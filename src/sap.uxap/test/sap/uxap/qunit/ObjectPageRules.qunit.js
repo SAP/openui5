@@ -1,7 +1,8 @@
 /*global QUnit */
 sap.ui.define(["sap/ui/thirdparty/jquery",
-               "sap/ui/core/Core"],
-function($, Core) {
+               "sap/ui/core/Core",
+               "sap/ui/core/mvc/XMLView"],
+function($, Core, XMLView) {
 	"use strict";
 
 	var BREAK_POINTS = {
@@ -21,16 +22,18 @@ function($, Core) {
 	};
 
 	QUnit.module("aat_UxAP-ManageDisplay", {
-		beforeEach: function () {
-			//aat_UxAP-331_ObjectPageRules1
-			this.objectPageSampleView1 = sap.ui.xmlview("UxAP-331_ObjectPageRules1", {
+		beforeEach: function (assert) {
+			var done = assert.async();
+			XMLView.create({
+				id: "UxAP-331_ObjectPageRules1",
 				viewName: "view.UxAP-331_ObjectPageRules1"
-			});
-			this.objectPageSampleView1.placeAt('qunit-fixture');
-
-			Core.applyChanges();
-
-			this.referencedObjectPage1 = this.objectPageSampleView1.byId("objectPage1");
+			}).then(function (oView) {
+				this.objectPageSampleView1 = oView;
+				this.objectPageSampleView1.placeAt("qunit-fixture");
+				Core.applyChanges();
+				this.referencedObjectPage1 = this.objectPageSampleView1.byId("objectPage1");
+				done();
+			}.bind(this));
 		},
 		afterEach: function () {
 			this.objectPageSampleView1.destroy();
@@ -90,15 +93,18 @@ function($, Core) {
 	});
 
 	QUnit.module("Single section", {
-		beforeEach: function () {
-			//aat_UxAP-331_ObjectPageRules2
-			this.objectPageSampleView2 = sap.ui.xmlview("UxAP-331_ObjectPageRules2", {
+		beforeEach: function (assert) {
+			var done = assert.async();
+			XMLView.create({
+				id: "UxAP-331_ObjectPageRules2",
 				viewName: "view.UxAP-331_ObjectPageRules2"
-			});
-			this.objectPageSampleView2.placeAt('qunit-fixture');
-			Core.applyChanges();
-
-			this.referencedObjectPage2 = this.objectPageSampleView2.byId("objectPage2");
+			}).then(function (oView) {
+				this.objectPageSampleView2 = oView;
+				this.objectPageSampleView2.placeAt("qunit-fixture");
+				Core.applyChanges();
+				this.referencedObjectPage2 = this.objectPageSampleView2.byId("objectPage2");
+				done();
+			}.bind(this));
 		},
 		afterEach: function () {
 			this.objectPageSampleView2.destroy();
@@ -147,15 +153,18 @@ function($, Core) {
 	});
 
 	QUnit.module("ObjectPage with DynamicHeaderTitle", {
-		beforeEach: function () {
-			//aat_UxAP-331_ObjectPageRules3
-			this.objectPageSampleView3 = sap.ui.xmlview("UxAP-331_ObjectPageRules3", {
+		beforeEach: function (assert) {
+			var done = assert.async();
+			XMLView.create({
+				id: "UxAP-331_ObjectPageRules3",
 				viewName: "view.UxAP-331_ObjectPageRules3"
-			});
-			this.objectPageSampleView3.placeAt('qunit-fixture');
-			Core.applyChanges();
-
-			this.referencedObjectPage3 = this.objectPageSampleView3.byId("objectPage3");
+			}).then(function (oView) {
+				this.objectPageSampleView3 = oView;
+				this.objectPageSampleView3.placeAt("qunit-fixture");
+				Core.applyChanges();
+				this.referencedObjectPage3 = this.objectPageSampleView3.byId("objectPage3");
+				done();
+			}.bind(this));
 		},
 		afterEach: function () {
 			this.objectPageSampleView3.destroy();
@@ -194,20 +203,24 @@ function($, Core) {
 	});
 
 	QUnit.module("Title Propagation Support based on UX Rules", {
-		beforeEach: function () {
-			this.oOPView = sap.ui.xmlview("UxAP-ObjectPageTitlePropagationSupport", {
+		beforeEach: function (assert) {
+			var done = assert.async();
+			XMLView.create({
+				id: "UxAP-ObjectPageTitlePropagationSupport",
 				viewName: "view.UxAP-ObjectPageTitlePropagationSupport"
-			});
-			this.oOPView.placeAt('qunit-fixture');
-			Core.applyChanges();
-
-			this.oSection3 = this.oOPView.byId("section_3");
-			this.oSection4 = this.oOPView.byId("section_4");
-			this.oSubSection11 = this.oOPView.byId("sub_section_1_1");
-			this.oSubSection21 = this.oOPView.byId("sub_section_2_1");
-			this.oSubSection22 = this.oOPView.byId("sub_section_2_2");
-			this.oSubSection31 = this.oOPView.byId("sub_section_3_1");
-			this.oSubSection41 = this.oOPView.byId("sub_section_4_1");
+			}).then(function (oView) {
+				this.oOPView = oView;
+				this.oOPView.placeAt("qunit-fixture");
+				Core.applyChanges();
+				this.oSection3 = this.oOPView.byId("section_3");
+				this.oSection4 = this.oOPView.byId("section_4");
+				this.oSubSection11 = this.oOPView.byId("sub_section_1_1");
+				this.oSubSection21 = this.oOPView.byId("sub_section_2_1");
+				this.oSubSection22 = this.oOPView.byId("sub_section_2_2");
+				this.oSubSection31 = this.oOPView.byId("sub_section_3_1");
+				this.oSubSection41 = this.oOPView.byId("sub_section_4_1");
+				done();
+			}.bind(this));
 		},
 		afterEach: function () {
 			this.oOPView.destroy();

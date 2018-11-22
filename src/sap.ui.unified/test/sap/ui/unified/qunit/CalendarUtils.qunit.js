@@ -1,21 +1,21 @@
-/*global QUnit, window */
+/*global QUnit, sinon, window */
 
 sap.ui.define([
 	"sap/ui/qunit/QUnitUtils",
-	"sap/ui/thirdparty/sinon",
 	"sap/ui/unified/calendar/CalendarUtils",
 	"sap/ui/core/date/UniversalDate",
-	"sap/ui/unified/calendar/CalendarDate"
-], function(qutils, sinon, CalendarUtils, UniversalDate, CalendarDate) {
+	"sap/ui/unified/calendar/CalendarDate",
+	"sap/ui/core/Locale"
+], function(qutils, CalendarUtils, UniversalDate, CalendarDate, Locale) {
 	"use strict";
 
 	QUnit.module("getFirstDateOfWeek/Month for week Sunday-Saturday (en_US locale)", {
 		beforeEach: function () {
 			this.oStub1 = sinon.stub(sap.ui.getCore().getConfiguration().getFormatSettings(), "getFormatLocale", function () {
-				return new sap.ui.core.Locale("en_US");//first date of week is Sunday (JS Date.getDay() = 0)
+				return new Locale("en_US");//first date of week is Sunday (JS Date.getDay() = 0)
 			});
 			this.oStub2 = sinon.stub(sap.ui.getCore().getConfiguration(), "getFormatLocale", function () {
-				return new sap.ui.core.Locale("en_US");//first date of week is Sunday (JS Date.getDay() = 0)
+				return new Locale("en_US");//first date of week is Sunday (JS Date.getDay() = 0)
 			});
 		},
 		afterEach: function () {
@@ -62,10 +62,10 @@ sap.ui.define([
 	QUnit.module("getFirstDateOfWeek for week Monday-Sunday (en_GB locale)", {
 		beforeEach: function () {
 			this.oStub1 = sinon.stub(sap.ui.getCore().getConfiguration().getFormatSettings(), "getFormatLocale", function () {
-				return new sap.ui.core.Locale("en_GB");//first date of week is Monday (JS Date.getDay() = 1)
+				return new Locale("en_GB");//first date of week is Monday (JS Date.getDay() = 1)
 			});
 			this.oStub2 = sinon.stub(sap.ui.getCore().getConfiguration(), "getFormatLocale", function () {
-				return new sap.ui.core.Locale("en_GB");//first date of week is Monday (JS Date.getDay() = 1)
+				return new Locale("en_GB");//first date of week is Monday (JS Date.getDay() = 1)
 			});
 		},
 		afterEach: function () {
@@ -155,7 +155,7 @@ sap.ui.define([
 			oLocaleData;
 
 		oDate = new Date(Date.UTC(2016, 10, 17, 0)); // 17.11.2016
-		oLocale = new sap.ui.core.Locale('en-US');
+		oLocale = new Locale('en-US');
 		oLocaleData = sap.ui.core.LocaleData.getInstance(oLocale);
 
 		// act
@@ -175,7 +175,7 @@ sap.ui.define([
 			oLocaleData;
 
 		oDate = new Date(Date.UTC(2016, 10, 17, 0)); // 17.11.2016
-		oLocale = new sap.ui.core.Locale('en-GB');
+		oLocale = new Locale('en-GB');
 		oLocaleData = sap.ui.core.LocaleData.getInstance(oLocale);
 
 		// act
@@ -207,7 +207,7 @@ sap.ui.define([
 	QUnit.module("_DATE_getFirstDateOfWeek for week Sunday-Saturday (en_US locale)", {
 		beforeEach: function () {
 			this.oStub = sinon.stub(sap.ui.getCore().getConfiguration().getFormatSettings(), "getFormatLocale", function () {
-				return new sap.ui.core.Locale("en_US");//first date of week is Sunday (JS Date.getDay() = 0)
+				return new Locale("en_US");//first date of week is Sunday (JS Date.getDay() = 0)
 			});
 		},
 		afterEach: function () {
@@ -255,7 +255,7 @@ sap.ui.define([
 	QUnit.module("_getFirstDateOfWeek(CalendarDate) for week Monday-Sunday (en_GB locale)", {
 		beforeEach: function () {
 			this.oStub = sinon.stub(sap.ui.getCore().getConfiguration().getFormatSettings(), "getFormatLocale", function () {
-				return new sap.ui.core.Locale("en_GB");//first date of week is Monday (JS Date.getDay() = 1)
+				return new Locale("en_GB");//first date of week is Monday (JS Date.getDay() = 1)
 			});
 		},
 		afterEach: function () {

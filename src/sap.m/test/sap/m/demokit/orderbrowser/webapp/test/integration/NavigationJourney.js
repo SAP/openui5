@@ -2,9 +2,10 @@
 
 sap.ui.define([
 	"sap/ui/test/opaQunit",
-	"./pages/App",
 	"./pages/Master",
-	"./pages/Detail"
+	"./pages/Detail",
+	"./pages/Browser",
+	"./pages/App"
 ], function (opaTest) {
 	"use strict";
 
@@ -12,7 +13,7 @@ sap.ui.define([
 
 	opaTest("Should navigate on press", function (Given, When, Then) {
 		// Arrangements
-		Given.iStartTheApp({
+		Given.iStartMyApp({
 			hash: "Orders/7991/"
 		});
 
@@ -85,71 +86,39 @@ sap.ui.define([
 		Then.onTheMasterPage.theListShouldHaveNoSelection();
 
 		// Cleanup
-		Then.iTeardownMyAppFrame();
+		Then.iTeardownMyApp();
 	});
 
 	opaTest("Start the App and simulate metadata error: MessageBox should be shown", function (Given, When, Then) {
 		//Arrangement
-		Given.iStartMyAppOnADesktopToTestErrorHandler("metadataError=true");
+		Given.iStartMyApp({
+			delay : 1000,
+			metadataError : true
+		});
 
 		// Assertions
 		Then.onTheAppPage.iShouldSeeTheMessageBox();
 
+		// Actions
+		When.onTheAppPage.iCloseTheMessageBox();
+
 		// Cleanup
-		Then.iTeardownMyAppFrame();
+		Then.iTeardownMyApp();
 	});
 
 	opaTest("Start the App and simulate bad request error: MessageBox should be shown", function (Given, When, Then) {
 		//Arrangement
-		Given.iStartMyAppOnADesktopToTestErrorHandler("errorType=serverError");
-
+		Given.iStartMyApp({
+			delay : 1000,
+			errorType : 'serverError'
+		});
 		// Assertions
 		Then.onTheAppPage.iShouldSeeTheMessageBox();
 
-		// Cleanup
-		Then.iTeardownMyAppFrame();
-	});
-
-	opaTest("Start the app and should be on the shipping tab", function (Given, When, Then) {
-		//Arrangement
-		Given.iStartTheApp({
-			hash: "Orders/7991/"
-		});
-		//Assertions
-		Then.onTheDetailPage.iShouldSeeTheShippingInfo();
-	});
-
-	opaTest("Press on the processor tab", function (Given, When, Then) {
-		//Actions
-		When.onTheDetailPage.iPressProcessorTab();
-		//Assertions
-		Then.onTheDetailPage.iShouldSeeTheProcessorInfo();
+		// Actions
+		When.onTheAppPage.iCloseTheMessageBox();
 
 		// Cleanup
-		Then.iTeardownMyAppFrame();
-	});
-
-	opaTest("Start the app with the processor tab in the hash I should be on the processor tab", function (Given, When, Then) {
-		//Arrangement
-		Given.iStartTheApp({
-			hash: "Orders/7991/?tab=processor"
-		});
-		//Assertions
-		Then.onTheDetailPage.iShouldSeeTheProcessorInfo();
-
-		// Cleanup
-		Then.iTeardownMyAppFrame();
-	});
-
-	opaTest("Start the app with an invalid tab url I should be on the shipping tab", function (Given, When, Then) {
-		//Arrangement
-		Given.iStartTheApp({
-			hash: "/Orders/7991/?tab=foo"
-		});
-		//Assertions
-		Then.onTheDetailPage.iShouldSeeTheShippingInfo();
-
-		// Cleanup
-		Then.iTeardownMyAppFrame();
+		Then.iTeardownMyApp();
 	});
 });

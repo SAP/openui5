@@ -4,12 +4,9 @@ sap.ui.define([
 	"sap/ui/core/date/Gregorian",
 	"sap/ui/core/date/Islamic",
 	"sap/ui/core/date/Japanese",
-	"sap/ui/core/library"
-], function(UniversalDate, Gregorian, Islamic, Japanese, coreLibrary) {
+	"sap/ui/core/CalendarType"
+], function(UniversalDate, Gregorian, Islamic, Japanese, CalendarType) {
 	"use strict";
-
-	// shortcut for enum from sap.ui.core namespace
-	var CalendarType = coreLibrary.CalendarType;
 
 	//next values must not overlap each other!
 	var year = 1400,

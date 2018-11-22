@@ -62,7 +62,6 @@
 						],
 			contentRight: [
 				new sap.m.SearchField( "SFB1", {
-					tooltip: "Search for objects..",
 					search: onSearch,
 					liveChange: onLiveChange,
  					layoutData: new sap.m.FlexItemData({growFactor: 1})
@@ -72,12 +71,11 @@
 		subHeader: new sap.m.Bar({
 			contentMiddle: [
 				new sap.m.SearchField( "SFB2", {
-					placeholder: "Search ... search.. search.. search.. search.. search.. search..",
+					placeholder: "Search",
 					showRefreshButton: true,
 					search: onSearch,
 					liveChange: onLiveChange,
 					width: "100%",
-					tooltip: "Search for objects..",
 					refreshButtonTooltip: "Refresh"
 				})
 			]

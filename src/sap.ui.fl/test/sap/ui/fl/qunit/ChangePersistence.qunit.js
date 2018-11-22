@@ -256,6 +256,57 @@ function (
 			}.bind(this));
 		});
 
+		QUnit.test("when getChangesForComponent is called twice with a variantSection", function (assert) {
+			var oMockedWrappedContent = {
+				"changes" : {
+					"changes": [],
+					"variantSection" : {
+						"variantManagementId" : {
+							"variants" : [{
+								"content" : {
+									"content" : {
+										"title": "variant 0"
+									},
+									"fileName": "variantManagementId"
+								},
+								"controlChanges" : [{
+									"fileName": "controlChange0",
+									"fileType": "change",
+									"selector": {
+										"id": "dummy_selector"
+									},
+									"variantReference": "variantManagementId",
+									"layer": "CUSTOMER_BASE"
+								}],
+								"variantChanges" : {}
+							}]
+						}
+					}
+				}
+			};
+
+			sandbox.stub(this.oChangePersistence._oVariantController, "_applyChangesOnVariantManagement");
+			sandbox.stub(Cache, "getChangesFillingCache").returns(Promise.resolve(oMockedWrappedContent));
+
+			function getChangesForComponentAssertions(aChanges, assert) {
+				assert.ok(true, "then after getChangesForComponent call");
+				assert.equal(aChanges.length, 1, "then one change is returned");
+				assert.ok(aChanges[0] instanceof Change, "then the change is an instance of Change");
+				assert.equal(aChanges[0].getDefinition().fileName, "controlChange0", "then the change is correctly assembled");
+			}
+
+			return this.oChangePersistence.getChangesForComponent()
+			.then(function(aChanges) {
+				getChangesForComponentAssertions(aChanges, assert);
+			})
+			.then(function() {
+				return this.oChangePersistence.getChangesForComponent();
+			}.bind(this))
+			.then(function(aChanges) {
+				getChangesForComponentAssertions(aChanges, assert);
+			});
+		});
+
 		QUnit.test("when getChangesForComponent is called with a variantSection and component data", function (assert) {
 			var oMockedWrappedContent = {
 				"changes" : {

@@ -1,4 +1,4 @@
-/*global QUnit, sinon, URI, jQuery */
+/*global QUnit, jQuery, opaSkip, opaTodo */
 (function() {
 	"use strict";
 
@@ -9,43 +9,48 @@
 
 	QUnit.config.autostart = false;
 
-	var fnOrig = URI.prototype.search;
-	var oSearchStub = sinon.stub(URI.prototype, "search", function(query) {
-		if ( query === true ) {
-			return {opaEnableUsageReport: "true", opaUsageReportUrl: "myURL"};
-		}
-		return fnOrig.apply(this, arguments);
-	});
-
 	sap.ui.require([
 		'sap/ui/test/opaQunit',
 		'sap/ui/test/Opa5',
 		'sap/ui/test/Opa'
 	], function (opaTest, Opa5, Opa) {
 
-		QUnit.begin(function () {
-			window.oUsageReportSpy = sinon.spy(Opa._usageReport, "_reportTest");
+		function setQUnitTimeout() {
+			QUnit.config.testTimeout = 2000;
+		}
+
+		QUnit.module("OPA QUnit - skip adapter", {
+			beforeEach: setQUnitTimeout
 		});
 
-		QUnit.done(function () {
-			// don't restore the report spy as it will be inspected by the calling test
-			oSearchStub.restore();
+		opaSkip("Should skip this test", function (oOpa) {
+			oOpa.waitFor({
+				success: function () {
+					Opa5.assert.ok(true);
+				}
+			});
 		});
 
-		QUnit.module("OPA QUnit - usage reporting", {
-			beforeEach: function () {
-				QUnit.config.testTimeout = 2000;
-			}
+		QUnit.module("OPA QUnit - todo adapter", {
+			beforeEach: setQUnitTimeout
+		});
+
+		opaTodo("Should not fail when TODO test is failing", function (oOpa) {
+			oOpa.waitFor({
+				success: function () {
+					Opa5.assert.ok(false, "Should not report test that awaits adaptation");
+				}
+			});
 		});
 
 		[{
-			name: "Should report message on OPA timeout",
+			type: "OPA timeout",
 			timeout: 1
 		}, {
-			name: "Should report message on QUnit timeout",
+			type: "QUnit timeout",
 			timeout: 3
 		}].forEach(function (data) {
-			opaTest(data.name, function (oOpa) {
+			opaTodo("Should not fail when TODO test timeouts with " + data.type, function (oOpa) {
 				oOpa.waitFor({
 					success: function () {
 						// use Opa5.assert - the global one will no longer be defined after the QUnit timeout and will cause error when ran 2 times in the OPA test suite
@@ -58,6 +63,14 @@
 						return false;
 					}
 				});
+			});
+		});
+
+		opaTodo("Should fail when TODO test is OK", function (oOpa) {
+			oOpa.waitFor({
+				success: function () {
+					Opa5.assert.ok(true, "Should report test that is already adapted");
+				}
 			});
 		});
 

@@ -38,7 +38,7 @@ sap.ui.define([
 				var oHistory = RuleAnalyzer.getLastAnalysisHistory();
 
 				var iExpectedNumberOfIssues = typeof oSettings.expectedNumberOfIssues === "function" ? oSettings.expectedNumberOfIssues() : oSettings.expectedNumberOfIssues;
-				assert.equal(oHistory.issues.length, iExpectedNumberOfIssues, " there should be " + oSettings.expectedNumberOfIssues + " issues");
+				assert.equal(oHistory.issues.length, iExpectedNumberOfIssues, " there should be " + iExpectedNumberOfIssues + " issues");
 
 				// If there are issues found check the rule id
 				if (oHistory.issues.length) {

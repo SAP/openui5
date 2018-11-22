@@ -362,7 +362,11 @@ sap.ui.define([
 						defaultController = typeof sControllerReplacement === "string" ? sControllerReplacement : sControllerReplacement.controllerName;
 					}
 					// create controller
-					oController = sap.ui.controller(defaultController, true /* oControllerImpl = true: do not extend controller inside factory; happens below (potentially async)! */, bAsync);
+					if (bAsync) {
+						oController = Controller.create({name: defaultController});
+					} else {
+						oController = sap.ui.controller(defaultController, true /* oControllerImpl = true: do not extend controller inside factory; happens below (potentially async)! */);
+					}
 				}
 			} else if (oController) {
 				// if passed controller is not extended yet we need to do it.
@@ -992,10 +996,32 @@ sap.ui.define([
 	 * @return {sap.ui.core.mvc.View} the created View instance
 	 */
 	sap.ui.view = function(sId, vView, sType /* used by factory functions */) {
+		var fnLogDeprecation = function(sMethod) {
+			// get the viewname for logging
+			var sName = "";
+			if (typeof sId == "object") {
+				sName = sId.viewName;
+			}
+			sName = sName || (vView && vView.name);
+
+			Log[sMethod](
+				"Do not use deprecated view factory functions (" + sName + ")." +
+				"Use the static create function on the view module instead: [XML|JS|HTML|JSON|]View.create().",
+				"sap.ui.view",
+				null,
+				function () {
+					return {
+						type: "sap.ui.view",
+						name: sName
+					};
+				}
+			);
+		};
+
 		if (vView && vView.async) {
-			Log.info("Do not use deprecated factory function 'sap.ui.view'. Use 'sap.ui.mvc.View.create' instead");
+			fnLogDeprecation("info");
 		} else {
-			Log.warning("Do not use synchronous view creation! Use the new asynchronous factory 'sap.ui.mvc.View.create' instead");
+			fnLogDeprecation("warning");
 		}
 		return viewFactory(sId, vView, sType);
 	};

@@ -704,6 +704,13 @@ sap.ui.define([
 	 */
 	Component.prototype.getEventBus = function() {
 		if (!this._oEventBus) {
+			var sClassName = this.getMetadata().getName();
+			Log.warning("Synchronous loading of EventBus, due to #getEventBus() call on Component '" + sClassName + "'.", "SyncXHR", null, function() {
+				return {
+					type: "SyncXHR",
+					name: sClassName
+				};
+			});
 			var EventBus = sap.ui.requireSync("sap/ui/core/EventBus");
 			this._oEventBus = new EventBus();
 		}
@@ -1366,7 +1373,7 @@ sap.ui.define([
 
 							// resolve relative to component
 							var oAnnotationSourceManifest = mConfig.origin.dataSources[aAnnotations[i]] || oManifest;
-							var sAnnotationUri = oAnnotationSourceManifest.resolveUri(oAnnotationUri).toString();
+							var sAnnotationUri = oAnnotationSourceManifest._resolveUri(oAnnotationUri).toString();
 
 							// add uri to annotationURI array in settings (this parameter applies for ODataModel v1 & v2)
 							oModelConfig.settings = oModelConfig.settings || {};
@@ -1404,7 +1411,7 @@ sap.ui.define([
 
 				// resolve URI relative to component which defined it
 				var oUriSourceManifest = (bIsDataSourceUri ? mConfig.origin.dataSources[oModelConfig.dataSource] : mConfig.origin.models[sModelName]) || oManifest;
-				oUri = oUriSourceManifest.resolveUri(oUri);
+				oUri = oUriSourceManifest._resolveUri(oUri);
 
 				// inherit sap-specific parameters from document (only if "sap.app/dataSources" reference is defined)
 				if (oModelConfig.dataSource) {
@@ -1614,7 +1621,7 @@ sap.ui.define([
 				/* eslint-disable no-loop-func */
 				oModelConfig.settings.enhanceWith.forEach(function(mBundle) {
 					if (mBundle.bundleUrl) {
-						mBundle.bundleUrl = oManifest.resolveUri(new URI(mBundle.bundleUrl), mBundle.bundleUrlRelativeTo).toString();
+						mBundle.bundleUrl = oManifest.resolveUri(mBundle.bundleUrl, mBundle.bundleUrlRelativeTo);
 					}
 				});
 				/* eslint-enable no-loop-func */
@@ -2072,7 +2079,7 @@ sap.ui.define([
 		};
 
 		if (typeof vConfig === 'string') {
-			Log.warning("Do not use deprecated function 'sap.ui.component' for Component instance lookup. " +
+			Log.warning("Do not use deprecated function 'sap.ui.component' (" + vConfig + ") + for Component instance lookup. " +
 				"Use 'Component.get' instead", "sap.ui.component", null, fnLogProperties.bind(null, vConfig));
 			// when only a string is given then this function behaves like a
 			// getter and returns an existing component instance
@@ -2080,10 +2087,10 @@ sap.ui.define([
 		}
 
 		if (vConfig.async) {
-			Log.info("Do not use deprecated factory function 'sap.ui.component'. " +
+			Log.info("Do not use deprecated factory function 'sap.ui.component' (" + vConfig["name"] + "). " +
 				"Use 'Component.create' instead", "sap.ui.component", null, fnLogProperties.bind(null, vConfig["name"]));
 		} else {
-			Log.warning("Do not use synchronous component creation! " +
+			Log.warning("Do not use synchronous component creation (" + vConfig["name"] + ")! " +
 				"Use the new asynchronous factory 'Component.create' instead", "sap.ui.component", null, fnLogProperties.bind(null, vConfig["name"]));
 		}
 		return componentFactory(vConfig);

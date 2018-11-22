@@ -53,6 +53,9 @@ sap.ui.define([
 	// shortcut for sap.ui.core.TitleLevel
 	var TitleLevel = coreLibrary.TitleLevel;
 
+	// shortcut for sap.ui.core.AccessibleLandmarkRole
+	var AccessibleLandmarkRole = coreLibrary.AccessibleLandmarkRole;
+
 	// shortcut for sap.uxap.ObjectPageSubSectionLayout
 	var ObjectPageSubSectionLayout = library.ObjectPageSubSectionLayout;
 
@@ -342,6 +345,15 @@ sap.ui.define([
 				footer: {type: "sap.m.IBar", multiple: false},
 
 				/**
+				 * Accessible landmark settings to be applied on the containers of the <code>sap.uxap.ObjectPageLayout</code> control.
+				 *
+				 * If not set, no landmarks will be written.
+				 *
+				 * @since 1.61
+				 */
+				landmarkInfo : {type : "sap.uxap.ObjectPageAccessibleLandmarkInfo", multiple : false},
+
+				/**
 				 * Internal aggregation to hold the reference to the AnchorBar.
 				 */
 				_anchorBar: {type: "sap.uxap.AnchorBar", multiple: false, visibility: "hidden"},
@@ -397,6 +409,7 @@ sap.ui.define([
 					}
 				}
 			},
+			dnd: { draggable: false, droppable: true },
 			designtime: "sap/uxap/designtime/ObjectPageLayout.designtime"
 		}
 	});
@@ -438,6 +451,10 @@ sap.ui.define([
 		TABLET: "sapFDynamicPage-Std-Tablet",
 		DESKTOP: "sapFDynamicPage-Std-Desktop"
 	};
+
+	ObjectPageLayout.DIV = "div";
+	ObjectPageLayout.HEADER = "header";
+	ObjectPageLayout.FOOTER = "footer";
 
 	/**
 	 * Retrieves thе next entry starting from the given one within the <code>sap.ui.core.TitleLevel</code> enumeration.
@@ -881,6 +898,8 @@ sap.ui.define([
 
 		this._cacheDomElements();
 
+		this._updateMedia(this._getWidth(this), ObjectPageLayout.MEDIA);
+
 		this._$opWrapper.on("scroll", this._onScroll.bind(this));
 
 		//the dom is already ready (re-rendering case), thus we compute the header immediately
@@ -957,8 +976,6 @@ sap.ui.define([
 		if (this._hasDynamicTitle()) {
 			this._updateMedia(this._getWidth(this), ObjectPageLayout.DYNAMIC_HEADERS_MEDIA);
 		}
-
-		this._updateMedia(this._getWidth(this), ObjectPageLayout.MEDIA);
 
 		this._updateToggleHeaderVisualIndicators();
 		this._updateTitleVisualState();
@@ -1959,7 +1976,11 @@ sap.ui.define([
 			sPreviousSectionId,
 			bAllowScrollSectionToTop,
 			bStickyTitleMode = !this._bHeaderExpanded,
-			oDomRef = this.getDomRef();
+			bIsFirstVisibleSubSection,
+			bParentIsFirstVisibleSection,
+			bIsFullscreenSection,
+			oDomRef = this.getDomRef(),
+			bUseIconTabBar = this.getUseIconTabBar();
 
 		if (!oDomRef || !this._bDomReady) { //calculate the layout only if the object page is full ready
 			return false; // return success flag
@@ -1972,7 +1993,7 @@ sap.ui.define([
 		if (this.iScreenHeight === 0) {
 			return; // element is hidden or not in DOM => the resulting calculations would be invalid
 		}
-		var iSubSectionsCount = 0;
+		var iSubSectionIndex = -1;
 
 		this._aSectionBases.forEach(function (oSectionBase) {
 			var oInfo = this._oSectionInfo[oSectionBase.getId()],
@@ -1985,7 +2006,7 @@ sap.ui.define([
 			}
 
 			if (!oInfo.isSection) {
-				iSubSectionsCount++;
+				iSubSectionIndex++;
 			}
 
 			oInfo.$dom = $this;
@@ -2059,6 +2080,15 @@ sap.ui.define([
 				}
 			}
 
+			if (!oInfo.isSection) {
+
+				bParentIsFirstVisibleSection = bUseIconTabBar /* there is only single section per tab */ || (oSectionBase.getParent() === this._oFirstVisibleSection);
+				bIsFirstVisibleSubSection = bParentIsFirstVisibleSection && (iSubSectionIndex === 0); /* index of *visible* subSections is first */
+				bIsFullscreenSection = oSectionBase.hasStyleClass(ObjectPageSubSection.FIT_CONTAINER_CLASS);
+
+				oSectionBase._setHeight(this._computeSubSectionHeight(bIsFirstVisibleSubSection, bIsFullscreenSection));
+			}
+
 		}, this);
 
 		//calculate the bottom spacer height and update the last section/subSection bottom (with our algorithm of having section tops based on the next section, we need to have a special handling for the very last subSection)
@@ -2082,7 +2112,7 @@ sap.ui.define([
 
 			// checks whether to ensure extra bottom space that allows scrolling the section up to the top of the page (right bellow the anchorBar)
 			bAllowScrollSectionToTop = this._bStickyAnchorBar /* if already in sticky mode, then preserve it, even if the section does not require scroll for its [entire content] display */
-			|| (iSubSectionsCount > 1) /* bringing any section (other than the first) bellow the anchorBar requires snap */
+			|| (iSubSectionIndex > 0) /* bringing any section (other than the first) bellow the anchorBar requires snap */
 			|| this._checkContentBottomRequiresSnap(oLastVisibleSubSection); /* check snap is needed in order to display the full section content in the viewport */
 
 			if (bAllowScrollSectionToTop && !this._shouldPreserveHeaderInTitleArea()) {
@@ -2100,6 +2130,27 @@ sap.ui.define([
 		this._setSectionInfoIsDirty(false);
 
 		return true; // return success flag
+	};
+
+	ObjectPageLayout.prototype._computeSubSectionHeight = function(bFirstVisibleSubSection, bFullscreenSection) {
+
+		var iSectionsContainerHeight;
+
+		if (!bFullscreenSection) {
+			return ""; // default height
+		}
+
+		// size the section to have the full height of its container
+		if (bFirstVisibleSubSection) {
+			// first visible is initially displayed in container with *expanded* header
+			// => obtain container height when *expanded* header
+			iSectionsContainerHeight = this._getSectionsContainerHeight(false /* expanded header */);
+		} else {
+			// non-first visible is displayed in container with *snapped* header
+			// => obtain container height when *snapped* header
+			iSectionsContainerHeight = this._getSectionsContainerHeight(true /*snapped header */);
+		}
+		return iSectionsContainerHeight + "px";
 	};
 
 	ObjectPageLayout.prototype._updateCustomScrollerHeight = function(bRequiresSnap) {
@@ -2165,6 +2216,18 @@ sap.ui.define([
 	* */
 	ObjectPageLayout.prototype._getScrollableViewportHeight = function(bIsStickyMode) {
 		return this.getDomRef().getBoundingClientRect().height - this._getStickyAreaHeight(bIsStickyMode);
+	};
+
+	ObjectPageLayout.prototype._getSectionsContainerHeight = function(bIsStickyMode) {
+
+		var iScrollContainerHeight = this._getScrollableViewportHeight(bIsStickyMode);
+		if (!bIsStickyMode) {
+			// for expanded mode, subtract the heights of headerContent and anchorBar
+			// as they are also part of the scrollable content when *expanded* header,
+			// but we need the height of the *sections area bellow* them
+			iScrollContainerHeight -= (this.iHeaderContentHeight + this.iAnchorBarHeight);
+		}
+		return iScrollContainerHeight;
 	};
 
 	ObjectPageLayout.prototype._getSectionPositionTop = function(oSectionBase, bShouldStick) {
@@ -3919,6 +3982,62 @@ sap.ui.define([
 		if (sNewText !== sCurrentText) {
 			this.$().attr("aria-label", sNewText);
 		}
+	};
+
+	/**
+	 * Formats <code>ObjectPageAccessibleLandmarkInfo</code> role and label of the provided <code>ObjectPageLayout</code> part.
+	 *
+	 * @param {sap.uxap.ObjectPageAccessibleLandmarkInfo} oLandmarkInfo ObjectPageLayout LandmarkInfo
+	 * @param {string} sPartName part of the page
+	 * @returns {sap.f.ObjectPageAccessibleLandmarkInfo} The formatted landmark info
+	 * @private
+	 */
+	ObjectPageLayout.prototype._formatLandmarkInfo = function (oLandmarkInfo, sPartName) {
+		if (oLandmarkInfo) {
+			var sRole = oLandmarkInfo["get" + sPartName + "Role"]() || "",
+				sLabel = oLandmarkInfo["get" + sPartName + "Label"]() || "";
+
+			if (sRole === AccessibleLandmarkRole.None) {
+				sRole = '';
+			}
+
+			return {
+				role: sRole.toLowerCase(),
+				label: sLabel
+			};
+		}
+
+		return {};
+	};
+
+	/**
+	 * Returns HTML tag of the page header.
+	 *
+	 * @param {sap.uxap.ObjectPageAccessibleLandmarkInfo} oLandmarkInfo ObjectPageLayout LandmarkInfo
+	 * @returns {string} The HTML tag of the page header.
+	 * @private
+	 */
+	ObjectPageLayout.prototype._getHeaderTag = function (oLandmarkInfo) {
+		if (oLandmarkInfo && oLandmarkInfo.getHeaderRole() !== AccessibleLandmarkRole.None) {
+			return ObjectPageLayout.DIV;
+		}
+
+		return ObjectPageLayout.HEADER;
+	};
+
+	/**
+	 * Returns HTML tag of the page footer.
+	 *
+	 * @param {sap.uxap.ObjectPageAccessibleLandmarkInfo} oLandmarkInfo ObjectPageLayout LandmarkInfo
+	 * @returns {string} The HTML tag of the page footer.
+	 * @private
+	 */
+	ObjectPageLayout.prototype._getFooterTag = function (oLandmarkInfo) {
+		if (oLandmarkInfo && oLandmarkInfo.getFooterRole() !== AccessibleLandmarkRole.None) {
+			return ObjectPageLayout.DIV;
+		}
+
+		return ObjectPageLayout.FOOTER;
 	};
 
 	function exists(vObject) {

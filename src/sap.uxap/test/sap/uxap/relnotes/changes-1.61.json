@@ -19,6 +19,36 @@
         "type": "FIX",
         "text": " sap.uxap.ObjectPageLayout: Fixed RTA behavior",
         "references": []
+      },
+      {
+        "id": "623a8bd7af1e942ec6bf7d03f98b21e4abeb8c7e",
+        "type": "FEATURE",
+        "text": " sap.uxap.ObjectPageLayout: Allow subSection fit container",
+        "references": []
+      },
+      {
+        "id": "acc2f0ceee9015abe6d238cf9eaef74bb9c1afe4",
+        "type": "FIX",
+        "text": " sap.uxap.ObjectPageLayout: Empty SubSection title disabled in RTA",
+        "references": []
+      },
+      {
+        "id": "78a52856e5f5323331d2397f5dddf98557dddc9b",
+        "type": "FIX",
+        "text": " sap.uxap.ObjectPageLayout: Initial flickering fixed",
+        "references": []
+      },
+      {
+        "id": "9cf4fdf82e964223fd29aba5d4a98c16bbbedbfe",
+        "type": "FIX",
+        "text": " sap.uxap.ObjectPageLayout: Unneeded save of changing title is fixed",
+        "references": []
+      },
+      {
+        "id": "45b98dbcebfa916f0b0de668b5630a5b1bcb4449",
+        "type": "FIX",
+        "text": " sap.uxap.ObjectPageSubSection: Revert header rendering",
+        "references": []
       }
     ]
   }

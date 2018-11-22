@@ -9,16 +9,23 @@ sap.ui.define([], function () {
 	"use strict";
 
 	function _generateRootLevelKeys(oRun) {
-		var oRulePreset = oRun.analysisInfo.rulePreset;
+		var oRulePreset = oRun.analysisInfo.rulePreset,
+			oSapUi5Version = oRun.technicalInfo.sapUi5Version && oRun.technicalInfo.sapUi5Version.version || null;
 
 		return {
 			loadedLibraries: [],
+			sapUi5Version: {
+				name: oSapUi5Version && oSapUi5Version.name || "",
+				version: oSapUi5Version && oSapUi5Version.version || "",
+				buildTimestamp: oSapUi5Version && oSapUi5Version.buildTimestamp || ""
+			},
 			rulePreset: {
 				id: oRulePreset && oRulePreset.id || "",
 				title: oRulePreset && oRulePreset.title || "",
 				description: oRulePreset && oRulePreset.description || "",
 				dateExported: oRulePreset && oRulePreset.dateExported || ""
-			}
+			},
+			analysisMetadata: oRun.analysisMetadata || null
 		};
 	}
 

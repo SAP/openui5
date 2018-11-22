@@ -2,9 +2,6 @@
 /*eslint no-undef:1, no-unused-vars:1, strict: 1 */
 sap.ui.define([
 	'jquery.sap.global',
-	'sap/base/Log',
-	'sap/ui/model/json/JSONModel',
-	'sap/m/Text',
 	'sap/m/App',
 	'sap/m/Page',
 	'sap/m/Button',
@@ -13,12 +10,10 @@ sap.ui.define([
 	'sap/m/IconTabHeader',
 	'sap/m/IconTabFilter',
 	'sap/tnt/ToolHeader',
-	'sap/tnt/ToolHeaderUtilitySeparator'
+	'sap/tnt/ToolHeaderUtilitySeparator',
+	'sap/ui/qunit/utils/waitForThemeApplied'
 ], function(
 	jQuery,
-	Log,
-	JSONModel,
-	Text,
 	App,
 	Page,
 	Button,
@@ -27,22 +22,12 @@ sap.ui.define([
 	IconTabHeader,
 	IconTabFilter,
 	ToolHeader,
-	ToolHeaderUtilitySeparator) {
+	ToolHeaderUtilitySeparator,
+	waitForThemeApplied) {
+
 	'use strict';
 
 	jQuery("#qunit-fixture").width('300px');
-
-	//create JSON model instance
-	var oModel = new JSONModel();
-
-	// create and add app
-	var oApp = new App("myApp", {initialPage: "toolHeaderPage"});
-	oApp.placeAt("qunit-fixture");
-
-	var oPage = new Page("toolHeaderPage", {
-		title: "Tool Header"
-	});
-	oApp.addPage(oPage);
 
 	function getToolHeader() {
 		return new ToolHeader({
@@ -193,13 +178,19 @@ sap.ui.define([
 
 	QUnit.module("API and Rendering", {
 		beforeEach: function () {
-			this.toolHeader = getToolHeader();
-			oPage.addContent(this.toolHeader);
+			this.oApp = new App("myApp", { initialPage: "toolHeaderPage" });
+			this.oPage = new Page("toolHeaderPage", { title: "Tool Header" });
+			this.oApp.placeAt("qunit-fixture");
+			this.oApp.addPage(this.oPage);
 
+			this.toolHeader = getToolHeader();
+			this.oPage.addContent(this.toolHeader);
 			sap.ui.getCore().applyChanges();
 		},
 		afterEach: function () {
-			this.toolHeader.destroy();
+			this.oApp.destroy();
+			this.oApp = null;
+			this.oPage = null;
 			this.toolHeader = null;
 		}
 	});
@@ -235,6 +226,10 @@ sap.ui.define([
 
 	QUnit.module("ToolHeader with IconTabHeader", {
 		beforeEach: function () {
+			this.oApp = new App("myApp", { initialPage: "toolHeaderPage" });
+			this.oPage = new Page("toolHeaderPage", { title: "Tool Header" });
+			this.oApp.placeAt("qunit-fixture");
+			this.oApp.addPage(this.oPage);
 
 			this.isDesktop = sap.ui.Device.system.desktop;
 			sap.ui.Device.system.desktop = false;
@@ -266,15 +261,15 @@ sap.ui.define([
 			this.iconTabHeader = iconTabHeader;
 			this.toolHeader = toolHeader;
 
-			oPage.addContent(toolHeader);
+			this.oPage.addContent(toolHeader);
 
 			sap.ui.getCore().applyChanges();
 		},
 		afterEach: function () {
-
 			sap.ui.Device.system.desktop = this.isDesktop;
-
-			this.toolHeader.destroy();
+			this.oApp.destroy();
+			this.oApp = null;
+			this.oPage = null;
 			this.toolHeader = null;
 		}
 	});
@@ -286,4 +281,6 @@ sap.ui.define([
 
 		assert.ok(this.iconTabHeader.$().find('.sapMITBFilterHidden').length > 0, 'Some tabs are hidden');
 	});
+
+	return waitForThemeApplied();
 });

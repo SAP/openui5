@@ -1,8 +1,5 @@
 <mvc:View xmlns:mvc="sap.ui.core.mvc" xmlns:forms="sap.ui.layout.form" xmlns="sap.m">
-	<forms:SimpleForm
-			maxContainerCols="1"
-			layout="ResponsiveGridLayout"
-			width="100%" editable="false">
+	<forms:SimpleForm editable="false" layout="ColumnLayout">
 
 			<Label text="Evangelize the UI framework across the company" design="Bold"/>
 			<Text text="4 days overdue Cascaded"/>
@@ -12,5 +9,6 @@
 
 			<Label text="Mentor junior developers" design="Bold"/>
 			<Text text="Due Dec 31 Cascaded"/>
+
 	</forms:SimpleForm>
 </mvc:View>

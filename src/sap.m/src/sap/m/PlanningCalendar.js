@@ -207,6 +207,7 @@ sap.ui.define([
 
 				/**
 				 * Specifies the height of the <code>PlanningCalendar</code>.
+				 * <b>Note:</b> If the set height is less than the displayed content, it will not be applied
 				 */
 				height : {type : "sap.ui.core.CSSSize", group : "Dimension", defaultValue : null},
 
@@ -823,6 +824,13 @@ sap.ui.define([
 
 		this._updateCurrentTimeVisualization(false); // CalendarRow sets visualization onAfterRendering
 
+		if (this.getHeight()) {
+			var $Table = this.getDomRef().querySelector("table");
+
+			// Table height is the PlanningCalendar height minus the height of the toolbars
+			var sStyle = this.$().height() - this._oInfoToolbar.$().height() - this._oToolbar.$().height() + "px";
+			$Table.style.height = sStyle;
+		}
 	};
 
 	/**
@@ -2884,6 +2892,9 @@ sap.ui.define([
 	 * Represents planning calendar row that holds header and timeline inside the internal table.
 	 */
 	var PlanningCalendarRowListItem = ColumnListItem.extend("sap.m.internal.PlanningCalendarRowListItem", {
+		metadata: {
+			library: "sap.m"
+		},
 		renderer: ColumnListItemRenderer
 	});
 

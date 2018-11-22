@@ -17,7 +17,10 @@ sap.ui.define([
 	"sap/m/NavContainer",
 	"sap/ui/core/HTML",
 	"sap/base/Log",
-	"sap/ui/Device"],
+	"sap/ui/Device",
+	"sap/ui/core/mvc/XMLView",
+	"sap/m/OverflowToolbar",
+	"sap/uxap/ObjectPageAccessibleLandmarkInfo"],
 function (
 	jQuery,
 	lib,
@@ -36,7 +39,10 @@ function (
 	NavContainer,
 	HTML,
 	Log,
-	Device
+	Device,
+	XMLView,
+	OverflowToolbar,
+	ObjectPageAccessibleLandmarkInfo
 ) {
 
 	"use strict";
@@ -95,7 +101,7 @@ function (
 	},
 
 		helpers = {
-			generateObjectPageWithContent: function (oFactory, iNumberOfSection, bUseIconTabBar) {
+			generateObjectPageWithContent: function (oFactory, iNumberOfSection, bUseIconTabBar, bFooter) {
 				var oObjectPage = bUseIconTabBar ? oFactory.getObjectPageLayoutWithIconTabBar() : oFactory.getObjectPage(),
 					oSection,
 					oSubSection;
@@ -105,6 +111,10 @@ function (
 					oSubSection = oFactory.getSubSection(i, oFactory.getBlocks());
 					oSection.addSubSection(oSubSection);
 					oObjectPage.addSection(oSection);
+				}
+
+				if (bFooter) {
+					oObjectPage.setFooter(new OverflowToolbar());
 				}
 
 				return oObjectPage;
@@ -383,7 +393,7 @@ function (
 				oObjectPage.attachEventOnce("onAfterRenderingDOMReady", function () {
 					setTimeout(function () {
 						sectionIsSelected(oObjectPage, assert, oExpected);
-						assert.strictEqual(oObjectPage._$opWrapper.scrollTop() - 1, oObjectPage.iHeaderContentHeight, "top section is selected");
+						assert.ok(isTolerableDifference(oObjectPage._$opWrapper.scrollTop(), oObjectPage.iHeaderContentHeight, ["chrome"], 1), "top section is selected");
 						assert.strictEqual(oObjectPage._bStickyAnchorBar, true, "anchor bar is snapped");
 						assert.strictEqual(oObjectPage._bHeaderExpanded, false, "header is snapped");
 
@@ -1288,14 +1298,19 @@ function (
 	});
 
 	QUnit.module("ObjectPage API: AnchorBar", {
-		beforeEach: function () {
-			this.appControl = new App();
-			this.oSampleView = sap.ui.xmlview("objectPageViewSample", {
+		beforeEach: function (assert) {
+			var done = assert.async();
+			XMLView.create({
+				id: "objectPageViewSample",
 				viewName: "view.UxAP-77_ObjectPageSample"
-			});
-			this.appControl.addPage(this.oSampleView);
-			this.appControl.placeAt("qunit-fixture");
-			Core.applyChanges();
+			}).then(function (oView) {
+				this.oSampleView = oView;
+				this.appControl = new App();
+				this.appControl.addPage(this.oSampleView);
+				this.appControl.placeAt("qunit-fixture");
+				Core.applyChanges();
+				done();
+			}.bind(this));
 		},
 		afterEach: function () {
 			this.appControl.destroy();
@@ -1338,13 +1353,19 @@ function (
 	});
 
 	QUnit.module("ObjectPage API: ObjectPageHeader", {
-		beforeEach: function () {
-			this.appControl = new App();
-			this.oSampleView = sap.ui.xmlview("objectPageViewSample", {
+		beforeEach: function (assert) {
+			var done = assert.async();
+			XMLView.create({
+				id: "objectPageViewSample",
 				viewName: "view.UxAP-77_ObjectPageSample"
-			});
-			this.appControl.addPage(this.oSampleView);
-			this.appControl.placeAt("qunit-fixture");
+			}).then(function (oView) {
+				this.oSampleView = oView;
+				this.appControl = new App();
+				this.appControl.addPage(this.oSampleView);
+				this.appControl.placeAt("qunit-fixture");
+				Core.applyChanges();
+				done();
+			}.bind(this));
 		},
 		afterEach: function () {
 			this.appControl.destroy();
@@ -1397,17 +1418,25 @@ function (
 	});
 
 	QUnit.module("ObjectPage API", {
-		beforeEach: function () {
-			this.appControl = new App();
-
-			this.oSampleView = sap.ui.xmlview("objectPageViewSample", {
+		beforeEach: function (assert) {
+			var done = assert.async();
+			XMLView.create({
+				id: "objectPageViewSample",
 				viewName: "view.UxAP-77_ObjectPageSample"
-			});
-			this.oView = sap.ui.xmlview("objectPageView", {
-				viewName: "view.UxAP-77_ObjectPage"
-			});
-			this.appControl.addPage(this.oView);
-			this.appControl.placeAt("qunit-fixture");
+			}).then(function (oView) {
+				this.oSampleView = oView;
+				XMLView.create({
+					id: "objectPageView",
+					viewName: "view.UxAP-77_ObjectPage"
+				}).then(function (oView) {
+					this.oView = oView;
+					this.appControl = new App();
+					this.appControl.addPage(this.oView);
+					this.appControl.placeAt("qunit-fixture");
+					Core.applyChanges();
+					done();
+				}.bind(this));
+			}.bind(this));
 		},
 		afterEach: function () {
 			this.appControl.destroy();
@@ -2507,7 +2536,7 @@ function (
 			$titleDescription.innerText = sShortText;
 
 			setTimeout(function() {
-				assert.strictEqual(layoutCalcSpy.callCount, 2, "layout recalculations called twice");
+				assert.strictEqual(layoutCalcSpy.callCount, 1, "layout recalculations called once");
 				assert.strictEqual(headerCalcSpy.callCount, 1, "header height recalculation called");
 				done();
 			}, 100);
@@ -2549,6 +2578,41 @@ function (
 		});
 
 		helpers.renderObject(this.oObjectPage);
+	});
+
+	QUnit.module("ObjectPage landmarkInfo API");
+
+	QUnit.test("DynamicPage landmark info is set correctly", function (assert) {
+		var oObjectPage = helpers.generateObjectPageWithContent(oFactory, 3, false, true),
+			oLandmarkInfo = new ObjectPageAccessibleLandmarkInfo({
+				rootRole: "Region",
+				rootLabel: "Root",
+				contentRole: "Main",
+				contentLabel: "Content",
+				headerRole: "Banner",
+				headerLabel: "Header",
+				footerRole: "Region",
+				footerLabel: "Footer",
+				navigationRole: "Navigation",
+				navigationLabel: "Navigation"
+			});
+
+		oObjectPage.placeAt('qunit-fixture');
+		oObjectPage.setLandmarkInfo(oLandmarkInfo);
+		Core.applyChanges();
+
+		assert.strictEqual(oObjectPage.$().attr("role"), "region", "Root role is set correctly.");
+		assert.strictEqual(oObjectPage.$().attr("aria-label"), "Root", "Root label is set correctly.");
+		assert.strictEqual(oObjectPage.$("sectionsContainer").attr("role"), "main", "Content role is set correctly.");
+		assert.strictEqual(oObjectPage.$("sectionsContainer").attr("aria-label"), "Content", "Content label is set correctly.");
+		assert.strictEqual(oObjectPage.$("headerTitle").attr("role"), "banner", "Header role is set correctly.");
+		assert.strictEqual(oObjectPage.$("headerTitle").attr("aria-label"), "Header", "Header label is set correctly.");
+		assert.strictEqual(oObjectPage.$("footerWrapper").attr("role"), "region", "Footer role is set correctly.");
+		assert.strictEqual(oObjectPage.$("footerWrapper").attr("aria-label"), "Footer", "Footer label is set correctly.");
+		assert.strictEqual(oObjectPage.$("anchorBar").attr("role"), "navigation", "Navigation role is set correctly.");
+		assert.strictEqual(oObjectPage.$("anchorBar").attr("aria-label"), "Navigation", "Navigation label is set correctly.");
+
+		oObjectPage.destroy();
 	});
 
 	function checkObjectExists(sSelector) {

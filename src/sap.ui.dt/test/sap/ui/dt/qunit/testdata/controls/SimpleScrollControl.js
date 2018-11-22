@@ -25,6 +25,10 @@ sap.ui.define(['sap/ui/thirdparty/jquery', 'sap/ui/core/Control'],
 
 		metadata: {
 			properties: {
+				scrollcontainerEnabled: {
+					type: "boolean",
+					defaultValue: true
+				}
 			},
 
 			aggregations: {
@@ -71,33 +75,35 @@ sap.ui.define(['sap/ui/thirdparty/jquery', 'sap/ui/core/Control'],
 			oRm.writeClasses();
 			oRm.write(">");
 
-			oRm.write("<div id='scrollContainer'");
-			oRm.addClass("sapUiDtTestSSCScrollContainer");
-			oRm.addStyle("height", "600px");
-			oRm.addStyle("width", "450px");
-			oRm.addStyle("overflow", "auto");
-			oRm.writeStyles();
-			oRm.writeClasses();
-			oRm.write(">");
+			if (oCtrl.getScrollcontainerEnabled()) {
+				oRm.write("<div id='scrollContainer'");
+				oRm.addClass("sapUiDtTestSSCScrollContainer");
+				oRm.addStyle("height", "600px");
+				oRm.addStyle("width", "450px");
+				oRm.addStyle("overflow", "auto");
+				oRm.writeStyles();
+				oRm.writeClasses();
+				oRm.write(">");
 
-			var sId = oCtrl.getId() + "-content1";
-			oRm.write("<div id='" + sId + "'>");
-			var aContent = oCtrl.getAggregation("content1", []);
-			aContent.forEach(function(oCtrl){
-				oRm.renderControl(oCtrl);
-			});
-			oRm.write("</div>");
+				var sId = oCtrl.getId() + "-content1";
+				oRm.write("<div id='" + sId + "'>");
+				var aContent = oCtrl.getAggregation("content1", []);
+				aContent.forEach(function(oCtrl){
+					oRm.renderControl(oCtrl);
+				});
+				oRm.write("</div>");
 
-			sId = oCtrl.getId() + "-content2";
-			oRm.write("<div id='" + sId + "'>");
-			aContent = oCtrl.getAggregation("content2", []);
-			aContent.forEach(function(oCtrl){
-				oRm.renderControl(oCtrl);
-			});
-			oRm.write("</div>");
+				sId = oCtrl.getId() + "-content2";
+				oRm.write("<div id='" + sId + "'>");
+				aContent = oCtrl.getAggregation("content2", []);
+				aContent.forEach(function(oCtrl){
+					oRm.renderControl(oCtrl);
+				});
+				oRm.write("</div>");
 
-			//end scrollcontainer
-			oRm.write("</div>");
+				//end scrollcontainer
+				oRm.write("</div>");
+			}
 
 			sId = oCtrl.getId() + "-footer";
 			oRm.write("<div id='" + sId + "'>");

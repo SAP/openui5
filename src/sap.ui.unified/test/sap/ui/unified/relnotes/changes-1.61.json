@@ -13,6 +13,24 @@
         "type": "FIX",
         "text": " sap.ui.unified.CalendarDateInterval: button text is read correctly now",
         "references": []
+      },
+      {
+        "id": "caeb54f3777d6361fcd8e8ea6e2ab604ecc81850",
+        "type": "FIX",
+        "text": " ShellLayout: Fix QUnit test for IE",
+        "references": []
+      },
+      {
+        "id": "811672e14234ceea9731f9586ec48eb6bcd549c5",
+        "type": "FIX",
+        "text": " sap.ui.unified.Calendar: aria-label is not encoded twice now",
+        "references": []
+      },
+      {
+        "id": "ffa8e3eff12f1736b0c8a43f5499aa34f0660b95",
+        "type": "FIX",
+        "text": " sap.ui.unified.Menu: Menu works correctly on combi devices",
+        "references": []
       }
     ]
   }

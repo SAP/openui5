@@ -74,7 +74,7 @@ sap.ui.define([
 					control: oControl,
 					domElement: oOptions.domElement
 				});
-				var sIDSuffix = _ControlFinder._getDomElementIDSuffix(oOptions.domElement);
+				var sIDSuffix = _ControlFinder._getDomElementIDSuffix(oOptions.domElement, oControl);
 				if (sIDSuffix) {
 					oLogger.debug("DOM element ID suffix is " + sIDSuffix);
 					oSelector.interaction = {

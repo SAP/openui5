@@ -144,6 +144,7 @@ sap.ui.define([
 					sKey = oTabToSelect ? oTabToSelect.getKey() : "home",
 					oViewModel = this.getModel("appView"),
 					bPhoneSize = oViewModel.getProperty("/bPhoneSize"),
+					bSearchMode = oViewModel.getProperty("/bSearchMode"),
 					bPhone = Device.system.phone,
 					bHasMaster = this.getOwnerComponent().getConfigUtil().hasMasterView(sRouteName),
 					oMasterView,
@@ -153,9 +154,7 @@ sap.ui.define([
 
 				oViewModel.setProperty("/bHasMaster", bHasMaster);
 
-				this._toggleTabHeaderClass();
-
-				if (bPhoneSize) {
+				if (bPhoneSize && !bSearchMode) {
 					this._selectHeader.setVisible(true);
 				}
 
@@ -641,18 +640,24 @@ sap.ui.define([
 
 			onHeaderResize: function (oEvent) {
 				var iWidth = oEvent.size.width,
-					bPhoneSize = Device.system.phone || iWidth < Device.media._predefinedRangeSets[Device.media.RANGESETS.SAP_STANDARD_EXTENDED].points[0];
+					bPhoneSize = Device.system.phone || iWidth < Device.media._predefinedRangeSets[Device.media.RANGESETS.SAP_STANDARD_EXTENDED].points[0],
+					oViewModel = this.getModel("appView"),
+					bSearchMode = oViewModel.getProperty("/bSearchMode");
 
-				this.getModel("appView").setProperty("/bPhoneSize", bPhoneSize);
+				oViewModel.setProperty("/bPhoneSize", bPhoneSize);
 
 				this._tabHeader.setVisible(!bPhoneSize);
 				this._selectHeader.setVisible(bPhoneSize);
+
+				// The select should be first set to visible on phone size, and after that
+				// set to false if search is opened for correct calculation of the search width.
+				if (bSearchMode) {
+					this._selectHeader.setVisible(false);
+				}
 			},
 
 			_onOrientationChange: function() {
 				this.getModel("appView").setProperty("/bLandscape", Device.orientation.landscape);
-
-				this._toggleTabHeaderClass();
 			},
 
 			onToggleSearchMode : function(oEvent) {
@@ -660,8 +665,6 @@ sap.ui.define([
 				oViewModel = this.getModel("appView"),
 				bPhoneSize = oViewModel.getProperty("/bPhoneSize");
 				oViewModel.setProperty("/bSearchMode", bSearchMode);
-
-				this._toggleTabHeaderClass();
 
 				if (bSearchMode) {
 					setTimeout(function () {
@@ -777,27 +780,6 @@ sap.ui.define([
 			_getCurrentPageRelativeURL: function () {
 				var parser = window.location;
 				return parser.pathname + parser.hash + parser.search;
-			},
-
-			_isToggleButtonVisible: function() {
-				var oViewModel = this.getModel("appView"),
-					bHasMaster = oViewModel.getProperty("/bHasMaster"),
-					bPhoneSize = oViewModel.getProperty("/bPhoneSize"),
-					bLandscape = oViewModel.getProperty("/bLandscape"),
-					bSearchMode = oViewModel.getProperty("/bSearchMode");
-
-				return bHasMaster && (bPhoneSize || !bLandscape) && !bSearchMode;
-			},
-
-			_toggleTabHeaderClass: function() {
-				var bPhoneSize = this.getModel("appView").getProperty("/bPhoneSize");
-
-				if (this._isToggleButtonVisible()) {
-						this._tabHeader.setVisible(!bPhoneSize);
-						this._selectHeader.setVisible(bPhoneSize);
-				} else if (bPhoneSize) {
-						this._selectHeader.setVisible(false);
-				}
 			},
 
 			_setHeaderSelectedKey: function(sKey) {

@@ -70,7 +70,7 @@ sap.ui.define(['./library'],
 				 * The arrangement is passed from the BlockLayout to the BlockLayoutRow after the BlockLayout is rendered.
 				 * This means that we need to rerender the BlockLayoutRow after its initial rendering, because the size was previously unknown
 				 */
-				aContent.forEach(oRm.renderControl);
+				aContent.forEach(oRm.renderControl, oRm);
 			} else if (arrangement) {
 				for (var i = 0; i < arrangement.length; i++) {
 					var aSubRow = arrangement[i];

@@ -1,0 +1,88 @@
+<mvc:View
+		xmlns="sap.m"
+		xmlns:mvc="sap.ui.core.mvc"
+		xmlns:grid="sap.ui.layout.cssgrid"
+		xmlns:form="sap.ui.layout.form"
+		xmlns:core="sap.ui.core"
+		controllerName="sap.ui.layout.sample.GridResponsiveness.GridResponsiveness">
+	<Panel>
+		<headerToolbar>
+			<Toolbar height="3rem">
+				<Title text="GridResponsiveness example"/>
+			</Toolbar>
+		</headerToolbar>
+		<content>
+			<Text class="message sapUiSmallMarginBottom" id="infoTxt" width="100%" text="Layout size is: "/>
+			<Text text="Responsive behaviour is fully configurable by the developer. It is possible to pass a GridResponsiveLayout to the customLayout aggregation of the CSSGrid and configure how it will look in different breakpoints (S, M, L, XL)"/>
+			<Slider class="sapUiSmallMarginBottom" value="100" liveChange="onSliderMoved"/>
+			<grid:CSSGrid id="grid1">
+			<grid:customLayout>
+				<grid:GridResponsiveLayout layoutChange="onLayoutChange">
+					<grid:layoutS>
+						<grid:GridSettings
+								gridTemplateColumns="repeat(auto-fit, 8rem)"
+								gridAutoRows="5rem"
+								gridRowGap="1rem"
+								gridColumnGap="1rem">
+						</grid:GridSettings>
+					</grid:layoutS>
+					<grid:layout>
+						<grid:GridSettings
+								gridTemplateColumns="repeat(auto-fit, 12rem)"
+								gridAutoRows="5rem"
+								gridRowGap="1rem"
+								gridColumnGap="1rem">
+						</grid:GridSettings>
+					</grid:layout>
+					<grid:layoutXL>
+						<grid:GridSettings
+								gridTemplateColumns="repeat(auto-fit, 20rem)"
+								gridAutoRows="5rem"
+								gridRowGap="1rem"
+								gridColumnGap="1rem">
+						</grid:GridSettings>
+					</grid:layoutXL>
+				</grid:GridResponsiveLayout>
+			</grid:customLayout>
+				<grid:items>
+					<VBox class="demoBox">
+						<Text text="A" wrapping="true" />
+					</VBox>
+					<VBox class="demoBox">
+						<Text text="B" wrapping="true" />
+					</VBox>
+					<VBox class="demoBox">
+						<Text text="C" wrapping="true" />
+					</VBox>
+					<VBox class="demoBox">
+						<Text text="D" wrapping="true" />
+					</VBox>
+					<VBox class="demoBox">
+						<Text text="E" wrapping="true" />
+					</VBox>
+					<VBox class="demoBox">
+						<Text text="F" wrapping="true" />
+					</VBox>
+					<VBox class="demoBox">
+						<Text text="G" wrapping="true" />
+					</VBox>
+					<VBox class="demoBox">
+						<Text text="H" wrapping="true" />
+					</VBox>
+					<VBox class="demoBox">
+						<Text text="I" wrapping="true" />
+					</VBox>
+					<VBox class="demoBox">
+						<Text text="J" wrapping="true" />
+					</VBox>
+					<VBox class="demoBox">
+						<Text text="K" wrapping="true" />
+					</VBox>
+					<VBox class="demoBox">
+						<Text text="L" wrapping="true" />
+					</VBox>
+				</grid:items>
+			</grid:CSSGrid>
+		</content>
+	</Panel>
+</mvc:View>

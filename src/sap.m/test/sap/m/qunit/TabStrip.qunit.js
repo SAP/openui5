@@ -710,6 +710,21 @@ sap.ui.define([
 		assert.equal(fnScrollingSpy.callCount, 1, "_handleInititalScrollToItem function is called");
 	});
 
+	QUnit.test("Initial scrolling when selected item is null", function (assert) {
+		//arrange
+		this.sut = new TabStrip({
+			items: this.items
+		});
+		var fnScrollingSpy = sinon.spy(this.sut, "_scrollIntoView");
+
+		this.sut.placeAt('qunit-fixture');
+		oCore.applyChanges();
+
+		//assert
+		assert.equal(this.sut.getSelectedItem(), null, "selected item is null");
+		assert.equal(fnScrollingSpy.callCount, 0, "_scrollIntoView function is not called");
+	});
+
 	QUnit.test("No Overflow Buttons on phone", function (assert) {
 		//arrange
 		var stubs = preparePhonePlatform.call(this);

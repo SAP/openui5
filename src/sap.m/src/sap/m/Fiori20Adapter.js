@@ -335,7 +335,7 @@ sap.ui.define([
 
 		this._attachNavigablePageChange(oControl, oAdaptOptions);
 
-		if (isInstanceOf(oControl, "sap/m/Page")) {
+		if (isInstanceOf(oControl, "sap/m/Page") || isInstanceOf(oControl, "sap/ui/core/mvc/XMLView")) {
 			this._attachModifyAggregation(oControl, "content", oAdaptOptions);
 		}
 

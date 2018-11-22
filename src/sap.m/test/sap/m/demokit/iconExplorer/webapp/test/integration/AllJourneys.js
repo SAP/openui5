@@ -10,7 +10,7 @@ sap.ui.define([
 	"./NotFoundJourney",
 	"./FavoriteJourney",
 	"./SearchJourney"
-	], function (Opa5, Startup, mockserver) {
+], function (Opa5, Startup, mockserver) {
 	"use strict";
 
 	mockserver.init();

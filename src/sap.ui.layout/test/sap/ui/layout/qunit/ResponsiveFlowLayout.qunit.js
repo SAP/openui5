@@ -1,11 +1,10 @@
 /*global QUnit, sinon */
 
 sap.ui.define([
-	"jquery.sap.global",
 	"sap/ui/layout/ResponsiveFlowLayout",
 	"sap/ui/layout/ResponsiveFlowLayoutData",
 	"sap/ui/commons/Button"
-], function(jQuery, ResponsiveFlowLayout, ResponsiveFlowLayoutData, Button) {
+], function(ResponsiveFlowLayout, ResponsiveFlowLayoutData, Button) {
 	"use strict";
 
 	var oRFL = new ResponsiveFlowLayout("rflLayout");

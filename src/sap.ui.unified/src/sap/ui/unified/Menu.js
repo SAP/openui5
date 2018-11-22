@@ -370,7 +370,7 @@ sap.ui.define([
 	 * @param {sap.ui.core.Dock} my The reference docking location of the menu for positioning the menu on the screen
 	 * @param {sap.ui.core.Dock} at The 'of' element's reference docking location for positioning the menu on the screen
 	 * @param {sap.ui.core.Element|DOMRef} of The menu is positioned relatively to this element based on the given dock locations
-	 * @param {string} [offset] The offset relative to the docking point, specified as a string with space-separated pixel values (e.g. "0 10" to move the popup 10 pixels to the right)
+	 * @param {string} [offset] The offset relative to the docking point, specified as a string with space-separated pixel values (e.g. "10 0" to move the popup 10 pixels to the right)
 	 * @param {sap.ui.core.Collision} [collision] The collision defines how the position of the menu should be adjusted in case it overflows the window in some direction
 	 *
 	 * @type {void}
@@ -801,7 +801,9 @@ sap.ui.define([
 		//-> This function and all its callers are obsolete when switching later to standard popup autoclose
 		//   (all needed further code locations for that change are marked with "TBD: standard popup autoclose")
 		var isInMenuHierarchy = false,
-			touchEnabled = this.getPopup().touchEnabled;
+		// before we were relaying on Popup.touchEnabled, but the logic in the Popup was changed
+		// and touchEnabled wasn't valid anymore for Combi devices, which caused the Menu to close automatically right after it was opened
+			touchEnabled = Device.support.touch;
 
 		this.bIgnoreOpenerDOMRef = false;
 

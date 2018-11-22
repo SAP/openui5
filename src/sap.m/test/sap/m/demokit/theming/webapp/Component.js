@@ -2,9 +2,8 @@ sap.ui.define([
 	"sap/ui/core/UIComponent",
 	"sap/ui/model/json/JSONModel",
 	"sap/ui/Device",
-	"sap/ui/demo/theming/model/models",
-	"sap/ui/demo/theming/controller/ErrorHandler"
-], function (UIComponent,JSONModel, Device, models, ErrorHandler) {
+	"./model/models"
+], function (UIComponent,JSONModel, Device, models) {
 	"use strict";
 
 	return UIComponent.extend("sap.ui.demo.theming.Component", {
@@ -23,30 +22,13 @@ sap.ui.define([
 			// call the base component's init function
 			UIComponent.prototype.init.apply(this, arguments);
 
-
-
 			// set device model
 			var oDeviceModel = new JSONModel(Device);
 			oDeviceModel.setDefaultBindingMode("OneWay");
 			this.setModel(oDeviceModel, "device");
 
-			// initialize the error handler with the component
-			this._oErrorHandler = new ErrorHandler(this);
-
 			// create the views based on the url/hash
 			this.getRouter().initialize();
-		},
-
-		/**
-		 * The component is destroyed by UI5 automatically.
-		 * In this method, the ErrorHandler is destroyed.
-		 * @public
-		 * @override
-		 */
-		destroy : function () {
-			this._oErrorHandler.destroy();
-			// call the base component's destroy function
-			UIComponent.prototype.destroy.apply(this, arguments);
 		},
 
 		/**
@@ -58,14 +40,12 @@ sap.ui.define([
 		getContentDensityClass : function() {
 			if (this._sContentDensityClass === undefined) {
 				// check whether FLP has already set the content density class; do nothing in this case
-				if (document.body.classList.contains("sapUiSizeCozy")
-					|| document.body.classList.contains("sapUiSizeCompact")) {
+				if (document.body.classList.contains("sapUiSizeCozy") || document.body.classList.contains("sapUiSizeCompact")) {
 					this._sContentDensityClass = "";
 				} else if (!Device.support.touch) { // apply "compact" mode if touch is not supported
 					this._sContentDensityClass = "sapUiSizeCompact";
 				} else {
-					// "cozy" in case of touch support; default for most sap.m controls
-					// but needed for desktop-first controls like sap.ui.table.Table
+					// "cozy" in case of touch support; default for most sap.m controls, but needed for desktop-first controls like sap.ui.table.Table
 					this._sContentDensityClass = "sapUiSizeCozy";
 				}
 			}

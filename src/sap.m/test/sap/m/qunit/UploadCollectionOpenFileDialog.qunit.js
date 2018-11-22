@@ -125,7 +125,7 @@ sap.ui.define("sap.m.qunit.UploadCollectionOpenFileDialog", [
 		}
 	});
 
-	QUnit.skip("The property multiple of the UploadCollection is set to true", function (assert) {
+	QUnit.test("The property multiple of the UploadCollection is set to true", function (assert) {
 		// Arrange
 		this.oUploadCollection.setMultiple(true);
 		var oItem = this.oUploadCollection.getItems()[0];
@@ -143,7 +143,7 @@ sap.ui.define("sap.m.qunit.UploadCollectionOpenFileDialog", [
 		Log.warning.restore();
 	});
 
-	QUnit.skip("Check trigger click event on FileUploader input element with item passed to openFileDialog", function (assert) {
+	QUnit.test("Check trigger click event on FileUploader input element with item passed to openFileDialog", function (assert) {
 		// Arrange
 		this.oUploadCollection.setMultiple(false);
 		var oItem = this.oUploadCollection.getItems()[0];
@@ -162,7 +162,7 @@ sap.ui.define("sap.m.qunit.UploadCollectionOpenFileDialog", [
 		assert.notEqual(aInputField, 0, "The input file can trigger click event");
 	});
 
-	QUnit.skip("Check trigger click event on FileUploader input element without an UploadCollectionItem passed to openFileDialog", function (assert) {
+	QUnit.test("Check trigger click event on FileUploader input element without an UploadCollectionItem passed to openFileDialog", function (assert) {
 		// Arrange
 		this.oUploadCollection.setMultiple(false);
 
@@ -180,7 +180,7 @@ sap.ui.define("sap.m.qunit.UploadCollectionOpenFileDialog", [
 		assert.notEqual(aInputField, 0, "The input file can trigger click event");
 	});
 
-	QUnit.skip("In case of 'uploadNewVersion' use case check if oItemToUpdate is set correctly", function (assert) {
+	QUnit.test("In case of 'uploadNewVersion' use case check if oItemToUpdate is set correctly", function (assert) {
 		// Arrange
 		this.oUploadCollection.setMultiple(false);
 		var oItem = this.oUploadCollection.getItems()[0];
@@ -217,7 +217,7 @@ sap.ui.define("sap.m.qunit.UploadCollectionOpenFileDialog", [
 		}
 	});
 
-	QUnit.skip("onChange event ends in rerendering without the item which is updated", function (assert) {
+	QUnit.test("onChange event ends in rerendering without the item which is updated", function (assert) {
 		// Arrange
 		this.oUploadCollection.setMultiple(false);
 		var oItemToUpdate = this.oUploadCollection.getItems()[0];
@@ -234,7 +234,7 @@ sap.ui.define("sap.m.qunit.UploadCollectionOpenFileDialog", [
 		assert.deepEqual(this.oUploadCollection._oList.getItems().length, 4, "The new file is not in the aggregated list");
 	});
 
-	QUnit.skip("onChange event test NumberOfAttachmentTitle", function (assert) {
+	QUnit.test("onChange event test NumberOfAttachmentTitle", function (assert) {
 		// Arrange
 		this.oUploadCollection.setMultiple(false);
 		var oItemToUpdate = this.oUploadCollection.getItems()[0];
@@ -250,7 +250,7 @@ sap.ui.define("sap.m.qunit.UploadCollectionOpenFileDialog", [
 		assert.ok(this.oUploadCollection._oNumberOfAttachmentsTitle.getText().indexOf("4") > -1, "Number of attachments is reduced in case of uploadingNewVersion");
 	});
 
-	QUnit.skip("onUploadComplete event test that _oItemToUpdate is set to null in the first case of uploadComplete", function (assert) {
+	QUnit.test("onUploadComplete event test that _oItemToUpdate is set to null in the first case of uploadComplete", function (assert) {
 		// Arrange
 		this.oUploadCollection.setMultiple(false);
 		this.oUploadCollection._oItemToUpdate = this.oUploadCollection.getItems()[0];
@@ -282,7 +282,7 @@ sap.ui.define("sap.m.qunit.UploadCollectionOpenFileDialog", [
 		assert.equal(this.oUploadCollection._oItemToUpdate, null, "_oItemToUpdate was set to null");
 	});
 
-	QUnit.skip("onUploadComplete event test that _oItemToUpdate is set to null in the second case of uploadComplete", function (assert) {
+	QUnit.test("onUploadComplete event test that _oItemToUpdate is set to null in the second case of uploadComplete", function (assert) {
 		// Arrange
 		this.oUploadCollection.setMultiple(false);
 		var oItemToUpdate = this.oUploadCollection.getItems()[0];
@@ -314,7 +314,7 @@ sap.ui.define("sap.m.qunit.UploadCollectionOpenFileDialog", [
 		assert.equal(this.oUploadCollection._oItemToUpdate, null, "_oItemToUpdate was set to null");
 	});
 
-	QUnit.skip("onUploadComplete event test that _oItemToUpdate is set to null in the third case of uploadComplete", function (assert) {
+	QUnit.test("onUploadComplete event test that _oItemToUpdate is set to null in the third case of uploadComplete", function (assert) {
 		// at present it is very hard to simulate IE9 in QUnits
 		if (Device.browser.msie && Device.browser.version <= 9) {
 			assert.expect(0);
@@ -352,7 +352,7 @@ sap.ui.define("sap.m.qunit.UploadCollectionOpenFileDialog", [
 		assert.equal(this.oUploadCollection._oItemToUpdate, null, "_oItemToUpdate was set to null");
 	});
 
-	QUnit.skip("onUploadComplete event test that _oItemToUpdate is set to null in the fourth case of uploadComplete", function (assert) {
+	QUnit.test("onUploadComplete event test that _oItemToUpdate is set to null in the fourth case of uploadComplete", function (assert) {
 		// at present it is very hard to simulate IE9 in QUnits
 		if (Device.browser.msie && Device.browser.version <= 9) {
 			assert.expect(0);

@@ -30,22 +30,6 @@ sap.ui.define(function () {
 			autostart: true
 		},
 		tests: {
-			"demokit/toolpageapp/webapp/test/integration/opaTests": {
-				title: "Integration Tests for ToolPage app",
-				ui5: {
-					preload: "async"
-				},
-				loader: {
-					paths: {
-						"sap/ui/demo/toolpageapp": "test-resources/sap/tnt/demokit/toolpageapp/webapp/"
-					}
-				},
-				group: "Demokit Other Content",
-				module: [
-					"sap/ui/demo/toolpageapp/test/integration/AllJourneys"
-				],
-				autostart: false
-			},
 			"InfoLabel": {
 				coverage: {
 					only : ["sap/tnt/InfoLabel"]
@@ -85,6 +69,12 @@ sap.ui.define(function () {
 			},
 			"ExploredSamples": {
 				loader: {
+					map: {
+						"*": {
+							"sap/ui/thirdparty/sinon": "sap/ui/thirdparty/sinon-4",
+							"sap/ui/thirdparty/sinon-qunit": "sap/ui/qunit/sinon-qunit-bridge"
+						}
+					},
 					paths: {
 						"sap/ui/demo/mock": "test-resources/sap/ui/documentation/sdk/"
 					}
@@ -94,7 +84,7 @@ sap.ui.define(function () {
 					version: 2
 				},
 				sinon: {
-					version: 1 // because MockServer is used by samples
+					version: 4
 				},
 				ui5: {
 					libs: ["sap.ui.layout", "sap.m", "sap.tnt", "sap.ui.documentation"],

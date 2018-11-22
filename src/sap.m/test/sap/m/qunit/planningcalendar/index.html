@@ -19,27 +19,7 @@
 		</script>
 
 		<!-- Application launch configuration -->
-		<script>
-			sap.ui.getCore().attachInit(function() {
-				new sap.m.App ({
-					pages: [
-						new sap.m.Page({
-							title: "simple Planning Calendar",
-							enableScrolling : true,
-							content: [
-								new sap.ui.core.ComponentContainer({
-									name : "sap.m.sample.PlanningCalendar",
-									settings : {
-										id : "PlanningCalendar"
-									}
-								})
-							]
-						})
-					]
-				}).placeAt("content");
-			});
-
-		</script>
+		<script src="js/initSut.js" defer></script>
 	</head>
 
 	<!-- UI Content -->

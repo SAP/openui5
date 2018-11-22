@@ -1,34 +1,44 @@
-<mvc:View xmlns="sap.m" xmlns:l="sap.ui.layout" xmlns:mvc="sap.ui.core.mvc" controllerName="sap.ui.demo.db.controller.App">
+<mvc:View
+	controllerName="sap.ui.demo.db.controller.App"
+	xmlns="sap.m"
+	xmlns:l="sap.ui.layout"
+	xmlns:mvc="sap.ui.core.mvc">
 	<Panel headerText="{i18n>panel1HeaderText}" class="sapUiResponsiveMargin" width="auto">
 		<content>
-			<Label text="{i18n>firstName}" class="sapUiSmallMargin" />
-			<Input value="{/firstName}" valueLiveUpdate="true" width="200px" enabled="{/enabled}" />
-			<Label text="{i18n>lastName}" class="sapUiSmallMargin" />
-			<Input value="{/lastName}" valueLiveUpdate="true" width="200px" enabled="{/enabled}" />
-			<CheckBox selected="{/enabled}" text="Enabled" />
+			<Label text="{i18n>firstName}" class="sapUiSmallMargin"/>
+			<Input value="{/firstName}" valueLiveUpdate="true" width="200px" enabled="{/enabled}"/>
+			<Label text="{i18n>lastName}" class="sapUiSmallMargin"/>
+			<Input value="{/lastName}" valueLiveUpdate="true" width="200px" enabled="{/enabled}"/>
+			<CheckBox selected="{/enabled}" text="Enabled"/>
 		</content>
 	</Panel>
-	<Panel headerText="{i18n>panel2HeaderText}" class="sapUiResponsiveMargin"
-		width="auto">
+	<Panel headerText="{i18n>panel2HeaderText}" class="sapUiResponsiveMargin" width="auto">
 		<content>
 			<l:HorizontalLayout>
 				<l:VerticalLayout>
-					<Label class="sapUiSmallMargin" text="{i18n>address}:" />
-					<Text class="sapUiSmallMarginBegin sapUiSmallMarginBottom" text="{/address/street}\n{/address/zip} {/address/city}\n{/address/country}" width="200px" />
+					<Label class="sapUiSmallMargin" text="{i18n>address}:"/>
+					<FormattedText class="sapUiSmallMarginBegin sapUiSmallMarginBottom" htmlText="{/address/street}&lt;br&gt;{/address/zip} {/address/city}&lt;br&gt;{/address/country}" width="200px"/>
 					<Link class="sapUiSmallMarginBegin"
-						  href="{
-								parts: [
-									'/firstName',
-									'/lastName'
-								],
-								formatter: '.formatMail'
-							}"
-						  text="{i18n>sendEmail}"/>
+						href="{
+							parts: [
+								'/firstName',
+								'/lastName'
+							],
+							formatter: '.formatMail'
+						}"
+						text="{i18n>sendEmail}"/>
 				</l:VerticalLayout>
 				<l:VerticalLayout>
-					<Label text="{i18n>salesToDate}:" class="sapUiSmallMargin" />
+					<Label text="{i18n>salesToDate}:" class="sapUiSmallMargin"/>
 					<Input width="200px" enabled="{/enabled}" description="{/currencyCode}"
-						   value="{ parts: [{path: '/salesToDate'}, {path: '/currencyCode'}], type: 'sap.ui.model.type.Currency', formatOptions: {showMeasure: false } }"/>
+						value="{
+							parts: [
+								{path: '/salesToDate'},
+								{path: '/currencyCode'}
+							],
+							type: 'sap.ui.model.type.Currency',
+							formatOptions: {showMeasure: false}
+						}"/>
 				</l:VerticalLayout>
 			</l:HorizontalLayout>
 		</content>
@@ -38,7 +48,7 @@
 			<List id="ProductList" headerText="{i18n>productListTitle}" items="{
 				path: 'products>/Products',
 				factory: '.productListFactory'
-			}" />
+			}"/>
 		</content>
 	</Panel>
 	<Panel id="productDetailsPanel" headerText="{i18n>panel4HeaderText}" class="sapUiResponsiveMargin" width="auto">

@@ -369,6 +369,17 @@ function (
 	};
 
 	/**
+	 * Returns all plugins that are currently busy
+	 * @returns {sap.ui.dt.Plugin[]} Returns an array of busy plugins
+	 * @protected
+	 */
+	DesignTime.prototype.getBusyPlugins = function() {
+		return this.getPlugins().filter(function(oPlugin) {
+			return oPlugin.isBusy();
+		});
+	};
+
+	/**
 	 * Adds new plugin to use with the DesignTime
 	 * @param {sap.ui.dt.Plugin} oPlugin to add
 	 * @return {sap.ui.dt.DesignTime} this

@@ -9,8 +9,9 @@ sap.ui.define([
 	"./TableExtension",
 	"./TableAccRenderExtension",
 	"./TableUtils",
-	"sap/ui/Device"
-], function(Control, library, TableExtension, TableAccRenderExtension, TableUtils, Device) {
+	"sap/ui/Device",
+	"sap/ui/thirdparty/jquery"
+], function(Control, library, TableExtension, TableAccRenderExtension, TableUtils, Device, jQuery) {
 	"use strict";
 
 	// shortcuts
@@ -335,7 +336,7 @@ sap.ui.define([
 		 * Modifies the labels and descriptions of a data cell.
 		 * @see ExtensionHelper.performCellModifications
 		 */
-		modifyAccOfDATACELL: function($Cell, bOnCellFocus) {
+		modifyAccOfDATACELL: function($Cell) {
 			var oTable = this.getTable(),
 				sTableId = oTable.getId(),
 				oIN = oTable._getItemNavigation();
@@ -421,7 +422,7 @@ sap.ui.define([
 		 * Modifies the labels and descriptions of a row header cell.
 		 * @see ExtensionHelper.performCellModifications
 		 */
-		modifyAccOfROWHEADER: function($Cell, bOnCellFocus) {
+		modifyAccOfROWHEADER: function($Cell) {
 			var oTable = this.getTable(),
 				sTableId = oTable.getId(),
 				bIsInGroupingRow = TableUtils.Grouping.isInGroupingRow($Cell),
@@ -462,7 +463,7 @@ sap.ui.define([
 		 * Modifies the labels and descriptions of a column header cell.
 		 * @see ExtensionHelper.performCellModifications
 		 */
-		modifyAccOfCOLUMNHEADER: function($Cell, bOnCellFocus) {
+		modifyAccOfCOLUMNHEADER: function($Cell) {
 			var oTable = this.getTable(),
 				oColumn = sap.ui.getCore().byId($Cell.attr("data-sap-ui-colid")),
 				mAttributes = ExtensionHelper.getAriaAttributesFor(this, TableAccExtension.ELEMENTTYPES.COLUMNHEADER, {
@@ -505,7 +506,7 @@ sap.ui.define([
 		 * Modifies the labels and descriptions of the column row header.
 		 * @see ExtensionHelper.performCellModifications
 		 */
-		modifyAccOfCOLUMNROWHEADER: function($Cell, bOnCellFocus) {
+		modifyAccOfCOLUMNROWHEADER: function($Cell) {
 			var oTable = this.getTable(),
 				bEnabled = $Cell.hasClass("sapUiTableSelAllEnabled");
 			oTable.$("sapUiTableGridCnt").removeAttr("role");
@@ -523,7 +524,7 @@ sap.ui.define([
 		 * Modifies the labels and descriptions of a row action cell.
 		 * @see ExtensionHelper.performCellModifications
 		 */
-		modifyAccOfROWACTION: function($Cell, bOnCellFocus) {
+		modifyAccOfROWACTION: function($Cell) {
 			var oTable = this.getTable(),
 				sTableId = oTable.getId(),
 				bIsInGroupingRow = TableUtils.Grouping.isInGroupingRow($Cell),
@@ -936,7 +937,7 @@ sap.ui.define([
 				clearTimeout(oTable._mTimeouts._cleanupACCExtension);
 				oTable._mTimeouts._cleanupACCExtension = null;
 			}
-			this.updateAccForCurrentCell(true);
+			this.updateAccForCurrentCell("Focus");
 		},
 
 		/**
@@ -1011,20 +1012,20 @@ sap.ui.define([
 	/**
 	 * Determines the current focused cell and modifies the labels and descriptions if needed.
 	 *
-	 * @param {boolean} bOnCellFocus Whether the accessibility information of the cell are updated because the cell was focused.
+	 * @param {sap.ui.table.TableUtils.RowsUpdateReason} sReason Why the accessibility information of the cell needs to be updated. Additionally
+	 * to the reasons in {@link sap.ui.table.TableUtils.RowsUpdateReason RowsUpdateReason}, also \"Focus\" is possible.
 	 * @public
 	 */
-	TableAccExtension.prototype.updateAccForCurrentCell = function(bOnCellFocus) {
+	TableAccExtension.prototype.updateAccForCurrentCell = function(sReason) {
 		if (!this._accMode || !this.getTable()._getItemNavigation()) {
 			return;
 		}
 
-		var oTable = this.getTable();
-
-		if (bOnCellFocus) {
+		if (sReason === "Focus" || sReason === TableUtils.RowsUpdateReason.Expand || sReason === TableUtils.RowsUpdateReason.Collapse) {
 			ExtensionHelper.cleanupCellModifications(this);
 		}
 
+		var oTable = this.getTable();
 		var oInfo = ExtensionHelper.getInfoOfFocusedCell(this);
 		var sCellType;
 
@@ -1048,8 +1049,8 @@ sap.ui.define([
 			return;
 		}
 
-		if (!bOnCellFocus) {
-			// Set cell to busy when scrolling (focus stays on the same cell, only content is replaced)
+		if (sReason !== "Focus") {
+			// Set cell to busy when the focus stays on the same cell and only the content is replaced (e.g. on scroll or expand),
 			// to force screenreader announcements
 			if (oInfo.isOfType(CellType.DATACELL | CellType.ROWHEADER)) {
 				if (oTable._mTimeouts._cleanupACCCellBusy) {
@@ -1074,7 +1075,7 @@ sap.ui.define([
 			}
 		}
 
-		ExtensionHelper["modifyAccOf" + sCellType].apply(this, [oInfo.cell, bOnCellFocus]);
+		ExtensionHelper["modifyAccOf" + sCellType].apply(this, [oInfo.cell]);
 	};
 
 	/**

@@ -114,12 +114,12 @@ html .sapUiContainer-Medium .sapUxAPObjectPageSubSectionHeader {
 
 /* remove the padding of form content, since form itself is already in a grid-cell that provides the required extra spacing */
 /* (1) if the direct child is a form container with a title, a more specific selector is needed: */
-.sapUxAPBlockContainer .sapUiFormResGrid > div.sapUiFormContainerTitle {
+.sapUxAPBlockContainer .sapUiFormCLContainer > div.sapUiFormContainerTitle {
 	padding-top: 0;
 }
 
 /* (2) if the direct child is a form container with a title, a more specific selector is needed for the title itself: */
-.sapUxAPBlockContainer .sapUiFormResGrid > div.sapUiFormContainerTitle > .sapUiFormTitle {
+.sapUxAPBlockContainer .sapUiFormCLContainer > div.sapUiFormContainerTitle > .sapUiFormTitle {
 	line-height: 2rem;
 	margin-bottom: 0;
 }
@@ -139,26 +139,20 @@ html .sapUiContainer-Medium .sapUxAPObjectPageSubSectionHeader {
 
 .sapUxAPObjectPageLayout-Std-Desktop .sapUxAPBlockContainer {
 	padding: 1rem 2rem 3rem 2rem;
-	.sapUiFormResGrid > div {
+	.sapUiFormCLContainer {
 		padding: 1rem 0;
 	}
 }
 .sapUxAPObjectPageLayout-Std-Tablet .sapUxAPBlockContainer {
 	padding: 1rem 1rem 3rem 1rem;
-	.sapUiFormResGrid > div {
+	.sapUiFormCLContainer {
 		padding: 1rem 0;
 	}
 }
 .sapUxAPObjectPageLayout-Std-Phone .sapUxAPBlockContainer {
 	padding: 0 1rem;
-	.sapUiFormResGrid > div {
+	.sapUiFormCLContainer {
 		padding: 1rem 0;
-	}
-	.sapUiRespGrid.sapUiRespGridHSpace1 {
-		padding: 0;
-	}
-	.sapUiRespGrid.sapUiRespGridHSpace1 > div {
-		margin: 0;
 	}
 	.sapUxAPObjectPageSubSectionAlignContent {
 		margin-right: -@sapUiMarginMedium;
@@ -221,3 +215,4 @@ html[data-sap-ui-browser^="ie"].sap-desktop {
 		pointer-events: none;
 	}
 }
+

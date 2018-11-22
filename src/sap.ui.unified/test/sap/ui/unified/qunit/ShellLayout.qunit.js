@@ -128,6 +128,7 @@ sap.ui.define([
 	QUnit.module("Rendering");
 
 	QUnit.test("Content", function(assert) {
+		sap.ui.getCore().applyChanges();
 		assert.ok(jQuery.sap.containsOrEquals(jQuery.sap.domById("shell-hdrcntnt"), jQuery.sap.domById("_header")), "Header rendered correctly");
 		assert.ok(jQuery.sap.containsOrEquals(jQuery.sap.domById("shell-curt-container-canvas"), jQuery.sap.domById("_curt_ctnt")), "Curtain Content rendered correctly");
 		assert.ok(jQuery.sap.containsOrEquals(jQuery.sap.domById("shell-curt-container-pane"), jQuery.sap.domById("_curt_pane_ctnt")), "Curtain Pane rendered correctly");

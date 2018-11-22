@@ -8,8 +8,9 @@
 		"title": "{{appTitle}}",
 		"description": "{{appDescription}}",
 		"applicationVersion": {
-		"version": "1.0.0"
+			"version": "1.0.0"
 		},
+		"resources": "resources.json",
 		"dataSources": {
 			"mainService": {
 				"uri": "/here/goes/your/serviceUrl/",
@@ -46,24 +47,18 @@
 			"async": true,
 			"id": "app"
 		},
-
 		"dependencies": {
-			"minUI5Version": "1.42.0",
+			"minUI5Version": "1.60.0",
 			"libs": {
-				"sap.ui.core": {
-				},
-				"sap.m": {
-				},
-				"sap.f": {
-				}
+				"sap.ui.core": {},
+				"sap.m": {},
+				"sap.f": {}
 			}
 		},
-
 		"contentDensities": {
 			"compact": true,
 			"cozy": true
 		},
-
 		"models": {
 			"i18n": {
 				"type": "sap.ui.model.resource.ResourceModel",
@@ -88,7 +83,6 @@
 				},
 				"async": true
 			},
-
 			"routes": [
 				{
 					"pattern": "",
@@ -101,7 +95,6 @@
 					"target": ["object"]
 				}
 			],
-
 			"targets": {
 				"worklist": {
 					"viewName": "Worklist",

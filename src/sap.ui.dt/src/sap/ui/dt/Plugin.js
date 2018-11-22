@@ -3,7 +3,7 @@
  */
 
 sap.ui.define([
-	'sap/ui/base/ManagedObject'
+	"sap/ui/base/ManagedObject"
 ],
 function(
 	ManagedObject
@@ -209,7 +209,16 @@ function(
 	 * @override
 	 * @public
 	 */
-	Plugin.prototype.getActionName = function(){
+	Plugin.prototype.getActionName = function(){};
+
+	/**
+	 * Indicate if a plugin is currently busy
+	 * Method to be overwritten by the different plugins
+	 *
+	 * @returns {boolean} Returns whether the plugin is currently busy
+	 */
+	Plugin.prototype.isBusy = function() {
+		return false;
 	};
 
 	/**

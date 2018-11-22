@@ -1,7 +1,7 @@
 <mvc:View
 	controllerName="sap.ui.demo.orderbrowser.controller.Master"
-	xmlns:mvc="sap.ui.core.mvc"
 	xmlns="sap.m"
+	xmlns:mvc="sap.ui.core.mvc"
 	xmlns:semantic="sap.f.semantic">
 	<semantic:SemanticPage id="page">
 		<semantic:titleHeading>
@@ -127,5 +127,4 @@
 			</List>
 		</semantic:content>
 	</semantic:SemanticPage>
-
 </mvc:View>

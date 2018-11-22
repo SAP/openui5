@@ -14,7 +14,8 @@ sap.ui.define([
 	"sap/m/App",
 	"sap/m/Page",
 	"sap/m/TextArea",
-	"sap/m/library"],
+	"sap/m/library",
+	"sap/ui/core/mvc/XMLView"],
 function (
 	jQuery,
 	Core,
@@ -29,7 +30,8 @@ function (
 	App,
 	Page,
 	TextArea,
-	mLib) {
+	mLib,
+	XMLView) {
 
 	"use strict";
 
@@ -204,14 +206,18 @@ function (
 
 
 	QUnit.module("Sections invalidation", {
-		beforeEach: function () {
-			this.oView = sap.ui.xmlview("UxAP-ObjectPageState", {
+		beforeEach: function (assert) {
+			var done = assert.async();
+			XMLView.create({
+				id: "UxAP-ObjectPageState",
 				viewName: "view.UxAP-ObjectPageState"
-			});
-			this.oObjectPage = this.oView.byId("ObjectPageLayout");
-
-			this.oView.placeAt('qunit-fixture');
-			Core.applyChanges();
+			}).then(function (oView) {
+				this.oView = oView;
+				this.oView.placeAt("qunit-fixture");
+				Core.applyChanges();
+				this.oObjectPage = this.oView.byId("ObjectPageLayout");
+				done();
+			}.bind(this));
 		},
 		afterEach: function () {
 			this.oView.destroy();
@@ -241,15 +247,19 @@ function (
 	});
 
 	QUnit.module("update content size", {
-		beforeEach: function () {
-			this.oView = sap.ui.xmlview("UxAP-ObjectPageState", {
+		beforeEach: function (assert) {
+			var done = assert.async();
+			XMLView.create({
+				id: "UxAP-ObjectPageState",
 				viewName: "view.UxAP-ObjectPageState"
-			});
-			this.oObjectPage = this.oView.byId("ObjectPageLayout");
-			this.oObjectPage.setSelectedSection(this.oObjectPage.getSections()[1].getId());
-
-			this.oView.placeAt('qunit-fixture');
-			Core.applyChanges();
+			}).then(function (oView) {
+				this.oView = oView;
+				this.oView.placeAt("qunit-fixture");
+				this.oObjectPage = this.oView.byId("ObjectPageLayout");
+				this.oObjectPage.setSelectedSection(this.oObjectPage.getSections()[1].getId());
+				Core.applyChanges();
+				done();
+			}.bind(this));
 		},
 		afterEach: function () {
 			this.oView.destroy();
@@ -296,13 +306,19 @@ function (
 		var sModulePrefix = bUseIconTabBar ? "IconTabBar" : "AnchorBar";
 
 		QUnit.module(sModulePrefix + "Mode", {
-			beforeEach: function () {
-				this.oView = sap.ui.xmlview("UxAP-ObjectPageState", {
+			beforeEach: function (assert) {
+				var done = assert.async();
+				XMLView.create({
+					id: "UxAP-ObjectPageState",
 					viewName: "view.UxAP-ObjectPageState"
-				});
-				this.oObjectPage = this.oView.byId("ObjectPageLayout");
-				this.oObjectPage.setUseIconTabBar(bUseIconTabBar);
-				this.oView.placeAt('qunit-fixture');
+				}).then(function (oView) {
+					this.oView = oView;
+					this.oObjectPage = this.oView.byId("ObjectPageLayout");
+					this.oObjectPage.setUseIconTabBar(bUseIconTabBar);
+					this.oView.placeAt("qunit-fixture");
+					Core.applyChanges();
+					done();
+				}.bind(this));
 			},
 			afterEach: function () {
 				this.oView.destroy();

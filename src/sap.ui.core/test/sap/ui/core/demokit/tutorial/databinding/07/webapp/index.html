@@ -2,48 +2,19 @@
 <html>
 <head>
 	<meta charset="utf-8">
-	<title>SAPUI5 Data Binding Tutorial</title>
+	<meta name="viewport" content="width=device-width, initial-scale=1.0">
+	<title>Data Binding Tutorial</title>
 	<script id="sap-ui-bootstrap"
 		src="../../../../../../../../../resources/sap-ui-core.js"
 		data-sap-ui-theme="sap_belize"
 		data-sap-ui-libs="sap.m"
-		data-sap-ui-resourceroots='{"sap.ui.demo.db": "./"}'
+		data-sap-ui-resourceroots='{
+			"sap.ui.demo.db": "./"
+		}'
 		data-sap-ui-compatVersion="edge"
-		data-sap-ui-preload="async">
+		data-sap-ui-async="true">
 	</script>
-	<script>
-		sap.ui.define([
-			"sap/ui/model/json/JSONModel",
-			"sap/ui/model/resource/ResourceModel"
-		], function (JSONModel, ResourceModel) {
-			"use strict";
-
-			// Attach an anonymous function to the SAPUI5 'init' event
-			sap.ui.getCore().attachInit(function () {
-				// Create a JSON model from an object literal
-				var oModel = new JSONModel({
-					firstName: "Harry",
-					lastName: "Hawk",
-					enabled: true
-				});
-
-				// Assign the model object to the SAPUI5 core
-				sap.ui.getCore().setModel(oModel);
-
-				// Create a resource bundle for language specific texts
-				var oResourceModel = new ResourceModel({
-					bundleName: "sap.ui.demo.db.i18n.i18n"
-				});
-
-				// Assign the model object to the SAPUI5 core using the name "i18n"
-				sap.ui.getCore().setModel(oResourceModel, "i18n");
-
-				// Display the XML view called "App"
-				sap.ui.xmlview({viewName: "sap.ui.demo.db.view.App"}).placeAt("content");
-			});
-		});
-	</script>
+	<script src="index.js"></script>
 </head>
-<body class="sapUiBody" id="content">
-</body>
+<body class="sapUiBody" id="content"></body>
 </html>

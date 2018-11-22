@@ -15,7 +15,7 @@ sap.ui.define(function() {
 			ui5: {
 				language: "en-US",
 				rtl: false,					// Whether to run the tests in RTL mode
-				libs: ["sap.ui.unified"],		// Libraries to load upfront in addition to the library which is tested (sap.ui.unified), if null no libs are loaded
+				libs: ["sap.ui.unified"],	// Libraries to load upfront in addition to the library which is tested (sap.ui.unified), if null no libs are loaded
 				"xx-waitForTheme": true		// Whether the start of the test should be delayed until the theme is applied
 			},
 			coverage: {
@@ -50,7 +50,7 @@ sap.ui.define(function() {
 					theme: "sap_belize"
 				},
 				coverage: {
-					only: ["sap/ui/layout/Calendar"]
+					only: ["sap/ui/unified/Calendar"]
 				}
 			},
 			"CalendarRow": {
@@ -63,7 +63,7 @@ sap.ui.define(function() {
 					reorder: false
 				},
 				coverage: {
-					only: ["sap/ui/layout/CalendarRow"]
+					only: ["sap/ui/unified/CalendarRow"]
 				}
 			},
 			"CalendarDateInterval": {
@@ -73,10 +73,11 @@ sap.ui.define(function() {
 					theme: "sap_belize"
 				},
 				sinon: {
+					sinon: 1,
 					useFakeTimers: false
 				},
 				coverage: {
-					only: ["sap/ui/layout/CalendarDateInterval"]
+					only: ["sap/ui/unified/CalendarDateInterval"]
 				}
 			},
 			"CalendarMonthInterval": {
@@ -89,32 +90,31 @@ sap.ui.define(function() {
 					reorder: false
 				},
 				sinon: {
+					sinon: 1,
 					useFakeTimers: true
 				},
 				coverage: {
-					only: ["sap/ui/layout/CalendarMonthInterval"]
+					only: ["sap/ui/unified/CalendarMonthInterval"]
 				}
 			},
 			"CalendarOneMonthInterval": {
 				group: "Calendar",
 				ui5: {
-					libs: ["sap.ui.unified", "sap.m"],
 					noConflict: true,
 					theme: "sap_belize"
 				},
 				coverage: {
-					only: ["sap/ui/layout/CalendarOneMonthInterval"]
+					only: ["sap/ui/unified/CalendarOneMonthInterval"]
 				}
 			},
 			"CalendarWeekInterval": {
 				group: "Calendar",
 				ui5: {
-					libs: ["sap.ui.unified", "sap.m"],
 					noConflict: true,
 					theme: "sap_belize"
 				},
 				coverage: {
-					only: ["sap/ui/layout/CalendarWeekInterval"]
+					only: ["sap/ui/unified/CalendarWeekInterval"]
 				}
 			},
 			"CalendarTimeInterval": {
@@ -127,7 +127,7 @@ sap.ui.define(function() {
 					reorder: false
 				},
 				coverage: {
-					only: ["sap/ui/layout/CalendarTimeInterval"]
+					only: ["sap/ui/unified/CalendarTimeInterval"]
 				}
 			},
 			"CalendarDate": {
@@ -137,7 +137,7 @@ sap.ui.define(function() {
 					theme: "sap_belize"
 				},
 				coverage: {
-					only: ["sap/ui/layout/CalendarDate"]
+					only: ["sap/ui/unified/calendar/CalendarDate"]
 				}
 			},
 			"Calendar_Islamic": {
@@ -148,7 +148,7 @@ sap.ui.define(function() {
 					theme: "sap_belize"
 				},
 				coverage: {
-					only: ["sap/ui/layout/Calendar_Islamic"]
+					only: ["sap/ui/unified/Calendar_Islamic"]
 				}
 			},
 			"Calendar_Japanese": {
@@ -159,7 +159,7 @@ sap.ui.define(function() {
 					theme: "sap_belize"
 				},
 				coverage: {
-					only: ["sap/ui/layout/Calendar_Japanese"]
+					only: ["sap/ui/unified/Calendar_Japanese"]
 				}
 			},
 			"CalendarLegend": {
@@ -169,7 +169,7 @@ sap.ui.define(function() {
 					theme: "sap_belize"
 				},
 				coverage: {
-					only: ["sap/ui/layout/CalendarLegend"]
+					only: ["sap/ui/unified/CalendarLegend"]
 				}
 			},
 			"CalendarUtils": {
@@ -179,18 +179,17 @@ sap.ui.define(function() {
 					theme: "sap_belize"
 				},
 				coverage: {
-					only: ["sap/ui/layout/CalendarUtils"]
+					only: ["sap/ui/unified/calendar/CalendarUtils"]
 				}
 			},
 			"Month": {
 				group: "Calendar",
 				ui5: {
-					libs: ["sap.ui.unified", "sap.m"],
 					noConflict: true,
 					theme: "sap_belize"
 				},
 				coverage: {
-					only: ["sap/ui/layout/Month"]
+					only: ["sap/ui/unified/calendar/Month"]
 				}
 			},
 			"FileUploader": {
@@ -201,7 +200,7 @@ sap.ui.define(function() {
 					theme: "sap_belize"
 				},
 				coverage: {
-					only: ["sap/ui/layout/FileUploader"]
+					only: ["sap/ui/unified/FileUploader"]
 				}
 			},
 			"Header": {
@@ -214,29 +213,27 @@ sap.ui.define(function() {
 					theme: "sap_belize"
 				},
 				coverage: {
-					only: ["sap/ui/layout/Header"]
+					only: ["sap/ui/unified/Header"]
 				}
 			},
 			"ColorPicker": {
-				group: "Calendar",
+				group: "ColorPicker",
 				ui5: {
-					libs: ["sap.ui.unified", "sap.m"],
 					noConflict: true,
 					theme: "sap_belize"
 				},
 				coverage: {
-					only: ["sap/ui/layout/ColorPicker"]
+					only: ["sap/ui/unified/ColorPicker"]
 				}
 			},
 			"Currency": {
 				group: "Currency",
 				ui5: {
-					libs: ["sap.ui.unified", "sap.m"],
 					noConflict: true,
 					theme: "sap_belize"
 				},
 				coverage: {
-					only: ["sap/ui/layout/Currency"]
+					only: ["sap/ui/unified/Currency"]
 				}
 			},
 			"Menu": {
@@ -246,18 +243,17 @@ sap.ui.define(function() {
 					theme: "sap_belize"
 				},
 				coverage: {
-					only: ["sap/ui/layout/Menu"]
+					only: ["sap/ui/unified/Menu"]
 				}
 			},
 			"MenuItem": {
 				group: "Menu",
 				ui5: {
-					libs: ["sap.ui.unified", "sap.m"],
 					noConflict: true,
 					theme: "sap_belize"
 				},
 				coverage: {
-					only: ["sap/ui/layout/MenuItem"]
+					only: ["sap/ui/unified/MenuItem"]
 				}
 			},
 			"MonthPicker": {
@@ -267,7 +263,7 @@ sap.ui.define(function() {
 					theme: "sap_belize"
 				},
 				coverage: {
-					only: ["sap/ui/layout/MonthPicker"]
+					only: ["sap/ui/unified/calendar/MonthPicker"]
 				}
 			},
 			"YearPicker": {
@@ -277,16 +273,24 @@ sap.ui.define(function() {
 					theme: "sap_belize"
 				},
 				coverage: {
-					only: ["sap/ui/layout/YearPicker"]
+					only: ["sap/ui/unified/calendar/YearPicker"]
 				}
 			},
 			"ExploredSamples": {
+				loader: {
+					map: {
+						"*": {
+							"sap/ui/thirdparty/sinon": "sap/ui/thirdparty/sinon-4",
+							"sap/ui/thirdparty/sinon-qunit": "sap/ui/qunit/sinon-qunit-bridge"
+						}
+					}
+				},
 				runAfterLoader: "sap/ui/demo/mock/qunit/SampleTesterErrorHandler",
 				qunit: {
 					version: 2
 				},
 				sinon: {
-					version: 1 // because MockServer is used by samples
+					version: 4
 				},
 				ui5: {
 					libs: ["sap.ui.unified", "sap.ui.documentation", "sap.ui.layout", "sap.m"],

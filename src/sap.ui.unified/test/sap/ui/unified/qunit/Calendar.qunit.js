@@ -1,26 +1,28 @@
 /*global QUnit, window */
-/*eslint no-undef:1, no-unused-vars:1, strict: 1 */
+
 sap.ui.define([
 	"sap/ui/qunit/QUnitUtils",
 	"sap/ui/unified/Calendar",
 	"sap/ui/unified/DateRange",
 	"sap/ui/unified/DateTypeRange",
-	"sap/ui/unified/CalendarLegend"
-], function(qutils, Calendar, DateRange, DateTypeRange, CalendarLegend) {
+	"sap/ui/unified/CalendarLegend",
+	"sap/ui/unified/CalendarLegendItem",
+	"sap/ui/core/Locale",
+	"sap/ui/core/HTML",
+	"sap/ui/unified/calendar/CalendarDate",
+	"sap/ui/unified/library"
+], function(qutils, Calendar, DateRange, DateTypeRange, CalendarLegend,
+	CalendarLegendItem, Locale, HTML, CalendarDate, unifiedLibrary) {
 	"use strict";
-
-	var CalendarDayType = sap.ui.unified.CalendarDayType;
-
 	// set language to en-US, since we have specific language strings tested
 	sap.ui.getCore().getConfiguration().setLanguage("en_US");
 
+	var CalendarDayType = unifiedLibrary.CalendarDayType;
 	var bSelectFired = false;
 	var oSelectedDate;
 	var iStartDateChangeFired = 0;
-	var oLocaleUS = new sap.ui.core.Locale("en-US");
-	var oLocaleDE = new sap.ui.core.Locale("de-DE");
+	var oLocaleUS = new Locale("en-US");
 	var oLocaleDataUS = sap.ui.core.LocaleData.getInstance(oLocaleUS);
-	var oLocaleDataDE = sap.ui.core.LocaleData.getInstance(oLocaleDE);
 
 	var handleStartDateChange = function(oEvent) {
 		iStartDateChangeFired++;
@@ -40,30 +42,30 @@ sap.ui.define([
 
 	var oLegend = new CalendarLegend("Legend1", {
 		items: [
-				new sap.ui.unified.CalendarLegendItem("T1", {type: sap.ui.unified.CalendarDayType.Type01, text: "My Type 1"}),
-				new sap.ui.unified.CalendarLegendItem("T2", {type: sap.ui.unified.CalendarDayType.Type02, text: "My Type 2"}),
-				new sap.ui.unified.CalendarLegendItem("T3", {type: sap.ui.unified.CalendarDayType.Type03, text: "My Type 3"}),
-				new sap.ui.unified.CalendarLegendItem("T5", {type: sap.ui.unified.CalendarDayType.Type05, text: "My Type 5"}),
-				new sap.ui.unified.CalendarLegendItem("T6", {type: sap.ui.unified.CalendarDayType.Type06, text: "My Type 6"}),
-				new sap.ui.unified.CalendarLegendItem("T7", {type: sap.ui.unified.CalendarDayType.Type07, text: "My Type 7"}),
-				new sap.ui.unified.CalendarLegendItem("T8", {type: sap.ui.unified.CalendarDayType.Type08, text: "My Type 8"}),
-				new sap.ui.unified.CalendarLegendItem("T9", {type: sap.ui.unified.CalendarDayType.Type09, text: "My Type 9"}),
-				new sap.ui.unified.CalendarLegendItem("T10", {type: sap.ui.unified.CalendarDayType.Type10, text: "My Type 10"})
+				new CalendarLegendItem("T1", {type: CalendarDayType.Type01, text: "My Type 1"}),
+				new CalendarLegendItem("T2", {type: CalendarDayType.Type02, text: "My Type 2"}),
+				new CalendarLegendItem("T3", {type: CalendarDayType.Type03, text: "My Type 3"}),
+				new CalendarLegendItem("T5", {type: CalendarDayType.Type05, text: "My Type 5"}),
+				new CalendarLegendItem("T6", {type: CalendarDayType.Type06, text: "My Type 6"}),
+				new CalendarLegendItem("T7", {type: CalendarDayType.Type07, text: "My Type 7"}),
+				new CalendarLegendItem("T8", {type: CalendarDayType.Type08, text: "My Type 8"}),
+				new CalendarLegendItem("T9", {type: CalendarDayType.Type09, text: "My Type 9"}),
+				new CalendarLegendItem("T10", {type: CalendarDayType.Type10, text: "My Type 10"})
 				]
 	});
 	var oCal2 = new Calendar("Cal2",{
 		intervalSelection: true,
 		width: "400px",
 		selectedDates: [new DateRange({startDate: new Date("2011", "0", "10"), endDate: new Date("2011", "0", "13")})],
-		specialDates: [new DateTypeRange({startDate: new Date("2011", "0", "1"), type: sap.ui.unified.CalendarDayType.Type01, tooltip: "Text"}),
-						new DateTypeRange({startDate: new Date("2011", "0", "2"), endDate: new Date("2011", "0", "4"), type: sap.ui.unified.CalendarDayType.Type02, tooltip: "Text"}),
-						new DateTypeRange({startDate: new Date("2011", "0", "5"), type: sap.ui.unified.CalendarDayType.Type04}),
+		specialDates: [new DateTypeRange({startDate: new Date("2011", "0", "1"), type: CalendarDayType.Type01, tooltip: "Text"}),
+						new DateTypeRange({startDate: new Date("2011", "0", "2"), endDate: new Date("2011", "0", "4"), type: CalendarDayType.Type02, tooltip: "Text"}),
+						new DateTypeRange({startDate: new Date("2011", "0", "5"), type: CalendarDayType.Type04}),
 						new DateTypeRange({startDate: new Date("2011", "0", "6"),
-							endDate: new Date("2011", "0", "10"), type: sap.ui.unified.CalendarDayType.NonWorking}),
+							endDate: new Date("2011", "0", "10"), type: CalendarDayType.NonWorking}),
 						new DateTypeRange({startDate: new Date("2011", "0", "6"),
-								endDate: new Date("2011", "0", "6"), type: sap.ui.unified.CalendarDayType.Type01}),
+								endDate: new Date("2011", "0", "6"), type: CalendarDayType.Type01}),
 						new DateTypeRange({startDate: new Date("2011", "0", "21"), type:
-							sap.ui.unified.CalendarDayType.NonWorking})
+							CalendarDayType.NonWorking})
 		],
 		legend: oLegend,
 		startDateChange: handleStartDateChange
@@ -297,7 +299,7 @@ sap.ui.define([
 
 		//act
 		oCal2.addSpecialDate(new DateTypeRange({
-			type: sap.ui.unified.CalendarDayType.NonWorking,
+			type: CalendarDayType.NonWorking,
 			startDate: new Date(2011, 0, 22)
 		}));
 
@@ -701,8 +703,6 @@ QUnit.module("Misc");
 		oCal5.placeAt("qunit-fixture");
 		sap.ui.getCore().applyChanges();
 
-		var months = oCal5.getAggregation("month");
-
 		//act
 		try {
 			oCal5._invalidateMonth();
@@ -800,10 +800,10 @@ QUnit.module("Misc");
 		// Arrange
 		var fnDone = oAssert.async(), // Async test
 			oSpecialDate = new DateTypeRange({
-				type: sap.ui.unified.CalendarDayType.Type01,
+				type: CalendarDayType.Type01,
 				startDate: new Date(2017, 1, 20)
 			}),
-			oHTMLButton = new sap.ui.core.HTML("persist_focus_target", {
+			oHTMLButton = new HTML("persist_focus_target", {
 				content: "<button>Btn</button>"
 			}).placeAt("qunit-fixture");
 
@@ -842,7 +842,7 @@ QUnit.module("Misc");
 				oSelectedDate = new DateRange({
 					startDate: new Date(2017, 1, 20)
 				}),
-				oHTMLButton = new sap.ui.core.HTML("persist_focus_target", {
+				oHTMLButton = new HTML("persist_focus_target", {
 					content: "<button>Btn</button>"
 				}).placeAt("qunit-fixture");
 
@@ -1051,7 +1051,7 @@ QUnit.module("Misc");
 			oSetAriaLabelButton3Spy = this.spy(oHeader, "_setAriaLabelButton3");
 
 		// act
-		oCalendar._setHeaderText(new sap.ui.unified.calendar.CalendarDate(2017, 2, 14, oCalendar.getPrimaryCalendarType()));
+		oCalendar._setHeaderText(new CalendarDate(2017, 2, 14, oCalendar.getPrimaryCalendarType()));
 
 		// assert
 		assert.equal(oSetTextButton3Spy.getCall(0).args[0], "April", "_setTextButton3 is called with April");
@@ -1069,7 +1069,7 @@ QUnit.module("Misc");
 				oSetAriaLabelButton1Spy = this.spy(oHeader, "setAriaLabelButton1");
 
 		// act
-		oCalendar._setHeaderText(sap.ui.unified.calendar.CalendarDate.fromLocalJSDate(new Date(2017, 2, 14), oCalendar.getPrimaryCalendarType()));
+		oCalendar._setHeaderText(CalendarDate.fromLocalJSDate(new Date(2017, 2, 14), oCalendar.getPrimaryCalendarType()));
 
 		// assert
 		assert.equal(oSetTextButton1Spy.getCall(0).args[0], "April", "setTextButton1 is called with April");

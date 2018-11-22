@@ -1,13 +1,11 @@
 <mvc:View
-	xmlns:mvc="sap.ui.core.mvc"
 	controllerName="sap.ui.demo.iconexplorer.controller.App"
 	displayBlock="true"
 	height="100%"
-	xmlns="sap.m">
-
+	xmlns="sap.m"
+	xmlns:mvc="sap.ui.core.mvc">
 	<App id="app"
 		busy="{view>/busy}"
 		busyIndicatorDelay="{view>/delay}"
 		class="sapUiDemoIconExplorer"/>
-
 </mvc:View>

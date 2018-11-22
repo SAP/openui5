@@ -4,11 +4,19 @@ sap.ui.define(function() {
 	return {
 		name: "TestSuite for sap.ui.core: GTP testcase CORE/SAMPLES",
 		defaults: {
+			loader: {
+				map: {
+					"*": {
+						"sap/ui/thirdparty/sinon": "sap/ui/thirdparty/sinon-4",
+						"sap/ui/thirdparty/sinon-qunit": "sap/ui/qunit/sinon-qunit-bridge"
+					}
+				}
+			},
 			qunit: {
 				version: 2
 			},
 			sinon: {
-				version: 1 // because MockServer is used by samples
+				version: 4
 			},
 			module: "test-resources/sap/ui/core/qunit/{name}.qunit"
 		},

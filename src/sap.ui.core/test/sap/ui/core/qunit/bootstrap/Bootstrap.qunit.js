@@ -31,14 +31,22 @@ sap.ui.define([
 	QUnit.test("GetRenderManager", function(assert) {
 		var oCore = sap.ui.getCore();
 
-		var aCommonMethods = ["renderControl", "write", "writeEscaped", "translate", "writeAcceleratorKey", "writeControlData", "writeInvisiblePlaceholderData",
-							  "writeElementData", "writeAttribute", "writeAttributeEscaped", "addClass", "writeClasses",
-							  "addStyle", "writeStyles", "writeAccessibilityState", "writeIcon",
-							  "getConfiguration", "getHTML", "cleanupControlWithoutRendering", "render", "flush", "destroy"];
+		var aCommonMethods = ["renderControl", "translate", "getConfiguration", "getHTML", "cleanupControlWithoutRendering"];
+
+		var aStringRendererMethods = ["write", "writeEscaped", "writeAcceleratorKey", "writeControlData", "writeInvisiblePlaceholderData",
+			"writeElementData", "writeAttribute", "writeAttributeEscaped", "addClass", "writeClasses", "addStyle", "writeStyles",
+			"writeAccessibilityState", "writeIcon"];
+
+		var aDomRendererMethods = ["openStart", "openEnd", "close", "voidStart", "voidEnd", "text", "attr", "class", "style", "controlData",
+		"elementData", "accessibilityState", "invisiblePlaceholderData", "icon", "unsafeHtml"];
+
+		var aNonRendererFunctions = ["render", "flush", "destroy"];
+
+		var aInterfaceMethods = aCommonMethods.concat(aStringRendererMethods, aDomRendererMethods, aNonRendererFunctions);
 
 		assert.notStrictEqual(oCore.getRenderManager, undefined, "function getRenderManager on sap.ui.core.Core instance must be defined");
 		assert.ok(typeof oCore.getRenderManager() === 'object', "calling getRenderManager on Core instance must deliver the RenderManager interface");
-		checkMethods(assert, oCore.getRenderManager(), aCommonMethods);
+		checkMethods(assert, oCore.getRenderManager(), aInterfaceMethods);
 	});
 
 	QUnit.test("GetConfiguration", function(assert) {

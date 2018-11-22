@@ -11,14 +11,13 @@ sap.ui.define([
 	"sap/ui/model/type/Integer",
 	"sap/ui/model/type/String",
 	"sap/m/Input",
-	"sap/m/Label"
-], function(coreLibrary, ControlMessageProcessor, Message, MessageManager, FormatException, Model, JSONModel, MessageModel, TypeInteger, TypeString, Input, Label) {
+	"sap/m/Label",
+	'sap/ui/qunit/utils/createAndAppendDiv'
+], function(coreLibrary, ControlMessageProcessor, Message, MessageManager, FormatException, Model, JSONModel, MessageModel, TypeInteger, TypeString, Input, Label, createAndAppendDiv) {
 	"use strict";
 
 	// create content div
-	var oDIV = document.createElement("div");
-	oDIV.id = "content";
-	document.body.appendChild(oDIV);
+	createAndAppendDiv("content");
 
 	// shortcuts for enums from the sap.ui.core namespace
 	var MessageType = coreLibrary.MessageType;

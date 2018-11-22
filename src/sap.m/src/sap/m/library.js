@@ -107,7 +107,6 @@ sap.ui.define([
 			"sap.m.TimePickerMaskMode",
 			"sap.m.TileSizeBehavior",
 			"sap.m.ToolbarDesign",
-			"sap.m.UploadState",
 			"sap.m.VerticalPlacementType",
 			"sap.m.semantic.SemanticRuleSetType"
 		],
@@ -2364,40 +2363,40 @@ sap.ui.define([
 	thisLib.OverflowToolbarPriority = {
 
 		/**
-		 * NeverOverflow priority forces OverflowToolbar items to remain always in the toolbar
+		 * Forces <code>OverflowToolbar</code> items to remain always in the toolbar.
 		 * @public
 		 */
 		NeverOverflow : "NeverOverflow",
 
 		/**
-		 * Deprecated - Use <code>sap.m.OverflowToolbarPriority.NeverOverflow</code> instead
+		 * Deprecated - Use <code>sap.m.OverflowToolbarPriority.NeverOverflow</code> instead.
 		 * @deprecated Since version 1.48
 		 * @public
 		 */
 		Never : "Never",
 
 		/**
-		 * High priority OverflowToolbar items overflow after the items with lower priority
+		 * Items with priority <code>High</code> overflow after the items with lower priority.
 		 * @public
 		 */
 		High : "High",
 
 		/**
-		 * Low priority  OverflowToolbar items overflow before the items with higher priority such as High priority items
+		 * Items with priority <code>Low</code> overflow before the items with higher priority,
+		 * such as <code>High</code> priority items.
 		 * @public
 		 */
 		Low : "Low",
 
 		/**
-		 * Disappear priority  OverflowToolbar items overflow before the items with higher priority
-		 * such as Low and High priority items and remain hidden in the overflow area.
-		 *
+		 * Items with priority <code>Disappear</code> overflow before the items with higher priority,
+		 * such as <code>Low</code> and <code>High</code>, and remain hidden in the overflow area.
 		 * @public
 		 */
 		Disappear : "Disappear",
 
 		/**
-		 * AlwaysOverflow priority forces OverflowToolbar items to remain always in the overflow area
+		 * Forces <code>OverflowToolbar</code> items to remain always in the overflow area.
 		 * @public
 		 */
 		AlwaysOverflow : "AlwaysOverflow",
@@ -3568,36 +3567,6 @@ sap.ui.define([
 		Hyphenated : "Hyphenated"
 	};
 
-	/**
-	 * States of the upload process for {@link sap.m.UploadCollectionItem}.
-	 *
-	 * @enum {string}
-	 * @public
-	 * @ui5-metamodel This enumeration also will be described in the UI5 (legacy) designtime metamodel
-	 */
-	thisLib.UploadState = {
-		/**
-		 * The file has been uploaded successfuly.
-		 * @public
-		 */
-		Complete: "Complete",
-		/**
-		 * The file cannot be uploaded due to an error.
-		 * @public
-		 */
-		Error: "Error",
-		/**
-		 * The file is awaiting an explicit command to start being uploaded.
-		 * @public
-		 */
-		Ready: "Ready",
-		/**
-		 * The file is currently being uploaded.
-		 * @public
-		 */
-		Uploading: "Uploading"
-	};
-
 	//lazy imports for MessageToast
 	sap.ui.lazyRequire("sap.m.MessageToast", "show");
 
@@ -4547,8 +4516,8 @@ sap.ui.define([
 	// implement Form helper factory with m controls
 	// possible is set before layout lib is loaded.
 	ObjectPath.set("sap.ui.layout.form.FormHelper", {
-		createLabel: function(sText){
-			return new sap.m.Label({text: sText});
+		createLabel: function(sText, sId){
+			return new sap.m.Label(sId, {text: sText});
 		},
 		createButton: function(sId, fnPressFunction, fnCallback){
 			var that = this;

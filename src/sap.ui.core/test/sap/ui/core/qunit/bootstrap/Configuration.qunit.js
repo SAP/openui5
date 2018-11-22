@@ -1,12 +1,12 @@
 /*global QUnit, sinon */
 sap.ui.define([
+	'sap/ui/core/CalendarType',
 	'sap/ui/core/Configuration',
 	'sap/ui/core/Core',
-	'sap/ui/core/library',
 	'sap/ui/core/Locale',
 	'sap/base/Log',
 	'sap/ui/core/LocaleData' // only used indirectly via Configuration.getCalendarType
-], function(Configuration, Core, coreLibrary, Locale, Log) {
+], function(CalendarType, Configuration, Core, Locale, Log) {
 	"use strict";
 
 	var browserUrl = {
@@ -26,7 +26,6 @@ sap.ui.define([
 		}
 	};
 
-	var CalendarType = coreLibrary.CalendarType;
 	var AnimationMode = Configuration.AnimationMode;
 
 	function getHtmlAttribute(sAttribute) {

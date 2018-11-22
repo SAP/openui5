@@ -7,7 +7,7 @@
 		width="auto"
 		class="sapUiSmallMargin"
 		mode="SingleSelectMaster"
-		selectionChange="onSelectionChange"
+		selectionChange=".onSelectionChange"
 		items="{
 			path: 'groups/0/icons',
 			sorter: {
@@ -20,7 +20,7 @@
 		growing="true"
 		growingScrollToLoad="true"
 		growingThreshold="{view>/growingThreshold}"
-		updateFinished="onUpdateFinished">
+		updateFinished=".onUpdateFinished">
 
 		<columns>
 			<Column id="iconColumn" width="2rem" vAlign="Middle">
@@ -62,7 +62,7 @@
 							templateShareable: true
 						}"
 						allowWrapping="true">
-						<Token text="{name}" select="onTagSelect" editable="false" class="tagsToken"/>
+						<Token text="{name}" select=".onTagSelect" editable="false" class="tagsToken"/>
 					</l:HorizontalLayout>
 					<RatingIndicator
 						iconUnselected="sap-icon://unfavorite"
@@ -71,7 +71,7 @@
 							formatter: '.formatter.favoriteRating'
 						}"
 						maxValue="1"
-						change="onToggleFavorite"/>
+						change=".onToggleFavorite"/>
 				</cells>
 			</ColumnListItem>
 		</items>

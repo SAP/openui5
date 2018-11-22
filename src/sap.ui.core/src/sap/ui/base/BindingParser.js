@@ -414,7 +414,7 @@ sap.ui.define([
 		 */
 		function expression(sInput, iStart, oBindingMode) {
 			var oBinding = ExpressionParser.parse(resolveEmbeddedBinding.bind(null, oEnv), sString,
-					iStart);
+					iStart, null, bStaticContext ? oContext : null);
 
 			/**
 			 * Recursively sets the mode <code>oBindingMode</code> on the given binding (or its

@@ -63,7 +63,7 @@ sap.ui.define([
 			var sGroupsMockUrl = sap.ui.require.toUrl("sap/ui/demo/iconexplorer") + "/localService/mockdata/" + sName + "/groups.json";
 			var sTagsMockUrl = sap.ui.require.toUrl("sap/ui/demo/iconexplorer") + "/localService/mockdata/" + sName + "/tags.json";
 
-			// we need to load the models before configuring the fakeserver
+			// we need to load the models before configuring the fake server
 			// faking the real call and load the real models (we just want to use a timer for opa tests)
 			// at the same time is just impossible
 			var oGroupsModel = this._loadModelFromDisk(sGroupsMockUrl);

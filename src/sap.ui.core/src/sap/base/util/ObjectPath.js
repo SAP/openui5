@@ -81,6 +81,7 @@ sap.ui.define([], function() {
 	 * If the provided path cannot be resolved completely, <code>undefined</code> is returned.
 	 *
 	 * The provided object path is used to navigate through the nested objects, starting with the root context.
+	 * If no root context is provided, the object path begins with <code>window</code>.
 	 *
 	 * @public
 	 * @static
@@ -90,6 +91,7 @@ sap.ui.define([], function() {
 	 * @example
 	 * ObjectPath.get("my.test.module", root) === root.my.test.module
 	 * ObjectPath.get(["my", "test", "otherModule"], root) === root.my.test.otherModule
+	 * ObjectPath.get("globalVar") === window["globalVar"];
 	 */
 	ObjectPath.get = function(vObjectPath, oRootContext) {
 		var oObject = oRootContext || defaultRootContext;
@@ -113,8 +115,8 @@ sap.ui.define([], function() {
 	 * @public
 	 * @static
 	 * @param {string|string[]} vObjectPath vObjectPath Path as string where each name is separated by '.'. Can also be an array of names.
-	 * @param {Object} [oRootContext=window] Root context where the path starts
 	 * @param {any} vValue The value to be set in the root context's object path
+	 * @param {Object} [oRootContext=window] Root context where the path starts
 	 * @throws {Error} Will throw an error if a value already exists within the object path and the path cannot be set.
 	 * @example
 	 * var root = {};

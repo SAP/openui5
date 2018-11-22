@@ -56,6 +56,12 @@ sap.ui.define([
 
 			"ExploredSamples": {
 				loader: {
+					map: {
+						"*": {
+							"sap/ui/thirdparty/sinon": "sap/ui/thirdparty/sinon-4",
+							"sap/ui/thirdparty/sinon-qunit": "sap/ui/qunit/sinon-qunit-bridge"
+						}
+					},
 					paths: {
 						"sap/ui/demo/mock": "test-resources/sap/ui/documentation/sdk/"
 					}
@@ -65,7 +71,7 @@ sap.ui.define([
 					version: 2
 				},
 				sinon: {
-					version: 1 // because MockServer is used by samples
+					version: 4
 				},
 				ui5: {
 					libs: ["sap.ui.layout", "sap.m", "sap.tnt", "sap.ui.documentation"],
@@ -158,7 +164,6 @@ sap.ui.define([
 			"DynamicSideContent": {
 				group: "DynamicSideContent",
 				ui5: {
-					libs: ["sap.ui.layout", "sap.m"],
 					noConflict: true,
 					theme: "sap_belize"
 				},
@@ -283,23 +288,52 @@ sap.ui.define([
 			},
 
 			//individual controls
-			"designtime/form/Form": {
+			"Designtime-Form-AddODataFormField": {
+				skip: !bSapUiCompAvailable,
 				group: "Designtime",
-				page: "test-resources/sap/ui/layout/qunit/designtime/form/Form.qunit.html"
+				title: "QUnit Page for sap.ui.layout.form.AddODataFormField design time and rta enabling",
+				ui5: {
+					libs: ["sap.ui.layout", "sap.ui.rta", "sap.ui.comp"]
+				},
+				module: "./designtime/form/AddODataFormField.qunit",
+				sinon: false
 			},
-			"designtime/form/FormContainer": {
+			"Designtime-Form-Form": {
 				group: "Designtime",
-				page: "test-resources/sap/ui/layout/qunit/designtime/form/FormContainer.qunit.html"
+				title: "QUnit Page for sap.ui.layout.form.Form design time and rta enabling",
+				ui5: {
+					libs: ["sap.ui.layout", "sap.ui.rta"]
+				},
+				module: "./designtime/form/Form.qunit",
+				sinon: false
 			},
-			"designtime/form/FormElement": {
+			"Designtime-Form-FormContainer": {
 				group: "Designtime",
-				page: "test-resources/sap/ui/layout/qunit/designtime/form/FormElement.qunit.html"
+				title: "QUnit Page for sap.ui.layout.form.FormContainer design time and rta enabling",
+				ui5: {
+					libs: ["sap.ui.layout", "sap.ui.rta"]
+				},
+				module: "./designtime/form/FormContainer.qunit",
+				sinon: false
 			},
-			"designtime/form/SimpleForm": {
+			"Designtime-Form-FormElement": {
 				group: "Designtime",
-				page: "test-resources/sap/ui/layout/qunit/designtime/form/SimpleForm.qunit.html"
+				title: "QUnit Page for sap.ui.layout.form.FormElement design time and rta enabling",
+				ui5: {
+					libs: ["sap.ui.layout", "sap.ui.rta"]
+				},
+				module: "./designtime/form/FormElement.qunit",
+				sinon: false
 			},
-
+			"Designtime-Form-SimpleForm": {
+				group: "Designtime",
+				title: "QUnit Page for sap.ui.layout.form.SimpleForm design time",
+				ui5: {
+					libs: ["sap.ui.layout", "sap.ui.rta"]
+				},
+				module: "./designtime/form/SimpleForm.qunit",
+				sinon: false
+			},
 			"Designtime-Grid": {
 				group: "Designtime",
 				module: "./designtime/Grid.qunit",
@@ -345,36 +379,66 @@ sap.ui.define([
 				module: "./designtime/DynamicSideContent.qunit",
 				sinon: false
 			},
-			"designtime/form/AddODataFormField": {
-				skip: !bSapUiCompAvailable,
-				page: "test-resources/sap/ui/layout/qunit/designtime/form/AddODataFormField.qunit.html"
-			},
 
 			// change handlers
-			"flex/RenameSimpleForm": {
+			"flex/AddSimpleFormField": {
+				skip: !bSapUiCompAvailable,
 				group: "Change Handler",
-				page: "test-resources/sap/ui/layout/qunit/form/changes/RenameSimpleForm.qunit.html"
-			},
-
-			"flex/HideSimpleForm": {
-				group: "Change Handler",
-				page: "test-resources/sap/ui/layout/qunit/form/changes/HideSimpleForm.qunit.html"
+				title: "Test Page for sap.ui.layout.qunit.form.changes.AddSimpleFormField",
+				ui5: {
+					libs: ["sap.ui.layout", "sap.m", "sap.ui.dt", "sap.ui.rta", "sap.ui.comp"]
+				},
+				coverage: {
+					only: "[sap/ui/layout]"
+				},
+				module: "./form/changes/AddSimpleFormField.qunit"
 			},
 
 			"flex/AddSimpleFormGroup": {
 				group: "Change Handler",
-				page: "test-resources/sap/ui/layout/qunit/form/changes/AddSimpleFormGroup.qunit.html"
+				title: "QUnit - sap.ui.layout.changes.AddSimpleFormGroup",
+				ui5: {
+					libs: ["sap.ui.layout", "sap.m"]
+				},
+				module: "./form/changes/AddSimpleFormGroup.qunit"
+			},
+
+			"flex/HideSimpleForm": {
+				group: "Change Handler",
+				title: "QUnit - sap.ui.layout.changes.HideSimpleForm",
+				ui5: {
+					libs: ["sap.ui.layout", "sap.m"]
+				},
+				module: "./form/changes/HideSimpleForm.qunit"
+			},
+
+			"flex/RenameSimpleForm": {
+				group: "Change Handler",
+				title: "QUnit - sap.ui.layout.changes.RenameSimpleForm",
+				ui5: {
+					libs: ["sap.ui.layout", "sap.m"]
+				},
+				module: "./form/changes/RenameSimpleForm.qunit"
 			},
 
 			"flex/UnhideSimpleForm": {
 				group: "Change Handler",
-				page: "test-resources/sap/ui/layout/qunit/form/changes/UnhideSimpleForm.qunit.html"
+				title: "QUnit - sap.ui.layout.changes.UnhideSimpleForm",
+				ui5: {
+					libs: ["sap.ui.layout", "sap.m"]
+				},
+				module: "./form/changes/UnhideSimpleForm.qunit"
 			},
 
-			"flex/AddSimpleFormField": {
-				group: "Change Handler",
+			"flex/AddFormContainer": {
 				skip: !bSapUiCompAvailable,
-				page: "test-resources/sap/ui/layout/qunit/form/changes/AddSimpleFormField.qunit.html"
+				group: "Change Handler",
+				title: "QUnit - sap.ui.layout.changes.AddFormContainer",
+				ui5: {
+					libs: ["sap.ui.layout", "sap.ui.rta", "sap.ui.comp"]
+				},
+				module: "./designtime/form/AddFormContainer.qunit",
+				sinon: false
 			}
 
 		}

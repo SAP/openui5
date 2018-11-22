@@ -1,11 +1,11 @@
 /*global location */
 sap.ui.define([
-    "sap/ui/demo/orderbrowser/controller/BaseController",
-    "sap/ui/model/json/JSONModel",
-    "sap/ui/demo/orderbrowser/model/formatter",
-    "sap/m/library"
+	"./BaseController",
+	"sap/ui/model/json/JSONModel",
+	"../model/formatter",
+	"sap/m/library"
 ], function(BaseController, JSONModel, formatter, mobileLibrary) {
-    "use strict";
+	"use strict";
 
 	// shortcut for sap.m.URLHelper
 	var URLHelper = mobileLibrary.URLHelper;
@@ -256,5 +256,4 @@ sap.ui.define([
 		}
 
 	});
-}
-);
+});

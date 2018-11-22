@@ -26,7 +26,7 @@ sap.ui.define("sap.m.qunit.UploadCollectionToolbar", [
 		}
 	});
 
-	QUnit.skip("No Toolbar is provided. Test that default toolbar is set", function (assert) {
+	QUnit.test("No Toolbar is provided. Test that default toolbar is set", function (assert) {
 		var aToolbarElements = this.oUploadCollection._oList.getAggregation("headerToolbar").getAggregation("content");
 		assert.equal(aToolbarElements.length, 3, "All elements are in the toolbar");
 		assert.ok(aToolbarElements[0] instanceof Title, "First element is an instance of sap.m.Title");
@@ -44,7 +44,7 @@ sap.ui.define("sap.m.qunit.UploadCollectionToolbar", [
 		}
 	});
 
-	QUnit.skip("A Toolbar without place holder is provided. Test that an info log has been written", function (assert) {
+	QUnit.test("A Toolbar without place holder is provided. Test that an info log has been written", function (assert) {
 		//Arrange
 		var oInfoLogStub = sinon.stub(Log, "info");
 
@@ -99,7 +99,7 @@ sap.ui.define("sap.m.qunit.UploadCollectionToolbar", [
 		}
 	});
 
-	QUnit.skip("A correct Toolbar is provided", function (assert) {
+	QUnit.test("A correct Toolbar is provided", function (assert) {
 		var aToolbarElements = this.oUploadCollection._oList.getAggregation("headerToolbar").getAggregation("content");
 		assert.equal(aToolbarElements.length, 8, "All elements are in the toolbar");
 		assert.ok(aToolbarElements[0] instanceof Button, "First element is a sap.m.Title");

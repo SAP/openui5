@@ -2429,7 +2429,8 @@
 		 *
 		 * @param {boolean} [cfg.async=false]
 		 *   When set to true, <code>sap.ui.require</code> loads modules asynchronously via script tags and
-		 *   <code>sap.ui.define</code> executes asynchronously.
+		 *   <code>sap.ui.define</code> executes asynchronously. To enable this feature, it is recommended to
+		 *   set the attribute <code>data-sap-ui-async="true"</code> on the application bootstrap tag.
 		 *
 		 *   <b>Note:</b> Switching back from async to sync is not supported and trying to do so will throw
 		 *   an <code>Error</code>

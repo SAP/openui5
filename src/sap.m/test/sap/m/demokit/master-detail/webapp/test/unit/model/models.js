@@ -1,9 +1,7 @@
 /*global QUnit*/
 
 sap.ui.define([
-	"sap/ui/demo/masterdetail/model/models",
-	"sap/ui/thirdparty/sinon",
-	"sap/ui/thirdparty/sinon-qunit"
+	"sap/ui/demo/masterdetail/model/models"
 ], function (models) {
 	"use strict";
 

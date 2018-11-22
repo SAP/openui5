@@ -326,7 +326,7 @@ sap.ui.define(['./SliderUtilities'],
 		 * @param {sap.ui.core.Control} oSlider An object representation of the control that should be rendered.
 		 */
 		SliderRenderer.renderLabels = function (oRm, oSlider) {
-			oSlider.getAggregation("_handlesLabels").forEach(oRm.renderControl);
+			oSlider.getAggregation("_handlesLabels").forEach(oRm.renderControl, oRm);
 		};
 
 		return SliderRenderer;

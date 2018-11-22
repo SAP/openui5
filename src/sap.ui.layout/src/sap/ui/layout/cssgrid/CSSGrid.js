@@ -121,7 +121,7 @@ sap.ui.define([
 			 * If the control should set grid properties or let the children do it
 			 * @experimental Since 1.61. Property might be removed or changed.
 			 */
-			handleItemLayoutData: { type: "boolean", defaultValue: true },
+			wrapItemsWithDiv: { type: "boolean", defaultValue: false },
 
 			/**
 			 * Sets the value for the CSS display:grid property {@link https://developer.mozilla.org/en-US/docs/Web/CSS/grid-template-columns MDN web docs: grid-template-columns}
@@ -153,6 +153,7 @@ sap.ui.define([
 
 			/**
 			 * Sets the value for the CSS display:grid property {@link https://developer.mozilla.org/en-US/docs/Web/CSS/grid-gap MDN web docs: grid-gap}
+			 * It is a shorthand for gridRowGap and gridColumnGap. If some of them is set, the gridGap value will have less priority and will be overwritten.
 			 *
 			 * <b>Note:</b> Not supported in IE11, Edge 15.
 			 */
@@ -312,10 +313,6 @@ sap.ui.define([
 	 * @private
 	 */
 	CSSGrid.prototype._onGridChange = function (oChanges) {
-
-		if (!this.getHandleItemLayoutData()) {
-			return;
-		}
 
 		if (oChanges.name !== "items" || !oChanges.child) {
 			return;

@@ -24,6 +24,7 @@
 							labelFor: "nameInput"
 						}),
 						new sap.m.Input("nameInput", {
+							required: true,
 							liveChange: function (oEvent) {
 								var val = oEvent.getParameter("value");
 								if (val.length > 3) {

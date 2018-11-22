@@ -40,7 +40,8 @@ sap.ui.define([
 		getManifest: function () {
 			return oManifest;
 		},
-		getModel: function () {}
+		getModel: function () {},
+		getLocalId: function() {}
 	};
 
 	var Util = {

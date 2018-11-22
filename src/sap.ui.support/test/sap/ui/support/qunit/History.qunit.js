@@ -69,6 +69,12 @@ function (History, IssueManager, RuleSetLoader) {
 		},
 		sReferenceFormattedHistory = "Run1-executedonRulePreset/ID:TestPreset/TestPreset---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------|ruleid:breadcrumbsInOverflowToolbar||name:BreadcrumbsinOverflowToolbar||library:sap.m||categories:Usability||audiences:Control||description:TheBreadcrumbsshouldnotbeplacedinsideanOverflowToolbar||resolution:Placebreadcrumbsinanothercontainer.|---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------|id|classname|status|details|---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------|testId|sap.m.Button|Medium|Button'sap.m.Button'(sdk---app--feedBackDialogButton)consistsofonlyaniconbuthasnotooltip||testId|sap.m.Button|Medium|Button'sap.m.Button'(sdk---app--feedBackDialogButton)consistsofonlyaniconbuthasnotooltip||testId|sap.m.Button|Medium|Button'sap.m.Button'(sdk---app--feedBackDialogButton)consistsofonlyaniconbuthasnotooltip||testId|sap.m.Button|Medium|Button'sap.m.Button'(sdk---app--feedBackDialogButton)consistsofonlyaniconbuthasnotooltip||testId|sap.m.Button|Medium|Button'sap.m.Button'(sdk---app--feedBackDialogButton)consistsofonlyaniconbuthasnotooltip||testId|sap.m.Button|Medium|Button'sap.m.Button'(sdk---app--feedBackDialogButton)consistsofonlyaniconbuthasnotooltip||testId|sap.m.Button|Medium|Button'sap.m.Button'(sdk---app--feedBackDialogButton)consistsofonlyaniconbuthasnotooltip||testId|sap.m.Button|Medium|Button'sap.m.Button'(sdk---app--feedBackDialogButton)consistsofonlyaniconbuthasnotooltip||testId|sap.m.Button|Medium|Button'sap.m.Button'(sdk---app--feedBackDialogButton)consistsofonlyaniconbuthasnotooltip|---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------";
 
+	var oExampleAnalysisMetadata = {
+		"scenarioCode": "<any-code>",
+		"scenarioName": "<any-name>",
+		"scenarioDescription": "<any-desc>"
+	};
+
 	var compareJSON = function (oTemplateObj, oComparedObj) {
 		var aKeys = (typeof oTemplateObj === "string" || !oTemplateObj) ? [] : Object.keys(oTemplateObj);
 		var sError = "";
@@ -197,7 +203,12 @@ function (History, IssueManager, RuleSetLoader) {
 						];
 					},
 					getTechInfoJSON: function () {
-						return {title: "Mock"};
+						return {
+							title: "Mock",
+							sapUi5Version: {
+								version: sap.ui.getVersionInfo()
+							}
+						};
 					}
 				},
 				_oExecutionScope: {
@@ -219,7 +230,8 @@ function (History, IssueManager, RuleSetLoader) {
 					title: "Test Preset",
 					description: "Description of test preset",
 					dateExported: ""
-				}
+				},
+				_oAnalysisMetadata: oExampleAnalysisMetadata
 			};
 		},
 		afterEach: function () {
@@ -280,18 +292,31 @@ function (History, IssueManager, RuleSetLoader) {
 		// Assert
 		// For ABAP parser the Collections should be arrays instead of dictionaries with key/value pairs.
 		assert.ok(Array.isArray(oFormattedHistory), "History should be an array.");
-		assert.ok(Array.isArray(oFormattedHistory[0].loadedLibraries), "Loaded libraries should be an array.");
-		assert.ok(Array.isArray(oFormattedHistory[0].loadedLibraries[0].rules), "Rules should be an array.");
-		assert.ok(Array.isArray(oFormattedHistory[0].loadedLibraries[0].rules[0].issues), "Issues should be an array.");
 
-		assert.ok(oFormattedHistory[0].hasOwnProperty("rulePreset"), "Should have rule preset");
-		assert.ok(oFormattedHistory[0].rulePreset.hasOwnProperty("id"), "Rule preset should have id");
-		assert.ok(oFormattedHistory[0].rulePreset.hasOwnProperty("title"), "Rule preset should have title");
-		assert.ok(oFormattedHistory[0].rulePreset.hasOwnProperty("description"), "Rule preset should have description");
-		assert.ok(oFormattedHistory[0].rulePreset.hasOwnProperty("dateExported"), "Rule preset should have dateExported");
+		var oHistoryItem = oFormattedHistory[0];
 
-		assert.ok(Array.isArray(oFormattedHistory[0].registrationIds), "Registration ids should be an array.");
-		assert.deepEqual(oFormattedHistory[0].registrationIds, ["F1234", "F5678", "F8888"], "Registration ids are correct.");
+		assert.ok(Array.isArray(oHistoryItem.loadedLibraries), "Loaded libraries should be an array.");
+		assert.ok(Array.isArray(oHistoryItem.loadedLibraries[0].rules), "Rules should be an array.");
+		assert.ok(Array.isArray(oHistoryItem.loadedLibraries[0].rules[0].issues), "Issues should be an array.");
+
+		assert.ok(oHistoryItem.hasOwnProperty("rulePreset"), "Should have rule preset");
+		assert.ok(oHistoryItem.rulePreset.hasOwnProperty("id"), "Rule preset should have id");
+		assert.ok(oHistoryItem.rulePreset.hasOwnProperty("title"), "Rule preset should have title");
+		assert.ok(oHistoryItem.rulePreset.hasOwnProperty("description"), "Rule preset should have description");
+		assert.ok(oHistoryItem.rulePreset.hasOwnProperty("dateExported"), "Rule preset should have dateExported");
+
+		assert.ok(Array.isArray(oHistoryItem.registrationIds), "Registration ids should be an array.");
+		assert.deepEqual(oHistoryItem.registrationIds, ["F1234", "F5678", "F8888"], "Registration ids are correct.");
+
+		var oVersion = sap.ui.getVersionInfo();
+		assert.ok(oHistoryItem.hasOwnProperty("sapUi5Version"), "Should have sap ui5 version");
+		assert.strictEqual(oHistoryItem.sapUi5Version.name, oVersion.name, "Sap ui5 version name is correct");
+		assert.strictEqual(oHistoryItem.sapUi5Version.version, oVersion.version, "Sap ui5 version key is correct");
+		assert.strictEqual(oHistoryItem.sapUi5Version.buildTimestamp, oVersion.buildTimestamp, "Sap ui5 version build timestamp is correct");
+
+		assert.ok(oHistoryItem.hasOwnProperty("analysisMetadata"), "Should have analysisMetadata");
+		assert.deepEqual(oHistoryItem.analysisMetadata, oExampleAnalysisMetadata, "Analysis metadata is correct (unchanged)");
+
 	});
 
 	QUnit.test("History getFormattedHistory - String format passed", function (assert) {

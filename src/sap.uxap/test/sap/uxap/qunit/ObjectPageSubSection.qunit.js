@@ -1167,41 +1167,6 @@ function($, Core, Lib, ObjectPageSection, ObjectPageSubSectionClass, BlockBase, 
 		assert.strictEqual(oSubSectionWithTitle.getTitle(), document.getElementById(sSubSectionWithTitleAriaLabelledBy).innerText, "Subsection title is properly labelled");
 	});
 
-	QUnit.module("SubSection Header");
-
-	QUnit.test("Header rendering depending on title value", function (assert) {
-		assert.expect(3);
-
-		var aSubSectionTitlesData = [
-			{value: "", headerRendered: false, msg: "SubSection header is not rendered as the title is an empty string"},
-			{value: "   ", headerRendered: true, msg: "SubSection header is rendered as the title is not an empty string"},
-			{value: "abc", headerRendered: true, msg: "SubSection header is rendered as the title is not an empty string"}
-		],
-		oSection = new ObjectPageSection({
-			title:"Personal",
-			subSections: [
-				new ObjectPageSubSectionClass({
-					title: "Initial",
-					blocks: new Label({text: "Block1" })
-				})
-			]
-		}),
-		oSubSection = oSection.getSubSections()[0];
-		oSection.placeAt('qunit-fixture');
-
-		aSubSectionTitlesData.forEach(function(oTitleData) {
-			// act
-			oSubSection.setTitle(oTitleData.value);
-			Core.applyChanges();
-
-			// assert
-			assert.strictEqual(oSubSection.$("header").length > 0, oTitleData.headerRendered, oTitleData.msg);
-		});
-
-		// clean up
-		oSection.destroy();
-	});
-
 	QUnit.module("Title ID propagation");
 
 	QUnit.test("_initTitlePropagationSupport is called on init", function (assert) {
@@ -1248,6 +1213,63 @@ function($, Core, Lib, ObjectPageSection, ObjectPageSubSectionClass, BlockBase, 
 		// Assert
 		assert.strictEqual(oSubSection._getTitleDomId(), "TestID",
 			"The previously set Borrowed Title DOM ID should be returned");
+	});
+
+	QUnit.module("Content fit container", {
+		beforeEach: function() {
+			this.oObjectPage = new ObjectPageLayout({
+				sections: [ new ObjectPageSection({
+					subSections: [new ObjectPageSubSectionClass({
+						blocks: [ new sap.m.Panel({ height: "100%" })]
+					})]
+				})]
+			});
+
+			this.oObjectPage.placeAt('qunit-fixture');
+			Core.applyChanges();
+		},
+		afterEach: function() {
+			this.oObjectPage.destroy();
+		}
+	});
+
+	QUnit.test("sapUxAPObjectPageSubSectionFitContainer expands the subSection to fit the container", function (assert) {
+		var oPage = this.oObjectPage,
+			oSection = this.oObjectPage.getSections()[0],
+			oSubSection = oSection.getSubSections()[0],
+			oSpy = sinon.spy(oSubSection, "_setHeight"),
+			done = assert.async();
+
+		//act
+		oSubSection.addStyleClass(ObjectPageSubSectionClass.FIT_CONTAINER_CLASS);
+
+		//setup
+		oPage.attachEventOnce("onAfterRenderingDOMReady", function() {
+			//check
+			var iViewportHeight = oPage._getScrollableViewportHeight(false);
+			assert.ok(oSpy.calledWith(iViewportHeight + "px"), true, "_setHeight is called");
+			done();
+		}, this);
+	});
+
+	QUnit.test("sapUxAPObjectPageSubSectionFitContainer class can be added late", function (assert) {
+		var oPage = this.oObjectPage,
+			oSection = this.oObjectPage.getSections()[0],
+			oSubSection = oSection.getSubSections()[0],
+			oSpy = sinon.spy(oPage, "_requestAdjustLayoutAndUxRules"),
+			done = assert.async();
+
+		//setup
+		oPage.attachEventOnce("onAfterRenderingDOMReady", function() {
+			oSpy.reset();
+
+			//act
+			oSubSection.addStyleClass(ObjectPageSubSectionClass.FIT_CONTAINER_CLASS);
+
+			//check
+			assert.strictEqual(oSpy.called, true, "_requestAdjustLayoutAndUxRules is called");
+			done();
+		}, this);
 	});
 
 });

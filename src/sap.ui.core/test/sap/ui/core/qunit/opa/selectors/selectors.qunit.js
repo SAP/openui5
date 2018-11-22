@@ -1,6 +1,7 @@
 sap.ui.define([
     "./_BindingPath",
     "./_ControlSelectorGenerator",
+    "./_ControlSelectorValidator",
     "./_DropdownItem",
     "./_GlobalID",
     "./_LabelFor",

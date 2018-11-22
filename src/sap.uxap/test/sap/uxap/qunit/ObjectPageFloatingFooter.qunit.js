@@ -1,18 +1,15 @@
 /*global QUnit, sinon*/
 sap.ui.define(["sap/ui/thirdparty/jquery",
                "sap/ui/core/Core",
-               "sap/ui/core/mvc/Controller",
                "sap/ui/core/mvc/XMLView",
                "sap/uxap/ObjectPageLayout"],
-function (jQuery, Core, controller, xmlview, ObjectPageLayout) {
+function (jQuery, Core, XMLView, ObjectPageLayout) {
 	"use strict";
-
-	controller.create({ name: "viewController" });
 
 	QUnit.module("ObjectPage - Rendering - Footer Visibility", {
 		beforeEach: function (assert) {
 			var done = assert.async();
-			xmlview.create({
+			XMLView.create({
 				id: "UxAP-162_ObjectPageSample",
 				viewName: "view.UxAP-162_ObjectPageSample"
 			}).then(function (oView) {

@@ -30,14 +30,13 @@
 					<Text text="The Grid is configured by the Fiori 3 specification."/>
 				</VBox>
 			</Panel>
-
 			<Panel>
 				<Label text="Grid Auto Flow - Dense (If the cards should try to fill empty spaces in the grid)"/>
 				<Switch change="onSwitchChange" state="true"/>
 			</Panel>
 
 			<Panel>
-				<grid:CSSGrid id="cssgrid" handleItemLayoutData="false" class="centered">
+				<grid:CSSGrid id="cssgrid" class="centered" wrapItemsWithDiv="true">
 
 					<grid:customLayout>
 						<grid:GridResponsiveLayout layoutChange="onLayoutChange">
@@ -78,109 +77,75 @@
 
 					<grid:items>
 
-						<f:Card id="default2x2"
-							verticalSize="2"
-							horizontalSize="2"
-							icon="sap-icon://accept"
-							title="Card Title 2x2"
-							subtitle="Card Subtitle"
-							status="Count"/>
+						<f:Card id="default2x2" manifest="{manifests>/grid/card1}">
+							<f:layoutData>
+								<grid:GridItemLayoutData gridRow="span 2" gridColumn="span 2" />
+							</f:layoutData>
+						</f:Card>
 
-						<f:Card id="default4x2"
-							verticalSize="2"
-							horizontalSize="4"
-							icon="sap-icon://accept"
-							title="Card Title  4x2"
-							subtitle="Card Subtitle"
-							status="Count"/>
+						<f:Card id="default4x2" manifest="{manifests>/grid/card2}">
+							<f:layoutData>
+								<grid:GridItemLayoutData gridRow="span 2" gridColumn="span 4" />
+							</f:layoutData>
+						</f:Card>
 
-						<f:Card id="default1x1"
-							verticalSize="1"
-							horizontalSize="1"
-							icon="sap-icon://accept"
-							title="Card Title 1x1"
-							subtitle="Card Subtitle"
-							status="Count"/>
+						<f:Card id="default1x1" manifest="{manifests>/grid/card3}"></f:Card>
 
-						<f:Card id="default2x1"
-							verticalSize="1"
-							horizontalSize="2"
-							icon="sap-icon://accept"
-							title="Card Title 2x1"
-							subtitle="Card Subtitle"
-							status="Count"/>
+						<f:Card id="default2x1" manifest="{manifests>/grid/card4}">
+							<f:layoutData>
+								<grid:GridItemLayoutData gridColumn="span 2" />
+							</f:layoutData>
+						</f:Card>
 
-						<f:Card id="ddefault1x1"
-							verticalSize="1"
-							horizontalSize="1"
-							icon="sap-icon://accept"
-							title="Card Title 1x1"
-							subtitle="Card Subtitle"
-							status="Count"/>
+						<f:Card id="ddefault1x1" manifest="{manifests>/grid/card5}"></f:Card>
 
-						<f:Card id="default4x1"
-							verticalSize="1"
-							horizontalSize="4"
-							icon="sap-icon://accept"
-							title="Card Title  4x1"
-							subtitle="Card Subtitle"
-							status="Count"/>
+						<f:Card id="default4x1" manifest="{manifests>/grid/card6}">
+							<f:layoutData>
+								<grid:GridItemLayoutData gridColumn="span 4" />
+							</f:layoutData>
+						</f:Card>
 
-						<f:Card id="ddefault6x2"
-							verticalSize="6"
-							horizontalSize="2"
-							icon="sap-icon://accept"
-							title="Card Title 2x6"
-							subtitle="Card Subtitle"
-							status="Count"/>
+						<f:Card id="ddefault6x2" manifest="{manifests>/grid/card7}">
+							<f:layoutData>
+								<grid:GridItemLayoutData gridRow="span 6" gridColumn="span 2" />
+							</f:layoutData>
+						</f:Card>
 
-						<f:Card id="default4x4"
-							verticalSize="4"
-							horizontalSize="4"
-							icon="sap-icon://accept"
-							title="Card Title 4x4"
-							subtitle="Card Subtitle"
-							status="Count"/>
+						<f:Card id="default4x4" manifest="{manifests>/grid/card8}">
+							<f:layoutData>
+								<grid:GridItemLayoutData gridRow="span 4" gridColumn="span 4" />
+							</f:layoutData>
+						</f:Card>
 
-						<f:Card id="default4x4Image"
-							verticalSize="4"
-							horizontalSize="4"
-							icon="../images/Woman_avatar_01.png"
-							title="Card Title 4x4 with image"
-							subtitle="Card Subtitle"
-							status="Count"/>
+						<f:Card id="default4x4Image" manifest="{manifests>/grid/card9}">
+							<f:layoutData>
+								<grid:GridItemLayoutData gridRow="span 4" gridColumn="span 4" />
+							</f:layoutData>
+						</f:Card>
 
-						<f:Card id="1default2x2"
-							verticalSize="2"
-							horizontalSize="2"
-							icon="sap-icon://accept"
-							title="Card Title 2x2"
-							subtitle="Card Subtitle"
-							status="Count"/>
+						<f:Card id="1default2x2" manifest="{manifests>/grid/card10}">
+							<f:layoutData>
+								<grid:GridItemLayoutData gridRow="span 2" gridColumn="span 2" />
+							</f:layoutData>
+						</f:Card>
 
-						<f:Card id="2default2x2"
-							verticalSize="2"
-							horizontalSize="2"
-							icon="sap-icon://accept"
-							title="Card Title 2x2"
-							subtitle="Card Subtitle"
-							status="Count"/>
+						<f:Card id="2default2x2" manifest="{manifests>/grid/card11}">
+							<f:layoutData>
+								<grid:GridItemLayoutData gridRow="span 2" gridColumn="span 2" />
+							</f:layoutData>
+						</f:Card>
 
-						<f:Card id="default6x4"
-							verticalSize="4"
-							horizontalSize="6"
-							icon="sap-icon://accept"
-							title="Card Title 6x4"
-							subtitle="Card Subtitle"
-							status="Count"/>
+						<f:Card id="default6x4" manifest="{manifests>/grid/card12}">
+							<f:layoutData>
+								<grid:GridItemLayoutData gridRow="span 4" gridColumn="span 6" />
+							</f:layoutData>
+						</f:Card>
 
-						<f:Card id="2default6x4"
-							verticalSize="4"
-							horizontalSize="6"
-							icon="sap-icon://accept"
-							title="Card Title 6x4"
-							subtitle="Card Subtitle"
-							status="Count"/>
+						<f:Card id="2default6x4" manifest="{manifests>/grid/card13}">
+							<f:layoutData>
+								<grid:GridItemLayoutData gridRow="span 4" gridColumn="span 6" />
+							</f:layoutData>
+						</f:Card>
 
 					</grid:items>
 				</grid:CSSGrid>

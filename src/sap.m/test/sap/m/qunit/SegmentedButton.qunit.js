@@ -2787,19 +2787,23 @@ sap.ui.define([
 
 
 	QUnit.test("Modifying the segmented button affects the select", function(assert) {
-		var newText = "new text";
+		var newText = "new text",
+			newIcon = "sap-icon://accept";
 
 		// Arrange
 		var oSegmentedButton = new SegmentedButton({
 			buttons : [
 				new Button({
-					text: "button 1"
+					text: "button 1",
+					icon: "sap-icon://taxi"
 				}),
 				new Button({
-					text: "button 2"
+					text: "button 2",
+					icon: "sap-icon://lab"
 				}),
 				new Button({
-					text: "button 3"
+					text: "button 3",
+					icon: "sap-icon://competitor"
 				})
 			]
 		});
@@ -2810,12 +2814,17 @@ sap.ui.define([
 		sap.ui.getCore().applyChanges();
 
 		oSegmentedButton.getButtons()[0].setText(newText);
+		oSegmentedButton.getButtons()[0].setIcon(newIcon);
 		this.clock.tick(1000);
 
 		// Assert
 		assert.strictEqual(oSegmentedButton.getAggregation("_select").getItems()[0].getText(),
 				newText,
 				"The select has been synced");
+
+		assert.strictEqual(oSegmentedButton.getAggregation("_select").getItems()[0].getIcon(),
+				newIcon,
+				"The select's icon has been synced");
 
 		// Cleanup
 		oSegmentedButton.destroy();

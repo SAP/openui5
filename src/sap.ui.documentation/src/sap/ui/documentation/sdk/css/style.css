@@ -2,7 +2,8 @@ a.sapLogo {
 	margin-left: 1rem;
 }
 
-.sapUiMedia-Std-Phone a.sapLogo {
+.sapUiMedia-Std-Phone a.sapLogo,
+.sap-phone a.sapLogo {
 	display: none;
 }
 
@@ -180,7 +181,8 @@ html:not(.sapUiMedia-StdExt-Phone) .sapUiDocumentationFooter {
 }
 
 /* header navigation on phone */
-.sapUiMedia-Std-Phone .sapTntToolHeader .sapMSlt.sapUiDocumentationSelect {
+.sapUiMedia-Std-Phone .sapTntToolHeader .sapMSlt.sapUiDocumentationSelect,
+.sap-phone .sapTntToolHeader .sapMSlt.sapUiDocumentationSelect {
 	height: 3rem;
 }
 
@@ -1634,6 +1636,25 @@ html:not(.sapUiTheme-sap_belize_hcb):not(.sapUiTheme-sap_belize_hcw) .sapUiDemoA
 	}
 }
 
+.sapUiDemokit .sapMText.demokitInitialPagesBlueText {
+	color: #0070b1;
+}
+
+.sapUiDemokit .toolsPageVbox {
+	width: 95%;
+}
+
+@media (min-width: 1600px) {
+	.sapUiDemokit .toolsPageVbox {
+		width: 50%;
+	}
+}
+
+.sapUiDemokit .toolsPageImage {
+	width: 350px;
+	max-width: 100%;
+}
+
 /* FireFox does not handle aspect ratio optimization so this must be disabled for it only by resetting the element position */
 html[data-sap-ui-browser^="ff"] .sapUiDemokit .landingImage {
 	position: relative;
@@ -1708,7 +1729,17 @@ html[data-sap-ui-os="mac"] pre.prettyprint.prettyprinted {
  */
 .sapUiTheme-sap_belize .sapUiSizeCompact .apiDetailPage .sapUxAPObjectPageLayout-Std-Desktop .sapUxAPBlockContainer,
 .sapUiTheme-sap_belize_plus .sapUiSizeCompact .apiDetailPage .sapUxAPObjectPageLayout-Std-Desktop .sapUxAPBlockContainer {
-	padding-top: 0;
+	padding: 0 3rem 2rem 3rem;
+}
+
+.sapUiTheme-sap_belize .sapUiSizeCompact .apiDetailPage .sapUxAPObjectPageLayout-Std-Tablet .sapUxAPBlockContainer,
+.sapUiTheme-sap_belize_plus .sapUiSizeCompact .apiDetailPage .sapUxAPObjectPageLayout-Std-Tablet .sapUxAPBlockContainer {
+	padding: 0 2rem 2rem 2rem;
+}
+
+.sapUiTheme-sap_belize .sapUiSizeCompact .apiDetailPage .sapUxAPObjectPageLayout-Std-Phone .sapUxAPBlockContainer,
+.sapUiTheme-sap_belize_plus .sapUiSizeCompact .apiDetailPage .sapUxAPObjectPageLayout-Std-Phone .sapUxAPBlockContainer {
+	padding: 0 1rem 2rem 1rem;
 }
 
 .sapUiTheme-sap_belize .apiDetailPage .sapUxAPObjectPageContainer,
@@ -2116,6 +2147,7 @@ html:not(.sapUiMedia-Std-Phone) .sapUiParamText.depth-5 {
 	display: inline;
 }
 .sapUiDisclaimerCommunityLink {
+
 	margin-top: 1.5rem;
 	margin-left: -0.125rem;
 }

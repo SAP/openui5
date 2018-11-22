@@ -484,7 +484,10 @@ function(
 			var sComponentId = Utils._getOwnerIdForControl(oControl);
 			if (!sComponentId) {
 				if (oControl && typeof oControl.getParent === "function") {
-					return Utils._getComponentIdForControl(oControl.getParent());
+					var oParent = oControl.getParent();
+					if (oParent) {
+						return Utils._getComponentIdForControl(oParent);
+					}
 				}
 			}
 			return sComponentId || "";

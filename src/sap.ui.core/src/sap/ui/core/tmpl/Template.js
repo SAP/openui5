@@ -448,6 +448,15 @@ function(
 	 */
 	sap.ui.template = function(oTemplate) {
 
+		var fnLogDeprecation = function(sName) {
+			Log.warning("The usage of Template Views is deprecated since 1.56. Please make use of the asynchronous create functions of the different view classes, e.g. XMLView.create()","Deprecation", null, function() {
+				return {
+					type: "sap.ui.template",
+					name: sName
+				};
+			});
+		};
+
 		// when no oTemplate is defined we need to lookup the elements in the document
 		// and retrieve elements which have a type attribute which contains a value
 		// of the supported types:
@@ -486,6 +495,8 @@ function(
 			oTemplate = jQuery.extend({
 				type: Template.DEFAULT_TEMPLATE
 			}, oTemplate);
+
+			fnLogDeprecation(oTemplate.id);
 
 			// in case of specifying a src attribute for the configuration object
 			// we load the template from a remote resource

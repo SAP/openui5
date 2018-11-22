@@ -1,37 +1,39 @@
 sap.ui.define([
-	"sap/ui/test/Opa5"
-], function(Opa5) {
+	"sap/ui/test/Opa5",
+	"sap/ui/demo/worklist/localService/mockserver",
+	"sap/ui/model/odata/v2/ODataModel"
+], function(Opa5, mockserver, ODataModel) {
 	"use strict";
-
-	function getFrameUrl (sHash, sUrlParameters) {
-		var sUrl = sap.ui.require.toUrl("sap/ui/demo/worklist/test/mockServer.html");
-		sUrlParameters = sUrlParameters ? "?" + sUrlParameters : "";
-
-		if (sHash) {
-			sHash = "#" + (sHash.indexOf("/") === 0 ? sHash.substring(1) : sHash);
-		} else {
-			sHash = "";
-		}
-
-		return sUrl + sUrlParameters + sHash;
-	}
 
 	return Opa5.extend("sap.ui.demo.worklist.test.integration.arrangements.Startup", {
 
-		iStartMyApp: function (oOptions) {
-			var sUrlParameters;
-			oOptions = oOptions || {};
+		/**
+		 * Initializes mock server, then start the app component
+		 * @param {object} oOptionsParameter An object that contains the configuration for starting up the app.
+		 * @param {integer} oOptionsParameter.delay A custom delay to start the app with
+		 * @param {string} [oOptionsParameter.hash] The in app hash can also be passed separately for better readability in tests
+		 * @param {boolean} [oOptionsParameter.autoWait=true] Automatically wait for pending requests while the application is starting up.
+		 */
+		iStartMyApp : function (oOptionsParameter) {
+			var oOptions = oOptionsParameter || {};
 
-			// Start the app with a minimal delay to make tests run fast but still async to discover basic timing issues
-			var iDelay = oOptions.delay || 50;
+			this._clearSharedData();
 
-			sUrlParameters = "serverDelay=" + iDelay;
+			// start the app with a minimal delay to make tests fast but still async to discover basic timing issues
+			oOptions.delay = oOptions.delay || 1;
 
-			this.iStartMyAppInAFrame(getFrameUrl(oOptions.hash, sUrlParameters));
-		},
+			// configure mock server with the current options
+			var oMockserverInitialized = mockserver.init(oOptions);
 
-		iStartMyAppOnADesktopToTestErrorHandler: function (sParam) {
-			this.iStartMyAppInAFrame(getFrameUrl("", sParam));
+			this.iWaitForPromise(oMockserverInitialized);
+			// start the app UI component
+			this.iStartMyUIComponent({
+				componentConfig: {
+					name: "sap.ui.demo.worklist"
+				},
+				hash: oOptions.hash,
+				autoWait: oOptions.autoWait
+			});
 		},
 
 		iRestartTheAppWithTheRememberedItem : function (oOptions) {
@@ -44,12 +46,15 @@ sap.ui.define([
 
 			return this.waitFor({
 				success : function() {
-					oOptions.hash = "/Objects/" + encodeURIComponent(sObjectId);
+					oOptions.hash = "Objects/" + encodeURIComponent(sObjectId);
 					this.iStartMyApp(oOptions);
 				}
 			});
+		},
+
+		_clearSharedData: function () {
+			// clear shared metadata in ODataModel to allow tests for loading the metadata
+			ODataModel.mSharedData = { server: {}, service: {}, meta: {} };
 		}
-
 	});
-
 });

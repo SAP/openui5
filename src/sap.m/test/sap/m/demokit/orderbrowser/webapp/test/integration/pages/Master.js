@@ -1,21 +1,12 @@
 sap.ui.define([
-    "sap/ui/test/Opa5",
-    "sap/ui/test/actions/Press",
-    "sap/ui/test/actions/EnterText",
-    "sap/ui/demo/orderbrowser/test/integration/pages/Common",
-    "sap/ui/test/matchers/AggregationLengthEquals",
-    "sap/ui/test/matchers/AggregationFilled",
-    "sap/ui/test/matchers/PropertyStrictEquals",
-    "sap/ui/thirdparty/jquery"
-], function(
-    Opa5,
-	Press,
-	EnterText,
-	Common,
-	AggregationLengthEquals,
-	AggregationFilled,
-	PropertyStrictEquals,
-	jQuery) {
+	"sap/ui/test/Opa5",
+	"sap/ui/test/actions/Press",
+	"./Common",
+	"sap/ui/test/actions/EnterText",
+	"sap/ui/test/matchers/AggregationLengthEquals",
+	"sap/ui/test/matchers/AggregationFilled",
+	"sap/ui/test/matchers/PropertyStrictEquals"
+], function(Opa5, Press, Common, EnterText, AggregationLengthEquals, AggregationFilled, PropertyStrictEquals) {
 	"use strict";
 
 	var sViewName = "Master",
@@ -125,19 +116,10 @@ sap.ui.define([
 				},
 
 				iTypeSomethingInTheSearchThatCannotBeFoundAndTriggerRefresh : function () {
-					var fireRefreshButtonPressedOnSearchField = function (oSearchField) {
-
-						/*eslint-disable new-cap */
-						var oEvent = jQuery.Event("touchend");
-						/*eslint-enable new-cap */
-						oEvent.originalEvent = {refreshButtonPressed: true, id: oSearchField.getId()};
-						oEvent.target = oSearchField;
-						oEvent.srcElement = oSearchField;
-						jQuery.extend(oEvent, oEvent.originalEvent);
-
-						oSearchField.fireSearch(oEvent);
-					};
-					return this.iSearchForValue([new EnterText({text: sSomethingThatCannotBeFound}), fireRefreshButtonPressedOnSearchField]);
+					return this.iSearchForValue(function (oSearchField) {
+						oSearchField.setValue(sSomethingThatCannotBeFound);
+						oSearchField.fireSearch({refreshButtonPressed : true});
+					});
 				},
 
 				iSearchForValue : function (aActions) {
@@ -279,11 +261,15 @@ sap.ui.define([
 
 				iShouldSeeTheBusyIndicator : function () {
 					return this.waitFor({
-						id : "list",
-						viewName : sViewName,
-						success : function (oList) {
-							// we set the list busy, so we need to query the parent of the app
-							Opa5.assert.ok(oList.getBusy(), "The master list is busy");
+						id: "list",
+						viewName: sViewName,
+						matchers: new PropertyStrictEquals({
+							name: "busy",
+							value: true
+						}),
+						autoWait: false,
+						success : function () {
+							Opa5.assert.ok(true, "The master list is busy");
 						},
 						errorMessage : "The master list is not busy."
 					});

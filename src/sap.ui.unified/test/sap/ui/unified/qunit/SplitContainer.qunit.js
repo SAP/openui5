@@ -4,8 +4,9 @@ sap.ui.define([
 	"sap/ui/qunit/QUnitUtils",
 	"jquery.sap.dom",
 	"sap/ui/core/Control",
-	"sap/ui/unified/SplitContainer"
-], function(qutils, jsd, Control, SplitContainer) {
+	"sap/ui/unified/SplitContainer",
+	'sap/ui/qunit/utils/waitForThemeApplied'
+], function(qutils, jsd, Control, SplitContainer, waitForThemeApplied) {
 	"use strict";
 
 	// Control initialization
@@ -130,4 +131,5 @@ sap.ui.define([
 		}, 600);
 	});
 
+	return waitForThemeApplied();
 });

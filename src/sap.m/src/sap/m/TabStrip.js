@@ -330,7 +330,7 @@ function(
 		 */
 		TabStrip.prototype._handleInititalScrollToItem = function() {
 			var $oItem = sap.ui.getCore().byId(this.getSelectedItem());
-			if ($oItem.$().length > 0) { // check if the item is already in the DOM
+			if ($oItem && $oItem.$().length > 0) { // check if the item is already in the DOM
 				this._scrollIntoView($oItem, 500);
 			}
 			sap.ui.getCore().detachThemeChanged(this._handleInititalScrollToItem, this);
@@ -1283,6 +1283,9 @@ function(
 		var CustomSelectRenderer = Renderer.extend(SelectRenderer);
 
 		var CustomSelect = Select.extend("sap.m.internal.TabStripSelect", {
+			metadata: {
+				library: "sap.m"
+			},
 			renderer: CustomSelectRenderer
 		});
 
@@ -1374,6 +1377,9 @@ function(
 		};
 
 		var CustomSelectList = SelectList.extend("sap.m.internal.TabStripSelectList", {
+			metadata: {
+				library: "sap.m"
+			},
 			renderer: CustomSelectListRenderer
 		});
 

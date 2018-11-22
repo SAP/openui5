@@ -1,19 +1,19 @@
 sap.ui.define([
-    "sap/ui/demo/iconexplorer/controller/BaseController",
-    "sap/ui/core/IconPool",
-    "sap/ui/model/json/JSONModel",
-    "sap/ui/demo/iconexplorer/model/formatter",
-    "sap/ui/model/Filter",
-    "sap/ui/model/FilterOperator",
-    "sap/ui/Device",
-    "sap/m/MessageToast",
-    "sap/m/Label",
-    "sap/m/ToggleButton",
-    "sap/m/library",
-    "sap/ui/thirdparty/jquery",
-    "sap/ui/core/theming/Parameters"
+	"sap/ui/demo/iconexplorer/controller/BaseController",
+	"sap/ui/core/IconPool",
+	"sap/ui/model/json/JSONModel",
+	"sap/ui/demo/iconexplorer/model/formatter",
+	"sap/ui/model/Filter",
+	"sap/ui/model/FilterOperator",
+	"sap/ui/Device",
+	"sap/m/MessageToast",
+	"sap/m/Label",
+	"sap/m/ToggleButton",
+	"sap/m/library",
+	"sap/ui/core/theming/Parameters",
+	"sap/ui/core/Fragment"
 ], function(
-    BaseController,
+	BaseController,
 	IconPool,
 	JSONModel,
 	formatter,
@@ -24,8 +24,8 @@ sap.ui.define([
 	Label,
 	ToggleButton,
 	mobileLibrary,
-	jQuery,
-	Parameters
+	Parameters,
+	Fragment
 ) {
 	"use strict";
 
@@ -387,13 +387,14 @@ sap.ui.define([
 		 * @private
 		 */
 		_copyStringToClipboard: function (copyText, successText, exceptionText) {
-			var $temp = jQuery("<input>");
+			var oTemp = document.createElement("input");
 
 			try {
-				jQuery("body").append($temp);
-				$temp.val(copyText).select();
+				document.body.append(oTemp);
+				oTemp.value = copyText;
+				oTemp.select();
 				document.execCommand("copy");
-				$temp.remove();
+				oTemp.remove();
 
 				MessageToast.show(successText);
 			} catch (oException) {
@@ -515,11 +516,13 @@ sap.ui.define([
 					var sFragmentName = formatter.uppercaseFirstLetter(oQuery.tab);
 
 					// add new content to the end of result container
-					var oResultsFragment = sap.ui.xmlfragment(
-						this.getView().getId(),
-						"sap.ui.demo.iconexplorer.view.browse." + sFragmentName,
-						this);
-					this.byId("resultContainer").addContent(oResultsFragment);
+					this._resultsLoaded = Fragment.load({
+						id: this.getView().getId(),
+						name: "sap.ui.demo.iconexplorer.view.browse." + sFragmentName,
+						controller: this
+					}).then(function(oFragmentContent){
+						this.byId("resultContainer").addContent(oFragmentContent);
+					}.bind(this));
 
 					var bCategoriesVisible = !(Device.system.phone || oQuery.tab == "favorites");
 					this.byId("categorySelection").setVisible(bCategoriesVisible);
@@ -702,11 +705,13 @@ sap.ui.define([
 			}
 
 			// filter icon list
-			var oResultBinding = this.byId("results").getBinding(this._sAggregationName);
-			if (oResultBinding !== undefined) {
-				oResultBinding.filter(this._vFilterSearch);
-				this.getModel("view").setProperty("/overviewNoDataText", this.getResourceBundle().getText("overviewNoDataWithSearchText"), null, true);
-			}
+			this._resultsLoaded.then(function () {
+				var oResultBinding = this.byId("results").getBinding(this._sAggregationName);
+				if (oResultBinding !== undefined) {
+					oResultBinding.filter(this._vFilterSearch);
+					this.getModel("view").setProperty("/overviewNoDataText", this.getResourceBundle().getText("overviewNoDataWithSearchText"), null, true);
+				}
+			}.bind(this));
 		},
 
 		/**
@@ -742,7 +747,10 @@ sap.ui.define([
 				suspended: true
 			});
 			// apply filters
-			this.byId("results").getBinding(this._sAggregationName).filter(this._vFilterSearch);
+			this._resultsLoaded.then(function () {
+				this.byId("results").getBinding(this._sAggregationName).filter(this._vFilterSearch);
+			}.bind(this));
+
 			// update tags
 			this._aCategoryTags = this.getModel().getProperty(sGroupPath + "/tags");
 			// update tag bar directly with all tags of this category when no search or tag is selected
@@ -758,44 +766,46 @@ sap.ui.define([
 		 */
 		_updateTags: function (oQuery) {
 			// caution: it is really important to use getCurrentContexts and not getContexts here as the later modifies the binding
-			var aContexts = this.byId("results").getBinding(this._sAggregationName).getCurrentContexts(),
-				aAllTags = [],
-				aCurrentTags = [],
-				bTagVisible = false,
-				sFontName = this.getModel("view").getProperty("/fontName"),
-				i;
+			this._resultsLoaded.then(function () {
+				var aContexts = this.byId("results").getBinding(this._sAggregationName).getCurrentContexts(),
+					aAllTags = [],
+					aCurrentTags = [],
+					bTagVisible = false,
+					sFontName = this.getModel("view").getProperty("/fontName"),
+					i;
 
-			// collect all current tags from the result list
-			for (i = 0; i < aContexts.length; i++) {
-				aAllTags = aAllTags.concat(aContexts[i].getProperty("tags").map(function(oItem) { return oItem.name; }));
-			}
-
-			// no category selected yet: use all tags
-			if (!this._aCategoryTags) {
-				this._aCategoryTags = this.getModel().getProperty("/" + sFontName + "/groups/0/tags");
-			}
-
-			// filter tags to the currently visible
-			for (i = 0; i < this._aCategoryTags.length; i++) {
-				if (aAllTags.indexOf(this._aCategoryTags[i].name) >= 0) {
-					this._aCategoryTags[i].pressed = (this._aCategoryTags[i].name === oQuery.tag);
-					if (this._aCategoryTags[i].pressed) {
-						bTagVisible = true;
-					}
-					aCurrentTags.push(this._aCategoryTags[i]);
+				// collect all current tags from the result list
+				for (i = 0; i < aContexts.length; i++) {
+					aAllTags = aAllTags.concat(aContexts[i].getProperty("tags").map(function(oItem) { return oItem.name; }));
 				}
-			}
 
-			// add current tag if it is not visible yet (tag bar only contains the top [x] tags)
-			if (oQuery.tag && !bTagVisible) {
-				aCurrentTags.push({
-					pressed : true,
-					name : oQuery.tag
-				});
-			}
+				// no category selected yet: use all tags
+				if (!this._aCategoryTags) {
+					this._aCategoryTags = this.getModel().getProperty("/" + sFontName + "/groups/0/tags");
+				}
 
-			// update model data and bind the tags
-			this._updateTagSelectionBar(aCurrentTags);
+				// filter tags to the currently visible
+				for (i = 0; i < this._aCategoryTags.length; i++) {
+					if (aAllTags.indexOf(this._aCategoryTags[i].name) >= 0) {
+						this._aCategoryTags[i].pressed = (this._aCategoryTags[i].name === oQuery.tag);
+						if (this._aCategoryTags[i].pressed) {
+							bTagVisible = true;
+						}
+						aCurrentTags.push(this._aCategoryTags[i]);
+					}
+				}
+
+				// add current tag if it is not visible yet (tag bar only contains the top [x] tags)
+				if (oQuery.tag && !bTagVisible) {
+					aCurrentTags.push({
+						pressed : true,
+						name : oQuery.tag
+					});
+				}
+
+				// update model data and bind the tags
+				this._updateTagSelectionBar(aCurrentTags);
+			}.bind(this));
 		},
 
 		/**

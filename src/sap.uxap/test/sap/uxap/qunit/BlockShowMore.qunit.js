@@ -1,18 +1,26 @@
 /*global QUnit */
 sap.ui.define([
 	"sap/ui/thirdparty/jquery",
-	"sap/ui/core/Core"],
-function($, Core) {
+	"sap/ui/core/Core",
+	"sap/ui/core/mvc/XMLView"],
+function($, Core, XMLView) {
 	"use strict";
 
 	QUnit.module("aat_UxAP-330");
 
 	QUnit.module("Show More", {
-		beforeEach: function () {
-			this.objectPageSampleView = sap.ui.xmlview("UxAP-330_PropertyOnBlockToSayIfItHaveMoreInfoToDisplay", {viewName: "view.UxAP-330_PropertyOnBlockToSayIfItHaveMoreInfoToDisplay" });
-			this.referencedObjectPage = this.objectPageSampleView.byId("objectPage330");
-			this.objectPageSampleView.placeAt('qunit-fixture');
-			Core.applyChanges();
+		beforeEach: function (assert) {
+			var done = assert.async();
+			XMLView.create({
+				id: "UxAP-330_PropertyOnBlockToSayIfItHaveMoreInfoToDisplay",
+				viewName: "view.UxAP-330_PropertyOnBlockToSayIfItHaveMoreInfoToDisplay"
+			}).then(function (oView) {
+				this.objectPageSampleView = oView;
+				this.referencedObjectPage = this.objectPageSampleView.byId("objectPage330");
+				this.objectPageSampleView.placeAt('qunit-fixture');
+				Core.applyChanges();
+				done();
+			}.bind(this));
 		},
 		afterEach: function () {
 			this.objectPageSampleView.destroy();

@@ -18,7 +18,7 @@ sap.ui.define([
 			// configure mock server with a delay
 			MockServer.config({
 				autoRespond: true,
-				autoRespondAfter: 1000
+				autoRespondAfter: 500
 			});
 
 			oMockServer.simulate(sLocalServicePath + "/metadata.xml", {

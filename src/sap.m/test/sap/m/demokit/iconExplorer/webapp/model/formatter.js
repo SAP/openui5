@@ -1,8 +1,7 @@
 sap.ui.define([
-	"sap/ui/thirdparty/jquery",
 	"sap/ui/core/library"
-] , function(jQuery, coreLibrary) {
-    "use strict";
+] , function(coreLibrary) {
+	"use strict";
 
 	// shortcut for sap.ui.core.ValueState
 	var ValueState = coreLibrary.ValueState;
@@ -16,7 +15,7 @@ sap.ui.define([
 		 * @returns {string} sValue 4rem in compact mode, 5rem on cozy mode
 		 */
 		previewPanelHeight : function (sDummy) {
-			if (jQuery("body").hasClass("sapUiSizeCompact") || jQuery("body").find(".sapUiSizeCompact").length) {
+			if (document.body.classList.contains("sapUiSizeCompact") || document.getElementsByClassName("sapUiSizeCompact").length) {
 				return "6.0625rem";
 			} else {
 				return "8rem";

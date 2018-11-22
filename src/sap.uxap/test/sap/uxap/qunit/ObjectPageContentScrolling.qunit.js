@@ -10,8 +10,10 @@ sap.ui.define([
 	"sap/m/Title",
 	"sap/m/Panel",
 	"sap/ui/core/HTML",
-	"sap/ui/Device"],
-function(jQuery, Core, ObjectPageSubSection, ObjectPageSection, ObjectPageLayout, ObjectPageDynamicHeaderTitle, Text, Title, Panel, HTML, Device) {
+	"sap/ui/Device",
+	"sap/ui/core/mvc/XMLView"],
+function(jQuery, Core, ObjectPageSubSection, ObjectPageSection, ObjectPageLayout, ObjectPageDynamicHeaderTitle, Text, Title, Panel, HTML, Device, XMLView) {
+
 	"use strict";
 
 	var oFactory = {
@@ -100,19 +102,30 @@ function(jQuery, Core, ObjectPageSubSection, ObjectPageSection, ObjectPageLayout
 		helpers.renderObject(oObjectPage);
 	});
 
-	QUnit.module("ObjectPage Content scrolling");
+	QUnit.module("ObjectPage Content scrolling", {
+		beforeEach: function (assert) {
+			var done = assert.async();
+			XMLView.create({
+				id: "UxAP-objectPageContentScrolling",
+				viewName: "view.UxAP-ObjectPageContentScrolling"
+			}).then(function (oView) {
+				this.oObjectPageContentScrollingView = oView;
+				this.oObjectPageContentScrollingView.placeAt('qunit-fixture');
+				Core.applyChanges();
+				done();
+			}.bind(this));
+		},
+		afterEach: function () {
+			this.oObjectPageContentScrollingView.destroy();
+		}
+	});
+
 	QUnit.test("Should validate each section's position after scrolling to it, considering UI rules", function (assert) {
-
 		var clock = sinon.useFakeTimers();
-		var oObjectPageContentScrollingView = sap.ui.xmlview("UxAP-objectPageContentScrolling", {
-			viewName: "view.UxAP-ObjectPageContentScrolling"
-		});
 
-		oObjectPageContentScrollingView.placeAt('qunit-fixture');
-		Core.applyChanges();
 		clock.tick(500);
 
-		var oObjectPage = oObjectPageContentScrollingView.byId("ObjectPageLayout");
+		var oObjectPage = this.oObjectPageContentScrollingView.byId("ObjectPageLayout");
 
 		for (var section in oObjectPage._oSectionInfo) {
 			if (!oObjectPage._oSectionInfo.hasOwnProperty(section)) {
@@ -149,24 +162,16 @@ function(jQuery, Core, ObjectPageSubSection, ObjectPageSection, ObjectPageLayout
 			assert.ok(isPositionsMatch(oObjectPage._$opWrapper[0].scrollTop, iExpectedPosition), "Assert section: \"" + section + "\" position: " + iExpectedPosition);
 		}
 		clock.restore();
-		oObjectPageContentScrollingView.destroy();
 	});
 
 	QUnit.test("Rerendering the page preserves the scroll position", function (assert) {
-
-		var done = assert.async();
-		var ObjectPageContentScrollingView = sap.ui.xmlview("UxAP-objectPageContentScrolling", {
-			viewName: "view.UxAP-ObjectPageContentScrolling"
-		});
-		var oObjectPage = ObjectPageContentScrollingView.byId("ObjectPageLayout"),
-			oSecondSection = ObjectPageContentScrollingView.byId("secondSection"),
+		var oObjectPage = this.oObjectPageContentScrollingView.byId("ObjectPageLayout"),
+			oSecondSection = this.oObjectPageContentScrollingView.byId("secondSection"),
 			iScrollPositionBeforeRerender,
-			iScrollPositionAfterRerender;
+			iScrollPositionAfterRerender,
+			done = assert.async();
 
 		oObjectPage.setSelectedSection(oSecondSection.getId());
-
-		ObjectPageContentScrollingView.placeAt("qunit-fixture");
-		Core.applyChanges();
 
 		setTimeout(function() {
 			iScrollPositionBeforeRerender = oObjectPage._$opWrapper[0].scrollTop;
@@ -174,24 +179,16 @@ function(jQuery, Core, ObjectPageSubSection, ObjectPageSection, ObjectPageLayout
 			setTimeout(function() {
 				iScrollPositionAfterRerender = oObjectPage._$opWrapper[0].scrollTop;
 				assert.ok(isPositionsMatch(iScrollPositionAfterRerender, iScrollPositionBeforeRerender), "scrollPosition is preserved");
-				ObjectPageContentScrollingView.destroy();
 				done();
 			}, 1000); // throttling delay
 		}, 1000); //dom calc delay
 	});
 
 	QUnit.test("ScrollToSection in 0 time scrolls to correct the scroll position", function (assert) {
-
-		var done = assert.async();
-		var ObjectPageContentScrollingView = sap.ui.xmlview("UxAP-objectPageContentScrolling", {
-			viewName: "view.UxAP-ObjectPageContentScrolling"
-		});
-		var oObjectPage = ObjectPageContentScrollingView.byId("ObjectPageLayout"),
+		var oObjectPage = this.oObjectPageContentScrollingView.byId("ObjectPageLayout"),
 			iScrollPosition,
-			iExpectedPosition;
-
-		ObjectPageContentScrollingView.placeAt("qunit-fixture");
-		Core.applyChanges();
+			iExpectedPosition,
+			done = assert.async();
 
 		setTimeout(function() {
 			oObjectPage.scrollToSection("UxAP-objectPageContentScrolling--secondSection", 0);
@@ -199,32 +196,24 @@ function(jQuery, Core, ObjectPageSubSection, ObjectPageSection, ObjectPageLayout
 				iScrollPosition = oObjectPage._$opWrapper[0].scrollTop;
 				iExpectedPosition =  oObjectPage._oSectionInfo["UxAP-objectPageContentScrolling--subsection2-1"].positionTop;
 				assert.ok(isPositionsMatch(iScrollPosition, iExpectedPosition), "scrollPosition is correct");
-				ObjectPageContentScrollingView.destroy();
 				done();
 			}, 1000); // throttling delay
 		}, 1000); //dom calc delay
 	});
 
 	QUnit.test("Deleting the above section preserves the selected section position", function (assert) {
-
-		var done = assert.async();
-		var ObjectPageContentScrollingView = sap.ui.xmlview("UxAP-objectPageContentScrolling", {
-			viewName: "view.UxAP-ObjectPageContentScrolling"
-		});
-		var oObjectPage = ObjectPageContentScrollingView.byId("ObjectPageLayout"),
-			oFirstSection = ObjectPageContentScrollingView.byId("firstSection"),
-			oThirdSection = ObjectPageContentScrollingView.byId("thirdSection"),
+		var oObjectPage = this.oObjectPageContentScrollingView.byId("ObjectPageLayout"),
+			oFirstSection = this.oObjectPageContentScrollingView.byId("firstSection"),
+			oThirdSection = this.oObjectPageContentScrollingView.byId("thirdSection"),
 			iScrollPositionAfterRemove,
-			iExpectedPositionAfterRemove;
+			iExpectedPositionAfterRemove,
+			done = assert.async();
 
 		oObjectPage.attachEventOnce("onAfterRenderingDOMReady", function() {
 			setTimeout(function () {
 				oObjectPage.setSelectedSection(oThirdSection.getId());
 			}, 500);
 		});
-
-		ObjectPageContentScrollingView.placeAt("qunit-fixture");
-		Core.applyChanges();
 
 		oObjectPage.attachEventOnce("onAfterRenderingDOMReady", function() {
 			setTimeout(function () {
@@ -233,7 +222,6 @@ function(jQuery, Core, ObjectPageSubSection, ObjectPageSection, ObjectPageLayout
 					iScrollPositionAfterRemove = oObjectPage._$opWrapper[0].scrollTop;
 					iExpectedPositionAfterRemove = Math.ceil(jQuery("#" + oThirdSection.getId() + " .sapUxAPObjectPageSectionContainer").position().top); // top of third section content
 					assert.ok(isPositionsMatch(iScrollPositionAfterRemove, iExpectedPositionAfterRemove), "scrollPosition is correct");
-					ObjectPageContentScrollingView.destroy();
 					oFirstSection.destroy();
 					done();
 				}, 500); // throttling delay
@@ -242,22 +230,14 @@ function(jQuery, Core, ObjectPageSubSection, ObjectPageSection, ObjectPageLayout
 	});
 
 	QUnit.test("Deleting the bellow section preserves the scroll position", function (assert) {
-
-		var done = assert.async();
-		var ObjectPageContentScrollingView = sap.ui.xmlview("UxAP-objectPageContentScrolling", {
-			viewName: "view.UxAP-ObjectPageContentScrolling"
-		});
-		var oObjectPage = ObjectPageContentScrollingView.byId("ObjectPageLayout"),
-			oSecondSection = ObjectPageContentScrollingView.byId("secondSection"),
-			oThirdSection = ObjectPageContentScrollingView.byId("thirdSection"),
+		var oObjectPage = this.oObjectPageContentScrollingView.byId("ObjectPageLayout"),
+			oSecondSection = this.oObjectPageContentScrollingView.byId("secondSection"),
+			oThirdSection = this.oObjectPageContentScrollingView.byId("thirdSection"),
 			iScrollPositionBeforeRemove,
-			iScrollPositionAfterRemove;
+			iScrollPositionAfterRemove,
+			done = assert.async();
 
 		oObjectPage.setSelectedSection(oSecondSection.getId());
-
-		ObjectPageContentScrollingView.placeAt("qunit-fixture");
-		Core.applyChanges();
-
 
 		setTimeout(function() {
 			oObjectPage.removeSection(oThirdSection);
@@ -265,7 +245,6 @@ function(jQuery, Core, ObjectPageSubSection, ObjectPageSection, ObjectPageLayout
 			setTimeout(function() {
 				iScrollPositionAfterRemove = oObjectPage._$opWrapper[0].scrollTop;
 				assert.ok(isPositionsMatch(iScrollPositionAfterRemove, iScrollPositionBeforeRemove), "scrollPosition is preserved");
-				ObjectPageContentScrollingView.destroy();
 				oThirdSection.destroy();
 				done();
 			}, 1000); // throttling delay
@@ -273,39 +252,25 @@ function(jQuery, Core, ObjectPageSubSection, ObjectPageSection, ObjectPageLayout
 	});
 
 	QUnit.test("Should keep ObjectPageHeader in \"Expanded\" mode on initial load", function (assert) {
-
-		var done = assert.async();
-		var ObjectPageContentScrollingView = sap.ui.xmlview("UxAP-objectPageContentScrolling", {
-			viewName: "view.UxAP-ObjectPageContentScrolling"
-		});
-		ObjectPageContentScrollingView.placeAt("qunit-fixture");
-		Core.applyChanges();
-		var oObjectPage = ObjectPageContentScrollingView.byId("ObjectPageLayout");
+		var oObjectPage = this.oObjectPageContentScrollingView.byId("ObjectPageLayout"),
+			done = assert.async();
 
 		setTimeout(function() {
 			assert.ok(!isObjectPageHeaderStickied(oObjectPage), "ObjectHeader is in \"Expanded\" mode");
-			ObjectPageContentScrollingView.destroy();
 			done();
 		}, 1000); //dom calc delay
 
 	});
 
 	QUnit.test("Should change ObjectPageHeader in \"Stickied\" mode after scrolling to a lower section", function (assert) {
-
-		var done = assert.async();
-		var ObjectPageContentScrollingView = sap.ui.xmlview("UxAP-objectPageContentScrolling", {
-			viewName: "view.UxAP-ObjectPageContentScrolling"
-		});
-		ObjectPageContentScrollingView.placeAt("qunit-fixture");
-		Core.applyChanges();
-		var oObjectPage = ObjectPageContentScrollingView.byId("ObjectPageLayout");
+		var oObjectPage = this.oObjectPageContentScrollingView.byId("ObjectPageLayout"),
+			done = assert.async();
 
 		setTimeout(function(){
 			//Act
 			oObjectPage.scrollToSection("UxAP-objectPageContentScrolling--subsection3-1",0,0);
 			setTimeout(function() {
 				assert.ok(isObjectPageHeaderStickied(oObjectPage), "ObjectHeader is in stickied mode");
-				ObjectPageContentScrollingView.destroy();
 				done();
 			}, 1000); //scroll delay
 		}, 1000); //dom calc delay
@@ -313,14 +278,8 @@ function(jQuery, Core, ObjectPageSubSection, ObjectPageSection, ObjectPageLayout
 	});
 
 	QUnit.test("Should keep ObjectPageHeader in \"Stickied\" mode when scrolling", function (assert) {
-
-		var done = assert.async();
-		var ObjectPageContentScrollingView = sap.ui.xmlview("UxAP-objectPageContentScrolling", {
-			viewName: "view.UxAP-ObjectPageContentScrolling"
-		});
-		ObjectPageContentScrollingView.placeAt("qunit-fixture");
-		Core.applyChanges();
-		var oObjectPage = ObjectPageContentScrollingView.byId("ObjectPageLayout");
+		var oObjectPage = this.oObjectPageContentScrollingView.byId("ObjectPageLayout"),
+			done = assert.async();
 
 		setTimeout(function(){
 			//Act
@@ -330,7 +289,6 @@ function(jQuery, Core, ObjectPageSubSection, ObjectPageSection, ObjectPageLayout
 				oObjectPage.scrollToSection("UxAP-objectPageContentScrolling--firstSection",0,0);
 				setTimeout(function() {
 					assert.ok(isObjectPageHeaderStickied(oObjectPage), "ObjectHeader is in stickied mode");
-					ObjectPageContentScrollingView.destroy();
 					done();
 				}, 1000);
 			}, 1000); //scroll delay
@@ -339,18 +297,12 @@ function(jQuery, Core, ObjectPageSubSection, ObjectPageSection, ObjectPageLayout
 	});
 
 	QUnit.test("_isClosestScrolledSection should return the first section if all sections are hidden", function (assert) {
-		var clock = sinon.useFakeTimers();
-		var oObjectPageContentScrollingView = sap.ui.xmlview("UxAP-objectPageContentScrolling", {
-			viewName: "view.UxAP-ObjectPageContentScrolling"
-		});
-
-		oObjectPageContentScrollingView.placeAt('qunit-fixture');
-		Core.applyChanges();
-		clock.tick(500);
-
-		var oObjectPage = oObjectPageContentScrollingView.byId("ObjectPageLayout"),
+		var clock = sinon.useFakeTimers(),
+			oObjectPage = this.oObjectPageContentScrollingView.byId("ObjectPageLayout"),
 			aSections = oObjectPage.getSections(),
 			sFirstSectionId = "UxAP-objectPageContentScrolling--firstSection";
+
+		clock.tick(500);
 
 		for (var section in aSections) {
 			aSections[section].setVisible(false);
@@ -359,26 +311,17 @@ function(jQuery, Core, ObjectPageSubSection, ObjectPageSection, ObjectPageLayout
 		assert.strictEqual(oObjectPage._isClosestScrolledSection(sFirstSectionId), true, "Fisrt section is the closest scrolled section");
 
 		clock.restore();
-		oObjectPageContentScrollingView.destroy();
 	});
 
 	QUnit.test("ScrollEnablement private API", function (assert) {
-		var oObjectPageContentScrollingView = sap.ui.xmlview("UxAP-objectPageContentScrolling", {
-			viewName: "view.UxAP-ObjectPageContentScrolling"
-		});
-
-		// arrange
-		oObjectPageContentScrollingView.placeAt('qunit-fixture');
-		Core.applyChanges();
-
-		var oObjectPage = oObjectPageContentScrollingView.byId("ObjectPageLayout");
+		var oObjectPage = this.oObjectPageContentScrollingView.byId("ObjectPageLayout");
 
 		oObjectPage._initializeScroller();
 
 		assert.ok(oObjectPage._oScroller._$Container, "ScrollEnablement private API is OK.");
-
-		oObjectPageContentScrollingView.destroy();
 	});
+
+	QUnit.module("ObjectPage scrolling without view");
 
 	QUnit.test("auto-scroll on resize of last section", function (assert) {
 		var oObjectPageLayout = helpers.generateObjectPageWithContent(oFactory, 2 /* two sections */),

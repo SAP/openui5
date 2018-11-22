@@ -65,6 +65,7 @@ sap.ui.define([
         });
         assert.strictEqual(mSelector.properties.text, "Item11", "Should include control selector relative to row");
         assert.strictEqual(mSelector.ancestor.bindingPath.path, "/items/0", "Should include row binding context path");
+        assert.strictEqual(mSelector.ancestor.controlType, "sap.m.ColumnListItem", "Should include row type");
         assert.strictEqual(mSelector.ancestor.ancestor.id, "myView--myTable", "Should include table selector");
         assert.ok(mControlAncestors.validation.getId().match("myView--myTable-0$"), "Should get control table");
         assert.strictEqual(mControlAncestors.selector.getId(), "myView--myTable", "Should get control table row");

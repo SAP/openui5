@@ -11,20 +11,16 @@ sap.ui.define([
 		onTheAppPage : {
 
 			actions : {
-
-				iWaitUntilTheBusyIndicatorIsGone : function () {
+				iCloseTheMessageBox : function () {
 					return this.waitFor({
-						id : sAppControl,
-						viewName : sViewName,
-						// inline-matcher directly as function
-						matchers : function(oRootView) {
-							// we set the view busy, so we need to query the parent of the app
-							return oRootView.getParent().getBusy() === false;
-						},
-						errorMessage : "The app is still busy."
+						id: "serviceErrorMessageBox",
+						autoWait: false,
+						success: function (oMessageBox) {
+							oMessageBox.destroy();
+							Opa5.assert.ok(true, "The MessageBox was closed");
+						}
 					});
 				}
-
 			},
 
 			assertions : {
@@ -33,11 +29,15 @@ sap.ui.define([
 					return this.waitFor({
 						id : sAppControl,
 						viewName : sViewName,
-						success : function (oRootView) {
-							// we set the view busy, so we need to query the parent of the app
-							Opa5.assert.ok(oRootView.getParent().getBusy(), "The app is busy");
+						matchers: new PropertyStrictEquals({
+							name: "busy",
+							value: true
+						}),
+						autoWait: false,
+						success : function () {
+							Opa5.assert.ok(true, "The app is busy");
 						},
-						errorMessage : "The app is not busy."
+						errorMessage : "The app is not busy"
 					});
 				},
 

@@ -5,6 +5,9 @@ sap.ui.define([
 ], function(Opa5, PropertyStrictEquals, Common) {
 	"use strict";
 
+	var sViewName = "App",
+		sAppId = "app";
+
 		Opa5.createPageObjects({
 			onTheAppPage : {
 				baseClass : Common,
@@ -13,8 +16,8 @@ sap.ui.define([
 
 				iWaitUntilTheAppBusyIndicatorIsGone : function () {
 					return this.waitFor({
-						id : "app",
-						viewName : "App",
+						id : sAppId,
+						viewName : sViewName,
 						matchers: new PropertyStrictEquals({
 							name: "busy",
 							value: false
@@ -25,15 +28,26 @@ sap.ui.define([
 						},
 						errorMessage : "The app is busy"
 					});
+				},
+
+				iCloseTheMessageBox : function () {
+					return this.waitFor({
+						id : "serviceErrorMessageBox",
+						autoWait: false,
+						success : function (oMessageBox) {
+							oMessageBox.destroy();
+							Opa5.assert.ok(true, "The MessageBox was closed");
+						}
+					});
 				}
 			},
 
 			assertions : {
 
 				iShouldSeeTheBusyIndicatorForTheWholeApp : function () {
-					return this.waitFor({
-						id : "app",
-						viewName : "App",
+						return this.waitFor({
+						id : sAppId,
+						viewName : sViewName,
 						matchers : new PropertyStrictEquals({
 							name : "busy",
 							value : true
@@ -49,10 +63,8 @@ sap.ui.define([
 
 				iShouldSeeTheMessageBox : function () {
 					return this.waitFor({
-						searchOpenDialogs : true,
-						controlType : "sap.m.Dialog",
+						id : "serviceErrorMessageBox",
 						autoWait: false,
-						matchers : new PropertyStrictEquals({ name: "type", value: "Message"}),
 						success : function () {
 							Opa5.assert.ok(true, "The correct MessageBox was shown");
 						}

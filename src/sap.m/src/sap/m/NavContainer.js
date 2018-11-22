@@ -1732,10 +1732,12 @@ sap.ui.define([
 		oPage.addStyleClass("sapMNavItem");
 		var iPreviousPageCount = aPages.length;
 
-		if (iPreviousPageCount === 0 && /* get the NEW pages count */ this.getPages().length === 1 && this.getDomRef()) { // the added page is the first and only page and has been newly added
-			this._ensurePageStackInitialized();
-			this.rerender();
+		if (iPreviousPageCount === 0 && /* get the NEW pages count */ this.getPages().length === 1) { // the added page is the first and only page and has been newly added
 			this._fireAdaptableContentChange(oPage);
+			if (this.getDomRef()) {
+				this._ensurePageStackInitialized();
+				this.rerender();
+			}
 		}
 
 		return this;
@@ -1750,10 +1752,12 @@ sap.ui.define([
 		// to a removePage-call where the class is removed again.
 		oPage.addStyleClass("sapMNavItem");
 
-		if (iPreviousPageCount === 0 && this.getPages().length === 1 && this.getDomRef()) { // the added page is the first and only page and has been newly added
-			this._ensurePageStackInitialized();
-			this.rerender();
+		if (iPreviousPageCount === 0 && this.getPages().length === 1) { // the added page is the first and only page and has been newly added
 			this._fireAdaptableContentChange(oPage);
+			if (this.getDomRef()) {
+				this._ensurePageStackInitialized();
+				this.rerender();
+			}
 		}
 
 		return this;

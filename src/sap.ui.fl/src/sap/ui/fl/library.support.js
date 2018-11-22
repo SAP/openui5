@@ -38,7 +38,7 @@ sap.ui.define(["sap/ui/support/library", "sap/ui/fl/Utils", "sap/ui/dt/DesignTim
 			resolution: "Replace the generated control ID with a stable ID. We strongly recommend that you use stable IDs for all controls in your app.",
 			resolutionurls: [{
 				text: "Documentation: Stable IDs: All You Need to Know",
-				href: "https://sapui5.hana.ondemand.com/#docs/guide/f51dbb78e7d5448e838cdc04bdf65403.html"
+				href: "https://sapui5.hana.ondemand.com/#topic/f51dbb78e7d5448e838cdc04bdf65403.html"
 			}],
 			async: true,
 			check: function (issueManager, oCoreFacade, oScope, resolve) {

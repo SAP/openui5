@@ -154,4 +154,23 @@ sap.ui.define([
 		});
 	});
 
+	QUnit.test("Pass metadata from analyze to reports", function (assert) {
+		var done = assert.async(),
+			oMetadata = {
+				"scenarioCode": "<any-code>",
+				"scenarioName": "<any-name>",
+				"scenarioDescription": "<any-desc>"
+			};
+
+		bootstrap.initSupportRules(["true", "silent"], {
+			onReady: function () {
+				RuleAnalyzer.analyze(this.scope, null, oMetadata).then(function () {
+					var history = RuleAnalyzer.getLastAnalysisHistory();
+					assert.deepEqual(history.analysisMetadata, oMetadata, "Metadata is correctly (unchanged) passed from analyze to reports.");
+					done();
+				});
+			}
+		});
+	});
+
 });

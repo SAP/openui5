@@ -5,17 +5,23 @@ sap.ui.define(["sap/ui/thirdparty/jquery",
                 "sap/m/Text",
                 "sap/uxap/ObjectPageDynamicHeaderTitle",
                 "sap/uxap/ObjectPageLayout",
-                "sap/ui/core/HTML"],
-function ($, Core, Label, Text, ObjectPageDynamicHeaderTitle, ObjectPageLayout, HTML) {
+                "sap/ui/core/HTML",
+                "sap/ui/core/mvc/XMLView"],
+function ($, Core, Label, Text, ObjectPageDynamicHeaderTitle, ObjectPageLayout, HTML, XMLView) {
 	"use strict";
 
 	QUnit.module("API", {
-		beforeEach: function () {
-			this.contentView = sap.ui.xmlview("UxAP-ObjectPageHeaderContent", {
+		beforeEach: function (assert) {
+			var done = assert.async();
+			XMLView.create({
+				id: "UxAP-ObjectPageHeaderContent",
 				viewName: "view.UxAP-ObjectPageHeaderContent"
-			});
-			this.contentView.placeAt('qunit-fixture');
-			Core.applyChanges();
+			}).then(function (oView) {
+				this.contentView = oView;
+				this.contentView.placeAt("qunit-fixture");
+				Core.applyChanges();
+				done();
+			}.bind(this));
 		},
 		afterEach: function () {
 			this.contentView.destroy();
@@ -46,12 +52,17 @@ function ($, Core, Label, Text, ObjectPageDynamicHeaderTitle, ObjectPageLayout, 
 	});
 
 	QUnit.module("ObjectPageHeaderContent integration inside ObjectPageLayout", {
-		beforeEach: function () {
-			this.contentView = sap.ui.xmlview("UxAP-ObjectPageHeaderContent", {
+		beforeEach: function (assert) {
+			var done = assert.async();
+			XMLView.create({
+				id: "UxAP-ObjectPageHeaderContent",
 				viewName: "view.UxAP-ObjectPageHeaderContent"
-			});
-			this.contentView.placeAt('qunit-fixture');
-			Core.applyChanges();
+			}).then(function (oView) {
+				this.contentView = oView;
+				this.contentView.placeAt("qunit-fixture");
+				Core.applyChanges();
+				done();
+			}.bind(this));
 		},
 		afterEach: function () {
 			this.contentView.destroy();
@@ -151,13 +162,26 @@ function ($, Core, Label, Text, ObjectPageDynamicHeaderTitle, ObjectPageLayout, 
 		oObjectPage.destroy();
 	});
 
-	QUnit.module("ObjectPageLayout content resize");
+	QUnit.module("ObjectPageLayout content resize", {
+		beforeEach: function (assert) {
+			var done = assert.async();
+			XMLView.create({
+				id: "UxAP-ObjectPageHeaderContent",
+				viewName: "view.UxAP-ObjectPageHeaderContent"
+			}).then(function (oView) {
+				this.contentView = oView;
+				this.contentView.placeAt("qunit-fixture");
+				Core.applyChanges();
+				done();
+			}.bind(this));
+		},
+		afterEach: function () {
+			this.contentView.destroy();
+		}
+	});
 
 	QUnit.test("addHeaderContent", function (assert) {
-		var contentView = sap.ui.xmlview("UxAP-ObjectPageHeaderContent", {
-			viewName: "view.UxAP-ObjectPageHeaderContent"
-		}),
-		oObjectPageLayout = contentView.byId("ObjectPageLayout"),
+		var	oObjectPageLayout = this.contentView.byId("ObjectPageLayout"),
 		oResizableControl = new HTML({content: "<div style='height:100px'></div>"}),
 		done = assert.async(),
 		bResizeListenerCalled = false;
@@ -178,12 +202,9 @@ function ($, Core, Label, Text, ObjectPageDynamicHeaderTitle, ObjectPageLayout, 
 			setTimeout(function() {
 				// check
 				assert.ok(bResizeListenerCalled, "_onUpdateContentSize method is called");
-				contentView.destroy();
 				done();
 			}, 500 /* wait for resizeHandler to be triggered */);
 		});
-
-		contentView.placeAt('qunit-fixture');
 	});
 
 });

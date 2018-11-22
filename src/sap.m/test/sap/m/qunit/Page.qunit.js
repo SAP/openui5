@@ -12,6 +12,7 @@ sap.ui.define([
 	"sap/ui/model/json/JSONModel",
 	"sap/m/OverflowToolbar",
 	"sap/ui/Device",
+	"sap/ui/qunit/utils/waitForThemeApplied",
 	"sap/ui/core/theming/Parameters",
 	"jquery.sap.global"
 ], function(
@@ -26,6 +27,7 @@ sap.ui.define([
 	JSONModel,
 	OverflowToolbar,
 	Device,
+	waitForThemeApplied,
 	Parameters,
 	jQuery
 ) {
@@ -54,7 +56,7 @@ sap.ui.define([
 
 
 	var oHtml = new HTML({
-		content : '<h1 id="qunit-header">QUnit Page for sap.m.Page</h1><h2 id="qunit-banner"></h2><h2 id="qunit-userAgent"></h2><ol id="qunit-tests"></ol>'
+		content : '<h1 id="qunit-header">Header</h1><h2 id="qunit-banner"></h2><h2 id="qunit-userAgent"></h2><ol id="qunit-tests"></ol>'
 	});
 	var oButton = new Button("bigButton", {
 		text: "Test",
@@ -685,4 +687,6 @@ sap.ui.define([
 		oSpy.restore();
 		oControl.destroy();
 	});
+
+	return waitForThemeApplied();
 });

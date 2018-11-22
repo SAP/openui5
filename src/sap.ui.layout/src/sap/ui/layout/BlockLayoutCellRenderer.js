@@ -110,7 +110,7 @@ sap.ui.define(['./library', 'sap/ui/core/library', "sap/base/Log"],
 
 			rm.write("<div class='" + contentClass + "' aria-labelledby='" + this.getTitleId(blockLayoutCell) +  "' >");
 			this.addTitle(rm, blockLayoutCell);
-			content.forEach(rm.renderControl);
+			content.forEach(rm.renderControl, rm);
 			rm.write("</div>");
 		};
 

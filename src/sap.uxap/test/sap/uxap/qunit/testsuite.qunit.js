@@ -68,6 +68,14 @@ sap.ui.define(function () {
 				}
 			},
 			"ExploredSamples": {
+				loader: {
+					map: {
+						"*": {
+							"sap/ui/thirdparty/sinon": "sap/ui/thirdparty/sinon-4",
+							"sap/ui/thirdparty/sinon-qunit": "sap/ui/qunit/sinon-qunit-bridge"
+						}
+					}
+				},
 				runAfterLoader: "sap/ui/demo/mock/qunit/SampleTesterErrorHandler",
 				qunit: {
 					version: 2

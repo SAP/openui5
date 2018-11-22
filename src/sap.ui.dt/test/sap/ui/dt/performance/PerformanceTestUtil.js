@@ -76,8 +76,10 @@ sap.ui.define([
 			}
 		},
 
-		addBoxesWithMixedControls: function(oParent, iCount) {
-			for (var i = 0; i < iCount; i++) {
+		addBoxesWithMixedControls: function(oParent, iCount, iOffset) {
+			var i = iOffset ? iOffset : 0;
+			iCount = iOffset ? iOffset + iCount : iCount;
+			for (i; i < iCount; i++) {
 				oParent.addContent(
 					new VBox("box" + i, {
 						items: [
@@ -137,19 +139,6 @@ sap.ui.define([
 				sap.ui.getCore().applyChanges();
 				document.getElementById("overlay-container").setAttribute("sap-ui-dt-loaded","true");
 			});
-		},
-
-		debounce: function(fn, iWait) {
-			iWait = iWait || 0;
-
-			var iTimerId;
-
-			return function () {
-				if (iTimerId) {
-					clearTimeout(iTimerId);
-				}
-				iTimerId = setTimeout(fn, iWait);
-			};
 		},
 
 		measureApplyStylePerformance: function(sCustomMetricName, iWaitUntilDoneInMs) {

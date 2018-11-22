@@ -148,7 +148,12 @@
 				"formFactors" : "-",
 				"samples" : [
 					"sap.ui.layout.sample.CSSGrid",
-					"sap.ui.layout.sample.NestedGrids"
+					"sap.ui.layout.sample.NestedGrids",
+					"sap.ui.layout.sample.GridAutoFlow",
+					"sap.ui.layout.sample.GridGap",
+					"sap.ui.layout.sample.GridTemplateRows",
+					"sap.ui.layout.sample.GridAutoRows",
+					"sap.ui.layout.sample.GridResponsiveness"
 				]
 			}
 		],
@@ -390,13 +395,38 @@
 			},
 			{
 				"id": "sap.ui.layout.sample.CSSGrid",
-				"name": " CSSGrid ",
+				"name": "CSSGrid",
 				"description": "CSSGrid example for page layout."
 			},
 			{
 				"id": "sap.ui.layout.sample.NestedGrids",
-				"name": "Nested  example",
+				"name": "Nested Example",
 				"description": "CSSGrid example nested grids."
+			},
+			{
+				"id": "sap.ui.layout.sample.GridAutoFlow",
+				"name": "Controlling Empty Spaces Within the Grid",
+				"description": "Example of setting the gridAutoFlow property."
+			},
+			{
+				"id": "sap.ui.layout.sample.GridGap",
+				"name": "Grid Gap and Layout Data",
+				"description": "Example of setting the gridGap property and using of Layout Data."
+			},
+			{
+				"id": "sap.ui.layout.sample.GridTemplateRows",
+				"name": "Configuring Rows and Columns",
+				"description": "Example of setting gridTemplateRows and gridTemplateColumns properties."
+			},
+			{
+				"id": "sap.ui.layout.sample.GridAutoRows",
+				"name": "Automatic Sizing for Additional Rows and Columns",
+				"description": "Example of setting gridAutoRows and gridAutoColumns properties."
+			},
+			{
+				"id": "sap.ui.layout.sample.GridResponsiveness",
+				"name": "Responsiveness",
+				"description": "Example of setting customLayout for different layout (screen) sizes."
 			}
 		]
 	}

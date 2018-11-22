@@ -130,7 +130,7 @@
 		};
 
 		var oTableSelectDialog3 = new sap.m.TableSelectDialog("TableSelectDialog3", {
-			title: "{dialog>/title}",
+			title: "Title one",
 			noDataText: "{dialog>/noDataMessage}",
 			search : fnDoSearch,
 			liveChange: fnDoSearch,
@@ -172,6 +172,7 @@
 
 		//create TableSelectDialog with growing false, search is not implemented to work
 		var oTableSelectDialog11 = new sap.m.TableSelectDialog({
+            title: "Title two",
 			columns : [
 				new sap.m.Column({
 					header : new sap.m.Label({text : "Item"})

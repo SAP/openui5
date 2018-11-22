@@ -18,7 +18,8 @@ sap.ui.define([
 	'sap/tnt/ToolHeaderUtilitySeparator',
 	'sap/tnt/SideNavigation',
 	'sap/tnt/NavigationList',
-	'sap/tnt/NavigationListItem'
+	'sap/tnt/NavigationListItem',
+	'sap/ui/qunit/utils/waitForThemeApplied'
 ], function(
 	jQuery,
 	Log,
@@ -37,7 +38,8 @@ sap.ui.define([
 	ToolHeaderUtilitySeparator,
 	SideNavigation,
 	NavigationList,
-	NavigationListItem) {
+	NavigationListItem,
+	waitForThemeApplied) {
 	'use strict';
 
 	//create JSON model instance
@@ -610,4 +612,6 @@ sap.ui.define([
 		sap.ui.Device.system.phone = false;
 		sap.ui.Device.system.combi = isCombiDevice;
 	});
+
+	return waitForThemeApplied();
 });

@@ -76,6 +76,10 @@
 .sapUiDtDragGhostWrapper {
 	position: fixed;
 	pointer-events: none;
+}
+
+/* fix ghost blinking in FireFox */
+.sap-desktop[data-sap-ui-browser^="ff"] .sapUiDtDragGhostWrapper {
 	top: -9999px;
 	left: -9999px;
 }

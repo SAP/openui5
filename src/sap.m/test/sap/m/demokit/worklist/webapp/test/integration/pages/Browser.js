@@ -31,7 +31,7 @@ sap.ui.define([
 				iChangeTheHashToSomethingInvalid : function () {
 					return this.waitFor({
 						success : function () {
-							Opa5.getHashChanger().setHash("/somethingInvalid");
+							Opa5.getHashChanger().setHash("somethingInvalid");
 						}
 					});
 				},
@@ -40,7 +40,7 @@ sap.ui.define([
 					return this.waitFor({
 						success : function () {
 							var sObjectId = this.getContext().currentItem.id;
-							Opa5.getHashChanger().setHash("/Objects/" + sObjectId);
+							Opa5.getHashChanger().setHash("Objects/" + sObjectId);
 						}
 					});
 				}

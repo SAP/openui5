@@ -8,20 +8,12 @@ sap.ui.define([
 	"sap/uxap/ObjectPageHeaderActionButton",
 	"sap/m/Button",
 	"sap/m/Link",
-	"sap/m/Breadcrumbs"],
-function ($, Core, ObjectPageLayout, ObjectPageHeader, ObjectPageHeaderActionButton, Button, Link, Breadcrumbs) {
+	"sap/m/Breadcrumbs",
+	"sap/ui/core/mvc/XMLView"],
+function ($, Core, ObjectPageLayout, ObjectPageHeader, ObjectPageHeaderActionButton, Button, Link, Breadcrumbs, XMLView) {
 	"use strict";
 
-	sap.ui.controller("viewController", {});
-
-	var core = sap.ui.getCore(),
-		viewController = sap.ui.controller("viewController"),
-		oHeaderView = sap.ui.xmlview("UxAP-ObjectPageHeader", {
-			viewName: "view.UxAP-ObjectPageHeader",
-			controller: viewController
-		}),
-		$title = oHeaderView.$("title"),
-		oFactory = {
+	var oFactory = {
 			getLink: function (sText, sHref) {
 				return new Link({
 					text: sText || "Page 1 long link",
@@ -30,68 +22,82 @@ function ($, Core, ObjectPageLayout, ObjectPageHeader, ObjectPageHeaderActionBut
 			}
 		};
 
-	oHeaderView.placeAt("qunit-fixture");
-
-	QUnit.module("rendering API");
+	QUnit.module("rendering API", {
+		beforeEach: function (assert) {
+			var done = assert.async();
+			XMLView.create({
+				id: "UxAP-ObjectPageHeader",
+				viewName: "view.UxAP-ObjectPageHeader"
+			}).then(function (oView) {
+				this.oHeaderView = oView;
+				this.oHeaderView.placeAt("qunit-fixture");
+				Core.applyChanges();
+				done();
+			}.bind(this));
+		},
+		afterEach: function () {
+			this.oHeaderView.destroy();
+		}
+	});
 
 	QUnit.test("Title block rendering", function (assert) {
-		assert.ok($title, "Title block is rendered");
+		assert.ok(this.oHeaderView.$("title"), "Title block is rendered");
 	});
 
 	QUnit.test("Title rendering", function (assert) {
-		assert.ok($title.find(".sapUxAPObjectPageHeaderTitleTextWrappable"), "Title is rendered");
+		assert.ok(this.oHeaderView.$("title").find(".sapUxAPObjectPageHeaderTitleTextWrappable"), "Title is rendered");
 	});
 
 	QUnit.test("Markers rendering", function (assert) {
-		assert.ok(oHeaderView.$("-favorite"), "Favourite marker is rendered");
-		assert.ok(oHeaderView.$("-flag"), "Flag marker is rendered");
+		assert.ok(this.oHeaderView.$("-favorite"), "Favourite marker is rendered");
+		assert.ok(this.oHeaderView.$("-flag"), "Flag marker is rendered");
 	});
 
 	QUnit.test("SelectTitleArrow rendering", function (assert) {
-		assert.ok(oHeaderView.$("-titleArrow"), "Title Arrow is rendered");
+		assert.ok(this.oHeaderView.$("-titleArrow"), "Title Arrow is rendered");
 	});
 
 	QUnit.test("Locked mark rendering", function (assert) {
-		assert.ok(oHeaderView.$().find(".sapUxAPObjectPageHeaderLockBtn").length === 1, "Locked mark is rendered");
+		assert.ok(this.oHeaderView.$().find(".sapUxAPObjectPageHeaderLockBtn").length === 1, "Locked mark is rendered");
 	});
 
 	QUnit.test("Unsaved changes mark is not rendered when Locked mark is set", function (assert) {
-		assert.ok(oHeaderView.$().find(".sapUxAPObjectPageHeaderChangesBtn").length === 0, "Unsaved changes mark is not rendered when Locked mark is set");
+		assert.ok(this.oHeaderView.$().find(".sapUxAPObjectPageHeaderChangesBtn").length === 0, "Unsaved changes mark is not rendered when Locked mark is set");
 	});
 
 	QUnit.test("Unsaved changes mark rendering", function (assert) {
-		this._oHeader = core.byId("UxAP-ObjectPageHeader--header");
+		this._oHeader = Core.byId("UxAP-ObjectPageHeader--header");
 		this._oHeader.setMarkLocked(false);
-		core.applyChanges();
+		Core.applyChanges();
 
-		assert.ok(oHeaderView.$().find(".sapUxAPObjectPageHeaderChangesBtn").length === 1, "Unsaved chages mark is rendered");
+		assert.ok(this.oHeaderView.$().find(".sapUxAPObjectPageHeaderChangesBtn").length === 1, "Unsaved chages mark is rendered");
 	});
 
 	QUnit.test("Tooltip rendering", function (assert) {
-		assert.ok(oHeaderView.$().find(".sapUxAPObjectPageHeaderTitleTextWrappable").attr("title") !== undefined, "Heading has title attribute");
+		assert.ok(this.oHeaderView.$().find(".sapUxAPObjectPageHeaderTitleTextWrappable").attr("title") !== undefined, "Heading has title attribute");
 	});
 
 	QUnit.test("SubTitle rendering", function (assert) {
-		assert.ok(oHeaderView.$().find(".sapUxAPObjectPageHeaderIdentifierDescription").length === 1, "SubTitle is rendered");
+		assert.ok(this.oHeaderView.$().find(".sapUxAPObjectPageHeaderIdentifierDescription").length === 1, "SubTitle is rendered");
 	});
 
 	QUnit.test("Image rendering", function (assert) {
-		assert.ok($title.find(".sapUxAPObjectPageHeaderObjectImage"), "Image is rendered");
+		assert.ok(this.oHeaderView.$("title").find(".sapUxAPObjectPageHeaderObjectImage"), "Image is rendered");
 	});
 
 	QUnit.test("Actions rendering", function (assert) {
-		assert.ok($title.find(".sapUxAPObjectPageHeaderIdentifierActions"), "Action buttons are rendered");
+		assert.ok(this.oHeaderView.$("title").find(".sapUxAPObjectPageHeaderIdentifierActions"), "Action buttons are rendered");
 	});
 	QUnit.test("Placeholder rendering", function (assert) {
-		assert.ok(oHeaderView.$().find(".sapUxAPObjectPageHeaderPlaceholder"), "placeholder rendered");
+		assert.ok(this.oHeaderView.$().find(".sapUxAPObjectPageHeaderPlaceholder"), "placeholder rendered");
 	});
 	QUnit.test("Updates when header invisible", function (assert) {
-		var oPage = oHeaderView.byId("ObjectPageLayout"),
-			oHeader = core.byId("UxAP-ObjectPageHeader--header");
+		var oPage = this.oHeaderView.byId("ObjectPageLayout"),
+			oHeader = Core.byId("UxAP-ObjectPageHeader--header");
 
 		oPage.setVisible(false);
 		oPage.setShowTitleInHeaderContent(true);
-		core.applyChanges();
+		Core.applyChanges();
 
 		try {
 			oHeader.setObjectSubtitle("Updated");
@@ -106,7 +112,7 @@ function ($, Core, ObjectPageLayout, ObjectPageHeader, ObjectPageHeaderActionBut
 	});
 
 	QUnit.test("titleSelectorTooltip aggregation validation", function (assert) {
-		var oHeader = core.byId("UxAP-ObjectPageHeader--header"),
+		var oHeader = Core.byId("UxAP-ObjectPageHeader--header"),
 			oLibraryResourceBundleOP = oHeader.oLibraryResourceBundleOP,
 			oTitleArrowIconAggr = oHeader.getAggregation("_titleArrowIcon"),
 			oTitleArrowIconContAggr = oHeader.getAggregation("_titleArrowIconCont");
@@ -116,14 +122,14 @@ function ($, Core, ObjectPageLayout, ObjectPageHeader, ObjectPageHeaderActionBut
 		assert.strictEqual(oTitleArrowIconContAggr.getTooltip(), "Custom Tooltip", "_titleArrowIconCont aggregation tooltip is initially set");
 
 		oHeader.setTitleSelectorTooltip("Test tooltip");
-		core.applyChanges();
+		Core.applyChanges();
 
 		assert.strictEqual(oHeader.getTitleSelectorTooltip(), "Test tooltip", "titleSelectorTooltip aggregation is updated with the new value");
 		assert.strictEqual(oTitleArrowIconAggr.getTooltip(), "Test tooltip", "_titleArrowIcon aggregation tooltip is updated with the new value");
 		assert.strictEqual(oTitleArrowIconContAggr.getTooltip(), "Test tooltip", "_titleArrowIconCont aggregation tooltip is updated with the new value");
 
 		oHeader.destroyTitleSelectorTooltip();
-		core.applyChanges();
+		Core.applyChanges();
 
 		assert.strictEqual(oHeader.getTitleSelectorTooltip(), null, "titleSelectorTooltip aggregation is destroyed");
 		assert.strictEqual(oTitleArrowIconAggr.getTooltip(), oLibraryResourceBundleOP.getText("OP_SELECT_ARROW_TOOLTIP"), "_titleArrowIcon aggregation tooltip is set to default");
@@ -131,21 +137,34 @@ function ($, Core, ObjectPageLayout, ObjectPageHeader, ObjectPageHeaderActionBut
 	});
 
 	QUnit.module("image rendering", {
-		beforeEach: function () {
-			this._oPage = oHeaderView.byId("ObjectPageLayout");
-			this._oHeader = core.byId("UxAP-ObjectPageHeader--header");
-		}, afterEach: function() {
+		beforeEach: function (assert) {
+			var done = assert.async();
+			XMLView.create({
+				id: "UxAP-ObjectPageHeader",
+				viewName: "view.UxAP-ObjectPageHeader"
+			}).then(function (oView) {
+				this.oHeaderView = oView;
+				this.oHeaderView.placeAt("qunit-fixture");
+				Core.applyChanges();
+				this._oPage = this.oHeaderView.byId("ObjectPageLayout");
+				this._oHeader = Core.byId("UxAP-ObjectPageHeader--header");
+				done();
+			}.bind(this));
+		},
+		afterEach: function () {
+			this.oHeaderView.destroy();
 			this._oPage = null;
 			this._oHeader = null;
 		}
 	});
+
 	QUnit.test("Image is in DOM if image URI", function (assert) {
 
-		assert.strictEqual(oHeaderView.$().find(".sapMImg.sapUxAPObjectPageHeaderObjectImage").length, 1, "image is in DOM");
+		assert.strictEqual(this.oHeaderView.$().find(".sapMImg.sapUxAPObjectPageHeaderObjectImage").length, 1, "image is in DOM");
 	});
 	QUnit.test("Placeholder is hidden if image URI", function (assert) {
 
-		assert.strictEqual(oHeaderView.$().find(".sapUxAPHidePlaceholder.sapUxAPObjectPageHeaderObjectImage").length, 1, "hidden placeholder is in DOM");
+		assert.strictEqual(this.oHeaderView.$().find(".sapUxAPHidePlaceholder.sapUxAPObjectPageHeaderObjectImage").length, 1, "hidden placeholder is in DOM");
 	});
 	QUnit.test("Two different images in DOM if showTitleInHeaderContent===true", function (assert) {
 		//act
@@ -153,10 +172,10 @@ function ($, Core, ObjectPageLayout, ObjectPageHeader, ObjectPageHeaderActionBut
 		this._oPage.setShowTitleInHeaderContent(true);
 		Core.applyChanges();
 
-		assert.strictEqual(oHeaderView.$().find(".sapMImg.sapUxAPObjectPageHeaderObjectImage").length, 2, "two images in DOM");
+		assert.strictEqual(this.oHeaderView.$().find(".sapMImg.sapUxAPObjectPageHeaderObjectImage").length, 2, "two images in DOM");
 
-		var img1 = oHeaderView.$().find(".sapMImg.sapUxAPObjectPageHeaderObjectImage")[0],
-			img2 = oHeaderView.$().find(".sapMImg.sapUxAPObjectPageHeaderObjectImage")[1];
+		var img1 = this.oHeaderView.$().find(".sapMImg.sapUxAPObjectPageHeaderObjectImage")[0],
+			img2 = this.oHeaderView.$().find(".sapMImg.sapUxAPObjectPageHeaderObjectImage")[1];
 
 		assert.notEqual(img1.id, img2.id, "two different images in DOM");
 	});
@@ -167,10 +186,10 @@ function ($, Core, ObjectPageLayout, ObjectPageHeader, ObjectPageHeaderActionBut
 		this._oPage.setShowTitleInHeaderContent(true);
 		Core.applyChanges();
 
-		assert.strictEqual(oHeaderView.$().find(".sapMImg.sapUxAPObjectPageHeaderObjectImage").length, 2, "two images in DOM");
+		assert.strictEqual(this.oHeaderView.$().find(".sapMImg.sapUxAPObjectPageHeaderObjectImage").length, 2, "two images in DOM");
 
-		var img1 = oHeaderView.$().find(".sapMImg.sapUxAPObjectPageHeaderObjectImage")[0],
-			img2 = oHeaderView.$().find(".sapMImg.sapUxAPObjectPageHeaderObjectImage")[1];
+		var img1 = this.oHeaderView.$().find(".sapMImg.sapUxAPObjectPageHeaderObjectImage")[0],
+			img2 = this.oHeaderView.$().find(".sapMImg.sapUxAPObjectPageHeaderObjectImage")[1];
 
 		assert.strictEqual($(img1).control()[0].getSrc(), sUpdatedSrc, "image1 is updated");
 		assert.strictEqual($(img2).control()[0].getSrc(), sUpdatedSrc, "image2 is updated");
@@ -182,17 +201,31 @@ function ($, Core, ObjectPageLayout, ObjectPageHeader, ObjectPageHeaderActionBut
 		this._oPage.setShowTitleInHeaderContent(true);
 		Core.applyChanges();
 
-		assert.strictEqual(oHeaderView.$().find(".sapUxAPObjectPageHeaderPlaceholder.sapUxAPObjectPageHeaderObjectImage .sapUiIcon").length, 2, "two placeholders in DOM");
+		assert.strictEqual(this.oHeaderView.$().find(".sapUxAPObjectPageHeaderPlaceholder.sapUxAPObjectPageHeaderObjectImage .sapUiIcon").length, 2, "two placeholders in DOM");
 
-		var oPlaceholder1 = oHeaderView.$().find(".sapUxAPObjectPageHeaderPlaceholder.sapUxAPObjectPageHeaderObjectImage .sapUiIcon")[0],
-			oPlaceholder2 = oHeaderView.$().find(".sapUxAPObjectPageHeaderPlaceholder.sapUxAPObjectPageHeaderObjectImage .sapUiIcon")[1];
+		var oPlaceholder1 = this.oHeaderView.$().find(".sapUxAPObjectPageHeaderPlaceholder.sapUxAPObjectPageHeaderObjectImage .sapUiIcon")[0],
+			oPlaceholder2 = this.oHeaderView.$().find(".sapUxAPObjectPageHeaderPlaceholder.sapUxAPObjectPageHeaderObjectImage .sapUiIcon")[1];
 
 		 assert.notEqual(oPlaceholder1.id, oPlaceholder2.id, "two different placeholders in DOM");
 	});
 
 	QUnit.module("Breadcrumbs API", {
-		beforeEach: function () {
-			this._oHeader = core.byId("UxAP-ObjectPageHeader--header");
+		beforeEach: function (assert) {
+			var done = assert.async();
+			XMLView.create({
+				id: "UxAP-ObjectPageHeader",
+				viewName: "view.UxAP-ObjectPageHeader"
+			}).then(function (oView) {
+				this.oHeaderView = oView;
+				this.oHeaderView.placeAt("qunit-fixture");
+				Core.applyChanges();
+				this._oHeader = Core.byId("UxAP-ObjectPageHeader--header");
+				done();
+			}.bind(this));
+		},
+		afterEach: function () {
+			this.oHeaderView.destroy();
+			this._oHeader = null;
 		}
 	});
 
@@ -276,33 +309,38 @@ function ($, Core, ObjectPageLayout, ObjectPageHeader, ObjectPageHeaderActionBut
 	});
 
 	QUnit.module("Private API", {
-		beforeEach: function() {
-			var sViewXML = '<core:View xmlns:core="sap.ui.core" xmlns="sap.uxap" xmlns:layout="sap.ui.layout" xmlns:m="sap.m" height="100%">' +
-							'<m:App>' +
-								'<ObjectPageLayout id="objectPageLayout" subSectionLayout="TitleOnLeft">' +
-									'<headerTitle>' +
-										'<ObjectPageHeader id = "applicationHeader" objectTitle="My Pastube">' +
-											'<actions>' +
-												'<m:CheckBox id="testCheckBox" text="Test"/>' +
-												'<ObjectPageHeaderActionButton id="installButton" text="Install" hideIcon="true" hideText="false" type="Emphasized"/>' +
-											'</actions>' +
-										'</ObjectPageHeader>' +
-									'</headerTitle>' +
-								'</ObjectPageLayout>' +
-							'</m:App>' +
-							'</core:View>';
-
-			this.myView = sap.ui.xmlview({ viewContent: sViewXML });
-			this.myView.placeAt("qunit-fixture");
-			Core.applyChanges();
+		beforeEach: function (assert) {
+			var done = assert.async(),
+				sViewXML = '<core:View xmlns:core="sap.ui.core" xmlns="sap.uxap" xmlns:layout="sap.ui.layout" xmlns:m="sap.m" height="100%">' +
+				'<m:App>' +
+					'<ObjectPageLayout id="objectPageLayout" subSectionLayout="TitleOnLeft">' +
+						'<headerTitle>' +
+							'<ObjectPageHeader id = "applicationHeader" objectTitle="My Pastube">' +
+								'<actions>' +
+									'<m:CheckBox id="testCheckBox" text="Test"/>' +
+									'<ObjectPageHeaderActionButton id="installButton" text="Install" hideIcon="true" hideText="false" type="Emphasized"/>' +
+								'</actions>' +
+							'</ObjectPageHeader>' +
+						'</headerTitle>' +
+					'</ObjectPageLayout>' +
+				'</m:App>' +
+				'</core:View>';
+			XMLView.create({
+				definition: sViewXML
+			}).then(function (oView) {
+				this.myView = oView;
+				this.myView.placeAt("qunit-fixture");
+				Core.applyChanges();
+				done();
+			}.bind(this));
 		},
-		afterEach: function() {
+		afterEach: function () {
 			this.myView.destroy();
 		}
 	});
 
 	QUnit.test("_adaptActions", function (assert) {
-		var oHeader = core.byId("UxAP-ObjectPageHeader--header"),
+		var oHeader = this.myView.byId("applicationHeader"),
 			$overflowButton = oHeader._oOverflowButton.$();
 
 		oHeader._adaptActions(100);
@@ -356,8 +394,22 @@ function ($, Core, ObjectPageLayout, ObjectPageHeader, ObjectPageHeaderActionBut
 	});
 
 	QUnit.module("Action buttons", {
-		beforeEach: function () {
-			this._oHeader = core.byId("UxAP-ObjectPageHeader--header");
+		beforeEach: function (assert) {
+			var done = assert.async();
+			XMLView.create({
+				id: "UxAP-ObjectPageHeader",
+				viewName: "view.UxAP-ObjectPageHeader"
+			}).then(function (oView) {
+				this.oHeaderView = oView;
+				this.oHeaderView.placeAt("qunit-fixture");
+				Core.applyChanges();
+				this._oHeader = Core.byId("UxAP-ObjectPageHeader--header");
+				done();
+			}.bind(this));
+		},
+		afterEach: function () {
+			this.oHeaderView.destroy();
+			this._oHeader = null;
 		}
 	});
 
@@ -406,16 +458,31 @@ function ($, Core, ObjectPageLayout, ObjectPageHeader, ObjectPageHeaderActionBut
 
 	});
 
-	QUnit.module("Resize");
+	QUnit.module("Resize", {
+		beforeEach: function (assert) {
+			var done = assert.async();
+			XMLView.create({
+				id: "UxAP-ObjectPageHeader",
+				viewName: "view.UxAP-ObjectPageHeader"
+			}).then(function (oView) {
+				this.oHeaderView = oView;
+				this.oHeaderView.placeAt("qunit-fixture");
+				Core.applyChanges();
+				done();
+			}.bind(this));
+		},
+		afterEach: function () {
+			this.oHeaderView.destroy();
+		}
+	});
 
 	QUnit.test("Resize listener is called after rerender while hidden", function (assert) {
-
-		var oHeader = oHeaderView.byId("header"),
+		var oHeader = this.oHeaderView.byId("header"),
 			oSpy = sinon.spy(oHeader, "_adaptLayoutForDomElement"),
 			done = assert.async();
 
 		// Setup: hide the container where the header is placed
-		oHeaderView.$().hide();
+		this.oHeaderView.$().hide();
 
 		var oDelegate = {
 			onAfterRendering: function() {
@@ -423,13 +490,13 @@ function ($, Core, ObjectPageLayout, ObjectPageHeader, ObjectPageHeaderActionBut
 
 				oSpy.reset();
 				// Act: show the view
-				oHeaderView.$().show();
+				this.oHeaderView.$().show();
 
 				setTimeout(function() {
 					assert.ok(oSpy.called, "the layout re-calculations are triggered");
 					done();
 				}, 300);
-			}
+			}.bind(this)
 		};
 
 		oHeader.addEventDelegate(oDelegate);
@@ -438,37 +505,50 @@ function ($, Core, ObjectPageLayout, ObjectPageHeader, ObjectPageHeaderActionBut
 	});
 
 	QUnit.module("Breadcrumbs rendering", {
-		beforeEach: function () {
-			this._oHeader = core.byId("UxAP-ObjectPageHeader--header");
-			this._oHeader.destroyBreadCrumbsLinks();
-			this._oHeader.destroyBreadcrumbs();
-			core.applyChanges();
+		beforeEach: function (assert) {
+			var done = assert.async();
+			XMLView.create({
+				id: "UxAP-ObjectPageHeader",
+				viewName: "view.UxAP-ObjectPageHeader"
+			}).then(function (oView) {
+				this.oHeaderView = oView;
+				this.oHeaderView.placeAt("qunit-fixture");
+				this._oHeader = Core.byId("UxAP-ObjectPageHeader--header");
+				this._oHeader.destroyBreadCrumbsLinks();
+				this._oHeader.destroyBreadcrumbs();
+				Core.applyChanges();
+				done();
+			}.bind(this));
+		},
+		afterEach: function () {
+			this.oHeaderView.destroy();
+			this._oHeader = null;
 		}
 	});
 
 	QUnit.test("There should be no BreadCrumbs rendered", function (assert) {
-		assert.strictEqual(oHeaderView.$().find(".sapMBreadcrumbs").length, 0, "There are No instances of sap.m.Breadcrumbs rendered in ObjectPageHeader");
+		assert.strictEqual(this.oHeaderView.$().find(".sapMBreadcrumbs").length, 0, "There are No instances of sap.m.Breadcrumbs rendered in ObjectPageHeader");
 	});
 
 	QUnit.test("After inserting a link in Legacy breadCrumnsLinks aggregation, the Legacy breadCrumbsLinks aggregation should be rendered", function (assert) {
 		this._oHeader.insertBreadCrumbLink(oFactory.getLink());
-		core.applyChanges();
-		assert.strictEqual(oHeaderView.$().find(".sapMBreadcrumbs").length, 1, "There is one instance of sap.m.Breadcrumbs rendered in ObjectPageHeader");
+		Core.applyChanges();
+		assert.strictEqual(this.oHeaderView.$().find(".sapMBreadcrumbs").length, 1, "There is one instance of sap.m.Breadcrumbs rendered in ObjectPageHeader");
 		assert.ok(this._oHeader.getBreadCrumbsLinks()[0].$().length > 0, "Legacy breadCrumbsLinks is rendered");
 	});
 
 	QUnit.test("After setting the New breadcrumbs aggregation, the New breadcrumbs aggregation should be rendered", function (assert) {
 		this._oHeader.setBreadcrumbs(new Breadcrumbs());
-		core.applyChanges();
-		assert.strictEqual(oHeaderView.$().find(".sapMBreadcrumbs").length, 1, "There is one instance of sap.m.Breadcrumbs rendered in ObjectPageHeader");
+		Core.applyChanges();
+		assert.strictEqual(this.oHeaderView.$().find(".sapMBreadcrumbs").length, 1, "There is one instance of sap.m.Breadcrumbs rendered in ObjectPageHeader");
 		assert.ok(this._oHeader.getBreadcrumbs().$().length > 0, "the New breadcrumbs aggregation is rendered");
 	});
 
 	QUnit.test("Having both New breadcrumbs and Legacy breadCrumbsLinks, the New breadcrumbs aggregation should be rendered", function (assert) {
 		this._oHeader.setBreadcrumbs(new Breadcrumbs());
 		this._oHeader.insertBreadCrumbLink(oFactory.getLink());
-		core.applyChanges();
-		assert.strictEqual(oHeaderView.$().find(".sapMBreadcrumbs").length, 1, "There is one instance of sap.m.Breadcrumbs rendered in ObjectPageHeader");
+		Core.applyChanges();
+		assert.strictEqual(this.oHeaderView.$().find(".sapMBreadcrumbs").length, 1, "There is one instance of sap.m.Breadcrumbs rendered in ObjectPageHeader");
 		assert.ok(this._oHeader.getBreadcrumbs().$().length > 0, "the New breadcrumbs aggregation is rendered");
 		assert.strictEqual(this._oHeader.getBreadCrumbsLinks()[0].$().length, 0, "Legacy breadCrumbsLinks is Not rendered");
 	});
@@ -476,19 +556,19 @@ function ($, Core, ObjectPageLayout, ObjectPageHeader, ObjectPageHeaderActionBut
 	QUnit.test("Having both New breadcrumbs and Legacy breadCrumbsLinks. After destroying the New breadcrumbs, Legacy breadCrumbsLinks should be rendered", function (assert) {
 		this._oHeader.setBreadcrumbs(new Breadcrumbs());
 		this._oHeader.insertBreadCrumbLink(oFactory.getLink());
-		core.applyChanges();
+		Core.applyChanges();
 		this._oHeader.destroyBreadcrumbs();
-		core.applyChanges();
-		assert.strictEqual(oHeaderView.$().find(".sapMBreadcrumbs").length, 1, "There is one instance of sap.m.Breadcrumbs rendered in ObjectPageHeader");
+		Core.applyChanges();
+		assert.strictEqual(this.oHeaderView.$().find(".sapMBreadcrumbs").length, 1, "There is one instance of sap.m.Breadcrumbs rendered in ObjectPageHeader");
 		assert.ok(this._oHeader.getBreadCrumbsLinks()[0].$().length > 0, "Legacy breadCrumbsLinks is rendered");
 	});
 
 	QUnit.test("Having the New breadcrumbs aggregation. After adding the Legacy breadCrumbsLinks, New  breadcrumbs should remain rendered", function (assert) {
 		this._oHeader.setBreadcrumbs(new Breadcrumbs());
-		core.applyChanges();
+		Core.applyChanges();
 		this._oHeader.insertBreadCrumbLink(oFactory.getLink());
-		core.applyChanges();
-		assert.strictEqual(oHeaderView.$().find(".sapMBreadcrumbs").length, 1, "There is one instance of sap.m.Breadcrumbs rendered in ObjectPageHeader");
+		Core.applyChanges();
+		assert.strictEqual(this.oHeaderView.$().find(".sapMBreadcrumbs").length, 1, "There is one instance of sap.m.Breadcrumbs rendered in ObjectPageHeader");
 		assert.ok(this._oHeader.getBreadcrumbs().$().length > 0, "the New breadcrumbs aggregation should be rendered");
 	});
 

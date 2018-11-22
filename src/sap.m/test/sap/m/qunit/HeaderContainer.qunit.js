@@ -246,7 +246,7 @@ sap.ui.define([
 		}
 	});
 
-	QUnit.test("Scrolling by item, using _getScrollValue, scroll 100", function (assert) {
+	QUnit.skip("Scrolling by item, using _getScrollValue, scroll 100", function (assert) {
 		assert.equal(this.oHeaderContainer._getScrollValue(true), this.oItem1.$().parent().outerWidth(true) + this.OFFSET);
 		assert.equal(this.oHeaderContainer._getScrollValue(false), 0);
 		var done = assert.async();

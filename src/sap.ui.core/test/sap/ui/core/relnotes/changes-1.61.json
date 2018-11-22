@@ -19,6 +19,60 @@
         "type": "FIX",
         "text": " Unit Type: Only parse and format valid values",
         "references": []
+      },
+      {
+        "id": "bef16433d491ac044626fd7cb0dc67a14a871b0e",
+        "type": "FEATURE",
+        "text": " PropertyBinding: Allow targetType \"raw\" and \"internal\"",
+        "references": []
+      },
+      {
+        "id": "f9b759118987bc73145abd82b5d09549c04843e0",
+        "type": "FIX",
+        "text": " CompositeBinding: Don\u0027t set undefined values on nested bindings",
+        "references": []
+      },
+      {
+        "id": "3cccd7109bb4ccc2f0cd5391fafbd8d801dbd3d0",
+        "type": "FIX",
+        "text": " CompositeBinding: Fixed typo when checking target type",
+        "references": []
+      },
+      {
+        "id": "a777f8e9ba8ca16c715e04b65b49a00549d6c0b2",
+        "type": "FIX",
+        "text": " Core: Default to async preload when ui5loader is async",
+        "references": []
+      },
+      {
+        "id": "58e7f5098c50e476712a72cb2aeaaaa93abde04d",
+        "type": "FIX",
+        "text": " core.routing/UIComponent: let router destroy dependency",
+        "references": []
+      },
+      {
+        "id": "dd63de234840865b16f621785c1ac8d40ecacf97",
+        "type": "FIX",
+        "text": " core/Control: corrected visibility of blocked property",
+        "references": []
+      },
+      {
+        "id": "c306f06f00aa32077b3acb4427a2d5d2502f732d",
+        "type": "FIX",
+        "text": " core/Control: fixed wrong jsdoc tag",
+        "references": []
+      },
+      {
+        "id": "a3abe51f184a6362db3ec8b88cc098dab2fbc3d1",
+        "type": "FIX",
+        "text": " routing.History: maintain the history state after hash replacement",
+        "references": []
+      },
+      {
+        "id": "fb63838d96165d666b14a7b953a8ebf8ab8e57e2",
+        "type": "FIX",
+        "text": " sap/ui/core/Manifest: finalize resolveUri API",
+        "references": []
       }
     ]
   }

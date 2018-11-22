@@ -504,7 +504,7 @@
 			}, createImportObject(baseData), baseData.heapBuffer);
 			theHyphenEngine.convert();
 
-			setTimeout(function() {
+			setTimeout(function () {
 				prepareLanguagesObj(lang, encloseHyphenateFunction(baseData, theHyphenEngine.hyphenate), decode(new Uint16Array(heapBuffer).subarray(384, 640)), baseData.leftmin, baseData.rightmin);
 			}, 0);
 		}

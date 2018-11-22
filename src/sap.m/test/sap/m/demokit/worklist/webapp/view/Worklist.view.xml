@@ -10,7 +10,7 @@
 		toggleHeaderOnTitleClick="false">
 
 		<semantic:titleHeading>
-			<Title text="{i18n>worklistTitle}" />
+			<Title text="{i18n>worklistTitle}"/>
 		</semantic:titleHeading>
 
 		<semantic:content>
@@ -28,7 +28,7 @@
 				busyIndicatorDelay="{worklistView>/tableBusyDelay}"
 				growing="true"
 				growingScrollToLoad="true"
-				updateFinished="onUpdateFinished">
+				updateFinished=".onUpdateFinished">
 
 				<headerToolbar>
 					<Toolbar>
@@ -37,7 +37,7 @@
 						<SearchField
 							id="searchField"
 							tooltip="{i18n>worklistSearchTooltip}"
-							search="onSearch"
+							search=".onSearch"
 							width="auto">
 						</SearchField>
 					</Toolbar>
@@ -55,7 +55,7 @@
 				<items>
 					<ColumnListItem
 						type="Navigation"
-						press="onPress">
+						press=".onPress">
 						<cells>
 							<ObjectIdentifier
 								title="{Name}"/>
@@ -72,7 +72,7 @@
 		</semantic:content>
 
 		<semantic:sendEmailAction>
-			<semantic:SendEmailAction id="shareEmail" press="onShareEmailPress"/>
+			<semantic:SendEmailAction id="shareEmail" press=".onShareEmailPress"/>
 		</semantic:sendEmailAction>
 
 

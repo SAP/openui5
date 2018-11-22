@@ -5,8 +5,8 @@
 		"type": "application",
 		"resources": "resources.json",
 		"i18n": "i18n/i18n.properties",
-		"title": "Browse Orders",
-		"description": "Demo app using the master-detail pattern, allowing to browse through a list of orders",
+		"title": "{{appTitle}}",
+		"description": "{{appDescription}}",
 		"applicationVersion": {
 			"version": "1.0.0"
 		},
@@ -19,10 +19,6 @@
 					"localUri": "localService/metadata.xml"
 				}
 			}
-		},
-		"sourceTemplate": {
-			"id": "sap.ui.ui5-template-plugin.2masterdetail",
-			"version": "1.38.3"
 		}
 	},
 	"sap.ui": {
@@ -49,20 +45,11 @@
 			"id": "app"
 		},
 		"dependencies": {
-			"minUI5Version": "1.38.0",
+			"minUI5Version": "1.60.0",
 			"libs": {
-				"sap.ui.core": {
-					"minVersion": "1.38.0"
-				},
-				"sap.m": {
-					"minVersion": "1.38.0"
-				},
-				"sap.ui.layout": {
-					"minVersion": "1.38.0"
-				},
-				"sap.f": {
-					"minVersion": "1.38.0"
-				}
+				"sap.ui.core": {},
+				"sap.m": {},
+				"sap.f": {}
 			}
 		},
 		"contentDensities": {
@@ -86,8 +73,8 @@
 				"routerClass": "sap.f.routing.Router",
 				"viewType": "XML",
 				"viewPath": "sap.ui.demo.orderbrowser.view",
-				"controlId": "app",
-				"controlAggregation": "midColumnPages",
+				"controlId": "layout",
+				"controlAggregation": "beginColumnPages",
 				"bypassed": {
 					"target": "notFound"
 				},
@@ -112,22 +99,22 @@
 				"master": {
 					"viewName": "Master",
 					"viewLevel": 1,
-					"viewId": "master",
-					"controlAggregation": "beginColumnPages"
+					"viewId": "master"
 				},
 				"object": {
 					"viewName": "Detail",
 					"viewId": "detail",
-					"viewLevel": 2
+					"viewLevel": 1,
+					"controlAggregation": "midColumnPages"
 				},
 				"detailObjectNotFound": {
 					"viewName": "DetailObjectNotFound",
-					"viewId": "detailObjectNotFound"
+					"viewId": "detailObjectNotFound",
+					"controlAggregation": "midColumnPages"
 				},
 				"notFound": {
 					"viewName": "NotFound",
-					"viewId": "notFound",
-					"controlAggregation": "beginColumnPages"
+					"viewId": "notFound"
 				},
 				"shipping": {
 					"viewName": "Shipping",

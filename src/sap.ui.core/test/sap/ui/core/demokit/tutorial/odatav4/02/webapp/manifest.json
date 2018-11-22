@@ -9,7 +9,6 @@
 		},
 		"title": "{{appTitle}}",
 		"description": "{{appDescription}}",
-		"ach": "ach",
 		"dataSources": {
 			"default": {
 				"uri": "https://services.odata.org/TripPinRESTierService/(S(id))/",
@@ -33,7 +32,6 @@
 			"viewName": "sap.ui.core.tutorial.odatav4.view.App",
 			"type": "XML",
 			"async": true,
-			"displayBlock": true,
 			"id": "appView"
 		},
 		"dependencies": {
@@ -65,9 +63,5 @@
 				}
 			}
 		}
-	},
-	"sap.platform.hcp": {
-		"uri": "webapp",
-		"_version": "1.1.0"
 	}
 }

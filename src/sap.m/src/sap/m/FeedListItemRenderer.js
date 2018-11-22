@@ -80,7 +80,7 @@ sap.ui.define(["./ListItemBaseRenderer", "sap/ui/core/Renderer", "sap/ui/Device"
 
 			oRm.write('</div>');
 			oRm.write('<div class="sapMFeedListItemText sapUiSelectable">');
-			oRm.write('<span id="' + sMyId + '-realtext" class="sapMFeedListItemText sapUiSelectable">');
+			this._writeText(oRm, oControl, sMyId, bIsPhone);
 			if (oControl._checkTextIsExpandable()) {
 				this._writeCollapsedText(oRm, oControl, sMyId);
 			} else {
@@ -110,7 +110,7 @@ sap.ui.define(["./ListItemBaseRenderer", "sap/ui/core/Renderer", "sap/ui/Device"
 				oRm.renderControl(oControl._getLinkSender(true));
 				oRm.write('</span>');
 			}
-			oRm.write('<span id="' + sMyId + '-realtext" class="sapMFeedListItemTextString sapUiSelectable">');
+			this._writeText(oRm, oControl, sMyId, bIsPhone);
 			if (oControl._checkTextIsExpandable()) {
 				this._writeCollapsedText(oRm, oControl, sMyId);
 			} else {
@@ -185,15 +185,41 @@ sap.ui.define(["./ListItemBaseRenderer", "sap/ui/core/Renderer", "sap/ui/Device"
 	};
 
 	FeedListItemRenderer._writeTimestamp = function(oRm, oControl, sId) {
-		oRm.write('<span id="' + sId + '-timestamp" class="sapMFeedListItemTimestampText sapUiSelectable">');
+		oRm.write('<span id="' + sId + '-timestamp"');
+		oRm.addClass('sapMFeedListItemTimestampText');
+		oRm.addClass('sapUiSelectable');
+		if (oControl.getUnread()) {
+			oRm.addClass('sapMFeedListItem-Unread');
+		}
+		oRm.writeClasses();
+		oRm.write(">");
 		oRm.writeEscaped(oControl.getTimestamp());
 		oRm.write('</span>');
 	};
 
 	FeedListItemRenderer._writeInfo = function(oRm, oControl, sId) {
-		oRm.write('<span id="' + sId + '-info" class="sapMFeedListItemInfoText sapUiSelectable">');
+		oRm.write('<span id="' + sId + '-info"');
+		oRm.addClass('sapMFeedListItemInfoText');
+		oRm.addClass('sapUiSelectable');
+		if (oControl.getUnread()) {
+			oRm.addClass('sapMFeedListItem-Unread');
+		}
+		oRm.writeClasses();
+		oRm.write(">");
 		oRm.writeEscaped(oControl.getInfo());
 		oRm.write('</span>');
+	};
+
+	FeedListItemRenderer._writeText = function(oRm, oControl, sId, bIsPhone) {
+		oRm.write('<span id="' + sId + '-realtext"');
+		bIsPhone ? oRm.addClass('sapMFeedListItemText') : oRm.addClass('sapMFeedListItemTextString');
+		oRm.addClass('sapMFeedListItemText');
+		oRm.addClass('sapUiSelectable');
+		if (oControl.getUnread()) {
+			oRm.addClass('sapMFeedListItem-Unread');
+		}
+		oRm.writeClasses();
+		oRm.write(">");
 	};
 
 	return FeedListItemRenderer;

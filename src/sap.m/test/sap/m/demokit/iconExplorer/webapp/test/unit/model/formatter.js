@@ -1,31 +1,28 @@
 /*global QUnit,sinon*/
 
 sap.ui.define([
-	"sap/ui/demo/iconexplorer/model/formatter",
-	"sap/ui/thirdparty/jquery",
-	"sap/ui/thirdparty/sinon",
-	"sap/ui/thirdparty/sinon-qunit"
-], function (formatter, jQuery) {
+	"sap/ui/demo/iconexplorer/model/formatter"
+], function (formatter) {
 	"use strict";
 
 	QUnit.module("Preview Panel Height");
 
 	QUnit.test("Should return 6rem when compact mode is set on body", function (assert) {
 		// Arrange
-		jQuery("body").addClass("sapUiSizeCompact");
+		document.body.classList.add("sapUiSizeCompact");
 		// Assert
 		assert.strictEqual(formatter.previewPanelHeight("foo"), "6.0625rem");
 		// Cleanup
-		jQuery("body").removeClass("sapUiSizeCompact");
+		document.body.classList.remove("sapUiSizeCompact");
 	});
 
 	QUnit.test("Should return 6rem when compact mode is set on any child of the body", function (assert) {
 		// Arrange
-		jQuery("#qunit-fixture").addClass("sapUiSizeCompact");
+		document.getElementById("qunit-fixture").classList.add("sapUiSizeCompact");
 		// Assert
 		assert.strictEqual(formatter.previewPanelHeight("foo"), "6.0625rem");
 		// Cleanup
-		jQuery("#qunit-fixture").removeClass("sapUiSizeCompact");
+		document.getElementById("qunit-fixture").classList.remove("sapUiSizeCompact");
 	});
 
 	QUnit.test("Should return 8rem in cozy mode", function (assert) {

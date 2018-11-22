@@ -1,11 +1,12 @@
 /*global QUnit */
-/*eslint no-undef:1, no-unused-vars:1, strict: 1, no-nested-ternary: 1 */
+
 sap.ui.define([
-	"jquery.sap.global",
 	"sap/ui/layout/HorizontalLayout",
 	"sap/ui/commons/Button",
-	"sap/ui/commons/TextField"
-], function(jQuery, HorizontalLayout, Button, TextField) {
+	"sap/ui/commons/TextField",
+	"sap/ui/commons/Label",
+	"sap/ui/Device"
+], function(HorizontalLayout, Button, TextField, Label, Device) {
 	"use strict";
 
 	var DOM_RENDER_LOCATION = "qunit-fixture";
@@ -61,14 +62,19 @@ sap.ui.define([
 		// System under Test + Act
 		var oContainer = new HorizontalLayout({
 				content: [
-					new sap.ui.commons.Label({text: "foo"}),
-					new sap.ui.commons.Label({text: "bar"})
+					new Label({text: "foo"}),
+					new Label({text: "bar"})
 				]
 			}),
-			sResponsiveSize = (sap.ui.Device.resize.width <= 599 ? "0px" : (sap.ui.Device.resize.width <= 1023 ? "16px" : "16px 32px")),
-			aResponsiveSize = sResponsiveSize.split(" "),
-			$container,
+			sResponsiveSize = "0px",
+			aResponsiveSize,
 			$containerContent;
+
+		if (Device.resize.width > 599) {
+			sResponsiveSize = Device.resize.width <= 1023 ? "16px" : "16px 32px";
+		}
+
+		aResponsiveSize = sResponsiveSize.split(" ");
 
 		// Act
 		oContainer.placeAt(DOM_RENDER_LOCATION);
@@ -103,7 +109,7 @@ sap.ui.define([
 		assert.strictEqual($containerContent.css("padding-right"), (aResponsiveSize[1] ? aResponsiveSize[1] : aResponsiveSize[0]) , "The container has " + sResponsiveSize + " right content padding when class \"sapUiResponsiveContentPadding\" is set (tested value depends on window size)");
 		assert.strictEqual($containerContent.css("padding-top"), aResponsiveSize[0], "The container has " + sResponsiveSize + " top content padding when class \"sapUiResponsiveContentPadding\" is set (tested value depends on window size)");
 		assert.strictEqual($containerContent.css("padding-bottom"), aResponsiveSize[0], "The container has " + sResponsiveSize + " bottom content padding when class \"sapUiResponsiveContentPadding\" is set (tested value depends on window size)");
-		assert.strictEqual($containerContent.children().css("padding-right"), (sap.ui.Device.resize.width <= 599 ? "0px" : "16px"), "The container children have " + (sap.ui.Device.resize.width <= 599 ? "0px" : "16px") + " right content padding when class \"sapUiResponsiveContentPadding\" is set");
+		assert.strictEqual($containerContent.children().css("padding-right"), (Device.resize.width <= 599 ? "0px" : "16px"), "The container children have " + (Device.resize.width <= 599 ? "0px" : "16px") + " right content padding when class \"sapUiResponsiveContentPadding\" is set");
 		assert.strictEqual($containerContent.children().last().css("padding-right"), "0px", "The last container child has no right content padding when class \"sapUiResponsiveContentPadding\" is set");
 
 		// Cleanup

@@ -1,23 +1,83 @@
-/*global QUnit,sinon*/
+/*global QUnit */
 
 sap.ui.define([
 	"sap/base/Log",
-	"sap/ui/thirdparty/jquery",
-	"jquery.sap.global",
 	"sap/ui/core/Component",
 	"sap/ui/core/ComponentContainer",
 	"sap/ui/core/util/LibraryInfo",
 	"sap/ui/model/odata/ODataModel",
 	"sap/m/App",
 	"sap/m/Page",
+	"sap/ui/thirdparty/jquery",
+	"sap/ui/thirdparty/URI",
 	"sap/ui/thirdparty/sinon",
-	"sap/ui/thirdparty/sinon-qunit",
-	"jquery.sap.sjax" // only used indirectly via jQuery.sap.syncHead
-], function(Log, jQuery, jQuery_, Component, ComponentContainer, LibraryInfo, ODataModel, App, Page) {
+	"sap/ui/thirdparty/sinon-qunit"
+], function(Log, Component, ComponentContainer, LibraryInfo, ODataModel, App, Page, jQuery, URI) {
 
 	"use strict";
 
 	var oLog = Log.getLogger("SampleTester");
+
+	function wait(iDelay) {
+		return new Promise(function(resolve) {
+			setTimeout(function() {
+				resolve();
+			}, iDelay);
+		});
+	}
+
+	function fetchHEAD(url) {
+		return Promise.resolve(
+			jQuery.ajax({
+				url: url,
+				type: 'HEAD'
+			})
+		).then(function() {
+			return true;
+		}, function() {
+			return false;
+		});
+	}
+
+	/* converts a global name to a resource (module) name */
+	function toResourceName(name) {
+		return name.replace(/\./g, "/");
+	}
+
+	function isLocaleSpecificResource(sResource) {
+		// check for a locale-like name suffix and the extension .properties
+		return /_[a-zA-Z]{2}(?:_[^/]+)?\.properties$/.test(sResource);
+	}
+
+	function RequestCollector(sandbox, baseUrl) {
+		var oRequireLoadSpy = sandbox.spy(sap.ui.require, "load");
+		var oAsyncRequestSpy = sandbox.spy(jQuery, "ajax");
+
+		this.resources = function() {
+			var aResources = [].concat(
+					oAsyncRequestSpy.getCalls().map(function(oCall) {
+						return typeof oCall.args[0] === "string" ? oCall.args[0] : oCall.args[0].url;
+					}),
+					oRequireLoadSpy.getCalls().map(function(oCall) {
+						return oCall.args[1];
+					})
+				);
+
+			var aSampleRequests = [];
+			aResources.forEach(function(sResourceUrl) {
+				sResourceUrl = new URI(sResourceUrl, document.baseURI).search("").hash("").toString();
+				// only add requests from within the sample and no duplicates
+				if ( sResourceUrl.startsWith(baseUrl) ) {
+					sResourceUrl = sResourceUrl.slice(baseUrl.length);
+					if ( aSampleRequests.indexOf(sResourceUrl) < 0 && sResourceUrl !== "Component.js" ) {
+						aSampleRequests.push(sResourceUrl);
+					}
+				}
+			});
+
+			return aSampleRequests;
+		};
+	}
 
 	var SampleTester = function(sLibraryName, aExcludes) {
 		this._sLibraryName = sLibraryName;
@@ -65,6 +125,10 @@ sap.ui.define([
 		oLog.info("starting to define tests for the samples of '" + this._sLibraryName + "'");
 
 		QUnit.module(this._sLibraryName, {
+			beforeEach: function() {
+				// clear metadata cache
+				ODataModel.mServiceData = {};
+			},
 			afterEach : function(assert) {
 				if (window.Flexie) {
 					oLog.info("destroy flexie instances");
@@ -82,112 +146,96 @@ sap.ui.define([
 
 		function makeTest(sampleConfig) {
 
-			QUnit.test(sampleConfig.name + " (" + shorten(sampleConfig.id) + ")", function(assert) {
-
-				// clear metadata cache
-				ODataModel.mServiceData = {};
+			QUnit.test("Launch " + sampleConfig.name + " (" + shorten(sampleConfig.id) + ")", function(assert) {
 
 				// display the sample name
 				oPage.setTitle(sampleConfig.name);
 
-				var oComponent = sap.ui.component({
-					name: sampleConfig.id
-				});
-
-				// spy on all resources loaded by the sample
-				var oAsyncRequestSpy = sinon.spy(jQuery, "ajax");
-				var oSyncRequestSpy = sinon.spy(jQuery.sap, "sjax");
-				var aSampleRequests = [];
-
-				// load and create content
-				oPage.addContent(
-					new ComponentContainer({
-						component: oComponent
-					})
-				);
-
-				// wait for the rendering
+				var sComponentBaseUrl = new URI(sap.ui.require.toUrl(toResourceName(sampleConfig.id)) + "/", document.baseURI).toString();
+				var oCollector = new RequestCollector(this, sComponentBaseUrl);
 				var done = assert.async();
-				setTimeout(function() {
-					// evaluate all sync and async calls triggered by this component
-					var sSampleUrl = jQuery.sap.getModulePath(sampleConfig.id) + "/";
-					oAsyncRequestSpy.getCalls().concat(oSyncRequestSpy.getCalls()).forEach(function (oCall) {
-						var sResourceUrl = (typeof oCall.args[0] === "string" ? oCall.args[0] : oCall.args[0].url),
-							iIndex = sResourceUrl.indexOf(sSampleUrl);
 
-						// only add requests from within the sample and no duplicates
-						if (iIndex >= 0 && aSampleRequests.indexOf(sResourceUrl) < 0) {
-							aSampleRequests.push(sResourceUrl);
-						}
+				Component.create({
+					name: sampleConfig.id,
+					manifest: false
+				}).then(function(oComponent) {
+
+					// load and create content
+					oPage.addContent(
+						new ComponentContainer({
+							component: oComponent
+						})
+					);
+
+					// wait for the rendering
+					return wait(iTimeout).then(function() {
+						return oComponent;
 					});
-					oAsyncRequestSpy.restore();
-					oSyncRequestSpy.restore();
 
-					// check if all files loaded by the sample are listed in the sample's component
+				}).then(function(oComponent) {
+
 					var oConfig = oComponent.getMetadata().getConfig();
-					aSampleRequests.forEach(function (sResourceUrl) {
-						// chop of ./ in the beginning
-						sResourceUrl = (sResourceUrl.indexOf("./") === 0 ? sResourceUrl.substr(2) : sResourceUrl);
+					var aListedResources = oConfig && oConfig.sample && Array.isArray(oConfig.sample.files) ? oConfig.sample.files : [];
+					var aRequestedResources = oCollector.resources();
 
-						// ignore local-specific i18n file names (like i18n_en_US.properties and i18n_en.properties)
-						if (sResourceUrl.split("/").pop().indexOf("i18n_") === 0) {
-							return;
-						}
-
-						// cross-check found files against the sample config
-						var bFound = oConfig.sample.files.some(function (sFile) {
-							var sFileUrl = jQuery.sap.getModulePath(sampleConfig.id, '/' + sFile);
-
-							return sFileUrl === sResourceUrl;
-						});
-
-						// check if file is not existing
-						if (!bFound) {
-							jQuery.ajax({
-								url: sResourceUrl,
-								async: false,
-								type: 'HEAD',
-								error: function() {
-									// file does not exist, ignore it
-									bFound = true;
-								}
+					// check whether all files listed in the sample's component really exist
+					var pListed = Promise.all(
+						aListedResources.map(function(sResource) {
+							return fetchHEAD(sComponentBaseUrl + sResource).then(function(exists) {
+								assert.ok(exists, "listed resource '" + sResource + "' should be downloadable");
 							});
-						}
+						})
+					);
 
-						// extract the local filename
-						var iIndex = sResourceUrl.indexOf(sSampleUrl),
-							sLocalResource = sResourceUrl.substr(iIndex + sSampleUrl.length);
+					// check further constraints
+					//assert.ok(aListedResources.indexOf("Component.js") < 0, "'Component.js' should not be listed as resource, it is added automatically");
+					assert.ok(aListedResources.indexOf("index.html") < 0, "'index.html' should not be listed as resource, it is added automatically");
 
-						assert.ok(bFound, "file used in sample '" + sLocalResource + "' should be listed in sample component");
-					});
+					// check whether all files loaded by the sample are listed in the sample's component
+					var pRequested = Promise.all(
+						aRequestedResources.map(function(sResource) {
 
-					done();
-				}, iTimeout);
+							// ignore locale-specific i18n file names (like i18n_en_US.properties and i18n_en.properties)
+							if ( isLocaleSpecificResource(sResource) ) {
+								return;
+							}
 
-				// check if all files listed in the sample's component exist
-				var oConfig = oComponent.getMetadata().getConfig();
-				if ( oConfig && oConfig.sample && oConfig.sample.files ) {
-					for (var i = 0; i < oConfig.sample.files.length; i++) {
-						var sFile = oConfig.sample.files[i],
-							sUrl = jQuery.sap.getModulePath(sampleConfig.id, '/' + sFile);
+							var p;
+							// cross-check requested resources against the listed resources
+							if ( aListedResources.indexOf(sResource) >= 0 ) {
+								p = Promise.resolve(false);
+							} else {
+								p = fetchHEAD(sComponentBaseUrl + sResource);
+							}
 
-						assert.ok(jQuery.sap.syncHead(sUrl), "listed sample component file '" + sFile + "' should be downloadable");
-					}
-				}
+							// check if resource exists, but is not listed
+							return p.then(function(existsButNotListed) {
+								assert.ok(!existsButNotListed, "requested resource '" + sResource + "' should be listed");
+							});
+						})
+					);
+
+					return Promise.all([pListed, pRequested]);
+
+				}).finally(done);  // do not rely on QUnit's promise handling to be able to run with QUnit 1
 			});
 
 		}
 
 		// register sample resources
+		var oPaths = {};
 		if (Array.isArray(oExploredIndex.samplesRef)) {
 			// register an array of namespaces
 			oExploredIndex.samplesRef.forEach(function (oItem) {
-				jQuery.sap.registerModulePath(oItem.namespace, "" + oItem.ref);
+				oPaths[toResourceName(oItem.namespace)] = String(oItem.ref);
 			});
 		} else if (oExploredIndex && oExploredIndex.samplesRef) {
 			// register a single namespace
-			jQuery.sap.registerModulePath(oExploredIndex.samplesRef.namespace, "" + oExploredIndex.samplesRef.ref);
+			oPaths[toResourceName(oExploredIndex.samplesRef.namespace)] = String(oExploredIndex.samplesRef.ref);
 		}
+		sap.ui.loader.config({
+			paths: oPaths
+		});
 
 		// add step based samples (tutorials and others, comment this out if the run-time is getting too long)
 		oExploredIndex.entities.forEach(function (oEnt) {
@@ -242,7 +290,7 @@ sap.ui.define([
 		QUnit.done(function() {
 			var oUIArea = oApp.getUIArea();
 			if (oUIArea) {
-				jQuery.sap.byId(oUIArea.getId()).hide();
+				jQuery(oUIArea.getRootNode()).hide();
 			}
 		});
 

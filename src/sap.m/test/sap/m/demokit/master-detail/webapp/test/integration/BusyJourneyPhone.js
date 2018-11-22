@@ -11,27 +11,18 @@ sap.ui.define([
 
 	opaTest("Should see a global busy indication while loading the metadata", function (Given, When, Then) {
 		// Arrangements
-		Given.iStartTheAppWithDelay("", 5000);
+		Given.iStartMyApp({delay :1000});
 
 		// Assertions
 		Then.onTheAppPage.iShouldSeeTheBusyIndicator();
-
-		//Cleanup
-		Then.iTeardownMyAppFrame();
 	});
 
 	opaTest("Should see a busy indication on the master after loading the metadata", function (Given, When, Then) {
-		// Arrangements
-		Given.iStartTheAppWithDelay("", 2000);
-
-		//Actions
-		When.onTheAppPage.iWaitUntilTheBusyIndicatorIsGone();
-
 		// Assertions
 		Then.onTheMasterPage.iShouldSeeTheBusyIndicator();
 
 		//Cleanup
-		Then.iTeardownMyAppFrame();
+		Then.iTeardownMyApp();
 	});
 
 });

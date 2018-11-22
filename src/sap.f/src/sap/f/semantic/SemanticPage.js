@@ -394,7 +394,7 @@ sap.ui.define([
 				/**
 				* The <code>footerCustomActions</code> are placed in the <code>FooterRight</code> area of the
 				* <code>SemanticPage</code> footer, right after the semantic footer actions.
-        *
+				*
 				* <b>Note:</b> Buttons that are part of this aggregation will always have their <code>type</code>
 				* property set to <code>Transparent</code> by design.
 				*/
@@ -437,10 +437,20 @@ sap.ui.define([
 				customShareActions: {type: "sap.m.Button", multiple: true},
 
 				/**
+				 * Accessible landmark settings to be applied to the containers of the <code>sap.f.SemanticPage</code> control.
+				 *
+				 * If not set, no landmarks will be written.
+				 *
+				 * @since 1.61
+				 */
+				landmarkInfo : {type : "sap.f.DynamicPageAccessibleLandmarkInfo", multiple : false, forwarding: {getter: "_getPage", aggregation: "landmarkInfo"}},
+
+				/**
 				* The aggregation holds <code>DynamicPage</code>, used internally.
 				*/
 				_dynamicPage: {type: "sap.f.DynamicPage", multiple: false, visibility: "hidden"}
 			},
+			dnd: { draggable: false, droppable: true },
 			designtime : "sap/f/designtime/SemanticPage.designtime"
 		}
 	});

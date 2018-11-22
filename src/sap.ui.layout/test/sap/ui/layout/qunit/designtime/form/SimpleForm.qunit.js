@@ -1,4 +1,4 @@
-sap.ui.require([
+sap.ui.define([
 	"sap/ui/dt/test/report/QUnit",
 	"sap/ui/dt/test/ElementEnablementTest",
 	"sap/ui/rta/test/controlEnablingCheck",

@@ -20,6 +20,7 @@ sap.ui.define([
 	"sap/m/SelectDialog",
 	"sap/m/Dialog",
 	"sap/m/Table",
+	"sap/ui/core/mvc/XMLView",
 	"sap/ui/core/Core"
 ], function(
 	qutils,
@@ -41,6 +42,7 @@ sap.ui.define([
 	SelectDialog,
 	Dialog,
 	Table,
+	XMLView,
 	Core
 ) {
 	createAndAppendDiv("content");
@@ -248,7 +250,18 @@ sap.ui.define([
 		"        </sections>" +
 		"    </ObjectPageLayout>" +
 		"    </m:App>" +
-		"</core:View>";
+		"</core:View>",
+
+
+		sEmptyView =
+			"<core:View" +
+			"        xmlns=\"sap.uxap\"" +
+			"        xmlns:core=\"sap.ui.core\"" +
+			"        xmlns:layout=\"sap.ui.layout\"" +
+			"        xmlns:m=\"sap.m\"" +
+			"        xmlns:f=\"sap.ui.layout.form\"" +
+			"        height=\"100%\">" +
+			"</core:View>";
 
 
 
@@ -798,6 +811,45 @@ sap.ui.define([
 		oRootPage.destroy();
 	});
 
+	QUnit.test("Header is adapted if the content of the root view is added at a later time", function(assert) {
+
+		var done = assert.async();
+		XMLView.create(
+			{definition: sEmptyView}).then(function(oRootView) {
+				oRootView.placeAt("content");
+				Core.applyChanges();
+
+				var oAdaptOptions = {bMoveTitle: true, bHideBackButton: true, bCollapseHeader: true},
+					oTitleInfo,
+					oBackButton,
+					sViewId,
+					fnViewListener = function(oEvent) {
+						oBackButton = oEvent.getParameter("oBackButton");
+						oTitleInfo = oEvent.getParameter("oTitleInfo");
+						sViewId = oEvent.getParameter("sViewId");
+					},
+					oSpy = sinon.spy(fnViewListener);
+
+				Fiori20Adapter.attachViewChange(oSpy);
+				Fiori20Adapter.traverse(oRootView, oAdaptOptions);
+
+				oRootView.addContent(new App({
+					pages: [new Page({
+						title: "Test"
+					})]
+				}));
+
+				// Assert
+				assert.ok(oTitleInfo.text, "Test", "title is adapted");
+
+				// cleanup
+				Fiori20Adapter.detachViewChange(oSpy);
+
+				oRootView.destroy();
+				done();
+		});
+	});
+
 
 	QUnit.module("Fiori2 adaptation of navigable views", {
 		beforeEach: function () {
@@ -884,8 +936,6 @@ sap.ui.define([
 	QUnit.module("Fiori2 adaptation of navContainer first page", {
 		beforeEach: function () {
 			this.oNavContainer = new NavContainer("myNc");
-			this.oNavContainer.placeAt("content");
-			Core.applyChanges();
 		},
 		afterEach: function () {
 			this.oNavContainer.destroy();
@@ -905,6 +955,8 @@ sap.ui.define([
 				},
 				oSpy = sinon.spy(fnViewListener);
 		//setup
+		this.oNavContainer.placeAt("content");
+		Core.applyChanges();
 		Fiori20Adapter.attachViewChange(oSpy);
 
 		//act
@@ -915,6 +967,80 @@ sap.ui.define([
 
 		//act
 		this.oNavContainer.addPage(new Page("page1", {title: "Test", showNavButton: true}));
+
+		// Assert
+		assert.ok(this.oNavContainer.getPages()[0].hasStyleClass("sapF2CollapsedHeader"), "page header is collapsed");
+		assert.ok(oSpy.calledOnce, "view change called once");
+		assert.equal(sViewId, "page1", "viewId is identified");
+		assert.equal(sPageTitle, "Test", "page title is identified");
+		assert.equal(oBackButton.getId(), "page1-navButton", "back button is identified");
+		assert.ok(oBackButton.hasStyleClass("sapF2AdaptedNavigation"), "back button is adapted");
+
+		//cleanup
+		Fiori20Adapter.detachViewChange(oSpy);
+	});
+
+	QUnit.test("First added page of navContainer is adapted before container was rendered", function(assert) {
+		var oAdaptOptions = {bMoveTitle: true, bHideBackButton: true, bCollapseHeader: true},
+			sPageTitle,
+			oBackButton,
+			sViewId,
+			fnViewListener = function(oEvent) {
+				oBackButton = oEvent.getParameter("oBackButton");
+				var oTitleInfo = oEvent.getParameter("oTitleInfo");
+				sPageTitle = oTitleInfo.text;
+				sViewId = oEvent.getParameter("sViewId");
+			},
+			oSpy = sinon.spy(fnViewListener);
+
+		//setup: only attach listener and DO NOT PLACE IN DOM YET
+		Fiori20Adapter.attachViewChange(oSpy);
+
+		//act
+		Fiori20Adapter.traverse(this.oNavContainer, oAdaptOptions);
+
+		//check
+		assert.equal(oSpy.callCount, 0, "view change not called when no view in navContainer");
+
+		//act
+		this.oNavContainer.addPage(new Page("page1", {title: "Test", showNavButton: true}));
+
+		// Assert
+		assert.ok(this.oNavContainer.getPages()[0].hasStyleClass("sapF2CollapsedHeader"), "page header is collapsed");
+		assert.ok(oSpy.calledOnce, "view change called once");
+		assert.equal(sViewId, "page1", "viewId is identified");
+		assert.equal(sPageTitle, "Test", "page title is identified");
+		assert.equal(oBackButton.getId(), "page1-navButton", "back button is identified");
+		assert.ok(oBackButton.hasStyleClass("sapF2AdaptedNavigation"), "back button is adapted");
+
+		//cleanup
+		Fiori20Adapter.detachViewChange(oSpy);
+	});
+
+	QUnit.test("First inserted page of navContainer is adapted before container was rendered", function(assert) {
+		var oAdaptOptions = {bMoveTitle: true, bHideBackButton: true, bCollapseHeader: true},
+			sPageTitle,
+			oBackButton,
+			sViewId,
+			fnViewListener = function(oEvent) {
+				oBackButton = oEvent.getParameter("oBackButton");
+				var oTitleInfo = oEvent.getParameter("oTitleInfo");
+				sPageTitle = oTitleInfo.text;
+				sViewId = oEvent.getParameter("sViewId");
+			},
+			oSpy = sinon.spy(fnViewListener);
+
+		//setup: only attach listener and DO NOT PLACE IN DOM YET
+		Fiori20Adapter.attachViewChange(oSpy);
+
+		//act
+		Fiori20Adapter.traverse(this.oNavContainer, oAdaptOptions);
+
+		//check
+		assert.equal(oSpy.callCount, 0, "view change not called when no view in navContainer");
+
+		//act
+		this.oNavContainer.insertPage(new Page("page1", {title: "Test", showNavButton: true}), 0);
 
 		// Assert
 		assert.ok(this.oNavContainer.getPages()[0].hasStyleClass("sapF2CollapsedHeader"), "page header is collapsed");
@@ -1670,10 +1796,17 @@ sap.ui.define([
 
 
 	QUnit.module("Fiori2 adaptation of ObjectPage header", {
-		beforeEach: function () {
-			this.oPage = sap.ui.xmlview("oplView", {viewContent:sObjectPageView});
-			this.oPage.placeAt("content");
-			Core.applyChanges();
+		beforeEach: function (assert) {
+			var done = assert.async();
+			XMLView.create({
+				id: "oplView",
+				definition: sObjectPageView
+			}).then(function (oView) {
+				this.oPage = oView;
+				this.oPage.placeAt("content");
+				Core.applyChanges();
+				done();
+			}.bind(this));
 		},
 		afterEach: function () {
 			this.oPage.destroy();

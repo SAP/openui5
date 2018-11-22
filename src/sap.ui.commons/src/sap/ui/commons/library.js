@@ -1262,8 +1262,8 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/DataType',
 	// implement Form helper factory with common controls
 	if (!sap.ui.layout.form.FormHelper || !sap.ui.layout.form.FormHelper.bFinal) {
 		sap.ui.layout.form.FormHelper = {
-			createLabel: function(sText){
-				return new sap.ui.commons.Label({text: sText});
+			createLabel: function(sText, sId){
+				return new sap.ui.commons.Label(sId, {text: sText});
 			},
 			createButton: function(sId, fPressFunction, fnCallback){
 				var that = this;

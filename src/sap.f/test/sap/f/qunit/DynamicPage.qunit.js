@@ -12,7 +12,9 @@ sap.ui.define([
 	"sap/m/Breadcrumbs",
 	"sap/m/Link",
 	"sap/m/Panel",
-	"sap/m/Button"
+	"sap/m/Button",
+	"sap/f/DynamicPageAccessibleLandmarkInfo",
+	"sap/ui/core/mvc/XMLView"
 ],
 function (
 	$,
@@ -27,7 +29,9 @@ function (
 	Breadcrumbs,
 	Link,
 	Panel,
-	Button
+	Button,
+	DynamicPageAccessibleLandmarkInfo,
+	XMLView
 ) {
 	"use strict";
 
@@ -383,6 +387,31 @@ function (
 
 		// assert
 		assert.ok(!oStateChangeListener.called, "stateChange event was not fired");
+	});
+
+	QUnit.test("DynamicPage landmark info is set correctly", function (assert) {
+		var oLandmarkInfo = new DynamicPageAccessibleLandmarkInfo({
+			rootRole: "Region",
+			rootLabel: "Root",
+			contentRole: "Main",
+			contentLabel: "Content",
+			headerRole: "Banner",
+			headerLabel: "Header",
+			footerRole: "Region",
+			footerLabel: "Footer"
+		});
+
+		this.oDynamicPage.setLandmarkInfo(oLandmarkInfo);
+		Core.applyChanges();
+
+		assert.strictEqual(this.oDynamicPage.$().attr("role"), "region", "Root role is set correctly.");
+		assert.strictEqual(this.oDynamicPage.$().attr("aria-label"), "Root", "Root label is set correctly.");
+		assert.strictEqual(this.oDynamicPage.$("content").attr("role"), "main", "Content role is set correctly.");
+		assert.strictEqual(this.oDynamicPage.$("content").attr("aria-label"), "Content", "Content label is set correctly.");
+		assert.strictEqual(this.oDynamicPage.$("header").attr("role"), "banner", "Header role is set correctly.");
+		assert.strictEqual(this.oDynamicPage.$("header").attr("aria-label"), "Header", "Header label is set correctly.");
+		assert.strictEqual(this.oDynamicPage.$("footerWrapper").attr("role"), "region", "Footer role is set correctly.");
+		assert.strictEqual(this.oDynamicPage.$("footerWrapper").attr("aria-label"), "Footer", "Footer label is set correctly.");
 	});
 
 	QUnit.module("DynamicPage - API - header initially snapped", {
@@ -3206,7 +3235,7 @@ function (
 	});
 
 	QUnit.module("Title responsiveness", {
-		beforeEach: function() {
+		beforeEach: function(assert) {
 
 			var oXmlString = [
 				'<mvc:View xmlns:mvc="sap.ui.core.mvc" xmlns="sap.uxap" xmlns:m="sap.m" xmlns:f="sap.f" displayBlock="true" height="100%">',
@@ -3266,30 +3295,36 @@ function (
 				'</mvc:View>'
 			].join('');
 
-			var Comp = UIComponent.extend("test"	, {
-				metadata: {
-					manifest : {
-						"sap.app": {
-							"id": "test",
-							"type": "application"
+			var Comp,
+				done = assert.async();
+
+			XMLView.create({
+				id: "comp---view",
+				definition: oXmlString
+			}).then(function (oView) {
+				Comp = UIComponent.extend("test", {
+					metadata: {
+						manifest : {
+							"sap.app": {
+								"id": "test",
+								"type": "application"
+							}
 						}
+					},
+					createContent : function() {
+						return oView;
 					}
-				},
-				createContent : function() {
-					return sap.ui.xmlview({
-						id : this.createId("view"),
-						viewContent : oXmlString
-					});
-				}
-			});
+				});
 
-			this.oUiComponent = new Comp("comp");
-			this.oUiComponentContainer = new ComponentContainer({
-				component : this.oUiComponent
-			});
+				this.oUiComponent = new Comp("comp");
+				this.oUiComponentContainer = new ComponentContainer({
+					component : this.oUiComponent
+				});
 
-			this.oUiComponentContainer.placeAt(TESTS_DOM_CONTAINER);
-			Core.applyChanges();
+				this.oUiComponentContainer.placeAt(TESTS_DOM_CONTAINER);
+				Core.applyChanges();
+				done();
+			}.bind(this));
 		},
 
 		afterEach: function() {
@@ -3327,7 +3362,7 @@ function (
 	});
 
 	QUnit.module("Title responsiveness shrink factors", {
-		beforeEach: function() {
+		beforeEach: function(assert) {
 
 			var oXmlString = [
 				'<mvc:View xmlns:mvc="sap.ui.core.mvc" xmlns="sap.uxap" xmlns:m="sap.m" xmlns:f="sap.f" displayBlock="true" height="100%">',
@@ -3387,32 +3422,37 @@ function (
 				'</mvc:View>'
 			].join('');
 
-			var Comp = UIComponent.extend("test"	, {
-				metadata: {
-					manifest : {
-						"sap.app": {
-							"id": "test",
-							"type": "application"
+			var Comp,
+				done = assert.async();
+
+			XMLView.create({
+				id: "comp---view",
+				definition: oXmlString
+			}).then(function (oView) {
+				Comp = UIComponent.extend("test", {
+					metadata: {
+						manifest : {
+							"sap.app": {
+								"id": "test",
+								"type": "application"
+							}
 						}
+					},
+					createContent : function() {
+						return oView;
 					}
-				},
-				createContent : function() {
-					return sap.ui.xmlview({
-						id : this.createId("view"),
-						viewContent : oXmlString
-					});
-				}
-			});
+				});
 
-			this.oUiComponent = new Comp("comp");
-			this.oUiComponentContainer = new ComponentContainer({
-				component : this.oUiComponent
-			});
+				this.oUiComponent = new Comp("comp");
+				this.oUiComponentContainer = new ComponentContainer({
+					component : this.oUiComponent
+				});
 
-			this.oUiComponentContainer.placeAt(TESTS_DOM_CONTAINER);
-			Core.applyChanges();
+				this.oUiComponentContainer.placeAt(TESTS_DOM_CONTAINER);
+				Core.applyChanges();
+				done();
+			}.bind(this));
 		},
-
 		afterEach: function() {
 			this.oUiComponentContainer.destroy();
 		}

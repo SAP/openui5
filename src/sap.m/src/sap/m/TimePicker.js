@@ -386,13 +386,17 @@ function(
 		 */
 		TimePicker.prototype.onfocusin = function (oEvent) {
 			var oPicker = this._getPicker();
-			var bIconClicked = jQuery(oEvent.target).hasClass("sapUiIcon");
+			var bIconClicked = this._isIconClicked(oEvent);
 
 			MaskEnabler.onfocusin.apply(this, arguments);
 
 			if (oPicker && oPicker.isOpen() && !bIconClicked) {
 				this._closePicker();
 			}
+		};
+
+		TimePicker.prototype._isIconClicked = function (oEvent) {
+			return jQuery(oEvent.target).hasClass("sapUiIcon") || jQuery(oEvent.target).hasClass("sapMInputBaseIconContainer");
 		};
 
 		/**
@@ -826,12 +830,20 @@ function(
 			return TimeFormatStyles.Medium;
 		};
 
+		// if the user has set localeId, create Locale from it, if not get the locate from the FormatSettings
+		TimePicker.prototype._getLocale = function () {
+			var sLocaleId = this.getLocaleId();
+
+			return sLocaleId ? new Locale(sLocaleId) : sap.ui.getCore().getConfiguration().getFormatSettings().getFormatLocale();
+		};
+
 		TimePicker.prototype._getFormatterInstance = function(oFormat, sPattern, bRelative, sCalendarType, bDisplayFormat) {
+			var oLocale  = this._getLocale();
 
 			if (sPattern === TimeFormatStyles.Short || sPattern === TimeFormatStyles.Medium || sPattern === TimeFormatStyles.Long) {
-				oFormat = DateFormat.getTimeInstance({style: sPattern, strictParsing: true, relative: bRelative}, new Locale(this.getLocaleId()));
+				oFormat = DateFormat.getTimeInstance({style: sPattern, strictParsing: true, relative: bRelative}, oLocale);
 			} else {
-				oFormat = DateFormat.getTimeInstance({pattern: sPattern, strictParsing: true, relative: bRelative}, new Locale(this.getLocaleId()));
+				oFormat = DateFormat.getTimeInstance({pattern: sPattern, strictParsing: true, relative: bRelative}, oLocale);
 			}
 
 			if (bDisplayFormat) {
@@ -1051,7 +1063,7 @@ function(
 				sCancelButtonText,
 				sTitle,
 				oIcon = this.getAggregation("_endIcon")[0],
-				sLocaleId = this.getLocaleId();
+				sLocaleId  = this._getLocale().getLanguage();
 
 			oResourceBundle = sap.ui.getCore().getLibraryResourceBundle("sap.m");
 			sOKButtonText = oResourceBundle.getText("TIMEPICKER_SET");
@@ -1351,9 +1363,7 @@ function(
 			var sDisplayFormat = oTimePicker._getDisplayFormatPattern(),
 				sMask,
 				sAllowedHourChars,
-				//Respect browser locale if no locale is explicitly set (BCP: 1670060658)
-				sLocaleId = oTimePicker.getLocaleId() || sap.ui.getCore().getConfiguration().getFormatLocale(),
-				oLocale  = new Locale(sLocaleId),
+				oLocale  = oTimePicker._getLocale(),
 				i;
 
 			if (oTimePicker._checkStyle(sDisplayFormat)) {
@@ -1363,8 +1373,6 @@ function(
 				sMask = sDisplayFormat;
 			}
 
-			// Set the localeId and prevent infinite loop by suppressing rendering
-			oTimePicker.setProperty("localeId", sLocaleId, true);
 			this._oTimePicker = oTimePicker;
 			this.aOriginalAmPmValues = LocaleData.getInstance(oLocale).getDayPeriods("abbreviated");
 			this.aAmPmValues = this.aOriginalAmPmValues.slice(0);

@@ -1,3 +1,5 @@
+/* global Promise */
+
 sap.ui.define([
 	"sap/ui/test/Opa5"
 ], function(Opa5) {
@@ -8,18 +10,14 @@ sap.ui.define([
 		createAWaitForAnEntitySet : function  (oOptions) {
 			return {
 				success: function () {
-					var bMockServerAvailable = false,
-						aEntitySet;
+					var aEntitySet;
 
-					this.getMockServer().then(function (oMockServer) {
+					var oMockServerInitialized = this.getMockServer().then(function (oMockServer) {
 						aEntitySet = oMockServer.getEntitySetData(oOptions.entitySet);
-						bMockServerAvailable = true;
 					});
 
+					this.iWaitForPromise(oMockServerInitialized);
 					return this.waitFor({
-						check: function () {
-							return bMockServerAvailable;
-						},
 						success : function () {
 							oOptions.success.call(this, aEntitySet);
 						}
@@ -51,7 +49,5 @@ sap.ui.define([
 				});
 			});
 		}
-
 	});
-
 });

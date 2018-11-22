@@ -820,7 +820,7 @@ sap.ui.define([
 	});
 
 	QUnit.test("test default locale", function (assert) {
-		var stub = sinon.stub(sap.ui.getCore().getConfiguration(), 'getFormatLocale').returns('ar');
+		var stub = sinon.stub(sap.ui.getCore().getConfiguration().getFormatSettings(), 'getFormatLocale').returns(new Locale('ar'));
 		//Test default browser locale set to arabic
 		generateValuesTest([
 			{ key: "setDisplayFormat", value: "hh:mm:ss a"},
@@ -845,6 +845,40 @@ sap.ui.define([
 		});
 
 		stub.restore();
+	});
+
+	QUnit.test("_getLocale when no localeId is set", function (assert) {
+		//arrange
+		var oTP = new TimePicker(),
+			oLocale,
+			oSystemLocale = sap.ui.getCore().getConfiguration().getFormatSettings().getFormatLocale();
+
+		// act
+		oLocale = oTP._getLocale();
+
+		// assert
+		assert.ok(!oTP.getLocaleId(), "there is no localeId specified");
+		assert.strictEqual(oLocale, oSystemLocale, "'_getLocale' returns system configuration, if the user haven't specified localeId");
+
+		//cleanup
+		oTP.destroy();
+	});
+
+	QUnit.test("_getLocale when localeId is set", function (assert) {
+		// arrange
+		var oTP = new TimePicker({localeId:'en'}),
+			oLocale,
+			oSystemLocale = sap.ui.getCore().getConfiguration().getFormatSettings().getFormatLocale();
+
+		// act
+		oLocale = oTP._getLocale();
+
+		// assert
+		assert.equal(oTP.getLocaleId(), "en");
+		assert.ok(oLocale !== oSystemLocale, "'_getLocale' is different from the system configuration, if the user have specified localeId");
+
+		// cleanup
+		oTP.destroy();
 	});
 
 	QUnit.test("Value is validated when setValue is called with null or undefined", function (assert) {
@@ -2077,7 +2111,9 @@ sap.ui.define([
 	QUnit.module("Accessibility", {
 		beforeEach: function () {
 			this.oRB = sap.ui.getCore().getLibraryResourceBundle('sap.m');
-			this.oTP = new TimePicker({});
+			this.oTP = new TimePicker({
+				localeId: 'en' //set localeId explicitly otherwise it will be taken from the system configuration and the test won't be stable
+			});
 			this.sandbox = sinon.sandbox;
 			this.oTP.placeAt("qunit-fixture");
 			sap.ui.getCore().applyChanges();
@@ -3789,7 +3825,8 @@ sap.ui.define([
 
 	QUnit.test("tap on the input icon on Tablet opens the picker", function(assert) {
 		// releated to BCP: 1670338556
-		var tp = new TimePicker();
+		var tp = new TimePicker(),
+			oIsIconClickedSpy = this.spy(tp, "_isIconClicked");
 		tp.placeAt("qunit-fixture");
 		sap.ui.getCore().applyChanges();
 
@@ -3802,15 +3839,47 @@ sap.ui.define([
 		tp.onfocusin(oEvent);
 		this.clock.tick(1000);
 
+		//assert
 		assert.strictEqual(jQuery(".sapMPopover").is(":visible"), true, "When tapped on the button the picker stays opened");
+		assert.strictEqual(oIsIconClickedSpy.callCount, 1, "_isIconClicked function is called on focusin");
 
 		oEvent.target = tp.getDomRef();
 
 		tp.onfocusin(oEvent);
 		this.clock.tick(1000);
 
+		//assert
 		assert.strictEqual(jQuery(".sapMPopover").is(":visible"), false, "When focus on the field the picker is closed");
+		assert.strictEqual(oIsIconClickedSpy.callCount, 2, "_isIconClicked function is called on focusin");
 
+		// clean up
+		tp.destroy();
+		oIsIconClickedSpy.restore();
+	});
+
+
+	QUnit.test("_isIconClicked works correctly", function(assert) {
+		// releated to BCP: 1880695361
+		//arrange
+		var tp = new TimePicker(),
+			oEvent;
+
+		oEvent = { target: ".sapUiIcon" };
+
+		//assert
+		assert.strictEqual(tp._isIconClicked(oEvent), true, "_isIconClicked returns true when the event has target sapUiIcon");
+
+		oEvent = { target: ".sapMInputBaseIconContainer" };
+
+		//assert
+		assert.strictEqual(tp._isIconClicked(oEvent), true, "_isIconClicked returns true when the event has target sapMInputBaseIconContainer");
+
+		oEvent = { target: ".someOtherClass" };
+
+		//assert
+		assert.strictEqual(tp._isIconClicked(oEvent), false, "_isIconClicked returns false when the event has some other target");
+
+		// clean up
 		tp.destroy();
 	});
 

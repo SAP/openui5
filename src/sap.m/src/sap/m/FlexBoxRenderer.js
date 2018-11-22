@@ -155,7 +155,9 @@ sap.ui.define([
 		}
 
 		if (!(oLayoutData instanceof sap.m.FlexItemData)) {
-			Log.warning(oLayoutData + " set on " + oItem + " is not of type sap.m.FlexItemData");
+			if (oLayoutData) {
+				Log.warning(oLayoutData + " set on " + oItem + " is not of type sap.m.FlexItemData");
+			}
 		} else {
 			// FlexItemData is an element not a control, so we need to write id and style class ourselves if a wrapper tag is used
 			if (sWrapperTag && oLayoutData.getId()) {

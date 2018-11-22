@@ -2,195 +2,85 @@
 /* CSS for control sap.f/Card  */
 /* Base theme          */
 /* ================================== */
-
 /* define the default raster for the card sizes for a certain theme */
 /* TODO: connect to the parameters for theme editor */
 /*       reuse the values also for the default raster of the cssgrid cells */
 /*       Is there also a js way to access this */
-.sapFCardDefaultRaster {
-	min-width: 5rem;
-    min-height: 5rem;
-    max-width: 5rem;
-    max-height: 5rem;
-}
+@sapFCardColor: @sapUiListBackground;
+@sapFCardBoxShadow: 0 0 2.125rem 0 rgba(0, 0, 0, 0.1);
+@sapFCardBorderRadius: 0.5rem;
+@sapFCardTitleColor: @sapUiGroupTitleTextColor;
+@sapFCardSubTitleColor: @sapUiContentLabelColor;
+@sapFCardSeparatorColor: #EEEEEF;
+@sapFHeaderIconColor: #6F7275;
+@sapFCardStatusColor: @sapUiGroupTitleTextColor;
+@sapFCardHeaderPadding: 1rem 1rem 0 1rem;
+@sapFCardTitleFontSize: @sapMFontHeader5Size;
+@sapFCardSubTitleFontSize: @sapMFontMediumSize;
+@sapFHeaderIconFontSize: 2rem;
+@sapFCardHeaderColor: @sapUiListBackground;
+
 .sapFCard {
-    background: #fff;
-    border-radius: 0.5rem;
-    box-shadow: 0 0 2.125rem 0 rgba(0, 0, 0, 0.1);
-    position: relative;
-    display: inline-block;
-    overflow: hidden;
-    font-family: "72";
-    -webkit-font-smoothing: antialiased;
-    -webkit-text-stroke: 0.3px rgba(250, 250, 250, 0.2);
-    padding: 0;
-    vertical-align: top;
-    margin: 0.9rem 0 0 0.9rem; /*TODO: this should be controlled by the outer layout*/
-    border: 1px dotted transparent;
+  background-color: @sapFCardColor;
+  border-radius: @sapFCardBorderRadius;
+  box-shadow: @sapFCardBoxShadow;
+  position: relative;
+  display: inline-block;
+  overflow: hidden;
+  //padding: 15px;
+  vertical-align: top;
+  box-sizing: border-box;
 }
-.sapFCard.sapFCardFitContainer {
-	width: 100%;
-	height: 100%;
-	margin: 0 0 0 0;
-	box-shadow: none;
-	border: none;
+
+.sapFCardHeader {
+  display: flex;
+  align-items: center;
+  padding: @sapFCardHeaderPadding;
+  box-sizing: border-box;
+  background-color: @sapFCardHeaderColor;
+
+  .sapFCardIcon.sapFAvatar{
+    background-color: @sapFCardColor;
+    color: @sapFHeaderIconColor;
+    font-size: @sapFHeaderIconFontSize;
+    display: flex;
+    margin-right: 0.75rem;
+    .sapFAvatarIcon.sapUiIcon {
+      align-self: center;
+    }
+  }
+  .sapFCardHeaderText {
+	.sapFCardTitle {
+	  margin: 0px;
+	  display: block;
+      color: @sapFCardTitleColor;
+      font-size: @sapFCardTitleFontSize;
+      font-family: @sapUiFontHeaderFamily;
+	}
+	.sapFCardSubtitle {
+      font-family: @sapUiFontFamily;
+	  margin: 0.5rem 0 0 0;
+      font-size: @sapFCardSubTitleFontSize;
+      color: @sapFCardSubTitleColor;
+	}
+
+  }
+	.sapFCardStatus {
+	  margin-left: auto;
+	  display: inline-block;
+      color: @sapFCardStatusColor;
+	}
 }
-.sapUiLayoutCSSGrid>.sapFCard {
-    margin: 0; /*TODO: inside of a css grid the margin is actually controlled by the grid-gap property already (see TODO comment above), so removing margin here */
+
+.sapFCard .sapFCardSeparator {
+  margin-top: 1rem;
+  height: 1px;
+  background-color: @sapFCardSeparatorColor;
 }
 
 html.sap-desktop .sapFCard:focus {
-    border-color: #000000;
-    outline: none;
+  border-color: #000000;
+  outline: none;
 }
 
-.sapFCardIcon {
-    min-width: 2.5rem;
-    min-height: 2.5rem;
-    max-width: 2.5rem;
-    max-height: 2.5rem;
-    flex-grow: 0;
-    overflow: hidden;
-    border-radius: 50%;
-    margin: 0 0 0 1rem;
-    background-size: cover;
-}
 
-.sapFCard2x2.sapFCardNoContent .sapFCardIcon {
-    position: absolute;
-    min-width: 2.5rem;
-    min-height: 2.5rem;
-    max-width: 2.5rem;
-    max-height: 2.5rem;
-    flex-grow: 0;
-    overflow: hidden;
-    border-radius: 50%;
-    margin: 0 0 0 1rem;
-    right: 1rem;
-    bottom: 1rem;
-}
-
-.sapFCard2x2.sapFCardNoContent>header>div {
-    overflow: visible;
-}
-.sapFCard2x2.sapFCardNoContent>header>div>h1 {
-    white-space: normal;
-    overflow: visible;
-}
-.sapFCard2x2.sapFCardNoContent>header>div>h2 {
-    white-space: normal;
-    overflow: hidden;
-}
-
-.sapFCardIcon.sapUiIcon {
-    line-height: 1.7;
-    font-size: 1.3rem;
-    background-color: #f0f0f0;
-}
-
-.sapFCardIcon:only-child {
-    margin: 0 auto;
-}
-.sapFCard>header:only-child {
-    margin: 1.3rem 0 0 0;
-}
-
-.sapFCard>header {
-    display: flex;
-    margin: 1rem 0;
-}
-.sapFCard>header>div {
-    flex-grow: 1;
-    margin: 0 1rem;
-    overflow:hidden;
-}
-
-.sapFCard>header>div>h1 {
-    margin:0.05rem 0 0 0;
-    font-weight:normal;
-    font-size: 1rem;
-    overflow: hidden;
-    text-overflow: ellipsis;
-    white-space: nowrap;
-}
-.sapFCard>header>div>h1:hover:before {
-    display: inline-block;
-    content: "";
-    margin-left: 0%;
-    width: 0%;
-    height: 1px;
-    animation: scroll 3s 0.8s ease-in-out;
-}
-.sapFCard>header>div>h2 {
-    margin:0.05rem 0 0 0;
-    font-weight:normal;
-    font-size: 0.875rem;
-    overflow: hidden;
-    text-overflow: ellipsis;
-    display:block;
-    width:100%;
-    white-space: nowrap;
-}
-.sapFCard .sapFCardTextScroll:hover:before {
-    display: inline-block;
-    content: "";
-    margin-left: 0%;
-    width: 0%;
-    height: 1px;
-    animation: scroll 3s 0.8s ease-in-out;
-}
-@keyframes scroll {
-  from {margin-left: 0%}
-  10% {margin-left: 0%}
-  35% {margin-left: -70%}
-  55% {margin-left: -70%}
-  90% {margin-left: 0%}
-  to {margin-left: 0%;}
-}
-
-.sapFCard>header>.sapFCardStatus {
-    margin:0;
-    font-weight:normal;
-    font-size: 0.875rem;
-    flex-grow: 0;
-    min-width: 3rem;
-    overflow: hidden;
-    text-overflow: ellipsis;
-    margin: 0 1rem 0 0;
-}
-
-.sapFCard>.sapFCardSeparator {
-    height: 1px;
-    margin: -2px 0.5rem;
-    position: relative;
-    overflow: hidden;
-    background-color: #f0f0f0;
-}
-
-.sapFCard.sapFCardLoading>.sapFCardSeparator:before {
-  display: block;
-  position: absolute;
-  content: "";
-  left: -100%;
-  width: 30%;
-  height: 1px;
-  background-color: #ddd;
-  background-image: linear-gradient(to right, transparent,#6da3c5,transparent);
-  animation: loading 3s linear infinite;
-}
-@keyframes loading {
-  from {left: -200px; width: 30%;}
-    50% {width: 30%;}
-    70% {width: 80%;}
-    80% { left: 50%;}
-    95% {left: 120%;}
-    to {left: 100%;}
-}
-
-.sapFCard>section.sapFCardContent {
-    background-color: #fff;
-    position: absolute;
-    top: 4.5rem;
-    width: 100%;
-    display: block;
-}

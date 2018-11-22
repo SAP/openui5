@@ -8,6 +8,7 @@ sap.ui.define([
 	'../Device',
 	'../Global',
 	'../base/Object',
+	'./CalendarType',
 	'./Locale',
 	'sap/ui/thirdparty/URI',
 	"sap/base/util/UriParameters",
@@ -21,6 +22,7 @@ sap.ui.define([
 		Device,
 		Global,
 		BaseObject,
+		CalendarType,
 		Locale,
 		URI,
 		UriParameters,
@@ -32,7 +34,7 @@ sap.ui.define([
 	"use strict";
 
 	// lazy dependencies. Can't be declared as this would result in cyclic dependencies
-	var CalendarType, LocaleData;
+	var LocaleData;
 
 	/**
 	 * Creates a new Configuration object.
@@ -128,7 +130,6 @@ sap.ui.define([
 					"versionedLibCss"       : { type : "boolean",  defaultValue : false },
 					"manifestFirst"         : { type : "boolean",  defaultValue : false },
 					"flexibilityServices"   : { type : "string",  defaultValue : "/sap/bc/lrep" },
-
 					"whitelistService"      : { type : "string",   defaultValue : null,      noUrl: true }, // url/to/service
 					"frameOptions"          : { type : "string",   defaultValue : "default", noUrl: true }, // default/allow/deny/trusted (default => allow)
 					"frameOptionsConfig"    : { type : "object",   defaultValue : undefined, noUrl:true },  // advanced frame options configuration
@@ -159,6 +160,7 @@ sap.ui.define([
 					"xx-xml-processing"     : { type : "string",  defaultValue : "" },
 					"xx-avoidAriaApplicationRole" : { type : "boolean",  defaultValue : false}, // Avoid ACC role 'application'
 					"xx-hyphenation" : { type : "string",  defaultValue : ""}, // (empty string)|native|thirdparty
+					"xx-flexBundleRequestForced" : { type : "boolean",  defaultValue : false },
 					"statistics"            : { type : "boolean",  defaultValue : false }
 			};
 
@@ -836,11 +838,7 @@ sap.ui.define([
 		getCalendarType :  function() {
 			var sName;
 
-			// lazy load of sap.ui.core library and LocaleData to avoid cyclic dependencies
-			if ( !CalendarType ) {
-				Global.getCore().loadLibrary('sap.ui.core');
-				CalendarType = sap.ui.require("sap/ui/core/library").CalendarType;
-			}
+			// lazy load of LocaleData to avoid cyclic dependencies
 			if ( !LocaleData ) {
 				LocaleData = sap.ui.requireSync("sap/ui/core/LocaleData");
 			}
@@ -1315,6 +1313,17 @@ sap.ui.define([
 		 */
 		getManifestFirst : function() {
 			return this.manifestFirst;
+		},
+
+		/**
+		 * Returns a flag if the changes-bundle for flexibility should be requested in case they are not preloaded
+		 *
+		 * @returns {boolean} flag if the changes-bundle for flexibility should be requested in case they are not preloaded
+		 * @private
+		 * @since 1.60.0
+		 */
+		isFlexBundleRequestForced : function() {
+			return this["xx-flexBundleRequestForced"];
 		},
 
 		/**

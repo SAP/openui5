@@ -10,8 +10,9 @@ sap.ui.define([
 	"sap/ui/commons/TextArea",
 	"sap/ui/commons/RatingIndicator",
 	"sap/ui/commons/CheckBox",
-	"sap/ui/commons/Label"
-], function(Device, qutils, VerticalLayout, Button, TextField, Image, Slider, TextArea, RatingIndicator, CheckBox, Label) {
+	"sap/ui/commons/Label",
+	"sap/ui/qunit/utils/waitForThemeApplied"
+], function(Device, qutils, VerticalLayout, Button, TextField, Image, Slider, TextArea, RatingIndicator, CheckBox, Label, waitForThemeApplied) {
 	"use strict";
 
 	var oLayout1 = new VerticalLayout("Layout1", {
@@ -147,4 +148,6 @@ sap.ui.define([
 		assert.ok(oInfo.children && oInfo.children.length == 2, "Children");
 		oLayout.destroy();
 	});
+
+	return waitForThemeApplied();
 });

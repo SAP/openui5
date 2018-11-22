@@ -1,13 +1,10 @@
 /*global QUnit */
 sap.ui.define([
+	"sap/ui/core/CalendarType",
 	"sap/ui/core/Locale",
-	"sap/ui/core/LocaleData",
-	"sap/ui/core/library"
-], function(Locale, LocaleData, coreLibrary) {
+	"sap/ui/core/LocaleData"
+], function(CalendarType, Locale, LocaleData) {
 	"use strict";
-
-	// shortcut for enum from sap.ui.core namespace
-	var CalendarType = coreLibrary.CalendarType;
 
 	//var aUSDSymbols = ["US$", "$", "$", "$", "$", "US$", "$", "US$", "$", "US$", , "$", "$US", "$\u00a0US", "$US", "$", "US$", "US$", "$",
 	//	"US$", "US$", "$", "$", "$", "US$", "US$", "USD", "US$", "US$", "$", "US$", "$", "USD"];

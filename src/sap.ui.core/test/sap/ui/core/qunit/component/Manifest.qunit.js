@@ -111,9 +111,13 @@ sap.ui.define([
 			url: "manifest/uri/manifest.json"
 		});
 
-		assert.strictEqual(this.oManifest.resolveUri(new URI("my/uri")).toString(), "test-resources/sap/ui/core/qunit/component/testdata/foo/bar/my/uri", "URL should resolve relative to the Component");
-		assert.strictEqual(this.oManifest.resolveUri(new URI("my/uri"), "component").toString(), "test-resources/sap/ui/core/qunit/component/testdata/foo/bar/my/uri", "URL should resolve relative to the Component");
-		assert.strictEqual(this.oManifest.resolveUri(new URI("my/uri"), "manifest").toString(), "manifest/uri/my/uri", "URL should resolve relative to the Manifest");
+		assert.strictEqual(this.oManifest._resolveUri(new URI("my/uri")).toString(), "test-resources/sap/ui/core/qunit/component/testdata/foo/bar/my/uri", "URL should resolve relative to the Component");
+		assert.strictEqual(this.oManifest._resolveUri(new URI("my/uri"), "component").toString(), "test-resources/sap/ui/core/qunit/component/testdata/foo/bar/my/uri", "URL should resolve relative to the Component");
+		assert.strictEqual(this.oManifest._resolveUri(new URI("my/uri"), "manifest").toString(), "manifest/uri/my/uri", "URL should resolve relative to the Manifest");
+
+		assert.strictEqual(this.oManifest.resolveUri("my/uri"), "test-resources/sap/ui/core/qunit/component/testdata/foo/bar/my/uri", "URL should resolve relative to the Component");
+		assert.strictEqual(this.oManifest.resolveUri("my/uri", "component"), "test-resources/sap/ui/core/qunit/component/testdata/foo/bar/my/uri", "URL should resolve relative to the Component");
+		assert.strictEqual(this.oManifest.resolveUri("my/uri", "manifest"), "manifest/uri/my/uri", "URL should resolve relative to the Manifest");
 
 	});
 
@@ -127,8 +131,13 @@ sap.ui.define([
 		}).then(function(oManifest) {
 			that.oManifest = oManifest; // Save for cleanup in afterEach
 			assert.strictEqual(that.oManifest.getEntry("sap.ui5").someValue, "someValue456", "Manifest data was loaded ASYNC");
-			assert.strictEqual(that.oManifest.resolveUri(
+			assert.strictEqual(that.oManifest._resolveUri(
 				new URI("test-resources/sap/ui/core/qunit/component/testdata/manifestload"), "manifest").toString(),
+				"test-resources/sap/ui/core/qunit/component/testdata/manifestload/test-resources/sap/ui/core/qunit/component/testdata/manifestload",
+				"URL should resolve relative to the Manifest"
+			);
+			assert.strictEqual(that.oManifest.resolveUri(
+				"test-resources/sap/ui/core/qunit/component/testdata/manifestload", "manifest"),
 				"test-resources/sap/ui/core/qunit/component/testdata/manifestload/test-resources/sap/ui/core/qunit/component/testdata/manifestload",
 				"URL should resolve relative to the Manifest"
 			);
@@ -143,8 +152,13 @@ sap.ui.define([
 			async: false
 		});
 		assert.strictEqual(this.oManifest.getEntry("sap.ui5").someValue, "someValue456", "Manifest data was loaded SYNC");
-		assert.strictEqual(this.oManifest.resolveUri(
+		assert.strictEqual(this.oManifest._resolveUri(
 			new URI("test-resources/sap/ui/core/qunit/component/testdata/manifestload"), "manifest").toString(),
+			"test-resources/sap/ui/core/qunit/component/testdata/manifestload/test-resources/sap/ui/core/qunit/component/testdata/manifestload",
+			"URL should resolve relative to the Manifest"
+		);
+		assert.strictEqual(this.oManifest.resolveUri(
+			"test-resources/sap/ui/core/qunit/component/testdata/manifestload", "manifest").toString(),
 			"test-resources/sap/ui/core/qunit/component/testdata/manifestload/test-resources/sap/ui/core/qunit/component/testdata/manifestload",
 			"URL should resolve relative to the Manifest"
 		);

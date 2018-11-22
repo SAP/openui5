@@ -134,6 +134,7 @@ html:not(.sapUiTheme-sap_belize_hcb):not(.sapUiTheme-sap_belize_hcw) .demokitIni
 
 /* design for the grid tab cell */
 .sapUiDemoIconExplorer .gridLayoutCell {
+	display: block;
 	text-align: center;
 	padding: 0.5rem;
 	min-height: 100px;
@@ -144,6 +145,7 @@ html:not(.sapUiTheme-sap_belize_hcb):not(.sapUiTheme-sap_belize_hcw) .demokitIni
 
 /* design for the visual tab cell */
 .sapUiDemoIconExplorer .visualLayoutCell {
+	display: block;
 	text-align: center;
 	padding: 0.5rem;
 	min-height: 325px;

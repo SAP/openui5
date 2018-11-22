@@ -1,8 +1,8 @@
 sap.ui.define([
-    "sap/ui/core/UIComponent",
-    "sap/ui/demo/toolpageapp/model/models",
-    "sap/ui/core/routing/History",
-    "sap/ui/model/resource/ResourceModel"
+	"sap/ui/core/UIComponent",
+	"./model/models",
+	"sap/ui/core/routing/History",
+	"sap/ui/model/resource/ResourceModel"
 ], function(UIComponent, models, History) {
 	"use strict";
 	return UIComponent.extend("sap.ui.demo.toolpageapp.Component", {

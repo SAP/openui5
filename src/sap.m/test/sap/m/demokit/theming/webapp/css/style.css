@@ -1,23 +1,24 @@
-.myColorPreview {
+.sapUiDemoTheming .myColorPreview {
 	display:block;
-	padding: 12px;
+	padding: 0.75rem;
 }
-.myColorPreviewBorder {
+
+.sapUiDemoTheming .myColorPreviewBorder {
 	border-width:1px;
 	border-style: solid;
 }
 
-.myTransparentPreview {
+.sapUiDemoTheming .myTransparentPreview {
 	background: none;
-	background-image: url("Transparenz.jpg");
+	background-image: url("transparency.jpg");
 }
 
-.alignment .sapMListTblHeader th{
+.sapUiDemoTheming .alignment .sapMListTblHeader th{
 	vertical-align: middle;
 }
-.padding .sapMPanelContent {
-	padding: 0rem;
+.sapUiDemoTheming .padding .sapMPanelContent {
+	padding: 0;
 }
-.sapMObjLNumberDiv .sapMObjectNumber .sapMObjectNumberText {
-	    font-size: 0.875rem;
+.sapUiDemoTheming .sapMObjLNumberDiv .sapMObjectNumber .sapMObjectNumberText {
+	font-size: 0.875rem;
 }

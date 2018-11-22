@@ -9,7 +9,7 @@ sap.ui.define([
 	'sap/ui/core/EnabledPropagator',
 	'sap/ui/core/delegate/ItemNavigation',
 	'sap/ui/core/ResizeHandler',
-	'sap/ui/core/Item',
+	'sap/ui/core/ListItem',
 	'sap/ui/core/IconPool',
 	'./SegmentedButtonRenderer'
 ],
@@ -19,7 +19,7 @@ function(
 	EnabledPropagator,
 	ItemNavigation,
 	ResizeHandler,
-	Item,
+	ListItem,
 	IconPool,
 	SegmentedButtonRenderer
 	) {
@@ -765,7 +765,7 @@ function(
 	 *    An sap.m.Button instance which becomes the new target of this <code>selectedButton</code> association.
 	 *    Alternatively, the ID of an sap.m.Button instance may be given as a string.
 	 *    If the value of null, undefined, or an empty string is provided the first item will be selected.
-	 * @returns {sap.m.SegmentedButton} <code>this</code> this pointer for chaining
+	 * @returns {sap.m.SegmentedButton} <code>this</code> pointer for chaining
 	 * @public
 	 */
 	SegmentedButton.prototype.setSelectedButton = function (vButton) {
@@ -892,6 +892,7 @@ function(
 		var iKey = 0,
 			iSelectedKey = 0,
 			sButtonText,
+			sButtonIcon,
 			oSelect = this.getAggregation("_select");
 
 
@@ -902,8 +903,10 @@ function(
 		oSelect.destroyItems();
 		this._getVisibleButtons().forEach(function (oButton) {
 			sButtonText = oButton.getText();
-			oSelect.addItem(new Item({
+			sButtonIcon = oButton.getIcon();
+			oSelect.addItem(new ListItem({
 				key: iKey.toString(),
+				icon: sButtonIcon ? sButtonIcon : "",
 				text: sButtonText ? sButtonText : oButton.getTooltip_AsString(),
 				enabled: oButton.getEnabled()
 			}));

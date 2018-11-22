@@ -11,6 +11,7 @@ sap.ui.define(['sap/ui/core/UIComponent'],
 						stretch: true,
 						files: [
 							"webapp/index.html",
+							"webapp/index.js",
 							"ui5.yaml",
 							"package.json"
 						]

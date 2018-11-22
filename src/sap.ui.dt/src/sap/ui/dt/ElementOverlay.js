@@ -344,6 +344,8 @@ function (
 				Overlay.prototype._setPosition.call(this, $ScrollContainerOverlayDomRef, mScrollContainerGeometry, this.$());
 				this._handleOverflowScroll(mScrollContainerGeometry, $ScrollContainerOverlayDomRef, this, bForceScrollbarSync);
 				this._setZIndex(mScrollContainerGeometry, $ScrollContainerOverlayDomRef);
+			} else {
+				$ScrollContainerOverlayDomRef.css("display", "none");
 			}
 		}, this);
 	};
@@ -365,14 +367,17 @@ function (
 		Promise.all(aPromises).then(function () {
 			this._sortChildren(this.getChildrenDomRef());
 
-			this.getScrollContainers().forEach(function(mScrollContainer, iIndex) {
-				var $ScrollContainerDomRef = this.getDesignTimeMetadata().getAssociatedDomRef(this.getElement(), mScrollContainer.domRef) || jQuery();
-				var $ScrollContainerOverlayDomRef = this.getScrollContainerById(iIndex);
+			// TODO: re-think async flow of applyStyles as part of Managing Updates BLI
+			if (!this.bIsDestroyed) {
+				this.getScrollContainers().forEach(function(mScrollContainer, iIndex) {
+					var $ScrollContainerDomRef = this.getDesignTimeMetadata().getAssociatedDomRef(this.getElement(), mScrollContainer.domRef) || jQuery();
+					var $ScrollContainerOverlayDomRef = this.getScrollContainerById(iIndex);
 
-				if ($ScrollContainerDomRef.length) {
-					this._sortChildren($ScrollContainerOverlayDomRef.get(0));
-				}
-			}, this);
+					if ($ScrollContainerDomRef.length) {
+						this._sortChildren($ScrollContainerOverlayDomRef.get(0));
+					}
+				}, this);
+			}
 		}.bind(this));
 	};
 

@@ -3,8 +3,9 @@
 sap.ui.define(["sap/ui/thirdparty/jquery",
                "sap/ui/core/Core",
                "sap/uxap/ObjectPageLayout",
-               "sap/uxap/ObjectPageSection"],
-function (jQuery, Core, ObjectPageLayout, ObjectPageSection) {
+               "sap/uxap/ObjectPageSection",
+               "sap/ui/core/mvc/XMLView"],
+function (jQuery, Core, ObjectPageLayout, ObjectPageSection, XMLView) {
 	"use strict";
 
 	var sRoleAttribute = "role",
@@ -16,17 +17,20 @@ function (jQuery, Core, ObjectPageLayout, ObjectPageSection) {
 		};
 
 	QUnit.module("Screen reader support - Root element", {
-		beforeEach: function () {
-			this.objectPageView = sap.ui.xmlview("UxAP-71_ObjectPageScreenReaderSupport", {
+		beforeEach: function (assert) {
+			var done = assert.async();
+			XMLView.create({
+				id: "UxAP-71_ObjectPageScreenReaderSupport",
 				viewName: "view.UxAP-71_ObjectPageScreenReaderSupport"
-			});
-
-			this.objectPageView.placeAt('qunit-fixture');
-			Core.applyChanges();
-
-			this.oObjectPage = this.objectPageView.byId("ObjectPageLayout");
+			}).then(function (oView) {
+				this.objectPageView = oView;
+				this.objectPageView.placeAt("qunit-fixture");
+				Core.applyChanges();
+				this.oObjectPage = this.objectPageView.byId("ObjectPageLayout");
+				done();
+			}.bind(this));
 		},
-		afterEach: function() {
+		afterEach: function () {
 			this.objectPageView.destroy();
 			this.oObjectPage = null;
 		}
@@ -61,21 +65,23 @@ function (jQuery, Core, ObjectPageLayout, ObjectPageSection) {
 	});
 
 	QUnit.module("Screen reader support - Section/SubSection", {
-		beforeEach: function () {
-			this.objectPageView = sap.ui.xmlview("UxAP-71_ObjectPageScreenReaderSupport", {
+		beforeEach: function (assert) {
+			var done = assert.async();
+			XMLView.create({
+				id: "UxAP-71_ObjectPageScreenReaderSupport",
 				viewName: "view.UxAP-71_ObjectPageScreenReaderSupport"
-			});
-			this.objectPageView.placeAt('qunit-fixture');
-			Core.applyChanges();
-
-			this.oObjectPage = this.objectPageView.byId("ObjectPageLayout");
-
+			}).then(function (oView) {
+				this.objectPageView = oView;
+				this.objectPageView.placeAt("qunit-fixture");
+				Core.applyChanges();
+				this.oObjectPage = this.objectPageView.byId("ObjectPageLayout");
+				done();
+			}.bind(this));
 		},
-		afterEach: function() {
+		afterEach: function () {
 			this.objectPageView.destroy();
 			this.oObjectPage = null;
-		}
-	});
+		}	});
 
 	QUnit.test("Section/SubSection roles", function (assert) {
 		var oSection = this.objectPageView.byId("testSection"),

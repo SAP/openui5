@@ -4,7 +4,7 @@
 		   xmlns:layout="sap.ui.layout"
 		   height="100%"
 		>
-	<ObjectPageLayout id="objectPage162" title="">
+	<ObjectPageLayout id="objectPage162">
 		<headerTitle id="header162">
 			<ObjectPageHeader
 					objectTitle="Denise Smith"

@@ -90,17 +90,17 @@ sap.ui.define([
 		}
 
 		var oLayoutData = GridItemLayoutData._getLayoutDataForControl(oItem),
-			oItemDom = oItem.getDomRef(),
+			oElement = GridItemLayoutData._getElement(oItem),
 			oProperties,
 			sProp,
 			sPropValue;
 
-		if (!oItemDom) {
+		if (!oElement) {
 			return;
 		}
 
 		if (!oLayoutData) {
-			GridItemLayoutData._removeItemStyles(oItemDom);
+			GridItemLayoutData._removeItemStyles(oElement);
 			return;
 		}
 
@@ -111,10 +111,30 @@ sap.ui.define([
 				sPropValue = oLayoutData.getProperty(sProp);
 
 				if (typeof sPropValue !== "undefined") {
-					GridItemLayoutData._setItemStyle(oItemDom, mGridItemProperties[sProp], sPropValue);
+					GridItemLayoutData._setItemStyle(oElement, mGridItemProperties[sProp], sPropValue);
 				}
 			}
 		}
+	};
+
+	/**
+	 * Return the DOM ref of the item or the item's wrapper
+	 *
+	 * @param {sap.ui.core.Control} oItem The item
+	 */
+	GridItemLayoutData._getElement = function (oItem) {
+		var oItemDom = oItem.getDomRef();
+
+		if (!oItemDom) {
+			return undefined;
+		}
+
+		var oWrapper = oItemDom.parentNode;
+
+		if (oWrapper && oWrapper.classList.contains("sapUiLayoutCSSGridItemWrapper")) {
+			return oWrapper;
+		}
+		return oItemDom;
 	};
 
 	/**

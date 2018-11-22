@@ -19,7 +19,6 @@ sap.ui.define(['sap/ui/core/UIComponent'],
 				includes : [ "main.css" ],
 				config : {
 					sample : {
-						stretch : true,
 						files : [
 							"NestedGrids.view.xml",
 							"NestedGrids.controller.js",

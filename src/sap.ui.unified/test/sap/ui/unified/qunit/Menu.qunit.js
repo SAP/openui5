@@ -1,18 +1,18 @@
-/*global QUnit, window */
-/*eslint no-undef:1, no-unused-vars:1, strict: 1, no-alert: 1*/
+/*global QUnit, sinon, window */
+
 sap.ui.define([
 	"sap/ui/qunit/QUnitUtils",
-	"sap/ui/thirdparty/sinon",
 	"sap/ui/unified/Menu",
 	"sap/ui/unified/MenuItem",
-	"sap/ui/unified/MenuTextFieldItem"
-], function(qutils, sinon, Menu, MenuItem, MenuTextFieldItem) {
+	"sap/ui/unified/MenuTextFieldItem",
+	"sap/base/Log"
+], function(qutils, Menu, MenuItem, MenuTextFieldItem, Log) {
 	"use strict";
 
 	try {
 		sap.ui.getCore().loadLibrary("sap.ui.commons");
 	} catch (e){
-		alert("This test page requires the library 'sap.ui.commons' which is not available.");
+		Log.error("This test page requires the library 'sap.ui.commons' which is not available.");
 		throw (e);
 	}
 
@@ -1097,7 +1097,6 @@ sap.ui.define([
 
 	QUnit.test("openAsContextMenu functionality", function(assert) {
 		var oMenu = new Menu({tooltip: "a tooltip"});
-		var eDock = sap.ui.core.Popup.Dock;
 		var fnEventHandler = function (oEvent) {
 			oMenu.openAsContextMenu(oEvent, jQuery("#content").get(0));
 			assert.ok(oMenu.bOpen, "Menu opened");

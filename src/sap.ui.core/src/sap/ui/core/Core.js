@@ -419,19 +419,23 @@ sap.ui.define([
 			if ( window["sap-ui-debug"] === true ) {
 				sPreloadMode = "";
 			}
-			// when the preload mode is 'auto', it will be set to 'sync' for optimized sources
+			// when the preload mode is 'auto', it will be set to 'async' or 'sync' for optimized sources
+			// depending on whether the ui5loader is configured async
 			if ( sPreloadMode === "auto" ) {
-				sPreloadMode = window["sap-ui-optimized"] ? "sync" : "";
+				if (window["sap-ui-optimized"]) {
+					sPreloadMode = sap.ui.loader.config().async ? "async" : "sync";
+				} else {
+					sPreloadMode = "";
+				}
 			}
 			// write back the determined mode for later evaluation (e.g. loadLibrary)
 			this.oConfiguration.preload = sPreloadMode;
 
-			var bAsync = sPreloadMode === "async";
-
-			// If UI5 has been booted asynchronously, bAsync can be also set to true.
-			if (sap.ui.loader.config().async) {
-				bAsync = true;
-			}
+			// This flag controls the core initialization flow.
+			// We can switch to async when an async preload is used or the ui5loader
+			// is in async mode. The latter might also happen for debug scenarios
+			// where no preload is used at all.
+			var bAsync = sPreloadMode === "async" || sap.ui.loader.config().async;
 
 			// evaluate configuration for library preload file types
 			this.oConfiguration['xx-libraryPreloadFiles'].forEach(function(v){
@@ -604,6 +608,12 @@ sap.ui.define([
 				if (bAsync) {
 					sap.ui.require(["sap/ui/core/support/Support", "sap/ui/support/Bootstrap"], fnCallbackSupportBootstrapInfo);
 				} else {
+					Log.warning("Synchronous loading of Support mode. Set preload configuration to 'async' or switch to asynchronous bootstrap to prevent these synchronous request.", "SyncXHR", null, function() {
+						return {
+							type: "SyncXHR",
+							name: "support-mode"
+						};
+					});
 					fnCallbackSupportBootstrapInfo(
 						sap.ui.requireSync("sap/ui/core/support/Support"),
 						sap.ui.requireSync("sap/ui/support/Bootstrap")
@@ -882,6 +892,14 @@ sap.ui.define([
 			});
 		}
 
+		Log.warning("Modules and libraries declared via bootstrap-configuration are loaded synchronously. Set preload configuration to" +
+			" 'async' or switch to asynchronous bootstrap to prevent these requests.", "SyncXHR", null, function() {
+			return {
+				type: "SyncXHR",
+				name: "legacy-module"
+			};
+		});
+
 		this.oConfiguration.modules.forEach( function(mod) {
 			var m = mod.match(/^(.*)\.library$/);
 			if ( m ) {
@@ -1113,11 +1131,12 @@ sap.ui.define([
 	 * @param {string} sThemeName Name of the theme for which to configure the location
 	 * @param {string[]} [aLibraryNames] Optional library names to which the configuration should be restricted
 	 * @param {string} sThemeBaseUrl Base URL below which the CSS file(s) will be loaded from
+	 * @param {boolean} [bForceUpdate=false] Force updating URLs of currently loaded theme
 	 * @return {sap.ui.core.Core} the Core, to allow method chaining
 	 * @since 1.10
 	 * @public
 	 */
-	Core.prototype.setThemeRoot = function(sThemeName, aLibraryNames, sThemeBaseUrl) {
+	Core.prototype.setThemeRoot = function(sThemeName, aLibraryNames, sThemeBaseUrl, bForceUpdate) {
 		assert(typeof sThemeName === "string", "sThemeName must be a string");
 		assert((Array.isArray(aLibraryNames) && typeof sThemeBaseUrl === "string") || (typeof aLibraryNames === "string" && sThemeBaseUrl === undefined), "either the second parameter must be a string (and the third is undefined), or it must be an array and the third parameter is a string");
 
@@ -1126,7 +1145,8 @@ sap.ui.define([
 		}
 
 		// normalize parameters
-		if (sThemeBaseUrl === undefined) {
+		if (typeof aLibraryNames === "string") {
+			bForceUpdate = sThemeBaseUrl;
 			sThemeBaseUrl = aLibraryNames;
 			aLibraryNames = undefined;
 		}
@@ -1142,6 +1162,11 @@ sap.ui.define([
 		} else {
 			// registration of theme default base URL
 			this._mThemeRoots[sThemeName] = sThemeBaseUrl;
+		}
+
+		// Update theme urls when theme roots of currently loaded theme have changed
+		if (bForceUpdate && sThemeName === this.sTheme) {
+			this._updateThemeUrls(this.sTheme);
 		}
 
 		return this;
@@ -1284,7 +1309,14 @@ sap.ui.define([
 			var sApplication = oConfig.getApplication();
 			if (sApplication) {
 
-				Log.warning("The configuration 'application' is deprecated. Please use the configuration 'component' instead! Please migrate from sap.ui.app.Application to sap.ui.core.Component.");
+				Log.warning("The configuration 'application' is deprecated. Please use the configuration 'component' instead! " +
+				"Please migrate from sap.ui.app.Application to sap.ui.core.Component.", "SyncXHR", null, function () {
+					return {
+						type: "Deprecation",
+						name: "sap.ui.core"
+					};
+				});
+
 				Log.info("Loading Application: " + sApplication,null,METHOD);
 				sap.ui.requireSync(sApplication.replace(/\./g, "/"));
 				var oClass = ObjectPath.get(sApplication);
@@ -3206,6 +3238,13 @@ sap.ui.define([
 	 * @deprecated Since 1.29.1 Require 'sap/ui/core/tmpl/Template' and use {@link sap.ui.core.tmpl.Template.byId Template.byId} instead.
 	 */
 	Core.prototype.getTemplate = function(sId) {
+		Log.warning("Synchronous loading of 'sap/ui/core/tmpl/Template'. Use 'sap/ui/core/tmpl/Template' module and" +
+			" call Template.byId instead", "SyncXHR", null, function() {
+			return {
+				type: "SyncXHR",
+				name: "Core.prototype.getTemplate"
+			};
+		});
 		var Template = sap.ui.requireSync('sap/ui/core/tmpl/Template');
 		return Template.byId(sId);
 	};
@@ -3618,7 +3657,17 @@ sap.ui.define([
 	 */
 	Core.prototype.getEventBus = function() {
 		if (!this.oEventBus) {
-			var EventBus = sap.ui.requireSync('sap/ui/core/EventBus');
+			var EventBus = sap.ui.require('sap/ui/core/EventBus');
+			if (!EventBus) {
+				Log.warning("Synchronous loading of EventBus. Ensure that 'sap/ui/core/EventBus' module is loaded" +
+					" before this function is called.", "SyncXHR", null, function() {
+					return {
+						type: "SyncXHR",
+						name: "core-eventbus"
+					};
+				});
+				EventBus = sap.ui.requireSync('sap/ui/core/EventBus');
+			}
 			var oEventBus = this.oEventBus = new EventBus();
 			this._preserveHandler = function(event) {
 				// for compatibility reasons

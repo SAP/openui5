@@ -311,14 +311,15 @@ function (jQuery, ManagedObject, Analyzer, CoreFacade,
 	};
 
 	 /**
-	 *Analyzes all rules in the given execution scope.
+	 * Analyzes all rules in the given execution scope.
 	 *
 	 * @private
 	 * @param {object} oExecutionScope The scope of the analysis
-	  * @param {object|string|object[]} [vPresetOrRules=All rules] The preset or system preset ID or rules against which the analysis will be run
+	 * @param {object|string|object[]} [vPresetOrRules=All rules] The preset or system preset ID or rules against which the analysis will be run
+	 * @param {object} [oMetadata] Metadata in custom format. Its only purpose is to be included in the analysis report.
 	 * @returns {Promise} Notifies the finished state by starting the Analyzer
 	 */
-	Main.prototype.analyze = function (oExecutionScope, vPresetOrRules) {
+	Main.prototype.analyze = function (oExecutionScope, vPresetOrRules, oMetadata) {
 		var that = this;
 
 		if (this._oAnalyzer && this._oAnalyzer.running()) {
@@ -337,6 +338,14 @@ function (jQuery, ManagedObject, Analyzer, CoreFacade,
 
 		// Set default values
 		oExecutionScope = oExecutionScope || {type: "global"};
+
+		// Include custom metadata in reports
+		if (oMetadata) {
+			// sanitize the metadata, so that there is no way to pass malicious functions
+			this._oAnalysisMetadata = JSON.parse(JSON.stringify(oMetadata));
+		} else {
+			this._oAnalysisMetadata = null;
+		}
 
 		var vRuleDescriptors;
 		if (vPresetOrRules && vPresetOrRules.selections) {

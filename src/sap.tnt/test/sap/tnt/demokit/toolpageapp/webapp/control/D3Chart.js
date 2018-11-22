@@ -1,9 +1,9 @@
 sap.ui.define([
-    "sap/ui/thirdparty/jquery",
-    "sap/ui/core/Control",
-    "sap/ui/core/HTML",
-    "sap/ui/core/ResizeHandler",
-    "sap/ui/dom/jquery/rect"
+	"sap/ui/thirdparty/jquery",
+	"sap/ui/core/Control",
+	"sap/ui/core/HTML",
+	"sap/ui/core/ResizeHandler",
+	"sap/ui/dom/jquery/rect"
 ], function($, Control, HTML, ResizeHandler) {
 	"use strict";
 
