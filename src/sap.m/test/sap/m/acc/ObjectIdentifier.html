@@ -99,19 +99,6 @@
 			ariaLabelledBy: oAriaLabelledByText
 		}, true);
 
-		var oObjectIdentifierLabel = new sap.m.Label({
-			text: "Label with additional information",
-			labelFor: "labelled-objectidentifier"
-		}).addStyleClass("sapUiMediumMarginBegin sapUiTinyMarginBottom");	// Added for better visual representation
-
-		var oLabelledObjectIdentifier = getObjectIdentifier({
-			id: "labelled-objectidentifier",
-			title: "Gaming keyboard",
-			text: "So many buttons... again",
-			titleActive: true,
-			titlePress: onTitlePress
-		}, true);
-
 
 		// --------------------------
 		// ObjectIdentifiers in Table
@@ -185,9 +172,6 @@
 				getText("ObjectIdentifier with ariaLabelledBy:"),
 				oAriaLabelledByText,
 				oObjectIdentifierAriaLabelledBy,
-				getText("ObjectIdentifier with sap.m.Label:"),
-				oObjectIdentifierLabel,
-				oLabelledObjectIdentifier,
 
 				getTitle("ObjectIdentifiers in Table"),
 
