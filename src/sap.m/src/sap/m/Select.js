@@ -597,26 +597,36 @@ function(
 		 * @private
 		 */
 		Select.prototype.setValue = function(sValue) {
-			var oSelectedItem = this.getSelectedItem();
+			var oDomRef = this.getDomRef(),
+				oTextPlaceholder = oDomRef && oDomRef.querySelector(".sapMSelectListItemText");
 
-			this.$().find(".sapMSelectListItemText").text(sValue);
-
-			if (oSelectedItem && oSelectedItem.isA("sap.ui.core.ListItem")) {
-				this._getValueIcon().setSrc(!!oSelectedItem.getIcon() ? oSelectedItem.getIcon() : null);
+			if (oTextPlaceholder) {
+				oTextPlaceholder.textContent = sValue;
 			}
+
+			this._getValueIcon();
 		};
 
 
 		Select.prototype._getValueIcon = function() {
 			var oValueIcon = this.getAggregation("_valueIcon"),
-				sIconSrc = this.getSelectedItem().getIcon() || null;
+				oSelectedItem = this.getSelectedItem(),
+				bHaveIcon = !!(oSelectedItem && oSelectedItem.getIcon && oSelectedItem.getIcon()),
+				sIconSrc = bHaveIcon ? oSelectedItem.getIcon() : "sap-icon://pull-down";
 
 			if (!oValueIcon) {
-				oValueIcon = new Icon({src: sIconSrc});
+				oValueIcon = new Icon(this.getId() + "-labelIcon", {src: sIconSrc, visible: false});
 				this.setAggregation("_valueIcon", oValueIcon, true);
 			}
 
-			oValueIcon.toggleStyleClass("sapMSelectListItemIcon", !!sIconSrc);
+			if (oValueIcon.getVisible() !== bHaveIcon) {
+				oValueIcon.setVisible(bHaveIcon);
+				oValueIcon.toggleStyleClass("sapMSelectListItemIcon", bHaveIcon);
+			}
+
+			if (bHaveIcon && oSelectedItem.getIcon() !== oValueIcon.getSrc()) {
+				oValueIcon.setSrc(sIconSrc);
+			}
 
 			return oValueIcon;
 		};
