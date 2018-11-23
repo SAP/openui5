@@ -146,6 +146,7 @@ sap.ui.define([
 	QUnit.module("Rendering");
 
 	QUnit.test("Content", function(assert) {
+		sap.ui.getCore().applyChanges();
 		assert.ok(jQuery.sap.containsOrEquals(jQuery.sap.domById("shell-header-hdr-center"), jQuery.sap.domById("search")), "Search rendered correctly");
 		assert.ok(jQuery.sap.containsOrEquals(jQuery.sap.domById("shell-header-hdr-begin"), jQuery.sap.domById("_itm")), "Header Items rendered correctly");
 		assert.ok(jQuery.sap.containsOrEquals(jQuery.sap.domById("shell-header-hdr-end"), jQuery.sap.domById("_end_itm")), "Header End Items rendered correctly");
