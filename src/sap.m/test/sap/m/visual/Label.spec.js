@@ -47,49 +47,48 @@ describe("sap.m.Label", function() {
 	// text align Begin
 	it("should visualize label with text align Begin", function () {
 		var lbl7 = element(by.id('lbl7'));
-		lbl7.click();
 		expect(takeScreenshot(lbl7)).toLookAs("7_align_Begin");
 	});
 
 	// text align Center
 	it("should visualize label with text align Center", function () {
 		var lbl8 = element(by.id('lbl8'));
-		lbl8.click();
 		expect(takeScreenshot(lbl8)).toLookAs("8_align_Center");
 	});
 
 	// text align End
 	it("should visualize label with text align End", function () {
 		var lbl9 = element(by.id('lbl9'));
-		lbl9.click();
 		expect(takeScreenshot(lbl9)).toLookAs("9_align_End");
 	});
 
 	// text align Left
 	it("should visualize label with text align Left", function () {
 		var lbl10 = element(by.id('lbl10'));
-		lbl10.click();
 		expect(takeScreenshot(lbl10)).toLookAs("10_align_Left");
 	});
 
 	// text align Right
 	it("should visualize label with text align Right", function () {
 		var lbl11 = element(by.id('lbl11'));
-		lbl11.click();
 		expect(takeScreenshot(lbl11)).toLookAs("11_align_Right");
 	});
 
 	// width
 	it("should visualize label with fixed width", function () {
 		var lbl13 = element(by.id('lbl13'));
-		lbl13.click();
 		expect(takeScreenshot(lbl13)).toLookAs("13_width");
+	});
+
+	// displayOnly
+	it("should visualize label in display mode", function () {
+		var lbl8a = element(by.id('lbl8a'));
+		expect(takeScreenshot(lbl8a)).toLookAs("13a_display_mode");
 	});
 
 	//  wrappingType (hyphenation)
 	it("should visualize label with hyphenation", function () {
 		var lbl14 = element(by.id('lbl14'));
-		lbl14.click();
 		expect(takeScreenshot(lbl14)).toLookAs("14_hyphenation");
 	});
 
