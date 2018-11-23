@@ -241,6 +241,18 @@ sap.ui.define([
 			 */
 			xhrSettings : {type : "sap.ui.unified.FileUploaderXHRSettings", multiple : false}
 		},
+		associations : {
+
+			/**
+			 * Association to controls / IDs which describe this control (see WAI-ARIA attribute aria-describedby).
+			 */
+			ariaDescribedBy: {type: "sap.ui.core.Control", multiple: true, singularName: "ariaDescribedBy"},
+
+			/**
+			 * Association to controls / IDs which label this control (see WAI-ARIA attribute aria-labelledby).
+			 */
+			ariaLabelledBy: {type: "sap.ui.core.Control", multiple: true, singularName: "ariaLabelledBy"}
+		},
 		events : {
 
 			/**
@@ -548,6 +560,29 @@ sap.ui.define([
 
 	FileUploader.prototype.getIdForLabel = function () {
 		return this.oBrowse.getId();
+	};
+
+	/**
+	 * Ensures that FileUploader's internal button will have a reference back to the labels, by which
+	 * the FileUploader is labelled
+	 *
+	 * @returns {sap.ui.unified.FileUploader} For chaining
+	 * @private
+	 */
+	FileUploader.prototype._ensureBackwardsReference = function () {
+		var oInternalButton = this.oBrowse,
+			aInternalButtonAriaLabelledBy = oInternalButton.getAriaLabelledBy(),
+			aReferencingLabels = LabelEnablement.getReferencingLabels(this);
+
+		if (aInternalButtonAriaLabelledBy) {
+			aReferencingLabels.forEach(function (sLabelId) {
+				if (aInternalButtonAriaLabelledBy.indexOf(sLabelId) === -1) {
+					oInternalButton.addAriaLabelledBy(sLabelId);
+				}
+			});
+		}
+
+		return this;
 	};
 
 	FileUploader.prototype.setFileType = function(vTypes) {
