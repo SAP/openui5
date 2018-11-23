@@ -11,7 +11,7 @@
 		<script id="sap-ui-bootstrap"
 				data-sap-ui-theme="sap_bluecrystal"
 				data-sap-ui-trace="false"
-				data-sap-ui-libs="sap.ui.commons, sap.ui.unified, sap.ui.layout"
+				data-sap-ui-libs="sap.m, sap.ui.unified, sap.ui.layout"
 				src="../../../../resources/sap-ui-core.js"
 		>
 		</script>
@@ -96,13 +96,13 @@
 			oForm.addFormContainer(oFormContainer);
 
 			var oFormElement = new sap.ui.layout.form.FormElement("F1E1", {
-				fields: [ new sap.ui.commons.Button({
+				fields: [ new sap.m.Button({
 												text: "focus now",
 												press: function(oEvent){
 													sap.ui.getCore().byId("Cal1").focusDate(new Date());
 												}
 									}),
-									new sap.ui.commons.ToggleButton({
+									new sap.m.ToggleButton({
 												text: "special days",
 												press: function(oEvent){
 													var bPressed = oEvent.getParameter("pressed");
@@ -165,9 +165,9 @@
 
 			oFormElement = new sap.ui.layout.form.FormElement("F1E2", {
 				label: "selected date",
-				fields: [ new sap.ui.commons.TextField("TF1",{
+				fields: [ new sap.m.Input("TF1",{
 												editable: true,
-												width: "10em",
+												width: "10rem",
 												placeholder: "yyyyMMddHHmmss",
 												change: function(oEvent){
 													var oTF = oEvent.oSource;
@@ -195,9 +195,9 @@
 
 			oFormElement = new sap.ui.layout.form.FormElement("F1E3", {
 				label: "start date",
-				fields: [ new sap.ui.commons.TextField("TF2",{
+				fields: [ new sap.m.Input("TF2",{
 												editable: true,
-												width: "10em",
+												width: "10rem",
 												placeholder: "yyyyMMddHHmmss",
 												change: function(oEvent){
 													var oTF = oEvent.oSource;
@@ -218,9 +218,9 @@
 
 			oFormElement = new sap.ui.layout.form.FormElement("F1E4", {
 				label: "min. date",
-				fields: [ new sap.ui.commons.TextField("TF-min",{
+				fields: [ new sap.m.Input("TF-min",{
 										editable: true,
-										width: "10em",
+										width: "10rem",
 										placeholder: "yyyyMMddHHmmss",
 										change: function(oEvent){
 											var oTF = oEvent.oSource;
@@ -239,9 +239,9 @@
 
 			oFormElement = new sap.ui.layout.form.FormElement("F1E5", {
 				label: "max. date",
-				fields: [ new sap.ui.commons.TextField("TF-max",{
+				fields: [ new sap.m.Input("TF-max",{
 										editable: true,
-										width: "10em",
+										width: "10rem",
 										placeholder: "yyyyMMddHHmmss",
 										change: function(oEvent){
 											var oTF = oEvent.oSource;
@@ -294,12 +294,14 @@
 				}
 			}).placeAt("sample2");
 
-			oLabel = new sap.ui.commons.Label({text: "selected date from", labelFor: "TF2-start"}).placeAt("event2");
-			oInput = new sap.ui.commons.TextField("TF2-start",{
+			oLabel = new sap.m.Label({text: "selected date from", labelFor: "TF2-start"}).placeAt("event2");
+			oInput = new sap.m.Input("TF2-start",{
+				width: "10rem",
 				editable: false
 			}).placeAt("event2");
-			oLabel = new sap.ui.commons.Label({text: "to", labelFor: "TF2-end"}).placeAt("event2");
-			oInput = new sap.ui.commons.TextField("TF2-end",{
+			oLabel = new sap.m.Label({text: "to", labelFor: "TF2-end"}).placeAt("event2");
+			oInput = new sap.m.Input("TF2-end",{
+				width: "10rem",
 				editable: false
 			}).placeAt("event2");
 
@@ -343,11 +345,15 @@
 				}
 			}).placeAt("sample3");
 
-			oLabel = new sap.ui.commons.Label({text: "selected dates", labelFor: "LB"}).placeAt("event3");
-			var oListBox = new sap.ui.commons.ListBox("LB",{
-				editable: false,
-				visibleItems: 10,
-				width: "10em"
+			oLabel = new sap.m.Label({text: "selected dates", labelFor: "LB"}).placeAt("event3");
+			var oListBox = new sap.m.SelectList("LB",{
+				width: "10rem"
+			});
+
+			var oScrollContainer = new sap.m.ScrollContainer({
+				height: "10rem",
+				vertical: true,
+				content: [oListBox]
 			}).placeAt("event3");
 
 			var oLegend = new sap.ui.unified.CalendarLegend("Legend1", {

@@ -11,7 +11,7 @@
 		<script id="sap-ui-bootstrap"
 				data-sap-ui-theme="sap_bluecrystal"
 				data-sap-ui-trace="false"
-				data-sap-ui-libs="sap.ui.commons, sap.ui.unified"
+				data-sap-ui-libs="sap.m, sap.ui.unified"
 				src="../../../../resources/sap-ui-core.js"
 		>
 		</script>
@@ -297,8 +297,9 @@
 			});
 			oRow1.addIntervalHeader(oApp);
 
-			var oLabel = new sap.ui.commons.Label({text: "start date", labelFor: "TF1"}).placeAt("event1");
-			var oInput = new sap.ui.commons.TextField("TF1",{
+			var oLabel = new sap.m.Label({text: "start date", labelFor: "TF1"}).placeAt("event1");
+			var oInput = new sap.m.Input("TF1",{
+				width:"10rem",
 				value: oFormatYyyyMMddHHmm.format(oRow1.getStartDate()),
 				editable: true,
 				placeholder: "yyyyMMddHHmm",
@@ -316,12 +317,12 @@
 				}
 			}).placeAt("event1");
 
-			var oLabel = new sap.ui.commons.Label({text: "Interval type", labelFor: "RG1"}).placeAt("event1");
-			new sap.ui.commons.RadioButtonGroup("RG1", {
+			var oLabel = new sap.m.Label({text: "Interval type", labelFor: "RG1"}).placeAt("event1");
+			new sap.m.RadioButtonGroup("RG1", {
 				columns: 3,
-				items: [new sap.ui.core.Item("I1",{text: sap.ui.unified.CalendarIntervalType.Hour}),
-				        new sap.ui.core.Item("I2",{text: sap.ui.unified.CalendarIntervalType.Day}),
-				        new sap.ui.core.Item("I3",{text: sap.ui.unified.CalendarIntervalType.Month})],
+				buttons: [new sap.m.RadioButton("I1",{text: sap.ui.unified.CalendarIntervalType.Hour}),
+				        new sap.m.RadioButton("I2",{text: sap.ui.unified.CalendarIntervalType.Day}),
+				        new sap.m.RadioButton("I3",{text: sap.ui.unified.CalendarIntervalType.Month})],
 				select: function(oEvent){
 					var oRow = sap.ui.getCore().byId("Row1");
 					if(oEvent.getParameter("selectedIndex") == 0){
@@ -334,9 +335,10 @@
 				}
 			}).placeAt("event1");
 
-			var oLabel = new sap.ui.commons.Label({text: "intervals", labelFor: "TF2"}).placeAt("event1");
-			var oInput = new sap.ui.commons.TextField("TF2",{
+			var oLabel = new sap.m.Label({text: "intervals", labelFor: "TF2"}).placeAt("event1");
+			var oInput = new sap.m.Input("TF2",{
 				value: oRow1.getIntervals(),
+				width: "10rem",
 				editable: true,
 				placeholder: "Number",
 				change: function(oEvent){
@@ -352,7 +354,7 @@
 				}
 			}).placeAt("event1");
 
-			oButton = new sap.ui.commons.ToggleButton({
+			oButton = new sap.m.ToggleButton({
 				text: "NonWorkingDays",
 				pressed: true,
 				press: function(oEvent){
@@ -365,7 +367,7 @@
 				}
 			}).placeAt("event1");
 
-			oButton = new sap.ui.commons.ToggleButton({
+			oButton = new sap.m.ToggleButton({
 				text: "NonWorkingHours",
 				pressed: false,
 				press: function(oEvent){
@@ -392,7 +394,7 @@
 				text: "This is a extra appointment!"
 			});
 
-			oButton = new sap.ui.commons.ToggleButton({
+			oButton = new sap.m.ToggleButton({
 				text: "extra appointment",
 				pressed: false,
 				press: function(oEvent){
@@ -405,7 +407,7 @@
 				}
 			}).placeAt("event1");
 
-			oButton = new sap.ui.commons.ToggleButton({
+			oButton = new sap.m.ToggleButton({
 				text: "Subintervals",
 				pressed: false,
 				press: function(oEvent){
@@ -414,7 +416,7 @@
 				}
 			}).placeAt("event1");
 
-			oButton = new sap.ui.commons.ToggleButton({
+			oButton = new sap.m.ToggleButton({
 				text: "IntervalHeaders",
 				pressed: true,
 				press: function(oEvent){
@@ -425,7 +427,7 @@
 				}
 			}).placeAt("event1");
 
-			oButton = new sap.ui.commons.ToggleButton("B-Empty", {
+			oButton = new sap.m.ToggleButton("B-Empty", {
 				text: "EmptyIntervalHeaders",
 				pressed: true,
 				press: function(oEvent){
@@ -434,7 +436,7 @@
 				}
 			}).placeAt("event1");
 
-			oButton = new sap.ui.commons.ToggleButton("B-OneLine", {
+			oButton = new sap.m.ToggleButton("B-OneLine", {
 				text: "Single line Appointments",
 				pressed: false,
 				press: function(oEvent){
@@ -443,26 +445,26 @@
 				}
 			}).placeAt("event1");
 
-			var oDropdownBox = new sap.ui.commons.DropdownBox("DB-Vis", {
+			var oDropdownBox = new sap.m.ComboBox("DB-Vis", {
 				selectedKey: sap.ui.unified.CalendarAppointmentVisualization.Standard,
 				items: [
-								new sap.ui.core.ListItem("I-1",{text:"Standard", key: sap.ui.unified.CalendarAppointmentVisualization.Standard}),
-								new sap.ui.core.ListItem("I-2",{text:"Filled", key: sap.ui.unified.CalendarAppointmentVisualization.Filled})
+								new sap.ui.core.Item("I-1",{text:"Standard", key: sap.ui.unified.CalendarAppointmentVisualization.Standard}),
+								new sap.ui.core.Item("I-2",{text:"Filled", key: sap.ui.unified.CalendarAppointmentVisualization.Filled})
 								],
 				change: function(oEvent){
-					var sKey = oEvent.getParameter("selectedItem").getKey();
+					var sKey = oEvent.getSource().getSelectedKey();
 					oRow1.setAppointmentsVisualization(sKey);
 				}
 			}).placeAt("event1");
-			new sap.ui.commons.DropdownBox("DB-GroupAppointment", {
+			new sap.m.ComboBox("DB-GroupAppointment", {
 				selectedKey: sap.ui.unified.GroupAppointmentsMode.Collapsed,
 				tooltip: "Group appointment mode",
 				items: [
-					new sap.ui.core.ListItem("GAM-I-1",{text:"Collapsed", key: sap.ui.unified.GroupAppointmentsMode.Collapsed}),
-					new sap.ui.core.ListItem("GAM-I-2",{text:"Expanded", key: sap.ui.unified.GroupAppointmentsMode.Expanded})
+					new sap.ui.core.Item("GAM-I-1",{text:"Collapsed", key: sap.ui.unified.GroupAppointmentsMode.Collapsed}),
+					new sap.ui.core.Item("GAM-I-2",{text:"Expanded", key: sap.ui.unified.GroupAppointmentsMode.Expanded})
 				],
 				change: function(oEvent){
-					var sKey = oEvent.getParameter("selectedItem").getKey();
+					var sKey = oEvent.getSource().getSelectedKey();
 					oRow1.setGroupAppointmentsMode(sKey);
 				}
 			}).placeAt("event1");
@@ -542,7 +544,7 @@
 				        ]
 			}).placeAt("legend");
 			// exent text output
-			oEventText = new sap.ui.commons.TextView("EventTV", {
+			oEventText = new sap.m.Label("EventTV", {
 				text: "event text"
 			}).placeAt("eventText");
 
