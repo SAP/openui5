@@ -8,11 +8,11 @@ sap.ui.define([
 	var sViewName = "App",
 		sAppId = "app";
 
-		Opa5.createPageObjects({
-			onTheAppPage : {
-				baseClass : Common,
+	Opa5.createPageObjects({
+		onTheAppPage : {
+			baseClass : Common,
 
-				actions : {
+			actions : {
 
 				iWaitUntilTheAppBusyIndicatorIsGone : function () {
 					return this.waitFor({

@@ -18,8 +18,8 @@ sap.ui.define([
 
 		// Assertions
 		Then.onTheWorklistPage.theTableShouldHaveAllEntries().
-		and.theTableShouldContainOnlyFormattedUnitNumbers().
-		and.theTitleShouldDisplayTheTotalAmountOfItems();
+			and.theTableShouldContainOnlyFormattedUnitNumbers().
+			and.theTitleShouldDisplayTheTotalAmountOfItems();
 	});
 
 	opaTest("Search for the First object should deliver results that contain the firstObject in the name", function (Given, When, Then) {

@@ -1,4 +1,4 @@
-/*global QUnit, sinon*/
+/*global QUnit*/
 
 sap.ui.define([
 	"sap/ui/demo/worklist/model/models",
@@ -7,11 +7,7 @@ sap.ui.define([
 	"use strict";
 
 	QUnit.module("createDeviceModel", {
-		beforeEach : function () {
-			sinon.defaultConfig.useFakeTimers = false;
-		},
 		afterEach : function () {
-			sinon.defaultConfig.useFakeTimers = true;
 			this.oDeviceModel.destroy();
 		}
 	});
