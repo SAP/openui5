@@ -362,7 +362,8 @@ sap.ui.define([
 
 	//*********************************************************************************************
 	QUnit.test("checkUpdate(true): no change event for virtual context", function (assert) {
-		var oVirtualContext = Context.create(this.oModel, {/*list binding*/}, "/...", -2),
+		var oVirtualContext = Context.create(this.oModel, {/*list binding*/}, "/...",
+				Context.VIRTUAL),
 			oBinding = this.oModel.bindProperty("relative", oVirtualContext);
 
 		// Note: it is important that automatic type determination runs as soon as possible
