@@ -6,10 +6,12 @@
  */
 sap.ui.define([
 	"jquery.sap.global",
-	"sap/ui/support/library"
+	"sap/ui/support/library",
+	"sap/ui/core/mvc/XMLView"
 ], function(
 	jQuery,
-	SupportLib) {
+	SupportLib,
+	XMLView) {
 	"use strict";
 
 	// shortcuts
@@ -162,78 +164,79 @@ sap.ui.define([
 		enabled: true,
 		minversion: "1.34",
 		title: "Library Usage",
-		description: "Checks whether there are unused loaded libraries",
+		description: "Checks whether there are unused loaded libraries. This rule only works on global execution scope.",
 		resolution: "Adapt your application descriptor and your application coding to improve the performance",
 		resolutionurls: [{
 			text: 'Documentation: Descriptor Dependencies to Libraries and Components',
 			href: 'https://openui5.hana.ondemand.com/#/topic/8521ad1955f340f9a6207d615c88d7fd'
 		}],
 		check: function(oIssueManager, oCoreFacade, oScope) {
-
-			//1. Ignore libraries with instantiated elements
-			var mLibraries = sap.ui.getCore().getLoadedLibraries();
-			oScope.getElements().forEach(function(oElement) {
-				var sElementLib = oElement.getMetadata().getLibraryName();
-				if (mLibraries[sElementLib]) {
-					delete mLibraries[sElementLib];
-				}
-			});
-
-			// 2. Ignore libraries with declared modules
-			// Alternative: More exact, but request-dependent solution would be loading and evaluating the resources.json file for each library
-
-			// support rules can get loaded within a ui5 version which does not have module "sap/base/util/LoaderExtensions" yet
-			// therefore load the jQuery.sap.getAllDeclaredModules fallback if not available
-			var LoaderExtensions = sap.ui.require("sap/base/util/LoaderExtensions");
-			var aDeclaredModules;
-			if (LoaderExtensions) {
-				aDeclaredModules = LoaderExtensions.getAllRequiredModules();
-			} else {
-				aDeclaredModules = jQuery.sap.getAllDeclaredModules();
-			}
-			Object.keys(mLibraries).forEach(function(sLibrary) {
-				var sLibraryWithDot = sLibrary + ".";
-				for (var i = 0; i < aDeclaredModules.length; i++) {
-					// Ignore library types and library enum files
-					var sDeclaredModule = aDeclaredModules[i];
-					if (sDeclaredModule.indexOf(sLibraryWithDot) === 0 &&
-						mLibraries[sLibrary].types.indexOf(sDeclaredModule) === -1 &&
-						sDeclaredModule.lastIndexOf(".library") !== sDeclaredModule.length - ".library".length &&
-						sDeclaredModule.lastIndexOf(".library-preload") !== sDeclaredModule.length - ".library-preload".length &&
-						sDeclaredModule.lastIndexOf(".flexibility") !== sDeclaredModule.length - ".flexibility".length &&
-						sDeclaredModule.lastIndexOf(".support") !== sDeclaredModule.length - ".support".length) {
-						delete mLibraries[sLibrary];
-						break;
-					}
-				}
-			});
-
-			// 3. Remove unused library dependent unused libraries
-			var aUnusedLibrary = Object.keys(mLibraries);
-			Object.keys(mLibraries).forEach(function(sLibrary) {
-				mLibraries[sLibrary].dependencies.forEach(function(oDependency) {
-					var iIndex = aUnusedLibrary.indexOf(oDependency);
-					if (iIndex > -1) {
-						aUnusedLibrary.splice(iIndex, 1);
+			if (oScope.getType() === "global") {
+				//1. Ignore libraries with instantiated elements
+				var mLibraries = sap.ui.getCore().getLoadedLibraries();
+				oScope.getElements().forEach(function(oElement) {
+					var sElementLib = oElement.getMetadata().getLibraryName();
+					if (mLibraries[sElementLib]) {
+						delete mLibraries[sElementLib];
 					}
 				});
-			});
 
-			aUnusedLibrary.forEach(function(sUnusedLibrary) {
-				// There are apps which use modules with default lib (empty string)
-				if (sUnusedLibrary){
-					oIssueManager.addIssue({
-						severity: Severity.Medium,
-						details: "The library '" + sUnusedLibrary + "' has been loaded, but not used so far in the analyzed scope of the application. There are two options to solve this issue: \n" +
-							"1. If the library is needed at later state in your application, you can make use of lazy library loading (see resolution section)." +
-							" Please be aware that if this lazy flag isn't used correctly this might lead to a performance decrease. \n" +
-							"2. If the library has been loaded by accident and is never used in the application, you should remove the library from the bootstrap or application descriptor.",
-						context: {
-							id: "WEBPAGE"
+				// 2. Ignore libraries with declared modules
+				// Alternative: More exact, but request-dependent solution would be loading and evaluating the resources.json file for each library
+
+				// support rules can get loaded within a ui5 version which does not have module "sap/base/util/LoaderExtensions" yet
+				// therefore load the jQuery.sap.getAllDeclaredModules fallback if not available
+				var LoaderExtensions = sap.ui.require("sap/base/util/LoaderExtensions");
+				var aDeclaredModules;
+				if (LoaderExtensions) {
+					aDeclaredModules = LoaderExtensions.getAllRequiredModules();
+				} else {
+					aDeclaredModules = jQuery.sap.getAllDeclaredModules();
+				}
+				Object.keys(mLibraries).forEach(function(sLibrary) {
+					var sLibraryWithDot = sLibrary + ".";
+					for (var i = 0; i < aDeclaredModules.length; i++) {
+						// Ignore library types and library enum files
+						var sDeclaredModule = aDeclaredModules[i];
+						if (sDeclaredModule.indexOf(sLibraryWithDot) === 0 &&
+							mLibraries[sLibrary].types.indexOf(sDeclaredModule) === -1 &&
+							sDeclaredModule.lastIndexOf(".library") !== sDeclaredModule.length - ".library".length &&
+							sDeclaredModule.lastIndexOf(".library-preload") !== sDeclaredModule.length - ".library-preload".length &&
+							sDeclaredModule.lastIndexOf(".flexibility") !== sDeclaredModule.length - ".flexibility".length &&
+							sDeclaredModule.lastIndexOf(".support") !== sDeclaredModule.length - ".support".length) {
+							delete mLibraries[sLibrary];
+							break;
+						}
+					}
+				});
+
+				// 3. Remove unused library dependent unused libraries
+				var aUnusedLibrary = Object.keys(mLibraries);
+				Object.keys(mLibraries).forEach(function(sLibrary) {
+					mLibraries[sLibrary].dependencies.forEach(function(oDependency) {
+						var iIndex = aUnusedLibrary.indexOf(oDependency);
+						if (iIndex > -1) {
+							aUnusedLibrary.splice(iIndex, 1);
 						}
 					});
-				}
-			});
+				});
+
+				aUnusedLibrary.forEach(function(sUnusedLibrary) {
+					// There are apps which use modules with default lib (empty string)
+					if (sUnusedLibrary){
+						oIssueManager.addIssue({
+							severity: Severity.Medium,
+							details: "The library '" + sUnusedLibrary + "' has been loaded, but not used so far in the analyzed scope of the application. There are two options to solve this issue: \n" +
+								"1. If the library is needed at later state in your application, you can make use of lazy library loading (see resolution section)." +
+								" Please be aware that if this lazy flag isn't used correctly this might lead to a performance decrease. \n" +
+								"2. If the library has been loaded by accident and is never used in the application, you should remove the library from the bootstrap or application descriptor.",
+							context: {
+								id: "WEBPAGE"
+							}
+						});
+					}
+				});
+			}
 		}
 	};
 
@@ -410,9 +413,7 @@ sap.ui.define([
 			var mComponentsRoutingSync = {};
 
 			// 1. Collect XML views in analyzed scope
-			var aSyncXMLViews = oScope.getElements().filter(function(oControl) {
-				return oControl.getMetadata().getName() === "sap.ui.core.mvc.XMLView";
-			}).filter(function(oXMLView) {
+			var aSyncXMLViews = oScope.getElementsByClassName(XMLView).filter(function(oXMLView) {
 				return oXMLView.oAsyncState === undefined;
 			});
 
