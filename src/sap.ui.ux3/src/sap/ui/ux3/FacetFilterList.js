@@ -4,13 +4,14 @@
 
 // Provides control sap.ui.ux3.FacetFilterList.
 sap.ui.define([
-    'jquery.sap.global',
+    'sap/ui/thirdparty/jquery',
     'sap/ui/commons/ListBox',
     'sap/ui/core/Control',
     './library',
-    "./FacetFilterListRenderer"
+    './FacetFilterListRenderer',
+    'sap/ui/core/ListItem'
 ],
-	function(jQuery, ListBox, Control, library, FacetFilterListRenderer) {
+	function(jQuery, ListBox, Control, library, FacetFilterListRenderer, ListItem) {
 	"use strict";
 
 
@@ -110,7 +111,6 @@ sap.ui.define([
 	}});
 
 
-	(function() {
 
 	/**
 	 * Does the setup when the control is created.
@@ -142,7 +142,7 @@ sap.ui.define([
 			that.onSelect(that, oEvent);
 		});
 		this.addAggregation("controls", this._oListBox);
-		this._oItemAll = new sap.ui.core.ListItem({text: this._oResBundle.getText("FACETFILTER_ALL", [0]), key:"sapUiFacetFilter_ALL"});
+		this._oItemAll = new ListItem({text: this._oResBundle.getText("FACETFILTER_ALL", [0]), key:"sapUiFacetFilter_ALL"});
 		this._oListBox.addItem(this._oItemAll);
 	};
 
@@ -276,7 +276,7 @@ sap.ui.define([
 				this._bAllOnly = true;
 				this._oListBox.setSelectedKeys(aSelectedKeys);
 	    }
-	    var iIndexAll = jQuery.inArray("sapUiFacetFilter_ALL", aSelectedKeys);
+	    var iIndexAll = aSelectedKeys.indexOf("sapUiFacetFilter_ALL");
 	    if (iIndexAll > -1) {
 				if (aSelectedKeys.length == 1) {
 					this._bAllOnly = true;
@@ -316,9 +316,7 @@ sap.ui.define([
 		});
 	};
 
-	}());
-
 
 	return FacetFilterList;
 
-}, /* bExport= */ true);
+});

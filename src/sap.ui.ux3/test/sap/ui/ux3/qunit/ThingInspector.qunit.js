@@ -8,7 +8,7 @@ sap.ui.define([
     "sap/ui/ux3/ThingInspector",
     "sap/ui/ux3/ThingAction",
     "sap/ui/ux3/NavigationItem",
-    "jquery.sap.global",
+    "sap/ui/thirdparty/jquery",
     "sap/ui/ux3/library",
     "sap/ui/ux3/ActionBar",
     "sap/ui/commons/Label",
@@ -17,7 +17,7 @@ sap.ui.define([
     "sap/ui/commons/layout/MatrixLayoutRow",
     "sap/ui/commons/Button",
     "sap/ui/commons/layout/MatrixLayout",
-    "jquery.sap.keycodes"
+    "sap/ui/events/KeyCodes"
 ], function(
     qutils,
 	createAndAppendDiv,
@@ -35,7 +35,8 @@ sap.ui.define([
 	MatrixLayoutCell,
 	MatrixLayoutRow,
 	Button,
-	MatrixLayout
+	MatrixLayout,
+	KeyCodes
 ) {
 	"use strict";
 
@@ -161,9 +162,6 @@ sap.ui.define([
 				text : "Activities"
 			}) ],
 		actionSelected : actionSelectedEventHandler,
-		followSelected : actionSelectedEventHandler,
-		flagSelected : actionSelectedEventHandler,
-		favoriteSelected : actionSelectedEventHandler,
 		feedSubmit : feedSubmitEventHandler,
 		close : closeEventHandler,
 		openNew : openNewEventHandler
@@ -208,13 +206,13 @@ sap.ui.define([
 
 	QUnit.test("ThingInspector exists", function(assert) {
 		assert.equal(true, true, "...");
-		var oDomRef = jQuery.sap.domById(oThingInspector.getId());
+		var oDomRef = oThingInspector.getId() ? window.document.getElementById(oThingInspector.getId()) : null;
 		assert.ok(oDomRef, "Rendered ThingInspector should exist in the page");
 		assert.equal(oDomRef.className, "sapUiUx3Overlay sapUiUx3TI sapUiShd", "Rendered ThingInspector should have the class 'sapUiUx3TI'");
 	});
 
 	QUnit.test("Swatch", function(assert) {
-		var oSwatch = jQuery.sap.domById(oThingInspector.getId() + "-thingViewer-swatch");
+		var oSwatch = oThingInspector.getDomRef("thingViewer-swatch");
 		assert.ok(oSwatch, "Rendered Swatch should exist in the page");
 		assert.equal(oSwatch.className, "sapUiUx3TVIcon", "Rendered Swatch should have the class 'sapUiUx3TVIcon'");
 	});
@@ -241,28 +239,28 @@ sap.ui.define([
 
 	QUnit.test("OpenNew Event", function(assert) {
 		assert.expect(1);
-		qutils.triggerMouseEvent(jQuery.sap.byId(oThingInspector.getId() + "-openNew"), "click", 1, 1, 1, 1);
+		qutils.triggerMouseEvent(oThingInspector.$("openNew"), "click", 1, 1, 1, 1);
 	});
 
 	QUnit.test("OpenNew via Keyboard Event", function(assert) {
 		assert.expect(2);
-		qutils.triggerKeyboardEvent(oThingInspector.getId() + "-openNew", jQuery.sap.KeyCodes.ENTER, false, false, false);
-		qutils.triggerKeyboardEvent(oThingInspector.getId() + "-openNew", jQuery.sap.KeyCodes.SPACE, false, false, false);
+		qutils.triggerKeyboardEvent(oThingInspector.getId() + "-openNew", KeyCodes.ENTER, false, false, false);
+		qutils.triggerKeyboardEvent(oThingInspector.getId() + "-openNew", KeyCodes.SPACE, false, false, false);
 	});
 
 	QUnit.test("ActionSelected Event", function(assert) {
 		assert.expect(2);
 		action = "delete";
-		qutils.triggerMouseEvent(jQuery.sap.byId(oThingInspector.getId() + "-actionBar-deleteButton"), "click", 1, 1, 1, 1);
+		qutils.triggerMouseEvent(oThingInspector.$("actionBar-deleteButton"), "click", 1, 1, 1, 1);
 	});
 
 	QUnit.test("FavoriteSelected Event", function(assert) {
 		assert.expect(7);
 		assert.ok(!oThingInspector.getFavoriteState(), "Favorite State is false");
 		action = "favorite";
-		qutils.triggerMouseEvent(jQuery.sap.byId(oThingInspector.getId() + "-actionBar-Favorite"), "click", 1, 1, 1, 1);
+		qutils.triggerMouseEvent(oThingInspector.$("actionBar-Favorite"), "click", 1, 1, 1, 1);
 		assert.ok(oThingInspector.getFavoriteState(), "Favorite State is true");
-		qutils.triggerMouseEvent(jQuery.sap.byId(oThingInspector.getId() + "-actionBar-Favorite"), "click", 1, 1, 1, 1);
+		qutils.triggerMouseEvent(oThingInspector.$("actionBar-Favorite"), "click", 1, 1, 1, 1);
 		assert.ok(!oThingInspector.getFavoriteState(), "Favorite State is false");
 	});
 
@@ -277,8 +275,8 @@ sap.ui.define([
 		assert.expect(1);
 		action = "favorite";
 		setTimeout(function() {
-			assert.ok(!jQuery.sap.byId(oThingInspector.getId() + "-favorite")[0], "Action not rendered anymore");
-			qutils.triggerMouseEvent(jQuery.sap.byId(oThingInspector.getId() + "-favorite"), "click", 1, 1, 1, 1);
+			assert.ok(!oThingInspector.getDomRef("favorite"), "Action not rendered anymore");
+			qutils.triggerMouseEvent(oThingInspector.$("favorite"), "click", 1, 1, 1, 1);
 			done();
 		},500);
 	});
@@ -287,9 +285,9 @@ sap.ui.define([
 		assert.expect(7);
 		assert.ok(!oThingInspector.getFlagState(), "Flag State is false");
 		action = "flag";
-		qutils.triggerMouseEvent(jQuery.sap.byId(oThingInspector.getId() + "-actionBar-Flag"), "click", 1, 1, 1, 1);
+		qutils.triggerMouseEvent(oThingInspector.$("actionBar-Flag"), "click", 1, 1, 1, 1);
 		assert.ok(oThingInspector.getFlagState(), "Flag State is true");
-		qutils.triggerMouseEvent(jQuery.sap.byId(oThingInspector.getId() + "-actionBar-Flag"), "click", 1, 1, 1, 1);
+		qutils.triggerMouseEvent(oThingInspector.$("actionBar-Flag"), "click", 1, 1, 1, 1);
 		assert.ok(!oThingInspector.getFlagState(), "Flag State is false");
 	});
 
@@ -298,9 +296,9 @@ sap.ui.define([
 		assert.ok(!oThingInspector.getFlagState(), "Flag State is false");
 		action = "flag";
 		//jQuery.sap.byId(oThingInspector.getId() + "-flag").focus();
-		qutils.triggerKeyboardEvent(oThingInspector.getId() + "-actionBar-Flag", jQuery.sap.KeyCodes.ENTER, false, false, false);
+		qutils.triggerKeyboardEvent(oThingInspector.getId() + "-actionBar-Flag", KeyCodes.ENTER, false, false, false);
 		assert.ok(oThingInspector.getFlagState(), "Flag State is true");
-		qutils.triggerKeyboardEvent(oThingInspector.getId() + "-actionBar-Flag", jQuery.sap.KeyCodes.SPACE, false, false, false);
+		qutils.triggerKeyboardEvent(oThingInspector.getId() + "-actionBar-Flag", KeyCodes.SPACE, false, false, false);
 		assert.ok(!oThingInspector.getFlagState(), "Flag State is false");
 	});
 
@@ -315,8 +313,8 @@ sap.ui.define([
 		assert.expect(1);
 		action = "flag";
 		setTimeout(function() {
-			assert.ok(!jQuery.sap.byId(oThingInspector.getId() + "-actionBar-Flag")[0], "Action not rendered anymore");
-			qutils.triggerMouseEvent(jQuery.sap.byId(oThingInspector.getId() + "-actionBar-Flag"), "click", 1, 1, 1, 1);
+			assert.ok(!oThingInspector.getDomRef("actionBar-Flag"), "Action not rendered anymore");
+			qutils.triggerMouseEvent(oThingInspector.$("actionBar-Flag"), "click", 1, 1, 1, 1);
 			done();
 		},500);
 	});
@@ -325,13 +323,13 @@ sap.ui.define([
 		var done = assert.async();
 		assert.expect(2);
 		action = "update";
-		qutils.triggerMouseEvent(jQuery.sap.byId(oThingInspector.getId() + "-actionBar-Update"), "click", 1, 1, 1, 1);
+		qutils.triggerMouseEvent(oThingInspector.$("actionBar-Update"), "click", 1, 1, 1, 1);
 		setTimeout(function() {
-			assert.ok(jQuery.sap.domById(oThingInspector.getId() + "-actionBar-UpdateActionPopup"), "Rendered update popup should exist in the page");
+			assert.ok(oThingInspector.getDomRef("actionBar-UpdateActionPopup"), "Rendered update popup should exist in the page");
 			//click again should hide comment popup
-			qutils.triggerMouseEvent(jQuery.sap.byId(oThingInspector.getId() + "-actionBar-Update"), "click", 1, 1, 1, 1);
+			qutils.triggerMouseEvent(oThingInspector.$("actionBar-Update"), "click", 1, 1, 1, 1);
 			setTimeout(function() {
-				assert.equal(jQuery.sap.byId(oThingInspector.getId() + "-actionBar-UpdateActionPopup").length, 0,
+				assert.equal(oThingInspector.$("actionBar-UpdateActionPopup").length, 0,
 						"Rendered update popup was removed in the page");
 				done();
 			}, 500);
@@ -342,9 +340,9 @@ sap.ui.define([
 		var done = assert.async();
 		assert.expect(5);
 		action = "update";
-		qutils.triggerMouseEvent(jQuery.sap.byId(oThingInspector.getId() + "-actionBar-Update"), "click", 1, 1, 1, 1);
+		qutils.triggerMouseEvent(oThingInspector.$("actionBar-Update"), "click", 1, 1, 1, 1);
 		setTimeout(function() {
-			assert.ok(jQuery.sap.domById(oThingInspector.getId() + "-actionBar-UpdateActionPopup"), "Rendered update popup should exist in the page");
+			assert.ok(oThingInspector.getDomRef("actionBar-UpdateActionPopup"), "Rendered update popup should exist in the page");
 			jQuery(jQuery(".sapUiFeederInput")[0]).focus();
 			setTimeout(function() {
 				jQuery(".sapUiFeederInput")[0].innerHTML = "my feed entry";
@@ -352,10 +350,10 @@ sap.ui.define([
 					jQuery(jQuery(".sapUiFeederInput")[0]).keyup();
 					setTimeout(function() {
 						//click on feed submit button should hide comment popup
-						qutils.triggerMouseEvent(jQuery.sap.byId(oThingInspector.getId() + '-actionBar-Feeder-send'), "click", 1, 1, 1, 1);
+						qutils.triggerMouseEvent(oThingInspector.$('actionBar-Feeder-send'), "click", 1, 1, 1, 1);
 						setTimeout(function() {
-							assert.ok(jQuery.sap.byId(oThingInspector.getId() + "-actionBar-UpdateActionPopup"), "Rendered comment popup should exist in the page");
-							assert.equal(jQuery.sap.byId(oThingInspector.getId() + "-actionBar-UpdateActionPopup").length, 0,
+							assert.ok(oThingInspector.$("actionBar-UpdateActionPopup"), "Rendered comment popup should exist in the page");
+							assert.equal(oThingInspector.$("actionBar-UpdateActionPopup").length, 0,
 									"Rendered update popup was removed in the page");
 							done();
 						}, 500);
@@ -376,8 +374,8 @@ sap.ui.define([
 		assert.expect(1);
 		action = "update";
 		setTimeout(function() {
-			assert.ok(!jQuery.sap.byId(oThingInspector.getId() + "-update")[0], "Action not rendered anymore");
-			qutils.triggerMouseEvent(jQuery.sap.byId(oThingInspector.getId() + "-update"), "click", 1, 1, 1, 1);
+			assert.ok(!oThingInspector.getDomRef("update"), "Action not rendered anymore");
+			qutils.triggerMouseEvent(oThingInspector.$("update"), "click", 1, 1, 1, 1);
 			done();
 		},500);
 	});
@@ -393,7 +391,7 @@ sap.ui.define([
 			assert.ok(oThingInspector.isOpen(), "Rendered ThingInspector is open");
 			setTimeout(
 					function() {
-						assert.ok(jQuery.sap.domById(oThingInspector.getId() + facet + "FacetButton"), "Rendered Facet Content for facet " + facet
+						assert.ok(window.document.getElementById(oThingInspector.getId() + facet + "FacetButton"), "Rendered Facet Content for facet " + facet
 								+ " should exist in the page");
 						done();
 					}, 500);
@@ -404,10 +402,10 @@ sap.ui.define([
 		var done = assert.async();
 		assert.expect(3);
 		facet = "activities";
-		qutils.triggerMouseEvent(jQuery.sap.domById("activities"), "click", 1, 1, 1, 1);
+		qutils.triggerMouseEvent(window.document.getElementById("activities"), "click", 1, 1, 1, 1);
 		setTimeout(
 				function() {
-					assert.ok(jQuery.sap.domById(oThingInspector.getId() + facet + "FacetButton"), "Rendered Facet Content for facet " + facet
+					assert.ok(window.document.getElementById(oThingInspector.getId() + facet + "FacetButton"), "Rendered Facet Content for facet " + facet
 							+ " should exist in the page");
 					done();
 				}, 500);
@@ -419,43 +417,43 @@ sap.ui.define([
 		assert.equal(oThingInspector.getFollowState(), FollowActionState.Default, "Follow State is sap.ui.ux3.FollowActionState.Default");
 		action = "follow";
 		// trigger follow
-		qutils.triggerMouseEvent(jQuery.sap.byId(oThingInspector.getId() + "-actionBar-Follow"), "click", 1, 1, 1, 1);
+		qutils.triggerMouseEvent(oThingInspector.$("actionBar-Follow"), "click", 1, 1, 1, 1);
 		assert.equal(oThingInspector.getFollowState(), FollowActionState.Follow, "Follow State is sap.ui.ux3.FollowActionState.Follow");
 		// menu must exist after click
-		qutils.triggerMouseEvent(jQuery.sap.byId(oThingInspector.getId() + "-actionBar-Follow"), "click", 1, 1, 1, 1);
-		assert.ok(jQuery.sap.domById(oThingInspector.getId() + "-actionBar-followActionMenu"), "Rendered Follow Action menu should exist in the page");
+		qutils.triggerMouseEvent(oThingInspector.$("actionBar-Follow"), "click", 1, 1, 1, 1);
+		assert.ok(oThingInspector.getDomRef("actionBar-followActionMenu"), "Rendered Follow Action menu should exist in the page");
 
 		setTimeout(function() {
 			// menu entries with unhold and unfollow must exist
-			assert.ok(jQuery.sap.byId(oThingInspector.getId() + "-actionBar-holdState"), "Rendered Follow Action menu with holdState should exist in the page");
-			assert.ok(jQuery.sap.byId(oThingInspector.getId() + "-actionBar-unfollowState"), "Rendered Follow Action menu with unfollowState should exist in the page");
+			assert.ok(oThingInspector.getDomRef("actionBar-holdState"), "Rendered Follow Action menu with holdState should exist in the page");
+			assert.ok(oThingInspector.getDomRef("actionBar-unfollowState"), "Rendered Follow Action menu with unfollowState should exist in the page");
 			// trigger hold
-			qutils.triggerMouseEvent(jQuery.sap.byId(oThingInspector.getId() + "-actionBar-holdState"), "click", 1, 1, 1, 1);
+			qutils.triggerMouseEvent(oThingInspector.$("actionBar-holdState"), "click", 1, 1, 1, 1);
 			setTimeout(function() {
 				assert.equal(oThingInspector.getFollowState(), FollowActionState.Hold, "Follow State is sap.ui.ux3.FollowActionState.Hold");
 				// menu must exist after click
-				qutils.triggerMouseEvent(jQuery.sap.byId(oThingInspector.getId() + "-actionBar-Follow"), "click", 1, 1, 1, 1);
-				assert.ok(jQuery.sap.domById(oThingInspector.getId() + "-actionBar-followActionMenu"), "Rendered Follow Action menu should exist in the page");
+				qutils.triggerMouseEvent(oThingInspector.$("actionBar-Follow"), "click", 1, 1, 1, 1);
+				assert.ok(oThingInspector.getDomRef("actionBar-followActionMenu"), "Rendered Follow Action menu should exist in the page");
 
 				setTimeout(
 						function() {
 							// menu entries with unhold and unfollow must exist
-							assert.ok(jQuery.sap.domById(oThingInspector.getId() + "-actionBar-unholdState"),
+							assert.ok(oThingInspector.getDomRef("actionBar-unholdState"),
 									"Rendered Follow Action menu with unholdState should exist in the page");
-							assert.ok(jQuery.sap.domById(oThingInspector.getId() + "-actionBar-unfollowState"),
+							assert.ok(oThingInspector.getDomRef("actionBar-unfollowState"),
 									"Rendered Follow Action menu with unfollowState should exist in the page");
 							// trigger unfollow
-							qutils.triggerMouseEvent(jQuery.sap.domById(oThingInspector.getId() + "-actionBar-unfollowState"), "click", 1, 1, 1, 1);
+							qutils.triggerMouseEvent(oThingInspector.getDomRef("actionBar-unfollowState"), "click", 1, 1, 1, 1);
 							assert.equal(oThingInspector.getFollowState(), FollowActionState.Default, "Follow State is sap.ui.ux3.FollowActionState.Default");
 
 							setTimeout(function() {
 
 								// menu entries with hold, unhold and unfollow must not exist only follow
-								assert.ok(!jQuery.sap.domById(oThingInspector.getId() + "-actionBar-holdState"),
+								assert.ok(!oThingInspector.getDomRef("actionBar-holdState"),
 										"Rendered Follow Action menu with holdState should not exists in the page");
-								assert.ok(!jQuery.sap.domById(oThingInspector.getId() + "-actionBar-unholdState"),
+								assert.ok(!oThingInspector.getDomRef("actionBar-unholdState"),
 										"Rendered Follow Action menu with unholdState should not exists in the page");
-								assert.ok(!jQuery.sap.domById(oThingInspector.getId() + "-actionBar-unfollowState"),
+								assert.ok(!oThingInspector.getDomRef("actionBar-unfollowState"),
 										"Rendered Follow Action menu with unfollowState should not exists in the page");
 								done();
 							}, 500);
@@ -476,8 +474,8 @@ sap.ui.define([
 		assert.expect(1);
 		action = "follow";
 		setTimeout(function() {
-			assert.ok(!jQuery.sap.byId(oThingInspector.getId() + "-follow")[0], "Action not rendered anymore");
-			qutils.triggerMouseEvent(jQuery.sap.byId(oThingInspector.getId() + "-follow"), "click", 1, 1, 1, 1);
+			assert.ok(!oThingInspector.getDomRef("follow"), "Action not rendered anymore");
+			qutils.triggerMouseEvent(oThingInspector.$("follow"), "click", 1, 1, 1, 1);
 			done();
 		},500);
 	});
@@ -488,7 +486,7 @@ sap.ui.define([
 		assert.expect(3);
 		assert.ok(oThingInspector.isOpen(), "Rendered ThingInspector is open");
 
-		qutils.triggerMouseEvent(jQuery.sap.byId(oThingInspector.getId() + "-close"), "click", 1, 1, 1, 1);
+		qutils.triggerMouseEvent(oThingInspector.$("close"), "click", 1, 1, 1, 1);
 		setTimeout(function() {
 			assert.ok(!oThingInspector.isOpen(), "Rendered ThingInspector is not open");
 			done();
@@ -498,7 +496,7 @@ sap.ui.define([
 	QUnit.test("Destroy and remove control", function(assert) {
 		oThingInspector.destroy();
 		sap.ui.getCore().applyChanges();
-		var oDomRef = jQuery.sap.domById(oThingInspector.getId());
+		var oDomRef = oThingInspector.getDomRef();
 		assert.ok(!oDomRef, "Rendered ThingInspector should not exist in the page after destruction");
 		oShell.destroy();
 	});
@@ -718,7 +716,7 @@ sap.ui.define([
 	QUnit.test("insertFacetContent",function(assert) {
 
 		var facet1 = new ThingGroup("overview10", {
-			text: "Overview"
+			title: "Overview"
 		});
 
 		this.oTI.insertFacetContent(facet1, 0);
@@ -728,7 +726,7 @@ sap.ui.define([
 	QUnit.test("addFacetContent",function(assert) {
 
 		var facet1 = new ThingGroup("overview11", {
-			text: "Overview"
+			title: "Overview"
 		});
 
 		this.oTI.addFacetContent(facet1);
@@ -738,7 +736,7 @@ sap.ui.define([
 	QUnit.test("removeFacetContent",function(assert) {
 
 		var facet1 = new ThingGroup("overview12", {
-			text: "Overview"
+			title: "Overview"
 		});
 
 		this.oTI.addFacetContent(facet1);
@@ -750,10 +748,10 @@ sap.ui.define([
 	QUnit.test("removeAllFacetContent",function(assert) {
 
 		var facet1 = new ThingGroup("overview13", {
-			text: "Overview"
+			title: "Overview"
 		});
 		var facet2 = new ThingGroup("overview14", {
-			text: "Overview"
+			title: "Overview"
 		});
 
 		this.oTI.addFacetContent(facet1);
@@ -766,7 +764,7 @@ sap.ui.define([
 	QUnit.test("destroyFacetContent",function(assert) {
 
 		var facet1 = new ThingGroup("overview15", {
-			text: "Overview"
+			title: "Overview"
 		});
 
 		this.oTI.addFacetContent(facet1);
@@ -777,15 +775,15 @@ sap.ui.define([
 
 	QUnit.test("indexOfFacetContent",function(assert) {
 		var facet1 = new ThingGroup("overview16", {
-			text: "Overview"
+			title: "Overview"
 		});
 
 		var facet2 = new ThingGroup("overview17", {
-			text: "Overview"
+			title: "Overview"
 		});
 
 		var facet3 = new ThingGroup("overview18", {
-			text: "Overview"
+			title: "Overview"
 		});
 
 		this.oTI.insertFacetContent(facet1, 0);
@@ -800,7 +798,6 @@ sap.ui.define([
 	QUnit.test("destroyActionBar",function(assert) {
 
 		var facet1 = new ActionBar("overview19", {
-			text: "Overview"
 		});
 
 		this.oTI.setActionBar(facet1);
@@ -812,7 +809,7 @@ sap.ui.define([
 	QUnit.test("insertHeaderContent",function(assert) {
 
 		var facet1 = new ThingGroup("overview20", {
-			text: "Overview"
+			title: "Overview"
 		});
 
 		this.oTI.insertHeaderContent(facet1, 0);
@@ -822,7 +819,7 @@ sap.ui.define([
 	QUnit.test("addHeaderContent",function(assert) {
 
 		var facet1 = new ThingGroup("overview21", {
-			text: "Overview"
+			title: "Overview"
 		});
 
 		this.oTI.addHeaderContent(facet1);
@@ -832,7 +829,7 @@ sap.ui.define([
 	QUnit.test("removeHeaderContent ",function(assert) {
 
 		var facet1 = new ThingGroup("overview22", {
-			text: "Overview"
+			title: "Overview"
 		});
 
 		this.oTI.addHeaderContent(facet1);
@@ -845,10 +842,10 @@ sap.ui.define([
 	QUnit.test("removeAllHeaderContent",function(assert) {
 
 		var facet1 = new ThingGroup("overview23", {
-			text: "Overview"
+			title: "Overview"
 		});
 		var facet2 = new ThingGroup("overview24", {
-			text: "Overview"
+			title: "Overview"
 		});
 
 		this.oTI.addHeaderContent(facet1);
@@ -863,7 +860,7 @@ sap.ui.define([
 	QUnit.test("destroyHeaderContent",function(assert) {
 
 		var facet1 = new ThingGroup("overview25", {
-			text: "Overview"
+			title: "Overview"
 		});
 
 		this.oTI.addHeaderContent(facet1);
@@ -875,15 +872,15 @@ sap.ui.define([
 
 	QUnit.test("indexOfHeaderContent ",function(assert) {
 		var facet1 = new ThingGroup("overview26", {
-			text: "Overview"
+			title: "Overview"
 		});
 
 		var facet2 = new ThingGroup("overview27", {
-			text: "Overview"
+			title: "Overview"
 		});
 
 		var facet3 = new ThingGroup("overview28", {
-			text: "Overview"
+			title: "Overview"
 		});
 
 		this.oTI.insertHeaderContent(facet1, 0);

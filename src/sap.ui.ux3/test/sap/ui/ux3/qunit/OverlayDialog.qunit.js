@@ -1,11 +1,10 @@
 /*global QUnit */
 sap.ui.define([
-	"sap/ui/qunit/QUnitUtils",
-	"sap/ui/qunit/utils/createAndAppendDiv",
-	"sap/ui/ux3/OverlayDialog",
-	"sap/ui/commons/Button",
-	"jquery.sap.global"
-], function(qutils, createAndAppendDiv, OverlayDialog, Button, jQuery) {
+    "sap/ui/qunit/QUnitUtils",
+    "sap/ui/qunit/utils/createAndAppendDiv",
+    "sap/ui/ux3/OverlayDialog",
+    "sap/ui/commons/Button"
+], function(qutils, createAndAppendDiv, OverlayDialog, Button) {
 	"use strict";
 
 	// prepare DOM
@@ -56,7 +55,7 @@ sap.ui.define([
 		assert.ok(oOverlayDialog.isOpen(), "Rendered OverlayDialog is open");
 		setTimeout(
 				function () {
-					assert.ok(jQuery.sap.domById(oOverlayDialog.getId() + "Button"), "Rendered Content should exist in the page");
+					assert.ok(oOverlayDialog.getId() + "Button" ? window.document.getElementById(oOverlayDialog.getId() + "Button") : null, "Rendered Content should exist in the page");
 					done();
 				}, 500);
 	});

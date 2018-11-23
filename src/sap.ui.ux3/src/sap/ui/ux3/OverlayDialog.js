@@ -4,13 +4,15 @@
 
 // Provides control sap.ui.ux3.OverlayDialog.
 sap.ui.define([
-    'jquery.sap.global',
     'sap/ui/core/IntervalTrigger',
     './Overlay',
     './library',
-    "./OverlayDialogRenderer"
+    './OverlayDialogRenderer',
+    'sap/base/Log',
+    // jQuery Plugin 'lastFocusableDomRef'
+	'sap/ui/dom/jquery/Focusable'
 ],
-	function(jQuery, IntervalTrigger, Overlay, library, OverlayDialogRenderer) {
+	function(IntervalTrigger, Overlay, library, OverlayDialogRenderer, Log) {
 	"use strict";
 
 	/**
@@ -69,11 +71,14 @@ sap.ui.define([
 	 * @private
 	 */
 	OverlayDialog.prototype._setFocusLast = function() {
+	    // jQuery Plugin "lastFocusableDomRef"
 		var oFocus = this.$("content").lastFocusableDomRef();
 		if (!oFocus && this.getCloseButtonVisible()) {
 			oFocus = this.getDomRef("close");
 		}
-		jQuery.sap.focus(oFocus);
+		if (oFocus) {
+			oFocus.focus();
+		}
 	};
 
 	/**
@@ -82,10 +87,14 @@ sap.ui.define([
 	 * @private
 	 */
 	OverlayDialog.prototype._setFocusFirst = function() {
+		var oFocus;
 		if (this.getCloseButtonVisible()) {
-			jQuery.sap.focus(this.getDomRef("close"));
+			oFocus = this.getDomRef("close");
 		} else {
-			jQuery.sap.focus(this.$("content").firstFocusableDomRef());
+			oFocus = this.$("content").firstFocusableDomRef();
+		}
+		if ( oFocus ) {
+			oFocus.focus();
 		}
 	};
 
@@ -96,7 +105,7 @@ sap.ui.define([
 	 * @public
 	 */
 	OverlayDialog.prototype.setOpenButtonVisible = function(bVisible) {
-		jQuery.sap.log.warning("OverlayDialog does not support an openButton.");
+		Log.warning("OverlayDialog does not support an openButton.");
 		return this;
 	};
 
@@ -226,4 +235,4 @@ sap.ui.define([
 	};
 
 	return OverlayDialog;
-}, /* bExport= */ true);
+});

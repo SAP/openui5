@@ -5,7 +5,7 @@ sap.ui.define([
 	"sap/ui/ux3/ThingAction",
 	"sap/ui/ux3/ActionBar",
 	"sap/ui/commons/Panel",
-	"jquery.sap.global",
+	"sap/ui/thirdparty/jquery",
 	"sap/ui/Device",
 	"sap/ui/ux3/library"
 ], function(
@@ -137,7 +137,7 @@ sap.ui.define([
 	// What is being tested works on ie. To be save for automatic tests, the timeout for internet explorer
 	// tests is twice as big as usual.
 	var iTimeOut = 500;
-	if (Device.browser.internet_explorer) {
+	if (Device.browser.msie) {
 		iTimeOut = 1000;
 	}
 

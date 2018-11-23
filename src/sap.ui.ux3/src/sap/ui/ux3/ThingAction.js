@@ -3,8 +3,8 @@
  */
 
 // Provides control sap.ui.ux3.ThingAction.
-sap.ui.define(['jquery.sap.global', 'sap/ui/core/Element', './library'],
-	function(jQuery, Element) {
+sap.ui.define(['sap/ui/core/Element', './library'],
+	function(Element) {
 	"use strict";
 
 
@@ -78,4 +78,4 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Element', './library'],
 
 	return ThingAction;
 
-}, /* bExport= */ true);
+});

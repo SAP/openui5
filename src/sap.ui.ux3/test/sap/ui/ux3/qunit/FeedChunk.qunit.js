@@ -1,12 +1,11 @@
 /*global QUnit */
 sap.ui.define([
-	"sap/ui/qunit/QUnitUtils",
-	"sap/ui/qunit/utils/createAndAppendDiv",
-	"sap/ui/ux3/FeedChunk",
-	"sap/ui/commons/MenuItem",
-	"jquery.sap.global",
-	"jquery.sap.keycodes"
-], function(qutils, createAndAppendDiv, FeedChunk, MenuItem, jQuery) {
+    "sap/ui/qunit/QUnitUtils",
+    "sap/ui/qunit/utils/createAndAppendDiv",
+    "sap/ui/ux3/FeedChunk",
+    "sap/ui/commons/MenuItem",
+    "sap/ui/events/KeyCodes"
+], function(qutils, createAndAppendDiv, FeedChunk, MenuItem, KeyCodes) {
 	"use strict";
 
 	// prepare DOM
@@ -177,7 +176,7 @@ sap.ui.define([
 		assert.equal(sap.ui.getCore().getControl("Chunk2-CommentFeeder").getThumbnailSrc(), "test-resources/sap/ui/ux3/images/feeder/w_01.png", "comment feeder thumbnail source");
 
 		//comment
-		assert.ok(!jQuery.sap.byId("commentChunk1").children("section").get(0), "No comment section found for comment-Chunk");
+		assert.ok(!jQuery(document.getElementById("commentChunk1")).children("section").get(0), "No comment section found for comment-Chunk");
 
 	});
 
@@ -194,7 +193,7 @@ sap.ui.define([
 
 		// sender thumb
 		assert.equal(oChunk1.$("thumb").attr("src"), "test-resources/sap/ui/ux3/images/feeder/m_01.png", "Sender image rendered for chunk");
-		assert.equal(jQuery.sap.byId("commentChunk3-thumb").attr("src"), "test-resources/sap/ui/ux3/images/feeder/m_01.png", "Sender image rendered for comment chunk");
+		assert.equal(jQuery(document.getElementById("commentChunk3-thumb")).attr("src"), "test-resources/sap/ui/ux3/images/feeder/m_01.png", "Sender image rendered for comment chunk");
 
 		// sender link
 		assert.equal(oChunk1.$("sender").text(), "Sender", "Link for sender name is rendered" );
@@ -205,7 +204,7 @@ sap.ui.define([
 		// date/time (if expand button exists only compate first part of span content)
 		assert.equal(oChunk1.$().children(".sapUiFeedChunkByline").text(), sTimestamp, "Timestamp rendered for Chunk without comments");
 		assert.equal(oChunk2.$().children(".sapUiFeedChunkByline").text().slice(0,sTimestamp.length), sTimestamp, "Timestamp rendered for Chunk with comments");
-		assert.equal(jQuery.sap.byId("commentChunk2").children(".sapUiFeedChunkByline").text(), sTimestamp, "Timestamp rendered for comment-Chunk");
+		assert.equal(jQuery(document.getElementById("commentChunk2")).children(".sapUiFeedChunkByline").text(), sTimestamp, "Timestamp rendered for comment-Chunk");
 
 		// no expand button if short text
 		assert.ok(!oChunk1.$("exp").get(0), "No expand button if text is short");
@@ -232,13 +231,13 @@ sap.ui.define([
 		assert.ok(!oChunk1.$().find(".sapUiFeedChunkShared").get(0), "No Status icon shared displayed if not active");
 
 		// delete button is allowed
-		assert.ok(jQuery.sap.byId("commentChunk2-delete").get(0), "Delete button on comment chunk if deletion is allowed");
+		assert.ok(jQuery(document.getElementById("commentChunk2-delete")).get(0), "Delete button on comment chunk if deletion is allowed");
 
 		// no delete button if not allowed
-		assert.ok(!jQuery.sap.byId("commentChunk1-delete").get(0), "No Delete button on comment chunk if deletion is not allowed");
+		assert.ok(!jQuery(document.getElementById("commentChunk1-delete")).get(0), "No Delete button on comment chunk if deletion is not allowed");
 
 		// comments displayed, by default only 2
-		assert.ok(!jQuery.sap.byId("commentChunk1").get(0) && jQuery.sap.byId("commentChunk2").get(0) && jQuery.sap.byId("commentChunk3").get(0), "Only last 2 comments displayed by default");
+		assert.ok(!jQuery(document.getElementById("commentChunk1")).get(0) && jQuery(document.getElementById("commentChunk2")).get(0) && jQuery(document.getElementById("commentChunk3")).get(0), "Only last 2 comments displayed by default");
 
 	});
 
@@ -360,9 +359,9 @@ sap.ui.define([
 	QUnit.test("Add comment", function(assert) {
 		var done = assert.async();
 
-		jQuery.sap.domById("Chunk2-CommentFeeder-input").focus();
+		window.document.getElementById("Chunk2-CommentFeeder-input").focus();
 		oChunk2.$("CommentFeeder-input").text("Test");
-		qutils.triggerKeyup("Chunk2-CommentFeeder-input", jQuery.sap.KeyCodes.T, false, false, false);
+		qutils.triggerKeyup("Chunk2-CommentFeeder-input", KeyCodes.T, false, false, false);
 		qutils.triggerMouseEvent("Chunk2-CommentFeeder-send", "click");
 		assert.equal(sEvent, "CommentAdded", "event fired on adding a new comment");
 		assert.equal(sEventSourceId, "Chunk2", "Event on right ID");
@@ -396,7 +395,7 @@ sap.ui.define([
 		qutils.triggerMouseEvent("Chunk2-all", "click");
 
 		var delayedCall = function() {
-			assert.ok(oChunk2.$("new-3").get(0) && jQuery.sap.byId("commentChunk1").get(0) && jQuery.sap.byId("commentChunk2").get(0) && jQuery.sap.byId("commentChunk3").get(0), "All comments displayed");
+			assert.ok(oChunk2.$("new-3").get(0) && jQuery(document.getElementById("commentChunk1")).get(0) && jQuery(document.getElementById("commentChunk2")).get(0) && jQuery(document.getElementById("commentChunk3")).get(0), "All comments displayed");
 			assert.equal(oChunk2.$("all").text(), rb.getText('FEED_MAX_COMMENTS'), "Link to show only max. number of comments if all comments are shown");
 			done();
 		};
@@ -409,7 +408,7 @@ sap.ui.define([
 		qutils.triggerMouseEvent("Chunk2-all", "click");
 
 		var delayedCall = function() {
-			assert.ok(oChunk2.$("new-3").get(0) && !jQuery.sap.byId("commentChunk1").get(0) && !jQuery.sap.byId("commentChunk2").get(0) && jQuery.sap.byId("commentChunk3").get(0), "Only Max. number of comments displayed");
+			assert.ok(oChunk2.$("new-3").get(0) && !jQuery(document.getElementById("commentChunk1")).get(0) && !jQuery(document.getElementById("commentChunk2")).get(0) && jQuery(document.getElementById("commentChunk3")).get(0), "Only Max. number of comments displayed");
 			assert.equal(oChunk2.$("all").text(), rb.getText('FEED_ALL_COMMENTS'), "Link to show only max. number of comments if all comments are shown");
 			done();
 		};

@@ -3,8 +3,8 @@
  */
 
 // Provides control sap.ui.ux3.DataSetItem.
-sap.ui.define(['jquery.sap.global', 'sap/ui/core/Element', './library'],
-	function(jQuery, Element, library) {
+sap.ui.define(['sap/ui/core/Element', './library'],
+	function(Element, library) {
 	"use strict";
 
 
@@ -99,4 +99,4 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Element', './library'],
 
 	return DataSetItem;
 
-}, /* bExport= */ true);
+});

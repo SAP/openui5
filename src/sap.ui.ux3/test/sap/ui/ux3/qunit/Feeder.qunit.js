@@ -1,13 +1,12 @@
 /*global QUnit */
 sap.ui.define([
-	"sap/ui/qunit/QUnitUtils",
-	"sap/ui/qunit/utils/createAndAppendDiv",
-	"sap/ui/ux3/Feeder",
-	"sap/ui/ux3/library",
-	"jquery.sap.global",
-	"sap/ui/Device",
-	"jquery.sap.keycodes"
-], function(qutils, createAndAppendDiv, Feeder, ux3Library, jQuery, Device) {
+    "sap/ui/qunit/QUnitUtils",
+    "sap/ui/qunit/utils/createAndAppendDiv",
+    "sap/ui/ux3/Feeder",
+    "sap/ui/ux3/library",
+    "sap/ui/Device",
+    "sap/ui/events/KeyCodes"
+], function(qutils, createAndAppendDiv, Feeder, ux3Library, Device, KeyCodes) {
 	"use strict";
 
 	// shortcut for sap.ui.ux3.FeederType
@@ -140,7 +139,7 @@ sap.ui.define([
 		// by typing text button must be enabled
 		oFeeder1.getDomRef("input").focus();
 		oFeeder1.$("input").text("A");
-		qutils.triggerKeyup("Feeder1-input", jQuery.sap.KeyCodes.A, true, false, false);
+		qutils.triggerKeyup("Feeder1-input", KeyCodes.A, true, false, false);
 		assert.ok(!oFeeder1.$("send").attr('disabled'), "After text is entered button must be enabled");
 
 		// focus out - set text property
@@ -151,7 +150,7 @@ sap.ui.define([
 			// on deleting text button must be disabled
 			oFeeder1.getDomRef("input").focus();
 			oFeeder1.$("input").text("");
-			qutils.triggerKeyup("Feeder1-input", jQuery.sap.KeyCodes.BACKSPACE, false, false, false);
+			qutils.triggerKeyup("Feeder1-input", KeyCodes.BACKSPACE, false, false, false);
 			var delayedCall2 = function() {
 				assert.ok(oFeeder1.$("send").hasClass('sapUiBtnDsbl'), "After text is deleted button must be disabled");
 				done();

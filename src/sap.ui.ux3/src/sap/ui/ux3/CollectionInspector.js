@@ -4,13 +4,16 @@
 
 // Provides control sap.ui.ux3.CollectionInspector.
 sap.ui.define([
-    'jquery.sap.global',
+    'sap/ui/thirdparty/jquery',
     'sap/ui/core/Control',
     'sap/ui/core/delegate/ItemNavigation',
     './library',
-    "./CollectionInspectorRenderer"
+    './CollectionInspectorRenderer',
+    'sap/ui/commons/ToggleButton',
+    'sap/ui/commons/SegmentedButton',
+    'sap/ui/commons/Button'
 ],
-	function(jQuery, Control, ItemNavigation, library, CollectionInspectorRenderer) {
+	function(jQuery, Control, ItemNavigation, library, CollectionInspectorRenderer, ToggleButton, SegmentedButton, Button) {
 	"use strict";
 
 
@@ -102,7 +105,7 @@ sap.ui.define([
 			this.addDelegate(this._oItemNavigation);
 		}
 
-		var oToggleButton = new sap.ui.commons.ToggleButton(this.getId() + "-toggleButton");
+		var oToggleButton = new ToggleButton(this.getId() + "-toggleButton");
 		oToggleButton.setParent(this);
 		oToggleButton.setTooltip("This button opens and closes the sidebar");
 		oToggleButton.attachPress(function() {
@@ -114,7 +117,7 @@ sap.ui.define([
 		});
 		this._oToggleButton = oToggleButton;
 
-		var oCollectionSelector = new sap.ui.commons.SegmentedButton(this.getId() + "-selector");
+		var oCollectionSelector = new SegmentedButton(this.getId() + "-selector");
 
 		oCollectionSelector.attachSelect(function(oEvent) {
 			var iCollectionIndex = this.indexOfButton(sap.ui.getCore().byId(this.getSelectedButton()));
@@ -128,7 +131,7 @@ sap.ui.define([
 
 		this._oCollectionSelector = oCollectionSelector;
 
-		var oEditButton = new sap.ui.commons.Button();
+		var oEditButton = new Button();
 		oEditButton.addStyleClass("sapUiUx3EditCollectionButton");
 		oEditButton.setText("Collection");
 		oEditButton.setTooltip("This button opens an edit dialog for the current collection");
@@ -196,7 +199,7 @@ sap.ui.define([
 		var oTarget = oEvent.target;
 		if (jQuery(oTarget).hasClass("sapUiUx3CICollectionListItem")) {
 			var oSelectedCollection = sap.ui.getCore().byId(this.getSelectedCollection());
-			if (jQuery.inArray(oTarget.id,oSelectedCollection.getSelectedItems()) >= 0) {
+			if (oSelectedCollection.getSelectedItems().indexOf(oTarget.id) >= 0) {
 				oSelectedCollection.removeSelectedItem(oTarget.id);
 			} else {
 				oSelectedCollection.addSelectedItem(oTarget.id);
@@ -361,7 +364,7 @@ sap.ui.define([
 	 * @public
 	 */
 	CollectionInspector.prototype.insertCollection = function(oCollection, iIndex) {
-		var oButton = new sap.ui.commons.Button();
+		var oButton = new Button();
 		oButton.setText(oCollection.getTitle());
 		oCollection.attachEvent('_titleChanged', function(oEvent) {
 			oButton.setText(oEvent.getParameter("newTitle"));
@@ -387,7 +390,7 @@ sap.ui.define([
 	 * @public
 	 */
 	CollectionInspector.prototype.addCollection = function(oCollection) {
-		var oButton = new sap.ui.commons.Button();
+		var oButton = new Button();
 		oButton.setText(oCollection.getTitle());
 		oCollection.attachEvent('_titleChanged', function(oEvent) {
 			oButton.setText(oEvent.getParameter("newTitle"));
@@ -600,8 +603,8 @@ sap.ui.define([
 		} else {
 			aSelectedItems = [];
 		}
-		jQuery.each(aItems, function(iIndex, oItem) {
-			if (jQuery.inArray(oItem.id,aSelectedItems) >= 0) {
+		aItems.each(function(iIndex, oItem) {
+			if (aSelectedItems.indexOf(oItem.id) >= 0) {
 				jQuery(oItem).addClass("sapUiUx3CICollectionListItemSelected");
 				jQuery(oItem).attr("aria-selected",true);
 			} else {
@@ -622,4 +625,4 @@ sap.ui.define([
 
 	return CollectionInspector;
 
-}, /* bExport= */ true);
+});

@@ -8,11 +8,11 @@ sap.ui.define([
     "sap/ui/commons/Link",
     "sap/ui/commons/library",
     "sap/ui/ux3/QuickView",
-    "jquery.sap.keycodes",
+    "sap/ui/thirdparty/jquery",
     "sap/ui/commons/layout/MatrixLayoutCell",
     "sap/ui/commons/layout/MatrixLayoutRow",
     "sap/ui/commons/layout/MatrixLayout",
-    "jquery.sap.global"
+    "sap/ui/events/KeyCodes"
 ], function(
     qutils,
 	createAndAppendDiv,
@@ -25,7 +25,8 @@ sap.ui.define([
 	jQuery,
 	MatrixLayoutCell,
 	MatrixLayoutRow,
-	MatrixLayout
+	MatrixLayout,
+	KeyCodes
 ) {
 	"use strict";
 
@@ -186,7 +187,7 @@ sap.ui.define([
 		var done = assert.async();
 		oButton.focus();
 		assert.ok(document.activeElement.id == "QVButton", "Focus the button initially");
-		qutils.triggerKeyboardEvent("QVButton", jQuery.sap.KeyCodes.I, false, false, true);
+		qutils.triggerKeyboardEvent("QVButton", KeyCodes.I, false, false, true);
 		setTimeout(function(){
 			assert.ok(isQuickViewVisible() == true, "QuickView is visible after Ctrl-I");
 			//click on the Name link

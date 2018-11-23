@@ -1,11 +1,10 @@
 /*global QUnit */
 sap.ui.define([
-	"sap/ui/qunit/QUnitUtils",
-	"sap/ui/qunit/utils/createAndAppendDiv",
-	"sap/ui/ux3/Overlay",
-	"jquery.sap.global",
-	"jquery.sap.keycodes"
-], function(qutils, createAndAppendDiv, Overlay, jQuery) {
+    "sap/ui/qunit/QUnitUtils",
+    "sap/ui/qunit/utils/createAndAppendDiv",
+    "sap/ui/ux3/Overlay",
+    "sap/ui/events/KeyCodes"
+], function(qutils, createAndAppendDiv, Overlay, KeyCodes) {
 	"use strict";
 
 	// prepare DOM
@@ -51,8 +50,8 @@ sap.ui.define([
 
 	QUnit.test("OpenNew via Keyboard Event", function (assert) {
 		assert.expect(2);
-		qutils.triggerKeyboardEvent(oOverlay.getId() + "-openNew", jQuery.sap.KeyCodes.ENTER, false, false, false);
-		qutils.triggerKeyboardEvent(oOverlay.getId() + "-openNew", jQuery.sap.KeyCodes.SPACE, false, false, false);
+		qutils.triggerKeyboardEvent(oOverlay.getId() + "-openNew", KeyCodes.ENTER, false, false, false);
+		qutils.triggerKeyboardEvent(oOverlay.getId() + "-openNew", KeyCodes.SPACE, false, false, false);
 	});
 
 	QUnit.test("Open Method", function (assert) {

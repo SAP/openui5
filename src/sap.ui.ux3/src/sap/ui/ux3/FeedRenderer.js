@@ -17,14 +17,10 @@ sap.ui.define([], function() {
 	/**
 	 * Renders the HTML for the given control, using the provided {@link sap.ui.core.RenderManager}.
 	 *
-	 * @param {sap.ui.core.RenderManager} oRenderManager the RenderManager that can be used for writing to the Render-Output-Buffer
-	 * @param {sap.ui.core.Control} oControl an object representation of the control that should be rendered
+	 * @param {sap.ui.core.RenderManager} rm the RenderManager that can be used for writing to the Render-Output-Buffer
+	 * @param {sap.ui.core.Control} oFeed an object representation of the control that should be rendered
 	 */
-	FeedRenderer.render = function(oRenderManager, oControl){
-	    // convenience variable
-		var rm = oRenderManager;
-		var oFeed = oControl;
-
+	FeedRenderer.render = function(rm, oFeed){
 		// write the HTML into the render manager
 	    rm.write('<DIV');
 	    rm.writeControlData(oFeed);

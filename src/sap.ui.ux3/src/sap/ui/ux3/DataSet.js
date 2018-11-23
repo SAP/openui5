@@ -4,13 +4,31 @@
 
 // Provides control sap.ui.ux3.DataSet.
 sap.ui.define([
-    'jquery.sap.global',
+    'sap/ui/thirdparty/jquery',
     'sap/ui/core/Control',
     'sap/ui/core/ResizeHandler',
     './library',
-    "./DataSetRenderer"
+    './DataSetRenderer',
+    'sap/ui/model/SelectionModel',
+    'sap/ui/commons/SegmentedButton',
+    'sap/ui/commons/SearchField',
+    'sap/ui/commons/Toolbar',
+    'sap/ui/commons/Button',
+    'sap/base/Log'
 ],
-	function(jQuery, Control, ResizeHandler, library, DataSetRenderer) {
+	function(
+		jQuery,
+		Control,
+		ResizeHandler,
+		library,
+		DataSetRenderer,
+		SelectionModel,
+		SegmentedButton,
+		SearchField,
+		Toolbar,
+		Button,
+		Log
+	) {
 	"use strict";
 
 
@@ -129,14 +147,12 @@ sap.ui.define([
 
 	DataSet.prototype.init = function() {
 		var that = this, oToolbar;
-		//each DS needs a selectionModel for its items
-		jQuery.sap.require("sap.ui.model.SelectionModel");
-		this.selectionModel = new sap.ui.model.SelectionModel(sap.ui.model.SelectionModel.SINGLE_SELECTION);
+		this.selectionModel = new SelectionModel(sap.ui.model.SelectionModel.SINGLE_SELECTION);
 		// init toolbar
-		this._oSegBut = new sap.ui.commons.SegmentedButton();
+		this._oSegBut = new SegmentedButton();
 		this._oSegBut.attachSelect(function(oEvent){that.press(oEvent);}, that);
 		this._oSegBut.show = false;
-		this._oSearchField = new sap.ui.commons.SearchField(this.getId() + "-searchValue");
+		this._oSearchField = new SearchField(this.getId() + "-searchValue");
 		this._oSearchField.setShowListExpander(false);
 		this._oSearchField.setEnableListSuggest(false);
 		this._oSearchField.setEnableFilterMode(true);
@@ -157,9 +173,9 @@ sap.ui.define([
 				oldLeadSelectedIndex: oldSelectedIndex,
 				newLeadSelectedIndex: newSelectedIndex
 			});
-			jQuery.sap.log.debug("Selection Change fired");
+			Log.debug("Selection Change fired");
 		});
-		oToolbar = new sap.ui.commons.Toolbar();
+		oToolbar = new Toolbar();
 		this._setToolbar(oToolbar);
 		this._iShiftStart = null;
 	};
@@ -288,7 +304,7 @@ sap.ui.define([
 			sItemId = oEvent.getParameters().itemId,
 			oItem = sap.ui.getCore().byId(sItemId),
 			aItems = this.getItems(),
-			iIndex = jQuery.inArray(oItem,aItems),
+			iIndex = aItems.indexOf(oItem),
 			oldSelectedIndex = this.getLeadSelection();
 
 		if (!this.getMultiSelect()) {
@@ -418,7 +434,7 @@ sap.ui.define([
 		 var oViewSwitch;
 
 		 if (oView.getIcon()) {
-			 oViewSwitch = new sap.ui.commons.Button({
+			 oViewSwitch = new Button({
 				 id : this.getId() + "-view-" + oView.getId(),
 				 lite: true,
 				 icon:oView.getIcon(),
@@ -426,13 +442,13 @@ sap.ui.define([
 				 iconSelected: oView.getIconSelected()
 			 });
 		 } else if (oView.getName()) {
-			 oViewSwitch = new sap.ui.commons.Button({
+			 oViewSwitch = new Button({
 				 id : this.getId() + "-view-" + oView.getId(),
 				 text : oView.getName(),
 				 lite: true
 			 });
 		 } else {
-			 oViewSwitch = new sap.ui.commons.Button({
+			 oViewSwitch = new Button({
 				 id : this.getId() + "-view-" + oView.getId(),
 				 text : oView.getId(),
 				 lite: true
@@ -453,7 +469,7 @@ sap.ui.define([
 		this._prepareToolbar();
 		if ($content.length > 0) {
 			var rm = sap.ui.getCore().createRenderManager();
-			sap.ui.ux3.DataSetRenderer.renderToolbar(rm, this);
+			DataSetRenderer.renderToolbar(rm, this);
 			rm.flush($content[0]);
 			rm.destroy();
 		}
@@ -467,7 +483,7 @@ sap.ui.define([
 		var $content = this.$("filter");
 		if ($content.length > 0) {
 			var rm = sap.ui.getCore().createRenderManager();
-			sap.ui.ux3.DataSetRenderer.renderFilterArea(rm, this);
+			DataSetRenderer.renderFilterArea(rm, this);
 			rm.flush($content[0]);
 			if (this.getShowFilter()) {
 				$content.removeClass("noPadding");
@@ -773,4 +789,4 @@ sap.ui.define([
 
 	return DataSet;
 
-}, /* bExport= */ true);
+});

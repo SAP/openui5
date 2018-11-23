@@ -9,7 +9,7 @@ sap.ui.define([
     "sap/ui/ux3/ThingAction",
     "sap/ui/ux3/ThingViewer",
     "sap/ui/ux3/NavigationItem",
-    "jquery.sap.global",
+    "sap/ui/thirdparty/jquery",
     "sap/ui/commons/Label",
     "sap/ui/commons/TextView",
     "sap/ui/commons/layout/MatrixLayoutCell",
@@ -162,13 +162,13 @@ sap.ui.define([
 
 	QUnit.test("ThingViewer exists", function(assert) {
 		oOverlayContainer.open();
-		var oDomRef = jQuery.sap.domById(oThingViewer.getId());
+		var oDomRef = oThingViewer.getDomRef();
 		assert.ok(oDomRef, "Rendered ThingViewer should exist in the page");
 		assert.equal(oDomRef.className, "sapUiUx3TV", "Rendered ThingViewer should have the class 'sapUiUx3TV'");
 	});
 
 	QUnit.test("Swatch", function(assert) {
-		var oSwatch = jQuery.sap.domById(oThingViewer.getId() + "-swatch");
+		var oSwatch = oThingViewer.getDomRef("swatch");
 		assert.ok(oSwatch, "Rendered Swatch should exist in the page");
 		assert.equal(oSwatch.className, "sapUiUx3TVIcon", "Rendered Swatch should have the class 'sapUiUx3TVIcon'");
 	});
@@ -177,7 +177,7 @@ sap.ui.define([
 		//number of navigation items must be the same as number of facets
 		var facets = oThingViewer.getFacets();
 		for (var i = 0; i < facets.length; i++) {
-			assert.ok(jQuery.sap.domById(facets[i].sId), "Rendered ThingViewer Facet " + facets[i].sId + " should exist in the page");
+			assert.ok(facets[i].sId ? window.document.getElementById(facets[i].sId) : null, "Rendered ThingViewer Facet " + facets[i].sId + " should exist in the page");
 		}
 	});
 
@@ -197,10 +197,10 @@ sap.ui.define([
 		var done = assert.async();
 		assert.expect(3);
 		facet = "activities";
-		qutils.triggerMouseEvent(jQuery.sap.domById("activities"), "click", 1, 1, 1, 1);
+		qutils.triggerMouseEvent(window.document.getElementById("activities"), "click", 1, 1, 1, 1);
 		setTimeout(
 				function() {
-					assert.ok(jQuery.sap.domById(oThingViewer.getId() + facet + "FacetButton"), "Rendered Facet Content for facet " + facet
+					assert.ok(document.getElementById(oThingViewer.getId() + facet + "FacetButton"), "Rendered Facet Content for facet " + facet
 					+ " should exist in the page");
 					done();
 				}, 500);
@@ -210,7 +210,7 @@ sap.ui.define([
 		oThingViewer.destroy();
 		oOverlayContainer.close();
 		sap.ui.getCore().applyChanges();
-		var oDomRef = jQuery.sap.domById(oThingViewer.getId());
+		var oDomRef = oThingViewer.getDomRef();
 		assert.ok(!oDomRef, "Rendered ThingViewer should not exist in the page after destruction");
 	});
 
@@ -314,10 +314,10 @@ sap.ui.define([
 	QUnit.test("insertFacetContent",function(assert) {
 
 		var facet1 = new ThingGroup("overview8", {
-			text: "Overview"
+			title: "Overview"
 		});
 		var facet2 = new ThingGroup("overview9", {
-			text: "Overview"
+			title: "Overview"
 		});
 
 		this.oTV.insertFacetContent(facet1, 0);
@@ -330,7 +330,7 @@ sap.ui.define([
 	QUnit.test("addFacetContent",function(assert) {
 
 		var facet1 = new ThingGroup("overview10", {
-			text: "Overview"
+			title: "Overview"
 		});
 
 		this.oTV.addFacetContent(facet1);
@@ -340,7 +340,7 @@ sap.ui.define([
 	QUnit.test("removeFacetContent",function(assert) {
 
 		var facet1 = new ThingGroup("overview11", {
-			text: "Overview"
+			title: "Overview"
 		});
 
 		this.oTV.addFacetContent(facet1);
@@ -352,10 +352,10 @@ sap.ui.define([
 	QUnit.test("removeAllFacetContent",function(assert) {
 
 		var facet1 = new ThingGroup("overview12", {
-			text: "Overview"
+			title: "Overview"
 		});
 		var facet2 = new ThingGroup("overview13", {
-			text: "Overview"
+			title: "Overview"
 		});
 
 		this.oTV.addFacetContent(facet1);
@@ -368,7 +368,7 @@ sap.ui.define([
 	QUnit.test("destroyFacetContent",function(assert) {
 
 		var facet1 = new ThingGroup("overview14", {
-			text: "Overview"
+			title: "Overview"
 		});
 
 		this.oTV.addFacetContent(facet1);
@@ -380,10 +380,10 @@ sap.ui.define([
 	QUnit.test("insertHeaderContent",function(assert) {
 
 		var facet1 = new ThingGroup("overview15", {
-			text: "Overview"
+			title: "Overview"
 		});
 		var facet2 = new ThingGroup("overview16", {
-			text: "Overview"
+			title: "Overview"
 		});
 
 		this.oTV.insertHeaderContent(facet1, 0);
@@ -396,7 +396,7 @@ sap.ui.define([
 	QUnit.test("removeHeaderContent ",function(assert) {
 
 		var facet1 = new ThingGroup("overview17", {
-			text: "Overview"
+			title: "Overview"
 		});
 
 		this.oTV.addHeaderContent(facet1);
@@ -408,10 +408,10 @@ sap.ui.define([
 	QUnit.test("removeAllHeaderContent",function(assert) {
 
 		var facet1 = new ThingGroup("overview18", {
-			text: "Overview"
+			title: "Overview"
 		});
 		var facet2 = new ThingGroup("overview19", {
-			text: "Overview"
+			title: "Overview"
 		});
 
 		this.oTV.addHeaderContent(facet1);
@@ -424,7 +424,7 @@ sap.ui.define([
 	QUnit.test("destroyHeaderContent",function(assert) {
 
 		var facet1 = new ThingGroup("overview20", {
-			text: "Overview"
+			title: "Overview"
 		});
 
 		this.oTV.addHeaderContent(facet1);

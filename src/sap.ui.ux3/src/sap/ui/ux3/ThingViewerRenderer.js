@@ -2,9 +2,13 @@
  * ${copyright}
  */
 
-sap.ui.define(['jquery.sap.global'],
-	function(jQuery) {
+sap.ui.define(["./library"],
+	function(library) {
 	"use strict";
+
+
+	// shortcut for sap.ui.ux3.ThingViewerHeaderType
+	var ThingViewerHeaderType = library.ThingViewerHeaderType;
 
 
 	/**
@@ -18,13 +22,10 @@ sap.ui.define(['jquery.sap.global'],
 	/**
 	 * Renders the HTML for the given control, using the provided {@link sap.ui.core.RenderManager}.
 	 *
-	 * @param {sap.ui.core.RenderManager} oRenderManager the RenderManager that can be used for writing to the Render-Output-Buffer
+	 * @param {sap.ui.core.RenderManager} rm the RenderManager that can be used for writing to the Render-Output-Buffer
 	 * @param {sap.ui.core.Control} oControl an object representation of the control that should be rendered
 	 */
-	ThingViewerRenderer.render = function(oRenderManager, oControl){
-	    // convenience variable
-		var rm = oRenderManager;
-
+	ThingViewerRenderer.render = function(rm, oControl){
 		rm.write("<div");
 		rm.writeControlData(oControl);
 		rm.writeAttributeEscaped("style", "width:" + oControl.getWidth() + "; height:" + oControl.getHeight());
@@ -35,16 +36,15 @@ sap.ui.define(['jquery.sap.global'],
 		rm.write("</div>");
 	};
 
-	ThingViewerRenderer.renderContent = function(oRenderManager, oControl) {
+	ThingViewerRenderer.renderContent = function(rm, oControl) {
 	// convenience variable
-		var rm = oRenderManager,
-			headerType = oControl.getHeaderType();
+		var headerType = oControl.getHeaderType();
 
 		rm.write("<div role='Main' class='sapUiUx3TVContent' id='" + oControl.getId() + "-content'>");
 		//render Header
 		//rm.write("<div class='sapUiUx3TVHeader sapUiUx3TVNoActionBar'>");
 		rm.write("<div class='sapUiUx3TVHeader sapUiUx3TVNoActionBar");
-		if (oControl.getHeaderType() === sap.ui.ux3.ThingViewerHeaderType.Standard) {
+		if (oControl.getHeaderType() === ThingViewerHeaderType.Standard) {
 			rm.write("'>");
 		} else {
 			rm.write(" sapUiUx3TVhorizontal'>");
@@ -57,7 +57,7 @@ sap.ui.define(['jquery.sap.global'],
 		rm.write("</span>");
 		rm.write("</div>");
 
-		if (headerType === sap.ui.ux3.ThingViewerHeaderType.Standard) {
+		if (headerType === ThingViewerHeaderType.Standard) {
 			rm.write("<div class='sapUiUx3TVHeaderGroupScrollContainer'>");
 			rm.write("<div id='" + oControl.getId() + "-header' class='sapUiUx3TVHeaderContainer'>");
 			this.renderHeader(rm,oControl);
@@ -70,7 +70,7 @@ sap.ui.define(['jquery.sap.global'],
 		}
 		// render Header Content
 		rm.write("<div id='" + oControl.getId() + "-headerContent'");
-		if (headerType === sap.ui.ux3.ThingViewerHeaderType.Standard) {
+		if (headerType === ThingViewerHeaderType.Standard) {
 			rm.write(">");
 		} else {
 			rm.write("style='height:100%; white-space:nowrap'>");
@@ -83,7 +83,7 @@ sap.ui.define(['jquery.sap.global'],
 
 		// render Facets
 		rm.write("<div class='sapUiUx3TVFacets sapUiUx3TVNoActionBar");
-		if (headerType === sap.ui.ux3.ThingViewerHeaderType.Standard) {
+		if (headerType === ThingViewerHeaderType.Standard) {
 			rm.write("'>");
 		} else {
 			rm.write(" sapUiUx3TVhorizontal'>");
@@ -106,14 +106,13 @@ sap.ui.define(['jquery.sap.global'],
 	 * Add root class to Thing
 	 *
 	 * @param {sap.ui.core.RenderManager}
-	 *            oRenderManager the RenderManager that can be used for writing to
+	 *            rm the RenderManager that can be used for writing to
 	 *            the Render-Output-Buffer
 	 * @param {sap.ui.core.Control}
 	 *            oControl an object representation of the control that should be
 	 *            rendered
 	 */
-	ThingViewerRenderer.addRootClasses = function(oRenderManager, oControl) {
-		var rm = oRenderManager;
+	ThingViewerRenderer.addRootClasses = function(rm, oControl) {
 		rm.addClass("sapUiUx3TV");
 	};
 
@@ -121,14 +120,13 @@ sap.ui.define(['jquery.sap.global'],
 	 * Add class to Thing
 	 *
 	 * @param {sap.ui.core.RenderManager}
-	 *            oRenderManager the RenderManager that can be used for writing to
+	 *            rm the RenderManager that can be used for writing to
 	 *            the Render-Output-Buffer
 	 * @param {sap.ui.core.Control}
 	 *            oControl an object representation of the control that should be
 	 *            rendered
 	 */
-	ThingViewerRenderer.addOverlayClasses = function(oRenderManager, oControl) {
-		var rm = oRenderManager;
+	ThingViewerRenderer.addOverlayClasses = function(rm, oControl) {
 		rm.addClass("sapUiUx3TVOverlay");
 	};
 
@@ -136,15 +134,13 @@ sap.ui.define(['jquery.sap.global'],
 	 * Renders the HTML for Thing Header
 	 *
 	 * @param {sap.ui.core.RenderManager}
-	 *            oRenderManager the RenderManager that can be used for writing to
+	 *            rm the RenderManager that can be used for writing to
 	 *            the Render-Output-Buffer
 	 * @param {sap.ui.core.Control}
 	 *            oControl an object representation of the control that should be
 	 *            rendered
 	 */
-	ThingViewerRenderer.renderHeader = function(oRenderManager, oControl) {
-		var rm = oRenderManager;
-
+	ThingViewerRenderer.renderHeader = function(rm, oControl) {
 		rm.write("<div class='sapUiUx3TVIconBar'>");
 		rm.writeIcon(oControl.getIcon(),["sapUiUx3TVIcon"],{
 			role: 'presentation',
@@ -172,7 +168,7 @@ sap.ui.define(['jquery.sap.global'],
 	 * Renders the HTML for Thing Toolbar
 	 *
 	 * @param {sap.ui.core.RenderManager}
-	 *            oRenderManager the RenderManager that can be used for writing to
+	 *            rm the RenderManager that can be used for writing to
 	 *            the Render-Output-Buffer
 	 * @param {sap.ui.core.Control}
 	 *            oControl an object representation of the control that should be
@@ -191,7 +187,7 @@ sap.ui.define(['jquery.sap.global'],
 	 * Renders the HTML for Thing Header content
 	 *
 	 * @param {sap.ui.core.RenderManager}
-	 *            oRenderManager the RenderManager that can be used for writing to
+	 *            rm the RenderManager that can be used for writing to
 	 *            the Render-Output-Buffer
 	 * @param {sap.ui.core.Control}
 	 *            oControl an object representation of the control that should be
@@ -203,11 +199,11 @@ sap.ui.define(['jquery.sap.global'],
 
 		for ( var i = 0; i < headerContentList.length; i++) {
 			var headerContent = headerContentList[i];
-			if (headerType === sap.ui.ux3.ThingViewerHeaderType.Standard) {
+			if (headerType === ThingViewerHeaderType.Standard) {
 				rm.write("<hr class='sapUiUx3TVHRWhite'>");
 			}
 			rm.write("<div class='sapUiUx3TVHeaderContainer");
-			if (headerType === sap.ui.ux3.ThingViewerHeaderType.Standard) {
+			if (headerType === ThingViewerHeaderType.Standard) {
 				rm.write("' role='form'>");
 			} else {
 				rm.write(" sapUiUx3TVhorizontal' role='form'>");
@@ -235,7 +231,7 @@ sap.ui.define(['jquery.sap.global'],
 	 * Renders the HTML for Thing Facet content
 	 *
 	 * @param {sap.ui.core.RenderManager}
-	 *            oRenderManager the RenderManager that can be used for writing to
+	 *            rm the RenderManager that can be used for writing to
 	 *            the Render-Output-Buffer
 	 * @param {sap.ui.core.Control}
 	 *            oControl an object representation of the control that should be
