@@ -70,7 +70,8 @@
 		jQuery.sap.require("sap.ui.test.TestUtils");
 		jQuery.sap.require("sap.m.TimePickerSliders");
 		jQuery.sap.require("sap.m.TimePickerSlider");
-		jQuery.sap.require("sap.m.VisibleItem")
+		jQuery.sap.require("sap.m.VisibleItem");
+		jQuery.sap.require("sap.ui.core.Locale");
 
 		var TimePickerMaskMode = sap.m.TimePickerMaskMode;
 
@@ -795,7 +796,7 @@
 		});
 
 		QUnit.test("test default locale", function (assert) {
-			var stub = sinon.stub(sap.ui.getCore().getConfiguration(), 'getFormatLocale').returns('ar');
+			var stub = sinon.stub(sap.ui.getCore().getConfiguration().getFormatSettings(), 'getFormatLocale').returns(new sap.ui.core.Locale('ar'));
 			//Test default browser locale set to arabic
 			generateValuesTest([
 				{ key: "setDisplayFormat", value: "hh:mm:ss a"},
@@ -820,6 +821,40 @@
 			});
 
 			stub.restore();
+		});
+
+		QUnit.test("_getLocale when no localeId is set", function (assert) {
+			//arrange
+			var oTP = new sap.m.TimePicker(),
+				oLocale,
+				oSystemLocale = sap.ui.getCore().getConfiguration().getFormatSettings().getFormatLocale();
+
+			// act
+			oLocale = oTP._getLocale();
+
+			// assert
+			assert.ok(!oTP.getLocaleId(), "there is no localeId specified");
+			assert.strictEqual(oLocale, oSystemLocale, "'_getLocale' returns system configuration, if the user haven't specified localeId");
+
+			//cleanup
+			oTP.destroy();
+		});
+
+		QUnit.test("_getLocale when localeId is set", function (assert) {
+			// arrange
+			var oTP = new sap.m.TimePicker({localeId:'en'}),
+				oLocale,
+				oSystemLocale = sap.ui.getCore().getConfiguration().getFormatSettings().getFormatLocale();
+
+			// act
+			oLocale = oTP._getLocale();
+
+			// assert
+			assert.equal(oTP.getLocaleId(), "en");
+			assert.ok(oLocale !== oSystemLocale, "'_getLocale' is different from the system configuration, if the user have specified localeId");
+
+			// cleanup
+			oTP.destroy();
 		});
 
 		QUnit.test("Value is validated when setValue is called with null or undefined", function (assert) {
@@ -2050,7 +2085,9 @@
 		QUnit.module("Accessibility", {
 			beforeEach: function () {
 				this.oRB = sap.ui.getCore().getLibraryResourceBundle('sap.m');
-				this.oTP = new sap.m.TimePicker({});
+				this.oTP = new sap.m.TimePicker({
+					localeId: 'en' //set localeId explicitly otherwise it will be taken from the system configuration and the test won't be stable
+				});
 				this.sandbox = sinon.sandbox;
 				this.oTP.placeAt("qunit-fixture");
 				sap.ui.getCore().applyChanges();
