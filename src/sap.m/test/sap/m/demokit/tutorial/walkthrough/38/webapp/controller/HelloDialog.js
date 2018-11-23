@@ -17,10 +17,9 @@ sap.ui.define([
 
 		open : function () {
 			var oView = this._oView;
-			var oDialog = oView.byId("helloDialog");
 
 			// create dialog lazily
-			if (!oDialog) {
+			if (!oView.byId("helloDialog")) {
 				var oFragmentController = {
 					onCloseDialog : function () {
 						oView.byId("helloDialog").close();
@@ -34,12 +33,10 @@ sap.ui.define([
 				}).then(function(oDialog){
 					// connect dialog to the root view of this component (models, lifecycle)
 					oView.addDependent(oDialog);
-					// forward compact/cozy style into dialog
-					syncStyleClass(oView.getController().getOwnerComponent().getContentDensityClass(), oView, oDialog);
 					oDialog.open();
 				});
 			} else {
-				oDialog.open();
+				oView.byId("helloDialog").open();
 			}
 		}
 

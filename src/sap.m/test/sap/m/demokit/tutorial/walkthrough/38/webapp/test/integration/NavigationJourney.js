@@ -1,17 +1,24 @@
 /*global QUnit, opaTest*/
 
 sap.ui.define([
+	"sap/ui/demo/walkthrough/localService/mockserver",
 	"sap/ui/test/opaQunit",
 	"./pages/App"
-], function () {
+], function (mockserver) {
 	"use strict";
 
 	QUnit.module("Navigation");
 
 	opaTest("Should open the Hello dialog", function (Given, When, Then) {
+		// initialize the mock server
+		mockserver.init();
 
 		// Arrangements
-		Given.iStartMyAppInAFrame(sap.ui.require.toUrl("sap/ui/demo/walkthrough/test/mockServer") + ".html");
+		Given.iStartMyUIComponent({
+			componentConfig: {
+				name: "sap.ui.demo.walkthrough"
+			}
+		});
 
 		//Actions
 		When.onTheAppPage.iPressTheSayHelloWithDialogButton();
@@ -20,6 +27,6 @@ sap.ui.define([
 		Then.onTheAppPage.iShouldSeeTheHelloDialog();
 
 		// Cleanup
-		Then.iTeardownMyAppFrame();
+		Then.iTeardownMyApp();
 	});
 });

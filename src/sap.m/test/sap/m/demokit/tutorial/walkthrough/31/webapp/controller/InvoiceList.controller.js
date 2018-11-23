@@ -20,7 +20,6 @@ sap.ui.define([
 		},
 
 		onFilterInvoices: function (oEvent) {
-
 			// build filter array
 			var aFilter = [];
 			var sQuery = oEvent.getParameter("query");

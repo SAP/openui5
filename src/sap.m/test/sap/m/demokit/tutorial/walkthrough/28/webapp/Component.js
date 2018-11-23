@@ -7,6 +7,10 @@ sap.ui.define([
 
 	return UIComponent.extend("sap.ui.demo.walkthrough.Component", {
 
+		metadata: {
+			manifest: "json"
+		},
+
 		init: function () {
 			// call the init function of the parent
 			UIComponent.prototype.init.apply(this, arguments);
