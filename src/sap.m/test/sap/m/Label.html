@@ -76,7 +76,12 @@
 
 			var oLabelWidth = new sap.m.Label("lbl13", {
 				text: "mobile label with width set to 250px with loooooooooooooooooooooooooooooooong content",
-				width: "250px",
+				width: "250px"
+			});
+
+			var oLabelDisplayOnly = new sap.m.Label("lbl8a", {
+				text: "mobile label in display mode",
+				displayOnly: true
 			});
 
 			var oLabelHyphenation = new sap.m.Label("lbl14", {
@@ -117,7 +122,12 @@
 			});
 
 			var oLabel7 = new sap.m.Label({
-				text: 'Label with wrappingType property set to "Hyphenated" ',
+				text: 'Label with wrappingType property set to "Hyphenated"',
+				design: "Bold"
+			});
+
+			var oLabel8 = new sap.m.Label({
+				text: 'Label with displayOnly property set to "true"',
 				design: "Bold"
 			});
 
@@ -200,8 +210,10 @@
                             oLabel5,
                             oLabelNoText,
                             oLabel6,
-                            oLabelWidth,
-                            oLabel7,
+							oLabelWidth,
+							oLabel8,
+							oLabelDisplayOnly,
+							oLabel7,
                             oLabelHyphenation,
                             oVL,
                             sf
