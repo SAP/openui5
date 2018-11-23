@@ -541,7 +541,7 @@ function(
 	 * @private
 	 */
 	SinglePlanningCalendar.prototype._setColumnHeaderVisibility = function () {
-		var bVisible = this._getSelectedView().isA("sap.m.SinglePlanningCalendarDayView");
+		var bVisible = !this._getSelectedView().isA("sap.m.SinglePlanningCalendarDayView");
 
 		this._getGrid()._getColumnHeaders().setVisible(bVisible);
 	};
