@@ -535,8 +535,10 @@ function (
 				sSelectedTitle: oSecondSection.getSubSections()[0].getTitle()
 			};
 			sectionIsSelected(oObjectPage, assert, oExpected);
-			assert.equal(oObjectPage._bHeaderExpanded, false, "Header is snapped");
 
+			setTimeout(function() {
+				assert.equal(oObjectPage._bHeaderExpanded, false, "Header is snapped");
+			}, 100);
 
 			// hide the objectPage (navigate to another page)
 			oNavCont.to("page2");
