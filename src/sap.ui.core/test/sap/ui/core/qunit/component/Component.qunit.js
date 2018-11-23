@@ -400,6 +400,15 @@ sap.ui.define([
 					"title": "{{title}}"
 				}
 			};
+			var oAppVariantManifest = {
+				"sap.app" : {
+					"id" : "app.variant.id",
+					"title": "{{title}}"
+				},
+				"sap.ui5": {
+					"componentName": "samples.components.button"
+				}
+			};
 
 			// workaround sinon gh #1534
 			this._oSandbox.serverPrototype = null;
@@ -412,6 +421,7 @@ sap.ui.define([
 					url !== "/anylocation/manifest.json?sap-language=EN"
 					&& url !== "/anyotherlocation1/manifest.json?sap-language=EN"
 					&& url !== "/anyotherlocation2/manifest.json?sap-language=EN"
+					& url !== "/anyappvariantlocation/manifest.json?sap-language=EN"
 
 					&& !/anylocation\/i18n\/i18n_en\.properties$/.test(url)
 					&& !/anyotherlocation2\/someFolder\/messagebundle_en\.properties$/.test(url)
@@ -440,6 +450,13 @@ sap.ui.define([
 				},
 				JSON.stringify(oAltManifest2)
 			]);
+			oServer.respondWith("GET", "/anyappvariantlocation/manifest.json?sap-language=EN", [
+				200,
+				{
+					"Content-Type": "application/json"
+				},
+				JSON.stringify(oAppVariantManifest)
+			]);
 
 			oServer.respondWith("GET", /anylocation\/i18n\/i18n_en\.properties$/, [
 				200,
@@ -449,6 +466,13 @@ sap.ui.define([
 				"title=Title anylocation"
 			]);
 			oServer.respondWith("GET", /anyotherlocation2\/someFolder\/messagebundle_en\.properties$/, [
+				200,
+				{
+					"Content-Type": "text/plain; charset=ISO-8859-1"
+				},
+				"title=Title anyotherlocation2"
+			]);
+			oServer.respondWith("GET", /anyappvariantlocation\/someFolder\/messagebundle_en\.properties$/, [
 				200,
 				{
 					"Content-Type": "text/plain; charset=ISO-8859-1"
@@ -471,7 +495,36 @@ sap.ui.define([
 		}, function(oError) {
 			assert.ok(false, "Component should be loaded!");
 		});
+	});
 
+	QUnit.test("Component.create - manifest with URL and App Variant", function(assert) {
+		var configSpy = this.spy(sap.ui.loader, "config");
+		var sComponentUrl = "test-resources/sap/ui/core/samples/components/button/";
+
+		return Component.create({
+			manifest: "/anyappvariantlocation/manifest.json",
+			url: sComponentUrl
+		}).then(function(oComponent) {
+			assert.equal(2, configSpy.callCount, "sap.ui.loader.config was called twice");
+
+			var mPathsOfFirstCall = configSpy.getCall(0).args[0].paths;
+			var aKeysOfFirstCall = Object.keys(mPathsOfFirstCall);
+			assert.equal(aKeysOfFirstCall.length, 1, "one path is registered");
+			var sComponentName = oComponent.getManifestEntry("/sap.ui5/componentName");
+			var sCompopnentModulePath = sComponentName.replace(/\./g, "/");
+			var sPathKeyOfFirstCall = aKeysOfFirstCall[0];
+			assert.equal(sPathKeyOfFirstCall, sCompopnentModulePath, "the component module path was registered");
+			assert.equal(mPathsOfFirstCall[sPathKeyOfFirstCall], sComponentUrl, "the component module uri is correct");
+
+			var mPathsOfSecondCall = configSpy.getCall(1).args[0].paths;
+			var aKeysOfSecondCall = Object.keys(mPathsOfSecondCall);
+			assert.equal(1, aKeysOfSecondCall.length, "one path is registered");
+			var sAppVariantId = oComponent.getManifestEntry("/sap.app/id");
+			var sAppVariantModulePath = sAppVariantId.replace(/\./g, "/");
+			var sPathKeyOfSecondCall = aKeysOfSecondCall[0];
+			assert.equal(sPathKeyOfSecondCall, sAppVariantModulePath, "the app variant module path was registered");
+			assert.equal(mPathsOfSecondCall[sPathKeyOfSecondCall], "../anyappvariantlocation/", "the component module uri is correct");
+		});
 	});
 
 	QUnit.test("Component.get - manifest with URL", function(assert) {
