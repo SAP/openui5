@@ -228,4 +228,33 @@ sap.ui.define([
 		assert.equal(oNewRequest.iSkip, 110, "Skip increased to 110 (from 105)");
 		assert.equal(oNewRequest.iTop, 30, "Top increased to 30 due to threshold (10+20) after being reduced to 10 (from 15)");
 	});
+
+	QUnit.test("Expand to the left (with threshold, edge-case: 0)", function(assert) {
+		assert.expect(4);
+		var oNewRequest = {
+			iSkip: 0,
+			iTop: 113,
+			iThreshold: 100
+		};
+
+		var oPendingRequest = {
+			iSkip: 3,
+			iTop: 113,
+			iThreshold: 100,
+			oRequestHandle: {
+				abort: function() {
+					// should not be called
+					assert.ok("Pending request got aborted");
+				}
+			}
+		};
+
+		var bReturnVal = TreeBindingUtils._determineRequestDelta(oNewRequest, oPendingRequest);
+
+		assert.equal(bReturnVal, undefined, "Request shall not be ignored");
+		assert.equal(oNewRequest.iSkip, 0, "Skip is still at 0");
+		assert.equal(oNewRequest.iTop, 103, "Top should be 3 now");
+		assert.equal(oNewRequest.iThreshold, 0, "Threshold should be 0");
+	});
+
 });
