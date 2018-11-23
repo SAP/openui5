@@ -35,6 +35,7 @@ sap.ui.define([
 				autoWait: oOptions.autoWait
 			});
 		},
+
 		_clearSharedData: function () {
 			// clear shared metadata in ODataModel to allow tests for loading the metadata
 			ODataModel.mSharedData = { server: {}, service: {}, meta: {} };

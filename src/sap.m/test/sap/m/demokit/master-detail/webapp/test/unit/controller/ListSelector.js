@@ -1,4 +1,4 @@
-/*global QUnit,sinon*/
+/*global QUnit*/
 
 sap.ui.define([
 	"sap/ui/demo/masterdetail/controller/ListSelector"
@@ -7,7 +7,6 @@ sap.ui.define([
 
 	QUnit.module("Initialization", {
 		beforeEach : function () {
-			sinon.config.useFakeTimers = false;
 			this.oListSelector = new ListSelector();
 		},
 		afterEach : function () {
@@ -34,7 +33,6 @@ sap.ui.define([
 
 	QUnit.module("List loading", {
 		beforeEach : function () {
-			sinon.config.useFakeTimers = false;
 			this.oListSelector = new ListSelector();
 		},
 		afterEach : function () {
@@ -110,7 +108,6 @@ sap.ui.define([
 
 	QUnit.module("Selecting item in the list", {
 		beforeEach : function () {
-			sinon.config.useFakeTimers = false;
 			this.oListSelector = new ListSelector();
 			this.oListSelector.oWhenListLoadingIsDone = {
 				then : function (fnAct) {

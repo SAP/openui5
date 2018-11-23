@@ -117,5 +117,4 @@ sap.ui.define([
 		// Cleanup
 		Then.iTeardownMyApp();
 	});
-
 });

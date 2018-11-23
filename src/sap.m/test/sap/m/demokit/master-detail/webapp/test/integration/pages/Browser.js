@@ -48,6 +48,7 @@ sap.ui.define([
 						}
 					}));
 				},
+
 				iShouldSeeTheHashForTheRememberedObject : function () {
 					return this.waitFor({
 						success : function () {
@@ -58,6 +59,7 @@ sap.ui.define([
 						}
 					});
 				},
+
 				iShouldSeeAnEmptyHash : function () {
 					return this.waitFor({
 						success : function () {
