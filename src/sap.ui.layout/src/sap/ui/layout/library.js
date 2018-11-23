@@ -777,6 +777,7 @@ sap.ui.define([
 	 * @see {@link https://developer.mozilla.org/en-US/docs/Glossary/Grid_tracks}
 	 * @since 1.60.0
 	 * @public
+	 * @ui5-metamodel This simple type will also be described in the UI5 (legacy) designtime metamodel
 	 */
 	sap.ui.layout.cssgrid.CSSGridTrack = DataType.createType("sap.ui.layout.cssgrid.CSSGridTrack", {
 			isValid: function (sValue) {
@@ -807,6 +808,7 @@ sap.ui.define([
 	 *
 	 * @since 1.60.0
 	 * @public
+	 * @ui5-metamodel This simple type will also be described in the UI5 (legacy) designtime metamodel
 	 */
 	sap.ui.layout.cssgrid.CSSGridGapShortHand = DataType.createType("sap.ui.layout.cssgrid.CSSGridGapShortHand", {
 			isValid: function (vValue) {
@@ -845,7 +847,7 @@ sap.ui.define([
 	 * @see {@link https://developer.mozilla.org/en-US/docs/Glossary/Grid_lines}
 	 * @since 1.60.0
 	 * @public
-	 * @ui5-metamodel This simple type also will be described in the UI5 (legacy) designtime metamodel
+	 * @ui5-metamodel This simple type will also be described in the UI5 (legacy) designtime metamodel
 	 */
 	sap.ui.layout.cssgrid.CSSGridLine = DataType.createType("sap.ui.layout.cssgrid.CSSGridLine", {
 			isValid: function (sValue) {
@@ -863,6 +865,7 @@ sap.ui.define([
 	 * @enum {string}
 	 * @since 1.60.0
 	 * @public
+	 * @ui5-metamodel This simple type will also be described in the UI5 (legacy) designtime metamodel
 	 */
 	sap.ui.layout.cssgrid.CSSGridAutoFlow = {
 

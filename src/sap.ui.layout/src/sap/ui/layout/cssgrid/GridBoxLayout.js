@@ -26,6 +26,7 @@ sap.ui.define([
 	 * @constructor
 	 * @private
 	 * @alias sap.ui.layout.cssgrid.GridBoxLayout
+	 * @ui5-metamodel This simple type will also be described in the UI5 (legacy) designtime metamodel
 	 */
 	var GridBoxLayout = GridLayoutBase.extend("sap.ui.layout.cssgrid.GridBoxLayout", {
 		metadata: {

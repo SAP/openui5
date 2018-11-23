@@ -25,8 +25,9 @@ sap.ui.define([
 	 *
 	 * @since 1.60
 	 * @constructor
-	 * @private
+	 * @public
 	 * @alias sap.ui.layout.cssgrid.GridResponsiveLayout
+	 * @ui5-metamodel This simple type will also be described in the UI5 (legacy) designtime metamodel
 	 */
 	var GridResponsiveLayout = GridLayoutBase.extend("sap.ui.layout.cssgrid.GridResponsiveLayout", {
 		metadata: {
