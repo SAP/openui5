@@ -3439,10 +3439,12 @@ function (
 		QUnit.test("with 3 async queued changes with 1 change whose selector points to no control", function(assert) {
 			this.mChanges.mChanges[this.sLabelId] = [this.oChange, this.oChange2, this.oChange4];
 			this.oFlexController._applyChangesOnControl(this.fnGetChangesMap, this.oComponent, this.oControl);
-			this.oFlexController.waitForChangesToBeApplied(this.oControl);
-			assert.ok(!!this.oChange.aPromiseFn);
-			assert.ok(!!this.oChange2.aPromiseFn);
-			assert.notOk(!!this.oChange4.aPromiseFn);
+			return this.oFlexController.waitForChangesToBeApplied(this.oControl)
+			.then(function() {
+				assert.ok(!!this.oChange.aPromiseFn);
+				assert.ok(!!this.oChange2.aPromiseFn);
+				assert.notOk(!!this.oChange4.aPromiseFn);
+			}.bind(this));
 		});
 
 		QUnit.test("with 3 async queued changes dependend on each other with an unavailable control dependency", function(assert) {
