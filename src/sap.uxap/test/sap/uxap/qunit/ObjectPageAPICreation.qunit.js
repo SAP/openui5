@@ -19,6 +19,7 @@ sap.ui.define([
 	"sap/base/Log",
 	"sap/ui/Device",
 	"sap/ui/core/mvc/XMLView",
+	"sap/ui/base/ManagedObject",
 	"sap/m/OverflowToolbar",
 	"sap/uxap/ObjectPageAccessibleLandmarkInfo"],
 function (
@@ -41,6 +42,7 @@ function (
 	Log,
 	Device,
 	XMLView,
+	ManagedObject,
 	OverflowToolbar,
 	ObjectPageAccessibleLandmarkInfo
 ) {
@@ -1417,6 +1419,20 @@ function (
 
 		assert.strictEqual(oHeaderContentClone !== null, true, "HeaderContent aggregation should exist in the clone");
 		assert.strictEqual(oHeaderContent.length, oHeaderContentClone.length, "HeaderContent and it's clone should have the same nubmer of elements");
+	});
+
+	QUnit.test("Should destroy cloned _headerContent hidden aggregation", function (assert) {
+		var oObjectPage = this.oSampleView.byId("objectPage13"),
+			oDestroySpy = sinon.spy(ManagedObject.prototype, "destroy"),
+			oObjectPageClone = oObjectPage.clone(),
+			aDestroyedObjectIds;
+
+		// act
+		oObjectPageClone.destroy();
+
+		// check
+		aDestroyedObjectIds = oDestroySpy.thisValues.map(function(x) {return x.getId();});
+		assert.ok(aDestroyedObjectIds.indexOf(oObjectPageClone.getId() + "-OPHeaderContent") > -1, "default headerContent clone is destroyed");
 	});
 
 	QUnit.module("ObjectPage API", {
