@@ -37,7 +37,10 @@
 				"sap.m": {},
 				"sap.tnt": {},
 				"sap.ui.layout": {},
-				"sap.uxap": {}
+				"sap.uxap": {},
+				"sap.suite.ui.microchart": {
+					"lazy": true
+				}
 			}
 		},
 		"models": {
