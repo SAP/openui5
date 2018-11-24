@@ -363,8 +363,10 @@ function(
 		return ChangeRegistry.getInstance().getChangeHandler(sChangeType, sControlType, oElement, JsControlTreeModifier, sLayer);
 	};
 
-	BasePlugin.prototype.isAvailable = function () {
-		return Plugin.prototype.isAvailable.apply(this, arguments);
+	BasePlugin.prototype.isAvailable = function (aElementOverlays) {
+		return aElementOverlays.every(function (oElementOverlay) {
+			return this._isEditableByPlugin(oElementOverlay);
+		}, this);
 	};
 
 	BasePlugin.prototype._checkRelevantContainerStableID = function(oAction, oElementOverlay){

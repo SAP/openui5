@@ -264,13 +264,12 @@ function(
 
 	/**
 	 * Checks if the plugin is available for an overlay
+	 * Method to be overwritten by the different plugins
 	 * @param {sap.ui.dt.ElementOverlay[]} aElementOverlays - Overlays to be checked
-	 * @return {Boolean} - true if the plugin is available
+	 * @returns {boolean} Returns false by default
 	 */
 	Plugin.prototype.isAvailable = function (aElementOverlays) {
-		return aElementOverlays.every(function (oElementOverlay) {
-			return this._isEditableByPlugin(oElementOverlay);
-		}, this);
+		return false;
 	};
 
 	/**
@@ -285,9 +284,12 @@ function(
 	/**
 	 * Checks if the plugin is enabled for a set of overlays
 	 * Method to be overwritten by the different plugins
-	 * @param {sap.ui.dt.ElementOverlay[]} vElementOverlays - Target overlays
+	 * @param {sap.ui.dt.ElementOverlay[]} aElementOverlays - Target overlays
+	 * @returns {boolean} Returns false by default
 	 */
-	Plugin.prototype.isEnabled = function (aElementOverlays) {};
+	Plugin.prototype.isEnabled = function (aElementOverlays) {
+		return false;
+	};
 
 	/**
 	 * Generic function to return the menu items for a context menu.

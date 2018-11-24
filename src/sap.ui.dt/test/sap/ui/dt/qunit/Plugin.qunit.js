@@ -133,6 +133,7 @@ function(
 		}
 	}, function () {
 		QUnit.test("when using common methods of the plugin", function (assert) {
+			assert.expect(6);
 			this.oPlugin.getActionName = function(){
 				return "dummyActionName";
 			};
@@ -151,12 +152,22 @@ function(
 			};
 			this.oPlugin.getAction(oOverlay);
 
-			this.oPlugin._isEditableByPlugin = function (oOverlay) {
-				assert.equal(oOverlay, "dummyOverlay", "when calling 'isAvailable', _isEditableByPlugin method of the plugin is called by default with the right overlay");
-			};
+			assert.equal(this.oPlugin.isAvailable(), false, "by default the plugin returns false");
+			assert.equal(this.oPlugin.isEnabled(), false, "by default the plugin returns false");
+			assert.equal(this.oPlugin.isBusy(), false, "by default the plugin returns false");
 
-			this.oPlugin.isAvailable(["dummyOverlay"]);
+			sandbox.stub(this.oPlugin, "getDesignTime").returns({
+				getSelectionManager: function() {
+					return {
+						get: function() {
+							assert.ok(true, "the function was called");
+						}
+					};
+				}
+			});
+			this.oPlugin.getSelectedOverlays();
 		});
+
 		QUnit.test("when calling _getMenuItems", function(assert){
 			var oOverlay = {
 				getDesignTimeMetadata: function(){

@@ -29,6 +29,7 @@ sap.ui.define([
 	"sap/ui/rta/plugin/Settings",
 	"sap/ui/rta/plugin/Stretch",
 	"sap/ui/rta/plugin/ControlVariant",
+	"sap/ui/dt/plugin/ToolHooks",
 	"sap/ui/dt/plugin/ContextMenu",
 	"sap/ui/dt/plugin/TabHandling",
 	"sap/ui/fl/FlexControllerFactory",
@@ -80,6 +81,7 @@ function(
 	SettingsPlugin,
 	StretchPlugin,
 	ControlVariantPlugin,
+	ToolHooksPlugin,
 	ContextMenuPlugin,
 	TabHandlingPlugin,
 	FlexControllerFactory,
@@ -375,11 +377,13 @@ function(
 			this._mDefaultPlugins["controlVariant"] = new ControlVariantPlugin({
 				commandFactory : oCommandFactory
 			});
+
+			//ToolHooks
+			this._mDefaultPlugins["toolHooks"] = new ToolHooksPlugin();
 		}
 
 		return jQuery.extend({}, this._mDefaultPlugins);
 	};
-
 
 	RuntimeAuthoring.prototype.addDependent = function (oObject, sName, bCreateGetter) {
 		bCreateGetter = typeof bCreateGetter === 'undefined' ? true : !!bCreateGetter;

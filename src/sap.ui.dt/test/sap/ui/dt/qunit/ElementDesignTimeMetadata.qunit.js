@@ -208,6 +208,33 @@ sap.ui.define([
 			assert.deepEqual(this.oElementDesignTimeMetadata.getStableElements(oOverlay), ["element"], "the function returns the value of the function");
 		});
 
+		QUnit.test("when getToolHooks method is called and DT Metadata has no tool object", function(assert) {
+			assert.ok(typeof this.oElementDesignTimeMetadata.getToolHooks().start === "function", "the function inside the object is part of the return");
+			assert.ok(typeof this.oElementDesignTimeMetadata.getToolHooks().stop === "function", "the function inside the object is part of the return");
+		});
+
+		QUnit.test("when getToolHooks method is called and DT Metadata has a tool object", function(assert) {
+			var oStartSpy = sandbox.spy();
+			var oStopSpy = sandbox.spy();
+
+			this.oElementDesignTimeMetadata.setData(Object.assign(
+				{},
+				this.oElementDesignTimeMetadata.getData(),
+				{
+					tool: {
+						start: oStartSpy,
+						stop: oStopSpy
+					}
+				}
+			));
+			assert.ok(typeof this.oElementDesignTimeMetadata.getToolHooks().start === "function", "the function inside the object is part of the return");
+			assert.ok(typeof this.oElementDesignTimeMetadata.getToolHooks().stop === "function", "the function inside the object is part of the return");
+			this.oElementDesignTimeMetadata.getToolHooks().start("arg1");
+			this.oElementDesignTimeMetadata.getToolHooks().stop("arg2");
+			assert.ok(oStartSpy.withArgs("arg1").calledOnce);
+			assert.ok(oStopSpy.withArgs("arg2").calledOnce);
+		});
+
 		QUnit.test("when 'getScrollContainers' is called without scrollContainers defined in the metadata", function(assert) {
 			assert.ok(Array.isArray(this.oElementDesignTimeMetadata.getScrollContainers()), "an array is returned");
 			assert.equal(this.oElementDesignTimeMetadata.getScrollContainers().length, 0, "the array is empty");
