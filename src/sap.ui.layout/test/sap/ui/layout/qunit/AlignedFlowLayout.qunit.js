@@ -37,7 +37,7 @@ sap.ui.require([
 			oRm.addStyle("box-sizing", "border-box");
 			oRm.addStyle("vertical-align", "top");
 			oRm.writeStyles();
-			oRm.write("></input>");
+			oRm.write(">");
 		}
 	});
 

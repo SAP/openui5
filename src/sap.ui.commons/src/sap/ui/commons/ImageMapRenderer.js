@@ -27,9 +27,9 @@ sap.ui.define(['jquery.sap.global'],
 		var accessibility = sap.ui.getCore().getConfiguration().getAccessibility();
 		var rb = sap.ui.getCore().getLibraryResourceBundle("sap.ui.commons");
 
-		rm.write('<SPAN id="' + oImageMap.getId() + '-Descr" style="visibility: hidden; display: none; outline: none;">');
+		rm.write('<span id="' + oImageMap.getId() + '-Descr" style="visibility: hidden; display: none; outline: none;">');
 		rm.writeEscaped(rb.getText("IMAGEMAP_DSC"));
-		rm.write('</SPAN>');
+		rm.write('</span>');
 
 		rm.write("<map tabindex='-1'");
 		rm.writeControlData(oImageMap);
