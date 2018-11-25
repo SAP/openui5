@@ -1961,6 +1961,9 @@ sap.ui.define([
 	 *     if declared in the Component metadata.
 	 *     A non-empty string value will be interpreted as the URL to load the manifest from.
 	 *     A non-null object value will be interpreted as manifest content.
+	 * @param {string} [mOptions.altManifestUrl] @since 1.61.0 Alternative URL for the manifest.json. If <code>mOptions.manifest</code>
+	 *     is set to an object value, this URL specifies the location to which the manifest object should resolve the relative
+	 *     URLs to.
 	 * @param {string} [mOptions.handleValidation=false] If set to <code>true</code> validation of the component is handled by the <code>MessageManager</code>
 	 * @param {object} [mOptions.asyncHints] Hints for asynchronous loading
 	 * @param {string[]|object[]} [mOptions.asyncHints.components] a list of components needed by the current component and its subcomponents
@@ -2213,6 +2216,9 @@ sap.ui.define([
 	 *     if declared in the Component metadata.
 	 *     A non-empty string value will be interpreted as the URL to load the manifest from.
 	 *     A non-null object value will be interpreted as manifest content.
+	 * @param {string} [mOptions.altManifestUrl] @since 1.61.0 Alternative URL for the manifest.json. If <code>mOptions.manifest</code>
+	 *     is set to an object value, this URL specifies the location to which the manifest object should resolve the relative
+	 *     URLs to.
 	 * @param {object} [mOptions.asyncHints] Hints for asynchronous loading
 	 * @param {string[]|object[]} [mOptions.asyncHints.components] a list of components needed by the current component and its subcomponents
 	 *     The framework will try to preload these components (their Component-preload.js) asynchronously, errors will be ignored.
@@ -2366,8 +2372,8 @@ sap.ui.define([
 			mModelConfigs,
 			fnCallLoadComponentCallback;
 
-		function createSanitizedManifest( oRawManifestJSON ) {
-			var oManifest = new Manifest( JSON.parse(JSON.stringify(oRawManifestJSON)) );
+		function createSanitizedManifest( oRawManifestJSON, mOptions ) {
+			var oManifest = new Manifest( JSON.parse(JSON.stringify(oRawManifestJSON)), mOptions );
 			return oConfig.async ? Promise.resolve(oManifest) : oManifest;
 		}
 
@@ -2395,7 +2401,7 @@ sap.ui.define([
 			// determine the semantic of the manifest property
 			bManifestFirst = !!vManifest;
 			sManifestUrl = vManifest && typeof vManifest === 'string' ? vManifest : undefined;
-			oManifest = vManifest && typeof vManifest === 'object' ? createSanitizedManifest(vManifest) : undefined;
+			oManifest = vManifest && typeof vManifest === 'object' ? createSanitizedManifest(vManifest, {url: oConfig && oConfig.altManifestUrl}) : undefined;
 		}
 
 		// if we find a manifest URL in the configuration
