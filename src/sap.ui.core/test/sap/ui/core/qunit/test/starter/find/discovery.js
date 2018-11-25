@@ -44,7 +44,7 @@ sap.ui.define([
 
 				// console.log("checking test page: " + sTestPage);
 				let url = new URL(oTestPageConfig.fullpage, location.href);
-				if ( !/testsuite\./.test(url.pathname) ) {
+				if ( !/testsuite[_.]/.test(url.pathname) ) {
 					resolve(oTestPageConfig);
 					return;
 				}
@@ -122,9 +122,19 @@ sap.ui.define([
 			return Promise.all( aPages.map( (page) => checkTestPage(page) ) );
 		} */
 
+		function decorateWithTestsuite(aPages, sTestsuite) {
+			aPages.forEach( (test) => {
+				if ( test.testsuite === undefined ) {
+					test.testsuite = sTestsuite;
+				}
+			});
+			return aPages;
+		}
+
 		function findTestPages(oIFrame) {
 			return Promise.resolve(oIFrame.contentWindow.suite()).
 				then( (oSuite) => (oSuite && oSuite.getTestPages() || []) ).
+				then( (aPages) => (decorateWithTestsuite(aPages, oIFrame.src))).
 				then( (aPages) => sequence(aPages) ).
 				catch( () => [] );
 		}
