@@ -81,7 +81,9 @@ sap.ui.define(function() {
 
 			if (oNewRequest.iThreshold) { // Add threshold if given
 				oNewRequest.iTop = oNewRequest.iTop + oNewRequest.iThreshold;
-				oNewRequest.iSkip = oNewRequest.iSkip - oNewRequest.iThreshold;
+				oNewRequest.iSkip = Math.max(0, oNewRequest.iSkip - oNewRequest.iThreshold);
+				// threshold is already added to top, so its not needed anymore
+				oNewRequest.iThreshold = 0;
 			}
 		} else if (oNewRequest.iSkip < iPendingSectionEndIndex && iNewSectionEndIndex > iPendingSectionEndIndex
 				&& oNewRequest.iSkip >= oPendingRequest.iSkip) {
@@ -91,6 +93,8 @@ sap.ui.define(function() {
 
 			if (oNewRequest.iThreshold) { // Add threshold if given
 				oNewRequest.iTop += oNewRequest.iThreshold;
+				// threshold is already added to top, so its not needed anymore
+				oNewRequest.iThreshold = 0;
 			}
 		} else if (oNewRequest.iSkip >= oPendingRequest.iSkip && iNewSectionEndIndex <= iPendingSectionEndIndex) {	// First check whether we should ignore the new request.
 																													// Keeping pending ones is better
