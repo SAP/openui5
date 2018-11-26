@@ -167,6 +167,21 @@ sap.ui.define([
 			this._oCardManifest.destroy();
 			this._oCardManifest = null;
 		}
+
+		if (this._oTitle) {
+			this._oTitle.destroy();
+			this._oTitle = null;
+		}
+
+		if (this._oSubTitle) {
+			this._oSubTitle.destroy();
+			this._oSubTitle = null;
+		}
+
+		if (this._oAvatar) {
+			this._oAvatar.destroy();
+			this._oAvatar = null;
+		}
 	};
 
 	Card.prototype.initComponent = function (sComponentName) {
