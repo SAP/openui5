@@ -90,20 +90,20 @@ sap.ui.define(['sap/ui/test/matchers/Matcher'], function(Matcher) {
 			if (sPropertyPath) {
 				var sPropertyPathToMatch = _getFormattedPath(sPropertyPath, sModelName, oBindingContext);
 
-				var аMatchingBindingInfos = Object.keys(oControl.mBindingInfos).filter(function (sBinding) {
+				var aMatchingBindingInfos = Object.keys(oControl.mBindingInfos).filter(function (sBinding) {
 					var mBindingInfo = oControl.mBindingInfos[sBinding];
-					var аBindingParts = mBindingInfo.parts ? mBindingInfo.parts : [mBindingInfo];
+					var aBindingParts = mBindingInfo.parts ? mBindingInfo.parts : [mBindingInfo];
 
-					var аMatchingParts = аBindingParts.filter(function (mPart) {
+					var aMatchingParts = aBindingParts.filter(function (mPart) {
 						var bPathMatches = mPart.path === sPropertyPathToMatch;
 						var bModelMatches = oObjectBindingInfo || mPart.model === sModelName;
 						return bPathMatches && bModelMatches;
 					});
 
-					return !!аMatchingParts.length;
+					return !!aMatchingParts.length;
 				});
 
-				bPropertyPathMatches = !!аMatchingBindingInfos.length;
+				bPropertyPathMatches = !!aMatchingBindingInfos.length;
 				this._oLogger.debug("Control '" + oControl + "' " + (bPropertyPathMatches ? "has" : "does not have") +
 					" binding property path '" + sPropertyPath + "' for model '" + sModelName + "'");
 			}
