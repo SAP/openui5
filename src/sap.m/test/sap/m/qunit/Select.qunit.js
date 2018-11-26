@@ -6651,6 +6651,41 @@ sap.ui.define([
 			oSelect.destroy();
 		});
 
+		QUnit.test("selection change with tab", function (assert) {
+			// system under test
+			var oExpectedItem,
+				oSelect = new Select({
+				items: [
+						new Item({
+							text: "First item"
+						}),
+						oExpectedItem = new Item({
+							text: "Second item"
+						})
+					]
+				});
+
+			// arrange
+			oSelect.placeAt("content");
+			sap.ui.getCore().applyChanges();
+			oSelect.focus();
+
+			// act
+			qutils.triggerKeydown(oSelect.getDomRef(), KeyCodes.SPACE);
+			this.clock.tick(1000); // wait 1s after the open animation is completed
+			assert.strictEqual(oSelect.isOpen(), true);
+
+			qutils.triggerKeydown(oSelect.getDomRef(), KeyCodes.ARROW_DOWN);
+			qutils.triggerKeydown(oSelect.getDomRef(), KeyCodes.TAB);
+			assert.strictEqual(oSelect.getSelectedItem().getText(), oExpectedItem.getText());
+
+			this.clock.tick(1000); // wait 1s after the close animation is completed
+			assert.strictEqual(oSelect.isOpen(), false);
+
+			// cleanup
+			oSelect.destroy();
+		});
+
 		QUnit.test("it should select Germany", function (assert) {
 
 			// system under test
