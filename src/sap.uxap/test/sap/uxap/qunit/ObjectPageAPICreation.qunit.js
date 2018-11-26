@@ -2495,6 +2495,19 @@ function (
 		oObjectPage.destroy();
 	});
 
+	QUnit.test("BCP:1870470695 - check _updateMedia is called initially when ObjectPage has correct size", function (assert) {
+		var oObjectPage = new ObjectPageLayout({}),
+			updateMediaSpy = sinon.spy(oObjectPage, "_updateMedia"),
+			done = assert.async();
+
+		oObjectPage.attachEventOnce("onAfterRenderingDOMReady", function() {
+				assert.strictEqual(updateMediaSpy.callCount, 1, "_updateMedia is called only once in after rendering phase");
+				oObjectPage.destroy();
+				done();
+		});
+
+		helpers.renderObject(oObjectPage);
+	});
 
 	QUnit.module("Header DOM changes", {
 		beforeEach: function () {
