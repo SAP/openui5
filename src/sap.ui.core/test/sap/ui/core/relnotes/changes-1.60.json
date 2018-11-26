@@ -434,5 +434,40 @@
         "references": []
       }
     ]
+  },
+  "1.60.2": {
+    "date": "November 2018",
+    "notes": [
+      {
+        "id": "5702fb03b3f589473dc078b04685587e9e6cc07f",
+        "type": "FIX",
+        "text": " Component: register the module path for app variants",
+        "references": []
+      },
+      {
+        "id": "3d4656af568637dc8709b402fcb98370e6edbb5f",
+        "type": "FIX",
+        "text": " Model.removeBinding: performance",
+        "references": []
+      },
+      {
+        "id": "b80509a6e14dc6dbc1c9d903f82ff658cb63d980",
+        "type": "FIX",
+        "text": " Unit Type: Only parse and format valid values",
+        "references": []
+      },
+      {
+        "id": "e9bfcbc1ab6de6c9ac7fe9c6060081eb3fe9d174",
+        "type": "FIX",
+        "text": " core/Control: corrected visibility of blocked property",
+        "references": []
+      },
+      {
+        "id": "dd34c4702d6edb0e861c6eeee3a94014d8f6317c",
+        "type": "FIX",
+        "text": " core/Control: fixed wrong jsdoc tag",
+        "references": []
+      }
+    ]
   }
 }

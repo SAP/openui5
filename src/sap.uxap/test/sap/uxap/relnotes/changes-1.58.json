@@ -150,5 +150,28 @@
         "references": []
       }
     ]
+  },
+  "1.58.6": {
+    "date": "November 2018",
+    "notes": [
+      {
+        "id": "58be787943235d4f54173c8a3428a55eb4522fb2",
+        "type": "FIX",
+        "text": " AnchorBar: Overlapping MenuButton\u0027s text is fixed",
+        "references": []
+      },
+      {
+        "id": "d9524f941fbdb91bd40aaae45c11d72c187cc310",
+        "type": "FIX",
+        "text": " ObjectPageHeader - Fixed styles of navigationBar",
+        "references": []
+      },
+      {
+        "id": "9e32fea6de17572989aef83466c37a749b7261d9",
+        "type": "FIX",
+        "text": " sap.uxap.ObjectPageHeader: Rectangle header image layout fixed",
+        "references": []
+      }
+    ]
   }
 }

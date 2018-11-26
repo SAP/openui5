@@ -1517,5 +1517,16 @@
         "references": []
       }
     ]
+  },
+  "1.52.22": {
+    "date": "November 2018",
+    "notes": [
+      {
+        "id": "05672de0d5b2a16d00b56b88d7afd14e52142847",
+        "type": "FIX",
+        "text": " sap.ui.model.analytics.odata4analytics#_renderPropertyFilterValue",
+        "references": []
+      }
+    ]
   }
 }

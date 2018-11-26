@@ -125,5 +125,16 @@
         "references": []
       }
     ]
+  },
+  "1.58.6": {
+    "date": "November 2018",
+    "notes": [
+      {
+        "id": "2a1844fc6b63b117da67eca72487a97e4aeed909",
+        "type": "FIX",
+        "text": " Table: Horizontal scroll position on focus in RTL with Unit Tests",
+        "references": []
+      }
+    ]
   }
 }

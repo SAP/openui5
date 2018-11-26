@@ -688,5 +688,34 @@
         "references": []
       }
     ]
+  },
+  "1.58.6": {
+    "date": "November 2018",
+    "notes": [
+      {
+        "id": "7922ae31658a527185e3006164f116861da52161",
+        "type": "FIX",
+        "text": " Fix testsuite issues in 1.58",
+        "references": []
+      },
+      {
+        "id": "3abc3d3480226c0072264d3088bf52c7afdbc214",
+        "type": "FIX",
+        "text": " core/Control: corrected visibility of blocked property",
+        "references": []
+      },
+      {
+        "id": "5f8a278ac2422c9d9f4d3c452ce838a3eb6283ca",
+        "type": "FIX",
+        "text": " performance/trace/FESR: deal with unsupported window.Performance API",
+        "references": []
+      },
+      {
+        "id": "b2d302137f58bf7e3048c575f972be9386c42691",
+        "type": "FIX",
+        "text": " sap.ui.model.analytics.odata4analytics#_renderPropertyFilterValue",
+        "references": []
+      }
+    ]
   }
 }

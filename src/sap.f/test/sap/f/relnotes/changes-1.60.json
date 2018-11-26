@@ -87,5 +87,22 @@
         "references": []
       }
     ]
+  },
+  "1.60.2": {
+    "date": "November 2018",
+    "notes": [
+      {
+        "id": "6af0af8d0b8525f8a0b6eb76ebd08d5d9c2631de",
+        "type": "FIX",
+        "text": " sap.f.DynamicPageTitle: Fixed CSS styles in snapped/expanded content",
+        "references": []
+      },
+      {
+        "id": "3d19d89b37c6f13ff523a0effb81b6809af57bd8",
+        "type": "FIX",
+        "text": " sap.f.FlexibleColumnLayout: Fixed Fiori 2.0 tutorial",
+        "references": []
+      }
+    ]
   }
 }

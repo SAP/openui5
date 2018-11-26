@@ -104,5 +104,9 @@
         "references": []
       }
     ]
+  },
+  "1.60.2": {
+    "date": "November 2018",
+    "notes": []
   }
 }

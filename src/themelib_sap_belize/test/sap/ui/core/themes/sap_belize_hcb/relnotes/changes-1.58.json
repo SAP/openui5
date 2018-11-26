@@ -173,5 +173,16 @@
         "references": []
       }
     ]
+  },
+  "1.58.6": {
+    "date": "November 2018",
+    "notes": [
+      {
+        "id": "4e71e6a081b0ea3bcdb7cac7aa65a9cca429a8fb",
+        "type": "FIX",
+        "text": " sap.f.DynamicPageHeader: Fixed background in Shell",
+        "references": []
+      }
+    ]
   }
 }

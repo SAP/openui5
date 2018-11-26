@@ -142,8 +142,21 @@
       }
     ]
   },
-  "1.60.1": {
+  "1.60.2": {
     "date": "November 2018",
-    "notes": []
+    "notes": [
+      {
+        "id": "3d01887a0bb1e6abbb4045542f307731d756458b",
+        "type": "FIX",
+        "text": " sap.uxap.ObjectPageLayout: Fixed RTA behavior",
+        "references": []
+      },
+      {
+        "id": "0167d995aa2a63b68e6a70c63c49985881bd9408",
+        "type": "FIX",
+        "text": " sap.uxap.ObjectPageSubSection: Revert header rendering",
+        "references": []
+      }
+    ]
   }
 }
