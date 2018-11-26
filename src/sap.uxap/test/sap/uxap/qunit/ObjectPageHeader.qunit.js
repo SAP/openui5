@@ -315,6 +315,10 @@ function ($, Core, ObjectPageLayout, ObjectPageHeader, ObjectPageHeaderActionBut
 	});
 
 	QUnit.test("_adaptLayoutForDomElement", function (assert) {
+		var oHeader = this.myView.byId("applicationHeader"),
+			$headerDomRef = oHeader.$(),
+			oSpy = sinon.spy(oHeader, "_adaptObjectPageHeaderIndentifierLine");
+
 		this.stub(sap.ui.Device, "system", {
 			desktop: false,
 			phone: true,
@@ -329,10 +333,15 @@ function ($, Core, ObjectPageLayout, ObjectPageHeader, ObjectPageHeaderActionBut
 		// assert
 		assert.strictEqual(this.myView.byId("installButton").$().css("visibility"), "visible", "Button is visible");
 
-		this.myView.byId("applicationHeader")._adaptLayoutForDomElement();
+		oHeader._adaptLayoutForDomElement();
 
 		// assert
 		assert.strictEqual(this.myView.byId("installButton").$().css("visibility"), "visible", "Button is visible");
+
+		oHeader._adaptLayoutForDomElement($headerDomRef);
+
+		// assert
+		assert.ok(oSpy.called, "The _adaptObjectPageHeaderIndentifierLine function is called");
 	});
 
 	QUnit.test("_getActionsWidth", function (assert) {
