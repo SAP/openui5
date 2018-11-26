@@ -392,8 +392,8 @@ sap.ui.define([
 						});
 					});
 				} else {
-					var Ext1 = sap.ui.requireSync(["example/ProviderExt1"]);
-					var Ext2 = sap.ui.requireSync(["example/ProviderExt2"]);
+					var Ext1 = sap.ui.requireSync("example/ProviderExt1");
+					var Ext2 = sap.ui.requireSync("example/ProviderExt2");
 					return [Ext1, Ext2];
 				}
 			}
@@ -414,17 +414,17 @@ sap.ui.define([
 	QUnit.module("Direct Member Extension", {
 		beforeEach: function() {
 			var oXMLContent = [
-				'<mvc:View xmlns:mvc="sap.ui.core.mvc" xmlns="sap.m">',
+				'<mvc:View xmlns:mvc="sap.ui.core.mvc" xmlns="sap.m" controllerName="example.BaseController">',
 				'  <Button id="btn1"></Button>',
 				'  <Button id="example.btn2"></Button>',
 				'</mvc:View>'
 			].join('');
 
-			this.view = sap.ui.xmlview({
-				viewContent: oXMLContent,
-				controller: sap.ui.controller("example.BaseController")
-			});
-
+			return XMLView.create({
+				definition: oXMLContent
+			}).then(function(oView) {
+				this.view = oView;
+			}.bind(this));
 		},
 		afterEach: function() {
 			this.view.destroy();
@@ -506,11 +506,12 @@ sap.ui.define([
 				'</mvc:View>'
 			].join('');
 
-			this.view = sap.ui.xmlview({
-				viewContent: oXMLContent,
+			return XMLView.create({
+				definition: oXMLContent,
 				controller: new BaseController()
-			});
-
+			}).then(function(oView) {
+				this.view = oView;
+			}.bind(this));
 		},
 		afterEach: function() {
 			//jQuery.sap.setObject("sample.ExtensionProvider", null);
@@ -619,12 +620,9 @@ sap.ui.define([
 				'</mvc:View>'
 			].join('');
 
-			this.view = sap.ui.view({
-				type: "XML",
-				viewContent: oXMLContent,
-				async: true
+			this.view = XMLView.create({
+				definition: oXMLContent
 			});
-
 		},
 		afterEach: function() {
 			this.view.destroy();
@@ -634,7 +632,7 @@ sap.ui.define([
 
 	QUnit.test("Public private checks", function(assert) {
 		var done = assert.async();
-		this.view.loaded()
+		this.view
 			.then(function(oView) {
 				this.view = oView;
 				var oController = this.view.getController(),
@@ -677,9 +675,9 @@ sap.ui.define([
 	});
 	QUnit.test("Override checks", function(assert) {
 		var done = assert.async();
-		this.view.loaded()
+		this.view
 			.then(function(oView) {
-				this.oview = oView;
+				this.view = oView;
 				var oController = this.view.getController(),
 					oExtension = oController.extension1;
 				assert.strictEqual(oController.publicWithCallbackMethod(), "callbackOfProviderExt2", "controller.publicWithCallbackMethod returns 'callbackOfProviderExt2'");
@@ -699,9 +697,8 @@ sap.ui.define([
 				'</mvc:View>'
 			].join('');
 
-			this.view = sap.ui.xmlview({
-				viewContent: oXMLContent,
-				async: true
+			this.view = XMLView.create({
+				definition: oXMLContent
 			});
 
 		},
@@ -714,9 +711,9 @@ sap.ui.define([
 	});
 	QUnit.test("Public private checks", function(assert) {
 		var done = assert.async();
-		this.view.loaded()
+		this.view
 			.then(function(oView) {
-				this.oview = oView;
+				this.view = oView;
 				var oController = this.view.getController(),
 					oExtension = oController.extension1,
 					oProviderExt1 = oController.extension.example.ProviderExt1,
@@ -794,9 +791,9 @@ sap.ui.define([
 
 	QUnit.test("Override checks", function(assert) {
 		var done = assert.async();
-		this.view.loaded()
+		this.view
 			.then(function(oView) {
-				this.oview = oView;
+				this.view = oView;
 				var oController = this.view.getController(),
 					oExtension = oController.extension1;
 				assert.strictEqual(oController.publicWithCallbackMethod(), "callbackOfProviderExt2", "controller.publicWithCallbackMethod returns 'callbackOfProviderExt2'");
