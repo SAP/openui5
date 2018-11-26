@@ -188,8 +188,8 @@ sap.ui.define([
 	 * @param {string} [sType=GET] The type of request to make ("POST" or "GET"), default is "GET".
 	 * Note: Other HTTP request methods, such as PUT and DELETE, can also be used here, but
 	 * they are not supported by all browsers.
-	 * @param {boolean} [bMerge=false] whether the data should be merged instead of replaced
-	 * @param {string} [bCache=false] force no caching if false. Default is false
+	 * @param {boolean} [bMerge=false] Whether the data should be merged instead of replaced
+	 * @param {boolean} [bCache=true] Disables caching if set to false. Default is true.
 	 * @param {object} [mHeaders] An object of additional header key/value pairs to send along with the request
 	 *
 	 * @public
