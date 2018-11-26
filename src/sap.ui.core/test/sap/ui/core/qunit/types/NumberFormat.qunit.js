@@ -1946,6 +1946,27 @@ sap.ui.define(["sap/ui/core/format/NumberFormat", "sap/ui/core/Locale"], functio
 		assert.equal(oFormat.format([-123456.789, "EUR"]), "EUR" + "\ufeff" + "-123,456.8", "123456.789 EUR");
 	});
 
+	QUnit.test("Currency format with sMeaure and the precision option should be ignored", function (assert) {
+		var oFormat = NumberFormat.getCurrencyInstance({
+			precision: 7
+		});
+
+		assert.equal(oFormat.format(123456, "EUR"), "EUR" + "\xa0" + "123,456.00", "123456 EUR");
+		assert.equal(oFormat.format([123456.7, "EUR"]), "EUR" + "\xa0" + "123,456.70", "123456.7 EUR");
+		assert.equal(oFormat.format(-123456.78, "EUR"), "EUR" + "\ufeff" + "-123,456.78", "-123456.78 EUR");
+		assert.equal(oFormat.format([-123456.789, "EUR"]), "EUR" + "\ufeff" + "-123,456.79", "-123456.789 EUR");
+	});
+
+	QUnit.test("Currency format with sMeaure and style short. The default precision option shouldn't be ignored", function (assert) {
+		var oFormat = NumberFormat.getCurrencyInstance({
+			style: "short"
+		});
+
+		assert.equal(oFormat.format(123456, "EUR"), "EUR" + "\xa0" + "123K", "123456 EUR");
+		assert.equal(oFormat.format([1234567.8, "EUR"]), "EUR" + "\xa0" + "1.2M", "123456.7 EUR");
+		assert.equal(oFormat.format(12345678.9, "EUR"), "EUR" + "\xa0" + "12M", "-123456.78 EUR");
+	});
+
 	QUnit.test("check space between currency code and number in different scenarios", function (assert) {
 		// in "en-US" locale there's no space in the currency pattern
 		// space should be inserted when it's necessary
