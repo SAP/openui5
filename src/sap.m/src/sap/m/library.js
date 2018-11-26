@@ -4563,6 +4563,9 @@ sap.ui.define([
 			},
 			createRadioButtonItem: function (mConfig) {
 				return new sap.m.RadioButton(mConfig);
+			},
+			createButton: function (sId, mConfig) {
+				return new sap.m.Button(sId, mConfig);
 			}
 		},
 		bFinal: true
