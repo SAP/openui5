@@ -263,7 +263,10 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/Object', 'sap/ui/core/Locale', 
 		parseAsString: false,
 		roundingMode: NumberFormat.RoundingMode.HALF_AWAY_FROM_ZERO,
 		emptyString: NaN,
-		showScale: true
+		showScale: true,
+		// The 'precision' format option is ignored because the number of decimals shouldn't
+		// depend on the number of integer part of a number
+		ignorePrecision: true
 	};
 
 	/*
@@ -685,6 +688,9 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/Object', 'sap/ui/core/Locale', 
 						&& oOrigOptions.pattern === undefined) {
 						// if none of the options which can affect the decimal digits is set, the default precision is set to 2
 						oOptions.precision = 2;
+						// set the default min/maxFractionDigits after setting the default precision
+						oOptions.minFractionDigits = 0;
+						oOptions.maxFractionDigits = 99;
 					}
 
 					if (oOrigOptions.maxFractionDigits === undefined && oOrigOptions.decimals === undefined) {
@@ -700,7 +706,9 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/Object', 'sap/ui/core/Locale', 
 		}
 
 		// Must be done after calculating the short value, as it depends on the value
-		if (oOptions.precision !== undefined) {
+		// If short format is enabled or the precision isn't ignored, take the precision
+		// option into consideration
+		if ((oShortFormat || !oOptions.ignorePrecision) && oOptions.precision !== undefined) {
 			// the number of decimal digits is calculated using (precision - number of integer digits)
 			// the maxFractionDigits is adapted if the calculated value is smaller than the maxFractionDigits
 			oOptions.maxFractionDigits = Math.min(oOptions.maxFractionDigits, getDecimals(vValue, oOptions.precision));
