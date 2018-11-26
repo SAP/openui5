@@ -468,7 +468,7 @@ sap.ui.define([
 	 * @param {int} [oFormatOptions.groupingSize=3] defines the grouping size in digits, the default is three
 	 * @param {int} [oFormatOptions.groupingBaseSize=3] defines the grouping base size in digits, in case it is different from the grouping size (e.g. indian grouping)
 	 * @param {string} [oFormatOptions.decimalSeparator] defines the used decimal separator
-	 * @param {string} [oFormatOptions.customUnits] defines a set of custom units, e.g. {"electric-inductance": {
+	 * @param {map} [oFormatOptions.customUnits] defines a set of custom units, e.g. {"electric-inductance": {
 				"displayName": "henry",
 				"unitPattern-count-one": "{0} H",
 				"unitPattern-count-other": "{0} H",
