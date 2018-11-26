@@ -419,18 +419,19 @@ sap.ui.require([
 
 		});
 
-		var oSpySapUiResource = this.spy(sap.ui, 'resource'),
+		var oSpySapUiRequireToUrl = this.spy(sap.ui.require, 'toUrl'),
 			pBundle = sap.ui.getCore().getLibraryResourceBundle("sap.test1", "de", true),
 			oSpyCall;
 
 		assert.ok(pBundle instanceof Promise, "a promise should be returned");
-		assert.equal(oSpySapUiResource.callCount, 1, "sap.ui.resource is called");
+		assert.equal(oSpySapUiRequireToUrl.callCount, 1, "sap.ui.require.toUrl is called");
 
-		oSpyCall = oSpySapUiResource.getCall(0);
+		oSpyCall = oSpySapUiRequireToUrl.getCall(0);
 
-		assert.equal(oSpyCall.args[1], 'messagebundle.properties', 'sap.ui.resource is called with the given message bundle name');
+		assert.equal(oSpyCall.args[0], 'sap/test1/messagebundle.properties', 'sap.ui.resource is called with the given message bundle name');
 
 		return pBundle.then(function(oBundle) {
+			oSpySapUiRequireToUrl.restore();
 			assert.ok(oBundle, "Bundle should be loaded");
 		});
 	});
@@ -440,16 +441,18 @@ sap.ui.require([
 		// no i18n property in manifest
 		this.stub(LoaderExtensions, 'loadResource').returns(undefined);
 
-		var oSpySapUiResource = this.spy(sap.ui, 'resource'),
+		var oSpySapUiRequireToUrl = this.spy(sap.ui.require, 'toUrl'),
 			pBundle = sap.ui.getCore().getLibraryResourceBundle("sap.test1", "fr", true),
 			oSpyCall;
 
 		assert.ok(pBundle instanceof Promise, "a promise should be returned");
-		assert.equal(oSpySapUiResource.callCount, 1, "sap.ui.resource is called");
+		assert.equal(oSpySapUiRequireToUrl.callCount, 1, "sap.ui.require.toUrl is called");
 
-		oSpyCall = oSpySapUiResource.getCall(0);
+		oSpyCall = oSpySapUiRequireToUrl.getCall(0);
 
-		assert.equal(oSpyCall.args[1], 'messagebundle.properties', 'sap.ui.resource is called with default message bundle name');
+		assert.equal(oSpyCall.args[0], 'sap/test1/messagebundle.properties', 'sap.ui.resource is called with default message bundle name');
+
+		oSpySapUiRequireToUrl.restore();
 
 		return pBundle;
 	});
@@ -475,16 +478,18 @@ sap.ui.require([
 
 		});
 
-		var oSpySapUiResource = this.spy(sap.ui, 'resource'),
+		var oSpySapUiRequireToUrl = this.spy(sap.ui.require, 'toUrl'),
 			pBundle = sap.ui.getCore().getLibraryResourceBundle("sap.test1", "en", true),
 			oSpyCall;
 
 		assert.ok(pBundle instanceof Promise, "a promise should be returned");
-		assert.equal(oSpySapUiResource.callCount, 1, "sap.ui.resource is called");
+		assert.equal(oSpySapUiRequireToUrl.callCount, 1, "sap.ui.require.toUrl is called");
 
-		oSpyCall = oSpySapUiResource.getCall(0);
+		oSpyCall = oSpySapUiRequireToUrl.getCall(0);
 
-		assert.equal(oSpyCall.args[1], 'i18n.properties', 'sap.ui.resource is called with the given message bundle name');
+		assert.equal(oSpyCall.args[0], 'sap/test1/i18n.properties', 'sap.ui.resource is called with the given message bundle name');
+
+		oSpySapUiRequireToUrl.restore();
 
 		return pBundle;
 	});
