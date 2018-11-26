@@ -95,4 +95,50 @@
 }
 
 
+.sapFCardHeaderKpi {
+  display: block;
+  width: 100%;
+  .sapFCardSubtitle {
+    display: flex;
+    .sapFCardHeaderUnitOfMeasurement::before {
+      content: "|";
+      display: inline-block;
+      margin: 0 0.4rem;
+    }
+  }
+  .sapFCardHeaderText .sapFCardSubtitle .sapMText,
+  .sapFCardHeaderDetails {
+    color: @sapUiTileTextColor;
+  }
 
+  .sapFCardHeaderIndicators {
+    margin-top: 4px;
+    display: flex;
+    justify-content: space-between;
+    width: 100%;
+    .sapFCardHeaderMainIndicator {
+      flex-shrink: 0;
+      height: 3rem;
+      margin-right: 1rem;
+      .sapMNCInner {
+        padding-top: 0px;
+      }
+    }
+
+    .sapFCardHeaderSideIndicators {
+      min-width: 0;
+      display: flex;
+      padding-top: 6px;
+      .sapFCardHeaderSideIndicator {
+        min-width: 0;
+        margin-left: 1rem;
+      }
+      .sapMText{
+        color: @sapUiTileTextColor;
+      }
+      .sapMObjectNumber {
+        color: @sapUiTileTitleTextColor;
+      }
+    }
+  }
+}

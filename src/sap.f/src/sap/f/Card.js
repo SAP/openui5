@@ -71,7 +71,7 @@ sap.ui.define([
 					 *    }
 					 *    "sap.card" : {
 					 *       "title": "Card Title",
-					 *       "subTitle": "Card Subtitle",
+					 *       "subtitle": "Card Subtitle",
 					 *       "icon": {
 					 *          "src": "sap-icon://accept"
 					 *       },
@@ -115,6 +115,14 @@ sap.ui.define([
 
 				},
 				aggregations: {
+					/**
+					 * @private
+					 */
+					_header: {
+						multiple: false,
+						visibility: "hidden"
+					},
+
 					/**
 					 * @private
 					 */
@@ -272,11 +280,10 @@ sap.ui.define([
 
 	Card.prototype.applyManifestSettings = function (sComponentName) {
 
-		this._createTitle();
-		this._createSubTitle();
-		this._createAvatar();
+		this._createHeader();
 
-		this._setPropertyFromManifest("subTitle");
+		// TODO move subtitle (and any other which should be there) to _createHeader()
+		this._setPropertyFromManifest("subtitle");
 		this._setPropertyFromManifest("icon");
 		this._setPropertyFromManifest("iconColor");
 		this._setPropertyFromManifest("iconBackgroundColor");
@@ -286,6 +293,44 @@ sap.ui.define([
 		this._setPropertyFromManifest("backgroundSize");
 
 		this._setContent(sComponentName);
+	};
+
+	Card.prototype._createHeader = function (oHeader) {
+		// TODO This is an experimenal implementation for different header types. Old header definition is still valid
+
+		var oHeader = this._oCardManifest.get("sap.card/header");
+
+		if (oHeader && oHeader.type) {
+
+			// implementation with different header types
+			switch (oHeader.type) {
+				case "kpi": sap.ui.require(["sap/f/cards/header/Kpi"], this._setCardHeader.bind(this));
+					break;
+				default: {
+					Log.error("Header type '" + oHeader.type + "' was not recognised.", "sap.f.Card");
+				}
+			}
+
+		} else {
+
+			// the default implementation - no header types
+			this._createTitle();
+			this._createSubTitle();
+			this._createAvatar();
+
+		}
+	};
+
+	Card.prototype._setCardHeader = function(CardHeader) {
+		var mSettings = this._oCardManifest.get("sap.card/header");
+		var oClonedSettings = jQuery.extend(true, {}, mSettings);
+
+		// we don't want to pass type to the header control
+		delete oClonedSettings.type; // TODO
+
+		var oHeader = new CardHeader(oClonedSettings);
+		this.setAggregation("_header", oHeader); // TODO do the same way as content? with setHeader
+		this.setBusy(false);
 	};
 
 	Card.prototype._setContent = function (sComponentName) {
@@ -305,8 +350,6 @@ sap.ui.define([
 		} else {
 			switch (sCardType.toLowerCase()) {
 			case "list":  sap.ui.require(["sap/f/cards/content/List"], this._setCardContent.bind(this));
-				break;
-			case "kpi": sap.ui.require(["sap/f/cards/content/KPI"], this._setCardContent.bind(this));
 				break;
 			case "table": sap.ui.require(["sap/f/cards/content/Table"], this._setCardContent.bind(this));
 				break;
@@ -339,9 +382,9 @@ sap.ui.define([
 	Card.prototype._createSubTitle = function () {
 		if (!this._oSubTitle) {
 			this._oSubTitle = new Text({
-				id: this.getId() + "-subTitle",
+				id: this.getId() + "-subtitle",
 				maxLines: 2,
-				text: this._oCardManifest.get("sap.card/subTitle")
+				text: this._oCardManifest.get("sap.card/subtitle")
 			}).addStyleClass("sapFCardSubtitle");
 		}
 

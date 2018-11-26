@@ -89,6 +89,10 @@
         "pattern": "flp",
         "name": "flp",
         "target": "flp"
+			}, {
+        "pattern": "kpiHeader",
+        "name": "kpiHeader",
+        "target": "kpiHeader"
       }
       ],
 	  "targets": {
@@ -141,7 +145,12 @@
           "viewId": "flp",
           "viewName": "Flp",
           "viewLevel": 1
-        }
+				},
+				"kpiHeader": {
+          "viewId": "kpiHeader",
+          "viewName": "kpiHeader",
+          "viewLevel": 1
+				}
 	  }
 	}
   }

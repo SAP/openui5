@@ -1,0 +1,34 @@
+<mvc:View
+        xmlns="sap.m"
+        xmlns:mvc="sap.ui.core.mvc"
+        xmlns:f="sap.f"
+		xmlns:grid="sap.ui.layout.cssgrid"
+        displayBlock="true">
+
+    <Page title="{i18n>appTitle}">
+
+        <subHeader>
+            <Toolbar>
+                <ToolbarSpacer/>
+                <Title text="Card with KPI Header"/>
+                <ToolbarSpacer/>
+            </Toolbar>
+        </subHeader>
+
+        <content>
+            <Panel>
+                <grid:CSSGrid>
+                    <grid:customLayout>
+						<grid:GridBoxLayout boxMinWidth="400px"/>
+					</grid:customLayout>
+                    <grid:items>
+                        <f:Card id="kpicard1" manifest="{manifests>/kpiManifests/kpicard1}"/>
+                        <f:Card id="kpicard2" manifest="{manifests>/kpiManifests/kpicard2}"/>
+                        <f:Card id="kpicard3" manifest="{manifests>/kpiManifests/kpicard3}"/>
+                        <f:Card id="kpicard4" manifest="{manifests>/kpiManifests/kpicard4}"/>
+                    </grid:items>
+                </grid:CSSGrid>
+            </Panel>
+        </content>
+    </Page>
+</mvc:View>
