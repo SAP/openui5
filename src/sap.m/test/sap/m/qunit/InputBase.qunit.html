@@ -2026,7 +2026,7 @@
 
 					var done = assert.async();
 					var oninputOverride = function (event) {
-						InputBase.prototype.oninput.call(this, event);
+						sap.m.InputBase.prototype.oninput.call(this, event);
 
 						assert.ok(event.isMarked("invalid"), "input event is marked as invalid");
 
@@ -2035,7 +2035,7 @@
 						done();
 					};
 
-					var oInput = new InputBase({
+					var oInput = new sap.m.InputBase({
 						value: 'ä'
 					}).placeAt("content");
 
