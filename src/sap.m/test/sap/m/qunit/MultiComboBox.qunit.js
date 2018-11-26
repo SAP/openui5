@@ -46,6 +46,9 @@ sap.ui.define([
 	// shortcut for sap.ui.core.OpenState
 	var OpenState = coreLibrary.OpenState;
 
+	// shortcut for sap.ui.core.ValueState
+	var ValueState = coreLibrary.ValueState;
+
 	createAndAppendDiv("MultiComboBox-content").setAttribute("class", "select-content");
 
 
@@ -6154,5 +6157,124 @@ sap.ui.define([
 	QUnit.test("_mapItemToList()", function(assert) {
 		var groupHeader = this.oMultiComboBox.getList().getItems()[0];
 		assert.ok(groupHeader instanceof sap.m.GroupHeaderListItem, "The control used for the group name is instance of sap.m.GroupHeaderListItem");
+	});
+
+	QUnit.module("Value State Error", {
+		beforeEach : function() {
+			var oItem1, oItem2, oItem3, oItem4;
+			this.oMultiComboBox = new MultiComboBox({
+				items: [
+					new SeparatorItem({ text: "Asia-Countries" }),
+					oItem1 = new ListItem({
+						text: "Hong Kong",
+						additionalText: "China"
+					}),
+					oItem2 = new ListItem({
+						text: "Haskovo",
+						additionalText: "Bulgaria"
+					}),
+					new SeparatorItem({ text: "Africa-Countries" }),
+					oItem3 = new ListItem({
+						text: "Baragoi",
+						additionalText: "Kenya"
+					}),
+					new SeparatorItem({ text: "Europe-Countries" }),
+					oItem4 = new ListItem({
+						text: "Brussel",
+						additionalText: "Belgium"
+					})
+				],
+				selectedItems: [oItem4]
+			});
+			this.oMultiComboBox.placeAt("MultiComboBox-content");
+
+			sap.ui.getCore().applyChanges();
+		},
+		afterEach : function() {
+			this.oMultiComboBox.destroy();
+		}
+	});
+
+	QUnit.test("onsapenter should trigger invalidation if the item is already selected", function(assert) {
+		// arrange
+		var oAlreadySelectedItemSpy = this.spy(this.oMultiComboBox, "_showAlreadySelectedVisualEffect");
+
+		// act
+		sap.ui.test.qunit.triggerCharacterInput(this.oMultiComboBox.getFocusDomRef(), "Brussel");
+		sap.ui.test.qunit.triggerKeydown(this.oMultiComboBox.getDomRef(), KeyCodes.ENTER); //onsapenter
+
+		// assert
+		assert.strictEqual(oAlreadySelectedItemSpy.callCount, 1, "_showAlreadySelectedVisualEffect() should be called exactly once");
+		assert.strictEqual(this.oMultiComboBox.getValueState(), ValueState.Error, "The value is already selected");
+		assert.strictEqual(this.oMultiComboBox.getValue(), "Brussel", "The value is not deleted");
+	});
+
+	QUnit.test("onbackspace should reset the value state", function(assert) {
+		// arrange
+		var oOnBackSpaceSpy = this.spy(this.oMultiComboBox, "_showAlreadySelectedVisualEffect");
+
+		// act
+		sap.ui.test.qunit.triggerCharacterInput(this.oMultiComboBox.getFocusDomRef(), "Brussel");
+		sap.ui.test.qunit.triggerKeydown(this.oMultiComboBox.getFocusDomRef(), KeyCodes.ENTER); //onsapenter
+		sap.ui.test.qunit.triggerKeydown(this.oMultiComboBox.getFocusDomRef(), KeyCodes.BACKSPACE); //onsapbackspace
+
+		// assert
+		assert.strictEqual(oOnBackSpaceSpy.callCount, 2, "_showAlreadySelectedVisualEffect() should be called and value state should be reset");
+		assert.strictEqual(this.oMultiComboBox.getValueState(), ValueState.None, "The input value is valid");
+
+	});
+
+	QUnit.test("onsapdelete should reset the value state", function(assert) {
+		// arrange
+		var oOnBackSpaceSpy = this.spy(this.oMultiComboBox, "_showAlreadySelectedVisualEffect");
+
+		// act
+		sap.ui.test.qunit.triggerCharacterInput(this.oMultiComboBox.getFocusDomRef(), "Brussel");
+		sap.ui.test.qunit.triggerKeydown(this.oMultiComboBox.getFocusDomRef(), KeyCodes.ENTER);
+		sap.ui.test.qunit.triggerKeydown(this.oMultiComboBox.getFocusDomRef(), KeyCodes.DELETE);
+
+		// assert
+		assert.strictEqual(oOnBackSpaceSpy.callCount, 2, "_showAlreadySelectedVisualEffect() should be called and value state should be reset");
+		assert.strictEqual(this.oMultiComboBox.getValueState(), ValueState.None, "The input value is valid");
+	});
+
+	QUnit.test("value state message should be opened if the input field is on focus", function(assert) {
+
+		// act
+		this.oMultiComboBox.open();
+		sap.ui.getCore().applyChanges();
+		this.clock.tick(500);
+
+		sap.ui.test.qunit.triggerCharacterInput(this.oMultiComboBox.getFocusDomRef(), "Brussel");
+		sap.ui.test.qunit.triggerKeydown(this.oMultiComboBox.getDomRef(), KeyCodes.ENTER);
+
+		this.oMultiComboBox.close();
+		this.clock.tick(500);
+
+		// assert
+		assert.strictEqual(document.activeElement, this.oMultiComboBox.getFocusDomRef(), "Focus is set to the input field");
+		assert.strictEqual(this.oMultiComboBox.getValueState(), ValueState.Error, "The value state is error");
+		assert.strictEqual(this.oMultiComboBox.getValueStateText(), "This value is already selected", "Value State message is correct");
+		assert.strictEqual(this.oMultiComboBox.getValue(), "Brussel", "The invalid value is corrected");
+	});
+
+	QUnit.test("onfocusout value should be deleted", function(assert) {
+
+		// act
+		this.oMultiComboBox.open();
+		sap.ui.getCore().applyChanges();
+		this.clock.tick(500);
+
+		sap.ui.test.qunit.triggerCharacterInput(this.oMultiComboBox.getFocusDomRef(), "Brussel");
+		sap.ui.test.qunit.triggerKeydown(this.oMultiComboBox.getDomRef(), KeyCodes.ENTER);
+
+		this.oMultiComboBox.getFocusDomRef().blur();
+		this.clock.tick(500);
+
+
+		// assert
+		assert.notEqual(document.activeElement, this.oMultiComboBox.getFocusDomRef(), "Focus is not in the input field");
+		assert.strictEqual(this.oMultiComboBox.getValueState(), ValueState.None, "The value state is reset");
+		assert.strictEqual(this.oMultiComboBox.getValue(), "", "The input value is deleted");
 	});
 });
