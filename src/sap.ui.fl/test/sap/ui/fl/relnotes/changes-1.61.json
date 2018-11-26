@@ -7,6 +7,12 @@
         "type": "FIX",
         "text": " sap.ui.fl - Change for VariantManagement stored as instance",
         "references": []
+      },
+      {
+        "id": "f74dbc5d1b5a83937f8157bd547f32d0e5765aa1",
+        "type": "FIX",
+        "text": " sap.ui.fl - waitForChangesToBeApplied in error changes",
+        "references": []
       }
     ]
   }

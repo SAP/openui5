@@ -1,0 +1,13 @@
+{
+  "1.61.0": {
+    "date": "November 2018",
+    "notes": [
+      {
+        "id": "4a6fee205042881ae2bb7776fda75c7d175b1369",
+        "type": "FEATURE",
+        "text": " sap.uxap.ObjectPageLayout: landmarkInfo enablement",
+        "references": []
+      }
+    ]
+  }
+}

@@ -283,6 +283,60 @@
         "type": "FIX",
         "text": " sap.m.Wizard: Fix ACC page",
         "references": []
+      },
+      {
+        "id": "a469d1bf501022723f07da1cfa8f3611b820a962",
+        "type": "FIX",
+        "text": " sap.m.ComboBoxBase: Escape special characters from input field",
+        "references": []
+      },
+      {
+        "id": "f698ed5c100e9cab25db37952f029a8e2881fdef",
+        "type": "FIX",
+        "text": " sap.m.Dialog: Sub header containing toolbar with \"Info\" design is now adjusted",
+        "references": []
+      },
+      {
+        "id": "03672d0230007db636eddd6562fb7255f49bb736",
+        "type": "FIX",
+        "text": " sap.m.GenericTile: fix border CSS for BC, HCB and HCW themes",
+        "references": []
+      },
+      {
+        "id": "3ea722c589e7430915efb76c9f8d50027c654683",
+        "type": "FIX",
+        "text": " sap.m.ObjectIdentifier: Descriptive text is read now along with control title",
+        "references": []
+      },
+      {
+        "id": "16acd2b6488be6733640f3582e2dfa7900f40674",
+        "type": "FIX",
+        "text": " sap.m.ObjectIdentifier: sap.m.Label removed from sample",
+        "references": []
+      },
+      {
+        "id": "9d5db436a4f965800dbf77a1007fc74698f9d91a",
+        "type": "FIX",
+        "text": " sap.m.Page: QUnit fixes",
+        "references": []
+      },
+      {
+        "id": "ab9e0590fa9116ee46c176d7d8887f6fd697833e",
+        "type": "FIX",
+        "text": " sap.m.PlanningCalendar - explored app sample fixed",
+        "references": []
+      },
+      {
+        "id": "c50165ed9d61c664cfe7652b7f06d4c282c719de",
+        "type": "FIX",
+        "text": " sap.m.SegmentedButton: Allowed usage of icons in OverflowToolbar",
+        "references": []
+      },
+      {
+        "id": "0cc7a1d05346b59040ae74ba87923b48d8549a9a",
+        "type": "FIX",
+        "text": " sap.m.TimePicker: gets correct locale",
+        "references": []
       }
     ]
   }

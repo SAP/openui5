@@ -49,6 +49,30 @@
         "type": "FIX",
         "text": " sap.uxap.ObjectPageSubSection: Revert header rendering",
         "references": []
+      },
+      {
+        "id": "67ac442feb9f09e38be5c61494cf70988438023b",
+        "type": "FEATURE",
+        "text": " sap.uxap.BlockBase: Default form layout is now ColumnLayout",
+        "references": []
+      },
+      {
+        "id": "4a6fee205042881ae2bb7776fda75c7d175b1369",
+        "type": "FEATURE",
+        "text": " sap.uxap.ObjectPageLayout: landmarkInfo enablement",
+        "references": []
+      },
+      {
+        "id": "2f600cacaf0efccdf920e349f70980ef70742c9c",
+        "type": "FIX",
+        "text": " sap.uxap.ObjectPage: APICreation failing qUnit fixed",
+        "references": []
+      },
+      {
+        "id": "c931092e7398f6e3dff1418d7b7e6880ecad4af5",
+        "type": "FIX",
+        "text": " sap.uxap.ObjectPageHeader: Adaptation of actions improved",
+        "references": []
       }
     ]
   }

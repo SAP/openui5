@@ -55,6 +55,12 @@
         "type": "FIX",
         "text": "sap.m.WizardProgressNavigator: Circles background on hover adjusted",
         "references": []
+      },
+      {
+        "id": "03672d0230007db636eddd6562fb7255f49bb736",
+        "type": "FIX",
+        "text": " sap.m.GenericTile: fix border CSS for BC, HCB and HCW themes",
+        "references": []
       }
     ]
   }

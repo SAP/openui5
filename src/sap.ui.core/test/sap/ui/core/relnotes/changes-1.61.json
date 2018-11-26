@@ -73,6 +73,54 @@
         "type": "FIX",
         "text": " sap/ui/core/Manifest: finalize resolveUri API",
         "references": []
+      },
+      {
+        "id": "244f193c66230c71333600f2566c287c511a9501",
+        "type": "FEATURE",
+        "text": " Core#setThemeRoot: Add forceUpdate parameter",
+        "references": []
+      },
+      {
+        "id": "5a35b7fadf2c97dd09d5e739d82c706511055639",
+        "type": "FEATURE",
+        "text": " Opa: add adapters for QUnit todo and skip",
+        "references": []
+      },
+      {
+        "id": "c70b85b761b552deb1d0203dd88f5ff3099416c7",
+        "type": "FEATURE",
+        "text": " mvc.Controller: Adopt controller extension for async",
+        "references": []
+      },
+      {
+        "id": "e9a9d512e3b085e636a012e462cab80917c41691",
+        "type": "FIX",
+        "text": " Aggregation Forwarding: also clone forwarded bindings",
+        "references": []
+      },
+      {
+        "id": "3c10095ed4950a908ee37e334cada22d870d5902",
+        "type": "FIX",
+        "text": " Component: register the module path for app variants",
+        "references": []
+      },
+      {
+        "id": "4ea0c9936a86bde283e52dff5837f3907bd7f391",
+        "type": "FIX",
+        "text": " Explored documentation: Controller Extension",
+        "references": []
+      },
+      {
+        "id": "bb56af8cfe511d3f7caa7c52aaa9fbc7f307fecb",
+        "type": "FIX",
+        "text": " Model.removeBinding: performance",
+        "references": []
+      },
+      {
+        "id": "e4ad1ebd1aaf3ac6f8613a7a09999fd92883627e",
+        "type": "FIX",
+        "text": " core.Popup: blur focus element only when it\u0027s not in a Popup",
+        "references": []
       }
     ]
   }

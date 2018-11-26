@@ -49,6 +49,18 @@
         "type": "FIX",
         "text": " sap.f.FlexibleColumnLayout: Last page in Sample fixed",
         "references": []
+      },
+      {
+        "id": "a8c3fe74814815a624dff7bf38465588f341d758",
+        "type": "FIX",
+        "text": " sap.f.Avatar: Initials are now read by JAWS if defined",
+        "references": []
+      },
+      {
+        "id": "e1ea8c0be8069c8bff90f051aaff8c0b350577d3",
+        "type": "FIX",
+        "text": " tutorial.fiori2: Product parameter is now transmitted",
+        "references": []
       }
     ]
   }

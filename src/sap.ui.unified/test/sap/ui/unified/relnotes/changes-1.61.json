@@ -31,6 +31,18 @@
         "type": "FIX",
         "text": " sap.ui.unified.Menu: Menu works correctly on combi devices",
         "references": []
+      },
+      {
+        "id": "945f8034def3e41b1c1752680c3ef52c8d533524",
+        "type": "FIX",
+        "text": " Shell: Fix QUnit test for IE",
+        "references": []
+      },
+      {
+        "id": "9b8e2b12df8dbafa8c799404f38078bc23b7777e",
+        "type": "FIX",
+        "text": " sap.m.PlanningCalendar - API appointment (de)selection works now.",
+        "references": []
       }
     ]
   }

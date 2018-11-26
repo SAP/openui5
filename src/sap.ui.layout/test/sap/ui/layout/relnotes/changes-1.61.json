@@ -25,6 +25,18 @@
         "type": "FIX",
         "text": " sap.ui.layout.ResponsiveSplitter: Improved focus outline",
         "references": []
+      },
+      {
+        "id": "87a88c4090bf95bff3d34bb8bffc3fc1637fb9a3",
+        "type": "FIX",
+        "text": " Fix in CSSGrid layout for use in bindings",
+        "references": []
+      },
+      {
+        "id": "a9fb4cb6b74ba10bd3e2cc8fdd61bf31566847c2",
+        "type": "FIX",
+        "text": " sap.ui.layout.VerticalLayout: QUnit fixes",
+        "references": []
       }
     ]
   }
