@@ -892,13 +892,17 @@ sap.ui.define([
 	 ************************************************************************************/
 
 	ObjectPageLayout.prototype.onAfterRendering = function () {
-		var oHeaderContent = this._getHeaderContent();
+		var oHeaderContent = this._getHeaderContent(),
+			iWidth = this._getWidth(this);
 
 		this._ensureCorrectParentHeight();
 
 		this._cacheDomElements();
 
-		this._updateMedia(this._getWidth(this), ObjectPageLayout.MEDIA);
+		if (iWidth > 0) {
+			this._updateMedia(iWidth, ObjectPageLayout.MEDIA);
+			this._bInitializedMedia = true;
+		}
 
 		this._$opWrapper.on("scroll", this._onScroll.bind(this));
 
@@ -972,6 +976,10 @@ sap.ui.define([
 		this._restoreScrollPosition();
 
 		this.oCore.getEventBus().publish("sap.ui", "ControlForPersonalizationRendered", this);
+
+		if (!this._bInitializedMedia) {
+			this._updateMedia(this._getWidth(this), ObjectPageLayout.MEDIA);
+		}
 
 		if (this._hasDynamicTitle()) {
 			this._updateMedia(this._getWidth(this), ObjectPageLayout.DYNAMIC_HEADERS_MEDIA);
