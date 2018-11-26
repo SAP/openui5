@@ -5290,7 +5290,8 @@ sap.ui.define([], function() {
 									EnumMember="com.sap.vocabularies.UI.v1.ImportanceType/Medium"/>\
 							</Record>\
 						</Collection>\
-						<Annotation Term="UI.Criticality" Qualifier="bar" Path="Criticality"/>\
+						<Annotation Term="UI.Criticality" Path="Criticality"/>\
+						<Annotation Term="UI.Criticality" Qualifier="bar" Path="Criticality/bar"/>\
 					</Annotation>\
 					<Annotation Term="UI.Facets">\
 						<Collection>\
@@ -5383,6 +5384,15 @@ sap.ui.define([], function() {
 								</If>\
 							</Apply>\
 						</Annotation>\
+					</Annotation>\
+				</Annotations>\
+				<Annotations Target="NorthwindModel.Product" Qualifier="inherited">\
+					<Annotation Term="com.sap.vocabularies.Common.v1.Label" String="Inheritance">\
+						<Annotation Term="com.sap.vocabularies.Common.v1.Label" String="No Inheritance"/>\
+					</Annotation>\
+					<Annotation Term="com.sap.vocabularies.UI.v1.LineItem">\
+						<Collection/>\
+						<Annotation Term="UI.Criticality" Path="Criticality"/>\
 					</Annotation>\
 				</Annotations>\
 			</Schema>\
