@@ -7,9 +7,10 @@ sap.ui.define([
 	"sap/ui/unified/CalendarLegendItem",
 	"sap/ui/unified/DateRange",
 	"sap/ui/unified/DateTypeRange",
-	"sap/ui/unified/library"
+	"sap/ui/unified/library",
+	"sap/ui/qunit/utils/waitForThemeApplied"
 ], function(qutils, CalendarTimeInterval, CalendarLegend, CalendarLegendItem,
-	DateRange, DateTypeRange, unifiedLibrary) {
+	DateRange, DateTypeRange, unifiedLibrary, waitForThemeApplied) {
 	"use strict";
 
 	// set language to en-US, since we have specific language strings tested

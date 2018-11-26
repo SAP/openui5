@@ -49,6 +49,9 @@ sap.ui.define(function() {
 					noConflict: true,
 					theme: "sap_belize"
 				},
+				qunit: {
+					reorder: false
+				},
 				coverage: {
 					only: ["sap/ui/unified/Calendar"]
 				}
@@ -71,6 +74,9 @@ sap.ui.define(function() {
 				ui5: {
 					noConflict: true,
 					theme: "sap_belize"
+				},
+				qunit: {
+					reorder: false
 				},
 				sinon: {
 					sinon: 1,
@@ -103,6 +109,9 @@ sap.ui.define(function() {
 					noConflict: true,
 					theme: "sap_belize"
 				},
+				qunit: {
+					reorder: false
+				},
 				coverage: {
 					only: ["sap/ui/unified/CalendarOneMonthInterval"]
 				}
@@ -112,6 +121,9 @@ sap.ui.define(function() {
 				ui5: {
 					noConflict: true,
 					theme: "sap_belize"
+				},
+				qunit: {
+					reorder: false
 				},
 				coverage: {
 					only: ["sap/ui/unified/CalendarWeekInterval"]
@@ -135,6 +147,9 @@ sap.ui.define(function() {
 				ui5: {
 					noConflict: true,
 					theme: "sap_belize"
+				},
+				qunit: {
+					reorder: false
 				},
 				coverage: {
 					only: ["sap/ui/unified/calendar/CalendarDate"]
@@ -242,6 +257,9 @@ sap.ui.define(function() {
 					noConflict: true,
 					theme: "sap_belize"
 				},
+				qunit: {
+					reorder: false
+				},
 				coverage: {
 					only: ["sap/ui/unified/Menu"]
 				}
@@ -251,6 +269,9 @@ sap.ui.define(function() {
 				ui5: {
 					noConflict: true,
 					theme: "sap_belize"
+				},
+				qunit: {
+					reorder: false
 				},
 				coverage: {
 					only: ["sap/ui/unified/MenuItem"]
@@ -262,6 +283,9 @@ sap.ui.define(function() {
 					noConflict: true,
 					theme: "sap_belize"
 				},
+				qunit: {
+					reorder: false
+				},
 				coverage: {
 					only: ["sap/ui/unified/calendar/MonthPicker"]
 				}
@@ -271,6 +295,9 @@ sap.ui.define(function() {
 				ui5: {
 					noConflict: true,
 					theme: "sap_belize"
+				},
+				qunit: {
+					reorder: false
 				},
 				coverage: {
 					only: ["sap/ui/unified/calendar/YearPicker"]

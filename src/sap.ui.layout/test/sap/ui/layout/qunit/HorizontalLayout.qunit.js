@@ -5,8 +5,9 @@ sap.ui.define([
 	"sap/ui/commons/Button",
 	"sap/ui/commons/TextField",
 	"sap/ui/commons/Label",
-	"sap/ui/Device"
-], function(HorizontalLayout, Button, TextField, Label, Device) {
+	"sap/ui/Device",
+	"sap/ui/qunit/utils/waitForThemeApplied"
+], function(HorizontalLayout, Button, TextField, Label, Device, waitForThemeApplied) {
 	"use strict";
 
 	var DOM_RENDER_LOCATION = "qunit-fixture";

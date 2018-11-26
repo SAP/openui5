@@ -6,8 +6,9 @@ sap.ui.define([
 	"sap/m/Label",
 	"sap/m/RadioButtonGroup",
 	"sap/m/RadioButton",
-	"sap/m/Slider"
-], function(ColorPicker, InputBase, Label, RadioButtonGroup, RadioButton, Slider) {
+	"sap/m/Slider",
+	"sap/ui/qunit/utils/waitForThemeApplied"
+], function(ColorPicker, InputBase, Label, RadioButtonGroup, RadioButton, Slider, waitForThemeApplied) {
 	"use strict";
 
 	(function () {
