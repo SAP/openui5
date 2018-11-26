@@ -220,22 +220,6 @@ function(
 	};
 
 	/**
-	 * Returns all available triggers from designtime metadata
-	 * @return {Array.<Object>} array of available triggers
-	 * @public
-	 */
-	DesignTimeMetadata.prototype.getTriggers = function() {
-		var mData = this.getData();
-		var aTriggers = [];
-
-		if (mData && Array.isArray(mData.triggers)) {
-			aTriggers = mData.triggers;
-		}
-
-		return aTriggers;
-	};
-
-	/**
 	 * Returns "label" from designtime metadata
 	 * @return {string|undefined} Returns the label calculated from getLabel() in designtime metadata
 	 * @public

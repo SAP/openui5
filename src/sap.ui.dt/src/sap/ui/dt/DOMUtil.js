@@ -292,33 +292,32 @@ function(
 	};
 
 	/**
-	 *
+	 * Sets the draggable attribute to a specified node
+	 * @param {HTMLElement} oNode - Target node to add the attribute to
+	 * @param {boolean} bValue - Attribute value
 	 */
-	DOMUtil.getEscapedString = function(sString) {
-		return sString.replace(/([;&,\.\+\*\~':"\!\^#$%@\[\]\(\)=>\|])/g, '\\$1');
+	DOMUtil.setDraggable = function (oNode, bValue) {
+		oNode.setAttribute("draggable", bValue);
 	};
 
 	/**
-	 *
+	 * Sets the draggable attribute of a specified node
+	 * @param {HTMLElement} oNode - Target node to set the draggable attribute on
+	 * @return {boolean|undefined} - returns undefined when draggable is not set to the node
 	 */
-	DOMUtil.setDraggable = function(oElement, bValue) {
-		oElement = jQuery(oElement);
-
-		oElement.attr("draggable", bValue);
-	};
-
-	/**
-	 *
-	 */
-	DOMUtil.getDraggable = function(oElement) {
-		oElement = jQuery(oElement);
-
-		return oElement.attr("draggable");
+	DOMUtil.getDraggable = function (oNode) {
+		switch (oNode.getAttribute("draggable")) {
+			case "true":
+				return true;
+			case "false":
+				return false;
+			default:
+				return;
+		}
 	};
 
 	/**
 	 * Copy the given styles object to a destination DOM node.
-	 *
 	 * @param {Object} oStyles A styles object, which is retrieved from window.getComputedStyle
 	 * @param {Element} oDest The element to which the styles should be copied.
 	 * @private
@@ -340,19 +339,14 @@ function(
 		var mStyles = window.getComputedStyle(oSrc, sPseudoElement);
 		var sContent = mStyles.getPropertyValue("content");
 		if (sContent && sContent !== "none") {
-			sContent = jQuery.trim(sContent);
+			sContent = String(sContent).trim();
 			if (sContent.indexOf("attr(") === 0) {
 				sContent = sContent.replace("attr(", "");
 				if (sContent.length) {
 					sContent = sContent.substring(0, sContent.length - 1);
 				}
-				sContent = oSrc.getAttribute(sContent);
-			}
-
-			// due to a firefox bug sContent can be null after oSrc.getAttribute
-			// sContent is requried for copy pseudo styling
-			if (sContent === null || sContent === undefined) {
-				sContent = "";
+				// oSrc.getAttribute may return null/undefined (e.g. in FireFox)
+				sContent = oSrc.getAttribute(sContent) || "";
 			}
 
 			// pseudo elements can't be inserted via js, so we should create a real elements,
@@ -432,19 +426,19 @@ function(
 	DOMUtil.insertStyles = function (sStyles, oTarget) {
 		var oStyle = document.createElement('style');
 		oStyle.type = 'text/css';
-
-		if (oStyle.styleSheet) {
-			oStyle.styleSheet.cssText = sStyles;
-		} else {
-			oStyle.appendChild(document.createTextNode(sStyles));
-		}
-
-		jQuery(oTarget).prepend(oStyle);
+		oStyle.appendChild(document.createTextNode(sStyles));
+		oTarget.appendChild(oStyle);
 	};
 
+	/**
+	 * Check whether the target node is a descendant of a node referenced by id
+	 * @param {string} sId - ID of a potential parent node
+	 * @param oTargetNode - Node to look for in a potential parent node
+	 * @returns {boolean} - true if a potential parent contains the target node
+	 */
 	DOMUtil.contains = function (sId, oTargetNode) {
 		var oNode = document.getElementById(sId);
-		return oNode && oNode.contains(oTargetNode);
+		return !!oNode && oNode.contains(oTargetNode);
 	};
 
 	/**

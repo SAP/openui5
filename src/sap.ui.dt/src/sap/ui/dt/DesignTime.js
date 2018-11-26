@@ -510,18 +510,17 @@ function (
 
 	/**
 	 * Creates overlay for specified root element and renders it in overlay container
-	 * @param {sap.ui.base.ManagedObject} vRootElement - Root element
-	 * @return {Promise} - resolves with ElementOverlay for specified root element
+	 * @param {sap.ui.base.ManagedObject} oRootElement - Root element
 	 * @private
 	 */
-	DesignTime.prototype._createOverlaysForRootElement = function (vRootElement) {
+	DesignTime.prototype._createOverlaysForRootElement = function (oRootElement) {
 		var iTaskId = this._oTaskManager.add({
 			type: 'createOverlay',
-			element: vRootElement,
+			element: oRootElement,
 			root: true
 		});
 		this.createOverlay({
-			element: ElementUtil.getElementInstance(vRootElement),
+			element: ElementUtil.getElementInstance(oRootElement),
 			root: true,
 			visible: this.getEnabled()
 		})
@@ -532,13 +531,14 @@ function (
 					this._oTaskManager.complete(iTaskId);
 					return oElementOverlay;
 				}.bind(this),
-				function (oError) {
-					var sErrorText = 'sap.ui.dt: root element with id = "{0}" initialization is failed';
-					sErrorText = oError
-						? Util.printf(sErrorText + ' due to: {1}', vRootElement.getId(), oError.message)
-						: Util.printf(sErrorText, vRootElement.getId());
+				function (vError) {
+					var oError = Util.propagateError(
+						vError,
+						"DesignTime#_createOverlaysForRootElement",
+						Util.printf('Root element with id = "{0}" initialization is failed', oRootElement.getId())
+					);
+					Log.error(Util.errorToString(oError));
 					this._oTaskManager.cancel(iTaskId);
-					throw Util.createError("DesignTime#createOverlay", sErrorText, "sap.ui.dt");
 				}.bind(this)
 			);
 	};
