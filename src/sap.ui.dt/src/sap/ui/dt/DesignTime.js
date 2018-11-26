@@ -46,6 +46,9 @@ function (
 ) {
 	"use strict";
 
+	var STATUS_SYNCING = 'syncing';
+	var STATUS_SYNCED = 'synced';
+
 	/**
 	 * Constructor for a new DesignTime.
 	 *
@@ -238,16 +241,19 @@ function (
 		},
 		constructor: function () {
 			// Storage for promises of pending overlays (overlays that are in creation phase)
+			this._sStatus = STATUS_SYNCED;
 			this._mPendingOverlays = {};
 			this._oTaskManager = new TaskManager({
 				complete: function (oEvent) {
 					if (oEvent.getSource().isEmpty()) {
-						this._registerElementOverlaysInPlugins();
+						this._registerElementOverlays();
+						this._sStatus = STATUS_SYNCED;
 						this.fireSynced();
 					}
 				}.bind(this),
 				add: function (oEvent) {
 					if (oEvent.getSource().count() === 1) {
+						this._sStatus = STATUS_SYNCING;
 						this.fireSyncing();
 					}
 				}.bind(this)
@@ -285,36 +291,54 @@ function (
 				});
 			}, this);
 
-			this._collectOverlaysDuringSyncing();
+			// Syncing batch of overlays
+			this._aOverlaysCreatedInLastBatch = [];
 		}
 	});
 
-	DesignTime.prototype._collectOverlaysDuringSyncing = function () {
-		this._aOverlaysCreatedInLastBatch = [];
-
-		this.attachElementOverlayCreated(function (oEvent) {
-			var oNewOverlay = oEvent.getParameter("elementOverlay");
-			this._aOverlaysCreatedInLastBatch.push(oNewOverlay);
-		}.bind(this));
-
-		this.attachElementOverlayDestroyed(this._onOverlayDestroyedDuringSyncing, this);
-	};
-
-	DesignTime.prototype._onOverlayDestroyedDuringSyncing = function (oEvent) {
-		var oDestroyedOverlay = oEvent.getParameter("elementOverlay");
-		var iIndex = this._aOverlaysCreatedInLastBatch.indexOf(oDestroyedOverlay);
+	DesignTime.prototype._removeOverlayFromSyncingBatch = function (oElementOverlay) {
+		var iIndex = this._aOverlaysCreatedInLastBatch.indexOf(oElementOverlay);
 		if (iIndex !== -1) {
 			this._aOverlaysCreatedInLastBatch.splice(iIndex, 1);
 		}
 	};
 
-	DesignTime.prototype._registerElementOverlaysInPlugins = function () {
+	DesignTime.prototype._registerElementOverlays = function () {
 		var aPlugins = this.getPlugins();
-		this._aOverlaysCreatedInLastBatch.forEach(function (oOverlay) {
-			aPlugins.forEach(function (oPlugin) {
-				oPlugin.callElementOverlayRegistrationMethods(oOverlay);
+		var aElementOverlays = this._aOverlaysCreatedInLastBatch.slice();
+
+		// IMPORTANT: cycles below should not be combined in one.
+		// Reason: overlays life-cycle:
+		// - create
+		// - register in registry
+		// - register in plugins
+		// - inform others about the new overlay
+		// The source code of each step may rely on the previous step indirectly. E.g.:
+		// Layout->Button. When we register Button inside the plugins, they may expect
+		// Layout to be available in OverlayRegistry already.
+
+		// 1. Register element overlays in OverlayRegistry:
+		aElementOverlays.forEach(function (oElementOverlay) {
+			OverlayRegistry.register(oElementOverlay);
+			oElementOverlay.attachBeforeDestroy(function (oEvent) {
+				OverlayRegistry.deregister(oEvent.getSource());
 			});
 		});
+
+		// 2. Register element overlays in plugins:
+		aElementOverlays.forEach(function (oElementOverlay) {
+			aPlugins.forEach(function (oPlugin) {
+				oPlugin.callElementOverlayRegistrationMethods(oElementOverlay);
+			});
+		}, this);
+
+		// 3. Tell the world about this miracle
+		aElementOverlays.forEach(function (oElementOverlay) {
+			this.fireElementOverlayCreated({
+				elementOverlay: oElementOverlay
+			});
+		}, this);
+
 		this._aOverlaysCreatedInLastBatch = [];
 	};
 
@@ -324,7 +348,6 @@ function (
 	 */
 	DesignTime.prototype.exit = function () {
 		this._bDestroyPending = true;
-		this.detachElementOverlayDestroyed(this._onOverlayDestroyedDuringSyncing, this);
 
 		// The plugins need to be destroyed before the overlays in order to go through the deregisterElementOverlay Methods
 		this.getPlugins().forEach(function (oPlugin) {
@@ -617,7 +640,12 @@ function (
 						function (oElementOverlay) {
 							return this._createChildren(oElementOverlay, mParams.parentMetadata)
 								.then(function () {
-									delete this._mPendingOverlays[sElementId];
+									// Remove overlay promise from the map only when it is "officially" available
+									// and registered everywhere (OverlayRegistry, Plugins, etc)
+									this.attachEventOnce("synced", function () {
+										delete this._mPendingOverlays[sElementId];
+									}, this);
+
 									// When DesignTime instance was destroyed during overlay creation process
 									if (this.bIsDestroyed) {
 										// TODO: refactor destroy() logic. See @676 & @788
@@ -636,13 +664,7 @@ function (
 											"while creating children overlays, its parent overlay has been destroyed"
 										));
 									} else {
-										OverlayRegistry.register(oElementOverlay);
-										oElementOverlay.attachBeforeDestroy(function (oEvent) {
-											OverlayRegistry.deregister(oEvent.getSource());
-										});
-										this.fireElementOverlayCreated({
-											elementOverlay: oElementOverlay
-										});
+										this._aOverlaysCreatedInLastBatch.push(oElementOverlay);
 										this._oTaskManager.complete(iTaskId);
 										return oElementOverlay;
 									}
@@ -763,6 +785,7 @@ function (
 					mParentAggregationMetadata
 				);
 
+				// TODO: Aggregation overlays should be registered at the same time as their ElementOverlays (currently they are registered *before*)
 				var oAggregationOverlay = new AggregationOverlay({
 					aggregationName: sAggregationName,
 					element: oElement,
@@ -853,6 +876,7 @@ function (
 		// FIXME: workaround. Overlays should not kill themselves (see ElementOverlay@_onElementDestroyed).
 		var sElementId = oElementOverlay.getAssociation('element');
 		if (sElementId in this._mPendingOverlays) { // means that the overlay was destroyed during initialization process
+			this._removeOverlayFromSyncingBatch(oElementOverlay);
 			return;
 		}
 
@@ -935,7 +959,14 @@ function (
 				oParams.id = oEvent.getSource().getId();
 				delete oParams.type;
 				delete oParams.target;
-				this.fireElementPropertyChanged(oParams);
+
+				if (this._sStatus === STATUS_SYNCING) {
+					this.attachEventOnce('synced', function (oParams) {
+						this.fireElementPropertyChanged(oParams);
+					}.bind(this, oParams));
+				} else {
+					this.fireElementPropertyChanged(oParams);
+				}
 				break;
 		}
 	};
@@ -947,7 +978,13 @@ function (
 	DesignTime.prototype._onEditableChanged = function(oEvent) {
 		var oParams = merge({}, oEvent.getParameters());
 		oParams.id = oEvent.getSource().getId();
-		this.fireElementOverlayEditableChanged(oParams);
+		if (this._sStatus === STATUS_SYNCING) {
+			this.attachEventOnce('synced', function () {
+				this.fireElementOverlayEditableChanged(oParams);
+			}, this);
+		} else {
+			this.fireElementOverlayEditableChanged(oParams);
+		}
 	};
 
 	/**
@@ -977,13 +1014,17 @@ function (
 
 							var iOverlayPosition = oParentAggregationOverlay.indexOfAggregation('children', oElementOverlay);
 
-							this.fireElementOverlayAdded({
-								id: oElementOverlay.getId(),
-								targetIndex: iOverlayPosition,
-								targetId: oParentAggregationOverlay.getId(),
-								targetAggregation: oParentAggregationOverlay.getAggregationName()
-							});
-
+							// `ElementOverlayAdded` event should be emitted only when overlays are ready to prevent
+							// an access to still syncing overlays (e.g. the overlay is still not available in overlay registry
+							// at this point and not registered in the plugins).
+							this.attachEventOnce("synced", function () {
+								this.fireElementOverlayAdded({
+									id: oElementOverlay.getId(),
+									targetIndex: iOverlayPosition,
+									targetId: oParentAggregationOverlay.getId(),
+									targetAggregation: oParentAggregationOverlay.getAggregationName()
+								});
+							}, this);
 							this._oTaskManager.complete(iTaskId);
 						}.bind(this),
 						function (vError) {
