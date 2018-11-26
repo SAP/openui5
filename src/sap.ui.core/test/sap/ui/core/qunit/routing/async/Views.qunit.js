@@ -28,8 +28,7 @@ sap.ui.define([
 			this.oViews = new Views({async: true});
 			this.oViewOptions = {
 				viewName : "foo.bar",
-				viewType : "XML",
-				id : "foo"
+				viewType : "XML"
 			};
 
 			this.oView = createXmlView();

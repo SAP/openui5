@@ -533,7 +533,8 @@ sap.ui.define([
 			},
 
 			/**
-			 * Adds or overwrites a view in the viewcache of the router, the viewname serves as a key
+			 * Adds or overwrites a view in the viewcache of the router which will be cached under the given sViewName
+			 * and the "undefined" key
 			 *
 			 * @deprecated Since 1.28 use {@link #getViews} instead.
 			 * @param {string} sViewName Name of the view

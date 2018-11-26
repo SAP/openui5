@@ -15,6 +15,9 @@ sap.ui.define([
 				},
 				isA: function(sClass) {
 					return sClass === "sap.ui.core.UIComponent";
+				},
+				getId: function() {
+					return "testid";
 				}
 			};
 			this.oCreateStub = sinon.stub(Component, "create").callsFake(function () {
@@ -58,7 +61,24 @@ sap.ui.define([
 		});
 	});
 
-	QUnit.test("Get component with empty cache should create a component", function (assert) {
+	QUnit.test("Get component with empty cache should create a component without id set", function (assert) {
+		var oOptions = {
+			name: "foo.bar",
+			manifest: true
+		}, that = this;
+
+		var oPromise = this.oCache.get(oOptions, "Component");
+		assert.equal(this.oCreateStub.callCount, 1, "Component.create is called once");
+
+		assert.propEqual(this.oCreateStub.getCall(0).args[0], oOptions, "The options is passed to the Component.create");
+
+		return oPromise.then(function (oComponent) {
+			assert.strictEqual(oComponent, that.oComponent, "The correct component instance is passed to promise resolve");
+			assert.strictEqual(that.oCache._oCache.component[oOptions.name][undefined], oComponent, "The component instance is saved under the undefined key");
+		});
+	});
+
+	QUnit.test("Get component with empty cache should create a component with id set", function (assert) {
 		var oOptions = {
 			name: "foo.bar",
 			id: "testid",
@@ -72,6 +92,8 @@ sap.ui.define([
 
 		return oPromise.then(function (oComponent) {
 			assert.strictEqual(oComponent, that.oComponent, "The correct component instance is passed to promise resolve");
+			assert.strictEqual(that.oCache._oCache.component[oOptions.name][undefined], undefined, "The component instance isn't saved under the undefined key");
+			assert.strictEqual(that.oCache._oCache.component[oOptions.name][oOptions.id], oComponent, "The component instance is saved under the undefined key");
 		});
 	});
 
@@ -118,7 +140,6 @@ sap.ui.define([
 	QUnit.test("Set component to TargetCache and get that component", function (assert) {
 		var oOptions = {
 			name: "foo.bar",
-			id: "testid",
 			option: {
 				a: "b",
 				c: "d"
@@ -178,6 +199,9 @@ sap.ui.define([
 				destroy: oDestroySpy,
 				isA: function(sClass) {
 					return sClass === "sap.ui.core.UIComponent";
+				},
+				getId: function() {
+					return "testid";
 				}
 			};
 

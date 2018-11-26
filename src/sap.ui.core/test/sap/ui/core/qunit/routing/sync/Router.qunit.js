@@ -1125,7 +1125,7 @@ sap.ui.define([
 
 		//Act
 		oReturnValue = this.oRouter.setView("foo.bar", this.oView);
-		var oRetrievedView = this.oRouter.getView("foo.bar", "bar", "baz");
+		var oRetrievedView = this.oRouter.getView("foo.bar", "bar");
 
 		//Assert
 		assert.strictEqual(oRetrievedView, this.oView, "the view was returned");
