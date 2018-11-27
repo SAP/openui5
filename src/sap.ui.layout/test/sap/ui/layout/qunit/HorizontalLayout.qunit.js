@@ -138,4 +138,6 @@ sap.ui.define([
 		assert.ok(oInfo.children && oInfo.children.length == 2, "Children");
 		oLayout.destroy();
 	});
+
+	return waitForThemeApplied();
 });

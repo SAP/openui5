@@ -1110,4 +1110,6 @@ sap.ui.define([
 		//clean
 		oDatesRow.destroy();
 	});
+
+	return waitForThemeApplied();
 });
