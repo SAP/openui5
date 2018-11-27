@@ -96,13 +96,144 @@ sap.ui.define([
 		oSPC.destroy();
 	});
 
-
 	QUnit.test("selectedView", function (assert) {
 		var oSPC = new SinglePlanningCalendar();
 
 		//assert
 		assert.ok(oSPC.getAssociation("selectedView"), "selectedView is set correctly");
 		assert.strictEqual(oSPC.getAssociation("selectedView"), oSPC._oDefaultView.getId(), "selectedView is the default view");
+
+		//clean up
+		oSPC.destroy();
+	});
+
+	QUnit.module("Events");
+
+	QUnit.test("appointmentSelect", function (assert) {
+		var oAppointment = new CalendarAppointment(),
+			oSPC = new SinglePlanningCalendar({
+				appointments: [
+					oAppointment
+				]
+			}),
+			oFakeEvent = {
+				target: {parentElement: {id: oAppointment.getId()}}
+			},
+			fnFireAppointmentSelectSpy = this.spy(oSPC, "fireAppointmentSelect");
+
+		//act
+		oSPC._getGrid().ontap(oFakeEvent);
+
+		//assert
+		assert.ok(fnFireAppointmentSelectSpy.calledOnce, "Event was fired");
+		assert.ok(fnFireAppointmentSelectSpy.calledWithExactly({
+			appointment: oAppointment,
+			id: oSPC.getId()
+		}), "Event was fired with the correct parameters");
+
+		//clean up
+		oSPC.destroy();
+	});
+
+	QUnit.test("headerDateSelect", function (assert) {
+		var oSPC = new SinglePlanningCalendar(),
+			oSPCHeaders = oSPC._getGrid()._getColumnHeaders(),
+			oStartDate = oSPC.getStartDate(),
+			oHeaderDateToSelect = new Date(oStartDate.getFullYear(), oStartDate.getMonth(), oStartDate.getDate()),
+			fnFireHeaderDateSelect = this.spy(oSPC, "fireHeaderDateSelect");
+
+		//act
+		oSPCHeaders.setDate(oHeaderDateToSelect);
+		oSPCHeaders.fireSelect();
+
+		//assert
+		assert.ok(fnFireHeaderDateSelect.calledOnce, "Event was fired");
+		assert.ok(fnFireHeaderDateSelect.calledWithExactly({
+			date: oHeaderDateToSelect,
+			id: oSPC.getId()
+		}), "Event was fired with the correct parameters");
+
+		//clean up
+		oSPC.destroy();
+	});
+
+	QUnit.test("startDateChange: on next button press", function (assert) {
+		var oSPC = new SinglePlanningCalendar(),
+			oSPCHeader = oSPC._getHeader(),
+			iScrollDays = sap.ui.getCore().byId(oSPC.getAssociation("selectedView")).getScrollEntityCount(),
+			oInitialStartDate = oSPC.getStartDate(),
+			fnFireStartDateChange = this.spy(oSPC, "fireStartDateChange");
+
+		//act
+		oSPCHeader.firePressNext();
+
+		//assert
+		assert.ok(fnFireStartDateChange.calledOnce, "Event was fired");
+		assert.ok(fnFireStartDateChange.calledWithExactly({
+			date: new Date(oInitialStartDate.getFullYear(), oInitialStartDate.getMonth(), oInitialStartDate.getDate() + iScrollDays),
+			id: oSPC.getId()
+		}), "Event was fired with the correct parameters");
+
+		//clean up
+		oSPC.destroy();
+	});
+
+	QUnit.test("startDateChange: on previous button press", function (assert) {
+		var oSPC = new SinglePlanningCalendar(),
+			oSPCHeader = oSPC._getHeader(),
+			iScrollDays = sap.ui.getCore().byId(oSPC.getAssociation("selectedView")).getScrollEntityCount(),
+			oInitialStartDate = oSPC.getStartDate(),
+			fnFireStartDateChange = this.spy(oSPC, "fireStartDateChange");
+
+		//act
+		oSPCHeader.firePressPrevious();
+
+		//assert
+		assert.ok(fnFireStartDateChange.calledOnce, "Event was fired");
+		assert.ok(fnFireStartDateChange.calledWithExactly({
+			date: new Date(oInitialStartDate.getFullYear(), oInitialStartDate.getMonth(), oInitialStartDate.getDate() - iScrollDays),
+			id: oSPC.getId()
+		}), "Event was fired with the correct parameters");
+
+		//clean up
+		oSPC.destroy();
+	});
+
+	QUnit.test("startDateChange: on today button press", function (assert) {
+		var oSPC = new SinglePlanningCalendar(),
+			oSPCHeader = oSPC._getHeader(),
+			oInitialStartDate = oSPC.getStartDate(),
+			fnFireStartDateChange = this.spy(oSPC, "fireStartDateChange");
+
+		//act
+		oSPCHeader.firePressToday();
+
+		//assert
+		assert.ok(fnFireStartDateChange.calledOnce, "Event was fired");
+		assert.ok(fnFireStartDateChange.calledWithExactly({
+			date: oSPC._getSelectedView().calculateStartDate(oInitialStartDate),
+			id: oSPC.getId()
+		}), "Event was fired with the correct parameters");
+
+		//clean up
+		oSPC.destroy();
+	});
+
+	QUnit.test("startDateChange: on date select from picker", function (assert) {
+		var oSPC = new SinglePlanningCalendar(),
+			oSPCHeader = oSPC._getHeader(),
+			oInitialStartDate = oSPC.getStartDate(),
+			fnFireStartDateChange = this.spy(oSPC, "fireStartDateChange");
+
+		//act
+		oSPCHeader.fireDateSelect();
+
+		//assert
+		assert.ok(fnFireStartDateChange.calledOnce, "Event was fired");
+		assert.ok(fnFireStartDateChange.calledWithExactly({
+			date: oSPC._getSelectedView().calculateStartDate(oInitialStartDate),
+			id: oSPC.getId()
+		}), "Event was fired with the correct parameters");
 
 		//clean up
 		oSPC.destroy();

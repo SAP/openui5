@@ -164,6 +164,51 @@ function(
 			 */
 			selectedView: { type: "sap.m.SinglePlanningCalendarView", multiple: false }
 
+		},
+
+		events: {
+
+			/**
+			 * Fired if an appointment is selected.
+			 */
+			appointmentSelect: {
+				parameters: {
+
+					/**
+					 * The selected appointment.
+					 */
+					appointment: {type: "sap.m.CalendarAppointment"}
+
+				}
+			},
+
+			/**
+			 * Fired if a date is selected in the calendar header.
+			 */
+			headerDateSelect: {
+				parameters: {
+
+					/**
+					 * Date of the selected header, as a JavaScript date object. It is considered as a local date.
+					 */
+					date: {type: "object"}
+
+				}
+			},
+
+			/**
+			 * <code>startDate</code> is changed while navigating in the <code>SinglePlanningCalendar</code>.
+			 */
+			startDateChange: {
+				parameters: {
+
+					/**
+					 * The new start date, as a JavaScript date object. It is considered as a local date.
+					 */
+					date: {type: "object"}
+
+				}
+			}
 		}
 
 	}});
@@ -181,6 +226,7 @@ function(
 		this.setAggregation("_grid", new SinglePlanningCalendarGrid(sOPCId + "-Grid"));
 
 		this._attachHeaderEvents();
+		this._attachGridEvents();
 		this.setStartDate(new Date());
 	};
 
@@ -395,6 +441,30 @@ function(
 	};
 
 	/**
+	 * Attaches handlers to the events in the _grid aggregation.
+	 *
+	 * @returns {object} this for method chaining
+	 * @private
+	 */
+	SinglePlanningCalendar.prototype._attachGridEvents = function () {
+		var oGrid = this._getGrid();
+
+		oGrid._getColumnHeaders().attachEvent("select", function (oEvent) {
+			this.fireHeaderDateSelect({
+				date: oEvent.getSource().getDate()
+			});
+		}, this);
+
+		oGrid.attachEvent("appointmentSelect", function (oEvent) {
+			this.fireAppointmentSelect({
+				appointment: oEvent.getParameter("appointment")
+			});
+		}, this);
+
+		return this;
+	};
+
+	/**
 	 * Handler for the pressPrevious and pressNext events in the _header aggregation.
 	 * @param {Date} oEvent The triggered event
 	 * @private
@@ -411,6 +481,9 @@ function(
 		var oStartDate = this._getSelectedView().calculateStartDate(new Date());
 
 		this.setStartDate(oStartDate);
+		this.fireStartDateChange({
+			date: oStartDate
+		});
 	};
 
 	/**
@@ -432,6 +505,9 @@ function(
 
 		oStartDate = this._getSelectedView().calculateStartDate(new Date(oStartDate.getTime()));
 		this.setStartDate(oStartDate);
+		this.fireStartDateChange({
+			date: oStartDate
+		});
 	};
 
 	/**
@@ -479,15 +555,20 @@ function(
 	 */
 	SinglePlanningCalendar.prototype._applyArrowsLogic = function (bBackwards) {
 		var oCalStartDate = CalendarDate.fromLocalJSDate(this.getStartDate() || new Date()),
-			iNumberToAdd = this._getSelectedView().getScrollEntityCount();
+			iNumberToAdd = this._getSelectedView().getScrollEntityCount(),
+			oStartDate;
 
 		if (bBackwards) {
 			iNumberToAdd *= -1;
 		}
 
 		oCalStartDate.setDate(oCalStartDate.getDate() + iNumberToAdd);
+		oStartDate = oCalStartDate.toLocalJSDate();
 
-		this.setStartDate(oCalStartDate.toLocalJSDate());
+		this.setStartDate(oStartDate);
+		this.fireStartDateChange({
+			date: oStartDate
+		});
 	};
 
 	/**

@@ -107,6 +107,22 @@ sap.ui.define([
 					 */
 					ariaLabelledBy: {type: "sap.ui.core.Control", multiple: true, singularName: "ariaLabelledBy"}
 
+				},
+				events: {
+
+					/**
+					 * Fired if an appointment is selected.
+					 */
+					appointmentSelect: {
+						parameters: {
+
+							/**
+							 * The selected appointment.
+							 */
+							appointment: {type: "sap.m.CalendarAppointment"}
+
+						}
+					}
 				}
 			}
 		});
@@ -149,6 +165,21 @@ sap.ui.define([
 		/*
 		 * PRIVATE API
 		 */
+
+		/**
+		 * Handles the <code>tap</code> event on the grid.
+		 *
+		 * @param {jQuery.Event} oEvent The event object
+		 */
+		SinglePlanningCalendarGrid.prototype.ontap = function (oEvent) {
+			var oAppointment = sap.ui.getCore().byId(oEvent.target.parentElement.id);
+
+			if (oAppointment && oAppointment.isA("sap.m.CalendarAppointment")) {
+				this.fireAppointmentSelect({
+					appointment: oAppointment
+				});
+			}
+		};
 
 		/**
 		 * Determines which is the first visible hour of the grid.
