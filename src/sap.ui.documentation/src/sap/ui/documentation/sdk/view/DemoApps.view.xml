@@ -29,7 +29,7 @@
 						alt="{i18n>imagePhone}"
 						width="100%"
 						class="welcomeImage"
-						load="handleLandingImageLoad"
+						load=".handleLandingImageLoad"
 						visible="{device>/system/phone}"
 						densityAware="false"/>
 					<l:BlockLayout
@@ -44,7 +44,7 @@
 								src="./resources/sap/ui/documentation/sdk/images/DemoApps_M_and_L_cropped.jpg"
 								alt="{i18n>imageComp}"
 								densityAware="false"
-								load="handleLandingImageLoad"
+								load=".handleLandingImageLoad"
 								visible="{=!${device>/system/phone}}"
 								width="100%"/>
 							<l:Grid
@@ -62,14 +62,14 @@
 											id="download"
 											text="{i18n>downloadButtonText}"
 											type="Emphasized"
-											press="onDownloadButtonPress">
+											press=".onDownloadButtonPress">
 										</Button>
 										<Button
 											class="actionButton headerButton sapContrast sapContrastPlus sapUiSmallMarginBegin"
 											id="readMoreButton"
 											text="{i18n>linkText}"
 											type="Ghost"
-											press="onReadMoreButtonPress">
+											press=".onReadMoreButtonPress">
 										</Button>
 									</l:HorizontalLayout>
 								</l:VerticalLayout>
@@ -125,8 +125,9 @@
 			<SelectDialog id="downloadDialog"
 				items="{/demoApps}"
 				title="{i18n>downloadDialogTitle}"
-				liveChange="onSearch"
-				confirm="onDownloadPress">
+				liveChange=".onSearch"
+				growing="false"
+				confirm=".onDownloadPress">
 				<InputListItem
 					visible="{= !!${config} }"
 					label="{name}"
@@ -137,7 +138,7 @@
 					<Button
 						text="{i18n>downloadButtonText}"
 						type="Emphasized"
-						press="onDownloadPress"/>
+						press=".onDownloadPress"/>
 				</InputListItem>
 			</SelectDialog>
 		</dependents>
