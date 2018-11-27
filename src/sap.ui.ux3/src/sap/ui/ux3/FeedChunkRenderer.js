@@ -3,8 +3,12 @@
  */
 
 // Provides default renderer for the sap.ui.ux3.FeedChunk
-sap.ui.define(['jquery.sap.global'],
-	function(jQuery) {
+sap.ui.define([
+    "sap/ui/core/theming/Parameters",
+    "sap/base/security/encodeXML",
+    "sap/base/security/URLWhitelist"
+],
+	function(Parameters, encodeXML, URLWhitelist) {
 	"use strict";
 
 
@@ -18,13 +22,10 @@ sap.ui.define(['jquery.sap.global'],
 	/**
 	 * Renders the HTML for the given control, using the provided {@link sap.ui.core.RenderManager}.
 	 *
-	 * @param {sap.ui.core.RenderManager} oRenderManager the RenderManager that can be used for writing to the Render-Output-Buffer
-	 * @param {sap.ui.core.Control} oControl an object representation of the control that should be rendered
+	 * @param {sap.ui.core.RenderManager} rm the RenderManager that can be used for writing to the Render-Output-Buffer
+	 * @param {sap.ui.core.Control} oChunk an object representation of the control that should be rendered
 	 */
-	FeedChunkRenderer.render = function(oRenderManager, oControl){
-		// convenience variable
-		var rm = oRenderManager;
-		var oChunk = oControl;
+	FeedChunkRenderer.render = function(rm, oChunk){
 		// check if chunk is a comment (child) of an other chunk
 		if (oChunk.getParent() instanceof sap.ui.ux3.FeedChunk) {
 			oChunk.bComment = true;
@@ -47,7 +48,7 @@ sap.ui.define(['jquery.sap.global'],
 		rm.write('<img id=' + sMyId + '-thumb');
 		var sThumbnail = oChunk.getThumbnailSrc();
 		if (!sThumbnail) {
-			sThumbnail = sap.ui.core.theming.Parameters._getThemeImage('_sap_ui_ux3_FeedChunk_PersonPlaceholder');
+			sThumbnail = Parameters._getThemeImage('_sap_ui_ux3_FeedChunk_PersonPlaceholder');
 		}
 		rm.writeAttributeEscaped('src', sThumbnail);
 		rm.writeAttributeEscaped('alt', oChunk.getSender());
@@ -159,24 +160,24 @@ sap.ui.define(['jquery.sap.global'],
 				rm.writeEscaped(sWord, true);
 				rm.write('</a>', sSpace);
 				i++;
-			} else if (/^(https?|ftp):\/\//i.test(sWord) && jQuery.sap.validateUrl(sWord)) {
+			} else if (/^(https?|ftp):\/\//i.test(sWord) && URLWhitelist.validate(sWord)) {
 				// web link - valid URL
 				rm.write('<a');
-				rm.writeAttribute('href', jQuery.sap.encodeHTML(sWord));
+				rm.writeAttribute('href', encodeXML(sWord));
 				rm.write('>');
 				rm.writeEscaped(sWord, true);
 				rm.write('</a>',sSpace);
-			} else if (/^(www\.)/i.test(sWord) && jQuery.sap.validateUrl("http://" + sWord)) {
+			} else if (/^(www\.)/i.test(sWord) && URLWhitelist.validate("http://" + sWord)) {
 				// web link without protocol -> use HTTP - valid URL
 				rm.write('<a');
-				rm.writeAttribute('href', jQuery.sap.encodeHTML("http://" + sWord));
+				rm.writeAttribute('href', encodeXML("http://" + sWord));
 				rm.write('>');
 				rm.writeEscaped(sWord, true);
 				rm.write('</a>',sSpace);
 			} else if (/^[\w\.=-]+@[\w\.-]+\.[\w]{2,5}$/.test(sWord)) {
 				//email - not 100% validity check and validation missing
 				rm.write('<a');
-				rm.writeAttribute('href', "mailto:" + jQuery.sap.encodeHTML(sWord));
+				rm.writeAttribute('href', "mailto:" + encodeXML(sWord));
 				rm.write('>');
 				rm.writeEscaped(sWord, true);
 				rm.write('</a>',sSpace);

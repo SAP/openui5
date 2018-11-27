@@ -1,21 +1,20 @@
 /*global QUnit */
 sap.ui.define([
-	"sap/ui/qunit/QUnitUtils",
-	"sap/ui/qunit/utils/createAndAppendDiv",
-	"sap/ui/ux3/Feed",
-	"sap/ui/core/ListItem",
-	"sap/ui/ux3/FeedChunk",
-	"jquery.sap.global",
-	"sap/ui/commons/MenuItem",
-	"jquery.sap.keycodes"
+    "sap/ui/qunit/QUnitUtils",
+    "sap/ui/qunit/utils/createAndAppendDiv",
+    "sap/ui/ux3/Feed",
+    "sap/ui/core/ListItem",
+    "sap/ui/ux3/FeedChunk",
+    "sap/ui/commons/MenuItem",
+    "sap/ui/events/KeyCodes"
 ], function(
 	qutils,
 	createAndAppendDiv,
 	Feed,
 	ListItem,
 	FeedChunk,
-	jQuery,
-	MenuItem
+	MenuItem,
+	KeyCodes
 ) {
 	"use strict";
 
@@ -99,28 +98,28 @@ sap.ui.define([
 
 	QUnit.test("Output of elements", function(assert) {
 		// feeder
-		assert.ok(jQuery.sap.byId("Feed1").children(".sapUiFeeder").get(0), "Feeder rendered");
+		assert.ok(jQuery(document.getElementById("Feed1")).children(".sapUiFeeder").get(0), "Feeder rendered");
 		assert.equal(sap.ui.getCore().getControl("Feed1-Feeder").getThumbnailSrc(), "test-resources/sap/ui/ux3/images/feeder/w_01.png", "ThumbnailSrc of feeder");
 
 		// no menu button if no items
-		assert.ok(!jQuery.sap.byId("Feed1-toolsButton").get(0), "No Menu button if no items");
+		assert.ok(!jQuery(document.getElementById("Feed1-toolsButton")).get(0), "No Menu button if no items");
 
 		// live button
-		assert.ok(jQuery.sap.byId("Feed1-liveButton").get(0), "Live button rendered");
+		assert.ok(jQuery(document.getElementById("Feed1-liveButton")).get(0), "Live button rendered");
 
 		// filter
-		assert.ok(jQuery.sap.byId("Feed1-filter").get(0), "filter rendered");
+		assert.ok(jQuery(document.getElementById("Feed1-filter")).get(0), "filter rendered");
 		assert.equal(sap.ui.getCore().getControl("Feed1-filter").getItems().length, 2, "Number of filter items");
 		assert.equal(sap.ui.getCore().getControl("Feed1-filter").getItems()[0].getId(), "FilterItem1", "Id of first filter item");
 
 		//search field
-		assert.ok(jQuery.sap.byId("Feed1-search").get(0), "searchField rendered");
+		assert.ok(jQuery(document.getElementById("Feed1-search")).get(0), "searchField rendered");
 
 		// chunks
-		assert.ok(jQuery.sap.byId("Feed1").children("section").get(0), "chunk section rendered");
-		assert.ok(jQuery.sap.byId("Chunk1").get(0), "First Chunk rendered rendered");
-		assert.ok(jQuery.sap.byId("Chunk2").get(0), "Second Chunk rendered rendered");
-		assert.equal(jQuery.sap.byId("Feed1").children("section").children("article").get(0).id, "Chunk1", "first chunk rendered at first");
+		assert.ok(jQuery(document.getElementById("Feed1")).children("section").get(0), "chunk section rendered");
+		assert.ok(jQuery(document.getElementById("Chunk1")).get(0), "First Chunk rendered rendered");
+		assert.ok(jQuery(document.getElementById("Chunk2")).get(0), "Second Chunk rendered rendered");
+		assert.equal(jQuery(document.getElementById("Feed1")).children("section").children("article").get(0).id, "Chunk1", "first chunk rendered at first");
 
 	});
 
@@ -130,7 +129,7 @@ sap.ui.define([
 		oFeed.addToolsMenuItem(new MenuItem('MenuItem2',{ text: 'Item2' }));
 
 		var delayedCall = function() {
-			assert.ok(jQuery.sap.byId("Feed1-toolsButton").get(0), "Menu button rendered");
+			assert.ok(jQuery(document.getElementById("Feed1-toolsButton")).get(0), "Menu button rendered");
 			assert.equal(sap.ui.getCore().getControl("Feed1-toolsButton").getMenu().getItems().length, 2, "Number of menu items");
 			done();
 		};
@@ -167,9 +166,9 @@ sap.ui.define([
 
 	QUnit.test("filter", function(assert) {
 		var done = assert.async();
-		jQuery.sap.domById("Feed1-filter").focus();
-		qutils.triggerKeyboardEvent("Feed1-filter", jQuery.sap.KeyCodes.ARROW_DOWN, false, false, false);
-		qutils.triggerKeyboardEvent("Feed1-filter", jQuery.sap.KeyCodes.ENTER, false, false, false);
+		window.document.getElementById("Feed1-filter").focus();
+		qutils.triggerKeyboardEvent("Feed1-filter", KeyCodes.ARROW_DOWN, false, false, false);
+		qutils.triggerKeyboardEvent("Feed1-filter", KeyCodes.ENTER, false, false, false);
 		var delayedCall = function() {
 			assert.equal(sEvent, "FilterChange", "Event by changing filter value");
 			assert.equal(sEventParameter, "Filter2", "New value of filter");
@@ -184,8 +183,8 @@ sap.ui.define([
 	QUnit.test("search field", function(assert) {
 		var oSearchDomRef = sap.ui.getCore().getControl("Feed1-search").getFocusDomRef();
 		qutils.triggerCharacterInput(oSearchDomRef, "Test");
-		qutils.triggerKeyEvent("keyup", oSearchDomRef, jQuery.sap.KeyCodes.T);
-		qutils.triggerKeyboardEvent(oSearchDomRef, jQuery.sap.KeyCodes.ENTER, false, false, false);
+		qutils.triggerKeyEvent("keyup", oSearchDomRef, KeyCodes.T);
+		qutils.triggerKeyboardEvent(oSearchDomRef, KeyCodes.ENTER, false, false, false);
 		assert.equal(sEvent, "Search", "Event by entering value in search field");
 		assert.equal(sEventParameter, "Test", "search query");
 		sEvent = "";
@@ -196,9 +195,9 @@ sap.ui.define([
 	QUnit.test("Add chunk", function(assert) {
 		var done = assert.async();
 
-		jQuery.sap.domById("Feed1-Feeder-input").focus();
-		jQuery.sap.byId("Feed1-Feeder-input").text("Test");
-		qutils.triggerKeyup("Feed1-Feeder-input", jQuery.sap.KeyCodes.T, false, false, false);
+		window.document.getElementById("Feed1-Feeder-input").focus();
+		jQuery(document.getElementById("Feed1-Feeder-input")).text("Test");
+		qutils.triggerKeyup("Feed1-Feeder-input", KeyCodes.T, false, false, false);
 		qutils.triggerMouseEvent("Feed1-Feeder-send", "click");
 		assert.equal(sEvent, "ChunkAdded", "event fired on adding a new chunk");
 		assert.equal(sEventParameter.getId(), oFeed.getChunks()[0].getId(), "chunk returned from event must be the first one in aggregation");
@@ -209,7 +208,7 @@ sap.ui.define([
 		sEventParameter = "";
 
 		var delayedCall = function() {
-			var aChunks = jQuery.sap.byId("Feed1").children("section").children("article");
+			var aChunks = jQuery(document.getElementById("Feed1")).children("section").children("article");
 			assert.equal(aChunks.get(0).id, "Feed1-new-2", "New chunk must be the first one");
 			done();
 		};

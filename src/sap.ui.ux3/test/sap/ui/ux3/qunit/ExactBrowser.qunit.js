@@ -1,25 +1,29 @@
 /*global QUnit, exactTestData */
 sap.ui.define([
-	"sap/ui/qunit/QUnitUtils",
-	"sap/ui/qunit/utils/createAndAppendDiv",
-	"sap/ui/ux3/ExactBrowser",
-	"sap/ui/commons/Menu",
-	"sap/ui/ux3/library",
-	"sap/ui/ux3/ExactAttribute",
-	"jquery.sap.global",
-	"sap/ui/Device",
-	"jquery.sap.keycodes",
-	"jquery.sap.script",
-	"../resources/ExactData"
+    "sap/ui/qunit/QUnitUtils",
+    "sap/ui/qunit/utils/createAndAppendDiv",
+    "sap/ui/ux3/ExactBrowser",
+    "sap/ui/commons/Menu",
+    "sap/ui/ux3/library",
+    "sap/ui/ux3/ExactAttribute",
+    "sap/ui/thirdparty/jquery",
+    "sap/ui/Device",
+    "sap/base/util/UriParameters",
+    "sap/ui/dom/containsOrEquals",
+    "sap/ui/events/KeyCodes",
+    "../resources/ExactData"
 ], function(
-	qutils,
+    qutils,
 	createAndAppendDiv,
 	ExactBrowser,
 	Menu,
 	ux3Library,
 	ExactAttribute,
 	jQuery,
-	Device
+	Device,
+	UriParameters,
+	containsOrEquals,
+	KeyCodes
 ) {
 	"use strict";
 
@@ -188,8 +192,8 @@ sap.ui.define([
 	});
 
 	QUnit.test("Width", function(assert) {
-		assert.ok(Math.abs(jQuery.sap.byId(oExactBrowser1._rootList.getId() + "-lst").width() - 168) < 5, "Default List Width");
-		assert.ok(Math.abs(jQuery.sap.byId(oExactBrowser3._rootList.getId() + "-lst").width() - 200) < 5, "Custom List Width");
+		assert.ok(Math.abs(jQuery(document.getElementById(oExactBrowser1._rootList.getId() + "-lst")).width() - 168) < 5, "Default List Width");
+		assert.ok(Math.abs(jQuery(document.getElementById(oExactBrowser3._rootList.getId() + "-lst")).width() - 200) < 5, "Custom List Width");
 	});
 
 	QUnit.module("List Interaction");
@@ -321,7 +325,7 @@ sap.ui.define([
 			);
 			setTimeout(function(){
 				if (navigator.userAgent.indexOf("Windows") >= 0 && Device.browser.safari){
-					if (jQuery.sap.getUriParameters().get("runExpandCheck") != "X"){
+					if (new UriParameters(window.location.href).get("runExpandCheck") != "X"){
 						done();
 						return;
 					}
@@ -455,8 +459,8 @@ sap.ui.define([
 
 	function checkNav(assert, oList){
 		assert.ok(
-			jQuery.sap.containsOrEquals(oList.getFocusDomRef(), document.activeElement) &&
-			!jQuery.sap.containsOrEquals(oList.getDomRef("cntnt"), document.activeElement),
+			containsOrEquals(oList.getFocusDomRef(), document.activeElement) &&
+			!containsOrEquals(oList.getDomRef("cntnt"), document.activeElement),
 			oList.getId() + " has focus."
 		);
 	}
@@ -472,7 +476,7 @@ sap.ui.define([
 
 		function tab(bNext, fAfter){
 			setTimeout(function(){
-				var sKey = jQuery.sap.KeyCodes.TAB;
+				var sKey = KeyCodes.TAB;
 				qutils.triggerKeydown(oCurrentList._lb.getItems()[0].getId(), sKey, !bNext);
 				idx = idx + (bNext ? 1 : -1);
 				oCurrentList = aLists[idx];
@@ -505,7 +509,7 @@ sap.ui.define([
 
 		function arrow(bNext, fAfter){
 			setTimeout(function(){
-				var sKey = bNext ? jQuery.sap.KeyCodes.ARROW_RIGHT : jQuery.sap.KeyCodes.ARROW_LEFT;
+				var sKey = bNext ? KeyCodes.ARROW_RIGHT : KeyCodes.ARROW_LEFT;
 				qutils.triggerKeydown(oCurrentList._lb.getItems()[0].getId(), sKey);
 				idx = idx + (bNext ? 1 : -1);
 				oCurrentList = aLists[idx];
@@ -517,7 +521,7 @@ sap.ui.define([
 		arrow(true, function(){ //ARROW_RIGHT
 			arrow(false, function(){ //ARROW_LEFT
 				arrow(true, function(){ //ARROW_RIGHT
-					qutils.triggerKeydown(oCurrentList._lb.getItems()[0].getId(), jQuery.sap.KeyCodes.ARROW_RIGHT);
+					qutils.triggerKeydown(oCurrentList._lb.getItems()[0].getId(), KeyCodes.ARROW_RIGHT);
 					checkNav(assert, oCurrentList); //Still on the same list!
 					done();
 				});
@@ -565,14 +569,14 @@ sap.ui.define([
 	});
 
 	QUnit.test("Hidden Elements", function(assert) {
-		assert.ok(!jQuery.sap.byId(oExactBrowser3._rootList.getId() + "-lst").is(":visible"), "Listbox is not visible.");
-		assert.ok(!jQuery.sap.byId(oExactBrowser3._rootList.getId() + "-rsz").is(":visible"), "ResizeHandle is not visible.");
-		assert.ok(!jQuery.sap.byId(oExactBrowser3._rootList.getId() + "-head").is(":visible"), "Header is not visible.");
+		assert.ok(!jQuery(document.getElementById(oExactBrowser3._rootList.getId() + "-lst")).is(":visible"), "Listbox is not visible.");
+		assert.ok(!jQuery(document.getElementById(oExactBrowser3._rootList.getId() + "-rsz")).is(":visible"), "ResizeHandle is not visible.");
+		assert.ok(!jQuery(document.getElementById(oExactBrowser3._rootList.getId() + "-head")).is(":visible"), "Header is not visible.");
 	});
 
 	QUnit.test("Visible Elements", function(assert) {
-		assert.ok(jQuery.sap.byId(oExactBrowser3._rootList.getId() + "-cntnt").is(":visible"), "Content Area is visible.");
-		assert.ok(jQuery.sap.byId(oExactBrowser3._rootList.getId() + "-foc").length == 1, "Focus Handle exists.");
+		assert.ok(jQuery(document.getElementById(oExactBrowser3._rootList.getId() + "-cntnt")).is(":visible"), "Content Area is visible.");
+		assert.ok(jQuery(document.getElementById(oExactBrowser3._rootList.getId() + "-foc")).length == 1, "Focus Handle exists.");
 	});
 
 

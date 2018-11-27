@@ -3,9 +3,17 @@
  */
 
 // Provides default renderer for the sap.ui.ux3.Feeder
-sap.ui.define(['jquery.sap.global'],
-	function(jQuery) {
+sap.ui.define([
+    "./library",
+    "sap/ui/core/theming/Parameters",
+    "sap/base/security/encodeXML"
+],
+	function(library, Parameters, encodeXML) {
 	"use strict";
+
+
+	// shortcut for sap.ui.ux3.FeederType
+	var FeederType = library.FeederType;
 
 
 	/**
@@ -19,24 +27,20 @@ sap.ui.define(['jquery.sap.global'],
 	/**
 	 * Renders the HTML for the given control, using the provided {@link sap.ui.core.RenderManager}.
 	 *
-	 * @param {sap.ui.core.RenderManager} oRenderManager the RenderManager that can be used for writing to the Render-Output-Buffer
-	 * @param {sap.ui.core.Control} oControl an object representation of the control that should be rendered
+	 * @param {sap.ui.core.RenderManager} rm the RenderManager that can be used for writing to the Render-Output-Buffer
+	 * @param {sap.ui.core.Control} oFeeder an object representation of the control that should be rendered
 	 */
-	FeederRenderer.render = function(oRenderManager, oControl){
-	    // convenience variable
-		var rm = oRenderManager;
-		var oFeeder = oControl;
-
+	FeederRenderer.render = function(rm, oFeeder){
 		// write the HTML into the render manager
 	    rm.write('<DIV');
 	    rm.writeControlData(oFeeder);
 		rm.addClass('sapUiFeeder');
 
 		switch (oFeeder.getType()) {
-		case sap.ui.ux3.FeederType.Medium:
+		case FeederType.Medium:
 			rm.addClass('sapUiFeederMedium');
 		break;
-		case sap.ui.ux3.FeederType.Comment:
+		case FeederType.Comment:
 			rm.addClass('sapUiFeederComment');
 		break;
 		default: // large feeder is default
@@ -51,7 +55,7 @@ sap.ui.define(['jquery.sap.global'],
 		rm.write('<img id=' + oFeeder.getId() + '-thumb');
 		var sThumbnail = oFeeder.getThumbnailSrc();
 		if (!sThumbnail) {
-			sThumbnail = sap.ui.core.theming.Parameters._getThemeImage("_sap_ui_ux3_Feeder_PersonPlaceholder");
+			sThumbnail = Parameters._getThemeImage("_sap_ui_ux3_Feeder_PersonPlaceholder");
 		}
 		rm.writeAttributeEscaped('src', sThumbnail);
 
@@ -78,7 +82,7 @@ sap.ui.define(['jquery.sap.global'],
 	};
 
 	FeederRenderer.getEmptyTextInfo = function( oFeeder ){
-		return "<span class='sapUiFeederEmptyText'>" + jQuery.sap.encodeHTML(oFeeder.getPlaceholderText() || oFeeder.rb.getText("FEED_EMPTY_FEEDER")) + "</span>";
+		return "<span class='sapUiFeederEmptyText'>" + encodeXML(oFeeder.getPlaceholderText() || oFeeder.rb.getText("FEED_EMPTY_FEEDER")) + "</span>";
 	};
 
 

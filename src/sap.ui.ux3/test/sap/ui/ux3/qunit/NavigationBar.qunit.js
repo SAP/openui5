@@ -3,7 +3,7 @@ sap.ui.define([
 	"sap/ui/qunit/QUnitUtils",
 	"sap/ui/qunit/utils/createAndAppendDiv",
 	"sap/ui/ux3/NavigationBar",
-	"jquery.sap.global",
+	"sap/ui/thirdparty/jquery",
 	"sap/ui/ux3/NavigationItem"
 ], function(qutils, createAndAppendDiv, NavigationBar, jQuery, NavigationItem) {
 	"use strict";
@@ -35,7 +35,7 @@ sap.ui.define([
 
 	QUnit.test("Initial Check", function(assert) {
 		assert.ok(oCtrl, "NavBar should exist after creating");
-		var oDomRef = jQuery.sap.domById("n1");
+		var oDomRef = window.document.getElementById("n1");
 		assert.ok(oDomRef, "NavBar root element should exist in the page");
 	});
 
@@ -193,14 +193,14 @@ sap.ui.define([
 
 	QUnit.test("Overflow", function(assert) {
 		var done = assert.async();
-		jQuery.sap.byId("uiArea1").css("width", "80px");
+		jQuery(document.getElementById("uiArea1")).css("width", "80px");
 		setTimeout(function(){
 			assert.equal(isForwardVisible(), true, "forward arrow should be visible");
 			assert.equal(isForwardEnabled(), true, "forward arrow should be enabled");
 			assert.equal(isBackVisible(), true, "back arrow should be visible");
 			assert.equal(isBackEnabled(), false, "back arrow should not be enabled");
 
-			jQuery.sap.byId("uiArea1").css("width", "800px");
+			jQuery(document.getElementById("uiArea1")).css("width", "800px");
 			setTimeout(function(){
 				assert.equal(isForwardVisible(), false, "forward arrow should not be visible");
 				assert.equal(isBackVisible(), false, "back arrow should not be visible");

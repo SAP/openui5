@@ -6,19 +6,20 @@ sap.ui.define([
 	"sap/ui/ux3/Notifier",
 	"sap/ui/core/Message",
 	"sap/ui/core/library",
-	"jquery.sap.global",
+	"sap/ui/thirdparty/jquery",
 	"sap/ui/ux3/library",
-	"jquery.sap.keycodes",
+	"sap/ui/events/KeyCodes",
 	"sap/ui/events/jquery/EventExtension"
 ], function(
-	qutils,
+    qutils,
 	createAndAppendDiv,
 	NotificationBar,
 	Notifier,
 	Message,
 	coreLibrary,
 	jQuery,
-	ux3Library
+	ux3Library,
+	KeyCodes
 ) {
 	"use strict";
 
@@ -183,7 +184,7 @@ sap.ui.define([
 		oMN.addMessage(oMessage);
 		sap.ui.getCore().applyChanges();
 
-		var $InplaceText = jQuery.sap.byId(oNotiBar.getId() + "-inplaceMessage");
+		var $InplaceText = jQuery(document.getElementById(oNotiBar.getId() + "-inplaceMessage"));
 		var bTest = $InplaceText.hasClass("sapUiInPlaceMessageSelectable");
 		assert.ok(!bTest, "Inplace text for common message is not selectable - there is no event listener");
 
@@ -191,7 +192,7 @@ sap.ui.define([
 		oMN.attachMessageSelected(function() {
 		});
 		sap.ui.getCore().applyChanges();
-		$InplaceText = jQuery.sap.byId(oNotiBar.getId() + "-inplaceMessage");
+		$InplaceText = jQuery(document.getElementById(oNotiBar.getId() + "-inplaceMessage"));
 		bTest = $InplaceText.hasClass("sapUiInPlaceMessageSelectable");
 		assert.ok(bTest, "Inplace text for common message is selectable");
 
@@ -206,7 +207,7 @@ sap.ui.define([
 		oMN.addMessage(oReadOnlyMessage);
 		sap.ui.getCore().applyChanges();
 
-		$InplaceText = jQuery.sap.byId(oNotiBar.getId() + "-inplaceMessage");
+		$InplaceText = jQuery(document.getElementById(oNotiBar.getId() + "-inplaceMessage"));
 		bTest = $InplaceText.hasClass("sapUiInPlaceMessageSelectable");
 		assert.ok(!bTest, "Inplace text is not selectable because it's read only");
 	});
@@ -299,7 +300,7 @@ sap.ui.define([
 		oNotiBar.addNotifier(oNotifier);
 		sap.ui.getCore().applyChanges();
 
-		var $notifier = jQuery.sap.byId(oNotifier.getId());
+		var $notifier = jQuery(document.getElementById(oNotifier.getId()));
 
 		var oEvt = jQuery.Event("mouseover");
 		$notifier.trigger(oEvt);
@@ -331,8 +332,8 @@ sap.ui.define([
 		var done = assert.async();
 		assert.expect(2);
 
-		var sKeyLeft = jQuery.sap.KeyCodes.ARROW_LEFT;
-		var sKeyRight = jQuery.sap.KeyCodes.ARROW_RIGHT;
+		var sKeyLeft = KeyCodes.ARROW_LEFT;
+		var sKeyRight = KeyCodes.ARROW_RIGHT;
 
 		var oMN = new Notifier({
 			title : "Message Notifier"
@@ -377,7 +378,7 @@ sap.ui.define([
 		var done = assert.async();
 		assert.expect(5);
 
-		var sKeyRight = jQuery.sap.KeyCodes.ARROW_RIGHT;
+		var sKeyRight = KeyCodes.ARROW_RIGHT;
 
 		var oMN = new Notifier("messageNotifier", {
 			title : "Message Notifier"
@@ -405,7 +406,7 @@ sap.ui.define([
 		sap.ui.getCore().applyChanges();
 
 		// NotificationBar is in maximized-mode
-		var oDomRef = jQuery.sap.domById("messageNotifier-messageNotifierView-messageView-messageMaximized2");
+		var oDomRef = window.document.getElementById("messageNotifier-messageNotifierView-messageView-messageMaximized2");
 		jQuery(oDomRef).focus();
 
 		setTimeout(function() {
@@ -421,7 +422,7 @@ sap.ui.define([
 				bTest = after.id === "messageNotifier-messageNotifierView-messageView-messageMaximized1";
 				assert.ok(bTest, "Next message notifier message focused");
 
-				oDomRef = jQuery.sap.domById(after.id);
+				oDomRef = after.id ? window.document.getElementById(after.id) : null;
 				before = after;
 				qutils.triggerKeydown(oDomRef, sKeyRight);
 
@@ -431,7 +432,7 @@ sap.ui.define([
 					bTest = before.id !== after.id;
 					assert.ok(bTest, "Moved to message of common notifier");
 
-					oDomRef = jQuery.sap.domById(after.id);
+					oDomRef = after.id ? window.document.getElementById(after.id) : null;
 					before = after;
 					qutils.triggerKeydown(oDomRef, sKeyRight);
 

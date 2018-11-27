@@ -4,12 +4,13 @@
 
 // Provides control sap.ui.ux3.OverlayContainer.
 sap.ui.define([
-    'jquery.sap.global',
     './Overlay',
     './library',
-    "./OverlayContainerRenderer"
+    './OverlayContainerRenderer',
+    // jQuery Plugin "lastFocusableDomRef"
+	'sap/ui/dom/jquery/Focusable'
 ],
-	function(jQuery, Overlay, library, OverlayContainerRenderer) {
+	function(Overlay, library, OverlayContainerRenderer) {
 	"use strict";
 
 
@@ -52,13 +53,17 @@ sap.ui.define([
 	 * @private
 	 */
 	OverlayContainer.prototype._setFocusLast = function() {
+	    // jQuery Plugin "lastFocusableDomRef"
 		var oFocus = this.$("content").lastFocusableDomRef();
 		if (!oFocus && this.getCloseButtonVisible()) {
 			oFocus = this.getDomRef("close");
 		} else if (!oFocus && this.getOpenButtonVisible()) {
 			oFocus = this.getDomRef("openNew");
 		}
-		jQuery.sap.focus(oFocus);
+
+		if (oFocus) {
+		    oFocus.focus();
+		}
 	};
 
 	/**
@@ -68,14 +73,20 @@ sap.ui.define([
 	 */
 	OverlayContainer.prototype._setFocusFirst = function() {
 		if (this.getOpenButtonVisible()) {
-			jQuery.sap.focus(this.getDomRef("openNew"));
+			if (this.getDomRef("openNew")) {
+				this.getDomRef("openNew").focus();
+			}
 		} else if (this.getCloseButtonVisible()) {
-			jQuery.sap.focus(this.getDomRef("close"));
+			if (this.getDomRef("close")) {
+				this.getDomRef("close").focus();
+			}
 		} else {
-			jQuery.sap.focus(this.$("content").firstFocusableDomRef());
+			if (this.$("content").firstFocusableDomRef()) {
+				this.$("content").firstFocusableDomRef().focus();
+			}
 		}
 	};
 
 	return OverlayContainer;
 
-}, /* bExport= */ true);
+});

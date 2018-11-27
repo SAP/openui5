@@ -1,18 +1,20 @@
 /*global QUnit */
 sap.ui.define([
-	"sap/ui/qunit/utils/createAndAppendDiv",
-	"sap/ui/model/json/JSONModel",
-	"sap/ui/ux3/DataSet",
-	"sap/ui/ux3/DataSetItem",
-	"sap/ui/ux3/DataSetSimpleView",
-	"sap/ui/commons/TextField"
+    "sap/ui/qunit/utils/createAndAppendDiv",
+    "sap/ui/model/json/JSONModel",
+    "sap/ui/ux3/DataSet",
+    "sap/ui/ux3/DataSetItem",
+    "sap/ui/ux3/DataSetSimpleView",
+    "sap/ui/commons/TextField",
+    "sap/ui/thirdparty/jquery"
 ], function(
-	createAndAppendDiv,
+    createAndAppendDiv,
 	JSONModel,
 	DataSet,
 	DataSetItem,
 	DataSetSimpleView,
-	TextField
+	TextField,
+	jQuery
 ) {
 	"use strict";
 

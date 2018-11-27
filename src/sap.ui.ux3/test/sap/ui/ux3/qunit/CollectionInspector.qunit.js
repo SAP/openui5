@@ -1,22 +1,20 @@
 /*global QUnit */
 sap.ui.define([
-	"sap/ui/qunit/QUnitUtils",
-	"sap/ui/qunit/utils/createAndAppendDiv",
-	"sap/ui/ux3/Collection",
-	"sap/ui/core/Item",
-	"sap/ui/ux3/ThingViewer",
-	"sap/ui/commons/Panel",
-	"sap/ui/ux3/CollectionInspector",
-	"jquery.sap.global"
+    "sap/ui/qunit/QUnitUtils",
+    "sap/ui/qunit/utils/createAndAppendDiv",
+    "sap/ui/ux3/Collection",
+    "sap/ui/core/Item",
+    "sap/ui/ux3/ThingViewer",
+    "sap/ui/commons/Panel",
+    "sap/ui/ux3/CollectionInspector"
 ], function(
-	qutils,
+    qutils,
 	createAndAppendDiv,
 	Collection,
 	Item,
 	ThingViewer,
 	Panel,
-	CollectionInspector,
-	jQuery
+	CollectionInspector
 ) {
 	"use strict";
 
@@ -115,7 +113,7 @@ sap.ui.define([
 
 	QUnit.test("Show collection two", function(assert) {
 		var done = assert.async();
-		qutils.triggerMouseEvent(jQuery.sap.byId("__button2"), "click", 1, 1, 1, 1);
+		qutils.triggerMouseEvent(jQuery(document.getElementById("__button2")), "click", 1, 1, 1, 1);
 		setTimeout(function() {
 			assert.equal(oCollectionInspector.$('sidebar').width(), 150, "Sidebar is visible.");
 			done();
@@ -126,17 +124,17 @@ sap.ui.define([
 		assert.equal(oCollectionInspector.getSelectedCollection(), oCollection2.getId());
 		assert.equal(oCollectionInspector.$('content').find('section').attr('id'), "__panel0");
 		assert.equal(oCollectionInspector.$('sidebar').find('li').length, 3);
-		qutils.triggerMouseEvent(jQuery.sap.byId("__button1"), "click", 1, 1, 1, 1);
+		qutils.triggerMouseEvent(jQuery(document.getElementById("__button1")), "click", 1, 1, 1, 1);
 		assert.equal(oCollectionInspector.getSelectedCollection(), oCollection1.getId());
 		assert.equal(oCollectionInspector.$('content').find('div').attr('id'), "__viewer0");
 		assert.equal(oCollectionInspector.$('sidebar').find('li').length, 2);
-		qutils.triggerMouseEvent(jQuery.sap.byId("__button3"), "click", 1, 1, 1, 1);
+		qutils.triggerMouseEvent(jQuery(document.getElementById("__button3")), "click", 1, 1, 1, 1);
 		assert.equal(oCollectionInspector.getSelectedCollection(), oCollection3.getId());
 	});
 
 	QUnit.module("Sidebar Navigation");
 	QUnit.test("Select items", function(assert) {
-		qutils.triggerMouseEvent(jQuery.sap.byId("__button1"), "click", 1, 1, 1, 1);
+		qutils.triggerMouseEvent(jQuery(document.getElementById("__button1")), "click", 1, 1, 1, 1);
 		var oSelectedCollection = sap.ui.getCore().byId(oCollectionInspector.getSelectedCollection());
 		oSelectedCollection.addSelectedItem(oSelectedCollection.getItems()[0]);
 		assert.equal(oCollectionInspector.$('sidebar').find('ul li:nth-child(1)').hasClass("sapUiUx3CICollectionListItemSelected"), true);
@@ -144,7 +142,7 @@ sap.ui.define([
 		oSelectedCollection.addSelectedItem(oSelectedCollection.getItems()[1]);
 		assert.equal(oCollectionInspector.$('sidebar').find('ul li:nth-child(1)').hasClass("sapUiUx3CICollectionListItemSelected"), false);
 		assert.equal(oCollectionInspector.$('sidebar').find('ul li:nth-child(2)').hasClass("sapUiUx3CICollectionListItemSelected"), true);
-		qutils.triggerMouseEvent(jQuery.sap.byId("__button2"), "click", 1, 1, 1, 1);
+		qutils.triggerMouseEvent(jQuery(document.getElementById("__button2")), "click", 1, 1, 1, 1);
 		oSelectedCollection = sap.ui.getCore().byId(oCollectionInspector.getSelectedCollection());
 		oSelectedCollection.addSelectedItem(oSelectedCollection.getItems()[0]);
 		assert.equal(oCollectionInspector.$('sidebar').find('ul li:nth-child(1)').hasClass("sapUiUx3CICollectionListItemSelected"), true);

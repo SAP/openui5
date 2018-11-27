@@ -4,15 +4,30 @@
 
 // Provides control sap.ui.ux3.ThingInspector.
 sap.ui.define([
-    'jquery.sap.global',
     './ActionBar',
     './Overlay',
     './ThingViewer',
-    "./ThingInspectorRenderer",
-    './library'
+    './ThingInspectorRenderer',
+    './library',
+    './ThingAction',
+    // jQuery custom selectors ':sapFocusable'
+    'sap/ui/dom/jquery/Selectors',
+    // jQuery Plugin 'lastFocusableDomRef'
+    'sap/ui/dom/jquery/Focusable'
 ],
-	function(jQuery, ActionBar, Overlay, ThingViewer, ThingInspectorRenderer) {
+	function(ActionBar, Overlay, ThingViewer, ThingInspectorRenderer, library, ThingAction) {
 	"use strict";
+
+
+
+	// shortcut for sap.ui.ux3.ActionBarSocialActions
+	var ActionBarSocialActions = library.ActionBarSocialActions;
+
+	// shortcut for sap.ui.ux3.ThingViewerHeaderType
+	var ThingViewerHeaderType = library.ThingViewerHeaderType;
+
+	// shortcut for sap.ui.ux3.FollowActionState
+	var FollowActionState = library.FollowActionState;
 
 
 
@@ -61,7 +76,7 @@ sap.ui.define([
 			/**
 			 * Follow State of a Thing
 			 */
-			followState : {type : "sap.ui.ux3.FollowActionState", group : "Misc", defaultValue : sap.ui.ux3.FollowActionState.Default},
+			followState : {type : "sap.ui.ux3.FollowActionState", group : "Misc", defaultValue : FollowActionState.Default},
 
 			/**
 			 * State of Flag Action
@@ -97,7 +112,7 @@ sap.ui.define([
 			 * Defines which header type should be used.
 			 * @since 1.16.3
 			 */
-			headerType : {type : "sap.ui.ux3.ThingViewerHeaderType", group : "Misc", defaultValue : sap.ui.ux3.ThingViewerHeaderType.Standard}
+			headerType : {type : "sap.ui.ux3.ThingViewerHeaderType", group : "Misc", defaultValue : ThingViewerHeaderType.Standard}
 		},
 		aggregations : {
 
@@ -197,7 +212,6 @@ sap.ui.define([
 	}});
 
 
-	(function() {
 		/**
 		 * Initialization hook for the Thinginspector. It creates the instance of the
 		 * Popup helper service and does some basic configuration for it.
@@ -228,13 +242,13 @@ sap.ui.define([
 						oBarAction = oEvent.getParameters().action,
 						oThingAction;
 
-					if (sActionID.indexOf(sap.ui.ux3.ActionBarSocialActions.Favorite) !== -1 ||
-						sActionID.indexOf(sap.ui.ux3.ActionBarSocialActions.Follow) !== -1 ||
-						sActionID.indexOf(sap.ui.ux3.ActionBarSocialActions.Flag) !== -1) {
+					if (sActionID.indexOf(ActionBarSocialActions.Favorite) !== -1 ||
+						sActionID.indexOf(ActionBarSocialActions.Follow) !== -1 ||
+						sActionID.indexOf(ActionBarSocialActions.Flag) !== -1) {
 						if (that._oSocialActions[sActionID]) {
 							oThingAction = that._oSocialActions[sActionID];
 						} else {
-							oThingAction =  new sap.ui.ux3.ThingAction({
+							oThingAction =  new ThingAction({
 								id: that.getId() + "-" + sActionID.toLowerCase(),
 								text: oBarAction.text,
 								enabled: oBarAction.enabled
@@ -346,13 +360,19 @@ sap.ui.define([
 		 * @private
 		 */
 		ThingInspector.prototype._setFocusLast = function() {
+		    // jQuery Plugin "lastFocusableDomRef"
 			var oFocus = this.$("thingViewer-toolbar").lastFocusableDomRef();
+			// jQuery custom selectors ":sapFocusable"
 			if (!oFocus && this.getCloseButtonVisible() && this.$("close").is(":sapFocusable")) {
 				oFocus = this.getDomRef("close");
-			} else if (!oFocus && this.getOpenButtonVisible() && this.$("openNew").is(":sapFocusable")) {
+			} else // jQuery custom selectors ":sapFocusable"
+			if (!oFocus && this.getOpenButtonVisible() && this.$("openNew").is(":sapFocusable")) {
 				oFocus = this.getDomRef("openNew");
 			}
-			jQuery.sap.focus(oFocus);
+
+			if (oFocus) {
+				oFocus.focus();
+			}
 		};
 
 		/**
@@ -361,12 +381,20 @@ sap.ui.define([
 		 * @private
 		 */
 		ThingInspector.prototype._setFocusFirst = function() {
+			// jQuery custom selectors ":sapFocusable"
 			if (this.getOpenButtonVisible() && this.$("openNew").is(":sapFocusable")) {
-				jQuery.sap.focus(this.getDomRef("openNew"));
-			} else if (this.getCloseButtonVisible() && this.$("close").is(":sapFocusable")) {
-				jQuery.sap.focus(this.getDomRef("close"));
+				if (this.getDomRef("openNew")) {
+					this.getDomRef("openNew").focus();
+				}
+			} else // jQuery custom selectors ":sapFocusable"
+			if (this.getCloseButtonVisible() && this.$("close").is(":sapFocusable")) {
+				if (this.getDomRef("close")) {
+					this.getDomRef("close").focus();
+				}
 			} else {
-				jQuery.sap.focus(this.$("thingViewer-content").firstFocusableDomRef());
+				if (this.$("thingViewer-content").firstFocusableDomRef()) {
+					this.$("thingViewer-content").firstFocusableDomRef().focus();
+				}
 			}
 		};
 
@@ -734,9 +762,8 @@ sap.ui.define([
 			}
 			return this;
 		};
-	}());
 
 
 	return ThingInspector;
 
-}, /* bExport= */ true);
+});

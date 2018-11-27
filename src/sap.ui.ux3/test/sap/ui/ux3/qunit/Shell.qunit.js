@@ -4,7 +4,7 @@ sap.ui.define([
 	"sap/ui/qunit/utils/createAndAppendDiv",
 	"sap/ui/commons/Button",
 	"sap/ui/ux3/Shell",
-	"jquery.sap.global",
+	"sap/ui/thirdparty/jquery",
 	"sap/ui/ux3/library",
 	"sap/ui/ux3/NavigationItem",
 	"sap/ui/core/Item",
@@ -102,24 +102,24 @@ sap.ui.define([
 		assert.equal(jQuery(".sapUiUx3ShellHeader-logout").length, 0, "There should be no logout button");
 		assert.equal(jQuery(".sapUiUx3ShellHeaderSep").length, 0, "There should be no header item separator");
 
-		var oDomRef = jQuery.sap.domById(oShell.getId() + "-tool-" + oShell.getId() + "-searchTool");
+		var oDomRef = oShell.getId() + "-tool-" + oShell.getId() + "-searchTool" ? window.document.getElementById(oShell.getId() + "-tool-" + oShell.getId() + "-searchTool") : null;
 		assert.ok(oDomRef, "Search tool should exist in the page");
-		oDomRef = jQuery.sap.domById(oShell.getId() + "-tool-" + oShell.getId() + "-feederTool");
+		oDomRef = oShell.getId() + "-tool-" + oShell.getId() + "-feederTool" ? window.document.getElementById(oShell.getId() + "-tool-" + oShell.getId() + "-feederTool") : null;
 		assert.ok(oDomRef, "Feeder tool should exist in the page");
 
 		assert.equal(jQuery(".sapUiUx3ShellToolPaletteArea").children().children().length, 3, "There should be two tools (plus an accessibility description)");
 
 		assert.equal(jQuery(".sapUiUx3ShellToolSep").length, 0, "There should be no tool separator");
 
-		assert.ok(jQuery.sap.domById("myShell-wsBar-list"), "Workset item navigation area should exist in the page");
-		assert.equal(jQuery.sap.byId("myShell-wsBar-list").children().length, 2, "There should not be any workset items, just the arrow and the dummy");
+		assert.ok(window.document.getElementById("myShell-wsBar-list"), "Workset item navigation area should exist in the page");
+		assert.equal(jQuery(document.getElementById("myShell-wsBar-list")).children().length, 2, "There should not be any workset items, just the arrow and the dummy");
 	});
 
 
 	QUnit.test("Destroy and remove control", function(assert) {
 		oShell.destroy();
 		sap.ui.getCore().applyChanges();
-		var oDomRef = jQuery.sap.domById(oShell.getId());
+		var oDomRef = oShell.getId() ? window.document.getElementById(oShell.getId()) : null;
 		assert.ok(!oDomRef, "Rendered Shell should not exist in the page after destruction");
 	});
 
@@ -143,8 +143,8 @@ sap.ui.define([
 			oShell.setFullHeightContent(oSettings.fullHeightContent);
 			oShell.setApplyContentPadding(oSettings.enablePadding);
 
-			var $canvas = jQuery.sap.byId("myShell-canvas");
-			var $content = jQuery.sap.byId("myShell-content");
+			var $canvas = jQuery(document.getElementById("myShell-canvas"));
+			var $content = jQuery(document.getElementById("myShell-content"));
 
 			if ($canvas.height() > 0){ //Skip check when test window too small
 				if (oShell.getFullHeightContent()){
@@ -224,7 +224,7 @@ sap.ui.define([
 		oShell.placeAt("uiArea1");
 		sap.ui.getCore().applyChanges();
 
-		var $canvas = jQuery.sap.byId("myShell-canvas");
+		var $canvas = jQuery(document.getElementById("myShell-canvas"));
 
 		function check(sProp){
 			var sVal = $canvas.css(sProp);
@@ -268,7 +268,7 @@ sap.ui.define([
 		oShell.placeAt("uiArea1");
 		sap.ui.getCore().applyChanges();
 
-		var jRef = jQuery.sap.byId(oShell.getId());
+		var jRef = jQuery(document.getElementById(oShell.getId()));
 		assert.ok(jRef.length == 1, "Rendered Shell should exist in the page");
 		assert.ok(jRef.hasClass("sapUiUx3Shell"), "Rendered Shell should have the class 'sapUiUx3Shell'");
 		assert.ok(jRef.hasClass("sapUiUx3ShellHeadStandard"), "Rendered Shell should have the class 'sapUiUx3ShellHeadStandard'");
@@ -278,12 +278,12 @@ sap.ui.define([
 	QUnit.test("Advanced Content", function(assert) {
 		var header = jQuery(".sapUiUx3ShellHeader")[0];
 		assert.ok(header.innerHTML.indexOf("") > -1, "Application Title must be present");
-		assert.equal(jQuery.sap.byId(oShell.getId() + "-logoImg").attr("src"), "http://www.sap.com/global/images/SAPLogo.gif", "Application Logo must be displayed");
+		assert.equal(jQuery(document.getElementById(oShell.getId() + "-logoImg")).attr("src"), "http://www.sap.com/global/images/SAPLogo.gif", "Application Logo must be displayed");
 
 		assert.equal(jQuery(".sapUiUx3ShellHeader-logout").length, 1, "There should be a logout button");
 		assert.equal(jQuery(".sapUiUx3ShellHeaderSep").length, 0, "There should be no header item separator");
 
-		var $wi = jQuery.sap.byId(oShell.getId() + "-wsBar-list");
+		var $wi = jQuery(document.getElementById(oShell.getId() + "-wsBar-list"));
 		assert.equal($wi.length, 1, "WorksetItem holder should exist");
 		assert.equal($wi.children().length, 5, "There should be three WorksetItems plus dummy plus arrow");
 		assert.ok($wi.children(":eq(1)").hasClass("sapUiUx3NavBarItemSel"), "First workset item should be selected");
@@ -292,17 +292,17 @@ sap.ui.define([
 
 		// if window is wide enough, there should be no overflow icons visible
 		if ($wi.width() > 250) {
-			var $wiofL = jQuery.sap.byId(oShell.getId() + "-wsBar-ofb");
+			var $wiofL = jQuery(document.getElementById(oShell.getId() + "-wsBar-ofb"));
 			assert.equal($wiofL.css("display"), "none", "Left workset item overflow button should be invisible");
-			var $wiofR = jQuery.sap.byId(oShell.getId() + "-wsBar-off");
+			var $wiofR = jQuery(document.getElementById(oShell.getId() + "-wsBar-off"));
 			assert.equal($wiofR.css("display"), "none", "Right workset item overflow button should be invisible");
 		}
 
-		var oDomRef = jQuery.sap.domById(oShell.getId() + "-tool-" + oShell.getId() + "-searchTool");
+		var oDomRef = oShell.getId() + "-tool-" + oShell.getId() + "-searchTool" ? window.document.getElementById(oShell.getId() + "-tool-" + oShell.getId() + "-searchTool") : null;
 		assert.ok(!!oDomRef, "Search tool should exist in the page");
-		oDomRef = jQuery.sap.domById(oShell.getId() + "-tool-" + oShell.getId() + "-inspectorTool");
+		oDomRef = oShell.getId() + "-tool-" + oShell.getId() + "-inspectorTool" ? window.document.getElementById(oShell.getId() + "-tool-" + oShell.getId() + "-inspectorTool") : null;
 		assert.ok(!oDomRef, "Inspector tool should NOT exist in the page");
-		oDomRef = jQuery.sap.domById(oShell.getId() + "-tool-" + oShell.getId() + "-feederTool");
+		oDomRef = oShell.getId() + "-tool-" + oShell.getId() + "-feederTool" ? window.document.getElementById(oShell.getId() + "-tool-" + oShell.getId() + "-feederTool") : null;
 		assert.ok(!!oDomRef, "Feeder tool should exist in the page");
 	});
 
@@ -311,7 +311,7 @@ sap.ui.define([
 
 		qutils.triggerMouseEvent("wi_so", "click", 1, 1, 1, 1);
 
-		var $wi = jQuery.sap.byId(oShell.getId() + "-wsBar-list");
+		var $wi = jQuery(document.getElementById(oShell.getId() + "-wsBar-list"));
 		assert.ok(!$wi.children(":eq(1)").hasClass("sapUiUx3NavBarItemSel"), "First workset item should NOT be selected");
 		assert.ok($wi.children(":eq(2)").hasClass("sapUiUx3NavBarItemSel"), "Second workset item should be selected");
 		assert.ok(!$wi.children(":eq(3)").hasClass("sapUiUx3NavBarItemSel"), "Third workset item should NOT be selected");
@@ -350,7 +350,7 @@ sap.ui.define([
 		assert.expect(2);
 		oShell.addContent(new Button("newContentBtn", {text:"new content"}));
 		setTimeout(function() {
-			assert.ok(jQuery.sap.domById("newContentBtn"), "The new content should now be present in the page");
+			assert.ok(window.document.getElementById("newContentBtn"), "The new content should now be present in the page");
 			assert.equal(renderCount, 1, "Still, only ONE re-rendering should have happened after adding more content");
 			done();
 		}, 10);
@@ -371,7 +371,7 @@ sap.ui.define([
 
 		oShell.addContent(newLbx);
 		setTimeout(function() {
-			assert.ok(jQuery.sap.domById("newContentLbx"), "The new content should now be present in the page");
+			assert.ok(window.document.getElementById("newContentLbx"), "The new content should now be present in the page");
 			assert.equal(onAfterRenderingCount, 1, "ListBox.onAfterRendering should have been called once");
 			done();
 		}, 10);
@@ -440,16 +440,16 @@ sap.ui.define([
 		assert.expect(8);
 
 		// pane should be closed
-		assert.equal(jQuery.sap.byId(oShell.getId() + "-paneBar").hasClass("sapUiUx3ShellPaneBarOpen"), false, "Pane bar should be closed");
-		assert.equal(jQuery.sap.byId("paneContent").length, 0, "Pane content should not yet exist");
+		assert.equal(jQuery(document.getElementById(oShell.getId() + "-paneBar")).hasClass("sapUiUx3ShellPaneBarOpen"), false, "Pane bar should be closed");
+		assert.equal(jQuery(document.getElementById("paneContent")).length, 0, "Pane content should not yet exist");
 
 		// open pane
 		qutils.triggerMouseEvent("pb_people", "click", 1, 1, 1, 1);
 
 		setTimeout(function() {
 			// check whether pane is open now
-			assert.equal(jQuery.sap.byId(oShell.getId() + "-paneBar").hasClass("sapUiUx3ShellPaneBarOpen"), true, "Pane bar should be open");
-			assert.equal(jQuery.sap.byId("paneContent").length, 1, "Pane content should exist");
+			assert.equal(jQuery(document.getElementById(oShell.getId() + "-paneBar")).hasClass("sapUiUx3ShellPaneBarOpen"), true, "Pane bar should be open");
+			assert.equal(jQuery(document.getElementById("paneContent")).length, 1, "Pane content should exist");
 
 			assert.equal(document.activeElement.id, "paneContent", "Pane content has focus after opening");
 
@@ -458,7 +458,7 @@ sap.ui.define([
 
 			setTimeout(function() {
 				// check whether pane is closed
-				assert.equal(jQuery.sap.byId(oShell.getId() + "-paneBar").hasClass("sapUiUx3ShellPaneBarOpen"), false, "Pane bar should be closed");
+				assert.equal(jQuery(document.getElementById(oShell.getId() + "-paneBar")).hasClass("sapUiUx3ShellPaneBarOpen"), false, "Pane bar should be closed");
 				done();
 			}, 3000);
 		}, 3000);

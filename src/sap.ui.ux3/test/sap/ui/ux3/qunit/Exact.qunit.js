@@ -1,12 +1,13 @@
 /*global QUnit, exactTestData */
 sap.ui.define([
-	"sap/ui/qunit/QUnitUtils",
-	"sap/ui/qunit/utils/createAndAppendDiv",
-	"sap/ui/ux3/Exact",
-	"sap/ui/commons/Menu",
-	"sap/ui/ux3/ExactAttribute",
-	"../resources/ExactData"
-], function(qutils, createAndAppendDiv, Exact, Menu, ExactAttribute) {
+    "sap/ui/qunit/QUnitUtils",
+    "sap/ui/qunit/utils/createAndAppendDiv",
+    "sap/ui/ux3/Exact",
+    "sap/ui/commons/Menu",
+    "sap/ui/ux3/ExactAttribute",
+    "sap/ui/thirdparty/jquery",
+    "../resources/ExactData"
+], function(qutils, createAndAppendDiv, Exact, Menu, ExactAttribute, jQuery) {
 	"use strict";
 
 	// prepare DOM

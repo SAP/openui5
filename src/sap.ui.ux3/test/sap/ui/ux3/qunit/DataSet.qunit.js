@@ -2,13 +2,14 @@
 sap.ui.define([
 	"sap/ui/qunit/QUnitUtils",
 	"sap/ui/qunit/utils/createAndAppendDiv",
-	"jquery.sap.global",
+	"sap/ui/thirdparty/jquery",
 	"sap/ui/model/json/JSONModel",
 	"sap/ui/ux3/DataSetItem",
 	"sap/ui/ux3/DataSetSimpleView",
 	"sap/ui/ux3/DataSet",
 	"sap/ui/core/Control",
-	"sap/ui/commons/Button"
+	"sap/ui/commons/Button",
+	"sap/ui/core/mvc/View" // sap.ui.view
 ], function(
 	qutils,
 	createAndAppendDiv,
@@ -218,9 +219,9 @@ sap.ui.define([
 			assert.ok(oDataSet.getDomRef(), "dataset should exist in the page");
 			assert.ok(oDataSet.getDomRef("searchValue"),
 					"filter field should exist in the page");
-			assert.ok(jQuery.sap.domById(oDataSet.getId() + "-view-" + oDataSet.getViews()[0].getId()),
+			assert.ok(oDataSet.getId() + "-view-" + oDataSet.getViews()[0].getId() ? window.document.getElementById(oDataSet.getId() + "-view-" + oDataSet.getViews()[0].getId()) : null,
 					"view button 1 should exist in the page");
-			assert.ok(jQuery.sap.domById(oDataSet.getId() + "-view-" + oDataSet.getViews()[1].getId()),
+			assert.ok(oDataSet.getId() + "-view-" + oDataSet.getViews()[1].getId() ? window.document.getElementById(oDataSet.getId() + "-view-" + oDataSet.getViews()[1].getId()) : null,
 					"view button 2 should exist in the page");
 			done();
 		}, 1000);

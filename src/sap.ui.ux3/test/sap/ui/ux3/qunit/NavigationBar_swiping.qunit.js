@@ -2,10 +2,10 @@
 sap.ui.define([
 	"sap/ui/qunit/QUnitUtils",
 	"sap/ui/qunit/utils/createAndAppendDiv",
-	"jquery.sap.global",
 	"sap/ui/ux3/NavigationBar",
-	"sap/ui/ux3/NavigationItem"
-], function(qutils, createAndAppendDiv, jQuery, NavigationBar, NavigationItem) {
+	"sap/ui/ux3/NavigationItem",
+	"sap/ui/events/jquery/EventSimulation"
+], function(qutils, createAndAppendDiv, NavigationBar, NavigationItem, EventSimulation) {
 	"use strict";
 
 	// prepare DOM
@@ -24,14 +24,14 @@ sap.ui.define([
 
 
 	// to make NavigationBar believe the device supports touch
-	var origTouchEventMode = jQuery.sap.touchEventMode;
+	var origTouchEventMode = EventSimulation.touchEventMode;
 	if (origTouchEventMode !== "ON") {
-		jQuery.sap.touchEventMode = "ON";
+		EventSimulation.touchEventMode = "ON";
 	}
 
 	var oCtrl = new NavigationBar("n1").placeAt("uiArea1");
 
-	jQuery.sap.touchEventMode = origTouchEventMode; //Set touch event mode back to original value
+	EventSimulation.touchEventMode = origTouchEventMode; //Set touch event mode back to original value
 
 	for (var i = 0; i < 5; i++) {
 		oCtrl.addItem(new NavigationItem({text:"Item with a long title, so we have something to scroll 1"}));

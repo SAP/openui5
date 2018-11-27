@@ -3,9 +3,22 @@
  */
 
 // Provides control sap.ui.ux3.Notifier.
-sap.ui.define(['jquery.sap.global', 'sap/ui/commons/Callout', 'sap/ui/core/Element', './library'],
-	function(jQuery, Callout, Element, library) {
+sap.ui.define([
+    'sap/ui/thirdparty/jquery',
+    'sap/ui/commons/Callout',
+    'sap/ui/core/Element',
+    './library',
+    'sap/ui/core/library',
+    'sap/ui/Device',
+    'sap/base/Log'
+],
+	function(jQuery, Callout, Element, library, coreLibrary, Device, Log) {
 	"use strict";
+
+
+
+	// shortcut for sap.ui.core.MessageType
+	var MessageType = coreLibrary.MessageType;
 
 
 
@@ -85,7 +98,6 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/commons/Callout', 'sap/ui/core/Eleme
 	 * This file defines behavior for the control,
 	 */
 
-	(function() {
 		var fBeforeOpen = function() {
 			this.fireEvent("_childControlCalling", {
 				type : "openCallout",
@@ -142,7 +154,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/commons/Callout', 'sap/ui/core/Eleme
 				collision : "none"
 			});
 			this._oCallout.addStyleClass("sapUiNotifierCallout");
-			if (sap.ui.Device.browser.mobile) {
+			if (Device.browser.mobile) {
 				// if used on a mobile device the tab-event is transfered into a
 				// 'mouseover' to open the Callout. To simulate a real tab-event the
 				// open delay of the callout has to be eleminated.
@@ -186,7 +198,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/commons/Callout', 'sap/ui/core/Eleme
 
 			this.setTooltip(this._oCallout);
 			this.setTooltip = function() {
-				jQuery.sap.log.warning("Setting toolstips for notifiers deactivated");
+				Log.warning("Setting toolstips for notifiers deactivated");
 			};
 
 			this._proxyEnableMessageSelect = jQuery.proxy(fnEnableMessageSelect, this);
@@ -238,7 +250,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/commons/Callout', 'sap/ui/core/Eleme
 		};
 
 		var fnFireChildControlCalling = function(sType, oMessage, oThat) {
-			var sLevel = oMessage ? oMessage.getLevel() : sap.ui.core.MessageType.None;
+			var sLevel = oMessage ? oMessage.getLevel() : MessageType.None;
 
 			oThat.fireEvent("_childControlCalling", {
 				type : sType,
@@ -293,8 +305,8 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/commons/Callout', 'sap/ui/core/Eleme
 
 			return this;
 		};
-	}());
+
 
 	return Notifier;
 
-}, /* bExport= */ true);
+});

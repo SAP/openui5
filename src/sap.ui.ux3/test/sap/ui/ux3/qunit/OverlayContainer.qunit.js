@@ -1,12 +1,11 @@
 /*global QUnit */
 sap.ui.define([
-	"sap/ui/qunit/QUnitUtils",
-	"sap/ui/qunit/utils/createAndAppendDiv",
-	"sap/ui/ux3/OverlayContainer",
-	"sap/ui/commons/Button",
-	"jquery.sap.global",
-	"jquery.sap.keycodes"
-], function(qutils, createAndAppendDiv, OverlayContainer, Button, jQuery) {
+    "sap/ui/qunit/QUnitUtils",
+    "sap/ui/qunit/utils/createAndAppendDiv",
+    "sap/ui/ux3/OverlayContainer",
+    "sap/ui/commons/Button",
+    "sap/ui/events/KeyCodes"
+], function(qutils, createAndAppendDiv, OverlayContainer, Button, KeyCodes) {
 	"use strict";
 
 	// prepare DOM
@@ -52,8 +51,8 @@ sap.ui.define([
 
 	QUnit.test("OpenNew via Keyboard Event", function (assert) {
 		assert.expect(2);
-		qutils.triggerKeyboardEvent(oOverlayContainer.getId() + "-openNew", jQuery.sap.KeyCodes.ENTER, false, false, false);
-		qutils.triggerKeyboardEvent(oOverlayContainer.getId() + "-openNew", jQuery.sap.KeyCodes.SPACE, false, false, false);
+		qutils.triggerKeyboardEvent(oOverlayContainer.getId() + "-openNew", KeyCodes.ENTER, false, false, false);
+		qutils.triggerKeyboardEvent(oOverlayContainer.getId() + "-openNew", KeyCodes.SPACE, false, false, false);
 	});
 
 	QUnit.test("Open Method", function (assert) {
@@ -64,7 +63,7 @@ sap.ui.define([
 		assert.ok(oOverlayContainer.isOpen(), "Rendered OverlayContainer is open");
 		setTimeout(
 				function () {
-					assert.ok(jQuery.sap.domById(oOverlayContainer.getId() + "Button"), "Rendered Content should exist in the page");
+					assert.ok(oOverlayContainer.getId() + "Button" ? window.document.getElementById(oOverlayContainer.getId() + "Button") : null, "Rendered Content should exist in the page");
 					done();
 				}, 500);
 	});

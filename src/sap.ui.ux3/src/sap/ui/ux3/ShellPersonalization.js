@@ -3,9 +3,43 @@
  */
 
 // Provides the class sap.ui.ux3.ShellPersonalization
-sap.ui.define(['jquery.sap.global', 'sap/ui/base/EventProvider', 'sap/ui/commons/Button', 'sap/ui/commons/Dialog'],
-	function(jQuery, EventProvider, Button, Dialog) {
+sap.ui.define([
+    'sap/ui/thirdparty/jquery',
+    'sap/ui/base/EventProvider',
+    'sap/ui/commons/Button',
+    'sap/ui/commons/Dialog',
+    'sap/ui/core/theming/Parameters',
+    './ShellColorPicker',
+    'sap/ui/commons/library',
+    'sap/ui/core/HTML',
+    'sap/ui/core/Popup',
+    'sap/ui/commons/Tab',
+    'sap/ui/core/Item',
+    'sap/ui/Device',
+    'sap/base/security/encodeXML'
+],
+	function(
+	    jQuery,
+		EventProvider,
+		Button,
+		Dialog,
+		Parameters,
+		ShellColorPicker,
+		commonsLibrary,
+		HTML,
+		Popup,
+		Tab,
+		Item,
+		Device,
+		encodeXML
+	) {
 	"use strict";
+
+
+
+
+	// shortcut for sap.ui.core.Popup.Dock
+	var Dock = Popup.Dock;
 
 
 
@@ -42,7 +76,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/EventProvider', 'sap/ui/commons
 	 * @public
 	 */
 	ShellPersonalization.prototype.initializeSettings = function(oSettings) {
-		this.oSettings = jQuery.extend({}, oSettings);
+		this.oSettings = Object.assign({}, oSettings);
 		if (this.shell.getDomRef()) {
 			this.applySettings(oSettings);
 		}
@@ -90,29 +124,29 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/EventProvider', 'sap/ui/commons
 
 	ShellPersonalization.TRANSPARENT_1x1 = sap.ui.resource('sap.ui.core', 'themes/base/img/1x1.gif');
 
-	ShellPersonalization.IMAGE_FOLDER_PATH = jQuery.sap.getModulePath("sap.ui.ux3.themes." + sap.ui.getCore().getConfiguration().getTheme(), "/img/shell/");
+	ShellPersonalization.IMAGE_FOLDER_PATH = sap.ui.require.toUrl(
+		"sap/ui/ux3/themes/" + sap.ui.getCore().getConfiguration().getTheme() + "/img/shell/");
 
 	ShellPersonalization.getOriginalSettings = function() {
 		// buffer the settings
 		if (!ShellPersonalization._bOriginalSettingsInitialized) {
 			ShellPersonalization._bOriginalSettingsInitialized = true;
 
-			jQuery.sap.require("sap.ui.core.theming.Parameters");
-			var mAllParameters = sap.ui.core.theming.Parameters.get();
+			var mAllParameters = Parameters.get();
 			var gradientTop = mAllParameters["sap.ui.ux3.Shell:sapUiUx3ShellGradientTop"];
 			var gradientBottom = mAllParameters["sap.ui.ux3.Shell:sapUiUx3ShellGradientBottom"];
 
-			if (!!sap.ui.Device.browser.firefox) {
+			if (Device.browser.firefox) {
 				ShellPersonalization.ORIGINAL_SETTINGS.sBgCssImg = "-moz-linear-gradient(top, " + gradientTop + " 0, " + gradientBottom + " 108px, " + gradientBottom + ")";
-			} else if (!!sap.ui.Device.browser.internet_explorer) {
-				if (sap.ui.Device.browser.version == 9) {
+			} else if (Device.browser.msie) {
+				if (Device.browser.version == 9) {
 					ShellPersonalization.ORIGINAL_SETTINGS.sBgCssImg = "url("
 						+ ShellPersonalization.IMAGE_FOLDER_PATH
 						+ "Workset_bg.png)";
 				} else { // IE10+
 					ShellPersonalization.ORIGINAL_SETTINGS.sBgCssImg = "-ms-linear-gradient(top, " + gradientTop + " 0, " + gradientBottom + " 108px, " + gradientBottom + ")";
 				}
-			} else if (!!sap.ui.Device.browser.webkit) {
+			} else if (Device.browser.webkit) {
 				ShellPersonalization.ORIGINAL_SETTINGS.sBgCssImg = "-webkit-linear-gradient(top, " + gradientTop + " 0, " + gradientBottom + " 108px, " + gradientBottom + ")";
 			}
 		}
@@ -147,8 +181,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/EventProvider', 'sap/ui/commons
 	 */
 	ShellPersonalization.prototype.applySettings = function(oSettings) {
 		// copy fallback settings and mix in the given settings
-		var oActualSettings = jQuery.extend({}, ShellPersonalization.getOriginalSettings());
-		oActualSettings = jQuery.extend(oActualSettings, oSettings);
+		var oActualSettings = Object.assign({}, ShellPersonalization.getOriginalSettings(), oSettings);
 
 		// apply the settings
 		this.applyByDStyle(oActualSettings.bByDStyle);
@@ -186,7 +219,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/EventProvider', 'sap/ui/commons
 			return;
 		} // first check is important because if !this.oDialog, the getter builds the Dialog and relies on the existence of this.oSettings!
 																// but on the other hand, this.oSettings must not be initialized when the Dialog is already open
-		this.oTransientSettings = jQuery.extend({}, this.oSettings);
+		this.oTransientSettings = Object.assign({}, this.oSettings);
 
 		this._getDialog().open();
 
@@ -198,18 +231,18 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/EventProvider', 'sap/ui/commons
 
 
 	ShellPersonalization.prototype.getTransientSettingsWithDefaults = function() {
-		return jQuery.extend(jQuery.extend({}, ShellPersonalization.getOriginalSettings()), this.oTransientSettings);
+		return Object.assign({}, ShellPersonalization.getOriginalSettings(), this.oTransientSettings);
 	};
 
 
 	ShellPersonalization.prototype._bindDragAndDrop = function(sPrefix) {
 		if (window.FileReader) {
 			var sId = this.shell.getId() + "-p13n_";
-			jQuery.sap.byId(sId + sPrefix + "ImageImg")
+			jQuery(document.getElementById(sId + sPrefix + "ImageImg"))
 				.bind('dragover', jQuery.proxy(this._handleDragover, this))
 				.bind('dragend',jQuery.proxy(this._handleDragend, this))
 				.bind('drop', jQuery.proxy(this._handleDrop, this));
-			jQuery.sap.byId(sId + sPrefix + "ImageHolder")
+			jQuery(document.getElementById(sId + sPrefix + "ImageHolder"))
 				.bind('dragover', jQuery.proxy(this._handleDragover, this))
 				.bind('dragend',jQuery.proxy(this._handleDragend, this))
 				.bind('drop', jQuery.proxy(this._handleDrop, this));
@@ -218,11 +251,11 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/EventProvider', 'sap/ui/commons
 	ShellPersonalization.prototype._unbindDragAndDrop = function(sPrefix) {
 		if (window.FileReader) {
 			var sId = this.shell.getId() + "-p13n_";
-			jQuery.sap.byId(sId + "hdrImageImg")
+			jQuery(document.getElementById(sId + "hdrImageImg"))
 				.unbind('dragover', this._handleDragover)
 				.unbind('dragend', this._handleDragend)
 				.unbind('drop', this._handleDrop);
-			jQuery.sap.byId(sId + "hdrImageHolder")
+			jQuery(document.getElementById(sId + "hdrImageHolder"))
 				.unbind('dragover', this._handleDragover)
 				.unbind('dragend', this._handleDragend)
 				.unbind('drop', this._handleDrop);
@@ -237,10 +270,8 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/EventProvider', 'sap/ui/commons
 	 */
 	ShellPersonalization.prototype._getDialog = function() {
 		if (!this.oDialog) {
-			jQuery.sap.require("sap.ui.ux3.ShellColorPicker");
-
 			var sId = this.shell.getId() + "-p13n_";
-			var oSettingsWithDefaults = jQuery.extend(jQuery.extend({}, ShellPersonalization.getOriginalSettings()), this.oSettings);
+			var oSettingsWithDefaults = Object.assign({}, ShellPersonalization.getOriginalSettings(), this.oSettings);
 			var c = sap.ui.commons;
 			var that = this;
 
@@ -294,11 +325,11 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/EventProvider', 'sap/ui/commons
 
 			/* build the first tab */
 
-			this.oBgImgHtml = new sap.ui.core.HTML(sId + "bgImageHolder", {
+			this.oBgImgHtml = new HTML(sId + "bgImageHolder", {
 				preferDOM:true,
 				content:"<div id='" + sId + "bgImageHolder' class='sapUiUx3ShellP13nImgHolder'><img id='" + sId + "bgImageImg' src='"
 				+ (this.oTransientSettings.sBackgroundImageSrc ?
-						jQuery.sap.encodeHTML(this.oTransientSettings.sBackgroundImageSrc)
+						encodeXML(this.oTransientSettings.sBackgroundImageSrc)
 						: sap.ui.resource('sap.ui.core', 'themes/base/img/1x1.gif')) + "'/></div>"}
 			);
 
@@ -315,7 +346,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/EventProvider', 'sap/ui/commons
 				liveChange:jQuery.proxy(this._handleSidebarOpacitySliderChange,this)
 			});
 
-			this.oBgColorPicker = new sap.ui.ux3.ShellColorPicker(sId + "bgColorPicker");
+			this.oBgColorPicker = new ShellColorPicker(sId + "bgColorPicker");
 			this.oBgColorPicker.attachLiveChange(function(oEvent){
 				that._handleBgColorChange(oEvent);
 			});
@@ -323,16 +354,16 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/EventProvider', 'sap/ui/commons
 			var that = this;
 			oBgColorBtn.attachPress(function(){
 				if (!that.oBgColorPicker.isOpen()) {
-					that.oBgColorPicker.open(sap.ui.ux3.ShellColorPicker.parseCssRgbString(that.getTransientSettingsWithDefaults().sBgColor),
-							sap.ui.core.Popup.Dock.BeginTop, sap.ui.core.Popup.Dock.BeginBottom, that.shell.getDomRef("bgColor"));
+					that.oBgColorPicker.open(ShellColorPicker.parseCssRgbString(that.getTransientSettingsWithDefaults().sBgColor),
+							Dock.BeginTop, Dock.BeginBottom, that.shell.getDomRef("bgColor"));
 				}
 			});
-			this.oBgPreviewHtml = new sap.ui.core.HTML({
+			this.oBgPreviewHtml = new HTML({
 				preferDom:true,
-				content:"<div id='" + this.shell.getId() + "-bgColor' style='background-color:" + jQuery.sap.encodeHTML(oSettingsWithDefaults.sBgColor) + "' class='sapUiUx3ShellColorPickerPreview'></div>"
+				content:"<div id='" + this.shell.getId() + "-bgColor' style='background-color:" + encodeXML(oSettingsWithDefaults.sBgColor) + "' class='sapUiUx3ShellColorPickerPreview'></div>"
 			});
 
-			var oBgTab = new sap.ui.commons.Tab().setText("Background").addContent(new c.layout.MatrixLayout({layoutFixed:false})
+			var oBgTab = new Tab().setText("Background").addContent(new c.layout.MatrixLayout({layoutFixed:false})
 				.createRow(new c.Label({text:"Background Image:"}), this.oBgImgHtml)
 				.createRow(new c.Label({text:"Image Transparency:"}), this.oBgImgOpacitySlider)
 				.createRow(new c.Label({text:"Background Color:"}), new c.layout.MatrixLayoutCell().addContent(this.oBgPreviewHtml).addContent(oBgColorBtn))
@@ -348,16 +379,16 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/EventProvider', 'sap/ui/commons
 				text:"ByDesign-style Header Bar",
 				checked:this.oTransientSettings.bByDStyle,change:jQuery.proxy(this._handleByDStyleChange,this)
 			});
-			this.oHdrImgHtml = new sap.ui.core.HTML(sId + "hdrImageHolder", {
+			this.oHdrImgHtml = new HTML(sId + "hdrImageHolder", {
 				preferDOM:true,
 				content:"<div id='" + sId + "hdrImageHolder' class='sapUiUx3ShellP13nImgHolder'><img id='" + sId + "hdrImageImg' src='"
 				+ (this.oTransientSettings.sHeaderImageSrc ?
-						jQuery.sap.encodeHTML(this.oTransientSettings.sHeaderImageSrc)
+						encodeXML(this.oTransientSettings.sHeaderImageSrc)
 						: sap.ui.resource('sap.ui.core', 'themes/base/img/1x1.gif'))
 				+ "'/></div>"}
 			);
 
-			this.oLineColorPicker = new sap.ui.ux3.ShellColorPicker(sId + "lineColorPicker");
+			this.oLineColorPicker = new ShellColorPicker(sId + "lineColorPicker");
 			this.oLineColorPicker.attachLiveChange(function(oEvent){
 				that._handleLineColorChange(oEvent);
 			});
@@ -365,16 +396,16 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/EventProvider', 'sap/ui/commons
 			var that = this;
 			oLineColorBtn.attachPress(function(){
 				if (!that.oLineColorPicker.isOpen()) {
-					that.oLineColorPicker.open(sap.ui.ux3.ShellColorPicker.parseCssRgbString(that.getTransientSettingsWithDefaults().sLineColor),
-							sap.ui.core.Popup.Dock.BeginTop, sap.ui.core.Popup.Dock.BeginBottom, that.shell.getDomRef("lineColor"));
+					that.oLineColorPicker.open(ShellColorPicker.parseCssRgbString(that.getTransientSettingsWithDefaults().sLineColor),
+							Dock.BeginTop, Dock.BeginBottom, that.shell.getDomRef("lineColor"));
 				}
 			});
-			this.oLinePreviewHtml = new sap.ui.core.HTML({
+			this.oLinePreviewHtml = new HTML({
 				preferDom: true,
-				content: "<div id='" + this.shell.getId() + "-lineColor' style='background-color:" + jQuery.sap.encodeHTML(oSettingsWithDefaults.sLineColor)
+				content: "<div id='" + this.shell.getId() + "-lineColor' style='background-color:" + encodeXML(oSettingsWithDefaults.sLineColor)
 				+ "' class='sapUiUx3ShellColorPickerPreview'></div>"});
 
-			var oHdrTab = new sap.ui.commons.Tab().setText("Header Bar").addContent(new c.layout.MatrixLayout({layoutFixed:false})
+			var oHdrTab = new Tab().setText("Header Bar").addContent(new c.layout.MatrixLayout({layoutFixed:false})
 				.createRow(new c.Label({text:"Line Color (ByD-style only):"}), new c.layout.MatrixLayoutCell().addContent(this.oLinePreviewHtml).addContent(oLineColorBtn))
 				.createRow(null)
 				.createRow(new c.Label({text:"Header Image:"}), this.oHdrImgHtml)
@@ -384,23 +415,23 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/EventProvider', 'sap/ui/commons
 
 			/* build the third tab */
 
-			this.oLogoImgHtml = new sap.ui.core.HTML(sId + "logoImageHolder", {
+			this.oLogoImgHtml = new HTML(sId + "logoImageHolder", {
 				preferDOM:true,
 				content:"<div id='" + sId + "logoImageHolder' class='sapUiUx3ShellP13nImgHolder'><img id='" + sId + "logoImageImg' src='"
 				+ (this.oTransientSettings.sLogoImageSrc ?
-						jQuery.sap.encodeHTML(this.oTransientSettings.sLogoImageSrc)
+						encodeXML(this.oTransientSettings.sLogoImageSrc)
 						: sap.ui.resource('sap.ui.core', 'themes/base/img/1x1.gif'))
 				+ "'/></div>"}
 			);
 			this.oLogoRbg = new c.RadioButtonGroup()
-				.addItem(new sap.ui.core.Item({text:"Left",key:"left"}))
-				.addItem(new sap.ui.core.Item({text:"Center",key:"center"}))
+				.addItem(new Item({text:"Left",key:"left"}))
+				.addItem(new Item({text:"Center",key:"center"}))
 				.attachSelect(this._handleLogoAlignChange, this);
 			this.oUseLogoSizeCb = new c.CheckBox({
 				text:"Use original image size",
 				checked:this.oTransientSettings.bUseLogoSize,change:jQuery.proxy(this._handleUseLogoSizeChange,this)
 			});
-			var oLogoTab = new sap.ui.commons.Tab().setText("Logo").addContent(new c.layout.MatrixLayout({layoutFixed:false})
+			var oLogoTab = new Tab().setText("Logo").addContent(new c.layout.MatrixLayout({layoutFixed:false})
 				.createRow(new c.Label({text:"Logo Image:"}), this.oLogoImgHtml)
 				.createRow(new c.Label({text:"Position:"}), this.oLogoRbg)
 				.createRow(this.oUseLogoSizeCb)
@@ -413,7 +444,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/EventProvider', 'sap/ui/commons
 
 			var that = this;
 			d.addButton(new c.Button({text:"Reset All",press:function(){
-				that.applySettings(jQuery.extend({}, ShellPersonalization.getOriginalSettings()));
+				that.applySettings(Object.assign({}, ShellPersonalization.getOriginalSettings()));
 				that.oSettings = {};
 				that.oTransientSettings = {};
 				that.updateDialog();
@@ -423,7 +454,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/EventProvider', 'sap/ui/commons
 				that.firePersonalizationChange({settings:{}});
 			}}));
 			d.addButton(new c.Button({text:"OK",press:function(){
-				that.oSettings = jQuery.extend({}, that.oTransientSettings); // settings are already applied
+				that.oSettings = Object.assign({}, that.oTransientSettings); // settings are already applied
 				that.firePersonalizationChange({settings:that.oSettings});
 				d.close();
 			}}));
@@ -439,13 +470,12 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/EventProvider', 'sap/ui/commons
 
 
 	ShellPersonalization.prototype.updateDialog = function() {
-		var oActualSettings = jQuery.extend({}, ShellPersonalization.getOriginalSettings());
-		oActualSettings = jQuery.extend(oActualSettings, this.oSettings);
+		var oActualSettings = Object.assign({}, ShellPersonalization.getOriginalSettings(), this.oSettings);
 		var sId = this.shell.getId() + "-p13n_";
 
 		this.oBgImgHtml.setContent("<div id='" + sId + "bgImageHolder' class='sapUiUx3ShellP13nImgHolder'><img id='" + sId + "bgImageImg' src='"
 				+ (oActualSettings.sBackgroundImageSrc ?
-						jQuery.sap.encodeHTML(oActualSettings.sBackgroundImageSrc)
+						encodeXML(oActualSettings.sBackgroundImageSrc)
 						: sap.ui.resource('sap.ui.core', 'themes/base/img/1x1.gif'))
 				+ "'/></div>");
 		this.oBgImgOpacitySlider.setValue(100 - oActualSettings.fBgImgOpacity * 100);
@@ -454,7 +484,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/EventProvider', 'sap/ui/commons
 		this.oByDStyleCb.setChecked(oActualSettings.bByDStyle);
 		this.oHdrImgHtml.setContent("<div id='" + sId + "hdrImageHolder' class='sapUiUx3ShellP13nImgHolder'><img id='" + sId + "hdrImageImg' src='"
 				+ (oActualSettings.sHeaderImageSrc ?
-						jQuery.sap.encodeHTML(oActualSettings.sHeaderImageSrc)
+						encodeXML(oActualSettings.sHeaderImageSrc)
 						: sap.ui.resource('sap.ui.core', 'themes/base/img/1x1.gif'))
 				+ "'/></div>");
 
@@ -462,7 +492,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/EventProvider', 'sap/ui/commons
 		this.oUseLogoSizeCb.setChecked(oActualSettings.bUseLogoSize);
 		this.oLogoImgHtml.setContent("<div id='" + sId + "logoImageHolder' class='sapUiUx3ShellP13nImgHolder'><img id='" + sId + "logoImageImg' src='"
 				+ (oActualSettings.sLogoImageSrc ?
-						jQuery.sap.encodeHTML(oActualSettings.sLogoImageSrc)
+						encodeXML(oActualSettings.sLogoImageSrc)
 						: sap.ui.resource('sap.ui.core', 'themes/base/img/1x1.gif'))
 				+ "'/></div>");
 	};
@@ -623,7 +653,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/EventProvider', 'sap/ui/commons
 	ShellPersonalization.prototype._handleDragover = function(evt) {
 		var id = evt.target.id;
 		if (!this._dragOverBlinking) {
-			var $bg = jQuery.sap.byId(id);
+			var $bg = jQuery(document.getElementById(id));
 			$bg.css("opacity", "0.5");
 			this._dragOverBlinking = true;
 			var that = this;
@@ -668,4 +698,4 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/EventProvider', 'sap/ui/commons
 
 	return ShellPersonalization;
 
-}, /* bExport= */ true);
+});

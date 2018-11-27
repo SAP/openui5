@@ -1,24 +1,26 @@
 /*global QUnit, sinon */
 sap.ui.define([
-	"sap/ui/qunit/QUnitUtils",
-	"sap/ui/qunit/utils/createAndAppendDiv",
-	"sap/ui/commons/Button",
-	"sap/ui/ux3/ToolPopup",
-	"jquery.sap.global",
-	"sap/ui/core/Popup",
-	"sap/ui/commons/FormattedTextView",
-	"sap/ui/commons/TextField",
-	"sap/ui/commons/TextView",
-	"sap/ui/commons/Link",
-	"sap/ui/commons/Label",
-	"sap/ui/commons/layout/MatrixLayoutCell",
-	"sap/ui/commons/library",
-	"sap/ui/commons/layout/MatrixLayoutRow",
-	"sap/ui/commons/layout/MatrixLayout",
-	"sap/ui/core/HTML",
-	"jquery.sap.keycodes"
+    "sap/ui/qunit/QUnitUtils",
+    "sap/ui/qunit/utils/createAndAppendDiv",
+    "sap/ui/commons/Button",
+    "sap/ui/ux3/ToolPopup",
+    "sap/ui/thirdparty/jquery",
+    "sap/ui/core/Popup",
+    "sap/ui/commons/FormattedTextView",
+    "sap/ui/commons/TextField",
+    "sap/ui/commons/TextView",
+    "sap/ui/commons/Link",
+    "sap/ui/commons/Label",
+    "sap/ui/commons/layout/MatrixLayoutCell",
+    "sap/ui/commons/library",
+    "sap/ui/commons/layout/MatrixLayoutRow",
+    "sap/ui/commons/layout/MatrixLayout",
+    "sap/ui/core/HTML",
+    "sap/ui/events/KeyCodes",
+    // jQuery Plugin "rect"
+	"sap/ui/dom/jquery/rect"
 ], function(
-	qutils,
+    qutils,
 	createAndAppendDiv,
 	Button,
 	ToolPopup,
@@ -33,7 +35,8 @@ sap.ui.define([
 	commonsLibrary,
 	MatrixLayoutRow,
 	MatrixLayout,
-	HTML
+	HTML,
+	KeyCodes
 ) {
 	"use strict";
 
@@ -82,6 +85,7 @@ sap.ui.define([
 	var oTPRect = {};
 
 	var $Window = jQuery(window);
+	// jQuery Plugin "rect"
 	var oWindowRect = $Window.rect();
 
 	var oPosition = {
@@ -125,9 +129,12 @@ sap.ui.define([
 		var fnOpened = function() {
 			oTP1.detachOpened(fnOpened);
 
+			// jQuery Plugin "rect"
 			oBtnRect = oBtn1.$().rect();
+			// jQuery Plugin "rect"
 			oTPRect = oTP1.$().rect();
-			$Arrow = jQuery.sap.byId("tp1-arrow");
+			$Arrow = jQuery(document.getElementById("tp1-arrow"));
+			// jQuery Plugin "rect"
 			oArrowRect = $Arrow.rect();
 
 			// since this function is called - it is already open
@@ -203,9 +210,12 @@ sap.ui.define([
 		var fnOpened = function() {
 			oTP1.detachOpened(fnOpened);
 
+			// jQuery Plugin "rect"
 			oBtnRect = oBtn1.$().rect();
+			// jQuery Plugin "rect"
 			oTPRect = oTP1.$().rect();
-			$Arrow = jQuery.sap.byId("tp1-arrow");
+			$Arrow = jQuery(document.getElementById("tp1-arrow"));
+			// jQuery Plugin "rect"
 			oArrowRect = $Arrow.rect();
 
 			bTest = oTP1.isOpen();
@@ -231,6 +241,7 @@ sap.ui.define([
 
 	QUnit.test("Open left (default)", function(assert) {
 		var done = assert.async();
+		// jQuery Plugin "rect"
 		oWindowRect = jQuery(window).rect();
 		oWindowRect.width = $Window.width();
 		oWindowRect.height = $Window.height();
@@ -260,9 +271,12 @@ sap.ui.define([
 		var fnOpened = function() {
 			oTP1.detachOpened(fnOpened);
 
+			// jQuery Plugin "rect"
 			oBtnRect = oBtn1.$().rect();
+			// jQuery Plugin "rect"
 			oTPRect = oTP1.$().rect();
-			$Arrow = jQuery.sap.byId("tp1-arrow");
+			$Arrow = jQuery(document.getElementById("tp1-arrow"));
+			// jQuery Plugin "rect"
 			oArrowRect = $Arrow.rect();
 
 			sBorderWidth = oTP1.$().css("border-left-width");
@@ -305,9 +319,12 @@ sap.ui.define([
 		var fnOpened = function() {
 			oTP1.detachOpened(fnOpened);
 
+			// jQuery Plugin "rect"
 			oBtnRect = oBtn1.$().rect();
+			// jQuery Plugin "rect"
 			oTPRect = oTP1.$().rect();
-			$Arrow = jQuery.sap.byId("tp1-arrow");
+			$Arrow = jQuery(document.getElementById("tp1-arrow"));
+			// jQuery Plugin "rect"
 			oArrowRect = $Arrow.rect();
 
 			sBorderWidth = oTP1.$().css("border-top-width");
@@ -358,9 +375,12 @@ sap.ui.define([
 			oTP1.detachOpened(fnOpened);
 			bTest = oTP1.isOpen();
 			if (bTest) {
+				// jQuery Plugin "rect"
 				oBtnRect = oBtn1.$().rect();
+				// jQuery Plugin "rect"
 				oTPRect = oTP1.$().rect();
-				$Arrow = jQuery.sap.byId("tp1-arrow");
+				$Arrow = jQuery(document.getElementById("tp1-arrow"));
+				// jQuery Plugin "rect"
 				oArrowRect = $Arrow.rect();
 
 				bTest = oTPRect.top + oTPRect.height <= oBtnRect.top;
@@ -396,6 +416,7 @@ sap.ui.define([
 	QUnit.module("Collision detection");
 	QUnit.test("fit", function(assert) {
 		var done = assert.async();
+		// jQuery Plugin "rect"
 		oWindowRect = jQuery(window).rect();
 		oWindowRect.width = $Window.width();
 		oWindowRect.height = $Window.height();
@@ -433,9 +454,12 @@ sap.ui.define([
 			bTest = oTP2.isOpen();
 			assert.ok(bTest, "ToolPopup opened");
 
+			// jQuery Plugin "rect"
 			oBtnRect = oBtn1.$().rect();
+			// jQuery Plugin "rect"
 			oTPRect = oTP2.$().rect();
-			$Arrow = jQuery.sap.byId("tp2-arrow");
+			$Arrow = jQuery(document.getElementById("tp2-arrow"));
+			// jQuery Plugin "rect"
 			oArrowRect = $Arrow.rect();
 
 			if (bTest) {
@@ -459,6 +483,7 @@ sap.ui.define([
 
 	QUnit.test("flip", function(assert) {
 		var done = assert.async();
+		// jQuery Plugin "rect"
 		oWindowRect = jQuery(window).rect();
 		oWindowRect.width = $Window.width();
 		oWindowRect.height = $Window.height();
@@ -497,9 +522,12 @@ sap.ui.define([
 			bTest = oTP3.isOpen();
 			assert.ok(bTest, "ToolPopup opened");
 
+			// jQuery Plugin "rect"
 			oBtnRect = oBtn2.$().rect();
+			// jQuery Plugin "rect"
 			oTPRect = oTP3.$().rect();
-			$Arrow = jQuery.sap.byId("tp3-arrow");
+			$Arrow = jQuery(document.getElementById("tp3-arrow"));
+			// jQuery Plugin "rect"
 			oArrowRect = $Arrow.rect();
 
 			sBorderWidth = oTP3.$().css("border-left-width");
@@ -616,7 +644,7 @@ sap.ui.define([
 		var fnOpened = function() {
 			oTPFocus.detachOpened(fnOpened);
 
-			var sKeyEnter = jQuery.sap.KeyCodes.ENTER;
+			var sKeyEnter = KeyCodes.ENTER;
 			var oDomRef = sap.ui.getCore().byId("FormattedTextView1").getDomRef();
 			qutils.triggerKeydown(oDomRef, sKeyEnter);
 
@@ -749,6 +777,7 @@ sap.ui.define([
 		var fnOpened = function() {
 			oTPMaxHeight.detachOpened(fnOpened);
 
+			// jQuery Plugin "rect"
 			oTPRect = oTPMaxHeight.$().rect();
 
 			bTest = Math.round(oTPRect.height) <= 200;
@@ -768,6 +797,7 @@ sap.ui.define([
 
 		var fnOpened = function() {
 			oTPMaxHeight.detachOpened(fnOpened);
+			// jQuery Plugin "rect"
 			oTPRect = oTPMaxHeight.$().rect();
 
 			// IE10, 11 are adding some fractions to the calculation in some cases// TODO remove after 1.62 version
@@ -815,10 +845,12 @@ sap.ui.define([
 			oTPMaxHeight.detachOpened(fnOpened);
 
 			var iWinHeight = jQuery(window).height();
+			// jQuery Plugin "rect"
 			var oRect = oTPMaxHeight.$().rect();
 
 			assert.ok(oRect.top + oRect.height < iWinHeight, "ToolPopup isn't bigger than window");
 
+			// jQuery Plugin "rect"
 			oRect = oTPMaxHeight.$("content").rect();
 			assert.ok(oRect.top + oRect.height < iWinHeight, "Content properly shrinked to ToolPopup size and not bigger than window");
 
@@ -906,6 +938,7 @@ sap.ui.define([
 
 			var fnApplyPosition = sinon.spy(oTPContent.oPopup, "_applyPosition");
 
+			// jQuery Plugin "rect"
 			var $Rect = oTPContent.$().rect();
 			var iOldHeight = $Rect.height;
 
@@ -923,6 +956,7 @@ sap.ui.define([
 			oTPContent.addContent(oLayout);
 			sap.ui.getCore().applyChanges();
 
+			// jQuery Plugin "rect"
 			$Rect = oTPContent.$().rect();
 			var iNewHeight = $Rect.height;
 
