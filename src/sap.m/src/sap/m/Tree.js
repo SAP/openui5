@@ -156,6 +156,13 @@ function(
 		return oResult;
 	};
 
+	Tree.prototype._updateDeepestLevel = function(oItem) {
+		// for level change action, e.g. expand
+		if (oItem.getLevel() + 1 > this.getDeepestLevel()) {
+			this._iDeepestLevel = oItem.getLevel() + 1;
+		}
+	};
+
 	Tree.prototype.onItemExpanderPressed = function(oItem, bExpand) {
 		var iIndex = this.indexOfItem(oItem);
 		var oBindingInfo = this.getBindingInfo("items");
@@ -166,9 +173,7 @@ function(
 			var bExpandedAfterPress;
 
 			// make sure when rendering is called, the padding calc uses the correct deepest level
-			if (oItem.getLevel() + 1 > this.getDeepestLevel()) {
-				this._iDeepestLevel = oItem.getLevel() + 1;
-			}
+			this._updateDeepestLevel(oItem);
 
 			if (bExpand == undefined) {
 				this.getBinding("items").toggleIndex(iIndex);
@@ -355,10 +360,17 @@ function(
 		var oBinding = this.getBinding("items");
 
 		if (oBinding && oBinding.expand) {
-			var aIndices = this._preExpand(vParam);
+			var aIndices = this._preExpand(vParam),
+				oItem;
 			for (var i = 0; i < aIndices.length - 1; i++) {
+				oItem = this.getItems()[aIndices[i]];
+				this._updateDeepestLevel(oItem);
 				oBinding.expand(aIndices[i], true);
 			}
+
+			oItem = this.getItems()[aIndices[aIndices.length - 1]];
+			this._updateDeepestLevel(oItem);
+
 			// trigger change
 			oBinding.expand(aIndices[aIndices.length - 1], false);
 		}
@@ -414,6 +426,8 @@ function(
 
 	Tree.prototype.onItemLongDragOver = function(oItem) {
 		var iIndex = this.indexOfItem(oItem);
+		this._updateDeepestLevel(oItem);
+
 		this.getBinding("items").expand(iIndex);
 	};
 
