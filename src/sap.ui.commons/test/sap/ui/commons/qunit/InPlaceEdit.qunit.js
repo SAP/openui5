@@ -9,8 +9,8 @@ sap.ui.define([
 	"sap/ui/commons/DropdownBox",
 	"sap/ui/commons/Link",
 	"sap/ui/core/library",
-	"jquery.sap.global",
-	"jquery.sap.keycodes"
+	"sap/ui/thirdparty/jquery",
+	"sap/ui/events/KeyCodes"
 ], function(
 	qutils,
 	createAndAppendDiv,
@@ -21,7 +21,8 @@ sap.ui.define([
 	DropdownBox,
 	Link,
 	coreLibrary,
-	jQuery
+	jQuery,
+	KeyCodes
 ) {
 	"use strict";
 
@@ -201,25 +202,25 @@ sap.ui.define([
 
 	QUnit.test("Visual appearance", function(assert) {
 		oIPE1.focus();
-		assert.ok(jQuery.sap.domById("TF1"), "TextField1 rendered");
+		assert.ok(document.getElementById("TF1"), "TextField1 rendered");
 		assert.equal(jQuery("#IPE1").get(0).offsetWidth, 200, "Width of the control");
 
 		oIPE2.focus();
-		assert.ok(!jQuery.sap.domById("TF2"), "TextField2 not rendered");
+		assert.ok(!document.getElementById("TF2"), "TextField2 not rendered");
 
 		oIPE4.focus();
-		assert.ok(jQuery.sap.domById("CB1"), "ComboBox1 rendered");
+		assert.ok(document.getElementById("CB1"), "ComboBox1 rendered");
 
 		oIPE5.focus();
-		assert.ok(jQuery.sap.domById("DdB1"), "DropdownBox1 rendered");
+		assert.ok(document.getElementById("DdB1"), "DropdownBox1 rendered");
 	});
 
 	QUnit.test("Link", function(assert) {
 		oIPE6.focus();
-		assert.ok(!jQuery.sap.domById("IPE6--input"), "on focus no TextField rendered");
+		assert.ok(!document.getElementById("IPE6--input"), "on focus no TextField rendered");
 		assert.equal(jQuery("#IPE6--Edit").css("visibility"), "visible", "on focus Edit button visible");
 		qutils.triggerEvent("click", "IPE6--Edit");
-		assert.ok(jQuery.sap.domById("IPE6--input"), "Edit mode: TextField rendered");
+		assert.ok(document.getElementById("IPE6--input"), "Edit mode: TextField rendered");
 		assert.ok(!jQuery("#IPE6--Edit").get(0), "Edit mode: no edit button rendered");
 	});
 
@@ -231,7 +232,7 @@ sap.ui.define([
 			assert.equal(jQuery("#IPE1--X").css("visibility"), "hidden", "Undo button invisible");
 			qutils.triggerCharacterInput("TF1", "A");
 			qutils.triggerEvent("input", "TF1");
-			qutils.triggerKeyup("TF1", jQuery.sap.KeyCodes.A, true, false, false);
+			qutils.triggerKeyup("TF1", KeyCodes.A, true, false, false);
 			assert.equal(jQuery("#TF1").val(), sStartText + "A", "Displayed text");
 			assert.equal(jQuery("#IPE1--X").css("visibility"), "visible", "Undo button visible");
 		done();
@@ -245,7 +246,7 @@ sap.ui.define([
 		setTimeout(function(){
 			assert.ok(!jQuery("#IPE7--X").get(0), "no Undo button rendered");
 			qutils.triggerCharacterInput("TF4", "A");
-			qutils.triggerKeyup("TF4", jQuery.sap.KeyCodes.A, true, false, false);
+			qutils.triggerKeyup("TF4", KeyCodes.A, true, false, false);
 			assert.equal(jQuery("#TF4").val(), sStartText + "A", "Displayed text");
 			assert.ok(!jQuery("#IPE7--X").get(0), "no Undo button rendered");
 		done();
@@ -258,7 +259,7 @@ sap.ui.define([
 		sap.ui.getCore().applyChanges();
 		setTimeout(function(){
 			qutils.triggerEvent("click", "CB1-icon");
-			assert.ok(jQuery.sap.domById("CB1-lb-list"), "ListBox rendered");
+			assert.ok(document.getElementById("CB1-lb-list"), "ListBox rendered");
 			qutils.triggerEvent("click", "Day7");
 			assert.equal(jQuery("#CB1-input").val(), "Sunday", "Displayed text");
 		done();
@@ -273,7 +274,7 @@ sap.ui.define([
 		sap.ui.getCore().applyChanges();
 
 		setTimeout(function(){
-			assert.ok(!jQuery.sap.domById("TF1"), "TextField1 not longer rendered");
+			assert.ok(!document.getElementById("TF1"), "TextField1 not longer rendered");
 			assert.equal(jQuery("#IPE1").find("span").text(), sStartText + "A", "Displayed text");
 			assert.ok(jQuery("#IPE1").hasClass("sapUiIpeUndo"), "Undo CSS-class rendered");
 			assert.ok(jQuery("#IPE1").find("button").get(0), "Undo Button rendered");
@@ -288,8 +289,8 @@ sap.ui.define([
 		sap.ui.getCore().applyChanges();
 
 		setTimeout(function(){
-				qutils.triggerKeyEvent("keydown", "TF1", jQuery.sap.KeyCodes.ESCAPE);
-				qutils.triggerKeyEvent("keypress", "TF1", jQuery.sap.KeyCodes.ESCAPE);
+				qutils.triggerKeyEvent("keydown", "TF1", KeyCodes.ESCAPE);
+				qutils.triggerKeyEvent("keypress", "TF1", KeyCodes.ESCAPE);
 				oIPE4.focus(); // to toggle in display mode
 				setTimeout(function(){
 					assert.equal(jQuery("#IPE1").text(), sStartText, "Displayed text");
@@ -305,7 +306,7 @@ sap.ui.define([
 		var done = assert.async();
 		oIPE1.focus();
 		qutils.triggerCharacterInput("TF1", "A");
-		qutils.triggerKeyup("TF1", jQuery.sap.KeyCodes.A, true, false, false);
+		qutils.triggerKeyup("TF1", KeyCodes.A, true, false, false);
 		oIPE4.focus(); // to toggle in display mode
 		sap.ui.getCore().applyChanges();
 

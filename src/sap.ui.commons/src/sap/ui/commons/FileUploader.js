@@ -4,12 +4,13 @@
 
 // Provides control sap.ui.commons.FileUploader.
 sap.ui.define([
-    'jquery.sap.global',
+    'sap/base/Log',
     './library',
     'sap/ui/unified/FileUploader',
-    "./FileUploaderRenderer"
+    './FileUploaderRenderer',
+    'sap/ui/core/Core' // sap.ui.getCore()
 ],
-	function(jQuery, library, UnifiedFileUploader, FileUploaderRenderer) {
+	function(Log, library, UnifiedFileUploader, FileUploaderRenderer, Core) {
 	"use strict";
 
 	/**
@@ -41,10 +42,10 @@ sap.ui.define([
 	try {
 		sap.ui.getCore().loadLibrary("sap.ui.unified");
 	} catch (e) {
-		jQuery.sap.log.error("The control 'sap.ui.commons.FileUploader' needs library 'sap.ui.unified'.");
+		Log.error("The control 'sap.ui.commons.FileUploader' needs library 'sap.ui.unified'.");
 		throw (e);
 	}
 
 	return FileUploader;
 
-}, /* bExport= */ true);
+});

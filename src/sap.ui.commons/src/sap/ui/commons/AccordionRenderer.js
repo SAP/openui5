@@ -3,8 +3,8 @@
  */
 
 // Provides default renderer for control sap.ui.commons.Accordion
-sap.ui.define(['jquery.sap.global'],
-	function(jQuery) {
+sap.ui.define(['./AccordionSection', 'sap/ui/Device'],
+	function(AccordionSection, Device) {
 	"use strict";
 
 
@@ -16,14 +16,10 @@ sap.ui.define(['jquery.sap.global'],
 	/**
 	 * Renders the HTML for the given control using the provided {@link sap.ui.core.RenderManager}.
 	 *
-	 * @param {sap.ui.core.RenderManager} oRenderManager The RenderManager that can be used for writing to the render output buffer
+	 * @param {sap.ui.core.RenderManager} rm The RenderManager that can be used for writing to the render output buffer
 	 * @param {sap.ui.core.Control} oAccordion An object representation of the control that is rendered
 	 */
-	AccordionRenderer.render = function(oRenderManager, oAccordion){
-
-		// convenience variable
-		var rm = oRenderManager;
-
+	AccordionRenderer.render = function(rm, oAccordion){
 
 		// write the HTML into the render manager
 		rm.write("<div");
@@ -49,7 +45,7 @@ sap.ui.define(['jquery.sap.global'],
 			// Open the section if the section is part of the default opened section
 			if (oAccordion.bInitialRendering) {
 
-				if (jQuery.inArray(aSections[i].getId(),aDefaultSections) != -1) {
+				if (aDefaultSections.indexOf(aSections[i].getId()) != -1) {
 					aSections[i]._setCollapsed(false);
 				} else {
 					aSections[i]._setCollapsed(true);
@@ -72,13 +68,11 @@ sap.ui.define(['jquery.sap.global'],
 	};
 
 
-	AccordionRenderer.renderSection = function(oRenderManager, oControl) {
-
-		var rm = oRenderManager;
+	AccordionRenderer.renderSection = function(rm, oControl) {
 		var accessibility = sap.ui.getCore().getConfiguration().getAccessibility();
 
-		var heightSet = sap.ui.commons.AccordionSection._isSizeSet(oControl.getMaxHeight());
-		var widthSet = sap.ui.commons.AccordionSection._isSizeSet(oControl.getParent().getWidth());
+		var heightSet = AccordionSection._isSizeSet(oControl.getMaxHeight());
+		var widthSet = AccordionSection._isSizeSet(oControl.getParent().getWidth());
 
 		// root element and classes
 		rm.write("<div");
@@ -155,12 +149,12 @@ sap.ui.define(['jquery.sap.global'],
 			//Disabled --> Unavailable annoucement
 			if (oControl.getEnabled()) {
 				rm.writeAttribute("aria-disabled", "false");
-				if (!sap.ui.Device.browser.internet_explorer) {// TODO remove after 1.62 version
+				if (!Device.browser.msie) {// TODO remove after 1.62 version
 					rm.writeAttribute("aria-grabbed", "false");
 				}
 			} else {
 				rm.writeAttribute("aria-disabled", "true");
-				if (!sap.ui.Device.browser.internet_explorer) {// TODO remove after 1.62 version
+				if (!Device.browser.msie) {// TODO remove after 1.62 version
 					rm.writeAttribute("aria-grabbed", "");
 				}
 			}

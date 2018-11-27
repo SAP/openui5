@@ -4,7 +4,7 @@ sap.ui.define([
 	"sap/ui/commons/Message",
 	"sap/ui/commons/library",
 	"sap/ui/commons/MessageBar",
-	"jquery.sap.global"
+	"sap/ui/thirdparty/jquery"
 ], function(
 	createAndAppendDiv,
 	Message,
@@ -56,9 +56,9 @@ sap.ui.define([
 		assert.equal(msgBar.getMaxListed()             ,7        ,"MaxListed");
 
 		// The "uiArea1" anchor should be visible, but not the Bar nor the List:
-		var jAnchor = jQuery.sap.byId("uiArea1");
-		var jBar    = jQuery.sap.byId("msgBar");
-		var jList   = jQuery.sap.byId("msgBar__List");
+		var jAnchor = jQuery("#uiArea1");
+		var jBar    = jQuery("#msgBar");
+		var jList   = jQuery("#msgBar__List");
 		assert.equal((jAnchor.css('display') == "block") ,true   ,"Anchor displayed");
 		assert.equal((jBar.css('display') == "block")    ,false  ,"Bar not displayed");
 		assert.equal((jList.css('display') == "block")   ,false  ,"List not displayed");
@@ -68,9 +68,9 @@ sap.ui.define([
 		// Injecting Messages:
 		msgBar.addMessages(aMeliMelos);
 		// Anchor and Bar should be visible, but not the List:
-		var jAnchor = jQuery.sap.byId("uiArea1");
-		var jBar    = jQuery.sap.byId("msgBar");
-		var jList   = jQuery.sap.byId("msgBar__List");
+		var jAnchor = jQuery("#uiArea1");
+		var jBar    = jQuery("#msgBar");
+		var jList   = jQuery("#msgBar__List");
 		assert.equal((jAnchor.css('display') == "block") ,true   ,"Anchor displayed");
 		assert.equal((jBar.css('display') == "block")    ,true   ,"Bar displayed");
 		assert.equal((jList.css('display') == "block")   ,false  ,"List not displayed");
@@ -85,9 +85,9 @@ sap.ui.define([
 		// Removing the previous Messages:
 		msgBar.deleteMessages(aMeliMeloIdsB);
 		// The "uiArea1" anchor should be visible, but not the Bar nor the List:
-		var jAnchor = jQuery.sap.byId("uiArea1");
-		var jBar    = jQuery.sap.byId("msgBar");
-		var jList   = jQuery.sap.byId("msgBar__List");
+		var jAnchor = jQuery("#uiArea1");
+		var jBar    = jQuery("#msgBar");
+		var jList   = jQuery("#msgBar__List");
 		assert.equal((jAnchor.css('display') == "block") ,true   ,"Anchor displayed");
 		assert.equal((jBar.css('display') == "block")    ,false  ,"Bar not displayed");
 		assert.equal((jList.css('display') == "block")   ,false  ,"List not displayed");

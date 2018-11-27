@@ -3,11 +3,9 @@
  */
 
 // Provides default renderer for control sap.ui.commons.MessageBar
-sap.ui.define(['jquery.sap.global', 'sap/ui/core/Popup'],
-	function(jQuery, Popup) {
+sap.ui.define(['sap/ui/core/Popup'],
+	function(Popup) {
 	"use strict";
-
-//jQuery.sap.require("sap.ui.commons.MessageType");
 
 	/**
 	 * MessageBar renderer.
@@ -20,12 +18,11 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Popup'],
 	/**
 	 * Renders the HTML for the given control, using the provided {@link sap.ui.core.RenderManager}.
 	 *
-	 * @param {sap.ui.core.RenderManager} oRenderManager the RenderManager that can be used for writing to the Render-Output-Buffer
+	 * @param {sap.ui.core.RenderManager} rm the RenderManager that can be used for writing to the Render-Output-Buffer
 	 * @param {sap.ui.core.Control} oControl an object representation of the control that should be rendered
 	 */
-	MessageBarRenderer.render = function(oRenderManager, oControl){
+	MessageBarRenderer.render = function(rm, oControl){
 	  // Convenience variables
-		var rm  = oRenderManager;
 		var id  = oControl.getId();
 
 		// Opening the outer DIV container:

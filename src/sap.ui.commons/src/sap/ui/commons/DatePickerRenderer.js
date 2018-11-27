@@ -3,9 +3,13 @@
  */
 
 // Provides default renderer for control sap.ui.commons.DatePicker
-sap.ui.define(['jquery.sap.global', './TextFieldRenderer'],
-	function(jQuery, TextFieldRenderer) {
+sap.ui.define(['./TextFieldRenderer', 'sap/ui/core/Renderer', 'sap/ui/core/ValueStateSupport', 'sap/ui/core/library'],
+	function(TextFieldRenderer, Renderer, ValueStateSupport, coreLibrary) {
 	"use strict";
+
+
+	// shortcut for sap.ui.core.ValueState
+	var ValueState = coreLibrary.ValueState;
 
 
 	/**
@@ -14,7 +18,7 @@ sap.ui.define(['jquery.sap.global', './TextFieldRenderer'],
 	 * For a common look&feel, the DatePicker extends the TextField control,
 	 * just like the ComboBox does.
 	 */
-	var DatePickerRenderer = sap.ui.core.Renderer.extend(TextFieldRenderer);
+	var DatePickerRenderer = Renderer.extend(TextFieldRenderer);
 
 	/**
 	 * Hint: "renderOuterAttributes" is a reserved/hard-coded TextField extending function!
@@ -42,9 +46,9 @@ sap.ui.define(['jquery.sap.global', './TextFieldRenderer'],
 	/**
 	 * Renders additional HTML for the DatePicker to the TextField (sets the icon)
 	 *
-	 * @param {sap.ui.fw.RenderManager} rm The RenderManager that can be used for
+	 * @param {sap.ui.core.RenderManager} rm The RenderManager that can be used for
 	 *                                                 writing to the Render-Output-Buffer.
-	 * @param {sap.ui.fw.Control} oControl An object representation of the control that should
+	 * @param {sap.ui.core.Control} oControl An object representation of the control that should
 	 *                                     be rendered.
 	 */
 	DatePickerRenderer.renderOuterContentBefore = function(rm, oControl){
@@ -65,7 +69,7 @@ sap.ui.define(['jquery.sap.global', './TextFieldRenderer'],
 			// ResourceBundle always returns the key if the text is not found
 		var sText = rb.getText("DATEPICKER_DATE_TYPE");
 
-		var sTooltip = sap.ui.core.ValueStateSupport.enrichTooltip(oControl, oControl.getTooltip_AsString());
+		var sTooltip = ValueStateSupport.enrichTooltip(oControl, oControl.getTooltip_AsString());
 		if (sTooltip) {
 			// add tooltip to description because it is not read by JAWS from title-attribute if a label is assigned
 			sText = sText + ". " + sTooltip;
@@ -79,8 +83,8 @@ sap.ui.define(['jquery.sap.global', './TextFieldRenderer'],
 	/*
 	 * Renders the inner attributes for the input element of the DatePicker
 	 *
-	 * @param {sap.ui.fw.RenderManager} oRenderManager the RenderManager that can be used for writing to the Render-Output-Buffer
-	 * @param {sap.ui.fw.Control} oDatePicker an object representation of the control that should be rendered
+	 * @param {sap.ui.core.RenderManager} rm the RenderManager that can be used for writing to the Render-Output-Buffer
+	 * @param {sap.ui.core.Control} oDatePicker an object representation of the control that should be rendered
 	 */
 	DatePickerRenderer.renderInnerAttributes = function(rm, oDatePicker) {
 
@@ -94,9 +98,9 @@ sap.ui.define(['jquery.sap.global', './TextFieldRenderer'],
 	/*
 	 * Renders ARIA information for the outer DIV
 	 *
-	 * @param {sap.ui.fw.RenderManager} oRenderManager the RenderManager that can be used for
+	 * @param {sap.ui.core.RenderManager} rm the RenderManager that can be used for
 	 *                                                 writing to the Render-Output-Buffer
-	 * @param {sap.ui.fw.Control} oControl an object representation of the control that should
+	 * @param {sap.ui.core.Control} oControl an object representation of the control that should
 	 *                                     be rendered
 	 */
 	DatePickerRenderer.renderDatePickerARIAInfo = function(rm, oControl) {
@@ -119,7 +123,7 @@ sap.ui.define(['jquery.sap.global', './TextFieldRenderer'],
 			haspopup: true,
 			describedby: {value: oDatePicker.getId() + "-Descr", append: true}};
 
-		if (oDatePicker.getValueState() == sap.ui.core.ValueState.Error) {
+		if (oDatePicker.getValueState() == ValueState.Error) {
 			mProps["invalid"] = true;
 		}
 

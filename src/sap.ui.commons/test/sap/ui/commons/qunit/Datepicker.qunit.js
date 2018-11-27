@@ -6,8 +6,8 @@ sap.ui.define([
 	"sap/ui/commons/DatePicker",
 	"sap/ui/model/json/JSONModel",
 	"sap/ui/model/type/Date",
-	"jquery.sap.global",
-	"jquery.sap.keycodes"
+	"sap/ui/thirdparty/jquery",
+	"sap/ui/events/KeyCodes"
 ], function(
 	qutils,
 	createAndAppendDiv,
@@ -15,7 +15,8 @@ sap.ui.define([
 	DatePicker,
 	JSONModel,
 	TypeDate,
-	jQuery
+	jQuery,
+	KeyCodes
 ) {
 	"use strict";
 
@@ -121,18 +122,18 @@ sap.ui.define([
 	// The DatePicker always appear ":visible" - test for class !!!
 	QUnit.test("TestOpenViaMouseClick", function(assert){
 		if (!bMobile){
-			assert.ok(!jQuery.sap.byId(ctrlId + "-cal").get(0), "calendar not exists before 1st click");
+			assert.ok(!oPicker.getDomRef("cal"), "calendar not exists before 1st click");
 			qutils.triggerMouseEvent("myDatePicker-icon", "click");
-			assert.ok(jQuery.sap.byId(ctrlId + "-cal").is(":visible"), "Should be visible after 1st click");
+			assert.ok(oPicker.$("cal").is(":visible"), "Should be visible after 1st click");
 			qutils.triggerMouseEvent("myDatePicker-icon", "click");
-			assert.ok(!jQuery.sap.byId(ctrlId + "-cal").is(":visible"), "Should be hidden after 2nd click");
+			assert.ok(!oPicker.$("cal").is(":visible"), "Should be hidden after 2nd click");
 		} else {
 			assert.ok(true, "not relevant asserts anymore");
 			/*
 			// on mobile device no jQuery DatePicker must open
-			assert.ok(!jQuery.sap.byId(ctrlId + "-cal").get(0), "no jQuery-DatePicker rendered on mobile devices");
+			assert.ok(!oPicker.getDomRef("cal"), "no jQuery-DatePicker rendered on mobile devices");
 			qutils.triggerMouseEvent("myDatePicker-icon", "click");
-			assert.ok(!jQuery.sap.byId(ctrlId + "-cal").get(0), "still no jQuery-DatePicker rendered on mobile devices after click");
+			assert.ok(!oPicker.getDomRef("cal"), "still no jQuery-DatePicker rendered on mobile devices after click");
 			*/
 		}
 	});
@@ -140,35 +141,35 @@ sap.ui.define([
 	if (!bMobile){
 		// on mobile devices no keyboard support
 		QUnit.test("Keyboard navigation on input field", function(assert) {
-			qutils.triggerKeydown("myDatePicker2-input", jQuery.sap.KeyCodes.PAGE_UP, false, false, false);
+			qutils.triggerKeydown("myDatePicker2-input", KeyCodes.PAGE_UP, false, false, false);
 			assert.equal(jQuery("#myDatePicker2-input").val(), "26.12.2010", "Date increases by 1 day pressing 'PAGE_UP'");
 			assert.equal(oPicker2.getValue(), "25.12.2010", "Value not changed by pressing 'PAGE_UP'");
-			qutils.triggerKeydown("myDatePicker2-input", jQuery.sap.KeyCodes.PAGE_UP, true, false, false);
+			qutils.triggerKeydown("myDatePicker2-input", KeyCodes.PAGE_UP, true, false, false);
 			assert.equal(jQuery("#myDatePicker2-input").val(), "26.01.2011", "Date increases by 1 month pressing shift+'PAGE_UP'");
 			assert.equal(oPicker2.getValue(), "25.12.2010", "Value not changed by pressing shift+'PAGE_UP'");
-			qutils.triggerKeydown("myDatePicker2-input", jQuery.sap.KeyCodes.PAGE_UP, true, false, true);
+			qutils.triggerKeydown("myDatePicker2-input", KeyCodes.PAGE_UP, true, false, true);
 			assert.equal(jQuery("#myDatePicker2-input").val(), "26.01.2012", "Date increases by 1 year pressing ctrl+shift+'PAGE_UP'");
 			assert.equal(oPicker2.getValue(), "25.12.2010", "Value not changed by pressing ctrl+shift+'PAGE_UP'");
-			qutils.triggerKeyboardEvent("myDatePicker2-input", jQuery.sap.KeyCodes.ENTER, false, false, false);
+			qutils.triggerKeyboardEvent("myDatePicker2-input", KeyCodes.ENTER, false, false, false);
 			assert.equal(oPicker2.getValue(), "26.01.2012", "Value changed by pressing ENTER");
 
-			qutils.triggerKeydown("myDatePicker2-input", jQuery.sap.KeyCodes.PAGE_DOWN, false, false, false);
+			qutils.triggerKeydown("myDatePicker2-input", KeyCodes.PAGE_DOWN, false, false, false);
 			assert.equal(jQuery("#myDatePicker2-input").val(), "25.01.2012", "Date decreases by 1 day pressing 'PAGE_DOWN'");
 			assert.equal(oPicker2.getValue(), "26.01.2012", "Value not changed by pressing 'PAGE_DOWN'");
-			qutils.triggerKeydown("myDatePicker2-input", jQuery.sap.KeyCodes.PAGE_DOWN, true, false, false);
+			qutils.triggerKeydown("myDatePicker2-input", KeyCodes.PAGE_DOWN, true, false, false);
 			assert.equal(jQuery("#myDatePicker2-input").val(), "25.12.2011", "Date decreases by 1 month pressing shift+'PAGE_DOWN'");
 			assert.equal(oPicker2.getValue(), "26.01.2012", "Value not changed by pressing shift+'PAGE_DOWN'");
-			qutils.triggerKeydown("myDatePicker2-input", jQuery.sap.KeyCodes.PAGE_DOWN, true, false, true);
+			qutils.triggerKeydown("myDatePicker2-input", KeyCodes.PAGE_DOWN, true, false, true);
 			assert.equal(jQuery("#myDatePicker2-input").val(), "25.12.2010", "Date decreases by 1 year pressing ctrl+shift+'PAGE_DOWN'");
 			assert.equal(oPicker2.getValue(), "26.01.2012", "Value not changed by pressing ctrl+shift+'PAGE_DOWN'");
-			qutils.triggerKeyboardEvent("myDatePicker2-input", jQuery.sap.KeyCodes.ENTER, false, false, false);
+			qutils.triggerKeyboardEvent("myDatePicker2-input", KeyCodes.ENTER, false, false, false);
 			assert.equal(oPicker2.getValue(), "25.12.2010", "Value changed by pressing ENTER");
 		});
 
 		QUnit.test("Input vailidation", function(assert) {
 			var oInput = jQuery("#myDatePicker-input");
 			oInput.val("Dec 6, 2012");
-			qutils.triggerKeyboardEvent("myDatePicker-input", jQuery.sap.KeyCodes.ENTER, false, false, false);
+			qutils.triggerKeyboardEvent("myDatePicker-input", KeyCodes.ENTER, false, false, false);
 			assert.equal(oPicker.getValue(), "Dec 6, 2012", "Value after input of Dec 6, 2012");
 			assert.equal(oPicker.getYyyymmdd(), "20121206", "Yyyymmdd after input of Dec 6, 2012");
 			assert.equal(sChangeValue, "Dec 6, 2012", "Value of Change event after input of Dec 6, 2012");
@@ -176,7 +177,7 @@ sap.ui.define([
 			assert.equal(bChangeInvalid, false, "InvalidEntry of Change event after input of Dec 6, 2012");
 
 			oInput.val("11/30/12");
-			qutils.triggerKeyboardEvent("myDatePicker-input", jQuery.sap.KeyCodes.ENTER, false, false, false);
+			qutils.triggerKeyboardEvent("myDatePicker-input", KeyCodes.ENTER, false, false, false);
 			assert.equal(oPicker.getValue(), "Nov 30, 2012", "Value after input of 11/30/12");
 			assert.equal(oPicker.getYyyymmdd(), "20121130", "Yyyymmdd after input of 11/30/12");
 			assert.equal(sChangeValue, "Nov 30, 2012", "Value of Change event after input of 11/30/12");
@@ -184,7 +185,7 @@ sap.ui.define([
 			assert.equal(bChangeInvalid, false, "InvalidEntry of Change event after input of 11/30/12");
 
 			oInput.val("abc");
-			qutils.triggerKeyboardEvent("myDatePicker-input", jQuery.sap.KeyCodes.ENTER, false, false, false);
+			qutils.triggerKeyboardEvent("myDatePicker-input", KeyCodes.ENTER, false, false, false);
 			assert.equal(oPicker.getValue(), "abc", "Value after input of abc");
 			assert.equal(oPicker.getYyyymmdd(), "20121130", "Yyyymmdd after input of abc");
 			assert.equal(sChangeValue, "abc", "Value of Change event after input of abc");
@@ -192,7 +193,7 @@ sap.ui.define([
 			assert.equal(bChangeInvalid, true, "InvalidEntry of Change event after input of abc");
 
 			oInput.val("");
-			qutils.triggerKeyboardEvent("myDatePicker-input", jQuery.sap.KeyCodes.ENTER, false, false, false);
+			qutils.triggerKeyboardEvent("myDatePicker-input", KeyCodes.ENTER, false, false, false);
 			assert.equal(oPicker.getValue(), "", "Value after input of \"\"");
 			assert.equal(oPicker.getYyyymmdd(), "", "Yyyymmdd after input of \"\"");
 			assert.equal(sChangeValue, "", "Value of Change event after input of \"\"");

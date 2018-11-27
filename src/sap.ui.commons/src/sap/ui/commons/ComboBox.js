@@ -4,15 +4,27 @@
 
 // Provides control sap.ui.commons.ComboBox.
 sap.ui.define([
-    'jquery.sap.global',
+    'sap/ui/thirdparty/jquery',
     './TextField',
     './library',
     'sap/ui/core/Popup',
-    "./ComboBoxRenderer",
-    'jquery.sap.strings'
+    './ComboBoxRenderer',
+    'sap/ui/core/library',
+    'sap/ui/Device',
+    './ListBox',
+    'sap/ui/base/Event',
+    'sap/ui/dom/containsOrEquals',
+    'sap/ui/events/KeyCodes',
+    'sap/ui/events/jquery/EventExtension',
+    'sap/ui/dom/jquery/selectText', // jQuery.fn.selectText
+    'jquery.sap.strings' // jQuery.sap.startsWithIgnoreCase
 ],
-	function(jQuery, TextField, library, Popup, ComboBoxRenderer /*, jQuerySap */) {
+	function(jQuery, TextField, library, Popup, ComboBoxRenderer, coreLibrary, Device, ListBox, Event, containsOrEquals, KeyCodes, EventExtension) {
 	"use strict";
+
+
+	// shortcut for sap.ui.core.AccessibleRole
+	var AccessibleRole = coreLibrary.AccessibleRole;
 
 
 	/**
@@ -109,9 +121,9 @@ sap.ui.define([
 		TextField.prototype.init.apply(this, arguments);
 		this._iClosedUpDownIdx = -1;
 		this._sCloseId = null;
-		this.setAccessibleRole(sap.ui.core.AccessibleRole.Combobox);
+		this.setAccessibleRole(AccessibleRole.Combobox);
 
-		if (!sap.ui.Device.system.desktop) {
+		if (!Device.system.desktop) {
 			this.mobile = true;
 		}
 	};
@@ -143,7 +155,7 @@ sap.ui.define([
 		this._sWantedSelectedItemId = undefined;
 
 		if (this._sHandleItemsChanged) {
-			jQuery.sap.clearDelayedCall(this._sHandleItemsChanged);
+			clearTimeout(this._sHandleItemsChanged);
 			this._sHandleItemsChanged = null;
 			this._bNoItemCheck = undefined;
 		}
@@ -235,7 +247,7 @@ sap.ui.define([
 	 */
 	ComboBox.prototype.onsapnextmodifiers = function(oEvent){
 		TextField.prototype.onsapnextmodifiers.apply(this, arguments);
-		if ( oEvent.keyCode == jQuery.sap.KeyCodes.ARROW_DOWN && oEvent.altKey ) {
+		if ( oEvent.keyCode == KeyCodes.ARROW_DOWN && oEvent.altKey ) {
 			this.onsapshow(oEvent);
 			oEvent.stopPropagation();
 		}
@@ -308,7 +320,7 @@ sap.ui.define([
 	ComboBox.prototype.onsapfocusleave = function(oEvent) {
 
 		var oLB = this._getListBox();
-		if ((oEvent.relatedControlId && jQuery.sap.containsOrEquals(oLB.getFocusDomRef(), sap.ui.getCore().byId(oEvent.relatedControlId).getFocusDomRef())) ||
+		if ((oEvent.relatedControlId && containsOrEquals(oLB.getFocusDomRef(), sap.ui.getCore().byId(oEvent.relatedControlId).getFocusDomRef())) ||
 				this._bOpening) {
 			this.focus();
 		} else {
@@ -431,21 +443,22 @@ sap.ui.define([
 		}
 
 		if (this._sTypeAhead) {
-			jQuery.sap.clearDelayedCall(this._sTypeAhead);
+			clearTimeout(this._sTypeAhead);
 		}
 
-		var oKC = jQuery.sap.KeyCodes;
-		if (ComboBox._isHotKey(oEvent) || oEvent.keyCode === oKC.F4 && oEvent.which === 0 /*this is the Firefox case and ensures 's' with same charCode is accepted*/) {
+		if (ComboBox._isHotKey(oEvent) || oEvent.keyCode === KeyCodes.F4 && oEvent.which === 0 /*this is the Firefox case and ensures 's' with same charCode is accepted*/) {
 			return;
 		}
 
 		var iKC = oEvent.which || oEvent.keyCode;
-		if (iKC !== oKC.DELETE && iKC !== oKC.BACKSPACE && iKC !== oKC.ESCAPE) {
-			this._sTypeAhead = jQuery.sap.delayedCall(200, this, "_doTypeAhead");
+		if (iKC !== KeyCodes.DELETE && iKC !== KeyCodes.BACKSPACE && iKC !== KeyCodes.ESCAPE) {
+			this._sTypeAhead = setTimeout(function() {
+				this._doTypeAhead();
+			}.bind(this), 200);
 		} else {
 			// standard behavior of TextField
 			TextField.prototype.onkeypress.apply(this, arguments);
-			if (iKC !== oKC.ESCAPE) {
+			if (iKC !== KeyCodes.ESCAPE) {
 				this._updatePosInSet( null, -1, null);
 			}
 		}
@@ -768,7 +781,7 @@ sap.ui.define([
 			return this._oListBox;
 		}
 		// else
-		this._oListBox = new sap.ui.commons.ListBox(this.getId() + "-lb", {allowMultiSelect:false});
+		this._oListBox = new ListBox(this.getId() + "-lb", {allowMultiSelect:false});
 		this.setAggregation("myListBox", this._oListBox, true);
 		this._oListBox.attachEvent("itemsChanged",this._handleItemsChanged, this);
 		this._oListBox.attachEvent("itemInvalidated",this._handleItemInvalidated, this);
@@ -862,7 +875,7 @@ sap.ui.define([
 				var itemId = jQuery(oEvent.target).closest("li").attr("id");
 				if (itemId) {
 					// could also be done via EventPool... but whose to use? Combo's? ListBox'?
-					var oNewEvent = new sap.ui.base.Event("_internalSelect", this.oCombo, {selectedId: itemId});
+					var oNewEvent = new Event("_internalSelect", this.oCombo, {selectedId: itemId});
 					this.oCombo._handleSelect(oNewEvent);
 				}
 			}};
@@ -961,7 +974,7 @@ sap.ui.define([
 			$Ref.val(oNewValue);
 			this._doSelect();
 			var oEvent = new jQuery.Event("sapshow"); // use sapshow event for live change (AutoComplete needs an event here)
-			oEvent.which = jQuery.sap.KeyCodes.F4;
+			oEvent.which = KeyCodes.F4;
 			this._fireLiveChange(oEvent);
 		}
 		var iItemsLength = oListBox.getItems().length;
@@ -985,12 +998,12 @@ sap.ui.define([
 		// and also ensure we get to know it closes / gets closed via automatic-close again
 		this.oPopup.attachClosed(this._handleClosed, this);
 
-		if (!!sap.ui.Device.browser.internet_explorer) {
+		if (Device.browser.msie) {
 			// as IE just ignores syncron focus() called from popup by opening it must be called asynchron
 			// otherwise onfocusin is not executed.
-			jQuery.sap.delayedCall(0, this, function(){
+			setTimeout(function(){
 				jQuery(this.getInputDomRef()).focus();
-			});
+			}.bind(this), 0);
 		}
 
 		// if ComboBox is open -> switch to action mode
@@ -1131,7 +1144,9 @@ sap.ui.define([
 
 		//handleItemsChange must be called asyncronous to insure that all bindingInfos are updated (item + selectedKey)
 		if (!this._sHandleItemsChanged) {
-			this._sHandleItemsChanged = jQuery.sap.delayedCall(0, this, "_handleItemsChanged", [null, true]);
+			this._sHandleItemsChanged = setTimeout(function() {
+				this._handleItemsChanged(null, true);
+			}.bind(this), 0);
 		}
 
 	};
@@ -1423,36 +1438,35 @@ sap.ui.define([
 			return true;
 		}
 
-		var iKeyCode = oEvent.keyCode || oEvent.which,
-			eKC = jQuery.sap.KeyCodes;
+		var iKeyCode = oEvent.keyCode || oEvent.which;
 
 		switch (iKeyCode) {
 			// some keys can be identified as hotkey 'all alone'
-			case eKC.ENTER:
-			case eKC.SHIFT:
-			case eKC.TAB:
-			case eKC.ALT:
-			case eKC.CONTROL:
+			case KeyCodes.ENTER:
+			case KeyCodes.SHIFT:
+			case KeyCodes.TAB:
+			case KeyCodes.ALT:
+			case KeyCodes.CONTROL:
 				return true;
 			// as  some keys share the keycode with standard characters (only in keypress event), ensure that which equals 0
-			case eKC.END:
-			case eKC.HOME:
-			case eKC.ARROW_LEFT:
-			case eKC.ARROW_UP:
-			case eKC.ARROW_RIGHT:
-			case eKC.ARROW_DOWN:
-			case eKC.F1:
-			case eKC.F2:
-			case eKC.F3:
-			case eKC.F4:
-			case eKC.F5:
-			case eKC.F6:
-			case eKC.F7:
-			case eKC.F8:
-			case eKC.F9:
-			case eKC.F10:
-			case eKC.F11:
-			case eKC.F12:
+			case KeyCodes.END:
+			case KeyCodes.HOME:
+			case KeyCodes.ARROW_LEFT:
+			case KeyCodes.ARROW_UP:
+			case KeyCodes.ARROW_RIGHT:
+			case KeyCodes.ARROW_DOWN:
+			case KeyCodes.F1:
+			case KeyCodes.F2:
+			case KeyCodes.F3:
+			case KeyCodes.F4:
+			case KeyCodes.F5:
+			case KeyCodes.F6:
+			case KeyCodes.F7:
+			case KeyCodes.F8:
+			case KeyCodes.F9:
+			case KeyCodes.F10:
+			case KeyCodes.F11:
+			case KeyCodes.F12:
 				if (oEvent.type == "keypress") {
 					return oEvent.which === 0;
 				} else {
@@ -1658,8 +1672,8 @@ sap.ui.define([
 	*/
 	ComboBox.prototype.invalidate = function(oOrigin) {
 
-		if (!oOrigin || !(oOrigin instanceof sap.ui.commons.ListBox) || oOrigin != this._getListBox()) {
-			sap.ui.core.Control.prototype.invalidate.apply(this, arguments);
+		if (!oOrigin || !(oOrigin instanceof ListBox) || oOrigin != this._getListBox()) {
+			TextField.prototype.invalidate.apply(this, arguments);
 		} else {
 			// register ListBox as invalidated
 			if (this.getUIArea() && oOrigin.getDomRef()) {
@@ -1674,7 +1688,7 @@ sap.ui.define([
 	 */
 	ComboBox.prototype.clone = function(sIdSuffix){
 
-		var oClone = sap.ui.core.Control.prototype.clone.apply(this, arguments),
+		var oClone = TextField.prototype.clone.apply(this, arguments),
 			oListBox = this.getAggregation("myListBox"),
 			oListBoxClone;
 
@@ -1710,7 +1724,7 @@ sap.ui.define([
 			oOption.text = sValue;
 			oOption.id = this.getId() + "-dummyOption";
 			if (aItems.length > 0) {
-				this.getDomRef("select").add(oOption, jQuery.sap.domById(this.getId() + "-" + aItems[0].getId()));
+				this.getDomRef("select").add(oOption, document.getElementById(this.getId() + "-" + aItems[0].getId()));
 			} else {
 				this.getDomRef("select").add(oOption, null);
 			}
@@ -1805,4 +1819,4 @@ sap.ui.define([
 
 	return ComboBox;
 
-}, /* bExport= */ true);
+});

@@ -4,10 +4,10 @@
 
 // Provides control sap.ui.commons.SegmentedButton.
 sap.ui.define([
-    'jquery.sap.global',
+    'sap/ui/thirdparty/jquery',
     'sap/ui/core/Control',
     'sap/ui/core/delegate/ItemNavigation',
-    "./SegmentedButtonRenderer"
+    './SegmentedButtonRenderer'
 ],
 	function(jQuery, Control, ItemNavigation, SegmentedButtonRenderer) {
 	"use strict";
@@ -192,7 +192,7 @@ sap.ui.define([
 		var $content = this.$();
 		if ($content.length > 0) {
 			var rm = sap.ui.getCore().createRenderManager();
-			sap.ui.commons.SegmentedButtonRenderer.renderButtons(rm, this);
+			SegmentedButtonRenderer.renderButtons(rm, this);
 			rm.flush($content[0]);
 			rm.destroy();
 		}
@@ -288,7 +288,7 @@ sap.ui.define([
 			oButton.detachPress(this._buttonSelected, this);
 		}
 
-		var oClone = sap.ui.core.Element.prototype.clone.apply(this, arguments);
+		var oClone = Control.prototype.clone.apply(this, arguments);
 
 		for (i = 0; i < aButtons.length; i++) {
 			oButton = aButtons[i];
@@ -306,4 +306,4 @@ sap.ui.define([
 
 	return SegmentedButton;
 
-}, /* bExport= */ true);
+});

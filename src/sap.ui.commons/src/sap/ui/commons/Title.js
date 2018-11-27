@@ -3,8 +3,8 @@
  */
 
 // Provides control sap.ui.commons.Title.
-sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Title'],
-	function(jQuery, library, Title1) {
+sap.ui.define(['./library', 'sap/ui/core/Title'],
+	function(library, CoreTitle) {
 	"use strict";
 
 
@@ -29,7 +29,7 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Title'],
 	 * @alias sap.ui.commons.Title
 	 * @ui5-metamodel This control/element also will be described in the UI5 (legacy) designtime metamodel
 	 */
-	var Title = Title1.extend("sap.ui.commons.Title", /** @lends sap.ui.commons.Title.prototype */ { metadata : {
+	var Title = CoreTitle.extend("sap.ui.commons.Title", /** @lends sap.ui.commons.Title.prototype */ { metadata : {
 
 		deprecated : true,
 		library : "sap.ui.commons"
@@ -66,4 +66,4 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Title'],
 
 	return Title;
 
-}, /* bExport= */ true);
+});

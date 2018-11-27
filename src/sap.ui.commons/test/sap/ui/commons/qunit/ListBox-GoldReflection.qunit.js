@@ -3,7 +3,7 @@ sap.ui.define([
 	"sap/ui/qunit/utils/createAndAppendDiv",
 	"sap/ui/commons/ListBox",
 	"sap/ui/core/ListItem",
-	"jquery.sap.global",
+	"sap/ui/thirdparty/jquery",
 	"sap/ui/Device",
 	"sap/ui/core/library"
 ], function(
@@ -70,7 +70,7 @@ sap.ui.define([
 	QUnit.test("Initial Check", function(assert) {
 		assert.ok(oCtrl, "ListBox should exist after creating");
 
-		var oDomRef = jQuery.sap.domById("ListBox1");
+		var oDomRef = document.getElementById("ListBox1");
 		assert.ok(oDomRef, "ListBox root element should exist");
 	});
 
@@ -82,7 +82,7 @@ sap.ui.define([
 		assert.equal(oCtrl.getWidth(), sWidth, "ListBox width property should have the value that was set");
 
 		// check width in DOM
-		var oDomRef = jQuery.sap.domById("ListBox1");
+		var oDomRef = document.getElementById("ListBox1");
 		assert.equal(oDomRef.offsetWidth, parseInt(sWidth), "actual ListBox width should match the applied setting");
 	});
 
@@ -97,7 +97,7 @@ sap.ui.define([
 		// check width in DOM
 		var expectedSetting = (Device.browser.internet_explorer
 				&& (!document.documentMode || document.documentMode < 9)) ? "398px" : "400px"; // the visual result is 400px in both cases
-		var $DomRef = jQuery.sap.byId("ListBox1");
+		var $DomRef = jQuery("#ListBox1");
 		assert.equal($DomRef.css("min-width"), expectedSetting, "min-width should be set in CSS");
 		assert.equal($DomRef[0].offsetWidth, 400, "actual ListBox width should be determined by the min-width");
 		oCtrl.setMinWidth(null);
@@ -114,7 +114,7 @@ sap.ui.define([
 		// check width in DOM
 		var expectedSetting = (Device.browser.internet_explorer
 				&& (!document.documentMode || document.documentMode < 9)) ? "48px" : "50px"; // the visual result is 50px in both cases
-		var $DomRef = jQuery.sap.byId("ListBox1");
+		var $DomRef = jQuery("#ListBox1");
 		assert.equal($DomRef.css("max-width"), expectedSetting, "max-width should be set in CSS");
 		assert.equal($DomRef[0].offsetWidth, 50, "actual ListBox width should be determined by the max-width");
 		oCtrl.setMaxWidth(null);
@@ -145,7 +145,7 @@ sap.ui.define([
 		assert.equal(oCtrl.getHeight(), sHeight, "ListBox height property must reflect settings");
 
 		// check height in DOM
-		var oDomRef = jQuery.sap.domById("ListBox1");
+		var oDomRef = document.getElementById("ListBox1");
 
 		assert.equal(oDomRef.offsetHeight, parseInt(sHeight), "actual ListBox height must reflect settings");
 	});
@@ -158,7 +158,7 @@ sap.ui.define([
 		assert.equal(oCtrl.getTooltip(), sTooltip, "ListBox tooltip property must reflect settings");
 
 		// check tooltip in DOM
-		var oDomRef = jQuery.sap.domById("ListBox1");
+		var oDomRef = document.getElementById("ListBox1");
 		assert.equal(oDomRef.getAttribute("title"), sTooltip, "actual Tooltip must reflect settings");
 	});
 
@@ -167,17 +167,17 @@ sap.ui.define([
 	 * Test DisplaySecondaryValues + DisplayIcons
 	 */
 	QUnit.test("DisplaySecondaryValues and DisplayIcons", function(assert) {
-		var oDomRef = jQuery.sap.domById("item0");
+		var oDomRef = document.getElementById("item0");
 		assert.equal(oDomRef.childNodes.length, 1, "ListItem should only have one child node by default");
 
 		oCtrl.setDisplaySecondaryValues(true);
 		sap.ui.getCore().applyChanges();
-		oDomRef = jQuery.sap.domById("item0");
+		oDomRef = document.getElementById("item0");
 		assert.equal(oDomRef.childNodes.length, 2, "ListItem should have two child nodes if secondary values are displayed");
 
 		oCtrl.setDisplayIcons(true);
 		sap.ui.getCore().applyChanges();
-		oDomRef = jQuery.sap.domById("item0");
+		oDomRef = document.getElementById("item0");
 		assert.equal(oDomRef.childNodes.length, 3, "ListItem should have three child nodes if also icons are displayed");
 		var imgSpan = oDomRef.childNodes[0];
 		assert.equal(imgSpan.firstChild.tagName.toUpperCase(), "IMG", "there should actually be an image in the first column");
@@ -190,7 +190,7 @@ sap.ui.define([
 		oCtrl.setDisplaySecondaryValues(true);
 		oCtrl.setDisplayIcons(true);
 		sap.ui.getCore().applyChanges();
-		var oDomRef = jQuery.sap.domById("item0");
+		var oDomRef = document.getElementById("item0");
 		var iconSpan = jQuery(oDomRef.childNodes[0]);
 		var valueSpan = jQuery(oDomRef.childNodes[1]);
 		var secondaryValueSpan = jQuery(oDomRef.childNodes[2]);
@@ -204,7 +204,7 @@ sap.ui.define([
 		oCtrl.setValueTextAlign(TextAlign.End);
 		oCtrl.setSecondaryValueTextAlign(TextAlign.End);
 		sap.ui.getCore().applyChanges();
-		oDomRef = jQuery.sap.domById("item0");
+		oDomRef = document.getElementById("item0");
 		iconSpan = jQuery(oDomRef.childNodes[0]);
 		valueSpan = jQuery(oDomRef.childNodes[1]);
 		secondaryValueSpan = jQuery(oDomRef.childNodes[2]);
@@ -217,7 +217,7 @@ sap.ui.define([
 		oCtrl.setValueTextAlign(TextAlign.Right);
 		oCtrl.setSecondaryValueTextAlign(TextAlign.Right);
 		sap.ui.getCore().applyChanges();
-		oDomRef = jQuery.sap.domById("item0");
+		oDomRef = document.getElementById("item0");
 		iconSpan = jQuery(oDomRef.childNodes[0]);
 		valueSpan = jQuery(oDomRef.childNodes[1]);
 		secondaryValueSpan = jQuery(oDomRef.childNodes[2]);
@@ -233,7 +233,7 @@ sap.ui.define([
 	 */
 	QUnit.test("ScrollTop", function(assert) {
 		assert.equal(oCtrl.getScrollTop(), iScrollTop, "getScrollTop() must be correct initially");
-		var oDomRef = jQuery.sap.domById("ListBox1");
+		var oDomRef = document.getElementById("ListBox1");
 		assert.equal(oDomRef.scrollTop, iScrollTop, "oDomRef.scrollTop must be correct initially");
 
 		// add more items to allow scrolling
@@ -243,20 +243,20 @@ sap.ui.define([
 			oCtrl.addItem(oItem);
 		}
 		sap.ui.getCore().applyChanges();
-		oDomRef = jQuery.sap.domById("ListBox1");
+		oDomRef = document.getElementById("ListBox1");
 		assert.equal(oCtrl.getScrollTop(), iScrollTop, "getScrollTop() must be correct after adding items");
 		assert.equal(oDomRef.scrollTop, iScrollTop, "oDomRef.scrollTop must be correct after adding items");
 
 		// now scroll - no re-rendering should be required
 		oCtrl.setScrollTop(33);
-		oDomRef = jQuery.sap.domById("ListBox1");
+		oDomRef = document.getElementById("ListBox1");
 		assert.equal(oCtrl.getScrollTop(), 33, "getScrollTop() must be correct after changing scrollTop");
 		assert.equal(oDomRef.scrollTop, 33, "oDomRef.scrollTop must be correct after changing scrollTop");
 
 		// make sure the scroll position remains after re-rendering
 		oCtrl.invalidate();
 		sap.ui.getCore().applyChanges();
-		oDomRef = jQuery.sap.domById("ListBox1");
+		oDomRef = document.getElementById("ListBox1");
 		assert.equal(oCtrl.getScrollTop(), 33, "getScrollTop() must be correct after re-rendering");
 		assert.equal(oDomRef.scrollTop, 33, "oDomRef.scrollTop must be correct after re-rendering");
 	});

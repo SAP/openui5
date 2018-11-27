@@ -4,12 +4,11 @@
 
 // Provides control sap.ui.commons.form.FormLayout.
 sap.ui.define([
- 'jquery.sap.global',
  'sap/ui/commons/library',
  'sap/ui/layout/form/FormLayout',
- "./FormLayoutRenderer"
+ './FormLayoutRenderer'
 ],
-	function(jQuery, library, FormLayout1, FormLayoutRenderer) {
+	function(library, LayoutFormLayout, FormLayoutRenderer) {
 	"use strict";
 
 
@@ -36,17 +35,13 @@ sap.ui.define([
 	 * @alias sap.ui.commons.form.FormLayout
 	 * @ui5-metamodel This control/element also will be described in the UI5 (legacy) designtime metamodel
 	 */
-	var FormLayout = FormLayout1.extend("sap.ui.commons.form.FormLayout", /** @lends sap.ui.commons.form.FormLayout.prototype */ { metadata : {
+	var FormLayout = LayoutFormLayout.extend("sap.ui.commons.form.FormLayout", /** @lends sap.ui.commons.form.FormLayout.prototype */ { metadata : {
 
 		deprecated : true,
 		library : "sap.ui.commons"
 	}});
 
-	/**
-	 * This file defines behavior for the control,
-	 */
-
 
 	return FormLayout;
 
-}, /* bExport= */ true);
+});

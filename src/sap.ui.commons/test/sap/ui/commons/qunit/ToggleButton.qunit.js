@@ -3,7 +3,7 @@ sap.ui.define([
 	"sap/ui/qunit/QUnitUtils",
 	"sap/ui/qunit/utils/createAndAppendDiv",
 	"sap/ui/commons/ToggleButton",
-	"jquery.sap.global"
+	"sap/ui/thirdparty/jquery"
 ], function(qutils, createAndAppendDiv, ToggleButton, jQuery) {
 	"use strict";
 
@@ -34,10 +34,8 @@ sap.ui.define([
 	QUnit.test("ARIA", function(assert){
 		var done = assert.async();
 		setTimeout(function() {
-			var oTB1 = jQuery.sap.domById(sToggleButtonId + "_1");
-			assert.equal(jQuery(oTB1).attr("aria-pressed"),"false","ARIA-PRESSED: for testToggleButton_1");
-			var oTB2 = jQuery.sap.domById(sToggleButtonId + "_2");
-			assert.equal(jQuery(oTB2).attr("aria-pressed"),"true","ARIA-PRESSED: for testToggleButton_2");
+			assert.equal(oToggleButton1.$().attr("aria-pressed"),"false","ARIA-PRESSED: for testToggleButton_1");
+			assert.equal(oToggleButton2.$().attr("aria-pressed"),"true","ARIA-PRESSED: for testToggleButton_2");
 			done();
 		},0);
 	});

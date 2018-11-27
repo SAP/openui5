@@ -5,9 +5,9 @@ sap.ui.define([
 	"sap/ui/commons/Splitter",
 	"sap/ui/commons/library",
 	"sap/ui/commons/Button",
-	"jquery.sap.global",
-	"jquery.sap.keycodes"
-], function(qutils, createAndAppendDiv, Splitter, commonsLibrary, Button, jQuery) {
+	"sap/ui/thirdparty/jquery",
+	"sap/ui/events/KeyCodes"
+], function(qutils, createAndAppendDiv, Splitter, commonsLibrary, Button, jQuery, KeyCodes) {
 	"use strict";
 
 	// shortcut for sap.ui.commons.Orientation;
@@ -99,13 +99,13 @@ sap.ui.define([
 		var pageY = oSplitter.splitterBar.offsetTop;
 		qutils.triggerMouseEvent(oSplitter.splitterBar, "mousemove", 1, 1, pageX, pageY );
 		// check if ghost bar is there
-		var ghost = jQuery.sap.domById(oSplitter.getId() + "_ghost");
+		var ghost = document.getElementById(oSplitter.getId() + "_ghost");
 		assert.ok(ghost, "Ghost bar check");
 		assert.equal(ghost.offsetLeft, pageX, "Ghost bar X position");
 		assert.equal(ghost.offsetTop, pageY, "Ghost bar Y position");
 		qutils.triggerMouseEvent(oSplitter.splitterBar, "mouseup", 1, 1, pageX, pageY );
 		// check if ghost bar is removed again
-		ghost = jQuery.sap.domById(oSplitter.getId() + "_ghost");
+		ghost = document.getElementById(oSplitter.getId() + "_ghost");
 		assert.equal(ghost, null, "Ghost bar check");
 		// check splitter pos
 		assert.equal( oSplitter.getSplitterOrientation(), Orientation.Vertical, "We expect value to be vertical" );
@@ -128,13 +128,13 @@ sap.ui.define([
 		var pageY = oSplitter1.splitterBar.offsetTop - 20;
 		qutils.triggerMouseEvent(oSplitter1.splitterBar, "mousemove", 1, 1, pageX, pageY );
 		// check if ghost bar is there
-		var ghost = jQuery.sap.domById(oSplitter1.getId() + "_ghost");
+		var ghost = document.getElementById(oSplitter1.getId() + "_ghost");
 		assert.ok(ghost, "Ghost bar check");
 		assert.equal(ghost.offsetLeft, pageX, "Ghost bar X position");
 		assert.equal(ghost.offsetTop, pageY, "Ghost bar Y position");
 		qutils.triggerMouseEvent(oSplitter1.splitterBar, "mouseup", 1, 1, pageX, pageY );
 		// check if ghost bar is removed again
-		ghost = jQuery.sap.domById(oSplitter1.getId() + "_ghost");
+		ghost = document.getElementById(oSplitter1.getId() + "_ghost");
 		assert.equal(ghost, null, "Ghost bar check");
 		// check splitter pos
 		assert.equal( oSplitter1.getSplitterPosition(), oSplitter1.sBarPosition + "%", "updated splitter pos " );
@@ -154,13 +154,13 @@ sap.ui.define([
 		var pageY = oSplitter1.splitterBar.offsetTop + 300;
 		qutils.triggerMouseEvent(oSplitter1.splitterBar, "mousemove", 1, 1, pageX, pageY );
 		// check if ghost bar is there
-		var ghost = jQuery.sap.domById(oSplitter1.getId() + "_ghost");
+		var ghost = document.getElementById(oSplitter1.getId() + "_ghost");
 		assert.ok(ghost, "Ghost bar check");
 		assert.equal(ghost.offsetLeft, pageX, "Ghost bar X position");
 		assert.equal(ghost.offsetTop, pageY - 300, "Ghost bar Y position");
 		qutils.triggerMouseEvent(oSplitter1.splitterBar, "mouseup", 1, 1, pageX, pageY );
 		// check if ghost bar is removed again
-		ghost = jQuery.sap.domById(oSplitter1.getId() + "_ghost");
+		ghost = document.getElementById(oSplitter1.getId() + "_ghost");
 		assert.equal(ghost, null, "Ghost bar check");
 		assert.equal( oSplitter1.getSplitterOrientation(), Orientation.Horizontal, "We expect value to be horizontal" );
 		assert.equal( oSplitter1.getMinSizeFirstPane(), "20%", "We expect value to be 20%" );
@@ -242,13 +242,13 @@ sap.ui.define([
 
 	QUnit.test("keyboard Home check splitterBar", function(assert) {
 		assert.equal( oSplitter1.getSplitterPosition(), "60%", "current splitter pos" );
-		qutils.triggerKeyboardEvent(oSplitter1.splitterBar, jQuery.sap.KeyCodes.HOME, false, false, false);
+		qutils.triggerKeyboardEvent(oSplitter1.splitterBar, KeyCodes.HOME, false, false, false);
 		assert.equal( oSplitter1.getSplitterPosition(), "20%", "updated splitter pos" );
 	});
 
 	QUnit.test("keyboard End check splitterBar", function(assert) {
 		assert.equal( oSplitter1.getSplitterPosition(), "20%", "current splitter pos" );
-		qutils.triggerKeyboardEvent(oSplitter1.splitterBar, jQuery.sap.KeyCodes.END, false, false, false);
+		qutils.triggerKeyboardEvent(oSplitter1.splitterBar, KeyCodes.END, false, false, false);
 		assert.equal( oSplitter1.getSplitterPosition(), "60%", "updated splitter pos" );
 	});
 
@@ -259,19 +259,19 @@ sap.ui.define([
 		var oldWidthFP = jQuery(oSplitter.firstPane).width();
 		var oldWidthSP = jQuery(oSplitter.secondPane).width();
 		assert.equal( oSplitter.getSplitterPosition(), oSplitter.sBarPosition + "%", "current splitter pos" );
-		qutils.triggerKeyboardEvent(oSplitter.splitterBar, jQuery.sap.KeyCodes.ARROW_LEFT, true, false, false);
+		qutils.triggerKeyboardEvent(oSplitter.splitterBar, KeyCodes.ARROW_LEFT, true, false, false);
 		newPos = jQuery(oSplitter.splitterBar).offset().left;
 		assert.equal( Math.round(oldPos - newPos), 10, "updated splitter pos" );
-		qutils.triggerKeyboardEvent(oSplitter.splitterBar, jQuery.sap.KeyCodes.ARROW_LEFT, true, false, false);
+		qutils.triggerKeyboardEvent(oSplitter.splitterBar, KeyCodes.ARROW_LEFT, true, false, false);
 		newPos = jQuery(oSplitter.splitterBar).offset().left;
 		assert.equal( Math.round(oldPos - newPos), 20, "updated splitter pos" );
 		assert.ok(oldPosPercent > oSplitter.sBarPosition, "bar position comparison");
 		assert.ok(oldWidthFP > jQuery(oSplitter.firstPane).width(), "pane width comparison");
 		assert.ok(oldWidthSP < jQuery(oSplitter.secondPane).width(), "pane width comparison");
-		qutils.triggerKeyboardEvent(oSplitter.splitterBar, jQuery.sap.KeyCodes.ARROW_RIGHT, true, false, false);
+		qutils.triggerKeyboardEvent(oSplitter.splitterBar, KeyCodes.ARROW_RIGHT, true, false, false);
 		newPos = jQuery(oSplitter.splitterBar).offset().left;
 		assert.equal( Math.round(oldPos - newPos), 10, "updated splitter pos" );
-		qutils.triggerKeyboardEvent(oSplitter.splitterBar, jQuery.sap.KeyCodes.ARROW_RIGHT, true, false, false);
+		qutils.triggerKeyboardEvent(oSplitter.splitterBar, KeyCodes.ARROW_RIGHT, true, false, false);
 		newPos = jQuery(oSplitter.splitterBar).offset().left;
 		assert.equal( Math.round(oldPos - newPos), 0, "updated splitter pos" );
 	});
@@ -283,19 +283,19 @@ sap.ui.define([
 		var oldHeightFP = jQuery(oSplitter1.firstPane).height();
 		var oldHeightSP = jQuery(oSplitter1.secondPane).height();
 		assert.equal( oSplitter1.getSplitterPosition(), oSplitter1.sBarPosition + "%", "current splitter pos" );
-		qutils.triggerKeyboardEvent(oSplitter1.splitterBar, jQuery.sap.KeyCodes.ARROW_UP, true, false, false);
+		qutils.triggerKeyboardEvent(oSplitter1.splitterBar, KeyCodes.ARROW_UP, true, false, false);
 		newPos = jQuery(oSplitter1.splitterBar).offset().top;
 		assert.equal( Math.round(oldPos - newPos), 10, "updated splitter pos" );
-		qutils.triggerKeyboardEvent(oSplitter1.splitterBar, jQuery.sap.KeyCodes.ARROW_UP, true, false, false);
+		qutils.triggerKeyboardEvent(oSplitter1.splitterBar, KeyCodes.ARROW_UP, true, false, false);
 		newPos = jQuery(oSplitter1.splitterBar).offset().top;
 		assert.equal( Math.round(oldPos - newPos), 20, "updated splitter pos" );
 		assert.ok(oldPosPercent > oSplitter1.sBarPosition, "bar position comparison");
 		assert.ok(oldHeightFP > jQuery(oSplitter1.firstPane).height(), "pane height comparison");
 		assert.ok(oldHeightSP < jQuery(oSplitter1.secondPane).height(), "pane height comparison");
-		qutils.triggerKeyboardEvent(oSplitter1.splitterBar, jQuery.sap.KeyCodes.ARROW_DOWN, true, false, false);
+		qutils.triggerKeyboardEvent(oSplitter1.splitterBar, KeyCodes.ARROW_DOWN, true, false, false);
 		newPos = jQuery(oSplitter1.splitterBar).offset().top;
 		assert.equal( Math.round(oldPos - newPos), 10, "updated splitter pos" );
-		qutils.triggerKeyboardEvent(oSplitter1.splitterBar, jQuery.sap.KeyCodes.ARROW_DOWN, true, false, false);
+		qutils.triggerKeyboardEvent(oSplitter1.splitterBar, KeyCodes.ARROW_DOWN, true, false, false);
 		newPos = jQuery(oSplitter1.splitterBar).offset().top;
 		assert.equal( Math.round(oldPos - newPos), 0, "updated splitter pos" );
 	});

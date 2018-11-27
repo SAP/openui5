@@ -1,12 +1,12 @@
 /*!
  * ${copyright}
  */
-sap.ui.define(['jquery.sap.global', 'sap/ui/core/Renderer', 'sap/ui/layout/form/GridLayoutRenderer'],
-	function(jQuery, Renderer, GridLayoutRenderer1) {
+sap.ui.define(['sap/ui/core/Renderer', 'sap/ui/layout/form/GridLayoutRenderer'],
+	function(Renderer, LayoutGridLayoutRenderer) {
 	"use strict";
 
 
-	var GridLayoutRenderer = Renderer.extend(GridLayoutRenderer1);
+	var GridLayoutRenderer = Renderer.extend(LayoutGridLayoutRenderer);
 
 	return GridLayoutRenderer;
 

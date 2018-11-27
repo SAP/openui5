@@ -2,7 +2,7 @@
 sap.ui.define([
 	"sap/ui/qunit/utils/createAndAppendDiv",
 	"sap/ui/commons/Image",
-	"jquery.sap.global"
+	"sap/ui/thirdparty/jquery"
 ], function(createAndAppendDiv, Image, jQuery) {
 	"use strict";
 
@@ -68,42 +68,42 @@ sap.ui.define([
 		// i1 is decorative, i2 not
 
 		// read alt attribute from DOM
-		assert.equal(jQuery.sap.byId(i1.getId()).attr("alt"), "", "alt text of i1 should be an empty string because the image is decorative");
-		assert.equal(jQuery.sap.byId(i2.getId()).attr("alt"), sAlt, "alt text of i2 should be rendered");
+		assert.equal(i1.$().attr("alt"), "", "alt text of i1 should be an empty string because the image is decorative");
+		assert.equal(i2.$().attr("alt"), sAlt, "alt text of i2 should be rendered");
 
 		// read title attribute from DOM
-		assert.equal(jQuery.sap.byId(i1.getId()).attr("title"), sTooltip, "tooltip text of i1 should be rendered");
-		assert.equal(jQuery.sap.byId(i2.getId()).attr("title"), sTooltip, "tooltip text of i2 should be rendered");
+		assert.equal(i1.$().attr("title"), sTooltip, "tooltip text of i1 should be rendered");
+		assert.equal(i2.$().attr("title"), sTooltip, "tooltip text of i2 should be rendered");
 
 		i1.setAlt("");
 		i2.setAlt("");
 		sap.ui.getCore().applyChanges();
 
-		assert.equal(jQuery.sap.byId(i1.getId()).attr("alt"), "", "alt text of i1 should be an empty string because the image is decorative");
-		assert.equal(jQuery.sap.byId(i2.getId()).attr("alt"), sTooltip, "alt text of i2 should have the tooltip when alt is not set, but tooltip is");
+		assert.equal(i1.$().attr("alt"), "", "alt text of i1 should be an empty string because the image is decorative");
+		assert.equal(i2.$().attr("alt"), sTooltip, "alt text of i2 should have the tooltip when alt is not set, but tooltip is");
 
 		i1.setTooltip("");
 		i2.setTooltip("");
 		sap.ui.getCore().applyChanges();
 
-		assert.equal(jQuery.sap.domById(i1.getId()).getAttribute("alt"), "", "alt attribute of i1 should be an empty string because the image is decorative");
-		assert.equal(jQuery.sap.domById(i2.getId()).getAttribute("alt"), null, "alt attribute of i2 should NOT be rendered");
-		assert.equal(jQuery.sap.domById(i1.getId()).getAttribute("title"), null, "title attribute of i1 should NOT be rendered");
-		assert.equal(jQuery.sap.domById(i2.getId()).getAttribute("title"), null, "title attribute of i2 should NOT be rendered");
+		assert.equal(i1.getDomRef().getAttribute("alt"), "", "alt attribute of i1 should be an empty string because the image is decorative");
+		assert.equal(i2.getDomRef().getAttribute("alt"), null, "alt attribute of i2 should NOT be rendered");
+		assert.equal(i1.getDomRef().getAttribute("title"), null, "title attribute of i1 should NOT be rendered");
+		assert.equal(i2.getDomRef().getAttribute("title"), null, "title attribute of i2 should NOT be rendered");
 
 		i1.setAlt(sAlt);
 		i2.setAlt(sAlt);
 		sap.ui.getCore().applyChanges();
 
-		assert.equal(jQuery.sap.byId(i1.getId()).attr("alt"), "", "alt text of i1 should be an empty string because the image is decorative");
-		assert.equal(jQuery.sap.byId(i2.getId()).attr("alt"), sAlt, "alt text of i2 should be rendered");
-		assert.equal(jQuery.sap.domById(i1.getId()).getAttribute("title"), null, "title attribute of i1 should NOT be rendered");
-		assert.equal(jQuery.sap.domById(i2.getId()).getAttribute("title"), null, "title attribute of i2 should NOT be rendered");
+		assert.equal(i1.$().attr("alt"), "", "alt text of i1 should be an empty string because the image is decorative");
+		assert.equal(i2.$().attr("alt"), sAlt, "alt text of i2 should be rendered");
+		assert.equal(i1.getDomRef().getAttribute("title"), null, "title attribute of i1 should NOT be rendered");
+		assert.equal(i2.getDomRef().getAttribute("title"), null, "title attribute of i2 should NOT be rendered");
 	});
 
 	QUnit.test("Offset Dimensions", function(assert) {
 		// test the initial dimensions
-		var oDomRef = jQuery.sap.domById("i1");
+		var oDomRef = document.getElementById("i1");
 		assert.equal(oDomRef.offsetWidth, parseInt(i1.getWidth()), "i1.offsetWidth should equal parseInt(i1.getWidth())");
 		assert.equal(oDomRef.offsetHeight, parseInt(i1.getHeight()), "i1.offsetHeight should equal parseInt(i1.getHeight())");
 	});
@@ -111,9 +111,9 @@ sap.ui.define([
 
 	QUnit.test("Empty Source No Height", function(assert) {
 		// test the initial dimensions
-		var oImage = jQuery.sap.byId("imageNoSourceNoHeight");
+		var oImage = jQuery("#imageNoSourceNoHeight");
 		assert.ok(oImage.hasClass("sapUiImgNoSource"), "imageNoSourceNoHeight has the right class 'sapUiImgNoSource' set");
-		var oDomRef = jQuery.sap.domById("imageNoSourceNoHeight");
+		var oDomRef = document.getElementById("imageNoSourceNoHeight");
 		assert.equal(oDomRef.offsetWidth, 0, "imageNoSourceNoHeight has the right width of 0px");
 		assert.equal(oDomRef.offsetHeight, 0, "imageNoSourceNoHeight has the right height of 0px");
 	});
@@ -121,9 +121,9 @@ sap.ui.define([
 
 	QUnit.test("Empty Source", function(assert) {
 		// test the initial dimensions
-		var oImage = jQuery.sap.byId("imageNoSource");
+		var oImage = jQuery("#imageNoSource");
 		assert.ok(oImage.hasClass("sapUiImgNoSource"), "imageNoSource has the right class 'sapUiImgNoSource' set");
-		var oDomRef = jQuery.sap.domById("imageNoSource");
+		var oDomRef = document.getElementById("imageNoSource");
 		assert.equal(oDomRef.offsetWidth, 100, "imageNoSource has the right width of 100px");
 		assert.equal(oDomRef.offsetHeight, 100, "imageNoSource has the right height of 100px");
 	});

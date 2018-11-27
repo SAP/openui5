@@ -4,7 +4,7 @@ sap.ui.define([
 	"sap/ui/core/library",
 	"sap/ui/commons/TextField",
 	"sap/ui/core/Control",
-	"jquery.sap.global",
+	"sap/ui/thirdparty/jquery",
 	"sap/ui/Device"
 ], function(
 	createAndAppendDiv,
@@ -275,8 +275,8 @@ sap.ui.define([
 	});
 
 	QUnit.test("ARIA", function (assert) {
-		var oT1 = jQuery.sap.byId("t1");
-		var oT2 = jQuery.sap.byId("t2");
+		var oT1 = jQuery("#t1");
+		var oT2 = jQuery("#t2");
 		assert.equal(oT2.attr("role"), oAccessibleRole.toLowerCase(), "Role");
 		assert.equal(oT2.attr("aria-multiline"), "false", "aria-multiline");
 		assert.equal(oT2.attr("aria-autocomplete"), "none", "aria-autocomplete");
@@ -295,9 +295,9 @@ sap.ui.define([
 	});
 
 	QUnit.test("Placeholder", function (assert) {
-		var oT1 = jQuery.sap.byId("t1");
-		var oT2 = jQuery.sap.byId("t2");
-		var oT3 = jQuery.sap.byId("t3");
+		var oT1 = jQuery("#t1");
+		var oT2 = jQuery("#t2");
+		var oT3 = jQuery("#t3");
 		if (Device.support.input.placeholder) {
 			assert.ok(!oT1.attr("placeholder"), "placeholder not set");
 			assert.equal(oT2.attr("placeholder"), "Hello", "placeholder set");
@@ -308,7 +308,7 @@ sap.ui.define([
 
 		oTextField3.setPlaceholder("Hello");
 		sap.ui.getCore().applyChanges();
-		oT3 = jQuery.sap.byId("t3");
+		oT3 = jQuery("#t3");
 
 		if (Device.support.input.placeholder) {
 			assert.equal(oT3.attr("placeholder"), "Hello", "Placeholder set");

@@ -2,7 +2,7 @@
 sap.ui.define([
 	"sap/ui/qunit/QUnitUtils",
 	"sap/ui/qunit/utils/createAndAppendDiv",
-	"jquery.sap.global",
+	"sap/ui/thirdparty/jquery",
 	"sap/ui/commons/RichTooltip",
 	"sap/ui/commons/Button",
 	"sap/ui/commons/TextField",
@@ -42,7 +42,7 @@ sap.ui.define([
 	}
 
 	function isRttVisible(sId){
-		return jQuery.sap.byId(sId).filter(":visible").size() > 0;
+		return jQuery(sId ? document.getElementById(sId) : null).filter(":visible").size() > 0;
 	}
 
 	var sText, sTitle, sDefaultTitle, sImageSrc, oRtt0, oRtt1, oButton1, sRtt2Offset, sRtt2HtmlText,
@@ -246,7 +246,7 @@ sap.ui.define([
 		var done = assert.async();
 		sap.ui.getCore().applyChanges();
 		checkOpenClose(1, true, 400, undefined, function() {
-			var jRtt1 = jQuery.sap.byId("rtt1");
+			var jRtt1 = jQuery("#rtt1");
 
 			var jObj = jRtt1.find(".sapUiRttText");
 			assert.ok(jObj.size() == 1, "RichTooltip text section is available");
@@ -295,8 +295,8 @@ sap.ui.define([
 		assert.expect(4);
 
 		checkOpenClose(2, true, 400, undefined, function() {
-			var jObjValueStateText = jQuery.sap.byId("rtt2").find(".sapUiRttValueStateText");
-			var jObjText = jQuery.sap.byId("rtt2").find(".sapUiRttText");
+			var jObjValueStateText = jQuery("#rtt2").find(".sapUiRttValueStateText");
+			var jObjText = jQuery("#rtt2").find(".sapUiRttText");
 
 			assert.ok(jObjValueStateText.size() == 1, "ValueState text section is available");
 			assert.ok(jObjText.size() == 1, "RichTooltip text section is available");
@@ -320,7 +320,7 @@ sap.ui.define([
 
 		setTimeout(function(){
 			checkOpenClose(2, true, 800, undefined, function() {
-				var jObjText = jQuery.sap.byId("rtt2").find(".sapUiRttText");
+				var jObjText = jQuery("#rtt2").find(".sapUiRttText");
 
 				// since IE8 transforms all tags into upper case it has to be transfered back into lower case
 				var sText = jObjText.html().toLowerCase();
@@ -328,7 +328,7 @@ sap.ui.define([
 
 				assert.ok(sText === sLowerOriginal, "HTML text as content text");
 
-				var jObjValueStateText = jQuery.sap.byId("rtt2").find(".sapUiRttValueStateText");
+				var jObjValueStateText = jQuery("#rtt2").find(".sapUiRttValueStateText");
 				assert.ok(jObjValueStateText.html() === sRtt2ValueStateText, "Custom 'ValueStateMessage':");
 				done();
 			});

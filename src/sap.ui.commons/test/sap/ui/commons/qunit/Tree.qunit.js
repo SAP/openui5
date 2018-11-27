@@ -5,12 +5,12 @@ sap.ui.define([
 	"sap/ui/commons/Tree",
 	"sap/ui/commons/TreeNode",
 	"sap/ui/model/json/JSONModel",
-	"jquery.sap.global",
+	"sap/ui/thirdparty/jquery",
 	"sap/ui/Device",
 	"sap/ui/commons/library",
 	"sap/ui/model/Filter",
 	"sap/ui/model/FilterOperator",
-	"jquery.sap.keycodes"
+	"sap/ui/events/KeyCodes"
 ], function(
 	qutils,
 	createAndAppendDiv,
@@ -21,7 +21,8 @@ sap.ui.define([
 	Device,
 	commonsLibrary,
 	Filter,
-	FilterOperator
+	FilterOperator,
+	KeyCodes
 ) {
 	"use strict";
 
@@ -75,7 +76,7 @@ sap.ui.define([
 	}
 
 	function createTransparentTree () {
-		var oTree2 = new Tree("tree2", {title:"Tree with Header", width:"200px",height:"300px", showHorizontalScrollbar:false, showHeader:false});
+		var oTree2 = new Tree(sTransparentTreeId, {title:"Tree with Header", width:"200px",height:"300px", showHorizontalScrollbar:false, showHeader:false});
 
 		var oNode21 = new TreeNode("node21", {text:"Root 1"});
 
@@ -249,21 +250,21 @@ sap.ui.define([
 
 	QUnit.test("Rendering of Standard tree", function(assert) {
 
-		assert.notEqual(jQuery.sap.domById(sStandardTreeId), null, "Tree is rendered.");
+		assert.notEqual(oStandardTree.getDomRef(), null, "Tree is rendered.");
 
-		assert.notEqual(jQuery.sap.domById(sStandardTreeId + "-Header"), null, "Tree header is there.");
+		assert.notEqual(oStandardTree.getDomRef("Header"), null, "Tree header is there.");
 
-		assert.notEqual(jQuery.sap.domById(sStandardTreeId + "-TreeCont"), null, "Tree content is there");
+		assert.notEqual(oStandardTree.getDomRef("TreeCont"), null, "Tree content is there");
 
 	});
 
 	QUnit.test("Rendering of transparent tree", function(assert) {
 
-		assert.notEqual(jQuery.sap.domById(sTransparentTreeId), null, "Tree is rendered.");
+		assert.notEqual(oTransparentTree.getDomRef(), null, "Tree is rendered.");
 
-		assert.equal(jQuery.sap.domById(sTransparentTreeId + "-Header"), null, "Tree header is not there.");
+		assert.equal(oTransparentTree.getDomRef("Header"), null, "Tree header is not there.");
 
-		assert.notEqual(jQuery.sap.domById(sTransparentTreeId + "-TreeCont"), null, "Tree content is there");
+		assert.notEqual(oTransparentTree.getDomRef("TreeCont"), null, "Tree content is there");
 	});
 
 	QUnit.module("Nodes public methods");
@@ -687,7 +688,7 @@ sap.ui.define([
 	QUnit.test("Space/Enter", function(assert) {
 		oStandardTree.expandAll();
 
-		qutils.triggerKeyboardEvent("node11", jQuery.sap.KeyCodes.ENTER, false, false, false);
+		qutils.triggerKeyboardEvent("node11", KeyCodes.ENTER, false, false, false);
 
 		assert.equal( oStandardTree.getSelection().getId(), "node11",  "New selection is set");
 
@@ -700,16 +701,16 @@ sap.ui.define([
 			sap.ui.getCore().getControl("node11").focus();
 
 			setTimeout(function(){
-				qutils.triggerKeyboardEvent(sStandardTreeId, jQuery.sap.KeyCodes.ARROW_DOWN, false, false, false);
+				qutils.triggerKeyboardEvent(sStandardTreeId, KeyCodes.ARROW_DOWN, false, false, false);
 				setTimeout(function(){
 					assert.equal( jQuery(document.activeElement).first().attr("id"), "node13",  "Focus is down one node");
-					qutils.triggerKeyboardEvent(sStandardTreeId, jQuery.sap.KeyCodes.ARROW_UP, false, false, false);
+					qutils.triggerKeyboardEvent(sStandardTreeId, KeyCodes.ARROW_UP, false, false, false);
 					setTimeout(function(){
 						assert.equal( jQuery(document.activeElement).first().attr("id"), "node11",  "Focus is up one node");
-						qutils.triggerKeyboardEvent("node11", jQuery.sap.KeyCodes.ARROW_LEFT, false, false, false);
+						qutils.triggerKeyboardEvent("node11", KeyCodes.ARROW_LEFT, false, false, false);
 						setTimeout(function(){
 							assert.equal( sap.ui.getCore().getControl("node11").getExpanded(), false,  "Node is collapsed");
-							qutils.triggerKeyboardEvent("node11", jQuery.sap.KeyCodes.ARROW_RIGHT, false, false, false);
+							qutils.triggerKeyboardEvent("node11", KeyCodes.ARROW_RIGHT, false, false, false);
 							setTimeout(function(){
 								assert.equal( sap.ui.getCore().getControl("node11").getExpanded(), true,  "Node is expanded");
 								done();
@@ -723,11 +724,11 @@ sap.ui.define([
 
 	QUnit.test("Plus/Minus", function(assert) {
 
-		qutils.triggerKeyboardEvent("node11", jQuery.sap.KeyCodes.NUMPAD_MINUS, false, false, false);
+		qutils.triggerKeyboardEvent("node11", KeyCodes.NUMPAD_MINUS, false, false, false);
 
 		assert.ok( !sap.ui.getCore().getControl("node11").getExpanded(), "Root is collapsed");
 
-		qutils.triggerKeyboardEvent("node11", jQuery.sap.KeyCodes.NUMPAD_PLUS, false, false, false);
+		qutils.triggerKeyboardEvent("node11", KeyCodes.NUMPAD_PLUS, false, false, false);
 
 		assert.ok( sap.ui.getCore().getControl("node11").getExpanded(), "Root is expanded");
 
@@ -735,7 +736,7 @@ sap.ui.define([
 
 	QUnit.test("Asterisk", function(assert) {
 
-		qutils.triggerKeyboardEvent(sStandardTreeId, jQuery.sap.KeyCodes.NUMPAD_ASTERISK, false, false, false);
+		qutils.triggerKeyboardEvent(sStandardTreeId, KeyCodes.NUMPAD_ASTERISK, false, false, false);
 
 		var foundNodeExpanded = false;
 		var aNodes = oStandardTree.getNodes();
@@ -749,7 +750,7 @@ sap.ui.define([
 		}
 		assert.ok( !foundNodeExpanded, "All nodes are now collapsed");
 
-		qutils.triggerKeyboardEvent(sStandardTreeId, jQuery.sap.KeyCodes.NUMPAD_ASTERISK, false, false, false);
+		qutils.triggerKeyboardEvent(sStandardTreeId, KeyCodes.NUMPAD_ASTERISK, false, false, false);
 
 		var foundNodeCollapsed = false;
 		aNodes = oStandardTree.getNodes();
@@ -768,11 +769,11 @@ sap.ui.define([
 
 		sap.ui.getCore().getControl("node13").focus();
 
-		qutils.triggerKeyboardEvent("node13", jQuery.sap.KeyCodes.END, false, false, false);
+		qutils.triggerKeyboardEvent("node13", KeyCodes.END, false, false, false);
 
 		assert.equal( jQuery(document.activeElement).first().attr("id"), "node14",  "Focus moved to last sibling");
 
-		qutils.triggerKeyboardEvent("node14", jQuery.sap.KeyCodes.HOME, false, false, false);
+		qutils.triggerKeyboardEvent("node14", KeyCodes.HOME, false, false, false);
 
 		assert.equal( jQuery(document.activeElement).first().attr("id"), "node13",  "Focus moved to first sibling");
 
@@ -784,11 +785,11 @@ sap.ui.define([
 
 		sap.ui.getCore().getControl("node13").focus();
 
-		qutils.triggerKeyboardEvent("node13", jQuery.sap.KeyCodes.END, false, false, true);
+		qutils.triggerKeyboardEvent("node13", KeyCodes.END, false, false, true);
 
 		assert.equal( jQuery(document.activeElement).first().attr("id"), "node12",  "Focus moved to last node");
 
-		qutils.triggerKeyboardEvent("node12", jQuery.sap.KeyCodes.HOME, false, false, true);
+		qutils.triggerKeyboardEvent("node12", KeyCodes.HOME, false, false, true);
 
 		assert.equal( jQuery(document.activeElement).first().attr("id"), "node11",  "Focus moved to first node");
 

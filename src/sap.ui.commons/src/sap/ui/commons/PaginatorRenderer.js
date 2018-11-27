@@ -3,8 +3,8 @@
  */
 
 //Provides default renderer for control sap.ui.commons.Paginator
-sap.ui.define(['jquery.sap.global', 'jquery.sap.encoder'],
-	function(jQuery/* , jQuerySap */) {
+sap.ui.define(["sap/base/security/encodeXML"],
+	function(encodeXML) {
 	"use strict";
 
 
@@ -126,9 +126,9 @@ sap.ui.define(['jquery.sap.global', 'jquery.sap.encoder'],
 			aHtml.push(">");
 			aHtml.push("<a id='" + sPaginatorId + "-a--" + i + "' title='");
 			if (i == iCurrent) {
-				aHtml.push(jQuery.sap.encodeHTML(rb.getText("PAGINATOR_CURRENT_PAGE", [i])));
+				aHtml.push(encodeXML(rb.getText("PAGINATOR_CURRENT_PAGE", [i])));
 			} else {
-				aHtml.push(jQuery.sap.encodeHTML(rb.getText("PAGINATOR_OTHER_PAGE", [i])));
+				aHtml.push(encodeXML(rb.getText("PAGINATOR_OTHER_PAGE", [i])));
 			}
 			aHtml.push("' href='#'");
 			if (i == iCurrent) {
@@ -155,10 +155,10 @@ sap.ui.define(['jquery.sap.global', 'jquery.sap.encoder'],
 		var isFirst = (page == 1);
 		var isLast = (page == oPaginator.getNumberOfPages());
 
-		var firstPage = jQuery.sap.byId(id + "--firstPageLink").toggleClass("sapUiLnk", !isFirst).toggleClass("sapUiLnkDsbl", isFirst);
-		var backLink = jQuery.sap.byId(id + "--backLink").toggleClass("sapUiLnk", !isFirst).toggleClass("sapUiLnkDsbl", isFirst);
-		var forwardLink = jQuery.sap.byId(id + "--forwardLink").toggleClass("sapUiLnk", !isLast).toggleClass("sapUiLnkDsbl", isLast);
-		var lastPage = jQuery.sap.byId(id + "--lastPageLink").toggleClass("sapUiLnk", !isLast).toggleClass("sapUiLnkDsbl", isLast);
+		var firstPage = jQuery(document.getElementById(id + "--firstPageLink")).toggleClass("sapUiLnk", !isFirst).toggleClass("sapUiLnkDsbl", isFirst);
+		var backLink = jQuery(document.getElementById(id + "--backLink")).toggleClass("sapUiLnk", !isFirst).toggleClass("sapUiLnkDsbl", isFirst);
+		var forwardLink = jQuery(document.getElementById(id + "--forwardLink")).toggleClass("sapUiLnk", !isLast).toggleClass("sapUiLnkDsbl", isLast);
+		var lastPage = jQuery(document.getElementById(id + "--lastPageLink")).toggleClass("sapUiLnk", !isLast).toggleClass("sapUiLnkDsbl", isLast);
 
 		if (isFirst) {
 			firstPage.attr("aria-disabled", "true");

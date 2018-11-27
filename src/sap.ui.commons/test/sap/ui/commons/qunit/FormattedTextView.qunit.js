@@ -4,7 +4,7 @@ sap.ui.define([
 	"sap/ui/commons/FormattedTextView",
 	"sap/ui/commons/Link",
 	"sap/ui/commons/Image",
-	"jquery.sap.global",
+	"sap/ui/thirdparty/jquery",
 	"sap/ui/commons/Button"
 ], function(
 	createAndAppendDiv,
@@ -85,7 +85,7 @@ sap.ui.define([
 
 	QUnit.test("Placeholders", function(assert) {
 		var placeHolderPattern = new RegExp("\<embed data-index=\"([0-9]*[0-9])\">", "gim");
-		var oTVDom = jQuery.sap.domById('textView1');
+		var oTVDom = document.getElementById('textView1');
 		var renderedText = jQuery(oTVDom).text();
 		assert.ok((placeHolderPattern.exec(renderedText) == null), "All placeholders correctly replaced");
 
@@ -100,7 +100,7 @@ sap.ui.define([
 		oFTV3.setHtmlText(evilText);
 		sap.ui.getCore().applyChanges();
 		goodText += 'START ' + 'END';
-		var deliveredText = jQuery(jQuery.sap.domById('textView3')).html();
+		var deliveredText = jQuery(document.getElementById('textView3')).html();
 		assert.equal(deliveredText, goodText, "Text has been sanitized");
 	});
 

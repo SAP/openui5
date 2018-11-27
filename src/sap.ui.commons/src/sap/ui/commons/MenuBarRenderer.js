@@ -3,9 +3,14 @@
  */
 
 // Provides default renderer for control sap.ui.commons.MenuBar
-sap.ui.define(['jquery.sap.global'],
-	function(jQuery) {
+sap.ui.define(['sap/ui/commons/library'],
+	function(library) {
 	"use strict";
+
+
+
+	// shortcut for sap.ui.commons.MenuBarDesign
+	var MenuBarDesign = library.MenuBarDesign;
 
 
 
@@ -19,18 +24,16 @@ sap.ui.define(['jquery.sap.global'],
 	/**
 	 * Renders the HTML for the given menubar using the provided {@link sap.ui.core.RenderManager}.
 	 *
-	 * @param {sap.ui.core.RenderManager} oRenderManager The RenderManager that can be used for writing to the render output buffer.
+	 * @param {sap.ui.core.RenderManager} rm The RenderManager that can be used for writing to the render output buffer.
 	 * @param {sap.ui.commons.Toolbar} oToolbar An object representation of the control that should be rendered.
 	 */
-	MenuBarRenderer.render = function(oRenderManager, oMenuBar) {
-		var rm = oRenderManager;
-
+	MenuBarRenderer.render = function(rm, oMenuBar) {
 		oMenuBar.doBeforeRendering();
 
 		rm.write("<div");
 		rm.writeControlData(oMenuBar);
 		rm.addClass("sapUiMnuBar");
-		if (oMenuBar.getDesign() == sap.ui.commons.MenuBarDesign.Header) {
+		if (oMenuBar.getDesign() == MenuBarDesign.Header) {
 			rm.addClass("sapUiMnuBarHeader");
 		}
 		var bIsDisabled = !oMenuBar.getEnabled();

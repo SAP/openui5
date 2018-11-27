@@ -4,13 +4,15 @@
 
 // Provides control sap.ui.commons.ImageMap.
 sap.ui.define([
-    'jquery.sap.global',
+    'sap/ui/thirdparty/jquery',
     './library',
     'sap/ui/core/Control',
     'sap/ui/core/delegate/ItemNavigation',
-    "./ImageMapRenderer"
+    './ImageMapRenderer',
+    './Area',
+    'sap/ui/Device'
 ],
-	function(jQuery, library, Control, ItemNavigation, ImageMapRenderer) {
+	function(jQuery, library, Control, ItemNavigation, ImageMapRenderer, Area, Device) {
 	"use strict";
 
 
@@ -80,15 +82,15 @@ sap.ui.define([
 	 * @ui5-metamodel This method also will be described in the UI5 (legacy) designtime metamodel
 	 */
 	ImageMap.prototype.createArea = function() {
-		var oArea = new sap.ui.commons.Area();
+		var oArea = new Area();
 
 		for ( var i = 0; i < arguments.length; i++) {
 			var oContent = arguments[i];
 			var oArea;
-			if (oContent instanceof sap.ui.commons.Area) {
+			if (oContent instanceof Area) {
 				oArea = oContent;
 			} else {
-				oArea = new sap.ui.commons.Area(oContent);
+				oArea = new Area(oContent);
 			}
 			this.addArea(oArea);
 		}
@@ -109,7 +111,7 @@ sap.ui.define([
 			this.oItemNavigation = new ItemNavigation();
 		}
 
-		if (!!sap.ui.Device.browser.internet_explorer) {
+		if (Device.browser.msie) {
 
 			var that = this;
 			var aImageControls = [];
@@ -158,7 +160,7 @@ sap.ui.define([
 	ImageMap.prototype.exit = function() {
 		// Remove the item navigation delegate
 		if (this.oItemNavigation) {
-			if (!!sap.ui.Device.browser.internet_explorer) {
+			if (Device.browser.msie) {
 				for ( var i = 0; i < this.aImageControls.length; i++) {
 					this.aImageControls[i].removeDelegate(this.oItemNavigation);
 				}
@@ -174,4 +176,4 @@ sap.ui.define([
 
 	return ImageMap;
 
-}, /* bExport= */ true);
+});

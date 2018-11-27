@@ -10,7 +10,7 @@ sap.ui.define([
 	"sap/ui/commons/layout/ResponsiveFlowLayoutData",
 	"sap/ui/core/VariantLayoutData",
 	"sap/ui/core/LayoutData",
-	"jquery.sap.global"
+	"sap/ui/thirdparty/jquery"
 ], function(
 	createAndAppendDiv,
 	ResponsiveLayout,
@@ -217,63 +217,63 @@ sap.ui.define([
 	QUnit.module("Rendering");
 
 	QUnit.test("Container rendering", function(assert) {
-		assert.ok(jQuery.sap.domById("F1"), "Form1 is rendered");
-		assert.ok(jQuery.sap.domById("Layout1"), "Layout1 is rendered");
-		assert.ok(!jQuery.sap.domById("F1C1--Panel"), "Form1: Container1 no Panel rendered (because no title and expander)");
-		assert.ok(jQuery.sap.domById("F1C1--RFLayout"), "Form1: Container1 ResponsiveFlowLayout rendered");
+		assert.ok(document.getElementById("F1"), "Form1 is rendered");
+		assert.ok(document.getElementById("Layout1"), "Layout1 is rendered");
+		assert.ok(!document.getElementById("F1C1--Panel"), "Form1: Container1 no Panel rendered (because no title and expander)");
+		assert.ok(document.getElementById("F1C1--RFLayout"), "Form1: Container1 ResponsiveFlowLayout rendered");
 
 		// panel
-		assert.ok(jQuery.sap.domById("F2C1--Panel"), "Form2: Container1 Panel rendered (because title)");
-		assert.ok(jQuery.sap.domById("F2C1--RFLayout"), "Form2: Container1 ResponsiveFlowLayout rendered");
+		assert.ok(document.getElementById("F2C1--Panel"), "Form2: Container1 Panel rendered (because title)");
+		assert.ok(document.getElementById("F2C1--RFLayout"), "Form2: Container1 ResponsiveFlowLayout rendered");
 		// title as text
 		var oContainer = sap.ui.getCore().byId("F2C1");
-		assert.ok(jQuery.sap.domById("F2C1--title"), "Form2: Container1 Title rendered");
-		assert.equal(jQuery.sap.byId("F2C1--title").text(), oContainer.getTitle(), "Form2: Container1 Title Text");
+		assert.ok(document.getElementById("F2C1--title"), "Form2: Container1 Title rendered");
+		assert.equal(jQuery("#F2C1--title").text(), oContainer.getTitle(), "Form2: Container1 Title Text");
 		// title as control
 		oContainer = sap.ui.getCore().byId("F3C1");
-		var sTitleId = oContainer.getTitle().getId();
-		assert.ok(jQuery.sap.domById(sTitleId), "Form3: Container1 Title rendered");
-		assert.equal(jQuery.sap.byId(sTitleId).text(), oContainer.getTitle().getText(), "Form3: Container1 Title Text");
+		var oTitle = oContainer.getTitle();
+		assert.ok(oTitle.getDomRef(), "Form3: Container1 Title rendered");
+		assert.equal(oTitle.$().text(), oContainer.getTitle().getText(), "Form3: Container1 Title Text");
 		// expander
 		// as button is loaded async, check if already there and rendered, if not, start test async
-		if (sap.ui.require("sap/ui/commons/Button") && jQuery.sap.domById("F3C2--Exp")) {
-			assert.ok(!jQuery.sap.domById("F3C1--Exp"), "Form3: Container1 no expander rendered");
-			assert.ok(jQuery.sap.domById("F3C2--Exp"), "Form3: Container2 expander rendered");
+		if (sap.ui.require("sap/ui/commons/Button") && document.getElementById("F3C2--Exp")) {
+			assert.ok(!document.getElementById("F3C1--Exp"), "Form3: Container1 no expander rendered");
+			assert.ok(document.getElementById("F3C2--Exp"), "Form3: Container2 expander rendered");
 		} else {
 			var fnDone = assert.async();
 			sap.ui.require(["sap/ui/commons/Button"], function() {
 				sap.ui.getCore().applyChanges(); // to wait for re-rendering
-				assert.ok(!jQuery.sap.domById("F3C1--Exp"), "Form3: Container1 no expander rendered");
-				assert.ok(jQuery.sap.domById("F3C2--Exp"), "Form3: Container2 expander rendered XXX");
+				assert.ok(!document.getElementById("F3C1--Exp"), "Form3: Container1 no expander rendered");
+				assert.ok(document.getElementById("F3C2--Exp"), "Form3: Container2 expander rendered XXX");
 				fnDone();
 			});
 		}
 
-		assert.ok(!jQuery.sap.domById("F3C5--Panel"), "Form3: invisible Container5 - Panel not rendered");
-		assert.ok(!jQuery.sap.domById("F3C5--RFLayout"), "Form3: invisible Container5 - ResponsiveFlowLayout not rendered");
+		assert.ok(!document.getElementById("F3C5--Panel"), "Form3: invisible Container5 - Panel not rendered");
+		assert.ok(!document.getElementById("F3C5--RFLayout"), "Form3: invisible Container5 - ResponsiveFlowLayout not rendered");
 	});
 
 	QUnit.test("Element Rendering", function(assert) {
-		assert.ok(jQuery.sap.domById("F1C1E1--RFLayout"), "Form1: Element1 ResponsiveFlowLayout rendered");
-		assert.ok(!jQuery.sap.domById("F1C1E1--content--RFLayout"), "Form1: Element1 no ResponsiveFlowLayout for content rendered");
+		assert.ok(document.getElementById("F1C1E1--RFLayout"), "Form1: Element1 ResponsiveFlowLayout rendered");
+		assert.ok(!document.getElementById("F1C1E1--content--RFLayout"), "Form1: Element1 no ResponsiveFlowLayout for content rendered");
 
-		assert.ok(jQuery.sap.domById("F2C1E1--RFLayout"), "Form2: Element1 ResponsiveFlowLayout rendered");
-		assert.ok(jQuery.sap.domById("F2C1E1--content--RFLayout"), "Form2: Element1 ResponsiveFlowLayout for content rendered");
+		assert.ok(document.getElementById("F2C1E1--RFLayout"), "Form2: Element1 ResponsiveFlowLayout rendered");
+		assert.ok(document.getElementById("F2C1E1--content--RFLayout"), "Form2: Element1 ResponsiveFlowLayout for content rendered");
 
-		assert.ok(!jQuery.sap.domById("F3C2E3--RFLayout"), "Form3: invisible Element ResponsiveFlowLayout not rendered");
-		assert.ok(!jQuery.sap.domById("F3C5E1--RFLayout"), "Form3: invisible Containers Element ResponsiveFlowLayout not rendered");
+		assert.ok(!document.getElementById("F3C2E3--RFLayout"), "Form3: invisible Element ResponsiveFlowLayout not rendered");
+		assert.ok(!document.getElementById("F3C5E1--RFLayout"), "Form3: invisible Containers Element ResponsiveFlowLayout not rendered");
 	});
 
 	QUnit.test("Fieds Rendering", function(assert) {
-		assert.ok(jQuery.sap.domById(sap.ui.getCore().byId("F1C1E1").getLabelControl().getId()), "Label1 rendered");
-		assert.ok(jQuery.sap.domById("F1C1E1_T1"), "TextField1 rendered");
+		assert.ok(sap.ui.getCore().byId("F1C1E1").getLabelControl().getDomRef(), "Label1 rendered");
+		assert.ok(document.getElementById("F1C1E1_T1"), "TextField1 rendered");
 
-		assert.ok(jQuery.sap.domById(sap.ui.getCore().byId("F2C1E1").getLabelControl().getId()), "Form2: Label rendered");
-		assert.ok(jQuery.sap.domById("F2C1E1_T1"), "Form2: TextField1 rendered");
-		assert.ok(jQuery.sap.domById("F2C1E1_T2"), "Form2: TextField2 rendered");
+		assert.ok(sap.ui.getCore().byId("F2C1E1").getLabelControl().getDomRef(), "Form2: Label rendered");
+		assert.ok(document.getElementById("F2C1E1_T1"), "Form2: TextField1 rendered");
+		assert.ok(document.getElementById("F2C1E1_T2"), "Form2: TextField2 rendered");
 
-		assert.ok(!jQuery.sap.domById("F3C2E3_T1"), "Form3: invisible Element - TextField not rendered");
-		assert.ok(!jQuery.sap.domById("F3C5E1_T1"), "Form3: invisible Container - TextField not rendered");
+		assert.ok(!document.getElementById("F3C2E3_T1"), "Form3: invisible Element - TextField not rendered");
+		assert.ok(!document.getElementById("F3C5E1_T1"), "Form3: invisible Container - TextField not rendered");
 	});
 
 	QUnit.module("Interaction");
@@ -292,12 +292,12 @@ sap.ui.define([
 			})
 			);
 		sap.ui.getCore().applyChanges();
-		assert.ok(jQuery.sap.domById("F3C4--Panel"), "Form3: new Container Panel rendered (because title)");
-		assert.ok(jQuery.sap.domById("F3C4--RFLayout"), "Form3: new Container ResponsiveFlowLayout rendered");
-		assert.ok(jQuery.sap.domById("F3C4E1--RFLayout"), "Form3: new Element1 ResponsiveFlowLayout rendered");
-		assert.ok(jQuery.sap.domById("F3C4E1--content--RFLayout"), "Form3: new Element1 ResponsiveFlowLayout for content rendered");
-		assert.ok(jQuery.sap.domById(sap.ui.getCore().byId("F3C4E1").getLabelControl().getId()), "Form3: new Label1 rendered");
-		assert.ok(jQuery.sap.domById("F3C4E1_T1"), "Form3: new TextField1 rendered");
+		assert.ok(document.getElementById("F3C4--Panel"), "Form3: new Container Panel rendered (because title)");
+		assert.ok(document.getElementById("F3C4--RFLayout"), "Form3: new Container ResponsiveFlowLayout rendered");
+		assert.ok(document.getElementById("F3C4E1--RFLayout"), "Form3: new Element1 ResponsiveFlowLayout rendered");
+		assert.ok(document.getElementById("F3C4E1--content--RFLayout"), "Form3: new Element1 ResponsiveFlowLayout for content rendered");
+		assert.ok(sap.ui.getCore().byId("F3C4E1").getLabelControl().getDomRef(), "Form3: new Label1 rendered");
+		assert.ok(document.getElementById("F3C4E1_T1"), "Form3: new TextField1 rendered");
 	});
 
 	QUnit.test("add element", function(assert) {
@@ -309,19 +309,19 @@ sap.ui.define([
 				})
 			);
 		sap.ui.getCore().applyChanges();
-		assert.ok(jQuery.sap.domById("F3C4E2--RFLayout"), "Form3: new Element2 ResponsiveFlowLayout rendered");
-		assert.ok(!jQuery.sap.domById("F3C4E2--content--RFLayout"), "Form3: new Element2 no ResponsiveFlowLayout for content rendered");
-		assert.ok(jQuery.sap.domById(sap.ui.getCore().byId("F3C4E2").getLabelControl().getId()), "Form3: new Label2 rendered");
-		assert.ok(jQuery.sap.domById("F3C4E2_T1"), "Form3: new TextField1 rendered");
+		assert.ok(document.getElementById("F3C4E2--RFLayout"), "Form3: new Element2 ResponsiveFlowLayout rendered");
+		assert.ok(!document.getElementById("F3C4E2--content--RFLayout"), "Form3: new Element2 no ResponsiveFlowLayout for content rendered");
+		assert.ok(sap.ui.getCore().byId("F3C4E2").getLabelControl().getDomRef(), "Form3: new Label2 rendered");
+		assert.ok(document.getElementById("F3C4E2_T1"), "Form3: new TextField1 rendered");
 	});
 
 	QUnit.test("add field", function(assert) {
 		var oElement = sap.ui.getCore().byId("F3C4E2");
 		oElement.addField(new TextField("F3C4E2_T2",{value: "Text"}));
 		sap.ui.getCore().applyChanges();
-		assert.ok(jQuery.sap.domById("F3C4E2--content--RFLayout"), "Form3: new Element2 ResponsiveFlowLayout for content rendered");
-		assert.ok(jQuery.sap.domById("F3C4E2_T1"), "Form3: new still TextField1 rendered");
-		assert.ok(jQuery.sap.domById("F3C4E2_T2"), "Form3: new TextField2 rendered");
+		assert.ok(document.getElementById("F3C4E2--content--RFLayout"), "Form3: new Element2 ResponsiveFlowLayout for content rendered");
+		assert.ok(document.getElementById("F3C4E2_T1"), "Form3: new still TextField1 rendered");
+		assert.ok(document.getElementById("F3C4E2_T2"), "Form3: new TextField2 rendered");
 	});
 
 	QUnit.test("make Element invisible", function(assert) {
@@ -330,8 +330,8 @@ sap.ui.define([
 		sap.ui.getCore().applyChanges();
 		assert.ok(!sap.ui.getCore().byId("F3C4E2--RFLayout"), "Form3: Elements ResponsiveFlowLayout does not exist any more.");
 		assert.ok(!sap.ui.getCore().byId("F3C4E2--content--RFLayout"), "Form3: ResponsiveFlowLayout for Element content does not exist any more.");
-		assert.ok(!jQuery.sap.domById(sap.ui.getCore().byId("F3C4E2").getLabelControl().getId()), "Form3: Label2 not longer rendered");
-		assert.ok(!jQuery.sap.domById("F3C4E2_T1"), "Form3: TextField1 not longer rendered");
+		assert.ok(!sap.ui.getCore().byId("F3C4E2").getLabelControl().getDomRef(), "Form3: Label2 not longer rendered");
+		assert.ok(!document.getElementById("F3C4E2_T1"), "Form3: TextField1 not longer rendered");
 	});
 
 	QUnit.test("make Element visible", function(assert) {
@@ -340,10 +340,10 @@ sap.ui.define([
 		sap.ui.getCore().applyChanges();
 		assert.ok(sap.ui.getCore().byId("F3C4E2--RFLayout"), "Form3: Elements ResponsiveFlowLayout exist again.");
 		assert.ok(sap.ui.getCore().byId("F3C4E2--content--RFLayout"), "Form3: Elements ResponsiveFlowLayout for content exist again.");
-		assert.ok(jQuery.sap.domById("F3C4E2--RFLayout"), "Form3: Element ResponsiveFlowLayout rendered");
-		assert.ok(jQuery.sap.domById("F3C4E2--content--RFLayout"), "Form3: Element2 ResponsiveFlowLayout for content rendered");
-		assert.ok(jQuery.sap.domById(sap.ui.getCore().byId("F3C4E2").getLabelControl().getId()), "Form3: Label2 rendered");
-		assert.ok(jQuery.sap.domById("F3C4E2_T1"), "Form3: TextField1 rendered");
+		assert.ok(document.getElementById("F3C4E2--RFLayout"), "Form3: Element ResponsiveFlowLayout rendered");
+		assert.ok(document.getElementById("F3C4E2--content--RFLayout"), "Form3: Element2 ResponsiveFlowLayout for content rendered");
+		assert.ok(sap.ui.getCore().byId("F3C4E2").getLabelControl().getDomRef(), "Form3: Label2 rendered");
+		assert.ok(document.getElementById("F3C4E2_T1"), "Form3: TextField1 rendered");
 	});
 
 	QUnit.test("make Container invisible", function(assert) {
@@ -354,8 +354,8 @@ sap.ui.define([
 		assert.ok(!sap.ui.getCore().byId("F3C4--RFLayout"), "Form3: ResponsiveFlowLayout for Container content does not exist any more.");
 		assert.ok(!sap.ui.getCore().byId("F3C4E2--RFLayout"), "Form3: Elements ResponsiveFlowLayout does not exist any more.");
 		assert.ok(!sap.ui.getCore().byId("F3C4E2--content--RFLayout"), "Form3: ResponsiveFlowLayout for Element content does not exist any more.");
-		assert.ok(!jQuery.sap.domById(sap.ui.getCore().byId("F3C4E2").getLabelControl().getId()), "Form3: Label2 not longer rendered");
-		assert.ok(!jQuery.sap.domById("F3C4E2_T1"), "Form3: TextField1 not longer rendered");
+		assert.ok(!sap.ui.getCore().byId("F3C4E2").getLabelControl().getDomRef(), "Form3: Label2 not longer rendered");
+		assert.ok(!document.getElementById("F3C4E2_T1"), "Form3: TextField1 not longer rendered");
 	});
 
 	QUnit.test("make Container visible", function(assert) {
@@ -364,14 +364,14 @@ sap.ui.define([
 		sap.ui.getCore().applyChanges();
 		assert.ok(sap.ui.getCore().byId("F3C4--Panel"), "Form3: Containers Panel exist again.");
 		assert.ok(sap.ui.getCore().byId("F3C4--RFLayout"), "Form3: ResponsiveFlowLayout for Container exist again.");
-		assert.ok(jQuery.sap.domById("F3C4--Panel"), "Form3: Containers Panel rendered");
-		assert.ok(jQuery.sap.domById("F3C4--RFLayout"), "Form3: Containers ResponsiveFlowLayout rendered");
+		assert.ok(document.getElementById("F3C4--Panel"), "Form3: Containers Panel rendered");
+		assert.ok(document.getElementById("F3C4--RFLayout"), "Form3: Containers ResponsiveFlowLayout rendered");
 		assert.ok(sap.ui.getCore().byId("F3C4E2--RFLayout"), "Form3: Elements ResponsiveFlowLayout exist again.");
 		assert.ok(sap.ui.getCore().byId("F3C4E2--content--RFLayout"), "Form3: Elements ResponsiveFlowLayout for content exist again.");
-		assert.ok(jQuery.sap.domById("F3C4E2--RFLayout"), "Form3: Element ResponsiveFlowLayout rendered");
-		assert.ok(jQuery.sap.domById("F3C4E2--content--RFLayout"), "Form3: Element2 ResponsiveFlowLayout for content rendered");
-		assert.ok(jQuery.sap.domById(sap.ui.getCore().byId("F3C4E2").getLabelControl().getId()), "Form3: Label2 rendered");
-		assert.ok(jQuery.sap.domById("F3C4E2_T1"), "Form3: TextField1 rendered");
+		assert.ok(document.getElementById("F3C4E2--RFLayout"), "Form3: Element ResponsiveFlowLayout rendered");
+		assert.ok(document.getElementById("F3C4E2--content--RFLayout"), "Form3: Element2 ResponsiveFlowLayout for content rendered");
+		assert.ok(sap.ui.getCore().byId("F3C4E2").getLabelControl().getDomRef(), "Form3: Label2 rendered");
+		assert.ok(document.getElementById("F3C4E2_T1"), "Form3: TextField1 rendered");
 	});
 
 	QUnit.test("destroy and add container new", function(assert) {
@@ -385,12 +385,12 @@ sap.ui.define([
 				})
 			);
 		sap.ui.getCore().applyChanges();
-		assert.ok(jQuery.sap.domById("F3C4--Panel"), "Form3: Container Panel still rendered");
-		assert.ok(jQuery.sap.domById("F3C4--RFLayout"), "Form3: Container ResponsiveFlowLayout still rendered");
-		assert.ok(jQuery.sap.domById("F3C4E1--RFLayout"), "Form3: Element1 ResponsiveFlowLayout still rendered");
-		assert.ok(jQuery.sap.domById("F3C4E1--content--RFLayout"), "Form3: Element1 ResponsiveFlowLayout for content still rendered");
-		assert.ok(jQuery.sap.domById(sap.ui.getCore().byId("F3C4E1").getLabelControl().getId()), "Form3: Label1 still rendered");
-		assert.ok(jQuery.sap.domById("F3C4E1_T1"), "Form3: TextField1 still rendered");
+		assert.ok(document.getElementById("F3C4--Panel"), "Form3: Container Panel still rendered");
+		assert.ok(document.getElementById("F3C4--RFLayout"), "Form3: Container ResponsiveFlowLayout still rendered");
+		assert.ok(document.getElementById("F3C4E1--RFLayout"), "Form3: Element1 ResponsiveFlowLayout still rendered");
+		assert.ok(document.getElementById("F3C4E1--content--RFLayout"), "Form3: Element1 ResponsiveFlowLayout for content still rendered");
+		assert.ok(sap.ui.getCore().byId("F3C4E1").getLabelControl().getDomRef(), "Form3: Label1 still rendered");
+		assert.ok(document.getElementById("F3C4E1_T1"), "Form3: TextField1 still rendered");
 	});
 
 	QUnit.test("destroy and add element new", function(assert) {
@@ -404,17 +404,17 @@ sap.ui.define([
 				})
 			);
 		sap.ui.getCore().applyChanges();
-		assert.ok(jQuery.sap.domById("F3C4E2--RFLayout"), "Form3: Element2 ResponsiveFlowLayout still rendered");
-		assert.ok(jQuery.sap.domById(sap.ui.getCore().byId("F3C4E2").getLabelControl().getId()), "Form3: Label2 still rendered");
-		assert.ok(jQuery.sap.domById("F3C4E2_T1"), "Form3: TextField1 still rendered");
+		assert.ok(document.getElementById("F3C4E2--RFLayout"), "Form3: Element2 ResponsiveFlowLayout still rendered");
+		assert.ok(sap.ui.getCore().byId("F3C4E2").getLabelControl().getDomRef(), "Form3: Label2 still rendered");
+		assert.ok(document.getElementById("F3C4E2_T1"), "Form3: TextField1 still rendered");
 	});
 
 	QUnit.test("remove field", function(assert) {
 		var oElement = sap.ui.getCore().byId("F3C4E2");
 		oElement.removeField("F3C4E2_T1");
 		sap.ui.getCore().applyChanges();
-		assert.ok(!jQuery.sap.domById("F3C4E2_T1"), "Form4: new TextField1 not longer rendered");
-		assert.ok(!jQuery.sap.domById("F3C4E2--content--RFLayout"), "Form4: new Element2 ResponsiveFlowLayout for content not longer rendered");
+		assert.ok(!document.getElementById("F3C4E2_T1"), "Form4: new TextField1 not longer rendered");
+		assert.ok(!document.getElementById("F3C4E2--content--RFLayout"), "Form4: new Element2 ResponsiveFlowLayout for content not longer rendered");
 		var oElementData = oLayout3.mContainers["F3C4"][2]["F3C4E2"];
 		assert.ok(!oElementData[1], "Element2 ResponsiveFlowLayout for content not longer in layout control data");
 		assert.ok(!sap.ui.getCore().byId("F3C4E2--content--RFLayout"), "Element2 ResponsiveFlowLayout for content desroyed");
@@ -424,9 +424,9 @@ sap.ui.define([
 		var oContainer = sap.ui.getCore().byId("F3C4");
 		oContainer.removeFormElement("F3C4E2");
 		sap.ui.getCore().applyChanges();
-		assert.ok(!jQuery.sap.domById("F3C4E2--RFLayout"), "Form3: new Element2 ResponsiveFlowLayout not longer rendered");
-		assert.ok(!jQuery.sap.domById(sap.ui.getCore().byId("F3C4E2").getLabelControl().getId()), "Form4: new Label2 not longer rendered");
-		assert.ok(!jQuery.sap.domById("F3C4E2_T1"), "Form4: new TextField1 not longer rendered");
+		assert.ok(!document.getElementById("F3C4E2--RFLayout"), "Form3: new Element2 ResponsiveFlowLayout not longer rendered");
+		assert.ok(!sap.ui.getCore().byId("F3C4E2").getLabelControl().getDomRef(), "Form4: new Label2 not longer rendered");
+		assert.ok(!document.getElementById("F3C4E2_T1"), "Form4: new TextField1 not longer rendered");
 		var oElementData = oLayout3.mContainers["F3C4"][2]["F3C4E2"];
 		assert.ok(!oElementData, "Element2 not longer in the layout control data");
 		assert.ok(!sap.ui.getCore().byId("F3C4E2--RFLayout"), "Element2 ResponsiveFlowLayout desroyed");
@@ -435,12 +435,12 @@ sap.ui.define([
 	QUnit.test("remove container", function(assert) {
 		oForm3.removeFormContainer("F3C4");
 		sap.ui.getCore().applyChanges();
-		assert.ok(!jQuery.sap.domById("F3C4--Panel"), "Form3: new Container Panel not longer rendered rendered");
-		assert.ok(!jQuery.sap.domById("F3C4--RFLayout"), "Form3: new Container ResponsiveFlowLayout not longer rendered");
-		assert.ok(!jQuery.sap.domById("F3C4E1--RFLayout"), "Form3: new Element1 ResponsiveFlowLayout not longer rendered");
-		assert.ok(!jQuery.sap.domById("F3C4E1--content--RFLayout"), "Form4: new Element1 ResponsiveFlowLayout for content not longer rendered");
-		assert.ok(!jQuery.sap.domById(sap.ui.getCore().byId("F3C4E1").getLabelControl().getId()), "Form4: new Label1 not longer rendered");
-		assert.ok(!jQuery.sap.domById("F3C4E1_T1"), "Form4: new TextField1 not longer rendered rendered");
+		assert.ok(!document.getElementById("F3C4--Panel"), "Form3: new Container Panel not longer rendered rendered");
+		assert.ok(!document.getElementById("F3C4--RFLayout"), "Form3: new Container ResponsiveFlowLayout not longer rendered");
+		assert.ok(!document.getElementById("F3C4E1--RFLayout"), "Form3: new Element1 ResponsiveFlowLayout not longer rendered");
+		assert.ok(!document.getElementById("F3C4E1--content--RFLayout"), "Form4: new Element1 ResponsiveFlowLayout for content not longer rendered");
+		assert.ok(!sap.ui.getCore().byId("F3C4E1").getLabelControl().getDomRef(), "Form4: new Label1 not longer rendered");
+		assert.ok(!document.getElementById("F3C4E1_T1"), "Form4: new TextField1 not longer rendered rendered");
 		assert.ok(!oLayout3.mContainers["F3C4"], "Container not longer in the layout control data");
 		assert.ok(!sap.ui.getCore().byId("F3C4E1--content--RFLayout"), "Element1 ResponsiveFlowLayout for content desroyed");
 		assert.ok(!sap.ui.getCore().byId("F3C4E1--RFLayout"), "Element1 ResponsiveFlowLayout desroyed");

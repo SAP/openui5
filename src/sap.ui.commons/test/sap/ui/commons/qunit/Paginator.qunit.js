@@ -3,10 +3,10 @@ sap.ui.define([
 	"sap/ui/qunit/QUnitUtils",
 	"sap/ui/qunit/utils/createAndAppendDiv",
 	"sap/ui/commons/Paginator",
-	"jquery.sap.global",
+	"sap/ui/thirdparty/jquery",
 	"sap/ui/commons/Dialog",
-	"jquery.sap.keycodes"
-], function(qutils, createAndAppendDiv, Paginator, jQuery, Dialog) {
+	"sap/ui/events/KeyCodes"
+], function(qutils, createAndAppendDiv, Paginator, jQuery, Dialog, KeyCodes) {
 	"use strict";
 
 	// prepare DOM
@@ -40,20 +40,20 @@ sap.ui.define([
 	QUnit.test("Initial Check", function(assert) {
 		assert.expect(2);
 		assert.ok(oCtrl, "Paginator should exist after creating");
-	var oDomRef = jQuery.sap.domById(sId);
+	var oDomRef = oCtrl.getDomRef();
 	assert.ok(oDomRef, "Paginator root element should exist in the page");
 	});
 
 	QUnit.test("Last Page Link", function(assert) {
 		assert.expect(2);
-	var oDomRef = jQuery.sap.domById(sId + "--lastPageLink");
+	var oDomRef = oCtrl.getDomRef("-lastPageLink");
 	assert.ok(oDomRef, "'Last Page' link should exist in the page");
 	assert.equal(jQuery(oDomRef).text(), oResourceBundle.getText("PAGINATOR_OTHER_PAGE", [110]), "'Last Page' link should display 'Page 110'");
 	});
 
 	QUnit.test("Page Links", function(assert) {
 		assert.expect(8);
-	var $pages = jQuery.sap.byId(sId + "-pages");
+	var $pages = oCtrl.$("pages");
 	assert.equal($pages.length, 1, "pages ul tag should exist in the page");
 	assert.equal($pages.children().length, 5, "pages ul tag should have five children");
 	assert.equal($pages.children(":eq(0)").text(), "1", "first page link should say '1'");
@@ -68,7 +68,7 @@ sap.ui.define([
 		assert.expect(3); // no event should be fired
 		oCtrl.setCurrentPage(2);
 		sap.ui.getCore().applyChanges();
-	var $pages = jQuery.sap.byId(sId + "-pages");
+	var $pages = oCtrl.$("pages");
 	assert.equal($pages.children().length, 5, "pages ul tag should have five children");
 	assert.ok($pages.children(":eq(1)").hasClass("sapUiPagCurrentPage"), "second page link should be current");
 	assert.ok(!$pages.children(":eq(0)").hasClass("sapUiPagCurrentPage"), "first page link should not be current");
@@ -78,7 +78,7 @@ sap.ui.define([
 		assert.expect(9); // no event should be fired
 		oCtrl.setCurrentPage(50);
 		sap.ui.getCore().applyChanges();
-	var $pages = jQuery.sap.byId(sId + "-pages");
+	var $pages = oCtrl.$("pages");
 	assert.equal($pages.children().length, 5, "pages ul tag should have five children");
 	assert.equal($pages.children(":eq(0)").text(), "48", "first displayed page link should say '48'");
 	assert.equal($pages.children(":eq(1)").text(), "49", "second page link should say '49'");
@@ -94,7 +94,7 @@ sap.ui.define([
 		assert.expect(6); // no event should be fired
 		oCtrl.setCurrentPage(109);
 		sap.ui.getCore().applyChanges();
-	var $pages = jQuery.sap.byId(sId + "-pages");
+	var $pages = oCtrl.$("pages");
 	assert.equal($pages.children().length, 5, "pages ul tag should have five children");
 	assert.equal($pages.children(":eq(0)").text(), "106", "first displayed page link should say '106'");
 	assert.equal($pages.children(":eq(3)").text(), "109", "second to last page link should say '109'");
@@ -108,14 +108,14 @@ sap.ui.define([
 		assert.equal(lastTargetPage, null, "lastTargetPage should be initial");
 
 		// click forward once
-		var target = jQuery.sap.domById(sId + "--forwardLink");
+		var target = oCtrl.getDomRef("-forwardLink");
 		qutils.triggerMouseEvent(target, "click");
 		assert.equal(lastTargetPage, 110, "lastTargetPage should be 110 after the click event");
 		assert.equal(lastSrcPage, 109, "lastTargetPage should be 109 after the first click event");
 		assert.equal(lastEventType, "Next", "lastEventType should be 'Next' after the click event");
 
 		assert.equal(oCtrl.getCurrentPage(), 110, "current page should now be 110");
-		var $pages = jQuery.sap.byId(sId + "-pages");
+		var $pages = oCtrl.$("pages");
 		assert.equal($pages.children(":eq(0)").text(), "106", "first displayed page link should say '106'");
 		assert.equal($pages.children(":eq(3)").text(), "109", "second to last page link should say '109'");
 		assert.equal($pages.children(":eq(4)").text(), "110", "last page link should say '110'");
@@ -123,11 +123,11 @@ sap.ui.define([
 		assert.ok(!$pages.children(":eq(3)").hasClass("sapUiPagCurrentPage"), "second to last page link should not be current");
 
 		// another forward click even though we are already at the end
-		target = jQuery.sap.domById(sId + "--forwardLink");
+		target = oCtrl.getDomRef("-forwardLink");
 		qutils.triggerMouseEvent(target, "click");
 
 		assert.equal(oCtrl.getCurrentPage(), 110, "current page should now be 110");
-		$pages = jQuery.sap.byId(sId + "-pages");
+		$pages = oCtrl.$("pages");
 		assert.equal($pages.children(":eq(0)").text(), "106", "first displayed page link should say '106'");
 		assert.equal($pages.children(":eq(3)").text(), "109", "second to last page link should say '109'");
 		assert.equal($pages.children(":eq(4)").text(), "110", "last page link should say '110'");
@@ -140,15 +140,15 @@ sap.ui.define([
 		assert.expect(16); // including event handlers
 
 		// click back multiple times
-		var target = jQuery.sap.domById(sId + "--backLink");
+		var target = oCtrl.getDomRef("-backLink");
 		qutils.triggerMouseEvent(target, "click");
-		target = jQuery.sap.domById(sId + "--backLink");
+		target = oCtrl.getDomRef("-backLink");
 		qutils.triggerMouseEvent(target, "click");
-		target = jQuery.sap.domById(sId + "--backLink");
+		target = oCtrl.getDomRef("-backLink");
 		qutils.triggerMouseEvent(target, "click");
-		target = jQuery.sap.domById(sId + "--backLink");
+		target = oCtrl.getDomRef("-backLink");
 		qutils.triggerMouseEvent(target, "click");
-		target = jQuery.sap.domById(sId + "--backLink");
+		target = oCtrl.getDomRef("-backLink");
 		qutils.triggerMouseEvent(target, "click");
 
 		assert.equal(lastTargetPage, 105, "lastTargetPage should be 105 after the click event");
@@ -157,7 +157,7 @@ sap.ui.define([
 
 		assert.equal(oCtrl.getCurrentPage(), 105, "current page should now be 110");
 		setTimeout(function(){
-			var $pages = jQuery.sap.byId(sId + "-pages");
+			var $pages = oCtrl.$("pages");
 			assert.equal($pages.children().length, 5, "pages ul tag should have five children");
 
 			assert.equal($pages.children(":eq(0)").text(), "103", "first displayed page link should say '103'");
@@ -176,7 +176,7 @@ sap.ui.define([
 		assert.expect(12); // including event handler
 
 		// click "Page 1"
-		var target = jQuery.sap.domById(sId + "--firstPageLink");
+		var target = oCtrl.getDomRef("-firstPageLink");
 		qutils.triggerMouseEvent(target, "click");
 
 		assert.equal(lastTargetPage, 1, "lastTargetPage should be 1 after the click event");
@@ -185,7 +185,7 @@ sap.ui.define([
 
 		assert.equal(oCtrl.getCurrentPage(), 1, "current page should now be 1");
 		setTimeout(function(){
-		var $pages = jQuery.sap.byId(sId + "-pages");
+		var $pages = oCtrl.$("pages");
 			assert.equal($pages.children().length, 5, "pages ul tag should have five children");
 
 			assert.equal($pages.children(":eq(0)").text(), "1", "first displayed page link should say '1'");
@@ -224,11 +224,11 @@ sap.ui.define([
 			oSecondPageLink = this.getPageLink(this.oPaginator, 2);
 
 		oFirstPageLink.focus();
-		qutils.triggerKeydown(oFirstPageLink[0], jQuery.sap.KeyCodes.ARROW_RIGHT);
+		qutils.triggerKeydown(oFirstPageLink[0], KeyCodes.ARROW_RIGHT);
 
 		assert.strictEqual(document.activeElement, oSecondPageLink[0]);
 
-		qutils.triggerKeydown(oSecondPageLink[0], jQuery.sap.KeyCodes.ARROW_LEFT);
+		qutils.triggerKeydown(oSecondPageLink[0], KeyCodes.ARROW_LEFT);
 
 		assert.strictEqual(document.activeElement, oFirstPageLink[0]);
 	});
@@ -237,8 +237,8 @@ sap.ui.define([
 		var oFirstPageLink = this.getPageLink(this.oPaginator, 1);
 
 		oFirstPageLink.focus();
-		qutils.triggerKeydown(oFirstPageLink[0], jQuery.sap.KeyCodes.ARROW_RIGHT);
-		qutils.triggerKeydown(document.activeElement,  jQuery.sap.KeyCodes.ENTER);
+		qutils.triggerKeydown(oFirstPageLink[0], KeyCodes.ARROW_RIGHT);
+		qutils.triggerKeydown(document.activeElement,  KeyCodes.ENTER);
 
 		assert.strictEqual(this.oPaginator.getCurrentPage(), 2, "Enter event should change the current page.");
 
@@ -259,7 +259,7 @@ sap.ui.define([
 
 		oDialog1.open();
 
-		qutils.triggerKeydown(oPaginator1.$("a--2"), jQuery.sap.KeyCodes.ENTER);
+		qutils.triggerKeydown(oPaginator1.$("a--2"), KeyCodes.ENTER);
 		assert.strictEqual(oPaginator1.getCurrentPage(), 2, "Enter event should change the current page");
 
 		//clean up

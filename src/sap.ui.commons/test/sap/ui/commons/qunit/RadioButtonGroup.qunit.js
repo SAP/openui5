@@ -5,7 +5,8 @@ sap.ui.define([
 	"sap/ui/commons/RadioButtonGroup",
 	"sap/ui/core/Item",
 	"sap/ui/core/library",
-	"jquery.sap.global"
+	"sap/ui/thirdparty/jquery",
+	"sap/ui/thirdparty/jqueryui/jquery-ui-position" // jQuery.fn.position
 ], function(
 	qutils,
 	createAndAppendDiv,
@@ -272,7 +273,7 @@ sap.ui.define([
 	});
 
 	QUnit.test("ARIA", function(assert) {
-		var oRBGDom = jQuery.sap.domById('RBG1');
+		var oRBGDom = document.getElementById('RBG1');
 		assert.equal(jQuery(oRBGDom).attr("role"),"radiogroup","ARIA role");
 		assert.equal(jQuery(oRBGDom).attr("aria-disabled"),"false","ARIA-disabled: for enabled field");
 		assert.equal(jQuery(oRBGDom).attr("aria-invalid"),"false","ARIA-invalid: for normal field");

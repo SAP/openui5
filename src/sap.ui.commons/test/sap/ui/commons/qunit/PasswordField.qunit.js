@@ -3,7 +3,7 @@ sap.ui.define([
 	"sap/ui/qunit/QUnitUtils",
 	"sap/ui/qunit/utils/createAndAppendDiv",
 	"sap/ui/commons/PasswordField",
-	"jquery.sap.global",
+	"sap/ui/thirdparty/jquery",
 	"sap/ui/Device"
 ], function(qutils, createAndAppendDiv, PasswordField, jQuery, Device) {
 	"use strict";
@@ -67,10 +67,10 @@ sap.ui.define([
 
 	QUnit.test("Password Value", function(assert) {
 		// check if password is in HTML
-		var oPwdFldDom2 = jQuery.sap.domById('oPwdFld2');
+		var oPwdFldDom2 = document.getElementById('oPwdFld2');
 		assert.equal(jQuery(oPwdFldDom2).attr("value"),"123","Password");
 		assert.equal(jQuery(oPwdFldDom2).attr("type"),"password","Type");
-		var oPwdFldDom3 = jQuery.sap.domById('oPwdFld3');
+		var oPwdFldDom3 = document.getElementById('oPwdFld3');
 		assert.equal(jQuery(oPwdFldDom3).attr("value"),"Password","Password");
 		assert.equal(jQuery(oPwdFldDom3).attr("type"),"password","Type");
 	});

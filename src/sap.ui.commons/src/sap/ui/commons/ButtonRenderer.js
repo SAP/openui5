@@ -3,9 +3,17 @@
  */
 
 // Provides default renderer for control sap.ui.commons.Button
-sap.ui.define(['jquery.sap.global'],
-	function(jQuery) {
+sap.ui.define([
+	'sap/ui/commons/library',
+	'sap/ui/core/IconPool',
+	'sap/ui/Device',
+	'sap/base/security/encodeXML'
+], function(library, IconPool, Device, encodeXML) {
 	"use strict";
+
+
+	// shortcut for sap.ui.commons.ButtonStyle
+	var ButtonStyle = library.ButtonStyle;
 
 
 	/**
@@ -44,8 +52,8 @@ sap.ui.define(['jquery.sap.global'],
 
 		var sStyle = oButton.getStyle();
 
-		if (sStyle != "" && sStyle != sap.ui.commons.ButtonStyle.Default) {
-			rm.addClass("sapUiBtn" + jQuery.sap.encodeHTML(sStyle));
+		if (sStyle != "" && sStyle != ButtonStyle.Default) {
+			rm.addClass("sapUiBtn" + encodeXML(sStyle));
 		}
 
 		//ARIA
@@ -68,7 +76,7 @@ sap.ui.define(['jquery.sap.global'],
 			bImageOnly = true; // only the image is there, so it must have some meaning
 
 			// add tooltip if available, if not - add the technical name of the icon
-			var oIconInfo = sap.ui.core.IconPool.getIconInfo(oButton.getIcon()),
+			var oIconInfo = IconPool.getIconInfo(oButton.getIcon()),
 				sTooltip = oButton.getTooltip_AsString();
 
 			if (sTooltip || (oIconInfo && oIconInfo.name)) {
@@ -95,7 +103,7 @@ sap.ui.define(['jquery.sap.global'],
 
 		// feature-dependent CSS class, written for browsers not understanding CSS gradients (=IE8, IE9)
 		// required to avoid a large number of browser selectors which is needed to NOT serve filter:... to IE10
-		if (!!sap.ui.Device.browser.internet_explorer && (!document.documentMode || document.documentMode < 10)) {
+		if (Device.browser.msie && (!document.documentMode || document.documentMode < 10)) {
 			rm.addClass("sapUiBtnNoGradient");
 		}
 
@@ -108,7 +116,7 @@ sap.ui.define(['jquery.sap.global'],
 		}
 
 		var bUseIconFont = false;
-		if (sap.ui.core.IconPool.isIconURI(oButton.getIcon())) {
+		if (IconPool.isIconURI(oButton.getIcon())) {
 			bUseIconFont = true;
 		}
 
@@ -172,7 +180,7 @@ sap.ui.define(['jquery.sap.global'],
 	ButtonRenderer.onblur = function(oButton) {
 		oButton.$().removeClass("sapUiBtnFoc");
 		oButton.$("img").attr("src", this._getIconForState(oButton, "blur"));
-		if (!!sap.ui.Device.browser.internet_explorer) {
+		if (Device.browser.msie) {
 			ButtonRenderer.onmouseout(oButton);
 		}
 	};
@@ -245,13 +253,12 @@ sap.ui.define(['jquery.sap.global'],
 
 	/**
 	 * HTML for icon as image.
-	 * @param {sap.ui.core.RenderManager} oRenderManager The RenderManager that can be used for writing to the render output buffer
+	 * @param {sap.ui.core.RenderManager} rm The RenderManager that can be used for writing to the render output buffer
 	 * @param {sap.ui.commons.Button} oButton The button to be rendered
 	 * @param {boolean} bImageOnly Whether the button has only image or it has text too
 	 */
-	ButtonRenderer.writeImgHtml = function(oRenderManager, oButton, bImageOnly) {
-		var rm = oRenderManager,
-			iconUrl = this._getIconForState(oButton, "base");
+	ButtonRenderer.writeImgHtml = function(rm, oButton, bImageOnly) {
+		var iconUrl = this._getIconForState(oButton, "base");
 
 		rm.write("<img");
 		rm.writeAttribute("id", oButton.getId() + "-img");
@@ -277,12 +284,11 @@ sap.ui.define(['jquery.sap.global'],
 
 	/**
 	 * HTML for icon as icon font.
-	 * @param {sap.ui.core.RenderManager} oRenderManager The RenderManager that can be used for writing to the render output buffer
+	 * @param {sap.ui.core.RenderManager} rm The RenderManager that can be used for writing to the render output buffer
 	 * @param {sap.ui.commons.Button} oButton The button to be rendered
 	 */
-	ButtonRenderer.writeIconHtml = function(oRenderManager, oButton) {
+	ButtonRenderer.writeIconHtml = function(rm, oButton) {
 
-		var rm = oRenderManager;
 		var aClasses = [];
 		var mAttributes = buildIconAttributes(oButton);
 		aClasses.push("sapUiBtnIco");
@@ -295,8 +301,8 @@ sap.ui.define(['jquery.sap.global'],
 
 	ButtonRenderer.changeIcon = function(oButton) {
 
-		if (sap.ui.core.IconPool.isIconURI(oButton.getIcon())) {
-			var oIconInfo = sap.ui.core.IconPool.getIconInfo(oButton.getIcon());
+		if (IconPool.isIconURI(oButton.getIcon())) {
+			var oIconInfo = IconPool.getIconInfo(oButton.getIcon());
 			var oIcon = oButton.$("icon");
 			oIcon.attr("data-sap-ui-icon-content", oIconInfo.content);
 			if (!oIconInfo.skipMirroring) {

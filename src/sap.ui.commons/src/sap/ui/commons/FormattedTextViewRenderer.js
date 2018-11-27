@@ -1,8 +1,8 @@
 /*!
  * ${copyright}
  */
-sap.ui.define(['jquery.sap.global'],
-	function (jQuery) {
+sap.ui.define(["sap/base/Log"],
+	function (Log) {
 		"use strict";
 
 
@@ -53,7 +53,7 @@ sap.ui.define(['jquery.sap.global'],
 				if (this._renderReplacement(oRm, aMatch[1], aInnerControls)) {
 					iToBeRendered--;
 				} else {
-					jQuery.sap.log.warning("Could not find matching control to placeholder #" + aMatch[1]);
+					Log.warning("Could not find matching control to placeholder #" + aMatch[1]);
 				}
 				lastIndex = rPlaceHolderPattern.lastIndex;
 			}
@@ -61,7 +61,7 @@ sap.ui.define(['jquery.sap.global'],
 			oRm.write(sHtml.slice(lastIndex, sHtml.length));
 
 			if (iToBeRendered > 0) {
-				jQuery.sap.log.warning('There are leftover controls in the aggregation that have not been used in the formatted text', oControl);
+				Log.warning('There are leftover controls in the aggregation that have not been used in the formatted text', oControl);
 			}
 
 			oRm.write("</span>");

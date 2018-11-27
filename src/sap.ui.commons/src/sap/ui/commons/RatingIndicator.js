@@ -4,14 +4,21 @@
 
 // Provides control sap.ui.commons.RatingIndicator.
 sap.ui.define([
-    'jquery.sap.global',
+    'sap/ui/thirdparty/jquery',
     './library',
     'sap/ui/core/Control',
     'sap/ui/core/theming/Parameters',
-    "./RatingIndicatorRenderer"
+    './RatingIndicatorRenderer',
+    'sap/ui/Device',
+    'sap/ui/events/checkMouseEnterOrLeave'
 ],
-	function(jQuery, library, Control, Parameters, RatingIndicatorRenderer) {
+	function(jQuery, library, Control, Parameters, RatingIndicatorRenderer, Device, checkMouseEnterOrLeave) {
 	"use strict";
+
+
+
+	// shortcut for sap.ui.commons.RatingIndicatorVisualMode
+	var RatingIndicatorVisualMode = library.RatingIndicatorVisualMode;
 
 
 
@@ -87,7 +94,7 @@ sap.ui.define([
 			 * Defines how float values are visualized: Full, Half, Continuous
 			 * (see enumeration RatingIndicatorVisualMode)
 			 */
-			visualMode : {type : "sap.ui.commons.RatingIndicatorVisualMode", group : "Behavior", defaultValue : sap.ui.commons.RatingIndicatorVisualMode.Half}
+			visualMode : {type : "sap.ui.commons.RatingIndicatorVisualMode", group : "Behavior", defaultValue : RatingIndicatorVisualMode.Half}
 		},
 		associations : {
 
@@ -270,7 +277,7 @@ sap.ui.define([
 	 */
 	RatingIndicator.prototype.onfocusout = function(oEvent){
 		//Do not react on focusouts of child DOM refs in IE
-		if (!!sap.ui.Device.browser.internet_explorer && oEvent.target != this.getDomRef()) {
+		if (Device.browser.msie && oEvent.target != this.getDomRef()) {
 			return;
 		}
 		this.saveValue(oEvent, false, this.iHoveredRating);
@@ -284,7 +291,7 @@ sap.ui.define([
 	 */
 	RatingIndicator.prototype.onfocusin = function(oEvent){
 		//Avoid focusing child DOM refs in IE
-		if (!!sap.ui.Device.browser.internet_explorer && oEvent.target != this.getDomRef()) {
+		if (Device.browser.msie && oEvent.target != this.getDomRef()) {
 			this.getDomRef().focus();
 		}
 	};
@@ -320,10 +327,10 @@ sap.ui.define([
 		}
 
 		for (var i = 1; i <= symbolValue; i++) {
-			sap.ui.commons.RatingIndicatorRenderer.hoverRatingSymbol(i, this);
+			RatingIndicatorRenderer.hoverRatingSymbol(i, this);
 		}
 		for (var i = symbolValue + 1; i <= this.getMaxValue(); i++) {
-			sap.ui.commons.RatingIndicatorRenderer.hoverRatingSymbol(i, this, true);
+			RatingIndicatorRenderer.hoverRatingSymbol(i, this, true);
 		}
 	};
 
@@ -341,10 +348,10 @@ sap.ui.define([
 			return;
 		}
 
-		if (jQuery.sap.checkMouseEnterOrLeave(oEvent, this.getDomRef())) {
+		if (checkMouseEnterOrLeave(oEvent, this.getDomRef())) {
 			this.iHoveredRating = -1;
 			for (var i = 1; i <= this.getMaxValue(); i++) {
-				sap.ui.commons.RatingIndicatorRenderer.unhoverRatingSymbol(i, this);
+				RatingIndicatorRenderer.unhoverRatingSymbol(i, this);
 			}
 		}
 	};
@@ -377,11 +384,11 @@ sap.ui.define([
 	 */
 	RatingIndicator.prototype.updateKeyboardHoverState = function(bSkipHoverAfter){
 		for (var i = 1; i <= this.getMaxValue(); i++) {
-			sap.ui.commons.RatingIndicatorRenderer.unhoverRatingSymbol(i, this);
+			RatingIndicatorRenderer.unhoverRatingSymbol(i, this);
 			if (i <= this.iHoveredRating) {
-				sap.ui.commons.RatingIndicatorRenderer.hoverRatingSymbol(i, this);
+				RatingIndicatorRenderer.hoverRatingSymbol(i, this);
 			} else if (!bSkipHoverAfter) {
-				sap.ui.commons.RatingIndicatorRenderer.hoverRatingSymbol(i, this, true);
+				RatingIndicatorRenderer.hoverRatingSymbol(i, this, true);
 			}
 		}
 		this.setAriaState();
@@ -446,7 +453,7 @@ sap.ui.define([
 		} else {
 			//Update hover state only if value is not changed (otherwise rerendering is done anyway)
 			for (var i = 1; i <= this.getMaxValue(); i++) {
-				sap.ui.commons.RatingIndicatorRenderer.unhoverRatingSymbol(i, this);
+				RatingIndicatorRenderer.unhoverRatingSymbol(i, this);
 			}
 			this.setAriaState();
 			return false;
@@ -506,4 +513,4 @@ sap.ui.define([
 
 	return RatingIndicator;
 
-}, /* bExport= */ true);
+});

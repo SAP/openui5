@@ -4,12 +4,14 @@
 
 // Provides control sap.ui.commons.RichTooltip.
 sap.ui.define([
-    'jquery.sap.global',
+    'sap/ui/thirdparty/jquery',
     './library',
     'sap/ui/core/TooltipBase',
-    "./RichTooltipRenderer"
+    './RichTooltipRenderer',
+    './FormattedTextView',
+    'sap/ui/dom/jquery/control' // jQuery.fn.control
 ],
-	function(jQuery, library, TooltipBase, RichTooltipRenderer) {
+	function(jQuery, library, TooltipBase, RichTooltipRenderer, FormattedTextView) {
 	"use strict";
 
 
@@ -107,7 +109,7 @@ sap.ui.define([
 			if (oValueStateText) {
 				oValueStateText.setHtmlText(sText);
 			} else {
-				oValueStateText = new sap.ui.commons.FormattedTextView(this.getId() + "-valueStateText", {
+				oValueStateText = new FormattedTextView(this.getId() + "-valueStateText", {
 					htmlText : sText
 				}).addStyleClass("sapUiRttValueStateText").addStyleClass("individual");
 
@@ -147,7 +149,7 @@ sap.ui.define([
 	 * @param {string} sText the text that should be shown
 	 */
 	RichTooltip.prototype.setText = function(sText) {
-		if (!!sText) {
+		if (sText) {
 			//replace carriage returns etc. with br tag
 			sText = sText.replace(/(\r\n|\n|\r)/g,"<br />");
 		}
@@ -156,7 +158,7 @@ sap.ui.define([
 		if (oText) {
 			oText.setHtmlText(sText);
 		} else {
-			oText = new sap.ui.commons.FormattedTextView(this.getId() + "-txt");
+			oText = new FormattedTextView(this.getId() + "-txt");
 			oText.setHtmlText(sText);
 			oText.addStyleClass("sapUiRttText");
 			this.setAggregation("formattedText", oText);
@@ -217,4 +219,4 @@ sap.ui.define([
 
 	return RichTooltip;
 
-}, /* bExport= */ true);
+});

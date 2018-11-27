@@ -4,14 +4,19 @@
 
 // Provides control sap.ui.commons.RadioButtonGroup.
 sap.ui.define([
-    'jquery.sap.global',
+    'sap/base/Log',
     './library',
     'sap/ui/core/Control',
     'sap/ui/core/delegate/ItemNavigation',
-    "./RadioButtonGroupRenderer"
+    './RadioButton',
+    './RadioButtonGroupRenderer',
+    'sap/ui/core/library'
 ],
-	function(jQuery, library, Control, ItemNavigation, RadioButtonGroupRenderer) {
+	function(Log, library, Control, ItemNavigation, RadioButton, RadioButtonGroupRenderer, coreLibrary) {
 	"use strict";
+
+	// shortcut for sap.ui.core.ValueState
+	var ValueState = coreLibrary.ValueState;
 
 	/**
 	 * Constructor for a new RadioButtonGroup.
@@ -66,7 +71,7 @@ sap.ui.define([
 			 * Note: Setting this attribute to sap.ui.core.ValueState.Error when the accessibility feature is enabled,
 			 * sets the value of the invalid property for the whole RadioButtonGroup to true.
 			 */
-			valueState : {type : "sap.ui.core.ValueState", group : "Data", defaultValue : sap.ui.core.ValueState.None},
+			valueState : {type : "sap.ui.core.ValueState", group : "Data", defaultValue : ValueState.None},
 
 			/**
 			 * The index of the selected/checked RadioButton.
@@ -134,7 +139,7 @@ sap.ui.define([
 	RadioButtonGroup.prototype.onBeforeRendering = function() {
 		if (this.getSelectedIndex() > this.getItems().length) {
 			// SelectedIndex is > than number of items -> select the first one
-			jQuery.sap.log.warning("Invalid index, set to 0");
+			Log.warning("Invalid index, set to 0");
 			this.setSelectedIndex(0);
 		}
 	};
@@ -211,7 +216,7 @@ sap.ui.define([
 
 		if (iSelectedIndex < 0) {
 			// invalid negative index -> don't change index.
-			jQuery.sap.log.warning("Invalid index, will not be changed");
+			Log.warning("Invalid index, will not be changed");
 			return this;
 		}
 
@@ -364,7 +369,7 @@ sap.ui.define([
 			this.iIDCount++;
 		}
 
-		var oRadioButton = new sap.ui.commons.RadioButton(this.getId() + "-" + this.iIDCount);
+		var oRadioButton = new RadioButton(this.getId() + "-" + this.iIDCount);
 		oRadioButton.setText(oItem.getText());
 		oRadioButton.setTooltip(oItem.getTooltip());
 		if (this.getEnabled()) {
@@ -686,4 +691,4 @@ sap.ui.define([
 
 	return RadioButtonGroup;
 
-}, /* bExport= */ true);
+});

@@ -4,12 +4,11 @@
 
 // Provides control sap.ui.commons.layout.VerticalLayout.
 sap.ui.define([
- 'jquery.sap.global',
  'sap/ui/commons/library',
  'sap/ui/layout/VerticalLayout',
- "./VerticalLayoutRenderer"
+ './VerticalLayoutRenderer'
 ],
-	function(jQuery, library, VerticalLayout1, VerticalLayoutRenderer) {
+	function(library, LayoutVerticalLayout, VerticalLayoutRenderer) {
 	"use strict";
 
 
@@ -34,7 +33,7 @@ sap.ui.define([
 	 * @alias sap.ui.commons.layout.VerticalLayout
 	 * @ui5-metamodel This control/element also will be described in the UI5 (legacy) designtime metamodel
 	 */
-	var VerticalLayout = VerticalLayout1.extend("sap.ui.commons.layout.VerticalLayout", /** @lends sap.ui.commons.layout.VerticalLayout.prototype */ { metadata : {
+	var VerticalLayout = LayoutVerticalLayout.extend("sap.ui.commons.layout.VerticalLayout", /** @lends sap.ui.commons.layout.VerticalLayout.prototype */ { metadata : {
 
 		deprecated : true,
 		library : "sap.ui.commons"
@@ -44,4 +43,4 @@ sap.ui.define([
 
 	return VerticalLayout;
 
-}, /* bExport= */ true);
+});

@@ -192,7 +192,6 @@ sap.ui.define(function() {
 				title: "ResponsiveContainer - sap.ui.commons",
 				_alternativeTitle: "QUnit Page for ResponsiveContainer - sap.ui.commons",
 				sinon: {
-					version: 1, // use sinon 1 because new bridge for sinon-4 doesn't support fake timers yet
 					useFakeTimers: true
 				},
 				ui5: {

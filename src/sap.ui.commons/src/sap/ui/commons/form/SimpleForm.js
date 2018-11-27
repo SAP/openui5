@@ -4,12 +4,11 @@
 
 // Provides control sap.ui.commons.form.SimpleForm.
 sap.ui.define([
- 'jquery.sap.global',
  'sap/ui/commons/library',
  'sap/ui/layout/form/SimpleForm',
- "./SimpleFormRenderer"
+ './SimpleFormRenderer'
 ],
-	function(jQuery, library, SimpleForm1, SimpleFormRenderer) {
+	function(library, LayoutSimpleForm, SimpleFormRenderer) {
 	"use strict";
 
 
@@ -33,15 +32,11 @@ sap.ui.define([
 	 * @alias sap.ui.commons.form.SimpleForm
 	 * @ui5-metamodel This control/element also will be described in the UI5 (legacy) designtime metamodel
 	 */
-	var SimpleForm = SimpleForm1.extend("sap.ui.commons.form.SimpleForm", /** @lends sap.ui.commons.form.SimpleForm.prototype */ { metadata : {
+	var SimpleForm = LayoutSimpleForm.extend("sap.ui.commons.form.SimpleForm", /** @lends sap.ui.commons.form.SimpleForm.prototype */ { metadata : {
 
 		deprecated : true,
 		library : "sap.ui.commons"
 	}});
-
-	///**
-	//* This file defines behavior for the control,
-	//*/
 
 	/* Overwrite to have right "since" in there */
 
@@ -72,4 +67,4 @@ sap.ui.define([
 
 	return SimpleForm;
 
-}, /* bExport= */ true);
+});

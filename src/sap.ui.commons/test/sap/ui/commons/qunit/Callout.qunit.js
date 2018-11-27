@@ -2,12 +2,13 @@
 sap.ui.define([
 	"sap/ui/qunit/QUnitUtils",
 	"sap/ui/qunit/utils/createAndAppendDiv",
-	"jquery.sap.global",
+	"sap/ui/thirdparty/jquery",
 	"sap/ui/commons/Button",
 	"sap/ui/commons/layout/MatrixLayout",
 	"sap/ui/commons/Link",
 	"sap/ui/commons/Callout",
-	"jquery.sap.keycodes"
+	"sap/base/Log",
+	"sap/ui/events/KeyCodes"
 ], function(
 	qutils,
 	createAndAppendDiv,
@@ -15,7 +16,9 @@ sap.ui.define([
 	Button,
 	MatrixLayout,
 	Link,
-	Callout
+	Callout,
+	Log,
+	KeyCodes
 ) {
 	"use strict";
 
@@ -29,7 +32,7 @@ sap.ui.define([
 		oLayout,
 		oCallout;
 
-	jQuery.sap.log.setLevel(jQuery.sap.log.Level.DEBUG);
+	Log.setLevel(Log.Level.DEBUG);
 
 	// the anchor
 	oButton = new Button("CButton", {
@@ -196,12 +199,12 @@ sap.ui.define([
 		var done = assert.async();
 		oButton.focus();
 		assert.ok(document.activeElement.id == "CButton", "Focus the button initially");
-		qutils.triggerKeyboardEvent("CButton", jQuery.sap.KeyCodes.I, false, false, true);
+		qutils.triggerKeyboardEvent("CButton", KeyCodes.I, false, false, true);
 		setTimeout(function(){
 			assert.ok(isCalloutVisible() == true, "Callout is visible after Ctrl-I");
 			assert.equal(document.activeElement.id, "clink_1", "The first link should be focused after the Callout is opened with keyboard");
 			//close it
-			qutils.triggerKeyboardEvent(document.activeElement.id, jQuery.sap.KeyCodes.ESCAPE, false, false, false);
+			qutils.triggerKeyboardEvent(document.activeElement.id, KeyCodes.ESCAPE, false, false, false);
 			setTimeout(function(){
 				assert.ok(isCalloutVisible() == false, "Callout is not visible after Esc");
 				assert.equal(document.activeElement.id, "CButton", "The parent element should be focused after the focused Callout is closed");

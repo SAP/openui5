@@ -3,8 +3,8 @@
  */
 
 // Provides control sap.ui.commons.RoadMapStep.
-sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Element'],
-	function(jQuery, library, Element) {
+sap.ui.define(['sap/ui/dom/containsOrEquals', './library', 'sap/ui/core/Element', './RoadMapRenderer'],
+	function(containsOrEquals, library, Element, RoadMapRenderer) {
 	"use strict";
 
 
@@ -68,14 +68,12 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Element'],
 		}
 	}});
 
-	(function() {
-
 	//Setter for property label which suppresses rerendering if possible -> Comment generated automatically
 	RoadMapStep.prototype.setLabel = function(sLabel) {
 		setProperty(this, "label", sLabel, function(){
-			sap.ui.commons.RoadMapRenderer.setStepLabel(this, sLabel);
+			RoadMapRenderer.setStepLabel(this, sLabel);
 			this.setProperty("label", sLabel, true);
-			sap.ui.commons.RoadMapRenderer.addEllipses(this);
+			RoadMapRenderer.addEllipses(this);
 			return true;
 		});
 		return this;
@@ -90,7 +88,7 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Element'],
 		}
 		setProperty(this, "enabled", bEnabled, function(){
 			var oRoadMap = getRoadMap(this);
-			var bWasSelected = sap.ui.commons.RoadMapRenderer.setStepEnabled(oRoadMap, this, bEnabled);
+			var bWasSelected = RoadMapRenderer.setStepEnabled(oRoadMap, this, bEnabled);
 			if (bWasSelected) {
 				oRoadMap.setProperty("selectedStep", "", true);
 			}
@@ -113,11 +111,11 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Element'],
 			if (isSubStep(this) || this.getSubSteps().length == 0 || !this.getEnabled() || !bExpanded) {
 				this.setProperty("expanded", false, true);
 				if (!isSubStep(this) && this.getSubSteps().length > 0 && this.getEnabled()) {
-					sap.ui.commons.RoadMapRenderer.selectStep(getRoadMap(this), this, false, true, null, true);
+					RoadMapRenderer.selectStep(getRoadMap(this), this, false, true, null, true);
 				}
 			} else {
 				this.setProperty("expanded", true, true);
-				sap.ui.commons.RoadMapRenderer.selectStep(getRoadMap(this), this, false, true, null, true);
+				RoadMapRenderer.selectStep(getRoadMap(this), this, false, true, null, true);
 			}
 			return true;
 		});
@@ -133,13 +131,13 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Element'],
 		}
 		setProperty(this, "visible", bVisible, function(){
 			var oRoadMap = getRoadMap(this);
-			var bWasSelected = sap.ui.commons.RoadMapRenderer.setStepVisible(oRoadMap, this, isSubStep(this), bVisible);
+			var bWasSelected = RoadMapRenderer.setStepVisible(oRoadMap, this, isSubStep(this), bVisible);
 			if (bWasSelected) {
 				oRoadMap.setProperty("selectedStep", "", true);
 			}
 			this.setProperty("visible", bVisible, true);
-			sap.ui.commons.RoadMapRenderer.updateStepArea(oRoadMap);
-			sap.ui.commons.RoadMapRenderer.updateStepAria(this);
+			RoadMapRenderer.updateStepArea(oRoadMap);
+			RoadMapRenderer.updateStepAria(this);
 			return true;
 		});
 		return this;
@@ -152,7 +150,7 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Element'],
 	 * @return Returns the dom reference that should get the focus
 	 */
 	RoadMapStep.prototype.getFocusDomRef = function () {
-		return jQuery.sap.byId(this.getFocusInfo().id).get(0) || null;
+		return this.getFocusInfo().id ? document.getElementById(this.getFocusInfo().id) : null;
 	};
 
 
@@ -199,14 +197,14 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Element'],
 		oEvent.stopPropagation();
 		oEvent.preventDefault();
 
-		if (!bIgnoreDomCheck && !jQuery.sap.containsOrEquals(this.getDomRef(), oEvent.target)) {
+		if (!bIgnoreDomCheck && !containsOrEquals(this.getDomRef(), oEvent.target)) {
 			return;
 		}
 
 		if (this.getEnabled()) {
 			var oRoadMap = getRoadMap(this);
 			var that = this;
-			sap.ui.commons.RoadMapRenderer.selectStep(oRoadMap, this, isSubStep(this), false, function(sType){
+			RoadMapRenderer.selectStep(oRoadMap, this, isSubStep(this), false, function(sType){
 				var bWasAlreadySelected = oRoadMap.getSelectedStep() == that.getId();
 				oRoadMap.setProperty("selectedStep", that.getId(), true);
 				that.focus();
@@ -255,8 +253,6 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Element'],
 		}
 	};
 
-	}());
-
 	return RoadMapStep;
 
-}, /* bExport= */ true);
+});

@@ -3,7 +3,7 @@
  */
 
 // Provides class sap.ui.commons.MessageBox
-sap.ui.define(['jquery.sap.global', 'sap/ui/core/library', 'sap/ui/core/ElementMetadata', 'sap/ui/core/Control',
+sap.ui.define(["sap/ui/thirdparty/jquery", 'sap/ui/core/library', 'sap/ui/core/ElementMetadata', 'sap/ui/core/Control',
 		'./library', './Button', './Dialog', './Image', './TextView', './layout/MatrixLayout', './layout/MatrixLayoutCell'],
 	function (jQuery, core, ElementMetadata, Control,
 			  commons, Button, Dialog, Image, TextView, MatrixLayout, MatrixLayoutCell) {
@@ -203,7 +203,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/library', 'sap/ui/core/ElementM
 				oDialog, oResult, oContent, oMsg, oDefaultButton;
 
 			// normalize the vActions array
-			if (typeof vActions !== "undefined" && !jQuery.isArray(vActions)) {
+			if (typeof vActions !== "undefined" && !Array.isArray(vActions)) {
 				vActions = [vActions];
 			}
 			if (!vActions || vActions.length === 0) {
