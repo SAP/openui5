@@ -640,7 +640,10 @@ sap.ui.define([
 					"font-weight: normal;" +
 					"font-style: normal;" +
 				"}";
-			jQuery('head').append('<style type="text/css">' + sFontFaceCSS + '</style>');
+			var style = document.createElement("style");
+			style.type = "text/css";
+			style.textContent = sFontFaceCSS;
+			document.head.appendChild(style);
 
 			mFontRegistry[sCollectionName].inserted = true;
 			mFontRegistry[sCollectionName].fontFace = sFontFace;
