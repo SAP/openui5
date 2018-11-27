@@ -24,7 +24,7 @@
 	], function (opaTest, Opa5, Opa) {
 
 		QUnit.begin(function () {
-			window.oUsageReportSpy = sinon.spy(Opa._usageReport, "_reportTest");
+			window.oUsageReportSpy = sinon.spy(Opa._usageReport, "_reportOpaTest");
 		});
 
 		QUnit.done(function () {
