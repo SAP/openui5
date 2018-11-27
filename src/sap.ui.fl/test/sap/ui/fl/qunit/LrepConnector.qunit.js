@@ -1237,24 +1237,18 @@ sap.ui.define([
 	});
 
 	QUnit.module("Load With CodeExt & XML", function (hooks) {
-		hooks.beforeEach(function(assert) {
-			var done = assert.async();
-
+		hooks.beforeEach(function (assert) {
+			this.server = sinon.fakeServer.create();
 			LrepConnector._bServiceAvailability = undefined;
 			this.oLrepConnector = LrepConnector.createConnector();
 			sandbox.stub(ContextManager, "getActiveContexts").callsFake(function () {
 				return [];
 			});
 
-			jQuery.get("test-resources/sap/ui/fl/qunit/testExtensions/test.fragment.xml.txt")
-				.done(function(sXmlFragment) {
-					this.sXmlFragment = sXmlFragment;
-					this.server = sinon.fakeServer.create();
-					done();
-				}.bind(this));
+			this.oLoadModulesStub = sandbox.stub(this.oLrepConnector, "_loadModules").returns(Promise.resolve());
 		});
 
-		hooks.afterEach(function() {
+		hooks.afterEach(function () {
 			this.server.restore();
 			sandbox.restore();
 
@@ -1262,7 +1256,7 @@ sap.ui.define([
 			LrepConnector.prototype._sRequestUrlPrefix = "";
 		});
 
-		QUnit.test("no additional request is sent in case the '/flex/data' has the flag 'loadModules' set to false", function(assert) {
+		QUnit.test("no additional request is sent in case the '/flex/data' has the flag 'loadModules' set to false", function (assert) {
 			var sComponentName = "test.component";
 			var sAppVersion = "1.2.3";
 			var sFlexDataRequestUrl = "/sap/bc/lrep/flex/data/" + sComponentName + "?appVersion=" + sAppVersion;
@@ -1278,17 +1272,18 @@ sap.ui.define([
 
 			return this.oLrepConnector.loadChanges(
 				{
-					name: sComponentName,
-					appVersion: sAppVersion
+					name : sComponentName,
+					appVersion : sAppVersion
 				}, {}
 			).then(function () {
 					assert.equal(this.server.requests.length, 1, "only one request was sent");
 					assert.equal(this.server.requests[0].url, sFlexDataRequestUrl, "the request is the flex data request");
+					assert.equal(this.oLoadModulesStub.callCount, 0, "no modules request was sent");
 				}.bind(this)
 			);
 		});
 
-		QUnit.test("no additional request is sent in case the '/flex/data' has not the flag 'loadModules'", function(assert) {
+		QUnit.test("no additional request is sent in case the '/flex/data' has not the flag 'loadModules'", function (assert) {
 			var sComponentName = "test.component";
 			var sAppVersion = "1.2.3";
 			var sFlexDataRequestUrl = "/sap/bc/lrep/flex/data/" + sComponentName + "?appVersion=" + sAppVersion;
@@ -1304,23 +1299,22 @@ sap.ui.define([
 
 			return this.oLrepConnector.loadChanges(
 				{
-					name: sComponentName,
-					appVersion: sAppVersion
+					name : sComponentName,
+					appVersion : sAppVersion
 				}, {}
 			).then(function () {
 					assert.equal(this.server.requests.length, 1, "only one request was sent");
 					assert.equal(this.server.requests[0].url, sFlexDataRequestUrl, "the request is the flex data request");
+					assert.equal(this.oLoadModulesStub.callCount, 0, "no modules request was sent");
 				}.bind(this)
 			);
 		});
 
-		QUnit.test("A js module is predefined on load data in case the '/flex/data' has the flag 'loadModules' set to true", function(assert) {
-			var sComponentName = "test.component";
+		QUnit.test("A modules request is sent in case the '/flex/data' has the flag 'loadModules' set to true", function (assert) {
+			var sComponentName = "oneJsModule";
 			var sAppVersion = "1.2.0";
 			var sFlexDataRequestUrl = "/sap/bc/lrep/flex/data/" + sComponentName + "?appVersion=" + sAppVersion;
 			var sFlexModulesRequestUrl = "/sap/bc/lrep/flex/modules/" + sComponentName + "?appVersion=" + sAppVersion;
-			var sComponentNameWithSlashes = sComponentName.replace(/\./g, "\/");
-			var sModuleName = sComponentNameWithSlashes + "/$$flexModules/" + sAppVersion + "/codeextensions/firstCodeExt";
 
 			var aPredefinedModules = [];
 
@@ -1335,148 +1329,20 @@ sap.ui.define([
 					"{\"loadModules\": true, \"changes\": []}"
 				]);
 
-			this.server.respondWith("GET", "/sap/bc/lrep/flex/modules/" + sComponentName + "?appVersion=" + sAppVersion,
-				[
-					200,
-					{
-						"Content-Type" : "application/javascript"
-					},
-					'sap.ui.predefine("' + sModuleName + '", ' +
-					'["sap/ui/core/mvc/ControllerExtension", "sap/m/MessageBox"], ' +
-					'function (ControllerExtension) { return sap.m.MessageBox.extend("test/x", {});' +
-					'\n});'
-				]);
 			this.server.autoRespond = true;
 
 			return this.oLrepConnector.loadChanges(
 				{
-					name: sComponentName,
-					appVersion: sAppVersion
-				}, {}
-			).then(function (){
-					assert.equal(this.server.requests.length, 2, "two requests were sent");
-					assert.equal(this.server.requests[0].url, sFlexDataRequestUrl, "the request is the flex data request");
-					assert.equal(this.server.requests[1].url, sFlexModulesRequestUrl, "the request is the flex modules request");
-					assert.equal(aPredefinedModules.length, 1, "one module was predefined.");
-					assert.equal(aPredefinedModules[0], sModuleName, "the specified module is predefined.");
-				}.bind(this)
-			);
-		});
-
-		QUnit.test("A xml module is preloaded on load data in case the '/flex/data' has the flag 'loadModules' set to true", function(assert) {
-			//var done = assert.async();
-			var sComponentName = "test.component";
-			var sAppVersion = "1.2.0";
-			var sFlexDataRequestUrl = "/sap/bc/lrep/flex/data/" + sComponentName + "?appVersion=" + sAppVersion;
-			var sFlexModulesRequestUrl = "/sap/bc/lrep/flex/modules/" + sComponentName + "?appVersion=" + sAppVersion;
-			var sComponentNameWithSlashes = sComponentName.replace(/\./g, "\/");
-			var sModuleName = sComponentNameWithSlashes + "/$$flexModules/" + sAppVersion + "/codeextensions/firstCodeExt";
-
-			var aPreloadedModules = [];
-
-			sandbox.stub(sap.ui.require, "preload").callsFake(function (mModules) {
-				Object.keys(mModules).map(function (sPreloadingModuleName) {aPreloadedModules.push(sPreloadingModuleName);});
-			});
-
-
-			this.server.respondWith("GET", "/sap/bc/lrep/flex/data/" + sComponentName + "?appVersion=" + sAppVersion,
-				[
-					200,
-					{"Content-Type" : "application/json"},
-					"{\"loadModules\": true, \"changes\": []}"
-				]);
-
-			this.server.respondWith("GET", "/sap/bc/lrep/flex/modules/" + sComponentName + "?appVersion=" + sAppVersion,
-				[
-					200,
-					{
-						"Content-Type" : "application/javascript"
-					},
-					'sap.ui.require.preload({\"' + sModuleName + '\": \'' + this.sXmlFragment + '\'});'
-				]);
-			this.server.autoRespond = true;
-
-			return this.oLrepConnector.loadChanges(
-				{
-					name: sComponentName,
-					appVersion: sAppVersion
+					name : sComponentName,
+					appVersion : sAppVersion
 				}, {}
 			).then(function () {
-					assert.equal(this.server.requests.length, 2, "two requests were sent");
+					assert.equal(this.server.requests.length, 1, "one /flex/data requests was sent");
 					assert.equal(this.server.requests[0].url, sFlexDataRequestUrl, "the request is the flex data request");
-					assert.equal(this.server.requests[1].url, sFlexModulesRequestUrl, "the request is the flex modules request");
-					assert.equal(aPreloadedModules.length, 1, "one module was preloaded.");
-					assert.equal(aPreloadedModules[0], sModuleName, "the specified module is preloaded.");
-					//done();
+					assert.equal(this.oLoadModulesStub.callCount, 1, "a /flex/modules request was sent");
+					assert.equal(this.oLoadModulesStub.getCall(0).args[0], sFlexModulesRequestUrl, "the request is the flex modules request");
 				}.bind(this)
 			);
-		});
-
-		QUnit.test("Multiple js module as well as multiple xml module are predefined on load data in case the '/flex/data' has the flag 'loadModules' set to true", function(assert) {
-			var done = assert.async();
-			var sComponentName = "test.component";
-			var sAppVersion = "1.2.0";
-			var sFlexDataRequestUrl = "/sap/bc/lrep/flex/data/" + sComponentName + "?appVersion=" + sAppVersion;
-			var sFlexModulesRequestUrl = "/sap/bc/lrep/flex/modules/" + sComponentName + "?appVersion=" + sAppVersion;
-			var sComponentNameWithSlashes = sComponentName.replace(/\./g, "\/");
-			var sJsModuleName1 = sComponentNameWithSlashes + "/$$flexModules/" + sAppVersion + "/codeextensions/firstCodeExt";
-			var sJsModuleName2 = sComponentNameWithSlashes + "/$$flexModules/" + sAppVersion + "/codeextensions/secondCodeExt";
-			var sXmlModuleName1 = sComponentNameWithSlashes + "/$$flexModules/" + sAppVersion + "/xmlfragments/firstXmlFragment";
-			var sXmlModuleName2 = sComponentNameWithSlashes + "/$$flexModules/" + sAppVersion + "/xmlfragments/secondXmlFragment";
-
-			var aPredefinedModules = [];
-			sandbox.stub(sap.ui, "predefine").callsFake(function (sModuleName) {
-				aPredefinedModules.push(sModuleName);
-			});
-
-			var aPreloadedModules = [];
-			sandbox.stub(sap.ui.require, "preload").callsFake(function (mModules) {
-				Object.keys(mModules).map(function (sModuleName) {aPreloadedModules.push(sModuleName);});
-			});
-
-			this.server.respondWith("GET", "/sap/bc/lrep/flex/data/" + sComponentName + "?appVersion=" + sAppVersion,
-				[
-					200,
-					{"Content-Type" : "application/json"},
-					"{\"loadModules\": true, \"changes\": []}"
-				]);
-
-			this.server.respondWith("GET", "/sap/bc/lrep/flex/modules/" + sComponentName + "?appVersion=" + sAppVersion,
-				[
-					200,
-					{
-						"Content-Type" : "application/javascript"
-					},
-					'sap.ui.predefine("' + sJsModuleName1 + '", ' +
-					'["sap/ui/core/mvc/ControllerExtension", "sap/m/MessageBox"], ' +
-					'function (ControllerExtension) { return sap.m.MessageBox.extend("test/x", {});' +
-					'\n});' +
-					'sap.ui.predefine("' + sJsModuleName2 + '", ' +
-					'["sap/ui/core/mvc/ControllerExtension", "sap/m/MessageBox"], ' +
-					'function (ControllerExtension) { return sap.m.MessageBox.extend("test/x", {});' +
-					'\n});' +
-					'sap.ui.require.preload({\"' + sXmlModuleName1 + '\": \'' + this.sXmlFragment + '\'});' +
-					'sap.ui.require.preload({\"' + sXmlModuleName2 + '\": \'' + this.sXmlFragment + '\'});'
-				]);
-			this.server.autoRespond = true;
-
-			return this.oLrepConnector.loadChanges(
-				{
-					name: sComponentName,
-					appVersion: sAppVersion
-				}, {}
-			).then(function () {
-				assert.equal(this.server.requests.length, 2, "two requests were sent");
-				assert.equal(this.server.requests[0].url, sFlexDataRequestUrl, "the request is the flex data request");
-				assert.equal(this.server.requests[1].url, sFlexModulesRequestUrl, "the request is the flex modules request");
-				assert.equal(aPredefinedModules.length, 2, "two modules was predefined.");
-				assert.equal(aPredefinedModules[0], sJsModuleName1, "the specified js module is predefined.");
-				assert.equal(aPredefinedModules[1], sJsModuleName2, "the specified js module is predefined.");
-				assert.equal(aPreloadedModules.length, 2, "two modules was preloaded.");
-				assert.equal(aPreloadedModules[0], sXmlModuleName1, "the specified xml module is preloaded.");
-				assert.equal(aPreloadedModules[1], sXmlModuleName2, "the specified xml module is preloaded.");
-				done();
-			}.bind(this));
 		});
 	});
 
