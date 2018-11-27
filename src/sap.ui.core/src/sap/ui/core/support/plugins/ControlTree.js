@@ -1510,11 +1510,17 @@ sap.ui.define([
 							if (oModel) {
 								sAbsolutePath = oModel.resolve(sPath, oBinding.getContext());
 
-								if (oModel.getProperty(sAbsolutePath) !== undefined) {
-									mData.invalidPath = false;
-								} else if (oModel.getProperty(sPath) !== undefined) {
-									mData.invalidPath = false;
-									sAbsolutePath = sPath;
+								if (oModel.isA("sap.ui.model.odata.v4.ODataModel")) { // ODataModel v4 throws an exception on getProperty() - check the context for data
+									if (oBinding.getContext() && oBinding.getContext().getProperty(sPath)) {
+										mData.invalidPath = false;
+									}
+								} else {
+									if (oModel.getProperty(sAbsolutePath) !== undefined) {
+										mData.invalidPath = false;
+									} else if (oModel.getProperty(sPath) !== undefined) {
+										mData.invalidPath = false;
+										sAbsolutePath = sPath;
+									}
 								}
 							}
 
