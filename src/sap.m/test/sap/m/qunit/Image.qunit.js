@@ -924,4 +924,25 @@ sap.ui.define([
 			});
 		});
 	});
+
+	QUnit.test("Invalid image src in case detailBox is present", function(assert){
+		// Arrange
+		var fnDone = assert.async(),
+			oErrorSpy = sinon.spy(function() {
+				// Assert
+				assert.strictEqual(oErrorSpy.callCount, 1, "Error spy called once");
+
+				// Cleanup
+				oImage.destroy();
+				fnDone();
+			}),
+			oImage = createImage({
+				src: "invalid_src.png",
+				error: oErrorSpy
+			});
+
+		// Act
+		oImage.setDetailBox(new LightBox());
+		oImage.placeAt("qunit-fixture");
+	});
 });
