@@ -3447,14 +3447,20 @@ sap.ui.define([
 	 */
 	ObjectPageLayout.prototype.clone = function () {
 		var oClone,
-			oHeaderContent;
+			oHeaderContent,
+			oCloneHeaderContent;
 
 		Object.keys(this.mAggregations).forEach(this._cloneProxiedAggregations, this);
 
 		oClone = Control.prototype.clone.apply(this, arguments);
 		oHeaderContent = this._getHeaderContent();
+		oCloneHeaderContent = oClone._getHeaderContent();
 
-		// "_headerContent" aggregation is hidden and it is not cloned by default
+		if (oCloneHeaderContent) { // a shallow (i.e. not deep) headerContent clone may be internally created by the objectPage if the original object had a headerTitle
+			oCloneHeaderContent.destroy();
+		}
+
+		// "_headerContent" aggregation is hidden and it is not cloned by default => explicitly create a deep clone
 		if (oHeaderContent) {
 			oClone.setAggregation("_headerContent", oHeaderContent.clone(), true);
 		}
