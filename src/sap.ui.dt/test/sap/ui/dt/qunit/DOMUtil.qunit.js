@@ -175,6 +175,11 @@ function(
 			assert.strictEqual(oDomRef.length, 1, "one element found");
 			assert.strictEqual(oDomRef.get(0).getAttribute("id"), "first-child", "right element found");
 		});
+
+		QUnit.test("when the getDomRefForCSSSelector is called without arguments", function(assert) {
+			var $DomRef = DOMUtil.getDomRefForCSSSelector();
+			assert.ok($DomRef instanceof jQuery);
+		});
 	});
 
 	/**
@@ -260,10 +265,7 @@ function(
 		});
 	});
 
-	/**
-	 * copyComputedStyle
-	 */
-	QUnit.module("Given that some DOM element with and without styles is rendered...", {
+	QUnit.module("copyComputedStyle()", {
 		beforeEach : function() {
 			this.oSrcDomElement = jQuery("<div class='child' id='first-child' " +
 				"style='background: #000; width: 200px; height: 200px;'" +
@@ -271,13 +273,8 @@ function(
 				.appendTo("#qunit-fixture");
 			this.oDestDomElement = jQuery("<div class='child' id='second-child'></div>")
 				.appendTo("#qunit-fixture");
-		},
-		afterEach : function() {
-			this.oSrcDomElement.remove();
-			this.oDestDomElement.remove();
-			jQuery("#qunit-fixture").empty();
 		}
-	}, function(){
+	}, function () {
 		QUnit.test("when copyComputedStyle is called and css-attribute display is set to none", function(assert) {
 			this.oSrcDomElement.css({
 				"display": "none"
@@ -449,6 +446,154 @@ function(
 			this.oNode.style.width = "10px";
 			this.oNode.style.display = "none";
 			assert.strictEqual(DOMUtil.isVisible(this.oNode), false, "with display:none the domRef is not visible");
+		});
+	});
+
+	QUnit.module("insertStyles()", function () {
+		QUnit.test("basic functionality", function (assert) {
+			var oFixtureNode = document.getElementById("qunit-fixture");
+			var oNode = document.createElement('div');
+			oNode.classList.add("customClass");
+			oNode.style.width = "300px";
+			oNode.style.height = "300px";
+			oNode.style.opacity = 1;
+			oFixtureNode.appendChild(oNode);
+
+			var oComputedStyle = window.getComputedStyle(oNode);
+			assert.strictEqual(parseFloat(oComputedStyle.getPropertyValue("opacity")), 1);
+			assert.strictEqual(parseInt(oComputedStyle.getPropertyValue("width")), 300);
+			assert.strictEqual(parseInt(oComputedStyle.getPropertyValue("height")), 300);
+
+			DOMUtil.insertStyles('\
+				.customClass {\
+					background-color: green;\
+					width: 100px !important;\
+					height: 100px !important;\
+					opacity: 0.5 !important;\
+				}\
+			', oFixtureNode);
+
+			oComputedStyle = window.getComputedStyle(oNode);
+			assert.strictEqual(parseFloat(oComputedStyle.getPropertyValue("opacity")), 0.5);
+			assert.strictEqual(parseInt(oComputedStyle.getPropertyValue("width")), 100);
+			assert.strictEqual(parseInt(oComputedStyle.getPropertyValue("height")), 100);
+		});
+	});
+
+	QUnit.module("contains()", function () {
+		QUnit.test("when nodes are real relatives", function (assert) {
+			var oFixtureNode = document.getElementById("qunit-fixture");
+
+			// Create Node1
+			var oNode1 = document.createElement('div');
+			oNode1.id = "node1";
+			oFixtureNode.appendChild(oNode1);
+
+			// Create Node2
+			var oNode2 = document.createElement('div');
+			oNode1.appendChild(oNode2);
+
+			assert.strictEqual(DOMUtil.contains("node1", oNode2), true);
+		});
+
+		QUnit.test("when provided id doesn't exist", function (assert) {
+			var oFixtureNode = document.getElementById("qunit-fixture");
+			var oNode = document.createElement('div');
+			oFixtureNode.appendChild(oNode);
+
+			assert.strictEqual(DOMUtil.contains("unknown-node-id", oNode), false);
+		});
+
+		QUnit.test("when both nodes are siblings", function (assert) {
+			var oFixtureNode = document.getElementById("qunit-fixture");
+
+			// Create Node1
+			var oNode1 = document.createElement('div');
+			oNode1.id = "node1";
+			oFixtureNode.appendChild(oNode1);
+
+			// Create Node2
+			var oNode2 = document.createElement('div');
+			oFixtureNode.appendChild(oNode2);
+
+			assert.strictEqual(DOMUtil.contains("node1", oNode2), false);
+		});
+	});
+
+
+	QUnit.module("setDraggable()", function () {
+		QUnit.test("basic functionality", function (assert) {
+			var oFixtureNode = document.getElementById("qunit-fixture");
+			var oNode = document.createElement('div');
+			oFixtureNode.appendChild(oNode);
+
+			DOMUtil.setDraggable(oNode, false);
+			assert.strictEqual(oNode.getAttribute("draggable"), "false");
+			DOMUtil.setDraggable(oNode, true);
+			assert.strictEqual(oNode.getAttribute("draggable"), "true");
+		});
+	});
+
+	QUnit.module("getDraggable()", function () {
+		QUnit.test("check boolean result", function (assert) {
+			var oFixtureNode = document.getElementById("qunit-fixture");
+			var oNode = document.createElement('div');
+			oFixtureNode.appendChild(oNode);
+
+			oNode.setAttribute("draggable", false);
+			assert.strictEqual(DOMUtil.getDraggable(oNode), false);
+			oNode.setAttribute("draggable", true);
+			assert.strictEqual(DOMUtil.getDraggable(oNode), true);
+		});
+
+		QUnit.test("check undefined if there is no attribute defined", function (assert) {
+			var oFixtureNode = document.getElementById("qunit-fixture");
+			var oNode = document.createElement('div');
+			oFixtureNode.appendChild(oNode);
+
+			assert.strictEqual(DOMUtil.getDraggable(oNode), undefined);
+		});
+	});
+
+	QUnit.module("syncScroll()", function () {
+		QUnit.test("basic functionality", function (assert) {
+			var oFixtureNode = document.getElementById("qunit-fixture");
+
+			function createScrollableBlock() {
+				var oOuterNode = document.createElement('div');
+				oOuterNode.style.backgroundColor = "blue";
+				oOuterNode.style.width = "200px";
+				oOuterNode.style.height = "200px";
+				oOuterNode.style.overflow = "scroll";
+				var oInnerNodeNode = document.createElement('div');
+				oInnerNodeNode.style.width = "500px";
+				oInnerNodeNode.style.height = "500px";
+				oOuterNode.appendChild(oInnerNodeNode);
+
+				return oOuterNode;
+			}
+
+			var oNode1 = createScrollableBlock();
+			var oNode2 = createScrollableBlock();
+
+			oFixtureNode.appendChild(oNode1);
+			oFixtureNode.appendChild(oNode2);
+
+			oNode1.scrollTop = 100;
+			oNode1.scrollLeft = 100;
+
+			assert.strictEqual(oNode1.scrollTop, 100);
+			assert.strictEqual(oNode1.scrollLeft, 100);
+			assert.strictEqual(oNode2.scrollTop, 0);
+			assert.strictEqual(oNode2.scrollLeft, 0);
+
+			// Sync
+			DOMUtil.syncScroll(oNode1, oNode2);
+
+			assert.strictEqual(oNode1.scrollTop, 100);
+			assert.strictEqual(oNode1.scrollLeft, 100);
+			assert.strictEqual(oNode2.scrollTop, 100);
+			assert.strictEqual(oNode2.scrollLeft, 100);
 		});
 	});
 

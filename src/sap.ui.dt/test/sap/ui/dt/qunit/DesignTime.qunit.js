@@ -135,6 +135,21 @@ function(
 				sap.ui.getCore().applyChanges();
 			}.bind(this));
 		});
+
+		QUnit.test("when getBusyPlugins() is called", function (assert) {
+			var CustomPlugin1 = Plugin.extend("qunit.CustomPlugin1");
+			var CustomPlugin2 = Plugin.extend("qunit.CustomPlugin2", {
+				isBusy: function () {
+					return true;
+				}
+			});
+			var oCustomPlugin1 = new CustomPlugin1();
+			var oCustomPlugin2 = new CustomPlugin2();
+
+			this.oDesignTime.addPlugin(oCustomPlugin1);
+			this.oDesignTime.addPlugin(oCustomPlugin2);
+			assert.deepEqual(this.oDesignTime.getBusyPlugins(), [ oCustomPlugin2 ]);
+		});
 	});
 
 	QUnit.module("Given that the DesignTime is created for a root control", {
@@ -867,17 +882,22 @@ function(
 
 		QUnit.test("when the overlay for a root element cannot be created", function(assert) {
 			var fnDone = assert.async();
-			var sErrorMessage = "ErrorMessage";
+			var sErrorMessage = "some error";
 			sandbox.stub(DesignTime.prototype, "createOverlay").callsFake(function(){
-				return Promise.reject({ message: sErrorMessage });
+				return Promise.reject(sErrorMessage);
 			});
 
-			var spyLog = sandbox.stub(Util, "createError").callsFake(function(){
-				var sErrorText = Util.printf('sap.ui.dt: root element with id = "{0}" initialization is failed due to: {1}', this.oLayout2.getId(), sErrorMessage);
-				assert.equal(spyLog.callCount, 1, "then an error is created");
-				assert.ok(spyLog.calledWith("DesignTime#createOverlay", sErrorText, "sap.ui.dt"), "then the correct error is created");
-				fnDone();
-			}.bind(this));
+			sandbox.stub(Log, "error")
+				.callThrough()
+				.withArgs(
+					sinon.match(function (sMessage) {
+						return sMessage.includes(sErrorMessage);
+					})
+				)
+				.callsFake(function () {
+					assert.ok(true);
+					fnDone();
+				});
 
 			this.oDesignTime.addRootElement(this.oLayout2);
 		});
