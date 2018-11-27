@@ -67,7 +67,7 @@ sap.ui.define(["sap/m/library", "sap/base/security/encodeCSS", "sap/ui/thirdpart
 			oRm.writeAttribute("id", oControl.getId() + "-startMarker");
 			oRm.addClass("sapMGTStartMarker");
 			oRm.writeClasses();
-			oRm.write("/>");
+			oRm.write("></div>");
 
 			this._renderFailedIcon(oRm, oControl);
 			this._renderHeader(oRm, oControl);
@@ -92,7 +92,7 @@ sap.ui.define(["sap/m/library", "sap/base/security/encodeCSS", "sap/ui/thirdpart
 			oRm.writeAttribute("id", oControl.getId() + "-styleHelper");
 			oRm.addClass("sapMGTStyleHelper");
 			oRm.writeClasses();
-			oRm.write("/>");
+			oRm.write("></div>");
 
 		} else {
 			// small
