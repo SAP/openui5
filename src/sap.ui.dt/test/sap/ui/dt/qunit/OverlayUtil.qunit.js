@@ -286,9 +286,15 @@ function(
 		});
 
 		QUnit.test("when findAllOverlaysInContainer is called", function(assert) {
-			assert.equal(OverlayUtil.findAllOverlaysInContainer(this.oButtonOverlay01, this.oLayoutOverlay0).length, 3, "then it returns the correct overlays ");
-			assert.equal(OverlayUtil.findAllOverlaysInContainer(this.oLayoutOverlay0, this.oLayoutOverlay1).length, 2, "then it returns the correct overlays ");
-			assert.equal(OverlayUtil.findAllOverlaysInContainer(this.oLayoutOverlay1, this.oLayoutOverlay2).length, 4, "then it returns the correct overlays");
+			assert.equal(OverlayUtil.findAllOverlaysInContainer(this.oButtonOverlay01).length, 3, "then it returns the correct overlays");
+			assert.equal(OverlayUtil.findAllOverlaysInContainer(this.oLayoutOverlay0).length, 2, "then it returns the correct overlays");
+			assert.equal(OverlayUtil.findAllOverlaysInContainer(this.oLayoutOverlay1).length, 4, "then it returns the correct overlays");
+		});
+
+		// This is the case in VisualEditor
+		QUnit.test("when findAllOverlaysInContainer is called and the relevant container overlay was destroyed", function(assert) {
+			this.oLayoutOverlay0.destroy();
+			assert.equal(OverlayUtil.findAllOverlaysInContainer(this.oButtonOverlay01).length, 0, "then it returns an empty array");
 		});
 	});
 
