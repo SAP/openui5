@@ -162,7 +162,12 @@ sap.ui.define(function() {
 			},
 			"analytics/AnalyticalBinding": {
 				coverage : {
-					only : "sap/ui/model/analytics/AnalyticalBinding"
+					only : "sap/ui/model/analytics/"
+				},
+				loader : {
+					paths : {
+						"sap/ui/core/qunit/analytics" : "test-resources/sap/ui/core/qunit/analytics"
+					}
 				},
 				qunit: {
 					version: 1
@@ -174,7 +179,12 @@ sap.ui.define(function() {
 			},
 			"analytics/odata4analytics": {
 				coverage : {
-					only : "sap/ui/model/analytics/odata4analytics"
+					only : "sap/ui/model/analytics/"
+				},
+				loader : {
+					paths : {
+						"sap/ui/core/qunit/analytics" : "test-resources/sap/ui/core/qunit/analytics"
+					}
 				},
 				qunit: {
 					version: 1
