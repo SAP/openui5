@@ -57,7 +57,7 @@ sap.ui.define([
 				/**
 				 * Determines whether the initial focus is set automatically on first rendering and after navigating to a new page.
 				 * This is useful when on touch devices the keyboard pops out due to the focus being automatically set on an input field.
-				 * If necessary the "afterShow" event can be used to focus another element.
+				 * If necessary, the <code>afterShow</code> event can be used to focus another element, only if <code>autoFocus</code> is set to <code>false</code>.
 				 *
 				 * <b>Note:</b>  The following scenarios are possible, depending on where the focus
 				 * was before navigation to a new page:
