@@ -1,4 +1,4 @@
-/*global QUnit */
+/*global QUnit, sinon */
 sap.ui.define([
 	"sap/ui/qunit/QUnitUtils",
 	"sap/ui/qunit/utils/createAndAppendDiv",
@@ -37,7 +37,7 @@ sap.ui.define([
 	// prepare DOM
 	createAndAppendDiv("content");
 
-
+	var iDialogDuration = sap.ui.getCore().getConfiguration().getAnimationMode() === "none" ? 15 : 500;
 
 	/**
 	* Set up a test data environment. Need a table for the perso dialog
@@ -160,17 +160,7 @@ sap.ui.define([
 
 
 
-	var oTPC = new TablePersoController({
-		table: oTable,
-		persoService: oPersoService,
-		hasGrouping: false
-	}).activate();
-
-	var oTPC1 = new TablePersoController({
-		table: oTable1,
-		persoService: oPersoService1,
-		hasGrouping: false
-	}).activate();
+	var oTPC;
 
 	var page = new Page("myFirstPage", {
 		title : "TablePersoDialog Test",
@@ -185,10 +175,26 @@ sap.ui.define([
 
 	var oTablePersoDialog = null;
 
-	var oTablePersoDialog1 = null;
+	var fnInit = function() {
+		oTPC = new TablePersoController({
+			table: oTable,
+			persoService: oPersoService,
+			hasGrouping: false
+		}).activate();
+		oTablePersoDialog = oTPC.getAggregation("_tablePersoDialog");
+	};
 
+	var fnExit = function() {
+		oTPC.destroy();
+		oTPC = undefined;
+		oTablePersoDialog = null;
+	};
 
-	QUnit.module("Initial Check");
+	QUnit.module("Initial Check", {
+		beforeEach: fnInit,
+		afterEach: fnExit
+	});
+
 
 	QUnit.test("Initialization", function(assert) {
 		oTablePersoDialog = oTPC.getAggregation("_tablePersoDialog");
@@ -199,7 +205,10 @@ sap.ui.define([
 	});
 
 
-	QUnit.module("Open, 'Reset All'-, 'Select All' Visibility");
+	QUnit.module("Open, 'Reset All'-, 'Select All' Visibility", {
+		beforeEach: fnInit,
+		afterEach: fnExit
+	});
 
 	QUnit.test("Open Dialog", function(assert) {
 		oTPC.setShowResetAll(false);
@@ -220,14 +229,18 @@ sap.ui.define([
 		sap.ui.getCore().applyChanges();
 		//Check if Reset ALL Button is visible
 		assert.ok(oTPC.getAggregation("_tablePersoDialog")._oDialog.getContent()[0].getContent()[1].$().length > 0, 'Reset All should be shown');
-		//Check if Select All is vsible
-			assert.ok(jQuery('.sapMPersoDialogSelectAllCb').is(':visible'), 'Select All Checkbox should be shown');
+		//Check if Select All is visible
+		assert.ok(jQuery('.sapMPersoDialogSelectAllCb').is(':visible'), 'Select All Checkbox should be shown');
 	});
 
 
-	QUnit.module("Personalizations");
+	QUnit.module("Personalizations", {
+		beforeEach: fnInit,
+		afterEach: fnExit
+	});
 
 	QUnit.test("Initial Column Info", function(assert) {
+		oTPC.openDialog();
 		var oPersData = oTablePersoDialog.retrievePersonalizations();
 		assert.ok(oPersData.aColumns, "Column personalization information available");
 		assert.strictEqual(oPersData.aColumns.length, 3, "Column personalization information for 3 columns");
@@ -246,16 +259,17 @@ sap.ui.define([
 	});
 
 	QUnit.test("En/-disable Arrow Buttons", function(assert) {
-		oTablePersoDialog = oTPC.getAggregation("_tablePersoDialog");
+		oTPC.setShowResetAll(false);
+		oTPC.setShowSelectAll(false);
+		oTPC.openDialog();
 		var oDataList = oTablePersoDialog._oDialog.getContent()[1].getContent()[0];
-		var oTablePersoDialog = oTPC.getAggregation("_tablePersoDialog");
 		var oButtonUp = sap.ui.getCore().byId(oTablePersoDialog.getId() + "-buttonUp");
 		var oButtonDown = sap.ui.getCore().byId(oTablePersoDialog.getId() + "-buttonDown");
 		var length = oDataList.getItems().length;
 
 //			first item is selected => the Down button must be enabled
-		assert.ok(oButtonUp.$().hasClass('sapMBtnDisabled'), "first item is selected: Button Arrow Up is disabled => OK!");
-		assert.ok(!oButtonDown.$().hasClass('sapMBtnDisabled'), "first item is selected: Button Arrow Down is enabled => OK!");
+		assert.ok(!oButtonUp.getEnabled(), "first item is selected: Button Arrow Up is disabled => OK!");
+		assert.ok(oButtonDown.getEnabled(), "first item is selected: Button Arrow Down is enabled => OK!");
 
 		if (length > 0) {
 			oDataList.setSelectedItem(oDataList.getItems()[0], true, true);
@@ -269,7 +283,13 @@ sap.ui.define([
 			assert.ok(!oButtonUp.$().hasClass('sapMBtnDisabled'), "More than one item in List, last item is selected: Button Arrow Up is enabled => OK!");
 		}
 
-		oTablePersoDialog1 = oTPC1.getTablePersoDialog();
+		var oTPC1 = new TablePersoController({
+			table: oTable1,
+			persoService: oPersoService1,
+			hasGrouping: false
+		}).activate();
+
+		var oTablePersoDialog1 = oTPC1.getTablePersoDialog();
 		oTPC1.openDialog();
 
 		var oDataList1 = oTablePersoDialog1._oDialog.getContent()[1].getContent()[0];
@@ -282,8 +302,8 @@ sap.ui.define([
 			assert.ok(oButtonUp1.$().hasClass('sapMBtnDisabled'), "One item available(selected): Button Arrow Up is disabled => OK!");
 			assert.ok(oButtonDown1.$().hasClass('sapMBtnDisabled'), "One item available(selected): Button Arrow Down is disabled => OK!");
 		}
-		var oButtonCancel = sap.ui.getCore().byId(oTablePersoDialog1._oDialog.getRightButton());
-		oButtonCancel.firePress();
+
+			oTPC1.destroy();
 	});
 
 
@@ -306,16 +326,24 @@ sap.ui.define([
 
 		// Press OK
 		oButtonOk.firePress();
-		sap.ui.getCore().applyChanges();
+		var fnDone = assert.async();
+		setTimeout(function () {
+			sap.ui.getCore().applyChanges();
 
-		var oPersData = oTablePersoDialog.retrievePersonalizations();
+			var oPersData = oTablePersoDialog.retrievePersonalizations();
 
-		assert.strictEqual(oPersData.aColumns[0].visible, false, "column 0 visibility is now false");
-		assert.strictEqual(oPersData.aColumns[1].text, "Number", "Column 1 (Color) order is now 2");
-		assert.strictEqual(oPersData.aColumns[2].text, "Modified Color", "Column 2 (Number) is now 1");
+			assert.strictEqual(oPersData.aColumns[0].visible, false, "column 0 visibility is now false");
+			assert.strictEqual(oPersData.aColumns[1].text, "Number", "Column 1 (Color) order is now 2");
+			assert.strictEqual(oPersData.aColumns[2].text, "Modified Color", "Column 2 (Number) is now 1");
+			fnDone();
+		}, 500);
 	});
 
-	QUnit.module("Many columns");
+	QUnit.module("Many columns", {
+		beforeEach: fnInit,
+		afterEach: fnExit
+	});
+
 	QUnit.test("Table has more than 100 columns", function(assert){
 		//Arrange
 		var oData2 = {
@@ -401,36 +429,45 @@ sap.ui.define([
 		sap.ui.getCore().applyChanges();
 		oTPC3.openDialog();
 		sap.ui.getCore().applyChanges();
-		var oTablePersoDialog3 = oTPC3.getTablePersoDialog(),
+
+		var fnDone = assert.async();
+		setTimeout( function(){
+
+			var oTablePersoDialog3 = oTPC3.getTablePersoDialog(),
 			oScrollCont = oTablePersoDialog3._oScrollContainer,
 			oButtonUp = oTablePersoDialog3._oButtonUp,
 			oButtonDown = oTablePersoDialog3._oButtonDown;
 
 
-		//Act
-		//Select first item
-		oTablePersoDialog3._oList.setSelectedItem(oTablePersoDialog3._oList.getItems()[0]);
-		sap.ui.getCore().applyChanges();
+			//Act
+			//Select first item
+			oTablePersoDialog3._oList.setSelectedItem(oTablePersoDialog3._oList.getItems()[0]);
+			sap.ui.getCore().applyChanges();
 
 
-		var spyScrollTo = this.spy(oScrollCont, "scrollTo");
-		//press 'Down button 7 times to trigger scroll down
-		for (var i = 0; i < 7; i++) {
-			oButtonDown.firePress();
-			sap.ui.getCore().applyChanges();
-		}
-		assert.equal(spyScrollTo.callCount, 1, "scrollTo should be called once when moving down");
-		//now press Up button 5 times to trigger scroll up
-		for (var i = 0; i < 5; i++) {
-			oButtonUp.firePress();
-			sap.ui.getCore().applyChanges();
-		}
-		assert.equal(spyScrollTo.callCount, 2, "scrollTo should be called once when moving up");
-		oTPC3.destroy();
-		oTable3.destroy();
+			var spyScrollTo = sinon.spy(oScrollCont, "scrollTo");
+			//press 'Down button 7 times to trigger scroll down
+			for (var i = 0; i < 7; i++) {
+				oButtonDown.firePress();
+				sap.ui.getCore().applyChanges();
+			}
+			assert.equal(spyScrollTo.callCount, 1, "scrollTo should be called once when moving down");
+			//now press Up button 5 times to trigger scroll up
+			for (var i = 0; i < 5; i++) {
+				oButtonUp.firePress();
+				sap.ui.getCore().applyChanges();
+			}
+			assert.equal(spyScrollTo.callCount, 2, "scrollTo should be called once when moving up");
+			oTPC3.destroy();
+			oTable3.destroy();
+			fnDone();
+		}, iDialogDuration); // to wait until dialog is open
 	});
 
-	QUnit.module("Reset All");
+	QUnit.module("Reset All", {
+		beforeEach: fnInit,
+		afterEach: fnExit
+	});
 
 	QUnit.test("Check column captions after Reset All", function(assert){
 		//Arrange
@@ -488,16 +525,22 @@ sap.ui.define([
 		sap.ui.getCore().applyChanges();
 		oResetButton.firePress();
 		sap.ui.getCore().applyChanges();
-		this.clock.tick(1);
-		assert.equal(oList.getSelectedItem(), oList.getItems()[0], 'After repositioning and after reset, the last selected item is still selected');
+		var fnDone = assert.async();
+		setTimeout(function () {
+			assert.equal(oList.getSelectedItem(), oList.getItems()[0], 'After repositioning and after reset, the last selected item is still selected');
 
-		oTPC4.destroy();
-		oTable4.destroy();
+			oTPC4.destroy();
+			oTable4.destroy();
+			fnDone();
+		}, 1);
 	});
 
 
 
-	QUnit.module("Close");
+	QUnit.module("Close", {
+		beforeEach: fnInit,
+		afterEach: fnExit
+	});
 
 	QUnit.test("Destroy TablePersoDialog", function(assert){
 		var oTablePersoDialog = new TablePersoDialog({
@@ -514,7 +557,7 @@ sap.ui.define([
 
 	QUnit.test("Test Initial focus", function (assert) {
 		// arrange
-		var oTable = new Table("testInitialFocusTable", {
+		var oTable1 = new Table("testInitialFocusTable", {
 			columns: [
 				new Column("col0", {
 					header : new Label({text : "Column 0"}),
@@ -552,31 +595,33 @@ sap.ui.define([
 			}
 		};
 
-		var oTPC = new TablePersoController({
-			table: oTable,
+		var oTPC1 = new TablePersoController({
+			table: oTable1,
 			persoService: oPersoService
 		}).activate();
 
-		oTable.placeAt("qunit-fixture");
+		oTable1.placeAt("qunit-fixture");
 		sap.ui.getCore().applyChanges();
 
 		// act
-		oTPC.openDialog();
+		oTPC1.openDialog();
 		sap.ui.getCore().applyChanges();
-		this.clock.tick(1);
-
-		// assert
-		var actual = oTPC.getTablePersoDialog()._oList.getSelectedItem().getId();
-		var expected = oTPC.getTablePersoDialog()._oList.getItems()[0].getId();
-		assert.strictEqual(actual, expected, 'The focus should be on the first list item.');
-		oTPC.destroy();
-		oTable.destroy();
+		var fnDone = assert.async();
+		setTimeout(function () {
+			// assert
+			var actual = oTPC1.getTablePersoDialog()._oList.getSelectedItem().getId();
+			var expected = oTPC1.getTablePersoDialog()._oList.getItems()[0].getId();
+			assert.strictEqual(actual, expected, 'The focus should be on the first list item.');
+			oTPC1.destroy();
+			oTable1.destroy();
+			fnDone();
+		}, 1);
 
 	});
 
 	QUnit.test("Test Initial focus with grouping", function (assert) {
 		// arrange
-		var oTable = new Table("testInitialFocusTable", {
+		var oTable1 = new Table("testInitialFocusTable", {
 			columns: [
 				new Column("col0", {
 					header : new Label({text : "Column 0"}),
@@ -623,25 +668,27 @@ sap.ui.define([
 			}
 		};
 
-		var oTPC = new TablePersoController({
-			table: oTable,
+		var oTPC1 = new TablePersoController({
+			table: oTable1,
 			persoService: oPersoService,
 			hasGrouping: true
 		}).activate();
 
-		oTable.placeAt("qunit-fixture");
+		oTable1.placeAt("qunit-fixture");
 		sap.ui.getCore().applyChanges();
 
 		// act
-		oTPC.openDialog();
+		oTPC1.openDialog();
 		sap.ui.getCore().applyChanges();
-		this.clock.tick(1);
-
-		// assert
-		var actual = oTPC.getTablePersoDialog()._oList.getSelectedItem().getId();
-		var expected = oTPC.getTablePersoDialog()._oList.getItems()[1].getId();
-		assert.strictEqual(actual, expected, 'The focus should be on the first list item.');
-		oTPC.destroy();
-		oTable.destroy();
+		var fnDone = assert.async();
+		setTimeout(function () {
+			// assert
+			var actual = oTPC1.getTablePersoDialog()._oList.getSelectedItem().getId();
+			var expected = oTPC1.getTablePersoDialog()._oList.getItems()[1].getId();
+			assert.strictEqual(actual, expected, 'The focus should be on the first list item.');
+			oTPC1.destroy();
+			oTable1.destroy();
+			fnDone();
+		}, 1);
 	});
 });

@@ -1161,8 +1161,10 @@ sap.ui.define(function() {
 					version: 2
 				},
 				sinon: {
-					version: 1,
-					useFakeTimers: true
+					version: 4
+				},
+				ui5: {
+					animationMode: "none"
 				}
 			},
 			TableSelectDialog: {
