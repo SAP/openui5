@@ -15,6 +15,7 @@ sap.ui.define([
 	"sap/m/Page",
 	"sap/m/App",
 	"sap/m/NavContainer",
+	"sap/ui/base/ManagedObject",
 	"sap/ui/core/HTML",
 	"sap/base/Log"],
 function (
@@ -33,6 +34,7 @@ function (
 	Page,
 	App,
 	NavContainer,
+	ManagedObject,
 	HTML,
 	Log
 ) {
@@ -1385,6 +1387,20 @@ function (
 
 		assert.strictEqual(oHeaderContentClone !== null, true, "HeaderContent aggregation should exist in the clone");
 		assert.strictEqual(oHeaderContent.length, oHeaderContentClone.length, "HeaderContent and it's clone should have the same nubmer of elements");
+	});
+
+	QUnit.test("Should destroy cloned _headerContent hidden aggregation", function (assert) {
+		var oObjectPage = this.oSampleView.byId("objectPage13"),
+			oDestroySpy = sinon.spy(ManagedObject.prototype, "destroy"),
+			oObjectPageClone = oObjectPage.clone(),
+			aDestroyedObjectIds;
+
+		// act
+		oObjectPageClone.destroy();
+
+		// check
+		aDestroyedObjectIds = oDestroySpy.thisValues.map(function(x) {return x.getId();});
+		assert.ok(aDestroyedObjectIds.indexOf(oObjectPageClone.getId() + "-OPHeaderContent") > -1, "default headerContent clone is destroyed");
 	});
 
 	QUnit.module("ObjectPage API", {
