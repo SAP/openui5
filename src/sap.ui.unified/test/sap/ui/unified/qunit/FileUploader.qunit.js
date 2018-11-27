@@ -689,4 +689,62 @@ sap.ui.define([
 		});
 	}
 
+	QUnit.module("Accessibility");
+
+	QUnit.test("Label is redirected to internal button", function (assert) {
+		// setup
+		var sInternalButtonAriaLabelledby,
+			oLabel = new sap.m.Label("newLabel", {
+				text: "Select Document",
+				labelFor: "fu"
+			}),
+			oFileUploader = new sap.ui.unified.FileUploader("fu");
+
+		// act
+		oLabel.placeAt("qunit-fixture");
+		oFileUploader.placeAt("qunit-fixture");
+		sap.ui.getCore().applyChanges();
+
+		sInternalButtonAriaLabelledby = oFileUploader.oBrowse.$().attr("aria-labelledby");
+
+		// assert
+		assert.ok(sInternalButtonAriaLabelledby.indexOf("newLabel") !== -1, "Internal button has reference to the newly created label");
+
+		// cleanup
+		oLabel.destroy();
+		oFileUploader.destroy();
+	});
+
+	QUnit.test("Label added dynamicaly", function (assert) {
+		// setup
+		var oNewLabel,
+			sInternalButtonAriaLabelledby,
+			oLabel = new sap.m.Label("initialLabel", {
+				text: "Select Document",
+				labelFor: "fu"
+			}),
+			oFileUploader = new sap.ui.unified.FileUploader("fu");
+
+		// act
+		oLabel.placeAt("qunit-fixture");
+		oFileUploader.placeAt("qunit-fixture");
+		sap.ui.getCore().applyChanges();
+
+		oNewLabel = new sap.m.Label("newLabel", { labelFor: "fu" });
+
+		oNewLabel.placeAt("content");
+		sap.ui.getCore().applyChanges();
+
+		sInternalButtonAriaLabelledby = oFileUploader.oBrowse.$().attr("aria-labelledby");
+
+		// assert
+		assert.ok(sInternalButtonAriaLabelledby.indexOf("initialLabel") !== -1, "Internal button has reference to the initialy created label");
+		assert.ok(sInternalButtonAriaLabelledby.indexOf("newLabel") !== -1, "Internal button has reference to the newly created label");
+
+		// cleanup
+		oLabel.destroy();
+		oNewLabel.destroy();
+		oFileUploader.destroy();
+	});
+
 });
