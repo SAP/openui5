@@ -1,7 +1,7 @@
 /*!
  * ${copyright}
  */
-sap.ui.require([
+sap.ui.define([
 	"sap/ui/core/sample/common/Helper",
 	"sap/ui/support/RuleAnalyzer",
 	"sap/ui/test/Opa5",
