@@ -919,4 +919,6 @@ sap.ui.define([
 		// clean
 		oCalP.destroy();
 	});
+
+	return waitForThemeApplied();
 });

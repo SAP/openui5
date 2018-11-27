@@ -1429,4 +1429,5 @@ QUnit.module("Misc");
 		assert.ok(oEventSpy.called, "Detected internal Months firing weekNumberSelect, so Calendar did the same");
 	});
 
+	return waitForThemeApplied();
 });

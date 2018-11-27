@@ -771,4 +771,6 @@ sap.ui.define([
 			assert.strictEqual(this.oCP.Color.l, 50, 'light is ok');
 		});
 	})();
+
+	return waitForThemeApplied();
 });
