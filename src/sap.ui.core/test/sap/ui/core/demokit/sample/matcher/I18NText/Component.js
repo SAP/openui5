@@ -20,7 +20,9 @@ sap.ui.define([
 						"webapp/i18n/i18n.properties",
 						"webapp/view/Main.view.xml",
 						"webapp/controller/Main.controller.js",
-						"webapp/index.html"
+						"webapp/index.html",
+						"webapp/Component.js",
+						"webapp/manifest.json"
 					]
 				}
 			}

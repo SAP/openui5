@@ -27,7 +27,8 @@ sap.ui.define(['sap/ui/core/UIComponent'],
 						"applicationUnderTest/view/Main.view.xml",
 						"applicationUnderTest/view/Main.controller.js",
 						"applicationUnderTest/index.html",
-						"applicationUnderTest/Component.js"
+						"applicationUnderTest/Component.js",
+						"applicationUnderTest/manifest.json"
 					]
 				}
 			}

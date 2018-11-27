@@ -5,11 +5,11 @@ sap.ui.define([
 ], function (Controller, JSONModel, ResourceModel) {
 	"use strict";
 
-	return Controller.extend("webapp.controller.Main", {
+	return Controller.extend("appUnderTest.controller.Main", {
 
 		onInit: function () {
 			// set I18N model
-			var oI18NModel = new ResourceModel({ bundleName: "webapp.i18n.i18n"});
+			var oI18NModel = new ResourceModel({ bundleName: "appUnderTest.i18n.i18n"});
 			this.getView().setModel(oI18NModel, "i18n");
 		},
 

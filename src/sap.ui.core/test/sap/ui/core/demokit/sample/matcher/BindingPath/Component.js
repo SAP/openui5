@@ -19,7 +19,9 @@ sap.ui.define([
 						"Opa.js",
 						"webapp/view/Main.view.xml",
 						"webapp/controller/Main.controller.js",
-						"webapp/index.html"
+						"webapp/index.html",
+						"webapp/Component.js",
+						"webapp/manifest.json"
 					]
 				}
 			}

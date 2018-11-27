@@ -74,6 +74,13 @@ sap.ui.define([
 				libs: "sap.m"
 			}
 		},
+		"demokit/sample/matcher/LabelFor/Opa": {
+			page: "test-resources/sap/ui/core/demokit/sample/matcher/LabelFor/Opa.html?noglobals=true&sap-ui-animation=false",
+			title: "Opa Sample for LabelFor Matcher",
+			ui5: {
+				libs: "sap.m"
+			}
+		},
 		"demokit/sample/OpaById/Opa": {
 			page: "test-resources/sap/ui/core/demokit/sample/OpaById/Opa.html?noglobals=true&sap-ui-animation=false",
 			title: "Opa sample for retrieving controls by id"
