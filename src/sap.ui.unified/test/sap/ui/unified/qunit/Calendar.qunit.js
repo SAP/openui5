@@ -10,9 +10,10 @@ sap.ui.define([
 	"sap/ui/core/Locale",
 	"sap/ui/core/HTML",
 	"sap/ui/unified/calendar/CalendarDate",
-	"sap/ui/unified/library"
+	"sap/ui/unified/library",
+	"sap/ui/qunit/utils/waitForThemeApplied"
 ], function(qutils, Calendar, DateRange, DateTypeRange, CalendarLegend,
-	CalendarLegendItem, Locale, HTML, CalendarDate, unifiedLibrary) {
+	CalendarLegendItem, Locale, HTML, CalendarDate, unifiedLibrary, waitForThemeApplied) {
 	"use strict";
 	// set language to en-US, since we have specific language strings tested
 	sap.ui.getCore().getConfiguration().setLanguage("en_US");
