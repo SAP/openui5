@@ -30,9 +30,11 @@ sap.ui.define([
 					id: oView.getId(),
 					name: "sap.ui.demo.walkthrough.view.HelloDialog",
 					controller: oFragmentController
-				}).then(function(oDialog){
+				}).then(function (oDialog) {
 					// connect dialog to the root view of this component (models, lifecycle)
 					oView.addDependent(oDialog);
+					// forward compact/cozy style into dialog
+					syncStyleClass(oView.getController().getOwnerComponent().getContentDensityClass(), oView, oDialog);
 					oDialog.open();
 				});
 			} else {

@@ -29,7 +29,7 @@ sap.ui.define([
 					id: oView.getId(),
 					name: "sap.ui.demo.walkthrough.view.HelloDialog",
 					controller: oFragmentController
-				}).then(function(oDialog){
+				}).then(function (oDialog) {
 					// connect dialog to the root view of this component (models, lifecycle)
 					oView.addDependent(oDialog);
 					oDialog.open();

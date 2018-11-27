@@ -4,7 +4,7 @@ sap.ui.define([
 	"sap/m/MessageToast",
 	"sap/ui/model/json/JSONModel",
 	"sap/ui/core/UIComponent"
-], function(Controller, History, MessageToast, JSONModel, UIComponent) {
+], function (Controller, History, MessageToast, JSONModel, UIComponent) {
 	"use strict";
 
 	return Controller.extend("sap.ui.demo.walkthrough.controller.Detail", {
