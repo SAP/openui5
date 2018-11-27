@@ -1841,7 +1841,7 @@ sap.ui.define([
 		if (!this.bIsFallback) {
 			var vDate;
 
-			jQuery.each(this.aFallbackFormats, function(i, oFallbackFormat) {
+			this.aFallbackFormats.every(function(oFallbackFormat) {
 				vDate = oFallbackFormat.parse(sValue, bUTC, bStrict);
 
 				if (Array.isArray(vDate)) {
