@@ -66,8 +66,8 @@ var mMultipleArgumentDynamicExpressions = {
  */
 function getQualifier(oAnnotationNode) {
 	return oAnnotationNode.getAttribute("Qualifier")
-		|| oAnnotationNode.parentElement.localName === "Annotations"
-			&& oAnnotationNode.parentElement.getAttribute("Qualifier");
+		|| oAnnotationNode.parentNode.nodeName === "Annotations"
+			&& oAnnotationNode.parentNode.getAttribute("Qualifier");
 }
 
 
@@ -280,9 +280,6 @@ var AnnotationParser =  {
 					propertyAnnotationNode = AnnotationParser._oXPath.nextNode(propertyAnnotationNodes, nodeIndexValue);
 					sTermValue = AnnotationParser.replaceWithAlias(propertyAnnotationNode.getAttribute("Term"));
 					var sQualifierValue = getQualifier(propertyAnnotationNode);
-					if (sQualifierValue !== (annotationNode.getAttribute("Qualifier") || propertyAnnotationNode.getAttribute("Qualifier"))) {
-						throw new Error("Oops");
-					}
 					if (sQualifierValue) {
 						sTermValue += "#" + sQualifierValue;
 					}
