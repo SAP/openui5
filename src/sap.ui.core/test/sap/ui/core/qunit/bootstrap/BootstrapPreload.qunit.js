@@ -65,7 +65,7 @@ sap.ui.define([
 		// Note: the tests must not call functions/ctors to avoid side effects like lazy loading
 
 		// we must exclude the primitive types - no module for them
-		var aBuiltInTypes = "any boolean float int object string void".split(" ");
+		var aBuiltInTypes = ["any","boolean","float","int","object","string","void","function"];
 		if ( Array.isArray(oLib.types) ) {
 			oLib.types.forEach(function(sType) {
 				if ( aBuiltInTypes.indexOf(sType) < 0 ) {
@@ -77,7 +77,7 @@ sap.ui.define([
 
 		// check existence and lazy loader status
 		var sMessage = bExpectLazyStubs ? "class must be a lazy loader only" : "class must not be a lazy loader";
-		var aExcludes = "sap.ui.core.Element sap.ui.core.Control sap.ui.core.Component sap.ui.table.Column".split(" ");
+		var aExcludes = ["sap.ui.core.Element", "sap.ui.core.Control", "sap.ui.core.Component", "sap.ui.table.Column", "sap.ui.core.CustomData"];
 
 		if ( Array.isArray(oLib.elements) ) {
 			oLib.elements.forEach(function(sElement) {
