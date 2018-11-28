@@ -67,7 +67,6 @@ sap.ui.define(["sap/f/library", "sap/base/security/encodeXML", "sap/ui/core/Icon
             CardRenderer.renderHeaderSection(oRm, oCard);
 
 			//content
-			oRm.write("<div class=\"sapFCardSeparator\" />");
 			CardRenderer.renderContentSection(oRm, oCard);
 
 			//end
