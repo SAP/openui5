@@ -297,6 +297,7 @@ sap.ui.define([
 			var sLabelKey = "MULTIINPUT_SHOW_MORE_TOKENS";
 
 			if (iHiddenTokensCount === this.getTokens().length) {
+				this.$().css("overflow", "visible");
 				if (iHiddenTokensCount === 1) {
 					sLabelKey = "TOKENIZER_SHOW_ALL_ITEM";
 				} else {
@@ -307,6 +308,7 @@ sap.ui.define([
 			this._oIndicator.removeClass("sapUiHidden");
 			this._oIndicator.html(oRb.getText(sLabelKey, iHiddenTokensCount));
 		} else {
+			this.$().css("overflow", "hidden");
 			this._oIndicator.addClass("sapUiHidden");
 		}
 
