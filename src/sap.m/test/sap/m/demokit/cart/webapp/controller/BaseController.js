@@ -1,8 +1,9 @@
 sap.ui.define([
-    'sap/ui/core/mvc/Controller',
-    'sap/m/MessageToast',
-    'sap/ui/core/UIComponent'
-], function(Controller, MessageToast, UIComponent) {
+	"sap/ui/core/mvc/Controller",
+	"sap/m/MessageToast",
+	"sap/ui/core/UIComponent",
+	"sap/ui/core/routing/History"
+], function(Controller, MessageToast, UIComponent, History) {
 	"use strict";
 
 	return Controller.extend("sap.ui.demo.cart.controller.BaseController", {
@@ -51,8 +52,44 @@ sap.ui.define([
 		 * @public
 		 */
 		onAvatarPress: function () {
-			var msg = this.getResourceBundle().getText("avatarButtonMessageToastText");
-			MessageToast.show(msg);
+			var sMessage = this.getResourceBundle().getText("avatarButtonMessageToastText");
+			MessageToast.show(sMessage);
+		},
+
+		/**
+		 * Sets the flexible column layout to one, two, or three columns for the different scenarios across the app
+		 * @param {string} sColumns the target amount of columns
+		 * @private
+		 */
+		_setLayout: function (sColumns) {
+			if (sColumns) {
+				this.getModel("appView").setProperty("/layout", sColumns + "Column" + (sColumns === "One" ? "" : "sMidExpanded"));
+			}
+		},
+
+		/**
+		 * Apparently, the middle page stays hidden on phone devices when it is navigated to a second time
+		 * @private
+		 */
+		_unhideMiddlePage: function () {
+			// TODO: bug in sap.f router, open ticket and remove this method afterwards
+			setTimeout(function () {
+				this.getOwnerComponent().getRootControl().byId("layout").getCurrentMidColumnPage().removeStyleClass("sapMNavItemHidden");
+			}.bind(this), 0);
+		},
+
+		/**
+		 * Navigate back
+		 */
+		onBack: function () {
+			this._setLayout("Two");
+			var oHistory = History.getInstance();
+			var oPrevHash = oHistory.getPreviousHash();
+			if (oPrevHash !== undefined) {
+				window.history.go(-1);
+			} else {
+				this.getRouter().navTo("home", {}, true);
+			}
 		}
 	});
 });

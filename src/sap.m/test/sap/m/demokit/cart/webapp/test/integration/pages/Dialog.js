@@ -1,7 +1,7 @@
 sap.ui.define([
-	'sap/ui/test/Opa5',
-	'sap/ui/test/matchers/PropertyStrictEquals',
-	'sap/ui/test/actions/Press'
+	"sap/ui/test/Opa5",
+	"sap/ui/test/matchers/PropertyStrictEquals",
+	"sap/ui/test/actions/Press"
 ], function (
 	Opa5,
 	PropertyStrictEquals,

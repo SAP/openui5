@@ -9,6 +9,7 @@
 		"applicationVersion": {
 			"version": "1.0.0"
 		},
+		"resources": "resources.json",
 		"dataSources": {
 			"mainService": {
 				"uri": "/sap/opu/odata/IWBEP/EPM_DEVELOPER_SCENARIO_SRV/",
@@ -23,12 +24,8 @@
 	"sap.ui": {
 		"technology": "UI5",
 		"icons": {
-			"icon": "sap-icon://detail-view",
-			"favIcon": "img/favicon.ico",
-			"phone": "img/57_iPhone_Desktop_Launch.png",
-			"phone@2": "img/114_iPhone_Retina_Web_Clip.png",
-			"tablet": "img/72_iPad_Desktop_Launch.png",
-			"tablet@2": "img/144_iPad_Retina_Web_Clip.png"
+			"icon": "sap-icon://cart",
+			"favIcon": "img/favicon.ico"
 		}
 	},
 	"sap.ui5": {
@@ -39,10 +36,11 @@
 			"id": "app"
 		},
 		"dependencies": {
-			"minUI5Version": "1.36.0",
+			"minUI5Version": "1.60.0",
 			"libs": {
 				"sap.ui.core": {},
 				"sap.m": {},
+				"sap.f": {},
 				"sap.ui.layout": {}
 			}
 		},
@@ -64,20 +62,15 @@
 		},
 		"handleValidation": true,
 		"resources": {
-			"css": [
-				{
-					"uri": "css/style.css"
-				}
-			]
+			"css": [{"uri": "css/style.css"}]
 		},
 		"routing": {
 			"config": {
-				"routerClass": "sap.m.routing.Router",
+				"routerClass": "sap.f.routing.Router",
 				"viewType": "XML",
 				"viewPath": "sap.ui.demo.cart.view",
-				"controlId": "app",
-				"controlAggregation": "pages",
-				"transition": "slide",
+				"controlId": "layout",
+				"controlAggregation": "midColumnPages",
 				"bypassed": {
 					"target": [
 						"home",
@@ -96,44 +89,57 @@
 					]
 				},
 				{
+					"pattern": "",
+					"name": "welcome",
+					"target": [
+						"welcome"
+					]
+				},
+				{
 					"pattern": "categories",
 					"name": "categories",
-					"target": [
-						"homeSlide"
-					]
+					"target": ["homePhone"]
 				},
 				{
 					"pattern": "category/{id}",
 					"name": "category",
 					"target": [
 						"welcome",
-						"categoryView"
+						"category"
 					],
-					"titleTarget": "categoryView"
+					"titleTarget": "category"
+				},
+				{
+					"pattern": "categoryPhone/{id}",
+					"name": "categoryPhone",
+					"target": [
+						"categoryPhone"
+					],
+					"titleTarget": "category"
 				},
 				{
 					"pattern": "category/{id}/product/{productId}",
 					"name": "product",
 					"target": [
-						"categoryView",
-						"productView"
+						"category",
+						"product"
 					],
-					"titleTarget": "productView"
+					"titleTarget": "product"
+				},
+				{
+					"pattern": "category/{id}/product/{productId}/cart",
+					"name": "productCart",
+					"target": [
+						"category",
+						"product",
+						"cart"
+					],
+					"titleTarget": "product"
 				},
 				{
 					"pattern": "cart",
 					"name": "cart",
-					"target": [
-						"cart"
-					]
-				},
-				{
-					"pattern": "cart/{productId}",
-					"name": "cartProductView",
-					"target": [
-						"cart",
-						"productView"
-					]
+					"target": ["home", "welcome", "cart"]
 				},
 				{
 					"pattern": "checkout",
@@ -144,37 +150,33 @@
 					"pattern": "ordercompleted",
 					"name": "ordercompleted",
 					"target": "ordercompleted"
-				},
-				{
-					"pattern": "product/{productId}",
-					"name": "cartProduct",
-					"target": [
-						"home",
-						"productView"
-					]
 				}
 			],
 			"targets": {
-				"splitscreenTarget": {
-					"viewName": "SplitScreen",
-					"viewId": "splitView"
-				},
-				"productView": {
+				"product": {
 					"viewName": "Product",
 					"viewLevel": 3,
-					"parent": "splitscreenTarget",
-					"controlId": "splitContainer",
-					"viewId": "productView",
-					"controlAggregation": "detailPages",
+					"viewId": "product",
+					"controlAggregation": "midColumnPages",
 					"title":"{Name}"
 				},
-				"categoryView": {
+				"category": {
 					"viewName": "Category",
 					"viewLevel": 2,
-					"parent": "splitscreenTarget",
-					"controlId": "splitContainer",
-					"controlAggregation": "masterPages",
-					"viewId": "categoryView",
+					"controlAggregation": "beginColumnPages",
+					"viewId": "category",
+					"title": {
+						"parts": [
+							"i18n>tabTitle",
+							"CategoryName"
+						]
+					}
+				},
+				"categoryPhone": {
+					"viewName": "Category",
+					"viewLevel": 2,
+					"controlAggregation": "midColumnPages",
+					"viewId": "category",
 					"title": {
 						"parts": [
 							"i18n>tabTitle",
@@ -185,41 +187,31 @@
 				"notFound": {
 					"viewName": "NotFound",
 					"viewLevel": 3,
-					"parent": "splitscreenTarget",
-					"controlId": "splitContainer",
-					"controlAggregation": "detailPages",
+					"controlAggregation": "midColumnPages",
 					"viewId": "notFoundView",
 					"title": "{i18n>categoryNoData}"
 				},
 				"welcome": {
 					"viewName": "Welcome",
 					"viewLevel": 0,
-					"parent": "splitscreenTarget",
-					"controlId": "splitContainer",
 					"viewId": "welcomeView",
-					"controlAggregation": "detailPages"
+					"controlAggregation": "midColumnPages"
 				},
 				"home": {
 					"viewName": "Home",
 					"viewLevel": 1,
-					"parent": "splitscreenTarget",
-					"controlId": "splitContainer",
-					"controlAggregation": "masterPages",
+					"controlAggregation": "beginColumnPages",
 					"viewId": "homeView",
 					"title": "{i18n>appTitle}"
 				},
-				"homeSlide": {
+				"homePhone": {
 					"viewName": "Home",
 					"viewLevel": -1,
-					"parent": "splitscreenTarget",
-					"controlId": "splitContainer",
-					"controlAggregation": "masterPages"
+					"controlAggregation": "midColumnPages"
 				},
 				"cart": {
 					"viewName": "Cart",
-					"parent": "splitscreenTarget",
-					"controlId": "splitContainer",
-					"controlAggregation": "masterPages",
+					"controlAggregation": "endColumnPages",
 					"viewId": "cartView",
 					"title": {
 						"parts": [
@@ -230,12 +222,14 @@
 				},
 				"checkout": {
 					"viewName": "Checkout",
+					"controlAggregation": "beginColumnPages",
 					"viewLevel": 1,
 					"title": "{i18n>checkoutTitle}",
 					"viewId": "checkoutView"
 				},
 				"ordercompleted": {
 					"viewName": "OrderCompleted",
+					"controlAggregation": "beginColumnPages",
 					"viewLevel": 2,
 					"viewId": "orderCompletedView",
 					"title": "{i18n>orderCompletedTitle}"

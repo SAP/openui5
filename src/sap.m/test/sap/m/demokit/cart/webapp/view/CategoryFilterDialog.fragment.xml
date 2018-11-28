@@ -3,18 +3,18 @@
 	xmlns:core="sap.ui.core"
 	xmlns:l="sap.ui.layout">
 	<ViewSettingsDialog
-		id="masterListFilterDialog"
-		confirm="handleConfirm"
-		cancel="handleCancel"
-		resetFilters="handleResetFilters">
+		id="categoryFilterDialog"
+		confirm=".handleConfirm"
+		cancel=".handleCancel"
+		resetFilters=".handleResetFilters">
 		<filterItems>
 			<ViewSettingsFilterItem
 				text="{i18n>availabilityFilterTitle}"
 				key="availabilityKey">
 				<items>
-					<ViewSettingsItem text="{i18n>availableFilterTitle}" key="Available" />
-					<ViewSettingsItem text="{i18n>outOfStockFilterTitle}" key="OutOfStock" />
-					<ViewSettingsItem text="{i18n>discontinuedFilterTitle}" key="Discontinued" />
+					<ViewSettingsItem text="{i18n>availableFilterTitle}" key="Available"/>
+					<ViewSettingsItem text="{i18n>outOfStockFilterTitle}" key="OutOfStock"/>
+					<ViewSettingsItem text="{i18n>discontinuedFilterTitle}" key="Discontinued"/>
 				</items>
 			</ViewSettingsFilterItem>
 			<ViewSettingsCustomItem
@@ -31,7 +31,7 @@
 							class="sapUiSmallMarginTop"
 							max="5000"
 							step="10"
-							change="handleChange"/>
+							change=".handleChange"/>
 					</l:VerticalLayout>
 				</customControl>
 			</ViewSettingsCustomItem>
@@ -40,7 +40,7 @@
 					key="supplierKey"
 					items="{view>/Suppliers}">
 				<items>
-					<ViewSettingsItem text="{view>SupplierName}" key="{view>SupplierName}" />
+					<ViewSettingsItem text="{view>SupplierName}" key="{view>SupplierName}"/>
 				</items>
 			</ViewSettingsFilterItem>
 		</filterItems>

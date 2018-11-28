@@ -1,14 +1,14 @@
 sap.ui.define([
-	'sap/ui/test/Opa5',
-	'sap/ui/test/matchers/AggregationFilled',
-	'sap/ui/test/matchers/AggregationEmpty',
-	'sap/ui/test/matchers/Properties',
-	'sap/ui/test/matchers/PropertyStrictEquals',
-	'sap/ui/test/matchers/AggregationContainsPropertyEqual',
-	'sap/ui/test/matchers/AggregationLengthEquals',
-	'sap/ui/test/matchers/BindingPath',
-	'sap/ui/test/matchers/Ancestor',
-	'sap/ui/test/actions/Press'
+	"sap/ui/test/Opa5",
+	"sap/ui/test/matchers/AggregationFilled",
+	"sap/ui/test/matchers/AggregationEmpty",
+	"sap/ui/test/matchers/Properties",
+	"sap/ui/test/matchers/PropertyStrictEquals",
+	"sap/ui/test/matchers/AggregationContainsPropertyEqual",
+	"sap/ui/test/matchers/AggregationLengthEquals",
+	"sap/ui/test/matchers/BindingPath",
+	"sap/ui/test/matchers/Ancestor",
+	"sap/ui/test/actions/Press"
 ], function (
 	Opa5,
 	AggregationFilled,
@@ -80,17 +80,17 @@ sap.ui.define([
 					});
 				},
 
-                iPressTheBackButton: function () {
-                    this.waitFor({
-                        controlType: "sap.m.Button",
-                        matchers: new Properties({type: "Back"}),
-                        actions: new Press(),
-                        errorMessage: "The back button was not found and could not be pressed"
-                    });
-                }
+				iPressTheBackButton: function () {
+					this.waitFor({
+						controlType: "sap.m.Button",
+						matchers: new Properties({type: "Back"}),
+						actions: new Press(),
+						errorMessage: "The back button was not found and could not be pressed"
+					});
+				}
 			},
 
-            assertions : {
+			assertions : {
 
 				iShouldSeeTheProductInMyCart : function () {
 					return this.waitFor({
@@ -103,14 +103,14 @@ sap.ui.define([
 					});
 				},
 
-                iShouldSeeTheCart: function () {
-                    return this.waitFor({
-                        success: function () {
-                            Opa5.assert.ok(true, "The cart was successfully displayed");
-                        },
-                        errorMessage: "The cart was not displayed"
-                    });
-                },
+				iShouldSeeTheCart: function () {
+					return this.waitFor({
+						success: function () {
+							Opa5.assert.ok(true, "The cart was successfully displayed");
+						},
+						errorMessage: "The cart was not displayed"
+					});
+				},
 
 				iShouldNotSeeASaveForLaterFooter : function () {
 					return this.waitFor({
@@ -187,7 +187,7 @@ sap.ui.define([
 					});
 				},
 
-	            iShouldSeeTheEditButtonDisabled : function () {
+				iShouldSeeTheEditButtonDisabled : function () {
 					return this.theEditButtonHelper(false);
 				},
 

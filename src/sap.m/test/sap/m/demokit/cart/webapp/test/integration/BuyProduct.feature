@@ -7,10 +7,10 @@ Feature: Buy a Product
     When on home: I press on "The Flat Screens category"
     When on the category: I press on "The first Product"
     When on the product: I add the displayed product to the cart
-    When on the category: I go to the cart page
+    When on the product: I go to the cart page
     Then on the category: I teardown my app
 
-    Given I start my App with the hash "#/cart/HT-1254" keeping local storage
+    Given I start my App with the hash "category/FS/product/HT-1254/cart" keeping local storage
     Then on the product: I should see the right product
 
     When on the cart: I press on the proceed button

@@ -1,10 +1,10 @@
+/*global window*/
 sap.ui.define([
-    'sap/ui/core/UIComponent',
-    'sap/ui/demo/cart/model/LocalStorageModel',
-    'sap/ui/thirdparty/jquery',
-    'sap/ui/demo/cart/model/models',
-    'sap/ui/core/routing/History'
-], function(UIComponent, LocalStorageModel, jQuery, models, History) {
+	"sap/ui/core/UIComponent",
+	"./model/LocalStorageModel",
+	"./model/models",
+	"sap/ui/Device"
+], function(UIComponent, LocalStorageModel, models, Device) {
 	"use strict";
 
 	return UIComponent.extend("sap.ui.demo.cart.Component", {
@@ -20,16 +20,6 @@ sap.ui.define([
 		 * @override
 		 */
 		init: function () {
-			UIComponent.prototype.init.apply(this, arguments);
-
-			// update browser title
-			this.getRouter().attachTitleChanged(function(oEvent) {
-				var sTitle = oEvent.getParameter("title");
-				jQuery(document).ready(function(){
-					document.title = sTitle;
-				});
-			});
-
 			//create and set cart model
 			var oCartModel = new LocalStorageModel("SHOPPING_CART", {
 				cartEntries: {},
@@ -40,17 +30,41 @@ sap.ui.define([
 			// set the device model
 			this.setModel(models.createDeviceModel(), "device");
 
+			// call the base component's init function and create the App view
+			UIComponent.prototype.init.apply(this, arguments);
+
+			// initialize the router
 			this.getRouter().initialize();
+
+			// update browser title
+			this.getRouter().attachTitleChanged(function(oEvent) {
+				var sTitle = oEvent.getParameter("title");
+				document.addEventListener('DOMContentLoaded', function(){
+					document.title = sTitle;
+				});
+			});
 		},
 
-		myNavBack: function () {
-			var oHistory = History.getInstance();
-			var oPrevHash = oHistory.getPreviousHash();
-			if (oPrevHash !== undefined) {
-				window.history.go(-1);
-			} else {
-				this.getRouter().navTo("home", {}, true);
+		/**
+		 * This method can be called to determine whether the sapUiSizeCompact or sapUiSizeCozy
+		 * design mode class should be set, which influences the size appearance of some controls.
+		 * @public
+		 * @return {string} css class, either 'sapUiSizeCompact' or 'sapUiSizeCozy' - or an empty string if no css class should be set
+		 */
+		getContentDensityClass : function() {
+			if (this._sContentDensityClass === undefined) {
+				// check whether FLP has already set the content density class; do nothing in this case
+				// eslint-disable-next-line sap-no-proprietary-browser-api
+				if (document.body.classList.contains("sapUiSizeCozy") || document.body.classList.contains("sapUiSizeCompact")) {
+					this._sContentDensityClass = "";
+				} else if (!Device.support.touch) { // apply "compact" mode if touch is not supported
+					this._sContentDensityClass = "sapUiSizeCompact";
+				} else {
+					// "cozy" in case of touch support; default for most sap.m controls, but needed for desktop-first controls like sap.ui.table.Table
+					this._sContentDensityClass = "sapUiSizeCozy";
+				}
 			}
+			return this._sContentDensityClass;
 		}
 	});
 });

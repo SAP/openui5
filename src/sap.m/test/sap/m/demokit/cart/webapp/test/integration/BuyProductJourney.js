@@ -1,14 +1,14 @@
 /* global QUnit */
 
 sap.ui.define([
-	'sap/ui/test/opaQunit',
-	'./pages/Home',
-	'./pages/Category',
-	'./pages/Product',
-	'./pages/Cart',
-	'./pages/Checkout',
-	'./pages/OrderCompleted',
-	'./pages/Welcome'
+	"sap/ui/test/opaQunit",
+	"./pages/Home",
+	"./pages/Category",
+	"./pages/Product",
+	"./pages/Cart",
+	"./pages/Checkout",
+	"./pages/OrderCompleted",
+	"./pages/Welcome"
 ], function (opaTest) {
 	"use strict";
 
@@ -47,7 +47,7 @@ sap.ui.define([
 
 		When.onTheProduct.iAddTheDisplayedProductToTheCart();
 
-		When.onTheCategory.iGoToTheCartPage();
+		When.onTheProduct.iGoToTheCartPage();
 
 		// Assertions
 		Then.onTheCart.iShouldSeeTheProductInMyCart()
@@ -58,13 +58,14 @@ sap.ui.define([
 	});
 
 	opaTest("Should keep the cart when reloading", function (Given, When, Then) {
-
 		// Arrangements
-		Given.iStartMyApp(true);
+		Given.iStartMyApp({
+			keepStorage: true
+		});
 
 		// Actions
 		When.onHome.iPressOnTheFlatScreensCategory();
-		When.onTheCategory.iGoToTheCartPage();
+		When.onTheWelcomePage.iGoToTheCartPage();
 
 		// Assertions
 		Then.onTheCart.iShouldSeeTheProductInMyCart();
@@ -75,8 +76,9 @@ sap.ui.define([
 
 	opaTest("Should start the app with a bookmarkable cart product", function (Given, When, Then) {
 		//Arrangement
-		Given.iStartMyApp(true,{
-			hash: "#/cart/HT-1254"
+		Given.iStartMyApp({
+			keepStorage: true,
+			hash: "category/FS/product/HT-1254/cart"
 		});
 		//Assertions
 		Then.onTheProduct.iShouldSeeTheRightProduct();
@@ -106,7 +108,7 @@ sap.ui.define([
 	opaTest("Should return to checkout", function (Given, When, Then) {
 
 		// Actions
-		When.onHome.iGoToTheCartPage();
+		When.onTheWelcomePage.iGoToTheCartPage();
 		When.onTheCart.iPressOnTheProceedButton();
 
 		// Assertions

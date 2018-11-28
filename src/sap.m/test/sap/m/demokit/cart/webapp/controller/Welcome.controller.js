@@ -1,9 +1,9 @@
 sap.ui.define([
-	'sap/ui/demo/cart/controller/BaseController',
-	'sap/ui/demo/cart/model/cart',
-	'sap/ui/model/json/JSONModel',
-	'sap/ui/model/Filter',
-	'sap/ui/demo/cart/model/formatter'
+	"./BaseController",
+	"../model/cart",
+	"sap/ui/model/json/JSONModel",
+	"sap/ui/model/Filter",
+	"../model/formatter"
 ], function (BaseController, cart, JSONModel, Filter, formatter) {
 	"use strict";
 
@@ -109,11 +109,22 @@ sap.ui.define([
 		 * Event handler to determine which button was clicked
 		 * @param {sap.ui.base.Event} oEvent the button press event
 		 */
-		onAddButtonPress: function (oEvent) {
+		onAddToCart: function (oEvent) {
 			var oResourceBundle = this.getModel("i18n").getResourceBundle();
 			var oProduct = oEvent.getSource().getBindingContext("view").getObject();
 			var oCartModel = this.getModel("cartProducts");
 			cart.addToCart(oResourceBundle, oProduct, oCartModel);
+		},
+
+		/**
+		 * Navigate to the generic cart view
+		 * @param {sap.ui.base.Event} @param oEvent the button press event
+		 */
+		onToggleCart: function (oEvent) {
+			var bPressed = oEvent.getParameter("pressed");
+
+			this._setLayout(bPressed ? "Three" : "Two");
+			this.getRouter().navTo(bPressed ? "cart" : "home");
 		},
 
 		/**

@@ -5,9 +5,10 @@
 	<Page
 		id="page"
 		title="{cfg>/pageTitle}"
-		showNavButton="{cfg>/notInDelete}"
-		navButtonPress="onNavButtonPress"
-		showFooter="true" >
+		backgroundDesign="Solid"
+		showNavButton="{device>/system/phone}"
+		navButtonPress=".onBack"
+		showFooter="true">
 		<landmarkInfo>
 			<PageAccessibleLandmarkInfo
 				rootRole="Region"
@@ -28,7 +29,7 @@
 					{path: 'cartProducts>/savedForLaterEntries'}
 				 ], formatter : '.formatter.hasItems'}"
 				visible="{cfg>/notInDelete}"
-				press="onEditOrDoneButtonPress"
+				press=".onEditOrDoneButtonPress"
 				tooltip="{i18n>cartEditButtonTooltip}"/>
 		</headerContent>
 		<footer>
@@ -38,7 +39,8 @@
 					text="{
 						path : 'cartProducts>/cartEntries',
 						formatter : '.formatter.totalPrice'
-					} EUR" />
+					} EUR"
+					class="sapUiTinyMarginBegin"/>
 				<ToolbarSpacer/>
 				<Button
 					id="proceedButton"
@@ -49,13 +51,13 @@
 						formatter: '.formatter.hasItems'
 					}"
 					visible="{cfg>/notInDelete}"
-					press="onProceedButtonPress" />
+					press=".onProceedButtonPress"/>
 				<Button
 					id="doneButton"
 					text="{i18n>cartDoneButtonText}"
 					enabled="true"
 					visible="{cfg>/inDelete}"
-					press="onEditOrDoneButtonPress" />
+					press=".onEditOrDoneButtonPress"/>
 			</Toolbar>
 		</footer>
 		<content>
@@ -90,13 +92,13 @@
 							formatter : '.formatter.price'
 						}"
 						numberUnit="EUR"
-						press="onEntryListPress"
-						iconDensityAware="false" >
+						press=".onEntryListPress"
+						iconDensityAware="false">
 						<attributes>
 							<ObjectAttribute
 								active="true"
 								press="onSaveForLater"
-								text="{i18n>cartSaveForLaterLinkText}" />
+								text="{i18n>cartSaveForLaterLinkText}"/>
 						</attributes>
 						<firstStatus>
 							<ObjectStatus
@@ -107,7 +109,7 @@
 								state="{
 									path : 'cartProducts>Status',
 									formatter : '.formatter.statusState'
-								}" />
+								}"/>
 						</firstStatus>
 					</ObjectListItem>
 				</items>
@@ -138,13 +140,13 @@
 							formatter : '.formatter.price'
 						}"
 						numberUnit="EUR"
-						press="onEntryListPress"
-						iconDensityAware="false" >
+						press=".onEntryListPress"
+						iconDensityAware="false">
 						<attributes>
 							<ObjectAttribute
 								active="true"
 								press="onAddBackToBasket"
-								text="{i18n>cartAddToCartLinkText}" />
+								text="{i18n>cartAddToCartLinkText}"/>
 						</attributes>
 						<firstStatus>
 							<ObjectStatus
@@ -155,7 +157,7 @@
 								state="{
 									path : 'cartProducts>Status',
 									formatter : '.formatter.statusState'
-								}" />
+								}"/>
 						</firstStatus>
 					</ObjectListItem>
 				</items>

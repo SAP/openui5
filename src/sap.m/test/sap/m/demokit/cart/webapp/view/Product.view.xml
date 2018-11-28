@@ -4,9 +4,8 @@
 	xmlns:mvc="sap.ui.core.mvc">
 	<Page
 		id="page"
-		title="{Name}"
-		showNavButton="{device>/system/phone}"
-		navButtonPress="onNavButtonPress" >
+		backgroundDesign="Solid"
+		>
 		<landmarkInfo>
 			<PageAccessibleLandmarkInfo
 				rootRole="Region"
@@ -16,26 +15,41 @@
 				headerRole="Region"
 				headerLabel="{i18n>Product_headerLabel}"
 				footerRole="Region"
-				footerLabel="{i18n>Product_footerLabel}" />
+				footerLabel="{i18n>Product_footerLabel}"/>
 		</landmarkInfo>
-		<headerContent>
-			<Button
-				icon="sap-icon://cart"
-				visible="{device>/system/phone}"
-				tooltip="{i18n>toCartButtonTooltip}"
-				press="onCartButtonPress" />
-			<ToolbarSpacer/>
-			<Button
-				icon="sap-icon://customer"
-				press="onAvatarPress"
-				tooltip="{i18n>avatarButtonTooltip}"/>
-		</headerContent>
+		<customHeader>
+			<Bar>
+				<contentLeft>
+					<Button
+						type="Back"
+						visible="{device>/system/phone}"
+						press=".onBack"/>
+				</contentLeft>
+				<contentMiddle>
+					<Title
+						level="H2"
+						text="{Name}"/>
+				</contentMiddle>
+				<contentRight>
+					<Button
+						icon="sap-icon://customer"
+						press=".onAvatarPress"
+						tooltip="{i18n>avatarButtonTooltip}"/>
+					<ToggleButton
+						icon="sap-icon://cart"
+						pressed="{= ${appView>/layout}.startsWith('ThreeColumns') }"
+						tooltip="{i18n>toCartButtonTooltip}"
+						press=".onToggleCart">
+					</ToggleButton>
+				</contentRight>
+			</Bar>
+		</customHeader>
 		<footer>
 			<Toolbar>
 				<ToolbarSpacer/>
 				<Button
 					icon="sap-icon://cart-3"
-					press="onAddButtonPress" />
+					press=".onAddToCart"/>
 			</Toolbar>
 		</footer>
 		<content>
@@ -50,10 +64,10 @@
 				<attributes>
 					<ObjectAttribute
 						title="{i18n>productSupplierAttributeText}"
-						text="{SupplierName}" />
+						text="{SupplierName}"/>
 					<ObjectAttribute
 						title="{i18n>productDescriptionAttributeText}"
-						text="{ShortDescription}" />
+						text="{ShortDescription}"/>
 					<ObjectAttribute
 						title="{i18n>productWeightAttributeText}"
 						text="{Weight} {WeightUnit}"/>
@@ -70,7 +84,7 @@
 						state="{
 							path : 'Status',
 							formatter : '.formatter.statusState'
-						}" />
+						}"/>
 				</statuses>
 			</ObjectHeader>
 			<VBox

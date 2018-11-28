@@ -1,15 +1,14 @@
 sap.ui.define([
-	'sap/ui/demo/cart/controller/BaseController',
-	'sap/ui/demo/cart/model/cart',
-	'sap/ui/model/json/JSONModel',
-	'sap/ui/Device',
-	'sap/ui/demo/cart/model/formatter',
-	'sap/m/MessageBox',
-	'sap/ui/core/ValueState',
-	'sap/m/Link',
-	'sap/m/MessagePopover',
-	'sap/m/MessagePopoverItem',
-	'sap/ui/demo/cart/model/EmailType'
+	"./BaseController",
+	"../model/cart",
+	"sap/ui/model/json/JSONModel",
+	"sap/ui/Device",
+	"../model/formatter",
+	"sap/m/MessageBox",
+	"sap/m/Link",
+	"sap/m/MessagePopover",
+	"sap/m/MessagePopoverItem",
+	"../model/EmailType"
 ], function (
 	BaseController,
 	cart,
@@ -17,13 +16,18 @@ sap.ui.define([
 	Device,
 	formatter,
 	MessageBox,
-	ValueState,
 	Link,
 	MessagePopover,
-	MessagePopoverItem) {
+	MessagePopoverItem,
+	EmailType) {
 	"use strict";
 
 	return BaseController.extend("sap.ui.demo.cart.controller.Checkout", {
+
+		types : {
+			email: new EmailType()
+		},
+
 		formatter: formatter,
 
 		onInit: function () {
@@ -60,6 +64,7 @@ sap.ui.define([
 					}
 				}
 			);
+
 			this.setModel(oModel);
 
 			// previously selected entries in wizard
@@ -70,6 +75,11 @@ sap.ui.define([
 
 			// Assign the model object to the SAPUI5 core
 			this.setModel(sap.ui.getCore().getMessageManager().getMessageModel(), "message");
+
+			// switch to single column view for checout process
+			this.getRouter().getRoute("checkout").attachMatched(function () {
+				this._setLayout("One");
+			}.bind(this));
 		},
 
 		/**
@@ -312,6 +322,7 @@ sap.ui.define([
 		 * navigates to "home" for further shopping
 		 */
 		onReturnToShopButtonPress: function () {
+			this._setLayout("Two");
 			this.getRouter().navTo("home");
 		},
 
