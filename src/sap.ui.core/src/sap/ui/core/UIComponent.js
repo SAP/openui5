@@ -533,6 +533,10 @@ sap.ui.define([
 			if (oRootView.id) {
 				oRootView.id = this.createId(oRootView.id);
 			}
+			if (oRootView.async) {
+				// for now the processing mode is always set to "sequential"
+				oRootView.processingMode = "sequential";
+			}
 			return View._legacyCreate(oRootView);
 		} else if (oRootView) {
 			throw new Error("Configuration option 'rootView' of component '" + this.getMetadata().getName() + "' is invalid! 'rootView' must be type of string or object!");

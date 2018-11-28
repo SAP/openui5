@@ -92,7 +92,13 @@ function(
 				/*
 				 * The ID of this fragment (optional)
 				 */
-				sId : { type: 'sap.ui.core.ID', visibility: 'hidden' }
+				sId : { type: 'sap.ui.core.ID', visibility: 'hidden' },
+
+				/**
+				 * The processing mode is not used by the Fragment itself.
+				 * It is only relevant for XMLViews nested within the Fragment.
+				 */
+				processingMode: { type: "string", visibility: "hidden" }
 			}
 		},
 
@@ -606,6 +612,10 @@ function(
 			}
 
 			var that = this;
+
+			// If given, processingMode will be passed down to nested subviews in XMLTemplateProcessor
+			that._sProcessingMode = mSettings.processingMode;
+
 			// unset any preprocessors (e.g. from an enclosing JSON view)
 			ManagedObject.runWithPreprocessors(function() {
 				// parse the XML tree
@@ -715,6 +725,9 @@ function(
 				};
 
 				this._oContainingView = mSettings.containingView || this;
+
+				// processing mode is propagated to subviews/fragments
+				this._sProcessingMode = mSettings.processingMode;
 
 				var vHTML = mSettings.fragmentContent || _getHTMLTemplate(mSettings.fragmentName);
 				this._oTemplate = document.createElement("div");

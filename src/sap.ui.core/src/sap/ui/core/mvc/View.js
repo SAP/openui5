@@ -933,6 +933,11 @@ sap.ui.define([
 			 });
 		})
 		.then(function(ViewClass) {
+			// Activate the asynchronous processing for XMLViews
+			if (ViewClass.getMetadata().isA("sap.ui.core.mvc.XMLView")) {
+				mParameters.processingMode = "sequential";
+			}
+
 			if (oOwnerComponent) {
 				return oOwnerComponent.runAsOwner(createView);
 			} else {
@@ -942,6 +947,10 @@ sap.ui.define([
 	};
 
 	/**
+	 * Used to bypass the public APIs returning a Promise.
+	 * Some internal use-cases need the View instance synchronously instead of the wrapping Promises
+	 * of the [...]View.create() factories: e.g. root-view creation in sap/ui/core/UIComponent
+	 * Internally, the views might still be loaded and processed asynchronously.
 	 * @sap-restricted sap.ui.core
 	 * @private
 	 * @see {sap.ui.view}

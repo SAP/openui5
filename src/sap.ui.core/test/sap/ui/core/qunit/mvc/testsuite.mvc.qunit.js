@@ -141,7 +141,7 @@ sap.ui.define(function() {
 				},
 				loader: {
 					paths: {
-						"testdata/view": "test-resources/sap/ui/core/qunit/testdata/view",
+						"testdata": "test-resources/sap/ui/core/qunit/testdata",
 						"my": "test-resources/sap/ui/core/qunit/fragment/"
 					}
 				}

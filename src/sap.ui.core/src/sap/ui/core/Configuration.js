@@ -134,7 +134,6 @@ sap.ui.define([
 					"frameOptions"          : { type : "string",   defaultValue : "default", noUrl: true }, // default/allow/deny/trusted (default => allow)
 					"frameOptionsConfig"    : { type : "object",   defaultValue : undefined, noUrl:true },  // advanced frame options configuration
 					"support"               : { type : "string[]",  defaultValue : null },
-
 					"xx-rootComponentNode"  : { type : "string",   defaultValue : "",        noUrl:true },
 					"xx-appCacheBusterMode" : { type : "string",   defaultValue : "sync" },
 					"xx-appCacheBusterHooks": { type : "object",   defaultValue : undefined, noUrl:true }, // e.g.: { handleURL: fn, onIndexLoad: fn, onIndexLoaded: fn }
@@ -157,7 +156,6 @@ sap.ui.define([
 					"xx-cache-serialization": { type : "boolean",  defaultValue : false},
 					"xx-nosync"             : { type : "string",   defaultValue : "" },
 					"xx-waitForTheme"       : { type : "boolean",  defaultValue : false},
-					"xx-xml-processing"     : { type : "string",  defaultValue : "" },
 					"xx-avoidAriaApplicationRole" : { type : "boolean",  defaultValue : false}, // Avoid ACC role 'application'
 					"xx-hyphenation" : { type : "string",  defaultValue : ""}, // (empty string)|native|thirdparty
 					"xx-flexBundleRequestForced" : { type : "boolean",  defaultValue : false },
@@ -743,32 +741,6 @@ sap.ui.define([
 		 */
 		getSAPParam : function (sName) {
 			return this.sapparams && this.sapparams[sName];
-		},
-
-		/**
-		 * The mode for async XMLView processing.
-		 * Potential values are: <code>sequential</code>
-		 * Turned OFF by default
-		 * @since 1.52.1
-		 * @experimental
-		 * @return {string} Asynchronous XML Processing mode
-		 * @public
-		 */
-		getXMLProcessingMode : function () {
-			return this["xx-xml-processing"];
-		},
-
-		/**
-		 * Determines the mode for async XMLView processing.
-		 * @experimental
-		 * @since 1.52.1
-		 * @param {string} sMode Asynchronous XML Processing mode, activated if set to <code>sequential</code>
-		 * @returns {sap.ui.core.Configuration}
-		 * @private
-		 */
-		setXMLProcessingMode : function (sMode) {
-			this["xx-xml-processing"] = sMode;
-			return this;
 		},
 
 		/**
