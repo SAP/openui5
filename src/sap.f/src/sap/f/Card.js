@@ -10,7 +10,8 @@ sap.ui.define([
 	"sap/base/Log",
 	"sap/f/CardRenderer",
 	"sap/m/Text",
-	"sap/f/Avatar"
+	"sap/f/Avatar",
+	"sap/ui/Device"
 ], function (
 	library,
 	Control,
@@ -19,7 +20,8 @@ sap.ui.define([
 	Log,
 	CardRenderer,
 	Text,
-	Avatar
+	Avatar,
+	Device
 ) {
 	"use strict";
 	/**
@@ -111,6 +113,18 @@ sap.ui.define([
 	 * @private
 	 */
 	Card.prototype.init = function() {
+	};
+
+	/**
+	 * Called after control is rendered.
+	 * @private
+	 */
+	Card.prototype.onAfterRendering = function() {
+		//TODO performance will be afected, but text should clamp on IE also - TBD
+		if (Device.browser.msie) {
+			this._oTitle.clampText();
+			this._oSubTitle.clampText();
+		}
 	};
 
 	/**
@@ -300,7 +314,7 @@ sap.ui.define([
 		if (!this._oSubTitle) {
 			this._oSubTitle = new Text({
 				id: this.getId() + "-subTitle",
-				maxLines: 3,
+				maxLines: 2,
 				text: this._oCardManifest.get("sap.card/subTitle")
 			}).addStyleClass("sapFCardSubtitle");
 		}
