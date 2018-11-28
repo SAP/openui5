@@ -15,7 +15,7 @@
 				class="sapUiSmallMarginEnd"/>
 			<Button
 				text="{i18n>showHelloButtonText}"
-				press=".onOpenDialog"
+				press=".onShowHello"
 				class="myCustomButton"/>
 			<Input
 				value="{/recipient/name}"
