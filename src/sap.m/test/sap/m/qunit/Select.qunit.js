@@ -3372,6 +3372,59 @@ sap.ui.define([
 			oSelect.destroy();
 		});
 
+		QUnit.test("it should render placeholders right when forceSelection=false and item is not provided initialy", function (assert) {
+
+			// system under test
+			var oSelect = new Select({
+				forceSelection: false,
+				items: [
+					new Item({
+						key: "1",
+						text: "First item"
+					}),
+					new ListItem({
+						key: "2",
+						text: "Second item",
+						icon: "sap-icon//competitor"
+					})
+				]
+			});
+			oSelect.placeAt("content");
+			sap.ui.getCore().applyChanges();
+
+			// act
+			oSelect.setSelectedItem(null);
+
+			// assert
+			assert.ok(oSelect.getSelectedItem() === null, "no item selected");
+			assert.strictEqual(!!oSelect.$("label").find(".sapMSelectListItemText").text(), false, "text placeholder is empty");
+			assert.strictEqual(oSelect.$("label").find("[id*=-labelIcon]").hasClass("sapUiHiddenPlaceholder"), true, "icon placeholder is hidden");
+
+			oSelect.setSelectedKey("1");
+			this.clock.tick();
+			assert.strictEqual(oSelect.$("label").find(".sapMSelectListItemText").text(), "First item", "text placeholder was filled right");
+			assert.strictEqual(oSelect.$("label").find("[id*=-labelIcon]").hasClass("sapUiHiddenPlaceholder"), true, "icon placeholder is hidden");
+
+			oSelect.setSelectedKey("2");
+			this.clock.tick();
+			assert.strictEqual(oSelect.$("label").find(".sapMSelectListItemText").text(), "Second item", "text placeholder was filled right");
+			assert.strictEqual(oSelect.$("label").find("[id*=-labelIcon]").hasClass("sapMSelectListItemIcon"), true, "icon placeholder was filled right");
+			assert.strictEqual(oSelect._getValueIcon().getSrc(), "sap-icon//competitor", "icon was set right");
+
+			oSelect.setSelectedKey("1");
+			this.clock.tick();
+			assert.strictEqual(oSelect.$("label").find(".sapMSelectListItemText").text(), "First item", "text placeholder was filled right");
+			assert.strictEqual(oSelect.$("label").find("[id*=-labelIcon]").hasClass("sapUiHiddenPlaceholder"), true, "icon placeholder is hidden");
+
+			oSelect.setSelectedItem(null);
+			this.clock.tick();
+			assert.ok(oSelect.getSelectedItem() === null, "no item selected");
+			assert.strictEqual(!!oSelect.$("label").find(".sapMSelectListItemText").text(), false, "text placeholder is empty");
+			assert.strictEqual(oSelect.$("label").find("[id*=-labelIcon]").hasClass("sapUiHiddenPlaceholder"), true, "icon placeholder is hidden");
+			// cleanup
+			oSelect.destroy();
+		});
+
 		// BCP 1580101530
 		QUnit.test("it should correctly synchronize the selection after the properties (models and bindingContext) are propagated", function (assert) {
 

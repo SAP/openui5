@@ -182,19 +182,19 @@ sap.ui.define(['sap/ui/core/Renderer', 'sap/ui/core/IconPool', 'sap/m/library', 
 			oRm.writeClasses();
 			oRm.write(">");
 
-			if (oSelectedItem && oSelectedItem.isA("sap.ui.core.ListItem") && oSelect.getType() !== SelectType.IconOnly) {
-				oRm.renderControl(oSelect._getValueIcon(oSelectedItem.getIcon()));
-			}
-
 			// write the text of the selected item only if it has not been removed or destroyed
 			// and when the Select isn't in IconOnly mode - BCP 1780431688
 
-			if ((oSelectedItem && oSelectedItem.getParent() && oSelect.getType() !== SelectType.IconOnly)) {
+			if (oSelect.getType() !== SelectType.IconOnly) {
+				oRm.renderControl(oSelect._getValueIcon());
 				oRm.write("<span");
 				oRm.addClass("sapMSelectListItemText");
+				oRm.writeAttribute("id", oSelect.getId() + "-labelText");
 				oRm.writeClasses();
 				oRm.write(">");
-				oRm.writeEscaped(oSelectedItem.getText());
+
+				oSelectedItem && oSelectedItem.getParent() ? oRm.writeEscaped(oSelectedItem.getText()) : "";
+
 				oRm.write("</span>");
 			}
 			oRm.write("</label>");
