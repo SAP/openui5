@@ -2,12 +2,9 @@
 /* CSS for control sap.f/Card  */
 /* Base theme          */
 /* ================================== */
-/* define the default raster for the card sizes for a certain theme */
-/* TODO: connect to the parameters for theme editor */
-/*       reuse the values also for the default raster of the cssgrid cells */
-/*       Is there also a js way to access this */
-@sapUiTileHoverBackground: #f0f0f0;
+
 @sapUiContentPadding: 1rem;
+@sapUiTileHoverBackground: @sapUiListHoverBackground;
 
 .sapFCard {
   position: relative;
@@ -24,6 +21,7 @@
   font-family: @sapUiFontFamily;
   font-size: @sapUiFontSize;
   color: @sapUiGroupTitleTextColor;
+  outline: none;
 }
 
 .sapFCard .sapFCardHeader {
@@ -41,16 +39,17 @@
   }
 
 
-  &:hover .sapFCardIcon.sapFAvatar:not(.sapFAvatarImage ){
+  &:hover .sapFCardIcon.sapFAvatar:not(.sapFAvatarImage):not(.sapFAvatarInitials ){
     background: lighten(@sapUiTileHoverBackground, 4);
   }
 
-  &:active .sapFCardIcon.sapFAvatar:not(.sapFAvatarImage ){
+  &:active .sapFCardIcon.sapFAvatar:not(.sapFAvatarImage):not(.sapFAvatarInitials ){
     background: @sapUiTileHoverBackground;
   }
 
-  .sapFCardIcon.sapFAvatar:not(.sapFAvatarImage ){
+  .sapFCardIcon.sapFAvatar:not(.sapFAvatarImage ):not(.sapFAvatarInitials ){
     background: @sapUiTileBackground;
+    border: none;
   }
 
   .sapFCardIcon.sapFAvatar{

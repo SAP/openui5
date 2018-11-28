@@ -31,6 +31,7 @@
 			<Panel>
 				<f:Card id="card0" manifest="{manifests>/noLayout/card01}"/>
 				<f:Card id="card000" manifest="{manifests>/noLayout/card0}"/>
+				<f:Card id="card14" manifest="{manifests>/noLayout/card14}"/>
 				<f:Card id="somedfault" manifest="{manifests>/noLayout/card1}"/>
 				<f:Card id="default1x1" manifest="{manifests>/noLayout/card2}"/>
 				<f:Card id="default2x1" manifest="{manifests>/noLayout/card3}"/>

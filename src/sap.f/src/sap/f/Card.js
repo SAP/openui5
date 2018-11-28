@@ -325,11 +325,17 @@ sap.ui.define([
 	Card.prototype._createAvatar = function () {
 		if (!this._oAvatar) {
 			this._oAvatar = new Avatar({
-				id: this.getId() + "-avatar",
-				src: this._oCardManifest.get("sap.card/icon/src")
+				id: this.getId() + "-avatar"
 			}).addStyleClass("sapFCardIcon");
-			var sDisplayShape = this._oCardManifest.get("sap.card/icon/displayShape");
+			var sDisplayShape = this._oCardManifest.get("sap.card/icon/displayShape"),
+				sAvatarSrc = this._oCardManifest.get("sap.card/icon/src"),
+				sAvatarInitials = this._oCardManifest.get("sap.card/icon/initials");
 
+			if (sAvatarSrc) {
+				this._oAvatar.setSrc(sAvatarSrc);
+			} else if (sAvatarInitials) {
+				this._oAvatar.setInitials(sAvatarInitials);
+			}
 			if (sDisplayShape) {
 				this._oAvatar.setDisplayShape(sDisplayShape);
 			}
