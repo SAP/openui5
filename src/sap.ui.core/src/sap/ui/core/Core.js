@@ -2478,9 +2478,8 @@ sap.ui.define([
 			} // else vI18n = undefined
 
 			if (vI18n !== false) {
-
 				vResult = ResourceBundle.create({
-					url : sap.ui.resource(sLibraryName, typeof vI18n === "string" ? vI18n : 'messagebundle.properties'),
+					url : getModulePath(sLibraryName + "/", (typeof vI18n === "string" ? vI18n : 'messagebundle.properties')),
 					locale : sLocale,
 					async: bAsync
 				});
