@@ -4,8 +4,10 @@ QUnit.config.autostart = false;
 
 sap.ui.require([
 	'sap/ui/test/Opa5',
-'sap/ui/test/opaQunit',
-'sap/ui/test/actions/Press'
+	'sap/ui/test/opaQunit',
+	'sap/ui/test/actions/Press',
+	'sap/ui/thirdparty/sinon',
+	'sap/ui/thirdparty/sinon-qunit'
 ], function (Opa5, opaTest, Press) {
 	"use strict";
 
