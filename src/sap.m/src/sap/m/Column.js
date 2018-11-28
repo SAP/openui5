@@ -25,6 +25,9 @@ sap.ui.define([
 	// shortcut for sap.ui.core.TextAlign
 	var TextAlign = coreLibrary.TextAlign;
 
+	// shortcut for sap.ui.core.SortOrder
+	var SortOrder = coreLibrary.SortOrder;
+
 
 
 	/**
@@ -125,7 +128,15 @@ sap.ui.define([
 			 * <b>Note:</b> You can pass one string parameter to given function after "#" sign. e.g. "data#myparameter"
 			 * @since 1.16
 			 */
-			mergeFunctionName : {type : "string", group : "Misc", defaultValue : 'getText'}
+			mergeFunctionName : {type : "string", group : "Misc", defaultValue : 'getText'},
+
+			/**
+			 * Defines if a column is sorted by setting the sort indicator for this column.
+			 *
+			 * <b>Note:</b> Defining this property does not trigger the sorting.
+			 * @since 1.61
+			 */
+			sortIndicator : {type : "sap.ui.core.SortOrder", group : "Appearance", defaultValue : SortOrder.None}
 		},
 		defaultAggregation : "header",
 		aggregations : {
@@ -522,6 +533,11 @@ sap.ui.define([
 		return this.setProperty("demandPopin", bValue);
 	};
 
+	Column.prototype.setSortIndicator = function(sSortIndicator) {
+		this.setProperty("sortIndicator", sSortIndicator, true);
+		this.$().attr("aria-sort", this.getSortIndicator().toLowerCase());
+		return this;
+	};
 
 	/**
 	 * Determines whether the column will be shown as pop-in or not

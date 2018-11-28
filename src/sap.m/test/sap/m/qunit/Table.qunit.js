@@ -105,7 +105,7 @@ sap.ui.define([
 
 	QUnit.test("Column Display", function(assert) {
 		var sut = createSUT('idColumnDisplayTable', true),
-			labelFilter = 'th>.sapMLabel',
+			labelFilter = 'th>.sapMColumnHeader>.sapMLabel',
 			aLabels;
 		sut.placeAt("qunit-fixture");
 		sap.ui.getCore().applyChanges();
@@ -1099,11 +1099,36 @@ sap.ui.define([
 		}
 	});
 
+	QUnit.test("Column alignment", function(assert) {
+		var oHeader1 = new Text({ text: "Header1" });
+		var oHeader2 = new Button({ text: "Header2" });
+		var oColumn1 = new Column({ header: oHeader1 });
+		var oColumn2 = new Column({ header: oHeader2, hAlign: "Center" });
+		var oTable = new Table({ columns: [oColumn1, oColumn2] });
+		oTable.placeAt("qunit-fixture");
+		sap.ui.getCore().applyChanges();
+
+		// column alignment in LTR mode
+		assert.equal(oColumn1.getDomRef().firstChild.style.justifyContent, "flex-start", "Column header content is aligned to the left");
+		assert.equal(oColumn2.getDomRef().firstChild.style.justifyContent, "center", "Center text alignment style class applied");
+
+		// column alignment in RTL mode
+		sap.ui.getCore().getConfiguration().setRTL(true);
+		sap.ui.getCore().applyChanges();
+		assert.equal(oColumn1.getDomRef().firstChild.style.justifyContent, "flex-end", "Column header content is aligned to the right");
+		assert.equal(oColumn2.getDomRef().firstChild.style.justifyContent, "center", "Center text alignment style class applied");
+
+		// clean up
+		oTable.destroy();
+		sap.ui.getCore().getConfiguration().setRTL(false);
+	});
+
 	QUnit.test("Active Headers", function(assert) {
 		var oHeader1 = new Text({ text: "Header1" });
 		var oHeader2 = new Button({ text: "Header2" });
 		var oColumn1 = new Column({ header: oHeader1 });
-		var oColumn2 = new Column({ header: oHeader2 });
+		var oColumn2 = new Column({ header: oHeader2, hAlign: "Center" });
+		oColumn1.setFooter(new Label({ text: "Footer Text" }));
 		var oTable = new Table({ columns: [oColumn1, oColumn2] });
 		var fnFireEventSpy = sinon.spy(oTable, "fireEvent");
 
@@ -1111,8 +1136,9 @@ sap.ui.define([
 		oTable.placeAt("qunit-fixture");
 		sap.ui.getCore().applyChanges();
 
-		assert.ok(oColumn1.$().hasClass("sapMListTblCellCH"), "ColumnHeader class is set for the 1st column");
-		assert.ok(oColumn2.$().hasClass("sapMListTblCellCH"), "ColumnHeader class is set for the 2nd column");
+		assert.equal(oColumn1.$().attr("role"), "columnheader", "role=columnheader applied to the columns");
+		assert.equal(oColumn2.$().attr("role"), "columnheader", "role=columnheader applied to the columns");
+		assert.ok(!oTable.getDomRef("tblFooter").getAttribute("role"), "role=columnheader is not applied to the table footer");
 
 		assert.ok(oHeader1.$().hasClass("sapMColumnHeaderContent"), "Content class is set for the 1st header");
 		assert.ok(oHeader2.$().hasClass("sapMColumnHeaderContent"), "Content class is set for the 2nd header");

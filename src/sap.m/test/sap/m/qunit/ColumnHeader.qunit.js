@@ -280,21 +280,6 @@ sap.ui.define([
 		sut.destroy();
 	});
 
-	QUnit.test("ColumnHeader text alignment", function(assert) {
-		var sut = createSUT();
-		sut.placeAt("content");
-		sap.ui.getCore().applyChanges();
-		var oColumn = sut.getColumns()[0];
-		var oColumnHeader = oColumn.getHeader();
-		oColumn.setHAlign(coreLibrary.TextAlign.End);
-		sap.ui.getCore().applyChanges();
-		var $columnHeader = oColumnHeader.$();
-
-		assert.equal($columnHeader.css("text-align"), "right", "ColumnHeader text is right aligned as specified by the Column settings");
-
-		sut.destroy();
-	});
-
 	QUnit.test("ColumnHeader behavior in case of popin", function(assert) {
 		var oColumn = new Column({
 			header: new ColumnHeader({

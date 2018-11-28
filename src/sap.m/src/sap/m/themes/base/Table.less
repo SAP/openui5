@@ -59,11 +59,11 @@ tr.sapMListTblHeaderNone > .sapMTableTH {
 
 /* inherit the alignment from the column */
 .sapMListTblCell .sapMObjectNumber {
-	display: inline-block; 
+	display: inline-block;
 }
-.sapMColumnHeaderContent,
+
 .sapMListTblCell .sapMSltLabel {
-	text-align: inherit !important; 
+	text-align: inherit !important;
 }
 
 .sapMListTblNone {
@@ -361,6 +361,71 @@ html[data-sap-ui-browser='ie11'] .sapMListTblHighlightCell > .sapMLIBHighlight {
 	vertical-align: middle;
 }
 
+/* Column header and column header content */
+.sapMListTblCell.sapMListTblHeaderCell {
+	padding: 0;
+}
+
+.sapMColumnHeader {
+	display: flex;
+	flex: 1 1 auto;
+	padding: .875rem .5rem 1rem;
+}
+
+.sapMListTblHighlightCol + .sapMListTblCell.sapMListTblHeaderCell {
+	padding-left: .5rem;
+}
+
+.sapMListTblHeaderCell:nth-last-child(2) {
+	padding-right: .5rem;
+}
+
+.sapMListTblHasNav .sapMListTblHeaderCell:nth-last-child(2) > .sapMColumnHeader {
+	padding-right: 0;
+}
+
+.sapMColumnHeaderActive:hover {
+	background-color: contrast(@sapUiListHeaderBackground, darken(@sapUiListHeaderBackground, 6), lighten(@sapUiListHeaderBackground, 6));
+}
+
+.sapMColumnHeaderActive:focus {
+	outline: 1px dotted @sapUiContentFocusColor;
+	outline-offset: -2px;
+}
+
+.sapMColumnHeaderActive:active {
+	color: @sapUiListActiveTextColor;
+	background-color: @sapUiListActiveBackground;
+	outline-color: @sapUiContentContrastFocusColor;
+}
+
+.sapMColumnHeaderActive:active > .sapMColumnHeaderContent {
+	color: @sapUiListActiveTextColor;
+}
+
+.sapMColumnHeaderActive > .sapMColumnHeaderContent {
+	cursor: default;
+}
+
+/* sort icons */
+[aria-sort=ascending] > .sapMColumnHeader::after,
+[aria-sort=descending] > .sapMColumnHeader::after {
+	font-family: "SAP-Icons";
+	font-size: @sapMFontMediumSize;
+	font-weight: normal;
+	align-self: center;
+	padding-left: 0.5rem;
+	padding-right: 0.5rem;
+}
+
+[aria-sort=ascending] > .sapMColumnHeader::after {
+	content: "\e1fd";
+}
+
+[aria-sort=descending] > .sapMColumnHeader::after {
+	content: "\e1fc";
+}
+
 /********** COMPACT DESIGN ************/
 
 /* overwite cell style */
@@ -426,4 +491,22 @@ html[data-sap-ui-browser='ie11'] .sapMListTblHighlightCell > .sapMLIBHighlight {
 	height: 0;
 	padding-top: 0;
 	padding-bottom: 0;
+}
+
+/* Column header and column header content */
+.sapUiSizeCompact .sapMColumnHeader {
+	padding-top: .5rem;
+	padding-bottom: .5rem;
+}
+
+.sapUiSizeCompact .sapMListTblCell.sapMListTblHeaderCell {
+	padding: 0;
+}
+
+.sapUiSizeCompact .sapMListTblHighlightCol + .sapMListTblCell.sapMListTblHeaderCell {
+	padding-left: .5rem;
+}
+
+.sapUiSizeCompact .sapMListTblHeaderCell:nth-last-child(2) {
+	padding-right: .5rem;
 }

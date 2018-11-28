@@ -50,6 +50,7 @@ sap.ui.define(['sap/ui/base/DataType', './CalendarType', './Core'],
 			"sap.ui.core.Priority",
 			"sap.ui.core.ScrollBarAction",
 			"sap.ui.core.Scrolling",
+			"sap.ui.core.SortOrder",
 			"sap.ui.core.TextAlign",
 			"sap.ui.core.TextDirection",
 			"sap.ui.core.TitleLevel",
@@ -1349,6 +1350,37 @@ sap.ui.define(['sap/ui/base/DataType', './CalendarType', './Core'],
 		 * @public
 		 */
 		Hidden : "Hidden"
+
+	};
+
+
+	/**
+	 * Sort order of a column
+	 *
+	 * @version ${version}
+	 * @enum {string}
+	 * @public
+	 * @since 1.61.0
+	 * @ui5-metamodel This enumeration also will be described in the UI5 (legacy) designtime metamodel
+	 */
+	thisLib.SortOrder = {
+
+		/**
+		 * Sorting is not applied.
+		 */
+		None : "None",
+
+		/**
+		 * Sorting is done in ascending order.
+		 * @public
+		 */
+		Ascending : "Ascending",
+
+		/**
+		 * Sorting is done in descending order.
+		 * @public
+		 */
+		Descending : "Descending"
 
 	};
 

@@ -31,6 +31,15 @@ sap.ui.define([
 	 */
 	var TableRenderer = Renderer.extend(ListBaseRenderer);
 
+	var bRtl = sap.ui.getCore().getConfiguration().getRTL();
+
+	// store the flex alignment for the column header based on the RTL mode
+	TableRenderer.columnAlign = {
+		left: bRtl ? "flex-end" : "flex-start",
+		center: "center",
+		right: bRtl ? "flex-start" : "flex-end"
+	};
+
 
 	/**
 	 * Renders the Header and/or Footer of the Table like List Control
@@ -142,10 +151,9 @@ sap.ui.define([
 			if (type == "Head") {
 				rm.writeElementData(oColumn);
 				rm.addClass("sapMTableTH");
-				// adding ColumnHeader specific class in order to overwrite the padding of the cell
-				if (bActiveHeaders || (control && control.isA("sap.m.ColumnHeader"))) {
-					rm.addClass(clsPrefix + "CellCH");
-				}
+				rm.writeAttribute("role", "columnheader");
+				var sSortIndicator = oColumn.getSortIndicator().toLowerCase();
+				sSortIndicator !== "none" && rm.writeAttribute("aria-sort", sSortIndicator);
 			}
 
 			rm.addClass(clsPrefix + "Cell");
@@ -153,7 +161,8 @@ sap.ui.define([
 			rm.writeAttribute("data-sap-width", oColumn.getWidth());
 			width && rm.addStyle("width", width);
 
-			if (align) {
+			// required to set the correct aligment to the footer cell
+			if (align && type !== "Head") {
 				rm.addStyle("text-align", align);
 			}
 
@@ -162,15 +171,31 @@ sap.ui.define([
 			rm.write(">");
 
 			if (control) {
-				if (bActiveHeaders) {
-					rm.write("<div tabindex='0' role='button' aria-haspopup='dialog' class='sapMColumnHeader sapMColumnHeaderActive'>");
+				if (type === "Head") {
+					rm.write("<div");
+					rm.addClass("sapMColumnHeader");
+
+					if (bActiveHeaders) {
+						// add active header attributes and style class
+						rm.writeAttribute("tabindex", 0);
+						rm.writeAttribute("role", "button");
+						rm.writeAttribute("aria-haspopup", "dialog");
+						rm.addClass("sapMColumnHeaderActive");
+					}
+
+					if (align) {
+						rm.addStyle("justify-content", TableRenderer.columnAlign[align]);
+					}
+
+					rm.writeClasses();
+					rm.writeStyles();
+					rm.write(">");
 					control.addStyleClass("sapMColumnHeaderContent");
-				}
-
-				rm.renderControl(control);
-
-				if (bActiveHeaders) {
+					rm.renderControl(control);
 					rm.write("</div>");
+				} else {
+					// rendering of the footer cell
+					rm.renderControl(control);
 				}
 			}
 
