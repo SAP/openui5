@@ -4689,14 +4689,13 @@ sap.ui.define([
 
 	//*********************************************************************************************
 	QUnit.test("SingleCache#requestSideEffects: $expand in intersection", function (assert) {
-		var oCache = this.createSingle("Employees('42')"),
-			oError = new Error("Unsupported navigation property in B/C"),
+		var oCache = this.createSingle("Me"),
+			oError = new Error("Unsupported collection-valued navigation property /Me/B/C"),
 			aPaths = ["B/C"];
 
 		this.mock(_Helper).expects("intersectQueryOptions").withExactArgs(
 				sinon.match.same(oCache.mQueryOptions), sinon.match.same(aPaths),
-				sinon.match.same(this.oRequestor.getModelInterface().fnFetchMetadata),
-				"/Employees/$Type")
+				sinon.match.same(this.oRequestor.getModelInterface().fnFetchMetadata), "/Me/$Type")
 			.throws(oError);
 
 		assert.throws(function () {

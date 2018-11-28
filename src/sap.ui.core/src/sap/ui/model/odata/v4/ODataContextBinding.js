@@ -932,7 +932,7 @@ sap.ui.define([
 
 				return SyncPromise.all(aPromises);
 			} catch (e) {
-				if (!e.message.startsWith("Unsupported navigation property")) {
+				if (!e.message.startsWith("Unsupported collection-valued navigation property ")) {
 					throw e;
 				}
 			}

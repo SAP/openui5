@@ -2669,7 +2669,7 @@ sap.ui.define([
 					oContext = {
 						getPath : function () {}
 					},
-					oError = new Error("Unsupported navigation property in B/C"),
+					oError = new Error("Unsupported collection-valued navigation property /Me/A"),
 					sGroupId = "group",
 					oGroupLock = {},
 					aPaths = [sPath],
@@ -2711,7 +2711,7 @@ sap.ui.define([
 				oCache = {
 					requestSideEffects : function () {}
 				},
-				oError = new Error("Unsupported navigation property in B/C"),
+				oError = new Error("Unsupported collection-valued navigation property /Me/A"),
 				sGroupId = "group",
 				oGroupLock = {},
 				aPaths = [sPath],
