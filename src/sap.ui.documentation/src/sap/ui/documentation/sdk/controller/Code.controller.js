@@ -4,14 +4,12 @@
 
 /*global history */
 sap.ui.define([
-    "jquery.sap.global",
-    "sap/ui/documentation/sdk/controller/BaseController",
-    "sap/ui/documentation/sdk/controller/util/ControlsInfo",
-    "sap/ui/model/json/JSONModel",
-    "sap/ui/thirdparty/jquery",
-    // implements sap.ui.component
-	"sap/ui/core/Component"
-], function(jQuery, BaseController, ControlsInfo, JSONModel, jQuery0) {
+	"sap/ui/thirdparty/jquery",
+	"sap/ui/documentation/sdk/controller/BaseController",
+	"sap/ui/documentation/sdk/controller/util/ControlsInfo",
+	"sap/ui/model/json/JSONModel",
+	"sap/ui/thirdparty/URI"
+], function(jQuery, BaseController, ControlsInfo, JSONModel, URI) {
 		"use strict";
 
 		return BaseController.extend("sap.ui.documentation.sdk.controller.Code", {
@@ -152,7 +150,7 @@ sap.ui.define([
 
 				if (!(sUrl in this._codeCache)) {
 					this._codeCache[sUrl] = "";
-					jQuery0.ajax(sUrl, {
+					jQuery.ajax(sUrl, {
 						async: false,
 						dataType: "text",
 						success: fnSuccess,
@@ -163,84 +161,85 @@ sap.ui.define([
 				return that._codeCache[sUrl];
 			},
 
-			onDownload : function (evt) {
+			onDownload : function () {
+				sap.ui.require([
+					"sap/ui/thirdparty/jszip",
+					"sap/ui/core/util/File"
+				], function(JSZip, File) {
+					var oZipFile = new JSZip();
 
-				//TODO: global jquery call found
-				jQuery.sap.require("sap.ui.thirdparty.jszip");
-				var JSZip = sap.ui.require("sap/ui/thirdparty/jszip");
-				var oZipFile = new JSZip();
+					// zip files
+					var oData = this.oModel.getData();
+					for (var i = 0 ; i < oData.files.length ; i++) {
+						var oFile = oData.files[i],
+							sRawFileContent = oFile.raw;
 
-				// zip files
-				var oData = this.oModel.getData();
-				for (var i = 0 ; i < oData.files.length ; i++) {
-					var oFile = oData.files[i],
-						sRawFileContent = oFile.raw;
+						// change the bootstrap URL to the current server for all HTML files of the sample
+						if (oFile.name && (oFile.name === oData.iframe || oFile.name.split(".").pop() === "html")) {
+							sRawFileContent = this._changeIframeBootstrapToCloud(sRawFileContent);
+						}
 
-					// change the bootstrap URL to the current server for all HTML files of the sample
-					if (oFile.name && (oFile.name === oData.iframe || oFile.name.split(".").pop() === "html")) {
-						sRawFileContent = this._changeIframeBootstrapToCloud(sRawFileContent);
-					}
+						oZipFile.file(oFile.name, sRawFileContent);
 
-					oZipFile.file(oFile.name, sRawFileContent);
-
-					// mock files
-					for (var j = 0; j < this._aMockFiles.length; j++) {
-						var sMockFile = this._aMockFiles[j];
-						if (oFile.raw.indexOf(sMockFile) > -1){
-							oZipFile.file("mockdata/" + sMockFile, this.downloadMockFile(sMockFile));
+						// mock files
+						for (var j = 0; j < this._aMockFiles.length; j++) {
+							var sMockFile = this._aMockFiles[j];
+							if (oFile.raw.indexOf(sMockFile) > -1){
+								oZipFile.file("mockdata/" + sMockFile, this.downloadMockFile(sMockFile));
+							}
 						}
 					}
-				}
 
-				var sRef = sap.ui.require.toUrl((this._sId).replace(/\./g, "/")),
-					aExtraFiles = oData.includeInDownload || [],
-					that = this;
+					var sRef = sap.ui.require.toUrl((this._sId).replace(/\./g, "/")),
+						aExtraFiles = oData.includeInDownload || [],
+						that = this;
 
-				// iframe examples have a separate index file and a component file to describe it
-				if (!oData.iframe) {
-					oZipFile.file("Component.js", this.fetchSourceFile(sRef, "Component.js"));
-					oZipFile.file("index.html", this._changeIframeBootstrapToCloud(this.createIndexFile(oData)));
-				}
+					// iframe examples have a separate index file and a component file to describe it
+					if (!oData.iframe) {
+						oZipFile.file("Component.js", this.fetchSourceFile(sRef, "Component.js"));
+						oZipFile.file("index.html", this._changeIframeBootstrapToCloud(this._createIndexHtmlFile(oData)));
+						oZipFile.file("index.js", this._changeIframeBootstrapToCloud(this._createIndexJsFile(oData)));
+					}
 
-				// add extra download files
-				aExtraFiles.forEach(function(sFileName) {
-					oZipFile.file(sFileName, that.fetchSourceFile(sRef, sFileName));
-				});
+					// add extra download files
+					aExtraFiles.forEach(function(sFileName) {
+						oZipFile.file(sFileName, that.fetchSourceFile(sRef, sFileName));
+					});
 
-				var oContent = oZipFile.generate({type:"blob"});
+					var oContent = oZipFile.generate({type:"blob"});
 
-				this._openGeneratedFile(oContent);
+					// save and open generated file
+					File.save(oContent, this._sId, "zip", "application/zip");
+				}.bind(this));
 			},
 
-			_openGeneratedFile : function (oContent) {
-				//TODO: global jquery call found
-				jQuery.sap.require("sap.ui.core.util.File");
-				var File = sap.ui.require("sap/ui/core/util/File");
-				File.save(oContent, this._sId, "zip", "application/zip");
-			},
-
-			createIndexFile : function(oData) {
-
-				var sHeight,
-					bScrolling;
-
+			_createIndexHtmlFile : function(oData) {
 				var sRef = sap.ui.require.toUrl("sap/ui/documentation/sdk/") + "tmpl";
-				var sIndexFile = this.fetchSourceFile(sRef, "index.html.tmpl");
+				var sFile = this.fetchSourceFile(sRef, "index.html.tmpl");
 
-				sIndexFile = sIndexFile.replace(/{{TITLE}}/g, oData.name);
-				sIndexFile = sIndexFile.replace(/{{SAMPLE_ID}}/g, oData.id);
+				sFile = sFile.replace(/{{TITLE}}/g, oData.name);
+				sFile = sFile.replace(/{{SAMPLE_ID}}/g, oData.id);
 
-				sHeight = oData.stretch ? 'height : "100%", ' : "";
-				sIndexFile = sIndexFile.replace(/{{HEIGHT}}/g, sHeight);
+				return sFile;
+			},
 
-				bScrolling = !oData.stretch;
-				sIndexFile = sIndexFile.replace(/{{SCROLLING}}/g, bScrolling);
+			_createIndexJsFile : function(oData) {
+				var sRef = sap.ui.require.toUrl("sap/ui/documentation/sdk/") + "tmpl";
+				var sFile = this.fetchSourceFile(sRef, "index.js.tmpl");
 
-				return sIndexFile;
+				sFile = sFile.replace(/{{TITLE}}/g, oData.name);
+				sFile = sFile.replace(/{{SAMPLE_ID}}/g, oData.id);
+
+				var sHeight = oData.stretch ? 'height : "100%", ' : "";
+				sFile = sFile.replace(/{{HEIGHT}}/g, sHeight);
+
+				var bScrolling = !oData.stretch;
+				sFile = sFile.replace(/{{SCROLLING}}/g, bScrolling);
+
+				return sFile;
 			},
 
 			downloadMockFile : function(sFile) {
-
 				var sRef = sap.ui.require.toUrl("sap/ui/demo/") + "mock";
 				var sWrongPath = "test-resources/sap/ui/documentation/sdk/images/";
 				var sCorrectPath = "https://openui5.hana.ondemand.com/test-resources/sap/ui/documentation/sdk/images/";
@@ -262,14 +261,7 @@ sap.ui.define([
 				this.router.navTo("sample", { id : this._sId }, true);
 			},
 
-			/**
-			 *
-			 */
 			_convertCodeToHtml : function (code) {
-
-				//TODO: global jquery call found
-				jQuery.sap.require("jquery.sap.encoder");
-
 				code = code.toString();
 
 				// Get rid of function around code
@@ -288,11 +280,6 @@ sap.ui.define([
 			},
 
 			_changeIframeBootstrapToCloud : function (sRawIndexFileHtml) {
-
-				//TODO: global jquery call found
-				jQuery.sap.require("sap.ui.thirdparty.URI");
-				var URI = sap.ui.require("sap/ui/thirdparty/URI");
-
 				var rReplaceIndex = /src=(?:"[^"]*\/sap-ui-core\.js"|'[^']*\/sap-ui-core\.js')/;
 				var oCurrentURI = new URI(window.location.href).search("");
 				var oRelativeBootstrapURI = new URI(sap.ui.require.toUrl("") + "/sap-ui-core.js");
