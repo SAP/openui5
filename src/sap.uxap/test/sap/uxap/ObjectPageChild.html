@@ -107,22 +107,15 @@
 				<sections>
 					<ObjectPageSection title="2014 Goals Plan">
 						<subSections>
-							<ObjectPageSubSection title=" ">
+							<ObjectPageSubSection>
 								<blocks>
-									<f:SimpleForm
-											maxContainerCols="1"
-											layout="ResponsiveGridLayout"
-											width="100%">
-										<layout:VerticalLayout>
-											<m:Label text="Evangelize the UI framework accross the company" design="Bold"/>
-											<m:Text text="4 days overdue Cascaded"/>
-											<m:Text text=" "/>
-											<m:Label text="Get trained in development management direction" design="Bold"/>
-											<m:Text text="Due Nov 21"/>
-											<m:Text text=" "/>
-											<m:Label text="Mentor junior developers" design="Bold"/>
-											<m:Text text="Due Dec 31 Cascaded"/>
-										</layout:VerticalLayout>
+									<f:SimpleForm layout="ColumnLayout"	editable="false" columnsXL="4" columnsL="3" columnsM="2">
+										<m:Label text="Evangelize the UI framework accross the company"/>
+										<m:Text text="4 days overdue Cascaded"/>
+										<m:Label text="Get trained in development management direction"/>
+										<m:Text text="Due Nov 21"/>
+										<m:Label text="Mentor junior developers"/>
+										<m:Text text="Due Dec 31 Cascaded"/>
 									</f:SimpleForm>
 								</blocks>
 							</ObjectPageSubSection>
@@ -132,33 +125,21 @@
 						<subSections>
 							<ObjectPageSubSection title="Connect">
 								<blocks>
-									<f:SimpleForm labelSpanL="4" labelSpanM="4"
-												  labelSpanS="4" emptySpanL="0" emptySpanM="0" emptySpanS="0"
-												  maxContainerCols="2" layout="ResponsiveLayout">
+									<f:SimpleForm layout="ColumnLayout"	editable="false" columnsXL="4" columnsL="3" columnsM="2">
 										<core:Title text="Main Payment Method"/>
 										<m:Label text="Bank Transfer"/>
-										<layout:VerticalLayout>
-											<m:Text text="Sparkasse Heimfeld, Germany"/>
-											<m:Text text="Account 458784545"/>
-										</layout:VerticalLayout>
+										<m:Text text="Sparkasse Heimfeld, Germany"/>
 									</f:SimpleForm>
-									<f:SimpleForm labelSpanL="4" labelSpanM="4"
-												  labelSpanS="4" emptySpanL="0" emptySpanM="0" emptySpanS="0"
-												  maxContainerCols="2" layout="ResponsiveLayout">
+									<f:SimpleForm layout="ColumnLayout"	editable="false" columnsXL="4" columnsL="3" columnsM="2">
 										<core:Title text="Payment method for Expenses"/>
-										<layout:VerticalLayout>
-											<m:Label text="Extra Travel Expenses:"/>
-											<m:Text text="Cash 100 USD"/>
-										</layout:VerticalLayout>
+										<m:Label text="Extra Travel Expenses:"/>
+										<m:Text text="Cash 100 USD"/>
 									</f:SimpleForm>
 								</blocks>
 							</ObjectPageSubSection>
 							<ObjectPageSubSection id="paymentSubSection" title="Payment information">
 								<blocks>
-									<f:SimpleForm labelSpanL="4" labelSpanM="4"
-												  labelSpanS="4" emptySpanL="0" emptySpanM="0" emptySpanS="0"
-												  maxContainerCols="2" layout="ResponsiveGridLayout"
-												  width="100%">
+									<f:SimpleForm layout="ColumnLayout"	editable="false" columnsXL="4" columnsL="3" columnsM="2">
 										<core:Title text="Termination information"/>
 										<m:Label text="Ok to return"/>
 										<m:Text text="No"/>
@@ -167,11 +148,7 @@
 									</f:SimpleForm>
 								</blocks>
 								<moreBlocks>
-									<f:SimpleForm labelSpanL="4" labelSpanM="4"
-												  labelSpanS="4" emptySpanL="0" emptySpanM="0" emptySpanS="0"
-												  maxContainerCols="2"
-												  layout="ResponsiveGridLayout"
-												  width="100%">
+									<f:SimpleForm layout="ColumnLayout"	editable="false" columnsXL="4" columnsL="3" columnsM="2">
 										<m:Label text="Start Date"/>
 										<m:Text text="Jan 01, 2001"/>
 										<m:Label text="End Date"/>
@@ -180,7 +157,7 @@
 										<m:Text text="Jun 01, 2014"/>
 										<m:Label text="Payroll End Date"/>
 										<m:Text text="Jun 01, 2014"/>
-										</f:SimpleForm>
+									</f:SimpleForm>
 								</moreBlocks>
 							</ObjectPageSubSection>
 						</subSections>
