@@ -726,5 +726,11 @@ sap.ui.define([
 		throw new Error("Unsupported operation: suspend");
 	};
 
+	/**
+	 * @override
+	 * @see sap.ui.model.odata.v4.ODataBinding#visitSideEffects
+	 */
+	ODataPropertyBinding.prototype.visitSideEffects = function () {};
+
 	return ODataPropertyBinding;
 });

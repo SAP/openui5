@@ -1801,6 +1801,14 @@ sap.ui.define([
 	});
 
 	//*********************************************************************************************
+	QUnit.test("visitSideEffects", function (assert) {
+		var oBinding = this.oModel.bindProperty("/EMPLOYEES('1')/AGE");
+
+		// code under test: nothing happens
+		oBinding.visitSideEffects();
+	});
+
+	//*********************************************************************************************
 	[true, false].forEach(function (bCheckUpdate) {
 		QUnit.test("resumeInternal: bCheckUpdate=" + bCheckUpdate, function (assert) {
 			var oContext = Context.create(this.oModel, {}, "/ProductList('42')"),

@@ -647,6 +647,12 @@ sap.ui.define([
 		 *   The meta path for the cache root's type, for example "/SalesOrderList/SO_2_BP" or
 		 *   "/Artists/foo.EditAction/@$ui5.overload/0/$ReturnType/$Type", such that an OData simple
 		 *   identifier may be appended
+		 * @param {object} mNavigationPropertyPaths
+		 *   Hash set of collection-valued navigation property meta paths (relative to the cache's
+		 *   root, that is without the root meta path prefix) which need to be refreshed, maps
+		 *   string to <code>true</code>; is modified
+		 * @param {boolean} [sPrefix=""]
+		 *   Optional prefix for navigation property meta paths used during recursion
 		 * @returns {object}
 		 *   The updated query options or <code>null</code> if no request is needed
 		 * @throws {Error}
@@ -654,28 +660,12 @@ sap.ui.define([
 		 *   navigation property
 		 */
 		intersectQueryOptions : function (mCacheQueryOptions, aPaths, fnFetchMetadata,
-				sRootMetaPath) {
+				sRootMetaPath, mNavigationPropertyPaths, sPrefix) {
 			var aExpands = [],
 				mExpands = {},
 				mResult,
 				aSelects,
 				mSelects = {};
-
-			/*
-			 * Throws an error if the given meta path points to a collection-valued navigation
-			 * property.
-			 *
-			 * @param {string} sMetaPath
-			 *   An absolute meta path
-			 * @throws {Error}
-			 *   If the given meta path points to a collection-valued navigation property
-			 */
-			function checkCollection(sMetaPath) {
-				if (fnFetchMetadata(sMetaPath).getResult().$isCollection) {
-					throw new Error("Unsupported collection-valued navigation property "
-						+ sMetaPath);
-				}
-			}
 
 			/*
 			 * Filter where only structural properties pass through.
@@ -715,12 +705,16 @@ sap.ui.define([
 				aExpands.forEach(function (sNavigationPropertyPath) {
 					var mChildQueryOptions,
 						sMetaPath = sRootMetaPath + "/" + sNavigationPropertyPath,
+						sPrefixedNavigationPropertyPath
+							= _Helper.buildPath(sPrefix, sNavigationPropertyPath),
 						mSet = {},
 						aStrippedPaths;
 
 					_Helper.addChildrenWithAncestor([sNavigationPropertyPath], aPaths, mSet);
 					if (!isEmptyObject(mSet)) {
-						checkCollection(sMetaPath);
+						if (fnFetchMetadata(sMetaPath).getResult().$isCollection) {
+							mNavigationPropertyPaths[sPrefixedNavigationPropertyPath] = true;
+						}
 						// complete navigation property may change, same expand as initially
 						mExpands[sNavigationPropertyPath]
 							= mCacheQueryOptions.$expand[sNavigationPropertyPath];
@@ -729,13 +723,17 @@ sap.ui.define([
 
 					aStrippedPaths = _Helper.stripPathPrefix(sNavigationPropertyPath, aPaths);
 					if (aStrippedPaths.length) {
-						checkCollection(sMetaPath);
+						if (fnFetchMetadata(sMetaPath).getResult().$isCollection) {
+							throw new Error("Unsupported collection-valued navigation property "
+								+ sMetaPath);
+						}
 						// details of the navigation property may change, compute intersection
 						// recursively
 						mChildQueryOptions = _Helper.intersectQueryOptions(
 							mCacheQueryOptions.$expand[sNavigationPropertyPath] || {},
 							aStrippedPaths, fnFetchMetadata,
-							sRootMetaPath + "/" + sNavigationPropertyPath);
+							sRootMetaPath + "/" + sNavigationPropertyPath,
+							mNavigationPropertyPaths, sPrefixedNavigationPropertyPath);
 						if (mChildQueryOptions) {
 							mExpands[sNavigationPropertyPath] = mChildQueryOptions;
 						}

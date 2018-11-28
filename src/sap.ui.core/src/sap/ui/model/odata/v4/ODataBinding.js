@@ -687,6 +687,37 @@ sap.ui.define([
 	};
 
 	/**
+	 * Recursively visits all dependent bindings of (the given context of) this binding. Bindings
+	 * with an own cache will request side effects themselves as applicable. Bindings mentioned
+	 * in <code>mNavigationPropertyPaths</code> will refresh themselves.
+	 *
+	 * @param {string} sGroupId
+	 *   The group ID to be used for requesting side effects
+	 * @param {string[]} aPaths
+	 *   The "14.5.11 Expression edm:NavigationPropertyPath" or
+	 *   "14.5.13 Expression edm:PropertyPath" strings describing which properties need to be loaded
+	 *   because they may have changed due to side effects of a previous update
+	 * @param {sap.ui.model.odata.v4.Context} [oContext]
+	 *   The context for which to request side effects; if missing, the whole binding is affected
+	 * @param {object} mNavigationPropertyPaths
+	 *   Hash set of collection-valued navigation property meta paths (relative to this binding's
+	 *   cache root) which need to be refreshed, maps string to <code>true</code>; read-only
+	 * @param {Promise[]} aPromises
+	 *   List of (sync) promises which is extended for each call to
+	 *   {@link sap.ui.model.odata.v4.ODataParentBinding#requestSideEffects} or
+	 *   {@link sap.ui.model.odata.v4.ODataBinding#refreshInternal}.
+	 * @param {string} [sPrefix=""]
+	 *   Prefix for navigation property meta paths; must only be used during recursion
+	 *
+	 * @abstract
+	 * @function
+	 * @name sap.ui.model.odata.v4.ODataBinding#visitSideEffects
+	 * @private
+	 * @see sap.ui.model.odata.v4.Context#requestSideEffects
+	 * @see sap.ui.model.odata.v4.ODataParentBinding#requestSideEffects
+	 */
+
+	/**
 	 * Calls the given processor with the cache containing this binding's data, the path relative
 	 * to the cache and the cache-owning binding. Adjusts the path if the cache is owned by a parent
 	 * binding.

@@ -30,7 +30,6 @@ sap.ui.define([
 
 	var sClassName = "sap.ui.model.odata.v4.lib._V2MetadataConverter",
 		sDefaultLanguage = sap.ui.getCore().getConfiguration().getLanguage(),
-		sFlight = "/sap/opu/odata/IWFND/RMTSAMPLEFLIGHT/",
 		sSalesOrderService = "/sap/opu/odata4/sap/zui5_testv4/default/sap/zui5_epm_sample/0002/",
 		sTeaBusi = "/sap/opu/odata4/IWBEP/TEA/default/IWBEP/TEA_BUSI/0001/";
 
@@ -485,7 +484,7 @@ sap.ui.define([
 
 			mModelParameters = jQuery.extend({}, {odataVersion : "2.0"}, mModelParameters);
 
-			return createModel(sFlight, mModelParameters);
+			return createModel("/sap/opu/odata/IWFND/RMTSAMPLEFLIGHT/", mModelParameters);
 		},
 
 		/**
@@ -8824,6 +8823,7 @@ sap.ui.define([
 					.expectChange("name", "bar");
 
 				return Promise.all([
+					// code under test
 					oInactiveArtistContext.requestSideEffects([{
 						$PropertyPath : "Address/City"
 					}, {
@@ -8967,6 +8967,7 @@ sap.ui.define([
 				// no change in messages
 
 			return Promise.all([
+				// code under test
 				oInactiveArtistContext.requestSideEffects([{
 					$PropertyPath : "DraftAdministrativeData/InProcessByUser"
 				}]),
@@ -10197,6 +10198,7 @@ sap.ui.define([
 			return Promise.all([
 				oModel.submitBatch("update"),
 				oPromise,
+				// code under test
 				that.oView.byId("form").getBindingContext().requestSideEffects([{
 					$PropertyPath : "TaxAmount" // must be ignored due to intersection
 				}]), // no GET request, no issue with locks!
@@ -10264,6 +10266,7 @@ sap.ui.define([
 				.expectChange("inProcessByUser2", "bar");
 
 			return Promise.all([
+				// code under test
 				that.oView.byId("form").getBindingContext().requestSideEffects([{
 					$PropertyPath : "DraftAdministrativeData/InProcessByUser"
 				}]),
@@ -10277,47 +10280,31 @@ sap.ui.define([
 	// Scenario: Read side effects via $NavigationPropertyPath. The dependent binding must be
 	// refreshed.
 	QUnit.test("requestSideEffects with $NavigationPropertyPath", function (assert) {
-		var oModel = createSpecialCasesModel({
-				autoExpandSelect : true,
-				groupId : "$direct",
-				updateGroupId : "$auto"
-			}),
+		var oModel = createSpecialCasesModel({autoExpandSelect : true}),
 			sView = '\
 <FlexBox binding="{/Artists(ArtistID=\'42\',IsActiveEntity=true)}" id="form">\
 	<Text id="id" text="{ArtistID}" />\
-	<Text binding="{path : \'DraftAdministrativeData\', parameters : {$$ownRequest : true}}"\
-		id="inProcessByUser" text="{InProcessByUser}" />\
+	<FlexBox binding="{}" id="section">\
+		<Text binding="{path : \'DraftAdministrativeData\', parameters : {$$ownRequest : true}}"\
+			id="inProcessByUser" text="{InProcessByUser}" />\
+	</FlexBox>\
 </FlexBox>',
 			that = this;
 
-		this.expectRequest("Artists(ArtistID='42',IsActiveEntity=true)"
-				+ "?$select=ArtistID,IsActiveEntity", {
-				"ArtistID" : "42"
-//				"IsActiveEntity" : true
-			})
-			.expectRequest("Artists(ArtistID='42',IsActiveEntity=true)/DraftAdministrativeData"
+		this.expectRequest("Artists(ArtistID='42',IsActiveEntity=true)/DraftAdministrativeData"
 				+ "?$select=DraftID,InProcessByUser", {
 //				"DraftID" : "23",
 				"InProcessByUser" : "foo"
+			})
+			.expectRequest("Artists(ArtistID='42',IsActiveEntity=true)"
+				+ "?$select=ArtistID,IsActiveEntity", {
+				"ArtistID" : "42"
+//				"IsActiveEntity" : true
 			})
 			.expectChange("id", "42")
 			.expectChange("inProcessByUser", "foo");
 
 		return this.createView(assert, sView, oModel).then(function () {
-			that.expectRequest("Artists(ArtistID='42',IsActiveEntity=true)/DraftAdministrativeData"
-					+ "?$select=DraftID,InProcessByUser", {
-//					"DraftID" : "23",
-					"InProcessByUser" : "bar"
-				})
-				.expectChange("inProcessByUser", "bar");
-
-			return Promise.all([
-				that.oView.byId("form").getBindingContext().requestSideEffects([{
-					$NavigationPropertyPath : "DraftAdministrativeData"
-				}]),
-				that.waitForChanges(assert)
-			]);
-		}).then(function () {
 			that.expectRequest("Artists(ArtistID='42',IsActiveEntity=true)"
 					+ "?$select=ArtistID,IsActiveEntity", {
 					"ArtistID" : "42"
@@ -10326,15 +10313,31 @@ sap.ui.define([
 				.expectRequest("Artists(ArtistID='42',IsActiveEntity=true)/DraftAdministrativeData"
 					+ "?$select=DraftID,InProcessByUser", {
 //					"DraftID" : "23",
-					"InProcessByUser" : "foo"
+					"InProcessByUser" : "bar"
 				})
 				.expectChange("id", "42") //TODO @see CPOUI5UISERVICESV3-1572
+				.expectChange("inProcessByUser", "bar");
+
+			return Promise.all([
+				// code under test
+				that.oView.byId("form").getBindingContext().requestSideEffects([{
+					$NavigationPropertyPath : ""
+				}, { // Note: this makes no difference, "" wins
+					$NavigationPropertyPath : "DraftAdministrativeData"
+				}]),
+				that.waitForChanges(assert)
+			]);
+		}).then(function () {
+			that.expectRequest("Artists(ArtistID='42',IsActiveEntity=true)/DraftAdministrativeData"
+					+ "?$select=DraftID,InProcessByUser", {
+//					"DraftID" : "23",
+					"InProcessByUser" : "foo"
+				})
 				.expectChange("inProcessByUser", "foo");
 
 			return Promise.all([
+				// code under test
 				that.oView.byId("form").getBindingContext().requestSideEffects([{
-					$NavigationPropertyPath : ""
-				}, {
 					$NavigationPropertyPath : "DraftAdministrativeData"
 				}]),
 				that.waitForChanges(assert)
@@ -10344,30 +10347,29 @@ sap.ui.define([
 
 	//*********************************************************************************************
 	// Scenario: read side effects which affect dependent bindings.
-	QUnit.test("requestSideEffects: dependent bindings", function (assert) {
-		var oModel = createSpecialCasesModel({
-				autoExpandSelect : true,
-				groupId : "$direct", // GET should not count for batchNo
-				updateGroupId : "update"
-			}),
+	QUnit.test("requestSideEffects: dependent bindings #1", function (assert) {
+		var oModel = createSpecialCasesModel({autoExpandSelect : true}),
 			sView = '\
 <FlexBox binding="{/Artists(ArtistID=\'42\',IsActiveEntity=true)}" id="form">\
 	<Text id="id" text="{ArtistID}" />\
-	<Text binding="{\
-			path : \'DraftAdministrativeData\',\
-			parameters : {$$ownRequest : true}\
-		}" id="inProcessByUser" text="{InProcessByUser}" />\
+	<FlexBox binding="{}" id="section">\
+		<Text binding="{\
+				path : \'DraftAdministrativeData\',\
+				parameters : {$$ownRequest : true}\
+			}" id="inProcessByUser" text="{InProcessByUser}" />\
+	</FlexBox>\
 </FlexBox>',
 			that = this;
 
-		this.expectRequest("Artists(ArtistID='42',IsActiveEntity=true)"
-				+ "?$select=ArtistID,IsActiveEntity", {
-				"ArtistID" : "42"
-//				"IsActiveEntity" : true
-			}).expectRequest("Artists(ArtistID='42',IsActiveEntity=true)/DraftAdministrativeData"
+		this.expectRequest("Artists(ArtistID='42',IsActiveEntity=true)/DraftAdministrativeData"
 				+ "?$select=DraftID,InProcessByUser", {
 				"DraftID" : "23",
 				"InProcessByUser" : "foo"
+			})
+			.expectRequest("Artists(ArtistID='42',IsActiveEntity=true)"
+				+ "?$select=ArtistID,IsActiveEntity", {
+				"ArtistID" : "42"
+//				"IsActiveEntity" : true
 			})
 			.expectChange("id", "42")
 			.expectChange("inProcessByUser", "foo");
@@ -10380,12 +10382,181 @@ sap.ui.define([
 				.expectChange("inProcessByUser", "bar");
 
 			return Promise.all([
+				// code under test
 				that.oView.byId("form").getBindingContext().requestSideEffects([{
 					$PropertyPath : "DraftAdministrativeData/InProcessByUser"
 				}]),
-				oModel.submitBatch("update"),
 				that.waitForChanges(assert)
 			]);
+		});
+	});
+
+	//*********************************************************************************************
+	// Scenario: read side effects which affect dependent bindings; add some unnecessary context
+	// bindings
+	QUnit.test("requestSideEffects: dependent bindings #2", function (assert) {
+		var sDraftAdministrativeData = "Artists(ArtistID='42',IsActiveEntity=true)"
+				+ "/BestFriend/BestFriend/DraftAdministrativeData",
+			oModel = createSpecialCasesModel({autoExpandSelect : true}),
+			sView = '\
+<FlexBox binding="{/Artists(ArtistID=\'42\',IsActiveEntity=true)}" id="form">\
+	<Text id="id" text="{ArtistID}" />\
+	<FlexBox binding="{BestFriend}" id="section">\
+		<FlexBox binding="{BestFriend}" id="section2">\
+			<Text binding="{\
+					path : \'DraftAdministrativeData\',\
+					parameters : {$$ownRequest : true}\
+				}" id="inProcessByUser" text="{InProcessByUser}" />\
+		</FlexBox>\
+	</FlexBox>\
+</FlexBox>',
+			that = this;
+
+		this.expectRequest(sDraftAdministrativeData + "?$select=DraftID,InProcessByUser", {
+				"DraftID" : "23",
+				"InProcessByUser" : "foo"
+			})
+			.expectRequest("Artists(ArtistID='42',IsActiveEntity=true)"
+				+ "?$select=ArtistID,IsActiveEntity"
+				//TODO CPOUI5UISERVICESV3-1677: Avoid unnecessary $expand
+				+ "&$expand=BestFriend($select=ArtistID,IsActiveEntity"
+					+ ";$expand=BestFriend($select=ArtistID,IsActiveEntity))", {
+				"ArtistID" : "42"
+//				"IsActiveEntity" : true
+			})
+			.expectChange("id", "42")
+			.expectChange("inProcessByUser", "foo");
+
+		return this.createView(assert, sView, oModel).then(function () {
+			that.expectRequest(sDraftAdministrativeData + "?$select=InProcessByUser", {
+					"InProcessByUser" : "bar"
+				})
+				.expectChange("inProcessByUser", "bar");
+
+			return Promise.all([
+				// code under test
+				that.oView.byId("form").getBindingContext().requestSideEffects([{
+					$PropertyPath : "BestFriend/BestFriend/DraftAdministrativeData/InProcessByUser"
+				}]),
+				that.waitForChanges(assert)
+			]);
+		});
+	});
+
+	//*********************************************************************************************
+	// Scenario: read side effects which affect dependent bindings; add some unnecessary context
+	// bindings
+	//TODO Enable autoExpandSelect once CPOUI5UISERVICESV3-1677 has been solved!
+	QUnit.test("requestSideEffects: dependent bindings #3", function (assert) {
+		var sDraftAdministrativeData = "Artists(ArtistID='42',IsActiveEntity=true)"
+				+ "/BestFriend/_Friend(ArtistID='42',IsActiveEntity=true)/DraftAdministrativeData",
+			oModel = createSpecialCasesModel({autoExpandSelect : false}),
+			sView = '\
+<FlexBox binding="{/Artists(ArtistID=\'42\',IsActiveEntity=true)}" id="form">\
+	<Text id="id" text="{ArtistID}" />\
+	<FlexBox binding="{BestFriend}" id="section">\
+		<FlexBox binding="{_Friend(ArtistID=\'42\',IsActiveEntity=true)}" id="section2">\
+			<Text binding="{\
+					path : \'DraftAdministrativeData\',\
+					parameters : {$$ownRequest : true}\
+				}" id="inProcessByUser" text="{InProcessByUser}" />\
+		</FlexBox>\
+	</FlexBox>\
+</FlexBox>',
+			that = this;
+
+		this.expectRequest("Artists(ArtistID='42',IsActiveEntity=true)"
+				/*+ "?$select=ArtistID,IsActiveEntity"*/, {
+				"ArtistID" : "42"
+//				"IsActiveEntity" : true
+			})
+			.expectRequest(sDraftAdministrativeData/* + "?$select=DraftID,InProcessByUser"*/, {
+				"DraftID" : "23",
+				"InProcessByUser" : "foo"
+			})
+			.expectChange("id", "42")
+			.expectChange("inProcessByUser", "foo");
+
+		return this.createView(assert, sView, oModel).then(function () {
+			that.expectRequest(sDraftAdministrativeData + "?$select=InProcessByUser", {
+					"InProcessByUser" : "bar"
+				})
+				.expectChange("inProcessByUser", "bar");
+
+			return Promise.all([
+				// code under test
+				that.oView.byId("form").getBindingContext().requestSideEffects([{
+					$PropertyPath : "BestFriend/_Friend/DraftAdministrativeData/InProcessByUser"
+				}]),
+				that.waitForChanges(assert)
+			]);
+		});
+	});
+
+	//*********************************************************************************************
+	// Scenario: Read side effects via collection-valued $NavigationPropertyPath.
+	// There is a child binding w/o own cache for the collection-valued navigation property affected
+	// by the side effect; the whole collection is refreshed using $expand; eventing is OK to update
+	// the UI.
+	// Note: This works the same with a grid table, except for CPOUI5UISERVICESV3-1685.
+	[false, true].forEach(function (bGrowing) {
+		var sTitle = "requestSideEffects with collection-valued navigation; growing = " + bGrowing;
+
+		QUnit.test(sTitle, function (assert) {
+			var oModel = createSpecialCasesModel({autoExpandSelect : true}),
+				sView = '\
+<FlexBox binding="{/Artists(ArtistID=\'42\',IsActiveEntity=true)}" id="form">\
+	<Text id="id" text="{ArtistID}" />\
+	<FlexBox binding="{BestFriend}" id="section">\
+		<Table growing="' + bGrowing + '" id="table" items="{_Publication}">\
+			<columns><Column/></columns>\
+			<ColumnListItem>\
+				<Text id="price" text="{Price}" />\
+			</ColumnListItem>\
+		</Table>\
+	</FlexBox>\
+</FlexBox>',
+				that = this;
+
+			this.expectRequest("Artists(ArtistID='42',IsActiveEntity=true)"
+					+ "?$select=ArtistID,IsActiveEntity"
+					+ "&$expand=BestFriend($select=ArtistID,IsActiveEntity"
+						+ ";$expand=_Publication($select=Price,PublicationID))", {
+					"ArtistID" : "42",
+//					"IsActiveEntity" : true,
+					"BestFriend" : {
+						"ArtistID" : "23",
+//						"IsActiveEntity" : true,
+						"_Publication" : [{
+							"Price" : "9.99"
+//							"PublicationID" "42-0":
+						}]
+					}
+				})
+				.expectChange("id", "42")
+				.expectChange("price", ["9.99"]);
+
+			return this.createView(assert, sView, oModel).then(function () {
+				that.expectRequest("Artists(ArtistID='42',IsActiveEntity=true)?$select=BestFriend"
+						+ "&$expand=BestFriend($select=_Publication"
+							+ ";$expand=_Publication($select=Price,PublicationID))", {
+						"BestFriend" : {
+							"_Publication" : [{
+								"Price" : "7.77"
+//								"PublicationID" "42-0":
+							}]
+						}
+					})
+					.expectChange("price", ["7.77"]);
+
+				return Promise.all([
+					// code under test
+					that.oView.byId("form").getBindingContext().requestSideEffects([{
+						$NavigationPropertyPath : "BestFriend/_Publication"
+					}]),
+					that.waitForChanges(assert)
+				]);
+			});
 		});
 	});
 
@@ -10907,5 +11078,91 @@ sap.ui.define([
 
 			return this.createView(assert, sView, oModel);
 		});
+	});
+
+	//*********************************************************************************************
+	// Scenario: unnecessary context bindings to confuse auto-$expand/$select
+	QUnit.skip("CPOUI5UISERVICESV3-1677: Avoid unnecessary $expand", function (assert) {
+		var oModel = createSpecialCasesModel({autoExpandSelect : true}),
+			sView = '\
+<FlexBox binding="{/Artists(ArtistID=\'42\',IsActiveEntity=true)}">\
+	<Text id="id" text="{ArtistID}" />\
+	<FlexBox binding="{BestFriend}">\
+		<FlexBox binding="{_Friend(ArtistID=\'42\',IsActiveEntity=true)}">\
+		</FlexBox>\
+	</FlexBox>\
+</FlexBox>';
+
+		//TODO avoid the following $expand
+//		+ "&$expand=BestFriend($select=ArtistID,IsActiveEntity"
+//		+ ";$expand=_Friend($select=ArtistID,IsActiveEntity))"
+		this.expectRequest("Artists(ArtistID='42',IsActiveEntity=true)"
+				+ "?$select=ArtistID,IsActiveEntity", {
+				"ArtistID" : "42"
+//				"IsActiveEntity" : true
+			})
+			.expectChange("id", "42");
+
+		return this.createView(assert, sView, oModel);
+	});
+
+	//*********************************************************************************************
+	// Scenario: context binding for :N navigation property using key predicate
+	QUnit.skip("CPOUI5UISERVICESV3-1679: nav.prop. using key predicate", function (assert) {
+		var oModel = createSpecialCasesModel({autoExpandSelect : true}),
+			sView = '\
+<FlexBox binding="{/Artists(ArtistID=\'42\',IsActiveEntity=true)}">\
+	<Text id="id" text="{ArtistID}" />\
+	<FlexBox binding="{_Friend(ArtistID=\'23\',IsActiveEntity=true)}">\
+		<Text id="friend" text="{ArtistID}" />\
+	</FlexBox>\
+</FlexBox>';
+
+		//TODO Failed to drill-down into _Friend(ArtistID='23',IsActiveEntity=true)/ArtistID
+		// --> "friend" binding would need to send its own request!
+		this.expectRequest("Artists(ArtistID='42',IsActiveEntity=true)"
+				+ "?$select=ArtistID,IsActiveEntity"
+				//TODO CPOUI5UISERVICESV3-1677: Avoid unnecessary $expand
+				+ "&$expand=_Friend($select=ArtistID,IsActiveEntity)", {
+				"ArtistID" : "42"
+//				"IsActiveEntity" : true
+			})
+			.expectChange("id", "42")
+			.expectChange("id", "23");
+
+		return this.createView(assert, sView, oModel);
+	});
+
+	//*********************************************************************************************
+	// Scenario: A grid table shows a collection which completely resides in the parent binding's
+	// cache. Auto-$expand/$select does not properly handle this case: "Price" is not selected.
+	QUnit.skip("CPOUI5UISERVICESV3-1685: autoExpandSelect with grid table", function (assert) {
+		var oModel = createSpecialCasesModel({autoExpandSelect : true}),
+			sView = '\
+<FlexBox binding="{/Artists(ArtistID=\'42\',IsActiveEntity=true)}">\
+	<Text id="id" text="{ArtistID}" />\
+	<t:Table rows="{_Publication}">\
+		<t:Column>\
+			<t:template>\
+				<Text id="price" text="{Price}" />\
+			</t:template>\
+		</t:Column>\
+	</t:Table>\
+</FlexBox>';
+
+		this.expectRequest("Artists(ArtistID='42',IsActiveEntity=true)"
+				+ "?$select=ArtistID,IsActiveEntity"
+				+ "&$expand=_Publication($select=Price,PublicationID)", {
+				"ArtistID" : "42",
+//				"IsActiveEntity" : true,
+				"_Publication" : [{
+					"Price" : "9.99"
+//						"PublicationID" "42-0":
+				}]
+			})
+			.expectChange("id", "42")
+			.expectChange("price", ["9.99"]);
+
+		return this.createView(assert, sView, oModel);
 	});
 });
