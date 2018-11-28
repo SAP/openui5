@@ -1,6 +1,7 @@
 /*global location history */
+
 sap.ui.define([
-	"mycompany/myapp/MyWorklistApp/controller/BaseController",
+	"./BaseController",
 	"sap/ui/model/json/JSONModel",
 	"mycompany/myapp/MyWorklistApp/model/formatter",
 	"sap/ui/model/Filter",
@@ -34,12 +35,12 @@ sap.ui.define([
 
 			// Model used to manipulate control states
 			oViewModel = new JSONModel({
-				worklistTableTitle : this.getResourceBundle().getText("worklistTableTitle"),
+				worklistTableTitle: this.getResourceBundle().getText("worklistTableTitle"),
 				shareOnJamTitle: this.getResourceBundle().getText("worklistTitle"),
-				shareSendEmailSubject : this.getResourceBundle().getText("shareSendEmailWorklistSubject"),
-				shareSendEmailMessage : this.getResourceBundle().getText("shareSendEmailWorklistMessage", [location.href]),
-				tableNoDataText : this.getResourceBundle().getText("tableNoDataText"),
-				tableBusyDelay : 0
+				shareSendEmailSubject: this.getResourceBundle().getText("shareSendEmailWorklistSubject"),
+				shareSendEmailMessage: this.getResourceBundle().getText("shareSendEmailWorklistMessage", [location.href]),
+				tableNoDataText: this.getResourceBundle().getText("tableNoDataText"),
+				tableBusyDelay: 0
 			});
 			this.setModel(oViewModel, "worklistView");
 
@@ -161,4 +162,5 @@ sap.ui.define([
 		}
 
 	});
+
 });

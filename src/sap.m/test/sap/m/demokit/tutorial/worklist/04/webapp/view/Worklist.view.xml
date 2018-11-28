@@ -16,7 +16,7 @@
 		<semantic:content>
 			<IconTabBar
 				id="iconTabBar"
-				select="onQuickFilter"
+				select=".onQuickFilter"
 				expandable="false"
 				headerBackgroundDesign="Transparent">
 				<items>
@@ -52,7 +52,7 @@
 						growing="true"
 						growingScrollToLoad="true"
 						noDataText="{worklistView>/tableNoDataText}"
-						updateFinished="onUpdateFinished"
+						updateFinished=".onUpdateFinished"
 						width="auto"
 						items="{
 							path: '/Products',

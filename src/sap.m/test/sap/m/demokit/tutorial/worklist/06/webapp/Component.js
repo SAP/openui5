@@ -2,8 +2,8 @@
 sap.ui.define([
 	"sap/ui/core/UIComponent",
 	"sap/ui/Device",
-	"mycompany/myapp/MyWorklistApp/model/models",
-	"mycompany/myapp/MyWorklistApp/controller/ErrorHandler"
+	"./model/models",
+	"./controller/ErrorHandler"
 ], function (UIComponent, Device, models, ErrorHandler) {
 	"use strict";
 
@@ -67,4 +67,5 @@ sap.ui.define([
 		}
 
 	});
+
 });

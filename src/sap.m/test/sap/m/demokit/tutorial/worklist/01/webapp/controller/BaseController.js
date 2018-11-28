@@ -1,8 +1,9 @@
-sap.ui.define(["sap/ui/core/mvc/Controller",
-               "sap/ui/core/UIComponent",
-               "sap/m/library"
-], function(Controller, UIComponent, mobileLibrary) {
-    "use strict";
+sap.ui.define([
+	"sap/ui/core/mvc/Controller",
+	"sap/ui/core/UIComponent",
+	"sap/m/library"
+], function (Controller, UIComponent, mobileLibrary) {
+	"use strict";
 
     return Controller.extend("mycompany.myapp.MyWorklistApp.controller.BaseController", {
 		/**
@@ -56,5 +57,7 @@ sap.ui.define(["sap/ui/core/mvc/Controller",
 				oViewModel.getProperty("/shareSendEmailMessage")
 			);
 		}
+
 	});
+
 });

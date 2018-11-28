@@ -15,6 +15,7 @@ sap.ui.define([
 		createCommentsModel: function() {
 			return new JSONModel({ productComments : [] });
 		}
+
 	};
 
 });

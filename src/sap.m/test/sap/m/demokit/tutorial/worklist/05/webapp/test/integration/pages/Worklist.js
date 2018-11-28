@@ -7,7 +7,15 @@ sap.ui.define([
 	"sap/ui/test/matchers/PropertyStrictEquals",
 	"./Common",
 	"./shareOptions"
-], function(Opa5, Press, EnterText, AggregationLengthEquals, AggregationFilled, PropertyStrictEquals, Common, shareOptions) {
+], function(
+    Opa5,
+	Press,
+	EnterText,
+	AggregationLengthEquals,
+	AggregationFilled,
+	PropertyStrictEquals,
+	Common,
+	shareOptions) {
 	"use strict";
 
 	var sViewName = "Worklist",
@@ -84,15 +92,6 @@ sap.ui.define([
 					});
 				},
 
-				iWaitUntilTheTableIsLoaded : function () {
-					return this.waitFor({
-						id : sTableId,
-						viewName : sViewName,
-						matchers : [ new AggregationFilled({name : "items"}) ],
-						errorMessage : "The Table has not been loaded"
-					});
-				},
-
 				iWaitUntilTheListIsNotVisible : function () {
 					return this.waitFor({
 						id : sTableId,
@@ -145,10 +144,14 @@ sap.ui.define([
 				},
 
 				iTypeSomethingInTheSearchThatCannotBeFoundAndTriggerRefresh : function () {
-					return this.iSearchForValueWithActions(function (oSearchField) {
+					var fnEnterTextAndFireRefreshButtonPressedOnSearchField = function (oSearchField) {
+						// set the search field value directly as EnterText action triggers a search event
 						oSearchField.setValue(sSomethingThatCannotBeFound);
-						oSearchField.fireSearch({refreshButtonPressed : true});
-					});
+
+						// fire the search to simulate a refresh button press
+						oSearchField.fireSearch({refreshButtonPressed: true});
+					};
+					return this.iSearchForValueWithActions(fnEnterTextAndFireRefreshButtonPressedOnSearchField);
 				},
 
 				iClearTheSearch : function () {
@@ -204,7 +207,7 @@ sap.ui.define([
 					var aAllEntities,
 						iExpectedNumberOfItems;
 
-					// retrieve all Products to be able to check for the total amount
+					// retrieve all Objects to be able to check for the total amount
 					this.waitFor(this.createAWaitForAnEntitySet({
 						entitySet: "Products",
 						success: function (aEntityData) {

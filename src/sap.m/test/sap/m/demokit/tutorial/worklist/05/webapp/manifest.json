@@ -1,5 +1,6 @@
 {
 	"_version": "1.12.0",
+
 	"sap.app": {
 		"id": "mycompany.myapp.MyWorklistApp",
 		"type": "application",
@@ -9,6 +10,7 @@
 		"applicationVersion": {
 			"version": "1.0.0"
 		},
+		"resources": "resources.json",
 		"dataSources": {
 			"mainService": {
 				"uri": "/northwind/V2/Northwind/Northwind.svc/",
@@ -18,12 +20,9 @@
 					"localUri": "localService/metadata.xml"
 				}
 			}
-		},
-		"sourceTemplate": {
-			"id": "sap.ui.ui5-template-plugin.1worklist",
-			"version": "1.52.7"
 		}
 	},
+
 	"sap.ui": {
 		"technology": "UI5",
 		"icons": {
@@ -40,6 +39,7 @@
 			"phone": true
 		}
 	},
+
 	"sap.ui5": {
 		"rootView": {
 			"viewName": "mycompany.myapp.MyWorklistApp.view.App",
@@ -48,7 +48,7 @@
 			"id": "app"
 		},
 		"dependencies": {
-			"minUI5Version": "1.42.0",
+			"minUI5Version": "1.60.0",
 			"libs": {
 				"sap.ui.core": {},
 				"sap.m": {},
@@ -79,9 +79,7 @@
 				"controlId": "app",
 				"controlAggregation": "pages",
 				"bypassed": {
-					"target": [
-						"notFound"
-					]
+					"target": ["notFound"]
 				},
 				"async": true
 			},
@@ -89,16 +87,12 @@
 				{
 					"pattern": "",
 					"name": "worklist",
-					"target": [
-						"worklist"
-					]
+					"target": ["worklist"]
 				},
 				{
 					"pattern": "Products/{objectId}",
 					"name": "object",
-					"target": [
-						"object"
-					]
+					"target": ["object"]
 				}
 			],
 			"targets": {

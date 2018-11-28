@@ -16,11 +16,6 @@
 		<semantic:content>
 			<Table
 				id="table"
-				busyIndicatorDelay="{worklistView>/tableBusyDelay}"
-				growing="true"
-				growingScrollToLoad="true"
-				noDataText="{worklistView>/tableNoDataText}"
-				updateFinished="onUpdateFinished"
 				width="auto"
 				items="{
 					path: '/Products',
@@ -31,17 +26,20 @@
 					parameters: {
 						'expand': 'Supplier'
 					}
-				}">
+				}"
+				noDataText="{worklistView>/tableNoDataText}"
+				busyIndicatorDelay="{worklistView>/tableBusyDelay}"
+				growing="true"
+				growingScrollToLoad="true"
+				updateFinished=".onUpdateFinished">
 				<headerToolbar>
 					<Toolbar>
-						<Title
-							id="tableHeader"
-							text="{worklistView>/worklistTableTitle}"/>
-						<ToolbarSpacer/>
+						<Title id="tableHeader" text="{worklistView>/worklistTableTitle}"/>
+						<ToolbarSpacer />
 						<SearchField
 							id="searchField"
 							tooltip="{i18n>worklistSearchTooltip}"
-							search="onSearch"
+							search=".onSearch"
 							width="auto">
 						</SearchField>
 					</Toolbar>
@@ -66,7 +64,8 @@
 							minScreenWidth="Tablet">
 							<Text text="{i18n>TablePriceColumnTitle}"/>
 						</Column>
-						<Column id="unitsOnOrderColumn"
+						<Column
+							id="unitsOnOrderColumn"
 							demandPopin="true"
 							minScreenWidth="Tablet"
 							hAlign="End">
@@ -112,9 +111,9 @@
 		</semantic:content>
 
 		<semantic:sendEmailAction>
-			<semantic:SendEmailAction id="shareEmail" press="onShareEmailPress"/>
+			<semantic:SendEmailAction id="shareEmail" press=".onShareEmailPress"/>
 		</semantic:sendEmailAction>
 
-
 	</semantic:SemanticPage>
+
 </mvc:View>

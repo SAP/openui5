@@ -2,12 +2,15 @@
 
 sap.ui.define([
 	"sap/ui/test/opaQunit",
+	"sap/ui/Device",
 	"./pages/Worklist",
 	"./pages/Browser",
 	"./pages/Object",
 	"./pages/App"
-], function (opaTest) {
+], function (opaTest, Device) {
 	"use strict";
+
+	var iDelay = (Device.browser.msie || Device.browser.edge) ? 1500 : 1000;
 
 	QUnit.module("Navigation");
 
@@ -62,29 +65,41 @@ sap.ui.define([
 		Then.onTheObjectPage.iShouldSeeTheRememberedObject();
 
 		// Cleanup
-		Then.iTeardownMyAppFrame();
+		Then.iTeardownMyApp();
 	});
 
 	opaTest("Start the App and simulate metadata error: MessageBox should be shown", function (Given, When, Then) {
 		//Arrangement
-		Given.iStartMyAppOnADesktopToTestErrorHandler("metadataError=true");
+		Given.iStartMyApp({
+			delay: iDelay,
+			metadataError: true
+		});
 
 		//Assertions
 		Then.onTheAppPage.iShouldSeeTheMessageBox();
 
+		// Actions
+		When.onTheAppPage.iCloseTheMessageBox();
+
 		// Cleanup
-		Then.iTeardownMyAppFrame();
+		Then.iTeardownMyApp();
 	});
 
 	opaTest("Start the App and simulate bad request error: MessageBox should be shown", function (Given, When, Then) {
 		//Arrangement
-		Given.iStartMyAppOnADesktopToTestErrorHandler("errorType=serverError");
+		Given.iStartMyApp({
+			delay: iDelay,
+			errorType: "serverError"
+		});
 
 		//Assertions
 		Then.onTheAppPage.iShouldSeeTheMessageBox();
 
+		// Actions
+		When.onTheAppPage.iCloseTheMessageBox();
+
 		// Cleanup
-		Then.iTeardownMyAppFrame();
+		Then.iTeardownMyApp();
 	});
 
 });

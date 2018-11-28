@@ -1,6 +1,7 @@
-/*global location*/
+/* global location history */
+
 sap.ui.define([
-	"mycompany/myapp/MyWorklistApp/controller/BaseController",
+	"./BaseController",
 	"sap/ui/model/json/JSONModel",
 	"sap/ui/core/routing/History",
 	"mycompany/myapp/MyWorklistApp/model/formatter"
@@ -8,7 +9,8 @@ sap.ui.define([
 	BaseController,
 	JSONModel,
 	History,
-	formatter) {
+	formatter
+) {
 	"use strict";
 
 	return BaseController.extend("mycompany.myapp.MyWorklistApp.controller.Object", {
@@ -138,5 +140,7 @@ sap.ui.define([
 			oViewModel.setProperty("/shareSendEmailMessage",
 			oResourceBundle.getText("shareSendEmailObjectMessage", [sObjectName, sObjectId, location.href]));
 		}
+
 	});
+
 });
