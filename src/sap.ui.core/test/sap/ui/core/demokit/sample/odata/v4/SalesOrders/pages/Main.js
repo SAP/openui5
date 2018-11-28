@@ -835,10 +835,10 @@ sap.ui.define([
 				},
 				checkSalesOrderIdInDetails : function (bChanged) {
 					return this.waitFor({
-						controlType : "sap.m.Text",
+						controlType : "sap.m.Input",
 						id : "SalesOrderID::detail",
-						success : function (oText) {
-							var sCurrentId = oText.getText(),
+						success : function (oInput) {
+							var sCurrentId = oInput.getValue(),
 								sIdBefore  = sap.ui.test.Opa.getContext().firstSalesOrderId,
 								sMessage = "checkSalesOrderIdInDetails(" + !!bChanged
 									+ ") before: '" + sIdBefore + "' current: '" + sCurrentId;
