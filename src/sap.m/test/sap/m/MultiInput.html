@@ -1043,6 +1043,24 @@
 			]
 		});
 
+		var oMultiInputReadOnly = new sap.m.MultiInput("multiInputReadOnlyInitial", {
+			width : "400px",
+			tokens : [
+				new sap.m.Token({text: "100", key: "0001"}),
+				new sap.m.Token({text: "101", key: "0002"}),
+				new sap.m.Token({text: "102", key: "0003"}),
+				new sap.m.Token({text: "103", key: "0004"}),
+				new sap.m.Token({text: "104", key: "0005"}),
+				new sap.m.Token({text: "105", key: "0006"}),
+				new sap.m.Token({text: "106", key: "0007"}),
+				new sap.m.Token({text: "107", key: "000800"}),
+				new sap.m.Token({text: "108", key: "000600"}),
+				new sap.m.Token({text: "109", key: "000700"}),
+				new sap.m.Token({text: "110", key: "000800"}),
+			]
+		}).setEditable(false)
+			.addStyleClass("sapUiLargeMarginBegin");
+
 		var readOnlyButton = new sap.m.ToggleButton({
 			text : "Toggle Read-Only",
 			press : function() {
@@ -1220,6 +1238,8 @@
 					new sap.m.Label({labelFor: oMultiInput9.getId(), text:"MultiInput with toggle button for read only"}),
 					oMultiInput9,
 					readOnlyButton,
+					new sap.m.Label({labelFor: oMultiInputReadOnly.getId(), text:"MultiInput in read-only state(editable=false). Should contain 11 tokens."}),
+					oMultiInputReadOnly,
 					new sap.m.Label({labelFor: multiInputWithSelectDialog.getId(), text : "MultiInput with SelectDialog", width: "100%"}),
 					multiInputWithSelectDialog,
 					new sap.m.Label({labelFor: oMinWidthMultiInput.getId(), text : "MultiInput with N-more and limited width", width: "100%"}),

@@ -5778,6 +5778,22 @@ sap.ui.define([
 	});
 
 	QUnit.test("_calculateSpaceForTokenizer", function(assert) {
+		var oMultiComboBox = new MultiComboBox({
+				width: "500px"
+			});
+
+		oMultiComboBox.placeAt("MultiComboBox-content");
+		sap.ui.getCore().applyChanges();
+
+		oMultiComboBox.$().find(".sapMMultiComboBoxInputContainer").removeClass("sapMMultiComboBoxInputContainer");
+		sap.ui.getCore().applyChanges();
+
+		assert.strictEqual(oMultiComboBox._calculateSpaceForTokenizer(), "398px", "_calculateSpaceForTokenizer returns a correct px value");
+
+		oMultiComboBox.destroy();
+	});
+
+	QUnit.test("_calculateSpaceForTokenizer with null DOM element reference", function(assert) {
 		var oMultiComboBox = new MultiComboBox(),
 			output;
 

@@ -507,7 +507,7 @@ sap.ui.define([
 
 		this.getTokens().forEach(function(oToken){
 			if (oToken.getDomRef()  && !oToken.$().hasClass("sapMHiddenToken")) {
-				this._oTokensWidthMap[oToken.getId()] = oToken.getDomRef().offsetWidth;
+				this._oTokensWidthMap[oToken.getId()] = oToken.$().outerWidth(true);
 			}
 		}.bind(this));
 
@@ -1134,7 +1134,7 @@ sap.ui.define([
 		oToken.addEventDelegate({
 			onAfterRendering: function () {
 				if (sap.ui.getCore().isThemeApplied() && oToken.getDomRef() && !oToken.$().hasClass("sapMHiddenToken")) {
-					this._oTokensWidthMap[oToken.getId()] = oToken.getDomRef().offsetWidth;
+					this._oTokensWidthMap[oToken.getId()] = oToken.$().outerWidth(true);
 				}
 			}.bind(this)
 		});
