@@ -639,11 +639,10 @@ function(
 	 * @private
 	 */
 	ListItemBase.prototype.isActionable = function() {
-		return this.getListProperty("includeItemInSelection") ||
-				this.getMode() == ListMode.SingleSelectMaster || (
-					this.getType() != ListItemType.Inactive &&
-					this.getType() != ListItemType.Detail
-				);
+		return this.isIncludedIntoSelection() || (
+			this.getType() != ListItemType.Inactive &&
+			this.getType() != ListItemType.Detail
+		);
 	};
 
 	ListItemBase.prototype.exit = function() {
@@ -756,13 +755,18 @@ function(
 	 * @return {Boolean}
 	 */
 	ListItemBase.prototype.isIncludedIntoSelection = function() {
+		if (!this.isSelectable()) {
+			return false;
+		}
+
 		var sMode = this.getMode();
-		return (sMode == ListMode.SingleSelectMaster || (
-				 this.getListProperty("includeItemInSelection") && (
-					sMode == ListMode.SingleSelectLeft ||
-					sMode == ListMode.SingleSelect ||
-					sMode == ListMode.MultiSelect)
-				));
+		return sMode == ListMode.SingleSelectMaster || (
+			this.getListProperty("includeItemInSelection") && (
+				sMode == ListMode.SingleSelectLeft ||
+				sMode == ListMode.SingleSelect ||
+				sMode == ListMode.MultiSelect
+			)
+		);
 	};
 
 	// informs the list when item's highlight is changed
