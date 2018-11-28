@@ -823,6 +823,16 @@ function(
 		});
 	});
 
+	function fnCreateComponentMockup(mTechnicalParameters) {
+		return {
+			getComponentData: function(){
+				return {
+					technicalParameters: mTechnicalParameters
+				};
+			}
+		};
+	}
+
 	QUnit.module("get/set URL Technical Parameter values", {
 
 		beforeEach : function(){
@@ -840,31 +850,14 @@ function(
 				"first-tech-parameter" : ["value1, value2"],
 				"second-tech-parameter" : ["value3"]
 			};
-
-			var oComponentMock = {
-				getComponentData: function(){
-					return {
-						technicalParameters: mParameters
-					};
-				}
-			};
-
-			assert.deepEqual(Utils.getTechnicalParametersForComponent(oComponentMock),
-				mParameters,
+			var oComponentMock = fnCreateComponentMockup(mParameters);
+			assert.deepEqual(Utils.getTechnicalParametersForComponent(oComponentMock), mParameters,
 				"then the function returns the variant reference in the URL parameter");
 		});
 
 		QUnit.test("when calling 'getTechnicalParametersForComponent' with technical parameters not existing", function(assert){
-			var oComponentMock = {
-				getComponentData: function(){
-					return {
-						technicalParameters: {}
-					};
-				}
-			};
-
-			assert.deepEqual(Utils.getTechnicalParametersForComponent(oComponentMock),
-				{},
+			var oComponentMock = fnCreateComponentMockup({});
+			assert.deepEqual(Utils.getTechnicalParametersForComponent(oComponentMock), {},
 				"then the function returns the variant reference in the URL parameter");
 		});
 

@@ -5,11 +5,12 @@
 sap.ui.define([
 	"sap/ui/fl/LrepConnector",
 	"sap/ui/fl/Utils",
+	"sap/ui/fl/variants/util/VariantUtil",
 	"sap/base/strings/formatMessage",
 	"sap/base/Log",
 	"sap/ui/thirdparty/jquery",
 	"sap/base/util/LoaderExtensions"
-], function(LrepConnector, Utils, formatMessage, Log, jQuery, LoaderExtensions) {
+], function(LrepConnector, Utils, VariantUtil, formatMessage, Log, jQuery, LoaderExtensions) {
 	"use strict";
 
 	/**
@@ -318,13 +319,19 @@ sap.ui.define([
 			Log.warning("Not all parameters were passed to determine a flexibility cache key.");
 			return Promise.resolve(Cache.NOTAG);
 		}
-		return this.getChangesFillingCache(LrepConnector.createConnector(), mComponent).then(function (oWrappedChangeFileContent) {
-			if (oWrappedChangeFileContent && oWrappedChangeFileContent.etag) {
-				return oWrappedChangeFileContent.etag;
-			} else {
-				return Cache.NOTAG;
-			}
-		});
+		return this.getChangesFillingCache(LrepConnector.createConnector(), mComponent)
+			.then(function (oWrappedChangeFileContent) {
+				if (oWrappedChangeFileContent && oWrappedChangeFileContent.etag) {
+					return oWrappedChangeFileContent.etag;
+				} else {
+					return Cache.NOTAG;
+				}
+			})
+			.then(function(sCacheKey) {
+				// concat current control variant id to cachekey if available
+				var sCurrentControlVariantId = VariantUtil.getCurrentControlVariantId(mComponent);
+				return sCurrentControlVariantId ? sCacheKey.concat(sCurrentControlVariantId) : sCacheKey;
+			});
 	};
 
 	/**
@@ -411,7 +418,7 @@ sap.ui.define([
 
 
 	/**
-	 * Retrievea a personalization object stored for an application under a given container ID and item name;
+	 * Retrieve a personalization object stored for an application under a given container ID and item name;
 	 * in case no itemName is given all items for the given container key are returned.
 	 *
 	 * @param {string} sReference The reference of the application for which the personalization should be retrieved
