@@ -50,7 +50,8 @@ function(
 	}
 
 	QUnit.module("Given RTA is started...", {
-		before: function() {
+
+		beforeEach: function() {
 			this.oPage = sap.ui.getCore().byId("Comp1---idMain1--mainPage");
 			this.oSmartForm = sap.ui.getCore().byId("Comp1---idMain1--MainForm");
 			this.oGroup = sap.ui.getCore().byId("Comp1---idMain1--GeneralLedgerDocument");
@@ -67,8 +68,6 @@ function(
 				rootControl : oComp.getAggregation("rootControl"),
 				showToolbars: false
 			});
-		},
-		beforeEach: function() {
 			return this.oRta.start();
 		},
 		afterEach: function() {
@@ -390,11 +389,21 @@ function(
 
 	QUnit.module("Given RTA is started for Object Page...", {
 		beforeEach : function() {
+
+			// View
+			// 	Page
+			// 		ObjectPageLayout
+			//			ObjectPageSection - visible
+			//				ObjectPageSubSection
+			//					Button
+			//			ObjectPageSection - invisible
+			//			ObjectPageSection - visible
+
 			var oEmbeddedView = sap.ui.getCore().byId("Comp1---idMain1");
 
 			var oSubSection = new ObjectPageSubSection({
 				id : oEmbeddedView.createId("subsection1"),
-				blocks: [new sap.m.Button({text: "abc"})]
+				blocks: [new Button({text: "abc"})]
 			});
 
 			this.oObjectPageSection1 = new ObjectPageSection({

@@ -171,14 +171,16 @@ function (
 			return;
 		}
 
-		var oOverlay = sap.ui.getCore().byId(oEvent.getParameters().id);
+		var oOverlay = OverlayRegistry.getOverlay(oEvent.getParameters().id);
 		var aRelevantOverlays = this._getRelevantOverlays(oOverlay);
 		var fnDebounced = DtUtil.debounce(function () {
-			var aNewStretchCandidates = this._getNewStretchCandidates(aRelevantOverlays).concat(this._getRelevantOverlaysOnEditableChange(oOverlay));
-			aNewStretchCandidates = aNewStretchCandidates.filter(function (sId, iPosition, aAllCandidates) {
-				return aAllCandidates.indexOf(sId) === iPosition;
-			});
-			this._setStyleClassForAllStretchCandidates(aNewStretchCandidates);
+			if (!this.bIsDestroyed && !oOverlay.bIsDestroyed) {
+				var aNewStretchCandidates = this._getNewStretchCandidates(aRelevantOverlays).concat(this._getRelevantOverlaysOnEditableChange(oOverlay));
+				aNewStretchCandidates = aNewStretchCandidates.filter(function (sId, iPosition, aAllCandidates) {
+					return aAllCandidates.indexOf(sId) === iPosition;
+				});
+				this._setStyleClassForAllStretchCandidates(aNewStretchCandidates);
+			}
 		}.bind(this));
 
 		aRelevantOverlays.forEach(function (oOverlay) {
