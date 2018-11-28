@@ -1,17 +1,20 @@
 /*global QUnit*/
 
-sap.ui.define([], function () {
+sap.ui.define([
+	'sap/ui/codeeditor/CodeEditor',
+	'sap/m/Button'
+], function (CodeEditor, Button) {
 		"use strict";
 
 		QUnit.module("Init", {
 			beforeEach: function () {
-				this.oCodeEditor = new sap.ui.codeeditor.CodeEditor({
+				this.oCodeEditor = new CodeEditor({
 					type: "html",
 					height: "300px",
 					maxLines: 70,
 					visible: false
 				});
-				this.oButton = new sap.m.Button({
+				this.oButton = new Button({
 					text: "click"
 				});
 
