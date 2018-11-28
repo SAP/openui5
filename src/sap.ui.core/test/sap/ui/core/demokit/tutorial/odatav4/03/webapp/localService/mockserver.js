@@ -8,6 +8,7 @@ sap.ui.define([
 	var oSandbox = sinon.sandbox.create(),
 		aUsers, // The array that holds the cached user data
 		sMetadata, // The string that holds the cached mock service metadata
+		sNamespace = "sap/ui/core/tutorial/odatav4",
 		sLogComponent = "sap.ui.core.tutorial.odatav4.mockserver", // Component for writing logs into the console
 		rBaseUrl = /services.odata.org\/TripPinRESTierService/;
 
@@ -163,11 +164,13 @@ sap.ui.define([
 	 */
 	function readData() {
 		var oMetadataPromise = new Promise(function (fnResolve, fnReject) {
+			var sResourcePath = sap.ui.require.toUrl(sNamespace + "/localService/metadata.xml");
 			var oRequest = new XMLHttpRequest();
+
 			oRequest.onload = function () {
 				// 404 is not an error for XMLHttpRequest so we need to handle it here
 				if (oRequest.status === 404) {
-					var sError = "resource './localService/metadata.xml' not found";
+					var sError = "resource " + sResourcePath + " not found";
 					Log.error(sError, sLogComponent);
 					fnReject(new Error(sError, sLogComponent));
 				}
@@ -175,21 +178,22 @@ sap.ui.define([
 				fnResolve();
 			};
 			oRequest.onerror = function() {
-				var sError = "error loading resource './localService/metadata.xml'";
+				var sError = "error loading resource '" + sResourcePath + "'";
 				Log.error(sError, sLogComponent);
 				fnReject(new Error(sError, sLogComponent));
 			};
-			oRequest.open("GET", "./localService/metadata.xml");
+			oRequest.open("GET", sResourcePath);
 			oRequest.send();
 		});
 
 		var oMockDataPromise = new Promise(function (fnResolve, fnReject) {
-			var oMockDataModel = new JSONModel("./localService/mockdata/people.json");
+			var sResourcePath = sap.ui.require.toUrl(sNamespace + "/localService/mockdata/people.json");
+			var oMockDataModel = new JSONModel(sResourcePath);
 
 			oMockDataModel.attachRequestCompleted(function (oEvent) {
 				// 404 is not an error for JSONModel so we need to handle it here
 				if (oEvent.getParameter("errorobject") && oEvent.getParameter("errorobject").statusCode === 404) {
-					var sError = "resource './localService/mockdata/people.json' not found";
+					var sError = "resource '" + sResourcePath + "' not found";
 					Log.error(sError, sLogComponent);
 					fnReject(new Error(sError, sLogComponent));
 				}
@@ -198,7 +202,7 @@ sap.ui.define([
 			});
 
 			oMockDataModel.attachRequestFailed(function () {
-				var sError = "error loading resource './localService/mockdata/people.json'";
+				var sError = "error loading resource '" + sResourcePath + "'";
 				Log.error(sError, sLogComponent);
 				fnReject(new Error(sError, sLogComponent));
 			});

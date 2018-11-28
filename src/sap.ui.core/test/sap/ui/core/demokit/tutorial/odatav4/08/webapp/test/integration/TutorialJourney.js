@@ -95,6 +95,6 @@ sap.ui.define([
 		Then.onTheTutorialPage.theTableToolbarItemsShouldBeEnabled(true).
 			and.thePageFooterShouldBeVisible(false);
 		// Cleanup
-		Then.iTeardownMyAppFrame();
+		Then.iTeardownMyApp();
 	});
 });
