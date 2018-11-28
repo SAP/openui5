@@ -35,13 +35,13 @@ sap.ui.define([
 				case "1":
 					return SyncPromise.resolve({
 						$kind : "NavigationProperty"
-//						$IsCollection : false
+//						$isCollection : false
 					});
 
 				case "N":
 					return SyncPromise.resolve({
 						$kind : "NavigationProperty",
-						$IsCollection : true
+						$isCollection : true
 					});
 
 				default:
