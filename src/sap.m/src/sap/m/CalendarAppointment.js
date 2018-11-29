@@ -15,14 +15,13 @@ sap.ui.define(['sap/ui/unified/CalendarAppointment'],
 		 *
 		 * @class
 		 * An appointment for use in a <code>SinglePlanningCalendar</code> or similar.
-		 * Disclaimer: this control is in beta state - incompatible API changes may be done before its official public release. Use at your own discretion.
 		 *
 		 * Applications could inherit from this element to add own fields.
 		 * @extends sap.ui.unified.CalendarAppointment
 		 * @version ${version}
 		 *
 		 * @constructor
-		 * @private
+		 * @experimental Disclaimer: this control is in a beta state - incompatible API changes may be done before its official public release. Use at your own discretion.
 		 * @since 1.61
 		 * @alias sap.m.CalendarAppointment
 		 */

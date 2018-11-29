@@ -18,8 +18,6 @@ function (library, SinglePlanningCalendarView, CalendarDate, CalendarUtils) {
 	 * @param {object} [mSettings] Initial settings for the new control
 	 *
 	 * @class
-	 * Disclaimer: This control is in a beta state - incompatible API changes may be done before its official public
-	 * release. Use at your own discretion.
 	 *
 	 * <h3>Overview</h3>
 	 *
@@ -33,7 +31,8 @@ function (library, SinglePlanningCalendarView, CalendarDate, CalendarUtils) {
 	 * @version ${version}
 	 *
 	 * @constructor
-	 * @private
+	 * @experimental Disclaimer: This control is in a beta state - incompatible API changes may be done before its official public
+	 * release. Use at your own discretion.
 	 * @since 1.61
 	 * @alias sap.m.SinglePlanningCalendarWeekView
 	 */
