@@ -2,7 +2,7 @@
  * ${copyright}
  */
 
-sap.ui.require([
+sap.ui.define([
 	"sap/ui/core/Component"
 ], function (Component) {
 	"use strict";
