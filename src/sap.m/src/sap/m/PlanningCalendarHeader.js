@@ -9,6 +9,7 @@ sap.ui.define([
 	'./Toolbar',
 	'./AssociativeOverflowToolbar',
 	'./Button',
+	'./AccButton',
 	'./Title',
 	'./ToolbarSpacer',
 	'./SegmentedButton',
@@ -17,6 +18,7 @@ sap.ui.define([
 	'sap/ui/core/format/DateFormat',
 	'sap/ui/core/Popup',
 	'sap/ui/core/IconPool',
+	'sap/ui/core/InvisibleText',
 	"./PlanningCalendarHeaderRenderer"
 ],
 function(
@@ -25,6 +27,7 @@ function(
 	Toolbar,
 	AssociativeOverflowToolbar,
 	Button,
+	AccButton,
 	Title,
 	ToolbarSpacer,
 	SegmentedButton,
@@ -33,6 +36,7 @@ function(
 	DateFormat,
 	Popup,
 	IconPool,
+	InvisibleText,
 	PlanningCalendarHeaderRenderer
 ) {
 	"use strict";
@@ -205,31 +209,40 @@ function(
 
 		oPrevBtn = new Button(sNavToolbarId + "-PrevBtn", {
 			icon: IconPool.getIconURI('slim-arrow-left'),
+			tooltip: oRB.getText("PCH_NAVIGATE_BACKWARDS"),
 			press: function () {
 				this.firePressPrevious();
 			}.bind(this)
 		});
 		this._oTodayBtn = new Button(sNavToolbarId + "-TodayBtn", {
 			text: oRB.getText("PLANNINGCALENDAR_TODAY"),
+			ariaLabelledBy: InvisibleText.getStaticId("sap.m", "PCH_NAVIGATE_TO_TODAY"),
 			press: function () {
 				this.firePressToday();
 			}.bind(this)
 		});
 		oNextBtn = new Button(sNavToolbarId + "-NextBtn", {
 			icon: IconPool.getIconURI('slim-arrow-right'),
+			tooltip: oRB.getText("PCH_NAVIGATE_FORWARD"),
 			press: function () {
 				this.firePressNext();
 			}.bind(this)
 		});
-		oPicker = new Calendar(sOPHId + "-Cal");
+		oPicker = new Calendar(sOPHId + "-Cal", {
+			ariaLabelledBy: InvisibleText.getStaticId("sap.ui.unified", "CALENDAR_DIALOG")
+		});
 		oPicker.attachEvent("select", this._handlePickerDateSelect, this);
 		oPicker.attachEvent("cancel", function (oEvent) {
+			var oPickerBtnDomRef = this._oPickerBtn.getDomRef();
+
 			this.fireCancel();
-			this._oPopup.close();
+			oPickerBtnDomRef && oPickerBtnDomRef.focus();
 		}, this);
 		this.setAggregation("_calendarPicker", oPicker);
-		this._oPickerBtn = new Button(sNavToolbarId + "-PickerBtn", {
+		this._oPickerBtn = new AccButton(sNavToolbarId + "-PickerBtn", {
 			text: this.getPickerText(),
+			ariaHaspopup: "dialog",
+			ariaLabelledBy: InvisibleText.getStaticId("sap.m", "PCH_SELECT_RANGE"),
 			press: function () {
 				var oDate = this.getStartDate() || new Date();
 				oPicker.displayDate(oDate);
@@ -396,12 +409,15 @@ function(
 	 * Handler for the select event of the Calendar in _calendarPicker aggregation.
 	 * @private
 	 */
-	PlanningCalendarHeader.prototype._handlePickerDateSelect = function () {
+	PlanningCalendarHeader.prototype._handlePickerDateSelect = function (oEvent) {
 		var oSelectedDate = this.getAggregation("_calendarPicker").getSelectedDates()[0].getStartDate();
 
 		this.setStartDate(oSelectedDate);
 		this._closeCalendarPickerPopup();
 		this.fireDateSelect();
+
+		// TODO: Focus should be returned to the picker after selection.
+		//oPickerBtnDomRef && oPickerBtnDomRef.focus();
 	};
 
 	/**

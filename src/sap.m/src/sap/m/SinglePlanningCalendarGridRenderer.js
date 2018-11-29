@@ -93,6 +93,8 @@ sap.ui.define(['sap/ui/unified/calendar/CalendarDate', 'sap/ui/unified/calendar/
 				oBlockersList = oControl._getBlockersToRender().oBlockersList;
 
 			oRm.write("<div");
+			oRm.writeAttribute("role", "grid");
+			oRm.writeAttribute("aria-labelledby", InvisibleText.getStaticId("sap.m", "SPC_BLOCKERS"));
 			oRm.addClass("sapMSinglePCBlockers");
 			oRm.addClass("sapUiCalendarRowVisFilled"); // TODO: when refactor the CSS of appointments maybe we won't need this class
 
@@ -122,7 +124,13 @@ sap.ui.define(['sap/ui/unified/calendar/CalendarDate', 'sap/ui/unified/calendar/
 				sText = oBlocker.getText(),
 				sIcon = oBlocker.getIcon(),
 				sId = oBlocker.getId(),
-				mAccProps = {labelledby: {value: InvisibleText.getStaticId("sap.ui.unified", "APPOINTMENT") + " " + sId + "-Descr", append: true}},
+				mAccProps = {
+					role: "gridcell",
+					labelledby: {
+						value: InvisibleText.getStaticId("sap.ui.unified", "APPOINTMENT"),
+						append: true
+					}
+				},
 				aAriaLabels = oControl.getAriaLabelledBy(),
 				iLeftPosition = iStartDayDiff * (100 / iColumns),
 				iRightPosition = (iColumns - iEndDayDiff - 1) * (100 / iColumns),
@@ -136,6 +144,9 @@ sap.ui.define(['sap/ui/unified/calendar/CalendarDate', 'sap/ui/unified/calendar/
 			if (sTitle) {
 				mAccProps["labelledby"].value = mAccProps["labelledby"].value + " " + sId + "-Title";
 			}
+
+			// Put start/end information after the title
+			mAccProps["labelledby"].value = mAccProps["labelledby"].value + " " + sId + "-Descr";
 
 			if (sText) {
 				mAccProps["labelledby"].value = mAccProps["labelledby"].value + " " + sId + "-Text";
@@ -153,6 +164,8 @@ sap.ui.define(['sap/ui/unified/calendar/CalendarDate', 'sap/ui/unified/calendar/
 			oRm.writeElementData(oBlocker);
 			oRm.writeAttribute("data-sap-level", iBlockerLevel);
 			oRm.writeAttribute("data-sap-width", iBlockerWidth);
+			oRm.writeAttribute("tabindex", 0);
+
 			if (sTooltip) {
 				oRm.writeAttributeEscaped("title", sTooltip);
 			}
@@ -238,6 +251,9 @@ sap.ui.define(['sap/ui/unified/calendar/CalendarDate', 'sap/ui/unified/calendar/
 				oRm.writeIcon("sap-icon://arrow-right", aClasses, { title: null });
 			}
 
+			oRm.write("<span id=\"" + sId + "-Descr\" class=\"sapUiInvisibleText\">" +
+				oControl._getAppointmentStartEndInfo(oBlocker) + "</span>");
+
 			oRm.write("</div>");
 
 			oRm.write("</div>");
@@ -291,6 +307,8 @@ sap.ui.define(['sap/ui/unified/calendar/CalendarDate', 'sap/ui/unified/calendar/
 				oAppointmentsToRender = oControl._getAppointmentsToRender();
 
 			oRm.write("<div");
+			oRm.writeAttribute("role", "grid");
+			oRm.writeAttribute("aria-labelledby", InvisibleText.getStaticId("sap.m", "SPC_APPOINTMENTS"));
 			oRm.addClass("sapMSinglePCColumns");
 			oRm.writeClasses();
 			oRm.write(">");
@@ -375,7 +393,13 @@ sap.ui.define(['sap/ui/unified/calendar/CalendarDate', 'sap/ui/unified/calendar/
 				sText = oAppointment.getText(),
 				sIcon = oAppointment.getIcon(),
 				sId = oAppointment.getId(),
-				mAccProps = {labelledby: {value: InvisibleText.getStaticId("sap.ui.unified", "APPOINTMENT") + " " + sId + "-Descr", append: true}},
+				mAccProps = {
+					role: "gridcell",
+					labelledby: {
+						value: InvisibleText.getStaticId("sap.ui.unified", "APPOINTMENT"),
+						append: true
+					}
+				},
 				aAriaLabels = oControl.getAriaLabelledBy(),
 				bAppStartIsOutsideVisibleStartHour = oColumnStartDateAndHour.getTime() > oAppStartDate.getTime(),
 				bAppEndIsOutsideVisibleEndHour = oColumnEndDateAndHour.getTime() < oAppEndDate.getTime(),
@@ -390,6 +414,9 @@ sap.ui.define(['sap/ui/unified/calendar/CalendarDate', 'sap/ui/unified/calendar/
 			if (sTitle) {
 				mAccProps["labelledby"].value = mAccProps["labelledby"].value + " " + sId + "-Title";
 			}
+
+			// Put start/end information after the title
+			mAccProps["labelledby"].value = mAccProps["labelledby"].value + " " + sId + "-Descr";
 
 			if (sText) {
 				mAccProps["labelledby"].value = mAccProps["labelledby"].value + " " + sId + "-Text";
@@ -407,6 +434,8 @@ sap.ui.define(['sap/ui/unified/calendar/CalendarDate', 'sap/ui/unified/calendar/
 			oRm.writeElementData(oAppointment);
 			oRm.writeAttribute("data-sap-level", iAppointmentLevel);
 			oRm.writeAttribute("data-sap-width", iAppointmentWidth);
+			oRm.writeAttribute("tabindex", 0);
+
 			if (sTooltip) {
 				oRm.writeAttributeEscaped("title", sTooltip);
 			}
@@ -528,7 +557,8 @@ sap.ui.define(['sap/ui/unified/calendar/CalendarDate', 'sap/ui/unified/calendar/
 			// 	sAriaText = sAriaText + "; " + this.getAriaTextForType(sType, aTypes);
 			// }
 
-			// oRm.write("<span id=\"" + sId + "-Descr\" class=\"sapUiInvisibleText\">" + sAriaText + "</span>");
+			oRm.write("<span id=\"" + sId + "-Descr\" class=\"sapUiInvisibleText\">" +
+				oControl._getAppointmentStartEndInfo(oAppointment) + "</span>");
 
 			oRm.write("</div>");
 

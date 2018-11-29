@@ -13,6 +13,7 @@ sap.ui.define([
 	'sap/ui/core/Control',
 	'sap/ui/core/Locale',
 	'sap/ui/core/LocaleData',
+	'sap/ui/core/InvisibleText',
 	'sap/ui/core/date/UniversalDate',
 	'sap/ui/core/format/DateFormat',
 	'sap/ui/unified/calendar/CalendarDate',
@@ -29,6 +30,7 @@ function(
 	Control,
 	Locale,
 	LocaleData,
+	InvisibleText,
 	UniversalDate,
 	DateFormat,
 	CalendarDate,
@@ -216,13 +218,14 @@ function(
 	SinglePlanningCalendar.prototype.init = function() {
 		var sOPCId = this.getId();
 
+		this._oRB = sap.ui.getCore().getLibraryResourceBundle("sap.m");
 		this._oDefaultView = new SinglePlanningCalendarWeekView({
 			key: "DEFAULT_INNER_WEEK_VIEW_CREATED_FROM_CONTROL",
 			title: ""
 		});
 		this.setAssociation("selectedView", this._oDefaultView);
 
-		this.setAggregation("_header", new PlanningCalendarHeader(sOPCId + "-Header"));
+		this.setAggregation("_header", this._createHeader());
 		this.setAggregation("_grid", new SinglePlanningCalendarGrid(sOPCId + "-Grid"));
 
 		this._attachHeaderEvents();
@@ -370,6 +373,23 @@ function(
 		this._alignColumns();
 
 		return this;
+	};
+
+	/**
+	 * Creates the header and adds proper <code>ariaLabelledBy</code> references on it's toolbars.
+	 * @returns {object} The created header
+	 * @private
+	 */
+	SinglePlanningCalendar.prototype._createHeader = function () {
+		var oHeader = new PlanningCalendarHeader(this.getId() + "-Header");
+
+		oHeader.getAggregation("_actionsToolbar")
+			.addAriaLabelledBy(InvisibleText.getStaticId("sap.m", "SPC_ACTIONS_TOOLBAR"));
+
+		oHeader.getAggregation("_navigationToolbar")
+			.addAriaLabelledBy(InvisibleText.getStaticId("sap.m", "SPC_NAVIGATION_TOOLBAR"));
+
+		return oHeader;
 	};
 
 	/**
