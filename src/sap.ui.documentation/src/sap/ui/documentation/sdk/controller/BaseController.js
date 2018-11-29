@@ -168,8 +168,10 @@ sap.ui.define([
 			 * @private
 			 */
 			_onOrientationChange: function(oEvent) {
-				if (Device.system.phone) {
-					this.byId("phoneImage").toggleStyleClass("phoneHeaderImageLandscape", oEvent.landscape);
+				var oImage = this.byId("phoneImage");
+
+				if (Device.system.phone && oImage) {
+					oImage.toggleStyleClass("phoneHeaderImageLandscape", oEvent.landscape);
 				}
 			},
 
