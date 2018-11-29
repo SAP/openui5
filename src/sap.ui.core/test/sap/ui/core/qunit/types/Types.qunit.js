@@ -1036,6 +1036,24 @@ sap.ui.define(["sap/ui/model/ValidateException",
 			assert.throws(function () { dateType.validateValue(dateValue); }, checkValidateException, "validate test");
 
 			dateType = new DateType({
+				pattern: 'yyyy-MM-dd'
+			}, {
+				minimum: new Date(2018, 0, 1), //01.01.2018
+				maximum: new Date(2019, 11, 31) //31.12.2019
+			});
+
+			dateValue = new Date(2017, 0, 1);
+
+			try {
+				dateType.validateValue(dateValue);
+			} catch (error) {
+				assert.equal(error.message, "Enter a date after 2018-01-01", "Correct error message shown");
+			}
+
+			assert.throws(function () { dateType.validateValue(dateValue); }, checkValidateException, "validate test");
+
+
+			dateType = new DateType({
 				source: { pattern: "dd.MM.yyyy" },
 				pattern: "yyyy/mm/dd"
 			}, {
