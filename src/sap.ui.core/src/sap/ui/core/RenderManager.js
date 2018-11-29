@@ -1482,7 +1482,7 @@ sap.ui.define([
 				"title": oIconInfo.text || null
 			};
 
-			this.style("font-family", encodeXML(oIconInfo.fontFamily));
+			this.style("font-family", "'" + encodeXML(oIconInfo.fontFamily) + "'");
 		} else {
 			mDefaultAttributes = {
 				role: "presentation",
