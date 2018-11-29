@@ -71,6 +71,7 @@ sap.ui.define([
 
 				jsonObj = XML2JSONUtils.XML2JSON(htmlContent, this._oConfig);
 				jsonObj.topicURL = topicURL;
+				jsonObj.iframeAttribute = Device.os.name === Device.os.OS.IOS ? ' scrolling="no" ' : "";
 
 
 				this.jsonDefModel.setData(jsonObj);
