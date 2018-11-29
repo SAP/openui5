@@ -545,50 +545,19 @@ sap.ui.define([
 
 		BlockBase._PARENT_GRID_SIZE = 12;
 
-		BlockBase.prototype._computeFormAdjustmentFields = function (oView, oLayoutData, sFormAdjustment, oParentColumns) {
+		BlockBase.prototype._computeFormAdjustmentFields = function (oView, sFormAdjustment, oParentColumns) {
 
-			if (oView && oLayoutData && sFormAdjustment && oParentColumns) {
+			if (oView && sFormAdjustment && oParentColumns) {
 
-				var oColumns = this._computeFormColumns(oLayoutData, sFormAdjustment, oParentColumns);
-
-				return jQuery.extend({},
-					BlockBase._FORM_ADJUSTMENT_CONST,
-					{columns: oColumns}
-				);
+				return sFormAdjustment === BlockBaseFormAdjustment.BlockColumns ?
+					jQuery.extend({}, BlockBase._FORM_ADJUSTMENT_CONST, {columns: oParentColumns}) :
+					BlockBase._FORM_ADJUSTMENT_CONST;
 			}
-		};
-
-		BlockBase.prototype._computeFormColumns = function (oLayoutData, sFormAdjustment, oParentColumns) {
-
-			var oColumns = jQuery.extend({}, BlockBase._FORM_ADJUSTMENT_CONST.columns);
-
-			if (sFormAdjustment === BlockBaseFormAdjustment.BlockColumns) {
-
-				var iColumnSpanXL = BlockBase._PARENT_GRID_SIZE / oParentColumns.XL,
-					iColumnSpanL = BlockBase._PARENT_GRID_SIZE / oParentColumns.L,
-					iColumnSpanM = BlockBase._PARENT_GRID_SIZE / oParentColumns.M;
-
-				oColumns.XL = oLayoutData.getSpanXL() / iColumnSpanXL;
-				oColumns.L = oLayoutData.getSpanL() / iColumnSpanL;
-				oColumns.M = oLayoutData.getSpanM() / iColumnSpanM;
-			}
-
-			// Those two checks are needed in order to avoid an exception thrown by ColumnLayout
-			if (oColumns.L > oColumns.XL) {
-				oColumns.L = oColumns.XL;
-			}
-
-			if (oColumns.M > oColumns.L) {
-				oColumns.M = oColumns.L;
-			}
-
-			return oColumns;
 		};
 
 		BlockBase.prototype._applyFormAdjustment = function () {
 
-			var oLayoutData = this.getLayoutData(),
-				sFormAdjustment = this.getFormAdjustment(),
+			var sFormAdjustment = this.getFormAdjustment(),
 				oView = this._getSelectedViewContent(),
 				oParent = this._oParentObjectPageSubSection,
 				oFormAdjustmentFields,
@@ -596,7 +565,7 @@ sap.ui.define([
 				oLayout;
 
 			if (sFormAdjustment && (sFormAdjustment !== BlockBaseFormAdjustment.None)
-				&& oView && oLayoutData && oParent) {
+				&& oView && oParent) {
 
 				var oParentColumns = oParent._oLayoutConfig;
 
@@ -606,7 +575,7 @@ sap.ui.define([
 						oItem.setLayout(SimpleFormLayout.ColumnLayout);
 
 						if (!oFormAdjustmentFields) {
-							oFormAdjustmentFields = this._computeFormAdjustmentFields(oView, oLayoutData, sFormAdjustment, oParentColumns);
+							oFormAdjustmentFields = this._computeFormAdjustmentFields(oView, sFormAdjustment, oParentColumns);
 						}
 
 						oLayout = oItem.getAggregation("form").getLayout();
@@ -632,7 +601,7 @@ sap.ui.define([
 						}
 
 						if (!oFormAdjustmentFields) {
-							oFormAdjustmentFields = this._computeFormAdjustmentFields(oView, oLayoutData, sFormAdjustment, oParentColumns);
+							oFormAdjustmentFields = this._computeFormAdjustmentFields(oView, sFormAdjustment, oParentColumns);
 						}
 
 						oColumnLayout._iBreakPointTablet -= BlockBase.FORM_ADUSTMENT_OFFSET;

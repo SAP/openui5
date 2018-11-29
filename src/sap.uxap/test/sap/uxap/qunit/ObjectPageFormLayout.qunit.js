@@ -39,38 +39,20 @@ function($, Core, XMLView) {
 		assert.strictEqual(aGridCells.length, 4, "Form grid has 4 cells");
 		assert.strictEqual(sGridCellsOuterClasses, sExpectedClasses,
 				"The correct classes are applied to to the outer div of the cells: " + sExpectedClasses);
+	});
 
-		// Act
-		oFormBlock.setColumnLayout("3");
-		this.clock.tick(iRenderingDelay);
-
-		// Arrange
-		sGridCellsOuterClasses = oFormBlock.$().find(".sapUiForm .sapUiFormCL>div")[0].className;
-		sExpectedClasses = "sapUiFormCLColumnsL3 sapUiFormCLColumnsM2 sapUiFormCLColumnsXL3 sapUiFormCLContent";
-
-		// Assert
-		assert.strictEqual(sGridCellsOuterClasses, sExpectedClasses,
-				"The correct classes are applied to to the outer div of the cells: " + sExpectedClasses);
-
-		// Act
-		oFormBlock.setColumnLayout("2");
-		this.clock.tick(iRenderingDelay);
+	QUnit.test("ObjectPage with TitleOnLeft Form layout", function (assert) {
 
 		// Arrange
-		sGridCellsOuterClasses = oFormBlock.$().find(".sapUiForm .sapUiFormCL>div")[0].className;
-		sExpectedClasses = "sapUiFormCLColumnsL2 sapUiFormCLColumnsM2 sapUiFormCLColumnsXL2 sapUiFormCLContent";
-
-		// Assert
-		assert.strictEqual(sGridCellsOuterClasses, sExpectedClasses,
-				"The correct classes are applied to to the outer div of the cells: " + sExpectedClasses);
+		var oObjectPage = this.oObjectPageFormView.byId("ObjectPageLayout"),
+			sExpectedClasses = "sapUiFormCLColumnsL2 sapUiFormCLColumnsM2 sapUiFormCLColumnsXL3 sapUiFormCLContent",
+			oFormBlock, sGridCellsOuterClasses;
 
 		// Act
-		oFormBlock.setColumnLayout("1");
+		oObjectPage.setSubSectionLayout("TitleOnLeft");
 		this.clock.tick(iRenderingDelay);
-
-		// Arrange
+		oFormBlock = this.oObjectPageFormView.byId("personalFormBlock");
 		sGridCellsOuterClasses = oFormBlock.$().find(".sapUiForm .sapUiFormCL>div")[0].className;
-		sExpectedClasses = "sapUiFormCLColumnsL1 sapUiFormCLColumnsM1 sapUiFormCLColumnsXL1 sapUiFormCLContent";
 
 		// Assert
 		assert.strictEqual(sGridCellsOuterClasses, sExpectedClasses,
@@ -116,37 +98,13 @@ function($, Core, XMLView) {
 		oFormBlock.setColumnLayout("3");
 		this.clock.tick(iRenderingDelay);
 
-		// Arrange
-		sGridCellsOuterClasses = oFormBlock.$().find(".sapUiForm .sapUiFormCL>div")[0].className;
-		sExpectedClasses = "sapUiFormCLColumnsL3 sapUiFormCLColumnsM2 sapUiFormCLColumnsXL3 sapUiFormCLContent";
-
-		// Assert
-		assert.strictEqual(sGridCellsOuterClasses, sExpectedClasses,
-				"The correct classes are applied to to the outer div of the cells: " + sExpectedClasses);
-
 		// Act
 		oFormBlock.setColumnLayout("2");
 		this.clock.tick(iRenderingDelay);
 
-		// Arrange
-		sGridCellsOuterClasses = oFormBlock.$().find(".sapUiForm .sapUiFormCL>div")[0].className;
-		sExpectedClasses = "sapUiFormCLColumnsL2 sapUiFormCLColumnsM2 sapUiFormCLColumnsXL2 sapUiFormCLContent";
-
-		// Assert
-		assert.strictEqual(sGridCellsOuterClasses, sExpectedClasses,
-				"The correct classes are applied to to the outer div of the cells: " + sExpectedClasses);
-
 		// Act
 		oFormBlock.setColumnLayout("1");
 		this.clock.tick(iRenderingDelay);
-
-		// Arrange
-		sGridCellsOuterClasses = oFormBlock.$().find(".sapUiForm .sapUiFormCL>div")[0].className;
-		sExpectedClasses = "sapUiFormCLColumnsL1 sapUiFormCLColumnsM1 sapUiFormCLColumnsXL1 sapUiFormCLContent";
-
-		// Assert
-		assert.strictEqual(sGridCellsOuterClasses, sExpectedClasses,
-				"The correct classes are applied to to the outer div of the cells: " + sExpectedClasses);
 
 		// Act
 		oTestInput.focus();
@@ -154,6 +112,24 @@ function($, Core, XMLView) {
 
 		// Assert
 		assert.strictEqual(parseInt(oTestInput.$().offset().top) < (iTestInputTop - oTestInput.$().height()), true, "Input field should be visible");
+	});
+
+	QUnit.test("ObjectPage with TitleOnLeft SimpleForm layout", function (assert) {
+
+		// Arrange
+		var oObjectPage = this.oObjectPageFormView.byId("ObjectPageLayout"),
+			sExpectedClasses = "sapUiFormCLColumnsL2 sapUiFormCLColumnsM2 sapUiFormCLColumnsXL3 sapUiFormCLContent",
+			oFormBlock, sGridCellsOuterClasses;
+
+		// Act
+		oObjectPage.setSubSectionLayout("TitleOnLeft");
+		this.clock.tick(iRenderingDelay);
+		oFormBlock = this.oObjectPageFormView.byId("personalSimpleFormBlock");
+		sGridCellsOuterClasses = oFormBlock.$().find(".sapUiForm .sapUiFormCL>div")[0].className;
+
+		// Assert
+		assert.strictEqual(sGridCellsOuterClasses, sExpectedClasses,
+				"The correct classes are applied to to the outer div of the cells: " + sExpectedClasses);
 	});
 
 });
