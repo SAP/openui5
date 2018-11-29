@@ -5,8 +5,9 @@ sap.ui.define([
 	"sap/ui/unified/Menu",
 	"sap/ui/unified/MenuItem",
 	"sap/ui/unified/MenuTextFieldItem",
-	"sap/base/Log"
-], function(qutils, Menu, MenuItem, MenuTextFieldItem, Log) {
+	"sap/base/Log",
+	"sap/ui/qunit/utils/waitForThemeApplied"
+], function(qutils, Menu, MenuItem, MenuTextFieldItem, Log, waitForThemeApplied) {
 	"use strict";
 
 	try {
@@ -1129,4 +1130,6 @@ sap.ui.define([
 		oMenu.destroy();
 		oOpenStub.restore();
 	});
+
+	return waitForThemeApplied();
 });
