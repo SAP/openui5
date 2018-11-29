@@ -2,9 +2,7 @@
 
 sap.ui.define([
 	"sap/ui/demo/walkthrough/model/formatter",
-	"sap/ui/model/resource/ResourceModel",
-	"sap/ui/thirdparty/sinon",
-	"sap/ui/thirdparty/sinon-qunit"
+	"sap/ui/model/resource/ResourceModel"
 ], function (formatter, ResourceModel) {
 	"use strict";
 

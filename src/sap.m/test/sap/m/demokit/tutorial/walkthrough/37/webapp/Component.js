@@ -1,7 +1,7 @@
 sap.ui.define([
 	"sap/ui/core/UIComponent",
 	"sap/ui/model/json/JSONModel",
-	"sap/ui/demo/walkthrough/controller/HelloDialog",
+	"./controller/HelloDialog",
 	"sap/ui/Device"
 ], function (UIComponent, JSONModel, HelloDialog, Device) {
 	"use strict";
@@ -13,7 +13,6 @@ sap.ui.define([
 		},
 
 		init: function () {
-
 			// call the init function of the parent
 			UIComponent.prototype.init.apply(this, arguments);
 
@@ -39,7 +38,7 @@ sap.ui.define([
 
 		},
 
-		exit : function() {
+		exit : function () {
 			this._helloDialog.destroy();
 			delete this._helloDialog;
 		},
@@ -48,9 +47,9 @@ sap.ui.define([
 			this._helloDialog.open();
 		},
 
-		getContentDensityClass : function() {
+		getContentDensityClass : function () {
 			if (!this._sContentDensityClass) {
-				if (!sap.ui.Device.support.touch) {
+				if (!Device.support.touch) {
 					this._sContentDensityClass = "sapUiSizeCompact";
 				} else {
 					this._sContentDensityClass = "sapUiSizeCozy";

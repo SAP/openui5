@@ -9,7 +9,7 @@
 		<content>
 			<Button
 				text="{i18n>showHelloButtonText}"
-				press="onShowHello"
+				press=".onShowHello"
 				class="myCustomButton"/>
 			<Input
 				value="{/recipient/name}"

@@ -11,11 +11,11 @@
 				id="helloDialogButton"
 				icon="sap-icon://world"
 				text="{i18n>openDialogButtonText}"
-				press="onOpenDialog"
+				press=".onOpenDialog"
 				class="sapUiSmallMarginEnd"/>
 			<Button
 				text="{i18n>showHelloButtonText}"
-				press="onShowHello"
+				press=".onOpenDialog"
 				class="myCustomButton"/>
 			<Input
 				value="{/recipient/name}"

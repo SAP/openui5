@@ -10,11 +10,11 @@
 			<Button
 				id="helloDialogButton"
 				text="{i18n>openDialogButtonText}"
-				press="onOpenDialog"
+				press=".onOpenDialog"
 				class="sapUiSmallMarginEnd"/>
 			<Button
 				text="{i18n>showHelloButtonText}"
-				press="onShowHello"
+				press=".onShowHello"
 				class="myCustomButton"/>
 			<Input
 				value="{/recipient/name}"

@@ -1,11 +1,11 @@
 sap.ui.define([
 	"sap/ui/core/mvc/Controller",
 	"sap/ui/model/json/JSONModel",
-	"sap/ui/demo/walkthrough/model/formatter",
+	"../model/formatter",
 	"sap/ui/model/Filter",
 	"sap/ui/model/FilterOperator",
 	"sap/ui/core/UIComponent"
-], function(Controller, JSONModel, formatter, Filter, FilterOperator, UIComponent) {
+], function (Controller, JSONModel, formatter, Filter, FilterOperator, UIComponent) {
 	"use strict";
 
 	return Controller.extend("sap.ui.demo.walkthrough.controller.InvoiceList", {
@@ -20,7 +20,6 @@ sap.ui.define([
 		},
 
 		onFilterInvoices: function (oEvent) {
-
 			// build filter array
 			var aFilter = [];
 			var sQuery = oEvent.getParameter("query");

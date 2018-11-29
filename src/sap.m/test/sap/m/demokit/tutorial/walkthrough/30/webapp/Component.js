@@ -1,7 +1,7 @@
 sap.ui.define([
 	"sap/ui/core/UIComponent",
 	"sap/ui/model/json/JSONModel",
-	"sap/ui/demo/walkthrough/controller/HelloDialog",
+	"./controller/HelloDialog",
 	"sap/base/Log"
 ], function (UIComponent, JSONModel, HelloDialog, Log) {
 	"use strict";
@@ -13,7 +13,6 @@ sap.ui.define([
 		},
 
 		init: function () {
-
 			// call the init function of the parent
 			UIComponent.prototype.init.apply(this, arguments);
 
@@ -41,7 +40,7 @@ sap.ui.define([
 			}
 		},
 
-		exit : function() {
+		exit : function () {
 			this._helloDialog.destroy();
 			delete this._helloDialog;
 		},

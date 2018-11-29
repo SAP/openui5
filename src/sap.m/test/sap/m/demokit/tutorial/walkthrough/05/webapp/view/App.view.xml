@@ -4,5 +4,5 @@
 	xmlns:mvc="sap.ui.core.mvc">
 	<Button
 		text="Say Hello"
-		press="onShowHello"/>
+		press=".onOpenDialog"/>
 </mvc:View>
