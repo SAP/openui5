@@ -436,8 +436,8 @@ sap.ui.define([
 		getContexts : function (iStartIndex, iLength) {
 			// extended change detection is ignored
 			this.iCurrentStart = iStartIndex || 0;
-			this.iCurrentLength =
-				Math.min(iLength || Infinity, this.iLength, this.oModel.iSizeLimit);
+			this.iCurrentLength = Math.min(iLength || Infinity, this.iLength - this.iCurrentStart,
+				this.oModel.iSizeLimit);
 			return this.getCurrentContexts();
 		},
 
