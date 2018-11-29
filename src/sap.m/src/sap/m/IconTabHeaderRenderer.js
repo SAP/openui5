@@ -2,8 +2,10 @@
  * ${copyright}
  */
 
-sap.ui.define(['sap/m/library'],
-	function(library) {
+sap.ui.define(['sap/m/library',
+			'sap/ui/Device'],
+	function(library,
+			 Device) {
 	"use strict";
 
 	// shortcut for sap.m.IconTabFilterDesign
@@ -80,10 +82,12 @@ sap.ui.define(['sap/m/library'],
 		// render left scroll arrow
 		oRM.renderControl(oControl._getScrollingArrow("left"));
 
-		// render scroll container on touch devices
-		oRM.write("<div id='" + oControl.getId() + "-scrollContainer' class='sapMITBScrollContainer'>");
+		var sAriaHidden = Device.browser.msie ? "aria-hidden='true'" : "";
 
-		oRM.write("<div id='" + oControl.getId() + "-head'");
+		// render scroll container on touch devices
+		oRM.write("<div id='" + oControl.getId() + "-scrollContainer' " +  sAriaHidden + " class='sapMITBScrollContainer'>");
+
+		oRM.write("<div id='" + oControl.getId() + "-head' " +  sAriaHidden);
 		oRM.addClass("sapMITBHead");
 
 		if (bTextOnly) {
