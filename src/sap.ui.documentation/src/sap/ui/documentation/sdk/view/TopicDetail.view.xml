@@ -9,7 +9,7 @@
 	<DynamicPage
 			id="topicDetailPage"
 			preserveHeaderStateOnScroll="true"
-			toggleHeaderOnTitleClick="false"
+			toggleHeaderOnTitleClick="{=${/bIsPhone} ? true : false}"
 			fitContent="true">
 		<title>
 			<DynamicPageTitle class="sapUiDocumentationDynamicPageTitle">
