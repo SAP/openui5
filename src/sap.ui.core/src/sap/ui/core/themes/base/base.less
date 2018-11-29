@@ -17,14 +17,47 @@
 @sapActiveColor: @sapHighlightColor;
 @sapHighlightTextColor: contrast(@sapHighlightColor, @sapTextColor, @sapContent_ContrastTextColor, @sapContent_ContrastTextThreshold);
 @sapTitleColor: @sapTextColor;
-@sapNegativeColor: #bb0000;
-@sapCriticalColor: #e78c07;
-@sapPositiveColor: #2b7d2b;
-@sapNeutralColor: #ffffff;
-@sapNegativeElementColor: @sapNegativeColor;
-@sapCriticalElementColor: @sapCriticalColor;
-@sapPositiveElementColor: @sapPositiveColor;
-@sapNeutralElementColor:  @sapNeutralColor;
+
+@sapErrorBackground:       lighten(@sapNegativeColor, 58);
+@sapWarningBackground:     lighten(@sapCriticalColor, 46);
+@sapSuccessBackground:     lighten(@sapPositiveColor, 60);
+@sapInformationBackground: lighten(@sapInformativeColor, 55);
+@sapNeutralBackground:     lighten(@sapNeutralColor, 56);
+
+@sapErrorBorderColor:       @sapErrorColor;
+@sapWarningBorderColor:     @sapWarningColor;
+@sapSuccessBorderColor:     @sapSuccessColor;
+@sapInformationBorderColor: @sapInformationColor;
+@sapNeutralBorderColor:     @sapNeutralColor;
+
+@sapNegativeElementColor:    @sapNegativeColor;
+@sapCriticalElementColor:    @sapCriticalColor;
+@sapPositiveElementColor:    @sapPositiveColor;
+@sapInformativeElementColor: @sapInformativeColor;
+@sapNeutralElementColor:     @sapNeutralColor;
+
+@sapNegativeTextColor:    @sapNegativeColor;
+@sapCriticalTextColor:    @sapCriticalColor;
+@sapPositiveTextColor:    @sapPositiveColor;
+@sapInformativeTextColor: @sapInformativeColor;
+@sapNeutralTextColor:     @sapNeutralColor;
+
+@sapNegativeColor:    #bb0000;
+@sapCriticalColor:    #e78c07;
+@sapPositiveColor:    #2b7d2b;
+@sapInformativeColor: #ec8b46;
+@sapNeutralColor:     #ffffff;
+
+@sapErrorColor:       lighten(@sapNegativeColor, 10);
+@sapWarningColor:     lighten(@sapCriticalColor, 10);
+@sapSuccessColor:     lighten(@sapPositiveColor, 10);
+@sapInformationColor: lighten(@sapInformativeColor, 10);
+
+@sapIndicationColor_1: #880000;
+@sapIndicationColor_2: #bb0000;
+@sapIndicationColor_3: #e78c07;
+@sapIndicationColor_4: #2b7c2b;
+@sapIndicationColor_5: #8fb5ff;
 
 @sapContent_LineHeight: 1.3;  //<=new
 @sapContent_ElementHeight: 1.37em;  //<=new
