@@ -91,6 +91,11 @@ describe('sap.m.MultiInput', function() {
 		expect(takeScreenshot(element(by.id("multiInputNotEditable")))).toLookAs("multi-input-not-editable");
 	});
 
+	//Show multi input with N-more and whole N-more label
+	it("should show  multiInput with N-more and reduced width", function () {
+		expect(takeScreenshot(element(by.id("minWidthMI")))).toLookAs("multi-input-min-width");
+	});
+
 	//Show selected multi input no placeholder
 	it("should show   multiInput no placeholder", function () {
 		element(by.id("multiInputNotEditable")).click();

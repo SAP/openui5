@@ -388,6 +388,18 @@
 			return null;
 		});
 
+		var oMinWidthMultiInput =  new sap.m.MultiInput("minWidthMI", {
+			width: "3rem",
+			tokens: [
+				new sap.m.Token({text: "Token 1", key: "0001"}),
+				new sap.m.Token({text: "Token 2", key: "0002"}),
+				new sap.m.Token({text: "Token 3", key: "0003"}),
+				new sap.m.Token({text: "Token 4", key: "0004"}),
+				new sap.m.Token({text: "Token 5", key: "0005"}),
+				new sap.m.Token({text: "Token 6", key: "0006"})
+			]
+		});
+
 		var oTableItemTemplate = new sap.m.ColumnListItem({
 			type : "Active",
 			vAlign : "Middle",
@@ -1210,6 +1222,8 @@
 					readOnlyButton,
 					new sap.m.Label({labelFor: multiInputWithSelectDialog.getId(), text : "MultiInput with SelectDialog", width: "100%"}),
 					multiInputWithSelectDialog,
+					new sap.m.Label({labelFor: oMinWidthMultiInput.getId(), text : "MultiInput with N-more and limited width", width: "100%"}),
+					oMinWidthMultiInput,
 					new sap.m.Label({labelFor: multiInputWithDataBinding.getId(), text : "MultiInput with DataBinding", width: "100%"}),
 					multiInputWithDataBinding,
 					oCondensedTable
