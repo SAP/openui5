@@ -1020,7 +1020,8 @@ sap.ui.define([
 				that.reset(ChangeReason.Refresh);
 			}, true);
 			oVirtualContext = Context.create(this.oModel, this,
-				this.oModel.resolve(this.sPath, this.oContext) + "/-2", -2);
+				this.oModel.resolve(this.sPath, this.oContext) + "/" + Context.VIRTUAL,
+				Context.VIRTUAL);
 			return [oVirtualContext];
 		}
 

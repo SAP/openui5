@@ -6,8 +6,9 @@ sap.ui.define([
 	"./lib/_Helper",
 	"sap/ui/base/SyncPromise",
 	"sap/ui/model/odata/OperationMode",
+	"sap/ui/model/odata/v4/Context",
 	"sap/ui/thirdparty/jquery"
-], function (_Helper, SyncPromise, OperationMode, jQuery) {
+], function (_Helper, SyncPromise, OperationMode, Context, jQuery) {
 	"use strict";
 
 	var sClassName = "sap.ui.model.odata.v4.ODataBinding",
@@ -149,7 +150,8 @@ sap.ui.define([
 			var mQueryOptions = aResult[0];
 
 			// Note: do not create a cache for a virtual context
-			if (mQueryOptions && !(oContext && oContext.getIndex && oContext.getIndex() === -2)) {
+			if (mQueryOptions && !(oContext && oContext.getIndex
+					&& oContext.getIndex() === Context.VIRTUAL)) {
 				return that.fetchResourcePath(oContext).then(function (sResourcePath) {
 					var oCache,
 						oError;

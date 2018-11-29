@@ -1415,7 +1415,7 @@ sap.ui.define([
 			bUseCache = {/*false or true*/};
 
 		this.mock(oMetaModel).expects("fetchObject").withExactArgs("/Function/value")
-			.returns(SyncPromise.resolve({$IsCollection : true, $Type : "some.EntityType"}));
+			.returns(SyncPromise.resolve({$isCollection : true, $Type : "some.EntityType"}));
 		oBindingMock.expects("doFetchQueryOptions").withExactArgs(undefined)
 			.returns(SyncPromise.resolve(mLocalQueryOptions));
 		oBindingMock.expects("selectKeyProperties")

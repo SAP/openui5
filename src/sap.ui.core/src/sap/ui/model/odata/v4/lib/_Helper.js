@@ -671,7 +671,7 @@ sap.ui.define([
 			 *   If the given meta path points to a collection-valued navigation property
 			 */
 			function checkCollection(sMetaPath) {
-				if (fnFetchMetadata(sMetaPath).getResult().$IsCollection) {
+				if (fnFetchMetadata(sMetaPath).getResult().$isCollection) {
 					throw new Error("Unsupported collection-valued navigation property "
 						+ sMetaPath);
 				}
