@@ -3037,6 +3037,7 @@ sap.ui.define([
 			"EMPLOYEE_2_EQUIPM€NTS", "EMPLOYEE_2_TEAM", "SALÃRY"]);
 		assertContextPaths(oBinding.getContexts(0, 10), ["ID", "AGE", "EMPLOYEE_2_CONTAINED_S",
 			"EMPLOYEE_2_EQUIPM€NTS", "EMPLOYEE_2_TEAM", "SALÃRY"]);
+		assertContextPaths(oBinding.getContexts(4, 10), ["EMPLOYEE_2_TEAM", "SALÃRY"]);
 
 		oMetaModel.setSizeLimit(2);
 		assertContextPaths(oBinding.getContexts(), ["ID", "AGE"]);
