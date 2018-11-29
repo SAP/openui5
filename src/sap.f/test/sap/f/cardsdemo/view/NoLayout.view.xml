@@ -45,8 +45,6 @@
 				<f:Card id="default6x4Busy" manifest="{manifests>/noLayout/card10}"/>
 				<f:Card id="default2x2Image" manifest="{manifests>/noLayout/card11}"/>
 				<f:Card id="card6x6withcomponent" manifest="{manifests>/noLayout/card12}"/>
-				<f:Card id="list" manifest="{manifests>/noLayout/listContent}"/>
-				<f:Card id="listcard2" manifest="{manifests>/noLayout/listcard2}"/>
 			</Panel>
 		</content>
 	</Page>

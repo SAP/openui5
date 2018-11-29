@@ -1,25 +1,26 @@
 /* ============================= */
 /* CSS for control sap.f/Card  */
-/* High Contrast Black theme     */
+/* Contrast Dark theme     */
 /* ============================= */
-
 .sapFCard .sapFCardHeader {
-  border-bottom: 1px solid @sapUiTileBorderColor;
+  border-bottom: 1px solid lighten(@sapUiTileBackground, 20);
   &:hover{
-    background: @sapUiHighlight;
+    background: lighten(@sapUiTileBackground,2);
   }
 
   &:active{
-    background: @sapUiHighlight;
+    background: lighten(@sapUiTileBackground,3);
   }
 
+
   &:hover .sapFCardIcon.sapFAvatar:not(.sapFAvatarImage):not(.sapFAvatarInitials ){
-    background: @sapUiHighlight;
+    background: lighten(@sapUiTileBackground,2);
   }
 
   &:active .sapFCardIcon.sapFAvatar:not(.sapFAvatarImage):not(.sapFAvatarInitials ){
-    background: @sapUiHighlight;
+    background: lighten(@sapUiTileBackground,3);
   }
+
   .sapFCardIcon.sapFAvatar{
     .sapUiIcon {
       color: @sapUiContentIconColor;
