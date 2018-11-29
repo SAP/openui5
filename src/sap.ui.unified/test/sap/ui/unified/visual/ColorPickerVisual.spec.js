@@ -25,23 +25,23 @@ describe("sap.ui.unified.ColorPickerVisual", function() {
 	it("should render large mode HSL color picker with RGB output", function() {
 		element(by.id("select_mode-label")).click();
 		element(by.id("large_mode")).click();
-		expect(takeScreenshot(element(by.id("ColorPickerArea-cont")))).toLookAs("Large_ColorPicker_HSL_RGB");
+		expect(takeScreenshot(element(by.id("ColorPickerArea-cont")))).toLookAs("Large_ColorPicker_HSV_RGB");
 	});
 
 	it("should render large mode HSV color picker with RGB output", function() {
 		element(by.id("hsv_hsl_btn")).click();
-		expect(takeScreenshot(element(by.id("ColorPickerArea-cont")))).toLookAs("Large_ColorPicker_HSV_RGB");
+		expect(takeScreenshot(element(by.id("ColorPickerArea-cont")))).toLookAs("Large_ColorPicker_HSL_RGB");
 	});
 
 
 	// Simplified mode
-	it("should render large mode HSL color picker with RGB output", function() {
+	it("should render simplified mode HSL color picker with RGB output", function() {
 		element(by.id("select_mode-label")).click();
 		element(by.id("simplified_mode")).click();
 		expect(takeScreenshot(element(by.id("ColorPickerArea-cont")))).toLookAs("Simplified_ColorPicker_HSL_RGB");
 	});
 
-	it("should render large mode HSV color picker with RGB output", function() {
+	it("should render simplified mode HSV color picker with RGB output", function() {
 		element(by.id("hsv_hsl_btn")).click();
 		expect(takeScreenshot(element(by.id("ColorPickerArea-cont")))).toLookAs("Simplified_ColorPicker_HSV_RGB");
 	});
