@@ -444,20 +444,20 @@ sap.ui.define([
 		 * Checks the control's value state after waiting some time for the control to set it.
 		 *
 		 * @param {object} assert The QUnit assert object
-		 * @param {string} sControlId The control ID
+		 * @param {string|sap.m.InputBase} vControl The control ID or an instance of InputBase
 		 * @param {sap.ui.core.ValueState} sState The expected value state
 		 * @param {string} sText The expected text
 		 *
 		 * @returns {Promise} A promise resolving when the check is done
 		 */
-		checkValueState : function (assert, sControlId, sState, sText) {
-			var oControl = this.oView.byId(sControlId);
+		checkValueState : function (assert, vControl, sState, sText) {
+			var oControl = typeof vControl === "string" ? this.oView.byId(vControl) : vControl;
 
 			return resolveLater(function () {
 				assert.strictEqual(oControl.getValueState(), sState,
-					sControlId + ": value state: " + oControl.getValueState());
+					oControl.getId() + ": value state: " + oControl.getValueState());
 				assert.strictEqual(oControl.getValueStateText(), sText,
-					sControlId + ": value state text: " + oControl.getValueStateText());
+					oControl.getId() + ": value state text: " + oControl.getValueStateText());
 			});
 		},
 
@@ -1451,7 +1451,7 @@ sap.ui.define([
 <Table id="table" items="{/EMPLOYEES}">\
 	<columns><Column/></columns>\
 	<ColumnListItem>\
-		<Text text="{ID}" />\
+		<Input value="{ID}" />\
 	</ColumnListItem>\
 </Table>',
 			that = this;
@@ -1483,6 +1483,10 @@ sap.ui.define([
 			that.oView.byId("table").getItems()[0].getBindingContext().refresh();
 
 			return that.waitForChanges(assert);
+		}).then(function () {
+
+			return that.checkValueState(assert,
+				that.oView.byId("table").getItems("items")[0].getCells()[0] , "Error", "Not found");
 		});
 	});
 
@@ -2621,14 +2625,15 @@ sap.ui.define([
 	<Table id="table" items="{SO_2_SOITEM}">\
 		<columns><Column/></columns>\
 		<ColumnListItem>\
-			<Text id="pos" text="{ItemPosition}" />\
+			<Text text="{ItemPosition}" />\
+			<Input value="{ProductID}" />\
 		</ColumnListItem>\
 	</Table>\
 </FlexBox>',
 			that = this;
 
 		this.expectRequest("SalesOrderList('42')?$select=SalesOrderID"
-			+ "&$expand=SO_2_SOITEM($select=ItemPosition,SalesOrderID)", {
+			+ "&$expand=SO_2_SOITEM($select=ItemPosition,ProductID,SalesOrderID)", {
 				"SalesOrderID" : "42",
 				"SO_2_SOITEM" : []
 			});
@@ -2661,6 +2666,10 @@ sap.ui.define([
 				that.oView.byId("table").getBinding("items").create(),
 				that.waitForChanges(assert)
 			]);
+		}).then(function () {
+			return that.checkValueState(assert,
+				that.oView.byId("table").getItems("items")[0].getCells()[1] , "Error",
+				"Enter a product ID");
 		});
 	});
 
@@ -3938,6 +3947,7 @@ sap.ui.define([
 		var sView = '\
 <FlexBox binding="{/EMPLOYEES(\'1\')}">\
 	<Text id="name" text="{Name}" />\
+	<Input id="status" value="{STATUS}" />\
 	<FlexBox id="action" \
 			binding="{com.sap.gateway.default.iwbep.tea_busi.v0001.AcChangeTeamOfEmployee(...)}">\
 		<layoutData><FlexItemData/></layoutData>\
@@ -3950,9 +3960,11 @@ sap.ui.define([
 
 		this.expectRequest("EMPLOYEES('1')", {
 				"Name" : "Jonathan Smith",
+				"STATUS" : "",
 				"@odata.etag" : "ETag"
 			})
 			.expectChange("name", "Jonathan Smith")
+			.expectChange("status", "")
 			.expectChange("teamId", null);
 
 		return this.createView(assert, sView).then(function () {
@@ -4028,6 +4040,8 @@ sap.ui.define([
 					}),
 				that.waitForChanges(assert)
 			]);
+		}).then(function () {
+			return that.checkValueState(assert, "status", "Error", "Illegal Status");
 		});
 	});
 
@@ -8813,10 +8827,11 @@ sap.ui.define([
 				code : "23",
 				message : "Just A Message",
 				//TODO:
-				// take care that relative bindings for the returnValueContext become
-				// also the messages returned by the operation with the right target.
+				// take care that relative bindings for the returnValueContext are also notified
+				// with the right target.
 				// Idea: report errors also with the path of the returnValueContext, in this example
 				// "Artists(ArtistID='42',IsActiveEntity=true)/Name"
+				// -> results in duplicated messages with different targets...
 				target : "/Artists(ArtistID='42',IsActiveEntity=true)"
 					+ "/special.cases.EditAction(...)/Name",
 				persistent : true,
