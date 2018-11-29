@@ -18,7 +18,8 @@ sap.ui.define([
 	"sap/ui/Device",
 	"sap/ui/core/CustomData",
 	"sap/ui/core/LayoutData",
-	"jquery.sap.global"
+	"jquery.sap.global",
+	"sap/ui/qunit/utils/waitForThemeApplied"
 ], function(
 	qutils,
 	SegmentedButton,
@@ -36,7 +37,8 @@ sap.ui.define([
 	jQuery,
 	Device,
 	CustomData,
-	LayoutData
+	LayoutData,
+	waitForThemeApplied
 ) {
 	// shortcut for sap.ui.core.mvc.ViewType
 	var ViewType = coreLibrary.mvc.ViewType;
@@ -3309,4 +3311,6 @@ sap.ui.define([
 		assert.strictEqual(this.oSB.getButtons()[0].$().data(this.oCD.getKey()), undefined,
 			"There should be new CustomData with key 'yours' rendered on the first button");
 	});
+
+	return waitForThemeApplied();
 });
