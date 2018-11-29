@@ -1,6 +1,7 @@
-# Ignore .gitignore, target and tmp folders
+# Ignore .gitignore, target, dist and tmp folders
 src/*/.gitignore
 src/*/target/
+src/*/dist/
 /target
 /tmp
 
@@ -23,6 +24,7 @@ grunt/bin
 # Ignore npm files/folders
 node_modules
 npm-debug.log
+package-lock.json
 
 # Ignore bower folder
 bower_components
@@ -41,9 +43,9 @@ web.config
 .vscode/
 
 # Ignore yarn files
-yarn.lock
-yarn-error.log
-*yarn
+yarn-error.log*
+yarn-debug.log*
+.yarn-integrity
 
 # Ignore documentation artifacts
 src/testsuite/src/main/webapp/documentation-config.js
