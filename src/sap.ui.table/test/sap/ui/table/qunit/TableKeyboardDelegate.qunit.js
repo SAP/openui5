@@ -7015,8 +7015,8 @@ sap.ui.define([
 		var oCellContent = oTable.getRows()[0].getCells()[0].getDomRef();
 
 		function test(sTitle, fnAct) {
-			fnAct();
 			aEvents = [];
+			fnAct();
 
 			return new Promise(function(resolve) {
 				oTable.attachEventOnce("_rowsUpdated", function() {
