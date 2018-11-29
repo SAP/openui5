@@ -19,6 +19,10 @@ sap.ui.define(function() {
 			}
 		},
 		tests: {
+			CanonicalRequests: {
+				title: "sap.ui.model.odata.v2.ODataModel - Canonical Requests",
+				sinon: 1 /* MockServer usage */
+			},
 			datajs: {
 				title: "sap.ui.thirdparty.datajs - QUnit tests"
 			},

@@ -196,6 +196,7 @@ sap.ui.define([
 				bDisableSoftStateHeader,
 				aBindableResponseHeaders,
 				sWarmupUrl,
+				bCanonicalRequests,
 				that = this;
 
 			if (typeof (sServiceUrl) === "object") {
@@ -230,8 +231,11 @@ sap.ui.define([
 				bDisableSoftStateHeader = mParameters.disableSoftStateHeader;
 				aBindableResponseHeaders = mParameters.bindableResponseHeaders;
 				sWarmupUrl = mParameters.warmupUrl;
+				bCanonicalRequests = mParameters.canonicalRequests;
 			}
-
+			this.mPathCache = {};
+			this.mInvalidatedPaths = {};
+			this.bCanonicalRequests = !!bCanonicalRequests;
 			this.sWarmupUrl = sWarmupUrl;
 			this.bWarmup = !!sWarmupUrl;
 			this.mSupportedBindingModes = {"OneWay": true, "OneTime": true, "TwoWay":true};
@@ -1329,23 +1333,36 @@ sap.ui.define([
 	 * @param {object} oData Data that should be imported
 	 * @param {map} mChangedEntities Map of changed entities
 	 * @param {object} oResponse Response where the data came from
+	 * @param {string} [sPath] The path to the data
+	 * @param {string} [sDeepPath] The deep path to the data
+	 * @param {string} [sKey] The cache key to the data if known
 	 * @return {string|string[]} Key of imported data or array of keys in case of nested entries
 	 * @private
 	 */
-	ODataModel.prototype._importData = function(oData, mChangedEntities, oResponse) {
+	ODataModel.prototype._importData = function(oData, mChangedEntities, oResponse, sPath, sDeepPath, sKey) {
 		var that = this,
-		aList, sKey, oResult, oEntry;
+			aList, oResult, oEntry;
+			sPath = sPath || "";
+			sKey = sKey || "";
+
 		if (oData.results) {
 			aList = [];
 			each(oData.results, function(i, entry) {
-				var sKey = that._importData(entry, mChangedEntities, oResponse);
+				sKey = that._getKey(entry);
+				var sKey = that._importData(entry, mChangedEntities, oResponse, sPath.substr(0, sPath.lastIndexOf("/")), sDeepPath, sKey);
 				if (sKey) {
 					aList.push(sKey);
 				}
 			});
 			return aList;
 		} else {
-			sKey = this._getKey(oData);
+			// data is single entity
+			if (sKey) {
+				sPath =  "/" + sKey;
+				sDeepPath += sKey.substr(sKey.indexOf("(")); /*e.g. SalesOrder(123)/ToLineItems + (345)*/
+			} else {
+				sKey = this._getKey(oData);
+			}
 			if (!sKey) {
 				return sKey;
 			}
@@ -1354,7 +1371,7 @@ sap.ui.define([
 			oEntry = this._getEntity(sKey);
 			if (!oEntry || (oEntry.__metadata && oEntry.__metadata.invalid)) {
 				oEntry = oData;
-				this._addEntity(oEntry);
+				sKey = this._addEntity(oEntry);
 			}
 
 			// Add response headers to the metadata so they can be accessed via "__metadata/headers/" binding path
@@ -1378,10 +1395,18 @@ sap.ui.define([
 
 			each(oData, function(sName, oProperty) {
 				if (oProperty && (oProperty.__metadata && oProperty.__metadata.uri || oProperty.results) && !oProperty.__deferred) {
-					oResult = that._importData(oProperty, mChangedEntities, oResponse);
+					var sNewPath = sPath + "/" + sName;
+					var sNewDeepPath = sDeepPath + "/" + sName;
+
+					oResult = that._importData(oProperty, mChangedEntities, oResponse, sNewPath, sNewDeepPath /*, sKey is not available */);
 					if (Array.isArray(oResult)) {
 						oEntry[sName] = { __list: oResult };
 					} else {
+						if (oEntry[sName].__ref) {
+							if (oEntry[sName].__ref !== oResult) {
+								that.mInvalidatedPaths[sPath.substr(sPath.lastIndexOf("(")) + "/" + sName] = "/" + oResult;
+							}
+						}
 						oEntry[sName] = { __ref: oResult };
 					}
 				} else if (!oProperty || !oProperty.__deferred) { //do not store deferred navprops
@@ -1393,7 +1418,34 @@ sap.ui.define([
 			oMap[sKey] = oEntry;
 			this._updateChangedEntities(oMap);
 			mChangedEntities[sKey] = true;
+
+
+			//try to resolve/cache paths containing mutiple nav properties likes "SalesOrderItem(123)/ToProduct/ToSupplier" => Product(123)/ToSupplier
+			this._writePathCache(this.resolveFromCache(sDeepPath), "/" + sKey);
+
+			this._writePathCache(sPath, "/" + sKey);
+			this._writePathCache(sDeepPath, "/" + sKey);
+
 			return sKey;
+		}
+	};
+
+	/**
+	 * Writes a new entry into the canonical path cache.
+	 *
+	 * @param {string} sPath The path is used as cache key.
+	 * @param {string} sCanonicalPath The canoncial path addressing the same resource.
+	 * @private
+	 */
+	ODataModel.prototype._writePathCache = function(sPath, sCanonicalPath){
+		if (sPath && sCanonicalPath/* last condition checks for nav property and parameter like Product(1), Product(2)*/){
+			if (!this.mPathCache[sPath]) {
+				this.mPathCache[sPath] = {};
+			}
+			this.mPathCache[sPath].canonicalPath = sCanonicalPath;
+			if (!this.mPathCache[sPath].updateKey) {
+				this.mPathCache[sPath].updateKey = sPath.substr(sPath.lastIndexOf("("));
+			}
 		}
 	};
 
@@ -1823,7 +1875,7 @@ sap.ui.define([
 		}
 
 		// if path cannot be resolved, call the callback function and return null
-		sResolvedPath = this.resolve(sPath, oContext);
+		sResolvedPath = this.resolve(sPath, oContext, this.bCanonicalRequests);
 		if (!sResolvedPath) {
 			if (fnCallBack) {
 				fnCallBack(null);
@@ -1840,7 +1892,8 @@ sap.ui.define([
 
 		if (!bReload) {
 			sCanonicalPath = this.resolve(sPath, oContext, true);
-			oNewContext = this.getContext(sCanonicalPath);
+			oNewContext = this.getContext(sCanonicalPath, oContext);
+			oNewContext.sDeepPath = this.resolveDeep(sPath, oContext, false);
 			if (fnCallBack) {
 				fnCallBack(oNewContext);
 			}
@@ -1856,7 +1909,8 @@ sap.ui.define([
 			oNewContext = null;
 
 			if (sKey) {
-				oNewContext = that.getContext('/' + sKey);
+				oNewContext = that.getContext('/' + sKey, oContext);
+				oNewContext.sDeepPath = that.resolveDeep(sPath, oContext);
 				oRef = {__ref: sKey};
 			}
 			/* in case of sPath == "" or a deep path (entity(1)/entities) we
@@ -1910,6 +1964,7 @@ sap.ui.define([
 		if (mParameters && mParameters.createPreliminaryContext) {
 			sResolvedPath = this.resolve(sPath, oContext);
 			oNewContext = this.getContext(sResolvedPath);
+			oNewContext.sDeepPath = this.resolveDeep(sPath, oContext);
 			return oNewContext;
 		}
 
@@ -2250,11 +2305,13 @@ sap.ui.define([
 	 * Adds an entity to the internal cache
 	 *
 	 * @param {object} oEntity The entity object
+	 * @return {string} The normalized entity key
 	 * @private
 	 */
 	ODataModel.prototype._addEntity = function(oEntity) {
 		var sKey = this._getKey(oEntity);
 		this.oData[sKey] = oEntity;
+		return sKey;
 	};
 
 	/**
@@ -2556,7 +2613,7 @@ sap.ui.define([
 	 */
 	ODataModel.prototype._getObject = function(sPath, oContext, bOriginalValue) {
 		var oNode = this.isLegacySyntax() ? this.oData : null, oChangedNode, oOrigNode,
-			sResolvedPath = this.resolve(sPath, oContext),
+			sResolvedPath = this.resolve(sPath, oContext, this.bCanonicalRequests) || this.resolve(sPath, oContext),
 			iSeparator, sDataPath, sMetaPath, oMetaContext, sKey, oMetaModel;
 
 		if (!sResolvedPath) {
@@ -2962,6 +3019,7 @@ sap.ui.define([
 			}
 
 			that._processSuccess(oRequest.request, oResponse, successWrapper, mGetEntities, mChangeEntities, mEntityTypes);
+			that._invalidatePathCache();
 			that._setSessionContextIdHeader(that._getHeader("sap-contextid", oResponse.headers));
 		}
 
@@ -3058,6 +3116,7 @@ sap.ui.define([
 						oRequestObject.response = oResponse;
 					}
 				}
+				that._invalidatePathCache();
 				that.checkUpdate(false, false, mGetEntities);
 			}
 
@@ -3120,6 +3179,33 @@ sap.ui.define([
 		};
 
 		return oRequestHandle;
+	};
+
+
+	/**
+	 * If canoncial path changes were detected, all canonical path cache entries are checked for up-to-dateness.
+	 * @private
+	 */
+
+	ODataModel.prototype._invalidatePathCache = function(){
+		var that = this, iIndex;
+		if (Object.keys(this.mInvalidatedPaths).length > 0){
+			Object.keys(this.mPathCache).forEach(function(sKey){
+				// Search for matching key and navigation property, e.g.: (key=123)/ToProduct
+				for (var sUpdateKey in that.mInvalidatedPaths) {
+					iIndex = sKey.indexOf(sUpdateKey);
+					if (iIndex > -1) {
+						if (iIndex + sUpdateKey.length !== that.mPathCache[sKey].canonicalPath.length) {
+							var sEnd = sKey.substr(iIndex + sUpdateKey.length);
+							that.mPathCache[sKey].canonicalPath = that.mInvalidatedPaths[sUpdateKey] + sEnd;
+						} else {
+							that.mPathCache[sKey].canonicalPath = that.mInvalidatedPaths[sUpdateKey];
+						}
+					}
+				}
+			});
+		}
+		this.mInvalidatedPaths = {};
 	};
 
 	/**
@@ -3550,7 +3636,7 @@ sap.ui.define([
 			if (!oResponse._imported && oResultData && (Array.isArray(oResultData) || typeof oResultData == 'object')) {
 				//need a deep data copy for import
 				oImportData = merge({}, oResultData);
-				that._importData(oImportData, mLocalGetEntities, oResponse);
+				that._importData(oImportData, mLocalGetEntities, oResponse, sPath, oRequest.deepPath);
 				oResponse._imported = true;
 			}
 
@@ -3814,6 +3900,7 @@ sap.ui.define([
 		sUrl = this._createRequestUrl('/' + sKey, null, aUrlParams, this.bUseBatch);
 
 		oRequest = this._createRequest(sUrl, sMethod, mHeaders, oPayload, sETag);
+		oRequest.deepPath = that.resolveDeep(sUrl);
 
 		//for createEntry requests we need to flag request again
 		if (bCreated) {
@@ -4180,6 +4267,7 @@ sap.ui.define([
 		return this._processRequest(function(requestHandle) {
 			sUrl = that._createRequestUrl(sPath, oContext, aUrlParams, that.bUseBatch);
 			oRequest = that._createRequest(sUrl, sMethod, mHeaders, oData, sETag);
+			oRequest.deepPath = that.resolveDeep(sPath, oContext);
 
 			mRequests = that.mRequests;
 			if (sGroupId in that.mDeferredGroups) {
@@ -4247,6 +4335,7 @@ sap.ui.define([
 		return this._processRequest(function(requestHandle) {
 			sUrl = that._createRequestUrl(sPath, oContext, aUrlParams, that.bUseBatch);
 			oRequest = that._createRequest(sUrl, sMethod, mHeaders, oData, sEtag);
+			oRequest.deepPath = that.resolveDeep(sPath, oContext);
 
 			sPath = that._normalizePath(sPath, oContext);
 			oEntityMetadata = that.oMetadata._getEntityTypeByPath(sPath);
@@ -4329,6 +4418,7 @@ sap.ui.define([
 		return this._processRequest(function(requestHandle) {
 			sUrl = that._createRequestUrl(sPath, oContext, aUrlParams, that.bUseBatch);
 			oRequest = that._createRequest(sUrl, sMethod, mHeaders, undefined, sETag);
+			oRequest.deepPath = that.resolveDeep(sPath, oContext);
 
 			mRequests = that.mRequests;
 			if (sGroupId in that.mDeferredGroups) {
@@ -4463,14 +4553,16 @@ sap.ui.define([
 				functionImport: true
 			}};
 
-			that._addEntity(oData);
+			sKey = that._addEntity(oData);
 			oContext = that.getContext("/" + sKey);
+			that._writePathCache("/" + sKey, "/" + sKey);
 			fnResolve(oContext);
 
 			aUrlParams = ODataUtils._createUrlParamsArray(mUrlParams);
 
 			sUrl = that._createRequestUrl(sFunctionName, null, aUrlParams, that.bUseBatch);
 			oRequest = that._createRequest(sUrl, sMethod, mHeaders, undefined, sETag);
+			oRequest.deepPath = that.resolveDeep(sFunctionName, null);
 			oRequest.key = sKey;
 
 			mRequests = that.mRequests;
@@ -4600,8 +4692,8 @@ sap.ui.define([
 			}
 
 			sUrl = that._createRequestUrl(sPath, oContext, aUrlParams, that.bUseBatch);
-
 			oRequest = that._createRequest(sUrl, sMethod, mHeaders, null, sETag);
+			oRequest.deepPath = that.resolveDeep(sPath, oContext);
 
 			mRequests = that.mRequests;
 			if (sGroupId in that.mDeferredGroups) {
@@ -5030,7 +5122,7 @@ sap.ui.define([
 			});
 		}
 
-		sResolvedPath = this.resolve(sPath, oContext, true);
+		sResolvedPath = this.resolve(sPath, oContext);
 
 		oEntry = this.getEntityByPath(sResolvedPath, null, oEntityInfo);
 		if (!oEntry) {
@@ -5429,11 +5521,12 @@ sap.ui.define([
 				changeSetId: sChangeSetId,
 				eTag: sETag}};
 
-			that._addEntity(merge({}, oEntity));
+			sKey = that._addEntity(merge({}, oEntity));
 			that.mChangedEntities[sKey] = oEntity;
 
 			sUrl = that._createRequestUrl(sPath, oContext, aUrlParams, that.bUseBatch);
 			oRequest = that._createRequest(sUrl, sMethod, mHeaders, oEntity, sETag);
+			oRequest.deepPath = that.resolveDeep(sPath, oContext);
 
 			oCreatedContext = that.getContext("/" + sKey); // context wants a path
 			oCreatedContext.bCreated = true;
@@ -5528,7 +5621,7 @@ sap.ui.define([
 		if (!oContext && !sPath.startsWith("/")) {
 			Log.fatal(this + " path " + sPath + " must be absolute if no Context is set");
 		}
-		return this.resolve(sPath, oContext);
+		return this.resolve(sPath, oContext, this.bCanonicalRequests) || this.resolve(sPath, oContext);
 	};
 
 	/**
@@ -5967,6 +6060,55 @@ sap.ui.define([
 	};
 
 	/**
+	 * Check canonical path cache for possible shorter representations of the given path.
+	 *
+	 * @param {string} sPath Path, which is checked.
+	 * @return {string|undefined} A shorter path or undefined.
+	 *
+	 * @example
+	 * sPath = a(1)/b(2)/toC/ToD
+	 * 1. Try to match this path.
+	 * 2. If no matching cache entry was found, iteratively try to match the path shorten by one segment:
+	 *  a) a(1)/b(2)/toC
+	 *  b) a(1)/b(2)
+	 * 	...
+	 * 3. If a matching cache entry was found, recursively check also this new path for shorter matches.
+	 *  E.g. following entry found in cache: "a(1)/b(2)" => "f(123)"
+	 *	a) f(123)/toC/ToD
+	 *  b) f(123)/toC
+	 * 	...
+	 * @private
+	 */
+
+	ODataModel.prototype.resolveFromCache = function(sPath){
+		if (!this.mPathCache){
+			return undefined;
+		}
+
+		var sStartingPath,
+			sEndingPathPart = "",
+			sCanonicalPath,
+			sNextMatch,
+			iIndex;
+
+		sCanonicalPath = this.mPathCache[sPath] ? this.mPathCache[sPath].canonicalPath : undefined;
+		if (sPath && sCanonicalPath !== sPath) {
+			sStartingPath = sCanonicalPath || sPath;
+			if (!sCanonicalPath) {
+				iIndex = sStartingPath.lastIndexOf("/");
+				sEndingPathPart = sStartingPath.substr(iIndex);
+				sStartingPath = sStartingPath.substr(0, iIndex);
+			}
+			sNextMatch = this.resolveFromCache(sStartingPath);
+
+			if (sNextMatch && sNextMatch !== sStartingPath) {
+				sCanonicalPath = sNextMatch + sEndingPathPart;
+			}
+		}
+		return sCanonicalPath;
+	};
+
+	/**
 	 * Resolve the path relative to the given context.
 	 *
 	 * In addition to {@link sap.ui.model.Model#resolve resolve} a
@@ -5978,19 +6120,36 @@ sap.ui.define([
 	 * @return {string} Resolved path, canonical path or undefined
 	 */
 	ODataModel.prototype.resolve = function(sPath, oContext, bCanonical) {
-		var sResolvedPath = Model.prototype.resolve.call(this,sPath, oContext);
-		if (!this._isMetadataPath(sResolvedPath) && bCanonical) {
-			var oEntityInfo = {},
-				oEntity = this.getEntityByPath(sPath, oContext, oEntityInfo);
-			if (oEntity) {
-				if (oEntityInfo.propertyPath) {
-					return "/" + oEntityInfo.key + "/" + oEntityInfo.propertyPath;
-				} else {
-					return "/" + oEntityInfo.key;
-				}
-			} else {
-				return undefined;
+		var sResolvedPath = Model.prototype.resolve.call(this, sPath, oContext);
+
+		if (sResolvedPath && !this._isMetadataPath(sResolvedPath) && bCanonical) {
+			var sCanonicalPath = this.resolveFromCache(sResolvedPath);
+			if (!sCanonicalPath){
+				//Use metadata to calc canonical path
+				sCanonicalPath = this.oMetadata._calculateCanonicalPath(sResolvedPath);
+				sCanonicalPath = this.resolveFromCache(sCanonicalPath) || sCanonicalPath;
 			}
+
+			this._writePathCache(sResolvedPath, sCanonicalPath);
+			return sCanonicalPath;
+		}
+		return sResolvedPath;
+	};
+
+	/**
+	 * Resolve the path relative to the given context. If the context contains a parent path
+	 * (deepPath) we resolve with this deepPath instead the canonical one.
+	 *
+	 * @param {string} sPath Path to resolve
+	 * @param {sap.ui.core.Context} [oContext] Context to resolve a relative path against
+	 * @return {string} Resolved path, canonical path or undefined
+	 * @private
+	 */
+	ODataModel.prototype.resolveDeep = function(sPath, oContext) {
+		var sResolvedPath = Model.prototype.resolve.call(this, sPath, oContext);
+		if (sPath && !sPath.startsWith("/")) {
+			// if sPath is relative we resolve with the deep path of the context - else the path is absolute already
+			sResolvedPath = oContext ? oContext.sDeepPath + '/' + sPath : sResolvedPath;
 		}
 		return sResolvedPath;
 	};

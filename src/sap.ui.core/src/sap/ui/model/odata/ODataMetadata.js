@@ -394,8 +394,7 @@ sap.ui.define([
 	 */
 	ODataMetadata.prototype._getEntityAssociationEnd = function(oEntityType, sName) {
 
-		if (!this.oMetadata || jQuery.isEmptyObject(this.oMetadata)) {
-			assert(undefined, "No metadata loaded!");
+		if (!this._checkMetadataLoaded()) {
 			return null;
 		}
 		// fill the cache
@@ -464,14 +463,15 @@ sap.ui.define([
 			assert(undefined, "sPath not defined!");
 			return null;
 		}
-		if (!this.oMetadata || jQuery.isEmptyObject(this.oMetadata)) {
-			assert(undefined, "No metadata loaded!");
-			return null;
-		}
 
 		if (this.mEntityTypes[sPath]) {
 			return this.mEntityTypes[sPath];
 		}
+
+		if (!this._checkMetadataLoaded()) {
+			return null;
+		}
+
 
 		// remove starting and trailing /
 		var sCandidate = sPath.replace(/^\/|\/$/g, ""),
@@ -534,6 +534,7 @@ sap.ui.define([
 				if (oEntityType) {
 					// store the type name also in the oEntityType
 					oEntityType.entityType = this._getEntityTypeName(oFuncType.entitySet);
+					oEntityType.isFunction = true;
 				}
 			}
 		}
@@ -565,8 +566,7 @@ sap.ui.define([
 		sNamespace = oEntityTypeInfo.namespace;
 		sEntityName = oEntityTypeInfo.name;
 
-		if (!this.oMetadata || jQuery.isEmptyObject(this.oMetadata)) {
-			assert(undefined, "No metadata loaded!");
+		if (!this._checkMetadataLoaded()) {
 			return null;
 		}
 		if (this.mEntityTypes[sName]) {
@@ -586,6 +586,20 @@ sap.ui.define([
 			});
 		}
 		return oEntityType;
+	};
+
+
+	/**
+	 * Checks whether the metadata was loaded.
+	 *
+	 * @returns {boolean} Returns true, if the metadata was loaded.
+	 */
+	ODataMetadata.prototype._checkMetadataLoaded = function(){
+		if (!this.oMetadata || jQuery.isEmptyObject(this.oMetadata)) {
+			assert(undefined, "No metadata loaded!");
+			return false;
+		}
+		return true;
 	};
 
 	/**
@@ -1075,7 +1089,8 @@ sap.ui.define([
 	 * @return {map|undefined} The EntitySet to which the path belongs or undefined if none
 	 */
 	ODataMetadata.prototype._getEntitySetByPath = function(sEntityPath) {
-		if (!this._entitySetMap) {
+		var oEntityType;
+		if (!this._entitySetMap && this._checkMetadataLoaded()) {
 			// Cache results of entity set lookup
 			this._entitySetMap = {};
 			this.oMetadata.dataServices.schema.forEach(function(mShema) {
@@ -1083,6 +1098,15 @@ sap.ui.define([
 					mShema.entityContainer.forEach(function(mContainer) {
 						if (mContainer.entitySet) {
 							mContainer.entitySet.forEach(function(mEntitySet) {
+								oEntityType = this._getEntityTypeByName(mEntitySet.entityType);
+								//convert navProp array to map
+								oEntityType.__navigationPropertiesMap = {};
+								if (oEntityType.navigationProperty && oEntityType.navigationProperty.length > 0) {
+									oEntityType.navigationProperty.forEach(function(oProp) {
+										oEntityType.__navigationPropertiesMap[oProp.name] = oProp;
+									});
+								}
+								mEntitySet.__entityType = oEntityType;
 								this._entitySetMap[mEntitySet.entityType] = mEntitySet;
 							}, this);
 						}
@@ -1091,9 +1115,9 @@ sap.ui.define([
 			}, this);
 		}
 
-		var oEntityType = this._getEntityTypeByPath(sEntityPath);
+		oEntityType = this._getEntityTypeByPath(sEntityPath);
 
-		if (oEntityType) {
+		if (oEntityType)  {
 			return this._entitySetMap[oEntityType.entityType];
 		}
 
@@ -1218,6 +1242,45 @@ sap.ui.define([
 			}
 		}
 		return null;
+	};
+
+	/**
+	 * Calculates the canonical path of the given deep path.
+	 *
+	 * @param {string} sPath The deep path
+	 * @return {string|undefined} The canonical path or undefined
+	 * @private
+	 */
+	ODataMetadata.prototype._calculateCanonicalPath = function(sPath) {
+		var sCanonicalPath, iIndex, aParts, sTempPath;
+		if (sPath) {
+			iIndex = sPath.lastIndexOf(")");
+			if (iIndex !== -1) {
+				sTempPath = sPath.substr(0, iIndex + 1);
+				var oEntitySet = this._getEntitySetByPath(sTempPath);
+				if (oEntitySet) {
+					if (oEntitySet.__entityType.isFunction) {
+						sCanonicalPath = sPath;
+					} else {
+						aParts = sPath.split("/");
+						if (sTempPath === "/" + aParts[1]) {
+							//check for nav prop
+							if (!(aParts[2] in oEntitySet.__entityType.__navigationPropertiesMap)) {
+								sCanonicalPath = sPath;
+							}
+
+						} else {
+							aParts = sTempPath.split("/");
+							sTempPath = '/' + oEntitySet.name + aParts[aParts.length - 1].substr(aParts[aParts.length - 1].indexOf("(")) + sPath.substr(iIndex + 1);
+							if (sTempPath !== sPath) {
+								sCanonicalPath = sTempPath;
+							}
+						}
+					}
+				}
+			}
+		}
+		return sCanonicalPath;
 	};
 
 	return ODataMetadata;
