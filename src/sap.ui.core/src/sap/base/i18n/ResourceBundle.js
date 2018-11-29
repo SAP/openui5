@@ -40,7 +40,8 @@ sap.ui.define([
 		"he" : "iw",
 		"yi" : "ji",
 		"id" : "in",
-		"sr" : "sh"
+		"sr" : "sh",
+		"nb" : "no"
 	};
 
 	/**
@@ -52,7 +53,8 @@ sap.ui.define([
 		"iw" : "he",
 		"ji" : "yi",
 		"in" : "id",
-		"sh" : "sr"
+		"sh" : "sr",
+		"no" : "nb"
 	};
 
 	/**
