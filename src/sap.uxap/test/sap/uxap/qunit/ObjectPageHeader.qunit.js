@@ -213,7 +213,27 @@ function ($, Core, ObjectPageLayout, ObjectPageHeader, ObjectPageHeaderActionBut
 	});
 	QUnit.test("No extra scroll event upon layout calculation", function (assert) {
 
-		var done = assert.async();
+		var done = assert.async(),
+
+		oHeader = new sap.uxap.ObjectPageHeader({
+			objectTitle: "Long title that wraps and goes over more lines",
+			objectSubtitle: "Long subtitle that wraps and goes over more lines",
+			objectImageURI: "qunit/img/HugeHeaderPicture.png",
+			showTitleSelector: true,
+			showMarkers:true,
+			markFavorite:true,
+			markLocked:true,
+			markFlagged:true,
+			objectImageShape: "Circle",
+			actions: [ new sap.m.Button({text: "Action"})]
+		}),
+		sIdentifierLineOrigHeight,
+		oDelegate = { onAfterRendering: function() {
+				sIdentifierLineOrigHeight = oHeader.$().find(".sapUxAPObjectPageHeaderIdentifier").get(0).style.height;
+				oHeader.removeEventDelegate(oDelegate);
+			}};
+
+		oHeader.addEventDelegate(oDelegate, oHeader);
 
 		var op = new sap.uxap.ObjectPageLayout({
 				height: "300px",
@@ -221,18 +241,7 @@ function ($, Core, ObjectPageLayout, ObjectPageHeader, ObjectPageHeaderActionBut
 				showTitleInHeaderContent: true,
 				useIconTabBar: true,
 				headerTitle: [
-					new sap.uxap.ObjectPageHeader({
-						objectTitle: "Long title that wraps and goes over more lines",
-						objectSubtitle: "Long subtitle that wraps and goes over more lines",
-						objectImageURI: "qunit/img/HugeHeaderPicture.png",
-						showTitleSelector: true,
-						showMarkers:true,
-						markFavorite:true,
-						markLocked:true,
-						markFlagged:true,
-						objectImageShape: "Circle",
-						actions: [ new sap.m.Button({text: "Action"})]
-					})
+					oHeader
 				],
 				headerContent: [
 					new sap.m.Text({
@@ -281,6 +290,7 @@ function ($, Core, ObjectPageLayout, ObjectPageHeader, ObjectPageHeaderActionBut
 						op.getHeaderTitle()._adaptLayout();
 						setTimeout(function() {
 							assert.ok(!scrollSpy.called, "no extra scroll upon header layout calculation");
+							assert.strictEqual(oHeader.$().find(".sapUxAPObjectPageHeaderIdentifier").get(0).style.height, sIdentifierLineOrigHeight, "original css is unmodified");
 							op.destroy(); // cleanup
 							done();
 						}, 1000);
