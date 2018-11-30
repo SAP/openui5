@@ -11092,4 +11092,67 @@ sap.ui.define([
 		var selectedText = this.comboBox._$input.getSelectedText();
 		assert.equal(selectedText, "äme", "Selected text is correct");
 	});
+
+	QUnit.module("Composition characters handling", {
+		beforeEach: function () {
+			this.comboBox = new ComboBox({
+				items: [
+					new Item({
+						key: '1',
+						text: '서비스 ID' //tjqltm ID
+					}),
+					new Item({
+						key: '2',
+						text: '서비스 유헝' // tjqltm
+					}),
+					new Item({
+						key: '3',
+						text: '성별' // tjd quf
+					})
+				]
+			}).placeAt("content");
+
+			sap.ui.getCore().applyChanges();
+		},
+		afterEach: function () {
+			this.comboBox.destroy();
+			this.comboBox = null;
+		}
+	});
+
+	QUnit.test("Filtering", function (assert) {
+
+		// act
+		var bMatched = ComboBoxBase.DEFAULT_TEXT_FILTER("서", this.comboBox.getItems()[0], "getText");
+		var aFilteredItems = this.comboBox.filterItems({ value: "서", properties: this.comboBox._getFilters() });
+
+		// assert
+		assert.ok(bMatched, "'DEFAULT_TEXT_FILTER' should match composite characters");
+		assert.strictEqual(aFilteredItems.length, 2, "Two items should be filtered");
+		assert.strictEqual(aFilteredItems[0].getText(), "서비스 ID", "Text should start with 서");
+	});
+
+	QUnit.test("Composititon events", function (assert) {
+		var oFakeEvent = {
+			isMarked: function () { },
+			srcControl: this.comboBox,
+			target: {
+				value: "서"
+			}
+		},
+		oHandleInputEventSpy = this.spy(this.comboBox, "handleInputValidation"),
+		oUpdateDomValueSpy = this.spy(this.comboBox, "updateDomValue");
+
+	this.comboBox._bDoTypeAhead = true;
+
+	// act
+	this.comboBox.oncompositionstart(oFakeEvent);
+	this.comboBox.oninput(oFakeEvent);
+	this.clock.tick(300);
+
+	// assert
+	assert.ok(oHandleInputEventSpy.called, "handleInputValidation should be called on input");
+	assert.notOk(oUpdateDomValueSpy.called, "Type ahead should not be called while composing");
+
+	});
 });
