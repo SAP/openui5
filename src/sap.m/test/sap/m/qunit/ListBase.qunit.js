@@ -1078,7 +1078,7 @@ sap.ui.define([
 			});
 
 			// simulate tap & check result
-			oSelectionItem.ontap({ srcControl: oSelectionItem });
+			oSelectionItem.$().trigger("tap");
 			assert.strictEqual(oList.getSelectedItem(), oSelectionItem, 'Item "' + oSelectionItem + '" should be selected');
 			oSelectionItem.setSelected(false);
 
@@ -1090,7 +1090,7 @@ sap.ui.define([
 			});
 
 			// simulate tap & check result
-			oSelectionItem.ontap({ srcControl: oSelectionItem });
+			oSelectionItem.$().trigger("tap");
 			assert.strictEqual(oList.getSelectedItem(), null, 'Item "' + oSelectionItem + '" should not be selected / selection should be empty');
 			oSelectionItem.setSelected(false);
 
@@ -1894,7 +1894,8 @@ sap.ui.define([
 				return {
 					toString: function() {
 						return bHasSelection ? "Hello World" : "";
-					}
+					},
+					focusNode: oListItem.getDomRef("content").firstChild
 				};
 			});
 
@@ -1907,7 +1908,7 @@ sap.ui.define([
 			assert.equal(window.getSelection().toString(), "");
 			oListItem.$().trigger("tap");
 			this.clock.tick(0);
-			assert.ok(fnPress.called, "Press event not fired");
+			assert.ok(fnPress.called, "Press event fired");
 
 			// clean up
 			oList.destroy();
