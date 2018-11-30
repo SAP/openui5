@@ -44,6 +44,7 @@ sap.ui.define([
 				useBatch:true,
 				defaultUpdateMethod: "PUT"
 			});
+			return oModel.metadataLoaded();
 		},
 		afterEach: function() {
 			oMockServer.stop();
@@ -112,348 +113,338 @@ sap.ui.define([
 	QUnit.test("Request Creation - CREATE & UPDATE", function(assert){
 
 		var done = assert.async();
-		oModel.attachMetadataLoaded(function() {
-			createTreeBinding("/orgHierarchy", null, [], {
-				threshold: 10,
-				countMode: "Inline",
-				operationMode: "Server",
-				numberOfExpandedLevels: 2
-			});
-
-			var oN1002, oN1029, oN1031;
-
-			var aNewNodeIds = [];
-
-			function handler1 (oEvent) {
-				oBinding.detachChange(handler1);
-
-				oN1002 = oBinding.findNode(1);
-				oN1029 = oBinding.findNode(28);
-				oN1031 = oBinding.findNode(30);
-
-				var oNewContextA = oBinding.createEntry();
-
-				oBinding.addContexts(oN1002.context, [oNewContextA]);
-				aNewNodeIds.push(oNewContextA.getProperty("HIERARCHY_NODE"));
-
-				var oNA = oBinding.findNode(2);
-
-				var oNewContextB = oBinding.createEntry();
-				var oNewContextC = oBinding.createEntry();
-
-				oBinding.addContexts(oNA.context, [oNewContextB, oNewContextC]);
-				aNewNodeIds.push(oNewContextB.getProperty("HIERARCHY_NODE"));
-				aNewNodeIds.push(oNewContextC.getProperty("HIERARCHY_NODE"));
-
-				oBinding.expand(2);
-
-				var oHandleN1031 = oBinding.removeContext(oN1031.context);
-
-				oBinding.addContexts(oNewContextC, oHandleN1031);
-
-				oBinding.expand(4); // expand new node C
-
-				var oNewContextD = oBinding.createEntry();
-
-				oBinding.addContexts(oN1031.context, [oNewContextD]);
-				aNewNodeIds.push(oNewContextD.getProperty("HIERARCHY_NODE"));
-
-				oBinding.expand(5);
-
-				var oHandleN0129 = oBinding.removeContext(oN1029.context);
-
-				oBinding.addContexts(oNewContextD, oHandleN0129);
-
-				oBinding.expand(6);
-
-				/*oModel.attachBatchRequestSent(function (o) {
-					debugger;
-				});*/
-
-				fnSpyRequestsInDatajs(function (aRequests) {
-					assert.equal(aRequests.length, 6, "Number of Change Requests is correct.");
-					assert.equal(fnCountRequestType(aRequests, "POST"), 4, "Exactly 4 POST requests for CREATEs");
-					assert.equal(fnCountRequestType(aRequests, "PUT"), 2, "Exactly 2 PUT requests for UPDATEs");
-
-					// check content
-					assert.equal(aRequests[0].method, "POST", "1st CREATE");
-					assert.equal(aRequests[1].method, "POST", "2nd CREATE");
-					assert.equal(aRequests[2].method, "POST", "3rd CREATE");
-					assert.equal(aRequests[3].method, "POST", "4th CREATE");
-					assert.equal(aRequests[4].method, "PUT", "1st UPDATE");
-					assert.equal(aRequests[5].method, "PUT", "2nd UPDATE");
-
-					// check the correct ordering of created nodes
-					// check the validity of the annotated HIERARCHY_NODE properties in the request
-					assert.equal(aRequests[0].data["HIERARCHY_NODE"], aNewNodeIds[0], "1st CREATED key is correct");
-					assert.equal(aRequests[1].data["HIERARCHY_NODE"], aNewNodeIds[1], "2nd CREATED key is correct");
-					assert.equal(aRequests[2].data["HIERARCHY_NODE"], aNewNodeIds[2], "3rd CREATED key is correct");
-					assert.equal(aRequests[3].data["HIERARCHY_NODE"], aNewNodeIds[3], "4th CREATED key is correct");
-
-					// check the parents of the created nodes
-					assert.equal(aRequests[0].data["PARENT_NODE"], "1002", "1st CREATED parent is correct"); // child of 1031
-					assert.equal(aRequests[1].data["PARENT_NODE"], aNewNodeIds[0], "2nd CREATED parent is correct"); // child of 1st new created node
-					assert.equal(aRequests[2].data["PARENT_NODE"], aNewNodeIds[0], "3rd CREATED parent is correct"); // also a child of 1st new created node
-					assert.equal(aRequests[3].data["PARENT_NODE"], "1031", "4th CREATED parent is correct"); //child of 1031
-
-					// check if the correct nodes have been updated in the correct order
-					assert.equal(aRequests[4].requestUri, "orgHierarchy('1031')", "1st UPDATE is on correct node");
-					assert.equal(aRequests[5].requestUri, "orgHierarchy('1029')", "2nd UPDATE is on correct node");
-
-					// check if the parent nodes are correctly updated to the newly created nodes
-					assert.equal(aRequests[4].data["PARENT_NODE"], aNewNodeIds[2], "1st UPDATED node parent is correct"); //child of 3rd newly created node
-					assert.equal(aRequests[5].data["PARENT_NODE"], aNewNodeIds[3], "1st UPDATED node parent is correct"); //child of 4th newly created node
-
-					done();
-				}, {suppressRequest: true});
-
-				oBinding.submitChanges();
-			}
-
-			oBinding.attachChange(handler1);
-			oBinding.getContexts(0, 100, 0);
+		createTreeBinding("/orgHierarchy", null, [], {
+			threshold: 10,
+			countMode: "Inline",
+			operationMode: "Server",
+			numberOfExpandedLevels: 2
 		});
+
+		var oN1002, oN1029, oN1031;
+
+		var aNewNodeIds = [];
+
+		function handler1 (oEvent) {
+			oBinding.detachChange(handler1);
+
+			oN1002 = oBinding.findNode(1);
+			oN1029 = oBinding.findNode(28);
+			oN1031 = oBinding.findNode(30);
+
+			var oNewContextA = oBinding.createEntry();
+
+			oBinding.addContexts(oN1002.context, [oNewContextA]);
+			aNewNodeIds.push(oNewContextA.getProperty("HIERARCHY_NODE"));
+
+			var oNA = oBinding.findNode(2);
+
+			var oNewContextB = oBinding.createEntry();
+			var oNewContextC = oBinding.createEntry();
+
+			oBinding.addContexts(oNA.context, [oNewContextB, oNewContextC]);
+			aNewNodeIds.push(oNewContextB.getProperty("HIERARCHY_NODE"));
+			aNewNodeIds.push(oNewContextC.getProperty("HIERARCHY_NODE"));
+
+			oBinding.expand(2);
+
+			var oHandleN1031 = oBinding.removeContext(oN1031.context);
+
+			oBinding.addContexts(oNewContextC, oHandleN1031);
+
+			oBinding.expand(4); // expand new node C
+
+			var oNewContextD = oBinding.createEntry();
+
+			oBinding.addContexts(oN1031.context, [oNewContextD]);
+			aNewNodeIds.push(oNewContextD.getProperty("HIERARCHY_NODE"));
+
+			oBinding.expand(5);
+
+			var oHandleN0129 = oBinding.removeContext(oN1029.context);
+
+			oBinding.addContexts(oNewContextD, oHandleN0129);
+
+			oBinding.expand(6);
+
+			/*oModel.attachBatchRequestSent(function (o) {
+				debugger;
+			});*/
+
+			fnSpyRequestsInDatajs(function (aRequests) {
+				assert.equal(aRequests.length, 6, "Number of Change Requests is correct.");
+				assert.equal(fnCountRequestType(aRequests, "POST"), 4, "Exactly 4 POST requests for CREATEs");
+				assert.equal(fnCountRequestType(aRequests, "PUT"), 2, "Exactly 2 PUT requests for UPDATEs");
+
+				// check content
+				assert.equal(aRequests[0].method, "POST", "1st CREATE");
+				assert.equal(aRequests[1].method, "POST", "2nd CREATE");
+				assert.equal(aRequests[2].method, "POST", "3rd CREATE");
+				assert.equal(aRequests[3].method, "POST", "4th CREATE");
+				assert.equal(aRequests[4].method, "PUT", "1st UPDATE");
+				assert.equal(aRequests[5].method, "PUT", "2nd UPDATE");
+
+				// check the correct ordering of created nodes
+				// check the validity of the annotated HIERARCHY_NODE properties in the request
+				assert.equal(aRequests[0].data["HIERARCHY_NODE"], aNewNodeIds[0], "1st CREATED key is correct");
+				assert.equal(aRequests[1].data["HIERARCHY_NODE"], aNewNodeIds[1], "2nd CREATED key is correct");
+				assert.equal(aRequests[2].data["HIERARCHY_NODE"], aNewNodeIds[2], "3rd CREATED key is correct");
+				assert.equal(aRequests[3].data["HIERARCHY_NODE"], aNewNodeIds[3], "4th CREATED key is correct");
+
+				// check the parents of the created nodes
+				assert.equal(aRequests[0].data["PARENT_NODE"], "1002", "1st CREATED parent is correct"); // child of 1031
+				assert.equal(aRequests[1].data["PARENT_NODE"], aNewNodeIds[0], "2nd CREATED parent is correct"); // child of 1st new created node
+				assert.equal(aRequests[2].data["PARENT_NODE"], aNewNodeIds[0], "3rd CREATED parent is correct"); // also a child of 1st new created node
+				assert.equal(aRequests[3].data["PARENT_NODE"], "1031", "4th CREATED parent is correct"); //child of 1031
+
+				// check if the correct nodes have been updated in the correct order
+				assert.equal(aRequests[4].requestUri, "orgHierarchy('1031')", "1st UPDATE is on correct node");
+				assert.equal(aRequests[5].requestUri, "orgHierarchy('1029')", "2nd UPDATE is on correct node");
+
+				// check if the parent nodes are correctly updated to the newly created nodes
+				assert.equal(aRequests[4].data["PARENT_NODE"], aNewNodeIds[2], "1st UPDATED node parent is correct"); //child of 3rd newly created node
+				assert.equal(aRequests[5].data["PARENT_NODE"], aNewNodeIds[3], "1st UPDATED node parent is correct"); //child of 4th newly created node
+
+				done();
+			}, {suppressRequest: true});
+
+			oBinding.submitChanges();
+		}
+
+		oBinding.attachChange(handler1);
+		oBinding.getContexts(0, 100, 0);
 	});
 
 	QUnit.test("Request Creation - CREATE & UPDATE & DELETE", function(assert){
 
 		var done = assert.async();
-		oModel.attachMetadataLoaded(function() {
-			createTreeBinding("/orgHierarchy", null, [], {
-				threshold: 10,
-				countMode: "Inline",
-				operationMode: "Server",
-				numberOfExpandedLevels: 2
-			});
-
-			var oN1002, oN1029, oN1031;
-
-			function handler1 (oEvent) {
-				oBinding.detachChange(handler1);
-
-				oN1002 = oBinding.findNode(1);
-				oN1029 = oBinding.findNode(28);
-				oN1031 = oBinding.findNode(30);
-
-				var oNewContextA = oBinding.createEntry();
-
-				oBinding.addContexts(oN1002.context, [oNewContextA]);
-
-				var oNA = oBinding.findNode(2);
-
-				var oNewContextB = oBinding.createEntry();
-				var oNewContextC = oBinding.createEntry();
-
-				oBinding.addContexts(oNA.context, [oNewContextB, oNewContextC]);
-
-				oBinding.expand(2);
-
-				var oHandleN1031 = oBinding.removeContext(oN1031.context);
-
-				oBinding.addContexts(oNewContextC, oHandleN1031);
-
-				oBinding.expand(4); // expand node C
-
-				var oNewContextD = oBinding.createEntry();
-
-				oBinding.addContexts(oN1031.context, [oNewContextD]);
-
-				oBinding.expand(5);
-
-				var oHandleN0129 = oBinding.removeContext(oN1029.context);
-
-				oBinding.addContexts(oNewContextD, oHandleN0129);
-
-				oBinding.expand(6);
-
-				oBinding.removeContext(oN1002.context);
-
-				// Check Requests
-				fnSpyRequestsInDatajs(function (aRequests) {
-					assert.equal(aRequests.length, 2, "Number of Change Requests is correct.");
-					assert.equal(fnCountRequestType(aRequests, "DELETE"), 2, "Exactly 2 DELETE requests.");
-
-					// Note: the order of the delete requests is important. This should always be ensured in tests!
-					assert.equal(aRequests[0].requestUri, "orgHierarchy('1002')", "First deleted node is 1002.");
-					assert.equal(aRequests[1].requestUri, "orgHierarchy('1029')", "Second deleted node is 1029.");
-
-					done();
-				}, {suppressRequest: true});
-
-				oBinding.submitChanges();
-			}
-
-			oBinding.attachChange(handler1);
-			oBinding.getContexts(0, 100, 0);
+		createTreeBinding("/orgHierarchy", null, [], {
+			threshold: 10,
+			countMode: "Inline",
+			operationMode: "Server",
+			numberOfExpandedLevels: 2
 		});
+
+		var oN1002, oN1029, oN1031;
+
+		function handler1 (oEvent) {
+			oBinding.detachChange(handler1);
+
+			oN1002 = oBinding.findNode(1);
+			oN1029 = oBinding.findNode(28);
+			oN1031 = oBinding.findNode(30);
+
+			var oNewContextA = oBinding.createEntry();
+
+			oBinding.addContexts(oN1002.context, [oNewContextA]);
+
+			var oNA = oBinding.findNode(2);
+
+			var oNewContextB = oBinding.createEntry();
+			var oNewContextC = oBinding.createEntry();
+
+			oBinding.addContexts(oNA.context, [oNewContextB, oNewContextC]);
+
+			oBinding.expand(2);
+
+			var oHandleN1031 = oBinding.removeContext(oN1031.context);
+
+			oBinding.addContexts(oNewContextC, oHandleN1031);
+
+			oBinding.expand(4); // expand node C
+
+			var oNewContextD = oBinding.createEntry();
+
+			oBinding.addContexts(oN1031.context, [oNewContextD]);
+
+			oBinding.expand(5);
+
+			var oHandleN0129 = oBinding.removeContext(oN1029.context);
+
+			oBinding.addContexts(oNewContextD, oHandleN0129);
+
+			oBinding.expand(6);
+
+			oBinding.removeContext(oN1002.context);
+
+			// Check Requests
+			fnSpyRequestsInDatajs(function (aRequests) {
+				assert.equal(aRequests.length, 2, "Number of Change Requests is correct.");
+				assert.equal(fnCountRequestType(aRequests, "DELETE"), 2, "Exactly 2 DELETE requests.");
+
+				// Note: the order of the delete requests is important. This should always be ensured in tests!
+				assert.equal(aRequests[0].requestUri, "orgHierarchy('1002')", "First deleted node is 1002.");
+				assert.equal(aRequests[1].requestUri, "orgHierarchy('1029')", "Second deleted node is 1029.");
+
+				done();
+			}, {suppressRequest: true});
+
+			oBinding.submitChanges();
+		}
+
+		oBinding.attachChange(handler1);
+		oBinding.getContexts(0, 100, 0);
 	});
 
 	QUnit.test("Request Creation - DELETE - 1", function(assert){
 
 		var done = assert.async();
-		oModel.attachMetadataLoaded(function() {
-			createTreeBinding("/orgHierarchy", null, [], {
-				threshold: 10,
-				countMode: "Inline",
-				operationMode: "Server",
-				numberOfExpandedLevels: 2
-			});
-
-			var oN1001, oN1005, oN1630/*, oN1636*/;
-
-			function handler1 (oEvent) {
-				oBinding.detachChange(handler1);
-
-				oBinding.attachChange(handler2);
-
-				oN1001 = oBinding.findNode(0);
-				oN1005 = oBinding.findNode(4);
-				oBinding.expand(oN1005);
-			}
-
-			function handler2 () {
-				oBinding.detachChange(handler2);
-
-				oN1630 = oBinding.findNode(5);
-				/*oN1636 = */oBinding.findNode(11);
-
-				oBinding.removeContext(oN1630.context);
-				oBinding.removeContext(oN1001.context);
-
-				// Check Requests
-				fnSpyRequestsInDatajs(function (aRequests) {
-					assert.equal(aRequests.length, 1, "Number of Change Requests is correct.");
-					assert.equal(fnCountRequestType(aRequests, "DELETE"), 1, "Exactly 1 DELETE requests.");
-
-					// Note: the order of the delete requests is important. This should always be ensured in tests!
-					assert.equal(aRequests[0].requestUri, "orgHierarchy('1001')", "First deleted node is 1001.");
-
-					done();
-				}, {suppressRequest: true});
-
-				oBinding.submitChanges();
-			}
-
-			oBinding.attachChange(handler1);
-			oBinding.getContexts(0, 100, 0);
+		createTreeBinding("/orgHierarchy", null, [], {
+			threshold: 10,
+			countMode: "Inline",
+			operationMode: "Server",
+			numberOfExpandedLevels: 2
 		});
+
+		var oN1001, oN1005, oN1630/*, oN1636*/;
+
+		function handler1 (oEvent) {
+			oBinding.detachChange(handler1);
+
+			oBinding.attachChange(handler2);
+
+			oN1001 = oBinding.findNode(0);
+			oN1005 = oBinding.findNode(4);
+			oBinding.expand(oN1005);
+		}
+
+		function handler2 () {
+			oBinding.detachChange(handler2);
+
+			oN1630 = oBinding.findNode(5);
+			/*oN1636 = */oBinding.findNode(11);
+
+			oBinding.removeContext(oN1630.context);
+			oBinding.removeContext(oN1001.context);
+
+			// Check Requests
+			fnSpyRequestsInDatajs(function (aRequests) {
+				assert.equal(aRequests.length, 1, "Number of Change Requests is correct.");
+				assert.equal(fnCountRequestType(aRequests, "DELETE"), 1, "Exactly 1 DELETE requests.");
+
+				// Note: the order of the delete requests is important. This should always be ensured in tests!
+				assert.equal(aRequests[0].requestUri, "orgHierarchy('1001')", "First deleted node is 1001.");
+
+				done();
+			}, {suppressRequest: true});
+
+			oBinding.submitChanges();
+		}
+
+		oBinding.attachChange(handler1);
+		oBinding.getContexts(0, 100, 0);
 	});
 
 	QUnit.test("Request Creation - DELETE - 2", function(assert){
 
 		var done = assert.async();
-		oModel.attachMetadataLoaded(function() {
-			createTreeBinding("/orgHierarchy", null, [], {
-				threshold: 10,
-				countMode: "Inline",
-				operationMode: "Server",
-				numberOfExpandedLevels: 2
-			});
-
-			var oN1005, oN1630, oN1638;
-
-			function handler1 (oEvent) {
-				oBinding.detachChange(handler1);
-
-				oN1005 = oBinding.findNode(4);
-				oBinding.expand(oN1005);
-
-				// register change event for loading the expanded children
-				oBinding.attachChange(handler2);
-			}
-
-			function handler2 () {
-				oBinding.detachChange(handler2);
-
-				oN1630 = oBinding.findNode(5);
-				oBinding.expand(oN1630);
-
-				// register change event for loading the expanded children
-				oBinding.attachChange(handler3);
-			}
-
-			function handler3 () {
-				oBinding.detachChange(handler3);
-
-				oN1638 = oBinding.findNode(6);
-
-				oBinding.removeContext(oN1638.context);
-				oBinding.removeContext(oN1630.context);
-
-				// Check Requests
-				fnSpyRequestsInDatajs(function (aRequests) {
-					assert.equal(aRequests.length, 1, "Number of Change Requests is correct.");
-					assert.equal(fnCountRequestType(aRequests, "DELETE"), 1, "Exactly 1 DELETE requests.");
-
-					// Note: the order of the delete requests is important. This should always be ensured in tests!
-					assert.equal(aRequests[0].requestUri, "orgHierarchy('1630')", "First deleted node is 1630.");
-
-					done();
-				}, {suppressRequest: true});
-
-				oBinding.submitChanges();
-			}
-
-			oBinding.attachChange(handler1);
-			oBinding.getContexts(0, 100, 0);
+		createTreeBinding("/orgHierarchy", null, [], {
+			threshold: 10,
+			countMode: "Inline",
+			operationMode: "Server",
+			numberOfExpandedLevels: 2
 		});
+
+		var oN1005, oN1630, oN1638;
+
+		function handler1 (oEvent) {
+			oBinding.detachChange(handler1);
+
+			oN1005 = oBinding.findNode(4);
+			oBinding.expand(oN1005);
+
+			// register change event for loading the expanded children
+			oBinding.attachChange(handler2);
+		}
+
+		function handler2 () {
+			oBinding.detachChange(handler2);
+
+			oN1630 = oBinding.findNode(5);
+			oBinding.expand(oN1630);
+
+			// register change event for loading the expanded children
+			oBinding.attachChange(handler3);
+		}
+
+		function handler3 () {
+			oBinding.detachChange(handler3);
+
+			oN1638 = oBinding.findNode(6);
+
+			oBinding.removeContext(oN1638.context);
+			oBinding.removeContext(oN1630.context);
+
+			// Check Requests
+			fnSpyRequestsInDatajs(function (aRequests) {
+				assert.equal(aRequests.length, 1, "Number of Change Requests is correct.");
+				assert.equal(fnCountRequestType(aRequests, "DELETE"), 1, "Exactly 1 DELETE requests.");
+
+				// Note: the order of the delete requests is important. This should always be ensured in tests!
+				assert.equal(aRequests[0].requestUri, "orgHierarchy('1630')", "First deleted node is 1630.");
+
+				done();
+			}, {suppressRequest: true});
+
+			oBinding.submitChanges();
+		}
+
+		oBinding.attachChange(handler1);
+		oBinding.getContexts(0, 100, 0);
 	});
 
 	QUnit.test("Request Creation - DELETE - 3 - deep to initially collapsed", function(assert){
 
 		var done = assert.async();
-		oModel.attachMetadataLoaded(function() {
-			createTreeBinding("/orgHierarchy", null, [], {
-				threshold: 10,
-				countMode: "Inline",
-				operationMode: "Server",
-				numberOfExpandedLevels: 2
-			});
-
-			var oN1005, oN1630, oN1633;
-
-			function handler1 (oEvent) {
-				oBinding.detachChange(handler1);
-
-				oN1005 = oBinding.findNode(4);
-
-				oBinding.expand(oN1005);
-
-				// register change event for loading the expanded children
-				oBinding.attachChange(handler2);
-			}
-
-			function handler2 () {
-				oBinding.detachChange(handler2);
-
-				oN1630 = oBinding.findNode(5);
-				oN1633 = oBinding.findNode(8);
-
-				// move from 1005 to 1630 (from server-indexed parent node to deep parent node)
-				oBinding.removeContext(oN1633.context);
-				oBinding.addContexts(oN1630.context, oN1633.context);
-
-				// delete new parent node for deep one 1633  -->  oN1630
-				oBinding.removeContext(oN1630.context);
-
-				// Check Requests
-				fnSpyRequestsInDatajs(function (aRequests) {
-					assert.equal(aRequests.length, 2, "Number of Change Requests is correct.");
-					assert.equal(fnCountRequestType(aRequests, "DELETE"), 2, "Exactly 1 DELETE requests.");
-
-					// Note: the order of the delete requests is important. This should always be ensured in tests!
-					assert.equal(aRequests[0].requestUri, "orgHierarchy('1633')", "First deleted node is 1633.");
-					assert.equal(aRequests[1].requestUri, "orgHierarchy('1630')", "First deleted node is 1630.");
-
-					done();
-				}, {suppressRequest: true});
-
-				oBinding.submitChanges();
-			}
-
-			oBinding.attachChange(handler1);
-			oBinding.getContexts(0, 100, 0);
+		createTreeBinding("/orgHierarchy", null, [], {
+			threshold: 10,
+			countMode: "Inline",
+			operationMode: "Server",
+			numberOfExpandedLevels: 2
 		});
+
+		var oN1005, oN1630, oN1633;
+
+		function handler1 (oEvent) {
+			oBinding.detachChange(handler1);
+
+			oN1005 = oBinding.findNode(4);
+
+			oBinding.expand(oN1005);
+
+			// register change event for loading the expanded children
+			oBinding.attachChange(handler2);
+		}
+
+		function handler2 () {
+			oBinding.detachChange(handler2);
+
+			oN1630 = oBinding.findNode(5);
+			oN1633 = oBinding.findNode(8);
+
+			// move from 1005 to 1630 (from server-indexed parent node to deep parent node)
+			oBinding.removeContext(oN1633.context);
+			oBinding.addContexts(oN1630.context, oN1633.context);
+
+			// delete new parent node for deep one 1633  -->  oN1630
+			oBinding.removeContext(oN1630.context);
+
+			// Check Requests
+			fnSpyRequestsInDatajs(function (aRequests) {
+				assert.equal(aRequests.length, 2, "Number of Change Requests is correct.");
+				assert.equal(fnCountRequestType(aRequests, "DELETE"), 2, "Exactly 1 DELETE requests.");
+
+				// Note: the order of the delete requests is important. This should always be ensured in tests!
+				assert.equal(aRequests[0].requestUri, "orgHierarchy('1633')", "First deleted node is 1633.");
+				assert.equal(aRequests[1].requestUri, "orgHierarchy('1630')", "First deleted node is 1630.");
+
+				done();
+			}, {suppressRequest: true});
+
+			oBinding.submitChanges();
+		}
+
+		oBinding.attachChange(handler1);
+		oBinding.getContexts(0, 100, 0);
 	});
 
 
@@ -461,281 +452,273 @@ sap.ui.define([
 
 
 		var done = assert.async();
-		oModel.attachMetadataLoaded(function() {
-			createTreeBinding("/orgHierarchy", null, [], {
-				threshold: 10,
-				countMode: "Inline",
-				operationMode: "Server",
-				numberOfExpandedLevels: 2
-			});
-
-			var oN1005, oN1630, oN1632, oN1642;
-
-			function handler1 (oEvent) {
-				oBinding.detachChange(handler1);
-
-				oN1005 = oBinding.findNode(4);
-
-				oBinding.expand(oN1005);
-
-				// register change event for loading the expanded children
-				oBinding.attachChange(handler2);
-			}
-
-			function handler2 () {
-				oBinding.detachChange(handler2);
-
-				oN1632 = oBinding.findNode(7);
-
-				oBinding.expand(oN1632);
-				// register change event for loading the expanded children
-				oBinding.attachChange(handler3);
-			}
-
-			function handler3 () {
-				oBinding.detachChange(handler3);
-
-				oN1630 = oBinding.findNode(5);
-				oN1642 = oBinding.findNode(9);
-
-				// move from 1642 to 1630  -  from deep parent node (1632) to deep parent node (1630)
-				oBinding.removeContext(oN1642.context);
-				oBinding.addContexts(oN1630.context, oN1642.context);
-
-				// delete new parent node for deep one 1642  -->  oN1630
-				oBinding.removeContext(oN1630.context);
-
-				// Check Requests
-				fnSpyRequestsInDatajs(function (aRequests) {
-					assert.equal(aRequests.length, 2, "Number of Change Requests is correct.");
-					assert.equal(fnCountRequestType(aRequests, "DELETE"), 2, "Exactly 1 DELETE requests.");
-
-					// Note: the order of the delete requests is important. This should always be ensured in tests!
-					assert.equal(aRequests[0].requestUri, "orgHierarchy('1630')", "First deleted node is 1630.");
-					assert.equal(aRequests[1].requestUri, "orgHierarchy('1642')", "First deleted node is 1642.");
-
-					done();
-				}, {suppressRequest: true});
-
-				oBinding.submitChanges();
-			}
-
-			oBinding.attachChange(handler1);
-			oBinding.getContexts(0, 100, 0);
+		createTreeBinding("/orgHierarchy", null, [], {
+			threshold: 10,
+			countMode: "Inline",
+			operationMode: "Server",
+			numberOfExpandedLevels: 2
 		});
+
+		var oN1005, oN1630, oN1632, oN1642;
+
+		function handler1 (oEvent) {
+			oBinding.detachChange(handler1);
+
+			oN1005 = oBinding.findNode(4);
+
+			oBinding.expand(oN1005);
+
+			// register change event for loading the expanded children
+			oBinding.attachChange(handler2);
+		}
+
+		function handler2 () {
+			oBinding.detachChange(handler2);
+
+			oN1632 = oBinding.findNode(7);
+
+			oBinding.expand(oN1632);
+			// register change event for loading the expanded children
+			oBinding.attachChange(handler3);
+		}
+
+		function handler3 () {
+			oBinding.detachChange(handler3);
+
+			oN1630 = oBinding.findNode(5);
+			oN1642 = oBinding.findNode(9);
+
+			// move from 1642 to 1630  -  from deep parent node (1632) to deep parent node (1630)
+			oBinding.removeContext(oN1642.context);
+			oBinding.addContexts(oN1630.context, oN1642.context);
+
+			// delete new parent node for deep one 1642  -->  oN1630
+			oBinding.removeContext(oN1630.context);
+
+			// Check Requests
+			fnSpyRequestsInDatajs(function (aRequests) {
+				assert.equal(aRequests.length, 2, "Number of Change Requests is correct.");
+				assert.equal(fnCountRequestType(aRequests, "DELETE"), 2, "Exactly 1 DELETE requests.");
+
+				// Note: the order of the delete requests is important. This should always be ensured in tests!
+				assert.equal(aRequests[0].requestUri, "orgHierarchy('1630')", "First deleted node is 1630.");
+				assert.equal(aRequests[1].requestUri, "orgHierarchy('1642')", "First deleted node is 1642.");
+
+				done();
+			}, {suppressRequest: true});
+
+			oBinding.submitChanges();
+		}
+
+		oBinding.attachChange(handler1);
+		oBinding.getContexts(0, 100, 0);
 	});
 
 	QUnit.test("Request Creation - Refresh after Success - Event-Timing", function(assert){
 
 		var done = assert.async();
-		oModel.attachMetadataLoaded(function() {
-			createTreeBinding("/orgHierarchy", null, [], {
-				threshold: 10,
-				countMode: "Inline",
-				operationMode: "Server",
-				numberOfExpandedLevels: 2
+		createTreeBinding("/orgHierarchy", null, [], {
+			threshold: 10,
+			countMode: "Inline",
+			operationMode: "Server",
+			numberOfExpandedLevels: 2
+		});
+
+		ensureCorrectChangeGroup();
+
+		var oN1005, oN1630, oN1638;
+
+		function handler1 (oEvent) {
+			oBinding.detachChange(handler1);
+
+			oN1005 = oBinding.findNode(4);
+			oBinding.expand(oN1005);
+
+			// register change event for loading the expanded children
+			oBinding.attachChange(handler2);
+		}
+
+		function handler2 () {
+			oBinding.detachChange(handler2);
+
+			oN1630 = oBinding.findNode(5);
+			oBinding.expand(oN1630);
+
+			// register change event for loading the expanded children
+			oBinding.attachChange(handler3);
+		}
+
+		function handler3 () {
+			oBinding.detachChange(handler3);
+
+			oN1638 = oBinding.findNode(6);
+
+			// remove some nodes
+			oBinding.removeContext(oN1638.context);
+			oBinding.removeContext(oN1630.context);
+
+			// and add another one
+			var oNewContext = oBinding.createEntry();
+			oBinding.addContexts(oN1005.context, [oNewContext]);
+
+			// check if requests were sent
+			fnSpyRequestsInDatajs(function (aChangeRequests, aOtherRequests) {
+				assert.equal(aChangeRequests.length, 2, "Number of Change Requests is correct.");
+				assert.equal(fnCountRequestType(aChangeRequests, "DELETE"), 1, "Exactly 1 DELETE requests.");
+				assert.equal(fnCountRequestType(aChangeRequests, "POST"), 1, "Exactly 1 CREATE/POST requests.");
+
+				// Note: the create requests are performed before the DELETEs
+				assert.equal(aChangeRequests[0].requestUri, "orgHierarchy", "Newly created node is POSTed against the collection.");
+				assert.equal(aChangeRequests[0].data.PARENT_NODE, "1005", "Newly created node has correct parent node value.");
+
+				// Note: the order of the delete requests is important. This should always be ensured in tests!
+				assert.equal(aChangeRequests[1].requestUri, "orgHierarchy('1630')", "First deleted node is 1630.");
+			}, {suppressRequest: false});
+
+			var bSuccessBeforeRefresh = false;
+
+			// check if refresh was fired after the success handler of the application
+			// This test fails, if the refreshAfterChange behavior is broken.
+			// In this case the refresh event will be fired twice:
+			//    1. when the refresh is forced by the model
+			//    2. when the batch returns with successfully performed changes (refresh triggered by the binding)
+			oBinding.attachRefresh(function () {
+				assert.ok(bSuccessBeforeRefresh, "Refresh fired after successful submitChanges.");
+				done();
 			});
 
-			ensureCorrectChangeGroup();
+			// check the application's success handler call
+			oBinding.submitChanges({
+				success: function (oBatchResponse) {
+					assert.ok("Application success handler called for submitted change-request");
+					assert.equal(oBatchResponse.__batchResponses[0].__changeResponses[0].statusCode, "201", "Status-Code 201: Successful CREATE/POST request.");
+					assert.equal(oBatchResponse.__batchResponses[0].__changeResponses[1].statusCode, "204", "Status-Code 204: Successful DELETE request.");
 
-			var oN1005, oN1630, oN1638;
+					bSuccessBeforeRefresh = true;
+				}
+			});
+		}
 
-			function handler1 (oEvent) {
-				oBinding.detachChange(handler1);
-
-				oN1005 = oBinding.findNode(4);
-				oBinding.expand(oN1005);
-
-				// register change event for loading the expanded children
-				oBinding.attachChange(handler2);
-			}
-
-			function handler2 () {
-				oBinding.detachChange(handler2);
-
-				oN1630 = oBinding.findNode(5);
-				oBinding.expand(oN1630);
-
-				// register change event for loading the expanded children
-				oBinding.attachChange(handler3);
-			}
-
-			function handler3 () {
-				oBinding.detachChange(handler3);
-
-				oN1638 = oBinding.findNode(6);
-
-				// remove some nodes
-				oBinding.removeContext(oN1638.context);
-				oBinding.removeContext(oN1630.context);
-
-				// and add another one
-				var oNewContext = oBinding.createEntry();
-				oBinding.addContexts(oN1005.context, [oNewContext]);
-
-				// check if requests were sent
-				fnSpyRequestsInDatajs(function (aChangeRequests, aOtherRequests) {
-					assert.equal(aChangeRequests.length, 2, "Number of Change Requests is correct.");
-					assert.equal(fnCountRequestType(aChangeRequests, "DELETE"), 1, "Exactly 1 DELETE requests.");
-					assert.equal(fnCountRequestType(aChangeRequests, "POST"), 1, "Exactly 1 CREATE/POST requests.");
-
-					// Note: the create requests are performed before the DELETEs
-					assert.equal(aChangeRequests[0].requestUri, "orgHierarchy", "Newly created node is POSTed against the collection.");
-					assert.equal(aChangeRequests[0].data.PARENT_NODE, "1005", "Newly created node has correct parent node value.");
-
-					// Note: the order of the delete requests is important. This should always be ensured in tests!
-					assert.equal(aChangeRequests[1].requestUri, "orgHierarchy('1630')", "First deleted node is 1630.");
-				}, {suppressRequest: false});
-
-				var bSuccessBeforeRefresh = false;
-
-				// check if refresh was fired after the success handler of the application
-				// This test fails, if the refreshAfterChange behavior is broken.
-				// In this case the refresh event will be fired twice:
-				//    1. when the refresh is forced by the model
-				//    2. when the batch returns with successfully performed changes (refresh triggered by the binding)
-				oBinding.attachRefresh(function () {
-					assert.ok(bSuccessBeforeRefresh, "Refresh fired after successful submitChanges.");
-					done();
-				});
-
-				// check the application's success handler call
-				oBinding.submitChanges({
-					success: function (oBatchResponse) {
-						assert.ok("Application success handler called for submitted change-request");
-						assert.equal(oBatchResponse.__batchResponses[0].__changeResponses[0].statusCode, "201", "Status-Code 201: Successful CREATE/POST request.");
-						assert.equal(oBatchResponse.__batchResponses[0].__changeResponses[1].statusCode, "204", "Status-Code 204: Successful DELETE request.");
-
-						bSuccessBeforeRefresh = true;
-					}
-				});
-			}
-
-			oBinding.attachChange(handler1);
-			oBinding.getContexts(0, 100, 0);
-		});
+		oBinding.attachChange(handler1);
+		oBinding.getContexts(0, 100, 0);
 	});
 
 	QUnit.test("Request Creation - No Refresh after Error - Event-Timing", function(assert){
 
 		var done = assert.async();
-		oModel.attachMetadataLoaded(function() {
-			createTreeBinding("/orgHierarchy", null, [], {
-				threshold: 10,
-				countMode: "Inline",
-				operationMode: "Server",
-				numberOfExpandedLevels: 2
+		createTreeBinding("/orgHierarchy", null, [], {
+			threshold: 10,
+			countMode: "Inline",
+			operationMode: "Server",
+			numberOfExpandedLevels: 2
+		});
+
+		ensureCorrectChangeGroup();
+
+		var oN1005, oN1630, oN1638;
+
+		function handler1 (oEvent) {
+			oBinding.detachChange(handler1);
+
+			oN1005 = oBinding.findNode(4);
+			oBinding.expand(oN1005);
+
+			// register change event for loading the expanded children
+			oBinding.attachChange(handler2);
+		}
+
+		function handler2 () {
+			oBinding.detachChange(handler2);
+
+			oN1630 = oBinding.findNode(5);
+			oBinding.expand(oN1630);
+
+			// register change event for loading the expanded children
+			oBinding.attachChange(handler3);
+		}
+
+		function handler3 () {
+			oBinding.detachChange(handler3);
+
+			oN1638 = oBinding.findNode(6);
+
+			// remove some nodes
+			oBinding.removeContext(oN1638.context);
+			oBinding.removeContext(oN1630.context);
+
+			// and add another one
+			var oNewContext = oBinding.createEntry();
+			oBinding.addContexts(oN1005.context, [oNewContext]);
+
+			// Force a broken batch --> MockServer responds with an error
+			fnSpyRequestsInDatajs(function (aChangeRequests, aOtherRequests) {
+				aChangeRequests[0].requestUri = "foo";
+			}, {suppressRequest: false});
+
+			// In case of a failing change-set in the submitted batch, there should be NO refresh!
+			var bNoRefresh = true;
+			oBinding.attachRefresh(function () {
+				bNoRefresh = false;
 			});
 
-			ensureCorrectChangeGroup();
+			// check the application's success handler call
+			oBinding.submitChanges({
+				success: function (oBatchResponse) {
+					assert.ok("Application success handler called for submitted change-request");
+					assert.equal(oBatchResponse.__batchResponses[0].response.statusCode, "404", "Error returned by the MockServer");
 
-			var oN1005, oN1630, oN1638;
+					assert.ok(bNoRefresh, "No Refresh was fired after a broken change-request");
+					done();
+				}
+			});
+		}
 
-			function handler1 (oEvent) {
-				oBinding.detachChange(handler1);
-
-				oN1005 = oBinding.findNode(4);
-				oBinding.expand(oN1005);
-
-				// register change event for loading the expanded children
-				oBinding.attachChange(handler2);
-			}
-
-			function handler2 () {
-				oBinding.detachChange(handler2);
-
-				oN1630 = oBinding.findNode(5);
-				oBinding.expand(oN1630);
-
-				// register change event for loading the expanded children
-				oBinding.attachChange(handler3);
-			}
-
-			function handler3 () {
-				oBinding.detachChange(handler3);
-
-				oN1638 = oBinding.findNode(6);
-
-				// remove some nodes
-				oBinding.removeContext(oN1638.context);
-				oBinding.removeContext(oN1630.context);
-
-				// and add another one
-				var oNewContext = oBinding.createEntry();
-				oBinding.addContexts(oN1005.context, [oNewContext]);
-
-				// Force a broken batch --> MockServer responds with an error
-				fnSpyRequestsInDatajs(function (aChangeRequests, aOtherRequests) {
-					aChangeRequests[0].requestUri = "foo";
-				}, {suppressRequest: false});
-
-				// In case of a failing change-set in the submitted batch, there should be NO refresh!
-				var bNoRefresh = true;
-				oBinding.attachRefresh(function () {
-					bNoRefresh = false;
-				});
-
-				// check the application's success handler call
-				oBinding.submitChanges({
-					success: function (oBatchResponse) {
-						assert.ok("Application success handler called for submitted change-request");
-						assert.equal(oBatchResponse.__batchResponses[0].response.statusCode, "404", "Error returned by the MockServer");
-
-						assert.ok(bNoRefresh, "No Refresh was fired after a broken change-request");
-						done();
-					}
-				});
-			}
-
-			oBinding.attachChange(handler1);
-			oBinding.getContexts(0, 100, 0);
-		});
+		oBinding.attachChange(handler1);
+		oBinding.getContexts(0, 100, 0);
 	});
 
 	QUnit.test("addContexts() & removeContext() API - Array Arguments and Requests", function(assert){
 
 		var done = assert.async();
-		oModel.attachMetadataLoaded(function() {
-			createTreeBinding("/orgHierarchy", null, [], {
-				threshold: 10,
-				countMode: "Inline",
-				operationMode: "Server",
-				numberOfExpandedLevels: 2
-			});
-
-			var oN1004, oN1009, oN1011;
-
-			function handler1 (oEvent) {
-				oBinding.detachChange(handler1);
-
-				//collect some nodes, which are already loaded
-				oN1004 = oBinding.findNode(3);
-				oN1009 = oBinding.findNode(8);
-				oN1011 = oBinding.findNode(10);
-
-				// remove some
-				var oCtx1004 = oBinding.removeContext(oN1004.context);
-				var oCtx1009 = oBinding.removeContext(oN1009.context);
-
-				// create some
-				var oCtxA = oBinding.createEntry();
-				var oCtxB = oBinding.createEntry();
-
-				// and mix them around --> new nodes and old ones in different order
-				oBinding.addContexts(oN1011.context, [oCtxA, oCtx1004, oCtxB, oCtx1009]);
-
-				oBinding.expand(7);
-
-				assert.equal(oBinding.getContextByIndex(8), oCtxA, "1st added context is correct.");
-				assert.equal(oBinding.getContextByIndex(9), oN1004.context, "2nd added context is correct.");
-				assert.equal(oBinding.getContextByIndex(10), oCtxB, "3rd added context is correct.");
-				assert.equal(oBinding.getContextByIndex(11), oN1009.context, "4th added context is correct.");
-
-				done();
-			}
-
-			oBinding.attachChange(handler1);
-			oBinding.getContexts(0, 100, 0);
+		createTreeBinding("/orgHierarchy", null, [], {
+			threshold: 10,
+			countMode: "Inline",
+			operationMode: "Server",
+			numberOfExpandedLevels: 2
 		});
+
+		var oN1004, oN1009, oN1011;
+
+		function handler1 (oEvent) {
+			oBinding.detachChange(handler1);
+
+			//collect some nodes, which are already loaded
+			oN1004 = oBinding.findNode(3);
+			oN1009 = oBinding.findNode(8);
+			oN1011 = oBinding.findNode(10);
+
+			// remove some
+			var oCtx1004 = oBinding.removeContext(oN1004.context);
+			var oCtx1009 = oBinding.removeContext(oN1009.context);
+
+			// create some
+			var oCtxA = oBinding.createEntry();
+			var oCtxB = oBinding.createEntry();
+
+			// and mix them around --> new nodes and old ones in different order
+			oBinding.addContexts(oN1011.context, [oCtxA, oCtx1004, oCtxB, oCtx1009]);
+
+			oBinding.expand(7);
+
+			assert.equal(oBinding.getContextByIndex(8), oCtxA, "1st added context is correct.");
+			assert.equal(oBinding.getContextByIndex(9), oN1004.context, "2nd added context is correct.");
+			assert.equal(oBinding.getContextByIndex(10), oCtxB, "3rd added context is correct.");
+			assert.equal(oBinding.getContextByIndex(11), oN1009.context, "4th added context is correct.");
+
+			done();
+		}
+
+		oBinding.attachChange(handler1);
+		oBinding.getContexts(0, 100, 0);
 	});
 });
