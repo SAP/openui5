@@ -91,18 +91,18 @@ sap.ui.define([
 	 *   Whether the paths in $expand and $select shall be sorted in the cache's query string;
 	 *   note that this flag can safely be ignored for all "new" features (after 1.47) which
 	 *   should just sort always
-	 * @param {string} [sOriginalResourcePath=sResourcePath]
-	 *   The path by which this resource has originally been requested and thus can be identified on
-	 *   the client. Only required for deferred operation requests.
+	 * @param {function} [fnGetOriginalResourcePath]
+	 *   A function that returns the cache's original resource path to be used to build the target
+	 *   path for bound messages; if unset, sResourcePath is used
 	 *
 	 * @private
 	 */
 	function Cache(oRequestor, sResourcePath, mQueryOptions, bSortExpandSelect,
-			sOriginalResourcePath) {
+			fnGetOriginalResourcePath) {
 		this.bActive = true;
 		this.mChangeListeners = {}; // map from path to an array of change listeners
+		this.fnGetOriginalResourcePath = fnGetOriginalResourcePath;
 		this.sMetaPath = _Helper.getMetaPath("/" + sResourcePath);
-		this.sOriginalResourcePath = sOriginalResourcePath || sResourcePath;
 		this.mPatchRequests = {}; // map from path to an array of (PATCH) promises
 		this.mPostRequests = {}; // map from path to an array of entity data (POST bodies)
 		this.oRequestor = oRequestor;
@@ -1053,8 +1053,11 @@ sap.ui.define([
 			visitInstance(oRoot, sRootMetaPath || this.sMetaPath, sRootPath || "", sRequestUrl);
 		}
 		if (bHasMessages) {
-			this.oRequestor.reportBoundMessages(this.sOriginalResourcePath, mPathToODataMessages,
-				aKeyPredicates);
+			this.oRequestor.reportBoundMessages(
+				this.fnGetOriginalResourcePath
+					? this.fnGetOriginalResourcePath(oRoot)
+					: this.sResourcePath,
+				mPathToODataMessages, aKeyPredicates);
 		}
 	};
 
@@ -1671,9 +1674,9 @@ sap.ui.define([
 	 *   A map of key-value pairs representing the query string
 	 * @param {boolean} [bSortExpandSelect=false]
 	 *   Whether the paths in $expand and $select shall be sorted in the cache's query string
-	 * @param {string} [sOriginalResourcePath=sResourcePath]
-	 *   The path by which this resource has originally been requested and thus can be identified on
-	 *   the client. Only required for deferred operation requests.
+	 * @param {string} [fnGetOriginalResourcePath]
+	 *   A function that returns the cache's original resource path to be used to build the target
+	 *   path for bound messages; if unset, sResourcePath is used
 	 * @param {boolean} [bPost]
 	 *   Whether the cache uses POST requests. If <code>true</code>, only {@link #post} may lead to
 	 *   a request, {@link #read} may only read from the cache; otherwise {@link #post} throws an
@@ -1687,7 +1690,7 @@ sap.ui.define([
 	 * @private
 	 */
 	function SingleCache(oRequestor, sResourcePath, mQueryOptions, bSortExpandSelect,
-			sOriginalResourcePath, bPost, sMetaPath, bFetchOperationReturnType) {
+			fnGetOriginalResourcePath, bPost, sMetaPath, bFetchOperationReturnType) {
 		Cache.apply(this, arguments);
 
 		this.bFetchOperationReturnType = bFetchOperationReturnType;
@@ -1935,9 +1938,9 @@ sap.ui.define([
 	 *   {foo : ["bar", "baz"]} results in the query string "foo=bar&foo=baz"
 	 * @param {boolean} [bSortExpandSelect=false]
 	 *   Whether the paths in $expand and $select shall be sorted in the cache's query string
-	 * @param {string} [sOriginalResourcePath=sResourcePath]
-	 *   The path by which this resource has originally been requested and thus can be identified on
-	 *   the client. Only required for deferred operation requests.
+	 * @param {string} [fnGetOriginalResourcePath]
+	 *   A function that returns the cache's original resource path to be used to build the target
+	 *   path for bound messages; if unset, sResourcePath is used
 	 * @param {boolean} [bPost]
 	 *   Whether the cache uses POST requests. If <code>true</code>, only {@link #post} may
 	 *   lead to a request, {@link #read} may only read from the cache; otherwise {@link #post}
@@ -1953,9 +1956,9 @@ sap.ui.define([
 	 * @public
 	 */
 	Cache.createSingle = function (oRequestor, sResourcePath, mQueryOptions, bSortExpandSelect,
-			sOriginalResourcePath, bPost, sMetaPath, bFetchOperationReturnType) {
+			fnGetOriginalResourcePath, bPost, sMetaPath, bFetchOperationReturnType) {
 		return new SingleCache(oRequestor, sResourcePath, mQueryOptions, bSortExpandSelect,
-			sOriginalResourcePath, bPost, sMetaPath, bFetchOperationReturnType);
+			fnGetOriginalResourcePath, bPost, sMetaPath, bFetchOperationReturnType);
 	};
 
 	/**

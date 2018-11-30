@@ -2263,9 +2263,9 @@ sap.ui.define([
 
 	//*********************************************************************************************
 	QUnit.test("_Cache#visitResponse: operation message", function (assert) {
-		var sResourcePath = "OperationImport(...)",
+		var sOriginalResourcePath = "OperationImport(...)",
 			oCache = _Cache.createSingle(this.oRequestor, "OperationImport", {},
-				false, sResourcePath, false, undefined, true),
+				false, getOriginalResourcePath, false, undefined, true),
 			oData = {
 				messages : [{
 					message : "text"
@@ -2284,9 +2284,14 @@ sap.ui.define([
 				}
 			};
 
+		function getOriginalResourcePath(oValue) {
+			assert.strictEqual(oValue, oData);
+			return sOriginalResourcePath;
+		}
+
 		mExpectedMessages[""].$count = 1;
 		this.oRequestorMock.expects("reportBoundMessages")
-			.withExactArgs(sResourcePath, mExpectedMessages, undefined);
+			.withExactArgs(sOriginalResourcePath, mExpectedMessages, undefined);
 
 		// code under test
 		oCache.visitResponse(oData, mTypeForMetaPath);
@@ -4195,8 +4200,8 @@ sap.ui.define([
 		this.mock(_Cache.prototype).expects("fetchTypes")
 			.returns(SyncPromise.resolve(Promise.resolve(mTypeForMetaPath)));
 
-		oCache = _Cache.createSingle(this.oRequestor, sResourcePath, mQueryParams, true,
-			sResourcePath + "(...)", undefined, sMetaPath, true);
+		oCache = _Cache.createSingle(this.oRequestor, sResourcePath, mQueryParams, true, undefined,
+			undefined, sMetaPath, true);
 		oCacheMock = this.mock(oCache);
 
 		this.oRequestorMock.expects("request")
@@ -4345,8 +4350,8 @@ sap.ui.define([
 			var oGroupLock = new _GroupLock("group"),
 				sMetaPath = "/TEAMS/name.space.EditAction/@$ui5.overload/0/$ReturnType",
 				sResourcePath = "TEAMS(TeamId='42',IsActiveEntity=true)/name.space.EditAction",
-				oCache = _Cache.createSingle(this.oRequestor, sResourcePath, {}, true,
-					sResourcePath + "(...)", true, sMetaPath, bFetchOperationReturnType),
+				oCache = _Cache.createSingle(this.oRequestor, sResourcePath, {}, true, undefined,
+					true, sMetaPath, bFetchOperationReturnType),
 				oReturnValue = {},
 				mTypes = {};
 

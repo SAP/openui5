@@ -30,6 +30,17 @@ sap.ui.define([
 		};
 
 	/**
+	 * Returns the path for the return value context.
+	 *
+	 * @param {string} sPath The bindings's path
+	 * @param {string} sResponsePredicate The key predicate of the response entity
+	 * @returns {string} The path for the return value context.
+	 */
+	function getReturnValueContextPath(sPath, sResponsePredicate) {
+		return sPath.slice(0, sPath.indexOf("(")) + sResponsePredicate;
+	}
+
+	/**
 	 * Do <strong>NOT</strong> call this private constructor, but rather use
 	 * {@link sap.ui.model.odata.v4.ODataModel#bindContext} instead!
 	 *
@@ -261,8 +272,7 @@ sap.ui.define([
 							that.oReturnValueContext.destroy();
 						}
 						that.oReturnValueContext = Context.create(that.oModel, that,
-							sResolvedPath.slice(0, sResolvedPath.indexOf("("))
-								+ sResponsePredicate);
+							getReturnValueContextPath(sResolvedPath, sResponsePredicate));
 						return that.oReturnValueContext;
 					}
 				});
@@ -517,7 +527,23 @@ sap.ui.define([
 			sMetaPath = oModel.getMetaModel().getMetaPath(sPath) + "/@$ui5.overload/0/$ReturnType",
 			sOriginalResourcePath = sPath.slice(1),
 			mParameters = jQuery.extend({}, this.oOperation.mParameters),
-			oRequestor = oModel.oRequestor;
+			oRequestor = oModel.oRequestor,
+			that = this;
+
+		/*
+		 * Returns the original resource path to be used for bound messages.
+		 *
+		 * @param {object} The response entity
+		 * @returns {string} The original resource path
+		 */
+		function getOriginalResourcePath(oResponseEntity) {
+			if (that.hasReturnValueContext(oOperationMetadata)) {
+				return getReturnValueContextPath(sOriginalResourcePath,
+					_Helper.getPrivateAnnotation(oResponseEntity, "predicate"));
+			}
+
+			return sOriginalResourcePath;
+		}
 
 		if (!bAction && oOperationMetadata.$kind !== "Function") {
 			throw new Error("Not an operation: " + sPath);
@@ -536,7 +562,7 @@ sap.ui.define([
 		sPath = oRequestor.getPathAndAddQueryOptions(sPath, oOperationMetadata, mParameters,
 			this.mCacheQueryOptions, vEntity);
 		oCache = _Cache.createSingle(oRequestor, sPath, this.mCacheQueryOptions,
-			oModel.bAutoExpandSelect, sOriginalResourcePath, bAction, sMetaPath,
+			oModel.bAutoExpandSelect, getOriginalResourcePath, bAction, sMetaPath,
 			oOperationMetadata.$ReturnType
 				&& !oOperationMetadata.$ReturnType.$Type.startsWith("Edm."));
 		this.oCachePromise = SyncPromise.resolve(oCache);
@@ -626,11 +652,17 @@ sap.ui.define([
 	 *   call succeeded, or rejected with an instance of <code>Error</code> in case of failure,
 	 *   for instance if the operation metadata is not found, if overloading is not supported, or if
 	 *   a collection-valued function parameter is encountered.
+	 *
 	 *   A return value context is a {@link sap.ui.model.odata.v4.Context} which represents a bound
 	 *   operation response. It is created only if the operation is bound and has a single entity
 	 *   return value from the same entity set as the operation's binding parameter and has a
 	 *   parent context which is a {@link sap.ui.model.odata.v4.Context} and points to an entity
 	 *   from an entity set.
+	 *
+	 *   If a return value context is created, it must be used instead of
+	 *   <code>this.getBoundContext()</code>. All bound messages will be related to the return value
+	 *   context only. Such a message can only be connected to a corresponding control if the
+	 *   control's property bindings use the return value context as binding context.
 	 * @throws {Error} If the binding's root binding is suspended, the given group ID is invalid, if
 	 *   the binding is not a deferred operation binding (see
 	 *   {@link sap.ui.model.odata.v4.ODataContextBinding}), if the binding is not resolved or

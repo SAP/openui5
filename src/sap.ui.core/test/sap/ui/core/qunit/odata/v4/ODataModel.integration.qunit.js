@@ -8744,8 +8744,7 @@ sap.ui.define([
 				}).expectMessages([{
 					code : "23",
 					message : "Just A Message",
-					target : "/Artists(ArtistID='42',IsActiveEntity=true)/special.cases."
-						+ oFixture.operation + "(...)/Name",
+					target : "/Artists(ArtistID='42',IsActiveEntity=false)/Name",
 					persistent : true,
 					type : "Success"
 				}]);
@@ -8826,14 +8825,7 @@ sap.ui.define([
 			oJustAMessage = {
 				code : "23",
 				message : "Just A Message",
-				//TODO:
-				// take care that relative bindings for the returnValueContext are also notified
-				// with the right target.
-				// Idea: report errors also with the path of the returnValueContext, in this example
-				// "Artists(ArtistID='42',IsActiveEntity=true)/Name"
-				// -> results in duplicated messages with different targets...
-				target : "/Artists(ArtistID='42',IsActiveEntity=true)"
-					+ "/special.cases.EditAction(...)/Name",
+				target : "/Artists(ArtistID='42',IsActiveEntity=false)/Name",
 				persistent : true,
 				type : "Success"
 			},
@@ -8842,7 +8834,7 @@ sap.ui.define([
 <FlexBox id="objectPage">\
 	<Text id="id" text="{ArtistID}" />\
 	<Text id="isActive" text="{IsActiveEntity}" />\
-	<Text id="name" text="{Name}" />\
+	<Input id="name" value="{Name}" />\
 	<Text id="inProcessByUser" text="{DraftAdministrativeData/InProcessByUser}" />\
 </FlexBox>',
 			that = this;
@@ -8917,6 +8909,8 @@ sap.ui.define([
 
 			return that.waitForChanges(assert);
 		}).then(function () {
+			return that.checkValueState(assert, "name", "Success", "Just A Message");
+		}).then(function () {
 			var oInactiveArtistContext = that.oView.getBindingContext();
 
 			that.expectChange("name", "TAFKAP")
@@ -8927,7 +8921,7 @@ sap.ui.define([
 					payload : {"Name" : "TAFKAP"}
 				}, {/* response does not matter here */});
 
-			that.oView.byId("name").getBinding("text").setValue("TAFKAP");
+			that.oView.byId("name").getBinding("value").setValue("TAFKAP");
 
 			that.expectRequest("Artists(ArtistID='42',IsActiveEntity=false)"
 				+ "?$select=DraftAdministrativeData"
