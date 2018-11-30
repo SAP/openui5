@@ -2783,16 +2783,12 @@ sap.ui.define([
 		bSubSectionsOnly = !!bSubSectionsOnly;
 		iScrollTop = Math.ceil(iScrollTop);
 
-		if (this.getUseIconTabBar() && this._oCurrentTabSection) {
-			return this._oCurrentTabSection.getId();
-		}
-
 		var iScrollPageBottom = iScrollTop + iPageHeight,                 //the bottom limit
 			sClosestId,
 			bTraverseSubSections = bSubSectionsOnly || this._bMobileScenario;
 
 		jQuery.each(this._oSectionInfo, function (sId, oInfo) {
-			var section, sectionParent, isParentHiddenSection, firstVisibleSubSection;
+			var section, sectionParent, isParentHiddenSection, firstVisibleSubSection, oSelectedSection, sSelectedSectionId = this.getSelectedSection();
 
 			// on desktop/tablet, skip subsections
 			// BCP 1680331690. Should skip subsections that are in a section with lower importance, which makes them hidden.
@@ -2802,6 +2798,17 @@ sap.ui.define([
 			}
 			sectionParent = section.getParent();
 			isParentHiddenSection = sectionParent instanceof ObjectPageSection && sectionParent._getIsHidden();
+
+			// discard (sub)sections that are not part of the current current tab
+			if (this.getUseIconTabBar() && sSelectedSectionId) {
+				oSelectedSection = this.oCore.byId(sSelectedSectionId);
+				if (oInfo.isSection && oInfo.sectionReference != oSelectedSection) {
+					return true;
+				}
+				if (!oInfo.isSection && oSelectedSection.indexOfSubSection(oInfo.sectionReference) < 0) {
+					return true;
+				}
+			}
 
 			if (oInfo.isSection || (bTraverseSubSections && !isParentHiddenSection)) {
 				//we need to set the sClosest to the first section for handling the scrollTop = 0

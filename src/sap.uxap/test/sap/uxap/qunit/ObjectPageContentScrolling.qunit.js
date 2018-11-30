@@ -498,6 +498,71 @@ function(jQuery, Core, ObjectPageSubSection, ObjectPageSection, ObjectPageLayout
 		oObjectPage.$().outerHeight("800px"); // set page height smaller than header height
 	});
 
+	QUnit.test("_getClosestScrolledSectionId anchorBar mode", function (assert) {
+		var done = assert.async();
+		XMLView.create({
+			id: "UxAP-objectPageContentScrolling",
+			viewName: "view.UxAP-ObjectPageContentScrolling"
+		}).then(function (oView) {
+			this.oObjectPageContentScrollingView = oView;
+			this.oObjectPageContentScrollingView.placeAt('qunit-fixture');
+			Core.applyChanges();
+
+			var oObjectPage = this.oObjectPageContentScrollingView.byId("ObjectPageLayout"),
+				oFirstSubSection = oObjectPage.getSections()[0].getSubSections()[0],
+				oSecondSubSection = oObjectPage.getSections()[0].getSubSections()[0],
+				iFirstSubSectionScrollTop,
+				iSecondSubSectionScrollTop,
+				iPageHeight;
+
+			oObjectPage.attachEventOnce("onAfterRenderingDOMReady", function() {
+				iPageHeight = oObjectPage.getDomRef().offsetHeight;
+				iFirstSubSectionScrollTop = oObjectPage._computeScrollPosition(oFirstSubSection);
+				iSecondSubSectionScrollTop = oObjectPage._computeScrollPosition(oSecondSubSection);
+
+				assert.strictEqual(oObjectPage._getClosestScrolledSectionId(iFirstSubSectionScrollTop + 10, iPageHeight, true /* subsections only */), oFirstSubSection.getId(), "first subsection is closest");
+				assert.strictEqual(oObjectPage._getClosestScrolledSectionId(iSecondSubSectionScrollTop + 10, iPageHeight, true /* subsections only */), oSecondSubSection.getId(), "second subsection is closest");
+				this.oObjectPageContentScrollingView.destroy();
+				done();
+			}.bind(this));
+		}.bind(this));
+	});
+
+	QUnit.test("_getClosestScrolledSectionId tabs mode", function (assert) {
+		var done = assert.async();
+		XMLView.create({
+			id: "UxAP-objectPageContentScrolling",
+			viewName: "view.UxAP-ObjectPageContentScrolling"
+		}).then(function (oView) {
+			this.oObjectPageContentScrollingView = oView;
+			this.oObjectPageContentScrollingView.placeAt('qunit-fixture');
+			Core.applyChanges();
+
+			var oObjectPage = this.oObjectPageContentScrollingView.byId("ObjectPageLayout"),
+				oSecondSection = oObjectPage.getSections()[1],
+				oSecondSectionFirstSubSection = oSecondSection.getSubSections()[0],
+				oSecondSectionSecondSubSection = oSecondSection.getSubSections()[0],
+				iFirstSubSectionScrollTop,
+				iSecondSubSectionScrollTop,
+				iPageHeight;
+
+			// select the second visible tab
+			oObjectPage.setSelectedSection();
+
+			oObjectPage.attachEventOnce("onAfterRenderingDOMReady", function() {
+				iPageHeight = oObjectPage.getDomRef().offsetHeight;
+				iFirstSubSectionScrollTop = oObjectPage._computeScrollPosition(oSecondSectionFirstSubSection);
+				iSecondSubSectionScrollTop = oObjectPage._computeScrollPosition(oSecondSectionSecondSubSection);
+
+				assert.strictEqual(oObjectPage._getClosestScrolledSectionId(iFirstSubSectionScrollTop + 10, iPageHeight, false /* sections only */), oSecondSection.getId(), "second section is closest");
+				assert.strictEqual(oObjectPage._getClosestScrolledSectionId(iFirstSubSectionScrollTop + 10, iPageHeight, true /* subsections only */), oSecondSectionFirstSubSection.getId(), "first subsection is closest");
+				assert.strictEqual(oObjectPage._getClosestScrolledSectionId(iSecondSubSectionScrollTop + 10, iPageHeight, true /* subsections only */), oSecondSectionSecondSubSection.getId(), "second subsection is closest");
+				this.oObjectPageContentScrollingView.destroy();
+				done();
+			}.bind(this));
+		}.bind(this));
+	});
+
 	function isObjectPageHeaderStickied(oObjectPage) {
 		var oHeaderTitle = document.getElementById(oObjectPage.getId() + "-headerTitle");
 		var oHeaderContent = document.getElementById(oObjectPage.getId() + "-headerContent");
