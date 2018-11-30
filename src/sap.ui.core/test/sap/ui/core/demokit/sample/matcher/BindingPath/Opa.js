@@ -4,11 +4,9 @@ QUnit.config.autostart = false;
 
 sap.ui.require([
 	'sap/ui/test/matchers/BindingPath',
-	'sap/ui/test/matchers/Ancestor',
-	'sap/ui/test/actions/Press',
 	'sap/ui/test/opaQunit',
 	'sap/ui/test/Opa5'
-], function (BindingPath, Ancestor, Press, opaTest, Opa5) {
+], function (BindingPath, opaTest, Opa5) {
 	"use strict";
 
 	QUnit.module("Binding Path");
@@ -30,40 +28,36 @@ sap.ui.require([
 			matchers: new BindingPath({
 				propertyPath: "/ProductCollection"
 			}),
-			success: function (oList) {
+			success: function () {
 				Opa5.assert.ok(true, "The binding property path of the list was matched");
-				this.waitFor({
-					controlType: "sap.m.CheckBox",
-					matchers: [
-						new Ancestor(oList),
-						new BindingPath({
-							path: "/ProductCollection/0"
-						})
-					],
-					actions: new Press(),
-					success: function (aCheckBoxes) {
-						Opa5.assert.ok(aCheckBoxes[0].getSelected(), "The binding context path of the CheckBox was matched");
-					},
-					errorMessage: "Could not match the binding context of the first collection item"
-				});
 			},
 			errorMessage: "Could not match the binding property of the list"
 		});
 
 		// Assert
 		Then.waitFor({
-			controlType: "sap.m.StandardListItem",
+			controlType: "sap.m.CustomListItem",
 			matchers: new BindingPath({
-				path: "/ProductCollection/0",
-				propertyPath: "Name"
+				path: "/ProductCollection/0"
 			}),
-			success: function (aItems) {
-				Opa5.assert.ok(aItems[0].getSelected(), "The binding context and property path for the selected item was matched");
+			success: function () {
+				Opa5.assert.ok(true, "Notebook Basic 15", "The binding context for the selected item was matched");
 			},
-			errorMessage: "The binding context and property path for the selected item was not matched"
+			errorMessage: "The binding context for the selected item was not matched"
 		});
 
-		// Assert
+		Then.waitFor({
+			controlType: "sap.m.CheckBox",
+			matchers:new BindingPath({
+				path: "/ProductCollection/0",
+				propertyPath: "Status"
+			}),
+			success: function (aCheckBoxes) {
+				Opa5.assert.ok(aCheckBoxes[0].getSelected(), "The binding context path and property path of the CheckBox were matched");
+			},
+			errorMessage: "Could not match the binding context and property path of the first collection item"
+		});
+
 		Then.waitFor({
 			controlType: "sap.m.Text",
 			matchers: new BindingPath({
