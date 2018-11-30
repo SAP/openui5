@@ -604,6 +604,10 @@ sap.ui.define([
 		}, 0);
 	});
 
+	QUnit.test("Selection Adapter", function(assert) {
+		assert.ok(this.table._oSelectionAdapter.isA("sap.ui.table.BindingSelectionAdapter"), "BindingSelectionAdapter is initialized");
+	});
+
 	QUnit.module("Selection", {
 		beforeEach: function() {
 			this.table = createTable();

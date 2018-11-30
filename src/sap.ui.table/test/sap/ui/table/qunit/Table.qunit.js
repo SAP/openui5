@@ -249,7 +249,7 @@ sap.ui.define([
 	QUnit.test("Properties", function(assert) {
 		assert.expect(9);
 		assert.equal(oTable.$().find(".sapUiTableHdr").text(), "TABLEHEADER", "Title of Table is correct!");
-		assert.equal(jQuery.sap.byId("__toolbar0").find("button").text(), "Modify Table Properties...", "Toolbar and toolbar button are correct!");
+		assert.equal(jQuery("#__toolbar0").find("button").text(), "Modify Table Properties...", "Toolbar and toolbar button are correct!");
 		assert.equal(oTable.$().find(".sapUiTableFtr").text(), "Footer", "Title of Table is correct!");
 		assert.equal(oTable.getSelectionMode(), "Single", "Selection mode is Single!");
 		assert.equal(oTable.getSelectedIndex(), -1, "Selected Index is -1!");
@@ -309,6 +309,10 @@ sap.ui.define([
 		oTable.filter(oColMoney, "");
 		assert.equal(oColFirstName.getFiltered() && oColMoney.getFiltered(), false, "Column FirstName and Money are not filtered anymore");
 		assert.equal(oTable.getBinding("rows").iLength, 200, "RowCount after removing filter");
+	});
+
+	QUnit.test("Selection Adapter", function(assert) {
+		assert.ok(oTable._oSelectionAdapter.isA("sap.ui.table.SelectionModelAdapter"), "SelectionModelAdapter is initialized");
 	});
 
 	QUnit.test("SelectionMode", function(assert) {

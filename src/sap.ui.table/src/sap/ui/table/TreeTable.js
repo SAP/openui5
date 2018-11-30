@@ -11,6 +11,7 @@ sap.ui.define([
 	'./library',
 	'sap/ui/core/Element',
 	'./TableUtils',
+	"./BindingSelectionAdapter",
 	"sap/base/Log",
 	"sap/base/assert"
 ],
@@ -22,13 +23,11 @@ sap.ui.define([
 		library,
 		Element,
 		TableUtils,
+		BindingSelectionAdapter,
 		Log,
 		assert
 	) {
 	"use strict";
-
-	// shortcuts
-	var SelectionMode = library.SelectionMode;
 
 	/**
 	 * Constructor for a new TreeTable.
@@ -138,6 +137,13 @@ sap.ui.define([
 	TreeTable.prototype.init = function() {
 		Table.prototype.init.apply(this, arguments);
 		TableUtils.Grouping.setTreeMode(this);
+
+		this._initSelectionAdapter();
+	};
+
+	TreeTable.prototype._initSelectionAdapter = function(){
+		this._oSelectionAdapter = new BindingSelectionAdapter();
+		this._oSelectionAdapter.attachEvent("selectionChange", this._onSelectionChanged, this);
 	};
 
 	TreeTable.prototype.bindRows = function(oBindingInfo) {
@@ -176,20 +182,6 @@ sap.ui.define([
 				selectionChanged: this._onSelectionChanged.bind(this)
 			});
 		}
-	};
-
-	TreeTable.prototype.setSelectionMode = function(sSelectionMode) {
-		var oBinding = this.getBinding("rows");
-		if (oBinding && oBinding.clearSelection) {
-			oBinding.clearSelection();
-
-			// Check for valid selection modes (e.g. change deprecated mode "Multi" to "MultiToggle")
-			sSelectionMode = TableUtils.sanitizeSelectionMode(this, sSelectionMode);
-			this.setProperty("selectionMode", sSelectionMode);
-		} else {
-			Table.prototype.setSelectionMode.call(this, sSelectionMode);
-		}
-		return this;
 	};
 
 	/**
@@ -341,59 +333,6 @@ sap.ui.define([
 	};
 
 	/**
-	 * Checks if the row at the given index is selected.
-	 *
-	 * @param {int} iRowIndex The row index for which the selection state should be retrieved
-	 * @returns {boolean} true if the index is selected, false otherwise
-	 * @public
-	 * @ui5-metamodel This method also will be described in the UI5 (legacy) designtime metamodel
-	 */
-	TreeTable.prototype.isIndexSelected = function(iRowIndex) {
-		var oBinding = this.getBinding("rows");
-		//when using the treebindingadapter, check if the node is selected
-		if (oBinding && oBinding.isIndexSelected) {
-			return oBinding.isIndexSelected(iRowIndex);
-		} else {
-			return Table.prototype.isIndexSelected.call(this, iRowIndex);
-		}
-	};
-
-	/**
-	 * Overridden from Table.js base class.
-	 * In a TreeTable you can only select indices, which correspond to the currently visualized tree.
-	 * Invisible tree nodes (e.g. collapsed child nodes) can not be selected via Index, because they do not
-	 * correspond to a TreeTable row.
-	 *
-	 * @param {int} iRowIndex The row index which will be selected (if existing)
-	 * @returns {sap.ui.table.TreeTable} a reference on the TreeTable control, can be used for chaining
-	 * @public
-	 * @ui5-metamodel This method also will be described in the UI5 (legacy) designtime metamodel
-	 */
-	TreeTable.prototype.setSelectedIndex = function(iRowIndex) {
-		if (this.getSelectionMode() === SelectionMode.None) {
-			return this;
-		}
-
-		if (iRowIndex === -1) {
-			//If Index eq -1 no item is selected, therefore clear selection is called
-			//SelectionModel doesn't know that -1 means no selection
-			this.clearSelection();
-		}
-
-		//when using the treebindingadapter, check if the node is selected
-		var oBinding = this.getBinding("rows");
-
-		if (oBinding && oBinding.findNode && oBinding.setNodeSelection) {
-			// set the found node as selected
-			oBinding.setSelectedIndex(iRowIndex);
-			//this.fireEvent("selectionChanged");
-		} else {
-			Table.prototype.setSelectedIndex.call(this, iRowIndex);
-		}
-		return this;
-	};
-
-	/**
 	 * Returns an array containing the row indices of all selected tree nodes (ordered ascending).
 	 *
 	 * Please be aware of the following:
@@ -404,112 +343,64 @@ sap.ui.define([
 	 * @returns {int[]} an array containing all selected indices
 	 * @public
 	 * @ui5-metamodel This method also will be described in the UI5 (legacy) designtime metamodel
+	 * @function
+	 * @name sap.ui.table.TreeTable#getSelectedIndices
 	 */
-	TreeTable.prototype.getSelectedIndices = function() {
-		//when using the treebindingadapter, check if the node is selected
-		var oBinding = this.getBinding("rows");
-
-		if (oBinding && oBinding.findNode && oBinding.getSelectedIndices) {
-			/*jQuery.sap.log.warning("When using a TreeTable on a V2 ODataModel, you can also use 'getSelectedContexts' on the underlying TreeBinding," +
-					" for an optimised retrieval of the binding contexts of the all selected rows/nodes.");*/
-			return oBinding.getSelectedIndices();
-		} else {
-			return Table.prototype.getSelectedIndices.call(this);
-		}
-	};
 
 	/**
 	 * Sets the selection of the TreeTable to the given range (including boundaries).
-	 * Beware: The previous selection will be lost/overridden. If this is not wanted, please use "addSelectionInterval" and
-	 * "removeSelectionInterval".
+	 * Beware: The previous selection will be lost/overridden. If this is not wanted, please use "addSelectionInterval"
+	 * and "removeSelectionInterval".
+	 * Please be aware, that the absolute row index only applies to the tree which is visualized by the TreeTable.
 	 *
 	 * @param {int} iFromIndex the start index of the selection range
 	 * @param {int} iToIndex the end index of the selection range
 	 * @returns {sap.ui.table.TreeTable} a reference on the TreeTable control, can be used for chaining
 	 * @public
 	 * @ui5-metamodel This method also will be described in the UI5 (legacy) designtime metamodel
+	 * @function
+	 * @name sap.ui.table.TreeTable#setSelectionInterval
 	 */
-	TreeTable.prototype.setSelectionInterval = function(iFromIndex, iToIndex) {
-		var sSelectionMode = this.getSelectionMode();
-
-		if (sSelectionMode === SelectionMode.None) {
-			return this;
-		}
-
-		//when using the treebindingadapter, check if the node is selected
-		var oBinding = this.getBinding("rows");
-
-		if (oBinding && oBinding.findNode && oBinding.setSelectionInterval) {
-			if (sSelectionMode === SelectionMode.Single) {
-				oBinding.setSelectionInterval(iFromIndex, iFromIndex);
-			} else {
-				oBinding.setSelectionInterval(iFromIndex, iToIndex);
-			}
-		} else {
-			Table.prototype.setSelectionInterval.call(this, iFromIndex, iToIndex);
-		}
-
-		return this;
-	};
 
 	/**
-	 * Marks a range of tree nodes as selected, starting with iFromIndex going to iToIndex.
-	 * The TreeNodes are referenced via their absolute row index.
-	 * Please be aware, that the absolute row index only applies to the tree which is visualized by the TreeTable.
+	 * Sets the selected index
+	 * In a TreeTable you can only select indices, which correspond to the currently visualized tree.
+	 * Invisible tree nodes (e.g. collapsed child nodes) can not be selected via Index, because they do not
+	 * correspond to a TreeTable row.
+	 *
+	 * @param {int} iRowIndex The row index which will be selected (if existing)
+	 * @returns {sap.ui.table.TreeTable} a reference on the TreeTable control, can be used for chaining
+	 * @public
+	 * @function
+	 * @name sap.ui.table.TreeTable#setSelectedIndex
+	 */
+
+	/**
+	 * Adds the given selection interval to the selection. In case of single selection, only <code>iIndexTo</code> is added to the selection.
 	 * Invisible nodes (collapsed child nodes) will not be regarded.
 	 *
 	 * Please also take notice of the fact, that "addSelectionInterval" does not change any other selection.
 	 * To override the current selection, please use "setSelctionInterval" or for a single entry use "setSelectedIndex".
 	 *
-	 * @param {int} iFromIndex The starting index of the range which will be selected.
-	 * @param {int} iToIndex The starting index of the range which will be selected.
-	 * @returns {sap.ui.table.TreeTable} a reference on the TreeTable control, can be used for chaining
+	 * @param {int} iIndexFrom Index from which the selection should start
+	 * @param {int} iIndexTo Index up to which to select
+	 * @returns {sap.ui.table.Table} Reference to <code>this</code> in order to allow method chaining
 	 * @public
-	 * @ui5-metamodel This method also will be described in the UI5 (legacy) designtime metamodel
+	 * @function
+	 * @name sap.ui.table.TreeTable#addSelectionInterval
 	 */
-	TreeTable.prototype.addSelectionInterval = function(iFromIndex, iToIndex) {
-		var sSelectionMode = this.getSelectionMode();
-
-		if (sSelectionMode === SelectionMode.None) {
-			return this;
-		}
-
-		var oBinding = this.getBinding("rows");
-		//TBA check
-		if (oBinding && oBinding.findNode && oBinding.addSelectionInterval) {
-			if (sSelectionMode === SelectionMode.Single) {
-				oBinding.setSelectionInterval(iFromIndex, iFromIndex);
-			} else {
-				oBinding.addSelectionInterval(iFromIndex, iToIndex);
-			}
-		} else {
-			Table.prototype.addSelectionInterval.call(this, iFromIndex, iToIndex);
-		}
-		return this;
-	};
 
 	/**
-	 * All rows/tree nodes inside the range (including boundaries) will be deselected.
-	 * Tree nodes are referenced with theit absolute row index inside the tree-
-	 * Please be aware, that the absolute row index only applies to the tree which is visualized by the TreeTable.
+	 * Removes the given selection interval from the selection. In case of single selection, only <code>iIndexTo</code> is removed from the selection.
 	 * Invisible nodes (collapsed child nodes) will not be regarded.
 	 *
-	 * @param {int} iFromIndex The starting index of the range which will be deselected.
-	 * @param {int} iToIndex The starting index of the range which will be deselected.
-	 * @returns {sap.ui.table.TreeTable} a reference on the TreeTable control, can be used for chaining
+	 * @param {int} iIndexFrom Index from which the deselection should start
+	 * @param {int} iIndexTo Index up to which to deselect
+	 * @returns {sap.ui.table.Table} Reference to <code>this</code> in order to allow method chaining
 	 * @public
-	 * @ui5-metamodel This method also will be described in the UI5 (legacy) designtime metamodel
+	 * @function
+	 * @name sap.ui.table.TreeTable#removeSelectionInterval
 	 */
-	TreeTable.prototype.removeSelectionInterval = function(iFromIndex, iToIndex) {
-		var oBinding = this.getBinding("rows");
-		//TBA check
-		if (oBinding && oBinding.findNode && oBinding.removeSelectionInterval) {
-			oBinding.removeSelectionInterval(iFromIndex, iToIndex);
-		} else {
-			Table.prototype.removeSelectionInterval.call(this, iFromIndex, iToIndex);
-		}
-		return this;
-	};
 
 	/**
 	 * Selects all available nodes/rows.
@@ -520,62 +411,9 @@ sap.ui.define([
 	 *
 	 * @returns {sap.ui.table.TreeTable} a reference on the TreeTable control, can be used for chaining
 	 * @public
-	 * @ui5-metamodel This method also will be described in the UI5 (legacy) designtime metamodel
+	 * @function
+	 * @name sap.ui.table.TreeTable#selectAll
 	 */
-	TreeTable.prototype.selectAll = function() {
-		if (!TableUtils.hasSelectAll(this)) {
-			return this;
-		}
-
-		//The OData TBA exposes a selectAll function
-		var oBinding = this.getBinding("rows");
-		if (oBinding && oBinding.selectAll) {
-			oBinding.selectAll();
-		} else {
-			//otherwise fallback on the tables own function
-			Table.prototype.selectAll.call(this);
-		}
-
-		return this;
-	};
-
-	/**
-	 * Retrieves the lead selection index. The lead selection index is, among other things, used to determine the
-	 * start/end of a selection range, when using Shift-Click to select multiple entries at once.
-	 *
-	 * @returns {int} index of lead selected row
-	 * @public
-	 * @ui5-metamodel This method also will be described in the UI5 (legacy) designtime metamodel
-	 */
-	TreeTable.prototype.getSelectedIndex = function() {
-		//when using the treebindingadapter, check if the node is selected
-		var oBinding = this.getBinding("rows");
-
-		if (oBinding && oBinding.findNode) {
-			return oBinding.getSelectedIndex();
-		} else {
-			return Table.prototype.getSelectedIndex.call(this);
-		}
-	};
-
-	/**
-	 * Clears the complete selection (all tree table rows/nodes will lose their selection)
-	 *
-	 * @returns {sap.ui.table.TreeTable} a reference on the TreeTable control, can be used for chaining
-	 * @public
-	 * @ui5-metamodel This method also will be described in the UI5 (legacy) designtime metamodel
-	 */
-	TreeTable.prototype.clearSelection = function() {
-		var oBinding = this.getBinding("rows");
-
-		if (oBinding && oBinding.clearSelection) {
-			oBinding.clearSelection();
-		} else {
-			Table.prototype.clearSelection.call(this);
-		}
-
-		return this;
-	};
 
 	TreeTable.prototype.getContextByIndex = function(iRowIndex) {
 		var oBinding = this.getBinding("rows");
