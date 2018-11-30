@@ -305,6 +305,44 @@ sap.ui.define([
 			}.bind(this));
 		});
 
+		QUnit.test('getCacheKey a cache entry and current variant management-id are available', function(assert) {
+			var sTestComponentName = "testComponent";
+			var sAppVersion = "oldVersion";
+			var sControlVariantId = "id_1541412437845_176_Copy";
+			Cache._entries = {
+				"testComponent" : {
+					"oldVersion" : {
+						file : "oldContent"
+					}
+				}
+			};
+			var oComponentMock = {
+				name : sTestComponentName,
+				appVersion : sAppVersion,
+				getComponentData: function(){
+					return {
+						technicalParameters: {
+							"sap-ui-fl-control-variant-id" : [sControlVariantId]
+						}
+					};
+				}
+			};
+			var oEntry = {
+				changes: {
+					changes: [
+						{something: "1"}
+					]
+				}
+			};
+			Cache._entries[sTestComponentName][sAppVersion].promise = Promise.resolve(oEntry);
+			sandbox.stub(this.oLrepConnector, 'loadChanges').returns(Promise.resolve(oEntry));
+			return Cache.getCacheKey(oComponentMock)
+			.then(function(sCacheKey) {
+				assert.ok(sCacheKey, "then cachekey is returned");
+				assert.equal(sCacheKey, Cache.NOTAG + sControlVariantId, "then cachekey is extended by control variant id");
+			});
+		});
+
 		QUnit.test("getChangesFillingCache returns an empty list of changes without sending an request " +
 			"if the passed parameter contain already the information that there are no changes", function(assert) {
 			var sComponentName = "smartFilterBar.Component";
@@ -536,7 +574,6 @@ sap.ui.define([
 				assert.deepEqual(oResult, oEntry, "then the available cache entry is returned");
 			}.bind(this));
 		});
-
 		QUnit.test('if cache key equals NO CHANGES, no cache entry is available and no change information is passed by cache key', function(assert) {
 			var sTestComponentName = "testComponent";
 			var sAppVersion = "oldVersion";
