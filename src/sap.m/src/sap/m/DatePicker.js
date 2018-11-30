@@ -58,7 +58,7 @@ sap.ui.define([
 	 * @param {object} [mSettings] Initial settings for the new control
 	 *
 	 * @class
-	 * Enables the users to select a localized date.
+	 * Enables the users to select a localized date between 0001-01-01 and 9999-12-31.
 	 *
 	 * <h3>Overview</h3>
 	 *

@@ -54,7 +54,7 @@ function(
 	 * @param {object} [mSettings] Initial settings for the new control
 	 *
 	 * @class
-	 * Allows end users to interact with date and/or time and select from a date and/or time pad.
+	 * Allows end users to interact with date (between 0001-01-01 and 9999-12-31) and/or time and select from a date and/or time pad.
 	 *
 	 * <b>Note:</b> This control should not be used any longer, instead please use the dedicated <code>sap.m.DatePicker</code>, <code>sap.m.TimePicker</code> or <code>sap.m.DateTimePicker</code> control.
 	 * @extends sap.ui.core.Control
