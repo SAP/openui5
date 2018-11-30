@@ -56,7 +56,17 @@
 	height: 100%;
 	width: auto;
 	outline: none;
-};
+}
+
+.sapMInputBaseDynamicContent {
+	height: 100%;
+	display: flex;
+	flex: 1;
+}
+
+.sapMInputBaseNoWidth .sapMInputBaseDynamicContent {
+	flex: auto;
+}
 
 .sapMInputBaseHasBeginIcons .sapMInputBaseInner {
 	padding-left: 0.25rem;

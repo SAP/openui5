@@ -215,12 +215,12 @@ sap.ui.define([
 	});
 
 	QUnit.test("date format", function(assert) {
-		assert.ok(!jQuery("#DP1").children("div.sapMInputBaseContentWrapper").children("input").val(), "DP1 : empty date");
-		assert.equal(jQuery("#DP2").children("div.sapMInputBaseContentWrapper").children("input").val(), "01+04+2014", "DP2: defined output format used");
-		assert.equal(jQuery("#DP3").children("div.sapMInputBaseContentWrapper").children("input").val(), "April 1, 2014", "DP3: defined output format used");
-		assert.equal(jQuery("#DP5").children("div.sapMInputBaseContentWrapper").children("input").val(), "Safar 10, 1437 AH", "DP5: defined islamic output format used");
-		assert.equal(jQuery("#DP6").children("div.sapMInputBaseContentWrapper").children("input").val(), "11/23/15", "DP6: defined output format from binding used");
-		assert.equal(jQuery("#DP7").children("div.sapMInputBaseContentWrapper").children("input").val(), "2/10/1437 AH", "DP7: defined islamic output format from binding used");
+		assert.ok(!jQuery("#DP1").find("input").val(), "DP1 : empty date");
+		assert.equal(jQuery("#DP2").find("input").val(), "01+04+2014", "DP2: defined output format used");
+		assert.equal(jQuery("#DP3").find("input").val(), "April 1, 2014", "DP3: defined output format used");
+		assert.equal(jQuery("#DP5").find("input").val(), "Safar 10, 1437 AH", "DP5: defined islamic output format used");
+		assert.equal(jQuery("#DP6").find("input").val(), "11/23/15", "DP6: defined output format from binding used");
+		assert.equal(jQuery("#DP7").find("input").val(), "2/10/1437 AH", "DP7: defined islamic output format from binding used");
 	});
 
 	QUnit.test("ValueHelp icon is not visible when DatePicker is not enabled", function (assert) {
@@ -304,14 +304,14 @@ sap.ui.define([
 		oDPMinDate.setDateValue(today);
 
 		//Assert
-		assert.equal(oDPMinDate.$().children("div.sapMInputBaseContentWrapper").children("input").val(), "01.01.2017",
+		assert.equal(oDPMinDate.$().find("input").val(), "01.01.2017",
 				"DOM value should equal the minDate> without time part");
 
 		//Act
 		oDPMaxDate.setDateValue(today);
 
 		//Assert
-		assert.equal(oDPMaxDate.$().children("div.sapMInputBaseContentWrapper").children("input").val(), "01.01.2017",
+		assert.equal(oDPMaxDate.$().find("input").val(), "01.01.2017",
 				"DOM value should equal the maxDate without time part");
 
 		//Cleanup
@@ -700,9 +700,9 @@ sap.ui.define([
 		bValid = true;
 		sId = "";
 		oDP2.focus();
-		jQuery("#DP2").children("div.sapMInputBaseContentWrapper").children("input").val("32+04+2014");
+		jQuery("#DP2").find("input").val("32+04+2014");
 		qutils.triggerKeyboardEvent("DP2-inner", jQuery.sap.KeyCodes.ENTER, false, false, false);
-		jQuery("#DP2").children("div.sapMInputBaseContentWrapper").children("input").change(); // trigger change event, because browser do not if value is changed using jQuery
+		jQuery("#DP2").find("input").change(); // trigger change event, because browser do not if value is changed using jQuery
 		assert.equal(sId, "DP2", "Change event fired");
 		assert.equal(sValue, "32+04+2014", "Value of event has entered value if invalid");
 		assert.ok(!bValid, "Value is not valid");
@@ -714,9 +714,9 @@ sap.ui.define([
 		bValid = false;
 		sId = "";
 		oDP2.focus();
-		jQuery("#DP2").children("div.sapMInputBaseContentWrapper").children("input").val("02+04+2014");
+		jQuery("#DP2").find("input").val("02+04+2014");
 		qutils.triggerKeyboardEvent("DP2-inner", jQuery.sap.KeyCodes.ENTER, false, false, false);
-		jQuery("#DP2").children("div.sapMInputBaseContentWrapper").children("input").change(); // trigger change event, because browser do not if value is changed using jQuery
+		jQuery("#DP2").find("input").change(); // trigger change event, because browser do not if value is changed using jQuery
 		assert.equal(sId, "DP2", "Change event fired");
 		assert.equal(sValue, "2014-04-02", "Value in internal format priovided");
 		assert.ok(bValid, "Value is valid");
@@ -730,9 +730,9 @@ sap.ui.define([
 		bValid = false;
 		sId = "";
 		oDP6.focus();
-		jQuery("#DP6").children("div.sapMInputBaseContentWrapper").children("input").val("13/23/2015");
+		jQuery("#DP6").find("input").val("13/23/2015");
 		qutils.triggerKeyboardEvent("DP6-inner", jQuery.sap.KeyCodes.ENTER, false, false, false);
-		jQuery("#DP6").children("div.sapMInputBaseContentWrapper").children("input").change(); // trigger change event, because browser do not if value is changed using jQuery
+		jQuery("#DP6").find("input").change(); // trigger change event, because browser do not if value is changed using jQuery
 		assert.ok(bParseError, "parse error fired");
 		assert.ok(!bValidationSuccess, "no validation success fired");
 		assert.equal(sId, "DP6", "ID of control");
@@ -747,15 +747,15 @@ sap.ui.define([
 		bValid = false;
 		sId = "";
 		oDP6.focus();
-		jQuery("#DP6").children("div.sapMInputBaseContentWrapper").children("input").val("01/01/15");
+		jQuery("#DP6").find("input").val("01/01/15");
 		qutils.triggerKeyboardEvent("DP6-inner", jQuery.sap.KeyCodes.ENTER, false, false, false);
-		jQuery("#DP6").children("div.sapMInputBaseContentWrapper").children("input").change(); // trigger change event, because browser do not if value is changed using jQuery
+		jQuery("#DP6").find("input").change(); // trigger change event, because browser do not if value is changed using jQuery
 		assert.ok(!bParseError, "no parse error fired");
 		assert.ok(bValidationSuccess, "validation success fired");
 		assert.equal(sId, "DP6", "ID of control");
 		assert.equal(sValue, "1/1/15", "Value in binding format priovided");
 		assert.equal(oDP6.getValue(), "1/1/15", "Value in internal format set");
-		assert.equal(jQuery("#DP6").children("div.sapMInputBaseContentWrapper").children("input").val(), "1/1/15", "output value formatted in binding format");
+		assert.equal(jQuery("#DP6").find("input").val(), "1/1/15", "output value formatted in binding format");
 		assert.equal(oDP6.getDateValue().getTime(), new Date("2015", "0", "1").getTime(), "DateValue changed");
 	});
 
@@ -769,7 +769,7 @@ sap.ui.define([
 		assert.equal(sValue, "2014-04-03", "PageUp: Value in internal format priovided");
 		assert.equal(oDP2.getValue(), "2014-04-03", "PageUp: Value in internal format set");
 		assert.equal(oDP2.getDateValue().getTime(), new Date("2014", "03", "03").getTime(), "PageUp: DateValue set");
-		assert.equal(jQuery("#DP2").children("div.sapMInputBaseContentWrapper").children("input").val(), "03+04+2014", "PageUp: Value in external format displayed");
+		assert.equal(jQuery("#DP2").find("input").val(), "03+04+2014", "PageUp: Value in external format displayed");
 		bChange = false;
 		sValue = "";
 		sId = "";
@@ -778,7 +778,7 @@ sap.ui.define([
 		assert.equal(sValue, "2014-05-03", "PageUp+shift: Value in internal format priovided");
 		assert.equal(oDP2.getValue(), "2014-05-03", "PageUp+shift: Value in internal format set");
 		assert.equal(oDP2.getDateValue().getTime(), new Date("2014", "4", "03").getTime(), "PageUp+shift: DateValue set");
-		assert.equal(jQuery("#DP2").children("div.sapMInputBaseContentWrapper").children("input").val(), "03+05+2014", "PageUp+shift: Value in external format displayed");
+		assert.equal(jQuery("#DP2").find("input").val(), "03+05+2014", "PageUp+shift: Value in external format displayed");
 		bChange = false;
 		sValue = "";
 		sId = "";
@@ -787,7 +787,7 @@ sap.ui.define([
 		assert.equal(sValue, "2015-05-03", "PageUp+shift+ctrl: Value in internal format priovided");
 		assert.equal(oDP2.getValue(), "2015-05-03", "PageUp+shift+ctrl: Value in internal format set");
 		assert.equal(oDP2.getDateValue().getTime(), new Date("2015", "4", "03").getTime(), "PageUp+shift+ctrl: DateValue set");
-		assert.equal(jQuery("#DP2").children("div.sapMInputBaseContentWrapper").children("input").val(), "03+05+2015", "PageUp+shift+ctrl: Value in external format displayed");
+		assert.equal(jQuery("#DP2").find("input").val(), "03+05+2015", "PageUp+shift+ctrl: Value in external format displayed");
 		bChange = false;
 		sValue = "";
 		sId = "";
@@ -796,7 +796,7 @@ sap.ui.define([
 		assert.equal(sValue, "2015-05-02", "PageDown: Value in internal format priovided");
 		assert.equal(oDP2.getValue(), "2015-05-02", "PageDown: Value in internal format set");
 		assert.equal(oDP2.getDateValue().getTime(), new Date("2015", "04", "02").getTime(), "PageDown: DateValue set");
-		assert.equal(jQuery("#DP2").children("div.sapMInputBaseContentWrapper").children("input").val(), "02+05+2015", "PageDown: Value in external format displayed");
+		assert.equal(jQuery("#DP2").find("input").val(), "02+05+2015", "PageDown: Value in external format displayed");
 		bChange = false;
 		sValue = "";
 		sId = "";
@@ -805,7 +805,7 @@ sap.ui.define([
 		assert.equal(sValue, "2015-04-02", "PageDown+shift: Value in internal format priovided");
 		assert.equal(oDP2.getValue(), "2015-04-02", "PageUp+shift: Value in internal format set");
 		assert.equal(oDP2.getDateValue().getTime(), new Date("2015", "3", "02").getTime(), "PageDown+shift: DateValue set");
-		assert.equal(jQuery("#DP2").children("div.sapMInputBaseContentWrapper").children("input").val(), "02+04+2015", "PageDown+shift: Value in external format displayed");
+		assert.equal(jQuery("#DP2").find("input").val(), "02+04+2015", "PageDown+shift: Value in external format displayed");
 		bChange = false;
 		sValue = "";
 		sId = "";
@@ -814,7 +814,7 @@ sap.ui.define([
 		assert.equal(sValue, "2014-04-02", "PageDown+shift+ctrl: Value in internal format priovided");
 		assert.equal(oDP2.getValue(), "2014-04-02", "PageDown+shift+ctrl: Value in internal format set");
 		assert.equal(oDP2.getDateValue().getTime(), new Date("2014", "3", "02").getTime(), "PageDown+shift+ctrl: DateValue set");
-		assert.equal(jQuery("#DP2").children("div.sapMInputBaseContentWrapper").children("input").val(), "02+04+2014", "PageDown+shift+ctrl: Value in external format displayed");
+		assert.equal(jQuery("#DP2").find("input").val(), "02+04+2014", "PageDown+shift+ctrl: Value in external format displayed");
 	});
 
 	//BCP 1670441899
@@ -922,9 +922,9 @@ sap.ui.define([
 		bValid = true;
 		sId = "";
 		oDP3.focus();
-		jQuery("#DP3").children("div.sapMInputBaseContentWrapper").children("input").val("invalid");
+		jQuery("#DP3").find("input").val("invalid");
 		qutils.triggerKeyboardEvent("DP3-inner", jQuery.sap.KeyCodes.ENTER, false, false, false);
-		jQuery("#DP3").children("div.sapMInputBaseContentWrapper").children("input").change(); // trigger change event, because browser do not if value is changed using jQuery
+		jQuery("#DP3").find("input").change(); // trigger change event, because browser do not if value is changed using jQuery
 		assert.equal(sId, "DP3", "Change event fired");
 		assert.equal(sValue, "invalid", "Value of event has entered value if invalid");
 		assert.ok(!bValid, "Value is not valid");
@@ -1046,9 +1046,9 @@ sap.ui.define([
 		bChange = false;
 		bValid = true;
 		oDP3.focus();
-		jQuery("#DP3").children("div.sapMInputBaseContentWrapper").children("input").val("December 31, 2015");
+		jQuery("#DP3").find("input").val("December 31, 2015");
 		qutils.triggerKeydown("DP3-inner", jQuery.sap.KeyCodes.ENTER, false, false, false);
-		jQuery("#DP3").children("div.sapMInputBaseContentWrapper").children("input").change(); // trigger change event, because browser do not if value is changed using jQuery
+		jQuery("#DP3").find("input").change(); // trigger change event, because browser do not if value is changed using jQuery
 		//Assert
 		assert.ok(bChange, "DP3: change event fired by typing invalid date");
 		assert.ok(!bValid, "DP3: invalid typed date is described in <change> event by its non-public parameter <valid>");
@@ -1346,7 +1346,7 @@ sap.ui.define([
 
 		//act
 		oDP.focus();
-		oDP.$().children("div.sapMInputBaseContentWrapper").children("input").val("05+05+1916");
+		oDP.$().find("input").val("05+05+1916");
 		oDP.onChange();
 
 		//assert
@@ -1792,9 +1792,9 @@ sap.ui.define([
 		sValue = "";
 		bValid = true;
 		sId = "";
-		jQuery("#DP2").children("div.sapMInputBaseContentWrapper").children("input").val("11/190/2016");
+		jQuery("#DP2").find("input").val("11/190/2016");
 		qutils.triggerKeyboardEvent("DP2-inner", jQuery.sap.KeyCodes.ENTER, false, false, false);
-		jQuery("#DP2").children("div.sapMInputBaseContentWrapper").children("input").change(); // trigger change event, because browser do not if value is changed using jQuery
+		jQuery("#DP2").find("input").change(); // trigger change event, because browser do not if value is changed using jQuery
 		assert.equal(sId, "DP2", "Change event fired");
 		assert.equal(sValue, "11/190/2016", "The new value is set to an invalid one");
 		assert.ok(!bValid, "Value is not valid");
