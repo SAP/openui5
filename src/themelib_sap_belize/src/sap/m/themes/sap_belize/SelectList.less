@@ -16,7 +16,7 @@
 }
 
 .sapMSltPicker-CTX .sapMSelectListItemBaseSelected,
-.sapMComboBoxBasePicker-CTX .sapMSelectListItemBaseSelected {
+.sapMComboBoxBasePicker-CTX .sapMSelectListFocus .sapMSelectListItemBaseSelected {
 	outline: 1px dotted @sapUiContentFocusColor;
 	outline-offset: -2px;
 }
@@ -54,7 +54,7 @@ html[data-sap-ui-browser^="ed"].sap-desktop {
 
 	.sapMSelectListItemBase:focus,
 	.sapMSltPicker-CTX .sapMSelectListItemBaseSelected,
-	.sapMComboBoxBasePicker-CTX .sapMSelectListItemBaseSelected {
+	.sapMComboBoxBasePicker-CTX .sapMSelectListFocus .sapMSelectListItemBaseSelected {
 		.sapMSelectListCell::before {
 			border-top: 1px dotted @sapUiContentFocusColor;
 			border-bottom: 1px dotted @sapUiContentFocusColor;
@@ -73,7 +73,7 @@ html[data-sap-ui-browser^="ed"].sap-desktop {
 	.sapUiSizeCompact {
 		.sapMSelectListItemBase:focus,
 		.sapMSltPicker-CTX .sapMSelectListItemBaseSelected,
-		.sapMComboBoxBasePicker-CTX .sapMSelectListItemBaseSelected {
+		.sapMComboBoxBasePicker-CTX .sapMSelectListFocus .sapMSelectListItemBaseSelected {
 			.sapMSelectListCell::before {
 				height: calc(@_sap_m_SelectList_ItemCompactHeight ~" - " @_sap_m_SelectList_ItemBelizeFocus_Height);
 			}
