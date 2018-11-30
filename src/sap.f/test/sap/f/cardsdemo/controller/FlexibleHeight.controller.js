@@ -6,6 +6,9 @@ sap.ui.define([
 
 	return Controller.extend("sap.f.cardsdemo.controller.FlexibleHeight", {
 		_index: 1,
+		onInit: function () {
+			this.getView().byId("cssgrid")._wrapItemsWithDiv = true;
+		},
         onLayoutChange: function (oEvent) {
 			var sLayout = oEvent.getParameter("layout");
 			var oGrid = oEvent.getSource().getParent();
