@@ -4,10 +4,10 @@
 sap.ui.define([
 	"sap/ui/fl/descriptorRelated/api/DescriptorVariantFactory",
 	"sap/ui/fl/descriptorRelated/api/DescriptorInlineChangeFactory",
-	"sap/ui/fl/LrepConnector",
 	"sap/ui/fl/Utils",
 	"sap/m/MessageBox",
 	"sap/ui/rta/Utils",
+	"sap/ui/fl/descriptorRelated/internal/Utils",
 	"sap/base/util/uid",
 	"sap/base/Log",
 	"sap/ui/thirdparty/hasher"
@@ -15,10 +15,10 @@ sap.ui.define([
 	function(
 		DescriptorVariantFactory,
 		DescriptorInlineChangeFactory,
-		LrepConnector,
 		FlexUtils,
 		MessageBox,
 		RtaUtils,
+		DescriptorUtils,
 		uid,
 		Log,
 		hasher
@@ -34,8 +34,7 @@ sap.ui.define([
 
 		AppVariantUtils.getManifirstSupport = function(sRunningAppId) {
 	        var sRoute = '/sap/bc/ui2/app_index/ui5_app_mani_first_supported/?id=' + sRunningAppId;
-			var oLREPConnector = LrepConnector.createConnector();
-			return oLREPConnector.send(sRoute, 'GET');
+			return DescriptorUtils.sendRequest(sRoute, 'GET');
 		};
 
 		AppVariantUtils.isStandAloneApp = function() {
@@ -274,8 +273,7 @@ sap.ui.define([
 
 		AppVariantUtils.triggerCatalogAssignment = function(sAppVariantId, sOriginalId) {
 			var sRoute = '/sap/bc/lrep/appdescr_variants/' + sAppVariantId + '?action=assignCatalogs&assignFromAppId=' + sOriginalId;
-			var oLREPConnector = LrepConnector.createConnector();
-			return oLREPConnector.send(sRoute, 'POST');
+			return DescriptorUtils.sendRequest(sRoute, 'POST');
 		};
 
 		AppVariantUtils.isS4HanaCloud = function(oSettings) {

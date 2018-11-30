@@ -2,19 +2,83 @@
 
 sap.ui.define([
 	"sap/ui/thirdparty/jquery",
-	"sap/ui/fl/descriptorRelated/internal/Utils"
+	"sap/ui/fl/descriptorRelated/api/DescriptorVariantFactory",
+	"sap/ui/fl/descriptorRelated/internal/Utils",
+	"sap/ui/fl/LrepConnector",
+	"sap/ui/fl/registry/Settings",
+	"sap/ui/thirdparty/sinon-4"
 ], function(
 	jQuery,
-	Utils
+	DescriptorVariantFactory,
+	Utils,
+	LrepConnector,
+	Settings,
+	sinon
 ) {
 	"use strict";
 
+	var oSandbox = sinon.sandbox.create();
 	QUnit.module("Utils", {
 		beforeEach : function() {
+			oSandbox = sinon.sandbox.create();
+
+			oSandbox.stub(Settings, "getInstance").resolves(
+				new Settings({
+					"isKeyUser":false,
+					"isAtoAvailable":false,
+					"isAtoEnabled":true,
+					"isProductiveSystem":false
+				})
+			);
 		},
 		afterEach : function() {
+			oSandbox.restore();
 		}
 	}, function() {
+		QUnit.test("sendRequest - LREPConnector created once", function(assert) {
+
+			var fnSendAjaxRequest = oSandbox.stub(LrepConnector.prototype, "_sendAjaxRequest");
+			fnSendAjaxRequest.onFirstCall().resolves({
+				response: {
+					"id" : "a.id",
+					"reference": "a.reference"
+				}
+			});
+
+			fnSendAjaxRequest.onSecondCall().resolves({
+				response: {
+					"IAMId" : "IAMId",
+					"VariantId": "a.id",
+					"CatalogIds": [
+						"TEST_CATALOG"
+					]
+				}
+			});
+
+			oSandbox.stub(LrepConnector.prototype, "_getDefaultHeader").callsFake(function() {
+				return {
+					headers: {
+						"X-CSRF-Token": "ABCD1234"
+					}
+				};
+			});
+
+			var fnCreateConnectorSpy = oSandbox.spy(LrepConnector, "createConnector");
+
+			return DescriptorVariantFactory.createNew({
+				"id" : "a.id",
+				"reference": "a.reference"
+			}).then(function(oDescriptorVariant) {
+				return Utils.sendRequest("/sap/bc/lrep/appdescr_variants/", "POST", oDescriptorVariant._getMap());
+			}).then(function(oResult) {
+				var oResponse = oResult.response;
+				var sRoute = '/sap/bc/lrep/appdescr_variants/' + oResponse.id + '?action=assignCatalogs&assignFromAppId=' + oResponse.reference;
+				return Utils.sendRequest(sRoute, "POST");
+			}).then(function(oResult) {
+				assert.ok(fnCreateConnectorSpy.calledOnce, "then the createConnector is called only once");
+			});
+		});
+
 		QUnit.test("getNameAndNameSpace", function(assert) {
 			assert.deepEqual(Utils.getNameAndNameSpace("id", "reference"), {
 				"fileName": "manifest",
