@@ -4,17 +4,16 @@
 	xmlns="sap.m"
 	xmlns:f="sap.f"
 	xmlns:mvc="sap.ui.core.mvc">
-	<Shell appWidthLimited="false">
-		<App
-			id="app"
+	<App
+		id="app"
+		class="sapUiDemoCart">
+		<f:FlexibleColumnLayout
+			id="layout"
 			busy="{appView>/busy}"
 			busyIndicatorDelay="{appView>/delay}"
+			layout="{appView>/layout}"
+			backgroundDesign="Translucent"
 			class="sapUiDemoCart">
-			<f:FlexibleColumnLayout
-				id="layout"
-				layout="{appView>/layout}"
-				backgroundDesign="Translucent">
-			</f:FlexibleColumnLayout>
-		</App>
-	</Shell>
+		</f:FlexibleColumnLayout>
+	</App>
 </mvc:View>
