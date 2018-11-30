@@ -442,9 +442,17 @@
 			oTableSelectDialog24.destroy();
 		});
 
-		QUnit.module("MultiSelect proper selection reset");
+		QUnit.module("MultiSelect proper selection reset", {
+			beforeEach : function () {
+				sinon.config.useFakeTimers = true;
+			},
+			afterEach : function () {
+				sinon.config.useFakeTimers = false;
+			}
+		});
 
-		QUnit.test("TableSelectDialog1 proper selection reset", function(assert) {
+		QUnit.test("TableSelectDialog1 proper selection reset after canceling filtered table with selected items", function(assert) {
+
 			oTableSelectDialog1.setMultiSelect(true);
 
 			oTableSelectDialog1.open();
@@ -455,17 +463,26 @@
 			aItems[0].setSelected(true);
 			aItems[2].setSelected(true);
 
-			oTableSelectDialog1._executeSearch("", "fakesesearch");
-
 			assert.equal(oTable.getSelectedItems().length, 2, "Two items selected before cancelling");
 
+			// Executing search that trigger change in the binding model
+			// of the table causing a filter to be applied to the model
+			oTableSelectDialog1._executeSearch("tt", "search");
+			this.clock.tick(500);
+
 			oTableSelectDialog1._onCancel();
+			this.clock.tick(500);
 
 			oTableSelectDialog1.open();
+			this.clock.tick(500);
 
-			assert.equal(oTable.getSelectedItems().length, 0, "Selection after search should be reset nevertheless");
+			assert.equal(oTable.getItems().length, 5, "Selection after search should be reset nevertheless");
+			assert.equal(oTable.getSelectedItems().length, 0, "The selected items array should be empty after canceling ");
+			assert.equal(oTable.getBinding("items").aFilters.length, 0, "No filter should be applied to the bindings model of the table");
 
 			oTableSelectDialog1._onCancel();
+			this.clock.tick(500);
+
 		});
 
 		QUnit.module("Open and Close");
