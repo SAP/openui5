@@ -815,16 +815,29 @@ function(
 		this.informList("ActiveChange", bActive);
 	};
 
+	/**
+	 * Detect text selection.
+	 *
+	 * @param {object} oDomRef DOM element of the control
+	 * @returns {boolean} true if text selection is done within the control else false
+	 * @private
+	 */
+	ListItemBase.detectTextSelection = function(oDomRef) {
+		var oSelection = window.getSelection(),
+			sTextSelection = oSelection.toString().replace("\n", "");
+
+		return sTextSelection && jQuery.contains(oDomRef, oSelection.focusNode);
+	};
+
 	ListItemBase.prototype.ontap = function(oEvent) {
 
 		// do not handle already handled events
-		if (this._eventHandledByControl) {
+		if (this._eventHandledByControl || oEvent.isMarked()) {
 			return oEvent.setMarked();
 		}
 
-		// do not handle in case of text selection
-		var sTextSelection = window.getSelection().toString().replace("\n", "");
-		if (sTextSelection) {
+		// do not handle in case of text selection within the list item
+		if (ListItemBase.detectTextSelection(this.getDomRef())) {
 			return;
 		}
 

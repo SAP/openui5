@@ -1,4 +1,4 @@
-/*global QUnit */
+/*global QUnit, sinon */
 sap.ui.define([
 	"sap/ui/util/Mobile",
 	"sap/ui/Device",
@@ -6,8 +6,9 @@ sap.ui.define([
 	"sap/m/Column",
 	"sap/m/Table",
 	"sap/m/Text",
-	"sap/m/Label"
-], function(Mobile, Device, ColumnListItem, Column, Table, Text, Label) {
+	"sap/m/Label",
+	"sap/m/MessageToast"
+], function(Mobile, Device, ColumnListItem, Column, Table, Text, Label, MessageToast) {
 	"use strict";
 
 
@@ -171,5 +172,55 @@ sap.ui.define([
 
 		// cleanup
 		sut.destroy();
+	});
+
+	QUnit.test("No press event on text selection", function(assert) {
+		this.clock = sinon.useFakeTimers();
+		var oCLI = new ColumnListItem({
+			type: "Active",
+			press: function(e) {
+				MessageToast.show("Item pressed");
+			},
+			cells: [
+				new Text({text: "Hello World"})
+			]
+		});
+		var oCol = new Column({
+			header: new Label({text: "Column Header"}),
+			demandPopin: true,
+			minScreenWidth: "4000000px"
+		});
+		var oTable = new Table({
+			columns: [oCol],
+			items: [oCLI]
+		});
+		oTable.placeAt("qunit-fixture");
+		sap.ui.getCore().applyChanges();
+
+		var fnPress = this.spy(oCLI, "firePress");
+		oCLI.focus();
+		var bHasSelection;
+		this.stub(window, "getSelection", function() {
+			return {
+				toString: function() {
+					return bHasSelection ? "Hello World" : "";
+				},
+				focusNode: oCLI.getDomRef("sub")
+			};
+		});
+
+		bHasSelection = true;
+		assert.equal(window.getSelection().toString(), "Hello World");
+		oCLI.$("sub").trigger("tap");
+		assert.notOk(fnPress.called, "Press event not fired");
+
+		bHasSelection = false;
+		assert.equal(window.getSelection().toString(), "");
+		oCLI.$("sub").trigger("tap");
+		this.clock.tick(0);
+		assert.ok(fnPress.called, "Press event fired");
+
+		// clean up
+		oTable.destroy();
 	});
 });
