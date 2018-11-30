@@ -3815,6 +3815,7 @@ sap.ui.define([
 		var oLastRow = aRows[aRows.length - 1];
 		var oLastRowFirstCell = oLastRow.getCells()[0];
 		var iInitialVisibleRowCount = oTable.getVisibleRowCount();
+		var oBindingInfo = oTable.getBindingInfo("rows");
 
 		oTable.setVisibleRowCount(iInitialVisibleRowCount - 1);
 		sap.ui.getCore().applyChanges();
@@ -3832,6 +3833,21 @@ sap.ui.define([
 		var oLastRowFirstCellAfterRowsUpdate = oLastRowAfterRowsUpdate.getCells()[0];
 		assert.ok(oTable.getRows()[iInitialVisibleRowCount - 1] !== undefined, "Row was added to the aggregation");
 		assert.ok(oLastRow === oLastRowAfterRowsUpdate, "Old row was recycled");
+		assert.ok(oLastRowFirstCell === oLastRowFirstCellAfterRowsUpdate, "Old cells recycled");
+		assert.ok(oLastRowFirstCell.getParent() === oLastRowAfterRowsUpdate, "Recycled cells have the last row as parent");
+
+		oTable.setVisibleRowCount(iInitialVisibleRowCount - 1);
+		sap.ui.getCore().applyChanges();
+		oTable.unbindRows();
+		oTable.invalidateRowsAggregation();
+		oTable.setVisibleRowCount(iInitialVisibleRowCount);
+		sap.ui.getCore().applyChanges();
+		oTable.bindRows(oBindingInfo);
+
+		aRows = oTable.getRows();
+		oLastRowAfterRowsUpdate = aRows[aRows.length - 1];
+		oLastRowFirstCellAfterRowsUpdate = oLastRowAfterRowsUpdate.getCells()[0];
+		assert.ok(oLastRow !== oLastRowAfterRowsUpdate, "Old row was replaced after row invalidation");
 		assert.ok(oLastRowFirstCell === oLastRowFirstCellAfterRowsUpdate, "Old cells recycled");
 		assert.ok(oLastRowFirstCell.getParent() === oLastRowAfterRowsUpdate, "Recycled cells have the last row as parent");
 
@@ -3873,6 +3889,19 @@ sap.ui.define([
 
 		oTable._aRowClones.push(oFakeRow);
 		oTable.destroy();
+		assert.ok(oFakeRowDestroySpy.calledOnce, "Rows that are not in the aggregation were destroyed");
+		assert.deepEqual(oTable._aRowClones, [], "The row pool has been cleared");
+	});
+
+	QUnit.test("Destruction of the rows aggregation", function(assert) {
+		var oFakeRow = {
+			destroy: function() {},
+			getIndex: function() {return -1;}
+		};
+		var oFakeRowDestroySpy = sinon.spy(oFakeRow, "destroy");
+
+		oTable._aRowClones.push(oFakeRow);
+		oTable.destroyAggregation("rows");
 		assert.ok(oFakeRowDestroySpy.calledOnce, "Rows that are not in the aggregation were destroyed");
 		assert.deepEqual(oTable._aRowClones, [], "The row pool has been cleared");
 	});
