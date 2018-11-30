@@ -3,17 +3,13 @@
  */
 
 sap.ui.define([
-	"sap/ui/fl/descriptorRelated/api/DescriptorInlineChangeFactory",
 	"sap/ui/fl/Utils",
-	"sap/ui/fl/LrepConnector",
 	"sap/ui/fl/descriptorRelated/internal/Utils",
 	"sap/ui/fl/registry/Settings",
 	"sap/ui/thirdparty/jquery",
 	"sap/base/util/merge"
 ], function(
-	DescriptorInlineChangeFactory,
 	FlexUtils,
-	LrepConnector,
 	Utils,
 	Settings,
 	jQuery,
@@ -193,9 +189,7 @@ sap.ui.define([
 				sRoute += 'skipIam=' + this._skipIam;
 		}
 
-		var oLREPConnector = LrepConnector.createConnector();
-
-		return oLREPConnector.send(sRoute, sMethod, mMap);
+		return Utils.sendRequest(sRoute, sMethod, mMap);
 	};
 
 	DescriptorVariant.prototype.getId = function() {
@@ -293,8 +287,7 @@ sap.ui.define([
 
 	DescriptorVariantFactory._getDescriptorVariant = function(sId) {
 		var sRoute = '/sap/bc/lrep/appdescr_variants/' + sId;
-		var oLREPConnector = LrepConnector.createConnector();
-		return oLREPConnector.send(sRoute, 'GET');
+		return Utils.sendRequest(sRoute, 'GET');
 	};
 
 	/**
