@@ -604,107 +604,131 @@ sap.ui.define([
 
 			this.$().addClass("sapMFocus");
 
-			var bToggleOpenState = (this.getPickerType() === "Dropdown");
-
 			this.loadItems(function() {
-				var oSelectedItem = this.getSelectedItem(),
-					sValue = oEvent.target.value,
-					bEmptyValue = sValue === "",
-					oControl = oEvent.srcControl,
-					aVisibleItems;
-
-				if (bEmptyValue && !this.bOpenedByKeyboardOrButton && !this.isPickerDialog()) {
-					aVisibleItems = this.getItems();
-				} else {
-					aVisibleItems = this.filterItems({
-						properties: this._getFilters(),
-						value: sValue
-					});
-				}
-
-				var bItemsVisible = !!aVisibleItems.length;
-				var oFirstVisibleItem = aVisibleItems[0]; // first item that matches the value
-				var bSearchBoth = this.getFilterSecondaryValues();
-				var bDesktopPlatform = Device.system.desktop;
-
-				// filtered items intersercted with starts with items by text
-				var aCommonStartsWithItems = this.intersectItems(this._filterStartsWithItems(sValue, 'getText'), aVisibleItems);
-
-				if (!bEmptyValue && oFirstVisibleItem && oFirstVisibleItem.getEnabled()) {
-
-					if (oControl._bDoTypeAhead) {
-						var aCommonAdditionalTextItems = this.intersectItems(this._filterStartsWithItems(sValue, 'getAdditionalText'), aVisibleItems);
-
-						if (bSearchBoth && !aCommonStartsWithItems[0] && aCommonAdditionalTextItems[0]) {
-
-							oControl.updateDomValue(aCommonAdditionalTextItems[0].getAdditionalText());
-							this.setSelection(aCommonAdditionalTextItems[0]);
-
-						} else if (aCommonStartsWithItems[0]) {
-							oControl.updateDomValue(aCommonStartsWithItems[0].getText());
-							this.setSelection(aCommonStartsWithItems[0]);
-						}
-					} else {
-						this.setSelection(aCommonStartsWithItems[0]);
-					}
-
-					if (oSelectedItem !== this.getSelectedItem()) {
-						this.fireSelectionChange({
-							selectedItem: this.getSelectedItem()
-						});
-					}
-
-					if (oControl._bDoTypeAhead) {
-
-						if (bDesktopPlatform) {
-							fnSelectTextIfFocused.call(oControl, sValue.length, oControl.getValue().length);
-						} else {
-							// timeout required for an Android and Windows Phone bug
-							setTimeout(fnSelectTextIfFocused.bind(oControl, sValue.length, oControl.getValue().length), 0);
-						}
-					}
-				}
-
-				if (bEmptyValue || !bItemsVisible ||
-					(!oControl._bDoTypeAhead && (this._getSelectedItemText() !== sValue))) {
-					this.setSelection(null);
-
-					if (oSelectedItem !== this.getSelectedItem()) {
-						this.fireSelectionChange({
-							selectedItem: this.getSelectedItem()
-						});
-					}
-				}
-
-				this._sInputValueBeforeOpen = sValue;
-
-				if (this.isOpen()) {
-					this._highlightList(sValue);
-				}
-
-				if (bItemsVisible) {
-					if (bEmptyValue && !this.bOpenedByKeyboardOrButton) {
-						this.close();
-					} else if (bToggleOpenState) {
-						this.open();
-						this.scrollToItem(this.getSelectedItem());
-					}
-				} else if (this.isOpen()) {
-					if (bToggleOpenState && !this.bOpenedByKeyboardOrButton) {
-						this.close();
-					}
-				} else {
-					this.clearFilter();
-				}
+				this.handleInputValidation(oEvent, this.isComposingCharacter());
 			}, {
-				name: "input",
-				busyIndicator: false
-			});
+					name: "input",
+					busyIndicator: false
+				}
+			);
 
 			// if the loadItems event is being processed,
 			// we need to open the dropdown list to show the busy indicator
-			if (this.bProcessingLoadItemsEvent && bToggleOpenState) {
+			if (this.bProcessingLoadItemsEvent && (this.getPickerType() === "Dropdown")) {
 				this.open();
+			}
+		};
+
+		/**
+		 * Handles the input event on the input field.
+		 *
+		 * @param {jQuery.Event} oEvent The event object.
+		 * @param {Boolean} bCompositionEvent True if the control is in composing state
+		 * @private
+		 */
+		ComboBox.prototype.handleInputValidation = function (oEvent, bCompositionEvent) {
+			var oSelectedItem = this.getSelectedItem(),
+				sValue = oEvent.target.value,
+				bEmptyValue = sValue === "",
+				oControl = oEvent.srcControl,
+				aVisibleItems,
+				bToggleOpenState = (this.getPickerType() === "Dropdown");
+
+			if (bEmptyValue && !this.bOpenedByKeyboardOrButton && !this.isPickerDialog()) {
+				aVisibleItems = this.getItems();
+			} else {
+				aVisibleItems = this.filterItems({
+					properties: this._getFilters(),
+					value: sValue
+				});
+			}
+
+			var bItemsVisible = !!aVisibleItems.length;
+			var oFirstVisibleItem = aVisibleItems[0]; // first item that matches the value
+
+			if (!bEmptyValue && oFirstVisibleItem && oFirstVisibleItem.getEnabled()) {
+				this.handleTypeAhead(oControl, aVisibleItems, sValue, bCompositionEvent);
+			}
+
+			if (bEmptyValue || !bItemsVisible ||
+				(!oControl._bDoTypeAhead && (this._getSelectedItemText() !== sValue))) {
+				this.setSelection(null);
+
+				if (oSelectedItem !== this.getSelectedItem()) {
+					this.fireSelectionChange({
+						selectedItem: this.getSelectedItem()
+					});
+				}
+			}
+
+			this._sInputValueBeforeOpen = sValue;
+
+			if (this.isOpen()) {
+				this._highlightList(sValue);
+			}
+
+			if (bItemsVisible) {
+				if (bEmptyValue && !this.bOpenedByKeyboardOrButton) {
+					this.close();
+				} else if (bToggleOpenState) {
+					this.open();
+					this.scrollToItem(this.getSelectedItem());
+				}
+			} else if (this.isOpen()) {
+				if (bToggleOpenState && !this.bOpenedByKeyboardOrButton) {
+					this.close();
+				}
+			} else {
+				this.clearFilter();
+			}
+		};
+
+		/**
+		 * Handles the type ahead functionality on the input field.
+		 *
+		 * @param {sap.m.ComboBoxTextField} oInput The input control
+		 * @param {sap.ui.core.Item[]} aItems The array of items
+		 * @param {string} sValue The input text value
+		 * @param {Boolean} bCompositionEvent True if the control is in composing state
+		 * @private
+		 */
+		ComboBox.prototype.handleTypeAhead = function (oInput, aItems, sValue, bCompositionEvent) {
+			// filtered items intersercted with starts with items by text
+			var aCommonStartsWithItems = this.intersectItems(this._filterStartsWithItems(sValue, 'getText'), aItems);
+			var bSearchBoth = this.getFilterSecondaryValues();
+			var bDesktopPlatform = Device.system.desktop;
+			var oSelectedItem = this.getSelectedItem();
+
+			if (oInput._bDoTypeAhead) {
+				var aCommonAdditionalTextItems = this.intersectItems(this._filterStartsWithItems(sValue, 'getAdditionalText'), aItems);
+
+				if (bSearchBoth && !aCommonStartsWithItems[0] && aCommonAdditionalTextItems[0]) {
+
+					!bCompositionEvent && oInput.updateDomValue(aCommonAdditionalTextItems[0].getAdditionalText());
+					this.setSelection(aCommonAdditionalTextItems[0]);
+
+				} else if (aCommonStartsWithItems[0]) {
+					!bCompositionEvent && oInput.updateDomValue(aCommonStartsWithItems[0].getText());
+					this.setSelection(aCommonStartsWithItems[0]);
+				}
+			} else {
+				this.setSelection(aCommonStartsWithItems[0]);
+			}
+
+			if (oSelectedItem !== this.getSelectedItem()) {
+				this.fireSelectionChange({
+					selectedItem: this.getSelectedItem()
+				});
+			}
+
+			if (oInput._bDoTypeAhead) {
+
+				if (bDesktopPlatform) {
+					fnSelectTextIfFocused.call(oInput, sValue.length, oInput.getValue().length);
+				} else {
+					// timeout required for an Android and Windows Phone bug
+					setTimeout(fnSelectTextIfFocused.bind(oInput, sValue.length, oInput.getValue().length), 0);
+				}
 			}
 		};
 
@@ -974,7 +998,7 @@ sap.ui.define([
 				return;
 			}
 
-			if (oControl.isOpen()) {
+			if (oControl.isOpen() && !this.isComposingCharacter()) {
 				oControl.close();
 			}
 		};
