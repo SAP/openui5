@@ -69,8 +69,6 @@
 		"webapp/test/unit/AllTests.js",
 		"webapp/test/unit/unitTests.qunit.html",
 		"webapp/test/unit/unitTests.qunit.js",
-		"webapp/test/initMockServer.js",
-		"webapp/test/mockServer.html",
 		"webapp/view/App.view.xml",
 		"webapp/view/Cart.view.xml",
 		"webapp/view/Category.view.xml",
