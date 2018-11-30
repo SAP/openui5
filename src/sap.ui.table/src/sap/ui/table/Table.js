@@ -862,15 +862,6 @@ sap.ui.define([
 	Table.prototype.exit = function() {
 		this.invalidateRowsAggregation();
 
-		// Rows that are not in the aggregation must be destroyed manually.
-		for (var i = 0; i < this._aRowClones.length; i++) {
-			var oRowClone = this._aRowClones[i];
-			if (oRowClone.getIndex() === -1) {
-				oRowClone.destroy();
-			}
-		}
-		this._aRowClones = [];
-
 		// destroy helpers
 		this._detachExtensions();
 
@@ -1810,6 +1801,20 @@ sap.ui.define([
 
 			this._bRowsBeingBound = false;
 		}
+	};
+
+	Table.prototype.destroyAggregation = function(sAggregationName, bSuppressInvalidate) {
+		var vReturn = Control.prototype.destroyAggregation.apply(this, arguments);
+
+		if (sAggregationName === "rows") {
+			// Rows that are not in the aggregation must be destroyed manually.
+			this._aRowClones.forEach(function(oRowClone) {
+				oRowClone.destroy();
+			});
+			this._aRowClones = [];
+		}
+
+		return vReturn;
 	};
 
 	/**
@@ -3435,7 +3440,7 @@ sap.ui.define([
 			iNumberOfRows = iNumberOfRows + 1; // Create one additional row for partial row scrolling.
 		}
 
-		if (this._bRowAggregationInvalid && aRows.length > 0) {
+		if (this._bRowAggregationInvalid) {
 			this.destroyAggregation("rows", true);
 			aRows = [];
 		}
