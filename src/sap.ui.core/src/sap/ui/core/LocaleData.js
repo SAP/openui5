@@ -965,6 +965,17 @@ sap.ui.define(['sap/ui/thirdparty/jquery', 'sap/ui/base/Object', './Locale', 'sa
 		},
 
 		/**
+		 * Returns the currency symbols available for this locale
+		 *
+		 * @returns {object} the map of all currency symbols available in this locale
+		 * @public
+		 * @since 1.60
+		 */
+		getCurrencySymbols: function() {
+			return this._get("currencySymbols");
+		},
+
+		/**
 		 * Retrieves the localized display name of a unit by sUnit, e.g. "duration-hour".
 		 * @param {string} sUnit the unit key, e.g. "duration-hour"
 		 * @return {string} The localized display name for the requested unit, e.g. <code>"Hour"</code>. Return empty string <code>""</code> if not found
