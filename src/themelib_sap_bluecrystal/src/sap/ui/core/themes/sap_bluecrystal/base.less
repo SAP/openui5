@@ -137,30 +137,35 @@
 
 
 /* Semantic Background Colors */
-@sapErrorBackground:   mix(@sapErrorColor, #fff, 15); // #fbdfdf
-@sapWarningBackground: #fffcb5;
-@sapSuccessBackground: mix(@sapSuccessColor, #fff, 12); // #e0f1e7
-@sapNeutralBackground: mix(@sapNeutralColor, #fff, 10); // #e6f2f9
+@sapErrorBackground:       mix(@sapErrorColor, #fff, 15); // #fbdfdf
+@sapWarningBackground:     #fffcb5;
+@sapSuccessBackground:     mix(@sapSuccessColor, #fff, 12); // #e0f1e7
+@sapInformationBackground: mix(@sapInformativeColor, #fff, 10); // #e6f2f9
+@sapNeutralBackground:     mix(@sapNeutralColor, #fff, 10); // #e6f2f9
 
 
 /* Semantic Border Colors */
-@sapErrorBorderColor:   @sapErrorColor; // #e52929
-@sapWarningBorderColor: @sapWarningColor; // #f0ab00
-@sapSuccessBorderColor: @sapSuccessColor; // #008a3b
+@sapErrorBorderColor:       @sapErrorColor; // #e52929
+@sapWarningBorderColor:     @sapWarningColor; // #f0ab00
+@sapSuccessBorderColor:     @sapSuccessColor; // #008a3b
+@sapInformationBorderColor: @sapInformationColor; // #007cc0
+@sapNeutralBorderColor:     @sapNeutralColor; // #007cc0
 
 
 /* Semantic Foreground Elements */
-@sapNegativeElementColor: @sapNegativeColor; // #cc1919
-@sapCriticalElementColor: @sapCriticalColor; // #d14900
-@sapPositiveElementColor: @sapPositiveColor; // #007833
-@sapNeutralElementColor:  @sapNeutralColor; // #007cc0
+@sapNegativeElementColor:    @sapNegativeColor; // #cc1919
+@sapCriticalElementColor:    @sapCriticalColor; // #d14900
+@sapPositiveElementColor:    @sapPositiveColor; // #007833
+@sapInformativeElementColor: @sapInformativeColor; // #007cc0
+@sapNeutralElementColor:     @sapNeutralColor; // #007cc0
 
 
 /* Semantic Text */
-@sapNegativeTextColor:  @sapNegativeColor; // #cc1919
-@sapCriticalTextColor:  @sapCriticalColor; // #d14900
-@sapPositiveTextColor:  @sapPositiveColor; // #007833
-@sapNeutralTextColor:  @sapTextColor; // #000000
+@sapNegativeTextColor:    @sapNegativeColor; // #cc1919
+@sapCriticalTextColor:    @sapCriticalColor; // #d14900
+@sapPositiveTextColor:    @sapPositiveColor; // #007833
+@sapInformativeTextColor: @sapInformativeColor; // #007cc0
+@sapNeutralTextColor:     @sapTextColor; // #000000
 
 
 /* Semantic Foreground Colors */
@@ -183,11 +188,38 @@
 // [Label "Informative Color"]
 // [Description "The color for elements showing informative state"]
 // [Tags "Base", "SemanticColor", "Color"]
+@sapInformativeColor: #007cc0;
+
+// [Label "Neutral Color"]
+// [Description "The color for elements showing neutral state"]
+// [Tags "Base", "SemanticColor", "Color"]
 @sapNeutralColor: #007cc0;
 
-@sapErrorColor:   lighten(@sapNegativeColor, 8); // #e52929
-@sapWarningColor: #f0ab00;
-@sapSuccessColor: lighten(@sapPositiveColor, 3.5); // #008a3b
+@sapErrorColor:       lighten(@sapNegativeColor, 8); // #e52929
+@sapWarningColor:     #f0ab00;
+@sapSuccessColor:     lighten(@sapPositiveColor, 3.5); // #008a3b
+@sapInformationColor: @sapInformativeColor; // #007cc0
+
+
+// [Label "Indication Color 1"]
+// [Tags "Base", "SemanticColor", "Color"]
+@sapIndicationColor_1: #9f1313;
+
+// [Label "Indication Color 2"]
+// [Tags "Base", "SemanticColor", "Color"]
+@sapIndicationColor_2: #cc1919;
+
+// [Label "Indication Color 3"]
+// [Tags "Base", "SemanticColor", "Color"]
+@sapIndicationColor_3: #d14900;
+
+// [Label "Indication Color 4"]
+// [Tags "Base", "SemanticColor", "Color"]
+@sapIndicationColor_4: #007833;
+
+// [Label "Indication Color 5"]
+// [Tags "Base", "SemanticColor", "Color"]
+@sapIndicationColor_5: #007cc0;
 
 
 /* ===================================== */
