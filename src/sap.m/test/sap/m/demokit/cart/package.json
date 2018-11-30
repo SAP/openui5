@@ -4,11 +4,22 @@
   "version": "1.0.0",
   "author": "SAP SE",
   "description": "UI5 Demo App - Shopping cart",
+  "private": true,
+  "scripts": {
+    "start": "ui5 serve",
+    "lint": "eslint webapp",
+    "build": "rimraf dist && ui5 build --a"
+  },
   "dependencies": {
-    "@openui5/sap.m": "^1",
-    "@openui5/sap.ui.core": "^1",
-    "@openui5/sap.ui.layout": "^1",
-    "@openui5/themelib_sap_belize": "^1",
-    "@openui5/sap.ui.documentation": "^1"
+    "@openui5/sap.m": "^1.60",
+    "@openui5/sap.ui.core": "^1.60",
+    "@openui5/sap.ui.layout": "^1.60",
+    "@openui5/themelib_sap_belize": "^1.60",
+    "@openui5/sap.ui.documentation": "^1.60"
+  },
+  "devDependencies": {
+    "@ui5/cli": "^0.2.0",
+    "eslint": "^4.19.1",
+    "rimraf": "^2.6.2"
   }
 }

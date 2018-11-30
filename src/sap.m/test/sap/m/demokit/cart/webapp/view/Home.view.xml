@@ -6,8 +6,7 @@
 	<Page
 		id="page"
 		title="{i18n>homeTitle}"
-		showNavButton="{device>/system/phone}"
-		navButtonPress="onNavButtonPress">
+		backgroundDesign="Solid">
 		<landmarkInfo>
 			<PageAccessibleLandmarkInfo
 				rootRole="Region"
@@ -20,17 +19,15 @@
 		</landmarkInfo>
 		<headerContent>
 			<Button
-				icon="sap-icon://cart"
-				tooltip="{i18n>toCartButtonTooltip}"
-				press="onCartButtonPress">
-			</Button>
+				icon="sap-icon://home"
+				press=".onBackToHome"
+				visible="{device>/system/phone}"/>
 		</headerContent>
 		<subHeader>
 			<Toolbar id="searchBar33343">
 				<SearchField
 					id="searchField"
 					liveChange="onSearch"
-					showRefreshButton="{=!${device>/support/touch}}"
 					placeholder="{i18n>homeSearchPlaceholder}"
 					tooltip="{i18n>homeSearchTooltip}"
 					width="100%">
@@ -41,7 +38,7 @@
 			<PullToRefresh
 				id="pullToRefresh"
 				visible="{device>/support/touch}"
-				refresh="onRefresh" />
+				refresh="onRefresh"/>
 			<!-- This list shows the search results -->
 			<List
 				visible="false"
@@ -49,6 +46,7 @@
 				mode="{= ${device>/system/phone} ? 'None' : 'SingleSelectMaster'}"
 				selectionChange="onProductListSelect"
 				noDataText="{i18n>homeNoData}"
+				busyIndicatorDelay="0"
 				items="{
 					path : '/Products',
 					sorter : {
@@ -69,7 +67,7 @@
 							formatter : '.formatter.price'
 						}"
 						numberUnit="EUR"
-						press="onProductListItemPress"
+						press=".onProductListItemPress"
 						iconDensityAware="false">
 						<attributes>
 							<ObjectAttribute text="{SupplierName}"/>
@@ -83,7 +81,7 @@
 								state="{
 									path : 'Status',
 									formatter : '.formatter.statusState'
-								}" />
+								}"/>
 						</firstStatus>
 					</ObjectListItem>
 				</items>
@@ -93,6 +91,7 @@
 				id="categoryList"
 				headerText="{i18n>homeCategoryListHeader}"
 				mode="None"
+				busyIndicatorDelay="0"
 				items="{
 					path : '/ProductCategories',
 					sorter : {
@@ -105,12 +104,12 @@
 						title="{CategoryName}"
 						type="Active"
 						counter="{NumberOfProducts}"
-						press="onCategoryListItemPress"
+						press=".onCategoryListItemPress"
 						tooltip="{i18n>openCategoryProducts} {CategoryName}">
 						<customData>
 							<core:CustomData
 								key="id"
-								value="{Category}" />
+								value="{Category}"/>
 						</customData>
 					</StandardListItem>
 				</items>

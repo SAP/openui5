@@ -1,45 +1,29 @@
 <!DOCTYPE html>
 <html>
 <head>
-	<meta http-equiv='X-UA-Compatible' content='IE=edge'>
-	<meta charset="utf-8">
 
+	<meta charset="utf-8">
+	<meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+	<title>Shopping Cart</title>
+
+	<!-- keep index.html mocked as well for consistency -->
 	<script
 		id='sap-ui-bootstrap'
 		src='../../../../../../resources/sap-ui-core.js'
 		data-sap-ui-theme='sap_belize'
 		data-sap-ui-libs='sap.m'
 		data-sap-ui-compatVersion="edge"
-		data-sap-ui-preload="async"
+		data-sap-ui-async="true"
+		data-sap-ui-oninit="module:sap/ui/demo/cart/initMockServer"
 		data-sap-ui-resourceroots='{
 			"sap.ui.demo.cart" : "./",
 			"sap.ui.demo.mock": "./../../../../../../test-resources/sap/ui/documentation/sdk/"
 		}'>
 	</script>
 
-	<script>
-		sap.ui.getCore().attachInit(function () {
-			sap.ui.require([
-				"sap/m/Shell",
-				"sap/ui/core/ComponentContainer",
-				"sap/ui/demo/cart/localService/mockserver"
-			], function (Shell, ComponentContainer, mockserver) {
-				mockserver.init();
-
-				new Shell("Shell", {
-					showLogout : false,
-					app : new ComponentContainer({
-						name : 'sap.ui.demo.cart',
-						settings : {
-							id : "cart"
-						}
-					})
-				}).placeAt('content');
-			});
-		});
-	</script>
-
 </head>
 <body class='sapUiBody' id='content'>
+	<div data-sap-ui-component data-name="sap.ui.demo.cart" data-id="container" data-settings='{"id" : "cart"}'></div>
 </body>
 </html>

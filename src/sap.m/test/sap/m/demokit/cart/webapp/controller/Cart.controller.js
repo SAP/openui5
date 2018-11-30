@@ -1,21 +1,16 @@
 sap.ui.define([
-    'sap/ui/demo/cart/controller/BaseController',
-    'sap/ui/model/json/JSONModel',
-    'sap/ui/Device',
-    'sap/ui/demo/cart/model/formatter',
-    'sap/m/MessageBox',
-    'sap/m/Dialog',
-    'sap/m/Button',
-    'sap/ui/core/routing/History'
-], function (
-    BaseController,
+	"./BaseController",
+	"sap/ui/model/json/JSONModel",
+	"sap/ui/Device",
+	"../model/formatter",
+	"sap/m/MessageBox"
+], function(
+	BaseController,
 	JSONModel,
 	Device,
 	formatter,
-	MessageBox,
-	Dialog,
-	Button,
-	History) {
+	MessageBox
+) {
 	"use strict";
 
 	var sCartModelName = "cartProducts";
@@ -28,6 +23,7 @@ sap.ui.define([
 		onInit: function () {
 			this._oRouter = this.getRouter();
 			this._oRouter.getRoute("cart").attachPatternMatched(this._routePatternMatched, this);
+			this._oRouter.getRoute("productCart").attachPatternMatched(this._routePatternMatched, this);
 			// set initial ui configuration model
 			var oCfgModel = new JSONModel({});
 			this.getView().setModel(oCfgModel, "cfg");
@@ -44,15 +40,11 @@ sap.ui.define([
 		},
 
 		_routePatternMatched: function () {
-			// show welcome page if cart is loaded from URL
-			var oHistory = History.getInstance();
-			if (!oHistory.getPreviousHash() && !sap.ui.Device.system.phone) {
-				this.getRouter().getTarget("welcome").display();
-			}
+			this._setLayout("Three");
 			var oCartModel = this.getModel("cartProducts");
 			var oCartEntries = oCartModel.getProperty("/cartEntries");
 			//enables the proceed and edit buttons if the cart has entries
-			if (!jQuery.isEmptyObject(oCartEntries)) {
+			if (Object.keys(oCartEntries).length > 0) {
 				oCartModel.setProperty("/showProceedButton", true);
 				oCartModel.setProperty("/showEditButton", true);
 			}
@@ -81,10 +73,6 @@ sap.ui.define([
 				listItemType: (bInDelete ? sPhoneType : "Inactive"),
 				pageTitle: (bInDelete ? oBundle.getText("appTitle") : oBundle.getText("cartTitleEdit"))
 			});
-		},
-
-		onNavButtonPress: function () {
-			this.getOwnerComponent().myNavBack();
 		},
 
 		onEntryListPress: function (oEvent) {
@@ -130,14 +118,14 @@ sap.ui.define([
 			// why are the items cloned? - the JSON model checks if the values in the object are changed.
 			// if we do our modifications on the same reference, there will be no change detected.
 			// so we modify after the clone.
-			var oListToAddItem = jQuery.extend({}, oModelData[sListToAddItem]);
-			var oListToDeleteItem = jQuery.extend({}, oModelData[sListToDeleteItem]);
+			var oListToAddItem = Object.assign({}, oModelData[sListToAddItem]);
+			var oListToDeleteItem = Object.assign({}, oModelData[sListToDeleteItem]);
 			var sProductId = oProduct.ProductId;
 
 			// find existing entry for product
 			if (oListToAddItem[sProductId] === undefined) {
 				// copy new entry
-				oListToAddItem[sProductId] = jQuery.extend({}, oProduct);
+				oListToAddItem[sProductId] = Object.assign({}, oProduct);
 			}
 
 			//Delete the saved Product from cart
@@ -153,8 +141,9 @@ sap.ui.define([
 			var sId = oEntry.ProductId;
 			if (!sap.ui.Device.system.phone) {
 				// Update the URL hash making the products inside the cart bookmarkable
-				this._oRouter.navTo("cartProductView", {
-					productId: sId
+				this._oRouter.navTo("productCart", {
+					id: oEntry.Category,
+					productId: oEntry.ProductId
 				}, true); // Don't create a history entry
 			} else {
 				this._oRouter.navTo("cartProduct", {productId: sId});
@@ -193,12 +182,12 @@ sap.ui.define([
 						return;
 					}
 					var oCartModel = oBindingContext.getModel();
-					var oCollectionEntries = jQuery.extend({}, oCartModel.getData()[sCollection]);
+					var oCollectionEntries = Object.assign({}, oCartModel.getData()[sCollection]);
 
 					delete oCollectionEntries[sEntryId];
 
 					// update model
-					oCartModel.setProperty("/" + sCollection, jQuery.extend({}, oCollectionEntries));
+					oCartModel.setProperty("/" + sCollection, Object.assign({}, oCollectionEntries));
 				}
 			});
 		},
@@ -209,7 +198,7 @@ sap.ui.define([
 		 * @public
 		 */
 		onProceedButtonPress: function () {
-			this._oRouter.navTo("checkout");
+			this.getRouter().navTo("checkout");
 		},
 
 		/**

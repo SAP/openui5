@@ -1,8 +1,3 @@
-/* override background color for non-accessibility themes */
-html:not(.sapUiTheme-sap_hcb):not(.sapUiTheme-sap_hcw):not(.sapUiTheme-sap_belize_hcb):not(.sapUiTheme-sap_belize_hcw) .customBackground section {
-	background-color: #bad0e3;
-}
-
 .sapUiDemoCart .welcomePrice  {
 	width: 100%;
 	padding: 0;

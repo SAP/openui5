@@ -12,7 +12,7 @@
 		</headerToolbar>
 		<infoToolbar>
 			<Toolbar>
-				<Label text="Your Shopping cart contains 1 item" />
+				<Label text="Your Shopping cart contains 1 item"/>
 			</Toolbar>
 		</infoToolbar>
 		<ObjectListItem

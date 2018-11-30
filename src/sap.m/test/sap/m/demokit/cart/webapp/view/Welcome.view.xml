@@ -4,10 +4,7 @@
 	xmlns:l="sap.ui.layout"
 	xmlns:mvc="sap.ui.core.mvc">
 	<Page
-		id="page"
-		showHeader="true"
-		title="{i18n>welcomeHeadline}"
-		class="customBackground">
+		id="page">
 		<landmarkInfo>
 			<PageAccessibleLandmarkInfo
 				rootRole="Region"
@@ -22,7 +19,7 @@
 				<contentLeft>
 					<Button
 						icon="sap-icon://menu2"
-						press="onShowCategories"
+						press=".onShowCategories"
 						visible="{device>/system/phone}"/>
 				</contentLeft>
 				<contentMiddle>
@@ -34,8 +31,14 @@
 				<contentRight>
 					<Button
 						icon="sap-icon://customer"
-						press="onAvatarPress"
+						press=".onAvatarPress"
 						tooltip="{i18n>avatarButtonTooltip}"/>
+					<ToggleButton
+						icon="sap-icon://cart"
+						pressed="{= ${appView>/layout}.startsWith('ThreeColumns') }"
+						tooltip="{i18n>toCartButtonTooltip}"
+						press=".onToggleCart">
+					</ToggleButton>
 				</contentRight>
 			</Bar>
 		</customHeader>
@@ -109,7 +112,7 @@
 				accessibleRole="Region"
 				backgroundDesign="Transparent"
 				class="sapUiNoContentPadding">
-				<headerToolbar >
+				<headerToolbar>
 					<Toolbar>
 						<Title
 							text="{i18n>promotedTitle}"
@@ -117,7 +120,7 @@
 							titleStyle="H2"
 							class="sapUiMediumMarginTopBottom"/>
 					</Toolbar>
-				</headerToolbar >
+				</headerToolbar>
 				<l:BlockLayout background="Dashboard">
 					<l:BlockLayoutRow
 						id="promotedRow"
@@ -135,7 +138,7 @@
 											<ObjectIdentifier
 												title="{view>Product/Name}"
 												titleActive="true"
-												titlePress="onSelectProduct"
+												titlePress=".onSelectProduct"
 												tooltip="{i18n>openProductDetails} {view>Product/Name}"
 												class="sapUiTinyMarginBottom"/>
 											<ObjectStatus
@@ -159,17 +162,17 @@
 											densityAware="false"
 											width="50%"
 											height="50%"
-											press="onSelectProduct"
+											press=".onSelectProduct"
 											tooltip="{i18n>openProductDetails} {view>Product/Name}"
 											alt="{i18n>alternativeImageText} {view>Product/Name}"/>
 									</FlexBox>
 									<Button
 										tooltip="{i18n>addToCart}"
 										type="Emphasized"
-										press="onAddButtonPress"
+										press=".onAddToCart"
 										icon="sap-icon://cart-3">
 										<layoutData>
-											<l:GridData span="XL4 L4 M4 S4" />
+											<l:GridData span="XL4 L4 M4 S4"/>
 										</layoutData>
 									</Button>
 									<ObjectListItem
@@ -184,7 +187,7 @@
 										}"
 										numberUnit="{view>/Currency}">
 										<layoutData>
-											<l:GridData span="XL8 L8 M8 S8" />
+											<l:GridData span="XL8 L8 M8 S8"/>
 										</layoutData>
 									</ObjectListItem>
 								</l:Grid>
@@ -198,7 +201,7 @@
 				accessibleRole="Region"
 				backgroundDesign="Transparent"
 				class="sapUiNoContentPadding">
-				<headerToolbar >
+				<headerToolbar>
 					<Toolbar>
 						<Title
 							text="{i18n>viewedTitle}"
@@ -206,7 +209,7 @@
 							titleStyle="H2"
 							class="sapUiMediumMarginTopBottom"/>
 					</Toolbar>
-				</headerToolbar >
+				</headerToolbar>
 				<l:BlockLayout background="Dashboard">
 					<l:BlockLayoutRow
 						id="viewedRow"
@@ -225,7 +228,7 @@
 												title="{view>Product/Name}"
 												tooltip="{i18n>openProductDetails} {view>Product/Name}"
 												titleActive="true"
-												titlePress="onSelectProduct"
+												titlePress=".onSelectProduct"
 												class="sapUiTinyMarginBottom"/>
 											<ObjectStatus
 												text="{
@@ -247,17 +250,17 @@
 											}"
 											width="100%"
 											height="100%"
-											press="onSelectProduct"
+											press=".onSelectProduct"
 											tooltip="{i18n>openProductDetails} {view>Product/Name}"
 											alt="{i18n>alternativeImageText} {view>Product/Name}"/>
 									</FlexBox>
 									<Button
 										tooltip="{i18n>addToCart}"
-										press="onAddButtonPress"
+										press=".onAddToCart"
 										icon="sap-icon://cart-3"
 										type="Emphasized">
 										<layoutData>
-											<l:GridData span="XL4 L4 M4 S4" />
+											<l:GridData span="XL4 L4 M4 S4"/>
 										</layoutData>
 									</Button>
 									<ObjectListItem
@@ -286,7 +289,7 @@
 				accessibleRole="Region"
 				backgroundDesign="Transparent"
 				class="sapUiNoContentPadding">
-				<headerToolbar >
+				<headerToolbar>
 					<Toolbar>
 						<Title
 							text="{i18n>favoriteTitle}"
@@ -294,7 +297,7 @@
 							titleStyle="H2"
 							class="sapUiMediumMarginTopBottom"/>
 					</Toolbar>
-				</headerToolbar >
+				</headerToolbar>
 				<l:BlockLayout background="Dashboard">
 					<l:BlockLayoutRow
 						id="favoriteRow"
@@ -313,7 +316,7 @@
 												title="{view>Product/Name}"
 												tooltip="{i18n>openProductDetails} {view>Product/Name}"
 												titleActive="true"
-												titlePress="onSelectProduct"
+												titlePress=".onSelectProduct"
 												class="sapUiTinyMarginBottom"/>
 											<ObjectStatus
 												text="{
@@ -335,17 +338,17 @@
 											}"
 											width="100%"
 											height="100%"
-											press="onSelectProduct"
+											press=".onSelectProduct"
 											tooltip="{i18n>openProductDetails} {view>Product/Name}"
 											alt="{i18n>alternativeImageText} {view>Product/Name}"/>
 									</FlexBox>
 									<Button
 										tooltip="{i18n>addToCart}"
 										type="Emphasized"
-										press="onAddButtonPress"
+										press=".onAddToCart"
 										icon="sap-icon://cart-3">
 										<layoutData>
-											<l:GridData span="XL4 L4 M4 S4" />
+											<l:GridData span="XL4 L4 M4 S4"/>
 										</layoutData>
 									</Button>
 									<ObjectListItem
@@ -360,7 +363,7 @@
 										}"
 										numberUnit="{view>/Currency}">
 										<layoutData>
-											<l:GridData span="XL8 L8 M8 S8" />
+											<l:GridData span="XL8 L8 M8 S8"/>
 										</layoutData>
 									</ObjectListItem>
 								</l:Grid>

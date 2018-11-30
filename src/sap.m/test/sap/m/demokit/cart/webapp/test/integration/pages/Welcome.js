@@ -1,10 +1,10 @@
 sap.ui.define([
-	'sap/ui/test/Opa5',
-	'sap/ui/test/actions/Press',
-	'sap/ui/test/matchers/BindingPath',
-	'sap/ui/test/matchers/AggregationLengthEquals',
-	'sap/ui/test/matchers/Properties',
-	'sap/ui/test/matchers/PropertyStrictEquals'
+	"sap/ui/test/Opa5",
+	"sap/ui/test/actions/Press",
+	"sap/ui/test/matchers/BindingPath",
+	"sap/ui/test/matchers/AggregationLengthEquals",
+	"sap/ui/test/matchers/Properties",
+	"sap/ui/test/matchers/PropertyStrictEquals"
 ], function (
 	Opa5,
 	Press,
@@ -68,6 +68,15 @@ sap.ui.define([
 						}),
 						actions: new Press(),
 						errorMessage: "The product image was not displayed"
+					});
+				},
+
+				iGoToTheCartPage : function () {
+					return this.waitFor({
+						controlType : "sap.m.Button",
+						matchers : new Properties({icon : "sap-icon://cart"}),
+						actions : new Press(),
+						errorMessage : "The cart button was not found and could not be pressed"
 					});
 				}
 			},

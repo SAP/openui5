@@ -1,8 +1,8 @@
 sap.ui.define([
-	'sap/ui/test/Opa5',
-	'sap/ui/test/matchers/PropertyStrictEquals',
-	'sap/ui/test/actions/Press',
-	'sap/ui/test/matchers/Properties'
+	"sap/ui/test/Opa5",
+	"sap/ui/test/matchers/PropertyStrictEquals",
+	"sap/ui/test/actions/Press",
+	"sap/ui/test/matchers/Properties"
 ], function (
 	Opa5,
 	PropertyStrictEquals,
@@ -30,6 +30,7 @@ sap.ui.define([
 						actions : new Press()
 					});
 				},
+
 				iPressTheCloseButtonOfTheLightBox: function () {
 					return this.waitFor({
 						controlType : "sap.m.Button",
@@ -45,6 +46,15 @@ sap.ui.define([
 						],
 						actions : new Press(),
 						errorMessage : "Did not find the Close button"
+					});
+				},
+
+				iGoToTheCartPage: function () {
+					return this.waitFor({
+						controlType: "sap.m.Button",
+						matchers: new PropertyStrictEquals({name: "icon", value: "sap-icon://cart"}),
+						actions: new Press(),
+						errorMessage: "The cart button was not found and could not be pressed"
 					});
 				}
 			},
@@ -80,23 +90,23 @@ sap.ui.define([
 					});
 				},
 
-                iShouldSeeTheBlasterExtremeDetailPage: function () {
-                    return this.waitFor({
-                        success: function () {
-                            Opa5.assert.ok(true, "The Blaster Extreme page was successfully displayed");
-                        },
-                        errorMessage: "The Blaster Extreme page was not displayed"
-                    });
-                },
+				iShouldSeeTheBlasterExtremeDetailPage: function () {
+					return this.waitFor({
+						success: function () {
+							Opa5.assert.ok(true, "The Blaster Extreme page was successfully displayed");
+						},
+						errorMessage: "The Blaster Extreme page was not displayed"
+					});
+				},
 
-                iShouldSeeTheSmartphoneAlphaDetailPage: function () {
-                    return this.waitFor({
-                        success: function () {
-                            Opa5.assert.ok(true, "The Smartphone Alpha page was successfully displayed");
-                        },
-                        errorMessage: "The Smartphone Alpha page was not displayed"
-                    });
-                },
+				iShouldSeeTheSmartphoneAlphaDetailPage: function () {
+					return this.waitFor({
+						success: function () {
+							Opa5.assert.ok(true, "The Smartphone Alpha page was successfully displayed");
+						},
+						errorMessage: "The Smartphone Alpha page was not displayed"
+					});
+				},
 				iShouldSeeTheRightProduct: function () {
 					return this.waitFor({
 						controlType: "sap.m.ObjectHeader",
