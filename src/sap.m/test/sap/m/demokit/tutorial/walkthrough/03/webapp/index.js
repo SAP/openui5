@@ -1,11 +1,9 @@
-sap.ui.getCore().attachInit(function () {
+sap.ui.define([
+	"sap/m/Text"
+], function (Text) {
 	"use strict";
 
-	sap.ui.require([
-		"sap/m/Text"
-	], function (Text) {
-		new Text({
-			text: "Hello World"
-		}).placeAt("content");
-	});
+	new Text({
+		text: "Hello World"
+	}).placeAt("content");
 });
