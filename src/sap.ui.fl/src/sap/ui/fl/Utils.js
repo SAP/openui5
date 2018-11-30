@@ -849,10 +849,10 @@ function(
 		},
 
 		/**
-		 * Returns technical parameters for the passed component.
+		 * Returns a map of technical parameters for the passed component.
 		 *
-		 * @param  {object} oComponent Component instance used to get the technical parameters
-		 * @returns {object|undefined} Returns the technical parameters object or undefined if unavailable
+		 * @param  {object} oComponent - Component instance used to get the technical parameters
+		 * @returns {object|undefined} Returns the requested technical parameter object or undefined if unavailable
 		 */
 		getTechnicalParametersForComponent : function(oComponent){
 			return oComponent
