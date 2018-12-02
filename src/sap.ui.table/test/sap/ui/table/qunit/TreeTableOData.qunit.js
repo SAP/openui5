@@ -79,7 +79,7 @@ sap.ui.define([
 			oAnnotationMockServer.start();
 			this.oModel = new ODataModel("/metadata/", {useBatch: true});
 			// let QUnit wait for the metadata to be loaded
-			return this.oModel.metadataLoaded;
+			return this.oModel.metadataLoaded();
 		},
 		afterEach: function() {
 			oAnnotationMockServer.stop();
