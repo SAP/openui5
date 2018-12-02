@@ -59,8 +59,8 @@ sap.ui.define([
 		oMockServer.stop();
 	}
 
-	function initModel(mParameters) {
-		return new ODataModel(sServiceUri, mParameters);
+	function initModel(mParameters, sServiceUriOverride) {
+		return new ODataModel(sServiceUriOverride || sServiceUri, mParameters);
 	}
 
 	var bChanged = false, bDataRequested = false, bDataReceived = false;
@@ -131,12 +131,15 @@ sap.ui.define([
 
 	QUnit.test("test init Model", function(assert) {
 		var done = assert.async();
-		oModel = initModel();
+		// Depending on the timing, the metadataLoaded event for oModel might have fired already
+		// Therefore create a local model and attach to the event in the same browser task
+		var oLocalModel = initModel();
 		var fnTest = function() {
 			assert.ok(true, "metadataloaded");
+			oLocalModel.destroy();
 			done();
 		};
-		oModel.attachMetadataLoaded(fnTest, this);
+		oLocalModel.attachMetadataLoaded(fnTest, this);
 	});
 
 	QUnit.test("read JSON", function(assert) {
@@ -201,8 +204,6 @@ sap.ui.define([
 
 	QUnit.test("test metadata promise", function(assert) {
 		var done = assert.async();
-		oModel = initModel();
-
 		var oPromise = oModel.metadataLoaded();
 		assert.ok(oPromise, "promise exists");
 		oPromise.then(function(){
@@ -215,7 +216,6 @@ sap.ui.define([
 
 	QUnit.test("test metadata promise and refresh", function(assert) {
 		var done = assert.async();
-		oModel = initModel();
 
 		var oPromise = oModel.metadataLoaded();
 		assert.ok(oPromise, "promise exists");
@@ -246,9 +246,9 @@ sap.ui.define([
 	QUnit.test("test metadata promise rejected refresh", function(assert) {
 		var done = assert.async();
 
-		var sTempService = sServiceUri;
-		sServiceUri = "/doesnotWork/";
-		oModel = initModel();
+		oModel.destroy();
+		oModel = initModel(undefined, "/doesnotWork/");
+
 		var oPromise = oModel.metadataLoaded();
 		assert.ok(oPromise, "promise exists");
 		oPromise.then(function(result){
@@ -264,7 +264,6 @@ sap.ui.define([
 		}, function(){
 			assert.ok(true, "oNewP Promise rejected");
 			cleanSharedData();
-			sServiceUri = sTempService;
 			done();
 		});
 
@@ -274,9 +273,8 @@ sap.ui.define([
 		var done = assert.async();
 		cleanSharedData();
 
-		var sTempService = sServiceUri;
-		sServiceUri = "/doesnotWork/";
-		oModel = initModel();
+		oModel.destroy();
+		oModel = initModel(undefined, "/doesnotWork/");
 
 		var oPromise = oModel.metadataLoaded();
 		assert.ok(oPromise, "promise exists");
@@ -294,7 +292,7 @@ sap.ui.define([
 		}, function(){
 			assert.ok(true, "oNewP Promise rejected");
 			// fix url
-			oModel.oMetadata.sUrl = sTempService + "$metadata";
+			oModel.oMetadata.sUrl = sServiceUri + "$metadata";
 			var oNewP2 = oModel.refreshMetadata();
 			assert.ok(oNewP2, "oNewP2 promise exists");
 			return oNewP2;
@@ -302,7 +300,6 @@ sap.ui.define([
 		.then(function(result){
 			assert.ok(true, "oNewP2 Promise resolved");
 			cleanSharedData();
-			sServiceUri = sTempService;
 		}, function(){
 			assert.ok(false, "oNewP2 Promise rejected");
 		});
@@ -311,8 +308,6 @@ sap.ui.define([
 
 	QUnit.test("test metadata promise ok then refresh failed", function(assert) {
 		var done = assert.async();
-
-		oModel = initModel();
 
 		var sTempService = sServiceUri;
 		var oPromise = oModel.metadataLoaded();
@@ -339,8 +334,6 @@ sap.ui.define([
 
 	QUnit.test("test metadata promise ok then refresh failed then refresh ok", function(assert) {
 		var done = assert.async();
-
-		oModel = initModel();
 
 		var oPromise = oModel.metadataLoaded();
 		var sTempService = sServiceUri;
@@ -379,7 +372,6 @@ sap.ui.define([
 	QUnit.test("test metadata isMetadataLoadingFailed", function(assert) {
 		var done = assert.async();
 
-		oModel = initModel();
 		assert.ok(!oModel.isMetadataLoadingFailed(), "check metadata loaded");
 		var oPromise = oModel.metadataLoaded();
 		var sTempService = sServiceUri;
@@ -3160,9 +3152,7 @@ sap.ui.define([
 				done();
 			}
 		});
-		oModel.attachMetadataLoaded(this, function() {
-			fnTest();
-		});
+		oModel.metadataLoaded().then(fnTest);
 	});
 
 	QUnit.test("test oDataModel createEntry", function(assert) {
@@ -3212,9 +3202,7 @@ sap.ui.define([
 				done();
 			}
 		});
-		oModel.attachMetadataLoaded(this, function() {
-			fnTest();
-		});
+		oModel.metadataLoaded().then(fnTest);
 	});
 
 	QUnit.test("test oDataModel createEntry and deleteCreatedEntry", function(assert) {
@@ -3262,7 +3250,7 @@ sap.ui.define([
 					assert.ok(false, "should not land here");
 				}
 			});
-			jQuery.sap.delayedCall(500, this, function() {
+			setTimeout(function() {
 				assert.ok(true, 'no request sent');
 				done();
 			});
@@ -3270,9 +3258,7 @@ sap.ui.define([
 		oModel.attachBatchRequestCompleted(this, function(test) {
 			assert.ok(false, "should not land here");
 		});
-		oModel.attachMetadataLoaded(this, function() {
-			fnTest();
-		});
+		oModel.metadataLoaded().then(fnTest);
 	});
 
 	QUnit.test("test oDataModel 2 times createEntry and one deleteCreatedEntry", function(assert) {
@@ -3354,9 +3340,7 @@ sap.ui.define([
 			assert.equal(aRequests[0].response.statusCode, "201", "response code");
 			done();
 		});
-		oModel.attachMetadataLoaded(this, function() {
-			fnTest();
-		});
+		oModel.metadataLoaded().then(fnTest);
 	});
 
 	QUnit.module("ODataModelV2 refresh after change", {

@@ -4101,9 +4101,7 @@ sap.ui.define([
 			done();
 		});
 
-		oModel.attachMetadataLoaded(this, function() {
-			fnTest();
-		});
+		oModel.metadataLoaded().then(fnTest);
 
 	});
 
