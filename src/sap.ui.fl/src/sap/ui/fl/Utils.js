@@ -1014,7 +1014,7 @@ function(
 
 		/**
 		 * Returns the reference of a component, according to the following logic:
-		 * First appVariantId, if not, componentName + ".Component", if not appId + ".Component".
+		 * First appVariantId, if not, componentName + ".Component", if not appId + ".Component" (unless they already have ".Component" at the end).
 		 *
 		 * @param {object} oManifest - Manifest of the component
 		 * @returns {string} flex reference
@@ -1027,15 +1027,22 @@ function(
 						return oManifest.getEntry("sap.ui5").appVariantId;
 					}
 					if (oManifest.getEntry("sap.ui5").componentName) {
-						return oManifest.getEntry("sap.ui5").componentName + ".Component";
+					    var sComponentName = oManifest.getEntry("sap.ui5").componentName;
+					    if (sComponentName.length > 0 && sComponentName.indexOf(".Component") < 0) {
+						sComponentName += ".Component";
+					    }
+					    return sComponentName;
 					}
 				}
 				if (oManifest.getEntry("sap.app") && oManifest.getEntry("sap.app").id) {
 					var sAppId = oManifest.getEntry("sap.app").id;
 					if (sAppId === Utils.APP_ID_AT_DESIGN_TIME && oManifest.getComponentName) {
-						sAppId = oManifest.getComponentName();
+					    sAppId = oManifest.getComponentName();
 					}
-					return sAppId + ".Component";
+					if (sAppId.length > 0 && sAppId.indexOf(".Component") < 0) {
+					    sAppId += ".Component";
+					}
+					return sAppId;
 				}
 			}
 			this.log.warning("No Manifest received.");
