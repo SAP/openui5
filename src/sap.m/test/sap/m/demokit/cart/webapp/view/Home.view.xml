@@ -20,8 +20,8 @@
 		<headerContent>
 			<Button
 				icon="sap-icon://home"
-				press=".onBackToHome"
-				visible="{device>/system/phone}"/>
+				press=".onBack"
+				visible="{appView>/smallScreenMode}"/>
 		</headerContent>
 		<subHeader>
 			<Toolbar id="searchBar33343">

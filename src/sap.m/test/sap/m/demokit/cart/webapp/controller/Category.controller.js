@@ -32,7 +32,6 @@ sap.ui.define([
 			var oComponent = this.getOwnerComponent();
 			this._oRouter = oComponent.getRouter();
 			this._oRouter.getRoute("category").attachMatched(this._loadCategories, this);
-			this._oRouter.getRoute("categoryPhone").attachMatched(this._loadCategories, this);
 			this._oRouter.getRoute("productCart").attachMatched(this._loadCategories, this);
 			this._oRouter.getRoute("product").attachMatched(this._loadCategories, this);
 			this._oRouter.getRoute("comparison").attachMatched(this._loadCategories, this);
@@ -40,6 +39,12 @@ sap.ui.define([
 		},
 
 		_loadCategories: function(oEvent) {
+			var bSmallScreen = this.getModel("appView").getProperty("/smallScreenMode"),
+				sRouteName = oEvent.getParameter("name");
+
+			// switch to first column in full screen mode for category route on small devices
+			this._setLayout(bSmallScreen && sRouteName === "category" ? "One" : "Two");
+
 			var oModel = this.getModel();
 			this._loadSuppliers();
 			var oProductList = this.byId("productList");
@@ -123,11 +128,9 @@ sap.ui.define([
 		 * Event handler to determine which sap.m.ObjectListItem is pressed
 		 * @param {sap.ui.base.Event} oEvent the sap.m.ObjectListItem press event
 		 */
-		onProductListItemPress : function (oEvent) {
-			this._showProduct(oEvent);
-		},
 
-		_showProduct: function (oEvent) {
+
+		onProductDetails: function (oEvent) {
 			var oBindContext;
 			if (Device.system.phone) {
 				oBindContext = oEvent.getSource().getBindingContext();
@@ -140,6 +143,7 @@ sap.ui.define([
 
 			// keep the cart context when showing a product
 			var bCartVisible = this.getModel("appView").getProperty("/layout").startsWith("Three");
+			this._setLayout("Two");
 			this._oRouter.navTo(bCartVisible ? "productCart" : "product", {
 				id: sCategoryId,
 				productId: sProductId
@@ -322,6 +326,13 @@ sap.ui.define([
 				item1Id : (sItem1Id ? sItem1Id : oProduct.ProductId),
 				item2Id : (sItem1Id && sItem1Id != oProduct.ProductId ? oProduct.ProductId : sItem2Id)
 			}, true);
+		},
+		/**
+		 * Always navigates back to category overview
+		 * @override
+		 */
+		onBack: function () {
+			this.getRouter().navTo("categories");
 		}
 	});
 });

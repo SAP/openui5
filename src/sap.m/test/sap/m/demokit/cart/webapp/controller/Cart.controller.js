@@ -135,20 +135,21 @@ sap.ui.define([
 			oCartModel.setProperty("/" + sListToDeleteItem, oListToDeleteItem);
 		},
 
-		_showProduct: function (item) {
-			// send event to refresh
-			var sPath = item.getBindingContext(sCartModelName).getPath();
-			var oEntry = this.getView().getModel(sCartModelName).getProperty(sPath);
-			var sId = oEntry.ProductId;
-			if (!sap.ui.Device.system.phone) {
-				// Update the URL hash making the products inside the cart bookmarkable
-				this._oRouter.navTo("productCart", {
-					id: oEntry.Category,
-					productId: oEntry.ProductId
-				}, true); // Don't create a history entry
+		_showProduct: function (oItem) {
+			var oEntry = oItem.getBindingContext(sCartModelName).getObject();
+
+			// close cart when showing a product on phone
+			var bCartVisible = false;
+			if (!Device.system.phone) {
+				bCartVisible = this.getModel("appView").getProperty("/layout").startsWith("Three");
 			} else {
-				this._oRouter.navTo("cartProduct", {productId: sId});
+				bCartVisible = false;
+				this._setLayout("Two");
 			}
+			this._oRouter.navTo(bCartVisible ? "productCart" : "product", {
+				id: oEntry.Category,
+				productId: oEntry.ProductId
+			}, !Device.system.phone);
 		},
 
 		onCartEntriesDelete: function (oEvent) {
@@ -200,25 +201,6 @@ sap.ui.define([
 		 */
 		onProceedButtonPress: function () {
 			this.getRouter().navTo("checkout");
-		},
-
-		/**
-		 * Helper function to reset the cart model.
-		 * @private
-		 */
-		_resetCart: function () {
-			var oCartModel = this.getView().getModel(sCartModelName);
-
-			//all relevant cart properties are set back to default. Content is deleted.
-			oCartModel.setProperty("/cartEntries", {});
-			oCartModel.setProperty("/savedForLaterEntries", {});
-			oCartModel.setProperty("/totalPrice", "0");
-
-			//navigates back to home screen
-			this._oRouter.navTo("home");
-			if (!Device.system.phone) {
-				this._oRouter.getTargets().display("welcome");
-			}
 		}
 	});
 });

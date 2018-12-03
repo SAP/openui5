@@ -20,7 +20,7 @@
 					<Button
 						icon="sap-icon://menu2"
 						press=".onShowCategories"
-						visible="{device>/system/phone}"/>
+						visible="{appView>/smallScreenMode}"/>
 				</contentLeft>
 				<contentMiddle>
 					<Title

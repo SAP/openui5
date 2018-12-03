@@ -58,6 +58,26 @@ sap.ui.define([
 		},
 
 		/**
+		 * React to FlexibleColumnLayout resize events
+		 * Hides navigation buttons and switches the layout as needed
+		 * @param {sap.ui.base.Event} oEvent the change event
+		 */
+		onStateChange: function (oEvent) {
+			var sLayout = oEvent.getParameter("layout"),
+				iColumns = oEvent.getParameter("maxColumnsCount");
+
+			if (iColumns === 1) {
+				this.getModel("appView").setProperty("/smallScreenMode", true);
+			} else {
+				this.getModel("appView").setProperty("/smallScreenMode", false);
+				// swich back to two column mode when device orientation is changed
+				if (sLayout === "OneColumn") {
+					this._setLayout("Two");
+				}
+			}
+		},
+
+		/**
 		 * Sets the flexible column layout to one, two, or three columns for the different scenarios across the app
 		 * @param {string} sColumns the target amount of columns
 		 * @private
@@ -80,16 +100,16 @@ sap.ui.define([
 		},
 
 		/**
-		 * Navigate back
+		 * Navigates back in browser history or to the home screen
 		 */
 		onBack: function () {
-			this._setLayout("Two");
+			this._unhideMiddlePage();
 			var oHistory = History.getInstance();
 			var oPrevHash = oHistory.getPreviousHash();
 			if (oPrevHash !== undefined) {
 				window.history.go(-1);
 			} else {
-				this.getRouter().navTo("home", {}, true);
+				this.getRouter().navTo("home");
 			}
 		},
 

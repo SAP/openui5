@@ -14,7 +14,8 @@ sap.ui.define([
 			oViewModel = new JSONModel({
 				busy : true,
 				delay : 0,
-				layout : "TwoColumnsMidExpanded"
+				layout : "TwoColumnsMidExpanded",
+				smallScreenMode : true
 			});
 			this.setModel(oViewModel, "appView");
 
