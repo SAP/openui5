@@ -73,6 +73,24 @@
         "type": "FIX",
         "text": " sap.uxap.ObjectPageHeader: Adaptation of actions improved",
         "references": []
+      },
+      {
+        "id": "8e0f255fb00ca2d3a6e15bc22153fb64db0aabbc",
+        "type": "FIX",
+        "text": " sap.uxap.BlockBase: Simplified Form Columns calculations",
+        "references": []
+      },
+      {
+        "id": "74794a4354f0ad4d4ae3568c55b89abad4f9fd16",
+        "type": "FIX",
+        "text": " sap.uxap.ObjectPageHeader: Corrected layout calculation",
+        "references": []
+      },
+      {
+        "id": "e7455d33b185414abbe4eb386cf93e54a896b52e",
+        "type": "FIX",
+        "text": " sap.uxap.ObjectPageLayout: _updateMedia is now called correctly",
+        "references": []
       }
     ]
   }

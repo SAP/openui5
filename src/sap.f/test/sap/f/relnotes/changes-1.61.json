@@ -61,6 +61,12 @@
         "type": "FIX",
         "text": " tutorial.fiori2: Product parameter is now transmitted",
         "references": []
+      },
+      {
+        "id": "5be434cfb50dc472ea7d4d27cb7edd5033481d84",
+        "type": "FIX",
+        "text": " Cleanup internally created elements of sap.f.Card",
+        "references": []
       }
     ]
   }

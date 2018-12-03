@@ -19,6 +19,12 @@
         "type": "FIX",
         "text": " Table: Apply input values when scrolling by edit mode navigation",
         "references": []
+      },
+      {
+        "id": "da5044220d20718f4eac0a646c00851504fffc8a",
+        "type": "FIX",
+        "text": " Table: Accessibility announcement in tree table and grouping rows",
+        "references": []
       }
     ]
   }

@@ -13,6 +13,12 @@
         "type": "FIX",
         "text": " sap.m.GenericTile: fix border CSS for BC, HCB and HCW themes",
         "references": []
+      },
+      {
+        "id": "bf890ed36239d151b6b256f08877a0088599c81a",
+        "type": "FEATURE",
+        "text": " Introduction of Indication less parameters",
+        "references": []
       }
     ]
   }
