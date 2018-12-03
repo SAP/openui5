@@ -306,10 +306,15 @@ sap.ui.define([
 			discovery.findTests( entryPage, progress ).then( aTests => {
 				sap.ui.getCore().byId("app").setBusy(false);
 				oTable.setFooter("Refresh: done.");
+				let aTestPageUrls = [];
+				// filter duplicate tests and sort them
+				aTests = aTests.filter((e,i,a) => {
+					return aTestPageUrls.indexOf(e.fullpage) === -1 && aTestPageUrls.push(e.fullpage) > 0;
+				}).sort((t1,t2) => compare(t1.fullpage, t2.fullpage));
 				oModel.setData({
 					_$schemaVersion: SCHEMA_VERSION,
 					entryPage,
-					tests: aTests.sort((t1,t2) => compare(t1.fullpage, t2.fullpage)),
+					tests: aTests,
 					testCount: aTests.length,
 					filteredTestCount: aTests.length
 				});

@@ -84,7 +84,8 @@
 						var onSuiteReady = function(oIFrame) {
 							that.findTestPages(oIFrame, bSequential).then(function(aTestPages) {
 								$frame.remove();
-								resolve(aTestPages);
+								// avoid duplicates in test pages
+								resolve(aTestPages.filter(function(e, i, a) { return a.indexOf(e) === i; }));
 							}, function(oError) {
 								if (window.console && typeof window.console.error === "function") {
 									window.console.error("QUnit: failed to load page '" + sTestPage + "'");
