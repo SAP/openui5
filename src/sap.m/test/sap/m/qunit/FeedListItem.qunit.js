@@ -650,9 +650,7 @@ sap.ui.define([
 	});
 
 	QUnit.test("'sender' is set to null and 'senderActive' is set to false", function (assert) {
-		this.oFeedListItem.ontap({
-			srcControl: this.oFeedListItem
-		});
+		this.oFeedListItem.$().trigger("tap");
 		assert.ok(this.oFeedListItem, "FeedListItem is clickable");
 	});
 

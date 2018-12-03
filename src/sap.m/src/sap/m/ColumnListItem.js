@@ -76,8 +76,9 @@ sap.ui.define([
 	 */
 	var TablePopin = Element.extend("sap.m.TablePopin", {
 		ontap: function(oEvent) {
-			if (oEvent.isMarked()) {
-				return;
+			// prevent the tap event if selection is done within the popin control and mark the event
+			if (oEvent.isMarked() || ListItemBase.detectTextSelection(this.getDomRef())) {
+				return oEvent.setMarked();
 			}
 
 			// focus to the main row if there is nothing to focus in the popin
