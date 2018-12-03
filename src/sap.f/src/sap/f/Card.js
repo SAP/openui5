@@ -72,12 +72,14 @@ sap.ui.define([
 					 *    "sap.card" : {
 					 *       "title": "Card Title",
 					 *       "subTitle": "Card Subtitle",
-					 *       "icon": "sap-icon://accept",
-					 *       "iconColor" : "green",
-					 *       //other properties from the Card interface (metadata)
-					 *       "type": "ListCard",
-					 *       "settings": {
-					 *          //settings for the card type
+					 *       "icon": {
+					 *          "src": "sap-icon://accept"
+					 *       },
+					 *       //Available type cards [Analytical, List]
+					 *       "type": "List",
+					 *       "status": "Count",
+					 *       "content": {
+					 *          //content depending on the type of the Card
 					 *       }
 					 *    }
 					 * }</pre>
@@ -85,6 +87,30 @@ sap.ui.define([
 					manifest: {
 						type: "any",
 						defaultValue: ""
+					},
+
+					/**
+					 * Defines the width of the Card
+					 *
+					 * <b>Note:</b> If no width is set, sap.f.Card will take 100% of its parent container
+					 * @since 1.61
+					 */
+					width : {
+						type : "sap.ui.core.CSSSize",
+						group : "Appearance",
+						defaultValue : "100%"
+					},
+
+					/**
+					 * Defines the height of the Card
+					 *
+					 * <b>Note:</b> If no height is set, sap.f.Card will take 100% of its parent container
+					 * @since 1.61
+					 */
+					height : {
+						type : "sap.ui.core.CSSSize",
+						group : "Appearance",
+						defaultValue : "100%"
 					}
 
 				},

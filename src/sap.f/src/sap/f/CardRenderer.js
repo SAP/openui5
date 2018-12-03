@@ -33,10 +33,8 @@ sap.ui.define(["sap/f/library", "sap/base/security/encodeXML", "sap/ui/core/Icon
 				if (oCard.getBusy()) {
 					oRm.addClass("sapFCardLoading");
 				}
-
-				oRm.addStyle("width", "100%");
-				oRm.addStyle("height", "100%");
-
+				oRm.addStyle("width", oCard.getWidth());
+				oRm.addStyle("height", oCard.getHeight());
 				oRm.writeClasses();
 				oRm.writeStyles();
 				oRm.write(">");
@@ -55,11 +53,8 @@ sap.ui.define(["sap/f/library", "sap/base/security/encodeXML", "sap/ui/core/Icon
                 oRm.addClass("sapFCardLoading");
             }
             oRm.writeClasses();
-
-			//styles
-			oRm.addStyle("width", oCard._oCardManifest.get("sap.card/width"));
-			oRm.addStyle("height", oCard._oCardManifest.get("sap.card/height"));
-
+			oRm.addStyle("width", oCard.getWidth());
+			oRm.addStyle("height", oCard.getHeight());
 			oRm.writeStyles();
 			oRm.write(">");
 
