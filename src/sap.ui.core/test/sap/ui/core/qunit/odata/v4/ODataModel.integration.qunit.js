@@ -1383,6 +1383,7 @@ sap.ui.define([
 
 	//*********************************************************************************************
 	// Refresh a single row with a bound message and check that the message is not duplicated.
+	// Refreshing a single line in a collection must not remove messages for other lines.
 	QUnit.test("Context#refresh() with messages", function (assert) {
 		var sView = '\
 <Table id="table"\
@@ -1395,9 +1396,30 @@ sap.ui.define([
 		<Text text="{ID}" />\
 	</ColumnListItem>\
 </Table>',
-			oResponseMessage = {
+			oMessage1 = {
+				"code" : "2",
+				"message" : "Another Text",
+				"persistent" : false,
+				"target" : "/EMPLOYEES('1')/ID",
+				"type" : "Warning"
+			},
+			oResponseMessage0 = {
 				"code" : "1",
 				"message" : "Text",
+				"numericSeverity" : 3,
+				"target" : "ID",
+				"transition" : false
+			},
+			oResponseMessage0AfterRefresh = {
+				"code" : "1",
+				"message" : "Text after refresh",
+				"numericSeverity" : 3,
+				"target" : "ID",
+				"transition" : false
+			},
+			oResponseMessage1 = {
+				"code" : "2",
+				"message" : "Another Text",
 				"numericSeverity" : 3,
 				"target" : "ID",
 				"transition" : false
@@ -1409,7 +1431,12 @@ sap.ui.define([
 				"value" : [{
 					"ID" : "0",
 					"__CT__FAKE__Message" : {
-						"__FAKE__Messages" : [oResponseMessage]
+						"__FAKE__Messages" : [oResponseMessage0]
+					}
+				}, {
+					"ID" : "1",
+					"__CT__FAKE__Message" : {
+						"__FAKE__Messages" : [oResponseMessage1]
 					}
 				}]
 			})
@@ -1419,7 +1446,7 @@ sap.ui.define([
 				"persistent" : false,
 				"target" : "/EMPLOYEES('0')/ID",
 				"type" : "Warning"
-			}]);
+			}, oMessage1]);
 
 		return this.createView(assert, sView, createTeaBusiModel({autoExpandSelect : true}))
 			.then(function () {
@@ -1429,10 +1456,16 @@ sap.ui.define([
 							+ "?$select=ID,__CT__FAKE__Message/__FAKE__Messages", {
 						"ID" : "0",
 						"__CT__FAKE__Message" : {
-							"__FAKE__Messages" : [oResponseMessage]
+							"__FAKE__Messages" : [oResponseMessage0AfterRefresh]
 						}
-					});
-				// no change in messages
+					})
+				.expectMessages([{
+					"code" : "1",
+					"message" : "Text after refresh",
+					"persistent" : false,
+					"target" : "/EMPLOYEES('0')/ID",
+					"type" : "Warning"
+				}, oMessage1]);
 
 				// code under test
 				oContext.refresh();

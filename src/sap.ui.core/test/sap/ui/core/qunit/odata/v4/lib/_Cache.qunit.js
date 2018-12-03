@@ -1789,7 +1789,7 @@ sap.ui.define([
 			};
 
 		this.oRequestorMock.expects("reportBoundMessages")
-			.withExactArgs(oCache.sResourcePath, mExpectedMessages, undefined);
+			.withExactArgs(oCache.sResourcePath, mExpectedMessages, ["SO_2_BP"]);
 
 		// code under test
 		oCache.visitResponse(oData, mTypeForMetaPath, "/SalesOrderList/SO_2_BP", "SO_2_BP");
@@ -1814,7 +1814,7 @@ sap.ui.define([
 			};
 
 		this.oRequestorMock.expects("reportBoundMessages")
-			.withExactArgs(oCache.sResourcePath, mExpectedMessages, undefined);
+			.withExactArgs(oCache.sResourcePath, mExpectedMessages, ["('0500000001')/SO_2_BP"]);
 
 		// code under test
 		oCache.visitResponse(oData, mTypeForMetaPath, "/SalesOrderList/SO_2_BP",
@@ -1834,6 +1834,7 @@ sap.ui.define([
 					SalesOrderID : "0500000001"
 				},
 				mExpectedMessages = {},
+				sMessagePath = bKeepTransientPath !== false ? "/-1" : "('0500000001')",
 				mTypeForMetaPath = {
 					"/SalesOrderList" : {
 						"@com.sap.vocabularies.Common.v1.Messages" : {$Path : "Messages"},
@@ -1849,10 +1850,10 @@ sap.ui.define([
 				// of key predicate and are thus forced to keep
 				delete oData.SalesOrderID; // missing key property -> no key predicate available
 			}
-			mExpectedMessages[bKeepTransientPath !== false ? "/-1" : "('0500000001')"] = aMessages;
+			mExpectedMessages[sMessagePath] = aMessages;
 
 			this.oRequestorMock.expects("reportBoundMessages")
-				.withExactArgs(oCache.sResourcePath, mExpectedMessages, undefined);
+				.withExactArgs(oCache.sResourcePath, mExpectedMessages, [sMessagePath]);
 
 			// code under test
 			oCache.visitResponse(oData, mTypeForMetaPath, "/SalesOrderList", "/-1",
@@ -1887,7 +1888,8 @@ sap.ui.define([
 			};
 
 		this.oRequestorMock.expects("reportBoundMessages")
-			.withExactArgs(oCache.sResourcePath, mExpectedMessages, undefined);
+			.withExactArgs(oCache.sResourcePath, mExpectedMessages,
+				["('0500000001')/SO_2_SOITEM(SalesOrderID='0500000001',ItemPosition='42')"]);
 
 		// code under test
 		oCache.visitResponse(oData, mTypeForMetaPath, "/SalesOrderList/SO_2_SOITEM",

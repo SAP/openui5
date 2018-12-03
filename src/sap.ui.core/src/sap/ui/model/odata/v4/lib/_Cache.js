@@ -912,8 +912,8 @@ sap.ui.define([
 	 */
 	Cache.prototype.visitResponse = function (oRoot, mTypeForMetaPath, sRootMetaPath, sRootPath,
 			bKeepTransientPath, iStart) {
-		var bHasMessages = false,
-			aKeyPredicates,
+		var aCachePaths,
+			bHasMessages = false,
 			mPathToODataMessages = {},
 			sRequestUrl = this.oRequestor.getServiceUrl() + this.sResourcePath,
 			that = this;
@@ -971,7 +971,7 @@ sap.ui.define([
 					if (!sCollectionPath) {
 						// remember the key predicates / indices of the root entries to remove all
 						// messages for entities that have been read
-						aKeyPredicates.push(sPredicate || iIndex.toString());
+						aCachePaths.push(sPredicate || iIndex.toString());
 					}
 					if (sPredicate) {
 						mByPredicate[sPredicate] = vInstance;
@@ -1005,6 +1005,10 @@ sap.ui.define([
 				sInstancePath = _Helper.buildPath(sInstancePath, sPredicate || iIndex);
 			} else if (!bKeepTransientPath && sPredicate && sInstancePath.endsWith("/-1")) {
 				sInstancePath = sInstancePath.slice(0, -3) + sPredicate;
+			}
+			if (sRootPath && !aCachePaths) {
+				// remove messages only for the part of the cache that is updated
+				aCachePaths = [sInstancePath];
 			}
 			if (sMessageProperty) {
 				aMessages = _Helper.drillDown(oInstance, sMessageProperty.split("/"));
@@ -1046,7 +1050,7 @@ sap.ui.define([
 		}
 
 		if (iStart !== undefined) {
-			aKeyPredicates = [];
+			aCachePaths = [];
 			visitArray(oRoot.value, sRootMetaPath || this.sMetaPath, "",
 				buildContextUrl(sRequestUrl, oRoot["@odata.context"]));
 		} else if (oRoot && typeof oRoot === "object") {
@@ -1057,7 +1061,7 @@ sap.ui.define([
 				this.fnGetOriginalResourcePath
 					? this.fnGetOriginalResourcePath(oRoot)
 					: this.sResourcePath,
-				mPathToODataMessages, aKeyPredicates);
+				mPathToODataMessages, aCachePaths);
 		}
 	};
 
