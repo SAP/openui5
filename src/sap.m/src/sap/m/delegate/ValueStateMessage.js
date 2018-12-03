@@ -179,6 +179,12 @@ sap.ui.define([
 			this._oPopup.attachClosed(function() {
 				jQuery(document.getElementById(sID)).remove();
 			});
+			this._oPopup.attachOpened(function() {
+				var content = this._oPopup.getContent();
+				if (content && this._oControl) {
+					content.style.zIndex = this._getCorrectZIndex();
+				}
+			}.bind(this));
 
 			return this._oPopup;
 		};
@@ -258,6 +264,24 @@ sap.ui.define([
 			}
 
 			this._oControl = null;
+		};
+
+		/**
+		 * Gets the z-index of the popup, so it won't be shown above some other popups.
+		 * @return {int} The correct z-index
+		 * @private
+		 */
+		ValueStateMessage.prototype._getCorrectZIndex = function() {
+
+			var aParents = this._oControl.$().parents().filter(function() {
+				return jQuery(this).css('z-index') !== 'auto';
+			});
+
+			if (!aParents.length) {
+				return 1;
+			}
+
+			return parseInt(aParents.first().css('z-index')) + 1;
 		};
 
 		return ValueStateMessage;

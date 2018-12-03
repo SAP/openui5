@@ -3505,6 +3505,10 @@ sap.ui.define([
 			sap.ui.getCore().applyChanges();
 		},
 		afterEach: function () {
+			if (this.inputWithSuggestions._oValueStateMessage._oPopup) {
+				this.inputWithSuggestions._oValueStateMessage._oPopup.close();
+			}
+
 			this.inputWithSuggestions.destroy();
 			this.inputWithSuggestions = null;
 		}
@@ -3521,6 +3525,18 @@ sap.ui.define([
 		this.clock.tick(300);
 
 		assert.notOk(this.inputWithSuggestions._oValueStateMessage._oPopup, "Value state message is not shown");
+	});
+
+	QUnit.test('valueStateMsg z-index', function (assert) {
+
+		this.inputWithSuggestions.setShowValueStateMessage(true);
+		this.inputWithSuggestions.setValueState("Error");
+		this.inputWithSuggestions.onfocusin();
+
+		this.clock.tick(300);
+
+		assert.ok(this.inputWithSuggestions._oValueStateMessage._oPopup, "Value state message is shown");
+		assert.strictEqual(jQuery(this.inputWithSuggestions._oValueStateMessage._oPopup.getContent()).css('z-index'), '1', 'z-index is correct');
 	});
 
 });
