@@ -6,7 +6,7 @@
 		id="page"
 		title="{cfg>/pageTitle}"
 		backgroundDesign="Solid"
-		showNavButton="{device>/system/phone}"
+		showNavButton="{appView>/smallScreenMode}"
 		navButtonPress=".onBack"
 		showFooter="true">
 		<landmarkInfo>

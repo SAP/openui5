@@ -4,8 +4,7 @@
 	xmlns:mvc="sap.ui.core.mvc">
 	<Page
 		id="page"
-		backgroundDesign="Solid"
-		>
+		backgroundDesign="Solid">
 		<landmarkInfo>
 			<PageAccessibleLandmarkInfo
 				rootRole="Region"
@@ -22,7 +21,7 @@
 				<contentLeft>
 					<Button
 						type="Back"
-						visible="{device>/system/phone}"
+						visible="{appView>/smallScreenMode}"
 						press=".onBack"/>
 				</contentLeft>
 				<contentMiddle>

@@ -33,7 +33,6 @@ sap.ui.define([
 			});
 			this.getView().setModel(oViewModel, "view");
 			this.getRouter().attachRouteMatched(this._onRouteMatched, this);
-			this.getRouter().getTarget("welcome").attachDisplay(this._onRouteMatched, this);
 
 			// select random carousel page at start
 			var oWelcomeCarousel = this.byId("welcomeCarousel");
@@ -49,8 +48,14 @@ sap.ui.define([
 		},
 
 		_onRouteMatched: function (oEvent) {
+			var sRouteName = oEvent.getParameter("name");
+
+			// always display two columns for home screen
+			if (sRouteName === "home") {
+				this._setLayout("Two");
+			}
 			// we do not need to call this function if the url hash refers to product or cart product
-			if (oEvent.getParameter("name") !== "product" && oEvent.getParameter("name") !== "cartProduct") {
+			if (sRouteName !== "product" && sRouteName !== "cartProduct") {
 				var aPromotedData = this.getView().getModel("view").getProperty("/Promoted");
 				if (!aPromotedData.length) {
 					var oModel = this.getModel();
@@ -99,12 +104,14 @@ sap.ui.define([
 				productId: sProductId
 			});
 		},
+
 		/**
-		 * Navigates to the category page on phones
+		 * Navigates to the category overview on phones
 		 */
 		onShowCategories: function () {
 			this.getRouter().navTo("categories");
 		},
+
 		/**
 		 * Event handler to determine which button was clicked
 		 * @param {sap.ui.base.Event} oEvent the button press event

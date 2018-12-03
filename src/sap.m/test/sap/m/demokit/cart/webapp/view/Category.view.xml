@@ -23,7 +23,7 @@
 			<List
 				id="productList"
 				mode="{= ${device>/system/phone} ? 'None' : 'SingleSelectMaster'}"
-				selectionChange="onProductListSelect"
+				selectionChange=".onProductDetails"
 				noDataText="{i18n>categoryNoData}"
 				busyIndicatorDelay="0"
 				items="{
@@ -55,7 +55,7 @@
 							formatter : '.formatter.price'
 						}"
 						numberUnit="{CurrencyCode}"
-						press=".onProductListItemPress"
+						press=".onProductDetails"
 						iconDensityAware="false"
 						tooltip="{i18n>openProductDetails} {Name}">
 						<attributes>
