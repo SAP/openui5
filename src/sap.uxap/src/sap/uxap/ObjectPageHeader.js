@@ -913,7 +913,7 @@ sap.ui.define([
 				// save the original height and
 				// set the height of the wrapping div to a constant value before temporarily changing its inner state
 				// to avoid flickering (as the temporary inner change will affect its height as well)
-				sOriginalHeight = $identifierLine.css("height");
+				sOriginalHeight = $identifierLine.get(0).style.height;
 				$identifierLine.css("height", $identifierLine.height());
 
 				// temporarily toggle the default subtitle display
@@ -928,7 +928,7 @@ sap.ui.define([
 			}
 
 			if (sOriginalHeight !== null) { // restore the original height
-				$identifierLine.css("height", sOriginalHeight);
+				$identifierLine.get(0).style.height = sOriginalHeight;
 			}
 		}
 
