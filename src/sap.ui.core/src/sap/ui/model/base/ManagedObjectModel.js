@@ -658,7 +658,7 @@ sap.ui.define([
 		if (bAsync) {
 			if (!this.sUpdateTimer) {
 				this.sUpdateTimer = setTimeout(function() {
-					this.checkUpdate(bForceUpdate, true, fnFilter);
+					this.checkUpdate(bForceUpdate, false, fnFilter);
 				}.bind(this), 0);
 			}
 			return;
