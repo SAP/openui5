@@ -39,6 +39,7 @@ sap.ui.define([
 	'sap/ui/performance/trace/initTraces',
 	'sap/base/util/LoaderExtensions',
 	'sap/base/util/isEmptyObject',
+	'sap/base/util/each',
 	'sap/ui/events/jquery/EventSimulation'
 ],
 	function(
@@ -76,7 +77,8 @@ sap.ui.define([
 		uid,
 		initTraces,
 		LoaderExtensions,
-		isEmptyObject
+		isEmptyObject,
+		each
 		/* ,EventSimulation */
 	) {
 
@@ -91,10 +93,6 @@ sap.ui.define([
 		/*eslint-disable no-eval */
 		eval(arguments[0]);
 		/*eslint-enable no-eval */
-	}
-
-	function each(obj, fn, thisArg) {
-		Object.keys(obj).forEach(fn, thisArg);
 	}
 
 	// when the Core module has been executed before, don't execute it again
@@ -240,7 +238,7 @@ sap.ui.define([
 			_oEventProvider = new EventProvider();
 
 			// Generate all functions from EventProvider for backward compatibility
-			["attachEvent", "detachEvent", "getEventingParent"].forEach(function(sFuncName) {
+			["attachEvent", "detachEvent", "getEventingParent"].forEach(function (sFuncName) {
 				Core.prototype[sFuncName] = _oEventProvider[sFuncName].bind(_oEventProvider);
 			});
 
@@ -2811,9 +2809,9 @@ sap.ui.define([
 		var sEventId = Core.M_EVENTS.ThemeChanged;
 		var oEvent = jQuery.Event(sEventId);
 		oEvent.theme = mParameters.theme;
-		each(this.mElements, function(prop) {
-			this.mElements[prop]._handleEvent(oEvent);
-		}, this);
+		each(this.mElements, function (prop, oElement) {
+			oElement._handleEvent(oEvent);
+		});
 
 		ActivityDetection.refresh();
 
@@ -2917,12 +2915,11 @@ sap.ui.define([
 		/*
 		 * Notify models that are able to handle a localization change
 		 */
-		each(this.oModels, function (prop) {
-			var oModel = this.oModels[prop];
+		each(this.oModels, function (prop, oModel) {
 			if (oModel && oModel._handleLocalizationChange) {
 				oModel._handleLocalizationChange();
 			}
-		}, this);
+		});
 
 
 		/*
@@ -2930,15 +2927,12 @@ sap.ui.define([
 		 * and then to update their bindings and corresponding data types (phase 2)
 		 */
 		function notifyAll(iPhase) {
-			each(this.mUIAreas, function(prop) {
-				fnAdapt.call(this.mUIAreas[prop], iPhase);
-			}, this);
-			each(this.mObjects["component"], function(prop) {
-				fnAdapt.call(this.mObjects["component"][prop], iPhase);
-			}, this);
-			each(this.mElements, function(prop) {
-				fnAdapt.call(this.mElements[prop], iPhase);
-			}, this);
+			var aElementsToNotify = [this.mUIAreas, this.mObjects["component"], this.mElements];
+			aElementsToNotify.forEach(function (mElements) {
+				each(mElements, function (prop, oElement) {
+					fnAdapt.call(oElement, iPhase);
+				});
+			});
 		}
 
 		notifyAll.call(this,1);
@@ -2951,16 +2945,16 @@ sap.ui.define([
 			// modify style sheet URLs
 			this._updateThemeUrls(this.sTheme);
 			// invalidate all UIAreas
-			each(this.mUIAreas, function(prop) {
-				this.mUIAreas[prop].invalidate();
-			}, this);
+			each(this.mUIAreas, function(prop, oUIArea) {
+				oUIArea.invalidate();
+			});
 			Log.info("RTL mode " + mChanges.rtl ? "activated" : "deactivated");
 		}
 
 		// notify Elements via a pseudo browser event (onlocalizationChanged, note the lower case 'l')
-		each(this.mElements, function(prop) {
-			this.mElements[prop]._handleEvent(oBrowserEvent);
-		}, this);
+		each(this.mElements, function (prop, oElement) {
+			oElement._handleEvent(oBrowserEvent);
+		});
 
 		// notify registered Core listeners
 		_oEventProvider.fireEvent(sEventId, {changes : mChanges});
@@ -3560,17 +3554,15 @@ sap.ui.define([
 			}
 			// propagate Models to all UI areas
 
-			each(this.mUIAreas, function (prop){
-				var oUIArea = this.mUIAreas[prop];
+			each(this.mUIAreas, function (prop, oUIArea){
 				if (oModel != oUIArea.getModel(sName)) {
 					oUIArea._propagateProperties(sName, oUIArea, oProperties, false, sName);
 				}
-			}, this);
+			});
 		} else if (oModel && oModel !== this.oModels[sName] ) {
 			this.oModels[sName] = oModel;
 			// propagate Models to all UI areas
-			each(this.mUIAreas, function (prop){
-				var oUIArea = this.mUIAreas[prop];
+			each(this.mUIAreas, function (prop, oUIArea){
 				if (oModel != oUIArea.getModel(sName)) {
 					var oProperties = {
 						oModels: Object.assign({}, this.oModels),
@@ -3579,7 +3571,7 @@ sap.ui.define([
 					};
 					oUIArea._propagateProperties(sName, oUIArea, oProperties, false, sName);
 				}
-			}, this);
+			}.bind(this));
 		} //else nothing to do
 		return this;
 	};
