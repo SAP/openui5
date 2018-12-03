@@ -4,6 +4,9 @@ sap.ui.define([
 	"use strict";
 
 	return Controller.extend("sap.f.cardsdemo.controller.Zflow", {
+		onInit: function () {
+			this.getView().byId("cssgrid")._wrapItemsWithDiv = true;
+		},
         onLayoutChange: function (oEvent) {
 			var sLayout = oEvent.getParameter("layout");
 			var oGrid = oEvent.getSource().getParent();

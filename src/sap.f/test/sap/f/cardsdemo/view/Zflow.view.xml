@@ -36,7 +36,7 @@
 			</Panel>
 
 			<Panel>
-				<grid:CSSGrid id="cssgrid" wrapItemsWithDiv="true">
+				<grid:CSSGrid id="cssgrid">
 
 					<grid:customLayout>
 						<grid:GridResponsiveLayout>
