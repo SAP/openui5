@@ -4,4 +4,26 @@
 /* ============================= */
 .sapFCard .sapFCardHeader {
   border-bottom: 1px solid @sapUiTileBorderColor;
+    &:hover{
+      background: @sapUiHighlight;
+    }
+
+    &:active{
+      background: @sapUiHighlight;
+    }
+
+
+    &:hover .sapFCardIcon.sapFAvatar:not(.sapFAvatarImage):not(.sapFAvatarInitials ){
+      background: @sapUiHighlight;
+    }
+
+    &:active .sapFCardIcon.sapFAvatar:not(.sapFAvatarImage):not(.sapFAvatarInitials ){
+      background: @sapUiHighlight;
+    }
+
+  .sapFCardIcon.sapFAvatar{
+    .sapUiIcon {
+      color: @sapUiContentIconColor;
+    }
+  }
 }

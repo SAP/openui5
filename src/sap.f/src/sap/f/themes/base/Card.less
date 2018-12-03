@@ -2,9 +2,9 @@
 /* CSS for control sap.f/Card  */
 /* Base theme          */
 /* ================================== */
-
 @sapUiContentPadding: 1rem;
-@sapUiTileHoverBackground: @sapUiListHoverBackground;
+@sapUiCardHeaderIconColor: #6a6d70;
+
 
 .sapFCard {
   position: relative;
@@ -14,7 +14,6 @@
   background: @sapUiTileBackground;
   box-shadow: @sapUiShadowLevel0;
   border-radius: 0.25rem;
-  border: 1px solid darken(@sapUiTileBackground, 20);
   width: 100%;
   height: 100%;
   overflow: hidden;
@@ -31,24 +30,24 @@
   display: flex;
   align-items: flex-start;
   &:hover{
-    background: lighten(@sapUiTileHoverBackground, 4);
+    background: darken(@sapUiTileBackground,2);
   }
 
   &:active{
-    background: @sapUiTileHoverBackground;
+    background: darken(@sapUiTileBackground,3);
   }
 
 
   &:hover .sapFCardIcon.sapFAvatar:not(.sapFAvatarImage):not(.sapFAvatarInitials ){
-    background: lighten(@sapUiTileHoverBackground, 4);
+    background: darken(@sapUiTileBackground,2);
   }
 
   &:active .sapFCardIcon.sapFAvatar:not(.sapFAvatarImage):not(.sapFAvatarInitials ){
-    background: @sapUiTileHoverBackground;
+    background: darken(@sapUiTileBackground,3);
   }
 
   .sapFCardIcon.sapFAvatar:not(.sapFAvatarImage ):not(.sapFAvatarInitials ){
-    background: @sapUiTileBackground;
+    background-color: transparent;
     border: none;
   }
 
@@ -59,9 +58,8 @@
     justify-content: center;
     .sapUiIcon {
       align-self: center;
-      font-size: 1.5rem;
-      background-color: transparent;
-      color: @sapUiTileIconColor;
+      font-size: 2rem;
+      color: @sapUiCardHeaderIconColor;
     }
   }
   .sapFCardHeaderText {
