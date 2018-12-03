@@ -102,6 +102,12 @@
         "type": "FIX",
         "text": " TreeTable: ACC - Avoid duplicate announcement on expand/collapse",
         "references": []
+      },
+      {
+        "id": "71af8cc83d1e5eb7c8ab00578d737f80a9d24ba3",
+        "type": "FIX",
+        "text": " Table: Correctly create new rows after resize",
+        "references": []
       }
     ]
   }

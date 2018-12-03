@@ -467,6 +467,12 @@
         "type": "FIX",
         "text": " core/Control: fixed wrong jsdoc tag",
         "references": []
+      },
+      {
+        "id": "789f4d795465c40ecd2aa2c8b7d1811c47dfb5df",
+        "type": "FIX",
+        "text": " TreeBindingUtils: Fixes negative $skip values",
+        "references": []
       }
     ]
   }

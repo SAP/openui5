@@ -107,6 +107,13 @@
   },
   "1.60.2": {
     "date": "November 2018",
-    "notes": []
+    "notes": [
+      {
+        "id": "dd9a880393ce78dc54b0d70f16166138d618f4cb",
+        "type": "FIX",
+        "text": " sap.ui.fl - attache ctrl variant id to viewcache",
+        "references": []
+      }
+    ]
   }
 }
