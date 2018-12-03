@@ -11,7 +11,8 @@ sap.ui.define([
 					name: "sap.ui.demo.HeapOfShards",
 					settings: {
 						id: "HeapOfShards"
-					}
+					},
+					async: true
 				}
 			});
 		}

@@ -18,7 +18,8 @@ sap.ui.define([
 			// start the app UI component
 			this.iStartMyUIComponent({
 				componentConfig: {
-					name: "sap.ui.core.tutorial.odatav4"
+					name: "sap.ui.core.tutorial.odatav4",
+					async: true
 				},
 				hash: oOptions.hash,
 				autoWait: oOptions.autoWait

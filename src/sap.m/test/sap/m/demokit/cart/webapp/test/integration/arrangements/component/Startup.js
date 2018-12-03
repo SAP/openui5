@@ -41,7 +41,8 @@ sap.ui.define([
 			// start the app UI component
 			this.iStartMyUIComponent({
 				componentConfig: {
-					name: "sap.ui.demo.cart"
+					name: "sap.ui.demo.cart",
+					async: true
 				},
 				hash: oOptions.hash,
 				autoWait: oOptions.autoWait

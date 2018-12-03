@@ -53,7 +53,8 @@ sap.ui.define([
 					name: "sap.ui.demo.iconexplorer",
 					settings : {
 						id : "iconexplorer"
-					}
+					},
+					async: true
 				},
 				hash: oOptions.hash
 			});
