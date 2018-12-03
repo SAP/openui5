@@ -1315,6 +1315,59 @@ function(
 			assert.equal(Utils.getFlexReference(oManifest), sComName + ".Component");
 		});
 
+		QUnit.test("When getFlexReference returns the componentName it does not add .Component at the end if it already exists there", function (assert) {
+			var sComponentName = "componentName.Component";
+			var sAppId = "appId";
+			var oManifest = {
+				"sap.app": {
+					"type": "application",
+					"id": sAppId
+				},
+				"sap.ui5": {
+					"componentName": sComponentName
+				},
+				getEntry: function (key) {
+					return this[key];
+				}
+			};
+
+			assert.equal(Utils.getFlexReference(oManifest), sComponentName);
+		});
+
+		QUnit.test("When getFlexReference returns the appId it does not add .Component at the end if it already exists there", function (assert) {
+			var sAppId = "appId.Component";
+			var oManifest = {
+				"sap.app": {
+					"type": "application",
+					"id": sAppId
+				},
+				getEntry: function (key) {
+					return this[key];
+				}
+			};
+
+			assert.equal(Utils.getFlexReference(oManifest), sAppId);
+		});
+
+		QUnit.test("When getFlexReference returns the value from getComponentName function if neither the sap.ui5.variantId nor the sap.ui5.componentName exist and sap.app.id is at design time it does not add .Component at the end if it already exists there", function (assert) {
+			var sAppId = Utils.APP_ID_AT_DESIGN_TIME;
+			var sComName = "comName.Component";
+			var oManifest = {
+				"sap.app": {
+					"type": "application",
+					"id": sAppId
+				},
+				getEntry: function (key) {
+					return this[key];
+				},
+				getComponentName: function(){
+					return sComName;
+				}
+			};
+
+			assert.equal(Utils.getFlexReference(oManifest), sComName);
+		});
+
 		QUnit.test("isCustomerDependentLayer", function(assert) {
 			assert.ok(Utils.isCustomerDependentLayer("CUSTOMER"), "'CUSTOMER' layer is detected as customer dependent");
 			assert.ok(Utils.isCustomerDependentLayer("CUSTOMER_BASE"), "'CUSTOMER_BASE' layer is detected as customer dependent");
