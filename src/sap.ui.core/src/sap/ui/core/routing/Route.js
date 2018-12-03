@@ -157,9 +157,18 @@ sap.ui.define([
 						});
 						that._routeMatched(oArguments, true);
 					});
+
+					that._aRoutes[iIndex].switched.add(function() {
+						that._routeSwitched();
+					});
 				});
 			},
 
+			_routeSwitched: function() {
+				this.fireEvent("switched", {
+					name: this._oConfig.name
+				});
+			},
 
 			/**
 			 * Destroys a route
@@ -390,6 +399,23 @@ sap.ui.define([
 			detachPatternMatched : function(fnFunction, oListener) {
 				return this.detachEvent("patternMatched", fnFunction, oListener);
 			},
+
+			/**
+			 * The 'switched' event is only fired, when the last matched route is has been left and another route is matched.
+			 *
+			 * @name sap.ui.core.routing.Route#switched
+			 * @event
+			 * @param {sap.ui.base.Event} oEvent
+			 * @param {sap.ui.base.EventProvider} oEvent.getSource
+			 * @param {object} oEvent.getParameters
+			 * @param {string} oEvent.getParameters.name The name of the route
+			 * @param {object} oEvent.getParameters.arguments A key-value pair object which contains the arguments defined in the route
+			 *  resolved with the corresponding information from the current URL hash
+			 * @param {object} oEvent.getParameters.config The configuration object of the route
+			 * @private
+			 * @ui5-restricted sap.ui.core.routing
+			 * @since 1.62
+			 */
 
 			_validateConfig: function(oConfig) {
 				if (!oConfig.name) {

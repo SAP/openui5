@@ -2,8 +2,9 @@
 sap.ui.define([
 	"sap/base/Log",
 	"sap/ui/core/Component",
-	"sap/ui/core/routing/TargetCache"
-], function (Log, Component, TargetCache) {
+	"sap/ui/core/routing/TargetCache",
+	"sap/ui/core/routing/HashChanger"
+], function (Log, Component, TargetCache, HashChanger) {
 	"use strict";
 
 	QUnit.module("Get and Set Component with TargetCache", {
@@ -70,7 +71,8 @@ sap.ui.define([
 		var oPromise = this.oCache.get(oOptions, "Component");
 		assert.equal(this.oCreateStub.callCount, 1, "Component.create is called once");
 
-		assert.propEqual(this.oCreateStub.getCall(0).args[0], oOptions, "The options is passed to the Component.create");
+		assert.strictEqual(this.oCreateStub.getCall(0).args[0].name, oOptions.name, "The options is passed to the Component.create");
+		assert.strictEqual(this.oCreateStub.getCall(0).args[0].manifest, oOptions.manifest, "The options is passed to the Component.create");
 
 		return oPromise.then(function (oComponent) {
 			assert.strictEqual(oComponent, that.oComponent, "The correct component instance is passed to promise resolve");
@@ -88,12 +90,39 @@ sap.ui.define([
 		var oPromise = this.oCache.get(oOptions, "Component");
 		assert.equal(this.oCreateStub.callCount, 1, "Component.create is called once");
 
-		assert.propEqual(this.oCreateStub.getCall(0).args[0], oOptions, "The options is passed to the Component.create");
+		var oCreateOption = this.oCreateStub.getCall(0).args[0];
+		assert.strictEqual(oCreateOption.name, oOptions.name, "The options is passed to the Component.create");
+		assert.strictEqual(oCreateOption.id, oOptions.id, "The options is passed to the Component.create");
+		assert.strictEqual(oCreateOption.manifest, oOptions.manifest, "The options is passed to the Component.create");
 
 		return oPromise.then(function (oComponent) {
 			assert.strictEqual(oComponent, that.oComponent, "The correct component instance is passed to promise resolve");
 			assert.strictEqual(that.oCache._oCache.component[oOptions.name][undefined], oComponent, "The component instance is also saved under the undefined key");
 			assert.strictEqual(that.oCache._oCache.component[oOptions.name][oOptions.id], oComponent, "The component instance is saved under the undefined key");
+		});
+	});
+
+	QUnit.test("Get component with creation info", function (assert) {
+		var oOptions = {
+			name: "foo.bar",
+			id: "testid"
+		}, that = this;
+
+		var oAfterCreateSpy = sinon.spy();
+		var oRouterHashChangerSpy = sinon.spy(this.oCache, "_createRouterHashChanger");
+		var oPromise = this.oCache._get(oOptions, "Component", true, {
+			afterCreate: oAfterCreateSpy,
+			prefix: "prefix"
+		});
+
+		assert.equal(oRouterHashChangerSpy.callCount, 1, "RouterHashChanger is created");
+		assert.equal(oRouterHashChangerSpy.args[0][0], "prefix", "The prefix is passed as parameter");
+
+		return oPromise.then(function (oComponent) {
+			assert.strictEqual(oComponent, that.oComponent, "The correct component instance is passed to promise resolve");
+			assert.equal(oAfterCreateSpy.callCount, 1, "afterCreate hook is called once");
+			assert.strictEqual(oAfterCreateSpy.args[0][0], that.oComponent, "The component instance is given as paramter");
+			oRouterHashChangerSpy.restore();
 		});
 	});
 
@@ -182,6 +211,70 @@ sap.ui.define([
 			assert.equal(oParameter.type, "Component", "Parameter 'type' is set correctly");
 			assert.strictEqual(oParameter.options, oOptions, "Parameter 'options' is set correctly");
 		});
+	});
+
+	QUnit.module("_createRouterHashChanger", {
+		beforeEach: function() {
+			var that = this;
+
+			this.oCreateSubHashChangerSpy = sinon.spy();
+
+			this.oComponentHashChanger = {
+				createSubHashChanger: this.oCreateSubHashChangerSpy
+			};
+
+			this.oComponentStub = {
+				getRouter: function() {
+					return {
+						getHashChanger: function() {
+							return that.oComponentHashChanger;
+						}
+					};
+				},
+				isA: function(sClassName) {
+					return sClassName === "sap.ui.core.UIComponent";
+				}
+			};
+
+			this.oCache = new TargetCache({
+				async: true,
+				component: this.oComponentStub
+			});
+		},
+		afterEach: function() {
+			this.oCache.destroy();
+		}
+	});
+
+	QUnit.test("A root RouterHashChanger is created if the TargetCache doesn't have a component assigned", function(assert) {
+		this.oCache._oComponent = null;
+
+		var oRouterHashChanger = this.oCache._createRouterHashChanger();
+		assert.strictEqual(oRouterHashChanger, HashChanger.getInstance().createRouterHashChanger(), "The root RouterHashChanger is returned");
+
+		oRouterHashChanger.destroy();
+	});
+
+	QUnit.test("A root RouterHashChanger is created if the component doesn't have router", function(assert) {
+		this.oComponentStub.getRouter = function() {
+			return null;
+		};
+
+		var oRouterHashChanger = this.oCache._createRouterHashChanger();
+		assert.strictEqual(oRouterHashChanger, HashChanger.getInstance().createRouterHashChanger(), "The root RouterHashChanger is returned");
+
+		oRouterHashChanger.destroy();
+	});
+
+	QUnit.test("The same RouterHashChanger as the current component is used if the prefix isn't defined", function(assert) {
+		var oRouterHashChanger = this.oCache._createRouterHashChanger();
+		assert.strictEqual(oRouterHashChanger, this.oComponentHashChanger, "The same hash changer as the one in the component is returned");
+	});
+
+	QUnit.test("A RouterHashChanger under the one of the component is created if the prefix is set", function(assert) {
+		this.oCache._createRouterHashChanger("prefix");
+		assert.equal(this.oCreateSubHashChangerSpy.callCount, 1, "The createSubHashChanger function is called");
+		assert.equal(this.oCreateSubHashChangerSpy.args[0][0], "prefix", "The correct parameter is passed");
 	});
 
 	QUnit.module("destroy", {

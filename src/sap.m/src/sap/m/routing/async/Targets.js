@@ -44,8 +44,8 @@ sap.ui.define([], function() {
 		/**
 		 * @private
 		 */
-		_displaySingleTarget: function(sName) {
-			var oTarget = this.getTarget(sName);
+		_displaySingleTarget: function(oTargetInfo) {
+			var oTarget = this.getTarget(oTargetInfo.name);
 
 			return this._super._displaySingleTarget.apply(this, arguments).then(function(oViewInfo){
 				if (oTarget) {

@@ -74,6 +74,12 @@ sap.ui.define(function(require) {
 			},
 			"TargetCache": {
 				title: "QUnit Page for sap.ui.core.routing.TargetCache"
+			},
+			"HashChangerBase": {
+				title: "QUnit Page for sap.ui.core.routing.HashChangerBase"
+			},
+			"RouterHashChanger": {
+				title: "QUnit Page for sap.ui.core.routing.RouterHashChanger"
 			}
 		}
 	};

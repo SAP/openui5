@@ -40,13 +40,13 @@ sap.ui.define([
 		/**
 		 * @private
 		 */
-		_display: function (vData, oSequencePromise) {
+		_display: function (vData, oSequencePromise, oTargetCreateInfo) {
 			if (this._oParent) {
 				// replace the sync
-				oSequencePromise = this._oParent._display(vData, oSequencePromise);
+				oSequencePromise = this._oParent._display(vData, oSequencePromise, oTargetCreateInfo);
 			}
 
-			return this._place(vData, oSequencePromise);
+			return this._place(vData, oSequencePromise, oTargetCreateInfo);
 		},
 
 		/**
@@ -58,8 +58,9 @@ sap.ui.define([
 		 * @return {Promise} resolves with {name: *, view: *, control: *} if the target can be successfully displayed otherwise it rejects with an error message
 		 * @private
 		 */
-		_place : function (vData, oSequencePromise) {
+		_place : function (vData, oSequencePromise, oTargetCreateInfo) {
 			if (vData instanceof Promise) {
+				oTargetCreateInfo = oSequencePromise;
 				oSequencePromise = vData;
 				vData = undefined;
 			}
@@ -92,7 +93,7 @@ sap.ui.define([
 
 				oObject = this._oCache._get(oCreateOptions, oOptions.type,
 						// Hook in the route for deprecated global view id, it has to be supported to stay compatible
-						this._bUseRawViewId);
+						this._bUseRawViewId, oTargetCreateInfo);
 
 				if (!(oObject instanceof Promise)) {
 					if (oObject.isA("sap.ui.core.mvc.View")) {
@@ -108,6 +109,14 @@ sap.ui.define([
 					.then(function(oParentInfo) {
 						return pLoaded
 							.then(function (oObject) {
+								if (oObject.isA("sap.ui.core.UIComponent")) {
+									var oRouter = oObject.getRouter();
+									if (oRouter && oRouter.isStopped()) {
+										// initialize the router in nested component
+										// if it has been previously stopped
+										oRouter.initialize();
+									}
+								}
 								return {
 									object: oObject,
 									parentInfo: oParentInfo || {}
