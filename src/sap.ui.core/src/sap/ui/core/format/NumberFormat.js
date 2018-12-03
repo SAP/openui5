@@ -1119,7 +1119,7 @@ sap.ui.define([
 			oDecimalRegExp = new RegExp(sDecimalSeparator, "g"),
 			sPercentSign = this.oLocaleData.getNumberSymbol("percentSign"),
 			bIndianCurrency = oOptions.type === mNumberType.CURRENCY && this.oLocale.getLanguage() === "en" && this.oLocale.getRegion() === "IN",
-			oRegExp, bPercent, sRegExpCurrency, sRegExpCurrencyMeasure, aParsed, sMeasure, sPercentPattern,
+			oRegExp, bPercent, sMeasure, sPercentPattern,
 			vResult = 0,
 			oShort, vEmptyParseValue;
 
@@ -1184,6 +1184,20 @@ sap.ui.define([
 			sValue = oPatternAndResult.numberValue || sValue;
 		}
 
+		if (oOptions.type === mNumberType.CURRENCY) {
+			var mCurrencySymbols = this.oLocaleData.getCurrencySymbols(),
+				oResult = parseNumberAndCurrency(mCurrencySymbols, sValue),
+				sMeasure;
+			if (!oResult) {
+				return null;
+			}
+			sValue = oResult.numberValue;
+			sMeasure = oResult.currencyCode;
+			if (!oOptions.showMeasure && sMeasure) {
+				return null;
+			}
+		}
+
 		if (typeof sValue === "string" || sValue instanceof String) {
 			// remove the RTL special characters before the string is matched with the regex
 			sValue = sValue.replace(/[\u202a\u200e\u202c\u202b\u200f]/g, "");
@@ -1201,36 +1215,11 @@ sap.ui.define([
 		// Check for valid syntax
 		if (oOptions.isInteger && !oShort) {
 			oRegExp = new RegExp(sRegExpInt);
-		} else if (oOptions.type === mNumberType.CURRENCY) {
-			sRegExpCurrencyMeasure = "[^\\d\\s+-]*";
-			sRegExpCurrency = "(?:^(" + sRegExpCurrencyMeasure + ")" + sRegExpFloat.substring(1, sRegExpFloat.length - 1) + "$)|(?:^" + sRegExpFloat.substring(1, sRegExpFloat.length - 1) + "(" + sRegExpCurrencyMeasure + ")\\s*$)";
-			oRegExp = new RegExp(sRegExpCurrency);
 		} else {
 			oRegExp = new RegExp(sRegExpFloat);
 		}
 		if (!oRegExp.test(sValue)) {
 			return oOptions.type === mNumberType.CURRENCY || oOptions.type === mNumberType.UNIT ? null : NaN;
-		}
-
-		if (oOptions.type === mNumberType.CURRENCY) {
-			aParsed = oRegExp.exec(sValue);
-			// checks whether the currency code (symbol) is at the beginning or end of the string
-			if (aParsed[2]) {
-				// currency code is at the beginning
-				sValue = aParsed[2];
-				sMeasure = aParsed[1] || undefined;
-			} else {
-				// currency code is at the end
-				sValue = aParsed[3];
-				sMeasure = aParsed[4] || undefined;
-			}
-			if (sMeasure && !oOptions.showMeasure) {
-				return null;
-			}
-
-			if (sMeasure) {
-				sMeasure = this.oLocaleData.getCurrencyCodeBySymbol(sMeasure) || sMeasure;
-			}
 		}
 
 		// Remove grouping separator and replace locale dependant decimal separator,
@@ -1746,6 +1735,47 @@ sap.ui.define([
 		}
 
 		return oBestMatch;
+	}
+
+	/**
+	 * Parses number and currency
+	 *
+	 * Sarch for the currency symbol first, looking for the longest match. In case no currency
+	 * symbol is found, search for a three letter currency code.
+	 *
+	 * @param {object} mCurrencyCodes
+	 * @param {string} sValue
+	 *
+	 * @return {object} return object containing numberValue and currencyCode or null
+	 */
+	function parseNumberAndCurrency(mCurrencyCodes, sValue) {
+		var rMatchExp = /(^[A-Z]{3}|[A-Z]{3}$)/,
+			sSymbol = "", sCode, sCurCode, sCurSymbol, aResult;
+
+		// Search for known symbols (longest match)
+		for (sCurCode in mCurrencyCodes) {
+			sCurSymbol = mCurrencyCodes[sCurCode];
+			if (sValue.indexOf(sCurSymbol) >= 0 && sSymbol.length < sCurSymbol.length) {
+				sSymbol = sCurSymbol;
+				sCode = sCurCode;
+			}
+		}
+
+		// Search for three letter currency code
+		if (!sCode) {
+			aResult = sValue.match(rMatchExp);
+			sCode = aResult && aResult[0];
+		}
+
+		// Remove symbol/code from value
+		if (sCode) {
+			sValue = sValue.replace(sSymbol || sCode, "");
+		}
+
+		return {
+			numberValue: sValue,
+			currencyCode: sCode || undefined
+		};
 	}
 
 
