@@ -1,10 +1,12 @@
-/*global QUnit, hasher */
+/*global QUnit, sinon */
 sap.ui.define([
 	"sap/base/Log",
 	"sap/ui/core/routing/HashChanger",
 	"sap/ui/core/routing/History",
+	"sap/ui/thirdparty/hasher",
+	"sap/ui/base/EventProvider",
 	"sap/ui/thirdparty/signals"
-], function (Log, HashChanger, History) {
+], function (Log, HashChanger, History, hasher, EventProvider) {
 	"use strict";
 
 
@@ -313,5 +315,198 @@ sap.ui.define([
 
 		//Act
 		oHashChanger.init();
+	});
+
+	QUnit.module("API", {
+		beforeEach: function(assert) {
+			hasher.setHash("");
+			this.oHashChanger = new HashChanger();
+		},
+		afterEach: function(assert) {
+			this.oHashChanger.destroy();
+		}
+	});
+
+	QUnit.test("#createSubHashChanger", function(assert) {
+		assert.strictEqual(this.oHashChanger._oRouterHashChanger, undefined, "initial child RouterHashChanger is empty");
+		var oRouterHashChanger = this.oHashChanger.createRouterHashChanger();
+		oRouterHashChanger.init();
+		assert.equal(this.oHashChanger._oRouterHashChanger, oRouterHashChanger, "child is registered to parent");
+		assert.ok(oRouterHashChanger.hasListeners("hashSet"), "hashSet listener is set");
+		assert.ok(oRouterHashChanger.hasListeners("hashReplaced"),"hashReplaced listener is set");
+		assert.strictEqual(oRouterHashChanger.hash, "", "initial hash of SubHashChanger is empty");
+
+		var oRouterHashChangerDuplicate = this.oHashChanger.createRouterHashChanger();
+		assert.strictEqual(oRouterHashChangerDuplicate, oRouterHashChanger, "The same instance should be returned for the same prefix");
+	});
+
+	QUnit.module("_reconstructHash", {
+		beforeEach: function(assert) {
+			this.oHashChanger = new HashChanger();
+		},
+		afterEach: function(assert) {
+			this.oHashChanger.destroy();
+		}
+	});
+
+	QUnit.test("Change the top level hash", function(assert) {
+		this.oHashChanger.setHash("oldHash");
+
+		var sHash = this.oHashChanger._reconstructHash(undefined, "newHash", []);
+		assert.equal(sHash, "newHash");
+	});
+
+	QUnit.test("Change the top level hash and delete sub hash(es)", function(assert) {
+		this.oHashChanger.setHash("root&/comment/0");
+
+		var sHash = this.oHashChanger._reconstructHash(undefined, "newHash", ["comment"]);
+		assert.equal(sHash, "newHash");
+	});
+
+	QUnit.test("Change the top level hash and delete sub hash(es)", function(assert) {
+		this.oHashChanger.setHash("notification&/comment/0&/notification/1");
+
+		var sHash = this.oHashChanger._reconstructHash(undefined, "newHash", ["comment"]);
+		assert.equal(sHash, "newHash&/notification/1");
+	});
+
+	QUnit.test("Add new subhash", function(assert) {
+		this.oHashChanger.setHash("root");
+
+		var sHash = this.oHashChanger._reconstructHash("comment", "123", []);
+		assert.equal(sHash, "root&/comment/123");
+	});
+
+	QUnit.test("Change subHash", function(assert) {
+		this.oHashChanger.setHash("root&/comment/0");
+
+		var sHash = this.oHashChanger._reconstructHash("comment", "123", []);
+		assert.equal(sHash, "root&/comment/123");
+	});
+
+	QUnit.test("Add new subHash and delete sub hash(es)", function(assert) {
+		this.oHashChanger.setHash("notification&/comment/0");
+
+		var sHash = this.oHashChanger._reconstructHash("notification", "234", ["comment"]);
+		assert.equal(sHash, "notification&/notification/234");
+	});
+
+	QUnit.test("Change the subHash and delete sub hash(es)", function(assert) {
+		this.oHashChanger.setHash("notification&/comment/0&/notification/1");
+
+		var sHash = this.oHashChanger._reconstructHash("notification", "234", ["comment"]);
+		assert.equal(sHash, "notification&/notification/234");
+	});
+
+	QUnit.test("Delete subhash", function(assert) {
+		this.oHashChanger.setHash("notification&/comment/0&/notification/1");
+
+		var sHash = this.oHashChanger._reconstructHash("notification", undefined, []);
+		assert.equal(sHash, "notification&/comment/0");
+	});
+
+	QUnit.module("_parseHash", {
+		beforeEach: function(assert) {
+			this.oHashChanger = new HashChanger();
+		},
+		afterEach: function(assert) {
+			this.oHashChanger.destroy();
+		}
+	});
+
+	QUnit.test("Parse a top level hash", function(assert) {
+		var sHash = "notifications";
+		var oParsedHash = this.oHashChanger._parseHash(sHash);
+		assert.deepEqual(oParsedHash, {
+			hash: "notifications",
+			subHashMap: {}
+		}, "top level hash parsed");
+	});
+
+	QUnit.test("Parse a top level hash with subhashes", function(assert) {
+		var sHash = "notifications&/comments/1&/notifications/2";
+		var oParsedHash = this.oHashChanger._parseHash(sHash);
+		assert.deepEqual(oParsedHash, {
+			hash: "notifications",
+			subHashMap: {
+				comments: "1",
+				notifications: "2"
+			}
+		}, "full hash parsed");
+
+	});
+	QUnit.test("Parse subhashes without top level hash", function(assert) {
+		var sHash = "&/comments/1&/notifications/2";
+		var oParsedHash = this.oHashChanger._parseHash(sHash);
+		assert.deepEqual(oParsedHash, {
+			hash: "",
+			subHashMap: {
+				comments: "1",
+				notifications: "2"
+			}
+		}, "full hash parsed");
+	});
+
+	QUnit.module("Integration: RouterHashChanger and HashChanger", {
+		beforeEach: function(assert) {
+			hasher.setHash("");
+			// overwrite the returnObject function of the eventPool in EventProvider
+			// to make the trace of event parameter easier
+			this.oReturnObjectStub = sinon.stub(EventProvider.prototype.oEventPool, "returnObject");
+
+			this.oHashChanger = new HashChanger();
+			this.oRHC = this.oHashChanger.createRouterHashChanger();
+			this.oRHC.init();
+
+			this.oHashChangedSpy = sinon.spy();
+			this.oHashChanger.attachEvent("hashChanged", this.oHashChangedSpy);
+
+			this.oChildHashChangedSpy = sinon.spy();
+			this.oRHC.attachEvent("hashChanged", this.oChildHashChangedSpy);
+		},
+		afterEach: function(assert) {
+			this.oRHC.destroy();
+			this.oHashChanger.destroy();
+			this.oReturnObjectStub.restore();
+		}
+	});
+
+	QUnit.test("set hash on the child", function(assert) {
+		this.oRHC.setHash("Child1");
+		assert.equal(this.oHashChangedSpy.callCount, 1, "hashChanged event is fired on HashChanger");
+		assert.strictEqual(this.oHashChangedSpy.args[0][0].getParameter("newHash"), "Child1", "The new hash is included in the event");
+		assert.equal(this.oChildHashChangedSpy.callCount, 1, "hashChanged event is fired on RouterHashChanger");
+		assert.strictEqual(this.oChildHashChangedSpy.args[0][0].getParameter("newHash"), "Child1", "The new hash is included in the event for RouterHashChanger");
+	});
+
+	QUnit.test("replace hash on the child", function(assert) {
+		this.oRHC.replaceHash("Child1");
+		assert.equal(this.oHashChangedSpy.callCount, 1, "hashChanged event is fired on HashChanger");
+		assert.strictEqual(this.oHashChangedSpy.args[0][0].getParameter("newHash"), "Child1", "The new hash is included in the event");
+		assert.equal(this.oChildHashChangedSpy.callCount, 1, "hashChanged event is fired on RouterHashChanger");
+		assert.strictEqual(this.oChildHashChangedSpy.args[0][0].getParameter("newHash"), "Child1", "The new hash is included in the event for RouterHashChanger");
+	});
+
+
+	QUnit.module("Destroy: RouterHashChanger and HashChanger", {
+		beforeEach: function(assert) {
+			this.oHashChanger = new HashChanger();
+			this.oRHC = this.oHashChanger.createRouterHashChanger();
+		}
+	});
+
+	QUnit.test("Destroy", function(assert) {
+		var oDestroySpy = sinon.spy(this.oRHC, "destroy");
+		this.oHashChanger.destroy();
+
+		assert.equal(this.oHashChanger._oRouterHashChanger, undefined, "The RouterHashChanger is reset");
+		assert.equal(oDestroySpy.callCount, 1, "The RouterHashChanger is also destroyed");
+	});
+
+	QUnit.test("Destroy the RouterHashChanger", function(assert) {
+		this.oRHC.destroy();
+
+		assert.equal(this.oHashChanger._oRouterHashChanger, undefined, "The RouterHashChanger is reset");
+		this.oHashChanger.destroy();
 	});
 });

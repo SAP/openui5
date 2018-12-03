@@ -28,6 +28,8 @@ sap.ui.define(['sap/ui/Device', "sap/base/Log", "sap/ui/thirdparty/jquery"], fun
 				oCurrentPromise,
 				that = this;
 
+			oRouter._matchedRoute = this;
+
 			if (!oSequencePromise || oSequencePromise === true) {
 				bInitial = true;
 				oSequencePromise = Promise.resolve();
@@ -90,7 +92,20 @@ sap.ui.define(['sap/ui/Device', "sap/base/Log", "sap/ui/thirdparty/jquery"], fun
 					}, 0);
 				});
 			} else {
-				oSequencePromise = oRouter._oTargets._display(this._oConfig.target, oTargetData, this._oConfig.titleTarget, oSequencePromise);
+				if (!this._oConfig.afterCreateHook) {
+					this._oConfig.afterCreateHook = function(oTargetObject) {
+						if (oTargetObject.isA("sap.ui.core.UIComponent")) {
+							var oRouter = oTargetObject.getRouter();
+							if (oRouter) {
+								that.attachEvent("switched", function() {
+									// stop the router in nested component when the Route which loads it is navigated away
+									oRouter.stop();
+								});
+							}
+						}
+					};
+				}
+				oSequencePromise = oRouter._oTargets._display(this._oConfig.target, oTargetData, this._oConfig.titleTarget, oSequencePromise, this._oConfig.afterCreateHook);
 			}
 
 			return oSequencePromise.then(function(oResult) {
