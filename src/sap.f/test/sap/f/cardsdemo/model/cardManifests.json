@@ -57,14 +57,14 @@
 		"card4": {
 			"sap.card": {
 			  "title": "This line is the title of sap.f.Card",
-			  "subTitle": " Thi is a sap.f.Card Subtitle",
+			  "subtitle": " Thi is a sap.f.Card Subtitle",
 			  "type": "CustomCard"
 			}
 		},
 		"card5": {
 		  "sap.card": {
 			"title": "This line is the title of sap.f.Card and a very very very very very very very very very very very very very very very very very very long one",
-			"subTitle": " Thi is a sap.f.Card Subtitle and a very very  very very very very very very very very very very very very very very very very  very very long one",
+			"subtitle": " Thi is a sap.f.Card Subtitle and a very very  very very very very very very very very very very very very very very very very  very very long one",
             "icon": {
               "src": "../images/Woman_avatar_01.png"
             },
@@ -78,7 +78,7 @@
                   "src": "../images/Woman_avatar_01.png"
                 },
 				"title": "Card Title  4x2",
-				"subTitle": "Card Subtitle",
+				"subtitle": "Card Subtitle",
 				"status": "Count",
 				"type": "CustomCard"
 			}
@@ -89,7 +89,7 @@
 				  "src": "sap-icon://accept"
 				},
 				"title": "Card Title 4x4",
-				"subTitle": "Card Subtitle",
+				"subtitle": "Card Subtitle",
 				"status": "Count",
 				"type": "CustomCard"
 			}
@@ -102,7 +102,7 @@
 				  "src": "../images/Woman_avatar_01.png"
 				},
 				"title": "Card Title 4x4 with image",
-				"subTitle": "Card Subtitle",
+				"subtitle": "Card Subtitle",
 				"status": "Count",
 				"type": "CustomCard"
 			}
@@ -124,7 +124,7 @@
 				  "src": "sap-icon://accept"
 				},
 				"title": "Card Title 6x4 Loading State",
-				"subTitle": "Content Loading State and a truncated subtitle subtitle subtitle",
+				"subtitle": "Content Loading State and a truncated subtitle subtitle subtitle",
 				"status": "Count",
 				"type": "CustomCard"
 			}
@@ -139,7 +139,7 @@
 				"color": "white",
 				"iconBackgroundColor": "rgba(255 255 255 0.3)",
 				"title": "Card with background image",
-				"subTitle": "Subtitle for the card",
+				"subtitle": "Subtitle for the card",
 				"status": "Count",
 				"type": "CustomCard"
 			}
@@ -151,7 +151,7 @@
 				},
 				"title": "Card with Component",
 				"manifest": "sap.f.cardsdemo.cardcontent.customcomponent",
-				"subTitle": "Card Component Container is created internally",
+				"subtitle": "Card Component Container is created internally",
 				"status": "",
 				"type": "CustomCard"
 			}
@@ -159,7 +159,7 @@
 		"card13": {
 			"sap.card": {
 			"title": "L3 Request list content Card",
-			"subTitle": "Card Subtitle",
+			"subtitle": "Card Subtitle",
 			"type": "List",
 			"icon":  {
 				"src": "sap-icon://accept"
@@ -246,7 +246,7 @@
       "card14": {
         "sap.card": {
           "title": "This line is the title of sap.f.Card and a very very very very very very very very very very very very very very very very very very long one",
-          "subTitle": " Thi is a sap.f.Card Subtitle and a very very  very very very very very very very very very very very very very very very very  very very long one",
+          "subtitle": " Thi is a sap.f.Card Subtitle and a very very  very very very very very very very very very very very very very very very very  very very long one",
           "icon": {
             "initials": "GK"
           },
@@ -257,7 +257,7 @@
 		"listContent": {
 			"sap.card": {
 			"title": "L4 Card Title 2x3",
-			"subTitle": "Card Subtitle",
+			"subtitle": "Card Subtitle",
 			"icon":  {
 				"src": "sap-icon://accept"
 			},
@@ -348,7 +348,7 @@
 				  "src": "sap-icon://accept"
 				},
 				"title": "Card Title 2x2",
-				"subTitle": "Card Subtitle",
+				"subtitle": "Card Subtitle",
 				"status": "Count",
 				"type": "CustomCard"
 			}
@@ -359,7 +359,7 @@
 				  "src": "sap-icon://accept"
 				},
 				"title": "Card Title 1x1",
-				"subTitle": "Card Subtitle",
+				"subtitle": "Card Subtitle",
 				"status": "Count",
 				"type": "CustomCard"
 			}
@@ -370,7 +370,7 @@
 				  "src": "sap-icon://accept"
 				},
 				"title": "Card Title 2x1",
-				"subTitle": "Card Subtitle",
+				"subtitle": "Card Subtitle",
 				"status": "Count",
 				"type": "CustomCard"
 			}
@@ -383,7 +383,7 @@
 				  "src": "sap-icon://accept"
 				},
 				"title": "Card Title 2x2",
-				"subTitle": "Card Subtitle",
+				"subtitle": "Card Subtitle",
 				"status": "Count",
 				"type": "CustomCard"
 			}
@@ -394,7 +394,7 @@
 				  "src": "sap-icon://accept"
 				},
 				"title": "Card Title 2x2",
-				"subTitle": "Card Subtitle",
+				"subtitle": "Card Subtitle",
 				"status": "Count",
 				"type": "CustomCard"
 			}
@@ -405,7 +405,7 @@
 				  "src": "sap-icon://accept"
 				},
 				"title": "Card Title 1x1",
-				"subTitle": "Card Subtitle",
+				"subtitle": "Card Subtitle",
 				"status": "Count",
 				"type": "CustomCard"
 			}
@@ -416,7 +416,7 @@
 				  "src": "sap-icon://accept"
 				},
 				"title": "Card Title 2x1",
-				"subTitle": "Card Subtitle",
+				"subtitle": "Card Subtitle",
 				"status": "Count",
 				"type": "CustomCard",
 				"width": "100%",
@@ -429,7 +429,7 @@
 				  "src": "sap-icon://accept"
 				},
 				"title": "Card Title 1x1",
-				"subTitle": "Card Subtitle",
+				"subtitle": "Card Subtitle",
 				"status": "Count",
 				"type": "CustomCard"
 			}
@@ -440,7 +440,7 @@
 				  "src": "sap-icon://accept"
 				},
 				"title": "Card Title 4x1",
-				"subTitle": "Card Subtitle",
+				"subtitle": "Card Subtitle",
 				"status": "Count",
 				"type": "CustomCard"
 			}
@@ -451,7 +451,7 @@
 				  "src": "sap-icon://accept"
 				},
 				"title": "Card Title 2x6",
-				"subTitle": "Card Subtitle",
+				"subtitle": "Card Subtitle",
 				"status": "Count",
 				"type": "CustomCard"
 			}
@@ -462,7 +462,7 @@
 				  "src": "sap-icon://accept"
 				},
 				"title": "Card Title 4x4",
-				"subTitle": "Card Subtitle",
+				"subtitle": "Card Subtitle",
 				"status": "Count",
 				"type": "CustomCard"
 			}
@@ -473,7 +473,7 @@
 				  "src": "sap-icon://accept"
 				},
 				"title": "Card Title 4x4 with image",
-				"subTitle": "Card Subtitle",
+				"subtitle": "Card Subtitle",
 				"status": "Count",
 				"type": "CustomCard"
 			}
@@ -484,7 +484,7 @@
 				  "src": "sap-icon://accept"
 				},
 				"title": "Card Title 2x2",
-				"subTitle": "Card Subtitle",
+				"subtitle": "Card Subtitle",
 				"status": "Count",
 				"type": "CustomCard"
 			}
@@ -495,7 +495,7 @@
 				  "src": "sap-icon://accept"
 				},
 				"title": "Card Title 2x2",
-				"subTitle": "Card Subtitle",
+				"subtitle": "Card Subtitle",
 				"status": "Count",
 				"type": "CustomCard"
 			}
@@ -506,7 +506,7 @@
 				  "src": "sap-icon://accept"
 				},
 				"title": "Card Title 6x4",
-				"subTitle": "Card Subtitle",
+				"subtitle": "Card Subtitle",
 				"status": "Count",
 				"type": "CustomCard"
 			}
@@ -517,7 +517,7 @@
 				  "src": "sap-icon://accept"
 				},
 				"title": "Card Title 6x4",
-				"subTitle": "Card Subtitle",
+				"subtitle": "Card Subtitle",
 				"status": "Count",
 				"type": "CustomCard"
 			}
@@ -530,7 +530,7 @@
 				  "src": "sap-icon://accept"
 				},
 				"title": "Card Title 2x2",
-				"subTitle": "Card Subtitle",
+				"subtitle": "Card Subtitle",
 				"status": "Count",
 				"type": "CustomCard"
 			}
@@ -541,7 +541,7 @@
 				"src": "sap-icon://accept"
 			  },
 				"title": "Card Title 4x2",
-				"subTitle": "Card Subtitle",
+				"subtitle": "Card Subtitle",
 				"status": "Count",
 				"type": "CustomCard"
 			}
@@ -552,7 +552,7 @@
 				"src": "sap-icon://accept"
 			  },
 				"title": "Card Title 1x1",
-				"subTitle": "Card Subtitle",
+				"subtitle": "Card Subtitle",
 				"status": "Count",
 				"type": "CustomCard"
 			}
@@ -563,7 +563,7 @@
 				"src": "sap-icon://accept"
 			  },
 				"title": "Card Title 2x1",
-				"subTitle": "Card Subtitle",
+				"subtitle": "Card Subtitle",
 				"status": "Count",
 				"type": "CustomCard"
 			}
@@ -574,7 +574,7 @@
 				"src": "sap-icon://accept"
 			  },
 				"title": "Card Title 1x1",
-				"subTitle": "Card Subtitle",
+				"subtitle": "Card Subtitle",
 				"status": "Count",
 				"type": "CustomCard",
 				"width": "100%",
@@ -587,7 +587,7 @@
 				"src": "sap-icon://accept"
 			  },
 				"title": "Card Title 4x1",
-				"subTitle": "Card Subtitle",
+				"subtitle": "Card Subtitle",
 				"status": "Count",
 				"type": "CustomCard"
 			}
@@ -598,7 +598,7 @@
 				"src": "sap-icon://accept"
 			  },
 				"title": "Card Title 2x6",
-				"subTitle": "Card Subtitle",
+				"subtitle": "Card Subtitle",
 				"status": "Count",
 				"type": "CustomCard"
 			}
@@ -609,7 +609,7 @@
 				"src": "sap-icon://accept"
 			  },
 				"title": "Card Title 4x4",
-				"subTitle": "Card Subtitle",
+				"subtitle": "Card Subtitle",
 				"status": "Count",
 				"type": "CustomCard"
 			}
@@ -620,7 +620,7 @@
 				"src": "sap-icon://accept"
 			  },
 				"title": "Card Title 4x4 with image",
-				"subTitle": "Card Subtitle",
+				"subtitle": "Card Subtitle",
 				"status": "Count",
 				"type": "CustomCard"
 			}
@@ -631,7 +631,7 @@
 				"src": "sap-icon://accept"
 			  },
 				"title": "Card Title 2x2",
-				"subTitle": "Card Subtitle",
+				"subtitle": "Card Subtitle",
 				"status": "Count",
 				"type": "CustomCard"
 			}
@@ -642,7 +642,7 @@
 				"src": "sap-icon://accept"
 			  },
 				"title": "Card Title 2x2",
-				"subTitle": "Card Subtitle",
+				"subtitle": "Card Subtitle",
 				"status": "Count",
 				"type": "CustomCard"
 			}
@@ -653,7 +653,7 @@
 				"src": "sap-icon://accept"
 			  },
 				"title": "Card Title 6x4",
-				"subTitle": "Card Subtitle",
+				"subtitle": "Card Subtitle",
 				"status": "Count",
 				"type": "CustomCard"
 			}
@@ -664,7 +664,7 @@
 				"src": "sap-icon://accept"
 			  },
 				"title": "Card Title 6x4",
-				"subTitle": "Card Subtitle",
+				"subtitle": "Card Subtitle",
 				"status": "Count",
 				"type": "CustomCard"
 			}
@@ -677,7 +677,7 @@
 				"src": "sap-icon://accept"
 			  },
 				"title": "Card Title 2x2",
-				"subTitle": "Card Subtitle",
+				"subtitle": "Card Subtitle",
 				"status": "Count",
 				"type": "CustomCard"
 			}
@@ -688,7 +688,7 @@
 				"src": "sap-icon://accept"
 			  },
 				"title": "Card Title 4x2",
-				"subTitle": "Card Subtitle",
+				"subtitle": "Card Subtitle",
 				"status": "Count",
 				"type": "CustomCard"
 			}
@@ -699,7 +699,7 @@
 				"src": "sap-icon://accept"
 			  },
 				"title": "Card Title 1x1",
-				"subTitle": "Card Subtitle",
+				"subtitle": "Card Subtitle",
 				"status": "Count",
 				"type": "CustomCard"
 			}
@@ -710,7 +710,7 @@
 				"src": "sap-icon://accept"
 			  },
 				"title": "Card Title 2x1",
-				"subTitle": "Card Subtitle",
+				"subtitle": "Card Subtitle",
 				"status": "Count",
 				"type": "CustomCard"
 			}
@@ -721,7 +721,7 @@
 				"src": "sap-icon://accept"
 			  },
 				"title": "Card Title 1x1",
-				"subTitle": "Card Subtitle",
+				"subtitle": "Card Subtitle",
 				"status": "Count",
 				"type": "CustomCard"
 			}
@@ -732,7 +732,7 @@
 				"src": "sap-icon://accept"
 			  },
 				"title": "Card Title 4x1",
-				"subTitle": "Card Subtitle",
+				"subtitle": "Card Subtitle",
 				"status": "Count",
 				"type": "CustomCard"
 			}
@@ -743,7 +743,7 @@
 				"src": "sap-icon://accept"
 			  },
 				"title": "Card Title 2x6",
-				"subTitle": "Card Subtitle",
+				"subtitle": "Card Subtitle",
 				"status": "Count",
 				"type": "CustomCard"
 			}
@@ -754,7 +754,7 @@
 				  "src": "sap-icon://accept"
 				},
 				"title": "Card Title 4x4",
-				"subTitle": "Card Subtitle",
+				"subtitle": "Card Subtitle",
 				"status": "Count",
 				"type": "CustomCard"
 			}
@@ -765,7 +765,7 @@
 				  "src": "../images/Woman_avatar_01.png"
 				},
 				"title": "Card Title 4x4 with image",
-				"subTitle": "Card Subtitle",
+				"subtitle": "Card Subtitle",
 				"status": "Count",
 				"type": "CustomCard"
 			}
@@ -776,7 +776,7 @@
 				"src": "sap-icon://accept"
 			  },
 				"title": "Card Title 2x2",
-				"subTitle": "Card Subtitle",
+				"subtitle": "Card Subtitle",
 				"status": "Count",
 				"type": "CustomCard"
 			}
@@ -787,7 +787,7 @@
 				"src": "sap-icon://accept"
 			  },
 				"title": "Card Title 2x2",
-				"subTitle": "Card Subtitle",
+				"subtitle": "Card Subtitle",
 				"status": "Count",
 				"type": "CustomCard"
 			}
@@ -798,7 +798,7 @@
 				"src": "sap-icon://accept"
 			  },
 				"title": "Card Title 6x4",
-				"subTitle": "Card Subtitle",
+				"subtitle": "Card Subtitle",
 				"status": "Count",
 				"type": "CustomCard"
 			}
@@ -809,7 +809,7 @@
 				  "src": "sap-icon://accept"
 				},
 				"title": "Card Title 6x4",
-				"subTitle": "Card Subtitle",
+				"subtitle": "Card Subtitle",
 				"status": "Count",
 				"type": "CustomCard"
 			}
@@ -819,7 +819,7 @@
 		"card13": {
 			"sap.card": {
 			"title": "Request list content Card",
-			"subTitle": "Card Subtitle",
+			"subtitle": "Card Subtitle",
 			"type": "List",
 			"icon":  {
 				"src": "sap-icon://accept"
@@ -854,7 +854,7 @@
 			"sap.card": {
 				"type": "Table",
 				"title": "Table Card",
-				"subTitle": "Table Card Subtitle",
+				"subtitle": "Table Card Subtitle",
 				"content": {
 					"data": {
 						"request": {
@@ -872,6 +872,157 @@
 							"value": "{lastName}"
 						}
 					]
+				}
+			}
+		}
+	},
+	"kpiManifests": {
+		"kpicard1": {
+			"sap.card": {
+				"type": "KPI",
+				"header": {
+					"type": "kpi",
+					"data": {
+						"request": {
+							"url": "./cardcontent/kpi.json"
+						},
+						"path": "/kpiInfos/kpi"
+					},
+					"title": "Project Cloud Transformation",
+					"subtitle": "Revenue",
+					"unitOfMeasurement": "EUR",
+					"mainIndicator": {
+						"number": "{number}",
+						"unit": "{unit}",
+						"trend": "{trend}",
+						"state": "{state}",
+						"range": {
+							"WE CAN OFFER THE USE OF RANGE OR STATE": "WE CAN OFFER THE USE OF RANGE OR STATE",
+
+							"Critical": [0, 100],
+							"Good": [100, 1000]
+						}
+					},
+					"details": "{details}",
+					"sideIndicators": [
+						{
+							"title": "Target",
+							"number": "{target/number}",
+							"unit": "{target/unit}"
+						},
+						{
+							"title": "Deviation",
+							"number": "{deviation/number}",
+							"unit": "%"
+						}
+					]
+				},
+				"content": {
+
+				}
+			}
+		},
+		"kpicard2": {
+			"sap.card": {
+				"type": "KPI",
+				"header": {
+					"type": "kpi",
+					"data": {
+						"json": {
+							"n": 6547394.45496,
+							"u": "М $",
+							"trend": "Down",
+							"valueColor": "Critical"
+						}
+					},
+					"subtitle": "Success Rate",
+					"mainIndicator": {
+						"number": "{n}",
+						"unit": "{u}",
+						"trend": "{trend}",
+						"state": "{valueColor}"
+					},
+					"sideIndicators": [
+						{
+							"title": "Decrease",
+							"number": "24",
+							"unit": "weeks"
+						}
+					]
+				}
+			}
+		},
+		"kpicard3": {
+			"sap.card": {
+				"type": "KPI",
+				"title": "Card with some KPI",
+				"subtitle": "Card Subtitle",
+				"header": {
+					"type": "kpi",
+					"data": {
+						"json": {
+							"n": "56",
+							"u": "%",
+							"trend": "Up",
+							"valueColor": "Good"
+						}
+					},
+					"title": "Project Cloud Transformation Project Cloud Transformation Project Cloud Transformation Project Cloud Transformation Project Cloud Transformation Project Cloud Transformation Project Cloud Transformation ",
+					"subtitle": "Forecasted goal achievement depending on business logic and other important information Forecasted goal achievement depending on business logic and other important information",
+					"unitOfMeasurement": "EUR",
+					"mainIndicator": {
+						"number": "{n}",
+						"unit": "{u}",
+						"trend": "{trend}",
+						"state": "{valueColor}"
+					},
+					"details": "Details, additional information, will directly truncate after there is no more space.Details, additional information, will directly truncate after there is no more space.",
+					"sideIndicators": [
+						{
+							"title": "Long Target Long Target Long Target Long Target Long Target Long Target Long Target Long Target Long Target Long Target Long Target Long Target Long Target Long Target Long Target",
+							"number": "3252.234",
+							"unit": "K"
+						},
+						{
+							"title": "Long Deviation Long Deviation",
+							"number": "22.43",
+							"unit": "%"
+						}
+					]
+				}
+			}
+		},
+		"kpicard4": {
+			"sap.card": {
+				"title": "List card",
+				"subtitle": "Card to check that kpi changes don't brake other cards Card to check that kpi changes don't brake other cards Card to check that kpi changes don't brake other cards Card to check that kpi changes don't brake other cards ",
+				"type": "List",
+				"content": {
+					"data": {
+						"request": {
+							"url": "./cardcontent/someitems.json"
+						}
+					},
+					"item": {
+						"icon": {
+							"label": "{{icon_label}}",
+							"value": "{icon}",
+							"type": "mapper",
+							"importance": 1
+						},
+						"title": {
+							"label": "{{title_label}}",
+							"value": "{Name}",
+							"type": "string",
+							"importance": 0
+						},
+						"description": {
+							"label": "{{description_label}}",
+							"value": "{Description}",
+							"type": "string",
+							"importance": 0
+						}
+					}
 				}
 			}
 		}

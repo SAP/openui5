@@ -27,7 +27,7 @@ sap.ui.define([], function () {
 	//fallback
 	var mFallbacks = {
 		"sap.card/title": "sap.app/title",
-		"sap.card/subTitle": "sap.app/subTitle",
+		"sap.card/subtitle": "sap.app/subtitle",
 		"sap.card/info": "sap.app/info",
 		"sap.card/i18n": "sap.app/i18n",
 		"sap.card/description": "sap.app/description",

@@ -46,5 +46,11 @@
       "description": "Example page for Card of type Table",
       "route": "tableContent",
       "usage": "Development purposes only!"
+    },
+    {
+      "title": "KPI in Header",
+      "description": "Example page for Card with KPI Header",
+      "route": "kpiHeader",
+      "usage": "Development purposes only!"
     }
 ]

@@ -45,7 +45,7 @@ sap.ui.define(["sap/f/library", "sap/base/security/encodeXML", "sap/ui/core/Icon
             //start
             oRm.write("<section");
             oRm.writeElementData(oCard);
-            oRm.writeAttributeEscaped("aria-label", oCard._oCardManifest.get("sap.card/title") + "-" + oCard._oCardManifest.get("sap.card/subTitle"));
+            oRm.writeAttributeEscaped("aria-label", oCard._oCardManifest.get("sap.card/title") + "-" + oCard._oCardManifest.get("sap.card/subtitle"));
             oRm.writeAttribute("tabindex", "0");
 			oRm.addClass("sapFCard");
 
@@ -80,34 +80,47 @@ sap.ui.define(["sap/f/library", "sap/base/security/encodeXML", "sap/ui/core/Icon
 			oRm.writeClasses();
 			oRm.writeStyles();
 			oRm.write(">");
-            if (oCard._oCardManifest.get("sap.card/icon")) {
-				this.renderHeaderIcon(oRm, oCard);
-			}
-			var sTitle = oCard._oCardManifest.get("sap.card/title"),
-				sSubTitle = oCard._oCardManifest.get("sap.card/subTitle");
-            if (sTitle) {
-				oRm.write("<div");
-				oRm.addClass("sapFCardHeaderText");
-				oRm.writeClasses();
-				oRm.writeStyles();
-				oRm.write(">");
-				oRm.renderControl(oCard._oTitle);
-				if (sSubTitle) {
-					oRm.renderControl(oCard._oSubTitle);
+
+			// TODO experimenatl implementation for different header types
+			if (oCard.getAggregation("_header")) {
+
+				// implementation with different header types
+				oRm.renderControl(oCard.getAggregation("_header"));
+
+			} else {
+
+				// the default implementation - no header types
+				if (oCard._oCardManifest.get("sap.card/icon")) {
+					this.renderHeaderIcon(oRm, oCard);
 				}
-				oRm.write("</div>");
+				var sTitle = oCard._oCardManifest.get("sap.card/title"),
+					sSubTitle = oCard._oCardManifest.get("sap.card/subtitle");
+				if (sTitle) {
+					oRm.write("<div");
+					oRm.addClass("sapFCardHeaderText");
+					oRm.writeClasses();
+					oRm.writeStyles();
+					oRm.write(">");
+					oRm.renderControl(oCard._oTitle);
+					if (sSubTitle) {
+						oRm.renderControl(oCard._oSubTitle);
+					}
+					oRm.write("</div>");
+				}
+
+				//TODO rename status to count
+				var sStatus = oCard._oCardManifest.get("sap.card/status");
+				if (sStatus) {
+					oRm.write("<span");
+					oRm.addClass("sapFCardStatus");
+					oRm.writeClasses();
+					oRm.write(">");
+					oRm.writeEscaped(sStatus);
+					oRm.write("</span>");
+				}
+
 			}
 
-			//TODO rename status to count
-			var sStatus = oCard._oCardManifest.get("sap.card/status");
-            if (sStatus) {
-				oRm.write("<span");
-				oRm.addClass("sapFCardStatus");
-				oRm.writeClasses();
-				oRm.write(">");
-				oRm.writeEscaped(sStatus);
-				oRm.write("</span>");
-            }
 			oRm.write("</header>");
 		};
 		/**

@@ -28,7 +28,7 @@
 		"type": "CustomCard",
 		"icon": "sap-icon://accept",
 		"title": "Card Title  4x2",
-		"subTitle": "Card Subtitle",
+		"subtitle": "Card Subtitle",
 		"status": "Count",
 		"width": "100%",
 		"height": "auto"
