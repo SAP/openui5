@@ -341,10 +341,8 @@ sap.ui.define([
 		sBgSrc = sap.ui.resource('sap.ui.unified', 'img/ColorPicker/Alphaslider_BG.png'),
 		// get resource bundle
 		oRb = sap.ui.getCore().getLibraryResourceBundle("sap.ui.unified"),
-		// Library Helper
-		oHelper = Library.ColorPickerHelper,
 		// Factory
-		oFactory = oHelper.factory,
+		oFactory = Library.ColorPickerHelper.factory,
 		// Constants object
 		CONSTANTS = {};
 
@@ -565,7 +563,7 @@ sap.ui.define([
 		this.data("sap-ui-fastnavgroup", "true", true); // Define group for F6 handling
 
 		// Get if control should be in responsive mode
-		this.bResponsive = oHelper.isResponsive();
+		this.bResponsive = Library.ColorPickerHelper.isResponsive();
 
 		// Color picker cursor size in px obtained from less parameter. Keep in mind width and height are the same.
 		var circleSize = this.bResponsive ? "_sap_ui_unified_ColorPicker_CircleSize" : "_sap_ui_commons_ColorPicker_CircleSize";
