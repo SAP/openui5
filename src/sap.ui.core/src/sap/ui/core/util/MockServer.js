@@ -185,7 +185,8 @@ sap.ui
 					INVALID_KEY_NAME: "Invalid key name in key predicate. Expected name is ##",
 					INVALID_KEY_PREDICATE_QUANTITY: "Invalid key predicate. The quantity of provided keys does not match the expected value",
 					INVALID_KEY_TYPE: "Invalid key predicate. The key literal for key property ## does not match its type."
-				}
+				},
+				_oRandomSeed: {}
 
 			});
 
@@ -201,15 +202,24 @@ sap.ui
 			 * @return (number) pseudo-random number
 			 */
 			MockServer.prototype._getPseudoRandomNumber = function (sType) {
-				if (!this._iRandomSeed) {
-					this._iRandomSeed = {};
+				if (!this._oRandomSeed) {
+					this._oRandomSeed = {};
 				}
-				if (!this._iRandomSeed.hasOwnProperty(sType)) {
-					this._iRandomSeed[sType] = 0;
+				if (!this._oRandomSeed.hasOwnProperty(sType)) {
+					this._oRandomSeed[sType] = 0;
 				}
-				this._iRandomSeed[sType] = (this._iRandomSeed[sType] + 11 ) * 25214903917 % 281474976710655;
-				return this._iRandomSeed[sType] / 281474976710655;
+				this._oRandomSeed[sType] = (this._oRandomSeed[sType] + 11 ) * 25214903917 % 281474976710655;
+				return this._oRandomSeed[sType] / 281474976710655;
 			};
+
+			/**
+			 * reset seed of pseudo-random number generator
+			 * @private
+			 */
+			MockServer.prototype._resetPseudoRandomNumberGenerator = function () {
+					this._oRandomSeed = {};
+			};
+
 
 			/**
 			 * Starts the server.
@@ -1961,6 +1971,7 @@ sap.ui
 					var DraftEnabledMockServer = sap.ui.requireSync("sap/ui/core/util/DraftEnabledMockServer");
 					DraftEnabledMockServer.handleDraft(oAnnotations, this);
 				}
+				this._resetPseudoRandomNumberGenerator();
 				this._refreshData();
 
 				// helper to handle xsrf token
