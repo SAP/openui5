@@ -99,6 +99,43 @@ html:not(.sapUiMedia-StdExt-Phone) .sapUiDocumentationFooter {
 	font-weight: bold;
 }
 
+
+/* welcome page code editor */
+
+.sapUiMedia-Std-Desktop .editorWrapper {
+    display:flex;
+}
+
+.sapUiMedia-Std-Desktop .editorWrapper > div {
+    flex-grow: 1;
+}
+
+.sapUiMedia-Std-Desktop .editorWrapper > div:first-child {
+    margin-right: 1rem;
+}
+
+.sapUiMedia-Std-Tablet .editorWrapper > div:first-child,
+.sapUiMedia-Std-Phone .editorWrapper > div:first-child{
+    margin-bottom: 2rem;
+}
+
+.editorWrapper .editorSrcWindow,
+.editorWrapper .editorOutputWindow {
+    height: 285px;
+}
+
+.editorWrapper .editorOutputWindow {
+    border: 1px solid #D2D2D2;
+}
+
+.editorWrapper .sapMTB.editorToolbar {
+    height: 4rem;
+}
+
+.sapUiBlockLayout .welcomeBlock .sapUiBlockCellContent .sapMText {
+    font-size: 0.875rem;
+}
+
 /************************************************* Custom control styles *********************************************/
 
 /* Search */
