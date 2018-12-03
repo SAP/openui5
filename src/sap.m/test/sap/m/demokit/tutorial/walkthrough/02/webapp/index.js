@@ -1,4 +1,6 @@
-sap.ui.getCore().attachInit(function () {
+sap.ui.define([
+
+], function () {
 	"use strict";
 
 	/* eslint-disable no-alert */
