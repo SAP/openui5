@@ -228,6 +228,8 @@
     <jscoverage xmlns="http://www.sap.com/ui5/buildext/jscoverage" >
         <exclude name=".library-all" />
         <exclude name=".library-preload" />
+        <exclude name=".library-preload*" /><!-- library-preload.designtime.js, library-preload.support.js -->
+        <exclude name=".library-h2-preload" />
         <exclude name="jquery-*" />
         <exclude name="sap-ui-*" />
         <exclude name="testsuite." />
