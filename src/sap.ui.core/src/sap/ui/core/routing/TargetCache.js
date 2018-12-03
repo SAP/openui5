@@ -117,7 +117,7 @@ sap.ui.define([
 			},
 
 			/**
-			 * Adds or overwrites a view or a component in the TargetCache. The sName serves as a key for caching.
+			 * Adds or overwrites a view or a component in the TargetCache. The given object is cached under its name and the 'undefined' key.
 			 *
 			 * If the third parameter is set to null or undefined, the previous cache view or component under the same name isn't managed by the TargetCache instance.
 			 * The lifecycle (for example the destroy) of the view or component instance should be maintained by additional code.
@@ -131,11 +131,19 @@ sap.ui.define([
 			 * @private
 			 */
 			set : function (sName, sType, oObject) {
-				this._checkName(sName, sType);
+				var oInstanceCache;
 
+				this._checkName(sName, sType);
 				assert(sType === "View" || sType === "Component", "sType must be either 'View' or 'Component'");
 
-				this._oCache[sType.toLowerCase()][sName] = oObject;
+				oInstanceCache = this._oCache[sType.toLowerCase()][sName];
+
+				if (!oInstanceCache) {
+					oInstanceCache = this._oCache[sType.toLowerCase()][sName] = {};
+				}
+
+				oInstanceCache[undefined] = oObject;
+
 				return this;
 			},
 
@@ -160,13 +168,16 @@ sap.ui.define([
 				Object.keys(this._oCache).forEach(function (sType) {
 					var oTypeCache = this._oCache[sType];
 					Object.keys(oTypeCache).forEach(function (sKey) {
-						var vObject = oTypeCache[sKey];
-						if (vObject instanceof Promise) { // if the promise isn't replaced by the real object yet
-							// wait until the promise resolves to destroy the object
-							vObject.then(destroyObject);
-						} else {
-							destroyObject(vObject);
-						}
+						var oInstanceCache = oTypeCache[sKey];
+						Object.keys(oInstanceCache).forEach(function(sId) {
+							var vObject = oInstanceCache[sId];
+							if (vObject instanceof Promise) { // if the promise isn't replaced by the real object yet
+								// wait until the promise resolves to destroy the object
+								vObject.then(destroyObject);
+							} else {
+								destroyObject(vObject);
+							}
+						});
 					});
 				}.bind(this));
 
