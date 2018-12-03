@@ -1,6 +1,6 @@
 /* global QUnit*/
 
-sap.ui.require([
+sap.ui.define([
 	"sap/ui/fl/PreprocessorImpl",
 	"sap/ui/core/Component",
 	"sap/ui/core/ComponentContainer",
