@@ -23,6 +23,7 @@
 				"name": "Currency",
 				"category": "Display",
 				"since": "1.22",
+				"formFactors": "SML",
 				"samples": [
 					"sap.ui.unified.sample.Currency",
 					"sap.ui.unified.sample.CurrencyInTable"
