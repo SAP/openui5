@@ -10,6 +10,7 @@
 /*eslint-env es6*/
 sap.ui.define([
 	"sap/m/App",
+	"sap/m/HBox",
 	"sap/m/Label",
 	"sap/m/Link",
 	"sap/m/Page",
@@ -23,12 +24,14 @@ sap.ui.define([
 	"sap/ui/model/Filter",
 	"sap/ui/model/json/JSONModel",
 	"sap/base/Log",
+	"sap/ui/dom/includeStylesheet",
 	"sap/ui/util/Storage",
 	"sap/ui/test/starter/_utils",
+	"require",
 	"./discovery",
 	"./filter",
 	"./TreeMapChart"
-], function(App, Label, Link, Page, SearchField, SegmentedButton, SegmentedButtonItem, Text, Toolbar, Table, Column, Filter, JSONModel, Log, Storage, _utils, discovery, makeFilterFunction, TreeMapChart) {
+], function(App, HBox, Label, Link, Page, SearchField, SegmentedButton, SegmentedButtonItem, Text, Toolbar, Table, Column, Filter, JSONModel, Log, includeStylesheet, Storage, _utils, require, discovery, makeFilterFunction, TreeMapChart) {
 	"use strict";
 
 	function compare(s1,s2) {
@@ -139,7 +142,7 @@ sap.ui.define([
 		oModel.setProperty("/filteredTestCount", oTable.getBinding("rows").getLength());
 	}
 
-	function createUI() {
+	function createUI(showSuite) {
 
 		new App("app", {
 			models: oModel,
@@ -205,10 +208,20 @@ sap.ui.define([
 								new Column("test",{
 									//width: "85px",
 									label: new Label({text: "Testcase"}),
-									template: new Link({
-										text: { path: "fullpage", formatter: makeNameFromURL },
-										href: { path: "fullpage" },
-										target: "test"
+									template: new HBox({
+										items: [
+											new Link({
+												text: { path: "fullpage", formatter: makeNameFromURL },
+												href: { path: "fullpage" },
+												target: "test"
+											}),
+											new Link({
+												text: "(suite)",
+												href: { path: "testsuite" },
+												target: "test",
+												visible: showSuite
+											}).addStyleClass("decorator")
+										]
 									}),
 									sortProperty: "page"
 								}),
@@ -290,12 +303,16 @@ sap.ui.define([
 		}
 	}
 
+	includeStylesheet(require.toUrl("./main.css"));
+
 	sap.ui.getCore().attachInit( () => {
 
-		createUI().then( () => {
+		let url = new URL(location.href);
+		let showSuite = url.searchParams.has('showSuite');
+
+		createUI(showSuite).then( () => {
 
 			let search = sap.ui.getCore().byId("search");
-			let url = new URL(location.href);
 			search.setValue( cleanURL(url.searchParams.get("testpage")) || "");
 			let entryPage = cleanURL(url.searchParams.get("root")) || _utils.getAttribute("data-sap-ui-root-testsuite") || "test-resources/qunit/testsuite.qunit.html";
 
