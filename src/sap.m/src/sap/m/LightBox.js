@@ -430,6 +430,8 @@ sap.ui.define([
 		 */
 		LightBox.prototype._fnOpened = function() {
 			var that = this;
+			that._onResize();
+
 			jQuery('#sap-ui-blocklayer-popup').on("click", function() {
 				that.close();
 			});
@@ -612,10 +614,18 @@ sap.ui.define([
 		 */
 		LightBox.prototype._setImageSize = function (image, imageWidth, imageHeight) {
 			var footerHeight = this._calculateFooterHeightInPx(),
-				dimensions = this._getDimensions(imageWidth, imageHeight, footerHeight);
+				dimensions = this._getDimensions(imageWidth, imageHeight, footerHeight),
+				width = dimensions.width + 'px',
+				height = dimensions.height + 'px',
+				imgDomRef = image.getDomRef();
 
-			image.setWidth(dimensions.width + 'px');
-			image.setHeight(dimensions.height + 'px');
+			image.setProperty('width', width, true);
+			image.setProperty('height', height, true);
+
+			if (imgDomRef) {
+				imgDomRef.style.width = width;
+				imgDomRef.style.height = height;
+			}
 		};
 
 		/**
