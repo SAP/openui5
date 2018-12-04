@@ -283,7 +283,7 @@ sap.ui.define([
 				});
 
 			// attach formatter to check value for dynamically created control
-			this.setFormatterInList(assert, oText, sId);
+			this.setFormatter(assert, oText, sId, true);
 			oTemplate.addCell(oText);
 			// ensure template control is not destroyed on re-creation of the "items" aggregation
 			delete oTable.getBindingInfo("items").template;
@@ -353,23 +353,15 @@ sap.ui.define([
 							technical : oMessage.getTechnical(),
 							type : oMessage.getType()
 						};
-					});
+					}).sort(compareMessages),
+				aExpectedMessages = this.aMessages.slice().sort(compareMessages);
 
-			function sortMessages(aMessages) {
-				aMessages.sort(function (oMessage1, oMessage2) {
-					var s1 = oMessage1.message,
-						s2 = oMessage2.message;
-
-					if (s1 < s2) {
-						return -1;
-					}
-					return s1 > s2 ? 1 : 0;
-				});
-				return aMessages;
+			function compareMessages(oMessage1, oMessage2) {
+					return oMessage1.message.localeCompare(oMessage2.message);
 			}
 
-			assert.deepEqual(sortMessages(aCurrentMessages), sortMessages(this.aMessages),
-				this.aMessages.length + " messages in message manager");
+			assert.deepEqual(aCurrentMessages, aExpectedMessages,
+				this.aMessages.length + " expected messages in message manager");
 		},
 
 		/**
@@ -446,6 +438,27 @@ sap.ui.define([
 				}
 			}
 			this.checkFinish(assert);
+		},
+
+		/**
+		 * Checks the control's value state after waiting some time for the control to set it.
+		 *
+		 * @param {object} assert The QUnit assert object
+		 * @param {string|sap.m.InputBase} vControl The control ID or an instance of InputBase
+		 * @param {sap.ui.core.ValueState} sState The expected value state
+		 * @param {string} sText The expected text
+		 *
+		 * @returns {Promise} A promise resolving when the check is done
+		 */
+		checkValueState : function (assert, vControl, sState, sText) {
+			var oControl = typeof vControl === "string" ? this.oView.byId(vControl) : vControl;
+
+			return resolveLater(function () {
+				assert.strictEqual(oControl.getValueState(), sState,
+					oControl.getId() + ": value state: " + oControl.getValueState());
+				assert.strictEqual(oControl.getValueStateText(), sText,
+					oControl.getId() + ": value state text: " + oControl.getValueStateText());
+			});
 		},
 
 		/**
@@ -720,7 +733,7 @@ sap.ui.define([
 					var oControl = oView.byId(sControlId);
 
 					if (oControl) {
-						that.setFormatterInList(assert, oControl, sControlId);
+						that.setFormatter(assert, oControl, sControlId, true);
 					}
 				});
 
@@ -906,52 +919,26 @@ sap.ui.define([
 
 		/**
 		 * Sets the formatter function which calls {@link #checkValue} for the given control.
-		 * Note that you may only use controls that have a 'text' property.
+		 * Note that you may only use controls that have a 'text' or a 'value' property.
 		 *
 		 * @param {object} assert The QUnit assert object
 		 * @param {sap.ui.base.ManagedObject} oControl The control
 		 * @param {string} sControlId The (symbolic) control ID for which changes are expected
+		 * @param {boolean} [bInList] Whether the control resides in a list item
 		 */
-		setFormatter : function (assert, oControl, sControlId) {
-			var oBindingInfo = oControl.getBindingInfo("text"),
+		setFormatter : function (assert, oControl, sControlId, bInList) {
+			var oBindingInfo = oControl.getBindingInfo("text") || oControl.getBindingInfo("value"),
 				fnOriginalFormatter = oBindingInfo.formatter,
 				that = this;
 
 			oBindingInfo.formatter = function (sValue) {
-				var sExpectedValue = fnOriginalFormatter
-						? fnOriginalFormatter.apply(this, arguments)
-						: sValue;
+				var oContext = bInList && this.getBindingContext();
 
-				that.checkValue(assert, sExpectedValue, sControlId);
-
-				return sValue;
-			};
-		},
-
-		/**
-		 * Sets the formatter function which calls {@link #checkValue} for the given control within
-		 * a list item.
-		 * Note that you may only use controls that have a 'text' property.
-		 *
-		 * @param {object} assert The QUnit assert object
-		 * @param {object} oControl The control
-		 * @param {string} sControlId The control ID for which changes are expected
-		 */
-		setFormatterInList : function (assert, oControl, sControlId) {
-			var oBindingInfo = oControl.getBindingInfo("text"),
-				fnOriginalFormatter = oBindingInfo.formatter,
-				that = this;
-
-			oBindingInfo.formatter = function (sValue) {
-				var sExpectedValue = fnOriginalFormatter
-						? fnOriginalFormatter.apply(this, arguments)
-						: sValue;
-
-				that.checkValue(assert, sExpectedValue, sControlId,
-					this.getBindingContext()
-					&& (this.getBindingContext().getIndex
-						? this.getBindingContext().getIndex()
-						: this.getBindingContext().getPath()));
+				if (fnOriginalFormatter) {
+					sValue = fnOriginalFormatter.apply(this, arguments);
+				}
+				that.checkValue(assert, sValue, sControlId,
+					oContext && (oContext.getIndex ? oContext.getIndex() : oContext.getPath()));
 
 				return sValue;
 			};
@@ -1396,6 +1383,7 @@ sap.ui.define([
 
 	//*********************************************************************************************
 	// Refresh a single row with a bound message and check that the message is not duplicated.
+	// Refreshing a single line in a collection must not remove messages for other lines.
 	QUnit.test("Context#refresh() with messages", function (assert) {
 		var sView = '\
 <Table id="table"\
@@ -1408,9 +1396,30 @@ sap.ui.define([
 		<Text text="{ID}" />\
 	</ColumnListItem>\
 </Table>',
-			oResponseMessage = {
+			oMessage1 = {
+				"code" : "2",
+				"message" : "Another Text",
+				"persistent" : false,
+				"target" : "/EMPLOYEES('1')/ID",
+				"type" : "Warning"
+			},
+			oResponseMessage0 = {
 				"code" : "1",
 				"message" : "Text",
+				"numericSeverity" : 3,
+				"target" : "ID",
+				"transition" : false
+			},
+			oResponseMessage0AfterRefresh = {
+				"code" : "1",
+				"message" : "Text after refresh",
+				"numericSeverity" : 3,
+				"target" : "ID",
+				"transition" : false
+			},
+			oResponseMessage1 = {
+				"code" : "2",
+				"message" : "Another Text",
 				"numericSeverity" : 3,
 				"target" : "ID",
 				"transition" : false
@@ -1422,7 +1431,12 @@ sap.ui.define([
 				"value" : [{
 					"ID" : "0",
 					"__CT__FAKE__Message" : {
-						"__FAKE__Messages" : [oResponseMessage]
+						"__FAKE__Messages" : [oResponseMessage0]
+					}
+				}, {
+					"ID" : "1",
+					"__CT__FAKE__Message" : {
+						"__FAKE__Messages" : [oResponseMessage1]
 					}
 				}]
 			})
@@ -1432,7 +1446,7 @@ sap.ui.define([
 				"persistent" : false,
 				"target" : "/EMPLOYEES('0')/ID",
 				"type" : "Warning"
-			}]);
+			}, oMessage1]);
 
 		return this.createView(assert, sView, createTeaBusiModel({autoExpandSelect : true}))
 			.then(function () {
@@ -1442,10 +1456,16 @@ sap.ui.define([
 							+ "?$select=ID,__CT__FAKE__Message/__FAKE__Messages", {
 						"ID" : "0",
 						"__CT__FAKE__Message" : {
-							"__FAKE__Messages" : [oResponseMessage]
+							"__FAKE__Messages" : [oResponseMessage0AfterRefresh]
 						}
-					});
-				// no change in messages
+					})
+				.expectMessages([{
+					"code" : "1",
+					"message" : "Text after refresh",
+					"persistent" : false,
+					"target" : "/EMPLOYEES('0')/ID",
+					"type" : "Warning"
+				}, oMessage1]);
 
 				// code under test
 				oContext.refresh();
@@ -1464,7 +1484,7 @@ sap.ui.define([
 <Table id="table" items="{/EMPLOYEES}">\
 	<columns><Column/></columns>\
 	<ColumnListItem>\
-		<Text text="{ID}" />\
+		<Input value="{ID}" />\
 	</ColumnListItem>\
 </Table>',
 			that = this;
@@ -1496,6 +1516,10 @@ sap.ui.define([
 			that.oView.byId("table").getItems()[0].getBindingContext().refresh();
 
 			return that.waitForChanges(assert);
+		}).then(function () {
+
+			return that.checkValueState(assert,
+				that.oView.byId("table").getItems("items")[0].getCells()[0] , "Error", "Not found");
 		});
 	});
 
@@ -1925,8 +1949,22 @@ sap.ui.define([
 	QUnit.test("ActionImport", function (assert) {
 		var sView = '\
 <FlexBox id="form" binding="{/ChangeTeamBudgetByID(...)}">\
-	<Text id="name" text="{Name}" />\
+	<Input id="name" value="{Name}" />\
 </FlexBox>',
+			oModelMessage = {
+				code : "1",
+				message : "Warning Text",
+				persistent : false,
+				target : "/ChangeTeamBudgetByID(...)/Name",
+				type : "Warning"
+			},
+			oResponseMessage = {
+				code : "1",
+				message : "Warning Text",
+				numericSeverity : 3,
+				target : "Name",
+				transition : false
+			},
 			that = this;
 
 		this.expectChange("name", null);
@@ -1940,8 +1978,12 @@ sap.ui.define([
 						"TeamID" : "TEAM_01"
 					}
 				}, {
-					"Name" : "Business Suite"
+					"Name" : "Business Suite",
+					"__CT__FAKE__Message" : {
+						"__FAKE__Messages" : [oResponseMessage]
+					}
 				})
+				.expectMessages([oModelMessage])
 				.expectChange("name", "Business Suite");
 
 			return Promise.all([
@@ -1952,6 +1994,8 @@ sap.ui.define([
 					.execute(),
 				that.waitForChanges(assert)
 			]);
+		}).then(function () {
+			return that.checkValueState(assert, "name", "Warning", "Warning Text");
 		});
 	});
 
@@ -2614,14 +2658,15 @@ sap.ui.define([
 	<Table id="table" items="{SO_2_SOITEM}">\
 		<columns><Column/></columns>\
 		<ColumnListItem>\
-			<Text id="pos" text="{ItemPosition}" />\
+			<Text text="{ItemPosition}" />\
+			<Input value="{ProductID}" />\
 		</ColumnListItem>\
 	</Table>\
 </FlexBox>',
 			that = this;
 
 		this.expectRequest("SalesOrderList('42')?$select=SalesOrderID"
-			+ "&$expand=SO_2_SOITEM($select=ItemPosition,SalesOrderID)", {
+			+ "&$expand=SO_2_SOITEM($select=ItemPosition,ProductID,SalesOrderID)", {
 				"SalesOrderID" : "42",
 				"SO_2_SOITEM" : []
 			});
@@ -2654,6 +2699,10 @@ sap.ui.define([
 				that.oView.byId("table").getBinding("items").create(),
 				that.waitForChanges(assert)
 			]);
+		}).then(function () {
+			return that.checkValueState(assert,
+				that.oView.byId("table").getItems("items")[0].getCells()[1] , "Error",
+				"Enter a product ID");
 		});
 	});
 
@@ -3931,6 +3980,7 @@ sap.ui.define([
 		var sView = '\
 <FlexBox binding="{/EMPLOYEES(\'1\')}">\
 	<Text id="name" text="{Name}" />\
+	<Input id="status" value="{STATUS}" />\
 	<FlexBox id="action" \
 			binding="{com.sap.gateway.default.iwbep.tea_busi.v0001.AcChangeTeamOfEmployee(...)}">\
 		<layoutData><FlexItemData/></layoutData>\
@@ -3943,9 +3993,11 @@ sap.ui.define([
 
 		this.expectRequest("EMPLOYEES('1')", {
 				"Name" : "Jonathan Smith",
+				"STATUS" : "",
 				"@odata.etag" : "ETag"
 			})
 			.expectChange("name", "Jonathan Smith")
+			.expectChange("status", "")
 			.expectChange("teamId", null);
 
 		return this.createView(assert, sView).then(function () {
@@ -4021,6 +4073,8 @@ sap.ui.define([
 					}),
 				that.waitForChanges(assert)
 			]);
+		}).then(function () {
+			return that.checkValueState(assert, "status", "Error", "Illegal Status");
 		});
 	});
 
@@ -4555,7 +4609,7 @@ sap.ui.define([
 							text : "{ID}"
 						});
 					}
-					that.setFormatterInList(assert, oListItem, "text");
+					that.setFormatter(assert, oListItem, "text", true);
 
 					return new ColumnListItem({cells : [oListItem]});
 				}
@@ -5822,7 +5876,7 @@ sap.ui.define([
 		return this.createView(assert, sView).then(function () {
 			var oText = new Text("id", {text : "{Team_Id}"});
 
-			that.setFormatterInList(assert, oText, "id");
+			that.setFormatter(assert, oText, "id", true);
 			that.expectRequest("TEAMS", {
 					"value" : aValues
 				})
@@ -8723,7 +8777,7 @@ sap.ui.define([
 				}).expectMessages([{
 					code : "23",
 					message : "Just A Message",
-					target : "/" + sRequestPath + "/Name",
+					target : "/Artists(ArtistID='42',IsActiveEntity=false)/Name",
 					persistent : true,
 					type : "Success"
 				}]);
@@ -8801,12 +8855,19 @@ sap.ui.define([
 	QUnit.test("bound operation: $$inheritExpandSelect", function (assert) {
 		var fnDataReceived = this.spy(),
 			fnDataRequested = this.spy(),
+			oJustAMessage = {
+				code : "23",
+				message : "Just A Message",
+				target : "/Artists(ArtistID='42',IsActiveEntity=false)/Name",
+				persistent : true,
+				type : "Success"
+			},
 			oModel = createSpecialCasesModel({autoExpandSelect : true}),
 			sView = '\
 <FlexBox id="objectPage">\
 	<Text id="id" text="{ArtistID}" />\
 	<Text id="isActive" text="{IsActiveEntity}" />\
-	<Text id="name" text="{Name}" />\
+	<Input id="name" value="{Name}" />\
 	<Text id="inProcessByUser" text="{DraftAdministrativeData/InProcessByUser}" />\
 </FlexBox>',
 			that = this;
@@ -8864,14 +8925,7 @@ sap.ui.define([
 					}],
 					"Name" : "Hour Frustrated"
 				})
-				.expectMessages([{
-					code : "23",
-					message : "Just A Message",
-					target :
-						"/Artists(ArtistID='42',IsActiveEntity=true)/special.cases.EditAction/Name",
-					persistent : true,
-					type : "Success"
-				}]);
+				.expectMessages([oJustAMessage]);
 
 			return Promise.all([
 				// code under test
@@ -8888,6 +8942,8 @@ sap.ui.define([
 
 			return that.waitForChanges(assert);
 		}).then(function () {
+			return that.checkValueState(assert, "name", "Success", "Just A Message");
+		}).then(function () {
 			var oInactiveArtistContext = that.oView.getBindingContext();
 
 			that.expectChange("name", "TAFKAP")
@@ -8898,7 +8954,7 @@ sap.ui.define([
 					payload : {"Name" : "TAFKAP"}
 				}, {/* response does not matter here */});
 
-			that.oView.byId("name").getBinding("text").setValue("TAFKAP");
+			that.oView.byId("name").getBinding("value").setValue("TAFKAP");
 
 			that.expectRequest("Artists(ArtistID='42',IsActiveEntity=false)"
 				+ "?$select=DraftAdministrativeData"

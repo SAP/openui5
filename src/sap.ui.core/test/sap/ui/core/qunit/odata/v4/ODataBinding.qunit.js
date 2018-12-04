@@ -1109,8 +1109,7 @@ sap.ui.define([
 		this.mock(oBinding).expects("fetchQueryOptionsForOwnCache")
 			.withExactArgs(sinon.match.same(oContext))
 			.returns(SyncPromise.resolve({}));
-		this.mock(oContext).expects("getIndex").withExactArgs()
-			.returns(-2);
+		this.mock(oContext).expects("getIndex").withExactArgs().returns(Context.VIRTUAL);
 
 		// code under test
 		oBinding.fetchCache(oContext);

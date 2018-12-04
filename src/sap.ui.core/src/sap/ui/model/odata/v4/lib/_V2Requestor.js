@@ -861,7 +861,7 @@ sap.ui.define([
 			oOperationMetadata.$Parameter.forEach(function (oParameter) {
 				sName = oParameter.$Name;
 				if (sName in mParameters) {
-					if (oParameter.$IsCollection) {
+					if (oParameter.$isCollection) {
 						throw new Error("Unsupported collection-valued parameter: " + sName);
 					}
 					mQueryOptions[sName]

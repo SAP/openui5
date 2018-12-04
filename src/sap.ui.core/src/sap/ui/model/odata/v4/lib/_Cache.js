@@ -91,18 +91,23 @@ sap.ui.define([
 	 *   Whether the paths in $expand and $select shall be sorted in the cache's query string;
 	 *   note that this flag can safely be ignored for all "new" features (after 1.47) which
 	 *   should just sort always
+	 * @param {function} [fnGetOriginalResourcePath]
+	 *   A function that returns the cache's original resource path to be used to build the target
+	 *   path for bound messages; if unset, sResourcePath is used
 	 *
 	 * @private
 	 */
-	function Cache(oRequestor, sResourcePath, mQueryOptions, bSortExpandSelect) {
+	function Cache(oRequestor, sResourcePath, mQueryOptions, bSortExpandSelect,
+			fnGetOriginalResourcePath) {
 		this.bActive = true;
 		this.mChangeListeners = {}; // map from path to an array of change listeners
+		this.fnGetOriginalResourcePath = fnGetOriginalResourcePath;
 		this.sMetaPath = _Helper.getMetaPath("/" + sResourcePath);
 		this.mPatchRequests = {}; // map from path to an array of (PATCH) promises
 		this.mPostRequests = {}; // map from path to an array of entity data (POST bodies)
 		this.oRequestor = oRequestor;
-		this.bSortExpandSelect = bSortExpandSelect;
 		this.sResourcePath = sResourcePath;
+		this.bSortExpandSelect = bSortExpandSelect;
 		this.bSentReadRequest = false;
 		this.oTypePromise = undefined;
 		this.setQueryOptions(mQueryOptions);
@@ -907,8 +912,8 @@ sap.ui.define([
 	 */
 	Cache.prototype.visitResponse = function (oRoot, mTypeForMetaPath, sRootMetaPath, sRootPath,
 			bKeepTransientPath, iStart) {
-		var bHasMessages = false,
-			aKeyPredicates,
+		var aCachePaths,
+			bHasMessages = false,
 			mPathToODataMessages = {},
 			sRequestUrl = this.oRequestor.getServiceUrl() + this.sResourcePath,
 			that = this;
@@ -966,7 +971,7 @@ sap.ui.define([
 					if (!sCollectionPath) {
 						// remember the key predicates / indices of the root entries to remove all
 						// messages for entities that have been read
-						aKeyPredicates.push(sPredicate || iIndex.toString());
+						aCachePaths.push(sPredicate || iIndex.toString());
 					}
 					if (sPredicate) {
 						mByPredicate[sPredicate] = vInstance;
@@ -1000,6 +1005,10 @@ sap.ui.define([
 				sInstancePath = _Helper.buildPath(sInstancePath, sPredicate || iIndex);
 			} else if (!bKeepTransientPath && sPredicate && sInstancePath.endsWith("/-1")) {
 				sInstancePath = sInstancePath.slice(0, -3) + sPredicate;
+			}
+			if (sRootPath && !aCachePaths) {
+				// remove messages only for the part of the cache that is updated
+				aCachePaths = [sInstancePath];
 			}
 			if (sMessageProperty) {
 				aMessages = _Helper.drillDown(oInstance, sMessageProperty.split("/"));
@@ -1041,15 +1050,18 @@ sap.ui.define([
 		}
 
 		if (iStart !== undefined) {
-			aKeyPredicates = [];
+			aCachePaths = [];
 			visitArray(oRoot.value, sRootMetaPath || this.sMetaPath, "",
 				buildContextUrl(sRequestUrl, oRoot["@odata.context"]));
 		} else if (oRoot && typeof oRoot === "object") {
 			visitInstance(oRoot, sRootMetaPath || this.sMetaPath, sRootPath || "", sRequestUrl);
 		}
 		if (bHasMessages) {
-			this.oRequestor.reportBoundMessages(this.sResourcePath, mPathToODataMessages,
-				aKeyPredicates);
+			this.oRequestor.reportBoundMessages(
+				this.fnGetOriginalResourcePath
+					? this.fnGetOriginalResourcePath(oRoot)
+					: this.sResourcePath,
+				mPathToODataMessages, aCachePaths);
 		}
 	};
 
@@ -1666,6 +1678,9 @@ sap.ui.define([
 	 *   A map of key-value pairs representing the query string
 	 * @param {boolean} [bSortExpandSelect=false]
 	 *   Whether the paths in $expand and $select shall be sorted in the cache's query string
+	 * @param {string} [fnGetOriginalResourcePath]
+	 *   A function that returns the cache's original resource path to be used to build the target
+	 *   path for bound messages; if unset, sResourcePath is used
 	 * @param {boolean} [bPost]
 	 *   Whether the cache uses POST requests. If <code>true</code>, only {@link #post} may lead to
 	 *   a request, {@link #read} may only read from the cache; otherwise {@link #post} throws an
@@ -1678,8 +1693,8 @@ sap.ui.define([
 	 *
 	 * @private
 	 */
-	function SingleCache(oRequestor, sResourcePath, mQueryOptions, bSortExpandSelect, bPost,
-			sMetaPath, bFetchOperationReturnType) {
+	function SingleCache(oRequestor, sResourcePath, mQueryOptions, bSortExpandSelect,
+			fnGetOriginalResourcePath, bPost, sMetaPath, bFetchOperationReturnType) {
 		Cache.apply(this, arguments);
 
 		this.bFetchOperationReturnType = bFetchOperationReturnType;
@@ -1771,7 +1786,6 @@ sap.ui.define([
 	SingleCache.prototype.post = function (oGroupLock, oData, oEntity) {
 		var sGroupId = oGroupLock.getGroupId(),
 			sHttpMethod = "POST",
-			aPromises,
 			that = this;
 
 		if (!this.bPost) {
@@ -1794,18 +1808,15 @@ sap.ui.define([
 				oData = undefined;
 			}
 		}
-		aPromises = [
+		this.oPromise = SyncPromise.all([
 			this.oRequestor.request(sHttpMethod, this.sResourcePath + this.sQueryString, oGroupLock,
-				{"If-Match" : oEntity}, oData)
-		];
-		if (this.bFetchOperationReturnType) {
-			aPromises.push(this.fetchTypes());
-		}
-		this.oPromise = SyncPromise.all(aPromises).then(function (aResult) {
+				{"If-Match" : oEntity}, oData),
+			this.fetchTypes()
+		]).then(function (aResult) {
 			that.bPosting = false;
-			if (that.bFetchOperationReturnType) {
-				that.visitResponse(aResult[0], aResult[1], that.sMetaPath + "/$Type");
-			}
+			that.visitResponse(aResult[0], aResult[1],
+				that.bFetchOperationReturnType ? that.sMetaPath + "/$Type" : undefined);
+
 			return aResult[0];
 		}, function (oError) {
 			that.bPosting = false;
@@ -1931,6 +1942,9 @@ sap.ui.define([
 	 *   {foo : ["bar", "baz"]} results in the query string "foo=bar&foo=baz"
 	 * @param {boolean} [bSortExpandSelect=false]
 	 *   Whether the paths in $expand and $select shall be sorted in the cache's query string
+	 * @param {string} [fnGetOriginalResourcePath]
+	 *   A function that returns the cache's original resource path to be used to build the target
+	 *   path for bound messages; if unset, sResourcePath is used
 	 * @param {boolean} [bPost]
 	 *   Whether the cache uses POST requests. If <code>true</code>, only {@link #post} may
 	 *   lead to a request, {@link #read} may only read from the cache; otherwise {@link #post}
@@ -1946,9 +1960,9 @@ sap.ui.define([
 	 * @public
 	 */
 	Cache.createSingle = function (oRequestor, sResourcePath, mQueryOptions, bSortExpandSelect,
-			bPost, sMetaPath, bFetchOperationReturnType) {
-		return new SingleCache(oRequestor, sResourcePath, mQueryOptions, bSortExpandSelect, bPost,
-			sMetaPath, bFetchOperationReturnType);
+			fnGetOriginalResourcePath, bPost, sMetaPath, bFetchOperationReturnType) {
+		return new SingleCache(oRequestor, sResourcePath, mQueryOptions, bSortExpandSelect,
+			fnGetOriginalResourcePath, bPost, sMetaPath, bFetchOperationReturnType);
 	};
 
 	/**

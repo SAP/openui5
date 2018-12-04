@@ -24,6 +24,15 @@ sap.ui.define([
 	});
 
 	//*********************************************************************************************
+	QUnit.test("VIRTUAL", function (assert) {
+		assert.throws(function () {
+			Context.VIRTUAL = 42;
+		}, TypeError, "immutable");
+
+		assert.strictEqual(Context.VIRTUAL, -9007199254740991/*Number.MIN_SAFE_INTEGER*/);
+	});
+
+	//*********************************************************************************************
 	QUnit.test("create", function (assert) {
 		var oBinding = {},
 			oContext,
@@ -160,7 +169,7 @@ sap.ui.define([
 
 	//*********************************************************************************************
 	QUnit.test("fetchValue for a virtual context", function (assert) {
-		var oContext = Context.create(null, {}, "/foo/-2", -2),
+		var oContext = Context.create(null, {}, "/foo/" + Context.VIRTUAL, Context.VIRTUAL),
 			oResult;
 
 		// code under test
@@ -1103,7 +1112,8 @@ sap.ui.define([
 	//*********************************************************************************************
 	QUnit.test("withCache: virtual context", function (assert) {
 		var oBinding = {},
-			oContext = Context.create({/*oModel*/}, oBinding, "/EMPLOYEES/-2", -2),
+			oContext = Context.create({/*oModel*/}, oBinding, "/EMPLOYEES/" + Context.VIRTUAL,
+				Context.VIRTUAL),
 			oResult;
 
 		this.mock(_Helper).expects("buildPath").never();

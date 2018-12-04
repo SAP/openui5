@@ -1559,7 +1559,7 @@ sap.ui.define([
 
 	//*********************************************************************************************
 	QUnit.test("getPathAndAddQueryOptions: collection parameter", function (assert) {
-		var oOperationMetadata = {$Parameter : [{$Name : "foo", $IsCollection : true}]},
+		var oOperationMetadata = {$Parameter : [{$Name : "foo", $isCollection : true}]},
 			oRequestor = _Requestor.create("/", undefined, undefined, undefined, "2.0");
 
 		assert.throws(function () {

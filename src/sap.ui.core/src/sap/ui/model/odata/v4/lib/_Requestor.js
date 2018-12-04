@@ -716,7 +716,7 @@ sap.ui.define([
 			for (sName in mParameters) {
 				oParameter = mName2Parameter[sName];
 				if (oParameter) {
-					if (oParameter.$IsCollection) {
+					if (oParameter.$isCollection) {
 						throw new Error("Unsupported collection-valued parameter: " + sName);
 					}
 					aArguments.push(encodeURIComponent(sName) + "=" + encodeURIComponent(
