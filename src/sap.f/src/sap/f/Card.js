@@ -336,6 +336,11 @@ sap.ui.define([
 	Card.prototype._setContent = function (sComponentName) {
 		var sCardType = this._oCardManifest.get("sap.card/type");
 
+		if (!sCardType) {
+			Log.error("Card type property is mandatory!");
+			return;
+		}
+
 		if (sCardType === "CustomCard" && sComponentName) {
 			sap.ui.require(["sap/ui/core/ComponentContainer"], function (ComponentContainer) {
 				var oContent = new ComponentContainer({
@@ -345,15 +350,19 @@ sap.ui.define([
 					settings: {}
 				});
 				this.setContent(oContent);
-				this.setBusy(false);
-			}.bind(this));
+			});
 		} else {
 			switch (sCardType.toLowerCase()) {
 			case "list":  sap.ui.require(["sap/f/cards/content/List"], this._setCardContent.bind(this));
 				break;
 			case "table": sap.ui.require(["sap/f/cards/content/Table"], this._setCardContent.bind(this));
 				break;
-			case "analytical": sap.ui.require(["sap/f/cards/content/Analytical"], this._setCardContent.bind(this));
+			case "analytical":
+				sap.ui.getCore().loadLibrary("sap.viz", {async: true}).then(function() {
+					sap.ui.require(["sap/f/cards/content/Analytical"], this._setCardContent.bind(this));
+				}.bind(this)).catch(function () {
+					Log.error("Analytical type card is not available with this distribution");
+				});
 				break;
 			}
 		}
@@ -412,5 +421,6 @@ sap.ui.define([
 
 		return this;
 	};
+
 	return Card;
 });

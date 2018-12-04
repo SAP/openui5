@@ -1,0 +1,27 @@
+<mvc:View
+		xmlns="sap.m"
+		xmlns:mvc="sap.ui.core.mvc"
+		xmlns:f="sap.f"
+		displayBlock="true">
+
+	<Page title="{i18n>appTitle}">
+
+		<subHeader>
+			<Toolbar>
+				<ToolbarSpacer/>
+				<Title text="Analytical Content Card "/>
+				<ToolbarSpacer/>
+			</Toolbar>
+		</subHeader>
+
+		<content>
+
+			<Panel>
+				<f:Card id="lineChart" manifest="{manifests>/analyticalContent/line}" height="auto" width="700px"/>
+				<f:Card id="stackedBarChart" manifest="{manifests>/analyticalContent/stackedBar}"  height="auto" width="700px"/>
+				<f:Card id="stackedColumnChart" manifest="{manifests>/analyticalContent/stackedColumn}"  height="auto" width="700px"/>
+				<f:Card id="donutChart" manifest="{manifests>/analyticalContent/donut}" height="auto" width="700px"/>
+			</Panel>
+		</content>
+	</Page>
+</mvc:View>

@@ -35,22 +35,28 @@
 		"route": "flp",
 		"usage": "Breathing is not required and the grid should be configured based on GenericTile size"
 	},
-    {
-      "title": "List Card",
-      "description": "Example page for Card of type List",
-      "route": "listContent",
-      "usage": "Development purposes only!"
-    },
-    {
-      "title": "Table Card",
-      "description": "Example page for Card of type Table",
-      "route": "tableContent",
-      "usage": "Development purposes only!"
-    },
-    {
-      "title": "KPI in Header",
-      "description": "Example page for Card with KPI Header",
-      "route": "kpiHeader",
-      "usage": "Development purposes only!"
-    }
+	{
+	  "title": "List Card",
+	  "description": "Example page for Card of type List",
+	  "route": "listContent",
+	  "usage": "Development purposes only!"
+	},
+	{
+	  "title": "Table Card",
+	  "description": "Example page for Card of type Table",
+	  "route": "tableContent",
+	  "usage": "Development purposes only!"
+	},
+	{
+	"title": "Content Analytical Card",
+	"description": "This is a playground for development purposes only",
+	"route": "analyticalContent",
+	"usage": "Development purposes only!"
+	},
+	{
+	  "title": "KPI in Header",
+	  "description": "Example page for Card with KPI Header",
+	  "route": "kpiHeader",
+	  "usage": "Development purposes only!"
+	}
 ]
