@@ -1176,6 +1176,22 @@ sap.ui.define([
 			});
 		});
 
+		QUnit.test("_sendAjaxRequest - shall reject Promise when no flexibility services url prefix is returned", function(assert) {
+
+		    sandbox.stub(sap.ui.getCore().getConfiguration(), "getFlexibilityServices").returns("");
+		    var sSampleUri = "http://www.abc.de/files/";
+
+			//Act
+			return this.oLrepConnector._sendAjaxRequest(sSampleUri).then(function() {
+			    assert.ok(false, "The Promise has not rejected");
+			}, function(oError) {
+			    assert.ok(true, "The Promise has rejected");
+			    assert.equal("warning", oError.status);
+			    assert.equal(1, oError.messages.length);
+			    assert.equal("Flexibility Services requests were not sent. The UI5 bootstrap is configured to not send any requests.", oError.messages[0].text);
+			});
+		});
+
 		QUnit.test("_sendAjaxRequest - shall reject Promise when fetching the XSRF Token has failed", function(assert) {
 			var requestCount = 0;
 			//Arrange
