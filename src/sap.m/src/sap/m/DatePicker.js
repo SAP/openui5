@@ -216,7 +216,12 @@ sap.ui.define([
 					/**
 					 * Date range containing the start and end date displayed in the <code>Calendar</code> popup.
 					 */
-					dateRange : {type : "sap.ui.unified.DateRange"}
+					dateRange : {type : "sap.ui.unified.DateRange"},
+
+					/**
+					 * Indicates if the event is fired, due to popup being opened.
+					 */
+					afterPopupOpened : {type : "boolean"}
 
 				}
 			}
@@ -970,7 +975,8 @@ sap.ui.define([
 
 		// Fire navigate event when the calendar popup opens
 		this.fireNavigate({
-			dateRange: this._getVisibleDatesRange(this._oCalendar)
+			dateRange: this._getVisibleDatesRange(this._oCalendar),
+			afterPopupOpened: true
 		});
 
 	}
