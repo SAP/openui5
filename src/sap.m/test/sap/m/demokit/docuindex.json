@@ -909,6 +909,14 @@
 			"sap.m.sample.PlanningCalendarWithStickyHeader"]
 		},
 		{
+			"id": "sap.m.SinglePlanningCalendar",
+			"name": "Single Planning Calendar",
+			"category": "User Input",
+			"since": "1.61",
+			"formFactors": "L",
+			"samples": ["sap.m.sample.SinglePlanningCalendar"]
+		},
+		{
 		  "id": "sap.m.Popover",
 		  "name": "Popover",
 		  "category": "Popup",
@@ -3028,6 +3036,11 @@
 		  "id": "sap.m.sample.PlanningCalendarWithStickyHeader",
 		  "name": "Planning Calendar - with header that remains visible (fixed on top) on scroll",
 		  "description": "PlanningCalendar with header area that remains visible (fixed on top) when the rest of the content is scrolled out of view."
+		},
+		{
+		  "id": "sap.m.sample.SinglePlanningCalendar",
+		  "name": "Single Planning Calendar",
+		  "description": "SinglePlanningCalendar, containing sap.m.Dialog for creating a new appointment. Note: Illustrates how the SinglePlanningCalendar can be used in combination with the sap.m.Dialog control for creating new appoitments. This feature is NOT part of the control."
 		},
 		{
 		  "id": "sap.m.sample.ImageContent",
