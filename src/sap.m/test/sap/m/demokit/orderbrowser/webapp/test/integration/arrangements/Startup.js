@@ -29,7 +29,8 @@ sap.ui.define([
 			// start the app UI component
 			this.iStartMyUIComponent({
 				componentConfig: {
-					name: "sap.ui.demo.orderbrowser"
+					name: "sap.ui.demo.orderbrowser",
+					async: true
 				},
 				hash: oOptions.hash,
 				autoWait: oOptions.autoWait
