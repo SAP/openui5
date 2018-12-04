@@ -31,7 +31,18 @@ sap.ui.define(['sap/ui/core/Control', 'sap/ui/model/json/JSONModel', 'sap/m/Flex
 			this.setModel(oModel);
 
 		};
-		Analytical.prototype.onAfterRendering = function () {
+
+		Analytical.prototype.exit = function () {
+			if (this._oChart) {
+				this._oChart.destroy();
+				this._oChart = null;
+			}
+
+			if (this.oFlattendedDataset) {
+				this.oFlattendedDataset.destroy();
+				this.oFlattendedDataset = null;
+			}
+
 
 		};
 

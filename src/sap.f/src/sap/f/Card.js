@@ -156,8 +156,12 @@ sap.ui.define([
 	Card.prototype.onAfterRendering = function() {
 		//TODO performance will be afected, but text should clamp on IE also - TBD
 		if (Device.browser.msie) {
-			this._oTitle.clampText();
-			this._oSubTitle.clampText();
+			if (this._oTitle) {
+				this._oTitle.clampText();
+			}
+			if (this._oSubTitle) {
+				this._oSubTitle.clampText();
+			}
 		}
 	};
 
@@ -169,6 +173,21 @@ sap.ui.define([
 		if (this._oCardManifest) {
 			this._oCardManifest.destroy();
 			this._oCardManifest = null;
+		}
+
+		if (this._oTitle) {
+			this._oTitle.destroy();
+			this._oTitle = null;
+		}
+
+		if (this._oSubTitle) {
+			this._oSubTitle.destroy();
+			this._oSubTitle = null;
+		}
+
+		if (this._oAvatar) {
+			this._oAvatar.destroy();
+			this._oAvatar = null;
 		}
 	};
 	/**
@@ -208,28 +227,6 @@ sap.ui.define([
 		// TODO: Ensure the content is not invalidated all the time.
 		// Same goes for the header information.
 		this.setAggregation("_content", oContent);
-	};
-
-	Card.prototype.exit = function () {
-		if (this._oCardManifest) {
-			this._oCardManifest.destroy();
-			this._oCardManifest = null;
-		}
-
-		if (this._oTitle) {
-			this._oTitle.destroy();
-			this._oTitle = null;
-		}
-
-		if (this._oSubTitle) {
-			this._oSubTitle.destroy();
-			this._oSubTitle = null;
-		}
-
-		if (this._oAvatar) {
-			this._oAvatar.destroy();
-			this._oAvatar = null;
-		}
 	};
 
 	Card.prototype.initComponent = function (sComponentName) {
