@@ -1,6 +1,6 @@
 /*global QUnit*/
 
-sap.ui.require([
+sap.ui.define([
 		"sap/ui/fl/Persistence",
 		"sap/ui/fl/Utils",
 		"sap/ui/fl/Change",
