@@ -11,8 +11,10 @@ sap.ui.define([
 	"sap/ui/core/Orientation",
 	"sap/m/BackgroundDesign",
 	"sap/base/Log",
+	"sap/m/Text",
 	"jquery.sap.events"
-], function(jQuery, HeaderContainer, FlexBox, Label, VerticalLayout, Button, Device, Icon, Orientation, BackgroundDesign, Log) {
+], function(jQuery, HeaderContainer, FlexBox, Label, VerticalLayout, Button, Device, Icon, Orientation, BackgroundDesign,
+			Log, Text) {
 	"use strict";
 
 	jQuery.sap.initMobile();
@@ -858,6 +860,56 @@ sap.ui.define([
 		//Assert
 		assert.ok(bIsLeftButton, "Arrow buttons are rendered on desktop");
 		assert.ok(bIsRightButton, "Arrow buttons are rendered on desktop");
+	});
+
+	QUnit.module("Aria handling", {
+		beforeEach: function () {
+			this.oHeaderContainer = new HeaderContainer("headerContainer");
+			this.oHeaderContainer.placeAt("qunit-fixture");
+			sap.ui.getCore().applyChanges();
+		},
+		afterEach: function () {
+			this.oHeaderContainer.destroy();
+			this.oHeaderContainer = null;
+		}
+	});
+
+	QUnit.test("aria-setsize & aria-posinset", function (assert) {
+		var iCount = 5,
+			i;
+
+		for (i = 0; i < iCount; i++) {
+			this.oHeaderContainer.addContent(new Text());
+		}
+
+		sap.ui.getCore().applyChanges();
+
+		var $items = this.oHeaderContainer.$().find(".sapMHrdrCntrInner");
+
+		for (i = 0; i < iCount; i++) {
+			assert.equal($items.eq(i).attr("aria-posinset"), i + 1);
+			assert.equal($items.eq(i).attr("aria-setsize"), iCount);
+		}
+	});
+
+	QUnit.test("aria-ariaLabelledBy", function (assert) {
+		var aTexts = [],
+			iCount = 5,
+			i;
+
+		for (i = 0; i < iCount; i++) {
+			aTexts.push(new Text());
+			this.oHeaderContainer.addAriaLabelledBy(aTexts[i]);
+			this.oHeaderContainer.addContent(new Text());
+		}
+
+		sap.ui.getCore().applyChanges();
+
+		var $items = this.oHeaderContainer.$().find(".sapMHrdrCntrInner");
+
+		for (i = 0; i < iCount; i++) {
+			assert.equal($items.eq(i).attr("aria-labelledby"), aTexts[i].getId());
+		}
 	});
 
 });
