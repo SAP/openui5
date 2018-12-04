@@ -29,7 +29,10 @@
 	  "minUI5Version": "1.30",
 	  "libs": {
 		"sap.m": {},
-		"sap.ui.core": {}
+		"sap.ui.core": {},
+		"sap.f": {},
+		"sap.ui.layout": {},
+		"sap.ui.codeeditor": {}
 	  }
 	},
 	"models": {
@@ -98,15 +101,20 @@
 		  "pattern": "flp",
 		  "name": "flp",
 		  "target": "flp"
-	}, {
-		"pattern": "kpiHeader",
-		"name": "kpiHeader",
-		"target": "kpiHeader"
+		}, {
+		  "pattern": "kpiHeader",
+		  "name": "kpiHeader",
+		  "target": "kpiHeader"
 		},
 		{
 		  "pattern": "analyticalContent",
 		  "name": "analyticalContent",
 		  "target": "analyticalContent"
+		},
+		{
+		  "pattern": "manifest",
+		  "name": "manifest",
+		  "target": "manifest"
 		}
 	  ],
 	  "targets": {
@@ -168,6 +176,11 @@
 		"kpiHeader": {
 		  "viewId": "kpiHeader",
 		  "viewName": "kpiHeader",
+		  "viewLevel": 1
+		},
+		"manifest": {
+		  "viewId": "manifest",
+		  "viewName": "Manifest",
 		  "viewLevel": 1
 		}
 	  }

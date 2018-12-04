@@ -1,43 +1,11 @@
 {
 	"noLayout": {
-		"card01": {
-			"sap.card": {
-				"type": "KPI",
-				"content": {
-					"data": {
-						"request": {
-							"url": "./cardcontent/kpi.json"
-						},
-						"path": "/kpiInfos/kpi"
-					},
-					"title": "Rate",
-					"number": "{number}",
-					"unit": "{unit}"
-				}
-			}
-		},
-		"card0": {
-			"sap.card": {
-				"type": "KPI",
-				"content": {
-					"data": {
-						"json": {
-							"n": 6,
-							"u": "%"
-						}
-					},
-					"title": "Success Rate",
-					"number": "{n}",
-					"unit": "{u}"
-				}
-			}
-		},
 		"card1": {
 			"sap.card": {
 				"icon":  {
 				  "src": "sap-icon://accept"
 				},
-				"type": "CustomCard"
+				"type": "List"
 			}
 		},
 		"card2": {
@@ -45,20 +13,20 @@
 				"icon":  {
 				  "src": "sap-icon://accept"
 				},
-				"type": "CustomCard"
+				"type": "List"
 			}
 		},
 		"card3": {
 			"sap.card": {
 				"title": "This line is the title of sap.f.Card",
-				"type": "CustomCard"
+				"type": "List"
 			}
 		},
 		"card4": {
 			"sap.card": {
 			  "title": "This line is the title of sap.f.Card",
 			  "subtitle": " Thi is a sap.f.Card Subtitle",
-			  "type": "CustomCard"
+			  "type": "List"
 			}
 		},
 		"card5": {
@@ -69,7 +37,7 @@
 			  "src": "../images/Woman_avatar_01.png"
 			},
 			"status": "Count",
-			"type": "CustomCard"
+			"type": "List"
 		  }
 		},
 		"card6": {
@@ -80,7 +48,7 @@
 				"title": "Card Title  4x2",
 				"subtitle": "Card Subtitle",
 				"status": "Count",
-				"type": "CustomCard"
+				"type": "List"
 			}
 		},
 		"card7": {
@@ -91,7 +59,7 @@
 				"title": "Card Title 4x4",
 				"subtitle": "Card Subtitle",
 				"status": "Count",
-				"type": "CustomCard"
+				"type": "List"
 			}
 		},
 		"card8": {
@@ -104,7 +72,7 @@
 				"title": "Card Title 4x4 with image",
 				"subtitle": "Card Subtitle",
 				"status": "Count",
-				"type": "CustomCard"
+				"type": "List"
 			}
 		},
 		"card9": {
@@ -114,7 +82,7 @@
 				"displayShape":  "Square"
 			  },
 			  "title": "Card Title 6x4 with image",
-			  "type": "CustomCard"
+			  "type": "List"
 			}
 		},
 		"card10": {
@@ -126,7 +94,7 @@
 				"title": "Card Title 6x4 Loading State",
 				"subtitle": "Content Loading State and a truncated subtitle subtitle subtitle",
 				"status": "Count",
-				"type": "CustomCard"
+				"type": "List"
 			}
 		},
 		"card11": {
@@ -141,7 +109,7 @@
 				"title": "Card with background image",
 				"subtitle": "Subtitle for the card",
 				"status": "Count",
-				"type": "CustomCard"
+				"type": "List"
 			}
 		},
 		"card12": {
@@ -153,7 +121,7 @@
 				"manifest": "sap.f.cardsdemo.cardcontent.customcomponent",
 				"subtitle": "Card Component Container is created internally",
 				"status": "",
-				"type": "CustomCard"
+				"type": "List"
 			}
 		},
 		"card13": {
@@ -252,7 +220,7 @@
 			"initials": "GK"
 		  },
 		  "status": "Count",
-		  "type": "CustomCard"
+		  "type": "List"
 		}
 	  },
 		"listContent": {
@@ -348,7 +316,7 @@
 				"title": "Card Title 2x2",
 				"subtitle": "Card Subtitle",
 				"status": "Count",
-				"type": "CustomCard"
+				"type": "List"
 			}
 		},
 		"card2": {
@@ -359,7 +327,7 @@
 				"title": "Card Title 1x1",
 				"subtitle": "Card Subtitle",
 				"status": "Count",
-				"type": "CustomCard"
+				"type": "List"
 			}
 		},
 		"card3": {
@@ -370,7 +338,7 @@
 				"title": "Card Title 2x1",
 				"subtitle": "Card Subtitle",
 				"status": "Count",
-				"type": "CustomCard"
+				"type": "List"
 			}
 		}
 	},
@@ -383,7 +351,7 @@
 				"title": "Card Title 2x2",
 				"subtitle": "Card Subtitle",
 				"status": "Count",
-				"type": "CustomCard"
+				"type": "List"
 			}
 		},
 		"card2": {
@@ -394,7 +362,7 @@
 				"title": "Card Title 2x2",
 				"subtitle": "Card Subtitle",
 				"status": "Count",
-				"type": "CustomCard"
+				"type": "List"
 			}
 		},
 		"card3": {
@@ -405,7 +373,7 @@
 				"title": "Card Title 1x1",
 				"subtitle": "Card Subtitle",
 				"status": "Count",
-				"type": "CustomCard"
+				"type": "List"
 			}
 		},
 		"card4": {
@@ -416,9 +384,7 @@
 				"title": "Card Title 2x1",
 				"subtitle": "Card Subtitle",
 				"status": "Count",
-				"type": "CustomCard",
-				"width": "100%",
-				"height": "100%"
+				"type": "List"
 			}
 		},
 		"card5": {
@@ -429,7 +395,7 @@
 				"title": "Card Title 1x1",
 				"subtitle": "Card Subtitle",
 				"status": "Count",
-				"type": "CustomCard"
+				"type": "List"
 			}
 		},
 		"card6": {
@@ -440,7 +406,7 @@
 				"title": "Card Title 4x1",
 				"subtitle": "Card Subtitle",
 				"status": "Count",
-				"type": "CustomCard"
+				"type": "List"
 			}
 		},
 		"card7": {
@@ -451,7 +417,7 @@
 				"title": "Card Title 2x6",
 				"subtitle": "Card Subtitle",
 				"status": "Count",
-				"type": "CustomCard"
+				"type": "List"
 			}
 		},
 		"card8": {
@@ -462,7 +428,7 @@
 				"title": "Card Title 4x4",
 				"subtitle": "Card Subtitle",
 				"status": "Count",
-				"type": "CustomCard"
+				"type": "List"
 			}
 		},
 		"card9": {
@@ -473,7 +439,7 @@
 				"title": "Card Title 4x4 with image",
 				"subtitle": "Card Subtitle",
 				"status": "Count",
-				"type": "CustomCard"
+				"type": "List"
 			}
 		},
 		"card10": {
@@ -484,7 +450,7 @@
 				"title": "Card Title 2x2",
 				"subtitle": "Card Subtitle",
 				"status": "Count",
-				"type": "CustomCard"
+				"type": "List"
 			}
 		},
 		"card11": {
@@ -495,7 +461,7 @@
 				"title": "Card Title 2x2",
 				"subtitle": "Card Subtitle",
 				"status": "Count",
-				"type": "CustomCard"
+				"type": "List"
 			}
 		},
 		"card12": {
@@ -506,7 +472,7 @@
 				"title": "Card Title 6x4",
 				"subtitle": "Card Subtitle",
 				"status": "Count",
-				"type": "CustomCard"
+				"type": "List"
 			}
 		},
 		"card13": {
@@ -517,7 +483,7 @@
 				"title": "Card Title 6x4",
 				"subtitle": "Card Subtitle",
 				"status": "Count",
-				"type": "CustomCard"
+				"type": "List"
 			}
 		}
 	},
@@ -530,7 +496,7 @@
 				"title": "Card Title 2x2",
 				"subtitle": "Card Subtitle",
 				"status": "Count",
-				"type": "CustomCard"
+				"type": "List"
 			}
 		},
 		"card2": {
@@ -541,7 +507,7 @@
 				"title": "Card Title 4x2",
 				"subtitle": "Card Subtitle",
 				"status": "Count",
-				"type": "CustomCard"
+				"type": "List"
 			}
 		},
 		"card3": {
@@ -552,7 +518,7 @@
 				"title": "Card Title 1x1",
 				"subtitle": "Card Subtitle",
 				"status": "Count",
-				"type": "CustomCard"
+				"type": "List"
 			}
 		},
 		"card4": {
@@ -563,7 +529,7 @@
 				"title": "Card Title 2x1",
 				"subtitle": "Card Subtitle",
 				"status": "Count",
-				"type": "CustomCard"
+				"type": "List"
 			}
 		},
 		"card5": {
@@ -574,9 +540,7 @@
 				"title": "Card Title 1x1",
 				"subtitle": "Card Subtitle",
 				"status": "Count",
-				"type": "CustomCard",
-				"width": "100%",
-				"height": "100%"
+				"type": "List"
 			}
 		},
 		"card6": {
@@ -587,7 +551,7 @@
 				"title": "Card Title 4x1",
 				"subtitle": "Card Subtitle",
 				"status": "Count",
-				"type": "CustomCard"
+				"type": "List"
 			}
 		},
 		"card7": {
@@ -598,7 +562,7 @@
 				"title": "Card Title 2x6",
 				"subtitle": "Card Subtitle",
 				"status": "Count",
-				"type": "CustomCard"
+				"type": "List"
 			}
 		},
 		"card8": {
@@ -609,7 +573,7 @@
 				"title": "Card Title 4x4",
 				"subtitle": "Card Subtitle",
 				"status": "Count",
-				"type": "CustomCard"
+				"type": "List"
 			}
 		},
 		"card9": {
@@ -620,7 +584,7 @@
 				"title": "Card Title 4x4 with image",
 				"subtitle": "Card Subtitle",
 				"status": "Count",
-				"type": "CustomCard"
+				"type": "List"
 			}
 		},
 		"card10": {
@@ -631,7 +595,7 @@
 				"title": "Card Title 2x2",
 				"subtitle": "Card Subtitle",
 				"status": "Count",
-				"type": "CustomCard"
+				"type": "List"
 			}
 		},
 		"card11": {
@@ -642,7 +606,7 @@
 				"title": "Card Title 2x2",
 				"subtitle": "Card Subtitle",
 				"status": "Count",
-				"type": "CustomCard"
+				"type": "List"
 			}
 		},
 		"card12": {
@@ -653,7 +617,7 @@
 				"title": "Card Title 6x4",
 				"subtitle": "Card Subtitle",
 				"status": "Count",
-				"type": "CustomCard"
+				"type": "List"
 			}
 		},
 		"card13": {
@@ -664,7 +628,7 @@
 				"title": "Card Title 6x4",
 				"subtitle": "Card Subtitle",
 				"status": "Count",
-				"type": "CustomCard"
+				"type": "List"
 			}
 		}
 	},
@@ -677,7 +641,7 @@
 				"title": "Card Title 2x2",
 				"subtitle": "Card Subtitle",
 				"status": "Count",
-				"type": "CustomCard"
+				"type": "List"
 			}
 		},
 		"card2": {
@@ -688,7 +652,7 @@
 				"title": "Card Title 4x2",
 				"subtitle": "Card Subtitle",
 				"status": "Count",
-				"type": "CustomCard"
+				"type": "List"
 			}
 		},
 		"card3": {
@@ -699,7 +663,7 @@
 				"title": "Card Title 1x1",
 				"subtitle": "Card Subtitle",
 				"status": "Count",
-				"type": "CustomCard"
+				"type": "List"
 			}
 		},
 		"card4": {
@@ -710,7 +674,7 @@
 				"title": "Card Title 2x1",
 				"subtitle": "Card Subtitle",
 				"status": "Count",
-				"type": "CustomCard"
+				"type": "List"
 			}
 		},
 		"card5": {
@@ -721,7 +685,7 @@
 				"title": "Card Title 1x1",
 				"subtitle": "Card Subtitle",
 				"status": "Count",
-				"type": "CustomCard"
+				"type": "List"
 			}
 		},
 		"card6": {
@@ -732,7 +696,7 @@
 				"title": "Card Title 4x1",
 				"subtitle": "Card Subtitle",
 				"status": "Count",
-				"type": "CustomCard"
+				"type": "List"
 			}
 		},
 		"card7": {
@@ -743,7 +707,7 @@
 				"title": "Card Title 2x6",
 				"subtitle": "Card Subtitle",
 				"status": "Count",
-				"type": "CustomCard"
+				"type": "List"
 			}
 		},
 		"card8": {
@@ -754,7 +718,7 @@
 				"title": "Card Title 4x4",
 				"subtitle": "Card Subtitle",
 				"status": "Count",
-				"type": "CustomCard"
+				"type": "List"
 			}
 		},
 		"card9": {
@@ -765,7 +729,7 @@
 				"title": "Card Title 4x4 with image",
 				"subtitle": "Card Subtitle",
 				"status": "Count",
-				"type": "CustomCard"
+				"type": "List"
 			}
 		},
 		"card10": {
@@ -776,7 +740,7 @@
 				"title": "Card Title 2x2",
 				"subtitle": "Card Subtitle",
 				"status": "Count",
-				"type": "CustomCard"
+				"type": "List"
 			}
 		},
 		"card11": {
@@ -787,7 +751,7 @@
 				"title": "Card Title 2x2",
 				"subtitle": "Card Subtitle",
 				"status": "Count",
-				"type": "CustomCard"
+				"type": "List"
 			}
 		},
 		"card12": {
@@ -798,7 +762,7 @@
 				"title": "Card Title 6x4",
 				"subtitle": "Card Subtitle",
 				"status": "Count",
-				"type": "CustomCard"
+				"type": "List"
 			}
 		},
 		"card13": {
@@ -809,7 +773,7 @@
 				"title": "Card Title 6x4",
 				"subtitle": "Card Subtitle",
 				"status": "Count",
-				"type": "CustomCard"
+				"type": "List"
 			}
 		}
 	},
@@ -1085,363 +1049,397 @@
 		}
 	  }
 	},
-  "analyticalContent": {
-	"line": {
-	  "sap.card": {
-		"type": "Analytical",
-		"header": {
-		  "type": "kpi",
-		  "data": {
-			"request": {
-			  "url": "./cardcontent/kpi.json"
-			},
-			"path": "/kpiInfos/kpi"
-		  },
-		  "title": "Project Cloud Transformation",
-		  "subtitle": "Revenue",
-		  "unitOfMeasurement": "EUR",
-		  "mainIndicator": {
-			"number": "{number}",
-			"unit": "{unit}",
-			"trend": "{trend}",
-			"state": "{state}",
-			"range": {
-			  "WE CAN OFFER THE USE OF RANGE OR STATE": "WE CAN OFFER THE USE OF RANGE OR STATE",
+	"analyticalContent": {
+		"line": {
+			"sap.card": {
+			"type": "Analytical",
+			"header": {
+				"type": "kpi",
+				"data": {
+				"request": {
+					"url": "./cardcontent/kpi.json"
+				},
+				"path": "/kpiInfos/kpi"
+				},
+				"title": "Project Cloud Transformation",
+				"subtitle": "Revenue",
+				"unitOfMeasurement": "EUR",
+				"mainIndicator": {
+				"number": "{number}",
+				"unit": "{unit}",
+				"trend": "{trend}",
+				"state": "{state}",
+				"range": {
+					"WE CAN OFFER THE USE OF RANGE OR STATE": "WE CAN OFFER THE USE OF RANGE OR STATE",
 
-			  "Critical": [0, 100],
-			  "Good": [100, 1000]
-			}
-		  },
-		  "details": "{details}",
-		  "sideIndicators": [
-			{
-			  "title": "Target",
-			  "number": "{target/number}",
-			  "unit": "{target/unit}"
-			},
-			{
-			  "title": "Deviation",
-			  "number": "{deviation/number}",
-			  "unit": "%"
-			}
-		  ]
-		},
-		"content": {
-		  "chart": {
-			"type": "line",
-			"vizProperties": {
-			  "legend": {
-				"visible": true
-			  },
-			  "legendGroup": {
-				"layout": {
-					"position": "right",
-					"alignment": "center"
+					"Critical": [0, 100],
+					"Good": [100, 1000]
 				}
-			  },
-			  "plotArea": {
-				"dataLabel": {
-				  "visible": true
 				},
-				"window": {
-				  "start": "firstDataPoint",
-				  "end": "lastDataPoint"
+				"details": "{details}",
+				"sideIndicators": [
+				{
+					"title": "Target",
+					"number": "{target/number}",
+					"unit": "{target/unit}"
+				},
+				{
+					"title": "Deviation",
+					"number": "{deviation/number}",
+					"unit": "%"
 				}
-			  },
-			  "title":  {
-				"text": "Line chart",
-				"visible": true,
-				"alignment": "bottom"
-			  }
+				]
 			},
-			"measureUid": "valueAxis",
-			"dimensionUid": "categoryAxis",
-			"data": {
-			  "request": {
-				"url": "./cardcontent/revenue.json"
-			  },
-			  "path": "/list"
+			"content": {
+				"chart": {
+				"type": "line",
+				"vizProperties": {
+					"legend": {
+					"visible": true
+					},
+					"legendGroup": {
+					"layout": {
+						"position": "right",
+						"alignment": "center"
+					}
+					},
+					"plotArea": {
+					"dataLabel": {
+						"visible": true
+					},
+					"window": {
+						"start": "firstDataPoint",
+						"end": "lastDataPoint"
+					}
+					},
+					"title":  {
+					"text": "Line chart",
+					"visible": true,
+					"alignment": "bottom"
+					}
+				},
+				"measureUid": "valueAxis",
+				"dimensionUid": "categoryAxis",
+				"data": {
+					"request": {
+					"url": "./cardcontent/revenue.json"
+					},
+					"path": "/list"
+				},
+				"dimensions": [
+					{
+					"label": "Weeks",
+					"value": "{Week}"
+					}
+				],
+				"measures": [
+					{
+					"label": "Revenue",
+					"value": "{Revenue}"
+					},
+					{
+					"label": "Cost",
+					"value": "{Cost}"
+					}
+				]
+				}
+			}
+			}
+		},
+		"stackedColumn": {
+			"sap.card": {
+			"type": "Analytical",
+			"header": {
+				"type": "kpi",
+				"data": {
+				"json": {
+					"n": "56",
+					"u": "%",
+					"trend": "Up",
+					"valueColor": "Good"
+				}
+				},
+				"title": "Project Cloud Transformation Project Cloud Transformation Project Cloud Transformation Project Cloud Transformation Project Cloud Transformation Project Cloud Transformation Project Cloud Transformation ",
+				"subtitle": "Forecasted goal achievement depending on business logic and other important information Forecasted goal achievement depending on business logic and other important information",
+				"unitOfMeasurement": "EUR",
+				"mainIndicator": {
+				"number": "{n}",
+				"unit": "{u}",
+				"trend": "{trend}",
+				"state": "{valueColor}"
+				},
+				"details": "Details, additional information, will directly truncate after there is no more space.Details, additional information, will directly truncate after there is no more space.",
+				"sideIndicators": [
+				{
+					"title": "Long Target Long Target Long Target Long Target Long Target Long Target Long Target Long Target Long Target Long Target Long Target Long Target Long Target Long Target Long Target",
+					"number": "3252.234",
+					"unit": "K"
+				},
+				{
+					"title": "Long Deviation Long Deviation",
+					"number": "22.43",
+					"unit": "%"
+				}
+				]
 			},
-			"dimensions": [
-			  {
-				"label": "Weeks",
-				"value": "{Week}"
-			  }
-			],
-			"measures": [
-			  {
-				"label": "Revenue",
-				"value": "{Revenue}"
-			  },
-			  {
-				"label": "Cost",
-				"value": "{Cost}"
-			  }
-			]
-		  }
+			"content": {
+				"chart": {
+				"type": "stacked_column",
+				"vizProperties": {
+					"legend": {
+					"visible": false
+					},
+					"plotArea": {
+					"dataLabel": {
+						"visible": false,
+						"showTotal": true,
+						"type": "percentage"
+					},
+					"window": {
+						"start": "firstDataPoint",
+						"end": "lastDataPoint"
+					}
+					},
+					"title":  {
+					"text": "Stacked column chart",
+					"visible": true,
+					"alignment": "bottom"
+					},
+					"valueAxis": {
+					"title": {
+						"visible": false
+					}
+					},
+					"categoryAxis": {
+					"title": {
+						"visible": true
+					}
+					}
+				},
+				"measureUid": "valueAxis",
+				"dimensionUid": "categoryAxis",
+				"data": {
+					"request": {
+					"url": "./cardcontent/revenue.json"
+					},
+					"path": "/list"
+				},
+				"dimensions": [
+					{
+					"label": "Weeks",
+					"value": "{Week}"
+					}
+				],
+				"measures": [
+					{
+					"label": "Revenue",
+					"value": "{Revenue}"
+					},
+					{
+					"label": "Cost",
+					"value": "{Cost}"
+					}
+				]
+				}
+			}
+			}
+		},
+		"stackedBar": {
+			"sap.card": {
+			"type": "Analytical",
+			"header": {
+				"type": "kpi",
+				"data": {
+				"json": {
+					"n": 6547394.45496,
+					"u": "М $",
+					"trend": "Down",
+					"valueColor": "Critical"
+				}
+				},
+				"subtitle": "Success Rate",
+				"mainIndicator": {
+				"number": "{n}",
+				"unit": "{u}",
+				"trend": "{trend}",
+				"state": "{valueColor}"
+				},
+				"sideIndicators": [
+				{
+					"title": "Decrease",
+					"number": "24",
+					"unit": "weeks"
+				}
+				]
+			},
+			"content": {
+				"chart": {
+				"type": "stacked_bar",
+				"vizProperties": {
+					"legend": {
+					"visible": true
+					},
+					"legendGroup": {
+					"layout": {
+						"position": "bottom",
+						"alignment": "center"
+					}
+					},
+					"plotArea": {
+					"dataLabel": {
+						"visible": true,
+						"showTotal": false,
+						"type": "percentage"
+					},
+					"window": {
+						"start": "firstDataPoint",
+						"end": "lastDataPoint"
+					}
+					},
+					"title":  {
+					"text": "Stacked Bar chart",
+					"visible": true,
+					"alignment": "bottom"
+					}
+				},
+				"measureUid": "valueAxis",
+				"dimensionUid": "categoryAxis",
+				"data": {
+					"request": {
+					"url": "./cardcontent/revenue.json"
+					},
+					"path": "/list"
+				},
+				"dimensions": [
+					{
+					"label": "Weeks",
+					"value": "{Week}"
+					}
+				],
+				"measures": [
+					{
+					"label": "Revenue",
+					"value": "{Revenue}"
+					}
+				]
+				}
+			}
+			}
+		},
+		"donut": {
+			"sap.card": {
+			"type": "Analytical",
+			"header": {
+				"type": "kpi",
+				"data": {
+				"json": {
+					"n": 6547394.45496,
+					"u": "М $",
+					"trend": "Down",
+					"valueColor": "Critical"
+				}
+				},
+				"subtitle": "Success Rate",
+				"mainIndicator": {
+				"number": "{n}",
+				"unit": "{u}",
+				"trend": "{trend}",
+				"state": "{valueColor}"
+				},
+				"sideIndicators": [
+				{
+					"title": "Decrease",
+					"number": "24",
+					"unit": "weeks"
+				}
+				]
+			},
+			"content": {
+				"chart": {
+				"type": "donut",
+				"vizProperties": {
+					"legend": {
+					"visible": true
+					},
+					"legendGroup": {
+					"layout": {
+						"position": "top",
+						"alignment": "center"
+					}
+					},
+					"plotArea": {
+					"dataLabel": {
+						"visible": true,
+						"showTotal": true
+					},
+					"window": {
+						"start": "firstDataPoint",
+						"end": "lastDataPoint"
+					}
+					},
+					"title":  {
+					"text": "Donut chart",
+					"visible": true,
+					"alignment": "bottom"
+					}
+				},
+				"measureUid": "size",
+				"dimensionUid": "color",
+				"data": {
+					"request": {
+					"url": "./cardcontent/cost.json"
+					},
+					"path": "/milk"
+				},
+				"dimensions": [
+					{
+					"label": "Store Name",
+					"value": "{Store Name}"
+					}
+				],
+				"measures": [
+					{
+					"label": "Revenue",
+					"value": "{Revenue}"
+					}
+				]
+				}
+			}
+			}
 		}
-	  }
 	},
-	"stackedColumn": {
-	  "sap.card": {
-		"type": "Analytical",
-		"header": {
-		  "type": "kpi",
-		  "data": {
-			"json": {
-			  "n": "56",
-			  "u": "%",
-			  "trend": "Up",
-			  "valueColor": "Good"
-			}
-		  },
-		  "title": "Project Cloud Transformation Project Cloud Transformation Project Cloud Transformation Project Cloud Transformation Project Cloud Transformation Project Cloud Transformation Project Cloud Transformation ",
-		  "subtitle": "Forecasted goal achievement depending on business logic and other important information Forecasted goal achievement depending on business logic and other important information",
-		  "unitOfMeasurement": "EUR",
-		  "mainIndicator": {
-			"number": "{n}",
-			"unit": "{u}",
-			"trend": "{trend}",
-			"state": "{valueColor}"
-		  },
-		  "details": "Details, additional information, will directly truncate after there is no more space.Details, additional information, will directly truncate after there is no more space.",
-		  "sideIndicators": [
-			{
-			  "title": "Long Target Long Target Long Target Long Target Long Target Long Target Long Target Long Target Long Target Long Target Long Target Long Target Long Target Long Target Long Target",
-			  "number": "3252.234",
-			  "unit": "K"
-			},
-			{
-			  "title": "Long Deviation Long Deviation",
-			  "number": "22.43",
-			  "unit": "%"
-			}
-		  ]
-		},
-		"content": {
-		  "chart": {
-			"type": "stacked_column",
-			"vizProperties": {
-			  "legend": {
-				"visible": false
-			  },
-			  "plotArea": {
-				"dataLabel": {
-				  "visible": false,
-				  "showTotal": true,
-				  "type": "percentage"
+	"manifestTests": {
+		"manifest": {
+			"sap.card": {
+				"title": "Request list content Card",
+				"subTitle": "Card Subtitle",
+				"type": "List",
+				"icon":  {
+					"src": "sap-icon://accept"
 				},
-				"window": {
-				  "start": "firstDataPoint",
-				  "end": "lastDataPoint"
+				"status": "100 of 200",
+				"content": {
+					"data": {
+						"request": {
+							"url": "./cardcontent/someitems.json"
+						}
+					},
+					"item": {
+						"icon": {
+							"label": "{{icon_label}}",
+							"value": "{icon}"
+						},
+						"title": {
+							"label": "{{title_label}}",
+							"value": "{Name}"
+						},
+						"description": {
+							"label": "{{description_label}}",
+							"value": "{Description}"
+						}
+					}
 				}
-			  },
-			  "title":  {
-				"text": "Stacked column chart",
-				"visible": true,
-				"alignment": "bottom"
-			  },
-			  "valueAxis": {
-				"title": {
-				  "visible": false
-				}
-			  },
-			  "categoryAxis": {
-				"title": {
-				  "visible": true
-				}
-			  }
-			},
-			"measureUid": "valueAxis",
-			"dimensionUid": "categoryAxis",
-			"data": {
-			  "request": {
-				"url": "./cardcontent/revenue.json"
-			  },
-			  "path": "/list"
-			},
-			"dimensions": [
-			  {
-				"label": "Weeks",
-				"value": "{Week}"
-			  }
-			],
-			"measures": [
-			  {
-				"label": "Revenue",
-				"value": "{Revenue}"
-			  },
-			  {
-				"label": "Cost",
-				"value": "{Cost}"
-			  }
-			]
-		  }
+			}
 		}
-	  }
-	},
-	"stackedBar": {
-	  "sap.card": {
-		"type": "Analytical",
-		"header": {
-		  "type": "kpi",
-		  "data": {
-			"json": {
-			  "n": 6547394.45496,
-			  "u": "М $",
-			  "trend": "Down",
-			  "valueColor": "Critical"
-			}
-		  },
-		  "subtitle": "Success Rate",
-		  "mainIndicator": {
-			"number": "{n}",
-			"unit": "{u}",
-			"trend": "{trend}",
-			"state": "{valueColor}"
-		  },
-		  "sideIndicators": [
-			{
-			  "title": "Decrease",
-			  "number": "24",
-			  "unit": "weeks"
-			}
-		  ]
-		},
-		"content": {
-		  "chart": {
-			"type": "stacked_bar",
-			"vizProperties": {
-			  "legend": {
-				"visible": true
-			  },
-			  "legendGroup": {
-				"layout": {
-				  "position": "bottom",
-				  "alignment": "center"
-				}
-			  },
-			  "plotArea": {
-				"dataLabel": {
-				  "visible": true,
-				  "showTotal": false,
-				  "type": "percentage"
-				},
-				"window": {
-				  "start": "firstDataPoint",
-				  "end": "lastDataPoint"
-				}
-			  },
-			  "title":  {
-				"text": "Stacked Bar chart",
-				"visible": true,
-				"alignment": "bottom"
-			  }
-			},
-			"measureUid": "valueAxis",
-			"dimensionUid": "categoryAxis",
-			"data": {
-			  "request": {
-				"url": "./cardcontent/revenue.json"
-			  },
-			  "path": "/list"
-			},
-			"dimensions": [
-			  {
-				"label": "Weeks",
-				"value": "{Week}"
-			  }
-			],
-			"measures": [
-			  {
-				"label": "Revenue",
-				"value": "{Revenue}"
-			  }
-			]
-		  }
-		}
-	  }
-	},
-	"donut": {
-	  "sap.card": {
-		"type": "Analytical",
-		"header": {
-		  "type": "kpi",
-		  "data": {
-			"json": {
-			  "n": 6547394.45496,
-			  "u": "М $",
-			  "trend": "Down",
-			  "valueColor": "Critical"
-			}
-		  },
-		  "subtitle": "Success Rate",
-		  "mainIndicator": {
-			"number": "{n}",
-			"unit": "{u}",
-			"trend": "{trend}",
-			"state": "{valueColor}"
-		  },
-		  "sideIndicators": [
-			{
-			  "title": "Decrease",
-			  "number": "24",
-			  "unit": "weeks"
-			}
-		  ]
-		},
-		"content": {
-		  "chart": {
-			"type": "donut",
-			"vizProperties": {
-			  "legend": {
-				"visible": true
-			  },
-			  "legendGroup": {
-				"layout": {
-				  "position": "top",
-				  "alignment": "center"
-				}
-			  },
-			  "plotArea": {
-				"dataLabel": {
-				  "visible": true,
-				  "showTotal": true
-				},
-				"window": {
-				  "start": "firstDataPoint",
-				  "end": "lastDataPoint"
-				}
-			  },
-			  "title":  {
-				"text": "Donut chart",
-				"visible": true,
-				"alignment": "bottom"
-			  }
-			},
-			"measureUid": "size",
-			"dimensionUid": "color",
-			"data": {
-			  "request": {
-				"url": "./cardcontent/cost.json"
-			  },
-			  "path": "/milk"
-			},
-			"dimensions": [
-			  {
-				"label": "Store Name",
-				"value": "{Store Name}"
-			  }
-			],
-			"measures": [
-			  {
-				"label": "Revenue",
-				"value": "{Revenue}"
-			  }
-			]
-		  }
-		}
-	  }
 	}
-  }
 }
