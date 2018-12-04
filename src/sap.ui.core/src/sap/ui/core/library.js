@@ -1367,6 +1367,7 @@ sap.ui.define(['sap/ui/base/DataType', './CalendarType', './Core'],
 
 		/**
 		 * Sorting is not applied.
+		 * @public
 		 */
 		None : "None",
 
