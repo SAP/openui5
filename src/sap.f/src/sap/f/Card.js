@@ -11,7 +11,8 @@ sap.ui.define([
 	"sap/f/CardRenderer",
 	"sap/m/Text",
 	"sap/f/Avatar",
-	"sap/ui/Device"
+	"sap/ui/Device",
+	"sap/ui/core/ComponentContainer"
 ], function (
 	library,
 	Control,
@@ -21,7 +22,8 @@ sap.ui.define([
 	CardRenderer,
 	Text,
 	Avatar,
-	Device
+	Device,
+	ComponentContainer
 ) {
 	"use strict";
 	/**
@@ -192,11 +194,9 @@ sap.ui.define([
 
 	Card.prototype.setManifest = function (vValue) {
 		this.setBusy(true);
-		var oCurrentContent = this.getAggregation("_content");
-		oCurrentContent && oCurrentContent.destroy("keepDom");
 		this.setProperty("manifest", vValue, true);
 		if (typeof vValue === "string") {
-			this.initComponent(vValue);
+			this.initManifest(vValue);
 		} else if (typeof vValue === "object") {
 			this._oCardManifest = new CardManifest(vValue);
 			this.applyManifestSettings();
@@ -232,12 +232,11 @@ sap.ui.define([
 		}
 	};
 
-	Card.prototype.initComponent = function (sComponentName) {
-		var sUrl = jQuery.sap.getModulePath(sComponentName) + "/manifest.json",
-			oPromise = Manifest.load({
-				manifestUrl: sUrl,
-				async: true
-			});
+	Card.prototype.initManifest = function (sManifestUrl) {
+		var oPromise = Manifest.load({
+			manifestUrl: sManifestUrl,
+			async: true
+		});
 
 		oPromise.then(function (oManifest) {
 			var oJson = oManifest._oRawManifest;
@@ -247,7 +246,7 @@ sap.ui.define([
 				if (this._oCardManifest.get("sap.app/type") !== "card") {
 					throw Error("sap.app/type entry in manifest is not 'card'");
 				}
-				this.applyManifestSettings(sComponentName);
+				this.applyManifestSettings();
 			}.bind(this));
 		}.bind(this));
 	};
@@ -278,7 +277,7 @@ sap.ui.define([
 		return this;
 	};
 
-	Card.prototype.applyManifestSettings = function (sComponentName) {
+	Card.prototype.applyManifestSettings = function () {
 
 		this._createHeader();
 
@@ -292,7 +291,7 @@ sap.ui.define([
 		this._setPropertyFromManifest("backgroundImage");
 		this._setPropertyFromManifest("backgroundSize");
 
-		this._setContent(sComponentName);
+		this._setContent();
 	};
 
 	Card.prototype._createHeader = function (oHeader) {
@@ -333,7 +332,7 @@ sap.ui.define([
 		this.setBusy(false);
 	};
 
-	Card.prototype._setContent = function (sComponentName) {
+	Card.prototype._setContent = function () {
 		var sCardType = this._oCardManifest.get("sap.card/type");
 
 		if (!sCardType) {
@@ -341,16 +340,13 @@ sap.ui.define([
 			return;
 		}
 
-		if (sCardType === "CustomCard" && sComponentName) {
-			sap.ui.require(["sap/ui/core/ComponentContainer"], function (ComponentContainer) {
-				var oContent = new ComponentContainer({
-					name: sComponentName,
-					async: true,
-					manifest: this._oCardManifest.getJson(),
-					settings: {}
-				});
-				this.setContent(oContent);
+		if (sCardType === "Custom") {
+			var oContent = new ComponentContainer({
+				async: true,
+				manifest: this._oCardManifest.getJson(),
+				settings: {}
 			});
+			this.setContent(oContent);
 		} else {
 			switch (sCardType.toLowerCase()) {
 			case "list":  sap.ui.require(["sap/f/cards/content/List"], this._setCardContent.bind(this));

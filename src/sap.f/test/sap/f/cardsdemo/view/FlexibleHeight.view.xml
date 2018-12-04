@@ -84,7 +84,7 @@
 							</f:layoutData>
 						</f:Card>
 
-						<f:Card id="default4x2withcomponent" manifest="sap.f.cardsdemo.cardcontent.listcomponent">
+						<f:Card id="default4x2withcomponent" manifest="./cardcontent/listcomponent/manifest.json">
 							<f:layoutData>
 								<grid:GridItemLayoutData gridRow="span 2" gridColumn="span 4" />
 							</f:layoutData>
