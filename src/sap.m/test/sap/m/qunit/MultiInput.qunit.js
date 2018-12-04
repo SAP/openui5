@@ -798,11 +798,13 @@ sap.ui.define([
 			phone: true,
 			tablet: false
 		});
+
 		oMI = new MultiInput({
 			change: function (oEvent) {
 				sValue = oEvent.getParameter("value");
 			}
 		}).placeAt("qunit-fixture");
+		sap.ui.getCore().applyChanges();
 
 		// Act
 		oMI._oSuggPopover._oPopover.open();
