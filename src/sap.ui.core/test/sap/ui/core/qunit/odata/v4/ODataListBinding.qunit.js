@@ -934,7 +934,7 @@ sap.ui.define([
 			.returns(sResolvedPath);
 		this.mock(Context).expects("create")
 			.withExactArgs(sinon.match.same(this.oModel), sinon.match.same(oBinding),
-				sResolvedPath + "/-2", -2)
+				sResolvedPath + "/" + Context.VIRTUAL, Context.VIRTUAL)
 			.returns(oVirtualContext);
 		oAddPrerenderingTaskSpy = this.mock(sap.ui.getCore()).expects("addPrerenderingTask")
 			.withExactArgs(sinon.match.func, true);

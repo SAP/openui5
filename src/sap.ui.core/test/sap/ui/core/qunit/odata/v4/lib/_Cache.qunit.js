@@ -144,7 +144,8 @@ sap.ui.define([
 		 *   The cache
 		 */
 		createSingle : function (sResourcePath, mQueryOptions, bPost) {
-			return _Cache.createSingle(this.oRequestor, sResourcePath, mQueryOptions, false, bPost);
+			return _Cache.createSingle(this.oRequestor, sResourcePath, mQueryOptions, undefined,
+				false, bPost);
 		},
 
 		/**
@@ -238,8 +239,8 @@ sap.ui.define([
 	//*********************************************************************************************
 	QUnit.test("_Cache: single cache with optional meta path", function (assert) {
 		var sMetaPath = "/com.sap.gateway.default.iwbep.tea_busi.v0001.TEAM",
-			oSingleCache = _Cache.createSingle(this.oRequestor, "TEAMS('42')", undefined, false,
-				false, sMetaPath);
+			oSingleCache = _Cache.createSingle(this.oRequestor, "TEAMS('42')", undefined, undefined,
+				false, false, sMetaPath);
 
 		assert.strictEqual(oSingleCache.sMetaPath, sMetaPath);
 
@@ -1525,7 +1526,7 @@ sap.ui.define([
 		// create after the mocks have been set up, otherwise they won't be called
 		oCache = _Cache.createSingle(this.oRequestor,
 			"TEAMS(TeamId='42',IsActiveEntity=true)/name.space.EditAction",
-			{}, true, true,
+			{}, "TEAMS(...)", true, true,
 			"/TEAMS/name.space.EditAction/@$ui5.overload/0/$ReturnType",
 			true /*bFetchOperationReturnType*/);
 
@@ -1788,7 +1789,7 @@ sap.ui.define([
 			};
 
 		this.oRequestorMock.expects("reportBoundMessages")
-			.withExactArgs(oCache.sResourcePath, mExpectedMessages, undefined);
+			.withExactArgs(oCache.sResourcePath, mExpectedMessages, ["SO_2_BP"]);
 
 		// code under test
 		oCache.visitResponse(oData, mTypeForMetaPath, "/SalesOrderList/SO_2_BP", "SO_2_BP");
@@ -1813,7 +1814,7 @@ sap.ui.define([
 			};
 
 		this.oRequestorMock.expects("reportBoundMessages")
-			.withExactArgs(oCache.sResourcePath, mExpectedMessages, undefined);
+			.withExactArgs(oCache.sResourcePath, mExpectedMessages, ["('0500000001')/SO_2_BP"]);
 
 		// code under test
 		oCache.visitResponse(oData, mTypeForMetaPath, "/SalesOrderList/SO_2_BP",
@@ -1833,6 +1834,7 @@ sap.ui.define([
 					SalesOrderID : "0500000001"
 				},
 				mExpectedMessages = {},
+				sMessagePath = bKeepTransientPath !== false ? "/-1" : "('0500000001')",
 				mTypeForMetaPath = {
 					"/SalesOrderList" : {
 						"@com.sap.vocabularies.Common.v1.Messages" : {$Path : "Messages"},
@@ -1848,10 +1850,10 @@ sap.ui.define([
 				// of key predicate and are thus forced to keep
 				delete oData.SalesOrderID; // missing key property -> no key predicate available
 			}
-			mExpectedMessages[bKeepTransientPath !== false ? "/-1" : "('0500000001')"] = aMessages;
+			mExpectedMessages[sMessagePath] = aMessages;
 
 			this.oRequestorMock.expects("reportBoundMessages")
-				.withExactArgs(oCache.sResourcePath, mExpectedMessages, undefined);
+				.withExactArgs(oCache.sResourcePath, mExpectedMessages, [sMessagePath]);
 
 			// code under test
 			oCache.visitResponse(oData, mTypeForMetaPath, "/SalesOrderList", "/-1",
@@ -1886,7 +1888,8 @@ sap.ui.define([
 			};
 
 		this.oRequestorMock.expects("reportBoundMessages")
-			.withExactArgs(oCache.sResourcePath, mExpectedMessages, undefined);
+			.withExactArgs(oCache.sResourcePath, mExpectedMessages,
+				["('0500000001')/SO_2_SOITEM(SalesOrderID='0500000001',ItemPosition='42')"]);
 
 		// code under test
 		oCache.visitResponse(oData, mTypeForMetaPath, "/SalesOrderList/SO_2_SOITEM",
@@ -2258,6 +2261,42 @@ sap.ui.define([
 			"/foo/bar/img_3.jpg");
 		assert.strictEqual(oData.value[0].foo[0].bar[0].messages[0].longtextUrl,
 			"/foo/bar/Longtext(3)");
+	});
+
+	//*********************************************************************************************
+	QUnit.test("_Cache#visitResponse: operation message", function (assert) {
+		var sOriginalResourcePath = "OperationImport(...)",
+			oCache = _Cache.createSingle(this.oRequestor, "OperationImport", {},
+				false, getOriginalResourcePath, false, undefined, true),
+			oData = {
+				messages : [{
+					message : "text"
+				}]
+			},
+			mExpectedMessages = {
+				"" : [{
+					message : "text"
+				}]
+			},
+			mTypeForMetaPath = {
+				"/OperationImport" : {
+					"@com.sap.vocabularies.Common.v1.Messages" : {$Path : "messages"},
+					$Key : ["id"],
+					id : {$Type : "Edm.Int32"}
+				}
+			};
+
+		function getOriginalResourcePath(oValue) {
+			assert.strictEqual(oValue, oData);
+			return sOriginalResourcePath;
+		}
+
+		mExpectedMessages[""].$count = 1;
+		this.oRequestorMock.expects("reportBoundMessages")
+			.withExactArgs(sOriginalResourcePath, mExpectedMessages, undefined);
+
+		// code under test
+		oCache.visitResponse(oData, mTypeForMetaPath);
 	});
 
 	//*********************************************************************************************
@@ -4100,7 +4139,7 @@ sap.ui.define([
 			.returns(SyncPromise.resolve(Promise.resolve(mTypeForMetaPath)));
 
 		oCache = _Cache.createSingle(this.oRequestor, sResourcePath, mQueryParams, true, undefined,
-			sMetaPath);
+			undefined, sMetaPath);
 		oCacheMock = this.mock(oCache);
 
 		oCacheMock.expects("registerChange").withExactArgs(undefined, sinon.match.same(oListener1));
@@ -4164,7 +4203,7 @@ sap.ui.define([
 			.returns(SyncPromise.resolve(Promise.resolve(mTypeForMetaPath)));
 
 		oCache = _Cache.createSingle(this.oRequestor, sResourcePath, mQueryParams, true, undefined,
-			sMetaPath, true);
+			undefined, sMetaPath, true);
 		oCacheMock = this.mock(oCache);
 
 		this.oRequestorMock.expects("request")
@@ -4313,8 +4352,8 @@ sap.ui.define([
 			var oGroupLock = new _GroupLock("group"),
 				sMetaPath = "/TEAMS/name.space.EditAction/@$ui5.overload/0/$ReturnType",
 				sResourcePath = "TEAMS(TeamId='42',IsActiveEntity=true)/name.space.EditAction",
-				oCache = _Cache.createSingle(this.oRequestor, sResourcePath, {}, true, true,
-					sMetaPath, bFetchOperationReturnType),
+				oCache = _Cache.createSingle(this.oRequestor, sResourcePath, {}, true, undefined,
+					true, sMetaPath, bFetchOperationReturnType),
 				oReturnValue = {},
 				mTypes = {};
 
@@ -4324,13 +4363,11 @@ sap.ui.define([
 					{"If-Match" : undefined}, undefined)
 				.resolves(oReturnValue);
 			this.mock(oCache).expects("fetchTypes")
-				.exactly(bFetchOperationReturnType ? 1 : 0)
 				.withExactArgs()
 				.resolves(mTypes);
 			this.mock(oCache).expects("visitResponse")
-				.exactly(bFetchOperationReturnType ? 1 : 0)
 				.withExactArgs(sinon.match.same(oReturnValue), sinon.match.same(mTypes),
-					sMetaPath + "/$Type");
+					bFetchOperationReturnType ? sMetaPath + "/$Type" : undefined);
 
 			// code under test
 			return oCache.post(oGroupLock);
@@ -4689,14 +4726,13 @@ sap.ui.define([
 
 	//*********************************************************************************************
 	QUnit.test("SingleCache#requestSideEffects: $expand in intersection", function (assert) {
-		var oCache = this.createSingle("Employees('42')"),
-			oError = new Error("Unsupported navigation property in B/C"),
+		var oCache = this.createSingle("Me"),
+			oError = new Error("Unsupported collection-valued navigation property /Me/B/C"),
 			aPaths = ["B/C"];
 
 		this.mock(_Helper).expects("intersectQueryOptions").withExactArgs(
 				sinon.match.same(oCache.mQueryOptions), sinon.match.same(aPaths),
-				sinon.match.same(this.oRequestor.getModelInterface().fnFetchMetadata),
-				"/Employees/$Type")
+				sinon.match.same(this.oRequestor.getModelInterface().fnFetchMetadata), "/Me/$Type")
 			.throws(oError);
 
 		assert.throws(function () {

@@ -9,8 +9,9 @@ sap.ui.define([
 	"sap/base/Log",
 	"sap/ui/base/SyncPromise",
 	"sap/ui/model/ChangeReason",
+	"sap/ui/model/odata/v4/Context",
 	"sap/ui/model/PropertyBinding"
-], function (asODataBinding, _Cache, Log, SyncPromise, ChangeReason, PropertyBinding) {
+], function (asODataBinding, _Cache, Log, SyncPromise, ChangeReason, Context, PropertyBinding) {
 	"use strict";
 	/*eslint max-nested-callbacks: 0 */
 
@@ -237,7 +238,8 @@ sap.ui.define([
 					// binding is unresolved or context was reset by another call to checkUpdate
 					return undefined;
 				}
-				if (that.oContext.getIndex() === -2) { // virtual parent context: no change event
+				if (that.oContext.getIndex() === Context.VIRTUAL) {
+					// virtual parent context: no change event
 					oCallToken.forceUpdate = false;
 				}
 				return that.oContext.fetchValue(that.sPath, that);

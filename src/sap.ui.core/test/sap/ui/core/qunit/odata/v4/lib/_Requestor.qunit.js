@@ -2913,7 +2913,7 @@ sap.ui.define([
 				}, { // unused collection parameter must not lead to an error
 					$Name : "p3",
 					//$Nullable : true,
-					$IsCollection : true
+					$isCollection : true
 				}]
 			},
 			oRequestor = _Requestor.create("/"),
@@ -2948,7 +2948,7 @@ sap.ui.define([
 	QUnit.test("getPathAndAddQueryOptions: Function w/ collection parameter", function (assert) {
 		var oOperationMetadata = {
 				$kind : "Function",
-				$Parameter : [{$Name : "foo", $IsCollection : true}]
+				$Parameter : [{$Name : "foo", $isCollection : true}]
 			},
 			oRequestor = _Requestor.create("/");
 

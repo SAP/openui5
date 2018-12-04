@@ -150,6 +150,10 @@
 			"$Precision" : 16,
 			"$Scale" : "variable"
 		},
+        "__CT__FAKE__Message": {
+            "$kind": "Property",
+            "$Type": "com.sap.gateway.default.iwbep.tea_busi.v0001.__CT__FAKE__Message"
+        },
 		"TEAM_2_EMPLOYEES" : {
 			"$kind" : "NavigationProperty",
 			"$isCollection" : true,
@@ -816,7 +820,12 @@
 			"com.sap.gateway.default.iwbep.tea_busi.v0001.TEAM/DEPARTMENT_ID" : {
 				"@com.sap.vocabularies.Common.v1.ValueListReferences" : ["../../../../f4/iwbep/v4_tea_department_id-fv/0001;ps='default-*iwbep*tea_busi-0001';va='com.sap.gateway.default.iwbep.tea_busi.v0001.ET-TEAM.DEPARTMENT_ID'/$metadata\n\t\t\t\t\t\t"],
 				"@com.sap.vocabularies.Common.v1.ValueListWithFixedValues" : true
-			}
+			},
+			"com.sap.gateway.default.iwbep.tea_busi.v0001.TEAM": {
+				"@com.sap.vocabularies.Common.v1.Messages": {
+          			"$Path": "__CT__FAKE__Message/__FAKE__Messages"
+				}
+            }
 		}
 	}
 }
