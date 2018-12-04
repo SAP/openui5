@@ -21,7 +21,8 @@ sap.ui.define([
 			var that = this,
 				vPromiseOrObject,
 				sName,
-				oInstanceCache;
+				oInstanceCache,
+				aWrittenIds = [];
 
 			function fnCreateObjectAsync() {
 				switch (sType) {
@@ -44,7 +45,10 @@ sap.ui.define([
 
 			function afterLoaded(oObject) {
 				if (that._oCache) { // the TargetCache may already be destroyed
-					oInstanceCache[oOptions.id] = oObject;
+					aWrittenIds.forEach(function(sId) {
+						oInstanceCache[sId] = oObject;
+					});
+
 					that.fireCreated({
 						object: oObject,
 						type: sType,
@@ -83,9 +87,15 @@ sap.ui.define([
 
 			if (!oInstanceCache) {
 				oInstanceCache = this._oCache[sType.toLowerCase()][sName] = {};
+				// save the object also to the undefined key if this is the first object created for its class
+				oInstanceCache[undefined] = vPromiseOrObject;
+				aWrittenIds.push(undefined);
 			}
 
-			oInstanceCache[oOptions.id] = vPromiseOrObject;
+			if (oOptions.id !== undefined) {
+				oInstanceCache[oOptions.id] = vPromiseOrObject;
+				aWrittenIds.push(oOptions.id);
+			}
 
 			return vPromiseOrObject;
 		},

@@ -92,7 +92,7 @@ sap.ui.define([
 
 		return oPromise.then(function (oComponent) {
 			assert.strictEqual(oComponent, that.oComponent, "The correct component instance is passed to promise resolve");
-			assert.strictEqual(that.oCache._oCache.component[oOptions.name][undefined], undefined, "The component instance isn't saved under the undefined key");
+			assert.strictEqual(that.oCache._oCache.component[oOptions.name][undefined], oComponent, "The component instance is also saved under the undefined key");
 			assert.strictEqual(that.oCache._oCache.component[oOptions.name][oOptions.id], oComponent, "The component instance is saved under the undefined key");
 		});
 	});

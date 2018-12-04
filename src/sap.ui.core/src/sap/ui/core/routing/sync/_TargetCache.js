@@ -45,9 +45,13 @@ sap.ui.define(["sap/base/Log", "sap/ui/core/mvc/View"], function(Log, View) {
 
 			if (!oInstanceCache) {
 				oInstanceCache = this._oCache.view[sViewName] = {};
+				// save the object also to the undefined key if this is the first view created for its class
+				oInstanceCache[undefined] = oView;
 			}
 
-			oInstanceCache[oOptions.id] = oView;
+			if (oOptions.id !== undefined) {
+				oInstanceCache[oOptions.id] = oView;
+			}
 
 			this.fireCreated({
 				object: oView,
