@@ -554,6 +554,8 @@ sap.ui.define([
 		// The lazy loading helper needs media information, hence instantiated on onBeforeRendering, where contextual width is available
 		this._oLazyLoading = new LazyLoading(this);
 
+		this._deregisterCustomEvents();
+
 		if (!this.getVisible()) {
 			return;
 		}
@@ -904,7 +906,7 @@ sap.ui.define([
 			this._bInitializedMedia = true;
 		}
 
-		this._$opWrapper.on("scroll", this._onScroll.bind(this));
+		this._$opWrapper.on("scroll.OPL", this._onScroll.bind(this));
 
 		//the dom is already ready (re-rendering case), thus we compute the header immediately
 		//in order to avoid flickering (see Incident 1570011343)
@@ -954,7 +956,7 @@ sap.ui.define([
 		}
 
 		if (Device.system.desktop) {
-			this._$opWrapper.on("scroll", this.onWrapperScroll.bind(this));
+			this._$opWrapper.on("scroll.OPL", this.onWrapperScroll.bind(this));
 		}
 
 		this._registerOnContentResize();
@@ -1054,6 +1056,8 @@ sap.ui.define([
 			this._oObserver.disconnect();
 			this._oObserver = null;
 		}
+
+		this._deregisterCustomEvents();
 
 		// setting these to null is necessary because
 		// some late callbacks may still have access to the page
@@ -2603,6 +2607,16 @@ sap.ui.define([
 		return iReachableScrollTop >= oRequiredScrollTop;
 	};
 
+	/**
+	 * removes all the events which are not using event delegation and bound with jQuery#on
+	 * these custom events are bound with "OPL" namespace
+	 * @private
+	 */
+	ObjectPageLayout.prototype._deregisterCustomEvents = function () {
+		if (this._$opWrapper.length) {
+			this._$opWrapper.off(".OPL");
+		}
+	};
 
 	/**
 	 * called when the user scrolls on the page
