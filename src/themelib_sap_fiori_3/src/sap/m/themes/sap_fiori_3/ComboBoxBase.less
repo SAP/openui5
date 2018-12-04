@@ -1,0 +1,51 @@
+/* =================================== */
+/* CSS for control sap.m/ComboBoxBase  */
+/* Fiori 3 theme                       */
+/* =================================== */
+
+/* ------------------------------ */
+/* text field                     */
+/* ------------------------------ */
+
+/* ------------------------------ */
+/* picker                         */
+/* ------------------------------ */
+
+div.sapMComboBoxBasePicker {
+	box-shadow: @sapUiShadowLevel1;
+	border: none;
+
+	& .sapMComboBoxBasePickerValueState .sapMComboBoxBasePickerTitle.sapMTitle {
+		padding-left: 0.75rem;
+	}
+}
+
+.sapMComboBoxBaseBar {
+	box-shadow: none;
+}
+
+div.sapMComboBoxBasePicker .sapMComboBoxBasePickerValueState {
+	font-size: @sapMFontSmallSize;
+	height: 2rem;
+	line-height: 2rem;
+	padding-left: 1rem;
+
+	&.sapMComboBoxBasePickerErrorState {
+		background: @sapUiErrorBG;
+		color: @sapUiBaseText;
+	}
+
+	&.sapMComboBoxBasePickerSuccessState {
+		background: @sapUiSuccessBG;
+		color: @sapUiBaseText;
+	}
+
+	&.sapMComboBoxBasePickerWarningState {
+		background: @sapUiWarningBG;
+		color: @sapUiBaseText;
+	}
+}
+
+.sapMComboBoxBasePickerNoneState {
+	display: none;
+}

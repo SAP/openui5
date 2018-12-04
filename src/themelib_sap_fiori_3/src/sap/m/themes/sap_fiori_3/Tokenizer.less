@@ -1,0 +1,24 @@
+/* ================================ */
+/* CSS for control sap.m/Tokenizer  */
+/* Fiori 3 theme                    */
+/* ================================ */
+
+html[data-sap-ui-browser^="ie"].sap-desktop, /* TODO remove after 1.62 version */
+html[data-sap-ui-browser^="ed"].sap-desktop {
+	.sapMTokenizer:focus {
+		&:before {
+			border: 1px dotted @sapUiContentFocusColor;
+		}
+	}
+}
+
+/* editable tokens in read-only tokenizer */
+.sapMTokenizer.sapMTokenizerReadonly {
+	.sapMToken {
+		color: @sapUiContentForegroundTextColor;
+
+		&.sapMTokenSelected {
+			color: @sapUiToggleButtonPressedTextColor;
+		}
+	}
+}

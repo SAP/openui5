@@ -254,6 +254,11 @@ module.exports = function(grunt) {
 					type: 'theme'
 			},
 			{
+					name: 'themelib_sap_fiori_3',
+					path: 'src/themelib_sap_fiori_3',
+					type: 'theme'
+			},
+			{
 					name: 'sap.ui.demokit',
 					path: 'src/sap.ui.demokit',
 					bower: false // exclude from bower publish

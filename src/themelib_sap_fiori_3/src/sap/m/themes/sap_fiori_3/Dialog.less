@@ -1,0 +1,34 @@
+/* ============================= */
+/* CSS for control sap.m/Dialog  */
+/* Fiori 3 theme                 */
+/* ============================= */
+
+@_sap_m_Dialog_HeaderShadowColor: darken(@sapUiGroupContentBackground, 8);
+
+.sapMDialog.sapMPopup-CTX > header .sapMHeader-CTX,
+.sapMDialog.sapMPopup-CTX > header .sapMSubHeader-CTX {
+	background-color: @sapUiGroupContentBackground;
+}
+
+.sapMDialog.sapMDialogWithSubHeader > header > .sapMIBar,
+.sapMDialog > header > .sapMIBar {
+	box-shadow: none;
+}
+
+.sapMDialog:not(.sapMDialogWithSubHeader) > header > .sapMIBar,
+.sapMDialog > header:last-of-type .sapMIBar {
+  	box-shadow: inset 0 -1px @_sap_m_Dialog_HeaderShadowColor;
+}
+
+.sapMDialog.sapMMessageDialog > .sapMDialogTitle .sapMIBar {
+  	box-shadow: inset 0 -0.125rem @_sap_m_Dialog_HeaderShadowColor;
+}
+
+.sapMDialog > header.sapMDialogTitle .sapMDialogIcon.sapUiIcon {
+	font-size: 1rem;
+}
+
+.sapMDialogResizeHandler::before {
+	content: attr(data-sap-ui-icon-content);
+	color: @sapUiButtonEmphasizedBackground;
+}
