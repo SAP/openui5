@@ -7,8 +7,7 @@ sap.ui.define([
 	'sap/ui/model/Context',
 	'sap/ui/model/ChangeReason',
 	'sap/ui/model/PropertyBinding',
-	"sap/base/util/deepEqual",
-	'sap/ui/model/ChangeReason'
+	"sap/base/util/deepEqual"
 ],
 	function(Context, ChangeReason, PropertyBinding, deepEqual) {
 	"use strict";
@@ -113,9 +112,17 @@ sap.ui.define([
 	 * @param {boolean} force no cache true/false: Default = false
 	 *
 	 */
-	ODataPropertyBinding.prototype.checkUpdate = function(bForceUpdate){
+	ODataPropertyBinding.prototype.checkUpdate = function(bForceUpdate, mChangedEntities){
 		if (this.bSuspended && !bForceUpdate) {
 			return;
+		}
+
+		// If mChangedEntities is given (not an 'empty' object) we check if our binding path is contained. If not, no update is needed.
+		if (mChangedEntities && Object.keys(mChangedEntities).length > 0) {
+			var sCanonicalPath = this.oModel.resolve(this.sPath, this.oContext, true);
+			if (sCanonicalPath && !(sCanonicalPath.split("/")[1] in mChangedEntities)) {
+				return;
+			}
 		}
 
 		var oDataState = this.getDataState();
