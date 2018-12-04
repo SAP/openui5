@@ -11,6 +11,7 @@ sap.ui.define([
 	"sap/m/Button",
 	"sap/ui/core/UIComponent",
 	"sap/ui/core/ComponentContainer",
+	"sap/ui/fl/FakeLrepConnectorSessionStorage",
 	"sap/ui/thirdparty/sinon-4"
 ],
 	function(
@@ -23,11 +24,13 @@ sap.ui.define([
 	Button,
 	UIComponent,
 	ComponentContainer,
+	FakeLrepConnectorSessionStorage,
 	sinon
 ) {
 	"use strict";
 
 	var sandbox = sinon.sandbox.create();
+	FakeLrepConnectorSessionStorage.enableFakeConnector();
 
 	// TODO: split big monolithic test into simple parts - 1 feature = 1 test case, not all at once!
 	QUnit.module("Given that RuntimeAuthoring and Property service are created", {
@@ -130,6 +133,7 @@ sap.ui.define([
 							virtual: true,
 							name: "Virtual Property Name 1",
 							group: "Virtual Property Group 1",
+							nullable: true,
 							get: function (oControl) {
 								return oControl.getId() === "mockControl" ? "Virtual property value 1" : "";
 							},
@@ -173,6 +177,7 @@ sap.ui.define([
 							virtual: true,
 							name: "Virtual Property Name 3",
 							group: "Virtual Property Group 3",
+							nullable: false,
 							get: function (oControl) {
 								return oControl.getId() === "mockControl" ? "Virtual property value 3" : "";
 							},

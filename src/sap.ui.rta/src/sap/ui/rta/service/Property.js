@@ -202,7 +202,8 @@ sap.ui.define([
 					Object.assign(
 						mEvaluatedProperty[sPropertyName],
 						mBindingInfo && {binding: mBindingInfo},
-						vPossibleValues && {possibleValues: vPossibleValues}
+						vPossibleValues && {possibleValues: vPossibleValues},
+						typeof mDtObj[sPropertyName].nullable === "boolean" && {nullable: mDtObj[sPropertyName].nullable} // nullable property
 					);
 
 					return mEvaluatedProperty;
