@@ -17,15 +17,15 @@
 				"config": "test-resources/sap/m/demokit/cart/demoapp.json"
 			},
 			{
-				"icon": "hello-world",
-				"text": "Hello World",
+				"icon": "unwired",
+				"text": "Quickstart",
 				"desc": "Your very simple first app",
-				"ref": "test-resources/sap/m/demokit/helloworld/index.html",
+				"ref": "test-resources/sap/m/demokit/tutorial/quickstart/03/webapp/index.html",
 				"links": {
 					"View Tutorial": "#docs/guide/592f36fd077b45349a67dcb3efb46ab1.html"
 				},
 				"category": "Tutorial",
-				"config": "test-resources/sap/m/demokit/helloworld/demoapp.json"
+				"config": "test-resources/sap/m/demokit/tutorial/quickstart/demoapp.json"
 			},
 			{
 				"icon": "task",
@@ -1364,6 +1364,20 @@
 		  "category": "User Input",
 		  "since": "1.54",
 		  "samples": ["sap.m.sample.ColorPalettePopover", "sap.m.sample.ColorPalette"]
+		},
+		{
+			  "id": "sap.m.tutorial.quickstart",
+			  "name": "Quickstart",
+			  "category": "Tutorial",
+			  "since": "1.61",
+			  "formFactors": "-",
+			  "description": "Unleash your SAPUI5 skills with this simple three step tutorial.",
+			  "docuLink": "#/topic/592f36fd077b45349a67dcb3efb46ab1",
+			  "samplesAsSteps": [
+				  "Ready",
+				  "Steady",
+				  "Go!"
+			  ]
 		},
 		{
 		  "id": "sap.m.tutorial.walkthrough",
