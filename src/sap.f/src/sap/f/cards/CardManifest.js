@@ -19,6 +19,7 @@
  * 4. Get the title
  *    myCardManifest.get("sap.card/title")
  *
+ * @experimental
  */
 sap.ui.define([], function () {
 	"use strict";

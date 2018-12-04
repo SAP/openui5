@@ -1,14 +1,37 @@
 /*!
  * ${copyright}
  */
-/**
- * Analytical Card with different Card Types
- * @experimental
- */
 sap.ui.define(['sap/ui/core/Control', 'sap/ui/model/json/JSONModel', 'sap/m/FlexBox', 'sap/viz/ui5/controls/VizFrame', 'sap/viz/ui5/controls/common/feeds/FeedItem',
 		'sap/viz/ui5/data/FlattenedDataset', 'sap/viz/ui5/data/DimensionDefinition', 'sap/viz/ui5/data/MeasureDefinition',  'sap/f/cards/Data'],
 	function (Control, JSONModel, FlexBox, VizFrame, FeedItem, FlattenedDataset, DimensionDefinition, MeasureDefinition, Data) {
 		"use strict";
+
+		/**
+		 * Constructor for a new <code>Analytical</code>.
+		 *
+		 * @param {string} [sId] ID for the new control, generated automatically if no ID is given
+		 * @param {object} [mSettings] Initial settings for the new control
+		 *
+		 * @class
+		 *
+		 * <h3>Overview</h3>
+		 *
+		 *
+		 * <h3>Usage</h3>
+		 *
+		 * <h3>Responsive Behavior</h3>
+		 *
+		 * @extends sap.ui.core.Control
+		 *
+		 * @author SAP SE
+		 * @version ${version}
+		 *
+		 * @constructor
+		 * @experimental
+		 * @since 1.60
+		 * @see {@link TODO Card}
+		 * @alias sap.f.cards.content.Analytical
+		 */
 		var Analytical = Control.extend("sap.f.cards.content.Analytical", {
 			metadata: {
 				properties: {
