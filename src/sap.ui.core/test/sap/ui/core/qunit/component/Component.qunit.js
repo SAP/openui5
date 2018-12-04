@@ -1399,4 +1399,19 @@ sap.ui.define([
 			oComponent.destroy();
 		});
 	});
+
+	QUnit.test("Relative URLs for Manifest object", function(assert) {
+
+		// load the test component
+		return Component.create({
+			manifest : this.oManifest,
+			altManifestUrl : "manifest/from/lrep/manifest.json"
+		}).then(function(oComponent) {
+
+			assert.strictEqual(oComponent.getManifestObject().resolveUri("test"), "test-resources/sap/ui/core/samples/components/button/test", "URL is properly resolved to Component!");
+			assert.strictEqual(oComponent.getManifestObject().resolveUri("test", "manifest"), "manifest/from/lrep/test", "URL is properly resolved to Manifest!");
+
+			oComponent.destroy();
+		});
+	});
 });
