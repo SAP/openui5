@@ -1,10 +1,6 @@
 /*!
  * ${copyright}
  */
-/**
- * Kpi Card
- * @experimental
- */
 sap.ui.define([
 	'sap/ui/core/Control',
 	'sap/ui/core/library',
@@ -31,6 +27,32 @@ sap.ui.define([
 
 		var TextAlign = coreLibrary.TextAlign;
 
+	/**
+	 * Constructor for a new <code>Kpi</code>.
+	 *
+	 * @param {string} [sId] ID for the new control, generated automatically if no ID is given
+	 * @param {object} [mSettings] Initial settings for the new control
+	 *
+	 * @class
+	 *
+	 * <h3>Overview</h3>
+	 *
+	 *
+	 * <h3>Usage</h3>
+	 *
+	 * <h3>Responsive Behavior</h3>
+	 *
+	 * @extends sap.ui.core.Control
+	 *
+	 * @author SAP SE
+	 * @version ${version}
+	 *
+	 * @constructor
+	 * @experimental
+	 * @since 1.60
+	 * @see {@link TODO Card}
+	 * @alias sap.f.cards.header.Kpi
+	 */
 		var Kpi = Control.extend("sap.f.cards.header.Kpi", {
 			metadata: {
 				properties: {

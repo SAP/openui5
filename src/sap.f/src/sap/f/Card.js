@@ -1,7 +1,6 @@
 /*!
  * ${copyright}
  */
-// Provides control sap.f.Card.
 sap.ui.define([
 	"./library",
 	"sap/ui/core/Control",
@@ -55,7 +54,6 @@ sap.ui.define([
 	 * @alias sap.f.Card
 	 * @ui5-metamodel This control/element also will be described in the UI5 (legacy) designtime metamodel
 	 */
-		//raster size
 	var Card = Control.extend("sap.f.Card", /** @lends sap.f.Card.prototype */ {
 			metadata: {
 				library: "sap.f",
