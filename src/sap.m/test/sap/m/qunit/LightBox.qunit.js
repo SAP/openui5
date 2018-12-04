@@ -257,4 +257,49 @@
 		assert.ok($popupContent.attr('aria-labelledby'), 'aria-labelledby attribute is set');
 		assert.strictEqual($popupContent.attr('role'), 'dialog', 'correct role is set');
 	});
+
+	QUnit.module('Resize', {
+		beforeEach: function() {
+			sinon.config.useFakeTimers = false;
+
+			this.LightBox = new sap.m.LightBox({
+				imageContent : [
+					new sap.m.LightBoxItem({
+						imageSrc: '../images/demo/nature/elephant.jpg'
+					})
+				]
+			});
+		},
+		afterEach: function() {
+			this.LightBox.close();
+			this.LightBox.destroy();
+
+			sinon.config.useFakeTimers = true;
+		}
+	});
+
+	QUnit.test('image source', function(assert) {
+		var done = assert.async();
+
+		// Act
+		this.LightBox.open();
+		sap.ui.getCore().applyChanges();
+
+		// Wait for CSS animation to complete
+		setTimeout(function () {
+
+			var nativeImage = this.LightBox._oPopup.getContent().$().find('img')[0];
+
+			this.LightBox._setImageSize(this.LightBox._getImageContent().getAggregation("_image"), 100, 100);
+
+			setTimeout(function () {
+
+				var newNativeImage = this.LightBox._oPopup.getContent().$().find('img')[0];
+				assert.strictEqual(nativeImage, newNativeImage, 'native image is not changed during resizing');
+
+				done();
+			}.bind(this), 100);
+
+		}.bind(this), 100);
+	});
 })();
