@@ -556,6 +556,80 @@ function (
 		});
 	});
 
+	QUnit.module("Given a designTime and stretch plugin are instantiated", {
+		beforeEach : function(assert) {
+			var done = assert.async();
+			this.clock = sinon.useFakeTimers();
+			this.oLayout1 = new VerticalLayout("layout1", {
+				width: "300px",
+				content: [
+					this.oLayout2 = new VerticalLayout("layout2" ,{
+						width: "300px",
+						visible: false,
+						content: [
+							this.oButton = new Button("button1")
+						]
+					})
+				]
+			}).addStyleClass("sapUiRtaRoot");
+			this.oLayout1.placeAt("qunit-fixture");
+			sap.ui.getCore().applyChanges();
+
+			this.oStretchPlugin = new Stretch();
+
+			this.oDesignTime = new DesignTime({
+				rootElements : [this.oLayout1],
+				plugins : [this.oStretchPlugin]
+			});
+
+			this.oDesignTime.attachEventOnce("synced", function() {
+				this.oOuterLayoutOverlay = OverlayRegistry.getOverlay(this.oLayout1);
+				this.oInnerLayoutOverlay = OverlayRegistry.getOverlay(this.oLayout2);
+				this.oButtonOverlay = OverlayRegistry.getOverlay(this.oButton);
+				done();
+			}.bind(this));
+		},
+		afterEach : function() {
+			sandbox.restore();
+			this.clock.restore();
+			this.oDesignTime.destroy();
+			this.oLayout1.destroy();
+		}
+	}, function() {
+		QUnit.test("When during '_onElementPropertyChanged' is called plugin gets destroyed", function(assert) {
+			var fnDone = assert.async();
+			var iTimeToWait = 1000;
+
+			this.oButton.setText("MyNewText");
+			this.oLayout2.setVisible(true);
+			sandbox.stub(this.oOuterLayoutOverlay, "getEditable").returns(true);
+			sandbox.stub(this.oInnerLayoutOverlay, "getEditable").returns(true);
+			this.oStretchPlugin.destroy();
+			setTimeout(function() {
+				assert.ok(true, "there is no error thrown");
+				assert.notOk(isStretched(this.oLayout1), "then stretch-styleclass should not be set");
+				fnDone();
+			}.bind(this), iTimeToWait);
+			this.clock.tick(iTimeToWait);
+		});
+
+		QUnit.test("When during '_onElementPropertyChanged' is called element gets destroyed", function(assert) {
+			var fnDone = assert.async();
+			var iTimeToWait = 1000;
+			sandbox.stub(this.oOuterLayoutOverlay, "getEditable").returns(true);
+			sandbox.stub(this.oInnerLayoutOverlay, "getEditable").returns(true);
+
+			this.oButton.setText("MyNewText");
+			this.oLayout2.setVisible(true);
+			this.oLayout1.destroy();
+			setTimeout(function() {
+				assert.ok(true, "there is no error thrown");
+				fnDone();
+			}, iTimeToWait);
+			this.clock.tick(iTimeToWait);
+		});
+	});
+
 	QUnit.done(function () {
 		jQuery("#qunit-fixture").hide();
 	});
