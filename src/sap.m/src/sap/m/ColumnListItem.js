@@ -235,6 +235,15 @@ sap.ui.define([
 		}
 	};
 
+	ColumnListItem.prototype.onfocusin = function(oEvent) {
+		if (oEvent.isMarked() || oEvent.srcControl !== this) {
+			return;
+		}
+
+		this.$().children(".sapMListTblCellDup").find(":sapTabbable").attr("tabindex", -1);
+		ListItemBase.prototype.onfocusin.apply(this, arguments);
+	};
+
 	// informs the table when item's type column requirement is changed
 	ColumnListItem.prototype._checkTypeColumn = function(bNeedsTypeColumn) {
 		if (bNeedsTypeColumn == undefined) {
