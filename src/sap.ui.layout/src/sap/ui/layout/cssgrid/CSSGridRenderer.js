@@ -37,7 +37,7 @@ sap.ui.define(["sap/ui/layout/cssgrid/GridLayoutBase"], function (GridLayoutBase
 		// Render items
 		oControl.getItems().forEach(function (oItem) {
 
-			if (oControl.getWrapItemsWithDiv()) {
+			if (oControl._wrapItemsWithDiv) {
 				rm.write("<div");
                 rm.addClass("sapUiLayoutCSSGridItemWrapper");
 				rm.writeClasses();
@@ -46,7 +46,7 @@ sap.ui.define(["sap/ui/layout/cssgrid/GridLayoutBase"], function (GridLayoutBase
 
 			rm.renderControl(oItem);
 
-			if (oControl.getWrapItemsWithDiv()) {
+			if (oControl._wrapItemsWithDiv) {
 				rm.write("</div>");
 			}
 		});

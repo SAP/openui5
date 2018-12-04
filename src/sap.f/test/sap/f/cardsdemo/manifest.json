@@ -85,6 +85,14 @@
         "pattern": "tableContent",
         "name": "tableContent",
         "target": "tableContent"
+      }, {
+        "pattern": "flp",
+        "name": "flp",
+        "target": "flp"
+			}, {
+        "pattern": "kpiHeader",
+        "name": "kpiHeader",
+        "target": "kpiHeader"
       }
       ],
 	  "targets": {
@@ -132,7 +140,17 @@
           "viewId": "tableContent",
           "viewName": "TableContent",
           "viewLevel": 1
-        }
+        },
+        "flp": {
+          "viewId": "flp",
+          "viewName": "Flp",
+          "viewLevel": 1
+				},
+				"kpiHeader": {
+          "viewId": "kpiHeader",
+          "viewName": "kpiHeader",
+          "viewLevel": 1
+				}
 	  }
 	}
   }

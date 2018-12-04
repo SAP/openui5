@@ -5,16 +5,14 @@
 	xmlns="sap.m"
 	xmlns:f="sap.f"
 	xmlns:mvc="sap.ui.core.mvc">
-	<Shell appWidthLimited="false">
-		<App
-			id="app"
-			busy="{appView>/busy}"
-			busyIndicatorDelay="{appView>/delay}">
-			<f:FlexibleColumnLayout
-				id="layout"
-				layout="{appView>/layout}"
-				backgroundDesign="Translucent">
-			</f:FlexibleColumnLayout>
-		</App>
-	</Shell>
+	<App
+		id="app"
+		busy="{appView>/busy}"
+		busyIndicatorDelay="{appView>/delay}">
+		<f:FlexibleColumnLayout
+			id="layout"
+			layout="{appView>/layout}"
+			backgroundDesign="Translucent">
+		</f:FlexibleColumnLayout>
+	</App>
 </mvc:View>

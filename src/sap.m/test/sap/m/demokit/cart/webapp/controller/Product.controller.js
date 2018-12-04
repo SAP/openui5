@@ -1,7 +1,7 @@
 sap.ui.define([
-    'sap/ui/demo/cart/controller/BaseController',
-    'sap/ui/demo/cart/model/formatter',
-    'sap/ui/demo/cart/model/cart'
+	"./BaseController",
+	"../model/formatter",
+	"../model/cart"
 ], function(
 	BaseController,
 	formatter,
@@ -16,9 +16,8 @@ sap.ui.define([
 			var oComponent = this.getOwnerComponent();
 			this._router = oComponent.getRouter();
 			this._router.getRoute("product").attachPatternMatched(this._routePatternMatched, this);
-			this._router.getRoute("cartProduct").attachPatternMatched(this._routePatternMatched, this);
 
-			this._router.getTarget("productView").attachDisplay(function (oEvent) {
+			this._router.getTarget("product").attachDisplay(function (oEvent) {
 				this.fnUpdateProduct(oEvent.getParameter("data").productId);// update the binding based on products cart selection
 			}, this);
 		},
@@ -85,19 +84,26 @@ sap.ui.define([
 		 * Saves the product, the i18n bundle, and the cart model and hands them to the <code>addToCart</code> function
 		 * @public
 		 */
-		onAddButtonPress : function () {
+		onAddToCart : function () {
 			var oResourceBundle = this.getOwnerComponent().getModel("i18n").getResourceBundle();
-			var oProduct = this.getView().getBindingContext().getObject();
+			var oEntry = this.getView().getBindingContext().getObject();
 			var oCartModel = this.getView().getModel("cartProducts");
-			cart.addToCart(oResourceBundle, oProduct, oCartModel);
+			cart.addToCart(oResourceBundle, oEntry, oCartModel);
 		},
 
-		onCartButtonPress :  function () {
-			this._router.navTo("cart");
-		},
+		/**
+		 * Navigate to the generic cart view
+		 * @param {sap.ui.base.Event} @param oEvent the button press event
+		 */
+		onToggleCart: function (oEvent) {
+			var bPressed = oEvent.getParameter("pressed");
+			var oEntry = this.getView().getBindingContext().getObject();
 
-		onNavButtonPress : function () {
-			this.getOwnerComponent().myNavBack();
+			this._setLayout(bPressed ? "Three" : "Two");
+			this.getRouter().navTo(bPressed ? "productCart" : "product", {
+				id: oEntry.Category,
+				productId: oEntry.ProductId
+			});
 		}
 	});
 });

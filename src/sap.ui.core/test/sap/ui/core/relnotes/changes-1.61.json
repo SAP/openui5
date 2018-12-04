@@ -121,6 +121,54 @@
         "type": "FIX",
         "text": " core.Popup: blur focus element only when it\u0027s not in a Popup",
         "references": []
+      },
+      {
+        "id": "bf890ed36239d151b6b256f08877a0088599c81a",
+        "type": "FEATURE",
+        "text": " Introduction of Indication less parameters",
+        "references": []
+      },
+      {
+        "id": "a324ce4e18dd7a2e17d4922642d0c97bd79f422d",
+        "type": "FEATURE",
+        "text": " sap.m.Column: enabling sort indicator",
+        "references": []
+      },
+      {
+        "id": "52ba580ac7370ee833051b357f389392a61a8dd0",
+        "type": "FIX",
+        "text": " JSONModel#loadData: Corrects API Documentation",
+        "references": []
+      },
+      {
+        "id": "5f245a1aaddeb9a49d876938ff52356173a25b0d",
+        "type": "FIX",
+        "text": " NumberFormat: correctly handle option precision with CurrencyFormat",
+        "references": []
+      },
+      {
+        "id": "c152fe11bff8f01b6cf487a7598c3942a6a11db3",
+        "type": "FIX",
+        "text": " TreeBindingUtils: Fixes negative $skip values",
+        "references": []
+      },
+      {
+        "id": "9ebc5dae9ff7a276742a603b259fb6cd7d877682",
+        "type": "FIX",
+        "text": " core.support.plugins.ControlTree: Binding Infos for OData v4 fixed",
+        "references": []
+      },
+      {
+        "id": "6cd0ddd7023a50d60562cdb08d3faf92ba7d21e8",
+        "type": "FIX",
+        "text": " sap.ui.model.odata.AnnotationsParser: nested annotation w/o qualifier",
+        "references": []
+      },
+      {
+        "id": "5f9fc4901ef7f8f3fd398b69b34e19be5c8a4bb5",
+        "type": "FIX",
+        "text": " type.Date: Format contstraints for validation error message",
+        "references": []
       }
     ]
   }

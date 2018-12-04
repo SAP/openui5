@@ -121,10 +121,11 @@
 @sapHC_ReducedAltForeground: #999999;
 
 /* Semantic Colors */
-@sapHC_NegativeColor: #FF5E5E;
-@sapHC_CriticalColor: #FFAB1D;
-@sapHC_PositiveColor: #99CC99;
-@sapHC_NeutralColor: #FFFFFF;
+@sapHC_NegativeColor:    #FF5E5E;
+@sapHC_CriticalColor:    #FFAB1D;
+@sapHC_PositiveColor:    #99CC99;
+@sapHC_InformativeColor: #7a5100;
+@sapHC_NeutralColor:     #FFFFFF;
 
 /* ACCENT COLORS */
 @sapAccentColor1: #ffc847;
@@ -138,30 +139,35 @@
 
 
 /* Semantic Background Colors */
-@sapErrorBackground:   @sapHC_StandardBackground;
-@sapWarningBackground: @sapHC_StandardBackground;
-@sapSuccessBackground: @sapHC_StandardBackground;
-@sapNeutralBackground: @sapHC_StandardBackground;
+@sapErrorBackground:       @sapHC_StandardBackground;
+@sapWarningBackground:     @sapHC_StandardBackground;
+@sapSuccessBackground:     @sapHC_StandardBackground;
+@sapInformationBackground: @sapHC_StandardBackground;
+@sapNeutralBackground:     @sapHC_StandardBackground;
 
 
 /* Semantic Border Colors */
-@sapErrorBorderColor:   @sapErrorColor;
-@sapWarningBorderColor: @sapWarningColor;
-@sapSuccessBorderColor: @sapSuccessColor;
+@sapErrorBorderColor:       @sapErrorColor;
+@sapWarningBorderColor:     @sapWarningColor;
+@sapSuccessBorderColor:     @sapSuccessColor;
+@sapInformationBorderColor: @sapInformationColor;
+@sapNeutralBorderColor:     @sapNeutralColor;
 
 
 /* Semantic Foreground Elements */
-@sapNegativeElementColor: @sapNegativeColor;
-@sapCriticalElementColor: @sapCriticalColor;
-@sapPositiveElementColor: @sapPositiveColor;
-@sapNeutralElementColor:  @sapNeutralColor;
+@sapNegativeElementColor:    @sapNegativeColor;
+@sapCriticalElementColor:    @sapCriticalColor;
+@sapPositiveElementColor:    @sapPositiveColor;
+@sapInformativeElementColor: @sapInformativeColor;
+@sapNeutralElementColor:     @sapNeutralColor;
 
 
 /* Semantic Text */
-@sapNegativeTextColor:  @sapNegativeColor;
-@sapCriticalTextColor:  @sapCriticalColor;
-@sapPositiveTextColor:  @sapPositiveColor;
-@sapNeutralTextColor:   @sapNeutralColor;
+@sapNegativeTextColor:    @sapNegativeColor;
+@sapCriticalTextColor:    @sapCriticalColor;
+@sapPositiveTextColor:    @sapPositiveColor;
+@sapInformativeTextColor: @sapInformativeColor;
+@sapNeutralTextColor:     @sapNeutralColor;
 
 
 /* Semantic Foreground Colors */
@@ -184,12 +190,39 @@
 // [Label "Informative Color"]
 // [Description "The color for elements showing informative state"]
 // [Tags "Base", "SemanticColor", "Color"]
+@sapInformativeColor: @sapHC_InformativeColor;
+
+// [Label "Neutral Color"]
+// [Description "The color for elements showing neutral state"]
+// [Tags "Base", "SemanticColor", "Color"]
 @sapNeutralColor: @sapHC_NeutralColor;
 
 
-@sapErrorColor:   @sapNegativeColor;
-@sapWarningColor: @sapCriticalColor;
-@sapSuccessColor: @sapPositiveColor;
+@sapErrorColor:       @sapNegativeColor;
+@sapWarningColor:     @sapCriticalColor;
+@sapSuccessColor:     @sapPositiveColor;
+@sapInformationColor: @sapInformativeColor;
+
+
+// [Label "Indication Color 1"]
+// [Tags "Base", "SemanticColor", "Color"]
+@sapIndicationColor_1: #ff5e5e;
+
+// [Label "Indication Color 2"]
+// [Tags "Base", "SemanticColor", "Color"]
+@sapIndicationColor_2: #ff9191;
+
+// [Label "Indication Color 3"]
+// [Tags "Base", "SemanticColor", "Color"]
+@sapIndicationColor_3: #ffab1d;
+
+// [Label "Indication Color 4"]
+// [Tags "Base", "SemanticColor", "Color"]
+@sapIndicationColor_4: #99cc99;
+
+// [Label "Indication Color 5"]
+// [Tags "Base", "SemanticColor", "Color"]
+@sapIndicationColor_5: #0f5d94;
 
 
 /* ===================================== */

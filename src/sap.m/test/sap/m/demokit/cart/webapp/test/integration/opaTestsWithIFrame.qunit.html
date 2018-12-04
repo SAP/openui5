@@ -1,45 +1,30 @@
 <!DOCTYPE html>
 <html>
-	<head>
-		<title>Integration tests for Shopping Cart Journeys with IFrame</title>
-		<meta http-equiv='X-UA-Compatible' content='IE=edge'>
-		<meta charset="utf-8">
+<head>
+	<title>Integration tests for Shopping Cart Journeys with IFrame</title>
 
-		<script
-			id="sap-ui-bootstrap"
-			src="../../../../../../../../resources/sap-ui-core.js"
-			data-sap-ui-resourceroots='{
-				"sap.ui.demo.cart": "../../",
-				"Startup": "./arrangements/iframe/Startup"
-			}'
-			data-sap-ui-preload="async"
-			data-sap-ui-frameOptions='deny'>
-		</script>
+	<meta charset="utf-8">
 
-		<script src="../../../../../../../../resources/sap/ui/qunit/qunit-css.js"></script>
-		<script src="../../../../../../../../resources/sap/ui/thirdparty/qunit.js"></script>
-		<script src="../../../../../../../../resources/sap/ui/qunit/qunit-junit.js"></script>
-		<script src="../../../../../../../../resources/sap/ui/qunit/qunit-coverage.js"></script>
+	<script
+		id="sap-ui-bootstrap"
+		src="../../../../../../../../resources/sap-ui-core.js"
+		data-sap-ui-resourceroots='{
+			"sap.ui.demo.cart": "../../",
+			"Startup": "./arrangements/iframe/Startup"
+		}'
+		data-sap-ui-async="true"
+		data-sap-ui-frameOptions='deny'>
+	</script>
 
-		<script>
-			/* global QUnit */
+	<link rel="stylesheet" type="text/css" href="../../../../../../../../resources/sap/ui/thirdparty/qunit-2.css">
 
-			// we want to be able to load our tests asynchronously - pause QUnit until we loaded everything
-			QUnit.config.autostart = false;
+	<script src="../../../../../../../../resources/sap/ui/thirdparty/qunit-2.js"></script>
+	<script src="../../../../../../../../resources/sap/ui/qunit/qunit-junit.js"></script>
 
-			sap.ui.getCore().attachInit(function () {
-				"use strict";
-				sap.ui.require([
-					"sap/ui/demo/cart/test/integration/AllJourneys"
-				], function () {
-					// configuration has been applied and the tests in the journeys have been loaded - start QUnit
-					QUnit.start();
-				});
-			});
-		</script>
-	</head>
-	<body>
-		<div id="qunit"></div>
-		<div id="qunit-fixture"></div>
-	</body>
+	<script src="opaTests.qunit.js"></script>
+</head>
+<body>
+	<div id="qunit"></div>
+	<div id="qunit-fixture"></div>
+</body>
 </html>

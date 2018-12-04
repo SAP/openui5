@@ -337,6 +337,78 @@
         "type": "FIX",
         "text": " sap.m.TimePicker: gets correct locale",
         "references": []
+      },
+      {
+        "id": "a324ce4e18dd7a2e17d4922642d0c97bd79f422d",
+        "type": "FEATURE",
+        "text": " sap.m.Column: enabling sort indicator",
+        "references": []
+      },
+      {
+        "id": "23d139557d66f6b252666d853d991450e91e33f0",
+        "type": "FIX",
+        "text": " sap.m.Image: Using DetailBox with invalid src results as error",
+        "references": []
+      },
+      {
+        "id": "a3e3bf3235fe7c1d4dde9172b3162a8e946326d6",
+        "type": "FIX",
+        "text": " sap.m.InputBase: Adjust flex properties for input content container",
+        "references": []
+      },
+      {
+        "id": "d78ac82e749a308dba35ba8f60e457f23790e074",
+        "type": "FIX",
+        "text": " sap.m.InputBase: Prevent min-width overstyling in subclasses",
+        "references": []
+      },
+      {
+        "id": "1c12a3cda357728978ea157f45bb81b3e60ab6a0",
+        "type": "FIX",
+        "text": " sap.m.NavContainer: JSDoc updated",
+        "references": []
+      },
+      {
+        "id": "dd4df6d94ef31112048bb83cbc16a4f3d98f9a5f",
+        "type": "FIX",
+        "text": " sap.m.ObjectListItem: Now the press event is correctly fired",
+        "references": []
+      },
+      {
+        "id": "cbf50568462a93c7a5d12209895c551298d3145c",
+        "type": "FIX",
+        "text": " sap.m.PlanningCalendar - toolbar content is not cut anymore.",
+        "references": []
+      },
+      {
+        "id": "ab714632f0275caf3768fbdf1c0938915f90a573",
+        "type": "FIX",
+        "text": " sap.m.SegmentedButton: Now qunits work correctly",
+        "references": []
+      },
+      {
+        "id": "9d835ee3af1ce2adb42ccda332b93c87afa5aaab",
+        "type": "FIX",
+        "text": " sap.m.Select: Fixed rendering issue",
+        "references": []
+      },
+      {
+        "id": "14bd0fd9e370c80e9cd99814858af88d8d698930",
+        "type": "FIX",
+        "text": " sap.m.Select: Navigation with Tab key is fixed",
+        "references": []
+      },
+      {
+        "id": "c176305436ccf0c146fa1458f84e0608c564f47d",
+        "type": "FIX",
+        "text": " sap.m.Tokenizer: N-More label is not cut off",
+        "references": []
+      },
+      {
+        "id": "d51dc21cc7c5b3e0ebf42e852ce671221b41666c",
+        "type": "FIX",
+        "text": " sap.m.uploadCollection : Delete \u0027instantUpload\u0027 both true and false before calling the super constructor to avoid unwanted error logs.",
+        "references": []
       }
     ]
   }

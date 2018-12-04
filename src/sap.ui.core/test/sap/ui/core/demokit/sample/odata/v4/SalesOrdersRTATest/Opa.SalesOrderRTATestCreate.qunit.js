@@ -1,7 +1,7 @@
 /*!
  * ${copyright}
  */
-sap.ui.require([
+sap.ui.define([
 	"sap/ui/core/sample/odata/v4/SalesOrders/tests/Create",
 	"sap/ui/test/opaQunit"
 ], function (CreateTest, opaTest) {

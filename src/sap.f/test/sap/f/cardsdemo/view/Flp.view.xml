@@ -1,0 +1,127 @@
+<mvc:View
+    xmlns="sap.m"
+    xmlns:mvc="sap.ui.core.mvc"
+	xmlns:f="sap.f"
+	xmlns:grid="sap.ui.layout.cssgrid"
+    displayBlock="true">
+
+	<Page title="{i18n>appTitle}">
+
+		<subHeader>
+			<Toolbar>
+				<ToolbarSpacer/>
+				<Title text="Using Tile based sap.ui.layout.cssgrid.CSSGrid configuration"/>
+				<ToolbarSpacer/>
+			</Toolbar>
+		</subHeader>
+
+		<content>
+
+			<Panel>
+				<grid:CSSGrid id="cssgrid">
+
+					<grid:customLayout>
+						<grid:GridBasicLayout
+							gridTemplateColumns="repeat(12, 5rem)"
+							gridAutoRows="5rem"
+							gridRowGap="1rem"
+							gridColumnGap="1rem">
+						</grid:GridBasicLayout>
+					</grid:customLayout>
+
+					<grid:items>
+
+						<f:Card id="default2x2" manifest="{manifests>/grid/card1}">
+							<f:layoutData>
+								<grid:GridItemLayoutData gridRow="span 2" gridColumn="span 2" />
+							</f:layoutData>
+						</f:Card>
+
+						<GenericTile
+							header="Sales Fulfillment Application Title"
+							subheader="Subtitle">
+							<TileContent unit="EUR" footer="Current Quarter">
+								<ImageContent src="sap-icon://home-share" />
+							</TileContent>
+
+							<layoutData>
+								<grid:GridItemLayoutData gridRow="span 2" gridColumn="span 2" />
+							</layoutData>
+						</GenericTile>
+
+						<f:Card id="default4x2" manifest="{manifests>/grid/card2}">
+							<f:layoutData>
+								<grid:GridItemLayoutData gridRow="span 2" gridColumn="span 4" />
+							</f:layoutData>
+						</f:Card>
+
+						<f:Card id="default1x1" manifest="{manifests>/grid/card3}"></f:Card>
+
+						<f:Card id="default2x1" manifest="{manifests>/grid/card4}">
+							<f:layoutData>
+								<grid:GridItemLayoutData gridColumn="span 2" />
+							</f:layoutData>
+						</f:Card>
+
+						<f:Card id="ddefault1x1" manifest="{manifests>/grid/card5}"></f:Card>
+
+						<f:Card id="default4x1" manifest="{manifests>/grid/card6}">
+							<f:layoutData>
+								<grid:GridItemLayoutData gridColumn="span 4" />
+							</f:layoutData>
+						</f:Card>
+
+						<f:Card id="ddefault6x2" manifest="{manifests>/grid/card7}">
+							<f:layoutData>
+								<grid:GridItemLayoutData gridRow="span 6" gridColumn="span 2" />
+							</f:layoutData>
+						</f:Card>
+
+						<f:Card id="default4x4" manifest="{manifests>/grid/card8}">
+							<f:layoutData>
+								<grid:GridItemLayoutData gridRow="span 4" gridColumn="span 4" />
+							</f:layoutData>
+						</f:Card>
+
+						<f:Card id="default4x4Image" manifest="{manifests>/grid/card9}">
+							<f:layoutData>
+								<grid:GridItemLayoutData gridRow="span 4" gridColumn="span 4" />
+							</f:layoutData>
+						</f:Card>
+
+						<GenericTile
+							header="Country-Specific Profit Margin"
+							subheader="Expenses">
+							<TileContent unit="EUR" footer="Current Quarter">
+								<NumericContent scale="M" value="1.96" valueColor="Error" indicator="Up" />
+							</TileContent>
+
+							<layoutData>
+								<grid:GridItemLayoutData gridRow="span 2" gridColumn="span 2" />
+							</layoutData>
+						</GenericTile>
+
+						<f:Card id="1default2x2" manifest="{manifests>/grid/card10}">
+							<f:layoutData>
+								<grid:GridItemLayoutData gridRow="span 2" gridColumn="span 2" />
+							</f:layoutData>
+						</f:Card>
+
+						<f:Card id="2default2x2" manifest="{manifests>/grid/card11}">
+							<f:layoutData>
+								<grid:GridItemLayoutData gridRow="span 2" gridColumn="span 2" />
+							</f:layoutData>
+						</f:Card>
+
+						<f:Card id="default6x4" manifest="{manifests>/grid/card12}">
+							<f:layoutData>
+								<grid:GridItemLayoutData gridRow="span 2" gridColumn="span 8" />
+							</f:layoutData>
+						</f:Card>
+
+					</grid:items>
+				</grid:CSSGrid>
+			</Panel>
+		</content>
+	</Page>
+</mvc:View>

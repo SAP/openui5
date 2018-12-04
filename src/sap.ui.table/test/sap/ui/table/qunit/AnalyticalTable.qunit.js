@@ -136,6 +136,10 @@ sap.ui.define([
 		}
 	});
 
+	QUnit.test("Selection Adapter", function(assert) {
+		assert.ok(this.oTable._oSelectionAdapter.isA("sap.ui.table.BindingSelectionAdapter"), "BindingSelectionAdapter is initialized");
+	});
+
 	QUnit.test("SelectionMode", function(assert) {
 		assert.equal(this.oTable.getSelectionMode(), library.SelectionMode.MultiToggle, "SelectionMode.MultiToggle");
 		this.oTable.setSelectionMode(library.SelectionMode.Single);

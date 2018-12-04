@@ -652,7 +652,6 @@ sap.ui.define([
 				controlAggregation: "pages",
 				controlId: this.oApp.getId(),
 				viewType: "XML",
-				viewId: "baz",
 				_async: true
 			};
 
@@ -700,8 +699,8 @@ sap.ui.define([
 
 		// System under test + Arrange
 		this.oTarget = new Target(
-				this.oConfig,
-				this.oViews
+			this.oConfig,
+			this.oViews
 		);
 
 		this.oTarget.attachTitleChanged(function(oEvent) {

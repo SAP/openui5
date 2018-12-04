@@ -1,7 +1,9 @@
 /* global QUnit */
 
 sap.ui.define([
-	'sap/ui/test/opaQunit'
+	"sap/ui/test/opaQunit",
+	"./pages/Home",
+	"./pages/Category"
 ], function (opaTest) {
 	"use strict";
 
@@ -68,23 +70,21 @@ sap.ui.define([
 		When.onTheCategory.iPressOkButton();
 		//Assertions
 		Then.onTheCategory.iShouldSeeAllProductsAndNoInfoToolbar();
-
-		opaTest("Should filter the products on supplier", function (Given, When, Then) {
-			// Actions
-			When.onTheCategory.iFilterOnSupplier();
-			//Assertions
-			Then.onTheCategory.iShouldOnlySeeTechnoComProductsAndAnInfoToolbar();
-		});
-
-		opaTest("Should remove the supplier filter", function (Given, When, Then) {
-			// Actions
-			When.onTheCategory.iRemoveTheSupplierFilter();
-			//Assertions
-			Then.onTheCategory.iShouldSeeAllProductsAndNoInfoToolbar();
-			// Cleanup
-			Then.onTheCategory.iTeardownMyApp();
-		});
-
 	});
 
+	opaTest("Should filter the products on supplier", function (Given, When, Then) {
+		// Actions
+		When.onTheCategory.iFilterOnSupplier();
+		//Assertions
+		Then.onTheCategory.iShouldOnlySeeTechnoComProductsAndAnInfoToolbar();
+	});
+
+	opaTest("Should remove the supplier filter", function (Given, When, Then) {
+		// Actions
+		When.onTheCategory.iRemoveTheSupplierFilter();
+		//Assertions
+		Then.onTheCategory.iShouldSeeAllProductsAndNoInfoToolbar();
+		// Cleanup
+		Then.onTheCategory.iTeardownMyApp();
+	});
 });

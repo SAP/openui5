@@ -30,10 +30,11 @@
 					'sap/m/SinglePlanningCalendarWeekView',
 					'sap/m/Button',
 					'sap/m/CalendarAppointment',
+					'sap/m/MessageToast',
 					'sap/m/App',
 					'sap/m/Page'
 				],
-				function (JSONModel, SinglePlanningCalendar, SinglePlanningCalendarDayView, SinglePlanningCalendarWorkWeekView, SinglePlanningCalendarWeekView, Button, CalendarAppointment, App, Page) {
+				function (JSONModel, SinglePlanningCalendar, SinglePlanningCalendarDayView, SinglePlanningCalendarWorkWeekView, SinglePlanningCalendarWeekView, Button, CalendarAppointment, MessageToast, App, Page) {
 					var aAppointments = [
 						{
 							title: "1 hour app. 0 without type and color",
@@ -351,6 +352,21 @@
 								startDate: "{startDate}",
 								endDate: "{endDate}"
 							})
+						},
+						appointmentSelect: function (oEvent) {
+							var oAppointment = oEvent.getParameter("appointment");
+
+							MessageToast.show("Appointment with title '" + oAppointment.getTitle() + "' has been selected.");
+						},
+						headerDateSelect: function (oEvent) {
+							var oDate = oEvent.getParameter("date");
+
+							MessageToast.show("Header date selected: '" + oDate + "'.");
+						},
+						startDateChange: function (oEvent) {
+							var oDate = oEvent.getParameter("date");
+
+							MessageToast.show("Start date changed to '" + oDate + "'.");
 						}
 					});
 					new App({

@@ -27,6 +27,7 @@ sap.ui.define([
 	'sap/ui/core/dnd/DragDropInfo',
 	'sap/m/Select',
 	'sap/m/Button',
+	'sap/m/OverflowToolbar',
 	'sap/m/Toolbar',
 	'sap/m/Table',
 	'sap/m/Column',
@@ -66,6 +67,7 @@ sap.ui.define([
 	DragDropInfo,
 	Select,
 	Button,
+	OverflowToolbar,
 	Toolbar,
 	Table,
 	Column,
@@ -361,7 +363,16 @@ sap.ui.define([
 				/**
 				 * The content of the toolbar.
 				 */
-				toolbarContent : {type : "sap.ui.core.Control", multiple : true, singularName : "toolbarContent"},
+				toolbarContent : {
+					type : "sap.ui.core.Control",
+					multiple : true,
+					singularName : "toolbarContent",
+					forwarding : {
+						getter : "_getTableHeaderToolbar",
+						aggregation : "content"
+					},
+					forwardBinding: true
+				},
 
 				/**
 				 * Hidden, for internal use only.
@@ -619,9 +630,15 @@ sap.ui.define([
 			content: [this._oCalendarHeader, this._oTimeInterval]
 		});
 
+		var oTableHeaderToolbar = new OverflowToolbar(this.getId() + "-Toolbar", {
+			design: ToolbarDesign.Transparent
+		});
+		oTableHeaderToolbar._oPlanningCalendar = this;
+
 		var oTable = new Table(sId + "-Table", {
 			sticky: [], // set sticky property to an empty array this correspondents to PlanningCalendar stickyHeader = false
 			infoToolbar: this._oInfoToolbar,
+			headerToolbar: oTableHeaderToolbar,
 			mode: ListMode.SingleSelectMaster,
 			columns: [ new Column({
 				styleClass: "sapMPlanCalRowHead"
@@ -697,11 +714,6 @@ sap.ui.define([
 
 		if (this._oSelectAllCheckBox) {
 			this._oSelectAllCheckBox.destroy();
-		}
-
-		if (this.getToolbarContent().length == 0 && this._oToolbar) {
-			this._oToolbar.destroy();
-			this._oToolbar = undefined;
 		}
 
 		// Remove event listener for rowHeaderClick event
@@ -828,7 +840,7 @@ sap.ui.define([
 			var $Table = this.getDomRef().querySelector("table");
 
 			// Table height is the PlanningCalendar height minus the height of the toolbars
-			var sStyle = this.$().height() - this._oInfoToolbar.$().height() - this._oToolbar.$().height() + "px";
+			var sStyle = this.$().height() - this._oInfoToolbar.$().height() - this._getTableHeaderToolbar().$().height() + "px";
 			$Table.style.height = sStyle;
 		}
 	};
@@ -1465,7 +1477,7 @@ sap.ui.define([
 			bStickyToolbar = bStick && !Device.system.phone && !bMobile1MonthView,
 			bStickyInfoToolbar = bStick && !(Device.system.phone && Device.orientation.landscape) && !bMobile1MonthView;
 
-		if (this._oToolbar && bStickyToolbar) {
+		if (bStickyToolbar) {
 			aStickyParts.push(sap.m.Sticky.HeaderToolbar);
 		}
 		if (this._oInfoToolbar && bStickyInfoToolbar) {
@@ -1535,62 +1547,6 @@ sap.ui.define([
 
 	};
 
-	PlanningCalendar.prototype.addToolbarContent = function(oContent) {
-
-		this.addAggregation("toolbarContent", oContent, true);
-
-		changeToolbar.call(this);
-
-		return this;
-
-	};
-
-	PlanningCalendar.prototype.insertToolbarContent = function(oContent, iIndex) {
-
-		this.insertAggregation("toolbarContent", oContent, iIndex);
-
-		changeToolbar.call(this);
-
-		return this;
-
-	};
-
-	PlanningCalendar.prototype.removeToolbarContent = function(vObject) {
-
-		var oRemoved = this.removeAggregation("toolbarContent", vObject, true);
-
-		changeToolbar.call(this);
-
-		return oRemoved;
-
-	};
-
-	PlanningCalendar.prototype.removeAllToolbarContent = function() {
-
-		var aRemoved = this.removeAllAggregation("toolbarContent", true);
-
-		changeToolbar.call(this);
-
-		return aRemoved;
-
-	};
-
-	PlanningCalendar.prototype.destroyToolbarContent = function() {
-
-		var destroyed = this.destroyAggregation("toolbarContent", true);
-
-		changeToolbar.call(this);
-
-		return destroyed;
-
-	};
-
-	// as OverflowToolbar uses indexOfContent function of controls parent to get Index
-	PlanningCalendar.prototype.indexOfContent = function(vControl) {
-
-		return this.indexOfToolbarContent(vControl);
-
-	};
 
 	PlanningCalendar.prototype.setSingleSelection = function(bSingleSelection) {
 
@@ -2147,6 +2103,10 @@ sap.ui.define([
 
 	PlanningCalendar.prototype._applyContextualSettings = function (oSettings) {
 		return Control.prototype._applyContextualSettings.call(this, oSettings || ManagedObject._defaultContextualSettings);
+	};
+
+	PlanningCalendar.prototype._getTableHeaderToolbar = function() {
+		return this.getAggregation("table").getHeaderToolbar();
 	};
 
 	function adaptCalHeaderForWeekNumbers(bShowWeekNumbers, bCurrentIntervalAllowsWeekNumbers) {
@@ -3542,31 +3502,6 @@ sap.ui.define([
 		if (aChangedRows.length > 0) {
 			this.fireRowSelectionChange({rows: aChangedRows});
 		}
-
-	}
-
-	function changeToolbar() {
-
-		var oTable = this.getAggregation("table");
-
-		if (this.getToolbarContent().length > 0) {
-			if (!this._oToolbar) {
-				this._oToolbar = new sap.m.OverflowToolbar(this.getId() + "-Toolbar", {
-					design: ToolbarDesign.Transpaent
-				});
-				this._oToolbar._oPlanningCalendar = this;
-				this._oToolbar.getContent = function() {
-					return this._oPlanningCalendar.getToolbarContent();
-				};
-			}
-			if (!oTable.getHeaderToolbar()) {
-				oTable.setHeaderToolbar(this._oToolbar);
-			}
-		} else if (oTable.getHeaderToolbar()) {
-			oTable.setHeaderToolbar();
-		}
-
-		this._oToolbar.invalidate();
 
 	}
 

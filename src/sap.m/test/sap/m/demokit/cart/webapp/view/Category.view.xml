@@ -5,8 +5,9 @@
 	<Page
 		id="page"
 		title="{CategoryName}"
+		backgroundDesign="Solid"
 		showNavButton="true"
-		navButtonPress="onNavButtonPress">
+		navButtonPress=".onBack">
 		<landmarkInfo>
 			<PageAccessibleLandmarkInfo
 				rootRole="Region"
@@ -18,13 +19,6 @@
 				headerRole="Region"
 				headerLabel="{i18n>Category_headerLabel}"/>
 		</landmarkInfo>
-		<headerContent>
-			<Button
-				icon="sap-icon://cart"
-				tooltip="{i18n>toCartButtonTooltip}"
-				press="onCartButtonPress">
-			</Button>
-		</headerContent>
 		<content>
 			<List
 				id="productList"
@@ -61,7 +55,7 @@
 							formatter : '.formatter.price'
 						}"
 						numberUnit="{CurrencyCode}"
-						press="onProductListItemPress"
+						press=".onProductListItemPress"
 						iconDensityAware="false"
 						tooltip="{i18n>openProductDetails} {Name}">
 						<attributes>
@@ -76,7 +70,7 @@
 								state="{
 									path : 'Status',
 									formatter : '.formatter.statusState'
-								}" />
+								}"/>
 						</firstStatus>
 					</ObjectListItem>
 				</items>
@@ -84,11 +78,11 @@
 		</content>
 		<footer>
 			<Toolbar>
-				<ToolbarSpacer />
+				<ToolbarSpacer/>
 				<Button
 					id="masterListFilterButton"
 					icon="sap-icon://filter"
-					press="onMasterListFilterPressed"/>
+					press=".onFilter"/>
 			</Toolbar>
 		</footer>
 	</Page>

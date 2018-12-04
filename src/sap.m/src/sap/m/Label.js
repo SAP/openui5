@@ -129,7 +129,7 @@ function(
 			required : {type : "boolean", group : "Misc", defaultValue : false},
 
 			/**
-			 * Determines if the label is in displayOnly mode. Controls in this mode are neither interactive, nor editable, nor focusable, and not in the tab chain.
+			 * Determines if the label is in displayOnly mode.
 			 *
 			 * <b>Note:</b> This property should be used only in Form controls in preview mode.
 			 *

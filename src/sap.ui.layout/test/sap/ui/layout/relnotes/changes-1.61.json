@@ -37,6 +37,18 @@
         "type": "FIX",
         "text": " sap.ui.layout.VerticalLayout: QUnit fixes",
         "references": []
+      },
+      {
+        "id": "44e2c7eeaf0576e12f4b02af24adf72b9f65f919",
+        "type": "FIX",
+        "text": " sap.ui.unified, sap.ui.layout: qunits work correctly",
+        "references": []
+      },
+      {
+        "id": "7522fe8b46606403adab8ef8868c822a42be5318",
+        "type": "FIX",
+        "text": " sap.ui.unified, sap.ui.layout: qunits work correctly",
+        "references": []
       }
     ]
   }

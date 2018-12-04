@@ -43,6 +43,42 @@
         "type": "FIX",
         "text": " sap.m.PlanningCalendar - API appointment (de)selection works now.",
         "references": []
+      },
+      {
+        "id": "44e2c7eeaf0576e12f4b02af24adf72b9f65f919",
+        "type": "FIX",
+        "text": " sap.ui.unified, sap.ui.layout: qunits work correctly",
+        "references": []
+      },
+      {
+        "id": "7522fe8b46606403adab8ef8868c822a42be5318",
+        "type": "FIX",
+        "text": " sap.ui.unified, sap.ui.layout: qunits work correctly",
+        "references": []
+      },
+      {
+        "id": "d9414b18462bf5f55a1d0b9f669b6cec66c6f890",
+        "type": "FIX",
+        "text": " sap.ui.unified.Calendar: MonthInterval, TimeInterval and CalendarRow examples using sap.m library instead of sap.ui.commons",
+        "references": []
+      },
+      {
+        "id": "7ed46d96b74a0d68e43d756b0095072db63a6f30",
+        "type": "FIX",
+        "text": " sap.ui.unified.Calendar[Time/Month]TimeInterval: test page fix",
+        "references": []
+      },
+      {
+        "id": "e43a50eb0ac889c53db79959a50609a406f4a976",
+        "type": "FIX",
+        "text": " sap.ui.unified.FileUploader: Labeling improved",
+        "references": []
+      },
+      {
+        "id": "04578cdae47aedd90988bb38e8b5ffbb61441e2f",
+        "type": "FIX",
+        "text": " sap.ui.unified.Menu: test works on IE",
+        "references": []
       }
     ]
   }

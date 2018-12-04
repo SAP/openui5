@@ -153,6 +153,12 @@ sap.ui.define(function() {
 					originInfo: true
 				}
 			},
+			StaticBinding: {
+				title: "sap.ui.model.StaticBinding - QUnit Tests",
+				ui5: {
+					language: "en-US"
+				}
+			},
 			TreeBindingUtils: {
 				title: "sap.ui.model.TreeBindingUtils - QUnit Tests"
 			},

@@ -1201,7 +1201,7 @@ sap.ui.define([
 		var $Table = oPC1.getDomRef().querySelector("table");
 
 		// Table height is the PlanningCalendar height minus the height of the toolbars
-		var sStyle = oPC1.$().height() - oPC1._oInfoToolbar.$().height() - oPC1._oToolbar.$().height() + "px";
+		var sStyle = oPC1.$().height() - oPC1._oInfoToolbar.$().height() - oPC1._getTableHeaderToolbar().$().height() + "px";
 		assert.equal($Table.style.height, sStyle, "The height is set correctly to the Table");
 	});
 
@@ -1422,54 +1422,6 @@ sap.ui.define([
 		sap.ui.getCore().applyChanges();
 		assert.equal(oTable.getItems().length, 0, "Table rows destroyed");
 		assert.ok(!sap.ui.getCore().byId("PC1-Row1"), "Row1 destroyed");
-
-		oPC1 = initPlanningCalendar("PC1", "SF1", "B1");
-	});
-
-	QUnit.test("toolbarContent", function(assert) {
-		var oButton = new Button("BX", {
-			icon: "sap-icon://home",
-			type: ButtonType.Transparent
-		});
-
-		var oTable = sap.ui.getCore().byId("PC1-Table");
-
-		oPC1.addToolbarContent(oButton);
-		sap.ui.getCore().applyChanges();
-		assert.equal(oTable.getHeaderToolbar().getContent().length, 3, "HeaderToolbar items");
-		assert.equal(oTable.getHeaderToolbar().getContent()[2].getId(), "BX", "HeaderToolbar: new button exist");
-		assert.ok(jQuery("#BX").get(0), "new button rendered");
-
-		oPC1.removeToolbarContent(oButton);
-		sap.ui.getCore().applyChanges();
-		assert.equal(oTable.getHeaderToolbar().getContent().length, 2, "HeaderToolbar items");
-		assert.ok(!jQuery("#BX").get(0), "new button not rendered");
-
-		oPC1.insertToolbarContent(oButton, 0);
-		sap.ui.getCore().applyChanges();
-		assert.equal(oTable.getHeaderToolbar().getContent().length, 3, "HeaderToolbar items");
-		assert.equal(oTable.getHeaderToolbar().getContent()[0].getId(), "BX", "HeaderToolbar: new button exist");
-		assert.ok(jQuery("#BX").get(0), "new button rendered");
-
-		var aRemoved = oPC1.removeAllToolbarContent();
-		sap.ui.getCore().applyChanges();
-		assert.ok(!oTable.getHeaderToolbar(), "No HeaderToolbar exist on table");
-		assert.equal(oPC1._oToolbar.getContent().length, 0, "HeaderToolbar items");
-		assert.ok(!jQuery("#BX").get(0), "new button not rendered");
-		assert.equal(aRemoved.length, 3, "3 controls removed");
-
-		for (var i = 0; i < aRemoved.length; i++) {
-			aRemoved[i].destroy();
-		}
-
-		oPC1 = initPlanningCalendar("PC1", "SF1", "B1");
-		oTable = sap.ui.getCore().byId("PC1-Table");
-
-		oPC1.destroyToolbarContent();
-		sap.ui.getCore().applyChanges();
-		assert.ok(!oTable.getHeaderToolbar(), "No HeaderToolbar exist on table");
-		assert.equal(oPC1._oToolbar.getContent().length, 0, "HeaderToolbar items");
-		assert.ok(!sap.ui.getCore().byId("SF1"), "SearchField destroyed");
 
 		oPC1 = initPlanningCalendar("PC1", "SF1", "B1");
 	});
@@ -2693,6 +2645,19 @@ sap.ui.define([
 
 		//cleanup
 		oSetPropertySpy.restore();
+
+	});
+
+	QUnit.test("_getTableHeaderToolbar returns the table's header toolbar", function(assert) {
+		var oHeaderToolbar = this.sut.getAggregation("table").getHeaderToolbar(),
+			oResult;
+
+		// act
+		oResult = this.sut._getTableHeaderToolbar();
+
+		//assert
+		assert.equal(oResult.getId(), oHeaderToolbar.getId(), "_getTableHeaderToolbar should return the header toolbar " +
+			"set to the hidden aggregation 'table'");
 
 	});
 

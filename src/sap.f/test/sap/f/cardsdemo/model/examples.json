@@ -29,6 +29,12 @@
 		"route": "zflow",
 		"usage": "The chosen card container is a CSSGrid and stable UI is NOT needed."
 	},
+	{
+		"title": "CSSGrid with FLP config",
+		"description": "The CSSGrid is configured without breathing and to work well with GenericTiles",
+		"route": "flp",
+		"usage": "Breathing is not required and the grid should be configured based on GenericTile size"
+	},
     {
       "title": "List Card",
       "description": "Example page for Card of type List",
@@ -39,6 +45,12 @@
       "title": "Table Card",
       "description": "Example page for Card of type Table",
       "route": "tableContent",
+      "usage": "Development purposes only!"
+    },
+    {
+      "title": "KPI in Header",
+      "description": "Example page for Card with KPI Header",
+      "route": "kpiHeader",
       "usage": "Development purposes only!"
     }
 ]

@@ -1,48 +1,56 @@
 sap.ui.define([
 	"sap/ui/test/Opa5",
 	"sap/ui/util/Storage",
-	"sap/base/util/UriParameters"],
-function(
+	"sap/ui/demo/cart/localService/mockserver",
+	"sap/ui/model/odata/v2/ODataModel"
+], function(
 	Opa5,
 	Storage,
-	UriParameters) {
+	mockserver,
+	ODataModel) {
 	"use strict";
 
-	function addSaveForLater() {
-		var sStateToAdd;
-		if (window.location.search) {
-			sStateToAdd = "&";
-		} else {
-			sStateToAdd = "?";
-		}
-
-		sStateToAdd += "safeForLater=true";
-
-		window.history.replaceState("dummy", {}, window.location.pathname + window.location.search + sStateToAdd + window.location.hash);
-	}
-
 	return Opa5.extend("sap.ui.demo.cart.test.integration.arrangements.component.Startup", {
-		iStartMyApp : function (bKeepStorage, oAdditionalUrlParameters) {
+
+		/**
+		 * Initializes mock server, then start the app component
+		 * @param {object} oOptionsParameter An object that contains the configuration for starting up the app.
+		 * @param {integer} oOptionsParameter.delay A custom delay to start the app with
+		 * @param {integer} oOptionsParameter.keepStorage Does not clear the local storage when set to true
+		 * @param {string} [oOptionsParameter.hash] The in app hash can also be passed separately for better readability in tests
+		 * @param {boolean} [oOptionsParameter.autoWait=true] Automatically wait for pending requests while the application is starting up.
+		 */
+		iStartMyApp : function (oOptionsParameter) {
+			var oOptions = oOptionsParameter || {};
+
+			this._clearSharedData();
+
 			// The cart local storage should be deleted when the app starts except when testing it.
-			if (!bKeepStorage) {
+			if (!oOptions.keepStorage) {
 				var oLocalStorage = new Storage(Storage.Type.local);
 				oLocalStorage.remove("SHOPPING_CART");
 			}
-			oAdditionalUrlParameters = oAdditionalUrlParameters || {};
-			return this.iStartMyUIComponent({
+
+			// start the app with a minimal delay to make tests fast but still async to discover basic timing issues
+			oOptions.delay = oOptions.delay || 1;
+
+			// configure mock server with the current options
+			var oMockserverInitialized = mockserver.init(oOptions);
+			this.iWaitForPromise(oMockserverInitialized);
+
+			// start the app UI component
+			this.iStartMyUIComponent({
 				componentConfig: {
 					name: "sap.ui.demo.cart"
 				},
-				hash: oAdditionalUrlParameters.hash
+				hash: oOptions.hash,
+				autoWait: oOptions.autoWait
 			});
 		},
 
-		// feature toggle tests
-		iStartMyAppSafeForLaterActivated: function () {
-			if (!new UriParameters(window.location.href).get("safeForLater")) {
-				addSaveForLater();
-			}
-			return this.iStartMyApp();
+		_clearSharedData: function () {
+			// clear shared metadata in ODataModel to allow tests for loading the metadata
+			ODataModel.mSharedData = { server: {}, service: {}, meta: {} };
 		}
 	});
 });

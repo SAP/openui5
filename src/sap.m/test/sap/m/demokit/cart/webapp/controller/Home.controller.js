@@ -1,13 +1,15 @@
 sap.ui.define([
-	'sap/ui/demo/cart/controller/BaseController',
-	'sap/ui/demo/cart/model/formatter',
-	'sap/ui/model/Filter',
-	'sap/ui/model/FilterOperator'
+	"./BaseController",
+	"../model/formatter",
+	"sap/ui/model/Filter",
+	"sap/ui/model/FilterOperator",
+	"sap/ui/Device"
 ], function (
 	BaseController,
 	formatter,
 	Filter,
-	FilterOperator) {
+	FilterOperator,
+	Device) {
 	"use strict";
 
 	return BaseController.extend("sap.ui.demo.cart.controller.Home", {
@@ -47,10 +49,6 @@ sap.ui.define([
 			oProductList.setVisible(bShowSearchResults);
 			oCategoryList.setVisible(!bShowSearchResults);
 
-			if (bShowSearchResults) {
-				this._changeNoDataTextToIndicateLoading(oProductList);
-			}
-
 			// filter product list
 			var oBinding = oProductList.getBinding("items");
 			if (oBinding) {
@@ -63,19 +61,13 @@ sap.ui.define([
 			}
 		},
 
-		_changeNoDataTextToIndicateLoading: function (oList) {
-			var sOldNoDataText = oList.getNoDataText();
-			oList.setNoDataText("Loading...");
-			oList.attachEventOnce("updateFinished", function () {
-				oList.setNoDataText(sOldNoDataText);
-			});
-		},
-
 		onCategoryListItemPress: function (oEvent) {
 			var oBindContext = oEvent.getSource().getBindingContext();
 			var oModel = oBindContext.getModel();
 			var sCategoryId = oModel.getData(oBindContext.getPath()).Category;
-			this._router.navTo("category", {id: sCategoryId});
+
+			this._router.navTo(Device.system.phone ? "categoryPhone" : "category", {id: sCategoryId});
+			this._unhideMiddlePage();
 		},
 
 		onProductListSelect: function (oEvent) {
@@ -88,19 +80,18 @@ sap.ui.define([
 			this._showProduct(oItem);
 		},
 
+		onBackToHome: function () {
+			this.getRouter().navTo("welcome");
+			this._unhideMiddlePage();
+
+		},
+
 		_showProduct: function (oItem) {
 			var oBindContext = oItem.getBindingContext();
 			var oModel = oBindContext.getModel();
 			var sId = oModel.getData(oBindContext.getPath()).ProductId;
-			this._router.navTo("cartProduct", {productId: sId}, !sap.ui.Device.system.phone);
-		},
-
-		onNavButtonPress : function () {
-			this.getOwnerComponent().myNavBack();
-		},
-
-		onCartButtonPress: function () {
-			this._router.navTo("cart");
+			this._router.navTo("cartProduct", {productId: sId}, !Device.system.phone);
 		}
+
 	});
 });

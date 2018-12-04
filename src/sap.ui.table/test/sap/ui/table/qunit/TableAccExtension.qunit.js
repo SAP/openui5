@@ -264,8 +264,9 @@ sap.ui.define([
 		assert.strictEqual(sText, sExpected, "ACC Info description of cell [" + iRow + ", " + iCol + "]");
 	}
 
-	function testAriaDescriptionsForFocusedDataCell($Cell, iRow, iCol, assert, mParams) {
+	function testAriaDescriptionsForFocusedDataCell($Cell, iRow, iCol, assert, mParams, bExpanded) {
 		var mParams = mParams || {};
+		var oTable = !mParams.table ? window.oTable : mParams.table;
 		var bGroup = !!mParams.group;
 		var aDescriptions = [];
 		var oRow = oTable.getRows()[iRow];
@@ -274,6 +275,9 @@ sap.ui.define([
 
 		if ((iIndex == 0 && !bGroup) || iIndex == 2 || iIndex == 4) {
 			aDescriptions.push(oTable.getId() + "-toggleedit");
+		}
+		if (oTable instanceof sap.ui.table.TreeTable && iIndex == 0 || bGroup){
+			aDescriptions.push(oTable.getId() + (bExpanded ? "-rowcollapsetext" : "-rowexpandtext"));
 		}
 
 		assert.strictEqual(
@@ -319,6 +323,43 @@ sap.ui.define([
 			testAriaLabelsForNonFocusedDataCell($Cell, 1, oTreeTable.columnCount - 1, assert, {table: oTreeTable});
 			done();
 		}, 100);
+	});
+
+	QUnit.test("Grouping Row (TreeTable Row Header)", function(assert) {
+		var done = assert.async();
+		var $Cell;
+
+		oTreeTable.setUseGroupMode(true);
+		sap.ui.getCore().applyChanges();
+		$Cell = getRowHeader(0, true, assert, oTreeTable);
+		testAriaLabelsForRowHeader($Cell, 0, assert, {group: true, focus: true, firstTime: true, rowChange: true, colChange: true, table: oTreeTable});
+
+		oTreeTable.expand(0);
+		oTreeTable.attachEventOnce("_rowsUpdated", function() {
+			setTimeout(function(){
+				testAriaLabelsForRowHeader($Cell, 0, assert, {group: true, focus: true, rowChange: true, expanded: true, table: oTreeTable});
+				done();
+			}, 100);
+		});
+	});
+
+	QUnit.test("Grouping Row (TreeTable Row Action)", function(assert) {
+		var done = assert.async();
+		var $Cell;
+		initRowActions(oTreeTable, 1, 1);
+
+		oTreeTable.setUseGroupMode(true);
+		sap.ui.getCore().applyChanges();
+		$Cell = getRowAction(1, true, assert, oTreeTable);
+		testAriaLabelsForRowAction($Cell, 1, assert, {group: true, focus: true, firstTime: true, rowChange: true, colChange: true, table: oTreeTable});
+
+		oTreeTable.expand(1);
+		oTreeTable.attachEventOnce("_rowsUpdated", function() {
+			setTimeout(function(){
+				testAriaLabelsForRowAction($Cell, 1, assert, {group: true, focus: true, rowChange: true, colChange: true, expanded: true, table: oTreeTable});
+				done();
+			}, 100);
+		});
 	});
 
 	QUnit.test("aria-labelledby without Focus", function(assert) {
@@ -369,6 +410,37 @@ sap.ui.define([
 		}, 100);
 	});
 
+	QUnit.test("aria-describedby with Focus (TreeTable)", function(assert) {
+		var done = assert.async();
+		var $Cell;
+		var i;
+		for (i = 0; i < oTreeTable.columnCount; i++) {
+			$Cell = getCell(0, i, true, assert, oTreeTable);
+			testAriaDescriptionsForFocusedDataCell($Cell, 0, i, assert, {firstTime: i == 0, colChange: true, table: oTreeTable}, false);
+		}
+		for (i = 0; i < oTreeTable.columnCount; i++) {
+			$Cell = getCell(1, i, true, assert, oTreeTable);
+			testAriaDescriptionsForFocusedDataCell($Cell, 1, i, assert, {firstTime: i == 0, colChange: true, table: oTreeTable}, false);
+		}
+
+		oTreeTable.expand(0);
+		oTreeTable.expand(2);
+		oTreeTable.attachEventOnce("_rowsUpdated", function() {
+			setTimeout(function(){
+				$Cell = getCell(0, 0, true, assert, oTreeTable);
+				testAriaDescriptionsForFocusedDataCell($Cell, 0, 0, assert, {firstTime: true, colChange: true, table: oTreeTable}, true);
+				$Cell = getCell(2, 0, true, assert, oTreeTable);
+				testAriaDescriptionsForFocusedDataCell($Cell, 2, 0, assert, {firstTime: true, colChange: true, table: oTreeTable}, true);
+
+				setFocusOutsideOfTable(assert);
+				setTimeout(function() {
+					assert.ok(!$Cell.attr("aria-describedby"), "No aria-describedby on cell [1, " + (oTable.columnCount - 1) + "]");
+					done();
+				}, 100);
+			}, 100);
+		});
+	});
+
 	QUnit.test("aria-describedby without Focus", function(assert) {
 		setFocusOutsideOfTable(assert);
 		var $Cell;
@@ -408,11 +480,7 @@ sap.ui.define([
 		for (i = 0; i < oTable.columnCount; i++) {
 			$Cell = getCell(1, i, true, assert);
 			testAriaLabelsForFocusedDataCell($Cell, 1, i, assert, {firstTime: i == 0, colChange: true, group: true});
-			testAriaDescriptionsForFocusedDataCell($Cell, 1, i, assert, {
-				firstTime: i == 0,
-				colChange: true,
-				group: true
-			});
+			testAriaDescriptionsForFocusedDataCell($Cell, 1, i, assert, {rowChange: i == 0, colChange: true, group: true}, false);
 		}
 
 		setFocusOutsideOfTable(assert);
@@ -612,6 +680,8 @@ sap.ui.define([
 		var bRowChange = !!mParams.rowChange;
 		var bGroup = !!mParams.group;
 		var bSum = !!mParams.sum;
+		var bExpanded = !!mParams.expanded;
+		var oTable = !mParams.table ? window.oTable : mParams.table;
 
 		var aLabels = [];
 		if (bFirstTime && bFocus) {
@@ -627,6 +697,7 @@ sap.ui.define([
 			aLabels.push(oTable.getId() + "-rownumberofrows");
 			if (bGroup) {
 				aLabels.push(oTable.getId() + "-ariarowgrouplabel");
+				aLabels.push(oTable.getId() + (bExpanded ? "-rowcollapsetext" : "-rowexpandtext"));
 			} else if (bSum) {
 				aLabels.push(oTable.getId() + "-ariagrouptotallabel");
 			} else {
@@ -769,6 +840,8 @@ sap.ui.define([
 		var bColChange = !!mParams.colChange;
 		var bGroup = !!mParams.group;
 		var bSum = !!mParams.sum;
+		var bExpanded = !!mParams.expanded;
+		var oTable = !mParams.table ? window.oTable : mParams.table;
 
 		var aLabels = [];
 		if (bFirstTime && bFocus) {
@@ -795,6 +868,7 @@ sap.ui.define([
 			if (bGroup) {
 				aLabels.push(oTable.getId() + "-ariarowgrouplabel");
 				aLabels.push(oTable.getId() + "-rows-row" + iRow + "-groupHeader");
+				aLabels.push(oTable.getId() + (bExpanded ? "-rowcollapsetext" : "-rowexpandtext"));
 			} else if (bSum) {
 				aLabels.push(oTable.getId() + "-ariagrouptotallabel");
 				aLabels.push(oTable.getId() + "-rows-row" + iRow + "-groupHeader");
@@ -850,7 +924,8 @@ sap.ui.define([
 				rowChange: true,
 				colChange: i < 2,
 				focus: true,
-				group: i == 1
+				group: i == 1,
+				expanded: false
 			});
 		}
 		setFocusOutsideOfTable(assert);
@@ -1152,7 +1227,7 @@ sap.ui.define([
 			"ariagrouptotallabel",
 			"ariacolrowheaderlabel", "rownumberofrows", "colnumberofcols", "cellacc", "ariarowselected", "ariacolmenu", "ariacolspan",
 			"ariacolfiltered", "ariacolsortedasc", "ariacolsorteddes",
-			"ariafixedcolumn", "ariainvalid", "ariaselection", "ariashowcolmenu", "ariahidecolmenu"
+			"ariafixedcolumn", "ariainvalid", "ariaselection", "ariashowcolmenu", "ariahidecolmenu", "rowexpandtext", "rowcollapsetext"
 		];
 		var $Elem = oTable.$().find(".sapUiTableHiddenTexts");
 		assert.strictEqual($Elem.length, 1, "Hidden Text Area available");

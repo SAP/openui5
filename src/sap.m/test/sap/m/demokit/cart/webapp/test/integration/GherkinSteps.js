@@ -5,18 +5,19 @@ sap.ui.define([
 	"use strict";
 	Startup = new Startup();
 
-	var Steps = StepDefinitions.extend("GherkinWithOPA5.Steps", {
+	return StepDefinitions.extend("GherkinWithOPA5.Steps", {
 		init: function() {
-			this.register(/^I start my App with the hash "(.*)" (.*)/i,
+			this.register(
+				/^I start my App with the hash "(.*)" (.*)/i,
 				function(sHash, sStorage) {
 					var bKeepStorage = sStorage.indexOf("keeping") >= 0;
-					Startup.iStartMyApp(bKeepStorage, {
+					Startup.iStartMyApp({
+						keepStorage: bKeepStorage,
 						hash: sHash
 					});
-				});
+				}
+			);
 		}
 	});
-
-	return Steps;
 
 });

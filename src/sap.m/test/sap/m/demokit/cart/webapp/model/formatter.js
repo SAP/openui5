@@ -1,5 +1,5 @@
 sap.ui.define([
-	'sap/ui/core/format/NumberFormat'
+	"sap/ui/core/format/NumberFormat"
 ], function (NumberFormat) {
 	"use strict";
 
@@ -96,7 +96,7 @@ sap.ui.define([
 			return oBundle.getText("cartSavedForLaterFooterText");
 		},
 
-        /**
+		/**
 		 * Checks if one of the collections contains items.
 		 * @param {object} oCollection1 First array or object to check
 		 * @param {object} oCollection2 Second array or object to check

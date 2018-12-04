@@ -36,7 +36,7 @@
 			</Panel>
 
 			<Panel>
-				<grid:CSSGrid id="cssgrid" class="centered" wrapItemsWithDiv="true">
+				<grid:CSSGrid id="cssgrid" class="centered">
 
 					<grid:customLayout>
 						<grid:GridResponsiveLayout layoutChange="onLayoutChange">

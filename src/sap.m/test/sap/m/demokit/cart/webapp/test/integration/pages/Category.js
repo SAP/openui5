@@ -1,11 +1,11 @@
 sap.ui.define([
-	'sap/ui/test/Opa5',
-	'sap/ui/test/matchers/PropertyStrictEquals',
-	'sap/ui/test/matchers/AggregationFilled',
-	'sap/ui/test/matchers/AggregationLengthEquals',
-	'sap/ui/test/matchers/BindingPath',
-	'sap/ui/test/matchers/Properties',
-	'sap/ui/test/actions/Press'
+	"sap/ui/test/Opa5",
+	"sap/ui/test/matchers/PropertyStrictEquals",
+	"sap/ui/test/matchers/AggregationFilled",
+	"sap/ui/test/matchers/AggregationLengthEquals",
+	"sap/ui/test/matchers/BindingPath",
+	"sap/ui/test/matchers/Properties",
+	"sap/ui/test/actions/Press"
 ], function (
 	Opa5,
 	PropertyStrictEquals,
@@ -27,15 +27,6 @@ sap.ui.define([
 						matchers: new BindingPath({path: "/Products('HT-1254')"}),
 						actions: new Press(),
 						errorMessage: "The product list does not contain required selection"
-					});
-				},
-
-				iGoToTheCartPage: function () {
-					return this.waitFor({
-						controlType: "sap.m.Button",
-						matchers: new PropertyStrictEquals({name: "icon", value: "sap-icon://cart"}),
-						actions: new Press(),
-						errorMessage: "The cart button was not found and could not be pressed"
 					});
 				},
 
