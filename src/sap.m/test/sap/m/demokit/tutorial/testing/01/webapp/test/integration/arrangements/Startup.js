@@ -1,34 +1,38 @@
 sap.ui.define([
-	'sap/ui/test/Opa5'
-], function (Opa5) {
+	"sap/ui/test/Opa5",
+	"sap/ui/demo/bulletinboard/localService/mockserver",
+	"sap/ui/model/odata/v2/ODataModel"
+], function(Opa5, mockserver, ODataModel) {
 	"use strict";
-
-	function getFrameUrl(sHash, sUrlParameters) {
-		sHash = sHash || "";
-		var sUrl = sap.ui.require.toUrl("sap/ui/demo/bulletinboard/test/mockServer.html");
-
-		if (sUrlParameters) {
-			sUrlParameters = "?" + sUrlParameters;
-		}
-
-		return sUrl + sUrlParameters + "#" + sHash;
-	}
 
 	return Opa5.extend("sap.ui.demo.bulletinboard.test.integration.arrangements.Startup", {
 
-		constructor: function (oConfig) {
-			Opa5.apply(this, arguments);
+		iStartMyApp: function (oOptionsParameter) {
+			var oOptions = oOptionsParameter || {};
 
-			this._oConfig = oConfig;
+			this._clearSharedData();
+
+			// start the app with a minimal delay to make tests fast but still async to discover basic timing issues
+			oOptions.delay = oOptions.delay || 50;
+
+			// configure mock server with the current options
+			var oMockserverInitialized = mockserver.init(oOptions);
+
+			this.iWaitForPromise(oMockserverInitialized);
+			// start the app UI component
+			this.iStartMyUIComponent({
+				componentConfig: {
+					name: "sap.ui.demo.bulletinboard",
+					async: true
+				},
+				hash: oOptions.hash,
+				autoWait: oOptions.autoWait
+			});
 		},
 
-		iStartMyApp: function (oOptions) {
-			var sUrlParameters;
-			oOptions = oOptions || { delay: 0 };
-
-			sUrlParameters = "serverDelay=" + oOptions.delay;
-
-			this.iStartMyAppInAFrame(getFrameUrl(oOptions.hash, sUrlParameters));
+		_clearSharedData: function () {
+			// clear shared metadata in ODataModel to allow tests for loading the metadata
+			ODataModel.mSharedData = { server: {}, service: {}, meta: {} };
 		}
 	});
 });

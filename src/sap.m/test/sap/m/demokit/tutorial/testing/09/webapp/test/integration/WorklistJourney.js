@@ -25,6 +25,6 @@ sap.ui.define([
 		Then.onTheWorklistPage.theTableShouldHaveAllEntries();
 
 		// Cleanup
-		Then.iTeardownMyAppFrame();
+		Then.iTeardownMyApp();
 	});
 });

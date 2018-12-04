@@ -16,8 +16,7 @@ sap.ui.define([
 			and.theTitleShouldDisplayTheTotalAmountOfItems();
 
 		// Cleanup
-		Then.iTeardownMyAppFrame();
+		Then.iTeardownMyApp();
 	});
 
-	}
-);
+});
