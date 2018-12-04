@@ -13,12 +13,17 @@
 						id="productList"
 						headerText="Product List"
 						items="{/ProductCollection}"
-						mode="MultiSelect"
 						includeItemInSelection="true">
 						<items>
-							<StandardListItem
-								title="{Name}"
-								description="{ProductId}"/>
+							<CustomListItem>
+								<HBox>
+									<CheckBox selected="{= ${Status} === 'Available' }"/>
+									<VBox class="sapUiSmallMarginBegin sapUiSmallMarginTopBottom" >
+										<Text text="{Name}"></Text>
+										<Label text="{ProductId}"/>
+									</VBox>
+								</HBox>
+							</CustomListItem>
 						</items>
 					</List>
 				</content>
