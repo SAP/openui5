@@ -262,4 +262,49 @@ sap.ui.define([
 			assert.strictEqual(oParameters.viewOptions, oViewOptions, "Did pass the name to the event parameters");
 		});
 	});
+
+	QUnit.module("legacy behavior of set/get", {
+		beforeEach: function () {
+			// System under test + Arrange
+			this.oViews = new Views({async: false});
+			this.oViewOptions = {
+				viewName : "foo.bar",
+				viewType : "XML",
+				// providing an id will let the view saved under both "undefined" and its id
+				id: "myview"
+			};
+
+			this.oView = createXmlView();
+
+			this.oSapUiViewStub = sinon.stub(View, "_legacyCreate").callsFake(function () {
+				return this.oView;
+			}.bind(this));
+		},
+		afterEach: function () {
+			this.oViews.destroy();
+			this.oSapUiViewStub.restore();
+		}
+	});
+
+	QUnit.test("Create a view with given id and the view should be returned by calling getView only with viewName", function(assert) {
+		// The oViews cache is empty, calling get the first time creates an instance and saves it in the cache
+		var oPromise = this.oViews.getView(this.oViewOptions);
+
+		assert.equal(this.oSapUiViewStub.callCount, 1, "The sap.ui.view factory is called");
+
+		return oPromise.then(function(oView) {
+			assert.strictEqual(oView, this.oView, "The correct view is returned");
+
+			// The view is saved in the cache and should be returned directly
+			var oPromise = this.oViews.getView({
+				viewName: "foo.bar"
+			});
+
+			assert.equal(this.oSapUiViewStub.callCount, 1, "The sap.ui.view factory isn't called again");
+
+			return oPromise;
+		}.bind(this)).then(function(oFetchedView) {
+			assert.strictEqual(oFetchedView, this.oView, "The correct view is returned from second get call");
+		}.bind(this));
+	});
 });
