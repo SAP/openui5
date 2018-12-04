@@ -6,12 +6,14 @@ sap.ui.define(["jquery.sap.global",
 		'sap/ui/base/Object',
 		"sap/base/util/UriParameters",
 		"sap/ui/thirdparty/jquery",
-		"sap/ui/support/RuleAnalyzer"],
+		"sap/ui/support/RuleAnalyzer",
+		"sap/ui/support/library"],
 	function(jQuery,
 			 BaseObject,
 			 UriParameters,
 			 jQueryDOM,
-			 RuleAnalyzer) {
+			 RuleAnalyzer,
+			 library) {
 	"use strict";
 
 	var Extension = BaseObject.extend("sap.ui.core.support.RuleEngineOpaExtension", {
@@ -52,7 +54,11 @@ sap.ui.define(["jquery.sap.global",
 			var fnShouldSkipRulesIssues = function () {
 				return new UriParameters(window.location.href).get('sap-skip-rules-issues') == 'true';
 			};
-
+			var getWindow = function () {
+				var opaWindow = window.parent;
+				opaWindow._$files = opaWindow._$files || [];
+				return opaWindow;
+			};
 			return {
 				/**
 				 * Run the Support Assistant and analyze against a specific state of the application.
@@ -146,6 +152,62 @@ sap.ui.define(["jquery.sap.global",
 						message: message,
 						actual: actual,
 						expected: history
+					});
+
+					return ruleDeferred.promise();
+				},
+
+				/**
+				 * This stores the passed history format in window._$files array.
+				 * Accessing this array give an opportunity to store this history in file
+				 *
+				 * @param {Object} [options] The options used for configuration
+				 * @param {String} [options.historyFormat] The format into which the history object will be converted. Possible values are listed in sap.ui.support.HistoryFormats.
+				 * @param {String} [options.fileName] The name of the file. The file name must be in following format:
+				 *
+				 *     <name of the file> + . + <file extension>
+				 *
+				 *      Example: file.json
+				 */
+				getReportAsFileInFormat: function (options) {
+					var oContext,
+						oHistory,
+						options = options[0] || {},
+						ruleDeferred = jQueryDOM.Deferred(),
+						sHistoryFormat = options["historyFormat"],
+						sFile = options["fileName"];
+
+					switch (sHistoryFormat) {
+						case library.HistoryFormats.Abap:
+							if (!sFile) {
+								sFile = "abap-report.json";
+							}
+							oHistory = RuleAnalyzer.getFormattedAnalysisHistory(sHistoryFormat);
+							break;
+						case library.HistoryFormats.String:
+							if (!sFile) {
+								sFile = "string-report.json";
+							}
+							oHistory = RuleAnalyzer.getFormattedAnalysisHistory(sHistoryFormat);
+							break;
+						default :
+							if (!sFile) {
+								sFile = "report.json";
+							}
+							oHistory = RuleAnalyzer.getAnalysisHistory();
+					}
+
+					oContext = getWindow();
+					oContext._$files.push({
+						name: sFile,
+						content: JSON.stringify(oHistory)
+					});
+
+					ruleDeferred.resolve({
+						result: true,
+						message: "Support Assistant Analysis History was stored in window._$files with following name " + sFile,
+						actual: true,
+						expected: true
 					});
 
 					return ruleDeferred.promise();
