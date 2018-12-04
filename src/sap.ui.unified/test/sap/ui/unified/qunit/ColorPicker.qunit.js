@@ -21,7 +21,7 @@ sap.ui.define([
 		QUnit.test("Responsive mode", function (oAssert) {
 			// Arrange
 			var oHelper = sap.ui.unified.ColorPickerHelper,
-				oFactory = oHelper.factory,
+				oFactory = sap.ui.unified.ColorPickerHelper.factory,
 				oRBGroup,
 				oInput,
 				oSlider;
