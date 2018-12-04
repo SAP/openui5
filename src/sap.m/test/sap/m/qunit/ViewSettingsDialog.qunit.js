@@ -20,6 +20,7 @@ sap.ui.define([
 	"sap/m/Input",
 	"sap/ui/base/ManagedObject",
 	"sap/base/Log",
+	"sap/ui/qunit/utils/waitForThemeApplied",
 	"jquery.sap.keycodes"
 ], function(
 	qutils,
@@ -40,7 +41,8 @@ sap.ui.define([
 	jQuery,
 	Input,
 	ManagedObject,
-	Log
+	Log,
+	waitForThemeApplied
 ) {
 	// shortcut for sap.m.ListMode
 	var ListMode = mobileLibrary.ListMode;
@@ -3215,4 +3217,6 @@ sap.ui.define([
 		assert.strictEqual(this.oVSD._getTitleLabel().getId(), sExpectedId, "id of the Dialog title is equal to the 'dialogId + -title' suffix");
 		assert.strictEqual(this.oVSD._getDialog().getAriaLabelledBy()[0], sExpectedId, "ariaLabeledBy attribute of the Dialog is equal to the Dialog title id");
 	});
+
+	return waitForThemeApplied();
 });

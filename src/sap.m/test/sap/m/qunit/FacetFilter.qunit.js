@@ -19,6 +19,7 @@ sap.ui.define([
 	"sap/m/HBox",
 	"sap/ui/core/InvisibleText",
 	"sap/m/GroupHeaderListItem",
+	"sap/ui/qunit/utils/waitForThemeApplied",
 	"jquery.sap.keycodes"
 ], function(
 	qutils,
@@ -38,7 +39,8 @@ sap.ui.define([
 	Sorter,
 	HBox,
 	InvisibleText,
-	GroupHeaderListItem
+	GroupHeaderListItem,
+	waitForThemeApplied
 ) {
 	// shortcut for sap.m.ToolbarDesign
 	var ToolbarDesign = mobileLibrary.ToolbarDesign;
@@ -4829,4 +4831,6 @@ sap.ui.define([
 		};
 		oFFL._handleSearchEvent(oEvent);
 	}
+
+	return waitForThemeApplied();
 });
