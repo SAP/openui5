@@ -7,11 +7,10 @@ sap.ui.define([
 	'sap/ui/base/Object',
 	'sap/ui/core/Locale',
 	'sap/ui/core/LocaleData',
-	"sap/base/strings/escapeRegExp",
 	"sap/base/assert",
 	"sap/ui/thirdparty/jquery"
 ],
-	function(BaseObject, Locale, LocaleData, escapeRegExp, assert, jQuery) {
+	function(BaseObject, Locale, LocaleData, assert, jQuery) {
 	"use strict";
 
 
@@ -1685,7 +1684,10 @@ sap.ui.define([
 			numberValue: undefined,
 			cldrCode: []
 		};
-		var iBestLength;
+		if (typeof sValue !== "string") {
+			return oBestMatch;
+		}
+		var iBestLength = Number.POSITIVE_INFINITY;
 		var sUnitCode, sKey;
 		for (sUnitCode in mUnitPatterns) {
 			for (sKey in mUnitPatterns[sUnitCode]) {
@@ -1693,29 +1695,35 @@ sap.ui.define([
 				if (sKey.indexOf("unitPattern") === 0) {
 					var sUnitPattern = mUnitPatterns[sUnitCode][sKey];
 
+					// IMPORTANT:
+					// To increase performance we are using native string operations instead of regex,
+					// to match the patterns against the input.
+					//
 					// sample input: e.g. "mi 12 tsd. ms²"
 					// unit pattern: e.g. "mi {0} ms²"
-					// regex from pattern: "^mi (.+) ms²$"
-					// match regex against input to get number.
+
 					// The smallest resulting number (String length) will be the best match
-					var bContainsExpression = sUnitPattern.indexOf("{0}") > -1;
+					var iNumberPatternIndex = sUnitPattern.indexOf("{0}");
+					var bContainsExpression = iNumberPatternIndex > -1;
 					if (bContainsExpression) {
 
 						//escape regex characters to match it properly
-						sUnitPattern = "^" + escapeRegExp(sUnitPattern).replace("\\{0\\}", "(.+)") + "$";
+						var sPrefix = sUnitPattern.substring(0, iNumberPatternIndex);
+						var sPostfix = sUnitPattern.substring(iNumberPatternIndex + "{0}".length);
 
-						var regexp = new RegExp(sUnitPattern);
-						var match = regexp.exec(sValue);
-						if (match && match[1]) {
+						var bMatches = sValue.startsWith(sPrefix) && sValue.endsWith(sPostfix);
+
+						var match = bMatches && sValue.substring(sPrefix.length, sValue.length - sPostfix.length);
+						if (match) {
 							//get the match with the shortest result.
 							// e.g. 1km -> (.+)m -> "1k" -> length 2
 							// e.g. 1km -> (.+)km -> "1" -> length 1
 
-							if (iBestLength === undefined || match[1].length < iBestLength) {
-								iBestLength = match[1].length;
-								oBestMatch.numberValue = match[1];
+							if (match.length < iBestLength) {
+								iBestLength = match.length;
+								oBestMatch.numberValue = match;
 								oBestMatch.cldrCode = [sUnitCode];
-							} else if (match[1].length === iBestLength && oBestMatch.cldrCode.indexOf(sUnitCode) === -1) {
+							} else if (match.length === iBestLength && oBestMatch.cldrCode.indexOf(sUnitCode) === -1) {
 								//ambiguous unit (en locale)
 								// e.g. 100 c -> (.+) c -> duration-century
 								// e.g. 100 c -> (.+) c -> volume-cup
