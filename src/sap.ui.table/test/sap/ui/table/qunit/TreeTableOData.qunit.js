@@ -148,7 +148,7 @@ sap.ui.define([
 			assert.equal(jQuery("#table0").find(".sapUiTableTreeIconNodeOpen").length, 1, "Expand(0): Test that only one node is expanded");
 			assert.equal(jQuery("#table0").find(".sapUiTableTreeIconNodeClosed").length, 9, "Expand(0): Test that 9 nodes are collapsed");
 			// expand second node, 2 change events, 1 for expand, 1 when data is loaded
-			attachRowsUpdatedOnce(this.oTable, fnHandler3, this);
+			attachEventHandler(this.oTable, 1, fnHandler3, this);
 			this.oTable.expand(1);
 		};
 
@@ -166,7 +166,7 @@ sap.ui.define([
 			assert.equal(jQuery("#table0").find(".sapUiTableTreeIconNodeClosed").length, 1,
 				"Collapse(0): Test that only one node is rendered, State: collapsed");
 			assert.equal(jQuery("#table0").find(".sapUiTableTreeIconNodeOpen").length, 0, "Collapse(0): There shall be no other rows");
-			// data already loaded, only one change event fired my expand
+			// data already loaded, only one change event fired by expand
 			attachRowsUpdatedOnce(this.oTable, fnHandler5, this);
 			this.oTable.expand(0);
 		};
@@ -527,15 +527,12 @@ sap.ui.define([
 			var i = 1;
 			var fnVisibleRowHandler = function() {
 				// section length is visibleRowCount, make sure to scroll to all the sections/nodes
-				i += this.oTable.getVisibleRowCount();
-				if (i <= this.oTable._getTotalRowCount() + this.oTable.getVisibleRowCount()) {
+				if (i < this.oTable._getMaxFirstVisibleRowIndex()) {
+					i += this.oTable.getVisibleRowCount();
 					this.oTable.setFirstVisibleRow(i);
-				}
-
-				if (i >= this.oTable._getTotalRowCount() - 1 && i < 1000) {
+				} else {
 					this.oTable.detachEvent("_rowsUpdated", fnVisibleRowHandler);
 					assert.equal(this.oTable.getSelectedIndices().length, 55, "55 Nodes in Tree, all selected");
-					i = 99999;
 					done();
 				}
 			};
