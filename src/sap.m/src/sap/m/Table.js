@@ -668,11 +668,6 @@ sap.ui.define([
 		ListBase.prototype.onfocusin.call(this, oEvent);
 	};
 
-	// function gets called when the focus is on the item or its content
-	Table.prototype.onItemFocusIn = function(oItem) {
-		ListBase.prototype.onItemFocusIn.apply(this, arguments);
-	};
-
 	// event listener for theme changed
 	Table.prototype.onThemeChanged = function() {
 		ListBase.prototype.onThemeChanged.call(this);
