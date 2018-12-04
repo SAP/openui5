@@ -1,5 +1,5 @@
 /* global sinon, QUnit*/
-sap.ui.require([
+sap.ui.define([
 	'sap/ui/model/Model',
 	'sap/ui/core/message/Message',
 	'sap/ui/core/library',
