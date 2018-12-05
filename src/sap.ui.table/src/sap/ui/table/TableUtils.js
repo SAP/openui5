@@ -1317,22 +1317,21 @@ sap.ui.define([
 			 * @param {any} [vContext] The context of the call.
 			 * @param {Object} [vArguments] The arguments object.
 			 * @param {boolean} [bAsync=false] Whether the method should be called in a promise.
+			 * @param {boolean} [bFinal=false] Whether this is the final invocation before cancellation.
 			 */
-			function invoke(vContext, vArguments, bAsync) {
-				bAsync = bAsync === true;
-				iLastInvocationTime = Date.now();
+			function invoke(vContext, vArguments, bAsync, bFinal) {
+				iLastInvocationTime = bFinal === true ? null : Date.now();
 
 				if (vArguments == null) {
 					return;
 				}
 
-				if (bAsync) {
+				if (bAsync === true) {
 					var oPromise = Promise.resolve().then(function() {
-						if (oPromise.canceled) {
-							return;
+						if (!oPromise.canceled) {
+							fn.apply(vContext, vArguments);
 						}
 						oCancelablePromise = null;
-						fn.apply(vContext, vArguments);
 					});
 					oPromise.cancel = function() {
 						oPromise.canceled = true;
@@ -1352,13 +1351,18 @@ sap.ui.define([
 			function invokeDebounced(vContext, vArguments) {
 				cancelTimer();
 
-				function _invoke(bCancel) {
-					bCancel = bCancel !== false;
-					if (mOptions.trailing) {
-						invoke(vContext, vArguments);
-					}
-					if (bCancel) {
+				/**
+				 * Executes a trailing invocation if it is enabled in the options.
+				 *
+				 * @param {boolean} [bFinal=true] Whether this is the final invocation.
+				 */
+				function _invoke(bFinal) {
+					bFinal = bFinal !== false;
+					if (bFinal) {
 						cancel();
+					}
+					if (mOptions.trailing) {
+						invoke(vContext, vArguments, null, bFinal);
 					}
 				}
 
