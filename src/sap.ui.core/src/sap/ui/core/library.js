@@ -43,6 +43,7 @@ sap.ui.define(['sap/ui/base/DataType', './CalendarType', './Core'],
 			"sap.ui.core.ID",
 			"sap.ui.core.IconColor",
 			"sap.ui.core.ImeMode",
+			"sap.ui.core.IndicationColor",
 			"sap.ui.core.MessageType",
 			"sap.ui.core.OpenState",
 			"sap.ui.core.Orientation",
@@ -1112,6 +1113,49 @@ sap.ui.define(['sap/ui/base/DataType', './CalendarType', './Core'],
 	 * @public
 	 * @ui5-metamodel This interface also will be described in the UI5 (legacy) designtime metamodel
 	 */
+
+	/**
+	 * Colors to highlight certain UI elements.
+	 * In contrast to the <code>ValueState</code> the semantic meaning must be defined by the application.
+	 *
+	 * @enum {string}
+	 * @public
+	 * @since 1.62.0
+	 * @ui5-metamodel This enumeration also will be described in the UI5 (legacy) designtime metamodel
+	 */
+	thisLib.IndicationColor = {
+
+		/**
+		 * Indication Color 1
+		 * @public
+		 */
+		Indication01 : "Indication01",
+
+		/**
+		 * Indication Color 2
+		 * @public
+		 */
+		Indication02 : "Indication02",
+
+		/**
+		 * Indication Color 3
+		 * @public
+		 */
+		Indication03 : "Indication03",
+
+		/**
+		 * Indication Color 4
+		 * @public
+		 */
+		Indication04 : "Indication04",
+
+		/**
+		 * Indication Color 5
+		 * @public
+		 */
+		Indication05 : "Indication05"
+
+	};
 
 
 	/**
