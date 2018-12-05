@@ -10,6 +10,7 @@ sap.ui.define([
 	"jquery.sap.keycodes",
 	"sap/ui/Device",
 	"sap/m/ResponsivePopover",
+	"sap/ui/qunit/utils/waitForThemeApplied",
 	"jquery.sap.global"
 ], function(
 	qutils,
@@ -20,7 +21,8 @@ sap.ui.define([
 	Button,
 	jQuery,
 	Device,
-	ResponsivePopover
+	ResponsivePopover,
+	waitForThemeApplied
 ) {
 	'use strict';
 
@@ -1088,4 +1090,6 @@ sap.ui.define([
 			done();
 		}, sinonClockTickValue);
 	});
+
+	return waitForThemeApplied();
 });

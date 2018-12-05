@@ -14,7 +14,8 @@ sap.ui.define([
 	"sap/m/Page",
 	"sap/m/App",
 	"jquery.sap.global",
-	"sap/ui/Device"
+	"sap/ui/Device",
+	"sap/ui/qunit/utils/waitForThemeApplied"
 ], function(
 	qutils,
 	createAndAppendDiv,
@@ -30,7 +31,8 @@ sap.ui.define([
 	Page,
 	App,
 	jQuery,
-	Device
+	Device,
+	waitForThemeApplied
 ) {
 	"use strict";
 
@@ -1090,4 +1092,6 @@ sap.ui.define([
 		assert.equal(oCustomHeader.getContentRight()[0].getVisible(), true, 'Clear button is not visible');
 		assert.ok(oCustomHeader.getContentRight()[0].getDomRef(), 'Clear button is in dom');
 	});
+
+	return waitForThemeApplied();
 });
