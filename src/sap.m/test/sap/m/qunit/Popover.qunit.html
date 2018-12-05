@@ -2188,6 +2188,51 @@
 			// clean up
 			oButton.destroy();
 		});
+
+		QUnit.test("Popover open after being destroyed", function (assert){
+			// setup
+			var oDeviceParams = {
+				system: {
+					desktop: true,
+					phone: false,
+					tablet: false
+				},
+				support: {
+					touch: false
+				}
+			};
+
+			this.stub(sap.ui.Device, "system", oDeviceParams.system);
+			this.stub(sap.ui.Device, "support", oDeviceParams.support);
+
+			var oPopover = new sap.m.Popover({
+				content: [new sap.m.Label({text: "Hello World!"})]
+			});
+			var oOpenerSpy = this.spy(oPopover, "openBy");
+			var oButton = new sap.m.Button({
+				text: "Click me!",
+				press: function () {
+					oPopover.openBy(this);
+					oPopover.close();
+					oPopover.openBy(this); // -> too fast! open will be deferred because popup is still "closing"
+					oPopover.destroy();
+				}
+			}).placeAt("content");
+			sap.ui.getCore().applyChanges();
+			this.clock.tick(500);
+
+			//Act
+			try {
+				oButton.firePress();
+				sap.ui.getCore().applyChanges();
+			} catch (e) { e; }
+
+			// Assert
+			assert.ok(!oOpenerSpy.threw(), "Destroyed and closed silently without exception");
+
+			// Cleanup
+			oButton.destroy();
+		});
 	</script>
 </head>
 <body id="body" class="sapUiBody">
