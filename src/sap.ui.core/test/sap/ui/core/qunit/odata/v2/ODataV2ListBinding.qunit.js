@@ -1785,6 +1785,45 @@ sap.ui.define([
 		}
 	});
 
+
+	QUnit.test("ListBinding sorting with expanded list", function(assert){
+		var done = assert.async();
+		oModel.read("/Categories(1)", {urlParameters: {"$expand":"Products"}, success: function() {
+
+			var oListBinding = oModel.bindList("/Categories(1)/Products", null, new sap.ui.model.Sorter("UnitPrice"));
+
+			oListBinding.initialize();
+			var aContexts = oListBinding.getContexts();
+			assert.equal(aContexts.length, 12, "12 entry contained");
+
+
+			var aData = aContexts.map(function(oContext) {
+				return {
+					name: oContext.getProperty("ProductName"),
+					value: oContext.getProperty("UnitPrice")
+				};
+			});
+
+			var aDataSorted = aData.slice();
+			aDataSorted.sort(function(a, b) {
+				var iFa = parseFloat(a.value);
+				var iFb = parseFloat(b.value);
+				if (iFa < iFb) {
+					return -1;
+				} else if (iFa > iFb) {
+					return 1;
+				}
+				return 0;
+			});
+
+			assert.deepEqual(aData, aDataSorted, "Data must be sorted using price");
+
+			done();
+		}});
+
+	});
+
+
 	QUnit.test("ListBinding serverside filter - NotStartsWith", function(assert){
 		var done = assert.async();
 		var oListBinding = oModel.bindList("/Categories", null, null, new Filter("CategoryName", "NotStartsWith", "C"), {

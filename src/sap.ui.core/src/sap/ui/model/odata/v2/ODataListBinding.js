@@ -490,6 +490,8 @@ sap.ui.define([
 				this.iLength = oRef.length;
 				this.bLengthFinal = true;
 				this.bDataAvailable = true;
+				// ensure sorters/filters for an expanded list are initialized
+				this._initSortersFilters();
 				this.applyFilter();
 				this.applySort();
 			} else { // means that expanded data has no data available e.g. for 0..n relations
