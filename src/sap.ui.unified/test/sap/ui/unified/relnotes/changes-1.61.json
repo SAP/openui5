@@ -79,6 +79,18 @@
         "type": "FIX",
         "text": " sap.ui.unified.Menu: test works on IE",
         "references": []
+      },
+      {
+        "id": "5e28e5c7409753be04ac5ce7e356dba48047f895",
+        "type": "FIX",
+        "text": " sap.ui.unified.ColorPicker: Now qunits work correctly",
+        "references": []
+      },
+      {
+        "id": "85fca6ddf610e76ee75ba48db3bb9aa6816acaa5",
+        "type": "FIX",
+        "text": " ui.unified.Calendar: Color of secondary numbers updated",
+        "references": []
       }
     ]
   }

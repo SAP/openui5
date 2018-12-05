@@ -91,6 +91,12 @@
         "type": "FIX",
         "text": " sap.uxap.ObjectPageLayout: _updateMedia is now called correctly",
         "references": []
+      },
+      {
+        "id": "2bf582ff341fb4601afa9f8677552ee3bea91d5d",
+        "type": "FIX",
+        "text": " sap.uxap.ObjectPageHeader: Corrected css height handling",
+        "references": []
       }
     ]
   }

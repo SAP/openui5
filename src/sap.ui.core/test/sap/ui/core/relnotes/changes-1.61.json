@@ -169,6 +169,59 @@
         "type": "FIX",
         "text": " type.Date: Format contstraints for validation error message",
         "references": []
+      },
+      {
+        "id": "d08f802a439c3a10621b5e87f481737169a7c364",
+        "type": "FEATURE",
+        "text": " Manifest: alternative manifest.json URL for manifest objects",
+        "references": []
+      },
+      {
+        "id": "c7b953e85eed283fd6cac90323bfaf59e3388410",
+        "type": "FEATURE",
+        "text": " StaticBinding: Support declaration of static binding values",
+        "references": []
+      },
+      {
+        "id": "a0b2ae3429614627ac59a2ae5fc4adeb5935bee7",
+        "type": "FIX",
+        "text": " ControllerExtension.qunit",
+        "references": []
+      },
+      {
+        "id": "f90d7ebc36368d78611153e99fd860201cc97ee1",
+        "type": "FIX",
+        "text": " ManagedObjectModel: asynchron checkUpdate does nothing",
+        "references": []
+      },
+      {
+        "id": "87833590c6d5cf9c729fbe9b39c95f88e02064ef",
+        "type": "FIX",
+        "text": " NumberFormat: Fixed bug in short currency parsing",
+        "references": []
+      },
+      {
+        "id": "73caaf72ea5a3614efe71b15e29b8813c1d3725b",
+        "type": "FIX",
+        "text": " sap.ui.core.Core: Replaced each function implementation with each utils module. Fixes: https://github.com/SAP/openui5/issues/2304",
+        "references": [
+          {
+            "type": "GitHub",
+            "reference": "2304"
+          }
+        ]
+      },
+      {
+        "id": "8510f4a8d6ab75afc6434064b8bbc5e64d02105f",
+        "type": "FIX",
+        "text": " sap.ui.model.odata.AnnotationsParser: nested annotation w/o qualifier",
+        "references": []
+      },
+      {
+        "id": "365139c52d945535f492d17a960161e36b52e7b7",
+        "type": "FIX",
+        "text": " sap.ui.model.odata.AnnotationsParser: nested annotation w/o qualifier (2)",
+        "references": []
       }
     ]
   }
