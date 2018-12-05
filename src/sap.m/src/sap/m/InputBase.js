@@ -361,11 +361,8 @@ function(
 
 		this.$().toggleClass("sapMFocus", true);
 
-		if (this.shouldValueStateMessageBeOpened()) {
-
-			// open value state message popup when focus is in the input
-			this.openValueStateMessage();
-		}
+		// open value state message popup when focus is in the input
+		this.openValueStateMessage();
 	};
 
 	/**
@@ -851,7 +848,7 @@ function(
 	 * @protected
 	 */
 	InputBase.prototype.openValueStateMessage = function() {
-		if (this._oValueStateMessage) {
+		if (this._oValueStateMessage && this.shouldValueStateMessageBeOpened()) {
 			this._oValueStateMessage.open();
 		}
 	};
@@ -919,7 +916,7 @@ function(
 		if ($Input[0] === document.activeElement) {
 			if (sValueState === mValueState.None) {
 				this.closeValueStateMessage();
-			} else if (this.shouldValueStateMessageBeOpened()) {
+			} else {
 				this.openValueStateMessage();
 			}
 		}
