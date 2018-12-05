@@ -131,7 +131,7 @@ sap.ui.define([
 							sRGBBackgroundColor = this.hexToRgb(ThemeParameters.get("sapUiErrorBorder"));
 							break;
 						case MessageType.Information:
-							sRGBBackgroundColor = this.hexToRgb(ThemeParameters.get("sapUiHighlight"));
+							sRGBBackgroundColor = this.hexToRgb(ThemeParameters.get("sapUiInformationBorder"));
 							break;
 						default:
 							sRGBBackgroundColor = "transparent"; // transparent
