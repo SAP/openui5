@@ -3379,4 +3379,43 @@ sap.ui.define([
 
 		assert.equal(scrollDiv.offsetWidth, scrollDiv.scrollWidth, "Dialog doesn't have a scrollbar");
 	});
+
+	QUnit.module("Input with Suggestions and Value State Message", {
+		beforeEach: function () {
+
+			this.inputWithSuggestions = new Input({
+				showSuggestion: true,
+				valueStateText: 'Some Error',
+				showValueStateMessage: false,
+				suggestionItems: [
+					new Item({
+						text: 'one',
+						key: '1'
+					}),
+					new Item({
+						text: 'two',
+						key: '2'
+					})
+				]
+			}).placeAt("content");
+			sap.ui.getCore().applyChanges();
+		},
+		afterEach: function () {
+			this.inputWithSuggestions.destroy();
+			this.inputWithSuggestions = null;
+		}
+	});
+
+	QUnit.test('valueStateText', function (assert) {
+
+		this.inputWithSuggestions.setValueState("Error");
+		this.inputWithSuggestions.onfocusin();
+		this.inputWithSuggestions._$input.focus().val("on").trigger("input");
+		this.clock.tick(300);
+
+		this.inputWithSuggestions._closeSuggestionPopup();
+		this.clock.tick(300);
+
+		assert.notOk(this.inputWithSuggestions._oValueStateMessage._oPopup, "Value state message is not shown");
+	});
 });
