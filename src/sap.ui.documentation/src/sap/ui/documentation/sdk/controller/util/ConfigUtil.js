@@ -28,7 +28,7 @@ sap.ui.define([
 
 				sViewName = "sap.ui.documentation.sdk.view." + capitalize(sViewName, 0);
 
-				return this._oComponent.getRouter().getView(sViewName);
+				return this._oComponent.getRouter().getView(sViewName, "XML");
 		},
 
 		_getMasterTargetName: function(sRouteName) {
