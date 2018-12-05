@@ -2,7 +2,7 @@ sap.ui.define(['sap/ui/core/UIComponent'],
 	function (UIComponent) {
 	'use strict';
 
-	var oComponent = UIComponent.extend('sap.f.tutorial.fiori2.02.Component', {
+	var oComponent = UIComponent.extend('sap.f.tutorial.fiori2.07.Component', {
 		metadata: {
 			config: {
 				sample: {

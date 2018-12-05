@@ -25,13 +25,6 @@ sap.ui.define([
 			this.setModel(oProductsModel, 'products');
 
 			this.getRouter().initialize();
-		},
-
-		createContent: function () {
-			return sap.ui.view({
-				viewName: "sap.ui.demo.fiori2.view.App",
-				type: "XML"
-			});
 		}
 	});
 });

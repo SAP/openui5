@@ -28,11 +28,7 @@ sap.ui.define([
 		},
 
 		onAdd: function () {
-			MessageBox.show("This functionality is not ready yet.", {
-				icon: MessageBox.Icon.INFORMATION,
-				title: "Aw, Snap!",
-				actions: [MessageBox.Action.OK]
-			});
+			MessageBox.information("This functionality is not ready yet.", {title: "Aw, Snap!"});
 		},
 
 		onSort: function () {
@@ -51,4 +47,4 @@ sap.ui.define([
 			this.oRouter.navTo("detail", {layout: oNextUIState.layout, product: product});
 		}
 	});
-}, true);
+});

@@ -1,7 +1,8 @@
 sap.ui.define([
 	"sap/ui/model/json/JSONModel",
-	"sap/ui/core/mvc/Controller"
-], function (JSONModel, Controller) {
+	"sap/ui/core/mvc/Controller",
+	'sap/f/library'
+], function (JSONModel, Controller, fioriLibrary) {
 	"use strict";
 
 	return Controller.extend("sap.ui.demo.fiori2.controller.App", {
@@ -18,7 +19,7 @@ sap.ui.define([
 
 			// If there is no layout parameter, query for the default level 0 layout (normally OneColumn)
 			if (!sLayout) {
-				sLayout = sap.f.LayoutType.OneColumn;
+				sLayout = fioriLibrary.LayoutType.OneColumn;
 			}
 
 			oModel.setProperty("/layout", sLayout);

@@ -1,7 +1,8 @@
-<m:View displayBlock="true" controllerName="sap.ui.demo.fiori2.controller.DetailDetail" height="100%"
-		xmlns="sap.f"
-		xmlns:m="sap.m">
-
+<mvc:View
+	controllerName="sap.ui.demo.fiori2.controller.DetailDetail"
+	xmlns="sap.f"
+	xmlns:m="sap.m"
+	xmlns:mvc="sap.ui.core.mvc">
 	<DynamicPage toggleHeaderOnTitleClick="false">
 		<title>
 			<DynamicPageTitle>
@@ -13,4 +14,4 @@
 			</DynamicPageTitle>
 		</title>
 	</DynamicPage>
-</m:View>
+</mvc:View>

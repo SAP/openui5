@@ -4,8 +4,9 @@ sap.ui.define([
 	"sap/ui/model/Filter",
 	"sap/ui/model/FilterOperator",
 	'sap/ui/model/Sorter',
-	'sap/m/MessageBox'
-], function (JSONModel, Controller, Filter, FilterOperator, Sorter, MessageBox) {
+	'sap/m/MessageBox',
+	'sap/f/library'
+], function (JSONModel, Controller, Filter, FilterOperator, Sorter, MessageBox, fioriLibrary) {
 	"use strict";
 
 	return Controller.extend("sap.ui.demo.fiori2.controller.Master", {
@@ -27,11 +28,7 @@ sap.ui.define([
 		},
 
 		onAdd: function () {
-			MessageBox.show("This functionality is not ready yet.", {
-				icon: MessageBox.Icon.INFORMATION,
-				title: "Aw, Snap!",
-				actions: [MessageBox.Action.OK]
-			});
+			MessageBox.information("This functionality is not ready yet.", {title: "Aw, Snap!"});
 		},
 
 		onSort: function () {
@@ -45,7 +42,7 @@ sap.ui.define([
 		onListItemPress: function () {
 			var oFCL = this.oView.getParent().getParent();
 
-			oFCL.setLayout(sap.f.LayoutType.TwoColumnsMidExpanded);
+			oFCL.setLayout(fioriLibrary.LayoutType.TwoColumnsMidExpanded);
 		}
 	});
-}, true);
+});

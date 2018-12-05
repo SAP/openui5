@@ -1,3 +1,7 @@
-<View xmlns="sap.f" displayBlock="true" height="100%">
-	<FlexibleColumnLayout id="flexibleColumnLayout" backgroundDesign="Solid"></FlexibleColumnLayout>
-</View>
+<mvc:View
+	displayBlock="true"
+	height="100%"
+	xmlns="sap.f"
+	xmlns:mvc="sap.ui.core.mvc">
+		<FlexibleColumnLayout id="flexibleColumnLayout" backgroundDesign="Solid"></FlexibleColumnLayout>
+</mvc:View>

@@ -1,7 +1,8 @@
-<m:View displayBlock="true" controllerName="sap.ui.demo.fiori2.controller.DetailDetail" height="100%"
-		xmlns="sap.f"
-		xmlns:m="sap.m">
-
+<mvc:View
+	controllerName="sap.ui.demo.fiori2.controller.DetailDetail"
+	xmlns="sap.f"
+	xmlns:m="sap.m"
+	xmlns:mvc="sap.ui.core.mvc">
 	<DynamicPage toggleHeaderOnTitleClick="false">
 		<title>
 			<DynamicPageTitle>
@@ -13,28 +14,28 @@
 
 				<navigationActions>
 					<m:OverflowToolbarButton
-							type="Transparent"
-							icon="sap-icon://full-screen"
-							press="handleFullScreen"
-							tooltip="Enter Full Screen Mode"
-							visible="{= ${/actionButtonsInfo/endColumn/fullScreen} !== null }"/>
+						type="Transparent"
+						icon="sap-icon://full-screen"
+						press=".handleFullScreen"
+						tooltip="Enter Full Screen Mode"
+						visible="{= ${/actionButtonsInfo/endColumn/fullScreen} !== null }"/>
 					<m:OverflowToolbarButton
-							type="Transparent"
-							icon="sap-icon://exit-full-screen"
-							press="handleExitFullScreen"
-							tooltip="Exit Full Screen Mode"
-							visible="{= ${/actionButtonsInfo/endColumn/exitFullScreen} !== null }"/>
+						type="Transparent"
+						icon="sap-icon://exit-full-screen"
+						press=".handleExitFullScreen"
+						tooltip="Exit Full Screen Mode"
+						visible="{= ${/actionButtonsInfo/endColumn/exitFullScreen} !== null }"/>
 					<m:OverflowToolbarButton
-							type="Transparent"
-							icon="sap-icon://decline"
-							press="handleClose"
-							tooltip="Close column"
-							visible="{= ${/actionButtonsInfo/endColumn/closeColumn} !== null }"/>
+						type="Transparent"
+						icon="sap-icon://decline"
+						press=".handleClose"
+						tooltip="Close column"
+						visible="{= ${/actionButtonsInfo/endColumn/closeColumn} !== null }"/>
 				</navigationActions>
 			</DynamicPageTitle>
 		</title>
 		<content>
-			<m:Link text="Navigate to next page…" press="handleAboutPress" />
+			<m:Link text="Navigate to next page…" press=".handleAboutPress"/>
 		</content>
 	</DynamicPage>
-</m:View>
+</mvc:View>
