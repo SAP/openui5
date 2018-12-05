@@ -8,15 +8,17 @@ sap.ui.define([
 		'sap/ui/core/Control',
 		'sap/ui/core/LocaleData',
 		'sap/ui/core/Locale',
+		'sap/ui/core/InvisibleText',
 		'sap/ui/core/format/DateFormat',
 		'sap/ui/core/date/UniversalDate',
 		'sap/ui/unified/library',
 		'sap/ui/unified/calendar/DatesRow',
 		'sap/ui/unified/calendar/CalendarDate',
 		'sap/ui/unified/calendar/CalendarUtils',
+		'sap/ui/events/KeyCodes',
 		'./SinglePlanningCalendarGridRenderer'
 	],
-	function (SinglePlanningCalendarUtilities, Control, LocaleData, Locale, DateFormat, UniversalDate, unifiedLibrary, DatesRow, CalendarDate, CalendarUtils, SinglePlanningCalendarGridRenderer) {
+	function (SinglePlanningCalendarUtilities, Control, LocaleData, Locale, InvisibleText, DateFormat, UniversalDate, unifiedLibrary, DatesRow, CalendarDate, CalendarUtils, KeyCodes, SinglePlanningCalendarGridRenderer) {
 		"use strict";
 
 		var ROW_HEIGHT = 48,
@@ -140,6 +142,10 @@ sap.ui.define([
 			this.setStartDate(oStartDate);
 			this._setColumns(7);
 
+			this._oUnifiedRB = sap.ui.getCore().getLibraryResourceBundle("sap.ui.unified");
+			this._oFormatAria = DateFormat.getDateTimeInstance({
+				pattern: "EEEE dd/MM/YYYY 'at' HH:mm:ss a"
+			});
 
 			setTimeout(this._updateRowHeaderAndNowMarker.bind(this), iDelay);
 		};
@@ -153,6 +159,28 @@ sap.ui.define([
 			this._oAppointmentsToRender = this._calculateAppointmentsLevelsAndWidth(this._oVisibleAppointments);
 			this._aVisibleBlockers = this._calculateVisibleBlockers(oAppointmentsMap.blockers, oCalStartDate, iColumns);
 			this._oBlockersToRender = this._calculateBlockersLevelsAndWidth(this._aVisibleBlockers);
+		};
+
+		/**
+		 * Handles the <code>keydown</code> event when any key is pressed.
+		 *
+		 * @param {jQuery.Event} oEvent The event object.
+		 */
+		SinglePlanningCalendarGrid.prototype.onkeydown = function (oEvent) {
+			var oAppointment;
+
+			if (oEvent.which === KeyCodes.SPACE || oEvent.which === KeyCodes.ENTER) {
+				oAppointment = sap.ui.getCore().byId(oEvent.target.id);
+
+				if (oAppointment && oAppointment.isA("sap.m.CalendarAppointment")) {
+					this.fireAppointmentSelect({
+						appointment: oAppointment
+					});
+				}
+
+				// Prevent scrolling
+				oEvent.preventDefault();
+			}
 		};
 
 		SinglePlanningCalendarGrid.prototype.setStartDate = function (oStartDate) {
@@ -878,6 +906,38 @@ sap.ui.define([
 		 */
 		SinglePlanningCalendarGrid.prototype._getColumnHeaders = function () {
 			return this.getAggregation("_columnHeaders");
+		};
+
+		/**
+		 * Gets Start/End information for a given a appointment.
+		 *
+		 * @param {sap.m.CalendarAppointment} oAppointment - The appointment for which Start/End information will be generated.
+		 * @returns {string}
+		 * @private
+		 */
+		SinglePlanningCalendarGrid.prototype._getAppointmentStartEndInfo = function (oAppointment) {
+			var sStartTime = this._oUnifiedRB.getText("CALENDAR_START_TIME"),
+				sEndTime = this._oUnifiedRB.getText("CALENDAR_END_TIME"),
+				sFormattedStartDate = this._oFormatAria.format(oAppointment.getStartDate()),
+				sFormattedEndDate = this._oFormatAria.format(oAppointment.getEndDate());
+
+			return sStartTime + ": " + sFormattedStartDate + "; " + sEndTime + ": " + sFormattedEndDate;
+		};
+
+		/**
+		 * This method is a hook for the RenderManager that gets called
+		 * during the rendering of child Controls. It allows to add,
+		 * remove and update existing accessibility attributes (ARIA) of
+		 * those controls.
+		 *
+		 * @param {sap.ui.core.Control} oControl - The Control that gets rendered by the RenderManager
+		 * @param {Object} mAriaProps - The mapping of "aria-" prefixed attributes
+		 * @protected
+		 */
+		SinglePlanningCalendarGrid.prototype.enhanceAccessibilityState = function(oControl, mAriaProps) {
+			if (oControl.getId() === this._getColumnHeaders().getId()) {
+				mAriaProps.labelledby = InvisibleText.getStaticId("sap.m", "PLANNINGCALENDAR_DAYS");
+			}
 		};
 
 		return SinglePlanningCalendarGrid;
