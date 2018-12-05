@@ -17,14 +17,14 @@ function (library, Log, Element) {
 	 * @param {object} [mSettings] Initial settings for the new control
 	 *
 	 * @class
-	 * Disclaimer: This control is in a beta state - incompatible API changes may be done before its official public
-	 * release. Use at your own discretion.
 	 *
 	 * <h3>Overview</h3>
 	 *
 	 * A {@link sap.m.SinglePlanningCalendarView} element represents a day view of the SinglePlanningCalendar.
 	 * The purpose of the element is to decouple the view logic from parent control <code>SinglePlanningCalendar</code>.
 	 *
+	 * <b>Disclaimer</b>: This control is in a beta state - incompatible API changes may be done before its official public
+	 * release. Use at your own discretion.
 	 *
 	 * @extends sap.ui.core.Element
 	 *
@@ -32,7 +32,7 @@ function (library, Log, Element) {
 	 * @version ${version}
 	 *
 	 * @constructor
-	 * @private
+	 * @public
 	 * @since 1.61
 	 * @alias sap.m.SinglePlanningCalendarView
 	 */
