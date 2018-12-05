@@ -57,6 +57,9 @@ function(
 	 * To prevent this, apps using the <code>SinglePlanningCalendar</code> must also load the
 	 * <code>sap.ui.unified</code> library.
 	 *
+	 * <b>Disclaimer</b>: This control is in a beta state - incompatible API changes may be done before its official public
+	 * release. Use at your own discretion.
+	 *
 	 * <h3>Usage</h3>
 	 *
 	 * The <code>SinglePlanningCalendar</code> has the following structure:
@@ -78,8 +81,7 @@ function(
 	 * @version ${version}
 	 *
 	 * @constructor
-	 * @experimental Disclaimer: This control is in a beta state - incompatible API changes may be done before its official public
-	 * release. Use at your own discretion.
+	 * @public
 	 * @since 1.61
 	 * @alias sap.m.SinglePlanningCalendar
 	 */
