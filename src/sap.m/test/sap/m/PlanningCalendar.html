@@ -567,9 +567,18 @@
 			}
 		});
 
+		var oVisLabel = new sap.m.Label({
+			text: "Appointments Visualization:",
+			labelFor: "Sel-Vis",
+			layoutData: new sap.m.OverflowToolbarLayoutData({
+				group: 2
+			})
+		});
 		var oVisSelect = new sap.m.Select("Sel-Vis", {
+			layoutData: new sap.m.OverflowToolbarLayoutData({
+				group: 2
+			}),
 			selectedKey: sap.ui.unified.CalendarAppointmentVisualization.Standard,
-			tooltip: "Appointment visualization",
 			items: [
 				new sap.ui.core.ListItem("I-1", {
 					text: "Standard",
@@ -586,9 +595,18 @@
 			}
 		});
 
+		var oGroupModeLabel = new sap.m.Label({
+			text: "Group appointment mode",
+			labelFor: "Sel-Group",
+			layoutData: new sap.m.OverflowToolbarLayoutData({
+				group: 3
+			})
+		});
 		var oGroupModeSelect = new sap.m.Select("Sel-Group", {
+			layoutData: new sap.m.OverflowToolbarLayoutData({
+				group: 3
+			}),
 			selectedKey: sap.ui.unified.GroupAppointmentsMode.Collapsed,
-			tooltip: "Group appointment mode",
 			items: [
 				new sap.ui.core.ListItem("GAM-I-1", {
 					text: sap.ui.unified.GroupAppointmentsMode.Collapsed,
@@ -615,11 +633,17 @@
 			change: function (oEvent) {
 				var vLegend = oEvent.getParameter("state") ? oLegend : "";
 				oPC1.setLegend(vLegend);
-			}
+			},
+			layoutData: new sap.m.OverflowToolbarLayoutData({
+				group: 1
+			})
 		});
 		var oLegendLabel = new sap.m.Label({
 			text: "Legend Connected to PC",
-			labelFor: oButtonSwitchLegendAssociation.getId()
+			labelFor: oButtonSwitchLegendAssociation.getId(),
+			layoutData: new sap.m.OverflowToolbarLayoutData({
+				group: 1
+			})
 		});
 
 		var oPC1 = sap.m.PlanningCalendar("PC1", {
@@ -1121,15 +1145,21 @@
 				oButtonShowRowHeaders,
 				oButtonShowWeekNumbers,
 				oButtonLegend,
+				new sap.m.ToolbarSeparator(),
 				oLegendLabel,
 				oButtonSwitchLegendAssociation,
+				new sap.m.ToolbarSeparator(),
 				oButtonReducedHeight,
 				oButtonToggleAlternatingRowColor,
 				oButtonToggleSpecNoWork,
 				oButtonMinMax,
 				oButtonToggleShowDayNamesLine,
 				oButtonToggleCustomViews,
+				new sap.m.ToolbarSeparator(),
+				oVisLabel,
 				oVisSelect,
+				new sap.m.ToolbarSeparator(),
+				oGroupModeLabel,
 				oGroupModeSelect
 			],
 			legend: oLegend,
