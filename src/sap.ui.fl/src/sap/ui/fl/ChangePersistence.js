@@ -122,12 +122,13 @@ sap.ui.define([
 	/**
 	 * Returns an cache key for caching views.
 	 *
+	 * @param {object} oAppComponent - Application component
 	 * @returns {string} Returns an ETag for caching
 	 * @private
 	 * @restricted sap.ui.fl
 	 */
-	ChangePersistence.prototype.getCacheKey = function() {
-		return Cache.getCacheKey(this._mComponent);
+	ChangePersistence.prototype.getCacheKey = function(oAppComponent) {
+		return Cache.getCacheKey(this._mComponent, oAppComponent);
 	};
 
 	/**

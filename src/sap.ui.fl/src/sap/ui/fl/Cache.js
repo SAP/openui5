@@ -302,20 +302,27 @@ sap.ui.define([
 
 	Cache.NOTAG = "<NoTag>";
 
+	Cache._concatControlVariantIdWithCacheKey = function (sCacheKey, sControlVariantId) {
+		return sCacheKey === Cache.NOTAG ?
+			sCacheKey.replace(/>$/, ''.concat('-', sControlVariantId, '>')) :
+			sCacheKey.concat('-', sControlVariantId);
+	};
+
 	/**
 	 * Function to retrieve the cache key of the SAPUI5 flexibility request of a given application
 	 *
 	 * @param {map} mComponent
 	 * @param {string} mComponent.name Name of the application component
 	 * @param {string} mComponent.appVersion Version of the application component
+	 * @param {object} oAppComponent - Application component
 	 * @return {Promise} Returns the promise resolved with the determined cache key
 	 *
 	 * @private
 	 * @restricted sap.ui.fl
 	 *
 	 */
-	Cache.getCacheKey = function (mComponent) {
-		if (!mComponent || !mComponent.name || !mComponent.appVersion) {
+	Cache.getCacheKey = function (mComponent, oAppComponent) {
+		if (!mComponent || !mComponent.name || !mComponent.appVersion || !oAppComponent) {
 			Log.warning("Not all parameters were passed to determine a flexibility cache key.");
 			return Promise.resolve(Cache.NOTAG);
 		}
@@ -329,8 +336,9 @@ sap.ui.define([
 			})
 			.then(function(sCacheKey) {
 				// concat current control variant id to cachekey if available
-				var sCurrentControlVariantId = VariantUtil.getCurrentControlVariantId(mComponent);
-				return sCurrentControlVariantId ? sCacheKey.concat(sCurrentControlVariantId) : sCacheKey;
+				var sCurrentControlVariantId = VariantUtil.getCurrentControlVariantId(oAppComponent);
+				return sCurrentControlVariantId ?
+					Cache._concatControlVariantIdWithCacheKey(sCacheKey, sCurrentControlVariantId) : sCacheKey;
 			});
 	};
 
