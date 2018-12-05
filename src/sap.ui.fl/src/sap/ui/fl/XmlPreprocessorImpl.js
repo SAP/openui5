@@ -100,7 +100,7 @@ sap.ui.define([
 		var sFlexReference = Utils.getComponentClassName(oAppComponent);
 		var sAppVersion = Utils.getAppVersionFromManifest(oAppComponent.getManifest());
 		var oChangePersistence = ChangePersistenceFactory.getChangePersistenceForComponent(sFlexReference, sAppVersion);
-		return oChangePersistence.getCacheKey();
+		return oChangePersistence.getCacheKey(oAppComponent);
 	};
 
 	 return XmlPreprocessorImpl;
