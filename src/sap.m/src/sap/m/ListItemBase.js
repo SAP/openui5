@@ -836,7 +836,7 @@ function(
 	ListItemBase.prototype.ontap = function(oEvent) {
 
 		// do not handle already handled events
-		if (this._eventHandledByControl || oEvent.isMarked()) {
+		if (this._eventHandledByControl) {
 			return oEvent.setMarked();
 		}
 
