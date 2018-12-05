@@ -6254,7 +6254,7 @@ sap.ui.define([
 		// assert
 		assert.strictEqual(document.activeElement, this.oMultiComboBox.getFocusDomRef(), "Focus is set to the input field");
 		assert.strictEqual(this.oMultiComboBox.getValueState(), ValueState.Error, "The value state is error");
-		assert.strictEqual(this.oMultiComboBox.getValueStateText(), "This value is already selected", "Value State message is correct");
+		assert.strictEqual(this.oMultiComboBox.getValueStateText(), oResourceBundle.getText("VALUE_STATE_ERROR_ALREADY_SELECTED"), "Value State message is correct");
 		assert.strictEqual(this.oMultiComboBox.getValue(), "Brussel", "The invalid value is corrected");
 	});
 
