@@ -205,7 +205,7 @@ sap.ui.define([
 				toString: function() {
 					return bHasSelection ? "Hello World" : "";
 				},
-				focusNode: oCLI.getDomRef("sub")
+				focusNode: oCLI.getDomRef("subcell")
 			};
 		});
 
