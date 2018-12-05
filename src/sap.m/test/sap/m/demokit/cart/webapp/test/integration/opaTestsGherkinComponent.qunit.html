@@ -1,18 +1,22 @@
 <!DOCTYPE html>
 <html>
 <head>
-	<title>Opa tests for cart on phone</title>
-	<meta charset="UTF-8">
+	<title>Opa tests for Shopping Cart written in Gherkin using a Component</title>
+	<meta charset="utf-8">
 
-	<script
-		id="sap-ui-bootstrap"
+	<script id="sap-ui-bootstrap"
 		src="../../../../../../../../resources/sap-ui-core.js"
 		data-sap-ui-resourceroots='{
+			"Startup": "./arrangements/component/Startup",
 			"sap.ui.demo.cart": "../../",
-			"Startup": "./arrangements/iframe/Startup"
+			"sap.ui.demo.mock": "./../../../../../../../../test-resources/sap/ui/documentation/sdk/"
 		}'
+		data-sap-ui-theme="sap_belize"
+		data-sap-ui-language="en"
+		data-sap-ui-oninit="module:sap/ui/demo/cart/test/initMockServer"
+		data-sap-ui-compatVersion="edge"
 		data-sap-ui-async="true"
-		data-sap-ui-frameOptions='deny'>
+		data-sap-ui-frameOptions="trusted">
 	</script>
 
 	<link rel="stylesheet" type="text/css" href="../../../../../../../../resources/sap/ui/thirdparty/qunit-2.css">
@@ -20,9 +24,9 @@
 	<script src="../../../../../../../../resources/sap/ui/thirdparty/qunit-2.js"></script>
 	<script src="../../../../../../../../resources/sap/ui/qunit/qunit-junit.js"></script>
 
-	<script src="opaTestsForPhone.qunit.js"></script>
-
+	<script src="opaTestsGherkin.qunit.js"></script>
 </head>
+
 <body>
 	<div id="qunit"></div>
 	<div id="qunit-fixture"></div>

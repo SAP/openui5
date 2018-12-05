@@ -8,8 +8,8 @@
 				"desc": "The classic business process of finding and ordering products",
 				"ref": "test-resources/sap/m/demokit/cart/webapp/index.html",
 				"links": {
-					"Run Integration Tests (OPA5)": "test-resources/sap/m/demokit/cart/webapp/test/integration/opaTestsWithComponent.qunit.html",
-					"Run Integration Tests (Gherkin)": "test-resources/sap/m/demokit/cart/webapp/test/integration/opaTestsWithGherkinAndComponent.qunit.html",
+					"Run Integration Tests (OPA5)": "test-resources/sap/m/demokit/cart/webapp/test/integration/opaTestsComponent.qunit.html",
+					"Run Integration Tests (Gherkin)": "test-resources/sap/m/demokit/cart/webapp/test/integration/opaTestsGherkinComponent.qunit.html",
 					"Run Unit Tests": "test-resources/sap/m/demokit/cart/webapp/test/unit/unitTests.qunit.html"
 				},
 				"category": "Showcase",
