@@ -391,9 +391,17 @@
 			}
 		});
 
+		var oVisLabel = new sap.m.Label({
+			text: "Appointments Visualization:",
+			labelFor: "Sel-Vis",
+			layoutData: new sap.m.OverflowToolbarLayoutData({
+				group: 1
+			})
+		});
 		var oVisSelect = new sap.m.Select("Sel-Vis", {
-			selectedKey: sap.ui.unified.CalendarAppointmentVisualization.Standard,
-			tooltip: "Appointment visualization",
+			layoutData: new sap.m.OverflowToolbarLayoutData({
+				group: 1
+			}),
 			items: [
 							new sap.ui.core.ListItem("I-1",{text:"Standard", key: sap.ui.unified.CalendarAppointmentVisualization.Standard}),
 							new sap.ui.core.ListItem("I-2",{text:"Filled", key: sap.ui.unified.CalendarAppointmentVisualization.Filled})
@@ -726,6 +734,8 @@
 			                 oButtonReducedHeight,
 			                 oButtonToggleAlternatingRowColor,
 			                 oButtonMinMax,
+			                 new sap.m.ToolbarSeparator(),
+			                 oVisLabel,
 			                 oVisSelect],
 			legend: "Legend1",
 			appointmentSelect: handleAppointmentSelect,
