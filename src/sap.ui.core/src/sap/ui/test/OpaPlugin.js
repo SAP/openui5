@@ -81,26 +81,33 @@ sap.ui.define([
 				})[0];
 			},
 
+			_getViewName: function (oOptions) {
+				var sOptionsViewName = (oOptions.viewNamespace || "") + "." + (oOptions.viewName || "");
+				var sViewName = sOptionsViewName.replace(/\.+/g,'.').replace(/^\.|\.$/g, "");
+				return sViewName;
+			},
+
 			/**
-			 * Gets a control inside of the view (same as calling oView.byId)
-			 * If no ID is provided, it will return all the controls inside of a view (also nested views and their children).<br/>
+			 * Gets a control inside the view (same as calling oView.byId)
+			 * Returns all matching controls inside a view (also nested views and their children).<br/>
 			 * eg : { id : "foo" } will search globally for a control with the ID foo<br/>
 			 * eg : { id : "foo" , viewName : "bar" } will search for a control with the ID foo inside the view with the name bar<br/>
 			 * eg : { viewName : "bar" } will return all the controls inside the view with the name bar<br/>
 			 * eg : { viewName : "bar", controlType : sap.m.Button } will return all the Buttons inside a view with the name bar<br/>
 			 * eg : { viewName : "bar", viewNamespace : "baz." } will return all the Controls in the view with the name baz.bar<br/>
 			 *
-			 * @param {object} oOptions that may contain a viewName, id, viewNamespace and controlType properties.
+			 * @param {object} oOptions can contain a viewName, id, viewNamespace and controlType properties.
+			 * oOptions.id can be string, array or regular expression
 			 * @returns {sap.ui.core.Element|sap.ui.core.Element[]|null}
-			 * If the passed id is a string it returns the found control or null.
-			 * Else an array of matching controls, if the view is not found or no control is found for multiple ids an empty array is returned.
+			 * If oOptions.id is a string, will return the control with such an ID or null.<br/>
+			 * If the view is not found or no control matches the given criteria, will return an empty array <br/>
+			 * Otherwise, will return an array of matching controls
 			 * @public
 			 */
 			getControlInView : function (oOptions) {
-				var sOptionsViewName = (oOptions.viewNamespace || "") + "." + (oOptions.viewName || ""),
-					sViewName = sOptionsViewName.replace(/\.+/g,'.').replace(/^\.|\.$/g, ""),
-					oView = this.getView(sViewName),
-					bSearchForSingleControl = typeof oOptions.id === "string";
+				var sViewName = this._getViewName(oOptions);
+				var oView = this.getView(sViewName);
+				var bSearchForSingleControl = typeof oOptions.id === "string";
 
 				if (!oView) {
 					this._oLogger.debug("Found no view with the name: '" + sViewName + "'");
@@ -146,13 +153,17 @@ sap.ui.define([
 				return aAllControlsOfTheView;
 			},
 
+			// get all child controls of a certain control type
+			// the parent is a control and can be an indirect ancestor
 			getAllControlsWithTheParent : function (oParent, fnControlType, sControlType) {
 				var ancestorMatcher = new Ancestor(oParent);
 				return this._filterUniqueControlsByCondition(this.getAllControls(fnControlType, sControlType), ancestorMatcher);
 			},
 
+			// get all child controls of a certain control type
+			// the parents are controls whose roots are under the DOM node $Container
 			getAllControlsInContainer : function ($Container, fnControlType, sControlType, sContainerDescription) {
-				var aControls = this._filterUniqueControlsByCondition($Container.find("*").control(), function (oControl) {
+				var aControls = this._filterUniqueControlsByCondition(this._getControlsInContainer($Container), function (oControl) {
 					return _opaCorePlugin.checkControlType(oControl, fnControlType);
 				});
 				this._oLogger.debug("Found " + aControls.length + " controls in " +
@@ -160,21 +171,88 @@ sap.ui.define([
 				return aControls;
 			},
 
+			// get control in static area that matches a control type, ID (string, array, regex) or both
+			_getControlsInStaticArea: function (oOptions) {
+				var vControls = this._getControlsInContainer($("#sap-ui-static")) || [];
+
+				if (oOptions.id) {
+					vControls = this._filterUniqueControlsByCondition(vControls, function (oControl) {
+						var bIdMatches = false;
+						var sUnprefixedControlId = oControl.getId();
+
+						// handle view-relative IDs
+						if (oOptions.viewName) {
+							var sViewName = this._getViewName(oOptions);
+							// the viewName could be set globally. in this case, if searchOpenDialogs should take priority:
+							// - if the control is actually inside the view - the control ID will be considered view-relative
+							// - otherwise, the control ID will be considered global
+							if (this._isControlInView(oControl, sViewName)) {
+								var sViewId = this.getView(sViewName).getId();
+								sUnprefixedControlId = sUnprefixedControlId.replace(sViewId + "--", "");
+							}
+						}
+
+						if (typeof oOptions.id === "string") {
+							bIdMatches = sUnprefixedControlId === oOptions.id;
+						}
+						if ($.type(oOptions.id) === "regexp") {
+							bIdMatches = oOptions.id.test(sUnprefixedControlId);
+						}
+						if ($.isArray(oOptions.id)) {
+							bIdMatches = oOptions.id.filter(function (sId) {
+								return sId === sUnprefixedControlId;
+							}).length > 0;
+						}
+
+						return bIdMatches;
+					}.bind(this));
+
+					this._oLogger.debug("Found " + (vControls.length ? vControls.length : "no ") + "controls in the static area with ID matching '" + oOptions.id + "'");
+				}
+
+				if (vControls.length && oOptions.controlType) {
+					vControls = this._filterUniqueControlsByCondition(vControls, function (oControl) {
+						return _opaCorePlugin.checkControlType(oControl, oOptions.controlType);
+					});
+
+					this._oLogger.debug("Found " + (vControls.length ? vControls.length : "no ") + "controls in the static area with control type matching '" + oOptions.id + "'");
+				}
+
+				if (oOptions.id && typeof oOptions.id === "string") {
+					return vControls[0] || null;
+				} else {
+					return vControls;
+				}
+			},
+
+			// get controls whose roots are in the subtree of oJQueryElement
+			_getControlsInContainer: function (oJQueryElement) {
+				return oJQueryElement.find("*").control();
+			},
+
+			_isControlInView: function (oControl, sViewName) {
+				if (!oControl) {
+					return false;
+				}
+				if (oControl.getViewName && oControl.getViewName() === sViewName) {
+					return true;
+				} else {
+					return this._isControlInView(oControl.getParent(), sViewName);
+				}
+			},
+
 			/**
-			 * Tries to find a control depending on the options provided.
-			 *
+			 * Find a control matching the provided options
+			 * autowait and Interactable matcher will be enforced if neccessary
 			 * @param {object} [oOptions] a map of options used to describe the control you are looking for.
-			 * @param {string} [oOptions.viewName] Controls will only be searched inside of the view.
-			 * Inside means, if you are giving an ID - the control will be found by using the byId function of the view.
-			 * If you are specifying other options than the id, the view has to be an ancestor of the control - when you call myControl.getParent,
-			 * you have to reach the view at some point.
-			 * @param {string|string[]} [oOptions.id] The ID if one or multiple controls. This can be a global ID or an ID used together with viewName. See the documentation of this parameter.
-			 * @param {boolean} [oOptions.visible=true] States if a control need to have a visible domref (jQUery's :visible will be used to determine this).
-			 * @param {boolean} [oOptions.interactable=false] @since 1.34 States if a control has to match the interactable matcher {@link sap.ui.test.matchers.Interactable}.
+			 * @param {string} [oOptions.viewName] Controls will only be searched inside this view (ie: the view (as a control) has to be an ancestor of the control)
+			 * If a control ID is given, the control will be found using the byId function of the view.
+			 * @param {string|string[]} [oOptions.id] The ID of one or multiple controls. This can be a global ID or an ID used together with viewName. See the documentation of this parameter.
+			 * @param {boolean} [oOptions.visible=true] should the control have a visible DOM reference
+			 * @param {boolean} [oOptions.interactable=false] @since 1.34 should the control match the interactable matcher {@link sap.ui.test.matchers.Interactable}.
 			 * @param {boolean} [oOptions.searchOpenDialogs] Only controls in the static UI area of UI5 are searched.
-			 * @param {string|function} [oOptions.controlType] @since 1.40 Selects all control by their type.
-			 * It is usually combined with viewName or searchOpenDialogs. If no control is matching the type, an empty
-			 * array will be returned. Here are some samples:
+			 * @param {string|function} [oOptions.controlType] @since 1.40 match all controls of a certain type
+			 * It is usually combined with viewName or searchOpenDialogs. If no control matches the type, an empty array will be returned. Examples:
 			 * <code>
 			 *     <pre>
 			 *         // will return an array of all visible buttons
@@ -199,10 +277,8 @@ sap.ui.define([
 			 * </code>
 			 * @returns {sap.ui.core.Element|sap.ui.core.Element[]|null}
 			 * <ul>
-			 *     <li>an array of found Controls depending on the options</li>
-			 *     <li>an empty array if no id was given</li>
-			 *     <li>the found control/element when an id as a string is specified</li>
-			 *     <li>null if an id as string was specified</li>
+			 *     <li>if a oOptions.id is a string, will return the single matching control or null if no controls match</li>
+			 *     <li>otherwise, will return an array of matching controls, or an empty array, if no controls match</li>
 			 * </ul>
 			 *
 			 * @public
@@ -216,9 +292,8 @@ sap.ui.define([
 					return typeof oOptions.id === "string" ? vResult : [];
 				}
 
-				// TODO: make all of these conditions matchers
 				if (oOptions.searchOpenDialogs) {
-					vResult = this.getAllControlsInContainer($("#sap-ui-static"), oOptions.controlType, oOptions.sOriginalControlType, "the static UI area");
+					vResult = this._getControlsInStaticArea(oOptions);
 				} else if (oOptions.viewName) {
 					vResult = this.getControlInView(oOptions);
 				} else if (oOptions.id) {
@@ -258,10 +333,10 @@ sap.ui.define([
 			},
 
 			/**
-			 * uses getMatchingControls to retrieve controls
-			 * enforces use of Interactable matcher and autoWait when neccessary
-			 * returns special marker FILTER_FOUND_NO_CONTROLS if nothing is found
-			 * found control values can be null, a single control or an array of controls
+			 * retrieve controls with getMatchingControls and then pass them through the matcher pipeline
+			 * @param {object} oOptions a map of options used to describe the control you are looking for.
+			 * @returns {object|array|string} can return a single control or array of controls depending on options
+			 * returns constant FILTER_FOUND_NO_CONTROLS if nothing is found
 			 * @private
 			 */
 			_getFilteredControls : function(oOptions) {
@@ -271,6 +346,7 @@ sap.ui.define([
 					? OpaPlugin.FILTER_FOUND_NO_CONTROLS : this._filterControlsByMatchers(oOptions, vControl);
 			},
 
+			// same as _getFilteredControls, but expects any matchers in oOptions to be in declarative form
 			_getFilteredControlsByDeclaration: function (oOptions) {
 				var vControl = this._filterControlsByCondition(oOptions);
 				var oMatcherFilterOptions = $.extend({}, oOptions, {useDeclarativeMatchers: true});
@@ -279,6 +355,7 @@ sap.ui.define([
 					? OpaPlugin.FILTER_FOUND_NO_CONTROLS : this._filterControlsByMatchers(oMatcherFilterOptions, vControl);
 			},
 
+			// filter result of getMatchingControls and maps it to FILTER_FOUND_NO_CONTROLS when no controls are found
 			_filterControlsByCondition: function (oOptions) {
 				var vControl = null;
 				var bPluginLooksForControls = this._isLookingForAControl(oOptions);
@@ -290,16 +367,17 @@ sap.ui.define([
 				// conditions in which no control was found and return value should be the special marker FILTER_FOUND_NO_CONTROLS
 				var aControlsNotFoundConditions = [
 					typeof oOptions.id === "string" && !vControl, // search for single control by string ID
-					!oOptions.id && (oOptions.viewName || oOptions.searchOpenDialogs) && !vControl.length, // search by control type in view or staic area
 					$.type(oOptions.id) === "regexp" && !vControl.length, // search by regex ID
 					$.isArray(oOptions.id) && (!vControl || vControl.length !== oOptions.id.length), // search by array of IDs
-					oOptions.controlType && $.isArray(vControl) && !vControl.length // search by control type globally
+					oOptions.controlType && $.isArray(vControl) && !vControl.length, // search by control type globally
+					!oOptions.id && (oOptions.viewName || oOptions.searchOpenDialogs) && !vControl.length // search by control type in view or staic area
 				];
 
 				return aControlsNotFoundConditions.some(Boolean)
 					? OpaPlugin.FILTER_FOUND_NO_CONTROLS : vControl;
 			},
 
+			// instantiate any matchers with declarative syntax and run controls through matcher pipeline
 			_filterControlsByMatchers: function (oOptions, vControl) {
 				var aMatchers = oOptions.useDeclarativeMatchers ? oMatcherFactory.getFilteringMatchers(oOptions) : oOptions.matchers;
 				var bPluginLooksForControls = this._isLookingForAControl(oOptions);
@@ -328,17 +406,16 @@ sap.ui.define([
 			},
 
 			/**
-			 * Returns a control by its ID.
-			 * Accepts an object with properties id and controlType. The id property can be string, regex or array of strings and is recommended to exist.
-			 * The controlType property is optional and will ensure the returned control is of a certain type.
-			 * <ul>
-			 * 	<li>a single string - function will return the control instance or null</li>
-			 * 	<li>an array of strings - function will return an array of found controls or an empty array</li>
-			 * 	<li>a regexp - function will return an array of found controls or an empty array</li>
-			 * </ul>
+			 * Find a control by its global ID
 			 *
-			 * @param oOptions should contain an ID property which can be of the type string, regex or array of strings. Can contain optional controlType property.
-			 * @returns {sap.ui.core.Element[]} all controls matched by the regex or the control matched by the string or null
+			 * @param {object} oOptions a map of match conditions. Must contain an id property
+			 * @param {string|string[]} [oOptions.id] required - ID to match. Can be string, regex or array
+			 * @param {string|function} [oOptions.controlType] optional - control type to match
+			 * @returns {sap.ui.core.Element|sap.ui.core.Element[]} all matching controls
+			 * <ul>
+			 *     <li>if a oOptions.id is a string, will return the single matching control or null if no controls match</li>
+			 *     <li>otherwise, will return an array of matching controls, or an empty array, if no controls match</li>
+			 * </ul>
 			 * @public
 			 */
 			getControlByGlobalId : function (oOptions) {
@@ -362,11 +439,10 @@ sap.ui.define([
 
 				if (bMatchById) {
 					//Performance critical
-					for (var sPropertyName in oCoreElements) {
-						if (!oCoreElements.hasOwnProperty(sPropertyName) || !oOptions.id.test(sPropertyName)) {
-							continue;
+					for (var sElement in oCoreElements) {
+						if (oCoreElements.hasOwnProperty(sElement) && oOptions.id.test(sElement)) {
+							aMatchIds.push(sElement);
 						}
-						aMatchIds.push(sPropertyName);
 					}
 				} else if ($.isArray(oOptions.id)) {
 					aMatchIds = oOptions.id;
@@ -418,9 +494,9 @@ sap.ui.define([
 			},
 
 			/**
-			 * Checks if the option when they would be passed to getMatchingControls could return a result
-			 * @param oOptions
-			 * @returns boolean
+			 * Checks if oOptions contains conditions that would provoke control search
+			 * @param {object} oOptions a map of match conditions
+			 * @returns {boolean} true if oOptions contains required conditions
 			 * @private
 			 */
 			_isLookingForAControl : function (oOptions) {
@@ -429,6 +505,7 @@ sap.ui.define([
 				});
 			},
 
+			// filter controls using a function and return a set of unique controls
 			_filterUniqueControlsByCondition : function (aControls, fnCondition) {
 				return aControls.filter(function (oControl, iPosition, aAllControls) {
 					var bKeepMe = !!fnCondition(oControl);
@@ -437,6 +514,10 @@ sap.ui.define([
 				});
 			},
 
+			// - if oOptions.controlType is the name of a control type, it will be replaced by the constructor for the control type
+			// and the control type name will be saved in a new option sOriginalControlType
+			// - if oOptions.controlType is not a string, it will be assumed that the control type is a lazy stub (and will not be resolved)
+			// mutates oOptions!
 			_modifyControlType : function (oOptions) {
 				var vControlType = oOptions.controlType;
 				//retrieve the constructor instance

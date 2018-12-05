@@ -6,6 +6,7 @@ sap.ui.define([
 	return UIComponent.extend("appUnderTest.Component", {
 		metadata: {
 			rootView: {
+				id: "mainView",
 				viewName: "view.Main",
 				type: "XML"
 			}
