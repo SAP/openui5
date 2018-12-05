@@ -172,7 +172,9 @@ sap.ui.define([
 	window.aFields = aFields;
 	window.iNumberOfRows = iNumberOfRows;
 
-	window.createTables = function(bSkipPlaceAt, bFocusableCellTemplates) {
+	window.createTables = function(bSkipPlaceAt, bFocusableCellTemplates, iCustomNumberOfRows) {
+		var iCount = !!iCustomNumberOfRows ? iCustomNumberOfRows : iNumberOfRows;
+
 		oTable = new Table({
 			rows: "{/rows}",
 			title: "Grid Table",
@@ -199,7 +201,7 @@ sap.ui.define([
 		var oData = {rows: [], tree: {rows: []}};
 		var oRow;
 		var oTree;
-		for (var i = 0; i < iNumberOfRows; i++) {
+		for (var i = 0; i < iCount; i++) {
 			oRow = {};
 			oTree = {rows: [{}]};
 			for (var j = 0; j < aFields.length; j++) {
