@@ -770,7 +770,8 @@ sap.ui.define([
 			assert.strictEqual(this.oCP.Color.s, 50, 'saturation is ok');
 			assert.strictEqual(this.oCP.Color.l, 50, 'light is ok');
 		});
+
+		return waitForThemeApplied();
 	})();
 
-	return waitForThemeApplied();
 });
