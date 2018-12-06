@@ -1,7 +1,7 @@
 /*!
  * ${copyright}
  */
-sap.ui.require([
+sap.ui.define([
 	"sap/ui/base/ExpressionParser"
 ], function (ExpressionParser) {
 	/*global QUnit */
