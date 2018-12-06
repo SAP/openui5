@@ -9,11 +9,12 @@ sap.ui.define([
 	"sap/ui/unified/CalendarLegendItem",
 	"sap/ui/core/Locale",
 	"sap/ui/core/HTML",
+	'sap/ui/events/KeyCodes',
 	"sap/ui/unified/calendar/CalendarDate",
 	"sap/ui/unified/library",
 	"sap/ui/qunit/utils/waitForThemeApplied"
 ], function(qutils, Calendar, DateRange, DateTypeRange, CalendarLegend,
-	CalendarLegendItem, Locale, HTML, CalendarDate, unifiedLibrary, waitForThemeApplied) {
+	CalendarLegendItem, Locale, HTML, KeyCodes, CalendarDate, unifiedLibrary, waitForThemeApplied) {
 	"use strict";
 	// set language to en-US, since we have specific language strings tested
 	sap.ui.getCore().getConfiguration().setLanguage("en_US");
@@ -435,7 +436,7 @@ sap.ui.define([
 		assert.ok(jQuery(jQuery("#Cal2--MP").get(0)).is(":visible"), "Month picker rendered");
 		var $July = jQuery("#Cal2--MP-m6"); // use keybord to select month to prevent event processing from ItemNavigation
 		$July.focus();
-		qutils.triggerKeyboardEvent($July.get(0), jQuery.sap.KeyCodes.ENTER, false, false, false);
+		qutils.triggerKeyboardEvent($July.get(0), KeyCodes.ENTER, false, false, false);
 		assert.ok(!jQuery(jQuery("#Cal2--MP").get(0)).is(":visible"), "Month picker removed after selecting month");
 		assert.equal(jQuery("#Cal2--Head-B1").text(), "Juli", "July shown");
 		aDays = jQuery("#Cal2--Month0-days").find(".sapUiCalItem");
@@ -450,7 +451,7 @@ sap.ui.define([
 		qutils.triggerEvent("click", "Cal2--Head-B1");
 		var $January = jQuery("#Cal2--MP-m0"); // use keybord to select month to prevent event processing from ItemNavigation
 		$January.focus();
-		qutils.triggerKeyboardEvent($January.get(0), jQuery.sap.KeyCodes.ENTER, false, false, false);
+		qutils.triggerKeyboardEvent($January.get(0), KeyCodes.ENTER, false, false, false);
 
 		qutils.triggerEvent("click", "Cal3--Head-prev");
 		assert.equal(jQuery("#Cal3--Head-B1").text(), "November", "November shown");
@@ -519,7 +520,7 @@ sap.ui.define([
 
 		var $NewYear = jQuery("#Cal2--YP-y19990101"); // use keybord to select month to prevent event processing from ItemNavigation
 		$NewYear.focus();
-		qutils.triggerKeyboardEvent($NewYear.get(0), jQuery.sap.KeyCodes.ENTER, false, false, false);
+		qutils.triggerKeyboardEvent($NewYear.get(0), KeyCodes.ENTER, false, false, false);
 		assert.ok(!jQuery(jQuery("#Cal2--YP").get(0)).is(":visible"), "Year picker not visible after selecting year");
 		assert.equal(jQuery("#Cal2--Head-B1").text(), "Januar", "January still shown");
 		assert.equal(jQuery("#Cal2--Head-B2").text(), "1999", "year 1999 shown");
@@ -545,7 +546,7 @@ sap.ui.define([
 
 		$NewYear = jQuery("#Cal2--YP-y20110101"); // use keybord to select month to prevent event processing from ItemNavigation
 		$NewYear.focus();
-		qutils.triggerKeyboardEvent($NewYear.get(0), jQuery.sap.KeyCodes.ENTER, false, false, false);
+		qutils.triggerKeyboardEvent($NewYear.get(0), KeyCodes.ENTER, false, false, false);
 		assert.ok(!jQuery(jQuery("#Cal2--YP").get(0)).is(":visible"), "Year picker not visible after selecting year");
 		assert.equal(jQuery("#Cal2--Head-B1").text(), "Januar", "January still shown");
 		assert.equal(jQuery("#Cal2--Head-B2").text(), "2011", "year 2011 shown again");
@@ -644,7 +645,7 @@ sap.ui.define([
 		bSelectFired = false;
 		oSelectedDate = undefined;
 		$Today.focus();
-		qutils.triggerKeyboardEvent($Today[0], jQuery.sap.KeyCodes.ENTER, false, false, false);
+		qutils.triggerKeyboardEvent($Today[0], KeyCodes.ENTER, false, false, false);
 		assert.ok(bSelectFired, "Select event fired");
 		assert.equal(oSelectedDate.getDate(), oToday.getDate(), "Today was selected");
 		assert.ok($Today.hasClass("sapUiCalItemSel"), "Today marked as selected");
@@ -654,7 +655,7 @@ sap.ui.define([
 		oSelectedDate = undefined;
 		var $Date = jQuery("#Cal3--Month0-20150110");
 		$Date.focus();
-		qutils.triggerKeyboardEvent($Date[0], jQuery.sap.KeyCodes.ENTER, false, false, false);
+		qutils.triggerKeyboardEvent($Date[0], KeyCodes.ENTER, false, false, false);
 		assert.ok(!bSelectFired, "No Select event fired on disabled date");
 		assert.ok(!$Date.hasClass("sapUiCalItemSel"), "Disabled date not marked as selected");
 		assert.equal($Date.attr("aria-selected"), "false", "Disabled date aria-selected = false");
@@ -672,7 +673,7 @@ sap.ui.define([
 			$otherSelectedDateFromTheOtherMonth;
 
 		$selectedDate.focus();
-		qutils.triggerKeydown($selectedDate, jQuery.sap.KeyCodes.ENTER);
+		qutils.triggerKeydown($selectedDate, KeyCodes.ENTER);
 		assert.ok($selectedDate.hasClass("sapUiCalItemSel"),
 				"30th of November is selected in the calendar of November");
 		assert.ok($selectedDateFromTheOtherMonth.hasClass("sapUiCalItemSel"),
@@ -681,14 +682,14 @@ sap.ui.define([
 		$otherSelectedDate = jQuery("#Cal4--Month0-20161129");
 		$otherSelectedDateFromTheOtherMonth = jQuery("#Cal4--Month1-20161129");
 		$otherSelectedDate.focus();
-		qutils.triggerKeydown($otherSelectedDate, jQuery.sap.KeyCodes.ENTER);
+		qutils.triggerKeydown($otherSelectedDate, KeyCodes.ENTER);
 		assert.ok($otherSelectedDate.hasClass("sapUiCalItemSel"),
 				"29th of November is selected in the calendar of November");
 		assert.ok($otherSelectedDateFromTheOtherMonth.hasClass("sapUiCalItemSel"),
 				"29th of November is also selected in the calendar of December");
 
 		$otherSelectedDate.focus();
-		qutils.triggerKeydown($otherSelectedDate, jQuery.sap.KeyCodes.ENTER);
+		qutils.triggerKeydown($otherSelectedDate, KeyCodes.ENTER);
 		assert.ok(!$otherSelectedDateFromTheOtherMonth.hasClass("sapUiCalItemSel"),
 				"Both selected 29th of November are deselected successfully");
 
@@ -931,7 +932,7 @@ QUnit.module("Misc");
 		oCal6.displayDate(new Date(2017, 6, 8));
 		$selectedDate = jQuery("#Cal6--Month0-20170725");
 		$selectedDate.focus();
-		qutils.triggerKeydown($selectedDate, jQuery.sap.KeyCodes.ENTER);
+		qutils.triggerKeydown($selectedDate, KeyCodes.ENTER);
 
 		//assert
 		assert.equal(oCal6.getFocusDomRef().id, "Cal6--Month0-20170725",
@@ -948,7 +949,7 @@ QUnit.module("Misc");
 		oCal7.displayDate(new Date(2017, 6, 8));
 		$selectedDate = jQuery("#Cal7--Month1-20170825");
 		$selectedDate.focus();
-		qutils.triggerKeydown($selectedDate, jQuery.sap.KeyCodes.ENTER);
+		qutils.triggerKeydown($selectedDate, KeyCodes.ENTER);
 
 		//assert
 		assert.equal(oCal7.getFocusDomRef().id, "Cal7--Month1-20170825",
@@ -964,19 +965,23 @@ QUnit.module("Misc");
 		// prepare
 		var oCalendar = new Calendar(),
 			oCurrentDate = new Date(2017, 5, 2),
-			oNewFocusedDate = new Date(2018, 6, 3);
+			oNewFocusedDate = new Date(2018, 6, 3),
+			oRb = sap.ui.getCore().getLibraryResourceBundle("sap.ui.unified"),
+			sExpectedAriaLabel;
 
 		oCalendar.displayDate(oCurrentDate);
 		oCalendar.placeAt("qunit-fixture");
 		sap.ui.getCore().applyChanges();
 
-		assert.equal(oCalendar.$("-Head-B2").attr("aria-label"),oCalendar.$("-Head-B2").text(), "aria-label should be equal to the text of the button");
+		sExpectedAriaLabel = oCalendar.$("-Head-B2").text() + ". " + oRb.getText("CALENDAR_YEAR_PICKER_OPEN_HINT");
+		assert.equal(oCalendar.$("-Head-B2").attr("aria-label"),sExpectedAriaLabel, "aria-label should be equal to the text of the button");
 
 		// act
 		oCalendar.displayDate(oNewFocusedDate);
 
 		// assert
-		assert.equal(oCalendar.$("-Head-B2").attr("aria-label"),oCalendar.$("-Head-B2").text(), "aria-label should be equal to the text of the button");
+		sExpectedAriaLabel = oCalendar.$("-Head-B2").text() + ". " + oRb.getText("CALENDAR_YEAR_PICKER_OPEN_HINT");
+		assert.equal(oCalendar.$("-Head-B2").attr("aria-label"),sExpectedAriaLabel, "aria-label should be equal to the text of the button");
 
 		// cleanup
 		oCalendar.destroy();
@@ -988,19 +993,23 @@ QUnit.module("Misc");
 		// prepare
 		var oCalendar = new Calendar(),
 			oCurrentDate = new Date(2017, 5, 2),
-			oNewFocusedDate = new Date(2017, 6, 3);
+			oNewFocusedDate = new Date(2017, 6, 3),
+			oRb = sap.ui.getCore().getLibraryResourceBundle("sap.ui.unified"),
+			sExpectedAriaLabel;
 
 		oCalendar.displayDate(oCurrentDate);
 		oCalendar.placeAt("qunit-fixture");
 		sap.ui.getCore().applyChanges();
 
-		assert.equal(oCalendar.$("-Head-B1").attr("aria-label"),oCalendar.$("-Head-B1").text(), "aria-label should be equal to the text of the button");
+		sExpectedAriaLabel = oCalendar.$("-Head-B1").text() + ". " + oRb.getText("CALENDAR_MONTH_PICKER_OPEN_HINT");
+		assert.equal(oCalendar.$("-Head-B1").attr("aria-label"), sExpectedAriaLabel, "aria-label should be equal to the text of the button");
 
 		// act
 		oCalendar.focusDate(oNewFocusedDate);
 
 		// assert
-		assert.equal(oCalendar.$("-Head-B1").attr("aria-label"),oCalendar.$("-Head-B1").text(), "aria-label should be equal to the text of the button");
+		sExpectedAriaLabel = oCalendar.$("-Head-B1").text() + ". " + oRb.getText("CALENDAR_MONTH_PICKER_OPEN_HINT");
+		assert.equal(oCalendar.$("-Head-B1").attr("aria-label"), sExpectedAriaLabel, "aria-label should be equal to the text of the button");
 
 		// cleanup
 		oCalendar.destroy();
@@ -1370,7 +1379,8 @@ QUnit.module("Misc");
 
 	QUnit.test("_updateHeadersYearPrimaryText should call header and secondMonthHeader methods with proper value", function (assert) {
 		// arrange
-		var sExpectedValue = "2018",
+		var sYear = "2018",
+			sExpectedValue = sYear + ". " + sap.ui.getCore().getLibraryResourceBundle("sap.ui.unified").getText("CALENDAR_YEAR_PICKER_OPEN_HINT"),
 			oHeader = { setTextButton2: this.spy(), setAriaLabelButton2: this.spy(), _setTextButton4: this.spy(), _setAriaLabelButton4: this.spy() },
 			oSecondMonthHeader = { setTextButton2: this.spy(), setAriaLabelButton2: this.spy() },
 			oCalendar = new Calendar(),
@@ -1379,15 +1389,15 @@ QUnit.module("Misc");
 		oGetAggregationStub.withArgs("secondMonthHeader").returns(oSecondMonthHeader);
 
 		// act
-		oCalendar._updateHeadersYearPrimaryText(sExpectedValue);
+		oCalendar._updateHeadersYearPrimaryText(sYear);
 
 		// assert
-		assert.equal(oHeader.setTextButton2.getCall(0).args[0], sExpectedValue, "setTextButton2 should be called with " + sExpectedValue);
+		assert.equal(oHeader.setTextButton2.getCall(0).args[0], sYear, "setTextButton2 should be called with " + sYear);
 		assert.equal(oHeader.setAriaLabelButton2.getCall(0).args[0], sExpectedValue, "setAriaLabelButton2 should be called with " + sExpectedValue);
-		assert.equal(oHeader._setTextButton4.getCall(0).args[0], sExpectedValue, "_setTextButton4 should be called with " + sExpectedValue);
-		assert.equal(oHeader._setAriaLabelButton4.getCall(0).args[0], sExpectedValue, "_setAriaLabelButton4 should be called with " + sExpectedValue);
-		assert.equal(oSecondMonthHeader.setTextButton2.getCall(0).args[0], sExpectedValue, "setTextButton2 should be called with " + sExpectedValue);
-		assert.equal(oSecondMonthHeader.setAriaLabelButton2.getCall(0).args[0], sExpectedValue, "setAriaLabelButton2 should be called with " + sExpectedValue);
+		assert.equal(oHeader._setTextButton4.getCall(0).args[0], sYear, "_setTextButton4 should be called with " + sYear);
+		assert.equal(oHeader._setAriaLabelButton4.getCall(0).args[0], sYear, "_setAriaLabelButton4 should be called with " + sYear);
+		assert.equal(oSecondMonthHeader.setTextButton2.getCall(0).args[0], sYear, "setTextButton2 should be called with " + sYear);
+		assert.equal(oSecondMonthHeader.setAriaLabelButton2.getCall(0).args[0], sYear, "setAriaLabelButton2 should be called with " + sYear);
 
 		// cleanup
 		oCalendar.destroy();
@@ -1429,5 +1439,58 @@ QUnit.module("Misc");
 		assert.ok(oEventSpy.called, "Detected internal Months firing weekNumberSelect, so Calendar did the same");
 	});
 
+	QUnit.test("onkeydown handler when F4 is pressed", function(assert) {
+		// Prepare
+		var oSpyEventPreventDefault = this.spy(),
+			oEvent = { keyCode: KeyCodes.F4, preventDefault: oSpyEventPreventDefault },
+			oCalendar = new Calendar(),
+			oSpyShowMonthPicker = this.stub(oCalendar, "_showMonthPicker");
+
+		// Act
+		oCalendar.onkeydown(oEvent);
+
+		// Assert
+		assert.equal(oSpyShowMonthPicker.callCount, 1, "month picker is about to show");
+		assert.equal(oSpyEventPreventDefault.callCount, 1, "the event is prevented from default browser action");
+
+		// Cleanup
+		oCalendar.destroy();
+	});
+
+	QUnit.test("onkeydown handler when Shift+F4 is pressed", function(assert) {
+		// Prepare
+		var oSpyEventPreventDefault = this.spy(),
+			oEvent = { keyCode: KeyCodes.F4, preventDefault: oSpyEventPreventDefault, shiftKey: true },
+			oCalendar = new Calendar(),
+			oSpyShowYearPicker = this.stub(oCalendar, "_showYearPicker");
+
+		// Act
+		oCalendar.onkeydown(oEvent);
+
+		// Assert
+		assert.equal(oSpyShowYearPicker.callCount, 1, "year picker is about to to show");
+		assert.equal(oSpyEventPreventDefault.callCount, 1, "the event is prevented from default browser action");
+
+		// Cleanup
+		oCalendar.destroy();
+	});
+
+	QUnit.test("onkeydown handler when F4 is pressed, but the there is a picker popup", function(assert) {
+		// Prepare
+		var oSpyEventPreventDefault = this.spy(),
+			oEvent = { keyCode: KeyCodes.F4, preventDefault: oSpyEventPreventDefault, shiftKey: true },
+			oCalendar = new Calendar();
+
+		this.stub(oCalendar, "_getSucessorsPickerPopup").returns(true);
+
+		// Act
+		oCalendar.onkeydown(oEvent);
+
+		// Assert
+		assert.equal(oSpyEventPreventDefault.callCount, 0, "browser's event handler is not prevented");
+
+		// Cleanup
+		oCalendar.destroy();
+	});
 	return waitForThemeApplied();
 });
