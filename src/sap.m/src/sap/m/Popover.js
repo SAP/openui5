@@ -861,6 +861,7 @@ sap.ui.define(['jquery.sap.global', './Bar', './Button', './InstanceManager', '.
 			oStyle.bottom = "";
 			oStyle.width = "";
 			oStyle.height = "";
+			oStyle.overflow = "";
 
 			oScrollAreaStyle.width = "";
 			oScrollAreaStyle.display = "";
