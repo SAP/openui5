@@ -2204,7 +2204,7 @@ sap.ui.define([
 
 	QUnit.test("Do not attach orientationChange handler on destroyed popover", function (assert){
 		// setup
-		 var oDeviceParams = {
+		var oDeviceParams = {
 			system: {
 				desktop: true,
 				phone: false,
@@ -2219,17 +2219,17 @@ sap.ui.define([
 		this.stub(Device, "support", oDeviceParams.support);
 
 		var oResizeHandlerSpy = this.spy(Device.resize, "attachHandler");
-			oButton = new Button().placeAt("content");
-			oPopover = new Popover({
-				contentWidth: "300px",
-				contentHeight: "300px",
-				content: new HTML({
-					content: "<div style='width: 500px; height: 600px'></div>"
-				}),
-				afterOpen: function(oEvent) {
-					oPopover.destroy();
-				}
-			});
+		oButton = new Button().placeAt("content");
+		oPopover = new Popover({
+			contentWidth: "300px",
+			contentHeight: "300px",
+			content: new HTML({
+				content: "<div style='width: 500px; height: 600px'></div>"
+			}),
+			afterOpen: function(oEvent) {
+				oPopover.destroy();
+			}
+		});
 
 		// act
 		oPopover.openBy(oButton);
@@ -2239,6 +2239,51 @@ sap.ui.define([
 		assert.equal(oResizeHandlerSpy.callCount, 0, "The resize handler is not attached to a destroyed popover");
 
 		// clean up
+		oButton.destroy();
+	});
+
+	QUnit.test("Popover open after being destroyed", function (assert){
+		// setup
+		var oDeviceParams = {
+			system: {
+				desktop: true,
+				phone: false,
+				tablet: false
+			},
+			support: {
+				touch: false
+			}
+		};
+
+		this.stub(Device, "system", oDeviceParams.system);
+		this.stub(Device, "support", oDeviceParams.support);
+
+		var oPopover = new Popover({
+			content: [new Label({text: "Hello World!"})]
+		});
+		var oOpenerSpy = this.spy(oPopover, "openBy");
+		var oButton = new Button({
+			text: "Click me!",
+			press: function () {
+				oPopover.openBy(this);
+				oPopover.close();
+				oPopover.openBy(this); // -> too fast! open will be deferred because popup is still "closing"
+				oPopover.destroy();
+			}
+		}).placeAt("content");
+		sap.ui.getCore().applyChanges();
+		this.clock.tick(500);
+
+		//Act
+		try {
+			oButton.firePress();
+			sap.ui.getCore().applyChanges();
+		} catch (e) { e; }
+
+		// Assert
+		assert.ok(!oOpenerSpy.threw(), "Destroyed and closed silently without exception");
+
+		// Cleanup
 		oButton.destroy();
 	});
 
