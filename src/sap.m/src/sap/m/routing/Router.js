@@ -26,6 +26,17 @@ sap.ui.define(['sap/ui/core/routing/Router', './TargetHandler', './Targets'],
 		 *     {
 		 *         name: "anotherRoute"
 		 *         pattern : "anotherPattern"
+		 *     },
+		 *     //Will create a route for a nested component with the prefix 'componentPrefix'
+		 *     {
+		 *         pattern: "componentPattern",
+		 *         name: "componentRoute",
+		 *         target: [
+		 *              {
+		 *                  name: "subComponent",
+		 *                  prefix: "componentPrefix"
+		 *              }
+		 *         ]
 		 *     }
 		 * ]
 		 * </pre>
@@ -41,6 +52,16 @@ sap.ui.define(['sap/ui/core/routing/Router', './TargetHandler', './Targets'],
 		 *     //Will create a route called 'anotherRoute'
 		 *     anotherRoute : {
 		 *         pattern : "anotherPattern"
+		 *     },
+		 *     //Will create a route for a nested component with the prefix 'componentPrefix'
+		 *     componentRoute{
+		 *         pattern: "componentPattern",
+		 *         target: [
+		 *              {
+		 *                  name: "subComponent",
+		 *                  prefix: "componentPrefix"
+		 *              }
+		 *         ]
 		 *     }
 		 * }
 		 * </pre>
@@ -63,6 +84,18 @@ sap.ui.define(['sap/ui/core/routing/Router', './TargetHandler', './Targets'],
 		 *     jsTarget : {
 		 *         viewType : "JS"
 		 *         ...
+		 *     },
+		 *     componentTarget: {
+		 *         type: "Component",
+		 *         name: "subComponent",
+		 *         id: "mySubComponent",
+		 *         options: {
+		 *             // the Component configuration:
+		 *             manifest: true
+		 *             ...
+		 *         },
+		 *         controlId: "myRootView",
+		 *         controlAggregation: "content"
 		 *     }
 		 * }
 		 * </pre>
@@ -76,6 +109,18 @@ sap.ui.define(['sap/ui/core/routing/Router', './TargetHandler', './Targets'],
 		 *     jsTarget : {
 		 *         viewType : "JS"
 		 *         ...
+		 *     },
+		 * 	   componentTarget: {
+		 *         type: "Component",
+		 *         name: "subComponent",
+		 *         id: "mySubComponent",
+		 *         options: {
+		 *             // the Component configuration:
+		 *             manifest: true
+		 *             ...
+		 *         },
+		 *         controlId: "myRootView",
+		 *         controlAggregation: "content"
 		 *     }
 		 * }
 		 * </pre>

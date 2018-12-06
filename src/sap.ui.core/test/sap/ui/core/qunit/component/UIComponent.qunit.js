@@ -205,6 +205,27 @@ sap.ui.define([
 
 	});
 
+	QUnit.test("forwarding RouterHashChanger to the creation of Router", function(assert) {
+		this.oManifest["sap.ui5"]["routing"] = {
+			routes: {
+			}
+		};
+		this.oServer.respondWithJSONContent(this.oManifest);
+
+		var oRouterHashChanger = {};
+		var oComponent = sap.ui.component({
+			manifestUrl : "/anylocation/manifest.json",
+			settings: {
+				_routerHashChanger: oRouterHashChanger
+			}
+		});
+
+		var oRouter = oComponent.getRouter();
+		assert.strictEqual(oRouter.getHashChanger(), oRouterHashChanger, "The RouterHashChanger is forwarded to the created Router");
+
+		oComponent.destroy();
+	});
+
 	QUnit.module("UIComponent with rootView from Manifest", {
 		beforeEach: function() {
 
