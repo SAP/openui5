@@ -1,7 +1,7 @@
 /*!
  * ${copyright}
  */
-sap.ui.require([
+sap.ui.define([
 	"jquery.sap.global",
 	"sap/ui/model/analytics/odata4analytics",
 	"sap/ui/model/analytics/ODataModelAdapter",
