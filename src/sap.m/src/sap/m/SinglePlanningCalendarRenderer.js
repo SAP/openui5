@@ -18,15 +18,23 @@ function() {
 	 * @param {sap.m.SinglePlanningCalendar} oCalendar An object representation of the <code>SinglePlanningCalendarRenderer</code> control that should be rendered.
 	 */
 	SinglePlanningCalendarRenderer.render = function(oRm, oCalendar){
+		var oHeader = oCalendar._getHeader(),
+			oGrid = oCalendar._getGrid();
+
 		oRm.write("<div");
 		oRm.writeControlData(oCalendar);
+		oRm.writeAccessibilityState({
+			role: "region",
+			roledescription: oCalendar._oRB.getText("SPC_CONTROL_NAME"),
+			labelledby: {
+				value: oHeader.getId() + "-Title " + oGrid.getId() + "-nowMarkerText",
+				append: true
+			}
+		});
 		oRm.addClass("sapMSinglePC");
 		oRm.addClass("sapUiSizeCompact"); // TODO: for now force Compact mode
 		oRm.writeClasses();
 		oRm.write(">");
-
-		var oHeader = oCalendar._getHeader(),
-			oGrid = oCalendar._getGrid();
 
 		oRm.renderControl(oHeader);
 		oRm.renderControl(oGrid);

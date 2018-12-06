@@ -73,6 +73,12 @@
         "type": "FEATURE",
         "text": " sap.m.Column: enabling sort indicator",
         "references": []
+      },
+      {
+        "id": "a6b8cd60cf66f2dbaa136c5c0d5feb9cf5a5d5d2",
+        "type": "FEATURE",
+        "text": " sap.m.Label: Color for displayOnly property is changed",
+        "references": []
       }
     ]
   }

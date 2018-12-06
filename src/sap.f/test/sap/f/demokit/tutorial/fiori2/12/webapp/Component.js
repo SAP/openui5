@@ -1,8 +1,9 @@
 sap.ui.define([
 	'sap/ui/core/UIComponent',
 	'sap/ui/model/json/JSONModel',
-	'sap/f/FlexibleColumnLayoutSemanticHelper'
-], function(UIComponent, JSONModel, FlexibleColumnLayoutSemanticHelper) {
+	'sap/f/FlexibleColumnLayoutSemanticHelper',
+	'sap/f/library'
+], function(UIComponent, JSONModel, FlexibleColumnLayoutSemanticHelper, fioriLibrary) {
 	'use strict';
 
 	return UIComponent.extend('sap.ui.demo.fiori2.Component', {
@@ -28,18 +29,11 @@ sap.ui.define([
 			this.getRouter().initialize();
 		},
 
-		createContent: function () {
-			return sap.ui.view({
-				viewName: "sap.ui.demo.fiori2.view.App",
-				type: "XML"
-			});
-		},
-
 		getHelper: function () {
 			var oFCL = this.getRootControl().byId('flexibleColumnLayout'),
 				oSettings = {
-					defaultTwoColumnLayoutType: sap.f.LayoutType.TwoColumnsMidExpanded,
-					defaultThreeColumnLayoutType: sap.f.LayoutType.ThreeColumnsMidExpanded,
+					defaultTwoColumnLayoutType: fioriLibrary.TwoColumnsMidExpanded,
+					defaultThreeColumnLayoutType: fioriLibrary.ThreeColumnsMidExpanded,
 					initialColumnsCount: 2
 				};
 

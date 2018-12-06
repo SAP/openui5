@@ -164,4 +164,36 @@ sap.ui.define([
 		);
 	});
 
+	QUnit.test("Manifest from Object", function(assert) {
+		this.oManifest = new Manifest({
+			"sap.app": {
+				"id": "sap.ui.test.manifestload"
+			},
+			"sap.ui5": {
+				"someValue": "someValue456",
+				"dependencies": {
+					"libs": {
+					},
+					"components": {
+						"sap.ui.test.manifestload": {}
+					}
+				}
+			}
+		}, {
+			url: "test-resources/sap/ui/core/qunit/component/testdata/manifestload/manifest.json"
+		});
+
+		assert.strictEqual(this.oManifest.getEntry("sap.ui5").someValue, "someValue456", "Manifest data was loaded ASYNC");
+		assert.strictEqual(this.oManifest._resolveUri(
+			new URI("test-resources/sap/ui/core/qunit/component/testdata/manifestload"), "manifest").toString(),
+			"test-resources/sap/ui/core/qunit/component/testdata/manifestload/test-resources/sap/ui/core/qunit/component/testdata/manifestload",
+			"URL should resolve relative to the Manifest"
+		);
+		assert.strictEqual(this.oManifest.resolveUri(
+			"test-resources/sap/ui/core/qunit/component/testdata/manifestload", "manifest"),
+			"test-resources/sap/ui/core/qunit/component/testdata/manifestload/test-resources/sap/ui/core/qunit/component/testdata/manifestload",
+			"URL should resolve relative to the Manifest"
+		);
+	});
+
 });

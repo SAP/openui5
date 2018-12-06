@@ -31,7 +31,8 @@ sap.ui.define(['./Button','./AccButtonRenderer'],
 			library : "sap.m",
 			properties : {
 				"tabIndex": {type : "string", defaultValue : null, bindable : "bindable"},
-				"ariaHidden": {type : "string", defaultValue : null, bindable : "bindable"}
+				"ariaHidden": {type : "string", defaultValue : null, bindable : "bindable"},
+				"ariaHaspopup": {type : "string", defaultValue : null, bindable : "bindable"}
 			}
 		}
 	});

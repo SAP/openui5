@@ -45,6 +45,6 @@ sap.ui.define([
 		Then.onThePostPage.iShouldSeeTheViewCounter();
 
 		// Cleanup
-		Then.iTeardownMyAppFrame();
+		Then.iTeardownMyApp();
 	});
 });

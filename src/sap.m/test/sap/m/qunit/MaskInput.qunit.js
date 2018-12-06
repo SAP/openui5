@@ -11,7 +11,9 @@ sap.ui.define([
 	"sap/ui/Device",
 	"sap/ui/core/library",
 	"sap/ui/events/jquery/EventExtension",
+	"sap/ui/qunit/utils/waitForThemeApplied",
 	"jquery.sap.keycodes"
+
 ], function(
 	qutils,
 	createAndAppendDiv,
@@ -22,7 +24,9 @@ sap.ui.define([
 	Button,
 	Device,
 	coreLibrary,
-	EventExtension
+	EventExtension,
+	waitForThemeApplied
+
 ) {
 	// shortcut for sap.ui.core.TextDirection
 	var TextDirection = coreLibrary.TextDirection;
@@ -1360,4 +1364,6 @@ sap.ui.define([
 		}
 		return oSelection;
 	}
+
+	return waitForThemeApplied();
 });

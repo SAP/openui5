@@ -29,8 +29,6 @@
 			</Panel>
 
 			<Panel>
-				<f:Card id="card0" manifest="{manifests>/noLayout/card01}"  width="180px" height="180px"/>
-				<f:Card id="card000" manifest="{manifests>/noLayout/card0}"  width="180px" height="180px"/>
 				<f:Card id="card14" manifest="{manifests>/noLayout/card14}"  width="300px" height="200px"/>
 				<f:Card id="somedfault" manifest="{manifests>/noLayout/card1}"  width="80px" height="80px"/>
 				<f:Card id="default1x1" manifest="{manifests>/noLayout/card2}"  width="80px" height="80px"/>

@@ -32,7 +32,8 @@ sap.ui.define([
 			// start the app UI component
 			this.iStartMyUIComponent({
 				componentConfig: {
-					name: "sap.ui.demo.toolpageapp"
+					name: "sap.ui.demo.toolpageapp",
+					async: true
 				},
 				hash: oOptions.hash,
 				autoWait: oOptions.autoWait

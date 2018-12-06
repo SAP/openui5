@@ -17,11 +17,22 @@
 		</subHeader>
 
 		<content>
-			<VBox class="centered">
-				<f:GridList class="sapUiMediumMarginBottom sapUiMediumMarginTop" items="{ path: '/' }">
+			<VBox class="sapUiMediumMargin">
+				<f:GridList
+					class="sapUiMediumMarginBottom sapUiMediumMarginTop"
+					items="{
+						path: '/',
+						sorter: {
+							path: 'group',
+							descending: false,
+							group: true
+						}
+					}">
 
 					<f:customLayout>
-						<grid:GridBoxLayout boxMinWidth="20rem"/>
+						<grid:GridBasicLayout
+							gridTemplateColumns="repeat(6, minmax(10rem, 20rem))"
+							gridGap="0.5rem 0.5rem"/>
 					</f:customLayout>
 
 					<CustomListItem type="Navigation" press="onSelectExample">
@@ -34,7 +45,7 @@
 								<VBox class="sapUiSmallMargin">
 									<Title text="{title}" wrapping="true"/>
 									<Text text="{description}" wrapping="true"/>
-									<Title text="Use case" wrapping="true" class="sapUiSmallMarginTop"/>
+									<Title visible="{= ${usage} ? true : false }" text="Use case" wrapping="true" class="sapUiSmallMarginTop"/>
 									<Text text="{usage}" wrapping="true"/>
 								</VBox>
 							</VBox>

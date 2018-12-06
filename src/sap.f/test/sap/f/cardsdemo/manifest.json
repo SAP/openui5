@@ -29,7 +29,10 @@
 	  "minUI5Version": "1.30",
 	  "libs": {
 		"sap.m": {},
-		"sap.ui.core": {}
+		"sap.ui.core": {},
+		"sap.f": {},
+		"sap.ui.layout": {},
+		"sap.ui.codeeditor": {}
 	  }
 	},
 	"models": {
@@ -53,48 +56,67 @@
 		},
 		"async": true
 	  },
-	  "routes": [{
-		"pattern": "",
-		"name": "appMain",
-		"target": "main"
-	  }, {
-		"pattern": "grid",
-		"name": "grid",
-		"target": "grid"
-	  }, {
-		"pattern": "zflow",
-		"name": "zflow",
-		"target": "zflow"
-	  }, {
-		"pattern": "flexibleHeight",
-		"name": "flexibleHeight",
-		"target": "flexibleHeight"
-	  }, {
-		"pattern": "splitter",
-		"name": "splitter",
-		"target": "splitter"
-	  }, {
-		"pattern": "nolayout",
-		"name": "nolayout",
-		"target": "nolayout"
-	  }, {
-        "pattern": "listContent",
-        "name": "listContent",
-        "target": "listContent"
-      }, {
-        "pattern": "tableContent",
-        "name": "tableContent",
-        "target": "tableContent"
-      }, {
-        "pattern": "flp",
-        "name": "flp",
-        "target": "flp"
-			}, {
-        "pattern": "kpiHeader",
-        "name": "kpiHeader",
-        "target": "kpiHeader"
-      }
-      ],
+	  "routes": [
+		{
+		  "pattern": "",
+		  "name": "appMain",
+		  "target": "main"
+		},
+		{
+		  "pattern": "grid",
+		  "name": "grid",
+		  "target": "grid"
+		},
+		{
+		  "pattern": "zflow",
+		  "name": "zflow",
+		  "target": "zflow"
+		},
+		{
+		  "pattern": "flexibleHeight",
+		  "name": "flexibleHeight",
+		  "target": "flexibleHeight"
+		},
+		{
+		  "pattern": "splitter",
+		  "name": "splitter",
+		  "target": "splitter"
+		},
+		{
+		  "pattern": "nolayout",
+		  "name": "nolayout",
+		  "target": "nolayout"
+		},
+		{
+		  "pattern": "listContent",
+		  "name": "listContent",
+		  "target": "listContent"
+		},
+		{
+		  "pattern": "tableContent",
+		  "name": "tableContent",
+		  "target": "tableContent"
+		},
+		{
+		  "pattern": "flp",
+		  "name": "flp",
+		  "target": "flp"
+		}, {
+		  "pattern": "kpiHeader",
+		  "name": "kpiHeader",
+		  "target": "kpiHeader"
+		},
+		{
+		  "pattern": "analyticalContent",
+		  "name": "analyticalContent",
+		  "target": "analyticalContent"
+		},
+		{
+		  "pattern": "manifest",
+		  "name": "manifest",
+		  "target": "manifest"
+		}
+	  ],
 	  "targets": {
 		"main": {
 		  "viewId": "main",
@@ -131,26 +153,36 @@
 		  "viewName": "NotFound",
 		  "transition": "show"
 		},
-        "listContent": {
-          "viewId": "listContent",
-          "viewName": "ListContent",
-          "viewLevel": 1
-        },
-        "tableContent": {
-          "viewId": "tableContent",
-          "viewName": "TableContent",
-          "viewLevel": 1
-        },
-        "flp": {
-          "viewId": "flp",
-          "viewName": "Flp",
-          "viewLevel": 1
-				},
-				"kpiHeader": {
-          "viewId": "kpiHeader",
-          "viewName": "kpiHeader",
-          "viewLevel": 1
-				}
+		"listContent": {
+		  "viewId": "listContent",
+		  "viewName": "ListContent",
+		  "viewLevel": 1
+		},
+		"tableContent": {
+		  "viewId": "tableContent",
+		  "viewName": "TableContent",
+		  "viewLevel": 1
+		},
+		"analyticalContent": {
+		  "viewId": "analyticalContent",
+		  "viewName": "AnalyticalContent",
+		  "viewLevel": 1
+		},
+		"flp": {
+		  "viewId": "flp",
+		  "viewName": "Flp",
+		  "viewLevel": 1
+		},
+		"kpiHeader": {
+		  "viewId": "kpiHeader",
+		  "viewName": "kpiHeader",
+		  "viewLevel": 1
+		},
+		"manifest": {
+		  "viewId": "manifest",
+		  "viewName": "Manifest",
+		  "viewLevel": 1
+		}
 	  }
 	}
   }

@@ -61,8 +61,6 @@ sap.ui.define(["sap/ui/Device"], function (Device) {
 			"jQuery.sap.Version": {},
 			"jquery.sap.dom": {
 				group: "jQuery plugins",
-				autostart: false,
-				beforeBootstrap: "./beforeBootstrap/jQuery.sap.dom",
 				qunit: {
 					reorder: false
 				}

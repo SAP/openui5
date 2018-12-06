@@ -409,6 +409,66 @@
         "type": "FIX",
         "text": " sap.m.uploadCollection : Delete \u0027instantUpload\u0027 both true and false before calling the super constructor to avoid unwanted error logs.",
         "references": []
+      },
+      {
+        "id": "dca917a795568643438469b682ddb16cf2b118a2",
+        "type": "FEATURE",
+        "text": " New 3-Step Quick Start Beginner Tutorial",
+        "references": []
+      },
+      {
+        "id": "03d3968b50a7e8892b6aceb9edf30ff56df45413",
+        "type": "FEATURE",
+        "text": " sap.m.Input: Autocomplete enablement",
+        "references": []
+      },
+      {
+        "id": "a6b8cd60cf66f2dbaa136c5c0d5feb9cf5a5d5d2",
+        "type": "FEATURE",
+        "text": " sap.m.Label: Color for displayOnly property is changed",
+        "references": []
+      },
+      {
+        "id": "f76e6430b221225e9016730aa53fde4042ddb7f8",
+        "type": "FIX",
+        "text": " m.MultiInput: fix test for IE11",
+        "references": []
+      },
+      {
+        "id": "4713b0ce2a2bdd83ad5bf54648e8741173e963d2",
+        "type": "FIX",
+        "text": " sap.m.GroupHeaderListItem: Should not have action cursor",
+        "references": []
+      },
+      {
+        "id": "89f87ff2e2cf8a02cb54357b13136253e31bb1e8",
+        "type": "FIX",
+        "text": " sap.m.IconTabBar: Only focused tab is read out by the Screen Reader",
+        "references": []
+      },
+      {
+        "id": "9419b64d4b72a2fe5506067ce0bf5d5ba15beca3",
+        "type": "FIX",
+        "text": " sap.m.Input: showValueStateMessage now works correctly",
+        "references": []
+      },
+      {
+        "id": "cd9dbb77991140921a7e0e4f605401979ee7c672",
+        "type": "FIX",
+        "text": " sap.m.uploadCollectionItem : Fixed .csv file download issue.",
+        "references": []
+      },
+      {
+        "id": "f295d13d3de6e46383071bb4766b9314fb2cf3a5",
+        "type": "FIX",
+        "text": " sap.m: Date controls documentation fix",
+        "references": []
+      },
+      {
+        "id": "8f996e639e37d5cee88e86b5422d4813b0bcd1e9",
+        "type": "FIX",
+        "text": " sap.m: Now qunits work correctly for FacetFilter, MaskInput, PlanningCalendar and ViewSettingsDialog",
+        "references": []
       }
     ]
   }

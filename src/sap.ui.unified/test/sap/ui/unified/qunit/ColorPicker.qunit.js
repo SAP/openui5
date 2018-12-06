@@ -21,7 +21,7 @@ sap.ui.define([
 		QUnit.test("Responsive mode", function (oAssert) {
 			// Arrange
 			var oHelper = sap.ui.unified.ColorPickerHelper,
-				oFactory = oHelper.factory,
+				oFactory = sap.ui.unified.ColorPickerHelper.factory,
 				oRBGroup,
 				oInput,
 				oSlider;
@@ -770,7 +770,8 @@ sap.ui.define([
 			assert.strictEqual(this.oCP.Color.s, 50, 'saturation is ok');
 			assert.strictEqual(this.oCP.Color.l, 50, 'light is ok');
 		});
+
+		return waitForThemeApplied();
 	})();
 
-	return waitForThemeApplied();
 });

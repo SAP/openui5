@@ -48,7 +48,7 @@ sap.ui.define([
 	 * @param {object} [mSettings] Initial settings for the new control
 	 *
 	 * @class
-	 * Enables the users to select date and time values in a combined input.
+	 * Enables the users to select date (between 0001-01-01 and 9999-12-31) and time values in a combined input.
 	 *
 	 * <h3>Overview</h3>
 	 *

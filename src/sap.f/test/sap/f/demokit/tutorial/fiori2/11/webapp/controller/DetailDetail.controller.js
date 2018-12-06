@@ -48,4 +48,4 @@ sap.ui.define([
 			this.oRouter.getRoute("detailDetail").detachPatternMatched(this._onPatternMatch, this);
 		}
 	});
-}, true);
+});

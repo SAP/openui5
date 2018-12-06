@@ -287,7 +287,7 @@ sap.ui.define([
 		if (!sFlexibilityServicePrefix) {
 			return Promise.reject({
 				status: "warning",
-				message: "Flexibility Services requests were not sent. The UI5 bootstrap is configured to not send any requests."
+				messages: [{"severity":"warning", "text":"Flexibility Services requests were not sent. The UI5 bootstrap is configured to not send any requests."}]
 			});
 		}
 

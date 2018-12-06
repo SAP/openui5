@@ -31,6 +31,7 @@ sap.ui.define([
 	"sap/ui/unified/calendar/DatesRow",
 	"sap/ui/core/library",
 	"sap/ui/core/Control",
+	"sap/ui/qunit/utils/waitForThemeApplied",
 	"jquery.sap.keycodes"
 ], function(
 	qutils,
@@ -62,7 +63,8 @@ sap.ui.define([
 	OneMonthDatesRow,
 	DatesRow,
 	coreLibrary,
-	Control
+	Control,
+	waitForThemeApplied
 ) {
 	// shortcut for sap.m.PlanningCalendarBuiltInView
 	var PlanningCalendarBuiltInView = mobileLibrary.PlanningCalendarBuiltInView;
@@ -5156,4 +5158,6 @@ sap.ui.define([
 	QUnit.test("startIndex is greater than the end Index: startIndex = 6, endIndex = 3 - (3 months event in 3 months from the row's startDate)", function (assert) {
 		this.test(assert, 6, 3, new Date(2018, 1, 1), new Date(2018, 4, 1));
 	});
+
+	return waitForThemeApplied();
 });

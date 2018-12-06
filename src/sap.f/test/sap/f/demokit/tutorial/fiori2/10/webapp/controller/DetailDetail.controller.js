@@ -1,7 +1,8 @@
 sap.ui.define([
 	"sap/ui/model/json/JSONModel",
-	"sap/ui/core/mvc/Controller"
-], function (JSONModel, Controller) {
+	"sap/ui/core/mvc/Controller",
+	'sap/f/library'
+], function (JSONModel, Controller, fioriLibrary) {
 	"use strict";
 
 	return Controller.extend("sap.ui.demo.fiori2.controller.DetailDetail", {
@@ -15,7 +16,7 @@ sap.ui.define([
 		},
 
 		handleAboutPress: function () {
-			this.oRouter.navTo("page2", {layout: sap.f.LayoutType.EndColumnFullScreen});
+			this.oRouter.navTo("page2", {layout: fioriLibrary.LayoutType.EndColumnFullScreen});
 		},
 
 		_onPatternMatch: function (oEvent) {

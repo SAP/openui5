@@ -1,0 +1,28 @@
+<core:FragmentDefinition
+		xmlns:l="sap.ui.layout"
+		xmlns:core="sap.ui.core"
+		xmlns="sap.m">
+	<l:VerticalLayout
+			class="sapUiContentPadding"
+			width="100%">
+		<l:content>
+			<Label text="Title:" labelFor="inputTitle"/>
+			<Input id="inputTitle"/>
+			<Label text="Start date:" labelFor="startDate"/>
+			<DateTimePicker
+					id="startDate"
+					displayFormat="short"
+					required="true"
+					change="handleCreateFragmentDateChange"/>
+			<Label text="End date:" labelFor="endDate"/>
+			<DateTimePicker
+					id="endDate"
+					displayFormat="short"
+					required="true"
+					change="handleCreateFragmentDateChange"/>
+			<Label text="More information:" labelFor="inputInfo"/>
+			<Input id="moreInfo"/>
+			<CheckBox id="fullDay" text="Fullday appointment" selected="false" />
+		</l:content>
+	</l:VerticalLayout>
+</core:FragmentDefinition>

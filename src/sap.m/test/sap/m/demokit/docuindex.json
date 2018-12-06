@@ -17,15 +17,15 @@
 				"config": "test-resources/sap/m/demokit/cart/demoapp.json"
 			},
 			{
-				"icon": "hello-world",
-				"text": "Hello World",
+				"icon": "unwired",
+				"text": "Quickstart",
 				"desc": "Your very simple first app",
-				"ref": "test-resources/sap/m/demokit/helloworld/index.html",
+				"ref": "test-resources/sap/m/demokit/tutorial/quickstart/03/webapp/index.html",
 				"links": {
 					"View Tutorial": "#docs/guide/592f36fd077b45349a67dcb3efb46ab1.html"
 				},
 				"category": "Tutorial",
-				"config": "test-resources/sap/m/demokit/helloworld/demoapp.json"
+				"config": "test-resources/sap/m/demokit/tutorial/quickstart/demoapp.json"
 			},
 			{
 				"icon": "task",
@@ -909,6 +909,14 @@
 			"sap.m.sample.PlanningCalendarWithStickyHeader"]
 		},
 		{
+			"id": "sap.m.SinglePlanningCalendar",
+			"name": "Single Planning Calendar",
+			"category": "User Input",
+			"since": "1.61",
+			"formFactors": "L",
+			"samples": ["sap.m.sample.SinglePlanningCalendar"]
+		},
+		{
 		  "id": "sap.m.Popover",
 		  "name": "Popover",
 		  "category": "Popup",
@@ -1364,6 +1372,20 @@
 		  "category": "User Input",
 		  "since": "1.54",
 		  "samples": ["sap.m.sample.ColorPalettePopover", "sap.m.sample.ColorPalette"]
+		},
+		{
+			  "id": "sap.m.tutorial.quickstart",
+			  "name": "Quickstart",
+			  "category": "Tutorial",
+			  "since": "1.61",
+			  "formFactors": "-",
+			  "description": "Unleash your SAPUI5 skills with this simple three step tutorial.",
+			  "docuLink": "#/topic/592f36fd077b45349a67dcb3efb46ab1",
+			  "samplesAsSteps": [
+				  "Ready",
+				  "Steady",
+				  "Go!"
+			  ]
 		},
 		{
 		  "id": "sap.m.tutorial.walkthrough",
@@ -3014,6 +3036,11 @@
 		  "id": "sap.m.sample.PlanningCalendarWithStickyHeader",
 		  "name": "Planning Calendar - with header that remains visible (fixed on top) on scroll",
 		  "description": "PlanningCalendar with header area that remains visible (fixed on top) when the rest of the content is scrolled out of view."
+		},
+		{
+		  "id": "sap.m.sample.SinglePlanningCalendar",
+		  "name": "Single Planning Calendar",
+		  "description": "SinglePlanningCalendar, containing sap.m.Dialog for creating a new appointment. Note: Illustrates how the SinglePlanningCalendar can be used in combination with the sap.m.Dialog control for creating new appoitments. This feature is NOT part of the control."
 		},
 		{
 		  "id": "sap.m.sample.ImageContent",

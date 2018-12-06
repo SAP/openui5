@@ -33,6 +33,6 @@ sap.ui.define([
 		Then.onTheWorklistPage.theTableHasOneItem();
 
 		// Cleanup
-		Then.iTeardownMyAppFrame();
+		Then.iTeardownMyApp();
 	});
 });

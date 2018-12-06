@@ -1,6 +1,7 @@
 sap.ui.define([
-	"sap/ui/core/mvc/Controller"
-], function (Controller) {
+	"sap/ui/core/mvc/Controller",
+	'sap/f/library'
+], function (Controller, fioriLibrary) {
 	"use strict";
 
 	return Controller.extend("sap.ui.demo.fiori2.controller.Detail", {
@@ -19,7 +20,7 @@ sap.ui.define([
 			var supplierPath = oEvent.getSource().getBindingContext("products").getPath(),
 				supplier = supplierPath.split("/").slice(-1).pop();
 
-			this.oRouter.navTo("detailDetail", {layout: sap.f.LayoutType.ThreeColumnsMidExpanded, supplier: supplier, product: this._product});
+			this.oRouter.navTo("detailDetail", {layout: fioriLibrary.LayoutType.ThreeColumnsMidExpanded, supplier: supplier, product: this._product});
 		},
 
 		_onProductMatched: function (oEvent) {

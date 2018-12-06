@@ -4,7 +4,6 @@
 	xmlns:f="sap.f"
 	xmlns:grid="sap.ui.layout.cssgrid"
 	xmlns:l="sap.ui.layout"
-    controllerName="sap.f.cardsdemo.controller.Zflow"
     displayBlock="true">
 
 	<Page title="{i18n>appTitle}">
@@ -29,7 +28,10 @@
 				<l:Splitter height="600px">
 					<l:Splitter orientation="Vertical">
 						<f:Card id="default2x2" manifest="{manifests>/splitter/card1}"/>
-						<f:Card id="default4x2withcomponent" manifest="sap.f.cardsdemo.cardcontent.listcomponent"/>
+						<f:Card id="default4x2withcomponent"
+							manifest="./cardcontent/listcomponent/manifest.json"
+							width="100%"
+							height="auto"/>
 					</l:Splitter>
 					<l:Splitter orientation="Vertical">
 						<f:Card id="default1x1" manifest="{manifests>/splitter/card2}"/>

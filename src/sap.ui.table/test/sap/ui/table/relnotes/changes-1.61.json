@@ -25,6 +25,12 @@
         "type": "FIX",
         "text": " Table: Accessibility announcement in tree table and grouping rows",
         "references": []
+      },
+      {
+        "id": "d8f3cb346fce4da02a993388e3d95ddd37c95ce3",
+        "type": "FIX",
+        "text": " Table: Correctly create new rows after resize",
+        "references": []
       }
     ]
   }

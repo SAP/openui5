@@ -1,0 +1,125 @@
+<mvc:View
+    xmlns="sap.m"
+    xmlns:mvc="sap.ui.core.mvc"
+	xmlns:f="sap.f"
+	xmlns:editor="sap.ui.codeeditor"
+    controllerName="sap.f.cardsdemo.controller.Manifest"
+    displayBlock="true">
+	<Page title="{i18n>appTitle}">
+		<subHeader>
+			<Toolbar>
+				<ToolbarSpacer/>
+				<Title text="Manifest loading examples"/>
+				<ToolbarSpacer/>
+			</Toolbar>
+		</subHeader>
+		<content>
+			<Panel>
+				<VBox id="samples">
+
+					<Panel
+						expanded="true"
+						expandable="true"
+						headerText="Using manifest property with string value (URL)">
+						<HBox>
+							<f:Card id="card1" manifest="./model/manifests/manifest_card1.json" width="500px" height="auto">
+								<f:layoutData>
+									<FlexItemData growFactor="1"/>
+								</f:layoutData>
+							</f:Card>
+							<VBox>
+								<Text text="XMLView usage:" class="sapUiTinyMargin"/>
+								<editor:CodeEditor
+									height="50px"
+									id="card1-editorXmlUsage"
+									busy="true"
+									type="xml"
+									editable="false">
+								</editor:CodeEditor>
+								<Text text="Manifest:" class="sapUiTinyMargin"/>
+								<editor:CodeEditor
+									height="450px"
+									id="card1-editorManifest"
+									busy="true"
+									type="json"
+									editable="false">
+								</editor:CodeEditor>
+								<layoutData>
+									<FlexItemData growFactor="3"/>
+								</layoutData>
+							</VBox>
+						</HBox>
+					</Panel>
+
+					<Panel
+						expanded="true"
+						expandable="true"
+						headerText="Using manifest property with object value (passed from a JSONModel)">
+						<HBox>
+							<f:Card id="card2" manifest="{manifests>/manifestTests/manifest}" width="500px" height="auto">
+								<f:layoutData>
+									<FlexItemData growFactor="1"/>
+								</f:layoutData>
+							</f:Card>
+							<VBox>
+								<Text text="XMLView usage:" class="sapUiTinyMargin"/>
+								<editor:CodeEditor
+									height="50px"
+									id="card2-editorXmlUsage"
+									busy="true"
+									type="xml"
+									editable="false">
+								</editor:CodeEditor>
+								<Text text="Manifest:" class="sapUiTinyMargin"/>
+								<editor:CodeEditor
+									height="450px"
+									id="card2-editorManifest"
+									busy="true"
+									type="json"
+									editable="false">
+								</editor:CodeEditor>
+								<layoutData>
+									<FlexItemData growFactor="3"/>
+								</layoutData>
+							</VBox>
+						</HBox>
+					</Panel>
+
+					<Panel
+						expanded="true"
+						expandable="true"
+						headerText="Using manifest property with Custom card">
+						<HBox>
+							<f:Card id="card3" manifest="./cardcontent/customcomponent/manifest.json" width="500px" height="auto">
+								<f:layoutData>
+									<FlexItemData growFactor="1"/>
+								</f:layoutData>
+							</f:Card>
+							<VBox>
+								<Text text="XMLView usage:" class="sapUiTinyMargin"/>
+								<editor:CodeEditor
+									height="50px"
+									id="card3-editorXmlUsage"
+									busy="true"
+									type="xml"
+									editable="false">
+								</editor:CodeEditor>
+								<Text text="Manifest:" class="sapUiTinyMargin"/>
+								<editor:CodeEditor
+									height="450px"
+									id="card3-editorManifest"
+									busy="true"
+									type="json"
+									editable="false">
+								</editor:CodeEditor>
+								<layoutData>
+									<FlexItemData growFactor="3"/>
+								</layoutData>
+							</VBox>
+						</HBox>
+					</Panel>
+				</VBox>
+			</Panel>
+		</content>
+	</Page>
+</mvc:View>

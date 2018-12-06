@@ -90,6 +90,28 @@ return new Opa5().waitFor({
 });
 ```
 
+`sap.ui.test.matchers.BindingPath`: This matcher checks if the controls have specified data binding paths. The `path` property matches
+controls by their binding context. Controls with a binding context are usually inside an aggregation or have a parent control with data binding.
+The `propertyPath` property matches controls by the data binding paths of their own properties. Binding property paths can be
+part of an expression binding. You can set the `path` and `propertyPath` properties separately or in combination. For a practical example of the various
+types of data binding, see the [Tutorial Samples](https://openui5nightly.hana.ondemand.com/#/entity/sap.ui.core.tutorial.databinding)
+
+```javascript
+// Match a CheckBox located inside a ListItem:
+// the CheckBox has a property binding with relative path "Selected"
+// the ListItem has a binding context path "/products/0"
+return new Opa5().waitFor({
+    controlType : "sap.m.CheckBox",
+    matchers : new sap.ui.test.matchers.BindingPath({
+        path: "/products/0",
+        propertyPath: "Selected"
+    }),
+    success : function (aResult) {
+        Opa5.assert.ok(aResult[0], "CheckBox is matched")
+    }
+});
+```
+
 You can also define a matcher as an inline function: The first parameter of the function is a control to match. If the control matches, return true to pass the control on to the next matcher and/or to check and success functions.
 
 ```javascript

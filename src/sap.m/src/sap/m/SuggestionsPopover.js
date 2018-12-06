@@ -20,7 +20,8 @@ sap.ui.define([
 	'sap/m/Table',
 	'sap/m/Toolbar',
 	'sap/m/ToolbarSpacer',
-	"sap/base/security/encodeXML"
+	"sap/base/security/encodeXML",
+	"sap/ui/events/KeyCodes"
 ], function (
 	Device,
 	BaseObject,
@@ -39,7 +40,8 @@ sap.ui.define([
 	Table,
 	Toolbar,
 	ToolbarSpacer,
-	encodeXML
+	encodeXML,
+	KeyCodes
 ) {
 	"use strict";
 
@@ -96,7 +98,8 @@ sap.ui.define([
 					if (this._oList) {
 						this._onsaparrowkey(oEvent, "down", this._oList.getItems().length);
 					}
-				}
+				},
+				onsapright: this._onsapright
 			}, this);
 		},
 
@@ -126,6 +129,13 @@ sap.ui.define([
 				this._oShowMoreButton.destroy();
 				this._oShowMoreButton = null;
 			}
+
+			this._bDoTypeAhead = null;
+			this._sTypedInValue = null;
+			this._oProposedItem = null;
+			this._sProposedItemText = null;
+			this._bSuggestionItemTapped = null;
+			this._oInputDelegate = null;
 		}
 	});
 
@@ -294,6 +304,9 @@ sap.ui.define([
 					+ "-popup-header", {
 					contentMiddle : this._oPopupInput.addEventDelegate({onsapenter: function(){
 							if (!(sap.m.MultiInput && oInput instanceof sap.m.MultiInput)) {
+								if (oInput.getAutocomplete()) {
+									this._finalizeAutocomplete();
+								}
 								oInput._closeSuggestionPopup();
 							}
 						}}, this)
@@ -333,6 +346,7 @@ sap.ui.define([
 				oInput._oSuggPopover._refreshListItems();
 			}.bind(this)));
 
+		this._registerAutocomplete();
 		this._oPopover.addStyleClass("sapMInputSuggestionPopup");
 		this._oPopover.addAriaLabelledBy(InvisibleText.getStaticId("sap.m", "INPUT_AVALIABLE_VALUES"));
 
@@ -370,9 +384,10 @@ sap.ui.define([
 				mode : ListMode.SingleSelectMaster,
 				rememberSelections : false,
 				itemPress : function(oEvent) {
+					this._bSuggestionItemTapped = true;
 					var oListItem = oEvent.getParameter("listItem");
 					oInput.setSelectionItem(oListItem._oItem, true);
-				}
+				}.bind(this)
 			});
 
 			this._oList.addEventDelegate({
@@ -442,6 +457,8 @@ sap.ui.define([
 			this._oList.destroy();
 			this._oList = null;
 		}
+
+		this._getInput().removeEventDelegate(this._oInputDelegate, this);
 	};
 
 	/**
@@ -604,7 +621,7 @@ sap.ui.define([
 		var oItem,
 			aItems = oInput.getSuggestionItems(),
 			aTabularRows = oInput.getSuggestionRows(),
-			sTypedChars = oInput.getDOMValue() || "",
+			sTypedChars = this._sTypedInValue || oInput.getDOMValue() || "",
 			oList = this._oList,
 			bFilter = oInput.getFilterSuggests(),
 			aHitItems = [],
@@ -880,6 +897,8 @@ sap.ui.define([
 
 		oInput._doSelect();
 		oInput._iPopupListSelectedIndex = iSelectedIndex;
+
+		this._oProposedItem = null;
 	};
 
 	/**
@@ -943,9 +962,10 @@ sap.ui.define([
 				enableBusyIndicator: false,
 				rememberSelections : false,
 				selectionChange: function (oEvent) {
+					this._bSuggestionItemTapped = true;
 					var oSelectedListItem = oEvent.getParameter("listItem");
 					oInput.setSelectionRow(oSelectedListItem, true);
-				}
+				}.bind(this)
 			});
 
 			this._oSuggestionTable.addEventDelegate({
@@ -983,7 +1003,7 @@ sap.ui.define([
 	 */
 	SuggestionsPopover.prototype._createHighlightedText = function (label) {
 		var text = label.innerText,
-			value = this._oInput.getValue().toLowerCase(),
+			value = (this._sTypedInValue || this._oInput.getValue()).toLowerCase(),
 			count = value.length,
 			lowerText = text.toLowerCase(),
 			subString,
@@ -1051,6 +1071,178 @@ sap.ui.define([
 		for (i = 0; i < labels.length; i++) {
 			label = labels[i];
 			label.innerHTML = this._createHighlightedText(label);
+		}
+	};
+
+	/**
+	 * Registers event handlers required for
+	 * the autocomplete functionality.
+	 *
+	 * @private
+	 */
+	SuggestionsPopover.prototype._registerAutocomplete = function () {
+		var oInput = this._oInput,
+			oPopover = this._oPopover,
+			oUsedInput = this._getInput(),
+			bUseDialog = oInput._bUseDialog;
+
+		if (bUseDialog) {
+			oPopover.addEventDelegate({
+				ontap: function () {
+					// used when clicking outside the suggestions list
+					if (!this._bSuggestionItemTapped && this._sProposedItemText) {
+						oUsedInput.setValue(this._sProposedItemText);
+						this._sProposedItemText = null;
+					}
+				}
+			}, this);
+		} else {
+			oPopover.attachAfterOpen(this._handleTypeAhead, this);
+		}
+
+		oPopover.attachAfterClose(this._finalizeAutocomplete, this);
+
+		this._oInputDelegate = {
+			onkeydown: function (oEvent) {
+				this._bDoTypeAhead = oInput.getAutocomplete() && (oEvent.which !== KeyCodes.BACKSPACE) && (oEvent.which !== KeyCodes.DELETE);
+			},
+			oninput: this._handleTypeAhead
+		};
+
+		oUsedInput.addEventDelegate(this._oInputDelegate, this);
+	};
+
+	/**
+	 * Autocompletes input.
+	 *
+	 * @private
+	 */
+	SuggestionsPopover.prototype._handleTypeAhead = function() {
+		var oInput = this._getInput(),
+			sValue = oInput.getValue();
+
+		this._oProposedItem = null;
+		this._sTypedInValue = sValue;
+
+		if (!this._bDoTypeAhead || sValue === "") {
+			return;
+		}
+
+		if (!this._oPopover.isOpen() || sValue.length < this._oInput.getStartSuggestion()) {
+			return;
+		}
+
+		if (document.activeElement !== oInput.getFocusDomRef()) {
+			return;
+		}
+
+		var sValueLowerCase = sValue.toLowerCase(),
+			bSearchSuggestionRows = this._oInput._hasTabularSuggestions(),
+			aItems = bSearchSuggestionRows ? this._oInput.getSuggestionRows() : this._oInput.getSuggestionItems(),
+			iLength = aItems.length,
+			sNewValue,
+			sItemText,
+			i;
+
+		for (i = 0; i < iLength; i++) {
+			sItemText =  bSearchSuggestionRows ? this._oInput._fnRowResultFilter(aItems[i]) : aItems[i].getText();
+
+			if (sItemText.toLowerCase().startsWith(sValueLowerCase)) {
+				this._oProposedItem = aItems[i];
+				sNewValue = sItemText;
+				break;
+			}
+		}
+
+		this._sProposedItemText = sNewValue;
+
+		if (sNewValue) {
+			sNewValue = this._formatTypedAheadValue(sNewValue);
+			oInput.updateDomValue(sNewValue);
+
+			if (Device.system.desktop) {
+				oInput.selectText(sValue.length, sNewValue.length);
+			} else {
+				// needed when user types too fast
+				setTimeout(function () {
+					oInput.selectText(sValue.length, sNewValue.length);
+				}, 0);
+			}
+		}
+	};
+
+	/**
+	 * Returns the Input control
+	 * depending on the device (mobile or desktop).
+	 *
+	 * @private
+	 * @returns {sap.m.Input} Reference to the corresponding control
+	 */
+	SuggestionsPopover.prototype._getInput = function () {
+		return this._oInput._bUseDialog ? this._oPopupInput : this._oInput;
+	};
+
+	/**
+	 * Sets the selected item (if it exists) from the autocomplete when pressing Enter.
+	 *
+	 * @private
+	 */
+	SuggestionsPopover.prototype._finalizeAutocomplete = function () {
+		if (!this._bSuggestionItemTapped && this._oProposedItem) {
+			if (this._oInput._hasTabularSuggestions()) {
+				this._oInput.setSelectionRow(this._oProposedItem, true);
+			} else {
+				this._oInput.setSelectionItem(this._oProposedItem, true);
+			}
+		}
+
+		if (document.activeElement === this._oInput.getFocusDomRef()) {
+			var iLength = this._oInput.getValue().length;
+			this._oInput.selectText(iLength, iLength);
+		}
+
+		this._oProposedItem = null;
+		this._sProposedItemText = null;
+		this._sTypedInValue = null;
+		this._bSuggestionItemTapped = false;
+	};
+
+	/**
+	 * Formats the input value
+	 * in a way that it preserves character casings typed by the user
+	 * and appends suggested value with casings as they are in the
+	 * corresponding suggestion item.
+	 *
+	 * @private
+	 * @param {string} sNewValue Value which will be formatted.
+	 * @returns {string} The new formatted value.
+	 */
+	SuggestionsPopover.prototype._formatTypedAheadValue = function (sNewValue) {
+		return this._sTypedInValue.concat(sNewValue.substring(this._sTypedInValue.length, sNewValue.length));
+	};
+
+	/**
+	 * Event delegate for right arrow key press
+	 * on the input control.
+	 *
+	 * @private
+	 */
+	SuggestionsPopover.prototype._onsapright = function () {
+		var oInput = this._oInput,
+			sValue = oInput.getValue();
+
+		if (!oInput.getAutocomplete()) {
+			return;
+		}
+
+		if (this._sTypedInValue !== sValue) {
+			this._sTypedInValue = sValue;
+
+			oInput.fireLiveChange({
+				value: sValue,
+				// backwards compatibility
+				newValue: sValue
+			});
 		}
 	};
 

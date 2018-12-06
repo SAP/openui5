@@ -1,7 +1,6 @@
 /*!
  * ${copyright}
  */
-// Provides control sap.f.Card.
 sap.ui.define([
 	"./library",
 	"sap/ui/core/Control",
@@ -11,7 +10,8 @@ sap.ui.define([
 	"sap/f/CardRenderer",
 	"sap/m/Text",
 	"sap/f/Avatar",
-	"sap/ui/Device"
+	"sap/ui/Device",
+	"sap/ui/core/ComponentContainer"
 ], function (
 	library,
 	Control,
@@ -21,7 +21,8 @@ sap.ui.define([
 	CardRenderer,
 	Text,
 	Avatar,
-	Device
+	Device,
+	ComponentContainer
 ) {
 	"use strict";
 	/**
@@ -53,7 +54,6 @@ sap.ui.define([
 	 * @alias sap.f.Card
 	 * @ui5-metamodel This control/element also will be described in the UI5 (legacy) designtime metamodel
 	 */
-		//raster size
 	var Card = Control.extend("sap.f.Card", /** @lends sap.f.Card.prototype */ {
 			metadata: {
 				library: "sap.f",
@@ -156,8 +156,12 @@ sap.ui.define([
 	Card.prototype.onAfterRendering = function() {
 		//TODO performance will be afected, but text should clamp on IE also - TBD
 		if (Device.browser.msie) {
-			this._oTitle.clampText();
-			this._oSubTitle.clampText();
+			if (this._oTitle) {
+				this._oTitle.clampText();
+			}
+			if (this._oSubTitle) {
+				this._oSubTitle.clampText();
+			}
 		}
 	};
 
@@ -169,6 +173,21 @@ sap.ui.define([
 		if (this._oCardManifest) {
 			this._oCardManifest.destroy();
 			this._oCardManifest = null;
+		}
+
+		if (this._oTitle) {
+			this._oTitle.destroy();
+			this._oTitle = null;
+		}
+
+		if (this._oSubTitle) {
+			this._oSubTitle.destroy();
+			this._oSubTitle = null;
+		}
+
+		if (this._oAvatar) {
+			this._oAvatar.destroy();
+			this._oAvatar = null;
 		}
 	};
 	/**
@@ -192,11 +211,9 @@ sap.ui.define([
 
 	Card.prototype.setManifest = function (vValue) {
 		this.setBusy(true);
-		var oCurrentContent = this.getAggregation("_content");
-		oCurrentContent && oCurrentContent.destroy("keepDom");
 		this.setProperty("manifest", vValue, true);
 		if (typeof vValue === "string") {
-			this.initComponent(vValue);
+			this.initManifest(vValue);
 		} else if (typeof vValue === "object") {
 			this._oCardManifest = new CardManifest(vValue);
 			this.applyManifestSettings();
@@ -210,34 +227,11 @@ sap.ui.define([
 		this.setAggregation("_content", oContent);
 	};
 
-	Card.prototype.exit = function () {
-		if (this._oCardManifest) {
-			this._oCardManifest.destroy();
-			this._oCardManifest = null;
-		}
-
-		if (this._oTitle) {
-			this._oTitle.destroy();
-			this._oTitle = null;
-		}
-
-		if (this._oSubTitle) {
-			this._oSubTitle.destroy();
-			this._oSubTitle = null;
-		}
-
-		if (this._oAvatar) {
-			this._oAvatar.destroy();
-			this._oAvatar = null;
-		}
-	};
-
-	Card.prototype.initComponent = function (sComponentName) {
-		var sUrl = jQuery.sap.getModulePath(sComponentName) + "/manifest.json",
-			oPromise = Manifest.load({
-				manifestUrl: sUrl,
-				async: true
-			});
+	Card.prototype.initManifest = function (sManifestUrl) {
+		var oPromise = Manifest.load({
+			manifestUrl: sManifestUrl,
+			async: true
+		});
 
 		oPromise.then(function (oManifest) {
 			var oJson = oManifest._oRawManifest;
@@ -247,7 +241,7 @@ sap.ui.define([
 				if (this._oCardManifest.get("sap.app/type") !== "card") {
 					throw Error("sap.app/type entry in manifest is not 'card'");
 				}
-				this.applyManifestSettings(sComponentName);
+				this.applyManifestSettings();
 			}.bind(this));
 		}.bind(this));
 	};
@@ -278,7 +272,7 @@ sap.ui.define([
 		return this;
 	};
 
-	Card.prototype.applyManifestSettings = function (sComponentName) {
+	Card.prototype.applyManifestSettings = function () {
 
 		this._createHeader();
 
@@ -292,7 +286,7 @@ sap.ui.define([
 		this._setPropertyFromManifest("backgroundImage");
 		this._setPropertyFromManifest("backgroundSize");
 
-		this._setContent(sComponentName);
+		this._setContent();
 	};
 
 	Card.prototype._createHeader = function (oHeader) {
@@ -333,27 +327,33 @@ sap.ui.define([
 		this.setBusy(false);
 	};
 
-	Card.prototype._setContent = function (sComponentName) {
+	Card.prototype._setContent = function () {
 		var sCardType = this._oCardManifest.get("sap.card/type");
 
-		if (sCardType === "CustomCard" && sComponentName) {
-			sap.ui.require(["sap/ui/core/ComponentContainer"], function (ComponentContainer) {
-				var oContent = new ComponentContainer({
-					name: sComponentName,
-					async: true,
-					manifest: this._oCardManifest.getJson(),
-					settings: {}
-				});
-				this.setContent(oContent);
-				this.setBusy(false);
-			}.bind(this));
+		if (!sCardType) {
+			Log.error("Card type property is mandatory!");
+			return;
+		}
+
+		if (sCardType === "Custom") {
+			var oContent = new ComponentContainer({
+				async: true,
+				manifest: this._oCardManifest.getJson(),
+				settings: {}
+			});
+			this.setContent(oContent);
 		} else {
 			switch (sCardType.toLowerCase()) {
 			case "list":  sap.ui.require(["sap/f/cards/content/List"], this._setCardContent.bind(this));
 				break;
 			case "table": sap.ui.require(["sap/f/cards/content/Table"], this._setCardContent.bind(this));
 				break;
-			case "analytical": sap.ui.require(["sap/f/cards/content/Analytical"], this._setCardContent.bind(this));
+			case "analytical":
+				sap.ui.getCore().loadLibrary("sap.viz", {async: true}).then(function() {
+					sap.ui.require(["sap/f/cards/content/Analytical"], this._setCardContent.bind(this));
+				}.bind(this)).catch(function () {
+					Log.error("Analytical type card is not available with this distribution");
+				});
 				break;
 			}
 		}
@@ -412,5 +412,6 @@ sap.ui.define([
 
 		return this;
 	};
+
 	return Card;
 });
