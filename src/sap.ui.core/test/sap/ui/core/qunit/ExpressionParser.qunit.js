@@ -9,11 +9,12 @@ sap.ui.define([
 	"sap/ui/base/ExpressionParser",
 	"sap/ui/base/ManagedObject",
 	"sap/ui/core/Icon",
+	"sap/ui/core/InvisibleText",
 	"sap/ui/model/json/JSONModel",
 	"sap/ui/model/odata/ODataUtils",
 	"sap/ui/performance/Measurement"
 ], function (jQuery, Log, JSTokenizer, BindingParser, ExpressionParser, ManagedObject, Icon,
-		JSONModel, ODataUtils, Measurement) {
+		InvisibleText, JSONModel, ODataUtils, Measurement) {
 	/*global QUnit, sinon */
 	/*eslint no-warning-comments: 0 */
 	"use strict";
@@ -51,13 +52,14 @@ sap.ui.define([
 	 * @param {object} [oScope] - the object to resolve formatter functions in the control
 	 */
 	function check(assert, sExpression, vResult, oScope) {
-		var oIcon = new Icon({
-				color: sExpression[0] === "{" ? sExpression : "{=" + sExpression + "}",
+		var oInvisibleText = new InvisibleText({
+				text: sExpression[0] === "{" ? sExpression : "{=" + sExpression + "}",
 				models: oModel
 			}, oScope);
 
-		oIcon.bindObject("/");
-		assert.strictEqual(oIcon.getColor(), oIcon.validateProperty("color", vResult));
+		oInvisibleText.bindObject("/");
+		assert.strictEqual(oInvisibleText.getText(),
+			oInvisibleText.validateProperty("text", vResult));
 	}
 
 	/**
@@ -605,8 +607,8 @@ sap.ui.define([
 		// w/o try/catch, a formatter's exception is thrown out of the control's c'tor...
 		// --> expression binding provides the comfort of an "automatic try/catch"
 		assert.throws(function () {
-			return new Icon({
-				color : {
+			return new InvisibleText({
+				text : {
 					path : '/',
 					formatter : function () { return null.toString(); }
 				},
@@ -669,10 +671,10 @@ sap.ui.define([
 				+ "${path: '/five', formatter: '.myFormatter'} : '7'", "~5~", 1);
 
 		// if we do not ensure that both ${mail} become the same part, evaluation is performed on
-		// partly resolved parts when calling oIcon.bindObject() after oIcon.bindProperty() in
-		// check(). Then the first ${mail} is already resolved (-> truthy) while the second still
-		// is null, the expression runs into an exception (" Cannot read property 'indexOf' of
-		// null") and raises a warning.
+		// partly resolved parts when calling oInvisibleText.bindObject() after
+		// oInvisibleText.bindProperty() in check(). Then the first ${mail} is already resolved
+		// (-> truthy) while the second still is null, the expression runs into an exception
+		// ("Cannot read property 'indexOf' of null") and raises a warning.
 		check(assert, "${mail} && ${mail}.indexOf('mail')", "0");
 	});
 
@@ -824,16 +826,17 @@ sap.ui.define([
 
 	//*********************************************************************************************
 	QUnit.test("Internal incident 1680322832", function (assert) {
-		var oIcon,
+		var oInvisibleText,
 			oModel = new JSONModel({ID : "T 1000"});
 
 		// code under test (used to fail with "Bad string")
-		oIcon = new Icon({
-			color : "'{= encodeURIComponent(${/ID}) }'",
+		oInvisibleText = new InvisibleText({
+			text : "'{= encodeURIComponent(${/ID}) }'",
 			models : oModel
 		});
 
-		assert.strictEqual(oIcon.getColor(), oIcon.validateProperty("color", "'T%201000'"));
+		assert.strictEqual(oInvisibleText.getText(),
+			oInvisibleText.validateProperty("text", "'T%201000'"));
 	});
 
 	//*********************************************************************************************
