@@ -76,6 +76,12 @@ function (
 					objectSubtitle: "Long subtitle that wraps and goes over more lines"
 				});
 			},
+			getObjectPageDynamicHeaderTitle: function () {
+				return new ObjectPageDynamicHeaderTitle({
+					content: [new Text({text: "some text"})],
+					expandedContent: [new HTML({content: "<div style='height:100px'>some content</div>"})]
+				});
+			},
 			getHeaderContent: function() {
 				return new HTML({content: "<div style='height:100px'>some content</div>"});
 			},
@@ -2488,6 +2494,45 @@ function (
 		// Cleanup
 		oCSSSpy.restore();
 		oObjectPage.destroy();
+	});
+
+	QUnit.test("Unsnapping/snapping header for measurements should update spacer height and should not introduce scrollbar",
+	function (assert) {
+
+		// Arrange
+		var oObjectPage = oFactory.getObjectPageLayoutWithIconTabBar(),
+			oSection,
+			oSubSection,
+			iSpacerInitialHeight,
+			iSpacerNewHeight,
+			done = assert.async();
+
+			assert.expect(2);
+
+		oObjectPage.setUseIconTabBar(false);
+		oObjectPage.setHeaderTitle(oFactory.getObjectPageDynamicHeaderTitle());
+		oSection = oFactory.getSection(0);
+		oSubSection = oFactory.getSubSection(0, oFactory.getBlocks());
+		oSection.addSubSection(oSubSection);
+		oObjectPage.addSection(oSection);
+
+		oObjectPage.attachEventOnce("onAfterRenderingDOMReady", function() {
+			iSpacerInitialHeight = oObjectPage._$spacer.height();
+			oObjectPage._adjustSpacerHeightUponUnsnapping(150, 200);
+			iSpacerNewHeight = oObjectPage._$spacer.height();
+
+			// Assert
+			assert.notEqual(iSpacerInitialHeight, iSpacerNewHeight,
+				"Spacer height has been adjusted when unsnapping leads to change of content height");
+			assert.strictEqual(iSpacerNewHeight, iSpacerInitialHeight - (200 - 150),
+				"New height of spacer is equal to the old height minus the difference in content size");
+			done();
+
+			// Cleanup
+			oObjectPage.destroy();
+		});
+
+		helpers.renderObject(oObjectPage);
 	});
 
 	QUnit.test("BCP:1870298358 - _getScrollableViewportHeight method should acquire the exact height", function (assert) {
