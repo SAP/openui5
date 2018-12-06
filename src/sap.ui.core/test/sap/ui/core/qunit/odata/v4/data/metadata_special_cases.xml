@@ -71,6 +71,19 @@
 				<EntitySet Name="EntitiesWithComplexKey" EntityType="special.cases.EntityWithComplexKey"/>
 				<EntitySet Name="Artists" EntityType="special.cases.ArtistsType"/>
 			</EntityContainer>
+			<Annotations Target="special.cases.ArtistsType/Name">
+				<Annotation Term="com.sap.vocabularies.Common.v1.Label" String="Artist Name" />
+			</Annotations>
+			<Annotations Target="special.cases.Container/Artists">
+				<Annotation Term="Org.OData.Capabilities.V1.InsertRestrictions">
+					<Record>
+						<PropertyValue Property="Insertable" Bool="true" />
+					</Record>
+				</Annotation>
+			</Annotations>
+			<Annotations Target="special.cases.ArtistsType">
+				<Annotation Term="com.sap.vocabularies.Common.v1.Label" String="Artist" />
+			</Annotations>
 		</Schema>
 	</edmx:DataServices>
 </edmx:Edmx>
