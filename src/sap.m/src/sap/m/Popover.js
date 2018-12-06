@@ -935,6 +935,7 @@ sap.ui.define([
 			oStyle.bottom = "";
 			oStyle.width = "";
 			oStyle.height = "";
+			oStyle.overflow = "";
 
 			oScrollAreaStyle.width = "";
 			oScrollAreaStyle.display = "";
