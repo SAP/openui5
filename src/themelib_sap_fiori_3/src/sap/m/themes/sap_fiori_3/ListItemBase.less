@@ -1,0 +1,20 @@
+/* =================================== */
+/* CSS for control sap.m/ListItemBase  */
+/* Fiori 3 theme                       */
+/* =================================== */
+
+@_sap_m_ListItemBase_ListTextShadowColor: none;
+
+.sapMLIBCounter {
+	text-shadow: @_sap_m_ListItemBase_ListTextShadowColor;
+}
+
+.sapMLIBActive.sapMLIBFocusable:focus {
+	outline-color: @sapUiContentContrastFocusColor;
+}
+
+/* Fix for IE/Edge visual appearance of buttons */
+.sapMLIB .sapMBtn:hover .sapMBtnHoverable.sapMBtnTransparent {
+	background-clip: border-box;
+	border-color: transparent;
+}

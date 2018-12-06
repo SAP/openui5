@@ -1,0 +1,40 @@
+/* ====================================== */
+/* CSS for control sap.m/RatingIndicator  */
+/* Fiori 3 theme                          */
+/* ====================================== */
+
+@_sap_m_RatingIndicator_IconUnselectedColor: darken(@sapUiContentForegroundColor, 30);
+@_sap_m_RatingIndicator_IconHoverColor: darken(@sapUiAccent1, 5);
+
+.sapMRIDisabled {
+    opacity: 0.5;
+}
+
+/* Custom focus outline */
+html.sap-desktop .sapMRI:focus:not(.sapMRIDisabled):not(.sapMRIDisplayOnly){
+	outline: 1px dotted @sapUiContentFocusColor;
+	outline-offset: -1px;
+}
+
+.sapMRIUnsel {
+  color: @_sap_m_RatingIndicator_IconUnselectedColor;
+}
+
+/* TODO remove after 1.62 version */
+/* IE ignores outline-offset. Use an overlay: */
+html[data-sap-ui-browser^="ie"].sap-desktop {
+	.sapMRI:focus:not(.sapMRIDisabled):not(.sapMRIDisplayOnly){
+		outline: none;
+		position: relative;
+	}
+	.sapMRI:focus:not(.sapMRIDisabled):not(.sapMRIDisplayOnly)::before {
+		content: " ";
+		box-sizing: border-box;
+		width: 100%;
+		height: 100%;
+		position: absolute;
+		left: 0;
+		top: 0;
+		border: 1px dotted @sapUiContentFocusColor;
+	}
+}
