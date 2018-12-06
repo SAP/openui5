@@ -39,8 +39,58 @@ counter-reset: ace_line;\
 var config = require("../config");
 var dom = require("../lib/dom");
 
+function Element(type) {
+    this.type = type;
+    this.style = {};
+    this.textContent = "";
+}
+Element.prototype.cloneNode = function() {
+    return this;
+};
+Element.prototype.appendChild = function(child) {
+    this.textContent += child.toString();
+};
+Element.prototype.toString = function() {
+    var stringBuilder = [];
+    if (this.type != "fragment") {
+        stringBuilder.push("<", this.type);
+        if (this.className)
+            stringBuilder.push(" class='", this.className, "'");
+        var styleStr = [];
+        for (var key in this.style) {
+            styleStr.push(key, ":", this.style[key]);
+        }
+        if (styleStr.length)
+            stringBuilder.push(" style='", styleStr.join(""), "'");
+        stringBuilder.push(">");
+    }
+    
+    if (this.textContent)
+        stringBuilder.push(this.textContent);
+    
+    if (this.type != "fragment") {
+        stringBuilder.push("</", this.type, ">");
+    }
+    
+    return stringBuilder.join("");
+};
+
+
+var simpleDom = {
+    createTextNode: function(textContent, element) {
+        return textContent;
+    },
+    createElement: function(type) {
+        return new Element(type);
+    },
+    createFragment: function() {
+        return new Element("fragment");
+    }
+};
+
 var SimpleTextLayer = function() {
     this.config = {};
+    this.dom = simpleDom;
 };
 SimpleTextLayer.prototype = TextLayer.prototype;
 
@@ -66,7 +116,7 @@ var highlight = function(el, opts, callback) {
             }
         }
     } else {
-        data = dom.getInnerText(el);
+        data = el.textContent;
         if (opts.trim)
             data = data.trim();
     }
@@ -123,31 +173,42 @@ highlight.renderSync = function(input, mode, theme, lineStart, disableGutter) {
 
     var textLayer = new SimpleTextLayer();
     textLayer.setSession(session);
+    Object.keys(textLayer.$tabStrings).forEach(function(k) {
+        if (typeof textLayer.$tabStrings[k] == "string") {
+            var el = simpleDom.createFragment();
+            el.textContent = textLayer.$tabStrings[k];
+            textLayer.$tabStrings[k] = el;
+        }
+    });
 
     session.setValue(input);
-
-    var stringBuilder = [];
     var length =  session.getLength();
+    
+    var outerEl = simpleDom.createElement("div");
+    outerEl.className = theme.cssClass;
+    
+    var innerEl = simpleDom.createElement("div");
+    innerEl.className = "ace_static_highlight" + (disableGutter ? "" : " ace_show_gutter");
+    innerEl.style["counter-reset"] = "ace_line " + (lineStart - 1);
 
-    for(var ix = 0; ix < length; ix++) {
-        stringBuilder.push("<div class='ace_line'>");
-        if (!disableGutter)
-            stringBuilder.push("<span class='ace_gutter ace_gutter-cell' unselectable='on'>" + /*(ix + lineStart) + */ "</span>");
-        textLayer.$renderLine(stringBuilder, ix, true, false);
-        stringBuilder.push("\n</div>");
+    for (var ix = 0; ix < length; ix++) {
+        var lineEl = simpleDom.createElement("div");
+        lineEl.className = "ace_line";
+        
+        if (!disableGutter) {
+            var gutterEl = simpleDom.createElement("span");
+            gutterEl.className ="ace_gutter ace_gutter-cell";
+            gutterEl.textContent = ""; /*(ix + lineStart) + */
+            lineEl.appendChild(gutterEl);
+        }
+        textLayer.$renderLine(lineEl, ix, false);
+        innerEl.appendChild(lineEl);
     }
-    var html = "<div class='" + theme.cssClass + "'>" +
-        "<div class='ace_static_highlight" + (disableGutter ? "" : " ace_show_gutter") +
-            "' style='counter-reset:ace_line " + (lineStart - 1) + "'>" +
-            stringBuilder.join("") +
-        "</div>" +
-    "</div>";
-
-    textLayer.destroy();
+    outerEl.appendChild(innerEl);
 
     return {
         css: baseStyles + theme.cssText,
-        html: html,
+        html: outerEl.toString(),
         session: session
     };
 };
@@ -156,6 +217,10 @@ module.exports = highlight;
 module.exports.highlight = highlight;
 });
                 (function() {
-                    ace.require(["ace/ext/static_highlight"], function() {});
+                    ace.require(["ace/ext/static_highlight"], function(m) {
+                        if (typeof module == "object" && typeof exports == "object" && module) {
+                            module.exports = m;
+                        }
+                    });
                 })();
             

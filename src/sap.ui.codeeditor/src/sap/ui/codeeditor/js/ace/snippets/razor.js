@@ -8,3 +8,11 @@ exports.snippetText = "snippet if\n\
 exports.scope = "razor";
 
 });
+                (function() {
+                    ace.require(["ace/snippets/razor"], function(m) {
+                        if (typeof module == "object" && typeof exports == "object" && module) {
+                            module.exports = m;
+                        }
+                    });
+                })();
+            

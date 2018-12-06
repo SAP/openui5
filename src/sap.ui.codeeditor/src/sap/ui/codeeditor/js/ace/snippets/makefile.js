@@ -9,3 +9,11 @@ exports.snippetText = "snippet ifeq\n\
 exports.scope = "makefile";
 
 });
+                (function() {
+                    ace.require(["ace/snippets/makefile"], function(m) {
+                        if (typeof module == "object" && typeof exports == "object" && module) {
+                            module.exports = m;
+                        }
+                    });
+                })();
+            

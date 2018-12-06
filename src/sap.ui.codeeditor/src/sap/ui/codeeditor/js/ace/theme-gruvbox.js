@@ -80,3 +80,11 @@ var dom = require("../lib/dom");
 dom.importCssString(exports.cssText, exports.cssClass);
 
 });
+                (function() {
+                    ace.require(["ace/theme/gruvbox"], function(m) {
+                        if (typeof module == "object" && typeof exports == "object" && module) {
+                            module.exports = m;
+                        }
+                    });
+                })();
+            

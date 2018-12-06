@@ -96,7 +96,6 @@ var RubyHighlightRules = function() {
         "support.function": builtinFunctions,
         "invalid.deprecated": "debugger" // TODO is this a remnant from js mode?
     }, "identifier");
-
     this.$rules = {
         "start" : [
             {
@@ -175,7 +174,6 @@ var RubyHighlightRules = function() {
                     defaultToken: "string"
                 }]
             }],
-
             {
                 token : "text", // namespaces aren't symbols
                 regex : "::"
@@ -457,7 +455,7 @@ oop.inherits(Mode, TextMode);
             var match = line.match(/^.*[\{\(\[]\s*$/);
             var startingClassOrMethod = line.match(/^\s*(class|def|module)\s.*$/);
             var startingDoBlock = line.match(/.*do(\s*|\s+\|.*\|\s*)$/);
-            var startingConditional = line.match(/^\s*(if|else|when)\s*/)
+            var startingConditional = line.match(/^\s*(if|else|when)\s*/);
             if (match || startingClassOrMethod || startingDoBlock || startingConditional) {
                 indent += tab;
             }
@@ -489,3 +487,11 @@ oop.inherits(Mode, TextMode);
 
 exports.Mode = Mode;
 });
+                (function() {
+                    ace.require(["ace/mode/ruby"], function(m) {
+                        if (typeof module == "object" && typeof exports == "object" && module) {
+                            module.exports = m;
+                        }
+                    });
+                })();
+            

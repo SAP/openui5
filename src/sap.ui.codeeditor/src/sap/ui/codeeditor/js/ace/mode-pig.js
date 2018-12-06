@@ -5,7 +5,6 @@ var oop = require("../lib/oop");
 var TextHighlightRules = require("./text_highlight_rules").TextHighlightRules;
 
 var PigHighlightRules = function() {
-
     this.$rules = {
         start: [{
             token: "comment.block.pig",
@@ -122,7 +121,7 @@ var PigHighlightRules = function() {
                 next: "pop"
             }]
         }]
-    }
+    };
     
     this.normalizeRules();
 };
@@ -131,7 +130,7 @@ PigHighlightRules.metaData = {
     fileTypes: ["pig"],
     name: "Pig",
     scopeName: "source.pig"
-}
+};
 
 
 oop.inherits(PigHighlightRules, TextHighlightRules);
@@ -160,8 +159,8 @@ oop.inherits(FoldMode, BaseFoldMode);
 
 (function() {
     
-    this.foldingStartMarker = /(\{|\[)[^\}\]]*$|^\s*(\/\*)/;
-    this.foldingStopMarker = /^[^\[\{]*(\}|\])|^[\s\*]*(\*\/)/;
+    this.foldingStartMarker = /([\{\[\(])[^\}\]\)]*$|^\s*(\/\*)/;
+    this.foldingStopMarker = /^[^\[\{\(]*([\}\]\)])|^[\s\*]*(\*\/)/;
     this.singleLineBlockCommentRe= /^\s*(\/\*).*\*\/\s*$/;
     this.tripleStarBlockCommentRe = /^\s*(\/\*\*\*).*\*\/\s*$/;
     this.startRegionRe = /^\s*(\/\*|\/\/)#?region\b/;
@@ -296,8 +295,16 @@ oop.inherits(Mode, TextMode);
 (function() {
     this.lineCommentStart = "--";
     this.blockComment = {start: "/*", end: "*/"};
-    this.$id = "ace/mode/pig"
+    this.$id = "ace/mode/pig";
 }).call(Mode.prototype);
 
 exports.Mode = Mode;
 });
+                (function() {
+                    ace.require(["ace/mode/pig"], function(m) {
+                        if (typeof module == "object" && typeof exports == "object" && module) {
+                            module.exports = m;
+                        }
+                    });
+                })();
+            

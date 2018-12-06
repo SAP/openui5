@@ -18,7 +18,23 @@ var LatexHighlightRules = function() {
             regex : "(\\\\(?:label|v?ref|cite(?:[^{]*)))(?:({)([^}]*)(}))?"
         }, {
             token : ["storage.type", "lparen", "variable.parameter", "rparen"],
-            regex : "(\\\\(?:begin|end))({)(\\w*)(})"
+            regex : "(\\\\begin)({)(verbatim)(})",
+            next : "verbatim"
+        },  {
+            token : ["storage.type", "lparen", "variable.parameter", "rparen"],
+            regex : "(\\\\begin)({)(lstlisting)(})",
+            next : "lstlisting"
+        },  {
+            token : ["storage.type", "lparen", "variable.parameter", "rparen"],
+            regex : "(\\\\(?:begin|end))({)([\\w*]*)(})"
+        }, {
+            token : "storage.type",
+            regex : /\\verb\b\*?/,
+            next : [{
+                token : ["keyword.operator", "string", "keyword.operator"],
+                regex : "(.)(.*?)(\\1|$)|",
+                next : "start"
+            }]
         }, {
             token : "storage.type",
             regex : "\\\\[a-zA-Z]+"
@@ -52,9 +68,24 @@ var LatexHighlightRules = function() {
             next : "start" 
         }, {
             defaultToken : "string"
+        }],
+        "verbatim": [{
+            token : ["storage.type", "lparen", "variable.parameter", "rparen"],
+            regex : "(\\\\end)({)(verbatim)(})",
+            next : "start"
+        }, {
+            defaultToken : "text"
+        }],
+        "lstlisting": [{
+            token : ["storage.type", "lparen", "variable.parameter", "rparen"],
+            regex : "(\\\\end)({)(lstlisting)(})",
+            next : "start"
+        }, {
+            defaultToken : "text"
         }]
-
     };
+    
+    this.normalizeRules();
 };
 oop.inherits(LatexHighlightRules, TextHighlightRules);
 
@@ -69,6 +100,18 @@ var oop = require("../../lib/oop");
 var BaseFoldMode = require("./fold_mode").FoldMode;
 var Range = require("../../range").Range;
 var TokenIterator = require("../../token_iterator").TokenIterator;
+var keywordLevels = {
+    "\\subparagraph": 1,
+    "\\paragraph": 2,
+    "\\subsubsubsection": 3,
+    "\\subsubsection": 4,
+    "\\subsection": 5,
+    "\\section": 6,
+    "\\chapter": 7,
+    "\\part": 8,
+    "\\begin": 9,
+    "\\end": 10
+};
 
 var FoldMode = exports.FoldMode = function() {};
 
@@ -76,7 +119,7 @@ oop.inherits(FoldMode, BaseFoldMode);
 
 (function() {
 
-    this.foldingStartMarker = /^\s*\\(begin)|(section|subsection|paragraph)\b|{\s*$/;
+    this.foldingStartMarker = /^\s*\\(begin)|\s*\\(part|chapter|(?:sub)*(?:section|paragraph))\b|{\s*$/;
     this.foldingStopMarker = /^\s*\\(end)\b|^\s*}/;
 
     this.getFoldWidgetRange = function(session, foldStyle, row) {
@@ -100,7 +143,7 @@ oop.inherits(FoldMode, BaseFoldMode);
         }
     };
 
-    this.latexBlock = function(session, row, column) {
+    this.latexBlock = function(session, row, column, returnRange) {
         var keywords = {
             "\\begin": 1,
             "\\end": -1
@@ -144,37 +187,43 @@ oop.inherits(FoldMode, BaseFoldMode);
 
         if (stack.length)
             return;
+        
+        if (dir == 1) {
+            stream.stepBackward();
+            stream.stepBackward();
+        }
+        
+        if (returnRange)
+            return stream.getCurrentTokenRange();
 
         var row = stream.getCurrentTokenRow();
         if (dir === -1)
             return new Range(row, session.getLine(row).length, startRow, startColumn);
-        stream.stepBackward();
-        return new Range(startRow, startColumn, row, stream.getCurrentTokenColumn());
+        else
+            return new Range(startRow, startColumn, row, stream.getCurrentTokenColumn());
     };
 
     this.latexSection = function(session, row, column) {
-        var keywords = ["\\subsection", "\\section", "\\begin", "\\end", "\\paragraph"];
-
         var stream = new TokenIterator(session, row, column);
         var token = stream.getCurrentToken();
         if (!token || token.type != "storage.type")
             return;
 
-        var startLevel = keywords.indexOf(token.value);
-        var stackDepth = 0
+        var startLevel = keywordLevels[token.value] || 0;
+        var stackDepth = 0;
         var endRow = row;
 
         while(token = stream.stepForward()) {
             if (token.type !== "storage.type")
                 continue;
-            var level = keywords.indexOf(token.value);
+            var level = keywordLevels[token.value] || 0;
 
-            if (level >= 2) {
+            if (level >= 9) {
                 if (!stackDepth)
                     endRow = stream.getCurrentTokenRow() - 1;
-                stackDepth += level == 2 ? 1 : - 1;
+                stackDepth += level == 9 ? 1 : - 1;
                 if (stackDepth < 0)
-                    break
+                    break;
             } else if (level >= startLevel)
                 break;
         }
@@ -217,8 +266,32 @@ oop.inherits(Mode, TextMode);
     this.lineCommentStart = "%";
 
     this.$id = "ace/mode/latex";
+    
+    this.getMatching = function(session, row, column) {
+        if (row == undefined)
+            row = session.selection.lead;
+        if (typeof row == "object") {
+            column = row.column;
+            row = row.row;
+        }
+
+        var startToken = session.getTokenAt(row, column);
+        if (!startToken)
+            return;
+        if (startToken.value == "\\begin" || startToken.value == "\\end") {
+            return this.foldingRules.latexBlock(session, row, column, true);
+        }
+    };
 }).call(Mode.prototype);
 
 exports.Mode = Mode;
 
 });
+                (function() {
+                    ace.require(["ace/mode/latex"], function(m) {
+                        if (typeof module == "object" && typeof exports == "object" && module) {
+                            module.exports = m;
+                        }
+                    });
+                })();
+            

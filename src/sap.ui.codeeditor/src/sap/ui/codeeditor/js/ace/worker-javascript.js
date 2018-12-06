@@ -1,5 +1,5 @@
 "no use strict";
-;(function(window) {
+!(function(window) {
 if (typeof window.window != "undefined" && window.document)
     return;
 if (window.require && window.define)
@@ -134,7 +134,7 @@ window.define = function(id, deps, factory) {
         exports: {},
         factory: function() {
             var module = this;
-            var returnExports = factory.apply(this, deps.map(function(dep) {
+            var returnExports = factory.apply(this, deps.slice(0, factory.length).map(function(dep) {
                 switch (dep) {
                     // Because "require", "exports" and "module" aren't actual
                     // dependencies, we must handle them seperately.
@@ -217,7 +217,7 @@ window.onmessage = function(e) {
 };
 })(this);
 
-ace.define("ace/lib/oop",["require","exports","module"], function(require, exports, module) {
+ace.define("ace/lib/oop",[], function(require, exports, module) {
 "use strict";
 
 exports.inherits = function(ctor, superCtor) {
@@ -245,7 +245,7 @@ exports.implement = function(proto, mixin) {
 
 });
 
-ace.define("ace/range",["require","exports","module"], function(require, exports, module) {
+ace.define("ace/range",[], function(require, exports, module) {
 "use strict";
 var comparePoints = function(p1, p2) {
     return p1.row - p2.row || p1.column - p2.column;
@@ -450,9 +450,9 @@ var Range = function(startRow, startColumn, endRow, endColumn) {
     };
     this.collapseRows = function() {
         if (this.end.column == 0)
-            return new Range(this.start.row, 0, Math.max(this.start.row, this.end.row-1), 0)
+            return new Range(this.start.row, 0, Math.max(this.start.row, this.end.row-1), 0);
         else
-            return new Range(this.start.row, 0, this.end.row, 0)
+            return new Range(this.start.row, 0, this.end.row, 0);
     };
     this.toScreenRange = function(session) {
         var screenPosStart = session.documentToScreenPosition(this.start);
@@ -484,7 +484,7 @@ Range.comparePoints = function(p1, p2) {
 exports.Range = Range;
 });
 
-ace.define("ace/apply_delta",["require","exports","module"], function(require, exports, module) {
+ace.define("ace/apply_delta",[], function(require, exports, module) {
 "use strict";
 
 function throwDeltaError(delta, errorText){
@@ -517,7 +517,6 @@ function validateDelta(docLines, delta) {
 }
 
 exports.applyDelta = function(docLines, delta, doNotValidate) {
-    
     var row = delta.start.row;
     var startColumn = delta.start.column;
     var line = docLines[row] || "";
@@ -546,10 +545,10 @@ exports.applyDelta = function(docLines, delta, doNotValidate) {
             }
             break;
     }
-}
+};
 });
 
-ace.define("ace/lib/event_emitter",["require","exports","module"], function(require, exports, module) {
+ace.define("ace/lib/event_emitter",[], function(require, exports, module) {
 "use strict";
 
 var EventEmitter = {};
@@ -607,7 +606,7 @@ EventEmitter.once = function(eventName, callback) {
 
 
 EventEmitter.setDefaultHandler = function(eventName, callback) {
-    var handlers = this._defaultHandlers
+    var handlers = this._defaultHandlers;
     if (!handlers)
         handlers = this._defaultHandlers = {_disabled_: {}};
     
@@ -624,13 +623,12 @@ EventEmitter.setDefaultHandler = function(eventName, callback) {
     handlers[eventName] = callback;
 };
 EventEmitter.removeDefaultHandler = function(eventName, callback) {
-    var handlers = this._defaultHandlers
+    var handlers = this._defaultHandlers;
     if (!handlers)
         return;
     var disabled = handlers._disabled_[eventName];
     
     if (handlers[eventName] == callback) {
-        var old = handlers[eventName];
         if (disabled)
             this.setDefaultHandler(eventName, disabled.pop());
     } else if (disabled) {
@@ -675,7 +673,7 @@ exports.EventEmitter = EventEmitter;
 
 });
 
-ace.define("ace/anchor",["require","exports","module","ace/lib/oop","ace/lib/event_emitter"], function(require, exports, module) {
+ace.define("ace/anchor",[], function(require, exports, module) {
 "use strict";
 
 var oop = require("./lib/oop");
@@ -735,7 +733,6 @@ var Anchor = exports.Anchor = function(doc, row, column) {
                 column: point.column + (point.row == deltaEnd.row ? deltaColShift : 0)
             };
         }
-        
         return {
             row: deltaStart.row,
             column: deltaStart.column
@@ -800,7 +797,7 @@ var Anchor = exports.Anchor = function(doc, row, column) {
 
 });
 
-ace.define("ace/document",["require","exports","module","ace/lib/oop","ace/apply_delta","ace/lib/event_emitter","ace/range","ace/anchor"], function(require, exports, module) {
+ace.define("ace/document",[], function(require, exports, module) {
 "use strict";
 
 var oop = require("./lib/oop");
@@ -984,7 +981,7 @@ var Document = function(textOrLines) {
             column = this.$lines[row].length;
         }
         this.insertMergedLines({row: row, column: column}, lines);
-    };    
+    };
     this.insertMergedLines = function(position, lines) {
         var start = this.clippedPos(position.row, position.column);
         var end = {
@@ -1091,28 +1088,23 @@ var Document = function(textOrLines) {
             return;
         }
         
-        if (isInsert && delta.lines.length > 20000)
+        if (isInsert && delta.lines.length > 20000) {
             this.$splitAndapplyLargeDelta(delta, 20000);
-        applyDelta(this.$lines, delta, doNotValidate);
-        this._signal("change", delta);
+        }
+        else {
+            applyDelta(this.$lines, delta, doNotValidate);
+            this._signal("change", delta);
+        }
     };
     
     this.$splitAndapplyLargeDelta = function(delta, MAX) {
         var lines = delta.lines;
-        var l = lines.length;
+        var l = lines.length - MAX + 1;
         var row = delta.start.row; 
         var column = delta.start.column;
-        var from = 0, to = 0;
-        do {
-            from = to;
+        for (var from = 0, to = 0; from < l; from = to) {
             to += MAX - 1;
             var chunk = lines.slice(from, to);
-            if (to > l) {
-                delta.lines = chunk;
-                delta.start.row = row + from;
-                delta.start.column = column;
-                break;
-            }
             chunk.push("");
             this.applyDelta({
                 start: this.pos(row + from, column),
@@ -1120,7 +1112,11 @@ var Document = function(textOrLines) {
                 action: delta.action,
                 lines: chunk
             }, true);
-        } while(true);
+        }
+        delta.lines = lines.slice(from);
+        delta.start.row = row + from;
+        delta.start.column = column;
+        this.applyDelta(delta, true);
     };
     this.revertDelta = function(delta) {
         this.applyDelta({
@@ -1138,7 +1134,7 @@ var Document = function(textOrLines) {
             if (index < 0)
                 return {row: i, column: index + lines[i].length + newlineLength};
         }
-        return {row: l-1, column: lines[l-1].length};
+        return {row: l-1, column: index + lines[l-1].length + newlineLength};
     };
     this.positionToIndex = function(pos, startRow) {
         var lines = this.$lines || this.getAllLines();
@@ -1156,7 +1152,7 @@ var Document = function(textOrLines) {
 exports.Document = Document;
 });
 
-ace.define("ace/lib/lang",["require","exports","module"], function(require, exports, module) {
+ace.define("ace/lib/lang",[], function(require, exports, module) {
 "use strict";
 
 exports.last = function(a) {
@@ -1258,7 +1254,7 @@ exports.escapeRegExp = function(str) {
 };
 
 exports.escapeHTML = function(str) {
-    return str.replace(/&/g, "&#38;").replace(/"/g, "&#34;").replace(/'/g, "&#39;").replace(/</g, "&#60;");
+    return ("" + str).replace(/&/g, "&#38;").replace(/"/g, "&#34;").replace(/'/g, "&#39;").replace(/</g, "&#60;");
 };
 
 exports.getMatchOffsets = function(string, regExp) {
@@ -1344,7 +1340,7 @@ exports.delayedCall = function(fcn, defaultTimeout) {
 };
 });
 
-ace.define("ace/worker/mirror",["require","exports","module","ace/range","ace/document","ace/lib/lang"], function(require, exports, module) {
+ace.define("ace/worker/mirror",[], function(require, exports, module) {
 "use strict";
 
 var Range = require("../range").Range;
@@ -1406,7 +1402,7 @@ var Mirror = exports.Mirror = function(sender) {
 
 });
 
-ace.define("ace/mode/javascript/jshint",["require","exports","module"], function(require, exports, module) {
+ace.define("ace/mode/javascript/jshint",[], function(require, exports, module) {
 module.exports = (function outer (modules, cache, entry) {
     var previousRequire = typeof require == "function" && require;
     function newRequire(name, jumped){
@@ -1431,7 +1427,9 @@ module.exports = (function outer (modules, cache, entry) {
     return newRequire(entry[0]);
 })
 ({"/node_modules/browserify/node_modules/events/events.js":[function(_dereq_,module,exports){
-
+//
+//
+//
 function EventEmitter() {
   this._events = this._events || {};
   this._maxListeners = this._maxListeners || undefined;
@@ -3269,7 +3267,6 @@ var state        = _dereq_("./state.js").state;
 var style        = _dereq_("./style.js");
 var options      = _dereq_("./options.js");
 var scopeManager = _dereq_("./scope-manager.js");
-
 var JSHINT = (function() {
   "use strict";
 
@@ -3728,7 +3725,6 @@ var JSHINT = (function() {
         }
 
         if (key === "validthis") {
-
           if (state.funct["(global)"])
             return void error("E009");
 
@@ -3921,7 +3917,6 @@ var JSHINT = (function() {
       assume();
     }
   }
-
   function peek(p) {
     var i = p || 0, j = lookahead.length, t;
 
@@ -3951,7 +3946,6 @@ var JSHINT = (function() {
     } while (t.id === "(endline)");
     return t;
   }
-
   function advance(id, t) {
 
     switch (state.tokens.curr.id) {
@@ -4034,7 +4028,6 @@ var JSHINT = (function() {
   function isBeginOfExpr(prev) {
     return !prev.left && prev.arity !== "unary";
   }
-
   function expression(rbp, initial) {
     var left, isArray = false, isObject = false, isLetExpr = false;
 
@@ -4117,7 +4110,6 @@ var JSHINT = (function() {
 
     return left;
   }
-
   function startLine(token) {
     return token.startLine || token.line;
   }
@@ -4201,7 +4193,6 @@ var JSHINT = (function() {
     }
     return true;
   }
-
   function symbol(s, p) {
     var x = state.syntax[s];
     if (!x || typeof x !== "object") {
@@ -4585,7 +4576,6 @@ var JSHINT = (function() {
     };
     return x;
   }
-
   function optionalidentifier(fnparam, prop, preserve) {
     if (!state.tokens.next.identifier) {
       return;
@@ -4704,7 +4694,6 @@ var JSHINT = (function() {
       return;
     }
     var res = isReserved(t);
-
     if (res && t.meta && t.meta.isFutureReservedWord && peek().id === ":") {
       warning("W024", t, t.id);
       res = false;
@@ -4725,13 +4714,12 @@ var JSHINT = (function() {
       state.tokens.next.label = t.value;
       t = state.tokens.next;
     }
-
     if (t.id === "{") {
+      //
       var iscase = (state.funct["(verb)"] === "case" && state.tokens.curr.value === ":");
       block(true, true, false, false, iscase);
       return;
     }
-
     r = expression(0, true);
 
     if (r && !(r.identifier && r.value === "function") &&
@@ -4742,7 +4730,6 @@ var JSHINT = (function() {
         warning("E007");
       }
     }
-
     if (!t.block) {
       if (!state.option.expr && (!r || !r.exps)) {
         warning("W030", state.tokens.curr);
@@ -4751,7 +4738,6 @@ var JSHINT = (function() {
       }
       parseFinalSemicolon();
     }
-
     indent = i;
     if (hasOwnScope) {
       state.funct["(scope)"].unstack();
@@ -4959,7 +4945,6 @@ var JSHINT = (function() {
       member[m] = 1;
     }
   }
-
   type("(number)", function() {
     return this;
   });
@@ -4975,6 +4960,8 @@ var JSHINT = (function() {
 
     nud: function() {
       var v = this.value;
+      //
+      //
       if (state.tokens.next.id === "=>") {
         return this;
       }
@@ -5025,7 +5012,6 @@ var JSHINT = (function() {
   type("(regexp)", function() {
     return this;
   });
-
   delim("(endline)");
   delim("(begin)");
   delim("(end)").reach = true;
@@ -5272,6 +5258,15 @@ var JSHINT = (function() {
     if (!state.inES6(true)) {
       warning("W119", this, "spread/rest operator", "6");
     }
+    //
+    //
+    //
+    //
+    //
+    //
+    //
+    //
+    //
     if (!state.tokens.next.identifier &&
         state.tokens.next.type !== "(string)" &&
           !checkPunctuators(state.tokens.next, ["[", "("])) {
@@ -6051,7 +6046,6 @@ var JSHINT = (function() {
   function increaseComplexityCount() {
     state.funct["(metrics)"].ComplexityCount += 1;
   }
-
   function checkCondAssignment(expr) {
     var id, paren;
     if (expr) {
@@ -6383,7 +6377,6 @@ var JSHINT = (function() {
   }
 
   function blockVariableStatement(type, statement, context) {
-
     var prefix = context && context.prefix;
     var inexport = context && context.inexport;
     var isLet = type === "let";
@@ -7499,7 +7492,6 @@ var JSHINT = (function() {
 
     return this;
   }).exps = true;
-
   FutureReservedWord("abstract");
   FutureReservedWord("boolean");
   FutureReservedWord("byte");
@@ -7528,7 +7520,6 @@ var JSHINT = (function() {
   FutureReservedWord("synchronized");
   FutureReservedWord("transient");
   FutureReservedWord("volatile");
-
   var lookupBlockType = function() {
     var pn, pn1, prev;
     var i = -1;
@@ -7633,7 +7624,6 @@ var JSHINT = (function() {
     return token.type === "(punctuator)" && token.value === value;
   }
   function destructuringAssignOrJsonValue() {
-
     var block = lookupBlockType();
     if (block.notJson) {
       if (!state.inES6() && block.isDestAssign) {
@@ -7646,7 +7636,6 @@ var JSHINT = (function() {
       jsonValue();
     }
   }
-
   var arrayComprehension = function() {
     var CompArray = function() {
       this.mode = "use";
@@ -7731,7 +7720,6 @@ var JSHINT = (function() {
         }
         };
   };
-
   function jsonValue() {
     function jsonObject() {
       var o = {}, t = state.tokens.next;
@@ -8066,7 +8054,6 @@ var JSHINT = (function() {
         throw err;
       }
     }
-
     if (JSHINT.scope === "(main)") {
       o = o || {};
 
@@ -8179,7 +8166,6 @@ var state  = _dereq_("./state.js").state;
 var unicodeData = _dereq_("../data/ascii-identifier-data.js");
 var asciiIdentifierStartTable = unicodeData.asciiIdentifierStartTable;
 var asciiIdentifierPartTable = unicodeData.asciiIdentifierPartTable;
-
 var Token = {
   Identifier: 1,
   Punctuator: 2,
@@ -8200,7 +8186,6 @@ var Context = {
   Block: 1,
   Template: 2
 };
-
 function asyncTrigger() {
   var _checks = [];
 
@@ -8227,7 +8212,6 @@ function Lexer(source) {
       .replace(/\r/g, "\n")
       .split("\n");
   }
-
   if (lines[0] && lines[0].substr(0, 2) === "#!") {
     if (lines[0].indexOf("node") !== -1) {
       state.option.node = true;
@@ -8359,18 +8343,15 @@ Lexer.prototype = {
     case "":
       return null;
     }
-
     ch2 = this.peek(1);
     ch3 = this.peek(2);
     ch4 = this.peek(3);
-
     if (ch1 === ">" && ch2 === ">" && ch3 === ">" && ch4 === "=") {
       return {
         type: Token.Punctuator,
         value: ">>>="
       };
     }
-
     if (ch1 === "=" && ch2 === "=" && ch3 === "=") {
       return {
         type: Token.Punctuator,
@@ -8431,7 +8412,6 @@ Lexer.prototype = {
         value: ch1
       };
     }
-
     if (ch1 === "/") {
       if (ch2 === "=") {
         return {
@@ -8455,7 +8435,6 @@ Lexer.prototype = {
     var startLine = this.line;
     var startChar = this.char;
     var self = this;
-
     function commentToken(label, body, opt) {
       var special = ["jshint", "jslint", "members", "member", "globals", "global", "exported"];
       var isSpecial = false;
@@ -8778,7 +8757,6 @@ Lexer.prototype = {
       return (ch === "$") || (ch === "_") || (ch === "\\") ||
         (ch >= "a" && ch <= "z") || (ch >= "A" && ch <= "Z");
     }
-
     if (char !== "." && !isDecimalDigit(char)) {
       return null;
     }
@@ -8837,7 +8815,6 @@ Lexer.prototype = {
           index += 1;
           value += char;
         }
-
         if (!isOctalDigit(char) && isDecimalDigit(char)) {
           index += 1;
           value += char;
@@ -8881,7 +8858,6 @@ Lexer.prototype = {
         };
       }
     }
-
     if (char === ".") {
       value += char;
       index += 1;
@@ -8895,7 +8871,6 @@ Lexer.prototype = {
         index += 1;
       }
     }
-
     if (char === "e" || char === "E") {
       value += char;
       index += 1;
@@ -9130,7 +9105,7 @@ Lexer.prototype = {
 
     while (this.peek() !== quote) {
       if (this.peek() === "") { // End Of Line
-
+        //
         if (!allowNewLine) {
           this.trigger("warning", {
             code: "W112",
@@ -9139,7 +9114,6 @@ Lexer.prototype = {
           });
         } else {
           allowNewLine = false;
-
           this.triggerAsync("warning", {
             code: "W043",
             line: this.line,
@@ -9152,7 +9126,6 @@ Lexer.prototype = {
             character: this.char
           }, checks, function() { return state.jsonMode && state.option.multistr; });
         }
-
         if (!this.nextLine()) {
           this.trigger("error", {
             code: "E029",
@@ -9175,7 +9148,6 @@ Lexer.prototype = {
         allowNewLine = false;
         var char = this.peek();
         var jump = 1; // A length of a jump, after we're done
-
         if (char < " ") {
           this.trigger("warning", {
             code: "W113",
@@ -9242,7 +9214,6 @@ Lexer.prototype = {
 
     index += 1;
     terminated = false;
-
     while (index < length) {
       char = this.peek(index);
       value += char;
@@ -9302,7 +9273,6 @@ Lexer.prototype = {
 
       index += 1;
     }
-
     if (!terminated) {
       this.trigger("error", {
         code: "E015",
@@ -9315,7 +9285,6 @@ Lexer.prototype = {
         from: this.from
       });
     }
-
     while (index < length) {
       char = this.peek(index);
       if (!/[gim]/.test(char)) {
@@ -9325,7 +9294,6 @@ Lexer.prototype = {
       value += char;
       index += 1;
     }
-
     try {
       new RegExp(body, flags.join(""));
     } catch (err) {
@@ -9363,7 +9331,6 @@ Lexer.prototype = {
         this.skip();
       }
     }
-
     var match = this.scanComments() ||
       this.scanStringLiteral(checks) ||
       this.scanTemplateLiteral(checks);
@@ -9371,7 +9338,6 @@ Lexer.prototype = {
     if (match) {
       return match;
     }
-
     match =
       this.scanRegExp() ||
       this.scanPunctuator() ||
@@ -9383,7 +9349,6 @@ Lexer.prototype = {
       this.skip(match.tokenLength || match.value.length);
       return match;
     }
-
     return null;
   },
   nextLine: function() {
@@ -9428,7 +9393,6 @@ Lexer.prototype = {
     if (char >= 0) {
       this.trigger("warning", { code: "W100", line: this.line, character: char });
     }
-
     if (!this.ignoringLinterErrors && state.option.maxlen &&
       state.option.maxlen < this.input.length) {
       var inComment = this.inComment ||
@@ -10101,7 +10065,6 @@ exports.val = {
   latedef      : false,
 
   ignore       : false, // start/end ignoring lines of code, bypassing the lexer
-
   ignoreDelimiters: false, // array of start/end delimiters used to ignore
   esversion: 5
 };
@@ -10812,7 +10775,6 @@ var state = {
     return this.directive["use strict"] || this.inClassBody ||
       this.option.module || this.option.strict === "implied";
   },
-
   inMoz: function() {
     return this.option.moz;
   },
@@ -10856,7 +10818,6 @@ exports.state = state;
 "use strict";
 
 exports.register = function(linter) {
-
   linter.on("Identifier", function style_scanProto(data) {
     if (linter.getOption("proto")) {
       return;
@@ -10870,7 +10831,6 @@ exports.register = function(linter) {
       });
     }
   });
-
   linter.on("Identifier", function style_scanIterator(data) {
     if (linter.getOption("iterator")) {
       return;
@@ -10884,7 +10844,6 @@ exports.register = function(linter) {
       });
     }
   });
-
   linter.on("Identifier", function style_scanCamelCase(data) {
     if (!linter.getOption("camelcase")) {
       return;
@@ -10898,7 +10857,6 @@ exports.register = function(linter) {
       });
     }
   });
-
   linter.on("String", function style_scanQuotes(data) {
     var quotmark = linter.getOption("quotmark");
     var code;
@@ -10906,15 +10864,12 @@ exports.register = function(linter) {
     if (!quotmark) {
       return;
     }
-
     if (quotmark === "single" && data.quote !== "'") {
       code = "W109";
     }
-
     if (quotmark === "double" && data.quote !== "\"") {
       code = "W108";
     }
-
     if (quotmark === true) {
       if (!linter.getCache("quotmark")) {
         linter.setCache("quotmark", data.quote);
@@ -10958,7 +10913,6 @@ exports.register = function(linter) {
       });
     }
   });
-
   linter.on("String", function style_scanJavaScriptURLs(data) {
     var re = /^(?:javascript|jscript|ecmascript|vbscript|livescript)\s*:/i;
 
@@ -10976,9 +10930,7 @@ exports.register = function(linter) {
 };
 
 },{}],"/node_modules/jshint/src/vars.js":[function(_dereq_,module,exports){
-
 "use strict";
-
 exports.reservedVars = {
   arguments : false,
   NaN       : false
@@ -11027,7 +10979,6 @@ exports.ecmaIdentifiers = {
     WeakSet            : false
   }
 };
-
 exports.browser = {
   Audio                : false,
   Blob                 : false,
@@ -11372,7 +11323,6 @@ exports.nonstandard = {
   escape  : false,
   unescape: false
 };
-
 exports.couch = {
   "require" : false,
   respond   : false,
@@ -11394,7 +11344,6 @@ exports.node = {
   global        : false,
   module        : false,
   require       : false,
-
   Buffer        : true,
   console       : true,
   exports       : true,
@@ -11527,7 +11476,6 @@ exports.wsh = {
   WScript                  : true,
   XDomainRequest           : true
 };
-
 exports.dojo = {
   dojo     : false,
   dijit    : false,
@@ -11683,7 +11631,7 @@ exports.jasmine = {
 
 });
 
-ace.define("ace/mode/javascript_worker",["require","exports","module","ace/lib/oop","ace/worker/mirror","ace/mode/javascript/jshint"], function(require, exports, module) {
+ace.define("ace/mode/javascript_worker",[], function(require, exports, module) {
 "use strict";
 
 var oop = require("../lib/oop");
@@ -11762,7 +11710,7 @@ oop.inherits(JavaScriptWorker, Mirror);
             if (e === 0)
                 return true;
         }
-        return false
+        return false;
     };
 
     this.onUpdate = function() {
@@ -11776,7 +11724,7 @@ oop.inherits(JavaScriptWorker, Mirror);
         lint(value, this.options, this.options.globals);
         var results = lint.errors;
 
-        var errorAdded = false
+        var errorAdded = false;
         for (var i = 0; i < results.length; i++) {
             var error = results[i];
             if (!error)
@@ -11798,7 +11746,7 @@ oop.inherits(JavaScriptWorker, Mirror);
                 continue;
             }
             else if (infoRe.test(raw)) {
-                type = "info"
+                type = "info";
             }
             else if (errorsRe.test(raw)) {
                 errorAdded  = true;
@@ -11822,7 +11770,6 @@ oop.inherits(JavaScriptWorker, Mirror);
             if (errorAdded) {
             }
         }
-
         this.sender.emit("annotate", errors);
     };
 
@@ -11830,8 +11777,10 @@ oop.inherits(JavaScriptWorker, Mirror);
 
 });
 
-ace.define("ace/lib/es5-shim",["require","exports","module"], function(require, exports, module) {
+ace.define("ace/lib/es5-shim",[], function(require, exports, module) {
 
+//
+//
 function Empty() {}
 
 if (!Function.prototype.bind) {
@@ -11844,7 +11793,6 @@ if (!Function.prototype.bind) {
         var bound = function () {
 
             if (this instanceof bound) {
-
                 var result = target.apply(
                     this,
                     args.concat(slice.call(arguments))
@@ -11868,6 +11816,7 @@ if (!Function.prototype.bind) {
             bound.prototype = new Empty();
             Empty.prototype = null;
         }
+        //
         return bound;
     };
 }
@@ -11888,6 +11837,9 @@ if ((supportsAccessors = owns(prototypeOfObject, "__defineGetter__"))) {
     lookupGetter = call.bind(prototypeOfObject.__lookupGetter__);
     lookupSetter = call.bind(prototypeOfObject.__lookupSetter__);
 }
+
+//
+//
 if ([1,2].splice(0).length != 2) {
     if(function() { // test IE < 9 to splice bug - see issue #138
         function makeArray(l) {
@@ -12210,6 +12162,9 @@ if (!Array.prototype.lastIndexOf || ([0, 1].lastIndexOf(0, -3) != -1)) {
         return -1;
     };
 }
+
+//
+//
 if (!Object.getPrototypeOf) {
     Object.getPrototypeOf = function getPrototypeOf(object) {
         return object.__proto__ || (
@@ -12293,7 +12248,6 @@ if (!Object.create) {
         return object;
     };
 }
-
 function doesDefinePropertyWork(object) {
     try {
         Object.defineProperty(object, "sentinel", {});
@@ -12459,11 +12413,18 @@ if (!Object.keys) {
     };
 
 }
+
+//
+//
 if (!Date.now) {
     Date.now = function now() {
         return new Date().getTime();
     };
 }
+
+
+//
+//
 var ws = "\x09\x0A\x0B\x0C\x0D\x20\xA0\u1680\u180E\u2000\u2001\u2002\u2003" +
     "\u2004\u2005\u2006\u2007\u2008\u2009\u200A\u202F\u205F\u3000\u2028" +
     "\u2029\uFEFF";
@@ -12476,6 +12437,8 @@ if (!String.prototype.trim || ws.trim()) {
     };
 }
 
+//
+//
 function toInteger(n) {
     n = +n;
     if (n !== n) { // isNaN

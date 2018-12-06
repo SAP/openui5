@@ -155,7 +155,6 @@ var AsciidocHighlightRules = function() {
         var prefix = /\w/.test(ch) ? "\\b" : "(?:\\B|^)";
         return prefix + ch + "[^" + ch + "].*?" + ch + "(?![\\w*])";
     }
-
     var tokenMap = {
         macro: "constant.character",
         tableBlock: "doc.comment",
@@ -210,7 +209,7 @@ oop.inherits(FoldMode, BaseFoldMode);
     this.getFoldWidget = function(session, foldStyle, row) {
         var line = session.getLine(row);
         if (!this.foldingStartMarker.test(line))
-            return ""
+            return "";
 
         if (line[0] == "=") {
             if (this.singleLineHeadingRe.test(line))
@@ -340,3 +339,11 @@ oop.inherits(Mode, TextMode);
 
 exports.Mode = Mode;
 });
+                (function() {
+                    ace.require(["ace/mode/asciidoc"], function(m) {
+                        if (typeof module == "object" && typeof exports == "object" && module) {
+                            module.exports = m;
+                        }
+                    });
+                })();
+            

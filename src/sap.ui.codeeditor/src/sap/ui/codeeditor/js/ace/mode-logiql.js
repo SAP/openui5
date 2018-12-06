@@ -5,7 +5,6 @@ var oop = require("../lib/oop");
 var TextHighlightRules = require("./text_highlight_rules").TextHighlightRules;
 
 var LogiQLHighlightRules = function() {
-
     this.$rules = { start: 
        [ { token: 'comment.block',
            regex: '/\\*',
@@ -62,7 +61,7 @@ var LogiQLHighlightRules = function() {
             },
          { token: 'variable.parameter',
            regex: '([a-zA-Z][a-zA-Z_0-9]*|_)\\s*(?=(,|\\.|<-|->|\\)|\\]|=))'
-            } ] }
+            } ] };
     
     this.normalizeRules();
 };
@@ -272,7 +271,7 @@ oop.inherits(Mode, TextMode);
 
     this.getMatching = function(session, row, column) {
         if (row == undefined)
-            row = session.selection.lead
+            row = session.selection.lead;
         if (typeof row == "object") {
             column = row.column;
             row = row.row;
@@ -308,3 +307,11 @@ oop.inherits(Mode, TextMode);
 
 exports.Mode = Mode;
 });
+                (function() {
+                    ace.require(["ace/mode/logiql"], function(m) {
+                        if (typeof module == "object" && typeof exports == "object" && module) {
+                            module.exports = m;
+                        }
+                    });
+                })();
+            
