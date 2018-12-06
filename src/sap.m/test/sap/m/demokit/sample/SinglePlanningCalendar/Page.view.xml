@@ -2,7 +2,7 @@
 	controllerName="sap.m.sample.SinglePlanningCalendar.Page"
 	xmlns:mvc="sap.ui.core.mvc"
 	xmlns="sap.m">
-	<Vbox class="sapUiSmallMargin">
+	<VBox class="sapUiSmallMargin">
 		<SinglePlanningCalendar
 			id="SPC1"
 			title= "Title"
@@ -29,5 +29,5 @@
 				</CalendarAppointment>
 			</appointments>
 		</SinglePlanningCalendar>
-	</Vbox>
+	</VBox>
 </mvc:View>
