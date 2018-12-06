@@ -803,7 +803,9 @@ sap.ui.define([
 		var isInMenuHierarchy = false,
 		// before we were relaying on Popup.touchEnabled, but the logic in the Popup was changed
 		// and touchEnabled wasn't valid anymore for Combi devices, which caused the Menu to close automatically right after it was opened
-			touchEnabled = Device.support.touch;
+		// check for if the device is combi was added because of change in the Chrome70 browser version where the touch events are "disabled" by default
+		// e.g. document.ontouchstart returns false
+		touchEnabled = Device.support.touch || Device.system.combi;
 
 		this.bIgnoreOpenerDOMRef = false;
 
