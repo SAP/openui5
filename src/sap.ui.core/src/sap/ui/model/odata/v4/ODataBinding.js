@@ -512,6 +512,19 @@ sap.ui.define([
 	};
 
 	/**
+	 * Tells whether the binding's root binding is suspended.
+	 *
+	 * @returns {boolean} Whether the binding's root binding is suspended
+	 *
+	 * @private
+	 */
+	ODataBinding.prototype.isRootBindingSuspended = function () {
+		var oRootBinding = this.getRootBinding();
+
+		return oRootBinding && oRootBinding.isSuspended();
+	};
+
+	/**
 	 * Creates or modifies a lock for a group at the model with this as owner.
 	 *
 	 * @param {string} [sGroupId]

@@ -26,7 +26,7 @@ sap.ui.define([
 		// http://localhost:8080/testsuite/proxy/sap/opu/odata4/sap/zui5_testv4/default/sap/zui5_epm_sample/0002/SalesOrderList('050001110')?custom-option=value&$expand=SO_2_SOITEM($expand=SOITEM_2_PRODUCT($expand=PRODUCT_2_BP($expand=BP_2_CONTACT)))
 		TestUtils.setupODataV4Server(oSandbox, {
 			"$metadata?custom-option=value" : {source : "metadata.xml"},
-			"BusinessPartnerList?custom-option=value&$select=BusinessPartnerID,CompanyName&$skip=0&$top=100" : {
+			"BusinessPartnerList?custom-option=value&$orderby=CompanyName&$filter=BusinessPartnerRole%20eq%20'01'&$select=BusinessPartnerID,CompanyName&$skip=0&$top=100" : {
 				source : "BusinessPartnerList.json"
 			},
 			"BusinessPartnerList('0100000000')?custom-option=value" : {

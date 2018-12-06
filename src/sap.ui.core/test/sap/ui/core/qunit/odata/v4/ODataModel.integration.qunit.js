@@ -7190,6 +7190,152 @@ sap.ui.define([
 	});
 
 	//*********************************************************************************************
+	// Scenario: call filter, sort, changeParameters on a suspended ODLB
+	QUnit.test("suspend/resume: call read APIs on a suspended ODLB", function (assert) {
+		var oModel = createSalesOrdersModel({autoExpandSelect : true}),
+			sView = '\
+<Table id="table" items="{path : \'/BusinessPartnerList\', suspended : true}">\
+	<columns><Column/></columns>\
+	<items>\
+		<ColumnListItem>\
+			<Text id="id" text="{BusinessPartnerID}" />\
+		</ColumnListItem>\
+	</items>\
+</Table>',
+			that = this;
+
+		this.expectChange("id", false);
+
+		return this.createView(assert, sView, oModel).then(function () {
+			var oBinding = that.oView.byId("table").getBinding("items");
+
+			oBinding.filter(new Filter("BusinessPartnerRole", FilterOperator.EQ, "01"))
+				.sort(new Sorter("CompanyName"))
+				.changeParameters({$filter : "BusinessPartnerID gt '0100000001'"});
+
+			that.expectRequest("BusinessPartnerList?$filter=BusinessPartnerRole%20eq%20'01'%20"
+				+ "and%20(BusinessPartnerID%20gt%20'0100000001')&$orderby=CompanyName"
+				+ "&$select=BusinessPartnerID&$skip=0&$top=100", {
+					value : [{
+						"BusinessPartnerID": "0100000002"
+					}, {
+						"BusinessPartnerID": "0100000003"
+					}]
+				})
+				.expectChange("id", [
+					"0100000002",
+					"0100000003"
+				]);
+
+			oBinding.attachEventOnce("change", function (oEvent) {
+				assert.strictEqual(oEvent.getParameter("reason"), ChangeReason.Filter);
+			});
+
+			// code under test
+			oBinding.resume();
+
+			return that.waitForChanges(assert);
+		});
+	});
+
+	//*********************************************************************************************
+	// Scenario: call setAggregation on a suspended ODLB
+	QUnit.test("suspend/resume: call setAggregation on a suspended ODLB", function (assert) {
+		var oModel = createSalesOrdersModel({autoExpandSelect : true}),
+			sView = '\
+<Table id="table" items="{path : \'/BusinessPartnerList\', suspended : true}">\
+	<columns><Column/></columns>\
+	<items>\
+		<ColumnListItem>\
+			<Text id="id" text="{BusinessPartnerID}" />\
+			<Text id="role" text="{BusinessPartnerRole}" />\
+		</ColumnListItem>\
+	</items>\
+</Table>',
+			that = this;
+
+		this.expectChange("id", false);
+
+		return this.createView(assert, sView, oModel).then(function () {
+			var oBinding = that.oView.byId("table").getBinding("items");
+
+			oBinding.setAggregation({groupLevels : ["BusinessPartnerRole"]});
+
+			that.expectRequest("BusinessPartnerList?$apply=groupby((BusinessPartnerRole))"
+				+ "&$select=BusinessPartnerID,BusinessPartnerRole&$count=true"
+				+ "&$skip=0&$top=100", {
+					value : [{
+						"BusinessPartnerID": "0100000000",
+						"BusinessPartnerRole": "01"
+					}, {
+						"BusinessPartnerID": "0100000001",
+						"BusinessPartnerRole": "02"
+					}]
+				})
+				.expectChange("id", [
+					"0100000000",
+					"0100000001"
+				]);
+
+			oBinding.attachEventOnce("change", function (oEvent) {
+				assert.strictEqual(oEvent.getParameter("reason"), ChangeReason.Change);
+			});
+
+			// code under test
+			oBinding.resume();
+
+			return that.waitForChanges(assert);
+		});
+	});
+
+	//*********************************************************************************************
+	// Scenario: call changeParameters on a suspended ODCB
+	QUnit.test("suspend/resume: call changeParameters on a suspended ODCB", function (assert) {
+		var oModel = createSalesOrdersModel({autoExpandSelect : true}),
+			sView = '\
+<FlexBox id="form" binding="{/SalesOrderList(\'42\')}">\
+	<Text id="id" text="{SalesOrderID}"/>\
+	<Table id="table" items="{SO_2_SOITEM}">\
+		<columns><Column/></columns>\
+		<items>\
+			<ColumnListItem>\
+				<Text id="pos" text="{ItemPosition}" />\
+			</ColumnListItem>\
+		</items>\
+	</Table>\
+</FlexBox>',
+			that = this;
+
+		this.expectRequest("SalesOrderList('42')?$select=SalesOrderID"
+			+ "&$expand=SO_2_SOITEM($select=ItemPosition,SalesOrderID)", {
+				"SalesOrderID" : "42",
+				"SO_2_SOITEM" : [{"SalesOrderID" : "42", "ItemPosition" : "10"}]
+			})
+			.expectChange("id", "42")
+			.expectChange("pos", ["10"]);
+
+		return this.createView(assert, sView, oModel).then(function () {
+			var oBinding = that.oView.byId("form").getElementBinding();
+
+			oBinding.suspend();
+			oBinding.changeParameters({"custom": "invalid"}); // just to call it twice
+			oBinding.changeParameters({"custom": "option"});
+
+			that.expectRequest("SalesOrderList('42')?custom=option&$select=SalesOrderID"
+				+ "&$expand=SO_2_SOITEM($select=ItemPosition,SalesOrderID)", {
+					"SalesOrderID" : "42",
+					"SO_2_SOITEM" : [{"SalesOrderID" : "42", "ItemPosition" : "10"}]
+				})
+				.expectChange("pos", ["10"]);
+
+			// code under test
+			oBinding.resume();
+
+			return that.waitForChanges(assert);
+		});
+	});
+
+	//*********************************************************************************************
 	// Scenario: Deferred operation binding returns a collection. A nested list binding for "value"
 	// with auto-$expand/$select displays the result.
 	QUnit.test("Deferred operation returns collection, auto-$expand/$select", function (assert) {
