@@ -77,7 +77,7 @@ sap.ui.define([
 				oHTMLElement.appendChild(oScrollExtension.getVerticalScrollbar());
 
 				// If an element is removed from DOM and is inserted again, the scroll position is reset to 0 and needs to be restored.
-				oScrollExtension.updateVerticalScrollPosition(oScrollExtension._nVerticalScrollPosition);
+				oScrollExtension.restoreVerticalScrollPosition();
 			}
 		},
 

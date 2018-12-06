@@ -2,22 +2,21 @@
 sap.ui.define([
 	"sap/ui/model/json/JSONModel",
 	"sap/ui/core/Control",
+	"sap/ui/table/library",
 	"sap/ui/table/Table",
 	"sap/ui/table/TreeTable",
+	"sap/ui/table/AnalyticalTable",
 	"sap/ui/table/Column",
 	"sap/ui/table/RowAction",
-	"sap/ui/table/RowActionItem"
-], function(JSONModel, Control, Table, TreeTable, Column, RowAction, RowActionItem) {
+	"sap/ui/table/RowActionItem",
+	"sap/ui/table/TableUtils"
+], function(JSONModel, Control, TableLibrary, Table, TreeTable, AnalyticalTable, Column, RowAction, RowActionItem, TableUtils) {
 	"use strict";
 
-	var oTable, oTreeTable;
-	var oModel = new JSONModel();
-	var aFields = ["A", "B", "C", "D", "E"];
-	var iNumberOfRows = 8;
+	var TableQUnitUtils = {}; // TBD: Move global functions to this object
 
-	//************************************************************************
-	// Preparation Code
-	//************************************************************************
+	var mDefaultOptions = {};
+	var iNumberOfDataRows = 8;
 
 	var TestControl = Control.extend("sap.ui.table.test.TestControl", {
 		metadata: {
@@ -97,70 +96,15 @@ sap.ui.define([
 		bFinal: true
 	};
 
-	var TableQUnitUtils = { // TBD: Move global functions to this object
-		getTestControl: function() {
-			return TestControl;
-		},
-
-		getTestInputControl: function() {
-			return TestInputControl;
-		},
-
-		/**
-		 * Adds a column to the tested table.
-		 *
-		 * @param {sap.ui.table.Table} oTable Instance of the table.
-		 * @param {string} sTitle The label of the column.
-		 * @param {string} sText The text of the column template.
-		 * @param {boolean} bInputElement If set to <code>true</code>, the column template will be an input element, otherwise a span.
-		 * @param {boolean} bFocusable If set to <code>true</code>, the column template will focusable. Only relevant, if <code>bInputElement</code>
-		 *                             is set to true.
-		 * @param {boolean} bTabbable If set to <code>true</code>, the column template will be tabbable.
-		 * @param {string} sInputType The type of the input element. Only relevant, if <code>bInputElement</code> is set to true.
-		 * @param {boolean} [bBindText=true] If set to <code>true</code>, the text property will be bound to the value of <code>sText</code>.
-		 * @returns {sap.ui.table.Column} The added column.
-		 */
-		addColumn: function(oTable, sTitle, sText, bInputElement, bFocusable, bTabbable, sInputType, bBindText) {
-			if (bBindText == null) {
-				bBindText = true;
-			}
-
-			var oControlTemplate;
-
-			if (bInputElement) {
-				oControlTemplate = new TestInputControl({
-					text: bBindText ? "{" + sText + "}" : sText,
-					index: oTable.getColumns().length,
-					visible: true,
-					tabbable: bTabbable,
-					type: sInputType
-				});
-			} else {
-				oControlTemplate = new TestControl({
-					text: bBindText ? "{" + sText + "}" : sText,
-					index: oTable.getColumns().length,
-					visible: true,
-					focusable: bFocusable,
-					tabbable: bFocusable && bTabbable
-				});
-			}
-
-			var oColumn = new Column({
-				label: sTitle,
-				width: "100px",
-				template: oControlTemplate
-			});
-			oTable.addColumn(oColumn);
-
-			for (var i = 0; i < iNumberOfRows; i++) {
-				oTable.getModel().getData().rows[i][sText] = sText + (i + 1);
-			}
-
-			return oColumn;
-		}
-	};
-
 	[Table, TreeTable].forEach(function(TableClass) {
+		TableClass.prototype.qunit = Object.create(TableClass.prototype);
+		Object.defineProperty(TableClass.prototype.qunit, "columnCount", {
+			get: function() {
+				return this.getColumns().length;
+			}
+		});
+
+		// TODO: Replace with above method.
 		Object.defineProperty(TableClass.prototype, "columnCount", {
 			get: function() {
 				return this.getColumns().length;
@@ -168,12 +112,515 @@ sap.ui.define([
 		});
 	});
 
+	function createTableConfig(TableClass, mOptions) {
+		var oMetadata = TableClass.getMetadata();
+		var aProperties = Object.keys(oMetadata.getAllProperties()).concat(Object.keys(oMetadata.getAllPrivateProperties()));
+		var aAggregations = Object.keys(oMetadata.getAllAggregations()).concat(Object.keys(oMetadata.getAllPrivateAggregations()));
+		var aAssociations = Object.keys(oMetadata.getAllAssociations()).concat(Object.keys(oMetadata.getAllPrivateAssociations()));
+		var aAdditionalKeys = ["models"];
+		var aAllMetadataKeys = aProperties.concat(aAggregations).concat(aAssociations).concat(aAdditionalKeys);
+
+		return Object.keys(mOptions).reduce(function(oObject, sKey) {
+			if (aAllMetadataKeys.indexOf(sKey) >= 0) {
+				oObject[sKey] = mOptions[sKey];
+			}
+			return oObject;
+		}, {});
+	}
+
+	function setExperimentalConfig(oTable, mOptions) {
+		var aExperimentalProperties = ["_bVariableRowHeightEnabled", "_bLargeDataScrolling"];
+
+		Object.keys(mOptions).reduce(function(oObject, sExperimentalProperty) {
+			if (aExperimentalProperties.indexOf(sExperimentalProperty) >= 0) {
+				oTable[sExperimentalProperty] = mOptions[sExperimentalProperty];
+			}
+		}, {});
+	}
+
+	function addAsyncHelpers(oTable) {
+		var fnResolveInitialRenderingFinished = null;
+		var pInitialRenderingFinished = new Promise(function(resolve) {
+			fnResolveInitialRenderingFinished = resolve;
+		});
+		var pRenderingFinished = null;
+
+		function waitForUnpredictableEvents() {
+			return new Promise(function(resolve) {
+				window.requestAnimationFrame(function() {
+					if (TableUtils.isVariableRowHeightEnabled(oTable)) {
+						TableQUnitUtils.wait(20).then(resolve);
+					} else {
+						resolve();
+					}
+				});
+			});
+		}
+
+		/**
+		 * Returns a promise that resolves when the next <code>_rowsUpdated</code> event is fired.
+		 *
+		 * @returns {Promise<Object>} A promise. Resolves with the event parameters.
+		 */
+		oTable.qunit.whenNextRowsUpdated = function() {
+			return new Promise(function(resolve) {
+				oTable.attachEventOnce("_rowsUpdated", function(oEvent) {
+					resolve(oEvent.getParameters());
+				});
+			});
+		};
+
+		/**
+		 * Returns a promise that resolves when the next rendering is finished. Includes row updates.
+		 *
+		 * @returns {Promise<Object>} A promise. Resolves with the event parameters.
+		 */
+		oTable.qunit.whenNextRenderingFinished = function() {
+			return oTable.qunit.whenNextRowsUpdated().then(function(mParameters) {
+				return waitForUnpredictableEvents().then(function() {
+					return mParameters;
+				});
+			});
+		};
+
+		/**
+		 * Returns a promise that resolves when the initial rendering is finished.
+		 *
+		 * @returns {Promise} A promise.
+		 */
+		oTable.qunit.whenInitialRenderingFinished = function() {
+			return pInitialRenderingFinished;
+		};
+		oTable.qunit.whenNextRenderingFinished().then(fnResolveInitialRenderingFinished);
+
+		/**
+		 * Returns a promise that resolves when no rendering is to be expected or when an ongoing rendering is finished. Includes row updates.
+		 *
+		 * @returns {Promise} A promise.
+		 */
+		oTable.qunit.whenRenderingFinished = function() {
+			if (pRenderingFinished != null) {
+				return pRenderingFinished;
+			} else if (oTable._getFirstRenderedRowIndex() !== oTable._iRenderedFirstVisibleRow) {
+				return oTable.qunit.whenNextRenderingFinished();
+			} else {
+				return waitForUnpredictableEvents();
+			}
+		};
+		function wrapForRenderingDetection(oObject, sFunctionName) {
+			var fnOriginalFunction = oObject[sFunctionName];
+			oObject[sFunctionName] = function() {
+				pRenderingFinished = oTable.qunit.whenNextRenderingFinished().then(function() {
+					pRenderingFinished = null;
+				});
+				fnOriginalFunction.apply(oObject, arguments);
+			};
+		}
+		// Wrap functions that inevitably trigger a "_rowsUpdated" event.
+		wrapForRenderingDetection(oTable, "invalidate");
+		wrapForRenderingDetection(oTable, "refreshRows");
+		wrapForRenderingDetection(oTable, "updateRows");
+
+		/**
+		 * Returns a promise that resolves when the next vertical scroll event is fired.
+		 *
+		 * @returns {Promise} A promise.
+		 */
+		oTable.qunit.whenVSbScrolled = function() {
+			return new Promise(function(resolve) {
+				var oVSb = oTable._getScrollExtension().getVerticalScrollbar();
+				TableQUnitUtils.addEventListenerOnce(oVSb, "scroll", resolve);
+			});
+		};
+
+		/**
+		 * Returns a promise that resolves when the next horizontal scroll event is fired.
+		 *
+		 * @returns {Promise} A promise.
+		 */
+		oTable.qunit.whenHSbScrolled = function() {
+			return new Promise(function(resolve) {
+				var oHSb = oTable._getScrollExtension().getHorizontalScrollbar();
+				TableQUnitUtils.addEventListenerOnce(oHSb, "scroll", resolve);
+			});
+		};
+
+		/**
+		 * Returns a promise that resolves when the scrolling is performed and rendering is finished.
+		 *
+		 * @param {int} iScrollPosition The new vertical scroll position.
+		 * @returns {Promise} A promise.
+		 */
+		oTable.qunit.scrollVSbTo = function(iScrollPosition) {
+			var oVSb = oTable._getScrollExtension().getVerticalScrollbar();
+			var iOldScrollTop = oVSb.scrollTop;
+
+			oVSb.scrollTop = iScrollPosition;
+
+			if (oVSb.scrollTop === iOldScrollTop) {
+				return Promise.resolve();
+			} else {
+				return oTable.qunit.whenVSbScrolled().then(oTable.qunit.whenRenderingFinished);
+			}
+		};
+
+		/**
+		 * Wrapper around #scrollVSbTo for easier promise chaining. Returns a function that returns a promise.
+		 *
+		 * @param {int} iScrollPosition The new vertical scroll position.
+		 * @returns {function(): Promise} Wrapper function.
+		 */
+		oTable.qunit.$scrollVSbTo = function(iScrollPosition) {
+			return function() {
+				return oTable.qunit.scrollVSbTo(iScrollPosition);
+			};
+		};
+
+		/**
+		 * Returns a promise that resolves when the scrolling is performed and rendering is finished.
+		 *
+		 * @param {int} iDistance The distance to scroll.
+		 * @returns {Promise} A promise.
+		 */
+		oTable.qunit.scrollVSbBy = function(iDistance) {
+			var oVSb = oTable._getScrollExtension().getVerticalScrollbar();
+			var iOldScrollTop = oVSb.scrollTop;
+
+			oVSb.scrollTop += iDistance;
+
+			if (oVSb.scrollTop === iOldScrollTop) {
+				return Promise.resolve();
+			} else {
+				return oTable.qunit.whenVSbScrolled().then(oTable.qunit.whenRenderingFinished);
+			}
+		};
+
+		/**
+		 * Wrapper around #scrollVSbTo for easier promise chaining. Returns a function that returns a promise.
+		 *
+		 * @param {int} iDistance The distance to scroll.
+		 * @returns {function(): Promise} Wrapper function.
+		 */
+		oTable.qunit.$scrollVSbBy = function(iDistance) {
+			return function() {
+				return oTable.qunit.scrollVSbBy(iDistance);
+			};
+		};
+
+		/**
+		 * Returns a promise that resolves when the height of the table's parent element is changed and rendering is finished.
+		 *
+		 * @param {Object} mSizes The new sizes.
+		 * @param {string} [mSizes.height] The new height. Must be a valid CSSSize.
+		 * @param {string} [mSizes.width] The new width. Must be a valid CSSSize.
+		 * @returns {Promise} A promise.
+		 */
+		oTable.qunit.resize = function(mSizes) {
+			var oDomRef = oTable.getDomRef();
+			var oContainerElement = oDomRef ? oDomRef.parentNode : null;
+
+			if (!oContainerElement) {
+				return Promise.resolve();
+			}
+
+			var sOldHeight = oContainerElement.style.height;
+			var sOldWidth = oContainerElement.style.width;
+
+			if (oTable.qunit.sContainerOriginalHeight == null) {
+				oTable.qunit.sContainerOriginalHeight = sOldHeight;
+			}
+			if (oTable.qunit.sContainerOriginalWidth == null) {
+				oTable.qunit.sContainerOriginalWidth = sOldWidth;
+			}
+
+			if (mSizes.height != null) {
+				oContainerElement.style.height = mSizes.height;
+			}
+			if (mSizes.width != null) {
+				oContainerElement.style.width = mSizes.width;
+			}
+
+			if ((mSizes.height != null && mSizes.height != sOldHeight) || (mSizes.width != null && mSizes.width != sOldWidth)) {
+				return new Promise(function(resolve) {
+					var iVisibleRowCountBefore = oTable.getVisibleRowCount();
+
+					TableQUnitUtils.wrapOnce(oTable, "_updateTableSizes", null, function() {
+						var iVisibleRowCountAfter = oTable.getVisibleRowCount();
+
+						if (iVisibleRowCountBefore !== iVisibleRowCountAfter) {
+							oTable.qunit.whenNextRenderingFinished().then(resolve);
+						} else {
+							oTable.qunit.whenRenderingFinished().then(resolve);
+						}
+					});
+				});
+			} else {
+				return Promise.resolve();
+			}
+		};
+
+		/**
+		 * Wrapper around #resize for easier promise chaining. Returns a function that returns a promise.
+		 *
+		 * @param {Object} mSizes The new sizes.
+		 * @param {string} [mSizes.height] The new height. Must be a valid CSSSize.
+		 * @param {string} [mSizes.width] The new width. Must be a valid CSSSize.
+		 * @returns {function(): Promise} Wrapper function.
+		 */
+		oTable.qunit.$resize = function(mSizes) {
+			return function() {
+				return oTable.qunit.resize(mSizes);
+			};
+		};
+
+		/**
+		 * Returns a promise that resolves when the height of the table's parent element is changed to its original value and rendering is finished.
+		 *
+		 * @returns {Promise} A promise.
+		 */
+		oTable.qunit.resetSize = function() {
+			return oTable.qunit.resize({
+				height: oTable.qunit.sContainerOriginalHeight,
+				width: oTable.qunit.sContainerOriginalWidth
+			});
+		};
+	}
+
+	function addHelpers(oTable) {
+		/**
+		 * Gets the data cell element.
+		 *
+		 * @param {int} iRowIndex Index of the row.
+		 * @param {int} iColumnIndex Index of the column.
+		 * @returns {HTMLElement} The cell DOM element.
+		 */
+		oTable.qunit.getDataCell = function(iRowIndex, iColumnIndex) {
+			return oTable.getDomRef("rows-row" + iRowIndex + "-col" + iColumnIndex);
+		};
+
+		/**
+		 * Gets the column header cell element. In case of multi-headers, the cell in the first header row is returned.
+		 *
+		 * @param {int} iColumnIndex Index of the column in the list of visible columns.
+		 * @returns {HTMLElement} The cell DOM element.
+		 */
+		oTable.qunit.getColumnHeaderCell = function(iColumnIndex) {
+			var sCellId = (oTable._getVisibleColumns()[iColumnIndex]).getId();
+			return document.getElementById(sCellId);
+		};
+
+		/**
+		 * Gets the row header cell element.
+		 *
+		 * @param {int} iRowIndex Index of the row the cell is inside.
+		 * @returns {HTMLElement} The cell DOM element.
+		 */
+		oTable.qunit.getRowHeaderCell = function(iRowIndex) {
+			return oTable.getDomRef("rowsel" + iRowIndex);
+		};
+
+		/**
+		 * Gets the row action cell element.
+		 *
+		 * @param {int} iRowIndex Index of the row the cell is inside.
+		 * @returns {HTMLElement} Returns the DOM element.
+		 */
+		oTable.qunit.getRowActionCell = function(iRowIndex) {
+			return oTable.getDomRef("rowact" + iRowIndex);
+		};
+
+		/**
+		 * Gets the selectAll cell element.
+		 *
+		 * @returns {HTMLElement} The cell DOM element.
+		 */
+		oTable.qunit.getSelectAllCell = function() {
+			return oTable.getDomRef("selall");
+		};
+	}
+
+	TableQUnitUtils.getTestControl = function() {
+		return TestControl;
+	};
+
+	TableQUnitUtils.getTestInputControl = function() {
+		return TestInputControl;
+	};
+
+	TableQUnitUtils.setDefaultOptions = function(mOptions) {
+		mOptions = Object.assign({}, mOptions);
+		mDefaultOptions = mOptions;
+	};
+
+	TableQUnitUtils.getDefaultOptions = function() {
+		return Object.create(mDefaultOptions);
+	};
+
+	TableQUnitUtils.createTable = function(TableClass, mOptions, fnBeforePlaceAt) {
+		if (typeof TableClass === "object" && TableClass !== null) {
+			fnBeforePlaceAt = mOptions;
+			mOptions = TableClass;
+			TableClass = Table;
+		} else if (TableClass instanceof Function && TableClass !== Table && TableClass !== TreeTable && TableClass !== AnalyticalTable) {
+			fnBeforePlaceAt = TableClass;
+			TableClass = Table;
+		}
+		mOptions = Object.assign({}, mDefaultOptions, mOptions);
+		TableClass = TableClass == null ? Table : TableClass;
+
+		var oTable = new TableClass(createTableConfig(TableClass, mOptions));
+		setExperimentalConfig(oTable, mOptions);
+		addAsyncHelpers(oTable);
+		addHelpers(oTable);
+
+		if (fnBeforePlaceAt instanceof Function) {
+			fnBeforePlaceAt(oTable, mOptions);
+		}
+
+		var sContainerId;
+		if (typeof mOptions.placeAt === "string") {
+			sContainerId = mOptions.placeAt;
+		} else if (mOptions.placeAt !== false) {
+			sContainerId = "qunit-fixture";
+		}
+
+		if (sContainerId != null) {
+			oTable.placeAt(sContainerId);
+			sap.ui.getCore().applyChanges();
+		}
+
+		return oTable;
+	};
+
+	/**
+	 * Adds a column to the tested table.
+	 *
+	 * @param {sap.ui.table.Table} oTable Instance of the table.
+	 * @param {string} sTitle The label of the column.
+	 * @param {string} sText The text of the column template.
+	 * @param {boolean} bInputElement If set to <code>true</code>, the column template will be an input element, otherwise a span.
+	 * @param {boolean} bFocusable If set to <code>true</code>, the column template will focusable. Only relevant, if <code>bInputElement</code>
+	 *                             is set to true.
+	 * @param {boolean} bTabbable If set to <code>true</code>, the column template will be tabbable.
+	 * @param {string} sInputType The type of the input element. Only relevant, if <code>bInputElement</code> is set to true.
+	 * @param {boolean} [bBindText=true] If set to <code>true</code>, the text property will be bound to the value of <code>sText</code>.
+	 * @returns {sap.ui.table.Column} The added column.
+	 */
+	TableQUnitUtils.addColumn = function(oTable, sTitle, sText, bInputElement, bFocusable, bTabbable, sInputType, bBindText) {
+		if (bBindText == null) {
+			bBindText = true;
+		}
+
+		var oControlTemplate;
+
+		if (bInputElement) {
+			oControlTemplate = new TestInputControl({
+				text: bBindText ? "{" + sText + "}" : sText,
+				index: oTable.getColumns().length,
+				visible: true,
+				tabbable: bTabbable,
+				type: sInputType
+			});
+		} else {
+			oControlTemplate = new TestControl({
+				text: bBindText ? "{" + sText + "}" : sText,
+				index: oTable.getColumns().length,
+				visible: true,
+				focusable: bFocusable,
+				tabbable: bFocusable && bTabbable
+			});
+		}
+
+		var oColumn = new Column({
+			label: sTitle,
+			width: "100px",
+			template: oControlTemplate
+		});
+		oTable.addColumn(oColumn);
+
+		for (var i = 0; i < iNumberOfDataRows; i++) {
+			oTable.getModel().getData().rows[i][sText] = sText + (i + 1);
+		}
+
+		return oColumn;
+	};
+
+	TableQUnitUtils.addEventDelegateOnce = function(oTable, sEventName, fnHandler) {
+		var oDelegate = {};
+
+		oDelegate[sEventName] = function(oEvent) {
+			this.removeEventDelegate(oDelegate);
+			fnHandler.call(this, oEvent);
+		};
+
+		oTable.addEventDelegate(oDelegate);
+	};
+
+	TableQUnitUtils.addEventListenerOnce = function(oElement, sEventName, fnHandler) {
+		oElement.addEventListener(sEventName, function(oEvent) {
+			oElement.removeEventListener(sEventName, fnHandler);
+			fnHandler.call(this, oEvent);
+		});
+	};
+
+	TableQUnitUtils.wrapOnce = function(oObject, sFunctionName, fnBefore, fnAfter) {
+		var fnOriginalFunction = oObject[sFunctionName];
+
+		oObject[sFunctionName] = function() {
+			oObject[sFunctionName] = fnOriginalFunction;
+
+			if (fnBefore) {
+				fnBefore.apply(oObject, arguments);
+			}
+
+			oObject[sFunctionName].apply(oObject, arguments);
+
+			if (fnAfter) {
+				fnAfter.apply(oObject, arguments);
+			}
+		};
+	};
+
+	/**
+	 * Returns a promise that resolves after a certain delay.
+	 *
+	 * @param {int} iMilliseconds The delay in milliseconds.
+	 * @returns {Promise} A promise.
+	 */
+	TableQUnitUtils.wait = function(iMilliseconds) {
+		iMilliseconds = iMilliseconds == null ? 0 : iMilliseconds;
+
+		return new Promise(function(resolve) {
+			setTimeout(resolve, iMilliseconds);
+		});
+	};
+
+	/**
+	 * Wrapper around #wait for easier promise chaining. Returns a function that returns a promise.
+	 *
+	 * @param {int} iMilliseconds The delay in milliseconds.
+	 * @returns {function(): Promise} Wrapper function.
+	 */
+	TableQUnitUtils.$wait = function(iMilliseconds) {
+		return function() {
+			return TableQUnitUtils.wait(iMilliseconds);
+		};
+	};
+
+	/***********************************
+	 * Legacy utils                    *
+	 ***********************************/
+
+	var oTable, oTreeTable;
+	var oModel = new JSONModel();
+	var aFields = ["A", "B", "C", "D", "E"];
+
 	window.oModel = oModel;
 	window.aFields = aFields;
-	window.iNumberOfRows = iNumberOfRows;
+	window.iNumberOfRows = iNumberOfDataRows;
 
 	window.createTables = function(bSkipPlaceAt, bFocusableCellTemplates, iCustomNumberOfRows) {
-		var iCount = !!iCustomNumberOfRows ? iCustomNumberOfRows : iNumberOfRows;
+		var iCount = !!iCustomNumberOfRows ? iCustomNumberOfRows : iNumberOfDataRows;
 
 		oTable = new Table({
 			rows: "{/rows}",

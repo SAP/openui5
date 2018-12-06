@@ -1535,113 +1535,6 @@ sap.ui.define([
 		}, 100);
 	});
 
-	QUnit.module("Variable Row Height", {
-		beforeEach: function() {
-			createTable({
-				visibleRowCount: 10,
-				width: "300px",
-				firstVisibleRow: 1
-			});
-
-			oTable.removeAllColumns();
-			oTable.addColumn(new Column({
-				label: new Label({text: "Variable Row Heights"}),
-				template: new DummyControl({
-					height: "{height}"
-				}),
-				width: "200px"
-			}));
-
-			oTable._bVariableRowHeightEnabled = true;
-			sap.ui.getCore().applyChanges();
-		},
-		afterEach: function() {
-			destroyTable();
-		}
-	});
-
-	QUnit.test("Vertical scrollbar height", function(assert) {
-		var oVsb = oTable._getScrollExtension().getVerticalScrollbar();
-		var iVSbHeight = oVsb.clientHeight;
-
-		assert.equal(iVSbHeight, 10 * oTable._getDefaultRowHeight(), "iVSbHeight is correct");
-	});
-
-	QUnit.test("FirstVisibleRow on init stays the same", function(assert) {
-		assert.equal(oTable.getFirstVisibleRow(), 1, "getFirstVisibleRow() returns 1");
-	});
-
-	QUnit.test("ScrollTop on init is as expected", function(assert) {
-		var oVsb = oTable._getScrollExtension().getVerticalScrollbar();
-		assert.ok(oVsb);
-		var iDefaultHeight = oTable._getDefaultRowHeight();
-
-		var done = assert.async();
-		window.setTimeout(function() {
-			assert.strictEqual(oVsb.scrollTop, iDefaultHeight, "ScrollTop is correct: " + oVsb.scrollTop);
-			done();
-		}, 100);
-	});
-
-	QUnit.test("ScrollTop after scrolling to last row is as expected", function(assert) {
-		var oVsb = oTable._getScrollExtension().getVerticalScrollbar();
-		assert.ok(oVsb);
-
-		oTable.setFirstVisibleRow(200);
-		sap.ui.getCore().applyChanges();
-
-		var done = assert.async();
-		window.setTimeout(function() {
-			var iVSbHeight = oVsb.clientHeight;
-			var oVSbScrollHeight = oVsb.scrollHeight;
-
-			assert.equal(oVsb.scrollTop, oVSbScrollHeight - iVSbHeight, "ScrollTop is correct");
-			done();
-		}, 100);
-	});
-
-	QUnit.test("After scrolling to last row, the table correction is as expected", function(assert) {
-		var done = assert.async();
-
-		// Create Data with different Row Heights
-		var aData = [{height: "800px"}, {height: "800px"}, {height: "800px"}, {height: "800px"}, {height: "800px"}];
-		aData = aData.concat(JSON.parse(JSON.stringify(aData)));
-		aData = aData.concat(JSON.parse(JSON.stringify(aData)));
-		aData = aData.concat(JSON.parse(JSON.stringify(aData)));
-
-		var oModel = new JSONModel();
-		oModel.setData({modelData: aData});
-		oTable.setModel(oModel);
-		oTable.bindRows("/modelData");
-
-		oTable.placeAt("qunit-fixture");
-		sap.ui.getCore().applyChanges();
-
-		var oScrollExtension = oTable._getScrollExtension();
-		var iDefaultRowHeight = oTable._getDefaultRowHeight();
-
-		window.setTimeout(function() {
-			var oVsb = oScrollExtension.getVerticalScrollbar();
-
-			assert.equal(oTable.getFirstVisibleRow(), 1, "Initial firstVisibleRow is correct");
-			assert.equal(oScrollExtension.getVerticalScrollPosition(), iDefaultRowHeight, "Initial scroll position is correct");
-			assert.equal(oVsb.scrollTop, iDefaultRowHeight, "Initial scrollTop is correct");
-			assert.strictEqual(oTable.getDomRef("tableCCnt").scrollTop, 0, "Initial inner scroll position is correct");
-
-			oVsb.scrollTop = 1000000;
-
-			window.setTimeout(function() {
-				assert.equal(oTable.getFirstVisibleRow(), 39, "After setting scrollTop, firstVisibleRow is correct");
-				assert.equal(oScrollExtension.getVerticalScrollPosition(), iDefaultRowHeight * 31,
-					"After setting scrollTop, the scroll position is correct");
-				assert.equal(oVsb.scrollTop, iDefaultRowHeight * 31, "After setting scrollTop, scrollTop is correct");
-				assert.strictEqual(oTable.getDomRef("tableCCnt").scrollTop, 8321,
-					"After setting scrollTop, the inner scroll position is correct");
-				done();
-			}, 500);
-		}, 500);
-	});
-
 	QUnit.module("Fixed rows and columns", {
 		beforeEach: function() {
 			createTable({
@@ -2629,12 +2522,16 @@ sap.ui.define([
 		var aFiredReasons = [];
 		var that = this;
 
-		function _createTable(sVisibleRowCountMode) {
+		function _createTable(sVisibleRowCountMode, bWithBinding, iRowHeight) {
+			bWithBinding = bWithBinding !== false;
+
 			oTable = new Table({
-				rows: "{/modelData}",
-				visibleRowCountMode: sVisibleRowCountMode
+				rows: bWithBinding ? "{/modelData}" : "",
+				visibleRowCountMode: sVisibleRowCountMode,
+				rowHeight: iRowHeight
 			});
 
+			aFiredReasons = [];
 			oTable.attachEvent("_rowsUpdated", function(oEvent) {
 				aFiredReasons.push(oEvent.getParameter("reason"));
 			});
@@ -2649,30 +2546,50 @@ sap.ui.define([
 			oTable.setModel(oModel);
 
 			oTable.placeAt("qunit-fixture");
+			sap.ui.getCore().applyChanges();
 		}
 
-		destroyTable();
+		function _destroyTable() {
+			destroyTable();
+			sap.ui.getCore().applyChanges();
+		}
+
+		_destroyTable();
 		_createTable(VisibleRowCountMode.Fixed);
 		this.checkRowsUpdated(assert, aFiredReasons, [
 			TableUtils.RowsUpdateReason.Render
 		]).then(function() {
-			destroyTable();
+			_destroyTable();
+			_createTable(VisibleRowCountMode.Fixed, false);
+			return that.checkRowsUpdated(assert, aFiredReasons, []);
+		}).then(function() {
+			_destroyTable();
 			_createTable(VisibleRowCountMode.Interactive);
-			aFiredReasons = [];
 			return that.checkRowsUpdated(assert, aFiredReasons, [
 				TableUtils.RowsUpdateReason.Render
 			]);
 		}).then(function() {
-			destroyTable();
+			_destroyTable();
+			_createTable(VisibleRowCountMode.Interactive, false);
+			return that.checkRowsUpdated(assert, aFiredReasons, []);
+		}).then(function() {
+			_destroyTable();
 			_createTable(VisibleRowCountMode.Auto);
-			aFiredReasons = [];
 			return that.checkRowsUpdated(assert, aFiredReasons, [
-				TableUtils.RowsUpdateReason.Render,
 				TableUtils.RowsUpdateReason.Render
 			], 250);
 		}).then(function() {
-			done();
-		});
+			_destroyTable();
+			_createTable(VisibleRowCountMode.Auto, false);
+			return that.checkRowsUpdated(assert, aFiredReasons, [], 250);
+		}).then(function() {
+			_destroyTable();
+			// No need to adjust row count after rendering. The table starts with 10 rows, and only 10 rows with a height of 90px fit.
+			_createTable(VisibleRowCountMode.Auto, true, 90);
+			return that.checkRowsUpdated(assert, aFiredReasons, [
+				TableUtils.RowsUpdateReason.Render
+			], 250);
+		}).then(done);
 	});
 
 	QUnit.test("_rowsUpdated - Re-render", function(assert) {
@@ -2685,17 +2602,17 @@ sap.ui.define([
 		});
 
 		function setVisibleRowCountMode(sNewVisibleRowCountMode) {
-			oTable.setVisibleRowCountMode(sNewVisibleRowCountMode);
-
 			return new Promise(function(resolve) {
-				window.setTimeout(function() {
+				oTable.setVisibleRowCountMode(sNewVisibleRowCountMode);
+				oTable.attachEventOnce("_rowsUpdated", function() {
 					aFiredReasons = [];
 					resolve();
-				}, 0);
+				});
+				sap.ui.getCore().applyChanges();
 			});
 		}
 
-		setVisibleRowCountMode(VisibleRowCountMode.Fixed).then(function() {
+		Promise.resolve().then(function() {
 			oTable.invalidate();
 			return that.checkRowsUpdated(assert, aFiredReasons, [
 				TableUtils.RowsUpdateReason.Render
@@ -2712,7 +2629,6 @@ sap.ui.define([
 		}).then(function() {
 			oTable.invalidate();
 			return that.checkRowsUpdated(assert, aFiredReasons, [
-				TableUtils.RowsUpdateReason.Render,
 				TableUtils.RowsUpdateReason.Render
 			]);
 		}).then(function() {
@@ -2848,6 +2764,30 @@ sap.ui.define([
 
 			that.checkRowsUpdated(assert, aFiredReasons, [
 				TableUtils.RowsUpdateReason.Unbind
+			]).then(function() {
+				done();
+			});
+		}, 0);
+	});
+
+	QUnit.test("_rowsUpdated - Bind", function(assert) {
+		var done = assert.async();
+		var aFiredReasons = [];
+		var oBindingInfo = oTable.getBindingInfo("rows");
+		var that = this;
+
+		oTable.unbindRows();
+
+		oTable.attachEvent("_rowsUpdated", function(oEvent) {
+			aFiredReasons.push(oEvent.getParameter("reason"));
+		});
+
+		window.setTimeout(function() {
+			aFiredReasons = [];
+			oTable.bindRows(oBindingInfo);
+
+			that.checkRowsUpdated(assert, aFiredReasons, [
+				TableUtils.RowsUpdateReason.Change
 			]).then(function() {
 				done();
 			});
@@ -3232,31 +3172,10 @@ sap.ui.define([
 		assert.ok(!oTable.getColumnForCell(oTable.getColumns()[0]), "Something wrong given");
 	});
 
-	QUnit.test("test onBeforeRendering function with variableRowHeightEnabled=true", function(assert) {
-		var fnCalculateRowsToDisplay = sinon.spy(oTable, "_calculateRowsToDisplay");
-		oTable._bVariableRowHeightEnabled = true;
-		/*eslint-disable new-cap */
-		var oEvent = jQuery.Event();
-		/*eslint-enable new-cap */
-		oTable.onBeforeRendering(oEvent);
-		assert.ok(fnCalculateRowsToDisplay.called, "_calcualteRowsToDisplay() called via onBeforeRendering()");
-		assert.ok(this.sinon.stub(TableUtils, "isVariableRowHeightEnabled").returns(true));
-	});
-
 	QUnit.test("test onThemeChanged function", function(assert) {
 		var fnInvalidate = sinon.spy(oTable, "invalidate");
 		oTable.onThemeChanged();
 		assert.ok(fnInvalidate.called, "invalidate() called from onThemeChanged()");
-	});
-
-	QUnit.test("test onAfterRendering function with variableRowHeightEnabled=true", function(assert) {
-		oTable._bVariableRowHeightEnabled = true;
-		/*eslint-disable new-cap */
-		var oEvent = jQuery.Event();
-		/*eslint-enable new-cap */
-		var oVSb = oTable._getScrollExtension().getVerticalScrollbar();
-		oTable.onAfterRendering(oEvent);
-		assert.equal(oVSb.scrollTop, 0, "scrollTop value is available");
 	});
 
 	QUnit.test("test _updateTableContent and cleanupTableRowForGrouping function via onAfterRendering", function(assert) {
