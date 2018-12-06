@@ -44,18 +44,19 @@ function(
 		 * @param {object} [mSettings] Initial settings for the new control
 		 *
 		 * @class
-		 * <strong><i>Overview</i></strong>
+		 * <h3>Overview</h3>
 		 *
 		 * A {@link sap.m.Slider} control represents a numerical range and a handle.
 		 * The purpose of the control is to enable visual selection of a value in a continuous numerical range by moving an adjustable handle.
 		 *
-		 * <strong>Notes:</strong>
+		 * <b>Notes:</b>
 		 * <ul><li>Only horizontal sliders are possible. </li>
 		 * <li>The handle can be moved in steps of predefined size. This is done with the <code>step</code> property. </li>
-		 * <li>Setting the property <code>showAdvancedTooltips</code> shows an input field above the handle</li>
+		 * <li>Setting the property <code>showAdvancedTooltip</code> shows an input field above the handle</li>
 		 * <li>Setting the property <code>inputsAsTooltips</code> enables the user to enter a specific value in the handle's tooltip. </li>
 		 * </ul>
-		 * <strong><i>Structure</i></strong>
+		 *
+		 * <h3>Structure</h3>
 		 *
 		 * The most important properties of the Slider are:
 		 * <ul>
@@ -67,14 +68,15 @@ function(
 		 * </ul>
 		 * These properties determine the visualization of the tooltips:
 		 * <ul>
-		 * <li> showAdvancedTooltips - Determines if a tooltip should be displayed above the handle</li>
-		 * <li> inputsAsTooltips - Determines if the tooltip displayed above the slider's handle should include an input field</li>
+		 * <li> <code>showAdvancedTooltip</code> - Determines if a tooltip should be displayed above the handle</li>
+		 * <li> <code>inputsAsTooltips</code> - Determines if the tooltip displayed above the slider's handle should include an input field</li>
 		 * </ul>
-		 * <strong><i>Usage</i></strong>
+		 *
+		 * <h3>Usage</h3>
 		 *
 		 * The most common usecase is to select values on a continuous numerical scale (e.g. temperature, volume, etc. ).
 		 *
-		 * <strong><i>Responsive Behavior</i></strong>
+		 * <h3>Responsive Behavior</h3>
 		 *
 		 * The <code>sap.m.Slider</code> control adjusts to the size of its parent container by recalculating and resizing the width of the control.
 		 * You can move the slider handle in several different ways:
@@ -159,7 +161,7 @@ function(
 
 				/**
 				 * Indicate whether the handle's advanced tooltip is shown. <b>Note:</b> Setting this option to <code>true</code>
-				 * will ignore the value set in <code>showHandleTooltips</code>. This will cause only the advanced tooltip to be shown.
+				 * will ignore the value set in <code>showHandleTooltip</code>. This will cause only the advanced tooltip to be shown.
 				 * @since 1.42
 				 *
 				 */
@@ -167,7 +169,7 @@ function(
 
 				/**
 				 * Indicates whether input fields should be used as tooltips for the handles. <b>Note:</b> Setting this option to <code>true</code>
-				 * will only work if <code>showAdvancedTooltips</code> is set to <code>true</code>.
+				 * will only work if <code>showAdvancedTooltip</code> is set to <code>true</code>.
 				 * @since 1.42
 				 */
 				inputsAsTooltips: {type: "boolean", group: "Appearance", defaultValue: false},
