@@ -7,7 +7,7 @@ sap.ui.define([
 	"sap/ui/base/BindingParser",
 	"sap/ui/base/ExpressionParser",
 	"sap/ui/base/ManagedObject",
-	"sap/ui/core/Icon",
+	"sap/ui/core/InvisibleText",
 	"sap/ui/model/Filter",
 	"sap/ui/model/Sorter",
 	"sap/ui/model/json/JSONModel",
@@ -15,8 +15,8 @@ sap.ui.define([
 	"sap/ui/model/type/Date",
 	"sap/ui/model/type/String",
 	"sap/base/Log"
-], function (jQuery, jQuery0, BindingParser, ExpressionParser, ManagedObject, Icon, Filter, Sorter, JSONModel,
-	Currency, Date, String, Log) {
+], function (jQuery, jQuery0, BindingParser, ExpressionParser, ManagedObject, InvisibleText, Filter,
+	Sorter, JSONModel, Currency, Date, String, Log) {
 	/*global QUnit, sinon */
 	/*eslint no-warning-comments: 0 */
 	"use strict";
@@ -839,42 +839,42 @@ sap.ui.define([
 
 	QUnit.test("parseExpression: resolving", function (assert) {
 		var sExpression = "[${/blue}?'blue':'red']",
-			oIcon = new Icon(),
+			oInvisibleText = new InvisibleText(),
 			oResult = BindingParser.parseExpression(sExpression, 1),
 			oModel = new JSONModel({blue: false});
 
 		assert.strictEqual(oResult.at, sExpression.length - 1);
-		oIcon.setModel(oModel);
-		oIcon.bindProperty("color", oResult.result);
-		assert.strictEqual(oIcon.getColor(), "red");
+		oInvisibleText.setModel(oModel);
+		oInvisibleText.bindProperty("text", oResult.result);
+		assert.strictEqual(oInvisibleText.getText(), "red");
 
 		oModel.setProperty("/blue", true);
-		assert.strictEqual(oIcon.getColor(), "blue");
+		assert.strictEqual(oInvisibleText.getText(), "blue");
 	});
 
 	QUnit.test("Expression binding: one time binding", function (assert) {
 		var oModel = new JSONModel({blue: false}),
-			oIcon = new Icon({models : oModel});
+			oInvisibleText = new InvisibleText({models : oModel});
 
-		oIcon.bindProperty("color", parse("{:= ${/blue} ? 'blue' : 'red' }"));
-		assert.strictEqual(oIcon.getColor(), "red");
+		oInvisibleText.bindProperty("text", parse("{:= ${/blue} ? 'blue' : 'red' }"));
+		assert.strictEqual(oInvisibleText.getText(), "red");
 
 		oModel.setProperty("/blue", true);
-		assert.strictEqual(oIcon.getColor(), "red", "one time binding -> value unchanged");
+		assert.strictEqual(oInvisibleText.getText(), "red", "one time binding -> value unchanged");
 
-		oIcon.bindProperty("color", parse("{/blue} {:= 'green' }"));
-		assert.strictEqual(oIcon.getColor(), "true green");
+		oInvisibleText.bindProperty("text", parse("{/blue} {:= 'green' }"));
+		assert.strictEqual(oInvisibleText.getText(), "true green");
 	});
 
 	QUnit.test("Expression binding: one time binding inside composite binding", function (assert) {
 		var oModel = new JSONModel({blue: false}),
-			oIcon = new Icon({models : oModel});
+			oInvisibleText = new InvisibleText({models : oModel});
 
-		oIcon.bindProperty("color", parse("*{:= ${/blue} ? 'blue' : 'red' }*"));
-		assert.strictEqual(oIcon.getColor(), "*red*");
+		oInvisibleText.bindProperty("text", parse("*{:= ${/blue} ? 'blue' : 'red' }*"));
+		assert.strictEqual(oInvisibleText.getText(), "*red*");
 
 		oModel.setProperty("/blue", true);
-		assert.strictEqual(oIcon.getColor(), "*red*", "one time binding -> value unchanged");
+		assert.strictEqual(oInvisibleText.getText(), "*red*", "one time binding -> value unchanged");
 	});
 
 	QUnit.test("Local functions are bound to context", function (assert) {
@@ -922,28 +922,28 @@ sap.ui.define([
 			= "{:= ${parts:['m2>/foo',{path:'/bar'}],formatter:'Global.joiningFormatter'} }",
 			oModel = new JSONModel({"bar" : 1}),
 			oModel2 = new JSONModel({"foo" : 0}),
-			oIcon = new Icon({models : {undefined : oModel, "m2" : oModel2}});
+			oInvisibleText = new InvisibleText({models : {undefined : oModel, "m2" : oModel2}});
 
 		// code under test
-		oIcon.bindProperty("color", parse(sBinding));
+		oInvisibleText.bindProperty("text", parse(sBinding));
 
-		assert.strictEqual(oIcon.getColor(), "0,1");
+		assert.strictEqual(oInvisibleText.getText(), "0,1");
 		oModel.setProperty("/bar", 42);
-		assert.strictEqual(oIcon.getColor(), "0,1", "one time binding -> value unchanged");
+		assert.strictEqual(oInvisibleText.getText(), "0,1", "one time binding -> value unchanged");
 	});
 
 	QUnit.test("Single expression binding, no mergeParts needed", function (assert) {
 		var oModel = new JSONModel({"foo" : 0, "bar" : 1}),
-			oIcon = new Icon({models : oModel});
+			oInvisibleText = new InvisibleText({models : oModel});
 
 		this.mock(BindingParser).expects("mergeParts").never();
 
 		// code under test
-		oIcon.bindProperty("color", parse("{:= ${/foo} + ${/bar} }"));
+		oInvisibleText.bindProperty("text", parse("{:= ${/foo} + ${/bar} }"));
 
-		assert.strictEqual(oIcon.getColor(), "1");
+		assert.strictEqual(oInvisibleText.getText(), "1");
 		oModel.setProperty("/foo", 42);
-		assert.strictEqual(oIcon.getColor(), "1", "one time binding -> value unchanged");
+		assert.strictEqual(oInvisibleText.getText(), "1", "one time binding -> value unchanged");
 	});
 
 	QUnit.test("BindingParser.simpleParser.escape", function (assert) {

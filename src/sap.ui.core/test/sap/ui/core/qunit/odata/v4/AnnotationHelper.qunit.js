@@ -5,15 +5,15 @@ sap.ui.define([
 	"jquery.sap.global",
 	"sap/base/Log",
 	"sap/ui/base/SyncPromise",
-	"sap/ui/core/Icon",
+	"sap/ui/core/InvisibleText",
 	"sap/ui/model/Context",
 	"sap/ui/model/json/JSONModel",
 	"sap/ui/model/odata/_AnnotationHelperBasics",
 	"sap/ui/model/odata/v4/AnnotationHelper",
 	"sap/ui/model/odata/v4/ODataMetaModel",
 	"sap/ui/model/odata/v4/_AnnotationHelperExpression"
-], function (jQuery, Log, SyncPromise, Icon, BaseContext, JSONModel, Basics, AnnotationHelper,
-		ODataMetaModel, Expression) {
+], function (jQuery, Log, SyncPromise, InvisibleText, BaseContext, JSONModel, Basics,
+		AnnotationHelper, ODataMetaModel, Expression) {
 	/*global QUnit, sinon */
 	/*eslint no-warning-comments: 0 */
 	"use strict";
@@ -122,12 +122,13 @@ sap.ui.define([
 	function check(assert, vRawValue, vResult, oMetaModel, oModel) {
 		var oContext = new BaseContext(oMetaModel, "/"),
 			// code under test
-			sColor = AnnotationHelper.value(vRawValue, {context : oContext}),
-			oIcon = new Icon({color: sColor, models : oModel});
+			sText = AnnotationHelper.value(vRawValue, {context : oContext}),
+			oInvisibleText = new InvisibleText({text: sText, models : oModel});
 
-		oIcon.bindObject("/");
-		assert.strictEqual(oIcon.getColor(), oIcon.validateProperty("color", vResult),
-			JSON.stringify(vRawValue) + " --> " + sColor);
+		oInvisibleText.bindObject("/");
+		assert.strictEqual(oInvisibleText.getText(),
+			oInvisibleText.validateProperty("text", vResult),
+			JSON.stringify(vRawValue) + " --> " + sText);
 	}
 
 	//*********************************************************************************************
