@@ -1675,7 +1675,28 @@ sap.ui.define([
 		return fnScanForPopup(this);
 	};
 
-	NavContainer.prototype.removePage = function (oPage) {
+	/**
+	 * Removes a page.
+	 *
+	 * @param {int | string | sap.ui.core.Control}
+	 *            vPage the position or ID of the <code>Control</control> that should be removed
+	 *            or that <code>Control</control> itself;
+	 *            if <code>vPage</code> is invalid, a negative value or a value greater or equal than the current size
+	 *            of the aggregation, nothing is removed.
+	 * @return {sap.ui.core.Control} the removed page or null
+	 * @protected
+	 * @override
+	 */
+	NavContainer.prototype.removePage = function (vPage) {
+		var oPage;
+		if (typeof (vPage) == "number") {
+			oPage = this.getPages()[vPage];
+		} else if (typeof (vPage) == "string") {
+			oPage = sap.ui.getCore().byId(vPage);
+		} else {
+			oPage = vPage;
+		}
+
 		// when removing a page that's not the currently displayed page, there's no need to invalidate the NavContainer
 		oPage = this.removeAggregation("pages", oPage, oPage !== this.getCurrentPage());
 

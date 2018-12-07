@@ -1789,6 +1789,82 @@ sap.ui.define([
 		localNc.to(page2.getId());
 	});
 
+	QUnit.test("Invalidation upon removePage", function(assert) {
+		var page1 = new Page({
+				title: "Page 1"
+			}),
+			localNc = new NavContainer({
+				initialPage: page1,
+				pages: [
+					page1
+				]
+			}),
+			oSpy = sinon.spy(localNc, "invalidate");
+
+		// Act
+		localNc.removePage(page1);
+
+		// Check
+		assert.strictEqual(oSpy.callCount, 1, "current page was invalidated");
+	});
+
+	QUnit.test("Invalidation upon removePage by id", function(assert) {
+		var page1 = new Page({
+				title: "Page 1"
+			}),
+			localNc = new NavContainer({
+				initialPage: page1,
+				pages: [
+					page1
+				]
+			}),
+			oSpy = sinon.spy(localNc, "invalidate");
+
+		// Act
+		localNc.removePage(page1.getId());
+
+		// Check
+		assert.strictEqual(oSpy.callCount, 1, "current page was invalidated");
+	});
+
+	QUnit.test("Invalidation upon removePage by index", function(assert) {
+		var page1 = new Page({
+				title: "Page 1"
+			}),
+			localNc = new NavContainer({
+				initialPage: page1,
+				pages: [
+					page1
+				]
+			}),
+		oSpy = sinon.spy(localNc, "invalidate");
+
+		// Act
+		localNc.removePage(0);
+
+		// Check
+		assert.strictEqual(oSpy.callCount, 1, "current page was invalidated");
+	});
+
+	QUnit.test("No invalidation upon removePage by invalid index", function(assert) {
+		var page1 = new Page({
+				title: "Page 1"
+			}),
+			localNc = new NavContainer({
+				initialPage: page1,
+				pages: [
+					page1
+				]
+			}),
+			oSpy = sinon.spy(localNc, "invalidate");
+
+		// Act: give invalid index as argument
+		localNc.removePage(1);
+
+		// Check
+		assert.strictEqual(oSpy.callCount, 0, "current page was not invalidated");
+	});
+
 	QUnit.module("NavContainer in Dialog", {
 		beforeEach: function () {
 			this.iDialogOpeningsCount = 0;
