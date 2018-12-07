@@ -4827,8 +4827,8 @@ sap.ui.define([
 		i = aKeys.length;
 		while ( i > 0 ) {
 			sKey = aKeys[--i];
-			//do not clone properties if property is bound and bindings are cloned; Property is set on update
-			if ( /*mProps.hasOwnProperty(sKey) && */ !(this.isBound(sKey) && bCloneBindings)) {
+			// Only clone public properties, do not clone bound properties if bindings are cloned (property will be set by binding)
+			if (oMetadata.hasProperty(sKey) && !(this.isBound(sKey) && bCloneBindings)) {
 				// Note: to avoid double resolution of binding expressions, we have to escape string values once again
 				if (typeof mProps[sKey] === "string") {
 					mSettings[sKey] = escape(mProps[sKey]);
@@ -4875,6 +4875,10 @@ sap.ui.define([
 
 			// Clone associations
 			for (sName in this.mAssociations) {
+				if ( !oMetadata.hasAssociation(sName) ) {
+					// skip non-public associations
+					continue;
+				}
 				var oAssociation = this.mAssociations[sName];
 				// Check every associated ID against the ID array, to make sure associations within
 				// the template are properly converted to associations within the clone
@@ -4891,6 +4895,7 @@ sap.ui.define([
 				mSettings[sName] = oAssociation;
 			}
 		}
+
 		// Create clone instance
 		oClone = new oClass(sId, mSettings);
 
