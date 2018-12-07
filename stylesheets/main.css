@@ -642,23 +642,12 @@ Download links and page
   transition-duration: 0.2s;
 }
 
-.beta.downloadbutton {
-  color: #009DE0;
-  border: 1px solid #009DE0;
-  background-color: white;
-}
-
 .downloadbutton:hover {
   color: white;
   text-decoration: none;
   background-color: #008fcc;
   transition-property: background-color;
   transition-duration: 0.2s;
-}
-
-.beta.downloadbutton:hover{
-  background-color: #f5f5f5;
-  color: #009DE0;
 }
 
 .downloadpage h3 {
