@@ -1089,8 +1089,9 @@ sap.ui.define([
 
 		setTimeout(function () {
 			this._resetAndInvalidateToolbar(false);
-			this._clearAllControlsCollections();
 		}.bind(this), 0);
+
+		this._clearAllControlsCollections();
 
 		return this._callToolbarMethod("destroyContent", arguments);
 	};

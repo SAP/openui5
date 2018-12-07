@@ -1736,6 +1736,24 @@ sap.ui.define([
 		oOverflowTB.destroy();
 	});
 
+
+	QUnit.test("[destroyContent] check for is overflowButton rendered after destroyContent execution", function (assert) {
+		var oOverflowTBbar = createOverflowToolbar({
+				width: "100%"
+			});
+
+		oOverflowTBbar.destroyContent();
+
+		for (var i = 0; i < 20; i++) {
+			oOverflowTBbar.addContent(new sap.m.Button({text: "Very long text for test"}));
+		}
+
+		this.clock.tick(500);
+		assert.equal(oOverflowTBbar._getOverflowButtonNeeded(), true, "Button should be displayed");
+		assert.equal(oOverflowTBbar.$().find("#" + oOverflowTBbar.getId() + "-overflowButton").length, 1, "Button was rendered");
+
+	});
+
 	QUnit.test("[onThemeChanged] resets also values in _aControlSizes object", function (assert) {
 		// Create a toolbar 550px wide with 5 buttons x 100px each, so all can fit (button margins included)
 		var aDefaultContent = [
