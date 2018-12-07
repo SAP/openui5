@@ -31,6 +31,7 @@ sap.ui.define([
 		minversion: "1.58",
 		title: "Preload Configuration",
 		description: "Checks whether the preload configuration was set correctly to async",
+		resolution: "Please execute this rule to get a specific solution based on the application's preload mode configuration.",
 		resolutionurls: [
 			{
 				text: "Performance: Speed Up Your App",
