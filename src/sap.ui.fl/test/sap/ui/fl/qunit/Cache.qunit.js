@@ -39,6 +39,14 @@ sap.ui.define([
 		});
 	}
 
+	function _createEntryMap(mChangesObject) {
+		return {
+			changes: {
+				changes: [ mChangesObject ]
+			}
+		};
+	}
+
 	QUnit.module("sap.ui.fl.Cache", function (hooks) {
 		hooks.beforeEach(function() {
 			Cache._entries = {};
@@ -147,13 +155,7 @@ sap.ui.define([
 
 		QUnit.test('addChange', function(assert) {
 			var sComponentName = "test";
-			var oEntry = {
-				changes: {
-					changes: [
-						{something: "1"}
-					]
-				}
-			};
+			var oEntry = _createEntryMap({something: "1"});
 			var oAddedEntry = {something: "2"};
 			var oChangesFromFirstCall;
 
@@ -177,13 +179,7 @@ sap.ui.define([
 				name : "testComponent",
 				appVersion : "1.2.3"
 			};
-			var oEntry = {
-				changes: {
-					changes: [
-						{something: "1"}
-					]
-				}
-			};
+			var oEntry = _createEntryMap({something: "1"});
 			var oAddedEntry = {something: "2"};
 			var oChangesFromFirstCall;
 
@@ -204,13 +200,7 @@ sap.ui.define([
 
 		QUnit.test('updateChange', function(assert) {
 			var sComponentName = "test";
-			var oEntry = {
-				changes: {
-					changes: [
-						{something: "1", fileName: "A"}
-					]
-				}
-			};
+			var oEntry = _createEntryMap({something: "1", fileName: "A"});
 			var oAddedEntry = {something: "2", fileName: "A"};
 
 			sandbox.stub(this.oLrepConnector, 'loadChanges').returns(Promise.resolve(oEntry));
@@ -231,13 +221,7 @@ sap.ui.define([
 				name : "testComponent",
 				appVersion : "1.2.3"
 			};
-			var oEntry = {
-				changes: {
-					changes: [
-						{something: "1", fileName: "A"}
-					]
-				}
-			};
+			var oEntry = _createEntryMap({something: "1", fileName: "A"});
 			var oAddedEntry = {something: "2", fileName: "A"};
 
 			sandbox.stub(this.oLrepConnector, 'loadChanges').returns(Promise.resolve(oEntry));
@@ -255,14 +239,7 @@ sap.ui.define([
 
 		QUnit.test('deleteChange', function(assert) {
 			var sComponentName = "test";
-			var oEntry = {
-				changes: {
-					changes: [
-						{something: "1", fileName: "A"}
-					]
-				}
-			};
-
+			var oEntry = _createEntryMap({something: "1", fileName: "A"});
 			var oAddedEntry = {something: "1", fileName: "A"};
 
 			sandbox.stub(this.oLrepConnector, 'loadChanges').returns(Promise.resolve(oEntry));
@@ -283,14 +260,7 @@ sap.ui.define([
 				name : "testComponent",
 				appVersion : "1.2.3"
 			};
-			var oEntry = {
-				changes: {
-					changes: [
-						{something: "1", fileName: "A"}
-					]
-				}
-			};
-
+			var oEntry = _createEntryMap({something: "1", fileName: "A"});
 			var oAddedEntry = {something: "1", fileName: "A"};
 
 			sandbox.stub(this.oLrepConnector, 'loadChanges').returns(Promise.resolve(oEntry));
@@ -305,10 +275,52 @@ sap.ui.define([
 			}.bind(this));
 		});
 
-		QUnit.test('getCacheKey a cache entry and current variant management-id are available', function(assert) {
+		QUnit.test('getCacheKey with invalid mComponent is called', function(assert) {
+			var mComponentMock = {};
+			var oAppComponentMock = {
+				getComponentData: function(){
+					return {
+						technicalParameters: {
+							"sap-ui-fl-control-variant-id" : ["control-variant-id-0"]
+						}
+					};
+				}
+			};
+			var oLogWarningSpy = sandbox.spy(Log, "warning");
+			return Cache.getCacheKey(mComponentMock, oAppComponentMock)
+			.then(function(sCacheKey) {
+				assert.ok(sCacheKey, "then cachekey is returned");
+				assert.equal(sCacheKey, Cache.NOTAG, "then cachekey returns <NoTag>");
+				assert.ok(oLogWarningSpy.calledOnce, "then warning message called once");
+			})
+			.catch(function(oErr) {
+				assert.notOk(true, "getCacheKey shouldn't reject execution: " + oErr);
+			});
+		});
+
+		QUnit.test('getCacheKey with invalid appComponent is called', function(assert) {
+			var mComponentMock = {
+				name : "testComponent",
+				appVersion : "testApplicationVersion"
+			};
+			var oAppComponentMock;
+			var oLogWarningSpy = sandbox.spy(Log, "warning");
+			return Cache.getCacheKey(mComponentMock, oAppComponentMock)
+			.then(function(sCacheKey) {
+				assert.ok(sCacheKey, "then cachekey is returned");
+				assert.equal(sCacheKey, Cache.NOTAG, "then cachekey returns <NoTag>");
+				assert.ok(oLogWarningSpy.calledOnce, "then warning message called once");
+			})
+			.catch(function(oErr) {
+				assert.notOk(true, "getCacheKey shouldn't reject execution: " + oErr);
+			});
+		});
+
+		QUnit.test('getCacheKey is called and cache entry and current variant management-id are available', function(assert) {
 			var sTestComponentName = "testComponent";
 			var sAppVersion = "oldVersion";
 			var sControlVariantId = "id_1541412437845_176_Copy";
+			var sCacheKeyResult = "<NoTag-id_1541412437845_176_Copy>";
 			Cache._entries = {
 				"testComponent" : {
 					"oldVersion" : {
@@ -316,9 +328,11 @@ sap.ui.define([
 					}
 				}
 			};
-			var oComponentMock = {
+			var mComponentMock = {
 				name : sTestComponentName,
-				appVersion : sAppVersion,
+				appVersion : sAppVersion
+			};
+			var oAppComponentMock = {
 				getComponentData: function(){
 					return {
 						technicalParameters: {
@@ -327,19 +341,39 @@ sap.ui.define([
 					};
 				}
 			};
-			var oEntry = {
-				changes: {
-					changes: [
-						{something: "1"}
-					]
-				}
-			};
+			var oEntry = _createEntryMap({something: "1"});
 			Cache._entries[sTestComponentName][sAppVersion].promise = Promise.resolve(oEntry);
 			sandbox.stub(this.oLrepConnector, 'loadChanges').returns(Promise.resolve(oEntry));
-			return Cache.getCacheKey(oComponentMock)
+			return Cache.getCacheKey(mComponentMock, oAppComponentMock)
 			.then(function(sCacheKey) {
 				assert.ok(sCacheKey, "then cachekey is returned");
-				assert.equal(sCacheKey, Cache.NOTAG + sControlVariantId, "then cachekey is extended by control variant id");
+				assert.equal(sCacheKey, sCacheKeyResult, "then cachekey is extended by control variant id");
+			});
+		});
+
+		QUnit.test('getCacheKey is called and cache entry, etag, and current variant management-id are available', function(assert) {
+			var sEtag = "abc123";
+			var sControlVariantId = "id_1541412437845_176_Copy";
+			var sCacheKeyResult = sEtag.concat('-', sControlVariantId);
+			var mComponentMock = {
+				name : "testComponent",
+				appVersion : "oldVersion"
+			};
+			var oAppComponentMock = {
+				getComponentData: function(){
+					return {
+						technicalParameters: {
+							"sap-ui-fl-control-variant-id" : [sControlVariantId]
+						}
+					};
+				}
+			};
+			var oWrappedChangeFileContentMock = { etag: sEtag };
+			sandbox.stub(Cache, "getChangesFillingCache").resolves(oWrappedChangeFileContentMock);
+			return Cache.getCacheKey(mComponentMock, oAppComponentMock)
+			.then(function(sCacheKey) {
+				assert.ok(sCacheKey, "then cachekey is returned");
+				assert.equal(sCacheKey, sCacheKeyResult, "then cachekey is extended by control variant id");
 			});
 		});
 
@@ -575,13 +609,7 @@ sap.ui.define([
 			var mPropertyBag = {
 				cacheKey: "<NO CHANGES>"
 			};
-			var oEntry = {
-				changes: {
-					changes: [
-						{something: "1"}
-					]
-				}
-			};
+			var oEntry = _createEntryMap({something: "1"});
 			Cache._entries[sTestComponentName][sAppVersion].promise = Promise.resolve(oEntry);
 
 			sandbox.stub(this.oLrepConnector, 'loadChanges').returns(Promise.resolve(oEntry));
@@ -640,13 +668,7 @@ sap.ui.define([
 			var mPropertyBag = {
 				cacheKey: "TEST"
 			};
-			var oEntry = {
-				changes: {
-					changes: [
-						{something: "1"}
-					]
-				}
-			};
+			var oEntry = _createEntryMap({something: "1"});
 			Cache._entries[sTestComponentName][sAppVersion].promise = Promise.resolve(oEntry);
 
 			sandbox.stub(this.oLrepConnector, 'loadChanges').returns(Promise.resolve(oEntry));
@@ -667,13 +689,7 @@ sap.ui.define([
 			var mPropertyBag = {
 				cacheKey: "TEST"
 			};
-			var oChange = {
-				changes: {
-					changes: [
-						{something: "1"}
-					]
-				}
-			};
+			var oChange = _createEntryMap({something: "1"});
 			sandbox.stub(this.oLrepConnector, 'loadChanges').returns(Promise.resolve(oChange));
 
 			return Cache.getChangesFillingCache(this.oLrepConnector, oComponent, mPropertyBag).then(function(oResult) {
@@ -688,13 +704,7 @@ sap.ui.define([
 				name : sTestComponentName,
 				appVersion : "newVersion"
 			};
-			var oEntry = {
-				changes: {
-					changes: [
-						{something: "1"}
-					]
-				}
-			};
+			var oEntry = _createEntryMap({something: "1"});
 			var oDefaultEntry = Cache._entries[sTestComponentName][Utils.DEFAULT_APP_VERSION];
 			var oOldEntry = Cache._entries[sTestComponentName]["oldVersion"];
 			var oAddedEntry = {something: "2"};
@@ -722,13 +732,7 @@ sap.ui.define([
 				name : sTestComponentName,
 				appVersion : "newVersion"
 			};
-			var oEntry = {
-				changes: {
-					changes: [
-						{something: "1", fileName: "A"}
-					]
-				}
-			};
+			var oEntry = _createEntryMap({something: "1", fileName: "A"});
 			var oDefaultEntry = Cache._entries[sTestComponentName][Utils.DEFAULT_APP_VERSION];
 			var oOldEntry = Cache._entries[sTestComponentName]["oldVersion"];
 			var oAddedEntry = {something: "2", fileName: "A"};
@@ -754,13 +758,7 @@ sap.ui.define([
 				name : sTestComponentName,
 				appVersion : "newVersion"
 			};
-			var oEntry = {
-				changes: {
-					changes: [
-						{something: "1", fileName: "A"}
-					]
-				}
-			};
+			var oEntry = _createEntryMap({something: "1", fileName: "A"});
 			var oDefaultEntry = Cache._entries[sTestComponentName][Utils.DEFAULT_APP_VERSION];
 			var oOldEntry = Cache._entries[sTestComponentName]["oldVersion"];
 			var oAddedEntry = {something: "1", fileName: "A"};

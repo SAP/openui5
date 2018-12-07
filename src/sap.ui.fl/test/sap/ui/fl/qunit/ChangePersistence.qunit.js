@@ -67,10 +67,15 @@ function (
 				etag: "abc123",
 				status: "success"
 			};
+			var oMockedAppComponent = {
+				getComponentData: function() {
+					return {};
+				}
+			};
 
 			sandbox.stub(Cache, "getChangesFillingCache").returns(Promise.resolve(oMockedWrappedContent));
 
-			return this.oChangePersistence.getCacheKey().then(function (oCacheKeyResponse) {
+			return this.oChangePersistence.getCacheKey(oMockedAppComponent).then(function (oCacheKeyResponse) {
 				assert.equal(oCacheKeyResponse, sChacheKey);
 			});
 		});
