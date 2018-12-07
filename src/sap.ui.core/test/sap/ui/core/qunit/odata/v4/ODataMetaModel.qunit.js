@@ -134,13 +134,19 @@ sap.ui.define([
 						"@UI.Importance" : {
 							"$EnumMember" : "UI.ImportanceType/High"
 						},
-						"$Type" : "UI.DataField",
+						"$Type" : "UI.DataFieldWithNavigationPath",
 						"Label" : "Team ID",
 						"Label@Common.Label" : "Team ID's Label",
+						"Target" : {
+							"$NavigationPropertyPath" : "TEAM_2_EMPLOYEES"
+						},
 						"Value" : {
 							"$Path" : "Team_Id"
 						}
 					}]
+				},
+				"tea_busi.TEAM/TEAM_2_EMPLOYEES" : {
+					"@Common.MinOccurs" : 1
 				},
 				"tea_busi.TEAM/Team_Id" : {
 					"@Common.Label" : "Team ID",
@@ -1059,6 +1065,7 @@ sap.ui.define([
 		"/OverloadedAction/@$ui5.overload" : sinon.match.array.deepEquals([aOverloadedAction[2]]),
 		"/OverloadedAction/@$ui5.overload/0" : aOverloadedAction[2],
 		// Note: trailing slash does not make a difference in "JSON" drill-down
+		"/OverloadedAction/@$ui5.overload/0/$ReturnType" : aOverloadedAction[2].$ReturnType,
 		"/OverloadedAction/@$ui5.overload/0/$ReturnType/" : aOverloadedAction[2].$ReturnType,
 		"/OverloadedAction/@$ui5.overload/0/$ReturnType/$Type" : "tea_busi.ComplexType_Salary",
 		"/OverloadedAction/" : mScope["tea_busi.ComplexType_Salary"],
@@ -1145,7 +1152,19 @@ sap.ui.define([
 		"/T€AMS@T€AMS/@sapui.name" : "@T€AMS", // no $Type inside @T€AMS, / makes no difference!
 		"/T€AMS@/@T€AMS/@sapui.name" : "@T€AMS", // dito
 		"/T€AMS/@UI.LineItem/0/@UI.Importance/@sapui.name" : "@UI.Importance", // in "JSON" mode
-		"/T€AMS/Team_Id@/@Common.Label@sapui.name" : "@Common.Label" // avoid indirection here!
+		"/T€AMS/Team_Id@/@Common.Label@sapui.name" : "@Common.Label", // avoid indirection here!
+		// .../$ ----------------------------------------------------------------------------------
+		"/$" : mScope, // @see #fetchData, but no clone
+		// "/$@sapui.name" --> "Unsupported path before @sapui.name"
+		"/T€AMS/$" : oContainerData["T€AMS"], // no $Type insertion here!
+		"/T€AMS/$@sapui.name" : "T€AMS",
+		"/T€AMS/@UI.LineItem/0/Value/$Path/" : mScope["name.space.Id"], // due to $Type insertion
+		"/T€AMS/@UI.LineItem/0/Value/$Path/@sapui.name" : "name.space.Id",
+		"/T€AMS/@UI.LineItem/0/Value/$Path/$" : oTeamData.Team_Id, // no $Type insertion here!
+		"/T€AMS/@UI.LineItem/0/Value/$Path/$@sapui.name" : "Team_Id",
+		"/T€AMS/TEAM_2_EMPLOYEES@Common.MinOccurs" : 1,
+		"/T€AMS/@UI.LineItem/0/Target/$NavigationPropertyPath@Common.MinOccurs" : 1 // OK
+		// "/T€AMS/@UI.LineItem/0/Target/$NavigationPropertyPath/$@Common.MinOccurs" : undefined
 	}, function (sPath, vResult) {
 		QUnit.test("fetchObject: " + sPath, function (assert) {
 			var oSyncPromise;
@@ -1201,7 +1220,10 @@ sap.ui.define([
 		// "@" to access to all annotations, e.g. for iteration
 		"/tea_busi.Worker/@/@missing",
 		// operations -----------------------------------------------------------------------------
-		"/VoidAction/"
+		"/VoidAction/",
+		// .../$ (only computed annotations make sense) -------------------------------------------
+		"/$@Common.MinOccurs",
+		"/T€AMS/@UI.LineItem/0/Target/$NavigationPropertyPath/$@Common.MinOccurs"
 	].forEach(function (sPath) {
 		QUnit.test("fetchObject: " + sPath + " --> undefined", function (assert) {
 			var oSyncPromise;
@@ -1303,6 +1325,7 @@ sap.ui.define([
 			"/tea_busi.FuGetEmployeeMaxAge/0@sapui.name" : "Unsupported path before @sapui.name",
 			"/tea_busi.TEAM/$Key/not.Found/@sapui.name" : "Unsupported path before @sapui.name",
 			"/GetEmployeeMaxAge/value@sapui.name" : "Unsupported path before @sapui.name",
+			"/$@sapui.name" : "Unsupported path before @sapui.name",
 			// Unsupported path after @sapui.name -------------------------------------------------
 			"/@sapui.name/foo" : "Unsupported path after @sapui.name",
 			"/$EntityContainer/T€AMS/@sapui.name/foo" : "Unsupported path after @sapui.name",
@@ -1322,7 +1345,11 @@ sap.ui.define([
 			// Unsupported overloads --------------------------------------------------------------
 			"/name.space.EmptyOverloads/" : "Unsupported overloads",
 			"/name.space.OverloadedAction/" : "Unsupported overloads",
-			"/name.space.OverloadedFunction/" : "Unsupported overloads"
+			"/name.space.OverloadedFunction/" : "Unsupported overloads",
+			// Unsupported path after $ -----------------------------------------------------------
+			"/T€AMS/@UI.LineItem/0/$/Value" : "Unsupported path after $", // in "JSON" mode
+			"/T€AMS/$/$Type" : "Unsupported path after $", // in OData mode
+			"/T€AMS/$/@@this.is.invalid" : "Unsupported path after $" // not a split segment
 		}, function (sPath, sWarning) {
 			QUnit.test("fetchObject fails: " + sPath + ", warn = " + bWarn, function (assert) {
 				var oSyncPromise;
@@ -1383,6 +1410,9 @@ sap.ui.define([
 	}, {
 		sPath : "/EMPLOYEES",
 		sSchemaChildName : "tea_busi.DefaultContainer"
+	}, {
+		sPath : "/T€AMS/@UI.LineItem/0/Value/$Path/$",
+		sSchemaChildName : "tea_busi.TEAM" // "Team_Id" is not part of this
 	}].forEach(function (oFixture) {
 		QUnit.test("fetchObject: " + oFixture.sPath + "@@...isMultiple", function (assert) {
 			var oContext,
