@@ -107,8 +107,6 @@ sap.ui.define([
 		if (oInfo.bAccessible) {
 			rm.writeAttribute("role", "menuitem");
 			rm.writeAttribute("aria-disabled", !bIsEnabled);
-			rm.writeAttribute("aria-posinset", oInfo.iItemNo);
-			rm.writeAttribute("aria-setsize", oInfo.iTotalItems);
 		}
 
 		// Left border
@@ -140,6 +138,8 @@ sap.ui.define([
 				disabled: !bIsEnabled,
 				multiline: false,
 				autocomplete: "none",
+				posinset: oInfo.iItemNo,
+				setsize: oInfo.iTotalItems,
 				labelledby: {value: /*oMenu.getId() + "-label " + */itemId + "-lbl", append: true}
 			});
 		}
