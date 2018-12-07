@@ -5,10 +5,11 @@
 
 /* Background animation element */
 .sapUiLocalBusyIndicatorAnimation > div::before {
-  background: saturate(lighten(@sapUiAccent6, 5), 20);
+	background: @sapUiContentIconColor;
+	animation-duration: 0ms;
 }
 
 /* Shadow animation element */
 .sapUiLocalBusyIndicatorAnimation > div::after {
-  box-shadow: inset 0px 0px 2px 1px saturate(lighten(@sapUiAccent6, 5), 20);
+	box-shadow: inset 0px 0px 0px 0px @sapUiContentIconColor;
 }

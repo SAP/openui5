@@ -3,6 +3,27 @@
 /* Fiori 3 theme                    */
 /* ================================ */
 
+@_sap_m_Tokenizer_OutlineOffset: 5px;
+
+.sapMTokenizer {
+	padding-left: 2 * @_sap_m_Tokenizer_OutlineOffset;
+	position: relative;
+	display: inline-block;
+	white-space: nowrap;
+	overflow: hidden;
+	box-sizing: border-box;
+}
+
+.sapMTokenizer .sapMToken {
+	margin-right: 0.3125rem;
+	max-width: calc(~"100% - 0.3125rem");
+}
+
+html.sap-desktop .sapMTokenizer:focus {
+	outline: 1px dotted @sapUiContentFocusColor;
+	outline-offset: -@_sap_m_Tokenizer_OutlineOffset;
+}
+
 html[data-sap-ui-browser^="ie"].sap-desktop, /* TODO remove after 1.62 version */
 html[data-sap-ui-browser^="ed"].sap-desktop {
 	.sapMTokenizer:focus {
