@@ -17,6 +17,7 @@ sap.ui.define([
 
 	var sClassName = "sap.ui.model.odata.v4.ODataPropertyBinding",
 		oEmptyQueryOptionsPromise = SyncPromise.resolve({}),
+		aImmutableEmptyArray = Object.freeze([]),
 		mSupportedEvents = {
 			AggregatedDataStateChange : true,
 			change : true,
@@ -346,6 +347,14 @@ sap.ui.define([
 	 */
 	ODataPropertyBinding.prototype.doFetchQueryOptions = function () {
 		return this.isRoot() ? SyncPromise.resolve(this.mQueryOptions) : oEmptyQueryOptionsPromise;
+	};
+
+	/**
+	 * @override
+	 * @see sap.ui.model.odata.v4.ODataBinding#getDependentBindings
+	 */
+	ODataPropertyBinding.prototype.getDependentBindings = function () {
+		return aImmutableEmptyArray;
 	};
 
 	/**

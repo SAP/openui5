@@ -1816,6 +1816,24 @@ sap.ui.define([
 	});
 
 	//*********************************************************************************************
+	QUnit.test("getDependentBindings", function (assert) {
+		var oBinding = this.oModel.bindProperty("/EMPLOYEES('1')/AGE"),
+			aDependentBindings;
+
+		// code under test
+		aDependentBindings = oBinding.getDependentBindings();
+
+		assert.deepEqual(aDependentBindings, []);
+		assert.strictEqual(oBinding.getDependentBindings(), aDependentBindings,
+			"share empty array");
+
+		assert.throws(function () {
+			aDependentBindings.push("foo");
+		});
+
+	});
+
+	//*********************************************************************************************
 	if (TestUtils.isRealOData()) {
 		//*****************************************************************************************
 		QUnit.test("PATCH an entity", function (assert) {

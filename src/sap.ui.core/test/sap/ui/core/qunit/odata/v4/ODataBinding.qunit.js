@@ -27,6 +27,7 @@ sap.ui.define([
 		asODataBinding.call(this);
 
 		jQuery.extend(this, {
+			getDependentBindings : function () {}, // implemented by all sub-classes
 			//Returns the metadata for the class that this object belongs to.
 			getMetadata : function () {
 				return {
@@ -1827,23 +1828,6 @@ sap.ui.define([
 		assert.throws(function () {
 			oBinding.checkBindingParameters({$$someName : "~"}, ["$$someName"]);
 		}, new Error("Unknown binding-specific parameter: $$someName"));
-	});
-
-	//*********************************************************************************************
-	QUnit.test("getDependentBindings", function (assert) {
-		var oBinding = new ODataBinding({
-				oModel : {
-					getDependentBindings : function () {}
-				}
-			}),
-			aDependentBindings = [];
-
-		this.mock(oBinding.oModel).expects("getDependentBindings")
-			.withExactArgs(sinon.match.same(oBinding))
-			.returns(aDependentBindings);
-
-		// code under test
-		assert.strictEqual(oBinding.getDependentBindings(), aDependentBindings);
 	});
 
 	//*********************************************************************************************

@@ -780,6 +780,14 @@ sap.ui.define([
 	 */
 
 	/**
+	 * @override
+	 * @see sap.ui.model.odata.v4.ODataBinding#getDependentBindings
+	 */
+	ODataContextBinding.prototype.getDependentBindings = function () {
+		return this.oModel.getDependentBindings(this);
+	};
+
+	/**
 	 * Returns the resolved path by calling {@link sap.ui.model.odata.v4.ODataModel#resolve} and
 	 * replacing all occurrences of "-1" with the corresponding key predicates.
 	 *

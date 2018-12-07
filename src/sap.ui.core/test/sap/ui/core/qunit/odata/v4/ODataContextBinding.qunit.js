@@ -2783,6 +2783,19 @@ sap.ui.define([
 	});
 
 	//*********************************************************************************************
+	QUnit.test("getDependentBindings", function (assert) {
+		var oBinding = this.bindContext("~path~"),
+			aDependentBindings = [];
+
+		this.mock(this.oModel).expects("getDependentBindings")
+			.withExactArgs(sinon.match.same(oBinding))
+			.returns(aDependentBindings);
+
+		// code under test
+		assert.strictEqual(oBinding.getDependentBindings(), aDependentBindings);
+	});
+
+	//*********************************************************************************************
 	if (TestUtils.isRealOData()) {
 		//*****************************************************************************************
 		QUnit.test("Action import on navigation property", function (assert) {

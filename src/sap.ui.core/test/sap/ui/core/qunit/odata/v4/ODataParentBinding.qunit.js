@@ -43,6 +43,7 @@ sap.ui.define([
 
 		jQuery.extend(this, {
 			oCachePromise : SyncPromise.resolve(), // mimic c'tor
+			getDependentBindings : function () {}, // implemented by all sub-classes
 			//Returns the metadata for the class that this object belongs to.
 			getMetadata : function () {
 				return {
