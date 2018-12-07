@@ -2003,7 +2003,7 @@ sap.ui.define([
 
 			if (!this._bRowsBeingBound) {
 				// Real unbind of rows.
-				this._updateTotalRowCount(true);
+				this._adjustToTotalRowCount();
 				if (this._bLazyRowCreationEnabled) {
 					this._updateRows(this.getVisibleRowCount(), TableUtils.RowsUpdateReason.Unbind);
 				}
@@ -2209,7 +2209,12 @@ sap.ui.define([
 		// since the tree gets only build once (as result of getContexts call). If first the fixed bottom row would
 		// be requested the analytical binding would build the tree twice.
 		aTmpContexts = this._getContexts(iStartIndex, this._computeRequestLength(iLength), iThreshold);
-		var iBindingLength = this._updateTotalRowCount(!bSuppressUpdate);
+
+		if (!bSuppressUpdate) {
+			this._adjustToTotalRowCount();
+		}
+
+		var iTotalRowCount = this._getTotalRowCount();
 
 		this._bContextsRequested = true;
 
@@ -2219,13 +2224,13 @@ sap.ui.define([
 
 		// request binding length after getContexts call to make sure that in case of tree binding and analytical binding
 		// the tree gets only built once (by getContexts call).
-		iMergeOffsetBottomRow = Math.min(iMergeOffsetBottomRow, Math.max(iBindingLength - iFixedBottomRowCount, 0));
+		iMergeOffsetBottomRow = Math.min(iMergeOffsetBottomRow, Math.max(iTotalRowCount - iFixedBottomRowCount, 0));
 		if (iFixedBottomRowCount > 0) {
 			// retrieve fixed bottom rows separately
 			// instead of just concatenating them to the existing contexts it must be made sure that they are put
 			// to the correct row index otherwise they would flip into the scroll area in case data gets requested for
 			// the scroll part.
-			aTmpContexts = this._getFixedBottomRowContexts(iFixedBottomRowCount, iBindingLength);
+			aTmpContexts = this._getFixedBottomRowContexts(iFixedBottomRowCount, iTotalRowCount);
 			fnMergeArrays(aContexts, aTmpContexts, iMergeOffsetBottomRow);
 		}
 
@@ -2240,46 +2245,28 @@ sap.ui.define([
 	};
 
 	/**
-	 * Updates the cached total number of rows (binding length) and stores it in <code>Table._iBindingLength</code>.
+	 * Updates the UI according to the current total row count.
 	 *
-	 * @param {boolean} [bUpdateUI=true] If set to <code>true</code>, the parts of the UI which are dependent on the total row count will
-	 *                                   be updated, if the total row count has changed.
-	 * @returns {int} The updated total row count.
 	 * @private
 	 */
-	Table.prototype._updateTotalRowCount = function(bUpdateUI) {
-		// If the binding length changes it must call updateAggregation (updateRows).
-		// Therefore it should be save to buffer the binding length here. This gives some performance advantage,
-		// especially for tree bindings using the TreeBindingAdapter, where a tree structure must be created to
-		// calculate the correct length.
-		if (this._iBindingLength === null) {
-			this._iBindingLength = 0; // Initialize the cached binding length.
-		}
-
+	Table.prototype._adjustToTotalRowCount = function() {
 		var oBinding = this.getBinding("rows");
-		var iNewTotalRowCount = oBinding ? oBinding.getLength() : 0;
+		var iTotalRowCount = this._getTotalRowCount();
+		var oScrollExtension = this._getScrollExtension();
 
-		if (this._iBindingLength !== iNewTotalRowCount) {
-			this._iBindingLength = iNewTotalRowCount;
+		if (this._iBindingLength !== iTotalRowCount) {
+			this._iBindingLength = iTotalRowCount;
+			this._updateFixedBottomRows();
+			oScrollExtension.updateVerticalScrollbarVisibility();
+			oScrollExtension.updateVerticalScrollHeight();
 
-			// If the binding length changes, some parts of the UI need to be updated.
-			if (bUpdateUI !== false) {
-				var oScrollExtension = this._getScrollExtension();
-
-				this._updateFixedBottomRows();
-				oScrollExtension.updateVerticalScrollbarVisibility();
-				oScrollExtension.updateVerticalScrollHeight();
-
-				if (!oBinding || !TableUtils.hasPendingRequests(this)) {
-					// A client binding -or- an $expand filled list binding does not fire dataReceived events. Therefore we need to update the no data area here.
-					// When the binding has been removed, the table might not be completely re-rendered (just the content). But the cached binding
-					// length changes. In this case the no data area needs to be updated.
-					this._updateNoData();
-				}
+			if (!oBinding || !TableUtils.hasPendingRequests(this)) {
+				// A client binding -or- an $expand filled list binding does not fire dataReceived events. Therefore we need to update the no data area here.
+				// When the binding has been removed, the table might not be completely re-rendered (just the content). But the cached binding
+				// length changes. In this case the no data area needs to be updated.
+				this._updateNoData();
 			}
 		}
-
-		return iNewTotalRowCount;
 	};
 
 	/**
@@ -2592,7 +2579,6 @@ sap.ui.define([
 	 * Returns the number of rows the <code>rows</code> aggregation is bound to.
 	 *
 	 * @returns {int} The total number of rows. Returns 0 if the <code>rows</code> aggregation is not bound.
-	 * @see sap.ui.table.Table#_updateTotalRowCount
 	 * @private
 	 */
 	Table.prototype._getTotalRowCount = function() {
@@ -3977,9 +3963,9 @@ sap.ui.define([
 		this._bPendingRequest = false;
 
 		// The AnalyticalBinding updates the length after it fires dataReceived, therefore the total row count will not change here. Later,
-		// when the contexts are retrieved in Table#_getRowContexts, the AnalyticalBinding updates the length and Table#_updateTotalRowCount
+		// when the contexts are retrieved in Table#_getRowContexts, the AnalyticalBinding updates the length and Table#_adjustToTotalRowCount
 		// will be called again and actually perform the update.
-		this._updateTotalRowCount(true);
+		this._adjustToTotalRowCount();
 
 		if (!TableUtils.hasPendingRequests(this)) {
 			// This timer should avoid flickering of the busy indicator and unnecessary updates of NoData in case a request will be sent

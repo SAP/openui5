@@ -3302,7 +3302,7 @@ sap.ui.define([
 		assert.equal(oTable._getFixedBottomRowContexts().length, 0, "FixedBottomRowContexts returned an empty array");
 		oTable.setFixedBottomRowCount(3);
 		assert.equal(oTable.getFixedBottomRowCount(), 3, "FixedBottomRowCount is set to 3");
-		assert.equal(oTable._getFixedBottomRowContexts(oTable.getFixedBottomRowCount(), oTable._updateTotalRowCount()).length, 3,
+		assert.equal(oTable._getFixedBottomRowContexts(oTable.getFixedBottomRowCount(), oTable._adjustToTotalRowCount()).length, 3,
 			"fixedBottomRowContexts returned non empty array when fixedBottomRowCount and bindingLength is set");
 		oTable._updateFixedBottomRows();
 		assert.equal(oTable.getFirstVisibleRow(), 0, "_updateFixedBottomRows() called with the updated fixedBottomRowCount");
@@ -3560,7 +3560,7 @@ sap.ui.define([
 		}
 
 		function testUpdateTotalRowCount(bNoDataVisible, sTestTitle) {
-			oTable._updateTotalRowCount(true);
+			oTable._adjustToTotalRowCount();
 			sap.ui.getCore().applyChanges();
 
 			testNoData(bNoDataVisible, sTestTitle);
