@@ -22,7 +22,7 @@ sap.ui.define([], function() {
 	 */
 	var fnIsPlainObject = function(obj) {
 		/*
-		 * The code in this function is taken from jQuery 3.1.1 "jQuery.extend" and got modified.
+		 * The code in this function is taken from jQuery 3.1.1 "jQuery.isPlainObject" and got modified.
 		 *
 		 * jQuery JavaScript Library v3.1.1
 		 * http://jquery.com/
