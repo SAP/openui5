@@ -2633,8 +2633,7 @@ sap.ui.define([
 			bShouldStick = this._shouldSnapHeaderOnScroll(iScrollTop),
 			bShouldPreserveHeaderInTitleArea = this._shouldPreserveHeaderInTitleArea(),
 			bScrolled = false,
-			oPreviousScrollState = this._oLastScrollState,
-			iScrollOffset = oPreviousScrollState ? (oPreviousScrollState.iScrollTop - iScrollTop) : 0;
+			oPreviousScrollState = this._oLastScrollState;
 
 		this._oLastScrollState = {
 			iScrollTop: iScrollTop,
@@ -2675,7 +2674,7 @@ sap.ui.define([
 
 				var iNewSpacerHeight = iSpacerHeight + iContentLengthChange;
 				this._$spacer.height(iNewSpacerHeight + "px"); // add extra space to compensate height loss
-				this._scrollTo($wrapper.scrollTop + iScrollOffset); // scroll back to the previous scroll top (to fallback from the visual offset of content)
+				this._scrollTo(oPreviousScrollState.iScrollTop); // scroll back to the previous scroll top (to fallback from the visual offset of content)
 				return;
 			}
 		}
