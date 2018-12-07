@@ -779,7 +779,7 @@ sap.ui.define([
 					// The FocusHandler triggers the "sapfocusleave" event in a timeout of 0ms after a blur event. To give the control in the cell
 					// enough time to react to the "sapfocusleave" event (e.g. sap.m.Input - changes its value), scrolling is performed
 					// asynchronously.
-					var bAllowSapFocusLeave = oCellInfo.type === CellType.DATACELL;
+					var bAllowSapFocusLeave = TableUtils.getCellInfo($Cell).type === CellType.DATACELL;
 					bScrolled = this._getScrollExtension().scroll(true, false, true, bAllowSapFocusLeave, function() {
 						if (bAllowSapFocusLeave) {
 							document.activeElement.blur();
@@ -908,7 +908,7 @@ sap.ui.define([
 					// The FocusHandler triggers the "sapfocusleave" event in a timeout of 0ms after a blur event. To give the control in the cell
 					// enough time to react to the "sapfocusleave" event (e.g. sap.m.Input - changes its value), scrolling is performed
 					// asynchronously.
-					var bAllowSapFocusLeave = oCellInfo.type === CellType.DATACELL;
+					var bAllowSapFocusLeave = TableUtils.getCellInfo($Cell).type === CellType.DATACELL;
 					bScrolled = this._getScrollExtension().scroll(false, false, true, bAllowSapFocusLeave, function() {
 						if (bAllowSapFocusLeave) {
 							document.activeElement.blur();
