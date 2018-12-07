@@ -43,10 +43,5 @@ function onLoad() {
 		//replace spaceholder with values from JSON
 		var aTemp = oStableVersion.version.split("\.");
 		var sNextVersion = aTemp[0] + "." + (parseInt(aTemp[1]) + 2);
-		var sNoUnstableVersion = sNoUnstableVersionTemplate.replace(/{{versionNext}}/g, sNextVersion);
-
-		oNoUnstableVersionElement.replaceWith(sNoUnstableVersion);
-		oNoUnstableVersionElement.css("display", "block");
-		oUnstableVersionElement.css("display", "none");
 	})
 }
