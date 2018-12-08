@@ -31,10 +31,20 @@ sap.ui.define([
 			this.getView().setModel(oViewModel, "view");
 			var oComponent = this.getOwnerComponent();
 			this._router = oComponent.getRouter();
-			this._router.getRoute("category").attachMatched(this._loadCategories, this);
-			this._router.getRoute("categoryPhone").attachMatched(this._loadCategories, this);
-			this._router.getRoute("productCart").attachMatched(this._loadCategories, this);
-			this._router.getRoute("product").attachMatched(this._loadCategories, this);
+			this._router.getRoute("category").attachMatched(this._onRouteMatched, this);
+			this._router.getRoute("productCart").attachMatched(this._onRouteMatched, this);
+			this._router.getRoute("product").attachMatched(this._onRouteMatched, this);
+		},
+
+		_onRouteMatched: function (oEvent) {
+			var bSmallScreen = this.getModel("appView").getProperty("/smallScreenMode"),
+				sRouteName = oEvent.getParameter("name");
+
+			// switch to first column in full screen mode for category route on small devices
+			this._setLayout(bSmallScreen && sRouteName === "category" ? "One" : "Two");
+
+			// load data and bind the view
+			this._loadCategories(oEvent);
 		},
 
 		_loadCategories: function(oEvent) {
@@ -108,22 +118,10 @@ sap.ui.define([
 		},
 
 		/**
-		 * Event handler to determine which list item is selected
-		 * @param {sap.ui.base.Event} oEvent the list select event
-		 */
-		onProductListSelect : function (oEvent) {
-			this._showProduct(oEvent);
-		},
-
-		/**
 		 * Event handler to determine which sap.m.ObjectListItem is pressed
 		 * @param {sap.ui.base.Event} oEvent the sap.m.ObjectListItem press event
 		 */
-		onProductListItemPress : function (oEvent) {
-			this._showProduct(oEvent);
-		},
-
-		_showProduct: function (oEvent) {
+		onProductDetails: function (oEvent) {
 			var oBindContext;
 			if (Device.system.phone) {
 				oBindContext = oEvent.getSource().getBindingContext();
@@ -136,10 +134,11 @@ sap.ui.define([
 
 			// keep the cart context when showing a product
 			var bCartVisible = this.getModel("appView").getProperty("/layout").startsWith("Three");
+			this._setLayout("Two");
 			this._router.navTo(bCartVisible ? "productCart" : "product", {
 				id: sCategoryId,
 				productId: sProductId
-			}, !Device.system.phone);
+			});
 
 			this._unhideMiddlePage();
 		},
@@ -304,6 +303,14 @@ sap.ui.define([
 			oSlider.setValue(oSlider.getMin());
 			oSlider.setValue2(oSlider.getMax());
 			oCustomFilter.setFilterCount(0);
+		},
+
+		/**
+		 * Always navigates back to category overview
+		 * @override
+		 */
+		onBack: function () {
+			this.getRouter().navTo("categories");
 		}
 	});
 });
