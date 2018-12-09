@@ -2872,13 +2872,15 @@ sap.ui.define([
 	};
 
 	/**
-	 * Returns the binding info for the given property or aggregation. The binding info contains information about path, binding object, format options,
-	 * sorter, filter etc. for the property or aggregation. As the binding object is only created when the model becomes available, the binding property may be
-	 * undefined.
+	 * Returns the binding info for the given property or aggregation.
 	 *
-	 * @param {string} sName the name of the property or aggregation
+	 * The binding info contains information about path, binding object, format options, sorter, filter etc.
+	 * for the property or aggregation. As the binding object is only created when the model becomes available,
+	 * the <code>binding</code> property may be undefined.
 	 *
-	 * @returns {object} the binding info object, containing at least a path or parts property
+	 * @param {string} sName Name of the property or aggregation
+	 *
+	 * @returns {object} A binding info object, containing at least a <code>path</code> or <code>parts</code> property
 	 *                   and, depending on the binding type, additional properties
 	 *
 	 * @protected
@@ -2893,20 +2895,42 @@ sap.ui.define([
 	};
 
 	/**
-	 * Bind the object to the referenced entity in the model, which is used as the binding context
-	 * to resolve bound properties or aggregations of the object itself and all of its children
-	 * relatively to the given path.
-	 * If a relative binding path is used, this will be applied whenever the parent context changes.
-	 * There is no difference between {@link sap.ui.core.Element#bindElement} and {@link sap.ui.base.ManagedObject#bindObject}.
-	 * @param {object} oBindingInfo the binding info object
-	 * @param {string} oBindingInfo.path the binding path
-	 * @param {object} [oBindingInfo.parameters] map of additional parameters for this binding
-	 * 		The supported parameters are listed in the corresponding model-specific implementation of <code>sap.ui.model.ContextBinding</code>.
-	 * @param {string} [oBindingInfo.model] name of the model
-	 * @param {boolean} [oBindingInfo.suspended] Whether the binding should be suspended
-	 * @param {object} [oBindingInfo.events] map of event listeners for the binding events
+	 * Bind the object to the referenced entity in the model.
 	 *
-	 * @return {sap.ui.base.ManagedObject} reference to the instance itself
+	 * The entity is used as the binding context to resolve bound properties or aggregations of the object itself
+	 * and all of its children relatively to the given path. If a relative binding path is used, it will be
+	 * evaluated anew whenever the parent context changes.
+	 *
+	 * Whenever the corresponding model becomes available or changes (either via a call to {@link #setModel setModel}
+	 * or propagated from a {@link #getParent parent}), its {@link sap.ui.model.Model#bindContext bindContext}
+	 * method will be called to create a new {@link sap.ui.model.ContextBinding ContextBinding} with the configured
+	 * binding options.
+	 *
+	 * There is no difference between <code>bindObject</code> and {@link sap.ui.core.Element#bindElement bindElement}.
+	 * Method <code>bindElement</code> was deprecated and renamed to <code>bindObject</code> when this kind of binding
+	 * was no longer limited to <code>sap.ui.core.Element</code>s.
+	 *
+	 * Also see {@link topic:91f05e8b6f4d1014b6dd926db0e91070 Context Binding} in the documentation.
+	 *
+	 * @param {object} oBindingInfo
+	 *            An object describing the binding
+	 * @param {string} oBindingInfo.path
+	 *            Path in the model to bind to, either an absolute path or relative to the binding context for the
+	 *            corresponding model; when the path contains a '&gt;' sign, the string preceding it will override
+	 *            the <code>model</code> property and the remainder after the '&gt;' will be used as binding path
+	 * @param {string} [oBindingInfo.model]
+	 *            Name of the model to bind against; when <code>undefined</code> or omitted, the default model is used
+	 * @param {object} [oBindingInfo.parameters=null]
+	 *            Map of additional parameters for this binding; the names and value ranges of the supported parameters
+	 *            depend on the model implementation, they should be documented with the <code>bindContext</code>
+	 *            method of the corresponding model class or with the model specific subclass of
+	 *            <code>sap.ui.model.ContextBinding</code>
+	 * @param {boolean} [oBindingInfo.suspended=false]
+	 *            Whether the binding should be suspended initially
+	 * @param {object} [oBindingInfo.events=null]
+	 *            Map of event handler functions keyed by the name of the binding events that they should be attached to
+	 * @returns {sap.ui.base.ManagedObject}
+	 *            Returns <code>this</code> to allow method chaining
 	 * @public
 	 */
 	ManagedObject.prototype.bindObject = function(oBindingInfo) {
@@ -2953,7 +2977,7 @@ sap.ui.define([
 	};
 
 	/**
-	 * Create object binding
+	 * Create object binding.
 	 *
 	 * @param {object} oBindingInfo The bindingInfo object
 	 * @private
@@ -3004,6 +3028,36 @@ sap.ui.define([
 	};
 
 	/**
+	 * Removes the defined binding context of this object, all bindings will now resolve
+	 * relative to the parent context again.
+	 *
+	 * @param {string} [sModelName] Name of the model to remove the context for.
+	 * @return {sap.ui.base.ManagedObject} Reference to the instance itself
+	 * @public
+	 */
+	ManagedObject.prototype.unbindObject = function(sModelName, /* internal use only */ _bSkipUpdateBindingContext) {
+		var oBindingInfo = this.mObjectBindingInfos[sModelName];
+		if (oBindingInfo) {
+			if (oBindingInfo.binding) {
+				oBindingInfo.binding.detachChange(oBindingInfo.modelChangeHandler);
+				oBindingInfo.binding.detachEvents(oBindingInfo.events);
+				if (this.refreshDataState) {
+					oBindingInfo.binding.detachAggregatedDataStateChange(oBindingInfo.dataStateChangeHandler);
+				}
+				oBindingInfo.binding.destroy();
+			}
+			delete this.mObjectBindingInfos[sModelName];
+			delete this.mElementBindingContexts[sModelName];
+			if ( !_bSkipUpdateBindingContext ) {
+				this.updateBindingContext(false, sModelName);
+				this.propagateProperties(sModelName);
+				this.fireModelContextChange();
+			}
+		}
+		return this;
+	};
+
+	/**
 	 * Bind the object to the referenced entity in the model, which is used as the binding context
 	 * to resolve bound properties or aggregations of the object itself and all of its children
 	 * relatively to the given path.
@@ -3031,46 +3085,21 @@ sap.ui.define([
 	};
 
 	/**
-	 * Removes the defined binding context of this object, all bindings will now resolve
-	 * relative to the parent context again.
-	 *
-	 * @param {string} [sModelName] name of the model to remove the context for.
-	 * @return {sap.ui.base.ManagedObject} reference to the instance itself
-	 * @public
-	 */
-	ManagedObject.prototype.unbindObject = function(sModelName, /* internal use only */ _bSkipUpdateBindingContext) {
-		var oBindingInfo = this.mObjectBindingInfos[sModelName];
-		if (oBindingInfo) {
-			if (oBindingInfo.binding) {
-				oBindingInfo.binding.detachChange(oBindingInfo.modelChangeHandler);
-				oBindingInfo.binding.detachEvents(oBindingInfo.events);
-				if (this.refreshDataState) {
-					oBindingInfo.binding.detachAggregatedDataStateChange(oBindingInfo.dataStateChangeHandler);
-				}
-				oBindingInfo.binding.destroy();
-			}
-			delete this.mObjectBindingInfos[sModelName];
-			delete this.mElementBindingContexts[sModelName];
-			if ( !_bSkipUpdateBindingContext ) {
-				this.updateBindingContext(false, sModelName);
-				this.propagateProperties(sModelName);
-				this.fireModelContextChange();
-			}
-		}
-		return this;
-	};
-
-	/**
 	 * Binds a property to the model.
 	 *
-	 * The Setter for the given property will be called with the value retrieved from the data model.
-	 * When the binding mode is <code>OneTime</code>, the property will be set only once. When it is
+	 * Whenever the corresponding model becomes available or changes (either via a call to {@link #setModel setModel}
+	 * or propagated from a {@link #getParent parent}), its {@link sap.ui.model.Model#bindProperty bindProperty}
+	 * method will be called to create a new {@link sap.ui.model.PropertyBinding PropertyBinding} with the configured
+	 * binding options.
+	 *
+	 * The Setter for the given property will be called by the binding with the value retrieved from the data
+	 * model. When the binding mode is <code>OneTime</code>, the property will be set only once. When it is
 	 * <code>OneWay</code>, the property will be updated whenever the corresponding data in the model changes.
 	 * In mode <code>TwoWay</code>, changes to the property (not originating in the model) will be
 	 * reported back to the model (typical use case: user interaction changes the value of a control).
 	 *
 	 * This is a generic method which can be used to bind any property to the model. A managed
-	 * object may flag any property in its metadata with <code>bindable="bindable"</code> to additionally
+	 * object may flag any property in its metadata with <code>bindable: "bindable"</code> to additionally
 	 * provide named methods to bind and unbind the corresponding property.
 	 *
 	 *
@@ -3107,17 +3136,21 @@ sap.ui.define([
 	 * will be given as <code>this</code> context. For formatters of binding parts in a composite
 	 * binding, this is not the case.
 	 *
+	 * Also see {@link topic:91f0652b6f4d1014b6dd926db0e91070 Property Binding} in the documentation.
+	 *
 	 * @param {string} sName
-	 *            Name of the property to bind
+	 *            Name of a public property to bind; public aggregations of cardinality 0..1 that have an alternative,
+	 *            simple type (e.g. "string" or "int") can also be bound with this method
 	 * @param {object} oBindingInfo
 	 *            Binding information
 	 * @param {string} oBindingInfo.path
-	 *            Path in the model to bind to, either an absolute path or relative to the binding
-	 *            context for the corresponding model
+	 *            Path in the model to bind to, either an absolute path or relative to the binding context for the
+	 *            corresponding model; when the path contains a '&gt;' sign, the string preceding it will override
+	 *            the <code>model</code> property and the remainder after the '&gt;' will be used as binding path
 	 * @param {string} [oBindingInfo.model]
-	 *            Name of the model to bind against or <code>undefined</code> for the default model
+	 *            Name of the model to bind against; when <code>undefined</code> or omitted, the default model is used
 	 * @param {boolean} [oBindingInfo.suspended]
-	 * 			  Whether the binding should be suspended
+	 * 			  Whether the binding should be suspended initially
 	 * @param {function} [oBindingInfo.formatter]
 	 *            Function to convert model data into a property value
 	 * @param {boolean} [oBindingInfo.useRawValues]
@@ -3148,16 +3181,21 @@ sap.ui.define([
 	 *            ignored when a type object is given
 	 * @param {sap.ui.model.BindingMode} [oBindingInfo.mode=Default]
 	 *            Binding mode to be used for this property binding (e.g. one way)
-	 * @param {object} [oBindingInfo.parameters]
-	 *            Map of parameters which is passed to the binding; the supported parameters are listed
-	 *            in the corresponding model-specific implementation of <code>sap.ui.model.PropertyBinding</code>.
+	 * @param {object} [oBindingInfo.parameters=null]
+	 *            Map of additional parameters for this binding; the names and value ranges of the supported
+	 *            parameters depend on the model implementation, they should be documented with the
+	 *            <code>bindProperty</code> method of the corresponding model class or with the model specific
+	 *            subclass of <code>sap.ui.model.PropertyBinding</code>
+	 * @param {object} [oBindingInfo.events=null]
+	 *            Map of event handler functions keyed by the name of the binding events that they should be attached to
 	 * @param {object[]} [oBindingInfo.parts]
 	 *            Array of binding info objects for the parts of a composite binding; the structure of
 	 *            each binding info is the same as described for the <code>oBindingInfo</code> as a whole.
 	 *
 	 *            <b>Note</b>: recursive composite bindings are currently not supported
 	 *
-	 * @return {sap.ui.base.ManagedObject} reference to the instance itself
+	 * @returns {sap.ui.base.ManagedObject}
+	 *            Returns <code>this</code> to allow method chaining
 	 * @public
 	 */
 	ManagedObject.prototype.bindProperty = function(sName, oBindingInfo, /* undocumented, old API only: */ _vFormat, _sMode) {
@@ -3523,30 +3561,75 @@ sap.ui.define([
 	/**
 	 * Bind an aggregation to the model.
 	 *
-	 * The bound aggregation will use the given template, clone it for each item
-	 * which exists in the bound list and set the appropriate binding context.
-	 * This is a generic method which can be used to bind any aggregation to the
-	 * model. A managed object may flag aggregations in the metamodel with
-	 * bindable="bindable" to get typed bind<i>Something</i> methods for those aggregations.
-	 * For more information on the <code>oBindingInfo.key</code> property and its usage, see {@link topic:7cdff73f308b4b10bdf7d83b7aba72e7 Extended Change Detection}
+	 * Whenever the corresponding model becomes available or changes (either via a call to {@link #setModel setModel}
+	 * or propagated from a {@link #getParent parent}), its {@link sap.ui.model.Model#bindList bindList} method will
+	 * be called to create a new {@link sap.ui.model.ListBinding ListBinding} with the configured binding options.
 	 *
-	 * @param {string} sName the aggregation to bind
-	 * @param {object} oBindingInfo the binding info
-	 * @param {string} oBindingInfo.path the binding path
-	 * @param {sap.ui.base.ManagedObject} oBindingInfo.template the template to clone for each item in the aggregation
-	 * @param {boolean} [oBindingInfo.suspended] Whether the binding should be suspended
-	 * @param {boolean} [oBindingInfo.templateShareable=true] option to enable that the template will be shared which means that it won't be destroyed or cloned automatically
-	 * @param {function} oBindingInfo.factory the factory function
-	 * @param {int} oBindingInfo.startIndex the first entry of the list to be created
-	 * @param {int} oBindingInfo.length the amount of entries to be created (may exceed the size limit of the model)
-	 * @param {sap.ui.model.Sorter|sap.ui.model.Sorter[]} [oBindingInfo.sorter] the initial sort order (optional)
-	 * @param {sap.ui.model.Filter[]} [oBindingInfo.filters] the predefined filters for this aggregation (optional)
-	 * @param {string|function} oBindingInfo.key the name of the key property or a function getting the context as only parameter to calculate a key for entries. This can be used to improve update behaviour in models, where a key is not already available.
-	 * @param {object} [oBindingInfo.parameters] a map of parameters which is passed to the binding.
-	 * The supported parameters are listed in the corresponding model-specific implementation of <code>sap.ui.model.ListBinding</code> or <code>sap.ui.model.TreeBinding</code>.
-	 * @param {function} [oBindingInfo.groupHeaderFactory] a factory function to generate custom group visualization (optional)
+	 * The bound aggregation will use the given template, clone it for each item which exists in the bound list and set
+	 * the appropriate binding context.
 	 *
-	 * @return {sap.ui.base.ManagedObject} reference to the instance itself
+	 * This is a generic method which can be used to bind any aggregation to the model. A class may flag aggregations
+	 * in its metadata with <code>bindable: "bindable"</code> to get typed <code>bind<i>Something</i></code> and
+	 * <code>unbind<i>Something</i></code> methods for those aggregations.
+	 *
+	 * Also see {@link topic:91f057786f4d1014b6dd926db0e91070 List Binding (Aggregation Binding)} in the documentation.
+	 *
+	 * For more information on the <code>oBindingInfo.key</code> property and its usage, see
+	 * {@link topic:7cdff73f308b4b10bdf7d83b7aba72e7 Extended Change Detection}.
+	 *
+	 * @param {string} sName
+	 *            Name of a public aggregation to bind
+	 * @param {object} oBindingInfo
+	 *            Binding info
+	 * @param {string} oBindingInfo.path
+	 *            Path in the model to bind to, either an absolute path or relative to the binding context for the
+	 *            corresponding model; when the path contains a '&gt;' sign, the string preceding it will override
+	 *            the <code>model</code> property and the remainder after the '&gt;' will be used as binding path
+	 * @param {string} [oBindingInfo.model]
+	 *            Name of the model to bind against; when <code>undefined</code> or omitted, the default model is used
+	 * @param {sap.ui.base.ManagedObject} [oBindingInfo.template]
+	 *            The template to clone for each item in the aggregation; either a template or a factory must be given
+	 * @param {boolean|undefined} [oBindingInfo.templateShareable=undefined]
+	 *            Whether the framework should assume that the application takes care of the lifecycle of the given
+	 *            template; when set to <code>true</code>, the template can be used in multiple bindings, either in
+	 *            parallel or over time, and the framework won't clone it when this <code>ManagedObject</code> is cloned;
+	 *            when set to <code>false</code>, the lifecycle of the template is bound to the lifecycle of the binding,
+	 *            when the aggregation is unbound or when this <code>ManagedObject</code> is destroyed, the template also
+	 *            will be destroyed, and when this  <code>ManagedObject</code> is cloned, the template will be cloned
+	 *            as well; the third option (<code>undefined</code>) only exists for compatibility reasons, its behavior
+	 *            is not fully reliable and it may leak the template
+	 * @param {function} [oBindingInfo.factory]
+	 *            A factory function that will be called to create an object for each item in the aggregation;
+	 *            this is an alternative to providing a template object and can be used when the objects should differ
+	 *            depending on the binding context; the factory function will be called with two parameters: an ID that
+	 *            should be used for the created object and the binding context for which the object has to be created;
+	 *            the function must return an object appropriate for the bound aggregation
+	 * @param {boolean} [oBindingInfo.suspended]
+	 *            Whether the binding should be suspended initially
+	 * @param {int} [oBindingInfo.startIndex]
+	 *            the first entry of the list to be created
+	 * @param {int} [oBindingInfo.length]
+	 *            The amount of entries to be created (may exceed the size limit of the model)
+	 * @param {sap.ui.model.Sorter|sap.ui.model.Sorter[]} [oBindingInfo.sorter]
+	 *            The initial sort order (optional)
+	 * @param {sap.ui.model.Filter[]} [oBindingInfo.filters]
+	 *            The predefined filters for this aggregation (optional)
+	 * @param {string|function} [oBindingInfo.key]
+	 *            Name of the key property or a function getting the context as only parameter to calculate a key
+	 *            for entries. This can be used to improve update behaviour in models, where a key is not already
+	 *            available.
+	 * @param {object} [oBindingInfo.parameters=null]
+	 *            Map of additional parameters for this binding; the names and value ranges of the supported
+	 *            parameters depend on the model implementation, they should be documented with the
+	 *            <code>bindList</code> method of the corresponding model class or with the model specific
+	 *            subclass of <code>sap.ui.model.ListBinding</code>
+	 * @param {function} [oBindingInfo.groupHeaderFactory]
+	 *            A factory function to generate custom group visualization (optional)
+	 * @param {object} [oBindingInfo.events=null]
+	 *            Map of event handler functions keyed by the name of the binding events that they should be attached to
+	 *
+	 * @returns {sap.ui.base.ManagedObject}
+	 *            Returns <code>this</code> to allow method chaining
 	 * @public
 	 */
 	ManagedObject.prototype.bindAggregation = function(sName, oBindingInfo) {
