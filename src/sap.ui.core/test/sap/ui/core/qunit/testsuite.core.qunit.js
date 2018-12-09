@@ -429,6 +429,9 @@ sap.ui.define(function() {
 					paths: {
 						"sap/ui/testlib": "test-resources/sap/ui/core/qunit/testdata/uilib/"
 					}
+				},
+				qunit: {
+					reorder: false
 				}
 			},
 			Hyphenation: {
