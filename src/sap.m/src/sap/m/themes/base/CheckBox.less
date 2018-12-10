@@ -20,6 +20,10 @@
 	}
 }
 
+html[data-sap-ui-browser^="ie"] .sapMCb {
+	overflow-y: hidden; // This prevents displaying a scrollbar in IE
+}
+
 .sapUiForm .sapMCb {
 	display: table-cell;
 }
