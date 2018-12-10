@@ -3300,18 +3300,10 @@ sap.ui.define([
 	};
 
 	/**
-	 * Interval for central interval timer.
+	 * Singleton instance
 	 * @private
 	 */
-	Core._I_INTERVAL = 200;
-
-	/**
-	 * Obsolete but kept for backward compatibility.
-	 * Note that the ResizeHandler has been required above, so we can access it here.
-	 * @private
-	 * @name sap.ui.core.ResizeHandler#I_INTERVAL
-	 */
-	ResizeHandler.prototype.I_INTERVAL = Core._I_INTERVAL;
+	var oIntervalTrigger;
 
 	/**
 	 * Registers a listener to the central interval timer.
@@ -3319,14 +3311,14 @@ sap.ui.define([
 	 * @param {function} fnFunction callback to be called periodically
 	 * @param {object} [oListener] optional context object to call the callback on.
 	 * @since 1.16.0
+	 * @deprecated Since 1.61. Use <code>IntervalTrigger.addListener()</code> from "sap/ui/core/IntervalTrigger" module.
 	 * @public
 	 */
 	Core.prototype.attachIntervalTimer = function(fnFunction, oListener) {
-		if (!this.oTimedTrigger) {
-			var IntervalTrigger = sap.ui.requireSync("sap/ui/core/IntervalTrigger");
-			this.oTimedTrigger = new IntervalTrigger(Core._I_INTERVAL);
+		if (!oIntervalTrigger) {
+			oIntervalTrigger = sap.ui.requireSync("sap/ui/core/IntervalTrigger");
 		}
-		this.oTimedTrigger.addListener(fnFunction, oListener);
+		oIntervalTrigger.addListener(fnFunction, oListener);
 	};
 
 	/**
@@ -3338,11 +3330,12 @@ sap.ui.define([
 	 * @param {function} fnFunction function to unregister
 	 * @param {object} [oListener] context object given during registration
 	 * @since 1.16.0
+	 * @deprecated Since 1.61. Use <code>IntervalTrigger.removeListener()</code> from "sap/ui/core/IntervalTrigger" module.
 	 * @public
 	 */
 	Core.prototype.detachIntervalTimer = function(fnFunction, oListener) {
-		if (this.oTimedTrigger) {
-			this.oTimedTrigger.removeListener(fnFunction, oListener);
+		if (oIntervalTrigger) {
+			oIntervalTrigger.removeListener(fnFunction, oListener);
 		}
 	};
 

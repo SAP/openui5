@@ -206,4 +206,33 @@ sap.ui.define([
 		}, 250);
 	});
 
+	QUnit.test("Singleton access", function(assert) {
+		var done = assert.async();
+		assert.expect(9);
+		assert.equal(typeof IntervalTrigger.addListener, "function", "must be a function");
+		assert.equal(typeof IntervalTrigger.removeListener, "function", "must be a function");
+		assert.equal(typeof IntervalTrigger.destroy, "undefined", "destroy must not be exposed since it modifies the global singleton");
+		assert.equal(typeof IntervalTrigger.setInterval, "undefined", "setInterval must not be exposed since it modifies the global singleton");
+
+		var oTasks = {};
+		oTasks.run = function() {
+			assert.ok(true, "internal task executed");
+		};
+		var oTaskSpy = this.spy(oTasks, "run");
+
+		var iExpectedCallCount = 0;
+		setTimeout(function() {
+			iExpectedCallCount = oTaskSpy.callCount;
+			assert.ok(iExpectedCallCount > 1, "Listener was called a second time by the iteration.");
+			IntervalTrigger.removeListener(oTasks.run);
+			setTimeout(function() {
+				assert.equal(oTaskSpy.callCount, iExpectedCallCount, "Listener was removed and not called again.");
+				oTaskSpy.restore();
+				done();
+			}, 300);
+		}, 300);
+
+		IntervalTrigger.addListener(oTasks.run);
+		assert.equal(oTaskSpy.callCount, 1, "Listener was called once after adding it.");
+	});
 });

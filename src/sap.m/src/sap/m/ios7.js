@@ -3,8 +3,8 @@
  */
 /*global window, document *///declare unusual global vars for JSLint/SAPUI5 validation
 
-sap.ui.define(["sap/ui/thirdparty/jquery"],
-	function(jQuery) {
+sap.ui.define(["sap/ui/core/IntervalTrigger", "sap/ui/thirdparty/jquery"],
+	function(IntervalTrigger, jQuery) {
 	"use strict";
 
 
@@ -13,7 +13,7 @@ sap.ui.define(["sap/ui/thirdparty/jquery"],
 			/**
 			 * IOS 7 behaves strange if the keyboard is open and you do an orientation change:
 			 * There will be a black space below the page and it will scroll away from the top in this case.
-			 * Thats why we scroll to the top on orientation change.
+			 * That's why we scroll to the top on orientation change.
 			 * We also need to catch blur since if you do orientation change with keyboard open, close the Keyboard, Open it on another input,
 			 * the black box will appear again. Since closing the keyboard will fire blur, we attach on this one.
 			 * @private
@@ -72,7 +72,7 @@ sap.ui.define(["sap/ui/thirdparty/jquery"],
 				return;
 			}
 
-			sap.ui.getCore().attachIntervalTimer(this._detectNavigationBar, this);
+			IntervalTrigger.addListener(this._detectNavigationBar, this);
 			this._bIntervallAttached = true;
 		};
 
@@ -81,7 +81,7 @@ sap.ui.define(["sap/ui/thirdparty/jquery"],
 				return;
 			}
 
-			sap.ui.getCore().detachIntervalTimer(this._detectNavigationBar, this);
+			IntervalTrigger.removeListener(this._detectNavigationBar, this);
 			this._bIntervallAttached = false;
 		};
 
