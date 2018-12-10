@@ -1621,14 +1621,25 @@ sap.ui.define([
 
 		$this.find(".sapUiTableNoOpacity").addBack().removeClass("sapUiTableNoOpacity");
 
-		if (this._bIsFlexItem || $this.closest(".sapUiLoSplitter").length) {
-			// a special workaround for the splitter control due to concurrence issues
+		if (this._bIsFlexItem) {
 			registerResizeHandler();
 		} else {
 			// Size changes of the parent happen due to adaptations of the table sizes. In order to first let the
 			// browser finish painting, the resize handler is registered in a promise. If this would be done synchronously,
 			// updateTableSizes would always run twice.
-			Promise.resolve().then(registerResizeHandler);
+			Promise.resolve().then(function() {
+				if (that.getVisibleRowCountMode() === VisibleRowCountMode.Auto) {
+					var iRowsToDisplay = that._calculateRowsToDisplay(that._determineAvailableSpace());
+
+					if (that.getVisibleRowCount() !== iRowsToDisplay) {
+						that._updateRows(iRowsToDisplay, sReason);
+					} else {
+						registerResizeHandler();
+					}
+				} else {
+					registerResizeHandler();
+				}
+			});
 		}
 	};
 
