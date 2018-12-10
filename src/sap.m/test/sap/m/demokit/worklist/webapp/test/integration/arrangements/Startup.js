@@ -23,9 +23,9 @@ sap.ui.define([
 			oOptions.delay = oOptions.delay || 1;
 
 			// configure mock server with the current options
-			var oMockserverInitialized = mockserver.init(oOptions);
+			var oMockServerInitialized = mockserver.init(oOptions);
 
-			this.iWaitForPromise(oMockserverInitialized);
+			this.iWaitForPromise(oMockServerInitialized);
 			// start the app UI component
 			this.iStartMyUIComponent({
 				componentConfig: {
@@ -36,7 +36,6 @@ sap.ui.define([
 				autoWait: oOptions.autoWait
 			});
 		},
-
 		iRestartTheAppWithTheRememberedItem : function (oOptions) {
 			var sObjectId;
 			this.waitFor({
@@ -45,14 +44,13 @@ sap.ui.define([
 				}
 			});
 
-			return this.waitFor({
+			this.waitFor({
 				success : function() {
 					oOptions.hash = "Objects/" + encodeURIComponent(sObjectId);
 					this.iStartMyApp(oOptions);
 				}
 			});
 		},
-
 		_clearSharedData: function () {
 			// clear shared metadata in ODataModel to allow tests for loading the metadata
 			ODataModel.mSharedData = { server: {}, service: {}, meta: {} };

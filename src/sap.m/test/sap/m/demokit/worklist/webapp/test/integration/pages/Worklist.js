@@ -7,15 +7,7 @@ sap.ui.define([
 	"sap/ui/test/matchers/PropertyStrictEquals",
 	"./Common",
 	"./shareOptions"
-], function(
-    Opa5,
-	Press,
-	EnterText,
-	AggregationLengthEquals,
-	AggregationFilled,
-	PropertyStrictEquals,
-	Common,
-	shareOptions) {
+], function(Opa5, Press, EnterText, AggregationLengthEquals, AggregationFilled, PropertyStrictEquals, Common, shareOptions) {
 	"use strict";
 
 	var sViewName = "Worklist",

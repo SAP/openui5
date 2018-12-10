@@ -1,16 +1,9 @@
-/* global location history */
-
 sap.ui.define([
 	"./BaseController",
 	"sap/ui/model/json/JSONModel",
 	"sap/ui/core/routing/History",
-	"sap/ui/demo/worklist/model/formatter"
-], function (
-	BaseController,
-	JSONModel,
-	History,
-	formatter
-) {
+	"../model/formatter"
+], function (BaseController, JSONModel, History, formatter) {
 	"use strict";
 
 	return BaseController.extend("sap.ui.demo.worklist.controller.Object", {

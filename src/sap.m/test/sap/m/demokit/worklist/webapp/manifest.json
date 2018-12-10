@@ -47,6 +47,7 @@
 			"async": true,
 			"id": "app"
 		},
+
 		"dependencies": {
 			"minUI5Version": "1.60.0",
 			"libs": {
@@ -55,10 +56,12 @@
 				"sap.f": {}
 			}
 		},
+
 		"contentDensities": {
 			"compact": true,
 			"cozy": true
 		},
+
 		"models": {
 			"i18n": {
 				"type": "sap.ui.model.resource.ResourceModel",
@@ -71,6 +74,7 @@
 				"preload": true
 			}
 		},
+
 		"routing": {
 			"config": {
 				"routerClass": "sap.m.routing.Router",
@@ -83,6 +87,7 @@
 				},
 				"async": true
 			},
+
 			"routes": [
 				{
 					"pattern": "",
@@ -95,6 +100,7 @@
 					"target": ["object"]
 				}
 			],
+
 			"targets": {
 				"worklist": {
 					"viewName": "Worklist",
