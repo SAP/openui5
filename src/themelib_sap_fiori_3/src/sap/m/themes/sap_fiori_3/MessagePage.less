@@ -3,6 +3,27 @@
 /* Fiori 3 theme                      */
 /* ================================== */
 
-.sapMMessagePage .sapMMessagePageInner .sapUiIcon::before {
-	color: fade(@sapUiContentNonInteractiveIconColor, 50);
+/* MessagePage inner controls styles*/
+.sapMMessagePage {
+	.sapMMessagePageInner {
+		.sapUiIcon::before {
+			color: fade(@sapUiContentNonInteractiveIconColor,50);
+		}
+	}
+
+	.sapMMessagePageMainText {
+		font-size: @sapMFontHeader2Size;
+		color: @sapUiGroupTitleTextColor;
+		margin: 1rem 0;
+	}
+
+	.sapMMessagePageDescription {
+		font-size: @sapMFontHeader5Size;
+		margin-top: 0;
+		margin-bottom: 2rem;
+
+		.sapMLnk {
+			font-size: @sapMFontHeader5Size;
+		}
+	}
 }
