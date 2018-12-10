@@ -3,9 +3,7 @@
 		xmlns:mvc="sap.ui.core.mvc"
 		xmlns:f="sap.f"
 		displayBlock="true">
-
 	<Page title="{i18n>appTitle}">
-
 		<subHeader>
 			<Toolbar>
 				<ToolbarSpacer/>
@@ -13,9 +11,7 @@
 				<ToolbarSpacer/>
 			</Toolbar>
 		</subHeader>
-
 		<content>
-
 			<Panel>
 				<f:SAPCard class="sapUiMediumMargin" id="lineChart" manifest="{manifests>/analyticalContent/line}" height="auto" width="700px"/>
 				<f:SAPCard class="sapUiMediumMargin" id="stackedBarChart" manifest="{manifests>/analyticalContent/stackedBar}"  height="auto" width="700px"/>
