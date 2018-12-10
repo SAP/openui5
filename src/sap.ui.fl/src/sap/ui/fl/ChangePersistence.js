@@ -1250,18 +1250,25 @@ sap.ui.define([
 							return this._oTransportSelection.setTransports(aChanges, Component.get(this.getComponentName()));
 						}
 					}.bind(this))
-						.then(function() {
-							var sUriOptions =
-								"?reference=" + this.getComponentName() +
-								"&appVersion=" + this._mComponent.appVersion +
-								"&layer=" + sLayer +
-								"&generator=" + sGenerator;
-							if (aChanges.length > 0) {
-								sUriOptions = sUriOptions + "&changelist=" + aChanges[0].getRequest();
+					.then(function() {
+						var sUriOptions =
+							"?reference=" + this.getComponentName() +
+							"&appVersion=" + this._mComponent.appVersion +
+							"&layer=" + sLayer +
+							"&generator=" + sGenerator;
+						//Make sure we include one request in case of mixed changes (local and transported)
+						var sChangeList = "";
+						aChanges.some(function(oChange) {
+							if (oChange.getRequest()) {
+								sChangeList = oChange.getRequest();
+								return true;
 							}
+							return false;
+						});
+						sUriOptions = sUriOptions + "&changelist=" + sChangeList;
 
-							return this._oConnector.send("/sap/bc/lrep/changes/" + sUriOptions, "DELETE");
-						}.bind(this));
+						return this._oConnector.send("/sap/bc/lrep/changes/" + sUriOptions, "DELETE");
+					}.bind(this));
 			}.bind(this));
 	};
 

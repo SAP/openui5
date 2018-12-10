@@ -2458,7 +2458,79 @@ function (
 			});
 		});
 
-		QUnit.test("when calling resetChanges", function (assert) {
+		QUnit.test("when calling resetChanges in VENDOR layer with mix content of $TMP and transported changes", function (assert) {
+			var done = assert.async();
+			var oMockTransportInfo = {
+				packageName : "PackageName",
+				transport : "transportId"
+			};
+			// changes for the component
+			var oVENDORChange1 = new Change({
+				"fileType": "change",
+				"layer": "VENDOR",
+				"fileName": "a",
+				"namespace": "b",
+				"packageName": "$TMP",
+				"changeType": "labelChange",
+				"creation": "",
+				"reference": "",
+				"selector": {
+					"id": "abc123"
+				},
+				"content": {
+					"something": "createNewVariant"
+				}
+			});
+
+			var oVENDORChange2 = new Change({
+				"fileType": "change",
+				"layer": "VENDOR",
+				"fileName": "a",
+				"namespace": "b",
+				"packageName": "c",
+				"changeType": "labelChange",
+				"creation": "",
+				"reference": "",
+				"selector": {
+					"id": "abc123"
+				},
+				"content": {
+					"something": "createNewVariant"
+				}
+			});
+
+			var aChanges = [oVENDORChange1, oVENDORChange2];
+			sandbox.stub(this.oChangePersistence, "getChangesForComponent").returns(Promise.resolve(aChanges));
+
+			// Settings in registry
+			var oSetting = {
+				isKeyUser: true,
+				isAtoAvailable: false,
+				isProductiveSystem: function() {return false;},
+				hasMergeErrorOccured: function() {return false;},
+				isAtoEnabled: function() {return false;}
+			};
+			sandbox.stub(sap.ui.fl.registry.Settings, "getInstance").returns(Promise.resolve(oSetting));
+
+			// LREP Connector
+			var sExpectedUri = "/sap/bc/lrep/changes/" +
+				"?reference=MyComponent" +
+				"&appVersion=1.2.3" +
+				"&layer=VENDOR" +
+				"&generator=Change.createInitialFileContent" +
+				"&changelist=transportId";
+			var oLrepStub = sandbox.stub(this.oChangePersistence._oConnector, "send").returns(Promise.resolve());
+			var fnOpenTransportSelectionStub = sandbox.stub(this.oChangePersistence._oTransportSelection, "openTransportSelection").returns(Promise.resolve(oMockTransportInfo));
+
+			this.oChangePersistence.resetChanges("VENDOR", "Change.createInitialFileContent").then(function() {
+				assert.ok(fnOpenTransportSelectionStub.calledOnce, "then openTransportSelection called once");
+				assert.ok(oLrepStub.calledOnce, "the LrepConnector is called once");
+				assert.equal(oLrepStub.args[0][0], sExpectedUri, "and with the correct URI");
+				done();
+			});
+		});
+
+		QUnit.test("when calling resetChanges in CUSTOMER layer with ATO_NOTIFICATION", function (assert) {
 			var done = assert.async();
 
 			// changes for the component
@@ -2479,7 +2551,7 @@ function (
 				}
 			});
 
-			var oVendorChange1 = new Change({
+			var oCUSTOMERChange1 = new Change({
 				"fileType": "change",
 				"layer": "CUSTOMER",
 				"fileName": "a",
@@ -2496,7 +2568,7 @@ function (
 				}
 			});
 
-			var oVendorChange2 = new Change({
+			var oCUSTOMERChange2 = new Change({
 				"fileType": "change",
 				"layer": "CUSTOMER",
 				"fileName": "a",
@@ -2513,7 +2585,7 @@ function (
 				}
 			});
 
-			var aChanges = [oVendorChange1, oUserChange, oVendorChange2];
+			var aChanges = [oCUSTOMERChange1, oUserChange, oCUSTOMERChange2];
 			sandbox.stub(this.oChangePersistence, "getChangesForComponent").returns(Promise.resolve(aChanges));
 
 			// Settings in registry
