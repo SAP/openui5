@@ -25,6 +25,36 @@
 		}
     },
 	"sap.card": {
-		"type": "Custom"
+		"type": "List",
+		"header": {
+			"title": "Request list content Card",
+			"subtitle": "Card Subtitle",
+			"icon":  {
+				"src": "sap-icon://accept"
+			},
+			"status": "100 of 200"
+		},
+		"content": {
+			"type": "List",
+			"data": {
+				"request": {
+					"url": "./cardcontent/someitems.json"
+				}
+			},
+			"item": {
+				"icon": {
+				"label": "{{icon_label}}",
+				"value": "{icon}"
+				},
+				"title": {
+				"label": "{{title_label}}",
+				"value": "{Name}"
+				},
+				"description": {
+				"label": "{{description_label}}",
+				"value": "{Description}"
+				}
+			}
+		}
 	}
 }

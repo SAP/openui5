@@ -7,7 +7,7 @@ sap.ui.define(['sap/ui/core/Control', 'sap/ui/model/json/JSONModel', 'sap/m/Flex
 		"use strict";
 
 		/**
-		 * Constructor for a new <code>Analytical</code>.
+		 * Constructor for a new <code>AnalyticalContent</code>.
 		 *
 		 * @param {string} [sId] ID for the new control, generated automatically if no ID is given
 		 * @param {object} [mSettings] Initial settings for the new control
@@ -30,14 +30,15 @@ sap.ui.define(['sap/ui/core/Control', 'sap/ui/model/json/JSONModel', 'sap/m/Flex
 		 * @experimental
 		 * @since 1.60
 		 * @see {@link TODO Card}
-		 * @alias sap.f.cards.content.Analytical
+		 * @alias sap.f.cards.AnalyticalContent
 		 */
-		var Analytical = Control.extend("sap.f.cards.content.Analytical", {
+		var AnalyticalContent = Control.extend("sap.f.cards.AnalyticalContent", {
 			metadata: {
 				properties: {
 					chart: {
 						type: "object"
-					}
+					},
+					manifestContent: { type: "object" }
 				},
 				aggregations: {
 					_content: { multiple: false, visibility: "hidden" }
@@ -48,14 +49,27 @@ sap.ui.define(['sap/ui/core/Control', 'sap/ui/model/json/JSONModel', 'sap/m/Flex
 			}
 		});
 
-		Analytical.prototype.init = function () {
+		AnalyticalContent.prototype.init = function () {
 
 			var oModel = new JSONModel();
 			this.setModel(oModel);
 
 		};
 
-		Analytical.prototype.exit = function () {
+		AnalyticalContent.prototype.setManifestContent = function (oContent) {
+
+			this.setProperty("manifestContent", oContent);
+
+			if (!oContent) {
+				return;
+			}
+
+			if (oContent.chart) {
+				this._setChart(oContent.chart);
+			}
+		};
+
+		AnalyticalContent.prototype.exit = function () {
 			if (this._oChart) {
 				this._oChart.destroy();
 				this._oChart = null;
@@ -65,16 +79,17 @@ sap.ui.define(['sap/ui/core/Control', 'sap/ui/model/json/JSONModel', 'sap/m/Flex
 				this.oFlattendedDataset.destroy();
 				this.oFlattendedDataset = null;
 			}
-
-
 		};
 
-		Analytical.prototype.setChart = function (oChartObject) {
+		AnalyticalContent.prototype.setChart = function (oChartObject) {
 			this.setProperty("chart", oChartObject, true);
-			//interpret chart
+			this._setChart(oChartObject);
+			return this;
+		};
 
+		AnalyticalContent.prototype._setChart = function (oChartObject) {
 			if (!oChartObject) {
-				return this;
+				return;
 			}
 
 			//handling the request
@@ -91,13 +106,9 @@ sap.ui.define(['sap/ui/core/Control', 'sap/ui/model/json/JSONModel', 'sap/m/Flex
 					// TODO: Handle errors. Maybe add error message
 				});
 			}
-
-
-			return this;
-
 		};
 
-		Analytical.prototype._updateModel = function (oData, sPath, oChartObject) {
+		AnalyticalContent.prototype._updateModel = function (oData, sPath, oChartObject) {
 			var sChartType = oChartObject.type;
 
 			this.getModel().setData(oData);
@@ -156,5 +167,5 @@ sap.ui.define(['sap/ui/core/Control', 'sap/ui/model/json/JSONModel', 'sap/m/Flex
 			this.setAggregation("_content", this._oChart);
 		};
 
-		return Analytical;
+		return AnalyticalContent;
 	});

@@ -2,6 +2,6 @@
           xmlns="sap.m" xmlns:html="http://www.w3.org/1999/xhtml"
           width="100%">
 
-	<Text text="A simple text content"></Text>
+	<Text class="sapUiMediumMargin" text="Hello from the root View of the Component"></Text>
 
 </mvc:View>

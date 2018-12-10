@@ -7,23 +7,28 @@ sap.ui.define([],
 	function () {
         "use strict";
 
-        var KpiRenderer = {};
+        var KpiHeaderRenderer = {};
 
 		/**
 		 * Render a kpi header.
 		 *
 		 * @param {sap.ui.core.RenderManager} oRm The RenderManager that can be used for writing to the render output buffer
-		 * @param {sap.f.cards.header.KPI} oControl An object representation of the control that should be rendered
+		 * @param {sap.f.cards.KpiHeader} oControl An object representation of the control that should be rendered
 		 */
-		KpiRenderer.render = function (oRm, oControl) {
+		KpiHeaderRenderer.render = function (oRm, oControl) {
+			oRm.write("<header");
+			oRm.addClass("sapFCardHeader");
+			oRm.writeClasses();
+			oRm.write(">");
+
 			oRm.write("<div");
 			oRm.addClass("sapFCardHeaderKpi");
 			oRm.writeClasses();
 			oRm.write(">");
 
-			KpiRenderer.renderHeaderText(oRm, oControl);
+			KpiHeaderRenderer.renderHeaderText(oRm, oControl);
 
-			KpiRenderer.renderIndicators(oRm, oControl);
+			KpiHeaderRenderer.renderIndicators(oRm, oControl);
 
 			var oDetails = oControl.getAggregation("_details");
 			if (oDetails) {
@@ -32,6 +37,7 @@ sap.ui.define([],
 			}
 
 			oRm.write("</div>");
+			oRm.write("</header>");
 		};
 
 		/**
@@ -40,7 +46,7 @@ sap.ui.define([],
 		 * @param {sap.ui.core.RenderManager} oRm The RenderManager that can be used for writing to the render output buffer
 		 * @param {sap.f.cards.header.KPI} oControl An object representation of the control that should be rendered
 		 */
-		KpiRenderer.renderHeaderText = function(oRm, oControl) {
+		KpiHeaderRenderer.renderHeaderText = function(oRm, oControl) {
 			var oTitle = oControl.getAggregation("_title"),
 				oSubtitle = oControl.getAggregation("_subtitle"),
 				oUnitOfMeasurement = oControl.getAggregation("_unitOfMeasurement");
@@ -83,7 +89,7 @@ sap.ui.define([],
 		 * @param {sap.ui.core.RenderManager} oRm The RenderManager that can be used for writing to the render output buffer
 		 * @param {sap.f.cards.header.KPI} oControl An object representation of the control that should be rendered
 		 */
-		KpiRenderer.renderIndicators = function(oRm, oControl) {
+		KpiHeaderRenderer.renderIndicators = function(oRm, oControl) {
 			var oMainIndicator = oControl.getAggregation("_mainIndicator"),
 				oSideIndicators = oControl.getAggregation("_sideIndicators");
 
@@ -112,5 +118,5 @@ sap.ui.define([],
 			oRm.write("</div>");
 		};
 
-		return KpiRenderer;
+		return KpiHeaderRenderer;
 	}, /* bExport= */ true);

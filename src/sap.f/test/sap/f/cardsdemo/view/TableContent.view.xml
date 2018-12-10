@@ -17,7 +17,7 @@
         <content>
 
             <Panel>
-                <f:Card id="tablecard1" manifest="{manifests>/tableManifests/tablecard1}" width="400px" height="auto"/>
+                <f:SAPCard id="tablecard1" manifest="{manifests>/tableManifests/tablecard1}" width="400px" height="auto"/>
             </Panel>
         </content>
     </Page>
