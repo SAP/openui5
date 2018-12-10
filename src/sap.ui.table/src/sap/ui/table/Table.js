@@ -3850,7 +3850,7 @@ sap.ui.define([
 	 * @private
 	 */
 	Table.prototype._toggleSelectAll = function() {
-		if (!TableUtils.hasData(this)) {
+		if (!TableUtils.hasData(this) || this.getSelectionMode() !== SelectionMode.MultiToggle) {
 			return;
 		}
 

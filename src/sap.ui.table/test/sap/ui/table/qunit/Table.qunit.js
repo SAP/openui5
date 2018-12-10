@@ -3285,6 +3285,28 @@ sap.ui.define([
 		assert.equal(oTable._clearTextSelection(), window.getSelection().removeAllRanges(), "Text selection is cleared");
 	});
 
+	QUnit.test("test _toggleSelectAll function", function(assert) {
+		oTable.clearSelection();
+		oTable.setSelectionMode(SelectionMode.None);
+		oTable._toggleSelectAll();
+		assert.deepEqual(oTable.getSelectedIndices(), [], "Selection was not changed if SelectionMode is None");
+
+		oTable.setSelectionMode(SelectionMode.Single);
+		oTable._toggleSelectAll();
+		assert.deepEqual(oTable.getSelectedIndices(), [], "Selection was not changed if SelectionMode is Single");
+
+		oTable.setSelectedIndex(1);
+		oTable._toggleSelectAll();
+		assert.deepEqual(oTable.getSelectedIndices(), [1], "Selection was not changed if SelectionMode is Single");
+
+		oTable.setSelectionMode(SelectionMode.MultiToggle);
+		oTable._toggleSelectAll();
+		assert.ok(TableUtils.areAllRowsSelected(oTable), "All rows selected if not all rows were selected and SelectionMode is MultiToggle");
+
+		oTable._toggleSelectAll();
+		assert.ok(!TableUtils.areAllRowsSelected(oTable), "All rows deselected if all rows were selected and SelectionMode is MultiToggle");
+	});
+
 	QUnit.test("Check for tooltip", function(assert) {
 		oTable.setTooltip("Table Tooltip");
 		assert.strictEqual(oTable.getTooltip(), "Table Tooltip", "Table tooltip set correctly");
