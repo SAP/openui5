@@ -1,7 +1,12 @@
 
-/* global QUnit */
-sap.ui.define(["sap/ui/qunit/utils/createAndAppendDiv", "sap/ui/testlib/TestButton", "sap/ui/core/HTML"],
-function(createAndAppendDiv, TestButton, HTML) {
+/* global QUnit, sinon */
+sap.ui.define([
+	"sap/ui/qunit/utils/createAndAppendDiv",
+	"sap/ui/core/UIArea",
+	"sap/ui/testlib/TestButton",
+	"sap/ui/core/HTML",
+	"sap/base/Log"
+], function(createAndAppendDiv, UIArea, TestButton, HTML, Log) {
 	"use strict";
 
 	createAndAppendDiv("uiArea1");
@@ -20,6 +25,10 @@ function(createAndAppendDiv, TestButton, HTML) {
 	var html3 = new HTML("html3", {
 		content: "<div style='background-color:red; width:64px;height:64px;'></div>"
 	});
+
+
+
+	QUnit.module("Rendering");
 
 	/**
 	 * Adds two controls to an empty UIArea and renders it.
@@ -171,4 +180,81 @@ function(createAndAppendDiv, TestButton, HTML) {
 		assert.equal($preserved[0].parentNode.id, "sap-ui-preserve", "preserved DOM is in preserve area");
 
 	});
+
+
+
+	QUnit.module("Event Handling", {
+		beforeEach: function() {
+			this.oButton = new TestButton().placeAt("uiArea1");
+			sap.ui.getCore().applyChanges();
+			this.spy(Log, "debug");
+			this.fakeEvent = function fakeEvent(type) {
+				return new jQuery.Event(new jQuery.Event(type), { target: this.oButton.getDomRef() });
+			};
+			this.hasBeenLogged = function hasBeenLogged(oEvent, oElement) {
+				return Log.debug.calledWith(
+					sinon.match(/Event fired:/).and(sinon.match(oEvent.type).and(sinon.match(oElement.toString()))));
+			};
+		},
+		afterEach: function() {
+			this.oButton.destroy();
+		}
+	});
+
+	QUnit.test("Logging (default config, normal event)", function(assert) {
+		// Prepare
+		var oEvent = this.fakeEvent("click");
+
+		// Act
+		this.oButton.getUIArea()._handleEvent(oEvent);
+
+		// assert
+		assert.ok(this.hasBeenLogged(oEvent, this.oButton), "Event ''click'' should have been logged");
+	});
+
+	QUnit.test("Logging (default config, verbose event)", function(assert) {
+		// Prepare
+		var oEvent = this.fakeEvent("mouseover");
+
+		// Act
+		this.oButton.getUIArea()._handleEvent(oEvent);
+
+		// assert
+		assert.notOk(this.hasBeenLogged(oEvent, this.oButton), "Event 'mouseover' should not have been logged");
+	});
+
+	QUnit.test("Logging (custom config, normal event)", function(assert) {
+		// Prepare
+		var oEvent = this.fakeEvent("click");
+
+		// Act
+		var oResultingConfig = UIArea.configureEventLogging({click: 1});
+		this.oButton.getUIArea()._handleEvent(oEvent);
+
+		// assert
+		assert.equal(oResultingConfig.click, true);
+		assert.equal(oResultingConfig.mouseover, true);
+		assert.notOk(this.hasBeenLogged(oEvent, this.oButton), "Event 'click' should not have been logged");
+
+		// cleanup
+		UIArea.configureEventLogging({click: 0});
+	});
+
+	QUnit.test("Logging (custom config, verbose event)", function(assert) {
+		// Prepare
+		var oEvent = this.fakeEvent("mouseover");
+
+		// Act
+		var oResultingConfig = UIArea.configureEventLogging({mouseover: 0});
+		this.oButton.getUIArea()._handleEvent(oEvent);
+
+		// assert
+		assert.equal(oResultingConfig.click, false);
+		assert.equal(oResultingConfig.mouseover, false);
+		assert.ok(this.hasBeenLogged(oEvent, this.oButton), "Event 'mouseover' should have been logged");
+
+		// cleanup
+		UIArea.configureEventLogging({mouseover: 1});
+	});
+
 });
