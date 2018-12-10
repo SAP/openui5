@@ -1,0 +1,19 @@
+{
+  "1.62.0": {
+    "date": "December 2018",
+    "notes": [
+      {
+        "id": "796aed587f7e75736ac19c2f348e66e95eb88863",
+        "type": "FIX",
+        "text": " Correct error object in case of disabled Flexibility Services",
+        "references": []
+      },
+      {
+        "id": "d24c92ce0418124b7130b73408ac4acdf3668d20",
+        "type": "FIX",
+        "text": " sap.ui.fl - fixed getCacheKey with ctrl variant id",
+        "references": []
+      }
+    ]
+  }
+}

@@ -1,0 +1,37 @@
+{
+  "1.62.0": {
+    "date": "December 2018",
+    "notes": [
+      {
+        "id": "a28d1e1a51ac38a235dfd9640b06ad9a885e2242",
+        "type": "FEATURE",
+        "text": " core/routing: support routing in nested components",
+        "references": []
+      },
+      {
+        "id": "c5995b0796008bf70f55d4e14b094b81e106e5b8",
+        "type": "FEATURE",
+        "text": " sap.m.HeaderContainer: Added aria properties for Header Container items",
+        "references": []
+      },
+      {
+        "id": "25067a0bae092807ffb6d882bfafd63776375cc5",
+        "type": "FIX",
+        "text": " sap.m.Popover: Correct reposition",
+        "references": []
+      },
+      {
+        "id": "1ad8c7620b3ce88f22ea0683120c9a720b1c6e47",
+        "type": "FIX",
+        "text": " sap.m.Popover: Exception when popover opened after being destroyed is fixed",
+        "references": []
+      },
+      {
+        "id": "ff326244773ffbe20729eb24aad209665b5b7fa3",
+        "type": "FIX",
+        "text": " sap.m.SinglePlanningCalendar: Demo Kit sample fixed",
+        "references": []
+      }
+    ]
+  }
+}

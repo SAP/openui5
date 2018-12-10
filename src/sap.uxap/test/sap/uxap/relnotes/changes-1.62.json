@@ -1,0 +1,19 @@
+{
+  "1.62.0": {
+    "date": "December 2018",
+    "notes": [
+      {
+        "id": "379d7affe32ce2bdfd1531d3bd68f2d90fc61494",
+        "type": "FIX",
+        "text": " sap.uxap.ObjectPageLayout: Corrected closest subSection for tabs",
+        "references": []
+      },
+      {
+        "id": "9094da4cd8466071b291479f87ca10c7f3578bcc",
+        "type": "FIX",
+        "text": " sap.uxap.ObjectPageLayout: Ensure scroll position preserved",
+        "references": []
+      }
+    ]
+  }
+}
