@@ -5682,6 +5682,7 @@ sap.ui.define([
 				delete this.oSharedMetaData.oMetadata;
 			}
 			delete this.oMetadata;
+			delete this.pMetadataLoaded;
 		}
 
 		if (this.oMetaModel) {
@@ -5695,6 +5696,7 @@ sap.ui.define([
 
 			this.oAnnotations.destroy();
 			delete this.oAnnotations;
+			delete this.pAnnotationsLoaded;
 		}
 
 	};
