@@ -12,8 +12,6 @@ sap.ui.define([
 ], function(ColorPicker, InputBase, Label, RadioButtonGroup, RadioButton, Slider, InvisibleText, waitForThemeApplied) {
 	"use strict";
 
-	(function () {
-
 		var CONSTANTS = new ColorPicker()._getConstants(), // Get control constants
 			applyChanges = sap.ui.getCore().applyChanges;
 
@@ -822,6 +820,5 @@ sap.ui.define([
 		});
 
 		return waitForThemeApplied();
-	})();
 
 });
