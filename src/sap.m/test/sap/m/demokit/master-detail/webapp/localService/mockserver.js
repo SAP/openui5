@@ -1,4 +1,3 @@
-/* global Promise */
 sap.ui.define([
 	"sap/ui/core/util/MockServer",
 	"sap/ui/model/json/JSONModel",
@@ -18,12 +17,13 @@ sap.ui.define([
 		 * You can configure the delay with the URL parameter "serverDelay".
 		 * The local mock data in this folder is returned instead of the real data for testing.
 		 * @protected
+		 * @param {object} [oOptionsParameter] init parameters for the mockserver
 		 * @returns{Promise} a promise that is resolved when the mock server has been started
 		 */
 		init : function (oOptionsParameter) {
 			var oOptions = oOptionsParameter || {};
 
-			return new Promise(function(fnResolve) {
+			return new Promise(function(fnResolve, fnReject) {
 				var sManifestUrl = sap.ui.require.toUrl(_sAppPath + "manifest.json"),
 					oManifestModel = new JSONModel(sManifestUrl);
 
@@ -59,7 +59,7 @@ sap.ui.define([
 
 					var aRequests = oMockServer.getRequests();
 
-					// compose an error response for requesti
+					// compose an error response for each request
 					var fnResponse = function (iErrCode, sMessage, aRequest) {
 						aRequest.response = function(oXhr){
 							oXhr.respond(iErrCode, {"Content-Type": "text/plain;charset=utf-8"}, sMessage);
@@ -95,8 +95,10 @@ sap.ui.define([
 				});
 
 				oManifestModel.attachRequestFailed(function () {
-					Log.error("Failed to load application manifest");
-					fnResolve();
+					var sError = "Failed to load application manifest";
+
+					Log.error(sError);
+					fnReject(new Error(sError));
 				});
 			});
 		},
@@ -111,5 +113,4 @@ sap.ui.define([
 	};
 
 	return oMockServerInterface;
-
 });

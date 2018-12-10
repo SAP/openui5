@@ -12,7 +12,5 @@ sap.ui.define([
 		_onNotFoundDisplayed : function () {
 			this.getModel("appView").setProperty("/layout", "OneColumn");
 		}
-
 	});
-
 });

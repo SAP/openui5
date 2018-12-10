@@ -108,6 +108,7 @@ sap.ui.define([
 			delay : 1000,
 			errorType : 'serverError'
 		});
+
 		// Assertions
 		Then.onTheAppPage.iShouldSeeTheMessageBox();
 
@@ -117,4 +118,5 @@ sap.ui.define([
 		// Cleanup
 		Then.iTeardownMyApp();
 	});
+
 });

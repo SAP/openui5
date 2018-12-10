@@ -9,7 +9,9 @@
 		busy="{detailView>/busy}"
 		busyIndicatorDelay="{detailView>/delay}">
 		<semantic:titleHeading>
-			<Title text="{Name}"/>
+			<Title
+				text="{Name}"
+				level="H2"/>
 		</semantic:titleHeading>
 		<semantic:headerContent>
 			<ObjectAttribute title="{i18n>priceTitle}"/>
@@ -19,7 +21,7 @@
 					path: 'UnitNumber',
 					formatter: '.formatter.currencyValue'
 				}"
-				numberUnit="{UnitOfMeasure}"
+				unit="{UnitOfMeasure}"
 			/>
 		</semantic:headerContent>
 		<semantic:content>
@@ -35,7 +37,8 @@
 						<Title
 							id="lineItemsTitle"
 							text="{detailView>/lineItemListTitle}"
-							titleStyle="H3"/>
+							titleStyle="H3"
+							level="H3"/>
 					</Toolbar>
 				</headerToolbar>
 				<columns>

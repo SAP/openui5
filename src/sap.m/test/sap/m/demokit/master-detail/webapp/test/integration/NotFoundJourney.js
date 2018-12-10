@@ -27,7 +27,7 @@ sap.ui.define([
 
 	opaTest("Should see the not found page if the hash is something that matches no route", function (Given, When, Then) {
 		// Arrangements
-		Given.iStartMyApp({ hash : "somethingThatDoesNotExist" });
+		Given.iStartMyApp({hash : "somethingThatDoesNotExist"});
 
 		// Assertions
 		Then.onTheNotFoundPage.iShouldSeeTheNotFoundPage().

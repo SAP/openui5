@@ -1,4 +1,3 @@
-/*global location */
 sap.ui.define([
 	"./BaseController",
 	"sap/ui/model/json/JSONModel",
@@ -200,9 +199,7 @@ sap.ui.define([
 				// reset to previous layout
 				this.getModel("appView").setProperty("/layout",  this.getModel("appView").getProperty("/previousLayout"));
 			}
-
 		}
-
 	});
 
 });

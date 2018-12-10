@@ -11,6 +11,7 @@ sap.ui.define([
 		onTheAppPage : {
 
 			actions : {
+
 				iCloseTheMessageBox : function () {
 					return this.waitFor({
 						id: "serviceErrorMessageBox",
