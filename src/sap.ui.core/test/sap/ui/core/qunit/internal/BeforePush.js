@@ -16,6 +16,8 @@
   back-end server using the SimpleProxy servlet. Before running any tests, this page checks that
   this server can be accessed and asks for basic authentication, so that the tests themselves later
   run through without login popups. If this fails, the tests with "realOData=true" can be skipped.
+
+  BeforePush expects all tests to use QUnit 2.
 */
 (function () {
 	"use strict";
@@ -66,26 +68,30 @@
 		if (!bRealOData) {
 			// remove the query property "realOData" at each URL; remove duplicates
 			aTests.forEach(function (sUrl) {
-				mFilter[sUrl.replace(/realOData=true(&|$)/, "").replace(/[?&]$/, "")] = true;
+				var sTest = sUrl.replace(/\?.*$/, ""); // the URL w/o query parameters
+
+				if (!mFilter[sTest]) {
+					mFilter[sTest] = sUrl.replace(/realOData=true(&|$)/, "").replace(/[?&]$/, "");
+				}
 			});
-			aTests = Object.keys(mFilter);
+			aTests = Object.keys(mFilter).map(function (sTest) {
+				return mFilter[sTest];
+			});
 		}
 		return aTests;
 	}
 
 	function runTests(bRealOData) {
 		var oActiveFrame,
-			oFinished,
 			oFirstFailedTest,
 			oSelectedTest,
 			iStart = Date.now(),
-			aTests = filterTests(/integrationTestsOnly/i.test(location.href), bRealOData);
+			aTests = filterTests(/integrationTestsOnly/i.test(location.href), bRealOData),
+			oTotal;
 
 		function createTest(sText, sUrl) {
 			var oTest = {
 					element : document.createElement("li"),
-					failed : 0,
-					total : 0,
 					url : sUrl
 				},
 				oDiv = document.createElement("div"),
@@ -112,9 +118,9 @@
 			if (aTests.length) {
 				return runTest(aTests.shift());
 			} else {
-				oFinished.element.classList.remove("hidden");
-				start(oFinished);
-				summary(oFinished, oFinished.total, oFinished.failed, Date.now() - iStart);
+				oTotal.element.classList.remove("hidden");
+				start(oTotal);
+				summary(Date.now() - iStart);
 				if (oFirstFailedTest) {
 					select(oFirstFailedTest);
 				}
@@ -124,12 +130,17 @@
 		function runTest(oTest) {
 			function onLoad() {
 				oActiveFrame.removeEventListener("load", onLoad);
-				oActiveFrame.contentWindow.QUnit.done(function (oDetails) {
-
-					stop(oTest, oDetails);
-					if (oDetails.failed) {
+				// see https://github.com/js-reporters/js-reporters (@since QUnit 2)
+				oActiveFrame.contentWindow.QUnit.on("runEnd", function (oDetails) {
+					oTest.testCounts = oDetails.testCounts;
+					summary(oDetails.runtime, oTest);
+					oTest.element.firstChild.classList.remove("running");
+					if (oDetails.status === "failed") {
+						oTest.element.firstChild.classList.add("failed");
 						oFirstFailedTest = oFirstFailedTest || oTest;
 						newActiveFrame();
+					} else {
+						oTest.frame = undefined;
 					}
 					next();
 				});
@@ -160,26 +171,37 @@
 			oTest.element.firstChild.classList.add("running");
 		}
 
-		function stop(oTest, oDetails) {
-			summary(oTest, oDetails.total, oDetails.failed, oDetails.runtime);
-			oTest.element.firstChild.classList.remove("running");
-			oFinished.failed += oDetails.failed;
-			oFinished.total += oDetails.total;
-			if (oDetails.failed) {
-				oTest.element.firstChild.classList.add("failed");
-			} else {
-				oTest.frame = undefined;
+		// Adds the summary for a test or the total when no test is given
+		function summary(iRuntime, oTest) {
+			var oElement, iMinutes, iSeconds, oTestCounts, sText;
+
+			function count(iCount, sWhat) {
+				return iCount ? ", " + iCount + " " + sWhat : "";
 			}
-		}
 
-		function summary(oTest, iTotal, iFailed, iRuntime) {
-			var oElement = document.createElement("a"),
-				sText = ": " + iTotal + " tests in " + Math.floor(iRuntime / 1000.0 + 0.5)
-					+ " seconds" + (iFailed ? ", " + iFailed + " failed" : "") + " ";
+			if (oTest) {
+				oTestCounts = oTest.testCounts;
+				oTotal.testCounts.failed += oTestCounts.failed;
+				oTotal.testCounts.skipped += oTestCounts.skipped;
+				oTotal.testCounts.todo += oTestCounts.todo;
+				oTotal.testCounts.total += oTestCounts.total;
+			} else {
+				oTestCounts = oTotal.testCounts;
+			}
+			iRuntime = Math.round(iRuntime / 1000);
+			iMinutes = Math.floor(iRuntime / 60);
+			iSeconds = iRuntime - iMinutes * 60;
+			sText = ": " + oTestCounts.total + " tests in " + (iMinutes ? iMinutes + " min " : "")
+				+ iSeconds + " sec"
+				+ count(oTestCounts.failed, "failed")
+				+ count(oTestCounts.skipped, "skipped")
+				+ count(oTestCounts.todo, "todo")
+				+ " ";
 
-			oTest.element.appendChild(document.createTextNode(sText));
+			(oTest || oTotal).element.appendChild(document.createTextNode(sText));
 
-			if (oTest.url) {
+			if (oTest) {
+				oElement = document.createElement("a");
 				oElement.setAttribute("href", oTest.url);
 				oElement.setAttribute("target", "_blank");
 				oElement.appendChild(document.createTextNode("Rerun"));
@@ -192,8 +214,14 @@
 		aTests = aTests.map(function (sUrl) {
 			return createTest(sUrl, "../../" + sUrl);
 		});
-		oFinished = createTest("Finished");
-		oFinished.element.classList.add("hidden");
+		oTotal = createTest("Finished");
+		oTotal.testCounts = {
+			failed : 0,
+			skipped : 0,
+			todo : 0,
+			total : 0
+		};
+		oTotal.element.classList.add("hidden");
 		newActiveFrame();
 		next();
 	}
