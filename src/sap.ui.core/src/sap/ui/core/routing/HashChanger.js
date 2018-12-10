@@ -3,12 +3,12 @@
  */
 
 sap.ui.define([
-	"./HashChangerBase",
-	"./RouterHashChanger",
+	'sap/ui/base/EventProvider',
 	'sap/ui/thirdparty/hasher',
 	"sap/base/Log",
 	"sap/base/util/ObjectPath"
-], function(HashChangerBase, RouterHashChanger, hasher, Log, ObjectPath) {
+],
+	function(EventProvider, hasher, Log, ObjectPath) {
 	"use strict";
 
 	/**
@@ -19,10 +19,12 @@ sap.ui.define([
 	 * @public
 	 * @alias sap.ui.core.routing.HashChanger
 	 */
-	var HashChanger = HashChangerBase.extend("sap.ui.core.routing.HashChanger", {
+	var HashChanger = EventProvider.extend("sap.ui.core.routing.HashChanger", {
 
 		constructor : function() {
-			HashChangerBase.apply(this);
+
+			EventProvider.apply(this);
+
 		}
 
 	});
@@ -55,135 +57,50 @@ sap.ui.define([
 	};
 
 	/**
-	 * Fires the hashchanged event, may be extended to modify the hash before fireing the event
-	 * @param {string} sNewHash the new hash of the browser
-	 * @param {string} sOldHash - the previous hash
+	 * The 'hashChanged' event is fired when the URL hash is changed
+	 *
+	 * @name sap.ui.core.routing.HashChanger#hashChanged
+	 * @event
+	 * @param {sap.ui.base.Event} oEvent
+	 * @param {sap.ui.base.EventProvider} oEvent.getSource
+	 * @param {object} oEvent.getParameters
+	 * @param {string} oEvent.getParameters.oldHash The URL hash before it's changed
+	 * @param {object} oEvent.getParameters.newHash The new URL hash
 	 * @protected
 	 */
-	HashChanger.prototype.fireHashChanged = function(sNewHash, sOldHash) {
-		// The "hashChanged" event has to be fired before forwarding the event
-		// to the RouterHashChanger to let the History.js react to the event
-		// before the last direction in History.js is consumed in Routers
-		this.fireEvent("hashChanged", {
-			newHash: sNewHash,
-			oldHash: sOldHash
-		});
-	};
 
 	/**
-	 * Creates an instance of {@link sap.ui.core.routing.RouterHashChanger} which is connected with
-	 * this HashChanger.
+	 * The 'hashSet' event is fired when {@link sap.ui.core.routing.HashChanger#setHash} is called
 	 *
-	 * The HashChanger attaches to the RouterHashChanger's "hashSet" and "hashReplaced" events to
-	 * propagate the hash modification from the RouterHashChanger to the browser.
-	 *
-	 * There's maximum one instance of RouterHashChanger created under a HashChanger.
-	 *
-	 * @return {sap.ui.core.routing.RouterHashChanger} the created RouterHashChanger
-	 * @private
+	 * @name sap.ui.core.routing.HashChanger#hashSet
+	 * @event
+	 * @param {sap.ui.base.Event} oEvent
+	 * @param {sap.ui.base.EventProvider} oEvent.getSource
+	 * @param {object} oEvent.getParameters
+	 * @param {string} oEvent.getParameters.sHash The URL hash
+	 * @protected
 	 */
-	HashChanger.prototype.createRouterHashChanger = function() {
-		if (!this._oRouterHashChanger) {
-			this._oRouterHashChanger = new RouterHashChanger({
-				parent: this
-			});
-
-			this.attachEvent("hashChanged", this._onHashChangedForRouterHashChanger, this);
-
-			this._oRouterHashChanger.attachEvent("hashSet", this._onHashModified, this);
-			this._oRouterHashChanger.attachEvent("hashReplaced", this._onHashModified, this);
-		}
-
-		return this._oRouterHashChanger;
-	};
-
-	HashChanger.prototype._onHashChangedForRouterHashChanger = function(oEvent) {
-		if (this._oRouterHashChanger) {
-			var sNewHash = oEvent.getParameter("newHash"),
-				oParsedHash = this._parseHash(sNewHash);
-
-			this._oRouterHashChanger.fireHashChanged(oParsedHash.hash, oParsedHash.subHashMap);
-		}
-	};
-
-	HashChanger.prototype._onHashModified = function(oEvent) {
-		var sEventName = oEvent.getId(),
-			sHash = oEvent.getParameter("hash"),
-			sKey = oEvent.getParameter("key"),
-			aDeletePrefix = oEvent.getParameter("deletePrefix");
-
-		if (sEventName === "hashSet") {
-			this._setSubHash(sKey, sHash, aDeletePrefix);
-		} else {
-			this._replaceSubHash(sKey, sHash, aDeletePrefix);
-		}
-	};
-
-	HashChanger.prototype._setSubHash = function(sKey, sSubHash, aChildPrefix) {
-		// construct the full hash by replacing the part starts with the sKey
-		var sHash = this._reconstructHash(sKey, sSubHash, aChildPrefix);
-		this.setHash(sHash);
-	};
-
-	HashChanger.prototype._replaceSubHash = function(sKey, sSubHash, aChildPrefix) {
-		// construct the full hash by replacing the part starts with the sKey
-		var sHash = this._reconstructHash(sKey, sSubHash, aChildPrefix);
-		this.replaceHash(sHash);
-	};
 
 	/**
+	 * The 'hashReplaced' event is fired when {@link sap.ui.core.routing.HashChanger#replaceHash} is called
 	 *
+	 * @name sap.ui.core.routing.HashChanger#hashReplaced
+	 * @event
+	 * @param {sap.ui.base.Event} oEvent
+	 * @param {sap.ui.base.EventProvider} oEvent.getSource
+	 * @param {object} oEvent.getParameters
+	 * @param {string} oEvent.getParameters.sHash The URL hash
+	 * @protected
 	 */
-	HashChanger.prototype._reconstructHash = function(sKey, sValue, aDeleteKeys) {
-		var aParts = this.getHash().split("&/"),
-			sTopHash = aParts.shift();
 
-		if (sKey === undefined) {
-			// change the top level hash
-			sTopHash = sValue;
-		} else {
-			var bFound = aParts.some(function(sPart, i, aParts) {
-				if (sPart.startsWith(sKey)) {
-					if (sValue) {
-						// replace the subhash
-						aParts[i] =  sKey + "/" + sValue;
-					} else {
-						// remove the subhash
-						aDeleteKeys.push(sKey);
-					}
-					return true;
-				}
-			});
-			if (!bFound) {
-				// the subhash must be added
-				aParts.push(sKey + "/" + sValue);
-			}
-		}
-
-		// remove dependent subhashes from aDeleteKeys from the hash
-		aParts = aParts.filter(function(sPart) {
-			return !aDeleteKeys.some(function(sPrefix) {
-				return sPart.startsWith(sPrefix);
-			});
-		});
-
-		aParts.unshift(sTopHash);
-
-		return aParts.join("&/");
-	};
-
-	HashChanger.prototype._parseHash = function(sHash) {
-		var aParts = sHash.split("&/");
-
-		return {
-			hash: aParts.shift(),
-			subHashMap: aParts.reduce(function(oMap, sPart) {
-				var iSlashPos = sPart.indexOf("/");
-
-				oMap[sPart.substring(0, iSlashPos)] = sPart.substring(iSlashPos + 1);
-				return oMap;
-			}, {})
-		};
+	/**
+	 * Fires the hashchanged event, may be extended to modify the hash before fireing the event
+	 * @param {string} newHash the new hash of the browser
+	 * @param {string} oldHash - the previous hash
+	 * @protected
+	 */
+	HashChanger.prototype.fireHashChanged = function(newHash, oldHash) {
+		this.fireEvent("hashChanged",{ newHash : newHash, oldHash : oldHash });
 	};
 
 	/**
@@ -193,7 +110,7 @@ sap.ui.define([
 	 * @public
 	 */
 	HashChanger.prototype.setHash = function(sHash) {
-		HashChangerBase.prototype.setHash.apply(this, arguments);
+		this.fireEvent("hashSet", { sHash : sHash });
 		hasher.setHash(sHash);
 	};
 
@@ -204,7 +121,7 @@ sap.ui.define([
 	 * @public
 	 */
 	HashChanger.prototype.replaceHash = function(sHash) {
-		HashChangerBase.prototype.replaceHash.apply(this, arguments);
+		this.fireEvent("hashReplaced", { sHash : sHash });
 		hasher.replaceHash(sHash);
 	};
 
@@ -234,21 +151,9 @@ sap.ui.define([
 	 * @protected
 	 */
 	HashChanger.prototype.destroy = function() {
-		if (this._oRouterHashChanger) {
-			this.detachEvent("hashChanged", this._onHashChangedForRouterHashChanger, this);
-			this._oRouterHashChanger.destroy();
-			this._oRouterHashChanger = undefined;
-		}
-
 		delete this._initialized;
 		hasher.changed.remove(this.fireHashChanged, this);
-		HashChangerBase.prototype.destroy.apply(this, arguments);
-	};
-
-	HashChanger.prototype.deregisterRouterHashChanger = function() {
-		// detach the hashChanged event handler for the RouterHashChanger instance
-		this.detachEvent("hashChanged", this._onHashChangedForRouterHashChanger, this);
-		delete this._oRouterHashChanger;
+		EventProvider.prototype.destroy.apply(this, arguments);
 	};
 
 	(function() {
@@ -298,19 +203,6 @@ sap.ui.define([
 		 */
 		HashChanger.replaceHashChanger = function(oHashChanger) {
 			if (_oHashChanger && oHashChanger) {
-				if (_oHashChanger._oRouterHashChanger) {
-					_oHashChanger._oRouterHashChanger.detachEvent("hashSet", _oHashChanger._onHashModified, _oHashChanger);
-					_oHashChanger._oRouterHashChanger.detachEvent("hashReplaced", _oHashChanger._onHashModified, _oHashChanger);
-					_oHashChanger.detachEvent("hashChanged", _oHashChanger._onHashChangedForRouterHashChanger, _oHashChanger);
-
-					oHashChanger._oRouterHashChanger = _oHashChanger._oRouterHashChanger;
-					oHashChanger._oRouterHashChanger.parent = oHashChanger;
-					delete _oHashChanger._oRouterHashChanger;
-
-					oHashChanger._oRouterHashChanger.attachEvent("hashSet", oHashChanger._onHashModified, oHashChanger);
-					oHashChanger._oRouterHashChanger.attachEvent("hashReplaced", oHashChanger._onHashModified, oHashChanger);
-					oHashChanger.attachEvent("hashChanged", oHashChanger._onHashChangedForRouterHashChanger, oHashChanger);
-				}
 
 				var fnGetHistoryInstance = ObjectPath.get("sap.ui.core.routing.History.getInstance"),
 					oHistory;

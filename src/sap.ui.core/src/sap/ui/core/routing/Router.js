@@ -55,22 +55,11 @@ sap.ui.define([
 		 *     {
 		 *         name: "anotherRoute"
 		 *         pattern : "anotherPattern"
-		 *     },
-		 *     //Will create a route for a nested component with the prefix 'componentPrefix'
-		 *     {
-		 *         pattern: "componentPattern",
-		 *         name: "componentRoute",
-		 *         target: [
-		 *              {
-		 *                  name: "subComponent",
-		 *                  prefix: "componentPrefix"
-		 *              }
-		 *         ]
 		 *     }
 		 * ]
 		 * </pre>
 		 *
-		 * The alternative way of defining routes is an Object.<br/>
+		 * The alternative way of defining routes is an Object.
 		 * If you choose this way, the name attribute is the name of the property.
 		 * <pre>
 		 * {
@@ -81,16 +70,6 @@ sap.ui.define([
 		 *     //Will create a route called 'anotherRoute'
 		 *     anotherRoute : {
 		 *         pattern : "anotherPattern"
-		 *     },
-		 *     //Will create a route for a nested component with the prefix 'componentPrefix'
-		 *     componentRoute{
-		 *         pattern: "componentPattern",
-		 *         target: [
-		 *              {
-		 *                  name: "subComponent",
-		 *                  prefix: "componentPrefix"
-		 *              }
-		 *         ]
 		 *     }
 		 * }
 		 * </pre>
@@ -100,6 +79,14 @@ sap.ui.define([
 		 * This config will be used for routes and for targets, used in the router<br/>
 		 * Eg: if the config object specifies :
 		 * <pre>
+		 * <code>
+		 * {
+		 *     viewType : "XML"
+		 * }
+		 * </code>
+		 * </pre>
+		 * The targets look like this:
+		 * <pre>
 		 * {
 		 *     xmlTarget : {
 		 *         ...
@@ -107,18 +94,6 @@ sap.ui.define([
 		 *     jsTarget : {
 		 *         viewType : "JS"
 		 *         ...
-		 *     },
-		 *     componentTarget: {
-		 *         type: "Component",
-		 *         name: "subComponent",
-		 *         id: "mySubComponent",
-		 *         options: {
-		 *             // the Component configuration:
-		 *             manifest: true
-		 *             ...
-		 *         },
-		 *         controlId: "myRootView",
-		 *         controlAggregation: "content"
 		 *     }
 		 * }
 		 * </pre>
@@ -132,18 +107,6 @@ sap.ui.define([
 		 *     jsTarget : {
 		 *         viewType : "JS"
 		 *         ...
-		 *     },
-		 * 	   componentTarget: {
-		 *         type: "Component",
-		 *         name: "subComponent",
-		 *         id: "mySubComponent",
-		 *         options: {
-		 *             // the Component configuration:
-		 *             manifest: true
-		 *             ...
-		 *         },
-		 *         controlId: "myRootView",
-		 *         controlAggregation: "content"
 		 *     }
 		 * }
 		 * </pre>
@@ -227,7 +190,7 @@ sap.ui.define([
 		 */
 		var Router = EventProvider.extend("sap.ui.core.routing.Router", /** @lends sap.ui.core.routing.Router.prototype */ {
 
-			constructor : function(oRoutes, oConfig, oOwner, oTargetsConfig, oRouterHashChanger) {
+			constructor : function(oRoutes, oConfig, oOwner, oTargetsConfig) {
 				EventProvider.apply(this);
 
 				this._oConfig = oConfig || {};
@@ -285,10 +248,6 @@ sap.ui.define([
 				});
 
 				this._oRouter.bypassed.add(jQuery.proxy(this._onBypassed, this));
-
-				if (oRouterHashChanger) {
-					this.setHashChanger(oRouterHashChanger);
-				}
 			},
 
 			/**
@@ -331,11 +290,8 @@ sap.ui.define([
 			 * @returns {sap.ui.core.routing.Router} this for chaining.
 			 */
 			initialize : function (bIgnoreInitialHash) {
-				var that = this;
-
-				if (!this.oHashChanger) {
-					this.oHashChanger = HashChanger.getInstance().createRouterHashChanger();
-				}
+				var that = this,
+					oHashChanger = this.oHashChanger = HashChanger.getInstance();
 
 				if (this._bIsInitialized) {
 					Log.warning("Router is already initialized.", this);
@@ -352,9 +308,9 @@ sap.ui.define([
 					that._bHashChangedAfterTitleChange = true;
 				};
 
-				if (!this.oHashChanger) {
+				if (!oHashChanger) {
 					Log.error("navTo of the router is called before the router is initialized. If you want to replace the current hash before you initialize the router you may use getUrl and use replaceHash of the Hashchanger.", this);
-					return this;
+					return;
 				}
 
 				if (this._oTargets) {
@@ -372,6 +328,12 @@ sap.ui.define([
 
 					}, this);
 
+					this.fnHashReplaced = function() {
+						this._bLastHashReplaced = true;
+					};
+
+					this.oHashChanger.attachEvent("hashReplaced", this.fnHashReplaced, this);
+
 					this._aHistory = [];
 
 					// Add the initial home route entry to history
@@ -381,16 +343,17 @@ sap.ui.define([
 					}
 				}
 
-				this.oHashChanger.init();
+				oHashChanger.init();
 
+				// The event handler needs to be attached after hash changer is
 				// initialized because whether the current hash is parsed is
 				// controlled by the 'bSuppressHashParsing' parameter and the
 				// 'hashchanged' event which may be fired from hashChanger.init()
 				// shouldn't be processed.
-				this.oHashChanger.attachEvent("hashChanged", this.fnHashChanged);
+				oHashChanger.attachEvent("hashChanged", this.fnHashChanged);
 
 				if (!bIgnoreInitialHash) {
-					this.parse(this.oHashChanger.getHash());
+					this.parse(oHashChanger.getHash());
 				}
 
 				return this;
@@ -416,30 +379,12 @@ sap.ui.define([
 					this.oHashChanger.detachEvent("hashReplaced", this.fnHashReplaced);
 				}
 
-				if (this._matchedRoute) {
-					this._matchedRoute.fireEvent("switched");
-					this._matchedRoute = null;
-				}
-
 				this._bIsInitialized = false;
 
 				return this;
 
 			},
 
-			getHashChanger: function() {
-				return this.oHashChanger;
-			},
-
-			setHashChanger: function(oHashChanger) {
-				if (this.oHashChanger) {
-					Log.warning("The Router already has a HashChanger set and this call is ignored");
-				} else {
-					this.oHashChanger = oHashChanger;
-				}
-
-				return this;
-			},
 
 			/**
 			 * Removes the router from the hash changer @see sap.ui.core.routing.HashChanger
@@ -623,7 +568,6 @@ sap.ui.define([
 				}
 
 				if (bReplace) {
-					this._bLastHashReplaced = true;
 					this.oHashChanger.replaceHash(sURL);
 				} else {
 					this.oHashChanger.setHash(sURL);
