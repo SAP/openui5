@@ -170,17 +170,88 @@ sap.ui.define([
 		assert.strictEqual(eventSpy.callCount, 1, 'should fire select event once');
 	});
 
-	QUnit.module('Privet methods', {
+	QUnit.module('SelectedKey', {
 		beforeEach: function () {
 			this.sideNavigation = new SideNavigation({
-				item: new NavigationList(),
-				fixedItem: new NavigationList()
+				selectedKey: 'root',
+				item: new NavigationList({
+					items: [
+						new NavigationListItem({
+							text: 'Root',
+							key: 'root',
+							items: [
+								new NavigationListItem({
+									text: 'Child 1',
+									key: 'child1'
+								}),
+								new NavigationListItem({
+									text: 'Child 2',
+									key: 'child2'
+								})
+							]
+						})
+					]
+				}),
+				fixedItem: new NavigationList({
+					items: [
+						new NavigationListItem({
+							text: 'Fixed 1',
+							key: 'fixed1'
+						}),
+						new NavigationListItem({
+							text: 'Fixed 2',
+							key: 'fixed2'
+						})
+					]
+				})
 			});
 			this.sideNavigation.placeAt(DOM_RENDER_LOCATION);
 			sap.ui.getCore().applyChanges();
 		},
 		afterEach: function () {
 			this.sideNavigation.destroy();
+			this.sideNavigation = null;
 		}
+	});
+
+	QUnit.test('api', function (assert) {
+
+		var selectedItem = sap.ui.getCore().byId(this.sideNavigation.getSelectedItem());
+		assert.strictEqual(selectedItem.getText(), 'Root', 'initial selection is correct');
+
+		this.sideNavigation.setSelectedKey('fixed1');
+		sap.ui.getCore().applyChanges();
+
+		selectedItem = sap.ui.getCore().byId(this.sideNavigation.getSelectedItem());
+		assert.strictEqual(selectedItem.getText(), 'Fixed 1', 'selection is correct');
+		assert.notOk(this.sideNavigation.getItem()._selectedItem, 'selection is removed');
+		assert.strictEqual(this.sideNavigation.getFixedItem()._selectedItem.getKey(), 'fixed1', 'selection is set');
+
+		this.sideNavigation.setSelectedKey('child2');
+		sap.ui.getCore().applyChanges();
+
+		selectedItem = sap.ui.getCore().byId(this.sideNavigation.getSelectedItem());
+		assert.strictEqual(selectedItem.getText(), 'Child 2', 'selection is correct');
+		assert.notOk(this.sideNavigation.getFixedItem()._selectedItem, 'selection is removed');
+		assert.strictEqual(this.sideNavigation.getItem()._selectedItem.getKey(), 'child2', 'selection is set');
+	});
+
+	QUnit.test('interaction', function (assert) {
+
+		this.sideNavigation.getFixedItem().getItems()[0]._selectItem();
+		sap.ui.getCore().applyChanges();
+
+		var selectedItem = sap.ui.getCore().byId(this.sideNavigation.getSelectedItem());
+		assert.strictEqual(selectedItem.getText(), 'Fixed 1', 'selection is correct');
+		assert.notOk(this.sideNavigation.getItem()._selectedItem, 'selection is removed');
+		assert.strictEqual(this.sideNavigation.getFixedItem()._selectedItem.getKey(), 'fixed1', 'selection is set');
+
+		this.sideNavigation.getItem().getItems()[0].getItems()[1]._selectItem();
+		sap.ui.getCore().applyChanges();
+
+		selectedItem = sap.ui.getCore().byId(this.sideNavigation.getSelectedItem());
+		assert.strictEqual(selectedItem.getText(), 'Child 2', 'selection is correct');
+		assert.notOk(this.sideNavigation.getFixedItem()._selectedItem, 'selection is removed');
+		assert.strictEqual(this.sideNavigation.getItem()._selectedItem.getKey(), 'child2', 'selection is set');
 	});
 });

@@ -73,6 +73,7 @@
 		</tnt:header>
 		<tnt:sideContent>
 			<tnt:SideNavigation expanded="true"
+								selectedKey="{/selectedKey}"
 								itemSelect="onItemSelect">
 				<tnt:NavigationList items="{path: '/navigation'}">
 					<tnt:NavigationListItem text="{title}"
@@ -97,7 +98,7 @@
 			</tnt:SideNavigation>
 		</tnt:sideContent>
 		<tnt:mainContents>
-			<NavContainer id="pageContainer">
+			<NavContainer id="pageContainer" initialPage="page2">
 				<pages>
 					<ScrollContainer id="root1"
 									 horizontal="false"

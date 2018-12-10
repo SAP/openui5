@@ -11,6 +11,7 @@ sap.ui.define([
 	var CController = Controller.extend("sap.tnt.sample.ToolPage.ToolPage", {
 		model : new sap.ui.model.json.JSONModel(),
 		data : {
+			selectedKey: 'page2',
 			navigation: [{
 				title: 'Root Item',
 				icon: 'sap-icon://employee',
