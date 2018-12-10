@@ -1120,5 +1120,16 @@
         "references": []
       }
     ]
+  },
+  "1.56.16": {
+    "date": "December 2018",
+    "notes": [
+      {
+        "id": "9d11db4ac496012c599780b723d91a54b865d8a2",
+        "type": "FIX",
+        "text": " NumberFormat: correctly handle option precision with CurrencyFormat",
+        "references": []
+      }
+    ]
   }
 }

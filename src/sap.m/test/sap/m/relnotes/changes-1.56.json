@@ -1844,5 +1844,46 @@
         "references": []
       }
     ]
+  },
+  "1.56.16": {
+    "date": "December 2018",
+    "notes": [
+      {
+        "id": "ebc1108f854faf46e64103bdd8dde80390ba4db6",
+        "type": "FIX",
+        "text": " sap.m.GroupHeaderListItem: Should not have action cursor",
+        "references": []
+      },
+      {
+        "id": "47d1c36eb8a01690b4ecdca8d533c87ad8cc2a27",
+        "type": "FIX",
+        "text": " sap.m.Input: showValueStateMessage now works correctly",
+        "references": []
+      },
+      {
+        "id": "bf3c585373ef3b1fadce84997b831fae450d6a7f",
+        "type": "FIX",
+        "text": " sap.m.ObjectListItem: Now the press event is correctly fired",
+        "references": []
+      },
+      {
+        "id": "ae3c910b657bc03b4b4bd51b8834789381deb7cb",
+        "type": "FIX",
+        "text": " sap.m.TableSelectDialog: Pressing close button triggers search event",
+        "references": []
+      },
+      {
+        "id": "7ca435eb72989f3a35b838c994892a9e655f26b1",
+        "type": "FIX",
+        "text": " sap.m.TimePicker: gets correct locale",
+        "references": []
+      },
+      {
+        "id": "8e84968b83f4005e891eccbd7181e0083f4c7cea",
+        "type": "FIX",
+        "text": " sap.m.uploadCollectionItem : Fixed .csv file download issue.",
+        "references": []
+      }
+    ]
   }
 }

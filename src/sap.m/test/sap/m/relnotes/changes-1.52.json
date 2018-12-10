@@ -3546,5 +3546,22 @@
         "references": []
       }
     ]
+  },
+  "1.52.22": {
+    "date": "November 2018",
+    "notes": [
+      {
+        "id": "27e4dba2e61486adb9c68a0b079db7d90be70d16",
+        "type": "FIX",
+        "text": " sap.m.Dialog: Adjust width when dialog contains long items",
+        "references": []
+      },
+      {
+        "id": "8db2e8a303f9adf0975a83b36132f713ad95fd4c",
+        "type": "FIX",
+        "text": " sap.m.Wizard: Current step in branching fixed",
+        "references": []
+      }
+    ]
   }
 }

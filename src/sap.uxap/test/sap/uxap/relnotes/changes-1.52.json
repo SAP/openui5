@@ -227,5 +227,16 @@
         "references": []
       }
     ]
+  },
+  "1.52.22": {
+    "date": "November 2018",
+    "notes": [
+      {
+        "id": "d82a9c2f127a00f82e2ed3584781355d13e98396",
+        "type": "FIX",
+        "text": " sap.uxap.ObjectPageLayout: Additional reading removed",
+        "references": []
+      }
+    ]
   }
 }
