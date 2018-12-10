@@ -245,14 +245,14 @@ sap.ui.define([
 			 * Privates
 			 */
 
-			_get : function (oOptions, sType, bGlobalId, oInfo) {
+			_get : function (oOptions, sType, bGlobalId) {
 				var oObject;
 				switch (sType) {
 					case "View":
 						oObject = this._getView(oOptions, bGlobalId);
 						break;
 					case "Component":
-						oObject = this._getComponent(oOptions, bGlobalId, oInfo);
+						oObject = this._getComponent(oOptions, bGlobalId);
 						break;
 					default:
 						throw Error("The given sType: " + sType + " isn't supported by TargetCache.getObject");
@@ -274,12 +274,12 @@ sap.ui.define([
 				return this._getViewWithGlobalId(oOptions);
 			},
 
-			_getComponent : function (oOptions, bGlobalId, oInfo) {
+			_getComponent : function (oOptions, bGlobalId) {
 				if (!bGlobalId) {
 					oOptions = this._createId(oOptions);
 				}
 
-				return this._getComponentWithGlobalId(oOptions, oInfo);
+				return this._getComponentWithGlobalId(oOptions);
 			},
 
 			_createId: function (oOptions) {

@@ -65,17 +65,6 @@ sap.ui.define([
 
 			var bCreated = false;
 			try {
-				if (typeof sId !== "string") {
-					mSettings = sId;
-					sId = undefined;
-				}
-
-				// save the _routerHashChanger for the creation of Router
-				if (mSettings && mSettings._routerHashChanger) {
-					this._oRouterHashChanger = mSettings._routerHashChanger;
-					delete mSettings._routerHashChanger;
-				}
-
 				Component.apply(this, arguments);
 				bCreated = true;
 			} finally {
@@ -291,7 +280,7 @@ sap.ui.define([
 		if (vRoutes) {
 			var Router = sap.ui.requireSync("sap/ui/core/routing/Router");
 			var fnRouterConstructor = getConstructorFunctionFor(this._getRouterClassName() || Router);
-			this._oRouter = new fnRouterConstructor(vRoutes, oRoutingConfig, this, oRoutingManifestEntry.targets, this._oRouterHashChanger);
+			this._oRouter = new fnRouterConstructor(vRoutes, oRoutingConfig, this, oRoutingManifestEntry.targets);
 			this._oTargets = this._oRouter.getTargets();
 			this._oViews = this._oRouter.getViews();
 		} else if (oRoutingManifestEntry.targets) {

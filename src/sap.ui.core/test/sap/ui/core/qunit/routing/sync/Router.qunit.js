@@ -88,34 +88,6 @@ sap.ui.define([
 		router.destroy();
 	});
 
-	QUnit.test("Should fire switched event on the last matched route when stopping the router instance", function(assert) {
-		//Arrange
-		var router = new Router({
-				home: {
-					pattern: ""
-				}
-			}),
-			oRoute = router.getRoute("home"),
-			oSwitchedSpy = this.spy();
-
-		oRoute.attachEvent("switched", oSwitchedSpy);
-
-		hasher.setHash("");
-
-		//Act
-		router.initialize();
-		router.stop();
-
-		//Assert
-		assert.equal(oSwitchedSpy.callCount, 1, "The switched event is fired on the last matched route");
-
-		router.initialize();
-		assert.equal(oSwitchedSpy.callCount, 1, "No further switched event is fired by initialize");
-
-		//Cleanup
-		router.destroy();
-	});
-
 	QUnit.test("Should not raise any exeception when stop is called before initialize", function(assert) {
 		assert.expect(0);
 		var router = new Router();
@@ -209,7 +181,7 @@ sap.ui.define([
 	QUnit.test("Should log a warning if a router gets destroyed while the hash changes", function (assert) {
 
 		// Arrange
-		var oWarningSpy = this.stub(Log, "warning").callsFake(jQuery.noop),
+		var oStub = this.stub(Log, "warning").callsFake(jQuery.noop),
 			oFirstRouter = new Router({
 				"matchingRoute" : {
 					pattern: "matches"
@@ -234,9 +206,7 @@ sap.ui.define([
 		hasher.setHash("matches");
 
 		// Assert
-		assert.equal(oWarningSpy.callCount, 1, "");
-		assert.ok(oWarningSpy.args[0][0].indexOf("destroyed") !== -1, "The message contains the correct keyword");
-		assert.strictEqual(oWarningSpy.args[0][1], oRouterToBeDestroyed, "The second parameter to the warning call is correct");
+		sinon.assert.calledWith(oStub, sinon.match(/destroyed/), sinon.match(oRouterToBeDestroyed));
 		oFirstRouter.destroy();
 	});
 

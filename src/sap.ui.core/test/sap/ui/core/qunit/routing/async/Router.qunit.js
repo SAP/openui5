@@ -14,15 +14,13 @@ sap.ui.define([
 	"sap/m/NavContainer",
 	"sap/m/Panel",
 	"sap/m/SplitContainer",
-	"./AsyncViewModuleHook",
-	"sap/ui/base/EventProvider"
-], function(Log, UIComponent, Controller, JSView, View, HashChanger, Router, Views, JSONModel, App, Button, NavContainer, Panel, SplitContainer, ModuleHook, EventProvider) {
+	"./AsyncViewModuleHook"
+], function(Log, UIComponent, Controller, JSView, View, HashChanger, Router, Views, JSONModel, App, Button, NavContainer, Panel, SplitContainer, ModuleHook) {
 	"use strict";
 
 	// This global namespace is used for creating custom component classes.
 	// It is set early here so that QUnit doesn't report it when using its 'noglobals' option
 	window.namespace = undefined;
-	window.namespace1 = undefined;
 
 	// use sap.m.Panel as a lightweight drop-in replacement for the ux3.Shell
 	var ShellSubstitute = Panel;
@@ -50,51 +48,6 @@ sap.ui.define([
 
 		return sap.ui.view(oViewOptions);
 	}
-
-	QUnit.module("get/setHashChanger");
-
-	QUnit.test("getHashChanger", function(assert) {
-		var oRouter = new Router({}, {async: true}, null, {});
-
-		assert.strictEqual(oRouter.getHashChanger(), undefined, "The router has no hash changer assigned from the constructor");
-		oRouter.destroy();
-	});
-
-	QUnit.test("setHashChanger", function(assert) {
-		var oRouter = new Router({}, {async: true}, null, {});
-		var oRouterHashChanger = HashChanger.getInstance().createRouterHashChanger();
-		oRouter.setHashChanger(oRouterHashChanger);
-
-		assert.strictEqual(oRouter.getHashChanger(), oRouterHashChanger, "The RouterHashChanger is set by the setter");
-
-		var oWarningSpy = sinon.spy(Log, "warning");
-		oRouter.setHashChanger({});
-		assert.equal(oWarningSpy.callCount, 1, "A warning is written");
-		assert.strictEqual(oRouter.getHashChanger(), oRouterHashChanger, "The RouterHashChanger is still the one which is set by the first setter call");
-
-		oWarningSpy.restore();
-		oRouter.destroy();
-	});
-
-	QUnit.module("construction");
-
-	QUnit.test("constructor with RouterHashChanger", function(assert) {
-		var oRouterHashChanger = HashChanger.getInstance().createRouterHashChanger();
-		var oRouter = new Router({}, {async: true}, null, {}, oRouterHashChanger);
-
-		assert.strictEqual(oRouter.getHashChanger(), oRouterHashChanger, "The hash changer is assigned to the router");
-		oRouterHashChanger.destroy();
-		oRouter.destroy();
-	});
-
-	QUnit.test("constructor without RouterHashChanger", function(assert) {
-		var oRouter = new Router({}, {async: true}, null, {});
-
-		assert.strictEqual(oRouter.getHashChanger(), undefined, "The hash changer isn't assigned to the router yet");
-		oRouter.initialize();
-		assert.ok(oRouter.getHashChanger(), "The router should be assigned with a hashchanger automatically after init");
-		oRouter.destroy();
-	});
 
 	QUnit.module("initialization");
 
@@ -145,34 +98,6 @@ sap.ui.define([
 
 		router.initialize();
 		assert.strictEqual(parseSpy.callCount, 2, "did notify again and parse the current hash");
-
-		//Cleanup
-		router.destroy();
-	});
-
-	QUnit.test("Should fire switched event on the last matched route when stopping the router instance", function(assert) {
-		//Arrange
-		var router = fnCreateRouter({
-				home: {
-					pattern: ""
-				}
-			}),
-			oRoute = router.getRoute("home"),
-			oSwitchedSpy = this.spy();
-
-		oRoute.attachEvent("switched", oSwitchedSpy);
-
-		hasher.setHash("");
-
-		//Act
-		router.initialize();
-		router.stop();
-
-		//Assert
-		assert.equal(oSwitchedSpy.callCount, 1, "The switched event is fired on the last matched route");
-
-		router.initialize();
-		assert.equal(oSwitchedSpy.callCount, 1, "No further switched event is fired by initialize");
 
 		//Cleanup
 		router.destroy();
@@ -271,7 +196,7 @@ sap.ui.define([
 	QUnit.test("Should log a warning if a router gets destroyed while the hash changes", function (assert) {
 
 		// Arrange
-		var oWarningSpy = this.stub(Log, "warning"),
+		var oStub = this.stub(Log, "warning").callsFake(jQuery.noop),
 			oFirstRouter = fnCreateRouter({
 				"matchingRoute" : {
 					pattern: "matches"
@@ -296,9 +221,7 @@ sap.ui.define([
 		hasher.setHash("matches");
 
 		// Assert
-		assert.equal(oWarningSpy.callCount, 1, "");
-		assert.ok(oWarningSpy.args[0][0].indexOf("destroyed") !== -1, "The message contains the correct keyword");
-		assert.strictEqual(oWarningSpy.args[0][1], oRouterToBeDestroyed, "The second parameter to the warning call is correct");
+		sinon.assert.calledWith(oStub, sinon.match(/destroyed/), sinon.match(oRouterToBeDestroyed));
 		oFirstRouter.destroy();
 	});
 
@@ -2994,200 +2917,6 @@ sap.ui.define([
 			aComponentInstances.forEach(function(oComponent) {
 				oComponent.destroy();
 			});
-		});
-	});
-
-	var count = 0;
-	QUnit.module("activate/deactivate router in nested component", {
-		beforeEach: function() {
-			this.oEventProviderStub = sinon.stub(EventProvider.prototype.oEventPool, "returnObject");
-			hasher.setHash("");
-			var that = this;
-			this.fnInitRouter = function() {
-				UIComponent.prototype.init.apply(this, arguments);
-				this._router = this.getRouter();
-				this._router.initialize();
-			};
-
-			sap.ui.jsview("rootView1", {
-				createContent : function() {
-					return new ShellSubstitute(this.createId("shell"));
-				}
-			});
-
-			var ParentComponent;
-
-			ParentComponent = UIComponent.extend("namespace1.ParentComponent" + count, {
-				metadata : {
-					routing:  {
-						config: {
-							async: true
-						},
-						routes: [
-							{
-								pattern: "",
-								name: "home",
-								target: {
-									name: "home",
-									prefix: "child"
-								}
-							},
-							{
-								pattern: "category",
-								name: "category"
-							}
-						],
-						targets: {
-							home: {
-								name: "namespace1.ChildComponent" + count,
-								type: "Component",
-								controlId: "shell",
-								controlAggregation: "content",
-								options: {
-									manifest: false
-								}
-							}
-						}
-					}
-				},
-				createContent: function() {
-					return sap.ui.jsview("rootView1");
-				},
-				init : that.fnInitRouter
-			});
-
-			this.oNestedRouteMatchedSpy = sinon.spy();
-
-			sap.ui.predefine("namespace1/ChildComponent" + count + "/Component", ["sap/ui/core/UIComponent"], function(UIComponent) {
-				return UIComponent.extend("namespace1.ChildComponent", {
-					metadata : {
-						routing:  {
-							config: {
-								async: true
-							},
-							routes: [
-								{
-									pattern: "product/{id}",
-									name: "product"
-								},
-								{
-									pattern: "",
-									name: "nestedHome"
-								}
-							]
-						}
-					},
-					init : function() {
-						UIComponent.prototype.init.apply(this, arguments);
-						var oRouter = this.getRouter();
-
-						oRouter.attachRouteMatched(that.oNestedRouteMatchedSpy);
-						oRouter.initialize();
-					}
-				});
-			});
-
-			this.oParentComponent = new ParentComponent("parent");
-		},
-		afterEach: function () {
-			this.oParentComponent.destroy();
-			this.oEventProviderStub.restore();
-			count++;
-		}
-	});
-
-	QUnit.test("Should load and instantiate the nested component when the home route is matched", function(assert) {
-		var that = this,
-			oRouter = this.oParentComponent.getRouter();
-
-		return new Promise(function(resolve, reject) {
-			oRouter.getRoute("home").attachMatched(function() {
-				var oContainer = that.oParentComponent.getRootControl(),
-					oShell = oContainer.byId("shell");
-				assert.equal(oShell.getContent().length, 1, "The nested component is loaded and placed into the aggregation");
-				assert.ok(oShell.getContent()[0].isA("sap.ui.core.ComponentContainer"), "A component container is added to the target aggregation");
-
-				var oNestedComponent = oShell.getContent()[0].getComponentInstance();
-				assert.equal(oNestedComponent.getMetadata().getName(), "namespace1.ChildComponent", "The correct component is loaded and instantiated");
-				assert.equal(that.oNestedRouteMatchedSpy.callCount, 1, "Route is matched once inside the nested component");
-
-				var oEvent = that.oNestedRouteMatchedSpy.args[0][0];
-				assert.equal(oEvent.getParameter("name"), "nestedHome", "The route with empty string pattern is matched");
-				oNestedComponent.destroy();
-				resolve();
-			});
-		});
-	});
-
-	QUnit.test("Should stop the router in nested component when another route in the parent router is matched", function(assert) {
-		var that = this,
-			oRouter = this.oParentComponent.getRouter();
-
-		return new Promise(function(resolve, reject) {
-			oRouter.getRoute("home").attachMatched(function() {
-				var oContainer = that.oParentComponent.getRootControl(),
-					oShell = oContainer.byId("shell");
-
-				var oNestedComponent = oShell.getContent()[0].getComponentInstance();
-
-				resolve(oNestedComponent);
-			});
-		}).then(function(oNestedComponent) {
-			var oNestedRouter = oNestedComponent.getRouter();
-			var oNestedRouterStopSpy = sinon.spy(oNestedRouter, "stop");
-			var oPromise = new Promise(function(resolve, reject) {
-				oRouter.getRoute("category").attachMatched(function() {
-					assert.equal(oNestedRouterStopSpy.callCount, 1, "The Router in nested component is stopped");
-					oNestedComponent.destroy();
-					resolve();
-				});
-			});
-			oRouter.navTo("category");
-			return oPromise;
-		});
-	});
-
-	QUnit.test("Should initialize the router in nested component again once the route is matched again which has loaded the nested component", function(assert) {
-		var that = this,
-			oRouter = this.oParentComponent.getRouter();
-
-		return new Promise(function(resolve, reject) {
-			var fnHomeMatched = function() {
-				oRouter.getRoute("home").detachEvent("matched", fnHomeMatched);
-				var oContainer = that.oParentComponent.getRootControl(),
-					oShell = oContainer.byId("shell");
-
-				var oNestedComponent = oShell.getContent()[0].getComponentInstance();
-
-				resolve(oNestedComponent);
-			};
-
-			oRouter.getRoute("home").attachMatched(fnHomeMatched);
-		}).then(function(oNestedComponent) {
-			var oNestedRouter = oNestedComponent.getRouter();
-			var oNestedRouterStopSpy = sinon.spy(oNestedRouter, "stop");
-			var oPromise = new Promise(function(resolve, reject) {
-				oRouter.getRoute("category").attachMatched(function() {
-					assert.equal(oNestedRouterStopSpy.callCount, 1, "The Router in nested component is stopped");
-					resolve(oNestedComponent);
-				});
-			});
-			oRouter.navTo("category");
-			return oPromise;
-		}).then(function(oNestedComponent) {
-			var iOldCountNestedRouteMatched = that.oNestedRouteMatchedSpy.callCount;
-			var oNestedRouter = oNestedComponent.getRouter();
-			var oNestedRouterInitSpy = sinon.spy(oNestedRouter, "initialize");
-			var oPromise = new Promise(function(resolve, reject) {
-				oRouter.getRoute("home").attachMatched(function() {
-					assert.equal(oNestedRouterInitSpy.callCount, 1, "The Router in nested component is initialized again");
-					assert.equal(that.oNestedRouteMatchedSpy.callCount - iOldCountNestedRouteMatched, 1, "Another routeMatched event is fired in the nested router");
-					oNestedComponent.destroy();
-					resolve();
-				});
-			});
-			oRouter.navTo("home");
-			return oPromise;
 		});
 	});
 });

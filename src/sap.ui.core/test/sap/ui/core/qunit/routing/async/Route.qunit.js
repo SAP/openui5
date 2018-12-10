@@ -127,19 +127,6 @@ sap.ui.define([
 		});
 	});
 
-	QUnit.test("Should save the current route as last matched route in the router after _routeMatched is called", function(assert) {
-		this.oRoute1._routeMatched({}, Promise.resolve());
-		assert.strictEqual(this.oRouterStub._matchedRoute, this.oRoute1, "The matched route is saved as last matched route in the router");
-	});
-
-	QUnit.test("Should fire a switched event", function(assert) {
-		var fnSwitchedSpy = this.spy();
-
-		this.oRoute1.attachEvent("switched", fnSwitchedSpy);
-		this.oRoute1._routeSwitched();
-
-		assert.equal(fnSwitchedSpy.callCount, 1, "The switched event handler is called");
-	});
 
 	function fnRouteEventsTestCase (sTestName, sEventName) {
 		QUnit.test(sTestName, function(assert) {
@@ -214,10 +201,9 @@ sap.ui.define([
 			this.oSpy = sinon.spy(function(sRoute) {
 				return {
 					matched: {
-						add: function() {}
-					},
-					switched: {
-						add: function() {}
+						add: function() {
+
+						}
 					}
 				};
 			});
@@ -306,5 +292,4 @@ sap.ui.define([
 		assert.strictEqual(this.oGetParentRouteSpy.args[0][0], "parent.component:category", "parameter is correctly given");
 		assert.strictEqual(this.oGetParentRouteSpy.returnValues[0], oParentRouter.getRoute("category"), "The parent route instance is fetched from the component");
 	});
-
 });
