@@ -123,7 +123,7 @@ sap.ui.define([
 	 * Returns an cache key for caching views.
 	 *
 	 * @param {object} oAppComponent - Application component
-	 * @returns {string} Returns an ETag for caching
+	 * @returns {promise} Returns a promise with an ETag for caching
 	 * @private
 	 * @restricted sap.ui.fl
 	 */
