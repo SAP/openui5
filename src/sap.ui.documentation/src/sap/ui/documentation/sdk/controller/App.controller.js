@@ -644,10 +644,14 @@ sap.ui.define([
 					oViewModel = this.getModel("appView"),
 					bSearchMode = oViewModel.getProperty("/bSearchMode");
 
-				oViewModel.setProperty("/bPhoneSize", bPhoneSize);
-
-				this._tabHeader.setVisible(!bPhoneSize);
-				this._selectHeader.setVisible(bPhoneSize);
+				// Check for a change in "bPhoneSize" property in order to
+				// reduce number of method calls
+				if (bPhoneSize !== oViewModel.getProperty("/bPhoneSize")) {
+					oViewModel.setProperty("/bPhoneSize", bPhoneSize);
+					this._updateVersionSwitchVisibility();
+					this._tabHeader.setVisible(!bPhoneSize);
+					this._selectHeader.setVisible(bPhoneSize);
+				}
 
 				// The select should be first set to visible on phone size, and after that
 				// set to false if search is opened for correct calculation of the search width.
