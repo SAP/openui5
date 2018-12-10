@@ -5217,6 +5217,7 @@ sap.ui.define([
 				delete this.oServiceData.oMetadata;
 			}
 			delete this.oMetadata;
+			delete this.pMetadataLoaded;
 		}
 
 
@@ -5226,6 +5227,7 @@ sap.ui.define([
 
 			this.oAnnotations.destroy();
 			delete this.oAnnotations;
+			delete this.pAnnotationsLoaded;
 		}
 
 	};
