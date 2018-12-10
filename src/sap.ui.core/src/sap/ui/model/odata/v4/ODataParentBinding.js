@@ -699,6 +699,39 @@ sap.ui.define([
 	};
 
 	/**
+	 * @override
+	 * @see sap.ui.model.odata.v4.ODataBinding#hasPendingChangesInDependents
+	 */
+	ODataParentBinding.prototype.hasPendingChangesInDependents = function (oContext) {
+		var aDependents = oContext
+				? this.oModel.getDependentBindings(oContext)
+				: this.getDependentBindings();
+
+		return aDependents.some(function (oDependent) {
+			var oCache, bHasPendingChanges;
+
+			if (oDependent.oCachePromise.isFulfilled()) {
+				// Pending changes for this cache are only possible when there is a cache already
+				oCache = oDependent.oCachePromise.getResult();
+				if (oCache && oCache.hasPendingChangesForPath("")) {
+					return true;
+				}
+			}
+			if (oDependent.mCacheByResourcePath) {
+				bHasPendingChanges = Object.keys(oDependent.mCacheByResourcePath)
+					.some(function (sPath) {
+						return oDependent.mCacheByResourcePath[sPath].hasPendingChangesForPath("");
+					});
+				if (bHasPendingChanges) {
+					return true;
+				}
+			}
+			// Ask dependents, they might have no cache, but pending changes in mCacheByResourcePath
+			return oDependent.hasPendingChangesInDependents();
+		});
+	};
+
+	/**
 	 * Initializes the OData list binding: Fires a 'change' event in case the binding has a
 	 * resolved path and its root binding is not suspended.
 	 *
@@ -782,6 +815,34 @@ sap.ui.define([
 	 * @private
 	 * @see sap.ui.model.odata.v4.Context#requestSideEffects
 	 */
+
+	/**
+	 * @override
+	 * @see sap.ui.model.odata.v4.ODataBinding#resetChangesInDependents
+	 */
+	ODataParentBinding.prototype.resetChangesInDependents = function () {
+		this.getDependentBindings().forEach(function (oDependent) {
+			var oCache;
+
+			if (oDependent.oCachePromise.isFulfilled()) {
+				// Pending changes for this cache are only possible when there is a cache already
+				oCache = oDependent.oCachePromise.getResult();
+				if (oCache) {
+					oCache.resetChangesForPath("");
+				}
+				oDependent.resetInvalidDataState();
+			}
+			// mCacheByResourcePath may have changes nevertheless
+			if (oDependent.mCacheByResourcePath) {
+				Object.keys(oDependent.mCacheByResourcePath).forEach(function (sPath) {
+					oDependent.mCacheByResourcePath[sPath].resetChangesForPath("");
+				});
+			}
+			// Reset dependents, they might have no cache, but pending changes in
+			// mCacheByResourcePath
+			oDependent.resetChangesInDependents();
+		});
+	};
 
 	/**
 	 * Resumes this binding. The binding can again fire change events and trigger data service

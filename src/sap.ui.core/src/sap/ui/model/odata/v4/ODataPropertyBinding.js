@@ -412,6 +412,14 @@ sap.ui.define([
 	};
 
 	/**
+	 * @override
+	 * @see sap.ui.model.odata.v4.ODataBinding#hasPendingChangesInDependents
+	 */
+	ODataPropertyBinding.prototype.hasPendingChangesInDependents = function (oContext) {
+		return false;
+	};
+
+	/**
 	 * Returns whether the binding is absolute or quasi-absolute.
 	 *
 	 * @returns {boolean} - Whether the binding is absolute or quasi-absolute
@@ -506,6 +514,14 @@ sap.ui.define([
 			throw new Error(this + " is not resolved yet");
 		}
 		return this.getModel().getMetaModel().requestValueListType(sResolvedPath);
+	};
+
+	/**
+	 * @override
+	 * @see sap.ui.model.odata.v4.ODataBinding#resetChangesInDependents
+	 */
+	ODataPropertyBinding.prototype.resetChangesInDependents = function () {
+		// nothing to do
 	};
 
 	/**
