@@ -3,8 +3,8 @@
  */
 
 // Provides default renderer for control sap.m.Image
-sap.ui.define(['sap/m/library', "sap/base/security/encodeXML"],
-	function(library, encodeXML) {
+sap.ui.define(['sap/m/library', "sap/base/security/encodeCSS"],
+	function(library, encodeCSS) {
 	"use strict";
 
 	// shortcut for sap.m.ImageMode
@@ -66,9 +66,13 @@ sap.ui.define(['sap/m/library', "sap/base/security/encodeXML"],
 		} else {
 			// preload the image with a window.Image instance. The source uri is set to the output DOM node via CSS style 'background-image' after the source image is loaded (in onload function)
 			oImage._preLoadImage(oImage._getDensityAwareSrc());
-			oRm.addStyle("background-size", encodeXML(oImage.getBackgroundSize()));
-			oRm.addStyle("background-position", encodeXML(oImage.getBackgroundPosition()));
-			oRm.addStyle("background-repeat", encodeXML(oImage.getBackgroundRepeat()));
+			if (oImage._isValidBackgroundSizeValue(oImage.getBackgroundSize())) {
+				oRm.addStyle("background-size", oImage.getBackgroundSize());
+			}
+			if (oImage._isValidBackgroundPositionValue(oImage.getBackgroundPosition())) {
+				oRm.addStyle("background-position", oImage.getBackgroundPosition());
+			}
+			oRm.addStyle("background-repeat", encodeCSS(oImage.getBackgroundRepeat()));
 		}
 
 		oRm.addClass("sapMImg");

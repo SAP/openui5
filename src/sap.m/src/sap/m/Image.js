@@ -6,11 +6,13 @@
 sap.ui.define([
 	'./library',
 	'sap/ui/core/Control',
+	'sap/ui/base/DataType',
 	'./ImageRenderer',
 	"sap/ui/events/KeyCodes",
-	"sap/ui/thirdparty/jquery"
+	"sap/ui/thirdparty/jquery",
+	"sap/base/security/encodeCSS"
 ],
-	function(library, Control, ImageRenderer, KeyCodes, jQuery) {
+	function(library, Control, DataType, ImageRenderer, KeyCodes, jQuery, encodeCSS) {
 	"use strict";
 
 
@@ -229,7 +231,7 @@ sap.ui.define([
 		// set the src to the real dom node
 		if (this.getMode() === ImageMode.Background) {
 			// In Background mode, the src is applied to the output DOM element only when the source image is finally loaded to the client side
-			$DomNode.css("background-image", "url(\"" + this._oImage.src + "\")");
+			$DomNode.css("background-image", "url(\"" + encodeCSS(this._oImage.src) + "\")");
 		}
 
 		if (!this._isWidthOrHeightSet()) {
@@ -676,6 +678,42 @@ sap.ui.define([
 	};
 
 	/**
+	 * Checks if the given value is valid for the <code>background-size</code>
+	 * CSS property
+	 *
+	 * @param {string} sValue the value to check
+	 * @protected
+	 * @returns {boolean} the check result
+	 */
+	Image.prototype._isValidBackgroundSizeValue = function (sValue) {
+		var whitespaceRegEx = /\s+/g;
+
+		// compress whitespace
+		sValue = jQuery.trim(sValue).replace(whitespaceRegEx, " ");
+
+		return isSubSet(sValue.split(" "), ["auto", "cover", "contain", "initial"])
+			|| DataType.getType("sap.ui.core.CSSSizeShortHand").isValid(sValue);
+	};
+
+	/**
+	 * Checks if the given value is valid for the <code>background-position</code>
+	 * CSS property
+	 *
+	 * @param {string} sValue the value to check
+	 * @protected
+	 * @returns {boolean} the check result
+	 */
+	Image.prototype._isValidBackgroundPositionValue = function (sValue) {
+		var whitespaceRegEx = /\s+/g;
+
+		// compress whitespace
+		sValue = jQuery.trim(sValue).replace(whitespaceRegEx, " ");
+
+		return isSubSet(sValue.split(" "), ["left", "right", "top", "center", "bottom", "initial"])
+			|| DataType.getType("sap.ui.core.CSSSizeShortHand").isValid(sValue);
+	};
+
+	/**
 	 * Returns the <code>sap.m.Image</code>  accessibility information.
 	 *
 	 * @see sap.ui.core.Control#getAccessibilityInfo
@@ -703,6 +741,17 @@ sap.ui.define([
 	Image.prototype.getFormDoNotAdjustWidth = function() {
 		return true;
 	};
+
+	/**
+	 * Utility function that checks if the content of an array
+	 * is a subset of the content of a second (reference) array
+	 */
+	function isSubSet (aTestArray, aRefArray) {
+		function isOutsideSet(sTestValue) {
+			return aRefArray.indexOf(sTestValue) < 0; // value is not part of the reference set
+		}
+		return aTestArray && aRefArray && !aTestArray.some(isOutsideSet);
+	}
 
 
 	return Image;

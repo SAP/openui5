@@ -76,6 +76,81 @@ sap.ui.define([
 		oImage.destroy();
 	});
 
+	QUnit.test("Image is rendered with correct backgroundPosition value", function(assert) {
+		// Arrange
+		var oImage = createImage({
+			mode: "Background"
+		}),
+		aTestInputValues = ["left top", "right bottom", "right center", "50% 50%", "10px 20px", "initial", " left  top ", "50px;5px solid red", '50px" onerror='],
+		aExpOutputValues = ["left top", "right bottom", "right center", "50% 50%", "10px 20px", "initial", "left top", "" /*invalid value should be discarded*/, "" /*invalid value should be discarded*/];
+
+		// System under test
+		oImage.placeAt("qunit-fixture");
+		Core.applyChanges();
+
+		aTestInputValues.forEach(function(sTestValue, iIndex) {
+			oImage.setBackgroundPosition(sTestValue);
+			oImage.rerender();
+
+			// Assert
+			var oImageDom = oImage.getDomRef();
+			assert.strictEqual(oImageDom.style.backgroundPosition, aExpOutputValues[iIndex], "correct property value");
+		});
+
+		// Clean up
+		oImage.destroy();
+	});
+
+	QUnit.test("Image is rendered with correct backgroundSize value", function(assert) {
+		// Arrange
+		var oImage = createImage({
+				mode: "Background"
+			}),
+			aTestInputValues = ["50% 50%", "10px 20px", "initial", "auto", "cover", "contain", "50px;5px solid red", '50px" onerror='],
+			aExpOutputValues = ["50% 50%", "10px 20px", "initial", "auto", "cover", "contain", "" /*invalid value should be discarded*/, "" /*invalid value should be discarded*/];
+
+		// System under test
+		oImage.placeAt("qunit-fixture");
+		Core.applyChanges();
+
+		aTestInputValues.forEach(function(sTestValue, iIndex) {
+			oImage.setBackgroundSize(sTestValue);
+			oImage.rerender();
+
+			// Assert
+			var oImageDom = oImage.getDomRef();
+			assert.strictEqual(oImageDom.style.backgroundSize, aExpOutputValues[iIndex], "correct property value");
+		});
+
+		// Clean up
+		oImage.destroy();
+	});
+
+	QUnit.test("Image is rendered with correct backgroundRepeat value", function(assert) {
+		// Arrange
+		var oImage = createImage({
+				mode: "Background"
+			}),
+			aTestInputValues = ["repeat", "repeat-x", "repeat-y", "no-repeat", "space", "round", "initial", "initial;5px solid red", 'initial" onerror='],
+			aExpOutputValues = ["repeat", "repeat-x", "repeat-y", "no-repeat", "space", "round", "initial", "" /*invalid value should be discarded*/, "" /*invalid value should be discarded*/];
+
+		// System under test
+		oImage.placeAt("qunit-fixture");
+		Core.applyChanges();
+
+		aTestInputValues.forEach(function(sTestValue, iIndex) {
+			oImage.setBackgroundRepeat(sTestValue);
+			oImage.rerender();
+
+			// Assert
+			var oImageDom = oImage.getDomRef();
+			assert.strictEqual(oImageDom.style.backgroundRepeat, aExpOutputValues[iIndex], "correct property value");
+		});
+
+		// Clean up
+		oImage.destroy();
+	});
+
 
 	QUnit.module("Rendering decorative image");
 
