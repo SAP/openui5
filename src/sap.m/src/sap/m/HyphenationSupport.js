@@ -238,7 +238,7 @@ sap.ui.define([
 			}
 
 			if (shouldControlHyphenate(oControl) && !shouldUseThirdParty()) {
-				oRm.addClass("sapUiHyphenation");
+				oRm.class("sapUiHyphenation");
 			}
 		};
 
