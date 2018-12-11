@@ -4,6 +4,7 @@
 sap.ui.define([
 	"sap/base/Log",
 	"sap/ui/base/BindingParser",
+	"sap/ui/core/InvisibleText",
 	"sap/ui/model/BindingMode",
 	"sap/ui/model/ClientContextBinding",
 	"sap/ui/model/Context",
@@ -18,9 +19,9 @@ sap.ui.define([
 	"sap/ui/model/odata/v2/ODataModel",
 	"sap/ui/performance/Measurement",
 	"sap/ui/test/TestUtils"
-], function (Log, BindingParser, BindingMode, ClientContextBinding, Context, FilterProcessor, Model,
-		JSONListBinding, JSONPropertyBinding, JSONTreeBinding, ODataMetaModel, ODataModel1, Utils,
-		ODataModel, Measurement, TestUtils) {
+], function (Log, BindingParser, InvisibleText, BindingMode, ClientContextBinding, Context,
+		FilterProcessor, Model, JSONListBinding, JSONPropertyBinding, JSONTreeBinding,
+		ODataMetaModel, ODataModel1, Utils, ODataModel, Measurement, TestUtils) {
 	/*global QUnit, sinon */
 	/*eslint camelcase: 0, max-nested-callbacks: 0, no-multi-str: 0, no-warning-comments: 0*/
 	"use strict";
@@ -1248,17 +1249,17 @@ sap.ui.define([
 				var sPath = "/dataServices/schema/" + sQuery + "/namespace";
 
 				function check(sBinding) {
-					var oIcon;
+					var oInvisibleText;
 
 					oMetaModel.mQueryCache = {};
 
 					try {
-						oIcon = new sap.ui.core.Icon({
-							color : sBinding,
+						oInvisibleText = new InvisibleText({
+							text : sBinding,
 							models : oMetaModel
 						});
 
-						assert.strictEqual(oIcon.getColor(), 'GWSAMPLE_BASIC', sBinding);
+						assert.strictEqual(oInvisibleText.getText(), 'GWSAMPLE_BASIC', sBinding);
 					} catch (ex) {
 						assert.ok(false, sBinding + ": " + ex.stack);
 					}
