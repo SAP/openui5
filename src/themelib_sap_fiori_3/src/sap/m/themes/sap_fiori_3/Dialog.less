@@ -3,6 +3,7 @@
 /* Fiori 3 theme                 */
 /* ============================= */
 
+@_sap_m_Dialog_MarginHeight: 6%;
 @_sap_m_Dialog_HeaderShadowColor: darken(@sapUiGroupContentBackground, 8);
 
 .sapMDialog.sapMPopup-CTX > header .sapMHeader-CTX,
@@ -30,5 +31,9 @@
 
 .sapMDialogResizeHandler::before {
 	content: attr(data-sap-ui-icon-content);
-	color: @sapUiButtonEmphasizedBackground;
+	color: @sapUiButtonLiteTextColor;
+}
+
+.sapMDialogBeginButton, .sapMDialogEndButton {
+	min-width: 4rem;
 }
