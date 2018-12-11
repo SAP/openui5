@@ -469,36 +469,11 @@ sap.ui.define([
 	 * @returns {boolean}
 	 *   <code>true</code> if the binding has pending changes
 	 *
+	 * @abstract
+	 * @function
+	 * @name sap.ui.model.odata.v4.ODataBinding#hasPendingChangesInDependents
 	 * @private
 	 */
-	ODataBinding.prototype.hasPendingChangesInDependents = function (oContext) {
-		var aDependents = oContext
-				? this.oModel.getDependentBindings(oContext)
-				: this.getDependentBindings();
-
-		return aDependents.some(function (oDependent) {
-			var oCache, bHasPendingChanges;
-
-			if (oDependent.oCachePromise.isFulfilled()) {
-				// Pending changes for this cache are only possible when there is a cache already
-				oCache = oDependent.oCachePromise.getResult();
-				if (oCache && oCache.hasPendingChangesForPath("")) {
-					return true;
-				}
-			}
-			if (oDependent.mCacheByResourcePath) {
-				bHasPendingChanges = Object.keys(oDependent.mCacheByResourcePath)
-					.some(function (sPath) {
-						return oDependent.mCacheByResourcePath[sPath].hasPendingChangesForPath("");
-					});
-				if (bHasPendingChanges) {
-					return true;
-				}
-			}
-			// Ask dependents, they might have no cache, but pending changes in mCacheByResourcePath
-			return oDependent.hasPendingChangesInDependents();
-		});
-	};
 
 	/**
 	 * Method not supported
@@ -683,31 +658,11 @@ sap.ui.define([
 	 *   If there is a change of this binding which has been sent to the server and for which there
 	 *   is no response yet.
 	 *
+	 * @abstract
+	 * @function
+	 * @name sap.ui.model.odata.v4.ODataBinding#resetChangesInDependents
 	 * @private
 	 */
-	ODataBinding.prototype.resetChangesInDependents = function () {
-		this.getDependentBindings().forEach(function (oDependent) {
-			var oCache;
-
-			if (oDependent.oCachePromise.isFulfilled()) {
-				// Pending changes for this cache are only possible when there is a cache already
-				oCache = oDependent.oCachePromise.getResult();
-				if (oCache) {
-					oCache.resetChangesForPath("");
-				}
-				oDependent.resetInvalidDataState();
-			}
-			// mCacheByResourcePath may have changes nevertheless
-			if (oDependent.mCacheByResourcePath) {
-				Object.keys(oDependent.mCacheByResourcePath).forEach(function (sPath) {
-					oDependent.mCacheByResourcePath[sPath].resetChangesForPath("");
-				});
-			}
-			// Reset dependents, they might have no cache, but pending changes in
-			// mCacheByResourcePath
-			oDependent.resetChangesInDependents();
-		});
-	};
 
 	/**
 	 * A method to reset invalid data state, to be called by {@link #resetChanges}.

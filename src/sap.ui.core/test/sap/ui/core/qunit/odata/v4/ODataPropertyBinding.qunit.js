@@ -1834,6 +1834,24 @@ sap.ui.define([
 	});
 
 	//*********************************************************************************************
+	[undefined, {}].forEach(function (oContext) {
+		QUnit.test("hasPendingChangesInDependents, w/ context=" + !!oContext, function (assert) {
+			var oBinding = this.oModel.bindProperty("/EMPLOYEES('1')/AGE");
+
+			// code under test
+			assert.strictEqual(oBinding.hasPendingChangesInDependents(oContext), false);
+		});
+	});
+
+	//*********************************************************************************************
+	QUnit.test("resetChangesInDependents", function (assert) {
+		var oBinding = this.oModel.bindProperty("/EMPLOYEES('1')/AGE");
+
+		// code under test
+		oBinding.resetChangesInDependents();
+	});
+
+	//*********************************************************************************************
 	if (TestUtils.isRealOData()) {
 		//*****************************************************************************************
 		QUnit.test("PATCH an entity", function (assert) {
