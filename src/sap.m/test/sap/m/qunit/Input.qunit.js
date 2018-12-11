@@ -3486,6 +3486,33 @@ sap.ui.define([
 		oInput = null;
 	});
 
+	QUnit.test("right arrow press", function (assert) {
+
+		var fnLiveChange = this.spy();
+
+		// arrange
+		var oInput = new Input({
+			showSuggestion: true,
+			suggestionItems: [
+				new Item({text: "Germany"}),
+				new Item({text: "Bulgaria"}),
+				new Item("UK", {key: "UK", text: "United Kingdom"}),
+				new Item({text: "Italy"})
+			],
+			liveChange: fnLiveChange
+		}).placeAt("content");
+
+		sap.ui.getCore().applyChanges();
+
+		oInput._oSuggPopover._onsapright();
+
+		assert.equal(fnLiveChange.callCount, 0, "liveChange handler is not fired");
+
+		// clean up
+		oInput.destroy();
+		oInput = null;
+	});
+
 	QUnit.module("Input with Suggestions and Value State Message", {
 		beforeEach: function () {
 
