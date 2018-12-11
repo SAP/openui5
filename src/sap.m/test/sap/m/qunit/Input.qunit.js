@@ -20,6 +20,7 @@ sap.ui.define([
 	"sap/m/Dialog",
 	"sap/m/Button",
 	"sap/m/SuggestionItem",
+	"sap/ui/qunit/utils/waitForThemeApplied",
 	"sap/ui/events/KeyCodes",
 	"jquery.sap.global"
 ], function(
@@ -42,6 +43,7 @@ sap.ui.define([
 	Dialog,
 	Button,
 	SuggestionItem,
+	waitForThemeApplied,
 	KeyCodes
 ) {
 	// shortcut for sap.m.InputTextFormatMode
@@ -3539,4 +3541,5 @@ sap.ui.define([
 		assert.strictEqual(jQuery(this.inputWithSuggestions._oValueStateMessage._oPopup.getContent()).css('z-index'), '1', 'z-index is correct');
 	});
 
+	return waitForThemeApplied();
 });
