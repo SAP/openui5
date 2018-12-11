@@ -1,9 +1,13 @@
 /*!
  * ${copyright}
  */
+/*global QUnit */
+QUnit.config.autostart = false;
+
 sap.ui.define([
+	"sap/ui/core/sample/common/pages/Any",
 	"sap/ui/test/opaQunit"
-], function (opaTest) {
+], function (Any, opaTest) {
 	/*global QUnit */
 	"use strict";
 
@@ -23,4 +27,6 @@ sap.ui.define([
 		Then.onAnyPage.analyzeSupportAssistant();
 		Then.iTeardownMyUIComponent();
 	});
+
+	QUnit.start();
 });

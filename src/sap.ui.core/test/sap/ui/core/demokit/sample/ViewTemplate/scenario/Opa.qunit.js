@@ -1,12 +1,16 @@
 /*!
  * ${copyright}
  */
+/*global QUnit */
+QUnit.config.autostart = false;
+
 sap.ui.define([
+	"sap/ui/core/sample/common/pages/Any",
 	"sap/ui/test/Opa5",
 	"sap/ui/test/opaQunit",
 	"sap/ui/test/TestUtils",
 	"sap/ui/test/matchers/Properties"
-], function (Opa5, opaTest, TestUtils, Properties) {
+], function (Any, Opa5, opaTest, TestUtils, Properties) {
 	/*global QUnit */
 	"use strict";
 
@@ -111,4 +115,6 @@ sap.ui.define([
 			errorMessage : "No title found, application did not load?!"
 		});
 	});
+
+	QUnit.start();
 });

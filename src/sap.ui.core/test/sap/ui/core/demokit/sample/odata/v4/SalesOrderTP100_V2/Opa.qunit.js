@@ -1,11 +1,16 @@
 /*!
  * ${copyright}
  */
+/*global QUnit */
+QUnit.config.autostart = false;
+
 sap.ui.define([
+	"sap/ui/core/sample/common/pages/Any",
+	"sap/ui/core/sample/odata/v4/SalesOrderTP100_V2/pages/Main",
 	"sap/base/Log",
 	"sap/ui/test/Opa5",
 	"sap/ui/test/opaQunit"
-], function (Log, Opa5, opaTest) {
+], function (Any, Main, Log, Opa5, opaTest) {
 	/*global QUnit */
 	"use strict";
 
@@ -48,4 +53,6 @@ sap.ui.define([
 		Then.onAnyPage.analyzeSupportAssistant();
 		Then.iTeardownMyUIComponent();
 	});
+
+	QUnit.start();
 });
