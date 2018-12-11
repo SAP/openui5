@@ -849,10 +849,7 @@ sap.ui.define([
 			this._aRowHeights = this._collectRowHeights(false);
 			this._updateRowHeights(this._collectRowHeights(true), true); // column header rows
 			this._updateRowHeights(this._aRowHeights, false); // table body rows
-
-			if (TableUtils.isVariableRowHeightEnabled(this)) {
-				this._iRenderedFirstVisibleRow = this._getFirstRenderedRowIndex();
-			}
+			this._iRenderedFirstVisibleRow = this._getFirstRenderedRowIndex();
 			this._getScrollExtension().updateVerticalScrollbarVisibility();
 
 			this._fireRowsUpdated(sReason);
@@ -1353,10 +1350,10 @@ sap.ui.define([
 	Table.prototype.onAfterRendering = function(oEvent) {
 		var bRenderedRows = oEvent && oEvent.isMarked("renderRows");
 		var sVisibleRowCountMode = this.getVisibleRowCountMode();
+		var iOldVisibleRowCount = this.getVisibleRowCount();
 		var $this = this.$();
 
 		this._bInvalid = false;
-		this._bOnAfterRendering = true;
 
 		this._attachEvents();
 
@@ -1377,8 +1374,6 @@ sap.ui.define([
 			this._disableTextSelection($this.find(".sapUiTableColHdrCnt"));
 		}
 
-		this._bOnAfterRendering = false;
-
 		// invalidate item navigation
 		this._getKeyboardExtension().invalidateItemNavigation();
 
@@ -1388,14 +1383,34 @@ sap.ui.define([
 		// manually removed so that the actions are later correctly positioned.
 		this.getDomRef().classList.remove("sapUiTableRActFlexible");
 
+		if (!bRenderedRows) {
+			// needed for the column resize ruler
+			this._aTableHeaders = this.$().find(".sapUiTableColHdrCnt th");
+		}
+
 		if (this._bFirstRendering && sVisibleRowCountMode === VisibleRowCountMode.Auto) {
 			this._bFirstRendering = false;
 			// Wait until everything is rendered (parent height!) before reading/updating sizes. Use a promise to make sure
 			// to be executed before timeouts may be executed.
 			Promise.resolve().then(this._updateTableSizes.bind(this, TableUtils.RowsUpdateReason.Render, {forceUpdate: true}));
 		} else {
-			var mOptions = {};
-			mOptions.skipHandleRowCountMode = bRenderedRows;
+			var mOptions = {
+				skipHandleRowCountMode: bRenderedRows
+			};
+			var fireRowsUpdated = function() {
+				if (bRenderedRows || this.getBinding("rows") == null) {
+					return;
+				}
+
+				if (sVisibleRowCountMode === VisibleRowCountMode.Auto) {
+					if (iOldVisibleRowCount === this.getVisibleRowCount()) {
+						this._fireRowsUpdated(TableUtils.RowsUpdateReason.Render);
+					}
+				} else {
+					this._fireRowsUpdated(TableUtils.RowsUpdateReason.Render);
+				}
+			}.bind(this);
+
 			if (bRenderedRows) {
 				if (TableUtils.isVariableRowHeightEnabled(this)) {
 					mOptions.rowContentHeight = "reset";
@@ -1404,18 +1419,10 @@ sap.ui.define([
 				}
 			}
 			if (!bRenderedRows && sVisibleRowCountMode === VisibleRowCountMode.Auto && this._bIsFlexItem) {
-				Promise.resolve().then(this._updateTableSizes.bind(this, TableUtils.RowsUpdateReason.Render, mOptions));
+				Promise.resolve().then(this._updateTableSizes.bind(this, TableUtils.RowsUpdateReason.Render, mOptions)).then(fireRowsUpdated);
 			} else {
 				this._updateTableSizes(TableUtils.RowsUpdateReason.Render, mOptions);
-			}
-		}
-
-		if (!bRenderedRows) {
-			// needed for the column resize ruler
-			this._aTableHeaders = this.$().find(".sapUiTableColHdrCnt th");
-
-			if (this.getBinding("rows")) {
-				this._fireRowsUpdated(TableUtils.RowsUpdateReason.Render);
+				fireRowsUpdated();
 			}
 		}
 	};
@@ -1812,7 +1819,7 @@ sap.ui.define([
 				});
 			}
 		} else if (!bOnScroll) {
-			// Even if the first visible row was not changed, this row may not be visible because of the inner scroll position. Therefore the
+			// Even if the first visible row was not changed, this row may not be visible because of the inner scroll position. Therefore, the
 			// scroll position is adjusted to make it visible (by resetting the inner scroll position).
 			oScrollExtension.updateVerticalScrollPosition();
 		}
@@ -3531,9 +3538,7 @@ sap.ui.define([
 			}
 		}
 
-		if (TableUtils.isVariableRowHeightEnabled(this)) {
-			this._iRenderedFirstVisibleRow = this._getFirstRenderedRowIndex();
-		}
+		this._iRenderedFirstVisibleRow = this._getFirstRenderedRowIndex();
 
 		var bFireRowsUpdated = bUpdateUI && aContexts.length > 0;
 		return this._renderRows(sReason, bFireRowsUpdated);
