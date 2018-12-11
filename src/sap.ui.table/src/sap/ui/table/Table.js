@@ -815,7 +815,6 @@ sap.ui.define([
 		this._attachExtensions();
 		this._initSelectionAdapter();
 
-		this._bLazyRowCreationEnabled = jQuery.sap.getUriParameters().get('sap-ui-xx-table-lazyrowcreation') !== "false"; // default true
 		this._bRowsBeingBound = false;
 		this._bContextsRequested = false;
 		this._bContextsAvailable = false;
@@ -1990,10 +1989,8 @@ sap.ui.define([
 				// Real unbind of rows.
 				this._oSelectionAdapter._setBinding(null);
 				this._updateTotalRowCount(true);
-				if (this._bLazyRowCreationEnabled) {
-					this._updateRows(this.getVisibleRowCount(), TableUtils.RowsUpdateReason.Unbind);
-				}
-				this.updateRows(TableUtils.RowsUpdateReason.Unbind); // Can be removed if lazy row creation with showNoData=false is supported.
+				this._updateRows(this.getVisibleRowCount(), TableUtils.RowsUpdateReason.Unbind);
+				this.updateRows(TableUtils.RowsUpdateReason.Unbind);
 			}
 		}
 
@@ -3469,7 +3466,7 @@ sap.ui.define([
 
 		this.setProperty("visibleRowCount", iNumberOfRows, true);
 
-		if (TableUtils.isNoDataVisible(this) && !oBinding && this._bLazyRowCreationEnabled) {
+		if (TableUtils.isNoDataVisible(this) && !oBinding) {
 			// Create rows lazily. Rows should not be instantiated or rendered when the NoData overlay is displayed and no binding is available.
 			// If the row count changes after the table was unbound, the rows will be removed from the aggregation. But they remain intact, stored in
 			// the row pool, for later use.
