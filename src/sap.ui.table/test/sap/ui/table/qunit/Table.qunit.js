@@ -316,13 +316,14 @@ sap.ui.define([
 	});
 
 	QUnit.test("SelectionMode", function(assert) {
+		oTable.setSelectionMode(SelectionMode.MultiToggle);
+		assert.strictEqual(oTable.getSelectionMode(), SelectionMode.MultiToggle, "SelectionMode set to MultiToggle");
+		oTable.setSelectionMode(SelectionMode.Single);
+		assert.strictEqual(oTable.getSelectionMode(), SelectionMode.Single, "SelectionMode set to Single");
 		oTable.setSelectionMode(SelectionMode.Multi);
-		assert.equal(oTable.getSelectionMode(), "MultiToggle", "Selection mode is MultiToggle although Multi was set!");
-
-		// check selection mode none without columns BCP: 1570822620
-		oTable.removeAllColumns();
+		assert.strictEqual(oTable.getSelectionMode(), SelectionMode.MultiToggle, "SelectionMode defaults to MultiToggle, if Multi is set");
 		oTable.setSelectionMode(SelectionMode.None);
-		assert.equal(oTable.getSelectionMode(), "None", "Selection mode is None!");
+		assert.strictEqual(oTable.getSelectionMode(), SelectionMode.None, "SelectionMode set to None");
 	});
 
 	QUnit.test("SelectionMode = None", function(assert) {
@@ -336,66 +337,6 @@ sap.ui.define([
 
 		oTable.addSelectionInterval(1, 1);
 		assert.deepEqual(oTable.getSelectedIndices(), [], "addSelectionInterval does not select in SelectionMode=\"None\"");
-	});
-
-	QUnit.test("Multi Selection", function(assert) {
-		var iFirstRow = oTable.getFirstVisibleRow();
-
-		function triggerSelectionOnRow(i, bKeyboard, bCtrlKey, bShiftKey) {
-			var oCell = jQuery.sap.domById(oTable.getId() + "-rowsel" + i);
-			oCell.focus();
-			if (bKeyboard) {
-				qutils.triggerKeydown(oCell, "SPACE", !!bShiftKey, false, !!bCtrlKey);
-				qutils.triggerKeyup(oCell, "SPACE", !!bShiftKey, false, !!bCtrlKey);
-			} else {
-				qutils.triggerEvent("click", oCell, {metaKey: !!bCtrlKey, ctrlKey: !!bCtrlKey, shiftKey: !!bShiftKey});
-			}
-		}
-
-		function checkSelection(sText, aExpectedSelection) {
-			var aSelection = oTable.getSelectedIndices();
-			assert.equal(aSelection.length, aExpectedSelection.length, sText + ": Number of selected items is " + aExpectedSelection.length);
-			for (var i = 0; i < aExpectedSelection.length; i++) {
-				assert.equal(aSelection[i], iFirstRow + aExpectedSelection[i], sText + ": Selected index " + iFirstRow + aExpectedSelection[i]);
-			}
-		}
-
-		oTable.setSelectionMode(SelectionMode.Multi);
-		assert.equal(oTable.getSelectionMode(), "MultiToggle", "Selection mode is MultiToggle although Multi was set!");
-		sap.ui.getCore().applyChanges();
-
-		checkSelection("MultiToggle - Initial", []);
-		triggerSelectionOnRow(0, false, false, false);
-		checkSelection("MultiToggle - After 1st selection", [0]);
-		triggerSelectionOnRow(2, false, false, false);
-		checkSelection("MultiToggle - After 2nd selection", [0, 2]);
-		triggerSelectionOnRow(3, false, true, false);
-		checkSelection("MultiToggle - After 3rd selection", [0, 2, 3]);
-		triggerSelectionOnRow(0, false, false, false);
-		checkSelection("MultiToggle - After 4th selection", [2, 3]);
-		triggerSelectionOnRow(3, true, false, false);
-		checkSelection("MultiToggle - After 5th selection", [2]);
-		triggerSelectionOnRow(0, true, false, false);
-		checkSelection("MultiToggle - After 6th selection", [0, 2]);
-		var oCell = oTable.$("rowsel0");
-		oCell.focus();
-		qutils.triggerKeydown(document.activeElement, "SHIFT", false, false, false);
-		qutils.triggerKeydown(document.activeElement, "ARROW_DOWN", true, false, false);
-		qutils.triggerKeydown(document.activeElement, "ARROW_DOWN", true, false, false);
-		qutils.triggerKeydown(document.activeElement, "ARROW_DOWN", true, false, false);
-		qutils.triggerKeydown(document.activeElement, "ARROW_DOWN", true, false, false);
-		qutils.triggerKeyup(document.activeElement, "SHIFT", false, false, false);
-		checkSelection("MultiToggle - After 7th selection", [0, 1, 2, 3, 4]);
-		triggerSelectionOnRow(2, false, false, true);
-		checkSelection("MultiToggle - After 8th selection", [0, 1, 2, 3, 4]);
-		triggerSelectionOnRow(6, false, false, true);
-		checkSelection("MultiToggle - After 9th selection", [0, 1, 2, 3, 4, 5, 6]);
-
-		oTable.clearSelection();
-		oTable._enableLegacyMultiSelection = true;
-		oTable.setSelectionMode(SelectionMode.Multi);
-		assert.equal(oTable.getSelectionMode(), "MultiToggle",
-			"Selection mode is MultiToggle although Multi and _enableLegacyMultiSelection was set!");
 	});
 
 	QUnit.test("SelectedIndex", function(assert) {

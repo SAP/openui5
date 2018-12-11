@@ -441,19 +441,17 @@ sap.ui.define([
 
 				oTable._iSourceRowIndex = iAbsoluteRowIndex; // To indicate that the selection was changed by user interaction.
 
-				var bSelectionChanged = true;
+				var bSelectionChanged = false;
 
 				if (fnDoSelect) {
 					bSelectionChanged = fnDoSelect(iAbsoluteRowIndex, bSelect);
 				} else if (oTable.isIndexSelected(iAbsoluteRowIndex)) {
-					if (bSelect === true) {
-						return false;
+					if (bSelect !== true) {
+						bSelectionChanged = true;
+						oTable.removeSelectionInterval(iAbsoluteRowIndex, iAbsoluteRowIndex);
 					}
-					oTable.removeSelectionInterval(iAbsoluteRowIndex, iAbsoluteRowIndex);
-				} else {
-					if (bSelect === false) {
-						return false;
-					}
+				} else if (bSelect !== false) {
+					bSelectionChanged = true;
 					oTable.addSelectionInterval(iAbsoluteRowIndex, iAbsoluteRowIndex);
 				}
 
@@ -1105,21 +1103,6 @@ sap.ui.define([
 			sContentDensity = fnGetContentDensity("hasClass", $DomRef.closest("." + aContentDensityStyleClasses.join(",.")));
 
 			return sContentDensity;
-		},
-
-		/**
-		 * Checks and returns an adapted selection mode (e.g. changes deprecated mode "Multi" to "MultiToggle") if necessary.
-		 * @param {sap.ui.table.Table} oTable Instance of the table
-		 * @param {string} sSelectionMode the <code>sap.ui.table.SelectionMode</code>
-		 * @returns {string} the sanitized <code>sap.ui.table.SelectionMode</code>
-		 * @private
-		 */
-		sanitizeSelectionMode: function(oTable, sSelectionMode) {
-			if (sSelectionMode === SelectionMode.Multi) {
-				sSelectionMode = SelectionMode.MultiToggle;
-				Log.warning("The selection mode 'Multi' is deprecated and must not be used anymore. Your setting was defaulted to selection mode 'MultiToggle'");
-			}
-			return sSelectionMode;
 		},
 
 		/**

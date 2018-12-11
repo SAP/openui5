@@ -866,16 +866,6 @@ sap.ui.define([
 		}
 	});
 
-	QUnit.test("sanitizeSelectionMode", function(assert) {
-		var mSelectionMode = SelectionMode;
-		assert.equal(TableUtils.sanitizeSelectionMode({}, mSelectionMode.None), mSelectionMode.None, "SelectionMode None");
-		assert.equal(TableUtils.sanitizeSelectionMode({}, mSelectionMode.Single), mSelectionMode.Single, "SelectionMode Single");
-		assert.equal(TableUtils.sanitizeSelectionMode({}, mSelectionMode.MultiToggle), mSelectionMode.MultiToggle, "SelectionMode MultiToggle");
-		assert.equal(TableUtils.sanitizeSelectionMode({}, mSelectionMode.Multi), mSelectionMode.MultiToggle, "SelectionMode Multi");
-		assert.equal(TableUtils.sanitizeSelectionMode({_enableLegacyMultiSelection: true}, mSelectionMode.Multi), mSelectionMode.MultiToggle,
-			"SelectionMode Multi (legacy)");
-	});
-
 	QUnit.test("getCell", function(assert) {
 		oTable.setRowActionCount(2);
 		oTable.setRowActionTemplate(new RowAction());
