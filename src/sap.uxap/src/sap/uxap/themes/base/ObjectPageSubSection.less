@@ -172,6 +172,19 @@ html .sapUiContainer-Medium .sapUxAPObjectPageSubSectionHeader {
 	}
 }
 
+.sapUxAPObjectPageSubSectionFitContainer {
+	overflow-y: hidden; // hide content that does not fit the available height to avoid overlap with the next section content
+
+	.sapUxAPBlockContainer,
+	.sapUxAPBlockContainer > .sapUiRespGrid,
+	.sapUxAPBlockContainer > .sapUiRespGrid > * {
+		height: 100%;
+	}
+	.sapUxAPBlockContainer {
+		box-sizing: border-box;
+	}
+}
+
 /* compact size */
 .sapUiSizeCompact {
 	.sapUxAPObjectPageSubSectionHeaderTitle {
