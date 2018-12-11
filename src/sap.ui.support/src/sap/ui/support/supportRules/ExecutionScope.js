@@ -297,7 +297,7 @@ sap.ui.define(
 				 */
 				getLoggedObjects: function (type) {
 					var log = jQuery.sap.log.getLogEntries(),
-						loggedObjects = [];
+						loggedObjects = [], elemIds;
 
 					// Add logEntries that have support info object,
 					// and that have the same type as the type provided
@@ -306,9 +306,11 @@ sap.ui.define(
 							return;
 						}
 
-						var elemIds = elements.map(function (element) {
-							return element.getId();
-						});
+						if (!elemIds){
+							elemIds = elements.map(function (element) {
+								return element.getId();
+							});
+						}
 
 						var hasElemId = !!logEntry.supportInfo.elementId,
 							typeMatch =
