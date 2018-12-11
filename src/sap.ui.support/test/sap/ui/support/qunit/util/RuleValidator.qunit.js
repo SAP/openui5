@@ -1,6 +1,6 @@
 /*global QUnit*/
 
-sap.ui.require([
+sap.ui.define([
 	'sap/ui/support/supportRules/util/RuleValidator'
 ], function (RuleValidator) {
 		"use strict";
