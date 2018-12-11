@@ -55,6 +55,13 @@ sap.ui.define([
 						return mHash;
 					}
 				};
+			},
+			getLogonSystem: function() {
+				return {
+					isTrial: function() {
+						return false;
+					}
+				};
 			}
 		});
 	}

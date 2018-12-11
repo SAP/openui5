@@ -189,6 +189,9 @@ sap.ui.define([
 		var sComponentName = mComponent.name;
 		var sAppVersion = mComponent.appVersion || Utils.DEFAULT_APP_VERSION;
 		var oCacheEntry = Cache.getEntry(sComponentName, sAppVersion);
+		var oCurrentLoadChanges;
+		mPropertyBag = mPropertyBag || {};
+		mPropertyBag.isTrial = Utils.isTrialSystem();
 
 		if (oCacheEntry.promise && !bInvalidateCache) {
 			return oCacheEntry.promise;
@@ -197,8 +200,8 @@ sap.ui.define([
 		var oChangesBundleLoadingPromise = Cache._getChangesFromBundle(mPropertyBag);
 
 		// in case of no changes present according to async hints
-		if (mPropertyBag && mPropertyBag.cacheKey === "<NO CHANGES>") {
-			var currentLoadChanges = oChangesBundleLoadingPromise.then(function (aChanges) {
+		if (mPropertyBag.cacheKey === "<NO CHANGES>") {
+			oCurrentLoadChanges = oChangesBundleLoadingPromise.then(function (aChanges) {
 				oCacheEntry.file = {
 					changes: {
 						changes : aChanges,
@@ -209,9 +212,16 @@ sap.ui.define([
 					componentClassName: sComponentName
 				};
 				return oCacheEntry.file;
+			})
+			.then(function(oReturn) {
+				// normally the LrepConnector takes care of this, but in case of no changes and async hints we have to do it here
+				if (mPropertyBag.isTrial && oLrepConnector instanceof LrepConnector) {
+					return oLrepConnector.enableFakeConnectorForTrial(mComponent, oReturn);
+				}
+				return oReturn;
 			});
-			oCacheEntry.promise = currentLoadChanges;
-			return currentLoadChanges;
+			oCacheEntry.promise = oCurrentLoadChanges;
+			return oCurrentLoadChanges;
 		}
 
 		var oFlexDataPromise = oLrepConnector.loadChanges(mComponent, mPropertyBag);
@@ -236,7 +246,7 @@ sap.ui.define([
 			});
 		});
 
-		var currentLoadChanges = Promise.all([oChangesBundleLoadingPromise, oChangesLoadingPromise]).then(function (aValues) {
+		oCurrentLoadChanges = Promise.all([oChangesBundleLoadingPromise, oChangesLoadingPromise]).then(function (aValues) {
 			var aChangesFromBundle = aValues[0];
 			var mChanges = aValues[1];
 
@@ -256,10 +266,10 @@ sap.ui.define([
 			throw err;
 		});
 
-		oCacheEntry.promise = currentLoadChanges;
+		oCacheEntry.promise = oCurrentLoadChanges;
 		Cache._oFlexDataPromise = oFlexDataPromise;
 
-		return currentLoadChanges;
+		return oCurrentLoadChanges;
 	};
 
 	/**
@@ -274,7 +284,7 @@ sap.ui.define([
 	 * @private
 	 */
 	Cache._getChangesFromBundle = function (mPropertyBag) {
-		var bChangesBundleDeterminable = mPropertyBag && mPropertyBag.appName;
+		var bChangesBundleDeterminable = mPropertyBag.appName;
 
 		if (!bChangesBundleDeterminable) {
 			return Promise.resolve([]);

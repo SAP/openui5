@@ -819,6 +819,43 @@ function(
 			aArray = [{a: 1, b: 2, c: 3}, undefined, {a: 7, b: 8, c: 9}];
 			assert.equal(Utils.indexOfObject(aArray, oObject), 1, "the function returns the correct index");
 		});
+
+		QUnit.test("isTrialSystem with ushellContainer available and returning true", function(assert) {
+			assert.expect(2);
+			sandbox.stub(Utils, "getUshellContainer").returns({
+				getLogonSystem: function() {
+					return {
+						isTrial: function() {
+							assert.ok(true, "the function was called");
+							return true;
+						}
+					};
+				}
+			});
+
+			assert.ok(Utils.isTrialSystem(), "the function returns true");
+		});
+
+		QUnit.test("isTrialSystem with ushellContainer available and returning false", function(assert) {
+			assert.expect(2);
+			sandbox.stub(Utils, "getUshellContainer").returns({
+				getLogonSystem: function() {
+					return {
+						isTrial: function() {
+							assert.ok(true, "the function was called");
+							return false;
+						}
+					};
+				}
+			});
+
+			assert.notOk(Utils.isTrialSystem(), "the function returns false");
+		});
+
+		QUnit.test("isTrialSystem without ushellContainer available", function(assert) {
+			sandbox.stub(Utils, "getUshellContainer").returns(undefined);
+			assert.notOk(Utils.isTrialSystem(), "the function does not break and returns false");
+		});
 	});
 
 	function fnCreateComponentMockup(mTechnicalParameters) {

@@ -127,8 +127,9 @@ sap.ui.define([
 		};
 
 		AppVariantUtils.getURLParsedHash = function() {
-			var oURLParser = sap.ushell.Container.getService("URLParsing");
-			if (oURLParser.parseShellHash && oURLParser.getHash){
+			var oUshellContainer = FlexUtils.getUshellContainer();
+			var oURLParser = oUshellContainer && oUshellContainer.getService("URLParsing");
+			if (oURLParser && oURLParser.parseShellHash && oURLParser.getHash){
 				return oURLParser.parseShellHash(hasher.getHash());
 			}
 		};
@@ -410,8 +411,9 @@ sap.ui.define([
 			var oComponentInstance = oApplication.componentHandle.getInstance();
 
 			if (oComponentInstance) {
-				var oCrossAppNav = sap.ushell.Container.getService("CrossApplicationNavigation");
-				if (oCrossAppNav.toExternal){
+				var oUshellContainer = FlexUtils.getUshellContainer();
+				var oCrossAppNav = oUshellContainer && oUshellContainer.getService("CrossApplicationNavigation");
+				if (oCrossAppNav && oCrossAppNav.toExternal){
 					oCrossAppNav.toExternal({target: {shellHash: "#"}}, oComponentInstance);
 				}
 			}
