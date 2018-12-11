@@ -1301,12 +1301,12 @@ sap.ui.define([
 		if (bSuppressInvalidate) {
 			//Refresh only for property changes with suppressed invalidation (others lead to rerendering and refresh is handled there)
 			ActivityDetection.refresh();
-			this.iSuppressInvalidate++;
 		}
 
 		// change the property (and invalidate if the rendering should be updated)
 		this.mProperties[sPropertyName] = oValue;
-		if (!this.isInvalidateSuppressed()) {
+
+		if (!bSuppressInvalidate) {
 			this.invalidate();
 		}
 
@@ -1324,11 +1324,6 @@ sap.ui.define([
 		}
 		if (this._observer) {
 			this._observer.propertyChange(this, sPropertyName, oOldValue, oValue);
-		}
-
-		// reset suppress invalidate flag
-		if (bSuppressInvalidate) {
-			this.iSuppressInvalidate--;
 		}
 
 		return this;
