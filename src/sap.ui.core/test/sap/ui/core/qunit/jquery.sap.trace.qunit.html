@@ -329,8 +329,12 @@
 				var xhr = new XMLHttpRequest();
 				xhr.open("www.sap.com", "GET");
 				xhr.setRequestHeader("header", "value");
-				xhr.setRequestHeader(null, null);
-				assert.ok(true, "no exception was raised on valid parammeters");
+				try {
+					xhr.setRequestHeader(null, null); // IE11 throws on this call
+					assert.ok(true, "no exception was raised on valid parammeters");
+				} catch (e) {
+					assert.ok(Device.browser.msie, "exception was raised for IE 11");
+				}
 			});
 
 			QUnit.module("Global busy duration measurement",{
