@@ -323,11 +323,11 @@ sap.ui.define([
 	 * @returns {sap.ui.model.odata.v4.ODataBinding[]}
 	 *   A list of dependent bindings, never <code>null</code>
 	 *
+	 * @abstract
+	 * @function
+	 * @name sap.ui.model.odata.v4.ODataBinding#getDependentBindings
 	 * @private
 	 */
-	ODataBinding.prototype.getDependentBindings = function () {
-		return this.oModel.getDependentBindings(this);
-	};
 
 	/**
 	 * Returns the group ID of the binding that is used for read requests.
