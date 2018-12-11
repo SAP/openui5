@@ -1682,13 +1682,35 @@ sap.ui.define([
 		QUnit.module("Highlight");
 		QUnit.test("Highlight should be rendered", function (assert) {
 			var oLI = new StandardListItem({
-				highlight: "Error",
-				title: "Error"
+				title: "Title of the item"
 			}).placeAt("content");
 
+			var fnTestHighlight = function(sHighlight) {
+				oLI.setHighlight(sHighlight);
+				sap.ui.getCore().applyChanges();
+				assert.ok(oLI.getDomRef().firstChild.classList.contains("sapMLIBHighlight"), "Highlight is rendered");
+				assert.ok(oLI.getDomRef().firstChild.classList.contains("sapMLIBHighlight" + sHighlight), sHighlight + " Highlight is rendered");
+			};
+
+			var aHighlightColors = ["Error", "Warning", "Success", "Information", "Indication01", "Indication02", "Indication03", "Indication04", "Indication05"];
+			for (var i = 0; i < aHighlightColors.length; i++) {
+				fnTestHighlight(aHighlightColors[i]);
+			}
+
+			oLI.setHighlight("None");
 			sap.ui.getCore().applyChanges();
-			assert.ok(oLI.getDomRef().firstChild.classList.contains("sapMLIBHighlight"), true, "Highlight is rendered");
-			assert.ok(oLI.getDomRef().firstChild.classList.contains("sapMLIBHighlightError"), true, "Error Highlight is rendered");
+			assert.ok(!oLI.getDomRef().firstChild.classList.contains("sapMLIBHighlight"), "Highlight is not rendered");
+			assert.ok(!oLI.getDomRef().firstChild.classList.contains("sapMLIBHighlightNone"), "No highlight class for None");
+
+			oLI.setHighlight(null);
+			assert.strictEqual(oLI.getHighlight(), "None", "Default for highlight is 'None'.");
+
+			oLI.setHighlight();
+			assert.strictEqual(oLI.getHighlight(), "None", "Default for highlight is 'None'.");
+
+			assert.throws(function() {
+				oLI.setHighlight("Nonsens");
+			}, "Error thrown when invalid value is set for highlight property.");
 
 			// clean up
 			oLI.destroy();
