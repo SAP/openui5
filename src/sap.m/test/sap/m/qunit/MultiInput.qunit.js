@@ -1711,4 +1711,48 @@ sap.ui.define([
 		assert.ok(!oMultiInput._oSelectedItemsList, "The SelectedItemsList gets detached");
 		assert.ok(oMultiInput._oSelectedItemsList != oList, "The SelectedItemsList gets cleaned properly");
 	});
+
+
+	QUnit.module("IE11", {
+		beforeEach : function() {
+			sinon.config.useFakeTimers = false;
+			this.multiInput1 = new MultiInput({
+				placeholder: 'placeholder',
+				tokens:[
+					new Token({text: 'token 1'}),
+					new Token({text: 'token 2'}),
+					new Token({text: 'token 3'})
+				]
+			});
+			this.multiInput1.placeAt("qunit-fixture");
+
+			sap.ui.getCore().applyChanges();
+		},
+		afterEach : function() {
+			sinon.config.useFakeTimers = true;
+			this.multiInput1.destroy();
+		}
+	});
+
+	QUnit.test("keyboard", function(assert) {
+		var done = assert.async();
+
+		this.multiInput1.focus();
+
+		this.multiInput1.oninput({
+			setMarked: function (vl) {
+				this.invalid = vl === "invalid";
+			},
+			isMarked: function () {
+				return this.invalid;
+			}
+		});
+
+		qutils.triggerKeydown(this.multiInput1.getDomRef(), KeyCodes.ARROW_LEFT);
+
+		setTimeout(function () {
+			assert.strictEqual(this.multiInput1.getTokens().length, 3, 'tokens count is correct');
+			done();
+		}.bind(this), 1000);
+	});
 });
