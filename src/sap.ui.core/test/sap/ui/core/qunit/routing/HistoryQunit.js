@@ -458,21 +458,21 @@ sap.ui.define([
 
 	QUnit.test("Should attach listener to each of the history relevant event names", function(assert) {
 		var oHashChanger = new HashChanger(),
-			aEventNames = ["foo", "bar"];
+			aEventsInfo = [{name: "foo"}, {name: "bar"}];
 
-		oHashChanger.getEventNamesForHistory = function() {
-			return aEventNames;
+		oHashChanger.getRelevantEventsInfo = function() {
+			return aEventsInfo;
 		};
 
-		aEventNames.forEach(function(sEvent) {
-			assert.ok(!oHashChanger.hasListeners(sEvent), "HashChanger doesn't have listener for event " + sEvent + " before History is attached to it");
+		aEventsInfo.forEach(function(oEventInfo) {
+			assert.ok(!oHashChanger.hasListeners(oEventInfo.name), "HashChanger doesn't have listener for event " + oEventInfo.name + " before History is attached to it");
 		});
 		assert.ok(!oHashChanger.hasListeners("hashChanged"), "HashChanger doesn't have listener for event hashChanged");
 
 		var oHistory = new History(oHashChanger);
 
-		aEventNames.forEach(function(sEvent) {
-			assert.ok(oHashChanger.hasListeners(sEvent), "HashChanger has listener for event " + sEvent + " after History is attached to it");
+		aEventsInfo.forEach(function(oEventInfo) {
+			assert.ok(oHashChanger.hasListeners(oEventInfo.name), "HashChanger has listener for event " + oEventInfo.name + " after History is attached to it");
 		});
 		assert.ok(!oHashChanger.hasListeners("hashChanged"), "HashChanger doesn't have listener for event hashChanged");
 
