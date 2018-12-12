@@ -1,6 +1,6 @@
 /* global QUnit*/
 
-sap.ui.require([
+sap.ui.define([
 	"sap/ui/thirdparty/jquery",
 	"sap/ui/dt/DesignTime",
 	"sap/ui/dt/plugin/TabHandling",

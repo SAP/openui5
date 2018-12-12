@@ -1,6 +1,6 @@
 /* global QUnit */
 
-sap.ui.require([
+sap.ui.define([
 	"sap/ui/thirdparty/jquery",
 	"sap/ui/rta/appVariant/AppVariantOverviewDialog",
 	"sap/ui/rta/appVariant/Utils",
