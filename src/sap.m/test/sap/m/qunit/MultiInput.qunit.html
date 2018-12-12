@@ -1359,6 +1359,49 @@
 		assert.strictEqual(result.getText(), "token", "then the return value is correct");
 	});
 
+	QUnit.module("IE11", {
+		beforeEach : function() {
+			sinon.config.useFakeTimers = false;
+			this.multiInput1 = new sap.m.MultiInput({
+				placeholder: 'placeholder',
+				tokens:[
+					new sap.m.Token({text: 'token 1'}),
+					new sap.m.Token({text: 'token 2'}),
+					new sap.m.Token({text: 'token 3'})
+				]
+			});
+			this.multiInput1.placeAt("qunit-fixture");
+
+			sap.ui.getCore().applyChanges();
+		},
+		afterEach : function() {
+			sinon.config.useFakeTimers = true;
+			this.multiInput1.destroy();
+		}
+	});
+
+	QUnit.test("keyboard", function(assert) {
+		var done = assert.async();
+
+		this.multiInput1.focus();
+
+		this.multiInput1.oninput({
+			setMarked: function (vl) {
+				this.invalid = vl === "invalid";
+			},
+			isMarked: function () {
+				return this.invalid;
+			}
+		});
+
+		qutils.triggerKeydown(this.multiInput1.getDomRef(), jQuery.sap.KeyCodes.ARROW_LEFT);
+
+		setTimeout(function () {
+			assert.strictEqual(this.multiInput1.getTokens().length, 3, 'tokens count is correct');
+			done();
+		}.bind(this), 1000);
+	});
+
 </script>
 
 </head>
