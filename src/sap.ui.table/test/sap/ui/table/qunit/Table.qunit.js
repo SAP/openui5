@@ -324,6 +324,11 @@ sap.ui.define([
 		assert.strictEqual(oTable.getSelectionMode(), SelectionMode.MultiToggle, "SelectionMode defaults to MultiToggle, if Multi is set");
 		oTable.setSelectionMode(SelectionMode.None);
 		assert.strictEqual(oTable.getSelectionMode(), SelectionMode.None, "SelectionMode set to None");
+
+		oTable._enableLegacyMultiSelection();
+		oTable.setSelectionMode(SelectionMode.Multi);
+		assert.strictEqual(oTable.getSelectionMode(), SelectionMode.MultiToggle,
+			"SelectionMode defaults to MultiToggle, if Multi is set when legacy multi selection is enabled");
 	});
 
 	QUnit.test("SelectionMode = None", function(assert) {

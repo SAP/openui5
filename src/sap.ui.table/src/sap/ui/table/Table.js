@@ -4114,6 +4114,29 @@ sap.ui.define([
 		});
 	};
 
+	/**
+	 * Enables the legacy multi selection behavior for mouse interaction.
+	 *
+	 * @private
+	 * @sap-restricted sap.watt.hanaplugins.editor.plugin.hdbcalculationview
+	 */
+	Table.prototype._enableLegacyMultiSelection = function() {
+		this._legacyMultiSelection = function(iIndex, oEvent) {
+			var bAdd = !!(oEvent.metaKey || oEvent.ctrlKey);
+			if (!this.isIndexSelected(iIndex)) {
+				if (bAdd) {
+					this.addSelectionInterval(iIndex, iIndex);
+				} else {
+					this.setSelectedIndex(iIndex);
+				}
+			} else if (bAdd || this._getSelectedIndicesCount() === 1) {
+				this.removeSelectionInterval(iIndex, iIndex);
+			} else {
+				this.setSelectedIndex(iIndex);
+			}
+		}.bind(this);
+	};
+
 	return Table;
 
 });

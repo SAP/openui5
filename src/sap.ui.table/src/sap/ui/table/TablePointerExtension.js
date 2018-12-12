@@ -107,9 +107,7 @@ sap.ui.define([
 		 * Changes the selection based on the given click event on the given row selector, data cell or row action cell.
 		 */
 		_handleClickSelection: function(oEvent, $Cell, oTable) {
-
 			TableUtils.toggleRowSelection(oTable, $Cell, null, function(iRowIndex) {
-
 				// IE and Edge perform a text selection if holding shift while clicking. This is not desired for range selection of rows.
 				if ((Device.browser.msie || Device.browser.edge) && oEvent.shiftKey) {
 					oTable._clearTextSelection();
@@ -117,57 +115,40 @@ sap.ui.define([
 
 				var oSelMode = oTable.getSelectionMode();
 
+				// Single selection
 				if (oSelMode === SelectionMode.Single) {
 					if (!oTable.isIndexSelected(iRowIndex)) {
 						oTable.setSelectedIndex(iRowIndex);
 					} else {
 						oTable.clearSelection();
 					}
-				} else {
-					var bCtrl = !!(oEvent.metaKey || oEvent.ctrlKey);
 
-					// in case of multi toggle behavior a click on the row selection
-					// header adds or removes the selected row and the previous selection
-					// will not be removed
-					if (oSelMode === SelectionMode.MultiToggle) {
-						bCtrl = true;
-					}
-
-					if (oEvent.shiftKey) {
-						// If no row is selected getSelectedIndex returns -1 - then we simply
-						// select the clicked row:
-						var iSelectedIndex = oTable.getSelectedIndex();
-						if (iSelectedIndex >= 0) {
-							oTable.addSelectionInterval(iSelectedIndex, iRowIndex);
-						} else {
-							oTable.setSelectedIndex(iRowIndex);
-						}
+				// Multi selection (range)
+				} else if (oEvent.shiftKey) {
+					// If no row is selected, getSelectedIndex returns -1. Then we simply select the clicked row.
+					var iSelectedIndex = oTable.getSelectedIndex();
+					if (iSelectedIndex >= 0) {
+						oTable.addSelectionInterval(iSelectedIndex, iRowIndex);
 					} else {
-						if (!oTable.isIndexSelected(iRowIndex)) {
-							if (bCtrl) {
-								oTable.addSelectionInterval(iRowIndex, iRowIndex);
-							} else {
-								oTable.setSelectedIndex(iRowIndex);
-							}
-						} else {
-							if (bCtrl) {
-								oTable.removeSelectionInterval(iRowIndex, iRowIndex);
-							} else {
-								if (oTable._getSelectedIndicesCount() === 1) {
-									oTable.clearSelection();
-								} else {
-									oTable.setSelectedIndex(iRowIndex);
-								}
-							}
-						}
+						oTable.setSelectedIndex(iRowIndex);
 					}
+
+				// Multi selection (toggle)
+				} else if (!oTable._legacyMultiSelection) {
+					if (!oTable.isIndexSelected(iRowIndex)) {
+						oTable.addSelectionInterval(iRowIndex, iRowIndex);
+					} else {
+						oTable.removeSelectionInterval(iRowIndex, iRowIndex);
+					}
+
+				// Multi selection (legacy)
+				} else {
+					oTable._legacyMultiSelection(iRowIndex, oEvent);
 				}
 
 				return true;
 			});
-
 		}
-
 	};
 
 	/*
