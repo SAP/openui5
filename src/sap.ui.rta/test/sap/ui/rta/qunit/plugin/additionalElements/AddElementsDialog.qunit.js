@@ -1,8 +1,8 @@
 /*global QUnit*/
 
-sap.ui.require([
+sap.ui.define([
 	"sap/ui/rta/plugin/additionalElements/AddElementsDialog",
-	'sap/base/Log',
+	"sap/base/Log",
 	"sap/ui/thirdparty/sinon-4"
 ], function (
 	AddElementsDialog,

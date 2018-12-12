@@ -2,7 +2,7 @@
 
 QUnit.config.autostart = false;
 
-sap.ui.require([
+sap.ui.define([
 	"sap/ui/dt/ElementOverlay",
 	"sap/ui/dt/DesignTime",
 	"sap/ui/dt/OverlayRegistry",
