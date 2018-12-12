@@ -110,7 +110,7 @@ sap.ui.define([
 	 *            Whether the <code>metadataLoaded</code> event will be fired only after all annotations have
 	 *            been loaded as well
 	 * @param {map} [mParameters.serviceUrlParams]
-	 *            Map of URL parameters (name/value pairs) - these parameters will be attached to all requests
+	 *            Map of URL parameters (name/value pairs) - these parameters will be attached to all requests, except for the <code>$metadata</code> request
 	 * @param {map} [mParameters.metadataUrlParams]
 	 *            Map of URL parameters for metadata requests - only attached to a <code>$metadata</code> request
 	 * @param {sap.ui.model.BindingMode} [mParameters.defaultBindingMode=OneWay]
