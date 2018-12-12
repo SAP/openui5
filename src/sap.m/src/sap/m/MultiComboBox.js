@@ -534,7 +534,7 @@ function(
 			// enable type ahead when switching focus from the dropdown to the input field
 			// we need to check whether the focus has been triggered by the popover's closing or just a manual focusin
 			// isOpen is still true as the closing has not finished yet.
-			!bPickerClosing && bPreviousFocusInDropdown && this._handleInputValidation(oEvent, false);
+			!bPickerClosing && bPreviousFocusInDropdown && this.handleInputValidation(oEvent, false);
 		}
 
 		if (oEvent.target === this.getOpenArea() && bDropdownPickerType && !this.isPlatformTablet()) {
@@ -707,9 +707,7 @@ function(
 		}
 
 		// suppress invalid value
-		if (!this._bCompositionStart && !this._bCompositionEnd) {
-			this._handleInputValidation(oEvent, false);
-		}
+		this.handleInputValidation(oEvent, this.isComposingCharacter());
 
 		if (this.isOpen()) {
 			// wait a tick so the setVisible call has replaced the DOM
@@ -1076,7 +1074,7 @@ function(
 		this.clearFilter();
 
 		// resets or not the value of the input depending on the event (enter does not clear the value)
-		!this._bPreventValueRemove && this.setValue("");
+		!this.isComposingCharacter() && !this._bPreventValueRemove && this.setValue("");
 		this._sOldValue = "";
 
 		if (this.isPickerDialog()) {
@@ -2923,25 +2921,23 @@ function(
 	 * @param {boolean} bCompositionEvent Is true if the fired event is a composition event
 	 * @private
 	 */
-	MultiComboBox.prototype._handleInputValidation = function(oEvent, bCompositionEvent) {
-		var sValue = oEvent.target.value, aStartsWithItems,
+	MultiComboBox.prototype.handleInputValidation = function(oEvent, bCompositionEvent) {
+		var sValue = oEvent.target.value,
 			bResetFilter = this._sOldInput && this._sOldInput.length > sValue.length,
-			bVisibleItemFound, aItemsToCheck, oSelectedButton;
+			bValidInputValue = this.isValueValid(sValue),
+			aItemsToCheck, oSelectedButton, aStartsWithItems;
 
 		// "compositionstart" and "compositionend" are native events and don't have srcControl
-		var oInput = bCompositionEvent ? jQuery(oEvent.target).control(0) : oEvent.srcControl;
+		var oInput = oEvent.srcControl;
 
-		aStartsWithItems = this._getItemsStartingWith(sValue, true);
-		var aStartsWithPerTermItems = this._getItemsStartingWithPerTerm(sValue, true);
-
-		bVisibleItemFound = !!aStartsWithItems.length;
-
-		if (!bVisibleItemFound && sValue !== "" && !aStartsWithPerTermItems.length) {
-			this._handleFieldValidationState(oInput, bCompositionEvent);
+		if (!bValidInputValue && sValue !== "" && !bCompositionEvent) {
+			this._handleFieldValidationState(oInput);
 			return;
 		}
 
-		this._handleTypeAhead(sValue, aStartsWithItems, oInput);
+		aStartsWithItems = this._getItemsStartingWith(sValue, true);
+
+		!bCompositionEvent && this._handleTypeAhead(sValue, aStartsWithItems, oInput);
 
 		aItemsToCheck = this.getEnabledItems();
 
@@ -2958,14 +2954,27 @@ function(
 
 		this.filterItems({ value: sValue, items: aItemsToCheck });
 
+		this._sOldInput = sValue;
+
 		// First do manipulations on list items and then let the list render
-		if ((!this.getValue() || !bVisibleItemFound && !aStartsWithPerTermItems.length) && !this.bOpenedByKeyboardOrButton && !this.isPickerDialog())  {
+		if ((!this.getValue() || !bValidInputValue) && !this.bOpenedByKeyboardOrButton && !this.isPickerDialog())  {
 			this.close();
 		} else {
 			this.open();
 		}
+	};
 
-		this._sOldInput = sValue;
+	/**
+	 * Determines if a given value matches an item
+	 *
+	 * @param {string} sValue The string value to be checked
+	 * @private
+	 */
+	MultiComboBox.prototype.isValueValid = function (sValue) {
+		var aStartsWithItems = this._getItemsStartingWith(sValue, true);
+		var aStartsWithPerTermItems = this._getItemsStartingWithPerTerm(sValue, true);
+
+		return aStartsWithItems.length || aStartsWithPerTermItems.length;
 	};
 
 	/**
@@ -3000,12 +3009,18 @@ function(
 	 * Shows invalid state to an input control
 	 *
 	 * @param {sap.m.InputBase} oInput Input to be validated
-	 * @param {boolean} bCompositionEvent Defines whether the event is composite
 	 * @private
 	 */
-	MultiComboBox.prototype._handleFieldValidationState = function (oInput, bCompositionEvent) {
-		var sUpdateValue = bCompositionEvent ? this._sComposition : (this._sOldInput || this._sOldValue || "");
-		oInput.updateDomValue(sUpdateValue);
+	MultiComboBox.prototype._handleFieldValidationState = function (oInput) {
+		// ensure that the value, which will be updated is valid
+		// needed for the composition characters
+		if (this._sOldInput && this.isValueValid(this._sOldInput)) {
+			oInput.updateDomValue(this._sOldInput);
+		} else if (this._sOldValue && this.isValueValid(this._sOldValue)) {
+			oInput.updateDomValue(this._sOldValue);
+		} else {
+			oInput.updateDomValue("");
+		}
 
 		if (this._iOldCursorPos) {
 			jQuery(oInput.getFocusDomRef()).cursorPos(this._iOldCursorPos);
@@ -3037,24 +3052,6 @@ function(
 		this._oTokenizer = this._createTokenizer();
 		this._aCustomerKeys = [];
 		this._aInitiallySelectedItems = [];
-
-		// handle composition events & validation of composition symbols
-		this._bCompositionStart = false;
-		this._bCompositionEnd = false;
-		this._sComposition = "";
-
-		this.attachBrowserEvent("compositionstart", function() {
-			this._bCompositionStart = true;
-			this._bCompositionEnd = false;
-		}, this);
-
-		this.attachBrowserEvent("compositionend", function(oEvent) {
-			this._bCompositionStart = false;
-			this._bCompositionEnd = true;
-			this._handleInputValidation(oEvent, true);
-			this._bCompositionEnd = false;
-			this._sComposition = oEvent.target.value;
-		}, this);
 
 		this._oRbM = sap.ui.getCore().getLibraryResourceBundle("sap.m");
 		this._oRbC = sap.ui.getCore().getLibraryResourceBundle("sap.ui.core");

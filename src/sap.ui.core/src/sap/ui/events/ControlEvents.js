@@ -51,6 +51,8 @@ sap.ui.define([
 		"dragleave",
 		"dragend",
 		"drop",
+		"compositionstart",
+		"compositionend",
 		"paste",
 		"cut",
 		/* input event is fired synchronously on IE9+ when the value of an <input> or <textarea> element is changed */
