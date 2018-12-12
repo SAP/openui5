@@ -3190,10 +3190,11 @@ sap.ui.define([
 	};
 
 	ObjectPageLayout.prototype._obtainExpandedTitleHeight = function (bViaClone) {
-
 		var oTitle = this.getHeaderTitle(),
 			$Clone,
-			iHeight;
+			iHeight,
+			iSectionsContainerHeight,
+			iSectionsContainerNewHeight;
 
 		if (bViaClone) {
 			// BCP: 1870298358 - setting overflow-y to hidden of the wrapper element during clone to eliminate unwanted
@@ -3204,12 +3205,31 @@ sap.ui.define([
 			$Clone.remove(); //clean dom
 			this._$opWrapper.css("overflow-y", "auto");
 		} else if (oTitle && oTitle.unSnap) {
+			iSectionsContainerHeight = this._$sectionsContainer.height();
+
 			oTitle.unSnap(false);
 			iHeight = oTitle.$().outerHeight();
 			oTitle.snap(false);
+
+			iSectionsContainerNewHeight = this._$sectionsContainer.height();
+			this._adjustSpacerHeightUponUnsnapping(iSectionsContainerHeight, iSectionsContainerNewHeight);
 		}
 
 		return iHeight;
+	};
+
+	/**
+	 * Adjusts spacer's height upon unsnapping for measurements (in case of unneeded Scrollbar appearance)
+	 *
+	 * @private
+	 */
+	ObjectPageLayout.prototype._adjustSpacerHeightUponUnsnapping = function (iSectionsContainerHeight, iSectionsContainerNewHeight) {
+		var iSpacerNewHeight;
+
+		if (iSectionsContainerHeight != iSectionsContainerNewHeight) {
+			iSpacerNewHeight = this._$spacer.height() - (iSectionsContainerNewHeight - iSectionsContainerHeight);
+			this._$spacer.height(iSpacerNewHeight);
+		}
 	};
 
 	/**
