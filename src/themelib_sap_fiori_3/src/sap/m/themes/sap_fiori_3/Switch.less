@@ -24,8 +24,13 @@ html.sap-desktop .sapMSwtCont:focus > .sapMSwt {
 
 .sapMSwtOff:not(.sapMSwtAcceptReject) {
 	background: @_sap_m_Switch_OffBackground;
-	border-color: @_sap_m_Switch_OffBorderColor;
+	border-color: @sapUiContentForegroundBorderColor;
 }
+
+.sapMSwt.sapMSwtOff.sapMSwtHoverable:not(.sapMSwtAcceptReject):hover {
+	border-color: @sapUiContentForegroundBorderColor;
+}
+
 
 /* disabled */
 
@@ -40,7 +45,7 @@ html.sap-desktop .sapMSwtCont:focus > .sapMSwt {
 /* background */
 
 .sapMSwtOff .sapMSwtHandle {
-	border-color: @_sap_m_Switch_OffBorderColor;
+	border-color: @sapUiContentForegroundBorderColor;
 }
 
 /* ====================================================== */
