@@ -41,6 +41,12 @@ sap.ui.define(function() {
 				coverage: {
 					only : ["sap/ui/documentation/sdk/ApiMaster.controller"]
 				}
+			},
+
+			"LiveEditorOutput": {
+				coverage: {
+					only : ["sap/ui/documentation/sdk/util/LiveEditorOutput.html"]
+				}
 			}
 
 			// "Forwarding": {

@@ -225,6 +225,43 @@
 
 			</l:BlockLayoutRow>
 
+
+			<l:BlockLayoutRow visible="{=! (${device>/system/phone} || ${device>/browser/msie}) }">
+				<l:BlockLayoutCell
+						class="sapUiDemokitLandingBlockHeadline"
+						backgroundColorSet="ColorSet9"
+						backgroundColorShade="ShadeA"
+						title="Start Coding"
+						titleAlignment="Center"/>
+			</l:BlockLayoutRow>
+
+
+			<l:BlockLayoutRow visible="{=! (${device>/system/phone} || ${device>/browser/msie}) }">
+				<l:BlockLayoutCell
+						class="welcomeBlock"
+						backgroundColorSet="ColorSet11"
+						backgroundColorShade="ShadeA"
+						width="1">
+
+					<custom:TitleLink
+							href="#/topic/8b49fc198bf04b2d9800fc37fecbb218"
+							text="Get Ready"
+							titleStyle="H2"/>
+					<Text class="sapUiMediumMarginTop" text="All you need to develop Web apps with UI5 is a development ennvironment and a browser. Choose between SAP Web IDE in the cloud for maximum convenience or set up your local development environment for maximum flexibility."/>
+					<Text class="sapUiSmallMarginTop" text="Try the first example right here!"/>
+				</l:BlockLayoutCell>
+
+
+				<l:BlockLayoutCell backgroundColorSet="ColorSet11"
+								   backgroundColorShade="ShadeA">
+					<l:layoutData>
+						<l:BlockLayoutCellData sSize="1" mSize="2" lSize="3" xlSize="3"/>
+					</l:layoutData>
+					<mvc:XMLView viewName="sap.ui.documentation.sdk.view.LiveEditor"/>
+				</l:BlockLayoutCell>
+			</l:BlockLayoutRow>
+
+
 			<l:BlockLayoutRow>
 				<l:BlockLayoutCell
 						backgroundColorSet="ColorSet9"
