@@ -601,6 +601,13 @@ function(
 			return;
 		}
 
+		// ie11 fires input event whenever placeholder attribute is changed
+		if (document.activeElement !== oEvent.target &&
+			Device.browser.msie && this.getValue() === this._lastValue) {
+			oEvent.setMarked("invalid");
+			return;
+		}
+
 		// dom value updated other than value property
 		this._bCheckDomValue = true;
 	};
