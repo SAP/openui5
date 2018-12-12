@@ -2,8 +2,8 @@
  * ${copyright}
  */
 sap.ui.define(['sap/ui/core/Control', 'sap/ui/model/json/JSONModel', 'sap/m/FlexBox', 'sap/viz/ui5/controls/VizFrame', 'sap/viz/ui5/controls/common/feeds/FeedItem',
-		'sap/viz/ui5/data/FlattenedDataset', 'sap/viz/ui5/data/DimensionDefinition', 'sap/viz/ui5/data/MeasureDefinition',  'sap/f/cards/Data'],
-	function (Control, JSONModel, FlexBox, VizFrame, FeedItem, FlattenedDataset, DimensionDefinition, MeasureDefinition, Data) {
+		'sap/viz/ui5/data/FlattenedDataset', 'sap/viz/ui5/data/DimensionDefinition', 'sap/viz/ui5/data/MeasureDefinition',  'sap/f/cards/Data', "sap/base/Log"],
+	function (Control, JSONModel, FlexBox, VizFrame, FeedItem, FlattenedDataset, DimensionDefinition, MeasureDefinition, Data, Log) {
 		"use strict";
 
 		/**
@@ -50,10 +50,8 @@ sap.ui.define(['sap/ui/core/Control', 'sap/ui/model/json/JSONModel', 'sap/m/Flex
 		});
 
 		AnalyticalContent.prototype.init = function () {
-
 			var oModel = new JSONModel();
 			this.setModel(oModel);
-
 		};
 
 		AnalyticalContent.prototype.setManifestContent = function (oContent) {
@@ -79,6 +77,58 @@ sap.ui.define(['sap/ui/core/Control', 'sap/ui/model/json/JSONModel', 'sap/m/Flex
 				this.oFlattendedDataset.destroy();
 				this.oFlattendedDataset = null;
 			}
+		};
+		AnalyticalContent.prototype._getVizPropertiesObject = function (oChartObject) {
+				var oTitle = oChartObject.title,
+					oLegend = oChartObject.legend,
+					oPlotArea = oChartObject.plotArea;
+
+			if (!oChartObject) {
+				return this;
+			}
+			var oVizObject = {
+				"title": {},
+				"legend": {},
+				"legendGroup": {
+					"layout": {}
+				},
+				"plotArea": {},
+				"categoryAxis": {
+					"title": {}
+				},
+				"valueAxis": {
+					"title": {}
+				}
+			};
+			if (oTitle) {
+				oVizObject.title.text = oTitle.text;
+				oVizObject.title.visible = oTitle.visible;
+				oVizObject.title.alignment = oTitle.alignment;
+			}
+			if (oLegend) {
+				oVizObject.legend.visible = oLegend.visible;
+				oVizObject.legendGroup.layout.position = oLegend.position;
+				oVizObject.legendGroup.layout.alignment = oLegend.alignment;
+			}
+
+			if (oPlotArea) {
+				if (oPlotArea.dataLabel) {
+					oVizObject.plotArea.dataLabel = oPlotArea.dataLabel;
+				}
+				if (oPlotArea.window) {
+					oVizObject.plotArea.window = oPlotArea.window;
+				}
+				if (oPlotArea.categoryAxis) {
+					oVizObject.categoryAxis.title.text = oPlotArea.categoryAxisText.text;
+					oVizObject.categoryAxis.title.visible = oPlotArea.categoryAxisText.visible;
+				}
+				if (oPlotArea.valueAxis) {
+					oVizObject.valueAxis.title.text = oPlotArea.valueAxisText.text;
+					oVizObject.valueAxis.title.visible = oPlotArea.valueAxisText.visible;
+				}
+			}
+			return oVizObject;
+
 		};
 
 		AnalyticalContent.prototype.setChart = function (oChartObject) {
@@ -109,7 +159,12 @@ sap.ui.define(['sap/ui/core/Control', 'sap/ui/model/json/JSONModel', 'sap/m/Flex
 		};
 
 		AnalyticalContent.prototype._updateModel = function (oData, sPath, oChartObject) {
-			var sChartType = oChartObject.type;
+			var sChartType = oChartObject.chartType;
+
+			if (!sChartType) {
+				Log.error("ChartType is a mandatory property");
+				return;
+			}
 
 			this.getModel().setData(oData);
 			var aDimensionNames = [];
@@ -158,12 +213,12 @@ sap.ui.define(['sap/ui/core/Control', 'sap/ui/model/json/JSONModel', 'sap/m/Flex
 				legendVisible: oChartObject.legend,
 
 				feeds: [
-					new FeedItem({ uid: oChartObject.measureUid, type: 'Measure', values: aMeasureNames }),
-					new FeedItem({ uid: oChartObject.dimensionUid, type: 'Dimension', values: aDimensionNames })
+					new FeedItem({ uid: oChartObject.measureAxis, type: 'Measure', values: aMeasureNames }),
+					new FeedItem({ uid: oChartObject.dimensionAxis, type: 'Dimension', values: aDimensionNames })
 				]
 			});
-
-			this._oChart.setVizProperties(oChartObject.vizProperties);
+			var oVizProperties = this._getVizPropertiesObject(oChartObject);
+			this._oChart.setVizProperties(oVizProperties);
 			this.setAggregation("_content", this._oChart);
 		};
 

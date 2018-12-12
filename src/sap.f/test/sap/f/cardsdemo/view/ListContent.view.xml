@@ -15,7 +15,6 @@
         </subHeader>
 
         <content>
-
             <Panel>
                 <f:SAPCard id="listCount" manifest="{manifests>/listContent/card13}" width="400px" height="auto"/>
             </Panel>

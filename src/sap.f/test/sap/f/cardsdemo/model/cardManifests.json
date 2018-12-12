@@ -1214,55 +1214,49 @@
 				},
 				"content": {
 					"chart": {
-						"type": "line",
-						"vizProperties": {
-							"legend": {
-								"visible": true
-							},
-							"legendGroup": {
-								"layout": {
-									"position": "right",
-									"alignment": "center"
-								}
-							},
-							"plotArea": {
-								"dataLabel": {
-									"visible": true
-								},
-								"window": {
-									"start": "firstDataPoint",
-									"end": "lastDataPoint"
-								}
-							},
-							"title": {
-								"text": "Line chart",
-								"visible": true,
-								"alignment": "bottom"
-							}
+						"chartType": "line",
+						"legend": {
+						  "visible": true,
+						  "position": "right",
+						  "alignment": "center"
 						},
-						"measureUid": "valueAxis",
-						"dimensionUid": "categoryAxis",
+						"plotArea": {
+						  "dataLabel": {
+							"visible": true
+						  },
+						  "window": {
+							"start": "firstDataPoint",
+							"end": "lastDataPoint"
+						  }
+						},
+						"title": {
+						  "text": "Line chart",
+						  "visible": true,
+						  "alignment": "bottom"
+						},
+						"measureAxis": "valueAxis",
+						"dimensionAxis": "categoryAxis",
 						"data": {
-							"request": {
-								"url": "./cardcontent/revenue.json"
-							},
-							"path": "/list"
+						  "request": {
+							"url": "./cardcontent/revenue.json"
+						  },
+						  "path": "/list"
 						},
 						"dimensions": [
-							{
-								"label": "Weeks",
-								"value": "{Week}"
-							}
+						  {
+							"label": "Weeks",
+							"value": "{Week}"
+						  }
 						],
 						"measures": [
-							{
-								"label": "Revenue",
-								"value": "{Revenue}"
-							},
-							{
-								"label": "Cost",
-								"value": "{Cost}"
-							}
+						  {
+							"label": "Revenue",
+							"value": "{Revenue}"
+						  },
+						  {
+							"label": "Cost",
+							"value": "{Cost}"
+						  }
 						]
 					}
 				}
@@ -1272,96 +1266,83 @@
 			"sap.card": {
 				"type": "Analytical",
 				"header": {
-					"type": "kpi",
-					"data": {
-						"json": {
-							"n": "56",
-							"u": "%",
-							"trend": "Up",
-							"valueColor": "Good"
-						}
+				  "type": "kpi",
+				  "data": {
+					"json": {
+					  "n": "56",
+					  "u": "%",
+					  "trend": "Up",
+					  "valueColor": "Good"
+					}
+				  },
+				  "title": "Project Cloud Transformation Project Cloud Transformation Project Cloud Transformation Project Cloud Transformation Project Cloud Transformation Project Cloud Transformation Project Cloud Transformation ",
+				  "subtitle": "Forecasted goal achievement depending on business logic and other important information Forecasted goal achievement depending on business logic and other important information",
+				  "unitOfMeasurement": "EUR",
+				  "mainIndicator": {
+					"number": "{n}",
+					"unit": "{u}",
+					"trend": "{trend}",
+					"state": "{valueColor}"
+				  },
+				  "details": "Details, additional information, will directly truncate after there is no more space.Details, additional information, will directly truncate after there is no more space.",
+				  "sideIndicators": [
+					{
+					  "title": "Long Target Long Target Long Target Long Target Long Target Long Target Long Target Long Target Long Target Long Target Long Target Long Target Long Target Long Target Long Target",
+					  "number": "3252.234",
+					  "unit": "K"
 					},
-					"title": "Project Cloud Transformation Project Cloud Transformation Project Cloud Transformation Project Cloud Transformation Project Cloud Transformation Project Cloud Transformation Project Cloud Transformation ",
-					"subtitle": "Forecasted goal achievement depending on business logic and other important information Forecasted goal achievement depending on business logic and other important information",
-					"unitOfMeasurement": "EUR",
-					"mainIndicator": {
-						"number": "{n}",
-						"unit": "{u}",
-						"trend": "{trend}",
-						"state": "{valueColor}"
-					},
-					"details": "Details, additional information, will directly truncate after there is no more space.Details, additional information, will directly truncate after there is no more space.",
-					"sideIndicators": [
-						{
-							"title": "Long Target Long Target Long Target Long Target Long Target Long Target Long Target Long Target Long Target Long Target Long Target Long Target Long Target Long Target Long Target",
-							"number": "3252.234",
-							"unit": "K"
-						},
-						{
-							"title": "Long Deviation Long Deviation",
-							"number": "22.43",
-							"unit": "%"
-						}
-					]
+					{
+					  "title": "Long Deviation Long Deviation",
+					  "number": "22.43",
+					  "unit": "%"
+					}
+				  ]
 				},
 				"content": {
 					"chart": {
-						"type": "stacked_column",
-						"vizProperties": {
-							"legend": {
-								"visible": false
-							},
-							"plotArea": {
-								"dataLabel": {
-									"visible": false,
-									"showTotal": true,
-									"type": "percentage"
-								},
-								"window": {
-									"start": "firstDataPoint",
-									"end": "lastDataPoint"
-								}
-							},
-							"title": {
-								"text": "Stacked column chart",
-								"visible": true,
-								"alignment": "bottom"
-							},
-							"valueAxis": {
-								"title": {
-									"visible": false
-								}
-							},
-							"categoryAxis": {
-								"title": {
-									"visible": true
-								}
-							}
+						"chartType": "stacked_column",
+						"legend": {
+						  "visible": false
 						},
-						"measureUid": "valueAxis",
-						"dimensionUid": "categoryAxis",
+						"plotArea": {
+						  "dataLabel": {
+							"visible": false,
+							"showTotal": true
+						  },
+						  "window": {
+							"start": "firstDataPoint",
+							"end": "lastDataPoint"
+						  }
+						},
+						"title": {
+						  "text": "Stacked column chart",
+						  "visible": true,
+						  "alignment": "bottom"
+						},
+						"measureAxis": "valueAxis",
+						"dimensionAxis": "categoryAxis",
 						"data": {
-							"request": {
-								"url": "./cardcontent/revenue.json"
-							},
-							"path": "/list"
+						  "request": {
+							"url": "./cardcontent/revenue.json"
+						  },
+						  "path": "/list"
 						},
 						"dimensions": [
-							{
-								"label": "Weeks",
-								"value": "{Week}"
-							}
+						  {
+							"label": "Weeks",
+							"value": "{Week}"
+						  }
 						],
 						"measures": [
-							{
-								"label": "Revenue",
-								"value": "{Revenue}"
-							},
-							{
-								"label": "Cost",
-								"value": "{Cost}"
-							}
-						]
+						{
+						  "label": "Revenue",
+						  "value": "{Revenue}"
+						},
+						{
+						  "label": "Cost",
+						  "value": "{Cost}"
+						}
+					  ]
 					}
 				}
 			}
@@ -1370,79 +1351,78 @@
 			"sap.card": {
 				"type": "Analytical",
 				"header": {
-					"type": "kpi",
-					"data": {
-						"json": {
-							"n": 6547394.45496,
-							"u": "М $",
-							"trend": "Down",
-							"valueColor": "Critical"
-						}
-					},
-					"subtitle": "Success Rate",
-					"mainIndicator": {
-						"number": "{n}",
-						"unit": "{u}",
-						"trend": "{trend}",
-						"state": "{valueColor}"
-					},
-					"sideIndicators": [
-						{
-							"title": "Decrease",
-							"number": "24",
-							"unit": "weeks"
-						}
-					]
+				  "type": "kpi",
+				  "data": {
+					"json": {
+					  "n": 6547394.45496,
+					  "u": "М $",
+					  "trend": "Down",
+					  "valueColor": "Critical"
+					}
+				  },
+				  "subtitle": "Success Rate",
+				  "mainIndicator": {
+					"number": "{n}",
+					"unit": "{u}",
+					"trend": "{trend}",
+					"state": "{valueColor}"
+				  },
+				  "sideIndicators": [
+					{
+					  "title": "Decrease",
+					  "number": "24",
+					  "unit": "weeks"
+					}
+				  ]
 				},
 				"content": {
 					"chart": {
-						"type": "stacked_bar",
-						"vizProperties": {
-							"legend": {
-								"visible": true
-							},
-							"legendGroup": {
-								"layout": {
-									"position": "bottom",
-									"alignment": "center"
-								}
-							},
-							"plotArea": {
-								"dataLabel": {
-									"visible": true,
-									"showTotal": false,
-									"type": "percentage"
-								},
-								"window": {
-									"start": "firstDataPoint",
-									"end": "lastDataPoint"
-								}
-							},
-							"title": {
-								"text": "Stacked Bar chart",
-								"visible": true,
-								"alignment": "bottom"
-							}
+						"chartType": "stacked_bar",
+						"legend": {
+						  "visible": true,
+						  "position": "bottom",
+						  "alignment": "center"
 						},
-						"measureUid": "valueAxis",
-						"dimensionUid": "categoryAxis",
+						"plotArea": {
+						  "dataLabel": {
+							"visible": true,
+							"showTotal": false
+						  },
+						  "window": {
+							"start": "firstDataPoint",
+							"end": "lastDataPoint"
+						  },
+						  "categoryAxisText": {
+							  "visible": false
+						  },
+						  "valueAxisText": {
+							  "text": "Value Axis text"
+						  }
+						},
+						"title": {
+						  "text": "Stacked Bar chart",
+						  "visible": true,
+						  "alignment": "bottom"
+						},
+						"measureAxis": "valueAxis",
+						"dimensionAxis": "categoryAxis",
 						"data": {
-							"request": {
-								"url": "./cardcontent/revenue.json"
-							},
-							"path": "/list"
+						  "request": {
+							"url": "./cardcontent/revenue.json"
+						  },
+						  "path": "/list"
 						},
 						"dimensions": [
-							{
-								"label": "Weeks",
-								"value": "{Week}"
-							}
+						  {
+							"label": "Weeks",
+							"value": "{Week}"
+						  }
 						],
 						"measures": [
-							{
-								"label": "Revenue",
-								"value": "{Revenue}"
-							}
+						  {
+							"label": "Revenue",
+							"value": "{Revenue}"
+						  }
 						]
 					}
 				}
@@ -1454,76 +1434,70 @@
 				"header": {
 					"type": "kpi",
 					"data": {
-						"json": {
-							"n": 6547394.45496,
-							"u": "М $",
-							"trend": "Down",
-							"valueColor": "Critical"
-						}
+					"json": {
+						"n": 6547394.45496,
+						"u": "М $",
+						"trend": "Down",
+						"valueColor": "Critical"
+					}
 					},
 					"subtitle": "Success Rate",
 					"mainIndicator": {
-						"number": "{n}",
-						"unit": "{u}",
-						"trend": "{trend}",
-						"state": "{valueColor}"
+					"number": "{n}",
+					"unit": "{u}",
+					"trend": "{trend}",
+					"state": "{valueColor}"
 					},
 					"sideIndicators": [
-						{
-							"title": "Decrease",
-							"number": "24",
-							"unit": "weeks"
-						}
+					{
+						"title": "Decrease",
+						"number": "24",
+						"unit": "weeks"
+					}
 					]
 				},
 				"content": {
 					"chart": {
-						"type": "donut",
-						"vizProperties": {
-							"legend": {
-								"visible": true
-							},
-							"legendGroup": {
-								"layout": {
-									"position": "top",
-									"alignment": "center"
-								}
-							},
-							"plotArea": {
-								"dataLabel": {
-									"visible": true,
-									"showTotal": true
-								},
-								"window": {
-									"start": "firstDataPoint",
-									"end": "lastDataPoint"
-								}
-							},
-							"title": {
-								"text": "Donut chart",
-								"visible": true,
-								"alignment": "bottom"
-							}
+						"chartType": "donut",
+						"legend": {
+						  "visible": true,
+						  "position": "top",
+						  "alignment": "center"
 						},
-						"measureUid": "size",
-						"dimensionUid": "color",
+						"plotArea": {
+						  "dataLabel": {
+							"visible": true,
+							"showTotal": true
+						  },
+						  "window": {
+							"start": "firstDataPoint",
+							"end": "lastDataPoint"
+						  }
+						},
+						"title": {
+						  "text": "Donut chart",
+						  "visible": true,
+						  "alignment": "bottom"
+						},
+						"measureAxis": "size",
+						"dimensionAxis": "color",
 						"data": {
-							"request": {
-								"url": "./cardcontent/cost.json"
-							},
-							"path": "/milk"
+						  "request": {
+							"url": "./cardcontent/cost.json"
+						  },
+						  "path": "/milk"
 						},
 						"dimensions": [
-							{
-								"label": "Store Name",
-								"value": "{Store Name}"
-							}
+						  {
+							"label": "Store Name",
+							"value": "{Store Name}"
+						  }
 						],
 						"measures": [
-							{
-								"label": "Revenue",
-								"value": "{Revenue}"
-							}
+						  {
+							"label": "Revenue",
+							"value": "{Revenue}"
+						  }
 						]
 					}
 				}
