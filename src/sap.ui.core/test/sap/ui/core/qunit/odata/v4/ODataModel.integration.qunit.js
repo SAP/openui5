@@ -181,6 +181,8 @@ sap.ui.define([
 				"/serviceroot.svc/$metadata"
 					: {source : "odata/v4/data/BusinessPartnerTest.metadata.xml"},
 				"/special/cases/$metadata"
+					: {source : "odata/v4/data/metadata_special_cases.xml"},
+				"/special/cases/$metadata?sap-client=123"
 					: {source : "odata/v4/data/metadata_special_cases.xml"}
 			});
 			this.oLogMock = this.mock(Log);
@@ -2289,13 +2291,11 @@ sap.ui.define([
 
 		return this.createView(assert, sView, createSalesOrdersModel()
 		).then(function () {
-			var oCount = that.oView.byId("count");
-
 			that.expectChange("count", "3");
 
 			// code under test
 			that.oView.setModel(that.oView.getModel(), "headerContext");
-			oCount.setBindingContext(
+			that.oView.byId("count").setBindingContext(
 				that.oView.byId("table").getBinding("items").getHeaderContext(),
 					"headerContext");
 
@@ -11302,6 +11302,395 @@ sap.ui.define([
 					that.waitForChanges(assert)
 				]);
 			});
+		});
+	});
+
+	//*********************************************************************************************
+	// Scenario: Read side effects for a collection-valued navigation property where only a single
+	// property is affected. There is a child binding with own cache for the collection affected
+	// by the side effect; instead of refreshing the whole collection, an efficient request is sent.
+	QUnit.test("requestSideEffects for a single property of a collection", function (assert) {
+		var oModel = createModel("/special/cases/?sap-client=123", {autoExpandSelect : true}),
+			sView = '\
+<Text id="count" text="{$count}"/>\
+<FlexBox binding="{/Artists(ArtistID=\'42\',IsActiveEntity=true)}" id="form">\
+	<Text id="id" text="{ArtistID}" />\
+	<FlexBox binding="{BestFriend}" id="section">\
+		<t:Table firstVisibleRow="1" id="table"\
+				rows="{path : \'_Publication\', parameters : {$count : true,\
+					$filter : \'CurrencyCode eq \\\'EUR\\\'\', $orderby : \'PublicationID\',\
+					$$ownRequest : true}}"\
+			threshold="0" visibleRowCount="2">\
+			<t:Column>\
+				<t:template>\
+					<Text id="price" text="{Price}" />\
+				</t:template>\
+			</t:Column>\
+			<t:Column>\
+				<t:template>\
+					<Text id="currency" text="{CurrencyCode}" />\
+				</t:template>\
+			</t:Column>\
+			<t:Column>\
+				<t:template>\
+					<Text id="inProcessByUser" text="{DraftAdministrativeData/InProcessByUser}" />\
+				</t:template>\
+			</t:Column>\
+			<t:Column>\
+				<t:template>\
+					<Text id="name" text="{_Artist/Name}" />\
+				</t:template>\
+			</t:Column>\
+		</t:Table>\
+	</FlexBox>\
+</FlexBox>',
+			that = this;
+
+		this.expectRequest("Artists(ArtistID='42',IsActiveEntity=true)"
+				+ "?sap-client=123&$select=ArtistID,IsActiveEntity"
+				//TODO CPOUI5UISERVICESV3-1677: Avoid unnecessary $expand
+				+ "&$expand=BestFriend($select=ArtistID,IsActiveEntity)", {
+				"ArtistID" : "42"
+//					"IsActiveEntity" : true
+			})
+			.expectRequest("Artists(ArtistID='42',IsActiveEntity=true)/BestFriend/_Publication"
+				+ "?sap-client=123&$count=true&$filter=CurrencyCode eq 'EUR'"
+				+ "&$orderby=PublicationID&$select=CurrencyCode,Price,PublicationID"
+				+ "&$expand=DraftAdministrativeData($select=DraftID,InProcessByUser)"
+				+ ",_Artist($select=ArtistID,IsActiveEntity,Name)&$skip=1&$top=2", {
+				"@odata.count" : "10",
+				value : [{
+					"_Artist" : {
+						"ArtistID" : "42",
+//						"IsActiveEntity" : true,
+						"Name" : "Hour Frustrated"
+					},
+					"CurrencyCode" : "EUR",
+					"DraftAdministrativeData" : null,
+					"Price" : "9.11", // Note: 9.ii for old value at index i, 7.ii for new value
+					"PublicationID" : "42-1"
+				}, {
+					"_Artist" : null,
+					"CurrencyCode" : "EUR",
+					"DraftAdministrativeData" : null,
+					"Price" : "9.22",
+					"PublicationID" : "42-2"
+				}]
+			})
+			.expectChange("count")
+			.expectChange("id", "42")
+			.expectChange("price", [, "9.11", "9.22"])
+			.expectChange("currency", [, "EUR", "EUR"])
+			.expectChange("inProcessByUser")
+			.expectChange("name", [, "Hour Frustrated"]);
+
+		return this.createView(assert, sView, oModel).then(function () {
+			that.expectChange("count", "10"); // must not be affected by side effects below!
+
+			that.oView.byId("count").setBindingContext(
+				that.oView.byId("table").getBinding("rows").getHeaderContext());
+
+			return that.waitForChanges(assert);
+		}).then(function () {
+			that.expectRequest("Artists(ArtistID='42',IsActiveEntity=true)/BestFriend/_Publication"
+					+ "?sap-client=123"
+					+ "&$filter=PublicationID eq '42-1' or PublicationID eq '42-2'"
+					+ "&$select=Price,PublicationID&$expand=_Artist($select=Name)", {
+					value : [{
+						"_Artist" : null, // side effect
+						"Price" : "7.11", // side effect
+						"PublicationID" : "42-1"
+					}, {
+						"_Artist" : { // side effect
+							"ArtistID" : "42a",
+//							"IsActiveEntity" : true,
+							"Name" : "Minute Frustrated"
+						},
+						"Messages" : [{ // side effect: reported, even if not selected
+							"code" : "23",
+							"message" : "This looks pretty cheap now",
+							"numericSeverity" : 2,
+							"target" : "Price"
+						}],
+						"Price" : "7.22", // side effect
+						"PublicationID" : "42-2"
+					}]
+				})
+				.expectChange("price", "7.11", 1)
+				.expectChange("price", "7.22", 2)
+				.expectChange("name", null, 1)
+				.expectChange("name", "Minute Frustrated", 2)
+				.expectMessages([{
+					"code" : "23",
+					"message" : "This looks pretty cheap now",
+					"persistent" : false,
+					"target" : "/Artists(ArtistID='42',IsActiveEntity=true)/BestFriend"
+						+ "/_Publication('42-2')/Price",
+					"technical" : false,
+					"type" : "Information"
+				}]);
+
+			return Promise.all([
+				// code under test
+				that.oView.byId("form").getBindingContext().requestSideEffects([{
+					$PropertyPath : "BestFriend/_Publication/Price"
+				}, {
+					$PropertyPath : "BestFriend/_Publication/_Artist/Name"
+				}]),
+				that.waitForChanges(assert)
+			]);
+		}).then(function () {
+			that.expectRequest("Artists(ArtistID='42',IsActiveEntity=true)/BestFriend/_Publication"
+					+ "?sap-client=123&$count=true&$filter=CurrencyCode eq 'EUR'"
+					+ "&$orderby=PublicationID&$select=CurrencyCode,Price,PublicationID"
+					+ "&$expand=DraftAdministrativeData($select=DraftID,InProcessByUser)"
+					+ ",_Artist($select=ArtistID,IsActiveEntity,Name)&$skip=7&$top=2", {
+					"@odata.count" : "10",
+					value : [{
+						"_Artist" : null,
+						"CurrencyCode" : "EUR",
+						"DraftAdministrativeData" : null,
+						"Price" : "7.77",
+						"PublicationID" : "42-7"
+					}, {
+						"_Artist" : null,
+						"CurrencyCode" : "EUR",
+						"DraftAdministrativeData" : null,
+						"Price" : "7.88",
+						"PublicationID" : "42-8"
+					}]
+				})
+				// "price" temporarily loses its binding context and thus fires a change event
+				.expectChange("price", null, null)
+				.expectChange("price", null, null)
+				// "currency" temporarily loses its binding context and thus fires a change event
+				.expectChange("currency", null, null)
+				.expectChange("currency", null, null)
+				// "name" temporarily loses its binding context and thus fires a change event
+				.expectChange("name", null, null)
+				.expectChange("price", "7.77", 7)
+				.expectChange("price", "7.88", 8)
+				.expectChange("currency", "EUR", 7)
+				.expectChange("currency", "EUR", 8);
+
+			that.oView.byId("table").setFirstVisibleRow(7);
+
+			return that.waitForChanges(assert);
+		}).then(function () {
+			that.expectRequest("Artists(ArtistID='42',IsActiveEntity=true)/BestFriend/_Publication"
+					+ "?sap-client=123"
+					+ "&$filter=PublicationID eq '42-7' or PublicationID eq '42-8'"
+					+ "&$select=Price,PublicationID", {
+					value : [{ // Note: different order than before!
+						"Price" : "5.88", // side effect
+						"PublicationID" : "42-8"
+					}, {
+						"Price" : "5.77", // side effect
+						"PublicationID" : "42-7"
+					}]
+				})
+				.expectChange("price", "5.77", 7)
+				.expectChange("price", "5.88", 8);
+
+			return Promise.all([
+				// code under test
+				that.oView.byId("form").getBindingContext().requestSideEffects([{
+					$PropertyPath : "BestFriend/_Publication/Price"
+				}]),
+				that.waitForChanges(assert)
+			]);
+		}).then(function () {
+			that.expectRequest("Artists(ArtistID='42',IsActiveEntity=true)/BestFriend/_Publication"
+					+ "?sap-client=123&$count=true&$filter=CurrencyCode eq 'EUR'"
+					+ "&$orderby=PublicationID&$select=CurrencyCode,Price,PublicationID"
+					+ "&$expand=DraftAdministrativeData($select=DraftID,InProcessByUser)"
+					+ ",_Artist($select=ArtistID,IsActiveEntity,Name)&$skip=1&$top=2", {
+					"@odata.count" : "10",
+					value : [{
+						"_Artist" : null,
+						"CurrencyCode" : "EUR",
+						"DraftAdministrativeData" : null,
+						"Price" : "5.11",
+						"PublicationID" : "42-1"
+					}, {
+						"_Artist" : null,
+						"CurrencyCode" : "EUR",
+						"DraftAdministrativeData" : null,
+						"Price" : "5.22",
+						"PublicationID" : "42-2"
+					}]
+				})
+				.expectChange("price", [, "5.11", "5.22"]);
+				// Note: "currency" cells do not change
+
+			// Note: invisible, cached data was not updated and thus must be read again
+			that.oView.byId("table").setFirstVisibleRow(1);
+
+			return that.waitForChanges(assert);
+		});
+	});
+
+	//*********************************************************************************************
+	// Scenario: Read side effects for a collection-valued navigation property where only a single
+	// property is affected. There is a child binding with own cache for the collection affected
+	// by the side effect; instead of refreshing the whole collection, an efficient request is sent.
+	// Additionally, there are detail "views" (form and table) which send their own requests and are
+	// affected by the side effect.
+	QUnit.test("requestSideEffects: collection & master/detail", function (assert) {
+		var oModel = createSpecialCasesModel({autoExpandSelect : true}),
+			sView = '\
+<FlexBox binding="{/Artists(ArtistID=\'42\',IsActiveEntity=true)}" id="form">\
+	<Text id="id" text="{ArtistID}" />\
+	<FlexBox binding="{BestFriend}" id="section">\
+		<Table id="table" items="{path : \'_Publication\', parameters : {$$ownRequest : true}}">\
+			<columns><Column/><Column/></columns>\
+			<ColumnListItem>\
+				<Text id="price" text="{Price}" />\
+				<Text id="currency" text="{CurrencyCode}" />\
+			</ColumnListItem>\
+		</Table>\
+	</FlexBox>\
+</FlexBox>\
+<FlexBox binding="{}" id="detail">\
+	<Text id="priceDetail" text="{Price}" />\
+	<Text id="currencyDetail" text="{CurrencyCode}" />\
+	<Text id="inProcessByUser" text="{DraftAdministrativeData/InProcessByUser}" />\
+</FlexBox>\
+<Table id="detailTable" items="{_Artist/_Friend}">\
+	<columns><Column/><Column/></columns>\
+	<ColumnListItem>\
+		<Text id="idDetail" text="{ArtistID}" />\
+		<Text id="nameDetail" text="{Name}" />\
+	</ColumnListItem>\
+</Table>',
+			that = this;
+
+		this.expectRequest("Artists(ArtistID='42',IsActiveEntity=true)/BestFriend/_Publication"
+				+ "?$select=CurrencyCode,Price,PublicationID&$skip=0&$top=100", {
+				value : [{
+					"CurrencyCode" : "EUR",
+					"Price" : "9.00", // Note: 9.ii for old value at index i, 7.ii for new value
+					"PublicationID" : "42-0"
+				}, {
+					"CurrencyCode" : "EUR",
+					"Price" : "9.11",
+					"PublicationID" : "42-1"
+				}]
+			})
+			.expectRequest("Artists(ArtistID='42',IsActiveEntity=true)"
+				+ "?$select=ArtistID,IsActiveEntity"
+				//TODO CPOUI5UISERVICESV3-1677: Avoid unnecessary $expand
+				+ "&$expand=BestFriend($select=ArtistID,IsActiveEntity)", {
+				"ArtistID" : "42"
+//					"IsActiveEntity" : true
+			})
+			.expectChange("id", "42")
+			.expectChange("price", ["9.00", "9.11"])
+			.expectChange("currency", ["EUR", "EUR"])
+			.expectChange("priceDetail")
+			.expectChange("currencyDetail")
+			.expectChange("inProcessByUser")
+			.expectChange("idDetail", false)
+			.expectChange("nameDetail", false);
+
+		return this.createView(assert, sView, oModel).then(function () {
+			that.expectRequest("Artists(ArtistID='42',IsActiveEntity=true)/BestFriend"
+					+ "/_Publication('42-0')?$select=CurrencyCode,Price,PublicationID"
+					+ "&$expand=DraftAdministrativeData($select=DraftID,InProcessByUser)", {
+					"CurrencyCode" : "EUR",
+					"DraftAdministrativeData" : {
+						"DraftID" : "1",
+						"InProcessByUser" : "JOHNDOE"
+					},
+					"Price" : "9.00",
+					"PublicationID" : "42-0"
+				})
+				.expectChange("priceDetail", "9.00")
+				.expectChange("currencyDetail", "EUR")
+				.expectChange("inProcessByUser", "JOHNDOE");
+
+			that.oView.byId("detail").setBindingContext(
+				that.oView.byId("table").getBinding("items").getCurrentContexts()[0]);
+
+			return that.waitForChanges(assert);
+		}).then(function () {
+			that.expectRequest("Artists(ArtistID='42',IsActiveEntity=true)/BestFriend/_Publication"
+					+ "?$select=Price,PublicationID"
+					+ "&$filter=PublicationID eq '42-0' or PublicationID eq '42-1'", {
+					value : [{
+						"Price" : "7.11", // side effect
+						"PublicationID" : "42-1"
+					}, {
+						"Price" : "7.00", // side effect
+						"PublicationID" : "42-0"
+					}]
+				})
+				.expectRequest("Artists(ArtistID='42',IsActiveEntity=true)/BestFriend"
+					+ "/_Publication('42-0')?$select=Price"
+					+ "&$expand=DraftAdministrativeData($select=InProcessByUser)", {
+					"DraftAdministrativeData" : {
+						"InProcessByUser" : "JANEDOE"
+					},
+					"Price" : "7.00"
+				})
+				.expectChange("priceDetail", "7.00")
+				.expectChange("inProcessByUser", "JANEDOE")
+				.expectChange("price", ["7.00", "7.11"]);
+
+			return Promise.all([
+				// code under test
+				that.oView.byId("form").getBindingContext().requestSideEffects([{
+					$PropertyPath : "BestFriend/_Publication/Price"
+				}, {
+					$PropertyPath : "BestFriend/_Publication/DraftAdministrativeData/InProcessByUser"
+				}]),
+				that.waitForChanges(assert)
+			]);
+		}).then(function () {
+			that.expectRequest("Artists(ArtistID='42',IsActiveEntity=true)/BestFriend"
+					+ "/_Publication('42-1')/_Artist/_Friend?$select=ArtistID,IsActiveEntity,Name"
+					+ "&$skip=0&$top=100", {
+					value : [{
+						"ArtistID" : "0",
+						"IsActiveEntity" : true,
+						"Name" : "TAFKAP"
+					}, {
+						"ArtistID" : "1",
+						"IsActiveEntity" : false,
+						"Name" : "John & Jane"
+					}]
+				})
+				.expectChange("idDetail", ["0", "1"])
+				.expectChange("nameDetail", ["TAFKAP", "John & Jane"]);
+
+			that.oView.byId("detailTable").setBindingContext(
+				that.oView.byId("table").getBinding("items").getCurrentContexts()[1]);
+
+			return that.waitForChanges(assert);
+		}).then(function () {
+			that.expectRequest("Artists(ArtistID='42',IsActiveEntity=true)/BestFriend"
+					+ "/_Publication('42-1')/_Artist/_Friend?$select=ArtistID,IsActiveEntity,Name"
+					+ "&$filter=ArtistID eq '0' and IsActiveEntity eq true"
+					+ " or ArtistID eq '1' and IsActiveEntity eq false", {
+					value : [{
+						"ArtistID" : "0",
+						"IsActiveEntity" : true,
+						"Name" : "TAFKAP (1)"
+					}, {
+						"ArtistID" : "1",
+						"IsActiveEntity" : false,
+						"Name" : "John | Jane"
+					}]
+				})
+				.expectChange("nameDetail", ["TAFKAP (1)", "John | Jane"]);
+
+			return Promise.all([
+				// code under test
+				that.oView.byId("form").getBindingContext().requestSideEffects([{
+					$PropertyPath : "BestFriend/_Publication/_Artist/_Friend/Name"
+				}]),
+				that.waitForChanges(assert)
+			]);
 		});
 	});
 

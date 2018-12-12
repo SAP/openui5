@@ -901,8 +901,8 @@ sap.ui.define([
 	 * @private
 	 */
 	ODataParentBinding.prototype.selectKeyProperties = function (mQueryOptions, sMetaPath) {
-		_Helper.selectKeyProperties(mQueryOptions, sMetaPath,
-			this.oModel.oRequestor.getModelInterface().fetchMetadata);
+		_Helper.selectKeyProperties(mQueryOptions,
+			this.oModel.getMetaModel().getObject(sMetaPath + "/"));
 	};
 
 	/**

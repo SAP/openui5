@@ -479,18 +479,50 @@ sap.ui.define([
 		},
 
 		/**
+		 * Returns a filter identifying the given instance via its key properties.
+		 *
+		 * @param {object} oInstance
+		 *   Entity instance runtime data
+		 * @param {string} sMetaPath
+		 *   The absolute meta path of the given instance
+		 * @param {object} mTypeForMetaPath
+		 *   Maps meta paths to the corresponding entity or complex types
+		 * @returns {string}
+		 *   A filter using key properties, e.g. "Sector eq 'DevOps' and ID eq 42)", or undefined,
+		 *   if at least one key property is undefined
+		 * @throws {Error}
+		 *   In case the entity type has no key properties according to metadata
+		 */
+		getKeyFilter : function (oInstance, sMetaPath, mTypeForMetaPath) {
+			var aFilters = [],
+				sKey,
+				mKey2Value = _Helper.getKeyProperties(oInstance, sMetaPath, mTypeForMetaPath);
+
+			if (!mKey2Value) {
+				return undefined;
+			}
+			for (sKey in mKey2Value) {
+				aFilters.push(sKey + " eq " + mKey2Value[sKey]);
+			}
+
+			return aFilters.join(" and ");
+		},
+
+		/**
 		 * Returns the key predicate (see "4.3.1 Canonical URL") for the given entity using the
 		 * given meta data.
 		 *
 		 * @param {object} oInstance
 		 *   Entity instance runtime data
 		 * @param {string} sMetaPath
-		 *   The meta path of the entity in the cache including the cache's resource path
+		 *   The absolute meta path of the given instance
 		 * @param {object} mTypeForMetaPath
 		 *   Maps meta paths to the corresponding entity or complex types
 		 * @returns {string}
-		 *   The key predicate, e.g. "(Sector='DevOps',ID='42')" or "('42')" or undefined if at
+		 *   The key predicate, e.g. "(Sector='DevOps',ID='42')" or "('42')", or undefined, if at
 		 *   least one key property is undefined
+		 * @throws {Error}
+		 *   In case the entity type has no key properties according to metadata
 		 */
 		getKeyPredicate : function (oInstance, sMetaPath, mTypeForMetaPath) {
 			var aKeyProperties = [],
@@ -504,6 +536,7 @@ sap.ui.define([
 
 				return aKeys.length === 1 ? vValue : encodeURIComponent(sAlias) + "=" + vValue;
 			});
+
 			return "(" + aKeyProperties.join(",") + ")";
 		},
 
@@ -514,7 +547,7 @@ sap.ui.define([
 		 * @param {object} oInstance
 		 *   Entity instance runtime data
 		 * @param {string} sMetaPath
-		 *   The meta path of the entity in the cache including the cache's resource path
+		 *   The absolute meta path of the given instance
 		 * @param {object} mTypeForMetaPath
 		 *   Maps meta paths to the corresponding entity or complex types
 		 * @param {boolean} [bReturnAlias=false]
@@ -527,7 +560,9 @@ sap.ui.define([
 		 *   the following map is returned:
 		 *   - {EntityInfoID : 42}, if bReturnAlias = true;
 		 *   - {"Info/ID" : 42}, if bReturnAlias = false;
-		 *   - undefined, if at least one key property is undefined
+		 *   - undefined, if at least one key property is undefined.
+		 * @throws {Error}
+		 *   In case the entity type has no key properties according to metadata
 		 */
 		getKeyProperties : function (oInstance, sMetaPath, mTypeForMetaPath, bReturnAlias) {
 			var bFailed,
@@ -638,8 +673,8 @@ sap.ui.define([
 		},
 
 		/**
-		 * Returns a copy of given query options where "$select" is replaced by the intersection
-		 * with the given property paths. "$expand" is removed.
+		 * Returns a copy of given query options where "$expand" and "$select" are replaced by the
+		 * intersection with the given (navigation) property paths.
 		 *
 		 * @param {object} mCacheQueryOptions
 		 *   A map of query options as returned by
@@ -975,20 +1010,14 @@ sap.ui.define([
 		},
 
 		/**
-		 * Adds the key properties of the entity reached by the given navigation property path to
-		 * $select of the query options. Expects that the type has already been loaded so that it
-		 * can be accessed synchronously.
+		 * Adds the key properties of the given entity type to $select of the given query options.
 		 *
 		 * @param {object} mQueryOptions
 		 *   The query options
-		 * @param {string} sMetaPath
-		 *   The path to the navigation property
-		 * @param {function} fnFetchMetadata
-		 *   Function which fetches metadata for a given meta path
+		 * @param {object} oType
+		 *   The entity type's metadata "JSON"
 		 */
-		selectKeyProperties : function (mQueryOptions, sMetaPath, fnFetchMetadata) {
-			var oType = fnFetchMetadata(sMetaPath + "/").getResult();
-
+		selectKeyProperties : function (mQueryOptions, oType) {
 			if (oType && oType.$Key) {
 				_Helper.addToSelect(mQueryOptions, oType.$Key.map(function (vKey) {
 					if (typeof vKey === "object") {
@@ -1026,7 +1055,7 @@ sap.ui.define([
 		 * A remainder never starts with a slash and may well be empty.
 		 *
 		 * @param {string} sPrefix
-		 *   A prefix (which must not end with a slash)
+		 *   A prefix (which must not end with a slash); "" is a path prefix of each path
 		 * @param {string[]} aPaths
 		 *   A list of paths
 		 * @returns {string[]}
@@ -1034,6 +1063,10 @@ sap.ui.define([
 		 */
 		stripPathPrefix : function (sPrefix, aPaths) {
 			var sPathPrefix = sPrefix + "/";
+
+			if (sPrefix === "") {
+				return aPaths;
+			}
 
 			return aPaths.filter(function (sPath) {
 				return sPath === sPrefix || sPath.startsWith(sPathPrefix);
@@ -1282,8 +1315,8 @@ sap.ui.define([
 						= (i === aMetaPathSegments.length - 1) // last segment in path
 							? mChildQueryOptions
 							: {};
-					_Helper.selectKeyProperties(mQueryOptionsForPathPrefix, sPropertyMetaPath,
-						fnFetchMetadata);
+					_Helper.selectKeyProperties(mQueryOptionsForPathPrefix,
+						fnFetchMetadata(sPropertyMetaPath + "/").getResult());
 					sExpandSelectPath = "";
 				} else if (oProperty.$kind !== "Property") {
 					return undefined;

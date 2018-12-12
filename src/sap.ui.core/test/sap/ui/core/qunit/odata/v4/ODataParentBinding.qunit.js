@@ -1804,23 +1804,18 @@ sap.ui.define([
 
 	//*********************************************************************************************
 	QUnit.test("selectKeyProperties", function (assert) {
-		var oModelInterface = {
-				fetchMetadata : function () {}
+		var oMetaModel = {
+				getObject : function () {}
 			},
 			oBinding = new ODataParentBinding({
-				oModel : {
-					oRequestor : {
-						getModelInterface : function () {
-							return oModelInterface;
-						}
-					}
-				}
+				oModel : {getMetaModel : function () { return oMetaModel; }}
 			}),
-			mQueryOptions = {};
+			mQueryOptions = {},
+			oType = {};
 
+		this.mock(oMetaModel).expects("getObject").withExactArgs("~/").returns(oType);
 		this.mock(_Helper).expects("selectKeyProperties")
-			.withExactArgs(sinon.match.same(mQueryOptions), "~",
-				sinon.match.same(oModelInterface.fetchMetadata));
+			.withExactArgs(sinon.match.same(mQueryOptions), sinon.match.same(oType));
 
 		// code under test
 		oBinding.selectKeyProperties(mQueryOptions, "~");
@@ -2522,7 +2517,7 @@ sap.ui.define([
 		QUnit.test("visitSideEffects, " + i, function (assert) {
 			var oBinding = new ODataParentBinding(),
 				oChild0 = {
-					oCachePromise : SyncPromise.resolve({}),
+					oCachePromise : SyncPromise.resolve({}), //TODO what if this is still pending?
 					getPath : function () { return "foo(0)"; },
 					requestSideEffects : function () {}
 				},

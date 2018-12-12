@@ -1572,7 +1572,43 @@ sap.ui.define([
 	 * @see sap.ui.model.odata.v4.ODataParentBinding#requestSideEffects
 	 */
 	ODataListBinding.prototype.requestSideEffects = function (sGroupId, aPaths, oContext) {
-		return this.refreshInternal(sGroupId);
+		var oModel = this.oModel,
+			// Hash set of collection-valued navigation property meta paths (relative to the cache's
+			// root) which need to be refreshed, maps string to <code>true</code>
+			mNavigationPropertyPaths = {},
+			oPromise,
+			aPromises,
+			that = this;
+
+		/*
+		 * Adds an error handler to the given promise which reports errors to the model.
+		 *
+		 * @param {Promise} oPromise - A promise
+		 * @return {Promise} A promise including an error handler
+		 */
+		function reportError(oPromise) {
+			return oPromise.catch(function (oError) {
+				oModel.reportError("Failed to request side effects", sClassName, oError);
+				throw oError;
+			});
+		}
+
+		return this.oCachePromise.then(function (oCache) {
+			if (aPaths.indexOf("") < 0) {
+				oPromise = oCache.requestSideEffects(oModel.lockGroup(sGroupId),
+					aPaths, mNavigationPropertyPaths, that.iCurrentBegin,
+					that.iCurrentEnd - that.iCurrentBegin);
+				if (oPromise) {
+					aPromises = [oPromise];
+					that.visitSideEffects(sGroupId, aPaths, oContext, mNavigationPropertyPaths,
+						aPromises);
+
+					return SyncPromise.all(aPromises.map(reportError));
+				}
+			}
+
+			return that.refreshInternal(sGroupId);
+		});
 	};
 
 	/**

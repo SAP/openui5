@@ -931,6 +931,54 @@ sap.ui.define([
 	});
 
 	//*********************************************************************************************
+	[false, true].forEach(function (bReturnAlias) {
+		QUnit.test("getKeyProperties throws, bReturnAlias = " + bReturnAlias, function (assert) {
+			assert.throws(function () {
+				// code under test
+				_Helper.getKeyProperties({}, "~path~", {"~path~" : {/*no $Key*/}}, bReturnAlias);
+			});
+		});
+	});
+
+	//*********************************************************************************************
+	QUnit.test("getKeyFilter", function (assert) {
+		var oHelperMock = this.mock(_Helper),
+			oInstance = {},
+			sMetaPath = {/*meta path*/},
+			mTypeForMetaPath = {};
+
+		oHelperMock.expects("getKeyProperties")
+			.withExactArgs(sinon.match.same(oInstance), sinon.match.same(sMetaPath),
+				sinon.match.same(mTypeForMetaPath))
+			.returns({key : 42});
+
+		assert.strictEqual(
+			// code under test
+			_Helper.getKeyFilter(oInstance, sMetaPath, mTypeForMetaPath),
+			"key eq 42");
+
+		oHelperMock.expects("getKeyProperties")
+			.withExactArgs(sinon.match.same(oInstance), sinon.match.same(sMetaPath),
+				sinon.match.same(mTypeForMetaPath))
+			.returns({key1 : "'a'", key2 : "'b'"});
+
+		assert.strictEqual(
+			// code under test
+			_Helper.getKeyFilter(oInstance, sMetaPath, mTypeForMetaPath),
+			"key1 eq 'a' and key2 eq 'b'");
+
+		oHelperMock.expects("getKeyProperties")
+			.withExactArgs(sinon.match.same(oInstance), sinon.match.same(sMetaPath),
+				sinon.match.same(mTypeForMetaPath))
+			.returns(undefined); // at least one key property is undefined
+
+		assert.strictEqual(
+			// code under test
+			_Helper.getKeyFilter(oInstance, sMetaPath, mTypeForMetaPath),
+			undefined);
+	});
+
+	//*********************************************************************************************
 	QUnit.test("namespace", function (assert) {
 		assert.strictEqual(_Helper.namespace("Products"), "");
 		assert.strictEqual(_Helper.namespace("zui5_epm_sample.Products"), "zui5_epm_sample");
@@ -1881,6 +1929,9 @@ sap.ui.define([
 		// code under test
 		assert.deepEqual(_Helper.stripPathPrefix("A", ["A"]), [""]);
 
+		// code under test
+		assert.deepEqual(_Helper.stripPathPrefix("", ["A", "B"]), ["A", "B"]);
+
 		aPaths = ["Z", "A/B", "AA", "A/C/D/C"];
 
 		// code under test
@@ -1921,40 +1972,24 @@ sap.ui.define([
 	//*********************************************************************************************
 	[false, true].forEach(function (bKeys) {
 		QUnit.test("selectKeyProperties: " + (bKeys ? "w/" : "w/o") + " keys", function (assert) {
-			var oMetaModel = {
-					// Note: "this" not needed, save Function#bind below
-					fetchObject : function () {}
-				},
-				aKeyProperties = ["foo", "path/to/key"],
-				sMetaPath = "~",
+			var aKeyProperties = ["foo", "path/to/key"],
 				mQueryOptions = {},
 				oType = bKeys ? {$Key : ["foo", {"alias" : "path/to/key"}]} : {};
 
-			this.mock(oMetaModel).expects("fetchObject")
-				.withExactArgs(sMetaPath + "/")
-				.returns(SyncPromise.resolve(oType));
 			this.mock(_Helper).expects("addToSelect").exactly(bKeys ? 1 : 0)
 				.withExactArgs(sinon.match.same(mQueryOptions), aKeyProperties);
 
 			// code under test
-			_Helper.selectKeyProperties(mQueryOptions, sMetaPath, oMetaModel.fetchObject);
+			_Helper.selectKeyProperties(mQueryOptions, oType);
 		});
 	});
 
 	//*********************************************************************************************
 	QUnit.test("selectKeyProperties: no type metadata available", function (assert) {
-		var oMetaModel = {
-				// Note: "this" not needed, save Function#bind below
-				fetchObject : function () {}
-			};
-
-		this.mock(oMetaModel).expects("fetchObject")
-			.withExactArgs("~/")
-			.returns(SyncPromise.resolve(undefined));
 		this.mock(_Helper).expects("addToSelect").never();
 
 		// code under test
-		_Helper.selectKeyProperties({}, "~", oMetaModel.fetchObject);
+		_Helper.selectKeyProperties({});
 	});
 
 	//*********************************************************************************************

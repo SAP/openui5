@@ -1479,7 +1479,7 @@ sap.ui.define([
 			var oElement = aResult[0];
 			// _Helper.updateExisting cannot be used because navigation properties cannot be handled
 			that.aElements[iIndex] = that.aElements.$byPredicate[sPredicate] = oElement;
-			that.visitResponse(oElement, aResult[1], that.sMetapath, sPredicate);
+			that.visitResponse(oElement, aResult[1], undefined, sPredicate);
 			return oElement;
 		});
 
@@ -1512,22 +1512,15 @@ sap.ui.define([
 		var that = this;
 
 		return this.fetchTypes().then(function (mTypeForMetaPath) {
-			var sKey,
-				aKeyFilters = [],
-				oEntity = that.aElements[iIndex],
-				mKeyProperties = _Helper.getKeyProperties(oEntity,
-					"/" + that.sResourcePath, mTypeForMetaPath),
+			var oEntity = that.aElements[iIndex],
 				sPredicate = _Helper.getPrivateAnnotation(oEntity, "predicate"),
 				mQueryOptions = jQuery.extend({}, that.mQueryOptions),
 				sFilterOptions = mQueryOptions["$filter"],
 				sReadUrl = that.sResourcePath;
 
-			for (sKey in mKeyProperties) {
-				aKeyFilters.push(sKey + " eq " + mKeyProperties[sKey]);
-			}
 
 			mQueryOptions["$filter"] = (sFilterOptions ? "(" + sFilterOptions + ") and " : "")
-				+ aKeyFilters.join(" and ");
+				+ _Helper.getKeyFilter(oEntity, that.sMetaPath, mTypeForMetaPath);
 
 			sReadUrl += that.oRequestor.buildQueryString(that.sMetaPath, mQueryOptions, false,
 				that.bSortExpandSelect);
@@ -1558,10 +1551,129 @@ sap.ui.define([
 						// _Helper.updateExisting cannot be used because navigation properties
 						// cannot be handled
 						that.aElements[iIndex] = that.aElements.$byPredicate[sPredicate] = oResult;
-						that.visitResponse(oResult, mTypeForMetaPath, that.sMetapath, sPredicate);
+						that.visitResponse(oResult, mTypeForMetaPath, undefined, sPredicate);
 					}
 				});
 		});
+	};
+
+	/**
+	 * Returns a promise to be resolved when the side effects have been applied to the given element
+	 * range. All other elements are discarded!
+	 *
+	 * @param {sap.ui.model.odata.v4.lib._GroupLock} oGroupLock
+	 *   A lock for the ID of the group that is associated with the request;
+	 *   see {sap.ui.model.odata.v4.lib._Requestor#request} for details
+	 * @param {string[]} aPaths
+	 *   The "14.5.11 Expression edm:NavigationPropertyPath" or
+	 *   "14.5.13 Expression edm:PropertyPath" strings describing which properties need to be loaded
+	 *   because they may have changed due to side effects of a previous update
+	 * @param {object} mNavigationPropertyPaths
+	 *   Hash set of collection-valued navigation property meta paths (relative to this cache's
+	 *   root) which need to be refreshed, maps string to <code>true</code>; is modified
+	 * @param {number} iStart
+	 *   The index of the first element to request side effects for (in model coordinates, i.e. -1
+	 *   is possible)
+	 * @param {number} iLength
+	 *   The number of elements to request side effects for; <code>Infinity</code> is supported
+	 * @returns {Promise}
+	 *   A promise resolving without a defined result, or <code>null</code> if a key property is
+	 *   missing
+	 *
+	 * @public
+	 */
+	CollectionCache.prototype.requestSideEffects = function (oGroupLock, aPaths,
+			mNavigationPropertyPaths, iStart, iLength) {
+		var sFilter,
+			aFilters = [],
+			mQueryOptions,
+			sResourcePath,
+			bTransient = this.aElements[-1] // Note: undefined vs. false!
+				&& _Helper.hasPrivateAnnotation(this.aElements[-1], "transient"),
+			mTypeForMetaPath = this.fetchTypes().getResult(),
+			that = this,
+			i;
+
+		/*
+		 * Discards the given element at the given index, keeping <code>$byPredicate</code>
+		 * up-to-date.
+		 *
+		 * @param {number} iOffset
+		 *   Offset for the instance's index inside <code>aElements</code>
+		 * @param {object} oInstance
+		 *   Entity instance runtime data
+		 * @param {number} i
+		 *   The instance's index inside <code>aElements</code>, relative to <code>iOffset</code>
+		 */
+		function discard(iOffset, oInstance, i) {
+			delete that.aElements.$byPredicate[
+				_Helper.getPrivateAnnotation(oInstance, "predicate")];
+			delete that.aElements[iOffset + i];
+		}
+
+		if (iStart < 0 && bTransient) {
+			// transient element is not affected by side effects
+			iStart = 0;
+			iLength -= 1;
+		}
+		if (!iLength) { // no affected elements: discard all except transient
+			if (bTransient === false) {
+				delete this.aElements[-1]; // discard persistent created element
+			}
+			this.aElements.length = 0; // discard all non-created elements
+			this.aElements.$byPredicate = {}; // Note: transient element not contained here
+			return SyncPromise.resolve(); // micro optimization: use *sync.* promise which is cached
+		}
+
+		// first discard elements outside of range
+		if (iStart >= 0 && bTransient === false) {
+			discard(0, this.aElements[-1], -1);
+		}
+		if (iStart > 0) {
+			this.aElements.slice(0, iStart).forEach(discard.bind(null, 0));
+		}
+		if (iStart + iLength < this.aElements.length) {
+			this.aElements.slice(iStart + iLength).forEach(discard.bind(null, iStart + iLength));
+			this.aElements.length = iStart + iLength;
+		}
+
+		mQueryOptions = _Helper.intersectQueryOptions(this.mQueryOptions, aPaths,
+			this.oRequestor.getModelInterface().fetchMetadata, this.sMetaPath,
+			mNavigationPropertyPaths);
+		if (!mQueryOptions) {
+			return SyncPromise.resolve(); // micro optimization: use *sync.* promise which is cached
+		}
+
+		for (i = iStart; i < this.aElements.length; i += 1) {
+			sFilter = _Helper.getKeyFilter(this.aElements[i], this.sMetaPath, mTypeForMetaPath);
+			if (!sFilter) {
+				return null; // missing key property
+			}
+			aFilters.push(sFilter);
+		}
+		mQueryOptions.$filter = aFilters.join(" or ");
+		_Helper.selectKeyProperties(mQueryOptions, mTypeForMetaPath[this.sMetaPath]);
+		delete mQueryOptions.$count;
+		delete mQueryOptions.$orderby;
+		delete mQueryOptions.$search;
+		sResourcePath = this.sResourcePath
+			+ this.oRequestor.buildQueryString(this.sMetaPath, mQueryOptions, false, true);
+
+		return this.oRequestor.request("GET", sResourcePath, oGroupLock).then(function (oResult) {
+				var oElement, sPredicate, i, n;
+
+				if (oResult.value.length !== aFilters.length) {
+					throw new Error("Expected " + aFilters.length + " row(s), but instead saw "
+						+ oResult.value.length);
+				}
+				that.visitResponse(oResult, mTypeForMetaPath, undefined, "", false, iStart);
+				for (i = 0, n = oResult.value.length; i < n; i += 1) {
+					oElement = oResult.value[i];
+					sPredicate = _Helper.getPrivateAnnotation(oElement, "predicate");
+					_Helper.updateExisting(that.mChangeListeners, sPredicate,
+						that.aElements.$byPredicate[sPredicate], oElement);
+				}
+			});
 	};
 
 	//*********************************************************************************************
@@ -1834,7 +1946,8 @@ sap.ui.define([
 	 * @param {sap.ui.model.odata.v4.lib._GroupLock} oGroupLock
 	 *   A lock for the ID of the group that is associated with the request;
 	 *   see {sap.ui.model.odata.v4.lib._Requestor#request} for details
-	 * @param {string[]} aPaths The "14.5.11 Expression edm:NavigationPropertyPath" or
+	 * @param {string[]} aPaths
+	 *   The "14.5.11 Expression edm:NavigationPropertyPath" or
 	 *   "14.5.13 Expression edm:PropertyPath" strings describing which properties need to be loaded
 	 *   because they may have changed due to side effects of a previous update
 	 * @param {object} mNavigationPropertyPaths
@@ -1856,14 +1969,14 @@ sap.ui.define([
 				mNavigationPropertyPaths),
 			that = this;
 
-		if (mQueryOptions === null) {
+		if (!mQueryOptions) {
 			return this.fetchValue(_GroupLock.$cached, "");
 		}
 
+		sResourcePath = (sResourcePath || this.sResourcePath)
+			+ this.oRequestor.buildQueryString(this.sMetaPath, mQueryOptions, false, true);
 		this.oPromise = Promise.all([
-			this.oRequestor.request("GET", (sResourcePath || this.sResourcePath)
-					+ this.oRequestor.buildQueryString(this.sMetaPath, mQueryOptions, false, true),
-				oGroupLock),
+			this.oRequestor.request("GET", sResourcePath, oGroupLock),
 			this.fetchTypes(),
 			this.fetchValue(_GroupLock.$cached, "")
 		]).then(function (aResult) {
@@ -1871,7 +1984,7 @@ sap.ui.define([
 				oOldValue = aResult[2];
 
 			// visit response to report the messages
-			that.visitResponse(oNewValue, aResult[1], that.sMetaPath);
+			that.visitResponse(oNewValue, aResult[1]);
 			_Helper.updateExisting(that.mChangeListeners, "", oOldValue, oNewValue);
 
 			return oOldValue;

@@ -30,7 +30,12 @@
 					<PropertyRef Name="PublicationID" />
 				</Key>
 				<Property Name="PublicationID" Type="Edm.String" Nullable="false" />
-				<Property Name="Price" Type="Edm.Decimal" Precision="14" Scale="variable" />
+				<Property Name="Price" Type="Edm.Decimal" Precision="13" Scale="variable" />
+				<Property Name="CurrencyCode" Type="Edm.String" MaxLength="5"/>
+				<Property Name="Messages" Type="Collection(special.cases.Message)" />
+				<Annotation Term="com.sap.vocabularies.Common.v1.Messages" Path="Messages" />
+				<NavigationProperty Name="DraftAdministrativeData" Type="special.cases.DraftAdministrativeDataType"/>
+				<NavigationProperty Name="_Artist" Type="special.cases.ArtistsType"/>
 			</EntityType>
 			<EntityType Name="EntityWithComplexKey">
 				<Key>

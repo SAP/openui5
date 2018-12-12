@@ -2641,8 +2641,6 @@ sap.ui.define([
 					.withExactArgs(sinon.match.same(oGroupLock), sinon.match.same(aPaths), {},
 						bWithContext ? "Me" : undefined)
 					.callsFake(function (oGroupLock, aPaths, mNavigationPropertyPaths) {
-						mNavigationPropertyPaths["refresh/toN"] = true;
-
 						that.mock(oBinding).expects("visitSideEffects")
 							.withExactArgs(sGroupId, sinon.match.same(aPaths),
 								sinon.match.same(oContext),

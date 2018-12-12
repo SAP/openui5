@@ -952,8 +952,7 @@ sap.ui.define([
 	 * @see sap.ui.model.odata.v4.ODataParentBinding#requestSideEffects
 	 */
 	ODataContextBinding.prototype.requestSideEffects = function (sGroupId, aPaths, oContext) {
-		var oCache = this.oCachePromise.getResult(),
-			oModel = this.oModel,
+		var oModel = this.oModel,
 			// Hash set of collection-valued navigation property meta paths (relative to the cache's
 			// root) which need to be refreshed, maps string to <code>true</code>
 			mNavigationPropertyPaths = {},
@@ -974,8 +973,9 @@ sap.ui.define([
 
 		if (aPaths.indexOf("") < 0) {
 			try {
-				aPromises.push(oCache.requestSideEffects(oModel.lockGroup(sGroupId), aPaths,
-					mNavigationPropertyPaths, oContext && oContext.getPath().slice(1)));
+				aPromises.push(
+					this.oCachePromise.getResult().requestSideEffects(oModel.lockGroup(sGroupId),
+						aPaths, mNavigationPropertyPaths, oContext && oContext.getPath().slice(1)));
 
 				this.visitSideEffects(sGroupId, aPaths, oContext, mNavigationPropertyPaths,
 					aPromises);
