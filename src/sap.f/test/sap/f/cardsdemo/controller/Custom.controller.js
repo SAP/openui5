@@ -53,56 +53,50 @@ sap.ui.define([
 			var oData = {
 				"content": {
 					"chart": {
-					"type": "line",
-					"vizProperties": {
+						"chartType": "line",
 						"legend": {
-						"visible": true
-						},
-						"legendGroup": {
-						"layout": {
+							"visible": true,
 							"position": "right",
 							"alignment": "center"
-						}
 						},
 						"plotArea": {
-						"dataLabel": {
-							"visible": true
+							"dataLabel": {
+								"visible": true
+							},
+							"window": {
+								"start": "firstDataPoint",
+								"end": "lastDataPoint"
+							}
 						},
-						"window": {
-							"start": "firstDataPoint",
-							"end": "lastDataPoint"
-						}
+						"title": {
+							"text": "Line chart",
+							"visible": true,
+							"alignment": "bottom"
 						},
-						"title":  {
-						"text": "Line chart",
-						"visible": true,
-						"alignment": "bottom"
-						}
-					},
-					"measureUid": "valueAxis",
-					"dimensionUid": "categoryAxis",
-					"data": {
-						"request": {
-							"url": "./cardcontent/revenue.json"
+						"measureAxis": "valueAxis",
+						"dimensionAxis": "categoryAxis",
+						"data": {
+							"request": {
+								"url": "./cardcontent/revenue.json"
+							},
+							"path": "/list"
 						},
-						"path": "/list"
-					},
-					"dimensions": [
-						{
-						"label": "Weeks",
-						"value": "{Week}"
-						}
-					],
-					"measures": [
-						{
-						"label": "Revenue",
-						"value": "{Revenue}"
-						},
-						{
-						"label": "Cost",
-						"value": "{Cost}"
-						}
-					]
+						"dimensions": [
+							{
+								"label": "Weeks",
+								"value": "{Week}"
+							}
+						],
+						"measures": [
+							{
+								"label": "Revenue",
+								"value": "{Revenue}"
+							},
+							{
+								"label": "Cost",
+								"value": "{Cost}"
+							}
+						]
 					}
 				}
 			};
