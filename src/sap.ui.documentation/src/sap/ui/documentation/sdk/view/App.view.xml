@@ -74,7 +74,8 @@
 
 				<ToolbarSpacer>
 					<layoutData>
-						<OverflowToolbarLayoutData priority="NeverOverflow" minWidth="{= ${device>/system/tablet} ? '' : '1rem'}" />
+						<OverflowToolbarLayoutData priority="NeverOverflow" 
+						minWidth="{= ${device>/system/tablet} || ${device>/orientation/landscape} ? '' : '1rem'}" />
 					</layoutData>
 				</ToolbarSpacer>
 
