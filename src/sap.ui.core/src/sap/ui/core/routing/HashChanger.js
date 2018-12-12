@@ -136,13 +136,20 @@ sap.ui.define([
 	};
 
 	/**
-	 * Defines the event names which should be used by {@link sap.ui.core.routing.History} to track the hash changes
+	 * Defines the events and its parameters which should be used for tracking the hash changes
 	 *
-	 * @return {array} the event names
+	 * @return {Object[]} the events info. Each event info object in the array should
+	 * contain a name property which describes the event name, and an optional paramMapping object where the parameter
+	 * names in the event are defined for the 'newHash', 'oldHash' and 'fullHash'. If any of them isn't defined in the
+	 * mapping, the same name is used to get the property value from the event object.
 	 * @protected
 	 */
-	HashChanger.prototype.getEventNamesForHistory = function() {
-		return ["hashChanged"];
+	HashChanger.prototype.getRelevantEventsInfo = function() {
+		return [
+			{
+				name: "hashChanged"
+			}
+		];
 	};
 
 	/**
@@ -203,7 +210,6 @@ sap.ui.define([
 		 */
 		HashChanger.replaceHashChanger = function(oHashChanger) {
 			if (_oHashChanger && oHashChanger) {
-
 				var fnGetHistoryInstance = ObjectPath.get("sap.ui.core.routing.History.getInstance"),
 					oHistory;
 

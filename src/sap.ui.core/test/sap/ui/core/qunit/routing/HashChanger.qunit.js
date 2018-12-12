@@ -175,6 +175,7 @@ sap.ui.define([
 		var firstInstance = HashChanger.getInstance(),
 			hashChanged = this.spy();
 
+		firstInstance.attachEvent("newEvent", function(){});
 		firstInstance.attachEvent("hashChanged", hashChanged);
 
 
@@ -185,6 +186,7 @@ sap.ui.define([
 		HashChanger.replaceHashChanger(oSecondHashChanger);
 
 		var retrievedInstance = HashChanger.getInstance();
+		assert.ok(retrievedInstance.hasListeners("newEvent"), "The listener to newEvent is transported to the new instance");
 
 		retrievedInstance.fireHashChanged("one");
 		assert.strictEqual(hashChanged.callCount, 2, "did call all the listener");
