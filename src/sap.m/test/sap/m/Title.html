@@ -6,139 +6,151 @@
 		<title>Title - sap.m</title>
 		<script src="shared-config.js"></script>
 		<script src="../../../resources/sap-ui-core.js" id="sap-ui-bootstrap"
-				data-sap-ui-libs="sap.m">
+				data-sap-ui-libs="sap.m, sap.ui.layout">
 		</script>
-
-		<style>
-			body.Highlight .sapMTitle {
-				background-color: red;
-			}
-		</style>
 
 		<script>
+			sap.ui.getCore().attachInit(function () {
+				sap.ui.require([
+					"sap/ui/model/json/JSONModel",
+					"sap/ui/layout/form/SimpleForm",
+					"sap/m/Label",
+					"sap/m/Input",
+					"sap/m/CheckBox",
+					"sap/ui/core/Item",
+					"sap/m/ComboBox",
+					"sap/m/Page",
+					"sap/m/App",
+					"sap/ui/core/TitleLevel",
+					"sap/m/Title",
+					"sap/ui/core/HTML",
+					"sap/m/VBox"
+				], function (
+					JSONModel,
+					SimpleForm,
+					Label,
+					Input,
+					CheckBox,
+					Item,
+					ComboBox,
+					Page,
+					App,
+					TitleLevel,
+					Title,
+					HTML,
+					VBox
+				) {
+					var oContent = new VBox("content"),
+						iIdCounter = 0,
+						oData = {
+							text: "This is the text of the title, but in some specific cases it can be very long.",
+							width: "",
+							visible: true,
+							wrapping: false,
+							wrappingType: "Normal",
+							align: "Initial",
+							level: "Auto"
+						};
 
-		var idCounter = 0;
-		var oData = {
-		     text: "This is the text of the title, but in some specific cases it can be very long.",
-		     width: "",
-		     visible: true,
-		     wrapping: false,
-		     wrappingType: "Normal",
-		     align: "Initial",
-		     level: "Auto"
-		}
+					var	oModel = new JSONModel();
+					oModel.setData(oData);
+					sap.ui.getCore().setModel(oModel);
 
-		jQuery.sap.require("sap.ui.model.json.JSONModel");
-		var oModel = new sap.ui.model.json.JSONModel();
-		oModel.setData(oData);
-		sap.ui.getCore().setModel(oModel);
+					var oSettingsForm = new SimpleForm({
+						editable: true,
+						layout: "ResponsiveGridLayout",
+									width: "50%",
+									labelSpanS: 4,
+									labelSpanM: 2,
+									labelSpanL: 2,
+									labelSpanXL: 2,
+						content: [
+							new Label({editable: false, text: "Text"}),
+							new Input("setting1_text", {value: "{/text}"}),
+							new Label({text: "Width" }),
+							new Input("setting2_width", {value: "{/width}"}),
+							new Label({text: "Visible"}),
+							new CheckBox("setting3_visible", {selected: "{/visible}"}),
+							new Label({text: "Align"}),
+							new ComboBox("setting4_align", {
+								value: "{/align}",
+								items: [
+									new Item({text: "Begin", key: "Begin"}),
+									new Item({text: "End", key: "End"}),
+									new Item({text: "Left", key: "Left"}),
+									new Item({text: "Right", key: "Right"}),
+									new Item({text: "Center", key: "Center"}),
+									new Item({text: "Initial", key: "Initial"})
+								]
+							}),
+							new Label({text: "Level"}),
+							new ComboBox("setting5_level", {
+								value: "{/level}",
+								items: [
+									new Item({text: "Auto"}),
+									new Item({text: "H1"}),
+									new Item({text: "H2"}),
+									new Item({text: "H3"}),
+									new Item({text: "H4"}),
+									new Item({text: "H5"}),
+									new Item({text: "H6"})
+								]
+							}),
+							new Label({text: "Wrapping"}),
+							new CheckBox("setting6_wrapping", {selected: "{/wrapping}"}),
+							new Label({text: "WrappingType"}),
+							new Input("setting7_wrappingType", {value: "{/wrappingType}"}),
+							new Label({text: "Bar Context"}),
+							new CheckBox("setting9_barContext", {
+								select: function () {
+									oContent.$().children().toggleClass("sapMIBar-CTX");
+								}
+							}),
+							new Label({text: "Toolbar Context"}),
+							new CheckBox("setting10_toolbarContext", {
+								select: function () {
+									oContent.$().children().toggleClass("sapMTB-Transparent-CTX");
+								}
+							})
+						]
+					}).addStyleClass("sapUiSizeCompact")
 
-		function createSetting(sLabel, oDefaultValue, aValues, fHandler){
-			var sDom, fHandle;
-			var sId = "setting"+(idCounter++);
-			if(!aValues || aValues.length == 0){
-				if(typeof oDefaultValue == "string"){
-					sDom = "<input id='"+sId+"' value='"+oDefaultValue+"'>";
-					fHandle = function(oEvent){
-						fHandler(oEvent, jQuery(oEvent.target).val());
-					};
-				}else if(typeof oDefaultValue == "number"){
-					sDom = "<input id='"+sId+"' value='"+oDefaultValue+"'>";
-					fHandle = function(oEvent){
-						fHandler(oEvent, parseInt(jQuery(oEvent.target).val()));
-					};
-				}else if(typeof oDefaultValue == "boolean"){
-					sDom = "<input type='checkbox' id='"+sId+"'"+(oDefaultValue ? " checked='"+oDefaultValue+"'" : "")+">";
-					fHandle = function(oEvent){
-						fHandler(oEvent, jQuery(oEvent.target).is(":checked"));
+					var oPage = new Page({
+						title: "Test Page for sap.m.Title",
+						content: [
+							oSettingsForm,
+							new HTML({ content: "<hr/>"}),
+							oContent
+						]
+					});
+
+					// create content
+					for (var level in TitleLevel) {
+						var oTitle = new Title("title" + iIdCounter, {
+							titleStyle: level,
+							tooltip: "Title with style '" + level + "'",
+							text: "{/text}",
+							width: "{/width}",
+							visible: "{/visible}",
+							wrapping: "{/wrapping}",
+							wrappingType: "{/wrappingType}",
+							textAlign: "{/align}",
+							level: "{/level}"
+						});
+
+						oContent.addItem(new HTML({ content: "<hr/>"}));
+						oContent.addItem(oTitle);
+						iIdCounter++;
 					}
-				}
-			}else{
-				sDom = "<select id='"+sId+"'>";
-				for(var i=0; i<aValues.length; i++){
-					sDom += "<option value='"+aValues[i]+"'" + (aValues[i] == oDefaultValue ? " selected='selected'" : "") + ">" + aValues[i] + "</option>";
-				}
-				sDom += "</select>";
-				fHandle = function(oEvent){
-					fHandler(oEvent, jQuery(oEvent.target).find(":selected").attr("value"));
-				}
-			}
 
-			if(!sDom){
-				return;
-			}
-
-			jQuery.sap.byId("settings").append("<div style='margin-top:5px;'><div style='display:inline-block;width:140px;'>" + sLabel + ":</div>" + sDom + "</div>");
-
-			jQuery.sap.byId(sId).change(fHandle);
-		}
-
-
-		jQuery(function(){
-
-			for(var level in sap.ui.core.TitleLevel){
-				jQuery("#content").append("<hr>");
-				jQuery("#content").append("<div id='content"+idCounter+"' ></div>");
-				var title = new sap.m.Title("title"+idCounter, {
-					titleStyle: level,
-					tooltip: "Title with style '" + level + "'",
-					text: "{/text}",
-					width: "{/width}",
-					visible: "{/visible}",
-					wrapping: "{/wrapping}",
-					wrappingType: "{/wrappingType}",
-					textAlign: "{/align}",
-					level: "{/level}"
+					var oApp = new App({
+						pages : [oPage]
+					}).placeAt("body");
 				});
-				title.placeAt("content"+idCounter);
-				idCounter++;
-			}
-
-			createSetting("Text", oData.text, null, function(oEvent, val){
-				oData.text = val;
-				oModel.setData(oData);
 			});
-			createSetting("Width", oData.width, null, function(oEvent, val){
-				oData.width = val;
-				oModel.setData(oData);
-			});
-			createSetting("Visible", oData.visible, null, function(oEvent, val){
-				oData.visible = val;
-				oModel.setData(oData);
-			});
-			createSetting("Align", oData.align, ["Begin", "End", "Left", "Right", "Center", "Initial"], function(oEvent, val){
-				oData.align = val;
-				oModel.setData(oData);
-			});
-			createSetting("Level", oData.style, ["Auto", "H1", "H2", "H3", "H4", "H5", "H6"], function(oEvent, val){
-				oData.level = val;
-				oModel.setData(oData);
-			});
-			createSetting("Wrapping", oData.wrapping, null, function(oEvent, val){
-				oData.wrapping = val;
-				oModel.setData(oData);
-			});
-			createSetting("WrappingType", oData.wrappingType, null, function(oEvent, val){
-				oData.wrappingType = val;
-				oModel.setData(oData);
-			});
-			createSetting("Highlight", false, null, function(oEvent, val){
-				jQuery("body").toggleClass("Highlight", val);
-			});
-			createSetting("Bar Context", false, null, function(oEvent, val){
-				jQuery("#content").children().toggleClass("sapMIBar-CTX", val);
-			});
-			createSetting("ToolBar Context", false, null, function(oEvent, val){
-				jQuery("#content").children().toggleClass("sapMTB-Transparent-CTX", val);
-			});
-		});
-
 		</script>
 	</head>
-	<body class="sapUiBody" role="application">
-		<h1>Test Page for sap.m.Title</h1>
-		<div id="settings"></div>
-		<hr>
-		<div id="content"></div>
+	<body id="body" class="sapUiBody" role="application">
+
 	</body>
 </html>

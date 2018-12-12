@@ -13,14 +13,14 @@
 			</Toolbar>
 		</headerToolbar>
 		<content>
-			<Panel  width="100%" class="sapUiResponsiveMargin">
+			<Panel id="boxContainerPanel" width="100%">
 				<headerToolbar>
 					<Toolbar height="3rem">
 						<Title text=" BoxContainer boxMinWidth=17rem"/>
 					</Toolbar>
 				</headerToolbar>
 				<content>
-					<grid:CSSGrid items="{ path: '/' }">
+					<grid:CSSGrid id="grid1" items="{ path: '/' }">
 
 						<grid:customLayout>
 							<grid:GridBoxLayout boxMinWidth="17rem"/>
@@ -38,7 +38,7 @@
 					</grid:CSSGrid>
 				</content>
 			</Panel>
-			<Panel width="100%" class="sapUiResponsiveMargin">
+			<Panel width="100%">
 				<headerToolbar>
 					<Toolbar height="3rem">
 						<Title text="BoxContainer boxWidth=7rem"/>

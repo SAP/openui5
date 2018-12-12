@@ -105,7 +105,7 @@
 		var oSplitter = new sap.ui.layout.Splitter("mySplitter", {
 			contentAreas: [
 				createExampleContent(), createExampleContent(),
-				sap.ui.layout.Splitter({
+				sap.ui.layout.Splitter("nestedSplitter", {
 					contentAreas: [new sap.m.Button(), new sap.m.Button()],
 					orientation: "Vertical"
 				})
