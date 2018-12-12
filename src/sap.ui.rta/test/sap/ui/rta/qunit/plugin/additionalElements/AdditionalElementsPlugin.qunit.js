@@ -13,6 +13,7 @@ sap.ui.define([
 	"sap/m/Bar",
 	"sap/ui/dt/DesignTime",
 	"sap/ui/dt/OverlayRegistry",
+	"sap/ui/fl/Utils",
 	"sap/ui/fl/registry/ChangeRegistry",
 	"sap/ui/fl/registry/SimpleChanges",
 	"sap/ui/fl/registry/Settings",
@@ -31,6 +32,7 @@ sap.ui.define([
 	Bar,
 	DesignTime,
 	OverlayRegistry,
+	FlexUtils,
 	ChangeRegistry,
 	SimpleChanges,
 	Settings,
@@ -862,17 +864,13 @@ sap.ui.define([
 			this.STUB_EXTENSIBILITY_USHELL_URL = "someURLToCheckOurParameterPassing:"
 					+ JSON.stringify(this.STUB_EXTENSIBILITY_USHELL_PARAMS);
 
-			this.originalUShell = sap.ushell;
-			// this overrides the ushell globally => we need to restore it!
-			sap.ushell = jQuery.extend(sap.ushell, {
-				Container : {
-					getService : function() {
-						return {
-							hrefForExternal : function(mData) {
-								return "someURLToCheckOurParameterPassing:" + JSON.stringify(mData);
-							}
-						};
-					}
+			sandbox.stub(FlexUtils, "getUshellContainer").returns({
+				getService : function() {
+					return {
+						hrefForExternal : function(mData) {
+							return "someURLToCheckOurParameterPassing:" + JSON.stringify(mData);
+						}
+					};
 				}
 			});
 			givenSomeBoundControls.call(this, assert);
@@ -882,7 +880,6 @@ sap.ui.define([
 		afterEach : function () {
 			this.oDesignTime.destroy();
 			sandbox.restore();
-			sap.ushell = this.originalUShell;
 			this.oPlugin.destroy();
 			this.oPseudoPublicParent.destroy();
 		}

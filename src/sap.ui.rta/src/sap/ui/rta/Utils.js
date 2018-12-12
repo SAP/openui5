@@ -493,17 +493,8 @@ function(
 	 * @returns {sap.ushell.renderers.fiori2.Renderer|undefined} renderer or null if there is no one
 	 */
 	Utils.getFiori2Renderer = function() {
-		var oContainer = Utils.getUshellContainer() || {};
+		var oContainer = FlexUtils.getUshellContainer() || {};
 		return typeof oContainer.getRenderer === "function" ? oContainer.getRenderer("fiori2") : undefined;
-	};
-
-	/**
-	 * Function to get the Fiori Container
-	 *
-	 * @returns {Object|undefined} ushell container or null if there is no one
-	 */
-	Utils.getUshellContainer = function() {
-		return sap.ushell && sap.ushell.Container;
 	};
 
 	/**

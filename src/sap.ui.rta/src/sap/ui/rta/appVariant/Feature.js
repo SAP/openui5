@@ -6,7 +6,6 @@ sap.ui.define([
 	"sap/ui/rta/Utils",
 	"sap/ui/fl/Utils",
 	"sap/ui/rta/appVariant/AppVariantUtils",
-	"sap/m/MessageBox",
 	"sap/ui/core/BusyIndicator",
 	"sap/ui/thirdparty/jquery",
 	"sap/base/util/UriParameters"
@@ -14,7 +13,6 @@ sap.ui.define([
 	RtaUtils,
 	FlexUtils,
 	AppVariantUtils,
-	MessageBox,
 	BusyIndicator,
 	jQuery,
 	UriParameters
@@ -146,7 +144,7 @@ sap.ui.define([
 			var oDescriptor = fnGetDescriptor();
 
 			if (oDescriptor["sap.app"] && oDescriptor["sap.app"].id) {
-				if (RtaUtils.getUshellContainer() && !AppVariantUtils.isStandAloneApp() && sCurrentLayer === "CUSTOMER") {
+				if (FlexUtils.getUshellContainer() && !AppVariantUtils.isStandAloneApp() && sCurrentLayer === "CUSTOMER") {
 					var oInboundInfo;
 
 					if (oDescriptor["sap.app"].crossNavigation && oDescriptor["sap.app"].crossNavigation.inbounds) {
@@ -188,7 +186,7 @@ sap.ui.define([
 				};
 
 				var fnTriggerPlatformDependentFlow = function(oResult) {
-					var oUshellContainer = RtaUtils.getUshellContainer();
+					var oUshellContainer = FlexUtils.getUshellContainer();
 					if (oUshellContainer && bCopyUnsavedChanges) {
 						// Tell FLP that no UI change is booked for the currently adapting app
 						oUshellContainer.setDirtyFlag(false);

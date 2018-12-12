@@ -20,7 +20,6 @@ sap.ui.define([
 
 	QUnit.module("Given sap.ui.fl.Variant class", {
 		beforeEach: function(assert) {
-			this.ushellStore = sap.ushell; // removes the lib for a pure OpenUI5 testing
 			this.oControl = {};
 			this.sUserId = "cookieMonster";
 			var done = assert.async();
@@ -32,10 +31,8 @@ sap.ui.define([
 					this.oVariant = new Variant(this.oVariantFileContent);
 					done();
 				}.bind(this));
-
 		},
 		afterEach: function() {
-			sap.ushell = this.ushellStore;
 			sandbox.restore();
 		}
 	}, function() {

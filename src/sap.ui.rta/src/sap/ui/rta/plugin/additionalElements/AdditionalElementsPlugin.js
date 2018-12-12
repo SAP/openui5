@@ -5,13 +5,13 @@
 sap.ui.define([
 	"sap/ui/thirdparty/jquery",
 	"sap/ui/rta/plugin/Plugin",
-	'sap/ui/dt/ElementUtil',
-	'sap/ui/dt/OverlayRegistry',
-	'sap/ui/rta/Utils',
-	'sap/ui/fl/Utils',
-	'sap/ui/dt/Util',
-	'sap/ui/core/StashedControlSupport',
-	'sap/ui/dt/ElementDesignTimeMetadata',
+	"sap/ui/dt/ElementUtil",
+	"sap/ui/dt/OverlayRegistry",
+	"sap/ui/rta/Utils",
+	"sap/ui/fl/Utils",
+	"sap/ui/dt/Util",
+	"sap/ui/core/StashedControlSupport",
+	"sap/ui/dt/ElementDesignTimeMetadata",
 	"sap/base/Log"
 ], function(
 	jQuery,
@@ -532,8 +532,8 @@ sap.ui.define([
 		 */
 		_onOpenCustomField : function (oEvent) {
 			// open field ext ui
-			var oCrossAppNav = sap.ushell && sap.ushell.Container
-			&& sap.ushell.Container.getService("CrossApplicationNavigation");
+			var oUshellContainer = FlUtils.getUshellContainer();
+			var oCrossAppNav = oUshellContainer.getService("CrossApplicationNavigation");
 			var sHrefForFieldExtensionUi = (oCrossAppNav && oCrossAppNav.hrefForExternal({
 				target : {
 					semanticObject : "CustomField",

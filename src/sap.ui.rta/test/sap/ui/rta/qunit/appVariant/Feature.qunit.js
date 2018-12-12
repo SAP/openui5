@@ -121,7 +121,7 @@ sap.ui.define([
 
 			sandbox.stub(FlUtils, "getAppDescriptor").returns(oMockedDescriptorData);
 
-			sandbox.stub(RtaUtils,"getUshellContainer").returns(false);
+			sandbox.stub(FlUtils,"getUshellContainer").returns(false);
 
 			sandbox.stub(AppVariantUtils, "isStandAloneApp").returns(false);
 
@@ -144,7 +144,7 @@ sap.ui.define([
 
 			sandbox.stub(FlUtils, "getAppDescriptor").returns(oMockedDescriptorData);
 
-			sandbox.stub(RtaUtils,"getUshellContainer").returns(true);
+			sandbox.stub(FlUtils,"getUshellContainer").returns(true);
 
 			sandbox.stub(AppVariantUtils, "isStandAloneApp").returns(false);
 
@@ -168,7 +168,7 @@ sap.ui.define([
 
 			sandbox.stub(FlUtils, "getAppDescriptor").returns(oMockedDescriptorData);
 
-			sandbox.stub(RtaUtils,"getUshellContainer").returns(true);
+			sandbox.stub(FlUtils,"getUshellContainer").returns(true);
 
 			sandbox.stub(AppVariantUtils, "isStandAloneApp").returns(true);
 
@@ -198,7 +198,7 @@ sap.ui.define([
 
 			sandbox.stub(FlUtils, "getAppDescriptor").returns(oMockedDescriptorData);
 
-			sandbox.stub(RtaUtils,"getUshellContainer").returns(true);
+			sandbox.stub(FlUtils,"getUshellContainer").returns(true);
 
 			sandbox.stub(AppVariantUtils, "isStandAloneApp").returns(false);
 
@@ -240,7 +240,7 @@ sap.ui.define([
 			};
 
 			sandbox.stub(FlUtils, "getAppDescriptor").returns(oMockedDescriptorData);
-			sandbox.stub(RtaUtils,"getUshellContainer").returns(true);
+			sandbox.stub(FlUtils,"getUshellContainer").returns(true);
 
 			sandbox.stub(AppVariantUtils, "isStandAloneApp").returns(false);
 
