@@ -58,7 +58,7 @@ sap.ui.define(["sap/ui/support/supportRules/Main",
 			 */
 			analyze: function (oExecutionScope, vPresetOrRules) {
 
-				if (RuleSetLoader._rulesCreated) {
+				if (RuleSetLoader._bRulesCreated) {
 					return Main.analyze(oExecutionScope, vPresetOrRules);
 				}
 
