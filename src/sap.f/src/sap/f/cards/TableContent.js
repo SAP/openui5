@@ -30,23 +30,16 @@ sap.ui.define(["sap/m/Table", "sap/ui/core/Control", "sap/ui/model/json/JSONMode
 		 * @experimental
 		 * @since 1.60
 		 * @see {@link TODO Card}
-		 * @alias sap.f.cards.content.Table
+		 * @alias sap.f.cards.TableContent
 		 */
-		var Table = Control.extend("sap.f.cards.content.Table", {
+		var TableContent = Control.extend("sap.f.cards.TableContent", {
 			metadata: {
 				properties: {
-
-					data: {
-						type: "object"
-					},
-					columns: {
-						type: "array"
-					},
-					row: {
-						type: "array"
-					}
+					manifestContent: { type: "object" }
 				},
+				defaultAggregation: "columns",
 				aggregations: {
+
 					_content: {
 						multiple: false,
 						visibility: "hidden"
@@ -62,12 +55,63 @@ sap.ui.define(["sap/m/Table", "sap/ui/core/Control", "sap/ui/model/json/JSONMode
 			}
 		});
 
-		Table.prototype.applySettings = function (mSettings, oScope) {
+		TableContent.prototype._getTable = function () {
+
+			if (this._bIsBeingDestroyed) {
+				return null;
+			}
+
+			var oTable = this.getAggregation("_content");
+
+			if (!oTable) {
+				oTable = new ResponsiveTable({
+					id: this.getId() + "-Table"
+				});
+				this.setAggregation("_content", oTable);
+			}
+
+			return oTable;
+		};
+
+		TableContent.prototype.setManifestContent = function (oContent) {
+
+			this.setProperty("manifestContent", oContent);
+
+			if (!oContent) {
+				return;
+			}
+
+			if (oContent.data) {
+				this._setData(oContent.data);
+			}
+
+			if (oContent.columns) {
+				this._setColumns(oContent.columns);
+			}
+		};
+
+		TableContent.prototype._setColumns = function (aColumns) {
+			var aCells = [];
+
+			aColumns.forEach(function (oColumn) {
+				this._getTable().addColumn(new sap.m.Column({ header: new sap.m.Text({ text: oColumn.label }) }));
+				aCells.push(new sap.m.Text({ text: oColumn.value }));
+			}.bind(this));
+
+			this._getTable().bindItems({
+				path: this._getTable().getBindingContext().getPath(),
+				template: new sap.m.ColumnListItem({
+					cells: aCells
+				})
+			});
+		};
+
+		TableContent.prototype.applySettings = function (mSettings, oScope) {
 
 			var oData = mSettings.data;
 
 			if (oData) {
-				this.setData(oData);
+				this._setData(oData);
 				delete mSettings.data;
 			}
 
@@ -78,57 +122,19 @@ sap.ui.define(["sap/m/Table", "sap/ui/core/Control", "sap/ui/model/json/JSONMode
 			return this;
 		};
 
-		Table.prototype.init = function () {
-			//create a Table control
-			this.oTable = new ResponsiveTable({
-				id: this.getId() + "-Table"
-			});
-
-			this.setAggregation("_content", this.oTable);
+		TableContent.prototype.init = function () {
 			var oModel = new JSONModel();
 			this.setModel(oModel);
 		};
 
-		Table.prototype.onBeforeRendering = function () {
-
-			var aCells = [];
-
-			this.getColumns().forEach(function (oColumn) {
-				this.getAggregation("_content").addColumn(new sap.m.Column({header: new sap.m.Text({text: oColumn.label})}));
-				aCells.push(new sap.m.Text({text: oColumn.value}));
-			}.bind(this));
-
-			this.getAggregation("_content").bindItems({
-				path: this.getAggregation("_content").getBindingContext().getPath(),
-				template: new sap.m.ColumnListItem({
-					cells: aCells
-				})
-			});
-		};
-
-		Table.prototype.exit = function () {
-
-			if (this.oTable) {
-				this.oTable.destroy();
-				this.oTable = null;
-			}
-		};
-
-		Table.prototype.destroy = function () {
-			this.setAggregation("_content", null);
+		TableContent.prototype.destroy = function () {
 			this.setModel(null);
 			return Control.prototype.destroy.apply(this, arguments);
 		};
 
-		Table.prototype.setData = function (oData) {
+		TableContent.prototype._setData = function (oData) {
 
-			this.setProperty("data", oData, true);
-
-			if (!oData) {
-				return this;
-			}
-
-			this.getAggregation("_content").bindElement({
+			this._getTable().bindElement({
 				path: oData.path || "/"
 			});
 
@@ -149,5 +155,5 @@ sap.ui.define(["sap/m/Table", "sap/ui/core/Control", "sap/ui/model/json/JSONMode
 			return this;
 		};
 
-		return Table;
+		return TableContent;
 });

@@ -12,9 +12,6 @@ sap.ui.define([
 			this._createCardExample("card2", {
 				xmlUsage: "<f:Card manifest='{manifests>/manifestTests/manifest}' width='500px' height='auto'/>"
 			});
-			this._createCardExample("card3", {
-				xmlUsage: "<f:Card manifest='./cardcontent/customcomponent/manifest.json' width='500px' height='auto'/>"
-			});
 		},
 		_createCardExample: function (sCardId, oData) {
 			setTimeout(function () {

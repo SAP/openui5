@@ -115,6 +115,11 @@
 		  "pattern": "manifest",
 		  "name": "manifest",
 		  "target": "manifest"
+		},
+		{
+		  "pattern": "customContent",
+		  "name": "customContent",
+		  "target": "customContent"
 		}
 	  ],
 	  "targets": {
@@ -181,6 +186,11 @@
 		"manifest": {
 		  "viewId": "manifest",
 		  "viewName": "Manifest",
+		  "viewLevel": 1
+		},
+		"customContent": {
+		  "viewId": "custom",
+		  "viewName": "Custom",
 		  "viewLevel": 1
 		}
 	  }

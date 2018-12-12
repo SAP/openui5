@@ -19,6 +19,10 @@ sap.ui.define(["sap/ui/base/DataType",
 		version: "${version}",
 		dependencies : ["sap.ui.core", "sap.m", "sap.ui.layout"],
 		designtime: "sap/f/designtime/library.designtime",
+		interfaces: [
+			"sap.f.cards.IHeader",
+			"sap.f.cards.ICard"
+		],
 		types: [
 			"sap.f.LayoutType",
 			"sap.f.DynamicPageTitleArea",

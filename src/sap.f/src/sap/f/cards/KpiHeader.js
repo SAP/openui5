@@ -11,7 +11,7 @@ sap.ui.define([
 	'sap/m/Text',
 	'sap/m/Label',
 	'sap/f/cards/Data',
-	"sap/f/cards/header/KpiRenderer"
+	"sap/f/cards/KpiHeaderRenderer"
 ], function (
 		Control,
 		coreLibrary,
@@ -51,10 +51,11 @@ sap.ui.define([
 	 * @experimental
 	 * @since 1.60
 	 * @see {@link TODO Card}
-	 * @alias sap.f.cards.header.Kpi
+	 * @alias sap.f.cards.KpiHeader
 	 */
-		var Kpi = Control.extend("sap.f.cards.header.Kpi", {
+		var KpiHeader = Control.extend("sap.f.cards.KpiHeader", {
 			metadata: {
+				interfaces: ["sap.f.cards.IHeader"],
 				properties: {
 					data: {
 						"type": "object"
@@ -89,11 +90,11 @@ sap.ui.define([
 			}
 		});
 
-		Kpi.prototype.init = function () {
+		KpiHeader.prototype.init = function () {
 			this.setModel(new JSONModel());
 		};
 
-		Kpi.prototype._createContent = function (oMapping) {
+		KpiHeader.prototype._createContent = function (oMapping) {
 			// TODO reuse title and subtitle if possible
 			// TODO create aggregation only if it does not exist already.
 
@@ -172,7 +173,7 @@ sap.ui.define([
 			}
 		};
 
-		Kpi.prototype.applySettings = function (mSettings, oScope) {
+		KpiHeader.prototype.applySettings = function (mSettings, oScope) {
 			var oData = mSettings.data;
 
 			if (oData) {
@@ -189,7 +190,7 @@ sap.ui.define([
 			return this;
 		};
 
-		Kpi.prototype.setData = function (oData) {
+		KpiHeader.prototype.setData = function (oData) {
 
 			this.setProperty("data", oData);
 
@@ -215,7 +216,7 @@ sap.ui.define([
 			return this;
 		};
 
-		Kpi.prototype._updateModel = function (oData, sPath) {
+		KpiHeader.prototype._updateModel = function (oData, sPath) {
 			this.getModel().setData(oData);
 
 			this.bindElement({
@@ -223,5 +224,5 @@ sap.ui.define([
 			});
 		};
 
-		return Kpi;
+		return KpiHeader;
 	});
