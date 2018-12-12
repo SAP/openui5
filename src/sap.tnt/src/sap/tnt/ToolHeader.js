@@ -91,8 +91,6 @@ sap.ui.define([
 					contentWidth: sap.ui.Device.system.phone ? "100%" : "auto"
 				}).addStyleClass('sapTntToolHeaderPopover sapContrast sapContrastPlus');
 
-				popover.oControlsManager._preProcessSapMButton = this._preProcessPopoverControlsSapMButton.bind(popover.oControlsManager);
-
 				if (sap.ui.Device.system.phone) {
 					// This will trigger when the toolbar is in the header/footer, because the position is known in advance (strictly top/bottom)
 					popover.attachBeforeOpen(this._shiftPopupShadow, this);
@@ -108,25 +106,6 @@ sap.ui.define([
 			}
 
 			return this.getAggregation("_popover");
-		};
-
-		/**
-		 * Modifies sap.m.Button.
-		 * @private
-		 */
-		ToolHeader.prototype._preProcessPopoverControlsSapMButton = function(oControl) {
-			this._mControlsCache[oControl.getId()] = {
-				buttonType: oControl.getType()
-			};
-
-			// Set some css classes to apply the proper paddings in cases of buttons with/without icons
-			if (oControl.getIcon()) {
-				oControl.addStyleClass("sapMOTAPButtonWithIcon");
-			} else {
-				oControl.addStyleClass("sapMOTAPButtonNoIcon");
-			}
-
-			oControl.attachEvent("_change", this._onSapMButtonUpdated, this);
 		};
 
 		/**
