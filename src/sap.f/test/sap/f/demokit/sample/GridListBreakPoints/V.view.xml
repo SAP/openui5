@@ -5,17 +5,22 @@
 		xmlns:f="sap.f"
 		controllerName="sap.f.sample.GridListBreakPoints.C">
 
-	<Panel width="100%" class="sapUiResponsiveMargin">
+	<Panel width="100%">
 		<headerToolbar>
 			<Toolbar height="3rem">
-				<Title text="GridList with break point S,M,L,XL"/>
+				<Title text="GridList with break point S, M, L, XL"/>
 			</Toolbar>
 		</headerToolbar>
 		<content>
+			<Text class="message sapUiTinyMarginBottom" id="infoTxt" width="100%" text="Layout size is: "/>
+			<MessageStrip
+					class="sapUiSmallMarginBeginEnd sapUiSmallMarginTop"
+					type="Information"
+					text="Note: This layout is not supported by Microsoft Internet Explorer and Microsoft Edge 15 and older versions."/>
 			<Slider value="100" liveChange="onSliderMoved" />
 			<f:GridList
 					id="gridList"
-					headerText="GridList with breakpoint layouts "
+					headerText="GridList header"
 					items="{ path: '/' }">
 
 				<f:customLayout>
@@ -57,7 +62,7 @@
 							<layoutData>
 								<FlexItemData growFactor="1" shrinkFactor="0" />
 							</layoutData>
-							<Title text="{title} (Click me)" wrapping="true" />
+							<Title text="{title}" wrapping="true" />
 							<Label text="{subtitle}" wrapping="true" />
 						</VBox>
 					</VBox>
