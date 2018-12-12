@@ -419,6 +419,8 @@ function(
 	 */
 	Input.prototype.exit = function() {
 
+		InputBase.prototype.exit.call(this);
+
 		this._deregisterEvents();
 
 		// clear delayed calls
