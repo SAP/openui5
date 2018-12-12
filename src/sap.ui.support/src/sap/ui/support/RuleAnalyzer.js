@@ -67,7 +67,7 @@ sap.ui.define([
 				});
 
 				return oLoadingPromise.then(function () {
-					if (RuleSetLoader._rulesCreated) {
+					if (RuleSetLoader._bRulesCreated) {
 						return Main.analyze(oExecutionScope, vPresetOrRules, oMetadata);
 					}
 
