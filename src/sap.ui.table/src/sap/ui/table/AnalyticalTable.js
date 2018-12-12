@@ -43,7 +43,6 @@ sap.ui.define([
 
 	// shortcuts
 	var GroupEventType = library.GroupEventType,
-		SelectionMode = library.SelectionMode,
 		SortOrder = library.SortOrder,
 		TreeAutoExpandMode = library.TreeAutoExpandMode;
 
@@ -182,7 +181,6 @@ sap.ui.define([
 		this.attachBrowserEvent("contextmenu", this._onContextMenu);
 
 		// defaulting properties
-		this.setSelectionMode(SelectionMode.MultiToggle);
 		this.setShowColumnVisibilityMenu(true);
 		this.setEnableColumnFreeze(true);
 		this.setEnableCellFilter(true);

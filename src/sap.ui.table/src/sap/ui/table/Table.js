@@ -1765,8 +1765,11 @@ sap.ui.define([
 	 * @public
 	 */
 	Table.prototype.setSelectionMode = function(sSelectionMode) {
-		// Check for valid selection modes (e.g. change deprecated mode "Multi" to "MultiToggle")
-		sSelectionMode = TableUtils.sanitizeSelectionMode(this, sSelectionMode);
+		if (sSelectionMode === SelectionMode.Multi) {
+			sSelectionMode = SelectionMode.MultiToggle;
+			Log.warning("The selection mode 'Multi' is deprecated and must not be used anymore."
+						+ " Your setting was defaulted to selection mode 'MultiToggle'");
+		}
 		this.setProperty("selectionMode", sSelectionMode);
 		this._oSelectionAdapter.setSelectionMode(sSelectionMode);
 		return this;
