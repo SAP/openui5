@@ -910,10 +910,6 @@ html.noscroll {
 			margin-bottom: 80px;
 			}
 
-.section.mod_startcoding .section__editor.mod_ie11 {
-			display: none
-			}
-
 .section.mod_documentation {
 		}
 
@@ -1015,18 +1011,6 @@ html.noscroll {
 		}
 	.section.mod_allreleases .section__content {
 		padding-top: 20px;
-		}
-}
-
-/* IE11 specific selectors */
-
-@media all and (-ms-high-contrast: none), (-ms-high-contrast: active) {
-	.section.mod_startcoding .section__editor {
-		display: none;
-		}
-
-	.section.mod_startcoding .section__editor.mod_ie11 {
-		display: block;
 		}
 }
 
