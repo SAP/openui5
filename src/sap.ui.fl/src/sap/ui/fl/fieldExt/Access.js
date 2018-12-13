@@ -4,9 +4,10 @@
 
 sap.ui.define([
 	"sap/ui/util/Storage",
+	"sap/ui/fl/Utils",
 	"sap/base/security/encodeURLParameters",
 	"sap/ui/thirdparty/jquery"
-], function(Storage, encodeURLParameters, jQuery) {
+], function(Storage, Utils, encodeURLParameters, jQuery) {
 	"use strict";
 
 	/**
@@ -552,7 +553,8 @@ sap.ui.define([
 	 * @return {boolean} true if system info is available
 	 */
 	Access._isSystemInfoAvailable = function() {
-		return sap && sap.ushell && sap.ushell.Container && sap.ushell.Container.getLogonSystem;
+		var oUshellContainer = Utils.getUshellContainer();
+		return oUshellContainer && oUshellContainer.getLogonSystem;
 	};
 
 	/**
@@ -561,7 +563,8 @@ sap.ui.define([
 	 * @return {map}	System information
 	 */
 	Access._getSystemInfo = function() {
-		return sap.ushell.Container.getLogonSystem();
+		var oUshellContainer = Utils.getUshellContainer();
+		return oUshellContainer && oUshellContainer.getLogonSystem();
 	};
 
 	/**

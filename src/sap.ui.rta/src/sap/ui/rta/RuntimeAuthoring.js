@@ -1372,8 +1372,8 @@ function(
 	 * @return {boolean} resolving to true if reload was triggered
 	 */
 	RuntimeAuthoring.prototype._removeMaxLayerParameter = function(){
-		if (Utils.getUshellContainer() && this.getLayer() !== "USER") {
-			var oCrossAppNav = Utils.getUshellContainer().getService("CrossApplicationNavigation");
+		if (FlexUtils.getUshellContainer() && this.getLayer() !== "USER") {
+			var oCrossAppNav = FlexUtils.getUshellContainer().getService("CrossApplicationNavigation");
 			var mParsedHash = FlexUtils.getParsedURLHash();
 			if (oCrossAppNav.toExternal && mParsedHash){
 				if (this._hasMaxLayerParameter(mParsedHash)) {
@@ -1422,14 +1422,14 @@ function(
 	 * @return {Promise} Resolving to false means that reload is not necessary
 	 */
 	RuntimeAuthoring.prototype._handleHigherLayerChangesOnStart = function() {
-		var oUshellContainer = Utils.getUshellContainer();
+		var oUshellContainer = FlexUtils.getUshellContainer();
 		if (oUshellContainer && this.getLayer() !== "USER") {
 			var mParsedHash = FlexUtils.getParsedURLHash();
 			return this._getFlexController().hasHigherLayerChanges({ignoreMaxLayerParameter : false})
 			.then(function(bHasHigherLayerChanges){
 				if (bHasHigherLayerChanges) {
 					return this._handleReloadWithoutHigherLayerChangesMessageBoxOnStart().then(function() {
-						var oCrossAppNav = sap.ushell.Container.getService("CrossApplicationNavigation");
+						var oCrossAppNav = oUshellContainer.getService("CrossApplicationNavigation");
 						if (oCrossAppNav.toExternal && mParsedHash){
 							return this._reloadWithoutHigherLayerChangesOnStart(mParsedHash, oCrossAppNav);
 						}
@@ -1463,7 +1463,7 @@ function(
 					//therefore this message takes precedence
 					var sLayer = this.getLayer();
 					sRestartReason = sLayer === "CUSTOMER" ? "MSG_RELOAD_WITH_PERSONALIZATION" : "MSG_RELOAD_WITH_ALL_CHANGES";
-					oUshellContainer = Utils.getUshellContainer();
+					oUshellContainer = FlexUtils.getUshellContainer();
 					if (!bChangesNeedRestart && oUshellContainer){
 						//if changes need restart this method has precedence, but in this case
 						//the faster cross app navigation to the same app (restart via hash) is possible

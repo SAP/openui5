@@ -4,20 +4,18 @@ sap.ui.define([
 	"sap/base/util/UriParameters",
 	"sap/ui/fl/FakeLrepConnector",
 	"sap/ui/core/util/MockServer",
-	"sap/ui/model/resource/ResourceModel",
 	"sap/ui/model/odata/v2/ODataModel",
 	"sap/ui/model/json/JSONModel",
-	"sap/ui/rta/Utils"
+	"sap/ui/fl/Utils"
 ], function(
 	UIComponent,
 	FakeLrepConnectorLocalStorage,
 	UriParameters,
 	FakeLrepConnector,
 	MockServer,
-	ResourceModel,
 	ODataModel,
 	JSONModel,
-	Utils
+	FlexUtils
 ) {
 
 	"use strict";
@@ -81,7 +79,7 @@ sap.ui.define([
 
 		_adaptButtonConfiguration: function(){
 			this.setModel(new JSONModel({
-				showOuterAdaptButton: !Utils.getUshellContainer(),
+				showOuterAdaptButton: !FlexUtils.getUshellContainer(),
 				showAdaptButton: false // for embedded app
 			}), "app");
 		},
