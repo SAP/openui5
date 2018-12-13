@@ -37,6 +37,7 @@ module.exports = function(grunt, config) {
 		if ( library.jsdoc && Array.isArray(library.jsdoc.exclude) ) {
 			jsdocConfig.source.exclude = library.jsdoc.exclude.map( exclude => path.join(library.src, exclude) );
 		}
+		jsdocConfig.templates[UI5_TEMPLATE_NAME].uilib = library.name;
 		jsdocConfig.templates[UI5_TEMPLATE_NAME].version = version;
 		jsdocConfig.templates[UI5_TEMPLATE_NAME].apiJsonFolder = apiJsonFolder;
 		jsdocConfig.templates[UI5_TEMPLATE_NAME].apiJsonFile = apiJsonFile;

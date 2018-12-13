@@ -8,6 +8,7 @@
 'use strict';
 
 const path = require('path');
+const fs = require('fs');
 const transformer = require("../../lib/jsdoc/transform-apijson-for-sdk");
 
 module.exports = function(grunt) {
@@ -16,9 +17,33 @@ module.exports = function(grunt) {
 	// creation: http://gruntjs.com/creating-tasks
 
 	grunt.registerMultiTask('ui5docs-preprocess', 'Grunt task to run api.json transformation script', function() {
+
 		const options = this.options({});
 		const done = this.async();
-		transformer(options.source,options.dest,options.lib)
+
+		// Collect all available api.json files
+		let dependencyLibs = [];
+		function collectFromDir(startPath){
+
+			if (!fs.existsSync(startPath)){
+				return;
+			}
+
+			let files = fs.readdirSync(startPath);
+			files.forEach(file => {
+				let filename = path.join(startPath, file);
+				let stat = fs.lstatSync(filename);
+
+				if (stat.isDirectory()) {
+					collectFromDir(filename);
+				} else if (/designtime\/api.json$/.test(filename)) {
+					dependencyLibs.push(filename);
+				}
+			});
+		}
+		collectFromDir('target');
+
+		transformer(options.source,options.dest,options.lib, dependencyLibs)
 		.then(done, (err) => {
 			grunt.fail.warn(err);
 		});
