@@ -1,12 +1,17 @@
 /*!
  * ${copyright}
  */
+/*global QUnit */
+QUnit.config.autostart = false;
+
 sap.ui.define([
+	"sap/ui/core/sample/common/pages/Any",
+	"sap/ui/core/sample/odata/v4/Sticky/pages/Main",
 	"sap/base/Log",
 	"sap/ui/test/Opa5",
 	"sap/ui/test/opaQunit",
 	"sap/ui/test/TestUtils"
-], function (Log, Opa5, opaTest, TestUtils) {
+], function (Any, Main, Log, Opa5, opaTest, TestUtils) {
 	/*global QUnit */
 	"use strict";
 
@@ -42,4 +47,6 @@ sap.ui.define([
 			Then.iTeardownMyUIComponent();
 		});
 	}
+
+	QUnit.start();
 });
