@@ -3040,7 +3040,7 @@
 		{
 		  "id": "sap.m.sample.SinglePlanningCalendar",
 		  "name": "Single Planning Calendar",
-		  "description": "SinglePlanningCalendar, containing sap.m.Dialog for creating a new appointment. Note: Illustrates how the SinglePlanningCalendar can be used in combination with the sap.m.Dialog control for creating new appoitments. This feature is NOT part of the control."
+		  "description": "SinglePlanningCalendar, contains sap.m.Dialog for creating a new appointment and sap.m.ResponsivePopover for editing an already created appointment. Note: Illustrates how the SinglePlanningCalendar can be used in combination with the sap.m.Dialog control for creating new appoitments and sap.m.ResponsivePopover for editing alredy created appointments. This feature is NOT part of the control."
 		},
 		{
 		  "id": "sap.m.sample.ImageContent",
