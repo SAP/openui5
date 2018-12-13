@@ -631,7 +631,8 @@ sap.ui.define([
 		});
 
 		var oTableHeaderToolbar = new OverflowToolbar(this.getId() + "-Toolbar", {
-			design: ToolbarDesign.Transparent
+			design: ToolbarDesign.Transparent,
+			visible: false
 		});
 		oTableHeaderToolbar._oPlanningCalendar = this;
 
@@ -844,6 +845,41 @@ sap.ui.define([
 			$Table.style.height = sStyle;
 		}
 	};
+
+	PlanningCalendar.prototype.addToolbarContent = function(oContent) {
+		this.addAggregation("toolbarContent", oContent);
+		_switchTableHeaderToolbarVisibility.call(this);
+		return this;
+	 };
+
+	 PlanningCalendar.prototype.insertToolbarContent = function(oContent, iIndex) {
+		this.insertAggregation("toolbarContent", oContent, iIndex);
+		_switchTableHeaderToolbarVisibility.call(this);
+		return this;
+	 };
+
+	 PlanningCalendar.prototype.removeToolbarContent = function(vObject) {
+		var oRemoved = this.removeAggregation("toolbarContent", vObject);
+		_switchTableHeaderToolbarVisibility.call(this);
+		return oRemoved;
+	 };
+
+	 PlanningCalendar.prototype.removeAllToolbarContent = function() {
+		var aRemoved = this.removeAllAggregation("toolbarContent");
+		_switchTableHeaderToolbarVisibility.call(this);
+		return aRemoved;
+	 };
+
+	 PlanningCalendar.prototype.destroyToolbarContent = function() {
+		var destroyed = this.destroyAggregation("toolbarContent");
+		_switchTableHeaderToolbarVisibility.call(this);
+		return destroyed;
+	 };
+
+	 function _switchTableHeaderToolbarVisibility () {
+		this._getTableHeaderToolbar().setVisible(!!this.getToolbarContent().length);
+	 }
+
 
 	/**
 	 * Sets the given date as start date. The current date is used as default.

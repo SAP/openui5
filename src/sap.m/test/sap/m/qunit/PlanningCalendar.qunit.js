@@ -16,6 +16,7 @@ sap.ui.define([
 	"jquery.sap.global",
 	"sap/m/SearchField",
 	"sap/m/Button",
+	"sap/m/Label",
 	"sap/m/library",
 	"sap/m/PlanningCalendarRow",
 	"sap/m/PlanningCalendar",
@@ -49,6 +50,7 @@ sap.ui.define([
 	jQuery,
 	SearchField,
 	Button,
+	Label,
 	mobileLibrary,
 	PlanningCalendarRow,
 	PlanningCalendar,
@@ -724,6 +726,56 @@ sap.ui.define([
 
 
 	QUnit.module("internal controls");
+
+	QUnit.test("PlanningCalendarHeaderToolbar is not visible when it doesn't contain any elements", function(assert) {
+		// Prepare
+		var oPC = createPlanningCalendar("PC7"),
+			oPCHeaderToolbar = oPC.getAggregation("table").getHeaderToolbar();
+
+		assert.ok(!oPC.getToolbarContent().length, "PlanningCalendar: HeaderToolbar is empty");
+		assert.notOk(oPCHeaderToolbar.getVisible(), "PlanningCalendar: HeaderToolbar is not visible");
+
+		// Act
+		oPC.addToolbarContent(new Button({text: "TEST"}));
+		oPC.insertToolbarContent(new Label({text: "TEST"}));
+
+		// Assert
+		assert.ok(oPCHeaderToolbar.getVisible(), "PlanningCalendar: HeaderToolbar is visible");
+		assert.equal(oPC.getToolbarContent().length, 2, "PlanningCalendar: HeaderToolbar has two elements");
+
+		// Act
+		oPC.removeAllToolbarContent();
+
+		// Assert
+		assert.notOk(oPCHeaderToolbar.getVisible(), "PlanningCalendar: HeaderToolbar is not visible");
+
+		// Clean up - no need
+	});
+
+	QUnit.test("PlanningCalendarHeaderToolbar is visible when it has at least one element", function(assert) {
+		// Prepare
+		var oButton = new Button({text: "TEST"}),
+			oLabel = new Label({text: "TEST"}),
+			oPC = createPlanningCalendar("PC8", oButton, oLabel),
+			oPCHeaderToolbar = oPC.getAggregation("table").getHeaderToolbar();
+
+		assert.equal(oPC.getToolbarContent().length, 2, "PlanningCalendar: HeaderToolbar has two elements");
+		assert.ok(oPCHeaderToolbar.getVisible(), "PlanningCalendar: HeaderToolbar is visible");
+
+		// Act
+		oPC.removeToolbarContent(oLabel);
+
+		// Assert
+		assert.ok(oPCHeaderToolbar.getVisible(), "PlanningCalendar: HeaderToolbar is visible");
+
+		// Act
+		oPC.removeToolbarContent(oButton);
+
+		// Assert
+		assert.notOk(oPCHeaderToolbar.getVisible(), "PlanningCalendar: HeaderToolbar is not visible");
+
+		// Clean up - no need
+	});
 
 	QUnit.test("PlanningCalendarRow", function(assert) {
 		var oRow = sap.ui.getCore().byId("PC1-Row1");
@@ -4122,7 +4174,7 @@ sap.ui.define([
 
 	QUnit.test("role button set on header cells in different views when we have intervalSelect event attached", function(assert) {
 		//Prepare
-		var oSut = createPlanningCalendar("PC", new sap.m.SearchField(), new sap.m.Button(), new Date(2015, 0, 1)),
+		var oSut = createPlanningCalendar("PC", new SearchField(), new Button(), new Date(2015, 0, 1)),
 			sExpectedRole = "button";
 
 		//Act
@@ -4167,7 +4219,7 @@ sap.ui.define([
 
 	QUnit.test("role gridcell set on header cells in different views when there is no intervalSelect event attached", function(assert) {
 		//Prepare
-		var oSut = createPlanningCalendar("PC", new sap.m.SearchField(), new sap.m.Button(), new Date(2015, 0, 1)),
+		var oSut = createPlanningCalendar("PC", new SearchField(), new Button(), new Date(2015, 0, 1)),
 			sExpectedRole = "gridcell";
 		oSut.detachEvent("intervalSelect", handleIntervalSelect);
 
