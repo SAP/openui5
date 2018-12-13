@@ -289,6 +289,15 @@ sap.ui.define([
 					Log.error("Analytical type card is not available with this distribution");
 				});
 				break;
+			case "timeline":
+				sap.ui.getCore().loadLibrary("sap.suite.ui.commons", { async: true }).then(function() {
+					sap.ui.require(["sap/f/cards/TimelineContent"], this._setCardContentFromManifest.bind(this));
+				}.bind(this)).catch(function () {
+					Log.error("Timeline type card is not available with this distribution");
+				});
+				break;
+			default:
+				Log.error(sCardType.toUpperCase() + " Card type is not supported");
 		}
 	};
 

@@ -1976,5 +1976,87 @@
 				}
 			}
 		}
+	},
+	"timelineContent": {
+	  "card0": {
+		"sap.card": {
+		  "type": "Timeline",
+		  "header": {
+			"title": "New Team Members",
+			"icon": {
+			  "src": "sap-icon://group"
+			}
+		  },
+		  "content": {
+			"data": {
+			  "request": {
+				"url": "./cardcontent/employees.json"
+			  },
+			  "path": "/Employees"
+			},
+			"item": {
+			  "dateTime" : {
+				"label": "{{hireDate_label}}",
+				"value": "{HireDate}"
+			  },
+			  "description" : {
+				"label": "{{jobResponsibilities_label}}",
+				"value": "{JobResponsibilities}"
+			  },
+			  "title" : {
+				"label": "{{jobTitle_label}}",
+				"value": "{JobTitle}"
+			  },
+			  "owner" : {
+				"label": "{{name_label}}",
+				"value": "{Name}"
+			  },
+			  "ownerImage" : {
+				"label": "{{picture_label}}",
+				"value": "{Photo}"
+			  },
+			  "icon": {
+				"label": "{{icon_label}}",
+				"value": "{Icon}"
+			  }
+			}
+		  }
+		}
+	  },
+	  "card1": {
+		"sap.card": {
+		  "type": "Timeline",
+		  "header": {
+			"title": "Upcoming Activities",
+			"subTitle": "For Today"
+		  },
+		  "content": {
+			"data": {
+			  "request": {
+				"url": "./cardcontent/employees.json"
+			  },
+			  "path": "/Activities"
+			},
+			"item": {
+			  "dateTime" : {
+				"label": "{{time_label}}",
+				"value": "{Time}"
+			  },
+			  "description" : {
+				"label": "{{description_label}}",
+				"value": "{Description}"
+			  },
+			  "title" : {
+				"label": "{{title_label}}",
+				"value": "{Title}"
+			  },
+			  "icon": {
+				"label": "{{icon_label}}",
+				"value": "{Icon}"
+			  }
+			}
+		  }
+		}
+	  }
 	}
 }

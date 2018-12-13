@@ -88,5 +88,11 @@
 		"description": "Navigation & Data services",
 		"route": "services",
 		"group": "Other Card Examples"
+	},
+	{
+	  "title": "TimelineContent Card",
+	  "description": "Example  POC TimelineContent",
+	  "route": "timelineContent",
+	  "group": "Card Type Examples"
 	}
 ]
