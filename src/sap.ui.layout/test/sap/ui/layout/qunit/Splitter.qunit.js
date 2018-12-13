@@ -516,6 +516,47 @@ sap.ui.define([
 		assert.ok(oBtn.bIsDestroyed, "Content inside has been destroyed");
 	});
 
+	QUnit.module("Events", {
+		beforeEach: function () {
+			this.oSplitter = new Splitter("splitter", {
+				contentAreas: [
+					new Button(),
+					new Button(),
+					new Button()
+				]
+			});
+			this.oSplitter.placeAt("qunit-fixture");
+			sap.ui.getCore().applyChanges();
+		},
+		afterEach: function () {
+			this.oSplitter.destroy();
+			this.oSplitter = null;
+		}
+	});
+
+	QUnit.test("Mousedown", function (assert) {
+		// arrange
+		var oSpy = sinon.spy(this.oSplitter, "_onBarMoveStart"),
+			oSplitterBar = this.oSplitter.$().children("#splitter-splitbar-0")[0],
+			oSplitterBarIcon = this.oSplitter.$().find("#splitter-splitbar-0-icon")[0],
+			oContentArea = this.oSplitter.$().children("#splitter-content-0")[0];
+
+		// act and assert
+		this.oSplitter.onmousedown({ target: oContentArea });
+		assert.strictEqual(oSpy.callCount, 0, "Clicking on content area should NOT trigger _onBarMoveStart");
+
+		oSpy.resetHistory();
+		this.oSplitter.onmousedown({ target: oSplitterBar });
+		assert.strictEqual(oSpy.callCount, 1, "Clicking on a splitter bar should trigger _onBarMoveStart");
+
+		oSpy.resetHistory();
+		this.oSplitter.onmousedown({ target: oSplitterBarIcon });
+		assert.strictEqual(oSpy.callCount, 1, "Clicking on a splitter bar icon should trigger _onBarMoveStart");
+
+		// cleanup
+		this.oSplitter._onBarMoveEnd({ changedTouches: false }); // used to deregister event listeners added onmousedown
+	});
+
 	QUnit.module("Resize Handling");
 
 	QUnit.test("Prevent size calculation while rerendering", function (assert) {

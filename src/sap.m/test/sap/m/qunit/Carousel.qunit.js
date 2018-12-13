@@ -7,10 +7,11 @@ sap.ui.define([
 	"sap/m/Image",
 	"sap/m/Page",
 	"sap/m/Button",
-	"jquery.sap.keycodes",
+	"sap/ui/events/KeyCodes",
 	"sap/ui/Device",
 	"sap/m/ResponsivePopover",
 	"sap/ui/qunit/utils/waitForThemeApplied",
+	"sap/ui/events/F6Navigation",
 	"jquery.sap.global"
 ], function(
 	qutils,
@@ -19,10 +20,11 @@ sap.ui.define([
 	Image,
 	Page,
 	Button,
-	jQuery,
+	KeyCodes,
 	Device,
 	ResponsivePopover,
-	waitForThemeApplied
+	waitForThemeApplied,
+	F6Navigation
 ) {
 	'use strict';
 
@@ -115,6 +117,13 @@ sap.ui.define([
 
 		// Assert
 		assert.strictEqual(this.oCarousel.getActivePage(), "keyTestPage_6", "The active page should be 'keyTestPage_6'");
+
+		// Act
+		var oSecondPage = this.oCarousel.getPages()[1];
+		this.oCarousel.setActivePage(oSecondPage);
+
+		// Assert
+		assert.strictEqual(this.oCarousel.getActivePage(), "keyTestPage_2", "The active page should be 'keyTestPage_2'");
 	});
 
 	QUnit.test("#next()", function (assert) {
@@ -301,6 +310,14 @@ sap.ui.define([
 
 		// Assert
 		assert.strictEqual(this.oCarousel.$().length, 1, "Carousel should be added to DOM");
+	});
+
+	QUnit.test("Set busy indicator size", function (assert) {
+		// Act
+		this.oCarousel.setBusyIndicatorSize("Unknown size");
+
+		// Assert
+		assert.strictEqual(this.oCarousel.getBusyIndicatorSize(), "Medium", "Default busy indicator size should be 'Medium'");
 	});
 
 	//================================================================================
@@ -566,7 +583,7 @@ sap.ui.define([
 		// Wait for CSS animation caused by setActivePage to complete
 		setTimeout(function () {
 			// Act
-			qutils.triggerKeydown(this.oCarousel.$(), jQuery.sap.KeyCodes.ARROW_RIGHT);
+			qutils.triggerKeydown(this.oCarousel.$(), KeyCodes.ARROW_RIGHT);
 
 			// Wait for CSS animation to complete
 			setTimeout(function () {
@@ -586,7 +603,7 @@ sap.ui.define([
 		// Wait for CSS animation caused by setActivePage to complete
 		setTimeout(function () {
 			// Act
-			qutils.triggerKeydown(this.oCarousel.$(), jQuery.sap.KeyCodes.ARROW_RIGHT);
+			qutils.triggerKeydown(this.oCarousel.$(), KeyCodes.ARROW_RIGHT);
 
 			// Wait for CSS animation to complete
 			setTimeout(function () {
@@ -606,7 +623,7 @@ sap.ui.define([
 		// Wait for CSS animation caused by setActivePage to complete
 		setTimeout(function () {
 			// Act
-			qutils.triggerKeydown(this.oCarousel.$(), jQuery.sap.KeyCodes.ARROW_UP);
+			qutils.triggerKeydown(this.oCarousel.$(), KeyCodes.ARROW_UP);
 
 			// Wait for CSS animation to complete
 			setTimeout(function () {
@@ -626,7 +643,7 @@ sap.ui.define([
 		// Wait for CSS animation caused by setActivePage to complete
 		setTimeout(function () {
 			// Act
-			qutils.triggerKeydown(this.oCarousel.$(), jQuery.sap.KeyCodes.ARROW_DOWN);
+			qutils.triggerKeydown(this.oCarousel.$(), KeyCodes.ARROW_DOWN);
 
 			// Assert
 			assert.strictEqual(this.oCarousel.getActivePage(), "keyTestPage12", "active page stays keyTestPage12");
@@ -643,7 +660,7 @@ sap.ui.define([
 		// Wait for CSS animation caused by setActivePage to complete
 		setTimeout(function () {
 			// Act
-			qutils.triggerKeydown(this.oCarousel.$(), jQuery.sap.KeyCodes.ARROW_LEFT);
+			qutils.triggerKeydown(this.oCarousel.$(), KeyCodes.ARROW_LEFT);
 
 			// Wait for CSS animation to complete
 			setTimeout(function () {
@@ -663,7 +680,7 @@ sap.ui.define([
 		// Wait for CSS animation caused by setActivePage to complete
 		setTimeout(function () {
 			// Act
-			qutils.triggerKeydown(this.oCarousel.$(), jQuery.sap.KeyCodes.ARROW_LEFT);
+			qutils.triggerKeydown(this.oCarousel.$(), KeyCodes.ARROW_LEFT);
 
 			// Assert
 			assert.strictEqual(this.oCarousel.getActivePage(), "keyTestPage1", "active page stays keyTestPage1");
@@ -680,7 +697,7 @@ sap.ui.define([
 		// Wait for CSS animation caused by setActivePage to complete
 		setTimeout(function () {
 			// Act
-			qutils.triggerKeydown(this.oCarousel.$(), jQuery.sap.KeyCodes.ARROW_DOWN);
+			qutils.triggerKeydown(this.oCarousel.$(), KeyCodes.ARROW_DOWN);
 
 			// Wait for CSS animation to complete
 			setTimeout(function () {
@@ -700,7 +717,7 @@ sap.ui.define([
 		// Wait for CSS animation caused by setActivePage to complete
 		setTimeout(function () {
 			// Act
-			qutils.triggerKeydown(this.oCarousel.$(), jQuery.sap.KeyCodes.ARROW_UP);
+			qutils.triggerKeydown(this.oCarousel.$(), KeyCodes.ARROW_UP);
 
 			// Assert
 			assert.strictEqual(this.oCarousel.getActivePage(), "keyTestPage1", "active page stays keyTestPage1");
@@ -717,7 +734,7 @@ sap.ui.define([
 		// Wait for CSS animation caused by setActivePage to complete
 		setTimeout(function () {
 			// Act
-			qutils.triggerKeydown(this.oCarousel.$(), jQuery.sap.KeyCodes.HOME);
+			qutils.triggerKeydown(this.oCarousel.$(), KeyCodes.HOME);
 
 			// Wait for CSS animation to complete
 			setTimeout(function () {
@@ -737,7 +754,7 @@ sap.ui.define([
 		// Wait for CSS animation caused by setActivePage to complete
 		setTimeout(function () {
 			// Act
-			qutils.triggerKeydown(this.oCarousel.$(), jQuery.sap.KeyCodes.END);
+			qutils.triggerKeydown(this.oCarousel.$(), KeyCodes.END);
 
 			// Wait for CSS animation to complete
 			setTimeout(function () {
@@ -757,7 +774,7 @@ sap.ui.define([
 		// Wait for CSS animation caused by setActivePage to complete
 		setTimeout(function () {
 			// Act
-			qutils.triggerKeydown(this.oCarousel.$(), jQuery.sap.KeyCodes.ARROW_RIGHT, false, false, true);
+			qutils.triggerKeydown(this.oCarousel.$(), KeyCodes.ARROW_RIGHT, false, false, true);
 
 			// Wait for CSS animation to complete
 			setTimeout(function () {
@@ -777,7 +794,7 @@ sap.ui.define([
 		// Wait for CSS animation caused by setActivePage to complete
 		setTimeout(function () {
 			// Act
-			qutils.triggerKeydown(this.oCarousel.$(), jQuery.sap.KeyCodes.ARROW_RIGHT, false, false, true);
+			qutils.triggerKeydown(this.oCarousel.$(), KeyCodes.ARROW_RIGHT, false, false, true);
 
 			// Wait for CSS animation to complete
 			setTimeout(function () {
@@ -797,7 +814,7 @@ sap.ui.define([
 		// Wait for CSS animation caused by setActivePage to complete
 		setTimeout(function () {
 			// Act
-			qutils.triggerKeydown(this.oCarousel.$(), jQuery.sap.KeyCodes.ARROW_UP, false, false, true);
+			qutils.triggerKeydown(this.oCarousel.$(), KeyCodes.ARROW_UP, false, false, true);
 
 			// Wait for CSS animation to complete
 			setTimeout(function () {
@@ -817,7 +834,7 @@ sap.ui.define([
 		// Wait for CSS animation caused by setActivePage to complete
 		setTimeout(function () {
 			// Act
-			qutils.triggerKeydown(this.oCarousel.$(), jQuery.sap.KeyCodes.ARROW_UP, false, false, true);
+			qutils.triggerKeydown(this.oCarousel.$(), KeyCodes.ARROW_UP, false, false, true);
 
 			// Wait for CSS animation to complete
 			setTimeout(function () {
@@ -837,7 +854,7 @@ sap.ui.define([
 		// Wait for CSS animation caused by setActivePage to complete
 		setTimeout(function () {
 			// Act
-			qutils.triggerKeydown(this.oCarousel.$(), jQuery.sap.KeyCodes.PAGE_UP);
+			qutils.triggerKeydown(this.oCarousel.$(), KeyCodes.PAGE_UP);
 
 			// Wait for CSS animation to complete
 			setTimeout(function () {
@@ -857,7 +874,7 @@ sap.ui.define([
 		// Wait for CSS animation caused by setActivePage to complete
 		setTimeout(function () {
 			// Act
-			qutils.triggerKeydown(this.oCarousel.$(), jQuery.sap.KeyCodes.PAGE_UP);
+			qutils.triggerKeydown(this.oCarousel.$(), KeyCodes.PAGE_UP);
 
 			// Wait for CSS animation to complete
 			setTimeout(function () {
@@ -877,7 +894,7 @@ sap.ui.define([
 		// Wait for CSS animation caused by setActivePage to complete
 		setTimeout(function () {
 			// Act
-			qutils.triggerKeydown(this.oCarousel.$(), jQuery.sap.KeyCodes.ARROW_LEFT, false, false, true);
+			qutils.triggerKeydown(this.oCarousel.$(), KeyCodes.ARROW_LEFT, false, false, true);
 
 			// Wait for CSS animation to complete
 			setTimeout(function () {
@@ -897,7 +914,7 @@ sap.ui.define([
 		// Wait for CSS animation caused by setActivePage to complete
 		setTimeout(function () {
 			// Act
-			qutils.triggerKeydown(this.oCarousel.$(), jQuery.sap.KeyCodes.ARROW_LEFT, false, false, true);
+			qutils.triggerKeydown(this.oCarousel.$(), KeyCodes.ARROW_LEFT, false, false, true);
 
 			// Wait for CSS animation to complete
 			setTimeout(function () {
@@ -917,7 +934,7 @@ sap.ui.define([
 		// Wait for CSS animation caused by setActivePage to complete
 		setTimeout(function () {
 			// Act
-			qutils.triggerKeydown(this.oCarousel.$(), jQuery.sap.KeyCodes.ARROW_DOWN, false, false, true);
+			qutils.triggerKeydown(this.oCarousel.$(), KeyCodes.ARROW_DOWN, false, false, true);
 
 			// Wait for CSS animation to complete
 			setTimeout(function () {
@@ -937,7 +954,7 @@ sap.ui.define([
 		// Wait for CSS animation caused by setActivePage to complete
 		setTimeout(function () {
 			// Act
-			qutils.triggerKeydown(this.oCarousel.$(), jQuery.sap.KeyCodes.ARROW_DOWN, false, false, true);
+			qutils.triggerKeydown(this.oCarousel.$(), KeyCodes.ARROW_DOWN, false, false, true);
 
 			// Wait for CSS animation to complete
 			setTimeout(function () {
@@ -957,7 +974,7 @@ sap.ui.define([
 		// Wait for CSS animation caused by setActivePage to complete
 		setTimeout(function () {
 			// Act
-			qutils.triggerKeydown(this.oCarousel.$(), jQuery.sap.KeyCodes.PAGE_DOWN);
+			qutils.triggerKeydown(this.oCarousel.$(), KeyCodes.PAGE_DOWN);
 
 			// Wait for CSS animation to complete
 			setTimeout(function () {
@@ -977,7 +994,7 @@ sap.ui.define([
 		// Wait for CSS animation caused by setActivePage to complete
 		setTimeout(function () {
 			// Act
-			qutils.triggerKeydown(this.oCarousel.$(), jQuery.sap.KeyCodes.PAGE_DOWN);
+			qutils.triggerKeydown(this.oCarousel.$(), KeyCodes.PAGE_DOWN);
 
 			// Wait for CSS animation to complete
 			setTimeout(function () {
@@ -990,9 +1007,36 @@ sap.ui.define([
 		}.bind(this), sinonClockTickValue);
 	});
 
+	QUnit.test("TAB", function (assert) {
+		// Arrange
+		var oImage = this.oCarousel.getPages()[5],
+			iActivePage = 5;
+
+		this.oCarousel.setActivePage(oImage);
+
+		// Act
+		qutils.triggerKeydown(this.oCarousel.$(), KeyCodes.TAB);
+
+		// Assert
+		assert.strictEqual(this.oCarousel._lastActivePageNumber, iActivePage, "Last active page index should be preserved.");
+	});
+
+	QUnit.test("F6", function (assert) {
+		var oSpy = sinon.spy(F6Navigation, "handleF6GroupNavigation");
+		// Act
+		qutils.triggerKeydown(this.oCarousel.$(), KeyCodes.F6);
+
+		// Assert
+		assert.ok(oSpy.callCount >= 1, "Last active page index should be preserved.");
+
+		// Clean up
+		oSpy.restore();
+	});
+
 	//================================================================================
-	// Carousel Keyboard handling
+	// End of Carousel Keyboard handling
 	//================================================================================
+
 	QUnit.test("Container Padding Classes", function (assert) {
 		// System under Test + Act
 		var oContainer = new Carousel({

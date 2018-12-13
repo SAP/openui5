@@ -374,11 +374,40 @@ sap.ui.define([
 		assert.equal(aButtons[2].getEditable(), true, "Third RadioButton is editable");
 	});
 
+	QUnit.test("setSelectedButton", function (assert) {
+		var oFirstButton = this.rbg.getButtons()[1];
+
+		// act
+		this.rbg.setSelectedButton(null);
+
+		// assert
+		assert.strictEqual(this.rbg.getSelectedIndex(), -1, "Selected index should be -1 when no button is provided");
+
+		// act
+		this.rbg.setSelectedButton(oFirstButton);
+
+		// assert
+		assert.strictEqual(this.rbg.getSelectedIndex(), 1, "Selected index should be properly set");
+	});
+
+	QUnit.test("setValueState", function (assert) {
+		var aButtons = this.rbg.getButtons();
+
+		// act
+		this.rbg.setValueState(ValueState.Error);
+		sap.ui.getCore().applyChanges();
+
+		// assert
+		for (var i = 0; i < aButtons.length; i++) {
+			assert.ok(aButtons[i].$().hasClass("sapMRbErr"), "Setting state to the group should also set state to all the buttons.");
+		}
+	});
+
 	QUnit.module("Methods", {
 		beforeEach: function() {
 			this.rbg = new RadioButtonGroup({
 				buttons: [
-					new RadioButton({enabled: false, text: "Option 1"})
+					new RadioButton("firstRadioButton", {enabled: false, text: "Option 1"})
 				]
 			});
 
@@ -407,11 +436,70 @@ sap.ui.define([
 	});
 
 	QUnit.test("RemoveAllButtons", function(assert) {
-
-		this.rbg.removeAllButtons();
+		var aButtons = this.rbg.removeAllButtons();
 		sap.ui.getCore().applyChanges();
 
 		// assert
 		assert.equal(this.rbg.$().find('.sapMRb').length, 0, "All buttons are removed");
+
+		// clean up
+		aButtons.forEach(function (oButton) {
+			oButton.destroy();
+		});
+	});
+
+	QUnit.test("Remove single button", function(assert) {
+		var oFirstButton = this.rbg.getButtons()[0],
+			oRadioButton = new RadioButton(),
+			iLength = this.rbg.getButtons().length,
+			oRemovedButton;
+
+		// act
+		this.rbg.removeButton(oRadioButton);
+
+		// assert
+		assert.strictEqual(this.rbg.getButtons().length, iLength, "Should NOT change buttons when non-member button is given.");
+
+		// act
+		oRemovedButton = this.rbg.removeButton("firstRadioButton");
+
+		// assert
+		assert.strictEqual(this.rbg.indexOfButton(oFirstButton), -1, "Should be able to remove button by given ID.");
+
+		// clean up
+		oRemovedButton.destroy();
+
+	});
+
+	QUnit.module("Events", {
+		beforeEach: function() {
+			this.rbg = new RadioButtonGroup({
+				buttons: [
+					new RadioButton("firstRadioButton"),
+					new RadioButton(),
+					new RadioButton()
+				]
+			});
+
+			this.rbg.placeAt("qunit-fixture");
+			sap.ui.getCore().applyChanges();
+		},
+		afterEach: function() {
+			this.rbg.destroy();
+		}
+	});
+
+	QUnit.test("Button selection", function (assert) {
+		var fnSpy = sinon.spy(),
+			oFirstButton = this.rbg.getButtons()[1];
+
+		this.rbg.attachSelect(fnSpy);
+
+		// act
+		qutils.triggerEvent("tap", oFirstButton.getId());
+		this.clock.tick(300);
+
+		// assert
+		assert.strictEqual(fnSpy.callCount, 1, "Click on a radio button should fire 'select'.");
 	});
 });
