@@ -7,7 +7,8 @@ sap.ui.define([
 	"sap/ui/core/routing/Router",
 	"sap/ui/core/UIComponent",
 	"sap/ui/thirdparty/jquery",
-	"sap/ui/thirdparty/sinon-4"
+	"sap/ui/thirdparty/sinon-4",
+	"sap/m/Dialog"
 ], function (
 	ContentDetailsEdit,
 	LRepConnector,
@@ -15,7 +16,8 @@ sap.ui.define([
 	Router,
 	UIComponent,
 	jQuery,
-	sinon
+	sinon,
+	Dialog
 ){
 	"use strict";
 
@@ -100,7 +102,16 @@ sap.ui.define([
 			);
 		});
 
-		QUnit.test("when save button is clicked", function (assert) {
+		QUnit.test("when _saveFile is called", function (assert) {
+			var oStubbedNavTo = sandbox.stub(oController, "_navToDisplayMode");
+			var oStubbedLrepConSaveFile = sandbox.stub(LRepConnector, "saveFile").returns(Promise.resolve());
+			return oController._saveFile("VENDOR", "namespace", "fileName", "fileType", "somedata", "sTransportId", "package").then(function(){
+				assert.ok(oStubbedNavTo.calledOnce, "then call for get a router");
+				assert.ok(oStubbedLrepConSaveFile.calledOnce, "then call Lrep connector for save file");
+			});
+		});
+
+		QUnit.test("when onSave is called with USER layer", function (assert) {
 			sandbox.stub(oController, "getView").returns({
 				getModel: function () {
 					return {
@@ -112,6 +123,110 @@ sap.ui.define([
 								data : "content",
 								metadata : [{
 									name : "layer",
+									value : "USER"
+								}]
+							};
+						}
+					};
+				}
+			});
+
+			var oStubbedSaveFile = sandbox.stub(oController, "_saveFile").returns(Promise.resolve());
+			oController.onSave();
+
+			assert.ok(oStubbedSaveFile.calledOnce, "then call for deleting file");
+			assert.equal(oStubbedSaveFile.getCall(0).args[0], "USER", "with correct layer");
+			assert.equal(oStubbedSaveFile.getCall(0).args[1], "namespace", "with correct namespace");
+			assert.equal(oStubbedSaveFile.getCall(0).args[2], "fileName", "with correct fileName");
+			assert.equal(oStubbedSaveFile.getCall(0).args[3], "fileType", "with correct fileType");
+			assert.equal(oStubbedSaveFile.getCall(0).args[4], "content", "with correct data");
+			assert.equal(oStubbedSaveFile.getCall(0).args[5], undefined, "with correct transportId");
+			assert.equal(oStubbedSaveFile.getCall(0).args[6], undefined, "with correct package");
+		});
+
+		QUnit.test("when onSave is called with LOAD layer", function (assert) {
+			sandbox.stub(oController, "getView").returns({
+				getModel: function () {
+					return {
+						getData: function () {
+							return {
+								fileName : "fileName",
+								fileType : "fileType",
+								namespace : "namespace",
+								data : "content",
+								metadata : [{
+									name : "layer",
+									value : "LOAD"
+								}]
+							};
+						}
+					};
+				}
+			});
+
+			var oStubbedSaveFile = sandbox.stub(oController, "_saveFile").returns(Promise.resolve());
+			oController.onSave();
+
+			assert.ok(oStubbedSaveFile.calledOnce, "then call for deleting file");
+			assert.equal(oStubbedSaveFile.getCall(0).args[0], "LOAD", "with correct layer");
+			assert.equal(oStubbedSaveFile.getCall(0).args[1], "namespace", "with correct namespace");
+			assert.equal(oStubbedSaveFile.getCall(0).args[2], "fileName", "with correct fileName");
+			assert.equal(oStubbedSaveFile.getCall(0).args[3], "fileType", "with correct fileType");
+			assert.equal(oStubbedSaveFile.getCall(0).args[4], "content", "with correct data");
+			assert.equal(oStubbedSaveFile.getCall(0).args[5], undefined, "with correct transportId");
+			assert.equal(oStubbedSaveFile.getCall(0).args[6], undefined, "with correct package");
+		});
+
+		QUnit.test("when onSave is called with ATO_NOTIFICATION content", function (assert) {
+			sandbox.stub(oController, "getView").returns({
+				getModel: function () {
+					return {
+						getData: function () {
+							return {
+								data: "{packageName: \"$TMP\"}",
+								fileName : "fileName",
+								fileType : "fileType",
+								namespace : "namespace",
+								layer : "All",
+								metadata : [{
+									name : "layer",
+									value : "CUSTOMER"
+								},{
+									name : "transportId",
+									value : "ATO_NOTIFICATION"
+								}]
+							};
+						}
+					};
+				}
+			});
+
+			var oStubbedSaveFile = sandbox.stub(oController, "_saveFile").returns(Promise.resolve());
+			oController.onSave();
+
+			assert.ok(oStubbedSaveFile.calledOnce, "then call for deleting file");
+			assert.equal(oStubbedSaveFile.getCall(0).args[0], "CUSTOMER", "with correct layer");
+			assert.equal(oStubbedSaveFile.getCall(0).args[1], "namespace", "with correct namespace");
+			assert.equal(oStubbedSaveFile.getCall(0).args[2], "fileName", "with correct fileName");
+			assert.equal(oStubbedSaveFile.getCall(0).args[3], "fileType", "with correct fileType");
+			assert.deepEqual(oStubbedSaveFile.getCall(0).args[4], "{packageName: \"$TMP\"}", "with correct data");
+			assert.equal(oStubbedSaveFile.getCall(0).args[5], "ATO_NOTIFICATION", "with correct transportId");
+			assert.equal(oStubbedSaveFile.getCall(0).args[6], undefined, "with correct package");
+		});
+
+		QUnit.test("when onSave is called with local object in VENDOR layer", function (assert) {
+			sandbox.stub(oController, "getView").returns({
+				getModel: function () {
+					return {
+						getData: function () {
+							return {
+								data: "{packageName: \"\"}",
+								fileName : "fileName",
+								fileType : "fileType",
+								namespace : "namespace",
+								layer : "All",
+								metadata : [{
+									name : "layer",
 									value : "VENDOR"
 								}]
 							};
@@ -119,18 +234,50 @@ sap.ui.define([
 					};
 				}
 			});
-			var oStubbedNavTo = sandbox.stub(oController, "_navToDisplayMode");
-			var oStubbedLrepConSaveFile = sandbox.stub(LRepConnector, "saveFile").returns(Promise.resolve());
 
-			return oController.onSave().then(function(){
-				assert.ok(oStubbedLrepConSaveFile.calledOnce, "then call Lrep connector for save file");
-				assert.equal(oStubbedLrepConSaveFile.getCall(0).args[0], "VENDOR", "with correct layer");
-				assert.equal(oStubbedLrepConSaveFile.getCall(0).args[1], "namespace", "with correct namespace");
-				assert.equal(oStubbedLrepConSaveFile.getCall(0).args[2], "fileName", "with correct fileName");
-				assert.equal(oStubbedLrepConSaveFile.getCall(0).args[3], "fileType", "with correct fileType");
-				assert.equal(oStubbedLrepConSaveFile.getCall(0).args[4], "content", "with correct fileType");
-				assert.ok(oStubbedNavTo.calledOnce, "then navigation to display mode is triggered");
+			var oStubbedSaveFile = sandbox.stub(oController, "_saveFile").returns(Promise.resolve());
+			oController.onSave();
+
+			assert.ok(oStubbedSaveFile.calledOnce, "then call for deleting file");
+			assert.equal(oStubbedSaveFile.getCall(0).args[0], "VENDOR", "with correct layer");
+			assert.equal(oStubbedSaveFile.getCall(0).args[1], "namespace", "with correct namespace");
+			assert.equal(oStubbedSaveFile.getCall(0).args[2], "fileName", "with correct fileName");
+			assert.equal(oStubbedSaveFile.getCall(0).args[3], "fileType", "with correct fileType");
+			assert.deepEqual(oStubbedSaveFile.getCall(0).args[4], "{packageName: \"\"}", "with correct data");
+			assert.equal(oStubbedSaveFile.getCall(0).args[5], undefined, "with correct transportId");
+			assert.equal(oStubbedSaveFile.getCall(0).args[6], undefined, "with correct package");
+		});
+
+		QUnit.test("when onSave is called with transported content", function (assert) {
+			var oStubbedGetView = sandbox.stub(oController, "getView").returns({
+				getModel: function () {
+					return {
+						getData: function () {
+							return {
+								data: "{packageName: \"package\"}",
+								fileName : "fileName",
+								fileType : "fileType",
+								namespace : "namespace",
+								layer : "All",
+								metadata : [{
+									name : "layer",
+									value : "VENDOR"
+								},{
+									name : "transportId",
+									value : "transportId"
+								}]
+							};
+						}
+					};
+				},
+				addDependent: function() {}
 			});
+			var oStubbedOpenDialog = sandbox.stub(Dialog.prototype, 'open').returns("dummy");
+
+			oController.onSave();
+
+			assert.equal(oStubbedGetView.callCount, 2, "then getView is called twice, first to get selected data, second to attach transport dialog");
+			assert.ok(oStubbedOpenDialog.calledOnce, "The transport Dialog is opened");
 		});
 
 		QUnit.test("when cancel button is clicked", function (assert) {
