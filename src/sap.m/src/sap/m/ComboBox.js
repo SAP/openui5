@@ -622,6 +622,10 @@ sap.ui.define([
 			if (this.bProcessingLoadItemsEvent && (this.getPickerType() === "Dropdown")) {
 				this.open();
 			}
+
+			// always focus input field when typing in it
+			this.$().addClass("sapMFocus");
+			this.getList().removeStyleClass("sapMSelectListFocus");
 		};
 
 		/**
