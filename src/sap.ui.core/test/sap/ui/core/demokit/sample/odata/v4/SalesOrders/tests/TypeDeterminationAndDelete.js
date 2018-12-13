@@ -128,7 +128,6 @@ sap.ui.define([
 				} else {
 					When.waitFor({
 						searchOpenDialogs : true,
-						id : "/SalesOrdersSchedules-/",
 						viewName : sViewName,
 						controlType : "sap.m.ColumnListItem",
 						success : function (aListItems) {
@@ -159,7 +158,6 @@ sap.ui.define([
 				When.waitFor({
 					searchOpenDialogs : true,
 					controlType : "sap.m.Dialog",
-					id : "salesOrderSchedulesDialog",
 					success : function (aControls) {
 						//new Press().executeOn(aControls[0].getButtons()[0]); // confirm deletion
 						Opa5.assert.ok(true, "'Schedules' opened");
@@ -252,7 +250,6 @@ sap.ui.define([
 			function verifyVisibleSchedules(aExpectedScheduleIds) {
 				Then.waitFor({
 					searchOpenDialogs : true,
-					id : "SalesOrdersSchedules",
 					viewName : sViewName,
 					controlType : "sap.m.Table",
 					check : function (oTable) {
