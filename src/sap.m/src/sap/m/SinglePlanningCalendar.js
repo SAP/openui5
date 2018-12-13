@@ -4,6 +4,7 @@
 
 // Provides control sap.m.SinglePlanningCalendar.
 sap.ui.define([
+	'./library',
 	'./PlanningCalendarHeader',
 	'./SegmentedButtonItem',
 	"./SinglePlanningCalendarWeekView",
@@ -14,6 +15,7 @@ sap.ui.define([
 	'sap/ui/core/Locale',
 	'sap/ui/core/LocaleData',
 	'sap/ui/core/InvisibleText',
+	'sap/ui/core/ResizeHandler',
 	'sap/ui/core/date/UniversalDate',
 	'sap/ui/core/format/DateFormat',
 	'sap/ui/unified/calendar/CalendarDate',
@@ -21,6 +23,7 @@ sap.ui.define([
 	'sap/ui/unified/DateRange'
 ],
 function(
+	library,
 	PlanningCalendarHeader,
 	SegmentedButtonItem,
 	SinglePlanningCalendarWeekView,
@@ -31,6 +34,7 @@ function(
 	Locale,
 	LocaleData,
 	InvisibleText,
+	ResizeHandler,
 	UniversalDate,
 	DateFormat,
 	CalendarDate,
@@ -38,6 +42,9 @@ function(
 	DateRange
 ) {
 	"use strict";
+
+	var PlanningCalendarStickyMode = library.PlanningCalendarStickyMode;
+	var HEADER_RESIZE_HANDLER_ID = "_sHeaderResizeHandlerId";
 
 	/**
 	 * Constructor for a new <code>SinglePlanningCalendar</code>.
@@ -101,7 +108,22 @@ function(
 			 * Determines the start date of the grid, as a JavaScript date object. It is considered as a local date.
 			 * The time part will be ignored. The current date is used as default.
 			 */
-			startDate: { type : "object", group : "Data" }
+			startDate: { type : "object", group : "Data" },
+
+			/**
+			 * Determines which part of the control will remain fixed at the top of the page during vertical scrolling
+			 * as long as the control is in the viewport.
+			 *
+			 * <b>Note:</b> Limited browser support. Browsers which do not support this feature:
+			 * <ul>
+			 * 	<li>Microsoft Internet Explorer</li>
+			 * 	<li>Microsoft Edge lower than version 41 (EdgeHTML 16)</li>
+			 * 	<li>Mozilla Firefox lower than version 59</li>
+			 * </ul>
+			 *
+			 * @since 1.62
+			 */
+			stickyMode: {type: "sap.m.PlanningCalendarStickyMode", group: "Behavior", defaultValue: PlanningCalendarStickyMode.None}
 
 		},
 
@@ -234,11 +256,69 @@ function(
 		this.setStartDate(new Date());
 	};
 
+	/**
+	 * Called before rendering starts.
+	 *
+	 * @private
+	 */
+	SinglePlanningCalendar.prototype.onBeforeRendering = function () {
+		// We can apply/remove sticky classes even before the control is rendered.
+		this._toggleStickyClasses();
+	};
+
+	/**
+	 * Called when rendering is completed.
+	 *
+	 * @private
+	 */
+	SinglePlanningCalendar.prototype.onAfterRendering = function () {
+		var oHeader = this._getHeader();
+
+		// Adjusting is done after rendering, because otherwise we won't have
+		// info about how much offset is actually needed.
+		this._adjustColumnHeadersTopOffset();
+
+		// Indicate if the actions toolbar is hidden
+		this.toggleStyleClass("sapMSinglePCActionsHidden", !oHeader._getActionsToolbar().getVisible());
+
+		this._registerResizeHandler(HEADER_RESIZE_HANDLER_ID, oHeader, this._onHeaderResize.bind(this));
+	};
+
 	SinglePlanningCalendar.prototype.exit = function () {
 		if (this._oDefaultView) {
 			this._oDefaultView.destroy();
 			this._oDefaultView = null;
 		}
+
+		this._deRegisterResizeHandler(HEADER_RESIZE_HANDLER_ID);
+	};
+
+	/**
+	 * Called when the navigation toolbar changes its width or height.
+	 *
+	 * @param oEvent The resize event
+	 * @returns {sap.m.SinglePlanningCalendar} <code>this</code> for chaining
+	 * @private
+	 */
+	SinglePlanningCalendar.prototype._onHeaderResize = function (oEvent) {
+		if (oEvent.oldSize.height === oEvent.size.height) {
+			// We need only height changes
+			return this;
+		}
+
+		// If resizing happened due to the actions toolbar changing its visibility,
+		// then update the corresponding class
+		this.toggleStyleClass("sapMSinglePCActionsHidden", !this._getHeader()._getActionsToolbar().getVisible());
+
+		// There are 3 reasons why the header's height might have changed and we need to adjust
+		// columnHeaders' offset for each of them.
+		// - Actions toolbar showed up: columnHeaders need to go lower
+		// - Actions toolbar got hidden: columnHeaders need to go higher
+		// - Screen width became too small and some of the navigation toolbar's content went
+		//   on a second line: second line: columnHeaders need to go lower
+		this._adjustColumnHeadersTopOffset();
+
+		return this;
 	};
 
 	SinglePlanningCalendar.prototype.setTitle = function (sTitle) {
@@ -250,6 +330,59 @@ function(
 	SinglePlanningCalendar.prototype.setStartDate = function (oDate) {
 		this.setProperty("startDate", oDate, true /*Suppressing because _alignColumns will do the rendering.*/ );
 		this._alignColumns();
+
+		return this;
+	};
+
+	/**
+	 * Applies or removes sticky classes based on <code>stickyMode</code>'s value.
+	 *
+	 * @returns {sap.m.SinglePlanningCalendar} <code>this</code> for chaining
+	 * @private
+	 */
+	SinglePlanningCalendar.prototype._toggleStickyClasses = function () {
+		var sStickyMode = this.getStickyMode();
+
+		this.toggleStyleClass("sapMSinglePCStickyAll", sStickyMode === PlanningCalendarStickyMode.All);
+		this.toggleStyleClass("sapMSinglePCStickyNavBarAndColHeaders", sStickyMode === PlanningCalendarStickyMode.NavBarAndColHeaders);
+
+		return this;
+	};
+
+	/**
+	 * Makes sure that the column headers are offset in such a way, that they are positioned right
+	 * after the navigation toolbar.
+	 *
+	 * @returns {sap.m.SinglePlanningCalendar} <code>this</code> for chaining
+	 * @private
+	 */
+	SinglePlanningCalendar.prototype._adjustColumnHeadersTopOffset = function () {
+		var sStickyMode = this.getStickyMode(),
+			oGrid = this._getGrid(),
+			oColumnHeaders = oGrid && oGrid._getColumnHeaders(),
+			sTop;
+
+		// Make sure that the columnHeaders are rendered
+		if (!oColumnHeaders || !oColumnHeaders.getDomRef()) {
+			return this;
+		}
+
+		switch (sStickyMode) {
+			case PlanningCalendarStickyMode.All:
+				// Since the whole header will be visible, columnHeaders should be offset by its whole height.
+				sTop = this._getHeader().$().outerHeight();
+				break;
+			case PlanningCalendarStickyMode.NavBarAndColHeaders:
+				// Since the action toolbar will be hidden, columnHeaders should be
+				sTop = this._getHeader()._getNavigationToolbar().$().outerHeight();
+				break;
+			default:
+				// Reset to default, if not in sticky mode
+				sTop = "auto";
+				break;
+		}
+
+		oColumnHeaders.$().css("top", sTop);
 
 		return this;
 	};
@@ -664,6 +797,37 @@ function(
 	 */
 	SinglePlanningCalendar.prototype._getGrid = function () {
 		return this.getAggregation("_grid");
+	};
+
+	/**
+	 * Registers resize handler.
+	 * @param {string} sHandler the handler ID
+	 * @param {Object} oObject
+	 * @param {Function} fnHandler
+	 * @returns {sap.m.SinglePlanningCalendar} <code>this</code> for chaining
+	 * @private
+	 */
+	SinglePlanningCalendar.prototype._registerResizeHandler = function (sHandler, oObject, fnHandler) {
+		if (!this[sHandler]) {
+			this[sHandler] = ResizeHandler.register(oObject, fnHandler);
+		}
+
+		return this;
+	};
+
+	/**
+	 * De-registers resize handler.
+	 * @param {string} sHandler the handler ID
+	 * @returns {sap.m.SinglePlanningCalendar} <code>this</code> for chaining
+	 * @private
+	 */
+	SinglePlanningCalendar.prototype._deRegisterResizeHandler = function (sHandler) {
+		if (this[sHandler]) {
+			ResizeHandler.deregister(this[sHandler]);
+			this[sHandler] = null;
+		}
+
+		return this;
 	};
 
 	return SinglePlanningCalendar;

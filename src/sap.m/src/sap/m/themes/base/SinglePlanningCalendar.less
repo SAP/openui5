@@ -1,0 +1,29 @@
+@_sap_m_PlanningCalendarHeader_ActionsToolbarHeight: 3rem;
+
+.sapMSinglePCStickyAll, .sapMSinglePCStickyNavBarAndColHeaders {
+	.sapMPCHead, .sapMSinglePCColumnHeader{
+		posititon: -webkit-sticky;
+		position: sticky;
+		z-index: 3;
+	}
+}
+
+.sapMSinglePCStickyAll {
+	.sapMPCHead {
+		top: 0;
+	}
+}
+
+.sapMSinglePCStickyNavBarAndColHeaders {
+	.sapMPCHead {
+		top: -@_sap_m_PlanningCalendarHeader_ActionsToolbarHeight;
+	}
+
+	// If the actions toolbar are hidden, then the navigation toolbar will
+	// be on top by default.
+	&.sapMSinglePCActionsHidden {
+		.sapMPCHead {
+			top: 0;
+		}
+	}
+}

@@ -1,6 +1,7 @@
 <mvc:View
 	controllerName="sap.m.sample.SinglePlanningCalendar.Page"
 	xmlns:mvc="sap.ui.core.mvc"
+	xmlns:core="sap.ui.core"
 	xmlns="sap.m">
 	<VBox class="sapUiSmallMargin">
 		<SinglePlanningCalendar
@@ -9,7 +10,14 @@
 			startDate="{path: '/startDate'}"
 			appointments="{path: '/appointments'}">
 			<actions>
-				<Button id="addButton" icon="sap-icon://add" press="handleAppointmentCreate" tooltip="Add new appointment" />
+				<Select tooltip="Select sticky mode" change="handleStickyModeChange">
+					<items>
+						<core:ListItem text="None" />
+						<core:ListItem text="All" />
+						<core:ListItem text="NavBarAndColHeaders" />
+					</items>
+				</Select>
+				<Button id="addButton" icon="sap-icon://add" text="Add appointment" press="handleAppointmentCreate" />
 			</actions>
 			<views>
 				<SinglePlanningCalendarWeekView key="WeekView" title="Week" />
