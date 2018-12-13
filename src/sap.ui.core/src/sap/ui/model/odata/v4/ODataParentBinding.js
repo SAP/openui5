@@ -801,8 +801,7 @@ sap.ui.define([
 	 *   "14.5.13 Expression edm:PropertyPath" strings describing which properties need to be loaded
 	 *   because they may have changed due to side effects of a previous update
 	 * @param {sap.ui.model.odata.v4.Context} [oContext]
-	 *   The context instance for which to request side effects; if missing, the whole binding is
-	 *   affected
+	 *   The context for which to request side effects; if missing, the whole binding is affected
 	 * @returns {sap.ui.base.SyncPromise}
 	 *   A promise resolving without a defined result, or rejected with an error if loading of side
 	 *   effects fails
@@ -972,6 +971,37 @@ sap.ui.define([
 				}
 			});
 		}
+	};
+
+	/**
+	 * @override
+	 * @see sap.ui.model.odata.v4.ODataBinding#visitSideEffects
+	 */
+	ODataParentBinding.prototype.visitSideEffects = function (sGroupId, aPaths, oContext,
+			mNavigationPropertyPaths, aPromises, sPrefix) {
+		var aDependentBindings = oContext
+				? this.oModel.getDependentBindings(oContext)
+				: this.getDependentBindings();
+
+		aDependentBindings.forEach(function (oDependentBinding) {
+			var sPath = _Helper.buildPath(sPrefix,
+					_Helper.getMetaPath(oDependentBinding.getPath())),
+				aStrippedPaths;
+
+			if (oDependentBinding.oCachePromise.getResult()) {
+				// dependent binding which has its own cache => not an ODataPropertyBinding
+				aStrippedPaths = _Helper.stripPathPrefix(sPath, aPaths);
+				if (aStrippedPaths.length) {
+					aPromises.push(
+						oDependentBinding.requestSideEffects(sGroupId, aStrippedPaths));
+				}
+			} else if (mNavigationPropertyPaths[sPath]) {
+				aPromises.push(oDependentBinding.refreshInternal(sGroupId));
+			} else {
+				oDependentBinding.visitSideEffects(sGroupId, aPaths, null,
+					mNavigationPropertyPaths, aPromises, sPath);
+			}
+		});
 	};
 
 	/**

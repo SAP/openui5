@@ -2534,37 +2534,16 @@ sap.ui.define([
 					oCache = {
 						requestSideEffects : function () {}
 					},
-					oChild0 = {
-						oCachePromise : SyncPromise.resolve({}),
-						getPath : function () {},
-						requestSideEffects : function () {}
-					},
-					oChild1 = {
-						oCachePromise : SyncPromise.resolve({}),
-						getPath : function () {},
-						requestSideEffects : function () {}
-					},
-					oChild2 = {
-						oCachePromise : SyncPromise.resolve(), // no own cache
-						requestSideEffects : function () {}
-					},
-					oChild3 = {
-						oCachePromise : SyncPromise.resolve({}),
-						getPath : function () {},
-						requestSideEffects : function () {}
-					},
 					oContext = bWithContext
 						? {getPath : function () {}}
 						: undefined,
 					oError = new Error(),
 					sGroupId = "group",
 					oGroupLock = {},
-					oHelperMock = this.mock(_Helper),
 					aPaths = [],
-					aPaths0 = ["A"],
-					aPaths1 = [/*empty!*/],
-					aPaths3 = ["A"],
-					oResult;
+					oPromise = Promise.resolve({/*the updated data*/}),
+					oResult,
+					that = this;
 
 				oBinding.oCachePromise = SyncPromise.resolve(oCache); // simulate execute
 				this.mock(this.oModel).expects("lockGroup").withExactArgs(sGroupId)
@@ -2573,37 +2552,25 @@ sap.ui.define([
 					this.mock(oContext).expects("getPath").withExactArgs().returns("/Me");
 				}
 				this.mock(oCache).expects("requestSideEffects")
-					.withExactArgs(sinon.match.same(oGroupLock), sinon.match.same(aPaths),
+					.withExactArgs(sinon.match.same(oGroupLock), sinon.match.same(aPaths), {},
 						bWithContext ? "Me" : undefined)
-					.resolves({/*the updated data*/});
-				if (bWithContext) {
-					this.mock(this.oModel).expects("getDependentBindings")
-						.withExactArgs(sinon.match.same(oContext))
-						.returns([oChild0, oChild1, oChild2, oChild3]);
-				} else {
-					this.mock(oBinding).expects("getDependentBindings").withExactArgs()
-						.returns([oChild0, oChild1, oChild2, oChild3]);
-				}
-				this.mock(oChild0).expects("getPath").withExactArgs().returns("foo");
-				oHelperMock.expects("stripPathPrefix")
-					.withExactArgs("foo", sinon.match.same(aPaths))
-					.returns(aPaths0);
-				this.mock(oChild0).expects("requestSideEffects")
-					.withExactArgs(sGroupId, sinon.match.same(aPaths0))
-					.resolves();
-				this.mock(oChild1).expects("getPath").withExactArgs().returns("bar");
-				oHelperMock.expects("stripPathPrefix")
-					.withExactArgs("bar", sinon.match.same(aPaths))
-					.returns(aPaths1);
-				this.mock(oChild1).expects("requestSideEffects").never();
-				this.mock(oChild2).expects("requestSideEffects").never();
-				this.mock(oChild3).expects("getPath").withExactArgs().returns("baz");
-				oHelperMock.expects("stripPathPrefix")
-					.withExactArgs("baz", sinon.match.same(aPaths))
-					.returns(aPaths3);
-				this.mock(oChild3).expects("requestSideEffects")
-					.withExactArgs(sGroupId, sinon.match.same(aPaths3))
-					.returns(bRecursionRejects ? Promise.reject(oError) : Promise.resolve());
+					.callsFake(function (oGroupLock, aPaths, mNavigationPropertyPaths) {
+						mNavigationPropertyPaths["refresh/toN"] = true;
+
+						that.mock(oBinding).expects("visitSideEffects")
+							.withExactArgs(sGroupId, sinon.match.same(aPaths),
+								sinon.match.same(oContext),
+								sinon.match.same(mNavigationPropertyPaths), [oPromise])
+							.callsFake(function (sGroupId, aPaths, oContext,
+									mNavigationPropertyPaths, aPromises) {
+								aPromises.push(Promise.resolve());
+								if (bRecursionRejects) {
+									aPromises.push(Promise.reject(oError));
+								}
+							});
+
+						return oPromise;
+					});
 				if (bRecursionRejects) {
 					this.mock(this.oModel).expects("reportError")
 						.withExactArgs("Failed to request side effects", sClassName,
@@ -2655,7 +2622,7 @@ sap.ui.define([
 		this.mock(this.oModel).expects("lockGroup").withExactArgs(sGroupId).returns(oGroupLock);
 		this.mock(oContext).expects("getPath").withExactArgs().returns("/Me");
 		this.mock(oCache).expects("requestSideEffects")
-			.withExactArgs(sinon.match.same(oGroupLock), sinon.match.same(aPaths), "Me")
+			.withExactArgs(sinon.match.same(oGroupLock), sinon.match.same(aPaths), {}, "Me")
 			.rejects(oError);
 		this.mock(this.oModel).expects("reportError")
 			.withExactArgs("Failed to request side effects", sClassName, sinon.match.same(oError));
@@ -2698,7 +2665,8 @@ sap.ui.define([
 						.returns(oGroupLock);
 					this.mock(oContext).expects("getPath").withExactArgs().returns("/Me");
 					this.mock(oCache).expects("requestSideEffects")
-						.withExactArgs(sinon.match.same(oGroupLock), sinon.match.same(aPaths), "Me")
+						.withExactArgs(sinon.match.same(oGroupLock), sinon.match.same(aPaths), {},
+							"Me")
 						.throws(oError);
 				}
 				this.mock(oBinding).expects("refreshReturnValueContext")
@@ -2738,7 +2706,7 @@ sap.ui.define([
 				this.mock(this.oModel).expects("lockGroup").withExactArgs(sGroupId)
 					.returns(oGroupLock);
 				this.mock(oCache).expects("requestSideEffects")
-					.withExactArgs(sinon.match.same(oGroupLock), sinon.match.same(aPaths),
+					.withExactArgs(sinon.match.same(oGroupLock), sinon.match.same(aPaths), {},
 						undefined)
 					.throws(oError);
 			}
@@ -2772,7 +2740,7 @@ sap.ui.define([
 		this.mock(this.oModel).expects("lockGroup").withExactArgs(sGroupId).returns(oGroupLock);
 		this.mock(oContext).expects("getPath").withExactArgs().returns("/Me");
 		this.mock(oCache).expects("requestSideEffects")
-			.withExactArgs(sinon.match.same(oGroupLock), sinon.match.same(aPaths), "Me")
+			.withExactArgs(sinon.match.same(oGroupLock), sinon.match.same(aPaths), {}, "Me")
 			.throws(oError);
 		this.mock(oContext).expects("refresh").never();
 

@@ -4627,19 +4627,22 @@ sap.ui.define([
 					"sap-client" : "123",
 					$select : ["ROOM_ID"]
 				}),
+				oCacheMock = this.mock(oCache),
 				oGroupLock = new _GroupLock("$auto"),
 				mMergedQueryOptions = {},
+				mNavigationPropertyPaths = {},
 				oNewValue = {},
 				oOldValue = {},
-				oPatchExpectation,
 				aPaths = ["ROOM_ID"],
+				oPromise,
 				mTypeForMetaPath = {},
+				oUpdateExistingExpectation,
 				oVisitResponseExpectation;
 
 			this.mock(_Helper).expects("intersectQueryOptions").withExactArgs(
 					sinon.match.same(oCache.mQueryOptions), sinon.match.same(aPaths),
 					sinon.match.same(this.oRequestor.getModelInterface().fnFetchMetadata),
-					"/Employees/$Type")
+					"/Employees/$Type", sinon.match.same(mNavigationPropertyPaths))
 				.returns(mMergedQueryOptions);
 			this.oRequestorMock.expects("buildQueryString")
 				.withExactArgs("/Employees", sinon.match.same(mMergedQueryOptions), false, true)
@@ -4648,47 +4651,66 @@ sap.ui.define([
 				.withExactArgs("GET", (sReadPath || sResourcePath) + "?~",
 					sinon.match.same(oGroupLock))
 				.resolves(oNewValue);
-			this.mock(oCache).expects("fetchTypes").withExactArgs()
+			oCacheMock.expects("fetchTypes").withExactArgs()
 				.returns(SyncPromise.resolve(mTypeForMetaPath));
-			oVisitResponseExpectation = this.mock(oCache).expects("visitResponse")
+			oCacheMock.expects("fetchValue")
+				.withExactArgs(sinon.match.same(_GroupLock.$cached), "")
+				.returns(SyncPromise.resolve(oOldValue));
+			oVisitResponseExpectation = oCacheMock.expects("visitResponse")
 				.withExactArgs(sinon.match.same(oNewValue), sinon.match.same(mTypeForMetaPath),
 					"/Employees");
-			oPatchExpectation = this.mock(oCache).expects("patch")
-				.withExactArgs("", sinon.match.same(oNewValue))
+			oUpdateExistingExpectation = this.mock(_Helper).expects("updateExisting")
+				.withExactArgs(sinon.match.same(oCache.mChangeListeners), "",
+					sinon.match.same(oOldValue), sinon.match.same(oNewValue))
 				.returns(SyncPromise.resolve(oOldValue));
 
 			// code under test
-			return oCache.requestSideEffects(oGroupLock, aPaths, sReadPath)
+			oPromise = oCache.requestSideEffects(oGroupLock, aPaths, mNavigationPropertyPaths,
+					sReadPath)
 				.then(function (vResult) {
 					assert.strictEqual(vResult, oOldValue);
-					assert.ok(oVisitResponseExpectation.calledBefore(oPatchExpectation));
+					assert.ok(oVisitResponseExpectation.calledBefore(oUpdateExistingExpectation));
 				});
+
+			oCacheMock.expects("fetchValue")
+				.withExactArgs(sinon.match.same(_GroupLock.$cached), "").callThrough();
+
+			return Promise.all([
+				oPromise,
+				// code under test: check that a "parallel" read waits for oPromise
+				oCache.fetchValue(_GroupLock.$cached, "").then(function (vResult) {
+					assert.strictEqual(vResult, oOldValue);
+					assert.ok(oUpdateExistingExpectation.called, "old value already updated");
+				})
+			]);
 		});
 	});
 	//TODO CollectionCache#refreshSingle claims that
 	// "_Helper.updateExisting cannot be used because navigation properties cannot be handled"
-	// --> what does that mean for our usage of Cache#patch?
+	// --> what does that mean for us?
 
 	//*********************************************************************************************
 	QUnit.test("SingleCache#requestSideEffects: no need to GET anything", function (assert) {
 		var oCache = this.createSingle("Employees('42')"),
+			mNavigationPropertyPaths = {},
 			oOldValue = {},
 			aPaths = ["ROOM_ID"];
 
 		this.mock(_Helper).expects("intersectQueryOptions").withExactArgs(
 				sinon.match.same(oCache.mQueryOptions), sinon.match.same(aPaths),
 				sinon.match.same(this.oRequestor.getModelInterface().fnFetchMetadata),
-				"/Employees/$Type")
+				"/Employees/$Type", sinon.match.same(mNavigationPropertyPaths))
 			.returns(null);
 		this.mock(oCache).expects("fetchValue")
 			.withExactArgs(sinon.match.same(_GroupLock.$cached), "")
 			.returns(SyncPromise.resolve(oOldValue));
 		this.oRequestorMock.expects("buildQueryString").never();
 		this.oRequestorMock.expects("request").never();
+		this.mock(oCache).expects("fetchTypes").never();
 		this.mock(_Helper).expects("updateExisting").never(); // ==> #patch also not called
 
 		// code under test
-		return oCache.requestSideEffects(new _GroupLock("$auto"), aPaths)
+		return oCache.requestSideEffects(new _GroupLock("$auto"), aPaths, mNavigationPropertyPaths)
 			.then(function (vResult) {
 				assert.strictEqual(vResult, oOldValue);
 			});
@@ -4700,12 +4722,13 @@ sap.ui.define([
 			oError = new Error(),
 			oGroupLock = new _GroupLock("$auto"),
 			mMergedQueryOptions = {},
+			mNavigationPropertyPaths = {},
 			aPaths = ["ROOM_ID"];
 
 		this.mock(_Helper).expects("intersectQueryOptions").withExactArgs(
 				sinon.match.same(oCache.mQueryOptions), sinon.match.same(aPaths),
 				sinon.match.same(this.oRequestor.getModelInterface().fnFetchMetadata),
-				"/Employees/$Type")
+				"/Employees/$Type", sinon.match.same(mNavigationPropertyPaths))
 			.returns(mMergedQueryOptions);
 		this.oRequestorMock.expects("buildQueryString")
 			.withExactArgs("/Employees", sinon.match.same(mMergedQueryOptions), false, true)
@@ -4713,10 +4736,15 @@ sap.ui.define([
 		this.oRequestorMock.expects("request")
 			.withExactArgs("GET", "Employees('42')?~", sinon.match.same(oGroupLock))
 			.rejects(oError);
+		this.mock(oCache).expects("fetchTypes").withExactArgs()
+			.returns(SyncPromise.resolve(/*don't care*/));
+		this.mock(oCache).expects("fetchValue")
+			.withExactArgs(sinon.match.same(_GroupLock.$cached), "")
+			.returns(SyncPromise.resolve(/*don't care*/));
 		this.mock(_Helper).expects("updateExisting").never(); // ==> #patch also not called
 
 		// code under test
-		return oCache.requestSideEffects(oGroupLock, aPaths)
+		return oCache.requestSideEffects(oGroupLock, aPaths, mNavigationPropertyPaths)
 			.then(function () {
 				assert.ok(false, "unexpected success");
 			}, function (oError0) {
@@ -4728,16 +4756,18 @@ sap.ui.define([
 	QUnit.test("SingleCache#requestSideEffects: $expand in intersection", function (assert) {
 		var oCache = this.createSingle("Me"),
 			oError = new Error("Unsupported collection-valued navigation property /Me/B/C"),
+			mNavigationPropertyPaths = {},
 			aPaths = ["B/C"];
 
 		this.mock(_Helper).expects("intersectQueryOptions").withExactArgs(
 				sinon.match.same(oCache.mQueryOptions), sinon.match.same(aPaths),
-				sinon.match.same(this.oRequestor.getModelInterface().fnFetchMetadata), "/Me/$Type")
+				sinon.match.same(this.oRequestor.getModelInterface().fnFetchMetadata), "/Me/$Type",
+				sinon.match.same(mNavigationPropertyPaths))
 			.throws(oError);
 
 		assert.throws(function () {
 			// code under test
-			oCache.requestSideEffects(new _GroupLock("$auto"), aPaths);
+			oCache.requestSideEffects(new _GroupLock("$auto"), aPaths, mNavigationPropertyPaths);
 		}, oError);
 	});
 

@@ -2708,6 +2708,96 @@ sap.ui.define([
 		// code under test
 		oBinding.resetChangesInDependents();
 	});
+
+	//*********************************************************************************************
+	[{
+	}, {
+		oContext : null,
+		bPrefix : true
+	}, {
+		oContext : {getPath : function () {}}
+	}].forEach(function (oFixture, i) {
+		QUnit.test("visitSideEffects, " + i, function (assert) {
+			var oBinding = new ODataParentBinding(),
+				oChild0 = {
+					oCachePromise : SyncPromise.resolve({}),
+					getPath : function () { return "foo(0)"; },
+					requestSideEffects : function () {}
+				},
+				oChild1 = {
+					oCachePromise : SyncPromise.resolve({}),
+					getPath : function () { return "bar(1)"; }
+				},
+				oChild2 = {
+					oCachePromise : SyncPromise.resolve(), // no own cache
+					getPath : function () { return "n/a/toN"; },
+					visitSideEffects : function () {}
+				},
+				oChild3 = {
+					oCachePromise : SyncPromise.resolve({}),
+					getPath : function () { return "baz(3)"; },
+					requestSideEffects : function () {}
+				},
+				oChild4 = {
+					oCachePromise : SyncPromise.resolve(), // no own cache
+					getPath : function () { return "refresh(4)/toN"; },
+					refreshInternal : function () {}
+				},
+				sGroupId = "group",
+				oHelperMock = this.mock(_Helper),
+				oModel = {
+					getDependentBindings : function () {}
+				},
+				mNavigationPropertyPaths = oFixture.bPrefix
+					? {"~/refresh/toN" : true}
+					: {"refresh/toN" : true},
+				aPaths = [],
+				aPaths0 = ["A"],
+				aPaths1 = [/*empty!*/],
+				aPaths3 = ["A"],
+				oPromise0 = {index : 0}, // give deepEqual a chance
+				oPromise3 = {index : 3},
+				oPromise4 = {index : 4},
+				aPromises = [];
+
+			if (oFixture.oContext) {
+				oBinding.oModel = oModel;
+				this.mock(oModel).expects("getDependentBindings")
+					.withExactArgs(sinon.match.same(oFixture.oContext))
+					.returns([oChild0, oChild1, oChild2, oChild3, oChild4]);
+			} else {
+				this.mock(oBinding).expects("getDependentBindings").withExactArgs()
+					.returns([oChild0, oChild1, oChild2, oChild3, oChild4]);
+			}
+			oHelperMock.expects("stripPathPrefix")
+				.withExactArgs(oFixture.bPrefix ? "~/foo" : "foo", sinon.match.same(aPaths))
+				.returns(aPaths0);
+			this.mock(oChild0).expects("requestSideEffects")
+				.withExactArgs(sGroupId, sinon.match.same(aPaths0))
+				.returns(oPromise0);
+			oHelperMock.expects("stripPathPrefix")
+				.withExactArgs(oFixture.bPrefix ? "~/bar" : "bar", sinon.match.same(aPaths))
+				.returns(aPaths1);
+			this.mock(oChild2).expects("visitSideEffects")
+				.withExactArgs(sGroupId, sinon.match.same(aPaths), null,
+					sinon.match.same(mNavigationPropertyPaths), sinon.match.same(aPromises),
+					oFixture.bPrefix ? "~/n/a/toN" : "n/a/toN");
+			oHelperMock.expects("stripPathPrefix")
+				.withExactArgs(oFixture.bPrefix ? "~/baz" : "baz", sinon.match.same(aPaths))
+				.returns(aPaths3);
+			this.mock(oChild3).expects("requestSideEffects")
+				.withExactArgs(sGroupId, sinon.match.same(aPaths3))
+				.returns(oPromise3);
+			this.mock(oChild4).expects("refreshInternal").withExactArgs(sGroupId)
+				.returns(oPromise4);
+
+			// code under test
+			oBinding.visitSideEffects(sGroupId, aPaths, oFixture.oContext, mNavigationPropertyPaths,
+				aPromises, oFixture.bPrefix ? "~" : undefined);
+
+			assert.deepEqual(aPromises, [oPromise0, oPromise3, oPromise4]);
+		});
+	});
 });
 //TODO Fix issue with ODataModel.integration.qunit
 //  "suspend/resume: list binding with nested context binding, only context binding is adapted"
