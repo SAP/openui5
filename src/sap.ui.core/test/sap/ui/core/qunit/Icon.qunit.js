@@ -66,7 +66,6 @@ sap.ui.define([
 		assert.equal($icon.css("background-color"), $dummy.css("background-color"));
 	});
 
-
 	QUnit.test("Active color", function(assert) {
 		$dummy.css("color", "#222222");
 		$dummy.css("background-color", "#999999");
@@ -178,6 +177,31 @@ sap.ui.define([
 		fnClick.apply(oIcon, [oEvent]);
 		assert.ok(bMarked, "The event should be marked");
 
+		oIcon.destroy();
+	});
+
+	QUnit.test("Set invalid color", function(assert) {
+		var sInvalidColor = "Invalid color",
+			oErrorLogSpy = sinon.spy(Log, "error");
+
+		var oIcon = new Icon({
+			src: IconPool.getIconURI("manager"),
+			color: sInvalidColor
+		});
+
+		sinon.assert.calledWithExactly(oErrorLogSpy, "\"" + sInvalidColor + "\" is not of type sap.ui.core.CSSColor " +
+				"nor of type sap.ui.core.IconColor.");
+		assert.equal(oIcon.getColor(), "", "No color set");
+
+		oIcon.setColor("#666666");
+		assert.equal(oIcon.getColor(), "#666666", "Color set");
+
+		oIcon.setColor(sInvalidColor);
+		assert.equal(oIcon.getColor(), "#666666", "Previous valid color still set");
+
+		sinon.assert.calledTwice(oErrorLogSpy);
+
+		oErrorLogSpy.restore();
 		oIcon.destroy();
 	});
 
