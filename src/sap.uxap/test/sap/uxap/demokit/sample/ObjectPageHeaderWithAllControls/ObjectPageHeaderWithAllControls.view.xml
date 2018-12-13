@@ -3,12 +3,9 @@
 		xmlns="sap.uxap"
 		xmlns:layout="sap.ui.layout"
 		xmlns:m="sap.m"
-		xmlns:comp="sap.ui.comp.variants"
 		xmlns:f="sap.ui.layout.form"
-		xmlns:sample="sap.uxap.sample.ObjectPageOnJSON"
 		xmlns:goals="sap.uxap.sample.SharedBlocks.goals"
 		xmlns:personal="sap.uxap.sample.SharedBlocks.personal"
-		xmlns:employment="sap.uxap.sample.SharedBlocks.employment"
 		controllerName="sap.uxap.sample.ObjectPageHeaderWithAllControls.ObjectPageHeaderWithAllControls"
 		height="100%">
 

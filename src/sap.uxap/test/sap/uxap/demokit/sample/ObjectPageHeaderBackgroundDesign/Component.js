@@ -14,7 +14,9 @@ sap.ui.define(["sap/ui/core/UIComponent"], function (UIComponent) {
 				sample: {
 					stretch: true,
 					files: [
-						"ObjectPageHeaderBackgroundDesign.view.xml"
+						"ObjectPageHeaderBackgroundDesign.view.xml",
+						"../AnchorBar/mySimpleBlock.js",
+						"../AnchorBar/mySimpleBlock.view.xml"
 					]
 				}
 			}

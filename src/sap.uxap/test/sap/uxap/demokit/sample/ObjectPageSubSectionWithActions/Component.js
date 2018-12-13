@@ -15,7 +15,9 @@ sap.ui.define(["sap/ui/core/UIComponent"], function (UIComponent) {
 				sample: {
 					stretch: true,
 					files: [
-						"ObjectPageSubSectionWithActions.view.xml"
+						"ObjectPageSubSectionWithActions.view.xml",
+						"../SharedBlocks/BlockBlue.js",
+						"../SharedBlocks/BlockBlue.view.xml"
 					]
 				}
 			}

@@ -18,7 +18,11 @@ sap.ui.define(["sap/ui/core/UIComponent"], function (UIComponent) {
 					stretch: true,
 					files: [
 						"ObjectPageBlockBase.view.xml",
-						"ObjectPageBlockBase.controller.js"
+						"ObjectPageBlockBase.controller.js",
+						"../SharedBlocks/BlockBlue.js",
+						"../SharedBlocks/BlockBlue.view.xml",
+						"../SharedBlocks/BlockBlueWithInfo.js",
+						"../SharedBlocks/BlockBlueWithInfo.view.xml"
 					]
 				}
 			}
