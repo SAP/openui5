@@ -559,6 +559,28 @@
 			labelFor: oNumberOfImagesInput
 		});
 
+		var oNumberOfPagesToBeShownInput = new sap.m.Input("input-pages-number", {
+			type: "Number",
+			value: "1",
+			width: "320px",
+			liveChange: function (oEvent) {
+				var iNumberOfPages = Number(oEvent.getSource().getValue());
+				if (!iNumberOfPages || iNumberOfPages < 1 || iNumberOfPages > 4){
+					return;
+				}
+
+				var oCarousel = sap.ui.getCore().byId("myCarousel");
+				oCarousel.setCustomLayout(new sap.m.CarouselLayout({
+					visiblePagesCount: iNumberOfPages
+				}));
+			}
+		});
+
+		var oNumberOfIPagesToBeShownLabel = new sap.m.Label({
+			text: "Number of pages to be shown in Carousel's visible area (Can be a number between 1 and 4)",
+			labelFor: oNumberOfPagesToBeShownInput
+		});
+
 		// Slider with 5 values, used to shrink the container of the carousel
 
 		var oScreenSizes = [
@@ -617,7 +639,9 @@
 				oRBGroupShowPageIndicatorLabel,
 				oRBGroupShowPageIndicator,
 				oNumberOfImagesInputLabel,
-				oNumberOfImagesInput
+				oNumberOfImagesInput,
+				oNumberOfIPagesToBeShownLabel,
+				oNumberOfPagesToBeShownInput
 			]
 		});
 

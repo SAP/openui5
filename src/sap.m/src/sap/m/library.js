@@ -290,6 +290,7 @@ sap.ui.define([
 		],
 		elements: [
 			"sap.m.CalendarAppointment",
+			"sap.m.CarouselLayout",
 			"sap.m.Column",
 			"sap.m.FlexItemData",
 			"sap.m.FeedListItemAction",

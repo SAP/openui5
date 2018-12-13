@@ -228,7 +228,8 @@
 		  "samples": [
 			  "sap.m.sample.Carousel",
 			  "sap.m.sample.CarouselWithControls",
-			  "sap.m.sample.CarouselWithDisplayOptions"
+			  "sap.m.sample.CarouselWithDisplayOptions",
+			  "sap.m.sample.CarouselWithMorePages"
 		  ]
 		},
 		{
@@ -1678,6 +1679,11 @@
 		  "id": "sap.m.sample.CarouselWithDisplayOptions",
 		  "name": "Carousel With Display Options",
 		  "description": "The Carousel have options for the arrows placement, page indicator placement and page indicator visibility."
+		},
+		{
+			"id": "sap.m.sample.CarouselWithMorePages",
+			"name": "Carousel with Multiple Items at Once",
+			"description": "The customLayout aggregation determines how many pages are displayed in Carousel's visible area."
 		},
 		{
 		  "id": "sap.m.sample.NavContainer",

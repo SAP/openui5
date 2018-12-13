@@ -496,6 +496,8 @@ Mobify.UI.Carousel = (function($, Utils) {
         });
 
         $element.on('afterSlide', function(e, previousSlide, nextSlide) {
+			var iFirstElement = nextSlide - 1,
+				sActiveClass = self._getClass('active');
 
             // The event might bubble up from another carousel inside of this one.
             // In this case we ignore the event.
@@ -507,7 +509,10 @@ Mobify.UI.Carousel = (function($, Utils) {
                 sPageIndicatorId = sId.replace(/(:|\.)/g,'\\$1') + '-pageIndicator';
 
             // self.$items.eq(previousSlide - 1).removeClass(self._getClass('active'));
-            self.$items.eq(nextSlide - 1).addClass(self._getClass('active'));
+			for (var i = iFirstElement; i < iFirstElement + self.options.numberOfItemsToShow; i++) {
+				var element = self.$items.eq(i);
+				element.addClass(sActiveClass);
+			}
 
             self.$element.find('#' + sPageIndicatorId + ' > [data-slide=\'' + previousSlide + '\']').removeClass(self._getClass('active'));
             self.$element.find('#' + sPageIndicatorId + ' > [data-slide=\'' + nextSlide + '\']').addClass(self._getClass('active'));
@@ -597,7 +602,11 @@ Mobify.UI.Carousel = (function($, Utils) {
         	} else {
         		newIndex = length;
         	}
-        }
+		}
+
+		if (newIndex + this.options.numberOfItemsToShow > this._length) {
+			newIndex = this._length - this.options.numberOfItemsToShow + 1;
+		}
 
         // Bail out early if no move is necessary.
         var bTriggerEvents = true;
@@ -657,7 +666,7 @@ Mobify.UI.Carousel = (function($, Utils) {
         @param {Object} [options] Options passed to the action.
     */
     $.fn.carousel = function (action, options) {
-        var initOptions = $.extend({}, $.fn.carousel.defaults);
+        var initOptions = $.extend({}, $.fn.carousel.defaults, options);
 
         // Handle different calling conventions
         if (typeof action == 'object') {

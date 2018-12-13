@@ -1,0 +1,41 @@
+<mvc:View height="100%" controllerName="sap.m.sample.CarouselWithMorePages.Carousel"
+	xmlns:mvc="sap.ui.core.mvc" xmlns="sap.m" xmlns:f="sap.f" xmlns:cards="sap.f.cards" >
+	<Page
+		title="Carrousel With customLayout aggregation Sample"
+		class="sapUiResponsiveContentPadding">
+		<Carousel
+			height="auto"
+			showPageIndicator="false"
+			pages="{
+						path: '/ProductCollection'
+				}">
+
+			<customLayout>
+				<CarouselLayout visiblePagesCount="3" />
+			</customLayout>
+
+			<f:Card>
+				<f:header>
+					<cards:Header
+						title="{Name}"
+						subtitle="{Description}"
+						iconSrc="{ProductPicUrl}"
+						iconDisplayShape="Square" />
+				</f:header>
+				<f:content>
+					<VBox class="sapUiSmallMargin">
+						<HBox>
+							<Label text="Supplier" class="sapUiTinyMarginEnd"/>
+							<Text text="{SupplierName}" />
+						</HBox>
+						<HBox>
+							<Label text="Status" class="sapUiTinyMarginEnd"/>
+							<Text text="{Status}" />
+						</HBox>
+					</VBox>
+				</f:content>
+			</f:Card>
+
+		</Carousel>
+	</Page>
+</mvc:View>
