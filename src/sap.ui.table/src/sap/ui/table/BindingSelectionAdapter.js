@@ -43,18 +43,18 @@ sap.ui.define([
 	 */
 	BindingSelectionAdapter.prototype.addSelectionInterval = function(iIndexFrom, iIndexTo) {
 		if (this.getSelectionMode() === SelectionMode.None) {
-			return this;
+			return;
 		}
+
 		var oBinding = this._getBinding();
-		//TBA check
-		if (oBinding && oBinding.findNode && oBinding.addSelectionInterval) {
+
+		if (oBinding && oBinding.addSelectionInterval) {
 			if (this.getSelectionMode() === SelectionMode.Single) {
 				iIndexFrom = iIndexTo;
 				oBinding.setSelectionInterval(iIndexFrom, iIndexTo);
 			}
 			oBinding.addSelectionInterval(iIndexFrom, iIndexTo);
 		}
-		return this;
 	};
 
 	/**
@@ -67,8 +67,6 @@ sap.ui.define([
 		if (oBinding && oBinding.clearSelection) {
 			oBinding.clearSelection();
 		}
-
-		return this;
 	};
 
 	/**
@@ -76,11 +74,12 @@ sap.ui.define([
 	 * @inheritDoc
 	 */
 	BindingSelectionAdapter.prototype.getSelectedIndex = function() {
-		//when using the treebindingadapter, check if the node is selected
 		var oBinding = this._getBinding();
 
 		if (oBinding && oBinding.findNode) {
 			return oBinding.getSelectedIndex();
+		} else {
+			return -1;
 		}
 	};
 
@@ -92,9 +91,40 @@ sap.ui.define([
 		var oBinding = this._getBinding();
 
 		if (oBinding && oBinding.findNode && oBinding.getSelectedIndices) {
-			/*jQuery.sap.log.warning("When using a TreeTable on a V2 ODataModel, you can also use 'getSelectedContexts' on the underlying TreeBinding," +
-					" for an optimised retrieval of the binding contexts of the all selected rows/nodes.");*/
 			return oBinding.getSelectedIndices();
+		} else {
+			return [];
+		}
+	};
+
+	/**
+	 * @override
+	 * @inheritDoc
+	 */
+	BindingSelectionAdapter.prototype.getSelectableCount = function() {
+		var oBinding = this._getBinding();
+
+		if (!oBinding) {
+			return 0;
+		} else if (oBinding.getGrandTotalContextInfo) { // AnalyticalBinding
+			var oRootNode = oBinding.getGrandTotalContextInfo();
+			return oRootNode ? oRootNode.totalNumberOfLeafs : 0;
+		} else {
+			return oBinding.getLength();
+		}
+	};
+
+	/**
+	 * @override
+	 * @inheritDoc
+	 */
+	BindingSelectionAdapter.prototype.getSelectedCount = function() {
+		var oBinding = this._getBinding();
+
+		if (oBinding && oBinding.getSelectedNodesCount) {
+			return oBinding.getSelectedNodesCount();
+		} else {
+			return 0;
 		}
 	};
 
@@ -132,11 +162,10 @@ sap.ui.define([
 	 */
 	BindingSelectionAdapter.prototype.removeSelectionInterval = function(iIndexFrom, iIndexTo) {
 		var oBinding = this._getBinding();
-		//TBA check
+
 		if (oBinding && oBinding.findNode && oBinding.removeSelectionInterval) {
 			oBinding.removeSelectionInterval(iIndexFrom, iIndexTo);
 		}
-		return this;
 	};
 
 	/**
@@ -145,15 +174,14 @@ sap.ui.define([
 	 */
 	BindingSelectionAdapter.prototype.selectAll = function() {
 		if (this.getSelectionMode() === SelectionMode.None) {
-			return this;
+			return;
 		}
-		//The OData TBA exposes a selectAll function
+
 		var oBinding = this._getBinding();
+
 		if (oBinding && oBinding.selectAll) {
 			oBinding.selectAll();
 		}
-
-		return this;
 	};
 
 	/**
@@ -162,22 +190,19 @@ sap.ui.define([
 	 */
 	BindingSelectionAdapter.prototype.setSelectedIndex = function(iIndex) {
 		if (this.getSelectionMode() === SelectionMode.None) {
-			return this;
+			return;
 		}
 
 		if (iIndex === -1) {
-			//If Index eq -1 no item is selected, therefore clear selection is called
-			//SelectionModel doesn't know that -1 means no selection
+			// Index -1 means to clear the selection. The binding doesn't know that -1 means no selection.
 			this.clearSelection();
-		}
+		} else {
+			var oBinding = this._getBinding();
 
-		var oBinding = this._getBinding();
-
-		if (oBinding && oBinding.findNode && oBinding.setNodeSelection) {
-			// set the found node as selected
-			oBinding.setSelectedIndex(iIndex);
+			if (oBinding && oBinding.setSelectedIndex) {
+				oBinding.setSelectedIndex(iIndex);
+			}
 		}
-		return this;
 	};
 
 	/**
@@ -186,32 +211,34 @@ sap.ui.define([
 	 */
 	BindingSelectionAdapter.prototype.setSelectionInterval = function(iIndexFrom, iIndexTo) {
 		if (this.getSelectionMode() === SelectionMode.None) {
-			return this;
+			return;
 		}
-		//when using the treebindingadapter, check if the node is selected
+
 		var oBinding = this._getBinding();
 
-		if (oBinding && oBinding.findNode && oBinding.setSelectionInterval) {
+		if (oBinding && oBinding.setSelectionInterval) {
 			if (this.getSelectionMode() === SelectionMode.Single) {
 				iIndexFrom = iIndexTo;
 			}
 			oBinding.setSelectionInterval(iIndexFrom, iIndexTo);
 		}
-
-		return this;
 	};
 
 	/**
 	 * Sets the selection mode. The current selection is lost
 	 *
-	 * @param {string} sSelectionMode
+	 * @param {string} sSelectionMode The new selection mode.
+	 * @returns {sap.ui.table.BindingSelectionAdapter} Reference to <code>this</code> in order to allow method chaining
 	 * @public
 	 */
 	BindingSelectionAdapter.prototype.setSelectionMode = function(sSelectionMode) {
-		if (this.getSelectionMode() !== sSelectionMode) {
+		var sOldSelectionMode = this.getSelectionMode();
+
+		SelectionAdapter.prototype.setSelectionMode.apply(this, arguments);
+
+		if (this.getSelectionMode() !== sOldSelectionMode) {
 			this.clearSelection();
 		}
-		this.setProperty("selectionMode", sSelectionMode, true);
 
 		return this;
 	};

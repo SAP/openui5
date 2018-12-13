@@ -1016,21 +1016,6 @@ sap.ui.define([
 	 ***************************************************/
 
 	/**
-	 * returns the count of rows which can ca selected when bound or 0
-	 * @private
-	 */
-	AnalyticalTable.prototype._getSelectableRowCount = function() {
-		var oBinding = this.getBinding("rows");
-
-		if (!oBinding) {
-			return 0;
-		}
-
-		var oRootNode = oBinding.getGrandTotalContextInfo();
-		return oRootNode ? oRootNode.totalNumberOfLeafs : 0;
-	};
-
-	/**
 	 * Checks if the row at the given index is selected.
 	 *
 	 * @param {int} iRowIndex The row index for which the selection state should be retrieved
@@ -1185,8 +1170,6 @@ sap.ui.define([
 	 * @function
 	 */
 	AnalyticalTable.prototype.isExpanded = TreeTable.prototype.isExpanded;
-
-	AnalyticalTable.prototype._getSelectedIndicesCount = TreeTable.prototype._getSelectedIndicesCount;
 
 	/**
 	 * Returns the current analytical information of the given row or <code>null</code> if no infomation is available
