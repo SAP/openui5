@@ -376,21 +376,27 @@
 			oLastSection = oObjectPageLayout.getSections()[1],
 			oLastSubSection = oLastSection.getSubSections()[0],
 			oResizableControl = new sap.ui.core.HTML({ content: "<div style='height: 100px'></div>"}),
+			iScrollTopBeforeResize,
+			iScrollTopAfterResize,
 			done = assert.async();
 
-		oObjectPageLayout.setSelectedSection(oLastSection);
 		oLastSubSection.addBlock(oResizableControl);
+		oObjectPageLayout.setSelectedSection(oLastSection);
 
 		oObjectPageLayout.attachEventOnce("onAfterRenderingDOMReady", function() {
-
-			// make the height of the last section smaller
-			oResizableControl.getDomRef().style.height = "10px";
-
 			setTimeout(function() {
-				assert.ok(oObjectPageLayout.getSelectedSection() === oLastSection.getId(), "Selection is preserved");
-				oObjectPageLayout.destroy();
-				done();
-			}, 10);
+				iScrollTopBeforeResize = oObjectPageLayout._$opWrapper.scrollTop();
+				// make the height of the last section smaller
+				oResizableControl.getDomRef().style.height = "10px";
+
+				setTimeout(function() {
+					iScrollTopAfterResize = oObjectPageLayout._$opWrapper.scrollTop();
+					assert.strictEqual(oObjectPageLayout.getSelectedSection(), oLastSection.getId(), "Selection is preserved");
+					assert.strictEqual(iScrollTopBeforeResize, iScrollTopAfterResize, "scrollTop is preserved");
+					oObjectPageLayout.destroy();
+					done();
+				}, 500); // allow the page to scroll to the position of the selected section
+			}, 500);
 		});
 
 		// arrange
