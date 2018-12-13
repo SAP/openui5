@@ -5,12 +5,20 @@ sap.ui.define([
 	"sap/ui/rta/appVariant/AppVariantUtils",
 	"sap/ui/fl/FakeLrepConnectorSessionStorage",
 	"sap/ui/fl/registry/Settings",
+	"sap/ui/fl/transport/Transports",
+	"sap/ui/rta/Utils",
+	"sap/ui/fl/descriptorRelated/internal/Utils",
+	"sap/base/Log",
 	"sap/ui/thirdparty/sinon-4"
 ], function (
 	jQuery,
 	AppVariantUtils,
 	FakeLrepConnectorSessionStorage,
 	Settings,
+	Transports,
+	RtaUtils,
+	DescriptorUtils,
+	Log,
 	sinon
 ) {
 	"use strict";
@@ -45,6 +53,7 @@ sap.ui.define([
 					}
 				}
 			});
+
 		},
 		afterEach: function () {
 			sandbox.restore();
@@ -453,22 +462,322 @@ sap.ui.define([
 					text: "Error1"
 				}]
 			};
+
+			sandbox.stub(Log,"error").callThrough().withArgs("App variant error: ", "Error1").returns();
 			var oResult = AppVariantUtils.buildErrorInfo('MSG_COPY_UNSAVED_CHANGES_FAILED', oError, "AppVariantId");
 			assert.strictEqual(oResult.appVariantId, "AppVariantId", "then the appVariantId is correct");
 			assert.notEqual(oResult.text, undefined, "then the text is correct");
 
+			sandbox.restore();
+
 			oError = {
 				iamAppId: "IamId"
 			};
+
+			sandbox.stub(Log,"error").callThrough().withArgs("App variant error: ", "IAM App Id: IamId").returns();
 			oResult = AppVariantUtils.buildErrorInfo('MSG_COPY_UNSAVED_CHANGES_FAILED', oError, "AppVariantId");
 			assert.strictEqual(oResult.appVariantId, "AppVariantId", "then the appVariantId is correct");
 			assert.notEqual(oResult.text, undefined, "then the text is correct");
 
+			sandbox.restore();
+
 			oError = "Error2";
+
+			sandbox.stub(Log,"error").callThrough().withArgs("App variant error: ", "Error2").returns();
 			oResult = AppVariantUtils.buildErrorInfo('MSG_COPY_UNSAVED_CHANGES_FAILED', oError, "AppVariantId");
 			assert.strictEqual(oResult.appVariantId, "AppVariantId", "then the appVariantId is correct");
 			assert.notEqual(oResult.text, undefined, "then the text is correct");
 		});
+
+		QUnit.test("When triggerDeleteAppVariantFromLREP() is called in on Premise system when transport is given and locked", function (assert) {
+			var fnShowMessageBoxSpy = sandbox.spy(RtaUtils, "_showMessageBox");
+
+			var fnGetTransportsSpy = sandbox.spy(Transports.prototype, "getTransports");
+
+			return AppVariantUtils.triggerDeleteAppVariantFromLREP("customer.test.app.variant").then(function() {
+				assert.ok(fnShowMessageBoxSpy.notCalled, "then the _showMessageBox is never called");
+				assert.ok(fnGetTransportsSpy.calledTwice, "then the getTransports is called twice");
+			});
+		});
+
+		QUnit.test("When triggerDeleteAppVariantFromLREP() is called in on Premise system when transport is given and released", function (assert) {
+			var fnShowMessageBoxSpy = sandbox.stub(RtaUtils, "_showMessageBox").resolves();
+
+			var oTransport = {
+				"transports": [],
+				"localonly": false,
+				"errorCode": ""
+			};
+
+			var fnGetTransportsSpy = sandbox.stub(Transports.prototype, "getTransports").resolves(oTransport);
+
+			return AppVariantUtils.triggerDeleteAppVariantFromLREP("customer.test.app.variant").then(function() {
+				assert.ok(fnShowMessageBoxSpy.calledOnce, "then the _showMessageBox is called once");
+				assert.ok(fnGetTransportsSpy.calledOnce, "then the getTransports is called once");
+			});
+		});
+
+		QUnit.test("When triggerDeleteAppVariantFromLREP() is called in on Premise system when it is a local object", function (assert) {
+			var fnShowMessageBoxSpy = sandbox.stub(RtaUtils, "_showMessageBox").resolves();
+
+			var oTransport = {
+				"transports": [],
+				"localonly": true,
+				"errorCode": ""
+			};
+
+			var fnGetTransportsSpy = sandbox.stub(Transports.prototype, "getTransports").resolves(oTransport);
+
+			return AppVariantUtils.triggerDeleteAppVariantFromLREP("customer.test.app.variant").then(function() {
+				assert.ok(fnShowMessageBoxSpy.notCalled, "then the _showMessageBox is never called");
+				assert.ok(fnGetTransportsSpy.calledTwice, "then the getTransports is called twice");
+			});
+		});
+
+		QUnit.test("When triggerDeleteAppVariantFromLREP() is called in S/4 cloud system", function (assert) {
+			sandbox.stub(Settings, "getInstance").resolves(
+				new Settings({
+					"isKeyUser":true,
+					"isAtoAvailable":true,
+					"isAtoEnabled":true,
+					"isProductiveSystem":false
+				})
+			);
+
+			var fnShowMessageBoxSpy = sandbox.spy(RtaUtils, "_showMessageBox");
+
+			var oTransport = {
+				"transports": "NO_TRANSPORTS",
+				"localonly": false,
+				"errorCode": ""
+			};
+
+			var fnGetTransportsSpy = sandbox.stub(Transports.prototype, "getTransports").resolves(oTransport);
+
+			return AppVariantUtils.triggerDeleteAppVariantFromLREP("customer.test.app.variant").then(function() {
+				assert.ok(fnShowMessageBoxSpy.notCalled, "then the _showMessageBox is never called");
+				assert.ok(fnGetTransportsSpy.calledOnce, "then the getTransports is called once");
+			});
+		});
+
+		QUnit.test("When showRelevantDialog() is called with success message and Ok button is pressed", function (assert) {
+			var oInfo = {
+				text: "Text",
+				copyId: false
+			};
+
+			var bSuccessful = true;
+
+			sandbox.stub(sap.m.MessageBox, "show").callsFake(function(sText, mParameters) {
+				mParameters.onClose("OK");
+			});
+
+			return AppVariantUtils.showRelevantDialog(oInfo, bSuccessful).then(function() {
+				assert.ok("then the successful dialog pops up and OK button pressed");
+			});
+		});
+
+		QUnit.test("When showRelevantDialog() is called with success message and CopyID and Ok button is pressed", function (assert) {
+			var oInfo = {
+				text: "Text",
+				copyId: true,
+				appVariantId: "Whatever!"
+			};
+
+			var bSuccessful = true;
+
+			sandbox.stub(sap.m.MessageBox, "show").callsFake(function(sText, mParameters) {
+				mParameters.onClose("Copy ID and Close");
+			});
+
+			return AppVariantUtils.showRelevantDialog(oInfo, bSuccessful).then(function() {
+				assert.ok("then the successful dialog pops up and Copy ID and Close button pressed");
+			});
+		});
+
+		QUnit.test("When showRelevantDialog() is called from overview dialog with failure message and Close button is pressed", function (assert) {
+			var oInfo = {
+				text: "Text",
+				overviewDialog: true
+			};
+
+			sandbox.stub(sap.m.MessageBox, "show").callsFake(function(sText, mParameters) {
+				mParameters.onClose("Close");
+			});
+
+			return AppVariantUtils.showRelevantDialog(oInfo).then(function() {
+				assert.ok("then the failure dialog pops up and Close button pressed");
+			});
+		});
+
+		QUnit.test("When showRelevantDialog() is called with failure message and close button is pressed", function (assert) {
+			var oInfo = {
+				text: "Text"
+			};
+
+			sandbox.stub(sap.m.MessageBox, "show").callsFake(function(sText, mParameters) {
+				mParameters.onClose("Close");
+			});
+
+			return AppVariantUtils.showRelevantDialog(oInfo).catch(
+				function() {
+					assert.ok("then the failure dialog pops up and Ok button pressed" );
+				}
+			);
+		});
+
+		QUnit.test("When showRelevantDialog() is called with failure message and Copy ID and close button is pressed", function (assert) {
+			var oInfo = {
+				text: "Text",
+				copyId: true,
+				appVariantId: "Whatever!"
+			};
+
+			sandbox.stub(sap.m.MessageBox, "show").callsFake(function(sText, mParameters) {
+				mParameters.onClose("Copy ID and Close");
+			});
+
+			return AppVariantUtils.showRelevantDialog(oInfo).catch(
+				function() {
+					assert.ok("then the failure dialog pops up and Copy ID and close button pressed" );
+				}
+			);
+		});
+
+		QUnit.test("When showRelevantDialog() is called with info message (Delete an app variant) and Ok button is pressed", function (assert) {
+			var oInfo = {
+				text: "Text",
+				deleteAppVariant: true
+			};
+
+			sandbox.stub(sap.m.MessageBox, "show").callsFake(function(sText, mParameters) {
+				mParameters.onClose("OK");
+			});
+
+			return AppVariantUtils.showRelevantDialog(oInfo).then(function() {
+				assert.ok("then the info dialog pops up and Ok button pressed" );
+			});
+		});
+
+		QUnit.test("When showRelevantDialog() is called with info message (Delete an app variant) and Close button is pressed", function (assert) {
+			var oInfo = {
+				text: "Text",
+				deleteAppVariant: true
+			};
+
+			sandbox.stub(sap.m.MessageBox, "show").callsFake(function(sText, mParameters) {
+				mParameters.onClose("Close");
+			});
+
+			return AppVariantUtils.showRelevantDialog(oInfo).catch(
+				function() {
+					assert.ok("then the info dialog pops up and Close button pressed" );
+				}
+			);
+		});
+
+		QUnit.test("When navigateToFLPHomepage() method is called and navigation to launchad gets triggered", function (assert) {
+			window.bUShellNavigationTriggered = false;
+			var originalUShell = sap.ushell;
+
+			sap.ushell = Object.assign({}, sap.ushell, {
+				Container : {
+					getService : function() {
+						return {
+							toExternal : function() {
+								window.bUShellNavigationTriggered = true;
+							}
+						};
+					}
+				},
+				services : {
+					AppConfiguration: {
+						getCurrentApplication: function() {
+							return {
+								componentHandle: {
+									getInstance: function() {
+										return "testInstance";
+									}
+								}
+							};
+						}
+					}
+				}
+			});
+
+			return AppVariantUtils.navigateToFLPHomepage().then(function() {
+				assert.equal(window.bUShellNavigationTriggered, true, "then the navigation to fiorilaunchpad gets triggered");
+				sap.ushell = originalUShell;
+				delete window.bUShellNavigationTriggered;
+			});
+		});
+
+		QUnit.test("When navigateToFLPHomepage() method is called and navigation to launchad does not get triggered", function (assert) {
+			window.bUShellNavigationTriggered = false;
+			var originalUShell = sap.ushell;
+
+			sap.ushell = Object.assign({}, sap.ushell, {
+				Container : {
+					getService : function() {
+						return {
+							toExternal : function() {
+								window.bUShellNavigationTriggered = true;
+							}
+						};
+					}
+				},
+				services : {
+					AppConfiguration: {
+						getCurrentApplication: function() {
+							return {
+								componentHandle: {
+									getInstance: function() {
+										return undefined;
+									}
+								}
+							};
+						}
+					}
+				}
+			});
+
+			return AppVariantUtils.navigateToFLPHomepage().then(function() {
+				assert.equal(window.bUShellNavigationTriggered, false, "then the navigation to fiorilaunchpad does not get triggered");
+				sap.ushell = originalUShell;
+				delete window.bUShellNavigationTriggered;
+			});
+		});
+
+		QUnit.test("When triggerCatalogAssignment() method is called on S4 Cloud system", function (assert) {
+			var fnSendRequest = sandbox.stub(DescriptorUtils, "sendRequest").resolves();
+			return AppVariantUtils.triggerCatalogAssignment("AppVarId", "OriginalId").then(function() {
+				assert.ok(fnSendRequest.calledWith("/sap/bc/lrep/appdescr_variants/AppVarId?action=assignCatalogs&assignFromAppId=OriginalId", "POST"));
+			});
+		});
+
+		QUnit.test("When triggerDeleteAppVariantFromLREP() is called in S/4 cloud system and faield", function (assert) {
+			sandbox.stub(Settings, "getInstance").resolves(
+				new Settings({
+					"isKeyUser":true,
+					"isAtoAvailable":true,
+					"isAtoEnabled":true,
+					"isProductiveSystem":false
+				})
+			);
+
+			var fnShowMessageBoxSpy = sandbox.spy(RtaUtils, "_showMessageBox");
+
+			var fnGetTransportsSpy = sandbox.stub(Transports.prototype, "getTransports").returns(Promise.reject("Transport error"));
+			sandbox.stub(Log,"error").callThrough().withArgs("App variant error: ", "Transport error").returns();
+			sandbox.stub(AppVariantUtils, "showRelevantDialog").returns(Promise.reject(false));
+
+			return AppVariantUtils.triggerDeleteAppVariantFromLREP("customer.test.app.variant").catch(function(bSuccess) {
+				assert.equal(bSuccess, false, "Error: An unexpected exception occured");
+				assert.ok(fnShowMessageBoxSpy.notCalled, "then the _showMessageBox is never called");
+				assert.ok(fnGetTransportsSpy.calledOnce, "then the getTransports is called once");
+			});
+		});
+
 	});
 
 	QUnit.done(function () {

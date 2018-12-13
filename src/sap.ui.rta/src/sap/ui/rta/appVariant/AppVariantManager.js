@@ -7,7 +7,6 @@ sap.ui.define([
 	"sap/ui/rta/appVariant/AppVariantUtils",
 	"sap/m/MessageBox",
 	"sap/ui/rta/appVariant/Feature",
-	"sap/ui/fl/transport/TransportSelection",
 	"sap/ui/rta/appVariant/S4HanaCloudBackend",
 	"sap/ui/rta/Utils",
 	"sap/ui/core/BusyIndicator"
@@ -17,7 +16,6 @@ sap.ui.define([
 	AppVariantUtils,
 	MessageBox,
 	RtaAppVariantFeature,
-	TransportSelection,
 	S4HanaCloudBackend,
 	RtaUtils,
 	BusyIndicator
@@ -159,33 +157,6 @@ sap.ui.define([
 	};
 
 	/**
-	 * Populates the app variant descriptor's transport property with a local object or with the provided transport id
-	 */
-	AppVariantManager.prototype._onTransportInDialogSelected = function(oAppVariantDescriptor, oTransportInfo){
-		if (oTransportInfo){
-
-			if (oTransportInfo.transport && oTransportInfo.packageName !== "$TMP") {
-
-				var aPromises = [];
-
-				if (oTransportInfo.transport) {
-					aPromises.push(oAppVariantDescriptor.setTransportRequest(oTransportInfo.transport));
-				}
-
-				if (aPromises.length) {
-					return Promise.all(aPromises).then(function() {
-						return Promise.resolve(oAppVariantDescriptor);
-					});
-				}
-			}
-
-			return Promise.resolve(oAppVariantDescriptor);
-		}
-
-		return Promise.resolve(false);
-	};
-
-	/**
 	 *
 	 * @param {Object} oAppVariantData
 	 * @returns {Promise} Returns a promise
@@ -193,11 +164,6 @@ sap.ui.define([
 	 */
 	AppVariantManager.prototype.createDescriptor = function(oAppVariantData) {
 		var aInlineChanges = this.createAllInlineChanges(oAppVariantData);
-
-		var fnOpenTransportDialog = function(oTransportInput) {
-			var oTransportSelection = new TransportSelection();
-			return oTransportSelection.openTransportSelection(oTransportInput, this, RtaUtils.getRtaStyleClassName());
-		};
 
 		var oAppVariantDescriptor;
 		return Promise.all(aInlineChanges).then(function(aResponses){
@@ -211,11 +177,20 @@ sap.ui.define([
 			return Promise.all(aInlineChanges);
 		}).then(function() {
 			var sNamespace = oAppVariantDescriptor.getNamespace();
-			var oTransportInput = AppVariantUtils.getTransportInput("",sNamespace, "manifest", "appdescr_variant");
-			return fnOpenTransportDialog.call(this, oTransportInput);
-		}.bind(this)).then(function(oTransportInfo) {
-			return this._onTransportInDialogSelected(oAppVariantDescriptor, oTransportInfo);
-		}.bind(this))["catch"](function(oError) {
+			var oSettings = oAppVariantDescriptor.getSettings();
+
+			if (AppVariantUtils.isS4HanaCloud(oSettings)) {
+				var oTransportInput = AppVariantUtils.getTransportInput("", sNamespace, "manifest", "appdescr_variant");
+				return AppVariantUtils.openTransportSelection(oTransportInput);
+			} else {
+				return Promise.resolve({
+					packageName: "$TMP",
+					transport: ""
+				});
+			}
+		}).then(function(oTransportInfo) {
+			return AppVariantUtils.onTransportInDialogSelected(oAppVariantDescriptor, oTransportInfo);
+		}).catch(function(oError) {
 			var oErrorInfo = AppVariantUtils.buildErrorInfo("MSG_CREATE_DESCRIPTOR_FAILED", oError, oAppVariantDescriptor.getId());
 			BusyIndicator.hide();
 			return AppVariantUtils.showRelevantDialog(oErrorInfo, false);
@@ -255,7 +230,7 @@ sap.ui.define([
 	 * @description Persists the new created app variant into the layered repository
 	 */
 	AppVariantManager.prototype.saveAppVariantToLREP = function(oAppVariantDescriptor) {
-		return oAppVariantDescriptor.submit()["catch"](function(oError) {
+		return oAppVariantDescriptor.submit().catch(function(oError) {
 			BusyIndicator.hide();
 			var oErrorInfo = AppVariantUtils.buildErrorInfo("MSG_SAVE_APP_VARIANT_FAILED", oError, oAppVariantDescriptor.getId());
 			return AppVariantUtils.showRelevantDialog(oErrorInfo, false);
@@ -287,8 +262,8 @@ sap.ui.define([
 	AppVariantManager.prototype.copyUnsavedChangesToLREP = function(sAppVariantId, bCopyUnsavedChanges) {
 		var oCommandStack = this.getCommandSerializer().getCommandStack();
 		if (bCopyUnsavedChanges && oCommandStack.getAllExecutedCommands().length) {
-			return this._takeOverDirtyChangesByAppVariant(sAppVariantId)["catch"](function(oError) {
-				return this._deleteAppVariantFromLREP(sAppVariantId)["catch"](function(oError) {
+			return this._takeOverDirtyChangesByAppVariant(sAppVariantId).catch(function(oError) {
+				return this._deleteAppVariantFromLREP(sAppVariantId).catch(function(oError) {
 					BusyIndicator.hide();
 					var oErrorInfo = AppVariantUtils.buildErrorInfo("SAVE_AS_MSG_DELETE_APP_VARIANT", oError, sAppVariantId);
 					return AppVariantUtils.showRelevantDialog(oErrorInfo, false);
@@ -311,7 +286,7 @@ sap.ui.define([
 	 */
 	AppVariantManager.prototype.triggerCatalogAssignment = function(oAppVariantDescriptor) {
 		if (AppVariantUtils.isS4HanaCloud(oAppVariantDescriptor.getSettings())) {
-			return AppVariantUtils.triggerCatalogAssignment(oAppVariantDescriptor.getId(), oAppVariantDescriptor.getReference())["catch"](function(oError) {
+			return AppVariantUtils.triggerCatalogAssignment(oAppVariantDescriptor.getId(), oAppVariantDescriptor.getReference()).catch(function(oError) {
 				BusyIndicator.hide();
 				var oErrorInfo = AppVariantUtils.buildErrorInfo("MSG_CATALOG_ASSIGNMENT_FAILED", oError, oAppVariantDescriptor.getId());
 				return AppVariantUtils.showRelevantDialog(oErrorInfo, false);
@@ -331,19 +306,13 @@ sap.ui.define([
 	AppVariantManager.prototype.notifyKeyUserWhenTileIsReady = function(sIamId, sAppVariantId) {
 		var oS4HanaCloudBackend = new S4HanaCloudBackend();
 
-		return oS4HanaCloudBackend.notifyFlpCustomizingIsReady(sIamId, function(sId) {
-			var sMessage = AppVariantUtils.getText("MSG_SAVE_APP_VARIANT_NEW_TILE_AVAILABLE");
-			var sTitle = AppVariantUtils.getText("SAVE_APP_VARIANT_NEW_TILE_AVAILABLE_TITLE");
-
-			return new Promise(function(resolve) {
-				MessageBox.show(sMessage, {
-					icon: MessageBox.Icon.INFORMATION,
-					title: sTitle,
-					onClose: resolve,
-					styleClass: RtaUtils.getRtaStyleClassName()
-				});
-			});
-		})["catch"](function(oError) {
+		return oS4HanaCloudBackend.notifyFlpCustomizingIsReady(sIamId, function() {
+			return RtaUtils._showMessageBox(
+				MessageBox.Icon.INFORMATION,
+				"SAVE_APP_VARIANT_NEW_TILE_AVAILABLE_TITLE",
+				"MSG_SAVE_APP_VARIANT_NEW_TILE_AVAILABLE"
+			);
+		}).catch(function(oError) {
 			BusyIndicator.hide();
 			var oErrorInfo = AppVariantUtils.buildErrorInfo("MSG_TILE_CREATION_FAILED", oError, sAppVariantId);
 			oErrorInfo.copyId = true;
@@ -380,24 +349,6 @@ sap.ui.define([
 	};
 
 	/**
-	 * Navigates to the Fiorilaunchpad
-	 */
-	AppVariantManager.prototype._navigateToFLPHomepage = function() {
-		var oApplication = sap.ushell.services.AppConfiguration.getCurrentApplication();
-		var oComponentInstance = oApplication.componentHandle.getInstance();
-
-		if (oComponentInstance) {
-			var oCrossAppNav = sap.ushell.Container.getService("CrossApplicationNavigation");
-			if (oCrossAppNav.toExternal){
-				oCrossAppNav.toExternal({target: {shellHash: "#"}}, oComponentInstance);
-				return Promise.resolve();
-			}
-		}
-
-		return Promise.resolve();
-	};
-
-	/**
 	 *
 	 * @param {Object} oAppVariantDescriptor
 	 * @param {Boolean} bSaveAsTriggeredFromRtaToolbar
@@ -410,8 +361,8 @@ sap.ui.define([
 		var oSuccessInfo = this._buildSuccessInfo(oAppVariantDescriptor, bSaveAsTriggeredFromRtaToolbar);
 		BusyIndicator.hide();
 		return AppVariantUtils.showRelevantDialog(oSuccessInfo, true).then(function() {
-			return bSaveAsTriggeredFromRtaToolbar ? this._navigateToFLPHomepage() : RtaAppVariantFeature.onGetOverview(true);
-		}.bind(this));
+			return bSaveAsTriggeredFromRtaToolbar ? AppVariantUtils.navigateToFLPHomepage() : RtaAppVariantFeature.onGetOverview(true);
+		});
 	};
 
 	return AppVariantManager;

@@ -73,7 +73,7 @@ sap.ui.define([
 				}
 			];
 
-			sandbox.stub(AppVariantOverviewUtils, "getAppVariantOverview").returns(Promise.resolve(aAppVariantOverviewAttributes));
+			sandbox.stub(AppVariantOverviewUtils, "getAppVariantOverview").resolves(aAppVariantOverviewAttributes);
 
 			this.oAppVariantOverviewDialog = new AppVariantOverviewDialog({
 				idRunningApp: "id1"
@@ -110,7 +110,7 @@ sap.ui.define([
 				}
 			];
 
-			sandbox.stub(AppVariantOverviewUtils, "getAppVariantOverview").returns(Promise.resolve(aAppVariantOverviewAttributes));
+			sandbox.stub(AppVariantOverviewUtils, "getAppVariantOverview").resolves(aAppVariantOverviewAttributes);
 
 			this.oAppVariantOverviewDialog = new AppVariantOverviewDialog({
 				idRunningApp: "id1"
@@ -166,7 +166,7 @@ sap.ui.define([
 				}
 			];
 
-			sandbox.stub(AppVariantOverviewUtils, "getAppVariantOverview").returns(Promise.resolve(aAppVariantOverviewAttributes));
+			sandbox.stub(AppVariantOverviewUtils, "getAppVariantOverview").resolves(aAppVariantOverviewAttributes);
 
 			this.oAppVariantOverviewDialog = new AppVariantOverviewDialog({
 				idRunningApp: "id1"
@@ -213,7 +213,7 @@ sap.ui.define([
 				}
 			];
 
-			sandbox.stub(AppVariantOverviewUtils, "getAppVariantOverview").returns(Promise.resolve(aAppVariantOverviewAttributes));
+			sandbox.stub(AppVariantOverviewUtils, "getAppVariantOverview").resolves(aAppVariantOverviewAttributes);
 
 			this.oAppVariantOverviewDialog = new AppVariantOverviewDialog({
 				idRunningApp: "id1"
