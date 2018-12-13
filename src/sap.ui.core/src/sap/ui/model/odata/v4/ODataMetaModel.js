@@ -1225,10 +1225,12 @@ sap.ui.define([
 						//       e.g. ".../$ReturnType/@..."
 						vResult = (mScope.$Annotations || {})[sTarget] || {};
 						bODataMode = false; // switch to pure "JSON" drill-down
+					} else if (sSegment === "$" && i + 1 < aSegments.length) {
+						return log(WARNING, "Unsupported path after $");
 					}
 				}
 
-				if (sSegment !== "@") {
+				if (sSegment !== "@" && sSegment !== "$") {
 					sName = bODataMode || sSegment[0] === "@" ? sSegment : undefined;
 					sTarget = bODataMode ? sTarget + "/" + sSegment : undefined;
 					vResult = vResult[sSegment];
@@ -1984,7 +1986,7 @@ sap.ui.define([
 	 * name (example path "/$EntityContainer/..."), a simple identifier (example path
 	 * "/TEAMS/$NavigationPropertyBinding/TEAM_2_EMPLOYEES/...") or even a path according to
 	 * "14.5.12 Expression edm:Path" etc. (example path
-	 * "/TEAMS/$Type/@com.sap.vocabularies.UI.v1.LineItem/0/Value/$Path/...").
+	 * "/TEAMS/@com.sap.vocabularies.UI.v1.LineItem/0/Value/$Path/...").
 	 *
 	 * Segments starting with an "@" character, for example "@com.sap.vocabularies.Common.v1.Label",
 	 * address annotations at the current object. As the first segment, they refer to the single
@@ -2085,6 +2087,15 @@ sap.ui.define([
 	 * "/EMPLOYEES/$Type/". That entity type in turn is a map of all its OData children (that is,
 	 * structural and navigation properties) and determines the set of possible child names that
 	 * might be used after the trailing slash.
+	 *
+	 * "$" can be used as the last segment to continue a path and thus force scope lookup, but no
+	 * OData simple identifier preparations. In this way, it serves as a placeholder for a technical
+	 * property. The path must not continue after "$", except for a computed annotation.
+	 * Example: "/TEAMS/@com.sap.vocabularies.UI.v1.LineItem/0/Value/$Path/$" addresses the
+	 * referenced property itself, not the corresponding type like
+	 * "/TEAMS/@com.sap.vocabularies.UI.v1.LineItem/0/Value/$Path/" does.
+	 * "/TEAMS/@com.sap.vocabularies.UI.v1.LineItem/0/Target/$NavigationPropertyPath/$@@.isMultiple"
+	 * calls a computed annotation on the navigation property itself, not on the corresponding type.
 	 *
 	 * Any other segment, including an OData simple identifier, is looked up as a property of the
 	 * current object.
