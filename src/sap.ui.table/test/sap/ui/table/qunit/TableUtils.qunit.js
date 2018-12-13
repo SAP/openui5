@@ -342,11 +342,9 @@ sap.ui.define([
 		assert.ok(!TableUtils.hasSelectAll(), "Returned false: No parameter passed");
 		test(false, SelectionMode.None, false);
 		test(false, SelectionMode.Single, false);
-		test(false, SelectionMode.Multi, false);
 		test(false, SelectionMode.MultiToggle, false);
 		test(true, SelectionMode.None, false);
 		test(true, SelectionMode.Single, false);
-		test(true, SelectionMode.Multi, true);
 		test(true, SelectionMode.MultiToggle, true);
 	});
 

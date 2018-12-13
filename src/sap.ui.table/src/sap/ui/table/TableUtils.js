@@ -210,8 +210,7 @@ sap.ui.define([
 		 */
 		hasSelectAll: function(oTable) {
 			var sSelectionMode = oTable ? oTable.getSelectionMode() : SelectionMode.None;
-			return (sSelectionMode === SelectionMode.Multi || sSelectionMode === SelectionMode.MultiToggle)
-				   && oTable.getEnableSelectAll();
+			return sSelectionMode === SelectionMode.MultiToggle && oTable.getEnableSelectAll();
 		},
 
 		/**
