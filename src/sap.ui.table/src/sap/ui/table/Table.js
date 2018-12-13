@@ -1456,7 +1456,7 @@ sap.ui.define([
 			TableUtils.deregisterResizeHandler(that, "");
 		}
 
-		if (this._bInvalid || !oDomRef) {
+		if (this._bInvalid || !oDomRef || !sap.ui.getCore().isThemeApplied()) {
 			return;
 		}
 
