@@ -30,7 +30,7 @@
             <Title text="Result"/>
             <Toolbar style="Clear" class="editorToolbar">
                 <Button text="Preview"
-                        press="executeCurrentSrc"
+                        press="requestExecuteCurrentSrc"
                         enabled="{= !${viewModel>/autoPreview}}"/>
                 <CheckBox text="Auto-preview"
                           selected="{viewModel>/autoPreview}"/>
