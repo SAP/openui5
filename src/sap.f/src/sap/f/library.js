@@ -8,6 +8,7 @@
 sap.ui.define(["sap/ui/base/DataType",
 	"sap/ui/Global",
 	"sap/ui/core/library",
+	"sap/ui/layout/library", // library dependency
 	"sap/m/library"], // library dependency
 	function(DataType) {
 
