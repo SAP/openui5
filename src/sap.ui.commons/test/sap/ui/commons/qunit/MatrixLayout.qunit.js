@@ -70,6 +70,9 @@ sap.ui.define([
 			oImg = new Image("IMG-" + i + "-" + j);
 			oMLC.addContent(oImg);
 			oImg.setSrc("test-resources/sap/ui/commons/images/SAPLogo.gif");
+			// Set default sizes of the iamge as the gif may not be loaded by the time the assert happens
+			oImg.setWidth("73px");
+			oImg.setHeight("36px");
 			oImg.setAlt("Cell @" + i + "," + j);
 			if (i == 1){
 				oImg.setHeight("20px");

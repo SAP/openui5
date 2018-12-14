@@ -449,6 +449,81 @@ sap.ui.define([
 			return InvisibleText.getStaticId("sap.m", "COMBOBOX_AVAILABLE_OPTIONS");
 		};
 
+		/**
+		 * Gets the control's List.
+		 *
+		 * @returns {sap.m.List} The list
+		 * @private
+		 */
+		ComboBoxBase.prototype.getList = function() {
+			return this._oList;
+		};
+
+		/**
+		 * Gets the item corresponding to given list item.
+		 *
+		 * @param {sap.m.StandardListItem | null} oListItem The given list item
+		 * @return {sap.ui.core.Item} The corresponding item
+		 * @private
+		 */
+		ComboBoxBase.prototype._getItemByListItem = function(oListItem) {
+			return this._getItemBy(oListItem, "ListItem");
+		};
+
+		/**
+		 * Gets the item corresponding to given data object.
+		 *
+		 * @param {Object | null} oDataObject The given object
+		 * @param {string} sDataName The data name
+		 * @return {sap.ui.core.Item} The corresponding item
+		 * @private
+		 */
+		ComboBoxBase.prototype._getItemBy = function(oDataObject, sDataName) {
+			sDataName = this.getRenderer().CSS_CLASS_COMBOBOXBASE + sDataName;
+
+			for ( var i = 0, aItems = this.getItems(), iItemsLength = aItems.length; i < iItemsLength; i++) {
+				if (aItems[i].data(sDataName) === oDataObject) {
+					return aItems[i];
+				}
+			}
+
+			return null;
+		};
+
+		/**
+		 * Checks if the list is in suggestions mode.
+		 *
+		 * @returns {boolean} true if the list has at least one not visible item, false if all items in the list are visible.
+		 * @private
+		 */
+		ComboBoxBase.prototype._isListInSuggestMode = function() {
+			return this.getList().getItems().some(function(oListItem) {
+				return !oListItem.getVisible() && this._getItemByListItem(oListItem).getEnabled();
+			}, this);
+		};
+
+		/**
+		 * Gets the control's ListItem.
+		 *
+		 * @param {sap.ui.core.Item} oItem The item
+		 * @returns {sap.m.StandardListItem | null} The ListItem
+		 * @private
+		 */
+		ComboBoxBase.prototype.getListItem = function(oItem) {
+			return oItem ? oItem.data(this.getRenderer().CSS_CLASS_COMBOBOXBASE + "ListItem") : null;
+		};
+
+		/**
+		 * Gets the selectable property of sap.ui.core.Item
+		 *
+		 * @param {sap.ui.core.Item} oItem The item in question
+		 * @returns {boolean} The selectable value
+		 * @private
+		 */
+		ComboBoxBase.prototype.getSelectable = function(oItem) {
+			return oItem._bSelectable;
+		};
+
 		/* =========================================================== */
 		/* Lifecycle methods                                           */
 		/* =========================================================== */
@@ -1096,8 +1171,15 @@ sap.ui.define([
 		 * @returns {sap.ui.core.Item | null} The first enabled item
 		 */
 		ComboBoxBase.prototype.findFirstEnabledItem = function(aItems) {
-			var oList = this.getList();
-			return oList ? oList.findFirstEnabledItem(aItems) : null;
+			aItems = aItems || this.getItems();
+
+			for (var i = 0; i < aItems.length; i++) {
+				if (aItems[i].getEnabled()) {
+					return aItems[i];
+				}
+			}
+
+			return null;
 		};
 
 		/**
@@ -1107,8 +1189,8 @@ sap.ui.define([
 		 * @returns {sap.ui.core.Item | null} The last enabled item
 		 */
 		ComboBoxBase.prototype.findLastEnabledItem = function(aItems) {
-			var oList = this.getList();
-			return oList ? oList.findLastEnabledItem(aItems) : null;
+			aItems = aItems || this.getItems();
+			return this.findFirstEnabledItem(aItems.reverse());
 		};
 
 		/**
@@ -1134,8 +1216,15 @@ sap.ui.define([
 		 * @protected
 		 */
 		ComboBoxBase.prototype.getVisibleItems = function() {
-			var oList = this.getList();
-			return oList ? oList.getVisibleItems() : [];
+			for (var i = 0, oListItem, aItems = this.getItems(), aVisibleItems = []; i < aItems.length; i++) {
+				oListItem = this.getListItem(aItems[i]);
+
+				if (oListItem && oListItem.getVisible()) {
+					aVisibleItems.push(aItems[i]);
+				}
+			}
+
+			return aVisibleItems;
 		};
 
 		/*
@@ -1173,8 +1262,7 @@ sap.ui.define([
 		 * @returns {sap.ui.core.Item[]} An array containing the selectables items.
 		 */
 		ComboBoxBase.prototype.getSelectableItems = function() {
-			var oList = this.getList();
-			return oList ? oList.getSelectableItems() : [];
+			return this.getEnabledItems(this.getVisibleItems());
 		};
 
 		/**
@@ -1187,8 +1275,15 @@ sap.ui.define([
 		 * @returns {sap.ui.core.Item | null} The matched item or <code>null</code>.
 		 */
 		ComboBoxBase.prototype.findItem = function(sProperty, sValue) {
-			var oList = this.getList();
-			return oList ? oList.findItem(sProperty, sValue) : null;
+			var sMethod = "get" + sProperty.charAt(0).toUpperCase() + sProperty.slice(1);
+
+			for (var i = 0, aItems = this.getItems(); i < aItems.length; i++) {
+				if (aItems[i][sMethod]() === sValue) {
+					return aItems[i];
+				}
+			}
+
+			return null;
 		};
 
 		/*
@@ -1241,9 +1336,9 @@ sap.ui.define([
 		 *
 		 */
 		ComboBoxBase.prototype.clearFilter = function() {
-			for (var i = 0, aItems = this.getItems(); i < aItems.length; i++) {
-				aItems[i].bVisible = true;
-			}
+			this.getItems().forEach(function(oItem) {
+				this.getListItem(oItem).setVisible(oItem.getEnabled() && this.getSelectable(oItem));
+			}, this);
 		};
 
 		/**
@@ -1292,7 +1387,10 @@ sap.ui.define([
 				oItem.attachEvent("_change", this.onItemChange, this);
 			}
 
-			this._scheduleOnItemsLoadedOnce();
+			if (this.getList()) {
+				this.getList().addItem(this._mapItemToListItem(oItem));
+			}
+
 			return this;
 		};
 
@@ -1357,13 +1455,15 @@ sap.ui.define([
 		 * @public
 		 */
 		ComboBoxBase.prototype.getEnabledItems = function(aItems) {
-			var oList = this.getList();
-			return oList ? oList.getEnabledItems(aItems) : [];
+			aItems = aItems || this.getItems();
+
+			return aItems.filter(function(oItem) {
+				return oItem.getEnabled();
+			});
 		};
 
 		/**
-		 * Gets the item with the given key from the aggregation named <code>items</code>.
-		 *
+		 * Gets the item with the given key from the aggregation named <code>items</code>.<br>
 		 * <b>Note:</b> If duplicate keys exist, the first item matching the key is returned.
 		 *
 		 * @param {string} sKey An item key that specifies the item to retrieve.
@@ -1371,8 +1471,7 @@ sap.ui.define([
 		 * @public
 		 */
 		ComboBoxBase.prototype.getItemByKey = function(sKey) {
-			var oList = this.getList();
-			return oList ? oList.getItemByKey(sKey) : null;
+			return this.findItem("key", sKey);
 		};
 
 		/**

@@ -559,7 +559,7 @@ function(Press,
 		assert.equal(oOpenPickerDomRef.css("display"), "block", "Checking Popover's display css property");
 
 		var oPressItem = new Press();
-		oPressItem.executeOn(this.oComboBox.getItems()[1]);
+		oPressItem.executeOn(this.oComboBox.getListItem(this.oComboBox.getItems()[1]));
 
 		this.clock.tick(500);
 
