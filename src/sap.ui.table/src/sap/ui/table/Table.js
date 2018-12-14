@@ -115,9 +115,9 @@ sap.ui.define([
 			 * content density configuration. The actual height can increase based on the content.
 			 *
 			 * In the table's body, it defines the height of the row content. The actual row height is also influenced by other factors, such as
-			 * the border width. If the <code>visibleRowCountMode</code> property is set to {@link sap.ui.table.VisibleRowCountMode.Fixed Fixed} or
-			 * {@link sap.ui.table.VisibleRowCountMode.Interactive Interactive}, the value defines the minimum height, and the actual height can
-			 * increase based on the content. If the mode is {@link sap.ui.table.VisibleRowCountMode.Auto Auto}, the value defines the actual
+			 * the border width. If the <code>visibleRowCountMode</code> property is set to {@link sap.ui.table.VisibleRowCountMode Fixed} or
+			 * {@link sap.ui.table.VisibleRowCountMode Interactive}, the value defines the minimum height, and the actual height can
+			 * increase based on the content. If the mode is {@link sap.ui.table.VisibleRowCountMode Auto}, the value defines the actual
 			 * height, and any content that doesn't fit is cut off.
 			 *
 			 * If no value is set (includes 0), a default height is applied based on the content density configuration. In any
