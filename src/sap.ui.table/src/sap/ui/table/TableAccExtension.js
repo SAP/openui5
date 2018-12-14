@@ -1212,8 +1212,9 @@ sap.ui.define([
 		}
 
 		var oRow = oRowSettings._getRow();
-		if (oRow) {
-			var oHighlightTextElement = oRow.getDomRef("highlighttext");
+		var oHighlightTextElement = oRow ? oRow.getDomRef("highlighttext") : null;
+
+		if (oHighlightTextElement) {
 			oHighlightTextElement.innerText = oRowSettings._getHighlightText();
 		}
 	};

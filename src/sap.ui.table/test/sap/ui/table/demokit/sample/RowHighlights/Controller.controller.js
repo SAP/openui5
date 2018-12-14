@@ -34,12 +34,19 @@ sap.ui.define([
 							oProduct.Status = "None";
 						} else if (oProduct.Price < 300) {
 							oProduct.Status = "Success";
+							oProduct.StatusText = "Custom success highlight text";
 						} else if (oProduct.Price < 600) {
 							oProduct.Status = "Warning";
+							oProduct.StatusText = "Custom warning highlight text";
 						} else if (oProduct.Price < 900) {
 							oProduct.Status = "Error";
+							oProduct.StatusText = "Custom error highlight text";
 						} else if (oProduct.Price < 1200) {
 							oProduct.Status = "Information";
+							oProduct.StatusText = "Custom information highlight text";
+						} else if (oProduct.Price < 1500) {
+							oProduct.Status = "Indication01";
+							oProduct.StatusText = "Custom indication highlight text";
 						} else {
 							oProduct.Status = "None";
 						}

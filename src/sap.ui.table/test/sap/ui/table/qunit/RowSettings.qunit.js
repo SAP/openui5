@@ -106,6 +106,12 @@ sap.ui.define([
 				return null;
 			}
 		},
+		assertText: function(assert, iRowIndex, sExpectedText) {
+			var oRow = oTable.getRows()[iRowIndex];
+			var oHighlightTextElement = oRow.getDomRef("highlighttext");
+
+			assert.strictEqual(oHighlightTextElement.innerHTML, sExpectedText, "The highlight text is correct");
+		},
 		assertColor: function(assert, iRowIndex, sExpectedBackgroundColor) {
 			var oRow = oTable.getRows()[iRowIndex];
 			var oHighlightElement = oRow.getDomRef("highlight");
@@ -254,6 +260,7 @@ sap.ui.define([
 		var oOnAfterRenderingEventListener = this.spy();
 
 		this.assertColor(assert, 0, this.hexToRgb(ThemeParameters.get("sapUiSuccessBorder")));
+		this.assertText(assert, 0, TableUtils.getResourceBundle().getText("TBL_ROW_STATE_SUCCESS"));
 
 		oTable.addEventDelegate({onAfterRendering: oOnAfterRenderingEventListener});
 		oTable.getRows()[0].getAggregation("_settings").setHighlight(MessageType.Error);
@@ -261,6 +268,20 @@ sap.ui.define([
 
 		assert.ok(oOnAfterRenderingEventListener.notCalled, "The table did not re-render after changing a highlight");
 		this.assertColor(assert, 0, this.hexToRgb(ThemeParameters.get("sapUiErrorBorder")));
+		this.assertText(assert, 0, TableUtils.getResourceBundle().getText("TBL_ROW_STATE_ERROR"));
+	});
+
+	QUnit.test("setHighlightText", function(assert) {
+		var oOnAfterRenderingEventListener = this.spy();
+
+		this.assertText(assert, 0, TableUtils.getResourceBundle().getText("TBL_ROW_STATE_SUCCESS"));
+
+		oTable.addEventDelegate({onAfterRendering: oOnAfterRenderingEventListener});
+		oTable.getRows()[0].getAggregation("_settings").setHighlightText("testitext");
+		sap.ui.getCore().applyChanges();
+
+		assert.ok(oOnAfterRenderingEventListener.notCalled, "The table did not re-render after changing a highlight text");
+		this.assertText(assert, 0, "testitext");
 	});
 
 	QUnit.test("_getHighlightCSSClassName", function(assert) {
@@ -298,7 +319,7 @@ sap.ui.define([
 		}
 	});
 
-	QUnit.test("_getHighlightText", function(assert) {
+	QUnit.test("_getHighlightText - Default texts", function(assert) {
 		var aRows = oTable.getRows();
 
 		for (var iRowIndex = 0; iRowIndex < iRowsWithHighlight; iRowIndex++) {
@@ -319,6 +340,26 @@ sap.ui.define([
 
 			assert.strictEqual(oRowSettings._getHighlightText(), sHighlightText,
 				"The correct text was returned for highlight " + oRowSettings.getHighlight());
+		}
+	});
+
+	QUnit.test("_getHighlightText - Custom texts", function(assert) {
+		var aRows = oTable.getRows();
+		var sCustomHighlightText = "Custom highlight text";
+
+		for (var iRowIndex = 0; iRowIndex < iRowsWithHighlight; iRowIndex++) {
+			var oRow = aRows[iRowIndex];
+			var oRowSettings = oRow.getAggregation("_settings");
+			var sHighlightText = sCustomHighlightText;
+
+			oRowSettings.setHighlightText(sCustomHighlightText);
+
+			if (iRowIndex === 4) { // MessageType.None
+				sHighlightText = "";
+			}
+
+			assert.strictEqual(oRowSettings._getHighlightText(), sHighlightText,
+				"The correct custom text was returned for highlight " + oRowSettings.getHighlight());
 		}
 	});
 
