@@ -2006,7 +2006,7 @@ function(
 		this.removeStyleClass("sapMFocus");
 
 		// reset the value state
-		if (this.getValueState() === ValueState.Error) {
+		if (this.getValueState() === ValueState.Error && this.getValueStateText() === this._oRbM.getText("VALUE_STATE_ERROR_ALREADY_SELECTED")) {
 			this.setValueState(ValueState.None);
 		}
 
