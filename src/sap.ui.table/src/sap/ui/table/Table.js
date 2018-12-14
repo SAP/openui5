@@ -2890,11 +2890,11 @@ sap.ui.define([
 	};
 
 	/**
-	 * Gets sorted columns in the order of which the sort API at the table or column was called.
-	 * Sorting on binding level is not reflected here.
+	 * Gets the sorted columns in the order in which sorting was performed through the {@link sap.ui.table.Table#sort} method and menus.
+	 * Does not reflect sorting at binding level or the columns sort visualization set with {@link sap.ui.table.Column#setSorted} and
+	 * {@link sap.ui.table.Column#setSortOrder}.
 	 *
 	 * @see sap.ui.table.Table#sort
-	 * @see sap.ui.table.Column#sort
 	 * @returns {sap.ui.table.Column[]} Array of sorted columns
 	 * @public
 	 * @ui5-metamodel This method also will be described in the UI5 (legacy) designtime metamodel
