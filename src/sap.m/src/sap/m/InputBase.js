@@ -553,7 +553,16 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control', 'sap/ui/
 	 * @param {jQuery.Event} oEvent The event object.
 	 */
 	InputBase.prototype.oninput = function(oEvent) {
+		this.handleInput(oEvent);
+	};
 
+	/**
+	 * Handles the input event of the control
+	 * @param {jQuery.Event} oEvent The event object.
+	 * @protected
+	 */
+
+	InputBase.prototype.handleInput = function(oEvent) {
 		// ie 10+ fires the input event when an input field with a native placeholder is focused
 		if (this._bIgnoreNextInput) {
 			this._bIgnoreNextInput = false;
