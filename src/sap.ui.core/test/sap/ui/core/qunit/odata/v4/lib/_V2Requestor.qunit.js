@@ -1381,6 +1381,10 @@ sap.ui.define([
 		mHeaders : { "DataServiceVersion" : "2.0" },
 		bVersionOptional : true
 	}, {
+		iCallCount : 1,
+		mHeaders : { "DataServiceVersion" : "2.0;fooBar" },
+		bVersionOptional : true
+	}, {
 		iCallCount : 2,
 		mHeaders : {},
 		bVersionOptional : true
@@ -1391,6 +1395,10 @@ sap.ui.define([
 	}, {
 		iCallCount : 1,
 		mHeaders : { "DataServiceVersion" : "1.0" },
+		bVersionOptional : true
+	}, {
+		iCallCount : 1,
+		mHeaders : { "DataServiceVersion" : "1.0;fooBar" },
 		bVersionOptional : true
 	}].forEach(function (oFixture, i) {
 		QUnit.test("doCheckVersionHeader, success cases - " + i, function (assert) {
@@ -1416,6 +1424,10 @@ sap.ui.define([
 		iCallCount : 1,
 		sError : "value 'foo' in response for /Foo('42')/Bar",
 		mHeaders : { "DataServiceVersion" : "foo" }
+	}, {
+		iCallCount : 1,
+		sError : "value '1.00' in response for /Foo('42')/Bar",
+		mHeaders : { "DataServiceVersion" : "1.00" }
 	}, {
 		iCallCount : 2,
 		sError : "'OData-Version' header with value 'baz' in response for /Foo('42')/Bar",

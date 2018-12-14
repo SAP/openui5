@@ -522,8 +522,11 @@ sap.ui.define([
 				+ "received 'OData-Version' header with value '" + vODataVersion
 				+ "' in response for " + this.sServiceUrl + sResourcePath);
 		}
-		if (sDataServiceVersion === "1.0" || sDataServiceVersion === "2.0"
-				|| !sDataServiceVersion) {
+		if (!sDataServiceVersion) {
+			return;
+		}
+		sDataServiceVersion = sDataServiceVersion.split(";")[0];
+		if (sDataServiceVersion === "1.0" || sDataServiceVersion === "2.0") {
 			return;
 		}
 		throw new Error("Expected 'DataServiceVersion' header with value '1.0' or '2.0' but "
