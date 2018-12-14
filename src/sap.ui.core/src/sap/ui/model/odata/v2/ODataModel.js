@@ -229,7 +229,7 @@ sap.ui.define([
 				aBindableResponseHeaders = mParameters.bindableResponseHeaders;
 				sWarmupUrl = mParameters.warmupUrl;
 			}
-			this.mCanonicalPaths = {};
+
 			this.sWarmupUrl = sWarmupUrl;
 			this.bWarmup = !!sWarmupUrl;
 			this.mSupportedBindingModes = {"OneWay": true, "OneTime": true, "TwoWay":true};
@@ -1489,7 +1489,6 @@ sap.ui.define([
 	 */
 	ODataModel.prototype.removeData = function(){
 		this.oData = {};
-		this.mCanonicalPaths = {};
 	};
 
 	/**
@@ -5702,7 +5701,6 @@ sap.ui.define([
 			delete this.pAnnotationsLoaded;
 		}
 
-		delete this.mCanonicalPaths;
 	};
 
 	/**
@@ -5944,18 +5942,13 @@ sap.ui.define([
 			return null;
 		}
 		var aParts = sResolvedPath.split("/"),
-			aPropertyPath = [],
 			oEntity = null,
-			sEntryPath,
-			oObject,
-			sKey;
-
+			aPropertyPath = [];
 		while (aParts.length > 0)  {
-			sEntryPath = aParts.join("/");
-			oObject = this._getObject(sEntryPath);
-
+			var sEntryPath = aParts.join("/"),
+				oObject = this._getObject(sEntryPath);
 			if (isPlainObject(oObject)) {
-				sKey = this._getKey(oObject);
+				var sKey = this._getKey(oObject);
 				if (sKey) {
 					oEntity = oObject;
 					break;
@@ -5984,22 +5977,18 @@ sap.ui.define([
 	 */
 	ODataModel.prototype.resolve = function(sPath, oContext, bCanonical) {
 		var sResolvedPath = Model.prototype.resolve.call(this,sPath, oContext);
-
 		if (!this._isMetadataPath(sResolvedPath) && bCanonical) {
-			var sCanonicalPath = this.mCanonicalPaths[sResolvedPath];
-			if (!sCanonicalPath) {
-				var oEntityInfo = {},
-					oEntity = this.getEntityByPath(sPath, oContext, oEntityInfo);
-				if (oEntity) {
-					if (oEntityInfo.propertyPath) {
-						sCanonicalPath = "/" + oEntityInfo.key + "/" + oEntityInfo.propertyPath;
-					} else {
-						sCanonicalPath = "/" + oEntityInfo.key;
-					}
-					this.mCanonicalPaths[sResolvedPath] = sCanonicalPath;
+			var oEntityInfo = {},
+				oEntity = this.getEntityByPath(sPath, oContext, oEntityInfo);
+			if (oEntity) {
+				if (oEntityInfo.propertyPath) {
+					return "/" + oEntityInfo.key + "/" + oEntityInfo.propertyPath;
+				} else {
+					return "/" + oEntityInfo.key;
 				}
+			} else {
+				return undefined;
 			}
-			return sCanonicalPath;
 		}
 		return sResolvedPath;
 	};
