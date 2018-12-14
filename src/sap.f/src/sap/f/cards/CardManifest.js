@@ -67,11 +67,23 @@ sap.ui.define([], function () {
 		}
 		while (oNode && sPart) {
 			oNode = oNode[sPart];
-			if (typeof oNode === "string" &&
-				this.oTranslator &&
-				oNode.indexOf("{{") === 0 &&
-				oNode.indexOf("}}") === oNode.length - 2) {
-				oNode = this.oTranslator.getText(oNode.substring(2, oNode.length - 2));
+			if (this.oTranslator) {
+				if (typeof oNode === "string" &&
+					oNode.indexOf("{{") === 0 &&
+					oNode.indexOf("}}") === oNode.length - 2) {
+					oNode = this.oTranslator.getText(oNode.substring(2, oNode.length - 2));
+				} else if (sPart === "header" && typeof oNode === "object") {
+					oNode = jQuery.extend({}, oNode);
+					var oSubParts = Object.keys(oNode);
+					for (var iSubPart in oSubParts) {
+						var sSubPart = oSubParts[iSubPart];
+						if (typeof oNode[sSubPart] === "string" &&
+							oNode[sSubPart].indexOf("{{") === 0 &&
+							oNode[sSubPart].indexOf("}}") === oNode[sSubPart].length - 2) {
+							oNode[sSubPart] = this.oTranslator.getText(oNode[sSubPart].substring(2, oNode[sSubPart].length - 2));
+						}
+					}
+				}
 			}
 			iPart++;
 			sPart = aParts[iPart];
