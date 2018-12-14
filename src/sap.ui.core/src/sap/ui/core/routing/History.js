@@ -100,7 +100,7 @@ sap.ui.define(['sap/ui/core/library', './HashChanger', "sap/base/Log", "sap/ui/t
 
 		var bDirectInstance = (Object.getPrototypeOf(oHashChanger) === HashChanger.prototype);
 
-		if (bDirectInstance || oHashChanger.getRelevantEventsInfo !== HashChanger.prototype.getRelevantEventsInfo) {
+		if (bDirectInstance || oHashChanger.getRelevantEventsInfo !== HashChanger.prototype.getRelevantEventsInfo || !oHashChanger.getEventNamesForHistory) {
 			// if the oHashChanger is a direct instance of sap.ui.core.routing.HashChanger
 			// or it has overwritten the getRelevantEventInfo function
 			aHashChangeEventsInfo = oHashChanger.getRelevantEventsInfo();
