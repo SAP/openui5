@@ -488,7 +488,7 @@ sap.ui.define([
 							return oList.getSelectedItem();
 						},
 						success : function (oSelectedItem) {
-							Opa5.assert.strictEqual(oSelectedItem.getTitle(), this.getContext().currentItem.title, "The list selection is incorrect");
+							Opa5.assert.strictEqual(oSelectedItem.getTitle(), this.getContext().currentItem.title, "The list selection is incorrect.\nHint: If the master list shows integer numbers, use toString function to convert the second parameter to string");
 						},
 						errorMessage : "The list has no selection"
 					});

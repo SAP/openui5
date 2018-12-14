@@ -1,11 +1,7 @@
-/* global Promise */
 sap.ui.define([
 	"sap/ui/base/Object",
 	"sap/base/Log"
-], function (
-	BaseObject,
-	Log
-) {
+], function (BaseObject, Log) {
 	"use strict";
 
 	return BaseObject.extend("sap.ui.demo.masterdetail.controller.ListSelector", {
@@ -106,5 +102,4 @@ sap.ui.define([
 			}.bind(this));
 		}
 	});
-
 });

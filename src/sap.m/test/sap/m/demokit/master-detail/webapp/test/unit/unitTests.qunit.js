@@ -1,5 +1,4 @@
 /* global QUnit */
-
 QUnit.config.autostart = false;
 
 sap.ui.getCore().attachInit(function () {
@@ -7,7 +6,7 @@ sap.ui.getCore().attachInit(function () {
 
 	sap.ui.require([
 		"sap/ui/demo/masterdetail/test/unit/AllTests"
-	], function() {
+	], function () {
 		QUnit.start();
 	});
 });

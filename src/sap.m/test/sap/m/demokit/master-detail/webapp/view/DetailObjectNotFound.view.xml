@@ -14,8 +14,7 @@
 			${device>/system/tablet} &amp;&amp;
 			${device>/orientation/portrait}
 		}"
-		navButtonPress=".onNavBack"
-		>
+		navButtonPress=".onNavBack">
 	</MessagePage>
 
 </mvc:View>
