@@ -1365,6 +1365,12 @@ html.noscroll {
 		margin-bottom: 25px;
 		}
 
+html.noscroll .list > .list__item {
+	/* force items to hide behind the opened menu
+	   TODO: fix svg icons z-index */
+	z-index: -1;
+	}
+
 @media (max-width: 980px) {
 	.list {
 		-ms-flex-wrap: wrap;
@@ -1788,28 +1794,12 @@ html.noscroll {
 			margin-right: 0;
 			margin-bottom: 10px;
 			}
+		.footer__item:not(:last-child) {
+			margin-right: 0;
+			}
 		.footer__item:nth-child(2) {
 			margin-right: 10px;
 		}
-		.footer__item:not(:last-child) {
-			}
-	/*.footer {*/
-		/*padding: 40px 20px;*/
-	/*}*/
-	/*.footer__bar {*/
-		/*flex-wrap: wrap;*/
-		/*justify-content: center;*/
-	/*}*/
-
-	/*.footer__item.mod_license {*/
-		/*width: 100%;*/
-		/*text-align: center;*/
-		/*margin: 0;*/
-	/*}*/
-
-	/*.footer__item.mod_navigation {*/
-		/*margin: 10px 10px 0;*/
-	/*}*/
 }
 
 .guidelines__intro {
