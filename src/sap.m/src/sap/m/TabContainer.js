@@ -128,7 +128,8 @@ sap.ui.define([
 					 */
 					addNewButtonPress: { }
 				},
-				designtime: "sap/m/designtime/TabContainer.designtime"
+				designtime: "sap/m/designtime/TabContainer.designtime",
+				dnd: { draggable: false, droppable: true }
 			},
 			constructor : function (vId, mSettings) {
 				var aStashedItems = [];

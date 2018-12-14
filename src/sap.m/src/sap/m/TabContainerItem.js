@@ -78,7 +78,8 @@ sap.ui.define(['sap/ui/core/Element'],
 						propertyValue : {type : "any"}
 					}
 				}
-			}
+			},
+			dnd: { draggable: true, droppable: false }
 		}});
 
 		/**

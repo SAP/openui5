@@ -152,7 +152,8 @@ sap.ui.define([
 			 */
 			to : {type : "object", group : "Misc", defaultValue : null, deprecated: true}
 		},
-		designtime: "sap/m/designtime/DateRangeSelection.designtime"
+		designtime: "sap/m/designtime/DateRangeSelection.designtime",
+		dnd: { draggable: false, droppable: true }
 	}});
 
 	/**

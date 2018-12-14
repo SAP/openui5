@@ -107,7 +107,8 @@ sap.ui.define([
 			 * @since 1.54
 			 */
 			press : {}
-		}
+		},
+		dnd: { draggable: true, droppable: false }
 	}});
 
 	/**

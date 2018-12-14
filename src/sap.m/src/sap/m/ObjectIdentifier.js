@@ -140,7 +140,8 @@ function(
 			 * Association to controls / IDs, which label this control (see WAI-ARIA attribute aria-labelledby).
 			 */
 			ariaLabelledBy: {type: "sap.ui.core.Control", multiple: true, singularName: "ariaLabelledBy"}
-		}
+		},
+		dnd: { draggable: true, droppable: false }
 	}});
 
 

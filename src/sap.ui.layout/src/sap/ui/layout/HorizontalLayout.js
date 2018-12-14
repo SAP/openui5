@@ -46,7 +46,8 @@ sap.ui.define(['sap/ui/core/Control', './library', "./HorizontalLayoutRenderer"]
 			 */
 			content : {type : "sap.ui.core.Control", multiple : true, singularName : "content"}
 		},
-		designtime: "sap/ui/layout/designtime/HorizontalLayout.designtime"
+		designtime: "sap/ui/layout/designtime/HorizontalLayout.designtime",
+		dnd: { draggable: false, droppable: true }
 	}});
 
 	/**

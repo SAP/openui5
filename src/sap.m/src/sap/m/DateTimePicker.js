@@ -156,7 +156,8 @@ sap.ui.define([
 			 */
 			_popup: { type: "sap.m.ResponsivePopover", multiple: false, visibility: "hidden" }
 		},
-		designtime: "sap/m/designtime/DateTimePicker.designtime"
+		designtime: "sap/m/designtime/DateTimePicker.designtime",
+		dnd: { draggable: false, droppable: true }
 	}});
 
 	var PopupContent = Control.extend("sap.m.internal.DateTimePickerPopup", {
