@@ -240,7 +240,7 @@ sap.ui.define([
 
 			var sCurrentLayer = mPropertyBag && mPropertyBag.currentLayer;
 			if (sCurrentLayer) {
-				aChanges = aChanges.filter(this._filterChangeForCurrentLayer.bind(null, sCurrentLayer));
+				aChanges = aChanges.filter(this._filterChangeForCurrentLayer.bind(this, sCurrentLayer));
 				if (!bIncludeControlVariants && bVariantChangesExist) {
 					this._getAllCtrlVariantChanges(oWrappedChangeFileContent.changes.variantSection, false, sCurrentLayer);
 				}
@@ -326,9 +326,9 @@ sap.ui.define([
 		}
 	};
 
-	ChangePersistence.prototype._filterChangeForMaxLayer = function(oChangeContent) {
-		if (Utils.isOverMaxLayer(oChangeContent.layer)) {
-			if (oChangeContent.layer === "USER" && !this._bUserLayerChangesExist) {
+	ChangePersistence.prototype._filterChangeForMaxLayer = function(oChangeOrChangeContent) {
+		if (Utils.isOverMaxLayer(this._getLayerFromChangeOrChangeContent(oChangeOrChangeContent))) {
+			if (oChangeOrChangeContent.layer === "USER" && !this._bUserLayerChangesExist) {
 				this._bUserLayerChangesExist = true;
 			}
 			return false;
@@ -336,8 +336,18 @@ sap.ui.define([
 		return true;
 	};
 
-	ChangePersistence.prototype._filterChangeForCurrentLayer = function(sLayer, oChangeContent) {
-		return sLayer === oChangeContent.layer;
+	ChangePersistence.prototype._filterChangeForCurrentLayer = function(sLayer, oChangeOrChangeContent) {
+		return sLayer === this._getLayerFromChangeOrChangeContent(oChangeOrChangeContent);
+	};
+
+	ChangePersistence.prototype._getLayerFromChangeOrChangeContent = function(oChangeOrChangeContent) {
+		var sChangeLayer;
+		if (oChangeOrChangeContent instanceof Variant || oChangeOrChangeContent instanceof Change) {
+			sChangeLayer = oChangeOrChangeContent.getLayer();
+		} else {
+			sChangeLayer = oChangeOrChangeContent.layer;
+		}
+		return sChangeLayer;
 	};
 
 	ChangePersistence.prototype._getAllCtrlVariantChanges = function(mVariantManagementReference, bFilterMaxLayer, sCurrentLayer) {
