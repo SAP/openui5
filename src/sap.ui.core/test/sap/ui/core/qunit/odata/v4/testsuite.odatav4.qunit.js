@@ -55,77 +55,39 @@ sap.ui.define(function () {
 			"lib/_V2MetadataConverter" : {},
 			"lib/_V2Requestor" : {},
 			"lib/_V4MetadataConverter" : {},
+			// the following tests set autostart=false because they require modules asynchronously
+			// and start QUnit on their own
 			"OPA.ListBinding" : {
 				autostart : false,
-				module : [
-					"sap/ui/core/sample/odata/v4/ListBinding/Opa.qunit"
-				],
-				coverage : {
-					only : "[/odata/type/,/odata/v4/]"
-				}
+				module : ["sap/ui/core/sample/odata/v4/ListBinding/Opa.qunit"]
 			},
 			"OPA.ListBindingTemplate" : {
 				autostart : false,
-				module : [
-					"sap/ui/core/sample/odata/v4/ListBindingTemplate/Opa.qunit"
-				],
-				coverage : {
-					only : "[/odata/type/,/odata/v4/,XMLPreprocessor]"
-				}
+				module : ["sap/ui/core/sample/odata/v4/ListBindingTemplate/Opa.qunit"]
 			},
 			"OPA.SalesOrders" : {
 				autostart : false,
-				module : [
-					"sap/ui/core/sample/odata/v4/SalesOrders/Opa.qunit"
-				],
-				coverage : {
-					only : "[/odata/type/,/odata/v4/]"
-				}
+				module : ["sap/ui/core/sample/odata/v4/SalesOrders/Opa.qunit"]
 			},
 			"OPA.SalesOrdersTemplate" : {
 				autostart : false,
-				module : [
-					"sap/ui/core/sample/odata/v4/SalesOrdersTemplate/Opa.qunit"
-				],
-				coverage : {
-					only : "[/odata/type/,/odata/v4/,XMLPreprocessor]"
-				}
+				module : ["sap/ui/core/sample/odata/v4/SalesOrdersTemplate/Opa.qunit"]
 			},
 			"OPA.SalesOrderTP100_V2" : {
 				autostart : false,
-				module : [
-					"sap/ui/core/sample/odata/v4/SalesOrderTP100_V2/Opa.qunit"
-				],
-				coverage : {
-					only : "[/odata/type/,/odata/v4/]"
-				}
+				module : ["sap/ui/core/sample/odata/v4/SalesOrderTP100_V2/Opa.qunit"]
 			},
 			"OPA.SalesOrderTP100_V4" : {
 				autostart : false,
-				module : [
-					"sap/ui/core/sample/odata/v4/SalesOrderTP100_V4/Opa.qunit"
-				],
-				coverage : {
-					only : "[/odata/type/,/odata/v4/]"
-				}
+				module : ["sap/ui/core/sample/odata/v4/SalesOrderTP100_V4/Opa.qunit"]
 			},
 			"OPA.Sticky" : {
 				autostart : false,
-				module : [
-					"sap/ui/core/sample/odata/v4/Sticky/Opa.qunit"
-				],
-				coverage : {
-					only : "[/odata/type/,/odata/v4/]"
-				}
+				module : ["sap/ui/core/sample/odata/v4/Sticky/Opa.qunit"]
 			},
 			"OPA.ViewTemplate.Types" : {
 				autostart : false,
-				module : [
-					"sap/ui/core/sample/ViewTemplate/types/Opa.qunit"
-				],
-				coverage : {
-					only : "[/odata/type/,/odata/v4/,ODataMetaModel,XMLPreprocessor,AnnotationHelper]"
-				}
+				module : ["sap/ui/core/sample/ViewTemplate/types/Opa.qunit"]
 			}
 		}
 	};
