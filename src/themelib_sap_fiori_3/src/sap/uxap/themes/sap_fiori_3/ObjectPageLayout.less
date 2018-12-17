@@ -88,34 +88,6 @@
 		.title-hover(transparent);
 	}
 
-    &.sapUxAPObjectPageLayoutTitleForceHovered {
-      .sapFDynamicPageToggleHeaderIndicator {
-        .sapMBtnInner.sapMBtnHoverable {
-          background-color: darken(@sapUiObjectHeaderBorderColor, 3);
-        }
-      }
-    }
-  }
-
-  // Toggle Header Visual Indicator
-  .sapFDynamicPageToggleHeaderIndicator.sapMBtn {
-
-    // normal state
-    & > .sapMBtnInner {
-      border: none;
-      background-color: @sapUiObjectHeaderBorderColor;
-    }
-
-    // hover state
-    &:hover > .sapMBtnInner.sapMBtnHoverable {
-      background-color: darken(@sapUiObjectHeaderBorderColor, 3);
-    }
-
-    // active state
-    &:focus > .sapMBtnInner.sapMFocusable.sapMBtnActive {
-      background: @sapUiSelected;
-      color: @sapUiButtonActiveBackground;
-    }
   }
 }
 
