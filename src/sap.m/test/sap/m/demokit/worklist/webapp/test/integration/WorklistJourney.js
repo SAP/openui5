@@ -41,6 +41,7 @@ sap.ui.define([
 		Then.iTeardownMyApp();
 	});
 
+
 	opaTest("Should see the busy indicator on app view while worklist view metadata is loaded", function (Given, When, Then) {
 		// Arrangements
 		Given.iStartMyApp({

@@ -50,9 +50,10 @@ sap.ui.define([
 					return this.waitFor({
 						id : "page",
 						viewName : sViewName,
-						matchers : function (oPage) {
-							return oPage.getBusy();
-						},
+						matchers: new PropertyStrictEquals({
+							name : "busy",
+							value: true
+						}),
 						autoWait: false,
 						success : function (oPage) {
 							Opa5.assert.ok(oPage.getBusy(), "The object view is busy");
@@ -65,9 +66,10 @@ sap.ui.define([
 					return this.waitFor({
 						id : "page",
 						viewName : sViewName,
-						matchers : function (oPage) {
-							return !oPage.getBusy();
-						},
+						matchers: new PropertyStrictEquals({
+							name : "busy",
+							value: false
+						}),
 						autoWait: false,
 						success : function (oPage) {
 							Opa5.assert.ok(!oPage.getBusy(), "The object view is not busy");

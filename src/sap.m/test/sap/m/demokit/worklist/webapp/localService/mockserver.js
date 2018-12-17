@@ -1,4 +1,3 @@
-/* global Promise */
 sap.ui.define([
 	"sap/ui/core/util/MockServer",
 	"sap/ui/model/json/JSONModel",
@@ -60,7 +59,7 @@ sap.ui.define([
 
 					var aRequests = oMockServer.getRequests();
 
-					// compose an error response for requesti
+					// compose an error response for each request
 					var fnResponse = function (iErrCode, sMessage, aRequest) {
 						aRequest.response = function(oXhr){
 							oXhr.respond(iErrCode, {"Content-Type": "text/plain;charset=utf-8"}, sMessage);

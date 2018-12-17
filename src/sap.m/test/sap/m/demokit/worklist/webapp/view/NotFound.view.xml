@@ -10,7 +10,7 @@
 		id="page"
 		description="">
 		<customDescription>
-			<Link id="link" text="{i18n>backToWorklist}" press=".onLinkPressed" />
+			<Link id="link" text="{i18n>backToWorklist}" press=".onLinkPressed"/>
 		</customDescription>
 	</MessagePage>
 
