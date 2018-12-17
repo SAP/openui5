@@ -2360,6 +2360,29 @@ sap.ui.define(["sap/ui/core/format/NumberFormat", "sap/ui/core/Locale"], functio
 		assert.deepEqual(aParsed, [50000, undefined], "should match input number " + iExpectedNumber);
 	});
 
+	QUnit.test("currency format/parse for currencies with letter 'K' in the measure symbol", function(assert) {
+		//setup
+		var oLocale = new Locale("en");
+		var oFormat = NumberFormat.getCurrencyInstance({
+			showMeasure: true
+		}, oLocale);
+
+
+		["SEK", "DKK"].forEach(function(sCurrencyMeasure) {
+
+			// input and output
+			var iExpectedNumber = 12345;
+			assert.ok(iExpectedNumber, "Input: " + iExpectedNumber + ", " + sCurrencyMeasure);
+
+			// execution
+			var sFormatted = oFormat.format(iExpectedNumber, sCurrencyMeasure);
+			assert.ok(sFormatted, "Formatted: " + sFormatted);
+
+			var aParsed = oFormat.parse(sFormatted);
+			assert.deepEqual(aParsed, [iExpectedNumber, sCurrencyMeasure], "Parsed: " + aParsed.join(", "));
+		});
+	});
+
 	QUnit.test("format/parse indian lakhs/crores", function (assert) {
 		var oLocale = new Locale("en-IN");
 		var oFormat = NumberFormat.getCurrencyInstance({}, oLocale);
