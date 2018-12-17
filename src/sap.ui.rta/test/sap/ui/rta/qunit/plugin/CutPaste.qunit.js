@@ -157,7 +157,7 @@ function(
 			aMenuItemsForLayout = this.CutPastePlugin.getMenuItems([this.oVericalLayoutOverlay]);
 			assert.ok(aMenuItemsForLayout[0].enabled([this.oVericalLayoutOverlay]), "'paste' is now enabled for the formContainer");
 			aMenuItemsForLayout[0].handler([this.oVericalLayoutOverlay]);
-			assert.equal(this.oVerticalLayout.getContent()[1].getId(), "objectStatus1", "then object status now pasted at the second position");
+			assert.equal(this.oVerticalLayout.getContent()[0].getId(), "objectStatus1", "then object status now pasted at the first position");
 		});
 	});
 

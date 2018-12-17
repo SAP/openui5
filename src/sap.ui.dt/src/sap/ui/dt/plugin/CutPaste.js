@@ -17,6 +17,8 @@ sap.ui.define([
 ) {
 	"use strict";
 
+	var INSERT_AFTER_ELEMENT = true;
+
 	/**
 	 * Constructor for a new CutPaste.
 	 *
@@ -164,7 +166,7 @@ sap.ui.define([
 				this.getElementMover().insertInto(oCutOverlay, oTargetZoneAggregation);
 				bResult = true;
 			} else if (OverlayUtil.isInTargetZoneAggregation(oTargetOverlay)) {
-				this.getElementMover().repositionOn(oCutOverlay, oTargetOverlay);
+				this.getElementMover().repositionOn(oCutOverlay, oTargetOverlay, INSERT_AFTER_ELEMENT);
 				bResult = true;
 			}
 		}
