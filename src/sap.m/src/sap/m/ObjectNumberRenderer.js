@@ -63,7 +63,7 @@ sap.ui.define(['sap/ui/core/Renderer', 'sap/ui/core/library'],
 		// when the status is "None" there is nothing for reading
 		if (oON.getState() !== ValueState.None) {
 			oRm.writeAccessibilityState({
-			labelledby: oON.getId() + "-state"
+			describedby: oON.getId() + "-state"
 			});
 		}
 
@@ -105,7 +105,7 @@ sap.ui.define(['sap/ui/core/Renderer', 'sap/ui/core/library'],
 			return;
 		}
 
-		oRm.write("<span id='" + oON.getId() + "-state' class='sapUiInvisibleText' aria-hidden='true'>");
+		oRm.write("<span id='" + oON.getId() + "-state' class='sapUiInvisibleText' aria-hidden='false'>");
 		oRm.write(oON._getStateText());
 		oRm.write("</span>");
 	};
