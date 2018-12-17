@@ -1189,6 +1189,88 @@
 			assert.ok(oSetModelStub.called, "setModel of the MessageView should be called");
 		});
 
+		QUnit.test("Prevent auto binding to the sap.ui.getCore().getMessageManager() when there's a model", function (assert) {
+			// Setup
+			var oMessagePopover = new sap.m.MessagePopover({
+						items: {
+							path: '/',
+							template: new sap.m.MessageItem({
+								type: '{type}',
+								title: '{title}'
+							})
+						}
+					}),
+					oButton = new sap.m.Button();
+
+			oMessagePopover.setModel(new sap.ui.model.json.JSONModel());
+			oButton.addDependent(oMessagePopover);
+			oButton.placeAt("qunit-fixture");
+			sap.ui.getCore().applyChanges();
+
+			// Act
+			var oMessage = new sap.ui.core.message.Message({
+				type: "Error",
+				message: "Simple message",
+				target: "",
+				processor: null,
+				technical: false,
+				references: null,
+				validation: false
+			});
+			sap.ui.getCore().getMessageManager().addMessages(oMessage);
+			sap.ui.getCore().applyChanges();
+
+			oMessagePopover.openBy(oButton);
+			sap.ui.getCore().applyChanges();
+			this.clock.tick(500);
+
+			//Assert
+			assert.strictEqual(oMessagePopover._oMessageView.getItems().length, 0, "If the MessagePopover is bound to a model, the MessageView should not bind to the MessageManager");
+
+			//Cleanup
+			oMessage.destroy();
+			oMessagePopover.destroy();
+			oButton.destroy();
+			sap.ui.getCore().getMessageManager().removeAllMessages();
+		});
+
+		QUnit.test("Auto bind to the sap.ui.getCore().getMessageManager() when there are items or binding", function (assert) {
+			// Setup
+			var oMessagePopover = new sap.m.MessagePopover(),
+					oButton = new sap.m.Button();
+
+			oButton.addDependent(oMessagePopover);
+			oButton.placeAt("qunit-fixture");
+			sap.ui.getCore().applyChanges();
+
+			// Act
+			var oMessage = new sap.ui.core.message.Message({
+				type: "Error",
+				message: "Simple message",
+				target: "",
+				processor: null,
+				technical: false,
+				references: null,
+				validation: false
+			});
+			sap.ui.getCore().getMessageManager().addMessages(oMessage);
+			sap.ui.getCore().applyChanges();
+
+			oMessagePopover.openBy(oButton);
+			sap.ui.getCore().applyChanges();
+			this.clock.tick(500);
+
+			//Assert
+			assert.strictEqual(oMessagePopover._oMessageView.getItems().length, 1, "If the MessagePopover is not bound to a model, the MessageView should bind to the MessageManager");
+			assert.strictEqual(oMessagePopover._oMessageView.getItems()[0].getTitle(), "Simple message", "The message should be the one from the MessageManager");
+
+			//Cleanup
+			oMessage.destroy();
+			oMessagePopover.destroy();
+			oButton.destroy();
+			sap.ui.getCore().getMessageManager().removeAllMessages();
+		});
+
 		QUnit.module("Refactoring", {
 			beforeEach: function () {
 				var oMessageTemplate = new sap.m.MessagePopoverItem({
