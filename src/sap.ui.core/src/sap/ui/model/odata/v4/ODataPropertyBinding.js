@@ -209,6 +209,9 @@ sap.ui.define([
 	ODataPropertyBinding.prototype.checkUpdate = function (bForceUpdate, sChangeReason, sGroupId,
 			vValue) {
 		var bDataRequested = false,
+			iHashHash = this.sPath.indexOf("##"),
+			oMetaModel = this.oModel.getMetaModel(),
+			mParametersForDataReceived = {data : {}},
 			sResolvedPath = this.oModel.resolve(this.sPath, this.oContext),
 			oCallToken = {
 				// a resolved binding fires a change event if checkUpdate is called at least once
@@ -217,7 +220,6 @@ sap.ui.define([
 					&& (bForceUpdate
 						|| this.oCheckUpdateCallToken && this.oCheckUpdateCallToken.forceUpdate)
 			},
-			mParametersForDataReceived = {data : {}},
 			vType = this.oType, // either the type or a promise resolving with it
 			that = this;
 
@@ -228,6 +230,8 @@ sap.ui.define([
 		if (arguments.length < 4) {
 			// Use Promise to become async so that only the latest sync call to checkUpdate wins
 			vValue = Promise.resolve(this.oCachePromise.then(function (oCache) {
+				var sDataPath, sMetaPath;
+
 				if (oCache) {
 					return oCache.fetchValue(that.lockGroup(sGroupId || that.getGroupId()),
 						/*sPath*/undefined, function () {
@@ -235,15 +239,25 @@ sap.ui.define([
 							that.fireDataRequested();
 						}, that);
 				}
-				if (!that.oContext) {
+				if (that.bRelative && !that.oContext) {
 					// binding is unresolved or context was reset by another call to checkUpdate
 					return undefined;
 				}
-				if (that.oContext.getIndex() === Context.VIRTUAL) {
+				if (that.bRelative && that.oContext.getIndex
+						&& that.oContext.getIndex() === Context.VIRTUAL) {
 					// virtual parent context: no change event
 					oCallToken.forceUpdate = false;
 				}
-				return that.oContext.fetchValue(that.sPath, that);
+				if (iHashHash < 0) { // relative data binding
+					return that.oContext.fetchValue(that.sPath, that);
+				} // else: metadata binding
+				sDataPath = that.sPath.slice(0, iHashHash);
+				sMetaPath = that.sPath.slice(iHashHash + 2);
+				if (sMetaPath[0] === "/") {
+					sMetaPath = "." + sMetaPath;
+				}
+				return oMetaModel.fetchObject(sMetaPath,
+					oMetaModel.getMetaContext(that.oModel.resolve(sDataPath, that.oContext)));
 			}).then(function (vValue) {
 				if (!vValue || typeof vValue !== "object"
 					|| (that.sInternalType === "any"
@@ -261,8 +275,9 @@ sap.ui.define([
 				}
 				mParametersForDataReceived = {error : oError};
 			}));
-			if (sResolvedPath && !this.bHasDeclaredType && this.sInternalType !== "any") {
-				vType = this.oModel.getMetaModel().fetchUI5Type(sResolvedPath);
+			if (sResolvedPath && !this.bHasDeclaredType && this.sInternalType !== "any"
+					&& iHashHash < 0) {
+				vType = oMetaModel.fetchUI5Type(sResolvedPath);
 			}
 		}
 		return SyncPromise.all([vValue, vType]).then(function (aResults) {
@@ -417,6 +432,14 @@ sap.ui.define([
 	 */
 	ODataPropertyBinding.prototype.hasPendingChangesInDependents = function (oContext) {
 		return false;
+	};
+
+	/**
+	 * @override
+	 * @see sap.ui.model.odata.v4.ODataBinding#isMeta
+	 */
+	ODataPropertyBinding.prototype.isMeta = function () {
+		return this.sPath.includes("##");
 	};
 
 	/**

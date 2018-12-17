@@ -761,6 +761,14 @@ sap.ui.define([
 	};
 
 	/**
+	 * @override
+	 * @see sap.ui.model.odata.v4.ODataBinding#isMeta
+	 */
+	ODataParentBinding.prototype.isMeta = function () {
+		return false;
+	};
+
+	/**
 	 * Refreshes all dependent bindings with the given parameters and waits for them to have
 	 * finished.
 	 *

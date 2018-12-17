@@ -11165,4 +11165,22 @@ sap.ui.define([
 
 		return this.createView(assert, sView, oModel);
 	});
+
+	//*********************************************************************************************
+	// Scenario: property binding with "##"-path pointing to a metamodel property.
+	// CPOUI5UISERVICESV3-1676
+	testViewStart("Property binding with metapath", '\
+<FlexBox binding="{/Artists(\'42\')}">\
+	<Text id="label0" text="{Name##@com.sap.vocabularies.Common.v1.Label}" />\
+	<Text id="name" text="{Name}" />\
+</FlexBox>\
+<Text id="insertable"\
+	text="{/Artists##@Org.OData.Capabilities.V1.InsertRestrictions/Insertable}" />\
+<Text id="label1" text="{/Artists##/@com.sap.vocabularies.Common.v1.Label}" />',
+		{"Artists('42')?$select=ArtistID,IsActiveEntity,Name" : {
+			//"ArtistID" : ..., "IsActiveEntity" : ...
+			"Name" : "Foo"}},
+		{"label0" : "Artist Name", "name" : "Foo", "insertable" : true, "label1" : "Artist"},
+		createSpecialCasesModel({autoExpandSelect : true})
+	);
 });

@@ -2798,6 +2798,13 @@ sap.ui.define([
 			assert.deepEqual(aPromises, [oPromise0, oPromise3, oPromise4]);
 		});
 	});
+
+	//*********************************************************************************************
+	QUnit.test("isMeta", function (assert) {
+		var oBinding = new ODataParentBinding();
+
+		assert.strictEqual(oBinding.isMeta(), false);
+	});
 });
 //TODO Fix issue with ODataModel.integration.qunit
 //  "suspend/resume: list binding with nested context binding, only context binding is adapted"

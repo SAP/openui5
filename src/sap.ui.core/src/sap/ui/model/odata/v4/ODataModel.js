@@ -583,8 +583,18 @@ sap.ui.define([
 	 * to get it updated asynchronously and register a change listener at the binding to be informed
 	 * when the value is available.
 	 *
+	 * It is possible to create a property binding pointing to metadata. A '##' in the
+	 * binding's path is recognized as a separator and splits it into two parts.
+	 * The part before the separator is resolved with the binding's context and the result is
+	 * transformed into a metadata context (see
+	 * {@link sap.ui.model.odata.v4.ODataMetaModel#getMetaContext}). The part following the
+	 * separator is then interpreted relative to this metadata context, even if it starts with
+	 * a '/'; a trailing '/' is allowed here, see
+	 * {@link sap.ui.model.odata.v4.ODataMetaModel#requestObject} for the effect it has.
+	 *
 	 * @param {string} sPath
-	 *   The binding path in the model; must not be empty or end with a slash
+	 *   The binding path in the model; must not be empty. Must not end with a '/' unless the
+	 *   binding points to metadata.
 	 * @param {sap.ui.model.Context} [oContext]
 	 *   The context which is required as base for a relative path
 	 * @param {object} [mParameters]
@@ -595,7 +605,8 @@ sap.ui.define([
 	 *   Query options specified for the binding overwrite model query options.
 	 *   Note: The binding only creates its own data service request if it is absolute or if it is
 	 *   relative to a context created via {@link #createBindingContext}. The binding parameters are
-	 *   ignored in case the binding creates no own data service request.
+	 *   ignored in case the binding creates no own data service request or in case the binding
+	 *   points to metadata.
 	 * @param {string} [mParameters.$$groupId]
 	 *   The group ID to be used for <b>read</b> requests triggered by this binding; if not
 	 *   specified, either the parent binding's group ID (if the binding is relative) or the

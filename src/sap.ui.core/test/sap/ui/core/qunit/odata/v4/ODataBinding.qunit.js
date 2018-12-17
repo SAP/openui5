@@ -37,6 +37,7 @@ sap.ui.define([
 				};
 			},
 			hasPendingChangesInDependents : function () {}, // implemented by all sub-classes
+			isMeta : function () { return false; },
 			isSuspended : Binding.prototype.isSuspended,
 			resetChangesInDependents : function () {} // implemented by all sub-classes
 		}, oTemplate);
@@ -455,8 +456,9 @@ sap.ui.define([
 
 	//*********************************************************************************************
 	[
-		{oModel : {}, sPath : "unresolvedRelative", bRelative : true},
-		{oModel : {}, oOperation : {}, sPath : "operation"}
+		{sPath : "unresolvedRelative", bRelative : true},
+		{oOperation : {}, sPath : "operation"},
+		{isMeta : function () { return true; }, sPath : "/data##meta"}
 	].forEach(function (oTemplate) {
 		QUnit.test("fetchQueryOptionsForOwnCache returns undefined: " + oTemplate.sPath,
 			function (assert) {

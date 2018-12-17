@@ -212,13 +212,9 @@ sap.ui.define([
 			oQueryOptionsPromise,
 			that = this;
 
-		// operation binding manages its cache on its own
-		if (this.oOperation) {
-			return SyncPromise.resolve(undefined);
-		}
-
-		// unresolved binding
-		if (this.bRelative && !oContext) {
+		if (this.oOperation // operation binding manages its cache on its own
+			|| this.bRelative && !oContext // unresolved binding
+			|| this.isMeta()) {
 			return SyncPromise.resolve(undefined);
 		}
 
@@ -488,6 +484,18 @@ sap.ui.define([
 	ODataBinding.prototype.isInitial = function () {
 		throw new Error("Unsupported operation: isInitial");
 	};
+
+	/**
+	 * Returns whether the binding points to metadata.
+	 *
+	 * @returns {boolean} - Whether the binding points to metadata
+	 *
+	 *
+	 * @abstract
+	 * @function
+	 * @name sap.ui.model.odata.v4.ODataBinding#isMeta
+	 * @private
+	 */
 
 	/**
 	 * Checks whether the binding can be refreshed. Only bindings which are not relative to a V4

@@ -8,6 +8,7 @@ sap.ui.define([
 	"sap/ui/base/SyncPromise",
 	"sap/ui/model/BindingMode",
 	"sap/ui/model/ChangeReason",
+	"sap/ui/model/Context",
 	"sap/ui/model/PropertyBinding",
 	"sap/ui/model/odata/type/String",
 	"sap/ui/model/odata/v4/Context",
@@ -18,9 +19,9 @@ sap.ui.define([
 	"sap/ui/model/odata/v4/lib/_GroupLock",
 	"sap/ui/model/odata/v4/lib/_Helper",
 	"sap/ui/test/TestUtils"
-], function (jQuery, Log, ManagedObject, SyncPromise, BindingMode, ChangeReason, PropertyBinding,
-		TypeString, Context, asODataBinding, ODataModel, ODataPropertyBinding, _Cache, _GroupLock,
-		_Helper, TestUtils) {
+], function (jQuery, Log, ManagedObject, SyncPromise, BindingMode, ChangeReason, BaseContext,
+		PropertyBinding, TypeString, Context, asODataBinding, ODataModel, ODataPropertyBinding,
+		_Cache, _GroupLock, _Helper, TestUtils) {
 	/*global QUnit, sinon */
 	/*eslint max-nested-callbacks: 0, no-warning-comments: 0 */
 	"use strict";
@@ -348,6 +349,7 @@ sap.ui.define([
 				oBinding.attachChange(function () {
 					bGotChangeEvent = true;
 				});
+				that.mock(that.oModel.getMetaModel()).expects("getMetaContext").never();
 				// checkDataState is called independently of bForceUpdate
 				that.mock(oBinding).expects("checkDataState").withExactArgs();
 
@@ -592,6 +594,101 @@ sap.ui.define([
 			assert.ok(oPromise.isFulfilled());
 			assert.strictEqual(oBinding.getValue(), vValue);
 		});
+	});
+
+	//*********************************************************************************************
+	[{
+		contextPath : "/Artists('42')",
+		path : "Name##@SAP_Common.Label"
+	}, {
+		contextPath : undefined,
+		path : "/Artists('42')/Name##@SAP_Common.Label"
+	}, {
+		contextPath : "/Irrelevant",
+		path : "/Artists('42')/Name##@SAP_Common.Label"
+	}, {
+		baseContext : true,
+		contextPath : "/Artists('42')",
+		path : "Name##@SAP_Common.Label"
+	}, {
+		contextPath : "/Artists('42')",
+		path : "##/@SAP_Common.Label"
+	}, {
+		contextPath : "/Irrelevant",
+		path : "/Artists('42')/Name##@SAP_Common.Label",
+		virtualContext : true
+	}].forEach(function (oFixture, i) {
+		QUnit.test("checkUpdate, meta path, resolved, " + i, function (assert) {
+			var oBinding,
+				bChangeFired,
+				oContext,
+				oMetaContext = {},
+				vValue = oFixture.virtualContext ? undefined : "Artist label";
+
+			if (oFixture.contextPath) {
+				oContext = oFixture.baseContext
+					? new BaseContext(this.oModel, oFixture.contextPath)
+					: Context.create(this.oModel, {/*oParentBinding*/}, oFixture.contextPath,
+						oFixture.virtualContext && Context.VIRTUAL);
+			}
+
+			this.mock(_Cache).expects("createProperty").never();
+
+			// code under test
+			oBinding = this.oModel.bindProperty(oFixture.path, oContext);
+
+			this.mock(this.oModel.getMetaModel()).expects("getMetaContext")
+				.withExactArgs(oFixture.path.startsWith("##/")
+					? "/Artists('42')"
+					: "/Artists('42')/Name")
+				.returns(oMetaContext);
+			this.mock(this.oModel.getMetaModel()).expects("fetchObject")
+				.withExactArgs(oFixture.path.startsWith("##/")
+					? "./@SAP_Common.Label"
+					: "@SAP_Common.Label",
+					sinon.match.same(oMetaContext))
+				.returns(SyncPromise.resolve(vValue));
+			if (oContext && !oFixture.baseContext) {
+				this.mock(oContext).expects("fetchValue").never();
+			}
+			this.mock(this.oModel.getMetaModel()).expects("fetchUI5Type").never();
+			this.mock(oBinding).expects("fireDataRequested").never();
+			this.mock(oBinding).expects("fireDataReceived").never();
+			oBinding.attachChange(function () {
+				bChangeFired = true;
+			});
+
+			// code under test
+			return oBinding.checkUpdate(oFixture.virtualContext).then(function () {
+				assert.strictEqual(oBinding.getValue(), vValue);
+				assert.ok(bChangeFired, "change event");
+			});
+		});
+	});
+
+	//*********************************************************************************************
+	QUnit.test("checkUpdate, meta path, unresolved", function (assert) {
+		var oBinding = this.oModel.bindProperty("Name##@SAP_Common.Label", null);
+
+		this.mock(this.oModel.getMetaModel()).expects("getMetaContext").never();
+		this.mock(this.oModel.getMetaModel()).expects("fetchObject").never();
+		this.mock(this.oModel.getMetaModel()).expects("fetchUI5Type").never();
+		this.mock(oBinding).expects("fireDataRequested").never();
+		this.mock(oBinding).expects("fireDataReceived").never();
+
+
+		// code under test
+		return oBinding.checkUpdate().then(function () {
+			assert.strictEqual(oBinding.getValue(), undefined);
+		});
+	});
+
+	//*********************************************************************************************
+	QUnit.test("isMeta", function (assert) {
+		assert.strictEqual(this.oModel.bindProperty("foo", null).isMeta(), false);
+		assert.strictEqual(this.oModel.bindProperty("foo#bar", null).isMeta(), false,
+			"action advertisement");
+		assert.strictEqual(this.oModel.bindProperty("foo##bar", null).isMeta(), true);
 	});
 
 	//*********************************************************************************************
