@@ -576,7 +576,16 @@ function(
 	 * @param {jQuery.Event} oEvent The event object.
 	 */
 	InputBase.prototype.oninput = function(oEvent) {
+		this.handleInput(oEvent);
+	};
 
+	/**
+	 * Handles the input event of the control
+	 * @param {jQuery.Event} oEvent The event object.
+	 * @protected
+	 */
+
+	InputBase.prototype.handleInput = function(oEvent) {
 		// ie 10+ fires the input event when an input field with a native placeholder is focused
 		if (this._bIgnoreNextInput) {
 			this._bIgnoreNextInput = false;
@@ -594,9 +603,6 @@ function(
 
 		// dom value updated other than value property
 		this._bCheckDomValue = true;
-
-		// update the synthetic placeholder visibility
-		this._setLabelVisibility();
 	};
 
 	/**
