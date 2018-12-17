@@ -11183,4 +11183,33 @@ sap.ui.define([
 		{"label0" : "Artist Name", "name" : "Foo", "insertable" : true, "label1" : "Artist"},
 		createSpecialCasesModel({autoExpandSelect : true})
 	);
+
+	//*********************************************************************************************
+	// Scenario: Metadata property binding with target type any represented as a part %{...}
+	// in an expression binding where the property binding has an object value.
+	// CPOUI5UISERVICESV3-1676
+	testViewStart("Metadata property binding with object value", '\
+<Text id="insertable"\
+	text="{= %{/Artists##@Org.OData.Capabilities.V1.InsertRestrictions}.Insertable }" />',
+		/* no data request*/ undefined,
+		{"insertable" : true},
+		createSpecialCasesModel({autoExpandSelect : true})
+	);
+
+	//*********************************************************************************************
+	// Scenario: Relative data property binding with target type any represented as a part %{...}
+	// in an expression binding where the property binding refers to a navigation property and thus
+	// has an object value.
+	// CPOUI5UISERVICESV3-1676
+	testViewStart("Relative data property binding with object value", '\
+<FlexBox binding="{/Artists(\'42\')}">\
+	<Text id="publicationCount" text="{= %{_Publication}.length }" />\
+</FlexBox>',
+		{"Artists('42')?$select=ArtistID,IsActiveEntity&$expand=_Publication($select=PublicationID)" : {
+			//"ArtistID" : ..., "IsActiveEntity" : ...
+			"_Publication" : [{/*"PublicationID" : ...*/}, {}, {}]
+		}},
+		{"publicationCount" : 3},
+		createSpecialCasesModel({autoExpandSelect : true})
+	);
 });

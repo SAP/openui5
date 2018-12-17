@@ -6,17 +6,18 @@
 sap.ui.define([
 	"./ODataBinding",
 	"./lib/_Cache",
+	"./lib/_Helper",
 	"sap/base/Log",
 	"sap/ui/base/SyncPromise",
 	"sap/ui/model/ChangeReason",
 	"sap/ui/model/odata/v4/Context",
 	"sap/ui/model/PropertyBinding"
-], function (asODataBinding, _Cache, Log, SyncPromise, ChangeReason, Context, PropertyBinding) {
+], function (asODataBinding, _Cache, _Helper, Log, SyncPromise, ChangeReason, Context,
+		PropertyBinding) {
 	"use strict";
 	/*eslint max-nested-callbacks: 0 */
 
 	var sClassName = "sap.ui.model.odata.v4.ODataPropertyBinding",
-		oEmptyQueryOptionsPromise = SyncPromise.resolve({}),
 		aImmutableEmptyArray = Object.freeze([]),
 		mSupportedEvents = {
 			AggregatedDataStateChange : true,
@@ -210,6 +211,7 @@ sap.ui.define([
 			vValue) {
 		var bDataRequested = false,
 			iHashHash = this.sPath.indexOf("##"),
+			bIsMeta = iHashHash >= 0,
 			oMetaModel = this.oModel.getMetaModel(),
 			mParametersForDataReceived = {data : {}},
 			sResolvedPath = this.oModel.resolve(this.sPath, this.oContext),
@@ -248,7 +250,7 @@ sap.ui.define([
 					// virtual parent context: no change event
 					oCallToken.forceUpdate = false;
 				}
-				if (iHashHash < 0) { // relative data binding
+				if (!bIsMeta) { // relative data binding
 					return that.oContext.fetchValue(that.sPath, that);
 				} // else: metadata binding
 				sDataPath = that.sPath.slice(0, iHashHash);
@@ -259,10 +261,15 @@ sap.ui.define([
 				return oMetaModel.fetchObject(sMetaPath,
 					oMetaModel.getMetaContext(that.oModel.resolve(sDataPath, that.oContext)));
 			}).then(function (vValue) {
-				if (!vValue || typeof vValue !== "object"
-					|| (that.sInternalType === "any"
-						&& that.sPath[that.sPath.lastIndexOf("/") + 1] === "#")) {
+				if (!vValue || typeof vValue !== "object") {
 					return vValue;
+				}
+				if (that.sInternalType === "any") {
+					if (bIsMeta) {
+						return vValue;
+					} else if (that.bRelative){
+						return _Helper.publicClone(vValue);
+					}
 				}
 				Log.error("Accessed value is not primitive", sResolvedPath, sClassName);
 			}, function (oError) {
@@ -276,7 +283,7 @@ sap.ui.define([
 				mParametersForDataReceived = {error : oError};
 			}));
 			if (sResolvedPath && !this.bHasDeclaredType && this.sInternalType !== "any"
-					&& iHashHash < 0) {
+					&& !bIsMeta) {
 				vType = oMetaModel.fetchUI5Type(sResolvedPath);
 			}
 		}
@@ -361,7 +368,7 @@ sap.ui.define([
 	 * @private
 	 */
 	ODataPropertyBinding.prototype.doFetchQueryOptions = function () {
-		return this.isRoot() ? SyncPromise.resolve(this.mQueryOptions) : oEmptyQueryOptionsPromise;
+		return this.isRoot() ? SyncPromise.resolve(this.mQueryOptions) : SyncPromise.resolve({});
 	};
 
 	/**

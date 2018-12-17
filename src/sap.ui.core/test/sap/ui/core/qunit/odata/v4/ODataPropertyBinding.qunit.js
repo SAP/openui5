@@ -381,44 +381,87 @@ sap.ui.define([
 	});
 
 	//*********************************************************************************************
-	["any", "int"].forEach(function (sType) {
-		[{
-			path : "/EntitySet('foo')/#com.sap.foo.AcFoo"
-		}, {
-			path : "#com.sap.foo.AcFoo",
-			contextPath: "/EntitySet('foo')"
-		}].forEach(function (oFixture) {
-			QUnit.test("checkUpdate: " + (oFixture.contextPath ? "relative path" : "absolute path")
-				+ ", targetType: " + sType + " - allow non primitive value for advertised actions",
-				function (assert) {
-					var oCacheMock = this.getPropertyCacheMock(),
-						oContext = oFixture.contextPath
-							? this.oModel.createBindingContext("/EntitySet('foo')")
-							: undefined,
-						oBinding = this.oModel.bindProperty(oFixture.path, oContext),
-						sResolvedPath = this.oModel.resolve(oFixture.path, oContext),
-						vValue = {};
+	QUnit.test("checkUpdate with object value, success", function (assert) {
+		var oContext = Context.create(this.oModel, {}, "/EntitySet('foo')"),
+			sPath = "nonPrimitive",
+			oBinding = this.oModel.bindProperty(sPath, oContext),
+			vValue = {/* non-primitive */},
+			vValueClone = {};
 
-					oBinding.setType(null, sType);
-					oCacheMock.expects("fetchValue")
-						.withExactArgs(new _GroupLock("$auto", undefined, oBinding, 1), undefined,
-							sinon.match.func, sinon.match.same(oBinding))
-						.returns(SyncPromise.resolve(vValue));
-					if (sType !== "any") {
-						this.mock(this.oModel.getMetaModel()).expects("fetchUI5Type")
-							.withExactArgs(sResolvedPath)
-							.returns(SyncPromise.resolve());
-						this.oLogMock.expects("error")
-							.withExactArgs("Accessed value is not primitive",
-								sResolvedPath, sClassName);
-					}
+		oBinding.setType(null, "any");
+		this.mock(oContext).expects("fetchValue")
+			.withExactArgs(sPath, sinon.match.same(oBinding))
+			.returns(SyncPromise.resolve(vValue));
+		this.mock(_Helper).expects("publicClone")
+			.withExactArgs(sinon.match.same(vValue))
+			.returns(vValueClone);
 
-					// code under test
-					return oBinding.checkUpdate().then(function () {
-						assert.strictEqual(oBinding.getValue(),
-							sType === "any" ? vValue : undefined);
-					});
-				});
+		// code under test
+		return oBinding.checkUpdate().then(function () {
+			assert.strictEqual(oBinding.getValue(), vValueClone);
+		});
+	});
+
+	//*********************************************************************************************
+	[{
+		path : "nonPrimitive",
+		internalType : "int"
+	}, {
+		path : "/EntitySet('bar')/nonPrimitive",
+		internalType : "any"
+	}].forEach(function (oFixture, i) {
+		QUnit.test("checkUpdate with object value, error, " + i, function (assert) {
+			var bAbsolute = oFixture.path[0] === "/",
+				oCacheMock = bAbsolute && this.getPropertyCacheMock(),
+				oContext = Context.create(this.oModel, {}, "/EntitySet('foo')"),
+				oBinding = this.oModel.bindProperty(oFixture.path, oContext),
+				sResolvedPath = this.oModel.resolve(oFixture.path, oContext),
+				vValue = {/* non-primitive */};
+
+			oBinding.setType(null, oFixture.internalType);
+			if (bAbsolute) {
+				oCacheMock.expects("fetchValue")
+					.withExactArgs(new _GroupLock("$auto", undefined, oBinding, 1), undefined,
+						sinon.match.func, sinon.match.same(oBinding))
+					.returns(SyncPromise.resolve(vValue));
+			} else {
+				this.mock(oContext).expects("fetchValue")
+					.withExactArgs(oFixture.path, sinon.match.same(oBinding))
+					.returns(SyncPromise.resolve(vValue));
+			}
+			if (oFixture.internalType !== "any") {
+				this.mock(this.oModel.getMetaModel()).expects("fetchUI5Type")
+					.withExactArgs(sResolvedPath)
+					.returns(SyncPromise.resolve());
+			}
+			this.oLogMock.expects("error")
+				.withExactArgs("Accessed value is not primitive",
+					sResolvedPath, sClassName);
+
+			// code under test
+			return oBinding.checkUpdate().then(function () {
+				assert.strictEqual(oBinding.getValue(), undefined);
+			});
+		});
+	});
+
+	//*********************************************************************************************
+	[false, undefined, null, 42, "foo"].forEach(function (vValue) {
+		QUnit.test("checkUpdate: no clone with primitive value: " + vValue, function (assert) {
+			var oContext = Context.create(this.oModel, {}, "/EntitySet('foo')"),
+				sPath = "primitive",
+				oBinding = this.oModel.bindProperty(sPath, oContext);
+
+			oBinding.setType(null, "any");
+			this.mock(oContext).expects("fetchValue")
+				.withExactArgs(sPath, sinon.match.same(oBinding))
+				.returns(SyncPromise.resolve(vValue));
+			this.mock(_Helper).expects("publicClone").never();
+
+			// code under test
+			return oBinding.checkUpdate().then(function () {
+				assert.strictEqual(oBinding.getValue(), vValue);
+			});
 		});
 	});
 
@@ -684,6 +727,40 @@ sap.ui.define([
 	});
 
 	//*********************************************************************************************
+	QUnit.test("checkUpdate, meta path, targetType any", function (assert) {
+		var oBinding,
+			bChangeFired,
+			oMetaContext = {},
+			oValue = {};
+
+		this.mock(_Cache).expects("createProperty").never();
+
+		// code under test
+		oBinding = this.oModel.bindProperty("/Artists##@Capabilities.InsertRestrictions", null);
+
+		oBinding.setType(undefined, "any");
+		this.mock(this.oModel.getMetaModel()).expects("getMetaContext")
+			.withExactArgs("/Artists")
+			.returns(oMetaContext);
+		this.mock(this.oModel.getMetaModel()).expects("fetchObject")
+			.withExactArgs("@Capabilities.InsertRestrictions", sinon.match.same(oMetaContext))
+			.returns(SyncPromise.resolve(oValue));
+		this.mock(this.oModel.getMetaModel()).expects("fetchUI5Type").never();
+		this.mock(oBinding).expects("fireDataRequested").never();
+		this.mock(oBinding).expects("fireDataReceived").never();
+		oBinding.attachChange(function () {
+			assert.notOk(bChangeFired, "exactly one change event");
+			bChangeFired = true;
+		});
+
+		// code under test
+		return oBinding.checkUpdate().then(function () {
+			assert.strictEqual(oBinding.getValue(), oValue);
+			assert.ok(bChangeFired, "change event");
+		});
+	});
+
+	//*********************************************************************************************
 	QUnit.test("isMeta", function (assert) {
 		assert.strictEqual(this.oModel.bindProperty("foo", null).isMeta(), false);
 		assert.strictEqual(this.oModel.bindProperty("foo#bar", null).isMeta(), false,
@@ -855,6 +932,8 @@ sap.ui.define([
 				oSpy = this.spy(ODataPropertyBinding.prototype, "checkUpdate");
 
 			oCacheMock.expects("createProperty").returns(oCache);
+			this.mock(ODataPropertyBinding.prototype).expects("isMeta").withExactArgs()
+				.returns(false);
 			this.mock(this.oModel.getMetaModel()).expects("fetchUI5Type")
 				.withExactArgs(sPath)
 				.returns(SyncPromise.resolve(oRawType));
@@ -1743,16 +1822,12 @@ sap.ui.define([
 		assert.deepEqual(oBinding.doFetchQueryOptions().getResult(), {custom : "foo"});
 
 		oBinding = this.oModel.bindProperty("path", undefined, {custom : "foo"});
-		this.mock(oBinding).expects("isRoot").twice().withExactArgs().returns(false);
+		this.mock(oBinding).expects("isRoot").withExactArgs().returns(false);
 
 		// code under test
 		oPromise = oBinding.doFetchQueryOptions();
 
 		assert.deepEqual(oPromise.getResult(), {});
-
-		// code under test
-		assert.strictEqual(oBinding.doFetchQueryOptions(), oPromise,
-			"all bindings share the same promise");
 	});
 
 	//*********************************************************************************************
