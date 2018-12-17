@@ -325,9 +325,7 @@ sap.ui.define([
 		}
 
 		// Bind automatically to the MessageModel if no items are bound
-		if (!this.getBindingInfo("items") && !aItems.length) {
-			this._makeAutomaticBinding();
-		}
+		this._makeAutomaticBinding();
 	};
 
 	/**
@@ -399,11 +397,25 @@ sap.ui.define([
 	};
 
 	/**
+	 * If there's no items binding, attach the MessageView to the sap.ui.getCore().getMessageManager().getMessageModel()
+	 *
+	 * @sap-restricted sap.m.MessagePopover
+	 * @private
+	 */
+	MessageView.prototype._makeAutomaticBinding = function () {
+		var aItems = this.getItems();
+
+		if (!this.getBindingInfo("items") && !aItems.length) {
+			this._bindToMessageModel();
+		}
+	};
+
+	/**
 	 * Makes automatic binding to the Message Model with default template
 	 *
 	 * @private
 	 */
-	MessageView.prototype._makeAutomaticBinding = function () {
+	MessageView.prototype._bindToMessageModel = function () {
 		var that = this;
 
 		this.setModel(sap.ui.getCore().getMessageManager().getMessageModel(), "message");
