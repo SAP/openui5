@@ -93,5 +93,22 @@
         "references": []
       }
     ]
+  },
+  "1.60.2": {
+    "date": "November 2018",
+    "notes": [
+      {
+        "id": "962aa2dc4b2f7feda9cf447a71f32cf45c4a8706",
+        "type": "FIX",
+        "text": " sap.ui.unified.Calendar: aria-label is not encoded twice now",
+        "references": []
+      },
+      {
+        "id": "b3cf3abc354ad80abbe38a5a1f9c9c52b5f1ddbb",
+        "type": "FIX",
+        "text": " sap.ui.unified.Menu: Menu works correctly on combi devices",
+        "references": []
+      }
+    ]
   }
 }

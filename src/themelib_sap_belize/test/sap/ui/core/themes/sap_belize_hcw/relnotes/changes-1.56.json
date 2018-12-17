@@ -141,5 +141,140 @@
         "references": []
       }
     ]
+  },
+  "1.56.1": {
+    "date": "May 2018",
+    "notes": [
+      {
+        "id": "83ba9375c5e6bcb62c946bf925f90e2f52dc0525",
+        "type": "FIX",
+        "text": " m.App: Applied transparent bg in belize_plus",
+        "references": []
+      },
+      {
+        "id": "9708cf2c03acada182d87ad5c00d4ca9abf74820",
+        "type": "FIX",
+        "text": " sap.m.IconTabBar: Selected text now has correct contrast",
+        "references": []
+      }
+    ]
+  },
+  "1.56.2": {
+    "date": "June 2018",
+    "notes": [
+      {
+        "id": "0d4c2b4c59d03f6cb1f69f361a780c90d98d73ec",
+        "type": "FIX",
+        "text": " sap.m.SegmentedButton: right border of the last visible sub item is now displayed",
+        "references": []
+      }
+    ]
+  },
+  "1.56.3": {
+    "date": "June 2018",
+    "notes": [
+      {
+        "id": "2cb7797097e092daa911782536d5f3d393ca17fe",
+        "type": "FIX",
+        "text": " CheckBox: right focus otline cut off fixed",
+        "references": []
+      },
+      {
+        "id": "bfe6a30402e14c3d2b49b18bbd5bfe93d7970ab8",
+        "type": "FIX",
+        "text": " sap.m.IconTabBar: headerBackgroundDesign now works correctly",
+        "references": []
+      },
+      {
+        "id": "8814ebdfa2caf9d82637b85320af0a5821da3f87",
+        "type": "FIX",
+        "text": " sap.ui.unified.Calendar, CalendarLegend: contrast ratio is fixed",
+        "references": []
+      },
+      {
+        "id": "b96197cdf87d030e87101e0777cb97de4c54153b",
+        "type": "FIX",
+        "text": " sap.ui.unified.Calendar: weekNumberSelect event now works correctly in IE and Edge",
+        "references": []
+      },
+      {
+        "id": "ba4788d820a686ccdd17dddeeb6189b021771cb7",
+        "type": "FIX",
+        "text": " sap_belize: @sapPositiveColor contrast ratio fixed",
+        "references": []
+      }
+    ]
+  },
+  "1.56.5": {
+    "date": "July 2018",
+    "notes": [
+      {
+        "id": "29208eb6d06827e7debe4dde201e888948377dcc",
+        "type": "FIX",
+        "text": " sap.m.RadioButton: Selection now visible in print",
+        "references": []
+      }
+    ]
+  },
+  "1.56.6": {
+    "date": "August 2018",
+    "notes": [
+      {
+        "id": "121f122b502c8e201b24510dd8808a9ba6d96b1a",
+        "type": "FIX",
+        "text": " sap.m.ComboBox: Items\u0027 loading indicator returned back",
+        "references": []
+      }
+    ]
+  },
+  "1.56.7": {
+    "date": "August 2018",
+    "notes": [
+      {
+        "id": "fe8d2122698444bef6af6aa8c6ed940b2f98e105",
+        "type": "FIX",
+        "text": " sap.m.PlanningCalendar: visual fix of the DatesRow on hover",
+        "references": []
+      }
+    ]
+  },
+  "1.56.9": {
+    "date": "September 2018",
+    "notes": [
+      {
+        "id": "7eb3c55fca84a6c3def91bd6ea26297909dbd847",
+        "type": "FIX",
+        "text": " Calendar: Picker\u0027s selected month/year style overriding focus in HC fixed",
+        "references": []
+      },
+      {
+        "id": "57e80f9ceddb5a1c5b0ad49f27ba0f35891345aa",
+        "type": "FIX",
+        "text": " sap.m.Input: Value help icon is now properly displayed in compact mode",
+        "references": []
+      }
+    ]
+  },
+  "1.56.12": {
+    "date": "October 2018",
+    "notes": [
+      {
+        "id": "b789285d201a09a6b1d777a9460fb09f05e04f34",
+        "type": "FIX",
+        "text": " sap.uxap.ObjectPageLayout: Fixed header content transparency",
+        "references": []
+      }
+    ]
+  },
+  "1.56.16": {
+    "date": "December 2018",
+    "notes": [
+      {
+        "id": "72ae47a09882f929546d8f09cb395190915e0de1",
+        "type": "FIX",
+        "text": " sap.f.DynamicPageHeader: Fixed background in Shell",
+        "references": []
+      }
+    ]
   }
 }

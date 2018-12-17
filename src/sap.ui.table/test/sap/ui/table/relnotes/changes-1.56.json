@@ -141,5 +141,101 @@
         "references": []
       }
     ]
+  },
+  "1.56.2": {
+    "date": "June 2018",
+    "notes": [
+      {
+        "id": "fab3e0d80350e9495d2bc9f12159245d9bafd6e4",
+        "type": "FIX",
+        "text": " Table: Avoid invalidation if NoData text string wasn\u0027t changed",
+        "references": []
+      },
+      {
+        "id": "8f6cf32f6a3087f4fd84faaa9ffb2291f88adff7",
+        "type": "FIX",
+        "text": " Table: Correct positioning of the action column",
+        "references": []
+      }
+    ]
+  },
+  "1.56.3": {
+    "date": "June 2018",
+    "notes": [
+      {
+        "id": "f481efa41733b3c7da0a8991f94de801bf6e7425",
+        "type": "FIX",
+        "text": " GridTable: NoData handling for $expand(ed) lists corrected",
+        "references": []
+      },
+      {
+        "id": "8fd51b3528f26a4884749c5e7400519a82187ad5",
+        "type": "FIX",
+        "text": " Table: Avoid infinite re-rendering if fixed columns are available",
+        "references": []
+      },
+      {
+        "id": "9008b174d83f22cedb969f2679484723bd5a037b",
+        "type": "FIX",
+        "text": " Table: Avoid layout and row updates if the table is invisible",
+        "references": []
+      },
+      {
+        "id": "b5d9e18806e203ef051c3f873a5cc0f7fdeb1a3b",
+        "type": "FIX",
+        "text": " TreeTable: Hide tree icon on leafs for screenreaders",
+        "references": []
+      }
+    ]
+  },
+  "1.56.4": {
+    "date": "July 2018",
+    "notes": [
+      {
+        "id": "3f51c73568b079f280fd084ce09e3648777f46f9",
+        "type": "FIX",
+        "text": " Table: Edit mode navigation with sap.m.Select repaired",
+        "references": []
+      }
+    ]
+  },
+  "1.56.6": {
+    "date": "August 2018",
+    "notes": [
+      {
+        "id": "aaca2b7a9a9a50f562b19c7139bea32ce2cc4ee6",
+        "type": "FIX",
+        "text": " Table: Avoid horizontal scrolling of cell content on focus in rtl",
+        "references": []
+      },
+      {
+        "id": "d6274faa97f288378db68f710b123eea3ff2ff82",
+        "type": "FIX",
+        "text": " Table: Scrolling to last row with mouse wheel",
+        "references": []
+      }
+    ]
+  },
+  "1.56.7": {
+    "date": "August 2018",
+    "notes": [
+      {
+        "id": "e1e8bdf7f894a20f7d5d421f126f28559a937c96",
+        "type": "FIX",
+        "text": " Table: Clicking on the column resizer no longer causes scrolling",
+        "references": []
+      }
+    ]
+  },
+  "1.56.13": {
+    "date": "October 2018",
+    "notes": [
+      {
+        "id": "13bb009aea14012e63be3aa7b8a2e3e92c7449d1",
+        "type": "FIX",
+        "text": " Table: Update the scroll position when setting firstVisibleRow",
+        "references": []
+      }
+    ]
   }
 }

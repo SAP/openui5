@@ -75,5 +75,33 @@
         "references": []
       }
     ]
+  },
+  "1.60.1": {
+    "date": "November 2018",
+    "notes": [
+      {
+        "id": "2b5787d8a970db03cc882d6cd410a23a2dcd932d",
+        "type": "FIX",
+        "text": " SimpleForm: Layout rendered wrong if set late",
+        "references": []
+      }
+    ]
+  },
+  "1.60.2": {
+    "date": "November 2018",
+    "notes": [
+      {
+        "id": "5784e7f6d95b8c2ba5e77bc44b8f5072ad88853c",
+        "type": "FIX",
+        "text": " ColumnElementData and ColumnContainerData @since wrong",
+        "references": []
+      },
+      {
+        "id": "ca7ae87d6010087bd0fddff5eef8f80cf1061e92",
+        "type": "FIX",
+        "text": " Form: use stable IDs for labels created by FormElement",
+        "references": []
+      }
+    ]
   }
 }

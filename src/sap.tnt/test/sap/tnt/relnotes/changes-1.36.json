@@ -1,56 +1,52 @@
 {
-	"1.36.1": {
-		"date": "February 2016",
-		"notes": [
-			{
-				"id": "3a91b31344fdd066a7f9f20237b008f3c63aff7c",
-				"type": "FIX",
-				"text": "sap.tnt.NavigationList: Focus is now styled correctly",
-				"references": [
-					{
-						"type": "BCP",
-						"reference": "1570874790"
-					}
-				]
-			}
-		]
-	},
-	"1.36.5": {
-		"date": "March 2016",
-		"notes": [
-			{
-				"id": "4aa146730c7326bbee55fe95d3c8203ec8cd8bfb",
-				"type": "FIX",
-				"text": "sap.tnt.SideNavigation: Blinking effect on collapse is not visible anymore",
-				"references": [
-					{
-						"type": "BCP",
-						"reference": "1670074223"
-					}
-				]
-			}
-		]
-	},
-	"1.36.9": {
-		"date": "May 2016",
-		"notes": [
-			{
-				"id": "452c3fac3c1a17366bfc13a1e7a1c65a7cd50e3a",
-				"type": "FEATURE",
-				"text": "sap.m.NavigationListItem: Added one click navigation",
-				"references": []
-			},
-			{
-				"id": "049d9c62a8234e0d8e61e1a1a645a1296c03ca6e",
-				"type": "FIX",
-				"text": "sap.tnt.SideNavigation: Window scrolling in iOS is now prevented",
-				"references": [
-					{
-						"type": "BCP",
-						"reference": "1670250764"
-					}
-				]
-			}
-		]
-	}
+  "1.36.1": {
+    "date": "February 2016",
+    "notes": [
+      {
+        "id": "3a91b31344fdd066a7f9f20237b008f3c63aff7c",
+        "type": "FIX",
+        "text": "sap.tnt.NavigationList: Focus is now styled correctly",
+        "references": []
+      }
+    ]
+  },
+  "1.36.5": {
+    "date": "March 2016",
+    "notes": [
+      {
+        "id": "4aa146730c7326bbee55fe95d3c8203ec8cd8bfb",
+        "type": "FIX",
+        "text": "sap.tnt.SideNavigation: Blinking effect on collapse is not visible anymore",
+        "references": []
+      }
+    ]
+  },
+  "1.36.9": {
+    "date": "May 2016",
+    "notes": [
+      {
+        "id": "452c3fac3c1a17366bfc13a1e7a1c65a7cd50e3a",
+        "type": "FEATURE",
+        "text": "sap.m.NavigationListItem: Added one click navigation",
+        "references": []
+      },
+      {
+        "id": "049d9c62a8234e0d8e61e1a1a645a1296c03ca6e",
+        "type": "FIX",
+        "text": "sap.tnt.SideNavigation: Window scrolling in iOS is now prevented",
+        "references": []
+      }
+    ]
+  },
+  "1.36.11": {
+    "date": "May 2016",
+    "notes": [
+      {
+        "id": "fa8841d1a95ac858fa48fa1e7c28568658806e80",
+        "type": "FIX",
+        "text": "sap.tnt.NavigationList: Icon rendering issue solved",
+        "references": []
+      }
+    ]
+  }
 }

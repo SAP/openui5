@@ -7,6 +7,12 @@
         "type": "FIX",
         "text": " sap.tnt.ToolPage: Rendering without SideNavigation",
         "references": []
+      },
+      {
+        "id": "11a655d87ee33509b2e7ddc493f5a73f72d96935",
+        "type": "FIX",
+        "text": " sap.tnt.ToolPage: Rendering without SideNavigation",
+        "references": []
       }
     ]
   }

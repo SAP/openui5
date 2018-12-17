@@ -1041,5 +1041,153 @@
         "references": []
       }
     ]
+  },
+  "1.60.1": {
+    "date": "November 2018",
+    "notes": [
+      {
+        "id": "ee484109be42705500f11f17c51a97c70fbe997a",
+        "type": "FIX",
+        "text": " Upload Collection 1902 Enhancements - Patch 1",
+        "references": []
+      },
+      {
+        "id": "3fc20a8a92d51d48eebc1b6113fe8ae75d1eaa39",
+        "type": "FIX",
+        "text": " sap.m.Carousel: content of scroll containers is now destroyed correctly",
+        "references": []
+      },
+      {
+        "id": "b4f9b214523dd005313b3b0ed5eff14445e8c29a",
+        "type": "FIX",
+        "text": " sap.m.Dialog: Adjust width when dialog contains long items",
+        "references": []
+      },
+      {
+        "id": "d74539ec9a877fce62bd507d33c7bf47e9b89ac1",
+        "type": "FIX",
+        "text": " sap.m.GrowingEnablement: small threshold does not work",
+        "references": []
+      },
+      {
+        "id": "606b4938853344e5efdcac842b99a80e09498388",
+        "type": "FIX",
+        "text": " sap.m.InputBase: Change prevented on button click",
+        "references": []
+      },
+      {
+        "id": "ec93ba982caac90b91a27055ae74b52a76209737",
+        "type": "FIX",
+        "text": " sap.m.ListBase: ariaLabelledBy should not be announced twice.",
+        "references": []
+      },
+      {
+        "id": "b5908cdec710f4bc678ff04b88ab76c5e2c0e29b",
+        "type": "FIX",
+        "text": " sap.m.MessageListItem: Prevent unneeded creation of InvisibleText",
+        "references": []
+      },
+      {
+        "id": "91071e5427ebc6450542116bf5a97123162da18d",
+        "type": "FIX",
+        "text": " sap.m.NotificationListBase: A problem with forwarding aggregation is now fixed.",
+        "references": []
+      },
+      {
+        "id": "adc417f0855e0303296d7673456e7122e3834ba7",
+        "type": "FIX",
+        "text": " sap.m.ObjectIdentifier: wraps on IE",
+        "references": []
+      },
+      {
+        "id": "4d44e761bfa6315b9982ba664d0425891a6fede1",
+        "type": "FIX",
+        "text": " sap.m.SegmentedButton: Width changed is not fired when in Popover",
+        "references": []
+      },
+      {
+        "id": "abf78628645cf7ea8b321018240f2142ae12a001",
+        "type": "FIX",
+        "text": " sap.m.Wizard: Current step in branching fixed",
+        "references": []
+      },
+      {
+        "id": "84bdd4b42941e68476960c331cb410b0d640192b",
+        "type": "FIX",
+        "text": " sap.m.UploadCollection: Rollback the latest refactoring",
+        "references": []
+      }
+    ]
+  },
+  "1.60.2": {
+    "date": "November 2018",
+    "notes": [
+      {
+        "id": "ca7ae87d6010087bd0fddff5eef8f80cf1061e92",
+        "type": "FIX",
+        "text": " Form: use stable IDs for labels created by FormElement",
+        "references": []
+      },
+      {
+        "id": "4c948855375416a125b0666af5ebe35da375edb0",
+        "type": "FIX",
+        "text": " Upload Collection 1902 Enhancements - Patch 2",
+        "references": []
+      },
+      {
+        "id": "0ccb7171d8a9bedd447738d84ac99c94ef4e8fc2",
+        "type": "FIX",
+        "text": " m.ViewSettingsDialog: Tooltip for sort items is now shown",
+        "references": []
+      },
+      {
+        "id": "6bc4b142127a53f3298082c3b9db734164af8971",
+        "type": "FIX",
+        "text": " sap.m.GenericTile : Reverted the clampText() as there is performance degradation for FLP due to its implementation.",
+        "references": []
+      },
+      {
+        "id": "b820fbb6427109ad7f4dcd16b60a11963c3510be",
+        "type": "FIX",
+        "text": " sap.m.GenericTile: fix border CSS for BC, HCB and HCW themes",
+        "references": []
+      },
+      {
+        "id": "c3e0e44976d55ebd3a7912c5cc3495471f6a594b",
+        "type": "FIX",
+        "text": " sap.m.MultiInput: Prevent removing tokens in disabled state",
+        "references": []
+      },
+      {
+        "id": "3b645f16f52c36e5f0d6432f11764760fc041a0c",
+        "type": "FIX",
+        "text": " sap.m.PlanningCalendar - explored app sample fixed",
+        "references": []
+      },
+      {
+        "id": "5aee3f19d745b8b0d4207b4383160940306f9b1c",
+        "type": "FIX",
+        "text": " sap.m.PlanningCalendar: Respects the given height",
+        "references": []
+      },
+      {
+        "id": "a506bffa24306b5535f6d2786017b34af6eb23e3",
+        "type": "FIX",
+        "text": " sap.m.TimePicker: Popover opens on iPad / Tablet correctly",
+        "references": []
+      },
+      {
+        "id": "08e6c088d3831e29708426e863faae66b9e95578",
+        "type": "FIX",
+        "text": " sap.m.TimePicker: gets correct locale",
+        "references": []
+      },
+      {
+        "id": "497bcc5cab988615b0f0c84eb3a3b375645c5548",
+        "type": "FIX",
+        "text": " sap.m.UploadCollection: Item\u0027s file name can be bound to null",
+        "references": []
+      }
+    ]
   }
 }

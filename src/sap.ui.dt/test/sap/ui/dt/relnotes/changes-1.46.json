@@ -5,19 +5,120 @@
       {
         "id": "b5b315e9a2e999f60d6fbc60bcadaa5687603adf",
         "type": "FEATURE",
-        "text": "sap.ui.dt: Shared configuration for test pages",
+        "text": " sap.ui.dt: Shared configuration for test pages",
         "references": []
       },
       {
         "id": "f9b274c8ebd8f4195c499c83904c68dc339c1599",
         "type": "FIX",
-        "text": "- cut-paste shortcuts on mac",
+        "text": " - cut-paste shortcuts on mac",
         "references": []
       },
       {
         "id": "3b873b3281987956b9fec1ea10866b3473d4be2a",
         "type": "FIX",
-        "text": "sap.ui.dt: Improve check on SimpleForm move",
+        "text": " sap.ui.dt: Improve check on SimpleForm move",
+        "references": []
+      }
+    ]
+  },
+  "1.46.3": {
+    "date": "February 2017",
+    "notes": [
+      {
+        "id": "83038641645b8e07470793f3df455cfb79f7987f",
+        "type": "FIX",
+        "text": " sap.ui.dt: new overlay-utils functionality",
+        "references": []
+      }
+    ]
+  },
+  "1.46.4": {
+    "date": "February 2017",
+    "notes": [
+      {
+        "id": "b2e4e6c6738249c8c81b94af3d08aaef8b2a4cc4",
+        "type": "FIX",
+        "text": " sap.ui.dt register overlays at plugins only when dt is synced",
+        "references": []
+      },
+      {
+        "id": "382181f37c8217d300b3dca5f5326c22986e9eac",
+        "type": "FIX",
+        "text": " sap.ui.dt: bugfix domUtil",
+        "references": []
+      },
+      {
+        "id": "3dc8d1f6d5bbb0198751e558db6f3c45aa41bd1e",
+        "type": "FIX",
+        "text": ": RTA - simpleform fix editable titles (dt-part)",
+        "references": []
+      }
+    ]
+  },
+  "1.46.5": {
+    "date": "March 2017",
+    "notes": [
+      {
+        "id": "bfae0dd427b2923d93f38caed9524fc204269f72",
+        "type": "FIX",
+        "text": " sap.ui.dt: Border fixes in HCB theme",
+        "references": []
+      }
+    ]
+  },
+  "1.46.6": {
+    "date": "April 2017",
+    "notes": [
+      {
+        "id": "ff817797c42e0a11cffe321c6d70ac6e1f41660f",
+        "type": "FIX",
+        "text": " Context menu can be called during rename and throws error",
+        "references": []
+      },
+      {
+        "id": "8fd1dd6ac7eb736f324a2141a45e4b7c1507413c",
+        "type": "FIX",
+        "text": " sap.ui.dt: Support dependents aggregation when handling overlays",
+        "references": []
+      },
+      {
+        "id": "ebabec27b2311b4acb9cd42a4b70b4236930d0a1",
+        "type": "FIX",
+        "text": " sap.ui.dt.Designtime - fix destroy overlay error after combine",
+        "references": []
+      }
+    ]
+  },
+  "1.46.8": {
+    "date": "May 2017",
+    "notes": [
+      {
+        "id": "0e419dd361cc0ff1880f347ff5f57fec80cdaa61",
+        "type": "FIX",
+        "text": " sap.ui.dt : suppress sync during element modification",
+        "references": []
+      }
+    ]
+  },
+  "1.46.9": {
+    "date": "June 2017",
+    "notes": [
+      {
+        "id": "5edc4c51c6dcb75050ad114e69027ee67551a507",
+        "type": "FIX",
+        "text": " simpleform getIndex",
+        "references": []
+      }
+    ]
+  },
+  "1.46.11": {
+    "date": "June 2017",
+    "notes": [
+      {
+        "id": "ed27ad9300c7707e3c1ad86251c0d5b655e18123",
+        "type": "FIX",
+        "text": " Revise ElementUtil.isValidForAggregation",
         "references": []
       }
     ]

@@ -81,5 +81,34 @@
         "references": []
       }
     ]
+  },
+  "1.60.2": {
+    "date": "November 2018",
+    "notes": [
+      {
+        "id": "ef0a3ac4b8b09e281666f82c7104ea1b5d00fc18",
+        "type": "FIX",
+        "text": " Table: Apply input values when scrolling by edit mode navigation",
+        "references": []
+      },
+      {
+        "id": "e54270c71f2395286fc457891375bc530d669f65",
+        "type": "FIX",
+        "text": " Table: Horizontal scroll position on focus in RTL with Unit Tests",
+        "references": []
+      },
+      {
+        "id": "1d3b0357a660a7c831238e1ac71332512bae8733",
+        "type": "FIX",
+        "text": " TreeTable: ACC - Avoid duplicate announcement on expand/collapse",
+        "references": []
+      },
+      {
+        "id": "71af8cc83d1e5eb7c8ab00578d737f80a9d24ba3",
+        "type": "FIX",
+        "text": " Table: Correctly create new rows after resize",
+        "references": []
+      }
+    ]
   }
 }

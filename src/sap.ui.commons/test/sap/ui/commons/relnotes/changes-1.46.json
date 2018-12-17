@@ -5,63 +5,72 @@
       {
         "id": "d25028b04cf5cac2ea82b673cdc50e055a0eb4bb",
         "type": "FEATURE",
-        "text": "sap.ui.commons: Shared configuration for test pages",
+        "text": " sap.ui.commons: Shared configuration for test pages",
         "references": []
       },
       {
         "id": "6832374bc7956a89fdd0c75c457c9235622cf131",
         "type": "FIX",
-        "text": "sap.ui.commons semantic colors for TextField and ProgressIndicator",
-        "references": [
-          {
-            "type": "BCP",
-            "reference": "1670517437"
-          }
-        ]
+        "text": " sap.ui.commons semantic colors for TextField and ProgressIndicator",
+        "references": []
       },
       {
         "id": "36764f477ff5e9db7e07017c975374134c3fc1cb",
         "type": "FIX",
-        "text": "sap.ui.commons semantic colors for TextField and ProgressIndicator",
-        "references": [
-          {
-            "type": "BCP",
-            "reference": "1670517437"
-          }
-        ]
+        "text": " sap.ui.commons semantic colors for TextField and ProgressIndicator",
+        "references": []
       },
       {
         "id": "6f5c19da89db21aae13eaf3438ed9057754cc69e",
         "type": "FIX",
-        "text": "sap.ui.commons.Link: Focus visualization in sap.ui.table.Table Cell",
-        "references": [
-          {
-            "type": "BCP",
-            "reference": "1680175114"
-          }
-        ]
+        "text": " sap.ui.commons.Link: Focus visualization in sap.ui.table.Table Cell",
+        "references": []
       },
       {
         "id": "d4c70ee8413d860d928f4b0fd4813e45d9aec92d",
         "type": "FIX",
-        "text": "sap.ui.commons.RadioButton: Memory leak issue",
-        "references": [
-          {
-            "type": "GitHub",
-            "reference": "1273"
-          }
-        ]
+        "text": " sap.ui.commons.RadioButton: Memory leak issue",
+        "references": []
       },
       {
         "id": "832a99253fba5489855f9471af8632d02d3e11d5",
         "type": "FIX",
-        "text": "sap.ui.core.Popup: keep blocklayer when there's still modal popup open",
-        "references": [
-          {
-            "type": "BCP",
-            "reference": "1670449871"
-          }
-        ]
+        "text": " sap.ui.core.Popup: keep blocklayer when there\u0027s still modal popup open",
+        "references": []
+      }
+    ]
+  },
+  "1.46.3": {
+    "date": "February 2017",
+    "notes": [
+      {
+        "id": "c08f2f23d6d81733372962bebbc1c4bbd230a3b5",
+        "type": "FIX",
+        "text": " sap.ui.commons.ComboBox: hover and active state fixed for sap_hcb",
+        "references": []
+      },
+      {
+        "id": "5ba296ecd11dfa12be93374542e82cf82607048f",
+        "type": "FIX",
+        "text": " sap.ui.commons.RadioButtonGroup: Layout issue when colums are set fixed",
+        "references": []
+      },
+      {
+        "id": "af79c8dbe74212e05ef4eab4d1806478d59bd2ac",
+        "type": "FIX",
+        "text": " sap.ui.commons.ValueHelpField: hover and active state fixed for sap_hcb",
+        "references": []
+      }
+    ]
+  },
+  "1.46.6": {
+    "date": "April 2017",
+    "notes": [
+      {
+        "id": "962a8b4b39538317296911f8ff906eaa061b51b9",
+        "type": "FIX",
+        "text": " sap.ui.commons.Slider: Setting of limit values work correctly",
+        "references": []
       }
     ]
   }

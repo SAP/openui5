@@ -7,6 +7,12 @@
         "type": "FIX",
         "text": " Form: use stable IDs for labels created by FormElement",
         "references": []
+      },
+      {
+        "id": "19f40d3bf7900f28c7b3a465438f81040a3f3563",
+        "type": "FIX",
+        "text": " Form: use stable IDs for labels created by FormElement",
+        "references": []
       }
     ]
   }

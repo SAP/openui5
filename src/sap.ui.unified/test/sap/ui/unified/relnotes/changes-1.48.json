@@ -117,5 +117,208 @@
         "references": []
       }
     ]
+  },
+  "1.48.1": {
+    "date": "May 2017",
+    "notes": [
+      {
+        "id": "14c4dd876b42b7ae53ba11d41a038ff3505a25c8",
+        "type": "FIX",
+        "text": " sap.m.Menu: Item separator position and height corrected",
+        "references": []
+      },
+      {
+        "id": "89775391e749ffb83ba7b917fb6c8f19a034d6d2",
+        "type": "FIX",
+        "text": " sap.ui.unified.calendar.Header: Previous and next buttons have aria info",
+        "references": []
+      },
+      {
+        "id": "e937b8999683756030037041d28a8b1220a925a1",
+        "type": "FIX",
+        "text": " sap.ui.unified.calendar.Month off by one day.",
+        "references": []
+      }
+    ]
+  },
+  "1.48.2": {
+    "date": "June 2017",
+    "notes": [
+      {
+        "id": "c6d8d32a688b688b7a295f9a483ac2d45f544bed",
+        "type": "FIX",
+        "text": " m.Menu: Header border and menu padding are fixed for phone",
+        "references": []
+      },
+      {
+        "id": "b5016dc4da1550ed500c2f48888b1c47fe77f1d1",
+        "type": "FIX",
+        "text": " m.PlanningCalendar: Appointments are aggregated equally across time zones",
+        "references": []
+      }
+    ]
+  },
+  "1.48.3": {
+    "date": "June 2017",
+    "notes": [
+      {
+        "id": "a22474d031a0c2140c6283afee865b5cb4031d15",
+        "type": "FIX",
+        "text": " sap.ui.unified.FileUploader: FileUploader and Label issue",
+        "references": []
+      },
+      {
+        "id": "952eceddfc805962b21d73d5e904b6a721522ab7",
+        "type": "FIX",
+        "text": " sap.ui.unified.Menu: opening as a context menu improved for RTL",
+        "references": []
+      }
+    ]
+  },
+  "1.48.6": {
+    "date": "August 2017",
+    "notes": [
+      {
+        "id": "f1c5fd290e7efc22122ff0168d3806399c6973e7",
+        "type": "FIX",
+        "text": " sap.m.DatePicker: Submit empty input value while picker open now works correctly",
+        "references": []
+      }
+    ]
+  },
+  "1.48.7": {
+    "date": "September 2017",
+    "notes": [
+      {
+        "id": "4cfba742526bb7f60af981f96350b7d9d24e781a",
+        "type": "FIX",
+        "text": " (Potentially) missing documentation for managed property is fixed.",
+        "references": []
+      },
+      {
+        "id": "6547cce06df8cd30531a560961748be7914c06d3",
+        "type": "FIX",
+        "text": " (Potentially) missing documentation for managed property is fixed.",
+        "references": []
+      },
+      {
+        "id": "ba878bb257ff4ab289787fbdb98c2c8d4e6e1964",
+        "type": "FIX",
+        "text": " ShellHeader Layout fixed",
+        "references": []
+      },
+      {
+        "id": "7753f98dfab1dc5771a629a9c152733158d9697c",
+        "type": "FIX",
+        "text": " ShellHeader Layout fixed",
+        "references": []
+      }
+    ]
+  },
+  "1.48.8": {
+    "date": "September 2017",
+    "notes": [
+      {
+        "id": "9cd697e1f21dac37d873ed1754092a478b7abb2d",
+        "type": "FIX",
+        "text": " sap.ui.unified.Calendar: Select event now has correct event source",
+        "references": []
+      }
+    ]
+  },
+  "1.48.9": {
+    "date": "September 2017",
+    "notes": [
+      {
+        "id": "1b802e3ea7a0b15f6adbf37e1a233f3c393b7ebc",
+        "type": "FIX",
+        "text": " sap.m.PlanningCalendar: selecting appointments fires event in OneMonth view on small screen size",
+        "references": []
+      }
+    ]
+  },
+  "1.48.10": {
+    "date": "October 2017",
+    "notes": [
+      {
+        "id": "3bdf4fde21c1b575f61450000875e7b1056e1d63",
+        "type": "FIX",
+        "text": " sap.ui.unified.calendar.Month: single interval selection highlights the right dates",
+        "references": []
+      }
+    ]
+  },
+  "1.48.11": {
+    "date": "October 2017",
+    "notes": [
+      {
+        "id": "3ea9209b09c00ae75d62f7947caa5fb29311cc6f",
+        "type": "FIX",
+        "text": " unified.FileUploader: drag and drop behavior fixed",
+        "references": []
+      }
+    ]
+  },
+  "1.48.14": {
+    "date": "November 2017",
+    "notes": [
+      {
+        "id": "b10d6ec743bf8d86e7e56db848e5330b670156ad",
+        "type": "FIX",
+        "text": " sap.ui.unified.Calendar: select date on mouseup when used on touch device",
+        "references": []
+      },
+      {
+        "id": "be133b2503416a7a3da1e060fe8dec94091318b7",
+        "type": "FIX",
+        "text": " sap.ui.unified.Menu: qunit tests fixed on combi devices",
+        "references": []
+      }
+    ]
+  },
+  "1.48.15": {
+    "date": "December 2017",
+    "notes": [
+      {
+        "id": "474a44c1f0fa36c63f9bfe0a5321ced4f2881b2f",
+        "type": "FIX",
+        "text": " sap.ui.unified.Calendar: Focus handling corrected",
+        "references": []
+      },
+      {
+        "id": "32753ac598fd5dc11721e4a8ca3aede6a41b2c3e",
+        "type": "FIX",
+        "text": " sap.ui.unified.Calendar: Select month and year corrected",
+        "references": []
+      }
+    ]
+  },
+  "1.48.16": {
+    "date": "December 2017",
+    "notes": [
+      {
+        "id": "35ba136293ae2b5805b2ce352faeb15d39160a83",
+        "type": "FIX",
+        "text": " sap.m.PlanningCalendar: days aligned correctly in RTL",
+        "references": []
+      }
+    ]
+  },
+  "1.48.19": {
+    "date": "February 2018",
+    "notes": [
+      {
+        "id": "f0e209f44375e1c6fc3bc93456fb3cbee2aeb455",
+        "type": "FIX",
+        "text": " Control: refactor fnHandleInteraction",
+        "references": []
+      },
+      {
+        "id": "139ad5712f9067271da6a70fe620e5083c5ccd28",
+        "type": "FIX",
+        "text": " sap.m: instanceof Date in public methods corrected",
+        "references": []
+      }
+    ]
   }
 }

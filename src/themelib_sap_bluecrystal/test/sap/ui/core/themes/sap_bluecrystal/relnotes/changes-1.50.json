@@ -75,5 +75,72 @@
         "references": []
       }
     ]
+  },
+  "1.50.3": {
+    "date": "September 2017",
+    "notes": [
+      {
+        "id": "cf433ef64c658190ac15fbabf7bac98befd69806",
+        "type": "FIX",
+        "text": " sap.m.ObjectAttribute: correct different height of the ObjectAttributeDiv between IE and Chrome",
+        "references": []
+      }
+    ]
+  },
+  "1.50.4": {
+    "date": "October 2017",
+    "notes": [
+      {
+        "id": "2652d40969d667f1efc041c07ee30a3baac09800",
+        "type": "FIX",
+        "text": " sap.m.BarInPageEnabler: Bars no longer care about the context they\u0027re used in (i.e. header, footer, etc.)",
+        "references": []
+      }
+    ]
+  },
+  "1.50.5": {
+    "date": "October 2017",
+    "notes": [
+      {
+        "id": "1a3ed654e0c5118015e33dffb80874f2e362ae46",
+        "type": "FIX",
+        "text": " sap.ui.unified.Calendar: minor visual fix in the header",
+        "references": []
+      }
+    ]
+  },
+  "1.50.6": {
+    "date": "November 2017",
+    "notes": [
+      {
+        "id": "ba5fbaa72b627de95005d9592573879c143d8b2e",
+        "type": "FIX",
+        "text": " sap.m.TileContainer: Moving of tiles fixed",
+        "references": []
+      }
+    ]
+  },
+  "1.50.9": {
+    "date": "January 2018",
+    "notes": [
+      {
+        "id": "3f234eb76551a9e1f1000e3aad7595515f6cebbf",
+        "type": "FIX",
+        "text": " sap.m.Dialog: correct header, subheader and footer DOM structure",
+        "references": []
+      },
+      {
+        "id": "2fa075b6b1daebb40def993d4a444b6617b55672",
+        "type": "FIX",
+        "text": " sap.m.Popover: correct header, subheader and footer DOM structure",
+        "references": []
+      },
+      {
+        "id": "78d81f9d14746439570a5841a241dff75158c249",
+        "type": "FIX",
+        "text": " sap.m.SegmentedButton: Vertically aligned correctly alongside other controls",
+        "references": []
+      }
+    ]
   }
 }

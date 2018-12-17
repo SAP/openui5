@@ -75,5 +75,28 @@
         "references": []
       }
     ]
+  },
+  "1.60.2": {
+    "date": "November 2018",
+    "notes": [
+      {
+        "id": "212c84bde90fccc28dfccef244873d82f85670ae",
+        "type": "FIX",
+        "text": " sap.f.DynamicPage: Title focus outline fixed in HC themes",
+        "references": []
+      },
+      {
+        "id": "cb73b49a028e52af9fa702b88e0d5cfb99e1fd61",
+        "type": "FIX",
+        "text": " sap.f.DynamicPageHeader: Fixed background in Shell",
+        "references": []
+      },
+      {
+        "id": "b820fbb6427109ad7f4dcd16b60a11963c3510be",
+        "type": "FIX",
+        "text": " sap.m.GenericTile: fix border CSS for BC, HCB and HCW themes",
+        "references": []
+      }
+    ]
   }
 }

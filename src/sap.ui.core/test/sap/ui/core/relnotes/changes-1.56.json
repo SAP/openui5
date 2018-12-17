@@ -784,5 +784,352 @@
         "references": []
       }
     ]
+  },
+  "1.56.1": {
+    "date": "May 2018",
+    "notes": [
+      {
+        "id": "75010072961d92b126a4e730b4a84efb8c10cee0",
+        "type": "FEATURE",
+        "text": " ExtensionPoint: Add new fully async load() API",
+        "references": []
+      },
+      {
+        "id": "d07c7d2cb1a358161f88eadec89354539f2b6dd1",
+        "type": "FIX",
+        "text": " Controller: extension",
+        "references": []
+      },
+      {
+        "id": "745e219fcde9406855f5c1d4279a1fe245e6aecb",
+        "type": "FIX",
+        "text": " ControllerExtension throws error",
+        "references": []
+      },
+      {
+        "id": "fcc72f01c91d3f8a46f12ba86a8f394cf808adcb",
+        "type": "FIX",
+        "text": " View.create: Create view with owner component",
+        "references": []
+      },
+      {
+        "id": "20b7c44beacb95f4d209861b8bffdf0ee690c2d8",
+        "type": "FIX",
+        "text": " sap.ui.model.odata.v4.lib._Requestor: OData-Version Header is optional for DELETE responses",
+        "references": []
+      },
+      {
+        "id": "2d1ec96e12a4342034fca69c05769e14b4f35c64",
+        "type": "FIX",
+        "text": " ui5loader: fix sync module loading on file protocol",
+        "references": []
+      },
+      {
+        "id": "064ee81a165270163a9ab0e4205e0685e3e32da8",
+        "type": "FIX",
+        "text": " Core: enable support for \"-\" and \".\" for initial modules",
+        "references": []
+      },
+      {
+        "id": "ac6bb43428731e2ec2c40760e80af6afe8fad77a",
+        "type": "FIX",
+        "text": " ui5loader: don\u0027t modify global define/require props by default",
+        "references": []
+      }
+    ]
+  },
+  "1.56.2": {
+    "date": "June 2018",
+    "notes": [
+      {
+        "id": "1d0daea9b88d1c947e75c1dc6830c4dc43ae17d1",
+        "type": "FIX",
+        "text": " ODataTreeBinding: Add missing support for count mode \"InlineRepeat\"",
+        "references": []
+      },
+      {
+        "id": "288a38aaff9b92ec8fac9137e6631f3a4eca5aaa",
+        "type": "FIX",
+        "text": " qunit-junit reporter: Add null-check for qunit DOM node",
+        "references": []
+      },
+      {
+        "id": "79f39a4c5fbd5472761e898c49ec1009f8b17cb3",
+        "type": "FIX",
+        "text": " ODataAnnotations: don\u0027t cache xml document",
+        "references": []
+      }
+    ]
+  },
+  "1.56.3": {
+    "date": "June 2018",
+    "notes": [
+      {
+        "id": "7693a999212ec2c74adbcd6676f41253ff314ba1",
+        "type": "FIX",
+        "text": " ControllerMetadata: don\u0027t delete public methods",
+        "references": []
+      },
+      {
+        "id": "eb6dcfa72637dde2a87278d553d22b7b246c6ecf",
+        "type": "FIX",
+        "text": " sap.ui.model.analytics.AnalyticalBinding#_createMultiUnitRepresentativeEntry",
+        "references": []
+      },
+      {
+        "id": "f15700d9eed90a2e0cb3269b18decae31f496c0e",
+        "type": "FIX",
+        "text": " sap.ui.model.analytics.AnalyticalBinding#getDownloadUrl: ensure all spaces are encoded",
+        "references": []
+      },
+      {
+        "id": "95be9300eb7659362397b89eeba3f1f80aba61f6",
+        "type": "FIX",
+        "text": " sap.ui.model.odata.AnnotationParser: better support annotations at arrays",
+        "references": []
+      },
+      {
+        "id": "492b68c748d1c6dcd3f73f4bd50a383771fd7bbe",
+        "type": "FIX",
+        "text": " ui5loader: Add Missing slash for JSDoc in closing code tag",
+        "references": []
+      },
+      {
+        "id": "6c574d623b2728f48c9bb6a253b73f4d22f508d8",
+        "type": "FIX",
+        "text": " DataState: Enable DS for List/Context/TreeBinding",
+        "references": []
+      },
+      {
+        "id": "07944d0e3141478aaa51cbaebb1d8950f7772034",
+        "type": "FIX",
+        "text": " sap.ui.model.odata.AnnotationParser: better support annotations at arrays",
+        "references": []
+      }
+    ]
+  },
+  "1.56.4": {
+    "date": "July 2018",
+    "notes": [
+      {
+        "id": "828d7a57d2d308285f84e67eae0a51ed32ac97e7",
+        "type": "FEATURE",
+        "text": " ui5loader: Enable async loading when switching to amd mode",
+        "references": []
+      },
+      {
+        "id": "56cb789946515b63e64cffb1b992f92dd3011d60",
+        "type": "FIX",
+        "text": " Component.getService(): Promise not rejecting",
+        "references": []
+      },
+      {
+        "id": "fa7a69bf8f42c5e94a83322207f86379db21030e",
+        "type": "FIX",
+        "text": " ManagedObject: remove trailing whitespaces",
+        "references": []
+      },
+      {
+        "id": "df477fdd30707650cc74e90778e16e1b324226e7",
+        "type": "FIX",
+        "text": " NumberFormat: Fix currency short format for RTL languages",
+        "references": []
+      },
+      {
+        "id": "156dca696f1bfef8b10c3103bedf4865ef970378",
+        "type": "FIX",
+        "text": " Theming Parameters: Improve inline parameters decoding",
+        "references": []
+      },
+      {
+        "id": "c8ad2e3a5bd01275356cd84f5cc978a7e0adb52f",
+        "type": "FIX",
+        "text": " jQuery.sap.loadResource: ignore URL params",
+        "references": []
+      },
+      {
+        "id": "cdc3bb5934dd0cf0037e82d8fc98759cbd8547a1",
+        "type": "FIX",
+        "text": " sap.ui.model.base.ManagedObjectModel",
+        "references": []
+      },
+      {
+        "id": "5dc9875f583cb6153a6303470d97169c24cb761c",
+        "type": "FIX",
+        "text": " sap/ui/dom/computedStylePolyfill: document.body is not there yet",
+        "references": []
+      },
+      {
+        "id": "d31d8f629b84db7598764125c116eb3976846e86",
+        "type": "FIX",
+        "text": " ODataAnnotations: restore cached arrays",
+        "references": []
+      }
+    ]
+  },
+  "1.56.5": {
+    "date": "July 2018",
+    "notes": [
+      {
+        "id": "346a986ef2b6a3e4382b9e8cf0e74e6e6dfb190d",
+        "type": "FIX",
+        "text": " core.Popup: modal popup should blur the previous DOM after open",
+        "references": []
+      },
+      {
+        "id": "30c2efbfeab19a5861fd8b424eb926236f31ffeb",
+        "type": "FIX",
+        "text": " model.ODataUtils: Complement toupper on all filter operators",
+        "references": []
+      },
+      {
+        "id": "66276c959364d7714916bfc1981e907bc1c8576c",
+        "type": "FIX",
+        "text": " sap/ui/dom/ActiveElementFix: empty object document.activeElement",
+        "references": []
+      },
+      {
+        "id": "903f86d2050a28d1db86d1c57eed506caaf1be67",
+        "type": "FIX",
+        "text": " AppCacheBuster: ignore query parameter for index lookup",
+        "references": []
+      }
+    ]
+  },
+  "1.56.6": {
+    "date": "August 2018",
+    "notes": [
+      {
+        "id": "13692a87c7db9fc6a522af4fa3f80653cda22138",
+        "type": "FEATURE",
+        "text": " core.CSSSize: Type validator now accepts viewport units",
+        "references": []
+      },
+      {
+        "id": "d27cd96fc64ffff8dfcd690f9a801ad04e380de4",
+        "type": "FIX",
+        "text": " FilterProcessor: Consider bCaseSensitive even if fnCompare is set",
+        "references": []
+      },
+      {
+        "id": "63701ac129711f73459af2dd5c8cb8183208b79e",
+        "type": "FIX",
+        "text": " Manifest: Manifest.load should keep manifest URL in async case",
+        "references": []
+      },
+      {
+        "id": "62f17cb6958d8c0bd36046edce181ca43a0c9f12",
+        "type": "FIX",
+        "text": " Manifest: set component base URL",
+        "references": []
+      },
+      {
+        "id": "fb6c4a2b1edcf2197ad085dc1e74b1264ff84287",
+        "type": "FIX",
+        "text": " v2.ODataAnnotations: don\u0027t cache invalid annotations",
+        "references": []
+      }
+    ]
+  },
+  "1.56.7": {
+    "date": "August 2018",
+    "notes": [
+      {
+        "id": "b2c5ad8632bec8886aa868d3fdc203ee0bf010a3",
+        "type": "FIX",
+        "text": " Register ui5loader modules synchronously",
+        "references": []
+      }
+    ]
+  },
+  "1.56.8": {
+    "date": "September 2018",
+    "notes": [
+      {
+        "id": "535d71a3b8d144ae415d09d67bfdad394eba6c08",
+        "type": "FIX",
+        "text": " Controller: controllerFactory resolves wrong controller class",
+        "references": []
+      },
+      {
+        "id": "0dd1a776348bfe33ce700926f0687a57d7633d52",
+        "type": "FIX",
+        "text": " performance/trace/Interaction: accept valid setRequestHeader parameters",
+        "references": []
+      }
+    ]
+  },
+  "1.56.9": {
+    "date": "September 2018",
+    "notes": [
+      {
+        "id": "e314af9b8bfb1a795ac3cf0f9fbb7169f30fb2e0",
+        "type": "FIX",
+        "text": " Manifest: always process entries with placeholders",
+        "references": []
+      },
+      {
+        "id": "cebb94960acb325edab4156d6361b8ec01ba58e7",
+        "type": "FIX",
+        "text": " types/NumberFormat: Currency with RTL locale format/parse",
+        "references": []
+      },
+      {
+        "id": "17841db154546d873e2918f97e8fa5c75994dc40",
+        "type": "FIX",
+        "text": " v2.ODataListBinding: 0 count in result now correctly processed",
+        "references": []
+      }
+    ]
+  },
+  "1.56.10": {
+    "date": "September 2018",
+    "notes": [
+      {
+        "id": "362b4640c54b6d5d83f1527284b04f1d89e94fb2",
+        "type": "FIX",
+        "text": " Theming Parameters: Prevent timing issues in Safari/Edge",
+        "references": []
+      }
+    ]
+  },
+  "1.56.11": {
+    "date": "October 2018",
+    "notes": [
+      {
+        "id": "51aec72b9037be5ec2578308612c438b299e8bb8",
+        "type": "FIX",
+        "text": " format/DateFormat: Multiple instances shouldn\u0027t share fallback formats",
+        "references": []
+      }
+    ]
+  },
+  "1.56.12": {
+    "date": "October 2018",
+    "notes": [
+      {
+        "id": "86c235f7cc315b6a9691a4f3e62f926f5249c636",
+        "type": "FIX",
+        "text": " XMLComposite: Repair id access for clones",
+        "references": []
+      },
+      {
+        "id": "0485cf58ff35c3f57e010edca3e2810163078e90",
+        "type": "FIX",
+        "text": " format/DateFormat: Remove unsupported API calls",
+        "references": []
+      }
+    ]
+  },
+  "1.56.16": {
+    "date": "December 2018",
+    "notes": [
+      {
+        "id": "9d11db4ac496012c599780b723d91a54b865d8a2",
+        "type": "FIX",
+        "text": " NumberFormat: correctly handle option precision with CurrencyFormat",
+        "references": []
+      }
+    ]
   }
 }

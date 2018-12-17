@@ -405,5 +405,75 @@
         "references": []
       }
     ]
+  },
+  "1.60.1": {
+    "date": "November 2018",
+    "notes": [
+      {
+        "id": "e723aa4d44246b07856a206dfc739db114bf6eea",
+        "type": "FIX",
+        "text": " sap.ui.model.analytics.odata4analytics#_renderPropertyFilterValue",
+        "references": []
+      },
+      {
+        "id": "68eab4ac33f4050d637e93fc02bc9793aefe8ff6",
+        "type": "FIX",
+        "text": " performance/trace/FESR: deal with unsupported window.Performance API",
+        "references": []
+      },
+      {
+        "id": "9b9631b727a7bf908e0ed2836d923c3f1ba3f345",
+        "type": "FIX",
+        "text": " routing.History: maintain the history state after hash replacement",
+        "references": []
+      },
+      {
+        "id": "bba33ddc1e9254c005802f8c66ffe66c50e3734b",
+        "type": "FIX",
+        "text": " sap/ui/core/Manifest: finalize resolveUri API",
+        "references": []
+      }
+    ]
+  },
+  "1.60.2": {
+    "date": "November 2018",
+    "notes": [
+      {
+        "id": "5702fb03b3f589473dc078b04685587e9e6cc07f",
+        "type": "FIX",
+        "text": " Component: register the module path for app variants",
+        "references": []
+      },
+      {
+        "id": "3d4656af568637dc8709b402fcb98370e6edbb5f",
+        "type": "FIX",
+        "text": " Model.removeBinding: performance",
+        "references": []
+      },
+      {
+        "id": "b80509a6e14dc6dbc1c9d903f82ff658cb63d980",
+        "type": "FIX",
+        "text": " Unit Type: Only parse and format valid values",
+        "references": []
+      },
+      {
+        "id": "e9bfcbc1ab6de6c9ac7fe9c6060081eb3fe9d174",
+        "type": "FIX",
+        "text": " core/Control: corrected visibility of blocked property",
+        "references": []
+      },
+      {
+        "id": "dd34c4702d6edb0e861c6eeee3a94014d8f6317c",
+        "type": "FIX",
+        "text": " core/Control: fixed wrong jsdoc tag",
+        "references": []
+      },
+      {
+        "id": "789f4d795465c40ecd2aa2c8b7d1811c47dfb5df",
+        "type": "FIX",
+        "text": " TreeBindingUtils: Fixes negative $skip values",
+        "references": []
+      }
+    ]
   }
 }
