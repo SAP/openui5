@@ -30,13 +30,18 @@ sap.ui.define([], function() {
 				sQueryString = sQueryString.slice(sQueryString.indexOf("?") + 1);
 				var aParameters = sQueryString.split("&"),
 					mParameters = {},
-					aParameter,
 					sName,
-					sValue;
+					sValue,
+					iPos;
 				for (var i = 0; i < aParameters.length; i++) {
-					aParameter = aParameters[i].split("=");
-					sName = decodeURIComponent(aParameter[0]);
-					sValue = aParameter.length > 1 ? decodeURIComponent(aParameter[1].replace(/\+/g,' ')) : "";
+					sName = aParameters[i];
+					sValue = "";
+					iPos = sName.indexOf("=");
+					if ( iPos >= 0 ) {
+						sValue = decodeURIComponent(sName.slice(iPos + 1).replace(/\+/g,' '));
+						sName = sName.slice(0, iPos);
+					}
+					sName = decodeURIComponent(sName.replace(/\+/g,' '));
 					if (sName) {
 						if (!Object.prototype.hasOwnProperty.call(mParameters, sName)) {
 							mParameters[sName] = [];
