@@ -392,5 +392,16 @@
         "references": []
       }
     ]
+  },
+  "1.52.23": {
+    "date": "December 2018",
+    "notes": [
+      {
+        "id": "eb520a8b76e51b5250d7089d678c0e2d472efcff",
+        "type": "FIX",
+        "text": " Table: Apply input values when scrolling by edit mode navigation",
+        "references": []
+      }
+    ]
   }
 }
