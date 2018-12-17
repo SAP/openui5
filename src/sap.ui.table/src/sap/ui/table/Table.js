@@ -1992,7 +1992,6 @@ sap.ui.define([
 		var vReturn = Element.prototype.unbindAggregation.call(this, sName, bSuppressReset);
 
 		if (sName === "rows" && oBinding) {
-			this._restoreAppDefaultsColumnHeaderSortFilter();
 			this._invalidateColumnMenus(); // Metadata might change.
 
 			if (!this._bRowsBeingBound) {
@@ -3855,17 +3854,6 @@ sap.ui.define([
 			this.selectAll();
 		}
 		this._iSourceRowIndex = undefined;
-	};
-
-	/**
-	 *
-	 * @private
-	 */
-	Table.prototype._restoreAppDefaultsColumnHeaderSortFilter = function() {
-		var aColumns = this.getColumns();
-		jQuery.each(aColumns, function(iIndex, oColumn){
-			oColumn._restoreAppDefaults();
-		});
 	};
 
 	Table.prototype.setBusy = function(bBusy, sBusySection) {
