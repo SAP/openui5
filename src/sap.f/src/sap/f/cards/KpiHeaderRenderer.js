@@ -2,7 +2,7 @@
  * ${copyright}
  */
 
-// Provides default renderer for control sap.f.Avatar
+// Provides default renderer for control sap.f.cards.KpiHeader
 sap.ui.define([],
 	function () {
         "use strict";
@@ -17,13 +17,11 @@ sap.ui.define([],
 		 */
 		KpiHeaderRenderer.render = function (oRm, oControl) {
 			oRm.write("<header");
+			oRm.writeControlData(oControl);
 			oRm.addClass("sapFCardHeader");
-			oRm.writeClasses();
-			oRm.write(">");
-
-			oRm.write("<div");
 			oRm.addClass("sapFCardHeaderKpi");
 			oRm.writeClasses();
+			oRm.writeStyles();
 			oRm.write(">");
 
 			KpiHeaderRenderer.renderHeaderText(oRm, oControl);
@@ -36,7 +34,6 @@ sap.ui.define([],
 				oRm.renderControl(oDetails);
 			}
 
-			oRm.write("</div>");
 			oRm.write("</header>");
 		};
 
@@ -51,7 +48,7 @@ sap.ui.define([],
 				oSubtitle = oControl.getAggregation("_subtitle"),
 				oUnitOfMeasurement = oControl.getAggregation("_unitOfMeasurement");
 
-			// TODO reuse title and subtitle if possible
+			// TODO reuse title and subtitle rendering from the default header if possible
 			oRm.write("<div");
 			oRm.addClass("sapFCardHeaderText");
 			oRm.writeClasses();
@@ -91,7 +88,7 @@ sap.ui.define([],
 		 */
 		KpiHeaderRenderer.renderIndicators = function(oRm, oControl) {
 			var oMainIndicator = oControl.getAggregation("_mainIndicator"),
-				oSideIndicators = oControl.getAggregation("_sideIndicators");
+				oSideIndicators = oControl.getAggregation("sideIndicators");
 
 			oRm.write("<div");
 			oRm.addClass("sapFCardHeaderIndicators");
@@ -108,8 +105,10 @@ sap.ui.define([],
 				oRm.addClass("sapFCardHeaderSideIndicators");
 				oRm.writeClasses();
 				oRm.write(">");
+
+				// TODO min-width for side indicator. Now it starts to truncate too early
+				// Maybe wrap them when card is toooo small
 				oSideIndicators.forEach(function(oIndicator) {
-					oIndicator.addStyleClass("sapFCardHeaderSideIndicator");
 					oRm.renderControl(oIndicator);
 				});
 				oRm.write("</div>");

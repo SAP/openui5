@@ -94,10 +94,8 @@
 	}
 }
 
-
-.sapFCardHeaderKpi {
+.sapFCard .sapFCardHeader.sapFCardHeaderKpi {
   display: block;
-  width: 100%;
   .sapFCardSubtitle {
     display: flex;
     .sapFCardHeaderUnitOfMeasurement::before {
@@ -119,7 +117,6 @@
     .sapFCardHeaderMainIndicator {
       flex-shrink: 0;
       height: 3rem;
-      margin-right: 1rem;
       .sapMNCInner {
         padding-top: 0px;
       }
@@ -130,15 +127,19 @@
       display: flex;
       padding-top: 6px;
       .sapFCardHeaderSideIndicator {
-        min-width: 0;
         margin-left: 1rem;
       }
-      .sapMText{
-        color: @sapUiTileTextColor;
-      }
-      .sapMObjectNumber {
-        color: @sapUiTileTitleTextColor;
-      }
     }
+  }
+}
+
+.sapFCardHeaderSideIndicator {
+  min-width: 4rem;
+  text-align: right;
+  .sapMText{
+    color: @sapUiTileTextColor;
+  }
+  .sapMObjectNumber {
+    color: @sapUiTileTitleTextColor;
   }
 }
