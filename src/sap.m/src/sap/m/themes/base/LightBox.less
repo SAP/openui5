@@ -22,7 +22,10 @@
 	border-radius: 0.25rem 0.25rem 0.375rem 0.375rem;
 	background-color: @sapUiGlobalBackgroundColor;
 	box-shadow: @sapUiShadowLevel3;
-	-webkit-transform: translateZ(0px);
+}
+
+html[data-sap-ui-browser^='sf'] .sapMLightBox {
+	-webkit-transform: translateZ(0px); // fixes displaying the control behind the block layer in Safari
 }
 
 .sap-desktop .sapMLightBox {
