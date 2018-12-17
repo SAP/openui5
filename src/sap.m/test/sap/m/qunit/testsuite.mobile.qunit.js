@@ -142,6 +142,12 @@ sap.ui.define(function() {
 					language: "en"
 				}
 			},
+			ColumnHeaderPopover: {
+				title: "QUnit Page for sap.m.ColumnHeaderPopover",
+				sinon: {
+					useFakeTimers: true
+				}
+			},
 			ColumnListItem: {
 				title: "ColumnListItem - sap.m"
 			},
