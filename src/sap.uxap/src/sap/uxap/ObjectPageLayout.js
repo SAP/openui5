@@ -454,7 +454,7 @@ sap.ui.define([
 
 	ObjectPageLayout.DIV = "div";
 	ObjectPageLayout.HEADER = "header";
-	ObjectPageLayout.FOOTER = "footer";
+	ObjectPageLayout.FOOTER = "section";
 
 	/**
 	 * Retrieves thе next entry starting from the given one within the <code>sap.ui.core.TitleLevel</code> enumeration.
@@ -895,6 +895,8 @@ sap.ui.define([
 
 	ObjectPageLayout.prototype.onAfterRendering = function () {
 		var oHeaderContent = this._getHeaderContent(),
+			oFooter = this.getFooter(),
+			sFooterAriaLabel,
 			iWidth = this._getWidth(this);
 
 		this._ensureCorrectParentHeight();
@@ -922,6 +924,11 @@ sap.ui.define([
 
 		if (oHeaderContent && oHeaderContent.supportsPinUnpin()) {
 			this.$().toggleClass("sapUxAPObjectPageLayoutHeaderPinnable", oHeaderContent.getPinnable());
+		}
+
+		if (oFooter) {
+			sFooterAriaLabel = ObjectPageLayout._getLibraryResourceBundle().getText("FOOTER_ARIA_LABEL");
+			oFooter.$().attr("aria-label", sFooterAriaLabel);
 		}
 
 		// Attach expand button event
@@ -4007,15 +4014,15 @@ sap.ui.define([
 	};
 
 
-	ObjectPageLayout.prototype._getRootAriaLabelText = function () {
+	ObjectPageLayout.prototype._getAriaLabelText = function (sElement) {
 		var oHeader = this.getHeaderTitle(),
 			sTitleText = oHeader ? oHeader.getTitleText() : null,
 			sAriaLabelText;
 
 		if (oHeader && sTitleText) {
-			sAriaLabelText = ObjectPageLayout._getLibraryResourceBundle().getText("ROOT_ARIA_LABEL_WITH_TITLE") + " " + sTitleText;
+			sAriaLabelText = sTitleText + " " + ObjectPageLayout._getLibraryResourceBundle().getText(sElement + "_ARIA_LABEL_WITH_TITLE");
 		} else {
-			sAriaLabelText = ObjectPageLayout._getLibraryResourceBundle().getText("ROOT_ARIA_LABEL_WITHOUT_TITLE");
+			sAriaLabelText = ObjectPageLayout._getLibraryResourceBundle().getText(sElement + "_ARIA_LABEL_WITHOUT_TITLE");
 		}
 
 		return sAriaLabelText;
@@ -4030,13 +4037,30 @@ sap.ui.define([
 		return oDOMRef.parentElement ? oDOMRef.getBoundingClientRect().height : 0;
 	};
 
-	ObjectPageLayout.prototype._updateRootAriaLabel = function () {
-		var sNewText = this._getRootAriaLabelText(),
-			sCurrentText = this.$().attr("aria-label");
+	/*
+	 * Updates the ObjectPage ARIA labels in the DOM in case of title change and no user pre-defined labels.
+	 */
+	ObjectPageLayout.prototype._updateAriaLabels = function () {
+		var oLandmarkInfo = this.getLandmarkInfo(),
+			sRootText = this._getAriaLabelText("ROOT"),
+			sHeaderText = this._getAriaLabelText("HEADER"),
+			sNavigationText = this._getAriaLabelText("NAVIGATION"),
+			sToolbarText = this._getAriaLabelText("NAVTOOLBAR"),
+			bHeaderLabelSet = oLandmarkInfo && oLandmarkInfo.getHeaderLabel(),
+			bRootLabelSet = oLandmarkInfo && oLandmarkInfo.getRootLabel(),
+			bNavigationLabelSet = oLandmarkInfo && oLandmarkInfo.getNavigationLabel();
 
-		if (sNewText !== sCurrentText) {
-			this.$().attr("aria-label", sNewText);
+		if (!bRootLabelSet) {
+			this.$().attr("aria-label", sRootText);
 		}
+		if (!bHeaderLabelSet) {
+			this.$("headerTitle").attr("aria-label", sHeaderText);
+		}
+		if (!bNavigationLabelSet) {
+			this.$("anchorBar").attr("aria-label", sNavigationText);
+			this.$("stickyAnchorBar").attr("aria-label", sNavigationText);
+		}
+		this.$("anchBar").attr("aria-label", sToolbarText);
 	};
 
 	/**

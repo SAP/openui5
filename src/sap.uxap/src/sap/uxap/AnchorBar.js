@@ -910,7 +910,9 @@ sap.ui.define([
 	 * called for figuring out responsive scenarios
 	 */
 	AnchorBar.prototype.onAfterRendering = function () {
-		var oSelectedButton;
+		var oSelectedButton,
+			sHeaderTitleAriaLabelText = this._getHeadeTitleAriaLabelText();
+
 		if (Toolbar.prototype.onAfterRendering) {
 			Toolbar.prototype.onAfterRendering.call(this);
 		}
@@ -925,6 +927,10 @@ sap.ui.define([
 		this._sResizeListenerId = ResizeHandler.register(this, jQuery.proxy(this._adjustSize, this));
 
 		this.$().find(".sapUxAPAnchorBarScrollContainer").scroll(jQuery.proxy(this._onScroll, this));
+
+		if (sHeaderTitleAriaLabelText) {
+			this.$().attr("aria-label", sHeaderTitleAriaLabelText);
+		}
 
 		//restore state from previous rendering
 		if (oSelectedButton) {
@@ -1012,6 +1018,16 @@ sap.ui.define([
 	AnchorBar.prototype._resetControl = function () {
 		this.destroyAggregation('content', true);
 		return this;
+	};
+
+	AnchorBar.prototype._getHeadeTitleAriaLabelText = function () {
+		var oObjectPage = this.getParent();
+
+		if (oObjectPage.isA("sap.uxap.ObjectPageLayout")) {
+			return oObjectPage._getAriaLabelText("NAVTOOLBAR");
+		}
+
+		return null;
 	};
 
 	/**
