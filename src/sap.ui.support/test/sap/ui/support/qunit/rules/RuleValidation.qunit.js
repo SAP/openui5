@@ -95,7 +95,14 @@ sap.ui.define(
 			Object.keys(RuleSetLoader._mRuleSets).map(function(sKey) {
 				var oLibrary = RuleSetLoader._mRuleSets[sKey];
 
-				oLibraries[oLibrary.lib.name] = Object.values(oLibrary.ruleset._mRules);
+				var arr = [];
+
+				for (var property in oLibrary.ruleset._mRules) {
+					if (oLibrary.ruleset._mRules.hasOwnProperty(property)) {
+						arr.push(oLibrary.ruleset._mRules[property]);
+					}
+				}
+				oLibraries[oLibrary.lib.name] = arr;
 			});
 
 			for (var sLibraryName in oLibraries) {
