@@ -7,7 +7,7 @@ sap.ui.define([
 	"sap/ui/model/resource/ResourceModel",
 	"sap/ui/model/odata/v2/ODataModel",
 	"sap/ui/model/json/JSONModel",
-	"sap/ui/rta/Utils"
+	"sap/ui/fl/Utils"
 ], function(
 	UIComponent,
 	FakeLrepConnectorLocalStorage,
