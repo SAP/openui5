@@ -633,7 +633,7 @@ function (jQuery, ManagedObject, Analyzer, CoreFacade,
 		});
 
 		// TODO: we need to make those "case"s using constants
-		switch (this._oExecutionScope._getType()) {
+		switch (this._oExecutionScope.getType()) {
 			case "global":
 				copyElementsFromCoreObject(this._oCoreFacade.getUIAreas(), "sap-ui-area");
 				copyElementsFromCoreObject(this._oCoreFacade.getComponents(), "sap-ui-component");

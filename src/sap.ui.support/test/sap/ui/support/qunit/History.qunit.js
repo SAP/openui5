@@ -212,7 +212,7 @@ function (History, IssueManager, RuleSetLoader) {
 					}
 				},
 				_oExecutionScope: {
-					_getType: function () {
+					getType: function () {
 						return "global";
 					},
 					_getContext: function () {
