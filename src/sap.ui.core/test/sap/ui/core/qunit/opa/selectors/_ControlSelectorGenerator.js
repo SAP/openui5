@@ -16,15 +16,18 @@ sap.ui.define([
 
     var aSelectorGenerators = Array.prototype.slice.call(arguments, 4);
 
-    QUnit.module("_ControlSelectorGenerator - order", {
+    function stubSelectors() {
+        var oTestSelector = {property: "text"};
+        return aSelectorGenerators.map(function (selector, i) {
+            var fnStub = sinon.stub(selector.prototype, "_generate");
+            fnStub.returns(i === 4 ? [oTestSelector] : oTestSelector);
+            return fnStub;
+        });
+    }
+
+    QUnit.module("_ControlSelectorGenerator", {
         beforeEach: function () {
-            this.aGenerateStubs = [];
-            var oTestSelector = {property: "text"};
-            aSelectorGenerators.forEach(function (selector, i) {
-                var fnStub = sinon.stub(selector.prototype, "_generate");
-                fnStub.returns(i === 4 ? [oTestSelector] : oTestSelector);
-                this.aGenerateStubs.push(fnStub);
-            }.bind(this));
+            this.aGenerateStubs = stubSelectors();
             this.fnFindControlsStub = sinon.stub(_ControlFinder, "_findControls");
             this.fnFindControlsStub.returns([{control: "test"}]);
             this.oText = new Text();
@@ -38,6 +41,29 @@ sap.ui.define([
                 fnStub.restore();
             });
         }
+    });
+
+    QUnit.test("Should continue if ancestor selector generation throws error", function (assert) {
+        var oTestControl = {id: "testControl"};
+        var fnAncestorStub = sinon.stub(aSelectorGenerators[0].prototype, "_getAncestors");
+        var fnOriginalGenerate = _ControlSelectorGenerator._generate;
+        _ControlSelectorGenerator._generate = function (oOptions) {
+            if (oOptions.validationRoot === oTestControl || oOptions.control === oTestControl) {
+                throw new Error("Test");
+            }
+            return fnOriginalGenerate(oOptions);
+        };
+
+        fnAncestorStub.returns({validation: oTestControl});
+        var oResult = _ControlSelectorGenerator._generate({control: this.oText});
+        assert.strictEqual(oResult.property, "text", "Should not throw error if relative selector throws error but there are other matching selectors");
+
+        fnAncestorStub.returns({selector: oTestControl});
+        oResult = _ControlSelectorGenerator._generate({control: this.oText});
+        assert.strictEqual(oResult.property, "text", "Should not throw error if generation for ancestor throws error but there are other matching selectors");
+
+        fnAncestorStub.restore();
+        _ControlSelectorGenerator._generate = fnOriginalGenerate;
     });
 
     QUnit.test("Should generate selectors in correct order", function (assert) {
