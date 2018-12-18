@@ -54,10 +54,12 @@ sap.ui.define(["sap/ui/fl/Utils", "sap/ui/thirdparty/jquery"], function(Utils, j
 	 * @param {String} sFilename - name of the file
 	 * @param {String} sFileType - type of the file
 	 * @param {String} sContent - content of the file saved to the layered repository
+	 * @param [String] sTransportId - id of an ABAP transport or ATO_NOTIFICATION
+	 * @param [String] sPackageName - name of an ABAP package
 	 * @returns {Promise} Promise of the SAVE content request to the back end
 	 * @public
 	 */
-	LrepConnector.saveFile = function (sLayer, sNamespace, sFilename, sFileType, sContent) {
+	LrepConnector.saveFile = function (sLayer, sNamespace, sFilename, sFileType, sContent, sTransportId, sPackageName) {
 		var that = this;
 
 		return new Promise(function (fnResolve, fnReject) {
@@ -68,7 +70,9 @@ sap.ui.define(["sap/ui/fl/Utils", "sap/ui/thirdparty/jquery"], function(Utils, j
 			var sContentSuffix = sNamespace + sFilename + "." + sFileType;
 			sContentSuffix = encodeURI(sContentSuffix);
 			var sLayerSuffix = that._getLayerSuffix(sLayer);
-			var sUrl = LrepConnector.sContentPathPrefix + sContentSuffix + sLayerSuffix;
+			var sChangeListSuffix = that._getChangeListSuffix(sTransportId);
+			var sPackageSuffix = that._getPackageSuffix(sPackageName);
+			var sUrl = LrepConnector.sContentPathPrefix + sContentSuffix + sLayerSuffix + sChangeListSuffix + sPackageSuffix;
 			that._getTokenAndSendPutRequest.call(that, sUrl, sContent, fnResolve, fnReject);
 		});
 	};
@@ -80,10 +84,11 @@ sap.ui.define(["sap/ui/fl/Utils", "sap/ui/thirdparty/jquery"], function(Utils, j
 	 * @param {String} sNamespace - namespace of the file
 	 * @param {String} sFileName - name of the file
 	 * @param {String} sFileType - type of the file
+	 * @param [String] sTransportId - id of the ABAP transport or ATO_NOTIFICATION
 	 * @returns {Promise} Promise of DELETE content request to the back end
 	 * @public
 	 */
-	LrepConnector.deleteFile = function (sLayer, sNamespace, sFileName, sFileType) {
+	LrepConnector.deleteFile = function (sLayer, sNamespace, sFileName, sFileType, sTransportId) {
 		var that = this;
 
 		return new Promise(function (fnResolve, fnReject) {
@@ -94,7 +99,8 @@ sap.ui.define(["sap/ui/fl/Utils", "sap/ui/thirdparty/jquery"], function(Utils, j
 			var sContentSuffix = sNamespace + sFileName + "." + sFileType;
 			sContentSuffix = encodeURI(sContentSuffix);
 			var sLayerSuffix = that._getLayerSuffix(sLayer);
-			var sUrl = LrepConnector.sContentPathPrefix + sContentSuffix + sLayerSuffix;
+			var sChangeListSuffix = that._getChangeListSuffix(sTransportId);
+			var sUrl = LrepConnector.sContentPathPrefix + sContentSuffix + sLayerSuffix + sChangeListSuffix;
 			that._getTokenAndSendDeletionRequest.call(that, sUrl, fnResolve, fnReject);
 		});
 	};
@@ -146,6 +152,26 @@ sap.ui.define(["sap/ui/fl/Utils", "sap/ui/thirdparty/jquery"], function(Utils, j
 			return "";
 		}
 		return "?layer=" + sLayer;
+	};
+
+	/**
+	 * Get changelist suffix for request URL;
+	 * @param {String} sChangeList - transport id
+	 * @returns {String} correct changelist suffix
+	 * @private
+	 */
+	LrepConnector._getChangeListSuffix = function (sChangeList) {
+		return sChangeList ? "&changelist=" + sChangeList : "";
+	};
+
+	/**
+	 * Get package suffix for request URL;
+	 * @param {String} sPackage - package name
+	 * @returns {String} correct package suffix
+	 * @private
+	 */
+	LrepConnector._getPackageSuffix = function (sPackage) {
+		return sPackage ? "&package=" + sPackage : "";
 	};
 
 	/**
