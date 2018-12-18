@@ -13,6 +13,8 @@ sap.ui.define([
 	/*eslint max-nested-callbacks: 0, no-multi-str: 0, no-warning-comments: 0 */
 	"use strict";
 
+	var sClassName = "sap.ui.model.odata.v4.lib._Helper";
+
 	/**
 	 * Returns a mock "fnFetchMetadata" (see _Requestor#getModelInterface) which returns metadata
 	 * for a meta path according to the given map.
@@ -1886,5 +1888,322 @@ sap.ui.define([
 
 		assert.deepEqual(aResult, ["B", "C/D/C"]);
 		assert.deepEqual(aPaths, ["Z", "A/B", "AA", "A/C/D/C"]);
+	});
+
+	//*********************************************************************************************
+	[{
+		before : [],
+		merge : ["foo"],
+		after : ["foo"]
+	}, {
+		before : ["foo"],
+		merge : ["bar"],
+		after : ["foo", "bar"]
+	}, {
+		before : ["foo", "bar"],
+		merge : ["bar", "baz"],
+		after : ["foo", "bar", "baz"]
+	}, {
+		before : undefined,
+		merge : ["foo", "bar"],
+		after : ["foo", "bar"]
+	}].forEach(function (oFixture) {
+		QUnit.test("addToSelect", function (assert) {
+			var mQueryOptions = {$foo : "bar", $select : oFixture.before};
+
+			// code under test
+			_Helper.addToSelect(mQueryOptions, oFixture.merge);
+
+			assert.deepEqual(mQueryOptions.$select, oFixture.after);
+		});
+	});
+
+	//*********************************************************************************************
+	[false, true].forEach(function (bKeys) {
+		QUnit.test("selectKeyProperties: " + (bKeys ? "w/" : "w/o") + " keys", function (assert) {
+			var oMetaModel = {
+					// Note: "this" not needed, save Function#bind below
+					fetchObject : function () {}
+				},
+				aKeyProperties = ["foo", "path/to/key"],
+				sMetaPath = "~",
+				mQueryOptions = {},
+				oType = bKeys ? {$Key : ["foo", {"alias" : "path/to/key"}]} : {};
+
+			this.mock(oMetaModel).expects("fetchObject")
+				.withExactArgs(sMetaPath + "/")
+				.returns(SyncPromise.resolve(oType));
+			this.mock(_Helper).expects("addToSelect").exactly(bKeys ? 1 : 0)
+				.withExactArgs(sinon.match.same(mQueryOptions), aKeyProperties);
+
+			// code under test
+			_Helper.selectKeyProperties(mQueryOptions, sMetaPath, oMetaModel.fetchObject);
+		});
+	});
+
+	//*********************************************************************************************
+	QUnit.test("selectKeyProperties: no type metadata available", function (assert) {
+		var oMetaModel = {
+				// Note: "this" not needed, save Function#bind below
+				fetchObject : function () {}
+			};
+
+		this.mock(oMetaModel).expects("fetchObject")
+			.withExactArgs("~/")
+			.returns(SyncPromise.resolve(undefined));
+		this.mock(_Helper).expects("addToSelect").never();
+
+		// code under test
+		_Helper.selectKeyProperties({}, "~", oMetaModel.fetchObject);
+	});
+
+	//*********************************************************************************************
+	[{
+		childPath : "Property",
+		childQueryOptions : {},
+		expected : {$select : ["Property"]}
+	}, {
+		childPath : "NavigationProperty",
+		childQueryOptions : {
+			$select : ["Property"]
+		},
+		expected : {
+			$expand : {
+				"NavigationProperty" : {
+					$select: ["Property", "Property_1", "Property_2"]
+				}
+			}
+		}
+	}, {
+		childPath : "NavigationProperty/Property",
+		childQueryOptions : {},
+		expected : {
+			$expand : {
+				"NavigationProperty" : {
+					$select: ["Property_1", "Property_2", "Property"]
+				}
+			}
+		}
+	}, {
+		childPath : "NavigationProperty/Property_1",
+		childQueryOptions : {},
+		expected : {
+			$expand : {
+				"NavigationProperty" : {
+					$select: ["Property_1", "Property_2"]
+				}
+			}
+		}
+	}, {
+		childPath : "Property/NavigationProperty",
+		childQueryOptions : {},
+		expected : {
+			$expand : {
+				"Property/NavigationProperty" : {
+					$select: ["Property_1", "Property_2"]
+				}
+			}
+		}
+	}, {
+		childPath : "Property_1/Property_2",
+		childQueryOptions : {},
+		expected : {$select : ["Property_1/Property_2"]}
+	}, {
+		childPath : "NavigationProperty_1/NavigationProperty_2",
+		childQueryOptions : {$foo : "bar"}, // will be taken as is
+		expected : {
+			$expand : {
+				"NavigationProperty_1" : {
+					$expand : {
+						"NavigationProperty_2" : {
+							$foo : "bar",
+							$select: ["Property_1", "Property_2"]
+						}
+					},
+					$select: ["Property_1", "Property_2"]
+				}
+			}
+		}
+	}].forEach(function (oFixture) {
+		QUnit.test("wrapChildQueryOptions, " + oFixture.childPath, function (assert) {
+			var oMetaModel = {
+					// Note: "this" not needed, save Function#bind below
+					fetchObject : function () {}
+				},
+				aMetaPathSegments = oFixture.childPath === ""
+					? []
+					: oFixture.childPath.split("/"),
+				mWrappedQueryOptions,
+				oMetaModelMock = this.mock(oMetaModel);
+
+			aMetaPathSegments.forEach(function (sSegment, j, aMetaPathSegments) {
+				var sPropertyMetaPath = "/EMPLOYEES/" + aMetaPathSegments.slice(0, j + 1).join("/"),
+					sKind = sSegment.split("_")[0];
+
+				oMetaModelMock.expects("fetchObject")
+					.withExactArgs(sPropertyMetaPath)
+					.returns(SyncPromise.resolve({$kind : sKind}));
+				if (sKind === "NavigationProperty") {
+					oMetaModelMock.expects("fetchObject")
+						.withExactArgs(sPropertyMetaPath + "/")
+						.returns(SyncPromise.resolve({$Key : ["Property_1", "Property_2"]}));
+				}
+			});
+
+			// code under test
+			mWrappedQueryOptions = _Helper.wrapChildQueryOptions("/EMPLOYEES", oFixture.childPath,
+				oFixture.childQueryOptions, oMetaModel.fetchObject);
+
+			assert.deepEqual(mWrappedQueryOptions, oFixture.expected);
+		});
+	});
+
+	//*********************************************************************************************
+	QUnit.test("wrapChildQueryOptions: empty path", function (assert) {
+		var mChildQueryOptions = {};
+
+		// code under test
+		assert.strictEqual(
+			_Helper.wrapChildQueryOptions("/...", "", mChildQueryOptions),
+			mChildQueryOptions);
+	});
+
+	//*********************************************************************************************
+	QUnit.test("wrapChildQueryOptions, returns undefined if $apply is present", function (assert) {
+		var mChildQueryOptions = {
+				$apply : "filter(Amount gt 3)"
+			},
+			oMetaModel = {
+				// Note: "this" not needed, save Function#bind below
+				fetchObject : function () {}
+			},
+			oMetaModelMock = this.mock(oMetaModel);
+
+		oMetaModelMock.expects("fetchObject")
+			.withExactArgs("/EMPLOYEES/NavigationProperty")
+			.returns(SyncPromise.resolve({$kind : "NavigationProperty"}));
+		oMetaModelMock.expects("fetchObject")
+			.withExactArgs("/EMPLOYEES/NavigationProperty/")
+			.returns(SyncPromise.resolve({}));
+		this.oLogMock.expects("debug").withExactArgs(
+			"Cannot wrap $apply into $expand: NavigationProperty",
+			JSON.stringify(mChildQueryOptions), sClassName
+		);
+
+		// code under test
+		assert.strictEqual(
+			_Helper.wrapChildQueryOptions("/EMPLOYEES", "NavigationProperty", mChildQueryOptions,
+				oMetaModel.fetchObject),
+			undefined);
+	});
+
+	//*********************************************************************************************
+	QUnit.test("wrapChildQueryOptions, child path with bound function", function (assert) {
+		var oMetaModel = {
+				// Note: "this" not needed, save Function#bind below
+				fetchObject : function () {}
+			};
+
+		this.mock(oMetaModel).expects("fetchObject")
+			.withExactArgs("/EMPLOYEES/name.space.boundFunction")
+			.returns(SyncPromise.resolve({$kind : "Function"}));
+
+		// code under test
+		assert.strictEqual(
+			_Helper.wrapChildQueryOptions("/EMPLOYEES", "name.space.boundFunction/Property", {},
+				oMetaModel.fetchObject),
+			undefined);
+	});
+
+	//*********************************************************************************************
+	QUnit.test("wrapChildQueryOptions, structural property w/ query options", function (assert) {
+		var oMetaModel = {
+				// Note: "this" not needed, save Function#bind below
+				fetchObject : function () {}
+			},
+			mChildLocalQueryOptions = {$apply : "filter(AGE gt 42)"};
+
+		this.mock(oMetaModel).expects("fetchObject")
+			.withExactArgs("/EMPLOYEES/Property")
+			.returns(SyncPromise.resolve({$kind : "Property"}));
+		this.oLogMock.expects("error").withExactArgs(
+			"Failed to enhance query options for auto-$expand/$select as the child "
+				+ "binding has query options, but its path 'Property' points to a "
+				+ "structural property",
+			JSON.stringify(mChildLocalQueryOptions), sClassName);
+
+		// code under test
+		assert.strictEqual(
+			_Helper.wrapChildQueryOptions("/EMPLOYEES", "Property", mChildLocalQueryOptions,
+				oMetaModel.fetchObject),
+			undefined);
+	});
+
+	//*********************************************************************************************
+	[{
+		mQueryOptions: undefined,
+		sOrderBy : undefined,
+		sFilter : undefined
+	}, {
+		mQueryOptions: {$orderby : "bar", $select : "Name"},
+		sOrderBy : undefined,
+		sFilter : undefined
+	}, {
+		mQueryOptions: undefined,
+		sOrderBy : "foo",
+		sFilter : undefined,
+		oResult : {$orderby : "foo"}
+	}, {
+		mQueryOptions: {$orderby : "bar", $select : "Name"},
+		sOrderBy : "foo,bar",
+		sFilter : undefined,
+		oResult : {$orderby : "foo,bar", $select : "Name"}
+	}, {
+		mQueryOptions: {$orderby : "bar", $select : "Name"},
+		sOrderBy : "bar",
+		sFilter : undefined
+	}, {
+		mQueryOptions: undefined,
+		sOrderBy : undefined,
+		sFilter : "foo",
+		oResult : {$filter : "foo"}
+	}, {
+		mQueryOptions: {$filter : "bar", $select : "Name"},
+		sOrderBy : undefined,
+		sFilter : "foo,bar",
+		oResult : {$filter : "foo,bar", $select : "Name"}
+	}, {
+		mQueryOptions: {$filter: "bar", $select : "Name"},
+		sOrderBy : undefined,
+		sFilter : "bar"
+	}, {
+		mQueryOptions: {$filter: "bar", $orderby : "foo", $select : "Name"},
+		sOrderBy : "foo",
+		sFilter : "bar"
+	}, {
+		mQueryOptions: {$filter: "foo", $orderby : "bar", $select : "Name"},
+		sOrderBy : "foo,bar",
+		sFilter : "bar,baz",
+		oResult : {$filter : "bar,baz", $orderby : "foo,bar", $select : "Name"}
+	}].forEach(function (oFixture, i) {
+		QUnit.test("mergeQueryOptions, " + i, function (assert) {
+			var oResult,
+				sQueryOptionsJSON = JSON.stringify(oFixture.mQueryOptions);
+
+			// code under test
+			oResult = _Helper.mergeQueryOptions(oFixture.mQueryOptions, oFixture.sOrderBy,
+				oFixture.sFilter);
+
+			assert.strictEqual(JSON.stringify(oFixture.mQueryOptions), sQueryOptionsJSON);
+			if ("oResult" in oFixture) {
+				assert.deepEqual(oResult, oFixture.oResult, i);
+			} else {
+				assert.strictEqual(oResult, oFixture.mQueryOptions, i);
+			}
+			if (oResult) {
+				assert.ok(oResult.$orderby || !("$orderby" in oResult), i + ": $orderby");
+				assert.ok(oResult.$filter || !("$filter" in oResult), i + ": $filter");
+			}
+		});
 	});
 });

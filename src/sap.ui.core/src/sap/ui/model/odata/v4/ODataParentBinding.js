@@ -121,23 +121,6 @@ sap.ui.define([
 	};
 
 	/**
-	 * Adds the given paths to $select of the given query options.
-	 *
-	 * @param {object} mQueryOptions The query options
-	 * @param {string[]} aSelectPaths The paths to add to $select
-	 *
-	 * @private
-	 */
-	ODataParentBinding.prototype.addToSelect = function (mQueryOptions, aSelectPaths) {
-		mQueryOptions.$select = mQueryOptions.$select || [];
-		aSelectPaths.forEach(function (sPath) {
-			if (mQueryOptions.$select.indexOf(sPath) < 0 ) {
-				mQueryOptions.$select.push(sPath);
-			}
-		});
-	};
-
-	/**
 	 * Merges the given query options into this binding's aggregated query options. The merge does
 	 * not take place in the following cases
 	 * <ol>
@@ -405,8 +388,7 @@ sap.ui.define([
 					fnCancelCallback, function (oError) {
 						// error callback
 						that.oModel.reportError("POST on '" + vCreatePath
-								+ "' failed; will be repeated automatically",
-							"sap.ui.model.odata.v4.ODataParentBinding", oError);
+							+ "' failed; will be repeated automatically", sClassName, oError);
 				}).then(function (oCreatedEntity) {
 					if (oCache.$resourcePath) {
 						// Ensure that a cache containing a persisted created entity is recreated
@@ -620,8 +602,9 @@ sap.ui.define([
 			if (sChildMetaPath === ""
 				|| oProperty
 				&& (oProperty.$kind === "Property" || oProperty.$kind === "NavigationProperty")) {
-				mWrappedChildQueryOptions = that.wrapChildQueryOptions(sBaseMetaPath,
-					sChildMetaPath, mChildQueryOptions);
+				mWrappedChildQueryOptions = _Helper.wrapChildQueryOptions(sBaseMetaPath,
+					sChildMetaPath, mChildQueryOptions,
+					that.oModel.oRequestor.getModelInterface().fnFetchMetadata);
 				if (mWrappedChildQueryOptions) {
 					return that.aggregateQueryOptions(mWrappedChildQueryOptions, bCacheImmutable);
 				}
@@ -631,10 +614,8 @@ sap.ui.define([
 				return that.aggregateQueryOptions(mChildQueryOptions, bCacheImmutable);
 			}
 			Log.error("Failed to enhance query options for auto-$expand/$select as the path '"
-					+ sFullMetaPath
-					+ "' does not point to a property",
-				JSON.stringify(oProperty),
-				"sap.ui.model.odata.v4.ODataParentBinding");
+					+ sFullMetaPath + "' does not point to a property",
+				JSON.stringify(oProperty), sClassName);
 			return false;
 		});
 		this.aChildCanUseCachePromises.push(oCanUseCachePromise);
@@ -900,16 +881,8 @@ sap.ui.define([
 	 * @private
 	 */
 	ODataParentBinding.prototype.selectKeyProperties = function (mQueryOptions, sMetaPath) {
-		var oType = this.oModel.getMetaModel().getObject(sMetaPath + "/");
-
-		if (oType && oType.$Key) {
-			this.addToSelect(mQueryOptions, oType.$Key.map(function (vKey) {
-				if (typeof vKey === "object") {
-					return vKey[Object.keys(vKey)[0]];
-				}
-				return vKey;
-			}));
-		}
+		_Helper.selectKeyProperties(mQueryOptions, sMetaPath,
+			this.oModel.oRequestor.getModelInterface().fnFetchMetadata);
 	};
 
 	/**
@@ -1010,76 +983,6 @@ sap.ui.define([
 					mNavigationPropertyPaths, aPromises, sPath);
 			}
 		});
-	};
-
-	/**
-	 * Creates the query options for a child binding with the meta path given by its base
-	 * meta path and relative meta path. Adds the key properties to $select of all expanded
-	 * navigation properties. Requires that meta data for the meta path is already loaded so that
-	 * synchronous access to all prefixes of the relative meta path is possible.
-	 * If the relative meta path contains segments which are not a structural property or a
-	 * navigation property, the child query options cannot be created and the method returns
-	 * undefined.
-	 *
-	 * @param {string} sBaseMetaPath The meta path which is the starting point for the relative
-	 *   meta path
-	 * @param {string} sChildMetaPath The relative meta path
-	 * @param {object} mChildQueryOptions The child binding's query options
-	 *
-	 * @returns {object} The query options for the child binding or <code>undefined</code> in case
-	 *   the query options cannot be created, e.g. because $apply cannot be wrapped into $expand
-	 *
-	 * @private
-	 */
-	ODataParentBinding.prototype.wrapChildQueryOptions = function (sBaseMetaPath,
-			sChildMetaPath, mChildQueryOptions) {
-		var sExpandSelectPath = "",
-			i,
-			aMetaPathSegments = sChildMetaPath.split("/"),
-			oProperty,
-			sPropertyMetaPath = sBaseMetaPath,
-			mQueryOptions = {},
-			mQueryOptionsForPathPrefix = mQueryOptions;
-
-		if (sChildMetaPath === "") {
-			return mChildQueryOptions;
-		}
-
-		for (i = 0; i < aMetaPathSegments.length; i += 1) {
-			sPropertyMetaPath = _Helper.buildPath(sPropertyMetaPath, aMetaPathSegments[i]);
-			sExpandSelectPath = _Helper.buildPath(sExpandSelectPath, aMetaPathSegments[i]);
-			oProperty = this.oModel.getMetaModel().getObject(sPropertyMetaPath);
-			if (oProperty.$kind === "NavigationProperty") {
-				mQueryOptionsForPathPrefix.$expand = {};
-				mQueryOptionsForPathPrefix = mQueryOptionsForPathPrefix.$expand[sExpandSelectPath]
-					= (i === aMetaPathSegments.length - 1) // last segment in path
-						? mChildQueryOptions
-						: {};
-				this.selectKeyProperties(mQueryOptionsForPathPrefix, sPropertyMetaPath);
-				sExpandSelectPath = "";
-			} else if (oProperty.$kind !== "Property") {
-				return undefined;
-			}
-		}
-		if (oProperty.$kind === "Property") {
-			if (Object.keys(mChildQueryOptions).length > 0) {
-				Log.error("Failed to enhance query options for "
-						+ "auto-$expand/$select as the child binding has query options, "
-						+ "but its path '" + sChildMetaPath + "' points to a structural "
-						+ "property",
-					JSON.stringify(mChildQueryOptions),
-					"sap.ui.model.odata.v4.ODataParentBinding");
-				return undefined;
-			}
-			this.addToSelect(mQueryOptionsForPathPrefix, [sExpandSelectPath]);
-		}
-		if ("$apply" in mChildQueryOptions) {
-			Log.debug("Cannot wrap $apply into $expand: " + sChildMetaPath,
-				JSON.stringify(mChildQueryOptions),
-				"sap.ui.model.odata.v4.ODataParentBinding");
-			return undefined;
-		}
-		return mQueryOptions;
 	};
 
 	function asODataParentBinding(oPrototype) {
