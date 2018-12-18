@@ -1,8 +1,9 @@
 /*global QUnit */
 sap.ui.define(["sap/ui/thirdparty/jquery",
                "sap/ui/core/Core",
-               "sap/ui/core/mvc/XMLView"],
-function($, Core, XMLView) {
+							 "sap/ui/core/mvc/XMLView",
+							 "sap/m/App"],
+function($, Core, XMLView, App) {
 	"use strict";
 
 	var BREAK_POINTS = {
@@ -263,6 +264,42 @@ function($, Core, XMLView) {
 		// Asssert
 		assert.strictEqual(oSubSection._getTitleDomId(),
 			"UxAP-ObjectPageTitlePropagationSupport--op2_sub_section_1_1-headerTitle", "Own Title DOM ID is returned");
+	});
+
+	QUnit.module("ObjectPage section selection and UX rules effects");
+
+	QUnit.test("When sections are bound to a model", function (assert) {
+		var done = assert.async();
+		XMLView.create({
+			id: "objectPageBoundSectionsViewSample",
+			viewName: "view.UxAP-ObjectPageBoundSections"
+		}).then(function (oView) {
+			this.oSampleView = oView;
+			this.appControl = new App();
+			this.appControl.addPage(this.oSampleView);
+			this.appControl.placeAt("qunit-fixture");
+			Core.applyChanges();
+
+			assert.strictEqual(this.oSampleView.byId("PartProfileObjectPage").getSelectedSection(), "objectPageBoundSectionsViewSample--testSection1", "selected section value should not be affected by UX rules");
+			done();
+		}.bind(this));
+	});
+
+	QUnit.test("When sections are not bound to a model", function (assert) {
+		var done = assert.async();
+		XMLView.create({
+			id: "objectPageNotBoundSectionsViewSample",
+			viewName: "view.UxAP-ObjectPageNotBoundSections"
+		}).then(function (oView) {
+			this.oSampleView = oView;
+			this.appControl = new App();
+			this.appControl.addPage(this.oSampleView);
+			this.appControl.placeAt("qunit-fixture");
+			Core.applyChanges();
+
+			assert.strictEqual(this.oSampleView.byId("PartProfileObjectPage").getSelectedSection(), "objectPageNotBoundSectionsViewSample--testSection2", "selected section value should be affected by UX rules");
+			done();
+		}.bind(this));
 	});
 
 });

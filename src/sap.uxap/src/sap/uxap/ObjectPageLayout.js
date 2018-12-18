@@ -831,9 +831,18 @@ sap.ui.define([
 
 	ObjectPageLayout.prototype._sectionCanBeRenderedByUXRules = function (oSection) {
 
-		if (!oSection || !oSection.getVisible() || !oSection._getInternalVisible()) {
+		// SubSection binding info is needed later in order to decide wether a section
+		// can be rendered by UX rules, i.e.
+		// if a section is bound, it is expected to not be empty
+		var oSubSectionsBindingInfo = oSection.getBindingInfo("subSections");
+
+		if (
+			(!oSection || !oSection.getVisible() || !oSection._getInternalVisible()) &&
+			!oSubSectionsBindingInfo
+		) {
 			return false;
 		}
+
 		var aSectionBasesIds = this._aSectionBases.map(function (oSectionBase) {
 			return oSectionBase.getId();
 		});
