@@ -96,37 +96,55 @@
 
 .sapFCard .sapFCardHeader.sapFCardHeaderKpi {
   display: block;
+
   .sapFCardSubtitle {
     display: flex;
-    .sapFCardHeaderUnitOfMeasurement::before {
-      content: "|";
-      display: inline-block;
-      margin: 0 0.4rem;
+    align-items: flex-end;
+
+    .sapFCardHeaderUnitOfMeasurement {
+      margin-left: 0.25rem;
+      padding-left: 0.25rem;
+      border-left: 1px solid @sapUiTileTextColor;
     }
   }
-  .sapFCardHeaderText .sapFCardSubtitle .sapMText,
+
+  .sapFCardHeaderText .sapFCardSubtitle .sapMText {
+    color: @sapUiTileTextColor;
+  }
+
   .sapFCardHeaderDetails {
+    margin-top: 0.25rem;
+    font-size: @sapMFontSmallSize;
     color: @sapUiTileTextColor;
   }
 
   .sapFCardHeaderIndicators {
-    margin-top: 4px;
+    margin-top: 0.25rem;
     display: flex;
-    justify-content: space-between;
-    width: 100%;
+    justify-content: flex-start;
+
     .sapFCardHeaderMainIndicator {
       flex-shrink: 0;
-      height: 3rem;
+      height: 2.875rem;
+      .sapMNCValue {
+        line-height: 2.875rem;
+      }
       .sapMNCInner {
         padding-top: 0px;
       }
     }
 
+    .sapFCardHeaderIndicatorsGap {
+      flex: 1 0 1rem;
+      max-width: 3rem;
+    }
+
     .sapFCardHeaderSideIndicators {
-      min-width: 0;
+      min-width: 0; // allows items to shrink and truncate the content inside
       display: flex;
-      padding-top: 6px;
-      .sapFCardHeaderSideIndicator {
+      align-items: flex-end;
+      padding: 0.5rem 0;
+      .sapFCardHeaderSideIndicator:nth-child(2) {
         margin-left: 1rem;
       }
     }
@@ -134,12 +152,18 @@
 }
 
 .sapFCardHeaderSideIndicator {
-  min-width: 4rem;
-  text-align: right;
-  .sapMText{
+  display: flex;
+  flex-direction: column;
+  align-items: flex-end;
+  min-width: 0; // allows items to shrink and truncate the content inside
+  .sapFCardHeaderSITitle {
+    font-size: @sapMFontSmallSize;
     color: @sapUiTileTextColor;
+    padding-bottom: 0.25rem;
   }
-  .sapMObjectNumber {
+  .sapFCardHeaderSINumber,
+  .sapFCardHeaderSINumber .sapMText {
+    font-size: @sapMFontSmallSize;
     color: @sapUiTileTitleTextColor;
   }
 }

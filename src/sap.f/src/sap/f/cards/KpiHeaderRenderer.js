@@ -98,6 +98,12 @@ sap.ui.define([],
 			if (oMainIndicator) {
 				oMainIndicator.addStyleClass("sapFCardHeaderMainIndicator");
 				oRm.renderControl(oMainIndicator);
+
+				oRm.write("<div");
+				oRm.addClass("sapFCardHeaderIndicatorsGap");
+				oRm.writeClasses();
+				oRm.write(">");
+				oRm.write("</div>");
 			}
 
 			if (oSideIndicators) {

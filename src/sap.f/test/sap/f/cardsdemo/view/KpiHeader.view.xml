@@ -23,12 +23,12 @@
 						<grid:GridBoxLayout boxMinWidth="400px"/>
 					</grid:customLayout>
                     <grid:items>
-                        <f:Card>
+                        <f:Card width="300px">
                             <f:header>
                                 <cards:KpiHeader
                                     title="Project Cloud Transformation"
                                     subtitle="Revenue"
-                                    unitOfMeasurement="EUR"
+                                    unitOfMeasurement="Currency"
                                     details="Q1, 2018"
 
                                     number="65.3454"

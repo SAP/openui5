@@ -3,19 +3,13 @@
  */
 sap.ui.define([
 	'sap/ui/core/Control',
-	'sap/ui/core/library',
-	'sap/m/ObjectNumber',
 	'sap/m/Text',
 	"sap/f/cards/KpiSideIndicatorRenderer"
 ], function (
 		Control,
-		coreLibrary,
-		ObjectNumber,
 		Text
 	) {
 		"use strict";
-
-		var TextAlign = coreLibrary.TextAlign;
 
 		/**
 		 * Constructor for a new <code>KpiSideIndicator</code>.
@@ -58,7 +52,8 @@ sap.ui.define([
 				},
 				aggregations: {
 					_title: { type: "sap.m.Text", multiple: false, visibility: "hidden" },
-					_number: { type: "sap.m.ObjectNumber", multiple: false, visibility: "hidden" }
+					_number: { type: "sap.m.Text", multiple: false, visibility: "hidden" },
+					_unit: { type: "sap.m.Text", multiple: false, visibility: "hidden" }
 				}
 			}
 		});
@@ -71,13 +66,13 @@ sap.ui.define([
 
 		KpiSideIndicator.prototype.setNumber = function(sValue) {
 			this.setProperty("number", sValue, true);
-			this._getNumber().setNumber(sValue);
+			this._getNumber().setText(sValue);
 			return this;
 		};
 
 		KpiSideIndicator.prototype.setUnit = function(sValue) {
 			this.setProperty("unit", sValue, true);
-			this._getNumber().setUnit(sValue);
+			this._getUnit().setText(sValue);
 			return this;
 		};
 
@@ -99,12 +94,23 @@ sap.ui.define([
 			var oControl = this.getAggregation("_number");
 
 			if (!oControl) {
-				oControl = new ObjectNumber({
-					id: this.getId() + "-number",
-					textAlign: TextAlign.End,
-					emphasized: false
+				oControl = new Text({
+					id: this.getId() + "-number"
 				});
 				this.setAggregation("_number", oControl);
+			}
+
+			return oControl;
+		};
+
+		KpiSideIndicator.prototype._getUnit = function () {
+			var oControl = this.getAggregation("_unit");
+
+			if (!oControl) {
+				oControl = new Text({
+					id: this.getId() + "-unit"
+				});
+				this.setAggregation("_unit", oControl);
 			}
 
 			return oControl;
