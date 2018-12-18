@@ -2,7 +2,7 @@ sap.ui.define(['sap/ui/core/UIComponent'],
 	function(UIComponent) {
 	"use strict";
 
-	var Component = UIComponent.extend("sap.ui.core.sample.OpaMessageToast.Component", {
+	var Component = UIComponent.extend("sap.ui.core.sample.OpaStaticAreaControls.Component", {
 
 		metadata : {
 			dependencies : {
@@ -12,11 +12,11 @@ sap.ui.define(['sap/ui/core/UIComponent'],
 			},
 			config : {
 				sample : {
-					iframe : "OpaMessageToast.html?opaExecutionDelay=700",
+					iframe : "OpaStaticAreaControls.html?opaExecutionDelay=700",
 					stretch : true,
 					files : [
-						"OpaMessageToast.html",
-						"OpaMessageToast.js",
+						"OpaStaticAreaControls.html",
+						"OpaStaticAreaControls.js",
 						"applicationUnderTest/index.html",
 						"applicationUnderTest/Component.js",
 						"applicationUnderTest/view/Main.view.xml",

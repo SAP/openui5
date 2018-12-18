@@ -138,7 +138,7 @@
 					"sap.ui.core.sample.OpaURLParameters.iStartMyAppInAFrameWithURLParameters",
 					"sap.ui.core.sample.OpaWithSupportAssistant",
 					"sap.ui.core.sample.OpaTestLibrary",
-					"sap.ui.core.sample.OpaMessageToast",
+					"sap.ui.core.sample.OpaStaticAreaControls",
 					"sap.ui.core.sample.OpaBusyIndicator",
 					"sap.ui.core.sample.OpaAutoWaitParams",
 					"sap.ushell.sample.OpaFLPSandbox"
@@ -736,9 +736,9 @@
 				"description": "This sample demonstrates how to create and use a simple OPA5 test library"
 			},
 			{
-				"id": "sap.ui.core.sample.OpaMessageToast",
-				"name": "Retrieving message toast elements with OPA5",
-				"description": "This sample demonstrates how to locate message toast elements with OPA5"
+				"id": "sap.ui.core.sample.OpaStaticAreaControls",
+				"name": "Retrieving controls located in the static area with OPA5",
+				"description": "This sample demonstrates how to locate static area controls with OPA5"
 			},
 			{
 				"id": "sap.ui.core.sample.OpaBusyIndicator",
