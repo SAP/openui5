@@ -6,6 +6,7 @@ sap.ui.define([
 	"sap/ui/fl/ChangePersistence",
 	"sap/ui/fl/Utils",
 	"sap/ui/fl/Change",
+	"sap/ui/fl/Variant",
 	"sap/ui/fl/LrepConnector",
 	"sap/ui/fl/Cache",
 	"sap/ui/fl/registry/Settings",
@@ -20,6 +21,7 @@ function (
 	ChangePersistence,
 	Utils,
 	Change,
+	Variant,
 	LrepConnector,
 	Cache,
 	Settings,
@@ -824,10 +826,15 @@ function (
 			};
 			Utils.setMaxLayerParameter("CUSTOMER");
 			sandbox.spy(this.oChangePersistence, "_filterChangeForMaxLayer");
-			this.oChangePersistence._getAllCtrlVariantChanges(mVariantSection, true);
-			assert.strictEqual(this.oChangePersistence._filterChangeForMaxLayer.callCount, 3, "then _filterChangeForMaxLayer() called thrice for three changes");
-			assert.strictEqual(this.oChangePersistence._bUserLayerChangesExist, true, "then the flag _bUserLayerChangesExist is set");
+			sandbox.spy(this.oChangePersistence, "_getLayerFromChangeOrChangeContent");
 
+			this.oChangePersistence._getAllCtrlVariantChanges(mVariantSection, true);
+
+			assert.strictEqual(this.oChangePersistence._filterChangeForMaxLayer.callCount, 3, "then _filterChangeForMaxLayer() was called thrice for three changes");
+			assert.strictEqual(this.oChangePersistence._getLayerFromChangeOrChangeContent.getCall(0).args[0].fileName, "variant0", "then _getLayerFromChangeOrChangeContent() was called for the variant");
+			assert.strictEqual(this.oChangePersistence._getLayerFromChangeOrChangeContent.getCall(1).args[0].fileName, "variantChange0", "then _getLayerFromChangeOrChangeContent() was called called for the variant change");
+			assert.strictEqual(this.oChangePersistence._getLayerFromChangeOrChangeContent.getCall(2).args[0].fileName, "controlChange0", "then _getLayerFromChangeOrChangeContent() was called for the control change");
+			assert.strictEqual(this.oChangePersistence._bUserLayerChangesExist, true, "then the flag _bUserLayerChangesExist is set");
 		});
 
 		QUnit.test("when getChangesForComponent is called with includeCtrlVariants and includeVariants set to true", function(assert) {
@@ -1341,6 +1348,26 @@ function (
 				assert.ok(fnGetCtrlVariantChangesStub.calledOnce, "then _getCtrlVariantChanges called when max layer parameter is set");
 				assert.strictEqual(this.oChangePersistence._bUserLayerChangesExist, true, "then the flag _bUserLayerChangesExist is set");
 			}.bind(this));
+		});
+
+		QUnit.test("when _getLayerFromChangeOrChangeContent is called with a change instance", function(assert) {
+			var oChange = new Change({
+				fileName:"change1",
+				layer: "USER",
+				selector: { id: "controlId" },
+				dependentSelector: []
+			});
+			assert.strictEqual(this.oChangePersistence._getLayerFromChangeOrChangeContent(oChange), "USER", "then the correct layer is returned");
+		});
+
+		QUnit.test("when _getLayerFromChangeOrChangeContent is called with a variant instance", function(assert) {
+			var oVariant = new Variant({
+				content: {
+					fileName: "variant1",
+					layer: "USER"
+				}
+			});
+			assert.strictEqual(this.oChangePersistence._getLayerFromChangeOrChangeContent(oVariant), "USER", "then the correct layer is returned");
 		});
 
 		QUnit.test("getChangesForComponent shall ignore max layer parameter when current layer is set", function(assert) {
