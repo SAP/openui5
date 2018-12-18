@@ -89,10 +89,11 @@ sap.ui.define([
 		});
 
 		QUnit.test("When createDescriptorVariant() is called", function (assert) {
-			return AppVariantUtils.createDescriptorVariant({id: "testId", reference: "testReference"}).then(function(oDescriptorVariant) {
+			return AppVariantUtils.createDescriptorVariant({id: "testId", version: "1.0.0", reference: "testReference"}).then(function(oDescriptorVariant) {
 				assert.ok(true, "then the descriptor variant is created");
 				assert.strictEqual(oDescriptorVariant._id, "testId", "then the id of the descriptor variant is correct");
 				assert.strictEqual(oDescriptorVariant._reference, "testReference", "then the reference of the descriptor variant is correct");
+				assert.strictEqual(oDescriptorVariant._version, "1.0.0", "then the version of the application variant is correct");
 			});
 		});
 
@@ -439,7 +440,7 @@ sap.ui.define([
 		});
 
 		QUnit.test("When isS4HanaCloud() method is called", function (assert) {
-			return AppVariantUtils.createDescriptorVariant({id: "testId", reference: "testReference"}).then(function(oDescriptorVariant) {
+			return AppVariantUtils.createDescriptorVariant({id: "testId", version: "1.0.0", reference: "testReference"}).then(function(oDescriptorVariant) {
 				assert.equal(AppVariantUtils.isS4HanaCloud(oDescriptorVariant._oSettings), false, "then the platform is not S4 Hana Cloud");
 			});
 		});
