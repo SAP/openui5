@@ -79,6 +79,46 @@ sap.ui.define([
 			});
 		});
 
+		QUnit.test("when getAppVariantDescriptor() is called and promise resolved with an app variant descriptor", function(assert) {
+			var oMockedDescriptorData = {
+				"sap.app": {
+					id: "customer.app.var.id"
+				}
+			};
+
+			var oRootControl = new Control();
+
+			sandbox.stub(FlUtils, "getAppDescriptor").returns(oMockedDescriptorData);
+			var oDummyAppVarDescr = {
+				"hugo": "foo"
+			};
+			var oAppVarDescrStub = sandbox.stub(AppVariantUtils, "getDescriptorFromLREP").resolves(oDummyAppVarDescr);
+
+			return RtaAppVariantFeature.getAppVariantDescriptor(oRootControl).then(function() {
+				assert.ok(oAppVarDescrStub.calledOnce, "then the getDescriptorFromLREP is called once");
+				assert.equal(oAppVarDescrStub.firstCall.args[0], "customer.app.var.id", "the application id was passed correctly");
+			});
+		});
+
+		QUnit.test("when getAppVariantDescriptor() is called and promise resolved", function(assert) {
+			var oMockedDescriptorData = {
+				id: "customer.app.var.id"
+			};
+
+			var oRootControl = new Control();
+
+			sandbox.stub(FlUtils, "getAppDescriptor").returns(oMockedDescriptorData);
+			var oDummyAppVarDescr = {
+				"hugo": "foo"
+			};
+			var oAppVarDescrStub = sandbox.stub(AppVariantUtils, "getDescriptorFromLREP").resolves(oDummyAppVarDescr);
+
+			return RtaAppVariantFeature.getAppVariantDescriptor(oRootControl).then(function(oAppVarDescr) {
+				assert.ok(oAppVarDescrStub.notCalled, "then the getDescriptorFromLREP is not called");
+				assert.equal(oAppVarDescr, false, "then the app variant descriptor is false");
+			});
+		});
+
 		QUnit.test("when onGetOverview() is called,", function(assert) {
 			var done = assert.async();
 

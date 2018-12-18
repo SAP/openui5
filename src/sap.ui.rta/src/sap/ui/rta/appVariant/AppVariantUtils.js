@@ -127,14 +127,6 @@ sap.ui.define([
 			};
 		};
 
-		AppVariantUtils.getURLParsedHash = function() {
-			var oUshellContainer = FlexUtils.getUshellContainer();
-			var oURLParser = oUshellContainer && oUshellContainer.getService("URLParsing");
-			if (oURLParser && oURLParser.parseShellHash && oURLParser.getHash){
-				return oURLParser.parseShellHash(hasher.getHash());
-			}
-		};
-
 		AppVariantUtils.getInboundInfo = function(oInbounds) {
 			var oInboundInfo = {};
 			if (!oInbounds) {
@@ -143,7 +135,7 @@ sap.ui.define([
 				return oInboundInfo;
 			}
 
-			var oParsedHash = this.getURLParsedHash();
+			var oParsedHash = FlexUtils.getParsedURLHash();
 			var aInbounds = Object.keys(oInbounds);
 			var aInboundsFound = [];
 
@@ -217,7 +209,7 @@ sap.ui.define([
 		};
 
 		AppVariantUtils.getInlineChangeCreateInbound = function(sCurrentRunningInboundId) {
-			var oParsedHash = this.getURLParsedHash();
+			var oParsedHash = FlexUtils.getParsedURLHash();
 			var oProperty = {
 				"inbound": {}
 			};
@@ -483,6 +475,10 @@ sap.ui.define([
 				}.bind(this));
 
 			}.bind(this));
+		};
+
+		AppVariantUtils.getDescriptorFromLREP = function(sAppVariantId) {
+			return DescriptorVariantFactory.createForExisting(sAppVariantId);
 		};
 
 		return AppVariantUtils;

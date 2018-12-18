@@ -1214,7 +1214,16 @@ sap.ui.define([
 		return this._oVariantController.getChangesForVariantSwitch(mPropertyBag);
 	};
 
-	ChangePersistence.prototype.transportAllUIChanges = function(oRootControl, sStyleClass, sLayer) {
+	/**
+	 * Transports all the UI changes and app variant descriptor (if exists) to the target system
+	 *
+	 * @param {object} oRootControl - the root control of the running application
+	 * @param {string} sStyleClass - RTA style class name
+	 * @param {string} sLayer - Working layer
+	 * @param {array} [aAppVariantDescriptors] - an array of app variant descriptors which needs to be transported
+	 * @returns {Promise} promise that resolves when all the artifacts are successfully transported
+	 */
+	ChangePersistence.prototype.transportAllUIChanges = function(oRootControl, sStyleClass, sLayer, aAppVariantDescriptors) {
 		var fnHandleAllErrors = function (oError) {
 			BusyIndicator.hide();
 			var oResourceBundle = sap.ui.getCore().getLibraryResourceBundle("sap.ui.fl");
@@ -1235,7 +1244,7 @@ sap.ui.define([
 					BusyIndicator.show(0);
 					return this.getChangesForComponent({currentLayer: sLayer, includeCtrlVariants: true})
 						.then(function(aAllLocalChanges) {
-							return this._oTransportSelection._prepareChangesForTransport(oTransportInfo, aAllLocalChanges)
+							return this._oTransportSelection._prepareChangesForTransport(oTransportInfo, aAllLocalChanges, aAppVariantDescriptors)
 								.then(function() {
 									BusyIndicator.hide();
 								});

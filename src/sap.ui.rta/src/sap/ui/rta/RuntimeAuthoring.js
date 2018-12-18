@@ -1082,11 +1082,19 @@ function(
 		BusyIndicator.show(500);
 		return this._serializeToLrep().then(function () {
 			BusyIndicator.hide();
-			return this._getFlexController()._oChangePersistence.transportAllUIChanges(this._oRootControl, Utils.getRtaStyleClassName(), this.getLayer())
-				.then(function(sResponse) {
-					if (sResponse !== "Error" && sResponse !== "Cancel") {
-						this._showMessageToast("MSG_TRANSPORT_SUCCESS");
+			var bAppVariantRunning = FlexUtils.isApplicationVariant(this._oRootControl);
+			return ((bAppVariantRunning) ? RtaAppVariantFeature.getAppVariantDescriptor(this._oRootControl) : Promise.resolve())
+				.then(function(oAppVariantDescriptor) {
+					var aAppVariantDescriptor = [];
+					if (oAppVariantDescriptor) {
+						aAppVariantDescriptor.push(oAppVariantDescriptor);
 					}
+					return this._getFlexController()._oChangePersistence.transportAllUIChanges(this._oRootControl, Utils.getRtaStyleClassName(), this.getLayer(), aAppVariantDescriptor)
+						.then(function(sResponse) {
+							if (sResponse !== "Error" && sResponse !== "Cancel") {
+								this._showMessageToast("MSG_TRANSPORT_SUCCESS");
+							}
+						}.bind(this));
 				}.bind(this));
 		}.bind(this))['catch'](fnShowTechnicalError);
 	};

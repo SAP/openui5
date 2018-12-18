@@ -249,7 +249,7 @@ sap.ui.define([
 				semanticObject: "testSemanticObject",
 				action: "testAction"
 			};
-			sandbox.stub(AppVariantUtils, "getURLParsedHash").returns(oParsedHash);
+			sandbox.stub(FlUtils, "getParsedURLHash").returns(oParsedHash);
 
 			assert.deepEqual(AppVariantUtils.getInlineChangeCreateInbound("testInbound"), oInboundPropertyChange, "then the inbound property change is correct");
 		});

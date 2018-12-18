@@ -167,6 +167,66 @@ sap.ui.define([
 				assert.equal(aMockLocalChanges[1].packageName, oMockTransportInfo.packageName, "but the new local change is updated");
 			});
 		});
+
+		QUnit.test("when preparing and checking changes for transport with local UI changes and app variant descriptor", function(assert) {
+			var oMockTransportInfo = {
+				packageName : "PackageName",
+				transport : "transportId"
+			},
+			oAppVariantDescriptor = {
+				packageName : "$TMP",
+				fileType : "appdescr_variant",
+				fileName : "manifest",
+				id : "customer.app.var.id",
+				namespace : "namespace1",
+				getDefinition : function(){
+					return {
+						fileType : this.fileType,
+						fileName : this.fileName
+					};
+				},
+				getNamespace : function(){
+					return this.namespace;
+				},
+				getPackage : function(){
+					return this.packageName;
+				}
+			},
+			oMockNewChange = {
+				packageName : "$TMP",
+				fileType : "change",
+				id : "changeId2",
+				namespace : "namespace2",
+				getDefinition : function(){
+					return {
+						packageName : this.packageName,
+						fileType : this.fileType
+					};
+				},
+				getId : function(){
+					return this.id;
+				},
+				getNamespace : function(){
+					return this.namespace;
+				},
+				setResponse : function(oDefinition){
+					this.packageName = oDefinition.packageName;
+				},
+				getPackage : function(){
+					return this.packageName;
+				}
+			},
+			aMockLocalChanges = [oMockNewChange],
+			aAppVariantDescriptors = [oAppVariantDescriptor];
+
+			sandbox.stub(Utils, "getClient").returns('');
+			sandbox.stub(LrepConnector, "createConnector").returns(this.oLrepConnector);
+			assert.ok(this.oTransportSelection.checkTransportInfo(oMockTransportInfo), "then true is returned for a valid transport info");
+			return this.oTransportSelection._prepareChangesForTransport(oMockTransportInfo, aMockLocalChanges, aAppVariantDescriptors).then(function(){
+				assert.equal(aAppVariantDescriptors[0].packageName, "$TMP", "but the app variant descriptor should not be updated");
+				assert.equal(aMockLocalChanges[0].packageName, oMockTransportInfo.packageName, "but the new local change is updated");
+			});
+		});
 	});
 
 	QUnit.module("sap.ui.fl.transport.TransportSelection", {

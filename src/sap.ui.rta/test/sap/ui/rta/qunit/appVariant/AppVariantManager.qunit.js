@@ -144,7 +144,7 @@ function (
 				semanticObject: "testSemanticObject",
 				action: "testAction"
 			};
-			sandbox.stub(AppVariantUtils, "getURLParsedHash").returns(oParsedHashStub);
+			sandbox.stub(FlUtils, "getParsedURLHash").returns(oParsedHashStub);
 
 			this.oAppVariantData = {
 				description: "App Variant Description",

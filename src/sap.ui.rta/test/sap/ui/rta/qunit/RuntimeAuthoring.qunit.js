@@ -882,23 +882,45 @@ function(
 			sandbox.restore();
 		}
 	}, function() {
-		QUnit.test("When transport function is called and transportAllUIChanges returns Promise.resolve()", function(assert) {
+		QUnit.test("When transport function is called and transportAllUIChanges returns Promise.resolve() when the running application is not an application variant", function(assert) {
 			var oChangePersistenceStub = sandbox.stub(this.oChangePersistence, "transportAllUIChanges").returns(Promise.resolve());
 			var oMessageToastStub = sandbox.stub(this.oRta, "_showMessageToast");
+			var oAppVariantRunningStub = sandbox.stub(Utils, "isApplicationVariant").returns(false);
 			return this.oRta.transport().then(function() {
 				assert.equal(oMessageToastStub.callCount, 1, "then the messageToast was shown");
+				assert.equal(oAppVariantRunningStub.callCount, 1, "then isApplicationVariant() got called");
 				assert.equal(oChangePersistenceStub.firstCall.args[1], RtaUtils.getRtaStyleClassName(), "the styleClass was passed correctly");
 				assert.equal(oChangePersistenceStub.firstCall.args[2], "CUSTOMER", "the layer was passed correctly");
+			});
+		});
+
+		QUnit.test("When transport function is called and transportAllUIChanges returns Promise.resolve() when the running application is an application variant", function(assert) {
+			var oChangePersistenceStub = sandbox.stub(this.oChangePersistence, "transportAllUIChanges").returns(Promise.resolve());
+			var oMessageToastStub = sandbox.stub(this.oRta, "_showMessageToast");
+			var oAppVariantRunningStub = sandbox.stub(Utils, "isApplicationVariant").returns(true);
+			var oDummyObject = {
+				"foo": "hugo"
+			};
+			var aAppVariantDescriptors = [oDummyObject];
+			sandbox.stub(RtaAppVariantFeature, "getAppVariantDescriptor").resolves(oDummyObject);
+			return this.oRta.transport().then(function() {
+				assert.equal(oMessageToastStub.callCount, 1, "then the messageToast was shown");
+				assert.equal(oAppVariantRunningStub.callCount, 1, "then isAppVariantRunning() got called");
+				assert.equal(oChangePersistenceStub.firstCall.args[1], RtaUtils.getRtaStyleClassName(), "the styleClass was passed correctly");
+				assert.equal(oChangePersistenceStub.firstCall.args[2], "CUSTOMER", "the layer was passed correctly");
+				assert.deepEqual(oChangePersistenceStub.firstCall.args[3], aAppVariantDescriptors, "then the array of app variant descriptors is correctly passed");
 			});
 		});
 
 		QUnit.test("When transport function is called and transportAllUIChanges returns Promise.reject()", function(assert) {
 			sandbox.stub(this.oChangePersistence, "transportAllUIChanges").returns(Promise.reject(new Error("Error")));
 			var oMessageToastStub = sandbox.stub(this.oRta, "_showMessageToast");
+			var oAppVariantRunningStub = sandbox.stub(Utils, "isApplicationVariant").returns(false);
 			var oShowErrorStub = sandbox.stub(Log, "error");
 			var oErrorBoxStub = sandbox.stub(MessageBox, "error");
 			return this.oRta.transport().then(function() {
 				assert.equal(oMessageToastStub.callCount, 0, "then the messageToast was not shown");
+				assert.equal(oAppVariantRunningStub.callCount, 1, "then isAppVariantRunning() got called");
 				assert.equal(oShowErrorStub.callCount, 1, "then the error was logged");
 				assert.equal(oErrorBoxStub.callCount, 1, "and a MessageBox.error was shown");
 			});
@@ -921,11 +943,13 @@ function(
 			var sErrorBoxText = oTextResources.getText("MSG_LREP_TRANSFER_ERROR") + "\n"
 					+ oTextResources.getText("MSG_ERROR_REASON", "Error text 1\nError text 2\n");
 			sandbox.stub(this.oChangePersistence, "transportAllUIChanges").returns(Promise.reject(oError));
+			var oAppVariantRunningStub = sandbox.stub(Utils, "isApplicationVariant").returns(false);
 			var oMessageToastStub = sandbox.stub(this.oRta, "_showMessageToast");
 			var oShowErrorStub = sandbox.stub(Log, "error");
 			var oErrorBoxStub = sandbox.stub(MessageBox, "error");
 			return this.oRta.transport().then(function() {
 				assert.equal(oMessageToastStub.callCount, 0, "then the messageToast was not shown");
+				assert.equal(oAppVariantRunningStub.callCount, 1, "then isAppVariantRunning() got called");
 				assert.equal(oShowErrorStub.callCount, 1, "then the error was logged");
 				assert.equal(oErrorBoxStub.callCount, 1, "and a MessageBox.error was shown");
 				assert.equal(oErrorBoxStub.args[0][0], sErrorBoxText, "and the shown error text is correct");
@@ -935,16 +959,20 @@ function(
 		QUnit.test("When transport function is called and transportAllUIChanges returns Promise.resolve() with 'Error' as parameter", function(assert) {
 			sandbox.stub(this.oChangePersistence, "transportAllUIChanges").returns(Promise.resolve('Error'));
 			var oMessageToastStub = sandbox.stub(this.oRta, "_showMessageToast");
+			var oAppVariantRunningStub = sandbox.stub(Utils, "isApplicationVariant").returns(false);
 			return this.oRta.transport().then(function() {
 				assert.equal(oMessageToastStub.callCount, 0, "then the messageToast was not shown");
+				assert.equal(oAppVariantRunningStub.callCount, 1, "then isAppVariantRunning() got called");
 			});
 		});
 
 		QUnit.test("When transport function is called and transportAllUIChanges returns Promise.resolve() with 'Cancel' as parameter", function(assert) {
 			sandbox.stub(this.oChangePersistence, "transportAllUIChanges").returns(Promise.resolve('Cancel'));
 			var oMessageToastStub = sandbox.stub(this.oRta, "_showMessageToast");
+			var oAppVariantRunningStub = sandbox.stub(Utils, "isApplicationVariant").returns(false);
 			return this.oRta.transport().then(function() {
 				assert.equal(oMessageToastStub.callCount, 0, "then the messageToast was not shown");
+				assert.equal(oAppVariantRunningStub.callCount, 1, "then isAppVariantRunning() got called");
 			});
 		});
 
