@@ -52,17 +52,17 @@ sap.ui.define([
 	 *
 	 * @class
 	 * The <code>SimpleForm</code> provides an easy-to-use API to create simple forms.
-	 * Inside a <code>SimpleForm</code>, a <code>{@link sap.ui.layout.form.Form|Form}</code> control is created along with its
-	 * <code>{@link sap.ui.layout.form.FormContainer|FormContainers}</code> and <code>{@link sap.ui.layout.form.FormElement|FormElements}</code>,
+	 * Inside a <code>SimpleForm</code>, a <code>{@link sap.ui.layout.form.Form Form}</code> control is created along with its
+	 * <code>{@link sap.ui.layout.form.FormContainer FormContainers}</code> and <code>{@link sap.ui.layout.form.FormElement FormElements}</code>,
 	 * but the complexity in the API is not exposed to the user.
 	 * <ul>
-	 * <li>A new <code>Title</code> or <code>Toolbar</code> starts a new group (<code>{@link sap.ui.layout.form.FormContainer|FormContainer}</code>) in the form.</li>
-	 * <li>A new <code>Label</code> starts a new row (<code>{@link sap.ui.layout.form.FormElement|FormElement}</code>) in the form.</li>
-	 * <li>All other controls will be assigned to the row (<code>{@link sap.ui.layout.form.FormElement|FormElement}</code>) that started with the last label.</li>
+	 * <li>A new <code>Title</code> or <code>Toolbar</code> starts a new group (<code>{@link sap.ui.layout.form.FormContainer FormContainer}</code>) in the form.</li>
+	 * <li>A new <code>Label</code> starts a new row (<code>{@link sap.ui.layout.form.FormElement FormElement}</code>) in the form.</li>
+	 * <li>All other controls will be assigned to the row (<code>{@link sap.ui.layout.form.FormElement FormElement}</code>) that started with the last label.</li>
 	 * </ul>
 	 * Use <code>LayoutData</code> to influence the layout for special cases in the Input/Display controls.
 	 *
-	 * <b>Note:</b> If a more complex form is needed, use the <code>{@link sap.ui.layout.form.Form|Form}</code> control instead.
+	 * <b>Note:</b> If a more complex form is needed, use the <code>{@link sap.ui.layout.form.Form Form}</code> control instead.
 	 *
 	 * @extends sap.ui.core.Control
 	 * @version ${version}
@@ -79,9 +79,9 @@ sap.ui.define([
 		properties : {
 
 			/**
-			 * The maximum amount of groups (<code>{@link sap.ui.layout.form.FormContainer|FormContainers}</code>) per row that is used before a new row is started.
+			 * The maximum amount of groups (<code>{@link sap.ui.layout.form.FormContainer FormContainers}</code>) per row that is used before a new row is started.
 			 *
-			 * <b>Note:</b> If <code>{@link sap.ui.layout.form.SimpleFormLayout.ResponsiveGridLayout}</code> is used as <code>layout</code>, this property is not used.
+			 * <b>Note:</b> If <code>{@link sap.ui.layout.form.SimpleFormLayout#ResponsiveGridLayout}</code> is used as <code>layout</code>, this property is not used.
 			 * Please use the properties <code>ColumnsL</code> and <code>ColumnsM</code> in this case.
 			 */
 			maxContainerCols : {type : "int", group : "Appearance", defaultValue : 2},
@@ -89,8 +89,8 @@ sap.ui.define([
 			/**
 			 * The overall minimum width in pixels that is used for the <code>SimpleForm</code>.
 			 *
-			 * If the available width is below the given <code>minWidth</code> the <code>SimpleForm</code> will create a new row for the next group (<code>{@link sap.ui.layout.form.FormContainer|FormContainer}</code>).
-			 * The default value is -1, meaning that inner groups (<code>{@link sap.ui.layout.form.FormContainer|FormContainers}</code>) will be stacked until <code>maxContainerCols</code> is reached,
+			 * If the available width is below the given <code>minWidth</code> the <code>SimpleForm</code> will create a new row for the next group (<code>{@link sap.ui.layout.form.FormContainer FormContainer}</code>).
+			 * The default value is -1, meaning that inner groups (<code>{@link sap.ui.layout.form.FormContainer FormContainers}</code>) will be stacked until <code>maxContainerCols</code> is reached,
 			 * irrespective of whether a <code>width</code> is reached or the available parents width is reached.
 			 *
 			 * <b>Note:</b> This property is only used if a <code>ResponsiveLayout</code> is used as a layout.
@@ -303,8 +303,8 @@ sap.ui.define([
 			/**
 			 * The content of the form is structured in the following way:
 			 * <ul>
-			 * <li>Add a <code>Title</code> or <code>Toolbar</code> control to start a new group (<code>{@link sap.ui.layout.form.FormContainer|FormContainer}</code>).</li>
-			 * <li>Add a <code>Label</code> control to start a new row (<code>{@link sap.ui.layout.form.FormElement|FormElement}</code>).</li>
+			 * <li>Add a <code>Title</code> or <code>Toolbar</code> control to start a new group (<code>{@link sap.ui.layout.form.FormContainer FormContainer}</code>).</li>
+			 * <li>Add a <code>Label</code> control to start a new row (<code>{@link sap.ui.layout.form.FormElement FormElement}</code>).</li>
 			 * <li>Add controls as input fields, text fields or other as needed.</li>
 			 * <li>Use <code>LayoutData</code> to influence the layout for special cases in the single controls.
 			 * For example, if a <code>ResponsiveLayout</code> is used as a layout,
