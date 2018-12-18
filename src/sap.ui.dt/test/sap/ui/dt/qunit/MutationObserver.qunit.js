@@ -77,19 +77,24 @@ function(
 
 		QUnit.test("ignoreOnce()", function (assert) {
 			var fnDone = assert.async();
-			assert.expect(1);
+			assert.expect(3);
 			this.oMutationObserver.ignoreOnce({
 				target: this.$Node.get(0),
 				type: "childList"
 			});
 			this.oMutationObserver.attachEvent("domChanged", function (oEvent) {
-				assert.ok(includes(oEvent.getParameter('targetNodes'), this.$Node.get(0)), "the node change is part of the event, but emitted only once (first mutation is ignored)");
-				fnDone();
+				// for the target node only one domChanged event should be fired
+				if (includes(oEvent.getParameter('targetNodes'), this.$Node.get(0))) {
+					assert.ok(true, "the node change is part of the event, but emitted only once (first mutation is ignored)");
+					assert.equal(oEvent.getParameter("targetNodes")[0].childNodes[0].id, "test1", "then first div is appended");
+					assert.equal(oEvent.getParameter("targetNodes")[0].childNodes[1].id, "test2", "then second div is appended");
+					fnDone();
+				}
 			}, this);
-			this.$Node.append("<div />");
+			this.$Node.append('<div id="test1"/>');
 			// setTimeout is needed to avoid native throttling by MutationObserver
 			setTimeout(function () {
-				this.$Node.append("<div />");
+				this.$Node.append('<div id="test2"/>');
 			}.bind(this));
 		});
 
