@@ -217,6 +217,32 @@ function(
 	/* ----------------------------------------------------------- */
 
 	/**
+	 * Handles the input event of the control
+	 * @param {jQuery.Event} oEvent The event object.
+	 * @protected
+	 */
+
+	InputBase.prototype.handleInput = function(oEvent) {
+		// ie 10+ fires the input event when an input field with a native placeholder is focused
+		if (this._bIgnoreNextInput) {
+			this._bIgnoreNextInput = false;
+			oEvent.setMarked("invalid");
+			return;
+		}
+
+		this._bIgnoreNextInput = false;
+
+		// ie11 fires input event from read-only fields
+		if (!this.getEditable()) {
+			oEvent.setMarked("invalid");
+			return;
+		}
+
+		// dom value updated other than value property
+		this._bCheckDomValue = true;
+	};
+
+	/**
 	 * To allow setting of default placeholder e.g. in DatePicker
 	 *
 	 * FIXME: Remove this workaround
@@ -582,31 +608,7 @@ function(
 	 * @param {jQuery.Event} oEvent The event object.
 	 */
 	InputBase.prototype.oninput = function(oEvent) {
-
-		// ie 10+ fires the input event when an input field with a native placeholder is focused
-		if (this._bIgnoreNextInput) {
-			this._bIgnoreNextInput = false;
-			oEvent.setMarked("invalid");
-			return;
-		}
-
-		this._bIgnoreNextInput = false;
-
-		// ie11 fires input event from read-only fields
-		if (!this.getEditable()) {
-			oEvent.setMarked("invalid");
-			return;
-		}
-
-		// ie11 fires input event whenever placeholder attribute is changed
-		if (document.activeElement !== oEvent.target &&
-			Device.browser.msie && this.getValue() === this._lastValue) {
-			oEvent.setMarked("invalid");
-			return;
-		}
-
-		// dom value updated other than value property
-		this._bCheckDomValue = true;
+		this.handleInput(oEvent);
 	};
 
 	/**
