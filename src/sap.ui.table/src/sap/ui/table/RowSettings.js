@@ -4,8 +4,8 @@
 
 // Provides control sap.ui.table.RowSettings
 sap.ui.define([
-	'sap/ui/core/Element', './TableUtils', 'sap/ui/base/DataType', './library', 'sap/ui/core/library', "sap/base/Log"
-], function(Element, TableUtils, DataType, library, coreLibrary, Log) {
+	'sap/ui/core/Element', './TableUtils', 'sap/ui/base/DataType', './library', 'sap/ui/core/library'
+], function(Element, TableUtils, DataType, library, coreLibrary) {
 	"use strict";
 
 	// shortcuts
@@ -156,19 +156,19 @@ sap.ui.define([
 	 */
 	RowSettings.prototype._getHighlightText = function() {
 		var sHighlight = this.getHighlight();
+
+		if (sHighlight === MessageType.None) {
+			return "";
+		}
+
 		var sHighlightText = this.getHighlightText();
 
-		if (sHighlight == null || sHighlight === MessageType.None) {
-			return "";
-		} else if (sHighlight in MessageType && sHighlightText === "") {
+		if (sHighlight in MessageType && sHighlightText === "") {
 			// TBL_ROW_STATE_INFORMATION, TBL_ROW_STATE_ERROR, TBL_ROW_STATE_WARNING, TBL_ROW_STATE_SUCCESS
-			return TableUtils.getResourceText("TBL_ROW_STATE_" + sHighlight.toUpperCase());
-		} else {
-			if (sHighlightText === "") {
-				Log.warning("No highlight text is set for a highlight of type sap.ui.core.IndicationColor", this._getRow());
-			}
-			return sHighlightText;
+			sHighlightText = TableUtils.getResourceText("TBL_ROW_STATE_" + sHighlight.toUpperCase());
 		}
+
+		return sHighlightText;
 	};
 
 	/**
