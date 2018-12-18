@@ -841,4 +841,77 @@ sap.ui.define([
 		assert.equal(this.oPanel.$().find("tr").find("span")[1].textContent, "A foo");
 		assert.equal(this.oPanel.$().find("tr").find("span")[2].textContent, "B foo");
 	});
+    QUnit.module("sap.m.P13nColumnsPanel: _sortModelItemsByPersistentIndex", {
+        beforeEach: function() {
+            this.oPanel = new sap.m.P13nColumnsPanel();
+        },
+        afterEach: function() {
+            this.oPanel.destroy();
+        }
+    });
+
+    QUnit.test("BCP 0020751295 0000514259 2018", function(assert) {
+        var aModelItems = JSON.parse('[' + '{"columnKey":"Project>Name","visible":true,"text":"Name","tooltip":null,"persistentIndex":-1,"persistentSelected":true},' + '{"columnKey":"Project>AmtA2","visible":true,"text":"Actuals Feb","tooltip":null,"persistentIndex":-1,"persistentSelected":true},' + '{"columnKey":"Project>AmtA12","visible":true,"text":"Actuals Dec","tooltip":null,"persistentIndex":-1,"persistentSelected":true},' + '{"columnKey":"Project>CreatedByName","visible":true,"text":"Created By","tooltip":null,"persistentIndex":-1,"persistentSelected":true},' + '{"columnKey":"Project>CreatedTime","visible":true,"text":"Created At","tooltip":null,"persistentIndex":-1,"persistentSelected":true},' + '{"columnKey":"Project>ChangedByName","visible":true,"text":"Changed By","tooltip":null,"persistentIndex":-1,"persistentSelected":true},' + '{"columnKey":"Project>ChangedTime","visible":true,"text":"Changed At","tooltip":null,"persistentIndex":-1,"persistentSelected":true},' + '{"columnKey":"Project>MaxValueC","visible":true,"text":"Project Cap","tooltip":null,"persistentIndex":-1,"persistentSelected":true},' + '{"columnKey":"Project>MaxValueB","visible":true,"text":"Plan","tooltip":null,"persistentIndex":-1,"persistentSelected":true},' + '{"columnKey":"Project>AmtLeTot","visible":true,"text":"Actuals+Plan to Go","tooltip":null,"persistentIndex":-1,"persistentSelected":true},' + '{"columnKey":"Project>DemographicsDesc","visible":true,"text":"Demographics","tooltip":null,"persistentIndex":-1,"persistentSelected":true}]');
+        var aModelItems_ = JSON.parse('[' + '{"columnKey":"Project>Name","visible":true,"text":"Name","tooltip":null,"persistentIndex":-1,"persistentSelected":true},' + '{"columnKey":"Project>AmtA2","visible":true,"text":"Actuals Feb","tooltip":null,"persistentIndex":-1,"persistentSelected":true},' + '{"columnKey":"Project>AmtA12","visible":true,"text":"Actuals Dec","tooltip":null,"persistentIndex":-1,"persistentSelected":true},' + '{"columnKey":"Project>CreatedByName","visible":true,"text":"Created By","tooltip":null,"persistentIndex":-1,"persistentSelected":true},' + '{"columnKey":"Project>CreatedTime","visible":true,"text":"Created At","tooltip":null,"persistentIndex":-1,"persistentSelected":true},' + '{"columnKey":"Project>ChangedByName","visible":true,"text":"Changed By","tooltip":null,"persistentIndex":-1,"persistentSelected":true},' + '{"columnKey":"Project>ChangedTime","visible":true,"text":"Changed At","tooltip":null,"persistentIndex":-1,"persistentSelected":true},' + '{"columnKey":"Project>MaxValueC","visible":true,"text":"Project Cap","tooltip":null,"persistentIndex":-1,"persistentSelected":true},' + '{"columnKey":"Project>MaxValueB","visible":true,"text":"Plan","tooltip":null,"persistentIndex":-1,"persistentSelected":true},' + '{"columnKey":"Project>AmtLeTot","visible":true,"text":"Actuals+Plan to Go","tooltip":null,"persistentIndex":-1,"persistentSelected":true},' + '{"columnKey":"Project>DemographicsDesc","visible":true,"text":"Demographics","tooltip":null,"persistentIndex":-1,"persistentSelected":true}]');
+
+        this.oPanel._sortModelItemsByPersistentIndex(aModelItems_);
+        assert.deepEqual(aModelItems_, aModelItems);
+    });
+    QUnit.module("sap.m.P13nColumnsPanel: _sortModelItemsByPersistentIndex", {
+        beforeEach: function() {
+            this.oPanel = new sap.m.P13nColumnsPanel({
+                items: {
+                    path: "/items",
+                    template: new sap.m.P13nItem({
+                        columnKey: "{columnKey}",
+                        text: "{text}"
+                    })
+                },
+                columnsItems: {
+                    path: "/columnsItems",
+                    template: new sap.m.P13nColumnsItem({
+                        columnKey: "{columnKey}",
+                        index: "{index}",
+                        visible: "{visible}"
+                    })
+                },
+                changeColumnsItems: function(oEvent) {
+                    // At least enough for this test!
+                    this.getModel().setProperty("/columnsItems", oEvent.getParameter("items"));
+                }
+            });
+            this.oDataInitial = {
+                items: [
+                    {
+                        columnKey: "key01",
+                        text: "É"
+                    }, {
+                        columnKey: "key02",
+                        text: "D"
+                    }, {
+                        columnKey: "key03",
+                        text: "F"
+                    }, {
+                        columnKey: "key04",
+                        text: "E"
+                    }
+                ]
+            };
+            this.oPanel.setModel(new sap.ui.model.json.JSONModel(jQuery.extend(true, {}, this.oDataInitial)));
+
+            this.oPanel.placeAt("content");
+            sap.ui.getCore().applyChanges();
+        },
+        afterEach: function() {
+            this.oPanel.destroy();
+        }
+    });
+
+    QUnit.test("BCP 0020751294 0000593415 2018", function(assert) {
+        assert.equal(this.oPanel.$().find("tr").find("span").length, 5);
+        assert.equal(this.oPanel.$().find("tr").find("span")[1].textContent, "D");
+        assert.equal(this.oPanel.$().find("tr").find("span")[2].textContent, "E");
+        assert.equal(this.oPanel.$().find("tr").find("span")[3].textContent, "É");
+        assert.equal(this.oPanel.$().find("tr").find("span")[4].textContent, "F");
+    });
 });

@@ -1,33 +1,14 @@
 /*global QUnit */
 sap.ui.define([
-	"sap/ui/qunit/QUnitUtils",
-	"sap/ui/qunit/utils/createAndAppendDiv",
-	"sap/m/P13nDimMeasurePanel",
-	"sap/m/library",
-	"sap/m/P13nItem",
-	"sap/m/P13nDimMeasureItem",
-	"sap/ui/model/json/JSONModel",
-	"sap/ui/events/jquery/EventExtension"
-], function(
-	qutils,
-	createAndAppendDiv,
-	P13nDimMeasurePanel,
-	mobileLibrary,
-	P13nItem,
-	P13nDimMeasureItem,
-	JSONModel,
-	EventExtension
-) {
+	"sap/ui/qunit/QUnitUtils", "sap/ui/qunit/utils/createAndAppendDiv", "sap/m/P13nDimMeasurePanel", "sap/m/library", "sap/m/P13nItem", "sap/m/P13nDimMeasureItem", "sap/ui/model/json/JSONModel", "sap/ui/events/jquery/EventExtension"
+], function(qutils, createAndAppendDiv, P13nDimMeasurePanel, mobileLibrary, P13nItem, P13nDimMeasureItem, JSONModel, EventExtension) {
 	"use strict";
 
 	// shortcut for sap.m.P13nPanelType
 	var P13nPanelType = mobileLibrary.P13nPanelType;
 
-
 	// prepare DOM
 	createAndAppendDiv("content");
-
-
 
 	// =========================================================== //
 	// Check UX requirements on                                    //
@@ -42,7 +23,7 @@ sap.ui.define([
 	// ------------------------------ //
 	// tests for default values       //
 	// ------------------------------ //
-	QUnit.test("constructor - items: []", function (assert) {
+	QUnit.test("constructor - items: []", function(assert) {
 
 		// system under test
 		var oDimMeasurePanel = new P13nDimMeasurePanel({
@@ -63,7 +44,7 @@ sap.ui.define([
 		oDimMeasurePanel.destroy();
 	});
 
-	QUnit.test("constructor - items: [aItems]", function (assert) {
+	QUnit.test("constructor - items: [aItems]", function(assert) {
 
 		// system under test
 		var oItemA, oItemB, oItemC;
@@ -107,7 +88,7 @@ sap.ui.define([
 		oDimMeasurePanel.destroy();
 	});
 
-	QUnit.test("constructor - [], addItem", function (assert) {
+	QUnit.test("constructor - [], addItem", function(assert) {
 
 		// system under test
 		var oDimMeasurePanel = new P13nDimMeasurePanel();
@@ -148,7 +129,7 @@ sap.ui.define([
 		oDimMeasurePanel.destroy();
 	});
 
-	QUnit.test("constructor - items: [aItems], insertItem", function (assert) {
+	QUnit.test("constructor - items: [aItems], insertItem", function(assert) {
 
 		// system under test
 		var oItemA, oItemB = new P13nItem({
@@ -192,7 +173,7 @@ sap.ui.define([
 		oDimMeasurePanel.destroy();
 	});
 
-	QUnit.test("constructor - items: [aItems], removeItem", function (assert) {
+	QUnit.test("constructor - items: [aItems], removeItem", function(assert) {
 
 		// system under test
 		var oItemA, oItemB, oItemC;
@@ -235,7 +216,7 @@ sap.ui.define([
 		oDimMeasurePanel.destroy();
 	});
 
-	QUnit.test("constructor - items: [aItems], removeItem dummy", function (assert) {
+	QUnit.test("constructor - items: [aItems], removeItem dummy", function(assert) {
 
 		// system under test
 		var oItemA, oItemB = new P13nItem({
@@ -278,7 +259,7 @@ sap.ui.define([
 		oDimMeasurePanel.destroy();
 	});
 
-	QUnit.test("constructor - items: [aItems], removeAllItems", function (assert) {
+	QUnit.test("constructor - items: [aItems], removeAllItems", function(assert) {
 
 		// system under test
 		var oItemA, oItemB, oItemC;
@@ -317,7 +298,7 @@ sap.ui.define([
 		oDimMeasurePanel.destroy();
 	});
 
-	QUnit.test("constructor - items: [aItems], destroyItems", function (assert) {
+	QUnit.test("constructor - items: [aItems], destroyItems", function(assert) {
 
 		// system under test
 		var oDimMeasurePanel = new P13nDimMeasurePanel({
@@ -352,7 +333,7 @@ sap.ui.define([
 		oDimMeasurePanel.destroy();
 	});
 
-	QUnit.test("constructor - items: [aItems], dimMeasureItems: [aDimMeasureItems]", function (assert) {
+	QUnit.test("constructor - items: [aItems], dimMeasureItems: [aDimMeasureItems]", function(assert) {
 
 		// system under test
 		var oItemA, oItemB, oItemC;
@@ -399,7 +380,7 @@ sap.ui.define([
 		oDimMeasurePanel.destroy();
 	});
 
-	QUnit.test("constructor - dimMeasureItems: [aDimMeasureItems], items: [aItems]", function (assert) {
+	QUnit.test("constructor - dimMeasureItems: [aDimMeasureItems], items: [aItems]", function(assert) {
 
 		// system under test
 		var oItemA, oItemB, oItemC;
@@ -446,7 +427,7 @@ sap.ui.define([
 		oDimMeasurePanel.destroy();
 	});
 
-	QUnit.test("constructor - items: [aItems], dimMeasureItems: [aDimMeasureItems]", function (assert) {
+	QUnit.test("constructor - items: [aItems], dimMeasureItems: [aDimMeasureItems]", function(assert) {
 
 		// system under test
 		var oItemA, oItemB, oItemC;
@@ -497,7 +478,7 @@ sap.ui.define([
 		oDimMeasurePanel.destroy();
 	});
 
-	QUnit.test("getOkPayload: â0 -> a0", function (assert) {
+	QUnit.test("getOkPayload: â0 -> a0", function(assert) {
 		// system under test
 		var oDimMeasureItemA;
 		var oDimMeasurePanel = new P13nDimMeasurePanel({
@@ -514,7 +495,7 @@ sap.ui.define([
 					visible: true
 				})
 			],
-			changeDimMeasureItems: function (oEvent) {
+			changeDimMeasureItems: function(oEvent) {
 				// At least enough for this test!
 				oDimMeasurePanel.getDimMeasureItems()[0].setVisible(oEvent.getParameter("items")[0].visible);
 				oDimMeasurePanel.getDimMeasureItems()[0].setIndex(oEvent.getParameter("items")[0].index);
@@ -546,7 +527,7 @@ sap.ui.define([
 		oDimMeasurePanel.destroy();
 	});
 
-	QUnit.test("getOkPayload: a0 -> â0", function (assert) {
+	QUnit.test("getOkPayload: a0 -> â0", function(assert) {
 		// system under test
 		var oDimMeasurePanel = new P13nDimMeasurePanel({
 			items: [
@@ -556,7 +537,7 @@ sap.ui.define([
 				})
 			],
 			dimMeasureItems: [],
-			changeDimMeasureItems: function (oEvent) {
+			changeDimMeasureItems: function(oEvent) {
 				// At least enough for this test!
 				oDimMeasurePanel.addDimMeasureItem(new P13nDimMeasureItem({
 					columnKey: oEvent.getParameter("items")[0].columnKey,
@@ -590,21 +571,20 @@ sap.ui.define([
 		oDimMeasurePanel.destroy();
 	});
 
-	QUnit.test("getOkPayload: a0 -> a1", function (assert) {
+	QUnit.test("getOkPayload: a0 -> a1", function(assert) {
 		// system under test
 		var oDimMeasurePanel = new P13nDimMeasurePanel({
 			items: [
 				new P13nItem({
 					columnKey: "keyA",
 					text: "A"
-				}),
-				new P13nItem({
+				}), new P13nItem({
 					columnKey: "keyB",
 					text: "B"
 				})
 			],
 			dimMeasureItems: [],
-			changeDimMeasureItems: function (oEvent) {
+			changeDimMeasureItems: function(oEvent) {
 				// At least enough for this test!
 				oDimMeasurePanel.addDimMeasureItem(new P13nDimMeasureItem({
 					columnKey: oEvent.getParameter("items")[0].columnKey,
@@ -637,24 +617,23 @@ sap.ui.define([
 		oDimMeasurePanel.destroy();
 	});
 
-	QUnit.test("getOkPayload: a0 -> â1", function (assert) {
+	QUnit.test("getOkPayload: a0 -> â1", function(assert) {
 		// system under test
 		var oDimMeasurePanel = new P13nDimMeasurePanel({
 			items: [
 				new P13nItem({
 					columnKey: "keyA",
 					text: "A"
-				}),
-				new P13nItem({
+				}), new P13nItem({
 					columnKey: "keyB",
 					text: "B"
 				})
 			],
 			dimMeasureItems: [],
-			changeDimMeasureItems: function (oEvent) {
+			changeDimMeasureItems: function(oEvent) {
 				// At least enough for this test!
 				this.destroyDimMeasureItems();
-				oEvent.getParameter("items").forEach(function (oMItem) {
+				oEvent.getParameter("items").forEach(function(oMItem) {
 					this.addDimMeasureItem(new P13nDimMeasureItem({
 						columnKey: oMItem.columnKey,
 						visible: oMItem.visible,
@@ -689,39 +668,38 @@ sap.ui.define([
 		assert.strictEqual(oDimMeasurePanel.getDimMeasureItems()[1].getVisible(), true);
 		assert.strictEqual(oDimMeasurePanel.getDimMeasureItems()[1].getIndex(), 0);
 
-//            // test
-//            var oDimMeasurePanelT = new sap.m.P13nDimMeasurePanel({
-//                items: [
-//                    new sap.m.P13nItem({
-//                        columnKey: "keyA",
-//                        text: "A"
-//                    }),
-//                    new sap.m.P13nItem({
-//                        columnKey: "keyB",
-//                        text: "B"
-//                    })
-//                ],
-//                dimMeasureItems: oDimMeasurePanel.getDimMeasureItems()
-//            });
-//            oDimMeasurePanel.destroy();
-//            oDimMeasurePanelT.placeAt("content");
-//            sap.ui.getCore().applyChanges();
-//            this.clock.tick(500);
-//            // test end
+		//            // test
+		//            var oDimMeasurePanelT = new sap.m.P13nDimMeasurePanel({
+		//                items: [
+		//                    new sap.m.P13nItem({
+		//                        columnKey: "keyA",
+		//                        text: "A"
+		//                    }),
+		//                    new sap.m.P13nItem({
+		//                        columnKey: "keyB",
+		//                        text: "B"
+		//                    })
+		//                ],
+		//                dimMeasureItems: oDimMeasurePanel.getDimMeasureItems()
+		//            });
+		//            oDimMeasurePanel.destroy();
+		//            oDimMeasurePanelT.placeAt("content");
+		//            sap.ui.getCore().applyChanges();
+		//            this.clock.tick(500);
+		//            // test end
 
 		// cleanup
 		oDimMeasurePanel.destroy();
 	});
 
-	QUnit.test("getOkPayload: â0 -> â1", function (assert) {
+	QUnit.test("getOkPayload: â0 -> â1", function(assert) {
 		// system under test
 		var oDimMeasurePanel = new P13nDimMeasurePanel({
 			items: [
 				new P13nItem({
 					columnKey: "keyA",
 					text: "A"
-				}),
-				new P13nItem({
+				}), new P13nItem({
 					columnKey: "keyB",
 					text: "B"
 				})
@@ -733,10 +711,10 @@ sap.ui.define([
 					visible: true
 				})
 			],
-			changeDimMeasureItems: function (oEvent) {
+			changeDimMeasureItems: function(oEvent) {
 				// At least enough for this test!
 				this.destroyDimMeasureItems();
-				oEvent.getParameter("items").forEach(function (oMItem) {
+				oEvent.getParameter("items").forEach(function(oMItem) {
 					this.addDimMeasureItem(new P13nDimMeasureItem({
 						columnKey: oMItem.columnKey,
 						visible: oMItem.visible,
@@ -770,15 +748,14 @@ sap.ui.define([
 		oDimMeasurePanel.destroy();
 	});
 
-	QUnit.test("getOkPayload: â0 -> a1", function (assert) {
+	QUnit.test("getOkPayload: â0 -> a1", function(assert) {
 		// system under test
 		var oDimMeasurePanel = new P13nDimMeasurePanel({
 			items: [
 				new P13nItem({
 					columnKey: "keyA",
 					text: "A"
-				}),
-				new P13nItem({
+				}), new P13nItem({
 					columnKey: "keyB",
 					text: "B"
 				})
@@ -790,10 +767,10 @@ sap.ui.define([
 					visible: true
 				})
 			],
-			changeDimMeasureItems: function (oEvent) {
+			changeDimMeasureItems: function(oEvent) {
 				// At least enough for this test!
 				this.destroyDimMeasureItems();
-				oEvent.getParameter("items").forEach(function (oMItem) {
+				oEvent.getParameter("items").forEach(function(oMItem) {
 					this.addDimMeasureItem(new P13nDimMeasureItem({
 						columnKey: oMItem.columnKey,
 						visible: oMItem.visible,
@@ -829,7 +806,7 @@ sap.ui.define([
 	});
 
 	QUnit.module("sap.m.P13nDimMeasurePanel: FIX", {
-		beforeEach: function () {
+		beforeEach: function() {
 			this.oPanel = new P13nDimMeasurePanel({
 				items: {
 					path: "/items",
@@ -847,46 +824,50 @@ sap.ui.define([
 						visible: "{visible}"
 					})
 				},
-				changeDimMeasureItems: function (oEvent) {
+				changeDimMeasureItems: function(oEvent) {
 					// At least enough for this test!
 					this.getModel().setProperty("/dimMeasureItems", oEvent.getParameter("items"));
 				}
 			});
 			this.oDataInitial = {
-				items: [{
-					columnKey: "keyC",
-					text: "C",
-					aggregationRole: "Measure"
-				}, {
-					columnKey: "keyB",
-					text: "B",
-					aggregationRole: "Dimension"
-				}, {
-					columnKey: "keyA",
-					text: "A",
-					aggregationRole: "Dimension"
-				}],
-				dimMeasureItems: [{
-					columnKey: "keyA",
-					index: 0,
-					visible: true
-				}, {
-					columnKey: "keyB",
-					index: 1,
-					visible: true
-				}]
+				items: [
+					{
+						columnKey: "keyC",
+						text: "C",
+						aggregationRole: "Measure"
+					}, {
+						columnKey: "keyB",
+						text: "B",
+						aggregationRole: "Dimension"
+					}, {
+						columnKey: "keyA",
+						text: "A",
+						aggregationRole: "Dimension"
+					}
+				],
+				dimMeasureItems: [
+					{
+						columnKey: "keyA",
+						index: 0,
+						visible: true
+					}, {
+						columnKey: "keyB",
+						index: 1,
+						visible: true
+					}
+				]
 			};
 			this.oPanel.setModel(new JSONModel(jQuery.extend(true, {}, this.oDataInitial)));
 
 			this.oPanel.placeAt("content");
 			sap.ui.getCore().applyChanges();
 		},
-		afterEach: function () {
+		afterEach: function() {
 			this.oPanel.destroy();
 		}
 	});
 
-	QUnit.test("Reset after entered search text", function (assert) {
+	QUnit.test("Reset after entered search text", function(assert) {
 		// arrange: deselect first item "A", move it down, enter search text and click 'search'
 		qutils.triggerTouchEvent("tap", this.oPanel._oTable.getItems()[0].$().find(".sapMCbMark")[0], {
 			srcControl: this.oPanel
@@ -937,7 +918,7 @@ sap.ui.define([
 		assert.equal(this.oPanel.$().find("tr").find("span")[6].textContent, "B");
 	});
 
-	QUnit.test("Reset after 'Show Selected' clicked", function (assert) {
+	QUnit.test("Reset after 'Show Selected' clicked", function(assert) {
 		// arrange: deselect first item "A", move it down and click 'Show Selected'
 		qutils.triggerTouchEvent("tap", this.oPanel._oTable.getItems()[0].$().find(".sapMCbMark")[0], {
 			srcControl: this.oPanel
@@ -946,7 +927,9 @@ sap.ui.define([
 		// As the toolbar can be overflowed, no 'Show Selected' button can not have a dom reference
 		var oEvent = jQuery.Event("ontap");
 		var oButton = this.oPanel._getToolbar().getContent()[4];
-		oButton.ontap.apply(oButton, [oEvent]);
+		oButton.ontap.apply(oButton, [
+			oEvent
+		]);
 		this.clock.tick(500);
 
 		// asserts before act
@@ -984,5 +967,66 @@ sap.ui.define([
 		assert.equal(this.oPanel.$().find("tr").find("span").length, 9); // 3 header cells + 3 cells * 2 items
 		assert.equal(this.oPanel.$().find("tr").find("span")[3].textContent, "A");
 		assert.equal(this.oPanel.$().find("tr").find("span")[6].textContent, "B");
+	});
+	QUnit.module("sap.m.P13nDimMeasurePanel: FIX 0020751294 0000593415 2018", {
+		beforeEach: function() {
+			this.oPanel = new sap.m.P13nDimMeasurePanel({
+				items: {
+					path: "/items",
+					template: new sap.m.P13nItem({
+						columnKey: "{columnKey}",
+						text: "{text}",
+						aggregationRole: "{aggregationRole}"
+					})
+				},
+				dimMeasureItems: {
+					path: "/dimMeasureItems",
+					template: new sap.m.P13nDimMeasureItem({
+						columnKey: "{columnKey}",
+						index: "{index}",
+						visible: "{visible}"
+					})
+				},
+				changeDimMeasureItems: function(oEvent) {
+					// At least enough for this test!
+					this.getModel().setProperty("/dimMeasureItems", oEvent.getParameter("items"));
+				}
+			});
+			this.oDataInitial = {
+				items: [
+					{
+						columnKey: "key01",
+						text: "É",
+						aggregationRole: "Measure"
+					}, {
+						columnKey: "key02",
+						text: "D",
+						aggregationRole: "Dimension"
+					}, {
+						columnKey: "key03",
+						text: "F",
+						aggregationRole: "Dimension"
+					}, {
+						columnKey: "key04",
+						text: "E",
+						aggregationRole: "Dimension"
+					}
+				]
+			};
+			this.oPanel.setModel(new sap.ui.model.json.JSONModel(jQuery.extend(true, {}, this.oDataInitial)));
+
+			this.oPanel.placeAt("content");
+			sap.ui.getCore().applyChanges();
+		},
+		afterEach: function() {
+			this.oPanel.destroy();
+		}
+	});
+
+	QUnit.test("Sorting of invisible dimensions and measures", function(assert) {
+		assert.equal(this.oPanel.$().find("tr").find("span")[3].textContent, "D");
+		assert.equal(this.oPanel.$().find("tr").find("span")[6].textContent, "E");
+		assert.equal(this.oPanel.$().find("tr").find("span")[9].textContent, "É");
+		assert.equal(this.oPanel.$().find("tr").find("span")[12].textContent, "F");
 	});
 });

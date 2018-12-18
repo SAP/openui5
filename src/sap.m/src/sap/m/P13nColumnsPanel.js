@@ -4,50 +4,8 @@
 
 // Provides control sap.m.P13nColumnsPanel.
 sap.ui.define([
-	'sap/ui/core/library',
-	'sap/ui/model/ChangeReason',
-	'sap/ui/model/json/JSONModel',
-	'sap/ui/model/BindingMode',
-	'sap/ui/core/ResizeHandler',
-	'sap/ui/core/IconPool',
-	'./library',
-	'./Table',
-	'./Column',
-	'./ColumnListItem',
-	'./P13nPanel',
-	'./P13nColumnsItem',
-	'./SearchField',
-	'./ScrollContainer',
-	'./Text',
-	'./Button',
-	'./OverflowToolbar',
-	'./OverflowToolbarLayoutData',
-	'./OverflowToolbarButton',
-	'./ToolbarSpacer',
-	"sap/ui/thirdparty/jquery"
-], function(
-	CoreLibrary,
-	ChangeReason,
-	JSONModel,
-	BindingMode,
-	ResizeHandler,
-	IconPool,
-	library,
-	Table,
-	Column,
-	ColumnListItem,
-	P13nPanel,
-	P13nColumnsItem,
-	SearchField,
-	ScrollContainer,
-	Text,
-	Button,
-	OverflowToolbar,
-	OverflowToolbarLayoutData,
-	OverflowToolbarButton,
-	ToolbarSpacer,
-	jQuery
-) {
+	'sap/ui/core/library', 'sap/ui/model/ChangeReason', 'sap/ui/model/json/JSONModel', 'sap/ui/model/BindingMode', 'sap/ui/core/ResizeHandler', 'sap/ui/core/IconPool', './library', './Table', './Column', './ColumnListItem', './P13nPanel', './P13nColumnsItem', './SearchField', './ScrollContainer', './Text', './Button', './OverflowToolbar', './OverflowToolbarLayoutData', './OverflowToolbarButton', './ToolbarSpacer', "sap/ui/thirdparty/jquery"
+], function(CoreLibrary, ChangeReason, JSONModel, BindingMode, ResizeHandler, IconPool, library, Table, Column, ColumnListItem, P13nPanel, P13nColumnsItem, SearchField, ScrollContainer, Text, Button, OverflowToolbar, OverflowToolbarLayoutData, OverflowToolbarButton, ToolbarSpacer, jQuery) {
 	"use strict";
 
 	// shortcut for sap.m.OverflowToolbarPriority
@@ -801,6 +759,23 @@ sap.ui.define([
 	};
 
 	P13nColumnsPanel.prototype._sortModelItemsByPersistentIndex = function(aModelItems) {
+		// BCP 0020751294 0000593415 2018
+		var oCollator;
+		var sLanguage;
+		try {
+			sLanguage = sap.ui.getCore().getConfiguration().getLocale().toString();
+			if (typeof window.Intl !== 'undefined') {
+				oCollator = window.Intl.Collator(sLanguage, {
+					numeric: true
+				});
+			}
+		} catch (oException) {
+			// this exception can happen if the configured language is not convertible to BCP47 -> getLocale will deliver an exception
+		}
+		// BCP 0020751295 0000514259 2018
+		aModelItems.forEach(function(oMItem, iIndex) {
+			oMItem.localIndex = iIndex;
+		});
 		aModelItems.sort(function(a, b) {
 			if (a.persistentSelected === true && (b.persistentSelected === false || b.persistentSelected === undefined)) {
 				return -1;
@@ -812,17 +787,16 @@ sap.ui.define([
 				} else if (b.persistentIndex > -1 && a.persistentIndex > b.persistentIndex) {
 					return 1;
 				} else {
-					return 0;
+					return a.localIndex - b.localIndex;
 				}
 			} else if ((a.persistentSelected === false || a.persistentSelected === undefined) && (b.persistentSelected === false || b.persistentSelected === undefined)) {
-				if (a.text < b.text) {
-					return -1;
-				} else if (a.text > b.text) {
-					return 1;
-				} else {
-					return 0;
-				}
+				return oCollator ? oCollator.compare(a.text, b.text) : a.text.localeCompare(b.text, sLanguage, {
+					numeric: true
+				});
 			}
+		});
+		aModelItems.forEach(function(oMItem) {
+			delete oMItem.localIndex;
 		});
 	};
 
