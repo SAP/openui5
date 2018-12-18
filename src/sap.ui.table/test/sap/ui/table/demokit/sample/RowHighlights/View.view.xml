@@ -35,7 +35,7 @@
 					</m:Toolbar>
 				</toolbar>
 				<rowSettingsTemplate>
-					<RowSettings highlight="{Status}"/>
+					<RowSettings highlight="{Status}" highlightText="{StatusText}"/>
 				</rowSettingsTemplate>
 				<columns>
 					<Column sortProperty="Status" filterProperty="Status">
