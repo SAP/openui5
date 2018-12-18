@@ -15,6 +15,7 @@ sap.ui.define([], function () {
 	 */
 	HeaderRenderer.render = function (oRm, oControl) {
 		oRm.write("<header");
+		oRm.writeControlData(oControl);
 		oRm.addClass("sapFCardHeader");
 		oRm.writeClasses();
 		oRm.write(">");
@@ -35,7 +36,7 @@ sap.ui.define([], function () {
 			oRm.write("</div>");
 		}
 
-		var sStatus = oControl.getStatus();
+		var sStatus = oControl.getStatusText();
 		if (sStatus) {
 			oRm.write("<span");
 			oRm.addClass("sapFCardStatus");

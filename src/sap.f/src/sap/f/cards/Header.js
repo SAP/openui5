@@ -52,7 +52,7 @@ sap.ui.define([
 			properties: {
 				title: { type: "string", defaultValue: "" },
 				subtitle: { type: "string", defaultValue: "" },
-				status: { type: "string", defaultValue: "" },
+				statusText: { type: "string", defaultValue: "" },
 				iconDisplayShape: { type: "sap.f.AvatarShape", defaultValue: AvatarShape.Circle },
 				iconSrc: { type: "sap.ui.core.URI", defaultValue: "" },
 				iconInitials: { type: "string", defaultValue: "" }
