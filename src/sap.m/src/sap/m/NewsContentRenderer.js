@@ -27,7 +27,6 @@ sap.ui.define([],
 
 		oRm.write("<div");
 		oRm.writeControlData(oControl);
-		oRm.writeAttribute("id", oControl.getId() + "-news-content");
 		oRm.writeAttribute("role", "presentation");
 		oRm.writeAttributeEscaped("aria-label", sTooltip);
 
