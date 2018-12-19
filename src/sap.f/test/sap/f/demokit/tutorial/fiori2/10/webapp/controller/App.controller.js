@@ -50,4 +50,4 @@ sap.ui.define([
 			this.oRouter.detachBeforeRouteMatched(this.onBeforeRouteMatched, this);
 		}
 	});
-}, true);
+});

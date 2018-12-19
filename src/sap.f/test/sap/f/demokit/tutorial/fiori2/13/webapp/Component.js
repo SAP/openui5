@@ -32,8 +32,8 @@ sap.ui.define([
 		getHelper: function () {
 			var oFCL = this.getRootControl().byId('flexibleColumnLayout'),
 				oSettings = {
-					defaultTwoColumnLayoutType: fioriLibrary.TwoColumnsMidExpanded,
-					defaultThreeColumnLayoutType: fioriLibrary.ThreeColumnsMidExpanded,
+					defaultTwoColumnLayoutType: fioriLibrary.LayoutType.TwoColumnsMidExpanded,
+					defaultThreeColumnLayoutType: fioriLibrary.LayoutType.ThreeColumnsMidExpanded,
 					initialColumnsCount: 2,
 					maxColumnsCount: 2
 				};

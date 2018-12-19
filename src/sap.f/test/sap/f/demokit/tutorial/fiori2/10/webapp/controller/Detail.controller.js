@@ -43,4 +43,4 @@ sap.ui.define([
 			this.oRouter.getRoute("detail").detachPatternMatched(this._onProductMatched, this);
 		}
 	});
-}, true);
+});
