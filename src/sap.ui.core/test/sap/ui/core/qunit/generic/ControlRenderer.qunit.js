@@ -25,6 +25,7 @@ sap.ui.define([
 			"sap.ui.documentation",
 			"sap.ui.dt",
 			"sap.ui.fl",
+			"sap.ui.integration",
 			"sap.ui.layout",
 			"sap.ui.rta",
 			"sap.ui.suite",

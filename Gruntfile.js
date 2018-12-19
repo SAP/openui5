@@ -244,6 +244,10 @@ module.exports = function(grunt) {
 					path: 'src/sap.ui.rta'
 			},
 			{
+					name: 'sap.ui.integration',
+					path: 'src/sap.ui.integration'
+			},
+			{
 					name: 'themelib_sap_bluecrystal',
 					path: 'src/themelib_sap_bluecrystal',
 					type: 'theme'
