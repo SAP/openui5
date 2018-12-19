@@ -8,31 +8,31 @@
         <Page title="GridList Demo">
             <IconTabBar>
                 <items>
-                    <IconTabFilter text="GridList" key="GridList1">
+                    <IconTabFilter id="GridList1" text="GridList" key="GridList1">
                         <mvc:XMLView viewName="sap.f.gridlist.view.examples.General" />
                     </IconTabFilter>
-                    <IconTabFilter text="GridList Breakpoints" key="GridList2">
+                    <IconTabFilter id="GridList2" text="GridList Breakpoints" key="GridList2">
                         <mvc:XMLView viewName="sap.f.gridlist.view.examples.Breakpoint" />
                     </IconTabFilter>
-                    <IconTabFilter text="GridList BoxContainer" key="GridList3">
+                    <IconTabFilter id="GridList3" text="GridList BoxContainer" key="GridList3">
                         <mvc:XMLView viewName="sap.f.gridlist.view.examples.BoxContainer" />
                     </IconTabFilter>
-                    <IconTabFilter text="GridList Growing" key="GridList4">
+                    <IconTabFilter id="GridList4" text="GridList Growing" key="GridList4">
                         <mvc:XMLView viewName="sap.f.gridlist.view.examples.Growing" />
                     </IconTabFilter>
-                    <IconTabFilter text="GridList Grouping 1" key="GridList5">
+                    <IconTabFilter id="GridList5" text="GridList Grouping 1" key="GridList5">
                         <mvc:XMLView viewName="sap.f.gridlist.view.examples.Grouping1" />
                     </IconTabFilter>
-                    <IconTabFilter text="GridList Grouping 2" key="GridList6">
+                    <IconTabFilter id="GridList6" text="GridList Grouping 2" key="GridList6">
                         <mvc:XMLView viewName="sap.f.gridlist.view.examples.Grouping2" />
                     </IconTabFilter>
-                    <IconTabFilter text="GridList Grouping 3" key="GridList7">
+                    <IconTabFilter id="GridList7" text="GridList Grouping 3" key="GridList7">
                         <mvc:XMLView viewName="sap.f.gridlist.view.examples.Grouping3" />
                     </IconTabFilter>
-                    <IconTabFilter text="GridList Grouping 4" key="GridList8">
+                    <IconTabFilter id="GridList8" text="GridList Grouping 4" key="GridList8">
                         <mvc:XMLView viewName="sap.f.gridlist.view.examples.Grouping4" />
                     </IconTabFilter>
-                    <IconTabFilter text="GridList Grouping 5" key="GridList9">
+                    <IconTabFilter id="GridList9" text="GridList Grouping 5" key="GridList9">
                         <mvc:XMLView viewName="sap.f.gridlist.view.examples.Grouping5" />
                     </IconTabFilter>
                 </items>

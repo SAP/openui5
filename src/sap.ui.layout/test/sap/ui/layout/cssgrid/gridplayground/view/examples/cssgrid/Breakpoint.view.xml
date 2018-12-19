@@ -20,7 +20,7 @@ controllerName="sap.ui.layout.cssgrid.gridplayground.controller.Main">
 				</Toolbar>
 			</headerToolbar>
 			<content>
-				<grid:CSSGrid items="{ path: '/' }">
+				<grid:CSSGrid id="grid1" items="{ path: '/' }">
 					<grid:customLayout>
 						<grid:GridResponsiveLayout layoutChange="onLayoutChange">
 							<grid:layoutS>

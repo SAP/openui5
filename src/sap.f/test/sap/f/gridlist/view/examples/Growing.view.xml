@@ -6,6 +6,7 @@
     controllerName="sap.f.gridlist.controller.Main">
 
     <f:GridList
+		id="growingGridList"
 		headerText="GridList with a basic layout"
 		items="{ path: '/' }"
 		growing="true"
