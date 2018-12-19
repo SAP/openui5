@@ -1683,4 +1683,19 @@ sap.ui.define([
 		assert.ok(!this.oDialog.$().hasClass("sapMDialogSubHeaderInfoBar"), "Dialog must not have specific class which adjust the height");
 		this.oDialog.destroy();
 	});
+
+	QUnit.module("Dialog sizing");
+
+	QUnit.test("Height should be 'auto' if content fits", function (assert) {
+		this.oDialog = new Dialog({
+			title: "Header",
+			content: new Text({text: "Content"})
+		});
+		this.oDialog.open();
+		this.clock.tick(500);
+
+		// assert
+		assert.strictEqual(this.oDialog.$('cont')[0].style.height, "auto", "Height is auto when content fits");
+		this.oDialog.destroy();
+	});
 });
