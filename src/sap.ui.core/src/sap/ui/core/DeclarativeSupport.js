@@ -192,6 +192,7 @@ sap.ui.define([
 
 			var mSettings = {};
 			mSettings.id = this._getId($element, oView);
+			mSettings.processingMode = oView && oView._sProcessingMode;
 			this._addSettingsForAttributes(mSettings, fnClass, oElement, oView);
 			this._addSettingsForAggregations(mSettings, fnClass, oElement, oView);
 
