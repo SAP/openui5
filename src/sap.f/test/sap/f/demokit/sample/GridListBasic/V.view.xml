@@ -5,16 +5,20 @@
 		xmlns:f="sap.f"
 		controllerName="sap.f.sample.GridListBasic.C">
 
-	<Panel width="100%" class="sapUiResponsiveMargin">
+	<Panel width="100%">
 		<headerToolbar>
 			<Toolbar height="3rem">
 				<Title text="GridList with default grid layout"/>
 			</Toolbar>
 		</headerToolbar>
 		<content>
+			<MessageStrip
+				class="sapUiSmallMarginBeginEnd sapUiSmallMarginTop"
+				type="Information"
+				text="Note: This layout is not supported by Microsoft Internet Explorer and Microsoft Edge 15 and older versions."/>
 			<Slider value="100" liveChange="onSliderMoved" />
 			<f:GridList id="gridList"
-						headerText="GridList with default grid layout"
+						headerText="GridList header"
 						items="{ path: '/' }">
 				<CustomListItem>
 					<VBox height="100%">
@@ -22,7 +26,7 @@
 							<layoutData>
 								<FlexItemData growFactor="1" shrinkFactor="0" /><!-- Don't shrink below minimum size. Fill space if available. -->
 							</layoutData>
-							<Title text="{title} (Click me)" wrapping="true" />
+							<Title text="{title}" wrapping="true" />
 							<Label text="{subtitle}" wrapping="true" />
 						</VBox>
 					</VBox>

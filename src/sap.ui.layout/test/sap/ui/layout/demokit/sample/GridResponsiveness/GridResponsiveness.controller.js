@@ -1,5 +1,5 @@
-sap.ui.define(['jquery.sap.global', 'sap/ui/core/mvc/Controller', "sap/m/MessageToast"],
-	function(jQuery, Controller, MessageToast) {
+sap.ui.define(['sap/ui/core/mvc/Controller'],
+	function(Controller) {
 		"use strict";
 
 		var GridResponsiveness = Controller.extend("sap.ui.layout.sample.GridResponsiveness.GridResponsiveness", {
@@ -12,7 +12,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/mvc/Controller', "sap/m/Message
 				}
 
 			},
-			onSliderMoved: function (oEvent, MessageToast) {
+			onSliderMoved: function (oEvent) {
 				var value = oEvent.getParameter("value");
 				this.byId("grid1").setWidth(value + "%");
 			},

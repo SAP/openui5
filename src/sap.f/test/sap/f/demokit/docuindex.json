@@ -83,7 +83,9 @@
 		  "samples": [
 			"sap.f.sample.GridListBasic",
 			"sap.f.sample.GridListBreakPoints",
-			"sap.f.sample.GridListBoxContainer"
+			"sap.f.sample.GridListBoxContainer",
+			"sap.f.sample.GridListBoxContainerGrouping",
+			"sap.f.sample.GridListBoxContainerReal"
 		  ]
 		}
 	  ],
@@ -140,13 +142,23 @@
 		},
 		{
 		  "id": "sap.f.sample.GridListBreakPoints",
-		  "name": "Grid List - Break point examples - S,M,L,XL",
-		  "description": ""
+		  "name": "Grid List - Break point examples - S, M, L, XL",
+		  "description": "This sample illustrates how to configure the responsive settings for different container sizes."
 		},
 		{
 		  "id": "sap.f.sample.GridListBoxContainer",
-		  "name": "Grid List with Boxes with minWith",
-		  "description": ""
+		  "name": "Grid List with GridBoxLayout",
+		  "description": "This layout allows to display same height grid items with configurable width."
+		},
+		{
+		  "id": "sap.f.sample.GridListBoxContainerGrouping",
+		  "name": "Grid List features - Grouping, Header, Growing",
+		  "description": "This sample illustrates subgroups with headers, custom header and lazy loading of GridList items."
+		},
+		{
+		  "id": "sap.f.sample.GridListBoxContainerReal",
+		  "name": "Grid List - Recommended Item Designs",
+		  "description": "This is a sample for GridList item templates representing a typical tools page dashboard style."
 		}
 		]
 	}

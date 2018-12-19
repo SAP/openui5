@@ -2,11 +2,11 @@ sap.ui.define(['sap/ui/core/UIComponent'],
 	function (UIComponent) {
 		"use strict";
 
-		return UIComponent.extend("sap.f.sample.GridListBasic.Component", {
+		return UIComponent.extend("sap.f.sample.GridListBoxContainerGrouping.Component", {
 
 			metadata: {
 				rootView: {
-					"viewName": "sap.f.sample.GridListBasic.V",
+					"viewName": "sap.f.sample.GridListBoxContainerGrouping.GridListBoxContainerGroupingHeadersGrowing",
 					"type": "XML",
 					"async": true
 				},
@@ -19,8 +19,8 @@ sap.ui.define(['sap/ui/core/UIComponent'],
 				config: {
 					sample: {
 						files: [
-							"V.view.xml",
-							"C.controller.js"
+							"GridListBoxContainerGroupingHeadersGrowing.view.xml",
+							"GridListBoxContainerGroupingHeadersGrowing.controller.js"
 						]
 					}
 				}

@@ -3,27 +3,45 @@
 		xmlns:mvc="sap.ui.core.mvc"
 		xmlns:grid="sap.ui.layout.cssgrid"
 		xmlns:f="sap.f"
-		controllerName="sap.f.sample.GridListBoxContainer.C">
+		controllerName="sap.f.sample.GridListBoxContainerGrouping.GridListBoxContainerGroupingHeadersGrowing">
 
 	<Panel width="100%">
 		<headerToolbar>
 			<Toolbar height="3rem">
-				<Title text="Grid List with GridBoxLayout and minWidth 17rem"/>
+				<Title text="GridList with GridBoxLayout"/>
 			</Toolbar>
 		</headerToolbar>
 		<content>
-			<Slider value="100" liveChange="onSliderMoved" />
+			<Slider value="100" liveChange="onSliderMoved"/>
 			<f:GridList
 					id="gridList"
-					headerText="GridList header"
-					items="{ path: '/' }">
+					items="{
+						path: '/',
+						sorter: {
+							path: 'group',
+							descending: false,
+							group: true
+						}
+					}"
+					growing="true"
+					growingThreshold="9">
+
+				<f:headerToolbar>
+					<Toolbar>
+						<content>
+							<Title text="GridList, using custom header with SearchField" />
+							<ToolbarSpacer />
+							<SearchField width="15rem" />
+						</content>
+					</Toolbar>
+				</f:headerToolbar>
 
 				<f:customLayout>
 					<grid:GridBoxLayout boxMinWidth="17rem"/>
 				</f:customLayout>
 
 				<CustomListItem>
-					<VBox height="100%">
+					<VBox >
 						<VBox class="sapUiSmallMargin">
 							<layoutData>
 								<FlexItemData growFactor="1" shrinkFactor="0" />
