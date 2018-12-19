@@ -263,6 +263,11 @@ sap.ui.define([
 			this.oAggregation = oAggregation;
 		}
 
+		if (this.isRootBindingSuspended()) {
+			this.setResumeChangeReason(sChangeReason);
+			return;
+		}
+
 		this.removeCachesAndMessages();
 		this.fetchCache(this.oContext);
 		this.reset(sChangeReason);
@@ -908,10 +913,9 @@ sap.ui.define([
 	 * @returns {sap.ui.model.odata.v4.ODataListBinding}
 	 *   <code>this</code> to facilitate method chaining
 	 * @throws {Error}
-	 *   If the binding's root binding is suspended, if there are pending changes, if an unsupported
-	 *   operation mode is used (see {@link sap.ui.model.odata.v4.ODataModel#bindList}), or if any
-	 *   given filter including their embedded filters is marked as case
-	 *   insensitive
+	 *   If there are pending changes, if an unsupported operation mode is used (see
+	 *   {@link sap.ui.model.odata.v4.ODataModel#bindList}), or if any given filter including their
+	 *   embedded filters is marked as case insensitive
 	 *
 	 * @public
 	 * @see sap.ui.model.ListBinding#filter
@@ -921,7 +925,6 @@ sap.ui.define([
 		var aFilters = _Helper.toArray(vFilters);
 
 		ODataListBinding.checkCaseSensitiveFilters(aFilters);
-		this.checkSuspended();
 		if (this.sOperationMode !== OperationMode.Server) {
 			throw new Error("Operation mode has to be sap.ui.model.odata.OperationMode.Server");
 		}
@@ -929,12 +932,18 @@ sap.ui.define([
 			throw new Error("Cannot filter due to pending changes");
 		}
 
-		this.createReadGroupLock(this.getGroupId(), true);
 		if (sFilterType === FilterType.Control) {
 			this.aFilters = aFilters;
 		} else {
 			this.aApplicationFilters = aFilters;
 		}
+
+		if (this.isRootBindingSuspended()) {
+			this.setResumeChangeReason(ChangeReason.Filter);
+			return this;
+		}
+
+		this.createReadGroupLock(this.getGroupId(), true);
 		this.removeCachesAndMessages();
 		this.fetchCache(this.oContext);
 		this.reset(ChangeReason.Filter);
@@ -1642,8 +1651,10 @@ sap.ui.define([
 	 * @private
 	 */
 	ODataListBinding.prototype.resumeInternal = function () {
-		var aBindings = this.getDependentBindings();
+		var aBindings = this.getDependentBindings(),
+			sChangeReason = this.sResumeChangeReason;
 
+		this.sResumeChangeReason = ChangeReason.Change;
 		this.reset();
 		this.fetchCache(this.oContext);
 		aBindings.forEach(function (oDependentBinding) {
@@ -1651,7 +1662,7 @@ sap.ui.define([
 			// binding is reset and the binding has not yet fired a change event
 			oDependentBinding.resumeInternal(false);
 		});
-		this._fireChange({reason : ChangeReason.Change});
+		this._fireChange({reason : sChangeReason});
 	};
 
 	/**
@@ -1687,8 +1698,7 @@ sap.ui.define([
 	 *   property for which a grand total is needed; only a single group level is supported.
 	 * @throws {Error}
 	 *   If the given data aggregation object is unsupported, if the system query option
-	 *   <code>$apply</code> has been specified explicitly before, if the binding's root binding
-	 *   is suspended, or if there are pending changes
+	 *   <code>$apply</code> has been specified explicitly before, or if there are pending changes
 	 *
 	 * @example <caption>First group level is product category including subtotals for the net
 	 *     amount in display currency. On leaf level, transaction currency is used as an additional
@@ -1711,7 +1721,6 @@ sap.ui.define([
 	 * @since 1.55.0
 	 */
 	ODataListBinding.prototype.setAggregation = function (oAggregation) {
-		this.checkSuspended();
 		if (this.hasPendingChanges()) {
 			throw new Error("Cannot set $$aggregation due to pending changes");
 		}
@@ -1722,6 +1731,12 @@ sap.ui.define([
 		oAggregation = _Helper.clone(oAggregation);
 		this.mQueryOptions.$apply = _AggregationHelper.buildApply(oAggregation).$apply;
 		this.oAggregation = oAggregation;
+
+		if (this.isRootBindingSuspended()) {
+			this.setResumeChangeReason(ChangeReason.Change);
+			return;
+		}
+
 		this.removeCachesAndMessages();
 		this.fetchCache(this.oContext);
 		this.reset(ChangeReason.Change);
@@ -1793,15 +1808,14 @@ sap.ui.define([
 	 * @returns {sap.ui.model.odata.v4.ODataListBinding}
 	 *   <code>this</code> to facilitate method chaining
 	 * @throws {Error}
-	 *   If the binding's root binding is suspended, there are pending changes or if an unsupported
-	 *   operation mode is used (see {@link sap.ui.model.odata.v4.ODataModel#bindList}).
+	 *   If there are pending changes or if an unsupported operation mode is used (see
+	 *   {@link sap.ui.model.odata.v4.ODataModel#bindList}).
 	 *
 	 * @public
 	 * @see sap.ui.model.ListBinding#sort
 	 * @since 1.39.0
 	 */
 	ODataListBinding.prototype.sort = function (vSorters) {
-		this.checkSuspended();
 		if (this.sOperationMode !== OperationMode.Server) {
 			throw new Error("Operation mode has to be sap.ui.model.odata.OperationMode.Server");
 		}
@@ -1811,10 +1825,17 @@ sap.ui.define([
 		}
 
 		this.aSorters = _Helper.toArray(vSorters);
+
+		if (this.isRootBindingSuspended()) {
+			this.setResumeChangeReason(ChangeReason.Sort);
+			return this;
+		}
+
 		this.removeCachesAndMessages();
 		this.createReadGroupLock(this.getGroupId(), true);
 		this.fetchCache(this.oContext);
 		this.reset(ChangeReason.Sort);
+
 		return this;
 	};
 

@@ -36,6 +36,8 @@ sap.ui.define([
 		this.iPatchCounter = 0;
 		// whether all sent PATCHes have been successfully processed
 		this.bPatchSuccess = true;
+		// change reason to be used when the binding is resumed
+		this.sResumeChangeReason = ChangeReason.Change;
 	}
 
 	asODataBinding(ODataParentBinding.prototype);
@@ -260,10 +262,9 @@ sap.ui.define([
 	 *   Map of binding parameters, see {@link sap.ui.model.odata.v4.ODataModel#bindList} and
 	 *   {@link sap.ui.model.odata.v4.ODataModel#bindContext}
 	 * @throws {Error}
-	 *   If the binding's root binding is suspended, there are pending changes or if
-	 *   <code>mParameters</code> is missing, contains binding-specific or unsupported parameters,
-	 *   contains unsupported values, or contains the property "$expand" or "$select" when the model
-	 *   is in auto-$expand/$select mode.
+	 *   If there are pending changes or if <code>mParameters</code> is missing, contains
+	 *   binding-specific or unsupported parameters, contains unsupported values, or contains the
+	 *   property "$expand" or "$select" when the model is in auto-$expand/$select mode.
 	 *
 	 * @public
 	 * @since 1.45.0
@@ -304,7 +305,6 @@ sap.ui.define([
 			}
 		}
 
-		this.checkSuspended();
 		if (!mParameters) {
 			throw new Error("Missing map of binding parameters");
 		}
@@ -909,6 +909,22 @@ sap.ui.define([
 				}
 				return vKey;
 			}));
+		}
+	};
+
+	/**
+	 * Sets the change reason that {@link #resume} will fire. In case there are multiple changes,
+	 * the "strongest" change reason wins: Filter > Sort > Change.
+	 *
+	 * @param {sap.ui.model.ChangeReason} sChangeReason
+	 *   The change reason
+	 *
+	 * @private
+	 */
+	ODataParentBinding.prototype.setResumeChangeReason = function (sChangeReason) {
+		if (sChangeReason === ChangeReason.Sort && this.sResumeChangeReason !== ChangeReason.Filter
+				|| sChangeReason === ChangeReason.Filter) {
+			this.sResumeChangeReason = sChangeReason;
 		}
 	};
 

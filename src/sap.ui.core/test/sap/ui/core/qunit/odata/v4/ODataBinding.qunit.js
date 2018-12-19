@@ -1886,4 +1886,23 @@ sap.ui.define([
 			assert.strictEqual(oError0, oError);
 		});
 	});
+
+	//*********************************************************************************************
+	QUnit.test("isRootBindingSuspended", function (assert) {
+		var oBinding = new ODataBinding(),
+			oBindingMock = this.mock(oBinding),
+			bResult = {/*true or false */},
+			oRootBinding = new ODataBinding();
+
+		oBindingMock.expects("getRootBinding").withExactArgs().returns(undefined);
+
+		// code under test - no root binding
+		assert.notOk(oBinding.isRootBindingSuspended());
+
+		oBindingMock.expects("getRootBinding").withExactArgs().returns(oRootBinding);
+		this.mock(oRootBinding).expects("isSuspended").withExactArgs().returns(bResult);
+
+		// code under test - with root binding
+		assert.strictEqual(oBinding.isRootBindingSuspended(), bResult);
+	});
 });

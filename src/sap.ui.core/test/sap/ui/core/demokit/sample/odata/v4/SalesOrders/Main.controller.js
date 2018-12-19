@@ -148,6 +148,8 @@ sap.ui.define([
 
 			// resume binding to BusinessPartnerList to trigger request when dialog is opened
 			if (oBPListBinding.isSuspended()) {
+				oBPListBinding.filter(new Filter("BusinessPartnerRole", FilterOperator.EQ, "01"));
+				oBPListBinding.sort(new Sorter("CompanyName"));
 				oBPListBinding.resume();
 			}
 			oCreateSalesOrderDialog.setBindingContext(oContext);

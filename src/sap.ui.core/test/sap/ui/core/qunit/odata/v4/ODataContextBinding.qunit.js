@@ -187,39 +187,44 @@ sap.ui.define([
 	});
 
 	//*********************************************************************************************
-	[undefined, false, true].forEach(function (bAction) {
-		var sTitle = "applyParameters: operation binding, bAction: " + bAction;
+	[false, true].forEach(function (bSuspended) {
+		[undefined, false, true].forEach(function (bAction) {
+			var sTitle = "applyParameters: operation binding, bAction=" + bAction + ", bSuspended="
+					+ bSuspended;
 
-		QUnit.test(sTitle, function (assert) {
-			var oBinding = this.bindContext("/OperationImport(...)"),
-				oBindingMock = this.mock(oBinding),
-				sGroupId = "foo",
-				sUpdateGroupId = "update foo",
-				oModelMock = this.mock(this.oModel),
-				mParameters = {
-					$$groupId : sGroupId,
-					$$updateGroupId : sUpdateGroupId
-				},
-				mQueryOptions = {};
+			QUnit.test(sTitle, function (assert) {
+				var oBinding = this.bindContext("/OperationImport(...)"),
+					oBindingMock = this.mock(oBinding),
+					sGroupId = "foo",
+					sUpdateGroupId = "update foo",
+					oModelMock = this.mock(this.oModel),
+					mParameters = {
+						$$groupId : sGroupId,
+						$$updateGroupId : sUpdateGroupId
+					},
+					mQueryOptions = {};
 
-			oBinding.oOperation.bAction = bAction;
+				oBinding.oOperation.bAction = bAction;
 
-			oModelMock.expects("buildQueryOptions")
-				.withExactArgs(sinon.match.same(mParameters), true).returns(mQueryOptions);
-			oBindingMock.expects("checkBindingParameters")
-				.withExactArgs(sinon.match.same(mParameters), aAllowedBindingParameters);
-			oBindingMock.expects("checkUpdate").never();
-			oBindingMock.expects("execute").exactly(bAction === false ? 1 : 0).withExactArgs();
-			oBindingMock.expects("fetchCache").never();
-			oBindingMock.expects("refreshInternal").never();
+				oBindingMock.expects("checkBindingParameters")
+					.withExactArgs(sinon.match.same(mParameters), aAllowedBindingParameters);
+				oModelMock.expects("buildQueryOptions")
+					.withExactArgs(sinon.match.same(mParameters), true).returns(mQueryOptions);
+				oBindingMock.expects("isRootBindingSuspended").withExactArgs().returns(bSuspended);
+				oBindingMock.expects("checkUpdate").never();
+				oBindingMock.expects("execute").exactly(bSuspended || bAction !== false ? 0 : 1)
+					.withExactArgs();
+				oBindingMock.expects("fetchCache").never();
+				oBindingMock.expects("refreshInternal").never();
 
-			// code under test (as called by ODataParentBinding#changeParameters)
-			oBinding.applyParameters(mParameters, ChangeReason.Filter);
+				// code under test (as called by ODataParentBinding#changeParameters)
+				oBinding.applyParameters(mParameters, ChangeReason.Filter);
 
-			assert.strictEqual(oBinding.mQueryOptions, mQueryOptions, "mQueryOptions");
-			assert.strictEqual(oBinding.sGroupId, sGroupId, "sGroupId");
-			assert.strictEqual(oBinding.sUpdateGroupId, sUpdateGroupId, "sUpdateGroupId");
-			assert.strictEqual(oBinding.mParameters, mParameters);
+				assert.strictEqual(oBinding.mQueryOptions, mQueryOptions, "mQueryOptions");
+				assert.strictEqual(oBinding.sGroupId, sGroupId, "sGroupId");
+				assert.strictEqual(oBinding.sUpdateGroupId, sUpdateGroupId, "sUpdateGroupId");
+				assert.strictEqual(oBinding.mParameters, mParameters);
+			});
 		});
 	});
 
@@ -262,35 +267,40 @@ sap.ui.define([
 	});
 
 	//*********************************************************************************************
-	QUnit.test("applyParameters: no operation binding", function (assert) {
-		var oContext = Context.create(this.oModel, {}, "/EMPLOYEES"),
-			oBinding = this.bindContext("", oContext),
-			oBindingMock = this.mock(oBinding),
-			sGroupId = "foo",
-			sUpdateGroupId = "update foo",
-			oModelMock = this.mock(this.oModel),
-			mParameters = {
-				$$groupId : sGroupId,
-				$$updateGroupId : sUpdateGroupId
-			},
-			mQueryOptions = {};
+	[false, true].forEach(function (bSuspended) {
+		QUnit.test("applyParameters: no operation binding, " + bSuspended, function (assert) {
+			var oContext = Context.create(this.oModel, {}, "/EMPLOYEES"),
+				oBinding = this.bindContext("", oContext),
+				oBindingMock = this.mock(oBinding),
+				sGroupId = "foo",
+				sUpdateGroupId = "update foo",
+				oModelMock = this.mock(this.oModel),
+				mParameters = {
+					$$groupId : sGroupId,
+					$$updateGroupId : sUpdateGroupId
+				},
+				mQueryOptions = {};
 
-		oModelMock.expects("buildQueryOptions")
-			.withExactArgs(sinon.match.same(mParameters), true).returns(mQueryOptions);
-		oBindingMock.expects("checkBindingParameters")
-			.withExactArgs(sinon.match.same(mParameters), aAllowedBindingParameters);
-		oBindingMock.expects("checkUpdate").never();
-		oBindingMock.expects("execute").never();
-		oBindingMock.expects("fetchCache").withExactArgs(sinon.match.same(oContext));
-		oBindingMock.expects("refreshInternal").withExactArgs(undefined, true);
+			oBindingMock.expects("checkBindingParameters")
+				.withExactArgs(sinon.match.same(mParameters), aAllowedBindingParameters);
+			oModelMock.expects("buildQueryOptions")
+				.withExactArgs(sinon.match.same(mParameters), true).returns(mQueryOptions);
+			oBindingMock.expects("isRootBindingSuspended").withExactArgs().returns(bSuspended);
+			oBindingMock.expects("checkUpdate").never();
+			oBindingMock.expects("execute").never();
+			oBindingMock.expects("fetchCache").exactly(bSuspended ? 0 : 1)
+				.withExactArgs(sinon.match.same(oContext));
+			oBindingMock.expects("refreshInternal").exactly(bSuspended ? 0 : 1)
+				.withExactArgs(undefined, true);
 
-		// code under test (as called by ODataParentBinding#changeParameters)
-		oBinding.applyParameters(mParameters, ChangeReason.Filter);
+			// code under test (as called by ODataParentBinding#changeParameters)
+			oBinding.applyParameters(mParameters, ChangeReason.Filter);
 
-		assert.strictEqual(oBinding.mQueryOptions, mQueryOptions, "mQueryOptions");
-		assert.strictEqual(oBinding.sGroupId, sGroupId, "sGroupId");
-		assert.strictEqual(oBinding.sUpdateGroupId, sUpdateGroupId, "sUpdateGroupId");
-		assert.strictEqual(oBinding.mParameters, mParameters);
+			assert.strictEqual(oBinding.mQueryOptions, mQueryOptions, "mQueryOptions");
+			assert.strictEqual(oBinding.sGroupId, sGroupId, "sGroupId");
+			assert.strictEqual(oBinding.sUpdateGroupId, sUpdateGroupId, "sUpdateGroupId");
+			assert.strictEqual(oBinding.mParameters, mParameters);
+		});
 	});
 
 	//*********************************************************************************************
@@ -2244,6 +2254,18 @@ sap.ui.define([
 			// code under test
 			oBinding.resumeInternal();
 		});
+	});
+
+	//*********************************************************************************************
+	QUnit.test("resumeInternal: initial binding", function (assert) {
+		var oBinding = this.bindContext("/EMPLOYEES('42')");
+
+		oBinding.suspend();
+
+		this.mock(oBinding).expects("_fireChange").withExactArgs({reason : ChangeReason.Change});
+
+		// code under test
+		oBinding.resume();
 	});
 
 	//*********************************************************************************************

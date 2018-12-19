@@ -80,6 +80,7 @@ sap.ui.define([
 		assert.deepEqual(oBinding.aChildCanUseCachePromises, []);
 		assert.strictEqual(oBinding.iPatchCounter, 0);
 		assert.strictEqual(oBinding.bPatchSuccess, true);
+		assert.strictEqual(oBinding.sResumeChangeReason, ChangeReason.Change);
 
 		// members introduced by ODataBinding; check inheritance
 		assert.ok(oBinding.hasOwnProperty("mCacheByResourcePath"));
@@ -392,7 +393,7 @@ sap.ui.define([
 				}),
 				oBindingMock = this.mock(oBinding);
 
-			oBindingMock.expects("checkSuspended").withExactArgs();
+			oBindingMock.expects("checkSuspended").never();
 			oBindingMock.expects("hasPendingChanges").returns(false);
 			oBindingMock.expects("applyParameters")
 				.withExactArgs(oFixture.mExpectedParameters,
@@ -2804,6 +2805,29 @@ sap.ui.define([
 		var oBinding = new ODataParentBinding();
 
 		assert.strictEqual(oBinding.isMeta(), false);
+	});
+
+	//*********************************************************************************************
+	QUnit.test("setResumeChangeReason", function (assert) {
+		var oBinding = new ODataParentBinding();
+
+		// code under test
+		oBinding.setResumeChangeReason(ChangeReason.Change);
+
+		assert.strictEqual(oBinding.sResumeChangeReason, ChangeReason.Change);
+
+		// code under test
+		oBinding.setResumeChangeReason(ChangeReason.Sort);
+		oBinding.setResumeChangeReason(ChangeReason.Change);
+
+		assert.strictEqual(oBinding.sResumeChangeReason, ChangeReason.Sort);
+
+		// code under test
+		oBinding.setResumeChangeReason(ChangeReason.Filter);
+		oBinding.setResumeChangeReason(ChangeReason.Sort);
+		oBinding.setResumeChangeReason(ChangeReason.Change);
+
+		assert.strictEqual(oBinding.sResumeChangeReason, ChangeReason.Filter);
 	});
 });
 //TODO Fix issue with ODataModel.integration.qunit
