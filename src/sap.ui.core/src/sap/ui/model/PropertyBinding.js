@@ -7,10 +7,11 @@ sap.ui.define([
 	'./Binding',
 	'./SimpleType',
 	'./DataState',
+	"sap/ui/base/SyncPromise",
 	"sap/base/Log",
 	"sap/base/assert"
 ],
-	function(Binding, SimpleType, DataState, Log, assert) {
+	function(Binding, SimpleType, DataState, SyncPromise, Log, assert) {
 	"use strict";
 
 
@@ -92,20 +93,28 @@ sap.ui.define([
 	 * @private
 	 */
 	PropertyBinding.prototype._setBoundValue = function(vValue, fnParse) {
-		var oDataState = this.getDataState();
-		try {
-			if (this.oType) {
-				vValue = fnParse(vValue);
-				this.oType.validateValue(vValue);
-			}
-		} catch (oException) {
-			oDataState.setInvalidValue(vValue);
-			this.checkDataState(); //data ui state is dirty inform the control
-			throw oException;
+		var oDataState = this.getDataState(),
+			that = this;
+
+		if (this.oType) {
+			return SyncPromise.resolve(vValue).then(function(vValue) {
+				return fnParse(vValue);
+			}).then(function(vValue) {
+				return SyncPromise.all([vValue, that.oType.validateValue(vValue)]);
+			}).then(function(aResult) {
+				return aResult[0];
+			}).then(function(vValue) {
+				oDataState.setInvalidValue(undefined);
+				that.setValue(vValue);
+			}).catch(function(oException) {
+				oDataState.setInvalidValue(vValue);
+				that.checkDataState(); //data ui state is dirty inform the control
+				throw oException;
+			}).unwrap();
+		} else {
+			oDataState.setInvalidValue(undefined);
+			that.setValue(vValue);
 		}
-		// if no type specified set value directly
-		oDataState.setInvalidValue(undefined);
-		this.setValue(vValue);
 	};
 
 	/** Convert raw to external representation
@@ -192,7 +201,7 @@ sap.ui.define([
 	 * setting the binding value and if so set the new value also in the model.
 	 *
 	 * @param {any} vValue the value to set for this binding
-	 *
+	 * @return {undefined|Promise} a Promise in case asynchronous parsing/validation is done
 	 * @throws sap.ui.model.ParseException
 	 * @throws sap.ui.model.ValidateException
 	 *
@@ -201,17 +210,15 @@ sap.ui.define([
 	PropertyBinding.prototype.setExternalValue = function(vValue) {
 		switch (this.sInternalType) {
 			case "raw":
-				this.setRawValue(vValue);
-				break;
+				return this.setRawValue(vValue);
 			case "internal":
-				this.setInternalValue(vValue);
-				break;
+				return this.setInternalValue(vValue);
 			default:
 				if (this.fnFormatter) {
 					Log.warning("Tried to use twoway binding, but a formatter function is used");
 					return;
 				}
-				this._setBoundValue(vValue, this._externalToRaw.bind(this));
+				return this._setBoundValue(vValue, this._externalToRaw.bind(this));
 		}
 	};
 
@@ -240,7 +247,7 @@ sap.ui.define([
 	 * @public
 	 */
 	PropertyBinding.prototype.setInternalValue = function(vValue) {
-		this._setBoundValue(vValue, this._internalToRaw.bind(this));
+		return this._setBoundValue(vValue, this._internalToRaw.bind(this));
 	};
 
 	/**
@@ -270,7 +277,7 @@ sap.ui.define([
 	 * @public
 	 */
 	PropertyBinding.prototype.setRawValue = function(vValue) {
-		this._setBoundValue(vValue, function(vValue) {
+		return this._setBoundValue(vValue, function(vValue) {
 			return vValue;
 		});
 	};
