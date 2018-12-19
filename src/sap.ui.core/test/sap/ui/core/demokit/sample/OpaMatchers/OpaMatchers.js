@@ -20,7 +20,6 @@ sap.ui.require([
 
 	opaTest("Should find a Button with a matching property", function(Given, When, Then) {
 
-		// Act
 		Given.iStartMyAppInAFrame("applicationUnderTest/index.html");
 
 		When.waitFor({
@@ -47,7 +46,6 @@ sap.ui.require([
 
 	opaTest("Should find a Button using inline-matchers, nested waitFors, Ancestor and Properties matchers", function(Given, When, Then) {
 
-		// Act
 		Given.iStartMyAppInAFrame("applicationUnderTest/index.html");
 
 		When.waitFor({
@@ -81,6 +79,26 @@ sap.ui.require([
 				});
 			},
 			errorMessage : "Did not find the bar with styleClass 'sapMPageHeader'"
+		});
+
+		Then.iTeardownMyAppFrame();
+	});
+
+	opaTest("Should find a Button using viewId", function (Given, When, Then) {
+
+		Given.iStartMyAppInAFrame("applicationUnderTest/index.html");
+
+		When.waitFor({
+			// use viewId when viewName is not enough to uniquely define a view
+			viewId : "container-appUnderTest---myMainView",
+			controlType : "sap.m.Button",
+			matchers: new Properties({
+				text : "Changed text"
+			}),
+			success : function (aButtons) {
+				Opa5.assert.ok(true, "Found the button: " + aButtons[0] + " in view with ID myMainView");
+			},
+			errorMessage : "Did not find the button in the view with ID myMainView"
 		});
 
 		Then.iTeardownMyAppFrame();

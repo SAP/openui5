@@ -2,7 +2,7 @@ sap.ui.define(['sap/ui/core/mvc/Controller'],
 function(Controller) {
 	"use strict";
 
-	return Controller.extend("appUnderTest.view.Main", {
+	return Controller.extend("appUnderTest.controller.Main", {
 
 		onInit : function () {
 			var that = this;

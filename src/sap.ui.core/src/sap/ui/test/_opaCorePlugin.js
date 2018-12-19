@@ -73,6 +73,11 @@ function () {
 			return oCore.mElements || oElements;
 		},
 
+		getCoreElement: function (sId, fnControlType) {
+			var oElement = this.getCoreElements()[sId] || null;
+			return this.checkControlType(oElement, fnControlType) ? oElement : null;
+		},
+
 		isUIDirty: function () {
 			return oCore && oCore.getUIDirty();
 		}

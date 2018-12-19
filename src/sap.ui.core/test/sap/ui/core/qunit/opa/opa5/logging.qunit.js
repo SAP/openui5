@@ -80,7 +80,7 @@ sap.ui.define([
 		this.check();
 
 		// Assert
-		sinon.assert.calledWith(this.debugSpy, "Found no view with the name: 'notExistingView'");
+		sinon.assert.calledWith(this.debugSpy, "Found 0 views with viewName 'notExistingView'");
 	});
 
 });
