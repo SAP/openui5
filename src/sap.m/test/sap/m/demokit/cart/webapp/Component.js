@@ -1,4 +1,3 @@
-/*global window*/
 sap.ui.define([
 	"sap/ui/core/UIComponent",
 	"./model/LocalStorageModel",

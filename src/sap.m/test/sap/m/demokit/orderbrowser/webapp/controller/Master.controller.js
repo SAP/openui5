@@ -1,4 +1,3 @@
-/*global history */
 sap.ui.define([
 	"./BaseController",
 	"sap/ui/model/json/JSONModel",

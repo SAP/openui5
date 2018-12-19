@@ -1,4 +1,3 @@
-/* global Promise */
 sap.ui.define([
 	"mycompany/myapp/MyWorklistApp/localService/mockserver",
 	"sap/m/MessageBox"
