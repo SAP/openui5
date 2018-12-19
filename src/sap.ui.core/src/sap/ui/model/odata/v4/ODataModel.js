@@ -270,19 +270,19 @@ sap.ui.define([
 						this.sServiceUrl + "$metadata", mParameters.annotationURI, this,
 						mParameters.supportReferences);
 					this.oRequestor = _Requestor.create(this.sServiceUrl, {
-							fnFetchEntityContainer :
+							fetchEntityContainer :
 								this.oMetaModel.fetchEntityContainer.bind(this.oMetaModel),
-							fnFetchMetadata : this.oMetaModel.fetchObject.bind(this.oMetaModel),
-							fnGetGroupProperty : this.getGroupProperty.bind(this),
+							fetchMetadata : this.oMetaModel.fetchObject.bind(this.oMetaModel),
+							getGroupProperty : this.getGroupProperty.bind(this),
 							lockGroup : this.lockGroup.bind(this),
-							fnOnCreateGroup : function (sGroupId) {
+							onCreateGroup : function (sGroupId) {
 								if (that.isAutoGroup(sGroupId)) {
 									sap.ui.getCore().addPrerenderingTask(
 										that._submitBatch.bind(that, sGroupId, true));
 								}
 							},
-							fnReportBoundMessages : this.reportBoundMessages.bind(this),
-							fnReportUnboundMessages : this.reportUnboundMessages.bind(this)
+							reportBoundMessages : this.reportBoundMessages.bind(this),
+							reportUnboundMessages : this.reportUnboundMessages.bind(this)
 						}, mHeaders, this.mUriParameters, sODataVersion);
 					if (mParameters.earlyRequests) {
 						this.oMetaModel.fetchEntityContainer(true);

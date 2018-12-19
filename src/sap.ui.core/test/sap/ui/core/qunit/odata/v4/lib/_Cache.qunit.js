@@ -84,7 +84,7 @@ sap.ui.define([
 	QUnit.module("sap.ui.model.odata.v4.lib._Cache", {
 		beforeEach : function () {
 			var oModelInterface = {
-					fnFetchMetadata : function () {
+					fetchMetadata : function () {
 						throw new Error("Unsupported operation");
 					},
 					lockGroup : function () {
@@ -3533,7 +3533,7 @@ sap.ui.define([
 	QUnit.test("_Cache#create: with given sPath and delete before submit", function (assert) {
 		var oBody,
 			// real requestor to avoid reimplementing callback handling of _Requestor.request
-			oRequestor = _Requestor.create("/~/", {fnGetGroupProperty : defaultGetGroupProperty}),
+			oRequestor = _Requestor.create("/~/", {getGroupProperty : defaultGetGroupProperty}),
 			oCache = new _Cache(oRequestor, "TEAMS"),
 			oCacheMock = this.mock(oCache),
 			aCollection = [],
@@ -4018,7 +4018,7 @@ sap.ui.define([
 	//*********************************************************************************************
 	QUnit.test("CollectionCache: create and delete transient entry", function (assert) {
 		// real requestor to avoid reimplementing callback handling of _Requestor.request
-		var oRequestor = _Requestor.create("/~/", {fnGetGroupProperty : defaultGetGroupProperty}),
+		var oRequestor = _Requestor.create("/~/", {getGroupProperty : defaultGetGroupProperty}),
 			oCache = _Cache.create(oRequestor, "Employees"),
 			fnCancelCallback = this.spy(),
 			oCreatePromise,
@@ -4063,7 +4063,7 @@ sap.ui.define([
 	//*********************************************************************************************
 	QUnit.test("CollectionCache: delete created entity", function (assert) {
 		// real requestor to avoid reimplementing callback handling of _Requestor.request
-		var oRequestor = _Requestor.create("/~/", {fnGetGroupProperty : defaultGetGroupProperty}),
+		var oRequestor = _Requestor.create("/~/", {getGroupProperty : defaultGetGroupProperty}),
 			oCache = _Cache.create(oRequestor, "Employees"),
 			fnCallback = this.spy(),
 			oCreatedPromise,
@@ -4641,7 +4641,7 @@ sap.ui.define([
 
 			this.mock(_Helper).expects("intersectQueryOptions").withExactArgs(
 					sinon.match.same(oCache.mQueryOptions), sinon.match.same(aPaths),
-					sinon.match.same(this.oRequestor.getModelInterface().fnFetchMetadata),
+					sinon.match.same(this.oRequestor.getModelInterface().fetchMetadata),
 					"/Employees/$Type", sinon.match.same(mNavigationPropertyPaths))
 				.returns(mMergedQueryOptions);
 			this.oRequestorMock.expects("buildQueryString")
@@ -4698,7 +4698,7 @@ sap.ui.define([
 
 		this.mock(_Helper).expects("intersectQueryOptions").withExactArgs(
 				sinon.match.same(oCache.mQueryOptions), sinon.match.same(aPaths),
-				sinon.match.same(this.oRequestor.getModelInterface().fnFetchMetadata),
+				sinon.match.same(this.oRequestor.getModelInterface().fetchMetadata),
 				"/Employees/$Type", sinon.match.same(mNavigationPropertyPaths))
 			.returns(null);
 		this.mock(oCache).expects("fetchValue")
@@ -4727,7 +4727,7 @@ sap.ui.define([
 
 		this.mock(_Helper).expects("intersectQueryOptions").withExactArgs(
 				sinon.match.same(oCache.mQueryOptions), sinon.match.same(aPaths),
-				sinon.match.same(this.oRequestor.getModelInterface().fnFetchMetadata),
+				sinon.match.same(this.oRequestor.getModelInterface().fetchMetadata),
 				"/Employees/$Type", sinon.match.same(mNavigationPropertyPaths))
 			.returns(mMergedQueryOptions);
 		this.oRequestorMock.expects("buildQueryString")
@@ -4761,7 +4761,7 @@ sap.ui.define([
 
 		this.mock(_Helper).expects("intersectQueryOptions").withExactArgs(
 				sinon.match.same(oCache.mQueryOptions), sinon.match.same(aPaths),
-				sinon.match.same(this.oRequestor.getModelInterface().fnFetchMetadata), "/Me/$Type",
+				sinon.match.same(this.oRequestor.getModelInterface().fetchMetadata), "/Me/$Type",
 				sinon.match.same(mNavigationPropertyPaths))
 			.throws(oError);
 
@@ -5444,11 +5444,11 @@ sap.ui.define([
 				},
 				oRequestor = _Requestor.create(TestUtils.proxy(
 					"/sap/opu/odata4/IWBEP/TEA/default/IWBEP/TEA_BUSI/0001/"), {
-						fnFetchMetadata : function () {
+						fetchMetadata : function () {
 							return SyncPromise.resolve({});
 						},
-						fnGetGroupProperty : defaultGetGroupProperty,
-						fnReportUnboundMessages : function () {}
+						getGroupProperty : defaultGetGroupProperty,
+						reportUnboundMessages : function () {}
 					}),
 				sResourcePath = "TEAMS('TEAM_01')",
 				oCache = _Cache.createSingle(oRequestor, sResourcePath);
