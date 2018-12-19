@@ -1,0 +1,26 @@
+/* ============================= */
+/* CSS for control sap.f/Card  */
+/* Fiori 3 theme                 */
+/* ============================= */
+.sapFCard .sapFCardHeader {
+  &:hover{
+    background: lighten(@sapUiTileHoverBackground,4);
+  }
+
+  &:active{
+    background: @sapUiTileHoverBackground;
+  }
+
+  &:hover .sapFCardIcon.sapFAvatar:not(.sapFAvatarImage):not(.sapFAvatarInitials ){
+    background: lighten(@sapUiTileHoverBackground,4);
+  }
+
+  &:active .sapFCardIcon.sapFAvatar:not(.sapFAvatarImage):not(.sapFAvatarInitials ){
+    background: @sapUiTileHoverBackground;
+  }
+  .sapFCardIcon.sapFAvatar{
+    .sapUiIcon {
+      color: @sapUiContentIconColor;
+    }
+  }
+}
