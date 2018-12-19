@@ -8,8 +8,11 @@ sap.ui.define([
 	"sap/ui/model/json/JSONModel",
 	"sap/m/App",
 	"sap/m/Panel",
-	"sap/ui/core/Component"
-], function(Log, formatMessage, View, Target, Views, JSONModel, App, Panel, Component) {
+	"sap/ui/core/Component",
+	"sap/ui/core/UIComponent",
+	"sap/ui/core/ComponentContainer",
+	"sap/ui/thirdparty/hasher"
+], function(Log, formatMessage, View, Target, Views, JSONModel, App, Panel, Component, UIComponent, ComponentContainer, hasher) {
 	"use strict";
 
 	// use sap.m.Panel as a lightweight drop-in replacement for the ux3.Shell
@@ -408,6 +411,94 @@ sap.ui.define([
 
 			assert.equal(oDestroySpy.callCount, 1, "The component container is also destroyed once the cache is destroyed");
 		}.bind(this));
+	});
+
+	QUnit.module("component - ComponentContainer integration", {
+		beforeEach: function(assert) {
+			hasher.setHash("");
+			this.fnInitRouter = function() {
+				UIComponent.prototype.init.apply(this, arguments);
+				this.getRouter().initialize();
+			};
+
+			sap.ui.jsview("root", {
+				createContent : function() {
+					return new ShellSubstitute(this.createId("shell"));
+				}
+			});
+
+			this.Component = UIComponent.extend("namespace.RootComponent", {
+				metadata : {
+					routing:  {
+						config: {
+							async: true
+						},
+						routes: [
+							{
+								pattern: "",
+								name: "home",
+								target: {
+									name: "home",
+									prefix: "nested"
+								}
+							}
+						],
+						targets: {
+							home: {
+								name: "namespace.NestedComponent",
+								id: "nestedComponent",
+								type: "Component",
+								controlId: "shell",
+								controlAggregation: "content",
+								options: {
+									manifest: false
+								},
+								containerOptions: {
+									option:true,
+									width: "90%"
+								}
+							}
+						}
+					}
+				},
+				createContent: function() {
+					return sap.ui.jsview("root");
+				},
+				init : this.fnInitRouter
+			});
+
+
+			sap.ui.predefine("namespace/NestedComponent/Component", ["sap/ui/core/UIComponent"], function(UIComponent) {
+				this.nestedComponent = UIComponent.extend("namespace.NestedComponent");
+				return this.nestedComponent;
+			}.bind(this));
+		},
+		afterEach: function () {
+			hasher.setHash("");
+		}
+	});
+
+	QUnit.test("pass settings to component container", function(assert) {
+		this.oContainerOptions = undefined;
+		var oComponentContainerSettingsSpy = this.spy(ComponentContainer.prototype, "applySettings");
+		var oComponent = new this.Component("rootComponent");
+		var oRouter = oComponent.getRouter();
+		assert.ok(oRouter);
+		return new Promise(function(resolve) {
+			oRouter.getRoute("home").attachMatched(resolve);
+			oRouter.navTo("home");
+		}).then(function() {
+			sinon.assert.calledWithMatch(oComponentContainerSettingsSpy, sinon.match({
+				component: sinon.match(function(oComponent) {
+					return oComponent.getId() === "rootComponent---nestedComponent";
+				}),
+				height: "100%",
+				width: "90%",
+				lifecycle: "Application",
+				option: true
+			}));
+			oComponent.destroy();
+		});
 	});
 
 	QUnit.module("target parent and children", {
@@ -849,4 +940,5 @@ sap.ui.define([
 		oParentTarget.destroy();
 		oViews.destroy();
 	});
+
 });
