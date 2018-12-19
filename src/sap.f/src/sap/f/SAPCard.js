@@ -144,8 +144,8 @@ sap.ui.define([
 			return;
 		}
 
-		if (oHeader.type === "kpi") {
-			sap.ui.require(["sap/f/cards/KpiHeader"], this._setCardHeaderFromManifest.bind(this));
+		if (oHeader.type === "numeric") {
+			sap.ui.require(["sap/f/cards/NumericHeader"], this._setCardHeaderFromManifest.bind(this));
 		} else {
 			sap.ui.require(["sap/f/cards/Header"], this._setCardHeaderFromManifest.bind(this));
 		}
@@ -185,7 +185,7 @@ sap.ui.define([
 			delete oClonedSettings.icon;
 		}
 
-		if (sType === "kpi") {
+		if (sType === "numeric") {
 			this.setAggregation("_header", new CardHeader({
 				manifestContent: oClonedSettings // TODO change when the final approach is cleared
 			}));

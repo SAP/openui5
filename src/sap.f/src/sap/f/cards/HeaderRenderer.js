@@ -8,7 +8,7 @@ sap.ui.define([], function () {
 	var HeaderRenderer = {};
 
 	/**
-	 * Render a kpi header.
+	 * Render a header.
 	 *
 	 * @param {sap.ui.core.RenderManager} oRm The RenderManager that can be used for writing to the render output buffer
 	 * @param {sap.f.cards.Header} oControl An object representation of the control that should be rendered

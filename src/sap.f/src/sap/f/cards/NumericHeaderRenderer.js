@@ -2,31 +2,31 @@
  * ${copyright}
  */
 
-// Provides default renderer for control sap.f.cards.KpiHeader
+// Provides default renderer for control sap.f.cards.NumericHeader
 sap.ui.define([],
 	function () {
         "use strict";
 
-        var KpiHeaderRenderer = {};
+        var NumericHeaderRenderer = {};
 
 		/**
-		 * Render a kpi header.
+		 * Render a numeric header.
 		 *
 		 * @param {sap.ui.core.RenderManager} oRm The RenderManager that can be used for writing to the render output buffer
-		 * @param {sap.f.cards.KpiHeader} oControl An object representation of the control that should be rendered
+		 * @param {sap.f.cards.NumericHeader} oControl An object representation of the control that should be rendered
 		 */
-		KpiHeaderRenderer.render = function (oRm, oControl) {
+		NumericHeaderRenderer.render = function (oRm, oControl) {
 			oRm.write("<header");
 			oRm.writeControlData(oControl);
 			oRm.addClass("sapFCardHeader");
-			oRm.addClass("sapFCardHeaderKpi");
+			oRm.addClass("sapFCardNumericHeader");
 			oRm.writeClasses();
 			oRm.writeStyles();
 			oRm.write(">");
 
-			KpiHeaderRenderer.renderHeaderText(oRm, oControl);
+			NumericHeaderRenderer.renderHeaderText(oRm, oControl);
 
-			KpiHeaderRenderer.renderIndicators(oRm, oControl);
+			NumericHeaderRenderer.renderIndicators(oRm, oControl);
 
 			var oDetails = oControl.getAggregation("_details");
 			if (oDetails) {
@@ -41,9 +41,9 @@ sap.ui.define([],
 		 * Render title and subtitle texts.
 		 *
 		 * @param {sap.ui.core.RenderManager} oRm The RenderManager that can be used for writing to the render output buffer
-		 * @param {sap.f.cards.header.KPI} oControl An object representation of the control that should be rendered
+		 * @param {sap.f.cards.NumericHeader} oControl An object representation of the control that should be rendered
 		 */
-		KpiHeaderRenderer.renderHeaderText = function(oRm, oControl) {
+		NumericHeaderRenderer.renderHeaderText = function(oRm, oControl) {
 			var oTitle = oControl.getAggregation("_title"),
 				oSubtitle = oControl.getAggregation("_subtitle"),
 				oUnitOfMeasurement = oControl.getAggregation("_unitOfMeasurement");
@@ -84,9 +84,9 @@ sap.ui.define([],
 		 * Render main indicator and side indicators if any.
 		 *
 		 * @param {sap.ui.core.RenderManager} oRm The RenderManager that can be used for writing to the render output buffer
-		 * @param {sap.f.cards.header.KPI} oControl An object representation of the control that should be rendered
+		 * @param {sap.f.cards.NumericHeader} oControl An object representation of the control that should be rendered
 		 */
-		KpiHeaderRenderer.renderIndicators = function(oRm, oControl) {
+		NumericHeaderRenderer.renderIndicators = function(oRm, oControl) {
 			var oMainIndicator = oControl.getAggregation("_mainIndicator"),
 				oSideIndicators = oControl.getAggregation("sideIndicators");
 
@@ -123,5 +123,5 @@ sap.ui.define([],
 			oRm.write("</div>");
 		};
 
-		return KpiHeaderRenderer;
+		return NumericHeaderRenderer;
 	}, /* bExport= */ true);

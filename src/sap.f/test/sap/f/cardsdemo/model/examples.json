@@ -66,9 +66,9 @@
 		"group": "Card Type Examples"
 	},
 	{
-		"title": "KPI Header",
-		"description": "Example page for Card with KPI Header",
-		"route": "kpiHeader",
+		"title": "Numeric Header",
+		"description": "Example page for Card with Numeric Header",
+		"route": "numericHeader",
 		"group": "Other Card Examples"
 	},
 	{

@@ -102,9 +102,9 @@
 		  "name": "flp",
 		  "target": "flp"
 		}, {
-		  "pattern": "kpiHeader",
-		  "name": "kpiHeader",
-		  "target": "kpiHeader"
+		  "pattern": "numericHeader",
+		  "name": "numericHeader",
+		  "target": "numericHeader"
 		},
 		{
 		  "pattern": "analyticalContent",
@@ -178,9 +178,9 @@
 		  "viewName": "Flp",
 		  "viewLevel": 1
 		},
-		"kpiHeader": {
-		  "viewId": "kpiHeader",
-		  "viewName": "kpiHeader",
+		"numericHeader": {
+		  "viewId": "numericHeader",
+		  "viewName": "numericHeader",
 		  "viewLevel": 1
 		},
 		"manifest": {

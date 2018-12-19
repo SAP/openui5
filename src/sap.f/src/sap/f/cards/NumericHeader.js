@@ -7,22 +7,22 @@ sap.ui.define([
 	'sap/m/Text',
 	'sap/f/cards/Data',
 	'sap/ui/model/json/JSONModel',
-	"sap/f/cards/KpiSideIndicator",
+	"sap/f/cards/NumericSideIndicator",
 	"sap/base/Log",
-	"sap/f/cards/KpiHeaderRenderer"
+	"sap/f/cards/NumericHeaderRenderer"
 ], function (
 		Control,
 		NumericContent,
 		Text,
 		Data,
 		JSONModel,
-		KpiSideIndicator,
+		NumericSideIndicator,
 		Log
 	) {
 		"use strict";
 
 	/**
-	 * Constructor for a new <code>KpiHeader</code>.
+	 * Constructor for a new <code>NumericHeader</code>.
 	 *
 	 * @param {string} [sId] ID for the new control, generated automatically if no ID is given
 	 * @param {object} [mSettings] Initial settings for the new control
@@ -45,9 +45,9 @@ sap.ui.define([
 	 * @experimental
 	 * @since 1.62
 	 * @see {@link TODO Card}
-	 * @alias sap.f.cards.KpiHeader
+	 * @alias sap.f.cards.NumericHeader
 	 */
-	var KpiHeader = Control.extend("sap.f.cards.KpiHeader", {
+	var NumericHeader = Control.extend("sap.f.cards.NumericHeader", {
 		metadata: {
 			interfaces: ["sap.f.cards.IHeader"],
 			properties: {
@@ -81,7 +81,7 @@ sap.ui.define([
 			},
 			aggregations: {
 
-				sideIndicators: { type: "sap.f.cards.KpiSideIndicator", multiple: true }, // TODO limit to 2, or describe in doc
+				sideIndicators: { type: "sap.f.cards.NumericSideIndicator", multiple: true }, // TODO limit to 2, or describe in doc
 
 				_title: { type: "sap.m.Text", multiple: false, visibility: "hidden" },
 				_subtitle: { type: "sap.m.Text", multiple: false, visibility: "hidden" },
@@ -92,16 +92,16 @@ sap.ui.define([
 		}
 	});
 
-	KpiHeader.prototype.setManifestContent = function(oManifestContent) {
+	NumericHeader.prototype.setManifestContent = function(oManifestContent) {
 		this.setProperty("manifestContent", oManifestContent, true);
 		this._bIsUsingManifestContent = true;
 		this._initFromManifestContent(oManifestContent);
 		return this;
 	};
 
-	KpiHeader.prototype.setTitle = function(sValue) {
+	NumericHeader.prototype.setTitle = function(sValue) {
 		if (this._bIsUsingManifestContent) {
-			Log.warning("Can not set title if there is a manifestContent.", "sap.f.cards.KpiHeader");
+			Log.warning("Can not set title if there is a manifestContent.", "sap.f.cards.NumericHeader");
 			return this;
 		}
 
@@ -110,9 +110,9 @@ sap.ui.define([
 		return this;
 	};
 
-	KpiHeader.prototype.setSubtitle = function(sValue) {
+	NumericHeader.prototype.setSubtitle = function(sValue) {
 		if (this._bIsUsingManifestContent) {
-			Log.warning("Can not set subtitle if there is a manifestContent.", "sap.f.cards.KpiHeader");
+			Log.warning("Can not set subtitle if there is a manifestContent.", "sap.f.cards.NumericHeader");
 			return this;
 		}
 
@@ -121,9 +121,9 @@ sap.ui.define([
 		return this;
 	};
 
-	KpiHeader.prototype.setUnitOfMeasurement = function(sValue) {
+	NumericHeader.prototype.setUnitOfMeasurement = function(sValue) {
 		if (this._bIsUsingManifestContent) {
-			Log.warning("Can not set unitOfMeasurement if there is a manifestContent.", "sap.f.cards.KpiHeader");
+			Log.warning("Can not set unitOfMeasurement if there is a manifestContent.", "sap.f.cards.NumericHeader");
 			return this;
 		}
 
@@ -132,9 +132,9 @@ sap.ui.define([
 		return this;
 	};
 
-	KpiHeader.prototype.setDetails = function(sValue) {
+	NumericHeader.prototype.setDetails = function(sValue) {
 		if (this._bIsUsingManifestContent) {
-			Log.warning("Can not set details if there is a manifestContent.", "sap.f.cards.KpiHeader");
+			Log.warning("Can not set details if there is a manifestContent.", "sap.f.cards.NumericHeader");
 			return this;
 		}
 
@@ -143,9 +143,9 @@ sap.ui.define([
 		return this;
 	};
 
-	KpiHeader.prototype.setNumber = function(sValue) {
+	NumericHeader.prototype.setNumber = function(sValue) {
 		if (this._bIsUsingManifestContent) {
-			Log.warning("Can not set number if there is a manifestContent.", "sap.f.cards.KpiHeader");
+			Log.warning("Can not set number if there is a manifestContent.", "sap.f.cards.NumericHeader");
 			return this;
 		}
 
@@ -154,9 +154,9 @@ sap.ui.define([
 		return this;
 	};
 
-	KpiHeader.prototype.setNumberUnit = function(sValue) {
+	NumericHeader.prototype.setNumberUnit = function(sValue) {
 		if (this._bIsUsingManifestContent) {
-			Log.warning("Can not set numberUnit if there is a manifestContent.", "sap.f.cards.KpiHeader");
+			Log.warning("Can not set numberUnit if there is a manifestContent.", "sap.f.cards.NumericHeader");
 			return this;
 		}
 
@@ -165,9 +165,9 @@ sap.ui.define([
 		return this;
 	};
 
-	KpiHeader.prototype.setTrend = function(sValue) {
+	NumericHeader.prototype.setTrend = function(sValue) {
 		if (this._bIsUsingManifestContent) {
-			Log.warning("Can not set trend if there is a manifestContent.", "sap.f.cards.KpiHeader");
+			Log.warning("Can not set trend if there is a manifestContent.", "sap.f.cards.NumericHeader");
 			return this;
 		}
 
@@ -176,9 +176,9 @@ sap.ui.define([
 		return this;
 	};
 
-	KpiHeader.prototype.setState = function(sValue) {
+	NumericHeader.prototype.setState = function(sValue) {
 		if (this._bIsUsingManifestContent) {
-			Log.warning("Can not set state if there is a manifestContent.", "sap.f.cards.KpiHeader");
+			Log.warning("Can not set state if there is a manifestContent.", "sap.f.cards.NumericHeader");
 			return this;
 		}
 
@@ -187,9 +187,9 @@ sap.ui.define([
 		return this;
 	};
 
-	KpiHeader.prototype.addSideIndicator = function(oValue) {
+	NumericHeader.prototype.addSideIndicator = function(oValue) {
 		if (this._bIsUsingManifestContent) {
-			Log.warning("Can not add side indicators if there is a manifestContent.", "sap.f.cards.KpiHeader");
+			Log.warning("Can not add side indicators if there is a manifestContent.", "sap.f.cards.NumericHeader");
 			return this;
 		}
 
@@ -199,7 +199,7 @@ sap.ui.define([
 
 	// TODO there is too much copy-pasted code
 
-	KpiHeader.prototype.applySettings = function (mSettings, oScope) {
+	NumericHeader.prototype.applySettings = function (mSettings, oScope) {
 		if (mSettings.manifestContent) {
 			this.setManifestContent(mSettings.manifestContent);
 			delete mSettings.manifestContent;
@@ -210,7 +210,7 @@ sap.ui.define([
 		return this;
 	};
 
-	KpiHeader.prototype._getTitle = function () {
+	NumericHeader.prototype._getTitle = function () {
 		var oControl = this.getAggregation("_title");
 
 		if (!oControl) {
@@ -225,7 +225,7 @@ sap.ui.define([
 		return oControl;
 	};
 
-	KpiHeader.prototype._getSubtitle = function () {
+	NumericHeader.prototype._getSubtitle = function () {
 		var oControl = this.getAggregation("_subtitle");
 
 		if (!oControl) {
@@ -240,7 +240,7 @@ sap.ui.define([
 		return oControl;
 	};
 
-	KpiHeader.prototype._getUnitOfMeasurement = function () {
+	NumericHeader.prototype._getUnitOfMeasurement = function () {
 		var oControl = this.getAggregation("_unitOfMeasurement");
 
 		if (!oControl) {
@@ -254,7 +254,7 @@ sap.ui.define([
 		return oControl;
 	};
 
-	KpiHeader.prototype._getDetails = function () {
+	NumericHeader.prototype._getDetails = function () {
 		var oControl = this.getAggregation("_details");
 
 		if (!oControl) {
@@ -268,7 +268,7 @@ sap.ui.define([
 		return oControl;
 	};
 
-	KpiHeader.prototype._getMainIndicator = function () {
+	NumericHeader.prototype._getMainIndicator = function () {
 		var oControl = this.getAggregation("_mainIndicator");
 
 		if (!oControl) {
@@ -284,7 +284,7 @@ sap.ui.define([
 		return oControl;
 	};
 
-	KpiHeader.prototype._initFromManifestContent = function (oManifestContent) {
+	NumericHeader.prototype._initFromManifestContent = function (oManifestContent) {
 		this._applyManifestContentSettings(oManifestContent);
 
 		if (oManifestContent.data) {
@@ -292,7 +292,7 @@ sap.ui.define([
 		}
 	};
 
-	KpiHeader.prototype._applyManifestContentSettings = function (oManifestContent) {
+	NumericHeader.prototype._applyManifestContentSettings = function (oManifestContent) {
 		if (oManifestContent.title) {
 			this._getTitle().applySettings({
 				text: oManifestContent.title
@@ -328,12 +328,12 @@ sap.ui.define([
 
 			oManifestContent.sideIndicators.forEach(function (oIndicator) {
 				// TODO Maybe we need a second private aggregation, so it does not conflict with sideIndicators
-				this.addAggregation("sideIndicators", new KpiSideIndicator(oIndicator));
+				this.addAggregation("sideIndicators", new NumericSideIndicator(oIndicator));
 			}.bind(this));
 		}
 	};
 
-	KpiHeader.prototype._handleData = function (oData) {
+	NumericHeader.prototype._handleData = function (oData) {
 		var oModel = new JSONModel();
 
 		var oRequest = oData.request;
@@ -362,5 +362,5 @@ sap.ui.define([
 		// TODO Check if model is destroyed when header is destroyed
 	};
 
-	return KpiHeader;
+	return NumericHeader;
 });

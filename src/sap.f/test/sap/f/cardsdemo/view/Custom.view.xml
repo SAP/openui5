@@ -47,9 +47,9 @@
 				width="300px"
 				height="400px">
 				<f:header>
-					<card:KpiHeader
-					 	title="KPI"
-						subtitle="Basic KPI subtitle"
+					<card:NumericHeader
+					 	title="Numeric"
+						subtitle="Basic numeric subtitle"
 						unitOfMeasurement="%"
 						details="Some details also"/>
 				</f:header>
@@ -84,9 +84,9 @@
 				width="650px"
 				height="1600px">
 				<f:header>
-					<card:KpiHeader
-					 	title="KPI"
-						subtitle="Basic KPI subtitle"
+					<card:numericHeader
+					 	title="Numeric"
+						subtitle="Basic Numeric subtitle"
 						unitOfMeasurement="%"
 						details="Some details also"/>
 				</f:header>

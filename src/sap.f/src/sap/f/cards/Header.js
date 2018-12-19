@@ -21,7 +21,7 @@ sap.ui.define([
 	var AvatarShape = library.AvatarShape;
 
 	/**
-	 * Constructor for a new <code>Kpi</code>.
+	 * Constructor for a new <code>Header</code>.
 	 *
 	 * @param {string} [sId] ID for the new control, generated automatically if no ID is given
 	 * @param {object} [mSettings] Initial settings for the new control

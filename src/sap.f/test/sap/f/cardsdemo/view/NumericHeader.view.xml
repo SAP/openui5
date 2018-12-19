@@ -11,7 +11,7 @@
         <subHeader>
             <Toolbar>
                 <ToolbarSpacer/>
-                <Title text="Card with KPI Header"/>
+                <Title text="Card with Numeric Header"/>
                 <ToolbarSpacer/>
             </Toolbar>
         </subHeader>
@@ -25,7 +25,7 @@
                     <grid:items>
                         <f:Card width="300px">
                             <f:header>
-                                <cards:KpiHeader
+                                <cards:NumericHeader
                                     title="Project Cloud Transformation"
                                     subtitle="Revenue"
                                     unitOfMeasurement="Currency"
@@ -37,17 +37,17 @@
                                     state="Error"
                                     >
                                     <cards:sideIndicators>
-                                        <cards:KpiSideIndicator title="Target" number="100" unit="K" />
-                                        <cards:KpiSideIndicator title="Deviation" number="34.7" unit="%" />
+                                        <cards:NumericSideIndicator title="Target" number="100" unit="K" />
+                                        <cards:NumericSideIndicator title="Deviation" number="34.7" unit="%" />
                                     </cards:sideIndicators>
-                                </cards:KpiHeader>
+                                </cards:NumericHeader>
                             </f:header>
                         </f:Card>
-                        <f:SAPCard id="kpicard1" manifest="{manifests>/kpiManifests/kpicard1}"/>
-                        <f:SAPCard id="kpicard2" manifest="{manifests>/kpiManifests/kpicard2}"/>
-                        <f:SAPCard id="kpicard3" manifest="{manifests>/kpiManifests/kpicard3}"/>
-                        <f:SAPCard id="kpicard4" manifest="{manifests>/kpiManifests/kpicard4}"/>
-                        <f:SAPCard id="kpicard5" manifest="{manifests>/kpiManifests/tablecard1}"/>
+                        <f:SAPCard manifest="{manifests>/kpiManifests/kpicard1}"/>
+                        <f:SAPCard manifest="{manifests>/kpiManifests/kpicard2}"/>
+                        <f:SAPCard manifest="{manifests>/kpiManifests/kpicard3}"/>
+                        <f:SAPCard manifest="{manifests>/kpiManifests/kpicard4}"/>
+                        <f:SAPCard manifest="{manifests>/kpiManifests/tablecard1}"/>
                     </grid:items>
                 </grid:CSSGrid>
             </Panel>
