@@ -255,6 +255,45 @@ sap.ui.define(['jquery.sap.global', './Dialog', './ComboBoxTextField', './Toolba
 			return sPickerHiddenLabelId;
 		};
 
+
+		/**
+		 * Called when the composition of a passage of text is started.
+		 *
+		 * @protected
+		 */
+		ComboBoxBase.prototype.oncompositionstart = function () {
+			this._bIsComposingCharacter = true;
+		};
+
+		/**
+		 * Called when the composition of a passage of text has been completed or cancelled.
+		 *
+		 * @param {jQuery.Event} oEvent The event object.
+		 * @protected
+		 */
+		ComboBoxBase.prototype.oncompositionend = function (oEvent) {
+			this._bIsComposingCharacter = false;
+			this._sComposition = oEvent.target.value;
+
+			// In Firefox and Edge the events are fired correctly
+			// http://blog.evanyou.me/2014/01/03/composition-event/
+			if (!Device.browser.edge && !Device.browser.firefox) {
+				ComboBoxTextField.prototype.handleInput.apply(this, arguments);
+				this.handleInputValidation(oEvent, this.isComposingCharacter());
+			}
+		};
+
+		/**
+		 * indicating if a character is currently composing.
+		 *
+		 * @returns {boolean} Whether or not a character is composing.
+		 * True if after "compositionstart" event and before "compositionend" event.
+		 * @protected
+		 */
+		ComboBoxBase.prototype.isComposingCharacter = function() {
+			return this._bIsComposingCharacter;
+		};
+
 		/* =========================================================== */
 		/* Lifecycle methods                                           */
 		/* =========================================================== */
@@ -286,6 +325,9 @@ sap.ui.define(['jquery.sap.global', './Dialog', './ComboBoxTextField', './Toolba
 			this.iInitialBusyIndicatorDelay = this.getBusyIndicatorDelay();
 			this._bOnItemsLoadedScheduled = false;
 			this._bDoTypeAhead = true;
+
+			// handle composition events & validation of composition symbols
+			this._sComposition = "";
 		};
 
 		ComboBoxBase.prototype.onBeforeRendering = function() {

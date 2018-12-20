@@ -208,8 +208,9 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/Device', 'jquery.sap.keycodes', 'jqu
 	 * for any of the following events that it wants to be notified about:
 	 *
 	 * click, dblclick, contextmenu, focusin, focusout, keydown, keypress, keyup, mousedown, mouseout, mouseover,
-	 * mouseup, select, selectstart, dragstart, dragenter, dragover, dragleave, dragend, drop, paste, cut, input,
-	 * touchstart, touchend, touchmove, touchcancel, tap, swipe, swipeleft, swiperight, scrollstart, scrollstop
+	 * mouseup, select, selectstart, dragstart, dragenter, dragover, dragleave, dragend, drop, composititonstart,
+	 * compositionend, paste, cut, input, touchstart, touchend, touchmove, touchcancel, tap, swipe,
+	 * swipeleft, swiperight, scrollstart, scrollstop
 	 *
 	 * The mouse events and touch events are supported simultaneously on both desktop and mobile browsers. Do NOT
 	 * create both onmouse* and ontouch* functions to avoid one event being handled twice on the same control.
@@ -237,6 +238,8 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/Device', 'jquery.sap.keycodes', 'jqu
 		"dragleave",
 		"dragend",
 		"drop",
+		"compositionstart",
+		"compositionend",
 		"paste",
 		"cut",
 
