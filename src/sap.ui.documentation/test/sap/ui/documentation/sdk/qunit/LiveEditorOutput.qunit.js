@@ -180,7 +180,7 @@ sap.ui.define(["sap/ui/Device"],
 				'</body>\n' +
 				'</html>',
 
-			sFrameURL = "/testsuite/resources/sap/ui/documentation/sdk/util/liveEditorOutput.html";
+			sFrameURL = sap.ui.require.toUrl("sap/ui/documentation/sdk/util/liveEditorOutput.html");
 
 		QUnit.module("Samples", {
 
