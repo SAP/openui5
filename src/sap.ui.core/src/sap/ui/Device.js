@@ -878,8 +878,10 @@ if (typeof window.sap.ui !== "object") {
 
 	device.support = {};
 
-	//Maybe better to but this on device.browser because there are cases that a browser can touch but a device can't!
-	device.support.touch = !!(('ontouchstart' in window) || window.DocumentTouch && document instanceof window.DocumentTouch);
+	//Maybe better to but this on Device.browser because there are cases that a browser can touch but a device can't!
+	//Chrome 70 removes the 'ontouchstart' from window for device with and without touch screen. Therefore we need to
+	//use maxTouchPoints to check whether the device support touch interaction
+	device.support.touch = !!(('ontouchstart' in window) || (navigator.maxTouchPoints > 0) || (window.DocumentTouch && document instanceof window.DocumentTouch));
 
 	// FIXME: PhantomJS doesn't support touch events but exposes itself as touch
 	//        enabled browser. Therfore we manually override that in jQuery.support!
