@@ -361,11 +361,13 @@
 			configurable: true,
 			enumerable: true,
 			get: function() {
+				var oActiveElement = null;
 				try {
-					return getActiveElement.call(this);
+					oActiveElement = getActiveElement.call(this);
 				} catch (e) {
-					return null;
+					// ignore
 				}
+				return (oActiveElement && oActiveElement.nodeType) ? oActiveElement : document.body;
 			}
 		});
 	}

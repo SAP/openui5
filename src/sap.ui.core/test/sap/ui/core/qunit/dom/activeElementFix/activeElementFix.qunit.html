@@ -36,6 +36,24 @@
 				document.getElementById("iframe").appendChild(iframe);
 			});
 
+			QUnit.test("fix IE11 issue of returning empty object from document.activeElement", function (assert) {
+				var done = assert.async();
+
+				var iframe = document.createElement("iframe");
+				iframe.src = "activeElementEmptyObjectFixIFrame.html";
+				iframe.onload = function (o) {
+					var iframeWindow = o.target.contentWindow;
+
+					assert.ok(iframeWindow.inputRemoved, "input is removed");
+					assert.equal(iframeWindow.savedActiveElement, iframeWindow.document.body, "The active element should be body");
+
+					// do not remove iframe to prevent exceptions from async operations accessing its DOM
+					done();
+				};
+
+				document.getElementById("iframe").appendChild(iframe);
+			});
+
 		</script>
 	</head>
 	<body>
