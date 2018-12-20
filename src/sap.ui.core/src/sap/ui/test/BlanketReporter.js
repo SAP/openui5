@@ -493,8 +493,9 @@ sap.ui.define([
 			}
 
 			oDiv.setAttribute("class", "coverageSummary");
-			oDiv.innerHTML = '<a href="#coverage" id="coverage">Blanket Code Coverage: OK</a>';
-			jQuery(oDiv).one("click", function (oMouseEvent) {
+			oDiv.innerHTML = '<a href="" id="coverage">Blanket Code Coverage: OK</a>';
+			jQuery("#coverage").one("click", function (oMouseEvent) {
+				oMouseEvent.preventDefault();
 				jQuery(oDiv).fadeOut(function () {
 					createViewAndPlaceAt(oModel, getDiv());
 				});

@@ -1837,6 +1837,9 @@ sap.ui.define([
 	 * @param {string[]} aPaths The "14.5.11 Expression edm:NavigationPropertyPath" or
 	 *   "14.5.13 Expression edm:PropertyPath" strings describing which properties need to be loaded
 	 *   because they may have changed due to side effects of a previous update
+	 * @param {object} mNavigationPropertyPaths
+	 *   Hash set of collection-valued navigation property meta paths (relative to this cache's
+	 *   root) which need to be refreshed, maps string to <code>true</code>; is modified
 	 * @param {string} [sResourcePath=this.sResourcePath]
 	 *   A resource path relative to the service URL; it must not contain a query string
 	 * @returns {Promise}
@@ -1845,29 +1848,36 @@ sap.ui.define([
 	 *
 	 * @public
 	 */
-	SingleCache.prototype.requestSideEffects = function (oGroupLock, aPaths, sResourcePath) {
+	SingleCache.prototype.requestSideEffects = function (oGroupLock, aPaths,
+			mNavigationPropertyPaths, sResourcePath) {
 		var mQueryOptions = _Helper.intersectQueryOptions(this.mQueryOptions, aPaths,
-				this.oRequestor.getModelInterface().fnFetchMetadata,
-				this.sMetaPath + "/$Type"), // add $Type because of return value context
+				this.oRequestor.getModelInterface().fetchMetadata,
+				this.sMetaPath + "/$Type", // add $Type because of return value context
+				mNavigationPropertyPaths),
 			that = this;
 
 		if (mQueryOptions === null) {
 			return this.fetchValue(_GroupLock.$cached, "");
 		}
 
-		return Promise.all([
+		this.oPromise = Promise.all([
 			this.oRequestor.request("GET", (sResourcePath || this.sResourcePath)
 					+ this.oRequestor.buildQueryString(this.sMetaPath, mQueryOptions, false, true),
 				oGroupLock),
-			this.fetchTypes()
+			this.fetchTypes(),
+			this.fetchValue(_GroupLock.$cached, "")
 		]).then(function (aResult) {
-			var oNewValue = aResult[0];
+			var oNewValue = aResult[0],
+				oOldValue = aResult[2];
 
 			// visit response to report the messages
 			that.visitResponse(oNewValue, aResult[1], that.sMetaPath);
+			_Helper.updateExisting(that.mChangeListeners, "", oOldValue, oNewValue);
 
-			return that.patch("", oNewValue);
+			return oOldValue;
 		});
+
+		return this.oPromise;
 	};
 
 	//*********************************************************************************************

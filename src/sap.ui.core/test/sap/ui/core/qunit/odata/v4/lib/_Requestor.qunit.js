@@ -15,13 +15,13 @@ sap.ui.define([
 	"use strict";
 
 	var oModelInterface = {
-			fnFetchMetadata : function () {
+			fetchMetadata : function () {
 				throw new Error("Do not call me!");
 			},
-			fnGetGroupProperty : defaultGetGroupProperty,
-			fnOnCreateGroup : function () {},
-			fnReportBoundMessages : function () {},
-			fnReportUnboundMessages : function () {}
+			getGroupProperty : defaultGetGroupProperty,
+			onCreateGroup : function () {},
+			reportBoundMessages : function () {},
+			reportUnboundMessages : function () {}
 		},
 		sServiceUrl = "/sap/opu/odata4/IWBEP/TEA/default/IWBEP/TEA_BUSI/0001/",
 		sSampleServiceUrl
@@ -188,7 +188,7 @@ sap.ui.define([
 		QUnit.test("getGroupSubmitMode, success" + oFixture.groupId, function (assert) {
 			var oRequestor = _Requestor.create(sServiceUrl, oModelInterface);
 
-			this.mock(oModelInterface).expects("fnGetGroupProperty")
+			this.mock(oModelInterface).expects("getGroupProperty")
 				.withExactArgs(oFixture.groupId, "submit")
 				.returns(oFixture.submitMode);
 
@@ -280,7 +280,7 @@ sap.ui.define([
 		assert.strictEqual(oRequestor.getServiceUrl(), sServiceUrl, "parameter sServiceUrl");
 		assert.deepEqual(oRequestor.mHeaders, {}, "parameter mHeaders");
 		assert.strictEqual(oRequestor.sQueryParams, "", "parameter mQueryParams");
-		assert.strictEqual(oRequestor.fnOnCreateGroup, undefined, "parameter fnOnCreateGroup");
+		assert.strictEqual(oRequestor.onCreateGroup, undefined, "parameter onCreateGroup");
 		// OData version specific header maps
 		assert.deepEqual(oRequestor.mFinalHeaders, mFinalHeaders, "mFinalHeaders");
 		assert.deepEqual(oRequestor.mPredefinedPartHeaders, mPredefinedPartHeaders,
@@ -805,10 +805,10 @@ sap.ui.define([
 	});
 
 	//*********************************************************************************************
-	QUnit.test("request, fnOnCreateGroup", function (assert) {
+	QUnit.test("request, onCreateGroup", function (assert) {
 		var oRequestor = _Requestor.create("/", oModelInterface);
 
-		this.mock(oModelInterface).expects("fnOnCreateGroup").withExactArgs("groupId");
+		this.mock(oModelInterface).expects("onCreateGroup").withExactArgs("groupId");
 
 		// code under test
 		oRequestor.request("GET", "SalesOrders", new _GroupLock("groupId"));
@@ -816,15 +816,15 @@ sap.ui.define([
 	});
 
 	//*********************************************************************************************
-	QUnit.test("request, fnGetGroupProperty", function (assert) {
+	QUnit.test("request, getGroupProperty", function (assert) {
 		var oGroupLock = new _GroupLock("groupId"),
 			oModelInterface = {
-				fnGetGroupProperty : defaultGetGroupProperty,
-				fnOnCreateGroup : null // optional
+				getGroupProperty : defaultGetGroupProperty,
+				onCreateGroup : null // optional
 			},
 			oRequestor = _Requestor.create("/", oModelInterface);
 
-		this.mock(oModelInterface).expects("fnGetGroupProperty")
+		this.mock(oModelInterface).expects("getGroupProperty")
 			.withExactArgs("groupId", "submit")
 			.returns("API");
 
@@ -2975,7 +2975,7 @@ sap.ui.define([
 			oPromise = {},
 			oRequestor = _Requestor.create("/", oModelInterface);
 
-		this.mock(oModelInterface).expects("fnFetchMetadata")
+		this.mock(oModelInterface).expects("fetchMetadata")
 			.withExactArgs(sinon.match.same(sPath))
 			.returns(oPromise);
 
@@ -2989,7 +2989,7 @@ sap.ui.define([
 			oRequestor = _Requestor.create("/", oModelInterface),
 			sResourcePath = "Procduct(42)/to_bar";
 
-		this.mock(oModelInterface).expects("fnReportUnboundMessages")
+		this.mock(oModelInterface).expects("reportUnboundMessages")
 			.withExactArgs(sResourcePath, [{code : "42"}]);
 
 		// code under test
@@ -3000,7 +3000,7 @@ sap.ui.define([
 	QUnit.test("reportUnboundMessages without messages", function (assert) {
 		var oRequestor = _Requestor.create("/", oModelInterface);
 
-		this.mock(oModelInterface).expects("fnReportUnboundMessages")
+		this.mock(oModelInterface).expects("reportUnboundMessages")
 			.withExactArgs("foo(42)/to_bar", null);
 
 		// code under test
@@ -3014,7 +3014,7 @@ sap.ui.define([
 			oRequestor = _Requestor.create("/", oModelInterface),
 			sResourcePath = {/*{string} any resource path*/};
 
-		this.mock(oModelInterface).expects("fnReportBoundMessages")
+		this.mock(oModelInterface).expects("reportBoundMessages")
 			.withExactArgs(sinon.match.same(sResourcePath), sinon.match.same(mPathToMessages),
 				sinon.match.same(aKeyPredicates));
 
@@ -3052,8 +3052,8 @@ sap.ui.define([
 		// code under test
 		assert.strictEqual(oRequestor.getOrCreateBatchQueue("group"), aBatchQueue);
 
-		oInterface.fnOnCreateGroup = function () {};
-		this.mock(oInterface).expects("fnOnCreateGroup").withExactArgs("group2");
+		oInterface.onCreateGroup = function () {};
+		this.mock(oInterface).expects("onCreateGroup").withExactArgs("group2");
 
 		// code under test
 		checkBatchQueue(oRequestor.getOrCreateBatchQueue("group2"), "group2");

@@ -171,6 +171,8 @@ sap.ui.define([
 //						$PropertyPath : "CountryOfOrigin"
 //					}, {
 						$PropertyPath : "CountryOfOrigin_Text"
+					}, {
+						$NavigationPropertyPath : "_Publication"
 					}]).then(
 						function () {
 							// unlock fields affected by side effects

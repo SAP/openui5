@@ -156,31 +156,30 @@ sap.ui.define([
 								return;
 							}
 
-							RuleAnalyzer.analyze({type : 'global'}).then(function() {
-								var oIssues =
-									RuleAnalyzer.getLastAnalysisHistory().issues || [];
+							this.iWaitForPromise(RuleAnalyzer.analyze({type : 'global'})
+								.then(function () {
+									var oIssues =
+											RuleAnalyzer.getLastAnalysisHistory().issues || [];
 
-								oIssues = oIssues.filter(function(oIssue) {
-									if (oIssue.severity !== "High"
-										// ignore rule as long as it is unclear how to solve
-										// ariaDescribedBy issues
-										|| oIssue.rule.id === "dialogAriaDescribedBy"
-										// cannot easily avoid sap.ui.view inside
-										// sap.ui.core.UIComponent#createContent
-										|| oIssue.rule.id === "syncFactoryLoading") {
-										return false;
+									oIssues = oIssues.filter(function(oIssue) {
+										if (oIssue.severity !== "High"
+											// cannot easily avoid sap.ui.view inside
+											// sap.ui.core.UIComponent#createContent
+											|| oIssue.rule.id === "syncFactoryLoading") {
+											return false;
+										}
+										return true;
+									});
+
+									Opa5.assert.strictEqual(oIssues.length, 0,
+										"No support assistant prio high issues");
+									if (oIssues.length) {
+										Opa5.assert.getFinalReport();
 									}
-									return true;
-								});
-
-								Opa5.assert.strictEqual(oIssues.length, 0,
-									"No support assistant prio high issues");
-								if (oIssues.length) {
-									Opa5.assert.getFinalReport();
-								}
-								sap.ui.test.Opa.getContext().bSupportAssistant = false;
-								Opa5.extendConfig(getConfig(false));
-							});
+									sap.ui.test.Opa.getContext().bSupportAssistant = false;
+									Opa5.extendConfig(getConfig(false));
+								})
+							);
 						}
 					});
 				}

@@ -54,15 +54,16 @@
 				tooltip="{:= ${ui>/bRealOData} ? 'real OData service' : 'mock OData service' }"
 				type="Transparent"/>
 			<Button id="showMessages" icon="sap-icon://message-popup" tooltip="Show messages"
-				press="onMessagePopoverPress" text="{ui>/iMessages}"
-				type="{= (${ui>/iMessages} ? 'Emphasized' : 'Default')}"/>
+				press="onToggleMessagePopover" text="{ui>/iMessages}"
+				type="{= ${ui>/iMessages} ? 'Emphasized' : 'Default' }"/>
 			<dependents>
 				<Dialog id="createSalesOrderDialog" title="Create New Sales Order">
 					<buttons>
 						<Button id="confirmCreateSalesOrder" text="OK"
 							press="onCloseSalesOrderDialog" type="Accept"/>
 					</buttons>
-					<form:SimpleForm editable="true" layout="ResponsiveGridLayout">
+					<form:SimpleForm ariaLabelledBy="createSalesOrderDialog" editable="true"
+						layout="ResponsiveGridLayout">
 						<Label text="Buyer ID"/>
 						<!-- TODO Q: derive maxLength from type's constraints?! A: SmartField?! -->
 						<Input id="BuyerID::new"
@@ -110,7 +111,7 @@
 			<headerToolbar>
 				<Toolbar id="salesOrderListToolbar">
 					<Title id="salesOrderListTitle" text="{$count} New Sales Orders"
-						titleStyle="H2">
+						level="H2">
 						<layoutData>
 							<ToolbarLayoutData shrinkable="false" />
 						</layoutData>
@@ -207,82 +208,84 @@
 						$$updateGroupId : 'SalesOrderUpdateGroup'
 					}
 				}">
-			<Toolbar design="Transparent">
-				<Title id="objectPageTitle" text="Sales Order Details" titleStyle="H2"/>
-				<!--Button icon="sap-icon://refresh"
-					press="onRefreshSalesOrderDetails"/-->
-				<Button icon="sap-icon://calendar" id="showSalesOrderSchedules"
-					press="onSalesOrderSchedules" tooltip="Show sales order schedules"/>
-				<Button icon="sap-icon://save" id="saveSalesOrder" press="onSaveSalesOrder"
-					tooltip="Save sales order"/>
-				<Button id="cancelSalesOrderChanges" icon="sap-icon://sys-cancel-2"
-					press="onCancelSalesOrderChanges"
-					tooltip="Cancel sales order changes"/>
-				<dependents>
-					<Dialog class="sapUiSizeCompact"
-							id="salesOrderSchedulesDialog" title="Sales Order Schedules">
-						<Toolbar design="Transparent">
-							<Title id="salesOrderSchedulesTitle"
-									text="{headerContext>$count} Schedules" titleStyle="H2">
-								<layoutData>
-									<ToolbarLayoutData shrinkable="false" />
-								</layoutData>
-							</Title>
-							<Button enabled="{ui>/bScheduleSelected}"
-								id="deleteSalesOrderSchedules"
-								icon="sap-icon://delete" press="onDeleteSalesOrderSchedules"
-								tooltip="Delete sales order schedules"/>
-						</Toolbar>
-						<buttons>
-							<Button icon="sap-icon://sys-cancel-2"
-								press="onCloseSalesOrderSchedules" text="Close"
-								tooltip="Close dialog"/>
-						</buttons>
-						<Table id="SO_2_SCHDL" items="{SO_2_SCHDL}"
-								mode="MultiSelect"
-								selectionChange="onSalesOrderScheduleSelect">
-							<columns>
-								<Column>
-									<Text text="Schedule Key"/>
-								</Column>
-								<Column>
-									<Text text="Delivery Date"/>
-								</Column>
-							</columns>
-							<ColumnListItem>
-								<Text text="{ScheduleKey}"/>
-								<Text text="{DeliveryDate}"/>
-							</ColumnListItem>
-						</Table>
-					</Dialog>
-				</dependents>
-			</Toolbar>
 			<form:SimpleForm ariaLabelledBy="objectPageTitle" backgroundDesign="Transparent"
 				editable="true" id="SalesOrderList::detail" labelSpanM="4"
 				layout="ResponsiveGridLayout">
+				<form:toolbar>
+					<Toolbar design="Transparent">
+						<Title id="objectPageTitle" text="Sales Order Details" level="H2"/>
+						<!--Button icon="sap-icon://refresh"
+							press="onRefreshSalesOrderDetails"/-->
+						<Button icon="sap-icon://calendar" id="showSalesOrderSchedules"
+							press="onSalesOrderSchedules" tooltip="Show sales order schedules"/>
+						<Button icon="sap-icon://save" id="saveSalesOrder" press="onSaveSalesOrder"
+							tooltip="Save sales order"/>
+						<Button id="cancelSalesOrderChanges" icon="sap-icon://sys-cancel-2"
+							press="onCancelSalesOrderChanges"
+							tooltip="Cancel sales order changes"/>
+						<dependents>
+							<Dialog class="sapUiSizeCompact"
+									id="salesOrderSchedulesDialog" title="Sales Order Schedules">
+								<Toolbar design="Transparent">
+									<Title id="salesOrderSchedulesTitle"
+											text="{headerContext>$count} Schedules" level="H2">
+										<layoutData>
+											<ToolbarLayoutData shrinkable="false" />
+										</layoutData>
+									</Title>
+									<Button enabled="{ui>/bScheduleSelected}"
+										id="deleteSalesOrderSchedules"
+										icon="sap-icon://delete" press="onDeleteSalesOrderSchedules"
+										tooltip="Delete sales order schedules"/>
+								</Toolbar>
+								<buttons>
+									<Button icon="sap-icon://sys-cancel-2"
+										press="onCloseSalesOrderSchedules" text="Close"
+										tooltip="Close dialog"/>
+								</buttons>
+								<Table id="SO_2_SCHDL" items="{SO_2_SCHDL}"
+										mode="MultiSelect"
+										selectionChange="onSalesOrderScheduleSelect">
+									<columns>
+										<Column>
+											<Text text="Schedule Key"/>
+										</Column>
+										<Column>
+											<Text text="Delivery Date"/>
+										</Column>
+									</columns>
+									<ColumnListItem>
+										<Text text="{ScheduleKey}"/>
+										<Text text="{DeliveryDate}"/>
+									</ColumnListItem>
+								</Table>
+							</Dialog>
+						</dependents>
+					</Toolbar>
+				</form:toolbar>
 				<Toolbar design="Transparent" id="salesOrderDetailsToolbar">
-					<Title text="Sales Order"/>
+					<Title text="Sales Order" level="H2"/>
 				</Toolbar>
 				<Label text="Sales Order ID" />
-				<Text id="SalesOrderID::detail" text="{SalesOrderID}" />
+				<Input id="SalesOrderID::detail" value="{SalesOrderID}" editable="false" />
 				<Label text="Created At" />
-				<Text text="{CreatedAt}" />
+				<Input value="{CreatedAt}" editable="false" />
 				<Label text="Changed At" />
-				<Text text="{ChangedAt}" />
+				<Input value="{ChangedAt}" editable="false" />
 				<Label text="Lifecycle Status Desc" />
-				<Text text="{LifecycleStatusDesc}" />
+				<Input value="{LifecycleStatusDesc}" editable="false" />
 				<Label text="Note" />
 				<Input id="Note::detail" value="{Note}" editable="{= %{LifecycleStatus} === 'N'}"/>
 				<Toolbar design="Transparent" id="SO_2_BP::detail" binding="{SO_2_BP}">
-					<Title text="Business Partner"/>
+					<Title text="Business Partner" level="H2"/>
 					<Button enabled="{:= !${ui>/bRealOData} }" icon="sap-icon://delete"
 						id="deleteBusinessPartner" press="onDeleteBusinessPartner"
 						tooltip="Delete business partner"/>
 				</Toolbar>
 				<Label text="Business Partner ID" />
-				<Text text="{SO_2_BP/BusinessPartnerID}" />
+				<Input value="{SO_2_BP/BusinessPartnerID}" editable="false" />
 				<Label text="CompanyName" />
-				<Text text="{SO_2_BP/CompanyName}" />
+				<Input value="{SO_2_BP/CompanyName}" editable="false" />
 				<Label text="PhoneNumber" />
 				<Input id="PhoneNumber::detail" value="{SO_2_BP/PhoneNumber}" />
 				<Label text="City" />
@@ -330,7 +333,7 @@
 					<Toolbar id="lineItemsToolbar">
 						<Title id="lineItemsTitle"
 							text="{headerContext>$count} Sales Order Line Items"
-							titleStyle="H2"/>
+							level="H2"/>
 						<Button enabled="{= !${ui>/bCreateItemPending} }"
 							icon="sap-icon://add" id="createSalesOrderLineItem"
 							press="onCreateSalesOrderLineItem"
@@ -404,14 +407,13 @@
 			</Table>
 		</VBox>
 		<VBox visible="{ui>/bLineItemSelected}">
-			<Toolbar design="Transparent">
-				<Title id="supplierDetailsTitle" text="Supplier Details" titleStyle="H2"/>
-			</Toolbar>
-			<form:SimpleForm ariaLabelledBy="supplierDetailsTitle"
-				binding="{SOITEM_2_PRODUCT/PRODUCT_2_BP}" editable="true" id="PRODUCT_2_BP"
-				layout="ResponsiveGridLayout">
-				<Label text="Supplier" />
-				<Text text="{CompanyName} {LegalForm}" />
+			<form:SimpleForm binding="{SOITEM_2_PRODUCT/PRODUCT_2_BP}" editable="true"
+				id="PRODUCT_2_BP" title="Supplier Details" layout="ResponsiveGridLayout">
+				<Toolbar>
+					<Title text="Supplier" level="H2"/>
+				</Toolbar>
+				<Label text="Company Name" />
+				<Input value="{CompanyName} {LegalForm}" editable="false" />
 				<Label text="Phone Number" />
 				<Input id="PRODUCT_2_BP:PhoneNumber" value="{PhoneNumber}"
 					enabled="{= !!%{CompanyName}}"/>

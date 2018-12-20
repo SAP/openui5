@@ -3,21 +3,16 @@
  */
 sap.ui.define([
 	"sap/base/Log",
-	"sap/m/Dialog",
 	"sap/m/MessageBox",
-	"sap/m/MessageItem",
-	"sap/m/MessagePopover",
 	"sap/m/MessageToast",
-	"sap/ui/core/Item",
-	"sap/ui/core/MessageType",
 	"sap/ui/core/format/DateFormat",
-	"sap/ui/core/mvc/Controller",
+	"sap/ui/core/sample/common/Controller",
 	"sap/ui/model/Filter",
 	"sap/ui/model/FilterOperator",
 	"sap/ui/model/FilterType",
 	"sap/ui/model/Sorter"
-], function (Log, Dialog, MessageBox, MessageItem, MessagePopover, MessageToast, Item, MessageType,
-		DateFormat, Controller, Filter, FilterOperator, FilterType, Sorter) {
+], function (Log, MessageBox, MessageToast, DateFormat, Controller, Filter, FilterOperator,
+		FilterType, Sorter) {
 	"use strict";
 
 	var oDateFormat = DateFormat.getTimeInstance({pattern : "HH:mm"}),
@@ -88,31 +83,6 @@ sap.ui.define([
 			return {bDescending : bDescending, sNewIcon : sNewIcon};
 		},
 
-		/**
-		 * Listens to all changes in the message model, decides whether to open the message popover
-		 * and updates <code>iMessages</code> within the UI model.
-		 *
-		 * @param {object} oEvent
-		 *   The change event
-		 *
-		 */
-		handleMessagesChange : function (oEvent) {
-			var aMessageContexts = oEvent.getSource().getCurrentContexts();
-
-			function worthy(aMessageContexts) {
-				return aMessageContexts.some(function (oContext) {
-					var oMessage = oContext.getObject();
-
-					return oMessage.technical === true;
-				});
-			}
-
-			if (!this.messagePopover.isOpen() && worthy(aMessageContexts)) {
-				this.messagePopover.openBy(this.byId("showMessages"));
-			}
-			this.getView().getModel("ui").setProperty("/iMessages", aMessageContexts.length);
-		},
-
 		onBeforeRendering : function () {
 			this.byId("salesOrderListTitle").setBindingContext(
 				this.byId("SalesOrderList").getBinding("items").getHeaderContext());
@@ -178,6 +148,8 @@ sap.ui.define([
 
 			// resume binding to BusinessPartnerList to trigger request when dialog is opened
 			if (oBPListBinding.isSuspended()) {
+				oBPListBinding.filter(new Filter("BusinessPartnerRole", FilterOperator.EQ, "01"));
+				oBPListBinding.sort(new Sorter("CompanyName"));
 				oBPListBinding.resume();
 			}
 			oCreateSalesOrderDialog.setBindingContext(oContext);
@@ -328,10 +300,6 @@ sap.ui.define([
 			});
 		},
 
-		onExit : function () {
-			this.messagePopover.destroy();
-		},
-
 		onFilter : function (oEvent) {
 			var oBinding = this.byId("SalesOrderList").getBinding("items"),
 				// TODO validation
@@ -363,35 +331,7 @@ sap.ui.define([
 		},
 
 		onInit : function () {
-			this.messagePopover = new MessagePopover({
-				items : {
-					path :"message>/",
-					template : new MessageItem({
-						description : "{message>description}",
-						longtextUrl : "{message>descriptionUrl}",
-						title : "{message>message}",
-						type : "{message>type}"})
-				}
-			});
-
-			this.messagePopover.setModel(sap.ui.getCore().getMessageManager().getMessageModel(),
-				"message");
-
-			this.messagePopover.getBinding("items").attachChange(this.handleMessagesChange, this);
-			this.messagePopover.attachAfterClose(function (oEvent) {
-				var oMessageManager = sap.ui.getCore().getMessageManager(),
-					aMessages;
-
-				// remove all bound messages which have to be handled by the application
-				aMessages = oMessageManager.getMessageModel().getData().filter(function (oMessage) {
-					return oMessage.persistent;
-				});
-				oMessageManager.removeMessages(aMessages);
-			});
-		},
-
-		onMessagePopoverPress: function (oEvent) {
-			this.messagePopover.toggle(oEvent.getSource());
+			this.initMessagePopover("showMessages");
 		},
 
 		onRefreshAll : function () {

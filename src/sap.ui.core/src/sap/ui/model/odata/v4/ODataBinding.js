@@ -212,13 +212,9 @@ sap.ui.define([
 			oQueryOptionsPromise,
 			that = this;
 
-		// operation binding manages its cache on its own
-		if (this.oOperation) {
-			return SyncPromise.resolve(undefined);
-		}
-
-		// unresolved binding
-		if (this.bRelative && !oContext) {
+		if (this.oOperation // operation binding manages its cache on its own
+			|| this.bRelative && !oContext // unresolved binding
+			|| this.isMeta()) {
 			return SyncPromise.resolve(undefined);
 		}
 
@@ -323,11 +319,11 @@ sap.ui.define([
 	 * @returns {sap.ui.model.odata.v4.ODataBinding[]}
 	 *   A list of dependent bindings, never <code>null</code>
 	 *
+	 * @abstract
+	 * @function
+	 * @name sap.ui.model.odata.v4.ODataBinding#getDependentBindings
 	 * @private
 	 */
-	ODataBinding.prototype.getDependentBindings = function () {
-		return this.oModel.getDependentBindings(this);
-	};
 
 	/**
 	 * Returns the group ID of the binding that is used for read requests.
@@ -469,36 +465,11 @@ sap.ui.define([
 	 * @returns {boolean}
 	 *   <code>true</code> if the binding has pending changes
 	 *
+	 * @abstract
+	 * @function
+	 * @name sap.ui.model.odata.v4.ODataBinding#hasPendingChangesInDependents
 	 * @private
 	 */
-	ODataBinding.prototype.hasPendingChangesInDependents = function (oContext) {
-		var aDependents = oContext
-				? this.oModel.getDependentBindings(oContext)
-				: this.getDependentBindings();
-
-		return aDependents.some(function (oDependent) {
-			var oCache, bHasPendingChanges;
-
-			if (oDependent.oCachePromise.isFulfilled()) {
-				// Pending changes for this cache are only possible when there is a cache already
-				oCache = oDependent.oCachePromise.getResult();
-				if (oCache && oCache.hasPendingChangesForPath("")) {
-					return true;
-				}
-			}
-			if (oDependent.mCacheByResourcePath) {
-				bHasPendingChanges = Object.keys(oDependent.mCacheByResourcePath)
-					.some(function (sPath) {
-						return oDependent.mCacheByResourcePath[sPath].hasPendingChangesForPath("");
-					});
-				if (bHasPendingChanges) {
-					return true;
-				}
-			}
-			// Ask dependents, they might have no cache, but pending changes in mCacheByResourcePath
-			return oDependent.hasPendingChangesInDependents();
-		});
-	};
 
 	/**
 	 * Method not supported
@@ -515,6 +486,18 @@ sap.ui.define([
 	};
 
 	/**
+	 * Returns whether the binding points to metadata.
+	 *
+	 * @returns {boolean} - Whether the binding points to metadata
+	 *
+	 *
+	 * @abstract
+	 * @function
+	 * @name sap.ui.model.odata.v4.ODataBinding#isMeta
+	 * @private
+	 */
+
+	/**
 	 * Checks whether the binding can be refreshed. Only bindings which are not relative to a V4
 	 * context and whose root binding is not suspended can be refreshed.
 	 *
@@ -526,6 +509,19 @@ sap.ui.define([
 	ODataBinding.prototype.isRefreshable = function () {
 		return (!this.bRelative || this.oContext && !this.oContext.getBinding)
 			&& !this.isSuspended();
+	};
+
+	/**
+	 * Tells whether the binding's root binding is suspended.
+	 *
+	 * @returns {boolean} Whether the binding's root binding is suspended
+	 *
+	 * @private
+	 */
+	ODataBinding.prototype.isRootBindingSuspended = function () {
+		var oRootBinding = this.getRootBinding();
+
+		return oRootBinding && oRootBinding.isSuspended();
 	};
 
 	/**
@@ -683,31 +679,11 @@ sap.ui.define([
 	 *   If there is a change of this binding which has been sent to the server and for which there
 	 *   is no response yet.
 	 *
+	 * @abstract
+	 * @function
+	 * @name sap.ui.model.odata.v4.ODataBinding#resetChangesInDependents
 	 * @private
 	 */
-	ODataBinding.prototype.resetChangesInDependents = function () {
-		this.getDependentBindings().forEach(function (oDependent) {
-			var oCache;
-
-			if (oDependent.oCachePromise.isFulfilled()) {
-				// Pending changes for this cache are only possible when there is a cache already
-				oCache = oDependent.oCachePromise.getResult();
-				if (oCache) {
-					oCache.resetChangesForPath("");
-				}
-				oDependent.resetInvalidDataState();
-			}
-			// mCacheByResourcePath may have changes nevertheless
-			if (oDependent.mCacheByResourcePath) {
-				Object.keys(oDependent.mCacheByResourcePath).forEach(function (sPath) {
-					oDependent.mCacheByResourcePath[sPath].resetChangesForPath("");
-				});
-			}
-			// Reset dependents, they might have no cache, but pending changes in
-			// mCacheByResourcePath
-			oDependent.resetChangesInDependents();
-		});
-	};
 
 	/**
 	 * A method to reset invalid data state, to be called by {@link #resetChanges}.
@@ -730,6 +706,37 @@ sap.ui.define([
 		return this.getMetadata().getName() + ": " + (this.bRelative  ? this.oContext + "|" : "")
 			+ this.sPath;
 	};
+
+	/**
+	 * Recursively visits all dependent bindings of (the given context of) this binding. Bindings
+	 * with an own cache will request side effects themselves as applicable. Bindings mentioned
+	 * in <code>mNavigationPropertyPaths</code> will refresh themselves.
+	 *
+	 * @param {string} sGroupId
+	 *   The group ID to be used for requesting side effects
+	 * @param {string[]} aPaths
+	 *   The "14.5.11 Expression edm:NavigationPropertyPath" or
+	 *   "14.5.13 Expression edm:PropertyPath" strings describing which properties need to be loaded
+	 *   because they may have changed due to side effects of a previous update
+	 * @param {sap.ui.model.odata.v4.Context} [oContext]
+	 *   The context for which to request side effects; if missing, the whole binding is affected
+	 * @param {object} mNavigationPropertyPaths
+	 *   Hash set of collection-valued navigation property meta paths (relative to this binding's
+	 *   cache root) which need to be refreshed, maps string to <code>true</code>; read-only
+	 * @param {Promise[]} aPromises
+	 *   List of (sync) promises which is extended for each call to
+	 *   {@link sap.ui.model.odata.v4.ODataParentBinding#requestSideEffects} or
+	 *   {@link sap.ui.model.odata.v4.ODataBinding#refreshInternal}.
+	 * @param {string} [sPrefix=""]
+	 *   Prefix for navigation property meta paths; must only be used during recursion
+	 *
+	 * @abstract
+	 * @function
+	 * @name sap.ui.model.odata.v4.ODataBinding#visitSideEffects
+	 * @private
+	 * @see sap.ui.model.odata.v4.Context#requestSideEffects
+	 * @see sap.ui.model.odata.v4.ODataParentBinding#requestSideEffects
+	 */
 
 	/**
 	 * Calls the given processor with the cache containing this binding's data, the path relative

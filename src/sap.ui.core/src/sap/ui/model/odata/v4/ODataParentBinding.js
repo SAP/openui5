@@ -36,6 +36,8 @@ sap.ui.define([
 		this.iPatchCounter = 0;
 		// whether all sent PATCHes have been successfully processed
 		this.bPatchSuccess = true;
+		// change reason to be used when the binding is resumed
+		this.sResumeChangeReason = ChangeReason.Change;
 	}
 
 	asODataBinding(ODataParentBinding.prototype);
@@ -260,10 +262,9 @@ sap.ui.define([
 	 *   Map of binding parameters, see {@link sap.ui.model.odata.v4.ODataModel#bindList} and
 	 *   {@link sap.ui.model.odata.v4.ODataModel#bindContext}
 	 * @throws {Error}
-	 *   If the binding's root binding is suspended, there are pending changes or if
-	 *   <code>mParameters</code> is missing, contains binding-specific or unsupported parameters,
-	 *   contains unsupported values, or contains the property "$expand" or "$select" when the model
-	 *   is in auto-$expand/$select mode.
+	 *   If there are pending changes or if <code>mParameters</code> is missing, contains
+	 *   binding-specific or unsupported parameters, contains unsupported values, or contains the
+	 *   property "$expand" or "$select" when the model is in auto-$expand/$select mode.
 	 *
 	 * @public
 	 * @since 1.45.0
@@ -304,7 +305,6 @@ sap.ui.define([
 			}
 		}
 
-		this.checkSuspended();
 		if (!mParameters) {
 			throw new Error("Missing map of binding parameters");
 		}
@@ -699,6 +699,39 @@ sap.ui.define([
 	};
 
 	/**
+	 * @override
+	 * @see sap.ui.model.odata.v4.ODataBinding#hasPendingChangesInDependents
+	 */
+	ODataParentBinding.prototype.hasPendingChangesInDependents = function (oContext) {
+		var aDependents = oContext
+				? this.oModel.getDependentBindings(oContext)
+				: this.getDependentBindings();
+
+		return aDependents.some(function (oDependent) {
+			var oCache, bHasPendingChanges;
+
+			if (oDependent.oCachePromise.isFulfilled()) {
+				// Pending changes for this cache are only possible when there is a cache already
+				oCache = oDependent.oCachePromise.getResult();
+				if (oCache && oCache.hasPendingChangesForPath("")) {
+					return true;
+				}
+			}
+			if (oDependent.mCacheByResourcePath) {
+				bHasPendingChanges = Object.keys(oDependent.mCacheByResourcePath)
+					.some(function (sPath) {
+						return oDependent.mCacheByResourcePath[sPath].hasPendingChangesForPath("");
+					});
+				if (bHasPendingChanges) {
+					return true;
+				}
+			}
+			// Ask dependents, they might have no cache, but pending changes in mCacheByResourcePath
+			return oDependent.hasPendingChangesInDependents();
+		});
+	};
+
+	/**
 	 * Initializes the OData list binding: Fires a 'change' event in case the binding has a
 	 * resolved path and its root binding is not suspended.
 	 *
@@ -725,6 +758,14 @@ sap.ui.define([
 	 */
 	ODataParentBinding.prototype.isPatchWithoutSideEffects = function () {
 		return !!this.mParameters.$$patchWithoutSideEffects;
+	};
+
+	/**
+	 * @override
+	 * @see sap.ui.model.odata.v4.ODataBinding#isMeta
+	 */
+	ODataParentBinding.prototype.isMeta = function () {
+		return false;
 	};
 
 	/**
@@ -768,8 +809,7 @@ sap.ui.define([
 	 *   "14.5.13 Expression edm:PropertyPath" strings describing which properties need to be loaded
 	 *   because they may have changed due to side effects of a previous update
 	 * @param {sap.ui.model.odata.v4.Context} [oContext]
-	 *   The context instance for which to request side effects; if missing, the whole binding is
-	 *   affected
+	 *   The context for which to request side effects; if missing, the whole binding is affected
 	 * @returns {sap.ui.base.SyncPromise}
 	 *   A promise resolving without a defined result, or rejected with an error if loading of side
 	 *   effects fails
@@ -782,6 +822,34 @@ sap.ui.define([
 	 * @private
 	 * @see sap.ui.model.odata.v4.Context#requestSideEffects
 	 */
+
+	/**
+	 * @override
+	 * @see sap.ui.model.odata.v4.ODataBinding#resetChangesInDependents
+	 */
+	ODataParentBinding.prototype.resetChangesInDependents = function () {
+		this.getDependentBindings().forEach(function (oDependent) {
+			var oCache;
+
+			if (oDependent.oCachePromise.isFulfilled()) {
+				// Pending changes for this cache are only possible when there is a cache already
+				oCache = oDependent.oCachePromise.getResult();
+				if (oCache) {
+					oCache.resetChangesForPath("");
+				}
+				oDependent.resetInvalidDataState();
+			}
+			// mCacheByResourcePath may have changes nevertheless
+			if (oDependent.mCacheByResourcePath) {
+				Object.keys(oDependent.mCacheByResourcePath).forEach(function (sPath) {
+					oDependent.mCacheByResourcePath[sPath].resetChangesForPath("");
+				});
+			}
+			// Reset dependents, they might have no cache, but pending changes in
+			// mCacheByResourcePath
+			oDependent.resetChangesInDependents();
+		});
+	};
 
 	/**
 	 * Resumes this binding. The binding can again fire change events and trigger data service
@@ -841,6 +909,22 @@ sap.ui.define([
 				}
 				return vKey;
 			}));
+		}
+	};
+
+	/**
+	 * Sets the change reason that {@link #resume} will fire. In case there are multiple changes,
+	 * the "strongest" change reason wins: Filter > Sort > Change.
+	 *
+	 * @param {sap.ui.model.ChangeReason} sChangeReason
+	 *   The change reason
+	 *
+	 * @private
+	 */
+	ODataParentBinding.prototype.setResumeChangeReason = function (sChangeReason) {
+		if (sChangeReason === ChangeReason.Sort && this.sResumeChangeReason !== ChangeReason.Filter
+				|| sChangeReason === ChangeReason.Filter) {
+			this.sResumeChangeReason = sChangeReason;
 		}
 	};
 
@@ -911,6 +995,37 @@ sap.ui.define([
 				}
 			});
 		}
+	};
+
+	/**
+	 * @override
+	 * @see sap.ui.model.odata.v4.ODataBinding#visitSideEffects
+	 */
+	ODataParentBinding.prototype.visitSideEffects = function (sGroupId, aPaths, oContext,
+			mNavigationPropertyPaths, aPromises, sPrefix) {
+		var aDependentBindings = oContext
+				? this.oModel.getDependentBindings(oContext)
+				: this.getDependentBindings();
+
+		aDependentBindings.forEach(function (oDependentBinding) {
+			var sPath = _Helper.buildPath(sPrefix,
+					_Helper.getMetaPath(oDependentBinding.getPath())),
+				aStrippedPaths;
+
+			if (oDependentBinding.oCachePromise.getResult()) {
+				// dependent binding which has its own cache => not an ODataPropertyBinding
+				aStrippedPaths = _Helper.stripPathPrefix(sPath, aPaths);
+				if (aStrippedPaths.length) {
+					aPromises.push(
+						oDependentBinding.requestSideEffects(sGroupId, aStrippedPaths));
+				}
+			} else if (mNavigationPropertyPaths[sPath]) {
+				aPromises.push(oDependentBinding.refreshInternal(sGroupId));
+			} else {
+				oDependentBinding.visitSideEffects(sGroupId, aPaths, null,
+					mNavigationPropertyPaths, aPromises, sPath);
+			}
+		});
 	};
 
 	/**

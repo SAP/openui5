@@ -125,6 +125,7 @@ sap.ui.define([
 					ui : new JSONModel({
 						code : "",
 						codeVisible : false,
+						iMessages : 0,
 						realOData : bRealOData,
 						v2 : true,
 						v4 : false
