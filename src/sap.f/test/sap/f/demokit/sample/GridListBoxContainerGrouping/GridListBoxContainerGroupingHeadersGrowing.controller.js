@@ -25,7 +25,7 @@ sap.ui.define([
 				{ title: "Grid item title 16", subtitle: "Subtitle 16", group: "Group B" },
 				{ title: "Grid item title 17", subtitle: "Subtitle 17", group: "Group B" },
 				{ title: "Grid item title 18", subtitle: "Subtitle 18", group: "Group B" },
-				{ title: "Grid item title 19", subtitle: "Subtitle 19", group: "Group B" },
+				{ title: "Grid item title 19 Grid item title 19 Grid item title 19 Grid item title 19 Grid item title 19 Grid item title 19 Grid item title 19 ", subtitle: "Subtitle 19", group: "Group B" },
 				{ title: "Grid item title 20", subtitle: "Subtitle 20", group: "Group B" },
 				{ title: "Grid item title 21", subtitle: "Subtitle 21", group: "Group B" },
 				{ title: "Grid item title 22", subtitle: "Subtitle 22", group: "Group B" },
@@ -41,7 +41,7 @@ sap.ui.define([
 		},
 		onSliderMoved: function (oEvent) {
 			var value = oEvent.getParameter("value");
-			this.byId("gridList").setWidth(value + "%");
+			this.byId("panelForGridList").setWidth(value + "%");
 		}
 	});
 

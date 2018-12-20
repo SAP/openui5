@@ -5,22 +5,24 @@
 	xmlns:f="sap.f"
     controllerName="sap.f.gridlist.controller.Main">
 
+	<Slider value="100" liveChange="onSliderMoved"/>
+
     <f:GridList
-		headerText="Grouping with equal rows and no gridTemplateRows"
-		items="{
-				path: '/',
-				sorter: {
-					path: 'group',
-					descending: false,
-					group: true
-				}
-			}">
+		id="growingGridListBoxes"
+		headerText="GridList with a GridBoxLayout"
+			items="{
+						path: '/',
+						sorter: {
+							path: 'group',
+							descending: false,
+							group: true
+						}
+					}"
+		growing="true"
+		growingThreshold="4">
 
         <f:customLayout>
-            <grid:GridBasicLayout
-				gridTemplateColumns="repeat(auto-fit, 8rem)"
-				gridGap="0.25rem 0.25rem">
-            </grid:GridBasicLayout>
+            <grid:GridBoxLayout/>
         </f:customLayout>
 
 		<CustomListItem>

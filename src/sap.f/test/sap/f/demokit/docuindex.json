@@ -78,7 +78,7 @@
 		{
 		  "id": "sap.f.GridList",
 		  "name": "Grid List",
-		  "category": "Display",
+		  "category": "List",
 		  "since": "1.60",
 		  "samples": [
 			"sap.f.sample.GridListBasic",

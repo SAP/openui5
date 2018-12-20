@@ -3,14 +3,14 @@
 		xmlns:mvc="sap.ui.core.mvc"
 		xmlns:grid="sap.ui.layout.cssgrid"
 		controllerName="sap.ui.layout.sample.NestedGrids.NestedGrids">
-	<Panel width="100%" height="100%">
+	<Slider class="sapUiSmallMarginBottom" value="100" liveChange="onSliderMoved" />
+	<Panel id="panelCSSGrid" width="100%" height="100%">
 		<headerToolbar>
 			<Toolbar height="3rem">
 				<Title text=" CssGrid Nested grids example"/>
 			</Toolbar>
 		</headerToolbar>
 		<content>
-			<Slider class="sapUiSmallMarginBottom" value="100" liveChange="onSliderMoved" />
 			<grid:CSSGrid id="grid1"
 						  gridTemplateColumns="repeat(2,minmax(250px, 1fr))"
 						  gridTemplateRows="1fr 3fr"

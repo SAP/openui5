@@ -9,7 +9,6 @@
 .sapFGridListDefault {
 	display: grid;
 	grid-template-columns: repeat(auto-fit, minmax(10rem, 1fr));
-	grid-auto-rows: 1fr;
 	grid-gap: 0.5rem 0.5rem;
 }
 
@@ -20,6 +19,7 @@
 		border: none;
 		padding-top: 0.25rem;
 		grid-column: ~"1 / -1";
+		width: 100%;
 
 		& .sapMGHLITitle {
 			font-size: 1.125rem;

@@ -5,7 +5,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/mvc/Controller'],
 		var GridTemplateRows = Controller.extend("sap.ui.layout.sample.GridGap.GridGap", {
 			onSliderMoved: function (oEvent) {
 				var value = oEvent.getParameter("value");
-				this.byId("grid1").setWidth(value + "%");
+				this.byId("panelCSSGrid").setWidth(value + "%");
 			},
 			onInputChanged: function (oEvent) {
 				var value = oEvent.getParameter("value");

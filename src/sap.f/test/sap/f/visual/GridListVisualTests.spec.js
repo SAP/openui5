@@ -5,6 +5,8 @@ describe("sap.f.GridListVisualTests", function () {
 
 	browser.testrunner.currentSuite.meta.controlName = "sap.f.GridList";
 
+	var bDesktop = null;
+
 	function goToIconTabFilter (sId) {
 		element(by.control({
 			id: sId,
@@ -20,6 +22,12 @@ describe("sap.f.GridListVisualTests", function () {
 	}
 
 	it("should visualize GridList with basic layout", function () {
+		browser.executeScript(
+			"return sap.ui.Device.system.desktop;")
+			.then(function (response) {
+				bDesktop = response;
+		});
+
 		takePictureOfContent("0_general");
 	});
 
@@ -39,6 +47,34 @@ describe("sap.f.GridListVisualTests", function () {
 
 		element(by.css(".sapMGrowingListTrigger")).click();
 		takePictureOfContent("4_growing_more");
+
+		element(by.css(".sapMGrowingListTrigger")).click();
+		takePictureOfContent("4_growing_second_grow");
+	});
+
+	it("should visualize growing GridList with GridBoxLayout and Grouping", function () {
+		element(by.css(".sapMITBArrowScrollRightInLine")).click(); // previous test has scrolled to the bottom of the viewport. We need this in order to click on the next tab
+
+		goToIconTabFilter("GridList4a");
+		takePictureOfContent("4A_growing");
+
+		element(by.css(".sapMSlider + .sapFGridList .sapMGrowingListTrigger")).click();
+		takePictureOfContent("4A_growing_more");
+
+		element(by.css(".sapMSlider + .sapFGridList .sapMGrowingListTrigger")).click();
+		takePictureOfContent("4A_growing_second_grow");
+
+		element(by.css(".sapMSlider + .sapFGridList .sapMGrowingListTrigger")).click();
+		takePictureOfContent("4A_growing_third_grow");
+	});
+	it("should visualize growing GridList with GridBoxLayout after Resizing", function () {
+		if (bDesktop) {
+			browser.executeScript('document.getElementsByClassName("sapMITBContent")[0].style.width = "40%"');
+		} else {
+			browser.executeScript('document.getElementsByClassName("sapMITBContent")[0].style.width = "90%"');
+		}
+		takePictureOfContent("4B_resizing");
+		browser.executeScript('document.getElementsByClassName("sapMITBContent")[0].style.width = ""');
 	});
 
 	it("should visualize GridList grouping with auto row height", function () {
