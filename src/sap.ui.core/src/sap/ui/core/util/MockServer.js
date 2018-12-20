@@ -2282,7 +2282,7 @@ sap.ui
 
 							};
 
-							var fnCUDRequest = function(sUrl, mHeaders, sData, sType,aChangesetResponses) {
+							var fnCUDRequest = function(sUrl, sData, sType,aChangesetResponses, mHeaders) {
 								var oResponse;
 								var fnAjaxSuccess = function(data, textStatus, xhr){
 									oResponse = {
@@ -2449,7 +2449,7 @@ sap.ui
 														sData = undefined;
 														sRelativeUrl = rDelete.exec(sChangesetRequest)[1];
 													}
-													fnCUDRequest(sServiceURL + sRelativeUrl, mHeaders, sData, sVerb, aChangesetResponses);
+													fnCUDRequest(sServiceURL + sRelativeUrl, sData, sVerb, aChangesetResponses, mHeaders);
 												}
 											} //END ChangeSets FOR
 											var sChangesetRespondData = "\r\nContent-Type: multipart/mixed; boundary=ejjeeffe1\r\n\r\n--ejjeeffe1";

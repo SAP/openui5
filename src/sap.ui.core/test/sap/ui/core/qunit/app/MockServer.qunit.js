@@ -3835,7 +3835,7 @@ sap.ui.define(["sap/ui/core/util/MockServer", "sap/ui/core/Control", "sap/ui/cor
 		oModel.submitChanges();
 	});
 
-	QUnit.test("$batch: cusotm headers of contained requests", function (assert) {
+	QUnit.test("$batch: custom headers of contained requests", function (assert) {
 
 		var done = assert.async();
 		var sUri = "/mock/";
@@ -4528,6 +4528,52 @@ sap.ui.define(["sap/ui/core/util/MockServer", "sap/ui/core/Control", "sap/ui/cor
 				}.bind(this)
 			});
 		}.bind(this));
+	});
+
+	QUnit.test("$batch: forwarding headers of contained requests", function (assert) {
+		var done = assert.async();
+		var sUri = "/mock/";
+		var oMockServer = new MockServer({
+			rootUri: sUri
+		});
+		var sMetadataUrl = "test-resources/sap/ui/core/qunit/testdata/DataModel.xml";
+		var sMockdataBaseUrl = "test-resources/sap/ui/core/qunit/testdata/";
+
+		oMockServer.simulate(sMetadataUrl, sMockdataBaseUrl);
+		var aRequests = oMockServer.getRequests();
+
+		aRequests.push({
+			method: "MERGE",
+			path: /LeaveItemCollection.*/,
+			response: function (oXhr) {
+				assert.equal(oXhr.requestHeaders["If-Match"], "123456789", "Etag is transmitted");
+				oXhr.respondJSON(204, {});
+				return true;
+			}
+		});
+
+		oMockServer.setRequests(aRequests);
+		oMockServer.start();
+
+		var oModel = new sap.ui.model.odata.v2.ODataModel(sUri, true);
+		oModel.setDeferredBatchGroups(["myId"]);
+
+		oModel.update("/LeaveItemCollection(employeeid='JSMITH',itemid='1',type='Vacation')", {
+			availablebalance: "40 days",
+			state: "Approved"
+		}, {
+			batchGroupId: "myId",
+			eTag: "123456789" // Should be transmitted as If-Match request header
+		});
+
+		oModel.attachBatchRequestCompleted(this, function (test) {
+			setTimeout(function () {
+				oMockServer.destroy();
+				done();
+			}, 0);
+		});
+
+		oModel.submitChanges();
 	});
 
 	function countProperties(obj) {
