@@ -1,6 +1,7 @@
 /*!
  * ${copyright}
  */
+/*global QUnit */
 
 QUnit.config.autostart = false;
 
@@ -9,16 +10,10 @@ sap.ui.require([
 	"sap/ui/core/Core"
 ], function (Core) {
 	"use strict";
-	/*global QUnit */
 
 	Core.boot();
-	sap.ui.loader.config({
-		paths: {
-			"sap/ui/core/qunit": "../../../../../../test-resources/sap/ui/core/qunit",
-			"sap/ui/test/qunit": "../../../../../../test-resources/sap/ui/test/qunit"
-		}
-	});
 
+	// Note: cannot require these above as data-sap-ui-resourceroots is ignored until boot
 	sap.ui.require([
 		// alphabetic sort order according to module names
 		// base
