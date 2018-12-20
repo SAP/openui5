@@ -6,14 +6,12 @@ sap.ui.define([
 	"sap/base/Log",
 	"sap/ui/base/ManagedObject",
 	"sap/ui/base/SyncPromise",
-	"sap/ui/model/Binding",
 	"sap/ui/model/ChangeReason",
 	"sap/ui/model/Filter",
 	"sap/ui/model/FilterOperator",
 	"sap/ui/model/FilterProcessor",
 	"sap/ui/model/FilterType",
 	"sap/ui/model/ListBinding",
-	"sap/ui/model/Model",
 	"sap/ui/model/Sorter",
 	"sap/ui/model/odata/OperationMode",
 	"sap/ui/model/odata/v4/Context",
@@ -26,10 +24,10 @@ sap.ui.define([
 	"sap/ui/model/odata/v4/lib/_GroupLock",
 	"sap/ui/model/odata/v4/lib/_Helper",
 	"sap/ui/test/TestUtils"
-], function (jQuery, Log, ManagedObject, SyncPromise, Binding, ChangeReason, Filter, FilterOperator,
-		FilterProcessor, FilterType, ListBinding, Model, Sorter, OperationMode, Context,
-		ODataListBinding, ODataModel, asODataParentBinding, _AggregationCache, _AggregationHelper,
-		_Cache, _GroupLock, _Helper, TestUtils) {
+], function (jQuery, Log, ManagedObject, SyncPromise, ChangeReason, Filter, FilterOperator,
+		FilterProcessor, FilterType, ListBinding, Sorter, OperationMode, Context, ODataListBinding,
+		ODataModel, asODataParentBinding, _AggregationCache, _AggregationHelper, _Cache, _GroupLock,
+		_Helper, TestUtils) {
 	/*global QUnit, sinon */
 	/*eslint max-nested-callbacks: 0, no-new: 0, no-warning-comments: 0 */
 	"use strict";
@@ -169,7 +167,7 @@ sap.ui.define([
 			// ensure that the requestor does not trigger requests
 			this.mock(this.oModel.oRequestor).expects("request").never();
 			// avoid that the cache requests actual metadata for faked responses
-			this.mock(this.oModel.oRequestor).expects("fetchMetadata").atLeast(0)
+			this.mock(this.oModel.oRequestor.oModelInterface).expects("fetchMetadata").atLeast(0)
 				.returns(SyncPromise.resolve());
 
 			// in case "request" is restored, this catches accidental requests

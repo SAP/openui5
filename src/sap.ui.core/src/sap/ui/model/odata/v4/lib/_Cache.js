@@ -200,7 +200,8 @@ sap.ui.define([
 						}
 						fnCallback();
 					}
-					that.oRequestor.reportBoundMessages(that.sResourcePath, [], [sEntityPath]);
+					that.oRequestor.getModelInterface().reportBoundMessages(that.sResourcePath, [],
+						[sEntityPath]);
 				});
 		});
 	};
@@ -409,7 +410,7 @@ sap.ui.define([
 				sPropertyPath += "/";
 			}
 			sPropertyPath += sPath.split("/").slice(0, iPathLength).join("/");
-			return that.oRequestor
+			return that.oRequestor.getModelInterface()
 				.fetchMetadata(that.sMetaPath + _Helper.getMetaPath(sPropertyPath))
 				.then(function (oProperty) {
 					if (!oProperty) {
@@ -522,7 +523,7 @@ sap.ui.define([
 		 */
 		function fetchType(sMetaPath) {
 			aPromises.push(that.oRequestor.fetchTypeForPath(sMetaPath).then(function (oType) {
-				var oMessageAnnotation = that.oRequestor
+				var oMessageAnnotation = that.oRequestor.getModelInterface()
 						.fetchMetadata(sMetaPath + "/" + sMessagesAnnotation).getResult();
 
 				if (oMessageAnnotation) {
@@ -1057,7 +1058,7 @@ sap.ui.define([
 			visitInstance(oRoot, sRootMetaPath || this.sMetaPath, sRootPath || "", sRequestUrl);
 		}
 		if (bHasMessages) {
-			this.oRequestor.reportBoundMessages(
+			this.oRequestor.getModelInterface().reportBoundMessages(
 				this.fnGetOriginalResourcePath
 					? this.fnGetOriginalResourcePath(oRoot)
 					: this.sResourcePath,

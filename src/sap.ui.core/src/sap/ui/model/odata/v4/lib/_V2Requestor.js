@@ -944,25 +944,9 @@ sap.ui.define([
 		return this.oModelInterface.fetchEntityContainer().then(function () {});
 	};
 
-	/**
-	 * Do not report bound OData messages.
-	 *
-	 * @private
-	 */
-	// @override
-	_V2Requestor.prototype.reportBoundMessages = function () {
-	};
-
-	/**
-	 * Do not report unbound OData messages.
-	 *
-	 * @private
-	 */
-	// @override
-	_V2Requestor.prototype.reportUnboundMessages = function () {
-	};
-
-	return function (oObject) {
-		jQuery.extend(oObject, _V2Requestor.prototype);
+	return function (oRequestor) {
+		jQuery.extend(oRequestor, _V2Requestor.prototype);
+		oRequestor.oModelInterface.reportBoundMessages = function () {};
+		oRequestor.oModelInterface.reportUnboundMessages = function () {};
 	};
 }, /* bExport= */ false);

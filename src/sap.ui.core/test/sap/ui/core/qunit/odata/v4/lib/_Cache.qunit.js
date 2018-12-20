@@ -85,20 +85,21 @@ sap.ui.define([
 		beforeEach : function () {
 			var oModelInterface = {
 					fetchMetadata : function () {
-						throw new Error("Unsupported operation");
+						return SyncPromise.resolve(null);
 					},
 					lockGroup : function () {
 						throw new Error("Unsupported operation");
-					}
+					},
+					reportBoundMessages : function () {}
 				};
 
+			this.oModelInterfaceMock = this.mock(oModelInterface);
 			this.oLogMock = this.mock(Log);
 			this.oLogMock.expects("warning").never();
 			this.oLogMock.expects("error").never();
 
 			this.oRequestor = {
 				buildQueryString : function () { return ""; },
-				fetchMetadata : function () { return SyncPromise.resolve(null); },
 				fetchTypeForPath : function () { return SyncPromise.resolve({}); },
 				getGroupSubmitMode : function (sGroupId) {
 					return defaultGetGroupProperty(sGroupId);
@@ -113,7 +114,6 @@ sap.ui.define([
 				relocateAll : function () {},
 				removePatch : function () {},
 				removePost : function () {},
-				reportBoundMessages : function () {},
 				reportUnBoundMessages : function () {},
 				request : function () {}
 			};
@@ -305,7 +305,7 @@ sap.ui.define([
 						undefined, undefined, undefined, undefined,
 						"EMPLOYEES('42')/EMPLOYEE_2_EQUIPMENTS('42')")
 					.returns(iStatus === 200 ? Promise.resolve().then(function () {
-						that.oRequestorMock.expects("reportBoundMessages")
+						that.oModelInterfaceMock.expects("reportBoundMessages")
 							.withExactArgs(oCache.sResourcePath, [],
 								["EMPLOYEE_2_EQUIPMENTS('42')"]);
 					}) : Promise.reject(oError));
@@ -426,7 +426,7 @@ sap.ui.define([
 				}, undefined, undefined, undefined, undefined,
 				"Equipments(Category='foo',ID='0815')/EQUIPMENT_2_EMPLOYEE/EMPLOYEE_2_TEAM")
 			.returns(Promise.resolve().then(function () {
-				that.oRequestorMock.expects("reportBoundMessages")
+				that.oModelInterfaceMock.expects("reportBoundMessages")
 					.withExactArgs(oCache.sResourcePath, [],
 						["EQUIPMENT_2_EMPLOYEE/EMPLOYEE_2_TEAM"]);
 			}));
@@ -692,7 +692,7 @@ sap.ui.define([
 		var oCache = new _Cache(this.oRequestor, "Products('42')"),
 			oData = {productPicture : {}};
 
-		this.oRequestorMock.expects("fetchMetadata")
+		this.oModelInterfaceMock.expects("fetchMetadata")
 			.withExactArgs("/Products/productPicture/picture")
 			.returns(SyncPromise.resolve({$Type : "Edm.Stream"}));
 
@@ -707,7 +707,7 @@ sap.ui.define([
 		var oCache = new _Cache(this.oRequestor, "Products('42')"),
 			oData = {};
 
-		this.oRequestorMock.expects("fetchMetadata")
+		this.oModelInterfaceMock.expects("fetchMetadata")
 			.withExactArgs("/Products/PRODUCT_2_BP")
 			.returns(SyncPromise.resolve({
 				$kind : "NavigationProperty",
@@ -730,7 +730,7 @@ sap.ui.define([
 
 		oData.$byPredicate = {"('42')": oData[0]};
 
-		this.oRequestorMock.expects("fetchMetadata")
+		this.oModelInterfaceMock.expects("fetchMetadata")
 			.withExactArgs("/Products/productPicture/picture")
 			.returns(SyncPromise.resolve({$Type : "Edm.Stream"}));
 
@@ -744,7 +744,7 @@ sap.ui.define([
 	QUnit.test("_Cache#drillDown: stream property, missing parent", function (assert) {
 		var oCache = new _Cache(this.oRequestor, "Products('42')");
 
-		this.oRequestorMock.expects("fetchMetadata")
+		this.oModelInterfaceMock.expects("fetchMetadata")
 			.withExactArgs("/Products/productPicture")
 			.returns(SyncPromise.resolve({$Type : "some.ComplexType"}));
 		this.oLogMock.expects("error").withExactArgs(
@@ -764,7 +764,7 @@ sap.ui.define([
 				}
 			};
 
-		this.oRequestorMock.expects("fetchMetadata")
+		this.oModelInterfaceMock.expects("fetchMetadata")
 			.withExactArgs("/Products/productPicture/picture")
 			.returns(SyncPromise.resolve({$Type : "Edm.Stream"}));
 
@@ -782,18 +782,18 @@ sap.ui.define([
 				}
 			};
 
-		this.oRequestorMock.expects("fetchMetadata")
+		this.oModelInterfaceMock.expects("fetchMetadata")
 			.withExactArgs("/Products/Name")
 			.returns(SyncPromise.resolve(Promise.resolve({
 				$Type : "Edm.String"
 			})));
-		this.oRequestorMock.expects("fetchMetadata")
+		this.oModelInterfaceMock.expects("fetchMetadata")
 			.withExactArgs("/Products/Currency")
 			.returns(SyncPromise.resolve(Promise.resolve({
 				$DefaultValue : "EUR",
 				$Type : "Edm.String"
 			})));
-		this.oRequestorMock.expects("fetchMetadata")
+		this.oModelInterfaceMock.expects("fetchMetadata")
 			.withExactArgs("/Products/Price")
 			.returns(SyncPromise.resolve(Promise.resolve({
 				$DefaultValue : "0.0",
@@ -802,7 +802,7 @@ sap.ui.define([
 		this.mock(_Helper).expects("parseLiteral")
 			.withExactArgs("0.0", "Edm.Double", "/Price")
 			.returns(0);
-		this.oRequestorMock.expects("fetchMetadata")
+		this.oModelInterfaceMock.expects("fetchMetadata")
 			.withExactArgs("/Products/ProductID")
 			.returns(SyncPromise.resolve(Promise.resolve({
 				$DefaultValue : "",
@@ -841,27 +841,27 @@ sap.ui.define([
 				}
 			};
 
-		this.oRequestorMock.expects("fetchMetadata").thrice()
+		this.oModelInterfaceMock.expects("fetchMetadata").thrice()
 			.withExactArgs("/BusinessPartners/Address")
 			.returns(SyncPromise.resolve(Promise.resolve({
 				$Type : "name.space.Address"
 			})));
-		this.oRequestorMock.expects("fetchMetadata")
+		this.oModelInterfaceMock.expects("fetchMetadata")
 			.withExactArgs("/BusinessPartners/Address/City")
 			.returns(SyncPromise.resolve({
 				$Type : "Edm.String"
 			}));
-		this.oRequestorMock.expects("fetchMetadata")
+		this.oModelInterfaceMock.expects("fetchMetadata")
 			.withExactArgs("/BusinessPartners/Address/unknown")
 			.returns(SyncPromise.resolve(undefined));
 		this.oLogMock.expects("error").withExactArgs("Failed to drill-down into Address/unknown," +
 			" invalid segment: unknown", "/~/BusinessPartners('42')", sClassName);
-		this.oRequestorMock.expects("fetchMetadata")
+		this.oModelInterfaceMock.expects("fetchMetadata")
 			.withExactArgs("/BusinessPartners/Address/GeoLocation")
 			.returns(SyncPromise.resolve({
 				$Type : "name.space.GeoLocation"
 			}));
-		this.oRequestorMock.expects("fetchMetadata")
+		this.oModelInterfaceMock.expects("fetchMetadata")
 			.withExactArgs("/BusinessPartners/Address/GeoLocation/Longitude")
 			.returns(SyncPromise.resolve({
 				$DefaultValue : "0.0",
@@ -897,7 +897,7 @@ sap.ui.define([
 				}
 			};
 
-		this.oRequestorMock.expects("fetchMetadata")
+		this.oModelInterfaceMock.expects("fetchMetadata")
 			.withExactArgs("/SalesOrders/SO_2_BP")
 			.returns(SyncPromise.resolve(Promise.resolve({
 				$kind : "NavigationProperty",
@@ -1481,7 +1481,7 @@ sap.ui.define([
 			Object.keys(oFixture.types).forEach(function (sPath) {
 				that.oRequestorMock.expects("fetchTypeForPath").withExactArgs(sPath)
 					.returns(Promise.resolve(oFixture.types[sPath]));
-				that.oRequestorMock.expects("fetchMetadata")
+				that.oModelInterfaceMock.expects("fetchMetadata")
 					.withExactArgs(sPath + "/@com.sap.vocabularies.Common.v1.Messages")
 					.returns(SyncPromise.resolve(
 						oFixture.messageAnnotations && oFixture.messageAnnotations[sPath] || null));
@@ -1600,7 +1600,7 @@ sap.ui.define([
 		this.mock(_Helper).expects("getKeyPredicate").withExactArgs(sinon.match.same(oEntity),
 				"/TEAMS", sinon.match.same(mTypeForMetaPath))
 			.returns(sPredicate);
-		this.oRequestorMock.expects("reportBoundMessages").never();
+		this.oModelInterfaceMock.expects("reportBoundMessages").never();
 
 		// code under test
 		oCache.visitResponse(oEntity, mTypeForMetaPath);
@@ -1619,7 +1619,7 @@ sap.ui.define([
 		this.mock(_Helper).expects("getKeyPredicate").withExactArgs(sinon.match.same(oEntity),
 			"/~/$Type", sinon.match.same(mTypeForMetaPath))
 			.returns(sPredicate);
-		this.oRequestorMock.expects("reportBoundMessages").never();
+		this.oModelInterfaceMock.expects("reportBoundMessages").never();
 
 		// code under test
 		oCache.visitResponse(oEntity, mTypeForMetaPath, "/~/$Type");
@@ -1670,7 +1670,7 @@ sap.ui.define([
 			.withExactArgs(sinon.match.same(oEntity.property.navigation),
 				"/TEAMS/property/navigation", sinon.match.same(mTypeForMetaPath))
 			.returns(sPredicate4);
-		this.oRequestorMock.expects("reportBoundMessages").never();
+		this.oModelInterfaceMock.expects("reportBoundMessages").never();
 
 		// code under test
 		oCache.visitResponse(oEntity, mTypeForMetaPath);
@@ -1709,7 +1709,7 @@ sap.ui.define([
 			.withExactArgs(sinon.match.same(oEntity.bar[1]), "/TEAMS/bar",
 				sinon.match.same(mTypeForMetaPath))
 			.returns(undefined);
-		this.oRequestorMock.expects("reportBoundMessages").never();
+		this.oModelInterfaceMock.expects("reportBoundMessages").never();
 
 		// code under test
 		oCache.visitResponse(oEntity, mTypeForMetaPath);
@@ -1774,7 +1774,7 @@ sap.ui.define([
 				}
 			};
 
-		this.oRequestorMock.expects("reportBoundMessages")
+		this.oModelInterfaceMock.expects("reportBoundMessages")
 			.withExactArgs(oCache.sResourcePath, mExpectedMessages, undefined);
 
 		// code under test
@@ -1799,7 +1799,7 @@ sap.ui.define([
 				}
 			};
 
-		this.oRequestorMock.expects("reportBoundMessages")
+		this.oModelInterfaceMock.expects("reportBoundMessages")
 			.withExactArgs(oCache.sResourcePath, mExpectedMessages, ["SO_2_BP"]);
 
 		// code under test
@@ -1824,7 +1824,7 @@ sap.ui.define([
 				}
 			};
 
-		this.oRequestorMock.expects("reportBoundMessages")
+		this.oModelInterfaceMock.expects("reportBoundMessages")
 			.withExactArgs(oCache.sResourcePath, mExpectedMessages, ["('0500000001')/SO_2_BP"]);
 
 		// code under test
@@ -1863,7 +1863,7 @@ sap.ui.define([
 			}
 			mExpectedMessages[sMessagePath] = aMessages;
 
-			this.oRequestorMock.expects("reportBoundMessages")
+			this.oModelInterfaceMock.expects("reportBoundMessages")
 				.withExactArgs(oCache.sResourcePath, mExpectedMessages, [sMessagePath]);
 
 			// code under test
@@ -1898,7 +1898,7 @@ sap.ui.define([
 				}
 			};
 
-		this.oRequestorMock.expects("reportBoundMessages")
+		this.oModelInterfaceMock.expects("reportBoundMessages")
 			.withExactArgs(oCache.sResourcePath, mExpectedMessages,
 				["('0500000001')/SO_2_SOITEM(SalesOrderID='0500000001',ItemPosition='42')"]);
 
@@ -1912,7 +1912,7 @@ sap.ui.define([
 			function (assert) {
 		var oCache = new _Cache(this.oRequestor, "SalesOrderList('0500000001')");
 
-		this.oRequestorMock.expects("reportBoundMessages").never();
+		this.oModelInterfaceMock.expects("reportBoundMessages").never();
 
 		// code under test
 		oCache.visitResponse({}, {
@@ -1931,7 +1931,7 @@ sap.ui.define([
 		this.mock(_Helper).expects("drillDown")
 			.withExactArgs(oData, ["foo", "bar", "messages"])
 			.returns();
-		this.oRequestorMock.expects("reportBoundMessages").never();
+		this.oModelInterfaceMock.expects("reportBoundMessages").never();
 
 		// code under test
 		oCache.visitResponse(oData, {
@@ -2020,7 +2020,7 @@ sap.ui.define([
 			oHelperMock.expects("drillDown")
 				.withExactArgs(oData.value[2], aMessagePathSegments)
 				.returns([]);
-			this.oRequestorMock.expects("reportBoundMessages")
+			this.oModelInterfaceMock.expects("reportBoundMessages")
 				.withExactArgs(oCache.sResourcePath, mExpectedMessages, [sFirst, sSecond, sThird]);
 
 			// code under test
@@ -2089,7 +2089,7 @@ sap.ui.define([
 			oHelperMock.expects("drillDown")
 				.withExactArgs(oData.value[0].SO_2_SOITEM[1], ["messages"])
 				.returns(aMessages);
-			this.oRequestorMock.expects("reportBoundMessages")
+			this.oModelInterfaceMock.expects("reportBoundMessages")
 				.withExactArgs(oCache.sResourcePath, mExpectedMessages,
 					[bPredicate ? "('42')" : "5"]);
 
@@ -2123,7 +2123,7 @@ sap.ui.define([
 			};
 
 		mExpectedMessages[""].$count = 1;
-		this.oRequestorMock.expects("reportBoundMessages")
+		this.oModelInterfaceMock.expects("reportBoundMessages")
 			.withExactArgs(oCache.sResourcePath, mExpectedMessages, undefined);
 
 		// code under test
@@ -2190,7 +2190,7 @@ sap.ui.define([
 		mExpectedMessages["foo"].$count = 1;
 		mExpectedMessages["foo/bar"].$count = 1;
 		mExpectedMessages["foo/baz"].$count = 1;
-		this.oRequestorMock.expects("reportBoundMessages")
+		this.oModelInterfaceMock.expects("reportBoundMessages")
 			.withExactArgs(oCache.sResourcePath, mExpectedMessages, undefined);
 
 		// code under test
@@ -2257,7 +2257,7 @@ sap.ui.define([
 		mExpectedMessages["(1)"].$count = 1;
 		mExpectedMessages["(1)/foo(2)"].$count = 1;
 		mExpectedMessages["(1)/foo(2)/bar(3)"].$count = 1;
-		this.oRequestorMock.expects("reportBoundMessages")
+		this.oModelInterfaceMock.expects("reportBoundMessages")
 			.withExactArgs(oCache.sResourcePath, mExpectedMessages, ["(1)"]);
 
 		// code under test
@@ -2303,7 +2303,7 @@ sap.ui.define([
 		}
 
 		mExpectedMessages[""].$count = 1;
-		this.oRequestorMock.expects("reportBoundMessages")
+		this.oModelInterfaceMock.expects("reportBoundMessages")
 			.withExactArgs(sOriginalResourcePath, mExpectedMessages, undefined);
 
 		// code under test
@@ -4074,7 +4074,10 @@ sap.ui.define([
 	//*********************************************************************************************
 	QUnit.test("CollectionCache: delete created entity", function (assert) {
 		// real requestor to avoid reimplementing callback handling of _Requestor.request
-		var oRequestor = _Requestor.create("/~/", {getGroupProperty : defaultGetGroupProperty}),
+		var oRequestor = _Requestor.create("/~/", {
+				getGroupProperty : defaultGetGroupProperty,
+				reportBoundMessages : function () {}
+			}),
 			oCache = _Cache.create(oRequestor, "Employees"),
 			fnCallback = this.spy(),
 			oCreatedPromise,
@@ -4111,7 +4114,7 @@ sap.ui.define([
 					{"If-Match" : sinon.match.same(oCacheData)},
 					undefined, undefined, undefined, undefined, "Employees('4711')")
 				.returns(Promise.resolve().then(function () {
-					that.mock(oRequestor).expects("reportBoundMessages")
+					that.mock(oRequestor.oModelInterface).expects("reportBoundMessages")
 						.withExactArgs(oCache.sResourcePath, [], ["('4711')"]);
 				}));
 
@@ -4953,7 +4956,7 @@ sap.ui.define([
 					{"If-Match" : sinon.match.same(oEntity)},
 					undefined, undefined, undefined, undefined, "Employees('42')")
 				.returns(Promise.resolve().then(function () {
-					that.oRequestorMock.expects("reportBoundMessages")
+					that.oModelInterfaceMock.expects("reportBoundMessages")
 						.withExactArgs(oCache.sResourcePath, [], [""]);
 				}));
 
@@ -5475,7 +5478,7 @@ sap.ui.define([
 		oCacheMock.expects("calculateKeyPredicate")
 			.withExactArgs(sinon.match.same(aResult[1].list3[2]),
 				sinon.match.same(mTypeForMetaPath), "/FOO/list3");
-		this.oRequestorMock.expects("reportBoundMessages").never();
+		this.oModelInterfaceMock.expects("reportBoundMessages").never();
 
 		// code under test
 		oCache.visitResponse({value : aResult}, mTypeForMetaPath, "/FOO", undefined, undefined, 0);

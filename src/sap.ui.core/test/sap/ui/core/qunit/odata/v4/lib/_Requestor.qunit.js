@@ -717,7 +717,7 @@ sap.ui.define([
 						"Content-Type" : "application/json;charset=UTF-8;IEEE754Compatible=true"
 					}, JSON.stringify(oChangedPayload), "~Employees~?custom=value")
 				.resolves(oResponse);
-			this.mock(oRequestor).expects("reportUnboundMessages")
+			this.mock(oRequestor).expects("reportUnboundMessagesAsJSON")
 				.withExactArgs(oResponse.resourcePath, sinon.match.same(oResponse.messages));
 			this.mock(oRequestor).expects("doConvertResponse")
 				.withExactArgs(sinon.match.same(oResponse.body), "meta/path")
@@ -1573,7 +1573,7 @@ sap.ui.define([
 				oRequestPromise = oRequestor.request(oFixture.method, "Products(42)",
 					new _GroupLock("group1"));
 
-			oRequestorMock.expects("reportUnboundMessages")
+			oRequestorMock.expects("reportUnboundMessagesAsJSON")
 				.withExactArgs("Products(42)", sinon.match.same(mHeaders["SAP-Messages"]));
 			oRequestorMock.expects("sendBatch") // arguments don't matter
 				.resolves([createResponse(oFixture.response, mHeaders)]);
@@ -2673,7 +2673,7 @@ sap.ui.define([
 		var oPromise = {},
 			oRequestor = _Requestor.create("/", oModelInterface);
 
-		this.mock(oRequestor).expects("fetchMetadata")
+		this.mock(oRequestor.oModelInterface).expects("fetchMetadata")
 			.withExactArgs("/EMPLOYEES/EMPLOYEE_2_TEAM/").returns(oPromise);
 
 		// code under test
@@ -2685,7 +2685,7 @@ sap.ui.define([
 		var oPromise = {},
 			oRequestor = _Requestor.create("/", oModelInterface);
 
-		this.mock(oRequestor).expects("fetchMetadata")
+		this.mock(oRequestor.oModelInterface).expects("fetchMetadata")
 			.withExactArgs("/EMPLOYEES/EMPLOYEE_2_TEAM/$Type").returns(oPromise);
 
 		// code under test
@@ -2970,20 +2970,6 @@ sap.ui.define([
 	});
 
 	//*****************************************************************************************
-	QUnit.test("fetchMetadata", function (assert) {
-		var sPath = {/*{string} any metadata path */},
-			oPromise = {},
-			oRequestor = _Requestor.create("/", oModelInterface);
-
-		this.mock(oModelInterface).expects("fetchMetadata")
-			.withExactArgs(sinon.match.same(sPath))
-			.returns(oPromise);
-
-		// code under test
-		assert.strictEqual(oRequestor.fetchMetadata(sPath), oPromise);
-	});
-
-	//*****************************************************************************************
 	QUnit.test("reportUnboundMessages", function (assert) {
 		var sMessages = '[{"code" : "42"}]',
 			oRequestor = _Requestor.create("/", oModelInterface),
@@ -2993,7 +2979,7 @@ sap.ui.define([
 			.withExactArgs(sResourcePath, [{code : "42"}]);
 
 		// code under test
-		oRequestor.reportUnboundMessages(sResourcePath, sMessages);
+		oRequestor.reportUnboundMessagesAsJSON(sResourcePath, sMessages);
 	});
 
 	//*****************************************************************************************
@@ -3004,22 +2990,7 @@ sap.ui.define([
 			.withExactArgs("foo(42)/to_bar", null);
 
 		// code under test
-		oRequestor.reportUnboundMessages("foo(42)/to_bar");
-	});
-
-	//*****************************************************************************************
-	QUnit.test("reportBoundMessages", function (assert) {
-		var aKeyPredicates = [/*any array of key predicates*/],
-			mPathToMessages = {/*any map of resource path to message object*/},
-			oRequestor = _Requestor.create("/", oModelInterface),
-			sResourcePath = {/*{string} any resource path*/};
-
-		this.mock(oModelInterface).expects("reportBoundMessages")
-			.withExactArgs(sinon.match.same(sResourcePath), sinon.match.same(mPathToMessages),
-				sinon.match.same(aKeyPredicates));
-
-		// code under test
-		oRequestor.reportBoundMessages(sResourcePath, mPathToMessages, aKeyPredicates);
+		oRequestor.reportUnboundMessagesAsJSON("foo(42)/to_bar");
 	});
 
 	//*****************************************************************************************
