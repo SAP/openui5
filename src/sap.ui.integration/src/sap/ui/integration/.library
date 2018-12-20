@@ -20,18 +20,18 @@
   <appData>
     <!-- excludes for the JSDoc -->
     <jsdoc xmlns="http://www.sap.com/ui5/buildext/jsdoc" >
-        <exclude name="sap.f.js." />
+        <exclude name="sap.ui.integration.js." />
     </jsdoc>
     <!-- excludes for the JSCoverage -->
     <jscoverage xmlns="http://www.sap.com/ui5/buildext/jscoverage" >
-        <exclude name="sap.f.js." />
+        <exclude name="sap.ui.integration.js." />
     </jscoverage>
 
     <documentation xmlns="http://www.sap.com/ui5/buildext/documentation"
-        indexUrl="../../../test-resources/sap/f/demokit/docuindex.json"
+        indexUrl="../../../../test-resources/sap/ui/integration/demokit/docuindex.json"
         resolve="lib" />
     <releasenotes xmlns="http://www.sap.com/ui5/buildext/releasenotes"
-        url="../../../test-resources/sap/f/relnotes/changes-{major}.{minor}.json"
+        url="../../../../test-resources/sap/ui/integration/relnotes/changes-{major}.{minor}.json"
         resolve="lib" />
 
     <ownership xmlns="http://www.sap.com/ui5/buildext/ownership">
