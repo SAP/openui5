@@ -978,7 +978,7 @@
 					if (iHidesCounter < iDesiredHides) {
 						setTimeout(function () {
 							oSplitContainer.hideMaster();
-						});
+						}, 1000);
 					}
 				};
 
@@ -991,7 +991,7 @@
 					if (iHidesCounter < iDesiredHides) {
 						setTimeout(function () {
 							oSplitContainer.showMaster();
-						});
+						}, 1000);
 					} else {
 						oApp.destroy();
 						done();
