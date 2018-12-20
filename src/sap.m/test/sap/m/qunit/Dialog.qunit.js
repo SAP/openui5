@@ -1684,18 +1684,32 @@ sap.ui.define([
 		this.oDialog.destroy();
 	});
 
-	QUnit.module("Dialog sizing");
+	QUnit.module("Dialog sizing", {
+		beforeEach: function() {
+			this.oDialog = new Dialog({
+				title: "Header",
+				content: new Text({text: "Content"})
+			});
+		},
+		afterEach: function() {
+			this.oDialog.destroy();
+		}
+	});
 
 	QUnit.test("Height should be 'auto' if content fits", function (assert) {
-		this.oDialog = new Dialog({
-			title: "Header",
-			content: new Text({text: "Content"})
-		});
 		this.oDialog.open();
 		this.clock.tick(500);
 
 		// assert
 		assert.strictEqual(this.oDialog.$('cont')[0].style.height, "auto", "Height is auto when content fits");
-		this.oDialog.destroy();
+	});
+
+	QUnit.test("Height should be set, when the dialog is stretched", function (assert) {
+		this.oDialog.setStretch(true);
+		this.oDialog.open();
+		this.clock.tick(500);
+
+		// assert
+		assert.notEqual(this.oDialog.$('cont')[0].style.height, "auto", "Height is set when stretch=true");
 	});
 });
