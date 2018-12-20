@@ -319,7 +319,7 @@ sap.ui.define([
 					openUi5Version: sap.ui.version,
 					isOpenUI5: bOpenUI5,
 					isSnapshotVersion: bSnapshot,
-					isDevVersion: bSnapshot || oVersion.getMinor() % 2 === 1,
+					isDevVersion: bSnapshot,
 					isBetaVersion: !bOpenUI5 && !bSnapshot && /-beta$/i.test(sVersionSuffix),
 					isInternal: !!bIsInternal,
 					libraries: oVersionInfo.libraries,
