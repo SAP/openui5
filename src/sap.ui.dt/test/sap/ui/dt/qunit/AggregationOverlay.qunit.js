@@ -51,7 +51,8 @@ function(
 	});
 
 	QUnit.module("Given that an AggregationOverlay is created for an aggregation with domRef DT metadata", {
-		beforeEach: function() {
+		beforeEach: function(assert) {
+			var fnDone = assert.async();
 			this.oPage = new Page();
 			this.oPage.placeAt("qunit-fixture");
 			sap.ui.getCore().applyChanges();
@@ -66,6 +67,9 @@ function(
 				})
 			});
 			Overlay.getOverlayContainer().append(this.oAggregationOverlay.render());
+			this.oAggregationOverlay.attachEventOnce("geometryChanged", function() {
+				fnDone();
+			});
 			this.oAggregationOverlay.applyStyles();
 		},
 		afterEach: function() {
