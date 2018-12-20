@@ -12,18 +12,14 @@
 			data-sap-ui-async="true"
 			data-sap-ui-compatversion="edge"
 			data-sap-ui-libs="sap.m"
-			data-sap-ui-oninit="module:sap/ui/core/sample/odata/v4/SalesOrderTP100_V4/Opa.qunit"
 			data-sap-ui-resourceroots='{"sap.ui.core.sample":"test-resources/sap/ui/core/demokit/sample"}'>
 		</script>
 
 		<link href="resources/sap/ui/thirdparty/qunit-2.css" media="screen" rel="stylesheet">
 		<script src="resources/sap/ui/thirdparty/qunit-2.js"></script>
 		<script src="resources/sap/ui/qunit/qunit-junit.js"></script>
-		<script src="resources/sap/ui/qunit/QUnitUtils.js"></script>
-		<script src="resources/sap/ui/qunit/qunit-coverage.js"
-			data-cover-flags="branchTracking"
-			data-sap-ui-cover-only="[/odata/type/,/odata/v4/]"></script>
-		<script src="resources/sap/ui/test/BranchTracking.js"></script>
+		<script src="test-resources/sap/ui/core/demokit/sample/odata/v4/SalesOrderTP100_V4/Opa.qunit.js">
+		</script>
 	</head>
 	<body>
 		<div id="qunit"></div>
