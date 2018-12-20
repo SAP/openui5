@@ -26,7 +26,8 @@ sap.ui.define([
 	'./TableDragAndDropExtension',
 	"./TableRenderer",
 	"sap/ui/thirdparty/jquery",
-	"sap/base/Log"
+	"sap/base/Log",
+	"sap/base/util/UriParameters"
 ],
 	function(
 		Device,
@@ -51,7 +52,8 @@ sap.ui.define([
 		TableDragAndDropExtension,
 		TableRenderer,
 		jQuery,
-		Log
+		Log,
+		UriParameters
 	) {
 	"use strict";
 
@@ -814,7 +816,7 @@ sap.ui.define([
 
 		this._attachExtensions();
 
-		this._bLazyRowCreationEnabled = jQuery.sap.getUriParameters().get('sap-ui-xx-table-lazyrowcreation') !== "false"; // default true
+		this._bLazyRowCreationEnabled = new UriParameters(window.location.href).get('sap-ui-xx-table-lazyrowcreation') !== "false"; // default true
 		this._bRowsBeingBound = false;
 		this._bContextsRequested = false;
 		this._bContextsAvailable = false;
