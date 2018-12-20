@@ -2,12 +2,10 @@
  * ${copyright}
  */
 sap.ui.define([
-	"sap/ui/core/sample/common/Helper",
 	"sap/ui/test/Opa5",
-	"sap/ui/test/TestUtils",
 	"sap/ui/test/actions/EnterText",
 	"sap/ui/test/actions/Press"
-], function (Helper, Opa5, TestUtils, EnterText, Press) {
+], function (Opa5, EnterText, Press) {
 	"use strict";
 	var sViewName = "sap.ui.core.sample.ViewTemplate.types.Types";
 
@@ -69,6 +67,15 @@ sap.ui.define([
 							Opa5.assert.ok(true, "Button with ID: " + sID + " pressed");
 						},
 						viewName : sViewName
+					});
+				},
+				pressMessagePopoverCloseButton : function () {
+					return this.waitFor({
+						controlType : "sap.m.MessagePopover",
+						success : function (aMessagePopover) {
+							aMessagePopover[0].close();
+							Opa5.assert.ok(true, "MessagePopover closed");
+						}
 					});
 				},
 				pressV4Button : function () {

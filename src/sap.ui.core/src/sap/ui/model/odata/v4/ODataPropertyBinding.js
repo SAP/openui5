@@ -6,17 +6,19 @@
 sap.ui.define([
 	"./ODataBinding",
 	"./lib/_Cache",
+	"./lib/_Helper",
 	"sap/base/Log",
 	"sap/ui/base/SyncPromise",
 	"sap/ui/model/ChangeReason",
 	"sap/ui/model/odata/v4/Context",
 	"sap/ui/model/PropertyBinding"
-], function (asODataBinding, _Cache, Log, SyncPromise, ChangeReason, Context, PropertyBinding) {
+], function (asODataBinding, _Cache, _Helper, Log, SyncPromise, ChangeReason, Context,
+		PropertyBinding) {
 	"use strict";
 	/*eslint max-nested-callbacks: 0 */
 
 	var sClassName = "sap.ui.model.odata.v4.ODataPropertyBinding",
-		oEmptyQueryOptionsPromise = SyncPromise.resolve({}),
+		aImmutableEmptyArray = Object.freeze([]),
 		mSupportedEvents = {
 			AggregatedDataStateChange : true,
 			change : true,
@@ -208,6 +210,10 @@ sap.ui.define([
 	ODataPropertyBinding.prototype.checkUpdate = function (bForceUpdate, sChangeReason, sGroupId,
 			vValue) {
 		var bDataRequested = false,
+			iHashHash = this.sPath.indexOf("##"),
+			bIsMeta = iHashHash >= 0,
+			oMetaModel = this.oModel.getMetaModel(),
+			mParametersForDataReceived = {data : {}},
 			sResolvedPath = this.oModel.resolve(this.sPath, this.oContext),
 			oCallToken = {
 				// a resolved binding fires a change event if checkUpdate is called at least once
@@ -216,7 +222,6 @@ sap.ui.define([
 					&& (bForceUpdate
 						|| this.oCheckUpdateCallToken && this.oCheckUpdateCallToken.forceUpdate)
 			},
-			mParametersForDataReceived = {data : {}},
 			vType = this.oType, // either the type or a promise resolving with it
 			that = this;
 
@@ -227,6 +232,8 @@ sap.ui.define([
 		if (arguments.length < 4) {
 			// Use Promise to become async so that only the latest sync call to checkUpdate wins
 			vValue = Promise.resolve(this.oCachePromise.then(function (oCache) {
+				var sDataPath, sMetaPath;
+
 				if (oCache) {
 					return oCache.fetchValue(that.lockGroup(sGroupId || that.getGroupId()),
 						/*sPath*/undefined, function () {
@@ -234,20 +241,35 @@ sap.ui.define([
 							that.fireDataRequested();
 						}, that);
 				}
-				if (!that.oContext) {
+				if (that.bRelative && !that.oContext) {
 					// binding is unresolved or context was reset by another call to checkUpdate
 					return undefined;
 				}
-				if (that.oContext.getIndex() === Context.VIRTUAL) {
+				if (that.bRelative && that.oContext.getIndex
+						&& that.oContext.getIndex() === Context.VIRTUAL) {
 					// virtual parent context: no change event
 					oCallToken.forceUpdate = false;
 				}
-				return that.oContext.fetchValue(that.sPath, that);
+				if (!bIsMeta) { // relative data binding
+					return that.oContext.fetchValue(that.sPath, that);
+				} // else: metadata binding
+				sDataPath = that.sPath.slice(0, iHashHash);
+				sMetaPath = that.sPath.slice(iHashHash + 2);
+				if (sMetaPath[0] === "/") {
+					sMetaPath = "." + sMetaPath;
+				}
+				return oMetaModel.fetchObject(sMetaPath,
+					oMetaModel.getMetaContext(that.oModel.resolve(sDataPath, that.oContext)));
 			}).then(function (vValue) {
-				if (!vValue || typeof vValue !== "object"
-					|| (that.sInternalType === "any"
-						&& that.sPath[that.sPath.lastIndexOf("/") + 1] === "#")) {
+				if (!vValue || typeof vValue !== "object") {
 					return vValue;
+				}
+				if (that.sInternalType === "any") {
+					if (bIsMeta) {
+						return vValue;
+					} else if (that.bRelative){
+						return _Helper.publicClone(vValue);
+					}
 				}
 				Log.error("Accessed value is not primitive", sResolvedPath, sClassName);
 			}, function (oError) {
@@ -260,8 +282,9 @@ sap.ui.define([
 				}
 				mParametersForDataReceived = {error : oError};
 			}));
-			if (sResolvedPath && !this.bHasDeclaredType && this.sInternalType !== "any") {
-				vType = this.oModel.getMetaModel().fetchUI5Type(sResolvedPath);
+			if (sResolvedPath && !this.bHasDeclaredType && this.sInternalType !== "any"
+					&& !bIsMeta) {
+				vType = oMetaModel.fetchUI5Type(sResolvedPath);
 			}
 		}
 		return SyncPromise.all([vValue, vType]).then(function (aResults) {
@@ -345,7 +368,15 @@ sap.ui.define([
 	 * @private
 	 */
 	ODataPropertyBinding.prototype.doFetchQueryOptions = function () {
-		return this.isRoot() ? SyncPromise.resolve(this.mQueryOptions) : oEmptyQueryOptionsPromise;
+		return this.isRoot() ? SyncPromise.resolve(this.mQueryOptions) : SyncPromise.resolve({});
+	};
+
+	/**
+	 * @override
+	 * @see sap.ui.model.odata.v4.ODataBinding#getDependentBindings
+	 */
+	ODataPropertyBinding.prototype.getDependentBindings = function () {
+		return aImmutableEmptyArray;
 	};
 
 	/**
@@ -400,6 +431,22 @@ sap.ui.define([
 			throw new Error(this + " is not resolved yet");
 		}
 		return this.getModel().getMetaModel().getValueListType(sResolvedPath);
+	};
+
+	/**
+	 * @override
+	 * @see sap.ui.model.odata.v4.ODataBinding#hasPendingChangesInDependents
+	 */
+	ODataPropertyBinding.prototype.hasPendingChangesInDependents = function (oContext) {
+		return false;
+	};
+
+	/**
+	 * @override
+	 * @see sap.ui.model.odata.v4.ODataBinding#isMeta
+	 */
+	ODataPropertyBinding.prototype.isMeta = function () {
+		return this.sPath.includes("##");
 	};
 
 	/**
@@ -497,6 +544,14 @@ sap.ui.define([
 			throw new Error(this + " is not resolved yet");
 		}
 		return this.getModel().getMetaModel().requestValueListType(sResolvedPath);
+	};
+
+	/**
+	 * @override
+	 * @see sap.ui.model.odata.v4.ODataBinding#resetChangesInDependents
+	 */
+	ODataPropertyBinding.prototype.resetChangesInDependents = function () {
+		// nothing to do
 	};
 
 	/**
@@ -700,6 +755,12 @@ sap.ui.define([
 	ODataPropertyBinding.prototype.suspend = function () {
 		throw new Error("Unsupported operation: suspend");
 	};
+
+	/**
+	 * @override
+	 * @see sap.ui.model.odata.v4.ODataBinding#visitSideEffects
+	 */
+	ODataPropertyBinding.prototype.visitSideEffects = function () {};
 
 	return ODataPropertyBinding;
 });

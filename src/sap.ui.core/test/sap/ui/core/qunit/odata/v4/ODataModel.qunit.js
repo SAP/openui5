@@ -412,13 +412,13 @@ sap.ui.define([
 
 		oExpectedCreate
 			.withExactArgs(getServiceUrl(), {
-					fnFetchEntityContainer : sinon.match.same(fnFetchEntityContainer),
-					fnFetchMetadata : sinon.match.same(fnFetchMetadata),
-					fnGetGroupProperty : sinon.match.same(fnGetGroupProperty),
+					fetchEntityContainer : sinon.match.same(fnFetchEntityContainer),
+					fetchMetadata : sinon.match.same(fnFetchMetadata),
+					getGroupProperty : sinon.match.same(fnGetGroupProperty),
 					lockGroup : sinon.match.same(fnLockGroup),
-					fnOnCreateGroup : sinon.match.func,
-					fnReportBoundMessages : sinon.match.same(fnReportBoundMessages),
-					fnReportUnboundMessages : sinon.match.same(fnReportUnboundMessages)
+					onCreateGroup : sinon.match.func,
+					reportBoundMessages : sinon.match.same(fnReportBoundMessages),
+					reportUnboundMessages : sinon.match.same(fnReportUnboundMessages)
 				},
 				{"Accept-Language" : "ab-CD"},
 				{"sap-client" : "123"}, "4.0")
@@ -454,10 +454,10 @@ sap.ui.define([
 		this.mock(sap.ui.getCore()).expects("addPrerenderingTask")
 			.withExactArgs(fnSubmitAuto);
 
-		// code under test - call fnOnCreateGroup
+		// code under test - call onCreateGroup
 		oModelInterface = oExpectedCreate.firstCall.args[1];
-		oModelInterface.fnOnCreateGroup("$auto");
-		oModelInterface.fnOnCreateGroup("foo");
+		oModelInterface.onCreateGroup("$auto");
+		oModelInterface.onCreateGroup("foo");
 	});
 
 	//*********************************************************************************************

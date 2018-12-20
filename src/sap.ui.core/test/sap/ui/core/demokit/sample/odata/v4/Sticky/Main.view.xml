@@ -21,8 +21,8 @@
 				<Button enabled="{= ${ui>/bSticky}}" id="discard" press="onDiscard" text="Discard"
 					tooltip="Discard Session"/>
 				<Button id="messagesButton" icon="sap-icon://message-popup" tooltip="Show messages"
-					press="onMessagePopoverPress" text="{ui>/iMessages}"
-					type="{= (${ui>/iMessages} ? 'Emphasized' : 'Default')}"/>
+					press="onToggleMessagePopover" text="{ui>/iMessages}"
+					type="{= ${ui>/iMessages} ? 'Emphasized' : 'Default' }"/>
 			</Toolbar>
 			</headerToolbar>
 			<columns>

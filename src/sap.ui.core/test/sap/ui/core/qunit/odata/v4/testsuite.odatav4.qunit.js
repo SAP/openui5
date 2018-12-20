@@ -55,89 +55,39 @@ sap.ui.define(function () {
 			"lib/_V2MetadataConverter" : {},
 			"lib/_V2Requestor" : {},
 			"lib/_V4MetadataConverter" : {},
+			// the following tests set autostart=false because they require modules asynchronously
+			// and start QUnit on their own
 			"OPA.ListBinding" : {
-				module : [
-					"sap/ui/core/sample/common/pages/Any",
-					"sap/ui/core/sample/odata/v4/ListBinding/Opa.qunit",
-					"sap/ui/core/sample/odata/v4/ListBinding/pages/Main"
-				],
-				coverage : {
-					only : "[/odata/type/,/odata/v4/]"
-				}
+				autostart : false,
+				module : ["sap/ui/core/sample/odata/v4/ListBinding/Opa.qunit"]
 			},
 			"OPA.ListBindingTemplate" : {
-				module : [
-					"sap/ui/core/sample/common/pages/Any",
-					"sap/ui/core/sample/odata/v4/ListBindingTemplate/Opa.qunit"
-				],
-				coverage : {
-					only : "[/odata/type/,/odata/v4/,XMLPreprocessor]"
-				}
+				autostart : false,
+				module : ["sap/ui/core/sample/odata/v4/ListBindingTemplate/Opa.qunit"]
 			},
 			"OPA.SalesOrders" : {
-				module : [
-					"sap/ui/core/sample/common/pages/Any",
-					"sap/ui/core/sample/odata/v4/SalesOrders/Opa.SalesOrderMessageHandling.qunit",
-					"sap/ui/core/sample/odata/v4/SalesOrders/Opa.SalesOrderTypeDeterminationAndDelete.qunit",
-					"sap/ui/core/sample/odata/v4/SalesOrders/Opa.SalesOrderChangeContext.qunit",
-					"sap/ui/core/sample/odata/v4/SalesOrders/Opa.SalesOrderCreate.qunit",
-					"sap/ui/core/sample/odata/v4/SalesOrders/Opa.SalesOrderCreateRelative.qunit",
-					"sap/ui/core/sample/odata/v4/SalesOrders/Opa.SalesOrderWriteNonDeferredGroup.qunit",
-					"sap/ui/core/sample/odata/v4/SalesOrders/pages/Main"
-				],
-				coverage : {
-					only : "[/odata/type/,/odata/v4/]"
-				}
+				autostart : false,
+				module : ["sap/ui/core/sample/odata/v4/SalesOrders/Opa.qunit"]
 			},
 			"OPA.SalesOrdersTemplate" : {
-				module : [
-					"sap/ui/core/sample/common/pages/Any",
-					"sap/ui/core/sample/odata/v4/SalesOrdersTemplate/Opa.qunit",
-					"sap/ui/core/sample/odata/v4/SalesOrdersTemplate/pages/Main"
-				],
-				coverage : {
-					only : "[/odata/type/,/odata/v4/,XMLPreprocessor]"
-				}
+				autostart : false,
+				module : ["sap/ui/core/sample/odata/v4/SalesOrdersTemplate/Opa.qunit"]
 			},
 			"OPA.SalesOrderTP100_V2" : {
-				module : [
-					"sap/ui/core/sample/common/pages/Any",
-					"sap/ui/core/sample/odata/v4/SalesOrderTP100_V2/Opa.qunit",
-					"sap/ui/core/sample/odata/v4/SalesOrderTP100_V2/pages/Main"
-				],
-				coverage : {
-					only : "[/odata/type/,/odata/v4/]"
-				}
+				autostart : false,
+				module : ["sap/ui/core/sample/odata/v4/SalesOrderTP100_V2/Opa.qunit"]
 			},
 			"OPA.SalesOrderTP100_V4" : {
-				module : [
-					"sap/ui/core/sample/common/pages/Any",
-					"sap/ui/core/sample/odata/v4/SalesOrderTP100_V4/Opa.qunit",
-					"sap/ui/core/sample/odata/v4/SalesOrderTP100_V4/pages/Main"
-				],
-				coverage : {
-					only : "[/odata/type/,/odata/v4/]"
-				}
+				autostart : false,
+				module : ["sap/ui/core/sample/odata/v4/SalesOrderTP100_V4/Opa.qunit"]
 			},
 			"OPA.Sticky" : {
-				module : [
-					"sap/ui/core/sample/common/pages/Any",
-					"sap/ui/core/sample/odata/v4/Sticky/Opa.qunit",
-					"sap/ui/core/sample/odata/v4/Sticky/pages/Main"
-				],
-				coverage : {
-					only : "[/odata/type/,/odata/v4/]"
-				}
+				autostart : false,
+				module : ["sap/ui/core/sample/odata/v4/Sticky/Opa.qunit"]
 			},
 			"OPA.ViewTemplate.Types" : {
-				module : [
-					"sap/ui/core/sample/common/pages/Any",
-					"sap/ui/core/sample/ViewTemplate/types/Opa.qunit",
-					"sap/ui/core/sample/ViewTemplate/types/pages/Main"
-				],
-				coverage : {
-					only : "[/odata/type/,/odata/v4/,ODataMetaModel,XMLPreprocessor,AnnotationHelper]"
-				}
+				autostart : false,
+				module : ["sap/ui/core/sample/ViewTemplate/types/Opa.qunit"]
 			}
 		}
 	};

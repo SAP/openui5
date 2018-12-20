@@ -54,23 +54,23 @@ sap.ui.define([
 	 *   {@link sap.ui.model.odata.v4.lib._Helper.buildQuery}; used only to request the CSRF token
 	 * @param {object} oModelInterface
 	 *   A interface allowing to call back to the owning model
-	 * @param {function} oModelInterface.fnFetchEntityContainer
+	 * @param {function} oModelInterface.fetchEntityContainer
 	 *   A promise which is resolved with the $metadata "JSON" object as soon as the entity
 	 *   container is fully available, or rejected with an error.
-	 * @param {function} oModelInterface.fnFetchMetadata
+	 * @param {function} oModelInterface.fetchMetadata
 	 *   A function that returns a SyncPromise which resolves with the metadata instance for a
 	 *   given meta path
-	 * @param {function} oModelInterface.fnGetGroupProperty
+	 * @param {function} oModelInterface.getGroupProperty
 	 *   A function called with parameters <code>sGroupId</code> and <code>sPropertyName</code>
 	 *   returning the property value in question. Only 'submit' is supported for <code>
 	 *   sPropertyName</code>. Supported property values are: 'API', 'Auto' and 'Direct'.
-	 * @param {function} oModelInterface.fnReportBoundMessages
+	 * @param {function} oModelInterface.reportBoundMessages
 	 *   A function for reporting bound messages; see {@link #reportBoundMessages} for the signature
 	 *   of this function
-	 * @param {function} oModelInterface.fnReportUnboundMessages
+	 * @param {function} oModelInterface.reportUnboundMessages
 	 *   A function called with parameters <code>sResourcePath</code> and <code>sMessages</code>
 	 *   reporting unbound OData messages to the {@link sap.ui.core.message.MessageManager}.
-	 * @param {function (string)} [oModelInterface.fnOnCreateGroup]
+	 * @param {function (string)} [oModelInterface.onCreateGroup]
 	 *   A callback function that is called with the group name as parameter when the first
 	 *   request is added to a group
 	 *
@@ -592,7 +592,7 @@ sap.ui.define([
 	 * @private
 	 */
 	Requestor.prototype.fetchMetadata = function (sMetaPath) {
-		return this.oModelInterface.fnFetchMetadata(sMetaPath);
+		return this.oModelInterface.fetchMetadata(sMetaPath);
 	};
 
 	/**
@@ -642,7 +642,7 @@ sap.ui.define([
 	 * @private
 	 */
 	Requestor.prototype.getGroupSubmitMode = function (sGroupId) {
-		return this.oModelInterface.fnGetGroupProperty(sGroupId, "submit");
+		return this.oModelInterface.getGroupProperty(sGroupId, "submit");
 	};
 
 	/**
@@ -673,8 +673,8 @@ sap.ui.define([
 			aChangeSet.iSerialNumber = 0;
 			aRequests = this.mBatchQueue[sGroupId] = [aChangeSet];
 			aRequests.iChangeSet = 0; // the index of the current change set in this queue
-			if (this.oModelInterface.fnOnCreateGroup) {
-				this.oModelInterface.fnOnCreateGroup(sGroupId);
+			if (this.oModelInterface.onCreateGroup) {
+				this.oModelInterface.onCreateGroup(sGroupId);
 			}
 		}
 		return aRequests;
@@ -1022,7 +1022,7 @@ sap.ui.define([
 	 */
 	Requestor.prototype.reportBoundMessages = function (sResourcePath, mPathToODataMessages,
 			aCachePaths) {
-		this.oModelInterface.fnReportBoundMessages(sResourcePath, mPathToODataMessages,
+		this.oModelInterface.reportBoundMessages(sResourcePath, mPathToODataMessages,
 			aCachePaths);
 	};
 
@@ -1037,7 +1037,7 @@ sap.ui.define([
 	 * @private
 	 */
 	Requestor.prototype.reportUnboundMessages = function (sResourcePath, sMessages) {
-		this.oModelInterface.fnReportUnboundMessages(sResourcePath, JSON.parse(sMessages || null));
+		this.oModelInterface.reportUnboundMessages(sResourcePath, JSON.parse(sMessages || null));
 	};
 
 	/**
@@ -1507,24 +1507,24 @@ sap.ui.define([
 		 *   relative resource paths (see {@link #request})
 		 * @param {object} oModelInterface
 		 *   An interface allowing to call back to the owning model
-		 * @param {function} oModelInterface.fnFetchEntityContainer
+		 * @param {function} oModelInterface.fetchEntityContainer
 		 *   A promise which is resolved with the $metadata "JSON" object as soon as the entity
 		 *   container is fully available, or rejected with an error.
-		 * @param {function} oModelInterface.fnFetchMetadata
+		 * @param {function} oModelInterface.fetchMetadata
 		 *   A function that returns a SyncPromise which resolves with the metadata instance for a
 		 *   given meta path
-		 * @param {function} oModelInterface.fnGetGroupProperty
+		 * @param {function} oModelInterface.getGroupProperty
 		 *   A function called with parameters <code>sGroupId</code> and <code>sPropertyName</code>
 		 *   returning the property value in question. Only 'submit' is supported for <code>
 		 *   sPropertyName</code>. Supported property values are: 'API', 'Auto' and 'Direct'.
-		 * @param {function (string)} [oModelInterface.fnOnCreateGroup]
+		 * @param {function (string)} [oModelInterface.onCreateGroup]
 		 *   A callback function that is called with the group name as parameter when the first
 		 *   request is added to a group
 		 * @param {function} oModelInterface.lockGroup
 		 *   A function to create or modify a lock for a group
-		 * @param {function} oModelInterface.fnReportBoundMessages
+		 * @param {function} oModelInterface.reportBoundMessages
 		 *   A function to report bound OData messages
-		 * @param {function (object[])} oModelInterface.fnReportUnboundMessages
+		 * @param {function (object[])} oModelInterface.reportUnboundMessages
 		 *   A function to report unbound OData messages contained in the <code>sap-messages</code>
 		 *   response header
 		 * @param {object} [mHeaders={}]

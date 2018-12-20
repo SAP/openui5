@@ -175,9 +175,6 @@ sap.ui.define(function() {
 						"sap/ui/core/qunit/analytics" : "test-resources/sap/ui/core/qunit/analytics"
 					}
 				},
-				qunit: {
-					version: 1
-				},
 				sinon: {
 					version: 1
 				},
@@ -191,9 +188,6 @@ sap.ui.define(function() {
 					paths : {
 						"sap/ui/core/qunit/analytics" : "test-resources/sap/ui/core/qunit/analytics"
 					}
-				},
-				qunit: {
-					version: 1
 				},
 				sinon: {
 					version: 1

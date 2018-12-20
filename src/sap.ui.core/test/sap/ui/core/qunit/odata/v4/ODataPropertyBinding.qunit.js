@@ -8,6 +8,7 @@ sap.ui.define([
 	"sap/ui/base/SyncPromise",
 	"sap/ui/model/BindingMode",
 	"sap/ui/model/ChangeReason",
+	"sap/ui/model/Context",
 	"sap/ui/model/PropertyBinding",
 	"sap/ui/model/odata/type/String",
 	"sap/ui/model/odata/v4/Context",
@@ -18,9 +19,9 @@ sap.ui.define([
 	"sap/ui/model/odata/v4/lib/_GroupLock",
 	"sap/ui/model/odata/v4/lib/_Helper",
 	"sap/ui/test/TestUtils"
-], function (jQuery, Log, ManagedObject, SyncPromise, BindingMode, ChangeReason, PropertyBinding,
-		TypeString, Context, asODataBinding, ODataModel, ODataPropertyBinding, _Cache, _GroupLock,
-		_Helper, TestUtils) {
+], function (jQuery, Log, ManagedObject, SyncPromise, BindingMode, ChangeReason, BaseContext,
+		PropertyBinding, TypeString, Context, asODataBinding, ODataModel, ODataPropertyBinding,
+		_Cache, _GroupLock, _Helper, TestUtils) {
 	/*global QUnit, sinon */
 	/*eslint max-nested-callbacks: 0, no-warning-comments: 0 */
 	"use strict";
@@ -348,6 +349,7 @@ sap.ui.define([
 				oBinding.attachChange(function () {
 					bGotChangeEvent = true;
 				});
+				that.mock(that.oModel.getMetaModel()).expects("getMetaContext").never();
 				// checkDataState is called independently of bForceUpdate
 				that.mock(oBinding).expects("checkDataState").withExactArgs();
 
@@ -379,44 +381,87 @@ sap.ui.define([
 	});
 
 	//*********************************************************************************************
-	["any", "int"].forEach(function (sType) {
-		[{
-			path : "/EntitySet('foo')/#com.sap.foo.AcFoo"
-		}, {
-			path : "#com.sap.foo.AcFoo",
-			contextPath: "/EntitySet('foo')"
-		}].forEach(function (oFixture) {
-			QUnit.test("checkUpdate: " + (oFixture.contextPath ? "relative path" : "absolute path")
-				+ ", targetType: " + sType + " - allow non primitive value for advertised actions",
-				function (assert) {
-					var oCacheMock = this.getPropertyCacheMock(),
-						oContext = oFixture.contextPath
-							? this.oModel.createBindingContext("/EntitySet('foo')")
-							: undefined,
-						oBinding = this.oModel.bindProperty(oFixture.path, oContext),
-						sResolvedPath = this.oModel.resolve(oFixture.path, oContext),
-						vValue = {};
+	QUnit.test("checkUpdate with object value, success", function (assert) {
+		var oContext = Context.create(this.oModel, {}, "/EntitySet('foo')"),
+			sPath = "nonPrimitive",
+			oBinding = this.oModel.bindProperty(sPath, oContext),
+			vValue = {/* non-primitive */},
+			vValueClone = {};
 
-					oBinding.setType(null, sType);
-					oCacheMock.expects("fetchValue")
-						.withExactArgs(new _GroupLock("$auto", undefined, oBinding, 1), undefined,
-							sinon.match.func, sinon.match.same(oBinding))
-						.returns(SyncPromise.resolve(vValue));
-					if (sType !== "any") {
-						this.mock(this.oModel.getMetaModel()).expects("fetchUI5Type")
-							.withExactArgs(sResolvedPath)
-							.returns(SyncPromise.resolve());
-						this.oLogMock.expects("error")
-							.withExactArgs("Accessed value is not primitive",
-								sResolvedPath, sClassName);
-					}
+		oBinding.setType(null, "any");
+		this.mock(oContext).expects("fetchValue")
+			.withExactArgs(sPath, sinon.match.same(oBinding))
+			.returns(SyncPromise.resolve(vValue));
+		this.mock(_Helper).expects("publicClone")
+			.withExactArgs(sinon.match.same(vValue))
+			.returns(vValueClone);
 
-					// code under test
-					return oBinding.checkUpdate().then(function () {
-						assert.strictEqual(oBinding.getValue(),
-							sType === "any" ? vValue : undefined);
-					});
-				});
+		// code under test
+		return oBinding.checkUpdate().then(function () {
+			assert.strictEqual(oBinding.getValue(), vValueClone);
+		});
+	});
+
+	//*********************************************************************************************
+	[{
+		path : "nonPrimitive",
+		internalType : "int"
+	}, {
+		path : "/EntitySet('bar')/nonPrimitive",
+		internalType : "any"
+	}].forEach(function (oFixture, i) {
+		QUnit.test("checkUpdate with object value, error, " + i, function (assert) {
+			var bAbsolute = oFixture.path[0] === "/",
+				oCacheMock = bAbsolute && this.getPropertyCacheMock(),
+				oContext = Context.create(this.oModel, {}, "/EntitySet('foo')"),
+				oBinding = this.oModel.bindProperty(oFixture.path, oContext),
+				sResolvedPath = this.oModel.resolve(oFixture.path, oContext),
+				vValue = {/* non-primitive */};
+
+			oBinding.setType(null, oFixture.internalType);
+			if (bAbsolute) {
+				oCacheMock.expects("fetchValue")
+					.withExactArgs(new _GroupLock("$auto", undefined, oBinding, 1), undefined,
+						sinon.match.func, sinon.match.same(oBinding))
+					.returns(SyncPromise.resolve(vValue));
+			} else {
+				this.mock(oContext).expects("fetchValue")
+					.withExactArgs(oFixture.path, sinon.match.same(oBinding))
+					.returns(SyncPromise.resolve(vValue));
+			}
+			if (oFixture.internalType !== "any") {
+				this.mock(this.oModel.getMetaModel()).expects("fetchUI5Type")
+					.withExactArgs(sResolvedPath)
+					.returns(SyncPromise.resolve());
+			}
+			this.oLogMock.expects("error")
+				.withExactArgs("Accessed value is not primitive",
+					sResolvedPath, sClassName);
+
+			// code under test
+			return oBinding.checkUpdate().then(function () {
+				assert.strictEqual(oBinding.getValue(), undefined);
+			});
+		});
+	});
+
+	//*********************************************************************************************
+	[false, undefined, null, 42, "foo"].forEach(function (vValue) {
+		QUnit.test("checkUpdate: no clone with primitive value: " + vValue, function (assert) {
+			var oContext = Context.create(this.oModel, {}, "/EntitySet('foo')"),
+				sPath = "primitive",
+				oBinding = this.oModel.bindProperty(sPath, oContext);
+
+			oBinding.setType(null, "any");
+			this.mock(oContext).expects("fetchValue")
+				.withExactArgs(sPath, sinon.match.same(oBinding))
+				.returns(SyncPromise.resolve(vValue));
+			this.mock(_Helper).expects("publicClone").never();
+
+			// code under test
+			return oBinding.checkUpdate().then(function () {
+				assert.strictEqual(oBinding.getValue(), vValue);
+			});
 		});
 	});
 
@@ -595,6 +640,135 @@ sap.ui.define([
 	});
 
 	//*********************************************************************************************
+	[{
+		contextPath : "/Artists('42')",
+		path : "Name##@SAP_Common.Label"
+	}, {
+		contextPath : undefined,
+		path : "/Artists('42')/Name##@SAP_Common.Label"
+	}, {
+		contextPath : "/Irrelevant",
+		path : "/Artists('42')/Name##@SAP_Common.Label"
+	}, {
+		baseContext : true,
+		contextPath : "/Artists('42')",
+		path : "Name##@SAP_Common.Label"
+	}, {
+		contextPath : "/Artists('42')",
+		path : "##/@SAP_Common.Label"
+	}, {
+		contextPath : "/Irrelevant",
+		path : "/Artists('42')/Name##@SAP_Common.Label",
+		virtualContext : true
+	}].forEach(function (oFixture, i) {
+		QUnit.test("checkUpdate, meta path, resolved, " + i, function (assert) {
+			var oBinding,
+				bChangeFired,
+				oContext,
+				oMetaContext = {},
+				vValue = oFixture.virtualContext ? undefined : "Artist label";
+
+			if (oFixture.contextPath) {
+				oContext = oFixture.baseContext
+					? new BaseContext(this.oModel, oFixture.contextPath)
+					: Context.create(this.oModel, {/*oParentBinding*/}, oFixture.contextPath,
+						oFixture.virtualContext && Context.VIRTUAL);
+			}
+
+			this.mock(_Cache).expects("createProperty").never();
+
+			// code under test
+			oBinding = this.oModel.bindProperty(oFixture.path, oContext);
+
+			this.mock(this.oModel.getMetaModel()).expects("getMetaContext")
+				.withExactArgs(oFixture.path.startsWith("##/")
+					? "/Artists('42')"
+					: "/Artists('42')/Name")
+				.returns(oMetaContext);
+			this.mock(this.oModel.getMetaModel()).expects("fetchObject")
+				.withExactArgs(oFixture.path.startsWith("##/")
+					? "./@SAP_Common.Label"
+					: "@SAP_Common.Label",
+					sinon.match.same(oMetaContext))
+				.returns(SyncPromise.resolve(vValue));
+			if (oContext && !oFixture.baseContext) {
+				this.mock(oContext).expects("fetchValue").never();
+			}
+			this.mock(this.oModel.getMetaModel()).expects("fetchUI5Type").never();
+			this.mock(oBinding).expects("fireDataRequested").never();
+			this.mock(oBinding).expects("fireDataReceived").never();
+			oBinding.attachChange(function () {
+				bChangeFired = true;
+			});
+
+			// code under test
+			return oBinding.checkUpdate(oFixture.virtualContext).then(function () {
+				assert.strictEqual(oBinding.getValue(), vValue);
+				assert.ok(bChangeFired, "change event");
+			});
+		});
+	});
+
+	//*********************************************************************************************
+	QUnit.test("checkUpdate, meta path, unresolved", function (assert) {
+		var oBinding = this.oModel.bindProperty("Name##@SAP_Common.Label", null);
+
+		this.mock(this.oModel.getMetaModel()).expects("getMetaContext").never();
+		this.mock(this.oModel.getMetaModel()).expects("fetchObject").never();
+		this.mock(this.oModel.getMetaModel()).expects("fetchUI5Type").never();
+		this.mock(oBinding).expects("fireDataRequested").never();
+		this.mock(oBinding).expects("fireDataReceived").never();
+
+
+		// code under test
+		return oBinding.checkUpdate().then(function () {
+			assert.strictEqual(oBinding.getValue(), undefined);
+		});
+	});
+
+	//*********************************************************************************************
+	QUnit.test("checkUpdate, meta path, targetType any", function (assert) {
+		var oBinding,
+			bChangeFired,
+			oMetaContext = {},
+			oValue = {};
+
+		this.mock(_Cache).expects("createProperty").never();
+
+		// code under test
+		oBinding = this.oModel.bindProperty("/Artists##@Capabilities.InsertRestrictions", null);
+
+		oBinding.setType(undefined, "any");
+		this.mock(this.oModel.getMetaModel()).expects("getMetaContext")
+			.withExactArgs("/Artists")
+			.returns(oMetaContext);
+		this.mock(this.oModel.getMetaModel()).expects("fetchObject")
+			.withExactArgs("@Capabilities.InsertRestrictions", sinon.match.same(oMetaContext))
+			.returns(SyncPromise.resolve(oValue));
+		this.mock(this.oModel.getMetaModel()).expects("fetchUI5Type").never();
+		this.mock(oBinding).expects("fireDataRequested").never();
+		this.mock(oBinding).expects("fireDataReceived").never();
+		oBinding.attachChange(function () {
+			assert.notOk(bChangeFired, "exactly one change event");
+			bChangeFired = true;
+		});
+
+		// code under test
+		return oBinding.checkUpdate().then(function () {
+			assert.strictEqual(oBinding.getValue(), oValue);
+			assert.ok(bChangeFired, "change event");
+		});
+	});
+
+	//*********************************************************************************************
+	QUnit.test("isMeta", function (assert) {
+		assert.strictEqual(this.oModel.bindProperty("foo", null).isMeta(), false);
+		assert.strictEqual(this.oModel.bindProperty("foo#bar", null).isMeta(), false,
+			"action advertisement");
+		assert.strictEqual(this.oModel.bindProperty("foo##bar", null).isMeta(), true);
+	});
+
+	//*********************************************************************************************
 	QUnit.test("ManagedObject.bindProperty w/ relative path, then bindObject", function (assert) {
 		var oCacheMock = this.mock(_Cache),
 			done = assert.async(),
@@ -758,6 +932,8 @@ sap.ui.define([
 				oSpy = this.spy(ODataPropertyBinding.prototype, "checkUpdate");
 
 			oCacheMock.expects("createProperty").returns(oCache);
+			this.mock(ODataPropertyBinding.prototype).expects("isMeta").withExactArgs()
+				.returns(false);
 			this.mock(this.oModel.getMetaModel()).expects("fetchUI5Type")
 				.withExactArgs(sPath)
 				.returns(SyncPromise.resolve(oRawType));
@@ -1646,16 +1822,12 @@ sap.ui.define([
 		assert.deepEqual(oBinding.doFetchQueryOptions().getResult(), {custom : "foo"});
 
 		oBinding = this.oModel.bindProperty("path", undefined, {custom : "foo"});
-		this.mock(oBinding).expects("isRoot").twice().withExactArgs().returns(false);
+		this.mock(oBinding).expects("isRoot").withExactArgs().returns(false);
 
 		// code under test
 		oPromise = oBinding.doFetchQueryOptions();
 
 		assert.deepEqual(oPromise.getResult(), {});
-
-		// code under test
-		assert.strictEqual(oBinding.doFetchQueryOptions(), oPromise,
-			"all bindings share the same promise");
 	});
 
 	//*********************************************************************************************
@@ -1801,6 +1973,14 @@ sap.ui.define([
 	});
 
 	//*********************************************************************************************
+	QUnit.test("visitSideEffects", function (assert) {
+		var oBinding = this.oModel.bindProperty("/EMPLOYEES('1')/AGE");
+
+		// code under test: nothing happens
+		oBinding.visitSideEffects();
+	});
+
+	//*********************************************************************************************
 	[true, false].forEach(function (bCheckUpdate) {
 		QUnit.test("resumeInternal: bCheckUpdate=" + bCheckUpdate, function (assert) {
 			var oContext = Context.create(this.oModel, {}, "/ProductList('42')"),
@@ -1813,6 +1993,42 @@ sap.ui.define([
 			// code under test
 			oBinding.resumeInternal(bCheckUpdate);
 		});
+	});
+
+	//*********************************************************************************************
+	QUnit.test("getDependentBindings", function (assert) {
+		var oBinding = this.oModel.bindProperty("/EMPLOYEES('1')/AGE"),
+			aDependentBindings;
+
+		// code under test
+		aDependentBindings = oBinding.getDependentBindings();
+
+		assert.deepEqual(aDependentBindings, []);
+		assert.strictEqual(oBinding.getDependentBindings(), aDependentBindings,
+			"share empty array");
+
+		assert.throws(function () {
+			aDependentBindings.push("foo");
+		});
+
+	});
+
+	//*********************************************************************************************
+	[undefined, {}].forEach(function (oContext) {
+		QUnit.test("hasPendingChangesInDependents, w/ context=" + !!oContext, function (assert) {
+			var oBinding = this.oModel.bindProperty("/EMPLOYEES('1')/AGE");
+
+			// code under test
+			assert.strictEqual(oBinding.hasPendingChangesInDependents(oContext), false);
+		});
+	});
+
+	//*********************************************************************************************
+	QUnit.test("resetChangesInDependents", function (assert) {
+		var oBinding = this.oModel.bindProperty("/EMPLOYEES('1')/AGE");
+
+		// code under test
+		oBinding.resetChangesInDependents();
 	});
 
 	//*********************************************************************************************

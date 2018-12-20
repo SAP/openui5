@@ -346,6 +346,11 @@ sap.ui.define([
 		this.bInheritExpandSelect = mParameters.$$inheritExpandSelect;
 		this.mQueryOptions = this.oModel.buildQueryOptions(mParameters, true);
 		this.mParameters = mParameters; // store mParameters at binding after validation
+
+		if (this.isRootBindingSuspended()) {
+			return;
+		}
+
 		if (!this.oOperation) {
 			this.fetchCache(this.oContext);
 			if (sChangeReason) {
@@ -780,6 +785,14 @@ sap.ui.define([
 	 */
 
 	/**
+	 * @override
+	 * @see sap.ui.model.odata.v4.ODataBinding#getDependentBindings
+	 */
+	ODataContextBinding.prototype.getDependentBindings = function () {
+		return this.oModel.getDependentBindings(this);
+	};
+
+	/**
 	 * Returns the resolved path by calling {@link sap.ui.model.odata.v4.ODataModel#resolve} and
 	 * replacing all occurrences of "-1" with the corresponding key predicates.
 	 *
@@ -927,44 +940,34 @@ sap.ui.define([
 	 */
 	ODataContextBinding.prototype.requestSideEffects = function (sGroupId, aPaths, oContext) {
 		var oCache = this.oCachePromise.getResult(),
-			aDependentBindings,
 			oModel = this.oModel,
+			// Hash set of collection-valued navigation property meta paths (relative to the cache's
+			// root) which need to be refreshed, maps string to <code>true</code>
+			mNavigationPropertyPaths = {},
 			aPromises = [];
 
 		/*
-		 * Push the given promise to "aPromises" and report errors.
+		 * Adds an error handler to the given promise which reports errors to the model.
 		 *
 		 * @param {Promise} oPromise - A promise
+		 * @return {Promise} A promise including an error handler
 		 */
-		function push(oPromise) {
-			aPromises.push(oPromise.catch(function (oError) {
+		function reportError(oPromise) {
+			return oPromise.catch(function (oError) {
 				oModel.reportError("Failed to request side effects", sClassName, oError);
 				throw oError;
-			}));
+			});
 		}
 
 		if (aPaths.indexOf("") < 0) {
 			try {
-				push(oCache.requestSideEffects(oModel.lockGroup(sGroupId), aPaths,
-					oContext && oContext.getPath().slice(1)));
+				aPromises.push(oCache.requestSideEffects(oModel.lockGroup(sGroupId), aPaths,
+					mNavigationPropertyPaths, oContext && oContext.getPath().slice(1)));
 
-				aDependentBindings = oContext
-					? oModel.getDependentBindings(oContext)
-					: this.getDependentBindings();
-				aDependentBindings.forEach(function (oDependentBinding) {
-					var aStrippedPaths;
+				this.visitSideEffects(sGroupId, aPaths, oContext, mNavigationPropertyPaths,
+					aPromises);
 
-					if (oDependentBinding.oCachePromise.getResult()) {
-						// dependent binding which has its own cache
-						aStrippedPaths
-							= _Helper.stripPathPrefix(oDependentBinding.getPath(), aPaths);
-						if (aStrippedPaths.length) {
-							push(oDependentBinding.requestSideEffects(sGroupId, aStrippedPaths));
-						}
-					}
-				});
-
-				return SyncPromise.all(aPromises);
+				return SyncPromise.all(aPromises.map(reportError));
 			} catch (e) {
 				if (!e.message.startsWith("Unsupported collection-valued navigation property ")) {
 					throw e;

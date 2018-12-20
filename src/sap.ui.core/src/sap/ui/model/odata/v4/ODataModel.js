@@ -270,19 +270,19 @@ sap.ui.define([
 						this.sServiceUrl + "$metadata", mParameters.annotationURI, this,
 						mParameters.supportReferences);
 					this.oRequestor = _Requestor.create(this.sServiceUrl, {
-							fnFetchEntityContainer :
+							fetchEntityContainer :
 								this.oMetaModel.fetchEntityContainer.bind(this.oMetaModel),
-							fnFetchMetadata : this.oMetaModel.fetchObject.bind(this.oMetaModel),
-							fnGetGroupProperty : this.getGroupProperty.bind(this),
+							fetchMetadata : this.oMetaModel.fetchObject.bind(this.oMetaModel),
+							getGroupProperty : this.getGroupProperty.bind(this),
 							lockGroup : this.lockGroup.bind(this),
-							fnOnCreateGroup : function (sGroupId) {
+							onCreateGroup : function (sGroupId) {
 								if (that.isAutoGroup(sGroupId)) {
 									sap.ui.getCore().addPrerenderingTask(
 										that._submitBatch.bind(that, sGroupId, true));
 								}
 							},
-							fnReportBoundMessages : this.reportBoundMessages.bind(this),
-							fnReportUnboundMessages : this.reportUnboundMessages.bind(this)
+							reportBoundMessages : this.reportBoundMessages.bind(this),
+							reportUnboundMessages : this.reportUnboundMessages.bind(this)
 						}, mHeaders, this.mUriParameters, sODataVersion);
 					if (mParameters.earlyRequests) {
 						this.oMetaModel.fetchEntityContainer(true);
@@ -583,8 +583,21 @@ sap.ui.define([
 	 * to get it updated asynchronously and register a change listener at the binding to be informed
 	 * when the value is available.
 	 *
+	 * It is possible to create a property binding pointing to metadata. A '##' in the
+	 * binding's path is recognized as a separator and splits it into two parts.
+	 * The part before the separator is resolved with the binding's context and the result is
+	 * transformed into a metadata context (see
+	 * {@link sap.ui.model.odata.v4.ODataMetaModel#getMetaContext}). The part following the
+	 * separator is then interpreted relative to this metadata context, even if it starts with
+	 * a '/'; a trailing '/' is allowed here, see
+	 * {@link sap.ui.model.odata.v4.ODataMetaModel#requestObject} for the effect it has.
+	 *
+	 * The binding may have an object value if the target type specified in the corresponding
+	 * control property's binding info is "any" and the binding is relative or points to metadata.
+	 *
 	 * @param {string} sPath
-	 *   The binding path in the model; must not be empty or end with a slash
+	 *   The binding path in the model; must not be empty. Must not end with a '/' unless the
+	 *   binding points to metadata.
 	 * @param {sap.ui.model.Context} [oContext]
 	 *   The context which is required as base for a relative path
 	 * @param {object} [mParameters]
@@ -595,7 +608,8 @@ sap.ui.define([
 	 *   Query options specified for the binding overwrite model query options.
 	 *   Note: The binding only creates its own data service request if it is absolute or if it is
 	 *   relative to a context created via {@link #createBindingContext}. The binding parameters are
-	 *   ignored in case the binding creates no own data service request.
+	 *   ignored in case the binding creates no own data service request or in case the binding
+	 *   points to metadata.
 	 * @param {string} [mParameters.$$groupId]
 	 *   The group ID to be used for <b>read</b> requests triggered by this binding; if not
 	 *   specified, either the parent binding's group ID (if the binding is relative) or the
@@ -605,10 +619,14 @@ sap.ui.define([
 	 * @returns {sap.ui.model.odata.v4.ODataPropertyBinding}
 	 *   The property binding
 	 * @throws {Error}
-	 *   If disallowed binding parameters are provided
+	 *   If disallowed binding parameters are provided or in case the binding's value is an object
+	 *   and the target type is not "any" or the binding is an absolute property binding not
+	 *   pointing to metadata
 	 *
 	 * @public
+	 * @see sap.ui.base.ManagedObject#bindProperty
 	 * @see sap.ui.model.Model#bindProperty
+	 * @see sap.ui.model.PropertyBinding#setType
 	 * @since 1.37.0
 	 */
 	ODataModel.prototype.bindProperty = function (sPath, oContext, mParameters) {

@@ -120,7 +120,7 @@ sap.ui.define([
 		oExpectedResult : {"__metadata" : {}, "results" : "foo"}
 	}].forEach(function (oFixture, i) {
 		QUnit.test("doConvertResponse, " + i, function (assert) {
-			var oRequestor = {fnFetchEntityContainer : function () {}},
+			var oRequestor = {fetchEntityContainer : function () {}},
 				oRequestorMock = this.mock(oRequestor);
 
 			asV2Requestor(oRequestor);
@@ -195,7 +195,7 @@ sap.ui.define([
 			sOutput = "2017-08-10T00:00:00Z",
 			oProperty = {},
 			oRequestor = {
-				oModelInterface : {fnFetchMetadata : function () {}}
+				oModelInterface : {fetchMetadata : function () {}}
 			},
 			oResponsePayload = {
 				// /sap/opu/odata/IWFND/RMTSAMPLEFLIGHT/
@@ -206,7 +206,7 @@ sap.ui.define([
 			};
 
 		asV2Requestor(oRequestor);
-		this.mock(oRequestor.oModelInterface).expects("fnFetchMetadata")
+		this.mock(oRequestor.oModelInterface).expects("fetchMetadata")
 			.withExactArgs(sMetaPath)
 			.returns(SyncPromise.resolve(oProperty));
 		this.mock(oRequestor).expects("convertPrimitive")
@@ -248,7 +248,7 @@ sap.ui.define([
 			sOutput1 = "2017-08-10T00:00:01Z",
 			oProperty = {},
 			oRequestor = {
-				oModelInterface : {fnFetchMetadata : function () {}}
+				oModelInterface : {fetchMetadata : function () {}}
 			},
 			oRequestorMock = this.mock(oRequestor),
 			oResponsePayload = {
@@ -261,7 +261,7 @@ sap.ui.define([
 			};
 
 		asV2Requestor(oRequestor);
-		this.mock(oRequestor.oModelInterface).expects("fnFetchMetadata").withExactArgs(sMetaPath)
+		this.mock(oRequestor.oModelInterface).expects("fetchMetadata").withExactArgs(sMetaPath)
 			.returns(SyncPromise.resolve(oProperty));
 		oRequestorMock.expects("convertNonPrimitive").never();
 		oRequestorMock.expects("convertPrimitive").withExactArgs(oResponsePayload.d.results[0],
@@ -1193,12 +1193,12 @@ sap.ui.define([
 				sMetaPath = "/MyEntitySet",
 				oProperty = {$Type : oFixture.type, $v2Type : oFixture.v2type},
 				oRequestor = {
-					oModelInterface : {fnFetchMetadata : function () {}}
+					oModelInterface : {fetchMetadata : function () {}}
 				};
 
 			asV2Requestor(oRequestor);
 
-			this.mock(oRequestor.oModelInterface).expects("fnFetchMetadata")
+			this.mock(oRequestor.oModelInterface).expects("fetchMetadata")
 				.withExactArgs(sMetaPath + "/foo/bar")
 				.returns(SyncPromise.resolve(oProperty));
 
@@ -1283,14 +1283,14 @@ sap.ui.define([
 		QUnit.test("convertFilter: " + oFixture.v4, function (assert) {
 			var oProperty = {$Type : "Edm.Double"},
 				oRequestor = {
-					oModelInterface : {fnFetchMetadata : function () {}}
+					oModelInterface : {fetchMetadata : function () {}}
 				},
 				sResourcePath = "MyEntitySet";
 
 			asV2Requestor(oRequestor);
 
 			// simply declare all properties to be Edm.Double so that a conversion is necessary
-			this.mock(oRequestor.oModelInterface).expects("fnFetchMetadata").atLeast(0)
+			this.mock(oRequestor.oModelInterface).expects("fetchMetadata").atLeast(0)
 				.returns(SyncPromise.resolve(oProperty));
 
 			// code under test
@@ -1319,12 +1319,12 @@ sap.ui.define([
 		QUnit.test("convertFilter: " + oFixture.error, function (assert) {
 			var sMetaPath = "/MyEntitySet",
 				oRequestor = {
-					oModelInterface : {fnFetchMetadata : function () {}}
+					oModelInterface : {fetchMetadata : function () {}}
 				};
 
 			asV2Requestor(oRequestor);
 
-			this.mock(oRequestor.oModelInterface).expects("fnFetchMetadata")
+			this.mock(oRequestor.oModelInterface).expects("fetchMetadata")
 				.withExactArgs(sMetaPath + "/foo/bar")
 				.returns(SyncPromise.resolve(oFixture.property));
 
@@ -1339,14 +1339,14 @@ sap.ui.define([
 	QUnit.test("ready()", function (assert) {
 		var oRequestor = {
 				oModelInterface : {
-					fnFetchEntityContainer : function () {}
+					fetchEntityContainer : function () {}
 				}
 			},
 			oSyncPromise;
 
 		asV2Requestor(oRequestor);
 
-		this.mock(oRequestor.oModelInterface).expects("fnFetchEntityContainer")
+		this.mock(oRequestor.oModelInterface).expects("fetchEntityContainer")
 			.returns(SyncPromise.resolve(Promise.resolve({})));
 
 		// code under test
@@ -1361,13 +1361,13 @@ sap.ui.define([
 	//*********************************************************************************************
 	QUnit.test("getTypeForName", function (assert) {
 		var oRequestor = {
-				oModelInterface : {fnFetchMetadata : function () {}}
+				oModelInterface : {fetchMetadata : function () {}}
 			},
 			oType = {};
 
 		asV2Requestor(oRequestor);
 
-		this.mock(oRequestor.oModelInterface).expects("fnFetchMetadata")
+		this.mock(oRequestor.oModelInterface).expects("fetchMetadata")
 			.withExactArgs("/my.Type").returns(SyncPromise.resolve(oType));
 
 		// code under test
@@ -1381,6 +1381,10 @@ sap.ui.define([
 		mHeaders : { "DataServiceVersion" : "2.0" },
 		bVersionOptional : true
 	}, {
+		iCallCount : 1,
+		mHeaders : { "DataServiceVersion" : "2.0;fooBar" },
+		bVersionOptional : true
+	}, {
 		iCallCount : 2,
 		mHeaders : {},
 		bVersionOptional : true
@@ -1391,6 +1395,10 @@ sap.ui.define([
 	}, {
 		iCallCount : 1,
 		mHeaders : { "DataServiceVersion" : "1.0" },
+		bVersionOptional : true
+	}, {
+		iCallCount : 1,
+		mHeaders : { "DataServiceVersion" : "1.0;fooBar" },
 		bVersionOptional : true
 	}].forEach(function (oFixture, i) {
 		QUnit.test("doCheckVersionHeader, success cases - " + i, function (assert) {
@@ -1416,6 +1424,10 @@ sap.ui.define([
 		iCallCount : 1,
 		sError : "value 'foo' in response for /Foo('42')/Bar",
 		mHeaders : { "DataServiceVersion" : "foo" }
+	}, {
+		iCallCount : 1,
+		sError : "value '1.00' in response for /Foo('42')/Bar",
+		mHeaders : { "DataServiceVersion" : "1.00" }
 	}, {
 		iCallCount : 2,
 		sError : "'OData-Version' header with value 'baz' in response for /Foo('42')/Bar",
@@ -1444,7 +1456,7 @@ sap.ui.define([
 	//*********************************************************************************************
 	QUnit.test("getPathAndAddQueryOptions: OperationImport", function (assert) {
 		var oModelInterface = {
-				fnFetchMetadata : null // do not call!
+				fetchMetadata : null // do not call!
 			},
 			oOperationMetadata = {
 				"$Parameter" : [{
@@ -1480,7 +1492,7 @@ sap.ui.define([
 
 		QUnit.test(sTitle, function (assert) {
 			var oEntity = {"Foo" : 42, "ID" : "1"},
-				oModelInterface = {fnFetchMetadata : function () {}},
+				oModelInterface = {fetchMetadata : function () {}},
 				oOperationMetadata = {
 					"$IsBound" : true,
 					"$Parameter" : [{ // "$Name" : null, "$Nullable" : false,
@@ -1505,7 +1517,7 @@ sap.ui.define([
 					}
 				};
 
-			this.mock(oModelInterface).expects("fnFetchMetadata")
+			this.mock(oModelInterface).expects("fetchMetadata")
 				.withExactArgs("/com.sap.ui5.OData.EdmTypes")
 				.returns(SyncPromise.resolve(oTypeMetadata));
 			oRequestorMock.expects("formatPropertyAsLiteral").withExactArgs("1", oTypeMetadata.ID)
@@ -1701,10 +1713,10 @@ sap.ui.define([
 	//*****************************************************************************************
 	QUnit.test("reportUnboundMessages does not call model interface", function (assert) {
 		var sMessages = '[{"code" : "42"}]',
-			oModelInterface = {fnReportUnboundMessages : function () {}},
+			oModelInterface = {reportUnboundMessages : function () {}},
 			oRequestor = _Requestor.create("/", oModelInterface, undefined, undefined, "2.0");
 
-		this.mock(oModelInterface).expects("fnReportUnboundMessages").never();
+		this.mock(oModelInterface).expects("reportUnboundMessages").never();
 
 		// code under test
 		oRequestor.reportUnboundMessages(sMessages);
@@ -1712,10 +1724,10 @@ sap.ui.define([
 
 	//*****************************************************************************************
 	QUnit.test("reportBoundMessages does not call model interface", function (assert) {
-		var oModelInterface = {fnReportBoundMessages : function () {}},
+		var oModelInterface = {reportBoundMessages : function () {}},
 			oRequestor = _Requestor.create("/", oModelInterface, undefined, undefined, "2.0");
 
-		this.mock(oModelInterface).expects("fnReportBoundMessages").never();
+		this.mock(oModelInterface).expects("reportBoundMessages").never();
 
 		// code under test
 		oRequestor.reportBoundMessages("Teams('42')", {/*mPathToMessages*/});
