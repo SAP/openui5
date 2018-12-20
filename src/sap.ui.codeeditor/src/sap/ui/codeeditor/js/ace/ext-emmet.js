@@ -125,7 +125,7 @@ var SnippetManager = function() {
         var s = editor.session;
         switch(name) {
             case "CURRENT_WORD":
-                var r = s.getWordRange();
+                var r = s.getWordRange(); 
             case "SELECTION":
             case "SELECTED_TEXT":
                 return s.getTextRange(r);
@@ -272,14 +272,14 @@ var SnippetManager = function() {
                 return;
 
             var value = tokens.slice(i + 1, i1);
-            var isNested = value.some(function(t) {return typeof t === "object"});          
+            var isNested = value.some(function(t) {return typeof t === "object";});          
             if (isNested && !ts.value) {
                 ts.value = value;
             } else if (value.length && (!ts.value || typeof ts.value !== "string")) {
                 ts.value = value.join("");
             }
         });
-        tabstops.forEach(function(ts) {ts.length = 0});
+        tabstops.forEach(function(ts) {ts.length = 0;});
         var expanding = {};
         function copyValue(val) {
             var copy = [];
@@ -509,10 +509,10 @@ var SnippetManager = function() {
                 return;
             
             s.startRe = guardedRegexp(s.trigger, s.guard, true);
-            s.triggerRe = new RegExp(s.trigger, "", true);
+            s.triggerRe = new RegExp(s.trigger);
 
             s.endRe = guardedRegexp(s.endTrigger, s.endGuard, true);
-            s.endTriggerRe = new RegExp(s.endTrigger, "", true);
+            s.endTriggerRe = new RegExp(s.endTrigger);
         }
 
         if (snippets && snippets.content)
@@ -975,7 +975,6 @@ AceEmmetEditor.prototype = {
         editor.session.remove(range);
         
         range.end = range.start;
-        
         value = this.$updateTabstops(value);
         snippetManager.insertSnippet(editor, value);
     },
@@ -1128,7 +1127,7 @@ exports.runEmmetCommand = function runEmmetCommand(editor) {
         var result = actions.run(this.action, editorProxy);
     } catch(e) {
         if (!emmet) {
-            load(runEmmetCommand.bind(this, editor));
+            exports.load(runEmmetCommand.bind(this, editor));
             return true;
         }
         editor._signal("changeStatus", typeof e == "string" ? e : e.message);
@@ -1176,7 +1175,7 @@ exports.isAvailable = function(editor, command) {
         } catch(e) {}
     }
     return isSupported;
-}
+};
 
 var onChangeMode = function(e, target) {
     var editor = target;
@@ -1186,11 +1185,11 @@ var onChangeMode = function(e, target) {
     if (e.enableEmmet === false)
         enabled = false;
     if (enabled)
-        load();
+        exports.load();
     exports.updateCommands(editor, enabled);
 };
 
-var load = function(cb) {
+exports.load = function(cb) {
     if (typeof emmetPath == "string") {
         require("ace/config").loadModule(emmetPath, function() {
             emmetPath = null;
@@ -1218,6 +1217,10 @@ exports.setCore = function(e) {
 };
 });
                 (function() {
-                    ace.require(["ace/ext/emmet"], function() {});
+                    ace.require(["ace/ext/emmet"], function(m) {
+                        if (typeof module == "object" && typeof exports == "object" && module) {
+                            module.exports = m;
+                        }
+                    });
                 })();
             

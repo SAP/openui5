@@ -910,7 +910,8 @@ function(
 				iDialogHeight,
 				maxDialogWidth =  Math.floor(window.innerWidth * 0.9), //90% of the max screen size
 				BORDER_THICKNESS = 2, // solves Scrollbar issue in IE when Table is in Dialog// TODO remove after 1.62 version
-				oBrowser = Device.browser;
+				oBrowser = Device.browser,
+				iTotalChildrenHeight = 0;
 
 			//if height is set by manually resizing return;
 			if (this._oManuallySetSize) {
@@ -929,9 +930,14 @@ function(
 					height: 'auto'
 				});
 
-				//set the newly calculated size by getting it from the browser rendered layout - by the max-height
-				iDialogHeight = parseFloat($dialog.height()) + BORDER_THICKNESS;
-				$dialogContent.height(Math.round( iDialogHeight));
+				$dialog.children().each(function() {
+					iTotalChildrenHeight += jQuery(this).outerHeight(true);
+				});
+				if (iTotalChildrenHeight > $dialog.innerHeight()) {
+					//set the newly calculated size by getting it from the browser rendered layout - by the max-height
+					iDialogHeight = parseFloat($dialog.height()) + BORDER_THICKNESS;
+					$dialogContent.height(Math.round( iDialogHeight));
+				}
 
 				$dialogContent.scrollTop(dialogContentScrollTop);
 			}

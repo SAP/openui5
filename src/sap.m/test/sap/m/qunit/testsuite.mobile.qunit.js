@@ -105,6 +105,12 @@ sap.ui.define(function() {
 				title: "Test Page for sap.m.Carousel",
 				sinon: {
 					useFakeTimers: true
+				},
+				coverage: {
+					only: [
+						"sap/m/Carousel",
+						"sap/m/CarouselRenderer"
+					]
 				}
 			},
 			CheckBox: {
@@ -877,6 +883,15 @@ sap.ui.define(function() {
 				_alternativeTitle: "QUnit Page for sap.m.RadioButton",
 				ui5: {
 					libs: "sap.m, sap.ui.core"
+				},
+				sinon: {
+					useFakeTimers: true
+				},
+				coverage: {
+					only: [
+						"sap/m/RadioButtonGroup",
+						"sap/m/RadioButtonGroupRenderer"
+					]
 				}
 			},
 			RangeSlider: {
@@ -1084,6 +1099,11 @@ sap.ui.define(function() {
 				},
 				ui5: {
 					compatVersion: "1.16"
+				},
+				coverage: {
+					only: [
+						"sap/m/Support"
+					]
 				}
 			},
 			Switch: {

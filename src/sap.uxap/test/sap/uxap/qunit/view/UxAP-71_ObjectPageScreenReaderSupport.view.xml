@@ -16,5 +16,12 @@
                 </ObjectPageSubSection>
             </ObjectPageSection>
         </sections>
+        <footer>
+			<m:OverflowToolbar>
+				<m:ToolbarSpacer />
+				<m:Button type="Accept" text="Accept"/>
+				<m:Button type="Reject" text="Reject"/>
+			</m:OverflowToolbar>
+		</footer>
     </ObjectPageLayout>
 </core:View>

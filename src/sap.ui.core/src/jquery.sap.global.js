@@ -313,7 +313,7 @@ sap.ui.define([
 
 			if ( !oResult ) {
 				aScripts = document.querySelectorAll('SCRIPT[src]');
-				rBootScripts = /^(.*\/)?(?:sap-ui-(core|custom|boot|merged)(?:-.*)?)\.js(?:[?#]|$)/;
+				rBootScripts = /^([^?#]*\/)?(?:sap-ui-(?:core|custom|boot|merged)(?:-[^?#/]*)?|jquery.sap.global|ui5loader(?:-autoconfig)?)\.js(?:[?#]|$)/;
 				for ( i = 0; i < aScripts.length; i++ ) {
 					oResult = check(aScripts[i], rBootScripts);
 					if ( oResult ) {

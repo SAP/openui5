@@ -29,13 +29,12 @@ sap.ui.define([
 						errorMessage : "The app is busy"
 					});
 				},
-
 				iCloseTheMessageBox : function () {
 					return this.waitFor({
 						id : "serviceErrorMessageBox",
 						autoWait: false,
 						success : function (oMessageBox) {
-							oMessageBox.destroy();
+							oMessageBox.close();
 							Opa5.assert.ok(true, "The MessageBox was closed");
 						}
 					});
@@ -45,7 +44,7 @@ sap.ui.define([
 			assertions : {
 
 				iShouldSeeTheBusyIndicatorForTheWholeApp : function () {
-						return this.waitFor({
+					return this.waitFor({
 						id : sAppId,
 						viewName : sViewName,
 						matchers : new PropertyStrictEquals({
@@ -60,7 +59,6 @@ sap.ui.define([
 						errorMessage : "The App is not busy"
 					});
 				},
-
 				iShouldSeeTheMessageBox : function () {
 					return this.waitFor({
 						id : "serviceErrorMessageBox",

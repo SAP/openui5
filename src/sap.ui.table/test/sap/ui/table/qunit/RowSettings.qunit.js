@@ -16,12 +16,15 @@ sap.ui.define([
 	var fakeSumRow = window.fakeSumRow;
 
 	var MessageType = CoreLibrary.MessageType;
+	var IndicationColor = CoreLibrary.IndicationColor;
+
+	var iRowsWithHighlight = 10;
 
 	/**
 	 * Sets up the row settings template in the table.
 	 */
 	function initRowSettings() {
-		oTable.setVisibleRowCount(7);
+		oTable.setVisibleRowCount(iRowsWithHighlight + 2);
 
 		oTable.setRowSettingsTemplate(new RowSettings({
 			highlight: {
@@ -43,9 +46,15 @@ sap.ui.define([
 						} else if (iIndex === 4) {
 							return MessageType.None;
 						} else if (iIndex === 5) {
-							return MessageType.Success;
+							return IndicationColor.Indication01;
 						} else if (iIndex === 6) {
-							return MessageType.Success;
+							return IndicationColor.Indication02;
+						} else if (iIndex === 7) {
+							return IndicationColor.Indication03;
+						} else if (iIndex === 8) {
+							return IndicationColor.Indication04;
+						} else if (iIndex === 9) {
+							return IndicationColor.Indication05;
 						}
 					}
 
@@ -59,10 +68,10 @@ sap.ui.define([
 
 	QUnit.module("Highlights", {
 		beforeEach: function() {
-			createTables();
+			createTables(false, false, iRowsWithHighlight + 2);
 			initRowSettings();
-			fakeGroupRow(5);
-			fakeSumRow(6);
+			fakeGroupRow(iRowsWithHighlight);
+			fakeSumRow(iRowsWithHighlight + 1);
 		},
 		afterEach: function() {
 			destroyTables();
@@ -97,6 +106,12 @@ sap.ui.define([
 				return null;
 			}
 		},
+		assertText: function(assert, iRowIndex, sExpectedText) {
+			var oRow = oTable.getRows()[iRowIndex];
+			var oHighlightTextElement = oRow.getDomRef("highlighttext");
+
+			assert.strictEqual(oHighlightTextElement.innerHTML, sExpectedText, "The highlight text is correct");
+		},
 		assertColor: function(assert, iRowIndex, sExpectedBackgroundColor) {
 			var oRow = oTable.getRows()[iRowIndex];
 			var oHighlightElement = oRow.getDomRef("highlight");
@@ -116,7 +131,7 @@ sap.ui.define([
 				var oRow = aRows[iRowIndex];
 				var oHighlightElement = oRow.getDomRef("highlight");
 
-				if (iRowIndex < 5) {
+				if (iRowIndex < iRowsWithHighlight) {
 					var sHighlight = oRow.getAggregation("_settings").getHighlight();
 					var sRGBBackgroundColor;
 
@@ -131,7 +146,22 @@ sap.ui.define([
 							sRGBBackgroundColor = this.hexToRgb(ThemeParameters.get("sapUiErrorBorder"));
 							break;
 						case MessageType.Information:
-							sRGBBackgroundColor = this.hexToRgb(ThemeParameters.get("sapUiHighlight"));
+							sRGBBackgroundColor = this.hexToRgb(ThemeParameters.get("sapUiInformationBorder"));
+							break;
+						case IndicationColor.Indication01:
+							sRGBBackgroundColor = this.hexToRgb(ThemeParameters.get("sapUiIndication1"));
+							break;
+						case IndicationColor.Indication02:
+							sRGBBackgroundColor = this.hexToRgb(ThemeParameters.get("sapUiIndication2"));
+							break;
+						case IndicationColor.Indication03:
+							sRGBBackgroundColor = this.hexToRgb(ThemeParameters.get("sapUiIndication3"));
+							break;
+						case IndicationColor.Indication04:
+							sRGBBackgroundColor = this.hexToRgb(ThemeParameters.get("sapUiIndication4"));
+							break;
+						case IndicationColor.Indication05:
+							sRGBBackgroundColor = this.hexToRgb(ThemeParameters.get("sapUiIndication5"));
 							break;
 						default:
 							sRGBBackgroundColor = "transparent"; // transparent
@@ -152,7 +182,7 @@ sap.ui.define([
 				var oRow = aRows[iRowIndex];
 				var oHighlightElement = oRow.getDomRef("highlight");
 
-				if (iRowIndex < 5) {
+				if (iRowIndex < iRowsWithHighlight) {
 					assert.strictEqual(oHighlightElement.getBoundingClientRect().width, 6,
 						sDensity + ": The highlight element of row " + (iRowIndex + 1) + " has the correct width"
 					);
@@ -229,20 +259,35 @@ sap.ui.define([
 	QUnit.test("setHighlight", function(assert) {
 		var oOnAfterRenderingEventListener = this.spy();
 
-		this.assertColor(assert, 0, this.hexToRgb(ThemeParameters.get("sapSuccessColor")));
+		this.assertColor(assert, 0, this.hexToRgb(ThemeParameters.get("sapUiSuccessBorder")));
+		this.assertText(assert, 0, TableUtils.getResourceBundle().getText("TBL_ROW_STATE_SUCCESS"));
 
 		oTable.addEventDelegate({onAfterRendering: oOnAfterRenderingEventListener});
 		oTable.getRows()[0].getAggregation("_settings").setHighlight(MessageType.Error);
 		sap.ui.getCore().applyChanges();
 
 		assert.ok(oOnAfterRenderingEventListener.notCalled, "The table did not re-render after changing a highlight");
-		this.assertColor(assert, 0, this.hexToRgb(ThemeParameters.get("sapErrorColor")));
+		this.assertColor(assert, 0, this.hexToRgb(ThemeParameters.get("sapUiErrorBorder")));
+		this.assertText(assert, 0, TableUtils.getResourceBundle().getText("TBL_ROW_STATE_ERROR"));
+	});
+
+	QUnit.test("setHighlightText", function(assert) {
+		var oOnAfterRenderingEventListener = this.spy();
+
+		this.assertText(assert, 0, TableUtils.getResourceBundle().getText("TBL_ROW_STATE_SUCCESS"));
+
+		oTable.addEventDelegate({onAfterRendering: oOnAfterRenderingEventListener});
+		oTable.getRows()[0].getAggregation("_settings").setHighlightText("testitext");
+		sap.ui.getCore().applyChanges();
+
+		assert.ok(oOnAfterRenderingEventListener.notCalled, "The table did not re-render after changing a highlight text");
+		this.assertText(assert, 0, "testitext");
 	});
 
 	QUnit.test("_getHighlightCSSClassName", function(assert) {
 		var aRows = oTable.getRows();
 
-		for (var iRowIndex = 0; iRowIndex <= 4; iRowIndex++) {
+		for (var iRowIndex = 0; iRowIndex < iRowsWithHighlight; iRowIndex++) {
 			var oRow = aRows[iRowIndex];
 			var oRowSettings = oRow.getAggregation("_settings");
 			var sCSSClassName = "sapUiTableRowHighlight";
@@ -257,6 +302,16 @@ sap.ui.define([
 				sCSSClassName += "Information";
 			} else if (iRowIndex === 4) {
 				sCSSClassName += "None";
+			} else if (iRowIndex === 5) {
+				sCSSClassName += "Indication01";
+			} else if (iRowIndex === 6) {
+				sCSSClassName += "Indication02";
+			} else if (iRowIndex === 7) {
+				sCSSClassName += "Indication03";
+			} else if (iRowIndex === 8) {
+				sCSSClassName += "Indication04";
+			} else if (iRowIndex === 9) {
+				sCSSClassName += "Indication05";
 			}
 
 			assert.strictEqual(oRowSettings._getHighlightCSSClassName(), sCSSClassName,
@@ -264,10 +319,10 @@ sap.ui.define([
 		}
 	});
 
-	QUnit.test("_getHighlightText", function(assert) {
+	QUnit.test("_getHighlightText - Default texts", function(assert) {
 		var aRows = oTable.getRows();
 
-		for (var iRowIndex = 0; iRowIndex <= 4; iRowIndex++) {
+		for (var iRowIndex = 0; iRowIndex < iRowsWithHighlight; iRowIndex++) {
 			var oRow = aRows[iRowIndex];
 			var oRowSettings = oRow.getAggregation("_settings");
 			var sHighlightText = "";
@@ -281,10 +336,30 @@ sap.ui.define([
 			} else if (iRowIndex === 3) {
 				sHighlightText = TableUtils.getResourceBundle().getText("TBL_ROW_STATE_" + MessageType.Information.toUpperCase());
 			}
-			// Row with index 4 (MessageType.None) has no highlight.
+			// Rows with indices 4-9 (MessageType.None and IndicationColors) has no highlight text.
 
 			assert.strictEqual(oRowSettings._getHighlightText(), sHighlightText,
 				"The correct text was returned for highlight " + oRowSettings.getHighlight());
+		}
+	});
+
+	QUnit.test("_getHighlightText - Custom texts", function(assert) {
+		var aRows = oTable.getRows();
+		var sCustomHighlightText = "Custom highlight text";
+
+		for (var iRowIndex = 0; iRowIndex < iRowsWithHighlight; iRowIndex++) {
+			var oRow = aRows[iRowIndex];
+			var oRowSettings = oRow.getAggregation("_settings");
+			var sHighlightText = sCustomHighlightText;
+
+			oRowSettings.setHighlightText(sCustomHighlightText);
+
+			if (iRowIndex === 4) { // MessageType.None
+				sHighlightText = "";
+			}
+
+			assert.strictEqual(oRowSettings._getHighlightText(), sHighlightText,
+				"The correct custom text was returned for highlight " + oRowSettings.getHighlight());
 		}
 	});
 

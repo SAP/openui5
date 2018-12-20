@@ -487,4 +487,19 @@ sap.ui.define([
 
 		assert.ok(!blockLayout.$().hasClass("sapUiBlockLayoutKeepFontSize"), "no style class is added");
 	});
+
+	QUnit.test("Generating arrangement for M size case", function (assert) {
+		var oBlockLayout = new BlockLayout(),
+			oBlockLayoutRow = new BlockLayoutRow();
+
+		oBlockLayoutRow.insertContent(new BlockLayoutCell(), 0);
+		oBlockLayoutRow.insertContent(new BlockLayoutCell(), 1);
+		oBlockLayoutRow.insertContent(new BlockLayoutCell(), 2);
+
+		oBlockLayout.addContent(oBlockLayoutRow);
+		oBlockLayout.placeAt("qunit-fixture");
+		sap.ui.getCore().applyChanges();
+
+		assert.deepEqual(oBlockLayoutRow._getCellArangementForCurrentSize(), [[1, 1, 1]], "Arrangement should be [1, 1, 1] for cells with equal height on size M");
+	});
 });

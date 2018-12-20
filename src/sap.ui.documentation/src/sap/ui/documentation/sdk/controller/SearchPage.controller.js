@@ -41,7 +41,7 @@ sap.ui.define([
 			 */
 			_onTopicMatched: function (event) {
 				var that = this,
-					sQuery = event.getParameter("arguments").searchParam;
+					sQuery = decodeURIComponent(event.getParameter("arguments").searchParam);
 				this.dataObject.searchTerm = sQuery;
 				this._modelRefresh();
 

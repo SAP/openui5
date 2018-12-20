@@ -1,6 +1,6 @@
 /* global QUnit */
 
-sap.ui.require([
+sap.ui.define([
 	"sap/ui/thirdparty/jquery",
 	"sap/ui/rta/appVariant/AppVariantOverviewDialog",
 	"sap/ui/rta/appVariant/Utils",
@@ -73,7 +73,7 @@ sap.ui.require([
 				}
 			];
 
-			sandbox.stub(AppVariantOverviewUtils, "getAppVariantOverview").returns(Promise.resolve(aAppVariantOverviewAttributes));
+			sandbox.stub(AppVariantOverviewUtils, "getAppVariantOverview").resolves(aAppVariantOverviewAttributes);
 
 			this.oAppVariantOverviewDialog = new AppVariantOverviewDialog({
 				idRunningApp: "id1"
@@ -110,7 +110,7 @@ sap.ui.require([
 				}
 			];
 
-			sandbox.stub(AppVariantOverviewUtils, "getAppVariantOverview").returns(Promise.resolve(aAppVariantOverviewAttributes));
+			sandbox.stub(AppVariantOverviewUtils, "getAppVariantOverview").resolves(aAppVariantOverviewAttributes);
 
 			this.oAppVariantOverviewDialog = new AppVariantOverviewDialog({
 				idRunningApp: "id1"
@@ -166,7 +166,7 @@ sap.ui.require([
 				}
 			];
 
-			sandbox.stub(AppVariantOverviewUtils, "getAppVariantOverview").returns(Promise.resolve(aAppVariantOverviewAttributes));
+			sandbox.stub(AppVariantOverviewUtils, "getAppVariantOverview").resolves(aAppVariantOverviewAttributes);
 
 			this.oAppVariantOverviewDialog = new AppVariantOverviewDialog({
 				idRunningApp: "id1"
@@ -213,7 +213,7 @@ sap.ui.require([
 				}
 			];
 
-			sandbox.stub(AppVariantOverviewUtils, "getAppVariantOverview").returns(Promise.resolve(aAppVariantOverviewAttributes));
+			sandbox.stub(AppVariantOverviewUtils, "getAppVariantOverview").resolves(aAppVariantOverviewAttributes);
 
 			this.oAppVariantOverviewDialog = new AppVariantOverviewDialog({
 				idRunningApp: "id1"

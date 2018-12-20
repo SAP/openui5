@@ -81,7 +81,7 @@ sap.ui.define(['sap/base/util/LoaderExtensions'], function (LoaderExtensions) {
 			// single lib in a second call (which re-uses this same promise) or vice versa.
 			if (mOptions.async && oVersionInfoPromise instanceof Promise) {
 				return oVersionInfoPromise.then(function() {
-					return sap.ui.getVersionInfo(mOptions);
+					return VersionInfo._load(mOptions);
 				});
 			}
 
@@ -104,7 +104,7 @@ sap.ui.define(['sap/base/util/LoaderExtensions'], function (LoaderExtensions) {
 
 				// Calling the function again with the same arguments will return the
 				// cached value from "sap.ui.versioninfo".
-				return sap.ui.getVersionInfo(mOptions);
+				return VersionInfo._load(mOptions);
 			};
 			var fnHandleError = function(oError) {
 				// Remove the stored Promise as the versioninfo couldn't be loaded

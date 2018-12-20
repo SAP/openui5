@@ -30,7 +30,6 @@ var ShHighlightRules = function() {
     }, "identifier");
 
     var integer = "(?:(?:[1-9]\\d*)|(?:0))";
-
     var fraction = "(?:\\.\\d+)";
     var intPart = "(?:\\d+)";
     var pointFloat = "(?:(?:" + intPart + "?" + fraction + ")|(?:" + intPart + "\\.))";
@@ -39,7 +38,7 @@ var ShHighlightRules = function() {
     var fileDescriptor = "(?:&" + intPart + ")";
 
     var variableName = "[a-zA-Z_][a-zA-Z0-9_]*";
-    var variable = "(?:" + variableName + "=)";
+    var variable = "(?:" + variableName + "(?==))";
 
     var builtinVariable = "(?:\\$(?:SHLVL|\\$|\\!|\\?))";
 
@@ -226,7 +225,6 @@ var TextHighlightRules = require("./text_highlight_rules").TextHighlightRules;
 var ShHighlightFile = require("./sh_highlight_rules");
 
 var MakefileHighlightRules = function() {
-
     var keywordMapper = this.createKeywordMapper({
         "keyword": ShHighlightFile.reservedKeywords,
         "support.function.builtin": ShHighlightFile.languageConstructs,
@@ -281,7 +279,7 @@ var MakefileHighlightRules = function() {
             next  : "start"
         }
     ]
-}
+};
 
 };
 
@@ -402,3 +400,11 @@ oop.inherits(Mode, TextMode);
 
 exports.Mode = Mode;
 });
+                (function() {
+                    ace.require(["ace/mode/makefile"], function(m) {
+                        if (typeof module == "object" && typeof exports == "object" && module) {
+                            module.exports = m;
+                        }
+                    });
+                })();
+            

@@ -364,5 +364,46 @@ sap.ui.define(
 				done();
 			}.bind(this), 100);
 		});
+
+		QUnit.module('Resize', {
+			beforeEach: function() {
+				this.LightBox = new LightBox({
+					imageContent : [
+						new LightBoxItem({
+							imageSrc: IMAGE_PATH + 'demo/nature/elephant.jpg'
+						})
+					]
+				});
+			},
+			afterEach: function() {
+				this.LightBox.close();
+				this.LightBox.destroy();
+			}
+		});
+
+		QUnit.test('image source', function(assert) {
+			var done = assert.async();
+
+			// Act
+			this.LightBox.open();
+			sap.ui.getCore().applyChanges();
+
+			// Wait for CSS animation to complete
+			setTimeout(function () {
+
+				var nativeImage = this.LightBox._oPopup.getContent().$().find('img')[0];
+
+				this.LightBox._setImageSize(this.LightBox._getImageContent().getAggregation("_image"), 100, 100);
+
+				setTimeout(function () {
+
+					var newNativeImage = this.LightBox._oPopup.getContent().$().find('img')[0];
+					assert.strictEqual(nativeImage, newNativeImage, 'native image is not changed during resizing');
+
+					done();
+				}.bind(this), 100);
+
+			}.bind(this), 100);
+		});
 	}
 );

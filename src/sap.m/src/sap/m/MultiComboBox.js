@@ -534,7 +534,7 @@ function(
 			// enable type ahead when switching focus from the dropdown to the input field
 			// we need to check whether the focus has been triggered by the popover's closing or just a manual focusin
 			// isOpen is still true as the closing has not finished yet.
-			!bPickerClosing && bPreviousFocusInDropdown && this._handleInputValidation(oEvent, false);
+			!bPickerClosing && bPreviousFocusInDropdown && this.handleInputValidation(oEvent, false);
 		}
 
 		if (oEvent.target === this.getOpenArea() && bDropdownPickerType && !this.isPlatformTablet()) {
@@ -707,9 +707,7 @@ function(
 		}
 
 		// suppress invalid value
-		if (!this._bCompositionStart && !this._bCompositionEnd) {
-			this._handleInputValidation(oEvent, false);
-		}
+		this.handleInputValidation(oEvent, this.isComposingCharacter());
 
 		if (this.isOpen()) {
 			// wait a tick so the setVisible call has replaced the DOM
@@ -1076,7 +1074,7 @@ function(
 		this.clearFilter();
 
 		// resets or not the value of the input depending on the event (enter does not clear the value)
-		!this._bPreventValueRemove && this.setValue("");
+		!this.isComposingCharacter() && !this._bPreventValueRemove && this.setValue("");
 		this._sOldValue = "";
 
 		if (this.isPickerDialog()) {
@@ -2008,7 +2006,7 @@ function(
 		this.removeStyleClass("sapMFocus");
 
 		// reset the value state
-		if (this.getValueState() === ValueState.Error) {
+		if (this.getValueState() === ValueState.Error && this.getValueStateText() === this._oRbM.getText("VALUE_STATE_ERROR_ALREADY_SELECTED")) {
 			this.setValueState(ValueState.None);
 		}
 
@@ -2434,52 +2432,6 @@ function(
 		}
 	};
 
-	/**
-	 * Retrieves the first enabled item from the aggregation named <code>items</code>.
-	 *
-	 * @param {array} [aItems] The item aggregation
-	 * @returns {sap.ui.core.Item | null} The first enabled item
-	 */
-	MultiComboBox.prototype.findFirstEnabledItem = function(aItems) {
-		aItems = aItems || this.getItems();
-
-		for (var i = 0; i < aItems.length; i++) {
-			if (aItems[i].getEnabled()) {
-				return aItems[i];
-			}
-		}
-
-		return null;
-	};
-
-	/**
-	 * Gets the visible items from the aggregation named <code>items</code>.
-	 *
-	 * @return {sap.ui.core.Item[]} The visible items in the aggregation
-	 */
-	MultiComboBox.prototype.getVisibleItems = function() {
-		for (var i = 0, oListItem, aItems = this.getItems(), aVisibleItems = []; i < aItems.length; i++) {
-			oListItem = this.getListItem(aItems[i]);
-
-			if (oListItem && oListItem.getVisible()) {
-				aVisibleItems.push(aItems[i]);
-			}
-		}
-
-		return aVisibleItems;
-	};
-
-	/**
-	 * Retrieves the last enabled item from the aggregation named <code>items</code>.
-	 *
-	 * @param {array} [aItems] The item aggregation
-	 * @returns {sap.ui.core.Item | null} The last enabled item
-	 */
-	MultiComboBox.prototype.findLastEnabledItem = function(aItems) {
-		aItems = aItems || this.getItems();
-		return this.findFirstEnabledItem(aItems.reverse());
-	};
-
 	/* =========================================================== */
 	/* API methods */
 	/* =========================================================== */
@@ -2708,15 +2660,6 @@ function(
 		return aItems;
 	};
 
-	/**
-	 * Gets the selectable items from the aggregation named <code>items</code>.
-	 *
-	 * @returns {sap.ui.core.Item[]} An array containing the selectable items.
-	 */
-	MultiComboBox.prototype.getSelectableItems = function() {
-		return this.getEnabledItems(this.getVisibleItems());
-	};
-
 	MultiComboBox.prototype.getWidth = function() {
 		return this.getProperty("width") || "100%";
 	};
@@ -2736,22 +2679,6 @@ function(
 			this._getReadOnlyPopover().addContent(oList);
 		}
 		return this;
-	};
-
-	MultiComboBox.prototype.clearFilter = function() {
-		this.getItems().forEach(function(oItem) {
-			this.getListItem(oItem).setVisible(oItem.getEnabled() && this.getSelectable(oItem));
-		}, this);
-	};
-
-	/**
-	 * @returns {boolean} true if the list has at least one not visible item, false if all items in the list are visible.
-	 * @private
-	 */
-	MultiComboBox.prototype._isListInSuggestMode = function() {
-		return this.getList().getItems().some(function(oListItem) {
-			return !oListItem.getVisible() && this._getItemByListItem(oListItem).getEnabled();
-		}, this);
 	};
 
 	/**
@@ -2858,17 +2785,6 @@ function(
 	};
 
 	/**
-	 * Get selectable property of sap.ui.core.Item
-	 *
-	 * @param {sap.ui.core.Item} oItem The item in question
-	 * @returns {boolean} The selectable value
-	 * @private
-	 */
-	MultiComboBox.prototype.getSelectable = function(oItem) {
-		return oItem._bSelectable;
-	};
-
-	/**
 	 * TODO: ComboBoxBase should be changed regarding 'this.getSelectedItem()'
 	 *
 	 * Fill the list of items.
@@ -2923,25 +2839,23 @@ function(
 	 * @param {boolean} bCompositionEvent Is true if the fired event is a composition event
 	 * @private
 	 */
-	MultiComboBox.prototype._handleInputValidation = function(oEvent, bCompositionEvent) {
-		var sValue = oEvent.target.value, aStartsWithItems,
+	MultiComboBox.prototype.handleInputValidation = function(oEvent, bCompositionEvent) {
+		var sValue = oEvent.target.value,
 			bResetFilter = this._sOldInput && this._sOldInput.length > sValue.length,
-			bVisibleItemFound, aItemsToCheck, oSelectedButton;
+			bValidInputValue = this.isValueValid(sValue),
+			aItemsToCheck, oSelectedButton, aStartsWithItems;
 
 		// "compositionstart" and "compositionend" are native events and don't have srcControl
-		var oInput = bCompositionEvent ? jQuery(oEvent.target).control(0) : oEvent.srcControl;
+		var oInput = oEvent.srcControl;
 
-		aStartsWithItems = this._getItemsStartingWith(sValue, true);
-		var aStartsWithPerTermItems = this._getItemsStartingWithPerTerm(sValue, true);
-
-		bVisibleItemFound = !!aStartsWithItems.length;
-
-		if (!bVisibleItemFound && sValue !== "" && !aStartsWithPerTermItems.length) {
-			this._handleFieldValidationState(oInput, bCompositionEvent);
+		if (!bValidInputValue && sValue !== "" && !bCompositionEvent) {
+			this._handleFieldValidationState(oInput);
 			return;
 		}
 
-		this._handleTypeAhead(sValue, aStartsWithItems, oInput);
+		aStartsWithItems = this._getItemsStartingWith(sValue, true);
+
+		!bCompositionEvent && this._handleTypeAhead(sValue, aStartsWithItems, oInput);
 
 		aItemsToCheck = this.getEnabledItems();
 
@@ -2958,14 +2872,27 @@ function(
 
 		this.filterItems({ value: sValue, items: aItemsToCheck });
 
+		this._sOldInput = sValue;
+
 		// First do manipulations on list items and then let the list render
-		if ((!this.getValue() || !bVisibleItemFound && !aStartsWithPerTermItems.length) && !this.bOpenedByKeyboardOrButton && !this.isPickerDialog())  {
+		if ((!this.getValue() || !bValidInputValue) && !this.bOpenedByKeyboardOrButton && !this.isPickerDialog())  {
 			this.close();
 		} else {
 			this.open();
 		}
+	};
 
-		this._sOldInput = sValue;
+	/**
+	 * Determines if a given value matches an item
+	 *
+	 * @param {string} sValue The string value to be checked
+	 * @private
+	 */
+	MultiComboBox.prototype.isValueValid = function (sValue) {
+		var aStartsWithItems = this._getItemsStartingWith(sValue, true);
+		var aStartsWithPerTermItems = this._getItemsStartingWithPerTerm(sValue, true);
+
+		return aStartsWithItems.length || aStartsWithPerTermItems.length;
 	};
 
 	/**
@@ -3000,12 +2927,18 @@ function(
 	 * Shows invalid state to an input control
 	 *
 	 * @param {sap.m.InputBase} oInput Input to be validated
-	 * @param {boolean} bCompositionEvent Defines whether the event is composite
 	 * @private
 	 */
-	MultiComboBox.prototype._handleFieldValidationState = function (oInput, bCompositionEvent) {
-		var sUpdateValue = bCompositionEvent ? this._sComposition : (this._sOldInput || this._sOldValue || "");
-		oInput.updateDomValue(sUpdateValue);
+	MultiComboBox.prototype._handleFieldValidationState = function (oInput) {
+		// ensure that the value, which will be updated is valid
+		// needed for the composition characters
+		if (this._sOldInput && this.isValueValid(this._sOldInput)) {
+			oInput.updateDomValue(this._sOldInput);
+		} else if (this._sOldValue && this.isValueValid(this._sOldValue)) {
+			oInput.updateDomValue(this._sOldValue);
+		} else {
+			oInput.updateDomValue("");
+		}
 
 		if (this._iOldCursorPos) {
 			jQuery(oInput.getFocusDomRef()).cursorPos(this._iOldCursorPos);
@@ -3038,24 +2971,6 @@ function(
 		this._aCustomerKeys = [];
 		this._aInitiallySelectedItems = [];
 
-		// handle composition events & validation of composition symbols
-		this._bCompositionStart = false;
-		this._bCompositionEnd = false;
-		this._sComposition = "";
-
-		this.attachBrowserEvent("compositionstart", function() {
-			this._bCompositionStart = true;
-			this._bCompositionEnd = false;
-		}, this);
-
-		this.attachBrowserEvent("compositionend", function(oEvent) {
-			this._bCompositionStart = false;
-			this._bCompositionEnd = true;
-			this._handleInputValidation(oEvent, true);
-			this._bCompositionEnd = false;
-			this._sComposition = oEvent.target.value;
-		}, this);
-
 		this._oRbM = sap.ui.getCore().getLibraryResourceBundle("sap.m");
 		this._oRbC = sap.ui.getCore().getLibraryResourceBundle("sap.ui.core");
 	};
@@ -3067,20 +2982,6 @@ function(
 	 */
 	MultiComboBox.prototype.clearSelection = function() {
 		this.removeAllSelectedItems();
-	};
-
-	MultiComboBox.prototype.addItem = function(oItem) {
-		this.addAggregation("items", oItem);
-
-		if (oItem) {
-			oItem.attachEvent("_change", this.onItemChange, this);
-		}
-
-		if (this.getList()) {
-			this.getList().addItem(this._mapItemToListItem(oItem));
-		}
-
-		return this;
 	};
 
 	/**
@@ -3140,33 +3041,6 @@ function(
 	};
 
 	/**
-	 * Gets the enabled items from the aggregation named <code>items</code>.
-	 *
-	 * @param {sap.ui.core.Item[]} [aItems=getItems()] Items to filter.
-	 * @return {sap.ui.core.Item[]} An array containing the enabled items.
-	 * @public
-	 */
-	MultiComboBox.prototype.getEnabledItems = function(aItems) {
-		aItems = aItems || this.getItems();
-
-		return aItems.filter(function(oItem) {
-			return oItem.getEnabled();
-		});
-	};
-
-	/**
-	 * Gets the item with the given key from the aggregation named <code>items</code>.<br>
-	 * <b>Note:</b> If duplicate keys exist, the first item matching the key is returned.
-	 *
-	 * @param {string} sKey An item key that specifies the item to retrieve.
-	 * @returns {sap.ui.core.Item} The matching item
-	 * @public
-	 */
-	MultiComboBox.prototype.getItemByKey = function(sKey) {
-		return this.findItem("key", sKey);
-	};
-
-	/**
 	 * Removes an item from the aggregation named <code>items</code>.
 	 *
 	 * @param {int | string | sap.ui.core.Item} oItem The item to remove or its index or id.
@@ -3201,42 +3075,12 @@ function(
 	};
 
 	/**
-	 * Retrieves an item by searching for the given property/value from the aggregation named <code>items</code>.<br>
-	 * <b>Note:</b> If duplicate values exist, the first item matching the value is returned.
-	 *
-	 * @param {string} sProperty An item property.
-	 * @param {string} sValue An item value that specifies the item to retrieve.
-	 * @returns {sap.ui.core.Item | null} The matched item or null.
-	 */
-	MultiComboBox.prototype.findItem = function(sProperty, sValue) {
-		var sMethod = "get" + sProperty.charAt(0).toUpperCase() + sProperty.slice(1);
-
-		for (var i = 0, aItems = this.getItems(); i < aItems.length; i++) {
-			if (aItems[i][sMethod]() === sValue) {
-				return aItems[i];
-			}
-		}
-
-		return null;
-	};
-
-	/**
 	 * Destroy the tokens in the Tokenizer.
 	 *
 	 * @private
 	 */
 	MultiComboBox.prototype._clearTokenizer = function() {
 		this._oTokenizer.destroyAggregation("tokens", true);
-	};
-
-	/**
-	 * Getter for the control's List.
-	 *
-	 * @returns {sap.m.List} The list
-	 * @private
-	 */
-	MultiComboBox.prototype.getList = function() {
-		return this._oList;
 	};
 
 	MultiComboBox.prototype.exit = function() {
@@ -3287,18 +3131,6 @@ function(
 	};
 
 	/**
-	 * Get item corresponding to given list item.
-	 *
-	 * @param {sap.m.StandardListItem | null} oListItem The given list item
-	 * @return {sap.ui.core.Item} The corresponding item
-	 * @private
-	 * @since 1.24.0
-	 */
-	MultiComboBox.prototype._getItemByListItem = function(oListItem) {
-		return this._getItemBy(oListItem, "ListItem");
-	};
-
-	/**
 	 * Get item corresponding to given token.
 	 *
 	 * @param {sap.m.Token | null} oToken The given token
@@ -3308,39 +3140,6 @@ function(
 	 */
 	MultiComboBox.prototype._getItemByToken = function(oToken) {
 		return this._getItemBy(oToken, "Token");
-	};
-
-	/**
-	 * Get item corresponding to given data object.
-	 *
-	 * @param {Object | null} oDataObject The given object
-	 * @param {string} sDataName The data name
-	 * @return {sap.ui.core.Item} The corresponding item
-	 * @private
-	 * @since 1.24.0
-	 */
-	MultiComboBox.prototype._getItemBy = function(oDataObject, sDataName) {
-		sDataName = this.getRenderer().CSS_CLASS_COMBOBOXBASE + sDataName;
-
-		for ( var i = 0, aItems = this.getItems(), iItemsLength = aItems.length; i < iItemsLength; i++) {
-			if (aItems[i].data(sDataName) === oDataObject) {
-				return aItems[i];
-			}
-		}
-
-		return null;
-	};
-
-	/**
-	 * Getter for the control's ListItem.
-	 *
-	 * @param {sap.ui.core.Item} oItem The item
-	 * @returns {sap.m.StandardListItem | null} The ListItem
-	 * @private
-	 * @since 1.24.0
-	 */
-	MultiComboBox.prototype.getListItem = function(oItem) {
-		return oItem ? oItem.data(this.getRenderer().CSS_CLASS_COMBOBOXBASE + "ListItem") : null;
 	};
 
 	/**

@@ -11,7 +11,7 @@
 		showIcon="true">
 	</MessageStrip>
 
-	<Slider value="100" liveChange="onSliderMoved"/>
+	<Slider value="{/viewPortPercentWidth}" liveChange="onSliderMoved"/>
 
 	<MessageStrip
 		class="sapUiTinyMargin"
@@ -323,4 +323,44 @@
 		</RadioButton>
 	</OverflowToolbar>
 
+	<MessageStrip
+		class="sapUiTinyMargin"
+		text="Overflow Toolbar with grouped elements: Label with Select and Label with Input.
+			Grouped elements move inside Overflow Toolbar in pairs."
+		type="Information"
+		showIcon="true">
+	</MessageStrip>
+	<OverflowToolbar id="otb8">
+		<Label text="Grouping:"/>
+		<ToolbarSpacer />
+		<Label text="Select:" labelFor="labeledSelectGroup1">
+			<layoutData>
+				<OverflowToolbarLayoutData group="1" />
+			</layoutData>
+		</Label>
+		<Select width="20%" id="labeledSelectGroup1">
+			<items>
+				<core:Item key="1" text="Option 1"/>
+				<core:Item key="2" text="Option 2"/>
+				<core:Item key="3" text="Option 3"/>
+				<core:Item key="4" text="Option 4"/>
+				<core:Item key="5" text="Option 5"/>
+			</items>
+			<layoutData>
+				<OverflowToolbarLayoutData group="1" shrinkable="true" minWidth="150px"/>
+			</layoutData>
+		</Select>
+		<Label text="Input:" labelFor="labeledInputGroup2">
+			<layoutData>
+				<OverflowToolbarLayoutData group="2" />
+			</layoutData>
+		</Label>
+
+		<Input width="20%" placeholder="Input" id="labeledInputGroup2">
+			<layoutData>
+				<OverflowToolbarLayoutData shrinkable="true" group="2" minWidth="150px"/>
+			</layoutData>
+		</Input>
+	</OverflowToolbar>
+	<Slider class="sapUiTinyMarginTopBottom" value="{/viewPortPercentWidth}" liveChange="onSliderMoved"/>
 </mvc:View>

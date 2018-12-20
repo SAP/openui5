@@ -1,0 +1,32 @@
+/* ======================================== */
+/* CSS for control sap.m/ProgressIndicator  */
+/* Fiori 3 theme                            */
+/* ======================================== */
+
+.sapMPI,
+.sapUiSizeCompact .sapMPI:not(.sapMPIDisplayOnly) {
+	height: 1rem;
+	min-width: 4rem;
+	margin: 0.5rem 0;
+}
+
+.sap-phone .sapMPI:not(.sapMPIDisplayOnly),
+.sap-tablet .sapMPI:not(.sapMPIDisplayOnly) {
+	margin: 0.875rem 0;
+}
+
+.sapMPIDisplayOnly:not(.sapMPIBarDisabled) .sapMPIBarNeutral {
+	background: @sapUiBaseText;
+}
+
+.sapMPIDisplayOnly:not(.sapMPIBarDisabled) .sapMPIText.sapMPITextLeft {
+	color: contrast(@sapUiBaseText, @sapUiBaseText, @sapUiContentForegroundColor, @sapUiContentContrastTextThreshold);
+}
+
+.sapMPIBarInformation {
+	background: @sapUiInformativeElement;
+}
+
+.sapMPIBarInformation .sapMPIText.sapMPITextLeft {
+	color: contrast(@sapUiInformativeElement, @sapUiContentForegroundTextColor, @sapUiContentContrastTextColor, @sapUiContentContrastTextThreshold);
+}

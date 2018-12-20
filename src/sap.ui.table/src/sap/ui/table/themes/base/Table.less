@@ -669,7 +669,6 @@ html[data-sap-ui-browser^="ie"] .sapUiTableColHdrCnt {
 }
 
 .sapUiTableRowHdr {
-	background-color: @sapUiListBackground;
 	border-bottom: 1px solid @sapUiListBorderColor;
 	border-right: 1px solid @sapUiListVerticalBorderColor;
 	box-sizing: border-box;
@@ -795,11 +794,31 @@ html[data-sap-ui-browser^="ie"] .sapUiTableColHdrCnt {
 	}
 
 	&.sapUiTableRowHighlightInformation {
-		background-color: @sapUiHighlight;
+		background-color: @sapUiInformationBorder;
 	}
 
 	&.sapUiTableRowHighlightNone {
 		background-color: transparent;
+	}
+
+	&.sapUiTableRowHighlightIndication01 {
+		background-color: @sapUiIndication1;
+	}
+
+	&.sapUiTableRowHighlightIndication02 {
+		background-color: @sapUiIndication2;
+	}
+
+	&.sapUiTableRowHighlightIndication03 {
+		background-color: @sapUiIndication3;
+	}
+
+	&.sapUiTableRowHighlightIndication04 {
+		background-color: @sapUiIndication4;
+	}
+
+	&.sapUiTableRowHighlightIndication05 {
+		background-color: @sapUiIndication5;
 	}
 }
 
@@ -882,7 +901,6 @@ html[data-sap-ui-browser^="ie"] .sapUiTableColHdrCnt {
 }
 
 .sapUiTableRowAction {
-	background-color: @sapUiListBackground;
 	border-bottom: 1px solid @sapUiListBorderColor;
 	border-right: 1px solid @sapUiListVerticalBorderColor;
 	border-left: 1px solid @sapUiListVerticalBorderColor;

@@ -10,7 +10,7 @@ var StatusBar = function(editor, parentNode) {
     parentNode.appendChild(this.element);
 
     var statusUpdate = lang.delayedCall(function(){
-        this.updateStatus(editor)
+        this.updateStatus(editor);
     }.bind(this)).schedule.bind(null, 100);
     
     editor.on("changeStatus", statusUpdate);
@@ -48,6 +48,10 @@ exports.StatusBar = StatusBar;
 
 });
                 (function() {
-                    ace.require(["ace/ext/statusbar"], function() {});
+                    ace.require(["ace/ext/statusbar"], function(m) {
+                        if (typeof module == "object" && typeof exports == "object" && module) {
+                            module.exports = m;
+                        }
+                    });
                 })();
             

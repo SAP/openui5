@@ -454,7 +454,7 @@ sap.ui.define([
 
 	ObjectPageLayout.DIV = "div";
 	ObjectPageLayout.HEADER = "header";
-	ObjectPageLayout.FOOTER = "footer";
+	ObjectPageLayout.FOOTER = "section";
 
 	/**
 	 * Retrieves thе next entry starting from the given one within the <code>sap.ui.core.TitleLevel</code> enumeration.
@@ -831,9 +831,18 @@ sap.ui.define([
 
 	ObjectPageLayout.prototype._sectionCanBeRenderedByUXRules = function (oSection) {
 
-		if (!oSection || !oSection.getVisible() || !oSection._getInternalVisible()) {
+		// SubSection binding info is needed later in order to decide wether a section
+		// can be rendered by UX rules, i.e.
+		// if a section is bound, it is expected to not be empty
+		var oSubSectionsBindingInfo = oSection.getBindingInfo("subSections");
+
+		if (
+			(!oSection || !oSection.getVisible() || !oSection._getInternalVisible()) &&
+			!oSubSectionsBindingInfo
+		) {
 			return false;
 		}
+
 		var aSectionBasesIds = this._aSectionBases.map(function (oSectionBase) {
 			return oSectionBase.getId();
 		});
@@ -895,6 +904,8 @@ sap.ui.define([
 
 	ObjectPageLayout.prototype.onAfterRendering = function () {
 		var oHeaderContent = this._getHeaderContent(),
+			oFooter = this.getFooter(),
+			sFooterAriaLabel,
 			iWidth = this._getWidth(this);
 
 		this._ensureCorrectParentHeight();
@@ -922,6 +933,11 @@ sap.ui.define([
 
 		if (oHeaderContent && oHeaderContent.supportsPinUnpin()) {
 			this.$().toggleClass("sapUxAPObjectPageLayoutHeaderPinnable", oHeaderContent.getPinnable());
+		}
+
+		if (oFooter) {
+			sFooterAriaLabel = ObjectPageLayout._getLibraryResourceBundle().getText("FOOTER_ARIA_LABEL");
+			oFooter.$().attr("aria-label", sFooterAriaLabel);
 		}
 
 		// Attach expand button event
@@ -2633,8 +2649,7 @@ sap.ui.define([
 			bShouldStick = this._shouldSnapHeaderOnScroll(iScrollTop),
 			bShouldPreserveHeaderInTitleArea = this._shouldPreserveHeaderInTitleArea(),
 			bScrolled = false,
-			oPreviousScrollState = this._oLastScrollState,
-			iScrollOffset = oPreviousScrollState ? (oPreviousScrollState.iScrollTop - iScrollTop) : 0;
+			oPreviousScrollState = this._oLastScrollState;
 
 		this._oLastScrollState = {
 			iScrollTop: iScrollTop,
@@ -2675,7 +2690,7 @@ sap.ui.define([
 
 				var iNewSpacerHeight = iSpacerHeight + iContentLengthChange;
 				this._$spacer.height(iNewSpacerHeight + "px"); // add extra space to compensate height loss
-				this._scrollTo($wrapper.scrollTop + iScrollOffset); // scroll back to the previous scroll top (to fallback from the visual offset of content)
+				this._scrollTo(oPreviousScrollState.iScrollTop); // scroll back to the previous scroll top (to fallback from the visual offset of content)
 				return;
 			}
 		}
@@ -2797,16 +2812,12 @@ sap.ui.define([
 		bSubSectionsOnly = !!bSubSectionsOnly;
 		iScrollTop = Math.ceil(iScrollTop);
 
-		if (this.getUseIconTabBar() && this._oCurrentTabSection) {
-			return this._oCurrentTabSection.getId();
-		}
-
 		var iScrollPageBottom = iScrollTop + iPageHeight,                 //the bottom limit
 			sClosestId,
 			bTraverseSubSections = bSubSectionsOnly || this._bMobileScenario;
 
 		jQuery.each(this._oSectionInfo, function (sId, oInfo) {
-			var section, sectionParent, isParentHiddenSection, firstVisibleSubSection;
+			var section, sectionParent, isParentHiddenSection, firstVisibleSubSection, oSelectedSection, sSelectedSectionId = this.getSelectedSection();
 
 			// on desktop/tablet, skip subsections
 			// BCP 1680331690. Should skip subsections that are in a section with lower importance, which makes them hidden.
@@ -2816,6 +2827,17 @@ sap.ui.define([
 			}
 			sectionParent = section.getParent();
 			isParentHiddenSection = sectionParent instanceof ObjectPageSection && sectionParent._getIsHidden();
+
+			// discard (sub)sections that are not part of the current current tab
+			if (this.getUseIconTabBar() && sSelectedSectionId) {
+				oSelectedSection = this.oCore.byId(sSelectedSectionId);
+				if (oInfo.isSection && oInfo.sectionReference != oSelectedSection) {
+					return true;
+				}
+				if (!oInfo.isSection && oSelectedSection.indexOfSubSection(oInfo.sectionReference) < 0) {
+					return true;
+				}
+			}
 
 			if (oInfo.isSection || (bTraverseSubSections && !isParentHiddenSection)) {
 				//we need to set the sClosest to the first section for handling the scrollTop = 0
@@ -3184,10 +3206,11 @@ sap.ui.define([
 	};
 
 	ObjectPageLayout.prototype._obtainExpandedTitleHeight = function (bViaClone) {
-
 		var oTitle = this.getHeaderTitle(),
 			$Clone,
-			iHeight;
+			iHeight,
+			iSectionsContainerHeight,
+			iSectionsContainerNewHeight;
 
 		if (bViaClone) {
 			// BCP: 1870298358 - setting overflow-y to hidden of the wrapper element during clone to eliminate unwanted
@@ -3198,12 +3221,31 @@ sap.ui.define([
 			$Clone.remove(); //clean dom
 			this._$opWrapper.css("overflow-y", "auto");
 		} else if (oTitle && oTitle.unSnap) {
+			iSectionsContainerHeight = this._$sectionsContainer.height();
+
 			oTitle.unSnap(false);
 			iHeight = oTitle.$().outerHeight();
 			oTitle.snap(false);
+
+			iSectionsContainerNewHeight = this._$sectionsContainer.height();
+			this._adjustSpacerHeightUponUnsnapping(iSectionsContainerHeight, iSectionsContainerNewHeight);
 		}
 
 		return iHeight;
+	};
+
+	/**
+	 * Adjusts spacer's height upon unsnapping for measurements (in case of unneeded Scrollbar appearance)
+	 *
+	 * @private
+	 */
+	ObjectPageLayout.prototype._adjustSpacerHeightUponUnsnapping = function (iSectionsContainerHeight, iSectionsContainerNewHeight) {
+		var iSpacerNewHeight;
+
+		if (iSectionsContainerHeight != iSectionsContainerNewHeight) {
+			iSpacerNewHeight = this._$spacer.height() - (iSectionsContainerNewHeight - iSectionsContainerHeight);
+			this._$spacer.height(iSpacerNewHeight);
+		}
 	};
 
 	/**
@@ -3981,15 +4023,15 @@ sap.ui.define([
 	};
 
 
-	ObjectPageLayout.prototype._getRootAriaLabelText = function () {
+	ObjectPageLayout.prototype._getAriaLabelText = function (sElement) {
 		var oHeader = this.getHeaderTitle(),
 			sTitleText = oHeader ? oHeader.getTitleText() : null,
 			sAriaLabelText;
 
 		if (oHeader && sTitleText) {
-			sAriaLabelText = ObjectPageLayout._getLibraryResourceBundle().getText("ROOT_ARIA_LABEL_WITH_TITLE") + " " + sTitleText;
+			sAriaLabelText = sTitleText + " " + ObjectPageLayout._getLibraryResourceBundle().getText(sElement + "_ARIA_LABEL_WITH_TITLE");
 		} else {
-			sAriaLabelText = ObjectPageLayout._getLibraryResourceBundle().getText("ROOT_ARIA_LABEL_WITHOUT_TITLE");
+			sAriaLabelText = ObjectPageLayout._getLibraryResourceBundle().getText(sElement + "_ARIA_LABEL_WITHOUT_TITLE");
 		}
 
 		return sAriaLabelText;
@@ -4004,13 +4046,30 @@ sap.ui.define([
 		return oDOMRef.parentElement ? oDOMRef.getBoundingClientRect().height : 0;
 	};
 
-	ObjectPageLayout.prototype._updateRootAriaLabel = function () {
-		var sNewText = this._getRootAriaLabelText(),
-			sCurrentText = this.$().attr("aria-label");
+	/*
+	 * Updates the ObjectPage ARIA labels in the DOM in case of title change and no user pre-defined labels.
+	 */
+	ObjectPageLayout.prototype._updateAriaLabels = function () {
+		var oLandmarkInfo = this.getLandmarkInfo(),
+			sRootText = this._getAriaLabelText("ROOT"),
+			sHeaderText = this._getAriaLabelText("HEADER"),
+			sNavigationText = this._getAriaLabelText("NAVIGATION"),
+			sToolbarText = this._getAriaLabelText("NAVTOOLBAR"),
+			bHeaderLabelSet = oLandmarkInfo && oLandmarkInfo.getHeaderLabel(),
+			bRootLabelSet = oLandmarkInfo && oLandmarkInfo.getRootLabel(),
+			bNavigationLabelSet = oLandmarkInfo && oLandmarkInfo.getNavigationLabel();
 
-		if (sNewText !== sCurrentText) {
-			this.$().attr("aria-label", sNewText);
+		if (!bRootLabelSet) {
+			this.$().attr("aria-label", sRootText);
 		}
+		if (!bHeaderLabelSet) {
+			this.$("headerTitle").attr("aria-label", sHeaderText);
+		}
+		if (!bNavigationLabelSet) {
+			this.$("anchorBar").attr("aria-label", sNavigationText);
+			this.$("stickyAnchorBar").attr("aria-label", sNavigationText);
+		}
+		this.$("anchBar").attr("aria-label", sToolbarText);
 	};
 
 	/**

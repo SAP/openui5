@@ -199,7 +199,7 @@ oop.inherits(Mode, TextMode);
 
 (function() {
     
-    this.lineCommentStart = '"'
+    this.lineCommentStart = '"';
     
     this.getNextLineIndent = function(state, line, tab) {
         var indent = this.$getIndent(line);
@@ -212,3 +212,11 @@ oop.inherits(Mode, TextMode);
 exports.Mode = Mode;
 
 });
+                (function() {
+                    ace.require(["ace/mode/abap"], function(m) {
+                        if (typeof module == "object" && typeof exports == "object" && module) {
+                            module.exports = m;
+                        }
+                    });
+                })();
+            

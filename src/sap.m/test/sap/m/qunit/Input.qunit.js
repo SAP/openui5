@@ -20,6 +20,7 @@ sap.ui.define([
 	"sap/m/Dialog",
 	"sap/m/Button",
 	"sap/m/SuggestionItem",
+	"sap/ui/qunit/utils/waitForThemeApplied",
 	"sap/ui/events/KeyCodes",
 	"jquery.sap.global"
 ], function(
@@ -42,6 +43,7 @@ sap.ui.define([
 	Dialog,
 	Button,
 	SuggestionItem,
+	waitForThemeApplied,
 	KeyCodes
 ) {
 	// shortcut for sap.m.InputTextFormatMode
@@ -3484,6 +3486,33 @@ sap.ui.define([
 		oInput = null;
 	});
 
+	QUnit.test("right arrow press", function (assert) {
+
+		var fnLiveChange = this.spy();
+
+		// arrange
+		var oInput = new Input({
+			showSuggestion: true,
+			suggestionItems: [
+				new Item({text: "Germany"}),
+				new Item({text: "Bulgaria"}),
+				new Item("UK", {key: "UK", text: "United Kingdom"}),
+				new Item({text: "Italy"})
+			],
+			liveChange: fnLiveChange
+		}).placeAt("content");
+
+		sap.ui.getCore().applyChanges();
+
+		oInput._oSuggPopover._onsapright();
+
+		assert.equal(fnLiveChange.callCount, 0, "liveChange handler is not fired");
+
+		// clean up
+		oInput.destroy();
+		oInput = null;
+	});
+
 	QUnit.module("Input with Suggestions and Value State Message", {
 		beforeEach: function () {
 
@@ -3505,6 +3534,10 @@ sap.ui.define([
 			sap.ui.getCore().applyChanges();
 		},
 		afterEach: function () {
+			if (this.inputWithSuggestions._oValueStateMessage._oPopup) {
+				this.inputWithSuggestions._oValueStateMessage._oPopup.close();
+			}
+
 			this.inputWithSuggestions.destroy();
 			this.inputWithSuggestions = null;
 		}
@@ -3523,4 +3556,17 @@ sap.ui.define([
 		assert.notOk(this.inputWithSuggestions._oValueStateMessage._oPopup, "Value state message is not shown");
 	});
 
+	QUnit.test('valueStateMsg z-index', function (assert) {
+
+		this.inputWithSuggestions.setShowValueStateMessage(true);
+		this.inputWithSuggestions.setValueState("Error");
+		this.inputWithSuggestions.onfocusin();
+
+		this.clock.tick(300);
+
+		assert.ok(this.inputWithSuggestions._oValueStateMessage._oPopup, "Value state message is shown");
+		assert.strictEqual(jQuery(this.inputWithSuggestions._oValueStateMessage._oPopup.getContent()).css('z-index'), '1', 'z-index is correct');
+	});
+
+	return waitForThemeApplied();
 });

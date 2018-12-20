@@ -1,6 +1,5 @@
-/* global Promise */
 sap.ui.define([
-	"sap/ui/demo/worklist/localService/mockserver",
+	"../localService/mockserver",
 	"sap/m/MessageBox"
 ], function (mockserver, MessageBox) {
 	"use strict";

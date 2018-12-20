@@ -386,7 +386,7 @@ sap.ui.define([
 			createType("int", {
 				defaultValue : 0,
 				isValid : function(vValue) {
-					return typeof vValue === "number" && Math.floor(vValue) == vValue;
+					return typeof vValue === "number" && (isNaN(vValue) || Math.floor(vValue) == vValue);
 				},
 				parseValue: function(sValue) {
 					return parseInt(sValue);

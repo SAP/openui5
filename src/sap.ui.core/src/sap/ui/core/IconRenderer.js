@@ -80,11 +80,11 @@ sap.ui.define(['./IconPool', './library', "sap/base/security/encodeXML"], functi
 		}
 
 		if (sColor && !(sColor in IconColor)) {
-			oRm.addStyle("color", encodeXML(sColor));
+			oRm.addStyle("color", sColor);
 		}
 
 		if (sBackgroundColor && !(sBackgroundColor in IconColor)) {
-			oRm.addStyle("background-color", encodeXML(sBackgroundColor));
+			oRm.addStyle("background-color", sBackgroundColor);
 		}
 
 		if (sSize) {

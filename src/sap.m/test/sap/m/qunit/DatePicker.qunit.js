@@ -1563,19 +1563,22 @@ sap.ui.define([
 
 	QUnit.test("navigate", function (assert) {
 		// Arrange
-		this.oDP.attachEvent("navigate", this.oSpy);
+		var fnFireNavigate = this.spy(this.oDP, "fireNavigate");
 
 		// Act
 		qutils.triggerEvent("click", "EDP-icon");
 
 		// Assert
-		assert.strictEqual(this.oSpy.callCount, 1, "Event handler should be called once after opening picker");
+		assert.ok(fnFireNavigate.callCount, 1, "Event handler should be called once after opening picker");
+		assert.ok(fnFireNavigate.getCall(0).args[0].afterPopupOpened,
+			"Event indicates that it has been fired after popup opening");
 
 		// Act
 		qutils.triggerEvent("click", "EDP-cal--Head-next");
 
 		// Assert
-		assert.strictEqual(this.oSpy.callCount, 2, "Event handler should be called second time after navigating in calendar");
+		assert.ok(fnFireNavigate.callCount, 2, "Event handler should be called a second time after navigating in the calendar");
+		assert.notOk(fnFireNavigate.getCall(1).args[0].afterPopupOpened, "Event isn't fired after opening");
 	});
 
 	QUnit.module("SpecialDates - lazy loading", {

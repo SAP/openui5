@@ -13,6 +13,9 @@
       <libraryName>sap.ui.core</libraryName>
     </dependency>
     <dependency>
+      <libraryName>sap.ui.layout</libraryName>
+    </dependency>
+    <dependency>
       <libraryName>sap.m</libraryName>
     </dependency>
   </dependencies>

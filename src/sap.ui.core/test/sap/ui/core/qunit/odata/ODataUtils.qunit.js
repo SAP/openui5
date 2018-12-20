@@ -401,6 +401,29 @@ sap.ui.define([
 			force: true
 		}), "/sap/opu;o=CANT_TOUCH_THIS/odata/IWFND/CATALOGSERVICE;x=123;o=Foo123;v=2/Annotations(TechnicalName='%2FIWBEP%2FTEA_TEST_ANNOTATION_FILE',Version='0001')/$value");
 
+		// Hana XS
+		assert.equal(ODataUtils.setAnnotationOrigin("/path/path2/annotations/anno.xml", {
+			preOriginBaseUri: "/path/path2/myservice.xsodata",
+			system: "Foo345",
+			client: 123
+		}), "/path/path2/annotations/anno.xml;o=sid(Foo345.123)");
+
+		assert.equal(ODataUtils.setAnnotationOrigin("/path/path2/annotations/anno.xml", {
+			preOriginBaseUri: "/path/path2/myservice.xsodata",
+			alias: "Bla123"
+		}), "/path/path2/annotations/anno.xml;o=Bla123");
+
+		assert.equal(ODataUtils.setAnnotationOrigin("/path/path2/annotations/anno.xml?parameter1=Test&parameter2=123", {
+			preOriginBaseUri: "/path/path2/myservice.xsodata",
+			system: "Foo345",
+			client: 123
+		}), "/path/path2/annotations/anno.xml;o=sid(Foo345.123)?parameter1=Test&parameter2=123");
+
+		assert.equal(ODataUtils.setAnnotationOrigin("/path/path2/annotations/anno.xml?parameter1=Test&parameter2=123", {
+			preOriginBaseUri: "/path/path2/myservice.xsodata",
+			alias: "Bla1234"
+		}), "/path/path2/annotations/anno.xml;o=Bla1234?parameter1=Test&parameter2=123");
+
 	});
 
 	QUnit.test("createFilterParams: Brackets should be correct", function(assert) {

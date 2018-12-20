@@ -1,0 +1,37 @@
+{
+  "1.62.0": {
+    "date": "December 2018",
+    "notes": [
+      {
+        "id": "f0ae681abffdbb9b5a273c4b1bbc6fb144b767f8",
+        "type": "FIX",
+        "text": " sap.ui.unified.Calendar - month \u0026 year picker are now fully accessible",
+        "references": []
+      },
+      {
+        "id": "1e82d15a24f8c61677070978d840baf5c6cbd2e6",
+        "type": "FIX",
+        "text": " sap.ui.unified.ColorPicker: Accessibility improved",
+        "references": []
+      },
+      {
+        "id": "4834d334a3b17ff38036b9de75f516ddd000865b",
+        "type": "FIX",
+        "text": " sap.ui.unified.ColorPicker: slider texts adjusted",
+        "references": []
+      },
+      {
+        "id": "142841ef855a2c6b03775fc677d6d02c22a6aa19",
+        "type": "FIX",
+        "text": " sap.ui.unified.Menu: Aria position is read now when an Item with text field is focused",
+        "references": []
+      },
+      {
+        "id": "6b6649144bbc2f3cd18dd17ee867ba68d0faaf3e",
+        "type": "FIX",
+        "text": " sap.ui.unified.Menu: Menu works correctly on combi devices",
+        "references": []
+      }
+    ]
+  }
+}

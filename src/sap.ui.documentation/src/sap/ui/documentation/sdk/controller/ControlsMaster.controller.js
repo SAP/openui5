@@ -293,6 +293,7 @@ sap.ui.define([
 
 				if (sFilterValue) {
 					// Get the search control, apply the value and fire a live change event so the list will be filtered
+					sFilterValue = decodeURI(sFilterValue);
 					oSearchField = this.byId("searchField");
 					oSearchField.setValue(sFilterValue).fireLiveChange({
 						newValue: sFilterValue

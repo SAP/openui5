@@ -56,7 +56,8 @@ sap.ui.define(['./InputBase', './MaskEnabler', './MaskInputRenderer'], function(
 				 A list of validation rules (one rule per mask character).
 				 */
 				rules: {type: "sap.m.MaskInputRule", multiple: true, singularName: "rule"}
-			}
+			},
+			dnd: { draggable: false, droppable: true }
 		}
 	});
 

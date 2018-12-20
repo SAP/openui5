@@ -198,7 +198,8 @@ function(
 				 */
 				_objectNumber: {type: "sap.m.ObjectNumber", multiple: false, visibility: "hidden"}
 			},
-			designtime: "sap/m/designtime/ObjectListItem.designtime"
+			designtime: "sap/m/designtime/ObjectListItem.designtime",
+			dnd: { draggable: true, droppable: true }
 		}});
 
 		/**

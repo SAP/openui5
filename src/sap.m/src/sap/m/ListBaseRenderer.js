@@ -275,9 +275,10 @@ sap.ui.define(["sap/m/library", "sap/ui/Device", "./ListItemBaseRenderer"],
 	 * @param {sap.ui.core.Control} oControl an object representation of the control
 	 */
 	ListBaseRenderer.getAccessibilityState = function(oControl) {
+		var sRole = this.getAriaRole(oControl);
 		return {
-			role : this.getAriaRole(oControl),
-			multiselectable : oControl._bSelectionMode ? oControl.getMode() == "MultiSelect" : undefined,
+			role : sRole,
+			multiselectable : (sRole && oControl._bSelectionMode) ? oControl.getMode() == "MultiSelect" : undefined,
 			labelledby : {
 				value : this.getAriaLabelledBy(oControl),
 				append : true

@@ -49,6 +49,7 @@ sap.ui.define([
 		Then.iTeardownMyApp();
 	});
 
+
 	opaTest("Should see the not found text for no search results", function (Given, When, Then) {
 		// Arrangements
 		Given.iStartMyApp();

@@ -528,7 +528,7 @@ sap.ui.define([
 			bChanged = sOldTitle !== sNewTitle;
 
 		this._applyActionProperty("objectTitle", Array.prototype.slice.call(arguments));
-		oParent && isFunction(oParent._updateRootAriaLabel) && oParent._updateRootAriaLabel();
+		oParent && isFunction(oParent._updateAriaLabels) && oParent._updateAriaLabels();
 
 		if (bChanged && this.mEventRegistry["_titleChange"]) {
 			this.fireEvent("_titleChange", {

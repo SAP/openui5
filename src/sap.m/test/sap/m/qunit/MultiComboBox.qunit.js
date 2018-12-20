@@ -6254,7 +6254,7 @@ sap.ui.define([
 		// assert
 		assert.strictEqual(document.activeElement, this.oMultiComboBox.getFocusDomRef(), "Focus is set to the input field");
 		assert.strictEqual(this.oMultiComboBox.getValueState(), ValueState.Error, "The value state is error");
-		assert.strictEqual(this.oMultiComboBox.getValueStateText(), "This value is already selected", "Value State message is correct");
+		assert.strictEqual(this.oMultiComboBox.getValueStateText(), oResourceBundle.getText("VALUE_STATE_ERROR_ALREADY_SELECTED"), "Value State message is correct");
 		assert.strictEqual(this.oMultiComboBox.getValue(), "Brussel", "The invalid value is corrected");
 	});
 
@@ -6276,5 +6276,69 @@ sap.ui.define([
 		assert.notEqual(document.activeElement, this.oMultiComboBox.getFocusDomRef(), "Focus is not in the input field");
 		assert.strictEqual(this.oMultiComboBox.getValueState(), ValueState.None, "The value state is reset");
 		assert.strictEqual(this.oMultiComboBox.getValue(), "", "The input value is deleted");
+	});
+
+	QUnit.module("Composition characters handling", {
+		beforeEach: function () {
+			this.multiComboBox = new MultiComboBox({
+				items: [
+					new Item({
+						key: '1',
+						text: '서비스 ID' //tjqltm ID
+					}),
+					new Item({
+						key: '2',
+						text: '서비스 유헝' // tjqltm
+					}),
+					new Item({
+						key: '3',
+						text: '성별' // tjd quf
+					})
+				]
+			}).placeAt("MultiComboBox-content");
+
+			sap.ui.getCore().applyChanges();
+		},
+		afterEach: function () {
+			this.multiComboBox.destroy();
+			this.multiComboBox = null;
+		}
+	});
+
+	QUnit.test("Filtering", function (assert) {
+
+		// act
+		var bMatched = ComboBoxBase.DEFAULT_TEXT_FILTER("서", this.multiComboBox.getItems()[0], "getText");
+		var aFilteredItems = this.multiComboBox.filterItems({ value: "서", items: this.multiComboBox.getItems() });
+
+		// assert
+		assert.ok(bMatched, "'DEFAULT_TEXT_FILTER' should match composite characters");
+		assert.strictEqual(aFilteredItems.length, 2, "Two items should be filtered");
+		assert.strictEqual(aFilteredItems[0].getText(), "서비스 ID", "Text should start with 서");
+	});
+
+	QUnit.test("Composititon events", function (assert) {
+		var oFakeEvent = {
+			isMarked: function () { },
+			srcControl: this.multiComboBox,
+			target: {
+				value: "서"
+			}
+		},
+			oHandleInputEventSpy = this.spy(this.multiComboBox, "handleInputValidation"),
+			oHandleTypeAheadSpy = this.spy(this.multiComboBox, "_handleTypeAhead"),
+			oHandleFieldValueStateSpy = this.spy(this.multiComboBox, "_handleFieldValidationState");
+
+		this.multiComboBox._bDoTypeAhead = true;
+
+		// act
+		this.multiComboBox.oncompositionstart(oFakeEvent);
+		this.multiComboBox.oninput(oFakeEvent);
+		this.clock.tick(300);
+
+		// assert
+		assert.ok(oHandleInputEventSpy.called, "handleInputValidation should be called on input");
+		assert.notOk(oHandleTypeAheadSpy.called, "Type ahed should not be called while composing");
+		assert.notOk(oHandleFieldValueStateSpy.called, "Field Validation should not be called while composing");
 	});
 });

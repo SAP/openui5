@@ -1,0 +1,13 @@
+{
+  "1.62.0": {
+    "date": "December 2018",
+    "notes": [
+      {
+        "id": "399d97690ba66b56b1cc0e1c80119d54537b5fa4",
+        "type": "FEATURE",
+        "text": " sap_fiori_3: initial commit of Fiori 3 Default",
+        "references": []
+      }
+    ]
+  }
+}

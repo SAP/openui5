@@ -734,7 +734,7 @@ sap.ui.define([
 					if (oTable.getTitle()) {
 						mAttributes["aria-labelledby"].push(oTable.getTitle().getId());
 					}
-					if (oTable.getSelectionMode() === SelectionMode.Multi || oTable.getSelectionMode() === SelectionMode.MultiToggle) {
+					if (oTable.getSelectionMode() === SelectionMode.MultiToggle) {
 						mAttributes["aria-multiselectable"] = "true";
 					}
 					break;
@@ -1212,8 +1212,9 @@ sap.ui.define([
 		}
 
 		var oRow = oRowSettings._getRow();
-		if (oRow) {
-			var oHighlightTextElement = oRow.getDomRef("highlighttext");
+		var oHighlightTextElement = oRow ? oRow.getDomRef("highlighttext") : null;
+
+		if (oHighlightTextElement) {
 			oHighlightTextElement.innerText = oRowSettings._getHighlightText();
 		}
 	};

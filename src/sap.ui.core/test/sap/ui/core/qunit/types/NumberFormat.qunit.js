@@ -1,4 +1,4 @@
-/*global QUnit */
+/*global QUnit, sinon */
 sap.ui.define(["sap/ui/core/format/NumberFormat", "sap/ui/core/Locale"], function (NumberFormat, Locale) {
 	"use strict";
 
@@ -1110,6 +1110,171 @@ sap.ui.define(["sap/ui/core/format/NumberFormat", "sap/ui/core/Locale"], functio
 	});
 
 	QUnit.module("Unit Format");
+
+
+	var aCombinations = generateUniqueChars(300);
+
+
+	function generateUniqueChars(iNrOfCharacters) {
+		var aRes = [];
+		var sChars = "ABCDEFGHIJKLMNOPQRSTUVWXYZ";
+		var maxChars = getNumberOfCharsRequired(iNrOfCharacters, sChars.length);
+		for (var i = 0; i < iNrOfCharacters; i++) {
+			aRes.push(getFullUniqueKey(i, sChars, maxChars));
+		}
+		return aRes;
+	}
+
+	function getNumberOfCharsRequired(iNrOfPermutations, iNrOfCharacters) {
+		var maxChars = 1;
+		var iCharsLength = iNrOfCharacters;
+		var iIndexCurrent = iNrOfPermutations;
+		while (iIndexCurrent / iCharsLength > 1) {
+			maxChars++;
+			iIndexCurrent = Math.ceil(iIndexCurrent / iCharsLength);
+		}
+		return maxChars;
+	}
+
+	function getFullUniqueKey(iNrOfPermutations, sChars, iMaxNumberChars) {
+
+		var sResult = getUniqueKey(iNrOfPermutations, sChars);
+
+
+		if (sResult.length < iMaxNumberChars) {
+			return sResult.padStart(iMaxNumberChars, sChars[0]);
+		}
+		return sResult;
+
+	}
+
+	function getUniqueKey(iNrOfPermutations, sChars) {
+		var iCharsLength = sChars.length;
+
+		var numberOfPlaces = Math.ceil(iNrOfPermutations / (iCharsLength - 1));
+		var cChar = sChars[iNrOfPermutations % (iCharsLength)];
+		if (numberOfPlaces <= 1) {
+			return cChar;
+		}
+		return getUniqueKey(numberOfPlaces, sChars) + cChar;
+	}
+
+	QUnit.test("Unit format custom units performance", function (assert) {
+		var oLocale = new Locale("en");
+		var oCustomUnits = {
+
+		};
+		for (var i = 0; i < aCombinations.length; i++) {
+			var sChar = aCombinations[i];
+			oCustomUnits["unit" + i] = {
+				"displayName": "unit " + i,
+				"unitPattern-count-one": "{0} " + sChar,
+				"unitPattern-count-other": "{0} " + sChar
+			};
+		}
+		var oFormat = NumberFormat.getUnitInstance({
+			customUnits: oCustomUnits
+		}, oLocale);
+
+		var oRegexInstantiationSpy = sinon.spy(window, "RegExp");
+		assert.equal(oFormat.format(1123, "unit299").toString(), "1,123 MN", "invalid unit pattern");
+		assert.equal(oFormat.format(1123, "unit150").toString(), "1,123 GU", "invalid unit pattern");
+		assert.equal(oFormat.format(1123, "unit1").toString(), "1,123 AB", "invalid unit pattern");
+		assert.equal(oFormat.format(1123, "unit7").toString(), "1,123 AH", "invalid unit pattern");
+
+		assert.equal(oRegexInstantiationSpy.callCount, 0, "no regexp creation during formatting");
+		oRegexInstantiationSpy.restore();
+	});
+
+	QUnit.test("Unit parse custom units regex creation cached after first execution", function (assert) {
+		var oLocale = new Locale("en");
+		var oCustomUnits = {
+			"ASD": {
+				"displayName": "unit ASD",
+				"unitPattern-count-one": "{0} ASD",
+				"unitPattern-count-other": "{0} ASD"
+			}
+		};
+		var oFormat = NumberFormat.getUnitInstance({
+			customUnits: oCustomUnits
+		}, oLocale);
+
+		var oRegexInstantiationSpy = sinon.spy(window, "RegExp");
+
+		oFormat.parse("1,123 ASD");
+		assert.equal(oRegexInstantiationSpy.callCount, 3, "create regexp instance for pattern");
+
+		oRegexInstantiationSpy.reset();
+		oFormat.parse("1,123 ASD");
+		assert.equal(oRegexInstantiationSpy.callCount, 3, "skip regexp instantiation for cached pattern");
+
+		oRegexInstantiationSpy.reset();
+		oFormat.parse("1,123 ASD");
+		assert.equal(oRegexInstantiationSpy.callCount, 3, "skip regexp instantiation for cached pattern");
+
+		oRegexInstantiationSpy.restore();
+	});
+
+	QUnit.test("Unit parse all cldr units regex creation cached after first execution", function (assert) {
+		var oLocale = new Locale("en");
+		var oFormat = NumberFormat.getUnitInstance(oLocale);
+
+		var oRegexInstantiationSpy = sinon.spy(window, "RegExp");
+
+		oFormat.parse("1,123 km");
+
+		oRegexInstantiationSpy.reset();
+		oFormat.parse("1,123 m");
+		assert.equal(oRegexInstantiationSpy.callCount, 3, "skip regexp instantiation for cached pattern");
+
+		oRegexInstantiationSpy.reset();
+		oFormat.parse("1,123 ms");
+		assert.equal(oRegexInstantiationSpy.callCount, 3, "skip regexp instantiation for cached pattern");
+
+		oRegexInstantiationSpy.reset();
+		oFormat.parse("1,123 cm");
+		assert.equal(oRegexInstantiationSpy.callCount, 3, "skip regexp instantiation for cached pattern");
+
+		oRegexInstantiationSpy.restore();
+	});
+
+	QUnit.test("Unit parse custom units performance", function (assert) {
+		var oLocale = new Locale("en");
+		var oCustomUnits = {
+
+		};
+		for (var i = 0; i < 300; i++) {
+			var sChar = aCombinations[i];
+			oCustomUnits["unit" + i] = {
+				"displayName": "unit " + i,
+				"unitPattern-count-one": "{0} " + sChar,
+				"unitPattern-count-other": "{0} " + sChar
+			};
+		}
+		var oFormat = NumberFormat.getUnitInstance({
+			customUnits: oCustomUnits
+		}, oLocale);
+
+		var t0 = performance.now();
+		var oRegexInstantiationSpy = sinon.spy(window, "RegExp");
+		assert.deepEqual(oFormat.parse("1,123 MN"), [1123, "unit299"], "invalid unit pattern");
+		assert.deepEqual(oFormat.parse("1,123 GU"), [1123, "unit150"], "invalid unit pattern");
+		assert.deepEqual(oFormat.parse("1,123 AB"), [1123, "unit1"], "invalid unit pattern");
+		assert.deepEqual(oFormat.parse("1,123 AH"), [1123, "unit7"], "invalid unit pattern");
+
+		assert.equal(oRegexInstantiationSpy.callCount, 12, "regexp creation during formatting");
+
+		assert.deepEqual(oFormat.parse("1,123 MM"), [1123, "unit298"], "invalid unit pattern");
+		assert.deepEqual(oFormat.parse("1,123 CI"), [1123, "unit34"], "invalid unit pattern");
+		assert.deepEqual(oFormat.parse("1,123 CC"), [1123, "unit28"], "invalid unit pattern");
+		assert.deepEqual(oFormat.parse("1,123 EE"), [1123, "unit82"], "invalid unit pattern");
+		assert.equal(oRegexInstantiationSpy.callCount, 24, "regexp creation during formatting");
+		var t1 = performance.now();
+
+		assert.ok(true, "Took " + (t1 - t0) + "ms for parsing");
+
+		oRegexInstantiationSpy.restore();
+	});
 
 	QUnit.test("Unit format with invalid unit definition coordinate", function (assert) {
 		var oLocale = new Locale("en");
@@ -2358,6 +2523,29 @@ sap.ui.define(["sap/ui/core/format/NumberFormat", "sap/ui/core/Locale"], functio
 
 		var aParsed = oFormat.parse(sFormatted);
 		assert.deepEqual(aParsed, [50000, undefined], "should match input number " + iExpectedNumber);
+	});
+
+	QUnit.test("currency format/parse for currencies with letter 'K' in the measure symbol", function(assert) {
+		//setup
+		var oLocale = new Locale("en");
+		var oFormat = NumberFormat.getCurrencyInstance({
+			showMeasure: true
+		}, oLocale);
+
+
+		["SEK", "DKK"].forEach(function(sCurrencyMeasure) {
+
+			// input and output
+			var iExpectedNumber = 12345;
+			assert.ok(iExpectedNumber, "Input: " + iExpectedNumber + ", " + sCurrencyMeasure);
+
+			// execution
+			var sFormatted = oFormat.format(iExpectedNumber, sCurrencyMeasure);
+			assert.ok(sFormatted, "Formatted: " + sFormatted);
+
+			var aParsed = oFormat.parse(sFormatted);
+			assert.deepEqual(aParsed, [iExpectedNumber, sCurrencyMeasure], "Parsed: " + aParsed.join(", "));
+		});
 	});
 
 	QUnit.test("format/parse indian lakhs/crores", function (assert) {

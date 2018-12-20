@@ -19,10 +19,10 @@
  * 4. Get the title
  *    myCardManifest.get("sap.card/title")
  *
- * @experimental
  */
 sap.ui.define([], function () {
 	"use strict";
+
 	//sap.card section can define local settings for the following entries, if not given the sap.app/sap.ui settings are used as
 	//fallback
 	var mFallbacks = {
@@ -34,6 +34,7 @@ sap.ui.define([], function () {
 		"sap.card/icons": "sap.ui/icons",
 		"sap.card/view": "sap.ui5/rootView"
 	};
+
 	/**
 	 * @constructor
 	 * @private
@@ -42,6 +43,7 @@ sap.ui.define([], function () {
 	function CardManifest(oManifestJson) {
 		this.oJson = oManifestJson;
 	}
+
 	/**
 	 * @constructor
 	 * @private
@@ -50,9 +52,11 @@ sap.ui.define([], function () {
 	CardManifest.prototype.registerTranslator = function (oTranslator) {
 		this.oTranslator = oTranslator;
 	};
+
 	CardManifest.prototype.getJson = function () {
 		return this.oJson;
 	};
+
 	CardManifest.prototype.get = function (sPath) {
 		var aParts = sPath.split("/"),
 			iPart = 0,
@@ -77,5 +81,11 @@ sap.ui.define([], function () {
 		}
 		return oNode;
 	};
+
+	CardManifest.prototype.destroy = function () {
+		this.oJson = null;
+		this.oTranslator = null;
+	};
+
 	return CardManifest;
 }, true);

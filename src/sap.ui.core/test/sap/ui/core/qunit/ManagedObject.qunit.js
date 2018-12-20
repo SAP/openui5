@@ -1759,7 +1759,18 @@ sap.ui.define([
 		beforeEach: function() {
 			this.obj = new TestManagedObject();
 			this.subObj = new TestManagedObject();
+			this.subSubObj = new TestManagedObject();
 			this.template = new TestManagedObject();
+			this.associated1 = new TestManagedObject();
+			this.associated2 = new TestManagedObject();
+		},
+		afterEach: function() {
+			this.associated2.destroy();
+			this.associated1.destroy();
+			this.template.destroy();
+			this.subSubObj.destroy();
+			this.subObj.destroy();
+			this.obj.destroy();
 		}
 	});
 
@@ -1774,6 +1785,48 @@ sap.ui.define([
 		assert.equal(result[0].getId(), this.subObj.getId() + "-clone", "id of cloned sub object created with correct suffix");
 	});
 
+	QUnit.test("Clone Object: properties", function(assert) {
+		this.obj.setValue("test1");
+		this.obj.setStringValue("test2");
+		this.obj.setFloatValue(0.815);
+		this.obj.setIntValue(1337);
+		this.obj.setBooleanValue(true);
+		this.obj.setEnumValue(MyEnum.Bad);
+		this.obj.setStringArray(["a","b"]);
+		this.obj.setFloatArray([1.2, 2.3]);
+		this.obj.setIntArray([1,2,3,4]);
+		this.obj.setBooleanArray([true,false,true,true]);
+		this.obj.setObjectValue({a:1, b:2});
+		this.obj.setProperty("_hiddenValue", "Magic Value");
+		var oSpy = this.spy(this.obj.getMetadata(), "_oClass");
+
+		var oClone = this.obj.clone(null, null, {
+			cloneChildren: false
+		});
+
+		assert.strictEqual(oClone.getValue(), this.obj.getValue(), "property value of the clone should have the same value as in the original");
+		assert.strictEqual(oClone.getStringValue(), this.obj.getStringValue(), "property stringValue of the clone should have the same value as in the original");
+		assert.strictEqual(oClone.getFloatValue(), this.obj.getFloatValue(), "property floatValue of the clone should have the same value as in the original");
+		assert.strictEqual(oClone.getIntValue(), this.obj.getIntValue(), "property intValue of the clone should have the same value as in the original");
+		assert.strictEqual(oClone.getBooleanValue(), this.obj.getBooleanValue(), "property booleanValue of the clone should have the same value as in the original");
+		assert.strictEqual(oClone.getEnumValue(), this.obj.getEnumValue(), "property enumValue of the clone should have the same value as in the original");
+		assert.deepEqual(oClone.getStringArray(), this.obj.getStringArray(), "property stringArray of the clone should have a value equal to the value of the original");
+		assert.notStrictEqual(oClone.getStringArray(), this.obj.getStringArray(), "property stringArray of the clone should not have the exact same value as in the original");
+		assert.deepEqual(oClone.getFloatArray(), this.obj.getFloatArray(), "property floatArray of the clone should have a value equal to the value of the original");
+		assert.notStrictEqual(oClone.getFloatArray(), this.obj.getFloatArray(), "property floatArray of the clone should not have the exact same value as in the original");
+		assert.deepEqual(oClone.getIntArray(), this.obj.getIntArray(), "property intArray of the clone should have a value equal to the value of the original");
+		assert.notStrictEqual(oClone.getIntArray(), this.obj.getIntArray(), "property intArray of the clone should not have the exact same value as in the original");
+		assert.deepEqual(oClone.getBooleanArray(), this.obj.getBooleanArray(), "property booleanArray of the clone should have a value equal to the value of the original");
+		assert.notStrictEqual(oClone.getBooleanArray(), this.obj.getBooleanArray(), "property booleanArray of the clone should not have the exact same value as in the original");
+		assert.strictEqual(oClone.getObjectValue(), this.obj.getObjectValue(), "property objectValue of the clone should have the same value as in the original");
+		assert.equal(oClone.getProperty("_hiddenValue"), "", "hidden propert must not be cloned");
+
+		assert.equal(oSpy.callCount, 1);
+		assert.equal(oSpy.args[0].length, 2);
+		assert.equal(typeof oSpy.args[0][1], "object");
+		assert.notOk("_hiddenValue" in oSpy.args[0][1], "property _hiddenValue must not be cloned");
+	});
+
 	QUnit.test("Clone Object: cloneChildren", function(assert) {
 		this.obj.addAggregation("subObjects", this.subObj);
 		var oClone = this.obj.clone(null, null, {
@@ -1786,6 +1839,44 @@ sap.ui.define([
 		});
 		result = oClone.getAggregation("subObjects", []);
 		assert.equal(result.length, 1, "children cloned");
+	});
+
+	QUnit.test("Clone Object: associations", function(assert) {
+		this.obj.addAggregation("subObjects", this.subObj); // should be cloned
+		this.subObj.addAggregation("subObjects", this.subSubObj); // should be cloned
+		this.obj.setSelectedObject(this.associated1);
+		this.obj.addAssociatedObj(this.subObj);
+		this.obj.addAssociatedObj(this.associated2);
+		this.obj.addAssociatedObj(this.subSubObj);
+		this.obj.setAssociation("_hiddenObject", this.associated1);
+		this.obj.addAssociation("_hiddenObjects", this.subObj);
+		this.obj.addAssociation("_hiddenObjects", this.associated2);
+		var oSpy = this.spy(this.obj.getMetadata(), "_oClass");
+
+		var oClone = this.obj.clone("-cl0ne", null, {
+			cloneChildren: true
+		});
+
+		var oClonedSubObj = oClone.getAggregation("subObjects")[0];
+		var oClonedSubSubObj = oClone.getAggregation("subObjects")[0].getAggregation("subObjects")[0];
+		assert.strictEqual(oClone.getSelectedObject(), this.associated1.getId(),
+				"an association to an 'external' object should remain the same in the clone");
+		assert.strictEqual(oClone.getAssociatedObjects().length, 3,
+				"the cloned association should have the expected cardinality");
+		assert.strictEqual(oClone.getAssociatedObjects()[0], oClonedSubObj.getId(),
+				"an association to a descendant should point to the cloned descendant");
+		assert.strictEqual(oClone.getAssociatedObjects()[1], this.associated2.getId(),
+				"an association to an external object should remain the same in the clone");
+		assert.strictEqual(oClone.getAssociatedObjects()[2], oClonedSubSubObj.getId(),
+				"an association to a 2nd level descendant should point to the cloned descendant");
+		assert.equal(oClone.getAssociation("_hiddenObject", null), null, "hidden 0..1 association must not be cloned");
+		assert.deepEqual(oClone.getAssociation("_hiddenObjects", []), [], "hidden 0..n association must not be cloned");
+
+		assert.equal(oSpy.callCount, 3);
+		assert.equal(oSpy.args[2].length, 2); // the root object is cloned last -> we're interested in the 3rd call
+		assert.equal(typeof oSpy.args[2][1], "object");
+		assert.notOk("_hiddenObject" in oSpy.args[0][1], "hidden association _hiddenObject must not have been added to the settings for the clone");
+		assert.notOk("_hiddenObjects" in oSpy.args[0][1], "hideen association _hiddenObjects must not have been added to the settings for the clone");
 	});
 
 	QUnit.test("Clone Object: cloneBinding:true/false", function(assert) {

@@ -1,9 +1,9 @@
 <mvc:View
 	controllerName="sap.m.sample.HeaderContainerNoDividers.Page"
 	xmlns="sap.m"
-	xmlns:l="sap.ui.layout"
+	xmlns:core="sap.ui.core"
 	xmlns:mvc="sap.ui.core.mvc">
-	<HeaderContainer scrollStep="200" showDividers="false">
+	<HeaderContainer id="headerContainer" scrollStep="200" showDividers="false">
 		<NumericContent size="S" scale="M" value="1.75" valueColor="Good" indicator="Up" press="press" />
 		<NumericContent size="S" scale="M" value="0.57" valueColor="Error" indicator="Down" press="press" />
 		<NumericContent size="S" scale="M" value="1.04" valueColor="Normal" indicator="Up" press="press" />
@@ -13,4 +13,12 @@
 		<NumericContent size="S" scale="M" value="1.42" valueColor="Good" indicator="Up" press="press" />
 		<NumericContent size="S" scale="M" value="0.21" valueColor="Error" indicator="Down" press="press" />
 	</HeaderContainer>
+	<core:InvisibleText id="text1" text="1.75 millions"/>
+	<core:InvisibleText id="text2" text="0.57 millions"/>
+	<core:InvisibleText id="text3" text="1.04 millions"/>
+	<core:InvisibleText id="text4" text="3.65 millions"/>
+	<core:InvisibleText id="text5" text="0.73 millions"/>
+	<core:InvisibleText id="text6" text="1.01 millions"/>
+	<core:InvisibleText id="text7" text="1.42 millions"/>
+	<core:InvisibleText id="text8" text="0.21 millions"/>
 </mvc:View>

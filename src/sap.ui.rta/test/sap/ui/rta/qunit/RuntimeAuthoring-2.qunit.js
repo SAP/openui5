@@ -1,18 +1,18 @@
 /* global QUnit */
 
 sap.ui.define([
-	'sap/m/MessageToast',
-	'sap/ui/dt/plugin/ContextMenu',
-	'sap/ui/dt/DesignTime',
-	'sap/ui/fl/registry/Settings',
-	'sap/ui/fl/Utils',
-	'sap/ui/rta/Utils',
-	'sap/ui/fl/FakeLrepSessionStorage',
-	'sap/ui/rta/RuntimeAuthoring',
-	'sap/ui/rta/command/CommandFactory',
-	'sap/ui/rta/plugin/Remove',
-	'qunit/RtaQunitUtils',
-	'sap/ui/thirdparty/sinon-4'
+	"sap/m/MessageToast",
+	"sap/ui/dt/plugin/ContextMenu",
+	"sap/ui/dt/DesignTime",
+	"sap/ui/fl/registry/Settings",
+	"sap/ui/fl/Utils",
+	"sap/ui/rta/Utils",
+	"sap/ui/fl/FakeLrepSessionStorage",
+	"sap/ui/rta/RuntimeAuthoring",
+	"sap/ui/rta/command/CommandFactory",
+	"sap/ui/rta/plugin/Remove",
+	"qunit/RtaQunitUtils",
+	"sap/ui/thirdparty/sinon-4"
 ], function (
 	MessageToast,
 	ContextMenuPlugin,
@@ -34,31 +34,25 @@ sap.ui.define([
 	var oComp = oCompCont.getComponentInstance();
 
 	function givenAnFLP(fnFLPToExternalStub, mShellParams){
-		if (!this.hasOwnProperty("originalUShell")){
-			this.originalUShell = sap.ushell;
-		}
-		// this overrides the ushell globally => we need to restore it!
-		sap.ushell = jQuery.extend(sap.ushell, {
-			Container : {
-				getService : function() {
-					return {
-						toExternal : fnFLPToExternalStub,
-						getHash : function() {
-							return "Action-somestring";
-						},
-						parseShellHash : function() {
-							var mHash = {
-								semanticObject : "Action",
-								action : "somestring"
-							};
+		sandbox.stub(Utils, "getUshellContainer").returns({
+			getService : function() {
+				return {
+					toExternal : fnFLPToExternalStub,
+					getHash : function() {
+						return "Action-somestring";
+					},
+					parseShellHash : function() {
+						var mHash = {
+							semanticObject : "Action",
+							action : "somestring"
+						};
 
-							if (mShellParams){
-								mHash.params = mShellParams;
-							}
-							return mHash;
+						if (mShellParams){
+							mHash.params = mShellParams;
 						}
-					};
-				}
+						return mHash;
+					}
+				};
 			}
 		});
 	}
@@ -254,8 +248,6 @@ sap.ui.define([
 		},
 		afterEach : function() {
 			this.oRta.destroy();
-			sap.ushell = this.originalUShell;
-			delete this.originalUShell;
 			//cleanup session storage
 			RuntimeAuthoring.disableRestart("CUSTOMER");
 			RuntimeAuthoring.disableRestart("VENDOR");
@@ -402,16 +394,14 @@ sap.ui.define([
 			this.fnEnableRestartSpy = sandbox.spy(RuntimeAuthoring, "enableRestart");
 			this.fnReloadPageStub = sandbox.stub(this.oRta, "_reloadPage");
 			this.fnFLPToExternalStub = sandbox.spy();
-			givenMaxLayerParameterIsSetTo.call(this, "CUSTOMER", this.fnFLPToExternalStub);
 		},
 		afterEach : function() {
 			this.oRta.destroy();
-			sap.ushell = this.originalUShell;
-			delete this.originalUShell;
 			sandbox.restore();
 		}
 	}, function() {
 		QUnit.test("when personalized changes exist and user exits and started in FLP reloading the personalization...", function(assert) {
+			givenMaxLayerParameterIsSetTo.call(this, "CUSTOMER", this.fnFLPToExternalStub);
 			whenHigherLayerChangesExist(this.oRta);
 
 			whenUserConfirmsMessage.call(this, "MSG_RELOAD_WITH_PERSONALIZATION", assert);
@@ -441,6 +431,7 @@ sap.ui.define([
 		});
 
 		QUnit.test("when app descriptor and personalized changes exist and user exits reloading the personalization...", function(assert) {
+			givenMaxLayerParameterIsSetTo.call(this, "CUSTOMER", this.fnFLPToExternalStub);
 			whenAppDescriptorChangesExist(this.oRta);
 			whenHigherLayerChangesExist(this.oRta);
 
@@ -456,6 +447,7 @@ sap.ui.define([
 		});
 
 		QUnit.test("when there are no personalized and appDescriptor changes and _handleReloadOnExit() is called", function(assert) {
+			givenMaxLayerParameterIsSetTo.call(this, "CUSTOMER", this.fnFLPToExternalStub);
 			whenNoHigherLayerChangesExist(this.oRta);
 
 			return this.oRta._handleReloadOnExit().then(function(sShouldReload){
@@ -468,6 +460,7 @@ sap.ui.define([
 		});
 
 		QUnit.test("when app descriptor and no personalized changes exist and user exits reloading the personalization...", function(assert) {
+			givenMaxLayerParameterIsSetTo.call(this, "CUSTOMER", this.fnFLPToExternalStub);
 			whenAppDescriptorChangesExist(this.oRta);
 			whenNoHigherLayerChangesExist(this.oRta);
 
@@ -483,6 +476,7 @@ sap.ui.define([
 		});
 
 		QUnit.test("when reloadable changes exist and user exits RTA...", function(assert) {
+			givenMaxLayerParameterIsSetTo.call(this, "CUSTOMER", this.fnFLPToExternalStub);
 			sandbox.stub(this.oRta, "_handleReloadOnExit").resolves(this.oRta._RESTART.RELOAD_PAGE);
 			sandbox.stub(this.oRta, "_serializeToLrep").resolves();
 

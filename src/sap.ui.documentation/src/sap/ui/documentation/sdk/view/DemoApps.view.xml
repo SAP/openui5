@@ -23,21 +23,21 @@
 					id="rootPage"
 					accessibleRole="Region"
 					class="sapUiNoContentPadding">
-					<Image
-						id="phoneImage"
-						src="./resources/sap/ui/documentation/sdk/images/DemoApps_S_cropped.jpg"
-						alt="{i18n>imagePhone}"
-						width="100%"
-						class="welcomeImage"
-						load=".handleLandingImageLoad"
-						visible="{device>/system/phone}"
-						densityAware="false"/>
 					<l:BlockLayout
 						id="headerLayout"
 						background="Light">
 						<l:BlockLayoutRow>
 							<l:BlockLayoutCell
-								class="sapUiDemokitLandingImageCell sapUiNoContentPadding welcomeImageCell">
+								class="sapUiDemokitLandingImageCell sapUiNoContentPadding">
+							<Image
+								id="phoneImage"
+								src="./resources/sap/ui/documentation/sdk/images/DemoApps_S_cropped.jpg"
+								alt="{i18n>imagePhone}"
+								width="100%"
+								class="welcomeImage"
+								load=".handleLandingImageLoad"
+								visible="{device>/system/phone}"
+								densityAware="false"/>
 							<Image
 								id="desktopImage"
 								class="desktopImage welcomeImage"

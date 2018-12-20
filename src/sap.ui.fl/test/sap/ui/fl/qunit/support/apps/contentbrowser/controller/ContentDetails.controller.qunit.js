@@ -7,7 +7,8 @@ sap.ui.define([
 	"sap/ui/core/routing/Router",
 	"sap/ui/fl/support/apps/contentbrowser/utils/DataUtils",
 	"sap/ui/thirdparty/jquery",
-	"sap/ui/thirdparty/sinon-4"
+	"sap/ui/thirdparty/sinon-4",
+	"sap/m/Dialog"
 ], function (
 	ContentDetails,
 	LRepConnector,
@@ -15,7 +16,8 @@ sap.ui.define([
 	Router,
 	DataUtils,
 	jQuery,
-	sinon
+	sinon,
+	Dialog
 ){
 	"use strict";
 
@@ -126,11 +128,119 @@ sap.ui.define([
 
 		QUnit.test("when _deleteFile is called", function (assert) {
 			var oRouter = new Router();
+
+			var oStubbedGetRouterFor = sandbox.stub(UIComponent, "getRouterFor").returns(oRouter);
+			var oStubbedNavTo = sandbox.stub(oRouter, "navTo");
+			var oStubbedLrepConDeleteFile = sandbox.stub(LRepConnector, "deleteFile").returns(Promise.resolve());
+
+			return oController._deleteFile("VENDOR", "namespace", "fileName", "fileType", "transportId", "All").then(function(){
+				assert.ok(oStubbedGetRouterFor.calledOnce, "then call for get a router");
+				assert.ok(oStubbedLrepConDeleteFile.calledOnce, "then call Lrep connector for deleting file");
+				assert.ok(oStubbedNavTo.calledOnce, "then navigation is triggered");
+				assert.equal(oStubbedNavTo.getCall(0).args[0], "LayerContentMaster", "with correct target");
+				assert.equal(oStubbedNavTo.getCall(0).args[1].layer, "All", "with correct layer");
+				assert.equal(oStubbedNavTo.getCall(0).args[1].namespace, "namespace", "with correct namespace");
+			});
+		});
+
+		QUnit.test("when _selectTransportAndDeleteFile is called with USER layer", function (assert) {
 			sandbox.stub(oController, "getView").returns({
 				getModel: function () {
 					return {
 						getData: function () {
 							return {
+								fileName : "fileName",
+								fileType : "fileType",
+								namespace : "namespace",
+								layer : "All",
+								metadata : [{
+									name : "layer",
+									value : "USER"
+								}]
+							};
+						}
+					};
+				}
+			});
+			var oStubbedDeleteFile = sandbox.stub(oController, "_deleteFile").returns(Promise.resolve());
+			oController._selectTransportAndDeleteFile();
+			assert.ok(oStubbedDeleteFile.calledOnce, "then call for deleting file");
+			assert.equal(oStubbedDeleteFile.getCall(0).args[0], "USER", "with correct layer");
+			assert.equal(oStubbedDeleteFile.getCall(0).args[1], "namespace", "with correct namespace");
+			assert.equal(oStubbedDeleteFile.getCall(0).args[2], "fileName", "with correct fileName");
+			assert.equal(oStubbedDeleteFile.getCall(0).args[3], "fileType", "with correct fileType");
+			assert.equal(oStubbedDeleteFile.getCall(0).args[4], undefined, "with correct transportId");
+		});
+
+		QUnit.test("when _selectTransportAndDeleteFile is called with LOAD layer", function (assert) {
+			sandbox.stub(oController, "getView").returns({
+				getModel: function () {
+					return {
+						getData: function () {
+							return {
+								fileName : "fileName",
+								fileType : "fileType",
+								namespace : "namespace",
+								layer : "All",
+								metadata : [{
+									name : "layer",
+									value : "LOAD"
+								}]
+							};
+						}
+					};
+				}
+			});
+			var oStubbedDeleteFile = sandbox.stub(oController, "_deleteFile").returns(Promise.resolve());
+			oController._selectTransportAndDeleteFile();
+			assert.ok(oStubbedDeleteFile.calledOnce, "then call for deleting file");
+			assert.equal(oStubbedDeleteFile.getCall(0).args[0], "LOAD", "with correct layer");
+			assert.equal(oStubbedDeleteFile.getCall(0).args[1], "namespace", "with correct namespace");
+			assert.equal(oStubbedDeleteFile.getCall(0).args[2], "fileName", "with correct fileName");
+			assert.equal(oStubbedDeleteFile.getCall(0).args[3], "fileType", "with correct fileType");
+			assert.equal(oStubbedDeleteFile.getCall(0).args[4], undefined, "with correct transportId");
+		});
+
+		QUnit.test("when _selectTransportAndDeleteFile is called with ATO_NOTIFICATION content", function (assert) {
+			sandbox.stub(oController, "getView").returns({
+				getModel: function () {
+					return {
+						getData: function () {
+							return {
+								data: "{packageName: \"$TMP\"}",
+								fileName : "fileName",
+								fileType : "fileType",
+								namespace : "namespace",
+								layer : "All",
+								metadata : [{
+									name : "layer",
+									value : "CUSTOMER"
+								},{
+									name : "transportId",
+									value : "ATO_NOTIFICATION"
+								}]
+							};
+						}
+					};
+				}
+			});
+			var oStubbedDeleteFile = sandbox.stub(oController, "_deleteFile").returns(Promise.resolve());
+			oController._selectTransportAndDeleteFile();
+			assert.ok(oStubbedDeleteFile.calledOnce, "then call for deleting file");
+			assert.equal(oStubbedDeleteFile.getCall(0).args[0], "CUSTOMER", "with correct layer");
+			assert.equal(oStubbedDeleteFile.getCall(0).args[1], "namespace", "with correct namespace");
+			assert.equal(oStubbedDeleteFile.getCall(0).args[2], "fileName", "with correct fileName");
+			assert.equal(oStubbedDeleteFile.getCall(0).args[3], "fileType", "with correct fileType");
+			assert.equal(oStubbedDeleteFile.getCall(0).args[4], "ATO_NOTIFICATION", "with correct transportId");
+		});
+
+		QUnit.test("when _selectTransportAndDeleteFile is called with local object in VENDOR layer", function (assert) {
+			sandbox.stub(oController, "getView").returns({
+				getModel: function () {
+					return {
+						getData: function () {
+							return {
+								data: "{packageName: \"\"}",
 								fileName : "fileName",
 								fileType : "fileType",
 								namespace : "namespace",
@@ -144,24 +254,48 @@ sap.ui.define([
 					};
 				}
 			});
-			var oStubbedGetRouterFor = sandbox.stub(UIComponent, "getRouterFor").returns(oRouter);
-			var oStubbedNavTo = sandbox.stub(oRouter, "navTo");
-			var oStubbedLrepConDeleteFile = sandbox.stub(LRepConnector, "deleteFile").returns(Promise.resolve());
-
-			return oController._deleteFile().then(function(){
-				assert.ok(oStubbedGetRouterFor.calledOnce, "then call for get a router");
-				assert.ok(oStubbedLrepConDeleteFile.calledOnce, "then call Lrep connector for deleting file");
-				assert.equal(oStubbedLrepConDeleteFile.getCall(0).args[0], "VENDOR", "with correct layer");
-				assert.equal(oStubbedLrepConDeleteFile.getCall(0).args[1], "namespace", "with correct namespace");
-				assert.equal(oStubbedLrepConDeleteFile.getCall(0).args[2], "fileName", "with correct fileName");
-				assert.equal(oStubbedLrepConDeleteFile.getCall(0).args[3], "fileType", "with correct fileType");
-				assert.ok(oStubbedNavTo.calledOnce, "then navigation is triggered");
-				assert.equal(oStubbedNavTo.getCall(0).args[0], "LayerContentMaster", "with correct target");
-				assert.equal(oStubbedNavTo.getCall(0).args[1].layer, "All", "with correct layer");
-				assert.equal(oStubbedNavTo.getCall(0).args[1].namespace, "namespace", "with correct namespace");
-			});
+			var oStubbedDeleteFile = sandbox.stub(oController, "_deleteFile").returns(Promise.resolve());
+			oController._selectTransportAndDeleteFile();
+			assert.ok(oStubbedDeleteFile.calledOnce, "then call for deleting file");
+			assert.equal(oStubbedDeleteFile.getCall(0).args[0], "VENDOR", "with correct layer");
+			assert.equal(oStubbedDeleteFile.getCall(0).args[1], "namespace", "with correct namespace");
+			assert.equal(oStubbedDeleteFile.getCall(0).args[2], "fileName", "with correct fileName");
+			assert.equal(oStubbedDeleteFile.getCall(0).args[3], "fileType", "with correct fileType");
+			assert.equal(oStubbedDeleteFile.getCall(0).args[4], undefined, "with correct transportId");
 		});
-	});
+
+		QUnit.test("when _selectTransportAndDeleteFile is called with transported content", function (assert) {
+			var oStubbedGetView = sandbox.stub(oController, "getView").returns({
+				getModel: function () {
+					return {
+						getData: function () {
+							return {
+								data: "{packageName: \"package\"}",
+								fileName : "fileName",
+								fileType : "fileType",
+								namespace : "namespace",
+								layer : "All",
+								metadata : [{
+									name : "layer",
+									value : "VENDOR"
+								},{
+									name : "transportId",
+									value : "transportId"
+								}]
+							};
+						}
+					};
+				},
+				addDependent: function() {}
+			});
+			var oStubbedOpenDialog = sandbox.stub(Dialog.prototype, 'open').returns("dummy");
+
+			oController._selectTransportAndDeleteFile();
+
+			assert.equal(oStubbedGetView.callCount, 2, "then getView is called twice, first to get selected data, second to attach transport dialog");
+			assert.ok(oStubbedOpenDialog.calledOnce, "The transport Dialog is opened");
+		});
+});
 
 	QUnit.done(function() {
 		jQuery("#qunit-fixture").hide();

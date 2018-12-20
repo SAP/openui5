@@ -1,0 +1,133 @@
+<mvc:View
+    xmlns="sap.m"
+    xmlns:mvc="sap.ui.core.mvc"
+	xmlns:f="sap.f"
+	xmlns:m="sap.m"
+	xmlns:card="sap.f.cards"
+	xmlns:core="sap.ui.core"
+    displayBlock="true"
+    controllerName="sap.f.cardsdemo.controller.Custom">
+
+	<Page title="{i18n>appTitle}">
+
+		<subHeader>
+			<Toolbar>
+				<ToolbarSpacer/>
+				<Title text="Custom Card example"/>
+				<ToolbarSpacer/>
+			</Toolbar>
+		</subHeader>
+
+		<content>
+
+			<f:SAPCard
+				class="sapUiMediumMargin"
+				width="300px"
+				height="400px"
+				manifest="./cardcontent/listcomponent/manifest.json">
+			</f:SAPCard>
+
+			<f:Card
+				class="sapUiMediumMargin"
+				width="300px"
+				height="400px">
+				<f:header>
+					<card:Header
+						title="Some title"
+						subtitle="Some long subtitle"
+						iconSrc="sap-icon://accept"/>
+				</f:header>
+				<f:content>
+					<m:Title class="sapUiMediumMargin" text="Some sap m Title"/>
+				</f:content>
+			</f:Card>
+
+			<f:Card
+				class="sapUiMediumMargin"
+				width="300px"
+				height="400px">
+				<f:header>
+					<card:KpiHeader
+					 	title="KPI"
+						subtitle="Basic KPI subtitle"
+						unitOfMeasurement="%"
+						details="Some details also"/>
+				</f:header>
+				<f:content>
+					<core:ComponentContainer manifest="./cardcontent/customcomponent/manifest.json"/>
+				</f:content>
+			</f:Card>
+
+			<f:Card
+				class="sapUiMediumMargin"
+				width="300px"
+				height="400px">
+				<f:header>
+					<card:Header
+						title="Some title"
+						subtitle="Some long subtitle"
+						iconSrc="sap-icon://accept"/>
+				</f:header>
+				<f:content>
+					<card:ListContent manifestContent="{list>/content}"/>
+				</f:content>
+			</f:Card>
+
+			<f:SAPCard
+				class="sapUiMediumMargin"
+				width="650px"
+				height="600px"
+				manifest="{manifests>/analyticalContent/donut}"/>
+
+			<f:Card
+				class="sapUiMediumMargin"
+				width="650px"
+				height="1600px">
+				<f:header>
+					<card:KpiHeader
+					 	title="KPI"
+						subtitle="Basic KPI subtitle"
+						unitOfMeasurement="%"
+						details="Some details also"/>
+				</f:header>
+				<f:content>
+					<m:VBox>
+						<m:Text class="sapUiMediumMargin" text="My Analytical Content"/>
+						<card:AnalyticalContent manifestContent="{analytical>/content}"/>
+						<m:Text class="sapUiMediumMargin" text="My List Content"/>
+						<card:ListContent manifestContent="{list>/content}"/>
+						<m:Text class="sapUiMediumMargin" text="My Table Content"/>
+						<card:TableContent manifestContent="{table>/content}"/>
+					</m:VBox>
+				</f:content>
+			</f:Card>
+
+			<m:Panel>
+				<m:Text class="sapUiMediumMargin" text="My Analytical Content"/>
+				<card:AnalyticalContent manifestContent="{analytical>/content}"/>
+				<m:Text class="sapUiMediumMargin" text="My List Content"/>
+				<card:ListContent manifestContent="{list>/content}"/>
+				<m:Text class="sapUiMediumMargin" text="My Table Content"/>
+				<card:TableContent manifestContent="{table>/content}"/>
+			</m:Panel>
+
+            <f:SAPCard class="sapUiMediumMargin" manifest="{manifests>/tableManifests/tablecard1}" width="400px" height="auto"/>
+
+			<f:Card
+				class="sapUiMediumMargin"
+				width="300px"
+				height="auto">
+				<f:header>
+					<card:Header
+						title="Activity items"
+						subtitle="Recent activities"
+						iconSrc="sap-icon://activity-items"/>
+				</f:header>
+				<f:content>
+					<card:TableContent manifestContent="{table>/content}"/>
+				</f:content>
+			</f:Card>
+
+		</content>
+	</Page>
+</mvc:View>

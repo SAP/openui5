@@ -125,7 +125,7 @@ sap.ui.define([
 		oFixFlex.destroy();
 	});
 
-	QUnit.test("Legacy support", function (assert) {
+	QUnit.test("Legacy support with vertical layout", function (assert) {
 		var $FixChild,
 			$FlexChild,
 			iFixChildWidth,
@@ -140,6 +140,49 @@ sap.ui.define([
 		var oFixFlex = new FixFlex({
 			flexContent: oButton1,
 			fixContent: [oButton2, oButton3]
+		});
+
+		oFixFlex.placeAt("qunit-fixture");
+		sap.ui.getCore().applyChanges();
+
+		$FixChild = oFixFlex.$("Fixed");
+		$FlexChild = oFixFlex.$("Flexible");
+
+		iFixChildWidth = $FixChild.outerWidth();
+		iFixChildHeight = $FixChild.outerHeight();
+		iFlexChildWidth = $FlexChild.outerWidth();
+		iFlexChildHeight = $FlexChild.outerHeight();
+
+		// Act
+		oFixFlex._handlerResizeNoFlexBoxSupport();
+		sap.ui.getCore().applyChanges();
+
+		// Assert
+		assert.strictEqual(iFixChildWidth, $FixChild.outerWidth(), "Width is not changed");
+		assert.strictEqual(iFixChildHeight, $FixChild.outerHeight(), "Height is not changed");
+		assert.strictEqual(iFlexChildWidth, $FlexChild.outerWidth(), "Width is not changed");
+		assert.strictEqual(iFlexChildHeight, $FlexChild.outerHeight(), "Height is not changed");
+
+		// Cleanup
+		oFixFlex.destroy();
+	});
+
+	QUnit.test("Legacy support with horizontal layout", function (assert) {
+		var $FixChild,
+			$FlexChild,
+			iFixChildWidth,
+			iFixChildHeight,
+			iFlexChildWidth,
+			iFlexChildHeight;
+
+		// Arrange
+		var oButton1 = new Button(), oButton2 = new Button(), oButton3 = new Button();
+
+		// System under test
+		var oFixFlex = new FixFlex({
+			flexContent: oButton1,
+			fixContent: [oButton2, oButton3],
+			vertical: false
 		});
 
 		oFixFlex.placeAt("qunit-fixture");
@@ -191,6 +234,30 @@ sap.ui.define([
 
 		// Assert
 		assert.equal($flexible.css('overflow'), 'auto', 'Overflow is auto.');
+
+		// Cleanup
+		oFixFlex.destroy();
+	});
+
+	QUnit.test("Flexible part Scrolling with minFlexSize", function (assert) {
+		var oFlexLabel = new Label({
+				text: "Loooong text. Loooong text. Loooong text. Loooong text. Loooong text. Loooong text. Loooong text. Loooong text."
+			}),
+			oFixLabel = new Label({text: "Ninja!"});
+
+		var oFixFlex = new FixFlex({
+			flexContent: oFlexLabel,
+			fixContent: [oFixLabel],
+			minFlexSize: 1000
+		});
+
+		// Act
+		oFixFlex.placeAt("qunit-fixture");
+		sap.ui.getCore().applyChanges();
+
+		// Assert
+		assert.ok(oFixFlex.$().hasClass("sapUiFixFlexScrolling"), "'sapUiFixFlexScrolling' class should be added to the FixFlex.");
+		assert.notOk(oFixFlex.$().hasClass("sapUiFixFlexInnerScrolling"), "'sapUiFixFlexInnerScrolling' class should be removed from the FixFlex.");
 
 		// Cleanup
 		oFixFlex.destroy();

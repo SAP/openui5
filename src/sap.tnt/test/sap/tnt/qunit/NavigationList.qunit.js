@@ -34,22 +34,25 @@ sap.ui.define([
 	});
 	oApp.addPage(oPage);
 
-	function getNavigationList() {
+	function getNavigationList(selectedKey) {
 		return new NavigationList({
+			selectedKey: selectedKey,
 			items: [
 				new NavigationListItem({
 					text: 'Root 1',
 					icon: 'sap-icon://employee',
 					items: [
 						new NavigationListItem({
-							text: 'Child 1'
+							text: 'Child 1',
+							key: 'child1'
 						}),
 						new NavigationListItem({
 							text: 'Disabled Child',
 							enabled: false
 						}),
 						new NavigationListItem({
-							text: 'Child 3'
+							text: 'Child 3',
+							key: 'child3'
 						})
 					]
 				}),
@@ -72,6 +75,7 @@ sap.ui.define([
 				}),
 				new NavigationListItem({
 					text: 'Root 2',
+					key: 'root1',
 					icon: 'sap-icon://employee',
 					items: [
 						new NavigationListItem({
@@ -230,13 +234,13 @@ sap.ui.define([
 
 	QUnit.test("contains elements and classes", function (assert) {
 		assert.ok(this.navigationList.$().hasClass('sapTntNavLI'), "sapTntNavLI class is set");
-		assert.ok(this.navigationList.$().children().length == 5, "groups number is correct");
-		assert.ok(this.navigationList.$().children()[0].children[1].children.length == 3, "first group children are ok");
+		assert.strictEqual(this.navigationList.$().children().length, 5, "groups number is correct");
+		assert.strictEqual(this.navigationList.$().children()[0].children[1].children.length, 3, "first group children are ok");
 	});
 
 	QUnit.test("list.setExpanded(false)", function (assert) {
 
-		assert.ok(this.navigationList.$().hasClass('sapTntNavLICollapsed') == false, "expanded mode is ok");
+		assert.notOk(this.navigationList.$().hasClass('sapTntNavLICollapsed'), "expanded mode is ok");
 
 		this.navigationList.setExpanded(false);
 		sap.ui.getCore().applyChanges();
@@ -246,7 +250,7 @@ sap.ui.define([
 
 	QUnit.test("group.setExpanded(false)", function (assert) {
 
-		assert.ok(jQuery(this.navigationList.$().children()[2].children[1]).hasClass('sapTntNavLIHiddenGroupItems') == false, "sapTntNavLIHiddenGroupItems class is not set");
+		assert.notOk(jQuery(this.navigationList.$().children()[2].children[1]).hasClass('sapTntNavLIHiddenGroupItems'), "sapTntNavLIHiddenGroupItems class is not set");
 
 		this.navigationList.getItems()[2].setExpanded(false);
 		sap.ui.getCore().applyChanges();
@@ -278,7 +282,7 @@ sap.ui.define([
 		});
 
 		this.navigationList.$().find('div.sapTntNavLIGroup.sapTntNavLIItemDisabled').each(function (index, item) {
-			assert.ok(item.getAttribute('tabIndex') == null, jQuery(item).text() + ' does not have a tab index');
+			assert.notOk(item.getAttribute('tabIndex'), jQuery(item).text() + ' does not have a tab index');
 		});
 
 		this.navigationList.$().find('li.sapTntNavLIGroupItem:not(.sapTntNavLIItemDisabled)').each(function (index, item) {
@@ -430,6 +434,46 @@ sap.ui.define([
 		Log.warning.restore();
 	});
 
+	QUnit.module('selectedKey property', {
+		beforeEach: function () {
+		},
+		afterEach: function () {
+			this.navigationList.destroy();
+			this.navigationList = null;
+		}
+	});
+
+	QUnit.test('api', function (assert) {
+
+		this.navigationList = getNavigationList('child1');
+		oPage.addContent(this.navigationList);
+		sap.ui.getCore().applyChanges();
+
+		assert.strictEqual(this.navigationList._selectedItem.getText(), 'Child 1', 'initial selection is correct');
+
+		this.navigationList.setSelectedKey('child3');
+		sap.ui.getCore().applyChanges();
+
+		assert.strictEqual(this.navigationList._selectedItem.getText(), 'Child 3', 'selection is correct');
+
+		this.navigationList.setSelectedKey('');
+		sap.ui.getCore().applyChanges();
+
+		assert.notOk(this.navigationList._selectedItem,'selection is removed');
+	});
+
+	QUnit.test('interaction', function (assert) {
+		this.navigationList = getNavigationList();
+
+		oPage.addContent(this.navigationList);
+		sap.ui.getCore().applyChanges();
+
+		assert.notOk(this.navigationList._selectedItem, 'no initial selection');
+
+		this.navigationList.getItems()[0].getItems()[0]._selectItem();
+
+		assert.strictEqual(this.navigationList.getSelectedKey(), 'child1', 'selection is correct');
+	});
 
 	QUnit.module("Interaction", {
 		beforeEach: function () {
@@ -450,7 +494,7 @@ sap.ui.define([
 		var done = assert.async();
 
 		// assert
-		assert.ok(jQuery(this.navigationList.$().children()[0].children[1]).hasClass('sapTntNavLIHiddenGroupItems') == false, "sapTntNavLIHiddenGroupItems class is not set");
+		assert.notOk(jQuery(this.navigationList.$().children()[0].children[1]).hasClass('sapTntNavLIHiddenGroupItems'), "sapTntNavLIHiddenGroupItems class is not set");
 
 		// arrange
 		var $groupIcon = jQuery('.sapTntNavLI .sapTntNavLIExpandIcon').first();
@@ -478,7 +522,7 @@ sap.ui.define([
 
 		this.navigationList.attachItemSelect(fnEventSpy);
 
-		assert.ok(jQuery(this.navigationList.$().children()[0].children[1]).hasClass('sapTntNavLIItemSelected') == false, "sapTntNavLIItemSelected class is not set");
+		assert.notOk(jQuery(this.navigationList.$().children()[0].children[1]).hasClass('sapTntNavLIItemSelected'), "sapTntNavLIItemSelected class is not set");
 
 		var $group = jQuery('.sapTntNavLI li div').first();
 
@@ -506,7 +550,7 @@ sap.ui.define([
 
 		var $groupItem = jQuery('.sapTntNavLI .sapTntNavLIGroupItem').first();
 
-		assert.ok($groupItem.hasClass('sapTntNavLIItemSelected') == false, "sapTntNavLIItemSelected class is not set");
+		assert.notOk($groupItem.hasClass('sapTntNavLIItemSelected'), "sapTntNavLIItemSelected class is not set");
 
 		$groupItem.trigger('tap');
 
@@ -523,7 +567,7 @@ sap.ui.define([
 
 	QUnit.test("popup list", function (assert) {
 
-		assert.ok(jQuery('.sapTntNavLIPopup').length == 0, "popup list is not shown");
+		assert.notOk(jQuery('.sapTntNavLIPopup').length, "popup list is not shown");
 		assert.ok(!this.navigationList._popover, "should have no popover reference");
 
 		this.navigationList.setExpanded(false);
@@ -537,7 +581,7 @@ sap.ui.define([
 		// wait 500ms
 		this.clock.tick(500);
 
-		assert.ok(jQuery('.sapTntNavLIPopup').length == 1, "popup list is shown");
+		assert.strictEqual(jQuery('.sapTntNavLIPopup').length, 1, "popup list is shown");
 		assert.ok(this.navigationList._popover, "should save popover reference");
 
 		var $groupItem = jQuery('.sapTntNavLI .sapTntNavLIGroupItem').first();

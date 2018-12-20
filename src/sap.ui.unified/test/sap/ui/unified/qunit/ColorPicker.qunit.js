@@ -7,8 +7,9 @@ sap.ui.define([
 	"sap/m/RadioButtonGroup",
 	"sap/m/RadioButton",
 	"sap/m/Slider",
+	"sap/ui/core/InvisibleText",
 	"sap/ui/qunit/utils/waitForThemeApplied"
-], function(ColorPicker, InputBase, Label, RadioButtonGroup, RadioButton, Slider, waitForThemeApplied) {
+], function(ColorPicker, InputBase, Label, RadioButtonGroup, RadioButton, Slider, InvisibleText, waitForThemeApplied) {
 	"use strict";
 
 	(function () {
@@ -20,29 +21,27 @@ sap.ui.define([
 
 		QUnit.test("Responsive mode", function (oAssert) {
 			// Arrange
-			var oHelper = sap.ui.unified.ColorPickerHelper,
-				oFactory = sap.ui.unified.ColorPickerHelper.factory,
-				oRBGroup,
+			var oRBGroup,
 				oInput,
 				oSlider;
 
 			// Assert - Properties
-			oAssert.strictEqual(oHelper.isResponsive(), true, "Helper should be in responsive mode");
-			oAssert.ok(oHelper.bFinal, "All further overwriting of this object is prohibited");
+			oAssert.strictEqual(sap.ui.unified.ColorPickerHelper.isResponsive(), true, "Helper should be in responsive mode");
+			oAssert.ok(sap.ui.unified.ColorPickerHelper.bFinal, "All further overwriting of this object is prohibited");
 
 			// Assert - Factory
-			oAssert.ok(oFactory.createLabel() instanceof Label,
+			oAssert.ok(sap.ui.unified.ColorPickerHelper.factory.createLabel() instanceof Label,
 				"Factory label control should be instance of sap.m.Label");
 
-			oInput = oFactory.createInput("MYCUSTOMINPUTID");
+			oInput = sap.ui.unified.ColorPickerHelper.factory.createInput("MYCUSTOMINPUTID");
 			oAssert.ok(oInput instanceof InputBase,
 				"Factory input control should be instance of sap.m.InputBase");
 			oAssert.strictEqual(oInput.getId(), "MYCUSTOMINPUTID",
 				"Factory input control should have 'MYCUSTOMINPUTID' assigned as ID");
 
 			// RadioButton group and RadioButtonItem
-			oRBGroup = oFactory.createRadioButtonGroup({
-				buttons: oHelper.factory.createRadioButtonItem()
+			oRBGroup = sap.ui.unified.ColorPickerHelper.factory.createRadioButtonGroup({
+				buttons: sap.ui.unified.ColorPickerHelper.factory.createRadioButtonItem()
 			});
 			oAssert.ok(oRBGroup instanceof RadioButtonGroup,
 				"Factory RadioButtonGroup control should be instance of sap.m.RadioButtonGroup");
@@ -52,7 +51,7 @@ sap.ui.define([
 				"sap.m.RadioButton");
 
 			// Slider
-			oSlider = oFactory.createSlider("MYCUSTOMSLIDERID", {step: 0.1});
+			oSlider = sap.ui.unified.ColorPickerHelper.factory.createSlider("MYCUSTOMSLIDERID", {step: 0.1});
 			oAssert.ok(oSlider instanceof Slider, "Factory Slider control should be instance of sap.m.Slider");
 			oAssert.strictEqual(oSlider.getId(), "MYCUSTOMSLIDERID",
 				"Factory Slider control should have 'MYCUSTOMSLIDERID' assigned as ID");
@@ -183,14 +182,22 @@ sap.ui.define([
 			oAssert.strictEqual(oPRGBCSpy.callCount, 0, "_processRGBChanges should not be called");
 		});
 
-		QUnit.test("Accessibility", function (oAssert) {
+		QUnit.module("Accessibility", {
+			beforeEach: function () {
+				this.oCP = new ColorPicker().placeAt("qunit-fixture");
+				applyChanges();
+			},
+			afterEach: function () {
+				this.oCP.destroy();
+				this.oCP = null;
+			}
+		});
+
+		QUnit.test("Sliders invisible texts", function (oAssert) {
 			// Arrange
 			var aInvisibleTexts,
 				oInvisibleHueText,
 				oInvisibleAlphaText;
-
-			this.oCP.placeAt("qunit-fixture");
-			applyChanges();
 
 			aInvisibleTexts = this.oCP.getAggregation("_invisibleTexts");
 			oInvisibleHueText = aInvisibleTexts[0];
@@ -215,6 +222,47 @@ sap.ui.define([
 			oAssert.ok(this.oCP.$().find('[labelFor="' + this.oCP.oRGBorHSLRBGroup.getId() + '"]'),
 				"There is a label with labelFor set for the output RadioButton group");
 
+		});
+
+		QUnit.test("Inputs invisible texts", function (oAssert) {
+			// Assert
+			oAssert.strictEqual(this.oCP.oHexField.getAriaLabelledBy()[0], InvisibleText.getStaticId("sap.ui.unified", "COLORPICKER_HEX"),
+				"Hex input is properly labelled by an invisible text.");
+
+			oAssert.strictEqual(this.oCP.oRedField.getAriaLabelledBy()[0], InvisibleText.getStaticId("sap.ui.unified", "COLORPICKER_RED"),
+				"Red input is properly labelled by an invisible text.");
+
+			oAssert.strictEqual(this.oCP.oGreenField.getAriaLabelledBy()[0], InvisibleText.getStaticId("sap.ui.unified", "COLORPICKER_GREEN"),
+				"Green input is properly labelled by an invisible text.");
+
+			oAssert.strictEqual(this.oCP.oBlueField.getAriaLabelledBy()[0], InvisibleText.getStaticId("sap.ui.unified", "COLORPICKER_BLUE"),
+				"Blue input is properly labelled by an invisible text.");
+
+			oAssert.strictEqual(this.oCP.oHueField.getAriaLabelledBy()[0], InvisibleText.getStaticId("sap.ui.unified", "COLORPICKER_HUE"),
+				"Hue input is properly labelled by an invisible text.");
+
+			oAssert.strictEqual(this.oCP.oSatField.getAriaLabelledBy()[0], InvisibleText.getStaticId("sap.ui.unified", "COLORPICKER_SAT"),
+				"Saturation input is properly labelled by an invisible text.");
+
+			oAssert.strictEqual(this.oCP.oLitField.getAriaLabelledBy()[0], InvisibleText.getStaticId("sap.ui.unified", "COLORPICKER_LIGHTNESS"),
+				"Lightness input is properly labelled by an invisible text.");
+
+			oAssert.strictEqual(this.oCP.oAlphaField.getAriaLabelledBy()[0], InvisibleText.getStaticId("sap.ui.unified", "COLORPICKER_ALPHA"),
+				"Alpha input is properly labelled by an invisible text.");
+
+			oAssert.strictEqual(this.oCP.oValField.getAriaLabelledBy()[0], InvisibleText.getStaticId("sap.ui.unified", "COLORPICKER_VALUE"),
+				"Value input is properly labelled by an invisible text.");
+		});
+
+		QUnit.test("Radio buttons tooltips", function (oAssert) {
+			var oRB = sap.ui.getCore().getLibraryResourceBundle("sap.ui.unified");
+
+			// Assert
+			oAssert.strictEqual(this.oCP.oRbRGB.getTooltip(), oRB.getText("COLORPICKER_SELECT_RGB_TOOLTIP"),
+				"The radio button for RGB color mode has correct tooltip text.");
+
+			oAssert.strictEqual(this.oCP.oRbHSLV.getTooltip(), oRB.getText("COLORPICKER_SELECT_HSL_TOOLTIP"),
+				"The radio button for HSL color mode has correct tooltip text.");
 		});
 
 		QUnit.module("Private methods", {

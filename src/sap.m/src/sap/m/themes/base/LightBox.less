@@ -24,6 +24,10 @@
 	box-shadow: @sapUiShadowLevel3;
 }
 
+html[data-sap-ui-browser^='sf'] .sapMLightBox {
+	-webkit-transform: translateZ(0px); // fixes displaying the control behind the block layer in Safari
+}
+
 .sap-desktop .sapMLightBox {
 	max-width: calc(~"100% - 4rem");
 	max-height: calc(~"100% - 4rem");

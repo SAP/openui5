@@ -440,7 +440,8 @@ sap.ui.define([
 					domRef : {type : "object"}
 				}
 			}
-		}
+		},
+		dnd: { draggable: false, droppable: true }
 	}});
 
 	ObjectHeader.prototype.init = function() {

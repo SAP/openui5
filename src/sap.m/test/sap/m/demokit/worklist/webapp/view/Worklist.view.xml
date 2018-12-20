@@ -10,7 +10,9 @@
 		toggleHeaderOnTitleClick="false">
 
 		<semantic:titleHeading>
-			<Title text="{i18n>worklistTitle}"/>
+			<Title
+				text="{i18n>worklistTitle}"
+				level="H2"/>
 		</semantic:titleHeading>
 
 		<semantic:content>
@@ -31,16 +33,23 @@
 				updateFinished=".onUpdateFinished">
 
 				<headerToolbar>
-					<Toolbar>
-						<Title id="tableHeader" text="{worklistView>/worklistTableTitle}"/>
+					<OverflowToolbar>
+						<Title
+							id="tableHeader"
+							text="{worklistView>/worklistTableTitle}"
+							level="H3"/>
 						<ToolbarSpacer />
 						<SearchField
 							id="searchField"
 							tooltip="{i18n>worklistSearchTooltip}"
-							search=".onSearch"
-							width="auto">
+							search=".onSearch">
+							<layoutData>
+								<OverflowToolbarLayoutData
+									maxWidth="200px"
+									priority="NeverOverflow"/>
+							</layoutData>
 						</SearchField>
-					</Toolbar>
+					</OverflowToolbar>
 				</headerToolbar>
 
 				<columns>

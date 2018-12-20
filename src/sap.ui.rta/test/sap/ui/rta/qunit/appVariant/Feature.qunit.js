@@ -13,6 +13,7 @@ sap.ui.define([
 	"sap/ui/rta/Utils",
 	"sap/ui/core/Control",
 	"sap/ui/core/Manifest",
+	"sap/base/Log",
 	"sap/base/util/UriParameters"
 ], function (
 	jQuery,
@@ -27,6 +28,7 @@ sap.ui.define([
 	RtaUtils,
 	Control,
 	Manifest,
+	Log,
 	UriParameters
 ) {
 	"use strict";
@@ -41,6 +43,40 @@ sap.ui.define([
 			jQuery("#sapUiBusyIndicator").hide();
 		}
 	}, function () {
+		QUnit.test("when isManifestSupported() is called,", function(assert) {
+			var oMockedDescriptorData = {
+				"sap.app": {
+					id: "BaseAppId"
+				}
+			};
+
+			sandbox.stub(FlUtils, "getAppDescriptor").returns(oMockedDescriptorData);
+			var fnGetManifirstSupport = sandbox.stub(AppVariantUtils, "getManifirstSupport").resolves({response: true});
+
+			return RtaAppVariantFeature.isManifestSupported().then(function(bSuccess) {
+				assert.ok(fnGetManifirstSupport.calledWith("BaseAppId"), "then getManifirstSupport is called with correct parameters");
+				assert.equal(bSuccess, true, "then the manifirst is supported");
+			});
+		});
+
+		QUnit.test("when isManifestSupported() is called and failed", function(assert) {
+			var oMockedDescriptorData = {
+				"sap.app": {
+					id: "BaseAppId"
+				}
+			};
+
+			sandbox.stub(FlUtils, "getAppDescriptor").returns(oMockedDescriptorData);
+			var fnGetManifirstSupport = sandbox.stub(AppVariantUtils, "getManifirstSupport").returns(Promise.reject("Server error"));
+			sandbox.stub(AppVariantUtils, "showRelevantDialog").returns(Promise.reject(false));
+			sandbox.stub(Log,"error").callThrough().withArgs("App variant error: ", "Server error").returns();
+
+			return RtaAppVariantFeature.isManifestSupported().catch(function(bSuccess) {
+				assert.ok(fnGetManifirstSupport.calledWith("BaseAppId"), "then getManifirstSupport is called with correct parameters");
+				assert.equal(bSuccess, false, "then the error happened");
+			});
+		});
+
 		QUnit.test("when onGetOverview() is called,", function(assert) {
 			var done = assert.async();
 
@@ -85,7 +121,7 @@ sap.ui.define([
 				}
 			];
 
-			sandbox.stub(AppVariantOverviewUtils, "getAppVariantOverview").returns(Promise.resolve(aAppVariantOverviewAttributes));
+			sandbox.stub(AppVariantOverviewUtils, "getAppVariantOverview").resolves(aAppVariantOverviewAttributes);
 
 			return RtaAppVariantFeature.onGetOverview(true).then(function(oAppVariantOverviewDialog) {
 				assert.ok(true, "the the promise got resolved and AppVariant Overview Dialog is opened");
@@ -121,7 +157,7 @@ sap.ui.define([
 
 			sandbox.stub(FlUtils, "getAppDescriptor").returns(oMockedDescriptorData);
 
-			sandbox.stub(RtaUtils,"getUshellContainer").returns(false);
+			sandbox.stub(FlUtils,"getUshellContainer").returns(false);
 
 			sandbox.stub(AppVariantUtils, "isStandAloneApp").returns(false);
 
@@ -144,7 +180,7 @@ sap.ui.define([
 
 			sandbox.stub(FlUtils, "getAppDescriptor").returns(oMockedDescriptorData);
 
-			sandbox.stub(RtaUtils,"getUshellContainer").returns(true);
+			sandbox.stub(FlUtils,"getUshellContainer").returns(true);
 
 			sandbox.stub(AppVariantUtils, "isStandAloneApp").returns(false);
 
@@ -168,7 +204,7 @@ sap.ui.define([
 
 			sandbox.stub(FlUtils, "getAppDescriptor").returns(oMockedDescriptorData);
 
-			sandbox.stub(RtaUtils,"getUshellContainer").returns(true);
+			sandbox.stub(FlUtils,"getUshellContainer").returns(true);
 
 			sandbox.stub(AppVariantUtils, "isStandAloneApp").returns(true);
 
@@ -198,7 +234,7 @@ sap.ui.define([
 
 			sandbox.stub(FlUtils, "getAppDescriptor").returns(oMockedDescriptorData);
 
-			sandbox.stub(RtaUtils,"getUshellContainer").returns(true);
+			sandbox.stub(FlUtils,"getUshellContainer").returns(true);
 
 			sandbox.stub(AppVariantUtils, "isStandAloneApp").returns(false);
 
@@ -240,7 +276,7 @@ sap.ui.define([
 			};
 
 			sandbox.stub(FlUtils, "getAppDescriptor").returns(oMockedDescriptorData);
-			sandbox.stub(RtaUtils,"getUshellContainer").returns(true);
+			sandbox.stub(FlUtils,"getUshellContainer").returns(true);
 
 			sandbox.stub(AppVariantUtils, "isStandAloneApp").returns(false);
 
@@ -318,7 +354,7 @@ sap.ui.define([
 				inbounds: {}
 			};
 
-			var fnProcessSaveAsDialog = sandbox.stub(AppVariantManager.prototype, "processSaveAsDialog").returns(Promise.resolve(oAppVariantData));
+			var fnProcessSaveAsDialog = sandbox.stub(AppVariantManager.prototype, "processSaveAsDialog").resolves(oAppVariantData);
 
 			sandbox.stub(FlUtils, "getComponentClassName").returns("testComponent");
 
@@ -339,16 +375,16 @@ sap.ui.define([
 
 			sandbox.stub(FlUtils, "getAppComponentForControl").returns(oComponent);
 
-			var onGetOverviewSpy = sandbox.stub(RtaAppVariantFeature, "onGetOverview").returns(Promise.resolve());
+			var onGetOverviewSpy = sandbox.stub(RtaAppVariantFeature, "onGetOverview").resolves();
 
-			sandbox.stub(Settings, "getInstance").returns(Promise.resolve(
+			sandbox.stub(Settings, "getInstance").resolves(
 				new Settings({
 					"isKeyUser":true,
 					"isAtoAvailable":false,
 					"isAtoEnabled":false,
 					"isProductiveSystem":false
 				})
-			));
+			);
 
 			var oResponse = {
 				"transports": [{
@@ -400,16 +436,16 @@ sap.ui.define([
 
 			var fnTriggerCatalogAssignment = sandbox.stub(AppVariantManager.prototype, "triggerCatalogAssignment").returns(oResponse);
 
-			sandbox.stub(AppVariantUtils, "showRelevantDialog").returns(Promise.resolve());
+			sandbox.stub(AppVariantUtils, "showRelevantDialog").resolves();
 
 			this.oServer.autoRespond = true;
 
 			var fnCreateDescriptorSpy = sandbox.spy(AppVariantManager.prototype, "createDescriptor");
 			var fnSaveAppVariantToLREP = sandbox.spy(AppVariantManager.prototype, "saveAppVariantToLREP");
-			var fnCopyUnsavedChangesToLREP = sandbox.stub(AppVariantManager.prototype, "copyUnsavedChangesToLREP").returns(Promise.resolve());
+			var fnCopyUnsavedChangesToLREP = sandbox.stub(AppVariantManager.prototype, "copyUnsavedChangesToLREP").resolves();
 			var fnShowSuccessMessageAndTriggerActionFlow = sandbox.spy(AppVariantManager.prototype, "showSuccessMessageAndTriggerActionFlow");
 
-			var fnNotifyKeyUserWhenTileIsReadySpy = sandbox.stub(AppVariantManager.prototype, "notifyKeyUserWhenTileIsReady").returns(Promise.resolve());
+			var fnNotifyKeyUserWhenTileIsReadySpy = sandbox.stub(AppVariantManager.prototype, "notifyKeyUserWhenTileIsReady").resolves();
 
 			return RtaAppVariantFeature.onSaveAsFromOverviewDialog(oDescriptor, false).then(function() {
 				assert.ok(onGetOverviewSpy.calledOnce, "then the App variant dialog gets opened only once after the new app variant has been saved to LREP");
@@ -448,7 +484,7 @@ sap.ui.define([
 				inbounds: {}
 			};
 
-			var fnProcessSaveAsDialog = sandbox.stub(AppVariantManager.prototype, "processSaveAsDialog").returns(Promise.resolve(oAppVariantData));
+			var fnProcessSaveAsDialog = sandbox.stub(AppVariantManager.prototype, "processSaveAsDialog").resolves(oAppVariantData);
 
 			sandbox.stub(FlUtils, "getComponentClassName").returns("testComponent");
 
@@ -465,14 +501,14 @@ sap.ui.define([
 
 			sandbox.stub(FlUtils, "getAppComponentForControl").returns(oComponent);
 
-			sandbox.stub(Settings, "getInstance").returns(Promise.resolve(
+			sandbox.stub(Settings, "getInstance").resolves(
 				new Settings({
 					"isKeyUser":true,
 					"isAtoAvailable":false,
 					"isAtoEnabled":false,
 					"isProductiveSystem":false
 				})
-			));
+			);
 
 			var oResponse = {
 				"transports": [{
@@ -528,12 +564,13 @@ sap.ui.define([
 
 			this.oServer.autoRespond = true;
 
+			sandbox.stub(Log,"error").callThrough().withArgs("App variant error: ", "IAM App Id: IAMId").returns();
 
 			var fnCreateDescriptorSpy = sandbox.spy(AppVariantManager.prototype, "createDescriptor");
 			var fnSaveAppVariantToLREP = sandbox.spy(AppVariantManager.prototype, "saveAppVariantToLREP");
-			var fnCopyUnsavedChangesToLREP = sandbox.stub(AppVariantManager.prototype, "copyUnsavedChangesToLREP").returns(Promise.resolve(true));
+			var fnCopyUnsavedChangesToLREP = sandbox.stub(AppVariantManager.prototype, "copyUnsavedChangesToLREP").resolves(true);
 			var fnShowSuccessMessageAndTriggerActionFlow = sandbox.spy(AppVariantManager.prototype, "showSuccessMessageAndTriggerActionFlow");
-			var fnNavigateToFLPHomepage = sandbox.stub(AppVariantManager.prototype, "_navigateToFLPHomepage").returns(Promise.resolve());
+			var fnNavigateToFLPHomepage = sandbox.stub(AppVariantUtils, "navigateToFLPHomepage").resolves();
 
 			return RtaAppVariantFeature.onSaveAsFromRtaToolbar(true, true).then(function() {
 				assert.ok(fnCreateDescriptorSpy.calledOnce, "then the create descriptor method is called once");

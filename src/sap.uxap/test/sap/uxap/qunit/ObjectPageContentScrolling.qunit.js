@@ -328,23 +328,24 @@ function(jQuery, Core, ObjectPageSubSection, ObjectPageSection, ObjectPageLayout
 			oLastSection = oObjectPageLayout.getSections()[1],
 			oLastSubSection = oLastSection.getSubSections()[0],
 			oResizableControl = new HTML({ content: "<div style='height: 100px'></div>"}),
+			iScrollTopBeforeResize,
+			iScrollTopAfterResize,
 			done = assert.async();
 
-		oObjectPageLayout.attachEventOnce("onAfterRenderingDOMReady", function() {
-			setTimeout(function () {
-				oObjectPageLayout.setSelectedSection(oLastSection);
-			}, 500);
-		});
-
 		oLastSubSection.addBlock(oResizableControl);
+		oObjectPageLayout.setSelectedSection(oLastSection);
+
 
 		oObjectPageLayout.attachEventOnce("onAfterRenderingDOMReady", function() {
 			setTimeout(function() {
+				iScrollTopBeforeResize = oObjectPageLayout._$opWrapper.scrollTop();
 				// make the height of the last section smaller
 				oResizableControl.getDomRef().style.height = "10px";
 
 				setTimeout(function() {
-					assert.ok(oObjectPageLayout.getSelectedSection() === oLastSection.getId(), "Selection is preserved");
+					iScrollTopAfterResize = oObjectPageLayout._$opWrapper.scrollTop();
+					assert.strictEqual(oObjectPageLayout.getSelectedSection(), oLastSection.getId(), "Selection is preserved");
+					assert.strictEqual(iScrollTopBeforeResize, iScrollTopAfterResize, "scrollTop is preserved");
 					oObjectPageLayout.destroy();
 					done();
 				}, 500); // allow the page to scroll to the position of the selected section
@@ -496,6 +497,71 @@ function(jQuery, Core, ObjectPageSubSection, ObjectPageSection, ObjectPageLayout
 
 		helpers.renderObject(oObjectPage);
 		oObjectPage.$().outerHeight("800px"); // set page height smaller than header height
+	});
+
+	QUnit.test("_getClosestScrolledSectionId anchorBar mode", function (assert) {
+		var done = assert.async();
+		XMLView.create({
+			id: "UxAP-objectPageContentScrolling",
+			viewName: "view.UxAP-ObjectPageContentScrolling"
+		}).then(function (oView) {
+			this.oObjectPageContentScrollingView = oView;
+			this.oObjectPageContentScrollingView.placeAt('qunit-fixture');
+			Core.applyChanges();
+
+			var oObjectPage = this.oObjectPageContentScrollingView.byId("ObjectPageLayout"),
+				oFirstSubSection = oObjectPage.getSections()[0].getSubSections()[0],
+				oSecondSubSection = oObjectPage.getSections()[0].getSubSections()[0],
+				iFirstSubSectionScrollTop,
+				iSecondSubSectionScrollTop,
+				iPageHeight;
+
+			oObjectPage.attachEventOnce("onAfterRenderingDOMReady", function() {
+				iPageHeight = oObjectPage.getDomRef().offsetHeight;
+				iFirstSubSectionScrollTop = oObjectPage._computeScrollPosition(oFirstSubSection);
+				iSecondSubSectionScrollTop = oObjectPage._computeScrollPosition(oSecondSubSection);
+
+				assert.strictEqual(oObjectPage._getClosestScrolledSectionId(iFirstSubSectionScrollTop + 10, iPageHeight, true /* subsections only */), oFirstSubSection.getId(), "first subsection is closest");
+				assert.strictEqual(oObjectPage._getClosestScrolledSectionId(iSecondSubSectionScrollTop + 10, iPageHeight, true /* subsections only */), oSecondSubSection.getId(), "second subsection is closest");
+				this.oObjectPageContentScrollingView.destroy();
+				done();
+			}.bind(this));
+		}.bind(this));
+	});
+
+	QUnit.test("_getClosestScrolledSectionId tabs mode", function (assert) {
+		var done = assert.async();
+		XMLView.create({
+			id: "UxAP-objectPageContentScrolling",
+			viewName: "view.UxAP-ObjectPageContentScrolling"
+		}).then(function (oView) {
+			this.oObjectPageContentScrollingView = oView;
+			this.oObjectPageContentScrollingView.placeAt('qunit-fixture');
+			Core.applyChanges();
+
+			var oObjectPage = this.oObjectPageContentScrollingView.byId("ObjectPageLayout"),
+				oSecondSection = oObjectPage.getSections()[1],
+				oSecondSectionFirstSubSection = oSecondSection.getSubSections()[0],
+				oSecondSectionSecondSubSection = oSecondSection.getSubSections()[0],
+				iFirstSubSectionScrollTop,
+				iSecondSubSectionScrollTop,
+				iPageHeight;
+
+			// select the second visible tab
+			oObjectPage.setSelectedSection();
+
+			oObjectPage.attachEventOnce("onAfterRenderingDOMReady", function() {
+				iPageHeight = oObjectPage.getDomRef().offsetHeight;
+				iFirstSubSectionScrollTop = oObjectPage._computeScrollPosition(oSecondSectionFirstSubSection);
+				iSecondSubSectionScrollTop = oObjectPage._computeScrollPosition(oSecondSectionSecondSubSection);
+
+				assert.strictEqual(oObjectPage._getClosestScrolledSectionId(iFirstSubSectionScrollTop + 10, iPageHeight, false /* sections only */), oSecondSection.getId(), "second section is closest");
+				assert.strictEqual(oObjectPage._getClosestScrolledSectionId(iFirstSubSectionScrollTop + 10, iPageHeight, true /* subsections only */), oSecondSectionFirstSubSection.getId(), "first subsection is closest");
+				assert.strictEqual(oObjectPage._getClosestScrolledSectionId(iSecondSubSectionScrollTop + 10, iPageHeight, true /* subsections only */), oSecondSectionSecondSubSection.getId(), "second subsection is closest");
+				this.oObjectPageContentScrollingView.destroy();
+				done();
+			}.bind(this));
+		}.bind(this));
 	});
 
 	function isObjectPageHeaderStickied(oObjectPage) {

@@ -29,22 +29,22 @@
 			</Panel>
 
 			<Panel>
-				<f:Card id="card14" manifest="{manifests>/noLayout/card14}"  width="300px" height="200px"/>
-				<f:Card id="somedfault" manifest="{manifests>/noLayout/card1}"  width="80px" height="80px"/>
-				<f:Card id="default1x1" manifest="{manifests>/noLayout/card2}"  width="80px" height="80px"/>
-				<f:Card id="default2x1" manifest="{manifests>/noLayout/card3}"  width="300px" height="200px"/>
-				<f:Card id="default4x1" manifest="{manifests>/noLayout/card4}"  width="300px" height="200px"/>
-				<f:Card id="listCount" manifest="{manifests>/noLayout/card13}"  width="400px" height="400px"/>
-				<f:Card id="default2x2" manifest="{manifests>/noLayout/card5}"  width="300px" height="200px"/>
-				<f:Card id="default4x2" manifest="{manifests>/noLayout/card6}"  width="320px" height="160px"/>
-				<f:Card id="default4x4" manifest="{manifests>/noLayout/card7}"  width="320px" height="320px"/>
-				<f:Card id="default4x4Image" manifest="{manifests>/noLayout/card8}"  width="320px" height="320px"/>
-				<f:Card id="default6x4" manifest="{manifests>/noLayout/card9}"  width="480px" height="320px"/>
-				<f:Card id="default6x4Busy" manifest="{manifests>/noLayout/card10}"  width="480px" height="320px"/>
-				<f:Card id="default2x2Image" manifest="{manifests>/noLayout/card11}"  width="160px" height="160px"/>
-				<f:Card id="card6x6withcomponent" manifest="{manifests>/noLayout/card12}"  width="480px" height="480px"/>
-				<f:Card id="list" manifest="{manifests>/noLayout/listContent}"  width="400px" height="400px"/>
-				<f:Card id="listcard2" manifest="{manifests>/noLayout/listcard2}"  width="400px" height="auto"/>
+				<f:SAPCard id="card14" manifest="{manifests>/noLayout/card14}"  width="300px" height="200px"/>
+				<f:SAPCard id="somedfault" manifest="{manifests>/noLayout/card1}"  width="80px" height="80px"/>
+				<f:SAPCard id="default1x1" manifest="{manifests>/noLayout/card2}"  width="80px" height="80px"/>
+				<f:SAPCard id="default2x1" manifest="{manifests>/noLayout/card3}"  width="300px" height="200px"/>
+				<f:SAPCard id="default4x1" manifest="{manifests>/noLayout/card4}"  width="300px" height="200px"/>
+				<f:SAPCard id="listCount" manifest="{manifests>/noLayout/card13}"  width="400px" height="400px"/>
+				<f:SAPCard id="default2x2" manifest="{manifests>/noLayout/card5}"  width="300px" height="200px"/>
+				<f:SAPCard id="default4x2" manifest="{manifests>/noLayout/card6}"  width="320px" height="160px"/>
+				<f:SAPCard id="default4x4" manifest="{manifests>/noLayout/card7}"  width="320px" height="320px"/>
+				<f:SAPCard id="default4x4Image" manifest="{manifests>/noLayout/card8}"  width="320px" height="320px"/>
+				<f:SAPCard id="default6x4" manifest="{manifests>/noLayout/card9}"  width="480px" height="320px"/>
+				<f:SAPCard id="default6x4Busy" manifest="{manifests>/noLayout/card10}"  width="480px" height="320px"/>
+				<f:SAPCard id="default2x2Image" manifest="{manifests>/noLayout/card11}"  width="160px" height="160px"/>
+				<f:SAPCard id="card6x6withcomponent" manifest="{manifests>/noLayout/card12}"  width="480px" height="480px"/>
+				<f:SAPCard id="list" manifest="{manifests>/noLayout/listContent}"  width="400px" height="400px"/>
+				<f:SAPCard id="listcard2" manifest="{manifests>/noLayout/listcard2}"  width="400px" height="auto"/>
 			</Panel>
 		</content>
 	</Page>

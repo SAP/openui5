@@ -166,8 +166,10 @@
 				new sap.m.DatePicker("DP11", {
 					navigate: function (oEvent) {
 						var oRange = oEvent.getParameter("dateRange"),
+							bAfterPopupOpened = oEvent.getParameter("afterPopupOpened"),
 							oStartDate = oRange.getStartDate(),
-							oEndDate = oRange.getEndDate();
+							oEndDate = oRange.getEndDate(),
+							sFeedback = "Navigate event fired and new special dates marked";
 
 						// Generate some random dates within range
 						oStartDate.setDate(oStartDate.getDate() + Math.floor(Math.random() * 15));
@@ -192,8 +194,14 @@
 							})
 						);
 
+
+						// Indicate if the navigate event was fired, due to popup being opened
+						if (bAfterPopupOpened) {
+							sFeedback = "Popup opened - " + sFeedback;
+						}
+
 						// Give feedback
-						sap.m.MessageToast.show("Navigate event fired and new special dates marked");
+						sap.m.MessageToast.show(sFeedback);
 					}
 				})
 			],

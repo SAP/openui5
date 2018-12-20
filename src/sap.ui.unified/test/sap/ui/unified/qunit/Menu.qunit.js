@@ -932,6 +932,29 @@ sap.ui.define([
 		assert.equal(oRootMenu.$().attr("aria-level"), undefined, "There must be no any aria-level attribute");
 	});
 
+	QUnit.test("aria-posinset and aria-setsize", function(assert) {
+		// Prepare
+		var oItem1 = new MenuItem(),
+			oItem2 = new MenuTextFieldItem(),
+			oMenu = new Menu({
+				items: [oItem1, oItem2]
+			}).placeAt("qunit-fixture");
+
+		// act
+		oMenu.open();
+		var $item1 = oItem1.$(),
+			$item2TF = oItem2.$("tf");
+
+		// assert
+		assert.equal($item1.attr("aria-posinset"), 1, "Correct posinset information is set");
+		assert.equal($item1.attr("aria-setsize"), 2, "Correct setsize information is set");
+		assert.equal($item2TF.attr("aria-posinset"), 2, "Correct posinset information is propagated to the inner input");
+		assert.equal($item2TF.attr("aria-setsize"), 2, "Correct setsize information is propagated to the inner input");
+
+		// clean up
+		oMenu.destroy();
+	});
+
 	QUnit.module("Misc");
 
 	// BCP: 002075129500003736822017

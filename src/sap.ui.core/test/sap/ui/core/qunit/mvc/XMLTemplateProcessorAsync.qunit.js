@@ -1,8 +1,10 @@
 /*global QUnit */
 sap.ui.define([
+	'sap/ui/core/Component',
+	'sap/ui/core/UIComponent',
 	"sap/ui/core/XMLTemplateProcessor",
 	"jquery.sap.xml"
-], function(XMLTemplateProcessor, jQuery) {
+], function(Component, UIComponent, XMLTemplateProcessor, jQuery) {
 	"use strict";
 
 	QUnit.module("enrichTemplateIdsPromise", {
@@ -234,5 +236,195 @@ sap.ui.define([
 		}
 
 		assert.ok(sError,"Not ending with binding in {model: 'model', path: '/path'}{path: '/path', name: 'context1'},{path: '/any', name: 'context2'}huhuhuh is detected");
+	});
+
+	QUnit.module("Propagation of processingMode: 'sequential'");
+
+	QUnit.test("Async rootView & childView", function(assert) {
+		var done = assert.async();
+
+		sap.ui.define("test/XMLTemplateProcessor/Component", function() {
+			return UIComponent.extend("test.XMLTemplateProcessor", {
+				metadata: {
+					rootView: {
+						viewName: "testdata/view/XMLTemplateProcessorAsync_nested",
+						type: "XML",
+						async: true
+					}
+				}
+			});
+		});
+
+		Component.create({
+			name: "test.XMLTemplateProcessor",
+			manifest: false
+		}).then(function(oComponent) {
+			var oRootView = oComponent.getRootControl();
+
+			oRootView.loaded().then(function(oView) {
+				assert.ok(oView, "View is loaded.");
+				assert.equal(oView._sProcessingMode, "sequential", "ProcessingMode 'sequential' is set on " + "View:" + oView.getViewName());
+
+				oView.getContent()[0].loaded().then(function(oView) {
+					assert.ok(oView, "View is loaded.");
+					assert.equal(oView._sProcessingMode, "sequential", "ProcessingMode 'sequential' is set on " + "View:" + oView.getViewName());
+					done();
+				});
+			});
+		});
+	});
+
+	QUnit.test("Async rootView & sync childView", function(assert) {
+		var done = assert.async();
+
+		sap.ui.define("test/XMLTemplateProcessor2/Component", function() {
+			return UIComponent.extend("test.XMLTemplateProcessor2", {
+				metadata: {
+					rootView: {
+						viewName: "testdata/view/XMLTemplateProcessorAsync_nested_2",
+						type: "XML",
+						async: true
+					}
+				}
+			});
+		});
+
+		Component.create({
+			name: "test.XMLTemplateProcessor2",
+			manifest: false
+		}).then(function(oComponent) {
+			var oRootView = oComponent.getRootControl();
+
+			oRootView.loaded().then(function(oView) {
+				assert.ok(oView, "View is loaded.");
+				assert.ok(oView.oAsyncState, "View is an async view.");
+				assert.equal(oView._sProcessingMode, "sequential", "ProcessingMode 'sequential' is set on " + "View:" + oView.getViewName());
+
+				oView.getContent()[0].loaded().then(function(oChildView1) {
+					assert.ok(oChildView1, "View is loaded.");
+					assert.notOk(oChildView1.oAsyncState, "View is a sync view.");
+					assert.equal(oChildView1._sProcessingMode, "sequential", "ProcessingMode 'sequential' is set on " + "View:" + oChildView1.getViewName());
+
+					oChildView1.getContent()[0].loaded().then(function(oChildView2) {
+						assert.ok(oChildView2, "View is loaded.");
+						assert.ok(oChildView2.oAsyncState, "View is an async view.");
+						assert.equal(oChildView2._sProcessingMode, "sequential", "ProcessingMode 'sequential' is set on " + "View:" + oChildView2.getViewName());
+						done();
+					});
+				});
+			});
+		});
+	});
+
+	QUnit.test("Async rootView & nested fragments", function(assert) {
+		var done = assert.async();
+
+		sap.ui.define("test/XMLTemplateProcessor3/Component", function() {
+			return UIComponent.extend("test.XMLTemplateProcessor3", {
+				metadata: {
+					rootView: {
+						viewName: "testdata/fragments/XMLViewWithXMLFragment",
+						type: "XML",
+						async: true
+					}
+				}
+			});
+		});
+
+		Component.create({
+			name: "test.XMLTemplateProcessor3",
+			manifest: false
+		}).then(function(oComponent) {
+			var oRootView = oComponent.getRootControl();
+
+			oRootView.loaded().then(function(oView) {
+				assert.ok(oView, "View is loaded.");
+				assert.ok(oView.oAsyncState, "View is an async view.");
+				assert.equal(oView._sProcessingMode, "sequential", "ProcessingMode 'sequential' is set on " + "View:" + oView.getViewName());
+
+				var oFragment = oView.byId("fragment");
+				oFragment.loaded().then(function(oChildView) {
+					assert.ok(oChildView, "View is loaded.");
+					assert.notOk(oChildView.oAsyncState, "View is a sync view.");
+					assert.equal(oChildView._sProcessingMode, "sequential", "ProcessingMode 'sequential' is set on " + "View:" + oChildView.getViewName());
+
+					done();
+				});
+			});
+		});
+	});
+
+	QUnit.test("Async XML rootView with HTML tags with nested XML view", function(assert) {
+		var done = assert.async();
+
+		sap.ui.define("test/XMLTemplateProcessor4/Component", function() {
+			return UIComponent.extend("test.XMLTemplateProcessor4", {
+				metadata: {
+					rootView: {
+						viewName: "testdata/fragments/XMLViewWithHTML",
+						type: "XML",
+						async: true
+					}
+				}
+			});
+		});
+
+		Component.create({
+			name: "test.XMLTemplateProcessor4",
+			manifest: false
+		}).then(function(oComponent) {
+			var oRootView = oComponent.getRootControl();
+
+			oRootView.loaded().then(function(oView) {
+				assert.ok(oView, "View is loaded.");
+				assert.ok(oView.oAsyncState, "View is an async view.");
+				assert.equal(oView._sProcessingMode, "sequential", "ProcessingMode 'sequential' is set on " + "View:" + oView.getViewName());
+
+				var xmlViewInHtml = oView.byId("xmlViewInHTML");
+				xmlViewInHtml.loaded().then(function(oView) {
+					assert.ok(oView, "View is loaded.");
+					assert.equal(oView._sProcessingMode, "sequential", "ProcessingMode 'sequential' is set on " + "View:" + oView.getViewName());
+
+					done();
+				});
+			});
+		});
+	});
+
+	QUnit.test("Async XML rootView with HTML fragment with nested XML view", function(assert) {
+		var done = assert.async();
+
+		sap.ui.define("test/XMLTemplateProcessor5/Component", function() {
+			return UIComponent.extend("test.XMLTemplateProcessor4", {
+				metadata: {
+					rootView: {
+						viewName: "testdata/fragments/XMLViewWithHTMLFragments",
+						type: "XML",
+						async: true
+					}
+				}
+			});
+		});
+
+		Component.create({
+			name: "test.XMLTemplateProcessor5",
+			manifest: false
+		}).then(function(oComponent) {
+			var oRootView = oComponent.getRootControl();
+
+			oRootView.loaded().then(function(oView) {
+				assert.ok(oView, "View is loaded.");
+				assert.ok(oView.oAsyncState, "View is an async view.");
+				assert.equal(oView._sProcessingMode, "sequential", "ProcessingMode 'sequential' is set on " + "View:" + oView.getViewName());
+
+				var xmlView = oView.byId("XVwithFrags");
+				xmlView.loaded().then(function(oView) {
+					assert.ok(oView, "View is loaded.");
+					assert.equal(oView._sProcessingMode, "sequential", "ProcessingMode 'sequential' is set on " + "View:" + oView.getViewName());
+
+					done();
+				});
+			});
+		});
 	});
 });

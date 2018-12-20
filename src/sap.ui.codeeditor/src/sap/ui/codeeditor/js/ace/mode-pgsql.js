@@ -25,7 +25,7 @@ DocCommentHighlightRules.getTagRule = function(start) {
         token : "comment.doc.tag.storage.type",
         regex : "\\b(?:TODO|FIXME|XXX|HACK)\\b"
     };
-}
+};
 
 DocCommentHighlightRules.getStartRule = function(start) {
     return {
@@ -93,7 +93,6 @@ var PerlHighlightRules = function() {
         "constant.language": buildinConstants,
         "support.function": builtinFunctions
     }, "identifier");
-
     this.$rules = {
         "start" : [
             {
@@ -192,7 +191,7 @@ var PythonHighlightRules = function() {
     var keywords = (
         "and|as|assert|break|class|continue|def|del|elif|else|except|exec|" +
         "finally|for|from|global|if|import|in|is|lambda|not|or|pass|print|" +
-        "raise|return|try|while|with|yield"
+        "raise|return|try|while|with|yield|async|await"
     );
 
     var builtinConstants = (
@@ -212,6 +211,7 @@ var PythonHighlightRules = function() {
     var keywordMapper = this.createKeywordMapper({
         "invalid.deprecated": "debugger",
         "support.function": builtinFunctions,
+        "variable.language": "self|cls",
         "constant.language": builtinConstants,
         "keyword": keywords
     }, "identifier");
@@ -457,7 +457,6 @@ var JavaScriptHighlightRules = function(options) {
         "3[0-7][0-7]?|" + // oct
         "[4-7][0-7]?|" + //oct
         ".)";
-
     this.$rules = {
         "no_regex" : [
             DocCommentHighlightRules.getStartRule("doc-start"),
@@ -546,7 +545,8 @@ var JavaScriptHighlightRules = function(options) {
                 next  : "property"
             }, {
                 token : "storage.type",
-                regex : /=>/
+                regex : /=>/,
+                next  : "start"
             }, {
                 token : "keyword.operator",
                 regex : /--|\+\+|\.{3}|===|==|=|!=|!==|<+=?|>+=?|!|&&|\|\||\?:|[!$%&*+\-~\/^]=?/,
@@ -1345,7 +1345,7 @@ var PgsqlHighlightRules = function() {
                 next : "comment"
             },{
                 token : "keyword.statementBegin",
-                regex : "^[a-zA-Z]+", // Could enumerate starting keywords but this allows things to work when new statements are added.
+                regex : "[a-zA-Z]+", // Could enumerate starting keywords but this allows things to work when new statements are added.
                 next : "statement"
             },{
                 token : "support.buildin", // psql directive
@@ -1498,3 +1498,11 @@ oop.inherits(Mode, TextMode);
 
 exports.Mode = Mode;
 });
+                (function() {
+                    ace.require(["ace/mode/pgsql"], function(m) {
+                        if (typeof module == "object" && typeof exports == "object" && module) {
+                            module.exports = m;
+                        }
+                    });
+                })();
+            

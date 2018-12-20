@@ -59,8 +59,8 @@ sap.ui.define([
 	 *
 	 * <h3>Current Limitations</h3>
 	 * <ul>
-	 * <li>No support for IE11.</li>
-	 * <li>No support for Edge version 15.</li>
+	 * <li>For Microsoft Internet Explorer some layouts are not supported, due to browser specifics.</li>
+	 * <li>For Microsoft Edge 15 and older versions some layouts are not supported, due to browser specifics.</li>
 	 * </ul>
 	 *
 	 * @see {@link topic:32d4b9c2b981425dbc374d3e9d5d0c2e Grid Controls}

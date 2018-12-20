@@ -4,9 +4,11 @@
 
 // Provides control sap.m.ListItemBase.
 sap.ui.define([
+	"sap/ui/base/DataType",
 	"sap/ui/events/KeyCodes",
 	"sap/ui/model/BindingMode",
 	"sap/ui/Device",
+	"sap/ui/core/library",
 	"sap/ui/core/Control",
 	"sap/ui/core/IconPool",
 	"sap/ui/core/Icon",
@@ -21,9 +23,11 @@ sap.ui.define([
 	"sap/ui/dom/jquery/Selectors"
 ],
 function(
+	DataType,
 	KeyCodes,
 	BindingMode,
 	Device,
+	coreLibrary,
 	Control,
 	IconPool,
 	Icon,
@@ -49,6 +53,9 @@ function(
 
 	// shortcut for sap.m.ButtonType
 	var ButtonType = library.ButtonType;
+
+	// shortcut for sap.ui.core.MessageType
+	var MessageType = coreLibrary.MessageType;
 
 
 	/**
@@ -104,9 +111,11 @@ function(
 
 			/**
 			 * Defines the highlight state of the list items.
+			 * Valid values for the <code>highlight</code> property are values of the enumerations {@link sap.ui.core.MessageType} or {@link sap.ui.core.IndicationColor}.
+			 * <b>Note:</b> There is no accessibility support for the indication colors.
 			 * @since 1.44.0
 			 */
-			highlight : {type : "sap.ui.core.MessageType", group : "Appearance", defaultValue : "None"}
+			highlight : {type : "string", group : "Appearance", defaultValue : "None"}
 		},
 		associations: {
 
@@ -366,7 +375,7 @@ function(
 			aOutput.push(oBundle.getText("LIST_ITEM_SELECTED"));
 		}
 
-		if (sHighlight != "None") {
+		if (sHighlight != MessageType.None && MessageType[sHighlight]) {
 			aOutput.push(oBundle.getText("LIST_ITEM_STATE_" + sHighlight.toUpperCase()));
 		}
 
@@ -658,6 +667,16 @@ function(
 		]);
 	};
 
+	ListItemBase.prototype.setHighlight = function(sValue) {
+		if (sValue == null /* null or undefined */) {
+			sValue = MessageType.None;
+		} else if (!DataType.getType("sap.ui.core.MessageType").isValid(sValue) && !DataType.getType("sap.ui.core.IndicationColor").isValid(sValue)) {
+			throw new Error("\"" + sValue + "\" is not a value of the enums sap.ui.core.MessageType or sap.ui.core.IndicationColor for property \"highlight\" of " + this);
+		}
+
+		return this.setProperty("highlight", sValue);
+	};
+
 	/**
 	 * Determines whether item is selectable or not.
 	 * By default, when item should be in selectable mode
@@ -772,7 +791,7 @@ function(
 	// informs the list when item's highlight is changed
 	ListItemBase.prototype._checkHighlight = function(bNeedsHighlight) {
 		if (bNeedsHighlight == undefined) {
-			bNeedsHighlight = (this.getVisible() && this.getHighlight() != "None");
+			bNeedsHighlight = (this.getVisible() && this.getHighlight() != MessageType.None);
 		}
 
 		if (this._bNeedsHighlight != bNeedsHighlight) {
@@ -836,7 +855,7 @@ function(
 	ListItemBase.prototype.ontap = function(oEvent) {
 
 		// do not handle already handled events
-		if (this._eventHandledByControl || oEvent.isMarked()) {
+		if (this._eventHandledByControl) {
 			return oEvent.setMarked();
 		}
 

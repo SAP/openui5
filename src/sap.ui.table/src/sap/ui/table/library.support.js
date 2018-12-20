@@ -11,8 +11,9 @@ sap.ui.define([
 	"sap/ui/Device",
 	"sap/ui/table/library",
 	"sap/base/Log",
-	"sap/ui/thirdparty/jquery"
-], function(SupportLib, Ruleset, SupportHelper, Device, TableLib, Log, jQuery) {
+	"sap/ui/thirdparty/jquery",
+	"sap/ui/core/library"
+], function(SupportLib, Ruleset, SupportHelper, Device, TableLib, Log, jQuery, coreLibrary) {
 	"use strict";
 
 	// shortcuts
@@ -20,6 +21,7 @@ sap.ui.define([
 		Severity = SupportLib.Severity,	// Hint, Warning, Error
 		//Audiences = SupportLib.Audiences; // Control, Internal, Application
 		VisibleRowCountMode = TableLib.VisibleRowCountMode;
+	var MessageType = coreLibrary.MessageType;
 
 	var oLib = {
 		name: "sap.ui.table",
@@ -135,6 +137,40 @@ sap.ui.define([
 				if (!aTables[i].getTitle() && aTables[i].getAriaLabelledBy().length == 0) {
 					SupportHelper.reportIssue(oIssueManager, "Table '" + aTables[i].getId() + "' does not have an accessible label.", Severity.High, aTables[i].getId());
 				}
+			}
+		}
+	});
+
+	/*
+	 * Validates whether the highlightText property of the RowSettings is correctly set.
+	 */
+	createRule({
+		id : "AccessibleRowHighlight",
+		categories: [Categories.Accessibility],
+		title : "Accessible Row Highlight",
+		description : "Checks whether the row highlights of the 'sap.ui.table.Table' controls are accessible.",
+		resolution : "Use the 'highlightText' property of the 'sap.ui.table.RowSettings' to define the semantics of the row 'highlight'.",
+		resolutionurls: [
+			SupportHelper.createDocuRef("API Reference: sap.ui.table.RowSettings#getHighlight", "#/api/sap.ui.table.RowSettings/methods/getHighlight"),
+			SupportHelper.createDocuRef("API Reference: sap.ui.table.RowSettings#getHighlightText", "#/api/sap.ui.table.RowSettings/methods/getHighlightText")
+		],
+		check : function(oIssueManager, oCoreFacade, oScope) {
+			var aTables = SupportHelper.find(oScope, true, "sap.ui.table.Table");
+
+			function checkRowHighlight(oRow) {
+				var oRowSettings = oRow.getAggregation("_settings");
+				var sHighlight = oRowSettings ? oRowSettings.getHighlight() : null;
+				var sHighlightText = oRowSettings ? oRowSettings.getHighlightText() : null;
+				var sRowId = oRow.getId();
+
+				if (oRowSettings && !(sHighlight in MessageType) && sHighlightText === "") {
+					SupportHelper.reportIssue(oIssueManager,
+						"Row '" + sRowId + "' of table '" + oRow.getParent().getId() + "' does not have a highlight text.", Severity.High, sRowId);
+				}
+			}
+
+			for (var i = 0; i < aTables.length; i++) {
+				aTables[i].getRows().forEach(checkRowHighlight);
 			}
 		}
 	});

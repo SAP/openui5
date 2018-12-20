@@ -12,7 +12,7 @@ controllerName="sap.ui.layout.cssgrid.gridplayground.controller.Main">
 		</Toolbar>
 	</headerToolbar>
 	<content>
-		<Panel width="auto" class="sapUiResponsiveMargin"  expandable="true" expanded="false">
+		<Panel id="panel1" width="auto" class="sapUiResponsiveMargin"  expandable="true" expanded="false">
 			<headerToolbar>
 				<Toolbar height="3rem">
 					<Title text=" CssGrid with properties: gridTemplateColumns=repeat(auto-fit, 8rem), gridAutoRows=1fr, gridGap=0.25rem 0.25rem"/>
@@ -40,7 +40,7 @@ controllerName="sap.ui.layout.cssgrid.gridplayground.controller.Main">
 			</content>
 		</Panel>
 
-		<Panel width="auto" class="sapUiResponsiveMargin"  expandable="true" expanded="false">
+		<Panel id="panel2" width="auto" class="sapUiResponsiveMargin"  expandable="true" expanded="false">
 			<headerToolbar>
 				<Toolbar height="3rem">
 					<Title text=" CssGrid as a container: no grid properties"/>
@@ -60,7 +60,7 @@ controllerName="sap.ui.layout.cssgrid.gridplayground.controller.Main">
 			</content>
 		</Panel>
 
-		<Panel width="auto" class="sapUiResponsiveMargin"  expandable="true" expanded="false">
+		<Panel id="panel3" width="auto" class="sapUiResponsiveMargin"  expandable="true" expanded="false">
 			<headerToolbar>
 				<Toolbar height="3rem">
 					<Title text=" CssGrid: gridTemplateColumns=1fr 2fr gridGap=0.25rem 0.25rem"/>
@@ -85,7 +85,7 @@ controllerName="sap.ui.layout.cssgrid.gridplayground.controller.Main">
 				</grid:CSSGrid>
 			</content>
 		</Panel>
-		<Panel width="auto" class="sapUiResponsiveMargin"  expandable="true" expanded="false">
+		<Panel id="panel4" width="auto" class="sapUiResponsiveMargin"  expandable="true" expanded="false">
 			<headerToolbar>
 				<Toolbar height="3rem">
 					<Title text=" CssGrid: gridTemplateRows=1fr 2fr gridGap=0.25rem 0.25rem"/>
@@ -117,7 +117,7 @@ controllerName="sap.ui.layout.cssgrid.gridplayground.controller.Main">
 				</grid:CSSGrid>
 			</content>
 		</Panel>
-		<Panel width="auto" class="sapUiResponsiveMargin"  expandable="true" expanded="false">
+		<Panel id="panel5" width="auto" class="sapUiResponsiveMargin"  expandable="true" expanded="false">
 			<headerToolbar>
 				<Toolbar height="3rem">
 					<Title text=" CssGrid: Page Layout"/>
@@ -125,7 +125,7 @@ controllerName="sap.ui.layout.cssgrid.gridplayground.controller.Main">
 			</headerToolbar>
 			<content>
 				<Slider value="100" app:mydata="grid5" liveChange="onSliderMoved" />
-				<grid:CSSGrid id="grid5">
+				<grid:CSSGrid id="grid5" class="sapUiSmallMarginTop">
 					<grid:customLayout>
 						<grid:GridBasicLayout
 								gridTemplateColumns="auto 1fr"
@@ -134,17 +134,17 @@ controllerName="sap.ui.layout.cssgrid.gridplayground.controller.Main">
 						</grid:GridBasicLayout>
 					</grid:customLayout>
 					<grid:items>
-						<core:HTML content='&lt;header class=&quot;sapUiSmallMargin stylePageLayout&quot;&gt;Header&lt;/header&gt;'>
+						<core:HTML content='&lt;header class=&quot;sapUiSmallMarginBottom stylePageLayout&quot;&gt;Header&lt;/header&gt;'>
 							<core:layoutData>
 								<grid:GridItemLayoutData
 										gridColumn="1 / 4"/>
 							</core:layoutData>
 						</core:HTML>
-						<core:HTML content='&lt;aside  class=&quot;sapUiSmallMargin stylePageLayout&quot;&gt;Left Side Bar&lt;/aside &gt;'>
+						<core:HTML content='&lt;aside  class=&quot;sapUiSmallMarginBottom stylePageLayout&quot;&gt;Left Side Bar&lt;/aside &gt;'>
 						</core:HTML>
-						<core:HTML content='&lt;article class=&quot;sapUiSmallMargin stylePageLayout&quot;&gt;Main Content&lt;/article&gt;'>
+						<core:HTML content='&lt;article class=&quot;sapUiSmallMarginBottom stylePageLayout&quot;&gt;Main Content&lt;/article&gt;'>
 						</core:HTML>
-						<core:HTML content='&lt;footer class=&quot;sapUiSmallMargin stylePageLayout&quot;&gt;Footer&lt;/footer&gt;'>
+						<core:HTML content='&lt;footer class=&quot;sapUiSmallMarginBottom stylePageLayout&quot;&gt;Footer&lt;/footer&gt;'>
 							<core:layoutData>
 								<grid:GridItemLayoutData
 										gridColumn="1 / 4"/>

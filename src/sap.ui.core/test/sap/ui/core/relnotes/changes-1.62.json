@@ -1,0 +1,49 @@
+{
+  "1.62.0": {
+    "date": "December 2018",
+    "notes": [
+      {
+        "id": "6a19fc127bb3fe8653ca74b782cbbe63e3fd5204",
+        "type": "FEATURE",
+        "text": " Introduce Enumeration for Indication Colors",
+        "references": []
+      },
+      {
+        "id": "a28d1e1a51ac38a235dfd9640b06ad9a885e2242",
+        "type": "FEATURE",
+        "text": " core/routing: support routing in nested components",
+        "references": []
+      },
+      {
+        "id": "399d97690ba66b56b1cc0e1c80119d54537b5fa4",
+        "type": "FEATURE",
+        "text": " sap_fiori_3: initial commit of Fiori 3 Default",
+        "references": []
+      },
+      {
+        "id": "7e9e24f65d8205c390d96128881fc17543e99fa8",
+        "type": "FIX",
+        "text": " ManagedObject: improve JSDoc of \u0027parameters\u0027 in bindObject etc.",
+        "references": []
+      },
+      {
+        "id": "a0970d3bf956bec5d82337dbe33aa7951f7fe3e9",
+        "type": "FIX",
+        "text": " ODataUtils: Enhance setAnnotationOrigin for HanaXS Use Case",
+        "references": []
+      },
+      {
+        "id": "833b6bd348a01e5ec3dfd1591f2f4c3598b8039b",
+        "type": "FIX",
+        "text": " UriParameters: Fixed parsing of query values with an equal sign",
+        "references": []
+      },
+      {
+        "id": "8213f13d828521df2018ace7cb7861429f0f43da",
+        "type": "FIX",
+        "text": " i18n.ResourceBundle: Norwegian language support for \"nb\"",
+        "references": []
+      }
+    ]
+  }
+}

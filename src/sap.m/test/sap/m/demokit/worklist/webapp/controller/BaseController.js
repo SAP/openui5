@@ -5,6 +5,9 @@ sap.ui.define([
 ], function (Controller, UIComponent, mobileLibrary) {
 	"use strict";
 
+	// shortcut for sap.m.URLHelper
+	var URLHelper = mobileLibrary.URLHelper;
+
 	return Controller.extend("sap.ui.demo.worklist.controller.BaseController", {
 		/**
 		 * Convenience method for accessing the router.
@@ -51,12 +54,11 @@ sap.ui.define([
 		 */
 		onShareEmailPress : function () {
 			var oViewModel = (this.getModel("objectView") || this.getModel("worklistView"));
-			mobileLibrary.URLHelper.triggerEmail(
+			URLHelper.triggerEmail(
 				null,
 				oViewModel.getProperty("/shareSendEmailSubject"),
 				oViewModel.getProperty("/shareSendEmailMessage")
 			);
-		}
-	});
+		}	});
 
 });

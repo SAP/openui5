@@ -25,7 +25,9 @@ function(
 			var mOffset = DOMUtil.getOffsetFromParent(oContentGeometry, this.oContainer.get(0));
 			//TODO: Remove when bug in Chrome and Safari is fixed
 			var iExpectedOffsetLeft = (Device.browser.webkit || Device.browser.blink) ? -47 : -35;
-			assert.strictEqual(mOffset.left, iExpectedOffsetLeft, "the left offset is correct");
+			// in some cases (special physical devices) the offset is returend as decimal value
+			// actually we need to round the offset for chrome browser on mac
+			assert.strictEqual(Math.round(mOffset.left), iExpectedOffsetLeft, "the left offset is correct");
 			assert.strictEqual(mOffset.top, 40, "the top offset is correct");
 		});
 
@@ -47,7 +49,8 @@ function(
 			this.oContainer.scrollLeft(iScrollValue);
 			this.oContainer.scrollTop(60);
 			var mOffset = DOMUtil.getOffsetFromParent(oContentGeometry, oContainerDomRef);
-			assert.strictEqual(mOffset.left, iExpectedOffsetLeft, "the left offset is correct");
+			// round for offset value is actually nedded for chrome browser on mac
+			assert.strictEqual(Math.round(mOffset.left), iExpectedOffsetLeft, "the left offset is correct");
 			assert.strictEqual(mOffset.top, 100, "the top offset is correct");
 		});
 	});

@@ -37,7 +37,7 @@ sap.ui.define(['sap/ui/core/Element', './library'],
 			 *
 			 * If set to <code>sap.ui.core.AccessibleLandmarkRole.None</code>, no landmark will be added to the container.
 			 */
-			rootRole : {type : "sap.ui.core.AccessibleLandmarkRole", defaultValue : "Region"},
+			rootRole : {type : "sap.ui.core.AccessibleLandmarkRole", defaultValue : "Main"},
 
 			/**
 			 * Texts which describe the landmark of the root container of the corresponding <code>sap.uxap.ObjectPageLayout</code> control.
@@ -93,7 +93,7 @@ sap.ui.define(['sap/ui/core/Element', './library'],
 			 *
 			 * If set to <code>sap.ui.core.AccessibleLandmarkRole.None</code>, no landmark will be added to the container.
 			 */
-			footerRole : {type : "sap.ui.core.AccessibleLandmarkRole", defaultValue : "None"},
+			footerRole : {type : "sap.ui.core.AccessibleLandmarkRole", defaultValue : "Region"},
 
 			/**
 			 * Texts which describe the landmark of the header container of the corresponding <code>sap.uxap.ObjectPageLayout</code> control.

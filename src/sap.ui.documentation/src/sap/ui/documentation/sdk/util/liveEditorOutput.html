@@ -1,0 +1,168 @@
+<!DOCTYPE html>
+<html>
+<head>
+
+	<title>OpenUI5 SDK - Demo Kit v2.0</title>
+	<meta http-equiv='X-UA-Compatible' content='IE=edge'>
+	<meta charset="utf-8">
+
+
+	<script>
+
+            window.addEventListener("message", function(event) {
+                // You must verify that the origin of the message's sender matches your
+                // expectations. In this case, we're only planning on accepting messages
+                // from our own origin, so we can simply compare the message event's
+                // origin to the location of this document. If we get a message from an
+                // unexpected host, ignore the message entirely.
+                if (event.origin !== (window.location.protocol + "//" + window.location.host)) {
+                    return;
+                }
+
+                writeSrc(event.data);
+            });
+
+
+            function writeSrc(oSrcData) {
+
+                if (!oSrcData || !oSrcData['index.html'] /* at least html src is needed */) {
+                    return;
+                }
+
+                // need to refer to 'document' via variable
+                // in order to overcome some security filter in Edge
+                //(that would throw a security error otherwise)
+                var c = document,
+                        sHtml = oSrcData['index.html'],
+                        sView = oSrcData['App.view.xml'],
+                        sController = oSrcData['App.controller.js'],
+                        oScriptEl,
+                        aLines = [];
+
+                c.open();
+
+                c.write(sHtml); // write the index.html
+
+                // there are two more resources in addition to the html:
+                // (1) xmlview and
+                // (2) controller code
+                // => attach script that will inject the remaining two resources:
+                oScriptEl = c.createElement("script");
+
+
+                aLines.push("var sViewSrc = " + JSON.stringify(sView) + ";");
+                aLines.push("var sControllerSrc = " + JSON.stringify(sController) + ";");
+                aLines.push('var fnAddHooks = ' + addHooks.toString() + ';');
+                aLines.push('fnAddHooks(sViewSrc, sControllerSrc);');
+
+                oScriptEl.innerHTML = aLines.join("\n");
+                c.head.insertBefore(oScriptEl, c.getElementById("sap-ui-bootstrap"));
+
+
+                c.close();
+            }
+
+            function addHooks(sViewSrc, sControllerSrc) {
+
+                var removeWhitespace = function(sContent) {
+                    if (sContent) {
+                        sContent = sContent.replace(/\n/g, ' ').replace(/\s+/g, ' ').replace(/>\s</g, '><');
+                    }
+                    return sContent;
+                },
+
+                addOnErrorHook = function () {
+
+                    window.addEventListener("error", function(error) {
+                        var oErrorOutput = document.createElement("span");
+                        oErrorOutput.innerText = error.message; // use save API
+                        oErrorOutput.style.cssText = "position:absolute; top:1rem; left:1rem";
+                        document.write("<span></span>"); // add content via document.write to ensure document.body is created;
+                        document.body.appendChild(oErrorOutput);
+                    })
+                },
+
+                addJQueryHook = function () {
+
+                    var sViewSource = removeWhitespace(sViewSrc),
+                        sControllerSource = removeWhitespace(sControllerSrc),
+                        oScriptToInsertView = document.createElement("script"),
+                        oScriptToInsertController = document.createElement("script"),
+                        aLines = [];
+
+                    function overwriteLoadResource(sResNameToOverwrite, sResAltSource) {
+
+                        var fnOrig = jQuery.ajax,
+                            loadFromAltSrc = function(url, options) {
+                                // do not modify the original arguments
+                                var urlcopy = url,
+                                    optionscopy = options,
+                                    sResName,
+                                    fnConvert,
+                                    oResource;
+
+                                // argument shifting may be needed
+                                if ( typeof urlcopy === "object" ) {
+                                    optionscopy = urlcopy;
+                                    urlcopy = undefined;
+                                }
+
+                                // Force options to be an object
+                                optionscopy = optionscopy || {};
+
+                                sResName = urlcopy || optionscopy.url;
+
+                                if (sResName && typeof sResName === 'string' && new RegExp(sResNameToOverwrite + "$").test(sResName)) {
+                                    fnConvert = jQuery.ajaxSettings.converters["text xml"];
+                                    oResource = fnConvert(sResAltSource);
+
+                                    optionscopy.success(oResource);
+                                    return true /* success */;
+                                }
+                                return false /* did not load from alt src */;
+                            };
+
+
+                        jQuery.ajax = function(url, options) {
+
+                            if (loadFromAltSrc(url, options)) {
+                                return;
+                            }
+
+                            return fnOrig.apply(this, arguments);
+                        }
+                    }
+
+                    aLines.push("var sResourceName = 'App.view.xml';");
+                    aLines.push("var sAltResourceSource = '" + sViewSource + "';");
+                    aLines.push("var fnOverwriteLoadResource = " + overwriteLoadResource.toString() + ";");
+                    aLines.push("fnOverwriteLoadResource.call(this, sResourceName, sAltResourceSource);");
+
+                    oScriptToInsertView.innerHTML = aLines.join("\n");
+                    document.head.appendChild(oScriptToInsertView);
+
+                    // the framework will issue a warning of the controller module remains anonymous => insert name
+                    oScriptToInsertController.innerHTML = sControllerSource.replace("sap.ui.define([", 'sap.ui.define("App.controller",[');
+                    document.head.appendChild(oScriptToInsertController);
+                };
+
+                addOnErrorHook();
+
+                // once the browser downloads jQuery,
+                // on *subsequent* loads it makes jQuery available *before* the document overall readyState becomes 'complete'
+                // => directly check if window.jQuery is already available
+                if (window.jQuery) {
+                    addJQueryHook();
+                } else if (document.readyState !== 'complete'){ // otherwise we wait for the browser to freshly download scripts and fire "DOMContentLoaded"
+                    document.addEventListener("DOMContentLoaded", addJQueryHook);
+                }
+            }
+
+
+
+    </script>
+</head>
+<body class='sapUiBody' id='content'>
+<div id="outputWindowWrapper"></div>
+</body>
+</html>

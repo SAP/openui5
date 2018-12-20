@@ -217,7 +217,8 @@ function(
 					 * Internal aggregation that contains the inner _picker pop-up.
 					 */
 					_picker: { type: "sap.m.ResponsivePopover", multiple: false, visibility: "hidden" }
-				}
+				},
+				dnd: { draggable: false, droppable: true }
 		}});
 
 		/**

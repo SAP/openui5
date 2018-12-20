@@ -788,6 +788,10 @@ sap.ui.define([
 
 				var that = this;
 				var fCheckAndOpen = function () {
+					if (oPopup.bIsDestroyed) {
+						return;
+					}
+
 					if (oPopup.getOpenState() === OpenState.CLOSING) {
 						if (that._sOpenTimeout) {
 							clearTimeout(that._sOpenTimeout);
@@ -935,6 +939,7 @@ sap.ui.define([
 			oStyle.bottom = "";
 			oStyle.width = "";
 			oStyle.height = "";
+			oStyle.overflow = "";
 
 			oScrollAreaStyle.width = "";
 			oScrollAreaStyle.display = "";

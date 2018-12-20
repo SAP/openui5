@@ -201,7 +201,8 @@ function(
 					metaKey: { type: "boolean" }
 				}
 			}
-		}
+		},
+		dnd: { draggable: true, droppable: false }
 	}});
 
 

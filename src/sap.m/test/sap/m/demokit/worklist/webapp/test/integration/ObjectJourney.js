@@ -31,18 +31,19 @@ sap.ui.define([
 			delay: 1000,
 			autoWait: false
 		});
+
 		//Actions
 		When.onTheAppPage.iWaitUntilTheAppBusyIndicatorIsGone();
 
 		// Assertions
 		Then.onTheObjectPage.iShouldSeeTheObjectViewsBusyIndicator().
-		and.theObjectViewsBusyIndicatorDelayIsRestored().
-		and.iShouldSeeTheRememberedObject().
-		and.theObjectViewShouldContainOnlyFormattedUnitNumbers();
+			and.theObjectViewsBusyIndicatorDelayIsRestored().
+			and.iShouldSeeTheRememberedObject().
+			and.theObjectViewShouldContainOnlyFormattedUnitNumbers();
 
 		// Cleanup
 		Then.iTeardownMyApp();
-
 	});
+
 
 });

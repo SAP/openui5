@@ -24,6 +24,8 @@ function (library, SinglePlanningCalendarView, CalendarDate, CalendarUtils) {
 	 * A {@link sap.m.SinglePlanningCalendarWeekView} element represents a week view of the SinglePlanningCalendar.
 	 * The purpose of the element is to decouple the view logic from parent control <code>SinglePlanningCalendar</code>.
 	 *
+	 * <b>Disclaimer</b>: This control is in a beta state - incompatible API changes may be done before its official public
+	 * release. Use at your own discretion.
 	 *
 	 * @extends sap.ui.core.Element
 	 *
@@ -31,8 +33,7 @@ function (library, SinglePlanningCalendarView, CalendarDate, CalendarUtils) {
 	 * @version ${version}
 	 *
 	 * @constructor
-	 * @experimental Disclaimer: This control is in a beta state - incompatible API changes may be done before its official public
-	 * release. Use at your own discretion.
+	 * @public
 	 * @since 1.61
 	 * @alias sap.m.SinglePlanningCalendarWeekView
 	 */

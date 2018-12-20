@@ -14,7 +14,7 @@ sap.ui.define([
 		},
 
 		onHideShowSubItemPress: function () {
-			var navListItem = this.byId('subItemThree');
+			var navListItem = this.byId('subItem3');
 
 			navListItem.setVisible(!navListItem.getVisible());
 		}

@@ -94,7 +94,8 @@ sap.ui.define([
 			 * Association to controls / ids which describe this control (see WAI-ARIA attribute aria-describedby).
 			 */
 			ariaDescribedBy: {type: "sap.ui.core.Control", multiple: true, singularName: "ariaDescribedBy"}
-		}
+		},
+		dnd: { draggable: true, droppable: false }
 	}});
 
 	/**

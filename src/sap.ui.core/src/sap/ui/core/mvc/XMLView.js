@@ -99,10 +99,13 @@ sap.ui.define([
 
 			/**
 			 * The processing mode of the XMLView.
-			 * If the async view is created with the XMLView.create API.
-			 * The default value is "sequential".
+			 * The processing mode "sequential" is implicitly activated for the following type of async views:
+			 *      a) root views in the manifest
+			 *      b) XMLViews created with the (XML)View.create factory
+			 *      c) XMLViews used via routing
+			 * Additionally, all declarative nested async subviews are also processed asynchronously.
 			 */
-			processingMode: { type: "string", defaultValue: "", visibility: "hidden" }
+			processingMode: { type: "string", visibility: "hidden" }
 		},
 
 		designtime: "sap/ui/core/designtime/mvc/XMLView.designtime"
@@ -124,7 +127,7 @@ sap.ui.define([
 		 *
 		 * When property <code>async</code> is set to true, the view definition and the controller class (and its
 		 * dependencies) will be loaded asynchronously. Any controls used in the view might be loaded sync or
-		 * async, this depends on the experimental runtime configuration option "xx-xml-processing". Even when
+		 * async, depending on the processingMode. Even when
 		 * the view definition is provided as string or XML Document, controller or controls might be loaded
 		 * asynchronously. In any case a view instance will be returned synchronously by this factory API, but its
 		 * content (control tree) might appear only later. Also see {@link sap.ui.core.mvc.View#loaded}.

@@ -1,0 +1,59 @@
+/* ================================== */
+/* CSS for control sap.m/RadioButton  */
+/* Fiori 3 theme                      */
+/* ================================== */
+
+@_sap_m_RadioButton_SelectedWarningColor: darken(@sapUiFieldWarningColor, 100);
+
+.sapMRb:focus:before {
+	border: 1px dotted @sapUiContentFocusColor;
+}
+
+.sapMLIBActive .sapMRbB .sapMRbBOut {
+	border: 2px solid @sapUiListActiveTextColor;
+}
+
+.sapMLIBActive .sapMRbSel .sapMRbBOut {
+	background-color: @sapUiListActiveBackground;
+}
+
+.sapMRbDis {
+	opacity: @sapUiContentDisabledOpacity;
+}
+
+/* Value states */
+
+.sapMRbErr.sapMRbSel .sapMRbBInn {
+	background-color: @sapUiFieldInvalidColor;
+}
+
+.sapMRbErr .sapMRbBOut,
+.sapMRbErr.sapMRbBTouched .sapMRbBOut {
+	border-color: @sapUiFieldInvalidColor;
+	background-color: @sapUiFieldInvalidBackground;
+}
+
+.sapMRbWarn.sapMRbSel .sapMRbBInn {
+	background-color: @_sap_m_RadioButton_SelectedWarningColor;
+}
+
+.sapMRbWarn .sapMRbBOut,
+.sapMRbWarn.sapMRbBTouched .sapMRbBOut {
+	border-color: @sapUiFieldWarningColor;
+	background-color: @sapUiFieldWarningBackground;
+}
+
+/* When printing border is needed for the selection */
+@media only print {
+	.sapMLIBActive .sapMRbSel .sapMRbBOut {
+		border-color: @sapUiListActiveBackground;
+	}
+
+	.sapMRbErr.sapMRbSel .sapMRbBInn {
+		border-color: @sapUiFieldInvalidColor;
+	}
+
+	.sapMRbWarn.sapMRbSel .sapMRbBInn {
+		border-color: @_sap_m_RadioButton_SelectedWarningColor;
+	}
+}

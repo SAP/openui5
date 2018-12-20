@@ -36,7 +36,7 @@ sap.ui.define([
             });
         },
         begin: function (oDetails) {
-            this._suiteBeginPromise = postJson(this.baseUrl + "begin", oDetails)
+            this._beginSuitePromise = postJson(this.baseUrl + "begin", oDetails)
                 .done(function (data) {
                     this._id = data.id;
                     oLogger.debug("Begin report with ID " + data.id);
@@ -45,34 +45,35 @@ sap.ui.define([
                     oLogger.debug("Failed to begin report. Error: " + JSON.stringify(err));
                 });
         },
-        moduleUpdate: function (oDetails) {
-            this._postSuiteJson("/modules", oDetails)
-                .done(function (data) {
-                    oLogger.debug("Sent report for module " + oDetails.name);
-                })
-                .fail(function (err) {
-                    oLogger.debug("Failed to send report for module '" + oDetails.name + "'. Error: " + JSON.stringify(err));
-                });
+        moduleStart: function (oDetails) {
+            this._moduleUpdate(oDetails);
+        },
+        testStart: function () {
+            this._isOpaEmpty = false;
+            this._QUnitTimeoutDetails = null;
         },
         testDone: function (oDetails) {
-            // there are 2 ways a test end is handled:
-            // - if a test is successful or has an OPA timeout, OPA queue is emptied and then the test finishes (testDone is called)
-            // - if there is a QUnit timeout, the test finishes (testDone is called), then the OPA queue is stopped and an error message is formed
+            // the details available depend on whether a QUnit timeout occurred:
+            // - no QUnit timeout: OPA queue is emptied and then the test finishes (call opaEmpty, then testDone)
+            // - with QUnit timeout: the test finishes, then the OPA queue is stopped and an error message is formed (call testDone, then opaEmpty)
+            // details for tests without an OPA queue will NOT be reported
             if (this._isOpaEmpty) {
-                this._reportTest(oDetails);
+                this._reportOpaTest(oDetails);
                 this._isOpaEmpty = false;
             } else {
-                this._QUnitTimeoutTest = oDetails;
+                this._QUnitTimeoutDetails = oDetails;
             }
         },
         opaEmpty: function (oOptions) {
             this._isOpaEmpty = true;
-            if (this._QUnitTimeoutTest) {
-                var assertions = this._QUnitTimeoutTest.assertions;
-                assertions[assertions.length - 1].message += "\n" + oOptions.errorMessage;
-                this._reportTest(this._QUnitTimeoutTest);
-                this._QUnitTimeoutTest = null;
+            if (oOptions && oOptions.qunitTimeout) {
+                var oLastAssertion = this._QUnitTimeoutDetails.assertions.slice(-1)[0];
+                oLastAssertion.message += "\n" + oOptions.errorMessage;
+                this._reportOpaTest(this._QUnitTimeoutDetails);
             }
+        },
+        moduleDone: function (oDetails) {
+            this._moduleUpdate(oDetails);
         },
         done: function (oDetails) {
             this._postSuiteJson("/done", oDetails)
@@ -81,9 +82,21 @@ sap.ui.define([
                 }.bind(this))
                 .fail(function (err) {
                     oLogger.debug("Failed to complete report with ID " + this._id + ". Error: " + JSON.stringify(err));
+                }.bind(this))
+                .always(function () {
+                    this._beginSuitePromise = null;
                 }.bind(this));
         },
-        _reportTest: function (oDetails) {
+        _moduleUpdate: function (oDetails) {
+            this._postSuiteJson("/modules", oDetails)
+            .done(function (data) {
+                oLogger.debug("Sent report for module " + oDetails.name);
+            })
+            .fail(function (err) {
+                oLogger.debug("Failed to send report for module '" + oDetails.name + "'. Error: " + JSON.stringify(err));
+            });
+        },
+        _reportOpaTest: function (oDetails) {
             this._postSuiteJson("/tests", oDetails)
                 .done(function (data) {
                     oLogger.debug("Sent report for test " + oDetails.name);
@@ -93,7 +106,8 @@ sap.ui.define([
                 });
         },
         _postSuiteJson: function (sUrlSuffix, oData) {
-            var oPromise = this._suiteBeginPromise || jQueryDOM.Deferred().resolve().promise();
+            // wait for begin suite request
+            var oPromise = this._beginSuitePromise || new jQueryDOM.Deferred().resolve().promise();
             return oPromise.done(function () {
                 return postJson.call(this, this.baseUrl + this._id + sUrlSuffix, oData);
             }.bind(this));

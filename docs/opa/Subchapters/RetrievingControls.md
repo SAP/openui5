@@ -183,7 +183,31 @@ For more information, see the [API Reference](https://openui5nightly.hana.ondema
 
 ## Searching for Controls Inside a Dialog
 
-This example shows the following use case: We want to press a button with 'Order Now' text on it inside a dialog. To do this, we set the `searchOpenDialogs` option to `true` and then restrict the `controlType` we want to search to `sap.m.Button`. We use the check function to search for a button with the text 'Order Now' and save it to the outer scope. After we find it, we trigger a `tap` event:
+Use the option `searchOpenDialogs` to restrict control search to open dialogs only. You can combine
+`searchOpenDialogs` with `controlType` or any predefined or custom matcher. As of version 1.62,
+the `id` option is also effective in combination with `searchOpenDialogs`. If the dialog is inside
+a view, the `viewName` option ensures the given ID is relative to the view. Otherwise, the search
+is done by global ID.
+
+This is an example of matching a control with ID "mainView--testButton" located inside a dialog.
+The dialog itself is part of a view with name "main.view" and ID "mainView":
+
+```javascript
+this.waitFor({
+    searchOpenDialogs: true,
+    id: "testButton",
+    viewName: "main.view"
+    actions: new sap.ui.test.actions.Press(),
+    errorMessage : "Did not find the dialog button"
+});
+```
+
+The next example shows the use case where we want to press a button with 'Order Now' text on it
+inside a dialog.
+
+To do this, we set the `searchOpenDialogs` option to `true` and then restrict the `controlType`
+we want to search for to `sap.m.Button`. We use the `check` function to search for a button with
+the text 'Order Now' and save it to the outer scope. After we find it, we trigger a `tap` event:
 
 ```javascript
 iPressOrderNow : function () {
@@ -217,7 +241,7 @@ iExpandRecursively : function() {
     return this.waitFor({
         controlType : "sap.ui.commons.TreeNode",
         matchers : new sap.ui.test.matchers.PropertyStrictEquals({
-            name : "expanded", 
+            name : "expanded",
             value : false
         }),
         actions : function (oTreeNode) {

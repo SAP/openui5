@@ -5,7 +5,6 @@ var oop = require("../lib/oop");
 var TextHighlightRules = require("./text_highlight_rules").TextHighlightRules;
 
 var PrologHighlightRules = function() {
-
     this.$rules = { start: 
        [ { include: '#comment' },
          { include: '#basic_fact' },
@@ -181,7 +180,7 @@ var PrologHighlightRules = function() {
        [ { token: 'variable.language.anonymous.prolog',
            regex: '\\b_\\b' },
          { token: 'variable.other.prolog',
-           regex: '\\b[A-Z_][a-zA-Z0-9_]*\\b' } ] }
+           regex: '\\b[A-Z_][a-zA-Z0-9_]*\\b' } ] };
     
     this.normalizeRules();
 };
@@ -191,7 +190,7 @@ PrologHighlightRules.metaData = { fileTypes: [ 'plg', 'prolog' ],
       foldingStopMarker: '(%\\s*end(\\s*region)?)|(?=\\.)',
       keyEquivalent: '^~P',
       name: 'Prolog',
-      scopeName: 'source.prolog' }
+      scopeName: 'source.prolog' };
 
 
 oop.inherits(PrologHighlightRules, TextHighlightRules);
@@ -220,8 +219,8 @@ oop.inherits(FoldMode, BaseFoldMode);
 
 (function() {
     
-    this.foldingStartMarker = /(\{|\[)[^\}\]]*$|^\s*(\/\*)/;
-    this.foldingStopMarker = /^[^\[\{]*(\}|\])|^[\s\*]*(\*\/)/;
+    this.foldingStartMarker = /([\{\[\(])[^\}\]\)]*$|^\s*(\/\*)/;
+    this.foldingStopMarker = /^[^\[\{\(]*([\}\]\)])|^[\s\*]*(\*\/)/;
     this.singleLineBlockCommentRe= /^\s*(\/\*).*\*\/\s*$/;
     this.tripleStarBlockCommentRe = /^\s*(\/\*\*\*).*\*\/\s*$/;
     this.startRegionRe = /^\s*(\/\*|\/\/)#?region\b/;
@@ -362,3 +361,11 @@ oop.inherits(Mode, TextMode);
 
 exports.Mode = Mode;
 });
+                (function() {
+                    ace.require(["ace/mode/prolog"], function(m) {
+                        if (typeof module == "object" && typeof exports == "object" && module) {
+                            module.exports = m;
+                        }
+                    });
+                })();
+            

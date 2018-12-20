@@ -4,22 +4,20 @@ sap.ui.define([
 	"sap/ui/test/matchers/Interactable",
 	"sap/ui/test/matchers/Visible",
 	'sap/ui/test/autowaiter/_autoWaiter',
-	"sap/ui/commons/Button",
-	"sap/ui/commons/CheckBox",
+	"sap/m/CheckBox",
 	"sap/m/Button",
 	"sap/m/Dialog"
 ], function (OpaPlugin,
 			 Interactable,
 			 Visible,
 			 _autoWaiter,
-			 Button,
 			 CheckBox,
-			 MButton,
+			 Button,
 			 Dialog) {
 	"use strict";
 
 
-	QUnit.module("getControlByGlobalId", {
+	QUnit.module("OpaPlugin - getControlByGlobalId", {
 		beforeEach : function() {
 			this.oPlugin = new OpaPlugin();
 			this.fnLogSpy = sinon.spy(this.oPlugin._oLogger, "debug");
@@ -173,7 +171,7 @@ sap.ui.define([
 		assert.strictEqual(oRetrievedButtons, null, "did return null");
 	});
 
-	QUnit.module("Controls with a control type and id", {
+	QUnit.module("OpaPlugin - Controls with a control type and id", {
 		beforeEach : function() {
 			this.oPlugin = new OpaPlugin();
 			this.fnLogSpy = sinon.spy(this.oPlugin._oLogger, "debug");
@@ -199,11 +197,11 @@ sap.ui.define([
 	});
 
 	QUnit.test("Should retrieve a controls even if the control is a lazy stub", function(assert) {
-		assert.ok(sap.ui.lazyRequire._isStub("sap.ui.commons.ComboBox"), "Combo box is still a stub");
+		assert.ok(sap.ui.lazyRequire._isStub("sap.m.ComboBox"), "Combo box is still a stub");
 
 		// Act - combo box is a lazy stub
 		var aRetrievedControls = this.oPlugin.getMatchingControls({
-			controlType : sap.ui.commons.ComboBox
+			controlType : sap.m.ComboBox
 		});
 
 		// Assert
@@ -235,7 +233,7 @@ sap.ui.define([
 
 	QUnit.test("Should retrieve all buttons by control type as string", function (assert) {
 		var aButtons = this.oPlugin.getMatchingControls({
-			controlType: "sap.ui.commons.Button"
+			controlType: "sap.m.Button"
 		});
 
 		assert.ok(aButtons.indexOf(this.oButton) !== -1, "has button");
@@ -246,18 +244,18 @@ sap.ui.define([
 	QUnit.test("Should log an error if the controlType does not match and a string id is given", function (assert) {
 		var oCheckBox = this.oPlugin.getMatchingControls({
 			id: "my_id3",
-			controlType: "sap.ui.commons.Button"
+			controlType: "sap.m.Button"
 		});
 
 		assert.strictEqual(oCheckBox, null, "got null");
 		sinon.assert.calledWithExactly(this.fnLogErrorSpy, "A control with global ID 'my_id3' is found but does not have required controlType " +
-			"'sap.ui.commons.Button'. Found control is 'Element sap.ui.commons.CheckBox#my_id3' but null is returned instead");
+			"'sap.m.Button'. Found control is 'Element sap.m.CheckBox#my_id3' but null is returned instead");
 	});
 
 	QUnit.test("Should log an error if the controlType does not match and a string id is given", function (assert) {
 		var oCheckBox = this.oPlugin.getMatchingControls({
 			id: "my_id3",
-			controlType: "sap.ui.commons.CheckBox"
+			controlType: "sap.m.CheckBox"
 		});
 
 		assert.strictEqual(oCheckBox, this.oCheckBox, "got null");
@@ -266,7 +264,7 @@ sap.ui.define([
 
 	QUnit.test("Should retrieve all buttons by control type and ids as array", function (assert) {
 		var aButtons = this.oPlugin.getMatchingControls({
-			controlType: "sap.ui.commons.Button",
+			controlType: "sap.m.Button",
 			id: [this.oButton.getId(), this.oButton2.getId()]
 		});
 
@@ -277,7 +275,7 @@ sap.ui.define([
 
 	QUnit.test("Should retrieve one button by control type and id as array", function (assert) {
 		var aButtons = this.oPlugin.getMatchingControls({
-			controlType: "sap.ui.commons.Button",
+			controlType: "sap.m.Button",
 			id: [this.oButton2.getId()]
 		});
 
@@ -351,7 +349,7 @@ sap.ui.define([
 
 	function createXmlView(sViewName) {
 		var sView = [
-			'<core:View xmlns:core="sap.ui.core" xmlns="sap.ui.commons">',
+			'<core:View xmlns:core="sap.ui.core" xmlns="sap.m">',
 			'<Button id="foo">',
 			'</Button>',
 			'<Button id="bar">',
@@ -368,7 +366,7 @@ sap.ui.define([
 		return oView;
 	}
 
-	QUnit.module("Controls in a view", {
+	QUnit.module("OpaPlugin - Controls in a view", {
 		beforeEach: function () {
 			this.oView = createXmlView("bar");
 
@@ -434,7 +432,7 @@ sap.ui.define([
 
 		//Act
 		var oRetrievedButton = this.oPlugin.getMatchingControls({
-			controlType: "sap.ui.commons.Button",
+			controlType: "sap.m.Button",
 			viewName : "bar",
 			id : "foo"
 		});
@@ -526,7 +524,7 @@ sap.ui.define([
 		assert.strictEqual(aRetrievedButtons[1].getId(), this.oView.byId("baz").getId(), "did return the baz button as second element");
 	});
 
-	QUnit.module("initialization", {
+	QUnit.module("OpaPlugin - initialization", {
 		beforeEach: function (assert) {
 			var Log = sap.ui.require("sap/base/Log");
 			assert.ok(Log, "Log module should be available");
@@ -567,13 +565,15 @@ sap.ui.define([
 		assert.ok(true, "did not throw an exception");
 	});
 
-	QUnit.module("Controls in a dialog", {
+	QUnit.module("OpaPlugin - controls in an open dialog with no view parent", {
 		beforeEach: function () {
-			this.oButtonInDialog = new MButton("buttonInDialog",{text: "OK"});
+			this.oButtonOK = new Button("OKButton", {text: "OK"});
+			this.oButtonCancel = new Button("cancelButton", {text: "Cancel"});
+			this.oCheckBox = new CheckBox("testCheckBox");
 			this.oDialog = new Dialog({
-				content: this.oButtonInDialog
+				buttons: [this.oButtonOK, this.oButtonCancel],
+				content: [this.oCheckBox]
 			});
-			// System under Test
 			this.oPlugin = new OpaPlugin();
 		},
 		afterEach: function () {
@@ -582,49 +582,176 @@ sap.ui.define([
 		}
 	});
 
-	QUnit.test("Should match a control in an open dialog specifying the control type", function (assert) {
-		// Arrange
+	QUnit.test("Should match all controls in an open dialog when no controlType or ID is given", function (assert) {
 		var fnStart = assert.async();
-
-		// Act
 		this.oDialog.attachAfterOpen(function () {
-			var aRetrievedControls = this.oPlugin.getMatchingControls({
-				searchOpenDialogs : true,
-				controlType: MButton,
-				id : ["buttonInDialog"]
+			var aControls = this.oPlugin.getMatchingControls({
+				searchOpenDialogs: true
 			});
 
-			// Assert
-			assert.ok(aRetrievedControls.length == 1, "Found exactly one control in dialog");
-			assert.ok(aRetrievedControls[0] == this.oButtonInDialog, "Found the 'sap.m.button' we were looking");
+			assert.ok(aControls.indexOf(this.oCheckBox) > -1, "Should match check box");
+			assert.ok(aControls.indexOf(this.oButtonOK) > -1, "Should match OK Button");
+			assert.ok(aControls.indexOf(this.oButtonCancel) > -1, "Should match cancel Button");
 
 			fnStart();
 		}, this);
-		// Act
+
 		this.oDialog.open();
 	});
 
-	QUnit.test("Should match a control in an open dialog without specifying the control type", function (assert) {
-		// Arrange
+	QUnit.test("Should match controls in an open dialog by control type", function (assert) {
 		var fnStart = assert.async();
-
-		// Act
 		this.oDialog.attachAfterOpen(function () {
-			var aRetrievedControls = this.oPlugin.getMatchingControls({
-				searchOpenDialogs : true,
-				id : ["buttonInDialog"]
+			var aControls = this.oPlugin.getMatchingControls({
+				searchOpenDialogs: true,
+				controlType: "sap.m.Button"
 			});
 
-			// Assert
-			assert.ok(jQuery.inArray(this.oButtonInDialog, aRetrievedControls) > -1, "Found button in dialog");
+			assert.strictEqual(aControls.length, 2, "Should match all controls of type Button");
+			assert.strictEqual(aControls.indexOf(this.oCheckBox), -1, "Should not match other type of controls");
 
 			fnStart();
 		}, this);
-		// Act
+
 		this.oDialog.open();
 	});
 
-	QUnit.module("Actions", {
+	QUnit.test("Should match controls in an open dialog by ID", function (assert) {
+		var fnStart = assert.async();
+		this.oDialog.attachAfterOpen(function () {
+			var oControlWithStrictID = this.oPlugin.getMatchingControls({
+				searchOpenDialogs: true,
+				id: "OKButton"
+			});
+			var aControlsWithMatchID = this.oPlugin.getMatchingControls({
+				searchOpenDialogs: true,
+				id: /Button/
+			});
+			var aControlsWithSomeID = this.oPlugin.getMatchingControls({
+				searchOpenDialogs: true,
+				id: ["OKButton", "testCheckBox", "someID"]
+			});
+
+			assert.strictEqual(oControlWithStrictID, this.oButtonOK, "Should match button with same ID");
+
+			assert.strictEqual(aControlsWithMatchID.length, 2, "Should match all controls with ID matching regex");
+			assert.ok(aControlsWithMatchID.indexOf(this.oButtonOK) > -1, "Should match OK Button with ID regex /Button/");
+			assert.ok(aControlsWithMatchID.indexOf(this.oButtonCancel) > -1, "Should match cancel Button  with ID regex /Button/");
+
+			assert.strictEqual(aControlsWithSomeID.length, 2, "Should match controls with IDs contained in set");
+			assert.ok(aControlsWithSomeID.indexOf(this.oButtonOK) > -1, "Should match OK Button by ID");
+			assert.ok(aControlsWithSomeID.indexOf(this.oCheckBox) > -1, "Should match CheckBox by ID");
+
+			fnStart();
+		}, this);
+
+		this.oDialog.open();
+	});
+
+	QUnit.test("Should not match controls in an open dialog when control type or ID does not match", function (assert) {
+		var fnStart = assert.async();
+		this.oDialog.attachAfterOpen(function () {
+			var aControlsWithMissingID = this.oPlugin.getMatchingControls({
+				searchOpenDialogs: true,
+				controlType: "sap.m.CheckBox",
+				id: /randomID/
+			});
+			var aControlsWithWrongType = this.oPlugin.getMatchingControls({
+				searchOpenDialogs: true,
+				controlType: "sap.m.CheckBox",
+				id: /Button/
+			});
+
+			assert.ok(!aControlsWithMissingID.length, "Should not match any controls when ID doesn't match");
+			assert.ok(!aControlsWithWrongType.length, "Should not match any controls when control type doesn't match");
+
+			fnStart();
+		}, this);
+
+		this.oDialog.open();
+	});
+
+	QUnit.module("OpaPlugin - controls in an open dialog with view parent", {
+		beforeEach: function () {
+			var sViewContent = [
+				'<core:View xmlns:core="sap.ui.core" xmlns="sap.m">',
+				'<Dialog id="myDialog">',
+				'<Button id="fooInDialog">',
+				'</Button>',
+				'</Dialog>',
+				'<Button id="foo">',
+				'</Button>',
+				'</core:View>'
+			].join('');
+			this.oView = sap.ui.xmlview({id: "viewWithDialog", viewContent: sViewContent});
+			this.oView.setViewName("testView");
+		},
+		afterEach: function () {
+			this.oView.destroy();
+		}
+	});
+
+	QUnit.test("Should only match controls in open dialog", function (assert) {
+		var oPlugin = new OpaPlugin();
+		var fnStart = assert.async();
+		var oDialog = sap.ui.getCore().byId("viewWithDialog--myDialog");
+		oDialog.attachAfterOpen(function () {
+			var aControls = oPlugin.getMatchingControls({
+				searchOpenDialogs: true,
+				viewName: "testView",
+				controlType: "sap.m.Button"
+			});
+			assert.strictEqual(aControls.length, 1, "Should match only one control");
+			assert.strictEqual(aControls[0].getId(), "viewWithDialog--fooInDialog", "Should match only control inside open dialog");
+
+			fnStart();
+		});
+
+		oDialog.open();
+	});
+
+	QUnit.test("Should match controls in open dialog by ID and viewName", function (assert) {
+		var oPlugin = new OpaPlugin();
+		var fnStart = assert.async();
+		var oDialog = sap.ui.getCore().byId("viewWithDialog--myDialog");
+		oDialog.attachAfterOpen(function () {
+			var oControlWithStrictID = oPlugin.getMatchingControls({
+				searchOpenDialogs: true,
+				viewName: "testView",
+				id: "fooInDialog"
+			});
+			assert.strictEqual(oControlWithStrictID.getId(), "viewWithDialog--fooInDialog", "Should match button with same ID and ignore viewId prefix");
+
+			fnStart();
+		});
+
+		oDialog.open();
+	});
+
+	QUnit.test("Should match controls in open dialog by ID with no viewName", function (assert) {
+		var oPlugin = new OpaPlugin();
+		var fnStart = assert.async();
+		var oDialog = sap.ui.getCore().byId("viewWithDialog--myDialog");
+		oDialog.attachAfterOpen(function () {
+			var oControlWithStrictID = oPlugin.getMatchingControls({
+				searchOpenDialogs: true,
+				id: "viewWithDialog--fooInDialog"
+			});
+			var aControlsWithMatchID = oPlugin.getMatchingControls({
+				searchOpenDialogs: true,
+				id: /fooInDialog/
+			});
+
+			assert.ok(oControlWithStrictID, "Should match button with full ID");
+			assert.strictEqual(aControlsWithMatchID.length, 1, "Should match all controls with ID matching regex");
+
+			fnStart();
+		});
+
+		oDialog.open();
+	});
+
+	QUnit.module("OpaPlugin - Actions", {
 		beforeEach: function () {
 			this.oPlugin =  new OpaPlugin();
 			this.oButton = new Button("foo").placeAt("qunit-fixture");
@@ -668,7 +795,7 @@ sap.ui.define([
 		assert.strictEqual(oResult.getId() ,this.oButton.getId());
 	});
 
-	QUnit.module("Should know if it is looking for a Control", {
+	QUnit.module("OpaPlugin - Should know if it is looking for a Control", {
 		beforeEach: function () {
 			// System under Test
 			this.oPlugin = new OpaPlugin();

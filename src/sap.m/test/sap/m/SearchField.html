@@ -41,7 +41,7 @@
 				}
 			}),
 		endButton:
-			new sap.m.Button({
+			new sap.m.Button("reject", {
 				text: "Reject",
 				press : function() {
 					oDialog.close();
@@ -120,7 +120,7 @@
 			new sap.m.SearchField("SF7", { // showSearchButton = false
 					placeholder: "Without search button..", ariaDescribedBy: ["SF_AD"], showSearchButton: false, search:onSearch, liveChange:onLiveChange
 				}),
-			new sap.m.Button({
+			new sap.m.Button("openDialog", {
 					text: "Open a Dialog",
 					press : function() {
 						oDialog.open();

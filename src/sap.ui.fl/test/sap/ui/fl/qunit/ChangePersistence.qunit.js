@@ -6,6 +6,7 @@ sap.ui.define([
 	"sap/ui/fl/ChangePersistence",
 	"sap/ui/fl/Utils",
 	"sap/ui/fl/Change",
+	"sap/ui/fl/Variant",
 	"sap/ui/fl/LrepConnector",
 	"sap/ui/fl/Cache",
 	"sap/ui/fl/registry/Settings",
@@ -20,6 +21,7 @@ function (
 	ChangePersistence,
 	Utils,
 	Change,
+	Variant,
 	LrepConnector,
 	Cache,
 	Settings,
@@ -67,10 +69,15 @@ function (
 				etag: "abc123",
 				status: "success"
 			};
+			var oMockedAppComponent = {
+				getComponentData: function() {
+					return {};
+				}
+			};
 
 			sandbox.stub(Cache, "getChangesFillingCache").returns(Promise.resolve(oMockedWrappedContent));
 
-			return this.oChangePersistence.getCacheKey().then(function (oCacheKeyResponse) {
+			return this.oChangePersistence.getCacheKey(oMockedAppComponent).then(function (oCacheKeyResponse) {
 				assert.equal(oCacheKeyResponse, sChacheKey);
 			});
 		});
@@ -875,8 +882,13 @@ function (
 			};
 			Utils.setMaxLayerParameter("CUSTOMER");
 			sandbox.spy(this.oChangePersistence, "_filterChangeForMaxLayer");
+			sandbox.spy(this.oChangePersistence, "_getLayerFromChangeOrChangeContent");
+
 			this.oChangePersistence._getAllCtrlVariantChanges(mVariantSection, true);
-			assert.strictEqual(this.oChangePersistence._filterChangeForMaxLayer.callCount, 3, "then _filterChangeForMaxLayer() called thrice for three changes");
+			assert.strictEqual(this.oChangePersistence._filterChangeForMaxLayer.callCount, 3, "then _filterChangeForMaxLayer() was called thrice for three changes");
+			assert.strictEqual(this.oChangePersistence._getLayerFromChangeOrChangeContent.getCall(0).args[0].fileName, "variant0", "then _getLayerFromChangeOrChangeContent() was called for the variant");
+			assert.strictEqual(this.oChangePersistence._getLayerFromChangeOrChangeContent.getCall(1).args[0].fileName, "variantChange0", "then _getLayerFromChangeOrChangeContent() was called called for the variant change");
+			assert.strictEqual(this.oChangePersistence._getLayerFromChangeOrChangeContent.getCall(2).args[0].fileName, "controlChange0", "then _getLayerFromChangeOrChangeContent() was called for the control change");
 			assert.strictEqual(this.oChangePersistence._bHasChangesOverMaxLayer, true, "then the flag _bHasChangesOverMaxLayer is set");
 
 		});
@@ -1392,6 +1404,26 @@ function (
 				assert.ok(fnGetCtrlVariantChangesStub.calledOnce, "then _getCtrlVariantChanges called when max layer parameter is set");
 				assert.strictEqual(this.oChangePersistence._bHasChangesOverMaxLayer, true, "then the flag _bHasChangesOverMaxLayer is set");
 			}.bind(this));
+		});
+
+		QUnit.test("when _getLayerFromChangeOrChangeContent is called with a change instance", function(assert) {
+			var oChange = new Change({
+				fileName:"change1",
+				layer: "USER",
+				selector: { id: "controlId" },
+				dependentSelector: []
+			});
+			assert.strictEqual(this.oChangePersistence._getLayerFromChangeOrChangeContent(oChange), "USER", "then the correct layer is returned");
+		});
+
+		QUnit.test("when _getLayerFromChangeOrChangeContent is called with a variant instance", function(assert) {
+			var oVariant = new Variant({
+				content: {
+					fileName: "variant1",
+					layer: "USER"
+				}
+			});
+			assert.strictEqual(this.oChangePersistence._getLayerFromChangeOrChangeContent(oVariant), "USER", "then the correct layer is returned");
 		});
 
 		QUnit.test("getChangesForComponent shall ignore max layer parameter when current layer is set", function(assert) {
@@ -2448,7 +2480,79 @@ function (
 			});
 		});
 
-		QUnit.test("when calling resetChanges", function (assert) {
+		QUnit.test("when calling resetChanges in VENDOR layer with mix content of $TMP and transported changes", function (assert) {
+			var done = assert.async();
+			var oMockTransportInfo = {
+				packageName : "PackageName",
+				transport : "transportId"
+			};
+			// changes for the component
+			var oVENDORChange1 = new Change({
+				"fileType": "change",
+				"layer": "VENDOR",
+				"fileName": "a",
+				"namespace": "b",
+				"packageName": "$TMP",
+				"changeType": "labelChange",
+				"creation": "",
+				"reference": "",
+				"selector": {
+					"id": "abc123"
+				},
+				"content": {
+					"something": "createNewVariant"
+				}
+			});
+
+			var oVENDORChange2 = new Change({
+				"fileType": "change",
+				"layer": "VENDOR",
+				"fileName": "a",
+				"namespace": "b",
+				"packageName": "c",
+				"changeType": "labelChange",
+				"creation": "",
+				"reference": "",
+				"selector": {
+					"id": "abc123"
+				},
+				"content": {
+					"something": "createNewVariant"
+				}
+			});
+
+			var aChanges = [oVENDORChange1, oVENDORChange2];
+			sandbox.stub(this.oChangePersistence, "getChangesForComponent").returns(Promise.resolve(aChanges));
+
+			// Settings in registry
+			var oSetting = {
+				isKeyUser: true,
+				isAtoAvailable: false,
+				isProductiveSystem: function() {return false;},
+				hasMergeErrorOccured: function() {return false;},
+				isAtoEnabled: function() {return false;}
+			};
+			sandbox.stub(sap.ui.fl.registry.Settings, "getInstance").returns(Promise.resolve(oSetting));
+
+			// LREP Connector
+			var sExpectedUri = "/sap/bc/lrep/changes/" +
+				"?reference=MyComponent" +
+				"&appVersion=1.2.3" +
+				"&layer=VENDOR" +
+				"&generator=Change.createInitialFileContent" +
+				"&changelist=transportId";
+			var oLrepStub = sandbox.stub(this.oChangePersistence._oConnector, "send").returns(Promise.resolve());
+			var fnOpenTransportSelectionStub = sandbox.stub(this.oChangePersistence._oTransportSelection, "openTransportSelection").returns(Promise.resolve(oMockTransportInfo));
+
+			this.oChangePersistence.resetChanges("VENDOR", "Change.createInitialFileContent").then(function() {
+				assert.ok(fnOpenTransportSelectionStub.calledOnce, "then openTransportSelection called once");
+				assert.ok(oLrepStub.calledOnce, "the LrepConnector is called once");
+				assert.equal(oLrepStub.args[0][0], sExpectedUri, "and with the correct URI");
+				done();
+			});
+		});
+
+		QUnit.test("when calling resetChanges in CUSTOMER layer with ATO_NOTIFICATION", function (assert) {
 			var done = assert.async();
 
 			// changes for the component
@@ -2469,7 +2573,7 @@ function (
 				}
 			});
 
-			var oVendorChange1 = new Change({
+			var oCUSTOMERChange1 = new Change({
 				"fileType": "change",
 				"layer": "CUSTOMER",
 				"fileName": "a",
@@ -2486,7 +2590,7 @@ function (
 				}
 			});
 
-			var oVendorChange2 = new Change({
+			var oCUSTOMERChange2 = new Change({
 				"fileType": "change",
 				"layer": "CUSTOMER",
 				"fileName": "a",
@@ -2503,7 +2607,7 @@ function (
 				}
 			});
 
-			var aChanges = [oVendorChange1, oUserChange, oVendorChange2];
+			var aChanges = [oCUSTOMERChange1, oUserChange, oCUSTOMERChange2];
 			sandbox.stub(this.oChangePersistence, "getChangesForComponent").returns(Promise.resolve(aChanges));
 
 			// Settings in registry

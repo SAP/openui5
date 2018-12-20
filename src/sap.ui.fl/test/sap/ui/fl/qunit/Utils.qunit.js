@@ -6,7 +6,6 @@ sap.ui.define([
 	'sap/ui/layout/HorizontalLayout',
 	'sap/m/Button',
 	'sap/ui/core/Component',
-	'sap/ui/core/UIComponent',
 	'sap/ui/thirdparty/hasher',
 	"sap/base/Log",
 	'sap/ui/thirdparty/sinon-4',
@@ -18,7 +17,6 @@ function(
 	HorizontalLayout,
 	Button,
 	Component,
-	UIComponent,
 	hasher,
 	Log,
 	sinon,
@@ -834,16 +832,9 @@ function(
 	}
 
 	QUnit.module("get/set URL Technical Parameter values", {
-
-		beforeEach : function(){
-			this.originalUShell = sap.ushell;
-		},
-
 		afterEach : function(){
-			sap.ushell = this.originalUShell;
 			sandbox.restore();
 		}
-
 	}, function() {
 		QUnit.test("when calling 'getTechnicalParametersForComponent' with a Component containing a valid URL parameter", function(assert){
 			var mParameters = {
@@ -872,34 +863,30 @@ function(
 					"sap-ui-fl-max-layer": ["CUSTOMER"]
 				}
 			};
-			sandbox.stub(Utils, "getUshellContainer").callsFake(function() {
-				return {
-					getService: function () {
-						return {
-							getHash: function () {
-								return "";
-							},
-							parseShellHash: function (sHash) {
-								return oParameters;
-							}
-						};
-					}
-				};
+			sandbox.stub(Utils, "getUshellContainer").returns({
+				getService: function () {
+					return {
+						getHash: function () {
+							return "";
+						},
+						parseShellHash: function (sHash) {
+							return oParameters;
+						}
+					};
+				}
 			});
 
 			assert.deepEqual(Utils.getParsedURLHash(), oParameters, "then the url parameters calculated from the url are received");
 		});
 
 		QUnit.test("when calling 'getParsedURLHash' with a ushell container and a URL which cannot be parsed properly", function(assert){
-			sandbox.stub(Utils, "getUshellContainer").callsFake(function() {
-				return {
-					getService: function () {
-						return {
-							getHash: function () { },
-							parseShellHash: function (sHash) { }
-						};
-					}
-				};
+			sandbox.stub(Utils, "getUshellContainer").returns({
+				getService: function () {
+					return {
+						getHash: function () { },
+						parseShellHash: function (sHash) { }
+					};
+				}
 			});
 
 			assert.ok(jQuery.isEmptyObject(Utils.getParsedURLHash()), "then an empty object is received");
@@ -932,7 +919,6 @@ function(
 				}
 			};
 
-
 			var oMockComponent = {
 				oComponentData : {
 					technicalParameters: {}
@@ -942,12 +928,9 @@ function(
 				}
 			};
 
-			// this overrides the ushell globally => it gets restored in afterEach
-			sap.ushell = Object.assign({}, sap.ushell, {
-				Container : {
-					getService : function() {
-						return oMockedURLParser;
-					}
+			sandbox.stub(Utils, "getUshellContainer").returns({
+				getService : function() {
+					return oMockedURLParser;
 				}
 			});
 
@@ -985,12 +968,9 @@ function(
 				}
 			};
 
-			// this overrides the ushell globally => it gets restored in afterEach
-			sap.ushell = Object.assign({}, sap.ushell, {
-				Container : {
-					getService : function() {
-						return oMockedURLParser;
-					}
+			sandbox.stub(Utils, "getUshellContainer").returns({
+				getService : function() {
+					return oMockedURLParser;
 				}
 			});
 			sandbox.stub(Utils.log, "warning");
@@ -1037,12 +1017,9 @@ function(
 				}
 			};
 
-			// this overrides the ushell globally => it gets restored in afterEach
-			sap.ushell = Object.assign({}, sap.ushell, {
-				Container : {
-					getService : function() {
-						return oMockedURLParser;
-					}
+			sandbox.stub(Utils, "getUshellContainer").returns({
+				getService : function() {
+					return oMockedURLParser;
 				}
 			});
 

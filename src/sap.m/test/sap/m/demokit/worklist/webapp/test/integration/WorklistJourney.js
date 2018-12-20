@@ -8,7 +8,7 @@ sap.ui.define([
 ], function (opaTest, Device) {
 	"use strict";
 
-	var iDelay = (Device.browser.msie || Device.browser.edge) ? 1500 : 1000;
+	var iDelay = 1500;
 
 	QUnit.module("Worklist");
 
@@ -40,6 +40,7 @@ sap.ui.define([
 		// Cleanup
 		Then.iTeardownMyApp();
 	});
+
 
 	opaTest("Should see the busy indicator on app view while worklist view metadata is loaded", function (Given, When, Then) {
 		// Arrangements

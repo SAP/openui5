@@ -14,7 +14,7 @@ controllerName="sap.ui.layout.cssgrid.gridplayground.controller.Main">
 		</Toolbar>
 	</headerToolbar>
 	<content>
-		<grid:CSSGrid>
+		<grid:CSSGrid id="grid1">
 			<grid:customLayout>
 				<grid:GridBasicLayout
 						gridTemplateColumns="repeat(auto-fit, 8rem)"

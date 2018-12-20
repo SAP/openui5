@@ -4,15 +4,21 @@ sap.ui.define([
 	"sap/ui/layout/cssgrid/CSSGrid",
 	"sap/ui/core/HTML",
 	"sap/ui/layout/cssgrid/GridItemLayoutData",
+	"sap/ui/layout/cssgrid/GridResponsiveLayout",
+	"sap/ui/layout/cssgrid/GridLayoutDelegate",
 	"sap/ui/Device",
-	"sap/ui/core/Core"
+	"sap/ui/core/Core",
+	"sap/ui/core/ResizeHandler"
 ],
 function (
 	CSSGrid,
 	HTML,
 	GridItemLayoutData,
+	GridResponsiveLayout,
+	GridLayoutDelegate,
 	Device,
-	Core
+	Core,
+	ResizeHandler
 ) {
 	"use strict";
 
@@ -549,6 +555,55 @@ function (
 
 		// Assert
 		assert.notOk(oItemDomRef.style.getPropertyValue("grid-column"), "Should remove the property when empty string");
+	});
+
+	QUnit.module("Delegate");
+
+	QUnit.test("Delegate with responsive layout", function (assert) {
+
+		// Arrange
+		var oResizeRegisterSpy = sinon.spy(ResizeHandler, "register"),
+			oResizeUnregisterSpy  = sinon.spy(ResizeHandler, "deregister"),
+			oGrid = new CSSGrid({
+				customLayout: new GridResponsiveLayout()
+			}),
+			sId;
+
+		oGrid.placeAt(DOM_RENDER_LOCATION);
+		Core.applyChanges();
+
+		// Assert
+		assert.ok(oResizeRegisterSpy.withArgs(oGrid).calledOnce, "Should register resize handler when the layout is responsive.");
+
+		// Act
+		sId = oGrid.__grid__sResizeListenerId;
+		oGrid.destroy();
+
+		// Assert
+		assert.ok(oResizeUnregisterSpy.withArgs(sId).calledOnce, "Resize handler should be deregistered when Grid is destroyed.");
+	});
+
+	QUnit.test("onResize", function (assert) {
+
+		// Arrange
+		var fnResizeStub = sinon.stub(),
+			fnApplyLayoutStub = sinon.stub(),
+			oMockedGrid = {
+				getGridLayoutConfiguration: function () {
+					return {
+						onGridResize: fnResizeStub,
+						applyGridLayout: fnApplyLayoutStub
+					};
+				},
+				getGridDomRefs: function () {}
+			};
+
+		// Act
+		GridLayoutDelegate.onResize.call(oMockedGrid);
+
+		// Assert
+		assert.ok(fnResizeStub.calledOnce, "Should call resize of the layout.");
+		assert.ok(fnApplyLayoutStub.calledOnce, "Should call applyGridLayout.");
 	});
 
 });

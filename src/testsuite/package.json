@@ -33,6 +33,7 @@
     "@openui5/sap.ui.unified": "1.62.0-SNAPSHOT",
     "@openui5/sap.ui.ux3": "1.62.0-SNAPSHOT",
     "@openui5/sap.uxap": "1.62.0-SNAPSHOT",
+    "@openui5/themelib_sap_fiori_3": "1.62.0-SNAPSHOT",
     "@openui5/themelib_sap_belize": "1.62.0-SNAPSHOT",
     "@openui5/themelib_sap_bluecrystal": "1.62.0-SNAPSHOT"
   }

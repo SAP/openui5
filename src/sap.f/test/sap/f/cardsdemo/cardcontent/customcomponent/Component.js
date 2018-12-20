@@ -1,7 +1,8 @@
-sap.ui.define(['sap/f/cards/CardComponent'],
-	function(CardComponent) {
+sap.ui.define(['sap/ui/core/UIComponent'],
+	function(UIComponent) {
 	"use strict";
-    var Component = CardComponent.extend("sap.f.cardsdemo.cardcontent.customcomponent.Component", {
+
+    var Component = UIComponent.extend("sap.f.cardsdemo.cardcontent.customcomponent.Component", {
 
 		metadata : {
 			manifest : "json"

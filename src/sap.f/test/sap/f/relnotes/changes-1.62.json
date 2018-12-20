@@ -1,0 +1,13 @@
+{
+  "1.62.0": {
+    "date": "December 2018",
+    "notes": [
+      {
+        "id": "a28d1e1a51ac38a235dfd9640b06ad9a885e2242",
+        "type": "FEATURE",
+        "text": " core/routing: support routing in nested components",
+        "references": []
+      }
+    ]
+  }
+}

@@ -11,7 +11,8 @@
 		<semantic:titleHeading>
 			<Title
 				id="masterPageTitle"
-				text="{masterView>/title}"/>
+				text="{masterView>/title}"
+				level="H2"/>
 		</semantic:titleHeading>
 		<semantic:content>
 			<!-- For client side filtering add this to the items attribute: parameters: {operationMode: 'Client'}}" -->
@@ -42,7 +43,8 @@
 						press=".onOpenViewSettings">
 						<Title
 							id="filterBarLabel"
-							text="{masterView>/filterBarLabel}" />
+							text="{masterView>/filterBarLabel}"
+							level="H3"/>
 					</Toolbar>
 				</infoToolbar>
 				<headerToolbar>

@@ -1,11 +1,11 @@
 /* global QUnit */
 
-sap.ui.require([
+sap.ui.define([
 	"sap/ui/dt/plugin/ElementMover",
 	"sap/ui/dt/OverlayRegistry",
 	"sap/ui/dt/DesignTime",
-	'sap/ui/layout/form/Form',
-	'sap/ui/layout/form/FormContainer',
+	"sap/ui/layout/form/Form",
+	"sap/ui/layout/form/FormContainer",
 	"sap/m/Button",
 	"sap/ui/layout/VerticalLayout"
 ], function(

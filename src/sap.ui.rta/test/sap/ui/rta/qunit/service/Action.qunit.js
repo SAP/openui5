@@ -1,6 +1,6 @@
 /* global QUnit*/
 
-sap.ui.require([
+sap.ui.define([
 	"sap/ui/rta/RuntimeAuthoring",
 	"sap/ui/rta/plugin/Plugin",
 	"sap/ui/core/UIComponent",

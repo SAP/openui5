@@ -71,7 +71,7 @@ sap.ui.define([
 			]
 		},
 		"int": {
-			valid: [0, -42],
+			valid: [0, -42, NaN, Infinity],
 			invalid: ['0', 0.5],
 			parseValue: [
 				{ input: '0', value: 0 },

@@ -26,6 +26,8 @@ sap.ui.define([
 					"gav": "<CORE.GAV>"
 				}]
 			};
+
+			this.oDeprecatedAPISpy = this.spy(sap.ui, "getVersionInfo");
 		},
 		initFakeServer: function(sResponseCode) {
 			this.oServer = this._oSandbox.useFakeServer();
@@ -453,6 +455,9 @@ sap.ui.define([
 			assert.ok(this.oServer.requests[0].async,
 				"First request should be async.");
 
+			assert.ok(this.oDeprecatedAPISpy.notCalled,
+				"Deprecated function should not be called internally");
+
 		}.bind(this)).then(done);
 	});
 
@@ -474,6 +479,9 @@ sap.ui.define([
 			assert.ok(this.oServer.requests[0].async,
 				"First request should be async.");
 
+			assert.ok(this.oDeprecatedAPISpy.notCalled,
+				"Deprecated function should not be called internally");
+
 		}.bind(this)).then(done);
 	});
 
@@ -486,7 +494,11 @@ sap.ui.define([
 			library: "sap.invalid.library"
 		}).then(function(oVersionInfo) {
 			assert.equal(oVersionInfo, undefined, "Unknown library leads to undefined return value");
-		}).then(done);
+
+			assert.ok(this.oDeprecatedAPISpy.notCalled,
+				"Deprecated function should not be called internally");
+
+		}.bind(this)).then(done);
 	});
 
 	QUnit.test("VersionInfo.load - file not found", function(assert) {
@@ -508,6 +520,9 @@ sap.ui.define([
 				"Server should have received one request.");
 			assert.ok(this.oServer.requests[0].async,
 				"Request should be async.");
+
+			assert.ok(this.oDeprecatedAPISpy.notCalled,
+				"Deprecated function should not be called internally");
 
 		}.bind(this)).then(done);
 	});

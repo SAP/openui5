@@ -1245,51 +1245,71 @@ sap.ui.define([
 	});
 
 	QUnit.test("Highlight texts", function(assert) {
+		oTable.setVisibleRowCount(1);
+		sap.ui.getCore().applyChanges();
+
 		var aVisibleHighlights = [
 			coreLibrary.MessageType.Success,
 			coreLibrary.MessageType.Warning,
 			coreLibrary.MessageType.Error,
 			coreLibrary.MessageType.Information
-		];
+		].concat(Object.getOwnPropertyNames(coreLibrary.IndicationColor));
 
 		var aInvisibleHighlights = [
 			coreLibrary.MessageType.None,
 			null
 		];
 
-		var i, j;
+		var i;
 		var sHighlight;
+		var sHighlightText;
+		var sCustomHighlightText = "Custom highlight text";
 
 		function assertHighlightTexts(bTextExists, sText) {
-			var aRows = oTable.getRows();
+			var oRow = oTable.getRows()[0];
+			var oHighlightTextElement = oRow.getDomRef("highlighttext");
 
-			for (j = 0; j < aRows.length; j++) {
-				var oRow = aRows[j];
-				var oHighlightTextElement = oRow.getDomRef("highlighttext");
+			assert.strictEqual(oHighlightTextElement != null, bTextExists,
+				"The highlight text element " + (bTextExists ? "exists in the DOM" : "does not exist in the DOM"));
 
-				var sMessage = "Row " + (j + 1) + ": The highlight text element "
-							   + (bTextExists ? "exists in the DOM" : "does not exist in the DOM");
-				assert.strictEqual(oHighlightTextElement != null, bTextExists, sMessage);
-
-				if (oHighlightTextElement != null) {
-					assert.strictEqual(oHighlightTextElement.innerHTML, sText, "The highlight text is correct: " + sText);
-				}
+			if (oHighlightTextElement != null) {
+				assert.strictEqual(oHighlightTextElement.innerHTML, sText, "The highlight text is correct: \"" + sText + "\"");
 			}
 		}
 
 		oTable.setRowSettingsTemplate(null);
 		sap.ui.getCore().applyChanges();
+
 		assertHighlightTexts(false);
 
+		// Default texts
 		for (i = 0; i < aVisibleHighlights.length; i++) {
 			sHighlight = aVisibleHighlights[i];
+			sHighlightText = "";
 
 			oTable.setRowSettingsTemplate(new RowSettings({
 				highlight: sHighlight
 			}));
 			sap.ui.getCore().applyChanges();
 
-			assertHighlightTexts(true, TableUtils.getResourceBundle().getText("TBL_ROW_STATE_" + sHighlight.toUpperCase()));
+			if (sHighlight in coreLibrary.MessageType) {
+				sHighlightText = TableUtils.getResourceBundle().getText("TBL_ROW_STATE_" + sHighlight.toUpperCase());
+			}
+
+			assertHighlightTexts(true, sHighlightText);
+		}
+
+		// Custom texts
+		for (i = 0; i < aVisibleHighlights.length; i++) {
+			sHighlight = aVisibleHighlights[i];
+
+			oTable.setRowSettingsTemplate(new RowSettings({
+				highlight: sHighlight,
+				highlightText: sCustomHighlightText
+			}));
+			sap.ui.getCore().applyChanges();
+
+			assertHighlightTexts(true, sCustomHighlightText);
 		}
 
 		for (i = 0; i < aInvisibleHighlights.length; i++) {

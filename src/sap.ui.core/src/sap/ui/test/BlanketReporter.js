@@ -131,7 +131,7 @@ sap.ui.define([
 					+ "</div>");
 				oHtml.setVisible(true);
 			} else {
-				oHtml.setContent("<div/>");
+				oHtml.setContent("<div></div>");
 			}
 		}
 	});

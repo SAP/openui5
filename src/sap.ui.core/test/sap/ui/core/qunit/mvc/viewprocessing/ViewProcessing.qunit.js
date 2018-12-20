@@ -79,9 +79,6 @@ sap.ui.define([
 
 		QUnit.module("XMLView " + (bAsyncView ? "async" : "sync") + (sSyncProcessingMode ? " with " + sSyncProcessingMode + " processing" : ""), {
 			beforeEach: function() {
-				this._sSyncProcessingModeBefore = sap.ui.getCore().getConfiguration().getXMLProcessingMode();
-				sap.ui.getCore().getConfiguration().setXMLProcessingMode(sSyncProcessingMode);
-
 				var fnOldSyncPromiseAll = SyncPromise.all;
 				MyGlobal.reset();
 				this.SyncPromiseAllStub = sinon.stub(SyncPromise, "all").callsFake(function(args) {
@@ -102,7 +99,6 @@ sap.ui.define([
 					ctrl.destroy();
 				});
 				this.SyncPromiseAllStub.restore();
-				sap.ui.getCore().getConfiguration().setXMLProcessingMode(this._sSyncProcessingModeBefore);
 			}
 		});
 

@@ -2,21 +2,15 @@
 <html>
 	<head>
 		<meta http-equiv="X-UA-Compatible" content="IE=edge">
-		<title>Image - sap.m</title>
-		<!--  Do not use this test page as copy&paste template, as it is rather a web page than an App;
-		      better make use of either the App control or jQuery.sap.initMobile() to set up the viewport etc. meta tags. -->
-		<!-- Mobile viewport -->
-		<meta name="viewport"	content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-		<!-- Enable fullscreen when possible -->
-		<meta name="apple-mobile-web-app-capable" content="yes">
-		<!-- Set the status bar style on Apple devices -->
-		<meta name="apple-mobile-web-app-status-bar-style" content="default">
+		<title>sap.m.Image</title>
 		<script src="shared-config.js"></script>
 		<script src="../../../resources/sap-ui-core.js"
 			id="sap-ui-bootstrap"
 			data-sap-ui-libs="sap.m">
 		</script>
 		<script>
+			jQuery.sap.initMobile();
+
 			var oImage = new sap.m.Image({
 				id: "image_not_decorative",
 				src: "images/SAPLogo.jpg",
@@ -34,7 +28,7 @@
 			});
 
 			var sSrc3 = "images/SAPUI5.png",
-				i3 = new sap.m.Image("i3", {
+				oImage3 = new sap.m.Image("oImage3", {
 					src: sSrc3,
 					alt: "test image",
 					densityAware: true,
@@ -105,84 +99,56 @@
 				backgroundPosition: "-74px -14px",
 				densityAware: true,
 				decorative: false
-			}).placeAt("uiArea9");
+			});
 
-			oImage.placeAt("uiArea1");
-			oImageWithoutDensityAware.placeAt("uiArea2");
-			i3.placeAt("uiArea3");
-			oImage1.placeAt("uiArea4");
-			oImageButton.placeAt("uiArea5");
-			oImageButton1.placeAt("uiArea6");
-			oImageInvalid.placeAt("uiArea7");
-			oDataImage.placeAt("uiArea8");
+			new sap.m.App({
+				pages : [
+					new sap.m.Page({
+						content : [
+						    new sap.m.Title({level: "H3", text: "If this page runs in a high density device, you could see the difference between the two images."}),
+							new sap.m.FlexBox({
+								items: [oImage, new sap.m.Text({text: "This image is density aware, it loads the high resolution version when it runs in a high density device."})]
+							}),
+							new sap.m.FlexBox({
+								items: [oImageWithoutDensityAware, new sap.m.Text({text: "This image is NOT density aware, it always loads the default version no matter what device it runs on."})]
+							}),
+							new sap.m.FlexBox({
+								items: [oImage3, new sap.m.Text({text: "There's only one version of this image available, so the high density device tries first to load the high resolution version and then falls back to this version."})]
+							}),
+							new sap.m.FlexBox({
+								items: [oImage1, new sap.m.Text({text: "This image has a width value that is set from the css, and it will not resize in high density device."})]
+							}),
+							new sap.m.FlexBox({
+								items: [oImageButton, new sap.m.Text({text: "This image has an active state, when you press this image the src will be changed to the activeSrc property."})]
+							}),
+							new sap.m.FlexBox({
+								items: [oImageButton1, new sap.m.Text({text: "This image has an active state but it's not density aware, when you press this image the src will be changed to the activeSrc property."})]
+							}),
+							new sap.m.FlexBox({
+								items: [oImageInvalid, new sap.m.Text({text: "This image is set first to a non valid src but the space is reserved, and the src will be changed to a valid image source on click."})]
+							}),
+							new sap.m.FlexBox({
+								items: [oDataImage, new sap.m.Text({text: "The src property of this image is in data uri format, it won't load higher density version in high density device."})]
+							}),
+							new sap.m.FlexBox({
+								items: [oBGImage1, new sap.m.Text({text: "The SAP Logo image is set as background of the dom element. The letter 'P' is extracted from the logo by using the backgroundPosition. In order to display the high density correctly, the backgroundSize property needs to be set with the dimension of normal density version."})]
+							})
+						]
+					})
+				]
+			}).placeAt('content');
 		</script>
 
 		<style>
-			div.des{
-				vertical-align: top;
-				-webkit-box-flex: 1;
-				display: block;
-				margin-left: 10px;
-			}
-
-			dev.uiArea{
-				-webkit-box-flex: 0;
-				margin-left: 5px;
-			}
-			div.row{
-				display: -webkit-box;
-				-webkit-box-orient: horizontal;
-				-webkit-box-pack: start;
-			}
-
 			.img1{
 				width: 50px;
 			}
-
-			.sapMImg {
+			.sapMImg, .sapMTitle {
 				margin-left: 1rem;
 			}
 		</style>
 	</head>
-	<body id="body" class="sapUiBody">
-		<h3>
-			If this page runs in a high density device, you could see the difference between the two images.
-		</h3>
-		<div class="row">
-			<div id="uiArea1" class="uiArea"></div>
-			<div class="des">This image is density aware, it loads the high resolution version when it runs in a high density device.</div>
-		</div>
-		<div class="row">
-			<div id="uiArea2" class="uiArea"></div>
-			<div class="des">This image is NOT density aware, it always loads the default version no matter what device it runs in.</div>
-		</div>
-		<div class="row">
-			<div id="uiArea3" class="uiArea"></div>
-			<div class="des">There's only one version of this image available, so the high density device tries first to load the high resolution version and then falls back to this version.</div>
-		</div>
-		<div class="row">
-			<div id="uiArea4" class="uiArea"></div>
-			<div class="des">This image has a width value that is set from the css, and it will not resize in high density device</div>
-		</div>
-		<div class="row">
-			<div id="uiArea5" class="uiArea"></div>
-			<div class="des">This image has a active state, when you press this image the src will be changed to the activeSrc property</div>
-		</div>
-		<div class="row">
-			<div id="uiArea6" class="uiArea"></div>
-			<div class="des">This image has a active state but it's not density aware, when you press this image the src will be changed to the activeSrc property</div>
-		</div>
-		<div class="row">
-			<div id="uiArea7" class="uiArea"></div>
-			<div class="des">This image is set first to a non valid src but the space is reserved, and the src will be changed to a valid image source in 3 seconds.</div>
-		</div>
-		<div class="row">
-			<div id="uiArea8" class="uiArea"></div>
-			<div class="des">The src property of this image is in data uri format, it won't load higher density version in high density device.</div>
-		</div>
-		<div class="row">
-			<div id="uiArea9" class="uiArea"></div>
-			<div class="des">The SAP Logo image is set as background of the dom element. The letter 'P' is extracted from the logo by using the backgroundPosition. In order to display the high density correctly, the backgroundSize property needs to be set with the dimension of normal density version.</div>
-		</div>
+	<body id="body" class="sapUiBody" role="application">
+		<div id="content" class="holder"></div>
 	</body>
 </html>

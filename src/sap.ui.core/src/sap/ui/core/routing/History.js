@@ -96,15 +96,38 @@ sap.ui.define(['sap/ui/core/library', './HashChanger', "sap/base/Log", "sap/ui/t
 	};
 
 	History.prototype._setHashChanger = function(oHashChanger) {
-		var aHashChangeEvents = oHashChanger.getEventNamesForHistory();
+		var aHashChangeEventsInfo;
+
+		var bDirectInstance = (Object.getPrototypeOf(oHashChanger) === HashChanger.prototype);
+
+		if (bDirectInstance || oHashChanger.getRelevantEventsInfo !== HashChanger.prototype.getRelevantEventsInfo || !oHashChanger.getEventNamesForHistory) {
+			// if the oHashChanger is a direct instance of sap.ui.core.routing.HashChanger
+			// or it has overwritten the getRelevantEventInfo function
+			aHashChangeEventsInfo = oHashChanger.getRelevantEventsInfo();
+		} else { // TODO: delete this once the getRelevantEventsInfo is implemented by the custom hash changer in FLP
+			aHashChangeEventsInfo = oHashChanger.getEventNamesForHistory().map(function(sEventName) {
+				return {
+					name: sEventName
+				};
+			});
+		}
+
 		if (this._oHashChanger) {
 			this._unRegisterHashChanger();
 		}
 
 		this._oHashChanger = oHashChanger;
 
-		aHashChangeEvents.forEach(function(sEvent) {
-			this._oHashChanger.attachEvent(sEvent, this._onHashChange, this);
+		this._mEventListeners = {};
+
+		aHashChangeEventsInfo.forEach(function(oEventInfo) {
+			var sEventName = oEventInfo.name,
+				oParamMapping = oEventInfo.paramMapping || {},
+				fnListener = this._onHashChange.bind(this, oParamMapping);
+
+			this._mEventListeners[sEventName] = fnListener;
+
+			this._oHashChanger.attachEvent(sEventName, fnListener, this);
 		}.bind(this));
 
 		this._oHashChanger.attachEvent("hashReplaced", this._hashReplaced, this);
@@ -112,11 +135,15 @@ sap.ui.define(['sap/ui/core/library', './HashChanger', "sap/base/Log", "sap/ui/t
 	};
 
 	History.prototype._unRegisterHashChanger = function() {
-		var aHashChangeEvents = this._oHashChanger.getEventNamesForHistory();
+		if (this._mEventListeners) {
+			var aEventNames = Object.keys(this._mEventListeners);
 
-		aHashChangeEvents.forEach(function(sEvent) {
-			this._oHashChanger.detachEvent(sEvent, this._onHashChange, this);
-		}.bind(this));
+			aEventNames.forEach(function(sEventName) {
+				this._oHashChanger.detachEvent(sEventName, this._mEventListeners[sEventName], this);
+			}.bind(this));
+
+			delete this._mEventListeners;
+		}
 
 		this._oHashChanger.detachEvent("hashReplaced", this._hashReplaced, this);
 		this._oHashChanger.detachEvent("hashSet", this._hashSet, this);
@@ -231,9 +258,13 @@ sap.ui.define(['sap/ui/core/library', './HashChanger', "sap/base/Log", "sap/ui/t
 		return sDirection;
 	};
 
-	History.prototype._onHashChange = function(oEvent) {
+	History.prototype._onHashChange = function(oParamMapping, oEvent) {
+		var sNewHashParamName = oParamMapping.newHash || "newHash",
+			sOldHashParamName = oParamMapping.oldHash || "oldHash",
+			sFullHashParamName = oParamMapping.fullHash || "fullHash";
+
 		// Leverage the fullHash parameter if available
-		this._hashChange(oEvent.getParameter("newHash"), oEvent.getParameter("oldHash"), oEvent.getParameter("fullHash"));
+		this._hashChange(oEvent.getParameter(sNewHashParamName), oEvent.getParameter(sOldHashParamName), oEvent.getParameter(sFullHashParamName));
 	};
 
 	/**

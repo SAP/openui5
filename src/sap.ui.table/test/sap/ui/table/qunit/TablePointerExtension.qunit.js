@@ -746,31 +746,115 @@ sap.ui.define([
 		oExtension._ExtensionHelper.__handleClickSelection = null;
 	});
 
-	QUnit.test("Selection", function(assert) {
+	QUnit.test("Single Selection", function(assert) {
+		oTable.clearSelection();
+		oTable.setSelectionBehavior(tableLibrary.SelectionBehavior.Row);
+		oTable.setSelectionMode(tableLibrary.SelectionMode.Single);
+		initRowActions(oTable, 2, 2);
+		sap.ui.getCore().applyChanges();
+
+		assert.ok(!oTable.isIndexSelected(0), "First row is not selected");
+
+		qutils.triggerMouseEvent(getCell(0, 0), "click");
+		assert.ok(oTable.isIndexSelected(0), "Click on data cell in first row -> First row selected");
+
+		qutils.triggerMouseEvent(getRowHeader(0), "click");
+		assert.ok(!oTable.isIndexSelected(0), "Click on row header cell in first row -> First row  not selected");
+
+		qutils.triggerMouseEvent(getRowAction(0), "click");
+		assert.ok(oTable.isIndexSelected(0), "Click on row action cell in first row -> First row selected");
+
+		qutils.triggerMouseEvent(getCell(1, 0), "click");
+		assert.deepEqual(oTable.getSelectedIndices(), [1], "Click on data cell in second row -> Second row selected");
+
+		oTable._enableLegacyMultiSelection();
+		qutils.triggerEvent("click", getCell(0, 0), {metaKey: true, ctrlKey: true});
+		assert.deepEqual(oTable.getSelectedIndices(), [0],
+			"Ctrl+Click on data cell in first row with legacy multi selection enabled -> First row selected");
+	});
+
+	QUnit.test("MultiToggle Selection - Range", function(assert) {
 		oTable.clearSelection();
 		oTable.setSelectionBehavior(tableLibrary.SelectionBehavior.Row);
 		initRowActions(oTable, 2, 2);
 		sap.ui.getCore().applyChanges();
 
-		var oElem = getCell(0, 0);
-		assert.ok(!oTable.isIndexSelected(0), "Row not selected");
-		qutils.triggerMouseEvent(oElem, "click");
-		assert.ok(oTable.isIndexSelected(0), "Row selected");
-		oElem = getRowHeader(0);
-		qutils.triggerMouseEvent(oElem, "click");
-		assert.ok(!oTable.isIndexSelected(0), "Row not selected");
-		oElem = getRowAction(0);
-		qutils.triggerMouseEvent(oElem, "click");
-		assert.ok(oTable.isIndexSelected(0), "Row selected");
+		qutils.triggerMouseEvent(getCell(0, 0), "click");
+		assert.ok(oTable.isIndexSelected(0), "Click on first row -> Row selected");
 
-		// Range selection with Shift + Click.
 		oTable.setFirstVisibleRow(3); // Scroll down 3 rows
 		sap.ui.getCore().applyChanges();
-		qutils.triggerEvent("click", getCell(2, 0), {
-			shiftKey: true
-		});
+		qutils.triggerEvent("click", getCell(2, 0), {shiftKey: true});
 		assert.deepEqual(oTable.getSelectedIndices(), [0, 1, 2, 3, 4, 5], "Range selection with Shift + Click selected the correct rows");
 		assert.strictEqual(window.getSelection().toString(), "", "Range selection with Shift + Click did not select text");
+
+		oTable._enableLegacyMultiSelection();
+		oTable.setFirstVisibleRow(5); // Scroll down 2 rows
+		sap.ui.getCore().applyChanges();
+		qutils.triggerEvent("click", getCell(2, 0), {shiftKey: true, ctrlKey: true});
+		assert.deepEqual(oTable.getSelectedIndices(), [0, 1, 2, 3, 4, 5, 6, 7],
+			"Range selection with Shift + Click selected the correct rows, even though Ctrl was also pressed and legacy multi selection was enabled");
+		assert.strictEqual(window.getSelection().toString(), "",
+			"Range selection with Shift + Click did not select text");
+	});
+
+	QUnit.test("MultiToggle Selection - Toggle", function(assert) {
+		oTable.clearSelection();
+		oTable.setSelectionBehavior(tableLibrary.SelectionBehavior.Row);
+		initRowActions(oTable, 2, 2);
+		sap.ui.getCore().applyChanges();
+
+		qutils.triggerMouseEvent(getCell(0, 0), "click");
+		assert.deepEqual(oTable.getSelectedIndices(), [0], "Click on unselected row with index 0");
+
+		qutils.triggerMouseEvent(getCell(1, 0), "click");
+		assert.deepEqual(oTable.getSelectedIndices(), [0, 1], "Click on unselected row with index 1");
+
+		qutils.triggerMouseEvent(getCell(0, 0), "click");
+		assert.deepEqual(oTable.getSelectedIndices(), [1], "Click on selected row with index 0");
+	});
+
+	QUnit.test("Legacy Multi Selection", function(assert) {
+		oTable.clearSelection();
+		oTable.setSelectionBehavior(tableLibrary.SelectionBehavior.Row);
+		initRowActions(oTable, 2, 2);
+		sap.ui.getCore().applyChanges();
+
+		oTable._enableLegacyMultiSelection();
+
+		qutils.triggerMouseEvent(getCell(0, 0), "click");
+		assert.deepEqual(oTable.getSelectedIndices(), [0], "Click on unselected row with index 0");
+
+		qutils.triggerMouseEvent(getCell(1, 0), "click");
+		assert.deepEqual(oTable.getSelectedIndices(), [1], "Click on unselected row with index 1");
+
+		qutils.triggerEvent("click", getCell(2, 0), {metaKey: true, ctrlKey: true});
+		assert.deepEqual(oTable.getSelectedIndices(), [1, 2], "Ctrl + Click on unselected row with index 2");
+
+		qutils.triggerEvent("click", getCell(0, 0), {metaKey: true, ctrlKey: true});
+		assert.deepEqual(oTable.getSelectedIndices(), [0, 1, 2], "Ctrl + Click on unselected row with index 0");
+
+		qutils.triggerEvent("click", getCell(1, 0), {metaKey: true, ctrlKey: true});
+		assert.deepEqual(oTable.getSelectedIndices(), [0, 2], "Ctrl + Click on selected row with index 1");
+
+		qutils.triggerMouseEvent(getCell(2, 0), "click");
+		assert.deepEqual(oTable.getSelectedIndices(), [2], "Click on selected row with index 2");
+	});
+
+	QUnit.test("MultiToggle Selection - Toggle", function(assert) {
+		oTable.clearSelection();
+		oTable.setSelectionBehavior(tableLibrary.SelectionBehavior.Row);
+		initRowActions(oTable, 2, 2);
+		sap.ui.getCore().applyChanges();
+
+		qutils.triggerMouseEvent(getCell(0, 0), "click");
+		assert.deepEqual(oTable.getSelectedIndices(), [0], "Click on unselected row with index 0");
+
+		qutils.triggerMouseEvent(getCell(1, 0), "click");
+		assert.deepEqual(oTable.getSelectedIndices(), [0, 1], "Click on unselected row with index 1");
+
+		qutils.triggerMouseEvent(getCell(0, 0), "click");
+		assert.deepEqual(oTable.getSelectedIndices(), [1], "Click on selected row with index 0");
 	});
 
 	QUnit.module("Column Reordering", {

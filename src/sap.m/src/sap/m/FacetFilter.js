@@ -10,6 +10,7 @@ sap.ui.define([
 	'sap/ui/core/IconPool',
 	'sap/ui/core/delegate/ItemNavigation',
 	'sap/ui/core/InvisibleText',
+	'sap/ui/core/IntervalTrigger',
 	'sap/ui/Device',
 	'sap/ui/base/ManagedObject',
 	'sap/ui/core/Icon',
@@ -34,6 +35,7 @@ sap.ui.define([
 		IconPool,
 		ItemNavigation,
 		InvisibleText,
+		IntervalTrigger,
 		Device,
 		ManagedObject,
 		Icon,
@@ -497,7 +499,7 @@ sap.ui.define([
 	 */
 	FacetFilter.prototype.exit = function() {
 		var oCtrl;
-		sap.ui.getCore().detachIntervalTimer(this._checkOverflow, this);
+		IntervalTrigger.removeListener(this._checkOverflow, this);
 
 		if (this.oItemNavigation) {
 			this.removeDelegate(this.oItemNavigation);
@@ -528,8 +530,8 @@ sap.ui.define([
 			oText.setTooltip(this._getSummaryText());
 		}
 
-			// Detach the interval timer attached in onAfterRendering
-			sap.ui.getCore().detachIntervalTimer(this._checkOverflow, this);
+		// Detach the interval timer attached in onAfterRendering
+		IntervalTrigger.removeListener(this._checkOverflow, this);
 	};
 
 	/**
@@ -540,7 +542,7 @@ sap.ui.define([
 		if (this.getType() !== FacetFilterType.Light && !Device.system.phone) {
 			// Attach an interval timer that periodically checks overflow of the "head" div in the event that the window is resized or the device orientation is changed. This is ultimately to
 			// see if carousel arrows should be displayed.
-			sap.ui.getCore().attachIntervalTimer(this._checkOverflow, this); // proxy() is needed for the additional parameters, not for "this"
+			IntervalTrigger.addListener(this._checkOverflow, this);
 		}
 
 		if (this.getType() !== FacetFilterType.Light) {

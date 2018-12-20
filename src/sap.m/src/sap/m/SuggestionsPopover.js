@@ -75,6 +75,9 @@ sap.ui.define([
 			// stores a reference to the input control that instantiates the popover
 			this._oInput = oInput;
 
+			// stores currently typed value
+			this._sTypedInValue = '';
+
 			// adds event delegate for the arrow keys
 			this._oInput.addEventDelegate({
 				onsapup: function(oEvent) {
@@ -130,11 +133,7 @@ sap.ui.define([
 				this._oShowMoreButton = null;
 			}
 
-			this._bDoTypeAhead = null;
-			this._sTypedInValue = null;
 			this._oProposedItem = null;
-			this._sProposedItemText = null;
-			this._bSuggestionItemTapped = null;
 			this._oInputDelegate = null;
 		}
 	});
@@ -1203,7 +1202,7 @@ sap.ui.define([
 
 		this._oProposedItem = null;
 		this._sProposedItemText = null;
-		this._sTypedInValue = null;
+		this._sTypedInValue = '';
 		this._bSuggestionItemTapped = false;
 	};
 

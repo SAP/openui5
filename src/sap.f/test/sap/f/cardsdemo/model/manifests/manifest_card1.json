@@ -3,15 +3,15 @@
 		"type": "card"
 	},
 	"sap.card": {
-		"title": "Request list content Card",
-		"subTitle": "Card Subtitle",
 		"type": "List",
-		"icon":  {
-			"src": "sap-icon://accept"
+		"header": {
+			"title": "Request list content Card",
+			"subtitle": "Card Subtitle",
+			"icon":  {
+				"src": "sap-icon://accept"
+			},
+			"status": "100 of 200"
 		},
-		"status": "100 of 200",
-		"width": "400px",
-		"height": "auto",
 		"content": {
 			"data": {
 				"request": {

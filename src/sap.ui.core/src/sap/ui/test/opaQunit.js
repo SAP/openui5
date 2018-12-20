@@ -15,7 +15,11 @@ sap.ui.define([
 	});
 
 	QUnit.moduleStart(function (oDetails) {
-		Opa._usageReport.moduleUpdate(oDetails);
+		Opa._usageReport.moduleStart(oDetails);
+	});
+
+	QUnit.testStart(function () {
+		Opa._usageReport.testStart();
 	});
 
 	QUnit.testDone(function (oDetails) {
@@ -31,7 +35,7 @@ sap.ui.define([
 	});
 
 	QUnit.moduleDone(function (oDetails) {
-		Opa._usageReport.moduleUpdate(oDetails);
+		Opa._usageReport.moduleDone(oDetails);
 	});
 
 	QUnit.done(function (oDetails) {

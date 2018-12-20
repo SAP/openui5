@@ -316,13 +316,19 @@ sap.ui.define([
 	});
 
 	QUnit.test("SelectionMode", function(assert) {
+		oTable.setSelectionMode(SelectionMode.MultiToggle);
+		assert.strictEqual(oTable.getSelectionMode(), SelectionMode.MultiToggle, "SelectionMode set to MultiToggle");
+		oTable.setSelectionMode(SelectionMode.Single);
+		assert.strictEqual(oTable.getSelectionMode(), SelectionMode.Single, "SelectionMode set to Single");
 		oTable.setSelectionMode(SelectionMode.Multi);
-		assert.equal(oTable.getSelectionMode(), "MultiToggle", "Selection mode is MultiToggle although Multi was set!");
-
-		// check selection mode none without columns BCP: 1570822620
-		oTable.removeAllColumns();
+		assert.strictEqual(oTable.getSelectionMode(), SelectionMode.MultiToggle, "SelectionMode defaults to MultiToggle, if Multi is set");
 		oTable.setSelectionMode(SelectionMode.None);
-		assert.equal(oTable.getSelectionMode(), "None", "Selection mode is None!");
+		assert.strictEqual(oTable.getSelectionMode(), SelectionMode.None, "SelectionMode set to None");
+
+		oTable._enableLegacyMultiSelection();
+		oTable.setSelectionMode(SelectionMode.Multi);
+		assert.strictEqual(oTable.getSelectionMode(), SelectionMode.MultiToggle,
+			"SelectionMode defaults to MultiToggle, if Multi is set when legacy multi selection is enabled");
 	});
 
 	QUnit.test("SelectionMode = None", function(assert) {
@@ -336,66 +342,6 @@ sap.ui.define([
 
 		oTable.addSelectionInterval(1, 1);
 		assert.deepEqual(oTable.getSelectedIndices(), [], "addSelectionInterval does not select in SelectionMode=\"None\"");
-	});
-
-	QUnit.test("Multi Selection", function(assert) {
-		var iFirstRow = oTable.getFirstVisibleRow();
-
-		function triggerSelectionOnRow(i, bKeyboard, bCtrlKey, bShiftKey) {
-			var oCell = jQuery.sap.domById(oTable.getId() + "-rowsel" + i);
-			oCell.focus();
-			if (bKeyboard) {
-				qutils.triggerKeydown(oCell, "SPACE", !!bShiftKey, false, !!bCtrlKey);
-				qutils.triggerKeyup(oCell, "SPACE", !!bShiftKey, false, !!bCtrlKey);
-			} else {
-				qutils.triggerEvent("click", oCell, {metaKey: !!bCtrlKey, ctrlKey: !!bCtrlKey, shiftKey: !!bShiftKey});
-			}
-		}
-
-		function checkSelection(sText, aExpectedSelection) {
-			var aSelection = oTable.getSelectedIndices();
-			assert.equal(aSelection.length, aExpectedSelection.length, sText + ": Number of selected items is " + aExpectedSelection.length);
-			for (var i = 0; i < aExpectedSelection.length; i++) {
-				assert.equal(aSelection[i], iFirstRow + aExpectedSelection[i], sText + ": Selected index " + iFirstRow + aExpectedSelection[i]);
-			}
-		}
-
-		oTable.setSelectionMode(SelectionMode.Multi);
-		assert.equal(oTable.getSelectionMode(), "MultiToggle", "Selection mode is MultiToggle although Multi was set!");
-		sap.ui.getCore().applyChanges();
-
-		checkSelection("MultiToggle - Initial", []);
-		triggerSelectionOnRow(0, false, false, false);
-		checkSelection("MultiToggle - After 1st selection", [0]);
-		triggerSelectionOnRow(2, false, false, false);
-		checkSelection("MultiToggle - After 2nd selection", [0, 2]);
-		triggerSelectionOnRow(3, false, true, false);
-		checkSelection("MultiToggle - After 3rd selection", [0, 2, 3]);
-		triggerSelectionOnRow(0, false, false, false);
-		checkSelection("MultiToggle - After 4th selection", [2, 3]);
-		triggerSelectionOnRow(3, true, false, false);
-		checkSelection("MultiToggle - After 5th selection", [2]);
-		triggerSelectionOnRow(0, true, false, false);
-		checkSelection("MultiToggle - After 6th selection", [0, 2]);
-		var oCell = oTable.$("rowsel0");
-		oCell.focus();
-		qutils.triggerKeydown(document.activeElement, "SHIFT", false, false, false);
-		qutils.triggerKeydown(document.activeElement, "ARROW_DOWN", true, false, false);
-		qutils.triggerKeydown(document.activeElement, "ARROW_DOWN", true, false, false);
-		qutils.triggerKeydown(document.activeElement, "ARROW_DOWN", true, false, false);
-		qutils.triggerKeydown(document.activeElement, "ARROW_DOWN", true, false, false);
-		qutils.triggerKeyup(document.activeElement, "SHIFT", false, false, false);
-		checkSelection("MultiToggle - After 7th selection", [0, 1, 2, 3, 4]);
-		triggerSelectionOnRow(2, false, false, true);
-		checkSelection("MultiToggle - After 8th selection", [0, 1, 2, 3, 4]);
-		triggerSelectionOnRow(6, false, false, true);
-		checkSelection("MultiToggle - After 9th selection", [0, 1, 2, 3, 4, 5, 6]);
-
-		oTable.clearSelection();
-		oTable._enableLegacyMultiSelection = true;
-		oTable.setSelectionMode(SelectionMode.Multi);
-		assert.equal(oTable.getSelectionMode(), "MultiToggle",
-			"Selection mode is MultiToggle although Multi and _enableLegacyMultiSelection was set!");
 	});
 
 	QUnit.test("SelectedIndex", function(assert) {
@@ -1535,113 +1481,6 @@ sap.ui.define([
 		}, 100);
 	});
 
-	QUnit.module("Variable Row Height", {
-		beforeEach: function() {
-			createTable({
-				visibleRowCount: 10,
-				width: "300px",
-				firstVisibleRow: 1
-			});
-
-			oTable.removeAllColumns();
-			oTable.addColumn(new Column({
-				label: new Label({text: "Variable Row Heights"}),
-				template: new DummyControl({
-					height: "{height}"
-				}),
-				width: "200px"
-			}));
-
-			oTable._bVariableRowHeightEnabled = true;
-			sap.ui.getCore().applyChanges();
-		},
-		afterEach: function() {
-			destroyTable();
-		}
-	});
-
-	QUnit.test("Vertical scrollbar height", function(assert) {
-		var oVsb = oTable._getScrollExtension().getVerticalScrollbar();
-		var iVSbHeight = oVsb.clientHeight;
-
-		assert.equal(iVSbHeight, 10 * oTable._getDefaultRowHeight(), "iVSbHeight is correct");
-	});
-
-	QUnit.test("FirstVisibleRow on init stays the same", function(assert) {
-		assert.equal(oTable.getFirstVisibleRow(), 1, "getFirstVisibleRow() returns 1");
-	});
-
-	QUnit.test("ScrollTop on init is as expected", function(assert) {
-		var oVsb = oTable._getScrollExtension().getVerticalScrollbar();
-		assert.ok(oVsb);
-		var iDefaultHeight = oTable._getDefaultRowHeight();
-
-		var done = assert.async();
-		window.setTimeout(function() {
-			assert.strictEqual(oVsb.scrollTop, iDefaultHeight, "ScrollTop is correct: " + oVsb.scrollTop);
-			done();
-		}, 100);
-	});
-
-	QUnit.test("ScrollTop after scrolling to last row is as expected", function(assert) {
-		var oVsb = oTable._getScrollExtension().getVerticalScrollbar();
-		assert.ok(oVsb);
-
-		oTable.setFirstVisibleRow(200);
-		sap.ui.getCore().applyChanges();
-
-		var done = assert.async();
-		window.setTimeout(function() {
-			var iVSbHeight = oVsb.clientHeight;
-			var oVSbScrollHeight = oVsb.scrollHeight;
-
-			assert.equal(oVsb.scrollTop, oVSbScrollHeight - iVSbHeight, "ScrollTop is correct");
-			done();
-		}, 100);
-	});
-
-	QUnit.test("After scrolling to last row, the table correction is as expected", function(assert) {
-		var done = assert.async();
-
-		// Create Data with different Row Heights
-		var aData = [{height: "800px"}, {height: "800px"}, {height: "800px"}, {height: "800px"}, {height: "800px"}];
-		aData = aData.concat(JSON.parse(JSON.stringify(aData)));
-		aData = aData.concat(JSON.parse(JSON.stringify(aData)));
-		aData = aData.concat(JSON.parse(JSON.stringify(aData)));
-
-		var oModel = new JSONModel();
-		oModel.setData({modelData: aData});
-		oTable.setModel(oModel);
-		oTable.bindRows("/modelData");
-
-		oTable.placeAt("qunit-fixture");
-		sap.ui.getCore().applyChanges();
-
-		var oScrollExtension = oTable._getScrollExtension();
-		var iDefaultRowHeight = oTable._getDefaultRowHeight();
-
-		window.setTimeout(function() {
-			var oVsb = oScrollExtension.getVerticalScrollbar();
-
-			assert.equal(oTable.getFirstVisibleRow(), 1, "Initial firstVisibleRow is correct");
-			assert.equal(oScrollExtension.getVerticalScrollPosition(), iDefaultRowHeight, "Initial scroll position is correct");
-			assert.equal(oVsb.scrollTop, iDefaultRowHeight, "Initial scrollTop is correct");
-			assert.strictEqual(oTable.getDomRef("tableCCnt").scrollTop, 0, "Initial inner scroll position is correct");
-
-			oVsb.scrollTop = 1000000;
-
-			window.setTimeout(function() {
-				assert.equal(oTable.getFirstVisibleRow(), 39, "After setting scrollTop, firstVisibleRow is correct");
-				assert.equal(oScrollExtension.getVerticalScrollPosition(), iDefaultRowHeight * 31,
-					"After setting scrollTop, the scroll position is correct");
-				assert.equal(oVsb.scrollTop, iDefaultRowHeight * 31, "After setting scrollTop, scrollTop is correct");
-				assert.strictEqual(oTable.getDomRef("tableCCnt").scrollTop, 8321,
-					"After setting scrollTop, the inner scroll position is correct");
-				done();
-			}, 500);
-		}, 500);
-	});
-
 	QUnit.module("Fixed rows and columns", {
 		beforeEach: function() {
 			createTable({
@@ -2629,12 +2468,16 @@ sap.ui.define([
 		var aFiredReasons = [];
 		var that = this;
 
-		function _createTable(sVisibleRowCountMode) {
+		function _createTable(sVisibleRowCountMode, bWithBinding, iRowHeight) {
+			bWithBinding = bWithBinding !== false;
+
 			oTable = new Table({
-				rows: "{/modelData}",
-				visibleRowCountMode: sVisibleRowCountMode
+				rows: bWithBinding ? "{/modelData}" : "",
+				visibleRowCountMode: sVisibleRowCountMode,
+				rowHeight: iRowHeight
 			});
 
+			aFiredReasons = [];
 			oTable.attachEvent("_rowsUpdated", function(oEvent) {
 				aFiredReasons.push(oEvent.getParameter("reason"));
 			});
@@ -2649,30 +2492,50 @@ sap.ui.define([
 			oTable.setModel(oModel);
 
 			oTable.placeAt("qunit-fixture");
+			sap.ui.getCore().applyChanges();
 		}
 
-		destroyTable();
+		function _destroyTable() {
+			destroyTable();
+			sap.ui.getCore().applyChanges();
+		}
+
+		_destroyTable();
 		_createTable(VisibleRowCountMode.Fixed);
 		this.checkRowsUpdated(assert, aFiredReasons, [
 			TableUtils.RowsUpdateReason.Render
 		]).then(function() {
-			destroyTable();
+			_destroyTable();
+			_createTable(VisibleRowCountMode.Fixed, false);
+			return that.checkRowsUpdated(assert, aFiredReasons, []);
+		}).then(function() {
+			_destroyTable();
 			_createTable(VisibleRowCountMode.Interactive);
-			aFiredReasons = [];
 			return that.checkRowsUpdated(assert, aFiredReasons, [
 				TableUtils.RowsUpdateReason.Render
 			]);
 		}).then(function() {
-			destroyTable();
+			_destroyTable();
+			_createTable(VisibleRowCountMode.Interactive, false);
+			return that.checkRowsUpdated(assert, aFiredReasons, []);
+		}).then(function() {
+			_destroyTable();
 			_createTable(VisibleRowCountMode.Auto);
-			aFiredReasons = [];
 			return that.checkRowsUpdated(assert, aFiredReasons, [
-				TableUtils.RowsUpdateReason.Render,
 				TableUtils.RowsUpdateReason.Render
 			], 250);
 		}).then(function() {
-			done();
-		});
+			_destroyTable();
+			_createTable(VisibleRowCountMode.Auto, false);
+			return that.checkRowsUpdated(assert, aFiredReasons, [], 250);
+		}).then(function() {
+			_destroyTable();
+			// No need to adjust row count after rendering. The table starts with 10 rows, and only 10 rows with a height of 90px fit.
+			_createTable(VisibleRowCountMode.Auto, true, 90);
+			return that.checkRowsUpdated(assert, aFiredReasons, [
+				TableUtils.RowsUpdateReason.Render
+			], 250);
+		}).then(done);
 	});
 
 	QUnit.test("_rowsUpdated - Re-render", function(assert) {
@@ -2685,17 +2548,17 @@ sap.ui.define([
 		});
 
 		function setVisibleRowCountMode(sNewVisibleRowCountMode) {
-			oTable.setVisibleRowCountMode(sNewVisibleRowCountMode);
-
 			return new Promise(function(resolve) {
-				window.setTimeout(function() {
+				oTable.setVisibleRowCountMode(sNewVisibleRowCountMode);
+				oTable.attachEventOnce("_rowsUpdated", function() {
 					aFiredReasons = [];
 					resolve();
-				}, 0);
+				});
+				sap.ui.getCore().applyChanges();
 			});
 		}
 
-		setVisibleRowCountMode(VisibleRowCountMode.Fixed).then(function() {
+		Promise.resolve().then(function() {
 			oTable.invalidate();
 			return that.checkRowsUpdated(assert, aFiredReasons, [
 				TableUtils.RowsUpdateReason.Render
@@ -2712,7 +2575,6 @@ sap.ui.define([
 		}).then(function() {
 			oTable.invalidate();
 			return that.checkRowsUpdated(assert, aFiredReasons, [
-				TableUtils.RowsUpdateReason.Render,
 				TableUtils.RowsUpdateReason.Render
 			]);
 		}).then(function() {
@@ -2848,6 +2710,30 @@ sap.ui.define([
 
 			that.checkRowsUpdated(assert, aFiredReasons, [
 				TableUtils.RowsUpdateReason.Unbind
+			]).then(function() {
+				done();
+			});
+		}, 0);
+	});
+
+	QUnit.test("_rowsUpdated - Bind", function(assert) {
+		var done = assert.async();
+		var aFiredReasons = [];
+		var oBindingInfo = oTable.getBindingInfo("rows");
+		var that = this;
+
+		oTable.unbindRows();
+
+		oTable.attachEvent("_rowsUpdated", function(oEvent) {
+			aFiredReasons.push(oEvent.getParameter("reason"));
+		});
+
+		window.setTimeout(function() {
+			aFiredReasons = [];
+			oTable.bindRows(oBindingInfo);
+
+			that.checkRowsUpdated(assert, aFiredReasons, [
+				TableUtils.RowsUpdateReason.Change
 			]).then(function() {
 				done();
 			});
@@ -3232,31 +3118,10 @@ sap.ui.define([
 		assert.ok(!oTable.getColumnForCell(oTable.getColumns()[0]), "Something wrong given");
 	});
 
-	QUnit.test("test onBeforeRendering function with variableRowHeightEnabled=true", function(assert) {
-		var fnCalculateRowsToDisplay = sinon.spy(oTable, "_calculateRowsToDisplay");
-		oTable._bVariableRowHeightEnabled = true;
-		/*eslint-disable new-cap */
-		var oEvent = jQuery.Event();
-		/*eslint-enable new-cap */
-		oTable.onBeforeRendering(oEvent);
-		assert.ok(fnCalculateRowsToDisplay.called, "_calcualteRowsToDisplay() called via onBeforeRendering()");
-		assert.ok(this.sinon.stub(TableUtils, "isVariableRowHeightEnabled").returns(true));
-	});
-
 	QUnit.test("test onThemeChanged function", function(assert) {
 		var fnInvalidate = sinon.spy(oTable, "invalidate");
 		oTable.onThemeChanged();
 		assert.ok(fnInvalidate.called, "invalidate() called from onThemeChanged()");
-	});
-
-	QUnit.test("test onAfterRendering function with variableRowHeightEnabled=true", function(assert) {
-		oTable._bVariableRowHeightEnabled = true;
-		/*eslint-disable new-cap */
-		var oEvent = jQuery.Event();
-		/*eslint-enable new-cap */
-		var oVSb = oTable._getScrollExtension().getVerticalScrollbar();
-		oTable.onAfterRendering(oEvent);
-		assert.equal(oVSb.scrollTop, 0, "scrollTop value is available");
 	});
 
 	QUnit.test("test _updateTableContent and cleanupTableRowForGrouping function via onAfterRendering", function(assert) {
@@ -3285,6 +3150,28 @@ sap.ui.define([
 		assert.equal(oTable._clearTextSelection(), window.getSelection().removeAllRanges(), "Text selection is cleared");
 	});
 
+	QUnit.test("test _toggleSelectAll function", function(assert) {
+		oTable.clearSelection();
+		oTable.setSelectionMode(SelectionMode.None);
+		oTable._toggleSelectAll();
+		assert.deepEqual(oTable.getSelectedIndices(), [], "Selection was not changed if SelectionMode is None");
+
+		oTable.setSelectionMode(SelectionMode.Single);
+		oTable._toggleSelectAll();
+		assert.deepEqual(oTable.getSelectedIndices(), [], "Selection was not changed if SelectionMode is Single");
+
+		oTable.setSelectedIndex(1);
+		oTable._toggleSelectAll();
+		assert.deepEqual(oTable.getSelectedIndices(), [1], "Selection was not changed if SelectionMode is Single");
+
+		oTable.setSelectionMode(SelectionMode.MultiToggle);
+		oTable._toggleSelectAll();
+		assert.ok(TableUtils.areAllRowsSelected(oTable), "All rows selected if not all rows were selected and SelectionMode is MultiToggle");
+
+		oTable._toggleSelectAll();
+		assert.ok(!TableUtils.areAllRowsSelected(oTable), "All rows deselected if all rows were selected and SelectionMode is MultiToggle");
+	});
+
 	QUnit.test("Check for tooltip", function(assert) {
 		oTable.setTooltip("Table Tooltip");
 		assert.strictEqual(oTable.getTooltip(), "Table Tooltip", "Table tooltip set correctly");
@@ -3306,7 +3193,7 @@ sap.ui.define([
 		assert.equal(oTable._getFixedBottomRowContexts().length, 0, "FixedBottomRowContexts returned an empty array");
 		oTable.setFixedBottomRowCount(3);
 		assert.equal(oTable.getFixedBottomRowCount(), 3, "FixedBottomRowCount is set to 3");
-		assert.equal(oTable._getFixedBottomRowContexts(oTable.getFixedBottomRowCount(), oTable._updateTotalRowCount()).length, 3,
+		assert.equal(oTable._getFixedBottomRowContexts(oTable.getFixedBottomRowCount(), oTable._adjustToTotalRowCount()).length, 3,
 			"fixedBottomRowContexts returned non empty array when fixedBottomRowCount and bindingLength is set");
 		oTable._updateFixedBottomRows();
 		assert.equal(oTable.getFirstVisibleRow(), 0, "_updateFixedBottomRows() called with the updated fixedBottomRowCount");
@@ -3564,7 +3451,7 @@ sap.ui.define([
 		}
 
 		function testUpdateTotalRowCount(bNoDataVisible, sTestTitle) {
-			oTable._updateTotalRowCount(true);
+			oTable._adjustToTotalRowCount();
 			sap.ui.getCore().applyChanges();
 
 			testNoData(bNoDataVisible, sTestTitle);
@@ -3992,113 +3879,6 @@ sap.ui.define([
 				assert.strictEqual(oTable.getRows().length, 0, "After 200ms: The table has no rows");
 
 				oTable.destroy();
-				done();
-			}, 200);
-		});
-	});
-
-	QUnit.test("Instant row creation - VisibleRowCountMode = Fixed|Interactive", function(assert) {
-		var oBindingInfo = oTable.getBindingInfo("rows");
-		var oModel = oTable.getModel();
-
-		var fnOriginalInit = Table.prototype.init;
-		Table.prototype.init = function() {
-			fnOriginalInit.apply(this, arguments);
-			this._bLazyRowCreationEnabled = false;
-		};
-
-		destroyTable();
-
-		function test(sVisibleRowCountMode) {
-			oTable = new Table({
-				visibleRowCountMode: sVisibleRowCountMode,
-				visibleRowCount: 5,
-				rows: oBindingInfo,
-				models: oModel
-			});
-			assert.strictEqual(oTable.getRows().length, 5, "Before rendering with binding: The table has the correct amount of rows");
-
-			oTable.placeAt("qunit-fixture");
-			sap.ui.getCore().applyChanges();
-			assert.strictEqual(oTable.getRows().length, 5, "After rendering with binding: The table has the correct amount of rows");
-
-			oTable.unbindRows();
-			assert.strictEqual(oTable.getRows().length, 5, "After unbind: The table has the correct amount of rows");
-
-			oTable.bindRows(oBindingInfo);
-			assert.strictEqual(oTable.getRows().length, 5, "After binding: The table has the correct amount of rows");
-
-			oTable.destroy();
-
-			oTable = new Table({
-				visibleRowCountMode: sVisibleRowCountMode,
-				visibleRowCount: 5
-			});
-			assert.strictEqual(oTable.getRows().length, 0, "Before rendering without binding: The table has no rows");
-
-			oTable.placeAt("qunit-fixture");
-			sap.ui.getCore().applyChanges();
-			assert.strictEqual(oTable.getRows().length, 5, "After rendering without binding: The table has the correct amount of rows");
-
-			oTable.destroy();
-		}
-
-		test(VisibleRowCountMode.Fixed);
-		test(VisibleRowCountMode.Interactive);
-
-		Table.prototype.init = fnOriginalInit;
-	});
-
-	QUnit.test("Instant row creation - VisibleRowCountMode = Auto", function(assert) {
-		var done = assert.async();
-		var oBindingInfo = oTable.getBindingInfo("rows");
-		var oModel = oTable.getModel();
-
-		var fnOriginalInit = Table.prototype.init;
-		Table.prototype.init = function() {
-			fnOriginalInit.apply(this, arguments);
-			this._bLazyRowCreationEnabled = false;
-		};
-
-		destroyTable();
-
-		oTable = new Table({
-			visibleRowCountMode: VisibleRowCountMode.Auto,
-			rows: oBindingInfo,
-			models: oModel
-		});
-		assert.strictEqual(oTable.getRows().length, 0, "Before rendering with binding: The table has no rows");
-
-		oTable.placeAt("qunit-fixture");
-		sap.ui.getCore().applyChanges();
-		assert.strictEqual(oTable.getRows().length, 0, "After rendering with binding: The table has no rows");
-
-		oTable.attachEventOnce("_rowsUpdated", function() {
-			assert.ok(oTable.getRows().length > 0, "After asynchronous row update: The table has rows");
-
-			oTable.unbindRows();
-			assert.ok(oTable.getRows().length > 0, "After unbind: The table has rows");
-
-			oTable.bindRows(oBindingInfo);
-			assert.ok(oTable.getRows().length > 0, "After binding: The table has rows");
-
-			oTable.destroy();
-
-			oTable = new Table({
-				visibleRowCountMode: VisibleRowCountMode.Auto
-			});
-			assert.strictEqual(oTable.getRows().length, 0, "Before rendering without binding: The table has no rows");
-
-			oTable.placeAt("qunit-fixture");
-			sap.ui.getCore().applyChanges();
-			assert.strictEqual(oTable.getRows().length, 0, "After rendering without binding: The table has no rows");
-
-			// _rowsUpdated is not fired, because there are no contexts. Therefore, use a timeout.
-			setTimeout(function() {
-				assert.ok(oTable.getRows().length > 0, "After 200ms: The table has rows");
-
-				oTable.destroy();
-				Table.prototype.init = fnOriginalInit;
 				done();
 			}, 200);
 		});

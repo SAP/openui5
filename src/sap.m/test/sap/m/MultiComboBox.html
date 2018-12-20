@@ -6,7 +6,7 @@
 <title>MultiComboBox - sap.m</title>
 <script src="shared-config.js"></script>
 <script id="sap-ui-bootstrap" src="../../../resources/sap-ui-core.js"
-	data-sap-ui-libs="sap.m"
+	data-sap-ui-libs="sap.m, sap.ui.layout"
 	data-sap-ui-compatVersion="1.20">
 
 </script>
@@ -410,6 +410,14 @@
 			}
 		});
 	}
+
+	var theCompactMode = new sap.m.CheckBox("compactMode", {
+		text: "Compact Mode",
+		selected : true,
+		select : function() {
+			$("body").toggleClass("sapUiSizeCompact");
+		}
+	});
 
 	function createLabelForComboBox(sId) {
 		return new sap.m.Label({
@@ -819,12 +827,7 @@
 					+ oControlEvent.getParameter("changedItem") + " on " + this);
 		}
 	});
-	var theCompactMode = new sap.m.CheckBox({
-		selected : true,
-		select : function() {
-			$("body").toggleClass("sapUiSizeCompact");
-		}
-	});
+
 	var oToolbar = new sap.m.Toolbar({
 		content : [
 			new sap.m.Label({labelFor:"MultiComboBoxToolbar", text:"MultiComboBox in toolbar:"}),
@@ -854,9 +857,9 @@
 		initialPage : "page1"
 	});
 	oApp.addPage(new sap.m.Page("page1", {
-		content : [oMultiComboBox2, oComboBox, oMultiInput1, oMultiComboBox, oMultiComboBox1,
+		content : [theCompactMode,oMultiComboBox2, oComboBox, oMultiInput1, oMultiComboBox, oMultiComboBox1,
 				oMultiComboBoxDisabledListItemSelectable, oMultiComboBoxDisabledListItemDisabled, oMultiComboBoxReadOnly,
-				oMultiComboBoxDisabled, oMultiComboBoxWithoutKey, theCompactMode, oMultiComboBoxError, oMultiComboBoxWarning,
+				oMultiComboBoxDisabled, oMultiComboBoxWithoutKey, oMultiComboBoxError, oMultiComboBoxWarning,
 				oMultiComboBoxSuccess, oMultiComboBoxBinding, oToolbar],
 		showNavButton : true,
 		navButtonPress : function() {

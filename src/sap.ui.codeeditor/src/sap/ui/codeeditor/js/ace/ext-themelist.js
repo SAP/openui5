@@ -21,6 +21,7 @@ var themeData = [
     ["Ambiance"             ,"ambiance"                ,  "dark"],
     ["Chaos"                ,"chaos"                   ,  "dark"],
     ["Clouds Midnight"      ,"clouds_midnight"         ,  "dark"],
+    ["Dracula"              ,""                        ,  "dark"],
     ["Cobalt"               ,"cobalt"                  ,  "dark"],
     ["Gruvbox"              ,"gruvbox"                 ,  "dark"],
     ["Green on Black"       ,"gob"                     ,  "dark"],
@@ -57,6 +58,10 @@ exports.themes = themeData.map(function(data) {
 
 });
                 (function() {
-                    ace.require(["ace/ext/themelist"], function() {});
+                    ace.require(["ace/ext/themelist"], function(m) {
+                        if (typeof module == "object" && typeof exports == "object" && module) {
+                            module.exports = m;
+                        }
+                    });
                 })();
             

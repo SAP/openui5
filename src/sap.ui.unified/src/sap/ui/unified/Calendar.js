@@ -17,6 +17,7 @@ sap.ui.define([
 	'sap/ui/core/format/DateFormat',
 	'sap/ui/core/ResizeHandler',
 	'sap/ui/core/Locale',
+	'sap/ui/events/KeyCodes',
 	"./CalendarRenderer",
 	"sap/ui/dom/containsOrEquals",
 	"sap/base/util/deepEqual",
@@ -37,6 +38,7 @@ sap.ui.define([
 	DateFormat,
 	ResizeHandler,
 	Locale,
+	KeyCodes,
 	CalendarRenderer,
 	containsOrEquals,
 	deepEqual,
@@ -44,6 +46,9 @@ sap.ui.define([
 	jQuery
 ) {
 	"use strict";
+
+	// get resource translation bundle;
+	var oLibraryResourceBundle = sap.ui.getCore().getLibraryResourceBundle("sap.ui.unified");
 
 	/*
 	 * Inside the Calendar CalendarDate objects are used. But in the API JS dates are used.
@@ -1014,6 +1019,21 @@ sap.ui.define([
 		}
 
 	};
+
+	// Handles F4 (Opens Month Picker) or Shift+F4(Opens Year Picker)
+	Calendar.prototype.onkeydown = function(oEvent) {
+		var iKC = oEvent.which || oEvent.keyCode,
+			bShift = oEvent.shiftKey;
+
+		// if there is a a popup for picking dates, we should not handle F4
+		if (this._getSucessorsPickerPopup() || iKC !== KeyCodes.F4) {
+			return;
+		}
+
+		oEvent.preventDefault(); //ie expands the address bar on F4
+		bShift ? this._showYearPicker() : this._showMonthPicker();
+	};
+
 
 	Calendar.prototype.onsaphide = Calendar.prototype.onsapshow;
 
@@ -2012,6 +2032,10 @@ sap.ui.define([
 			sAriaLabel = aMonthNamesWide[aMonths[0]] || sText;
 		}
 
+		if (!this._getSucessorsPickerPopup()) {
+			sAriaLabel += ". " + oLibraryResourceBundle.getText("CALENDAR_MONTH_PICKER_OPEN_HINT");
+		}
+
 		oHeader.setTextButton1(sText);
 		oHeader.setAriaLabelButton1(sAriaLabel);
 		oHeader._setTextButton3(sLastMonthName);
@@ -2309,10 +2333,11 @@ sap.ui.define([
 
 	Calendar.prototype._updateHeadersYearPrimaryText = function (sYear) {
 		var oHeader = this.getAggregation("header"),
-			oSecondMonthHeader = this.getAggregation("secondMonthHeader");
+			oSecondMonthHeader = this.getAggregation("secondMonthHeader"),
+			sAriaLabel = sYear + (this._getSucessorsPickerPopup() ? "" : ". " + oLibraryResourceBundle.getText("CALENDAR_YEAR_PICKER_OPEN_HINT"));
 
 		oHeader.setTextButton2(sYear);
-		oHeader.setAriaLabelButton2(sYear);
+		oHeader.setAriaLabelButton2(sAriaLabel);
 		oHeader._setTextButton4(sYear);
 		oHeader._setAriaLabelButton4(sYear);
 		oSecondMonthHeader.setTextButton2(sYear);
