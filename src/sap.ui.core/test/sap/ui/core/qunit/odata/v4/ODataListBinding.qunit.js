@@ -4090,74 +4090,6 @@ sap.ui.define([
 	});
 
 	//*********************************************************************************************
-	QUnit.test("mergeQueryOptions", function (assert) {
-		var oBinding = this.bindList("/EMPLOYEES");
-
-		[{
-			mQueryOptions: undefined,
-			sOrderBy : undefined,
-			sFilter : undefined
-		}, {
-			mQueryOptions: {$orderby : "bar", $select : "Name"},
-			sOrderBy : undefined,
-			sFilter : undefined
-		}, {
-			mQueryOptions: undefined,
-			sOrderBy : "foo",
-			sFilter : undefined,
-			oResult : {$orderby : "foo"}
-		}, {
-			mQueryOptions: {$orderby : "bar", $select : "Name"},
-			sOrderBy : "foo,bar",
-			sFilter : undefined,
-			oResult : {$orderby : "foo,bar", $select : "Name"}
-		}, {
-			mQueryOptions: {$orderby : "bar", $select : "Name"},
-			sOrderBy : "bar",
-			sFilter : undefined
-		}, {
-			mQueryOptions: undefined,
-			sOrderBy : undefined,
-			sFilter : "foo",
-			oResult : {$filter : "foo"}
-		}, {
-			mQueryOptions: {$filter : "bar", $select : "Name"},
-			sOrderBy : undefined,
-			sFilter : "foo,bar",
-			oResult : {$filter : "foo,bar", $select : "Name"}
-		}, {
-			mQueryOptions: {$filter: "bar", $select : "Name"},
-			sOrderBy : undefined,
-			sFilter : "bar"
-		}, {
-			mQueryOptions: {$filter: "bar", $orderby : "foo", $select : "Name"},
-			sOrderBy : "foo",
-			sFilter : "bar"
-		}, {
-			mQueryOptions: {$filter: "foo", $orderby : "bar", $select : "Name"},
-			sOrderBy : "foo,bar",
-			sFilter : "bar,baz",
-			oResult : {$filter : "bar,baz", $orderby : "foo,bar", $select : "Name"}
-		}].forEach(function (oFixture, i) {
-			var sQueryOptionsJSON = JSON.stringify(oFixture.mQueryOptions),
-				// code under test
-				oResult = oBinding.mergeQueryOptions(oFixture.mQueryOptions,
-					oFixture.sOrderBy, oFixture.sFilter);
-
-			assert.strictEqual(JSON.stringify(oFixture.mQueryOptions), sQueryOptionsJSON);
-			if ("oResult" in oFixture) {
-				assert.deepEqual(oResult, oFixture.oResult, i);
-			} else {
-				assert.strictEqual(oResult, oFixture.mQueryOptions, i);
-			}
-			if (oResult) {
-				assert.ok(oResult.$orderby || !("$orderby" in oResult), i + ": $orderby");
-				assert.ok(oResult.$filter || !("$filter" in oResult), i + ": $filter");
-			}
-		});
-	});
-
-	//*********************************************************************************************
 	QUnit.test("getDiff: extendedChangeDetection without bDetectUpdates", function (assert) {
 		var oBinding = this.bindList("/EMPLOYEES"),
 			oContext0 = { getPath : function () {}},
@@ -4251,7 +4183,7 @@ sap.ui.define([
 		oBindingMock.expects("fetchFilter")
 			.withExactArgs(sinon.match.same(oContext), "staticFilter")
 			.returns(SyncPromise.resolve("resolvedFilter"));
-		oBindingMock.expects("mergeQueryOptions")
+		this.mock(_Helper).expects("mergeQueryOptions")
 			.withExactArgs(sinon.match.same(oBinding.mQueryOptions), "resolvedOrderby",
 				"resolvedFilter")
 			.returns(mQueryOptions);

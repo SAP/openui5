@@ -11,6 +11,7 @@ sap.ui.define([
 	"use strict";
 
 	var rAmpersand = /&/g,
+		sClassName = "sap.ui.model.odata.v4.lib._Helper",
 		rEquals = /\=/g,
 		rEscapedCloseBracket = /%29/g,
 		rEscapedOpenBracket = /%28/g,
@@ -76,6 +77,21 @@ sap.ui.define([
 					}
 				});
 			}
+		},
+
+		/**
+		 * Adds the given paths to $select of the given query options.
+		 *
+		 * @param {object} mQueryOptions The query options
+		 * @param {string[]} aSelectPaths The paths to add to $select
+		 */
+		addToSelect : function (mQueryOptions, aSelectPaths) {
+			mQueryOptions.$select = mQueryOptions.$select || [];
+			aSelectPaths.forEach(function (sPath) {
+				if (mQueryOptions.$select.indexOf(sPath) < 0 ) {
+					mQueryOptions.$select.push(sPath);
+				}
+			});
 		},
 
 		/**
@@ -242,7 +258,7 @@ sap.ui.define([
 						oResult.message = oResult.error.message.value;
 					}
 				} catch (e) {
-					Log.warning(e.toString(), sBody, "sap.ui.model.odata.v4.lib._Helper");
+					Log.warning(e.toString(), sBody, sClassName);
 				}
 			} else if (sContentType === "text/plain") {
 				oResult.message = sBody;
@@ -475,8 +491,6 @@ sap.ui.define([
 		 * @returns {string}
 		 *   The key predicate, e.g. "(Sector='DevOps',ID='42')" or "('42')" or undefined if at
 		 *   least one key property is undefined
-		 *
-		 * @private
 		 */
 		getKeyPredicate : function (oInstance, sMetaPath, mTypeForMetaPath) {
 			var aKeyProperties = [],
@@ -514,8 +528,6 @@ sap.ui.define([
 		 *   - {EntityInfoID : 42}, if bReturnAlias = true;
 		 *   - {"Info/ID" : 42}, if bReturnAlias = false;
 		 *   - undefined, if at least one key property is undefined
-		 *
-		 * @private
 		 */
 		getKeyProperties : function (oInstance, sMetaPath, mTypeForMetaPath, bReturnAlias) {
 			var bFailed,
@@ -560,8 +572,6 @@ sap.ui.define([
 		 * @returns {string}
 		 *   The corresponding metadata path within the OData metadata model, for example
 		 *   "/EMPLOYEES/ENTRYDATE"
-		 *
-		 * @private
 		 */
 		getMetaPath : function (sPath) {
 			return sPath.replace(rNotMetaContext, "");
@@ -596,8 +606,6 @@ sap.ui.define([
 		 *   The path of the cache value in the cache
 		 * @returns {string[]} aSelect
 		 *   The properties that have been selected for the given path or undefined otherwise
-		 *
-		 * @private
 		 */
 		getSelectForPath : function (mQueryOptions, sPath) {
 			if (sPath) {
@@ -796,6 +804,36 @@ sap.ui.define([
 		},
 
 		/**
+		 * Merges the given values for "$orderby" and "$filter" into the given map of query options.
+		 * Ensures that the original map is left unchanged, but creates a copy only if necessary.
+		 *
+		 * @param {object} [mQueryOptions]
+		 *   The map of query options
+		 * @param {string} [sOrderby]
+		 *   The new value for the query option "$orderby"
+		 * @param {string} [sFilter]
+		 *   The new value for the query option "$filter"
+		 * @returns {object}
+		 *   The merged map of query options
+		 */
+		mergeQueryOptions : function (mQueryOptions, sOrderby, sFilter) {
+			var mResult;
+
+			function set(sProperty, sValue) {
+				if (sValue && (!mQueryOptions || mQueryOptions[sProperty] !== sValue)) {
+					if (!mResult) {
+						mResult = mQueryOptions ? _Helper.clone(mQueryOptions) : {};
+					}
+					mResult[sProperty] = sValue;
+				}
+			}
+
+			set("$orderby", sOrderby);
+			set("$filter", sFilter);
+			return mResult || mQueryOptions;
+		},
+
+		/**
 		 * Determines the namespace of the given qualified name.
 		 *
 		 * @param {string} sName
@@ -934,6 +972,31 @@ sap.ui.define([
 				}
 			}
 			return mHeaders;
+		},
+
+		/**
+		 * Adds the key properties of the entity reached by the given navigation property path to
+		 * $select of the query options. Expects that the type has already been loaded so that it
+		 * can be accessed synchronously.
+		 *
+		 * @param {object} mQueryOptions
+		 *   The query options
+		 * @param {string} sMetaPath
+		 *   The path to the navigation property
+		 * @param {function} fnFetchMetadata
+		 *   Function which fetches metadata for a given meta path
+		 */
+		selectKeyProperties : function (mQueryOptions, sMetaPath, fnFetchMetadata) {
+			var oType = fnFetchMetadata(sMetaPath + "/").getResult();
+
+			if (oType && oType.$Key) {
+				_Helper.addToSelect(mQueryOptions, oType.$Key.map(function (vKey) {
+					if (typeof vKey === "object") {
+						return vKey[Object.keys(vKey)[0]];
+					}
+					return vKey;
+				}));
+			}
 		},
 
 		/**
@@ -1170,6 +1233,78 @@ sap.ui.define([
 					delete mMap[sPath];
 				}
 			}
+		},
+
+		/**
+		 * Creates the query options for a child binding with the meta path given by its base
+		 * meta path and relative meta path. Adds the key properties to $select of all expanded
+		 * navigation properties. Requires that meta data for the meta path is already loaded so
+		 * that synchronous access to all prefixes of the relative meta path is possible.
+		 * If the relative meta path contains segments which are not a structural property or a
+		 * navigation property, the child query options cannot be created and the method returns
+		 * undefined.
+		 *
+		 * @param {string} sBaseMetaPath
+		 *   The meta path which is the starting point for the relative meta path
+		 * @param {string} sChildMetaPath
+		 *   The relative meta path
+		 * @param {object} mChildQueryOptions
+		 *   The child binding's query options
+		 * @param {function} fnFetchMetadata
+		 *   Function which fetches metadata for a given meta path
+		 *
+		 * @returns {object} The query options for the child binding or <code>undefined</code> in
+		 *   case the query options cannot be created, e.g. because $apply cannot be wrapped into
+		 *   $expand
+		 */
+		wrapChildQueryOptions : function (sBaseMetaPath, sChildMetaPath, mChildQueryOptions,
+				fnFetchMetadata) {
+			var sExpandSelectPath = "",
+				i,
+				aMetaPathSegments = sChildMetaPath.split("/"),
+				oProperty,
+				sPropertyMetaPath = sBaseMetaPath,
+				mQueryOptions = {},
+				mQueryOptionsForPathPrefix = mQueryOptions;
+
+			if (sChildMetaPath === "") {
+				return mChildQueryOptions;
+			}
+
+			for (i = 0; i < aMetaPathSegments.length; i += 1) {
+				sPropertyMetaPath = _Helper.buildPath(sPropertyMetaPath, aMetaPathSegments[i]);
+				sExpandSelectPath = _Helper.buildPath(sExpandSelectPath, aMetaPathSegments[i]);
+				oProperty = fnFetchMetadata(sPropertyMetaPath).getResult();
+				if (oProperty.$kind === "NavigationProperty") {
+					mQueryOptionsForPathPrefix.$expand = {};
+					mQueryOptionsForPathPrefix
+						= mQueryOptionsForPathPrefix.$expand[sExpandSelectPath]
+						= (i === aMetaPathSegments.length - 1) // last segment in path
+							? mChildQueryOptions
+							: {};
+					_Helper.selectKeyProperties(mQueryOptionsForPathPrefix, sPropertyMetaPath,
+						fnFetchMetadata);
+					sExpandSelectPath = "";
+				} else if (oProperty.$kind !== "Property") {
+					return undefined;
+				}
+			}
+			if (oProperty.$kind === "Property") {
+				if (Object.keys(mChildQueryOptions).length > 0) {
+					Log.error("Failed to enhance query options for auto-$expand/$select as the"
+							+ " child binding has query options, but its path '" + sChildMetaPath
+							+ "' points to a structural property",
+						JSON.stringify(mChildQueryOptions), sClassName);
+					return undefined;
+				}
+				_Helper.addToSelect(mQueryOptionsForPathPrefix, [sExpandSelectPath]);
+			}
+			if ("$apply" in mChildQueryOptions) {
+				Log.debug("Cannot wrap $apply into $expand: " + sChildMetaPath,
+					JSON.stringify(mChildQueryOptions), sClassName);
+				return undefined;
+			}
+			return mQueryOptions;
 		}
 	};
 
