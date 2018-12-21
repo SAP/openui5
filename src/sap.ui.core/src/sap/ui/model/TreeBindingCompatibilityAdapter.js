@@ -228,7 +228,7 @@ sap.ui.define(["sap/ui/thirdparty/jquery"],
 					that.clearSelection();
 					var _aSelectedContexts = this._aSelectedContexts;
 					jQuery.each(this.aContexts, function(iIndex, oContext) {
-						if (((_aSelectedContexts ? this.aContexts.indexOf(oContext) : -1)) >= 0) {
+						if (((_aSelectedContexts ? _aSelectedContexts.indexOf(oContext) : -1)) >= 0) {
 							that.addSelectionInterval(iIndex, iIndex);
 						}
 					});
