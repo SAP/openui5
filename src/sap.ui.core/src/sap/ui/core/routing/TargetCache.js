@@ -3,8 +3,8 @@
  */
 sap.ui.define([
 	'sap/ui/base/EventProvider',
-	'sap/ui/core/routing/async/_TargetCache',
-	'sap/ui/core/routing/sync/_TargetCache',
+	'sap/ui/core/routing/async/TargetCache',
+	'sap/ui/core/routing/sync/TargetCache',
 	"sap/base/assert",
 	"sap/base/Log",
 	"sap/ui/thirdparty/jquery"
