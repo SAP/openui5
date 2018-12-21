@@ -153,8 +153,7 @@ sap.ui.define([
 			if (mQueryOptions && !(oContext && oContext.getIndex
 					&& oContext.getIndex() === Context.VIRTUAL)) {
 				return that.fetchResourcePath(oContext).then(function (sResourcePath) {
-					var oCache,
-						oError;
+					var oCache, oError, iReturnValueContextId;
 
 					// create cache only for the latest call to fetchCache
 					if (!oCachePromise || that.oFetchCacheCallToken === oCallToken) {
@@ -164,12 +163,15 @@ sap.ui.define([
 							// mCacheByResourcePath has to be reset if parameters are changing
 							that.mCacheByResourcePath = that.mCacheByResourcePath || {};
 							oCache = that.mCacheByResourcePath[sResourcePath];
-							if (oCache) {
+							iReturnValueContextId = oContext.getReturnValueContextId
+								&& oContext.getReturnValueContextId();
+							if (oCache && oCache.$returnValueContextId === iReturnValueContextId) {
 								oCache.setActive(true);
 							} else {
 								oCache = that.doCreateCache(sResourcePath, that.mCacheQueryOptions,
 									oContext);
 								that.mCacheByResourcePath[sResourcePath] = oCache;
+								oCache.$returnValueContextId = iReturnValueContextId;
 								oCache.$resourcePath = sResourcePath;
 							}
 						} else { // absolute binding

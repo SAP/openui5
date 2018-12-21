@@ -12,7 +12,10 @@ sap.ui.define([
 ], function (_GroupLock, _Helper, Log, SyncPromise, BaseContext) {
 	"use strict";
 
-	var oModule,
+	var sClassName = "sap.ui.model.odata.v4.Context",
+		oModule,
+		// counter for the unique ID of a return value context
+		iReturnValueContextCount = 0,
 		// index of virtual context used for auto-$expand/$select
 		iVIRTUAL = -9007199254740991/*Number.MIN_SAFE_INTEGER*/;
 
@@ -65,6 +68,11 @@ sap.ui.define([
 	 *   by this context; used by list bindings, not context bindings
 	 * @param {Promise} [oCreatePromise]
 	 *   Promise returned by {@link #created}
+	 * @param {number} [iReturnValueContextId]
+	 *   The unique ID for this context if it is a return value context. The ID can be retrieved via
+	 *   {@link #getReturnValueContextId}.
+	 * @throws {Error}
+	 *   If an invalid path is given
 	 *
 	 * @alias sap.ui.model.odata.v4.Context
 	 * @author SAP SE
@@ -90,7 +98,14 @@ sap.ui.define([
 	 * @version ${version}
 	 */
 	var Context = BaseContext.extend("sap.ui.model.odata.v4.Context", {
-			constructor : function (oModel, oBinding, sPath, iIndex, oCreatePromise) {
+			constructor : function (oModel, oBinding, sPath, iIndex, oCreatePromise,
+					iReturnValueContextId) {
+				if (sPath[0] !== "/") {
+					throw new Error("Not an absolute path: " + sPath);
+				}
+				if (sPath.slice(-1) === "/") {
+					throw new Error("Unsupported trailing slash: " + sPath);
+				}
 				BaseContext.call(this, oModel, sPath);
 				this.oBinding = oBinding;
 				this.oCreatePromise = oCreatePromise
@@ -98,9 +113,9 @@ sap.ui.define([
 					&& Promise.resolve(oCreatePromise).then(function () {});
 				this.oSyncCreatePromise = oCreatePromise && SyncPromise.resolve(oCreatePromise);
 				this.iIndex = iIndex;
+				this.iReturnValueContextId = iReturnValueContextId;
 			}
-		}),
-		sClassName = "sap.ui.model.odata.v4.Context";
+		});
 
 	/**
 	 * Deletes the OData entity this context points to.
@@ -409,6 +424,28 @@ sap.ui.define([
 			}
 		}
 		return oSyncPromise.isFulfilled() ? oSyncPromise.getResult() : undefined;
+	};
+
+	/**
+	 * Returns the ID of the return value context of this context. If this context is not a return
+	 * value context, the context of the parent binding is asked for its return value context. If
+	 * there is no return value context in the current binding hierarchy of this context,
+	 * <code>undefined</code>is returned.
+	 *
+	 * @returns {number}
+	 *   The ID of the return value context in the binding hierarchy of this context or
+	 *   <code>undefined</code>
+	 *
+	 * @private
+	 */
+	Context.prototype.getReturnValueContextId = function () {
+		if (this.iReturnValueContextId) {
+			return this.iReturnValueContextId;
+		}
+		if (this.oBinding.bRelative
+				&& this.oBinding.oContext && this.oBinding.oContext.getReturnValueContextId) {
+			return this.oBinding.oContext.getReturnValueContextId();
+		}
 	};
 
 	/**
@@ -792,13 +829,31 @@ sap.ui.define([
 		 * @private
 		 */
 		create : function (oModel, oBinding, sPath, iIndex, oCreatePromise) {
-			if (sPath[0] !== "/") {
-				throw new Error("Not an absolute path: " + sPath);
-			}
-			if (sPath.slice(-1) === "/") {
-				throw new Error("Unsupported trailing slash: " + sPath);
-			}
 			return new Context(oModel, oBinding, sPath, iIndex, oCreatePromise);
+		},
+
+		/**
+		 * Creates a return value context for an OData V4 model. A unique ID for this context is
+		 * generated and can be retrieved via {@link #getReturnValueContextId}.
+		 *
+		 * @param {sap.ui.model.odata.v4.ODataModel} oModel
+		 *   The model
+		 * @param {sap.ui.model.odata.v4.ODataContextBinding} oBinding
+		 *   A binding that belongs to the model
+		 * @param {string} sPath
+		 *   An absolute path without trailing slash
+		 * @returns {sap.ui.model.odata.v4.Context}
+		 *   A return value context for an OData V4 model
+		 * @throws {Error}
+		 *   If an invalid path is given
+		 *
+		 * @private
+		 */
+		createReturnValueContext : function (oModel, oBinding, sPath) {
+			iReturnValueContextCount += 1;
+
+			return new Context(oModel, oBinding, sPath, undefined, undefined,
+				iReturnValueContextCount);
 		}
 	};
 

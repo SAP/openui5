@@ -786,6 +786,103 @@ sap.ui.define([
 	});
 
 	//*********************************************************************************************
+	[
+		undefined, // use old context for second call
+		{/*base context*/},
+		// no return value context ID
+		{getReturnValueContextId : function () { return undefined; }},
+		// different return value context ID
+		{getReturnValueContextId : function () { return 43; }}
+	].forEach(function (oContext, i) {
+		var sTitle = "fetchCache: called second time, " + (oContext ? "create a new " : "reuse ")
+				+ "cache - " + i;
+
+		QUnit.test(sTitle, function (assert) {
+			var oBinding = new ODataBinding({
+					oCachePromise : SyncPromise.resolve(),
+					doCreateCache : function () {},
+					oModel : {
+						oRequestor : {
+							ready : function () { return SyncPromise.resolve(); }
+						},
+						mUriParameters : {}
+					},
+					sPath : "relative",
+					bRelative : true
+				}),
+				oBindingMock = this.mock(oBinding),
+				oCache = {
+					setActive : function () {}
+				},
+				oCache1 = {},
+				oCacheMock = this.mock(oCache),
+				oContext0 = {
+					getReturnValueContextId : function () { return 42; }
+				},
+				oJQueryMock = this.mock(jQuery),
+				mLocalQueryOptions = {},
+				mResultingQueryOptions = {};
+
+			oBindingMock.expects("fetchQueryOptionsForOwnCache")
+				.withExactArgs(sinon.match.same(oContext0))
+				.returns(SyncPromise.resolve(mLocalQueryOptions));
+			oBindingMock.expects("fetchResourcePath")
+				.withExactArgs(sinon.match.same(oContext0))
+				.returns(SyncPromise.resolve("resourcePath/relative"));
+			oJQueryMock.expects("extend")
+				.withExactArgs(true, {}, sinon.match.same(oBinding.oModel.mUriParameters),
+					sinon.match.same(mLocalQueryOptions))
+				.returns(mResultingQueryOptions);
+			oBindingMock.expects("doCreateCache")
+				.withExactArgs("resourcePath/relative", sinon.match.same(mResultingQueryOptions),
+					sinon.match.same(oContext0))
+				.returns(oCache);
+
+			// code under test
+			oBinding.fetchCache(oContext0);
+
+			return oBinding.oCachePromise.then(function (oCache0) {
+				assert.strictEqual(oCache0.$returnValueContextId, 42);
+
+				return oCache0;
+			}).then(function (oCache0) {
+				var oContext1 = oContext ? oContext : oContext0,
+					mResultingQueryOptions1 = {};
+
+				oCacheMock.expects("setActive").withExactArgs(false);
+				oBindingMock.expects("fetchQueryOptionsForOwnCache")
+					.withExactArgs(sinon.match.same(oContext1))
+					.returns(SyncPromise.resolve(mLocalQueryOptions));
+				oBindingMock.expects("fetchResourcePath")
+					.withExactArgs(sinon.match.same(oContext1))
+					.returns(SyncPromise.resolve("resourcePath/relative"));
+				oJQueryMock.expects("extend")
+					.withExactArgs(true, {}, sinon.match.same(oBinding.oModel.mUriParameters),
+						sinon.match.same(mLocalQueryOptions))
+					.returns(mResultingQueryOptions1);
+
+				if (oContext) {
+					oBindingMock.expects("doCreateCache")
+						.withExactArgs("resourcePath/relative",
+							sinon.match.same(mResultingQueryOptions1),
+							sinon.match.same(oContext1))
+						.returns(oCache1);
+					oCacheMock.expects("setActive").withExactArgs(true).never();
+				} else {
+					oCacheMock.expects("setActive").withExactArgs(true);
+				}
+
+				// code under test
+				oBinding.fetchCache(oContext1);
+
+				return oBinding.oCachePromise;
+			}).then(function (oCache0) {
+				assert.strictEqual(oCache0, oContext ? oCache1 : oCache);
+			});
+		});
+	});
+
+	//*********************************************************************************************
 	QUnit.test("fetchCache: requestor is not ready", function (assert) {
 		var oRequestor = {
 				ready : function () {}
