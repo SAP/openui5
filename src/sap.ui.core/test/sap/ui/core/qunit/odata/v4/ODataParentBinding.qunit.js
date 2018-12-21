@@ -814,7 +814,7 @@ sap.ui.define([
 							getMetaPath : function () {}
 						},
 						oModelInterface = {
-							fnFetchMetadata : function () {}
+							fetchMetadata : function () {}
 						},
 						oBinding = new ODataParentBinding({
 							bAggregatedQueryOptionsInitial : oFixture.initial,
@@ -876,7 +876,7 @@ sap.ui.define([
 					this.mock(_Helper).expects("wrapChildQueryOptions")
 						.withExactArgs("/EMPLOYEES", "value",
 							sinon.match.same(mChildLocalQueryOptions),
-							sinon.match.same(oModelInterface.fnFetchMetadata))
+							sinon.match.same(oModelInterface.fetchMetadata))
 						.returns(mChildQueryOptions);
 					oBindingMock.expects("aggregateQueryOptions")
 						.exactly(oFixture.hasChildQueryOptions ? 1 : 0)
@@ -926,7 +926,7 @@ sap.ui.define([
 						reportError : function () {},
 						oRequestor : {
 							getModelInterface : function () {
-								return {/*fnFetchMetadata*/};
+								return {/*fetchMetadata*/};
 							}
 						}
 					}
@@ -995,7 +995,7 @@ sap.ui.define([
 					getMetaModel : function () { return oMetaModel; },
 					oRequestor : {
 						getModelInterface : function () {
-							return {/*fnFetchMetadata*/};
+							return {/*fetchMetadata*/};
 						}
 					},
 					mUriParameters : {}
@@ -1050,7 +1050,7 @@ sap.ui.define([
 				getMetaPath : function () {}
 			},
 			oModelInterface = {
-				fnFetchMetadata : function () {}
+				fetchMetadata : function () {}
 			},
 			oBinding = new ODataParentBinding({
 				oCachePromise : SyncPromise.resolve(Promise.resolve()),
@@ -1086,7 +1086,7 @@ sap.ui.define([
 			.withExactArgs(sinon.match.same(mLocalQueryOptions), "/TEAMS");
 		this.mock(_Helper).expects("wrapChildQueryOptions")
 			.withExactArgs("/TEAMS", "", sinon.match.same(mChildQueryOptions),
-				sinon.match.same(oModelInterface.fnFetchMetadata))
+				sinon.match.same(oModelInterface.fetchMetadata))
 			.returns(mWrappedChildQueryOptions);
 		oBindingMock.expects("aggregateQueryOptions")
 			.withExactArgs(sinon.match.same(mWrappedChildQueryOptions), false)
@@ -1800,7 +1800,7 @@ sap.ui.define([
 	//*********************************************************************************************
 	QUnit.test("selectKeyProperties", function (assert) {
 		var oModelInterface = {
-				fnFetchMetadata : function () {}
+				fetchMetadata : function () {}
 			},
 			oBinding = new ODataParentBinding({
 				oModel : {
@@ -1815,7 +1815,7 @@ sap.ui.define([
 
 		this.mock(_Helper).expects("selectKeyProperties")
 			.withExactArgs(sinon.match.same(mQueryOptions), "~",
-				sinon.match.same(oModelInterface.fnFetchMetadata));
+				sinon.match.same(oModelInterface.fetchMetadata));
 
 		// code under test
 		oBinding.selectKeyProperties(mQueryOptions, "~");

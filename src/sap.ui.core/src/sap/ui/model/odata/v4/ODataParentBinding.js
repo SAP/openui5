@@ -604,7 +604,7 @@ sap.ui.define([
 				&& (oProperty.$kind === "Property" || oProperty.$kind === "NavigationProperty")) {
 				mWrappedChildQueryOptions = _Helper.wrapChildQueryOptions(sBaseMetaPath,
 					sChildMetaPath, mChildQueryOptions,
-					that.oModel.oRequestor.getModelInterface().fnFetchMetadata);
+					that.oModel.oRequestor.getModelInterface().fetchMetadata);
 				if (mWrappedChildQueryOptions) {
 					return that.aggregateQueryOptions(mWrappedChildQueryOptions, bCacheImmutable);
 				}
@@ -882,7 +882,7 @@ sap.ui.define([
 	 */
 	ODataParentBinding.prototype.selectKeyProperties = function (mQueryOptions, sMetaPath) {
 		_Helper.selectKeyProperties(mQueryOptions, sMetaPath,
-			this.oModel.oRequestor.getModelInterface().fnFetchMetadata);
+			this.oModel.oRequestor.getModelInterface().fetchMetadata);
 	};
 
 	/**
