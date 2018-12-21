@@ -578,7 +578,7 @@ sap.ui.define([
 					/**
 					 * new value of the visible property.
 					 */
-					visible : {type : "boolean"}
+					newVisible : {type : "boolean"}
 				}
 			},
 
