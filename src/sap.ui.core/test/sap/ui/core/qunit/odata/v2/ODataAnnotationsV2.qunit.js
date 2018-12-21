@@ -1,6 +1,6 @@
 /*global QUnit */
 sap.ui.define([
-	"test-resources/sap/ui/core/qunit/odata/data/ODataAnnotationsFakeService",
+	"sap/ui/core/qunit/odata/data/ODataAnnotationsFakeService",
 	"sap/ui/model/odata/ODataMetadata",
 	"sap/ui/model/odata/v2/ODataAnnotations",
 	"sap/ui/model/odata/v2/ODataModel",
