@@ -2,8 +2,8 @@
  * ${copyright}
  */
 
-// Provides control sap.ui.mylib.Example.
-sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control'],
+// Provides control sap.ui.integration.Example.
+sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control', './ExampleRenderer'],
 	function(jQuery, library, Control) {
 	"use strict";
 
