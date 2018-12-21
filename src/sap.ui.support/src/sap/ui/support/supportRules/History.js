@@ -145,7 +145,7 @@ function (library, IssueManager, RuleSetLoader, StringHistoryFormatter, AbapHist
 				rulePreset: oSelectedRulePreset,
 				scope: {
 					executionScope: {
-						type: oContext._oExecutionScope._getType(),
+						type: oContext._oExecutionScope.getType(),
 						selectors: oContext._oExecutionScope._getContext().parentId || oContext._oExecutionScope._getContext().components
 					}
 				},

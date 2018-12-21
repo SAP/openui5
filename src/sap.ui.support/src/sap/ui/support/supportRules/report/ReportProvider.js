@@ -226,7 +226,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/thirdparty/handlebars', 'sap/ui/supp
 		var content = '';
 
 		try {
-			var scopeType = scope.executionScope._getType();
+			var scopeType = scope.executionScope.getType();
 			var scopeDisplaySettings = scope.scopeDisplaySettings.executionScopes[scopeType];
 			var scopeDisplayTitle = scope.scopeDisplaySettings.executionScopeTitle;
 			content += '<div class="sapUiSupportLabel">' + scopeDisplayTitle + ': </div>';
