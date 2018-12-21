@@ -93,7 +93,7 @@ sap.ui.define([
 				// TODO
 				/**
 				 * Event raised when one or more <code>DimMeasureItems</code> has been updated.
-                 * Aggregation <code>DimMeasureItems</code> should be updated outside...
+				 * Aggregation <code>DimMeasureItems</code> should be updated outside...
 				 * @since 1.50.0
 				 */
 				changeDimMeasureItems: {},
@@ -163,7 +163,7 @@ sap.ui.define([
 				}, {
 					key: "category2",
 					text: oRb.getText('COLUMNSPANEL_CHARTROLE_CATEGORY2')
-				},{
+				}, {
 					key: "series",
 					text: oRb.getText('COLUMNSPANEL_CHARTROLE_SERIES')
 				}
@@ -175,8 +175,7 @@ sap.ui.define([
 				}, {
 					key: "axis2",
 					text: oRb.getText('COLUMNSPANEL_CHARTROLE_AXIS2')
-				},
-				{
+				}, {
 					key: "axis3",
 					text: oRb.getText('COLUMNSPANEL_CHARTROLE_AXIS3')
 				}, {
@@ -632,7 +631,7 @@ sap.ui.define([
 					text: "{text}"
 				})
 			},
-            selectionChange: jQuery.proxy(this._onChartTypeChange, this),
+			selectionChange: jQuery.proxy(this._onChartTypeChange, this),
 			layoutData: new sap.m.OverflowToolbarLayoutData({
 				moveToOverflow: false,
 				stayInOverflow: false
@@ -875,6 +874,22 @@ sap.ui.define([
 	};
 
 	P13nDimMeasurePanel.prototype._sortModelItemsByPersistentIndex = function(aModelItems) {
+		// BCP 0020751294 0000593415 2018
+		var oCollator;
+		var sLanguage = sap.ui.getCore().getConfiguration().getLocale().toString();
+		try {
+			if (typeof window.Intl !== 'undefined') {
+				oCollator = window.Intl.Collator(sLanguage, {
+					numeric: true
+				});
+			}
+		} catch (oException) {
+			// this exception can happen if the configured language is not convertible to BCP47 -> getLocale will deliver an exception
+		}
+		// BCP 0020751295 0000514259 2018
+		aModelItems.forEach(function(oMItem, iIndex) {
+			oMItem.localIndex = iIndex;
+		});
 		aModelItems.sort(function(a, b) {
 			if (a.persistentSelected === true && (b.persistentSelected === false || b.persistentSelected === undefined)) {
 				return -1;
@@ -886,17 +901,16 @@ sap.ui.define([
 				} else if (b.persistentIndex > -1 && a.persistentIndex > b.persistentIndex) {
 					return 1;
 				} else {
-					return 0;
+					return a.localIndex - b.localIndex;
 				}
 			} else if ((a.persistentSelected === false || a.persistentSelected === undefined) && (b.persistentSelected === false || b.persistentSelected === undefined)) {
-				if (a.text < b.text) {
-					return -1;
-				} else if (a.text > b.text) {
-					return 1;
-				} else {
-					return 0;
-				}
+				return oCollator ? oCollator.compare(a.text, b.text) : a.text.localeCompare(b.text, sLanguage, {
+					numeric: true
+				});
 			}
+		});
+		aModelItems.forEach(function(oMItem) {
+			delete oMItem.localIndex;
 		});
 	};
 
@@ -1193,8 +1207,8 @@ sap.ui.define([
 			}
 		}, this);
 
-        this._switchVisibilityOfUnselectedModelItems();
-        this._filterModelItemsBySearchText();
+		this._switchVisibilityOfUnselectedModelItems();
+		this._filterModelItemsBySearchText();
 
 		var aMItems = this._getInternalModel().getProperty("/items");
 		// Sort the table items only by persistentIndex

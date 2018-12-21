@@ -992,6 +992,66 @@
             assert.equal(this.oPanel.$().find("tr").find("span")[3].textContent, "A");
             assert.equal(this.oPanel.$().find("tr").find("span")[6].textContent, "B");
         });
+
+        module("sap.m.P13nDimMeasurePanel: FIX 0020751294 0000593415 2018", {
+            setup: function () {
+                this.oPanel = new sap.m.P13nDimMeasurePanel({
+                    items: {
+                        path: "/items",
+                        template: new sap.m.P13nItem({
+                            columnKey: "{columnKey}",
+                            text: "{text}",
+                            aggregationRole: "{aggregationRole}"
+                        })
+                    },
+                    dimMeasureItems: {
+                        path: "/dimMeasureItems",
+                        template: new sap.m.P13nDimMeasureItem({
+                            columnKey: "{columnKey}",
+                            index: "{index}",
+                            visible: "{visible}"
+                        })
+                    },
+                    changeDimMeasureItems: function (oEvent) {
+                        // At least enough for this test!
+                        this.getModel().setProperty("/dimMeasureItems", oEvent.getParameter("items"));
+                    }
+                });
+                this.oDataInitial = {
+                    items: [{
+                        columnKey: "key01",
+                        text: "É",
+                        aggregationRole: "Measure"
+                    }, {
+                        columnKey: "key02",
+                        text: "D",
+                        aggregationRole: "Dimension"
+                    }, {
+                        columnKey: "key03",
+                        text: "F",
+                        aggregationRole: "Dimension"
+                    }, {
+                        columnKey: "key04",
+                        text: "E",
+                        aggregationRole: "Dimension"
+                    }]
+                };
+                this.oPanel.setModel(new sap.ui.model.json.JSONModel(jQuery.extend(true, {}, this.oDataInitial)));
+
+                this.oPanel.placeAt("content");
+                sap.ui.getCore().applyChanges();
+            },
+            teardown: function () {
+                this.oPanel.destroy();
+            }
+        });
+
+        QUnit.test("Sorting of invisible dimensions and measures", function (assert) {
+            assert.equal(this.oPanel.$().find("tr").find("span")[3].textContent, "D");
+            assert.equal(this.oPanel.$().find("tr").find("span")[6].textContent, "E");
+            assert.equal(this.oPanel.$().find("tr").find("span")[9].textContent, "É");
+            assert.equal(this.oPanel.$().find("tr").find("span")[12].textContent, "F");
+        });
     </script>
 
 </head>
