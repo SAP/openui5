@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2014-2018 SAP SE
+ * Copyright (c) 2014-2019 SAP SE
  */
 
 'use strict';
