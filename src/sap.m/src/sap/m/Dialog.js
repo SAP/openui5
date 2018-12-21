@@ -1521,6 +1521,28 @@ function(
 			return oEndButton ? oEndButton.getId() : null;
 		};
 
+		Dialog.prototype.setBeginButton = function (oButton) {
+			var sTheme = Core.getConfiguration().getTheme();
+
+			if (oButton && oButton.isA("sap.m.Button") && sTheme.startsWith("sap_fiori_")) {
+				oButton.setType("Emphasized");
+				oButton.addStyleClass("sapMDialogBeginButton");
+			}
+
+			return this.setAggregation("beginButton", oButton);
+		};
+
+		Dialog.prototype.setEndButton = function (oButton) {
+			var sTheme = Core.getConfiguration().getTheme();
+
+			if (oButton && oButton.isA("sap.m.Button") && sTheme.startsWith("sap_fiori_")) {
+				oButton.setType("Transparent");
+				oButton.addStyleClass("sapMDialogEndButton");
+			}
+
+			return this.setAggregation("endButton", oButton);
+		};
+
 		//get buttons should return the buttons, beginButton and endButton aggregations
 		Dialog.prototype.getAggregation = function (sAggregationName, oDefaultForCreation, bPassBy) {
 			var originalResponse = Control.prototype.getAggregation.apply(this, Array.prototype.slice.call(arguments, 0, 2));
