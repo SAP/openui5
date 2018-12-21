@@ -9097,6 +9097,263 @@ sap.ui.define([
 	});
 
 	//*********************************************************************************************
+	// Scenario: Object page bound to an active entity and its navigation property is $expand'ed via
+	// an own request. Trigger "Edit" bound action to start editing using a return value context and
+	// modify a property in the entity referenced by the navigation property. Activate the inactive
+	// entity via a bound action using another return value context.
+	// The elements referenced via the navigation property must not be taken from the cache.
+	// See CPOUI5UISERVICESV3-1686.
+	QUnit.test("return value contexts: don't reuse caches if context changed", function (assert) {
+		var oActiveArtistContext,
+			oInactiveArtistContext,
+			oModel = createSpecialCasesModel({autoExpandSelect : true}),
+			sView = '\
+<FlexBox id="objectPage">\
+	<Text id="id" text="{ArtistID}" />\
+	<Text id="isActive" text="{IsActiveEntity}" />\
+	<Input id="name" value="{Name}" />\
+	<Table id="table" items="{\
+			path : \'_Publication\',\
+			parameters : {$$ownRequest : true}\
+		}">\
+		<columns><Column/></columns>\
+		<ColumnListItem>\
+			<Input id="price" value="{Price}" />\
+		</ColumnListItem>\
+	</Table>\
+</FlexBox>',
+			that = this;
+		this.expectChange("id")
+			.expectChange("isActive")
+			.expectChange("name")
+			.expectChange("price", []);
+
+		return this.createView(assert, sView, oModel).then(function () {
+			that.expectRequest("Artists(ArtistID='42',IsActiveEntity=true)/_Publication"
+					+ "?$select=Price,PublicationID&$skip=0&$top=100", {
+					value : [{
+						"Price" : "9.99",
+						"PublicationID" : "42-0"
+					}]
+				})
+				.expectRequest("Artists(ArtistID='42',IsActiveEntity=true)"
+					+ "?$select=ArtistID,IsActiveEntity,Name", {
+					"ArtistID" : "42",
+					"IsActiveEntity" : true,
+					"Name" : "Hour Frustrated"
+				})
+				.expectChange("id", "42")
+				.expectChange("isActive", "Yes")
+				.expectChange("name", "Hour Frustrated")
+				.expectChange("price", ["9.99"]);
+
+			oActiveArtistContext = oModel.bindContext("/Artists(ArtistID='42',IsActiveEntity=true)")
+				.getBoundContext();
+			that.oView.setBindingContext(oActiveArtistContext);
+
+			return that.waitForChanges(assert);
+		}).then(function () {
+			var oOperation = that.oModel.bindContext("special.cases.EditAction(...)",
+					that.oView.getBindingContext(), {$$inheritExpandSelect : true});
+
+			that.expectRequest({
+					method : "POST",
+					url : "Artists(ArtistID='42',IsActiveEntity=true)/special.cases.EditAction"
+						+ "?$select=ArtistID,IsActiveEntity,Name",
+					payload : {}
+				}, {
+					"ArtistID" : "42",
+					"IsActiveEntity" : false,
+					"Name" : "Hour Frustrated"
+				});
+
+			return Promise.all([
+				// code under test
+				oOperation.execute(),
+				that.waitForChanges(assert)
+			]);
+		}).then(function (aPromiseResults) {
+			oInactiveArtistContext = aPromiseResults[0];
+
+			that.expectRequest("Artists(ArtistID='42',IsActiveEntity=false)/_Publication"
+					+ "?$select=Price,PublicationID&$skip=0&$top=100", {
+					value : [{
+						"Price" : "9.99",
+						"PublicationID" : "42-0"
+					}]
+				})
+				.expectChange("isActive", "No")
+				.expectChange("price", ["9.99"]);
+
+			that.oView.setBindingContext(oInactiveArtistContext);
+
+			return that.waitForChanges(assert);
+		}).then(function () {
+			var oBinding = that.oView.byId("table").getItems()[0].getCells()[0].getBinding("value");
+
+			that.expectRequest({
+					method : "PATCH",
+					url : "Artists(ArtistID='42',IsActiveEntity=false)/_Publication('42-0')",
+					payload : {"Price" : "8.88"}
+				}, {
+					"@odata.etag" : "ETag1",
+					"Price" : "8.88"
+				})
+				.expectChange("price", "8.88", 0);
+
+			oBinding.setValue("8.88");
+
+			return that.waitForChanges(assert);
+		}).then(function () {
+			// switching back to active context takes values from cache
+			that.expectChange("isActive", "Yes")
+				.expectChange("price", ["9.99"]);
+
+			that.oView.setBindingContext(oActiveArtistContext);
+
+			return that.waitForChanges(assert);
+		}).then(function () {
+			// switching back to inactive context takes values also from cache
+			that.expectChange("isActive", "No")
+				.expectChange("price", ["8.88"]);
+
+			that.oView.setBindingContext(oInactiveArtistContext);
+
+			return that.waitForChanges(assert);
+		}).then(function () {
+			var oOperation = that.oModel.bindContext("special.cases.ActivationAction(...)",
+					that.oView.getBindingContext(), {$$inheritExpandSelect : true});
+
+			that.expectRequest({
+					method : "POST",
+					url : "Artists(ArtistID='42',IsActiveEntity=false)"
+						+ "/special.cases.ActivationAction?$select=ArtistID,IsActiveEntity,Name",
+					payload : {}
+				}, {
+					"ArtistID" : "42",
+					"IsActiveEntity" : true,
+					"Name" : "Hour Frustrated"
+				});
+
+			return Promise.all([
+				// code under test
+				oOperation.execute(),
+				that.waitForChanges(assert)
+			]);
+		}).then(function (aPromiseResults) {
+			var oNewActiveArtistContext = aPromiseResults[0];
+
+			// new active artist context causes dependent binding to reload data
+			that.expectRequest("Artists(ArtistID='42',IsActiveEntity=true)/_Publication"
+					+ "?$select=Price,PublicationID&$skip=0&$top=100", {
+					value : [{
+						"Price" : "8.88",
+						"PublicationID" : "42-0"
+					}]
+				})
+				.expectChange("isActive", "Yes")
+				.expectChange("price", ["8.88"]);
+
+			that.oView.setBindingContext(oNewActiveArtistContext);
+
+			return that.waitForChanges(assert);
+		});
+	});
+
+	//*********************************************************************************************
+	// Scenario: Master list and details containing a nested table with an own request. Use cached
+	// values in nested table if user switches between entries in the master list.
+	// See CPOUI5UISERVICESV3-1686.
+	QUnit.test("Reuse caches in nested tables with own request while switching master list entries",
+			function (assert) {
+		var oModel = createTeaBusiModel({autoExpandSelect : true}),
+			sView = '\
+<Table id="table" items="{/EMPLOYEES}">\
+	<columns><Column/></columns>\
+	<ColumnListItem>\
+		<Text id="name" text="{Name}" />\
+	</ColumnListItem>\
+</Table>\
+<FlexBox id="form" binding="{path : \'\', parameters : {$$ownRequest : true}}">\
+	<Text id="managerId" text="{EMPLOYEE_2_MANAGER/ID}" />\
+	<Table items="{path : \'EMPLOYEE_2_EQUIPMENTS\', parameters : {$$ownRequest : true}}">\
+		<columns><Column/></columns>\
+		<ColumnListItem>\
+			<Text id="equipmentId" text="{ID}" />\
+		</ColumnListItem>\
+	</Table>\
+</FlexBox>',
+			that = this;
+
+		this.expectRequest("EMPLOYEES?$select=ID,Name&$skip=0&$top=100", {
+				"value" : [
+					{"ID" : "42", "Name" : "Jonathan Smith"},
+					{"ID" : "43", "Name" : "Frederic Fall"}
+				]
+			})
+			.expectChange("name", ["Jonathan Smith", "Frederic Fall"])
+			.expectChange("managerId")
+			.expectChange("equipmentId", false);
+
+		return this.createView(assert, sView, oModel).then(function () {
+			that.expectRequest("EMPLOYEES('42')?$select=ID&$expand=EMPLOYEE_2_MANAGER($select=ID)",
+				{
+					"ID" : "42",
+					"EMPLOYEE_2_MANAGER" : {
+						"ID" : "1"
+					}
+				})
+				.expectRequest("EMPLOYEES('42')/EMPLOYEE_2_EQUIPMENTS?$select=Category,ID"
+					+ "&$skip=0&$top=100", {
+					"value" : [
+						{"Category" : "Electronics", "ID" : 99},
+						{"Category" : "Electronics", "ID" : 98}
+					]
+				})
+				.expectChange("managerId", "1")
+				.expectChange("equipmentId", ["99", "98"]);
+
+			// code under test
+			that.oView.byId("form").setBindingContext(
+				that.oView.byId("table").getBinding("items").getCurrentContexts()[0]);
+
+			return that.waitForChanges(assert);
+		}).then(function () {
+			that.expectRequest("EMPLOYEES('43')/EMPLOYEE_2_EQUIPMENTS?$select=Category,ID"
+					+ "&$skip=0&$top=100", {
+					"value" : [
+						{"Category" : "Electronics", "ID" : 97},
+						{"Category" : "Electronics", "ID" : 96}
+					]
+				})
+				.expectRequest("EMPLOYEES('43')?$select=ID&$expand=EMPLOYEE_2_MANAGER($select=ID)",
+				{
+					"ID" : "43",
+					"EMPLOYEE_2_MANAGER" : {
+						"ID" : "2"
+					}
+				})
+				.expectChange("managerId", "2")
+				.expectChange("equipmentId", ["97", "96"]);
+
+			// code under test
+			that.oView.byId("form").setBindingContext(
+				that.oView.byId("table").getBinding("items").getCurrentContexts()[1]);
+
+			return that.waitForChanges(assert);
+		}).then(function () {
+			that.expectChange("managerId", "1")
+				.expectChange("equipmentId", ["99", "98"]);
+
+			// code under test - no request!
+			that.oView.byId("form").setBindingContext(
+				that.oView.byId("table").getBinding("items").getCurrentContexts()[0]);
+
+			return that.waitForChanges(assert);
+		});
+	});
+
+	//*********************************************************************************************
 	// Scenario: Object page bound to active entity with a navigation property $expand'ed via
 	// auto-$expand/$select. The "Edit" bound action on the active entity has the binding parameter
 	// $$inheritExpandSelect set so that it triggers the POST request with the same $expand and

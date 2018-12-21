@@ -1286,7 +1286,7 @@ sap.ui.define([
 				.returns(true);
 			oParentContextMock.expects("fetchValue")
 				.returns(SyncPromise.resolve(oParentEntity));
-			oContextMock.expects("create")
+			oContextMock.expects("createReturnValueContext")
 				.withExactArgs(sinon.match.same(this.oModel), sinon.match.same(oBinding),
 					"/TEAMS('77')")
 				.returns(oReturnValueContextFirstExecute);
@@ -1315,7 +1315,7 @@ sap.ui.define([
 				oParentContextMock.expects("fetchValue")
 					.returns(SyncPromise.resolve(oParentEntity));
 				that.mock(oReturnValueContextFirstExecute).expects("destroy").withExactArgs();
-				oContextMock.expects("create")
+				oContextMock.expects("createReturnValueContext")
 					.withExactArgs(sinon.match.same(that.oModel), sinon.match.same(oBinding),
 						"/TEAMS('77')")
 					.returns(oReturnValueContextSecondExecute);
