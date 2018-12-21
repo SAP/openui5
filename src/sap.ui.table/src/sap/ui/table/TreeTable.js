@@ -461,27 +461,6 @@ sap.ui.define([
 		return this;
 	};
 
-	/**
-	 * Returns the number of selected entries.
-	 * Depending on the binding it is either retrieved from the binding or the selection model.
-	 * @private
-	 */
-	TreeTable.prototype._getSelectedIndicesCount = function() {
-		var iSelectedIndicesCount;
-
-		//when using the treebindingadapter, check if the node is selected
-		var oBinding = this.getBinding("rows");
-
-		if (oBinding && oBinding.getSelectedNodesCount) {
-			return oBinding.getSelectedNodesCount();
-		} else {
-			// selection model case
-			return Table.prototype.getSelectedIndices.call(this);
-		}
-
-		return iSelectedIndicesCount;
-	};
-
 	TreeTable.prototype.setUseGroupMode = function(bGroup) {
 		this.setProperty("useGroupMode", !!bGroup);
 		if (!!bGroup) {
