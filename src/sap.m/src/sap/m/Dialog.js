@@ -933,7 +933,7 @@ function(
 				$dialog.children().each(function() {
 					iTotalChildrenHeight += jQuery(this).outerHeight(true);
 				});
-				if (iTotalChildrenHeight > $dialog.innerHeight()) {
+				if (this.getStretch() ||  iTotalChildrenHeight > $dialog.innerHeight()) {
 					//set the newly calculated size by getting it from the browser rendered layout - by the max-height
 					iDialogHeight = parseFloat($dialog.height()) + BORDER_THICKNESS;
 					$dialogContent.height(Math.round( iDialogHeight));
