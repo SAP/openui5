@@ -62,6 +62,7 @@ sap.ui.define(["sap/ui/fl/Utils", "sap/base/util/uid", 'sap/ui/base/ManagedObjec
 			aButtons.forEach(function (oButton, index) {
 				var oIdToSave,
 					oMenuItem,
+					aCustomData = oButton.getAggregation("customData"),
 					oSelector = oChangeDefinition.content.buttonsIdForSave[index],
 					sButtonText = oModifier.getProperty(oButton, "text");
 
@@ -93,11 +94,17 @@ sap.ui.define(["sap/ui/fl/Utils", "sap/base/util/uid", 'sap/ui/base/ManagedObjec
 				oModifier.setProperty(oIdToSave, "key", "originalButtonId");
 				oModifier.setProperty(oIdToSave, "value", oModifier.getId(oButton));
 
+				if (aCustomData && aCustomData.length > 0) {
+					aCustomData.forEach(function (oCustomData, index) {
+						oModifier.insertAggregation(oMenuItem, "customData", oCustomData, index);
+					});
+				}
+
 				oModifier.removeAggregation(oParent, sParentAggregation, oButton);
 				// adding each button control to the menuItem's dependents aggregation
 				// this way we can save all relevant information it may have
 				oModifier.insertAggregation(oMenuItem, "dependents", oButton);
-				oModifier.insertAggregation(oMenuItem, "customData", oIdToSave);
+				oModifier.insertAggregation(oMenuItem, "customData", oIdToSave, 0);
 				oModifier.insertAggregation(oMenu, "items", oMenuItem, index);
 			});
 
