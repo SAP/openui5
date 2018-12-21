@@ -742,8 +742,12 @@ sap.ui.define([
 					oInput._sCloseTimer = setTimeout(function() {
 						oInput._iPopupListSelectedIndex = -1;
 						oInput.cancelPendingSuggest();
+						if (this._sTypedInValue) {
+							this._oInput.setValue(this._sTypedInValue);
+						}
+						this._oProposedItem = null;
 						oPopup.close();
-					}, 0);
+					}.bind(this), 0);
 				}
 			} else {
 				// hide table on phone when there are no items to display
