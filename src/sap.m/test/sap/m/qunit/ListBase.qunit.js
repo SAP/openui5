@@ -1808,6 +1808,41 @@ sap.ui.define([
 			oList.destroy();
 		});
 
+		QUnit.test("highlight text of the item", function(assert) {
+			var oListItem1 = new StandardListItem({
+				title: "Title of the item"
+			}).placeAt("content");
+
+			var fnTestHighlight = function(sHighlight, sHighlightText, sExpectedHighlightText) {
+				oListItem1.setHighlight(sHighlight);
+				oListItem1.setHighlightText(sHighlightText);
+				sap.ui.getCore().applyChanges();
+				assert.ok(oListItem1.getAccessibilityInfo().description.indexOf(sExpectedHighlightText) > -1,
+					"highlight text exists in the accessibility info of the item");
+			};
+
+			var aMessageTypes = ["Error", "Warning", "Success", "Information"];
+			var aIndicationColors = ["Indication01", "Indication02", "Indication03", "Indication04", "Indication05"];
+
+			// Default text
+			aMessageTypes.forEach(function(sHighlight) {
+				var sDefaultText = sap.ui.getCore().getLibraryResourceBundle("sap.m").getText("LIST_ITEM_STATE_" + sHighlight.toUpperCase());
+				fnTestHighlight(sHighlight, undefined, sDefaultText);
+			});
+
+			// Custom text
+			aMessageTypes.concat(aIndicationColors).forEach(function(sHighlight) {
+				fnTestHighlight(sHighlight, "custom highlight text", "custom highlight text");
+			});
+
+			oListItem1.setHighlight("None");
+			oListItem1.setHighlightText("custom highlight text");
+			assert.ok(oListItem1.getAccessibilityInfo().description.indexOf("custom highlight text") === -1,
+				"If the highlight is 'None', the highlight text does not exist in the accessibility info of the item");
+
+			oListItem1.destroy();
+		});
+
 		QUnit.module("Context Menu");
 
 		QUnit.test("Context Menu", function(assert) {

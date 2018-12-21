@@ -4,23 +4,24 @@
 /**
  * Defines support rules of the Link control of sap.m Table.
  */
-sap.ui.define(["sap/ui/support/library"],
-	function(SupportLib) {
+sap.ui.define(["sap/ui/support/library", "sap/m/ListBase", "sap/ui/core/library"],
+	function(SupportLib, ListBase, coreLibrary) {
 		"use strict";
 
 		// shortcuts
 		var Categories = SupportLib.Categories, // Accessibility, Performance, Memory, ...
 			Severity = SupportLib.Severity,	// Hint, Warning, Error
 			Audiences = SupportLib.Audiences; // Control, Internal, Application
+		var MessageType = coreLibrary.MessageType;
 
 		//**********************************************************
 		// Rule Definitions
 		//**********************************************************
 
 		/**
-		 *Checks, if a link with attached press handler has no href property set
+		 * Checks column widths configuration
 		 */
-		var oTableRule = {
+		var oColumnWidthRule = {
 			id: "definingColumnWidths",
 			audiences: [Audiences.Control],
 			categories: [Categories.Usability],
@@ -56,5 +57,46 @@ sap.ui.define(["sap/ui/support/library"],
 			}
 		};
 
-		return [oTableRule];
+		/*
+		 * Validates whether the highlightText property of the item is correctly set.
+		 */
+		var oItemHighlightTextRule = {
+			id: "accessibleItemHighlight",
+			audiences: [Audiences.Application],
+			categories: [Categories.Accessibility],
+			title: "ListItem: Accessible Highlight",
+			description: "Checks whether the item highlights are accessible.",
+			resolution: "Use the 'highlightText' property of the item to define the semantics of the 'highlight'.",
+			resolutionurls: [{
+				text: "API Reference: sap.m.ListItemBase#getHighlight",
+				href: "https://sapui5.hana.ondemand.com/#/api/sap.m.ListItemBase/methods/getHighlight"
+			}, {
+				text: "API Reference: sap.m.ListItemBase#getHighlightText",
+				href: "https://sapui5.hana.ondemand.com/#/api/sap.m.ListItemBase/methods/getHighlightText"
+			}],
+			check: function(oIssueManager, oCoreFacade, oScope) {
+				function checkItemHighlight(oListItemBase) {
+					var sHighlight = oListItemBase.getHighlight();
+					var sHighlightText = oListItemBase.getHighlightText();
+					var sItemId = oListItemBase.getId();
+					var sListId = oListItemBase.getParent().getId();
+
+					if (!(sHighlight in MessageType) && sHighlightText === "") {
+						oIssueManager.addIssue({
+							severity: Severity.High,
+							details: "Item '" + sItemId + "' does not have a highlight text.",
+							context: {
+								id: sListId
+							}
+						});
+					}
+				}
+
+				oScope.getElementsByClassName(ListBase).forEach(function(oListBase) {
+					oListBase.getItems().forEach(checkItemHighlight);
+				});
+			}
+		};
+
+		return [oColumnWidthRule, oItemHighlightTextRule];
 	}, true);
