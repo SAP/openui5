@@ -63,6 +63,8 @@ sap.ui.define([
 		SortOrder = library.SortOrder,
 		VisibleRowCountMode = library.VisibleRowCountMode;
 
+	var MAX_RENDERING_ITERATIONS = 20; // Consistent with Core.MAX_RENDERING_ITERATIONS
+
 	/**
 	 * Constructor for a new Table.
 	 *
@@ -1638,8 +1640,15 @@ sap.ui.define([
 					var iRowsToDisplay = that._calculateRowsToDisplay(that._determineAvailableSpace());
 
 					if (that.getVisibleRowCount() !== iRowsToDisplay) {
+						that._iRenderingLoopCount = that._iRenderingLoopCount ? that._iRenderingLoopCount + 1 : 1;
+						if (that._iRenderingLoopCount > MAX_RENDERING_ITERATIONS) {
+							Log.error("Rendering has been re-started too many times (" + that._iRenderingLoopCount + ")."
+									  + " Please run the Support Assistant to detect possible configuration issues.", that);
+							return;
+						}
 						that._updateRows(iRowsToDisplay, sReason);
 					} else {
+						delete that._iRenderingLoopCount;
 						registerResizeHandler();
 					}
 				} else {
