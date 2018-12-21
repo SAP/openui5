@@ -1,4 +1,3 @@
-/* global Promise */
 sap.ui.define([
 	"sap/ui/demo/iconexplorer/localService/mockserver"
 ], function (mockserver) {

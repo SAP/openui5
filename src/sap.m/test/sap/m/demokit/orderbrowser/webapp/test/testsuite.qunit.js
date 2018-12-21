@@ -1,4 +1,3 @@
-/* global window, parent, location */
 window.suite = function () {
 	"use strict";
 	var oSuite = new parent.jsUnitTestSuite(),
