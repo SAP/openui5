@@ -54,7 +54,8 @@ sap.ui.define(["sap/ui/fl/Utils"], function(FlexUtils) {
 				var aMenuItemCustomData = oModifier.getAggregation(oMenuItem, "customData"),
 					aMenuItemDependents = oModifier.getAggregation(oMenuItem, "dependents"),
 					sMenuItemId = oModifier.getId(oMenuItem),
-					oButton, sSavedId;
+					oButton,
+					sSavedId;
 
 				// getting the id of the button before the combine action
 				if (aMenuItemCustomData && aMenuItemCustomData.length > 0) {
@@ -105,6 +106,15 @@ sap.ui.define(["sap/ui/fl/Utils"], function(FlexUtils) {
 						return oMenuItem.firePress(oEvent);
 					});
 				}
+
+				if (aMenuItemCustomData && aMenuItemCustomData.length > 0) {
+					aMenuItemCustomData.forEach(function (oCustomData, index) {
+						if (oModifier.getId(oCustomData) !== sCheckForId) {
+							oModifier.insertAggregation(oButton, "customData", oCustomData);
+						}
+					});
+				}
+
 				oModifier.insertAggregation(oParent, sParentAggregation, oButton, iAggregationIndex + index);
 			});
 
