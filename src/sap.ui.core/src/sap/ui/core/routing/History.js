@@ -96,22 +96,6 @@ sap.ui.define(['sap/ui/core/library', './HashChanger', "sap/base/Log", "sap/ui/t
 	};
 
 	History.prototype._setHashChanger = function(oHashChanger) {
-		var aHashChangeEventsInfo;
-
-		var bDirectInstance = (Object.getPrototypeOf(oHashChanger) === HashChanger.prototype);
-
-		if (bDirectInstance || oHashChanger.getRelevantEventsInfo !== HashChanger.prototype.getRelevantEventsInfo || !oHashChanger.getEventNamesForHistory) {
-			// if the oHashChanger is a direct instance of sap.ui.core.routing.HashChanger
-			// or it has overwritten the getRelevantEventInfo function
-			aHashChangeEventsInfo = oHashChanger.getRelevantEventsInfo();
-		} else { // TODO: delete this once the getRelevantEventsInfo is implemented by the custom hash changer in FLP
-			aHashChangeEventsInfo = oHashChanger.getEventNamesForHistory().map(function(sEventName) {
-				return {
-					name: sEventName
-				};
-			});
-		}
-
 		if (this._oHashChanger) {
 			this._unRegisterHashChanger();
 		}
@@ -120,7 +104,7 @@ sap.ui.define(['sap/ui/core/library', './HashChanger', "sap/base/Log", "sap/ui/t
 
 		this._mEventListeners = {};
 
-		aHashChangeEventsInfo.forEach(function(oEventInfo) {
+		oHashChanger.getRelevantEventsInfo().forEach(function(oEventInfo) {
 			var sEventName = oEventInfo.name,
 				oParamMapping = oEventInfo.paramMapping || {},
 				fnListener = this._onHashChange.bind(this, oParamMapping);

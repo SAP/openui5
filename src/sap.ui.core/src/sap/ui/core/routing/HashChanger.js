@@ -98,26 +98,8 @@ sap.ui.define([
 		if (!this._mEventListeners) {
 			this._mEventListeners = {};
 
-			var aEventsInfo,
-				bDirectInstance = Object.getPrototypeOf(this) === HashChanger.prototype;
-
-			if (bDirectInstance || this.getRelevantEventsInfo !== HashChanger.prototype.getRelevantEventsInfo) {
-				aEventsInfo = this.getRelevantEventsInfo();
-			} else { // TODO: delete after getRelevantEventsInfo is implemented in custom hash changer in FLP
-				aEventsInfo = this.getEventNamesForHistory().map(function(sEventName) {
-					return {
-						name: sEventName,
-						paramMapping: {
-							newHash: sEventName === "hashChanged" ? "newHash" : "newAppSpecificRoute"
-						},
-						updateHashOnly: sEventName !== "hashChanged" // The event other than the "hashChanged" event
-						// should only update the hash and not fire hashChanged event on existing routers
-					};
-				});
-			}
-
 			// get all relevant events which should be forwarded to the _oRouterHashChanger
-			aEventsInfo.forEach(function(oEventInfo) {
+			this.getRelevantEventsInfo().forEach(function(oEventInfo) {
 				var sEventName = oEventInfo.name,
 					fnListener = this._onHashChangedForRouterHashChanger.bind(this, oEventInfo);
 
