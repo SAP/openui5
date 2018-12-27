@@ -33,7 +33,8 @@ sap.ui.define(function() {
 		},
 		tests: {
 			"Rules-RuleValidation": {
-				module: "./rules/RuleValidation.qunit"
+				module: "./rules/RuleValidation.qunit",
+				autostart: false
 			},
 			"RuleSerializer": {},
 			"RuleSet": {},
