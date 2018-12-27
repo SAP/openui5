@@ -685,11 +685,13 @@ sap.ui.define(['sap/ui/core/Control', 'sap/ui/core/theming/Parameters', 'sap/ui/
 			rm.addClass("sapUiTableCHT"); // marker for the column header table
 		}
 		rm.writeClasses();
-		rm.addStyle("min-width", oTable._getColumnsWidth(iStartColumn, iEndColumn) + "px");
-		//Firefox and chrome and safari need a defined width for the fixed table
-		if (bFixedTable && (!!Device.browser.firefox || !!Device.browser.chrome || !!Device.browser.safari)) {
-			rm.addStyle("width", oTable._getColumnsWidth(iStartColumn, iEndColumn) + "px");
+
+		if (bFixedTable) {
+			rm.addStyle("width", "auto");
+		} else {
+			rm.addStyle("min-width", oTable._getColumnsWidth(iStartColumn, iEndColumn) + "px");
 		}
+
 		rm.writeStyles();
 		rm.write(">");
 
