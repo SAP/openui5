@@ -307,42 +307,44 @@ sap.ui.define([
 			this.mRequestHandles[sRequestKey].abort();
 		}
 		sGroupId = this.sRefreshGroupId ? this.sRefreshGroupId : this.sGroupId;
-		this.mRequestHandles[sRequestKey] = this.oModel.read(sNodeId, {
-			context: this.oContext,
-			groupId: sGroupId,
-			success: function (oData) {
-				var sNavPath = that._getNavPath(that.getPath());
+		var sAbsolutePath = this.oModel.resolve(this.getPath(), this.getContext());
+		if (sAbsolutePath) {
+			this.mRequestHandles[sRequestKey] = this.oModel.read(sAbsolutePath, {
+				groupId: sGroupId,
+				success: function (oData) {
+					var sNavPath = that._getNavPath(that.getPath());
 
-				if (oData) {
-					// we expect only one root node
-					var oEntry = oData;
-					var sKey =  that.oModel._getKey(oEntry);
-					var oNewContext = that.oModel.getContext('/' + sKey);
+					if (oData) {
+						// we expect only one root node
+						var oEntry = oData;
+						var sKey =  that.oModel._getKey(oEntry);
+						var oNewContext = that.oModel.getContext('/' + sKey);
 
-					that.oRootContext = oNewContext;
-					that._processODataObject(oNewContext.getObject(), sNodeId, sNavPath);
-				} else {
-					that._bRootMissing = true;
-				}
-				that.bNeedsUpdate = true;
-
-				delete that.mRequestHandles[sRequestKey];
-
-				that.oModel.callAfterUpdate(function() {
-					that.fireDataReceived({data: oData});
-				});
-			},
-			error: function (oError) {
-				//Only perform error handling if the request was not aborted intentionally
-				if (oError && oError.statusCode != 0 && oError.statusText != "abort") {
+						that.oRootContext = oNewContext;
+						that._processODataObject(oNewContext.getObject(), sNodeId, sNavPath);
+					} else {
+						that._bRootMissing = true;
+					}
 					that.bNeedsUpdate = true;
-					that._bRootMissing = true;
+
 					delete that.mRequestHandles[sRequestKey];
 
-					that.fireDataReceived();
+					that.oModel.callAfterUpdate(function() {
+						that.fireDataReceived({data: oData});
+					});
+				},
+				error: function (oError) {
+					//Only perform error handling if the request was not aborted intentionally
+					if (oError && oError.statusCode != 0 && oError.statusText != "abort") {
+						that.bNeedsUpdate = true;
+						that._bRootMissing = true;
+						delete that.mRequestHandles[sRequestKey];
+
+						that.fireDataReceived();
+					}
 				}
-			}
-		});
+			});
+		}
 	};
 
 	/**
@@ -1100,18 +1102,18 @@ sap.ui.define([
 
 			// execute the request and use the metadata if available
 			this.fireDataRequested();
+
 			sAbsolutePath = this.oModel.resolve(this.getPath(), this.getContext());
-
-			sGroupId = this.sRefreshGroupId ? this.sRefreshGroupId : this.sGroupId;
-			this.mRequestHandles[sRequestKey] = this.oModel.read(sAbsolutePath, {
-				urlParameters: aParams,
-				success: fnSuccess,
-				error: fnError,
-				sorters: this.aSorters,
-				groupId: sGroupId
-			});
-
-
+			if (sAbsolutePath) {
+				sGroupId = this.sRefreshGroupId ? this.sRefreshGroupId : this.sGroupId;
+				this.mRequestHandles[sRequestKey] = this.oModel.read(sAbsolutePath, {
+					urlParameters: aParams,
+					success: fnSuccess,
+					error: fnError,
+					sorters: this.aSorters,
+					groupId: sGroupId
+				});
+			}
 		}.bind(this));
 	};
 
@@ -1261,14 +1263,16 @@ sap.ui.define([
 			if (this.mRequestHandles[sRequestKey]) {
 				this.mRequestHandles[sRequestKey].abort();
 			}
-			sGroupId = this.sRefreshGroupId ? this.sRefreshGroupId : this.sGroupId;
-			this.mRequestHandles[sRequestKey] = this.oModel.read(sAbsolutePath, {
-				urlParameters: aParams,
-				success: fnSuccess,
-				error: fnError,
-				sorters: this.aSorters,
-				groupId: sGroupId
-			});
+			if (sAbsolutePath) {
+				sGroupId = this.sRefreshGroupId ? this.sRefreshGroupId : this.sGroupId;
+				this.mRequestHandles[sRequestKey] = this.oModel.read(sAbsolutePath, {
+					urlParameters: aParams,
+					success: fnSuccess,
+					error: fnError,
+					sorters: this.aSorters,
+					groupId: sGroupId
+				});
+			}
 		}
 	};
 
@@ -1384,14 +1388,16 @@ sap.ui.define([
 		if (this.mRequestHandles[sRequestKey]) {
 			this.mRequestHandles[sRequestKey].abort();
 		}
-		this.mRequestHandles[sRequestKey] = this.oModel.read(this.getPath(), {
-			context: this.oContext,
-			urlParameters: aURLParams,
-			success: fnSuccess,
-			error: fnError,
-			sorters: this.aSorters,
-			groupId: this.sRefreshGroupId ? this.sRefreshGroupId : this.sGroupId
-		});
+		var sAbsolutePath = this.oModel.resolve(this.getPath(), this.getContext());
+		if (sAbsolutePath) {
+			this.mRequestHandles[sRequestKey] = this.oModel.read(sAbsolutePath, {
+				urlParameters: aURLParams,
+				success: fnSuccess,
+				error: fnError,
+				sorters: this.aSorters,
+				groupId: this.sRefreshGroupId ? this.sRefreshGroupId : this.sGroupId
+			});
+		}
 	};
 
 	/**
