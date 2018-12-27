@@ -37,6 +37,10 @@ sap.ui.define([
 	// shortcut for sap.uxap.ObjectPageHeaderPictureShape
 	var ObjectPageHeaderPictureShape = library.ObjectPageHeaderPictureShape;
 
+	function isFunction(oObject) {
+		return typeof oObject === "function";
+	}
+
 	/**
 	 * Constructor for a new ObjectPageHeader.
 	 *
@@ -458,7 +462,7 @@ sap.ui.define([
 			bChanged = sOldTitle !== sNewTitle;
 
 		this._applyActionProperty("objectTitle", Array.prototype.slice.call(arguments));
-		oParent && oParent._updateRootAriaLabel();
+		oParent && isFunction(oParent._updateRootAriaLabel) && oParent._updateRootAriaLabel();
 
 		if (bChanged && this.mEventRegistry["_titleChange"]) {
 			this.fireEvent("_titleChange", {
