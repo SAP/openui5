@@ -14,7 +14,7 @@ sap.ui.define(["sap/ui/support/library", "/sap/ui/table/library"],
 			VisibleRowCountMode = library.VisibleRowCountMode; // Control, Internal, Application
 
 		var oDynamicPageFitContentRule = {
-			id : "DynamicPageFitContentRule",
+			id : "dynamicPageFitContentRule",
 			title: "DynamicPage fitContent property recommendations",
 			minversion: "1.42",
 			audiences: [Audiences.Application],
