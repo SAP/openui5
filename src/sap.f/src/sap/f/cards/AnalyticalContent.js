@@ -208,6 +208,8 @@ sap.ui.define(['sap/ui/core/Control', 'sap/ui/model/json/JSONModel', 'sap/m/Flex
 				uiConfig: {
 					applicationSet: 'fiori'
 				},
+				height: "100%",
+				width: "100%",
 				vizType: sChartType,
 				dataset: this.oFlattendedDataset,
 				legendVisible: oChartObject.legend,

@@ -8,7 +8,8 @@
 
 .sapFCard {
   position: relative;
-  display: inline-block;
+  display: inline-flex;
+  flex-direction: column;
   vertical-align: top;
   box-sizing: border-box;
   background: @sapUiTileBackground;
@@ -24,6 +25,7 @@
 }
 
 .sapFCard .sapFCardHeader {
+  flex-shrink: 0;
   background: @sapUiTileBackground;
   border-bottom: 1px solid darken(@sapUiTileBackground, 20);
   padding: @sapUiContentPadding;
@@ -166,4 +168,29 @@
     font-size: @sapMFontSmallSize;
     color: @sapUiTileTitleTextColor;
   }
+}
+
+.sapFCard .sapFCardContent {
+  flex: 1 0 auto;
+  overflow: hidden;
+}
+
+html[data-sap-ui-browser^="sf"] .sapFCard .sapFCardContent,
+html[data-sap-ui-browser^="cr"] .sapFCard .sapFCardContent {
+  flex: 1;
+}
+
+.sapFCard:focus:after {
+  content: '';
+  display: block;
+  position: absolute;
+  left: 1px;
+  bottom: 1px;
+  right: 1px;
+  top: 1px;
+  border: 1px dotted @sapUiContentFocusColor;
+}
+
+html[data-sap-ui-browser^="ie"] .sapFCard:focus:after {
+  border: 1px dashed @sapUiContentFocusColor;
 }
