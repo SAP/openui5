@@ -695,7 +695,7 @@ function(
 			return;
 		}
 		var oItem = this.getItemByDomRef(oEvent.target);
-		if (!this.bOpen || !oItem || oItem == this.oHoveredItem) {
+		if (!this.bOpen || !oItem) {
 			return;
 		}
 
