@@ -372,6 +372,25 @@ sap.ui.define([
 		oLabel.destroy();
 	});
 
+	QUnit.test("aria-controls is removed when menu is closed", function (assert) {
+		// Prepare
+		var oGetMenuSub = this.stub(this.oMenuButton, "getMenu", function () {
+			return {
+				getDomRefId: function () { return "Some ID to fake the method"; }
+			};
+		});
+
+		// Act
+		this.oMenuButton._writeAriaAttributes();
+		this.oMenuButton._menuClosed();
+
+		// Assert
+		assert.notOk(this.oMenuButton.getDomRef().hasAttribute("aria-controls"), "aria-controls attribute is removed when menu is closed");
+
+		// Cleanup
+		oGetMenuSub.restore();
+	});
+
 	QUnit.module("Pressing", {
 		beforeEach: function () {
 			this.sut = new MenuButton("menuButton1");
