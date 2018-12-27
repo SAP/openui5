@@ -17,7 +17,9 @@ sap.ui.define(["sap/ui/core/UIComponent"], function (UIComponent) {
 				sample: {
 					stretch: true,
 					files: [
-						"AnchorBarNoPopover.view.xml"
+						"AnchorBarNoPopover.view.xml",
+						"../SharedBlocks/BlockBlue.js",
+						"../SharedBlocks/BlockBlue.view.xml"
 					]
 				}
 			}

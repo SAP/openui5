@@ -14,7 +14,9 @@ sap.ui.define(["sap/ui/core/UIComponent"], function (UIComponent) {
 				sample: {
 					stretch: true,
 					files: [
-						"ObjectPageHeaderActionButtons.view.xml"
+						"ObjectPageHeaderActionButtons.view.xml",
+						"../AnchorBar/mySimpleBlock.js",
+						"../AnchorBar/mySimpleBlock.view.xml"
 					]
 				}
 			}
