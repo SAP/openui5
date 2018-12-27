@@ -15,6 +15,7 @@ sap.ui.define([
 	'sap/ui/model/SorterProcessor',
 	'sap/ui/model/FilterProcessor',
 	'sap/ui/model/FilterType',
+	'sap/ui/model/Context',
 	"sap/base/Log",
 	"sap/base/assert",
 	"sap/ui/thirdparty/jquery"
@@ -31,6 +32,7 @@ sap.ui.define([
 		SorterProcessor,
 		FilterProcessor,
 		FilterType,
+		Context,
 		Log,
 		assert,
 		jQuery
@@ -2040,7 +2042,7 @@ sap.ui.define([
 	 * @private
 	 */
 	ODataTreeBinding.prototype.setContext = function(oContext) {
-		if (this.oContext !== oContext) {
+		if (Context.hasChanged(this.oContext, oContext)) {
 			this.oContext = oContext;
 
 			// If binding is not a relative binding, nothing to do here
