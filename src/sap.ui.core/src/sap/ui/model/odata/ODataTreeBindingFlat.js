@@ -671,20 +671,23 @@ sap.ui.define([
 
 			// TODO: Add additional filters to the read call, as soon as back-end implementations support it
 			// Something like this: aFilters = [new sap.ui.model.Filter([hierarchyFilters].concat(this.aFilters))];
-			oRequest.oRequestHandle = this.oModel.read(this.getPath(), {
-				context: this.oContext,
-				urlParameters: aUrlParameters,
-				filters: [new Filter({
-					filters: aFilters,
-					and: true
-				})],
-				sorters: this.aSorters || [],
-				success: _handleSuccess.bind(this),
-				error: _handleError.bind(this),
-				groupId: this.sRefreshGroupId ? this.sRefreshGroupId : this.sGroupId
-			});
 
-			this._aPendingRequests.push(oRequest);
+			var sAbsolutePath = this.oModel.resolve(this.getPath(), this.getContext());
+			if (sAbsolutePath) {
+				oRequest.oRequestHandle = this.oModel.read(sAbsolutePath, {
+					urlParameters: aUrlParameters,
+					filters: [new Filter({
+						filters: aFilters,
+						and: true
+					})],
+					sorters: this.aSorters || [],
+					success: _handleSuccess.bind(this),
+					error: _handleError.bind(this),
+					groupId: this.sRefreshGroupId ? this.sRefreshGroupId : this.sGroupId
+				});
+
+				this._aPendingRequests.push(oRequest);
+			}
 		}.bind(this));
 	};
 
@@ -961,20 +964,22 @@ sap.ui.define([
 
 			// TODO: Add additional filters to the read call, as soon as back-end implementations support it
 			// Something like this: aFilters = [new sap.ui.model.Filter([hierarchyFilters].concat(this.aFilters))];
-			oRequest.oRequestHandle = this.oModel.read(this.getPath(), {
-				context: this.oContext,
-				urlParameters: aUrlParameters,
-				filters: [new Filter({
-					filters: aFilters,
-					and: true
-				})],
-				sorters: this.aSorters || [],
-				success: _handleSuccess.bind(this),
-				error: _handleError.bind(this),
-				groupId: this.sRefreshGroupId ? this.sRefreshGroupId : this.sGroupId
-			});
+			var sAbsolutePath = this.oModel.resolve(this.getPath(), this.getContext());
+			if (sAbsolutePath) {
+				oRequest.oRequestHandle = this.oModel.read(sAbsolutePath, {
+					urlParameters: aUrlParameters,
+					filters: [new Filter({
+						filters: aFilters,
+						and: true
+					})],
+					sorters: this.aSorters || [],
+					success: _handleSuccess.bind(this),
+					error: _handleError.bind(this),
+					groupId: this.sRefreshGroupId ? this.sRefreshGroupId : this.sGroupId
+				});
 
-			this._aPendingChildrenRequests.push(oRequest);
+				this._aPendingChildrenRequests.push(oRequest);
+			}
 		}.bind(this));
 	};
 
@@ -1188,20 +1193,22 @@ sap.ui.define([
 				aFilters = aFilters.concat(this.aApplicationFilters);
 			}
 
-			oRequest.oRequestHandle = this.oModel.read(this.getPath(), {
-				context: this.oContext,
-				urlParameters: aUrlParameters,
-				filters: [new Filter({
-					filters: aFilters,
-					and: true
-				})],
-				sorters: this.aSorters || [],
-				success: _handleSuccess.bind(this),
-				error: _handleError.bind(this),
-				groupId: this.sRefreshGroupId ? this.sRefreshGroupId : this.sGroupId
-			});
+			var sAbsolutePath = this.oModel.resolve(this.getPath(), this.getContext());
+			if (sAbsolutePath) {
+				oRequest.oRequestHandle = this.oModel.read(sAbsolutePath, {
+					urlParameters: aUrlParameters,
+					filters: [new Filter({
+						filters: aFilters,
+						and: true
+					})],
+					sorters: this.aSorters || [],
+					success: _handleSuccess.bind(this),
+					error: _handleError.bind(this),
+					groupId: this.sRefreshGroupId ? this.sRefreshGroupId : this.sGroupId
+				});
 
-			this._aPendingSubtreeRequests.push(oRequest);
+				this._aPendingSubtreeRequests.push(oRequest);
+			}
 		}.bind(this));
 	};
 
@@ -2828,18 +2835,20 @@ sap.ui.define([
 									"," + this.oTreeProperties["hierarchy-preorder-rank-for"];
 
 		// request the magnitude and preorder
-		this.oModel.read(this.getPath(), {
-			context: this.oContext,
-			urlParameters: this.oModel.createCustomParams(mUrlParameters),
-			filters: [new Filter({
-				filters: aFilters,
-				and: true
-			})],
-			sorters: aSorters,
-			groupId: sGroupId,
-			success: successHandler,
-			error: errorHandler
-		});
+		var sAbsolutePath = this.oModel.resolve(this.getPath(), this.getContext());
+		if (sAbsolutePath) {
+			this.oModel.read(sAbsolutePath, {
+				urlParameters: this.oModel.createCustomParams(mUrlParameters),
+				filters: [new Filter({
+					filters: aFilters,
+					and: true
+				})],
+				sorters: aSorters,
+				groupId: sGroupId,
+				success: successHandler,
+				error: errorHandler
+			});
+		}
 	};
 
 	ODataTreeBindingFlat.prototype._generateSiblingsPositionRequest = function(oNode, mParameters) {
