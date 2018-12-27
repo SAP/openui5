@@ -18,7 +18,6 @@ sap.ui.define([
 	"sap/ui/Device",
 	"sap/ui/core/CustomData",
 	"sap/ui/core/LayoutData",
-	"jquery.sap.global",
 	"sap/ui/qunit/utils/waitForThemeApplied"
 ], function(
 	qutils,
