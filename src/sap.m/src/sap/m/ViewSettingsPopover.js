@@ -1810,7 +1810,7 @@ sap.ui.define([
 					modal          : false,
 					afterOpen      : function (oEvent) {
 						this.fireAfterOpen({openBy: oEvent.getParameter("openBy")});
-						this.$().attr("aria-labelledby", this._getPopoverAriaLabel());
+						this.$().addAriaLabelledBy(this._getPopoverAriaLabel());
 						this._getSegmentedButton().getFocusDomRef().focus(); // focus first tab button after toolbar open
 					}.bind(this),
 					afterClose     : function (oEvent) {
