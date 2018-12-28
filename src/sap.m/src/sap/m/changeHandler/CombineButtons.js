@@ -62,6 +62,7 @@ sap.ui.define(["sap/ui/fl/Utils", "sap/base/util/uid", 'sap/ui/base/ManagedObjec
 			aButtons.forEach(function (oButton, index) {
 				var oIdToSave,
 					oMenuItem,
+					oBindingInfo = oButton.getBindingInfo("enabled"),
 					aCustomData = oButton.getAggregation("customData"),
 					oSelector = oChangeDefinition.content.buttonsIdForSave[index],
 					sButtonText = oModifier.getProperty(oButton, "text");
@@ -80,6 +81,10 @@ sap.ui.define(["sap/ui/fl/Utils", "sap/base/util/uid", 'sap/ui/base/ManagedObjec
 				}).observe(oButton, {
 					properties: ["enabled"]
 				});
+
+				if (oBindingInfo) {
+					oMenuItem.bindProperty("enabled", oBindingInfo);
+				}
 
 				if (sButtonText) {
 					bIsRtl ? aMenuButtonName.unshift(sButtonText) : aMenuButtonName.push(sButtonText);

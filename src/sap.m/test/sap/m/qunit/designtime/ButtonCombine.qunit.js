@@ -8,7 +8,8 @@ sap.ui.define([
 	"sap/ui/fl/Change",
 	"sap/ui/core/util/reflection/JsControlTreeModifier",
 	"sap/ui/core/util/reflection/XmlTreeModifier",
-	"sap/ui/events/jquery/EventExtension"
+	"sap/ui/events/jquery/EventExtension",
+	"sap/ui/model/json/JSONModel"
 ],
 	function(
 		Title,
@@ -19,7 +20,8 @@ sap.ui.define([
 		Change,
 		JsControlTreeModifier,
 		XmlTreeModifier,
-		EventExtension
+		EventExtension,
+		JSONModel
 	) {
 		'use strict';
 
@@ -135,6 +137,58 @@ sap.ui.define([
 
 		});
 
+		QUnit.test("Enable / Disable Button when the property is binded", function(assert) {
+			// Arrange
+			var oModel = new JSONModel();
+			oModel.setData({ mData: { enabled: false }});
+
+			var oBtn1 = new Button({
+				id: "btn1",
+				text: "btn1",
+				enabled: true
+			}),
+			oBtn2 = new Button({
+				id: "btn2",
+				text: "btn2"
+			});
+
+			oBtn1.setModel(oModel);
+			oBtn1.bindProperty("enabled", "/mData/enabled");
+
+			this.oBar = new Bar({
+				id: "idBar",
+				contentRight: [ oBtn1, oBtn2 ]
+			});
+			var oView = new View({content : [
+				this.oBar
+			]});
+
+			var mSpecificChangeInfo = {
+					"parentId": "idFormContainer",
+					"combineFieldIds" : ["btn1", "btn2"]
+				};
+
+			var oChange = new Change({"changeType" : "combineButtons", "content" : {}});
+
+			CombineButtons.completeChangeContent(oChange, mSpecificChangeInfo,{modifier: JsControlTreeModifier, view : oView, appComponent: this.oMockedAppComponent});
+			CombineButtons.applyChange(oChange, this.oBar, {modifier: JsControlTreeModifier, view : oView, appComponent : this.oMockedAppComponent});
+
+			var oCreatedMenuButton = sap.ui.getCore().byId("idBar").getContentRight()[0],
+				oFirstMenuItem = oCreatedMenuButton.getMenu().getItems()[0];
+
+			oCreatedMenuButton.placeAt("content");
+			sap.ui.getCore().applyChanges();
+
+			assert.strictEqual(oFirstMenuItem.getEnabled(), false, "First menuItem is disabled like the button from which was created");
+			assert.strictEqual(oFirstMenuItem.getBindingInfo("enabled") === oBtn1.getBindingInfo("enabled"), true,
+					"First menuItem has the same bindingInfo for the 'enabled' property as the button from which was created");
+
+			// clean up
+			oBtn1.destroy();
+			oBtn2.destroy();
+		});
+
+
 		QUnit.test('CustomData of the Button is copied to MenuItem', function (assert) {
 			var oBtn1 = new Button({
 				id: "btn1",
@@ -182,5 +236,4 @@ sap.ui.define([
 			oBtn2.destroy();
 
 		});
-
 	});
