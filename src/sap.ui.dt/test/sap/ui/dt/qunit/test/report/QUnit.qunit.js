@@ -1,43 +1,85 @@
 /*global QUnit*/
 
 sap.ui.define([
-	"sap/ui/dt/test/ElementEnablementTest",
-	"sap/ui/dt/test/report/QUnit",
-	"sap/m/Button" // Used implicitly by ElementEnablementTest
-],
-function (
-	ElementEnablementTest,
-	ReportQUnit
-) {
-	"use strict";
+		"sap/ui/dt/test/report/QUnit",
+		"sap/ui/thirdparty/sinon-4",
+		"sap/m/Button" // Used implicitly by ElementEnablementTest
+	],
+	function (
+		ReportQUnit,
+		sinon
+	) {
+		"use strict";
 
-	var iQUnitTests = 0;
+		var sandbox = sinon.sandbox.create();
 
-	QUnit.log(function() {
-		iQUnitTests++;
-	});
+		QUnit.module("sap.ui.dt.test.report.QUnit", {
+			afterEach: function () {
+				sandbox.restore();
+			}
+		}, function () {
+			QUnit.test("when a Test Report is created with mock data", function (assert) {
+				assert.expect(10);
+				var oModuleStub = sandbox.stub(QUnit, "module");
+				var oTestStub = sandbox.stub(QUnit, "test");
 
-	var oElementEnablementTest = new ElementEnablementTest({
-		type : "sap.m.Button"
-	});
+				var oData = {
+					name: "Element Enablement Test",
+					result: true,
+					children: [{
+						name: "sap.m.Button",
+						message: "Given that a DesignTime is created for sap.m.Button",
+						result: true,
+						children: [{
+							name: "Aggregations",
+							message: "message",
+							result: true,
+							children: [{
+								name: "tooltip",
+								message: "Aggregation ignored",
+								result: true,
+								children: []
+							}, {
+								name: "customData",
+								message: "Aggregation ignored",
+								result: true,
+								children: []
+							}, {
+								name: "layoutData",
+								message: "Aggregation ignored",
+								result: true,
+								children: []
+							}, {
+								name: "withChildren",
+								message: "withChildren ignored",
+								result: true,
+								children: [{
+									result: true,
+									message: "foo"
+								}, {
+									result: true,
+									message: "bar"
+								}]
+							}]
+						}]
+					}]
+				};
+				var oQUnit = new ReportQUnit({
+					data: oData
+				});
+				assert.ok(oQUnit, "the QUnit instance is created");
+				assert.equal(oModuleStub.callCount, 1, "one module was created");
+				assert.equal(oTestStub.callCount, 1, "one test was created");
+				assert.equal(oModuleStub.firstCall.args[0], "Given that a DesignTime is created for sap.m.Button", "the module title is correct");
+				assert.equal(oTestStub.firstCall.args[0], "Aggregations: message", "the test title is correct");
 
-	oElementEnablementTest.run().then(function(oResult) {
-		var oQUnit = new ReportQUnit({
-			data: oResult
+				// call the assertions that would run in a separate test
+				oTestStub.firstCall.args[1](assert);
+				oQUnit.destroy();
+			});
 		});
 
-		QUnit.module("Given that a sap.m.Button is tested");
-
-		QUnit.test("when the result is returned and displayed with the QUnit report, then", function (assert) {
-			assert.ok(oQUnit, "the QUnit instance is created");
-			assert.ok(iQUnitTests > 4, "and the QUnit tests were running");
-			oQUnit.destroy();
-			oElementEnablementTest.destroy();
+		QUnit.done(function () {
+			jQuery("#qunit-fixture").hide();
 		});
-
 	});
-
-	QUnit.done(function() {
-		jQuery("#qunit-fixture").hide();
-	});
-});
