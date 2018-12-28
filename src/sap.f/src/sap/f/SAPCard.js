@@ -56,18 +56,16 @@ sap.ui.define([
 				/**
 				 * Defines the width of the Card
 				 *
-				 * <b>Note:</b> If no width is set, sap.f.Card will take 100% of its parent container
 				 * @since 1.61
 				 */
-				width: { type: "sap.ui.core.CSSSize", group: "Appearance", defaultValue: "100%" },
+				width: { type: "sap.ui.core.CSSSize", group: "Appearance", defaultValue: "auto" },
 
 				/**
 				 * Defines the height of the Card
 				 *
-				 * <b>Note:</b> If no height is set, sap.f.Card will take 100% of its parent container
 				 * @since 1.61
 				 */
-				height: { type: "sap.ui.core.CSSSize", group: "Appearance", defaultValue: "100%" }
+				height: { type: "sap.ui.core.CSSSize", group: "Appearance", defaultValue: "auto" }
 			},
 			aggregations: {
 				_header: { type: "sap.f.cards.IHeader", multiple: false },
