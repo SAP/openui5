@@ -762,6 +762,9 @@ sap.ui.define([
 				var oDate1Old = this.getDateValue();
 				var oDate2Old = this.getSecondDateValue();
 
+				// the selected range includes all of the hours from the second date
+				oDate2.setHours(11, 59, 59);
+
 				var sValue;
 				if (!deepEqual(oDate1, oDate1Old) || !deepEqual(oDate2, oDate2Old)) {
 					// compare Dates because value can be the same if only 2 digits for year

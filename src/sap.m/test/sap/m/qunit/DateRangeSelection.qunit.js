@@ -569,7 +569,7 @@ sap.ui.define([
 			//Assert
 			assert.equal(oDRS.getDateValue().toString(), new Date(2017, 11, 10).toString(),
 				"dateValue corresponds to the chosen by the end user date range in local time");
-			assert.equal(oDRS.getSecondDateValue().toString(), new Date(2017, 11, 20).toString(),
+			assert.equal(oDRS.getSecondDateValue().toString(), new Date(2017, 11, 20, 11, 59, 59).toString(),
 				"secondDateValue corresponds to the chosen by the end user date range in local time");
 
 			assert.equal(oDRS.getValue(), oDateInterval.formatValue([
