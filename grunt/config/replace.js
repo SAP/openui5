@@ -20,7 +20,7 @@ module.exports = function(grunt, config) {
 				{
 					from: /(?:\$\{copyright\}|@copyright@)/g,
 					to:
-						'UI development toolkit for HTML5 (OpenUI5)' + '\n' +
+						'OpenUI5' + '\n' +
 						' * (c) Copyright 2009-' + new Date().getFullYear() + ' SAP SE or an SAP affiliate company.' + '\n' +
 						' * Licensed under the Apache License, Version 2.0 - see LICENSE.txt.'
 				},
