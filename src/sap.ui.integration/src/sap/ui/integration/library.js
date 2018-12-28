@@ -21,7 +21,7 @@ sap.ui.define(["sap/ui/base/DataType",
 		types: [
 		],
 		controls: [
-			"sap.ui.integration.Example"
+			"sap.ui.integration.widgets.Card"
 		],
 		elements: [
 		],

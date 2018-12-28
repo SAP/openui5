@@ -84,11 +84,6 @@ sap.ui.define(function () {
 					only: ["sap/f/Router"]
 				}
 			},
-			"SAPCard": {
-				coverage: {
-					only: ["sap/f/SAPCard"]
-				}
-			},
 			"SemanticContainer": {
 				coverage: {
 					only: ["sap/f/SemanticContainer"]

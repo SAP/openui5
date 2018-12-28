@@ -1,11 +1,11 @@
 /* global QUnit */
 
 sap.ui.define([
-	"sap/f/SAPCard",
+	"sap/ui/integration/widgets/Card",
 	"sap/ui/core/Core"
 ],
 function (
-	SAPCard,
+	Card,
 	Core
 ) {
 	"use strict";
@@ -218,7 +218,7 @@ function (
 		// Arrange
 		var done = assert.async();
 
-		var oCard = new SAPCard("somecard", {
+		var oCard = new Card("somecard", {
 			manifest: oManifest_ListCard,
 			width: "400px",
 			height: "600px"
@@ -251,7 +251,7 @@ function (
 
 	QUnit.module("Card headers", {
 		beforeEach: function () {
-			this.oCard = new SAPCard("somecard", {
+			this.oCard = new Card("somecard", {
 				width: "400px",
 				height: "600px"
 			});

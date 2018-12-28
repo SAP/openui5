@@ -2,6 +2,7 @@
     xmlns="sap.m"
     xmlns:mvc="sap.ui.core.mvc"
 	xmlns:f="sap.f"
+	xmlns:w="sap.ui.integration.widgets"
 	xmlns:grid="sap.ui.layout.cssgrid"
     controllerName="sap.f.cardsdemo.controller.Zflow"
     displayBlock="true">
@@ -77,75 +78,75 @@
 
 					<grid:items>
 
-						<f:SAPCard id="default2x2" manifest="{manifests>/zflow/card1}">
-							<f:layoutData>
+						<w:Card id="default2x2" manifest="{manifests>/zflow/card1}">
+							<w:layoutData>
 								<grid:GridItemLayoutData gridRow="span 2" gridColumn="span 2" />
-							</f:layoutData>
-						</f:SAPCard>
+							</w:layoutData>
+						</w:Card>
 
-						<f:SAPCard id="default4x2" manifest="{manifests>/zflow/card2}">
-							<f:layoutData>
+						<w:Card id="default4x2" manifest="{manifests>/zflow/card2}">
+							<w:layoutData>
 								<grid:GridItemLayoutData gridRow="span 2" gridColumn="span 4" />
-							</f:layoutData>
-						</f:SAPCard>
+							</w:layoutData>
+						</w:Card>
 
-						<f:SAPCard id="default1x1" manifest="{manifests>/zflow/card3}"></f:SAPCard>
+						<w:Card id="default1x1" manifest="{manifests>/zflow/card3}"></w:Card>
 
-						<f:SAPCard id="default2x1" manifest="{manifests>/zflow/card4}">
-							<f:layoutData>
+						<w:Card id="default2x1" manifest="{manifests>/zflow/card4}">
+							<w:layoutData>
 								<grid:GridItemLayoutData gridColumn="span 2" />
-							</f:layoutData>
-						</f:SAPCard>
+							</w:layoutData>
+						</w:Card>
 
-						<f:SAPCard id="ddefault1x1" manifest="{manifests>/zflow/card5}"></f:SAPCard>
+						<w:Card id="ddefault1x1" manifest="{manifests>/zflow/card5}"></w:Card>
 
-						<f:SAPCard id="default4x1" manifest="{manifests>/zflow/card6}">
-							<f:layoutData>
+						<w:Card id="default4x1" manifest="{manifests>/zflow/card6}">
+							<w:layoutData>
 								<grid:GridItemLayoutData gridColumn="span 4" />
-							</f:layoutData>
-						</f:SAPCard>
+							</w:layoutData>
+						</w:Card>
 
-						<f:SAPCard id="ddefault6x2" manifest="{manifests>/zflow/card7}">
-							<f:layoutData>
+						<w:Card id="ddefault6x2" manifest="{manifests>/zflow/card7}">
+							<w:layoutData>
 								<grid:GridItemLayoutData gridRow="span 6" gridColumn="span 2" />
-							</f:layoutData>
-						</f:SAPCard>
+							</w:layoutData>
+						</w:Card>
 
-						<f:SAPCard id="default4x4" manifest="{manifests>/zflow/card8}">
-							<f:layoutData>
+						<w:Card id="default4x4" manifest="{manifests>/zflow/card8}">
+							<w:layoutData>
 								<grid:GridItemLayoutData gridRow="span 4" gridColumn="span 4" />
-							</f:layoutData>
-						</f:SAPCard>
+							</w:layoutData>
+						</w:Card>
 
-						<f:SAPCard id="default4x4Image" manifest="{manifests>/zflow/card9}">
-							<f:layoutData>
+						<w:Card id="default4x4Image" manifest="{manifests>/zflow/card9}">
+							<w:layoutData>
 								<grid:GridItemLayoutData gridRow="span 4" gridColumn="span 4" />
-							</f:layoutData>
-						</f:SAPCard>
+							</w:layoutData>
+						</w:Card>
 
-						<f:SAPCard id="1default2x2" manifest="{manifests>/zflow/card10}">
-							<f:layoutData>
+						<w:Card id="1default2x2" manifest="{manifests>/zflow/card10}">
+							<w:layoutData>
 								<grid:GridItemLayoutData gridRow="span 2" gridColumn="span 2" />
-							</f:layoutData>
-						</f:SAPCard>
+							</w:layoutData>
+						</w:Card>
 
-						<f:SAPCard id="2default2x2" manifest="{manifests>/zflow/card11}">
-							<f:layoutData>
+						<w:Card id="2default2x2" manifest="{manifests>/zflow/card11}">
+							<w:layoutData>
 								<grid:GridItemLayoutData gridRow="span 2" gridColumn="span 2" />
-							</f:layoutData>
-						</f:SAPCard>
+							</w:layoutData>
+						</w:Card>
 
-						<f:SAPCard id="default6x4" manifest="{manifests>/zflow/card12}">
-							<f:layoutData>
+						<w:Card id="default6x4" manifest="{manifests>/zflow/card12}">
+							<w:layoutData>
 								<grid:GridItemLayoutData gridRow="span 4" gridColumn="span 6" />
-							</f:layoutData>
-						</f:SAPCard>
+							</w:layoutData>
+						</w:Card>
 
-						<f:SAPCard id="2default6x4" manifest="{manifests>/zflow/card13}">
-							<f:layoutData>
+						<w:Card id="2default6x4" manifest="{manifests>/zflow/card13}">
+							<w:layoutData>
 								<grid:GridItemLayoutData gridRow="span 4" gridColumn="span 6" />
-							</f:layoutData>
-						</f:SAPCard>
+							</w:layoutData>
+						</w:Card>
 
 					</grid:items>
 				</grid:CSSGrid>

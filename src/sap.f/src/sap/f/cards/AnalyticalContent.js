@@ -38,7 +38,7 @@ sap.ui.define(['sap/ui/core/Control', 'sap/ui/model/json/JSONModel', 'sap/m/Flex
 					chart: {
 						type: "object"
 					},
-					manifestContent: { type: "object" }
+					configuration: { type: "object" }
 				},
 				aggregations: {
 					_content: { multiple: false, visibility: "hidden" }
@@ -54,9 +54,9 @@ sap.ui.define(['sap/ui/core/Control', 'sap/ui/model/json/JSONModel', 'sap/m/Flex
 			this.setModel(oModel);
 		};
 
-		AnalyticalContent.prototype.setManifestContent = function (oContent) {
+		AnalyticalContent.prototype.setConfiguration = function (oContent) {
 
-			this.setProperty("manifestContent", oContent);
+			this.setProperty("configuration", oContent);
 
 			if (!oContent) {
 				return;

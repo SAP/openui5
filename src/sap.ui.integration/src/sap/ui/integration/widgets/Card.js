@@ -4,7 +4,7 @@
 sap.ui.define([
 	"sap/ui/core/Control",
 	"sap/ui/core/Manifest",
-	"sap/f/cards/CardManifest",
+	"sap/ui/integration/widgets/CardManifest",
 	"sap/base/Log",
 	"sap/f/CardRenderer"
 ], function (
@@ -42,13 +42,13 @@ sap.ui.define([
 	 * @experimental
 	 * @since 1.60
 	 * @see {@link TODO Card}
-	 * @alias sap.f.Card
+	 * @alias sap.ui.integration.widgets.Card
 	 * @ui5-metamodel This control/element also will be described in the UI5 (legacy) designtime metamodel
 	 */
-	var SAPCard = Control.extend("sap.f.SAPCard", /** @lends sap.f.Card.prototype */ {
+	var Card = Control.extend("sap.ui.integration.widgets.Card", /** @lends sap.ui.integration.widgets.Card.prototype */ {
 		metadata: {
-			library: "sap.f",
-			interfaces: ["sap.f.cards.ICard"],
+			library: "sap.ui.integration",
+			interfaces: ["sap.f.ICard"],
 			properties: {
 
 				manifest: { type: "any", defaultValue: "" },
@@ -79,14 +79,14 @@ sap.ui.define([
 	 * Called on destroying the control
 	 * @private
 	 */
-	SAPCard.prototype.exit = function () {
+	Card.prototype.exit = function () {
 		if (this._oCardManifest) {
 			this._oCardManifest.destroy();
 			this._oCardManifest = null;
 		}
 	};
 
-	SAPCard.prototype.setManifest = function (vValue) {
+	Card.prototype.setManifest = function (vValue) {
 		this.setBusy(true);
 		this.setProperty("manifest", vValue, true);
 		if (typeof vValue === "string") {
@@ -100,7 +100,7 @@ sap.ui.define([
 		return this;
 	};
 
-	SAPCard.prototype.initManifest = function (sManifestUrl) {
+	Card.prototype.initManifest = function (sManifestUrl) {
 		var oPromise = Manifest.load({
 			manifestUrl: sManifestUrl,
 			async: true
@@ -121,20 +121,20 @@ sap.ui.define([
 	/**
 	 * Apply all manifest settings after the manifest is fully ready
 	 */
-	SAPCard.prototype._applyManifestSettings = function () {
+	Card.prototype._applyManifestSettings = function () {
 		this._setHeaderFromManifest();
 		this._setContentFromManifest();
 	};
 
-	SAPCard.prototype._getHeader = function () {
+	Card.prototype._getHeader = function () {
 		return this.getAggregation("_header");
 	};
 
-	SAPCard.prototype._getContent = function () {
+	Card.prototype._getContent = function () {
 		return this.getAggregation("_content");
 	};
 
-	SAPCard.prototype._setHeaderFromManifest = function () {
+	Card.prototype._setHeaderFromManifest = function () {
 		var oHeader = this._oCardManifest.get("sap.card/header");
 
 		if (!oHeader) {
@@ -149,7 +149,7 @@ sap.ui.define([
 		}
 	};
 
-	SAPCard.prototype._setContentFromManifest = function () {
+	Card.prototype._setContentFromManifest = function () {
 		var sCardType = this._oCardManifest.get("sap.card/type");
 
 		if (!sCardType) {
@@ -172,7 +172,7 @@ sap.ui.define([
 		}
 	};
 
-	SAPCard.prototype._setCardHeaderFromManifest = function (CardHeader) {
+	Card.prototype._setCardHeaderFromManifest = function (CardHeader) {
 		var oClonedSettings = jQuery.extend(true, {}, this._oCardManifest.get("sap.card/header")),
 			sType = oClonedSettings.type;
 
@@ -192,22 +192,22 @@ sap.ui.define([
 
 		if (sType === "numeric") {
 			this.setAggregation("_header", new CardHeader({
-				manifestContent: oClonedSettings // TODO change when the final approach is cleared
+				configuration: oClonedSettings // TODO change when the final approach is cleared
 			}));
 		} else {
 			this.setAggregation("_header", new CardHeader(oClonedSettings));
 		}
 	};
 
-	SAPCard.prototype._setCardContentFromManifest = function(CardContent) {
+	Card.prototype._setCardContentFromManifest = function(CardContent) {
 		var mSettings = this._oCardManifest.get("sap.card/content");
 		var oClonedSettings = {
-			manifestContent: jQuery.extend(true, {}, mSettings)
+			configuration: jQuery.extend(true, {}, mSettings)
 		};
 		var oContent = new CardContent(oClonedSettings);
 		this.setAggregation("_content", oContent);
 		this.setBusy(false);
 	};
 
-	return SAPCard;
+	return Card;
 });

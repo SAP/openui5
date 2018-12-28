@@ -18,6 +18,14 @@ sap.ui.define(function() {
 			autostart: true
 		},
 		tests: {
+			"Card": {
+				coverage: {
+					only: [
+						"sap/ui/integration/widgets/Card",
+						"sap/ui/integration/widgets/CardManifest"
+					]
+				}
+			}
 		}
 	};
 });

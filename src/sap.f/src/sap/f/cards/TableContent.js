@@ -35,7 +35,7 @@ sap.ui.define(["sap/m/Table", "sap/ui/core/Control", "sap/ui/model/json/JSONMode
 		var TableContent = Control.extend("sap.f.cards.TableContent", {
 			metadata: {
 				properties: {
-					manifestContent: { type: "object" }
+					configuration: { type: "object" }
 				},
 				defaultAggregation: "columns",
 				aggregations: {
@@ -73,9 +73,9 @@ sap.ui.define(["sap/m/Table", "sap/ui/core/Control", "sap/ui/model/json/JSONMode
 			return oTable;
 		};
 
-		TableContent.prototype.setManifestContent = function (oContent) {
+		TableContent.prototype.setConfiguration = function (oContent) {
 
-			this.setProperty("manifestContent", oContent);
+			this.setProperty("configuration", oContent);
 
 			if (!oContent) {
 				return;
