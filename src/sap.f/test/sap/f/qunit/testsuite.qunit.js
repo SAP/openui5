@@ -34,6 +34,11 @@ sap.ui.define(function () {
 					only: ["sap/f/Avatar"]
 				}
 			},
+			"Card": {
+				coverage: {
+					only: ["sap/f/Card"]
+				}
+			},
 			"DynamicPage": {
 				coverage: {
 					only: ["sap/f/DynamicPage"]
@@ -77,6 +82,11 @@ sap.ui.define(function () {
 			"Router": {
 				coverage: {
 					only: ["sap/f/Router"]
+				}
+			},
+			"SAPCard": {
+				coverage: {
+					only: ["sap/f/SAPCard"]
 				}
 			},
 			"SemanticContainer": {
