@@ -8,7 +8,6 @@ sap.ui.define([
 	"sap/ui/dt/OverlayRegistry",
 	"sap/ui/dt/OverlayUtil",
 	"sap/ui/dt/Util",
-	"sap/ui/core/Control",
 	"sap/base/util/includes"
 ],
 function (
@@ -16,7 +15,6 @@ function (
 	OverlayRegistry,
 	OverlayUtil,
 	DtUtil,
-	Control,
 	includes
 ) {
 	"use strict";
@@ -86,15 +84,16 @@ function (
 		}
 	};
 
-	Stretch.prototype.addStretchCandidate = function (oElement) {
+	Stretch.prototype.addStretchCandidate = function (oOverlay) {
+		var oElement = oOverlay.getElement();
 		if (!includes(this.getStretchCandidates(), oElement.getId())) {
 			this.addAssociation("stretchCandidates", oElement);
 		}
 	};
 
-	Stretch.prototype.removeStretchCandidate = function (oElement) {
-		this.removeAssociation("stretchCandidates", oElement);
-		this._toggleStyleClass(oElement, false);
+	Stretch.prototype.removeStretchCandidate = function (oOverlay) {
+		this.removeAssociation("stretchCandidates", oOverlay.getElement());
+		this._toggleStyleClass(oOverlay, false);
 	};
 
 	/**
@@ -112,7 +111,7 @@ function (
 	 * @override
 	 */
 	Stretch.prototype.deregisterElementOverlay = function (oOverlay) {
-		this._toggleStyleClass(oOverlay.getElement(), false);
+		this._toggleStyleClass(oOverlay, false);
 	};
 
 	/**
@@ -250,26 +249,28 @@ function (
 	};
 
 	Stretch.prototype._reevaluateStretching = function (oOverlay) {
-		var oElement = oOverlay.getElement();
-		if (oElement instanceof Control) {
-			var bIsStretched = oElement.hasStyleClass(Stretch.STRETCHSTYLECLASS);
-			var bShouldBeStretched = this._childrenAreSameSize(oOverlay, undefined, bIsStretched);
-			if (bIsStretched && !bShouldBeStretched) {
-				this.removeStretchCandidate(oElement);
-			} else if (!bIsStretched && bShouldBeStretched) {
-				this.addStretchCandidate(oElement);
-				return true;
+		if (!oOverlay.bIsDestroyed) {
+			var $Element = oOverlay.getAssociatedDomRef();
+			if ($Element) {
+				var bIsStretched = $Element.hasClass(Stretch.STRETCHSTYLECLASS);
+				var bShouldBeStretched = this._childrenAreSameSize(oOverlay, undefined, bIsStretched);
+				if (bIsStretched && !bShouldBeStretched) {
+					this.removeStretchCandidate(oOverlay);
+				} else if (!bIsStretched && bShouldBeStretched) {
+					this.addStretchCandidate(oOverlay);
+					return true;
+				}
 			}
 		}
 	};
 
 	Stretch.prototype._checkParentAndAddToStretchCandidates = function (oOverlay) {
 		var oParentOverlay = oOverlay.getParentElementOverlay();
-		var oParentElement = oParentOverlay && oParentOverlay.getElement();
-		if (oParentElement instanceof Control) {
+		var $ParentElement = oParentOverlay && oParentOverlay.getAssociatedDomRef();
+		if ($ParentElement) {
 			if (this._startAtSamePosition(oParentOverlay, oOverlay)) {
 				if (this._childrenAreSameSize(oParentOverlay)) {
-					this.addStretchCandidate(oParentElement);
+					this.addStretchCandidate(oParentOverlay);
 				}
 			}
 		}
@@ -309,7 +310,7 @@ function (
 		if (bIsAlreadyStretched) {
 			iHeight -= oReferenceOverlay.getElement().$().css("padding-top");
 		}
-		var iParentSize = oParentGeometry.size.width * iHeight;
+		var iParentSize = Math.round(oParentGeometry.size.width) * Math.round(iHeight);
 		aChildOverlays = aChildOverlays || OverlayUtil.getAllChildOverlays(oReferenceOverlay);
 
 		var aChildrenGeometry = aChildOverlays.map(function (oChildOverlay) {
@@ -322,7 +323,7 @@ function (
 			return false;
 		}
 
-		var iChildrenSize = oChildrenGeometry.size.width * oChildrenGeometry.size.height;
+		var iChildrenSize = Math.round(oChildrenGeometry.size.width) * Math.round(oChildrenGeometry.size.height);
 		return iChildrenSize === iParentSize;
 	};
 
@@ -374,15 +375,18 @@ function (
 			var bAtLeastOneChildEditable = this._atLeastOneDescendantEditable(oOverlay, aChildOverlays);
 			var bAddClass = oOverlay.getEditable() && bAtLeastOneChildEditable;
 
-			this._toggleStyleClass(oOverlay.getElement(), bAddClass);
+			this._toggleStyleClass(oOverlay, bAddClass);
 		}, this);
 	};
 
-	Stretch.prototype._toggleStyleClass = function (oElement, bAddClass) {
-		if (bAddClass && oElement.addStyleClass) {
-			oElement.addStyleClass(Stretch.STRETCHSTYLECLASS);
-		} else if (!bAddClass && oElement.removeStyleClass) {
-			oElement.removeStyleClass(Stretch.STRETCHSTYLECLASS);
+	Stretch.prototype._toggleStyleClass = function (oOverlay, bAddClass) {
+		var $Element = oOverlay.getAssociatedDomRef();
+		if ($Element) {
+			if (bAddClass) {
+				$Element.addClass(Stretch.STRETCHSTYLECLASS);
+			} else {
+				$Element.removeClass(Stretch.STRETCHSTYLECLASS);
+			}
 		}
 	};
 
