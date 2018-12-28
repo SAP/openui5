@@ -1019,8 +1019,8 @@
 					"sideIndicators": [
 						{
 							"title": "Decrease",
-							"number": "24",
-							"unit": "weeks"
+							"number": "245438095430954.4532423",
+							"unit": "%"
 						}
 					]
 				}
@@ -1051,12 +1051,12 @@
 					"details": "Details, additional information, will directly truncate after there is no more space.Details, additional information, will directly truncate after there is no more space.",
 					"sideIndicators": [
 						{
-							"title": "Long Target Long Target Long Target Long Target Long Target Long Target Long Target Long Target Long Target Long Target Long Target Long Target Long Target Long Target Long Target",
+							"title": "Target Long Target Long Target Long Target Long",
 							"number": "3252.234",
 							"unit": "K"
 						},
 						{
-							"title": "Long Deviation Long Deviation",
+							"title": "Deviation Long Deviation Deviation Long Deviation",
 							"number": "22.43",
 							"unit": "%"
 						}

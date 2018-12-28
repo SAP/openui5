@@ -23,9 +23,26 @@ sap.ui.define([],
 			oRm.writeStyles();
 			oRm.write(">");
 
-			oRm.renderControl(oControl.getAggregation("_title"));
+			var oTitle = oControl.getAggregation("_title");
+			oTitle.addStyleClass("sapFCardHeaderSITitle");
+			oRm.renderControl(oTitle);
 
-			oRm.renderControl(oControl.getAggregation("_number"));
+			oRm.write("<div");
+			oRm.addClass("sapFCardHeaderSINumber");
+			oRm.writeClasses();
+			oRm.write(">");
+
+			var oNumber = oControl.getAggregation("_number");
+			if (oNumber) {
+				oRm.renderControl(oNumber);
+			}
+
+			var oUnit = oControl.getAggregation("_unit");
+			if (oUnit) {
+				oRm.renderControl(oUnit);
+			}
+
+			oRm.write("</div>");
 
 			oRm.write("</div>");
 		};
