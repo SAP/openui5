@@ -4078,6 +4078,111 @@ sap.ui.define([
 	});
 
 	//*********************************************************************************************
+	// Scenario: Call a bound action on a collection and check that return value context has right
+	// path and messages are reported as expected. Refreshing the return value context updates also
+	// messages properly. (CPOUI5UISERVICESV3-1674)
+	QUnit.test("Bound action on collection", function (assert) {
+		var oExecutePromise,
+			oModel = createSpecialCasesModel({autoExpandSelect : true}),
+			oReturnValueContext,
+			sView = '\
+<Table id="table" items="{path : \'/Artists\', parameters : {$select : \'Messages\'}}">\
+	<columns><Column/><Column/></columns>\
+	<ColumnListItem>\
+		<Text id="name" text="{Name}" />\
+	</ColumnListItem>\
+</Table>\
+<Text id="nameCreated" text="{Name}" />',
+			that = this;
+
+		this.expectRequest("Artists?$select=ArtistID,IsActiveEntity,Messages,Name&$skip=0&$top=100",
+			{
+				"value" : [{
+					"@odata.etag" : "ETag",
+					"ArtistID" : "XYZ",
+					"IsActiveEntity" : true,
+					"Messages" : [],
+					"Name" : "Missy Eliot"
+				}]
+			})
+			.expectChange("name", "Missy Eliot")
+			.expectChange("nameCreated", false);
+
+		return this.createView(assert, sView, oModel).then(function () {
+			var oHeaderContext = that.oView.byId("table").getBinding("items").getHeaderContext();
+
+			that.expectRequest({
+					method : "POST",
+					headers : {},
+					url : "Artists/special.cases.Create?"
+						+ "$select=ArtistID,IsActiveEntity,Messages,Name",
+					payload : {}
+				}, {
+					"@odata.etag" : "ETagAfterCreate",
+					"ArtistID" : "ABC",
+					"IsActiveEntity" : false,
+					"Messages" : [{
+						"code" : "23",
+						"message" : "Just A Message",
+						"numericSeverity" : 1,
+						"transition" : false,
+						"target" : "Name"
+					}],
+					"Name" : "Queen"
+				}).expectMessages([{
+					code : "23",
+					message : "Just A Message",
+					target : "/Artists(ArtistID='ABC',IsActiveEntity=false)/Name",
+					persistent : false,
+					type : "Success"
+				}]);
+
+			oExecutePromise = that.oModel.bindContext("special.cases.Create(...)", oHeaderContext,
+				{$$inheritExpandSelect : true}).execute();
+
+			return Promise.all([
+				oExecutePromise,
+				that.waitForChanges(assert)
+			]);
+		}).then(function (aPromiseResults) {
+			oReturnValueContext = aPromiseResults[0];
+
+			that.expectChange("nameCreated", "Queen");
+
+			that.oView.byId("nameCreated").setBindingContext(oReturnValueContext);
+
+			return that.waitForChanges(assert);
+		}).then(function () {
+			that.expectRequest("Artists(ArtistID='ABC',IsActiveEntity=false)?"
+					+ "$select=ArtistID,IsActiveEntity,Messages,Name", {
+					"@odata.etag" : "ETagAfterRefresh",
+					"ArtistID" : "ABC",
+					"IsActiveEntity" : true,
+					"Messages" : [{
+						"code" : "23",
+						"message" : "Just Another Message",
+						"numericSeverity" : 1,
+						"transition" : false,
+						"target" : "Name"
+					}],
+					"Name" : "After Refresh"
+				})
+				.expectChange("nameCreated", "After Refresh")
+				.expectMessages([{
+					code : "23",
+					message : "Just Another Message",
+					target : "/Artists(ArtistID='ABC',IsActiveEntity=false)/Name",
+					persistent : false,
+					type : "Success"
+				}]);
+
+			oReturnValueContext.refresh();
+
+			return that.waitForChanges(assert);
+		});
+	});
+
+	//*********************************************************************************************
 	// Scenario: Call bound action on a context of a relative ListBinding
 	QUnit.test("Read entity for a relative ListBinding, call bound action", function (assert) {
 		var oModel = createTeaBusiModel(),

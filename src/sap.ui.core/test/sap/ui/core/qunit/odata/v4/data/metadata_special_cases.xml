@@ -63,6 +63,10 @@
 				<Parameter Name="_it" Type="special.cases.ArtistsType" Nullable="false"/>
 				<ReturnType Type="special.cases.ArtistsType" Nullable="false"/>
 			</Action>
+			<Action Name="Create" EntitySetPath="_it" IsBound="true">
+				<Parameter Name="_it" Type="Collection(special.cases.ArtistsType)" Nullable="false"/>
+				<ReturnType Type="special.cases.ArtistsType" Nullable="false"/>
+			</Action>
 			<Function Name="GetDraft" EntitySetPath="_it" IsBound="true">
 				<Parameter Name="_it" Type="special.cases.ArtistsType" Nullable="false"/>
 				<ReturnType Type="special.cases.ArtistsType" Nullable="true"/>

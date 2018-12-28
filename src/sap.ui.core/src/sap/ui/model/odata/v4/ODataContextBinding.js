@@ -30,14 +30,22 @@ sap.ui.define([
 		};
 
 	/**
-	 * Returns the path for the return value context.
+	 * Returns the path for the return value context. Supports bound operations on an entity or a
+	 * collection.
 	 *
-	 * @param {string} sPath The bindings's path
+	 * @param {string} sPath
+	 *   The bindings's path; either a resolved model path or a resource path; for example:
+	 *   "Artists(ArtistID='42',IsActiveEntity=true)/special.cases.EditAction(...)" or
+	 *   "/Artists(ArtistID='42',IsActiveEntity=true)/special.cases.EditAction(...)" or
+	 *   "Artists/special.cases.Create(...)" or "/Artists/special.cases.Create(...)"
 	 * @param {string} sResponsePredicate The key predicate of the response entity
 	 * @returns {string} The path for the return value context.
 	 */
 	function getReturnValueContextPath(sPath, sResponsePredicate) {
-		return sPath.slice(0, sPath.indexOf("(")) + sResponsePredicate;
+		var sBoundParameterPath = sPath.slice(0, sPath.lastIndexOf("/")),
+			i = sBoundParameterPath.indexOf("(");
+
+		return (i < 0 ? sBoundParameterPath : sPath.slice(0, i)) + sResponsePredicate;
 	}
 
 	/**

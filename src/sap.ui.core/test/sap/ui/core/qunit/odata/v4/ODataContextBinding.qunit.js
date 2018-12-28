@@ -1225,82 +1225,113 @@ sap.ui.define([
 	});
 
 	//*********************************************************************************************
-	QUnit.test("_execute: bound operation with return value context", function (assert) {
-		var oContextMock = this.mock(Context),
-			bDependentsRefreshed,
-			oError = {},
-			oGroupLock = new _GroupLock("groupId"),
-			oOperationMetadata = {},
-			oRootBinding = {
-				getRootBinding : function () { return oRootBinding; },
-				isSuspended : function () { return false; }
-			},
-			oParentContext = Context.create(this.oModel, oRootBinding, "/TEAMS('42')"),
-			oBinding = this.bindContext("name.space.Operation(...)", oParentContext,
-				{$$groupId : "groupId"}),
-			oBindingMock = this.mock(oBinding),
-			oModelMock = this.mock(this.oModel),
-			oParentEntity = {},
-			oResponseEntity = {},
-			oReturnValueContextFirstExecute = {destroy : function () {}},
-			oReturnValueContextSecondExecute = {destroy : function () {}},
-			that = this;
+	[false, true].forEach(function (bOnCollection) {
+		var sTitle = "_execute: bound operation " + (bOnCollection ? "on a collection " : "")
+				+ "with return value context";
 
-		function asyncRefresh() {
-			bDependentsRefreshed = false;
-			return new SyncPromise(function (resolve) {
-				setTimeout(function () {
-					bDependentsRefreshed = true;
-					resolve();
+		QUnit.test(sTitle, function (assert) {
+			var oContextMock = this.mock(Context),
+				bDependentsRefreshed,
+				oError = {},
+				oGroupLock = new _GroupLock("groupId"),
+				oGroupLockMock = this.mock(oGroupLock),
+				oOperationMetadata = {},
+				oRootBinding = {
+					getRootBinding : function () { return oRootBinding; },
+					isSuspended : function () { return false; }
+				},
+				sParentContextPath = bOnCollection ? "/TEAMS" : "/TEAMS('42')",
+				oParentContext = Context.create(this.oModel, oRootBinding, sParentContextPath),
+				oParentContextMock = this.mock(oParentContext),
+				oBinding = this.bindContext("name.space.Operation(...)", oParentContext,
+					{$$groupId : "groupId"}),
+				oBindingMock = this.mock(oBinding),
+				oMetaModelMock = this.mock(this.oModel.getMetaModel()),
+				oModelMock = this.mock(this.oModel),
+				oParentEntity = {},
+				oResponseEntity = {},
+				oReturnValueContextFirstExecute = {destroy : function () {}},
+				oReturnValueContextSecondExecute = {destroy : function () {}},
+				that = this;
+
+			function asyncRefresh() {
+				bDependentsRefreshed = false;
+				return new SyncPromise(function (resolve) {
+					setTimeout(function () {
+						bDependentsRefreshed = true;
+						resolve();
+					});
 				});
-			});
-		}
+			}
 
-		this.mock(oGroupLock).expects("setGroupId").withExactArgs("groupId").thrice();
-		this.mock(this.oModel.getMetaModel()).expects("fetchObject").thrice()
-			.withExactArgs("/TEAMS/name.space.Operation/@$ui5.overload")
-			.returns(SyncPromise.resolve([oOperationMetadata]));
-		_Helper.setPrivateAnnotation(oParentEntity, "predicate", "('42')");
-		_Helper.setPrivateAnnotation(oResponseEntity, "predicate", "('77')");
-		oBindingMock.expects("createCacheAndRequest").twice()
-			.withExactArgs(sinon.match.same(oGroupLock),
-				"/TEAMS('42')/name.space.Operation(...)",
-				sinon.match.same(oOperationMetadata), sinon.match.func)
-			.returns(Promise.resolve(oResponseEntity));
-		oBindingMock.expects("_fireChange").twice()
-			.withExactArgs({reason : ChangeReason.Change});
-		oBindingMock.expects("refreshDependentBindings")
-			.withExactArgs("groupId", true).returns(asyncRefresh());
-		oBindingMock.expects("hasReturnValueContext").twice()
-			.withExactArgs(sinon.match.same(oOperationMetadata))
-			.returns(true);
-		this.mock(oParentContext).expects("fetchValue").twice()
-			.returns(SyncPromise.resolve(oParentEntity));
-		oContextMock.expects("create")
-			.withExactArgs(sinon.match.same(this.oModel), sinon.match.same(oBinding),
-				"/TEAMS('77')")
-			.returns(oReturnValueContextFirstExecute);
-		oContextMock.expects("create")
-			.withExactArgs(sinon.match.same(this.oModel), sinon.match.same(oBinding),
-				"/TEAMS('77')")
-			.returns(oReturnValueContextSecondExecute);
-
-		// code under test
-		return oBinding._execute(oGroupLock).then(function (oReturnValueContext0) {
-			assert.strictEqual(oReturnValueContext0, oReturnValueContextFirstExecute);
-			assert.strictEqual(bDependentsRefreshed, true);
-
-			that.mock(oReturnValueContextFirstExecute).expects("destroy").withExactArgs();
+			oGroupLockMock.expects("setGroupId").withExactArgs("groupId");
+			oMetaModelMock.expects("fetchObject")
+				.withExactArgs("/TEAMS/name.space.Operation/@$ui5.overload")
+				.returns(SyncPromise.resolve([oOperationMetadata]));
+			if (!bOnCollection) {
+				_Helper.setPrivateAnnotation(oParentEntity, "predicate", "('42')");
+			}
+			_Helper.setPrivateAnnotation(oResponseEntity, "predicate", "('77')");
+			oBindingMock.expects("createCacheAndRequest")
+				.withExactArgs(sinon.match.same(oGroupLock),
+					sParentContextPath + "/name.space.Operation(...)",
+					sinon.match.same(oOperationMetadata), sinon.match.func)
+				.returns(Promise.resolve(oResponseEntity));
+			oBindingMock.expects("_fireChange")
+				.withExactArgs({reason : ChangeReason.Change});
 			oBindingMock.expects("refreshDependentBindings")
 				.withExactArgs("groupId", true).returns(asyncRefresh());
+			oBindingMock.expects("hasReturnValueContext")
+				.withExactArgs(sinon.match.same(oOperationMetadata))
+				.returns(true);
+			oParentContextMock.expects("fetchValue")
+				.returns(SyncPromise.resolve(oParentEntity));
+			oContextMock.expects("create")
+				.withExactArgs(sinon.match.same(this.oModel), sinon.match.same(oBinding),
+					"/TEAMS('77')")
+				.returns(oReturnValueContextFirstExecute);
 
 			// code under test
-			return oBinding._execute(oGroupLock).then(function (oReturnValueContext1) {
-				assert.strictEqual(oReturnValueContext1, oReturnValueContextSecondExecute);
+			return oBinding._execute(oGroupLock).then(function (oReturnValueContext0) {
+				assert.strictEqual(oReturnValueContext0, oReturnValueContextFirstExecute);
+				assert.strictEqual(bDependentsRefreshed, true);
 
+				oGroupLockMock.expects("setGroupId").withExactArgs("groupId");
+				oMetaModelMock.expects("fetchObject")
+					.withExactArgs("/TEAMS/name.space.Operation/@$ui5.overload")
+					.returns(SyncPromise.resolve([oOperationMetadata]));
 				oBindingMock.expects("createCacheAndRequest")
 					.withExactArgs(sinon.match.same(oGroupLock),
-						"/TEAMS('42')/name.space.Operation(...)",
+						sParentContextPath + "/name.space.Operation(...)",
+						sinon.match.same(oOperationMetadata), sinon.match.func)
+					.returns(Promise.resolve(oResponseEntity));
+				oBindingMock.expects("_fireChange")
+					.withExactArgs({reason : ChangeReason.Change});
+				oBindingMock.expects("refreshDependentBindings")
+					.withExactArgs("groupId", true).returns(asyncRefresh());
+				oBindingMock.expects("hasReturnValueContext")
+					.withExactArgs(sinon.match.same(oOperationMetadata))
+					.returns(true);
+				oParentContextMock.expects("fetchValue")
+					.returns(SyncPromise.resolve(oParentEntity));
+				that.mock(oReturnValueContextFirstExecute).expects("destroy").withExactArgs();
+				oContextMock.expects("create")
+					.withExactArgs(sinon.match.same(that.oModel), sinon.match.same(oBinding),
+						"/TEAMS('77')")
+					.returns(oReturnValueContextSecondExecute);
+
+				// code under test
+				return oBinding._execute(oGroupLock);
+			}).then(function (oReturnValueContext1) {
+				assert.strictEqual(oReturnValueContext1, oReturnValueContextSecondExecute);
+
+				oGroupLockMock.expects("setGroupId").withExactArgs("groupId");
+				oMetaModelMock.expects("fetchObject")
+					.withExactArgs("/TEAMS/name.space.Operation/@$ui5.overload")
+					.returns(SyncPromise.resolve([oOperationMetadata]));
+				oBindingMock.expects("createCacheAndRequest")
+					.withExactArgs(sinon.match.same(oGroupLock),
+						sParentContextPath + "/name.space.Operation(...)",
 						sinon.match.same(oOperationMetadata), sinon.match.func)
 					.returns(Promise.reject(oError));
 				oBindingMock.expects("_fireChange")
