@@ -2,20 +2,20 @@
  * ${copyright}
  */
 
-// Provides default renderer for control sap.f.cards.KpiSideIndicatorRenderer
+// Provides default renderer for control sap.f.cards.NumericSideIndicatorRenderer
 sap.ui.define([],
 	function () {
         "use strict";
 
-        var KpiSideIndicatorRenderer = {};
+        var NumericSideIndicatorRenderer = {};
 
 		/**
-		 * Render a kpi header side indicator.
+		 * Render a numeric header side indicator.
 		 *
 		 * @param {sap.ui.core.RenderManager} oRm The RenderManager that can be used for writing to the render output buffer
-		 * @param {sap.f.cards.header.KPI} oControl An object representation of the control that should be rendered
+		 * @param {sap.f.cards.NumericHeader} oControl An object representation of the control that should be rendered
 		 */
-		KpiSideIndicatorRenderer.render = function (oRm, oControl) {
+		NumericSideIndicatorRenderer.render = function (oRm, oControl) {
 			oRm.write("<div");
 			oRm.writeControlData(oControl);
 			oRm.addClass("sapFCardHeaderSideIndicator");
@@ -47,5 +47,5 @@ sap.ui.define([],
 			oRm.write("</div>");
 		};
 
-		return KpiSideIndicatorRenderer;
+		return NumericSideIndicatorRenderer;
 	}, /* bExport= */ true);

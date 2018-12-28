@@ -4,7 +4,7 @@
 sap.ui.define([
 	'sap/ui/core/Control',
 	'sap/m/Text',
-	"sap/f/cards/KpiSideIndicatorRenderer"
+	"sap/f/cards/NumericSideIndicatorRenderer"
 ], function (
 		Control,
 		Text
@@ -12,7 +12,7 @@ sap.ui.define([
 		"use strict";
 
 		/**
-		 * Constructor for a new <code>KpiSideIndicator</code>.
+		 * Constructor for a new <code>NumericSideIndicator</code>.
 		 *
 		 * @param {string} [sId] ID for the new control, generated automatically if no ID is given
 		 * @param {object} [mSettings] Initial settings for the new control
@@ -35,9 +35,9 @@ sap.ui.define([
 		 * @experimental
 		 * @since 1.62
 		 * @see {@link TODO Card}
-		 * @alias sap.f.cards.KpiSideIndicator
+		 * @alias sap.f.cards.NumericSideIndicator
 		 */
-		var KpiSideIndicator = Control.extend("sap.f.cards.KpiSideIndicator", {
+		var NumericSideIndicator = Control.extend("sap.f.cards.NumericSideIndicator", {
 			metadata: {
 				properties: {
 					title: {
@@ -58,25 +58,25 @@ sap.ui.define([
 			}
 		});
 
-		KpiSideIndicator.prototype.setTitle = function(sValue) {
+		NumericSideIndicator.prototype.setTitle = function(sValue) {
 			this.setProperty("title", sValue, true);
 			this._getTitle().setText(sValue);
 			return this;
 		};
 
-		KpiSideIndicator.prototype.setNumber = function(sValue) {
+		NumericSideIndicator.prototype.setNumber = function(sValue) {
 			this.setProperty("number", sValue, true);
 			this._getNumber().setText(sValue);
 			return this;
 		};
 
-		KpiSideIndicator.prototype.setUnit = function(sValue) {
+		NumericSideIndicator.prototype.setUnit = function(sValue) {
 			this.setProperty("unit", sValue, true);
 			this._getUnit().setText(sValue);
 			return this;
 		};
 
-		KpiSideIndicator.prototype._getTitle = function () {
+		NumericSideIndicator.prototype._getTitle = function () {
 			var oControl = this.getAggregation("_title");
 
 			if (!oControl) {
@@ -90,7 +90,7 @@ sap.ui.define([
 			return oControl;
 		};
 
-		KpiSideIndicator.prototype._getNumber = function () {
+		NumericSideIndicator.prototype._getNumber = function () {
 			var oControl = this.getAggregation("_number");
 
 			if (!oControl) {
@@ -103,7 +103,7 @@ sap.ui.define([
 			return oControl;
 		};
 
-		KpiSideIndicator.prototype._getUnit = function () {
+		NumericSideIndicator.prototype._getUnit = function () {
 			var oControl = this.getAggregation("_unit");
 
 			if (!oControl) {
@@ -116,5 +116,5 @@ sap.ui.define([
 			return oControl;
 		};
 
-		return KpiSideIndicator;
+		return NumericSideIndicator;
 	});

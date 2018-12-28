@@ -952,7 +952,7 @@
 			"sap.card": {
 				"type": "List",
 				"header": {
-					"type": "kpi",
+					"type": "numeric",
 					"data": {
 						"request": {
 							"url": "./cardcontent/kpi.json"
@@ -1000,7 +1000,7 @@
 			"sap.card": {
 				"type": "List",
 				"header": {
-					"type": "kpi",
+					"type": "numeric",
 					"data": {
 						"json": {
 							"n": 6547394.45496,
@@ -1030,7 +1030,7 @@
 			"sap.card": {
 				"type": "List",
 				"header": {
-					"type": "kpi",
+					"type": "numeric",
 					"data": {
 						"json": {
 							"n": "56",
@@ -1103,7 +1103,7 @@
 		"tablecard1": {
 			"sap.card": {
 				"header": {
-					"type": "kpi",
+					"type": "numeric",
 					"data": {
 						"request": {
 							"url": "./cardcontent/kpi.json"
@@ -1171,7 +1171,7 @@
 			"sap.card": {
 				"type": "Analytical",
 				"header": {
-					"type": "kpi",
+					"type": "numeric",
 					"data": {
 						"request": {
 							"url": "./cardcontent/kpi.json"
@@ -1266,7 +1266,7 @@
 			"sap.card": {
 				"type": "Analytical",
 				"header": {
-				  "type": "kpi",
+				  "type": "numeric",
 				  "data": {
 					"json": {
 					  "n": "56",
@@ -1351,7 +1351,7 @@
 			"sap.card": {
 				"type": "Analytical",
 				"header": {
-				  "type": "kpi",
+				  "type": "numeric",
 				  "data": {
 					"json": {
 					  "n": 6547394.45496,
@@ -1432,7 +1432,7 @@
 			"sap.card": {
 				"type": "Analytical",
 				"header": {
-					"type": "kpi",
+					"type": "numeric",
 					"data": {
 					"json": {
 						"n": 6547394.45496,
