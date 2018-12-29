@@ -369,6 +369,7 @@ sap.ui.define([
 	 */
 	Image.prototype.onBeforeRendering = function() {
 		this._defaultEventTriggered = false;
+		this.$().find(".sapMImg").off("load").off("error");
 	};
 
 	/**

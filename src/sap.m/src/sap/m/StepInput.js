@@ -404,12 +404,11 @@ function(
 				this.setValue(fMax);
 			}
 			this._disableButtons(vValue, fMax, fMin);
+			this.$().unbind(Device.browser.firefox ? "DOMMouseScroll" : "mousewheel", this._onmousewheel);
 		};
 
 		StepInput.prototype.onAfterRendering = function () {
-			var $domRef = this.$();
-			$domRef.unbind(Device.browser.firefox ? "DOMMouseScroll" : "mousewheel", this._onmousewheel);
-			$domRef.bind(Device.browser.firefox ? "DOMMouseScroll" : "mousewheel", this._onmousewheel);
+			this.$().bind(Device.browser.firefox ? "DOMMouseScroll" : "mousewheel", this._onmousewheel);
 		};
 
 		StepInput.prototype.exit = function () {

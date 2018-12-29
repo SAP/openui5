@@ -364,8 +364,8 @@ sap.ui.define([
 		this._initScopeContent("sapMGT");
 		this._generateFailedText();
 
-		this.$().unbind("mouseenter", this._updateAriaAndTitle);
-		this.$().unbind("mouseleave", this._removeTooltipFromControl);
+		this.$().unbind("mouseenter");
+		this.$().unbind("mouseleave");
 
 		if (this._sParentResizeListenerId) {
 			ResizeHandler.deregister(this._sResizeListenerId);
