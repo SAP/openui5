@@ -104,5 +104,16 @@
         "references": []
       }
     ]
+  },
+  "1.60.3": {
+    "date": "December 2018",
+    "notes": [
+      {
+        "id": "38ae9bf3bfcc04e1bae1e8a5e7e37d4dfbd114f6",
+        "type": "FIX",
+        "text": " tutorial.fiori2: Product parameter is now transmitted",
+        "references": []
+      }
+    ]
   }
 }

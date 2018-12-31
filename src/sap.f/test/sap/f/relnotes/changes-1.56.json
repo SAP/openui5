@@ -200,5 +200,22 @@
         "references": []
       }
     ]
+  },
+  "1.56.16": {
+    "date": "December 2018",
+    "notes": [
+      {
+        "id": "676aaadcd49d0388820da06f1061da05ae346d72",
+        "type": "FIX",
+        "text": " sap.f.DynamicPageTitle: Fixed CSS styles in snapped/expanded content",
+        "references": []
+      },
+      {
+        "id": "3aea47d4f30e9158dd787aa372f42cc8e72b5aec",
+        "type": "FIX",
+        "text": " tutorial.fiori2: Product parameter is now transmitted",
+        "references": []
+      }
+    ]
   }
 }

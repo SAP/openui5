@@ -1528,5 +1528,22 @@
         "references": []
       }
     ]
+  },
+  "1.52.23": {
+    "date": "December 2018",
+    "notes": [
+      {
+        "id": "db49ccb4964067d5a791dfd362cd6a087b30e604",
+        "type": "FIX",
+        "text": " Model.removeBinding: performance",
+        "references": []
+      },
+      {
+        "id": "cc8bdc7029aae7f54f3e3b4ce6ecb4104205b3c4",
+        "type": "FIX",
+        "text": " v2.ODataModel: memory leak",
+        "references": []
+      }
+    ]
   }
 }

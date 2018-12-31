@@ -3563,5 +3563,40 @@
         "references": []
       }
     ]
+  },
+  "1.52.23": {
+    "date": "December 2018",
+    "notes": [
+      {
+        "id": "00900cbd9d2e0b6b821d214c51cb1f95c6ea6aa8",
+        "type": "FIX",
+        "text": " sap.m.Input: showValueStateMessage now works correctly",
+        "references": []
+      },
+      {
+        "id": "36d23945750a250211b845bdda3b447164c4afd1",
+        "type": "FIX",
+        "text": " sap.m.MultiInput: Pressing left arrow no longer deletes a token",
+        "references": []
+      },
+      {
+        "id": "244bc4dd9d6f827c9eaa27914ac302c48344b396",
+        "type": "FIX",
+        "text": " sap.m.ObjectListItem: Now the press event is correctly fired",
+        "references": []
+      },
+      {
+        "id": "8ed19d5c5ca8744614d72e376d961458071b8054",
+        "type": "FIX",
+        "text": " sap.m.Popover: Correct reposition",
+        "references": []
+      },
+      {
+        "id": "2bc6b60f1ad6aa1fd8ce9c4452d19e85ddd88b38",
+        "type": "FIX",
+        "text": " sap.m.uploadCollectionItem : Fixed .csv file download issue.",
+        "references": []
+      }
+    ]
   }
 }

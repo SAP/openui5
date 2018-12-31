@@ -110,5 +110,16 @@
         "references": []
       }
     ]
+  },
+  "1.60.3": {
+    "date": "December 2018",
+    "notes": [
+      {
+        "id": "94108301f880b3a18416a7b3cf0125bb98268e17",
+        "type": "FIX",
+        "text": " sap.m.PlanningCalendar - API appointment (de)selection works now.",
+        "references": []
+      }
+    ]
   }
 }

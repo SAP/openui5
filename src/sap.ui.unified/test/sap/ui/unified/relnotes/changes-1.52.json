@@ -432,5 +432,16 @@
         "references": []
       }
     ]
+  },
+  "1.52.23": {
+    "date": "December 2018",
+    "notes": [
+      {
+        "id": "cb05a99ab1e7e24a69995daaf2330f41fe99e5a2",
+        "type": "FIX",
+        "text": " sap.ui.unified.Menu: Menu works correctly on combi devices",
+        "references": []
+      }
+    ]
   }
 }

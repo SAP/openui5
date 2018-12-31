@@ -158,5 +158,22 @@
         "references": []
       }
     ]
+  },
+  "1.60.3": {
+    "date": "December 2018",
+    "notes": [
+      {
+        "id": "db0c4b351856fbd73da0959d0b3c8a50ed8fe2f4",
+        "type": "FIX",
+        "text": " sap.uxap.ObjectPageHeader: Adaptation of actions improved",
+        "references": []
+      },
+      {
+        "id": "57873d20c9c8fb6712d33bab7322ccd66fdebe71",
+        "type": "FIX",
+        "text": " sap.uxap.ObjectPageLayout: Ensure scroll position preserved",
+        "references": []
+      }
+    ]
   }
 }
