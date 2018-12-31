@@ -121,6 +121,9 @@ sap.ui.define([
 				 * Displays the main number indicator
 				 */
 				_mainIndicator: { type: "sap.m.NumericContent", multiple: false }
+			},
+			events: {
+				press: {}
 			}
 		}
 	});

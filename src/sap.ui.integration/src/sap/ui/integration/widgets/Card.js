@@ -5,12 +5,14 @@ sap.ui.define([
 	"sap/ui/core/Control",
 	"sap/ui/core/Manifest",
 	"sap/ui/integration/util/CardManifest",
+	"sap/ui/integration/util/ServiceManager",
 	"sap/base/Log",
 	"sap/f/CardRenderer"
 ], function (
 	Control,
 	Manifest,
 	CardManifest,
+	ServiceManager,
 	Log,
 	CardRenderer
 ) {
@@ -104,6 +106,10 @@ sap.ui.define([
 			this._oCardManifest.destroy();
 			this._oCardManifest = null;
 		}
+		if (this._oServiceManager) {
+			this._oServiceManager.destroy();
+			this._oServiceManager = null;
+		}
 	};
 
 	Card.prototype.setManifest = function (vValue) {
@@ -142,8 +148,46 @@ sap.ui.define([
 	 * Apply all manifest settings after the manifest is fully ready
 	 */
 	Card.prototype._applyManifestSettings = function () {
+		this._registerServices();
 		this._setHeaderFromManifest();
 		this._setContentFromManifest();
+	};
+
+	/**
+	 * Register all required services in the ServiceManager based on the card manifest.
+	 */
+	Card.prototype._registerServices = function () {
+		var oServiceFactoryReferences = this._oCardManifest.get("sap.ui5/services");
+		if (!oServiceFactoryReferences) {
+			return;
+		}
+
+		if (!this._oServiceManager) {
+			this._oServiceManager = new ServiceManager(oServiceFactoryReferences);
+		}
+
+		var oHeader = this._oCardManifest.get("sap.card/header");
+		var oContent = this._oCardManifest.get("sap.card/content");
+
+		var bHeaderWithServiceNavigation = oHeader
+			&& oHeader.actions
+			&& oHeader.actions[0].service
+			&& oHeader.actions[0].type === "Navigation";
+
+		// TODO: Improve... Need to decide if card or content will be responsible for the actions and their parsing.
+		var bContentWithServiceNavigation = oContent
+			&& oContent.item
+			&& oContent.item.actions
+			&& oContent.item.actions[0].service
+			&& oContent.item.actions[0].type === "Navigation";
+
+		if (bHeaderWithServiceNavigation) {
+			this._oServiceManager.registerService(oHeader.actions[0].service, "sap.ui.integration.services.Navigation");
+		}
+
+		if (bContentWithServiceNavigation) {
+			this._oServiceManager.registerService(oContent.item.actions[0].service, "sap.ui.integration.services.Navigation");
+		}
 	};
 
 	Card.prototype._getHeader = function () {
@@ -198,12 +242,57 @@ sap.ui.define([
 
 	Card.prototype._setCardHeaderFromManifest = function (CardHeader) {
 		var oClonedSettings = jQuery.extend(true, {}, this._oCardManifest.get("sap.card/header"));
+		var oHeader = CardHeader.create(oClonedSettings);
 
-		delete oClonedSettings.type;
+		if (Array.isArray(oClonedSettings.actions) && oClonedSettings.actions.length > 0) {
+			this._setCardHeaderActions(oHeader, oClonedSettings.actions);
+		}
 
-		// TODO ensure that CardHeader has a static method "create"
-		this.setAggregation("_header", CardHeader.create(oClonedSettings));
+		this.setAggregation("_header", oHeader);
 	};
+
+	/**
+	 * Sets all header actions by parsing the 'actions' property of the manifest
+	 * and attaching the respective handlers.
+	 *
+	 * @param {sap.f.cards.IHeader} oHeader The header to set actions to.
+	 * @param {Object[]} aActions The actions to set on the header.
+	 */
+	Card.prototype._setCardHeaderActions = function (oHeader, aActions) {
+		var oAction;
+
+		// For now only take the first Navigation action and set it on the header.
+		// Refactor when additional actions are needed.
+		for (var i = 0; i < aActions.length; i++) {
+			if (aActions[i].type === "Navigation" && aActions[i].enabled) {
+				oAction = aActions[i];
+				break;
+			}
+		}
+
+		if (!oAction) {
+			return;
+		}
+
+		if (oAction.service) {
+			oHeader.attachPress(function () {
+				this._oServiceManager.getService("sap.ui.integration.services.Navigation").then(function (oNavigationService) {
+					if (oNavigationService) {
+						oNavigationService.navigate(oAction.parameters);
+					}
+				}).catch(function () {
+					Log.error("Navigation service unavailable");
+				});
+			}.bind(this));
+		} else if (oAction.url) {
+			oHeader.attachPress(function () {
+				window.open(oAction.url, oAction.target || "_blank");
+			});
+		}
+
+		oHeader.addStyleClass("sapFCardHeaderClickable");
+	};
+
 	Card.prototype.onBeforeRendering = function () {
 		var sConfig = this.getHostConfigurationId();
 		if (sConfig) {

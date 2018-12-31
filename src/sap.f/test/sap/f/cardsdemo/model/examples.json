@@ -77,10 +77,16 @@
 		"route": "manifest",
 		"group": "Other Card Examples"
 	},
-  {
-	"title": "Card Container",
-	"description": "Card Container",
-	"route": "cardContainer",
-	"group": "Other Card Examples"
-  }
+	{
+		"title": "Card Container",
+		"description": "Card Container",
+		"route": "cardContainer",
+		"group": "Other Card Examples"
+	},
+	{
+		"title": "Services",
+		"description": "Navigation & Data services",
+		"route": "services",
+		"group": "Other Card Examples"
+	}
 ]

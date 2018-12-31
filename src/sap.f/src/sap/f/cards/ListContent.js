@@ -1,7 +1,7 @@
 /*!
  * ${copyright}
  */
-sap.ui.define(['sap/ui/core/Control', 'sap/ui/model/json/JSONModel', 'sap/m/List', 'sap/m/StandardListItem', 'sap/ui/base/ManagedObject', "sap/f/cards/Data", "sap/base/Log"],
+sap.ui.define(["sap/ui/core/Control", "sap/ui/model/json/JSONModel", "sap/m/List", "sap/m/StandardListItem", "sap/ui/base/ManagedObject", "sap/f/cards/Data", "sap/base/Log"],
 	function (Control, JSONModel, sapMList, StandardListItem, ManagedObject, Data, Log) {
 		"use strict";
 
@@ -156,7 +156,10 @@ sap.ui.define(['sap/ui/core/Control', 'sap/ui/model/json/JSONModel', 'sap/m/List
 			mItem.highlight && this._bindItemProperty("highlight", mItem.highlight);
 			mItem.info && this._bindItemProperty("info", mItem.info.value);
 			mItem.info && this._bindItemProperty("infoState", mItem.info.state);
+			mItem.interactionType && this._bindItemProperty("type", mItem.interactionType);
 			/* eslint-enable no-unused-expressions */
+
+			this._attachActions(mItem);
 
 			var oList = this._getList();
 			if (oList.isBound("items")) {
@@ -173,7 +176,47 @@ sap.ui.define(['sap/ui/core/Control', 'sap/ui/model/json/JSONModel', 'sap/m/List
 				return;
 			}
 
-			this._oItemTemplate.bindProperty(sPropertyName, ManagedObject.bindingParser(sPropertyValue));
+			var oBindingInfo = ManagedObject.bindingParser(sPropertyValue);
+			if (oBindingInfo) {
+				this._oItemTemplate.bindProperty(sPropertyName, oBindingInfo);
+			} else {
+				this._oItemTemplate.setProperty(sPropertyName, sPropertyValue);
+			}
+		};
+
+		ListContent.prototype._attachActions = function (mItem) {
+			if (!mItem.actions) {
+				return;
+			}
+
+			// For now we allow for only one action of type navigation.
+			var oAction = mItem.actions[0];
+			if (oAction.type === "Navigation" && oAction.enabled) {
+				this._attachNavigationAction(oAction);
+			}
+		};
+
+		ListContent.prototype._attachNavigationAction = function (oAction) {
+
+			if (oAction.service) {
+				this._oItemTemplate.attachPress(function (oEvent) {
+					// How should we do this? Pass handler from card? Or maybe fire event requstService and wait for parent to return it?
+					this.getParent()._oServiceManager.getService("sap.ui.integration.services.Navigation").then(function (oNavigationService) {
+						if (oNavigationService) {
+							oNavigationService.navigate({
+								parameters: oEvent.getParameters(),
+								manifestParameters: oAction.parameters
+							});
+						}
+					}).catch(function () {
+						Log.error("Navigation service unavailable");
+					});
+				}.bind(this));
+			} else if (oAction.url) {
+				this._oItemTemplate.attachPress(function () {
+					window.open(oAction.url, oAction.target || "_blank");
+				});
+			}
 		};
 
 		/**
