@@ -28,9 +28,12 @@ sap.ui.require([
 			'The checks are executed on elements contained within Dialog2 using a subset of rules. \n' +
 			'The OPA assertion would fail if any severity issues are found, and it is expected to always pass. \n\n' +
 			'****** Support Assistant rule check report	******\n' +
-			'At the end of the OPA journey the detailed Support Assistant report is displayed. ' +
+			'After all the checks are completed, a detailed Support Assistant report is displayed. ' +
 			'It shows all Rules and issues generated from the different checks executed. \n' +
-			'In this case errors should come only from the first test.\n\n'
+			'In this case errors should come only from the first test.\n\n' +
+			'****** Saving the report ******\n' +
+			'At the end of the OPA journey the report is saved as an array\n' +
+			'at window._$files which can be used to save it to an external file.\n\n'
 	);
 	panel.addContent(readmeText);
 	panel.placeAt('readme');
