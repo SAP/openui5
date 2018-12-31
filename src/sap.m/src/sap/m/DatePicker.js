@@ -48,6 +48,8 @@ sap.ui.define([
 	// shortcut for sap.ui.core.CalendarType
 	var CalendarType = coreLibrary.CalendarType;
 
+	var oResourceBundle = sap.ui.getCore().getLibraryResourceBundle("sap.m");
+
 	// lazy dependency to sap/ui/unified/Calendar
 	var Calendar;
 
@@ -289,7 +291,7 @@ sap.ui.define([
 			id: this.getId() + "-icon",
 			src: this.getIconSrc(),
 			noTabStop: true,
-			title: ""
+			tooltip: oResourceBundle.getText("OPEN_PICKER_TEXT")
 		});
 
 		// idicates whether the picker is still open
@@ -1117,7 +1119,7 @@ sap.ui.define([
 				sValue = this._formatValue(oDate);
 			}
 		}
-		oInfo.type = sap.ui.getCore().getLibraryResourceBundle("sap.m").getText("ACC_CTR_TYPE_DATEINPUT");
+		oInfo.type = oResourceBundle.getText("ACC_CTR_TYPE_DATEINPUT");
 		oInfo.description = [sValue, oRenderer.getLabelledByAnnouncement(this), oRenderer.getDescribedByAnnouncement(this)].join(" ").trim();
 		return oInfo;
 	};
