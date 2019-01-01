@@ -221,6 +221,8 @@ sap.ui.define([
 						return oContext.getProperty("elementId");
 					case "odata":
 						return oContext.getProperty("name");
+					case "custom":
+						return oContext.getProperty("key");
 					default:
 						Log.error("sap.ui.rta.plugin.additionalElements.AddElementsDialog#_createContent: unsupported data type");
 				}
