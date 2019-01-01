@@ -1060,40 +1060,38 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control', 'sap/m/T
 	 *
 	 * @private
 	 */
-	GenericTile.prototype._setTooltipFromControl = function() {
-		var oContent, sTooltip = "";
-		var bIsFirst = true;
-		var aTiles = this.getTileContent();
+    GenericTile.prototype._setTooltipFromControl = function () {
+        var sTooltip = "";
+        var bIsFirst = true;
+        var aTiles = this.getTileContent();
 
-		// when header text is truncated, set header text as tooltip
-		if (this._isHeaderTextTruncated()) {
-			sTooltip = this._oTitle.getText();
-			bIsFirst = false;
-		}
+        if (this._oTitle.getText()) {
+            sTooltip = this._oTitle.getText();
+            bIsFirst = false;
+        }
 
-		// when subheader text is truncated, set subheader text as tooltip
-		if (this._isSubheaderTextTruncated()) {
-			sTooltip += (bIsFirst ? "" : "\n") + this.getSubheader();
-			bIsFirst = false;
-		}
+        if (this.getSubheader()) {
+            sTooltip += (bIsFirst ? "" : "\n") + this.getSubheader();
+            bIsFirst = false;
+        }
 
-		// when MicroChart is in GenericTile, set MicroChart tooltip as GenericTile tooltip (not valid in actions scope)
-		if (this.getScope() !== library.GenericTileScope.Actions) {
-			for (var i = 0; i < aTiles.length; i++) {
-				oContent = aTiles[i].getContent();
-				if (oContent && oContent.getMetadata().getLibraryName() === "sap.suite.ui.microchart") {
-					sTooltip += (bIsFirst ? "" : "\n") + oContent.getTooltip_AsString();
-				}
-				bIsFirst = false;
-			}
-		}
+        // not valid in actions scope and LineMode
+        if (this.getScope() !== library.GenericTileScope.Actions && this.getMode() !== library.GenericTileMode.LineMode ) {
+            if (aTiles[0] && aTiles[0].getTooltip_AsString() && aTiles[0].getTooltip_AsString() !== "" ) {
+                sTooltip += (bIsFirst ? "" : "\n") + aTiles[0].getTooltip_AsString();
+                bIsFirst = false;
+            }
+            if (this.getFrameType() === "TwoByOne" && aTiles[1] && aTiles[1].getTooltip_AsString() && aTiles[1].getTooltip_AsString() !== ""){
+                sTooltip += (bIsFirst ? "" : "\n") + aTiles[1].getTooltip_AsString();
+            }
+        }
 
-		// when user does not set tooltip, apply the tooltip above
-		if (sTooltip && !this._getTooltipText() && !this._isTooltipSuppressed()) {
-			this.$().attr("title", sTooltip);
-			this._bTooltipFromControl = true;
-		}
-	};
+        // when user does not set tooltip, apply the tooltip below
+        if (sTooltip && !this._getTooltipText() && !this._isTooltipSuppressed()) {
+            this.$().attr("title", sTooltip.trim());
+            this._bTooltipFromControl = true;
+        }
+    };
 
 	/**
 	 * Updates the attributes ARIA-label and title of the GenericTile. The updated attribute title is used for tooltip as well.
