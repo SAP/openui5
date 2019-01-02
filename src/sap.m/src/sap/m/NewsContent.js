@@ -81,8 +81,8 @@ sap.ui.define([
 
 	NewsContent.prototype.onBeforeRendering = function() {
 		this._setPointerOnContentText();
-		this.$().unbind("mouseenter", this._addTooltip);
-		this.$().unbind("mouseleave", this._removeTooltip);
+		this.$().unbind("mouseenter");
+		this.$().unbind("mouseleave");
 	};
 
 	NewsContent.prototype.onAfterRendering = function() {
