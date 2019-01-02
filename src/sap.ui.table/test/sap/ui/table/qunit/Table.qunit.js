@@ -2582,6 +2582,81 @@ sap.ui.define([
 		});
 	});
 
+	QUnit.test("_rowsUpdated - Changing VisibleRowCountMode (VisibleRowCount stays unchanged)", function(assert) {
+		var done = assert.async();
+		var aFiredReasons = [];
+		var iVisibleRowCount = null;
+		var that = this;
+
+		function _createTable(sVisibleRowCountMode) {
+			return new Promise(function(resolve) {
+				oTable = new Table({
+					rows: "{/modelData}",
+					visibleRowCountMode: sVisibleRowCountMode,
+					columns: [
+						new Column({
+							label: new Label({text: "Last Name"}),
+							template: new Text({text: "{lastName}"})
+						})
+					],
+					models: new JSONModel({modelData: aData}),
+					visibleRowCount: iVisibleRowCount
+				});
+
+				oTable.attachEventOnce("_rowsUpdated", function() {
+					if (iVisibleRowCount == null) {
+						iVisibleRowCount = oTable.getVisibleRowCount();
+					}
+					resolve();
+				});
+
+				oTable.placeAt("qunit-fixture");
+				sap.ui.getCore().applyChanges();
+			});
+		}
+
+		function _destroyTable() {
+			destroyTable();
+			sap.ui.getCore().applyChanges();
+		}
+
+		function test(sInitialVisibleRowCountMode, sNewVisibleRowCountMode) {
+			return _createTable(sInitialVisibleRowCountMode).then(function() {
+				aFiredReasons = [];
+				oTable.attachEvent("_rowsUpdated", function(oEvent) {
+					aFiredReasons.push(oEvent.getParameter("reason"));
+				});
+
+				oTable.setVisibleRowCountMode(sNewVisibleRowCountMode);
+				sap.ui.getCore().applyChanges();
+			}).then(function() {
+				return that.checkRowsUpdated(assert, aFiredReasons, [
+					TableUtils.RowsUpdateReason.Render
+				]);
+			});
+		}
+
+		Promise.resolve().then(function() {
+			_destroyTable();
+			return test(VisibleRowCountMode.Auto, VisibleRowCountMode.Fixed);
+		}).then(function() {
+			_destroyTable();
+			return test(VisibleRowCountMode.Auto, VisibleRowCountMode.Interactive);
+		}).then(function() {
+			_destroyTable();
+			return test(VisibleRowCountMode.Fixed, VisibleRowCountMode.Interactive);
+		}).then(function() {
+			_destroyTable();
+			return test(VisibleRowCountMode.Fixed, VisibleRowCountMode.Auto);
+		}).then(function() {
+			_destroyTable();
+			return test(VisibleRowCountMode.Interactive, VisibleRowCountMode.Fixed);
+		}).then(function() {
+			_destroyTable();
+			return test(VisibleRowCountMode.Interactive, VisibleRowCountMode.Auto);
+		}).then(done);
+	});
+
 	QUnit.test("_rowsUpdated - Refresh", function(assert) {
 		var done = assert.async();
 		var aFiredReasons = [];

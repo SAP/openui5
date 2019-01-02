@@ -1391,7 +1391,6 @@ sap.ui.define([
 		}
 
 		if (this._bFirstRendering && sVisibleRowCountMode === VisibleRowCountMode.Auto) {
-			this._bFirstRendering = false;
 			// Wait until everything is rendered (parent height!) before reading/updating sizes. Use a promise to make sure
 			// to be executed before timeouts may be executed.
 			Promise.resolve().then(this._updateTableSizes.bind(this, TableUtils.RowsUpdateReason.Render, {forceUpdate: true}));
@@ -1427,6 +1426,8 @@ sap.ui.define([
 				fireRowsUpdated();
 			}
 		}
+
+		this._bFirstRendering = false;
 	};
 
 	Table.prototype.invalidate = function() {
