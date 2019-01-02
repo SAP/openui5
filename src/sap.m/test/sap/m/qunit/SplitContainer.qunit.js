@@ -848,13 +848,11 @@ sap.ui.define([
 		oSplitContainer.placeAt("content");
 		sap.ui.getCore().applyChanges();
 
-		assert.ok(oSplitContainer.hasStyleClass("sapMSplitContainerPortrait"), "The sapMSplitContainerPortrait class should be added as a control style class");
 		assert.ok(oSplitContainer.$().hasClass("sapMSplitContainerPortrait"), "The sapMSplitContainerPortrait class should be output to the DOM node");
 
 		this.stub(Device, "orientation", oLandscape);
 		oSplitContainer._handleResize();
 
-		assert.ok(!oSplitContainer.hasStyleClass("sapMSplitContainerPortrait"), "The sapMSplitContainerPortrait class should be removed from control style class");
 		assert.ok(!oSplitContainer.$().hasClass("sapMSplitContainerPortrait"), "The sapMSplitContainerPortrait class should be removed from the DOM node");
 
 		oSplitContainer.destroy();

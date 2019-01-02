@@ -34,7 +34,6 @@ sap.ui.define(function () {
 		}
 		oRm.addClass("sapUxAPObjectPageSubSection");
 		oRm.addClass("ui-helper-clearfix");
-		oRm.writeClasses(oControl);
 		oRm.writeClasses();
 
 		if (bAccessibilityOn) {
