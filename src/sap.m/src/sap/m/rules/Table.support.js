@@ -64,6 +64,8 @@ sap.ui.define(["sap/ui/support/library", "sap/m/ListBase", "sap/ui/core/library"
 			id: "accessibleItemHighlight",
 			audiences: [Audiences.Application],
 			categories: [Categories.Accessibility],
+			enabled: true,
+			minversion: "1.62",
 			title: "ListItem: Accessible Highlight",
 			description: "Checks whether the item highlights are accessible.",
 			resolution: "Use the 'highlightText' property of the item to define the semantics of the 'highlight'.",
