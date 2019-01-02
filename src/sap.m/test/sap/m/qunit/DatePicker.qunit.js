@@ -223,9 +223,9 @@ sap.ui.define([
 		assert.equal(jQuery("#DP7").find("input").val(), "2/10/1437 AH", "DP7: defined islamic output format from binding used");
 	});
 
-	QUnit.test("ValueHelp icon is not visible when DatePicker is not enabled", function (assert) {
+	QUnit.test("ValueHelp icon is not visible when DatePicker is not editable", function (assert) {
 		// arrange
-		var oDatePicker = new DatePicker({ enabled: false }),
+		var oDatePicker = new DatePicker({ editable: false }),
 			oValueHelpIconSetPropertySpy = this.spy(),
 			oValueHelpIconStub = this.stub(oDatePicker, "_getValueHelpIcon", function () {
 				return { setProperty: oValueHelpIconSetPropertySpy };

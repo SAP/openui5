@@ -340,7 +340,7 @@ function(
 			var oValueHelpIcon = this._getValueHelpIcon();
 
 			if (oValueHelpIcon) {
-				oValueHelpIcon.setProperty("visible", this.getEnabled(), true);
+				oValueHelpIcon.setProperty("visible", this.getEditable(), true);
 			}
 		};
 
