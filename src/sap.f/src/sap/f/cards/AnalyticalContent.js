@@ -45,7 +45,11 @@ sap.ui.define(['sap/ui/core/Control', 'sap/ui/model/json/JSONModel', 'sap/m/Flex
 				}
 			},
 			renderer: function (oRm, oControl) {
+				oRm.write("<div");
+				oRm.writeElementData(oControl);
+				oRm.write(">");
 				oRm.renderControl(oControl.getAggregation("_content"));
+				oRm.write("</div>");
 			}
 		});
 
@@ -92,6 +96,10 @@ sap.ui.define(['sap/ui/core/Control', 'sap/ui/model/json/JSONModel', 'sap/m/Flex
 				"legendGroup": {
 					"layout": {}
 				},
+				"window": {
+					"start": "firstDataPoint",
+					"end": "lastDataPoint"
+				},
 				"plotArea": {},
 				"categoryAxis": {
 					"title": {}
@@ -115,15 +123,10 @@ sap.ui.define(['sap/ui/core/Control', 'sap/ui/model/json/JSONModel', 'sap/m/Flex
 				if (oPlotArea.dataLabel) {
 					oVizObject.plotArea.dataLabel = oPlotArea.dataLabel;
 				}
-				if (oPlotArea.window) {
-					oVizObject.plotArea.window = oPlotArea.window;
-				}
 				if (oPlotArea.categoryAxis) {
-					oVizObject.categoryAxis.title.text = oPlotArea.categoryAxisText.text;
 					oVizObject.categoryAxis.title.visible = oPlotArea.categoryAxisText.visible;
 				}
 				if (oPlotArea.valueAxis) {
-					oVizObject.valueAxis.title.text = oPlotArea.valueAxisText.text;
 					oVizObject.valueAxis.title.visible = oPlotArea.valueAxisText.visible;
 				}
 			}
