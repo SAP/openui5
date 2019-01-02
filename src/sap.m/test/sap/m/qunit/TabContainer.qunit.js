@@ -305,61 +305,6 @@ sap.ui.define([
 		}
 	});
 
-	QUnit.test("Select first item, focus it and remove it", function (assert) {
-		//arrange
-		var oTabContainerItemToRemove = this.items[0];
-		var oTabContainerItemToBeSelectedAndFocused = this.items[1];
-		var oTabStripItemToRemove = this.oTabContainer._toTabStripItem(oTabContainerItemToRemove);
-		var oTabStripItemToBeSelectedAndFocused = this.oTabContainer._toTabStripItem(oTabContainerItemToBeSelectedAndFocused);
-		this.oTabContainer.setSelectedItem(oTabContainerItemToRemove);
-		this.clock.tick(1000);
-		jQuery(oTabStripItemToRemove).focus();
-		this.oTabStrip._removeItem(oTabStripItemToRemove);
-		this.clock.tick(1000);
-		//assert
-		assert.equal(this.oTabContainer.getItems().length, 4, "Length check");
-		assert.equal(this.oTabContainer.getItems().indexOf(oTabContainerItemToRemove), -1, "The item should not exist at any index");
-		assert.equal(this.oTabContainer.getSelectedItem(), oTabContainerItemToBeSelectedAndFocused.getId(), "Selection is applied to the right item");
-		assert.strictEqual(document.activeElement.id, oTabStripItemToBeSelectedAndFocused.getId(), "Focus is applied to the right item");
-	});
-
-	QUnit.test("Select last item, focus it and remove it", function (assert) {
-		//arrange
-		var oTabContainerItemToRemove = this.items[4];
-		var oTabContainerItemToBeSelectedAndFocused = this.items[3];
-		var oTabStripItemToRemove = this.oTabContainer._toTabStripItem(oTabContainerItemToRemove);
-		var oTabStripItemToBeSelectedAndFocused = this.oTabContainer._toTabStripItem(oTabContainerItemToBeSelectedAndFocused);
-		this.oTabContainer.setSelectedItem(oTabContainerItemToRemove);
-		this.clock.tick(1000);
-		jQuery(oTabStripItemToRemove).focus();
-		this.oTabStrip._removeItem(oTabStripItemToRemove);
-		this.clock.tick(1000);
-		//assert
-		assert.equal(this.oTabContainer.getItems().length, 4, "Length check");
-		assert.equal(this.oTabContainer.getItems().indexOf(oTabContainerItemToRemove), -1, "The item should not exist at any index");
-		assert.equal(this.oTabContainer.getSelectedItem(), oTabContainerItemToBeSelectedAndFocused.getId(), "Selection is applied to the right item");
-		assert.strictEqual(document.activeElement.id, oTabStripItemToBeSelectedAndFocused.getId(), "Focus is applied to the right item");
-	});
-
-	QUnit.test("Select random item, focus another and remove it", function (assert) {
-		//arrange
-		var oTabContainerItemToRemove = this.items[3];
-		var oTabContainerItemToBeSelected = this.items[0];
-		var oTabContainerItemToBeFocused = this.items[4];
-		var oTabStripItemToRemove = this.oTabContainer._toTabStripItem(oTabContainerItemToRemove);
-		var oTabStripItemToBeFocused = this.oTabContainer._toTabStripItem(oTabContainerItemToBeFocused);
-		this.oTabContainer.setSelectedItem(oTabContainerItemToBeSelected);
-		this.clock.tick(1000);
-		jQuery(oTabStripItemToRemove).focus();
-		this.oTabStrip._removeItem(oTabStripItemToRemove);
-		this.clock.tick(1000);
-		//assert
-		assert.equal(this.oTabContainer.getItems().length, 4, "Length check");
-		assert.equal(this.oTabContainer.getItems().indexOf(oTabContainerItemToRemove), -1, "The item should not exist at any index");
-		assert.equal(this.oTabContainer.getSelectedItem(), oTabContainerItemToBeSelected.getId(), "Selection is applied to the right item");
-		assert.strictEqual(document.activeElement.id, oTabStripItemToBeFocused.getId(), "Focus is applied to the right item");
-	});
-
 	QUnit.test("Selection prevented", function (assert) {
 		var oTabContainer = new TabContainer({
 			items: {

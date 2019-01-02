@@ -336,7 +336,9 @@ sap.ui.define([
 				this.fireItemSelect({item: oNextItem});
 			}
 			// Focus (force to wait until invalidated)
-			setTimeout(fnFocusCallback.bind(this), 0);
+			if (document.activeElement.classList.contains('sapMTabStripSelectListItemCloseBtn')) {
+				setTimeout(fnFocusCallback.bind(this), 0);
+			}
 		};
 
 		TabContainer.prototype._attachItemPropertyChanged = function (oTabContainerItem) {
