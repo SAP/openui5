@@ -32,6 +32,7 @@ sap.ui.define(["sap/ui/base/DataType",
 		controls: [
 			"sap.f.Avatar",
 			"sap.f.Card",
+			"sap.f.CardContainer",
 			"sap.f.DynamicPage",
 			"sap.f.DynamicPageHeader",
 			"sap.f.DynamicPageTitle",
@@ -40,6 +41,7 @@ sap.ui.define(["sap/ui/base/DataType",
 			"sap.f.GridList"
 		],
 		elements: [
+			"sap.f.CardItemLayoutData",
 			"sap.f.semantic.AddAction",
 			"sap.f.semantic.CloseAction",
 			"sap.f.semantic.CopyAction",

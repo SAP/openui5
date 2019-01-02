@@ -64,7 +64,7 @@ sap.ui.define([
 				width: {
 					type: "sap.ui.core.CSSSize",
 					group: "Appearance",
-					defaultValue: "auto"
+					defaultValue: "100%"
 				},
 
 				/**

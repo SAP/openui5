@@ -1,0 +1,80 @@
+<mvc:View
+		xmlns="sap.m"
+		xmlns:mvc="sap.ui.core.mvc"
+		xmlns:f="sap.f"
+		xmlns:w="sap.ui.integration.widgets"
+		displayBlock="true">
+	<Page title="{i18n>appTitle}">
+		<subHeader>
+			<Toolbar>
+				<ToolbarSpacer />
+				<Title text="Card Layout"/>
+				<ToolbarSpacer />
+			</Toolbar>
+		</subHeader>
+		<content>
+			<f:CardContainer>
+				<w:Card manifest="{manifests>/listContent/card13}">
+					<w:layoutData>
+						<f:CardItemLayoutData columns="3" />
+					</w:layoutData>
+				</w:Card>
+				<w:Card manifest="{manifests>/analyticalContent/line}">
+					<w:layoutData>
+						<f:CardItemLayoutData columns="4" />
+					</w:layoutData>
+				</w:Card>
+				<w:Card manifest="{manifests>/listContent/card13}">
+					<w:layoutData>
+						<f:CardItemLayoutData columns="4" />
+					</w:layoutData>
+				</w:Card>
+				<w:Card manifest="{manifests>/analyticalContent/stackedBar}">
+					<w:layoutData>
+						<f:CardItemLayoutData columns="4" />
+					</w:layoutData>
+				</w:Card>
+				<w:Card manifest="{manifests>/analyticalContent/stackedColumn}">
+					<w:layoutData>
+						<f:CardItemLayoutData columns="5" />
+					</w:layoutData>
+				</w:Card>
+				<w:Card manifest="{manifests>/analyticalContent/donut}">
+					<w:layoutData>
+						<f:CardItemLayoutData columns="6" />
+					</w:layoutData>
+				</w:Card>
+				<w:Card manifest="{manifests>/listContent/card13}">
+					<w:layoutData>
+						<f:CardItemLayoutData columns="3" />
+					</w:layoutData>
+				</w:Card>
+				<w:Card manifest="{manifests>/analyticalContent/line}">
+					<w:layoutData>
+						<f:CardItemLayoutData columns="4" />
+					</w:layoutData>
+				</w:Card>
+				<w:Card manifest="{manifests>/analyticalContent/stackedBar}">
+					<w:layoutData>
+						<f:CardItemLayoutData columns="4" />
+					</w:layoutData>
+				</w:Card>
+				<w:Card manifest="{manifests>/listContent/card13}">
+					<w:layoutData>
+						<f:CardItemLayoutData columns="5" />
+					</w:layoutData>
+				</w:Card>
+				<w:Card manifest="{manifests>/analyticalContent/stackedColumn}">
+					<w:layoutData>
+						<f:CardItemLayoutData columns="3" />
+					</w:layoutData>
+				</w:Card>
+				<w:Card manifest="{manifests>/analyticalContent/donut}">
+					<w:layoutData>
+						<f:CardItemLayoutData columns="8" />
+					</w:layoutData>
+				</w:Card>
+			</f:CardContainer>
+		</content>
+	</Page>
+</mvc:View>

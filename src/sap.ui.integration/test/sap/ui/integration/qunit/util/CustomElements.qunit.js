@@ -178,7 +178,7 @@ sap.ui.define([
 				assert.ok(oElement._control._controlImpl.getProperty("height") === "100px", "Property height set correctly on the control to 100px");
 				assert.notOk(oElement._control._controlImpl.getProperty("width") === "100", "Property width not set correctly on the control because it has an invalid value");
 				assert.ok(oElement.height === "100px", "Property height set correctly on the control to 100px");
-				assert.ok(oElement.width === "auto", "Property width still auto");
+				assert.ok(oElement.width === "100%", "Property width still 100%");
 				done();
 			}, 100);
 		});
