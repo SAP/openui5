@@ -1,10 +1,11 @@
 <mvc:View
-        xmlns="sap.m"
-        xmlns:mvc="sap.ui.core.mvc"
-        xmlns:f="sap.f"
-        xmlns:cards="sap.f.cards"
-		xmlns:grid="sap.ui.layout.cssgrid"
-        displayBlock="true">
+	xmlns="sap.m"
+	xmlns:mvc="sap.ui.core.mvc"
+	xmlns:f="sap.f"
+	xmlns:cards="sap.f.cards"
+	xmlns:w="sap.ui.integration.widgets"
+	xmlns:grid="sap.ui.layout.cssgrid"
+	displayBlock="true">
 
     <Page title="{i18n>appTitle}">
 
@@ -43,11 +44,11 @@
                                 </cards:NumericHeader>
                             </f:header>
                         </f:Card>
-                        <f:SAPCard manifest="{manifests>/kpiManifests/kpicard1}"/>
-                        <f:SAPCard manifest="{manifests>/kpiManifests/kpicard2}"/>
-                        <f:SAPCard manifest="{manifests>/kpiManifests/kpicard3}"/>
-                        <f:SAPCard manifest="{manifests>/kpiManifests/kpicard4}"/>
-                        <f:SAPCard manifest="{manifests>/kpiManifests/tablecard1}"/>
+                        <w:Card manifest="{manifests>/kpiManifests/kpicard1}"/>
+                        <w:Card manifest="{manifests>/kpiManifests/kpicard2}"/>
+                        <w:Card manifest="{manifests>/kpiManifests/kpicard3}"/>
+                        <w:Card manifest="{manifests>/kpiManifests/kpicard4}"/>
+                        <w:Card manifest="{manifests>/kpiManifests/tablecard1}"/>
                     </grid:items>
                 </grid:CSSGrid>
             </Panel>

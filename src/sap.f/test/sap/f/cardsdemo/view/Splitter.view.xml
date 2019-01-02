@@ -2,6 +2,7 @@
     xmlns="sap.m"
     xmlns:mvc="sap.ui.core.mvc"
 	xmlns:f="sap.f"
+	xmlns:w="sap.ui.integration.widgets"
 	xmlns:grid="sap.ui.layout.cssgrid"
 	xmlns:l="sap.ui.layout"
     displayBlock="true">
@@ -27,18 +28,18 @@
 			<Panel>
 				<l:Splitter height="600px">
 					<l:Splitter orientation="Vertical">
-						<f:SAPCard id="default2x2"
+						<w:Card id="default2x2"
 								   manifest="{manifests>/splitter/card1}"
 								   width="100%" height="100%"/>
-						<f:SAPCard id="default4x2withcomponent"
+						<w:Card id="default4x2withcomponent"
 								   manifest="./cardcontent/listcomponent/manifest.json"
 								   width="100%" height="100%"/>
 					</l:Splitter>
 					<l:Splitter orientation="Vertical">
-						<f:SAPCard id="default1x1"
+						<w:Card id="default1x1"
 								   manifest="{manifests>/splitter/card2}"
 								   width="100%" height="100%"/>
-						<f:SAPCard id="default2x1"
+						<w:Card id="default2x1"
 								   manifest="{manifests>/splitter/card3}"
 								   width="100%" height="100%"/>
 					</l:Splitter>

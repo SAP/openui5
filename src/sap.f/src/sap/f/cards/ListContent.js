@@ -35,7 +35,7 @@ sap.ui.define(['sap/ui/core/Control', 'sap/ui/model/json/JSONModel', 'sap/m/List
 			metadata: {
 				properties: {
 
-					manifestContent: { type: "object" }
+					configuration: { type: "object" }
 				},
 				aggregations: {
 
@@ -112,9 +112,9 @@ sap.ui.define(['sap/ui/core/Control', 'sap/ui/model/json/JSONModel', 'sap/m/List
 		/**
 		 * @param {Object} oContent The content section of the manifest schema
 		 */
-		ListContent.prototype.setManifestContent = function (oContent) {
+		ListContent.prototype.setConfiguration = function (oContent) {
 
-			this.setProperty("manifestContent", oContent);
+			this.setProperty("configuration", oContent);
 
 			if (!oContent) {
 				return;

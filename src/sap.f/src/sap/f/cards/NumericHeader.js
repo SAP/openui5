@@ -51,7 +51,7 @@ sap.ui.define([
 		metadata: {
 			interfaces: ["sap.f.cards.IHeader"],
 			properties: {
-				manifestContent: {
+				configuration: {
 					"type": "object"
 				},
 				title: {
@@ -92,16 +92,16 @@ sap.ui.define([
 		}
 	});
 
-	NumericHeader.prototype.setManifestContent = function(oManifestContent) {
-		this.setProperty("manifestContent", oManifestContent, true);
-		this._bIsUsingManifestContent = true;
-		this._initFromManifestContent(oManifestContent);
+	NumericHeader.prototype.setConfiguration = function(oConfiguration) {
+		this.setProperty("configuration", oConfiguration, true);
+		this._bIsUsingConfiguration = true;
+		this._initFromConfiguration(oConfiguration);
 		return this;
 	};
 
 	NumericHeader.prototype.setTitle = function(sValue) {
-		if (this._bIsUsingManifestContent) {
-			Log.warning("Can not set title if there is a manifestContent.", "sap.f.cards.NumericHeader");
+		if (this._bIsUsingConfiguration) {
+			Log.warning("Can not set title if there is a configuration.", "sap.f.cards.NumericHeader");
 			return this;
 		}
 
@@ -111,8 +111,8 @@ sap.ui.define([
 	};
 
 	NumericHeader.prototype.setSubtitle = function(sValue) {
-		if (this._bIsUsingManifestContent) {
-			Log.warning("Can not set subtitle if there is a manifestContent.", "sap.f.cards.NumericHeader");
+		if (this._bIsUsingConfiguration) {
+			Log.warning("Can not set subtitle if there is a configuration.", "sap.f.cards.NumericHeader");
 			return this;
 		}
 
@@ -122,8 +122,8 @@ sap.ui.define([
 	};
 
 	NumericHeader.prototype.setUnitOfMeasurement = function(sValue) {
-		if (this._bIsUsingManifestContent) {
-			Log.warning("Can not set unitOfMeasurement if there is a manifestContent.", "sap.f.cards.NumericHeader");
+		if (this._bIsUsingConfiguration) {
+			Log.warning("Can not set unitOfMeasurement if there is a configuration.", "sap.f.cards.NumericHeader");
 			return this;
 		}
 
@@ -133,8 +133,8 @@ sap.ui.define([
 	};
 
 	NumericHeader.prototype.setDetails = function(sValue) {
-		if (this._bIsUsingManifestContent) {
-			Log.warning("Can not set details if there is a manifestContent.", "sap.f.cards.NumericHeader");
+		if (this._bIsUsingConfiguration) {
+			Log.warning("Can not set details if there is a configuration.", "sap.f.cards.NumericHeader");
 			return this;
 		}
 
@@ -144,8 +144,8 @@ sap.ui.define([
 	};
 
 	NumericHeader.prototype.setNumber = function(sValue) {
-		if (this._bIsUsingManifestContent) {
-			Log.warning("Can not set number if there is a manifestContent.", "sap.f.cards.NumericHeader");
+		if (this._bIsUsingConfiguration) {
+			Log.warning("Can not set number if there is a configuration.", "sap.f.cards.NumericHeader");
 			return this;
 		}
 
@@ -155,8 +155,8 @@ sap.ui.define([
 	};
 
 	NumericHeader.prototype.setNumberUnit = function(sValue) {
-		if (this._bIsUsingManifestContent) {
-			Log.warning("Can not set numberUnit if there is a manifestContent.", "sap.f.cards.NumericHeader");
+		if (this._bIsUsingConfiguration) {
+			Log.warning("Can not set numberUnit if there is a configuration.", "sap.f.cards.NumericHeader");
 			return this;
 		}
 
@@ -166,8 +166,8 @@ sap.ui.define([
 	};
 
 	NumericHeader.prototype.setTrend = function(sValue) {
-		if (this._bIsUsingManifestContent) {
-			Log.warning("Can not set trend if there is a manifestContent.", "sap.f.cards.NumericHeader");
+		if (this._bIsUsingConfiguration) {
+			Log.warning("Can not set trend if there is a configuration.", "sap.f.cards.NumericHeader");
 			return this;
 		}
 
@@ -177,8 +177,8 @@ sap.ui.define([
 	};
 
 	NumericHeader.prototype.setState = function(sValue) {
-		if (this._bIsUsingManifestContent) {
-			Log.warning("Can not set state if there is a manifestContent.", "sap.f.cards.NumericHeader");
+		if (this._bIsUsingConfiguration) {
+			Log.warning("Can not set state if there is a configuration.", "sap.f.cards.NumericHeader");
 			return this;
 		}
 
@@ -188,8 +188,8 @@ sap.ui.define([
 	};
 
 	NumericHeader.prototype.addSideIndicator = function(oValue) {
-		if (this._bIsUsingManifestContent) {
-			Log.warning("Can not add side indicators if there is a manifestContent.", "sap.f.cards.NumericHeader");
+		if (this._bIsUsingConfiguration) {
+			Log.warning("Can not add side indicators if there is a configuration.", "sap.f.cards.NumericHeader");
 			return this;
 		}
 
@@ -200,9 +200,9 @@ sap.ui.define([
 	// TODO there is too much copy-pasted code
 
 	NumericHeader.prototype.applySettings = function (mSettings, oScope) {
-		if (mSettings.manifestContent) {
-			this.setManifestContent(mSettings.manifestContent);
-			delete mSettings.manifestContent;
+		if (mSettings.configuration) {
+			this.setConfiguration(mSettings.configuration);
+			delete mSettings.configuration;
 		}
 
 		Control.prototype.applySettings.apply(this, [mSettings, oScope]);
@@ -284,49 +284,49 @@ sap.ui.define([
 		return oControl;
 	};
 
-	NumericHeader.prototype._initFromManifestContent = function (oManifestContent) {
-		this._applyManifestContentSettings(oManifestContent);
+	NumericHeader.prototype._initFromConfiguration = function (oConfiguration) {
+		this._applyConfigurationSettings(oConfiguration);
 
-		if (oManifestContent.data) {
-			this._handleData(oManifestContent.data);
+		if (oConfiguration.data) {
+			this._handleData(oConfiguration.data);
 		}
 	};
 
-	NumericHeader.prototype._applyManifestContentSettings = function (oManifestContent) {
-		if (oManifestContent.title) {
+	NumericHeader.prototype._applyConfigurationSettings = function (oConfiguration) {
+		if (oConfiguration.title) {
 			this._getTitle().applySettings({
-				text: oManifestContent.title
+				text: oConfiguration.title
 			});
 		}
-		if (oManifestContent.subtitle) {
+		if (oConfiguration.subtitle) {
 			this._getSubtitle().applySettings({
-				text: oManifestContent.subtitle
+				text: oConfiguration.subtitle
 			});
 		}
-		if (oManifestContent.unitOfMeasurement) {
+		if (oConfiguration.unitOfMeasurement) {
 			this._getUnitOfMeasurement().applySettings({
-				text: oManifestContent.unitOfMeasurement
+				text: oConfiguration.unitOfMeasurement
 			});
 		}
-		if (oManifestContent.details) {
+		if (oConfiguration.details) {
 			this._getDetails().applySettings({
-				text: oManifestContent.details
+				text: oConfiguration.details
 			});
 		}
 
-		if (oManifestContent.mainIndicator.number) {
+		if (oConfiguration.mainIndicator.number) {
 			this._getMainIndicator().applySettings({
-				value: oManifestContent.mainIndicator.number,
-				scale: oManifestContent.mainIndicator.unit,
-				indicator: oManifestContent.mainIndicator.trend,
-				valueColor: oManifestContent.mainIndicator.state // TODO convert ValueState to ValueColor
+				value: oConfiguration.mainIndicator.number,
+				scale: oConfiguration.mainIndicator.unit,
+				indicator: oConfiguration.mainIndicator.trend,
+				valueColor: oConfiguration.mainIndicator.state // TODO convert ValueState to ValueColor
 			});
 		}
 
-		if (oManifestContent.sideIndicators) { // TODO validate that it is an array and with no more than 2 elements
+		if (oConfiguration.sideIndicators) { // TODO validate that it is an array and with no more than 2 elements
 			this.destroySideIndicators();
 
-			oManifestContent.sideIndicators.forEach(function (oIndicator) {
+			oConfiguration.sideIndicators.forEach(function (oIndicator) {
 				// TODO Maybe we need a second private aggregation, so it does not conflict with sideIndicators
 				this.addAggregation("sideIndicators", new NumericSideIndicator(oIndicator));
 			}.bind(this));
