@@ -96,6 +96,42 @@ sap.ui.require([
 			total: false,
 			visible: true
 		},
+		oControllingAreaNoTextGrouped = {
+				name: "ControllingAreaNoText",
+				grouped: true,
+				inResult: false,
+				sortOrder: "Ascending",
+				sorted: false,
+				total: false,
+				visible: true
+		},
+		oControllingAreaNoTextNoLabelGrouped = {
+				name: "ControllingAreaNoTextNoLabel",
+				grouped: true,
+				inResult: false,
+				sortOrder: "Ascending",
+				sorted: false,
+				total: false,
+				visible: true
+		},
+		oControllingAreaNoTextEmptyLabelGrouped = {
+				name: "ControllingAreaNoTextEmptyLabel",
+				grouped: true,
+				inResult: false,
+				sortOrder: "Ascending",
+				sorted: false,
+				total: false,
+				visible: true
+		},
+		oControllingAreaWithTextEmptyLabelGrouped = {
+				name: "ControllingAreaWithTextEmptyLabel",
+				grouped: true,
+				inResult: false,
+				sortOrder: "Ascending",
+				sorted: false,
+				total: false,
+				visible: true
+		},
 		// Analytical info for measures
 		oActualCostsTotal = {
 			name: "ActualCosts",
@@ -134,6 +170,15 @@ sap.ui.require([
 			visible: true
 		},
 		// Analytical info for other properties
+		oControllingAreaText2 = {
+			name: "ControllingAreaText2",
+			grouped: false,
+			inResult: false,
+			sortOrder: "Ascending",
+			sorted: false,
+			total: false,
+			visible: true
+		},
 		oCostElementText = {
 			name: "CostElementText",
 			grouped: false,
@@ -765,6 +810,67 @@ sap.ui.require([
 
 			oContextMock.verify();
 			done();
+		});
+	});
+
+	//*********************************************************************************************
+	QUnit.test("getGroupName: dimension with text and empty label", function (assert) {
+		var done = assert.async();
+
+		setupAnalyticalBinding(2, {}, function (oBinding) {
+
+			var oContext = {
+					getProperty : function () {}
+				},
+				oContextMock = sinon.mock(oContext),
+				sGroupProperty = "ControllingAreaWithTextEmptyLabel",
+				sTextProperty = "ControllingAreaText2";
+
+			oContextMock.expects("getProperty").withExactArgs(sGroupProperty).returns("foo");
+			oContextMock.expects("getProperty").withExactArgs(sTextProperty).returns("bar");
+
+			// Code under test
+			assert.strictEqual(oBinding.getGroupName(oContext, 1), "foo - bar");
+
+			oContextMock.verify();
+			done();
+		}, [oControllingAreaWithTextEmptyLabelGrouped, oControllingAreaText2, oActualCostsTotal]);
+	});
+
+	//*********************************************************************************************
+	[{
+		oDimension : oControllingAreaNoTextGrouped,
+		sGroupName : "Controlling Area: foo"
+	}, {
+		oDimension : oControllingAreaNoTextNoLabelGrouped,
+		sGroupName : "foo"
+	}, {
+		oDimension : oControllingAreaNoTextEmptyLabelGrouped,
+		sGroupName : "foo"
+	}].forEach(function (oFixture) {
+		var oDimension = oFixture.oDimension,
+			sTitle = "getGroupName: dimension without text for dimension: "
+				+ oDimension.name;
+
+		QUnit.test(sTitle, function (assert) {
+			var done = assert.async();
+
+			setupAnalyticalBinding(2, {}, function (oBinding) {
+
+				var oContext = {
+						getProperty : function () {}
+					},
+					oContextMock = sinon.mock(oContext);
+
+				oContextMock.expects("getProperty")
+					.withExactArgs(oDimension.name).returns("foo");
+
+				// Code under test
+				assert.strictEqual(oBinding.getGroupName(oContext, 1), oFixture.sGroupName);
+
+				oContextMock.verify();
+				done();
+			}, [oDimension, oActualCostsTotal]);
 		});
 	});
 
@@ -2272,7 +2378,8 @@ sap.ui.require([
 						"Currency" : "EUR",
 						"^~volatile" : true,
 						"__metadata" : {
-							"uri" : ",100%2F1000%252F,,EUR,,,,,,-multiple-units-not-dereferencable"
+							"uri" :
+								",,,,,100%2F1000%252F,,EUR,,,,,,-multiple-units-not-dereferencable"
 						}
 					},
 					bIsNewEntry: true,
