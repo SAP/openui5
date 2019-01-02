@@ -209,12 +209,15 @@ sap.ui.define([
 							oObject = sap.ui.getCore().byId(sComponentContainerId);
 
 							if (!oObject) {
-								oObject = new ComponentContainer(sComponentContainerId, {
+								// defaults mixed in with configured settings
+								var oContainerOptions = Object.assign({
 									component: oComponent,
 									height: "100%",
 									width: "100%",
 									lifecycle: sap.ui.core.ComponentLifecycle.Application
-								});
+								}, oOptions.containerOptions);
+
+								oObject = new ComponentContainer(sComponentContainerId, oContainerOptions);
 
 								fnOriginalExit = oComponent.exit;
 								oComponent.exit = function () {

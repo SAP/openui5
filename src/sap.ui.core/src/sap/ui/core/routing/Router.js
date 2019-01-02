@@ -117,6 +117,14 @@ sap.ui.define([
 		 *             manifest: true
 		 *             ...
 		 *         },
+		 *         containerOptions: {
+		 *             // the ComponentContainer configuration defaults
+		 *             //(other settings need to be provided):
+		 *             height: "100%",
+		 *             width: "100%",
+		 *             lifecycle: sap.ui.core.ComponentLifecycle.Application
+		 *             ...
+		 *         }
 		 *         controlId: "myRootView",
 		 *         controlAggregation: "content"
 		 *     }
@@ -142,6 +150,14 @@ sap.ui.define([
 		 *             manifest: true
 		 *             ...
 		 *         },
+		 *         containerOptions: {
+		 *             // the ComponentContainer configuration defaults
+		 *             //(other settings need to be provided):
+		 *             height: "100%",
+		 *             width: "100%",
+		 *             lifecycle: sap.ui.core.ComponentLifecycle.Application
+		 *             ...
+		 *         }
 		 *         controlId: "myRootView",
 		 *         controlAggregation: "content"
 		 *     }
