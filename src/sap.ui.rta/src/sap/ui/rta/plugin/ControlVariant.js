@@ -82,14 +82,9 @@ sap.ui.define([
 	 */
 	ControlVariant.prototype.registerElementOverlay = function(oOverlay) {
 		var oControl = oOverlay.getElement(),
-			oModel = this._getVariantModel(oControl),
 			sVariantManagementReference;
 
 		Plugin.prototype.registerElementOverlay.apply(this, arguments);
-
-		if (!oModel){
-			return;
-		}
 
 		if (oControl instanceof VariantManagement) {
 			var vAssociationElement = oControl.getFor(),
@@ -98,18 +93,18 @@ sap.ui.define([
 			var sControlId = oControl.getId();
 			sVariantManagementReference = oAppComponent.getLocalId(sControlId) || sControlId;
 
-			if (!vAssociationElement ||
-				(Array.isArray(vAssociationElement) && vAssociationElement.length === 0)) {
+			// If "for" association is not valid
+			if (
+				!vAssociationElement
+				|| ( Array.isArray(vAssociationElement) && vAssociationElement.length === 0 )
+			) {
 				oOverlay.setVariantManagement(sVariantManagementReference);
 				return;
-			}
-			if (!this._isPersonalizationMode()) {
-				oModel._setModelPropertiesForControl(sVariantManagementReference, true, oControl);
-				oModel.checkUpdate(true);
 			}
 
 			aVariantManagementTargetElements = !Array.isArray(vAssociationElement) ? [vAssociationElement] : vAssociationElement;
 
+			// Propagate variant management reference to all children overlays starting from the "for" association element as the root
 			aVariantManagementTargetElements.forEach( function(sVariantManagementTargetElement) {
 				var oVariantManagementTargetElement = sVariantManagementTargetElement instanceof ManagedObject ? sVariantManagementTargetElement : sap.ui.getCore().byId(sVariantManagementTargetElement),
 					oVariantManagementTargetOverlay = OverlayRegistry.getOverlay(oVariantManagementTargetElement);
@@ -117,6 +112,7 @@ sap.ui.define([
 			}.bind(this));
 			oOverlay.attachEvent("editableChange", RenameHandler._manageClickEvent, this);
 		} else if (!oOverlay.getVariantManagement()) {
+			// Case where overlay is dynamically created - variant management reference should be identified from parent
 			sVariantManagementReference = this._getVariantManagementFromParent(oOverlay);
 			if (sVariantManagementReference) {
 				oOverlay.setVariantManagement(sVariantManagementReference);
@@ -173,17 +169,6 @@ sap.ui.define([
 	ControlVariant.prototype.deregisterElementOverlay = function(oOverlay) {
 		oOverlay.detachEvent("editableChange", RenameHandler._manageClickEvent, this);
 		oOverlay.detachBrowserEvent("click", RenameHandler._onClick, this);
-
-		var oModel;
-		var sVariantManagementReference;
-		var oControl = oOverlay.getElement();
-		if (oControl instanceof VariantManagement) {
-			oModel = this._getVariantModel(oControl);
-			sVariantManagementReference = oOverlay.getVariantManagement();
-			oModel._setModelPropertiesForControl(sVariantManagementReference, false, oControl);
-			oModel.checkUpdate(true);
-		}
-
 		this.removeFromPluginsList(oOverlay);
 		Plugin.prototype.deregisterElementOverlay.apply(this, arguments);
 	};

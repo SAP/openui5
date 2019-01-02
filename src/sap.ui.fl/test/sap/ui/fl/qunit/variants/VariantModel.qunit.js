@@ -120,27 +120,27 @@ function(
 			assert.equal(sCurrentVariant, "variant1", "then the key of the current variant is returned");
 		});
 
-		QUnit.test("when calling '_setModelPropertiesForControl'", function(assert) {
+		QUnit.test("when calling 'setModelPropertiesForControl'", function(assert) {
 			this.oModel.getData()["variantMgmtId1"]._isEditable = true;
-			this.oModel._setModelPropertiesForControl("variantMgmtId1", false, oDummyControl);
+			this.oModel.setModelPropertiesForControl("variantMgmtId1", false, oDummyControl);
 			assert.equal(this.oModel.getData()["variantMgmtId1"].variantsEditable, true, "the parameter variantsEditable is initially true");
-			this.oModel._setModelPropertiesForControl("variantMgmtId1", true, oDummyControl);
-			assert.equal(this.oModel.getData()["variantMgmtId1"].variantsEditable, false, "the parameter variantsEditable is set to false for bAdaptationMode = true");
-			this.oModel._setModelPropertiesForControl("variantMgmtId1", false, oDummyControl);
-			assert.equal(this.oModel.getData()["variantMgmtId1"].variantsEditable, true, "the parameter variantsEditable is set to true for bAdaptationMode = false");
+			this.oModel.setModelPropertiesForControl("variantMgmtId1", true, oDummyControl);
+			assert.equal(this.oModel.getData()["variantMgmtId1"].variantsEditable, false, "the parameter variantsEditable is set to false for bDesignTimeMode = true");
+			this.oModel.setModelPropertiesForControl("variantMgmtId1", false, oDummyControl);
+			assert.equal(this.oModel.getData()["variantMgmtId1"].variantsEditable, true, "the parameter variantsEditable is set to true for bDesignTimeMode = false");
 		});
 
-		QUnit.test("when calling '_setModelPropertiesForControl' and variant management control has property editable=false", function(assert) {
+		QUnit.test("when calling 'setModelPropertiesForControl' and variant management control has property editable=false", function(assert) {
 			this.oModel.getData()["variantMgmtId1"]._isEditable = false;
-			this.oModel._setModelPropertiesForControl("variantMgmtId1", false, oDummyControl);
+			this.oModel.setModelPropertiesForControl("variantMgmtId1", false, oDummyControl);
 			assert.equal(this.oModel.getData()["variantMgmtId1"].variantsEditable, false, "the parameter variantsEditable is initially false");
-			this.oModel._setModelPropertiesForControl("variantMgmtId1", true, oDummyControl);
-			assert.equal(this.oModel.getData()["variantMgmtId1"].variantsEditable, false, "the parameter variantsEditable stays false for bAdaptationMode = true");
-			this.oModel._setModelPropertiesForControl("variantMgmtId1", false, oDummyControl);
-			assert.equal(this.oModel.getData()["variantMgmtId1"].variantsEditable, false, "the parameter variantsEditable stays false for bAdaptationMode = false");
+			this.oModel.setModelPropertiesForControl("variantMgmtId1", true, oDummyControl);
+			assert.equal(this.oModel.getData()["variantMgmtId1"].variantsEditable, false, "the parameter variantsEditable stays false for bDesignTimeMode = true");
+			this.oModel.setModelPropertiesForControl("variantMgmtId1", false, oDummyControl);
+			assert.equal(this.oModel.getData()["variantMgmtId1"].variantsEditable, false, "the parameter variantsEditable stays false for bDesignTimeMode = false");
 		});
 
-		QUnit.test("when calling '_setModelPropertiesForControl' with updateVariantInURL = true", function(assert) {
+		QUnit.test("when calling 'setModelPropertiesForControl' with updateVariantInURL = true", function(assert) {
 			this.oModel.getData()["variantMgmtId1"]._isEditable = true;
 			this.oModel.getData()["variantMgmtId1"].updateVariantInURL = true;
 			this.oModel.getData()["variantMgmtId1"].currentVariant = "variant0";
@@ -153,21 +153,21 @@ function(
 				ignoreRegisterUpdate: true
 			};
 
-			this.oModel._setModelPropertiesForControl("variantMgmtId1", false, oDummyControl);
+			this.oModel.setModelPropertiesForControl("variantMgmtId1", false, oDummyControl);
 			assert.strictEqual(VariantUtil.getCurrentHashParamsFromRegister.callCount, 0, "then VariantUtil.getCurrentHashParamsFromRegister not called");
-			assert.equal(this.oModel._bAdaptationMode, false, "the property _bAdaptationMode is initially false");
+			assert.equal(this.oModel._bDesignTimeMode, false, "the property _bDesignTimeMode is initially false");
 			assert.deepEqual(this.oModel.updateHasherEntry.getCall(0).args[0], {},
 				"then VariantModel.updateHasherEntry() called with an empty object initially");
 
-			this.oModel._setModelPropertiesForControl("variantMgmtId1", true, oDummyControl);
+			this.oModel.setModelPropertiesForControl("variantMgmtId1", true, oDummyControl);
 			assert.strictEqual(VariantUtil.getCurrentHashParamsFromRegister.callCount, 0, "then VariantUtil.getCurrentHashParamsFromRegister not called");
-			assert.equal(this.oModel._bAdaptationMode, true, "the property _bAdaptationMode is true when adaptation mode is on");
+			assert.equal(this.oModel._bDesignTimeMode, true, "the property _bDesignTimeMode is true when adaptation mode is on");
 			assert.deepEqual(this.oModel.updateHasherEntry.getCall(1).args[0], mExpectedParameters,
 				"then VariantModel.updateHasherEntry() called with empty hash parameters in UI adaptation mode");
 
 			mExpectedParameters.parameters = ["currentHash1", "currentHash2"];
-			this.oModel._setModelPropertiesForControl("variantMgmtId1", false, oDummyControl);
-			assert.equal(this.oModel._bAdaptationMode, false, "the property _bAdaptationMode is set to false when adaptation mode is turned off");
+			this.oModel.setModelPropertiesForControl("variantMgmtId1", false, oDummyControl);
+			assert.equal(this.oModel._bDesignTimeMode, false, "the property _bDesignTimeMode is set to false when adaptation mode is turned off");
 			assert.deepEqual(this.oModel.updateHasherEntry.getCall(2).args[0], mExpectedParameters,
 				"then VariantModel.updateHasherEntry() called with current hash parameters when not in UI adaptation mode");
 			assert.strictEqual(VariantUtil.getCurrentHashParamsFromRegister.callCount, 1, "then VariantUtil.getCurrentHashParamsFromRegister called once");
@@ -439,7 +439,7 @@ function(
 			sandbox.stub(this.oModel, "updateHasherEntry");
 
 			// set adaptation mode true
-			this.oModel._bAdaptationMode = true;
+			this.oModel._bDesignTimeMode = true;
 
 			// mock current variant id to make it different
 			this.oModel.oData["variantMgmtId1"].currentVariant = "variantCurrent";
@@ -451,7 +451,7 @@ function(
 			this.oModel._setVariantProperties("variantMgmtId1", mPropertyBag, true);
 			assert.ok( this.oModel.updateHasherEntry.calledWithExactly({
 				parameters: [this.oModel.oData["variantMgmtId1"].currentVariant],
-				updateURL: !this.oModel._bAdaptationMode
+				updateURL: !this.oModel._bDesignTimeMode
 			}), "then the 'updateHasherEntry' called with the current variant id as a parameter in UI adaptation mode");
 		});
 
@@ -471,7 +471,7 @@ function(
 			sandbox.stub(this.oModel, "updateHasherEntry");
 
 			// set adaptation mode false
-			this.oModel._bAdaptationMode = false;
+			this.oModel._bDesignTimeMode = false;
 
 			// mock variant controller data
 			this.oModel.oVariantController._mVariantManagement = {};
@@ -480,7 +480,7 @@ function(
 			this.oModel._setVariantProperties("variantMgmtId1", mPropertyBag, true);
 			assert.ok( this.oModel.updateHasherEntry.calledWithExactly({
 				parameters: [],
-				updateURL: !this.oModel._bAdaptationMode
+				updateURL: !this.oModel._bDesignTimeMode
 			}), "then the 'updateHasherEntry' called without the current variant id as a parameter in personalization mode");
 		});
 
@@ -644,7 +644,7 @@ function(
 			sandbox.stub(VariantUtil, "getCurrentHashParamsFromRegister").returns(["Dummy", "variantMgmtId1", "Dummy1"]);
 			sandbox.stub(this.oModel.oVariantController, "getVariant").withArgs("variantMgmtId1", "variantMgmtId1").returns(true);
 			var fnUpdateHasherEntryStub = sandbox.stub(this.oModel, "updateHasherEntry");
-			this.oModel._bAdaptationMode = true;
+			this.oModel._bDesignTimeMode = true;
 
 			this.oModel._updateVariantInURL("variantMgmtId1", "variant0");
 
@@ -659,7 +659,7 @@ function(
 			sandbox.stub(Utils, "getParsedURLHash").returns({params: true});
 
 			var fnUpdateHasherEntryStub = sandbox.stub(this.oModel, "updateHasherEntry");
-			this.oModel._bAdaptationMode = true;
+			this.oModel._bDesignTimeMode = true;
 
 			this.oModel._updateVariantInURL("variantMgmtId1", "variant0");
 
@@ -1091,7 +1091,7 @@ function(
 			sandbox.stub(this.oFlexController._oChangePersistence._oVariantController, "_setVariantData");
 			sandbox.stub(this.oFlexController._oChangePersistence._oVariantController, "_updateChangesForVariantManagementInMap");
 
-			this.oModel._setModelPropertiesForControl("variantMgmtId1", true, oVariantManagement);
+			this.oModel.setModelPropertiesForControl("variantMgmtId1", true, oVariantManagement);
 
 			this.oModel.getData()["variantMgmtId1"].variants[1].title = "test";
 			this.oModel.getData()["variantMgmtId1"].variants[1].favorite = false;

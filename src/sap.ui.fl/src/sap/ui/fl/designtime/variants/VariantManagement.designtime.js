@@ -3,8 +3,26 @@
  */
 
 // Provides the Design Time Metadata for the sap.ui.fl.variants.VariantManagement control.
-sap.ui.define([], function() {
+sap.ui.define([
+	"sap/ui/fl/Utils"
+], function(
+	flUtils
+) {
 	"use strict";
+	var sVariantModelName = "$FlexVariants";
+	var fnSetControlAttributes = function (oVariantManagement, bDesignTimeMode) {
+		var oAppComponent = flUtils.getAppComponentForControl(oVariantManagement),
+			sControlId = oVariantManagement.getId(),
+			oModel = oAppComponent.getModel(sVariantModelName),
+			sVariantManagementReference = oAppComponent.getLocalId(sControlId) || sControlId;
+
+		if (!oModel) {
+			return;
+		}
+
+		oModel.setModelPropertiesForControl(sVariantManagementReference, bDesignTimeMode, oVariantManagement);
+		oModel.checkUpdate(true);
+	};
 	return {
 		annotations: {},
 		properties: {
@@ -34,12 +52,15 @@ sap.ui.define([], function() {
 			return oVariantManagement.getTitle().getDomRef("inner");
 		},
 		customData: {},
-		editor: {
+		tool: {
 			start: function(oVariantManagement) {
-				// debugger
+				// In personalization mode the variant management overlay cannot be selected
+				var bDesignTimeMode = true;
+				fnSetControlAttributes(oVariantManagement, bDesignTimeMode);
 			},
 			stop: function(oVariantManagement) {
-				// debugger
+				var bDesignTimeMode = false;
+				fnSetControlAttributes(oVariantManagement, bDesignTimeMode);
 			}
 		}
 	};
