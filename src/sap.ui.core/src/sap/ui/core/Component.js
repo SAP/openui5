@@ -454,7 +454,10 @@ sap.ui.define([
 
 	/**
 	 * Returns true, if the Component instance is a variant.
-	 * @TODO more details
+	 *
+	 * A Component is a variant if the property sap.ui5/componentName
+	 * is present in the manifest and if this property and the sap.app/id
+	 * differs.
 	 *
 	 * @return {boolean} true, if the Component instance is a variant
 	 * @private
@@ -462,10 +465,10 @@ sap.ui.define([
 	 */
 	Component.prototype._isVariant = function() {
 		if (this._oManifest) {
-			// read the "/sap.app/id" from static manifest/metadata
-			var sMetadataId = this._oMetadataProxy._oMetadata.getManifestEntry("/sap.app/id");
-			// a variant differs in the "/sap.app/id"
-			return sMetadataId !== this.getManifestEntry("/sap.app/id");
+			// read the "/sap.ui5/componentName" which should be present for variants
+			var sComponentName = this.getManifestEntry("/sap.ui5/componentName");
+			// a variant differs in the "/sap.app/id" and "/sap.ui5/componentName"
+			return sComponentName && sComponentName !== this.getManifestEntry("/sap.app/id");
 		} else {
 			return false;
 		}
