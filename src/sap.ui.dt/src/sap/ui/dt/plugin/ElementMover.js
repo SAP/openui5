@@ -213,8 +213,9 @@ sap.ui.define([
 	 * metadata for the relevant aggregation.
 	 * @param  {sap.ui.dt.Overlay} oMovedOverlay The overlay of the element being moved
 	 * @param  {sap.ui.dt.Overlay} oTargetElementOverlay The overlay of the target element for the move
+	 * @param  {boolean} bInsertAfterElement Flag defining if the Element should be inserted After the Selection
 	 */
-	ElementMover.prototype.repositionOn = function(oMovedOverlay, oTargetElementOverlay) {
+	ElementMover.prototype.repositionOn = function(oMovedOverlay, oTargetElementOverlay, bInsertAfterElement) {
 		var oMovedElement = oMovedOverlay.getElement();
 		var oTargetParentInformation = OverlayUtil.getParentInformation(oTargetElementOverlay);
 		var oAggregationDesignTimeMetadata;
@@ -231,6 +232,9 @@ sap.ui.define([
 		if (oTargetParentInformation.index !== -1) {
 			if (oAggregationDesignTimeMetadata && oAggregationDesignTimeMetadata.beforeMove){
 				oAggregationDesignTimeMetadata.beforeMove(oRelevantContainerElement, oMovedElement);
+			}
+			if (bInsertAfterElement){
+				oTargetParentInformation.index++;
 			}
 			ElementUtil.insertAggregation(oTargetParentInformation.parent, oTargetParentInformation.aggregation,
 				oMovedElement, oTargetParentInformation.index);
@@ -264,13 +268,13 @@ sap.ui.define([
 
 		var aTargetAggregationItems = ElementUtil.getAggregation(oTargetAggregationOverlay.getElement(), oTargetAggregationOverlay.getAggregationName());
 		var iIndex = aTargetAggregationItems.indexOf(oMovedElement);
-		// Don't do anything when the element is already in the aggregation and is the last element
-		if (!(iIndex > -1 && iIndex === aTargetAggregationItems.length - 1)) {
+		// Don't do anything when the element is already in the aggregation and is the first element
+		if (!(iIndex > -1 && iIndex === 0)) {
 			if (oAggregationDesignTimeMetadata && oAggregationDesignTimeMetadata.beforeMove){
 				oAggregationDesignTimeMetadata.beforeMove(oRelevantContainerElement, oMovedElement);
 			}
 			var sTargetAggregationName = oTargetAggregationOverlay.getAggregationName();
-			ElementUtil.addAggregation(oTargetParentElement, sTargetAggregationName, oMovedElement);
+			ElementUtil.insertAggregation(oTargetParentElement, sTargetAggregationName, oMovedElement, 0);
 			if (oAggregationDesignTimeMetadata && oAggregationDesignTimeMetadata.afterMove){
 				oAggregationDesignTimeMetadata.afterMove(oRelevantContainerElement, oMovedElement);
 			}

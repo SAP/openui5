@@ -144,9 +144,9 @@ function(
 			fnTriggerKeydown(this.oButtonOverlay.getDomRef(), KeyCodes.V, false, false, true, false);
 
 			var aContent = this.oLayout.getContent();
-			assert.equal(aContent.indexOf(this.oButton), 1, "the first Button is at position 1");
+			assert.equal(aContent.indexOf(this.oButton), 0, "the first Button is at position 0");
 			assert.equal(aContent.indexOf(this.oButton2), 2, "the second Button is at position 2");
-			assert.equal(aContent.indexOf(this.oButton3), 0, "the third Button is at position 0");
+			assert.equal(aContent.indexOf(this.oButton3), 1, "the third Button is at position 1");
 		});
 
 		QUnit.test("when cut is triggered on a button overlay and paste is triggered on layout overlay", function(assert) {
@@ -155,9 +155,9 @@ function(
 			fnTriggerKeydown(this.oLayoutOverlay.getDomRef(), KeyCodes.V, false, false, true, false);
 
 			var aContent = this.oLayout.getContent();
-			assert.equal(aContent.indexOf(this.oButton), 2, "the first Button is at position 2");
-			assert.equal(aContent.indexOf(this.oButton2), 0, "the second Button is at position 0");
-			assert.equal(aContent.indexOf(this.oButton3), 1, "the third Button is at position 1");
+			assert.equal(aContent.indexOf(this.oButton), 0, "the first Button is at position 0");
+			assert.equal(aContent.indexOf(this.oButton2), 1, "the second Button is at position 1");
+			assert.equal(aContent.indexOf(this.oButton3), 2, "the third Button is at position 2");
 		});
 
 		QUnit.test("when paste is triggered on a Layout overlay and cut was not triggered before", function(assert) {
