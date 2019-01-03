@@ -1129,7 +1129,7 @@ function(
 		var that = this;
 
 		oPopover.open = function() {
-			return this.openBy(that.getDomRef("content"));
+			return this.openBy(that);
 		};
 	};
 
