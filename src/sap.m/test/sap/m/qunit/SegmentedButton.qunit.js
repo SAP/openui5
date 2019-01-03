@@ -833,10 +833,10 @@ sap.ui.define([
 
 		aButtons = oSB.getButtons();
 
-		iBtn1Width = aButtons[0].$().outerWidth();
-		iBtn2Width = aButtons[1].$().outerWidth();
-		iBtn3Width = aButtons[2].$().outerWidth();
-		iBtn4Width = aButtons[3].$().outerWidth();
+		iBtn1Width = Math.ceil(aButtons[0].getDomRef().getBoundingClientRect().width);
+		iBtn2Width = Math.ceil(aButtons[1].getDomRef().getBoundingClientRect().width);
+		iBtn3Width = Math.ceil(aButtons[2].getDomRef().getBoundingClientRect().width);
+		iBtn4Width = Math.ceil(aButtons[3].getDomRef().getBoundingClientRect().width);
 
 		// Assert
 		assert.ok(iBtn1Width > 0, "The width of the first button is greater than zero");
