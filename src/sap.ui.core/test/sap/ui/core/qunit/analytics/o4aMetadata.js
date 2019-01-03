@@ -72,6 +72,18 @@ sap.ui.define([
 		"				<Property Name=\"ActualPlannedCostsPercentage\" Type=\"Edm.Decimal\"\n" +
 		"					Precision=\"34\" sap:filterable=\"false\" sap:aggregation-role=\"measure\"\n" +
 		"					sap:label=\"Actual Planned Costs Percentage\" />\n" +
+		"				<!-- Dimensions without labels / texts -->\n" +
+		"				<Property Name=\"ControllingAreaNoText\" Type=\"Edm.String\"\n" +
+		"					MaxLength=\"4\" sap:aggregation-role=\"dimension\" sap:label=\"Controlling Area\"\n />\n" +
+		"				<Property Name=\"ControllingAreaNoTextNoLabel\" Type=\"Edm.String\"\n" +
+		"					MaxLength=\"4\" sap:aggregation-role=\"dimension\" />\n" +
+		"				<Property Name=\"ControllingAreaNoTextEmptyLabel\" Type=\"Edm.String\"\n" +
+		"					MaxLength=\"4\" sap:aggregation-role=\"dimension\" sap:label=\"\" />\n" +
+		"				<Property Name=\"ControllingAreaWithTextEmptyLabel\" Type=\"Edm.String\"\n" +
+		"					MaxLength=\"4\" sap:aggregation-role=\"dimension\" sap:label=\"\"\n" +
+		"					sap:text=\"ControllingAreaText2\" />\n" +
+		"				<Property Name=\"ControllingAreaText2\" Type=\"Edm.String\"\n" +
+		"					MaxLength=\"40\" sap:label=\"Controlling Area2\" sap:attribute-for=\"ControllingAreaWithTextEmptyLabel\" />\n" +
 		"				<NavigationProperty Name=\"ControllingAreaDetails\"\n" +
 		"					Relationship=\"servicemock.ControllingAreaToMasterDataType\"\n" +
 		"					FromRole=\"ActualPlannedCostsResultsDependent\" ToRole=\"ControllingAreasPrincipal\" sap:hierarchy-node-for=\"ControllingArea\"/>\n" +
