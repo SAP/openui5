@@ -148,10 +148,19 @@ sap.ui.define(
 			var done = assert.async();
 			var oImageContent = this.LightBox.getImageContent()[0],
 				sImageSource = IMAGE_PATH + 'demo/nature/elephant.jpg',
-				oLightBoxPopup = this.LightBox._oPopup;
+				oNativeImage = oImageContent._getNativeImage(),
+				fnOnload = oNativeImage.onload,
+				oLightBoxPopup = this.LightBox._oPopup,
+				iOnloadCount = 0;
 
 			oImageContent.setImageSrc(sImageSource);
 			sap.ui.getCore().applyChanges();
+
+			oNativeImage.onload = function () {
+				fnOnload.apply(oNativeImage, arguments);
+				iOnloadCount++;
+			};
+
 
 			//act
 			this.LightBox.open();
@@ -160,6 +169,7 @@ sap.ui.define(
 				// Assert
 				assert.strictEqual(this.LightBox.isOpen(), true, 'The lightbox should be open');
 				assert.strictEqual(oLightBoxPopup.isOpen(), true, 'The lightbox should be open');
+				assert.strictEqual(iOnloadCount, 1, "image is loaded just once");
 				done();
 			}.bind(this), 100);
 		});
