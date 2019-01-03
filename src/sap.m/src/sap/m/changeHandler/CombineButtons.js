@@ -78,6 +78,9 @@ sap.ui.define(["sap/ui/fl/Utils", "sap/base/util/uid", 'sap/ui/base/ManagedObjec
 				// observe the Button enabled property so in case it is changed the new value should be applied to the MenuItem also
 				new ManagedObjectObserver(function (oChanges) {
 					oModifier.setProperty(oMenuItem, "enabled", oChanges.current);
+					if (oBindingInfo) {
+						oMenuItem.bindProperty("enabled", oBindingInfo);
+					}
 				}).observe(oButton, {
 					properties: ["enabled"]
 				});
