@@ -303,7 +303,7 @@ sap.ui.define([
 		oCalendarDateInt.placeAt("content");
 		oExternalControl.placeAt("content");
 		sap.ui.getCore().applyChanges();
-		var sExpected = oExternalControl.getDomRef().id + "--Month0-20190102";
+		var sExpected = oExternalControl.$().find(".sapUiCalItems").children()[0].id;
 
 		oExternalControl.focus();
 		_assertFocus(oExternalControl.getDomRef(), sExpected, "Prerequisites check: 'extControl' (another DateInterval) should be focused", assert);
