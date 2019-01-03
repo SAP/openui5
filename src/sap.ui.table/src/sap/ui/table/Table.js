@@ -2164,11 +2164,10 @@ sap.ui.define([
 		var iNewTotalRowCount = oBinding ? oBinding.getLength() : 0;
 
 		if (this._iBindingLength !== iNewTotalRowCount) {
-			this._iBindingLength = iNewTotalRowCount;
-
 			// If the binding length changes, some parts of the UI need to be updated.
 			if (bUpdateUI !== false) {
 				var oScrollExtension = this._getScrollExtension();
+				this._iBindingLength = iNewTotalRowCount;
 
 				this._updateFixedBottomRows();
 				oScrollExtension.updateVerticalScrollbarVisibility();
