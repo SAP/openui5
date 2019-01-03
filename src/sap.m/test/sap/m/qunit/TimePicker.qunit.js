@@ -443,9 +443,9 @@ sap.ui.define([
 		assert.strictEqual(parseInt(aList[aList.length - 1].getText()), iEnd, "the text property of the last element of the array is correct");
 	});
 
-	QUnit.test("ValueHelp icon is not visible when timepicker is not enabled", function (assert) {
+	QUnit.test("ValueHelp icon is not visible when timepicker is not editable", function (assert) {
 		// arrange
-		var oTimePicker = new DatePicker({ enabled: false }),
+		var oTimePicker = new DatePicker({ editable: false }),
 			oValueHelpIconSetPropertySpy = this.spy(),
 			oValueHelpIconStub = this.stub(oTimePicker, "_getValueHelpIcon", function () {
 				return { setProperty: oValueHelpIconSetPropertySpy };
