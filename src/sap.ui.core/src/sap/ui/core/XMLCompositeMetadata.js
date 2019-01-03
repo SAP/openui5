@@ -64,6 +64,12 @@ sap.ui.define([
 							if (typeof oClassInfo.fragmentContent === "string") { // parse if not already an XML document
 								var oParser = new DOMParser();
 								oClassInfo.fragmentContent = oParser.parseFromString(oClassInfo.fragmentContent, "text/xml").documentElement;
+
+								// DOMParser throws an exception in IE11, FF only logs an error, Chrome does nothing; there is a <parsererror> tag in the result, though; only handle Chrome for now
+								if (oClassInfo.fragmentContent && oClassInfo.fragmentContent.getElementsByTagName("parsererror").length) { // parser error
+									var sMessage = oClassInfo.fragmentContent.getElementsByTagName("parsererror")[0].innerText; // contains "Below is a rendering of the page up to the first error", but don't bother removing it
+									throw new Error("There was an error parsing the XML fragment for XMLComposite '" + sClassName + "'. The following message may contain hints to find the problem: " + sMessage);
+								}
 							}
 							this._fragment = oClassInfo.fragmentContent; // otherwise assume XML
 						} else {
@@ -71,8 +77,7 @@ sap.ui.define([
 						}
 					}
 				} catch (e) {
-					if (!oClassInfo.fragmentUnspecified) {
-						// fragment xml was explicitly specified so we expect to find something !
+					if (!oClassInfo.fragmentUnspecified /* fragment xml was explicitly specified so we expect to find something */ || e.message.startsWith("There was an error parsing")) {
 						throw (e);
 					} else {
 						// should the class perhaps have been abstract ...
