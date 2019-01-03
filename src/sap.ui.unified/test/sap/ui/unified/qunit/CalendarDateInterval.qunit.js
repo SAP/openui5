@@ -24,11 +24,11 @@ sap.ui.define([
 		iStartDateChanged++;
 	};
 
-	var _assertFocus = function(oTarget, sMsg, assert) {
+	var _assertFocus = function(oTarget, sId, sMsg, assert) {
 		var $activeElement = document.activeElement;
 		assert.ok($activeElement, "There should be an active element. " +  sMsg);
 		if ($activeElement) {
-			assert.strictEqual($activeElement.id, oTarget.id, "Element with id: [" + oTarget.id + "] should be focused. " + sMsg);
+			assert.strictEqual($activeElement.id, sId, "Element with id: [" + sId + "] should be focused. " + sMsg);
 		}
 	};
 
@@ -290,7 +290,7 @@ sap.ui.define([
 		oCalendarDateInt.rerender();
 
 		//Assert
-		_assertFocus(aDates[1], "Calendar: after rerendering  second day still has focus", assert);
+		_assertFocus(aDates[1], aDates[1].id, "Calendar: after rerendering  second day still has focus", assert);
 		oCalendarDateInt.destroy();
 	});
 
@@ -303,15 +303,16 @@ sap.ui.define([
 		oCalendarDateInt.placeAt("content");
 		oExternalControl.placeAt("content");
 		sap.ui.getCore().applyChanges();
+		var sExpected = oExternalControl.getDomRef().id + "--Month0-20190102";
 
-		oExternalControl.$().focus();
-		_assertFocus(oExternalControl.getDomRef(), "Prerequisites check: 'extControl' (another DateInterval) should be focused", assert);
+		oExternalControl.focus();
+		_assertFocus(oExternalControl.getDomRef(), sExpected, "Prerequisites check: 'extControl' (another DateInterval) should be focused", assert);
 
 		//Act
 		oCalendarDateInt.rerender();
 
 		//Assert
-		_assertFocus(oExternalControl.getDomRef(), "After rerendering, the focus should stay on the 'extControl' (another MonthInterval)", assert);
+		_assertFocus(oExternalControl.getDomRef(), sExpected, "After rerendering, the focus should stay on the 'extControl' (another MonthInterval)", assert);
 		oCalendarDateInt.destroy();
 		oExternalControl.destroy();
 	});
