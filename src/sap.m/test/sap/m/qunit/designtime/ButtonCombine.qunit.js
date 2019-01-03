@@ -183,6 +183,12 @@ sap.ui.define([
 			assert.strictEqual(oFirstMenuItem.getBindingInfo("enabled") === oBtn1.getBindingInfo("enabled"), true,
 					"First menuItem has the same bindingInfo for the 'enabled' property as the button from which was created");
 
+			oModel.setData({ mData: { enabled: true }});
+
+			assert.strictEqual(oFirstMenuItem.getEnabled(), true, "First menuItem is enabled like the button from which was created");
+			assert.strictEqual(oFirstMenuItem.getBindingInfo("enabled") === oBtn1.getBindingInfo("enabled"), true,
+			"First menuItem has the same bindingInfo for the 'enabled' property as the button from which was created");
+
 			// clean up
 			oBtn1.destroy();
 			oBtn2.destroy();
