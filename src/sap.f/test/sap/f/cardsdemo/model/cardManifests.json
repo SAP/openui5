@@ -2,153 +2,226 @@
 	"noLayout": {
 		"card1": {
 			"sap.card": {
-				"header": {
-					"icon": {
-						"src": "sap-icon://accept"
+			  "header": {
+				"iconSrc": "sap-icon://accept",
+				"title": "Card Title 2x2",
+				"subtitle": "Card subtitle",
+				"status": {
+				  "text": "Count"
+				}
+			  },
+				"type": "List",
+			  "content": {
+				"data": {
+				  "json": [
+					{
+					  "Name": "Notebook Basic 15",
+					  "Description": "Notebook Basic 15 with 2,80 GHz quad core, 15\" LCD, 4 GB DDR3 RAM, 500 GB Hard Disc, Windows 8 Pro",
+					  "Id": "HT-1000",
+					  "SubCategoryId": "Notebooks",
+					  "icon": "../images/Woman_avatar_01.png"
+					},
+					{
+					  "Name": "Notebook Basic 17",
+					  "Description": "Notebook Basic 17 with 2,80 GHz quad core, 17\" LCD, 4 GB DDR3 RAM, 500 GB Hard Disc, Windows 8 Pro",
+					  "Id": "HT-1001",
+					  "SubCategoryId": "Notebooks",
+					  "icon": "../images/Woman_avatar_01.png"
+					},
+					{
+					  "Name": "Notebook Basic 18",
+					  "Description": "Notebook Basic 18 with 2,80 GHz quad core, 18\" LCD, 8 GB DDR3 RAM, 1000 GB Hard Disc, Windows 8 Pro",
+					  "Id": "HT-1002",
+					  "SubCategoryId": "Notebooks",
+					  "icon": "../images/Woman_avatar_01.png"
 					}
+				  ]
 				},
-				"type": "List"
+				"item": {
+				  "icon": {
+					"label": "{{icon_label}}",
+					"value": "{icon}"
+				  },
+				  "title": {
+					"label": "{{title_label}}",
+					"value": "{Name}"
+				  },
+				  "description": {
+					"label": "{{description_label}}",
+					"value": "{Description}"
+				  }
+				}
+			  }
 			}
 		},
 		"card2": {
 			"sap.card": {
 				"header": {
-					"icon": {
-						"src": "sap-icon://accept"
-					}
+				  "title": "This line is the title of sap.f.Card",
+				  "status": {
+					"text": "Count"
+				  }
 				},
-				"type": "List"
+				"type": "List",
+				"content": {
+				"data": {
+				  "json": [
+					{
+					  "Name": "Notebook Basic 15",
+					  "Description": "Notebook Basic 15 with 2,80 GHz quad core, 15\" LCD, 4 GB DDR3 RAM, 500 GB Hard Disc, Windows 8 Pro",
+					  "Id": "HT-1000",
+					  "SubCategoryId": "Notebooks",
+					  "icon": "../images/Woman_avatar_01.png"
+					},
+					{
+					  "Name": "Notebook Basic 17",
+					  "Description": "Notebook Basic 17 with 2,80 GHz quad core, 17\" LCD, 4 GB DDR3 RAM, 500 GB Hard Disc, Windows 8 Pro",
+					  "Id": "HT-1001",
+					  "SubCategoryId": "Notebooks",
+					  "icon": "../images/Woman_avatar_01.png"
+					},
+					{
+					  "Name": "Notebook Basic 18",
+					  "Description": "Notebook Basic 18 with 2,80 GHz quad core, 18\" LCD, 8 GB DDR3 RAM, 1000 GB Hard Disc, Windows 8 Pro",
+					  "Id": "HT-1002",
+					  "SubCategoryId": "Notebooks",
+					  "icon": "../images/Woman_avatar_01.png"
+					}
+				  ]
+				},
+				"item": {
+				  "icon": {
+					"label": "{{icon_label}}",
+					"value": "{icon}"
+				  },
+				  "title": {
+					"label": "{{title_label}}",
+					"value": "{Name}"
+				  },
+				  "description": {
+					"label": "{{description_label}}",
+					"value": "{Description}"
+				  }
+				}
+			  }
 			}
 		},
 		"card3": {
 			"sap.card": {
 				"header": {
-					"title": "This line is the title of sap.f.Card"
+				  "title": "This line is the title of sap.f.Card",
+				  "subtitle": " Thi is a sap.f.Card subtitle",
+				  "status": {
+					"text": "Count"
+				  }
 				},
-				"type": "List"
+				"type": "List",
+			  "content": {
+				"data": {
+				  "json": [
+					{
+					  "Name": "Notebook Basic 17",
+					  "Description": "Notebook Basic 17 with 2,80 GHz quad core, 17\" LCD, 4 GB DDR3 RAM, 500 GB Hard Disc, Windows 8 Pro",
+					  "Id": "HT-1001",
+					  "SubCategoryId": "Notebooks",
+					  "icon": "../images/Woman_avatar_01.png"
+					},
+					{
+					  "Name": "Notebook Basic 18",
+					  "Description": "Notebook Basic 18 with 2,80 GHz quad core, 18\" LCD, 8 GB DDR3 RAM, 1000 GB Hard Disc, Windows 8 Pro",
+					  "Id": "HT-1002",
+					  "SubCategoryId": "Notebooks",
+					  "icon": "../images/Woman_avatar_01.png"
+					}
+				  ]
+				},
+				"item": {
+				  "icon": {
+					"label": "{{icon_label}}",
+					"value": "{icon}"
+				  },
+				  "title": {
+					"label": "{{title_label}}",
+					"value": "{Name}"
+				  },
+				  "description": {
+					"label": "{{description_label}}",
+					"value": "{Description}"
+				  }
+				}
+			  }
 			}
 		},
 		"card4": {
 			"sap.card": {
 				"header": {
-					"title": "This line is the title of sap.f.Card",
-					"subtitle": " Thi is a sap.f.Card subtitle"
-				},
-				"type": "List"
-			}
-		},
-		"card5": {
-			"sap.card": {
-				"header": {
 					"title": "This line is the title of sap.f.Card and a very very very very very very very very very very very very very very very very very very long one",
 					"subtitle": " Thi is a sap.f.Card subtitle and a very very  very very very very very very very very very very very very very very very very  very very long one",
 					"icon": {
-						"src": "../images/Woman_avatar_01.png"
+					  "src" : "../images/Woman_avatar_01.png",
+					  "shape": "Square"
 					},
-					"status": "Count"
+					"status": {
+					  "text": "100 of 200"
+					}
+
 				},
-				"type": "List"
+				"type": "List",
+				"content": {
+				"data": {
+				  "json": [
+					{
+					  "Name": "Notebook Basic 15",
+					  "Description": "Notebook Basic 15 with 2,80 GHz quad core, 15\" LCD, 4 GB DDR3 RAM, 500 GB Hard Disc, Windows 8 Pro",
+					  "Id": "HT-1000",
+					  "SubCategoryId": "Notebooks",
+					  "icon": "../images/Woman_avatar_01.png"
+					},
+					{
+					  "Name": "Notebook Basic 17",
+					  "Description": "Notebook Basic 17 with 2,80 GHz quad core, 17\" LCD, 4 GB DDR3 RAM, 500 GB Hard Disc, Windows 8 Pro",
+					  "Id": "HT-1001",
+					  "SubCategoryId": "Notebooks",
+					  "icon": "../images/Woman_avatar_01.png"
+					},
+					{
+					  "Name": "Notebook Basic 18",
+					  "Description": "Notebook Basic 18 with 2,80 GHz quad core, 18\" LCD, 8 GB DDR3 RAM, 1000 GB Hard Disc, Windows 8 Pro",
+					  "Id": "HT-1002",
+					  "SubCategoryId": "Notebooks",
+					  "icon": "../images/Woman_avatar_01.png"
+					}
+				  ]
+				},
+				"item": {
+				  "icon": {
+					"label": "{{icon_label}}",
+					"value": "{icon}"
+				  },
+				  "title": {
+					"label": "{{title_label}}",
+					"value": "{Name}"
+				  },
+				  "description": {
+					"label": "{{description_label}}",
+					"value": "{Description}"
+				  }
+				}
+			  }
 			}
 		},
-		"card6": {
-			"sap.card": {
-				"header": {
-					"icon": {
-						"src": "../images/Woman_avatar_01.png"
-					},
-					"title": "Card Title  4x2",
-					"subtitle": "Card subtitle",
-					"status": "Count"
-				},
-				"type": "List"
-			}
-		},
-		"card7": {
-			"sap.card": {
-				"header": {
-					"icon": {
-						"src": "sap-icon://accept"
-					},
-					"title": "Card Title 4x4",
-					"subtitle": "Card subtitle",
-					"status": "Count"
-				},
-				"type": "List"
-			}
-		},
-		"card8": {
-			"sap.card": {
-				"header": {
-					"icon": {
-						"src": "../images/Woman_avatar_01.png"
-					},
-					"title": "Card Title 4x4 with image",
-					"subtitle": "Card subtitle",
-					"status": "Count"
-				},
-				"type": "List"
-			}
-		},
-		"card9": {
-			"sap.card": {
-				"header": {
-					"icon": {
-						"src": "../images/Woman_avatar_01.png",
-						"displayShape": "Square"
-					},
-					"title": "Card Title 6x4 with image"
-				},
-				"type": "List"
-			}
-		},
-		"card10": {
-			"sap.card": {
-				"header": {
-					"icon": {
-						"src": "sap-icon://accept"
-					},
-					"title": "Card Title 6x4 Loading State",
-					"subtitle": "Content Loading State and a truncated subtitle subtitle subtitle",
-					"status": "Count"
-				},
-				"type": "List"
-			}
-		},
-		"card11": {
-			"sap.card": {
-				"header": {
-					"icon": {
-						"src": "sap-icon://accept"
-					},
-					"title": "Card with background image",
-					"subtitle": "subtitle for the card",
-					"status": "Count"
-				},
-				"type": "List"
-			}
-		},
-		"card12": {
-			"sap.card": {
-				"header": {
-					"icon": {
-						"src": "sap-icon://accept"
-					},
-					"title": "Card with Component",
-					"subtitle": "Card Component Container is created internally"
-				},
-				"type": "List"
-			}
-		},
-		"card13": {
+		"card5": {
 			"sap.card": {
 				"type": "List",
 				"header": {
 					"title": "L3 Request list content Card",
 					"subtitle": "Card subtitle",
-					"icon": {
-						"src": "sap-icon://accept"
-					},
-					"status": "100 of 200"
+				  "icon": {
+					"src" : "sap-icon://activity-items"
+				  },
+				  "status": {
+					"text": "Count"
+				  }
 				},
 				"content": {
 					"data": {
@@ -228,27 +301,70 @@
 				}
 			}
 		},
-		"card14": {
+		"card6": {
 			"sap.card": {
 				"header": {
 					"title": "This line is the title of sap.f.Card and a very very very very very very very very very very very very very very very very very very long one",
 					"subtitle": " Thi is a sap.f.Card subtitle and a very very  very very very very very very very very very very very very very very very very  very very long one",
-					"icon": {
-						"initials": "GK"
-					},
-					"status": "Count"
+				  "icon": {
+					"text" : "GK"
+				  },
+				  "status": {
+					"text": "Count"
+				  }
 				},
-				"type": "List"
+				"type": "List",
+			  "content": {
+				"data": {
+				  "json": [
+					{
+					  "Name": "Notebook Basic 15",
+					  "Description": "Notebook Basic 15 with 2,80 GHz quad core, 15\" LCD, 4 GB DDR3 RAM, 500 GB Hard Disc, Windows 8 Pro",
+					  "Id": "HT-1000",
+					  "SubCategoryId": "Notebooks",
+					  "icon": "../images/Woman_avatar_01.png"
+					},
+					{
+					  "Name": "Notebook Basic 17",
+					  "Description": "Notebook Basic 17 with 2,80 GHz quad core, 17\" LCD, 4 GB DDR3 RAM, 500 GB Hard Disc, Windows 8 Pro",
+					  "Id": "HT-1001",
+					  "SubCategoryId": "Notebooks",
+					  "icon": "../images/Woman_avatar_01.png"
+					},
+					{
+					  "Name": "Notebook Basic 18",
+					  "Description": "Notebook Basic 18 with 2,80 GHz quad core, 18\" LCD, 8 GB DDR3 RAM, 1000 GB Hard Disc, Windows 8 Pro",
+					  "Id": "HT-1002",
+					  "SubCategoryId": "Notebooks",
+					  "icon": "../images/Woman_avatar_01.png"
+					}
+				  ]
+				},
+				"item": {
+				  "icon": {
+					"label": "{{icon_label}}",
+					"value": "{icon}"
+				  },
+				  "title": {
+					"label": "{{title_label}}",
+					"value": "{Name}"
+				  },
+				  "description": {
+					"label": "{{description_label}}",
+					"value": "{Description}"
+				  }
+				}
+			  }
 			}
 		},
-		"listContent": {
+		"card7": {
 			"sap.card": {
 				"type": "List",
 				"header": {
 					"title": "L4 Card Title 2x3",
 					"subtitle": "Card subtitle",
 					"icon": {
-						"src": "sap-icon://accept"
+					  "src" : "sap-icon://activity-items"
 					}
 				},
 				"content": {
@@ -258,48 +374,6 @@
 								"Name": "Notebook Basic 15",
 								"Description": "Notebook Basic 15 with 2,80 GHz quad core, 15\" LCD, 4 GB DDR3 RAM, 500 GB Hard Disc, Windows 8 Pro",
 								"Id": "HT-1000",
-								"SubCategoryId": "Notebooks"
-							},
-							{
-								"Name": "Notebook Basic 17",
-								"Description": "Notebook Basic 17 with 2,80 GHz quad core, 17\" LCD, 4 GB DDR3 RAM, 500 GB Hard Disc, Windows 8 Pro",
-								"Id": "HT-1001",
-								"SubCategoryId": "Notebooks"
-							},
-							{
-								"Name": "Notebook Basic 18",
-								"Description": "Notebook Basic 18 with 2,80 GHz quad core, 18\" LCD, 8 GB DDR3 RAM, 1000 GB Hard Disc, Windows 8 Pro",
-								"Id": "HT-1002",
-								"SubCategoryId": "Notebooks"
-							},
-							{
-								"Name": "Notebook Basic 19",
-								"Description": "Notebook Basic 19 with 2,80 GHz quad core, 19\" LCD, 8 GB DDR3 RAM, 1000 GB Hard Disc, Windows 8 Pro",
-								"Id": "HT-1003",
-								"SubCategoryId": "Notebooks"
-							},
-							{
-								"Name": "ITelO Vault",
-								"Description": "Digital Organizer with State-of-the-Art Storage Encryption",
-								"Id": "HT-1007",
-								"SubCategoryId": "PDAs & Organizers"
-							},
-							{
-								"Name": "Notebook Professional 15",
-								"Description": "Notebook Professional 15 with 2,80 GHz quad core, 15\" Multitouch LCD, 8 GB DDR3 RAM, 500 GB SSD - DVD-Writer (DVD-R/+R/-RW/-RAM),Windows 8 Pro",
-								"Id": "HT-1010",
-								"SubCategoryId": "Notebooks"
-							},
-							{
-								"Name": "Notebook Professional 26",
-								"Description": "Notebook Professional 15 with 2,80 GHz quad core, 15\" Multitouch LCD, 8 GB DDR3 RAM, 500 GB SSD - DVD-Writer (DVD-R/+R/-RW/-RAM),Windows 8 Pro",
-								"Id": "HT-1022",
-								"SubCategoryId": "Notebooks"
-							},
-							{
-								"Name": "Notebook Professional 27",
-								"Description": "Notebook Professional 15 with 2,80 GHz quad core, 15\" Multitouch LCD, 8 GB DDR3 RAM, 500 GB SSD - DVD-Writer (DVD-R/+R/-RW/-RAM),Windows 8 Pro",
-								"Id": "HT-1024",
 								"SubCategoryId": "Notebooks"
 							}
 						]
@@ -326,6 +400,342 @@
 					}
 				}
 			}
+		},
+		"line": {
+		  "sap.card": {
+			"type": "Analytical",
+			"header": {
+			  "type": "numeric",
+			  "data": {
+				"request": {
+				  "url": "./cardcontent/kpi.json"
+				},
+				"path": "/kpiInfos/kpi"
+			  },
+			  "title": "Project Cloud Transformation",
+			  "subtitle": "Revenue",
+			  "unitOfMeasurement": "EUR",
+			  "mainIndicator": {
+				"number": "{number}",
+				"unit": "{unit}",
+				"trend": "{trend}",
+				"state": "{state}",
+				"range": {
+				  "WE CAN OFFER THE USE OF RANGE OR STATE": "WE CAN OFFER THE USE OF RANGE OR STATE",
+				  "Critical": [
+					0,
+					100
+				  ],
+				  "Good": [
+					100,
+					1000
+				  ]
+				}
+			  },
+			  "details": "{details}",
+			  "sideIndicators": [
+				{
+				  "title": "Target",
+				  "number": "{target/number}",
+				  "unit": "{target/unit}"
+				},
+				{
+				  "title": "Deviation",
+				  "number": "{deviation/number}",
+				  "unit": "%"
+				}
+			  ]
+			},
+			"content": {
+			  "chart": {
+				"chartType": "line",
+				"legend": {
+				  "visible": true,
+				  "position": "right",
+				  "alignment": "center"
+				},
+				"plotArea": {
+				  "dataLabel": {
+					"visible": true
+				  },
+				  "window": {
+					"start": "firstDataPoint",
+					"end": "lastDataPoint"
+				  }
+				},
+				"title": {
+				  "text": "Line chart",
+				  "visible": true,
+				  "alignment": "bottom"
+				},
+				"measureAxis": "valueAxis",
+				"dimensionAxis": "categoryAxis",
+				"data": {
+				  "request": {
+					"url": "./cardcontent/revenue.json"
+				  },
+				  "path": "/list"
+				},
+				"dimensions": [
+				  {
+					"label": "Weeks",
+					"value": "{Week}"
+				  }
+				],
+				"measures": [
+				  {
+					"label": "Revenue",
+					"value": "{Revenue}"
+				  },
+				  {
+					"label": "Cost",
+					"value": "{Cost}"
+				  }
+				]
+			  }
+			}
+		  }
+		},
+		"stackedColumn": {
+		  "sap.card": {
+			"type": "Analytical",
+			"header": {
+			  "type": "numeric",
+			  "data": {
+				"json": {
+				  "n": "56",
+				  "u": "%",
+				  "trend": "Up",
+				  "valueColor": "Good"
+				}
+			  },
+			  "title": "Project Cloud Transformation Project Cloud Transformation Project Cloud Transformation Project Cloud Transformation Project Cloud Transformation Project Cloud Transformation Project Cloud Transformation ",
+			  "subtitle": "Forecasted goal achievement depending on business logic and other important information Forecasted goal achievement depending on business logic and other important information",
+			  "unitOfMeasurement": "EUR",
+			  "mainIndicator": {
+				"number": "{n}",
+				"unit": "{u}",
+				"trend": "{trend}",
+				"state": "{valueColor}"
+			  },
+			  "details": "Details, additional information, will directly truncate after there is no more space.Details, additional information, will directly truncate after there is no more space.",
+			  "sideIndicators": [
+				{
+				  "title": "Long Target Long Target Long Target Long Target Long Target Long Target Long Target Long Target Long Target Long Target Long Target Long Target Long Target Long Target Long Target",
+				  "number": "3252.234",
+				  "unit": "K"
+				},
+				{
+				  "title": "Long Deviation Long Deviation",
+				  "number": "22.43",
+				  "unit": "%"
+				}
+			  ]
+			},
+			"content": {
+			  "chart": {
+				"chartType": "stacked_column",
+				"legend": {
+				  "visible": false
+				},
+				"plotArea": {
+				  "dataLabel": {
+					"visible": false,
+					"showTotal": true
+				  },
+				  "window": {
+					"start": "firstDataPoint",
+					"end": "lastDataPoint"
+				  }
+				},
+				"title": {
+				  "text": "Stacked column chart",
+				  "visible": true,
+				  "alignment": "bottom"
+				},
+				"measureAxis": "valueAxis",
+				"dimensionAxis": "categoryAxis",
+				"data": {
+				  "request": {
+					"url": "./cardcontent/revenue.json"
+				  },
+				  "path": "/list"
+				},
+				"dimensions": [
+				  {
+					"label": "Weeks",
+					"value": "{Week}"
+				  }
+				],
+				"measures": [
+				  {
+					"label": "Revenue",
+					"value": "{Revenue}"
+				  },
+				  {
+					"label": "Cost",
+					"value": "{Cost}"
+				  }
+				]
+			  }
+			}
+		  }
+		},
+		"stackedBar": {
+		  "sap.card": {
+			"type": "Analytical",
+			"header": {
+			  "type": "numeric",
+			  "data": {
+				"json": {
+				  "n": 6547394.45496,
+				  "u": "М $",
+				  "trend": "Down",
+				  "valueColor": "Critical"
+				}
+			  },
+			  "subtitle": "Success Rate",
+			  "mainIndicator": {
+				"number": "{n}",
+				"unit": "{u}",
+				"trend": "{trend}",
+				"state": "{valueColor}"
+			  },
+			  "sideIndicators": [
+				{
+				  "title": "Decrease",
+				  "number": "24",
+				  "unit": "weeks"
+				}
+			  ]
+			},
+			"content": {
+			  "chart": {
+				"chartType": "stacked_bar",
+				"legend": {
+				  "visible": true,
+				  "position": "bottom",
+				  "alignment": "center"
+				},
+				"plotArea": {
+				  "dataLabel": {
+					"visible": true,
+					"showTotal": false
+				  },
+				  "window": {
+					"start": "firstDataPoint",
+					"end": "lastDataPoint"
+				  },
+				  "categoryAxisText": {
+					"visible": false
+				  },
+				  "valueAxisText": {
+					"text": "Value Axis text"
+				  }
+				},
+				"title": {
+				  "text": "Stacked Bar chart",
+				  "visible": true,
+				  "alignment": "bottom"
+				},
+				"measureAxis": "valueAxis",
+				"dimensionAxis": "categoryAxis",
+				"data": {
+				  "request": {
+					"url": "./cardcontent/revenue.json"
+				  },
+				  "path": "/list"
+				},
+				"dimensions": [
+				  {
+					"label": "Weeks",
+					"value": "{Week}"
+				  }
+				],
+				"measures": [
+				  {
+					"label": "Revenue",
+					"value": "{Revenue}"
+				  }
+				]
+			  }
+			}
+		  }
+		},
+		"donut": {
+		  "sap.card": {
+			"type": "Analytical",
+			"header": {
+			  "type": "numeric",
+			  "data": {
+				"json": {
+				  "n": 6547394.45496,
+				  "u": "М $",
+				  "trend": "Down",
+				  "valueColor": "Critical"
+				}
+			  },
+			  "subtitle": "Success Rate",
+			  "mainIndicator": {
+				"number": "{n}",
+				"unit": "{u}",
+				"trend": "{trend}",
+				"state": "{valueColor}"
+			  },
+			  "sideIndicators": [
+				{
+				  "title": "Decrease",
+				  "number": "24",
+				  "unit": "weeks"
+				}
+			  ]
+			},
+			"content": {
+			  "chart": {
+				"chartType": "donut",
+				"legend": {
+				  "visible": true,
+				  "position": "top",
+				  "alignment": "center"
+				},
+				"plotArea": {
+				  "dataLabel": {
+					"visible": true,
+					"showTotal": true
+				  },
+				  "window": {
+					"start": "firstDataPoint",
+					"end": "lastDataPoint"
+				  }
+				},
+				"title": {
+				  "text": "Donut chart",
+				  "visible": true,
+				  "alignment": "bottom"
+				},
+				"measureAxis": "size",
+				"dimensionAxis": "color",
+				"data": {
+				  "request": {
+					"url": "./cardcontent/cost.json"
+				  },
+				  "path": "/milk"
+				},
+				"dimensions": [
+				  {
+					"label": "Store Name",
+					"value": "{Store Name}"
+				  }
+				],
+				"measures": [
+				  {
+					"label": "Revenue",
+					"value": "{Revenue}"
+				  }
+				]
+			  }
+			}
+		  }
 		}
 	},
 	"splitter": {
