@@ -519,4 +519,20 @@ sap.ui.define([
 
 		assert.ok(oAttr.getDomRef(), "Object attribute should have its container element rendered");
 	});
+
+	QUnit.test("Object attribute do not throw expection when a special regex symbol for regex is used in the title", function (assert) {
+		// Arrange
+		var oAttr = new ObjectAttribute();
+		var oGetTitleStub = this.stub(oAttr, "getTitle", function () {
+			return "\".*+?^${}()|[]\\";
+		});
+
+		// Act
+		oAttr._getUpdatedTextControl();
+
+		// Assert
+		assert.ok(true, "Exception is not thrown");
+
+		// Clean up
+	});
 });
