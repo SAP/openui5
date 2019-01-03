@@ -17,7 +17,7 @@ sap.ui.define([
 		Data,
 		JSONModel,
 		NumericSideIndicator,
-		Log
+		NumericHeaderRenderer
 	) {
 		"use strict";
 
@@ -51,9 +51,6 @@ sap.ui.define([
 		metadata: {
 			interfaces: ["sap.f.cards.IHeader"],
 			properties: {
-				configuration: {
-					"type": "object"
-				},
 				title: {
 					"type": "string" // TODO required
 				},
@@ -69,7 +66,7 @@ sap.ui.define([
 				number: { // TODO what if value is not a number, is the naming still ok?
 					"type": "string"
 				},
-				numberUnit: {
+				unit: {
 					"type": "string"
 				},
 				trend: {
@@ -92,121 +89,56 @@ sap.ui.define([
 		}
 	});
 
-	NumericHeader.prototype.setConfiguration = function(oConfiguration) {
-		this.setProperty("configuration", oConfiguration, true);
-		this._bIsUsingConfiguration = true;
-		this._initFromConfiguration(oConfiguration);
-		return this;
-	};
-
 	NumericHeader.prototype.setTitle = function(sValue) {
-		if (this._bIsUsingConfiguration) {
-			Log.warning("Can not set title if there is a configuration.", "sap.f.cards.NumericHeader");
-			return this;
-		}
-
 		this.setProperty("title", sValue, true);
 		this._getTitle().setText(sValue);
 		return this;
 	};
 
 	NumericHeader.prototype.setSubtitle = function(sValue) {
-		if (this._bIsUsingConfiguration) {
-			Log.warning("Can not set subtitle if there is a configuration.", "sap.f.cards.NumericHeader");
-			return this;
-		}
-
 		this.setProperty("subtitle", sValue, true);
 		this._getSubtitle().setText(sValue);
 		return this;
 	};
 
 	NumericHeader.prototype.setUnitOfMeasurement = function(sValue) {
-		if (this._bIsUsingConfiguration) {
-			Log.warning("Can not set unitOfMeasurement if there is a configuration.", "sap.f.cards.NumericHeader");
-			return this;
-		}
-
 		this.setProperty("unitOfMeasurement", sValue, true);
 		this._getUnitOfMeasurement().setText(sValue);
 		return this;
 	};
 
 	NumericHeader.prototype.setDetails = function(sValue) {
-		if (this._bIsUsingConfiguration) {
-			Log.warning("Can not set details if there is a configuration.", "sap.f.cards.NumericHeader");
-			return this;
-		}
-
 		this.setProperty("details", sValue, true);
 		this._getDetails().setText(sValue);
 		return this;
 	};
 
 	NumericHeader.prototype.setNumber = function(sValue) {
-		if (this._bIsUsingConfiguration) {
-			Log.warning("Can not set number if there is a configuration.", "sap.f.cards.NumericHeader");
-			return this;
-		}
-
 		this.setProperty("number", sValue, true);
 		this._getMainIndicator().setValue(sValue);
 		return this;
 	};
 
-	NumericHeader.prototype.setNumberUnit = function(sValue) {
-		if (this._bIsUsingConfiguration) {
-			Log.warning("Can not set numberUnit if there is a configuration.", "sap.f.cards.NumericHeader");
-			return this;
-		}
-
-		this.setProperty("numberUnit", sValue, true);
+	NumericHeader.prototype.setUnit = function(sValue) {
+		this.setProperty("unit", sValue, true);
 		this._getMainIndicator().setScale(sValue);
 		return this;
 	};
 
 	NumericHeader.prototype.setTrend = function(sValue) {
-		if (this._bIsUsingConfiguration) {
-			Log.warning("Can not set trend if there is a configuration.", "sap.f.cards.NumericHeader");
-			return this;
-		}
-
 		this.setProperty("trend", sValue, true);
 		this._getMainIndicator().setIndicator(sValue);
 		return this;
 	};
 
 	NumericHeader.prototype.setState = function(sValue) {
-		if (this._bIsUsingConfiguration) {
-			Log.warning("Can not set state if there is a configuration.", "sap.f.cards.NumericHeader");
-			return this;
-		}
-
 		this.setProperty("state", sValue, true);
 		this._getMainIndicator().setValueColor(sValue); // TODO convert ValueState to ValueColor
 		return this;
 	};
 
 	NumericHeader.prototype.addSideIndicator = function(oValue) {
-		if (this._bIsUsingConfiguration) {
-			Log.warning("Can not add side indicators if there is a configuration.", "sap.f.cards.NumericHeader");
-			return this;
-		}
-
 		this.addAggregation("sideIndicators", oValue);
-		return this;
-	};
-
-	// TODO there is too much copy-pasted code
-
-	NumericHeader.prototype.applySettings = function (mSettings, oScope) {
-		if (mSettings.configuration) {
-			this.setConfiguration(mSettings.configuration);
-			delete mSettings.configuration;
-		}
-
-		Control.prototype.applySettings.apply(this, [mSettings, oScope]);
-
 		return this;
 	};
 
@@ -284,56 +216,53 @@ sap.ui.define([
 		return oControl;
 	};
 
-	NumericHeader.prototype._initFromConfiguration = function (oConfiguration) {
-		this._applyConfigurationSettings(oConfiguration);
+	/**
+	 * Creates an instance of NumericHeader with the given options
+	 *
+	 * @private
+	 * @static
+	 * @param {map} mConfiguration A map containing the header configuration options.
+	 * @return {sap.f.cards.NumericHeader} The created NumericHeader
+	 */
+	NumericHeader.create = function(mConfiguration) {
+		var mSettings = {
+			title: mConfiguration.title,
+			subtitle: mConfiguration.subtitle,
+			unitOfMeasurement: mConfiguration.unitOfMeasurement,
+			details: mConfiguration.details
+		};
 
-		if (oConfiguration.data) {
-			this._handleData(oConfiguration.data);
+		if (mConfiguration.mainIndicator) {
+			mSettings.number = mConfiguration.mainIndicator.number;
+			mSettings.unit = mConfiguration.mainIndicator.unit;
+			mSettings.trend = mConfiguration.mainIndicator.trend;
+			mSettings.state = mConfiguration.mainIndicator.state; // TODO convert ValueState to ValueColor
 		}
+
+		if (mConfiguration.sideIndicators) {
+			mSettings.sideIndicators = mConfiguration.sideIndicators.map(function (mIndicator) { // TODO validate that it is an array and with no more than 2 elements
+				return new NumericSideIndicator(mIndicator);
+			});
+		}
+
+		var oHeader = new NumericHeader(mSettings);
+
+		if (mConfiguration.data) {
+			this._handleData(oHeader, mConfiguration.data);
+		}
+
+		return oHeader;
 	};
 
-	NumericHeader.prototype._applyConfigurationSettings = function (oConfiguration) {
-		if (oConfiguration.title) {
-			this._getTitle().applySettings({
-				text: oConfiguration.title
-			});
-		}
-		if (oConfiguration.subtitle) {
-			this._getSubtitle().applySettings({
-				text: oConfiguration.subtitle
-			});
-		}
-		if (oConfiguration.unitOfMeasurement) {
-			this._getUnitOfMeasurement().applySettings({
-				text: oConfiguration.unitOfMeasurement
-			});
-		}
-		if (oConfiguration.details) {
-			this._getDetails().applySettings({
-				text: oConfiguration.details
-			});
-		}
-
-		if (oConfiguration.mainIndicator.number) {
-			this._getMainIndicator().applySettings({
-				value: oConfiguration.mainIndicator.number,
-				scale: oConfiguration.mainIndicator.unit,
-				indicator: oConfiguration.mainIndicator.trend,
-				valueColor: oConfiguration.mainIndicator.state // TODO convert ValueState to ValueColor
-			});
-		}
-
-		if (oConfiguration.sideIndicators) { // TODO validate that it is an array and with no more than 2 elements
-			this.destroySideIndicators();
-
-			oConfiguration.sideIndicators.forEach(function (oIndicator) {
-				// TODO Maybe we need a second private aggregation, so it does not conflict with sideIndicators
-				this.addAggregation("sideIndicators", new NumericSideIndicator(oIndicator));
-			}.bind(this));
-		}
-	};
-
-	NumericHeader.prototype._handleData = function (oData) {
+	/**
+	 * Creates an instance of NumericHeader with the given options
+	 *
+	 * @private
+	 * @static
+	 * @param {sap.f.cards.NumericHeader} oHeader The header for which the data is
+	 * @param {object} oData Data configuration
+	 */
+	NumericHeader._handleData = function (oHeader, oData) {
 		var oModel = new JSONModel();
 
 		var oRequest = oData.request;
@@ -354,7 +283,7 @@ sap.ui.define([
 			});
 		}
 
-		this.setModel(oModel)
+		oHeader.setModel(oModel)
 			.bindElement({
 				path: oData.path || "/"
 			});

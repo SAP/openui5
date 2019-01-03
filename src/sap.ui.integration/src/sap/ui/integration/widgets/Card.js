@@ -173,30 +173,12 @@ sap.ui.define([
 	};
 
 	Card.prototype._setCardHeaderFromManifest = function (CardHeader) {
-		var oClonedSettings = jQuery.extend(true, {}, this._oCardManifest.get("sap.card/header")),
-			sType = oClonedSettings.type;
+		var oClonedSettings = jQuery.extend(true, {}, this._oCardManifest.get("sap.card/header"));
 
 		delete oClonedSettings.type;
 
-		if (oClonedSettings.icon) {
-			oClonedSettings.iconSrc = oClonedSettings.icon.src;
-			oClonedSettings.iconDisplayShape = oClonedSettings.icon.shape;
-			oClonedSettings.iconInitials = oClonedSettings.icon.text;
-			delete oClonedSettings.icon;
-		}
-
-		if (oClonedSettings.status) {
-			oClonedSettings.statusText = oClonedSettings.status.text;
-			delete oClonedSettings.status;
-		}
-
-		if (sType === "numeric") {
-			this.setAggregation("_header", new CardHeader({
-				configuration: oClonedSettings // TODO change when the final approach is cleared
-			}));
-		} else {
-			this.setAggregation("_header", new CardHeader(oClonedSettings));
-		}
+		// TODO ensure that CardHeader has a static method "create"
+		this.setAggregation("_header", CardHeader.create(oClonedSettings));
 	};
 
 	Card.prototype._setCardContentFromManifest = function(CardContent) {

@@ -33,7 +33,7 @@
                                     details="Q1, 2018"
 
                                     number="65.3454"
-                                    numberUnit="K"
+                                    unit="K"
                                     trend="Down"
                                     state="Error"
                                     >

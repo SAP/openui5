@@ -121,5 +121,34 @@ sap.ui.define([
 		}
 	};
 
+	/**
+	 * Creates an instance of Header with the given options
+	 *
+	 * @private
+	 * @static
+	 * @param {map} mConfiguration A map containing the header configuration options.
+	 * @return {sap.f.cards.Header} The created Header
+	 */
+	Header.create = function(mConfiguration) {
+		var mSettings = {
+			title: mConfiguration.title,
+			subtitle: mConfiguration.subtitle
+		};
+
+		if (mConfiguration.icon) {
+			mSettings.iconSrc = mConfiguration.icon.src;
+			mSettings.iconDisplayShape = mConfiguration.icon.shape;
+			mSettings.iconInitials = mConfiguration.icon.text;
+		}
+
+		if (mConfiguration.status) {
+			mSettings.statusText = mConfiguration.status.text;
+		}
+
+		var oHeader = new Header(mSettings);
+
+		return oHeader;
+	};
+
 	return Header;
 });
