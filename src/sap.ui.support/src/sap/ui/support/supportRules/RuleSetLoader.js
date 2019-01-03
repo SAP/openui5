@@ -38,7 +38,7 @@ sap.ui.define([
 		var sSupportModulePath = jQuery.sap.getModulePath("sap.ui.support");
 		var sSupportModuleRootPath = sSupportModulePath.replace('/sap/ui/support', '');
 		var sAbsUrl = getAbsoluteUrl(sSupportModuleRootPath);
-		var bCanLoadInternalRules = !Utils.isDistributionOpenUI5(sap.ui.getVersionInfo()) && Utils.canLoadInternalRules();
+		var bCanLoadInternalRules = Utils.canLoadInternalRules();
 
 		var RuleSetLoader = {};
 
