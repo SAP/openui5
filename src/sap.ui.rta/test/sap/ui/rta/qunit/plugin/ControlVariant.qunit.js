@@ -15,6 +15,7 @@ sap.ui.define([
 	"sap/ui/fl/registry/ChangeRegistry",
 	'sap/ui/fl/FlexControllerFactory',
 	"sap/ui/rta/plugin/ControlVariant",
+	"sap/ui/dt/plugin/ToolHooks",
 	"sap/ui/rta/plugin/RenameHandler",
 	'sap/ui/core/Manifest',
 	"sap/m/Button",
@@ -42,6 +43,7 @@ sap.ui.define([
 	ChangeRegistry,
 	FlexControllerFactory,
 	ControlVariantPlugin,
+	ToolHooksPlugin,
 	RenameHandler,
 	Manifest,
 	Button,
@@ -202,6 +204,7 @@ sap.ui.define([
 				this.oControlVariantPlugin = new ControlVariantPlugin({
 					commandFactory: new CommandFactory()
 				});
+				this.oToolHooksPlugin = new ToolHooksPlugin();
 				done();
 			}.bind(this));
 
@@ -235,6 +238,7 @@ sap.ui.define([
 		});
 
 		QUnit.test("when registerElementOverlay is called with VariantManagement control Overlay", function(assert) {
+			this.oToolHooksPlugin.registerElementOverlay(this.oVariantManagementOverlay);
 			this.oControlVariantPlugin.registerElementOverlay(this.oVariantManagementOverlay);
 			assert.strictEqual(this.oObjectPageLayoutOverlay.getVariantManagement(), this.sLocalVariantManagementId, "then VariantManagement reference successfully set to ObjectPageLayout Overlay from the id of VariantManagement control");
 			assert.notOk(this.oLayoutOuterOverlay.getVariantManagement(), "then no VariantManagement reference set to an element outside element not a part of the associated control");
@@ -245,8 +249,10 @@ sap.ui.define([
 
 		QUnit.test("when registerElementOverlay and afterwards deregisterElementOverlay are called with VariantManagement control Overlay", function(assert) {
 			assert.equal(this.oModel.getData()[this.sLocalVariantManagementId].variantsEditable, true, "the parameter 'variantsEditable' is true by default");
+			this.oToolHooksPlugin.registerElementOverlay(this.oVariantManagementOverlay);
 			this.oControlVariantPlugin.registerElementOverlay(this.oVariantManagementOverlay);
 			assert.equal(this.oModel.getData()[this.sLocalVariantManagementId].variantsEditable, false, "'variantsEditable' is set to false after registering");
+			this.oToolHooksPlugin.deregisterElementOverlay(this.oVariantManagementOverlay);
 			this.oControlVariantPlugin.deregisterElementOverlay(this.oVariantManagementOverlay);
 			assert.equal(this.oModel.getData()[this.sLocalVariantManagementId].variantsEditable, true, "'variantsEditable' is set to true after deregistering");
 		});
