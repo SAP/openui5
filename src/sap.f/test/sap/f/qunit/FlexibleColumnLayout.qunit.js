@@ -22,7 +22,8 @@ function (
 		DESKTOP_SIZE = "1300px",
 		TABLET_SIZE = "1200px",
 		PHONE_SIZE = "900px",
-		ANIMATION_WAIT_TIME = 500;
+		ANIMATION_WAIT_TIME = 500,
+		COLUMN_RESIZING_ANIMATION_DURATION = 560;
 
 	var fnCreatePage = function (sId) {
 		return new Page(sId, {
@@ -259,6 +260,8 @@ function (
 	});
 
 	QUnit.test("Navigation arrows - 3 columns operation (not-fixed 3-column layout)", function (assert) {
+		this.clock = sinon.useFakeTimers();
+
 		this.oFCL = oFactory.createFCL({
 			layout: LT.ThreeColumnsMidExpanded,
 			beginColumnPages: [new sap.m.Page()]
@@ -267,6 +270,9 @@ function (
 
 		this.getMidColumnForwardArrow().firePress();
 		assertArrowsVisibility(assert, this.oFCL, 0, 1, 1, 0);
+
+		//since the last column is concealed we must wait for all animations to end.
+		this.clock.tick(COLUMN_RESIZING_ANIMATION_DURATION);
 		assertColumnsVisibility(assert, this.oFCL, 1, 1, 0); // End column is gone
 
 		// Click it again
@@ -285,6 +291,7 @@ function (
 
 		this.getEndColumnForwardArrow().firePress();
 		assertArrowsVisibility(assert, this.oFCL, 0, 1, 1, 0);
+		this.clock.restore();
 	});
 
 	QUnit.test("Resizing the control triggers a layout change", function (assert) {
@@ -533,6 +540,8 @@ function (
 	});
 
 	QUnit.test("Navigation arrows - 3 columns operation", function (assert) {
+		this.clock = sinon.useFakeTimers();
+
 		this.oFCL = oFactory.createFCL({
 			layout: LT.ThreeColumnsMidExpanded,
 			beginColumnPages: [new sap.m.Page()]
@@ -541,6 +550,9 @@ function (
 
 		this.getMidColumnForwardArrow().firePress();
 		assertArrowsVisibility(assert, this.oFCL, 0, 1, 1, 0);
+
+		//since the last column is concealed we must wait for all animations to end.
+		this.clock.tick(COLUMN_RESIZING_ANIMATION_DURATION);
 		assertColumnsVisibility(assert, this.oFCL, 1, 1, 0); // End column is gone
 
 		// Click it again
@@ -553,6 +565,7 @@ function (
 		this.getMidColumnBackArrow().firePress();
 		assertArrowsVisibility(assert, this.oFCL, 0, 1, 1, 0);
 		assertColumnsVisibility(assert, this.oFCL, 0, 1, 1); // End column is back
+		this.clock.restore();
 	});
 
 	QUnit.module("PHONE - API", {
@@ -856,19 +869,60 @@ function (
 		assert.strictEqual(this.oFCL._bWasFullScreen, true, "EndColumnFullScreen is a fullscreen layout");
 	});
 
+	QUnit.test("Storing resize information for the conceal effect", function (assert) {
+		assert.strictEqual(this.oFCL._iPreviousVisibleColumnsCount, 2, "The default TwoColumnsBeginExpanded layout has 2 columns");
+		assert.strictEqual(this.oFCL._bWasFullScreen, false, "TwoColumnsBeginExpanded isn't a fullscreen layout");
+		assert.strictEqual(this.oFCL._sPreviuosLastVisibleColumn, "mid",
+			"The default TwoColumnsBeginExpanded layout has the 'mid' column as the last visible column");
+
+		this.oFCL.setLayout(LT.ThreeColumnsMidExpanded);
+		assert.strictEqual(this.oFCL._iPreviousVisibleColumnsCount, 3, "ThreeColumnsMidExpanded has 3 columns");
+		assert.strictEqual(this.oFCL._bWasFullScreen, false, "ThreeColumnsMidExpanded isn't a fullscreen layout");
+		assert.strictEqual(this.oFCL._sPreviuosLastVisibleColumn, "end",
+			"The ThreeColumnsMidExpanded layout has the 'end' column as the last visible column");
+	});
+
 	QUnit.test("Reveal effect pinning decision", function (assert) {
 		// Simulate last column and switch to a layout with more columns
-		assert.strictEqual(this.oFCL._shouldPinColumn(3, true), true, "Third column should be pinned if any ThreeColumn layout is opened");
+		assert.strictEqual(this.oFCL._shouldRevealColumn(3, true), true, "Third column should be pinned if any ThreeColumn layout is opened");
 
 		// New layout has more columns, but we are not testing the last column
-		assert.strictEqual(this.oFCL._shouldPinColumn(3, false), false, "First or second columns shouldn't be pinned for ThreeColumn layouts");
+		assert.strictEqual(this.oFCL._shouldRevealColumn(3, false), false, "First or second columns shouldn't be pinned for ThreeColumn layouts");
 
 		// New layout has less columns than the current one
-		assert.strictEqual(this.oFCL._shouldPinColumn(1, true), false, "No pinning should be done when the new column has fewer columns");
+		assert.strictEqual(this.oFCL._shouldRevealColumn(1, true), false, "No pinning should be done when the new column has fewer columns");
 
 		// Set a fullscreen layout
 		this.oFCL.setLayout(LT.MidColumnFullScreen);
-		assert.strictEqual(this.oFCL._shouldPinColumn(2, true), false, "No pinning should be done when closing a fullscreen layout");
+		assert.strictEqual(this.oFCL._shouldRevealColumn(2, true), false, "No pinning should be done when closing a fullscreen layout");
+	});
+
+	QUnit.test("Conceal effect layout changes", function(assert) {
+		//arrange
+		var $endColumn = this.oFCL._$columns["end"];
+		this.clock = sinon.useFakeTimers();
+
+		this.oFCL.setLayout(LT.ThreeColumnsMidExpanded);
+		this.clock.tick(COLUMN_RESIZING_ANIMATION_DURATION);
+
+		//act
+		this.oFCL.getAggregation("_midColumnForwardArrow").firePress();
+
+		//assert
+
+		//the animation hasn't been executed so the three columns are visible
+		assertColumnsVisibility(assert, this.oFCL, 1, 1, 1);
+		assert.ok($endColumn.hasClass("sapFFCLPinnedColumn"),
+			"End column should have the 'sapFFCLPinnedColumn' class applied.");
+
+		//since the last column is concealed we must wait for all animations to end.
+		this.clock.tick(COLUMN_RESIZING_ANIMATION_DURATION);
+
+		assertColumnsVisibility(assert, this.oFCL, 1, 1, 0); // End column is gone
+		assert.notOk($endColumn.hasClass("sapFFCLPinnedColumn"),
+			"End column should not have the 'sapFFCLPinnedColumn' class applied.");
+
+		this.clock.restore();
 	});
 
 	QUnit.module("ScreenReader supprot", {

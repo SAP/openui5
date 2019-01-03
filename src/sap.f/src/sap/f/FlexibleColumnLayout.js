@@ -589,7 +589,6 @@ sap.ui.define([
 
 	FlexibleColumnLayout.COLUMN_RESIZING_ANIMATION_DURATION = 560; // ms
 	FlexibleColumnLayout.PINNED_COLUMN_CLASS_NAME = "sapFFCLPinnedColumn";
-
 	FlexibleColumnLayout.prototype.init = function () {
 
 		// Create the 3 nav containers
@@ -887,6 +886,7 @@ sap.ui.define([
 			bNeedsMargin = false,
 			aColumns = ["begin", "mid", "end"],
 			bRtl = sap.ui.getCore().getConfiguration().getRTL(),
+			bHasAnimations = sap.ui.getCore().getConfiguration().getAnimationMode() !== Configuration.AnimationMode.none,
 			aActiveColumns,
 			iVisibleColumnsCount,
 			iDefaultVisibleColumnsCount,
@@ -915,16 +915,34 @@ sap.ui.define([
 		// Calculate the width available for the columns
 		iAvailableWidth = this._getControlWidth() - iTotalMargin;
 
+		// Animations on - Before resizing pin the columns that should not be animated in order to create the reveal/conceal effect
+		if (bHasAnimations) {
+
+			aColumns.forEach(function (sColumn) {
+				var bShouldConcealColumn = this._shouldConcealColumn(iDefaultVisibleColumnsCount, sColumn),
+					bShouldRevealColumn = this._shouldRevealColumn(iDefaultVisibleColumnsCount, sColumn === sLastVisibleColumn),
+					oColumn = this._$columns[sColumn];
+
+				oColumn.toggleClass(FlexibleColumnLayout.PINNED_COLUMN_CLASS_NAME, bShouldConcealColumn || bShouldRevealColumn);
+
+			}, this);
+		}
+
+		// Resize the columns according to the current layout
 		aColumns.forEach(function (sColumn) {
-			var oColumn = this._$columns[sColumn];
+			var oColumn = this._$columns[sColumn],
+				bShouldConcealColumn;
 
 			iPercentWidth = this._getColumnSize(sColumn);
+			bShouldConcealColumn = bHasAnimations && this._shouldConcealColumn(iDefaultVisibleColumnsCount, sColumn);
 
 			// Add the left margin if the column has width and there was already a non-zero width column before it (bNeedsMargin = true)
 			oColumn.toggleClass("sapFFCLColumnMargin", bNeedsMargin && iPercentWidth > 0);
 
-			// Add the active class to the column if it shows something
-			oColumn.toggleClass("sapFFCLColumnActive", iPercentWidth > 0);
+			if (!bShouldConcealColumn) {
+				// Add the active class to the column if it shows something
+				oColumn.toggleClass("sapFFCLColumnActive", iPercentWidth > 0);
+			}
 
 			// Remove all the classes that are used for HCB theme borders, they will be set again later
 			oColumn.removeClass("sapFFCLColumnOnlyActive");
@@ -939,26 +957,29 @@ sap.ui.define([
 				sNewWidth = iNewWidth + "px";
 			}
 
+
 			// Animations on - suspend ResizeHandler while animation is running
-			if (sap.ui.getCore().getConfiguration().getAnimationMode() !== Configuration.AnimationMode.none) {
+			if (bHasAnimations) {
 
 				var oColumnDomRef = oColumn.get(0);
-
-				// If the column count increases (but not due to closing a fullscreen layout), then prevent
-				// the new column from being animated.
-				oColumn.toggleClass(FlexibleColumnLayout.PINNED_COLUMN_CLASS_NAME,
-					this._shouldPinColumn(iDefaultVisibleColumnsCount, sColumn === sLastVisibleColumn));
-
-				// Suspending ResizeHandler temporarily
-				ResizeHandler.suspend(oColumnDomRef);
 
 				// Clear previous timeouts if present
 				if (oColumn._iResumeResizeHandlerTimeout) {
 					clearTimeout(oColumn._iResumeResizeHandlerTimeout);
 				}
 
+				// Suspending ResizeHandler temporarily
+				ResizeHandler.suspend(oColumnDomRef);
+
 				// Schedule resume of ResizeHandler
 				oColumn._iResumeResizeHandlerTimeout = setTimeout(function() {
+					// If the column is concealed we must apply the width after the animations are over.
+					if (bShouldConcealColumn) {
+						oColumn.width(sNewWidth);
+						// The column does not show anything anymore, so we can remove the active class
+						oColumn.toggleClass("sapFFCLColumnActive", false);
+					}
+
 					ResizeHandler.resume(oColumnDomRef);
 					oColumn._iResumeResizeHandlerTimeout = null;
 
@@ -967,7 +988,11 @@ sap.ui.define([
 				}, FlexibleColumnLayout.COLUMN_RESIZING_ANIMATION_DURATION);
 			}
 
-			oColumn.width(sNewWidth);
+			//If the current column is concealed we don't want to apply the new width at this iteration.
+			//The new width should be applied once the animations are over, so that the previous column conceals the current.
+			if (!bShouldConcealColumn) {
+				oColumn.width(sNewWidth);
+			}
 
 			// For tablet and desktop - notify child controls to render with reduced container size, if they need to
 			if (!Device.system.phone) {
@@ -999,32 +1024,47 @@ sap.ui.define([
 			this._$columns[aActiveColumns[aActiveColumns.length - 1]].addClass("sapFFCLColumnLastActive");
 		}
 
-		this._storePreviousResizingInfo(iDefaultVisibleColumnsCount);
+		this._storePreviousResizingInfo(iDefaultVisibleColumnsCount, sLastVisibleColumn);
 	};
 
 	/**
 	 * Stores information from the last columns' resizing.
 	 *
 	 * @param iVisibleColumnsCount
+	 * @param sLastVisibleColumn
 	 * @private
 	 */
-	FlexibleColumnLayout.prototype._storePreviousResizingInfo = function (iVisibleColumnsCount) {
+	FlexibleColumnLayout.prototype._storePreviousResizingInfo = function (iVisibleColumnsCount, sLastVisibleColumn) {
 		var oCurrentLayout = this.getLayout();
 
 		this._iPreviousVisibleColumnsCount = iVisibleColumnsCount;
 		this._bWasFullScreen = oCurrentLayout === LT.MidColumnFullScreen || oCurrentLayout === LT.EndColumnFullScreen;
+		this._sPreviuosLastVisibleColumn = sLastVisibleColumn;
 	};
 
 	/**
-	 * Decides whether or not a given column should be pinned (not animated).
+	 *  Decides whether or not a given column should be revealed - another column slide out on top of it).
 	 *
 	 * @param iVisibleColumnsCount
 	 * @param bIsLastColumn
 	 * @returns {boolean|*}
 	 * @private
 	 */
-	FlexibleColumnLayout.prototype._shouldPinColumn = function (iVisibleColumnsCount, bIsLastColumn) {
+	FlexibleColumnLayout.prototype._shouldRevealColumn = function (iVisibleColumnsCount, bIsLastColumn) {
 		return (iVisibleColumnsCount > this._iPreviousVisibleColumnsCount) && !this._bWasFullScreen && bIsLastColumn;
+	};
+
+	/**
+	 * Decides whether or not a given column should be concealed - another column should slide in on top of it.
+	 *
+	 * @param iVisibleColumnsCount
+	 * @param sColumn
+	 * @returns {boolean|*}
+	 * @private
+	 */
+	FlexibleColumnLayout.prototype._shouldConcealColumn = function(iVisibleColumnsCount, sColumn) {
+		return  (iVisibleColumnsCount < this._iPreviousVisibleColumnsCount && sColumn === this._sPreviuosLastVisibleColumn
+					&& !this._bWasFullScreen && this._getColumnSize(sColumn) === 0);
 	};
 
 	/**
