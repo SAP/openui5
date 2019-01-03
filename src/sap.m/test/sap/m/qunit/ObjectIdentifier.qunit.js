@@ -753,6 +753,42 @@ sap.ui.define([
 		oObjectIdentifier.destroy();
 	});
 
+	QUnit.test("Should not display top row when there aren't badges and title", function(assert) {
+		//Arrange
+		var sut = new ObjectIdentifier({
+			text: "test text"
+		});
+		sut.placeAt("qunit-fixture");
+		sap.ui.getCore().applyChanges();
+
+		//Assert
+		assert.equal(sut.$().find(".sapMObjectIdentifierTopRow").css("display"), "none", "top row is hidden");
+
+		//Act
+		sut.setTitle('test title');
+		sap.ui.getCore().applyChanges();
+
+		//Assert
+		assert.equal(sut.$().find(".sapMObjectIdentifierTopRow").attr("style"), undefined, "top row is visible");
+
+		//Act
+		sut.setTitle('');
+		sap.ui.getCore().applyChanges();
+
+		//Assert
+		assert.equal(sut.$().find(".sapMObjectIdentifierTopRow").css("display"), "none", "top row is hidden");
+
+		//Act
+		sut.setBadgeNotes(true);
+		sap.ui.getCore().applyChanges();
+
+		//Assert
+		assert.equal(sut.$().find(".sapMObjectIdentifierTopRow").attr("style"), undefined, "top row is visible");
+
+		//Cleanup
+		sut.destroy();
+	});
+
 	QUnit.module("Databinding");
 
 	QUnit.test("Model sets titleActive = true", function(assert) {
