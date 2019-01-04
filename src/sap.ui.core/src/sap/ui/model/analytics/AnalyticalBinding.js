@@ -1015,34 +1015,32 @@ sap.ui.define([
 			fValueFormatter = this.mAnalyticalInfoByProperty[sGroupProperty]
 				&& this.mAnalyticalInfoByProperty[sGroupProperty].formatter,
 			sPropertyValue = oContext.getProperty(sGroupProperty),
-			oTextProperty, sFormattedPropertyValue, sGroupName;
+			sFormattedPropertyValue, sFormattedTextPropertyValue, sGroupName, sLabelText,
+			oTextProperty, sTextProperty, sTextPropertyValue, fTextValueFormatter;
 
 		if (oDimension && this.oDimensionDetailsSet[sGroupProperty].textPropertyName) {
 			oTextProperty = oDimension.getTextProperty();
 		}
 
-		var sTextProperty, sTextPropertyValue, fTextValueFormatter;
 		if (oTextProperty) {
-			sTextProperty = oDimension.getTextProperty().name;
+			sTextProperty = oTextProperty.name;
 			// it might happen that text property is not contained in the UI
 			fTextValueFormatter = this.mAnalyticalInfoByProperty[sTextProperty]
 				&& this.mAnalyticalInfoByProperty[sTextProperty].formatter;
 			sTextPropertyValue = oContext.getProperty(sTextProperty);
-		}
+			sFormattedPropertyValue = fValueFormatter
+				? fValueFormatter(sPropertyValue, sTextPropertyValue) : sPropertyValue;
 
-		if (!oTextProperty) {
-			sFormattedPropertyValue = fValueFormatter ? fValueFormatter(sPropertyValue) : sPropertyValue;
-			sGroupName = (oDimension.getLabelText ? oDimension.getLabelText() + ': ' : '')
-				+ sFormattedPropertyValue;
+			sFormattedTextPropertyValue = fTextValueFormatter
+				? fTextValueFormatter(sTextPropertyValue, sPropertyValue) : sTextPropertyValue;
 		} else {
-			sFormattedPropertyValue = fValueFormatter ? fValueFormatter(sPropertyValue, sTextPropertyValue) : sPropertyValue;
-			sGroupName = (oDimension.getLabelText ? oDimension.getLabelText() + ': ' : '')
-				+ sFormattedPropertyValue;
-
-			var sFormattedTextPropertyValue = fTextValueFormatter ? fTextValueFormatter(sTextPropertyValue, sPropertyValue) : sTextPropertyValue;
-			if (sFormattedTextPropertyValue) {
-				sGroupName += ' - ' + sFormattedTextPropertyValue;
-			}
+			sFormattedPropertyValue = fValueFormatter
+				? fValueFormatter(sPropertyValue) : sPropertyValue;
+		}
+		sLabelText = oDimension.getLabelText && oDimension.getLabelText();
+		sGroupName = (sLabelText ? sLabelText + ': ' : '') + sFormattedPropertyValue;
+		if (sFormattedTextPropertyValue) {
+			sGroupName += ' - ' + sFormattedTextPropertyValue;
 		}
 
 		return sGroupName;
