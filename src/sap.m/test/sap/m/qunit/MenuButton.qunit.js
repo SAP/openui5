@@ -14,7 +14,8 @@ sap.ui.define([
 	"sap/ui/core/library",
 	"sap/m/Popover",
 	"sap/m/Button",
-	"sap/base/Log"
+	"sap/base/Log",
+	"sap/ui/qunit/utils/waitForThemeApplied"
 ], function(
 	qutils,
 	createAndAppendDiv,
@@ -29,7 +30,8 @@ sap.ui.define([
 	coreLibrary,
 	Popover,
 	Button,
-	Log
+	Log,
+	waitForThemeApplied
 ) {
 	// shortcut for sap.ui.core.TextDirection
 	var TextDirection = coreLibrary.TextDirection;
@@ -895,4 +897,6 @@ sap.ui.define([
 			document.body.removeChild(oTextBtnContentDiv);
 		});
 	}
+
+	return waitForThemeApplied();
 });
