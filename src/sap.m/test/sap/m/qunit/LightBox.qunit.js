@@ -144,6 +144,7 @@
 	});
 
 	QUnit.test('Opening a lightbox with image source', function(assert) {
+
 		// arrange
 		assert.expect(2);
 		var oImageContent = this.LightBox.getImageContent()[0],
@@ -301,5 +302,52 @@
 			}.bind(this), 100);
 
 		}.bind(this), 100);
+	});
+
+	//================================================================================
+	// LightBox native image
+	//================================================================================
+	QUnit.module('Native Image', {
+		beforeEach: function() {
+			sinon.config.useFakeTimers = false;
+			this.LightBox = new sap.m.LightBox({
+				imageContent : [
+					new sap.m.LightBoxItem()
+				]
+			});
+		},
+		afterEach: function() {
+			sinon.config.useFakeTimers = true;
+			this.LightBox.close();
+			this.LightBox.destroy();
+		}
+	});
+
+	QUnit.test('Image loading', function(assert) {
+
+		// arrange
+		var done = assert.async(),
+			oImageContent = this.LightBox.getImageContent()[0],
+			sImageSource = '../images/demo/nature/elephant.jpg',
+			oNativeImage = oImageContent._getNativeImage(),
+			fnOnload = oNativeImage.onload,
+			iOnloadCount = 0;
+
+		oImageContent.setImageSrc(sImageSource);
+		sap.ui.getCore().applyChanges();
+
+		oNativeImage.onload = function () {
+			fnOnload.apply(oNativeImage, arguments);
+			iOnloadCount++;
+		};
+
+		//act
+		this.LightBox.open();
+
+		setTimeout(function () {
+			// Assert
+			assert.strictEqual(iOnloadCount, 1, "image is loaded just once");
+			done();
+		}, 100);
 	});
 })();

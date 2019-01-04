@@ -196,7 +196,7 @@ sap.ui.define([
 
 			// Prevents image having 0 width and height when the LightBox rendered
 			// busy state first and then loaded the image in the meantime
-			if (oNativeImage.src !== sImageSrc) {
+			if (oNativeImage.getAttribute('src') !== sImageSrc) {
 				oNativeImage.src = sImageSrc;
 			}
 
