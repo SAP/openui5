@@ -4,6 +4,7 @@
 
 sap.ui.define([
 	'./library',
+	'sap/ui/Device',
 	'./NotificationListBase',
 	'sap/ui/core/InvisibleText',
 	'sap/ui/core/IconPool',
@@ -13,6 +14,7 @@ sap.ui.define([
 ],
 function(
 	library,
+	Device,
 	NotificationListBase,
 	InvisibleText,
 	IconPool,
@@ -253,6 +255,30 @@ function(
 	NotificationListItem.prototype.onAfterRendering = function () {
 		this._registerResize();
 	};
+
+	/**
+	 * Handles the <code>focusin</code> event.
+	 *
+	 * @param {jQuery.Event} event The event object.
+	 */
+	NotificationListItem.prototype.onfocusin = function (event) {
+
+		if (!Device.browser.msie) {
+			return;
+		}
+
+		// in IE the elements inside can get the focus (IE issue)
+		// https://stackoverflow.com/questions/18259754/ie-click-on-child-does-not-focus-parent-parent-has-tabindex-0
+		// in that case just focus the whole item
+		var target = event.target;
+
+		if (target !== this.getDomRef() && !target.classList.contains('sapMBtn')) {
+			event.preventDefault();
+			event.stopImmediatePropagation();
+			this.focus();
+		}
+	};
+
 
 	/**
 	 * Called when the control is destroyed.
