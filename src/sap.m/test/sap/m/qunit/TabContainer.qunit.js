@@ -423,10 +423,12 @@ sap.ui.define([
 
 		//arrange
 		oTabContainerAddedItem = new TabContainerItem({
-			name: "Apple"
+			name: "Apple",
+			tooltip: "added item"
 		});
 		oTabContainerInsertedItem = new TabContainerItem({
-			name: "Apple"
+			name: "Apple",
+			tooltip: "inserted item"
 		});
 		this.oTabContainer.addItem(oTabContainerAddedItem);
 		this.oTabContainer.insertItem(oTabContainerInsertedItem, 0);
@@ -444,10 +446,12 @@ sap.ui.define([
 		assert.equal(this.oTabStrip.getItems()[1].getKey(), oTabContainerAddedItem.getId(), "Added TabContainerItem.id should be propagated to TabStripItem.key");
 		assert.equal(this.oTabStrip.getItems()[1].getText(), oTabContainerAddedItem.getName(), "Added TabContainerItem.name should be propagated to TabStripItem.text");
 		assert.equal(this.oTabStrip.getItems()[1].getModified(), oTabContainerAddedItem.getModified(), "Added TabContainerItem.modified should be propagated to TabStripItem.modified");
+		assert.equal(this.oTabStrip.getItems()[1].getTooltip(), oTabContainerAddedItem.getTooltip(), "Added TabContainerItem.tooltip should be propagated to TabStripItem.tooltip");
 
 		assert.equal(this.oTabStrip.getItems()[0].getKey(), oTabContainerInsertedItem.getId(), "Inserted TabContainerItem.id should be propagated to TabStripItem.key");
 		assert.equal(this.oTabStrip.getItems()[0].getText(), oTabContainerInsertedItem.getName(), "Inserted TabContainerItem.name should be propagated to TabStripItem.text");
 		assert.equal(this.oTabStrip.getItems()[0].getModified(), oTabContainerInsertedItem.getModified(), "Inserted TabContainerItem.modified should be propagated to TabStripItem.modified");
+		assert.equal(this.oTabStrip.getItems()[0].getTooltip(), oTabContainerInsertedItem.getTooltip(), "Inserted TabContainerItem.tooltip should be propagated to TabStripItem.tooltip");
 	});
 
 	QUnit.module("Constructing with array of items", {

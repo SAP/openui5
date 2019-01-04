@@ -425,7 +425,8 @@ sap.ui.define([
 				new sap.m.TabStripItem({
 					key: oItem.getId(),
 					text: oItem.getName(),
-					modified: oItem.getModified()
+					modified: oItem.getModified(),
+					tooltip: oItem.getTooltip()
 				})
 			);
 
@@ -458,7 +459,8 @@ sap.ui.define([
 				new sap.m.TabStripItem({
 					key: oItem.getId(),
 					text: oItem.getName(),
-					modified: oItem.getModified()
+					modified: oItem.getModified(),
+					tooltip: oItem.getTooltip()
 				}),
 				iIndex
 			);
