@@ -1,4 +1,4 @@
-sap.ui.define(function() {
+sap.ui.define(function () {
 	"use strict";
 
 	return {
@@ -10,8 +10,7 @@ sap.ui.define(function() {
 			sinon: {
 				version: "edge"
 			},
-			ui5: {
-			},
+			ui5: {},
 			coverage: {
 				only: ["sap/ui/integration"]
 			},
@@ -22,7 +21,14 @@ sap.ui.define(function() {
 				coverage: {
 					only: [
 						"sap/ui/integration/widgets/Card",
-						"sap/ui/integration/widgets/CardManifest"
+						"sap/ui/integration/util/CardManifest"
+					]
+				}
+			},
+			"util/CustomElements": {
+				coverage: {
+					only: [
+						"sap/ui/integration/util/CustomElements"
 					]
 				}
 			}

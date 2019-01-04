@@ -1,0 +1,109 @@
+<!DOCTYPE HTML>
+<html>
+
+<head>
+	<meta http-equiv="X-UA-Compatible" content="IE=edge">
+
+	<title>sap.ui.integration.HostConfiguration Test</title>
+
+	<script src="../shared-config.js"></script>
+	<script src="../../../../../resources/sap-ui-core.js" id="sap-ui-bootstrap" data-sap-ui-libs="sap.ui.integration,sap.ui.codeeditor"
+	 data-sap-ui-resourceroots='{
+		"test" : "./"
+	}'></script>
+
+	<script>
+		var oHostConfigDark = jQuery.sap.loadResource("test/sampleHostConfigDark.json", {
+			dataType: "json"
+		});
+
+		var oConfigSample = oHostConfigDark;
+		var oHostConfiguration = new sap.ui.integration.host.HostConfiguration({
+			id: "hostConfig1",
+			config: oConfigSample
+		});
+		oHostConfiguration.placeAt("hostConfig");
+
+		var oCodeEditor = new sap.ui.codeeditor.CodeEditor({
+			height: "400px"
+		});
+		oCodeEditor.setValue(JSON.stringify(oConfigSample, null, "\t"));
+		oCodeEditor.setSyntaxHints(false);
+		oCodeEditor.attachLiveChange(function (oEvent) {
+			var vValue = oEvent.getParameter("value");
+			try {
+				vValue = JSON.parse(vValue);
+				oHostConfiguration.setConfig(vValue);
+			} catch (ex) {
+				debugger;
+				oHostConfiguration.setConfig({});
+			}
+		});
+		oCodeEditor.placeAt("editor");
+
+		var oCodeEditor2 = new sap.ui.codeeditor.CodeEditor({
+			height: "400px",
+			editable: false
+		});
+		oCodeEditor2.setValue(JSON.stringify(oConfigSample, null, "\t"));
+		oCodeEditor2.setSyntaxHints(false);
+		oCodeEditor2.setType("css");
+		oCodeEditor2.placeAt("less");
+		oHostConfiguration.attachCssChanged(function (oEvent) {
+			oCodeEditor2.setValue(oEvent.getParameter("cssText"));
+		});
+
+		//create a numeric good card
+		var oCard = new sap.ui.integration.widgets.Card({
+			manifest: "../widgets/cardmanifests/numeric.good.manifest.json",
+			hostConfigurationId: "hostConfig1",
+			width: "400px"
+		});
+		oCard.placeAt("preview");
+
+		//create a numeric critical card
+		var oCard = new sap.ui.integration.widgets.Card({
+			manifest: "../widgets/cardmanifests/numeric.critical.manifest.json",
+			hostConfigurationId: "hostConfig1",
+			width: "400px"
+		});
+		oCard.placeAt("preview");
+
+		//create a numeric error card
+		var oCard = new sap.ui.integration.widgets.Card({
+			manifest: "../widgets/cardmanifests/numeric.error.manifest.json",
+			hostConfigurationId: "hostConfig1",
+			width: "400px"
+		});
+		oCard.placeAt("preview");
+
+		//create a list card
+		var oCard = new sap.ui.integration.widgets.Card({
+			manifest: "../widgets/cardmanifests/list.manifest.json",
+			hostConfigurationId: "hostConfig1",
+			width: "400px"
+		});
+		oCard.placeAt("preview");
+	</script>
+	<style>
+		#preview .sapFCard {
+			margin: 10px;
+		}
+	</style>
+</head>
+
+<body id="body" class="sapUiBody">
+	<div id="editor" style="width:40%;display:inline-block">
+	</div>
+	<div id="less" style="width:40%;display:inline-block">
+	</div>
+
+	<div id="hostConfig">
+	</div>
+
+	<div id="preview">
+	</div>
+
+</body>
+
+</html>

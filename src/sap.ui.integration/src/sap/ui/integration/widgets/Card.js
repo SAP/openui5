@@ -4,7 +4,7 @@
 sap.ui.define([
 	"sap/ui/core/Control",
 	"sap/ui/core/Manifest",
-	"sap/ui/integration/widgets/CardManifest",
+	"sap/ui/integration/util/CardManifest",
 	"sap/base/Log",
 	"sap/f/CardRenderer"
 ], function (
@@ -51,25 +51,45 @@ sap.ui.define([
 			interfaces: ["sap.f.ICard"],
 			properties: {
 
-				manifest: { type: "any", defaultValue: "" },
+				manifest: {
+					type: "any",
+					defaultValue: ""
+				},
 
 				/**
 				 * Defines the width of the Card
 				 *
 				 * @since 1.61
 				 */
-				width: { type: "sap.ui.core.CSSSize", group: "Appearance", defaultValue: "auto" },
+				width: {
+					type: "sap.ui.core.CSSSize",
+					group: "Appearance",
+					defaultValue: "auto"
+				},
 
 				/**
 				 * Defines the height of the Card
 				 *
 				 * @since 1.61
 				 */
-				height: { type: "sap.ui.core.CSSSize", group: "Appearance", defaultValue: "auto" }
+				height: {
+					type: "sap.ui.core.CSSSize",
+					group: "Appearance",
+					defaultValue: "auto"
+				}
 			},
 			aggregations: {
-				_header: { type: "sap.f.cards.IHeader", multiple: false },
-				_content: { type: "sap.ui.core.Control", multiple: false }
+				_header: {
+					type: "sap.f.cards.IHeader",
+					multiple: false
+				},
+				_content: {
+					type: "sap.ui.core.Control",
+					multiple: false
+				}
+			},
+			associations: {
+				hostConfigurationId: {}
 			}
 		},
 		renderer: CardRenderer
@@ -158,12 +178,16 @@ sap.ui.define([
 		}
 
 		switch (sCardType.toLowerCase()) {
-			case "list":  sap.ui.require(["sap/f/cards/ListContent"], this._setCardContentFromManifest.bind(this));
+			case "list":
+				sap.ui.require(["sap/f/cards/ListContent"], this._setCardContentFromManifest.bind(this));
 				break;
-			case "table": sap.ui.require(["sap/f/cards/TableContent"], this._setCardContentFromManifest.bind(this));
+			case "table":
+				sap.ui.require(["sap/f/cards/TableContent"], this._setCardContentFromManifest.bind(this));
 				break;
 			case "analytical":
-				sap.ui.getCore().loadLibrary("sap.viz", { async: true }).then(function() {
+				sap.ui.getCore().loadLibrary("sap.viz", {
+					async: true
+				}).then(function () {
 					sap.ui.require(["sap/f/cards/AnalyticalContent"], this._setCardContentFromManifest.bind(this));
 				}.bind(this)).catch(function () {
 					Log.error("Analytical type card is not available with this distribution");
@@ -180,8 +204,14 @@ sap.ui.define([
 		// TODO ensure that CardHeader has a static method "create"
 		this.setAggregation("_header", CardHeader.create(oClonedSettings));
 	};
+	Card.prototype.onBeforeRendering = function () {
+		var sConfig = this.getHostConfigurationId();
+		if (sConfig) {
+			this.addStyleClass(sConfig.replace(/-/g, "_"));
+		}
+	};
 
-	Card.prototype._setCardContentFromManifest = function(CardContent) {
+	Card.prototype._setCardContentFromManifest = function (CardContent) {
 		var mSettings = this._oCardManifest.get("sap.card/content");
 		var oClonedSettings = {
 			configuration: jQuery.extend(true, {}, mSettings)
