@@ -321,7 +321,7 @@ sap.ui.define([
 	 * @param {jQuery.Event} The event object.
 	 */
 	TreeItemBase.prototype.onsapright = function(oEvent) {
-		if (this.isLeaf()) {
+		if (oEvent.srcControl !== this || this.isLeaf()) {
 			return;
 		}
 
@@ -340,7 +340,7 @@ sap.ui.define([
 	 * @param {jQuery.Event} The event object.
 	 */
 	TreeItemBase.prototype.onsapleft = function(oEvent) {
-		if (this.isTopLevel() && !this.getExpanded()) {
+		if (oEvent.srcControl !== this || this.isTopLevel() && !this.getExpanded()) {
 			return;
 		}
 
@@ -362,9 +362,16 @@ sap.ui.define([
 	 * @param {jQuery.Event} The event object.
 	 */
 	TreeItemBase.prototype.onsapbackspace = function(oEvent) {
-		if (!this.isTopLevel()) {
-			this.getParentNode().focus();
+		// Only set focus on parent when the event is fired by item itself.
+		// Prevent miss-set when the content of CustomTreeItem fires event.
+		if (oEvent.srcControl !== this) {
+			return;
 		}
+
+		if (!this.isTopLevel()) {
+				this.getParentNode().focus();
+		}
+
 	};
 
 	TreeItemBase.prototype.getAccessibilityType = function(oBundle) {
