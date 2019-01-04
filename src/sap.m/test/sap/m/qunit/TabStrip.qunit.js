@@ -604,6 +604,25 @@ sap.ui.define([
 		assert.strictEqual(this.sut.$().find("[aria-aria-selected]").length, 0, "the duplicate aria-aria-selected attribute is not present in the DOM");
 	});
 
+	QUnit.test("Items has aria-setsize attribute set correctly to number of items in the items aggregation", function (assert) {
+		var aItems = this.sut.getDomRef().querySelectorAll(".sapMTabStripItem"),
+			iExpected = this.sut.getItems().length;
+
+		Array.prototype.forEach.call(aItems, function (oItem) {
+			assert.equal(oItem.getAttribute("aria-setsize"), iExpected, "aria-setsize is set correctly");
+		});
+	});
+
+	QUnit.test("Items has aria-setsize attribute set correctly to number of items in the items aggregation", function (assert) {
+		var aItems = this.sut.getDomRef().querySelectorAll(".sapMTabStripItem");
+
+		Array.prototype.forEach.call(aItems, function (oItem, iIndex) {
+			var iExpected = iIndex + 1;
+			assert.equal(oItem.getAttribute("aria-posinset"), iExpected, "Index of the " + iExpected + " item is set properly");
+		});
+	});
+
+
 
 	QUnit.module("TabSelect PHONE", {
 		afterEach: function () {
