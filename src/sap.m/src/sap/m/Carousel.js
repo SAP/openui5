@@ -9,6 +9,8 @@ sap.ui.define([
 	'sap/ui/Device',
 	'sap/ui/core/ResizeHandler',
 	'sap/ui/core/library',
+	'sap/ui/core/HTML',
+	'sap/m/ScrollContainer',
 	'./CarouselRenderer',
 	"sap/ui/events/KeyCodes",
 	"sap/base/Log",
@@ -23,6 +25,8 @@ function(
 	Device,
 	ResizeHandler,
 	coreLibrary,
+	HTML,
+	ScrollContainer,
 	CarouselRenderer,
 	KeyCodes,
 	Log,
@@ -693,7 +697,7 @@ function(
 
 
 		var cellClasses = oPage instanceof sap.m.Image ? "sapMCrslItemTableCell " + imgClass : "sapMCrslItemTableCell",
-			oContent = new sap.ui.core.HTML({
+			oContent = new HTML({
 			content :	"<div class='sapMCrslItemTable'>" +
 							"<div class='" + cellClasses + "'></div>" +
 						"</div>",
@@ -705,7 +709,7 @@ function(
 			}
 		});
 
-		var oScrollContainer = new sap.m.ScrollContainer({
+		var oScrollContainer = new ScrollContainer({
 			horizontal: false,
 			vertical: false,
 			content:[oContent],
