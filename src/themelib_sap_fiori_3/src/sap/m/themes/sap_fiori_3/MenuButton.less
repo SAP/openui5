@@ -16,3 +16,14 @@
 		}
 	}
 }
+
+.sapMMenuBtn {
+	.sapMBtn:hover > .sapMBtnHoverable.sapMBtnEmphasized,
+	span.sapMBtnInner.sapMBtnEmphasized {
+		border-left-color: @sapUiButtonEmphasizedTextColor;
+	}
+}
+
+.sapMMenuBtn.sapMMenuBtnSplit .sapMSBActive:not(.sapMBtnDisabled) > span.sapMBtnInner.sapMBtnEmphasized {
+	border-left-color: @sapUiButtonEmphasizedTextColor;
+}
