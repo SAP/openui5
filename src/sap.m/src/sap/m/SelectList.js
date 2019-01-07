@@ -725,6 +725,17 @@ sap.ui.define([
 			if (!this._oItemNavigation) {
 				this._oItemNavigation = new ItemNavigation(null, null, !this.getEnabled() /* not in tab chain */);
 				this._oItemNavigation.attachEvent(ItemNavigation.Events.AfterFocus, this.onAfterFocus, this);
+				this._oItemNavigation.setDisabledModifiers({
+					// Alt + arrow keys are reserved for browser navigation
+					sapnext: [
+						"alt", // Windows and Linux
+						"meta" // Apple (⌘)
+					],
+					sapprevious: [
+						"alt",
+						"meta"
+					]
+				});
 				this.addEventDelegate(this._oItemNavigation);
 			}
 
