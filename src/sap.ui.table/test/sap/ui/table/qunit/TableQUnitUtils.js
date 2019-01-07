@@ -149,7 +149,7 @@ sap.ui.define([
 			return new Promise(function(resolve) {
 				window.requestAnimationFrame(function() {
 					if (TableUtils.isVariableRowHeightEnabled(oTable)) {
-						TableQUnitUtils.wait(20).then(resolve);
+						window.requestAnimationFrame(resolve);
 					} else {
 						resolve();
 					}
