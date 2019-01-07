@@ -33,12 +33,18 @@ sap.ui.define([
 			this.hash = mSettings.hash || "";
 			this.subHashMap = mSettings.subHashMap;
 
+			this.key = mSettings.key || "";
+
 			HashChangerBase.apply(this);
 		}
 	});
 
 	RouterHashChanger.prototype.init = function() {
 		this.parent.init();
+	};
+
+	RouterHashChanger.prototype._generatePrefixedKey = function(sKey) {
+		return this.key ? (this.key + "-" + sKey) : sKey;
 	};
 
 	/*
@@ -49,19 +55,22 @@ sap.ui.define([
 	RouterHashChanger.prototype.createSubHashChanger = function(sKey) {
 		this.children = this.children || {};
 
-		if (this.children[sKey]) {
-			return this.children[sKey];
+		var sPrefixedKey = this._generatePrefixedKey(sKey);
+
+		if (this.children[sPrefixedKey]) {
+			return this.children[sPrefixedKey];
 		}
 
 		var oChild = new RouterHashChanger({
+			key: sPrefixedKey,
 			parent: this,
 			subHashMap: this.subHashMap,
-			hash: (this.subHashMap && this.subHashMap[sKey]) || ""
+			hash: (this.subHashMap && this.subHashMap[sPrefixedKey]) || ""
 		});
 
-		oChild.attachEvent("hashSet", this._onChildHashChanged.bind(this, sKey));
-		oChild.attachEvent("hashReplaced", this._onChildHashChanged.bind(this, sKey));
-		this.children[sKey] = oChild;
+		oChild.attachEvent("hashSet", this._onChildHashChanged.bind(this, sPrefixedKey));
+		oChild.attachEvent("hashReplaced", this._onChildHashChanged.bind(this, sPrefixedKey));
+		this.children[sPrefixedKey] = oChild;
 
 		return oChild;
 	};
@@ -197,6 +206,7 @@ sap.ui.define([
 		delete this.hash;
 		delete this.subHashMap;
 		delete this.parent;
+		delete this.key;
 
 		HashChangerBase.prototype.destroy.apply(this, arguments);
 	};

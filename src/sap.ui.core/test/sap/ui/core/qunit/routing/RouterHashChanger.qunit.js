@@ -184,8 +184,6 @@ sap.ui.define([
 		assert.strictEqual(oHashChangedSpy.args[0][0].getParameter("oldHash"), "", "old hash is undefined");
 	});
 
-
-
 	QUnit.test("#createSubHashChanger", function(assert) {
 		assert.strictEqual(this.oRHC.children, undefined, "initial child registry is empty");
 		var oSubRHC = this.oRHC.createSubHashChanger("foo");
@@ -206,15 +204,11 @@ sap.ui.define([
 			// to make the trace of event parameter easier
 			this.oReturnObjectStub = sinon.stub(EventProvider.prototype.oEventPool, "returnObject");
 
-			// this.oRHC = new RouterHashChanger({
-			// 	parent: HashChanger.getInstance()
-			// });
-
 			this.oRHC = HashChanger.getInstance().createRouterHashChanger();
 			this.oChildRHC1 = this.oRHC.createSubHashChanger("foo");
 			this.oChildRHC2 = this.oRHC.createSubHashChanger("bar");
-			this.oGrandChildRHC1 = this.oChildRHC1.createSubHashChanger("foo.child1");
-			this.oGrandChildRHC2 = this.oChildRHC1.createSubHashChanger("foo.child2");
+			this.oGrandChildRHC1 = this.oChildRHC1.createSubHashChanger("child1");
+			this.oGrandChildRHC2 = this.oChildRHC1.createSubHashChanger("child2");
 
 			this.oRootHashSetSpy = sinon.spy();
 			this.oRHC.attachEvent("hashSet", this.oRootHashSetSpy);
@@ -261,9 +255,17 @@ sap.ui.define([
 		}
 	});
 
+	QUnit.test("Prefixed key", function(assert) {
+		assert.strictEqual(this.oRHC.key, "", "The top level RouterHashChanger has an empty string key");
+		assert.strictEqual(this.oChildRHC1.key, "foo", "The child RouterHashChanger has correct key set");
+		assert.strictEqual(this.oChildRHC2.key, "bar", "The child RouterHashChanger has correct key set");
+		assert.strictEqual(this.oGrandChildRHC1.key, "foo-child1", "The grand child RouterHashChanger has correct key set");
+		assert.strictEqual(this.oGrandChildRHC2.key, "foo-child2", "The grand child RouterHashChanger has correct key set");
+	});
+
 	QUnit.test("Browser hash changed", function(assert) {
 		var oHashChanger = HashChanger.getInstance();
-		var sHash = "rootHash&/foo/fooHash/fooHash1&/foo.child2/foo.child2/foo.child2Hash";
+		var sHash = "rootHash&/foo/fooHash/fooHash1&/foo-child2/foo.child2/foo.child2Hash";
 		var oRHCHashChangedSpy = sinon.spy();
 		var oChild2HashChangedSpy = sinon.spy();
 
@@ -305,14 +307,14 @@ sap.ui.define([
 		this.oGrandChildRHC2.detachEvent("hashChanged", this.oGrandChild2HashChangedSpy);
 		this.oChildRHC1.setHash("Child1");
 		assert.equal(this.oChild1HashSetSpy.args[0][0].getParameter("deletePrefix").length, 1, "Child1 hash changer called");
-		assert.equal(this.oChild1HashSetSpy.args[0][0].getParameter("deletePrefix")[0], "foo.child1", "Child1 hash changer called");
+		assert.equal(this.oChild1HashSetSpy.args[0][0].getParameter("deletePrefix")[0], "foo-child1", "Child1 hash changer called");
 	});
 
 	QUnit.test("delete prefix for children after setHash", function(assert) {
 		this.oChildRHC1.setHash("Child1");
 		assert.equal(this.oChild1HashSetSpy.args[0][0].getParameter("deletePrefix").length, 2, "Child1 hash changer called");
-		assert.equal(this.oChild1HashSetSpy.args[0][0].getParameter("deletePrefix")[0], "foo.child1", "Child1 hash changer called");
-		assert.equal(this.oChild1HashSetSpy.args[0][0].getParameter("deletePrefix")[1], "foo.child2", "Child1 hash changer called");
+		assert.equal(this.oChild1HashSetSpy.args[0][0].getParameter("deletePrefix")[0], "foo-child1", "Child1 hash changer called");
+		assert.equal(this.oChild1HashSetSpy.args[0][0].getParameter("deletePrefix")[1], "foo-child2", "Child1 hash changer called");
 	});
 
 	QUnit.test("replace hash on the grand child", function(assert) {
@@ -337,31 +339,44 @@ sap.ui.define([
 		this.oGrandChildRHC2.detachEvent("hashChanged", this.oGrandChild2HashChangedSpy);
 		this.oChildRHC1.replaceHash("Child1");
 		assert.equal(this.oChild1HashReplacedSpy.args[0][0].getParameter("deletePrefix").length, 1, "Child1 hash changer called");
-		assert.equal(this.oChild1HashReplacedSpy.args[0][0].getParameter("deletePrefix")[0], "foo.child1", "Child1 hash changer called");
+		assert.equal(this.oChild1HashReplacedSpy.args[0][0].getParameter("deletePrefix")[0], "foo-child1", "Child1 hash changer called");
 	});
 
 	QUnit.test("delete prefix for children after replaceHash", function(assert) {
 		this.oChildRHC1.replaceHash("Child1");
 		assert.equal(this.oChild1HashReplacedSpy.args[0][0].getParameter("deletePrefix").length, 2, "Child1 hash changer called");
-		assert.equal(this.oChild1HashReplacedSpy.args[0][0].getParameter("deletePrefix")[0], "foo.child1", "Child1 hash changer called");
-		assert.equal(this.oChild1HashReplacedSpy.args[0][0].getParameter("deletePrefix")[1], "foo.child2", "Child1 hash changer called");
+		assert.equal(this.oChild1HashReplacedSpy.args[0][0].getParameter("deletePrefix")[0], "foo-child1", "Child1 hash changer called");
+		assert.equal(this.oChild1HashReplacedSpy.args[0][0].getParameter("deletePrefix")[1], "foo-child2", "Child1 hash changer called");
 	});
 
 	QUnit.test("fireHashChanged on SubHashChanger", function(assert) {
-		this.oChildRHC1.attachEvent("hashChanged", this.oChild1HashChangedSpy);
-		this.oGrandChildRHC1.attachEvent("hashChanged", this.oGrandChild1HashChangedSpy);
-		this.oGrandChildRHC2.attachEvent("hashChanged", this.oGrandChild2HashChangedSpy);
 		this.oRHC.fireHashChanged("hash", {});
+
+		assert.equal(this.oChild1HashChangedSpy.callCount, 1, "hashChanged event is fired on the child hashChanger");
+		assert.equal(this.oGrandChild1HashChangedSpy.callCount, 1, "hashChanged event is fired on the grand child hashChanger");
+		assert.equal(this.oGrandChild2HashChangedSpy.callCount, 1, "hashChanged event is fired on the grand child hashChanger");
 		assert.equal(this.oChild1HashChangedSpy.args[0][0].getParameter("newHash"), "", "Child1 hashChanged fired");
+		assert.equal(this.oGrandChild1HashChangedSpy.args[0][0].getParameter("newHash"), "", "Grand Child1 hashChanged fired");
+		assert.equal(this.oGrandChild2HashChangedSpy.args[0][0].getParameter("newHash"), "", "Grand Child2 hashChanged fired");
 	});
 
 	QUnit.test("fireHashChanged on SubHashChanger with subhash", function(assert) {
 		this.oRHC.fireHashChanged("hash", {"foo": "subhash"});
+
+		assert.equal(this.oChild1HashChangedSpy.callCount, 1, "hashChanged event is fired on the child hashChanger");
+		assert.equal(this.oGrandChild1HashChangedSpy.callCount, 1, "hashChanged event is fired on the grand child hashChanger");
+		assert.equal(this.oGrandChild2HashChangedSpy.callCount, 1, "hashChanged event is fired on the grand child hashChanger");
 		assert.equal(this.oChild1HashChangedSpy.args[0][0].getParameter("newHash"), "subhash", "Child1 hashChanged fired");
+		assert.equal(this.oGrandChild1HashChangedSpy.args[0][0].getParameter("newHash"), "", "Grand Child1 hashChanged fired");
+		assert.equal(this.oGrandChild2HashChangedSpy.args[0][0].getParameter("newHash"), "", "Grand Child2 hashChanged fired");
 	});
 
 	QUnit.test("fireHashChanged on SubHashChanger with subhashes on nested level", function(assert) {
-		this.oRHC.fireHashChanged("hash", {"foo": "subhash", "foo.child1": "subhash.foo"});
+		this.oRHC.fireHashChanged("hash", {"foo": "subhash", "foo-child1": "subhash.foo"});
+
+		assert.equal(this.oChild1HashChangedSpy.callCount, 1, "hashChanged event is fired on the child hashChanger");
+		assert.equal(this.oGrandChild1HashChangedSpy.callCount, 1, "hashChanged event is fired on the grand child hashChanger");
+		assert.equal(this.oGrandChild2HashChangedSpy.callCount, 1, "hashChanged event is fired on the grand child hashChanger");
 		assert.equal(this.oChild1HashChangedSpy.args[0][0].getParameter("newHash"), "subhash", "Child1 hashChanged fired");
 		assert.equal(this.oGrandChild1HashChangedSpy.args[0][0].getParameter("newHash"), "subhash.foo", "Child1 hashChanged fired");
 		assert.equal(this.oGrandChild2HashChangedSpy.args[0][0].getParameter("newHash"), "", "Child1 hashChanged fired");
