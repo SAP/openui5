@@ -538,6 +538,12 @@
         "type": "FIX",
         "text": " v2.ODataModel: memory leak",
         "references": []
+      },
+      {
+        "id": "3e026e935c3b172e78e852aef747e18e4d02ae66",
+        "type": "FIX",
+        "text": " sap.ui.core/Component: improved variant determination",
+        "references": []
       }
     ]
   }
