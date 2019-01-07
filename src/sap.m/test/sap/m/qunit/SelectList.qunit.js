@@ -2031,6 +2031,35 @@ sap.ui.define([
 		oSelectList.destroy();
 	});
 
+	QUnit.test("When keyboardNavigationMode is set to Delimited, it shouldn't prevent browser from navigating to previous or next page.", function(assert) {
+
+		// system under test
+		var oSelectList = new SelectList({
+			items: [
+				new Item({
+					text: "lorem ipsum"
+				})
+			]
+		});
+
+		// arrange
+		oSelectList.placeAt("content");
+		sap.ui.getCore().applyChanges();
+
+		var oModifiers = oSelectList._oItemNavigation.getDisabledModifiers();
+
+		// assert
+		assert.ok(oModifiers["sapnext"], "sapnext has disabled modifiers");
+		assert.ok(oModifiers["sapprevious"], "sapprevious has disabled modifiers");
+		assert.ok(oModifiers["sapnext"].indexOf("alt") !== -1, "forward item navigation is not handled when altKey is pressed");
+		assert.ok(oModifiers["sapnext"].indexOf("meta") !== -1, "forward item navigation on MacOS is not handled when metaKey is pressed");
+		assert.ok(oModifiers["sapprevious"].indexOf("alt") !== -1, "backward item navigation is not handled when altKey is pressed");
+		assert.ok(oModifiers["sapprevious"].indexOf("meta") !== -1, "backward item navigation on MacOS is not handled when metaKey is pressed");
+
+		// cleanup
+		oSelectList.destroy();
+	});
+
 	QUnit.module("removeItem()");
 
 	QUnit.test("it should give a warning when called with faulty parameter", function(assert) {
