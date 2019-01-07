@@ -47,6 +47,8 @@ sap.ui.define(['sap/ui/core/Control', 'sap/ui/model/json/JSONModel', 'sap/m/Flex
 			renderer: function (oRm, oControl) {
 				oRm.write("<div");
 				oRm.writeElementData(oControl);
+				oRm.addClass("sapFCardContentAnalytical");
+				oRm.writeClasses();
 				oRm.write(">");
 				oRm.renderControl(oControl.getAggregation("_content"));
 				oRm.write("</div>");
@@ -96,11 +98,12 @@ sap.ui.define(['sap/ui/core/Control', 'sap/ui/model/json/JSONModel', 'sap/m/Flex
 				"legendGroup": {
 					"layout": {}
 				},
-				"window": {
-					"start": "firstDataPoint",
-					"end": "lastDataPoint"
+				"plotArea": {
+					"window": {
+						"start": "firstDataPoint",
+						"end": "lastDataPoint"
+					}
 				},
-				"plotArea": {},
 				"categoryAxis": {
 					"title": {}
 				},
