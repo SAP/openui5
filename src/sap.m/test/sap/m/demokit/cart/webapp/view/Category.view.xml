@@ -23,7 +23,7 @@
 			<List
 				id="productList"
 				mode="{= ${device>/system/phone} ? 'None' : 'SingleSelectMaster'}"
-				selectionChange="onProductListSelect"
+				selectionChange=".onProductListSelect"
 				noDataText="{i18n>categoryNoData}"
 				busyIndicatorDelay="0"
 				items="{
@@ -59,7 +59,12 @@
 						iconDensityAware="false"
 						tooltip="{i18n>openProductDetails} {Name}">
 						<attributes>
-							<ObjectAttribute text="{SupplierName}"/>
+							<ObjectAttribute visible="true"
+											 text="{SupplierName}"/>
+							<ObjectAttribute visible="{device>/system/desktop}"
+											 active="true"
+											 text="{i18n>CompareWith}"
+											 press=".compareProducts"/>
 						</attributes>
 						<firstStatus>
 							<ObjectStatus

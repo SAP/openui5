@@ -2,12 +2,13 @@ sap.ui.define([
 	"sap/ui/core/mvc/Controller",
 	"sap/m/MessageToast",
 	"sap/ui/core/UIComponent",
-	"sap/ui/core/routing/History"
-], function(Controller, MessageToast, UIComponent, History) {
+	"sap/ui/core/routing/History",
+	"../model/cart"
+], function(Controller, MessageToast, UIComponent, History, cart) {
 	"use strict";
 
 	return Controller.extend("sap.ui.demo.cart.controller.BaseController", {
-
+		cart: cart,
 		/**
 		 * Convenience method for accessing the router.
 		 * @public
@@ -90,6 +91,30 @@ sap.ui.define([
 			} else {
 				this.getRouter().navTo("home", {}, true);
 			}
+		},
+
+		/**
+		 * Called, when the add button of a product is pressed.
+		 * Saves the product, the i18n bundle, and the cart model and hands them to the <code>addToCart</code> function
+		 * @public
+		 */
+		onAddToCart : function () {
+			var oResourceBundle = this.getOwnerComponent().getModel("i18n").getResourceBundle();
+			var oEntry =  arguments[0].getSource().getBindingContext().getObject();
+			var oCartModel = this.getView().getModel("cartProducts");
+			cart.addToCart(oResourceBundle, oEntry, oCartModel);
+		},
+		/**
+		 * Clear comparison model
+		 * @protected
+		 */
+		_clearComparison: function (){
+			var oModel = this.getOwnerComponent().getModel("comparison");
+			oModel.setData({
+				category: "",
+				item1: "",
+				item2: ""
+			});
 		}
 	});
 });

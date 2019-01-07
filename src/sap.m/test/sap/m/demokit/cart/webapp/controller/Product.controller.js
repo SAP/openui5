@@ -1,16 +1,13 @@
 sap.ui.define([
 	"./BaseController",
-	"../model/formatter",
-	"../model/cart"
+	"../model/formatter"
 ], function(
 	BaseController,
-	formatter,
-	cart) {
+	formatter) {
 	"use strict";
 
 	return BaseController.extend("sap.ui.demo.cart.controller.Product", {
 		formatter : formatter,
-		cart: cart,
 
 		onInit : function () {
 			var oComponent = this.getOwnerComponent();
@@ -77,18 +74,6 @@ sap.ui.define([
 			if (!oData) {
 				this._router.getTargets().display("notFound");
 			}
-		},
-
-		/**
-		 * Called, when the add button of a product is pressed.
-		 * Saves the product, the i18n bundle, and the cart model and hands them to the <code>addToCart</code> function
-		 * @public
-		 */
-		onAddToCart : function () {
-			var oResourceBundle = this.getOwnerComponent().getModel("i18n").getResourceBundle();
-			var oEntry = this.getView().getBindingContext().getObject();
-			var oCartModel = this.getView().getModel("cartProducts");
-			cart.addToCart(oResourceBundle, oEntry, oCartModel);
 		},
 
 		/**

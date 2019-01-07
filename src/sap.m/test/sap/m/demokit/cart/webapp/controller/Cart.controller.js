@@ -24,6 +24,7 @@ sap.ui.define([
 			this._oRouter = this.getRouter();
 			this._oRouter.getRoute("cart").attachPatternMatched(this._routePatternMatched, this);
 			this._oRouter.getRoute("productCart").attachPatternMatched(this._routePatternMatched, this);
+			this._oRouter.getRoute("comparisonCart").attachPatternMatched(this._routePatternMatched, this);
 			// set initial ui configuration model
 			var oCfgModel = new JSONModel({});
 			this.getView().setModel(oCfgModel, "cfg");
