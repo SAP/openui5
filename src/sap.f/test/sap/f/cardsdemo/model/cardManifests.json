@@ -379,12 +379,6 @@
 						]
 					},
 					"item": {
-						"icon": {
-							"label": "{{icon_label}}",
-							"value": "{SubCategoryId}",
-							"type": "mapper",
-							"importance": 1
-						},
 						"title": {
 							"label": "{{title_label}}",
 							"value": "{Name}",
@@ -1322,6 +1316,11 @@
 						"description": {
 							"label": "{{description_label}}",
 							"value": "{Description}"
+						},
+						"highlight": "{state}",
+						"info": {
+						  "value": "{info}",
+						  "state": "{infoState}"
 						}
 					}
 				}
