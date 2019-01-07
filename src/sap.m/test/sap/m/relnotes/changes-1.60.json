@@ -1300,6 +1300,12 @@
         "type": "FIX",
         "text": " sap.m.uploadCollectionItem : Fixed .csv file download issue.",
         "references": []
+      },
+      {
+        "id": "94d545f3155bf853228a8571c3c7f4cbc5d522ba",
+        "type": "FIX",
+        "text": " sap.m.Button: BindingInfo is copied to the MenuItems once the buttons are combined in RTA",
+        "references": []
       }
     ]
   }
