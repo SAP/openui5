@@ -312,6 +312,10 @@ sap.ui.define([
 
 	Cache.NOTAG = "<NoTag>";
 
+	Cache._trimEtag = function(sCacheKey) {
+		return sCacheKey.replace(/(^W\/|")/g, '');
+	};
+
 	Cache._concatControlVariantIdWithCacheKey = function (sCacheKey, sControlVariantId) {
 		return sCacheKey === Cache.NOTAG ?
 			sCacheKey.replace(/>$/, ''.concat('-', sControlVariantId, '>')) :
@@ -321,7 +325,7 @@ sap.ui.define([
 	/**
 	 * Function to retrieve the cache key of the SAPUI5 flexibility request of a given application
 	 *
-	 * @param {map} mComponent
+	 * @param {map} mComponent - component map
 	 * @param {string} mComponent.name Name of the application component
 	 * @param {string} mComponent.appVersion Version of the application component
 	 * @param {object} oAppComponent - Application component
@@ -339,7 +343,7 @@ sap.ui.define([
 		return this.getChangesFillingCache(LrepConnector.createConnector(), mComponent)
 			.then(function (oWrappedChangeFileContent) {
 				if (oWrappedChangeFileContent && oWrappedChangeFileContent.etag) {
-					return oWrappedChangeFileContent.etag;
+					return Cache._trimEtag(oWrappedChangeFileContent.etag);
 				} else {
 					return Cache.NOTAG;
 				}
