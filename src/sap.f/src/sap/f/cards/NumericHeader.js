@@ -8,7 +8,6 @@ sap.ui.define([
 	'sap/f/cards/Data',
 	'sap/ui/model/json/JSONModel',
 	"sap/f/cards/NumericSideIndicator",
-	"sap/base/Log",
 	"sap/f/cards/NumericHeaderRenderer"
 ], function (
 		Control,
@@ -16,8 +15,7 @@ sap.ui.define([
 		Text,
 		Data,
 		JSONModel,
-		NumericSideIndicator,
-		NumericHeaderRenderer
+		NumericSideIndicator
 	) {
 		"use strict";
 
@@ -34,7 +32,6 @@ sap.ui.define([
 	 *
 	 * <h3>Usage</h3>
 	 *
-	 * <h3>Responsive Behavior</h3>
 	 *
 	 * @extends sap.ui.core.Control
 	 *
@@ -51,97 +48,191 @@ sap.ui.define([
 		metadata: {
 			interfaces: ["sap.f.cards.IHeader"],
 			properties: {
-				title: {
-					"type": "string" // TODO required
-				},
-				subtitle: {
-					"type": "string"
-				},
-				unitOfMeasurement: {
-					"type": "string"
-				},
-				details: {
-					"type": "string"
-				},
-				number: { // TODO what if value is not a number, is the naming still ok?
-					"type": "string"
-				},
-				unit: {
-					"type": "string"
-				},
-				trend: {
-					"type": "sap.m.DeviationIndicator"
-				},
-				state: {
-					"type": "sap.m.ValueColor" // TODO ValueState
-				}
+				/**
+				 * The title of the card
+				 */
+				title: { "type": "string", group: "Appearance" },
+
+				/**
+				 * The subtitle of the card
+				 */
+				subtitle: { "type": "string", group: "Appearance" },
+
+				/**
+				 * General unit of measurement for the header. Displayed as side information to the subtitle.
+				 */
+				unitOfMeasurement: { "type": "string", group : "Data" },
+
+				/**
+				 * The numeric value of the main number indicator.
+				 * If the value contains more than five characters, only the first five are displayed. Without rounding the number.
+				 */
+				number: { "type": "string", group : "Data" },
+
+				/**
+				 * Defines the unit of measurement (scaling prefix) for the main indicator.
+				 * Financial characters can be used for currencies and counters. The International System of Units (SI) prefixes can be used.
+				 * If the unit contains more than three characters, only the first three characters are displayed.
+				 */
+				unit: { "type": "string", group : "Data" },
+
+				/**
+				 * The direction of the trend arrow. Shows deviation for the value of the main number indicator.
+				 */
+				trend: { "type": "sap.m.DeviationIndicator", group: "Appearance", defaultValue : "None" },
+
+				/**
+				 * The semantic color which represents the state of the main number indicator
+				 */
+				state: { "type": "sap.m.ValueColor", group: "Appearance", defaultValue : "Neutral" },
+
+				/**
+				 * Additional text which adds more details to what is shown in the numeric header.
+				 */
+				details: { "type": "string", group: "Appearance" }
 			},
 			aggregations: {
-
+				/**
+				 * Additional side number indicators. For example "Deviation" and "Target". Not more than two side indicators should be used.
+				 */
 				sideIndicators: { type: "sap.f.cards.NumericSideIndicator", multiple: true }, // TODO limit to 2, or describe in doc
 
+				/**
+				 * Used to display title text
+				 */
 				_title: { type: "sap.m.Text", multiple: false, visibility: "hidden" },
+
+				/**
+				 * Used to display subtitle text
+				 */
 				_subtitle: { type: "sap.m.Text", multiple: false, visibility: "hidden" },
+
+				/**
+				 * Shows unit of measurement next to subtitle
+				 */
 				_unitOfMeasurement: { type: "sap.m.Text", multiple: false, visibility: "hidden" },
+
+				/**
+				 * Display details
+				 */
 				_details: { type: "sap.m.Text", multiple: false, visibility: "hidden" },
-				_mainIndicator: { type: "sap.m.NumericContent", multiple: false } // TODO required
+
+				/**
+				 * Displays the main number indicator
+				 */
+				_mainIndicator: { type: "sap.m.NumericContent", multiple: false }
 			}
 		}
 	});
 
+	/**
+	 * Sets the title
+	 * @overwrite
+	 * @public
+	 * @param {string} sValue The text of the title
+	 * @return {sap.f.cards.NumericHeader} this pointer for chaining
+	 */
 	NumericHeader.prototype.setTitle = function(sValue) {
 		this.setProperty("title", sValue, true);
 		this._getTitle().setText(sValue);
 		return this;
 	};
 
+	/**
+	 * Sets the subtitle
+	 * @overwrite
+	 * @public
+	 * @param {string} sValue The text of the subtitle
+	 * @return {sap.f.cards.NumericHeader} this pointer for chaining
+	 */
 	NumericHeader.prototype.setSubtitle = function(sValue) {
 		this.setProperty("subtitle", sValue, true);
 		this._getSubtitle().setText(sValue);
 		return this;
 	};
 
+	/**
+	 * Sets the general unit of measurement for the header. Displayed as side information to the subtitle.
+	 * @overwrite
+	 * @public
+	 * @param {string} sValue The value of the unit of measurement
+	 * @return {sap.f.cards.NumericHeader} this pointer for chaining
+	 */
 	NumericHeader.prototype.setUnitOfMeasurement = function(sValue) {
 		this.setProperty("unitOfMeasurement", sValue, true);
 		this._getUnitOfMeasurement().setText(sValue);
 		return this;
 	};
 
+	/**
+	 * Sets additional text which adds more details to what is shown in the numeric header
+	 * @overwrite
+	 * @public
+	 * @param {string} sValue The text of the details
+	 * @return {sap.f.cards.NumericHeader} this pointer for chaining
+	 */
 	NumericHeader.prototype.setDetails = function(sValue) {
 		this.setProperty("details", sValue, true);
 		this._getDetails().setText(sValue);
 		return this;
 	};
 
+	/**
+	 * Sets the value of the main number indicator
+	 * @overwrite
+	 * @public
+	 * @param {string} sValue A string representation of the number
+	 * @return {sap.f.cards.NumericHeader} this pointer for chaining
+	 */
 	NumericHeader.prototype.setNumber = function(sValue) {
 		this.setProperty("number", sValue, true);
 		this._getMainIndicator().setValue(sValue);
 		return this;
 	};
 
+	/**
+	 * Sets the unit of measurement (scaling prefix) for the main indicator.
+	 * @overwrite
+	 * @public
+	 * @param {string} sValue The text of the title
+	 * @return {sap.f.cards.NumericHeader} this pointer for chaining
+	 */
 	NumericHeader.prototype.setUnit = function(sValue) {
 		this.setProperty("unit", sValue, true);
 		this._getMainIndicator().setScale(sValue);
 		return this;
 	};
 
+	/**
+	 * Sets the direction of the trend arrow.
+	 * @overwrite
+	 * @public
+	 * @param {sap.m.DeviationIndicator} sValue The direction of the trend arrow
+	 * @return {sap.f.cards.NumericHeader} this pointer for chaining
+	 */
 	NumericHeader.prototype.setTrend = function(sValue) {
 		this.setProperty("trend", sValue, true);
 		this._getMainIndicator().setIndicator(sValue);
 		return this;
 	};
 
+	/**
+	 * Sets the semantic color which represents the state of the main number indicator
+	 * @overwrite
+	 * @public
+	 * @param {sap.m.ValueColor} sValue The semantic color which represents the state
+	 * @return {sap.f.cards.NumericHeader} this pointer for chaining
+	 */
 	NumericHeader.prototype.setState = function(sValue) {
 		this.setProperty("state", sValue, true);
 		this._getMainIndicator().setValueColor(sValue); // TODO convert ValueState to ValueColor
 		return this;
 	};
 
-	NumericHeader.prototype.addSideIndicator = function(oValue) {
-		this.addAggregation("sideIndicators", oValue);
-		return this;
-	};
-
+	/**
+	 * @private
+	 * @return {sap.m.Text} The title aggregation
+	 */
 	NumericHeader.prototype._getTitle = function () {
 		var oControl = this.getAggregation("_title");
 
@@ -157,6 +248,10 @@ sap.ui.define([
 		return oControl;
 	};
 
+	/**
+	 * @private
+	 * @return {sap.m.Text} The subtitle aggregation
+	 */
 	NumericHeader.prototype._getSubtitle = function () {
 		var oControl = this.getAggregation("_subtitle");
 
@@ -172,6 +267,10 @@ sap.ui.define([
 		return oControl;
 	};
 
+	/**
+	 * @private
+	 * @return {sap.m.Text} The unit of measurement aggregation
+	 */
 	NumericHeader.prototype._getUnitOfMeasurement = function () {
 		var oControl = this.getAggregation("_unitOfMeasurement");
 
@@ -186,6 +285,10 @@ sap.ui.define([
 		return oControl;
 	};
 
+	/**
+	 * @private
+	 * @return {sap.m.Text} The details aggregation
+	 */
 	NumericHeader.prototype._getDetails = function () {
 		var oControl = this.getAggregation("_details");
 
@@ -200,6 +303,10 @@ sap.ui.define([
 		return oControl;
 	};
 
+	/**
+	 * @private
+	 * @return {sap.m.NumericContent} The main indicator aggregation
+	 */
 	NumericHeader.prototype._getMainIndicator = function () {
 		var oControl = this.getAggregation("_mainIndicator");
 
@@ -274,10 +381,6 @@ sap.ui.define([
 			Data.fetch(oRequest).then(function (data) {
 				oModel.setData(data);
 				oModel.refresh();
-
-				// oHeader.rerender(); // TODO sometimes is needed, sometimes not?!?!
-				// Also check warning "Couldn't rerender '__header1', as its DOM location couldn't be determined - "
-
 			}).catch(function (oError) {
 				// TODO: Handle errors. Maybe add error message
 			});

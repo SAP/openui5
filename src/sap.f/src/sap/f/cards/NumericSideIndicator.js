@@ -24,7 +24,6 @@ sap.ui.define([
 		 *
 		 * <h3>Usage</h3>
 		 *
-		 * <h3>Responsive Behavior</h3>
 		 *
 		 * @extends sap.ui.core.Control
 		 *
@@ -40,42 +39,83 @@ sap.ui.define([
 		var NumericSideIndicator = Control.extend("sap.f.cards.NumericSideIndicator", {
 			metadata: {
 				properties: {
-					title: {
-						"type": "string"
-					},
-					number: {
-						"type": "string"
-					},
-					unit: {
-						"type": "string"
-					}
+					/**
+					 * The title of the indicator
+					 */
+					title: { "type": "string", group: "Appearance" },
+
+					/**
+					 * The numeric value
+					 */
+					number: { "type": "string", group : "Data" },
+
+					/**
+					 * Defines the unit of measurement (scaling prefix) for the numeric value
+					 */
+					unit: { "type": "string", group : "Data" }
 				},
 				aggregations: {
+					/**
+					 * Used to display title
+					 */
 					_title: { type: "sap.m.Text", multiple: false, visibility: "hidden" },
+
+					/**
+					 * Used to display the number part of the indicator
+					 */
 					_number: { type: "sap.m.Text", multiple: false, visibility: "hidden" },
+
+					/**
+					 * Used to display the unit of measurement for the number
+					 */
 					_unit: { type: "sap.m.Text", multiple: false, visibility: "hidden" }
 				}
 			}
 		});
 
+		/**
+		 * Sets the title
+		 * @overwrite
+		 * @public
+		 * @param {string} sValue The text of the title
+		 * @return {sap.f.cards.NumericSideIndicator} this pointer for chaining
+		 */
 		NumericSideIndicator.prototype.setTitle = function(sValue) {
 			this.setProperty("title", sValue, true);
 			this._getTitle().setText(sValue);
 			return this;
 		};
 
+		/**
+		 * Sets the numeric value
+		 * @overwrite
+		 * @public
+		 * @param {string} sValue The text of the title
+		 * @return {sap.f.cards.NumericSideIndicator} this pointer for chaining
+		 */
 		NumericSideIndicator.prototype.setNumber = function(sValue) {
 			this.setProperty("number", sValue, true);
 			this._getNumber().setText(sValue);
 			return this;
 		};
 
+		/**
+		 * Sets the unit of measurement
+		 * @overwrite
+		 * @public
+		 * @param {string} sValue The text of the title
+		 * @return {sap.f.cards.NumericSideIndicator} this pointer for chaining
+		 */
 		NumericSideIndicator.prototype.setUnit = function(sValue) {
 			this.setProperty("unit", sValue, true);
 			this._getUnit().setText(sValue);
 			return this;
 		};
 
+		/**
+		 * @private
+		 * @return {sap.m.Text} The title aggregation
+		 */
 		NumericSideIndicator.prototype._getTitle = function () {
 			var oControl = this.getAggregation("_title");
 
@@ -90,6 +130,10 @@ sap.ui.define([
 			return oControl;
 		};
 
+		/**
+		 * @private
+		 * @return {sap.m.Text} The number aggregation
+		 */
 		NumericSideIndicator.prototype._getNumber = function () {
 			var oControl = this.getAggregation("_number");
 
@@ -103,6 +147,10 @@ sap.ui.define([
 			return oControl;
 		};
 
+		/**
+		 * @private
+		 * @return {sap.m.Text} The unit of measurement aggregation
+		 */
 		NumericSideIndicator.prototype._getUnit = function () {
 			var oControl = this.getAggregation("_unit");
 
