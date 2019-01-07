@@ -525,8 +525,8 @@ sap.ui.define([
 		//If we have version of control with delimiter, then sValue should consist of two dates delimited with delimiter,
 		//hence we have to split the value to these dates
 		var sDelimiter = _getDelimiter.call(this);
-		sValue = sValue.trim();
 		if (sDelimiter && sValue) {
+			sValue = sValue.trim();
 			sValue = _trim(sValue, [sDelimiter, " "]);
 
 			aDates = sValue.split(sDelimiter);

@@ -305,6 +305,29 @@ sap.ui.define([
 		oDateRangeSelection.destroy();
 	});
 
+	//BCP: 1870496053
+	QUnit.test("parsing undefined value doesn't throw error", function(assert) {
+		//arrange, act
+		var oDateRangeSelection = new DateRangeSelection({
+				displayFormat: "dd.MM.yyyy",
+				displayFormatType: CalendarType.Gregorian
+			}),
+			oDate;
+		// act
+		try {
+			oDate = oDateRangeSelection._parseValue();
+			//assert
+			assert.equal(1, 1, "The control doesn't throw error when the added date range is undefined");
+			assert.ok(!oDate[0], "the first value does not exist");
+			assert.ok(!oDate[1], "the second value does not exist");
+		} catch (e) {
+			assert.equal(1, 0, "Throws an error " + e.stack);
+		}
+
+		//clean
+		oDateRangeSelection.destroy();
+	});
+
 	QUnit.module("Accessibility");
 
 	QUnit.test("getAccessibilityInfo", function(assert) {
