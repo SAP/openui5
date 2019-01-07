@@ -50,6 +50,11 @@ sap.ui.define([],
 		oRm.write("<div"); // Top row begins
 		oRm.addClass("sapMObjectIdentifierTopRow");
 		oRm.writeClasses();
+		if (!oOI._hasTopRow()) {
+			oRm.addStyle("display", "none");
+			oRm.writeStyles();
+		}
+
 		oRm.write(">");
 
 		oRm.write("<div id='" + oOI.getId() + "-title'"); // Title begins

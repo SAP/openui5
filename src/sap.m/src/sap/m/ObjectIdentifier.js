@@ -362,10 +362,18 @@ function(
 	ObjectIdentifier.prototype.setTitle = function (sTitle) {
 		//always suppress rerendering because title div is rendered
 		//if text is empty or not
-		var oTitleControl = this._getTitleControl();
+		var oTitleControl = this._getTitleControl(),
+			$TitleContainerRow;
 		oTitleControl.setProperty("text", sTitle, false);
 		oTitleControl.setVisible(!!oTitleControl.getText());
 		this.setProperty("title", sTitle, true);
+
+		$TitleContainerRow = this.$().find(".sapMObjectIdentifierTopRow");
+		if (this._hasTopRow()) {
+			$TitleContainerRow.attr('style', null);
+		} else {
+			$TitleContainerRow.css("display", "none");
+		}
 		this.$("text").toggleClass("sapMObjectIdentifierTextBellow",
 				!!this.getProperty("text") && !!this.getProperty("title"));
 
@@ -517,6 +525,10 @@ function(
 
 		// return the modified Object containing all needed information about the control
 		return oTitleInfo;
+	};
+
+	ObjectIdentifier.prototype._hasTopRow = function() {
+		return this.getTitle() || this.getBadgeNotes() || this.getBadgePeople() || this.getBadgeAttachments();
 	};
 
 	return ObjectIdentifier;
