@@ -73,6 +73,8 @@ sap.ui.define(['./TabStripItem', 'sap/ui/Device', 'sap/ui/core/InvisibleText'], 
 	 * @param {boolean} bSelected Flag indicating if this is the currently selected item
 	 */
 	TabStripRenderer.renderItem = function (oRm, oControl, oItem, bSelected) {
+		var sTooltip = oItem.getTooltip();
+
 		oRm.write("<div id='" + oItem.getId() + "'");
 		oRm.addClass(TabStripItem.CSS_CLASS);
 		if (oItem.getModified()) {
@@ -82,6 +84,10 @@ sap.ui.define(['./TabStripItem', 'sap/ui/Device', 'sap/ui/core/InvisibleText'], 
 			oRm.addClass(TabStripItem.CSS_CLASS_SELECTED);
 		}
 		oRm.writeClasses();
+
+		if (sTooltip){
+			oRm.writeAttributeEscaped("title", sTooltip);
+		}
 
 		oRm.writeElementData(oItem);
 
