@@ -1632,10 +1632,6 @@
 						"plotArea": {
 						  "dataLabel": {
 							"visible": true
-						  },
-						  "window": {
-							"start": "firstDataPoint",
-							"end": "lastDataPoint"
 						  }
 						},
 						"title": {
@@ -1717,10 +1713,6 @@
 						  "dataLabel": {
 							"visible": false,
 							"showTotal": true
-						  },
-						  "window": {
-							"start": "firstDataPoint",
-							"end": "lastDataPoint"
 						  }
 						},
 						"title": {
@@ -1797,15 +1789,8 @@
 							"visible": true,
 							"showTotal": false
 						  },
-						  "window": {
-							"start": "firstDataPoint",
-							"end": "lastDataPoint"
-						  },
 						  "categoryAxisText": {
 							  "visible": false
-						  },
-						  "valueAxisText": {
-							  "text": "Value Axis text"
 						  }
 						},
 						"title": {
@@ -1877,10 +1862,6 @@
 						  "dataLabel": {
 							"visible": true,
 							"showTotal": true
-						  },
-						  "window": {
-							"start": "firstDataPoint",
-							"end": "lastDataPoint"
 						  }
 						},
 						"title": {
