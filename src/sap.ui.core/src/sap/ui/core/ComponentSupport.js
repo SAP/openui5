@@ -28,24 +28,32 @@ sap.ui.define([
 
 
 	/**
-	 * The class <code>sap.ui.core.ComponentSupport</code> provides functionality
+	 * The module <code>sap/ui/core/ComponentSupport</code> provides functionality
 	 * which is used to find declared Components in the HTML page and to create
 	 * the Component instances which will be put into a ComponentContainer.
+	 *
+	 * The {@link module:sap/ui/core/ComponentSupport.run} function is called automatically once the module has been required.
+	 * This allows declarative support for components.
+	 *
+	 * See {@link topic:82a0fcecc3cb427c91469bc537ebdddf Declarative API for Initial Components}.
 	 *
 	 * @author SAP SE
 	 * @public
 	 * @since 1.58.0
 	 * @version ${version}
-	 * @alias sap.ui.core.ComponentSupport
+	 * @namespace
+	 * @alias module:sap/ui/core/ComponentSupport
 	 */
 	var ComponentSupport = function() {
 	};
 
 
 	/**
-	 * Find all DOM elements with the attribute <code>data-sap-ui-component</div>
+	 * Find all DOM elements with the attribute <code>data-sap-ui-component</code>
 	 * and parse the attributes from these DOM elements for the settings of the
 	 * <code>ComponentContainer</code> which will be placed into these DOM elements.
+	 *
+	 * This function is called automatically once the module has been required.
 	 *
 	 * @public
 	 */
