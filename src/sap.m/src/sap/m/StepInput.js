@@ -143,8 +143,10 @@ function(
 					 */
 					stepMode: {type: "sap.m.StepInputStepModeType", group: "Data", defaultValue: StepModeType.AdditionAndSubtraction},
 					/**
-					 * Increases/decreases the value with a larger value than the set step only when using the PageUp/PageDown keys.
+					 * Increases/decreases the value with a larger value than the set step when using the PageUp/PageDown keys or Shift+Up/Down key combinations.
 					 * Default value is 2 times larger than the set step.
+					 * <b>Note:</b> PageUp/PageDown keys takes effect only if the
+					 * <code>handlePageKeys</code> property is set to <code>true</code>.
 					 */
 					largerStep: {type: "float", group: "Data", defaultValue: 2},
 					/**
@@ -223,7 +225,16 @@ function(
 					 * Defines when the validation of the typed value will happen. By default this happens on focus out.
 					 * @since 1.54
 					 */
-					validationMode: {type: "sap.m.StepInputValidationMode", group: "Misc", defaultValue: StepInputValidationMode.FocusOut}
+					validationMode: {type: "sap.m.StepInputValidationMode", group: "Misc", defaultValue: StepInputValidationMode.FocusOut},
+					/**
+					 * Indicates whether mouse wheel can be used to change the value or not.
+					 */
+					handleMouseWheel: {type: "boolean", group: "Behavior", defaultValue: true},
+					/**
+					 * Indicates whether PageUp/PageDown keys can be used to change the value or not.
+					 * <b>Note:</b> Shift+PageUp/PageDown will be handled regardless of this setting.
+					 */
+					handlePageKeys: {type: "boolean", group: "Behavior", defaultValue: true}
 				},
 				aggregations: {
 					/**
@@ -836,10 +847,12 @@ function(
 		 * @param {jQuery.Event} oEvent Event object
 		 */
 		StepInput.prototype.onsappageup = function (oEvent) {
-			this._applyValue(this._calculateNewValue(this.getLargerStep(), true).displayValue);
-			this._verifyValue();
-			// prevent document scrolling when page up key is pressed
-			oEvent.preventDefault();
+			if (this.getHandlePageKeys()) {
+				this._applyValue(this._calculateNewValue(this.getLargerStep(), true).displayValue);
+				this._verifyValue();
+				// prevent document scrolling when page up key is pressed
+				oEvent.preventDefault();
+			}
 		};
 
 		/**
@@ -848,10 +861,12 @@ function(
 		 * @param {jQuery.Event} oEvent Event object
 		 */
 		StepInput.prototype.onsappagedown = function (oEvent) {
-			this._applyValue(this._calculateNewValue(this.getLargerStep(), false).displayValue);
-			this._verifyValue();
-			// prevent document scrolling when page down key is pressed
-			oEvent.preventDefault();
+			if (this.getHandlePageKeys()) {
+				this._applyValue(this._calculateNewValue(this.getLargerStep(), false).displayValue);
+				this._verifyValue();
+				// prevent document scrolling when page down key is pressed
+				oEvent.preventDefault();
+			}
 		};
 
 		/**
@@ -899,12 +914,14 @@ function(
 		};
 
 		StepInput.prototype._onmousewheel = function (oEvent) {
-			oEvent.preventDefault();
-			var oOriginalEvent = oEvent.originalEvent,
-				bDirectionPositive = oOriginalEvent.detail ? (-oOriginalEvent.detail > 0) : (oOriginalEvent.wheelDelta > 0);
+			if (this.getHandleMouseWheel()) {
+				oEvent.preventDefault();
+				var oOriginalEvent = oEvent.originalEvent,
+					bDirectionPositive = oOriginalEvent.detail ? (-oOriginalEvent.detail > 0) : (oOriginalEvent.wheelDelta > 0);
 
-			this._applyValue(this._calculateNewValue(1, bDirectionPositive).displayValue);
-			this._verifyValue();
+				this._applyValue(this._calculateNewValue(1, bDirectionPositive).displayValue);
+				this._verifyValue();
+			}
 		};
 
 		/**
