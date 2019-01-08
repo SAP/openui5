@@ -17,11 +17,15 @@
 					"subtle": "#00AA00"
 				},
 				"warning": {
-					"default": "#E95C00",
+					"default": "#E09C08",
 					"subtle": "#999933"
 				},
 				"attention": {
 					"default": "#DD0000",
+					"subtle": "#990000"
+				},
+				"accent": {
+					"default": "#5E9DFD",
 					"subtle": "#990000"
 				}
 			}
