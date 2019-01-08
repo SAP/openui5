@@ -392,7 +392,7 @@ function(
 			this._bRTL = sap.ui.getCore().getConfiguration().getRTL();
 
 			// used to judge if enableScrolling needs to be disabled
-			this._scrollContentList = ["NavContainer", "Page", "ScrollContainer", "SplitContainer", "MultiInput"];
+			this._scrollContentList = ["sap.m.NavContainer", "sap.m.Page", "sap.m.ScrollContainer", "sap.m.SplitContainer", "sap.m.MultiInput"];
 
 			this.oPopup = new Popup();
 			this.oPopup.setShadow(true);
@@ -1019,18 +1019,14 @@ function(
 		 * @private
 		 */
 		Dialog.prototype._hasSingleScrollableContent = function () {
-			var aContent = this.getContent(), i;
+			var aContent = this.getContent();
 
-			while (aContent.length === 1 && aContent[0] instanceof sap.ui.core.mvc.View) {
+			while (aContent.length === 1 && aContent[0] instanceof Control && aContent[0].isA("sap.ui.core.mvc.View")) {
 				aContent = aContent[0].getContent();
 			}
 
-			if (aContent.length === 1) {
-				for (i = 0; i < this._scrollContentList.length; i++) {
-					if (aContent[0] instanceof library[this._scrollContentList[i]]) {
-						return true;
-					}
-				}
+			if (aContent.length === 1 && aContent[0] instanceof Control && aContent[0].isA(this._scrollContentList)) {
+				return true;
 			}
 
 			return false;
@@ -1490,7 +1486,7 @@ function(
 		//The public setters and getters should not be documented via JSDoc because they will appear in the explored app
 
 		Dialog.prototype.setLeftButton = function (vButton) {
-			if (!(vButton instanceof sap.m.Button)) {
+			if (typeof vButton === "string") {
 				vButton = sap.ui.getCore().byId(vButton);
 			}
 
@@ -1501,7 +1497,7 @@ function(
 		};
 
 		Dialog.prototype.setRightButton = function (vButton) {
-			if (!(vButton instanceof sap.m.Button)) {
+			if (typeof vButton === "string") {
 				vButton = sap.ui.getCore().byId(vButton);
 			}
 
