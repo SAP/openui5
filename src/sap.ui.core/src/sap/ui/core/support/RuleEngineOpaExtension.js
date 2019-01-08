@@ -100,6 +100,7 @@ sap.ui.define(["jquery.sap.global",
 				 * This parameter will override failOnAnyIssues if set.
 				 * @param {Array.<{libName:string, ruleId:string}>} [options.rules] The rules to check.
 				 * @param {Object} [options.executionScope] The execution scope of the analysis.
+				 * @param {Object} [options.metadata] The metadata that will be passed to the analyse method.
 				 * @param {('global'|'subtree'|'components')} [options.executionScope.type=global] The type of the execution scope.
 				 * @param {string|string[]} [options.executionScope.selectors] The IDs of the components or the subtree.
 				 * @public
@@ -112,10 +113,11 @@ sap.ui.define(["jquery.sap.global",
 						failOnHighRuleIssues = options["failOnHighIssues"],
 						rules = options.rules,
 						preset = options.preset,
+						metadata = options.metadata,
 						executionScope = options.executionScope;
 
 					// private API provided by jquery.sap.global
-					RuleAnalyzer.analyze(executionScope, rules || preset).then(function () {
+					RuleAnalyzer.analyze(executionScope, rules || preset, metadata).then(function () {
 						var analysisHistory = RuleAnalyzer.getAnalysisHistory(),
 							lastAnalysis = { issues: [] };
 
