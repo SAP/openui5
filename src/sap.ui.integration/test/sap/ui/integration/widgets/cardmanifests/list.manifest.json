@@ -90,10 +90,7 @@
 					"label": "{{description_label}}",
 					"value": "{Description}"
 				},
-				"highlight": {
-					"label": "{{description_label}}",
-					"value": "{highlight}"
-				}
+				"highlight": "{highlight}"
 			}
 		}
 	}
