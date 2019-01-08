@@ -217,67 +217,80 @@ html:not(.sapUiMedia-StdExt-Phone) .sapUiDocumentationFooter {
 	text-overflow: inherit;
 }
 
-/* header navigation on phone */
+/********************************************* Header navigation on phone *********************************************/
 .sapUiMedia-Std-Phone .sapTntToolHeader .sapMSlt.sapUiDocumentationSelect,
 .sap-phone .sapTntToolHeader .sapMSlt.sapUiDocumentationSelect {
 	height: 3rem;
 }
 
-.sapUiSizeCompact .sapTntToolHeader .sapMSlt.menuSelect.sapUiDocumentationSelect,
-.sapUiSizeCompact .sapTntToolHeader .sapMSlt.menuSelect.sapUiDocumentationSelect .sapMSltArrow {
+.sapTntToolHeader .sapMSlt.menuSelect.sapUiDocumentationSelect,
+.sapTntToolHeader .sapMSlt.menuSelect.sapUiDocumentationSelect .sapMSltArrow {
+	border:none;
 	background: #2f3c48;
 }
 
-.sapUiTheme-sap_belize_hcb .sapUiSizeCompact .sapTntToolHeader .sapMSlt.menuSelect.sapUiDocumentationSelect,
-.sapUiTheme-sap_belize_hcb .sapUiSizeCompact .sapTntToolHeader .sapMSlt.menuSelect.sapUiDocumentationSelect .sapMSltArrow {
+/* Menu Select`s bakground on HCB */
+.sapUiTheme-sap_belize_hcb .sapTntToolHeader .sapMSlt.menuSelect.sapUiDocumentationSelect,
+.sapUiTheme-sap_belize_hcb .sapTntToolHeader .sapMSlt.menuSelect.sapUiDocumentationSelect .sapMSltLabel,
+.sapUiTheme-sap_belize_hcb .sapTntToolHeader .sapMSlt.menuSelect.sapUiDocumentationSelect .sapMSltArrow {
 	background: #000;
 }
 
-.sapUiTheme-sap_belize_hcw .sapUiSizeCompact .sapTntToolHeader .sapMSlt.menuSelect.sapUiDocumentationSelect,
-.sapUiTheme-sap_belize_hcw .sapUiSizeCompact .sapTntToolHeader .sapMSlt.menuSelect.sapUiDocumentationSelect .sapMSltArrow {
+/* Menu Select`s bakground on HCW */
+.sapUiTheme-sap_belize_hcw .sapTntToolHeader .sapMSlt.menuSelect.sapUiDocumentationSelect,
+.sapUiTheme-sap_belize_hcw .sapTntToolHeader .sapMSlt.menuSelect.sapUiDocumentationSelect .sapMSltLabel,
+.sapUiTheme-sap_belize_hcw .sapTntToolHeader .sapMSlt.menuSelect.sapUiDocumentationSelect .sapMSltArrow {
 	background: #fff;
 }
 
-.sapUiSizeCompact .sapTntToolHeader .sapMSlt.menuSelect.sapUiDocumentationSelect {
-	border-color: #2f3c48;
-}
-
-.sapUiTheme-sap_belize_hcb  .sapUiSizeCompact .sapTntToolHeader .sapMSlt.menuSelect.sapUiDocumentationSelect,
-.sapUiTheme-sap_belize_hcw  .sapUiSizeCompact .sapTntToolHeader .sapMSlt.menuSelect.sapUiDocumentationSelect {
-	border: none;
-}
-
-.sapUiSizeCompact .sapTntToolHeader .sapMSlt.menuSelect.sapUiDocumentationSelect .sapMSltLabel,
-.sapUiSizeCompact .sapTntToolHeader .sapMSlt.menuSelect.sapUiDocumentationSelect .sapMSltArrow {
-	line-height: 2.7rem;
+/* Menu Select`s hover bakground */
+.sapContrast.sapUiDocumentationSelect.sapMSltHoverable:not(.sapMSltState):not(.sapMSltIconOnly):hover,
+.sapContrast .sapUiDocumentationSelect.sapMSltHoverable:not(.sapMSltState):not(.sapMSltIconOnly):hover {
 	background: #2f3c48;
 }
 
+/* Menu Select`s color on HCB */
+.sapUiTheme-sap_belize_hcb .sapTntToolHeader .sapMSlt.menuSelect.sapUiDocumentationSelect .sapMSltLabel {
+	color: #fff;
+}
+/* Menu Select`s color on HCW */
+.sapUiTheme-sap_belize_hcw .sapTntToolHeader .sapMSlt.menuSelect.sapUiDocumentationSelect .sapMSltLabel {
+	color: #000;
+}
+
+/* Menu Select`s focus */
+html.sap-desktop .sapContrast .sapMSlt.sapUiDocumentationSelect:not(.sapMSltExpanded):not(.sapMSltDisabled):not(.sapMSltState):focus,
+html.sap-desktop .sapContrast.sapMSlt.sapUiDocumentationSelect:not(.sapMSltExpanded):not(.sapMSltDisabled):not(.sapMSltState):focus {
+	outline: none;
+}
+
+.sapTntToolHeader .sapMSlt.menuSelect.sapUiDocumentationSelect .sapMSltLabel,
+.sapTntToolHeader .sapMSlt.menuSelect.sapUiDocumentationSelect .sapMSltArrow {
+	line-height: 2.7rem;
+}
+
+/* Menu Select`s label */
 .sapTntToolHeader .sapMSlt.menuSelect.sapUiDocumentationSelect .sapMSltLabel {
-	border-bottom: 0.1rem solid;
+	color: #91c8f6;
+	font-size: 1rem;
+	border-bottom: 0.1625rem solid;
 	width: auto;
 }
 
 .sapUiTheme-sap_belize_hcb .sapTntToolHeader .sapMSlt.menuSelect.sapUiDocumentationSelect .sapMSltLabel,
 .sapUiTheme-sap_belize_hcw .sapTntToolHeader .sapMSlt.menuSelect.sapUiDocumentationSelect .sapMSltLabel {
-	border-bottom: 3px solid;
+	border-bottom: 0.1875rem solid;
 }
 
-.sapTntToolHeader .sapMSlt.menuSelect.sapUiDocumentationSelect .sapMSltLabel {
-	color: #91c8f6;
-	font-size: 1rem;
+/* Menu Select`s arrow color on press */
+.sapTntToolHeader .sapMSlt.sapMSltPressed > .sapMSltArrow::before {
+	color: #cae4fb;
 }
-
-.sapUiTheme-sap_belize_hcb .sapTntToolHeader .sapMSlt.menuSelect.sapUiDocumentationSelect .sapMSltLabel {
+.sapUiTheme-sap_belize_hcb .sapTntToolHeader .sapMSlt.sapMSltPressed > .sapMSltArrow::before {
 	color: #fff;
 }
-
-.sapUiTheme-sap_belize_hcw .sapTntToolHeader .sapMSlt.menuSelect.sapUiDocumentationSelect .sapMSltLabel {
+.sapUiTheme-sap_belize_hcw .sapTntToolHeader .sapMSlt.sapMSltPressed > .sapMSltArrow::before {
 	color: #000;
-}
-
-.sapUiSizeCompact .sapTntToolHeader .sapMSlt.sapMSltPressed > .sapMSltArrow::before {
-	color: #cae4fb;
 }
 
 /********************************************* Documentation page styles *********************************************/
