@@ -1085,6 +1085,27 @@ sap.ui.define([
 		oCalP.destroy();
 	});
 
+	QUnit.test("Content overlay is shown when picker is open", function(assert) {
+		// arrange
+		var oCalP = new CalendarDateInterval("CalP",{
+			pickerPopup: true
+		}).placeAt("qunit-fixture");
+
+		sap.ui.getCore().applyChanges();
+		// open calendarPicker
+		qutils.triggerEvent("click", "CalP--Head-B1");
+		// Make rendering sync, so we can assert safely
+		sap.ui.getCore().applyChanges();
+
+		assert.strictEqual(oCalP.$("contentOver").get(0).style.display, "", "After opening the picker overlay is shown");
+
+		// close calendarPicker
+		sap.ui.test.qunit.triggerKeydown(document.activeElement, jQuery.sap.KeyCodes.ESCAPE);
+
+		// clean
+		oCalP.destroy();
+	});
+
 	QUnit.module("WeekNumbers");
 
 	QUnit.test("DatesRow getWeekNumbers", function(assert) {
