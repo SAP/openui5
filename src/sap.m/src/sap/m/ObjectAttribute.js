@@ -132,6 +132,7 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control', 'sap/ui/
 		}
 		sText = oppositeDirectionMarker + sText + oppositeDirectionMarker;
 		if (sTitle) {
+			sTitle = sTitle.replace(/[.*+?^${}()|[\]\\]/g, '\\$&'); // saniteze the sTitle in order to make it usable in regex
 			sText = sText.replace(new RegExp(sTitle + ":\\s+", "gi"), "");
 			sText = sTitle + ": " + sText;
 		}
