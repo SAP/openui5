@@ -31,11 +31,6 @@
 								updateFinished="onAllLoadMore"
 								items="{
 									path: '/data',
-									sorter: {
-										path: 'category',
-										descending: false,
-										group: true
-									},
 									groupHeaderFactory: '.getGroupHeader'
 								}">
 								<FeedListItem
@@ -63,11 +58,7 @@
 									growingThreshold="25"
 									updateFinished="onAPILoadMore"
 									items="{
-										path: '/dataAPI',
-										sorter: {
-											path: 'title',
-											descending: false
-										}
+										path: '/dataAPI'
 									}">
 									<FeedListItem
 										visible="{path:'category', formatter:'.categoryAPIFormatter'}"
@@ -95,11 +86,7 @@
 									growingThreshold="25"
 									updateFinished="onDocLoadMore"
 									items="{
-										path: '/dataDoc',
-										sorter: {
-											path: 'title',
-											descending: false
-										}
+										path: '/dataDoc'
 									}">
 									<FeedListItem
 										visible="{path:'category', formatter:'.categoryDocFormatter'}"
@@ -127,11 +114,7 @@
 									growingThreshold="25"
 									updateFinished="onExploredLoadMore"
 									items="{
-										path: '/dataExplored',
-										sorter: {
-											path: 'title',
-											descending: false
-										}
+										path: '/dataExplored'
 									}">
 									<FeedListItem
 										visible="{path:'category', formatter:'.categoryExploredFormatter'}"
