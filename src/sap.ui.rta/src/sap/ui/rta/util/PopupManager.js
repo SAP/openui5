@@ -12,18 +12,20 @@ sap.ui.define([
 	'sap/ui/fl/Utils',
 	'sap/ui/core/Component',
 	'sap/ui/core/ComponentContainer',
-	'sap/ui/core/Element'
+	'sap/ui/core/Element',
+	'sap/ui/dt/ElementUtil'
 ],
 function (
 	jQuery,
 	ManagedObject,
 	InstanceManager,
 	Overlay,
-	dtUtils,
+	dtUtil,
 	flUtils,
 	Component,
 	ComponentContainer,
-	Element
+	Element,
+	ElementUtil
 ) {
 	"use strict";
 
@@ -80,6 +82,27 @@ function (
 	PopupManager.prototype.init = function() {
 		// create map for modal states
 		this._oModalState = new Map();
+		this._calculateMaxAllowedZIndex();
+	};
+
+	/**
+	 * Calculates max allowed z-index below open popups and sets the value in {@link sap.ui.dt.ElementUtil}
+	 *
+	 * @private
+	 */
+	PopupManager.prototype._calculateMaxAllowedZIndex = function() {
+		var aOpenPopups = InstanceManager.getOpenDialogs().concat(InstanceManager.getOpenPopovers());
+		var iMaxAllowedZIndex;
+		if (aOpenPopups.length < 1) {
+			return;
+		}
+		aOpenPopups.forEach(function(oPopupElement) {
+			var iPopupZIndex = parseInt(jQuery(oPopupElement.getDomRef()).css("z-index"));
+			iMaxAllowedZIndex = (iMaxAllowedZIndex && iMaxAllowedZIndex < iPopupZIndex)
+				? iMaxAllowedZIndex
+				: iPopupZIndex - 5;
+		});
+		ElementUtil.setMaxAllowedZIndex(iMaxAllowedZIndex);
 	};
 
 	/**
@@ -92,7 +115,11 @@ function (
 	PopupManager.prototype._overrideInstanceFunctions = function() {
 
 		//check open popups and create overlays while starting RTA
-		this._applyPopupMethods(this._createPopupOverlays);
+		this._applyPopupAttributes({
+			method: this._createPopupOverlays,
+			setModal: true,
+			bringToTop: true
+		});
 
 		//override InstanceManager.AddDialogInstance() and InstanceManager.AddPopoverInstance()
 		this._overrideAddPopupInstance();
@@ -102,40 +129,55 @@ function (
 	};
 
 	/**
-	 * Retrieve relevant open popups for dynamic overlay creation.
+	 * Retrieves all open popups which are supported.
+	 * Thereafter the result is categorized into adaptable dialogs, adaptable popovers and all supported popup controls.
 	 *
-	 * @returns {any} Returns open popups
+	 * @returns {object} Categorized object of supported popups
 	 * @public
 	 */
-	PopupManager.prototype.getRelevantPopups = function() {
+	PopupManager.prototype.getCategorizedOpenPopups = function() {
 		var aOpenDialogs, aOpenPopovers;
 
-		//check if dialogs are already open when RTA is started
+		// check if dialogs are already open when RTA is started
 		aOpenDialogs = InstanceManager.getOpenDialogs();
+		// separate adaptable dialogs from all supported dialogs
+		var oCategorizedDialogs = this._getValidatedPopups(aOpenDialogs);
 
-		//check if popovers are already open when RTA is started
+		// check if popovers are already open when RTA is started
 		aOpenPopovers = InstanceManager.getOpenPopovers();
+		// separate adaptable popovers from all supported popovers
+		var oCategorizedPopovers = this._getValidatedPopups(aOpenPopovers);
 
-		var oRelevantPopups = {
-			aDialogs: this._getValidatedPopups(aOpenDialogs),
-			aPopovers: this._getValidatedPopups(aOpenPopovers)
+		var oOpenPopups = {
+			aDialogs: oCategorizedDialogs.relevant,
+			aPopovers: oCategorizedPopovers.relevant,
+			aAllSupportedPopups: oCategorizedDialogs.allSupported.concat(oCategorizedPopovers.allSupported)
 		};
-		return oRelevantPopups;
+		return oOpenPopups;
 	};
 
 	/**
-	 * Retrieves array of validated popups after component comparison: <code>this.oRtaRootAppComponent.oContainer.getParent()</code>.
+	 * Filters the passed array and returns an object containing list of adaptable popups and all supported popup controls (also includes non-adaptable popups).
 	 *
 	 * @param {sap.ui.core.Popup[]} aOpenPopups Specifies open popups
-	 * @returns {sap.ui.core.Popup[]|boolean} Returns relevant popups or false
+	 * @returns {object} Returns an object containing all adaptation relevant popups and all supported popup controls
 	 * @private
 	 */
 	PopupManager.prototype._getValidatedPopups = function(aOpenPopups) {
-		aOpenPopups = aOpenPopups.filter(function(oPopup) {
-				return this._isPopupAdaptable(oPopup);
+		var aAllSupportedPopups = [];
+		aOpenPopups = aOpenPopups.filter(function(oPopupElement) {
+				if (this._isPopupAdaptable(oPopupElement)) {
+					aAllSupportedPopups.push(oPopupElement);
+					return true;
+				} else if (this._isSupportedPopup(oPopupElement) && (!(oPopupElement instanceof sap.m.Popover) )) {
+					aAllSupportedPopups.push(oPopupElement);
+				}
 			}.bind(this));
 
-		return (aOpenPopups.length > 0) ? aOpenPopups : false;
+		return {
+			relevant: aOpenPopups,
+			allSupported: aAllSupportedPopups
+		};
 	};
 
 	/**
@@ -197,13 +239,9 @@ function (
 			if (sMode === 'navigation'){
 				// add focus handlers
 				oPopover.oPopup[this._getFocusEventName("add")]();
-				//restore original Modal state
-				oPopover.oPopup.setModal(this._oModalState.get(oPopover.oPopup));
 			} else {
 				// remove focus handler
 				oPopover.oPopup[this._getFocusEventName("remove")]();
-				// set Modal
-				oPopover.oPopup.setModal(true);
 				// ensure the toolbar is visible
 				if (this.getRta().getShowToolbars()) {
 					this.getRta().getToolbar().bringToFront();
@@ -212,8 +250,8 @@ function (
 		};
 
 		sNewMode === 'navigation'
-			? this._applyPatchesToOpenPopups(dtUtils.curry(fnApplyFocusAndSetModal)(sNewMode))
-			: this._removePatchesToOpenPopups(dtUtils.curry(fnApplyFocusAndSetModal)(sNewMode));
+			? this._applyPatchesToOpenPopups(dtUtil.curry(fnApplyFocusAndSetModal)(sNewMode))
+			: this._removePatchesToOpenPopups(dtUtil.curry(fnApplyFocusAndSetModal)(sNewMode));
 	};
 
 	/**
@@ -222,7 +260,11 @@ function (
 	 * @private
 	 */
 	PopupManager.prototype._applyPatchesToOpenPopups = function(fnEvent) {
-		this._applyPopupMethods(fnEvent, true);
+		this._applyPopupAttributes({
+			method: fnEvent,
+			focus: true,
+			setModal: false
+		});
 	};
 
 	/**
@@ -231,7 +273,10 @@ function (
 	 * @private
 	 */
 	PopupManager.prototype._removePatchesToOpenPopups = function(fnEvent) {
-		this._applyPopupMethods(fnEvent);
+		this._applyPopupAttributes({
+			method: fnEvent,
+			setModal: true
+		});
 	};
 
 	/**
@@ -271,14 +316,39 @@ function (
 	PopupManager.prototype._overrideAddFunctions = function(fnOriginalFunction) {
 		return function(oPopupElement) {
 			var vOriginalReturn = fnOriginalFunction.apply(InstanceManager, arguments);
-			if ( this._isPopupAdaptable(oPopupElement)
-				&& this.getRta()._oDesignTime ) {
-				oPopupElement.attachAfterOpen(this._createPopupOverlays, this);
-				//PopupManager internal method
-				this.fireOpen(oPopupElement);
+			if (this._isSupportedPopup(oPopupElement)) {
+				if (this._isPopupAdaptable(oPopupElement)
+					&& this.getRta()._oDesignTime) {
+					oPopupElement.attachAfterOpen(this._createPopupOverlays, this);
+					this._setModal(true, oPopupElement);
+					//PopupManager internal method
+					this.fireOpen(oPopupElement);
+				} else if (!(oPopupElement instanceof sap.m.Popover)) {
+					// for all popups which are non-adaptable and non-popovers
+					this._setModal(true, oPopupElement);
+				}
 			}
 			return vOriginalReturn;
 		}.bind(this);
+	};
+
+	/**
+	 * Sets or un-sets the passed popup element as a modal.
+	 *
+	 * @param {boolean} bSetModal - If the passed popup element is required to be set as modal
+	 * @param {sap.ui.core.Control} oPopupElement - The popup element
+	 *
+	 * @private
+	 */
+	PopupManager.prototype._setModal = function (bSetModal, oPopupElement) {
+		var bOriginalModalState = this._oModalState.get(oPopupElement.oPopup);
+		if (typeof bOriginalModalState !== "boolean" && bSetModal && this.getRta().getMode() === 'adaptation') {
+			this._oModalState.set(oPopupElement.oPopup, oPopupElement.oPopup.getModal());
+			oPopupElement.oPopup.setModal(true);
+		} else if (typeof bOriginalModalState === "boolean" && bSetModal === false) {
+			oPopupElement.oPopup.setModal(bOriginalModalState);
+			this._oModalState.delete(oPopupElement.oPopup);
+		}
 	};
 
 	/**
@@ -288,23 +358,29 @@ function (
 	 * @param {boolean} bFocus Set to true if the popup is in focus
 	 * @private
 	 */
-	PopupManager.prototype._applyPopupMethods = function(fnPopupMethod, bFocus) {
+	PopupManager.prototype._applyPopupAttributes = function(mPropertyBag) {
 		//check if popups are open
-		var oRelevantPopups = this.getRelevantPopups();
+		var oRelevantPopups = this.getCategorizedOpenPopups();
 
-		//apply passed method to each open popup
-		Object.keys(oRelevantPopups).forEach(function(sKey) {
-			if (oRelevantPopups[sKey]) {
-				if (bFocus) {
+		["aDialogs", "aPopovers"].forEach(function(sKey) {
+			if (oRelevantPopups[sKey].length > 0) {
+				//set focus
+				if (mPropertyBag.focus) {
 					if (oRelevantPopups[sKey][0].oPopup.oContent) {
 						oRelevantPopups[sKey][0].oPopup.oContent.focus();
 					}
 				}
+
 				oRelevantPopups[sKey].forEach(function(oPopupElement) {
-					fnPopupMethod.call(this, oPopupElement);
+					//call passed method for all relevant popups
+					mPropertyBag.method.call(this, oPopupElement);
 				}.bind(this));
+
 			}
 		}.bind(this));
+
+		//set modal for all popups
+		oRelevantPopups.aAllSupportedPopups.forEach(this._setModal.bind(this, mPropertyBag.setModal));
 	};
 
 	/**
@@ -339,13 +415,9 @@ function (
 			return vOriginalReturn;
 		}.bind(this);
 
-		//add original modal state to the map
-		this._oModalState.set(oPopup, oPopup.getModal());
-
 		//only remove focus event when in adaptation mode
 		if (this.getRta().getMode() === 'adaptation') {
 			oPopup[this._getFocusEventName("remove")]();
-			oPopup.setModal(true);
 		}
 	};
 
@@ -375,10 +447,11 @@ function (
 	PopupManager.prototype._overrideRemoveFunctions = function(fnOriginalFunction) {
 		return function(oPopupElement) {
 			var vOriginalReturn = fnOriginalFunction.apply(InstanceManager, arguments);
-
-			if ( this._isPopupAdaptable(oPopupElement)
-				&& this.getRta()._oDesignTime ) {
-				this.getRta()._oDesignTime.removeRootElement(oPopupElement);
+			if (this._isSupportedPopup(oPopupElement)) {
+				if (this._isPopupAdaptable(oPopupElement, false)
+					&& this.getRta()._oDesignTime) {
+					this.getRta()._oDesignTime.removeRootElement(oPopupElement);
+				}
 				// remove the Modal state from the map
 				this._oModalState.delete(oPopupElement.oPopup);
 				//PopupManager internal method
@@ -512,8 +585,7 @@ function (
 
 		var oPopupAppComponent = this._getAppComponentForControl(oPopupElement);
 
-		return (this.oRtaRootAppComponent === oPopupAppComponent || this._isComponentInsidePopup(oPopupElement))
-			&& this._isSupportedPopup(oPopupElement);
+		return this.oRtaRootAppComponent === oPopupAppComponent || this._isComponentInsidePopup(oPopupElement);
 	};
 
 	/**
