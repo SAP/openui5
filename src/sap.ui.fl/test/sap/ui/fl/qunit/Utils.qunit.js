@@ -1200,6 +1200,18 @@ function(
 			assert.ok(Utils.isDebugEnabled(), "the debugging is detected");
 		});
 
+		QUnit.test("can determine the fl library debugging is set as the only library", function (assert) {
+			var oConfig = sap.ui.getCore().getConfiguration();
+			sandbox.stub(oConfig, "getDebug").returns(false);
+			sandbox.stub(Utils, "_getUriParameters").returns({
+				get: function() {
+					return "sap/ui/fl/";
+				}
+			});
+
+			assert.ok(Utils.isDebugEnabled(), "the debugging is detected");
+		});
+
 		QUnit.test("can determine the fl library debugging is set as part of other libraries", function (assert) {
 			var oConfig = sap.ui.getCore().getConfiguration();
 			sandbox.stub(oConfig, "getDebug").returns(false);
@@ -1212,7 +1224,19 @@ function(
 			assert.ok(Utils.isDebugEnabled(), "the debugging is detected");
 		});
 
-		QUnit.test("can determine no 'sap.ui.fl'-library debugging is set", function (assert) {
+		QUnit.test("can determine the fl library debugging is set as part of other libraries", function (assert) {
+			var oConfig = sap.ui.getCore().getConfiguration();
+			sandbox.stub(oConfig, "getDebug").returns(false);
+			sandbox.stub(Utils, "_getUriParameters").returns({
+				get: function() {
+					return "sap/ui/core/,sap/m/,sap/ui/fl/,sap/ui/rta/";
+				}
+			});
+
+			assert.ok(Utils.isDebugEnabled(), "the debugging is detected");
+		});
+
+		QUnit.test("can determine no 'sap/ui/fl'-library debugging is set", function (assert) {
 			var oConfig = sap.ui.getCore().getConfiguration();
 			sandbox.stub(oConfig, "getDebug").returns(false);
 			sandbox.stub(Utils, "_getUriParameters").returns({
