@@ -24,43 +24,70 @@ sap.ui.define(['./ListItemBaseRenderer', 'sap/ui/core/Renderer', 'sap/ui/core/li
 		 *            rm The RenderManager that can be used for writing to the render output buffer
 		 * @param {sap.m.ObjectListItem}
 		 *            oLI An object to be rendered
-		 * @param {sap.m.ObjectAttribute[]}
-		 *            aAttributes Attributes to be rendered
-		 * @param {sap.m.ObjectStatus[]}
-		 *            aStatuses Statuses to be rendered
+		 * @param {sap.m.ObjectAttribute}
+		 *            oAttribute An attribute to be rendered
+		 * @param {sap.m.ObjectStatus}
+		 *            oStatus A status to be rendered
 		 */
-		ObjectListItemRenderer.renderAttributesStatuses = function(rm, oLI, aAttributes, aStatuses) {
-			var i;
+		ObjectListItemRenderer.renderAttributeStatus = function(rm, oLI, oAttribute, oStatus) {
+
+			if (!oAttribute && !oStatus || (oAttribute && oAttribute._isEmpty() && oStatus && oStatus._isEmpty())) {
+				return; // nothing to render
+			}
+
 			rm.write("<div"); // Start attribute row container
 			rm.addClass("sapMObjLAttrRow");
 			rm.writeClasses();
 			rm.write(">");
 
-			rm.write("<div"); // Start render attribute
-			rm.addClass("sapMObjLAttrDiv");
-			rm.writeClasses();
-			rm.write(">");
-			for (i = 0; i < aAttributes.length; i++) {
-				rm.renderControl(aAttributes[i]);
-			}
-			rm.write("</div>"); // End render attribute
+			if (oAttribute && !oAttribute._isEmpty()) {
+				rm.write("<div");
+				rm.addClass("sapMObjLAttrDiv");
 
-			rm.write("<div"); // Start render status
-			rm.addClass("sapMObjLStatusDiv");
-			rm.writeClasses();
-			rm.write(">");
-			for (i = 0; i < aStatuses.length; i++) {
-				if (aStatuses[i] instanceof Array) {
-					while (aStatuses[i].length > 0) {
-						rm.renderControl(aStatuses[i].shift());
+				// Add padding to push attribute text down since it will be raised up due
+				// to markers height
+				if (oStatus && (!oStatus._isEmpty())) {
+					if (oStatus instanceof Array) {
+						rm.addClass("sapMObjAttrWithMarker");
+					}
+				}
+
+				rm.writeClasses();
+
+				if (!oStatus || oStatus._isEmpty()) {
+					rm.addStyle("width", "100%");
+					rm.writeStyles();
+				}
+				rm.write(">");
+				rm.renderControl(oAttribute);
+				rm.write("</div>");
+			}
+
+			if (oStatus && !oStatus._isEmpty()) {
+				rm.write("<div");
+				rm.addClass("sapMObjLStatusDiv");
+
+				// Object marker icons (flag, favorite) are passed as an array
+				if (oStatus instanceof Array && oStatus.length > 0) {
+					rm.addClass("sapMObjStatusMarker");
+				}
+				rm.writeClasses();
+				if (!oAttribute || oAttribute._isEmpty()) {
+					rm.addStyle("width", "100%");
+					rm.writeStyles();
+				}
+				rm.write(">");
+				if (oStatus instanceof Array) {
+					while (oStatus.length > 0) {
+						rm.renderControl(oStatus.shift());
 					}
 				} else {
-					rm.renderControl(aStatuses[i]);
+					rm.renderControl(oStatus);
 				}
+				rm.write("</div>");
 			}
-			rm.write("</div>"); // End render status
 
-			rm.write("</div>"); // End attribute row container
+			rm.write("</div>"); // Start attribute row container
 		};
 
 		/**
@@ -162,9 +189,9 @@ sap.ui.define(['./ListItemBaseRenderer', 'sap/ui/core/Renderer', 'sap/ui/core/li
 				rm.writeClasses();
 				rm.write(">");
 
-				var aAttribs = oLI.getAttributes();
+				var aAttribs = oLI._getVisibleAttributes();
 				var statuses = [];
-				var markers = oLI.getMarkers();
+				var markers = oLI._getVisibleMarkers();
 
 				markers._isEmpty = function() {
 					return !(markers.length);
@@ -174,10 +201,16 @@ sap.ui.define(['./ListItemBaseRenderer', 'sap/ui/core/Renderer', 'sap/ui/core/li
 					statuses.push(markers);
 				}
 
-				oLI.getFirstStatus() && statuses.push(oLI.getFirstStatus());
-				oLI.getSecondStatus() && statuses.push(oLI.getSecondStatus());
+				statuses.push(oLI.getFirstStatus());
+				statuses.push(oLI.getSecondStatus());
 
-				this.renderAttributesStatuses(rm, oLI, aAttribs, statuses);
+				while (aAttribs.length > 0) {
+					this.renderAttributeStatus(rm, oLI, aAttribs.shift(), statuses.shift());
+				}
+
+				while (statuses.length > 0) {
+					this.renderAttributeStatus(rm, oLI, null, statuses.shift());
+				}
 
 				rm.write("</div>"); // End Bottom row container
 			}
