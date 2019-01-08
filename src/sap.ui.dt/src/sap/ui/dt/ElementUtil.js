@@ -42,6 +42,8 @@ function(
 	/**
 	 *
 	 */
+	ElementUtil.iMaxAllowedZIndex = null;
+
 	ElementUtil.iterateOverAllPublicAggregations = function(oElement, fnCallback) {
 		var mAggregations = oElement.getMetadata().getAllAggregations();
 		var aAggregationNames = Object.keys(mAggregations);
@@ -430,6 +432,27 @@ function(
 		} else {
 			return undefined;
 		}
+	};
+
+	/**
+	 * Returns the lower z-index value after comparing the passed value with the lowest z-index value from open popups
+	 * @param {integer} iCurrentZIndex - The current z-index value
+	 * @returns {integer|undefined} - Returns the z-index value appropriate to be set below open popups
+	 */
+	ElementUtil.getZIndexBelowOpenPopups = function(iCurrentZIndex) {
+		if (Util.isInteger(this.iMaxAllowedZIndex) && this.iMaxAllowedZIndex < iCurrentZIndex) {
+			return this.iMaxAllowedZIndex;
+		} else {
+			return iCurrentZIndex;
+		}
+	};
+
+	/**
+	 * Sets the value for the max allowed z-index below open popups
+	 * @param {integer} iZIndex - The z-index value to be set
+	 */
+	ElementUtil.setMaxAllowedZIndex = function(iZIndex) {
+		this.iMaxAllowedZIndex = iZIndex;
 	};
 
 	return ElementUtil;

@@ -814,6 +814,34 @@ function(
 		});
 	});
 
+	QUnit.module("Given setMaxAllowedZIndex()", {
+	}, function() {
+		QUnit.test("when setMaxAllowedZIndex is called with a z-index value", function (assert) {
+			ElementUtil.setMaxAllowedZIndex(17);
+			assert.strictEqual(ElementUtil.iMaxAllowedZIndex, 17, "then ElementUtil.iMaxAllowedZIndex is set to the passed z-index value");
+			ElementUtil.iMaxAllowedZIndex = null;
+		});
+	});
+
+	QUnit.module("Given getZIndexBelowOpenPopups()", {
+		beforeEach: function() {
+			ElementUtil.iMaxAllowedZIndex = 30;
+		}, afterEach: function() {
+			ElementUtil.iMaxAllowedZIndex = null;
+		}
+	}, function() {
+		QUnit.test("when getZIndexBelowOpenPopups is called with a z-index lower than the max allowed z-index", function (assert) {
+			assert.strictEqual(ElementUtil.getZIndexBelowOpenPopups(15), 15, "then the passed value is returned");
+		});
+		QUnit.test("when getZIndexBelowOpenPopups is called with a z-index higher than the max allowed z-index", function (assert) {
+			assert.strictEqual(ElementUtil.getZIndexBelowOpenPopups(35), 30, "then the max allowed z-index is returned");
+		});
+		QUnit.test("when getZIndexBelowOpenPopups is called with a z-index value and ElementUtil.iMaxZIndexAllowed is null", function (assert) {
+			ElementUtil.iMaxAllowedZIndex = null;
+			assert.strictEqual(ElementUtil.getZIndexBelowOpenPopups(35), 35, "then the passed value is returned");
+		});
+	});
+
 	QUnit.module("Given a bound list control", {
 		beforeEach : function(assert) {
 			var done = assert.async();
