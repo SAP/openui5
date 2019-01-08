@@ -475,5 +475,76 @@
         "references": []
       }
     ]
+  },
+  "1.60.3": {
+    "date": "December 2018",
+    "notes": [
+      {
+        "id": "6cacdbd6934fc39099a0f83110b689ec8c39cd9b",
+        "type": "FIX",
+        "text": " ComboBoxBase: Support for composition characters",
+        "references": []
+      },
+      {
+        "id": "a4d93f23fd231a8beb6bf1e996567f424cfe91eb",
+        "type": "FIX",
+        "text": " Device.js: use maxTouchPoints for touch support detection",
+        "references": []
+      },
+      {
+        "id": "f10fcbbe2e28d62916f6c40d6fc9442ac8ac3f22",
+        "type": "FIX",
+        "text": " NumberFormat: Fixed bug in short currency parsing",
+        "references": []
+      },
+      {
+        "id": "048a0b8635f96a24e854f4ff31fc56dd0864322e",
+        "type": "FIX",
+        "text": " NumberFormat: correctly handle option precision with CurrencyFormat",
+        "references": []
+      },
+      {
+        "id": "e64a8c6a46e92001ffd0f8b610b8283abb723720",
+        "type": "FIX",
+        "text": " ODataUtils: Enhance setAnnotationOrigin for HanaXS Use Case",
+        "references": []
+      },
+      {
+        "id": "0a64c4b2f0e0a5058e72d85d27f536f6dd86f0d7",
+        "type": "FIX",
+        "text": " TreeBindingCompatibilityAdapter: Safe Array indexOf",
+        "references": []
+      },
+      {
+        "id": "c18db8f635f05fd0b2d1fea62d9f43969d8981b0",
+        "type": "FIX",
+        "text": " UriParameters: Fixed parsing of query values with an equal sign",
+        "references": []
+      },
+      {
+        "id": "fc9b3d01094325ebb7e0e432afd471e00589563a",
+        "type": "FIX",
+        "text": " i18n.ResourceBundle: Norwegian language support for \"nb\"",
+        "references": []
+      },
+      {
+        "id": "098a4ae9bcbdfeda1486ec35f200827a98334679",
+        "type": "FIX",
+        "text": " sap.ui.model.odata.AnnotationsParser: nested annotation w/o qualifier",
+        "references": []
+      },
+      {
+        "id": "2381ca75c357adf1d27cfd77dec72a490b590410",
+        "type": "FIX",
+        "text": " v2.ODataModel: memory leak",
+        "references": []
+      },
+      {
+        "id": "3e026e935c3b172e78e852aef747e18e4d02ae66",
+        "type": "FIX",
+        "text": " sap.ui.core/Component: improved variant determination",
+        "references": []
+      }
+    ]
   }
 }

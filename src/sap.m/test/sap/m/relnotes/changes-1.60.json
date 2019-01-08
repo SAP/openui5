@@ -1189,5 +1189,124 @@
         "references": []
       }
     ]
+  },
+  "1.60.3": {
+    "date": "December 2018",
+    "notes": [
+      {
+        "id": "6cacdbd6934fc39099a0f83110b689ec8c39cd9b",
+        "type": "FIX",
+        "text": " ComboBoxBase: Support for composition characters",
+        "references": []
+      },
+      {
+        "id": "26b47f518d177ea4d1792abeddcbf170d874fcfa",
+        "type": "FIX",
+        "text": " LightBox: Image is no longer re-rendered on resize",
+        "references": []
+      },
+      {
+        "id": "c8d8b2ed78881d61b287f59f1ab7c3a7d104682c",
+        "type": "FIX",
+        "text": " sap.m.Button: BindingInfo is copied to the MenuItems once the buttons are combined in RTA",
+        "references": []
+      },
+      {
+        "id": "d47b19605d869f4c83c3fdda80eaa6ae27fb0577",
+        "type": "FIX",
+        "text": " sap.m.Button: CustomData is copied to the MenuItems once the buttons are combined in RTA",
+        "references": []
+      },
+      {
+        "id": "559332755cd6d6dff9e1724f1738ce3c8c0c296f",
+        "type": "FIX",
+        "text": " sap.m.Dialog: Dialog is no longer flickering",
+        "references": []
+      },
+      {
+        "id": "9ca6b430fbf024ce59b041927f53d479ce03ef14",
+        "type": "FIX",
+        "text": " sap.m.GroupHeaderListItem: Should not have action cursor",
+        "references": []
+      },
+      {
+        "id": "3e1aa46f22c40654e49a3ba70cc15be0a561f81f",
+        "type": "FIX",
+        "text": " sap.m.IconTabBar: Only focused tab is read out by the Screen Reader",
+        "references": []
+      },
+      {
+        "id": "b60f6acf801230fac71d6f5f992415ed9f09951f",
+        "type": "FIX",
+        "text": " sap.m.Input: showValueStateMessage now works correctly",
+        "references": []
+      },
+      {
+        "id": "bf526926b309b12543a44bb2c1c510b7cf06b53c",
+        "type": "FIX",
+        "text": " sap.m.InputBase: Fix layouting issues with flex parents",
+        "references": []
+      },
+      {
+        "id": "c40dfa1b695df49bccaf8caef459bec6894b326b",
+        "type": "FIX",
+        "text": " sap.m.InputBase: Prevent min-width overstyling in subclasses",
+        "references": []
+      },
+      {
+        "id": "94571600d45453b50a54ebaae175b04c00ce3bf3",
+        "type": "FIX",
+        "text": " sap.m.MessagePopover: MessageView\u0027s auto binding fix",
+        "references": []
+      },
+      {
+        "id": "e749337b4d89c005175cd693df9cd1eed0036bb9",
+        "type": "FIX",
+        "text": " sap.m.MultiInput: Pressing left arrow no longer deletes a token",
+        "references": []
+      },
+      {
+        "id": "6113ca1594d2e218b79b56194c532f061f277d55",
+        "type": "FIX",
+        "text": " sap.m.NavContainer: Added type check on removePage",
+        "references": []
+      },
+      {
+        "id": "b50d76ebf1eb54c9c8fc42bacefda8e93207e761",
+        "type": "FIX",
+        "text": " sap.m.ObjectListItem: Now the press event is correctly fired",
+        "references": []
+      },
+      {
+        "id": "9d560cacab2042485d17b3189d7b26c492365791",
+        "type": "FIX",
+        "text": " sap.m.Popover: Correct reposition",
+        "references": []
+      },
+      {
+        "id": "d5a5d39eb6176d1466184a30fd0dc2e7d0bafae4",
+        "type": "FIX",
+        "text": " sap.m.Popover: Exception when popover opened after being destroyed is fixed",
+        "references": []
+      },
+      {
+        "id": "e62d015423eb213a2a9916c41eebfacf0fd3bd09",
+        "type": "FIX",
+        "text": " sap.m.Tokenizer: N-More label is not cut off",
+        "references": []
+      },
+      {
+        "id": "07f26ec9455562582d804e89bdcaa12a0d95121d",
+        "type": "FIX",
+        "text": " sap.m.uploadCollectionItem : Fixed .csv file download issue.",
+        "references": []
+      },
+      {
+        "id": "94d545f3155bf853228a8571c3c7f4cbc5d522ba",
+        "type": "FIX",
+        "text": " sap.m.Button: BindingInfo is copied to the MenuItems once the buttons are combined in RTA",
+        "references": []
+      }
+    ]
   }
 }
