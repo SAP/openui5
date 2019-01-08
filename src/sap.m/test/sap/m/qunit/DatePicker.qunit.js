@@ -243,6 +243,22 @@ sap.ui.define([
 		oDatePicker.destroy();
 	});
 
+	QUnit.test("title is set to the icon", function (assert) {
+		// arrange
+		var oDatePicker = new DatePicker(),
+			sExpected = sap.ui.getCore().getLibraryResourceBundle("sap.m").getText("OPEN_PICKER_TEXT");
+
+		// act
+		oDatePicker.placeAt("qunit-fixture");
+		sap.ui.getCore().applyChanges();
+
+		// assert
+		assert.equal(oDatePicker.$("icon").attr("title"), sExpected, "icon has its title property set");
+
+		// cleanup
+		oDatePicker.destroy();
+	});
+
 	QUnit.module("data binding");
 
 	QUnit.test("data binding with OData", function(assert) {
