@@ -120,6 +120,11 @@
 		  "pattern": "customContent",
 		  "name": "customContent",
 		  "target": "customContent"
+		},
+		{
+		  "pattern": "cardContainer",
+		  "name": "cardContainer",
+		  "target": "cardContainer"
 		}
 	  ],
 	  "targets": {
@@ -191,6 +196,11 @@
 		"customContent": {
 		  "viewId": "custom",
 		  "viewName": "Custom",
+		  "viewLevel": 1
+		},
+		"cardContainer": {
+		  "viewId": "CardContainer",
+		  "viewName": "CardContainer",
 		  "viewLevel": 1
 		}
 	  }
