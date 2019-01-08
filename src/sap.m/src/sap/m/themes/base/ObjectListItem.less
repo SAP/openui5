@@ -91,15 +91,14 @@ html .sapUiContainer-Narrow .sapMText.sapMObjLTitle {
 }
 
 .sapMObjLAttrRow {
-	display: flex;
 	font-size: .875rem;
+	padding-top: .313rem;
 }
 
 .sapMObjLAttrDiv {
 	box-sizing: border-box;
 	display: inline-block;
-	min-width: 50%;
-	flex: 1;
+	width: 50%;
 	text-align: left;
 	vertical-align: top;
 }
@@ -113,7 +112,6 @@ html[dir=rtl] .sapMObjLAttrDiv {
 	white-space: nowrap;
 	overflow: hidden;
 	width: 100%;
-	padding-top: .313rem;
 }
 
 
@@ -133,12 +131,9 @@ html[dir=rtl] .sapMObjLAttrDiv {
 .sapMObjLStatusDiv {
 	box-sizing: border-box;
 	display: inline-block;
+	width: 50%;
 	text-align: right;
 	vertical-align: top;
-	& > * {
-		padding-top: .313rem;
-		padding-bottom: 0.1875rem;
-	}
 }
 
 html[dir=rtl] .sapMObjLStatusDiv {
@@ -177,7 +172,7 @@ html[data-sap-ui-browser="ie11"] .sapMObjLItem > .sapMLIBContent
 }
 
 /* overwrite transform for the markers favorite and flag icon */
-html[dir=rtl] .sapMObjLStatusDiv > .sapUiIcon.sapUiIconMirrorInRTL {
+html[dir=rtl] .sapMObjStatusMarker > .sapUiIcon.sapUiIconMirrorInRTL {
 	-webkit-transform: none; /* Chrome, Safari, Opera */
 	transform: none;
 }
@@ -187,17 +182,17 @@ html[dir=rtl] .sapMObjLStatusDiv > .sapUiIcon.sapUiIconMirrorInRTL {
 	max-width: 3rem;
 }
 
-.sapMObjLItem .sapMObjLStatusDiv .sapMObjectMarkerText,
-.sapMObjLItem .sapMObjLStatusDiv .sapMObjectMarkerIcon {
+.sapMObjLItem .sapMObjStatusMarker .sapMObjectMarkerText,
+.sapMObjLItem .sapMObjStatusMarker .sapMObjectMarkerIcon {
 	margin-left: 0.5rem;
 }
 
-.sapMObjLItem .sapMObjLStatusDiv .sapMText,
-.sapMObjLItem .sapMObjLStatusDiv .sapUiIcon {
+.sapMObjLItem .sapMObjStatusMarker .sapMText,
+.sapMObjLItem .sapMObjStatusMarker .sapUiIcon {
 	font-size: 0.875rem;
 }
 
-.sapMObjLItem .sapMObjLStatusDiv .sapUiIcon:before {
+.sapMObjLItem .sapMObjStatusMarker .sapUiIcon:before {
 	vertical-align: top;
 }
 
@@ -218,7 +213,7 @@ html[data-sap-ui-browser ^= "ie"], html[data-sap-ui-browser^="ed"] {
 }
 
 .sapMLIBActive .sapMObjLNumberDiv .sapMObjectNumber,
-.sapMLIBActive .sapMObjLStatusDiv .sapMObjectMarker .sapUiIcon {
+.sapMLIBActive .sapMObjStatusMarker .sapMObjectMarker .sapUiIcon {
 	color: @sapUiListActiveTextColor;
 }
 
