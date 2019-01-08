@@ -3,8 +3,26 @@
  */
 
 // Provides control sap.m.ObjectListItem.
-sap.ui.define(['./ListItemBase', './library', 'sap/ui/core/IconPool', 'sap/m/ObjectNumber', 'sap/ui/core/library'],
-	function(ListItemBase, library, IconPool, ObjectNumber, coreLibrary) {
+sap.ui.define([
+	'sap/ui/core/Control',
+	'sap/ui/base/ManagedObjectObserver',
+	'./ListItemBase',
+	'./library',
+	'sap/ui/core/IconPool',
+	'sap/m/ObjectNumber',
+	'sap/ui/core/library',
+	'./ObjectListItemRenderer'
+],
+function(
+	Control,
+	ManagedObjectObserver,
+	ListItemBase,
+	library,
+	IconPool,
+	ObjectNumber,
+	coreLibrary,
+	ObjectListItemRenderer
+	) {
 		"use strict";
 
 
@@ -186,6 +204,9 @@ sap.ui.define(['./ListItemBase', './library', 'sap/ui/core/IconPool', 'sap/m/Obj
 		 */
 		ObjectListItem.prototype.init = function (oEvent) {
 			this._generateObjectNumber();
+
+			this._observerObjectMarkerChanges = this._observerObjectMarkerChanges.bind(this);
+			this._oMarkersObservers = {};
 		};
 
 		/**
@@ -264,7 +285,43 @@ sap.ui.define(['./ListItemBase', './library', 'sap/ui/core/IconPool', 'sap/m/Obj
 		 */
 		ObjectListItem.prototype._hasBottomContent = function() {
 
-			return (this._hasAttributes() || this._hasStatus() || this.getShowMarkers() || this.getMarkLocked() || this.getMarkers().length > 0);
+			return (this._hasAttributes() || this._hasStatus() || this.getShowMarkers() || this.getMarkLocked() || this._getVisibleMarkers().length > 0);
+		};
+
+		/**
+		 * @private
+		 * @returns {Array} The visible attributes of the control
+		 */
+		ObjectListItem.prototype._getVisibleAttributes = function() {
+
+			var aAllAttributes = this.getAttributes();
+			var aVisibleAttributes = [];
+
+			for (var i = 0; i < aAllAttributes.length; i++) {
+				if (aAllAttributes[i].getVisible()) {
+					aVisibleAttributes.push(aAllAttributes[i]);
+				}
+			}
+
+			return aVisibleAttributes;
+		};
+
+		/**
+		 * @private
+		 * @returns {Array} The visible markers of the control
+		 */
+		ObjectListItem.prototype._getVisibleMarkers = function() {
+
+			var aAllMarkers = this.getMarkers();
+			var aVisibleMarkers = [];
+
+			for (var i = 0; i < aAllMarkers.length; i++) {
+				if (aAllMarkers[i].getVisible()) {
+					aVisibleMarkers.push(aAllMarkers[i]);
+				}
+			}
+
+			return aVisibleMarkers;
 		};
 
 		/**
@@ -441,6 +498,68 @@ sap.ui.define(['./ListItemBase', './library', 'sap/ui/core/IconPool', 'sap/m/Obj
 						aAllMarkers[i].setVisible(bMarked);
 				}
 			}
+
+			return this;
+		};
+
+		ObjectListItem.prototype.addMarker = function(oObject) {
+			this._startObservingMarker(oObject);
+
+			return Control.prototype.addAggregation.call(this, "markers", oObject);
+		};
+
+		ObjectListItem.prototype.insertMarker = function(oObject, iIndex) {
+			this._startObservingMarker(oObject);
+
+			return Control.prototype.insertAggregation.call(this, "markers", oObject, iIndex);
+		};
+
+		ObjectListItem.prototype.removeMarker = function(vObject) {
+			var oObject = Control.prototype.removeAggregation.call(this, "markers", vObject);
+
+			this._stopObservingMarker(oObject);
+
+			return oObject;
+		};
+
+		ObjectListItem.prototype.removeAllMarkers = function() {
+			var aItems = Control.prototype.removeAllAggregation.call(this, "markers");
+
+			for (var i = 0; i < aItems.length; i++) {
+				this._stopObservingMarker(aItems[i]);
+			}
+
+			return aItems;
+		};
+
+		ObjectListItem.prototype.destroyMarkers = function() {
+			this.getMarkers().forEach(function (oMarker) {
+				this._stopObservingMarker(oMarker);
+			}, this);
+
+			return Control.prototype.destroyAggregation.call(this, "markers");
+		};
+
+		ObjectListItem.prototype._observerObjectMarkerChanges = function (oChanges) {
+			if (oChanges.current !== oChanges.old) {
+				this.invalidate();
+			}
+		};
+
+		ObjectListItem.prototype._startObservingMarker = function (oMarker) {
+			var oObserver = new ManagedObjectObserver(this._observerObjectMarkerChanges);
+			this._oMarkersObservers[oMarker.getId()] = oObserver;
+
+			oObserver.observe(oMarker, { properties: true });
+
+			return this;
+		};
+
+		ObjectListItem.prototype._stopObservingMarker = function (oMarker) {
+			var sMarkerId = oMarker.getId();
+
+			this._oMarkersObservers[sMarkerId].disconnect();
+			delete this._oMarkersObservers[sMarkerId];
 
 			return this;
 		};
