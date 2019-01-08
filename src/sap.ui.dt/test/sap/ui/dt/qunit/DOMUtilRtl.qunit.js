@@ -27,7 +27,8 @@ function(
 			var iExpectedOffsetLeft = (Device.browser.webkit || Device.browser.blink) ? -47 : -35;
 			// in some cases (special physical devices) the offset is returend as decimal value
 			// actually we need to round the offset for chrome browser on mac
-			assert.strictEqual(Math.round(mOffset.left), iExpectedOffsetLeft, "the left offset is correct");
+			assert.strictEqual(Math.round(mOffset.left), iExpectedOffsetLeft, "the left offset is correct - result: " +
+				Math.round(mOffset.left) + " / expected value: " + iExpectedOffsetLeft);
 			assert.strictEqual(mOffset.top, 40, "the top offset is correct");
 		});
 
@@ -50,7 +51,8 @@ function(
 			this.oContainer.scrollTop(60);
 			var mOffset = DOMUtil.getOffsetFromParent(oContentGeometry, oContainerDomRef);
 			// round for offset value is actually nedded for chrome browser on mac
-			assert.strictEqual(Math.round(mOffset.left), iExpectedOffsetLeft, "the left offset is correct");
+			assert.strictEqual(Math.round(mOffset.left), iExpectedOffsetLeft, "the left offset is correct - result: " +
+				Math.round(mOffset.left) + " / expected value: " + iExpectedOffsetLeft);
 			assert.strictEqual(mOffset.top, 100, "the top offset is correct");
 		});
 	});
