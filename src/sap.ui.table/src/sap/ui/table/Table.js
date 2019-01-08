@@ -2061,11 +2061,10 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/Device',
 		var iNewTotalRowCount = oBinding == null ? 0 : oBinding.getLength();
 
 		if (iCurrentTotalRowCount !== iNewTotalRowCount) {
-			this._iBindingLength = iNewTotalRowCount;
-
 			// If the binding length changes, some parts of the UI need to be updated.
 			if (bUpdateUI !== false) {
 				var oScrollExtension = this._getScrollExtension();
+				this._iBindingLength = iNewTotalRowCount;
 
 				this._updateFixedBottomRows();
 				oScrollExtension.updateVerticalScrollbarVisibility();
