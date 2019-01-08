@@ -231,7 +231,7 @@ sap.ui.define(["sap/ui/core/Control", "sap/ui/model/json/JSONModel", "sap/m/List
 		};
 
 		/**
-		 * Sets data from manifest
+		 * Sets data from manifest.
 		 * @returns {object} <code>this</code> for chaining
 		 * @since 1.61
 		 * @override

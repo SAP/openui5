@@ -10,7 +10,11 @@ sap.ui.define(function () {
 			sinon: {
 				version: "edge"
 			},
-			ui5: {},
+			ui5: {
+				libs: ["sap.f", "sap.m"],	// Libraries to load upfront in addition to the library which is tested, if null no libs are loaded
+				noConflict: true,
+				preload: "auto"
+			},
 			coverage: {
 				only: ["sap/ui/integration"]
 			},
