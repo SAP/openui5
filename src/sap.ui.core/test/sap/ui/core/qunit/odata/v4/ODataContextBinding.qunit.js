@@ -1276,11 +1276,11 @@ sap.ui.define([
 			.returns(true);
 		this.mock(oParentContext).expects("fetchValue").twice()
 			.returns(SyncPromise.resolve(oParentEntity));
-		oContextMock.expects("create")
+		oContextMock.expects("createReturnValueContext")
 			.withExactArgs(sinon.match.same(this.oModel), sinon.match.same(oBinding),
 				"/TEAMS('77')")
 			.returns(oReturnValueContextFirstExecute);
-		oContextMock.expects("create")
+		oContextMock.expects("createReturnValueContext")
 			.withExactArgs(sinon.match.same(this.oModel), sinon.match.same(oBinding),
 				"/TEAMS('77')")
 			.returns(oReturnValueContextSecondExecute);

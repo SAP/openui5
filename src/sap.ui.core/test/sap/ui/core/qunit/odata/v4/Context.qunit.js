@@ -52,12 +52,14 @@ sap.ui.define([
 		assert.strictEqual(oContext.getPath(), sPath);
 		assert.strictEqual(oContext.getIndex(), 42);
 		assert.strictEqual(oContext.created(), undefined);
+		assert.strictEqual(oContext.getReturnValueContextId(), undefined);
 
 		// code under test
 		oContext = Context.create(oModel, oBinding, sPath, 42,
 			new Promise(function (resolve, reject) {
 				fnResolve = resolve;
 			}));
+
 		// code under test
 		oCreatedPromise = oContext.created();
 
@@ -74,6 +76,72 @@ sap.ui.define([
 		return oCreatedPromise.then(function () {
 			assert.strictEqual(bCreatedPromisePending, false, "Created Promise resolved");
 		});
+	});
+
+	//*********************************************************************************************
+	QUnit.test("createReturnValueContext", function (assert) {
+		var oBinding = {},
+			oContext,
+			oModel = {},
+			sPath = "/foo";
+
+		// code under test (return value context)
+		oContext = Context.createReturnValueContext(oModel, oBinding, sPath);
+
+		assert.notEqual(oContext.getReturnValueContextId(), undefined);
+		assert.strictEqual(oContext.getReturnValueContextId(), oContext.getReturnValueContextId());
+
+		// code under test (return value contexts have different IDs)
+		assert.notEqual(
+			Context.createReturnValueContext(oModel, oBinding, sPath).getReturnValueContextId(),
+			oContext.getReturnValueContextId());
+	});
+
+	//*********************************************************************************************
+	[
+		{getReturnValueContextId : function () {}},
+		{},
+		undefined
+	].forEach(function (oParentContext, i) {
+		QUnit.test("getReturnValueContextId: relative - " + i, function (assert) {
+			var oBinding = {
+					oContext : oParentContext,
+					bRelative : true
+				},
+				oContext,
+				oModel = {},
+				vReturnValueContextId = {};
+
+			oContext = Context.create(oModel, oBinding, "/foo/bar");
+
+			if (i === 0) {
+				this.mock(oParentContext).expects("getReturnValueContextId")
+					.withExactArgs().returns(vReturnValueContextId);
+			}
+
+			// code under test
+			assert.strictEqual(oContext.getReturnValueContextId(),
+				i === 0 ? vReturnValueContextId : undefined);
+		});
+	});
+
+	//*********************************************************************************************
+	QUnit.test("getReturnValueContextId: absolute binding", function (assert) {
+		var oParentContext = {getReturnValueContextId : function () {}},
+			oBinding = {
+				// context is set even if not used because binding is absolute
+				oContext : oParentContext,
+				bRelative : false
+			},
+			oContext,
+			oModel = {};
+
+		oContext = Context.create(oModel, oBinding, "/foo/bar");
+
+		this.mock(oParentContext).expects("getReturnValueContextId").never();
+
+		// code under test
+		assert.strictEqual(oContext.getReturnValueContextId(), undefined);
 	});
 
 	//*********************************************************************************************
@@ -97,6 +165,10 @@ sap.ui.define([
 		assert.throws(function () {
 			Context.create(null, null, "foo");
 		}, new Error("Not an absolute path: foo"));
+
+		assert.throws(function () {
+			Context.createReturnValueContext(null, null, "foo");
+		}, new Error("Not an absolute path: foo"));
 	});
 
 	//*********************************************************************************************
@@ -106,6 +178,13 @@ sap.ui.define([
 		}, new Error("Unsupported trailing slash: /"));
 		assert.throws(function () {
 			Context.create(null, null, "/foo/");
+		}, new Error("Unsupported trailing slash: /foo/"));
+
+		assert.throws(function () {
+			Context.createReturnValueContext(null, null, "/");
+		}, new Error("Unsupported trailing slash: /"));
+		assert.throws(function () {
+			Context.createReturnValueContext(null, null, "/foo/");
 		}, new Error("Unsupported trailing slash: /foo/"));
 	});
 

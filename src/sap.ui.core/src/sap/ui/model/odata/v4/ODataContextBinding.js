@@ -271,8 +271,8 @@ sap.ui.define([
 						if (that.oReturnValueContext) {
 							that.oReturnValueContext.destroy();
 						}
-						that.oReturnValueContext = Context.create(that.oModel, that,
-							getReturnValueContextPath(sResolvedPath, sResponsePredicate));
+						that.oReturnValueContext = Context.createReturnValueContext(that.oModel,
+							that, getReturnValueContextPath(sResolvedPath, sResponsePredicate));
 						return that.oReturnValueContext;
 					}
 				});
