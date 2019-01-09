@@ -2978,6 +2978,9 @@ sap.ui.define([
 		this._$headerContent.toggleClass("sapUxAPObjectPageHeaderDetailsHidden", bStuck); // hide header content
 		this._$anchorBar.css("visibility", sValue);
 		this._$anchorBar.toggleClass("sapUxAPObjectPageNavigationHidden", bStuck); // toggle custom AnchorBar class to make difference between stickied/expanded
+		if (exists(this._$stickyAnchorBar)) {
+			this._$stickyAnchorBar.attr("aria-hidden", !bStuck);
+		}
 		this.fireToggleAnchorBar({fixed: bStuck});
 	};
 
