@@ -1141,6 +1141,8 @@ sap.ui.define([
 		var oWheelUpEvent = jQuery.Event(sWheelEventType, { originalEvent: { detail: bFirefox ? -1 : 0, wheelDelta: 13 } });
 		var oWheelDownEvent = jQuery.Event(sWheelEventType, { originalEvent: { detail: bFirefox ? 1 : 0 , wheelDelta: -13 } });
 
+
+		this.stepInput.focus();
 		//act
 		qutils.triggerEvent(sWheelEventType, this.stepInput.getDomRef(), oWheelUpEvent);
 
@@ -1154,6 +1156,28 @@ sap.ui.define([
 		//assert
 		assert.equal(this.stepInput.getAggregation("_input")._getInputValue(), 4,
 				"The input's value is decreasing with 1 after mouse wheel down");
+	});
+
+	QUnit.test("mousewheel up/down not increases/decreases the value if the input is not focused", function (assert) {
+		//arrange
+		var bFirefox = Device.browser.firefox;
+		var sWheelEventType = bFirefox ? "DOMMouseScroll" : "mousewheel";
+		var oWheelUpEvent = jQuery.Event(sWheelEventType, { originalEvent: { detail: bFirefox ? -1 : 0, wheelDelta: 13 } });
+		var oWheelDownEvent = jQuery.Event(sWheelEventType, { originalEvent: { detail: bFirefox ? 1 : 0 , wheelDelta: -13 } });
+
+		//act
+		qutils.triggerEvent(sWheelEventType, this.stepInput.getDomRef(), oWheelUpEvent);
+
+		//assert
+		assert.equal(this.stepInput.getAggregation("_input")._getInputValue(), 4,
+			"The input's value is not increased");
+
+		//act
+		qutils.triggerEvent(sWheelEventType, this.stepInput.getDomRef(), oWheelDownEvent);
+
+		//assert
+		assert.equal(this.stepInput.getAggregation("_input")._getInputValue(), 4,
+			"The input's value is not decreased");
 	});
 
 
