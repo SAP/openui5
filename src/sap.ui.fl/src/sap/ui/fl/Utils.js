@@ -927,7 +927,7 @@ function(
 			}
 
 			var aDebugParameters = sDebugParameters.split(",");
-			return aDebugParameters.indexOf("sap/ui/fl") !== -1;
+			return aDebugParameters.indexOf("sap/ui/fl") !== -1 || aDebugParameters.indexOf("sap/ui/fl/") !== -1;
 		},
 
 		/**
