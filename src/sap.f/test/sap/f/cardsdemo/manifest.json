@@ -125,6 +125,11 @@
 		  "pattern": "cardContainer",
 		  "name": "cardContainer",
 		  "target": "cardContainer"
+		},
+		{
+		  "pattern": "services",
+		  "name": "services",
+		  "target": "services"
 		}
 	  ],
 	  "targets": {
@@ -201,6 +206,11 @@
 		"cardContainer": {
 		  "viewId": "CardContainer",
 		  "viewName": "CardContainer",
+		  "viewLevel": 1
+		},
+		"services": {
+		  "viewId": "services",
+		  "viewName": "Services",
 		  "viewLevel": 1
 		}
 	  }

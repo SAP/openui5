@@ -61,6 +61,9 @@ sap.ui.define([
 				_title: { type: "sap.m.Text", multiple: false, visibility: "hidden" },
 				_subtitle: { type: "sap.m.Text", multiple: false, visibility: "hidden" },
 				_avatar: { type: "sap.f.Avatar", multiple: false, visibility: "hidden" }
+			},
+			events: {
+				press: {}
 			}
 		}
 	});
@@ -96,7 +99,6 @@ sap.ui.define([
 		return oAvatar;
 	};
 
-
 	Header.prototype.onBeforeRendering = function () {
 		this._getTitle().setText(this.getTitle());
 		this._getSubtitle().setText(this.getSubtitle());
@@ -119,6 +121,10 @@ sap.ui.define([
 				this._getSubtitle().clampText();
 			}
 		}
+	};
+
+	Header.prototype.ontap = function () {
+		this.firePress();
 	};
 
 	/**
