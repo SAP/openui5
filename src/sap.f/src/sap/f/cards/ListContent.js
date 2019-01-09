@@ -45,6 +45,18 @@ sap.ui.define(["sap/ui/core/Control", "sap/ui/model/json/JSONModel", "sap/m/List
 					}
 				}
 			},
+			constructor: function (vId, mSettings) {
+				if (typeof vId !== "string"){
+					mSettings = vId;
+				}
+
+				if (mSettings.serviceManager) {
+					this._oServiceManager = mSettings.serviceManager;
+					delete mSettings.serviceManager;
+				}
+
+				Control.apply(this, arguments);
+			},
 			renderer: function (oRm, oCardContent) {
 				oRm.write("<div");
 				oRm.writeElementData(oCardContent);
@@ -229,16 +241,32 @@ sap.ui.define(["sap/ui/core/Control", "sap/ui/model/json/JSONModel", "sap/m/List
 		ListContent.prototype._setData = function (oData) {
 
 			var oRequest = oData.request;
+			var oService = oData.service;
 
 			if (oData.json && !oRequest) {
 				this._updateModel(oData.json, oData.path);
 			}
 
-			if (oRequest) {
+			if (oService) {
+				this._oServiceManager.getService("sap.ui.integration.services.Data").then(function (oDataService) {
+					if (oDataService) {
+						oDataService.getData().then(function (data) {
+							this._updateModel(data, oData.path);
+						}.bind(this)).catch(function () {
+							Log.error("Card content data service failed to get data");
+						});
+						oDataService.attachDataChanged(function (oEvent) {
+							this._updateModel(oEvent.data, oData.path);
+						}.bind(this), oData.service.parameters);
+					}
+				}.bind(this)).catch(function () {
+					Log.error("Data service unavailable");
+				});
+			} else if (oRequest) {
 				Data.fetch(oRequest).then(function (data) {
 					this._updateModel(data, oData.path);
 				}.bind(this)).catch(function (oError) {
-					// TODO: Handle errors. Maybe add error message
+					Log.error("Card content data request failed");
 				});
 			}
 

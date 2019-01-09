@@ -20,13 +20,16 @@
 			id="sap-ui-bootstrap"
 			data-sap-ui-bindingSyntax="complex"
 			data-sap-ui-compatVersion="edge"
-			data-sap-ui-libs="sap.f, sap.m, sap.ui.layout, sap.ui.integration"
 			data-sap-ui-preload="async"
+			data-sap-ui-async="true"
 			data-sap-ui-theme="sap_belize"
-			data-sap-ui-oninit="module:sap/f/cardsdemo/App"
-            data-sap-ui-resourceroots='{"sap.f.cardsdemo": "./"}'>
+			data-sap-ui-language="en"
+			data-sap-ui-resourceroots='{"sap.f.cardsdemo": "./"}'
+			data-sap-ui-oninit="module:sap/ui/core/ComponentSupport">
 	</script>
+
 </head>
 <body id="content" class="sapUiBody">
+	<div data-sap-ui-component data-name="sap.f.cardsdemo" data-id="container" data-settings='{"id" : "cardsplayground"}'></div>
 </body>
 </html>

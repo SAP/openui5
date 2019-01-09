@@ -1,7 +1,8 @@
 sap.ui.define([
 	"sap/ui/core/UIComponent",
-	"sap/ui/model/json/JSONModel"
-], function (UIComponent, JSONModel) {
+	"sap/ui/model/json/JSONModel",
+	"./services/SampleServices"
+], function (UIComponent, JSONModel, SampleServices) {
 	"use strict";
 
 	return UIComponent.extend("sap.f.cardsdemo.Component", {

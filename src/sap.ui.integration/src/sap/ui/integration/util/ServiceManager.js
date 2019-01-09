@@ -10,10 +10,6 @@ sap.ui.define([
 ) {
 	"use strict";
 
-	var SUPPORTED_SERVICE_INTERFACES = {
-		"sap.ui.integration.services.Navigation": { navigate: null, enabled: null }
-	};
-
 	/**
 	 * Constructor for a new <code>ServiceManager</code>.
 	 *
@@ -56,38 +52,36 @@ sap.ui.define([
 			}
 			this._mServiceFactoryReferences = _mServiceFactoryReferences;
 			this._mServices = {};
-			// Copy object with empty values
-			Object.keys(SUPPORTED_SERVICE_INTERFACES).forEach(function (sKey) {
-				this._mServices[sKey] = {};
-			}, this);
 		}
 	});
 
 	/**
 	 * Registers a card service which can then be available by getService(sServiceName).
-	 * @param {string} sName The name of the service.
+	 * @param {string|Object} vService The name of the service or a service configuration object.
 	 * @param {Object} sInterface The interface of the service.
 	 * @returns {Promise} A promise resolved when the service instance is ready.
 	 */
-	ServiceManager.prototype.registerService = function (sName, sInterface) {
-		var oInterface = SUPPORTED_SERVICE_INTERFACES[sInterface];
-		var oServiceRef = this._mServices[sInterface][sName];
+	ServiceManager.prototype.registerService = function (vService, sInterface) {
+		var sName = vService.name || vService,
+			oServiceRef;
+
+		if (!this._mServices[sInterface]) {
+			this._mServices[sInterface] = {};
+		}
+
+		oServiceRef = this._mServices[sInterface][sName];
 
 		if (!oServiceRef) {
 			oServiceRef = {};
-			oServiceRef.promise = ServiceManager._getService(this, sName, this._mServiceFactoryReferences);
-			oServiceRef.promise.then(function (oServiceInstance) {
-				oServiceRef.interface = oInterface;
-				oServiceRef.instance = oServiceInstance;
-
-				oServiceInstance.registerDependency(oServiceRef.interface);
-
-				return oServiceRef.interface.enabled().then(function (bEnabled) {
-					oServiceRef.on = bEnabled;
+			oServiceRef.promise = ServiceManager._getService(this, sName, this._mServiceFactoryReferences)
+				.then(function (oServiceInstance) {
+					oServiceRef.instance = oServiceInstance;
+					return oServiceRef.instance.enabled(/* Pass parameters */).then(function (bEnabled) {
+						oServiceRef.on = bEnabled;
+					});
+				}).catch(function (oError) {
+					Log.error(oError.message);
 				});
-			}).catch(function (oError) {
-				Log.error(oError.message);
-			});
 
 			this._mServices[sInterface][sName] = oServiceRef;
 
@@ -119,7 +113,7 @@ sap.ui.define([
 
 			this._mServices[sServiceInterface][sServiceName].promise.then(function () {
 				if (this._mServices[sServiceInterface][sServiceName].on) {
-					fnResolve(this._mServices[sServiceInterface][sServiceName].interface);
+					fnResolve(this._mServices[sServiceInterface][sServiceName].instance);
 				} else {
 					fnResolve(false);
 				}
