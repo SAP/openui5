@@ -17,12 +17,14 @@
 </head>
 
 <body>
-	<buttton onclick="createCard()">Create</buttton>
+
 	<ui-host-configuration config="./host/sampleHostConfigDark.json" id="myStyle">
 	</ui-host-configuration>
-
 	<ui-card manifest="./widgets/cardmanifests/list.manifest.json" hostConfigurationId="myStyle"></ui-card>
 	<ui-card manifest="./widgets/cardmanifests/list.manifest.json" hostConfigurationId="myStyle"></ui-card>
+	<div>
+		<button onclick="createCard()">Add Card</button>
+	</div>
 </body>
 
 </html>
