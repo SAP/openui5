@@ -783,8 +783,23 @@ function(
 		});
 
 		QUnit.test("when calling '_duplicateVariant' from CUSTOMER layer with reference to a variant on VENDOR layer with one CUSTOMER and one VENDOR change", function(assert) {
-			var oChange0 = new Change({"fileName":"change0", "selector": {"id": "abc123"}, "variantReference":"variant0", "layer": "CUSTOMER", "support": {}, "reference": "test.Component"});
-			var oChange1 = new Change({"fileName":"change1", "selector": {"id": "abc123"}, "variantReference":"variant0", "layer": "VENDOR", "support": {}, "reference": "test.Component"});
+			var oChange0 = new Change({
+				"fileName": "change0",
+				"selector": {"id": "abc123"},
+				"variantReference": "variant0",
+				"layer": "CUSTOMER",
+				"support": {},
+				"reference": "test.Component",
+				"packageName": "MockPackageName"
+			});
+			var oChange1 = new Change({
+				"fileName": "change1",
+				"selector": {"id": "abc123"},
+				"variantReference": "variant0",
+				"layer": "VENDOR",
+				"support": {},
+				"reference": "test.Component"
+			});
 
 			var oSourceVariant = {
 				"content": {
@@ -824,7 +839,8 @@ function(
 			assert.equal(oDuplicateVariant.controlChanges.length, 1, "then only one change duplicated");
 			assert.equal(oDuplicateVariant.controlChanges[0].getDefinition().variantReference, "newVariant", "then the change has the correct variantReference");
 			assert.equal(oDuplicateVariant.controlChanges[0].getDefinition().support.sourceChangeFileName, oSourceVariant.controlChanges[0].getDefinition().fileName, "then the fileName of the origin change is written to support object");
-			assert.equal(oDuplicateVariant.controlChanges[0].getDefinition().layer, Utils.getCurrentLayer(), "then only the change with the same layer is duplicated");
+			assert.equal(oDuplicateVariant.controlChanges[0].getLayer(), Utils.getCurrentLayer(), "then only the change with the same layer is duplicated");
+			assert.equal(oDuplicateVariant.controlChanges[0].getPackage(), "$TMP", "then the package name of the duplicate change was set to $TMP");
 			assert.equal(oDuplicateVariant.content.variantReference, oSourceVariant.content.fileName, "then the duplicate variant has reference to the source variant from VENDOR layer");
 		});
 
