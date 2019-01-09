@@ -463,7 +463,6 @@ sap.ui.define([
 			// open context menu (expanded context menu) on fucused overlay
 			oCombinedElementOverlay.focus();
 
-			QUnitUtils.triggerKeydown(oCombinedElementOverlay.getDomRef(), KeyCodes.F10, true, false, false);
 			var oContextMenuControl = this.oRta.getPlugins()["contextMenu"].oContextMenuControl;
 			oContextMenuControl.attachEventOnce("Opened", function() {
 				var oContextMenuButton = oContextMenuControl.getButtons().filter(function (oButton) {
@@ -473,6 +472,7 @@ sap.ui.define([
 				oContextMenuButton.firePress();
 				sap.ui.getCore().applyChanges();
 			});
+			QUnitUtils.triggerKeydown(oCombinedElementOverlay.getDomRef(), KeyCodes.F10, true, false, false);
 		});
 	});
 
