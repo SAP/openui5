@@ -225,6 +225,13 @@ function(jQuery, Button, Dialog, Label, Popover, CalendarAppointment, Fragment, 
 				this.getView().setModel(oModel);
 		},
 
+		handleStickyModeChange: function (oEvent) {
+			var oSPC = this.byId("SPC1"),
+				sNewStickyMode = oEvent.getParameter("selectedItem").getText();
+
+			oSPC.setStickyMode(sNewStickyMode);
+		},
+
 		handleAppointmentCreate: function (oEvent) {
 			var oFrag = sap.ui.core.Fragment,
 				oDateTimePickerStart,

@@ -488,6 +488,15 @@ function(
 		return this.getAggregation("_actionsToolbar");
 	};
 
+	/**
+	 * Getter for _navigationToolbar.
+	 * @returns {object} The _navigationToolbar object
+	 * @private
+	 */
+	PlanningCalendarHeader.prototype._getNavigationToolbar = function () {
+		return this.getAggregation("_navigationToolbar");
+	};
+
 	return PlanningCalendarHeader;
 
 });
