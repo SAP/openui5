@@ -675,7 +675,7 @@ function(
 			}
 
 			// Return the focus on the main element
-			this.$().focus();
+			this._getInput().focus();
 
 			return this;
 		};
