@@ -1,4 +1,4 @@
-/*global QUnit, foo */
+/*global QUnit, foo, sinon */
 sap.ui.define([
 	"sap/ui/test/Opa",
 	"sap/ui/test/Opa5",
@@ -256,6 +256,235 @@ sap.ui.define([
 		Opa.emptyQueue().done(fnDone);
 	});
 
+	QUnit.module("Page Object - test libraries", {
+		afterEach: function () {
+			Opa5.resetConfig();
+		}
+	});
+
+	QUnit.test("Should add only the requested test libraries", function (assert) {
+		Opa5.extendConfig({
+			testLibs: {
+				fooLib: {},
+				barLib: {}
+			},
+			testLibBase: {
+				fooLib: { actions: { fooAction: function () {} } },
+				barLib: { actions: { barAction: function () {} } },
+				skippedLib: { actions: { noAction: function () {} } }
+			}
+		});
+
+		Opa5.createPageObjects({
+			onTheFooPage: {
+				actions: { iCanAct: function () {} },
+				assertions: { iCanAssert: function () {} }
+			}
+		});
+
+		assert.ok(Opa.config.actions.onTheFooPage.fooLib.fooAction, "Should add methods of requested library foo");
+		assert.ok(Opa.config.actions.onTheFooPage.barLib.barAction, "Should add methods of requested library bar");
+		assert.ok(!Opa.config.actions.onTheFooPage.skippedLib, "Should skip methods of library that is not requested");
+	});
+
+	QUnit.test("Should add only test libraries that defined a base", function (assert) {
+		Opa5.extendConfig({
+			testLibs: {
+				fooLib: {},
+				barLib: {}
+			},
+			testLibBase: {
+				fooLib: { actions: { fooAction: function () {} } }
+			}
+		});
+
+		Opa5.createPageObjects({
+			onTheFooPage: {
+				actions: { iCanAct: function () {} },
+				assertions: { iCanAssert: function () {} }
+			}
+		});
+
+		assert.ok(Opa.config.actions.onTheFooPage.fooLib.fooAction, "Should add methods of requested library foo");
+		assert.ok(!Opa.config.actions.onTheFooPage.barLib, "Should skip requested library bar that has no methods defined");
+	});
+
+	QUnit.test("Should add only the defined operations for a test library", function (assert) {
+		Opa5.extendConfig({
+			testLibs: {
+				fooLib: {},
+				barLib: {}
+			},
+			testLibBase: {
+				fooLib: { actions: { fooAction: function () {} } },
+				barLib: { assertions: { barAssert: function () {} } }
+			}
+		});
+
+		Opa5.createPageObjects({
+			onTheFooPage: {
+				actions: { iCanAct: function () {} },
+				assertions: { iCanAssert: function () {} }
+			}
+		});
+
+		assert.ok(Opa.config.actions.onTheFooPage.fooLib.fooAction, "Should add actions of library foo");
+		assert.ok(!Object.keys(Opa.config.actions.onTheFooPage.barLib).length, "Should not add actions when they are not defined");
+		assert.ok(!Object.keys(Opa.config.assertions.onTheFooPage.fooLib).length, "Should not add assertions when trey are not defined");
+		assert.ok(Opa.config.assertions.onTheFooPage.barLib.barAssert, "Should add assertions of library bar");
+	});
+
+	QUnit.test("Should add test library methods to returned page object and to OPA config", function (assert) {
+		Opa5.extendConfig({
+			testLibs: {
+				fooLib: {}
+			},
+			testLibBase: {
+				fooLib: {
+					actions: { fooAction: function () {} },
+					assertions: { barAssert: function () {} }
+				}
+			}
+		});
+
+		var mPageObjects = Opa5.createPageObjects({
+			onTheFooPage: {
+				actions: { iCanAct: function () {} },
+				assertions: { iCanAssert: function () {} }
+			},
+			onTheBarPage: {
+				actions: { iCanActBar: function () {} }
+			},
+			onTheBazPage: {
+				assertions: { iCanAssertBaz: function () {} }
+			}
+		});
+
+		assert.ok(mPageObjects.onTheFooPage.actions.iCanAct, "Should add own actions to page object");
+		assert.ok(mPageObjects.onTheFooPage.assertions.iCanAssert, "Should add own assertions to page object");
+		assert.ok(mPageObjects.onTheFooPage.actions.fooLib.fooAction, "Should add test library actions to page object");
+		assert.ok(mPageObjects.onTheFooPage.assertions.fooLib.barAssert, "Should add test library assertions to page object");
+
+		assert.ok(Opa.config.actions.onTheFooPage.iCanAct, "Should add page object actions to OPA actions");
+		assert.ok(Opa.config.arrangements.onTheFooPage.iCanAct, "Should add page object arrangements to OPA arrangements");
+		assert.ok(Opa.config.assertions.onTheFooPage.iCanAssert, "Should add page object assertions to OPA assertions");
+		assert.ok(Opa.config.actions.onTheFooPage.fooLib.fooAction, "Should add test library actions to OPA actions");
+		assert.ok(Opa.config.arrangements.onTheFooPage.fooLib.fooAction, "Should add test library arrangements to OPA arrangements");
+		assert.ok(Opa.config.assertions.onTheFooPage.fooLib.barAssert, "Should add test library assertions to OPA assertions");
+
+		// page object without own assertions
+		assert.ok(mPageObjects.onTheBarPage.actions.fooLib.fooAction, "Should add test library actions to page object");
+		assert.ok(!mPageObjects.onTheBarPage.assertions);
+
+		assert.ok(Opa.config.actions.onTheBarPage.fooLib.fooAction, "Should add test library actions to OPA actions");
+		assert.ok(Opa.config.arrangements.onTheBarPage.fooLib.fooAction, "Should add test library arrangements to OPA arrangements");
+		assert.ok(!Opa.config.assertions.onTheBarPage, "Should add test library assertions to OPA assertions");
+
+		// page object without own actions
+		assert.ok(!mPageObjects.onTheBazPage.actions);
+		assert.ok(mPageObjects.onTheBazPage.assertions.fooLib.barAssert, "Should add test library assertions to page object");
+
+		assert.ok(!Opa.config.actions.onTheBazPage);
+		assert.ok(!Opa.config.arrangements.onTheBazPage);
+		assert.ok(Opa.config.assertions.onTheBazPage.fooLib.barAssert, "Should add test library assertions to OPA assertions");
+	});
+
+	QUnit.test("Should use test library methods from inside page object", function (assert) {
+		var fnActSpy = sinon.spy();
+		var fnAssertSpy = sinon.spy();
+
+		Opa5.extendConfig({
+			testLibs: {
+				fooLib: {}
+			},
+			testLibBase: {
+				fooLib: {
+					actions: { fooAction: fnActSpy },
+					assertions: { barAssert: fnAssertSpy }
+				}
+			}
+		});
+
+		Opa5.createPageObjects({
+			onTheFooPage: {
+				actions: {
+					iCanAct: function () {
+						return this.fooLib.fooAction();
+					}
+				},
+				assertions: {
+					iCanAssert: function () {
+						return this.fooLib.barAssert();
+					}
+				}
+			}
+		});
+
+		Opa.config.actions.onTheFooPage.iCanAct();
+		assert.ok(fnActSpy.calledOnce, "Should call testlib action");
+
+		Opa.config.assertions.onTheFooPage.iCanAssert();
+		assert.ok(fnAssertSpy.calledOnce, "Should call testlib assertion");
+	});
+
+	QUnit.test("Should use waitFor defaults in test library methods", function (assert) {
+		var fnOtherBase = Opa5.extend("sap.ui.test.opa.otherBase");
+		var fnWaitForSpy = sinon.spy();
+		fnOtherBase.prototype.waitFor = fnWaitForSpy;
+
+		Opa5.extendConfig({
+			testLibs: {
+				fooLib: {}
+			},
+			testLibBase: {
+				fooLib: {
+					actions: {
+						fooAction: function () {
+							this.waitFor({foo: "value"});
+						}
+					},
+					assertions: {
+						barAssert: function () {
+							this.waitFor({bar: "value"});
+						}
+					}
+				}
+			}
+		});
+
+		Opa5.createPageObjects({
+			onTheFooPage: {
+				viewName: "myViewName",
+				viewId: "myViewId",
+				baseClass: fnOtherBase,
+				actions: {
+					iCanAct: function () {
+						return this.fooLib.fooAction();
+					}
+				},
+				assertions: {
+					iCanAssert: function () {
+						return this.fooLib.barAssert();
+					}
+				}
+			}
+		});
+
+		Opa.config.actions.onTheFooPage.iCanAct();
+		var mWaitForArgs = fnWaitForSpy.getCall(0).args[0];
+		assert.ok(fnWaitForSpy.calledOnce, "Should call baseClass waitFor in action");
+		assert.strictEqual(mWaitForArgs.viewId, "myViewId", "Should set default viewId");
+		assert.strictEqual(mWaitForArgs.viewName, "myViewName", "Should set default viewName");
+		assert.strictEqual(mWaitForArgs.foo, "value", "Should keep other properties");
+
+		Opa.config.assertions.onTheFooPage.iCanAssert();
+		mWaitForArgs = fnWaitForSpy.getCall(1).args[0];
+		assert.ok(fnWaitForSpy.calledTwice, "Should call baseClass waitFor in assertion");
+		assert.strictEqual(mWaitForArgs.viewId, "myViewId", "Should set default viewId");
+		assert.strictEqual(mWaitForArgs.viewName, "myViewName", "Should set default viewName");
+		assert.strictEqual(mWaitForArgs.bar, "value", "Should keep other properties");
+	});
+
 	function assertPageObjectIsReturned(assert, oPages){
 		assert.ok(oPages,"Page Object is returned");
 		assert.ok(oPages.onMyFirstPage.actions.iCanDoMagic, "Page Object has access to the actions it describes");
@@ -276,6 +505,9 @@ sap.ui.define([
 		assert.ok(Opa.config.assertions[sPageName].iCanSeeIt, "Page Object assertions are added");
 		assert.ok(Opa.config.assertions[sPageName].iCanHearIt, "Page Object assertions are added");
 		assert.ok(!Opa.config.assertions[sPageName].iCanDoMagic, "Page Object actions are not added to the assertions");
+
+		assert.ok(!(Opa.config.arrangements[sPageName] && Opa.config.arrangements[sPageName].iCanSeeIt), "Page Object assertions are not added to the arrangements");
+		assert.ok(!(Opa.config.arrangements[sPageName] && Opa.config.arrangements[sPageName].iCanHearIt), "Page Object assertions are not added to the arrangements");
 	}
 
 	function assertPageObjectBase(assert, oPages,fnOtherBase){
