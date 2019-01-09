@@ -668,7 +668,7 @@ function(
 
 			this._btndown = undefined;
 			this._disableButtons(oNewValue.displayValue, fMax, fMin);
-			this.setValue(oNewValue.value);
+			this.setValue(oNewValue.displayValue);
 
 			if (this._sOldValue !== this.getValue()) {
 				this.fireChange({value: this.getValue()});
