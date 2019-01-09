@@ -1492,5 +1492,41 @@ QUnit.module("Misc");
 		// Cleanup
 		oCalendar.destroy();
 	});
+
+	QUnit.test("onsapescape fires cancel event in all views (days, months and years)", function (assert) {
+		// Prepare
+		var oCalendar = new Calendar(),
+			oSpyFireCancel = this.spy(oCalendar, "fireCancel");
+
+		// Act in Day view
+		oCalendar._iMode = 0;
+		oCalendar.onsapescape();
+
+		// Assert in Day view
+		assert.equal(oSpyFireCancel.callCount, 1, "fireCancel should be called once in Day view");
+
+		oSpyFireCancel.reset();
+
+		// Act in Month view
+		oCalendar._iMode = 1;
+		oCalendar.onsapescape();
+
+		// Assert in Month view
+		assert.equal(oSpyFireCancel.callCount, 1, "fireCancel should be called once in Month view");
+
+		oSpyFireCancel.reset();
+
+		// Act in year view
+		oCalendar._iMode = 2;
+		oCalendar.onsapescape();
+
+		// Assert in Year view
+		assert.equal(oSpyFireCancel.callCount, 1, "fireCancel should be called once in Year view");
+
+		// Cleanup
+		oSpyFireCancel.restore();
+		oCalendar.destroy();
+	});
+
 	return waitForThemeApplied();
 });
