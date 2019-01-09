@@ -10,7 +10,8 @@ sap.ui.define([
 	"jquery.sap.global",
 	"sap/ui/core/library",
 	"sap/m/ObjectMarker",
-	"sap/m/library"
+	"sap/m/library",
+	"sap/ui/base/ManagedObjectObserver"
 ], function(
 	qutils,
 	createAndAppendDiv,
@@ -21,7 +22,8 @@ sap.ui.define([
 	jQuery,
 	coreLibrary,
 	ObjectMarker,
-	mobileLibrary
+	mobileLibrary,
+	ManagedObjectObserver
 ) {
 	// shortcut for sap.ui.core.ValueState
 	var ValueState = coreLibrary.ValueState;
@@ -326,8 +328,6 @@ sap.ui.define([
 		markersOlI.destroy();
 	});
 
-	QUnit.module("Rendering Markers aggregation");
-
 	QUnit.test("Removing marker", function(assert) {
 		var markersOlI = new ObjectListItem({
 			id: "markersOlI",
@@ -351,6 +351,128 @@ sap.ui.define([
 		assert.ok($allRows.length === 0, "There are no markers");
 
 		markersOlI.destroy();
+	});
+
+	QUnit.module("Markers aggregation general");
+
+	QUnit.test("addMarker should add observer for changes in marker properties", function (assert) {
+		// Arrange
+		var oMarker = new ObjectMarker("marker", { type: ObjectMarkerType.Flagged });
+		var oLI = new ObjectListItem();
+
+		// Act
+		oLI.addMarker(oMarker);
+
+		// Assert
+		assert.ok(oLI._oMarkersObservers.marker, "There is key set to the _oMarkersObservers that is equal to the marker id");
+		assert.ok(oLI._oMarkersObservers.marker instanceof ManagedObjectObserver, "observer is set properly for marker with id: marker");
+
+		// Cleanup
+		oLI.destroy();
+	});
+
+	QUnit.test("insertMarker should add observer for changes in marker properties", function (assert) {
+		// Arrange
+		var oMarker = new ObjectMarker("marker", { type: ObjectMarkerType.Flagged });
+		var oLI = new ObjectListItem();
+
+		// Act
+		oLI.insertMarker(oMarker, 0);
+
+		// Assert
+		assert.ok(oLI._oMarkersObservers.marker, "There is key set to the _oMarkersObservers that is equal to the marker id");
+		assert.ok(oLI._oMarkersObservers.marker instanceof ManagedObjectObserver, "observer is set properly for marker with id: marker");
+
+		// Cleanup
+		oLI.destroy();
+	});
+
+	QUnit.test("removeMarker should remove observer for changes in marker properties", function (assert) {
+		// Arrange
+		var oMarker = new ObjectMarker("marker", { type: ObjectMarkerType.Flagged });
+		var oLI = new ObjectListItem({ markers: oMarker });
+
+		// Assert
+		assert.ok(oLI._oMarkersObservers.marker, "There is key set to the _oMarkersObservers that is equal to the marker id");
+		assert.ok(oLI._oMarkersObservers.marker instanceof ManagedObjectObserver, "observer is set properly for marker with id: marker");
+
+		// Act
+		oLI.removeMarker(oMarker);
+
+		// Assert
+		assert.notOk(oLI._oMarkersObservers.marker, "MarkersObservers hashmap should not have marker key");
+
+		// Cleanup
+		oLI.destroy();
+		oMarker.destroy();
+	});
+
+	QUnit.test("removeAllMarkers should remove observer for changes in marker properties", function (assert) {
+		// Arrange
+		var oMarker1 = new ObjectMarker("marker1", { type: ObjectMarkerType.Flagged });
+		var oMarker2 = new ObjectMarker("marker2", { type: ObjectMarkerType.Flagged });
+		var oLI = new ObjectListItem({ markers: [oMarker1, oMarker2] });
+
+		// Assert
+		assert.ok(oLI._oMarkersObservers.marker1, "There is key set to the _oMarkersObservers that is equal to the marker1 id");
+		assert.ok(oLI._oMarkersObservers.marker1 instanceof ManagedObjectObserver, "observer is set properly for marker with id: marker1");
+		assert.ok(oLI._oMarkersObservers.marker2, "There is key set to the _oMarkersObservers that is equal to the marker2 id");
+		assert.ok(oLI._oMarkersObservers.marker2 instanceof ManagedObjectObserver, "observer is set properly for marker with id: marker2");
+
+		// Act
+		oLI.removeAllMarkers();
+
+		// Assert
+		assert.notOk(oLI._oMarkersObservers.marker1, "MarkersObservers hashmap should not have marker1 key");
+		assert.notOk(oLI._oMarkersObservers.marker2, "MarkersObservers hashmap should not have marker2 key");
+
+		// Cleanup
+		oLI.destroy();
+		oMarker1.destroy();
+		oMarker2.destroy();
+	});
+
+	QUnit.test("destroyMarkers should remove observer for changes in marker properties", function (assert) {
+		// Arrange
+		var oMarker1 = new ObjectMarker("marker1", { type: ObjectMarkerType.Flagged });
+		var oMarker2 = new ObjectMarker("marker2", { type: ObjectMarkerType.Flagged });
+		var oLI = new ObjectListItem({ markers: [oMarker1, oMarker2] });
+
+		// Assert
+		assert.ok(oLI._oMarkersObservers.marker1, "There is key set to the _oMarkersObservers that is equal to the marker1 id");
+		assert.ok(oLI._oMarkersObservers.marker1 instanceof ManagedObjectObserver, "observer is set properly for marker with id: marker1");
+		assert.ok(oLI._oMarkersObservers.marker2, "There is key set to the _oMarkersObservers that is equal to the marker2 id");
+		assert.ok(oLI._oMarkersObservers.marker2 instanceof ManagedObjectObserver, "observer is set properly for marker with id: marker2");
+
+		// Act
+		oLI.destroyMarkers();
+
+		// Assert
+		assert.notOk(oLI._oMarkersObservers.marker1, "MarkersObservers hashmap should not have marker1 key");
+		assert.notOk(oLI._oMarkersObservers.marker2, "MarkersObservers hashmap should not have marker2 key");
+
+		// Cleanup
+		oLI.destroy();
+		oMarker1.destroy();
+		oMarker2.destroy();
+	});
+
+	// BCP: 1870534226
+	QUnit.test("Update Marker, invalidates the ObjectListItem", function (assert) {
+		var oMarker = new ObjectMarker("marker", { type: ObjectMarkerType.Flagged });
+		var oLI = new ObjectListItem({ markers: oMarker });
+		var oLIInvalidateSpy = this.spy(oLI, "invalidate");
+
+		// Act
+		oMarker.setVisible(false);
+
+		// Assert
+		assert.equal(oLIInvalidateSpy.callCount, 1, "ObjectListItem should be invalidated when ObjectMarker visible property is changed");
+
+		// Cleanup
+		oLIInvalidateSpy.restore();
+		oLI.destroy();
+		oMarker.destroy();
 	});
 
 	/******************************************************************/

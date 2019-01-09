@@ -369,6 +369,24 @@
 	});
 	list.addItem(favoriteMarkerOnly);
 
+	var emptyFirstStatus = new sap.m.ObjectListItem({
+		type: "Active",
+		title: "Empty first status and set second status",
+		number: "20",
+		firstStatus: new sap.m.ObjectStatus({
+			text: "",
+			state: "Error"
+		}),
+		secondStatus: new sap.m.ObjectStatus({
+			text: "Second Status",
+			state: "None"
+		}),
+		attributes: new sap.m.ObjectAttribute({
+			text: "Object Attribute with a very long text. Object Attribute with a very long text. Object Attribute with a very long text. Object Attribute with a very long text. Object Attribute with a very long text."
+		})
+	});
+	list.addItem(emptyFirstStatus);
+
 	var markersAndStatuses = new sap.m.ObjectListItem({
 
 		type: "Active",
