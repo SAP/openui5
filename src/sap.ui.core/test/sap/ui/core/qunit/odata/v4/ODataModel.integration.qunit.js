@@ -847,7 +847,8 @@ sap.ui.define([
 		 * {@link #waitForChanges}) is expected to perform the given request.
 		 *
 		 * @param {string|object} vRequest The request with the properties "method", "url" and
-		 *   "headers". A string is interpreted as URL with method "GET".
+		 *   "headers". A string is interpreted as URL with method "GET". Spaces inside the URL are
+		 *   percent encoded automatically.
 		 * @param {object} [oResponse] The response message to be returned from the requestor.
 		 * @param {object} [mResponseHeaders] The response headers to be returned from the
 		 *   requestor.
@@ -865,6 +866,7 @@ sap.ui.define([
 			vRequest.payload = vRequest.payload || undefined;
 			vRequest.responseHeaders = mResponseHeaders || {};
 			vRequest.response = oResponse;
+			vRequest.url = vRequest.url.replace(/ /g, "%20");
 			this.aRequests.push(vRequest);
 
 			return this;
@@ -1116,7 +1118,7 @@ sap.ui.define([
 		<Text id="text" text="{Name}" />\
 	</ColumnListItem>\
 </Table>',
-		{"EMPLOYEES?$select=Name&$filter=AGE%20gt%2021%20and%20(TEAM_ID%20eq%2042)&$orderby=AGE,Name%20desc&$skip=0&$top=100" :
+		{"EMPLOYEES?$select=Name&$filter=AGE gt 21 and (TEAM_ID eq 42)&$orderby=AGE,Name desc&$skip=0&$top=100" :
 			{"value" : [{"Name" : "Frederic Fall"}, {"Name" : "Jonathan Smith"}]}},
 		{"text" : ["Frederic Fall", "Jonathan Smith"]}
 	);
@@ -1283,7 +1285,7 @@ sap.ui.define([
 
 		return this.createView(assert, sView).then(function () {
 			that.expectRequest("TEAMS('42')/TEAM_2_EMPLOYEES?$orderby=AGE&$select=Name"
-					+ "&$filter=AGE%20gt%2042&$skip=0&$top=100", {
+					+ "&$filter=AGE gt 42&$skip=0&$top=100", {
 					"value" : [
 						{"Name" : "Frederic Fall"},
 						{"Name" : "Peter Burke"}
@@ -1319,7 +1321,7 @@ sap.ui.define([
 </Table>',
 			that = this;
 
-		this.expectRequest("EMPLOYEES?foo=bar&$orderby=AGE&$filter=AGE%20gt%2042"
+		this.expectRequest("EMPLOYEES?foo=bar&$orderby=AGE&$filter=AGE gt 42"
 				+ "&$select=AGE,ID,Name&$skip=0&$top=100", {
 				"value" : [
 					{"@odata.etag" : "ETag0", "ID" : "0", "Name" : "Frederic Fall", "AGE" : 70},
@@ -1350,7 +1352,7 @@ sap.ui.define([
 				var oContext = that.oView.byId("table").getItems()[0].getBindingContext();
 
 				that.expectRequest("EMPLOYEES?foo=bar&$orderby=AGE"
-						+ "&$filter=(AGE%20gt%2042)%20and%20ID%20eq%20'0'"
+						+ "&$filter=(AGE gt 42) and ID eq '0'"
 						+ "&$select=AGE,ID,Name", {"value" : []})
 					.expectChange("text", ["Jonathan Smith", "Peter Burke"])
 					.expectChange("age", ["50", "77"]);
@@ -1363,7 +1365,7 @@ sap.ui.define([
 				var oContext = that.oView.byId("table").getItems()[0].getBindingContext();
 
 				that.expectRequest("EMPLOYEES?foo=bar&$orderby=AGE"
-						+ "&$filter=(AGE%20gt%2042)%20and%20ID%20eq%20'1'"
+						+ "&$filter=(AGE gt 42) and ID eq '1'"
 						+ "&$select=AGE,ID,Name", {
 						"value" : [{
 							"ID" : "1",
@@ -2119,8 +2121,8 @@ sap.ui.define([
 
 			return that.waitForChanges(assert);
 		}).then(function () {
-			that.expectRequest("SalesOrderList?$select=SalesOrderID&$filter=SalesOrderID%20gt"
-					+ "%20'0500000001'&$skip=0&$top=100",
+			that.expectRequest("SalesOrderList?$select=SalesOrderID&$filter=SalesOrderID gt"
+					+ " '0500000001'&$skip=0&$top=100",
 					{"value" : [{"SalesOrderID" : "0500000002"}]}
 				)
 				.expectChange("count", "1")
@@ -2169,7 +2171,7 @@ sap.ui.define([
 
 			return that.waitForChanges(assert);
 		}).then(function () {
-			that.expectRequest("SalesOrderList?$select=SalesOrderID&$orderby=SalesOrderID%20desc"
+			that.expectRequest("SalesOrderList?$select=SalesOrderID&$orderby=SalesOrderID desc"
 					+ "&$skip=0&$top=100", {
 					"value" : [
 						{"SalesOrderID" : "0500000002"},
@@ -2232,7 +2234,7 @@ sap.ui.define([
 			return that.waitForChanges(assert);
 		}).then(function () {
 			that.expectRequest("SalesOrderList?$select=SalesOrderID"
-					+ "&$filter=SalesOrderID%20gt%20'0500000001'&$skip=0&$top=100",
+					+ "&$filter=SalesOrderID gt '0500000001'&$skip=0&$top=100",
 					{"value" : [{"SalesOrderID" : "0500000002"}]}
 				)
 				.expectChange("count", "1")
@@ -4248,7 +4250,7 @@ sap.ui.define([
 </Table>',
 			that = this;
 
-		this.expectRequest("EMPLOYEES?$filter=TEAM_ID%20eq%20'77'&$select=ID,Name,TEAM_ID"
+		this.expectRequest("EMPLOYEES?$filter=TEAM_ID eq '77'&$select=ID,Name,TEAM_ID"
 				+ "&$skip=0&$top=100", {
 				"value" : [
 					{"ID" : "0", "Name" : "Frederic Fall", "TEAM_ID" : "77"},
@@ -4268,7 +4270,7 @@ sap.ui.define([
 				}, {
 					"TEAM_ID" : "42"
 				})
-				.expectRequest("EMPLOYEES?$filter=(TEAM_ID%20eq%20'77')%20and%20ID%20eq%20'0'"
+				.expectRequest("EMPLOYEES?$filter=(TEAM_ID eq '77') and ID eq '0'"
 					+ "&$select=ID,Name,TEAM_ID", {"value" : []})
 				.expectChange("text", ["Jonathan Smith", "Peter Burke"]);
 
@@ -4415,7 +4417,7 @@ sap.ui.define([
 </FlexBox>';
 
 		this.expectRequest("EMPLOYEES('2')/EMPLOYEE_2_TEAM"
-				+ "?$expand=TEAM_2_EMPLOYEES($orderby=AGE%20desc)&$select=Name,Team_Id", {
+				+ "?$expand=TEAM_2_EMPLOYEES($orderby=AGE desc)&$select=Name,Team_Id", {
 				"Name" : "SAP NetWeaver Gateway Content",
 				"TEAM_2_EMPLOYEES" : [
 					{"AGE" : 32},
@@ -4460,7 +4462,7 @@ sap.ui.define([
 </Table>',
 			that = this;
 
-		this.expectRequest("EMPLOYEES?$orderby=Name&$select=AGE,ID,Name&$filter=AGE%20lt%2077"
+		this.expectRequest("EMPLOYEES?$orderby=Name&$select=AGE,ID,Name&$filter=AGE lt 77"
 				+ "&$skip=0&$top=100", {
 				"value" : [
 					{"Name" : "Frederic Fall"},
@@ -4473,7 +4475,7 @@ sap.ui.define([
 		return this.createView(assert, sView, createTeaBusiModel({autoExpandSelect : true}))
 			.then(function () {
 				that.expectRequest("EMPLOYEES?$orderby=Name&$select=AGE,ID,Name"
-						+ "&$filter=AGE%20gt%2042&$skip=0&$top=100", {
+						+ "&$filter=AGE gt 42&$skip=0&$top=100", {
 						"value" : [
 							{"Name" : "Frederic Fall"},
 							{"Name" : "Peter Burke"}
@@ -4537,7 +4539,7 @@ sap.ui.define([
 		return this.createView(assert, sView, createTeaBusiModel({autoExpandSelect : true}))
 			.then(function () {
 				that.expectRequest("TEAMS('2')/TEAM_2_EMPLOYEES?$orderby=Name&$select=ID,Name"
-						+ "&$filter=AGE%20gt%2042&$skip=0&$top=100", {
+						+ "&$filter=AGE gt 42&$skip=0&$top=100", {
 						"value" : [
 							{"Name" : "Frederic Fall"},
 							{"Name" : "Peter Burke"}
@@ -4565,7 +4567,7 @@ sap.ui.define([
 		</ColumnListItem>\
 	</Table>\
 </FlexBox>', {
-		"TEAMS('42')/TEAM_2_EMPLOYEES?$apply=filter(AGE%20lt%2042)&$select=ID,Name&$skip=0&$top=100" : {
+		"TEAMS('42')/TEAM_2_EMPLOYEES?$apply=filter(AGE lt 42)&$select=ID,Name&$skip=0&$top=100" : {
 			"value" : [
 				{"Name" : "Frederic Fall"},
 				{"Name" : "Peter Burke"}
@@ -4596,7 +4598,7 @@ sap.ui.define([
 					{"Team_Id" : "TEAM_01"}
 				]
 			})
-			.expectRequest("TEAMS('TEAM_01')/TEAM_2_EMPLOYEES?$apply=filter(AGE%20lt%2042)"
+			.expectRequest("TEAMS('TEAM_01')/TEAM_2_EMPLOYEES?$apply=filter(AGE lt 42)"
 				+ "&$select=ID,Name&$skip=0&$top=100", {
 				"value" : [
 					{"Name" : "Frederic Fall"},
@@ -4817,7 +4819,7 @@ sap.ui.define([
 
 				that.expectRequest({
 						method : "GET",
-						url : sUrlPrefix + "$orderby=Name%20desc&$skip=0&$top=100"
+						url : sUrlPrefix + "$orderby=Name desc&$skip=0&$top=100"
 					}, {
 						"value" : [mJonathan, mFrederic]
 					})
@@ -5099,7 +5101,7 @@ sap.ui.define([
 				.expectChange("text", ["0", "1", "2"]);
 
 			return this.createView(assert, sView, createSalesOrdersModel()).then(function () {
-				that.expectRequest("SalesOrderList?$filter=" + oFixture.request.replace(/ /g, "%20")
+				that.expectRequest("SalesOrderList?$filter=" + oFixture.request
 						+ "&$skip=0&$top=100", {
 						"value" : [
 							{"SalesOrderID" : "0"},
@@ -5388,22 +5390,22 @@ sap.ui.define([
 	//*********************************************************************************************
 	[{
 		binding : "CreatedAt ge 2017-05-23T00:00:00Z",
-		request : "CreatedAt%20ge%20datetime'2017-05-23T00:00:00'"
+		request : "CreatedAt ge datetime'2017-05-23T00:00:00'"
 	}, {
 		binding : "Note eq null",
-		request : "Note%20eq%20null"
+		request : "Note eq null"
 	}, {
 		binding : "2017-05-23T00:00:00Z ge CreatedAt",
-		request : "datetime'2017-05-23T00:00:00'%20ge%20CreatedAt"
+		request : "datetime'2017-05-23T00:00:00' ge CreatedAt"
 	}, {
 		binding : "Note eq null and 2017-05-23T00:00:00Z ge CreatedAt",
-		request : "Note%20eq%20null%20and%20datetime'2017-05-23T00:00:00'%20ge%20CreatedAt"
+		request : "Note eq null and datetime'2017-05-23T00:00:00' ge CreatedAt"
 	}, {
 		binding : "Note eq null or 2017-05-23T00:00:00Z ge CreatedAt",
-		request : "Note%20eq%20null%20or%20datetime'2017-05-23T00:00:00'%20ge%20CreatedAt"
+		request : "Note eq null or datetime'2017-05-23T00:00:00' ge CreatedAt"
 	}, {
 		binding : "Note eq null or not (2017-05-23T00:00:00Z ge CreatedAt)",
-		request : "Note%20eq%20null%20or%20not%20(datetime'2017-05-23T00:00:00'%20ge%20CreatedAt)"
+		request : "Note eq null or not (datetime'2017-05-23T00:00:00' ge CreatedAt)"
 	}].forEach(function (oFixture) {
 		// Scenario: test conversion of $filter for V2 Adapter
 		// Usage of service: /sap/opu/odata/IWBEP/GWSAMPLE_BASIC/
@@ -5540,7 +5542,7 @@ sap.ui.define([
 </t:Table>',
 			oModel = createTeaBusiModel({autoExpandSelect : true});
 
-		this.expectRequest("EMPLOYEES?$filter=AGE%20gt%2042&$select=ID,Name&$skip=0&$top=105", {
+		this.expectRequest("EMPLOYEES?$filter=AGE gt 42&$select=ID,Name&$skip=0&$top=105", {
 				"value" : [
 					{"Name" : "Frederic Fall"},
 					{"Name" : "Jonathan Smith"}
@@ -5729,7 +5731,7 @@ sap.ui.define([
 			.expectChange("id", ["1", "2", "3"]);
 
 		return this.createView(assert, sView).then(function () {
-			that.expectRequest("TEAMS('42')?$expand=TEAM_2_EMPLOYEES($filter=ID%20eq%20'2')", {
+			that.expectRequest("TEAMS('42')?$expand=TEAM_2_EMPLOYEES($filter=ID eq '2')", {
 					"TEAM_2_EMPLOYEES" : [{
 						"ID" : "2"
 					}]
@@ -6203,7 +6205,7 @@ sap.ui.define([
 
 			that.expectRequest("GetAvailableFlights?fromdate=datetime'2017-08-10T00:00:00'"
 					+ "&todate=datetime'2017-08-10T23:59:59'"
-					+ "&cityfrom='new%20york'&cityto='SAN%20FRANCISCO'", {
+					+ "&cityfrom='new york'&cityto='SAN FRANCISCO'", {
 					"d" : {
 						"results" : [{
 							"__metadata" : {
@@ -6643,7 +6645,7 @@ sap.ui.define([
 			that.expectRequest({
 					method : "PUT",
 					url : "UpdateAgencyPhoneNo?agencynum='00000061'"
-						+ "&telephone='%2B49%20(0)2102%2069555'"
+						+ "&telephone='%2B49 (0)2102 69555'"
 				}, {
 					"d" : {
 						"__metadata" : {
@@ -7318,8 +7320,8 @@ sap.ui.define([
 				.sort(new Sorter("CompanyName"))
 				.changeParameters({$filter : "BusinessPartnerID gt '0100000001'"});
 
-			that.expectRequest("BusinessPartnerList?$filter=BusinessPartnerRole%20eq%20'01'%20"
-				+ "and%20(BusinessPartnerID%20gt%20'0100000001')&$orderby=CompanyName"
+			that.expectRequest("BusinessPartnerList?$filter=BusinessPartnerRole eq '01' "
+				+ "and (BusinessPartnerID gt '0100000001')&$orderby=CompanyName"
 				+ "&$select=BusinessPartnerID&$skip=0&$top=100", {
 					value : [{
 						"BusinessPartnerID": "0100000002"
@@ -7867,7 +7869,7 @@ sap.ui.define([
 			]);
 		}).then(function () {
 			that.expectRequest("Equipments?"
-					+ "$filter=EQUIPMENT_2_PRODUCT/ID%20eq%2042&$skip=0&$top=100", {
+					+ "$filter=EQUIPMENT_2_PRODUCT/ID eq 42&$skip=0&$top=100", {
 					value : [{
 						"Name" : "Bar"
 					}]
@@ -7953,7 +7955,7 @@ sap.ui.define([
 		}).then(function () {
 
 			that.expectRequest("Equipments?$select=Category,ID,Name"
-					+ "&$filter=EQUIPMENT_2_PRODUCT/ID%20eq%2042&$skip=0&$top=105", {
+					+ "&$filter=EQUIPMENT_2_PRODUCT/ID eq 42&$skip=0&$top=105", {
 					value : [{
 						"Category" : "1",
 						"ID" : "2",
@@ -8022,7 +8024,7 @@ sap.ui.define([
 			that = this;
 
 		this.expectRequest("SalesOrderList?$apply=groupby((LifecycleStatus),aggregate(GrossAmount))"
-				+ "/orderby(LifecycleStatus%20desc)&$count=true&$skip=0&$top=3", {
+				+ "/orderby(LifecycleStatus desc)&$count=true&$skip=0&$top=3", {
 				"@odata.count" : "26",
 				"value" : [
 					{"GrossAmount" : 1, "LifecycleStatus" : "Z"},
@@ -8047,7 +8049,7 @@ sap.ui.define([
 
 			that.expectRequest("SalesOrderList?"
 					+ "$apply=groupby((LifecycleStatus),aggregate(GrossAmount))"
-					+ "/orderby(LifecycleStatus%20desc)&$count=true&$skip=7&$top=3", {
+					+ "/orderby(LifecycleStatus desc)&$count=true&$skip=7&$top=3", {
 					"@odata.count" : "26",
 					"value" : [
 						{"GrossAmount" : 7, "LifecycleStatus" : "T"},
@@ -8072,7 +8074,7 @@ sap.ui.define([
 
 			return that.waitForChanges(assert).then(function () {
 				that.expectRequest("SalesOrderList?$apply=groupby((LifecycleStatus))"
-						+ "/orderby(LifecycleStatus%20desc)&$count=true&$skip=7&$top=3", {
+						+ "/orderby(LifecycleStatus desc)&$count=true&$skip=7&$top=3", {
 						"@odata.count" : "26",
 						"value" : [
 							{"LifecycleStatus" : "T"},
@@ -8164,7 +8166,7 @@ sap.ui.define([
 				oGrandTotalRow["UI5__count@odata.type"] = "#Decimal";
 			}
 			this.expectRequest(sBasicPath + "/concat(aggregate(SalesNumber"
-					+ (bCount ? ",$count%20as%20UI5__count" : "") + "),top(0))", {
+					+ (bCount ? ",$count as UI5__count" : "") + "),top(0))", {
 					"value" : [oGrandTotalRow]
 				})
 				.expectRequest(sBasicPath + "/skip(1)/top(4)", {
@@ -8288,7 +8290,7 @@ sap.ui.define([
 			}
 			this.expectRequest(
 					sBasicPath + (bCount
-						? "/concat(aggregate($count%20as%20UI5__count),top(5))"
+						? "/concat(aggregate($count as UI5__count),top(5))"
 						: "/top(5)"),
 					{"value" : aValues})
 				.expectChange("count")
@@ -8392,9 +8394,9 @@ sap.ui.define([
 </t:Table>';
 
 		this.expectRequest("BusinessPartners?$apply=groupby((Region)"
-				+ ",aggregate(SalesAmount%20with%20sap.unit_sum%20as%20SalesAmountSum,SalesNumber))"
-				+ "/filter(SalesAmountSum%20gt%200)/orderby(SalesAmountSum%20asc)"
-				+ "/concat(aggregate(SalesAmountSum%20with%20sap.unit_sum%20as%20"
+				+ ",aggregate(SalesAmount with sap.unit_sum as SalesAmountSum,SalesNumber))"
+				+ "/filter(SalesAmountSum gt 0)/orderby(SalesAmountSum asc)"
+				+ "/concat(aggregate(SalesAmountSum with sap.unit_sum as "
 				+ "UI5grand__SalesAmountSum),top(4))", {
 				"value" : [{
 						"UI5grand__SalesAmountSum" : 351,
@@ -8470,9 +8472,9 @@ sap.ui.define([
 				oMinMaxElement["UI5__count@odata.type"] = "#Decimal";
 			}
 			this.expectRequest("SalesOrderList?$apply=aggregate(GrossAmount)"
-					+ "/concat(aggregate(GrossAmount%20with%20min%20as%20UI5min__GrossAmount,"
-					+ "GrossAmount%20with%20max%20as%20UI5max__GrossAmount"
-					+ (bCount ? ",$count%20as%20UI5__count" : "") + "),top(1))", {
+					+ "/concat(aggregate(GrossAmount with min as UI5min__GrossAmount,"
+					+ "GrossAmount with max as UI5max__GrossAmount"
+					+ (bCount ? ",$count as UI5__count" : "") + "),top(1))", {
 					"value" : [oMinMaxElement, {"GrossAmount" : 1}]
 				})
 				.expectChange("grossAmount", 1);
@@ -8645,8 +8647,8 @@ sap.ui.define([
 					name : "GrossAmount",
 					total : false
 				}],
-				sBasicPath = "SalesOrderList?$count=true&$filter=GrossAmount%20lt%2042"
-					+ "&$orderby=LifecycleStatus%20desc"
+				sBasicPath = "SalesOrderList?$count=true&$filter=GrossAmount lt 42"
+					+ "&$orderby=LifecycleStatus desc"
 					+ "&$apply=groupby((LifecycleStatus),aggregate(GrossAmount))",
 				sView = '\
 <Text id="count" text="{$count}"/>\
@@ -8782,9 +8784,9 @@ sap.ui.define([
 				return this.getContexts.apply(this, arguments);
 			});
 		this.expectRequest("EMPLOYEES?$apply=groupby((Name),aggregate(AGE))"
-				+ "/filter(AGE%20ge%2030)/orderby(AGE)"
-				+ "/concat(aggregate(AGE%20with%20min%20as%20UI5min__AGE,"
-				+ "AGE%20with%20max%20as%20UI5max__AGE,$count%20as%20UI5__count)"
+				+ "/filter(AGE ge 30)/orderby(AGE)"
+				+ "/concat(aggregate(AGE with min as UI5min__AGE,"
+				+ "AGE with max as UI5max__AGE,$count as UI5__count)"
 				+ ",skip(1)/top(3))", {
 				"value" : [{
 						// the server response may contain additional data for example @odata.id or
@@ -8821,7 +8823,7 @@ sap.ui.define([
 			that.expectRequest("EMPLOYEES?$apply=groupby((Name),aggregate(AGE))"
 					// Note: for consistency, we prefer filter() over $filter here
 					// (same for orderby() vs. $orderby and skip/top)
-					+ "/filter(AGE%20ge%2030)/orderby(AGE)/top(1)", {
+					+ "/filter(AGE ge 30)/orderby(AGE)/top(1)", {
 					"value" : [{
 						"ID" : "3",
 						"Name" : "John Field",
