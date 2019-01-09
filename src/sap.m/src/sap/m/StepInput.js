@@ -899,7 +899,7 @@ function(
 		};
 
 		StepInput.prototype._onmousewheel = function (oEvent) {
-			var bIsFocused = document.activeElement === this.$().getDomRef();
+			var bIsFocused = document.activeElement === this._getInput().getDomRef("inner");
 			if (bIsFocused) {
 				oEvent.preventDefault();
 				var oOriginalEvent = oEvent.originalEvent,
