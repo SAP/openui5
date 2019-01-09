@@ -5,7 +5,7 @@
 
 .sapFDynamicPage {
 	.sapFDynamicPageContent {
-		background: @sapUiGlobalBackgroundColor;
+		background: @sapUiBaseBG;
 	}
 
 	// DynamicPageTitle and Toggle Header Visual Indicator hover state
@@ -18,7 +18,7 @@
 
 		.sapFDynamicPageTitleTranslucent:hover,
 		&.sapFDynamicPageTitleForceHovered .sapFDynamicPageTitleTranslucent {
-			.title-hover(lighten(@sapUiObjectHeaderBackground, 10));
+			.title-hover(@sapUiObjectHeaderBackground);
 		}
 
 		.sapFDynamicPageTitleTransparent:hover,
@@ -26,32 +26,39 @@
 			.title-hover(transparent);
 		}
 
-		&.sapFDynamicPageTitleForceHovered {
-			.sapFDynamicPageToggleHeaderIndicator {
-				.sapMBtnInner {
-					background-color: darken(@sapUiObjectHeaderBorderColor, 3);
-				}
-			}
+	}
+}
+
+.sapFDynamicPageToggleHeaderIndicator,
+.sapFDynamicPage:not(.sapFDynamicPageTitleClickEnabled) .sapFDynamicPageHeaderPinButton {
+	margin-left: -0.75rem;
+}
+
+.sapFDynamicPageHeaderPinnable .sapFDynamicPageToggleHeaderIndicator {
+	margin-left: -1.75rem;
+}
+
+.sapFDynamicPageToggleHeaderIndicator,
+.sapFDynamicPageHeaderPinButton {
+	.sapMBtnInner {
+		border-color: @sapUiObjectHeaderBorderColor;
+		min-width: 1.5rem;
+		width: 1.5rem;
+		height: 1.5rem;
+		bottom: 0.675rem;
+
+		.sapMBtnIcon {
+			line-height: 1.5rem;
 		}
 	}
+}
 
-	// Toggle Header Visual Indicator
-	.sapFDynamicPageToggleHeaderIndicator.sapMBtn {
-
-		& > .sapMBtnInner {
-			border: none;
-			background-color: @sapUiObjectHeaderBorderColor;
-		}
-
-		// hover state
-		&:hover > .sapMBtnInner.sapMBtnHoverable {
-			background-color: darken(@sapUiObjectHeaderBorderColor, 3);
-		}
-
-		// active state
-		&:focus > .sapMBtnInner.sapMFocusable.sapMBtnActive {
-			background: @sapUiSelected;
-			color: @sapUiButtonActiveBackground;
+/* Compact */
+.sapUiSizeCompact {
+	.sapFDynamicPageToggleHeaderIndicator,
+	.sapFDynamicPageHeaderPinButton {
+		.sapMBtnInner {
+			bottom: 0.175rem;
 		}
 	}
 }
@@ -68,5 +75,5 @@
 }
 
 .title-hover(@backgroundColor) {
-	background-color: darken(@backgroundColor, 3);
+	background-color: darken(@backgroundColor, 2);
 }
