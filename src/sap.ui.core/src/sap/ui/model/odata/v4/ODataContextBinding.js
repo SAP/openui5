@@ -887,7 +887,12 @@ sap.ui.define([
 			return SyncPromise.resolve();
 		}
 
-		this.createReadGroupLock(sGroupId, this.isRefreshable());
+		if (this.isRootBindingSuspended()) {
+			this.refreshSuspended(sGroupId);
+			return this.refreshDependentBindings(sGroupId, bCheckUpdate);
+		}
+
+		this.createReadGroupLock(sGroupId, this.isRoot());
 		return this.oCachePromise.then(function (oCache) {
 			var oReadGroupLock = that.oReadGroupLock;
 
@@ -995,6 +1000,10 @@ sap.ui.define([
 	 * @private
 	 */
 	ODataContextBinding.prototype.resumeInternal = function (bCheckUpdate) {
+		var sChangeReason = this.sResumeChangeReason;
+
+		this.sResumeChangeReason = ChangeReason.Change;
+
 		if (!this.oOperation) {
 			this.mAggregatedQueryOptions = {};
 			this.bAggregatedQueryOptionsInitial = true;
@@ -1003,7 +1012,7 @@ sap.ui.define([
 			this.getDependentBindings().forEach(function (oDependentBinding) {
 				oDependentBinding.resumeInternal(bCheckUpdate);
 			});
-			this._fireChange({reason : ChangeReason.Change});
+			this._fireChange({reason : sChangeReason});
 		} else if (this.oOperation.bAction === false) {
 			// ignore returned promise, error handling takes place in execute
 			this.execute();

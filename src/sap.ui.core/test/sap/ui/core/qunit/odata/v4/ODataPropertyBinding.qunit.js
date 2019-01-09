@@ -1733,6 +1733,7 @@ sap.ui.define([
 			oCheckUpdatePromise = {},
 			oContext = Context.create(this.oModel, {}, "/EMPLOYEES/42");
 
+		oBindingMock.expects("isRootBindingSuspended").twice().withExactArgs().returns(false);
 		this.mock(ODataPropertyBinding.prototype).expects("fetchCache").thrice()
 			.withExactArgs(oContext)
 			.callsFake(function () {
@@ -1749,6 +1750,21 @@ sap.ui.define([
 
 		// code under test
 		assert.strictEqual(oBinding.refreshInternal("myGroup", false).getResult(), undefined);
+	});
+
+	//*********************************************************************************************
+	QUnit.test("refreshInternal: suspended", function (assert) {
+		var oBinding = this.oModel.bindProperty("NAME"),
+			oBindingMock = this.mock(oBinding);
+
+		oBindingMock.expects("isRootBindingSuspended").withExactArgs().returns(true);
+		oBindingMock.expects("fetchCache").never();
+		oBindingMock.expects("checkUpdate").never();
+
+		// code under test
+		assert.strictEqual(oBinding.refreshInternal("myGroup", true).isFulfilled(), true);
+
+		assert.strictEqual(oBinding.sResumeChangeReason, ChangeReason.Refresh);
 	});
 
 	//*********************************************************************************************
@@ -1830,31 +1846,6 @@ sap.ui.define([
 		oPromise = oBinding.doFetchQueryOptions();
 
 		assert.deepEqual(oPromise.getResult(), {});
-	});
-
-	//*********************************************************************************************
-	[{
-		path : "/absolute",
-		context : undefined,
-		result : true
-	}, {
-		path : "relative",
-		context : undefined,
-		result : false
-	}, {
-		path : "quasiAbsolute",
-		context : {getPath : function () {}},
-		result : true
-	}, {
-		path : "relativeToV4Context",
-		context : {getPath : function () {}, getBinding : function () {}},
-		result : false
-	}].forEach(function (oFixture, i) {
-		QUnit.test("isRoot, " + i, function (assert) {
-			var oBinding = this.oModel.bindProperty(oFixture.path, oFixture.context);
-
-			assert.strictEqual(!!oBinding.isRoot(), oFixture.result);
-		});
 	});
 
 	//*********************************************************************************************
@@ -1987,13 +1978,18 @@ sap.ui.define([
 		QUnit.test("resumeInternal: bCheckUpdate=" + bCheckUpdate, function (assert) {
 			var oContext = Context.create(this.oModel, {}, "/ProductList('42')"),
 				oBinding = this.oModel.bindProperty("Category", oContext),
-				oBindingMock = this.mock(oBinding);
+				oBindingMock = this.mock(oBinding),
+				sResumeChangeReason = {/*change or refresh*/};
 
+			oBinding.sResumeChangeReason = sResumeChangeReason;
 			oBindingMock.expects("fetchCache").withExactArgs(sinon.match.same(oContext));
-			oBindingMock.expects("checkUpdate").exactly(bCheckUpdate ? 1 : 0).withExactArgs();
+			oBindingMock.expects("checkUpdate").exactly(bCheckUpdate ? 1 : 0)
+				.withExactArgs(false, sinon.match.same(sResumeChangeReason));
 
 			// code under test
 			oBinding.resumeInternal(bCheckUpdate);
+
+			assert.strictEqual(oBinding.sResumeChangeReason, ChangeReason.Change);
 		});
 	});
 

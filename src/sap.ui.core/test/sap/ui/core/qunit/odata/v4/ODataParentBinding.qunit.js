@@ -80,7 +80,6 @@ sap.ui.define([
 		assert.deepEqual(oBinding.aChildCanUseCachePromises, []);
 		assert.strictEqual(oBinding.iPatchCounter, 0);
 		assert.strictEqual(oBinding.bPatchSuccess, true);
-		assert.strictEqual(oBinding.sResumeChangeReason, ChangeReason.Change);
 
 		// members introduced by ODataBinding; check inheritance
 		assert.ok(oBinding.hasOwnProperty("mCacheByResourcePath"));
@@ -2610,26 +2609,31 @@ sap.ui.define([
 	});
 
 	//*********************************************************************************************
-	QUnit.test("setResumeChangeReason", function (assert) {
+	QUnit.test("refreshSuspended", function (assert) {
 		var oBinding = new ODataParentBinding();
 
-		// code under test
-		oBinding.setResumeChangeReason(ChangeReason.Change);
-
-		assert.strictEqual(oBinding.sResumeChangeReason, ChangeReason.Change);
+		this.mock(oBinding).expects("getGroupId").never();
+		this.mock(oBinding).expects("setResumeChangeReason").withExactArgs(ChangeReason.Refresh);
 
 		// code under test
-		oBinding.setResumeChangeReason(ChangeReason.Sort);
-		oBinding.setResumeChangeReason(ChangeReason.Change);
+		oBinding.refreshSuspended();
+	});
 
-		assert.strictEqual(oBinding.sResumeChangeReason, ChangeReason.Sort);
+	//*********************************************************************************************
+	QUnit.test("refreshSuspended: with group ID", function (assert) {
+		var oBinding = new ODataParentBinding();
+
+		this.mock(oBinding).expects("getGroupId").thrice().withExactArgs().returns("myGroup");
+		this.mock(oBinding).expects("setResumeChangeReason").withExactArgs(ChangeReason.Refresh);
 
 		// code under test
-		oBinding.setResumeChangeReason(ChangeReason.Filter);
-		oBinding.setResumeChangeReason(ChangeReason.Sort);
-		oBinding.setResumeChangeReason(ChangeReason.Change);
+		oBinding.refreshSuspended("myGroup");
 
-		assert.strictEqual(oBinding.sResumeChangeReason, ChangeReason.Filter);
+		assert.throws(function () {
+			// code under test
+			oBinding.refreshSuspended("otherGroup");
+		}, new Error(oBinding + ": Cannot refresh a suspended binding with group ID 'otherGroup' "
+			+ "(own group ID is 'myGroup')"));
 	});
 });
 //TODO Fix issue with ODataModel.integration.qunit

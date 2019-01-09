@@ -450,17 +450,6 @@ sap.ui.define([
 	};
 
 	/**
-	 * Returns whether the binding is absolute or quasi-absolute.
-	 *
-	 * @returns {boolean} - Whether the binding is absolute or quasi-absolute
-	 *
-	 * @private
-	 */
-	ODataPropertyBinding.prototype.isRoot = function () {
-		return !this.bRelative || this.oContext && !this.oContext.getBinding;
-	};
-
-	/**
 	 * Change handler for the cache. The cache calls this method when the value is changed.
 	 *
 	 * @param {any} vValue
@@ -477,6 +466,10 @@ sap.ui.define([
 	 * @see sap.ui.model.odata.v4.ODataBinding#refreshInternal
 	 */
 	ODataPropertyBinding.prototype.refreshInternal = function (sGroupId, bCheckUpdate) {
+		if (this.isRootBindingSuspended()) {
+			this.sResumeChangeReason = ChangeReason.Refresh;
+			return SyncPromise.resolve();
+		}
 		this.fetchCache(this.oContext);
 		return bCheckUpdate
 			? this.checkUpdate(true, ChangeReason.Refresh, sGroupId)
@@ -594,8 +587,10 @@ sap.ui.define([
 	ODataPropertyBinding.prototype.resumeInternal = function (bCheckUpdate) {
 		this.fetchCache(this.oContext);
 		if (bCheckUpdate) {
-			this.checkUpdate();
+			this.checkUpdate(false, this.sResumeChangeReason);
 		}
+		// the change event is fired asynchronously, so it is safe to reset here
+		this.sResumeChangeReason = ChangeReason.Change;
 	};
 
 	/**

@@ -6,11 +6,13 @@ sap.ui.define([
 	"sap/base/Log",
 	"sap/ui/base/SyncPromise",
 	"sap/ui/model/Binding",
+	"sap/ui/model/ChangeReason",
 	"sap/ui/model/odata/v4/Context",
 	"sap/ui/model/odata/v4/ODataBinding",
 	"sap/ui/model/odata/v4/SubmitMode",
 	"sap/ui/model/odata/v4/lib/_Helper"
-], function (jQuery, Log, SyncPromise, Binding, Context, asODataBinding, SubmitMode, _Helper) {
+], function (jQuery, Log, SyncPromise, Binding, ChangeReason, Context, asODataBinding, SubmitMode,
+		_Helper) {
 	/*global QUnit, sinon */
 	/*eslint max-nested-callbacks: 0, no-warning-comments: 0 */
 	"use strict";
@@ -63,6 +65,7 @@ sap.ui.define([
 		//TODO add missing properties introduced by oDataBinding
 		assert.ok(oBinding.hasOwnProperty("mCacheByResourcePath"));
 		assert.strictEqual(oBinding.mCacheByResourcePath, undefined);
+		assert.strictEqual(oBinding.sResumeChangeReason, ChangeReason.Change);
 	});
 
 	//*********************************************************************************************
@@ -175,7 +178,7 @@ sap.ui.define([
 				refreshInternal : function () {}
 			});
 
-		this.mock(oBinding).expects("isRefreshable").withExactArgs().returns(true);
+		this.mock(oBinding).expects("isRoot").withExactArgs().returns(true);
 		this.mock(oBinding).expects("hasPendingChanges").returns(false);
 		this.mock(oBinding.oModel).expects("checkGroupId");
 		this.mock(oBinding).expects("refreshInternal").withExactArgs("groupId", true);
@@ -187,7 +190,7 @@ sap.ui.define([
 	QUnit.test("refresh: not refreshable", function (assert) {
 		var oBinding = new ODataBinding();
 
-		this.mock(oBinding).expects("isRefreshable").withExactArgs().returns(false);
+		this.mock(oBinding).expects("isRoot").withExactArgs().returns(false);
 
 		assert.throws(function () {
 			oBinding.refresh();
@@ -198,7 +201,7 @@ sap.ui.define([
 	QUnit.test("refresh: pending changes", function (assert) {
 		var oBinding = new ODataBinding();
 
-		this.mock(oBinding).expects("isRefreshable").withExactArgs().returns(true);
+		this.mock(oBinding).expects("isRoot").withExactArgs().returns(true);
 		this.mock(oBinding).expects("hasPendingChanges").returns(true);
 
 		assert.throws(function () {
@@ -215,7 +218,7 @@ sap.ui.define([
 			}),
 			oError = new Error();
 
-		this.mock(oBinding).expects("isRefreshable").withExactArgs().returns(true);
+		this.mock(oBinding).expects("isRoot").withExactArgs().returns(true);
 		this.mock(oBinding).expects("hasPendingChanges").returns(false);
 		this.mock(oBinding.oModel).expects("checkGroupId").withExactArgs("$invalid").throws(oError);
 
@@ -225,54 +228,31 @@ sap.ui.define([
 	});
 
 	//*********************************************************************************************
-	[false, true].forEach(function (bSuspended) {
-		QUnit.test("isRefreshable: absolute, bSuspended = " + bSuspended, function (assert) {
+	[{
+		path : "/absolute",
+		context : undefined,
+		result : true
+	}, {
+		path : "relative",
+		context : undefined,
+		result : false
+	}, {
+		path : "quasiAbsolute",
+		context : {getPath : function () {}},
+		result : true
+	}, {
+		path : "relativeToV4Context",
+		context : {getPath : function () {}, getBinding : function () {}},
+		result : false
+	}].forEach(function (oFixture, i) {
+		QUnit.test("isRoot, " + i, function (assert) {
 			var oBinding = new ODataBinding({
-					bRelative : false
-				});
+				oContext : oFixture.context,
+				sPath : oFixture.path,
+				bRelative : !oFixture.path.startsWith("/")
+			});
 
-			this.mock(oBinding).expects("isSuspended").withExactArgs().returns(bSuspended);
-			assert.strictEqual(oBinding.isRefreshable(), !bSuspended);
-		});
-	});
-
-	//*********************************************************************************************
-	[false, true].forEach(function (bSuspended) {
-		QUnit.test("isRefreshable: unresolved, bSuspended = " + bSuspended, function (assert) {
-			var oBinding = new ODataBinding({
-					bRelative : true
-				});
-
-			assert.strictEqual(oBinding.isRefreshable(), undefined);
-		});
-
-	});
-
-	//*********************************************************************************************
-	[false, true].forEach(function (bSuspended) {
-		QUnit.test("isRefreshable: V4 context, bSuspended = " + bSuspended, function (assert) {
-			var oBinding = new ODataBinding({
-					bRelative : true,
-					oContext : {
-						getBinding : function () {}
-					}
-				});
-
-			assert.strictEqual(oBinding.isRefreshable(), false);
-		});
-
-	});
-
-	//*********************************************************************************************
-	[false, true].forEach(function (bSuspended) {
-		QUnit.test("isRefreshable: quasi-absolute, bSuspended = " + bSuspended, function (assert) {
-			var oBinding = new ODataBinding({
-					bRelative : true,
-					oContext : {}
-				});
-
-			this.mock(oBinding).expects("isSuspended").withExactArgs().returns(bSuspended);
-			assert.strictEqual(oBinding.isRefreshable(), !bSuspended);
+			assert.strictEqual(!!oBinding.isRoot(), oFixture.result);
 		});
 	});
 
@@ -2001,5 +1981,36 @@ sap.ui.define([
 
 		// code under test - with root binding
 		assert.strictEqual(oBinding.isRootBindingSuspended(), bResult);
+	});
+
+	//*********************************************************************************************
+	QUnit.test("setResumeChangeReason", function (assert) {
+		var oBinding = new ODataBinding();
+
+		// code under test
+		oBinding.setResumeChangeReason(ChangeReason.Change);
+
+		assert.strictEqual(oBinding.sResumeChangeReason, ChangeReason.Change);
+
+		// code under test
+		oBinding.setResumeChangeReason(ChangeReason.Refresh);
+		oBinding.setResumeChangeReason(ChangeReason.Change);
+
+		assert.strictEqual(oBinding.sResumeChangeReason, ChangeReason.Refresh);
+
+		// code under test
+		oBinding.setResumeChangeReason(ChangeReason.Sort);
+		oBinding.setResumeChangeReason(ChangeReason.Refresh);
+		oBinding.setResumeChangeReason(ChangeReason.Change);
+
+		assert.strictEqual(oBinding.sResumeChangeReason, ChangeReason.Sort);
+
+		// code under test
+		oBinding.setResumeChangeReason(ChangeReason.Filter);
+		oBinding.setResumeChangeReason(ChangeReason.Sort);
+		oBinding.setResumeChangeReason(ChangeReason.Refresh);
+		oBinding.setResumeChangeReason(ChangeReason.Change);
+
+		assert.strictEqual(oBinding.sResumeChangeReason, ChangeReason.Filter);
 	});
 });

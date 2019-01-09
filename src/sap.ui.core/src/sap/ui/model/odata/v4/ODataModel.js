@@ -1206,7 +1206,8 @@ sap.ui.define([
 	 * @param {string} [sGroupId]
 	 *   The group ID to be used for refresh; valid values are <code>undefined</code>, '$auto',
 	 *   '$auto.*', '$direct' or application group IDs as specified in
-	 *   {@link sap.ui.model.odata.v4.ODataModel}
+	 *   {@link sap.ui.model.odata.v4.ODataModel}. It is ignored for suspended bindings, because
+	 *   resume uses the binding's group ID
 	 * @throws {Error}
 	 *   If the given group ID is invalid or if there are pending changes, see
 	 *   {@link #hasPendingChanges}
@@ -1222,9 +1223,12 @@ sap.ui.define([
 	ODataModel.prototype.refresh = function (sGroupId) {
 		this.checkGroupId(sGroupId);
 
+		// Note: aBindings contains all bindings with change listeners (owned by Model)
 		this.aBindings.slice().forEach(function (oBinding) {
-			if (oBinding.isRefreshable()) {
-				oBinding.refresh(sGroupId);
+			if (oBinding.isRoot()) {
+				// ignore the group ID for suspended bindings to avoid mismatches and errors; they
+				// refresh via resume with their own group ID anyway
+				oBinding.refresh(oBinding.isSuspended() ? undefined : sGroupId);
 			}
 		});
 	};

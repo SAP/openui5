@@ -459,7 +459,7 @@ sap.ui.define([
 			var sGroupId;
 
 			that.iMaxLength += 1;
-			if (!bSkipRefresh && that.isRefreshable()) {
+			if (!bSkipRefresh && that.isRoot()) {
 				sGroupId = that.getGroupId();
 				if (!that.oModel.isDirectGroup(sGroupId) && !that.oModel.isAutoGroup(sGroupId)) {
 					sGroupId = "$auto";
@@ -1434,13 +1434,7 @@ sap.ui.define([
 		var aContexts = this.aContexts, // keep it, because reset sets a new, empty array
 			that = this;
 
-		this.createReadGroupLock(sGroupId, this.isRefreshable());
-		return this.oCachePromise.then(function (oCache) {
-			if (oCache) {
-				that.removeCachesAndMessages();
-				that.fetchCache(that.oContext);
-			}
-			that.reset(ChangeReason.Refresh);
+		function refreshDependentBindings() {
 			// Do not use this.getDependentBindings() because this still contains the children of
 			// the -1 context which will not survive.
 			// The array may be sparse, but forEach skips the gaps and the -1
@@ -1454,6 +1448,22 @@ sap.ui.define([
 					oDependentBinding.refreshInternal(sGroupId, false);
 				});
 			});
+		}
+
+		if (this.isRootBindingSuspended()) {
+			this.refreshSuspended(sGroupId);
+			refreshDependentBindings();
+			return SyncPromise.resolve();
+		}
+
+		this.createReadGroupLock(sGroupId, this.isRoot());
+		return this.oCachePromise.then(function (oCache) {
+			if (oCache) {
+				that.removeCachesAndMessages();
+				that.fetchCache(that.oContext);
+			}
+			that.reset(ChangeReason.Refresh);
+			refreshDependentBindings();
 		});
 	};
 
@@ -1623,6 +1633,8 @@ sap.ui.define([
 			sChangeReason = this.sResumeChangeReason;
 
 		this.sResumeChangeReason = ChangeReason.Change;
+
+		this.removeCachesAndMessages();
 		this.reset();
 		this.fetchCache(this.oContext);
 		aBindings.forEach(function (oDependentBinding) {
@@ -1631,6 +1643,11 @@ sap.ui.define([
 			oDependentBinding.resumeInternal(false);
 		});
 		this._fireChange({reason : sChangeReason});
+
+		// Update after the change event, otherwise $count is fetched before the request
+		this.oModel.getDependentBindings(this.oHeaderContext).forEach(function (oBinding) {
+			oBinding.checkUpdate();
+		});
 	};
 
 	/**

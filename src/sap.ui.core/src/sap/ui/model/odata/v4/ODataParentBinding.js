@@ -36,8 +36,6 @@ sap.ui.define([
 		this.iPatchCounter = 0;
 		// whether all sent PATCHes have been successfully processed
 		this.bPatchSuccess = true;
-		// change reason to be used when the binding is resumed
-		this.sResumeChangeReason = ChangeReason.Change;
 	}
 
 	asODataBinding(ODataParentBinding.prototype);
@@ -759,7 +757,9 @@ sap.ui.define([
 	 * @param {boolean} [bCheckUpdate]
 	 *   If <code>true</code>, a property binding is expected to check for updates.
 	 * @returns {sap.ui.base.SyncPromise}
-	 *   A promise resolving when all dependent bindings are refreshed
+	 *   A promise resolving when all dependent bindings are refreshed; it is rejected if the
+	 *   binding's root binding is suspended and a group ID different from the binding's group ID is
+	 *   given
 	 *
 	 * @private
 	 */
@@ -782,6 +782,24 @@ sap.ui.define([
 	};
 
 	/**
+	 * Refreshes the binding; expects it to be suspended.
+	 *
+	 * @param {string} sGroupId
+	 *   The group ID to be used for the refresh
+	 * @throws {Error}
+	 *   If a group ID different from the binding's group ID is given
+
+	 * @private
+	 */
+	ODataParentBinding.prototype.refreshSuspended = function (sGroupId) {
+		if (sGroupId && sGroupId !== this.getGroupId()) {
+			throw new Error(this + ": Cannot refresh a suspended binding with group ID '"
+				+ sGroupId  + "' (own group ID is '" + this.getGroupId() + "')");
+		}
+		this.setResumeChangeReason(ChangeReason.Refresh);
+	};
+
+	/**
 	 * Loads side effects for the given context of this binding.
 	 *
 	 * @param {string} sGroupId
@@ -796,7 +814,8 @@ sap.ui.define([
 	 *   A promise resolving without a defined result, or rejected with an error if loading of side
 	 *   effects fails
 	 * @throws {Error}
-	 *   If this binding does not use own service data requests
+	 *   If this binding does not use own service data requests or if the binding's root binding is
+	 *   suspended and the given group ID is not the binding's group
 	 *
 	 * @abstract
 	 * @function
@@ -884,22 +903,6 @@ sap.ui.define([
 	ODataParentBinding.prototype.selectKeyProperties = function (mQueryOptions, sMetaPath) {
 		_Helper.selectKeyProperties(mQueryOptions, sMetaPath,
 			this.oModel.oRequestor.getModelInterface().fetchMetadata);
-	};
-
-	/**
-	 * Sets the change reason that {@link #resume} will fire. In case there are multiple changes,
-	 * the "strongest" change reason wins: Filter > Sort > Change.
-	 *
-	 * @param {sap.ui.model.ChangeReason} sChangeReason
-	 *   The change reason
-	 *
-	 * @private
-	 */
-	ODataParentBinding.prototype.setResumeChangeReason = function (sChangeReason) {
-		if (sChangeReason === ChangeReason.Sort && this.sResumeChangeReason !== ChangeReason.Filter
-				|| sChangeReason === ChangeReason.Filter) {
-			this.sResumeChangeReason = sChangeReason;
-		}
 	};
 
 	/**

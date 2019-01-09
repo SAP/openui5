@@ -1676,6 +1676,7 @@ sap.ui.define([
 		oBinding = this.bindList("TEAMS", this.oModel.createBindingContext("/"), undefined,
 			undefined, {$$groupId : "group"});
 
+		this.mock(oBinding).expects("isRootBindingSuspended").withExactArgs().returns(false);
 		this.mock(oBinding).expects("createReadGroupLock").withExactArgs("myGroup", true);
 
 		//code under test
@@ -1703,6 +1704,7 @@ sap.ui.define([
 			{$$groupId : "group"});
 
 		oCache = oCache1;
+		this.mock(oBinding).expects("isRootBindingSuspended").withExactArgs().returns(false);
 		this.mock(oBinding).expects("createReadGroupLock").withExactArgs("myGroup", false);
 		this.mock(oBinding).expects("removeCachesAndMessages").withExactArgs();
 		this.mock(oBinding).expects("reset").withExactArgs(ChangeReason.Refresh);
@@ -1729,6 +1731,7 @@ sap.ui.define([
 		oBinding.getContexts(0, 10);
 
 		return oReadPromise.then(function () {
+			that.mock(oBinding).expects("isRootBindingSuspended").withExactArgs().returns(false);
 			that.mock(oBinding).expects("reset").withExactArgs(ChangeReason.Refresh);
 
 			//code under test
@@ -1737,48 +1740,59 @@ sap.ui.define([
 	});
 
 	//*********************************************************************************************
-	QUnit.test("refreshInternal: dependent bindings", function (assert) {
-		var oBinding,
-			oCache = {read : function () {}},
-			oChild0 = {refreshInternal : function () {}},
-			oChild1 = {refreshInternal : function () {}},
-			oChild2 = {refreshInternal : function () {}},
-			oCacheMock = this.mock(oCache),
-			oModelMock = this.mock(this.oModel),
-			oReadPromise1 = createResult(1, 0),
-			oReadPromise2 = createResult(1, 2),
-			that = this;
+	[false, true].forEach(function (bSuspended) {
+		var sTitle = "refreshInternal: dependent bindings, suspended=" + bSuspended;
 
-		this.mock(ODataListBinding.prototype).expects("fetchCache").atLeast(1)
-			.withExactArgs(undefined)
-			.callsFake(function () {
-				this.oCachePromise = SyncPromise.resolve(oCache);
+		QUnit.test(sTitle, function (assert) {
+			var oBinding,
+				oCache = {read : function () {}},
+				oChild0 = {refreshInternal : function () {}},
+				oChild1 = {refreshInternal : function () {}},
+				oChild2 = {refreshInternal : function () {}},
+				oCacheMock = this.mock(oCache),
+				oModelMock = this.mock(this.oModel),
+				oReadPromise1 = createResult(1, 0),
+				oReadPromise2 = createResult(1, 2),
+				that = this;
+
+			this.mock(ODataListBinding.prototype).expects("fetchCache").atLeast(1)
+				.withExactArgs(undefined)
+				.callsFake(function () {
+					this.oCachePromise = SyncPromise.resolve(oCache);
+				});
+			oBinding = this.bindList("/EMPLOYEES", undefined, undefined, undefined,
+				{$$groupId : "myGroup"});
+			oCacheMock.expects("read").withArgs(0, 1).returns(oReadPromise1);
+			oCacheMock.expects("read").withArgs(2, 1).returns(oReadPromise2);
+
+			oBinding.getContexts(0, 1);
+			oBinding.getContexts(2, 1);
+			oBinding.aContexts[-1] = {}; // a -1 context must not be refreshed
+
+			return Promise.all([oReadPromise1, oReadPromise2]).then(function () {
+				var aContexts = oBinding.aContexts;
+
+				that.mock(oBinding).expects("isRootBindingSuspended").withExactArgs()
+					.returns(bSuspended);
+				that.mock(oBinding).expects("refreshSuspended").exactly(bSuspended ? 1 : 0)
+					.withExactArgs("myGroup");
+				that.mock(oBinding).expects("createReadGroupLock").exactly(bSuspended ? 0 : 1)
+					.withExactArgs("myGroup", true);
+				that.mock(oBinding).expects("reset").exactly(bSuspended ? 0 : 1)
+					.withExactArgs(ChangeReason.Refresh);
+				oModelMock.expects("getDependentBindings")
+					.withExactArgs(sinon.match.same(aContexts[0]))
+					.returns([oChild0, oChild1]);
+				oModelMock.expects("getDependentBindings")
+					.withExactArgs(sinon.match.same(aContexts[2]))
+					.returns([oChild2]);
+				that.mock(oChild0).expects("refreshInternal").withExactArgs("myGroup", false);
+				that.mock(oChild1).expects("refreshInternal").withExactArgs("myGroup", false);
+				that.mock(oChild2).expects("refreshInternal").withExactArgs("myGroup", false);
+
+				//code under test
+				return oBinding.refreshInternal("myGroup");
 			});
-		oBinding = this.bindList("/EMPLOYEES");
-		oCacheMock.expects("read").withArgs(0, 1).returns(oReadPromise1);
-		oCacheMock.expects("read").withArgs(2, 1).returns(oReadPromise2);
-
-		oBinding.getContexts(0, 1);
-		oBinding.getContexts(2, 1);
-		oBinding.aContexts[-1] = {}; // a -1 context must not be refreshed
-
-		return Promise.all([oReadPromise1, oReadPromise2]).then(function () {
-			var aContexts = oBinding.aContexts;
-
-			that.mock(oBinding).expects("createReadGroupLock").withExactArgs("myGroup", true);
-			that.mock(oBinding).expects("reset").withExactArgs(ChangeReason.Refresh);
-			oModelMock.expects("getDependentBindings")
-				.withExactArgs(sinon.match.same(aContexts[0]))
-				.returns([oChild0, oChild1]);
-			oModelMock.expects("getDependentBindings")
-				.withExactArgs(sinon.match.same(aContexts[2]))
-				.returns([oChild2]);
-			that.mock(oChild0).expects("refreshInternal").withExactArgs("myGroup", false);
-			that.mock(oChild1).expects("refreshInternal").withExactArgs("myGroup", false);
-			that.mock(oChild2).expects("refreshInternal").withExactArgs("myGroup", false);
-
-			//code under test
-			return oBinding.refreshInternal("myGroup");
 		});
 	});
 
@@ -5006,36 +5020,47 @@ sap.ui.define([
 
 	//*********************************************************************************************
 	QUnit.test("resumeInternal", function (assert) {
-		var sChangeReason = {/*Filter,Sort,Change*/},
+		var sChangeReason = {/*Filter,Sort,Refresh,Change*/},
 			oContext = Context.create(this.oModel, {}, "/TEAMS"),
 			oBinding = this.bindList("TEAM_2_EMPLOYEES", oContext),
 			oBindingMock = this.mock(oBinding),
 			oDependent0 = {resumeInternal : function () {}},
 			oDependent1 = {resumeInternal : function () {}},
+			oDependent2 = {checkUpdate : function () {}},
+			oDependent3 = {checkUpdate : function () {}},
 			oFetchCacheExpectation,
 			oFireChangeExpectation,
-			oGetDependentBindingsExpectation,
+			oGetDependentBindingsExpectation1,
+			oGetDependentBindingsExpectation2,
 			oResetExpectation;
 
 		oBinding.sResumeChangeReason = sChangeReason;
+		oBindingMock.expects("removeCachesAndMessages").withExactArgs();
 		oResetExpectation = oBindingMock.expects("reset").withExactArgs();
 		oFetchCacheExpectation = oBindingMock.expects("fetchCache")
 			.withExactArgs(sinon.match.same(oContext));
-		oGetDependentBindingsExpectation = oBindingMock.expects("getDependentBindings")
+		oGetDependentBindingsExpectation1 = oBindingMock.expects("getDependentBindings")
 			.withExactArgs()
 			.returns([oDependent0, oDependent1]);
 		this.mock(oDependent0).expects("resumeInternal").withExactArgs(false);
 		this.mock(oDependent1).expects("resumeInternal").withExactArgs(false);
 		oFireChangeExpectation = oBindingMock.expects("_fireChange")
 			.withExactArgs({reason : sinon.match.same(sChangeReason)});
+		oGetDependentBindingsExpectation2 = this.mock(this.oModel)
+			.expects("getDependentBindings")
+			.withExactArgs(sinon.match.same(oBinding.oHeaderContext))
+			.returns([oDependent2, oDependent3]);
+		this.mock(oDependent2).expects("checkUpdate").withExactArgs();
+		this.mock(oDependent3).expects("checkUpdate").withExactArgs();
 
 		// code under test
 		oBinding.resumeInternal();
 
 		assert.strictEqual(oBinding.sResumeChangeReason, ChangeReason.Change);
-		assert.ok(oResetExpectation.calledAfter(oGetDependentBindingsExpectation));
+		assert.ok(oResetExpectation.calledAfter(oGetDependentBindingsExpectation1));
 		assert.ok(oFetchCacheExpectation.calledAfter(oResetExpectation));
 		assert.ok(oFireChangeExpectation.calledAfter(oFetchCacheExpectation));
+		assert.ok(oGetDependentBindingsExpectation2.calledAfter(oFireChangeExpectation));
 	});
 	//TODO This is very similar to ODCB#resumeInternal; both should be refactored to
 	//  ODParentBinding#resumeInternal. Differences
