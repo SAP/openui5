@@ -62,6 +62,9 @@ sap.ui.define([
 	var GenericTag = Control.extend("sap.m.GenericTag", /** @lends sap.m.GenericTag.prototype */ {
 		metadata: {
 			library : "sap.m",
+			interfaces : [
+				"sap.m.IOverflowToolbarContent"
+			],
 			properties : {
 				/**
 				 * Defines the text rendered by the control. It's a value-descriptive text rendered on one line.
@@ -109,13 +112,18 @@ sap.ui.define([
 	});
 
 	/**
+	 * Classname to be used, when control is inside OverflowToolbar
+	 *
+	 */
+
+	GenericTag.CLASSNAME_OVERFLOW_TOOLBAR = "sapMGenericTagOverflowToolbar";
+	/**
 	 * Sets the <code>status</code> property.
 	 *
 	 * Default value is <code>None</code>.
 	 * @param {sap.ui.core.ValueState} sStatus New value for property <code>status</code>.
 	 * @returns {sap.m.GenericTag} <code>this</code> to allow method chaining.
 	 * @public
-	 * @since 1.62.0
 	 */
 
 	GenericTag.prototype.setStatus = function(sStatus) {
@@ -242,6 +250,40 @@ sap.ui.define([
 	 */
 	GenericTag.prototype._toggleActiveGenericTag = function(bToggle){
 		this.toggleStyleClass("sapMGenericTagActive", bToggle);
+	};
+
+	/**
+	 * @private used for OverflowToolbar functionality
+	 */
+
+	GenericTag.prototype._onBeforeEnterOverflow = function(oControl) {
+		oControl.addStyleClass(GenericTag.CLASSNAME_OVERFLOW_TOOLBAR);
+	};
+
+	/**
+	 * @private used for OverflowToolbar functionality
+	 */
+
+	GenericTag.prototype._onAfterExitOverflow = function(oControl) {
+		oControl.removeStyleClass(GenericTag.CLASSNAME_OVERFLOW_TOOLBAR);
+	};
+
+	/**
+	 * Sets the behavior of the <code>GenericTag</code> inside an <code>OverflowToolbar</code> configuration.
+	 *
+	 * @public
+	 * @returns {object} Configuration information for the <code>sap.m.IOverflowToolbarContent</code> interface.
+	 */
+	GenericTag.prototype.getOverflowToolbarConfig = function() {
+		var oConfig = {
+			canOverflow: true
+		};
+
+		oConfig.onBeforeEnterOverflow = this._onBeforeEnterOverflow;
+
+		oConfig.onAfterExitOverflow = this._onAfterExitOverflow;
+
+		return oConfig;
 	};
 
 	return GenericTag;

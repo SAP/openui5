@@ -25,6 +25,7 @@ sap.ui.define([
 			this.byId("otb6").setWidth(iValue + "%");
 			this.byId("otb7").setWidth(iValue + "%");
 			this.byId("otb8").setWidth(iValue + "%");
+			this.byId("otb9").setWidth(iValue + "%");
 		}
 	});
 

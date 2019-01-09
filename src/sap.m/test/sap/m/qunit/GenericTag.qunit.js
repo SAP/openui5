@@ -6,8 +6,10 @@ sap.ui.define([
 	"sap/m/ObjectNumber",
 	"sap/ui/core/library",
 	"sap/ui/events/KeyCodes",
-	"sap/ui/qunit/QUnitUtils"
-], function(GenericTag, GenericTagRenderer, library, ObjectNumber, coreLibrary, KeyCodes, qutils) {
+	"sap/ui/qunit/QUnitUtils",
+	"sap/m/ToolbarSpacer",
+	"sap/m/OverflowToolbar"
+], function(GenericTag, GenericTagRenderer, library, ObjectNumber, coreLibrary, KeyCodes, qutils, ToolbarSpacer, OverflowToolbar) {
 	"use strict";
 
 	var GenericTagDesign = library.GenericTagDesign,
@@ -551,5 +553,45 @@ sap.ui.define([
 
 		//assert
 		assert.equal($genericTag.attr("aria-labelledby"), [this.sStatusTextId, this.sTextId, sErrorIconId].join(" "));
+	});
+
+	QUnit.module("Test behavior in overflow toolbar", {
+		beforeEach: function() {
+			this.clock = sinon.useFakeTimers();
+		},
+		afterEach: function() {
+			this.clock.restore();
+		}
+	});
+
+	QUnit.test("Generic tag gets inside overflow toolbar", function (assert) {
+		var oSingleGenericTag = new GenericTag({ text: "Test Generic Tag"}),
+			aToolbarContent = [
+				new ToolbarSpacer(),
+				oSingleGenericTag
+			],
+			oOverflowTB = new OverflowToolbar({
+				width: 'auto',
+				content: aToolbarContent
+			});
+		oOverflowTB.placeAt("qunit-fixture");
+		sap.ui.getCore().applyChanges();
+		// set small width that causes all content to move to the OverflowToolbar
+		oOverflowTB.setWidth("1rem");
+		this.clock.tick(1000);
+
+		assert.strictEqual(
+			oSingleGenericTag.hasStyleClass(GenericTag.CLASSNAME_OVERFLOW_TOOLBAR),
+			true, "Generic tag gets inside overflow toolbar");
+
+		// remove the labelled control
+		oOverflowTB.setWidth('20rem');
+		this.clock.tick(1000);
+
+		assert.strictEqual(
+			oSingleGenericTag.hasStyleClass(GenericTag.CLASSNAME_OVERFLOW_TOOLBAR),
+			false, "Generic tag gets outside overflow toolbar");
+
+		oOverflowTB.destroy();
 	});
 });

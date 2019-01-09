@@ -783,6 +783,58 @@
 		})
 	];
 
+	var toolbarContent11 = [
+		new sap.m.GenericTag({
+			text : "Shortage Expected",
+			status: "Warning"
+		}),
+		new sap.m.GenericTag({
+			text : "Project Cost",
+			status: "Error"
+		}),
+		new sap.m.GenericTag({
+			text : "In Stock",
+			status: "Success"
+		}),
+		new sap.m.GenericTag({
+			text : "Total Cost",
+			valueState: "Error"
+		}),
+		new sap.m.GenericTag({
+			text : "Shortage Expected",
+			status: "Warning"
+		}),
+		new sap.m.GenericTag({
+			text : "Project Cost",
+			status: "Error"
+		}),
+		new sap.m.GenericTag({
+			text : "In Stock",
+			status: "Success"
+		}),
+		new sap.m.GenericTag({
+			text : "Total Cost",
+			valueState: "Error"
+		}),
+		new sap.m.GenericTag({
+			text : "Shortage Expected",
+			status: "Warning"
+		}),
+		new sap.m.GenericTag({
+			text : "Project Cost",
+			status: "Error"
+		}),
+		new sap.m.GenericTag({
+			text : "In Stock",
+			status: "Success"
+		}),
+		new sap.m.GenericTag({
+			text : "Total Cost",
+			valueState: "Error"
+		}),
+		new sap.m.ToolbarSpacer()
+	];
+
 	var toolbarContentFooter = [
 		new sap.m.Label({
 			text : "When the toolbar is in the footer, the action sheet opens above it."
@@ -880,12 +932,15 @@
 			content: toolbarContent10
 		}),
 
+		new sap.m.OverflowToolbar("otb11", {
+			width: 'auto',
+			content: toolbarContent11
+		}),
 		new sap.m.OverflowToolbar("otbFooter", {
 			width: 'auto',
 			content : toolbarContentFooter
 		})
 	];
-
 
 	var oPage = new sap.m.Page("toolbar-page", {
 		title : "Overflow Toolbar - the buttons that do not fit go to an action sheet",
