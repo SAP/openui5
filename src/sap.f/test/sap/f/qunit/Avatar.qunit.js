@@ -194,7 +194,7 @@ function(oCore) {
 		oCore.applyChanges();
 
 		var $oAvatar = this.oAvatar.$();
-		assert.ok($oAvatar.hasClass("sapFAvatarImageCover"), sPreAvatarFitType + "Cover");
+		assert.ok($oAvatar.find(".sapFAvatarImageHolder").hasClass("sapFAvatarImageCover"), sPreAvatarFitType + "Cover");
 	});
 
 	QUnit.test("Avatar with imageFitType set to 'Contain'", function (assert) {
@@ -203,7 +203,23 @@ function(oCore) {
 		oCore.applyChanges();
 
 		var $oAvatar = this.oAvatar.$();
-		assert.ok($oAvatar.hasClass("sapFAvatarImageContain"), sPreAvatarFitType + "Contain");
+		assert.ok($oAvatar.find(".sapFAvatarImageHolder").hasClass("sapFAvatarImageContain"), sPreAvatarFitType + "Contain");
+	});
+
+	QUnit.test("Show fallback initials when image source is invalid and initials are set and valid", function (assert) {
+		this.oAvatar.setSrc("_" + sImagePath);
+		this.oAvatar.setInitials("PB");
+		oCore.applyChanges();
+
+		var $oAvatar = this.oAvatar.$();
+		assert.ok($oAvatar.find(".sapFAvatarInitialsHolder").text(), 'PB');
+	});
+	QUnit.test("Show fallback default Icon when image source is invalid and initials are not set", function (assert) {
+		this.oAvatar.setSrc("_" + sImagePath);
+		oCore.applyChanges();
+
+		var $oAvatar = this.oAvatar.$();
+		assert.ok($oAvatar.find(".sapUiIcon") !== undefined);
 	});
 
 	QUnit.module("Aggregations", {
@@ -330,7 +346,7 @@ function(oCore) {
 	QUnit.test("URL escaping", function (assert) {
 		var $oAvatar = this.oAvatar.$();
 		// If src is not escaped, the css value would be invalid and jQuery would return 'none'
-		assert.notStrictEqual($oAvatar.css("background-image"), "none", "src is properly escaped");
+		assert.notStrictEqual($oAvatar.find(".sapFAvatarImageHolder").css("background-image"), "none", "src is properly escaped");
 	});
 
 	QUnit.module("Accessibility", {
