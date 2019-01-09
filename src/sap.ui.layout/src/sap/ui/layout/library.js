@@ -83,7 +83,11 @@ sap.ui.define([
 			"sap.ui.layout.form.GridElementData",
 			"sap.ui.layout.form.ColumnElementData",
 			"sap.ui.layout.form.ColumnContainerData",
-			"sap.ui.layout.cssgrid.GridItemLayoutData"
+			"sap.ui.layout.cssgrid.GridItemLayoutData",
+			"sap.ui.layout.cssgrid.GridLayoutBase",
+			"sap.ui.layout.cssgrid.GridBasicLayout",
+			"sap.ui.layout.cssgrid.GridBoxLayout",
+			"sap.ui.layout.cssgrid.GridResponsiveLayout"
 		],
 		extensions: {
 			flChangeHandlers: {
