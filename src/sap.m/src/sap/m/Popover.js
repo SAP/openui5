@@ -408,7 +408,7 @@ sap.ui.define([
 			this._followOfTolerance = 32;
 
 			// used to judge if enableScrolling needs to be disabled
-			this._scrollContentList = [sap.m.NavContainer, sap.m.Page, sap.m.ScrollContainer];
+			this._scrollContentList = ["sap.m.NavContainer", "sap.m.Page", "sap.m.ScrollContainer"];
 
 			// Make this.oPopup call this._adjustPositionAndArrow each time after its position is changed
 			this._fnAdjustPositionAndArrow = jQuery.proxy(this._adjustPositionAndArrow, this);
@@ -612,7 +612,7 @@ sap.ui.define([
 					if (oNavContent) {
 						oNavContent.attachEvent("navigate", function (oEvent) {
 							var oPage = oEvent.getParameter("to");
-							if (oPage instanceof sap.m.Page) {
+							if (oPage instanceof Control && oPage.isA("sap.m.Page")) {
 								this.$().toggleClass("sapMPopoverWithHeaderCont", !!oPage._getAnyHeader());
 							}
 						}, this);
@@ -1124,11 +1124,11 @@ sap.ui.define([
 		Popover.prototype._getSingleNavContent = function () {
 			var aContent = this._getAllContent();
 
-			while (aContent.length === 1 && aContent[0] instanceof sap.ui.core.mvc.View) {
+			while (aContent.length === 1 && aContent[0] instanceof Control && aContent[0].isA("sap.ui.core.mvc.View")) {
 				aContent = aContent[0].getContent();
 			}
 
-			if (aContent.length === 1 && aContent[0] instanceof sap.m.NavContainer) {
+			if (aContent.length === 1 && aContent[0] instanceof Control && aContent[0].isA("sap.m.NavContainer")) {
 				return aContent[0];
 			} else {
 				return null;
@@ -1138,11 +1138,11 @@ sap.ui.define([
 		Popover.prototype._getSinglePageContent = function () {
 			var aContent = this._getAllContent();
 
-			while (aContent.length === 1 && aContent[0] instanceof sap.ui.core.mvc.View) {
+			while (aContent.length === 1 && aContent[0] instanceof Control && aContent[0].isA("sap.ui.core.mvc.View")) {
 				aContent = aContent[0].getContent();
 			}
 
-			if (aContent.length === 1 && aContent[0] instanceof sap.m.Page) {
+			if (aContent.length === 1 && aContent[0] instanceof Control && aContent[0].isA("sap.m.Page")) {
 				return aContent[0];
 			} else {
 				return null;
@@ -1158,11 +1158,11 @@ sap.ui.define([
 		Popover.prototype._hasSinglePageContent = function () {
 			var aContent = this._getAllContent();
 
-			while (aContent.length === 1 && aContent[0] instanceof sap.ui.core.mvc.View) {
+			while (aContent.length === 1 && aContent[0] instanceof Control && aContent[0].isA("sap.ui.core.mvc.View")) {
 				aContent = aContent[0].getContent();
 			}
 
-			if (aContent.length === 1 && aContent[0] instanceof sap.m.Page) {
+			if (aContent.length === 1 && aContent[0] instanceof Control && aContent[0].isA("sap.m.Page")) {
 				return true;
 			} else {
 				return false;
@@ -1178,22 +1178,17 @@ sap.ui.define([
 		 * @returns {boolean} True if there is a scrollable element within the Popover's content
 		 */
 		Popover.prototype._hasSingleScrollableContent = function () {
-			var aContent = this._getAllContent(), i;
+			var aContent = this._getAllContent();
 
-			while (aContent.length === 1 && aContent[0] instanceof sap.ui.core.mvc.View) {
+			while (aContent.length === 1 && aContent[0] instanceof Control && aContent[0].isA("sap.ui.core.mvc.View")) {
 				aContent = aContent[0].getContent();
 			}
 
-			if (aContent.length === 1) {
-				for (i = 0; i < this._scrollContentList.length; i++) {
-					if (aContent[0] instanceof this._scrollContentList[i]) {
-						return true;
-					}
-				}
-				return false;
-			} else {
-				return false;
+			if (aContent.length === 1 && aContent[0] instanceof Control && aContent[0].isA(this._scrollContentList)) {
+				return true;
 			}
+
+			return false;
 		};
 
 		/**
