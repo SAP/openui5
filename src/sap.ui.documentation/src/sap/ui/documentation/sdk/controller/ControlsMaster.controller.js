@@ -31,17 +31,21 @@ sap.ui.define([
 ) {
 		"use strict";
 
+		var COZY = "cozy",
+			COMPACT = "compact",
+			CONDENSED = "condensed";
+
 		return BaseController.extend("sap.ui.documentation.sdk.controller.ControlsMaster", {
 
 			_oStorage: new Storage(Storage.Type.local),
 			_sStorageKey: "UI5_EXPLORED_LIST_SETTINGS_FROM_1_48",
 			_oViewSettings: {
-				compactOn: false,
+				densityMode: COMPACT,
 				themeActive: "sap_belize",
 				rtl: false
 			},
 			_oDefaultSettings: {
-				compactOn: false,
+				densityMode: COMPACT,
 				themeActive: "sap_belize",
 				rtl: false
 			},
@@ -145,11 +149,21 @@ sap.ui.define([
 				this._oComponent = this.getOwnerComponent();
 				this._oRootView = this.getRootView();
 
-				this._oViewSettings.compactOn = this._oComponent.getContentDensityClass() === "sapUiSizeCompact";
+				switch (this._oComponent.getContentDensityClass()) {
+					case "sapUiSizeCompact":
+						this._oViewSettings.densityMode = COMPACT;
+						break;
+					case "sapUiSizeCondensed":
+						this._oViewSettings.densityMode = CONDENSED;
+						break;
+					default:
+						this._oViewSettings.densityMode = COZY;
+				}
+
 				this._oViewSettings.rtl = this._oCore.getConfiguration().getRTL();
 
-				// Keep default settings for compact mode up to date
-				this._oDefaultSettings.compactOn = this._oViewSettings.compactOn;
+				// Keep default settings for density mode up to date
+				this._oDefaultSettings.densityMode = this._oViewSettings.densityMode;
 				this._oDefaultSettings.rtl = this._oViewSettings.rtl;
 
 				this._initListSettings();
@@ -160,7 +174,7 @@ sap.ui.define([
 				if (["group", "entity", "sample", "code", "code_file", "controls", "controlsMaster", "listFilter"].indexOf(sRouteName) === -1) {
 					// Reset view settings
 					this._applyAppConfiguration(this._oDefaultSettings.themeActive,
-						this._oDefaultSettings.compactOn,
+						this._oDefaultSettings.densityMode,
 						this._oDefaultSettings.rtl);
 
 					// When we restore the default settings we don't need the event any more
@@ -180,13 +194,32 @@ sap.ui.define([
 			},
 
 			/**
+			 * Toggles content density classes in the provided html body
+			 * @param {object} oBody the html body to set the correct class on
+			 * @param {string} sDensityMode content density mode
+			 * @private
+			 */
+			_toggleContentDensityClasses: function(oBody, sDensityMode){
+				switch (sDensityMode) {
+					case COMPACT:
+						oBody.toggleClass("sapUiSizeCompact", true).toggleClass("sapUiSizeCozy", false).toggleClass("sapUiSizeCondensed", false);
+						break;
+					case CONDENSED:
+						oBody.toggleClass("sapUiSizeCondensed", true).toggleClass("sapUiSizeCozy", false).toggleClass("sapUiSizeCompact", true);
+						break;
+					default:
+						oBody.toggleClass("sapUiSizeCozy", true).toggleClass("sapUiSizeCondensed", false).toggleClass("sapUiSizeCompact", false);
+				}
+			},
+
+			/**
 			 * Apply content configuration
 			 * @param {string} sThemeActive name of the theme
-			 * @param {boolean} bCompactOn compact mode
+			 * @param {string} sDensityMode content density mode
 			 * @param {boolean} bRTL right to left mode
 			 * @private
 			 */
-			_applyAppConfiguration: function(sThemeActive, bCompactOn, bRTL){
+			_applyAppConfiguration: function(sThemeActive, sDensityMode, bRTL){
 				var oSampleFrameContent,
 					oSampleFrameCore,
 					$SampleFrame,
@@ -195,11 +228,9 @@ sap.ui.define([
 					bContentDensityChanged;
 
 				// Handle content density change
-				if (this._oViewSettings.compactOn !== bCompactOn) {
-					jQueryDOM(document.body).toggleClass("sapUiSizeCompact", bCompactOn)
-						.toggleClass("sapUiSizeCozy", !bCompactOn);
-
-					this._oViewSettings.compactOn = bCompactOn;
+				if (this._oViewSettings.densityMode !== sDensityMode) {
+					this._toggleContentDensityClasses(jQueryDOM(document.body), sDensityMode);
+					this._oViewSettings.densityMode = sDensityMode;
 					bContentDensityChanged = true;
 				}
 
@@ -233,8 +264,7 @@ sap.ui.define([
 							oSampleFrameCore = oSampleFrameContent.sap.ui.getCore();
 
 							if (bContentDensityChanged) {
-								oSampleFrameContent.jQuery('body').toggleClass("sapUiSizeCompact", bCompactOn)
-									.toggleClass("sapUiSizeCozy", !bCompactOn);
+								this._toggleContentDensityClasses(oSampleFrameContent.jQuery('body'), sDensityMode);
 							}
 
 							if (bRTLChanged) {
@@ -629,7 +659,7 @@ sap.ui.define([
 					var oAppSettings = this._oCore.getConfiguration(),
 						oThemeSelect = this._oCore.byId("ThemeSelect"),
 						sUriParamTheme = new UriParameters(window.location.href).get("sap-theme"),
-						bCompactMode = this._oViewSettings.compactOn;
+						bDensityMode = this._oViewSettings.densityMode;
 
 					// Theme select
 					oThemeSelect.setSelectedKey(sUriParamTheme ? sUriParamTheme : oAppSettings.getTheme());
@@ -637,8 +667,8 @@ sap.ui.define([
 					// RTL
 					this._oCore.byId("RTLSwitch").setState(oAppSettings.getRTL());
 
-					// Compact mode select
-					this._oCore.byId("CompactModeSwitch").setState(bCompactMode);
+					// Density mode select
+					this._oCore.byId("DensityModeSwitch").setSelectedKey(bDensityMode);
 					this._oSettingsDialog.open();
 				}.bind(this), 0);
 			},
@@ -657,7 +687,7 @@ sap.ui.define([
 			 */
 			handleSaveAppSettings: function () {
 				var BusyDialog,
-					bCompact = this._oCore.byId('CompactModeSwitch').getState(),
+					sDensityMode = this._oCore.byId('DensityModeSwitch').getSelectedKey(),
 					sTheme = this._oCore.byId('ThemeSelect').getSelectedKey(),
 					bRTL = this._oCore.byId('RTLSwitch').getState();
 
@@ -679,7 +709,7 @@ sap.ui.define([
 				}.bind(this), 1000);
 
 				// handle settings change
-				this._applyAppConfiguration(sTheme, bCompact, bRTL);
+				this._applyAppConfiguration(sTheme, sDensityMode, bRTL);
 
 				// If we are navigating outside the Explored App section: view settings should be reset
 				this.getRouter().attachBeforeRouteMatched(this._viewSettingsResetOnNavigation, this);
