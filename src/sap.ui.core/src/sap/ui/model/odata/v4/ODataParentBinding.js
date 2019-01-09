@@ -315,6 +315,7 @@ sap.ui.define([
 		}
 
 		if (sChangeReason) {
+			this.createReadGroupLock(this.getGroupId(), true);
 			this.applyParameters(mBindingParameters, sChangeReason);
 		}
 	};

@@ -4153,13 +4153,14 @@ sap.ui.define([
 
 		this.mock(oBinding).expects("checkSuspended").never();
 		this.mock(oBinding).expects("hasPendingChanges").returns(false);
+		this.mock(oBinding).expects("getGroupId").returns("$auto");
 		this.mock(oBinding).expects("isRootBindingSuspended").returns(false);
 
 		// code under test;
 		oBinding.changeParameters({$filter : "bar"});
 
 		assert.ok(oBinding.oCachePromise.getResult() !== undefined,
-			"Binding gets cache after changeParamters");
+			"Binding gets cache after changeParameters");
 	});
 
 	//*********************************************************************************************
