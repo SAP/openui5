@@ -72,7 +72,6 @@ sap.ui.define([
 			Menu.prototype.exit.apply(this, arguments);
 		}
 		window.clearTimeout(this._iPopupClosedTimeoutId);
-		this._detachEvents();
 		this._oColumn = this._oTable = null;
 	};
 
@@ -100,10 +99,8 @@ sap.ui.define([
 	 * @private
 	 */
 	ColumnMenu.prototype.setParent = function(oParent) {
-		this._detachEvents();
 		this._invalidate();
 		this._updateReferences(oParent);
-		this._attachEvents();
 		return Menu.prototype.setParent.apply(this, arguments);
 	};
 
@@ -120,28 +117,18 @@ sap.ui.define([
 		}
 	};
 
-
-	/**
-	 * Attaches the required event handlers.
-	 * @private
-	 */
-	ColumnMenu.prototype._attachEvents = function() {
-		if (this._oTable) {
-			this._oTable.attachColumnVisibility(this._invalidate, this);
-			this._oTable.attachColumnMove(this._invalidate, this);
+	ColumnMenu._destroyColumnVisibilityMenuItem = function() {
+		if (ColumnMenu._oColumnVisibilityMenuItem) {
+			ColumnMenu._oColumnVisibilityMenuItem.destroy();
+			ColumnMenu._oColumnVisibilityMenuItem = null;
 		}
 	};
 
-
-	/**
-	 * Detaches the required event handlers.
-	 * @private
-	 */
-	ColumnMenu.prototype._detachEvents = function() {
-		if (this._oTable) {
-			this._oTable.detachColumnVisibility(this._invalidate, this);
-			this._oTable.detachColumnMove(this._invalidate, this);
+	ColumnMenu.prototype._removeColumnVisibilityFromAggregation = function() {
+		if (!ColumnMenu._oColumnVisibilityMenuItem) {
+			return;
 		}
+		this.removeAggregation("items", ColumnMenu._oColumnVisibilityMenuItem, true);
 	};
 
 	/**
@@ -186,8 +173,11 @@ sap.ui.define([
 	ColumnMenu.prototype.open = function() {
 		if (this._bInvalidated) {
 			this._bInvalidated = false;
+			this._removeColumnVisibilityFromAggregation();
 			this.destroyItems();
 			this._addMenuItems();
+		} else if (this._oColumn) {
+			this._addColumnVisibilityMenuItem();
 		}
 
 		if (this.getItems().length > 0) {
@@ -195,7 +185,6 @@ sap.ui.define([
 			Menu.prototype.open.apply(this, arguments);
 		}
 	};
-
 
 	/**
 	 * Adds the menu items to the menu.
@@ -343,11 +332,15 @@ sap.ui.define([
 		var oTable = this._oTable;
 
 		if (oTable && oTable.getShowColumnVisibilityMenu()) {
-			var oColumnVisibiltyMenuItem = this._createMenuItem("column-visibilty", "TBL_COLUMNS");
-			this.addItem(oColumnVisibiltyMenuItem);
+			if (ColumnMenu._oColumnVisibilityMenuItem && !ColumnMenu._oColumnVisibilityMenuItem.bIsDestroyed) {
+				this.addItem(ColumnMenu._oColumnVisibilityMenuItem);
+				return;
+			}
 
-			var oColumnVisibiltyMenu = new Menu(oColumnVisibiltyMenuItem.getId() + "-menu");
-			oColumnVisibiltyMenuItem.setSubmenu(oColumnVisibiltyMenu);
+			ColumnMenu._oColumnVisibilityMenuItem = this._createMenuItem("column-visibilty", "TBL_COLUMNS");
+
+			var oColumnVisibiltyMenu = new Menu(ColumnMenu._oColumnVisibilityMenuItem.getId() + "-menu");
+			ColumnMenu._oColumnVisibilityMenuItem.setSubmenu(oColumnVisibiltyMenu);
 
 			var aColumns = oTable.getColumns();
 
@@ -379,9 +372,10 @@ sap.ui.define([
 				oColumnVisibiltyMenu.addItem(oMenuItem);
 
 				if (aVisibleColumns.length == 1 && aVisibleColumns[0] === oColumn) {
-					oMenuItem.setEnabled(false); // Indicate to the user that changing the visibility of the least visible column is not allowed
+					oMenuItem.setEnabled(false); // Indicate to the user that changing the visibility of the last visible column is not allowed
 				}
 			}
+			this.addItem(ColumnMenu._oColumnVisibilityMenuItem);
 		}
 	};
 
@@ -414,7 +408,6 @@ sap.ui.define([
 			icon: oColumn.getVisible() ? "sap-icon://accept" : null,
 			ariaLabelledBy: [oTable.getId() + (oColumn.getVisible() ? "-ariahidecolmenu" : "-ariashowcolmenu")],
 			select: jQuery.proxy(function(oEvent) {
-				var oMenuItem = oEvent.getSource();
 				var bVisible = !oColumn.getVisible();
 				if (bVisible || TableUtils.getVisibleColumnCount(this._oTable) > 1) {
 					var oTable = oColumn.getParent();
@@ -428,7 +421,6 @@ sap.ui.define([
 					if (bExecuteDefault) {
 						oColumn.setVisible(bVisible);
 					}
-					oMenuItem.setIcon(bVisible ? "sap-icon://accept" : null);
 				}
 			}, this)
 		});
@@ -506,6 +498,24 @@ sap.ui.define([
 			oFilterField.setValueState(sFilterState);
 		}
 		return this;
+	};
+
+	ColumnMenu._updateVisibilityIcon = function(iIndex, bVisible){
+		if (ColumnMenu._oColumnVisibilityMenuItem) {
+			var sIcon = bVisible ? "sap-icon://accept" : "";
+			var oSubmenu = ColumnMenu._oColumnVisibilityMenuItem.getSubmenu();
+			if (!oSubmenu){
+				return;
+			}
+			var aItems = oSubmenu.getItems();
+			var oItem = aItems.find(function(element) {
+				return element.getId().endsWith("-item-" + iIndex);
+			});
+			if (!oItem){
+				return;
+			}
+			oItem.setProperty("icon", sIcon);
+		}
 	};
 
 	return ColumnMenu;
