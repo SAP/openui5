@@ -31,9 +31,11 @@
 	box-sizing: border-box;
 	background: @sapUiObjectHeaderBackground;
 
-	&.sapFDynamicPageTitleFocus {
-		outline: 0.0625rem dotted @sapUiContentFocusColor;
-		outline-offset: -0.0625rem;
+	html.sap-desktop & {
+		&.sapFDynamicPageTitleFocus {
+			outline: 0.0625rem dotted @sapUiContentFocusColor;
+			outline-offset: -0.0625rem;
+		}
 	}
 
 	.sapFDynamicPageTitleFocusSpan {

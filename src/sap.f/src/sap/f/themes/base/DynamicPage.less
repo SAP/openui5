@@ -269,11 +269,16 @@ html[data-sap-ui-browser^="ie"] {
 	}
 }
 
-.sapFDynamicPageHeaderPinButton:hover > .sapMBtnInner {
+.sapFDynamicPageHeaderPinButton:hover > .sapMBtnInner.sapMBtnHoverable {
 	background-color: darken(@sapUiObjectHeaderBorderColor, 3);
+
+	&.sapMToggleBtnPressed {
+		background-color: @sapUiToggleButtonPressedHoverBackground;
+	}
 }
 
-.sapFDynamicPageHeaderPinButton:active > .sapMBtnInner {
+.sapFDynamicPageHeaderPinButton > .sapMBtnInner.sapMBtnActive,
+.sapFDynamicPageHeaderPinButton > .sapMBtnInner.sapMBtnActive.sapMBtnHoverable {
 	background-color: @sapUiSelected;
 }
 
