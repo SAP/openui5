@@ -2142,6 +2142,24 @@ sap.ui.define([
 		oSB = null;
 	});
 
+	QUnit.test("getOverflowToolbarConfig - correct configuration for sap.m.OverflowToolbar control", function (assert) {
+		// Arrange
+		var oSB = new SegmentedButton(),
+			oExpected = {
+				canOverflow: true,
+				listenForEvents: ["select"],
+				autoCloseEvents: ["select"], // BCP: 1970012411 In overflow - selection should close the popover.
+				noInvalidationProps: ["enabled", "selectedKey"],
+				invalidationEvents: ["_containerWidthChanged"],
+				onBeforeEnterOverflow: oSB._onBeforeEnterOverflow,
+				onAfterExitOverflow: oSB._onAfterExitOverflow
+			};
+
+		// Assert
+		assert.deepEqual(oSB.getOverflowToolbarConfig(), oExpected,
+			"Return object is valid for sap.m.OverflowToolbar configuration");
+
+	});
 
 	/* =========================================================== */
 	/* Helper functionality module                                 */

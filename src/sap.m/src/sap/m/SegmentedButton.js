@@ -433,22 +433,23 @@ function(
 
 	/**
 	 * Required by the {@link sap.m.IOverflowToolbarContent} interface.
-	 * Registers invalidations event which is fired when width of the control is changed.
+	 * Registers invalidation event which is fired when width of the control is changed.
 	 *
-	 * @protected
 	 * @returns {object} Configuration information for the <code>sap.m.IOverflowToolbarContent</code> interface.
+	 *
+	 * @ui5-restricted sap.m.OverflowToolBar
+	 * @private
 	 */
 	SegmentedButton.prototype.getOverflowToolbarConfig = function() {
-		var oConfig = {
+		return {
 			canOverflow: true,
 			listenForEvents: ["select"],
+			autoCloseEvents: ["select"],
 			noInvalidationProps: ["enabled", "selectedKey"],
 			invalidationEvents: ["_containerWidthChanged"],
 			onBeforeEnterOverflow: this._onBeforeEnterOverflow,
 			onAfterExitOverflow: this._onAfterExitOverflow
 		};
-
-		return oConfig;
 	};
 
 	// SegmentedButton - switch to/from select mode
