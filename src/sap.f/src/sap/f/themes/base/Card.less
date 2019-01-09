@@ -2,8 +2,11 @@
 /* CSS for control sap.f/Card  */
 /* Base theme          */
 /* ================================== */
-@sapUiContentPadding: 1rem;
-@sapUiCardHeaderIconColor: #6a6d70;
+@_sap_f_Card_Content_Padding: 1rem;
+@_sap_f_Card_Header_Icon_Color: #6a6d70;
+@_sap_f_Card_Header_Border_Bottom: 1px solid darken(@sapUiTileBackground, 20);
+@_sap_f_Card_Header_Hover_Color: darken(@sapUiTileBackground, 2);
+@_sap_f_Card_Header_Active_Color: darken(@sapUiTileBackground, 3);
 
 
 .sapFCard {
@@ -27,25 +30,25 @@
 .sapFCard .sapFCardHeader {
   flex-shrink: 0;
   background: @sapUiTileBackground;
-  border-bottom: 1px solid darken(@sapUiTileBackground, 20);
-  padding: @sapUiContentPadding;
+  border-bottom: @_sap_f_Card_Header_Border_Bottom;
+  padding: @_sap_f_Card_Content_Padding;
   display: flex;
   align-items: flex-start;
   &:hover{
-    background: darken(@sapUiTileBackground,2);
+    background: @_sap_f_Card_Header_Hover_Color;
   }
 
   &:active{
-    background: darken(@sapUiTileBackground,3);
+    background: @_sap_f_Card_Header_Active_Color;
   }
 
 
   &:hover .sapFCardIcon.sapFAvatar:not(.sapFAvatarImage):not(.sapFAvatarInitials ){
-    background: darken(@sapUiTileBackground,2);
+    background: @_sap_f_Card_Header_Hover_Color;
   }
 
   &:active .sapFCardIcon.sapFAvatar:not(.sapFAvatarImage):not(.sapFAvatarInitials ){
-    background: darken(@sapUiTileBackground,3);
+    background: @_sap_f_Card_Header_Active_Color;
   }
 
   .sapFCardIcon.sapFAvatar:not(.sapFAvatarImage ):not(.sapFAvatarInitials ){
@@ -65,7 +68,7 @@
     .sapUiIcon {
       align-self: center;
       font-size: 2rem;
-      color: @sapUiCardHeaderIconColor;
+      color: @_sap_f_Card_Header_Icon_Color;
     }
   }
   .sapFCardHeaderText {
@@ -183,11 +186,17 @@
   }
 }
 
-.sapFCard .sapFCardContent .sapVizFrame {
-	min-height: 200px;
+.sapFCard .sapFCardContent {
+	.sapVizFrame {
+		min-height: 7rem;
 
-	.ui5-viz-controls-app {
-		min-height: inherit;
+		.ui5-viz-controls-app {
+			min-height: inherit;
+		}
+	}
+
+	.sapMLIB.sapMSLINoDescIcon {
+		padding: 0 1rem 0 0.125rem;
 	}
 }
 
@@ -210,4 +219,19 @@ html[data-sap-ui-browser^="cr"] .sapFCard .sapFCardContent {
 
 html[data-sap-ui-browser^="ie"] .sapFCard:focus:after {
   border: 1px dashed @sapUiContentFocusColor;
+}
+
+.sapUiSizeCompact {
+	.sapFCard .sapFCardContent {
+
+		.sapMLIB.sapMSLINoDescIcon {
+			padding: 0 1rem 0 0;
+
+			.sapMSLIImgIcon.sapUiIcon {
+				font-size: 1rem;
+				height: 1rem;
+				line-height: 1rem;
+			}
+		}
+	}
 }

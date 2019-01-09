@@ -93,7 +93,14 @@ sap.ui.define(['sap/ui/core/Control', 'sap/ui/model/json/JSONModel', 'sap/m/Flex
 				return this;
 			}
 			var oVizObject = {
-				"title": {},
+				"title": {
+					"style" : {
+						"fontWeight": "normal"
+					},
+					"layout": {
+						"respectPlotPosition": false
+					}
+				},
 				"legend": {},
 				"legendGroup": {
 					"layout": {}
@@ -126,10 +133,10 @@ sap.ui.define(['sap/ui/core/Control', 'sap/ui/model/json/JSONModel', 'sap/m/Flex
 				if (oPlotArea.dataLabel) {
 					oVizObject.plotArea.dataLabel = oPlotArea.dataLabel;
 				}
-				if (oPlotArea.categoryAxis) {
+				if (oPlotArea.categoryAxisText) {
 					oVizObject.categoryAxis.title.visible = oPlotArea.categoryAxisText.visible;
 				}
-				if (oPlotArea.valueAxis) {
+				if (oPlotArea.valueAxisText) {
 					oVizObject.valueAxis.title.visible = oPlotArea.valueAxisText.visible;
 				}
 			}
@@ -151,8 +158,8 @@ sap.ui.define(['sap/ui/core/Control', 'sap/ui/model/json/JSONModel', 'sap/m/Flex
 			//handling the request
 			var oRequest = oChartObject.data.request;
 
-			if (oChartObject.json && !oRequest) {
-				this._updateModel(oChartObject.json, oChartObject.path);
+			if (oChartObject.data.json && !oRequest) {
+				this._updateModel(oChartObject.data.json, oChartObject.data.path, oChartObject);
 			}
 
 			if (oRequest) {

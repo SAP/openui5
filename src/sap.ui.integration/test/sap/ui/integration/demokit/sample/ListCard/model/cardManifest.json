@@ -1,0 +1,61 @@
+{
+  "listCard": {
+	"sap.card": {
+	  "type": "List",
+	  "header": {
+		"title": "Quick Links",
+		"status": {
+		  "text": "7 of 28"
+		}
+	  },
+	  "content": {
+		"data": {
+		  "json": [
+			{
+			  "Name": "Template Based Segmentation",
+			  "icon": "sap-icon://horizontal-bullet-chart"
+			},
+			{
+			  "Name": "Segmentation Models",
+			  "icon": "sap-icon://opportunity"
+			},
+			{
+			  "Name": "Marketing plans",
+			  "icon": "sap-icon://line-charts"
+			},
+			{
+			  "Name": "Target Groups",
+			  "icon": "sap-icon://horizontal-bar-chart"
+			},
+			{
+			  "Name": "Program Structure",
+			  "icon": "sap-icon://org-chart"
+			},
+			{
+			  "Name": "AdWords Campaigns",
+			  "icon": "sap-icon://bar-chart"
+			},
+			{
+			  "Name": "Winter Campaign Results",
+			  "icon": "sap-icon://tools-opportunity"
+			}
+		  ]
+		},
+		"item": {
+		  "icon": {
+			"label": "{{icon_label}}",
+			"value": "{icon}"
+		  },
+		  "title": {
+			"label": "{{title_label}}",
+			"value": "{Name}"
+		  },
+		  "description": {
+			"label": "{{description_label}}",
+			"value": "{Description}"
+		  }
+		}
+	  }
+	}
+  }
+}
