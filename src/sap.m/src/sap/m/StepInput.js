@@ -899,12 +899,15 @@ function(
 		};
 
 		StepInput.prototype._onmousewheel = function (oEvent) {
-			oEvent.preventDefault();
-			var oOriginalEvent = oEvent.originalEvent,
-				bDirectionPositive = oOriginalEvent.detail ? (-oOriginalEvent.detail > 0) : (oOriginalEvent.wheelDelta > 0);
+			var bIsFocused = document.activeElement === this.$().getDomRef();
+			if (bIsFocused) {
+				oEvent.preventDefault();
+				var oOriginalEvent = oEvent.originalEvent,
+					bDirectionPositive = oOriginalEvent.detail ? (-oOriginalEvent.detail > 0) : (oOriginalEvent.wheelDelta > 0);
 
-			this._applyValue(this._calculateNewValue(1, bDirectionPositive).displayValue);
-			this._verifyValue();
+				this._applyValue(this._calculateNewValue(1, bDirectionPositive).displayValue);
+				this._verifyValue();
+			}
 		};
 
 		/**
