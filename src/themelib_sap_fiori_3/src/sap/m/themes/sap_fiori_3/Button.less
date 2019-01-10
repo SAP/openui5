@@ -26,6 +26,7 @@
 .sapMBtn .sapMBtnContent {
 	display: flex;
 	flex-direction: row;
+	justify-content: center;
 }
 
 .sapMBtn .sapMBtnContent {
@@ -133,11 +134,28 @@
 	padding-right: 0;
 }
 
+.sapMBtnGhost {
+	color: @sapUiButtonTextColor;
+	border: 1px solid @sapUiButtonBorderColor;
+	background: @sapUiButtonLiteBackground;
+}
+
+
+.sapMBtnGhost.sapMBtnHoverable.sapMBtnActive {
+	color: @sapUiButtonActiveTextColor;
+	border-color: @sapUiButtonActiveBorderColor;
+	background: @sapUiButtonActiveBackground;
+}
+
+.sapMBtn:hover > .sapMBtnGhost.sapMBtnHoverable:not(.sapMBtnActive) {
+	background: @sapUiButtonHoverBackground;
+	border-color: @sapUiButtonHoverBorderColor;
+}
 
 .sapUiSizeCompact {
 	.sapMBtnIcon {
-		margin-left: auto;
-		margin-right: auto;
+		margin-left: 0;
+		margin-right: 0;
 	}
 
 	.sapMBtnText .sapMBtnIconLeft + .sapMBtnIconLeft {
@@ -259,9 +277,14 @@ html.sap-desktop .sapMBtn:focus > .sapMBtnEmphasized > .sapMBtnFocusDiv {
 	border-color:     transparent;
 }
 
+.sapUiSizeCompact .sapMBar-CTX .sapMBtnInner.sapMBtnGhost:not(.sapMBtnDisabled) {
+	background: @sapUiButtonLiteBackground;
+	border: 1px solid @sapUiButtonBorderColor;
+}
+
 .sapMIBar-CTX .sapMBtn:hover > .sapMBtnGhost.sapMBtnHoverable:not(.sapMBtnActive):not(.sapMToggleBtnPressed) {
-	background: fade(@sapUiButtonLiteTextColor, 20);
-	border-color: fade(@sapUiButtonLiteTextColor, 50);
+	background: @sapUiButtonHoverBackground;
+	border-color: @sapUiButtonHoverBorderColor;
 }
 
 html.sap-desktop .sapMFooter-CTX .sapMBtnInner.sapMBtnAccept {
