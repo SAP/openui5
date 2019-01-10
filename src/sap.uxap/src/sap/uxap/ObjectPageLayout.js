@@ -505,7 +505,8 @@ sap.ui.define([
 		this._bHeaderExpanded = true;
 		this._bHeaderBiggerThanAllowedHeight = false;
 		this._bDelayDOMBasedCalculations = true;    //delay before obtaining DOM metrics to ensure that the final metrics are obtained
-		this._iStoredScrollPosition = 0;
+		this._iStoredScrollTop = 0; // used by RTA to restore state upon drag'n'drop operation
+		this._oStoredScrolledSubSectionInfo = {}; // used to (re)store the position within the currently scrolled section upon rerender
 
 		// anchorbar management
 		this._bInternalAnchorBarVisible = true;
@@ -817,15 +818,6 @@ sap.ui.define([
 				this.setAssociation("selectedSection", null, true);
 				return; // skip further computation as there is no a section to be selected
 			}
-		}
-
-		var oStoredSubSection = this.oCore.byId(this._sStoredScrolledSubSectionId),
-			bValidSelectedSubSection = oStoredSubSection
-				&& this._sectionCanBeRenderedByUXRules(oStoredSubSection)
-				&& (oSelectedSection.indexOfSubSection(oStoredSubSection) >= 0);
-
-		if (!bValidSelectedSubSection) {
-			this._sStoredScrolledSubSectionId = null; // the stored location is not valid anymore (e.g. section was removed/hidden or another section was explicitly selected)
 		}
 	};
 
@@ -3471,51 +3463,75 @@ sap.ui.define([
 		return false;
 	};
 
-	ObjectPageLayout.prototype._isPositionWithinSection = function (iScrollPosition, oSection) {
-		if (!oSection || !this._bDomReady || !this._oSectionInfo[oSection.getId()]) {
-			return;
-		}
-		var iSectionPositionTop = this._computeScrollPosition(oSection),
-			iSectionHeight = jQuery(oSection.getDomRef()).height(),
-			iSectionPositionBottom = iSectionPositionTop + iSectionHeight;
+	/**
+	 * Checks if the <code>_oStoredScrolledSubSectionInfo</code> is still eligible to restore
+	 *
+	 * (as the visibility of the stored subSection or the value of the currently <code>selectedSection</code> may have
+	 * changed from outside since the <code>_oStoredScrolledSubSectionInfo</code> was last obtained
+	 *
+	 * @returns {boolean}
+	 * @private
+	 */
+	ObjectPageLayout.prototype._isValidStoredSubSectionInfo = function () {
+		var sSelectedSectionId = this.getSelectedSection(),
+			oSelectedSection = this.oCore.byId(sSelectedSectionId),
+			oStoredSubSection;
 
-		return ((iScrollPosition >= iSectionPositionTop) && (iScrollPosition < iSectionPositionBottom));
+		if (!oSelectedSection || !this._oStoredScrolledSubSectionInfo) {
+			return false;
+		}
+
+		oStoredSubSection = this.oCore.byId(this._oStoredScrolledSubSectionInfo.sSubSectionId);
+
+		return oStoredSubSection
+			&& this._sectionCanBeRenderedByUXRules(oStoredSubSection)
+			&& (oSelectedSection.indexOfSubSection(oStoredSubSection) >= 0);
 	};
 
 	/**
-	 * Restores the more precise <code>scrollPosition</code> within the selected section
-	 * @param {sap.uxap.ObjectPageSectionBase} oSectionToSelect, the selected section
+	 * Restores the more precise scroll position within the selected section
 	 * @private
 	 */
 	ObjectPageLayout.prototype._restoreScrollPosition = function () {
 
-		var oStoredScrolledSubSection = this.oCore.byId(this._sStoredScrolledSubSectionId);
+		var bValidStoredSubSection = this._isValidStoredSubSectionInfo(),
+			iRestoredScrollPosition;
 
-		if (!oStoredScrolledSubSection) {
-			return;
-		}
-
-		// check if the stored <code>_iStoredScrollPosition</code> is still within the selected section
-		// (this may not be the case anymore of the position of sections changed *after* the <code>_iStoredScrollPosition</code> was saved, due to change in height/visibility/removal of some section(s)
-		if (this._isPositionWithinSection(this._iStoredScrollPosition, oStoredScrolledSubSection)) {
-			this._scrollTo(this._iStoredScrollPosition, 0);
+		if (bValidStoredSubSection) {
+			iRestoredScrollPosition =
+				this._computeScrollPosition(this.oCore.byId(this._oStoredScrolledSubSectionInfo.sSubSectionId)) +
+				this._oStoredScrolledSubSectionInfo.iOffset;
+			this._scrollTo(iRestoredScrollPosition, 0);
 		} else {
-			this.scrollToSection(oStoredScrolledSubSection.getId(), 0);
+			this.scrollToSection(this.getSelectedSection(), 0);
 		}
 	};
 
 	/**
-	 * Stores the more precise <code>scrollPosition</code> within the selected section
+	 * Stores the more precise scroll position within the selected section
 	 * @private
 	 */
 	ObjectPageLayout.prototype._storeScrollLocation = function () {
 
-		if (!this.getDomRef() || !this._bDomReady) {
+		if (!this.getDomRef() || !this._bDomReady || !this._oScroller) {
 			return;
 		}
-		this._iStoredScrollPosition = this._oScroller.getScrollTop(); //TODO: compute the position RELATIVE to the subsection
-		this._sStoredScrolledSubSectionId = this._getClosestScrolledSectionId(this._oScroller.getScrollTop(), this.iScreenHeight, true /* subSections only */);
 
+		var iScrollTop = this._oScroller.getScrollTop(),
+			sScrolledSubSectionId = this._getClosestScrolledSectionId(
+				this._oScroller.getScrollTop(), this.iScreenHeight, true /* subSections only */),
+			iScrollTopWithinScrolledSubSection;
+
+		if (sScrolledSubSectionId) {
+			iScrollTopWithinScrolledSubSection = iScrollTop -
+				this._computeScrollPosition(this.oCore.byId(sScrolledSubSectionId));
+		}
+
+		this._iStoredScrollTop = iScrollTop;
+		this._oStoredScrolledSubSectionInfo = {
+			sSubSectionId: sScrolledSubSectionId,
+			iOffset: iScrollTopWithinScrolledSubSection
+		};
 		this._oCurrentTabSection = null;
 	};
 
@@ -3970,8 +3986,8 @@ sap.ui.define([
 		// restore state:
 		// (1) restore latest stored scrollPosition
 		// (2) adjust snapped state and selectedSection to the ones that corresponds to the current scrollPosition (these, by design, will be auto-detected and adjusted in the **onScroll** listener)
-		if (this._iStoredScrollPosition) { // restore scroll position if available
-			this._scrollTo(this._iStoredScrollPosition, 0); // snapped state and selectedSection will be auto-detected and adjusted in the onScroll handler
+		if (this._iStoredScrollTop) { // restore scroll position if available
+			this._scrollTo(this._iStoredScrollTop, 0); // snapped state and selectedSection will be auto-detected and adjusted in the onScroll handler
 		} else { // remain at current scroll position
 			this._onScroll({target: {scrollTop: this._$opWrapper.scrollTop()}}); // explicitly call the onScroll handler to allow auto-detect and adjust the selectedSection and the snapped state
 		}
