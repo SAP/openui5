@@ -277,7 +277,7 @@
 									width="1.25rem"
 									press="onDisclaimerLinkPress"/>
 							</html:div>
-							<html:div class="sapUIDisclaimerLink">
+							<html:div class="sapUIDisclaimerLink sapUiSmallMarginBottom">
 								<Link text="CLI Documentation"
 									  target="_blank"
 									  href="https://github.com/SAP/ui5-cli#cli-usage"/>
