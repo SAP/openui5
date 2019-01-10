@@ -44,6 +44,16 @@ sap.ui.define(function () {
 					only: ["sap/f/DynamicPage"]
 				}
 			},
+			"DynamicPageHeader": {
+				coverage: {
+					only: ["sap/f/DynamicPageHeader"]
+				}
+			},
+			"DynamicPageTitle": {
+				coverage: {
+					only: ["sap/f/DynamicPageTitle"]
+				}
+			},
 			"ExploredSamples": {
 				loader: {
 					map: {
