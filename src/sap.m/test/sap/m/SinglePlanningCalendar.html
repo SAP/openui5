@@ -354,9 +354,11 @@
 							})
 						},
 						appointmentSelect: function (oEvent) {
-							var oAppointment = oEvent.getParameter("appointment");
+							var oAppointment = oEvent.getParameter("appointment"),
+								sAppointmentTitle = oAppointment.getTitle(),
+								sAppointmentSelected = oAppointment.getSelected() ? "selected" : "deselected";
 
-							MessageToast.show("Appointment with title '" + oAppointment.getTitle() + "' has been selected.");
+							MessageToast.show("Appointment with title \n'" + sAppointmentTitle + "'\n has been " + sAppointmentSelected);
 						},
 						headerDateSelect: function (oEvent) {
 							var oDate = oEvent.getParameter("date");
