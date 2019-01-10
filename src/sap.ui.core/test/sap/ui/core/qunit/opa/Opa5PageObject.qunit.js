@@ -2,8 +2,9 @@
 sap.ui.define([
 	"sap/ui/test/Opa",
 	"sap/ui/test/Opa5",
-	"sap/base/Log"
-], function (Opa, Opa5, Log) {
+	"sap/base/Log",
+	"./utils/view"
+], function (Opa, Opa5, Log, viewUtils) {
 	"use strict";
 
 	// preset some globals to avoid issues with QUnit's 'noglobals' option
@@ -133,8 +134,11 @@ sap.ui.define([
 
 	QUnit.module("Page Object - ViewName", {
 		beforeEach: function () {
-			this.oView = createXmlView("foo");
-			this.oView2 = createXmlView("bar");
+			this.oView = viewUtils.createXmlView("foo", "myFooView");
+			this.oView2 = viewUtils.createXmlView("bar", "myBarView");
+			this.oView.placeAt("qunit-fixture");
+			this.oView2.placeAt("qunit-fixture");
+			sap.ui.getCore().applyChanges();
 		},
 		afterEach: function () {
 			this.oView.destroy();
@@ -142,11 +146,12 @@ sap.ui.define([
 		}
 	});
 
-	QUnit.test("Should search for a control inside of the view", function (assert) {
+	QUnit.test("Should search for controls when viewName is given", function (assert) {
 		var fnDone = assert.async();
 		assert.expect(4);
 		var oView = this.oView;
 		var oView2 = this.oView2;
+
 		Opa5.createPageObjects({
 			onMyPageWithViewName: {
 				viewName: "foo",
@@ -154,9 +159,8 @@ sap.ui.define([
 					iWait: function () {
 						this.waitFor({
 							id: "foo",
-							visible: false,
 							success: function (oButton) {
-								assert.strictEqual(oButton, oView.byId("foo"));
+								assert.strictEqual(oButton, oView.byId("foo"), "Should define action viewName in page object");
 							}
 						});
 					},
@@ -164,9 +168,8 @@ sap.ui.define([
 						this.waitFor({
 							viewName: "bar",
 							id: "foo",
-							visible: false,
 							success: function (oButton) {
-								assert.strictEqual(oButton, oView2.byId("foo"));
+								assert.strictEqual(oButton, oView2.byId("foo"), "Should override viewName in waitFor");
 							}
 						});
 					},
@@ -174,9 +177,8 @@ sap.ui.define([
 						this.waitFor({
 							id: oView.getId(),
 							viewName: "",
-							visible: false,
 							success: function (oViewFromOPA) {
-								assert.strictEqual(oViewFromOPA, oView);
+								assert.strictEqual(oViewFromOPA, oView, "Should remove viewName in waitFor");
 							}
 						});
 					}
@@ -185,15 +187,15 @@ sap.ui.define([
 					iWait: function () {
 						this.waitFor({
 							id: "bar",
-							visible: false,
 							success: function (oButton) {
-								assert.strictEqual(oButton, oView.byId("bar"));
+								assert.strictEqual(oButton, oView.byId("bar"), "Should define assertion viewName in page object");
 							}
 						});
 					}
 				}
 			}
 		});
+
 		Opa.config.actions.onMyPageWithViewName.iWait();
 		Opa.config.actions.onMyPageWithViewName.iWaitWithOtherViewName();
 		Opa.config.actions.onMyPageWithViewName.iWaitWithoutViewName();
@@ -202,24 +204,57 @@ sap.ui.define([
 		Opa.emptyQueue().done(fnDone);
 	});
 
-	function createXmlView(sViewName) {
-		var sView = [
-			'<core:View xmlns:core="sap.ui.core" xmlns="sap.m">',
-			'<Button id="foo">',
-			'</Button>',
-			'<Button id="bar">',
-			'</Button>',
-			'<Button id="baz">',
-			'</Button>',
-			'<Image id="boo"></Image>',
-			'</core:View>'
-		].join('');
-		var oView;
+	QUnit.test("Should search for controls when viewId is given", function (assert) {
+		var fnDone = assert.async();
+		assert.expect(3);
+		var oView = this.oView;
+		var oView2 = this.oView2;
 
-		oView = sap.ui.xmlview({viewContent: sView});
-		oView.setViewName(sViewName);
-		return oView;
-	}
+		Opa5.createPageObjects({
+			onMyPageWithViewId: {
+				viewId: "myFooView",
+				actions: {
+					iWait: function () {
+						this.waitFor({
+							id: "foo",
+							success: function (oButton) {
+								assert.strictEqual(oButton, oView.byId("foo"), "Should define action viewId in page object");
+							}
+						});
+					},
+					iWaitWithOtherViewId: function () {
+						this.waitFor({
+							viewId: "myBarView",
+							id: "foo",
+							success: function (oButton) {
+								assert.strictEqual(oButton, oView2.byId("foo"), "Should override viewId in waitFor");
+							}
+						});
+					}
+				}
+			},
+			onMyPageWithViewIdAndName: {
+				viewId: "myFooView",
+				viewName: "foo",
+				actions: {
+					iWait: function () {
+						this.waitFor({
+							id: "foo",
+							success: function (oButton) {
+								assert.strictEqual(oButton, oView.byId("foo"), "Should define viewId and viewName in page object");
+							}
+						});
+					}
+				}
+			}
+		});
+
+		Opa.config.actions.onMyPageWithViewId.iWait();
+		Opa.config.actions.onMyPageWithViewId.iWaitWithOtherViewId();
+		Opa.config.actions.onMyPageWithViewIdAndName.iWait();
+
+		Opa.emptyQueue().done(fnDone);
+	});
 
 	function assertPageObjectIsReturned(assert, oPages){
 		assert.ok(oPages,"Page Object is returned");
