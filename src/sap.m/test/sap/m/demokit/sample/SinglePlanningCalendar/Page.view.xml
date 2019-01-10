@@ -6,7 +6,10 @@
 	<VBox class="sapUiSmallMargin">
 		<SinglePlanningCalendar
 			id="SPC1"
-			title= "Title"
+			title= "My calendar"
+			appointmentSelect="handleAppointmentSelect"
+			headerDateSelect="handleHeaderDateSelect"
+			startDateChange="handleStartDateChange"
 			startDate="{path: '/startDate'}"
 			appointments="{path: '/appointments'}">
 			<actions>
@@ -17,7 +20,7 @@
 						<core:ListItem text="NavBarAndColHeaders" />
 					</items>
 				</Select>
-				<Button id="addButton" icon="sap-icon://add" text="Add appointment" press="handleAppointmentCreate" />
+				<Button id="addNewAppointment" icon="sap-icon://add" text="Add appointment" press="handleAppointmentCreate" tooltip="Add new appointment" />
 			</actions>
 			<views>
 				<SinglePlanningCalendarWeekView key="WeekView" title="Week" />
@@ -30,7 +33,6 @@
 					text= "{text}"
 					type= "{type}"
 					icon= "{icon}"
-					color= "{color}"
 					fullDay= "{fullDay}"
 					startDate= "{startDate}"
 					endDate= "{endDate}">

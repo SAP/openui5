@@ -1,228 +1,247 @@
-/* eslint-disable no-alert, no-console */
 sap.ui.define([
-	"jquery.sap.global",
 	"sap/m/Button",
 	"sap/m/Dialog",
-	"sap/m/Label",
-	"sap/m/Popover",
-	"sap/m/CalendarAppointment",
 	"sap/ui/core/Fragment",
 	"sap/ui/core/mvc/Controller",
 	"sap/ui/model/json/JSONModel",
-	"sap/ui/Device"
+	"sap/ui/unified/Library",
+	"sap/m/MessageToast"
 ],
-function(jQuery, Button, Dialog, Label, Popover, CalendarAppointment, Fragment, Controller, JSONModel, Device) {
+function(Button, Dialog, Fragment, Controller, JSONModel, unifiedLibrary, MessageToast) {
 	"use strict";
+
+	var CalendarDayType = unifiedLibrary.CalendarDayType;
 
 	var PageController = Controller.extend("sap.m.sample.SinglePlanningCalendar.Page", {
 
 		onInit: function() {
+
 			var oModel = new JSONModel();
-				oModel.setData({
-					startDate: new Date(2018, 6, 9),
-					appointments: [
-						{
-							title: "Meet John Miller",
-							startDate: new Date(2018, 6, 8, 8, 0, 0),
-							endDate: new Date(2018, 6, 8, 9, 0, 0)
-						},
-						{
-							title: "Discussion of the plan",
-							type: "Type01",
-							startDate: new Date(2018, 6, 8, 9, 0, 0),
-							endDate: new Date(2018, 6, 8, 10, 0, 0)
-						},
-						{
-							title: "Lunch",
-							text: "canteen",
-							type: "Type02",
-							startDate: new Date(2018, 6, 8, 10, 0, 0),
-							endDate: new Date(2018, 6, 8, 11, 0, 0)
-						},
-						{
-							title: "New Product",
-							text: "room 105",
-							type: "Type03",
-							icon: "sap-icon://meeting-room",
-							startDate: new Date(2018, 6, 8, 11, 0, 0),
-							endDate: new Date(2018, 6, 8, 12, 0, 0)
-						},
-						{
-							title: "Team meeting",
-							text: "Regular",
-							type: "Type04",
-							icon: "sap-icon://home",
-							startDate: new Date(2018, 6, 8, 12, 0, 0),
-							endDate: new Date(2018, 6, 8, 13, 0, 0)
-						},
-						{
-							title: "Discussion with clients",
-							text: "Online meeting",
-							type: "Type05",
-							icon: "sap-icon://home",
-							startDate: new Date(2018, 6, 8, 13, 0, 0),
-							endDate: new Date(2018, 6, 8, 14, 0, 0)
-						},
-						{
-							title: "Discussion of the plan",
-							text: "Online meeting",
-							type: "Type06",
-							icon: "sap-icon://home",
-							tentative: true,
-							startDate: new Date(2018, 6, 8, 14, 0, 0),
-							endDate: new Date(2018, 6, 8, 15, 0, 0)
-						},
-						{
-							title: "Discussion with clients",
-							type: "Type07",
-							icon: "sap-icon://home",
-							startDate: new Date(2018, 6, 8, 15, 0, 0),
-							endDate: new Date(2018, 6, 8, 16, 0, 0)
-						},
-						{
-							title: "Meeting with the manager",
-							type: "Type08",
-							startDate: new Date(2018, 6, 8, 16, 0, 0),
-							endDate: new Date(2018, 6, 8, 17, 0, 0)
-						},
-						{
-							title: "Meeting with the manager",
-							type: "Type14",
-							startDate: new Date(2018, 6, 9, 9, 30, 0),
-							endDate: new Date(2018, 6, 9, 10, 0, 0)
-						},
-						{
-							title: "Lunch",
-							type: "Type15",
-							startDate: new Date(2018, 6, 9, 10, 0, 0),
-							endDate: new Date(2018, 6, 9, 11, 0, 0)
-						},
-						{
-							title: "Team meeting",
-							text: "online",
-							type: "Type16",
-							startDate: new Date(2018, 6, 9, 11, 0, 0),
-							endDate: new Date(2018, 6, 9, 12, 0, 0)
-						},
-						{
-							title: "Discussion with clients",
-							type: "Type17",
-							startDate: new Date(2018, 6, 9, 12, 0, 0),
-							endDate: new Date(2018, 6, 9, 13, 0, 0)
-						},
-						{
-							title: "Team meeting",
-							text: "room 5",
-							type: "Type18",
-							startDate: new Date(2018, 6, 9, 14, 0, 0),
-							endDate: new Date(2018, 6, 9, 17, 0, 0)
-						},
-						{
-							title: "Daily standup meeting",
-							type: "Type20",
-							startDate: new Date(2018, 6, 9, 12, 0, 0),
-							endDate: new Date(2018, 6, 9, 12, 15, 0)
-						},
-						{
-							title: "Private meeting",
-							type: "Type20",
-							startDate: new Date(2018, 6, 11, 12, 0, 0),
-							endDate: new Date(2018, 6, 11, 12, 20, 0)
-						},
-						{
-							title: "Private meeting",
-							color: "#f230b1",
-							startDate: new Date(2018, 6, 10, 9, 0, 0),
-							endDate: new Date(2018, 6, 10, 10, 0, 0)
-						},
-						{
-							title: "Meeting with the manager",
-							type: "Type20",
-							startDate: new Date(2018, 6, 10, 18, 0, 0),
-							endDate: new Date(2018, 6, 10, 18, 30, 0)
-						},
-						{
-							title: "Meet John Doe",
-							type: "Type01",
-							icon: "sap-icon://home",
-							startDate: new Date(2018, 6, 11, 10, 0, 0),
-							endDate: new Date(2018, 6, 11, 10, 30, 0)
-						},
-						{
-							title: "Team meeting",
-							text: "online",
-							type: "Type02",
-							startDate: new Date(2018, 6, 11, 11, 0, 0),
-							endDate: new Date(2018, 6, 11, 12, 30, 0)
-						},
-						{
-							title: "Workshop",
-							type: "Type03",
-							startDate: new Date(2018, 6, 11, 11, 30, 0),
-							endDate: new Date(2018, 6, 11, 15, 0, 0)
-						},
-						{
-							title: "Team collaboration",
-							type: "Type04",
-							startDate: new Date(2018, 6, 12, 7, 0, 0),
-							endDate: new Date(2018, 6, 12, 15, 30, 0)
-						},
-						{
-							title: "Out of the office",
-							type: "Type05",
-							startDate: new Date(2018, 6, 12, 18, 0, 0),
-							endDate: new Date(2018, 6, 12, 22, 30, 0)
-						},
-						{
-							title: "Working out of the building",
-							type: "Type06",
-							startDate: new Date(2018, 6, 12, 23, 0, 0),
-							endDate: new Date(2018, 6, 13, 0, 30, 0)
-						},
-						{
-							title: "Vacation",
-							type: "Type07",
-							text: "out of office",
-							startDate: new Date(2018, 6, 11, 15, 0, 0),
-							endDate: new Date(2018, 6, 13, 17, 0, 0)
-						},
-
-						// Full day appointments/blockers
-						{
-							title: "Reminder",
-							fullDay: true,
-							startDate: new Date(2018, 6, 12, 15, 30, 0),
-							endDate: new Date(2018, 6, 13, 16, 30, 0)
-						},
-						{
-							title: "Team collaboration",
-							fullDay: true,
-							color: "#f230b1",
-							startDate: new Date(2018, 6, 6, 15, 30, 0),
-							endDate: new Date(2018, 6, 16, 16, 30, 0)
-						},
-						{
-							title: "Workshop out of the country",
-							fullDay: true,
-							startDate: new Date(2018, 6, 14, 15, 30, 0),
-							endDate: new Date(2018, 6, 20, 16, 30, 0)
-						},
-						{
-							title: "Working out of the building",
-							fullDay: true,
-							startDate: new Date(2018, 6, 15, 15, 30, 0),
-							endDate: new Date(2018, 6, 17, 16, 30, 0)
-						},
-						{
-							title: "Payment reminder",
-							fullDay: true,
-							startDate: new Date(2018, 6, 7, 15, 30, 0),
-							endDate: new Date(2018, 6, 8, 16, 30, 0)
+			oModel.setData({
+					startDate: new Date("2018", "6", "9"),
+					types: (function() {
+						var aTypes = [];
+						for (var key in CalendarDayType) {
+							aTypes.push({
+								type: CalendarDayType[key]
+							});
 						}
-					]
-				});
-
-				this.getView().setModel(oModel);
+						return aTypes;
+					})(),
+					appointments: [{
+						title: "Meet John Miller",
+						type: CalendarDayType.Type05,
+						startDate: new Date("2018", "6", "8", "5", "0"),
+						endDate: new Date("2018", "6", "8", "6", "0")
+					}, {
+						title: "Discussion of the plan",
+						type: CalendarDayType.Type01,
+						startDate: new Date("2018", "6", "8", "6", "0"),
+						endDate: new Date("2018", "6", "8", "7", "9")
+					}, {
+						title: "Lunch",
+						text: "canteen",
+						type: CalendarDayType.Type05,
+						startDate: new Date("2018", "6", "8", "7", "0"),
+						endDate: new Date("2018", "6", "8", "8", "0")
+					}, {
+						title: "New Product",
+						text: "room 105",
+						type: CalendarDayType.Type01,
+						icon: "sap-icon://meeting-room",
+						startDate: new Date("2018", "6", "8", "8", "0"),
+						endDate: new Date("2018", "6", "8", "9", "0")
+					}, {
+						title: "Team meeting",
+						text: "Regular",
+						type: CalendarDayType.Type01,
+						icon: "sap-icon://home",
+						startDate: new Date("2018", "6", "8", "9", "9"),
+						endDate: new Date("2018", "6", "8", "10", "0")
+					}, {
+						title: "Discussion with clients",
+						text: "Online meeting",
+						type: CalendarDayType.Type08,
+						icon: "sap-icon://home",
+						startDate: new Date("2018", "6", "8", "10", "0"),
+						endDate: new Date("2018", "6", "8", "11", "0")
+					}, {
+						title: "Discussion of the plan",
+						text: "Online meeting",
+						type: CalendarDayType.Type01,
+						icon: "sap-icon://home",
+						tentative: true,
+						startDate: new Date("2018", "6", "8", "11", "0"),
+						endDate: new Date("2018", "6", "8", "12", "0")
+					}, {
+						title: "Discussion with clients",
+						type: CalendarDayType.Type08,
+						icon: "sap-icon://home",
+						startDate: new Date("2018", "6", "8", "12", "0"),
+						endDate: new Date("2018", "6", "8", "13", "9")
+					}, {
+						title: "Meeting with the manager",
+						type: CalendarDayType.Type03,
+						startDate: new Date("2018", "6", "8", "13", "9"),
+						endDate: new Date("2018", "6", "8", "13", "9")
+					}, {
+						title: "Meeting with the manager",
+						type: CalendarDayType.Type03,
+						startDate: new Date("2018", "6", "9", "6", "30"),
+						endDate: new Date("2018", "6", "9", "7", "0")
+					}, {
+						title: "Lunch",
+						type: CalendarDayType.Type05,
+						startDate: new Date("2018", "6", "9", "7", "0"),
+						endDate: new Date("2018", "6", "9", "8", "0")
+					}, {
+						title: "Team meeting",
+						text: "online",
+						type: CalendarDayType.Type01,
+						startDate: new Date("2018", "6", "9", "8", "0"),
+						endDate: new Date("2018", "6", "9", "9", "0")
+					}, {
+						title: "Discussion with clients",
+						type: CalendarDayType.Type08,
+						startDate: new Date("2018", "6", "9", "9", "0"),
+						endDate: new Date("2018", "6", "9", "10", "0")
+					}, {
+						title: "Team meeting",
+						text: "room 5",
+						type: CalendarDayType.Type01,
+						startDate: new Date("2018", "6", "9", "11", "0"),
+						endDate: new Date("2018", "6", "9", "14", "0")
+					}, {
+						title: "Daily standup meeting",
+						type: CalendarDayType.Type01,
+						startDate: new Date("2018", "6", "9", "9", "0"),
+						endDate: new Date("2018", "6", "9", "9", "15", "0")
+					}, {
+						title: "Private meeting",
+						type: CalendarDayType.Type03,
+						startDate: new Date("2018", "6", "11", "9", "9"),
+						endDate: new Date("2018", "6", "11", "9", "20")
+					}, {
+						title: "Private meeting",
+						type: CalendarDayType.Type03,
+						startDate: new Date("2018", "6", "10", "6", "0"),
+						endDate: new Date("2018", "6", "10", "7", "0")
+					}, {
+						title: "Meeting with the manager",
+						type: CalendarDayType.Type03,
+						startDate: new Date("2018", "6", "10", "15", "0"),
+						endDate: new Date("2018", "6", "10", "15", "30")
+					}, {
+						title: "Meet John Doe",
+						type: CalendarDayType.Type05,
+						icon: "sap-icon://home",
+						startDate: new Date("2018", "6", "11", "7", "0"),
+						endDate: new Date("2018", "6", "11", "7", "30")
+					}, {
+						title: "Team meeting",
+						text: "online",
+						type: CalendarDayType.Type01,
+						startDate: new Date("2018", "6", "11", "8", "0"),
+						endDate: new Date("2018", "6", "11", "9", "30")
+					}, {
+						title: "Workshop",
+						type: CalendarDayType.Type05,
+						startDate: new Date("2018", "6", "11", "8", "30"),
+						endDate: new Date("2018", "6", "11", "12", "0")
+					}, {
+						title: "Team collaboration",
+						type: CalendarDayType.Type01,
+						startDate: new Date("2018", "6", "12", "4", "0"),
+						endDate: new Date("2018", "6", "12", "12", "30")
+					}, {
+						title: "Out of the office",
+						type: CalendarDayType.Type05,
+						startDate: new Date("2018", "6", "12", "15", "0"),
+						endDate: new Date("2018", "6", "12", "19", "30")
+					}, {
+						title: "Working out of the building",
+						type: CalendarDayType.Type05,
+						startDate: new Date("2018", "6", "12", "20", "0"),
+						endDate: new Date("2018", "6", "12", "21", "30")
+					}, {
+						title: "Vacation",
+						type: CalendarDayType.Type09,
+						text: "out of office",
+						startDate: new Date("2018", "6", "11", "12", "0"),
+						endDate: new Date("2018", "6", "13", "14", "0")
+					}, {
+						title: "Reminder",
+						fullDay: true,
+						type: CalendarDayType.Type09,
+						startDate: new Date("2018", "6", "12", "12", "30"),
+						endDate: new Date("2018", "6", "13", "13", "30")
+					}, {
+						title: "Team collaboration",
+						fullDay: true,
+						type: CalendarDayType.Type01,
+						startDate: new Date("2018", "6", "6", "12", "30"),
+						endDate:  new Date("2018", "6", "16", "13", "30")
+					}, {
+						title: "Workshop out of the country",
+						fullDay: true,
+						type: CalendarDayType.Type05,
+						startDate: new Date("2018", "6", "14", "12", "30"),
+						endDate: new Date("2018", "6", "20", "13", "30")
+					}, {
+						title: "Payment reminder",
+						fullDay: true,
+						type: CalendarDayType.Type09,
+						startDate: new Date("2018", "6", "7", "12", "30"),
+						endDate: new Date("2018", "6", "8", "13", "30")
+					}, {
+						title:"Meeting with the manager",
+						type: CalendarDayType.Type03,
+						startDate: new Date("2018", "6", "6", "9", "0"),
+						endDate: new Date("2018", "6", "6", "10", "0")
+					}, {
+						title:"Daily standup meeting",
+						type: CalendarDayType.Type01,
+						startDate: new Date("2018", "6", "7", "10", "0"),
+						endDate: new Date("2018", "6", "7", "10", "30")
+					}, {
+						title:"Private meeting",
+						type: CalendarDayType.Type03,
+						startDate: new Date("2018", "6", "6", "11", "30"),
+						endDate: new Date("2018", "6", "6", "12", "0")
+					}, {
+						title:"Lunch",
+						type: CalendarDayType.Type05,
+						startDate: new Date("2018", "6", "6", "12", "0"),
+						endDate: new Date("2018", "6", "6", "13", "0")
+					}, {
+						title:"Discussion of the plan",
+						type: CalendarDayType.Type01,
+						startDate: new Date("2018", "6", "16", "11", "0"),
+						endDate: new Date("2018", "6", "16", "12", "0")
+					}, {
+						title:"Lunch",
+						text: "canteen",
+						type: CalendarDayType.Type05,
+						startDate: new Date("2018", "6", "16", "12", "0"),
+						endDate: new Date("2018", "6", "16", "13", "0")
+					}, {
+						title:"Team meeting",
+						text: "room 200",
+						type: CalendarDayType.Type01,
+						icon: "sap-icon://meeting-room",
+						startDate:  new Date("2018", "6", "16", "16", "0"),
+						endDate: new Date("2018", "6", "16", "17", "0")
+					}, {
+						title:"Discussion with clients",
+						text: "Online meeting",
+						type: CalendarDayType.Type08,
+						icon: "sap-icon://home",
+						startDate: new Date("2018", "6", "17", "15", "30"),
+						endDate: new Date("2018", "6", "17", "16", "30")
+					}
+				]
+			});
+			this.getView().setModel(oModel);
 		},
 
 		handleStickyModeChange: function (oEvent) {
@@ -232,34 +251,210 @@ function(jQuery, Button, Dialog, Label, Popover, CalendarAppointment, Fragment, 
 			oSPC.setStickyMode(sNewStickyMode);
 		},
 
-		handleAppointmentCreate: function (oEvent) {
-			var oFrag = sap.ui.core.Fragment,
-				oDateTimePickerStart,
-				oDateTimePickerEnd,
-				oBeginButton;
+		handleAppointmentSelect: function (oEvent) {
+			var oAppointment = oEvent.getParameter("appointment");
 
-			if (!this.oNewAppointmentDialog) {
-				this._createDialog();
+			if (!this._oDetailsPopover) {
+				Fragment.load({
+					id: "myPopoverFrag",
+					name: "sap.m.sample.SinglePlanningCalendar.Details",
+					controller: this
+				})
+				.then(function(oPopoverContent){
+					this._oDetailsPopover = oPopoverContent;
+					this.getView().addDependent(this._oDetailsPopover);
+					// To edit an appointment through the form input fields,
+					// the Details.fragment.xml must be loaded
+					this._setPopoverInitialState(oAppointment);
+				}.bind(this));
+			} else {
+				this._setPopoverInitialState(oAppointment);
 			}
+		},
 
-			oDateTimePickerStart = oFrag.byId("myFrag", "startDate");
-			oDateTimePickerEnd =  oFrag.byId("myFrag", "endDate");
-			oBeginButton = this.oNewAppointmentDialog.getBeginButton();
+		/*
+		 * Sets the default values of the fields in the popover.
+		 */
+		_setPopoverInitialState: function(oAppointment) {
+			var oAppBC = oAppointment.getBindingContext(),
+				oTitleInput = Fragment.byId("myPopoverFrag", "appTitle"),
+				oTypeInput = Fragment.byId("myPopoverFrag", "appType"),
+				oDateTimePickerStart = Fragment.byId("myPopoverFrag", "startDate"),
+				oDateTimePickerEnd = Fragment.byId("myPopoverFrag", "endDate"),
+				oInfoInput = Fragment.byId("myPopoverFrag", "moreInfo"),
+				oOKButton = this._oDetailsPopover.getBeginButton(),
+				aTypes = oTypeInput.getItems(),
+				oSelectedItem = aTypes[0],
+				i;
 
-			oDateTimePickerStart.setValue("");
-			oDateTimePickerEnd.setValue("");
+			for (i = 0; i < aTypes.length; ++i) {
+				if (aTypes[i].getKey() === oAppointment.getType()) {
+					oSelectedItem = aTypes[i];
+					break;
+				}
+			}
+			this._oDetailsPopover.setBindingContext(oAppBC);
+
+			oTitleInput.setValue(oAppointment.getTitle());
+			oTypeInput.setSelectedItem(oSelectedItem);
+			oDateTimePickerStart.setDateValue(oAppointment.getStartDate());
+			oDateTimePickerEnd.setDateValue(oAppointment.getEndDate());
+			oInfoInput.setValue(oAppointment.getText());
+
 			oDateTimePickerStart.setValueState("None");
 			oDateTimePickerEnd.setValueState("None");
 
-			this.updateButtonEnabledState(oDateTimePickerStart, oDateTimePickerEnd, oBeginButton);
-			this.oNewAppointmentDialog.open();
+			this.updateButtonEnabledState(oDateTimePickerStart, oDateTimePickerEnd, oOKButton);
+			this._oDetailsPopover.openBy(oAppointment);
 		},
 
-		_validateDateTimePicker: function (sValue, oDateTimePicker) {
-			if (sValue === "") {
-				oDateTimePicker.setValueState("Error");
+		handleAppointmentCreate: function () {
+			this._loadDialogFragment(this.getView().byId("SPC1").getStartDate());
+		},
+
+		handleHeaderDateSelect: function (oEvent) {
+			this._loadDialogFragment(oEvent.getParameter("date"));
+		},
+
+		/*
+		 * Loads the dialog fragment for creation of an appointment.
+		 */
+		_loadDialogFragment: function (oAppStartDate) {
+			if (!this._oNewAppointmentDialog) {
+				Fragment.load({
+					id: "myDialogFrag",
+					name: "sap.m.sample.SinglePlanningCalendar.Create",
+					controller: this
+				})
+				.then(function(oDialogContent){
+					this._createDialog(oDialogContent);
+					// To set the form input fields values,
+					// the Create.fragment.xml must be loaded
+					this._setDialogInitialState(oAppStartDate);
+				}.bind(this));
 			} else {
-				oDateTimePicker.setValueState("None");
+				this._setDialogInitialState(oAppStartDate);
+			}
+		},
+
+		_createDialog: function (oDialogContent) {
+			var oDateTimePickerStart,
+				oDateTimePickerEnd,
+				oInputTitle,
+				sInputType,
+				oInputInfo,
+				oNewAppointment,
+				oModel,
+				aAppointments;
+
+			this._oNewAppointmentDialog = new Dialog({
+				title: 'Add appointment',
+				content: [
+					oDialogContent
+				],
+				beginButton: new Button({
+					text: 'Create',
+					enabled: false,
+					press: function () {
+						oDateTimePickerStart = Fragment.byId("myDialogFrag", "startDate").getDateValue();
+						oDateTimePickerEnd = Fragment.byId("myDialogFrag", "endDate").getDateValue();
+						oInputTitle = Fragment.byId("myDialogFrag", "appTitle");
+						sInputType = Fragment.byId("myDialogFrag", "appType").getSelectedItem().getText();
+						oInputInfo = Fragment.byId("myDialogFrag", "moreInfo");
+
+						if (Fragment.byId("myDialogFrag", "startDate").getValueState() !== "Error"
+							&& Fragment.byId("myDialogFrag", "endDate").getValueState() !== "Error") {
+
+							oNewAppointment = {
+								title: oInputTitle.getValue(),
+								text: oInputInfo.getValue(),
+								type: sInputType,
+								startDate: oDateTimePickerStart,
+								endDate: oDateTimePickerEnd
+							};
+
+							oModel = this.getView().getModel();
+							aAppointments = oModel.getData().appointments;
+							aAppointments.push(oNewAppointment);
+							oModel.updateBindings();
+
+							this._oNewAppointmentDialog.close();
+						}
+					}.bind(this)
+				}),
+				endButton: new Button({
+					text: 'Close',
+					press: function () {
+						this._oNewAppointmentDialog.close();
+					}.bind(this)
+				})
+			});
+
+			this._oNewAppointmentDialog.addStyleClass("sapUiContentPadding");
+			this.getView().addDependent(this._oNewAppointmentDialog);
+		},
+
+		/*
+		 * Sets the default values of the fields in the dialog.
+		 */
+		_setDialogInitialState: function(oAppStartDate) {
+			var oInputTitle = Fragment.byId("myDialogFrag", "appTitle"),
+				oDateTimePickerStart = Fragment.byId("myDialogFrag", "startDate"),
+				oDateTimePickerEnd =  Fragment.byId("myDialogFrag", "endDate"),
+				oInputInfo = Fragment.byId("myDialogFrag", "moreInfo"),
+				oBeginButton = this._oNewAppointmentDialog.getBeginButton(),
+				oEndDate = new Date(oAppStartDate);
+
+			oInputTitle.setValue("");
+			oDateTimePickerStart.setDateValue(oAppStartDate);
+			// Default end hour is an hour later than the start hour
+			oEndDate.setHours(oEndDate.getHours() + 1);
+			oDateTimePickerEnd.setDateValue(oEndDate);
+
+			oDateTimePickerStart.setValueState("None");
+			oDateTimePickerEnd.setValueState("None");
+			oInputInfo.setValue("");
+
+			this.updateButtonEnabledState(oDateTimePickerStart, oDateTimePickerEnd, oBeginButton);
+			this._oNewAppointmentDialog.open();
+		},
+
+		handleDetailsDateChange: function (oEvent) {
+			this._dateChange(oEvent, "myPopoverFrag", this._oDetailsPopover.getBeginButton());
+		},
+
+		handleCreateDateChange: function (oEvent) {
+			this._dateChange(oEvent, "myDialogFrag", this._oNewAppointmentDialog.getBeginButton());
+		},
+
+		_dateChange: function(oEvent, sFragmentId, oSubmitButton) {
+			var oDateTimePickerStart = Fragment.byId(sFragmentId, "startDate"),
+				oDateTimePickerEnd = Fragment.byId(sFragmentId, "endDate");
+
+			// Check if the DateTimePicker for the start date is changed and
+			// apply this date incremented by one hour in the DateTimePicker for the end date.
+			if (sap.ui.getCore().byId(oEvent.getParameter("id")) === oDateTimePickerStart) {
+				var oEndDate = new Date(oDateTimePickerStart.getDateValue().getTime());
+				oEndDate.setHours(oEndDate.getHours() + 1);
+				oDateTimePickerEnd.setDateValue(oEndDate);
+			}
+			this._validateDateTimePicker(oDateTimePickerStart, oDateTimePickerEnd);
+			this.updateButtonEnabledState(oDateTimePickerStart, oDateTimePickerEnd, oSubmitButton);
+		},
+
+		_validateDateTimePicker: function (oDateTimePickerStart, oDateTimePickerEnd) {
+			var oStartDate = oDateTimePickerStart.getDateValue(),
+				oEndDate = oDateTimePickerEnd.getDateValue(),
+				sValueStateText = "Start date should be before End date";
+
+			if (oStartDate && oEndDate && oEndDate.getTime() <= oStartDate.getTime()) {
+				oDateTimePickerStart.setValueState("Error");
+				oDateTimePickerEnd.setValueState("Error");
+				oDateTimePickerStart.setValueStateText(sValueStateText);
+				oDateTimePickerEnd.setValueStateText(sValueStateText);
+			} else {
+				oDateTimePickerStart.setValueState("None");
+				oDateTimePickerEnd.setValueState("None");
 			}
 		},
 
@@ -272,81 +467,30 @@ function(jQuery, Button, Dialog, Label, Popover, CalendarAppointment, Fragment, 
 			oButton.setEnabled(bEnabled);
 		},
 
-		handleCreateFragmentDateChange: function (oEvent) {
-			var oFrag =  sap.ui.core.Fragment,
-				oDateTimePickerStart = oFrag.byId("myFrag", "startDate"),
-				oDateTimePickerEnd = oFrag.byId("myFrag", "endDate"),
-				oBeginButton = this.oNewAppointmentDialog.getBeginButton();
+		handleOkButton: function () {
+			var sTitleValue = Fragment.byId("myPopoverFrag", "appTitle").getValue(),
+				sTypeValue = Fragment.byId("myPopoverFrag", "appType").getSelectedItem().getKey(),
+				oStartValue = Fragment.byId("myPopoverFrag", "startDate").getDateValue(),
+				oEndValue = Fragment.byId("myPopoverFrag", "endDate").getDateValue(),
+				sInfoValue = Fragment.byId("myPopoverFrag", "moreInfo").getValue(),
+				sAppointmentPath = this._oDetailsPopover.getBindingContext().sPath,
+				oModel = this.getView().getModel();
 
-			if (sap.ui.getCore().byId(oEvent.getParameter("id")) === oDateTimePickerStart &&
-				!oDateTimePickerEnd.getProperty("value")) {
-				oDateTimePickerEnd.setValue(oDateTimePickerStart.getProperty("value"));
-			}
-			this._validateDateTimePicker(oEvent.getParameter("value"), oEvent.getSource());
-			this.updateButtonEnabledState(oDateTimePickerStart, oDateTimePickerEnd, oBeginButton);
+			oModel.setProperty(sAppointmentPath + "/title", sTitleValue);
+			oModel.setProperty(sAppointmentPath + "/type", sTypeValue);
+			oModel.setProperty(sAppointmentPath + "/startDate", oStartValue);
+			oModel.setProperty(sAppointmentPath + "/endDate", oEndValue);
+			oModel.setProperty(sAppointmentPath + "/text", sInfoValue);
+			this._oDetailsPopover.close();
 		},
 
-		_createDialog: function () {
-			var oFrag =  sap.ui.core.Fragment,
-				that = this,
-				sPath = "/appointments",
-				oStartDate,
-				oEndDate,
-				oTitle,
-				oInfo,
-				bFullDay,
-				oNewAppointment,
-				oModel,
-				oAppointments;
+		handleCancelButton: function () {
+			this._oDetailsPopover.close();
+		},
 
-			that.oNewAppointmentDialog = new Dialog({
-				title: 'Add a new appointment',
-				content: [
-					sap.ui.xmlfragment("myFrag", "sap.m.sample.SinglePlanningCalendar.Create", this)
-				],
-				beginButton: new Button({
-					text: 'Create',
-					enabled: false,
-					press: function () {
-						oStartDate = oFrag.byId("myFrag", "startDate").getDateValue();
-						oEndDate = oFrag.byId("myFrag", "endDate").getDateValue();
-						oTitle = oFrag.byId("myFrag", "inputTitle");
-						oInfo = oFrag.byId("myFrag", "moreInfo");
-						bFullDay = oFrag.byId("myFrag", "fullDay").getProperty("selected");
-
-						if (oFrag.byId("myFrag", "startDate").getValueState() !== "Error"
-							&& oFrag.byId("myFrag", "endDate").getValueState() !== "Error") {
-
-							oNewAppointment = {
-								startDate: oStartDate,
-								endDate: oEndDate,
-								title: oTitle.getValue(),
-								text: oInfo.getValue(),
-								fullDay: bFullDay
-							};
-
-							oModel = that.getView().getModel();
-							oAppointments = oModel.getProperty(sPath);
-							oAppointments.push(oNewAppointment);
-
-							oTitle.setValue("");
-							oInfo.setValue("");
-
-							oModel.setProperty(sPath, oAppointments);
-							that.oNewAppointmentDialog.close();
-						}
-					}
-				}),
-				endButton: new Button({
-					text: 'Close',
-					press: function () {
-						that.oNewAppointmentDialog.close();
-					}
-				})
-			});
-
-			that.oNewAppointmentDialog.addStyleClass("sapUiContentPadding");
-			this.getView().addDependent(that.oNewAppointmentDialog);
+		handleStartDateChange: function (oEvent) {
+			var oStartDate = oEvent.getParameter("date");
+			MessageToast.show("'startDateChange' event fired.\n\nNew start date is "  + oStartDate.toString());
 		}
 	});
 
