@@ -1,13 +1,16 @@
 /*global QUnit*/
-sap.ui.define(["sap/ui/Device"],
-	function (Device) {
+sap.ui.define(["sap/ui/Device", "sap/ui/thirdparty/URI"],
+	function (Device, URI) {
 		"use strict";
 
 		if (Device.browser["msie"]) {
 			return; // not supported for IE
 		}
 
-		var sXmlSrc = '<mvc:View\n' +
+		var sCoreUrl = new URI(sap.ui.require.toUrl("sap-ui-core.js"), document.baseURI).href(),
+			sFrameURL = sap.ui.require.toUrl("sap/ui/documentation/sdk/util/liveEditorOutput.html"),
+
+		sXmlSrc = '<mvc:View\n' +
 			'        controllerName="HelloWorld.App"\n' +
 			'        xmlns:mvc="sap.ui.core.mvc"\n' +
 			'        xmlns="sap.m">\n' +
@@ -41,7 +44,7 @@ sap.ui.define(["sap/ui/Device"],
 				'    <title>OpenUI5 Hello World App</title>\n' +
 				'    <script\n' +
 				'            id="sap-ui-bootstrap"\n' +
-				'            src="https://openui5.hana.ondemand.com/resources/sap-ui-core.js"\n' +
+				'            src="' + sCoreUrl + '"\n' +
 				'            data-sap-ui-theme="sap_belize"\n' +
 				'            data-sap-ui-libs="sap.m"\n' +
 				'            data-sap-ui-resourceroots=\'{"HelloWorld": "./"}\'\n' +
@@ -74,7 +77,7 @@ sap.ui.define(["sap/ui/Device"],
 				'    <title>OpenUI5 Hello World App</title>\n' +
 				'    <script\n' +
 				'            id="sap-ui-bootstrap"\n' +
-				'            src="https://openui5.hana.ondemand.com/resources/sap-ui-core.js"\n' +
+				'            src="' + sCoreUrl + '"\n' +
 				'            data-sap-ui-theme="sap_belize"\n' +
 				'            data-sap-ui-libs="sap.m"\n' +
 				'            data-sap-ui-resourceroots=\'{"HelloWorld": "./"}\'\n' +
@@ -101,7 +104,7 @@ sap.ui.define(["sap/ui/Device"],
 				'    <title>OpenUI5 Hello World App</title>\n' +
 				'    <script\n' +
 				'            id="sap-ui-bootstrap"\n' +
-				'            src="https://openui5.hana.ondemand.com/resources/sap-ui-core.js"\n' +
+				'            src="' + sCoreUrl + '"\n' +
 				'            data-sap-ui-theme="sap_belize"\n' +
 				'            data-sap-ui-libs="sap.m"\n' +
 				'            data-sap-ui-resourceroots=\'{"HelloWorld": "./"}\'\n' +
@@ -129,7 +132,7 @@ sap.ui.define(["sap/ui/Device"],
 				'    <title>OpenUI5 Hello World App</title>\n' +
 				'    <script\n' +
 				'            id="sap-ui-bootstrap"\n' +
-				'            src="https://openui5.hana.ondemand.com/resources/sap-ui-core.js"\n' +
+				'            src="' + sCoreUrl + '"\n' +
 				'            data-sap-ui-theme="sap_belize"\n' +
 				'            data-sap-ui-libs="sap.m"\n' +
 				'            data-sap-ui-resourceroots=\'{"HelloWorld": "./"}\'\n' +
@@ -158,7 +161,7 @@ sap.ui.define(["sap/ui/Device"],
 				'    <title>OpenUI5 Hello World App</title>\n' +
 				'    <script\n' +
 				'            id="sap-ui-bootstrap"\n' +
-				'            src="https://openui5.hana.ondemand.com/resources/sap-ui-core.js"\n' +
+				'            src="' + sCoreUrl + '"\n' +
 				'            data-sap-ui-theme="sap_belize"\n' +
 				'            data-sap-ui-libs="sap.m"\n' +
 				'            data-sap-ui-resourceroots=\'{"HelloWorld": "./"}\'\n' +
@@ -178,9 +181,7 @@ sap.ui.define(["sap/ui/Device"],
 				'</head>\n' +
 				'<body class="sapUiBody" id="content">\n' +
 				'</body>\n' +
-				'</html>',
-
-			sFrameURL = sap.ui.require.toUrl("sap/ui/documentation/sdk/util/liveEditorOutput.html");
+				'</html>';
 
 		QUnit.module("Samples", {
 
@@ -302,7 +303,7 @@ sap.ui.define(["sap/ui/Device"],
 		});
 
 
-		QUnit.test("displays uncouth errors in output window", function(assert) {
+		QUnit.test("displays uncauth errors in output window", function(assert) {
 
 			var done = assert.async(),
 				oFrame = this.iframe,
@@ -328,7 +329,7 @@ sap.ui.define(["sap/ui/Device"],
 			oFrame.src = sFrameURL;
 		});
 
-		QUnit.test("any code in the error message is output as text only (xss filter)", function(assert) {
+		QUnit.test("any code in the error message is output as text only", function(assert) {
 
 			var done = assert.async(),
 				oFrame = this.iframe,
