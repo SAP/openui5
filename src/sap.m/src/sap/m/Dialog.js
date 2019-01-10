@@ -942,8 +942,8 @@ function(
 				$dialogContent.scrollTop(dialogContentScrollTop);
 			}
 
-			// IE, EDGE and Firefox (when width is auto) have specific container behavior (e.g. div with 500px width is about 17px smaller when it has vertical scrollbar
-			if ((oBrowser.internet_explorer || oBrowser.edge || oBrowser.firefox)) {
+			// Browsers except chrome do not increase the width of the container to include scrollbar (when width is auto). So we need to compensate
+			if (Device.system.desktop && !oBrowser.chrome) {
 
 				var iVerticalScrollBarWidth = Math.ceil($dialogContent.outerWidth() - dialogClientWidth),
 					iCurrentWidthAndHeight = $dialogContent.width() + "x" + $dialogContent.height();
