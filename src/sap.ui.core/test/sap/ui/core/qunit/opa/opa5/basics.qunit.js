@@ -70,21 +70,20 @@ sap.ui.define([
 		assert.strictEqual(Opa.config.timeout, 10, "extended timeout");
 	});
 
-	QUnit.test("Should read a config value from URL parameter", function (assert) {
+	QUnit.test("Should read application config from URL parameters", function (assert) {
 		var fnDone = assert.async();
 		var fnOrig = URI.prototype.search;
 		var oStub = sinon.stub(URI.prototype, "search", function (query) {
 			if ( query === true ) {
 				return {
-					"newKey": "value",		// should parse unprefixed params
-					"opaSpecific": "value",	// should exclude opa params
-					"notopaSpecific": "value", // should not exclude params that contain but don't start with 'opa'
-					"notopaFrameKey": "value", // should not exclude params that contain but don't start with 'opaFrame'
-					"opaFrameKey": "value", // should not exclude opaFrame params
-					"opaKeyFrameKey": "value", // should exclude opa params
+					"newKey": "value",		// include unprefixed params
+					"opaSpecific": "value",	// exclude opa params
+					"notopaSpecific": "value", // include params that contain but don't start with 'opa'
+					"notopaFrameKey": "value", // include params that contain but don't start with 'opaFrame'
+					"opaFrameKey": "value", // include opaFrame params
+					"opaKeyFrameKey": "value", // exclude opa params
 					"existingKey": "value",	// uri params should override defaults
-					"someTruthyValue": "True", // should parse boolean values
-					"someFalsyValue": "false" // should parse boolean values
+					"someTruthyValue": "True" // should not parse boolean values
 				};
 			}
 			return fnOrig.apply(this, arguments); // should use callThrough with sinon > 3.0
@@ -98,8 +97,7 @@ sap.ui.define([
 			assert.strictEqual(Opa.config.appParams.notopaFrameKey, "value");
 			assert.strictEqual(Opa.config.appParams.opaFrameKey, "value");
 			assert.strictEqual(Opa.config.appParams.opaKeyFrameKey, undefined);
-			assert.strictEqual(Opa.config.appParams.someTruthyValue, true);
-			assert.strictEqual(Opa.config.appParams.someFalsyValue, false);
+			assert.strictEqual(Opa.config.appParams.someTruthyValue, "True");
 			Opa5.extendConfig({
 				appParams: {
 					existingKey: "oldValue"
