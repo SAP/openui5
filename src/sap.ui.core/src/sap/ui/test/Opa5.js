@@ -20,8 +20,9 @@ sap.ui.define([
 		'sap/ui/base/EventProvider',
 		'sap/ui/qunit/QUnitUtils',
 		'sap/ui/test/autowaiter/_autoWaiter',
-		"sap/ui/dom/includeStylesheet",
-		"sap/ui/thirdparty/jquery"
+		'sap/ui/dom/includeStylesheet',
+		'sap/ui/thirdparty/jquery',
+		'sap/ui/test/_OpaUriParameterParser'
 	],
 	function(Opa,
 			 OpaPlugin,
@@ -41,7 +42,8 @@ sap.ui.define([
 			 QUnitUtils,
 			 _autoWaiter,
 			 includeStylesheet,
-	         jQueryDOM) {
+			 jQueryDOM,
+			 _OpaUriParameterParser) {
 		"use strict";
 
 		var oLogger = _OpaLogger.getLogger("sap.ui.test.Opa5"),
@@ -63,49 +65,7 @@ sap.ui.define([
 			aExtensions = [],
 			aEventProvider = new EventProvider();
 
-		Opa._extractAppParams = function() {
-			// extract all uri parameters except opa* and qunit parameters
-			var aBlacklistPatterns = [
-				/^opa((?!(Frame)).*)$/,
-				/hidepassed/,
-				/noglobals/,
-				/notrycatch/,
-				/coverage/,
-				/module/,
-				/filter/
-			];
-			var oParams = {};
-			var oUriParams = new URI().search(true);
-			Object.keys(oUriParams).forEach(function (sUriParamName) {
-				var bBlacklistedPattern = false;
-				aBlacklistPatterns.forEach(function (oPattern) {
-					if (!bBlacklistedPattern && sUriParamName.match(oPattern)) {
-						oLogger.debug("Skipping uri parameter: " + sUriParamName + " as blacklisted with pattern: " + oPattern);
-						bBlacklistedPattern = true;
-					}
-				});
-				if (!bBlacklistedPattern) {
-					oParams[sUriParamName] = Opa._parseParam(oUriParams[sUriParamName]);
-				}
-			});
-			return oParams;
-		};
-
-		var reduce = function(oTarget, oExcesive) {
-			for (var sKey in oExcesive) {
-				if (oTarget.hasOwnProperty(sKey) && oExcesive.hasOwnProperty(sKey)) {
-					if (typeof oTarget[sKey] == "object" && typeof oExcesive[sKey] == "object") {
-						reduce(oTarget[sKey], oExcesive[sKey]);
-					} else {
-						delete oTarget[sKey];
-					}
-				}
-			}
-			return oTarget;
-		};
-
-		// parse app params from uri
-		var appParams = Opa._extractAppParams();
+		var appUriParams = _OpaUriParameterParser._getAppParams();
 
 		/**
 		 * Helps you when writing tests for UI5 applications.
@@ -278,13 +238,12 @@ sap.ui.define([
 				componentLauncher.teardown();
 			};
 
-			// remove appParams from this frame URL as application under test is stopped
+			// restore URL after component teardown in order to remove any appParams added by extendConfig
 			var oParamsWaitForOptions = createWaitForObjectWithoutDefaults();
 			oParamsWaitForOptions.success = function() {
 				var uri = new URI();
-				uri.search(reduce(
-					uri.search(true),Opa.config.appParams));
-				window.history.replaceState({},"",uri.toString());
+				uri.search(appUriParams);
+				window.history.replaceState({}, "", uri.toString());
 			};
 
 			return jQueryDOM.when(this.waitFor(oOptions), this.waitFor(oParamsWaitForOptions));
@@ -938,7 +897,7 @@ sap.ui.define([
 		Opa5.extendConfig = function(options) {
 			Opa.extendConfig(options);
 			Opa.extendConfig({
-				appParams: appParams
+				appParams: appUriParams
 			});
 			Opa5._getAutoWaiter().extendConfig(options.autoWait);
 		};
@@ -974,7 +933,7 @@ sap.ui.define([
 				_stackDropCount : 1
 			});
 			Opa.extendConfig({
-				appParams: appParams
+				appParams: appUriParams
 			});
 		};
 
