@@ -92,15 +92,20 @@ sap.ui.define([
 		assert.strictEqual(Opa.config.timeout, 10, "extended timeout");
 	});
 
-	QUnit.test("Should read a config value from URL parameter", function (assert) {
+	QUnit.test("Should read application config value from URL parameters", function (assert) {
 		var fnDone = assert.async();
 		var fnOrig = URI.prototype.search;
 		var oStub = sinon.stub(URI.prototype, "search", function (query) {
 			if ( query === true ) {
 				return {
-					"newKey": "value",		// should parse unprefixed params
-					"opaSpecific": "value",	// should exclude opa params
-					"existingKey": "value"	// uri params should override defaults
+					"newKey": "value",		// include unprefixed params
+					"opaSpecific": "value",	// exclude opa params
+					"notopaSpecific": "value", // include params that contain but don't start with 'opa'
+					"notopaFrameKey": "value", // include params that contain but don't start with 'opaFrame'
+					"opaFrameKey": "value", // include opaFrame params
+					"opaKeyFrameKey": "value", // exclude opa params
+					"existingKey": "value",	// uri params should override defaults
+					"someTruthyValue": "True" // should not parse boolean values
 				};
 			}
 			return fnOrig.apply(this, arguments); // should use callThrough with sinon > 3.0
@@ -110,6 +115,12 @@ sap.ui.define([
 		sap.ui.require(["sap/ui/test/Opa5","sap/ui/test/Opa"], function (Opa5,Opa) {
 			assert.strictEqual(Opa.config.appParams.newKey, "value");
 			assert.strictEqual(Opa.config.appParams.specific, undefined);
+			assert.strictEqual(Opa.config.appParams.notopaSpecific, "value");
+			assert.strictEqual(Opa.config.appParams.notopaFrameKey, "value");
+			assert.strictEqual(Opa.config.appParams.opaFrameKey, "value");
+			assert.strictEqual(Opa.config.appParams.opaKeyFrameKey, undefined);
+			assert.strictEqual(Opa.config.appParams.someTruthyValue, "True");
+
 			Opa5.extendConfig({
 				appParams: {
 					existingKey: "oldValue"

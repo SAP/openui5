@@ -6,11 +6,11 @@
 sap.ui.define([
 	'jquery.sap.global',
 	'sap/ui/Device',
-	'./_LogCollector',
-	'./_OpaLogger',
-	'./_ParameterValidator',
-	'sap/ui/thirdparty/URI'
-], function ($, Device, _LogCollector, _OpaLogger, _ParameterValidator,URI) {
+	'sap/ui/test/_LogCollector',
+	'sap/ui/test/_OpaLogger',
+	'sap/ui/test/_ParameterValidator',
+	'sap/ui/test/_OpaUriParameterParser'
+], function ($, Device, _LogCollector, _OpaLogger, _ParameterValidator, _OpaUriParameterParser) {
 	"use strict";
 
 	///////////////////////////////
@@ -304,29 +304,7 @@ sap.ui.define([
 		Opa.config = $.extend(true, Opa.config, options, opaUriParams);
 	};
 
-	Opa._parseParam = function(sParam) {
-		var iValue = parseInt(sParam,10);
-		return (typeof iValue === 'number' && isNaN(iValue)) ? sParam : iValue;
-	};
-
-	Opa._extractOpaUriParams = function() {
-		var sPrefix = 'opa';
-		// extract all uri parameters starting with prefix, strip the prefix,
-		// de-capitalize the result and return them
-		var oParams = {};
-		var oUriParams = new URI().search(true);
-		for (var sUriParamName in oUriParams) {
-			if (sUriParamName.indexOf(sPrefix) == 0) {
-				oParams[sUriParamName.substr(sPrefix.length,1).toLowerCase() +
-					sUriParamName.substr(sPrefix.length + 1)] =
-						this._parseParam(oUriParams[sUriParamName]);
-			}
-		}
-		return oParams;
-	};
-
-	// parse opa params from uri
-	var opaUriParams = Opa._extractOpaUriParams();
+	var opaUriParams = _OpaUriParameterParser._getOpaParams();
 
 	// These browsers are not executing Promises as microtasks so slow down OPA a bit to let mircotasks before other tasks.
 	// TODO: A proper solution would be waiting for all the active timeouts in the synchronization part until then this is a workaround
