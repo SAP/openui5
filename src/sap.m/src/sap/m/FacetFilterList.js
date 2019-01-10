@@ -575,7 +575,7 @@ sap.ui.define([
 				if (bindingInfoaFilters.length > 0) {
 					numberOfsPath = bindingInfoaFilters[0].aFilters.length;
 					if (this._firstTime) {
-						this._saveBindInfo = bindingInfoaFilters[0].aFilters[0];
+						this._saveBindInfo = bindingInfoaFilters[0].aFilters[0][0];
 						this._firstTime = false;
 					}
 				}
@@ -583,25 +583,41 @@ sap.ui.define([
 			if (oBinding) { // There will be no binding if the items aggregation has not been bound to a model, so search is not
 				// possible
 				if (sSearchVal || numberOfsPath > 0) {
-					var path = this.getBindingInfo("items").template.getBindingInfo("text").parts[0].path;
+					var aBindingParts = this.getBindingInfo("items").template.getBindingInfo("text").parts;
+					var path = aBindingParts[0].path;
 					if (path || path === "") { // path="" will be resolved relativelly to the parent, i.e. actual path will match the parent's one.
 						var oUserFilter = new Filter(path, sap.ui.model.FilterOperator.Contains, sSearchVal);
+						var aUserFilters = [oUserFilter];
+
+						// Add Filters for every parts from the model except the first one because the array is already
+						// predefined with a first item the first binding part
+						for (var i = 1; i < aBindingParts.length; i++) {
+							aUserFilters.push(new Filter(aBindingParts[i].path, sap.ui.model.FilterOperator.Contains, sSearchVal));
+						}
+
 						if (this.getEnableCaseInsensitiveSearch() && isODataModel(oBinding.getModel())){
 							//notice the single quotes wrapping the value from the UI control!
 							var sEncodedString = "'" + String(sSearchVal).replace(/'/g, "''") + "'";
 							sEncodedString = sEncodedString.toLowerCase();
 							oUserFilter = new Filter("tolower(" + path + ")", sap.ui.model.FilterOperator.Contains, sEncodedString);
+							aUserFilters = [oUserFilter];
+							// Add Filters for every parts from the model except the first one because the array is already
+							// predefined with a first item the first binding part
+							for (var i = 1; i < aBindingParts.length; i++) {
+								aUserFilters.push(new Filter("tolower(" + aBindingParts[i].path + ")", sap.ui.model.FilterOperator.Contains, sSearchVal));
+							}
 						}
+						var oPartsFilters = new Filter(aUserFilters, false);
 						if (numberOfsPath > 1) {
-							var oFinalFilter = new Filter([oUserFilter, this._saveBindInfo], true);
+							var oFinalFilter = new Filter([oPartsFilters, this._saveBindInfo], true);
 						} else {
 							if (this._saveBindInfo > "" && oUserFilter.sPath != this._saveBindInfo.sPath) {
-								var oFinalFilter = new Filter([oUserFilter, this._saveBindInfo], true);
+								var oFinalFilter = new Filter([oPartsFilters, this._saveBindInfo], true);
 							} else {
 								if (sSearchVal == "") {
 									var oFinalFilter = [];
 								} else {
-									var oFinalFilter = new Filter([oUserFilter], true);
+									var oFinalFilter = new Filter([oPartsFilters], true);
 								}
 							}
 						}
