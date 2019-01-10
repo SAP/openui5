@@ -40,6 +40,10 @@
 						oCPP.setDisplayMode(sColorPickerDisplay);
 					}
 				}),
+				oSelectLabel = new sap.m.Label({
+					text: "Select display mode:",
+					labelFor: oSelect
+				}).addStyleClass("sapUiMediumMarginTop"),
 				oButton = new sap.m.Button("toggle_mode", {
 					text: "Toggle Compact Mode",
 					press: function(){
@@ -64,6 +68,7 @@
 											})
 										]
 									}),
+									oSelectLabel,
 									oSelect,
 									oButton,
 									new sap.m.ToggleButton("hsv_hsl_btn", {
