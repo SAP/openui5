@@ -1308,5 +1308,58 @@
         "references": []
       }
     ]
+  },
+  "1.60.4": {
+    "date": "January 2019",
+    "notes": [
+      {
+        "id": "699b33718f2c06eee8c46692f11512ce9d48c366",
+        "type": "FIX",
+        "text": " P13nDimMeasurePanel: alphabetical sorting of invisible list items",
+        "references": []
+      },
+      {
+        "id": "3b73481b7b163cd5a7939afb40b31ff9d21acd88",
+        "type": "FIX",
+        "text": " sap.m.DateRangeSelection: now doesn\u0027t throw error when the range is undefined",
+        "references": []
+      },
+      {
+        "id": "d9dfbb78de437443a42dbb1cf26653d769c5d857",
+        "type": "FIX",
+        "text": " sap.m.GenericTile : Refractored default Tooltip to contain Header,Sub-header and TileContent.",
+        "references": []
+      },
+      {
+        "id": "166b3418c232bc4b6a36ef9e8b13d419e9140711",
+        "type": "FIX",
+        "text": " sap.m.LightBox: Image is now loading correctly",
+        "references": []
+      },
+      {
+        "id": "e95815c688b7cfb30c744eec47b55a2eb148f8dd",
+        "type": "FIX",
+        "text": " sap.m.MultiComboBox: Popover resizing prevented",
+        "references": []
+      },
+      {
+        "id": "fbba94087e875942bdfdcaaa629aa0c691834cda",
+        "type": "FIX",
+        "text": " sap.m.ObjectAttribute: do not throw exception  when special chars are used in title",
+        "references": []
+      },
+      {
+        "id": "798f63035d7d2d87b46eedcfd8932a12fce83839",
+        "type": "FIX",
+        "text": " sap.m.Switch: getAccessibilityInfo function returns correct data",
+        "references": []
+      },
+      {
+        "id": "dbf827bde5d2ffbf443dcf59322ac950a34773eb",
+        "type": "FIX",
+        "text": " sap.m.Tree: Should get the expanded state from the binding",
+        "references": []
+      }
+    ]
   }
 }
