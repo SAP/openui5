@@ -73,7 +73,7 @@ function(
 			var fnDebounced = DtUtil.debounce(function() {
 				this.oAggregationOverlay.detachEvent("geometryChanged", fnDebounced);
 				done();
-			}.bind(this));
+			}.bind(this), 100);
 			this.oAggregationOverlay.attachEvent("geometryChanged", fnDebounced);
 
 			this.oAggregationOverlay.applyStyles();
