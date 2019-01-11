@@ -18,8 +18,25 @@
 
         <content>
             <Panel>
-                <w:Card id="listCount" class="sapUiMediumMargin" manifest="./model/manifests/manifest_navigationService.json" width="400px" height="auto"/>
-                <w:Card id="listCount2" class="sapUiMediumMargin" manifest="./model/manifests/manifest_navigationService2.json" width="400px" height="auto"/>
+				<VBox>
+					<HBox class="sapUiMediumMarginLeft">
+						<Text class="sapUiMediumMarginRight" text="Cards using the same data service."/>
+						<Button text="Add data" press="onPress"/>
+					</HBox>
+					<HBox>
+						<w:Card class="sapUiMediumMargin" manifest="./model/manifests/manifest_dataService.json" width="400px" height="auto"/>
+						<w:Card class="sapUiMediumMargin" manifest="./model/manifests/manifest_dataService2.json" width="400px" height="auto"/>
+					</HBox>
+					<VBox class="sapUiMediumMarginLeft">
+						<Text text="Cards using navigation service."/>
+						<Text text="Left Card has navigation actions on the header and on all the items."/>
+						<Text text="Right Card has navigation actions on some items only."/>
+					</VBox>
+					<HBox>
+						<w:Card class="sapUiMediumMargin" manifest="./model/manifests/manifest_navigationService.json" width="400px" height="auto"/>
+                		<w:Card class="sapUiMediumMargin" manifest="./model/manifests/manifest_navigationService2.json" width="400px" height="auto"/>
+					</HBox>
+				</VBox>
             </Panel>
         </content>
     </Page>

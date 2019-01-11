@@ -1,4 +1,4 @@
-sap.ui.define(['sap/ui/integration/services/Navigation'], function (Navigation) {
+sap.ui.define(["sap/ui/integration/services/Navigation"], function (Navigation) {
 	"use strict";
 
 	var SampleNavigation = Navigation.extend();

@@ -181,12 +181,20 @@ sap.ui.define([
 			&& oContent.item.actions[0].service
 			&& oContent.item.actions[0].type === "Navigation";
 
+		var bContentWithDataService = oContent
+			&& oContent.data
+			&& oContent.data.service;
+
 		if (bHeaderWithServiceNavigation) {
 			this._oServiceManager.registerService(oHeader.actions[0].service, "sap.ui.integration.services.Navigation");
 		}
 
 		if (bContentWithServiceNavigation) {
 			this._oServiceManager.registerService(oContent.item.actions[0].service, "sap.ui.integration.services.Navigation");
+		}
+
+		if (bContentWithDataService) {
+			this._oServiceManager.registerService(oContent.data.service, "sap.ui.integration.services.Data");
 		}
 	};
 
@@ -303,7 +311,8 @@ sap.ui.define([
 	Card.prototype._setCardContentFromManifest = function (CardContent) {
 		var mSettings = this._oCardManifest.get("sap.card/content");
 		var oClonedSettings = {
-			configuration: jQuery.extend(true, {}, mSettings)
+			configuration: jQuery.extend(true, {}, mSettings),
+			serviceManager: this._oServiceManager
 		};
 		var oContent = new CardContent(oClonedSettings);
 		this.setAggregation("_content", oContent);
