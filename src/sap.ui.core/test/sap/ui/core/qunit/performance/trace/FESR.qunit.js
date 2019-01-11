@@ -67,6 +67,7 @@ sap.ui.define(['sap/ui/performance/trace/FESR', 'sap/ui/performance/XHRIntercept
 			assert.equal(oSpyReturnValue.appNameLong, "newAppNameLong", "The correct appNameLong should be returned.");
 			assert.equal(oSpyReturnValue.appNameShort, "newAppNameShort", "The correct appNameShort should be returned.");
 
+			Interaction.clear();
 			onBeforeCreatedSpy.restore();
 
 			done();
