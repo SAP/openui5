@@ -44,7 +44,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/mvc/Controller', 'sap/ui/model/
 			oToggleButton.setEnabled(sCurrentBreakpoint === "S");
 		},
 		updateShowSideContentButtonVisibility: function (sCurrentBreakpoint) {
-			var bShowButton = !(sCurrentBreakpoint === "S" || this._oDSC.getShowSideContent());
+			var bShowButton = !(sCurrentBreakpoint === "S" || this._oDSC.isSideContentVisible());
 			this._showSideContentButton.setVisible(bShowButton);
 		},
 		handleToggleClick: function (oEvent) {
