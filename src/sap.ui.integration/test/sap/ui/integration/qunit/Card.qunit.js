@@ -28,7 +28,7 @@ function (
 			"type": "List",
 			"header": {
 				"title": "L3 Request list content Card",
-				"subtitle": "Card subtitle",
+				"subTitle": "Card subtitle",
 				"icon": {
 					"src": "sap-icon://accept"
 				},
@@ -44,7 +44,7 @@ function (
 			"type": "List",
 			"header": {
 				"title": "L3 Request list content Card",
-				"subtitle": "Card subtitle",
+				"subTitle": "Card subtitle",
 				"icon": {
 					"src": "sap-icon://accept"
 				},
@@ -140,8 +140,7 @@ function (
 				},
 				"item": {
 					"icon": {
-						"label": "{{icon_label}}",
-						"value": "{icon}"
+						"src": "{icon}"
 					},
 					"title": {
 						"label": "{{title_label}}",
@@ -166,7 +165,7 @@ function (
 			"type": "Analytical",
 			"header": {
 				"title": "L3 Request list content Card",
-				"subtitle": "Card subtitle",
+				"subTitle": "Card subtitle",
 				"icon": {
 					"src": "sap-icon://accept"
 				},
@@ -175,119 +174,117 @@ function (
 				}
 			},
 			"content": {
-				"chart": {
-					"chartType": "stacked_bar",
-					"legend": {
+				"chartType": "StackedBar",
+				"legend": {
+					"visible": true,
+					"position": "Bottom",
+					"alignment": "Center"
+				},
+				"plotArea": {
+					"dataLabel": {
 						"visible": true,
-						"position": "bottom",
-						"alignment": "center"
+						"showTotal": false
 					},
-					"plotArea": {
-						"dataLabel": {
-							"visible": true,
-							"showTotal": false
-						},
-						"categoryAxisText": {
-							"visible": false
-						},
-						"valueAxisText": {
-							"visible": true
-						}
+					"categoryAxisText": {
+						"visible": false
 					},
-					"title": {
-						"text": "Stacked Bar chart",
-						"visible": true,
-						"alignment": "bottom"
-					},
-					"measureAxis": "valueAxis",
-					"dimensionAxis": "categoryAxis",
-					"data": {
-						"json": [
-							{
-								"Week": "CW14",
-								"Revenue": 431000.22,
-								"Cost": 230000.00,
-								"Cost1": 24800.63,
-								"Cost2": 205199.37,
-								"Cost3": 199999.37,
-								"Target": 500000.00,
-								"Budget": 210000.00
-							},
-							{
-								"Week": "CW15",
-								"Revenue": 494000.30,
-								"Cost": 238000.00,
-								"Cost1": 99200.39,
-								"Cost2": 138799.61,
-								"Cost3": 200199.37,
-								"Target": 500000.00,
-								"Budget": 224000.00
-							},
-							{
-								"Week": "CW16",
-								"Revenue": 491000.17,
-								"Cost": 221000.00,
-								"Cost1": 70200.54,
-								"Cost2": 150799.46,
-								"Cost3": 80799.46,
-								"Target": 500000.00,
-								"Budget": 238000.00
-							},
-							{
-								"Week": "CW17",
-								"Revenue": 536000.34,
-								"Cost": 280000.00,
-								"Cost1": 158800.73,
-								"Cost2": 121199.27,
-								"Cost3": 108800.46,
-								"Target": 500000.00,
-								"Budget": 252000.00
-							},
-							{
-								"Week": "CW18",
-								"Revenue": 675000.00,
-								"Cost": 230000.00,
-								"Cost1": 140000.91,
-								"Cost2": 89999.09,
-								"Cost3": 100099.09,
-								"Target": 600000.00,
-								"Budget": 266000.00
-							},
-							{
-								"Week": "CW19",
-								"Revenue": 680000.00,
-								"Cost": 250000.00,
-								"Cost1": 172800.15,
-								"Cost2": 77199.85,
-								"Cost3": 57199.85,
-								"Target": 600000.00,
-								"Budget": 280000.00
-							},
-							{
-								"Week": "CW20",
-								"Revenue": 659000.14,
-								"Cost": 325000.00,
-								"Cost1": 237200.74,
-								"Cost2": 87799.26,
-								"Cost3": 187799.26,
-								"Target": 600000.00,
-								"Budget": 294000.00
-							}
-						]
-					},
-					"dimensions": [
+					"valueAxisText": {
+						"visible": true
+					}
+				},
+				"title": {
+					"text": "Stacked Bar chart",
+					"visible": true,
+					"alignment": "Center"
+				},
+				"measureAxis": "valueAxis",
+				"dimensionAxis": "categoryAxis",
+				"data": {
+					"json": [
 						{
-							"label": "Weeks",
-							"value": "{Week}"
-						}
-					],
-					"measures": [
+							"Week": "CW14",
+							"Revenue": 431000.22,
+							"Cost": 230000.00,
+							"Cost1": 24800.63,
+							"Cost2": 205199.37,
+							"Cost3": 199999.37,
+							"Target": 500000.00,
+							"Budget": 210000.00
+						},
 						{
-							"label": "Revenue",
-							"value": "{Revenue}"
+							"Week": "CW15",
+							"Revenue": 494000.30,
+							"Cost": 238000.00,
+							"Cost1": 99200.39,
+							"Cost2": 138799.61,
+							"Cost3": 200199.37,
+							"Target": 500000.00,
+							"Budget": 224000.00
+						},
+						{
+							"Week": "CW16",
+							"Revenue": 491000.17,
+							"Cost": 221000.00,
+							"Cost1": 70200.54,
+							"Cost2": 150799.46,
+							"Cost3": 80799.46,
+							"Target": 500000.00,
+							"Budget": 238000.00
+						},
+						{
+							"Week": "CW17",
+							"Revenue": 536000.34,
+							"Cost": 280000.00,
+							"Cost1": 158800.73,
+							"Cost2": 121199.27,
+							"Cost3": 108800.46,
+							"Target": 500000.00,
+							"Budget": 252000.00
+						},
+						{
+							"Week": "CW18",
+							"Revenue": 675000.00,
+							"Cost": 230000.00,
+							"Cost1": 140000.91,
+							"Cost2": 89999.09,
+							"Cost3": 100099.09,
+							"Target": 600000.00,
+							"Budget": 266000.00
+						},
+						{
+							"Week": "CW19",
+							"Revenue": 680000.00,
+							"Cost": 250000.00,
+							"Cost1": 172800.15,
+							"Cost2": 77199.85,
+							"Cost3": 57199.85,
+							"Target": 600000.00,
+							"Budget": 280000.00
+						},
+						{
+							"Week": "CW20",
+							"Revenue": 659000.14,
+							"Cost": 325000.00,
+							"Cost1": 237200.74,
+							"Cost2": 87799.26,
+							"Cost3": 187799.26,
+							"Target": 600000.00,
+							"Budget": 294000.00
 						}
 					]
-				}
+				},
+				"dimensions": [
+					{
+						"label": "Weeks",
+						"value": "{Week}"
+					}
+				],
+				"measures": [
+					{
+						"label": "Revenue",
+						"value": "{Revenue}"
+					}
+				]
 			}
 		}
 	};
@@ -297,7 +294,7 @@ function (
 			"type": "List",
 			"header": {
 				"title": "L3 Request list content Card",
-				"subtitle": "Card subtitle",
+				"subTitle": "Card subtitle",
 				"icon": {
 					"text": "AJ",
 					"shape": "Circle",
@@ -316,7 +313,7 @@ function (
 		"sap.card": {
 			"type": "List",
 			"header": {
-				"type": "numeric",
+				"type": "Numeric",
 				"data": {
 					"json": {
 						"n": "56",
@@ -326,7 +323,7 @@ function (
 					}
 				},
 				"title": "Project Cloud Transformation Project Cloud Transformation Project Cloud Transformation Project Cloud Transformation Project Cloud Transformation Project Cloud Transformation Project Cloud Transformation ",
-				"subtitle": "Forecasted goal achievement depending on business logic and other important information Forecasted goal achievement depending on business logic and other important information",
+				"subTitle": "Forecasted goal achievement depending on business logic and other important information Forecasted goal achievement depending on business logic and other important information",
 				"unitOfMeasurement": "EUR",
 				"mainIndicator": {
 					"number": "{n}",
@@ -355,9 +352,9 @@ function (
 		"sap.card": {
 			"type": "List",
 			"header": {
-				"type": "numeric",
+				"type": "Numeric",
 				"title": "Project Cloud Transformation Project Cloud Transformation Project Cloud Transformation Project Cloud Transformation Project Cloud Transformation Project Cloud Transformation Project Cloud Transformation ",
-				"subtitle": "Forecasted goal achievement depending on business logic and other important information Forecasted goal achievement depending on business logic and other important information",
+				"subTitle": "Forecasted goal achievement depending on business logic and other important information Forecasted goal achievement depending on business logic and other important information",
 				"unitOfMeasurement": "EUR",
 				"mainIndicator": {
 					"number": "56",
@@ -472,7 +469,7 @@ function (
 			assert.ok(oHeader.getAggregation("_avatar") && oHeader.getAggregation("_avatar").getDomRef(), "Card header avatar should be created and rendered.");
 
 			assert.equal(oHeader.getAggregation("_title").getText(), oManifest_Header["sap.card"].header.title, "Card header title should be correct.");
-			assert.equal(oHeader.getAggregation("_subtitle").getText(), oManifest_Header["sap.card"].header.subtitle, "Card header subtitle should be correct.");
+			assert.equal(oHeader.getAggregation("_subtitle").getText(), oManifest_Header["sap.card"].header.subTitle, "Card header subtitle should be correct.");
 			assert.equal(oHeader.getAggregation("_avatar").getSrc(), oManifest_Header["sap.card"].header.icon.src, "Card header icon src should be correct.");
 			assert.equal(oHeader.getStatusText(), oManifest_Header["sap.card"].header.status.text, "Card header status should be correct.");
 
@@ -520,7 +517,7 @@ function (
 
 			// Assert properties
 			assert.equal(oHeader.getAggregation("_title").getText(), oManifest_NumericHeader["sap.card"].header.title, "Card header title should be correct.");
-			assert.equal(oHeader.getAggregation("_subtitle").getText(), oManifest_NumericHeader["sap.card"].header.subtitle, "Card header subtitle should be correct.");
+			assert.equal(oHeader.getAggregation("_subtitle").getText(), oManifest_NumericHeader["sap.card"].header.subTitle, "Card header subtitle should be correct.");
 			assert.equal(oHeader.getAggregation("_unitOfMeasurement").getText(), oManifest_NumericHeader["sap.card"].header.unitOfMeasurement, "Card header unitOfMeasurement should be correct.");
 			assert.equal(oHeader.getAggregation("_details").getText(), oManifest_NumericHeader["sap.card"].header.details, "Card header details should be correct.");
 
@@ -656,7 +653,7 @@ function (
 			assert.equal(oVizProperites.valueAxis.title.visible, true, "Chart should have a valueAxis.title.visible set to false");
 			assert.equal(oVizProperites.title.visible, true, "Chart should have a title.visible set to true");
 			assert.equal(oVizProperites.title.text, "Stacked Bar chart", "Chart should have a title.text set to true");
-			assert.equal(oVizProperites.title.alignment, "bottom", "Chart should have a title.alignment set to true");
+			assert.equal(oVizProperites.title.alignment, "center", "Chart should have a title.alignment set to center");
 			assert.equal(oChart.getFeeds()[0].getProperty("uid"), "valueAxis", "Chart should have a feed item whit property 'uid'");
 			assert.equal(oChart.getFeeds()[0].getProperty("type"), "Measure", "Chart should have a feed item whit property 'Measure'");
 			assert.equal(oChart.getFeeds()[1].getProperty("uid"), "categoryAxis", "Chart should have a feed item whit property 'uid'");

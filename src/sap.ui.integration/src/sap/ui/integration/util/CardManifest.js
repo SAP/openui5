@@ -27,11 +27,12 @@ sap.ui.define([], function () {
 	//fallback
 	var mFallbacks = {
 		"sap.card/title": "sap.app/title",
-		"sap.card/subtitle": "sap.app/subtitle",
+		"sap.card/subTitle": "sap.app/subTitle",
 		"sap.card/info": "sap.app/info",
 		"sap.card/i18n": "sap.app/i18n",
 		"sap.card/description": "sap.app/description",
 		"sap.card/icons": "sap.ui/icons",
+		"sap.card/icon": "sap.ui/icons/icon",
 		"sap.card/view": "sap.ui5/rootView"
 	};
 

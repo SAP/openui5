@@ -14,7 +14,7 @@
 		"type": "List",
 		"header": {
 			"title": "Request list content Card",
-			"subtitle": "Card Subtitle",
+			"subTitle": "Card Subtitle",
 			"icon": {
 				"src": "sap-icon://accept"
 			},
@@ -32,7 +32,7 @@
 			},
 			"item": {
 				"icon": {
-					"value": "{icon}"
+					"src": "{icon}"
 				},
 				"title": {
 					"value": "{title}"

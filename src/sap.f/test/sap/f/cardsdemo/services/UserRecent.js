@@ -52,7 +52,7 @@ sap.ui.define(["sap/ui/integration/services/Data", "sap/ui/core/EventBus"], func
 
 	UserRecent.prototype.attachDataChanged = function (fnHandler, oParams) {
 
-		// Do something with the params passed by the dataChange listener (if necessary).
+		// Do something with the oParams (if needed).
 
 		_oEventBus.subscribe("cardChannel", "dataChanged", function (sChannel, sEventId, oData) {
 			fnHandler({

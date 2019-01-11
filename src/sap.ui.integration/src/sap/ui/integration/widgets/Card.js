@@ -213,7 +213,7 @@ sap.ui.define([
 			return;
 		}
 
-		if (oHeader.type === "numeric") {
+		if (oHeader.type === "Numeric") {
 			sap.ui.require(["sap/f/cards/NumericHeader"], this._setCardHeaderFromManifest.bind(this));
 		} else {
 			sap.ui.require(["sap/f/cards/Header"], this._setCardHeaderFromManifest.bind(this));
@@ -309,10 +309,10 @@ sap.ui.define([
 
 	Card.prototype._setCardContentFromManifest = function (CardContent) {
 		var mSettings = this._oCardManifest.get("sap.card/content");
-		var oClonedSettings = {
-			configuration: jQuery.extend(true, {}, mSettings),
-			serviceManager: this._oServiceManager
-		};
+		var oClonedSettings = { configuration: jQuery.extend(true, {}, mSettings) };
+		if (this._oServiceManager) {
+			oClonedSettings.serviceManager = this._oServiceManager;
+		}
 		var oContent = new CardContent(oClonedSettings);
 		this.setAggregation("_content", oContent);
 		this.setBusy(false);
