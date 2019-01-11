@@ -31,7 +31,9 @@
 						<Label text="This is a subheading"/>
 					</f:snappedContent>
 					<f:content>
-						<Image src="./test-resources/sap/f/images/KPI.png" tooltip="This is just a placeholder, not a real KPI control." height="2rem" width="3.5rem"/>
+						<GenericTag text="Shortage expected" status="Warning">
+							<ObjectNumber number="100" unit="EUR" emphasized="false" state="Warning"/>
+						</GenericTag>
 					</f:content>
 					<f:actions>
 						<Button

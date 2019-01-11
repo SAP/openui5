@@ -28,11 +28,11 @@
 				</breadcrumbs>
 
 				<expandedHeading>
-					<m:Title text="Denise Smith" wrapping="true" class="sapUiTinyMarginTop"/>
+					<m:Title text="Denise Smith" wrapping="true"/>
 				</expandedHeading>
 
 				<snappedHeading>
-					<m:Title text="Denise Smith" wrapping="true" class="sapUiTinyMarginTop"/>
+					<m:Title text="Denise Smith" wrapping="true"/>
 				</snappedHeading>
 
 				<expandedContent>
@@ -54,7 +54,9 @@
 					<ObjectPageHeaderActionButton icon="sap-icon://slim-arrow-up" type="Transparent" tooltip="slim-arrow-up"/>
 					<ObjectPageHeaderActionButton icon="sap-icon://slim-arrow-down" type="Transparent" tooltip="slim-arrow-down"/>
 				</navigationActions>
-
+				<content>
+					<m:GenericTag text="Material Shortage" status="Warning"/>
+				</content>
 			</ObjectPageDynamicHeaderTitle>
 		</headerTitle>
 
