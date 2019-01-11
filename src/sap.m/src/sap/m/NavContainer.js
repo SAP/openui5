@@ -509,7 +509,6 @@ sap.ui.define([
 	NavContainer.prototype._applyAutoFocus = function (oNavInfo) {
 		var sPageId = oNavInfo.toId,
 			domRefRememberedFocusSubject,
-			bAutoFocus = this.getAutoFocus(),
 			bNavigatingBackToPreviousLocation = oNavInfo.isBack || oNavInfo.isBackToPage || oNavInfo.isBackToTop;
 
 		// BCP: 1780071998 - If focus is not inside the From page we don't do any focus manipulation
@@ -524,10 +523,10 @@ sap.ui.define([
 			domRefRememberedFocusSubject = this._mFocusObject != null ? this._mFocusObject[sPageId] : null;
 			if (domRefRememberedFocusSubject) {
 				domRefRememberedFocusSubject.focus();
-			} else if (bAutoFocus) {
+			} else {
 				NavContainer._applyAutoFocusTo(sPageId);
 			}
-		} else if (oNavInfo.isTo && bAutoFocus) {
+		} else if (oNavInfo.isTo) {
 			// set focus to first focusable object in "to page"
 			NavContainer._applyAutoFocusTo(sPageId);
 		}
@@ -546,7 +545,12 @@ sap.ui.define([
 
 		this._iTransitionsCompleted++;
 		this._bNavigating = false;
-		this._applyAutoFocus(oNavInfo);
+
+		// BCP: 1870488179 - We call _applyAutoFocus only if autoFocus property is true
+		if (this.getAutoFocus()) {
+			this._applyAutoFocus(oNavInfo);
+		}
+
 		this.fireAfterNavigate(oNavInfo);
 		// TODO: destroy HTML? Remember to destroy ALL HTML of several pages when backToTop has been called
 

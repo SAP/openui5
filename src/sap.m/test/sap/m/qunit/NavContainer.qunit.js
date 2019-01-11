@@ -238,16 +238,33 @@ sap.ui.define([
 	});
 
 	QUnit.test("Auto focus disabled", function (assert) {
-		this.sinon.stub(nc, "getAutoFocus").returns(false);
-		nc._applyAutoFocus({
-			isTo: true,
-			toId: this.pageId,
-			isBack: true,
-			isBackToTop: true,
-			isBackToPage: true
-		});
+		// Arrange
+		var oApplyAutoFocusSpy = sinon.spy(NavContainer.prototype, "_applyAutoFocus"),
+			fnDone = assert.async(),
+			oNavContainer = new NavContainer({
+				pages : [
+					new Page("firstPage"),
+					new Page("secondPage")
+				],
+				autoFocus: false,
+				afterNavigate: function() {
+					// Assert
+					assert.strictEqual(oApplyAutoFocusSpy.callCount, 0,
+							"_applyAutoFocus is never called when autoFocus property is false.");
 
-		assert.ok(!this.spy.calledWith(this.pageId));
+					// Cleanup
+					oApplyAutoFocusSpy.restore();
+					oNavContainer.destroy();
+
+					fnDone();
+				}
+			}).placeAt("qunit-fixture");
+
+		assert.expect(1);
+		Core.applyChanges();
+
+		// Act
+		oNavContainer.to("secondPage");
 	});
 
 	QUnit.test("Auto focus should't be used when inside a popup", function (assert) {
