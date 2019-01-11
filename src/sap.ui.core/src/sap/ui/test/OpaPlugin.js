@@ -78,7 +78,9 @@ sap.ui.define([
 			getView: function (sViewName) {
 				var aViews = this.getAllControls(View, "View");
 				var aMatchingViews = aViews.filter(function (oViewInstance) {
-					return oViewInstance.$().length > 0 && oViewInstance.getViewName() === sViewName;
+					var oViewDomRef = oViewInstance.$();
+					var bIsViewVisible = oViewDomRef.length > 0 && oViewDomRef.is(":visible") && oViewDomRef.css("visibility") !== "hidden";
+					return bIsViewVisible && oViewInstance.getViewName() === sViewName;
 				});
 
 				this._oLogger.debug("Found " + aMatchingViews.length + " views with viewName '" + sViewName + "'");
