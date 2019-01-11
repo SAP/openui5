@@ -510,56 +510,42 @@ function(
 			return this;
 		};
 
-		ObjectListItem.prototype.addAggregation = function(sAggregationName, oObject, bSuppressInvalidate) {
-			Control.prototype.addAggregation.apply(this, arguments);
+		ObjectListItem.prototype.addMarker = function(oObject) {
+			this._startObservingMarker(oObject);
 
-			if (sAggregationName === "markers") {
-				this._startObservingMarker(oObject);
-			}
-
-			return this;
+			return Control.prototype.addAggregation.call(this, "markers", oObject);
 		};
 
-		ObjectListItem.prototype.insertAggregation = function(sAggregationName, oObject, iIndex, bSuppressInvalidate) {
-			Control.prototype.insertAggregation.apply(this, arguments);
+		ObjectListItem.prototype.insertMarker = function(oObject, iIndex) {
+			this._startObservingMarker(oObject);
 
-			if (sAggregationName === "markers") {
-				this._startObservingMarker(oObject);
-			}
-
-			return this;
+			return Control.prototype.insertAggregation.call(this, "markers", oObject, iIndex);
 		};
 
-		ObjectListItem.prototype.removeAggregation = function(sAggregationName, vObject, bSuppressInvalidate) {
-			var oObject = Control.prototype.removeAggregation.apply(this, arguments);
+		ObjectListItem.prototype.removeMarker = function(vObject) {
+			var oObject = Control.prototype.removeAggregation.call(this, "markers", vObject);
 
-			if (sAggregationName === "markers") {
-				this._stopObservingMarker(oObject);
-			}
+			this._stopObservingMarker(oObject);
 
 			return oObject;
 		};
 
-		ObjectListItem.prototype.removeAllAggregation = function(sAggregationName, bSuppressInvalidate) {
-			var aItems = Control.prototype.removeAllAggregation.apply(this, arguments);
+		ObjectListItem.prototype.removeAllMarkers = function() {
+			var aItems = Control.prototype.removeAllAggregation.call(this, "markers");
 
-			if (sAggregationName === "markers") {
-				for (var i = 0; i < aItems.length; i++) {
-					this._stopObservingMarker(aItems[i]);
-				}
+			for (var i = 0; i < aItems.length; i++) {
+				this._stopObservingMarker(aItems[i]);
 			}
 
 			return aItems;
 		};
 
-		ObjectListItem.prototype.destroyAggregation = function(sAggregationName, bSuppressInvalidate) {
-			if (sAggregationName === "markers") {
-				this.getMarkers().forEach(function (oMarker) {
-					this._stopObservingMarker(oMarker);
-				}, this);
-			}
+		ObjectListItem.prototype.destroyMarkers = function() {
+			this.getMarkers().forEach(function (oMarker) {
+				this._stopObservingMarker(oMarker);
+			}, this);
 
-			return Control.prototype.destroyAggregation.apply(this, arguments);
+			return Control.prototype.destroyAggregation.call(this, "markers");
 		};
 
 		ObjectListItem.prototype._observerObjectMarkerChanges = function (oChanges) {
