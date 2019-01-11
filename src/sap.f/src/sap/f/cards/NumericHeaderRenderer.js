@@ -7,7 +7,8 @@ sap.ui.define([],
 	function () {
         "use strict";
 
-        var NumericHeaderRenderer = {};
+        var NumericHeaderRenderer = {},
+			oRb = sap.ui.getCore().getLibraryResourceBundle("sap.f");
 
 		/**
 		 * Render a numeric header.
@@ -20,6 +21,13 @@ sap.ui.define([],
 			oRm.writeControlData(oControl);
 			oRm.addClass("sapFCardHeader");
 			oRm.addClass("sapFCardNumericHeader");
+			oRm.writeAttribute("tabindex", "0");
+			//Accessibility state
+			oRm.writeAccessibilityState(oControl, {
+				role: "group",
+				labelledBy: {value: oControl._getHeaderAccessibility(), append: true},
+				roledescription: {value: oRb.getText("ARIA_ROLEDESCRIPTION_CARD_HEADER"), append: true}
+			});
 			oRm.writeClasses();
 			oRm.writeStyles();
 			oRm.write(">");
