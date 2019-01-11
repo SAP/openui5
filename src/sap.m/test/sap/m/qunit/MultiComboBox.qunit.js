@@ -6320,6 +6320,7 @@ sap.ui.define([
 	QUnit.test("Composititon events", function (assert) {
 		var oFakeEvent = {
 			isMarked: function () { },
+			setMarked: function () { },
 			srcControl: this.multiComboBox,
 			target: {
 				value: "서"
