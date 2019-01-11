@@ -107,6 +107,14 @@ sap.ui.define([
 		this._getAvatar().setInitials(this.getIconInitials());
 	};
 
+	Header.prototype._getHeaderAccessibility = function () {
+		var sTitleId = this._getTitle() ? this._getTitle().getId() : "",
+			sSubtitleId = this._getSubtitle() ? this._getSubtitle().getId() : "",
+			sAvatarId = this._getAvatar() ? this._getAvatar().getId() : "";
+
+			return sTitleId + " " + sSubtitleId + " " + sAvatarId;
+	};
+
 	/**
 	 * Called after control is rendered.
 	 * @private

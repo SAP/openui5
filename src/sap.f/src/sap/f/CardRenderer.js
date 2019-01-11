@@ -11,7 +11,8 @@ sap.ui.define([], function () {
 	 * @author SAP SE
 	 * @namespace
 	 */
-	var CardRenderer = {};
+	var CardRenderer = {},
+		oRb = sap.ui.getCore().getLibraryResourceBundle("sap.f");
 
 	/**
 	 * Renders the HTML for the given control, using the provided {@link sap.ui.core.RenderManager}.
@@ -20,26 +21,39 @@ sap.ui.define([], function () {
 	 * @param {sap.ui.core.Control} oCard an object representation of the control that should be rendered
 	 */
 	CardRenderer.render = function (oRm, oCard) {
-
+		var oHeader = oCard._getHeader();
 		//start
-		oRm.write("<section");
+		oRm.write("<div");
 		oRm.writeElementData(oCard);
-		oRm.writeAttribute("tabindex", "0");
 		oRm.addClass("sapFCard");
 		oRm.writeClasses();
 		oRm.addStyle("width", oCard.getWidth());
 		oRm.addStyle("height", oCard.getHeight());
+		//Accessibility state
+		oRm.writeAccessibilityState(oCard, {
+			role: "region",
+			roledescription: {value: oRb.getText("ARIA_ROLEDESCRIPTION_CARD"), append: true}
+		});
+		if (oHeader) {
+			var oTitle = oHeader._getTitle();
+			if (oTitle) {
+				oRm.writeAccessibilityState(oCard, {
+					labelledBy: {value: oTitle.getId(), append: true}
+				});
+			}
+
+		}
 		oRm.writeStyles();
 		oRm.write(">");
 
 		//header
-		oRm.renderControl(oCard._getHeader());
+		oRm.renderControl(oHeader);
 
 		//content
 		CardRenderer.renderContentSection(oRm, oCard);
 
 		//end
-		oRm.write("</section>");
+		oRm.write("</div>");
 	};
 
 	/**
@@ -53,14 +67,19 @@ sap.ui.define([], function () {
 		var oContent = oCard._getContent();
 
 		if (oContent) {
-			oRm.write("<section");
+			oRm.write("<div");
 			oRm.addClass("sapFCardContent");
 			oRm.writeClasses();
+			//Accessibility configuration
+			oRm.writeAccessibilityState(oCard, {
+				role: "group",
+				label: {value: oRb.getText("ARIA_LABEL_CARD_CONTENT"), append: true}
+			});
 			oRm.write(">");
 
 			oRm.renderControl(oContent);
 
-			oRm.write("</section>");
+			oRm.write("</div>");
 		}
 	};
 

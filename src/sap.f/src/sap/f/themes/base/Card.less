@@ -28,12 +28,14 @@
 }
 
 .sapFCard .sapFCardHeader {
+  position: relative;
   flex-shrink: 0;
   background: @sapUiTileBackground;
   border-bottom: @_sap_f_Card_Header_Border_Bottom;
   padding: @_sap_f_Card_Content_Padding;
   display: flex;
   align-items: flex-start;
+  outline: none;
   &:hover{
     background: @_sap_f_Card_Header_Hover_Color;
   }
@@ -205,7 +207,7 @@ html[data-sap-ui-browser^="cr"] .sapFCard .sapFCardContent {
   flex: 1;
 }
 
-.sapFCard:focus:after {
+.sapFCardHeader:focus::before {
   content: '';
   display: block;
   position: absolute;
@@ -217,7 +219,7 @@ html[data-sap-ui-browser^="cr"] .sapFCard .sapFCardContent {
   pointer-events: none;
 }
 
-html[data-sap-ui-browser^="ie"] .sapFCard:focus:after {
+html[data-sap-ui-browser^="ie"] .sapFCardHeader:focus::before {
   border: 1px dashed @sapUiContentFocusColor;
 }
 
