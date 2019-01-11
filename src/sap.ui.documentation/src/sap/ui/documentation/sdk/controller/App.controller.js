@@ -212,7 +212,7 @@ sap.ui.define([
 				if (sKey && sKey !== "home") {
 					this.getRouter().navTo(sKey, {}, true);
 				} else {
-					this.getRouter().navTo("", {}, true);
+					this.getRouter().navTo("welcome", {}, true);
 
 					this._setHeaderSelectedKey("home");
 				}
