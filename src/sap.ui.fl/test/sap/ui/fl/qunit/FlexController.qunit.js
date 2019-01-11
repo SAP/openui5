@@ -1208,57 +1208,6 @@ function (
 			});
 		});
 
-		QUnit.test("creates a change containing valid applicationVersions in developerMode", function (assert) {
-			var oControl = new Control("mockControl");
-			sandbox.stub(Utils, "getAppComponentForControl").returns(oComponent);
-			var oDummyChangeHandler = {
-				completeChangeContent: function () {}
-			};
-			sandbox.stub(this.oFlexController, "_getChangeHandler").returns(oDummyChangeHandler);
-
-			var oChange = this.oFlexController.createChange({ developerMode : true }, oControl);
-			var oValidAppVersions = oChange.getDefinition().validAppVersions;
-
-			assert.equal(oValidAppVersions.creation, this.oFlexController.getAppVersion(), "the valid CREATION app version is correct");
-			assert.equal(oValidAppVersions.from, this.oFlexController.getAppVersion(), "the valid FROM app version is correct");
-			assert.equal(oValidAppVersions.to, this.oFlexController.getAppVersion(), "the valid TO app version is correct");
-			oControl.destroy();
-		});
-
-		QUnit.test("creates a change containing valid applicationVersions in developerMode and ADAPTATION_PROJECT scenario", function (assert) {
-			var oControl = new Control("mockControl");
-			sandbox.stub(Utils, "getAppComponentForControl").returns(oComponent);
-			var oDummyChangeHandler = {
-				completeChangeContent: function () {}
-			};
-			sandbox.stub(this.oFlexController, "_getChangeHandler").returns(oDummyChangeHandler);
-
-			var oChange = this.oFlexController.createChange({ developerMode : true, scenario : sap.ui.fl.Scenario.AdaptationProject }, oControl);
-			var oValidAppVersions = oChange.getDefinition().validAppVersions;
-
-			assert.equal(oValidAppVersions.creation, this.oFlexController.getAppVersion(), "the valid CREATION app version is correct");
-			assert.equal(oValidAppVersions.from, this.oFlexController.getAppVersion(), "the valid FROM app version is correct");
-			assert.equal(oValidAppVersions.to, undefined, "the TO app version is not defined");
-			oControl.destroy();
-		});
-
-		QUnit.test("creates a change containing valid applicationVersions in developerMode and AppVariant scenario", function (assert) {
-			var oControl = new Control("mockControl");
-			sandbox.stub(Utils, "getAppComponentForControl").returns(oComponent);
-			var oDummyChangeHandler = {
-				completeChangeContent: function () {}
-			};
-			sandbox.stub(this.oFlexController, "_getChangeHandler").returns(oDummyChangeHandler);
-
-			var oChange = this.oFlexController.createChange({ developerMode : true, scenario : sap.ui.fl.Scenario.AppVariant }, oControl);
-			var oValidAppVersions = oChange.getDefinition().validAppVersions;
-
-			assert.equal(oValidAppVersions.creation, this.oFlexController.getAppVersion(), "the valid CREATION app version is correct");
-			assert.equal(oValidAppVersions.from, this.oFlexController.getAppVersion(), "the valid FROM app version is correct");
-			assert.equal(oValidAppVersions.to, undefined, "the TO app version is not defined");
-			oControl.destroy();
-		});
-
 		QUnit.test("when processViewByModifier is called with changes", function (assert) {
 			var oGetChangesForViewStub = sandbox.stub(this.oFlexController._oChangePersistence, "getChangesForView").returns(Promise.resolve());
 			var oResolveGetChangesForViewSpy = sandbox.spy(this.oFlexController, "_resolveGetChangesForView");
@@ -1291,6 +1240,100 @@ function (
 				assert.notOk(oResolveGetChangesForViewSpy.calledOnce, "then _resolveGetChangesForView is skipped");
 				assert.ok(oHandlePromiseChainError.calledOnce, "then error handling is called");
 			});
+		});
+	});
+
+	QUnit.module("applicationVersions when using createBaseChange", {
+		beforeEach: function() {
+			this.oFlexController = new FlexController("testScenarioComponent", "1.2.3");
+		},
+		afterEach: function() {
+			sandbox.restore();
+		}
+	}, function() {
+		QUnit.test("calling createBaseChange with scenario AppVariant and developerMode = true", function(assert) {
+			var oChangeSpecificData = {
+				developerMode: true,
+				scenario: sap.ui.fl.Scenario.AppVariant
+			};
+			var oChange = this.oFlexController.createBaseChange(oChangeSpecificData, {});
+			var oValidAppVersions = oChange.getDefinition().validAppVersions;
+			assert.equal(oValidAppVersions.creation, this.oFlexController.getAppVersion(), "the valid CREATION app version is correct");
+			assert.equal(oValidAppVersions.from, this.oFlexController.getAppVersion(), "the valid FROM app version is correct");
+			assert.notOk(oChange.getDefinition().validAppVersions.to, "the 'to' value is not set");
+		});
+
+		QUnit.test("calling createBaseChange with scenario VersionedAppVariant and developerMode = true", function(assert) {
+			var oChangeSpecificData = {
+				developerMode: true,
+				scenario: sap.ui.fl.Scenario.VersionedAppVariant
+			};
+			var oChange = this.oFlexController.createBaseChange(oChangeSpecificData, {});
+			var oValidAppVersions = oChange.getDefinition().validAppVersions;
+			assert.equal(oValidAppVersions.creation, this.oFlexController.getAppVersion(), "the valid CREATION app version is correct");
+			assert.equal(oValidAppVersions.from, this.oFlexController.getAppVersion(), "the valid FROM app version is correct");
+			assert.equal(oChange.getDefinition().validAppVersions.to, this.oFlexController.getAppVersion(), "the 'to' value is set");
+		});
+
+		QUnit.test("calling createBaseChange with scenario AdaptationProject and developerMode = true", function(assert) {
+			var oChangeSpecificData = {
+				developerMode: true,
+				scenario: sap.ui.fl.Scenario.AdaptationProject
+			};
+			var oChange = this.oFlexController.createBaseChange(oChangeSpecificData, {});
+			var oValidAppVersions = oChange.getDefinition().validAppVersions;
+			assert.equal(oValidAppVersions.creation, this.oFlexController.getAppVersion(), "the valid CREATION app version is correct");
+			assert.equal(oValidAppVersions.from, this.oFlexController.getAppVersion(), "the valid FROM app version is correct");
+			assert.notOk(oChange.getDefinition().validAppVersions.to, "the 'to' value is not set");
+		});
+
+		QUnit.test("calling createBaseChange with scenario FioriElementsFromScratch and developerMode = true", function(assert) {
+			var oChangeSpecificData = {
+				developerMode: true,
+				scenario: sap.ui.fl.Scenario.FioriElementsFromScratch
+			};
+			var oChange = this.oFlexController.createBaseChange(oChangeSpecificData, {});
+			var oValidAppVersions = oChange.getDefinition().validAppVersions;
+			assert.equal(oValidAppVersions.creation, this.oFlexController.getAppVersion(), "the valid CREATION app version is correct");
+			assert.equal(oValidAppVersions.from, this.oFlexController.getAppVersion(), "the valid FROM app version is correct");
+			assert.equal(oChange.getDefinition().validAppVersions.to, this.oFlexController.getAppVersion(), "the 'to' value is set");
+		});
+
+		QUnit.test("calling createBaseChange with scenario UiAdaptation and developerMode = true", function(assert) {
+			var oChangeSpecificData = {
+				developerMode: true,
+				scenario: sap.ui.fl.Scenario.UiAdaptation
+			};
+			var oChange = this.oFlexController.createBaseChange(oChangeSpecificData, {});
+			var oValidAppVersions = oChange.getDefinition().validAppVersions;
+			assert.equal(oValidAppVersions.creation, this.oFlexController.getAppVersion(), "the valid CREATION app version is correct");
+			assert.equal(oValidAppVersions.from, this.oFlexController.getAppVersion(), "the valid FROM app version is correct");
+			assert.equal(oChange.getDefinition().validAppVersions.to, this.oFlexController.getAppVersion(), "the 'to' value is set");
+		});
+
+		QUnit.test("calling createBaseChange with developerMode = false", function(assert) {
+			var oChangeSpecificData = {
+				developerMode: false
+			};
+			var oChange = this.oFlexController.createBaseChange(oChangeSpecificData, {});
+			var oValidAppVersions = oChange.getDefinition().validAppVersions;
+			assert.equal(oValidAppVersions.creation, this.oFlexController.getAppVersion(), "the valid CREATION app version is correct");
+			assert.equal(oValidAppVersions.from, this.oFlexController.getAppVersion(), "the valid FROM app version is correct");
+			assert.notOk(oChange.getDefinition().validAppVersions.to, "the 'to' value is not set");
+		});
+
+		QUnit.test("calling createBaseChange with multiple contexts should throw an Error", function(assert) {
+			sandbox.stub(ContextManager, "_getContextIdsFromUrl").returns([0, 1]);
+
+			assert.throws(function() {
+				this.oFlexController.createBaseChange({}, {});
+			}, Error, "an Error is thrown");
+		});
+
+		QUnit.test("calling createBaseChange without appComponent should throw an Error", function(assert) {
+			assert.throws(function() {
+				this.oFlexController.createBaseChange({});
+			}, Error, "an Error is thrown");
 		});
 	});
 
