@@ -1166,7 +1166,8 @@ code {
 }
 
 /* correct split container right border */
-html:not(.sapUiTheme-sap_belize_hcb):not(.sapUiTheme-sap_belize_hcw) .sapUiDemokit .sapMSplitContainerMaster {
+html.sapUiTheme-sap_belize .sapUiDemokit .sapUiDocumentationSplitApp > .sapMSplitContainerMaster,
+html.sapUiTheme-sap_belize_plus .sapUiDemokit .sapUiDocumentationSplitApp > .sapMSplitContainerMaster {
 	border-right: 1px solid #4f667a;
 }
 
