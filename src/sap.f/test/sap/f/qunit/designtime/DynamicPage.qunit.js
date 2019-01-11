@@ -50,7 +50,7 @@ function (
             });
         }
     });
-    oElementEnablementTest.run().then(function (oData) {
+    return oElementEnablementTest.run().then(function (oData) {
         new QUnitReport({
             data: oData
         });

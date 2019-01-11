@@ -19,47 +19,52 @@ sap.ui.define([
 			});
 		}
 	});
-	oElementEnablementTest.run().then(function (oData) {
+
+	return oElementEnablementTest.run()
+
+	.then(function (oData) {
 		new QUnitReport({
 			data: oData
 		});
-	});
+	})
 
-	// Rename title action module
-	var fnConfirmFilterTextRenamedWithNewValue = function (oRadioButton, oViewAfterAction, assert) {
-		assert.strictEqual(oViewAfterAction.byId("filter").getText(),
-			"New Text",
-			"then the filter title has been renamed to the new value (New Text)");
-	};
+	.then(function() {
+		// Rename title action module
+		var fnConfirmFilterTextRenamedWithNewValue = function (oRadioButton, oViewAfterAction, assert) {
+			assert.strictEqual(oViewAfterAction.byId("filter").getText(),
+				"New Text",
+				"then the filter title has been renamed to the new value (New Text)");
+		};
 
-	var fnConfirmFilterTextIsRenamedWithOldValue = function (oUiComponent, oViewAfterAction, assert) {
-		assert.strictEqual(oViewAfterAction.byId("filter").getText(),
-			"Old Text",
-			"then the filter title has been renamed to the old value (Old Text)");
-	};
+		var fnConfirmFilterTextIsRenamedWithOldValue = function (oUiComponent, oViewAfterAction, assert) {
+			assert.strictEqual(oViewAfterAction.byId("filter").getText(),
+				"Old Text",
+				"then the filter title has been renamed to the old value (Old Text)");
+		};
 
-	rtaControlEnablingCheck("Checking the rename action for a IconTabFilter title", {
-		xmlView:
-			'<mvc:View xmlns:mvc="sap.ui.core.mvc" xmlns="sap.m">' +
-				'<IconTabBar id="bar">' +
-					'<items>' +
-						'<IconTabFilter id="filter" text="Old Text" />' +
-					'</items>' +
-				'</IconTabBar>' +
-			'</mvc:View>',
-		action: {
-			name: "rename",
-			controlId: "filter",
-			parameter: function (oView) {
-				return {
-					newValue: "New Text",
-					renamedElement: oView.byId("filter")
-				};
-			}
-		},
-		afterAction: fnConfirmFilterTextRenamedWithNewValue,
-		afterUndo: fnConfirmFilterTextIsRenamedWithOldValue,
-		afterRedo: fnConfirmFilterTextRenamedWithNewValue
+		rtaControlEnablingCheck("Checking the rename action for a IconTabFilter title", {
+			xmlView:
+				'<mvc:View xmlns:mvc="sap.ui.core.mvc" xmlns="sap.m">' +
+					'<IconTabBar id="bar">' +
+						'<items>' +
+							'<IconTabFilter id="filter" text="Old Text" />' +
+						'</items>' +
+					'</IconTabBar>' +
+				'</mvc:View>',
+			action: {
+				name: "rename",
+				controlId: "filter",
+				parameter: function (oView) {
+					return {
+						newValue: "New Text",
+						renamedElement: oView.byId("filter")
+					};
+				}
+			},
+			afterAction: fnConfirmFilterTextRenamedWithNewValue,
+			afterUndo: fnConfirmFilterTextIsRenamedWithOldValue,
+			afterRedo: fnConfirmFilterTextRenamedWithNewValue
+		});
 	});
 
 });

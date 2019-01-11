@@ -11,7 +11,7 @@ sap.ui.define([
 		type: "sap.m.SplitContainer",
 		timeout : 300
 	});
-	oElementEnablementTest.run().then(function(oData) {
+	return oElementEnablementTest.run().then(function(oData) {
 		var oReport = new QUnitReport({
 			data: oData
 		});

@@ -11,7 +11,7 @@ sap.ui.define([
 		// timeout is needed because after control is rendered, style computation takes time
 		timeout : 300
 	});
-	oElementEnablementTest.run().then(function(oData) {
+	return oElementEnablementTest.run().then(function(oData) {
 		var oReport = new QUnitReport({
 			data: oData
 		});

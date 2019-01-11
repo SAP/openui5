@@ -18,12 +18,9 @@ function(
 		}
 	}, function () {
 		QUnit.test("when the test is started", function(assert) {
-			var done = assert.async();
-
-			this.oLibraryEnablementTest2.run(this.aLibraries).then(function(oResult) {
+			return this.oLibraryEnablementTest2.run(this.aLibraries).then(function(oResult) {
 				assert.ok(oResult, "A result is returned");
 				assert.ok(oResult.results.length > 0, "Library Test was successfully performed");
-				done();
 			});
 		});
 	});
