@@ -16,6 +16,7 @@ sap.ui.define([
 	'./SuggestionsPopover',
 	"sap/ui/dom/containsOrEquals",
 	"sap/base/assert",
+	"sap/base/util/deepEqual",
 	"./InputRenderer",
 	"sap/ui/thirdparty/jquery",
 	// jQuery Plugin "selectText"
@@ -34,6 +35,7 @@ function(
 	SuggestionsPopover,
 	containsOrEquals,
 	assert,
+	deepEqual,
 	InputRenderer,
 	jQuery
 ) {
@@ -1097,13 +1099,22 @@ function(
 	 * @param {jQuery.Event} oEvent Keyboard event.
 	 */
 	Input.prototype.onsapfocusleave = function(oEvent) {
-		var oPopup = this._oSuggPopover && this._oSuggPopover._oPopover;
+		var oPopup = this._oSuggPopover && this._oSuggPopover._oPopover,
+			oFocusedControl = oEvent.relatedControlId && sap.ui.getCore().byId(oEvent.relatedControlId),
+			oFocusDomRef = oFocusedControl && oFocusedControl.getFocusDomRef(),
+			bFocusInPopup = oPopup
+				&& oFocusDomRef
+				&& containsOrEquals(oPopup.getDomRef(), oFocusDomRef);
 
 		if (oPopup instanceof Popover) {
-			if (oEvent.relatedControlId && containsOrEquals(oPopup.getDomRef(), sap.ui.getCore().byId(oEvent.relatedControlId).getFocusDomRef())) {
-				// Force the focus to stay in input
+			if (bFocusInPopup) {
+				// set the flag that the focus is currently in the Popup
 				this._bPopupHasFocus = true;
-				this.focus();
+				if (Device.system.desktop && deepEqual(oPopup.getFocusDomRef(), oFocusDomRef)) {
+					// force the focus to stay in the Input field when scrollbar
+					// is moving
+					this.focus();
+				}
 			} else {
 				// When the input still has the value of the last jQuery.val call, a change event has to be
 				// fired manually because browser doesn't fire an input event in this case.
@@ -1114,17 +1125,12 @@ function(
 		}
 
 		// Inform InputBase to fire the change event on Input only when focus doesn't go into the suggestion popup
-		var oFocusedControl = sap.ui.getCore().byId(oEvent.relatedControlId);
-		if (!(oPopup
-				&& oFocusedControl
-				&& containsOrEquals(oPopup.getDomRef(), oFocusedControl.getFocusDomRef())
-			)) {
+		if (!bFocusInPopup) {
 			InputBase.prototype.onsapfocusleave.apply(this, arguments);
 		}
 
 		this.bValueHelpRequested = false;
 	};
-
 	/**
 	 * Keyboard handler for the onMouseDown event.
 	 *
