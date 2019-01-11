@@ -41,7 +41,6 @@ sap.ui.define([
 	 * @version ${version}
 	 *
 	 * @constructor
-	 * @experimental
 	 * @since 1.60
 	 * @see {@link TODO Card}
 	 * @alias sap.ui.integration.widgets.Card

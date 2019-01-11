@@ -132,10 +132,10 @@ sap.ui.define([
 			return;
 		}
 
-		this._itemNavigation.setRootDomRef(this.getDomRef());
-		this._itemNavigation.setItemDomRefs(this.$().children().map(function () {
-			return this.firstChild;
-		}));
+		// this._itemNavigation.setRootDomRef(this.getDomRef());
+		// this._itemNavigation.setItemDomRefs(this.$().children().map(function () {
+		// 	return this.firstChild;
+		// }));
 	};
 
 	CardContainer.prototype.init = function () {

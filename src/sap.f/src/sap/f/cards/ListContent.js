@@ -112,8 +112,7 @@ sap.ui.define(["sap/ui/core/Control", "sap/ui/model/json/JSONModel", "sap/m/List
 			var oModel = new JSONModel();
 			this.setModel(oModel);
 			this._oItemTemplate = new StandardListItem({
-				iconDensityAware: false,
-				iconInset: false
+				iconDensityAware: false
 			});
 		};
 

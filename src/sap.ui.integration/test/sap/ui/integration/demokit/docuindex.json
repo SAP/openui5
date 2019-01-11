@@ -1,26 +1,51 @@
 {
-	"explored": {
-		"entitiesDefaults": {
-			"formFactors": "L"
-		},
-		"samplesRef": {
-			"namespace": "sap.ui.integration.sample",
-			"ref": "test-resources/sap/ui/integration/demokit/sample"
-		},
-		"entities": [{
-			"id": "sap.ui.integration.HostConfiguration",
-			"name": "Host Configuration",
-			"category": "Display",
-			"since": "1.62",
-			"formFactors": "-",
-			"samples": [
-				"sap.ui.integration.sample.HostConfigurationUsage"
-			]
-		}],
-		"samples": [{
-			"id": "sap.ui.integration.sample.HostConfigurationUsage",
-			"name": "Host Configuration Sample",
-			"description": "This example demonstrates how HostConfiguration can influence some Cards on a Page."
-		}]
-	}
+  "explored": {
+	"entitiesDefaults": {
+	  "formFactors": "L"
+	},
+	"samplesRef": {
+	  "namespace": "sap.ui.integration.sample",
+	  "ref": "test-resources/sap/ui/integration/demokit/sample"
+	},
+	"entities": [
+	  {
+		"id": "sap.ui.integration.HostConfiguration",
+		"name": "Host Configuration",
+		"category": "Display",
+		"since": "1.62",
+		"formFactors": "-",
+		"samples": [
+		  "sap.ui.integration.sample.HostConfigurationUsage"
+		]
+	  },
+	  {
+		"id": "sap.ui.integration.widgets.Card",
+		"name": "Card",
+		"category": "Display",
+		"since": "1.62",
+		"formFactors": "-",
+		"samples": [
+		  "sap.ui.integration.sample.ListCard",
+		  "sap.ui.integration.sample.AnalyticalCard"
+		]
+	  }
+	],
+	"samples": [
+	  {
+		"id": "sap.ui.integration.sample.HostConfigurationUsage",
+		"name": "Host Configuration Sample",
+		"description": "This example demonstrates how HostConfiguration can influence some Cards on a Page."
+	  },
+	  {
+		"id": "sap.ui.integration.sample.ListCard",
+		"name": "List Card",
+		"description": "The list card is used to display multiple list items of various types."
+	  },
+	  {
+		"id": "sap.ui.integration.sample.AnalyticalCard",
+		"name": "Analytical Card",
+		"description": "The analytical card is used for data visualization."
+	  }
+	]
+  }
 }

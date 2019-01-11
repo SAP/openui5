@@ -1,0 +1,11 @@
+<mvc:View
+        controllerName="sap.ui.integration.sample.ListCard.ListCard"
+        xmlns="sap.m"
+        xmlns:mvc="sap.ui.core.mvc"
+        class="sapUiContentPadding"
+        xmlns:w="sap.ui.integration.widgets">
+    <Panel>
+        <w:Card width="auto" manifest="{manifests>/listCard}">
+        </w:Card>
+    </Panel>
+</mvc:View>
