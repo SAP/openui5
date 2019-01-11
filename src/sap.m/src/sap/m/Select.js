@@ -1900,8 +1900,7 @@ function(
 				sProperty = oControlEvent.getParameter("name");
 
 			// if the selected item has changed, synchronization is needed
-			if (sSelectedItemId === oControlEvent.getParameter("id")) {
-
+			if (sSelectedItemId === oControlEvent.getParameter("id") || this.getSelectedKey() === oControlEvent.oSource.getKey()) {
 				switch (sProperty) {
 					case "text":
 						// Notify interested controls that an item's text was changed
