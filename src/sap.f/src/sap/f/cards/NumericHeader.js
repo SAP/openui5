@@ -397,5 +397,37 @@ sap.ui.define([
 		// TODO Check if model is destroyed when header is destroyed
 	};
 
+	/**
+	 * Gets ids of controls that are contained in th numeric header.
+	 *
+	 * @private
+	 * @returns {string} idS
+	 */
+	NumericHeader.prototype._getHeaderAccessibility = function () {
+		var sTitleId = this._getTitle() ? this._getTitle().getId() : "",
+			sSubtitleId = this._getSubtitle() ? this._getSubtitle().getId() : "",
+			sUnitOfMeasureId = this._getUnitOfMeasurement() ? this._getUnitOfMeasurement().getId() : "",
+			sSideIndicatorsId = this.getSideIndicators() ? this._getSideIndicatorIds() : "",
+			sDetailsId = this._getDetails() ? this._getDetails().getId() : "",
+			sMainIndicatorId = this._getMainIndicator() ? this._getMainIndicator().getId() : "";
+
+			return sTitleId + " " + sSubtitleId + " " + sUnitOfMeasureId + " " + sMainIndicatorId + sSideIndicatorsId + " " + sDetailsId;
+	};
+
+	/**
+	 * Gets ids of <code>sap.f.cards.NumericSideIndicator</code>.
+	 *
+	 * @private
+	 * @returns {string} idS
+	 */
+	NumericHeader.prototype._getSideIndicatorIds = function () {
+		var sSideIndicatorIds = "";
+		this.getSideIndicators().forEach(function(oSideIndicator) {
+			sSideIndicatorIds += " " + oSideIndicator.getId();
+		});
+
+		return sSideIndicatorIds;
+	};
+
 	return NumericHeader;
 });

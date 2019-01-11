@@ -666,4 +666,82 @@ function (
 		}.bind(this), iTimeout);
 	});
 
+	QUnit.module("Card Accessibility", {
+		beforeEach: function () {
+			this.oRb = sap.ui.getCore().getLibraryResourceBundle("sap.f");
+			this.oCard = new Card("somecard", {
+				manifest: oManifest_ListCard,
+				width: "400px",
+				height: "600px"
+			});
+			this.oNumercHeader = new Card("numericCard", {
+				manifest: oManifest_NumericHeader,
+				width: "400px",
+				height: "600px"
+			});
+
+			this.oCard.placeAt(DOM_RENDER_LOCATION);
+			this.oNumercHeader.placeAt(DOM_RENDER_LOCATION);
+			Core.applyChanges();
+		},
+		afterEach: function () {
+			this.oCard.destroy();
+			this.oCard = null;
+			this.oNumercHeader.destroy();
+			this.oNumercHeader = null;
+			this.oRb = null;
+		}
+	});
+
+	QUnit.test("Card", function (assert) {
+
+		// Arrange
+		var done = assert.async();
+
+		// setTimeout until there are proper events to attach to.
+		setTimeout(function () {
+				var oCardDomRef = this.oCard.getDomRef(),
+					oHeader = this.oCard.getAggregation("_header"),
+					oHeaderDomRef = oHeader.getDomRef(),
+					oContentDomRef = document.getElementsByClassName("sapFCardContent")[0],
+					sAriaLabelledByIds = oHeader._getTitle().getId() + " " + oHeader._getSubtitle().getId() + " " + oHeader._getAvatar().getId();
+
+			//Card Container
+			assert.equal(oCardDomRef.getAttribute("role"), "region", "Card container should have a role - region");
+			assert.equal(oCardDomRef.getAttribute("aria-roledescription"), this.oRb.getText("ARIA_ROLEDESCRIPTION_CARD"), "Card container should have aria-roledescription - Card");
+			assert.equal(oCardDomRef.getAttribute("aria-labelledby"), oHeader._getTitle().getId(), "Card container should have aria-lebelledby - pointing to the title id if there is one");
+
+			//Card Header
+			assert.equal(oHeaderDomRef.getAttribute("role"), "group", "Card header should have a role - group");
+			assert.equal(oHeaderDomRef.getAttribute("aria-roledescription"), this.oRb.getText("ARIA_ROLEDESCRIPTION_CARD_HEADER"), "Card header should have aria-roledescription - Card Header");
+			assert.equal(oHeaderDomRef.getAttribute("aria-labelledby"), sAriaLabelledByIds, "Card container should have aria-lebelledby - pointing to the title, subtitle and avatar ids if there is one");
+			assert.equal(oHeaderDomRef.getAttribute("tabindex"), 0, "Card header should have tabindex=0");
+
+			//Card Content
+			assert.equal(oContentDomRef.getAttribute("role"), "group", "Card content should have a role - group");
+			assert.equal(oContentDomRef.getAttribute("aria-label"), this.oRb.getText("ARIA_LABEL_CARD_CONTENT"), "Card container should have aria-label - Card Content");
+			done();
+		}.bind(this), iTimeout);
+	});
+
+	QUnit.test("Card - Numeric Header", function (assert) {
+
+		// Arrange
+		var done = assert.async();
+
+		// setTimeout until there are proper events to attach to.
+		setTimeout(function () {
+			var oHeader = this.oNumercHeader.getAggregation("_header"),
+				oHeaderDomRef = oHeader.getDomRef(),
+				sAriaLabelledByIds = oHeader._getTitle().getId() + " " + oHeader._getSubtitle().getId() + " " + oHeader._getUnitOfMeasurement().getId() + " " + oHeader._getMainIndicator().getId() +  oHeader._getSideIndicatorIds() + " " + oHeader._getDetails().getId();
+
+			//Card Header
+			assert.equal(oHeaderDomRef.getAttribute("role"), "group", "Card header should have a role - group");
+			assert.equal(oHeaderDomRef.getAttribute("aria-roledescription"), this.oRb.getText("ARIA_ROLEDESCRIPTION_CARD_HEADER"), "Card header should have aria-roledescription - Card Header");
+			assert.equal(oHeaderDomRef.getAttribute("aria-labelledby"),  sAriaLabelledByIds, "Card container should have aria-lebelledby - pointing to the title, subtitle and avatar ids if there is one");
+			assert.equal(oHeaderDomRef.getAttribute("tabindex"), 0, "Card header should have tabindex=0");
+			done();
+		}.bind(this), iTimeout);
+	});
+
 });
