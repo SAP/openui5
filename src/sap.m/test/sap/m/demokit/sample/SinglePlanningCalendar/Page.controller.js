@@ -4,7 +4,7 @@ sap.ui.define([
 	"sap/ui/core/Fragment",
 	"sap/ui/core/mvc/Controller",
 	"sap/ui/model/json/JSONModel",
-	"sap/ui/unified/Library",
+	"sap/ui/unified/library",
 	"sap/m/MessageToast"
 ],
 function(Button, Dialog, Fragment, Controller, JSONModel, unifiedLibrary, MessageToast) {
