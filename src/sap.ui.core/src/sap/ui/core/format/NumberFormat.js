@@ -7,10 +7,11 @@ sap.ui.define([
 	'sap/ui/base/Object',
 	'sap/ui/core/Locale',
 	'sap/ui/core/LocaleData',
-	"sap/base/assert",
-	"sap/ui/thirdparty/jquery"
+	'sap/base/Log',
+	'sap/base/assert',
+	'sap/ui/thirdparty/jquery'
 ],
-	function(BaseObject, Locale, LocaleData, assert, jQuery) {
+	function(BaseObject, Locale, LocaleData, Log, assert, jQuery) {
 	"use strict";
 
 
@@ -222,6 +223,7 @@ sap.ui.define([
 		currencyCode: true,
 		currencyContext: 'standard',
 		style: "standard",
+		customCurrencies: undefined,
 		parseAsString: false,
 		roundingMode: NumberFormat.RoundingMode.HALF_AWAY_FROM_ZERO,
 		emptyString: NaN,
@@ -391,6 +393,22 @@ sap.ui.define([
 	 * default value.
 	 * </p>
 	 *
+	 * The currency instance supports locally defined custom currency exclusive to the created instance.
+	 * The following example shows how to use custom currencies (e.g. for Bitcoins):
+	 * <pre>
+	 * var oFormat = NumberFormat.getCurrencyInstance({
+	 *     "currencyCode": false,
+	 *     "customCurrencies": {
+	 *         "BTC": {
+	 *             "symbol": "Ƀ",
+	 *             "decimals": 3
+	 *         }
+	 *     }
+	 * });
+	 *
+	 * oFormat.format(123.4567, "BTC"); // "Ƀ 123.457"
+	 * </pre>
+	 *
 	 * @param {object} [oFormatOptions] The option object which support the following parameters. If no options is given, default values according to the type and locale settings are used.
 	 * @param {int} [oFormatOptions.minIntegerDigits=1] defines minimal number of non-decimal digits
 	 * @param {int} [oFormatOptions.maxIntegerDigits=99] defines maximum number of non-decimal digits
@@ -419,11 +437,16 @@ sap.ui.define([
 	 *  defined by maxFractionDigits. Rounding will only be applied, if the passed value if of type number. This can be assigned by value in {@link sap.ui.core.format.NumberFormat.RoundingMode RoundingMode}
 	 *  or a function which will be used for rounding the number. The function is called with two parameters: the number and how many decimal digits should be reserved.
 	 * @param {boolean} [oFormatOptions.showMeasure=true] defines whether the measure according to the format is shown in the formatted string
-	 * @param {boolean} [oFormatOptions.currencyCode=true] defines whether the currency is shown as code in currency format. The currency symbol is displayed when this is set to false and there's symbol defined
+	 * @param {boolean} [oFormatOptions.currencyCode=true] defines whether the currency is shown as code in currency format. The currency symbol is displayed when this is set to false and there is a symbol defined
 	 *  for the given currency code.
 	 * @param {string} [oFormatOptions.currencyContext=standard] It can be set either with 'standard' (the default value) or with 'accounting' for an accounting specific currency display
 	 * @param {number} [oFormatOptions.emptyString=NaN] @since 1.30.0 defines what empty string is parsed as and what is formatted as empty string. The allowed values are only NaN, null or 0.
 	 *  The 'format' and 'parse' are done in a symmetric way which means when this parameter is set to NaN, empty string is parsed as NaN and NaN is formatted as empty string.
+	 * @param {map} [oFormatOptions.customCurrencies] defines a set of custom currencies exclusive to this NumberFormat instance.
+	 *  If custom currencies are defined on the instance, no other currencies can be formatted and parsed by this instance.
+	 *  Globally available custom currencies can be added via the global configuration.
+	 *  See the above examples.
+	 *  See also {@link sap.ui.core.Configuration.FormatSettings#setCustomCurrencies} and {@link sap.ui.core.Configuration.FormatSettings#addCustomCurrencies}.
 	 * @param {sap.ui.core.Locale} [oLocale] Locale to get the formatter for
 	 * @return {sap.ui.core.format.NumberFormat} unit instance of the NumberFormat
 	 * @static
@@ -435,6 +458,9 @@ sap.ui.define([
 			oLocaleFormatOptions = this.getLocaleFormatOptions(oFormat.oLocaleData, mNumberType.CURRENCY, sContext);
 
 		oFormat.oFormatOptions = jQuery.extend(false, {}, this.oDefaultCurrencyFormat, oLocaleFormatOptions, oFormatOptions);
+
+		oFormat._defineCustomCurrencySymbols();
+
 		return oFormat;
 	};
 
@@ -758,6 +784,74 @@ sap.ui.define([
 	};
 
 	/**
+	 * Compiles a map <code>this.mKnownCurrencySymbols</code>
+	 * of all custom currency symbols. Symbols are either defined in
+	 * the custom currency object itself, or are looked up on the
+	 * LocaleData in case an ISO Code is given.
+	 *
+	 * It also checks if there are duplicated symbols defined,
+	 * which lead to an ambiguous parse result.
+	 *
+	 * In case there are custom currencies defined on instance level,
+	 * it also compiles a map <code>this.mKnownCurrencyCodes</code>
+	 * of custom currency codes.
+	 *
+	 * The function is only used by the Currency formatting.
+	 * @private
+	 */
+	NumberFormat.prototype._defineCustomCurrencySymbols = function() {
+		var oOptions = this.oFormatOptions;
+		var mCurrencySymbols = this.oLocaleData.getCurrencySymbols();
+
+		var fnFindDuplicates = function(mSymbols, mResult) {
+			var aUniqueSymbols = [];
+			for (var sKey in mSymbols) {
+				if (aUniqueSymbols.indexOf(mSymbols[sKey]) === -1) {
+					aUniqueSymbols.push(mSymbols[sKey]);
+				} else {
+					// Duplicated symbol found
+					mResult[mSymbols[sKey]] = true;
+					Log.error("Symbol '" + mSymbols[sKey] + "' is defined multiple times in custom currencies.", undefined, "NumberFormat");
+				}
+			}
+		};
+
+		// process custom currencies on instance-level
+		if (oOptions.customCurrencies && typeof oOptions.customCurrencies === "object") {
+			this.mKnownCurrencySymbols = {};
+			this.mKnownCurrencyCodes = {};
+
+			// get all relevant symbols for custom currencies
+			Object.keys(oOptions.customCurrencies).forEach(function (sKey) {
+				if (oOptions.customCurrencies[sKey].symbol) {
+					this.mKnownCurrencySymbols[sKey] = oOptions.customCurrencies[sKey].symbol;
+				} else {
+					// if no symbol is defined, we make a look up into the locale data with the given isoCode
+					var sIsoCode = oOptions.customCurrencies[sKey].isoCode;
+					if (sIsoCode) {
+						this.mKnownCurrencySymbols[sKey] = mCurrencySymbols[sIsoCode];
+					}
+				}
+
+				// In case no symbol is found during parsing,
+				// we take the custom currency key itself
+				this.mKnownCurrencyCodes[sKey] = sKey;
+
+			}.bind(this));
+
+		} else {
+			// find duplicated symbols in global config/CLDR
+			// mCurrencySymbols
+			this.mKnownCurrencySymbols = mCurrencySymbols;
+			this.mKnownCurrencyCodes = this.oLocaleData.getCustomCurrencyCodes();
+		}
+
+		// Find duplicated symbols defined in custom currencies
+		this.mDuplicatedSymbols = {};
+		fnFindDuplicates(this.mKnownCurrencySymbols, this.mDuplicatedSymbols);
+	};
+
+	/**
 	 * Format a number according to the given format options.
 	 *
 	 * @param {number|array} vValue the number to format or an array which contains the number to format and the sMeasure parameter
@@ -797,6 +891,13 @@ sap.ui.define([
 		if (vValue === oOptions.emptyString || (isNaN(vValue) && isNaN(oOptions.emptyString))) {
 			// if the value equals the 'emptyString' format option, return empty string.
 			// the NaN case has to be checked by using isNaN because NaN !== NaN
+			return "";
+		}
+
+		// If custom currencies are defined, we exclusively accept the defined ones,
+		// other currencies are ignored
+		if (sMeasure && oOptions.customCurrencies && !oOptions.customCurrencies[sMeasure]) {
+			Log.error("Currency '" + sMeasure + "' is unknown.");
 			return "";
 		}
 
@@ -874,6 +975,12 @@ sap.ui.define([
 		//handle measure
 		if (oOptions.type == mNumberType.CURRENCY) {
 			var iDigits = this.oLocaleData.getCurrencyDigits(sMeasure);
+
+			// decimals might be undefined, yet 0 is accepted of course
+			if (oOptions.customCurrencies && oOptions.customCurrencies[sMeasure] && oOptions.customCurrencies[sMeasure].decimals !== undefined) {
+				iDigits = oOptions.customCurrencies[sMeasure].decimals;
+			}
+
 			if (oOptions.maxFractionDigits === undefined) {
 				oOptions.maxFractionDigits = iDigits;
 			}
@@ -1015,8 +1122,20 @@ sap.ui.define([
 				}
 			}
 
+			// check if we need to render a symbol instead of a currency-code
 			if (!oOptions.currencyCode) {
-				sMeasure = this.oLocaleData.getCurrencySymbol(sMeasure);
+				var sSymbol;
+				// custom currencies provided
+				if (oOptions.customCurrencies && typeof oOptions.customCurrencies === "object") {
+					// the custom currency symbol map was preprocessed on instance creation
+					sSymbol = this.mKnownCurrencySymbols[sMeasure];
+				} else {
+					sSymbol = this.oLocaleData.getCurrencySymbol(sMeasure);
+				}
+
+				if (sSymbol && sSymbol !== sMeasure) {
+					sMeasure = sSymbol;
+				}
 			}
 
 			sResult = this._composeCurrencyResult(sPattern, sResult, sMeasure, {
@@ -1082,6 +1201,9 @@ sap.ui.define([
 		if (oOptions.showMeasure && sMeasure) {
 			var sPlaceHolder = "\u00a4",
 				// convert the PCRE regex in CLDR to the regex supported by Javascript
+				// The regex means to exclude all possible currency symbols.
+				// In PCRE regex, there's an expression to match all currency symbols /\p{Sc}/ which has to be converted to this long regex in javascript.
+				// This regex is borrowed from https://stackoverflow.com/questions/25910808/javascript-regex-currency-symbol-in-a-string.
 				mRegex = {
 					"[:digit:]": /\d/,
 					"[:^S:]": /[^\$\xA2-\xA5\u058F\u060B\u09F2\u09F3\u09FB\u0AF1\u0BF9\u0E3F\u17DB\u20A0-\u20BD\uA838\uFDFC\uFE69\uFF04\uFFE0\uFFE1\uFFE5\uFFE6]/
@@ -1215,16 +1337,24 @@ sap.ui.define([
 			sValue = oPatternAndResult.numberValue || sValue;
 		}
 
+		var oResult;
 		if (oOptions.type === mNumberType.CURRENCY) {
-			var mCurrencySymbols = this.oLocaleData.getCurrencySymbols(),
-				oResult = parseNumberAndCurrency(mCurrencySymbols, sValue),
-				sMeasure;
+			oResult = parseNumberAndCurrency({
+				value: sValue,
+				currencySymbols: this.mKnownCurrencySymbols,
+				customCurrencyCodes: this.mKnownCurrencyCodes,
+				duplicatedSymbols: this.mDuplicatedSymbols,
+				customCurrenciesAvailable: !!oOptions.customCurrencies
+			});
+
 			if (!oResult) {
 				return null;
 			}
+
 			sValue = oResult.numberValue;
 			sMeasure = oResult.currencyCode;
-			if (!oOptions.showMeasure && sMeasure) {
+
+			if ((oOptions.customCurrencies && sMeasure === null) || (!oOptions.showMeasure && sMeasure)) {
 				return null;
 			}
 		}
@@ -1778,46 +1908,113 @@ sap.ui.define([
 	}
 
 	/**
-	 * Parses number and currency
+	 * Identify the longest match between a sub string of <code>sValue</code>
+	 * and one of the values of the <code>mCollection</code> map.
 	 *
-	 * Sarch for the currency symbol first, looking for the longest match. In case no currency
-	 * symbol is found, search for a three letter currency code.
+	 * @param {string} sValue the string value which is checked for all currency codes/symbols during a parse call
+	 * @param {object} mCollection a collection of currency codes or symbols
 	 *
-	 * @param {object} mCurrencyCodes
-	 * @param {string} sValue
-	 *
-	 * @return {object} return object containing numberValue and currencyCode or null
+	 * @return {object} returns object containing matched symbol/ code
 	 */
-	function parseNumberAndCurrency(mCurrencyCodes, sValue) {
-		var rMatchExp = /(^[A-Z]{3}|[A-Z]{3}$)/,
-			sSymbol = "", sCode, sCurCode, sCurSymbol, aResult;
+	function findLongestMatch(sValue, mCollection) {
+		var sSymbol = "", sCode, sCurSymbol;
 
-		// Search for known symbols (longest match)
-		for (sCurCode in mCurrencyCodes) {
-			sCurSymbol = mCurrencyCodes[sCurCode];
+		for (var sCurCode in mCollection) {
+			sCurSymbol = mCollection[sCurCode];
 			if (sValue.indexOf(sCurSymbol) >= 0 && sSymbol.length < sCurSymbol.length) {
 				sSymbol = sCurSymbol;
 				sCode = sCurCode;
 			}
 		}
 
-		// Search for three letter currency code
-		if (!sCode) {
-			aResult = sValue.match(rMatchExp);
-			sCode = aResult && aResult[0];
+		return {
+			symbol: sSymbol,
+			code: sCode
+		};
+	}
+
+	/**
+	 * Parses number and currency
+	 *
+	 * Search for the currency symbol first, looking for the longest match. In case no currency
+	 * symbol is found, search for a three letter currency code.
+	 *
+	 * @param {object} oConfig
+	 * @param {string} oConfig.value the string value to be parse
+	 * @param {object} oConfig.currencySymbols the list of currency symbols to respect during parsing
+	 * @param {object} oConfig.customCurrencyCodes the list of currency codes used for parsing in case no symbol was found in the value string
+	 * @param {object} oConfig.duplicatedSymbols a list of all duplicated symbols;
+	 * In case oFormatOptions.currencyCode is set to false and the value string contains a duplicated symbol,
+	 * the value is not parsable. The result will be a parsed number and <code>undefined</code> for the currency.
+	 * @param {boolean} oConfig.customCurrenciesAvailable a flag to mark if custom currencies are available on the instance
+	 *
+	 * @private
+	 * @return {object} returns object containing numberValue and currencyCode or null
+	 */
+	function parseNumberAndCurrency(oConfig) {
+		var sValue = oConfig.value;
+
+		// Search for known symbols (longest match)
+		// no distinction between default and custom currencies
+		var oMatch = findLongestMatch(sValue, oConfig.currencySymbols);
+
+		// Search for currency code
+		if (!oMatch.code) {
+			// before falling back to the default regex for ISO codes we check the
+			// codes for custom currencies (if defined)
+			oMatch = findLongestMatch(sValue, oConfig.customCurrencyCodes);
+
+			if (!oMatch.code && !oConfig.customCurrenciesAvailable) {
+				// Match 3-letter iso code
+				var aIsoMatches = sValue.match(/(^[A-Z]{3}|[A-Z]{3}$)/);
+				oMatch.code = aIsoMatches && aIsoMatches[0];
+			}
 		}
 
 		// Remove symbol/code from value
-		if (sCode) {
-			sValue = sValue.replace(sSymbol || sCode, "");
+		if (oMatch.code) {
+			var iLastCodeIndex = oMatch.code.length - 1;
+			var sLastCodeChar = oMatch.code.charAt(iLastCodeIndex);
+			var iDelimiterPos;
+			var rValidDelimiters = /[\-\s]+/;
+
+			// Check whether last character of matched code is a number
+			if (/\d$/.test(sLastCodeChar)) {
+				// Check whether parse string starts with the matched code
+				if (sValue.startsWith(oMatch.code)) {
+					iDelimiterPos = iLastCodeIndex + 1;
+					// \s matching any whitespace character including
+					// non-breaking ws and invisible non-breaking ws
+					if (!rValidDelimiters.test(sValue.charAt(iDelimiterPos))) {
+						return undefined;
+					}
+				}
+			// Check whether first character of matched code is a number
+			} else if (/^\d/.test(oMatch.code)) {
+				// Check whether parse string ends with the matched code
+				if (sValue.endsWith(oMatch.code)) {
+					iDelimiterPos = sValue.indexOf(oMatch.code) - 1;
+					if (!rValidDelimiters.test(sValue.charAt(iDelimiterPos))) {
+						return undefined;
+					}
+				}
+			}
+			sValue = sValue.replace(oMatch.symbol || oMatch.code, "");
+		}
+
+		// Set currency code to undefined, as the defined custom currencies
+		// contain multiple currencies having the same symbol.
+		if (oConfig.duplicatedSymbols && oConfig.duplicatedSymbols[oMatch.symbol]) {
+			oMatch.code = undefined;
+			Log.error("The parsed currency symbol '" + oMatch.symbol + "' is defined multiple " +
+					"times in custom currencies.Therefore the result is not distinct.");
 		}
 
 		return {
 			numberValue: sValue,
-			currencyCode: sCode || undefined
+			currencyCode: oMatch.code || undefined
 		};
 	}
-
 
 	return NumberFormat;
 
