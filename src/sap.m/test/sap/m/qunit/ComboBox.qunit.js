@@ -10302,6 +10302,25 @@ sap.ui.define([
 		oComboBox.destroy();
 	});
 
+	if (Device.browser.internet_explorer) {
+		QUnit.test("AriaDescribedBy", function(assert) {
+			var oComboBox = new ComboBox(),
+				oResourceBundle = sap.ui.getCore().getLibraryResourceBundle("sap.m").getText("ACC_CTR_TYPE_COMBO");
+
+			oComboBox.placeAt("content");
+			sap.ui.getCore().applyChanges();
+
+			var oInvisibleText = oComboBox.oInvisibleText;
+
+			//Assert
+			assert.ok(oComboBox.$("inner").attr("aria-describedby").length > 0, "Property aria-describedby should exist");
+			assert.strictEqual(oInvisibleText.getText(), oResourceBundle , "'Combobox' is announced.");
+
+			//Cleanup
+			oComboBox.destroy();
+		});
+	}
+
 	QUnit.module("Integration");
 
 	QUnit.test("Keep selected value on parent re-render", function (assert) {

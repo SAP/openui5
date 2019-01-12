@@ -1,8 +1,8 @@
 /*!
  * ${copyright}
  */
-sap.ui.define(['./ComboBoxBaseRenderer', 'sap/ui/core/Renderer'],
-	function(ComboBoxBaseRenderer, Renderer) {
+sap.ui.define(['./ComboBoxBaseRenderer','./ComboBoxTextFieldRenderer', 'sap/ui/core/Renderer', 'sap/ui/Device'],
+	function(ComboBoxBaseRenderer, ComboBoxTextFieldRenderer, Renderer, Device) {
 	"use strict";
 
 	/**
@@ -32,20 +32,33 @@ sap.ui.define(['./ComboBoxBaseRenderer', 'sap/ui/core/Renderer'],
 			oRm.addClass("sapMMultiComboBoxHasToken");
 		}
 	};
-
 	/**
-	 * Add attributes to the element.
+	 * Returns the accessibility state of the control.
 	 *
-	 * @param {sap.ui.core.RenderManager} oRm The RenderManager that can be used for writing to the render output buffer.
-	 * @param {sap.ui.core.Control} oControl An object representation of the control that should be rendered.
+	 * @param {sap.ui.core.Control} oControl an object representation of the control.
+	 * @returns {Object}
 	 */
-	MultiComboBoxRenderer.writeInnerAttributes = function(oRm, oControl) {
+	MultiComboBoxRenderer.getAccessibilityState = function (oControl) {
+		var mAccessibilityState = ComboBoxTextFieldRenderer.getAccessibilityState.call(this, oControl),
+			oInvisibleTextId = oControl._oTokenizer && oControl._oTokenizer.getTokensInfoId();
+
+		mAccessibilityState.expanded = oControl.isOpen();
+
 		if (sap.ui.getCore().getConfiguration().getAccessibility()) {
-			var oInvisibleTextId = oControl._oTokenizer && oControl._oTokenizer.getTokensInfoId();
-			oRm.writeAttribute("aria-describedby", oInvisibleTextId);
+			if (Device.browser.internet_explorer && mAccessibilityState.describedby) {
+				mAccessibilityState.describedby = {
+					value: (mAccessibilityState.describedby + " " + oInvisibleTextId).trim(),
+					append: true
+				};
+			}else {
+				mAccessibilityState.describedby = {
+					value: oInvisibleTextId.trim(),
+					append: true
+				};
+			}
 		}
 
-		ComboBoxBaseRenderer.writeInnerAttributes.apply(this, arguments);
+		return mAccessibilityState;
 	};
 
 	MultiComboBoxRenderer.prependInnerContent = function (oRm, oControl) {
