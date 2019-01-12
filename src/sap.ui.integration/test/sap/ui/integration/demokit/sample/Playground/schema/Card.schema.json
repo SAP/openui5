@@ -1,0 +1,507 @@
+{
+	"title": "JSON schema for SAP.CARD Namespace",
+	"description": "Represents general card attributes",
+	"type": "object",
+	"additionalProperties": false,
+	"required": [
+		"type"
+	],
+	"properties": {
+		"type": {
+			"description": "Represents type of a card and can be List or Analytical",
+			"type": "string",
+			"enum": [
+				"List",
+				"Analytical"
+			]
+		},
+		"header": {
+			"$ref": "#/definitions/HeaderType"
+		},
+		"content": {
+			"$ref": "#/definitions/ContentType",
+			"description": "Content type depends on the Card type"
+		}
+	},
+	"definitions": {
+		"HeaderType": {
+			"anyOf": [{
+					"$ref": "#/definitions/HeaderType.Default"
+				},
+				{
+					"$ref": "#/definitions/HeaderType.Numeric"
+				}
+			]
+		},
+		"HeaderType.Default": {
+			"description": "Represents header default type attributes",
+			"type": "object",
+			"additionalProperties": false,
+			"properties": {
+				"type": {
+					"description": "Represents language-dependent title",
+					"type": "string",
+					"enum": [
+						"Default",
+						"Numeric"
+					],
+					"default": "Default"
+				},
+				"title": {
+					"description": "Represents language-dependent title",
+					"$ref": "#/definitions/i18n_key"
+				},
+				"subtitle": {
+					"description": "Represents language-dependent additional information to the subTitle",
+					"$ref": "#/definitions/i18n_key"
+				},
+				"icon": {
+					"description": "Represents icon of the Card",
+					"$ref": "#/definitions/icon"
+				},
+				"status": {
+					"description": "Represents the status of the Card",
+					"$ref": "#/definitions/status"
+				}
+			}
+		},
+		"HeaderType.Numeric": {
+			"description": "Represents header with numeric data",
+			"type": "object",
+			"properties": {
+				"type": {
+					"description": "Represents language-dependent title",
+					"type": "string",
+					"enum": [
+						"Default",
+						"Numeric"
+					],
+					"default": "Default"
+				},
+				"data": {
+					"$ref": "#/definitions/data"
+				},
+				"title": {
+					"description": "Represents language-dependent title",
+					"$ref": "#/definitions/i18n_key"
+				},
+				"subTitle": {
+					"description": "Represents language-dependent additional information to the subTitle",
+					"$ref": "#/definitions/i18n_key"
+				},
+				"unitOfMeasurement": {
+					"description": "Represents unit of measurement for the whole numeric header",
+					"type": "string"
+				},
+				"mainIndicator": {
+					"description": "Represents the main numeric for the header",
+					"type": "object",
+					"properties": {
+						"number": {
+							"description": "The value of the numeric",
+							"type": "string"
+						},
+						"unit": {
+							"description": "The unit of measurement of the numeric",
+							"type": "string"
+						},
+						"trend": {
+							"description": "The trend indicator (direction) of the numeric",
+							"type": "string",
+							"enum": [
+								"Down",
+								"None",
+								"Up"
+							],
+							"default": "None"
+						},
+						"state": {
+							"description": "The state color of the numeric",
+							"type": "string",
+							"enum": [
+								"Critical",
+								"Error",
+								"Good",
+								"Neutral"
+							],
+							"default": "None"
+						}
+					}
+				},
+				"details": {
+					"description": "Additional information about the numeric header",
+					"type": "string"
+				},
+				"sideIndicators": {
+					"type": "array",
+					"maxItems": 2,
+					"items": {
+						"description": "Multiple side indicators that relate to the main numeric",
+						"type": "object",
+						"properties": {
+							"title": {
+								"description": "Title for the side indicator",
+								"$ref": "#/definitions/i18n_key"
+							},
+							"number": {
+								"description": "The value of the side indicator",
+								"type": "string"
+							},
+							"unit": {
+								"description": "The unit of measurement of the side indicator",
+								"type": "string"
+							}
+						}
+					}
+				}
+			}
+		},
+		"ContentType": {
+			"anyOf": [{
+					"$ref": "#/definitions/ContentType.List"
+				},
+				{
+					"$ref": "#/definitions/ContentType.Analytical"
+				}
+			]
+		},
+		"ContentType.List": {
+			"description": "Represents list content attributes",
+			"type": "object",
+			"additionalProperties": false,
+			"properties": {
+				"data": {
+					"$ref": "#/definitions/data"
+				},
+				"item": {
+					"$ref": "#/definitions/item"
+				}
+			}
+		},
+		"ContentType.Analytical": {
+			"description": "Represents analytical content attributes",
+			"type": "object",
+			"additionalProperties": false,
+			"properties": {
+				"chart": {
+					"description": "The template for all charts",
+					"type": "object",
+					"additionalProperties": false,
+					"properties": {
+						"chartType": {
+							"description": "Describes the type of the chart",
+							"enum": [
+								"line",
+								"stacked_column",
+								"stacked_bar",
+								"donut"
+							],
+							"default": "None"
+						},
+						"legend": {
+							"description": "Describes legend properties",
+							"type": "object",
+							"additionalProperties": false,
+							"properties": {
+								"legend": {
+									"$ref": "#/definitions/legend"
+								}
+							}
+						},
+						"plotArea": {
+							"description": "Describes the plotArea properties",
+							"type": "object",
+							"additionalProperties": false,
+							"properties": {
+								"dataLabel": {
+									"$ref": "#/definitions/dataLabel"
+								},
+								"categoryAxisText": {
+									"$ref": "#/definitions/axisText"
+								},
+								"valueAxisText": {
+									"$ref": "#/definitions/axisText"
+								}
+							}
+						},
+						"title": {
+							"description": "Describes the title properties",
+							"type": "object",
+							"additionalProperties": false,
+							"properties": {
+								"visible": {
+									"description": "Represent the visibility state of the title",
+									"type": "boolean",
+									"default": true
+								},
+								"text": {
+									"description": "Representation of the text title",
+									"type": "string"
+								},
+								"alignment": {
+									"description": "Representation of how the title will be aligned",
+									"enum": [
+										"Left",
+										"Center",
+										"Right"
+									],
+									"default": "Center"
+								}
+							}
+						},
+						"measureAxis": {
+							"description": "Represents the value set for measure axis",
+							"type": "string"
+						},
+						"dimensionAxis": {
+							"description": "Represents the value set for  dimension axis",
+							"type": "string"
+						},
+						"data": {
+							"$ref": "#/definitions/data"
+						},
+						"dimensions": {
+							"$ref": "#/definitions/field"
+						},
+						"measures": {
+							"$ref": "#/definitions/field"
+						}
+					}
+				}
+			}
+		},
+		"icon": {
+			"description": "Represents icon attributes",
+			"type": "object",
+			"properties": {
+				"src": {
+					"type": "string",
+					"description": "Represents icon name or source URL"
+				},
+				"alt": {
+					"type": "string",
+					"description": "Alternative text for the icon"
+				},
+				"shape": {
+					"type": "string",
+					"description": "Represents the shape of the icon",
+					"enum": [
+						"Square",
+						"Circle"
+					],
+					"default": "Square"
+				},
+				"text": {
+					"type": "string",
+					"description": "Text inside icon"
+				},
+				"backgroundColor": {
+					"type": "string",
+					"description": "Background color of the icon"
+				},
+				"color": {
+					"type": "string",
+					"description": "Color of the icon"
+				}
+			}
+		},
+		"status": {
+			"description": "Represents status attributes",
+			"type": "object",
+			"additionalProperties": false,
+			"properties": {
+				"text": {
+					"type": "string",
+					"description": "Text that represents the status"
+				}
+			}
+		},
+		"data": {
+			"description": "Represents request and response attributes",
+			"type": "object",
+			"additionalProperties": false,
+			"properties": {
+				"request": {
+					"$ref": "#/definitions/request"
+				},
+				"path": {
+					"description": "The path from the JSON to be used as root",
+					"type": "string",
+					"default": "/",
+					"pattern": "^[a-zA-Z0-9_\\.\\-\\|\\@\\#]*$"
+				},
+				"json": {
+					"description": "The data to be used directly. Without making requests.",
+					"type": "object",
+					"additionalProperties": true
+				}
+			}
+		},
+		"request": {
+			"description": "Represents request attributes",
+			"type": "object",
+			"additionalProperties": false,
+			"required": [
+				"url"
+			],
+			"properties": {
+				"mode": {
+					"description": "The mode of the request",
+					"type": "string",
+					"enum": [
+						"no-cors",
+						"same-origin",
+						"cors"
+					],
+					"default": "cors"
+				},
+				"url": {
+					"description": "The URL to make the request to",
+					"type": "string"
+				},
+				"method": {
+					"description": "The HTTP method",
+					"type": "string",
+					"enum": [
+						"GET",
+						"POST"
+					],
+					"default": "GET"
+				},
+				"parameters": {
+					"description": "Represents the request parameters. If it is a POST request the parameters will be put as key/value pairs into the body of the request",
+					"type": "object",
+					"additionalProperties": true
+				},
+				"headers": {
+					"description": "Represents HTTP headers",
+					"type": "object",
+					"additionalProperties": true
+				}
+			}
+		},
+		"item": {
+			"description": "The template for all items",
+			"type": "object",
+			"additionalProperties": false,
+			"properties": {
+				"type": {},
+				"title": {
+					"description": "The title of the item",
+					"$ref": "#/definitions/field"
+				},
+				"description": {
+					"description": "The description of the item",
+					"$ref": "#/definitions/field"
+				},
+				"info": {
+					"allOf": [{
+						"$ref": "#/definitions/field"
+					}],
+					"properties": {
+						"state": {
+							"type": "string",
+							"description": "The state of the info",
+							"enum": [
+								"Error",
+								"Success",
+								"Warning",
+								"None"
+							],
+							"default": "None"
+						}
+					}
+				},
+				"highlight": {
+					"type": "string",
+					"description": "The highlight of the item",
+					"enum": [
+						"Error",
+						"Success",
+						"Warning",
+						"None",
+						"Information"
+					],
+					"default": "None"
+				},
+				"icon": {
+					"$ref": "#/definitions/icon"
+				}
+			}
+		},
+		"field": {
+			"type": "object",
+			"additionalProperties": false,
+			"required": [
+				"label",
+				"value"
+			],
+			"properties": {
+				"label": {
+					"type": "string",
+					"description": "The label of the field"
+				},
+				"value": {
+					"type": "string",
+					"description": "The value of the field"
+				}
+			}
+		},
+		"dataLabel": {
+			"type": "object",
+			"additionalProperties": false,
+			"properties": {
+				"visible": {
+					"description": "Represent the visibility state of the legend",
+					"type": "boolean",
+					"default": true
+				},
+				"showTotal": {
+					"description": "Represent the visibility state show total indicator",
+					"type": "boolean",
+					"default": true
+				}
+			}
+		},
+		"axisText": {
+			"type": "object",
+			"additionalProperties": false,
+			"properties": {
+				"visible": {
+					"description": "Represent the visibility state of axis text",
+					"type": "boolean",
+					"default": true
+				}
+			}
+		},
+		"legend": {
+			"type": "object",
+			"additionalProperties": false,
+			"properties": {
+				"visible": {
+					"description": "Represent the visibility state of the legend",
+					"type": "boolean",
+					"default": false
+				},
+				"position": {
+					"description": "Representation of where the legend will be positioned",
+					"enum": [
+						"Top",
+						"Bottom",
+						"Left",
+						"Right"
+					],
+					"default": "Right"
+				},
+				"alignment": {
+					"description": "Representation of how the legend will be aligned",
+					"enum": [
+						"TopLeft",
+						"center"
+					],
+					"default": "TopLeft"
+				}
+			}
+		}
+	}
+}

@@ -1,0 +1,21 @@
+[{
+		"text": "List Card",
+		"url": "./manifests/list.manifest.json"
+	}, {
+		"text": "List Card: Highlight",
+		"url": "./manifests/list.highlight.manifest.json"
+	}, {
+		"text": "List Card: Icon",
+		"url": "./manifests/list.icon.manifest.json"
+	}, {
+		"text": "List Card: Numeric Header",
+		"url": "./manifests/list.numeric.manifest.json"
+	}, {
+		"text": "Table Card",
+		"url": "./manifests/table.manifest.json"
+	},
+	{
+		"text": "Analytical Card",
+		"url": "./manifests/analytical.manifest.json"
+	}
+]
