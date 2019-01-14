@@ -1,0 +1,30 @@
+<!DOCTYPE HTML>
+<html style="height:100%">
+
+<head>
+	<meta http-equiv="X-UA-Compatible" content="IE=edge">
+
+	<title>Card Playground</title>
+
+	<script src="../../../../../../../resources/sap-ui-core.js" id="sap-ui-bootstrap" data-sap-ui-libs="sap.ui.integration,sap.ui.codeeditor"
+	 data-sap-ui-theme="sap_fiori_3" data-sap-ui-resourceroots='{
+		"sap.ui.integration.sample" : "../"
+	}'></script>
+
+	<script>
+		sap.ui.require(["sap/ui/core/Core", "sap/ui/core/ComponentContainer"], function (Core, ComponentContainer) {
+			var oContainer = new ComponentContainer({
+				async: true,
+				name: "sap.ui.integration.sample.Playground",
+				height: "100%"
+			});
+			oContainer.placeAt("content");
+		});
+	</script>
+</head>
+
+<body id="content" class="sapUiBody" style="margin: 10px;overflow: hidden">
+
+</body>
+
+</html>
