@@ -49,124 +49,129 @@ sap.ui.define([
 			});
 		}
 	});
-	oElementEnablementTest.run().then(function(oData) {
+
+	return oElementEnablementTest.run()
+
+	.then(function(oData) {
 		new QUnitReport({
 			data: oData
 		});
-	});
+	})
 
-	// Rename action
-	var fnConfirmFormElementRenamedWithNewValue = function (oUiComponent, oViewAfterAction, assert) {
-		assert.strictEqual(oViewAfterAction.byId("formElement").getLabel(),
-			"New Option",
-			"then the control has been renamed to the new value (New Option)");
-	};
+	.then(function() {
+		// Rename action
+		var fnConfirmFormElementRenamedWithNewValue = function (oUiComponent, oViewAfterAction, assert) {
+			assert.strictEqual(oViewAfterAction.byId("formElement").getLabel(),
+				"New Option",
+				"then the control has been renamed to the new value (New Option)");
+		};
 
-	var fnConfirmFormElementIsRenamedWithOldValue = function (oUiComponent, oViewAfterAction, assert) {
-		assert.strictEqual(oViewAfterAction.byId("formElement").getLabel(),
-			"Option 1",
-			"then the control has been renamed to the old value (Option 1)");
-	};
+		var fnConfirmFormElementIsRenamedWithOldValue = function (oUiComponent, oViewAfterAction, assert) {
+			assert.strictEqual(oViewAfterAction.byId("formElement").getLabel(),
+				"Option 1",
+				"then the control has been renamed to the old value (Option 1)");
+		};
 
-	rtaControlEnablingCheck("Checking the rename action for a FormElement", {
-		xmlView: '<mvc:View xmlns:mvc="sap.ui.core.mvc" xmlns:f="sap.ui.layout.form" xmlns:m="sap.m">' +
-			'<f:Form id="idForm">' +
-				'<f:layout>' +
-					'<f:ResponsiveGridLayout/>' +
-				'</f:layout>' +
-				'<f:formContainers>' +
-					'<f:FormContainer>' +
-						'<f:formElements>' +
-							'<f:FormElement id="formElement" label="Option 1">' +
-								'<f:fields>' +
-									'<m:Input/>' +
-								'</f:fields>' +
-							'</f:FormElement>' +
-						'</f:formElements>' +
-					'</f:FormContainer>' +
-				'</f:formContainers>' +
-			'</f:Form>' +
-		'</mvc:View>'
-		,
-		action: {
-			name: "rename",
-			controlId: "formElement",
-			parameter: function (oView) {
-				return {
-					newValue: 'New Option',
-					renamedElement: oView.byId("formElement")
-				};
-			}
-		},
-		afterAction: fnConfirmFormElementRenamedWithNewValue,
-		afterUndo: fnConfirmFormElementIsRenamedWithOldValue,
-		afterRedo: fnConfirmFormElementRenamedWithNewValue
-	});
+		rtaControlEnablingCheck("Checking the rename action for a FormElement", {
+			xmlView: '<mvc:View xmlns:mvc="sap.ui.core.mvc" xmlns:f="sap.ui.layout.form" xmlns:m="sap.m">' +
+				'<f:Form id="idForm">' +
+					'<f:layout>' +
+						'<f:ResponsiveGridLayout/>' +
+					'</f:layout>' +
+					'<f:formContainers>' +
+						'<f:FormContainer>' +
+							'<f:formElements>' +
+								'<f:FormElement id="formElement" label="Option 1">' +
+									'<f:fields>' +
+										'<m:Input/>' +
+									'</f:fields>' +
+								'</f:FormElement>' +
+							'</f:formElements>' +
+						'</f:FormContainer>' +
+					'</f:formContainers>' +
+				'</f:Form>' +
+			'</mvc:View>'
+			,
+			action: {
+				name: "rename",
+				controlId: "formElement",
+				parameter: function (oView) {
+					return {
+						newValue: 'New Option',
+						renamedElement: oView.byId("formElement")
+					};
+				}
+			},
+			afterAction: fnConfirmFormElementRenamedWithNewValue,
+			afterUndo: fnConfirmFormElementIsRenamedWithOldValue,
+			afterRedo: fnConfirmFormElementRenamedWithNewValue
+		});
 
-	// Remove and reveal actions
-	var fnConfirmFormElementIsInvisible = function (oUiComponent, oViewAfterAction, assert) {
-		assert.strictEqual(oViewAfterAction.byId("formElement").getVisible(), false, "then the FormElement is invisible");
-	};
+		// Remove and reveal actions
+		var fnConfirmFormElementIsInvisible = function (oUiComponent, oViewAfterAction, assert) {
+			assert.strictEqual(oViewAfterAction.byId("formElement").getVisible(), false, "then the FormElement is invisible");
+		};
 
-	var fnConfirmFormElementIsVisible = function (oUiComponent, oViewAfterAction, assert) {
-		assert.strictEqual(oViewAfterAction.byId("formElement").getVisible(), true, "then the FormElement is visible");
-	};
+		var fnConfirmFormElementIsVisible = function (oUiComponent, oViewAfterAction, assert) {
+			assert.strictEqual(oViewAfterAction.byId("formElement").getVisible(), true, "then the FormElement is visible");
+		};
 
-	rtaControlEnablingCheck("Checking the remove action for FormElement", {
-		xmlView: '<mvc:View xmlns:mvc="sap.ui.core.mvc" xmlns:f="sap.ui.layout.form" xmlns:m="sap.m">' +
-			'<f:Form id="idForm">' +
-				'<f:layout>' +
-					'<f:ResponsiveGridLayout/>' +
-				'</f:layout>' +
-				'<f:formContainers>' +
-					'<f:FormContainer>' +
-						'<f:formElements>' +
-							'<f:FormElement id="formElement" label="labelForElement1">' +
-								'<f:fields>' +
-									'<m:Input/>' +
-								'</f:fields>' +
-							'</f:FormElement>' +
-						'</f:formElements>' +
-					'</f:FormContainer>' +
-				'</f:formContainers>' +
-			'</f:Form>' +
-		'</mvc:View>'
-		,
-		action: {
-			name: "remove",
-			controlId: "formElement"
-		},
-		afterAction: fnConfirmFormElementIsInvisible,
-		afterUndo: fnConfirmFormElementIsVisible,
-		afterRedo: fnConfirmFormElementIsInvisible
-	});
+		rtaControlEnablingCheck("Checking the remove action for FormElement", {
+			xmlView: '<mvc:View xmlns:mvc="sap.ui.core.mvc" xmlns:f="sap.ui.layout.form" xmlns:m="sap.m">' +
+				'<f:Form id="idForm">' +
+					'<f:layout>' +
+						'<f:ResponsiveGridLayout/>' +
+					'</f:layout>' +
+					'<f:formContainers>' +
+						'<f:FormContainer>' +
+							'<f:formElements>' +
+								'<f:FormElement id="formElement" label="labelForElement1">' +
+									'<f:fields>' +
+										'<m:Input/>' +
+									'</f:fields>' +
+								'</f:FormElement>' +
+							'</f:formElements>' +
+						'</f:FormContainer>' +
+					'</f:formContainers>' +
+				'</f:Form>' +
+			'</mvc:View>'
+			,
+			action: {
+				name: "remove",
+				controlId: "formElement"
+			},
+			afterAction: fnConfirmFormElementIsInvisible,
+			afterUndo: fnConfirmFormElementIsVisible,
+			afterRedo: fnConfirmFormElementIsInvisible
+		});
 
-	rtaControlEnablingCheck("Checking the reveal action for a FormElement", {
-		xmlView: '<mvc:View xmlns:mvc="sap.ui.core.mvc" xmlns:f="sap.ui.layout.form" xmlns:m="sap.m">' +
-			'<f:Form id="idForm">' +
-				'<f:layout>' +
-					'<f:ResponsiveGridLayout/>' +
-				'</f:layout>' +
-				'<f:formContainers>' +
-					'<f:FormContainer>' +
-						'<f:formElements>' +
-							'<f:FormElement id="formElement" visible="false" label="labelForElement1">' +
-								'<f:fields>' +
-									'<m:Input/>' +
-								'</f:fields>' +
-							'</f:FormElement>' +
-						'</f:formElements>' +
-					'</f:FormContainer>' +
-				'</f:formContainers>' +
-			'</f:Form>' +
-		'</mvc:View>'
-		,
-		action: {
-			name: "reveal",
-			controlId: "formElement"
-		},
-		afterAction: fnConfirmFormElementIsVisible,
-		afterUndo: fnConfirmFormElementIsInvisible,
-		afterRedo: fnConfirmFormElementIsVisible
+		rtaControlEnablingCheck("Checking the reveal action for a FormElement", {
+			xmlView: '<mvc:View xmlns:mvc="sap.ui.core.mvc" xmlns:f="sap.ui.layout.form" xmlns:m="sap.m">' +
+				'<f:Form id="idForm">' +
+					'<f:layout>' +
+						'<f:ResponsiveGridLayout/>' +
+					'</f:layout>' +
+					'<f:formContainers>' +
+						'<f:FormContainer>' +
+							'<f:formElements>' +
+								'<f:FormElement id="formElement" visible="false" label="labelForElement1">' +
+									'<f:fields>' +
+										'<m:Input/>' +
+									'</f:fields>' +
+								'</f:FormElement>' +
+							'</f:formElements>' +
+						'</f:FormContainer>' +
+					'</f:formContainers>' +
+				'</f:Form>' +
+			'</mvc:View>'
+			,
+			action: {
+				name: "reveal",
+				controlId: "formElement"
+			},
+			afterAction: fnConfirmFormElementIsVisible,
+			afterUndo: fnConfirmFormElementIsInvisible,
+			afterRedo: fnConfirmFormElementIsVisible
+		});
 	});
 });

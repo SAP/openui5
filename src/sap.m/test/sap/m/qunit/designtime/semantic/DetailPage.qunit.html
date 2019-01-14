@@ -27,7 +27,7 @@ sap.ui.require([
     var oElementEnablementTest = new ElementEnablementTest({
         type: "sap.m.semantic.DetailPage"
     });
-    oElementEnablementTest.run().then(function(oData) {
+    return oElementEnablementTest.run().then(function(oData) {
         var oReport = new QUnit({
             data: oData
         });
