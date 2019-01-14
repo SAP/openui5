@@ -1327,6 +1327,49 @@ sap.ui.define([
 		oFF.destroy();
 	});
 
+	QUnit.test("FacetFilterList search on different bind parts", function(assert) {
+
+		var aValues = [{country : "Bulgaria", city: "Sofia"}, {country : "Germany", city: "Stuttgart"}, {country: "Brunei", city: "Brunei"}];
+		var oModel = new JSONModel({
+			values : aValues
+		});
+
+		var oFFL = new FacetFilterList();
+		oFFL.bindAggregation("items", {
+			path : "/values",
+			template : new FacetFilterItem().bindProperty("text", {
+				parts: [
+					{path:'country'},
+					{path: 'city'}
+				],
+				formatter: function (Country, City) {
+					return Country + " " + City;
+				}
+			})
+		});
+		oFFL.setModel(oModel);
+		var aResult = oFFL.getItems();
+
+		oFFL._search("S");
+		aResult = oFFL.getItems();
+		assert.equal(aResult.length, 2, "Matched two items Sofia and Stuttgart");
+		assert.equal(aResult[0].getText(), "Bulgaria Sofia", "first item is correct");
+		assert.equal(aResult[1].getText(), "Germany Stuttgart", "second item is correct");
+
+		oFFL._search("x");
+		aResult = oFFL.getItems();
+		assert.equal(aResult.length, 0, "No Matches found");
+
+		oFFL._search("ga");
+		aResult = oFFL.getItems();
+		assert.equal(aResult.length, 2, "Matched two items 'Bulgaria' and 'Stuttgart' because of 'ga'");
+		assert.equal(aResult[0].getText(), "Bulgaria Sofia", "first item is correct");
+		assert.equal(aResult[1].getText(), "Germany Stuttgart", "second item is correct");
+
+
+		oFFL.destroy();
+	});
+
 
 	QUnit.test("FacetFilter searchValue of the list is reset when FacetFilter _navFromFilterItemsPage is called", function (assert) {
 		// arrange
