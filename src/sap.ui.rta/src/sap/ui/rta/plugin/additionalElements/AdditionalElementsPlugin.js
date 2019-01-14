@@ -733,7 +733,7 @@ sap.ui.define([
 			var iRevealTargetIndex = Utils.getIndex(mParents.parent, oSiblingElement, sParentAggregationName);
 			var iRevealedSourceIndex = Utils.getIndex(oSourceParent, oRevealedElement, sParentAggregationName) - 1;
 
-			iRevealTargetIndex = iIndex !== undefined ? iIndex : _adjustTargetIndex(oSourceParent, oTargetParent, iRevealedSourceIndex, iRevealTargetIndex);
+			iRevealTargetIndex = iIndex !== undefined ? iIndex : ElementUtil.adjustIndexForMove(oSourceParent, oTargetParent, iRevealedSourceIndex, iRevealTargetIndex);
 
 			if (iRevealTargetIndex !== iRevealedSourceIndex || mParents.parent !== oRevealedElement.getParent()){
 				var oSourceParentOverlay = OverlayRegistry.getOverlay(oRevealedElement) ? OverlayRegistry.getOverlay(oRevealedElement).getParentAggregationOverlay() : mParents.relevantContainerOverlay;
@@ -762,7 +762,7 @@ sap.ui.define([
 			return Promise.resolve();
 		},
 
-		/**
+		/**el
 		 * This function gets called on startup. It checks if the Overlay is editable by this plugin.
 		 * @param {sap.ui.dt.Overlay} oOverlay - overlay to be checked
 		 * @returns {object} Returns object with editable boolean values for "asChild" and "asSibling"
@@ -869,14 +869,6 @@ sap.ui.define([
 			oParent = mParents.parent;
 		}
 		return oParent;
-	}
-
-	//in case an element is moved inside the same container above its current position, its own position has to be removed
-	function _adjustTargetIndex (oSourceContainer, oTargetContainer, iSourceIndex, iTargetIndex) {
-		if (oSourceContainer === oTargetContainer && iSourceIndex < iTargetIndex && iSourceIndex > -1) {
-			return iTargetIndex - 1;
-		}
-		return iTargetIndex;
 	}
 
 	return AdditionalElementsPlugin;

@@ -455,5 +455,21 @@ function(
 		this.iMaxAllowedZIndex = iZIndex;
 	};
 
+	/**
+	 * Decrements passed index value by 1, if the source and target overlays for move belong to the same container and source index is less than the target index.
+	 * To compensate the fact that the lower source index is also removed during move.
+	 * @param {object} oSourceContainer - Source container
+	 * @param {object} oTargetContainer - Target container
+	 * @param {integer} iSourceIndex - Source index
+	 * @param {integer} iTargetIndex - Target index
+	 * @returns {integer} - Index for move
+	 */
+	ElementUtil.adjustIndexForMove = function(oSourceContainer, oTargetContainer, iSourceIndex, iTargetIndex) {
+		if (oSourceContainer === oTargetContainer && iSourceIndex < iTargetIndex && iSourceIndex > -1) {
+			return iTargetIndex - 1;
+		}
+		return iTargetIndex;
+	};
+
 	return ElementUtil;
 }, /* bExport= */true);
