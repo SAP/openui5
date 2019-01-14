@@ -9,10 +9,11 @@ sap.ui.define([
 	"./lib/_Helper",
 	"sap/base/Log",
 	"sap/ui/base/SyncPromise",
+	"sap/ui/model/BindingMode",
 	"sap/ui/model/ChangeReason",
 	"sap/ui/model/odata/v4/Context",
 	"sap/ui/model/PropertyBinding"
-], function (asODataBinding, _Cache, _Helper, Log, SyncPromise, ChangeReason, Context,
+], function (asODataBinding, _Cache, _Helper, Log, SyncPromise, BindingMode, ChangeReason, Context,
 		PropertyBinding) {
 	"use strict";
 	/*eslint max-nested-callbacks: 0 */
@@ -264,7 +265,8 @@ sap.ui.define([
 				if (!vValue || typeof vValue !== "object") {
 					return vValue;
 				}
-				if (that.sInternalType === "any") {
+				if (that.sInternalType === "any" && (that.getBindingMode() === BindingMode.OneTime
+						|| (that.sPath[that.sPath.lastIndexOf("/") + 1] === "#" && !bIsMeta))) {
 					if (bIsMeta) {
 						return vValue;
 					} else if (that.bRelative){
@@ -330,6 +332,13 @@ sap.ui.define([
 	 */
 	// @override
 	ODataPropertyBinding.prototype.destroy = function () {
+		// ManagedObject#_bindProperty destroys OneTime bindings on the first change event, but the
+		// control still knows the binding, so that it is destroyed a second time when the control
+		// is destroyed: Do not throw then, but log an error until this is fixed
+		if (this.getBindingMode() === BindingMode.OneTime && !this.oCachePromise) {
+			Log.error("Binding already destroyed", this.sPath, sClassName);
+			return;
+		}
 		this.deregisterChange();
 		this.oModel.bindingDestroyed(this);
 		this.oCachePromise = undefined;
