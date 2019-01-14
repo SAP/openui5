@@ -163,7 +163,7 @@ sap.ui.define(["sap/ui/core/Control", "sap/ui/model/json/JSONModel", "sap/m/List
 			/* eslint-disable no-unused-expressions */
 			mItem.title && this._bindItemProperty("title", mItem.title.value);
 			mItem.description && this._bindItemProperty("description", mItem.description.value);
-			mItem.icon && this._bindItemProperty("icon", mItem.icon.value);
+			mItem.icon && mItem.icon.src && this._bindItemProperty("icon", mItem.icon.src);
 			mItem.highlight && this._bindItemProperty("highlight", mItem.highlight);
 			mItem.info && this._bindItemProperty("info", mItem.info.value);
 			mItem.info && this._bindItemProperty("infoState", mItem.info.state);

@@ -40,7 +40,7 @@
 				<w:Card id="default4x2" manifest="{manifests>/noLayout/card6}"  width="320px"/>
 				<w:Card id="default4x4" manifest="{manifests>/noLayout/card7}"  width="320px"/>
 				<w:Card id="stackedBar" manifest="{manifests>/noLayout/stackedBar}"  height="500px" width="700px"/>
-				<w:Card id="donut" manifest="{manifests>/noLayout/donut}"  height="500px" width="700px"/>
+				<w:Card id="Donut" manifest="{manifests>/noLayout/donut}"  height="500px" width="700px"/>
 			</Panel>
 		</content>
 	</Page>

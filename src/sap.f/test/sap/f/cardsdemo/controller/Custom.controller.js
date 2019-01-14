@@ -20,8 +20,7 @@ sap.ui.define([
 					},
 					"item": {
 						"icon": {
-							"label": "{{icon_label}}",
-							"value": "{icon}"
+							"src": "{icon}"
 						},
 						"title": {
 							"label": "{{title_label}}",
@@ -52,52 +51,46 @@ sap.ui.define([
 		_createAnalyticalModel: function () {
 			var oData = {
 				"content": {
-					"chart": {
-						"chartType": "line",
-						"legend": {
-							"visible": true,
-							"position": "right",
-							"alignment": "center"
+					"chartType": "Line",
+					"legend": {
+						"visible": true,
+						"position": "Right",
+						"alignment": "Center"
+					},
+					"plotArea": {
+						"dataLabel": {
+							"visible": true
+						}
+					},
+					"title": {
+						"text": "Line chart",
+						"visible": true,
+						"alignment": "Bottom"
+					},
+					"measureAxis": "valueAxis",
+					"dimensionAxis": "categoryAxis",
+					"data": {
+						"request": {
+							"url": "./cardcontent/revenue.json"
 						},
-						"plotArea": {
-							"dataLabel": {
-								"visible": true
-							},
-							"window": {
-								"start": "firstDataPoint",
-								"end": "lastDataPoint"
-							}
+						"path": "/list"
+					},
+					"dimensions": [
+						{
+							"label": "Weeks",
+							"value": "{Week}"
+						}
+					],
+					"measures": [
+						{
+							"label": "Revenue",
+							"value": "{Revenue}"
 						},
-						"title": {
-							"text": "Line chart",
-							"visible": true,
-							"alignment": "bottom"
-						},
-						"measureAxis": "valueAxis",
-						"dimensionAxis": "categoryAxis",
-						"data": {
-							"request": {
-								"url": "./cardcontent/revenue.json"
-							},
-							"path": "/list"
-						},
-						"dimensions": [
-							{
-								"label": "Weeks",
-								"value": "{Week}"
-							}
-						],
-						"measures": [
-							{
-								"label": "Revenue",
-								"value": "{Revenue}"
-							},
-							{
-								"label": "Cost",
-								"value": "{Cost}"
-							}
-						]
-					}
+						{
+							"label": "Cost",
+							"value": "{Cost}"
+						}
+					]
 				}
 			};
 			var oModel = new JSONModel();

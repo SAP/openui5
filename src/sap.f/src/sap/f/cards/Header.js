@@ -146,7 +146,7 @@ sap.ui.define([
 	Header.create = function(mConfiguration) {
 		var mSettings = {
 			title: mConfiguration.title,
-			subtitle: mConfiguration.subtitle
+			subtitle: mConfiguration.subTitle
 		};
 
 		if (mConfiguration.icon) {

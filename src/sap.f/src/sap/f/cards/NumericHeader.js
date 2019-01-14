@@ -337,7 +337,7 @@ sap.ui.define([
 	NumericHeader.create = function(mConfiguration) {
 		var mSettings = {
 			title: mConfiguration.title,
-			subtitle: mConfiguration.subtitle,
+			subtitle: mConfiguration.subTitle,
 			unitOfMeasurement: mConfiguration.unitOfMeasurement,
 			details: mConfiguration.details
 		};
