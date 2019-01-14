@@ -251,6 +251,20 @@ sap.ui.define([
 		var oClonedSettings = jQuery.extend(true, {}, this._oCardManifest.get("sap.card/header"));
 		var oHeader = CardHeader.create(oClonedSettings);
 
+		oHeader.attachEvent("_updated", function () {
+			this.fireEvent("_headerUpdated");
+		}.bind(this));
+
+		if (!oClonedSettings.data || (oClonedSettings.data && oClonedSettings.data.json)) {
+			var oDelegate = {
+				onAfterRendering: function () {
+					this.fireEvent("_headerUpdated");
+					oHeader.removeEventDelegate(oDelegate);
+				}
+			};
+			oHeader.addEventDelegate(oDelegate, this);
+		}
+
 		if (Array.isArray(oClonedSettings.actions) && oClonedSettings.actions.length > 0) {
 			this._setCardHeaderActions(oHeader, oClonedSettings.actions);
 		}
@@ -309,11 +323,32 @@ sap.ui.define([
 
 	Card.prototype._setCardContentFromManifest = function (CardContent) {
 		var mSettings = this._oCardManifest.get("sap.card/content");
+		if (!mSettings) {
+			this.setBusy(false);
+			return;
+		}
+
 		var oClonedSettings = { configuration: jQuery.extend(true, {}, mSettings) };
+
 		if (this._oServiceManager) {
 			oClonedSettings.serviceManager = this._oServiceManager;
 		}
+
 		var oContent = new CardContent(oClonedSettings);
+		oContent.attachEvent("_updated", function () {
+			this.fireEvent("_contentUpdated");
+		}.bind(this));
+
+		if (mSettings.data && mSettings.data.json) {
+			var oDelegate = {
+				onAfterRendering: function () {
+					this.fireEvent("_contentUpdated");
+					oContent.removeEventDelegate(oDelegate);
+				}
+			};
+			oContent.addEventDelegate(oDelegate, this);
+		}
+
 		this.setAggregation("_content", oContent);
 		this.setBusy(false);
 	};

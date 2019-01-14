@@ -384,7 +384,8 @@ sap.ui.define([
 			Data.fetch(oRequest).then(function (data) {
 				oModel.setData(data);
 				oModel.refresh();
-			}).catch(function (oError) {
+				this.fireEvent("_updated");
+			}.bind(this)).catch(function (oError) {
 				// TODO: Handle errors. Maybe add error message
 			});
 		}

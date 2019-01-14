@@ -191,6 +191,7 @@ sap.ui.define(['sap/ui/core/Control', 'sap/ui/model/json/JSONModel', 'sap/m/Flex
 			if (oRequest) {
 				Data.fetch(oRequest).then(function (data) {
 					this._updateModel(data, oChartObject.data.path, oChartObject);
+					this.fireEvent("_updated");
 				}.bind(this)).catch(function (oError) {
 					// TODO: Handle errors. Maybe add error message
 				});
