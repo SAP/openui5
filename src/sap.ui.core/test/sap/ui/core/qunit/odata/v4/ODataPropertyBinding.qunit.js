@@ -1289,7 +1289,8 @@ sap.ui.define([
 			// Note: if setValue throws, ManagedObject#updateModelProperty does not roll back!
 			that.mock(that.oModel).expects("reportError")
 				.withExactArgs("Failed to update path /ProductList('HT-1000')/Name", sClassName,
-					sinon.match({message : "Cannot set value on this binding"}));
+					sinon.match({message : "Cannot set value on this binding as it is not relative"
+						+ " to a sap.ui.model.odata.v4.Context"}));
 
 			// code under test
 			oControl.setText("foo");
@@ -1323,7 +1324,8 @@ sap.ui.define([
 			// Note: if setValue throws, ManagedObject#updateModelProperty does not roll back!
 			that.mock(that.oModel).expects("reportError")
 				.withExactArgs("Failed to update path /ProductList('HT-1000')/Name", sClassName,
-					sinon.match({message : "Cannot set value on this binding"}));
+					sinon.match({message : "Cannot set value on this binding as it is not relative"
+						+ " to a sap.ui.model.odata.v4.Context"}));
 
 			// code under test
 			oControl.setText("foo");

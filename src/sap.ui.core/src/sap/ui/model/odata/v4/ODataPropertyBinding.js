@@ -665,8 +665,9 @@ sap.ui.define([
 	 *   Valid values are <code>undefined</code>, '$auto', '$auto.*', '$direct' or application group
 	 *   IDs as specified in {@link sap.ui.model.odata.v4.ODataModel}.
 	 * @throws {Error}
-	 *   If the binding's root binding is suspended, the new value is not primitive or no value has
-	 *   been read before
+	 *   If the binding's root binding is suspended, the new value is not primitive, no value has
+	 *   been read before, or if the binding is not relative to a
+	 *   {@link sap.ui.model.odata.v4.Context}
 	 *
 	 * @public
 	 * @see sap.ui.model.PropertyBinding#setValue
@@ -697,7 +698,8 @@ sap.ui.define([
 			oGroupLock = that.lockGroup(sGroupId, true);
 			this.oCachePromise.then(function (oCache) {
 				if (oCache) {
-					reportError(new Error("Cannot set value on this binding"));
+					reportError(new Error("Cannot set value on this binding as it is not relative"
+						+ " to a sap.ui.model.odata.v4.Context"));
 					// do not update that.vValue!
 				} else {
 					return that.oModel.getMetaModel().fetchUpdateData(that.sPath, that.oContext)
