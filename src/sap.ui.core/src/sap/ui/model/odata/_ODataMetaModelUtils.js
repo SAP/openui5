@@ -9,8 +9,6 @@ sap.ui.define([
 ], function (_AnnotationHelperBasics, Log, jQuery) {
 	"use strict";
 
-	/*global Promise */
-
 	var oBoolFalse = { "Bool" : "false" },
 		oBoolTrue = { "Bool" : "true" },
 		// maps V2 sap:semantics value for a date part to corresponding V4 term relative to
