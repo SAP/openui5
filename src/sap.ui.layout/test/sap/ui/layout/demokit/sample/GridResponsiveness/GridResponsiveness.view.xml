@@ -5,7 +5,8 @@
 		xmlns:form="sap.ui.layout.form"
 		xmlns:core="sap.ui.core"
 		controllerName="sap.ui.layout.sample.GridResponsiveness.GridResponsiveness">
-	<Panel>
+	<Slider class="sapUiSmallMarginBottom" value="100" liveChange="onSliderMoved"/>
+	<Panel id="panelCSSGrid">
 		<headerToolbar>
 			<Toolbar height="3rem">
 				<Title text="GridResponsiveness example"/>
@@ -14,7 +15,6 @@
 		<content>
 			<Text class="message sapUiSmallMarginBottom" id="infoTxt" width="100%" text="Layout size is: "/>
 			<Text text="Responsive behaviour is fully configurable by the developer. It is possible to pass a GridResponsiveLayout to the customLayout aggregation of the CSSGrid and configure how it will look in different breakpoints (S, M, L, XL)"/>
-			<Slider class="sapUiSmallMarginBottom" value="100" liveChange="onSliderMoved"/>
 			<grid:CSSGrid id="grid1">
 				<grid:customLayout>
 					<grid:GridResponsiveLayout layoutChange="onLayoutChange">

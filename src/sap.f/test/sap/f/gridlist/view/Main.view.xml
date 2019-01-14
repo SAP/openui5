@@ -20,6 +20,9 @@
                     <IconTabFilter id="GridList4" text="GridList Growing" key="GridList4">
                         <mvc:XMLView viewName="sap.f.gridlist.view.examples.Growing" />
                     </IconTabFilter>
+                     <IconTabFilter id="GridList4a" text="GridList Growing Boxes" key="GridList4a">
+                        <mvc:XMLView viewName="sap.f.gridlist.view.examples.GrowingBoxes" />
+                    </IconTabFilter>
                     <IconTabFilter id="GridList5" text="GridList Grouping 1" key="GridList5">
                         <mvc:XMLView viewName="sap.f.gridlist.view.examples.Grouping1" />
                     </IconTabFilter>

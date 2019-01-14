@@ -41,7 +41,7 @@ sap.ui.define([
 		},
 		onSliderMoved: function (oEvent) {
 			var value = oEvent.getParameter("value");
-			this.byId("gridList").setWidth(value + "%");
+			this.byId("panelForGridList").setWidth(value + "%");
 		}
 	});
 
