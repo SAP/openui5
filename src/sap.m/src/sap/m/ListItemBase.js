@@ -689,10 +689,10 @@ function(
 	};
 
 	ListItemBase.prototype.setHighlight = function(sValue) {
-		if (sValue == null /* null or undefined */) {
+		if (sValue == null) {
 			sValue = MessageType.None;
 		} else if (!DataType.getType("sap.ui.core.MessageType").isValid(sValue) && !DataType.getType("sap.ui.core.IndicationColor").isValid(sValue)) {
-			throw new Error("\"" + sValue + "\" is not a value of the enums sap.ui.core.MessageType or sap.ui.core.IndicationColor for property \"highlight\" of " + this);
+			throw new Error('"' + sValue + '" is not a value of the enums sap.ui.core.MessageType or sap.ui.core.IndicationColor for property "highlight" of ' + this);
 		}
 
 		return this.setProperty("highlight", sValue);
