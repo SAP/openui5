@@ -149,9 +149,6 @@ sap.ui.define(["sap/m/library", "sap/ui/Device", "./ListItemBaseRenderer"],
 		// modes
 		rm.addClass("sapMListMode" + oControl.getMode());
 
-		// inset
-		oControl.getInset() && rm.addClass("sapMListInset");
-
 		// write inserted styles and classes
 		rm.writeClasses();
 		rm.writeStyles();
