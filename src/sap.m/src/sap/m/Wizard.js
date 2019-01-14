@@ -385,7 +385,7 @@ sap.ui.define([
 			this._updateProgressNavigator();
 			this.setAssociation("currentStep", step);
 
-			lastStep._oNextButton.setVisible(true);
+			this.getShowNextButton() && lastStep._oNextButton.setVisible(true);
 
 			return this;
 		};
