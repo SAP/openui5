@@ -20,26 +20,6 @@
 	}
 }
 
-.sapFDynamicPageHeaderPinButton .sapMBtnInner {
-	border: none;
-	&:not(.sapMToggleBtnPressed) {
-		background-color: @sapUiObjectHeaderBorderColor;
-	}
-}
-
-.sapFDynamicPageHeaderPinButton:hover > .sapMBtnInner.sapMBtnHoverable {
-	background-color: darken(@sapUiObjectHeaderBorderColor, 3);
-
-	&.sapMToggleBtnPressed {
-		background-color: @sapUiToggleButtonPressedHoverBackground;
-	}
-}
-
-.sapFDynamicPageHeaderPinButton > .sapMBtnInner.sapMBtnActive,
-.sapFDynamicPageHeaderPinButton > .sapMBtnInner.sapMBtnActive.sapMBtnHoverable {
-	background-color: @sapUiSelected;
-}
-
 /* Compact */
 .sapUiSizeCompact {
 	.sapFDynamicPageToggleHeaderIndicator,
@@ -65,11 +45,23 @@
 	}
 }
 
-.sapFDynamicPageHeaderPinButton:hover > .sapMBtnInner {
-	background-color: darken(@sapUiObjectHeaderBorderColor, 3);
+.sapFDynamicPageHeaderPinButton .sapMBtnInner {
+	border: none;
+	&:not(.sapMToggleBtnPressed) {
+		background-color: @sapUiObjectHeaderBorderColor;
+	}
 }
 
-.sapFDynamicPageHeaderPinButton:active > .sapMBtnInner {
+.sapFDynamicPageHeaderPinButton:hover > .sapMBtnInner.sapMBtnHoverable {
+	background-color: darken(@sapUiObjectHeaderBorderColor, 3);
+
+	&.sapMToggleBtnPressed {
+		background-color: @sapUiToggleButtonPressedHoverBackground;
+	}
+}
+
+.sapFDynamicPageHeaderPinButton > .sapMBtnInner.sapMBtnActive,
+.sapFDynamicPageHeaderPinButton > .sapMBtnInner.sapMBtnActive.sapMBtnHoverable {
 	background-color: @sapUiSelected;
 }
 
@@ -110,7 +102,7 @@
 	// Toggle Header Visual Indicator
 	.sapFDynamicPageToggleHeaderIndicator.sapMBtn {
 
-		& > .sapMBtnInner:not(.sapMBtnActive) {
+		& > .sapMBtnInner {
 			border: none;
 			background-color: @sapUiObjectHeaderBorderColor;
 		}
