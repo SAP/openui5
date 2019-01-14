@@ -1357,8 +1357,8 @@ sap.ui.define([
 
 		function moveResizer(oColumn) {
 			qutils.triggerEvent("mousemove", oColumn.getId(), {
-				clientX: Math.floor(oColumn.getDomRef().getBoundingClientRect().left + 10),
-				clientY: Math.floor(oColumn.getDomRef().getBoundingClientRect().top + 10)
+				clientX: Math.floor(oColumn.getDomRef().getBoundingClientRect().right - 1),
+				clientY: Math.floor(oColumn.getDomRef().getBoundingClientRect().top + 1)
 			});
 		}
 
