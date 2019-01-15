@@ -81,7 +81,7 @@ sap.ui.define([
 			 * Returns the result of the last analysis performed.
 			 * @memberof sap.ui.support.RuleAnalyzer
 			 * @public
-			 * @returns {Object} Last analysis history.
+			 * @returns {sap.ui.support.AnalysisResult} Last analysis history.
 			 */
 			getLastAnalysisHistory: function () {
 				return Main.getLastAnalysisHistory();
@@ -92,7 +92,7 @@ sap.ui.define([
 			 *
 			 * @memberof sap.ui.support.RuleAnalyzer
 			 * @public
-			 * @returns {Object[]} Array of history objects in the order of analyses performed. The results of the last analysis are contained in the last element in the array.
+			 * @returns {sap.ui.support.AnalysisResult[]} Array of history objects in the order of analyses performed. The results of the last analysis are contained in the last element in the array.
 			 */
 			getAnalysisHistory: function () {
 				return Main.getAnalysisHistory();

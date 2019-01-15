@@ -145,6 +145,7 @@
 					vertical="false">
 				<SplitApp id="splitApp"
 						  mode="HideMode"
+						  class="sapUiDocumentationSplitApp"
 						  defaultTransitionNameDetail="show"
 						  defaultTransitionNameMaster="fade">
 				</SplitApp>

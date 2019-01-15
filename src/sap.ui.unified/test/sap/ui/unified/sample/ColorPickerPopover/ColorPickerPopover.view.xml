@@ -21,7 +21,8 @@
 						width="200px"
 						placeholder="Enter Color ..."
 						showValueHelp="true"
-						valueHelpRequest="openDefaultModeSample"/>
+						valueHelpRequest="openDefaultModeSample"
+						change="handleInputChange"/>
 				</cells>
 			</ColumnListItem>
 			<ColumnListItem>
@@ -32,7 +33,8 @@
 						width="200px"
 						placeholder="Enter Color ..."
 						showValueHelp="true"
-						valueHelpRequest="openLargeModeSample"/>
+						valueHelpRequest="openLargeModeSample"
+						change="handleInputChange"/>
 				</cells>
 			</ColumnListItem>
 			<ColumnListItem>
@@ -43,7 +45,8 @@
 						width="200px"
 						placeholder="Enter Color ..."
 						showValueHelp="true"
-						valueHelpRequest="openSimplifiedModeSample"/>
+						valueHelpRequest="openSimplifiedModeSample"
+						change="handleInputChange"/>
 				</cells>
 			</ColumnListItem>
 

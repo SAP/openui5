@@ -5,7 +5,8 @@
 		xmlns:grid="sap.ui.layout.cssgrid"
 		xmlns:form="sap.ui.layout.form"
 		controllerName="sap.ui.layout.sample.GridTemplateRows.GridTemplateRows">
-	<Panel>
+	<Slider class="sapUiSmallMarginBottom" value="100" liveChange="onSliderMoved"/>
+	<Panel id="panelCSSGrid">
 		<headerToolbar>
 			<Toolbar height="3rem">
 				<Title text=" Properties gridTemplateRows and gridTemplateColumns example"/>
@@ -44,7 +45,6 @@
 					<core:Item text="repeat(auto-fill, 200px)"/>
 				</ComboBox>
 			</form:SimpleForm>
-			<Slider class="sapUiSmallMarginBottom" value="100" liveChange="onSliderMoved"/>
 			<grid:CSSGrid id="grid1"
 						  gridTemplateRows="1fr 2fr 1fr"
 						  gridTemplateColumns="repeat(2,1fr)"

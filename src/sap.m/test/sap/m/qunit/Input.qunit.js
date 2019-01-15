@@ -3513,6 +3513,97 @@ sap.ui.define([
 		oInput = null;
 	});
 
+	QUnit.test("autocomplete with 0 matched items", function (assert) {
+
+		// arrange
+		var stub = sinon.stub();
+		var oInput = new Input({
+			showSuggestion: true,
+			suggestionItemSelected: stub,
+			suggestionColumns: [
+				new Column({
+					header: new Label({
+						text: "{i18n>/Name}"
+					})
+				}),
+				new Column({
+					header : new Label({
+						text : "{i18n>/Qty}"
+					})
+				}),
+				new Column({
+					header : new Label({
+						text : "{i18n>/Value}"
+					})
+				}),
+				new Column({
+					header : new Label({
+						text : "{i18n>/Price}"
+					})
+				})
+			]});
+
+		var oTableItemTemplate = new ColumnListItem({
+			vAlign : "Middle",
+			cells : [
+				new Label({
+					text : "{name}"
+				}),
+				new Label({
+					text: "{qty}"
+				}), new Label({
+					text: "{limit}"
+				}), new Label({
+					text : "{price}"
+				})
+			]
+		});
+
+		var oSuggestionData = {
+			tabularSuggestionItems : [{
+				name : "Product1",
+				qty : "10 EA",
+				limit : "15.00 Eur",
+				price : "10.00 EUR"
+			}, {
+				name : "Product2",
+				qty : "9 EA",
+				limit : "25.00 Eur",
+				price : "20.00 EUR"
+			}, {
+				name : "Product3",
+				qty : "8 EA",
+				limit : "35.00 Eur",
+				price : "30.00 EUR"
+			}]
+		};
+
+		var oModel = new JSONModel(oSuggestionData);
+
+		oInput.setModel(oModel);
+		oInput.bindSuggestionRows({
+			path: "/tabularSuggestionItems",
+			template: oTableItemTemplate
+		});
+
+		oInput.placeAt("content");
+		sap.ui.getCore().applyChanges();
+
+		var oFakeKeydown = jQuery.Event("keydown", { which: KeyCodes.G });
+		oInput._oSuggPopover._oPopover.open();
+
+		// act
+		oInput._$input.focus().trigger(oFakeKeydown).val("p").trigger("input");
+		oInput.bindSuggestionRows({
+			path: "",
+			template: new ColumnListItem()
+		});
+		this.clock.tick(300);
+
+		// assert
+		assert.strictEqual(stub.callCount, 0, "Should NOT call 'setSelectedRow' when aggregation is destroyed after a proposed item was found.");
+	});
+
 	QUnit.module("Input with Suggestions and Value State Message", {
 		beforeEach: function () {
 

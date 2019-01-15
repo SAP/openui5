@@ -43,6 +43,10 @@ sap.ui.define([
         },
         onLayoutChange: function (oEvent) {
             Log.error("[TEST] Layout Changed to " + oEvent.getParameter("layout"));
+        },
+        onSliderMoved: function (oEvent) {
+			var value = oEvent.getParameter("value");
+			this.byId("growingGridListBoxes").setWidth(value + "%");
 		}
     });
 

@@ -81,6 +81,14 @@ sap.ui.define([
 				libs: "sap.m"
 			}
 		},
+		"demokit/sample/OpaAutoWaitParams/OpaAutoWaitParams": {
+			page: "test-resources/sap/ui/core/demokit/sample/OpaAutoWaitParams/OpaAutoWaitParams.html?noglobals=true&sap-ui-animation=false",
+			title: "OPA5 AutoWait Parameters"
+		},
+		"demokit/sample/OpaBusyIndicator/OpaBusyIndicator": {
+			page: "test-resources/sap/ui/core/demokit/sample/OpaBusyIndicator/OpaBusyIndicator.html?noglobals=true&sap-ui-animation=false",
+			title: "Testing busy controls with OPA5"
+		},
 		"demokit/sample/OpaById/Opa": {
 			page: "test-resources/sap/ui/core/demokit/sample/OpaById/Opa.html?noglobals=true&sap-ui-animation=false",
 			title: "Opa sample for retrieving controls by id"
@@ -132,6 +140,22 @@ sap.ui.define([
 					"sap/ui/demo/mock": "../../../../../../../sap/ui/documentation/sdk/"
 				}
 			}
+		},
+		"demokit/sample/OpaStaticAreaControls/OpaStaticAreaControls": {
+			page: "test-resources/sap/ui/core/demokit/sample/OpaStaticAreaControls/OpaStaticAreaControls.html?noglobals=true&sap-ui-animation=false",
+			title: "Retrieving controls in the static area with OPA5"
+		},
+		"demokit/sample/OpaTestLibrary/OpaTestLibrary": {
+			page: "test-resources/sap/ui/core/demokit/sample/OpaTestLibrary/OpaTestLibrary.html?noglobals=true&sap-ui-animation=false",
+			title: "OPA5 Test Library Sample"
+		},
+		"demokit/sample/OpaURLParameters/iStartMyAppInAFrameWithURLParameters/iStartMyAppInAFrameWithURLParameters": {
+			page: "test-resources/sap/ui/core/demokit/sample/OpaURLParameters/iStartMyAppInAFrameWithURLParameters/iStartMyAppInAFrameWithURLParameters.html?sap-ui-animation=false",
+			title: "Opa sample passing URL parameters to the IFrame"
+		},
+		"demokit/sample/OpaURLParameters/iStartMyUIComponentWithURLParameters/iStartMyUIComponentWithURLParameters": {
+			page: "test-resources/sap/ui/core/demokit/sample/OpaURLParameters/iStartMyUIComponentWithURLParameters/iStartMyUIComponentWithURLParameters.html?sap-ui-animation=false",
+			title: "OPA sample passing URL parameters"
 		},
 		"launchers/componentLauncher": {
 			title: "QUnit Page for sap.ui.test.launchers.componentLauncher",

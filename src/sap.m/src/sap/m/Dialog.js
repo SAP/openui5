@@ -392,7 +392,7 @@ function(
 			this._bRTL = sap.ui.getCore().getConfiguration().getRTL();
 
 			// used to judge if enableScrolling needs to be disabled
-			this._scrollContentList = ["NavContainer", "Page", "ScrollContainer", "SplitContainer", "MultiInput"];
+			this._scrollContentList = ["sap.m.NavContainer", "sap.m.Page", "sap.m.ScrollContainer", "sap.m.SplitContainer", "sap.m.MultiInput"];
 
 			this.oPopup = new Popup();
 			this.oPopup.setShadow(true);
@@ -933,7 +933,7 @@ function(
 				$dialog.children().each(function() {
 					iTotalChildrenHeight += jQuery(this).outerHeight(true);
 				});
-				if (iTotalChildrenHeight > $dialog.innerHeight()) {
+				if (this.getStretch() ||  iTotalChildrenHeight > $dialog.innerHeight()) {
 					//set the newly calculated size by getting it from the browser rendered layout - by the max-height
 					iDialogHeight = parseFloat($dialog.height()) + BORDER_THICKNESS;
 					$dialogContent.height(Math.round( iDialogHeight));
@@ -1019,18 +1019,14 @@ function(
 		 * @private
 		 */
 		Dialog.prototype._hasSingleScrollableContent = function () {
-			var aContent = this.getContent(), i;
+			var aContent = this.getContent();
 
-			while (aContent.length === 1 && aContent[0] instanceof sap.ui.core.mvc.View) {
+			while (aContent.length === 1 && aContent[0] instanceof Control && aContent[0].isA("sap.ui.core.mvc.View")) {
 				aContent = aContent[0].getContent();
 			}
 
-			if (aContent.length === 1) {
-				for (i = 0; i < this._scrollContentList.length; i++) {
-					if (aContent[0] instanceof library[this._scrollContentList[i]]) {
-						return true;
-					}
-				}
+			if (aContent.length === 1 && aContent[0] instanceof Control && aContent[0].isA(this._scrollContentList)) {
+				return true;
 			}
 
 			return false;
@@ -1490,7 +1486,7 @@ function(
 		//The public setters and getters should not be documented via JSDoc because they will appear in the explored app
 
 		Dialog.prototype.setLeftButton = function (vButton) {
-			if (!(vButton instanceof sap.m.Button)) {
+			if (typeof vButton === "string") {
 				vButton = sap.ui.getCore().byId(vButton);
 			}
 
@@ -1501,7 +1497,7 @@ function(
 		};
 
 		Dialog.prototype.setRightButton = function (vButton) {
-			if (!(vButton instanceof sap.m.Button)) {
+			if (typeof vButton === "string") {
 				vButton = sap.ui.getCore().byId(vButton);
 			}
 
@@ -1519,6 +1515,28 @@ function(
 		Dialog.prototype.getRightButton = function () {
 			var oEndButton = this.getEndButton();
 			return oEndButton ? oEndButton.getId() : null;
+		};
+
+		Dialog.prototype.setBeginButton = function (oButton) {
+			var sTheme = Core.getConfiguration().getTheme();
+
+			if (oButton && oButton.isA("sap.m.Button") && sTheme.startsWith("sap_fiori_")) {
+				oButton.setType("Emphasized");
+				oButton.addStyleClass("sapMDialogBeginButton");
+			}
+
+			return this.setAggregation("beginButton", oButton);
+		};
+
+		Dialog.prototype.setEndButton = function (oButton) {
+			var sTheme = Core.getConfiguration().getTheme();
+
+			if (oButton && oButton.isA("sap.m.Button") && sTheme.startsWith("sap_fiori_")) {
+				oButton.setType("Transparent");
+				oButton.addStyleClass("sapMDialogEndButton");
+			}
+
+			return this.setAggregation("endButton", oButton);
 		};
 
 		//get buttons should return the buttons, beginButton and endButton aggregations

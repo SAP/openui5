@@ -471,6 +471,8 @@ sap.ui.define([
 			if (this._isSplitButton()) {
 				this._getButtonControl().setArrowState(false);
 			}
+
+			this.$().removeAttr("aria-controls");
 		};
 
 		MenuButton.prototype._menuItemSelected = function(oEvent) {

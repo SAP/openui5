@@ -203,9 +203,7 @@ sap.ui.define([
 			oRm.writeAttribute("id", oTitle.getId() + "-inner");
 			oRm.write(">");
 			oRm.writeEscaped(oAssoTitle ? oAssoTitle.getText() : oTitle.getText());
-			oRm.write("</span></", sTag, ">");
-
-			oRm.write("</a>");
+			oRm.write("</span></a></", sTag, ">");
 		}
 	});
 

@@ -125,8 +125,8 @@ sap.ui.define([
 	};
 
 	NumericContent.prototype.onBeforeRendering = function() {
-		this.$().unbind("mouseenter", this._addTooltip);
-		this.$().unbind("mouseleave", this._removeTooltip);
+		this.$().unbind("mouseenter");
+		this.$().unbind("mouseleave");
 	};
 
 	NumericContent.prototype.onAfterRendering = function() {

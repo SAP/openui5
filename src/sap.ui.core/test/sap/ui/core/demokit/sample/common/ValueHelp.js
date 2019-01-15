@@ -50,7 +50,7 @@ sap.ui.define([
 			render : function(oRm, oValueHelp) {
 				oRm.write("<div");
 				oRm.writeControlData(oValueHelp);
-				oRm.writeClasses(oValueHelp);
+				oRm.writeClasses();
 				oRm.write(">");
 				oRm.renderControl(oValueHelp.getAggregation("field"));
 				oRm.write("</div>");

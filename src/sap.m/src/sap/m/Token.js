@@ -10,7 +10,8 @@ sap.ui.define([
 	'sap/ui/core/library',
 	'sap/ui/core/Icon',
 	'./TokenRenderer',
-	"sap/ui/events/KeyCodes"
+	"sap/ui/events/KeyCodes",
+	'sap/ui/core/theming/Parameters'
 ],
 	function(
 		library,
@@ -19,7 +20,8 @@ sap.ui.define([
 		coreLibrary,
 		Icon,
 		TokenRenderer,
-		KeyCodes
+		KeyCodes,
+		Parameters
 	) {
 	"use strict";
 
@@ -136,10 +138,13 @@ sap.ui.define([
 	 * This file defines behavior for the control,
 	 */
 	Token.prototype.init = function() {
-		var that = this;
+		var that = this,
+			bSysCancelIconUsed = Parameters.get("_sap_m_Token_Sys_Cancel_Icon") === "true",
+			sSrcIcon = bSysCancelIconUsed ? "sap-icon://sys-cancel" : "sap-icon://decline";
+
 		this._deleteIcon = new Icon({
 			id : that.getId() + "-icon",
-			src : "sap-icon://sys-cancel",
+			src : sSrcIcon,
 			noTabStop: true,
 			press : function(oEvent) {
 				var oParent = that.getParent();

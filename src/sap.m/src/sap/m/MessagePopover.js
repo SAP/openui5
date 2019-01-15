@@ -616,6 +616,16 @@ function(
 				}
 			});
 
+			// The MessagePopover wraps entirely the MessageView, therefore these checks should be done
+			// from the perspective of MessagePopover instead of MessageView
+			oMessageView._makeAutomaticBinding = function () {
+				var aItems = that.getItems();
+
+				if (!that.getBindingInfo("items") && !aItems.length) {
+					this._bindToMessageModel(); // MessageView's scope
+				}
+			};
+
 			return oMessageView;
 		};
 

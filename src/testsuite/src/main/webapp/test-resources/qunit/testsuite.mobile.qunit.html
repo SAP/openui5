@@ -23,20 +23,11 @@
     // execute all the mobile QUnit tests
     suite.addTestPage(contextPath + "/test-resources/sap/m/qunit/testsuite.mobile.qunit.html");
 
-    // execute the test for the demo kit content
-    suite.addTestPage(contextPath + "/test-resources/sap/ui/documentation/sdk/qunit/testsuite.demoapps.qunit.html");
-
-    // execute the test for the demo kit SDK
-    suite.addTestPage(contextPath + "/test-resources/sap/ui/documentation/sdk/qunit/testsuite.demokit.qunit.html");
-
     // execute all "tnt" tests
     suite.addTestPage(contextPath + "/test-resources/sap/tnt/qunit/testsuite.mobile.qunit.html");
 
     // execute all "f" tests
     suite.addTestPage(contextPath + "/test-resources/sap/f/qunit/testsuite.qunit.html");
-
-    // execute all "support" tests
-    suite.addTestPage(contextPath + "/test-resources/sap/ui/support/qunit/testsuite.qunit.html");
 
     return suite;
   }

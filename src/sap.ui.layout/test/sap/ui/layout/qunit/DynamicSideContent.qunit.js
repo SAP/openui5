@@ -48,8 +48,8 @@ sap.ui.define([
 		});
 
 		QUnit.test("Default values",function(assert) {
-			assert.strictEqual(this._oDSC.getShowSideContent(), true, "'showSideContent' property default value should be 'true'");
-			assert.strictEqual(this._oDSC.getShowMainContent(), true, "'showMainContent' property default value should be 'true'");
+			assert.strictEqual(this._oDSC.isSideContentVisible(), true, "'showSideContent' property default value should be 'true'");
+			assert.strictEqual(this._oDSC.isMainContentVisible(), true, "'showMainContent' property default value should be 'true'");
 			assert.strictEqual(this._oDSC.getSideContentVisibility(), sap.ui.layout.SideContentVisibility.ShowAboveS, "'showMainContent' property default value should be 'ShowAboveS'");
 			assert.strictEqual(this._oDSC.getSideContentFallDown(), sap.ui.layout.SideContentFallDown.OnMinimumWidth, "'showMainContent' property default value should be 'onMinimumWidth'");
 			assert.strictEqual(this._oDSC.getEqualSplit(), false, "'equalSplit' property default value should be false");
@@ -80,7 +80,7 @@ sap.ui.define([
 			sinon.spy(this._oDSC, "_changeGridState");
 
 			this._oDSC.setShowSideContent(false, bSuppressVisualUpdate);
-			assert.strictEqual(this._oDSC.getShowSideContent(), false, "'showSideContent' property is set to false");
+			assert.strictEqual(this._oDSC.isSideContentVisible(), false, "'showSideContent' property is set to false");
 			assert.ok(this._oDSC._changeGridState.calledOnce, "_changeGridState is called when side content is not visible");
 
 			this._oDSC._changeGridState.restore();
@@ -88,7 +88,7 @@ sap.ui.define([
 			sinon.spy(this._oDSC, "_changeGridState");
 
 			this._oDSC.setShowSideContent(true, bSuppressVisualUpdate);
-			assert.strictEqual(this._oDSC.getShowSideContent(), true, "'showSideContent' property is set to true");
+			assert.strictEqual(this._oDSC.isSideContentVisible(), true, "'showSideContent' property is set to true");
 			assert.ok(this._oDSC._changeGridState.calledOnce, "_changeGridState is called when side content is visible and suppressVisualUpdate is false");
 
 			this._oDSC._changeGridState.restore();
@@ -106,7 +106,7 @@ sap.ui.define([
 			sinon.spy(this._oDSC, "_changeGridState");
 
 			this._oDSC.setShowMainContent(false, bSuppressInvalidate);
-			assert.strictEqual(this._oDSC.getShowMainContent(), false, "'showMainContent' property is set to false");
+			assert.strictEqual(this._oDSC.isMainContentVisible(), false, "'showMainContent' property is set to false");
 			assert.ok(this._oDSC._changeGridState.calledOnce, "_changeGridState is called when main content is not visible");
 
 			this._oDSC._changeGridState.restore();
@@ -123,7 +123,7 @@ sap.ui.define([
 
 			bSuppressInvalidate = false;
 			this._oDSC.setShowMainContent(true, bSuppressInvalidate);
-			assert.strictEqual(this._oDSC.getShowMainContent(), true, "'showMainContent' property is set to true");
+			assert.strictEqual(this._oDSC.isMainContentVisible(), true, "'showMainContent' property is set to true");
 			assert.ok(this._oDSC._changeGridState.calledOnce, "_changeGridState is called when main content is visible and suppressVisualUpdate is false");
 
 			this._oDSC._changeGridState.restore();
@@ -135,8 +135,8 @@ sap.ui.define([
 
 			this._oDSC.setEqualSplit(true);
 			assert.strictEqual(this._oDSC.getEqualSplit(), true, "'equalSplit' property is set to true");
-			assert.strictEqual(this._oDSC.getShowSideContent(), true, "Side content should be visible");
-			assert.strictEqual(this._oDSC.getShowMainContent(), true, "Main content should be visible");
+			assert.strictEqual(this._oDSC.isSideContentVisible(), true, "Side content should be visible");
+			assert.strictEqual(this._oDSC.isMainContentVisible(), true, "Main content should be visible");
 
 			this._oDSC._currentBreakpoint = XL;
 			assert.ok(this._oDSC._setResizeData.calledOnce, "_setResizeData is called");
@@ -238,9 +238,9 @@ sap.ui.define([
 			this._oDSC.setShowSideContent(false);
 			this._oDSC._currentBreakpoint = S;
 			this._oDSC.toggle();
-			assert.ok(this._oDSC.getShowSideContent(), "Side content should be visible when toggled");
+			assert.ok(this._oDSC.isSideContentVisible(), "Side content should be visible when toggled");
 			assert.ok(this._oDSC._SCVisible, "Side content internal visible property should be true");
-			assert.ok(!this._oDSC.getShowMainContent(), "Main content should not be visible when toggled");
+			assert.ok(!this._oDSC.isMainContentVisible(), "Main content should not be visible when toggled");
 			assert.ok(!this._oDSC._MCVisible, "Main content internal visible property should be false");
 
 		});
@@ -687,40 +687,40 @@ sap.ui.define([
 			this._oDSC._currentBreakpoint = XL;
 			this._oDSC.setShowSideContent(false);
 
-			assert.ok(!this._oDSC.getShowSideContent(), "Side content should be hidden");
+			assert.ok(!this._oDSC.isSideContentVisible(), "Side content should be hidden");
 
 			this._oDSC._currentBreakpoint = L;
 			this._oDSC._changeGridState();
-			assert.ok(!this._oDSC.getShowSideContent(), "Side content should be hidden when changing to L breakpoint");
+			assert.ok(!this._oDSC.isSideContentVisible(), "Side content should be hidden when changing to L breakpoint");
 
 			this._oDSC._currentBreakpoint = M;
 			this._oDSC._changeGridState();
-			assert.ok(!this._oDSC.getShowSideContent(), "Side content should be hidden when changing to M breakpoint");
+			assert.ok(!this._oDSC.isSideContentVisible(), "Side content should be hidden when changing to M breakpoint");
 
 			this._oDSC._currentBreakpoint = S;
 			this._oDSC._changeGridState();
-			assert.ok(!this._oDSC.getShowSideContent(), "Side content should be hidden when changing to S breakpoint");
+			assert.ok(!this._oDSC.isSideContentVisible(), "Side content should be hidden when changing to S breakpoint");
 
 			this._oDSC._currentBreakpoint = M;
 			this._oDSC._changeGridState();
-			assert.ok(!this._oDSC.getShowSideContent(), "Side content should be hidden after switching to M breakpoint");
+			assert.ok(!this._oDSC.isSideContentVisible(), "Side content should be hidden after switching to M breakpoint");
 
 			this._oDSC._currentBreakpoint = S;
 			this._oDSC._changeGridState();
 			this._oDSC.toggle();
-			assert.ok(this._oDSC.getShowSideContent(), "Side content should be now visible when changing to S breakpoint and toggling");
-			assert.ok(!this._oDSC.getShowMainContent(), "Main content should be now hidden when changing to S breakpoint and toggling");
+			assert.ok(this._oDSC.isSideContentVisible(), "Side content should be now visible when changing to S breakpoint and toggling");
+			assert.ok(!this._oDSC.isMainContentVisible(), "Main content should be now hidden when changing to S breakpoint and toggling");
 
 			this._oDSC._currentBreakpoint = M;
 			this._oDSC._changeGridState();
-			assert.ok(this._oDSC.getShowSideContent(), "Side content should be now visible after switching to M breakpoint after toggling on S breakpoint");
+			assert.ok(this._oDSC.isSideContentVisible(), "Side content should be now visible after switching to M breakpoint after toggling on S breakpoint");
 
 			this._oDSC._currentBreakpoint = S;
 			this._oDSC._changeGridState();
 			this._oDSC.toggle();
 			this._oDSC.setShowSideContent(false);
-			assert.ok(!this._oDSC.getShowSideContent(), "Side content should be now hidden when changing to S breakpoint, toggling and closing the side content");
-			assert.ok(this._oDSC.getShowMainContent(), "Main content should be now visible when changing to S breakpoint, toggling and closing the side content");
+			assert.ok(!this._oDSC.isSideContentVisible(), "Side content should be now hidden when changing to S breakpoint, toggling and closing the side content");
+			assert.ok(this._oDSC.isMainContentVisible(), "Main content should be now visible when changing to S breakpoint, toggling and closing the side content");
 
 		});
 

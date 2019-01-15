@@ -918,14 +918,16 @@ function(
 		 * @public
 		 */
 		isDebugEnabled: function () {
+			var oUriParams = this._getUriParameters();
+			var sDebugParameters = oUriParams.get("sap-ui-debug") || "";
+
 			// true if SAPUI5 is in complete debug mode
-			if (sap.ui.getCore().getConfiguration().getDebug() || window["sap-ui-debug"] == true) {
+			if (sap.ui.getCore().getConfiguration().getDebug() || sDebugParameters === "true") {
 				return true;
 			}
 
-			var sDebugParameters = window["sap-ui-debug"] || "";
 			var aDebugParameters = sDebugParameters.split(",");
-			return aDebugParameters.indexOf("sap.ui.fl") !== -1;
+			return aDebugParameters.indexOf("sap/ui/fl") !== -1 || aDebugParameters.indexOf("sap/ui/fl/") !== -1;
 		},
 
 		/**

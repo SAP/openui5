@@ -133,6 +133,18 @@ function (jQuery, Core, ObjectPageLayout, ObjectPageSection, XMLView) {
 			"The aria-label on the AnchorBar element now indicates that there is no title");
 	});
 
+	QUnit.test("AnchorBar sticky aria state", function (assert) {
+		var oStickyAnchorBar = this.oObjectPage.$("stickyAnchorBar");
+
+		assert.strictEqual(oStickyAnchorBar.attr("aria-hidden"), "true", "The sticky AnchorBar should have aria-hidden=true when header is expanded initially.");
+
+		this.oObjectPage._snapHeader();
+		assert.strictEqual(oStickyAnchorBar.attr("aria-hidden"), "false", "The sticky AnchorBar should have aria-hidden=false when header is snaped.");
+
+		this.oObjectPage._expandHeader();
+		assert.strictEqual(oStickyAnchorBar.attr("aria-hidden"), "true", "The sticky AnchorBar should have aria-hidden=true when header is expanded again.");
+	});
+
 	QUnit.test("Footer element role", function (assert) {
 		var sRoleBundleText = getResourceBundleText("FOOTER_ROLE_DESCRIPTION");
 

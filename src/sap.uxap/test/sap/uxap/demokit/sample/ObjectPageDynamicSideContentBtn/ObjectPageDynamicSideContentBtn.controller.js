@@ -31,7 +31,7 @@ sap.ui.define(["sap/ui/model/json/JSONModel", "sap/ui/core/mvc/Controller"], fun
 		updateToggleButtonState: function (oEvent) {
 			sCurrentBreakpoint = oEvent.getParameter("currentBreakpoint");
 
-			if (sCurrentBreakpoint === "S" || !oDynamicSideView.getShowSideContent()) {
+			if (sCurrentBreakpoint === "S" || !oDynamicSideView.isSideContentVisible()) {
 				oOPSideContentBtn.setVisible(true);
 			} else {
 				oOPSideContentBtn.setVisible(false);

@@ -71,6 +71,9 @@ sap.ui.require([
 		function handleValueStateChange(oEvent) {
 			var choice = oEvent.getSource().getText();
 			sap.ui.getCore().byId("inp").setValueState(choice);
+			if ( choice === "Error") {
+				sap.ui.getCore().byId("inp").setValueStateText("123 123 123 123 123 123 123 11111111111111111111111111111");
+			}
 		}
 
 		function handleDescriptionChange(oEvent) {
@@ -169,7 +172,7 @@ sap.ui.require([
 						})
 					]
 				}),
-				new Input("inp", {}),
+				new Input("inp", { width: "10rem"}),
 				new SimpleForm("sf", {
 					width: "100%",
 					maxContainerCols: 2,

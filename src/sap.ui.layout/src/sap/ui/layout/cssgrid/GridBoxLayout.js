@@ -40,7 +40,7 @@ sap.ui.define([
 	 * @author SAP SE
 	 * @version ${version}
 	 *
-	 * @extends sap.ui.base.GridLayoutBase
+	 * @extends sap.ui.layout.cssgrid.GridLayoutBase
 	 *
 	 * @since 1.60
 	 * @constructor
@@ -79,8 +79,7 @@ sap.ui.define([
 	GridBoxLayout.prototype.getActiveGridSettings = function () {
 		return new GridSettings({
 			gridTemplateColumns: this._getTemplateColumns(),
-			gridGap: "0.5rem 0.5rem",
-			gridAutoRows: "1fr"
+			gridGap: "0.5rem 0.5rem"
 		});
 	};
 
@@ -127,6 +126,44 @@ sap.ui.define([
 			this._calcWidth(oGrid);
 			this._flattenHeight(oGrid);
 		}
+
+		if (oGrid.isA("sap.f.GridList") && oGrid.getGrowing()) { // if there is growing of the list new GridListItems are loaded and there could be changes in all GridListItems dimensions
+			var fnCopyOfOnAfterPageLoaded = oGrid._oGrowingDelegate._onAfterPageLoaded;
+
+			oGrid._oGrowingDelegate._onAfterPageLoaded = function () {
+				fnCopyOfOnAfterPageLoaded.call(oGrid._oGrowingDelegate);
+
+				if (!this.isGridSupportedByBrowser()) {
+					this._flattenHeight(oGrid);
+					this._calcWidth(oGrid);
+					this._loopOverGridItems(oGrid, function (oGridItem) {
+						if (!oGridItem.classList.contains("sapMGHLI")) {
+							oGridItem.classList.add("sapUiLayoutCSSGridItem"); // newly loaded items don't have this class
+						}
+					});
+				} else if (oGrid.isA("sap.f.GridList") && oGrid.isGrouped()) {
+					this._flattenHeight(oGrid);
+				}
+			}.bind(this);
+		}
+	};
+
+	/**
+	 * Sets all display:grid styles to the provided HTML element
+	 *
+	 * @protected
+	 * @param {HTMLElement} oElement The element to which to apply the grid styles
+	 * @param {sap.ui.layout.cssgrid.GridSettings} oGridSettings The grid settings to apply
+	 */
+	GridBoxLayout.prototype._setGridLayout = function (oElement, oGridSettings) {
+		var oGridList = sap.ui.getCore().byId(oElement.parentElement.id);
+
+		// we need to overwrite this function since after it the GridListItems are with final dimensions and further calculation cold be done.
+		GridLayoutBase.prototype._setGridLayout.call(this, oElement, oGridSettings);
+
+		if (this.isGridSupportedByBrowser() && (oGridList && oGridList.isA("sap.f.GridList") && oGridList.isGrouped())) {
+			this._flattenHeight(oGridList);
+		}
 	};
 
 	/**
@@ -139,8 +176,8 @@ sap.ui.define([
 
 	/**
 	 * Resize handler for the GridBoxLayout.
-	 *  - Changes the size class if needed.
-	 *  - For IE11 manually flatten the height of the boxes.
+	 * - Changes the size class if needed.
+	 * - Manually flatten the height of the boxes.
 	 *
 	 * @param {object} oEvent - The event from a resize
 	 * @private
@@ -153,7 +190,7 @@ sap.ui.define([
 			}
 		}
 
-		if (!this.isGridSupportedByBrowser()) {
+		if (!this.isGridSupportedByBrowser() || (oEvent.control && oEvent.control.isA("sap.f.GridList") && oEvent.control.isGrouped())) {
 			this._flattenHeight(oEvent.control);
 		}
 	};
@@ -167,17 +204,19 @@ sap.ui.define([
 	 * @private
 	 */
 	GridBoxLayout.prototype._calcWidth = function (oControl) {
+		var sWidth;
 		if (this._hasBoxWidth()) {
-			var sWidth = this.getBoxWidth() || this.getBoxMinWidth();
-			this._loopOverGridItems(oControl, function (oGridItem) {
-				oGridItem.style.width = sWidth;
-			});
+			sWidth = this.getBoxWidth() || this.getBoxMinWidth();
 		}
+		this._loopOverGridItems(oControl, function (oGridItem) {
+			if (!oGridItem.classList.contains("sapMGHLI")) { // the item is not group header
+				oGridItem.style.width = sWidth;
+			}
+		});
 	};
 
 	/**
 	 * Make all Elements inside the GridBoxLayout with equal heights
-	 * Note: Only needed for IE11.
 	 *
 	 * @param {sap.ui.layout.cssgrid.IGridConfigurable} oControl The grid
 	 * @private
@@ -194,7 +233,9 @@ sap.ui.define([
 		this._loopOverGridItems(oControl, function (oGridItem) {
 			// apply height to all items
 			if (oGridItem.getBoundingClientRect().height < iMaxHeight) {
-				oGridItem.style.height = iMaxHeight + "px";
+				if (!oGridItem.classList.contains("sapMGHLI")) { // the item is not group header
+					oGridItem.style.height = iMaxHeight + "px";
+				}
 			}
 		});
 	};

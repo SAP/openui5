@@ -5006,6 +5006,33 @@ sap.ui.define([
 		oMultiComboBox.destroy();
 	});
 
+	if (Device.browser.internet_explorer) {
+		QUnit.test("AriaDescribedBy announcement", function(assert) {
+			var oItem1 = new Item({key: "Item1", text: "Item1"}),
+				oItem2 = new Item({key: "Item2", text: "Item2"}),
+				oMultiComboBox = new MultiComboBox({
+					items: [oItem1, oItem2]
+				}),
+				sInvisibleTextId = oMultiComboBox._oTokenizer.getTokensInfoId(),
+				oInvisibleText = sap.ui.getCore().byId(sInvisibleTextId);
+
+			oMultiComboBox.placeAt("MultiComboBox-content");
+			sap.ui.getCore().applyChanges();
+
+			var	oInvisibleText1 = oMultiComboBox.oInvisibleText;
+
+			//assert
+			assert.ok(oMultiComboBox.$("inner").attr("aria-describedby").length > 0, "Property aria-describedby should exist");
+			assert.strictEqual(oInvisibleText.getText(), oResourceBundle.getText("TOKENIZER_ARIA_CONTAIN_TOKEN") , "'MultiComboBox may contain tokens' text is announced.");
+			assert.strictEqual(oInvisibleText1.getText(), oResourceBundle.getText("ACC_CTR_TYPE_COMBO") , "'Combobox' is announced");
+
+			// destroy
+			oItem1.destroy();
+			oItem2.destroy();
+			oMultiComboBox.destroy();
+		});
+	}
+
 	QUnit.test("MultiComboBox with accessibility=false", function(assert) {
 		var oStub =  sinon.stub(sap.ui.getCore().getConfiguration(), "getAccessibility").returns(false),
 			oMultiComboBox = new MultiComboBox();
@@ -6320,6 +6347,7 @@ sap.ui.define([
 	QUnit.test("Composititon events", function (assert) {
 		var oFakeEvent = {
 			isMarked: function () { },
+			setMarked: function () { },
 			srcControl: this.multiComboBox,
 			target: {
 				value: "서"

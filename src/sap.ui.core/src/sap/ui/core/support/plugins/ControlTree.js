@@ -422,12 +422,16 @@ sap.ui.define([
 
 					if (oContext.invalidPath) {
 						rm.write(' style="color:red"');
+					} else if (oContext.unverifiedPath) {
+						rm.write(' style="color:orange"');
 					}
 
 					rm.write('>' + encode(oContext.path));
 
 					if (oContext.invalidPath) {
 						rm.write(' (invalid)');
+					} else if (oContext.unverifiedPath) {
+						rm.write(' (unverified)');
 					}
 
 					rm.write('</span></div>');
@@ -495,12 +499,16 @@ sap.ui.define([
 
 						if (oBinding.invalidPath) {
 							rm.write(' style="color:red"');
+						} else if (oBinding.unverifiedPath) {
+							rm.write(' style="color:orange"');
 						}
 
 						rm.write('>' + encode(oBinding.path));
 
 						if (oBinding.invalidPath) {
 							rm.write(' (invalid)');
+						} else if (oBinding.unverifiedPath) {
+							rm.write(' (unverified)');
 						}
 
 						rm.write('</span></div>');
@@ -1510,10 +1518,9 @@ sap.ui.define([
 							if (oModel) {
 								sAbsolutePath = oModel.resolve(sPath, oBinding.getContext());
 
-								if (oModel.isA("sap.ui.model.odata.v4.ODataModel")) { // ODataModel v4 throws an exception on getProperty() - check the context for data
-									if (oBinding.getContext() && oBinding.getContext().getProperty(sPath)) {
-										mData.invalidPath = false;
-									}
+								if (oModel.isA("sap.ui.model.odata.v4.ODataModel")) { // ODataModel v4 throws an exception on getProperty()
+									mData.unverifiedPath = true;
+									mData.invalidPath = false; // otherwise path is shown as invalid
 								} else {
 									if (oModel.getProperty(sAbsolutePath) !== undefined) {
 										mData.invalidPath = false;
@@ -1547,8 +1554,12 @@ sap.ui.define([
 					path: oContext.getPath()
 				};
 
-				if (!oContext.getObject() == null) {
-					mContextInfos.invalidPath = true;
+				if (oContext.getModel().isA("sap.ui.model.odata.v4.ODataModel")) { // ODataModel v4 throws an exception on getObject()
+					mContextInfos.unverifiedPath = true;
+				} else {
+					if (!oContext.getObject() == null) {
+						mContextInfos.invalidPath = true;
+					}
 				}
 
 				return mContextInfos;

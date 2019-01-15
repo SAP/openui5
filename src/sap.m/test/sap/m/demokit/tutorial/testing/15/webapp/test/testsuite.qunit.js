@@ -1,4 +1,3 @@
-/* global window, parent, location */
 /* eslint-disable new-cap */
 window.suite = function() {
 	"use strict";

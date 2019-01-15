@@ -549,11 +549,19 @@ sap.ui.define(['jquery.sap.global',
 				this.oNewAppointmentDialog.open();
 			},
 
-			_validateDateTimePicker: function (sValue, oDateTimePicker) {
-				if (sValue === "") {
-					oDateTimePicker.setValueState("Error");
+			_validateDateTimePicker: function (oDateTimePickerStart, oDateTimePickerEnd) {
+				var oStartDate = oDateTimePickerStart.getDateValue(),
+					oEndDate = oDateTimePickerEnd.getDateValue(),
+					sValueStateText = "Start date should be before End date";
+
+				if (oStartDate && oEndDate && oEndDate.getTime() <= oStartDate.getTime()) {
+					oDateTimePickerStart.setValueState("Error");
+					oDateTimePickerEnd.setValueState("Error");
+					oDateTimePickerStart.setValueStateText(sValueStateText);
+					oDateTimePickerEnd.setValueStateText(sValueStateText);
 				} else {
-					oDateTimePicker.setValueState("None");
+					oDateTimePickerStart.setValueState("None");
+					oDateTimePickerEnd.setValueState("None");
 				}
 			},
 
@@ -572,7 +580,7 @@ sap.ui.define(['jquery.sap.global',
 					oDTPEnd = oFrag.byId("myPopoverFrag", "endDate"),
 					oOKButton = oFrag.byId("myPopoverFrag", "OKButton");
 
-				this._validateDateTimePicker(oEvent.getParameter("value"), oEvent.getSource());
+				this._validateDateTimePicker(oDTPStart, oDTPEnd);
 				this.updateButtonEnabledState(oDTPStart, oDTPEnd, oOKButton);
 			},
 
@@ -582,7 +590,7 @@ sap.ui.define(['jquery.sap.global',
 					oDateTimePickerEnd = oFrag.byId("myFrag", "endDate"),
 					oBeginButton = this.oNewAppointmentDialog.getBeginButton();
 
-				this._validateDateTimePicker(oEvent.getParameter("value"), oEvent.getSource());
+				this._validateDateTimePicker(oDateTimePickerStart, oDateTimePickerEnd);
 				this.updateButtonEnabledState(oDateTimePickerStart, oDateTimePickerEnd, oBeginButton);
 			},
 

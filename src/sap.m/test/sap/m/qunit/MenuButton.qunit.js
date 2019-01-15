@@ -14,7 +14,8 @@ sap.ui.define([
 	"sap/ui/core/library",
 	"sap/m/Popover",
 	"sap/m/Button",
-	"sap/base/Log"
+	"sap/base/Log",
+	"sap/ui/qunit/utils/waitForThemeApplied"
 ], function(
 	qutils,
 	createAndAppendDiv,
@@ -29,7 +30,8 @@ sap.ui.define([
 	coreLibrary,
 	Popover,
 	Button,
-	Log
+	Log,
+	waitForThemeApplied
 ) {
 	// shortcut for sap.ui.core.TextDirection
 	var TextDirection = coreLibrary.TextDirection;
@@ -370,6 +372,25 @@ sap.ui.define([
 				"Internal button has reference to the newly created label");
 
 		oLabel.destroy();
+	});
+
+	QUnit.test("aria-controls is removed when menu is closed", function (assert) {
+		// Prepare
+		var oGetMenuSub = this.stub(this.oMenuButton, "getMenu", function () {
+			return {
+				getDomRefId: function () { return "Some ID to fake the method"; }
+			};
+		});
+
+		// Act
+		this.oMenuButton._writeAriaAttributes();
+		this.oMenuButton._menuClosed();
+
+		// Assert
+		assert.notOk(this.oMenuButton.getDomRef().hasAttribute("aria-controls"), "aria-controls attribute is removed when menu is closed");
+
+		// Cleanup
+		oGetMenuSub.restore();
 	});
 
 	QUnit.module("Pressing", {
@@ -895,4 +916,6 @@ sap.ui.define([
 			document.body.removeChild(oTextBtnContentDiv);
 		});
 	}
+
+	return waitForThemeApplied();
 });

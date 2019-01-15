@@ -3,11 +3,23 @@
 /* Fiori 3 theme                          */
 /* ====================================== */
 
-@_sap_m_RatingIndicator_IconUnselectedColor: darken(@sapUiContentForegroundColor, 30);
-@_sap_m_RatingIndicator_IconHoverColor: darken(@sapUiAccent1, 5);
+.sapMRI.sapMRIReadOnly {
+	.sapMRIIconSel{
+		color: @sapUiAccent1;
+	}
+	.sapMRIIconReadOnly{
+		color: lighten(@sapUiContentForegroundColor, 10);
+	}
+}
+
+.sapMRI.sapMRIDisplayOnly {
+	.sapMRIIconUnsel {
+		color: lighten(@sapUiContentForegroundColor, 10);
+	}
+}
 
 .sapMRIDisabled {
-    opacity: 0.5;
+	opacity: 0.5;
 }
 
 /* Custom focus outline */
@@ -17,7 +29,7 @@ html.sap-desktop .sapMRI:focus:not(.sapMRIDisabled):not(.sapMRIDisplayOnly){
 }
 
 .sapMRIUnsel {
-  color: @_sap_m_RatingIndicator_IconUnselectedColor;
+	color: @sapUiContentForegroundColor;
 }
 
 /* TODO remove after 1.62 version */

@@ -429,22 +429,19 @@ sap.ui.define([
 
 		// _setHeaderAnnouncement() test
 		var $tblHeader = sut.$("tblHeader").focus();
-		sap.ui.getCore().applyChanges();
-		var $invisibleText = document.getElementById($tblHeader.attr("aria-labelledBy"));
-		assert.equal($invisibleText.innerHTML, oResourceBundle.getText("ACC_CTR_TYPE_HEADER_ROW") + " Name Color Number", "Text correctly assigned for screen reader announcement");
+		var oInvisibleText = document.getElementById($tblHeader.attr("aria-labelledBy"));
+		assert.equal(oInvisibleText.innerHTML, oResourceBundle.getText("ACC_CTR_TYPE_HEADER_ROW") + " Name Color Number", "Text correctly assigned for screen reader announcement");
 
 		// _setFooterAnnouncment() test
-		sut.$("tblFooter").focus();
-		sap.ui.getCore().applyChanges();
-		$invisibleText = document.getElementById($tblHeader.attr("aria-labelledBy"));
-		assert.equal($invisibleText.innerHTML, oResourceBundle.getText("ACC_CTR_TYPE_FOOTER_ROW") + " Name Greetings", "Text correctly assigned for screen reader announcement");
+		var $tblFooter = sut.$("tblFooter").focus();
+		oInvisibleText = document.getElementById($tblFooter.attr("aria-labelledBy"));
+		assert.equal(oInvisibleText.innerHTML, oResourceBundle.getText("ACC_CTR_TYPE_FOOTER_ROW") + " Name Greetings", "Text correctly assigned for screen reader announcement");
 
 		// noDataText test
 		oBinding.filter([new Filter("name", "Contains", "xxx")]);
 		sap.ui.getCore().applyChanges();
 		sut.$("nodata").focus();
-		$invisibleText = document.getElementById($tblHeader.attr("aria-labelledBy"));
-		assert.equal($invisibleText.innerHTML, oResourceBundle.getText("LIST_NO_DATA"), "Text correctly assinged for screen reader announcement");
+		assert.equal(oInvisibleText.innerHTML, oResourceBundle.getText("LIST_NO_DATA"), "Text correctly assinged for screen reader announcement");
 
 		sut.destroy();
 	});

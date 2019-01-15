@@ -4,19 +4,18 @@
 		xmlns:grid="sap.ui.layout.cssgrid"
 		xmlns:f="sap.f"
 		controllerName="sap.f.sample.GridListBasic.C">
-
-	<Panel width="100%">
+	<MessageStrip
+				class="sapUiSmallMarginBeginEnd sapUiSmallMarginTop"
+				type="Information"
+				text="Note: This layout is not supported by Microsoft Internet Explorer and Microsoft Edge 15 and older versions."/>
+	<Slider value="100" liveChange="onSliderMoved" />
+	<Panel id="panelForGridList">
 		<headerToolbar>
 			<Toolbar height="3rem">
 				<Title text="GridList with default grid layout"/>
 			</Toolbar>
 		</headerToolbar>
 		<content>
-			<MessageStrip
-				class="sapUiSmallMarginBeginEnd sapUiSmallMarginTop"
-				type="Information"
-				text="Note: This layout is not supported by Microsoft Internet Explorer and Microsoft Edge 15 and older versions."/>
-			<Slider value="100" liveChange="onSliderMoved" />
 			<f:GridList id="gridList"
 						headerText="GridList header"
 						items="{ path: '/' }">

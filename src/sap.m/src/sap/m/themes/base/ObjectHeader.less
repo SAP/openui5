@@ -23,8 +23,9 @@
 
 html.sap-tablet.sapUiMedia-Std-Tablet .sapMOH,
 html:not(.sapUiMedia-Std-Phone) .sapMSplitContainer:not(.sapMSplitContainerHideMode) .sapMOH {
-	padding: 2rem;
+	padding: 1.5rem 2rem;
 }
+
 html .sapUiContainer-Narrow .sapMOH,
 html.sap-desktop.sapUiMedia-Std-Phone .sapMOH,
 html.sap-phone .sapMOH {
@@ -37,17 +38,18 @@ html.sap-phone .sapMOH {
 
 .sapMOH.sapMOHC {
 	margin: 0;
-	padding: 1.125rem 3rem 1rem 3rem;
+	padding: 1.125rem 2rem 1rem 2rem;
 }
 
-html.sap-tablet.sapUiMedia-Std-Tablet .sapMOH.sapMOHC {
+html.sap-tablet.sapUiMedia-Std-Tablet .sapMOH.sapMOHC,
+html:not(.sapUiMedia-Std-Phone) .sapMSplitContainer:not(.sapMSplitContainerHideMode) .sapMOH.sapMOHC {
 	margin: 0;
 	padding: 1.125rem 2rem 1rem 2rem;
 }
 
 html.sap-phone .sapMOH.sapMOHC {
 	margin: 0;
-	padding: 1.125rem 1rem 1rem 1rem;
+	padding: 1rem;
 }
 
 .sapMDialog .sapMOH.sapMOHC {
@@ -1097,7 +1099,7 @@ html.sap-desktop .sapMOHTitleArrow .sapUiIcon:hover {
 /*** styles for responsive object header ***/
 .sapMOHRTitle h1 {
 	font-family: @sapUiFontHeaderFamily;
-	font-size: 1.375rem;
+	font-size: @sapMFontHeader2Size;;
 	font-weight: @sapUiFontHeaderWeight;
 	color: @sapUiGroupTitleTextColor;
 }

@@ -75,6 +75,7 @@ function (
 	QUnit.module("Given that an overlay is created for a control", {
 		beforeEach: function (assert) {
 			var fnDone = assert.async();
+			sandbox.spy(ElementUtil, "getZIndexBelowOpenPopups");
 			this.oButton = new Button({
 				text: "Button"
 			});
@@ -97,6 +98,7 @@ function (
 		}
 	}, function () {
 		QUnit.test("when all is rendered", function (assert) {
+			assert.ok(ElementUtil.getZIndexBelowOpenPopups.callCount, 1, "then ElementUtil.getZIndexBelowOpenPopups() called once for the root overlay");
 			assert.ok(this.oElementOverlay.getDomRef(), "overlay is rendered");
 			assert.ok(this.oElementOverlay.isVisible(), "overlay is visible");
 			assert.deepEqual(this.oElementOverlay.$().offset(), this.oButton.$().offset(), "overlay has same position as a control");

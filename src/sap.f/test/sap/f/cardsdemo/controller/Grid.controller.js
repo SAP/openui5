@@ -5,7 +5,6 @@ sap.ui.define([
 
 	return Controller.extend("sap.f.cardsdemo.controller.Grid", {
 		onInit: function () {
-			this.getView().byId("cssgrid")._wrapItemsWithDiv = true;
 		},
         onLayoutChange: function (oEvent) {
 			var sLayout = oEvent.getParameter("layout");

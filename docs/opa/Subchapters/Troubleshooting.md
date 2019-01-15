@@ -14,6 +14,19 @@ After turning on the debug mode, you can have a look at the log and also filter 
 
 Frequent errors are typos in ViewName or control ids. These are easily discovered in the logs.
 
+### Multiple views with the same `viewName`
+
+If there are multiple views with the same `viewName`, OPA5 may not find the exact control you are
+looking for.
+
+As of version 1.62, there are a couple of ways to ensure a correct match:
+
+- `viewId` parameter is introduced. You can set it in `Opa5.extendConfig()`, `Opa5.waitFor()`
+and in page object definitions. `viewId` can be used standalone or in combination with `viewName`.
+If OPA5 finds multiple views with the same name, it will prompt you to add a view ID with the test
+failure message "Please provide `viewId` to locate the exact view.".
+- Views that are not rendered will not be used in OPA5 control search.
+
 ### Control is not found when running the test on a different machine or in a suite
 
 The size of the iFrame in which the application is loaded is as big as the browser window. It is

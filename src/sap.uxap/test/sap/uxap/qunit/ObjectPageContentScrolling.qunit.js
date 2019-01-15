@@ -102,6 +102,47 @@ function(jQuery, Core, ObjectPageSubSection, ObjectPageSection, ObjectPageLayout
 		helpers.renderObject(oObjectPage);
 	});
 
+	QUnit.module("scroll position within subSection", {
+		beforeEach: function (assert) {
+			this.oObjectPage = helpers.generateObjectPageWithContent(oFactory, 10);
+		},
+		afterEach: function () {
+			this.oObjectPage.destroy();
+			this.oObjectPage = null;
+		}
+	});
+
+	QUnit.test("_restoreScrollPosition restores position within subSection", function (assert) {
+		// Mock data values
+		var oSelectedSection = this.oObjectPage.getSections()[1],
+			oStoredSubSection = oSelectedSection.getSubSections()[0],
+			storedSubSectionPositionTop = 200,
+			iOffsetWithinStoredSubSection = 20,
+			oScrollSpy = sinon.spy(this.oObjectPage, "_scrollTo");
+
+
+		// Setup: Select section
+		this.oObjectPage.setSelectedSection(oSelectedSection);
+		// Setup: Mock the effect of _storeScrollLocation with oStoredSubSection
+		this.oObjectPage._oStoredScrolledSubSectionInfo.sSubSectionId = oStoredSubSection.getId();
+		this.oObjectPage._oStoredScrolledSubSectionInfo.iOffset = iOffsetWithinStoredSubSection;
+		// Setup: Mock the position of the stored subSection
+		sinon.stub(this.oObjectPage, "_computeScrollPosition", function(oSection) {
+			return storedSubSectionPositionTop; // mock a specific scroll position of a section
+		});
+		// Setup: Mock the validity of the stored subSection
+		sinon.stub(this.oObjectPage, "_sectionCanBeRenderedByUXRules", function() {
+			return true;
+		});
+
+		// act
+		this.oObjectPage._restoreScrollPosition();
+
+		// check
+		assert.ok(oScrollSpy.calledWithMatch(storedSubSectionPositionTop + iOffsetWithinStoredSubSection),
+			"correct scroll position is restored");
+	});
+
 	QUnit.module("ObjectPage Content scrolling", {
 		beforeEach: function (assert) {
 			var done = assert.async();
@@ -167,21 +208,55 @@ function(jQuery, Core, ObjectPageSubSection, ObjectPageSection, ObjectPageLayout
 	QUnit.test("Rerendering the page preserves the scroll position", function (assert) {
 		var oObjectPage = this.oObjectPageContentScrollingView.byId("ObjectPageLayout"),
 			oSecondSection = this.oObjectPageContentScrollingView.byId("secondSection"),
+			oStoreSpy = sinon.spy(oObjectPage, "_storeScrollLocation"),
+			oRestoreSpy = sinon.spy(oObjectPage, "_restoreScrollPosition"),
+			oScrollSpy = sinon.spy(oObjectPage, "_scrollTo"),
 			iScrollPositionBeforeRerender,
-			iScrollPositionAfterRerender,
 			done = assert.async();
 
 		oObjectPage.setSelectedSection(oSecondSection.getId());
 
+		assert.expect(3);
+
 		setTimeout(function() {
 			iScrollPositionBeforeRerender = oObjectPage._$opWrapper[0].scrollTop;
-			oObjectPage.rerender();
-			setTimeout(function() {
-				iScrollPositionAfterRerender = oObjectPage._$opWrapper[0].scrollTop;
-				assert.ok(isPositionsMatch(iScrollPositionAfterRerender, iScrollPositionBeforeRerender), "scrollPosition is preserved");
+
+			oObjectPage.addEventDelegate({ onBeforeRendering: function() {
+					assert.ok(oStoreSpy.called, "_storeScrollLocation is called on beforeRenderingf");
+				}});
+
+			oObjectPage.attachEventOnce("onAfterRenderingDOMReady", function() {
+				assert.ok(oRestoreSpy.called, "_restoreScrollPosition is called on afterRendering");
+				assert.ok(oScrollSpy.calledWithMatch(iScrollPositionBeforeRerender), "scroll position is preserved");
 				done();
-			}, 1000); // throttling delay
+			});
+			oObjectPage.rerender();
 		}, 1000); //dom calc delay
+	});
+
+	QUnit.test("Scroll position is preserved upon insertion of another section", function (assert) {
+
+		var oObjectPage = this.oObjectPageContentScrollingView.byId("ObjectPageLayout"),
+			oFirstSection = oObjectPage.getSections()[0],
+			oSecondSection = oObjectPage.getSections()[1],
+			oScrollSpy = sinon.spy(oObjectPage, "_scrollTo"),
+			iExpectedScrollTopAfterRendering,
+			done = assert.async();
+
+		// setup: hide the first visible section so that the next visible is selected
+		oFirstSection.setVisible(false);
+
+		oObjectPage.attachEventOnce("onAfterRenderingDOMReady", function() {
+
+			oFirstSection.setVisible(true);
+			oScrollSpy.reset();
+			oObjectPage.attachEventOnce("onAfterRenderingDOMReady", function() {
+				iExpectedScrollTopAfterRendering = oObjectPage._computeScrollPosition(oSecondSection);
+				assert.ok(oScrollSpy.calledWithMatch(iExpectedScrollTopAfterRendering),
+					"scroll position of the selectedSection is preserved");
+				done();
+			});
+		});
 	});
 
 	QUnit.test("ScrollToSection in 0 time scrolls to correct the scroll position", function (assert) {

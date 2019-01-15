@@ -6,6 +6,7 @@ sap.ui.define([
 	"sap/ui/dt/AggregationOverlay",
 	"sap/ui/dt/AggregationDesignTimeMetadata",
 	"sap/ui/dt/DOMUtil",
+	"sap/ui/dt/Util",
 	"sap/m/Page",
 	"sap/m/Button",
 	"sap/m/Panel",
@@ -18,6 +19,7 @@ function(
 	AggregationOverlay,
 	AggregationDesignTimeMetadata,
 	DOMUtil,
+	DtUtil,
 	Page,
 	Button,
 	Panel,
@@ -51,7 +53,8 @@ function(
 	});
 
 	QUnit.module("Given that an AggregationOverlay is created for an aggregation with domRef DT metadata", {
-		beforeEach: function() {
+		beforeEach: function(assert) {
+			var done = assert.async();
 			this.oPage = new Page();
 			this.oPage.placeAt("qunit-fixture");
 			sap.ui.getCore().applyChanges();
@@ -66,6 +69,13 @@ function(
 				})
 			});
 			Overlay.getOverlayContainer().append(this.oAggregationOverlay.render());
+
+			var fnDebounced = DtUtil.debounce(function() {
+				this.oAggregationOverlay.detachEvent("geometryChanged", fnDebounced);
+				done();
+			}.bind(this), 100);
+			this.oAggregationOverlay.attachEvent("geometryChanged", fnDebounced);
+
 			this.oAggregationOverlay.applyStyles();
 		},
 		afterEach: function() {

@@ -87,6 +87,7 @@ function(
 				oRM.addClass("sapMHrdrCntrInner");
 				oRM.writeAttribute("aria-setsize", oControl.getSetSize());
 				oRM.writeAttribute("aria-posinset", oControl.getPosition());
+				oRM.writeAttribute("role", "listitem");
 				if (oControl.getAriaLabelledBy()) {
 					oRM.writeAttributeEscaped("aria-labelledby", oControl.getAriaLabelledBy());
 				}

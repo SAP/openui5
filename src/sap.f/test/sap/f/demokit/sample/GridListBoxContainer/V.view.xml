@@ -4,15 +4,14 @@
 		xmlns:grid="sap.ui.layout.cssgrid"
 		xmlns:f="sap.f"
 		controllerName="sap.f.sample.GridListBoxContainer.C">
-
-	<Panel width="100%">
+	<Slider value="100" liveChange="onSliderMoved" />
+	<Panel id="panelForGridList">
 		<headerToolbar>
 			<Toolbar height="3rem">
 				<Title text="Grid List with GridBoxLayout and minWidth 17rem"/>
 			</Toolbar>
 		</headerToolbar>
 		<content>
-			<Slider value="100" liveChange="onSliderMoved" />
 			<f:GridList
 					id="gridList"
 					headerText="GridList header"

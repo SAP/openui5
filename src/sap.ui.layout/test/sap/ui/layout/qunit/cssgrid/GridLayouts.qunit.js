@@ -5,13 +5,25 @@ sap.ui.define([
 	"sap/ui/layout/cssgrid/GridLayoutBase",
 	"sap/ui/layout/cssgrid/GridBasicLayout",
 	"sap/ui/layout/cssgrid/GridResponsiveLayout",
-	"sap/ui/layout/cssgrid/GridSettings"
+	"sap/ui/layout/cssgrid/GridBoxLayout",
+	"sap/ui/layout/cssgrid/GridSettings",
+	"sap/f/GridList",
+	"sap/m/CustomListItem",
+	"sap/m/Text",
+	"sap/ui/model/json/JSONModel",
+	"sap/ui/model/Sorter"
 ], function (
 	jQuery,
 	GridLayoutBase,
 	GridBasicLayout,
 	GridResponsiveLayout,
-	GridSettings
+	GridBoxLayout,
+	GridSettings,
+	GridList,
+	CustomListItem,
+	Text,
+	JSONModel,
+	Sorter
 ) {
 	"use strict";
 
@@ -363,6 +375,87 @@ sap.ui.define([
 
 		// Cleanup
 		GridResponsiveLayout.prototype.setActiveLayout.restore();
+	});
+
+	QUnit.module("GridBoxLayout", {
+		beforeEach: function () {
+		},
+		afterEach: function () {
+		}
+	});
+
+	QUnit.test("When Grid (GridList control) is with Grouping", function (assert) {
+		var oGridBoxLayout = new GridBoxLayout();
+		var data = [
+			{ title: "Grid item title 1", subtitle: "Subtitle 1", group: "Group A" },
+			{ title: "Grid item title 2", subtitle: "Subtitle 2", group: "Group B" }];
+			var model = new JSONModel();
+			model.setData(data);
+			sap.ui.getCore().setModel(model);
+		var oGridList = new GridList("gListGrouping", {
+			customLayout: oGridBoxLayout,
+			// growing: true,
+			// growingThreshold: 1,
+			items: {
+				path: '/',
+				sorter: new Sorter('group', false, true),
+				template: new CustomListItem({
+					content: [
+						new Text({text: "{subtitle}"})
+					]
+				})
+			}
+		});
+
+		oGridList.placeAt("qunit-fixture");
+		sap.ui.getCore().applyChanges();
+
+		var id = "#" + oGridList.sId + "-listUl";
+		var sGridAutoRows = getComputedStyle(document.querySelector(id)).gridAutoRows;
+		var isCSSGridSupported = oGridBoxLayout.isGridSupportedByBrowser();
+		assert.equal(oGridList.getCustomLayout().getMetadata()._sClassName, "sap.ui.layout.cssgrid.GridBoxLayout", "GridBoxLayout is applied");
+		if (isCSSGridSupported) {
+			assert.equal(sGridAutoRows, "auto",  "Height of the rows are calculated and CSS Grid property 'grid-auto-rows' is not set.");
+		} else {
+			assert.equal(sGridAutoRows, undefined,  "CSS Grid is not supported for this browser version. Height of the rows are calculated");
+		}
+	});
+
+
+	QUnit.test("When (GridList control) is without Grouping", function (assert) {
+		var oGridBoxLayout = new GridBoxLayout();
+		var data = [
+			{ title: "Grid item title 1", subtitle: "Subtitle 1", group: "Group A" },
+			{ title: "Grid item title 2", subtitle: "Subtitle 2", group: "Group B" }];
+			var model = new JSONModel();
+			model.setData(data);
+			sap.ui.getCore().setModel(model);
+		var oGridList = new GridList("gListNoGrouping", {
+			customLayout: oGridBoxLayout,
+			// growing: true,
+			// growingThreshold: 1,
+			items: {
+				path: '/',
+				template: new CustomListItem({
+					content: [
+								new Text({text: "{subtitle}"})
+					]
+				})
+			}
+		});
+
+		oGridList.placeAt("qunit-fixture");
+		sap.ui.getCore().applyChanges();
+
+		var id = "#" + oGridList.sId + "-listUl";
+		var sGridAutoRows = getComputedStyle(document.querySelector(id)).gridAutoRows;
+		var isCSSGridSupported = oGridBoxLayout.isGridSupportedByBrowser();
+		assert.equal(oGridList.getCustomLayout().getMetadata()._sClassName, "sap.ui.layout.cssgrid.GridBoxLayout", "GridBoxLayout is applied");
+		if (isCSSGridSupported) {
+			assert.equal(sGridAutoRows, "1fr",  "Height of the rows comes from CSS Grid property 'grid-auto-rows'");
+		} else {
+			assert.equal(sGridAutoRows, undefined,  "CSS Grid is not supported for this browser version. Height of the rows are calculated");
+		}
 	});
 
 });

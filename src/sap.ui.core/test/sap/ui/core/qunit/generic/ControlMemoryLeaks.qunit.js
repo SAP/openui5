@@ -188,7 +188,7 @@ sap.ui.define([
 
 	var aKnownLibraries = ["sap.ui.core","sap.chart","sap.f","sap.m","sap.makit","sap.me","sap.ndc",
 						   "sap.suite.ui.microchart", "sap.tnt","sap.ui.commons","sap.ui.comp","sap.ui.dt",
-						   "sap.ui.fl","sap.ui.generic.app","sap.ui.generic.template","sap.ui.layout",
+						   "sap.ui.fl","sap.ui.integration","sap.ui.generic.app","sap.ui.generic.template","sap.ui.layout",
 						   "sap.ui.richtexteditor","sap.ui.rta","sap.ui.server.java","sap.ui.suite","sap.ui.table",
 						   "sap.ui.unified","sap.ui.ux3","sap.uiext.inbox","sap.uxap","sap.viz"];
 

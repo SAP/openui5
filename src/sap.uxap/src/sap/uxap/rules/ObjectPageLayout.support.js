@@ -80,7 +80,7 @@ sap.ui.define(["sap/ui/support/library"],
 		};
 
 		var oDupicatedElementsOfObjectPageHeader = {
-			id: "objectPageHeaderElementsDuplicatedInObjectPageHeaderContent",
+			id: "oPHeaderElementsDuplicatedInOPHeaderContent",
 			title: "ObjectPageHeader: Duplicated element(s) in ObjectPageHeaderContent.",
 			minversion: "1.26",
 			audiences: [Audiences.Application],

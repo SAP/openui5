@@ -9,6 +9,8 @@ sap.ui.define([
 	'sap/ui/Device',
 	'sap/ui/core/ResizeHandler',
 	'sap/ui/core/library',
+	'sap/ui/core/HTML',
+	'sap/m/ScrollContainer',
 	'./CarouselRenderer',
 	"sap/ui/events/KeyCodes",
 	"sap/base/Log",
@@ -23,6 +25,8 @@ function(
 	Device,
 	ResizeHandler,
 	coreLibrary,
+	HTML,
+	ScrollContainer,
 	CarouselRenderer,
 	KeyCodes,
 	Log,
@@ -397,7 +401,7 @@ function(
 				}
 
 				// BCP: 1580078315
-				if (sap.zen && sap.zen.commons && this.getParent() instanceof sap.zen.commons.layout.PositionContainer) {
+				if (this.getParent() && this.getParent().isA("sap.zen.commons.layout.PositionContainer")) {
 					if (this._isCarouselUsedWithCommonsLayout === undefined){
 						setTimeout(this["invalidate"].bind(this), 0);
 						this._isCarouselUsedWithCommonsLayout = true;
@@ -692,8 +696,8 @@ function(
 		}
 
 
-		var cellClasses = oPage instanceof sap.m.Image ? "sapMCrslItemTableCell " + imgClass : "sapMCrslItemTableCell",
-			oContent = new sap.ui.core.HTML({
+		var cellClasses = oPage.isA("sap.m.Image") ? "sapMCrslItemTableCell " + imgClass : "sapMCrslItemTableCell",
+			oContent = new HTML({
 			content :	"<div class='sapMCrslItemTable'>" +
 							"<div class='" + cellClasses + "'></div>" +
 						"</div>",
@@ -705,7 +709,7 @@ function(
 			}
 		});
 
-		var oScrollContainer = new sap.m.ScrollContainer({
+		var oScrollContainer = new ScrollContainer({
 			horizontal: false,
 			vertical: false,
 			content:[oContent],

@@ -5,6 +5,7 @@
 	xmlns:m="sap.m"
 	xmlns:card="sap.f.cards"
 	xmlns:core="sap.ui.core"
+	xmlns:w="sap.ui.integration.widgets"
     displayBlock="true"
     controllerName="sap.f.cardsdemo.controller.Custom">
 
@@ -20,12 +21,12 @@
 
 		<content>
 
-			<f:SAPCard
+			<w:Card
 				class="sapUiMediumMargin"
 				width="300px"
 				height="400px"
 				manifest="./cardcontent/listcomponent/manifest.json">
-			</f:SAPCard>
+			</w:Card>
 
 			<f:Card
 				class="sapUiMediumMargin"
@@ -47,9 +48,9 @@
 				width="300px"
 				height="400px">
 				<f:header>
-					<card:KpiHeader
-					 	title="KPI"
-						subtitle="Basic KPI subtitle"
+					<card:NumericHeader
+					 	title="Numeric"
+						subtitle="Basic numeric subtitle"
 						unitOfMeasurement="%"
 						details="Some details also"/>
 				</f:header>
@@ -69,11 +70,11 @@
 						iconSrc="sap-icon://accept"/>
 				</f:header>
 				<f:content>
-					<card:ListContent manifestContent="{list>/content}"/>
+					<card:ListContent configuration="{list>/content}"/>
 				</f:content>
 			</f:Card>
 
-			<f:SAPCard
+			<w:Card
 				class="sapUiMediumMargin"
 				width="650px"
 				height="600px"
@@ -84,34 +85,34 @@
 				width="650px"
 				height="1600px">
 				<f:header>
-					<card:KpiHeader
-					 	title="KPI"
-						subtitle="Basic KPI subtitle"
+					<card:numericHeader
+					 	title="Numeric"
+						subtitle="Basic Numeric subtitle"
 						unitOfMeasurement="%"
 						details="Some details also"/>
 				</f:header>
 				<f:content>
 					<m:VBox>
 						<m:Text class="sapUiMediumMargin" text="My Analytical Content"/>
-						<card:AnalyticalContent manifestContent="{analytical>/content}"/>
+						<card:AnalyticalContent configuration="{analytical>/content}"/>
 						<m:Text class="sapUiMediumMargin" text="My List Content"/>
-						<card:ListContent manifestContent="{list>/content}"/>
+						<card:ListContent configuration="{list>/content}"/>
 						<m:Text class="sapUiMediumMargin" text="My Table Content"/>
-						<card:TableContent manifestContent="{table>/content}"/>
+						<card:TableContent configuration="{table>/content}"/>
 					</m:VBox>
 				</f:content>
 			</f:Card>
 
 			<m:Panel>
 				<m:Text class="sapUiMediumMargin" text="My Analytical Content"/>
-				<card:AnalyticalContent manifestContent="{analytical>/content}"/>
+				<card:AnalyticalContent configuration="{analytical>/content}"/>
 				<m:Text class="sapUiMediumMargin" text="My List Content"/>
-				<card:ListContent manifestContent="{list>/content}"/>
+				<card:ListContent configuration="{list>/content}"/>
 				<m:Text class="sapUiMediumMargin" text="My Table Content"/>
-				<card:TableContent manifestContent="{table>/content}"/>
+				<card:TableContent configuration="{table>/content}"/>
 			</m:Panel>
 
-            <f:SAPCard class="sapUiMediumMargin" manifest="{manifests>/tableManifests/tablecard1}" width="400px" height="auto"/>
+            <w:Card class="sapUiMediumMargin" manifest="{manifests>/tableManifests/tablecard1}" width="400px" height="auto"/>
 
 			<f:Card
 				class="sapUiMediumMargin"
@@ -124,7 +125,7 @@
 						iconSrc="sap-icon://activity-items"/>
 				</f:header>
 				<f:content>
-					<card:TableContent manifestContent="{table>/content}"/>
+					<card:TableContent configuration="{table>/content}"/>
 				</f:content>
 			</f:Card>
 

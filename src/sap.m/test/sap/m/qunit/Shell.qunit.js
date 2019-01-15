@@ -9,8 +9,9 @@ sap.ui.define([
 	"sap/m/Shell",
 	"sap/m/SplitApp",
 	"sap/m/Page",
-	"sap/ui/util/Mobile"
-], function(QUnitUtils, createAndAppendDiv, jQuery, Parameters, coreLibrary, Shell, SplitApp, Page, Mobile) {
+	"sap/ui/util/Mobile",
+	"sap/ui/qunit/utils/waitForThemeApplied"
+], function(QUnitUtils, createAndAppendDiv, jQuery, Parameters, coreLibrary, Shell, SplitApp, Page, Mobile, waitForThemeApplied) {
 	// shortcut for sap.ui.core.TitleLevel
 	var TitleLevel = coreLibrary.TitleLevel;
 
@@ -383,4 +384,5 @@ sap.ui.define([
 		oShell.destroy();
 	});
 
+	return waitForThemeApplied();
 });

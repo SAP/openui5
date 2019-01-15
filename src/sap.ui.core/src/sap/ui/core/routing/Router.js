@@ -55,11 +55,22 @@ sap.ui.define([
 		 *     {
 		 *         name: "anotherRoute"
 		 *         pattern : "anotherPattern"
+		 *     },
+		 *     //Will create a route for a nested component with the prefix 'componentPrefix'
+		 *     {
+		 *         pattern: "componentPattern",
+		 *         name: "componentRoute",
+		 *         target: [
+		 *              {
+		 *                  name: "subComponent",
+		 *                  prefix: "componentPrefix"
+		 *              }
+		 *         ]
 		 *     }
 		 * ]
 		 * </pre>
 		 *
-		 * The alternative way of defining routes is an Object.
+		 * The alternative way of defining routes is an Object.<br/>
 		 * If you choose this way, the name attribute is the name of the property.
 		 * <pre>
 		 * {
@@ -70,6 +81,16 @@ sap.ui.define([
 		 *     //Will create a route called 'anotherRoute'
 		 *     anotherRoute : {
 		 *         pattern : "anotherPattern"
+		 *     },
+		 *     //Will create a route for a nested component with the prefix 'componentPrefix'
+		 *     componentRoute{
+		 *         pattern: "componentPattern",
+		 *         target: [
+		 *              {
+		 *                  name: "subComponent",
+		 *                  prefix: "componentPrefix"
+		 *              }
+		 *         ]
 		 *     }
 		 * }
 		 * </pre>
@@ -79,14 +100,6 @@ sap.ui.define([
 		 * This config will be used for routes and for targets, used in the router<br/>
 		 * Eg: if the config object specifies :
 		 * <pre>
-		 * <code>
-		 * {
-		 *     viewType : "XML"
-		 * }
-		 * </code>
-		 * </pre>
-		 * The targets look like this:
-		 * <pre>
 		 * {
 		 *     xmlTarget : {
 		 *         ...
@@ -94,6 +107,26 @@ sap.ui.define([
 		 *     jsTarget : {
 		 *         viewType : "JS"
 		 *         ...
+		 *     },
+		 *     componentTarget: {
+		 *         type: "Component",
+		 *         name: "subComponent",
+		 *         id: "mySubComponent",
+		 *         options: {
+		 *             // the Component configuration:
+		 *             manifest: true
+		 *             ...
+		 *         },
+		 *         containerOptions: {
+		 *             // the ComponentContainer configuration defaults
+		 *             //(other settings need to be provided):
+		 *             height: "100%",
+		 *             width: "100%",
+		 *             lifecycle: sap.ui.core.ComponentLifecycle.Application
+		 *             ...
+		 *         }
+		 *         controlId: "myRootView",
+		 *         controlAggregation: "content"
 		 *     }
 		 * }
 		 * </pre>
@@ -107,6 +140,26 @@ sap.ui.define([
 		 *     jsTarget : {
 		 *         viewType : "JS"
 		 *         ...
+		 *     },
+		 * 	   componentTarget: {
+		 *         type: "Component",
+		 *         name: "subComponent",
+		 *         id: "mySubComponent",
+		 *         options: {
+		 *             // the Component configuration:
+		 *             manifest: true
+		 *             ...
+		 *         },
+		 *         containerOptions: {
+		 *             // the ComponentContainer configuration defaults
+		 *             //(other settings need to be provided):
+		 *             height: "100%",
+		 *             width: "100%",
+		 *             lifecycle: sap.ui.core.ComponentLifecycle.Application
+		 *             ...
+		 *         }
+		 *         controlId: "myRootView",
+		 *         controlAggregation: "content"
 		 *     }
 		 * }
 		 * </pre>
@@ -190,7 +243,7 @@ sap.ui.define([
 		 */
 		var Router = EventProvider.extend("sap.ui.core.routing.Router", /** @lends sap.ui.core.routing.Router.prototype */ {
 
-			constructor : function(oRoutes, oConfig, oOwner, oTargetsConfig) {
+			constructor : function(oRoutes, oConfig, oOwner, oTargetsConfig, oRouterHashChanger) {
 				EventProvider.apply(this);
 
 				this._oConfig = oConfig || {};
@@ -248,6 +301,10 @@ sap.ui.define([
 				});
 
 				this._oRouter.bypassed.add(jQuery.proxy(this._onBypassed, this));
+
+				if (oRouterHashChanger) {
+					this.setHashChanger(oRouterHashChanger);
+				}
 			},
 
 			/**
@@ -290,8 +347,11 @@ sap.ui.define([
 			 * @returns {sap.ui.core.routing.Router} this for chaining.
 			 */
 			initialize : function (bIgnoreInitialHash) {
-				var that = this,
-					oHashChanger = this.oHashChanger = HashChanger.getInstance();
+				var that = this;
+
+				if (!this.oHashChanger) {
+					this.oHashChanger = HashChanger.getInstance().createRouterHashChanger();
+				}
 
 				if (this._bIsInitialized) {
 					Log.warning("Router is already initialized.", this);
@@ -308,9 +368,9 @@ sap.ui.define([
 					that._bHashChangedAfterTitleChange = true;
 				};
 
-				if (!oHashChanger) {
+				if (!this.oHashChanger) {
 					Log.error("navTo of the router is called before the router is initialized. If you want to replace the current hash before you initialize the router you may use getUrl and use replaceHash of the Hashchanger.", this);
-					return;
+					return this;
 				}
 
 				if (this._oTargets) {
@@ -328,12 +388,6 @@ sap.ui.define([
 
 					}, this);
 
-					this.fnHashReplaced = function() {
-						this._bLastHashReplaced = true;
-					};
-
-					this.oHashChanger.attachEvent("hashReplaced", this.fnHashReplaced, this);
-
 					this._aHistory = [];
 
 					// Add the initial home route entry to history
@@ -343,17 +397,16 @@ sap.ui.define([
 					}
 				}
 
-				oHashChanger.init();
+				this.oHashChanger.init();
 
-				// The event handler needs to be attached after hash changer is
 				// initialized because whether the current hash is parsed is
 				// controlled by the 'bSuppressHashParsing' parameter and the
 				// 'hashchanged' event which may be fired from hashChanger.init()
 				// shouldn't be processed.
-				oHashChanger.attachEvent("hashChanged", this.fnHashChanged);
+				this.oHashChanger.attachEvent("hashChanged", this.fnHashChanged);
 
 				if (!bIgnoreInitialHash) {
-					this.parse(oHashChanger.getHash());
+					this.parse(this.oHashChanger.getHash());
 				}
 
 				return this;
@@ -379,12 +432,53 @@ sap.ui.define([
 					this.oHashChanger.detachEvent("hashReplaced", this.fnHashReplaced);
 				}
 
+				if (this._matchedRoute) {
+					this._matchedRoute.fireEvent("switched");
+					this._matchedRoute = null;
+				}
+
 				this._bIsInitialized = false;
 
 				return this;
 
 			},
 
+			/**
+			 * Returns whether the router is stopped by calling {@link sap.ui.core.routing.Router#stop} function
+			 *
+			 * @return {boolean} whether the router is stopped
+			 * @public
+			 * @since 1.62
+			 */
+			isStopped: function() {
+				return this._bIsInitialized === false;
+			},
+
+			/**
+			 * Returns whether the router is initialized by calling {@link sap.ui.core.routing.Router#initialize}
+			 * function
+			 *
+			 * @return {boolean} whether the router is initialized
+			 * @public
+			 * @since 1.62
+			 */
+			isInitialized: function() {
+				return this._bIsInitialized === true;
+			},
+
+			getHashChanger: function() {
+				return this.oHashChanger;
+			},
+
+			setHashChanger: function(oHashChanger) {
+				if (this.oHashChanger) {
+					Log.warning("The Router already has a HashChanger set and this call is ignored");
+				} else {
+					this.oHashChanger = oHashChanger;
+				}
+
+				return this;
+			},
 
 			/**
 			 * Removes the router from the hash changer @see sap.ui.core.routing.HashChanger
@@ -393,6 +487,10 @@ sap.ui.define([
 			 * @returns { sap.ui.core.routing.Router } this for chaining.
 			 */
 			destroy : function () {
+				if (this.bIsDestroyed) {
+					return this;
+				}
+
 				EventProvider.prototype.destroy.apply(this);
 
 				// destroy the view cache
@@ -428,6 +526,7 @@ sap.ui.define([
 					this._oTargets = null;
 				}
 
+				delete this._bIsInitialized;
 				this.bIsDestroyed = true;
 
 				return this;
@@ -568,6 +667,7 @@ sap.ui.define([
 				}
 
 				if (bReplace) {
+					this._bLastHashReplaced = true;
 					this.oHashChanger.replaceHash(sURL);
 				} else {
 					this.oHashChanger.setHash(sURL);

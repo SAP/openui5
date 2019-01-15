@@ -251,12 +251,11 @@ sap.ui.define([
 		};
 
 		/**
-		 * Gets the value of showSideContent property.
+		 * Checks if the side content is visible.
 		 * @returns {boolean} Side content visibility state
-		 * @override
 		 * @public
 		 */
-		DynamicSideContent.prototype.getShowSideContent = function () {
+		DynamicSideContent.prototype.isSideContentVisible = function () {
 			if (this._currentBreakpoint === S) {
 				return this._SCVisible && this.getProperty("showSideContent");
 			} else {
@@ -265,12 +264,11 @@ sap.ui.define([
 		};
 
 		/**
-		 * Gets the value of showMainContent property.
-		 * @returns {boolean} Side content visibility state
-		 * @override
+		 * Checks if the main content is visible.
+		 * @returns {boolean} Main content visibility state
 		 * @public
 		 */
-		DynamicSideContent.prototype.getShowMainContent = function () {
+		DynamicSideContent.prototype.isMainContentVisible = function () {
 			if (this._currentBreakpoint === S) {
 				return this._MCVisible && this.getProperty("showMainContent");
 			} else {

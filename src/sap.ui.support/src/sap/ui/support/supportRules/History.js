@@ -11,6 +11,20 @@ sap.ui.define([
 function (library, IssueManager, RuleSetLoader, StringHistoryFormatter, AbapHistoryFormatter) {
 	"use strict";
 
+	/**
+	 * Analysis result which is created after analysis with the SupportAssistant.
+	 *
+	 * @typedef {map} sap.ui.support.AnalysisResult
+	 * @property {Object} loadedLibraries The loaded libraries.
+	 * @property {Object} analysisInfo Data for the performed analysis.
+	 * @property {Object} analysisMetadata The metadata provided in the analyze method, if any.
+	 * @property {Object[]} applicationInfo Array with information about the application.
+	 * @property {Object[]} technicalInfo Technical information.
+	 * @property {number} totalIssuesCount Count of the issues, found in the application.
+	 * @property {Object[]} issues Array with all the issues, which were found.
+	 * @public
+	 */
+
 	var _aRuns = [];
 
 	var _generateRootLevelKeys = function (oRun, sFormat) {
@@ -24,6 +38,7 @@ function (library, IssueManager, RuleSetLoader, StringHistoryFormatter, AbapHist
 			};
 		}
 
+		// when updating this object also update sap.ui.support.AnalysisResult
 		return {
 			loadedLibraries: {},
 			analysisInfo: {
@@ -145,7 +160,7 @@ function (library, IssueManager, RuleSetLoader, StringHistoryFormatter, AbapHist
 				rulePreset: oSelectedRulePreset,
 				scope: {
 					executionScope: {
-						type: oContext._oExecutionScope._getType(),
+						type: oContext._oExecutionScope.getType(),
 						selectors: oContext._oExecutionScope._getContext().parentId || oContext._oExecutionScope._getContext().components
 					}
 				},

@@ -169,34 +169,34 @@ sap.ui.require([
 		});
 	});
 
-opaTest('Should fail only on ACC issues, defined by a system preset, checked on specific scope', function (Given, When, Then) {
-	var dialogId = 'dialogWithRuleErrors';
-	var closeButtonId = 'dialogWithRuleErrorsCloseButton';
+	opaTest('Should fail only on ACC issues, defined by a system preset, checked on specific scope', function (Given, When, Then) {
+		var dialogId = 'dialogWithRuleErrors';
+		var closeButtonId = 'dialogWithRuleErrorsCloseButton';
 
-	When.waitFor({
-		viewName: 'Main',
-		id: 'firstButton',
-		actions: new Press(),
-		errorMessage: 'Did not find button to open the first dialog'
+		When.waitFor({
+			viewName: 'Main',
+			id: 'firstButton',
+			actions: new Press(),
+			errorMessage: 'Did not find button to open the first dialog'
+		});
+
+		Then.waitFor({
+			id: dialogId,
+			success: function () {
+				Opa5.assert.ok(true, 'Dialog opened');
+			}
+		});
+
+		Then.iShouldSeeNoACCErrors(dialogId);
+
+		Then.waitFor({
+			id: closeButtonId,
+			actions: new Press(),
+			success: function () {
+				Opa5.assert.ok(true, 'Dialog closed');
+			}
+		});
 	});
-
-	Then.waitFor({
-		id: dialogId,
-		success: function () {
-			Opa5.assert.ok(true, 'Dialog opened');
-		}
-	});
-
-	Then.iShouldSeeNoACCErrors(dialogId);
-
-	Then.waitFor({
-		id: closeButtonId,
-		actions: new Press(),
-		success: function () {
-			Opa5.assert.ok(true, 'Dialog closed');
-		}
-	});
-});
 
 	opaTest('Should pass without any issue, checked on specific scope with subset of rules', function (Given, When, Then) {
 		var dialogId = 'dialogWithNoRuleErrors';
@@ -230,6 +230,17 @@ opaTest('Should fail only on ACC issues, defined by a system preset, checked on 
 
 	opaTest('Should get report after tests execution', function (Given, When, Then) {
 		Then.iShouldGetSupportRuleReport();
+	});
+
+	opaTest('Should save report to window._$files with name AppTestReport.json', function (Given, When, Then) {
+		Then.waitFor({
+			success: function () {
+				Opa5.assert.getReportAsFileInFormat({
+					fileName: "AppTestReport.json"
+				});
+			}
+		});
+
 		Then.iTeardownMyAppFrame();
 	});
 

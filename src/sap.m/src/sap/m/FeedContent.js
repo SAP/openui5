@@ -98,8 +98,8 @@ sap.ui.define([
 	};
 
 	FeedContent.prototype.onBeforeRendering = function() {
-		this.$().unbind("mouseenter", this._addTooltip);
-		this.$().unbind("mouseleave", this._removeTooltip);
+		this.$().unbind("mouseenter");
+		this.$().unbind("mouseleave");
 	};
 
 	FeedContent.prototype.onAfterRendering = function() {

@@ -3,15 +3,62 @@
 /* Fiori 3 theme                */
 /* ============================ */
 
-@_sap_m_Token_BorderColor: darken(@sapUiButtonBackground, 10);
-@_sap_m_Token_HoverBorderColor: darken(@sapUiButtonHoverBackground, 5);
+@_sap_m_Token_Sys_Cancel_Icon: false;
+@_sap_m_Token_TokenPadding: 0.5rem;
+@_sap_m_Token_TokenCompactPadding: 0.25rem;
+@_sap_m_Token_LeftPadding: 0.3125rem;
+@_sap_m_Token_BorderColor: darken(@sapUiButtonBackground, 24);
+@_sap_m_Token_HoverBorderColor: darken(@sapUiButtonHoverBackground, 22);
+@_sap_m_Token_HoverBackgroundColor: darken(@sapUiButtonHoverBackground, 2);
+@_sap_m_Token_BackgroundColor: darken(@sapUiButtonBackground, 2);
+@_sap_m_Token_LeftPadding: 0.3125rem;
+@_sap_m_Token_TokenSize: @sapMFontSmallSize + (2 * @_sap_m_Token_TokenPadding) - @_sap_m_Token_LeftPadding;
+@_sap_m_Token_TokenCompactSize: @sapMFontSmallSize  + @_sap_m_Token_TokenCompactPadding;
 
 .sapMToken {
 	border: 1px solid @_sap_m_Token_BorderColor;
+	background: @_sap_m_Token_BackgroundColor;
+	font-size: @sapMFontMediumSize;
+	border-radius: 0.25rem;
+	padding-left: 0.3125rem;
+}
+
+.sapMTokenText {
+	max-width: calc(~"100% - " @_sap_m_Token_TokenSize);
+}
+
+.sapMTokenSelected,
+.sapMToken.sapMTokenReadOnly.sapMTokenSelected {
+	color: @sapUiToggleButtonPressedTextColor;
+	background: @sapUiToggleButtonPressedBackground;
+	border: 1px solid @sapUiToggleButtonPressedBorderColor;
+	border-radius: 0.25rem;
+}
+
+.sapMTokenSelected .sapMTokenIcon,
+.sapMTokenSelected .sapMTokenText {
+	color: @sapUiToggleButtonPressedTextColor;
 }
 
 html.sap-desktop .sapMToken:hover {
 	border: 1px solid @_sap_m_Token_HoverBorderColor;
+	background: @_sap_m_Token_HoverBackgroundColor;
+	border-radius: 0.25rem;
+}
+
+html.sap-desktop .sapMToken.sapMTokenSelected:hover {
+	background: @sapUiToggleButtonPressedHoverBackground;
+	border: 1px solid @sapUiToggleButtonPressedHoverBorderColor;
+	border-radius: 0.25rem;
+}
+
+.sapMTokenIcon {
+	font-size: @sapMFontSmallSize;
+	color: @sapUiContentIconColor;
+}
+
+.sapMToken.sapMTokenReadOnly {
+	color: @sapUiContentForegroundTextColor;
 }
 
 html.sap-desktop .sapMToken:focus {

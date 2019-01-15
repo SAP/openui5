@@ -3,11 +3,11 @@
 /* Fiori 3 theme                            */
 /* ======================================== */
 
-@_sap_ui_unified_Calendar_ItemColor: lighten(@sapUiContentForegroundColor,7);
-@_sap_ui_unified_Calendar_ItemHoverColor: darken(@sapUiContentForegroundColor,5);
+@_sap_ui_unified_Calendar_ItemColor: darken(@sapUiListBackground, 3);
+@_sap_ui_unified_Calendar_ItemHoverColor: darken(@sapUiListBackground, 15);
 @_sap_ui_unified_Calendar_ItemBorderColor: lighten(@sapUiListBorderColor, 10);
-@_sap_ui_unified_Calendar_ItemWeekEndColor: darken(@sapUiContentForegroundColor, 3);
-@_sap_ui_unified_Calendar_ItemWeekEndHoverColor: darken(@sapUiContentForegroundColor, 10);
+@_sap_ui_unified_Calendar_ItemWeekEndColor: darken(@sapUiListBackground, 13);
+@_sap_ui_unified_Calendar_ItemWeekEndHoverColor: darken(@sapUiListBackground, 20);
 @_sap_ui_unified_Calendar_ItemOtherMonthColor: lighten(@sapUiBaseText, 30);
 @_sap_ui_unified_Calendar_ItemSelBetweenColor: lighten(@sapUiSelected, 43);
 @_sap_ui_unified_Calendar_ItemSelBetweenHoverColor: lighten(@sapUiSelected, 35);
@@ -31,6 +31,11 @@
 @_sap_ui_unified_Calendar_sapUiCalItemType18: desaturate(@sapUiAccent8, 45);
 @_sap_ui_unified_Calendar_sapUiCalItemType19: darken(desaturate(@sapUiAccent6,60), 15);
 @_sap_ui_unified_Calendar_sapUiCalItemType20: darken(saturate(@sapUiAccent5, 30),20);
+
+.sapUiCalItem,
+.sapUiCalWeekNum {
+	height: 2.875rem;
+}
 
 /* calendar should have only a border if on popup */
 .sapUiCal[data-sap-ui-popup] {
@@ -93,8 +98,9 @@ html.sap-desktop .sapUiCalHead > .sapUiCalHeadB:active {
 	border: 0.0625rem solid @_sap_ui_unified_Calendar_ItemBorderColor;
 }
 
-.sapUiCalItem{
+.sapUiCalItem {
 	background-color: @_sap_ui_unified_Calendar_ItemColor;
+	border-radius: 0.25rem;
 }
 
 .sapUiCalRowWeekNumber {
@@ -112,6 +118,10 @@ html.sap-desktop .sapUiCalHead > .sapUiCalHeadB:active {
 .sapUiCalItem:focus {
 	outline: none;
 	overflow: visible;
+}
+
+html.sap-desktop .sapUiCalItem:focus {
+	background-color: darken(@sapUiListBackground, 15);
 }
 
 /* hover and focus makes only sense on desktops. On mobile devices it's not needed */
@@ -188,6 +198,7 @@ html.sap-desktop .sapUiCalItemWeekEnd:focus {
 
 .sapUiCalItemNow > .sapUiCalItemText {
 	line-height: 2.6875rem;
+	border-radius: 0.25rem;
 }
 
 .sapUiCalItemOtherMonth {
@@ -202,7 +213,7 @@ html.sap-desktop .sapUiCalItemOtherMonth:focus {
 
 .sapUiCalItemSel {
 	color: @sapUiContentContrastTextColor;
-	background-color: @sapUiSelected;
+	background-color: @sapUiActive;
 }
 
 .sapUiCalItemSel.sapUiCalItemOtherMonth {
@@ -211,13 +222,13 @@ html.sap-desktop .sapUiCalItemOtherMonth:focus {
 
 .sapUiCalItemSelBetween,
 .sapUiCalItemSelBetween.sapUiCalItemOtherMonth {
-	background-color: @_sap_ui_unified_Calendar_ItemSelBetweenColor;
+	background-color: @sapUiListSelectionBackgroundColor;
 	color: @sapUiBaseText;
 }
 
 html.sap-desktop .sapUiCalItemSel:hover,
 html.sap-desktop .sapUiCalItemSel:focus {
-	background-color: darken(@sapUiSelected, 10);
+	background-color: lighten(@sapUiActive, 3);
 }
 
 html[data-sap-ui-browser^="ie"].sap-desktop .sapUiCalMonthPicker .sapUiCalItemSel:focus,
@@ -228,7 +239,7 @@ html[data-sap-ui-browser^="ie"].sap-desktop .sapUiCalYearPicker .sapUiCalItemSel
 
 html.sap-desktop .sapUiCalItemSelBetween:hover,
 html.sap-desktop .sapUiCalItemSelBetween:focus {
-	background-color: @_sap_ui_unified_Calendar_ItemSelBetweenHoverColor;
+	background-color: @sapUiListSelectionHoverBackground;
 }
 
 .sapUiCalItemNow.sapUiCalItemSel {
@@ -236,7 +247,7 @@ html.sap-desktop .sapUiCalItemSelBetween:focus {
 }
 
 .sapUiCalItemNow.sapUiCalItemSel > .sapUiCalItemText{
-	box-shadow: inset 0.0625rem 0.0625rem 0 0 @_sap_ui_unified_Calendar_ItemBorderColor, inset -0.0625rem -0.0625rem 0 0 @_sap_ui_unified_Calendar_ItemBorderColor;
+	box-shadow: inset 0.0625rem 0.0625rem 0.125rem 0 @_sap_ui_unified_Calendar_ItemBorderColor, inset -0.0625rem -0.0625rem 0.125rem 0 @_sap_ui_unified_Calendar_ItemBorderColor;
 }
 
 .sapUiCalItemNow.sapUiCalItemSelBetween{

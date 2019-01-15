@@ -6,14 +6,18 @@ sap.ui.define([
 	'sap/ui/test/autowaiter/_autoWaiter',
 	"sap/m/CheckBox",
 	"sap/m/Button",
-	"sap/m/Dialog"
+	"sap/m/Dialog",
+	"sap/ui/core/mvc/View",
+	"./utils/view"
 ], function (OpaPlugin,
 			 Interactable,
 			 Visible,
 			 _autoWaiter,
 			 CheckBox,
 			 Button,
-			 Dialog) {
+			 Dialog,
+			 View,
+			 viewUtils) {
 	"use strict";
 
 
@@ -347,30 +351,12 @@ sap.ui.define([
 		assert.strictEqual(aRetrievedControls.length, 0);
 	});
 
-	function createXmlView(sViewName) {
-		var sView = [
-			'<core:View xmlns:core="sap.ui.core" xmlns="sap.m">',
-			'<Button id="foo">',
-			'</Button>',
-			'<Button id="bar">',
-			'</Button>',
-			'<Button id="baz">',
-			'</Button>',
-			'<Image id="boo"></Image>',
-			'</core:View>'
-		].join('');
-		var oView;
-
-		oView = sap.ui.xmlview({id: "myViewWithAb", viewContent: sView});
-		oView.setViewName(sViewName);
-		return oView;
-	}
-
 	QUnit.module("OpaPlugin - Controls in a view", {
 		beforeEach: function () {
-			this.oView = createXmlView("bar");
+			this.oView = viewUtils.createXmlView("bar", "myFooBarView");
+			this.oView.placeAt("qunit-fixture");
+			sap.ui.getCore().applyChanges();
 
-			// System under Test
 			this.oPlugin = new OpaPlugin();
 			this.fnLogSpy = sinon.spy(this.oPlugin._oLogger, "debug");
 		},
@@ -386,7 +372,7 @@ sap.ui.define([
 			viewName: "notexistingview"
 		});
 
-		sinon.assert.calledWith(this.fnLogSpy, "Found no view with the name: 'notexistingview'");
+		sinon.assert.calledWith(this.fnLogSpy, "Found no view with ID 'undefined' and viewName 'notexistingview'");
 		assert.strictEqual(aAllControlsInTheView.length, 0);
 	});
 
@@ -396,7 +382,7 @@ sap.ui.define([
 			id: "foo"
 		});
 
-		sinon.assert.calledWith(this.fnLogSpy, "Found no view with the name: 'notexistingview'");
+		sinon.assert.calledWith(this.fnLogSpy, "Found no view with ID 'undefined' and viewName 'notexistingview'");
 		assert.strictEqual(aAllControlsInTheView, null);
 	});
 
@@ -409,67 +395,43 @@ sap.ui.define([
 		assert.strictEqual(aAllControlsInTheView.length, 4);
 	});
 
-	QUnit.test("Should get a single control of a view", function(assert) {
-		// Arrange
-		this.oView.placeAt("qunit-fixture");
-		sap.ui.getCore().applyChanges();
-
-		//Act
+	QUnit.test("Should get a single control of a view when ID is given as string", function(assert) {
 		var oRetrievedButton = this.oPlugin.getMatchingControls({
 			viewNamespace : "",
 			viewName : "bar",
 			id : "foo"
 		});
 
-		// Assert
 		assert.strictEqual(oRetrievedButton.getId(), this.oView.byId("foo").getId(), "did return the foo button as first element");
 	});
 
-	QUnit.test("Should get a single control of a view when the control type is also given", function(assert) {
-		// Arrange
-		this.oView.placeAt("qunit-fixture");
-		sap.ui.getCore().applyChanges();
-
-		//Act
+	QUnit.test("Should get a single control of a view when ID is string and the control type is also given", function(assert) {
 		var oRetrievedButton = this.oPlugin.getMatchingControls({
 			controlType: "sap.m.Button",
 			viewName : "bar",
 			id : "foo"
 		});
 
-		// Assert
 		assert.strictEqual(oRetrievedButton.getId(), this.oView.byId("foo").getId(), "did return the foo button as first element");
 	});
 
 	QUnit.test("Should log if a control with an id is not found in a view", function(assert) {
-		// Arrange
-		this.oView.placeAt("qunit-fixture");
-		sap.ui.getCore().applyChanges();
-
-		//Act
 		var oResult = this.oPlugin.getMatchingControls({
 			viewName : "bar",
 			id : "notexistingcontrol"
 		});
 
-		// Assert
 		assert.strictEqual(oResult, null, "returned null");
 		sinon.assert.calledWith(this.fnLogSpy, "Found no control with ID 'notexistingcontrol' in view 'bar'");
 	});
 
 	QUnit.test("Should get multiple controls of a view", function(assert) {
-		// Arrange
-		this.oView.placeAt("qunit-fixture");
-		sap.ui.getCore().applyChanges();
-
-		//Act
 		var aRetrievedButtons = this.oPlugin.getMatchingControls({
 			viewNamespace : "",
 			viewName : "bar",
 			id : ["foo","bar"]
 		});
 
-		// Assert
 		assert.strictEqual(aRetrievedButtons.length, 2, "did return all the buttons");
 		assert.strictEqual(aRetrievedButtons[0].getId(), this.oView.byId("foo").getId(), "did return the foo button as first element");
 		assert.strictEqual(aRetrievedButtons[1].getId(), this.oView.byId("bar").getId(), "did return the bar button as second element");
@@ -522,6 +484,83 @@ sap.ui.define([
 		assert.strictEqual(aRetrievedButtons.length, 2, "did return all buttons with b in the id");
 		assert.strictEqual(aRetrievedButtons[0].getId(), this.oView.byId("bar").getId(), "did return the bar button as first element");
 		assert.strictEqual(aRetrievedButtons[1].getId(), this.oView.byId("baz").getId(), "did return the baz button as second element");
+	});
+
+	QUnit.test("Should match controls by controlType and view ID", function (assert) {
+		var aMatchedButtons = this.oPlugin.getMatchingControls({
+			viewId: "myFooBarView",
+			controlType: "sap.m.Button"
+		});
+
+		assert.strictEqual(aMatchedButtons.length, 3, "Should match all buttons in the view");
+		assert.strictEqual(aMatchedButtons[0].getId(), "myFooBarView--foo", "Should match the first button");
+		assert.strictEqual(aMatchedButtons[1].getId(), "myFooBarView--bar", "Should match the second button");
+		assert.strictEqual(aMatchedButtons[2].getId(), "myFooBarView--baz", "Should match the third button");
+		sinon.assert.calledWith(this.fnLogSpy, "Found view with ID 'myFooBarView' and viewName 'undefined'");
+	});
+
+	QUnit.test("Should match controls by string ID and view ID", function (assert) {
+		var oMatchedButton = this.oPlugin.getMatchingControls({
+			viewId: "myFooBarView",
+			id: "foo"
+		});
+
+		assert.strictEqual(oMatchedButton.getId(), "myFooBarView--foo", "Should match the button with exact ID in the view");
+		sinon.assert.calledWith(this.fnLogSpy, "Found view with ID 'myFooBarView' and viewName 'undefined'");
+	});
+
+	QUnit.test("Should match controls by viewName and view ID", function (assert) {
+		var aMatchedButtons = this.oPlugin.getMatchingControls({
+			viewId: "myFooBarView",
+			viewName: "bar",
+			controlType: "sap.m.Button"
+		});
+
+		assert.strictEqual(aMatchedButtons.length, 3, "Should match all controls");
+		sinon.assert.calledWith(this.fnLogSpy, "Found view with ID 'myFooBarView' and viewName 'bar'");
+	});
+
+	QUnit.test("Should not match controls if viewID is not an ID of a view", function (assert) {
+		var aMatchedButtons = this.oPlugin.getMatchingControls({
+			viewId: "foo",
+			controlType: "sap.m.Button"
+		});
+
+		assert.ok(!aMatchedButtons.length, "Should not match any controls");
+		sinon.assert.calledWith(this.fnLogSpy, "Found no view with ID 'foo' and viewName 'undefined'");
+	});
+
+	QUnit.test("Should not match controls by correct view ID if viewName is wrong", function (assert) {
+		var aMatchedButtons = this.oPlugin.getMatchingControls({
+			viewId: "myFooBarView",
+			viewName: "notexistingview",
+			controlType: "sap.m.Button"
+		});
+
+		assert.ok(!aMatchedButtons.length, "Should not match any controls");
+		sinon.assert.calledWith(this.fnLogSpy, "Found no view with ID 'myFooBarView' and viewName 'notexistingview'");
+	});
+
+	QUnit.test("Should not match controls by correct viewName if view ID is wrong", function (assert) {
+		var aMatchedButtons = this.oPlugin.getMatchingControls({
+			viewId: "myNotExistingView",
+			viewName: "bar",
+			controlType: "sap.m.Button"
+		});
+
+		assert.ok(!aMatchedButtons.length, "Should not match any controls");
+		sinon.assert.calledWith(this.fnLogSpy, "Found no view with ID 'myNotExistingView' and viewName 'bar'");
+	});
+
+	QUnit.test("Should ignore viewNamespace when matching by viewId", function (assert) {
+		var aMatchedButtons = this.oPlugin.getMatchingControls({
+			viewNamespace: "someNameSpace",
+			viewId: "myFooBarView",
+			controlType: "sap.m.Button"
+		});
+
+		assert.strictEqual(aMatchedButtons.length, 3, "Should match all controls");
+		sinon.assert.calledWith(this.fnLogSpy, "Found view with ID 'myFooBarView' and viewName 'undefined'");
 	});
 
 	QUnit.module("OpaPlugin - initialization", {
@@ -685,6 +724,8 @@ sap.ui.define([
 			].join('');
 			this.oView = sap.ui.xmlview({id: "viewWithDialog", viewContent: sViewContent});
 			this.oView.setViewName("testView");
+			this.oView.placeAt("qunit-fixture");
+			sap.ui.getCore().applyChanges();
 		},
 		afterEach: function () {
 			this.oView.destroy();
@@ -710,17 +751,33 @@ sap.ui.define([
 		oDialog.open();
 	});
 
-	QUnit.test("Should match controls in open dialog by ID and viewName", function (assert) {
+	QUnit.test("Should match controls in open dialog by ID and view", function (assert) {
 		var oPlugin = new OpaPlugin();
 		var fnStart = assert.async();
 		var oDialog = sap.ui.getCore().byId("viewWithDialog--myDialog");
 		oDialog.attachAfterOpen(function () {
-			var oControlWithStrictID = oPlugin.getMatchingControls({
+			var oControlWithViewName = oPlugin.getMatchingControls({
 				searchOpenDialogs: true,
 				viewName: "testView",
 				id: "fooInDialog"
 			});
-			assert.strictEqual(oControlWithStrictID.getId(), "viewWithDialog--fooInDialog", "Should match button with same ID and ignore viewId prefix");
+
+			var oControlWithViewId = oPlugin.getMatchingControls({
+				searchOpenDialogs: true,
+				viewId: "viewWithDialog",
+				id: "fooInDialog"
+			});
+
+			var oControlWithViewNameAndId = oPlugin.getMatchingControls({
+				searchOpenDialogs: true,
+				viewName: "testView",
+				viewId: "viewWithDialog",
+				id: "fooInDialog"
+			});
+
+			assert.strictEqual(oControlWithViewName.getId(), "viewWithDialog--fooInDialog", "Should match button with same ID and ignore viewId prefix when viewName is given");
+			assert.strictEqual(oControlWithViewId.getId(), "viewWithDialog--fooInDialog", "Should match button with same ID and ignore viewId prefix when view ID is given");
+			assert.strictEqual(oControlWithViewNameAndId.getId(), "viewWithDialog--fooInDialog", "Should match button with same ID and ignore viewId prefix when viewName and view ID are given");
 
 			fnStart();
 		});
@@ -728,7 +785,7 @@ sap.ui.define([
 		oDialog.open();
 	});
 
-	QUnit.test("Should match controls in open dialog by ID with no viewName", function (assert) {
+	QUnit.test("Should match controls in open dialog by ID with no viewName or viewID", function (assert) {
 		var oPlugin = new OpaPlugin();
 		var fnStart = assert.async();
 		var oDialog = sap.ui.getCore().byId("viewWithDialog--myDialog");
@@ -822,6 +879,9 @@ sap.ui.define([
 			options: { viewName : valueAndExpected.value },
 			testedProperty: "viewName"
 		},{
+			options: { viewId : valueAndExpected.value },
+			testedProperty: "viewId"
+		},{
 			options: { controlType : valueAndExpected.value },
 			testedProperty: "controlType"
 		},{
@@ -852,11 +912,12 @@ sap.ui.define([
 		});
 	});
 
-	QUnit.module("Prepare a correct viewName", {
+	QUnit.module("OpaPlugin - Prepare a correct viewName", {
 		beforeEach: function () {
-			this.oView = createXmlView("sample.viewNamespace.viewName");
+			this.oView = viewUtils.createXmlView("sample.viewNamespace.viewName", "myViewSample");
+			this.oView.placeAt("qunit-fixture");
+			sap.ui.getCore().applyChanges();
 
-			// System under Test
 			this.oPlugin = new OpaPlugin();
 		},
 		afterEach: function () {
@@ -889,6 +950,62 @@ sap.ui.define([
 			var aAllControlsInTheView = this.oPlugin.getMatchingControls(value);
 			assert.strictEqual(aAllControlsInTheView.length, 4);
 		});
+	});
+
+	QUnit.module("OpaPlugin - getView", {
+		beforeEach: function () {
+			this.oPlugin = new OpaPlugin();
+			this.fnLogSpy = sinon.spy(this.oPlugin._oLogger, "debug");
+			this.sViewName = "sample.viewNamespace.viewName";
+			this.oSampleView = viewUtils.createXmlView(this.sViewName, "mySampleView");
+			this.oOtherView = viewUtils.createXmlView(this.sViewName, "myOtherView");
+			this.oNoMatchView = viewUtils.createXmlView("differentName", "noMatch");
+		},
+		afterEach: function () {
+			this.fnLogSpy.restore();
+			this.oSampleView.destroy();
+			this.oOtherView.destroy();
+			this.oNoMatchView.destroy();
+		}
+	});
+
+	QUnit.test("Should return only one visible view", function (assert) {
+		this.oSampleView.placeAt("qunit-fixture");
+		sap.ui.getCore().applyChanges();
+
+		var aViews = this.oPlugin.getAllControls(View, "View");
+		var oMatchedView = this.oPlugin.getView(this.sViewName);
+
+		assert.strictEqual(aViews.length, 3, "Should find all controls of type View");
+		assert.strictEqual(oMatchedView.getId(), "mySampleView", "Should match only visible views");
+		sinon.assert.calledWith(this.fnLogSpy, "Found 1 views with viewName '" + this.sViewName + "'");
+	});
+
+	QUnit.test("Should return view with matching name", function (assert) {
+		this.oSampleView.placeAt("qunit-fixture");
+		this.oNoMatchView.placeAt("qunit-fixture");
+		sap.ui.getCore().applyChanges();
+
+		var aViews = this.oPlugin.getAllControls(View, "View");
+		var oMatchedView = this.oPlugin.getView(this.sViewName);
+
+		assert.strictEqual(aViews.length, 3, "Should find all controls of type View");
+		assert.strictEqual(oMatchedView.getId(), "mySampleView", "Should match only views with correct viewName");
+		sinon.assert.calledWith(this.fnLogSpy, "Found 1 views with viewName '" + this.sViewName + "'");
+	});
+
+	QUnit.test("Should return nothing when more than one views have the same name", function (assert) {
+		this.oSampleView.placeAt("qunit-fixture");
+		this.oOtherView.placeAt("qunit-fixture");
+		sap.ui.getCore().applyChanges();
+
+		var aViews = this.oPlugin.getAllControls(View, "View");
+		var oMatchedView = this.oPlugin.getView(this.sViewName);
+
+		assert.strictEqual(aViews.length, 3, "Should find all controls of type View");
+		assert.ok(!oMatchedView, "Should not match views with duplicate name");
+		sinon.assert.calledWith(this.fnLogSpy, "Found 2 views with viewName '" + this.sViewName + "'");
+		sinon.assert.calledWithMatch(this.fnLogSpy, "Please provide viewId");
 	});
 
 	jQuery(function () {

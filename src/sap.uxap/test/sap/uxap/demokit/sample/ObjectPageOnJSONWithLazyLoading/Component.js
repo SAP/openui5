@@ -19,6 +19,9 @@ sap.ui.define(["sap/ui/core/UIComponent"], function (UIComponent) {
 					files: [
 						"ObjectPageOnJSONWithLazyLoading.view.xml",
 						"ObjectPageOnJSONWithLazyLoading.controller.js",
+						"../SharedBlocks/employment/EmploymentBlockJob.js",
+						"../SharedBlocks/employment/EmploymentBlockJobCollapsed.view.xml",
+						"../SharedBlocks/employment/EmploymentBlockJobExpanded.view.xml",
 						"HRData.json"
 					]
 				}

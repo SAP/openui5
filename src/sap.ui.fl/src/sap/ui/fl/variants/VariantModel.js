@@ -153,7 +153,7 @@ sap.ui.define([
 
 		this.updateHasherEntry({
 			parameters: aParameterValues,
-			updateURL: !this._bAdaptationMode
+			updateURL: !this._bDesignTimeMode
 		});
 	};
 
@@ -168,7 +168,7 @@ sap.ui.define([
 
 		if (mHashParameters) {
 			// in UI Adaptation the parameters are empty, so the current URL parameters are retrieved from hash register
-			if (this._bAdaptationMode) {
+			if (this._bDesignTimeMode) {
 				mHashParameters = {};
 				mHashParameters[this.sVariantTechnicalParameterName] = VariantUtil.getCurrentHashParamsFromRegister.call(this);
 			}
@@ -330,6 +330,8 @@ sap.ui.define([
 					oDuplicateChangeData.support = {};
 				}
 				oDuplicateChangeData.support.sourceChangeFileName = oChange.fileName;
+				// For new change instances the package name needs to be reset to $TMP, BCP: 1870561348
+				oDuplicateChangeData.packageName = "$TMP";
 				oDuplicateChangeContent = Change.createInitialFileContent(oDuplicateChangeData);
 				aSameLayerChanges.push(new Change(oDuplicateChangeContent));
 			}
@@ -508,7 +510,7 @@ sap.ui.define([
 						// if default variant is changed from the current variant, then add the current variant id as a variant URI parameter
 						this.updateHasherEntry({
 							parameters: aHashParameters.concat(oData[sVariantManagementReference].currentVariant),
-							updateURL: !this._bAdaptationMode
+							updateURL: !this._bDesignTimeMode
 						});
 					} else if (
 						oData[sVariantManagementReference].defaultVariant === oData[sVariantManagementReference].currentVariant
@@ -518,7 +520,7 @@ sap.ui.define([
 						aHashParameters.splice(aHashParameters.indexOf(oData[sVariantManagementReference].currentVariant), 1);
 						this.updateHasherEntry({
 							parameters: aHashParameters,
-							updateURL: !this._bAdaptationMode
+							updateURL: !this._bDesignTimeMode
 						});
 					}
 				}
@@ -628,9 +630,9 @@ sap.ui.define([
 		}
 	};
 
-	VariantModel.prototype._setModelPropertiesForControl = function(sVariantManagementReference, bAdaptationMode, oControl) {
-		var fnRemove = function(oVariant, sVariantManagementReference, bAdaptationMode) {
-			if ((oVariant.layer === Utils.getCurrentLayer(!bAdaptationMode)) && (oVariant.key !== sVariantManagementReference)) {
+	VariantModel.prototype.setModelPropertiesForControl = function(sVariantManagementReference, bDesignTimeMode, oControl) {
+		var fnRemove = function(oVariant, sVariantManagementReference, bDesignTimeMode) {
+			if ((oVariant.layer === Utils.getCurrentLayer(!bDesignTimeMode)) && (oVariant.key !== sVariantManagementReference)) {
 				return true;
 			} else {
 				return false;
@@ -641,16 +643,16 @@ sap.ui.define([
 		this.oData[sVariantManagementReference].showFavorites = true;
 
 		// only first time - should not be executed for each variant management control
-		if (this._bAdaptationMode !== bAdaptationMode) {
+		if (this._bDesignTimeMode !== bDesignTimeMode) {
 			var mPropertyBag = {};
-			if (bAdaptationMode) {
+			if (bDesignTimeMode) {
 				// Clear the URL parameter on adaptation mode (set to default variant = clear)
 				mPropertyBag = {
 					parameters: [],
 					updateURL: true,
 					ignoreRegisterUpdate: true
 				};
-			} else if (this._bAdaptationMode) { // initially this._bAdaptationMode is undefined
+			} else if (this._bDesignTimeMode) { // initially this._bDesignTimeMode is undefined
 				mPropertyBag = {
 					parameters: VariantUtil.getCurrentHashParamsFromRegister.call(this),
 					updateURL: true,
@@ -658,7 +660,7 @@ sap.ui.define([
 				};
 			}
 			this.updateHasherEntry(mPropertyBag);
-			this._bAdaptationMode = bAdaptationMode;
+			this._bDesignTimeMode = bDesignTimeMode;
 		}
 
 		if (!(typeof this.fnManageClick === "function" && typeof this.fnManageClickRta === "function")) {
@@ -667,14 +669,15 @@ sap.ui.define([
 		oControl.detachManage(this.fnManageClick, this); /* attach done below */
 		oControl.detachManage(this.fnManageClickRta, this); /* attach done in this.manageVariants() */
 
-		if (bAdaptationMode) {
+		if (bDesignTimeMode) {
 			// Runtime Adaptation Settings
 			this.oData[sVariantManagementReference].variantsEditable = false;
 
+			// Properties for variant management control's internal model
 			this.oData[sVariantManagementReference].variants.forEach(function(oVariant) {
 				oVariant.rename = true;
 				oVariant.change = true;
-				oVariant.remove = fnRemove(oVariant, sVariantManagementReference, bAdaptationMode);
+				oVariant.remove = fnRemove(oVariant, sVariantManagementReference, bDesignTimeMode);
 			});
 		} else {
 			// Personalization Settings
@@ -684,8 +687,10 @@ sap.ui.define([
 				}, this.fnManageClick, this);
 
 				this.oData[sVariantManagementReference].variantsEditable = true;
+
+				// Properties for variant management control's internal model
 				this.oData[sVariantManagementReference].variants.forEach(function(oVariant) {
-					oVariant.remove = fnRemove(oVariant, sVariantManagementReference, bAdaptationMode);
+					oVariant.remove = fnRemove(oVariant, sVariantManagementReference, bDesignTimeMode);
 					// Check for end-user variant
 					if (oVariant.layer === Utils.getCurrentLayer(true)) {
 						oVariant.rename = true;
@@ -833,7 +838,7 @@ sap.ui.define([
 			//attach binding change event on VariantManagement control title
 			oVariantManagementControl.getTitle().getBinding("text").attachEvent("change", {control: oVariantManagementControl}, this._handleCurrentVariantChange, this);
 
-			this._setModelPropertiesForControl(sVariantManagementReference, false, oVariantManagementControl);
+			this.setModelPropertiesForControl(sVariantManagementReference, false, oVariantManagementControl);
 
 			oVariantManagementControl.attachSave(this._handleSave, this);
 

@@ -166,6 +166,8 @@ sap.ui.define([
 
 	QUnit.module("Scrolling", {
 		beforeEach: function () {
+			var oCore = sap.ui.getCore();
+
 			this.OFFSET = 10;
 			this.oItem1 = new FlexBox({
 				height: "120px",
@@ -193,7 +195,17 @@ sap.ui.define([
 				width: '400px'
 			});
 			this.oHeaderContainer.placeAt("qunit-fixture");
-			sap.ui.getCore().applyChanges();
+			oCore.applyChanges();
+
+			if (!oCore.isThemeApplied()) {
+				return new Promise(function (resolve) {
+					function themeChanged() {
+						resolve();
+						oCore.detachThemeChanged(themeChanged);
+					}
+					oCore.attachThemeChanged(themeChanged);
+				});
+			}
 		},
 		afterEach: function () {
 			this.oHeaderContainer.destroy();
@@ -248,16 +260,13 @@ sap.ui.define([
 		}
 	});
 
-	QUnit.skip("Scrolling by item, using _getScrollValue, scroll 100", function (assert) {
+	QUnit.test("Scrolling by item, using _getScrollValue, scroll 100", function (assert) {
 		assert.equal(this.oHeaderContainer._getScrollValue(true), this.oItem1.$().parent().outerWidth(true) + this.OFFSET);
 		assert.equal(this.oHeaderContainer._getScrollValue(false), 0);
-		var done = assert.async();
+
 		this.oHeaderContainer._scroll(100, 0);
-		setTimeout(function () {
-			assert.equal(this.oHeaderContainer._getScrollValue(true), this.oItem1.$().parent().outerWidth(true) + this.OFFSET - 100);
-			assert.equal(this.oHeaderContainer._getScrollValue(false), -100);
-			done();
-		}.bind(this), 500);
+		assert.equal(this.oHeaderContainer._getScrollValue(true), this.oItem1.$().parent().outerWidth(true) + this.OFFSET - 100);
+		assert.equal(this.oHeaderContainer._getScrollValue(false), -100);
 	});
 
 	QUnit.test("Shifting content to the left", function (assert) {

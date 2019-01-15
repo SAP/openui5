@@ -14,28 +14,24 @@
                 <grid:layoutS>
                     <grid:GridSettings
                         gridTemplateColumns="repeat(auto-fit, 8rem)"
-                        gridAutoRows="1fr"
                         gridGap="0.25rem 0.25rem">
                     </grid:GridSettings>
                 </grid:layoutS>
                 <grid:layoutM>
                     <grid:GridSettings
                         gridTemplateColumns="repeat(auto-fit, 12rem)"
-                        gridAutoRows="1fr"
                         gridGap="0.5rem 0.5rem">
                     </grid:GridSettings>
                 </grid:layoutM>
                 <grid:layoutL>
                     <grid:GridSettings
                         gridTemplateColumns="repeat(auto-fit, 16rem)"
-                        gridAutoRows="1fr"
                         gridGap="0.75rem 0.75rem">
                     </grid:GridSettings>
                 </grid:layoutL>
                 <grid:layoutXL>
                     <grid:GridSettings
                         gridTemplateColumns="repeat(auto-fit, 20rem)"
-                        gridAutoRows="1fr"
                         gridGap="1rem 1rem">
                     </grid:GridSettings>
                 </grid:layoutXL>
@@ -64,14 +60,12 @@
                 <grid:layoutS>
                     <grid:GridSettings
                         gridTemplateColumns="repeat(auto-fit, 8rem)"
-                        gridAutoRows="1fr"
                         gridGap="0.25rem 0.25rem">
                     </grid:GridSettings>
                 </grid:layoutS>
                 <grid:layout>
                     <grid:GridSettings
                         gridTemplateColumns="repeat(auto-fit, 20rem)"
-                        gridAutoRows="1fr"
                         gridGap="1rem 1rem">
                     </grid:GridSettings>
                 </grid:layout>

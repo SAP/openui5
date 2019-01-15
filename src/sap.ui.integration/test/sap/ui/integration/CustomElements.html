@@ -1,0 +1,30 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+	<meta http-equiv="X-UA-Compatible" content="IE=edge">
+	<meta charset="utf-8">
+	<title>Custom Elements for sap.ui.integration</title>
+	<script src="../../../../resources/sap-ui-integration.js" tags="card,host-configuration" prefix="ui"></script>
+	<script>
+		function createCard() {
+			var oDiv = document.createElement("div");
+			oDiv.innerHTML =
+				'<ui-card manifest="./widgets/cardmanifests/list.manifest.json" hostConfigurationId="myStyle"></ui-card>';
+			document.body.appendChild(oDiv);
+		}
+	</script>
+</head>
+
+<body>
+
+	<ui-host-configuration config="./host/sampleHostConfigDark.json" id="myStyle">
+	</ui-host-configuration>
+	<ui-card manifest="./widgets/cardmanifests/list.manifest.json" hostConfigurationId="myStyle"></ui-card>
+	<ui-card manifest="./widgets/cardmanifests/list.manifest.json" hostConfigurationId="myStyle"></ui-card>
+	<div>
+		<button onclick="createCard()">Add Card</button>
+	</div>
+</body>
+
+</html>

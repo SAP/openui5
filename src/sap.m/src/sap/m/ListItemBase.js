@@ -111,11 +111,26 @@ function(
 
 			/**
 			 * Defines the highlight state of the list items.
-			 * Valid values for the <code>highlight</code> property are values of the enumerations {@link sap.ui.core.MessageType} or {@link sap.ui.core.IndicationColor}.
-			 * <b>Note:</b> There is no accessibility support for the indication colors.
+			 *
+			 * Valid values for the <code>highlight</code> property are values of the enumerations {@link sap.ui.core.MessageType} or
+			 * {@link sap.ui.core.IndicationColor}.
+			 *
+			 * Accessibility support is provided through the associated {@link sap.m.ListItemBase#setHighlightText highlightText} property.
+			 * If the <code>highlight</code> property is set to a value of {@link sap.ui.core.MessageType}, the <code>highlightText</code>
+			 * property does not need to be set because a default text is used. However, the default text can be overridden by setting the
+			 * <code>highlightText</code> property.
+			 * In all other cases the <code>highlightText</code> property must be set.
+			 *
 			 * @since 1.44.0
 			 */
-			highlight : {type : "string", group : "Appearance", defaultValue : "None"}
+			highlight : {type : "string", group : "Appearance", defaultValue : "None"},
+
+			/**
+			 * Defines the semantics of the {@link sap.m.ListItemBase#setHighlight highlight} property for accessibility purposes.
+			 *
+			 * @since 1.62
+			 */
+			highlightText : {type : "string", group : "Misc", defaultValue : ""}
 		},
 		associations: {
 
@@ -375,8 +390,14 @@ function(
 			aOutput.push(oBundle.getText("LIST_ITEM_SELECTED"));
 		}
 
-		if (sHighlight != MessageType.None && MessageType[sHighlight]) {
-			aOutput.push(oBundle.getText("LIST_ITEM_STATE_" + sHighlight.toUpperCase()));
+		if (sHighlight !== MessageType.None) {
+			var sHighlightText = this.getHighlightText();
+
+			if (sHighlight in MessageType && !sHighlightText) {
+				sHighlightText = oBundle.getText("LIST_ITEM_STATE_" + sHighlight.toUpperCase());
+			}
+
+			aOutput.push(sHighlightText);
 		}
 
 		if (this.getUnread() && this.getListProperty("showUnread")) {
@@ -668,10 +689,10 @@ function(
 	};
 
 	ListItemBase.prototype.setHighlight = function(sValue) {
-		if (sValue == null /* null or undefined */) {
+		if (sValue == null) {
 			sValue = MessageType.None;
 		} else if (!DataType.getType("sap.ui.core.MessageType").isValid(sValue) && !DataType.getType("sap.ui.core.IndicationColor").isValid(sValue)) {
-			throw new Error("\"" + sValue + "\" is not a value of the enums sap.ui.core.MessageType or sap.ui.core.IndicationColor for property \"highlight\" of " + this);
+			throw new Error('"' + sValue + '" is not a value of the enums sap.ui.core.MessageType or sap.ui.core.IndicationColor for property "highlight" of ' + this);
 		}
 
 		return this.setProperty("highlight", sValue);

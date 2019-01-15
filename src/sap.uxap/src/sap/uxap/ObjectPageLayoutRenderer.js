@@ -102,6 +102,9 @@ sap.ui.define(["sap/ui/Device"],
 			if (!bNavigationLabelSet) {
 				oRm.writeAttributeEscaped("aria-label", sNavigationAriaLabelText);
 			}
+			if (!oControl._bHeaderInTitleArea) {
+				oRm.writeAttribute("aria-hidden", "true");
+			}
 			oRm.addClass("sapUxAPObjectPageStickyAnchorBar");
 			oRm.addClass("sapUxAPObjectPageNavigation");
 

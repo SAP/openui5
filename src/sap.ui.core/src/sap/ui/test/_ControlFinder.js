@@ -118,7 +118,7 @@ sap.ui.define([
      * @private
      */
     _ControlFinder._getControlForElement = function (vElement) {
-        var vSelector = Object.prototype.toString.call(vElement) === "[object String]" ? "#" + vElement : vElement;
+        var vSelector = Object.prototype.toString.call(vElement) === "[object String]" ? document.getElementById(vElement) : vElement;
         var controls = _ControlFinder._getIdentifiedDOMElement(vSelector).control();
         return controls && controls[0];
     };

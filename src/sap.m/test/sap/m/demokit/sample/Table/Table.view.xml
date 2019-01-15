@@ -32,6 +32,9 @@
 						placeholder="Sticky options"
 						selectionFinish="onSelectionFinish"
 						width="15%">
+						<layoutData>
+							<ToolbarLayoutData minWidth="4rem"/>
+						</layoutData>
 						<items>
 							<core:Item  text="Column headers"
 								key="ColumnHeaders"/>

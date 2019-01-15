@@ -127,6 +127,25 @@
 					"titleTarget": "product"
 				},
 				{
+				  "pattern": "category/{id}/compare/:item1Id:/:item2Id:",
+				  "name": "comparison",
+				  "target": [
+					"category",
+					"comparison"
+				  ],
+				  "titleTarget": "comparison"
+				},
+				{
+				  "pattern": "category/{id}/compare/:item1Id:/:item2Id:/cart",
+				  "name": "comparisonCart",
+				  "target": [
+					"category",
+					"comparison",
+					"cart"
+				  ],
+				  "titleTarget": "comparison"
+				},
+				{
 					"pattern": "category/{id}/product/{productId}/cart",
 					"name": "productCart",
 					"target": [
@@ -159,6 +178,13 @@
 					"viewId": "product",
 					"controlAggregation": "midColumnPages",
 					"title":"{Name}"
+				},
+				"comparison": {
+				  "viewName": "Comparison",
+				  "viewLevel": 3,
+				  "viewId": "comparison",
+				  "controlAggregation": "midColumnPages",
+				  "title":"{Name}"
 				},
 				"category": {
 					"viewName": "Category",

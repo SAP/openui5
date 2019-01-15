@@ -1,0 +1,300 @@
+/*!
+ * ${copyright}
+ */
+
+sap.ui.define([
+	"sap/base/Log"
+], function (
+	Log
+) {
+	"use strict";
+	var eventHelper = document.createElement("span"),
+		observer,
+		oInterface = {
+			registerTag: function registerTag(tagName, prefix, controlClass) {
+				prefix = prefix + "-";
+				var prefixedTagName = prefix + tagName;
+				createTagClass.apply(this, [prefixedTagName, controlClass]);
+			},
+			coreInstance: null
+		};
+
+	function initCustomEvents() {
+		if (typeof window.CustomEvent === "function") {
+			return false;
+		}
+
+		function CustomEvent(event, params) {
+			params = params || {
+				bubbles: false,
+				cancelable: false,
+				detail: undefined
+			};
+			var evt = document.createEvent('CustomEvent');
+			evt.initCustomEvent(event, params.bubbles, params.cancelable, params.detail);
+			return evt;
+		}
+		CustomEvent.prototype = window.Event.prototype;
+		window.CustomEvent = CustomEvent;
+	}
+
+	function fireCustomEvent(node, eventType, data) {
+		var event = new window.CustomEvent(eventType),
+			attrValue = node.getAttribute("on" + eventType);
+		if (attrValue) {
+			eventHelper.setAttribute("onclick", attrValue);
+			eventHelper.onclick(event);
+		}
+		node.dispatchEvent(event);
+	}
+
+	function createObserver() {
+		// Options for the observer (which mutations to observe)
+		var config = {
+			childList: true,
+			subtree: true
+		};
+
+		// Callback function to execute when mutations are observed
+		function callback(mutationsList, observer) {
+			mutationsList.forEach(function (mutation) {
+				if (mutation.type == 'childList') {
+					mutation.addedNodes.forEach(function (node) {
+						if (!document.createCustomElement._querySelector) {
+							return;
+						}
+						if (node.tagName && document.createCustomElement.hasOwnProperty(node.tagName.toLowerCase())) {
+							if (!node._control) {
+								document.createCustomElement[node.tagName.toLowerCase()].connectToNode(node);
+							}
+							node._control._connectedCallback();
+						}
+						if (node.tagName) {
+							var aTags = node.querySelectorAll(document.createCustomElement._querySelector);
+							for (var i = 0; i < aTags.length; i++) {
+								node = aTags[i];
+								if (node.tagName && document.createCustomElement.hasOwnProperty(node.tagName.toLowerCase())) {
+									if (!node._control) {
+										document.createCustomElement[node.tagName.toLowerCase()].connectToNode(node);
+									}
+									node._control._connectedCallback();
+								}
+							}
+						}
+					});
+					mutation.removedNodes.forEach(function (node) {
+						if (!document.createCustomElement._querySelector) {
+							return;
+						}
+						if (node._control) {
+							node._control._disconnectedCallback();
+						}
+						if (node.tagName) {
+							var aTags = node.querySelectorAll(document.createCustomElement._querySelector);
+							for (var i = 0; i < aTags.length; i++) {
+								node = aTags[i];
+								if (node._control) {
+									node._control._disconnectedCallback();
+								}
+							}
+						}
+					});
+				} else if (mutation.type === "attributes" && mutation.target && mutation.target._control) {
+					mutation.target._control._changeProperty.call(mutation.target._control, mutation.attributeName, mutation.target.getAttribute(mutation.attributeName));
+				}
+			});
+		}
+
+		// Create an observer instance linked to the callback function
+		var observer = new window.MutationObserver(callback);
+
+		// Start observing the target node for configured mutations
+		if (!document.body) {
+			Log.error("CustomElements.js was loaded before a body element was present in the DOM. Ensure to load CustomElements.js after the document was parsed, i.e. after the windows onload event.");
+			return null;
+		}
+		observer.observe(document.body, config);
+		return observer;
+	}
+
+	function createTagClass(prefixedTagName, TagImpl) {
+		if (document.createCustomElement[prefixedTagName]) {
+			return document.createCustomElement[prefixedTagName];
+		}
+		var tagMetadata = TagImpl.getMetadata(),
+			tagAllProperties = tagMetadata.getAllProperties(),
+			tagAllAssociations = tagMetadata.getAllAssociations(),
+			tagAllEvents = tagMetadata.getAllEvents(),
+			tagAllAttributes = {};
+		//create attributes for properties
+		Object.keys(tagAllProperties).map(function (n) {
+			tagAllAttributes[n.toLowerCase()] = tagAllProperties[n];
+		});
+		//create attributes for associations
+		Object.keys(tagAllAssociations).map(function (n) {
+			tagAllAttributes[n.toLowerCase()] = tagAllAssociations[n];
+		});
+		//create attributes for all events and register
+		Object.keys(tagAllEvents).map(function (n) {
+			tagAllAttributes["on" + n.toLowerCase()] = tagAllEvents[n];
+		});
+
+		var Tag = function (node) {
+			this._node = node;
+			node._control = this;
+			Tag.initCloneNode(node);
+			Tag.defineProperties(node);
+			this._controlImpl = this._controlImpl || new TagImpl(node.getAttribute("id"));
+			this._changeProperties(node);
+			//TODO: How to avoid the UI Area?
+			node.setAttribute("id", this._controlImpl.getId() + "-area");
+			this._uiArea = oInterface.coreInstance.createUIArea(node);
+			this._uiArea.addContent(this._controlImpl);
+			if (Tag.isInActiveDocument(node)) {
+				this._connectedCallback();
+			}
+			return node;
+		};
+
+		Tag.cloneNode = function () {
+			var clone = this._cloneNode.call(this);
+			clone.removeAttribute("data-sap-ui-area");
+			clone.removeAttribute("id");
+			clone._controlImpl = this._control._controlImpl.clone();
+			Tag.connectToNode(clone);
+			return clone;
+		};
+
+		Tag.initCloneNode = function (node) {
+			if (!node._cloneNode) {
+				node._cloneNode = node.cloneNode;
+				node.cloneNode = Tag.cloneNode;
+			}
+		};
+
+		/**
+		 * Checks whether the given node is in the active document
+		 */
+		Tag.isInActiveDocument = function (node) {
+			return !!(node.parentNode && node.ownerDocument === document);
+		};
+
+		Tag.defineProperty = function (node, name, defaultValue) {
+			Object.defineProperty(node, name, {
+				get: function () {
+					return tagMetadata.getProperty(name).get(node._control._controlImpl);
+				},
+				set: function (value) {
+					node._control._changeProperty(name, value);
+					return tagMetadata.getProperty(name).get(node._control._controlImpl);
+				}
+			});
+		};
+
+		Tag.defineProperties = function (node) {
+			for (var name in tagAllAttributes) {
+				if (name.charAt(0) !== "_") {
+					Tag.defineProperty(node, name, tagAllAttributes[name].defaultValue);
+				}
+			}
+		};
+		Tag.observer = observer;
+		Tag.connectToNode = function (node) {
+			new Tag(node);
+			return Tag.observer && Tag.observer.observe(node, {
+				attributes: true
+			});
+		};
+
+		Tag.prototype._connectedCallback = function () {
+			this._connected || ((this._connected = true) && this._controlImpl.invalidate());
+		};
+		Tag.prototype._disconnectedCallback = function () {
+			this._connected = false;
+		};
+
+		Tag.prototype._changeProperties = function (node) {
+			var aNames = node.getAttributeNames();
+			for (var i = 0; i < aNames.length; i++) {
+				this._changeProperty(aNames[i], node.getAttribute(aNames[i]));
+			}
+		};
+
+		Tag.prototype._changeProperty = function (property, newValue) {
+			var oTagImpl = this._controlImpl,
+				oSetting = tagAllAttributes[property];
+
+			if (property === "id") {
+				return;
+			}
+			if (oSetting && (oSetting._iKind === 0 /*property*/ || oSetting._iKind === 3 /*association*/ )) {
+				var oType = oSetting.getType();
+				var vValue = oType.parseValue(newValue);
+				var vOldValue = oSetting.get(oTagImpl);
+				if (oType.isValid(vValue)) {
+					oSetting.set(oTagImpl, vValue);
+				} else {
+					oSetting.set(oTagImpl, vOldValue);
+				}
+			} else if (oSetting && oSetting._iKind === 5 /*event*/ ) {
+				var that = this;
+				//detatch the old event handler
+				if (this["_" + oSetting.name]) {
+					oTagImpl[oSetting._sDetachMutator](this["_" + oSetting.name]);
+				}
+				//create a new event handler
+				this["_" + oSetting.name] = function (oEvent) {
+					//simply fire a custom browser event with the parameters
+					that.fireCustomEvent(oSetting.name.toLowerCase(), oEvent.mParameters);
+				};
+				//attach the new event handler
+				oTagImpl[oSetting._sMutator](this["_" + oSetting.name]);
+			} else if (property === "class") {
+				var aClasss = newValue.split(" ");
+				this._addedClasses = this._addedClasses || [];
+				this._addedClasses.forEach(function (s) {
+					s && oTagImpl.removeStyleClass(s);
+				});
+				aClasss.forEach(function (s) {
+					s = oTagImpl.addStyleClass(s);
+				});
+				this._addedClasses = aClasss;
+			}
+		};
+		Tag.prototype.fireCustomEvent = function (eventType, data) {
+			fireCustomEvent(this._node, eventType, data);
+		};
+		var createElement = document.createCustomElement;
+		createElement[prefixedTagName] = Tag;
+		if (createElement._querySelector) {
+			createElement._querySelector += ",";
+		} else {
+			Object.defineProperty(createElement, "_querySelector", {
+				enumerable: false,
+				writable: true
+			});
+			createElement._querySelector = "";
+		}
+		var sSelector = prefixedTagName.replace("-", "\\-");
+		createElement._querySelector += sSelector;
+		var customTags = document.querySelectorAll(sSelector);
+		customTags.forEach(function (node) {
+			createElement[prefixedTagName].connectToNode(node);
+		});
+		return Tag;
+
+	}
+
+	//initialize createCustomElement if it does not exist
+	if (!document.createCustomElement) {
+		document.createCustomElement = function (tagName) {
+			var node = document.createElement(tagName);
+			document.createCustomElement[tagName].connectToNode(node);
+			return node;
+		};
+	}
+	//allow custom event on the tag as properties
+	initCustomEvents();
+	observer = createObserver();
+	return oInterface;
+});

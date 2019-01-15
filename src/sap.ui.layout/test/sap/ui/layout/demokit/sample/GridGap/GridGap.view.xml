@@ -4,7 +4,8 @@
 		xmlns:grid="sap.ui.layout.cssgrid"
 		xmlns:form="sap.ui.layout.form"
 		controllerName="sap.ui.layout.sample.GridGap.GridGap">
-	<Panel>
+	<Slider class="sapUiSmallMarginBottom" value="100" liveChange="onSliderMoved"/>
+	<Panel id="panelCSSGrid">
 		<headerToolbar>
 			<Toolbar height="3rem">
 				<Title text=" Property gridGap example"/>
@@ -34,7 +35,6 @@
 				<Label  labelFor="gcg" text="gridColumnGap" />
 				<Input id="gcg" width="60px" change="onInputChanged"/>
 			</form:SimpleForm>
-			<Slider class="sapUiSmallMarginBottom" value="100" liveChange="onSliderMoved"/>
 			<grid:CSSGrid id="grid1"
 						  gridAutoFlow="Column"
 						  gridTemplateColumns="repeat(6, minmax(30px,1fr))"

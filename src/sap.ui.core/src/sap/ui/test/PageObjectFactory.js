@@ -37,13 +37,13 @@ sap.ui.define([
 
 				var fnBaseClass =  mPageObjects[sPageObjectName].baseClass || Opa5;
 				var sNamespace = mPageObjects[sPageObjectName].namespace || "sap.ui.test.opa.pageObject";
-				var sViewName = mPageObjects[sPageObjectName].viewName || "";
+				var mView = _getViewData(mPageObjects[sPageObjectName]);
 
 				var mPageObjectActions = mPageObjects[sPageObjectName].actions;
-				_registerOperationObject(mPageObjectActions, "actions", sPageObjectName, fnBaseClass, oPageObject, sNamespace, sViewName);
+				_registerOperationObject(mPageObjectActions, "actions", sPageObjectName, fnBaseClass, oPageObject, sNamespace, mView);
 
 				var mPageObjectAssertions = mPageObjects[sPageObjectName].assertions;
-				_registerOperationObject(mPageObjectAssertions, "assertions", sPageObjectName, fnBaseClass, oPageObject, sNamespace, sViewName);
+				_registerOperationObject(mPageObjectAssertions, "assertions", sPageObjectName, fnBaseClass, oPageObject, sNamespace, mView);
 			}
 			return oPageObject;
 		};
@@ -52,12 +52,12 @@ sap.ui.define([
 		 * Privates
 		 */
 
-		function _registerOperationObject (mPageObjectOperation, sOperationType, sPageObjectName, fnBaseClass, oPageObject, sNamespace, sViewName) {
+		function _registerOperationObject (mPageObjectOperation, sOperationType, sPageObjectName, fnBaseClass, oPageObject, sNamespace, mView) {
 			if (mPageObjectOperation){
 
 				var sClassName = _createClassName(sNamespace, sPageObjectName, sOperationType);
 
-				var oOperationsPageObject = _createPageObject(mPageObjectOperation, sClassName, fnBaseClass, sViewName);
+				var oOperationsPageObject = _createPageObject(mPageObjectOperation, sClassName, fnBaseClass, mView);
 
 				_registerPageObject(oOperationsPageObject, sOperationType, sPageObjectName, oPageObject);
 			}
@@ -73,7 +73,7 @@ sap.ui.define([
 			return sClassName;
 		}
 
-		function _createPageObject (mPageObjectOperation, sClassName, fnBaseClass, sViewName){
+		function _createPageObject (mPageObjectOperation, sClassName, fnBaseClass, mView){
 
 			var OperationsPageObject = fnBaseClass.extend(sClassName);
 
@@ -84,10 +84,10 @@ sap.ui.define([
 			}
 
 			var oOperationsPageObject = new OperationsPageObject();
-			if (sViewName && oOperationsPageObject.waitFor) {
+			if (!$.isEmptyObject(mView) && oOperationsPageObject.waitFor) {
 				var fnOriginalWaitFor = oOperationsPageObject.waitFor;
 				oOperationsPageObject.waitFor = function (oOptions) {
-					return fnOriginalWaitFor.call(this, $.extend(true, { viewName : sViewName}, oOptions));
+					return fnOriginalWaitFor.call(this, $.extend(true, {}, mView, oOptions));
 				};
 			}
 			return oOperationsPageObject;
@@ -106,6 +106,15 @@ sap.ui.define([
 			oPageObject[sPageObjectName][sOperationType] = oOperationsPageObject;
 		}
 
+		function _getViewData(mPageObject) {
+			var mView = {};
+			["viewName", "viewId"].forEach(function (sProp) {
+				if (mPageObject[sProp]) {
+					mView[sProp] = mPageObject[sProp];
+				}
+			});
+			return mView;
+		}
 
 
 		return fnPageObjectFactory;

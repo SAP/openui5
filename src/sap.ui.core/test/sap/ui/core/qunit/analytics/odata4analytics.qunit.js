@@ -139,7 +139,7 @@ sap.ui.define([
 			aDimensionNames = oQueryResult.getAllDimensionNames();
 
 		assert.ok(jQuery.isArray(aDimensionNames), "getAllDimensionNames returned an Array.");
-		assert.strictEqual(aDimensionNames.length, 9, "Number of Dimensions should be '9'.");
+		assert.strictEqual(aDimensionNames.length, 13);
 		assert.strictEqual(aDimensionNames[0], "ControllingArea",
 			"Access to the dimension array returns the expected values (1/2).");
 		assert.strictEqual(aDimensionNames[8], "Currency",

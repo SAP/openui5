@@ -141,7 +141,9 @@ sap.ui.define([
 		oGrid.getGridDomRefs().forEach(function (oDomRef) {
 			if (oDomRef.children){
 				for (var i = 0; i < oDomRef.children.length; i++) {
-					oDomRef.children[i].classList.add("sapUiLayoutCSSGridItem");
+					if (!oDomRef.children[i].classList.contains("sapMGHLI")) {
+						oDomRef.children[i].classList.add("sapUiLayoutCSSGridItem");
+					}
 				}
 			}
 		});

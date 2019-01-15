@@ -25,8 +25,8 @@ function (
 		}
 	}, function () {
 		QUnit.test("when the result is returned and displayed with the Table report", function (assert) {
-			var done = assert.async();
-			this.oLibraryEnablementTest.run().then(function(oResult) {
+			return this.oLibraryEnablementTest.run()
+			.then(function(oResult) {
 				var oTable = new Table({
 					data : oResult
 				});
@@ -48,7 +48,6 @@ function (
 					window.setTimeout(function() {
 						assert.ok(!oTable._getTable().isExpanded(0), "and when the collapse button is pressed then the table is collapsed again");
 						oTable.destroy();
-						done();
 					});
 				});
 

@@ -11,16 +11,36 @@
 
 	"sap.ui5": {
 		"rootView": {
-			"viewName": "appUnderTest.view.Main",
+			"viewName": "appUnderTest.view.App",
 			"type": "XML",
-			"async": true,
-			"processingMode": "sequential"
+			"id": "app"
 		},
 		"dependencies": {
 			"minUI5Version": "1.60.0",
 			"libs": {
 				"sap.ui.core": {},
 				"sap.m": {}
+			}
+		},
+		"routing": {
+			"config": {
+				"routerClass": "sap.m.routing.Router",
+				"viewType": "XML",
+				"viewPath": "appUnderTest.view",
+				"controlId": "app",
+				"controlAggregation": "pages"
+			},
+			"routes": [{
+				"pattern": "",
+				"name": "home",
+				"target": "home"
+			}],
+			"targets": {
+				"home": {
+					"viewId": "myMainView",
+					"viewName": "Main",
+					"viewLevel" : 1
+				}
 			}
 		}
 	}

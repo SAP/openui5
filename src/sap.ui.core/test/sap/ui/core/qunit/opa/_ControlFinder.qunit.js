@@ -17,13 +17,16 @@ sap.ui.define([
 	QUnit.module("_ControlFinder - controls", {
 		beforeEach: function () {
 			this.oButton = new Button("myId", {text : "foo", type: sap.m.ButtonType.Emphasized});
+			this.oButtonWithSpecialId = new Button("test::button.ID");
 			this.oObjectListItem = new ObjectListItem({title: "testItem", number: 8});
 			this.oButton.placeAt("qunit-fixture");
+			this.oButtonWithSpecialId.placeAt("qunit-fixture");
 			this.oObjectListItem.placeAt("qunit-fixture");
 			sap.ui.getCore().applyChanges();
 		},
 		afterEach: function () {
 			this.oButton.destroy();
+			this.oButtonWithSpecialId.destroy();
 			this.oObjectListItem.destroy();
 		}
 	});
@@ -50,7 +53,7 @@ sap.ui.define([
 
 		assert.strictEqual(aControls.length, 1, "Should match the correct element");
 		assert.strictEqual(aControls[0], this.oButton);
-		sinon.assert.calledTwice(oIsMatchingSpy);
+		assert.strictEqual(oIsMatchingSpy.callCount, 3, "Should pass all Buttons through matcher pipeline");
 		assert.strictEqual(oIsMatchingSpy.getCalls()[0].thisValue.getName(), "text");
 		assert.strictEqual(oIsMatchingSpy.getCalls()[1].thisValue.getName(), "type");
 	});
@@ -63,6 +66,11 @@ sap.ui.define([
 	QUnit.test("Should get control for element ID", function (assert) {
 		var oControl = _ControlFinder._getControlForElement("myId-content");
 		assert.strictEqual(oControl, this.oButton);
+	});
+
+	QUnit.test("Should get control when element ID has meta characters", function (assert) {
+		var oControl = _ControlFinder._getControlForElement("test::button.ID");
+		assert.strictEqual(oControl, this.oButtonWithSpecialId);
 	});
 
 	QUnit.test("Should get control properties", function (assert) {

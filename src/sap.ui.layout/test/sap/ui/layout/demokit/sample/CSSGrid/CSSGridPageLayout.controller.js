@@ -5,7 +5,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/mvc/Controller'],
 		var CSSGridPageLayout = Controller.extend("sap.ui.layout.sample.CSSGrid.CSSGridPageLayout", {
 			onSliderMoved: function (oEvent) {
 				var value = oEvent.getParameter("value");
-				this.byId("grid1").setWidth(value + "%");
+				this.byId("gridLayout").setWidth(value + "%");
 			}
 		});
 

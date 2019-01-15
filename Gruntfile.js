@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2014-2018 SAP SE
+ * Copyright (c) 2014-2019 SAP SE
  */
 
 'use strict';
@@ -242,6 +242,10 @@ module.exports = function(grunt) {
 			{
 					name: 'sap.ui.rta',
 					path: 'src/sap.ui.rta'
+			},
+			{
+					name: 'sap.ui.integration',
+					path: 'src/sap.ui.integration'
 			},
 			{
 					name: 'themelib_sap_bluecrystal',
