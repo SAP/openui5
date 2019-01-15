@@ -89,7 +89,7 @@ function(
 	 * <ul>
 	 * <li> You need to pick one item from a predefined set of options. Use {@link sap.m.Select select}
 	 * or {@link sap.m.ComboBox combobox} instead. </li>
-	 * <li> You need to select a range of item. Use {@link sap.ui.comp.valuehelpdialog.ValueHelpDialog value help dialog instead. </li>
+	 * <li> You need to select a range of item. Use {@link sap.ui.comp.valuehelpdialog.ValueHelpDialog value help dialog} instead. </li>
 	 * <li> You need to be able to add your own values to an existing list. Use a {@link sap.m.Dialog dialog} instead. </li>
 	 * </ul>
 	 * <h4>Note:</h4>
@@ -170,7 +170,7 @@ function(
 			 * This flag controls whether the Clear button is shown. When set to <code>true</code>, it provides a way to clear selection mode in Select Dialog.
 			 * We recommended enabling of the Clear button in the following cases, where a mechanism to clear the value is needed:
 			 * In case of single selection mode(default mode) for Select Dialog and <code>rememberSelections</code> is set to <code>true</code>. Clear button needs to be enabled in order to allow users to clear the selection.
-			 * In case of using <code>sap.m.Input</code> with <code>valueHepOnly</code> set to <code>true</code>, Clear button could be used for clearing selection.
+			 * In case of using <code>sap.m.Input</code> with <code>valueHelpOnly</code> set to <code>true</code>, the Clear button could be used for clearing selection.
 			 * In case the application stores a value and uses only Select Dialog to edit/maintain it.
 			 * <b>Note:</b>When used with oData, only the loaded selections will be cleared.
 			 * @since 1.58
@@ -209,11 +209,11 @@ function(
 					selectedItems : {type : "sap.m.StandardListItem[]"},
 
 					/**
-					 * Returns the binding contexts of the selected items including the non-visible items.
+					 * Returns the binding contexts of the selected items including the non-visible items. See {@link sap.m.ListBase#getSelectedContexts getSelectedContexts} of <code>sap.m.ListBase</code>.
 					 * NOTE: In contrast to the parameter "selectedItems", this parameter will also include the selected but NOT visible items (e.g. due to list filtering). An empty array will be set for this parameter if no data binding is used.
 					 * NOTE: When the list binding is pre-filtered and there are items in the selection that are not visible upon opening the dialog, these contexts are not loaded. Therefore, these items will not be included in the selectedContexts array unless they are displayed at least once.
 					 */
-					selectedContexts : {type : "string"}
+					selectedContexts : {type : "object[]"}
 				}
 			},
 
