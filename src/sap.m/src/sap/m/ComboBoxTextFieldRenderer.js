@@ -67,10 +67,20 @@ sap.ui.define([
 		ComboBoxTextFieldRenderer.getAccessibilityState = function(oControl) {
 			var mAccessibilityState = InputBaseRenderer.getAccessibilityState.call(this, oControl);
 			mAccessibilityState.autocomplete = "both";
-			if (Device.browser.internet_explorer) {
-				mAccessibilityState.describedby = oControl.oInvisibleText.getId();
-			}
 			return mAccessibilityState;
+		};
+		/**
+		 * Returns the inner aria describedby ids for the accessibility.
+		 *
+		 * @param {sap.ui.core.Control} oControl an object representation of the control.
+		 * @returns {String|undefined}
+		 */
+		ComboBoxTextFieldRenderer.getAriaDescribedBy = function(oControl) {
+			var sAriaDescribedBy = InputBaseRenderer.getAriaDescribedBy.apply(this, arguments);
+			if (Device.browser.msie) {
+				return (sAriaDescribedBy || "") + " " + oControl.oInvisibleText.getId();
+			}
+			return sAriaDescribedBy;
 		};
 
 		/**
