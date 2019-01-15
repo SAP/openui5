@@ -1355,6 +1355,12 @@
         "references": []
       },
       {
+        "id": "e75dfb54b91bc9e6d43b6dca8968b012d8fee94d",
+        "type": "FIX",
+        "text": " sap.m.Table: Text controls should inherit cell alignment",
+        "references": []
+      },
+      {
         "id": "dbf827bde5d2ffbf443dcf59322ac950a34773eb",
         "type": "FIX",
         "text": " sap.m.Tree: Should get the expanded state from the binding",
