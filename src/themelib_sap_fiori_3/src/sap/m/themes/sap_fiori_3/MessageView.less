@@ -4,11 +4,74 @@
 /* ================================== */
 
 .sapMMsgView {
+	.sapMMsgViewItem {
+		padding-top: 0.5rem;
+		padding-bottom: 0.5rem;
+		padding-left: 0;
+	}
 	.sapMLIBActive .sapMLIBImgNav {
 		background: none;
+	}
+
+	.sapMSLITitleDiv,
+	.sapMSLIDescriptionDiv {
+		font-family: @sapUiFontHeaderFamily;
+		font-size: @sapMFontHeader6Size;
+		font-weight: @sapUiFontHeaderWeight;
+	}
+
+	.sapMSLITitleDiv {
+		color: @sapUiGroupTitleTextColor;
+	}
+
+	.sapMSLIDescriptionDiv {
+		color: @sapUiContentLabelColor;
+	}
+
+	.sapMMsgViewDescriptionText {
+		padding-bottom:0;
+		margin: 0 1rem 1rem 3rem;
+		line-height: 1.4;
+		font-family: @sapUiFontFamily;
+		color: @sapUiBaseText;
+	}
+
+	.sapMMsgViewTitleText:not(.sapMLnk) {
+		margin: 1rem 1rem 1rem 3rem;
+		font-family: @sapUiFontHeaderFamily;
+		font-weight: @sapUiFontHeaderWeight;
+		color: @sapUiGroupTitleTextColor;
+	}
+
+	.sapMMsgViewDescriptionLink {
+		margin: 0 1rem 1rem 3rem;
+		font-family: @sapUiFontFamily;
+		font-size: @sapMFontMediumSize;
+		font-weight: normal;
+		color: @sapUiLink;
 	}
 }
 
 .sapMMsgView .sapMIBar.sapMHeader-CTX {
 	background-color: @sapUiGroupContentBackground;
+}
+
+.sapMMsgViewDescIcon {
+	font-size: 1rem;
+	top: 1.125rem;
+}
+
+.sapMMsgViewItem .sapMSLIImgIcon {
+	font-size: 1rem;
+}
+
+.sapMMsgView .sapMSegBBtn .sapMBtnCustomIcon {
+	font-size: 1rem;
+}
+
+/* Compact size */
+.sapUiSizeCompact .sapMMsgView {
+	.sapMBtnIcon {
+		margin-right: 0.5rem;
+	}
 }
