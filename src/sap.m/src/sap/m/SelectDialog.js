@@ -89,7 +89,7 @@ function(
 	 * <ul>
 	 * <li> You need to pick one item from a predefined set of options. Use {@link sap.m.Select select}
 	 * or {@link sap.m.ComboBox combobox} instead. </li>
-	 * <li> You need to select a range of item. Use {@link sap.ui.comp.valuehelpdialog.ValueHelpDialog value help dialog instead. </li>
+	 * <li> You need to select a range of item. Use {@link sap.ui.comp.valuehelpdialog.ValueHelpDialog value help dialog} instead. </li>
 	 * <li> You need to be able to add your own values to an existing list. Use a {@link sap.m.Dialog dialog} instead. </li>
 	 * </ul>
 	 * <h4>Note:</h4>
