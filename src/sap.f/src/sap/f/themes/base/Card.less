@@ -203,7 +203,7 @@
 
 	.sapMLIBContent {
 		.sapMSLIDiv {
-			flex: 1;
+			flex: 1 1 auto;
 		}
 	}
 }
@@ -211,6 +211,12 @@
 html[data-sap-ui-browser^="sf"] .sapFCard .sapFCardContent,
 html[data-sap-ui-browser^="cr"] .sapFCard .sapFCardContent {
   flex: 1;
+
+	.sapMLIBContent {
+		.sapMSLIDiv {
+			flex: 1;
+		}
+	}
 }
 
 .sapFCardHeader:focus::before,
