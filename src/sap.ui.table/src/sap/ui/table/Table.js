@@ -3055,20 +3055,21 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/Device',
 
 		if (bIsHorizontal) {
 			var oHsb = this.getDomRef(SharedDomRef.HorizontalScrollBar);
-			if (oHsb) {
+			if (oHsb && this.$().hasClass("sapUiTableHScr")) {
 				oHsb.scrollLeft = oHsb.scrollLeft + iScrollDelta;
+				oEvent.preventDefault();
+				oEvent.stopPropagation();
 			}
 		} else {
 			var oVsb = this.getDomRef(SharedDomRef.VerticalScrollBar);
-			if (oVsb) {
+			if (oVsb && this.$().hasClass("sapUiTableVScr")) {
 				this._bIsScrolledByWheel = true;
 				this._bIsScrolledByKeyboard = false;
 				oVsb.scrollTop = oVsb.scrollTop + iScrollDelta;
+				oEvent.preventDefault();
+				oEvent.stopPropagation();
 			}
 		}
-
-		oEvent.preventDefault();
-		oEvent.stopPropagation();
 	};
 
 	/**
