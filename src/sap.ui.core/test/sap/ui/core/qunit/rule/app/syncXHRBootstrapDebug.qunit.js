@@ -19,7 +19,12 @@
 			});
 		},
 		after: function(assert) {
-			assert.equal(this.requireSyncStub.callCount, 4);
+			var iCount = 4;
+			// Only in IE: the Normalize Polyfill is required sync by the FilterProcessor
+			if (sap.ui.Device.browser.msie) {
+				iCount = 5;
+			}
+			assert.equal(this.requireSyncStub.callCount, iCount);
 			this.requireSyncStub.restore();
 		}
 	});
