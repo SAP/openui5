@@ -978,7 +978,7 @@ sap.ui.define([
 				checkSuspended : function () {},
 				hasPendingChangesForPath : function () {},
 				hasPendingChangesInDependents : function () {},
-				isRefreshable : function () {},
+				isRoot : function () {},
 				refresh : function () {},
 				refreshSingle : function () {}
 			},
@@ -1001,7 +1001,7 @@ sap.ui.define([
 		oBindingMock.expects("hasPendingChangesInDependents")
 			.withExactArgs(sinon.match.same(oContext))
 			.returns(false);
-		oBindingMock.expects("isRefreshable")
+		oBindingMock.expects("isRoot")
 			.withExactArgs()
 			.returns(true);
 		oBindingMock.expects("refresh").never();
@@ -1129,7 +1129,7 @@ sap.ui.define([
 				checkSuspended : function () {},
 				hasPendingChangesForPath : function () {},
 				hasPendingChangesInDependents : function () {},
-				isRefreshable : function () {},
+				isRoot : function () {},
 				refreshSingle : function () {}
 			},
 			oBindingMock = this.mock(oBinding),
@@ -1148,7 +1148,7 @@ sap.ui.define([
 		oBindingMock.expects("hasPendingChangesInDependents")
 			.withExactArgs(sinon.match.same(oContext))
 			.returns(false);
-		oBindingMock.expects("isRefreshable").withExactArgs().returns(false);
+		oBindingMock.expects("isRoot").withExactArgs().returns(false);
 
 		assert.throws(function () {
 			// code under test

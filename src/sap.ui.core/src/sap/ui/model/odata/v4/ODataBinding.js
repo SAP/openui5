@@ -5,13 +5,16 @@
 sap.ui.define([
 	"./lib/_Helper",
 	"sap/ui/base/SyncPromise",
+	"sap/ui/model/ChangeReason",
 	"sap/ui/model/odata/OperationMode",
 	"sap/ui/model/odata/v4/Context",
 	"sap/ui/thirdparty/jquery"
-], function (_Helper, SyncPromise, OperationMode, Context, jQuery) {
+], function (_Helper, SyncPromise, ChangeReason, OperationMode, Context, jQuery) {
 	"use strict";
 
-	var sClassName = "sap.ui.model.odata.v4.ODataBinding",
+	var aChangeReasonPrecedence = [ChangeReason.Change, ChangeReason.Refresh, ChangeReason.Sort,
+			ChangeReason.Filter],
+		sClassName = "sap.ui.model.odata.v4.ODataBinding",
 		rIndexInPath = /\/-?\d/;
 
 	/**
@@ -20,7 +23,13 @@ sap.ui.define([
 	 * @alias sap.ui.model.odata.v4.ODataBinding
 	 * @mixin
 	 */
-	function ODataBinding() {}
+	function ODataBinding() {
+		// maps a canonical path of a quasi-absolute or relative binding to a cache object that may
+		// be reused
+		this.mCacheByResourcePath = undefined;
+		// change reason to be used when the binding is resumed
+		this.sResumeChangeReason = ChangeReason.Change;
+	}
 
 	/**
 	 * Checks binding-specific parameters from the given map. "Binding-specific" parameters are
@@ -500,17 +509,14 @@ sap.ui.define([
 	 */
 
 	/**
-	 * Checks whether the binding can be refreshed. Only bindings which are not relative to a V4
-	 * context and whose root binding is not suspended can be refreshed.
+	 * Returns whether the binding is absolute or quasi-absolute.
 	 *
-	 * @returns {boolean}
-	 *   <code>true</code> if the binding can be refreshed
+	 * @returns {boolean} Whether the binding is absolute or quasi-absolute
 	 *
 	 * @private
 	 */
-	ODataBinding.prototype.isRefreshable = function () {
-		return (!this.bRelative || this.oContext && !this.oContext.getBinding)
-			&& !this.isSuspended();
+	ODataBinding.prototype.isRoot = function () {
+		return !this.bRelative || this.oContext && !this.oContext.getBinding;
 	};
 
 	/**
@@ -549,7 +555,7 @@ sap.ui.define([
 	 * group ID and notifies the control that new data is available.
 	 *
 	 * Refresh is supported for bindings which are not relative to a
-	 * {@link sap.ui.model.odata.v4.Context} and whose root binding is not suspended.
+	 * {@link sap.ui.model.odata.v4.Context}.
 	 *
 	 * Note: When calling {@link #refresh} multiple times, the result of the request triggered by
 	 * the last call determines the binding's data; it is <b>independent</b> of the order of calls
@@ -562,14 +568,16 @@ sap.ui.define([
 	 * {@link #refresh}.
 	 *
 	 * @param {string} [sGroupId]
-	 *   The group ID to be used for refresh; if not specified, the group ID for this binding is
-	 *   used.
+	 *   The group ID to be used for refresh; if not specified, the binding's group ID is used. For
+	 *   suspended bindings, only the binding's group ID is supported because {@link #resume} uses
+	 *   the binding's group ID.
 	 *
 	 *   Valid values are <code>undefined</code>, '$auto', '$auto.*', '$direct' or application group
 	 *   IDs as specified in {@link sap.ui.model.odata.v4.ODataModel}.
 	 * @throws {Error}
-	 *   If the given group ID is invalid, the binding has pending changes, its root binding is
-	 *   suspended or refresh on this binding is not supported.
+	 *   If the given group ID is invalid, the binding has pending changes, refresh on this
+	 *   binding is not supported, or a group ID different from the binding's group ID is specified
+	 *   for a suspended binding.
 	 *
 	 * @public
 	 * @see sap.ui.model.Binding#refresh
@@ -581,7 +589,7 @@ sap.ui.define([
 	 */
 	// @override sap.ui.model.Binding#refresh
 	ODataBinding.prototype.refresh = function (sGroupId) {
-		if (!this.isRefreshable()) {
+		if (!this.isRoot()) {
 			throw new Error("Refresh on this binding is not supported");
 		}
 		if (this.hasPendingChanges()) {
@@ -604,6 +612,9 @@ sap.ui.define([
 	 *   If <code>true</code>, a property binding is expected to check for updates.
 	 * @returns {sap.ui.base.SyncPromise}
 	 *   A promise resolving without a defined result when the refresh is finished
+	 * @throws {Error}
+	 *   If the binding's root binding is suspended and a group ID different from the binding's
+	 *   group ID is given
 	 *
 	 * @abstract
 	 * @function
@@ -697,6 +708,22 @@ sap.ui.define([
 	};
 
 	/**
+	 * Sets the change reason that {@link #resume} fires. If there are multiple changes, the
+	 * "strongest" change reason wins: Filter > Sort > Refresh > Change.
+	 *
+	 * @param {sap.ui.model.ChangeReason} sChangeReason
+	 *   The change reason
+	 *
+	 * @private
+	 */
+	ODataBinding.prototype.setResumeChangeReason = function (sChangeReason) {
+		if (aChangeReasonPrecedence.indexOf(sChangeReason) >
+				aChangeReasonPrecedence.indexOf(this.sResumeChangeReason)) {
+			this.sResumeChangeReason = sChangeReason;
+		}
+	};
+
+	/**
 	 * Returns a string representation of this object including the binding path. If the binding is
 	 * relative, the parent path is also given, separated by a '|'.
 	 *
@@ -777,15 +804,11 @@ sap.ui.define([
 	};
 
 	return function (oPrototype) {
-		if (oPrototype) {
+		if (this) {
+			ODataBinding.apply(this, arguments);
+		} else {
 			jQuery.extend(oPrototype, ODataBinding.prototype);
-			return;
 		}
-		// initialize members introduced by ODataBinding
-
-		// maps a canonical path of a quasi-absolute or relative binding to a cache object that may
-		// be reused
-		this.mCacheByResourcePath = undefined;
 	};
 
 }, /* bExport= */ false);
