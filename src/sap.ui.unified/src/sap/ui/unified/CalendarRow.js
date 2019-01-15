@@ -577,7 +577,7 @@ sap.ui.define([
 		for (var i = 0; i < aVisibleAppointments.length; i++) {
 			var oAppointment = aVisibleAppointments[i].appointment;
 			if (containsOrEquals(oAppointment.getDomRef(), oEvent.target)) {
-				_selectAppointment.call(this, oAppointment, !oEvent.ctrlKey);
+				_selectAppointment.call(this, oAppointment, !(oEvent.ctrlKey || oEvent.metaKey));
 				break;
 			}
 		}

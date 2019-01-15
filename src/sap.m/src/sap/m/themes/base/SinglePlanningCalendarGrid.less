@@ -189,6 +189,10 @@
 		min-width: auto;
 		width: 100%;
 		height: calc(~"100% - 0.0625rem");
+		-webkit-user-select: none;
+		-moz-user-select: none;
+		-ms-user-select: none;
+		user-select: none;
 
 		& > .sapUiCalendarAppCont,
 		&:active > .sapUiCalendarAppCont,
@@ -241,14 +245,6 @@
 	min-height: auto;
 	height: auto;
 	overflow: visible;
-}
-
-.sapUiCalendarRowVisFilled .sapMSinglePCAppointmentWrap {
-	// TODO: this styles will be removed when Appointments refactoring occured
-	.sapUiCalendarApp,
-	.sapUiCalendarApp:hover:not(:active) {
-		background-color: transparent;
-	}
 }
 
 .sapUiSizeCompact {
