@@ -960,6 +960,10 @@ sap.ui.define([
 			this.oSampleView = viewUtils.createXmlView(this.sViewName, "mySampleView");
 			this.oOtherView = viewUtils.createXmlView(this.sViewName, "myOtherView");
 			this.oNoMatchView = viewUtils.createXmlView("differentName", "noMatch");
+			this.oSampleView.placeAt("qunit-fixture");
+			this.oOtherView.placeAt("qunit-fixture");
+			this.oNoMatchView.placeAt("qunit-fixture");
+			sap.ui.getCore().applyChanges();
 		},
 		afterEach: function () {
 			this.fnLogSpy.restore();
@@ -970,8 +974,7 @@ sap.ui.define([
 	});
 
 	QUnit.test("Should return only one visible view", function (assert) {
-		this.oSampleView.placeAt("qunit-fixture");
-		sap.ui.getCore().applyChanges();
+		this.oOtherView.$().css("visibility", "hidden"); // hide view
 
 		var aViews = this.oPlugin.getAllControls(View, "View");
 		var oMatchedView = this.oPlugin.getView(this.sViewName);
@@ -979,26 +982,16 @@ sap.ui.define([
 		assert.strictEqual(aViews.length, 3, "Should find all controls of type View");
 		assert.strictEqual(oMatchedView.getId(), "mySampleView", "Should match only visible views");
 		sinon.assert.calledWith(this.fnLogSpy, "Found 1 views with viewName '" + this.sViewName + "'");
-	});
 
-	QUnit.test("Should return view with matching name", function (assert) {
-		this.oSampleView.placeAt("qunit-fixture");
-		this.oNoMatchView.placeAt("qunit-fixture");
-		sap.ui.getCore().applyChanges();
-
-		var aViews = this.oPlugin.getAllControls(View, "View");
-		var oMatchedView = this.oPlugin.getView(this.sViewName);
+		this.oOtherView.destroy();
+		this.oOtherView = viewUtils.createXmlView(this.sViewName, "myOtherView"); // do not render view
 
 		assert.strictEqual(aViews.length, 3, "Should find all controls of type View");
-		assert.strictEqual(oMatchedView.getId(), "mySampleView", "Should match only views with correct viewName");
+		assert.strictEqual(oMatchedView.getId(), "mySampleView", "Should match only visible views");
 		sinon.assert.calledWith(this.fnLogSpy, "Found 1 views with viewName '" + this.sViewName + "'");
 	});
 
 	QUnit.test("Should return nothing when more than one views have the same name", function (assert) {
-		this.oSampleView.placeAt("qunit-fixture");
-		this.oOtherView.placeAt("qunit-fixture");
-		sap.ui.getCore().applyChanges();
-
 		var aViews = this.oPlugin.getAllControls(View, "View");
 		var oMatchedView = this.oPlugin.getView(this.sViewName);
 
