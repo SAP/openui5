@@ -121,7 +121,7 @@ sap.ui.define([
 	GenericTag.prototype.setStatus = function(sStatus) {
 
 		this.setProperty("status", sStatus, false);
-		this._getStatusIcon().setSrc(sStatus !== ValueState.None ? Icons[sStatus] : "");
+		this._getStatusIcon().setSrc(sStatus !== ValueState.None ? Icons[sStatus] : null);
 
 		return this;
 	};

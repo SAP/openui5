@@ -119,6 +119,7 @@
 
 	.sapMGenericTagErrorIcon {
 		color: @sapUiNegativeText;
+		padding-left: 0.5rem;
 	}
 
 	.sapMGenericTagText {
@@ -126,13 +127,12 @@
 		font-size: @sapMFontMediumSize;
 		font-weight: normal;
 		color: @sapUiBaseText;
-		padding-right: 0.5rem;
 		white-space: nowrap;
 		overflow: hidden;
 		text-overflow: ellipsis;
 		box-sizing: border-box;
 		flex: 1 10000 auto;
-		min-width: 33px;
+		min-width: @sapMGenericTagTextMinWidth;
 	}
 
 	.sapMGenericTagValue {
@@ -143,6 +143,7 @@
 		box-sizing: border-box;
 		align-items: center;
 		flex: 0 0.5 auto;
+		padding-left: 0.5rem;
 
 		.sapMObjectNumberText {
 			min-width: 0.75rem;
@@ -159,8 +160,5 @@
 		}
 	}
 
-	:last-child {
-		padding-right: 0;
-	}
 }
 
