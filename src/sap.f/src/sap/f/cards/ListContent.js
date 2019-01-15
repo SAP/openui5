@@ -50,7 +50,7 @@ sap.ui.define(["sap/ui/core/Control", "sap/ui/model/json/JSONModel", "sap/m/List
 					mSettings = vId;
 				}
 
-				if (mSettings.serviceManager) {
+				if (mSettings && mSettings.serviceManager) {
 					this._oServiceManager = mSettings.serviceManager;
 					delete mSettings.serviceManager;
 				}
@@ -283,6 +283,8 @@ sap.ui.define(["sap/ui/core/Control", "sap/ui/model/json/JSONModel", "sap/m/List
 				path: sPath || "/",
 				template: this._oItemTemplate
 			});
+
+			this.fireEvent("_updated");
 		};
 
 	return ListContent;
