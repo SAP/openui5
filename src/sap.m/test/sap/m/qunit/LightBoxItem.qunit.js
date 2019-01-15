@@ -43,7 +43,7 @@ sap.ui.define(
 			this.LightBoxItem.setImageSrc(imageSrc);
 
 			// assert
-			assert.strictEqual(this.LightBoxItem._getNativeImage().getAttribute('src'), imageSrc, 'setImageSrc should not set the image src if the popup is open');
+			assert.strictEqual(this.LightBoxItem._getNativeImage().getAttribute('src'), imageSrc, 'setImageSrc should set the src attribute of the native image object if the open state is not OPEN');
 
 			// clean
 			this.LightBoxItem.getParent.restore();
