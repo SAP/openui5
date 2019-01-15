@@ -1,28 +1,42 @@
 <core:FragmentDefinition
+		xmlns="sap.m"
 		xmlns:l="sap.ui.layout"
-		xmlns:core="sap.ui.core"
-		xmlns="sap.m">
+		xmlns:f="sap.ui.layout.form"
+		xmlns:core="sap.ui.core">
 	<l:VerticalLayout
 			class="sapUiContentPadding"
 			width="100%">
 		<l:content>
-			<Label text="Title:" labelFor="inputTitle"/>
-			<Input id="inputTitle"/>
-			<Label text="Start date:" labelFor="startDate"/>
-			<DateTimePicker
-					id="startDate"
-					displayFormat="short"
-					required="true"
-					change="handleCreateFragmentDateChange"/>
-			<Label text="End date:" labelFor="endDate"/>
-			<DateTimePicker
-					id="endDate"
-					displayFormat="short"
-					required="true"
-					change="handleCreateFragmentDateChange"/>
-			<Label text="More information:" labelFor="inputInfo"/>
-			<Input id="moreInfo"/>
-			<CheckBox id="fullDay" text="Fullday appointment" selected="false" />
+			<f:SimpleForm id="appointmentCreateForm"
+						  editable="true"
+						  layout="ResponsiveGridLayout"
+						  singleContainerFullSize="false">
+				<f:content>
+					<Label text="Title" labelFor="appTitle"/>
+					<Input id="appTitle"/>
+					<Label text="Type" labelFor="appType"/>
+					<Select
+						id="appType"
+						selectedKey="{/types>type}"
+						items="{
+							path: '/types'
+						}">
+						<core:Item key="{type}" text="{type}" />
+					</Select>
+					<Label text="Start date" labelFor="startDate"/>
+					<DateTimePicker
+							id="startDate"
+							required="true"
+							change="handleCreateDateChange"/>
+					<Label text="End date" labelFor="endDate"/>
+					<DateTimePicker
+							id="endDate"
+							required="true"
+							change="handleCreateDateChange"/>
+					<Label text="More information" labelFor="inputInfo"/>
+					<Input id="moreInfo"/>
+				</f:content>
+			</f:SimpleForm>
 		</l:content>
 	</l:VerticalLayout>
 </core:FragmentDefinition>

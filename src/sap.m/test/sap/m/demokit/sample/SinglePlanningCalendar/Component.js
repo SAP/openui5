@@ -20,7 +20,8 @@ sap.ui.define(["sap/ui/core/UIComponent"],
 						files : [
 							"Page.view.xml",
 							"Page.controller.js",
-							"Create.fragment.xml"
+							"Create.fragment.xml",
+							"Details.fragment.xml"
 						]
 					}
 				}

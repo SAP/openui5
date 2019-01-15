@@ -155,12 +155,17 @@ sap.ui.define([
 					typeof this.es.getLoggedObjects == "function",
 				getElementsByClassName =
 					this.es.getElementsByClassName &&
-					typeof this.es.getElementsByClassName == "function";
+					typeof this.es.getElementsByClassName == "function",
+				getTypeIsAMethod =
+					this.es.getType &&
+					typeof this.es.getType === "function";
+
 
 			assert.ok(getElementsIsAMethod, " should not be changed");
 			assert.ok(getPublicElementsIsAMethod, " should not be changed");
 			assert.ok(getLoggedObjectsIsAMethod, " should not be changed");
 			assert.ok(getElementsByClassName, " should not be changed");
+			assert.ok(getTypeIsAMethod, " should not be changed");
 		});
 
 		QUnit.test("getElementsByClassName", function (assert) {
@@ -274,6 +279,24 @@ sap.ui.define([
 				37,
 				"should be with less elements than global scope"
 			);
+		});
+
+		QUnit.test("getType return value", function (assert) {
+			assert.strictEqual(this.es.getType(), "global", "Execution scope type should be global.");
+
+			var	esSubtree = ExecutionScope(core, {
+					type: "subtree",
+					parentId: "innerPanel"
+				});
+
+			assert.strictEqual(esSubtree.getType(), "subtree", "Execution scope type should be subtree.");
+
+			var esComponents = ExecutionScope(core, {
+				type: "components",
+				components: []
+			});
+
+			assert.strictEqual(esComponents.getType(), "components","Execution scope type should be components.");
 		});
 
 		QUnit.module("GetLoggedObjects test", {

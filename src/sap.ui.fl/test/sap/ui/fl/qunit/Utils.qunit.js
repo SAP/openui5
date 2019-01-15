@@ -1176,10 +1176,8 @@ function(
 
 	QUnit.module("Utils.isDebugEnabled", {
 		beforeEach: function () {
-			this.sWindowSapUiDebug = window["sap-ui-debug"];
 		},
 		afterEach: function () {
-			window["sap-ui-debug"] = this.sWindowSapUiDebug;
 			sandbox.restore();
 		}
 	}, function() {
@@ -1193,7 +1191,23 @@ function(
 		QUnit.test("can determine the fl library debugging is set as the only library", function (assert) {
 			var oConfig = sap.ui.getCore().getConfiguration();
 			sandbox.stub(oConfig, "getDebug").returns(false);
-			window["sap-ui-debug"] = "sap.ui.fl";
+			sandbox.stub(Utils, "_getUriParameters").returns({
+				get: function() {
+					return "sap/ui/fl";
+				}
+			});
+
+			assert.ok(Utils.isDebugEnabled(), "the debugging is detected");
+		});
+
+		QUnit.test("can determine the fl library debugging is set as the only library", function (assert) {
+			var oConfig = sap.ui.getCore().getConfiguration();
+			sandbox.stub(oConfig, "getDebug").returns(false);
+			sandbox.stub(Utils, "_getUriParameters").returns({
+				get: function() {
+					return "sap/ui/fl/";
+				}
+			});
 
 			assert.ok(Utils.isDebugEnabled(), "the debugging is detected");
 		});
@@ -1201,36 +1215,68 @@ function(
 		QUnit.test("can determine the fl library debugging is set as part of other libraries", function (assert) {
 			var oConfig = sap.ui.getCore().getConfiguration();
 			sandbox.stub(oConfig, "getDebug").returns(false);
-			window["sap-ui-debug"] = "sap.ui.core,sap.m,sap.ui.fl,sap.ui.rta";
+			sandbox.stub(Utils, "_getUriParameters").returns({
+				get: function() {
+					return "sap/ui/core,sap/m,sap/ui/fl,sap/ui/rta";
+				}
+			});
 
 			assert.ok(Utils.isDebugEnabled(), "the debugging is detected");
 		});
 
-		QUnit.test("can determine no 'sap.ui.fl'-library debugging is set", function (assert) {
+		QUnit.test("can determine the fl library debugging is set as part of other libraries", function (assert) {
 			var oConfig = sap.ui.getCore().getConfiguration();
 			sandbox.stub(oConfig, "getDebug").returns(false);
-			window["sap-ui-debug"] = "sap.ui.rta, sap.m";
+			sandbox.stub(Utils, "_getUriParameters").returns({
+				get: function() {
+					return "sap/ui/core/,sap/m/,sap/ui/fl/,sap/ui/rta/";
+				}
+			});
+
+			assert.ok(Utils.isDebugEnabled(), "the debugging is detected");
+		});
+
+		QUnit.test("can determine no 'sap/ui/fl'-library debugging is set", function (assert) {
+			var oConfig = sap.ui.getCore().getConfiguration();
+			sandbox.stub(oConfig, "getDebug").returns(false);
+			sandbox.stub(Utils, "_getUriParameters").returns({
+				get: function() {
+					return "sap/ui/rta, sap/m";
+				}
+			});
 			assert.ok(!Utils.isDebugEnabled(), "no debugging is detected");
 		});
 
 		QUnit.test("can determine debugging is set to a boolean and is false", function (assert) {
 			var oConfig = sap.ui.getCore().getConfiguration();
 			sandbox.stub(oConfig, "getDebug").returns(false);
-			window["sap-ui-debug"] = false;
+			sandbox.stub(Utils, "_getUriParameters").returns({
+				get: function() {
+					return "false";
+				}
+			});
 			assert.ok(!Utils.isDebugEnabled(), "no debugging is detected");
 		});
 
 		QUnit.test("can determine no library debugging is set", function (assert) {
 			var oConfig = sap.ui.getCore().getConfiguration();
 			sandbox.stub(oConfig, "getDebug").returns(false);
-			window["sap-ui-debug"] = "";
+			sandbox.stub(Utils, "_getUriParameters").returns({
+				get: function() {
+					return null;
+				}
+			});
 			assert.ok(!Utils.isDebugEnabled(), "no debugging is detected");
 		});
 
 		QUnit.test("can determine debugging is set to a boolean and is true", function (assert) {
 			var oConfig = sap.ui.getCore().getConfiguration();
 			sandbox.stub(oConfig, "getDebug").returns(false);
-			window["sap-ui-debug"] = true;
+			sandbox.stub(Utils, "_getUriParameters").returns({
+				get: function() {
+					return "true";
+				}
+			});
 			assert.ok(Utils.isDebugEnabled(), "debugging is detected");
 		});
 	});

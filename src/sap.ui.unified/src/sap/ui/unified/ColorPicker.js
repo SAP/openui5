@@ -942,14 +942,16 @@ sap.ui.define([
 		this.oSatField = Library.ColorPickerHelper.factory.createInput(sId + "-sF", {
 			value: this.Color.s,
 			change: this._handleSatValueChange.bind(this),
-			ariaLabelledBy: InvisibleText.getStaticId("sap.ui.unified", "COLORPICKER_SAT")
+			ariaLabelledBy: InvisibleText.getStaticId("sap.ui.unified", "COLORPICKER_SAT") +
+				" " + InvisibleText.getStaticId("sap.ui.unified", "COLORPICKER_PERCENTAGE")
 		}).addStyleClass(CONSTANTS.RightColumnInputClass);
 
 
 		this.oLitField = Library.ColorPickerHelper.factory.createInput(sId + "-lF", {
 			value: this.Color.l,
 			change: this._handleLitValueChange.bind(this),
-			ariaLabelledBy: InvisibleText.getStaticId("sap.ui.unified", "COLORPICKER_LIGHTNESS")
+			ariaLabelledBy: InvisibleText.getStaticId("sap.ui.unified", "COLORPICKER_LIGHTNESS") +
+				" " + InvisibleText.getStaticId("sap.ui.unified", "COLORPICKER_PERCENTAGE")
 		}).addStyleClass(CONSTANTS.RightColumnInputClass).addStyleClass(CONSTANTS.HideForHSVClass);
 
 

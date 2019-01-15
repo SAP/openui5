@@ -12,27 +12,29 @@
 
 .sapFDynamicPage {
 	// DynamicPageTitle and Toggle Header Visual Indicator hover state
-	&.sapFDynamicPageTitleClickEnabled {
+	html.sap-desktop & {
+		&.sapFDynamicPageTitleClickEnabled {
 
-		.sapFDynamicPageTitle:hover,
-		&.sapFDynamicPageTitleForceHovered .sapFDynamicPageTitle {
-			.title-hover(@sapUiObjectHeaderBackground);
-		}
+			.sapFDynamicPageTitle:hover,
+			&.sapFDynamicPageTitleForceHovered .sapFDynamicPageTitle {
+				.title-hover(@sapUiObjectHeaderBackground);
+			}
 
-		.sapFDynamicPageTitle.sapFDynamicPageTitleTranslucent:hover,
-		&.sapFDynamicPageTitleForceHovered .sapFDynamicPageTitle.sapFDynamicPageTitleTranslucent {
-			.title-hover(fade(@sapUiObjectHeaderBackground, 60%));
-		}
+			.sapFDynamicPageTitle.sapFDynamicPageTitleTranslucent:hover,
+			&.sapFDynamicPageTitleForceHovered .sapFDynamicPageTitle.sapFDynamicPageTitleTranslucent {
+				.title-hover(fade(@sapUiObjectHeaderBackground, 60%));
+			}
 
-		.sapFDynamicPageTitle.sapFDynamicPageTitleTransparent:hover,
-		&.sapFDynamicPageTitleForceHovered .sapFDynamicPageTitle.sapFDynamicPageTitleTransparent {
-			.title-hover(transparent);
-		}
+			.sapFDynamicPageTitle.sapFDynamicPageTitleTransparent:hover,
+			&.sapFDynamicPageTitleForceHovered .sapFDynamicPageTitle.sapFDynamicPageTitleTransparent {
+				.title-hover(transparent);
+			}
 
-		&.sapFDynamicPageTitleForceHovered {
-			.sapFDynamicPageToggleHeaderIndicator {
-				.sapMBtnInner {
-					background-color: darken(@sapUiObjectHeaderBorderColor, 3);
+			&.sapFDynamicPageTitleForceHovered {
+				.sapFDynamicPageToggleHeaderIndicator {
+					.sapMBtnInner {
+						background-color: darken(@sapUiObjectHeaderBorderColor, 3);
+					}
 				}
 			}
 		}

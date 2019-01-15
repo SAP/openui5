@@ -101,6 +101,23 @@ sap.ui.define([
 	 * @override
 	 * @inheritDoc
 	 */
+	SelectionModelAdapter.prototype.getSelectableCount = function() {
+		var oBinding = this._getBinding();
+		return oBinding ? oBinding.getLength() : 0;
+	};
+
+	/**
+	 * @override
+	 * @inheritDoc
+	 */
+	SelectionModelAdapter.prototype.getSelectedCount = function() {
+		return this.getSelectedIndices().length;
+	};
+
+	/**
+	 * @override
+	 * @inheritDoc
+	 */
 	SelectionModelAdapter.prototype.isIndexSelectable = function(iIndex) {
 		var iCount = this._getLastIndex();
 		return iIndex >= 0 && iIndex <= iCount;
@@ -141,16 +158,14 @@ sap.ui.define([
 	 */
 	SelectionModelAdapter.prototype.setSelectedIndex = function(iIndex) {
 		if (this.getSelectionMode() === SelectionMode.None) {
-			return this;
+			return;
 		}
 		if (iIndex === -1) {
-			//If Index eq -1 no item is selected, therefore clear selection is called
-			//SelectionModel doesn't know that -1 means no selection
+			// Index -1 means to clear the selection. The selection model doesn't know that -1 means no selection.
 			this.clearSelection();
 		} else {
 			this.setSelectionInterval(iIndex, iIndex);
 		}
-		return this;
 	};
 
 	/**
@@ -168,17 +183,24 @@ sap.ui.define([
 	 * Sets the selection mode. The current selection is lost.
 	 *
 	 * @param {string} sSelectionMode The new selection mode.
+	 * @returns {sap.ui.table.SelectionModelAdapter} Reference to <code>this</code> in order to allow method chaining
 	 * @public
 	 */
 	SelectionModelAdapter.prototype.setSelectionMode = function(sSelectionMode) {
+		var sOldSelectionMode = this.getSelectionMode();
+
+		SelectionAdapter.prototype.setSelectionMode.apply(this, arguments);
+
+		if (this.getSelectionMode() !== sOldSelectionMode) {
+			this.clearSelection();
+		}
+
 		if (this.oSelectionModel) {
-			if (this.getSelectionMode() !== sSelectionMode) {
-				this.clearSelection();
-			}
-			this.setProperty("selectionMode", sSelectionMode, true);
 			var iSelectionMode = (sSelectionMode === SelectionMode.MultiToggle ? SelectionModel.MULTI_SELECTION : SelectionModel.SINGLE_SELECTION);
 			this.oSelectionModel.setSelectionMode(iSelectionMode);
 		}
+
+		return this;
 	};
 
 	/**

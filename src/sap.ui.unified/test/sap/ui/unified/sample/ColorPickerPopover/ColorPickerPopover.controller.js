@@ -1,9 +1,10 @@
 sap.ui.define([
 	'jquery.sap.global',
+	'sap/ui/core/library',
 	'sap/ui/core/mvc/Controller',
 	'sap/ui/unified/ColorPickerPopover',
 	'sap/m/MessageToast'
-], function (jQuery, Controller, ColorPickerPopover, MessageToast) {
+], function (jQuery, coreLibrary, Controller, ColorPickerPopover, MessageToast) {
 	"use strict";
 
 	var ColorPickerController = Controller.extend("sap.ui.unified.sample.ColorPickerPopover.ColorPickerPopover", {
@@ -80,10 +81,21 @@ sap.ui.define([
 		},
 
 		handleChange: function (oEvent) {
-			var oView = this.getView();
-			oView.byId(this.inputId).setValue(oEvent.getParameter("colorString"));
+			var oView = this.getView(),
+				oInput = oView.byId(this.inputId);
+
+			oInput.setValue(oEvent.getParameter("colorString"));
+			oInput.setValueState("None");
 			this.inputId = "";
 			MessageToast.show("Chosen color string: " + oEvent.getParameter("colorString"));
+		},
+
+		handleInputChange: function (oEvent) {
+			var oInput = oEvent.getSource(),
+				bValid = coreLibrary.CSSColor.isValid(oEvent.getParameter("value")),
+				sState = bValid ? "None" : "Error";
+
+			oInput.setValueState(sState);
 		}
 	});
 

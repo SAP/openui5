@@ -6,6 +6,31 @@ sap.ui.define(['sap/ui/core/Control', 'sap/ui/model/json/JSONModel', 'sap/m/Flex
 	function (Control, JSONModel, FlexBox, VizFrame, FeedItem, FlattenedDataset, DimensionDefinition, MeasureDefinition, Data, Log) {
 		"use strict";
 
+		var LegendPosition = {
+			"Top": "top",
+			"Bottom": "bottom",
+			"Left": "left",
+			"Right": "right"
+		};
+
+		var LegendAlignment = {
+			"TopLeft": "topLeft",
+			"Center" : "center"
+		};
+
+		var TitleAlignment = {
+			"Left": "left",
+			"Center": "center",
+			"Right": "right"
+		};
+
+		var ChartTypes = {
+			"Line": "line",
+			"StackedColumn": "stacked_column",
+			"StackedBar": "stacked_bar",
+			"Donut": "donut"
+		};
+
 		/**
 		 * Constructor for a new <code>AnalyticalContent</code>.
 		 *
@@ -35,17 +60,32 @@ sap.ui.define(['sap/ui/core/Control', 'sap/ui/model/json/JSONModel', 'sap/m/Flex
 		var AnalyticalContent = Control.extend("sap.f.cards.AnalyticalContent", {
 			metadata: {
 				properties: {
-					chart: {
-						type: "object"
-					},
-					manifestContent: { type: "object" }
+					configuration: { type: "object" }
 				},
 				aggregations: {
 					_content: { multiple: false, visibility: "hidden" }
 				}
 			},
+			constructor: function (vId, mSettings) {
+				if (typeof vId !== "string"){
+					mSettings = vId;
+				}
+
+				if (mSettings.serviceManager) {
+					this._oServiceManager = mSettings.serviceManager;
+					delete mSettings.serviceManager;
+				}
+
+				Control.apply(this, arguments);
+			},
 			renderer: function (oRm, oControl) {
+				oRm.write("<div");
+				oRm.writeElementData(oControl);
+				oRm.addClass("sapFCardContentAnalytical");
+				oRm.writeClasses();
+				oRm.write(">");
 				oRm.renderControl(oControl.getAggregation("_content"));
+				oRm.write("</div>");
 			}
 		});
 
@@ -54,30 +94,26 @@ sap.ui.define(['sap/ui/core/Control', 'sap/ui/model/json/JSONModel', 'sap/m/Flex
 			this.setModel(oModel);
 		};
 
-		AnalyticalContent.prototype.setManifestContent = function (oContent) {
+		AnalyticalContent.prototype.setConfiguration = function (oContent) {
 
-			this.setProperty("manifestContent", oContent);
+			this.setProperty("configuration", oContent);
 
 			if (!oContent) {
 				return;
 			}
 
-			if (oContent.chart) {
-				this._setChart(oContent.chart);
-			}
+			this._setChart(oContent);
 		};
 
-		AnalyticalContent.prototype.exit = function () {
-			if (this._oChart) {
-				this._oChart.destroy();
-				this._oChart = null;
-			}
+		AnalyticalContent.prototype.exit = function () {};
 
-			if (this.oFlattendedDataset) {
-				this.oFlattendedDataset.destroy();
-				this.oFlattendedDataset = null;
-			}
-		};
+		/**
+		 * Creates vizFrame readable vizProperties object.
+		 * @param {Object} oChartObject Chart information
+		 * @returns {Object} oVizPropertiesObject vizFrame vizProperties object
+		 * @since 1.61
+		 * @private
+		 */
 		AnalyticalContent.prototype._getVizPropertiesObject = function (oChartObject) {
 				var oTitle = oChartObject.title,
 					oLegend = oChartObject.legend,
@@ -86,14 +122,26 @@ sap.ui.define(['sap/ui/core/Control', 'sap/ui/model/json/JSONModel', 'sap/m/Flex
 			if (!oChartObject) {
 				return this;
 			}
-			var oVizObject = {
-				"title": {},
+			var oVizPropertiesObject = {
+				"title": {
+					"style" : {
+						"fontWeight": "normal"
+					},
+					"layout": {
+						"respectPlotPosition": false
+					}
+				},
 				"legend": {},
 				"legendGroup": {
 					"layout": {}
 				},
-				"plotArea": {},
-				"categoryAxis": {
+				"plotArea": {
+					"window": {
+						"start": "firstDataPoint",
+						"end": "lastDataPoint"
+					}
+				},
+			"categoryAxis": {
 					"title": {}
 				},
 				"valueAxis": {
@@ -101,40 +149,29 @@ sap.ui.define(['sap/ui/core/Control', 'sap/ui/model/json/JSONModel', 'sap/m/Flex
 				}
 			};
 			if (oTitle) {
-				oVizObject.title.text = oTitle.text;
-				oVizObject.title.visible = oTitle.visible;
-				oVizObject.title.alignment = oTitle.alignment;
+				oVizPropertiesObject.title.text = oTitle.text;
+				oVizPropertiesObject.title.visible = oTitle.visible;
+				oVizPropertiesObject.title.alignment = TitleAlignment[oTitle.alignment];
 			}
 			if (oLegend) {
-				oVizObject.legend.visible = oLegend.visible;
-				oVizObject.legendGroup.layout.position = oLegend.position;
-				oVizObject.legendGroup.layout.alignment = oLegend.alignment;
+				oVizPropertiesObject.legend.visible = oLegend.visible;
+				oVizPropertiesObject.legendGroup.layout.position = LegendPosition[oLegend.position];
+				oVizPropertiesObject.legendGroup.layout.alignment = LegendAlignment[oLegend.alignment];
 			}
 
 			if (oPlotArea) {
 				if (oPlotArea.dataLabel) {
-					oVizObject.plotArea.dataLabel = oPlotArea.dataLabel;
+					oVizPropertiesObject.plotArea.dataLabel = oPlotArea.dataLabel;
 				}
-				if (oPlotArea.window) {
-					oVizObject.plotArea.window = oPlotArea.window;
+				if (oPlotArea.categoryAxisText) {
+					oVizPropertiesObject.categoryAxis.title.visible = oPlotArea.categoryAxisText.visible;
 				}
-				if (oPlotArea.categoryAxis) {
-					oVizObject.categoryAxis.title.text = oPlotArea.categoryAxisText.text;
-					oVizObject.categoryAxis.title.visible = oPlotArea.categoryAxisText.visible;
-				}
-				if (oPlotArea.valueAxis) {
-					oVizObject.valueAxis.title.text = oPlotArea.valueAxisText.text;
-					oVizObject.valueAxis.title.visible = oPlotArea.valueAxisText.visible;
+				if (oPlotArea.valueAxisText) {
+					oVizPropertiesObject.valueAxis.title.visible = oPlotArea.valueAxisText.visible;
 				}
 			}
-			return oVizObject;
+			return oVizPropertiesObject;
 
-		};
-
-		AnalyticalContent.prototype.setChart = function (oChartObject) {
-			this.setProperty("chart", oChartObject, true);
-			this._setChart(oChartObject);
-			return this;
 		};
 
 		AnalyticalContent.prototype._setChart = function (oChartObject) {
@@ -143,10 +180,12 @@ sap.ui.define(['sap/ui/core/Control', 'sap/ui/model/json/JSONModel', 'sap/m/Flex
 			}
 
 			//handling the request
-			var oRequest = oChartObject.data.request;
+			if (oChartObject.data) {
+				var oRequest = oChartObject.data.request;
+			}
 
-			if (oChartObject.json && !oRequest) {
-				this._updateModel(oChartObject.json, oChartObject.path);
+			if (oChartObject.data.json && !oRequest) {
+				this._updateModel(oChartObject.data.json, oChartObject.data.path, oChartObject);
 			}
 
 			if (oRequest) {
@@ -158,6 +197,14 @@ sap.ui.define(['sap/ui/core/Control', 'sap/ui/model/json/JSONModel', 'sap/m/Flex
 			}
 		};
 
+		/**
+		 * Updates model when data is received.
+		 * @param {Object} oData Data to be set on the model
+		 * @param {Object} sPath Binding path
+		 * @param {Object} oChartObject Chart information
+		 * @since 1.61
+		 * @private
+		 */
 		AnalyticalContent.prototype._updateModel = function (oData, sPath, oChartObject) {
 			var sChartType = oChartObject.chartType;
 
@@ -167,6 +214,20 @@ sap.ui.define(['sap/ui/core/Control', 'sap/ui/model/json/JSONModel', 'sap/m/Flex
 			}
 
 			this.getModel().setData(oData);
+
+			var oChart = this._createChart(oChartObject, sPath);
+			this.setAggregation("_content", oChart);
+		};
+
+		/**
+		 * Creates a chart depending one the configuration form the manifest.
+		 * @param {Object} sPath Binding path
+		 * @param {Object} oChartObject Chart information
+		 * @returns {object} oChart configured chart
+		 * @since 1.61
+		 * @private
+		 */
+		AnalyticalContent.prototype._createChart = function (oChartObject, sPath) {
 			var aDimensionNames = [];
 			if (oChartObject.dimensions) {
 				var aDimensions = [];
@@ -197,29 +258,31 @@ sap.ui.define(['sap/ui/core/Control', 'sap/ui/model/json/JSONModel', 'sap/m/Flex
 				}
 
 			}
-			this.oFlattendedDataset = new FlattenedDataset({
+			 var oFlattendedDataset = new FlattenedDataset({
 				measures: aMeasures,
 				dimensions: aDimensions,
 				data: {
-					path: oChartObject.data.path
+					path: sPath || "/"
 				}
 			});
-			this._oChart = new VizFrame({
+			var oChart = new VizFrame({
 				uiConfig: {
 					applicationSet: 'fiori'
 				},
-				vizType: sChartType,
-				dataset: this.oFlattendedDataset,
+				height: "100%",
+				width: "100%",
+				vizType: ChartTypes[oChartObject.chartType],
+				dataset: oFlattendedDataset,
 				legendVisible: oChartObject.legend,
-
 				feeds: [
 					new FeedItem({ uid: oChartObject.measureAxis, type: 'Measure', values: aMeasureNames }),
 					new FeedItem({ uid: oChartObject.dimensionAxis, type: 'Dimension', values: aDimensionNames })
 				]
 			});
 			var oVizProperties = this._getVizPropertiesObject(oChartObject);
-			this._oChart.setVizProperties(oVizProperties);
-			this.setAggregation("_content", this._oChart);
+			oChart.setVizProperties(oVizProperties);
+
+			return oChart;
 		};
 
 		return AnalyticalContent;

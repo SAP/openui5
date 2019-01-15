@@ -998,12 +998,9 @@ sap.ui.define([
 
 	};
 
-	Calendar.prototype.onsapescape = function(oEvent){
+	Calendar.prototype.onsapescape = function(oEvent) {
 
-		if (this._iMode == 0) {
-			this.fireCancel();
-		}
-
+		this.fireCancel();
 		this._closedPickers();
 
 	};

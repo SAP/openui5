@@ -21,6 +21,10 @@
 	.sapUiLayoutCSSGridBoxLayoutGenerateBreakpoints(XL);
 }
 
+.sapUiLayoutCSSGridBoxLayoutContainer.sapFGridListGroup {
+	grid-auto-rows: auto;
+}
+
 /* Mixins */
 
 /* Mixin to generate breakpoints.
@@ -46,7 +50,7 @@
 			}
 
 			>  .sapUiLayoutCSSGridItem:nth-of-type(@{i}n) {
-				margin-right: 0;
+				margin-right: 0; // if there is Grouping (and headers) this doesn't calculates correctly. Should be reworked
 			}
 	}
 

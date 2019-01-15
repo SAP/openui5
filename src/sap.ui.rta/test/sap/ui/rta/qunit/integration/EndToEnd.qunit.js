@@ -267,8 +267,8 @@ sap.ui.define([
 				if (oFirstExecutedCommand &&
 					oFirstExecutedCommand.getName() === "move") {
 					fnWaitForExecutionAndSerializationBeingDone.call(this).then(function() {
-						var iIndex = this.oGroup.getGroupElements().length - 1;
-						assert.equal(this.oGroup.getGroupElements()[iIndex].getId(), this.oCompanyCodeField.getId(), " then the field is moved");
+						var iIndex = 0;
+						assert.equal(this.oGroup.getGroupElements()[iIndex].getId(), this.oCompanyCodeField.getId(), " then the field is moved to first place");
 						assert.equal(oChangePersistence.getDirtyChanges().length, 1, "then there is 1 dirty change in the FL ChangePersistence");
 						this.oRta.stop();
 					}.bind(this));
@@ -463,7 +463,6 @@ sap.ui.define([
 			// open context menu (expanded context menu) on fucused overlay
 			oCombinedElementOverlay.focus();
 
-			QUnitUtils.triggerKeydown(oCombinedElementOverlay.getDomRef(), KeyCodes.F10, true, false, false);
 			var oContextMenuControl = this.oRta.getPlugins()["contextMenu"].oContextMenuControl;
 			oContextMenuControl.attachEventOnce("Opened", function() {
 				var oContextMenuButton = oContextMenuControl.getButtons().filter(function (oButton) {
@@ -473,6 +472,7 @@ sap.ui.define([
 				oContextMenuButton.firePress();
 				sap.ui.getCore().applyChanges();
 			});
+			QUnitUtils.triggerKeydown(oCombinedElementOverlay.getDomRef(), KeyCodes.F10, true, false, false);
 		});
 	});
 

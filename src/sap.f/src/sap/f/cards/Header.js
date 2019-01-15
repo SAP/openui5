@@ -21,7 +21,7 @@ sap.ui.define([
 	var AvatarShape = library.AvatarShape;
 
 	/**
-	 * Constructor for a new <code>Kpi</code>.
+	 * Constructor for a new <code>Header</code>.
 	 *
 	 * @param {string} [sId] ID for the new control, generated automatically if no ID is given
 	 * @param {object} [mSettings] Initial settings for the new control
@@ -52,7 +52,7 @@ sap.ui.define([
 			properties: {
 				title: { type: "string", defaultValue: "" },
 				subtitle: { type: "string", defaultValue: "" },
-				status: { type: "string", defaultValue: "" },
+				statusText: { type: "string", defaultValue: "" },
 				iconDisplayShape: { type: "sap.f.AvatarShape", defaultValue: AvatarShape.Circle },
 				iconSrc: { type: "sap.ui.core.URI", defaultValue: "" },
 				iconInitials: { type: "string", defaultValue: "" }
@@ -61,6 +61,9 @@ sap.ui.define([
 				_title: { type: "sap.m.Text", multiple: false, visibility: "hidden" },
 				_subtitle: { type: "sap.m.Text", multiple: false, visibility: "hidden" },
 				_avatar: { type: "sap.f.Avatar", multiple: false, visibility: "hidden" }
+			},
+			events: {
+				press: {}
 			}
 		}
 	});
@@ -96,13 +99,20 @@ sap.ui.define([
 		return oAvatar;
 	};
 
-
 	Header.prototype.onBeforeRendering = function () {
 		this._getTitle().setText(this.getTitle());
 		this._getSubtitle().setText(this.getSubtitle());
 		this._getAvatar().setDisplayShape(this.getIconDisplayShape());
 		this._getAvatar().setSrc(this.getIconSrc());
 		this._getAvatar().setInitials(this.getIconInitials());
+	};
+
+	Header.prototype._getHeaderAccessibility = function () {
+		var sTitleId = this._getTitle() ? this._getTitle().getId() : "",
+			sSubtitleId = this._getSubtitle() ? this._getSubtitle().getId() : "",
+			sAvatarId = this._getAvatar() ? this._getAvatar().getId() : "";
+
+			return sTitleId + " " + sSubtitleId + " " + sAvatarId;
 	};
 
 	/**
@@ -119,6 +129,39 @@ sap.ui.define([
 				this._getSubtitle().clampText();
 			}
 		}
+	};
+
+	Header.prototype.ontap = function () {
+		this.firePress();
+	};
+
+	/**
+	 * Creates an instance of Header with the given options
+	 *
+	 * @private
+	 * @static
+	 * @param {map} mConfiguration A map containing the header configuration options.
+	 * @return {sap.f.cards.Header} The created Header
+	 */
+	Header.create = function(mConfiguration) {
+		var mSettings = {
+			title: mConfiguration.title,
+			subtitle: mConfiguration.subTitle
+		};
+
+		if (mConfiguration.icon) {
+			mSettings.iconSrc = mConfiguration.icon.src;
+			mSettings.iconDisplayShape = mConfiguration.icon.shape;
+			mSettings.iconInitials = mConfiguration.icon.text;
+		}
+
+		if (mConfiguration.status) {
+			mSettings.statusText = mConfiguration.status.text;
+		}
+
+		var oHeader = new Header(mSettings);
+
+		return oHeader;
 	};
 
 	return Header;

@@ -1195,6 +1195,9 @@ function(
 	 * @private
 	 */
 	IconTabHeader.prototype._checkOverflow = function() {
+		if (this.bIsDestroyed) {
+			return;
+		}
 
 		var oBarHead = this.getDomRef("head");
 		var $bar = this.$();
@@ -1313,6 +1316,9 @@ function(
 	 * @return {sap.m.IconTabHeader} this pointer for chaining
 	 */
 	IconTabHeader.prototype._scrollIntoView = function(oItem, iDuration) {
+		if (this.bIsDestroyed) {
+			return;
+		}
 
 		var $item = oItem.$(),
 			iScrollLeft,

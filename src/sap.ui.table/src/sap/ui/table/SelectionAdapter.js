@@ -111,6 +111,28 @@ sap.ui.define([
     };
 
 	/**
+	 * Returns the number of items that can be selected.
+	 *
+	 * @returns {int} The number of items that can be selected.
+	 * @public
+	 * @abstract
+	 */
+	SelectionAdapter.prototype.getSelectableCount = function() {
+		return 0;
+	};
+
+	/**
+	 * Returns the number items that are selected.
+	 *
+	 * @returns {int} The number of items that are selected.
+	 * @public
+	 * @abstract
+	 */
+	SelectionAdapter.prototype.getSelectedCount = function() {
+		return 0;
+	};
+
+	/**
 	 * Checks whether an index is selectable.
 	 *
 	 * @param {int} iIndex The index to be checked

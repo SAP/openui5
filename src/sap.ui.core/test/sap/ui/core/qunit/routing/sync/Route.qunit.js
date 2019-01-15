@@ -67,6 +67,22 @@ sap.ui.define([
 		oRoute.destroy();
 	});
 
+	QUnit.test("Should save the current route as last matched route in the router after _routeMatched is called", function(assert) {
+		var oRoute = new Route(oRouterStub, { name : "testRoute" });
+		oRoute._routeMatched({});
+		assert.strictEqual(oRouterStub._matchedRoute, oRoute, "The matched route is saved as last matched route in the router");
+	});
+
+	QUnit.test("Should fire a switched event", function(assert) {
+		var fnSwitchedSpy = this.spy();
+		var oRoute = new Route(oRouterStub, { name : "testRoute" });
+
+		oRoute.attachEvent("switched", fnSwitchedSpy);
+		oRoute._routeSwitched();
+
+		assert.equal(fnSwitchedSpy.callCount, 1, "The switched event handler is called");
+	});
+
 	function fnRouteEventsTestCase (sTestName, sEventName) {
 		QUnit.test(sTestName, function(assert) {
 			// Arrange
@@ -133,9 +149,10 @@ sap.ui.define([
 			this.oSpy = sinon.spy(function(sRoute) {
 				return {
 					matched: {
-						add: function() {
-
-						}
+						add: function() {}
+					},
+					switched: {
+						add: function() {}
 					}
 				};
 			});

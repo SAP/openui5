@@ -473,7 +473,8 @@ function(
 		Switch.prototype.getAccessibilityInfo = function() {
 			var oBundle = sap.ui.getCore().getLibraryResourceBundle("sap.m"),
 				bState = this.getState(),
-				sDesc = oBundle.getText("ACC_CTR_STATE_CHECKED") + " " + this.getInvisibleElementText(bState);
+				sDesc = bState ? oBundle.getText("ACC_CTR_STATE_CHECKED") + " "
+						+ this.getInvisibleElementText(bState) : oBundle.getText("ACC_CTR_STATE_NOT_CHECKED") + " " + this.getInvisibleElementText(bState);
 
 			return {
 				role: "checkbox",

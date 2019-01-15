@@ -2,6 +2,7 @@
 		xmlns="sap.m"
 		xmlns:mvc="sap.ui.core.mvc"
 		xmlns:f="sap.f"
+		xmlns:w="sap.ui.integration.widgets"
 		displayBlock="true">
 	<Page title="{i18n>appTitle}">
 		<subHeader>
@@ -13,10 +14,10 @@
 		</subHeader>
 		<content>
 			<Panel>
-				<f:SAPCard class="sapUiMediumMargin" id="lineChart" manifest="{manifests>/analyticalContent/line}" height="auto" width="700px"/>
-				<f:SAPCard class="sapUiMediumMargin" id="stackedBarChart" manifest="{manifests>/analyticalContent/stackedBar}"  height="auto" width="700px"/>
-				<f:SAPCard class="sapUiMediumMargin" id="stackedColumnChart" manifest="{manifests>/analyticalContent/stackedColumn}"  height="auto" width="700px"/>
-				<f:SAPCard class="sapUiMediumMargin" id="donutChart" manifest="{manifests>/analyticalContent/donut}" height="auto" width="700px"/>
+				<w:Card class="sapUiMediumMargin" id="lineChart" manifest="{manifests>/analyticalContent/line}" height="500px" width="700px"/>
+				<w:Card class="sapUiMediumMargin" id="stackedBarChart" manifest="{manifests>/analyticalContent/stackedBar}"  height="500px" width="700px"/>
+				<w:Card class="sapUiMediumMargin" id="stackedColumnChart" manifest="{manifests>/analyticalContent/stackedColumn}"  height="500px" width="700px"/>
+				<w:Card class="sapUiMediumMargin" id="donutChart" manifest="{manifests>/analyticalContent/donut}" height="500px" width="700px"/>
 			</Panel>
 		</content>
 	</Page>

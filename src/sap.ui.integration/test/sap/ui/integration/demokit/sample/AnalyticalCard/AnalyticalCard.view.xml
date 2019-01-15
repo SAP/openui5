@@ -1,0 +1,49 @@
+<mvc:View
+        controllerName="sap.ui.integration.sample.AnalyticalCard.AnalyticalCard"
+        xmlns="sap.m"
+        xmlns:mvc="sap.ui.core.mvc"
+        xmlns:f="sap.f"
+        xmlns:w="sap.ui.integration.widgets">
+    <f:CardContainer>
+        <w:Card height="23rem" manifest="{manifests>/line}">
+            <w:layoutData>
+                <f:CardItemLayoutData columns="4" />
+            </w:layoutData>
+        </w:Card>
+        <w:Card height="23rem" manifest="{manifests>/stackedColumn}">
+            <w:layoutData>
+                <f:CardItemLayoutData columns="3" />
+            </w:layoutData>
+        </w:Card>
+        <w:Card height="11rem" manifest="{manifests>/donut1}">
+            <w:layoutData>
+                <f:CardItemLayoutData columns="2" />
+            </w:layoutData>
+        </w:Card>
+        <w:Card height="11rem" manifest="{manifests>/donut2}">
+            <w:layoutData>
+                <f:CardItemLayoutData columns="2" />
+            </w:layoutData>
+        </w:Card>
+        <w:Card height="11rem" manifest="{manifests>/donut3}">
+            <w:layoutData>
+                <f:CardItemLayoutData columns="2" />
+            </w:layoutData>
+        </w:Card>
+        <w:Card height="11rem" manifest="{manifests>/donut4}">
+            <w:layoutData>
+                <f:CardItemLayoutData columns="2" />
+            </w:layoutData>
+        </w:Card>
+        <w:Card height="11rem" manifest="{manifests>/donut5}">
+            <w:layoutData>
+                <f:CardItemLayoutData columns="2" />
+            </w:layoutData>
+        </w:Card>
+        <w:Card height="11rem" manifest="{manifests>/donut6}">
+            <w:layoutData>
+                <f:CardItemLayoutData columns="2" />
+            </w:layoutData>
+        </w:Card>
+    </f:CardContainer>
+</mvc:View>

@@ -242,10 +242,10 @@ function (
 			this.oControlDragDrop._onAggregationDragEnter(stubEventFor(this.oLayoutAggregationOverlay));
 
 			assert.equal(this.oObjectHeader.getAttributes().length, 0, "object attribute is removed from the header");
-			assert.equal(this.oLayout.getContent()[0].getId(), this.oObjectHeader.getId(), "object header is still at 1. position");
-			assert.equal(this.oLayout.getContent()[1].getId(), this.oButton.getId(), "button is still at 2. position");
-			assert.equal(this.oLayout.getContent()[2].getId(), this.oNotMovableButton.getId(), "not movable button is still at 3. position");
-			assert.equal(this.oLayout.getContent()[3].getId(), this.oObjectAttribute.getId(), "object attribute is inserted at the 4. position");
+			assert.equal(this.oLayout.getContent()[0].getId(), this.oObjectAttribute.getId(), "object attribute is inserted at the 1. position");
+			assert.equal(this.oLayout.getContent()[1].getId(), this.oObjectHeader.getId(), "object header is now at 2. position");
+			assert.equal(this.oLayout.getContent()[2].getId(), this.oButton.getId(), "button is now at 3. position");
+			assert.equal(this.oLayout.getContent()[3].getId(), this.oNotMovableButton.getId(), "not movable button is now at 4. position");
 		});
 
 		QUnit.test("while dragging the object attribute on the layout content aggregation overlay  when dragend is triggered ,", function(assert) {
@@ -256,10 +256,10 @@ function (
 			this.oControlDragDrop._onDragEnd(stubEventFor(this.oLayoutAggregationOverlay));
 
 			assert.equal(this.oObjectHeader.getAttributes().length, 0, "object attribute is removed from the header");
-			assert.equal(this.oLayout.getContent()[0].getId(), this.oObjectHeader.getId(), "object header is still at 1. position");
-			assert.equal(this.oLayout.getContent()[1].getId(), this.oButton.getId(), "button is still at 2. position");
-			assert.equal(this.oLayout.getContent()[2].getId(), this.oNotMovableButton.getId(), "not movable button is still at 3. position");
-			assert.equal(this.oLayout.getContent()[3].getId(), this.oObjectAttribute.getId(), "object attribute is inserted at the 4. position");
+			assert.equal(this.oLayout.getContent()[0].getId(), this.oObjectAttribute.getId(), "object attribute is inserted at the 1. position");
+			assert.equal(this.oLayout.getContent()[1].getId(), this.oObjectHeader.getId(), "object header is now at 2. position");
+			assert.equal(this.oLayout.getContent()[2].getId(), this.oButton.getId(), "button is now at 3. position");
+			assert.equal(this.oLayout.getContent()[3].getId(), this.oNotMovableButton.getId(), "not movable button is now at 4. position");
 
 			assert.ok(!this.oControlDragDrop.getElementMover()._getSource(), "source information should be deleted after move has finished");
 		});
@@ -288,10 +288,10 @@ function (
 			QUnitUtils.triggerKeydown(this.oLayoutOverlay.getDomRef(), KeyCodes.V, false, false, true);
 
 			assert.equal(this.oObjectHeader.getAttributes().length, 0, "object attribute is removed from the header");
-			assert.equal(this.oLayout.getContent()[0].getId(), this.oObjectHeader.getId(), "object header is still at 1. position");
-			assert.equal(this.oLayout.getContent()[1].getId(), this.oButton.getId(), "button is still at 2. position");
-			assert.equal(this.oLayout.getContent()[2].getId(), this.oNotMovableButton.getId(), "not movable button is still at 3. position");
-			assert.equal(this.oLayout.getContent()[3].getId(), this.oObjectAttribute.getId(), "object attribute is inserted at the 4. position");
+			assert.equal(this.oLayout.getContent()[0].getId(), this.oObjectAttribute.getId(), "object attribute is inserted at the 1. position");
+			assert.equal(this.oLayout.getContent()[1].getId(), this.oObjectHeader.getId(), "object header is now at 2. position");
+			assert.equal(this.oLayout.getContent()[2].getId(), this.oButton.getId(), "button is now at 3. position");
+			assert.equal(this.oLayout.getContent()[3].getId(), this.oNotMovableButton.getId(), "not movable button is now at 4. position");
 
 			assert.ok(!this.oLayoutAggregationOverlay.isTargetZone(), "the valid aggregation (layout) is not marked as target zone");
 			assert.ok(!this.oObjectHeaderAggregationOverlay.isTargetZone(), "the valid aggregation (objectHeader) is not marked as target zone");
@@ -305,8 +305,8 @@ function (
 
 			assert.equal(this.oObjectHeader.getAttributes().length, 0, "object attribute is removed from the header");
 			assert.equal(this.oLayout.getContent()[0].getId(), this.oObjectHeader.getId(), "object header stays at 1. position");
-			assert.equal(this.oLayout.getContent()[1].getId(), this.oObjectAttribute.getId(), "object attribute is inserted at the 2. position before the button");
-			assert.equal(this.oLayout.getContent()[2].getId(), this.oButton.getId(), "button is now at 3. position");
+			assert.equal(this.oLayout.getContent()[1].getId(), this.oButton.getId(), "button is still at 2. position");
+			assert.equal(this.oLayout.getContent()[2].getId(), this.oObjectAttribute.getId(), "object attribute is inserted at the 3. position after the button");
 
 			assert.ok(!this.oLayoutAggregationOverlay.isTargetZone(), "the valid aggregation (layout) is not marked as target zone");
 			assert.ok(!this.oObjectHeaderAggregationOverlay.isTargetZone(), "the valid aggregation (objectHeader) is not marked as target zone");
@@ -420,7 +420,8 @@ function (
 			this.oControlDragDrop._onAggregationDragEnter(stubEventFor(this.oSplitContainerMasterPagesAggregationOverlay));
 
 			assert.equal(this.oSplitContainer.getMasterPages().length, 2, "then the page is again in the masterPages aggregation");
-			assert.strictEqual(this.oSplitContainer.getMasterPages()[1], this.oPage1, "and is the right control on the right position");
+			assert.strictEqual(this.oSplitContainer.getMasterPages()[0], this.oPage1, "and is the first control on the right position");
+			assert.strictEqual(this.oSplitContainer.getMasterPages()[1], this.oPage2, "and is the 2. control on the right position");
 		});
 
 		QUnit.test("when the cut is triggered on the page overlay, that fit into both aggregations", function(assert) {

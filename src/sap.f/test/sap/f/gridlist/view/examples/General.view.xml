@@ -12,7 +12,7 @@
         <f:customLayout>
             <grid:GridBasicLayout
 				gridTemplateColumns="repeat(auto-fit, 8rem)"
-				gridAutoRows="1fr"
+
 				gridGap="0.25rem 0.25rem">
             </grid:GridBasicLayout>
         </f:customLayout>

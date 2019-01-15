@@ -47,7 +47,9 @@ sap.ui.define(["sap/ui/support/library"],
 			}
 
 			function cleanup() {
-				oDomElement.remove(); // allow this element and its attached listeners be picked up by the GC
+				if (oDomElement && oDomElement.parentNode !== null) { // allow this element and its attached listeners be picked up by the GC
+					oDomElement.parentNode.removeChild(oDomElement);
+				}
 				bDone = true;
 			}
 

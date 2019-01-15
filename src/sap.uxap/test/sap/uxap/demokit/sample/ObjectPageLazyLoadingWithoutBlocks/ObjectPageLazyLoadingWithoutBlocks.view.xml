@@ -1,7 +1,6 @@
 <core:View xmlns:core="sap.ui.core"
 		   xmlns="sap.uxap"
 		   xmlns:m="sap.m"
-		   xmlns:l="sap.ui.layout"
 		   xmlns:f="sap.ui.layout.form"
 		   controllerName="sap.uxap.sample.ObjectPageLazyLoadingWithoutBlocks.ObjectPageLazyLoadingWithoutBlocks"
 		   height="100%"

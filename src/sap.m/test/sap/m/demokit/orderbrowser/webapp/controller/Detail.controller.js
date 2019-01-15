@@ -1,4 +1,3 @@
-/*global location */
 sap.ui.define([
 	"./BaseController",
 	"sap/ui/model/json/JSONModel",

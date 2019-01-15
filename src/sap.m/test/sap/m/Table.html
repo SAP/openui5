@@ -328,7 +328,7 @@
 			header : new sap.m.Label({
 				text : "Image"
 			}),
-			minScreenWidth : "Phone",
+			minScreenWidth : "Phone"
 		}),
 		new sap.m.Column({
 			header : new sap.m.Label({
@@ -353,7 +353,7 @@
 			minScreenWidth : "Desktop",
 			popinDisplay : "Inline",
 			demandPopin : true
-		}),
+		})
 	];
 
 	var oTemplate = new sap.m.ColumnListItem({
@@ -363,6 +363,39 @@
 			setTimeout(function() {
 				sap.m.MessageToast.show("detail is pressed");
 			}, 10);
+		},
+		highlight: {
+			path: "money",
+			formatter: function(fSalary) {
+				if (fSalary < 50) {
+					return "Error";
+				}
+				if (fSalary < 1000) {
+					return "Warning";
+				}
+				if (fSalary <= 10000) {
+					return "Indication04";
+				}
+				if (fSalary > 10000 && fSalary < 50000) {
+					return "Success";
+				}
+				return "None";
+			}
+		},
+		highlightText: {
+			path: "money",
+			formatter: function(fSalary) {
+				if (fSalary < 5) {
+					return "Get a new job!";
+				}
+				if (fSalary >= 1000 && fSalary <= 10000) {
+					return "Indication of your salary";
+				}
+				if (fSalary > 10000 && fSalary < 50000) {
+					return "Richie Rich!";
+				}
+				return "";
+			}
 		},
 		cells : [
 			new sap.m.Text({
@@ -394,8 +427,8 @@
 				displayFormat : "dd.MM.yyyy"
 			}),
 			new sap.m.Text({
-				text : "{money} EUR",
-			}),
+				text : "{money} EUR"
+			})
 		]
 	});
 

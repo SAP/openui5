@@ -13,7 +13,7 @@ describe("sap.m.ComboBox", function() {
 	it("should open first ComboBox - Default", function() {
 		var defaultArrow = element(by.id("box_default-arrow"));
 		defaultArrow.click();
-		element.all(by.css('li.sapMSelectListItemBase[id*="box_default"]')).get(2).click();
+		element.all(by.css('li.sapMLIB[id*="box_default"]')).get(2).click();
 		defaultArrow.click();
 		expect(takeScreenshot()).toLookAs("default_fullscreen");
 		defaultArrow.click();
@@ -23,7 +23,7 @@ describe("sap.m.ComboBox", function() {
 	it("should open second ComboBox - Two column layout", function() {
 		var twoColumnArrow = element(by.id("box_two_column-arrow"));
 		twoColumnArrow.click();
-		element.all(by.css('li.sapMSelectListItemBase[id*="box_two_column"]')).get(8).click();
+		element.all(by.css('li.sapMLIB[id*="box_two_column"]')).get(8).click();
 		twoColumnArrow.click();
 		expect(takeScreenshot()).toLookAs("two_column_fullscreen");
 		twoColumnArrow.click();

@@ -3,26 +3,38 @@
 sap.ui.define([
 	"sap/ui/thirdparty/jquery",
 	"sap/ui/thirdparty/sinon-4",
+	"sap/ui/base/ManagedObject",
 	"sap/ui/dt/DesignTime",
 	"sap/ui/dt/OverlayRegistry",
 	"sap/ui/dt/Util",
 	"sap/ui/layout/VerticalLayout",
+	"sap/ui/layout/form/Form",
+	"sap/ui/layout/form/FormContainer",
+	"sap/ui/layout/form/FormElement",
+	"sap/ui/layout/form/FormLayout",
+	"sap/ui/rta/plugin/Stretch",
 	"sap/m/HBox",
 	"sap/m/VBox",
 	"sap/m/Button",
-	"sap/ui/rta/plugin/Stretch"
+	"sap/base/util/includes"
 ],
 function (
 	jQuery,
 	sinon,
+	ManagedObject,
 	DesignTime,
 	OverlayRegistry,
 	DtUtil,
 	VerticalLayout,
+	Form,
+	FormContainer,
+	FormElement,
+	FormLayout,
+	Stretch,
 	HBox,
 	VBox,
 	Button,
-	Stretch
+	includes
 ) {
 	'use strict';
 
@@ -30,9 +42,51 @@ function (
 
 	var sStretchStyleClass = Stretch.STRETCHSTYLECLASS;
 
-	function isStretched(oControl) {
-		return oControl.hasStyleClass(sStretchStyleClass);
+	function isStretched(oOverlay) {
+		return oOverlay.getAssociatedDomRef().hasClass(sStretchStyleClass);
 	}
+
+	QUnit.module("Given a stretch plugin", {
+		beforeEach: function() {
+			this.oStretchPlugin = new Stretch();
+		},
+		afterEach: function() {
+			this.oStretchPlugin.destroy();
+		}
+	}, function() {
+		QUnit.test("add / remove StretchCandidate", function(assert) {
+			var oOverlay1 = {
+				getElement: function() {
+					return new ManagedObject("element1");
+				},
+				getAssociatedDomRef: function() {}
+			};
+			var oOverlay2 = {
+				getElement: function() {
+					return new ManagedObject("element2");
+				},
+				getAssociatedDomRef: function() {}
+			};
+
+			assert.equal(this.oStretchPlugin.getStretchCandidates().length, 0, "there is no element");
+
+			this.oStretchPlugin.addStretchCandidate(oOverlay1);
+			assert.equal(this.oStretchPlugin.getStretchCandidates().length, 1, "there is one element");
+			assert.ok(includes(this.oStretchPlugin.getStretchCandidates(), "element1"), "the element of the first overlay was added");
+
+			this.oStretchPlugin.addStretchCandidate(oOverlay2);
+			assert.equal(this.oStretchPlugin.getStretchCandidates().length, 2, "there are two elements");
+			assert.ok(includes(this.oStretchPlugin.getStretchCandidates(), "element2"), "the element of the second overlay was added");
+
+			this.oStretchPlugin.removeStretchCandidate(oOverlay2);
+			assert.equal(this.oStretchPlugin.getStretchCandidates().length, 1, "there is one element");
+			assert.notOk(includes(this.oStretchPlugin.getStretchCandidates(), "element2"), "the element of the second overlay was removed");
+
+			this.oStretchPlugin.removeStretchCandidate(oOverlay1);
+			assert.equal(this.oStretchPlugin.getStretchCandidates().length, 0, "there is no element");
+			assert.notOk(includes(this.oStretchPlugin.getStretchCandidates(), "element1"), "the element of the first overlay was removed");
+		});
+	});
 
 	QUnit.module("Given a designTime and stretch plugin are instantiated with nested editable containers", {
 		beforeEach : function(assert) {
@@ -93,36 +147,36 @@ function (
 		}
 	}, function() {
 		QUnit.test("After initialization", function(assert) {
-			assert.ok(isStretched(this.oLayout), "the style class was set");
-			assert.ok(isStretched(this.oVBox1), "the style class was set");
-			assert.ok(isStretched(this.oVBox2), "the style class was set");
+			assert.ok(isStretched(this.oLayoutOverlay), "the style class was set");
+			assert.ok(isStretched(this.oVBoxOverlay1), "the style class was set");
+			assert.ok(isStretched(this.oVBoxOverlay2), "the style class was set");
 		});
 
 		QUnit.test("when the plugin gets deregistered", function(assert) {
 			this.oStretchPlugin.deregisterElementOverlay(this.oLayoutOverlay);
 			this.oStretchPlugin.deregisterElementOverlay(this.oVBoxOverlay1);
 			this.oStretchPlugin.deregisterElementOverlay(this.oVBoxOverlay2);
-			assert.notOk(isStretched(this.oLayout), "the style class was removed");
-			assert.notOk(isStretched(this.oVBox1), "the style class was removed");
-			assert.notOk(isStretched(this.oVBox2), "the style class was removed");
+			assert.notOk(isStretched(this.oLayoutOverlay), "the style class was removed");
+			assert.notOk(isStretched(this.oVBoxOverlay1), "the style class was removed");
+			assert.notOk(isStretched(this.oVBoxOverlay2), "the style class was removed");
 		});
 
 		QUnit.test("when a vbox changes editable to false", function(assert) {
 			var oSetStyleClassSpy = sandbox.spy(this.oStretchPlugin, "_setStyleClassForAllStretchCandidates");
 			this.oVBoxOverlay1.setEditable(false);
 			assert.deepEqual(oSetStyleClassSpy.lastCall.args[0], [this.oVBox1.getId()], "only one overlay is reevaluated");
-			assert.ok(isStretched(this.oLayout), "the style class was set");
-			assert.notOk(isStretched(this.oVBox1), "the style class was set");
-			assert.ok(isStretched(this.oVBox2), "the style class was set");
+			assert.ok(isStretched(this.oLayoutOverlay), "the style class was set");
+			assert.notOk(isStretched(this.oVBoxOverlay1), "the style class was set");
+			assert.ok(isStretched(this.oVBoxOverlay2), "the style class was set");
 		});
 
 		QUnit.test("when the root element changes editable to false", function(assert) {
 			var oSetStyleClassSpy = sandbox.spy(this.oStretchPlugin, "_setStyleClassForAllStretchCandidates");
 			this.oLayoutOverlay.setEditable(false);
 			assert.deepEqual(oSetStyleClassSpy.lastCall.args[0], [this.oLayout.getId()], "only one overlay is reevaluated");
-			assert.notOk(isStretched(this.oLayout), "the style class was set");
-			assert.ok(isStretched(this.oVBox1), "the style class was set");
-			assert.ok(isStretched(this.oVBox2), "the style class was set");
+			assert.notOk(isStretched(this.oLayoutOverlay), "the style class was set");
+			assert.ok(isStretched(this.oVBoxOverlay1), "the style class was set");
+			assert.ok(isStretched(this.oVBoxOverlay2), "the style class was set");
 		});
 
 		QUnit.test("when the size of the layout changes", function(assert) {
@@ -137,7 +191,7 @@ function (
 
 			this.oLayoutOverlay.attachEventOnce("geometryChanged", function() {
 				this.oStretchPlugin._onElementOverlayChanged(oEvent);
-				assert.notOk(isStretched(this.oLayout), "the style class was removed");
+				assert.notOk(isStretched(this.oLayoutOverlay), "the style class was removed");
 				done();
 			}, this);
 			this.oLayout.setWidth("400px");
@@ -185,14 +239,14 @@ function (
 		}
 	}, function() {
 		QUnit.test("After initialization", function(assert) {
-			assert.notOk(isStretched(this.oLayout), "the style class was not set");
-			assert.ok(isStretched(this.oVBox1), "the style class was set");
+			assert.notOk(isStretched(this.oLayoutOverlay), "the style class was not set");
+			assert.ok(isStretched(this.oVBoxOverlay1), "the style class was set");
 		});
 
 		QUnit.test("When a vbox inside becomes not editable", function(assert) {
 			this.oVBoxOverlay1.setEditable(false);
-			assert.notOk(isStretched(this.oLayout), "the style class was not set");
-			assert.notOk(isStretched(this.oVBox1), "the style class was removed");
+			assert.notOk(isStretched(this.oLayoutOverlay), "the style class was not set");
+			assert.notOk(isStretched(this.oVBoxOverlay1), "the style class was removed");
 		});
 
 		QUnit.test("when the size of the layout changes", function(assert) {
@@ -208,7 +262,7 @@ function (
 
 			this.oLayoutOverlay.attachEventOnce("geometryChanged", function() {
 				this.oStretchPlugin._onElementOverlayChanged(oEvent);
-				assert.ok(isStretched(this.oLayout), "the style class was set");
+				assert.ok(isStretched(this.oLayoutOverlay), "the style class was set");
 				done();
 			}, this);
 		});
@@ -229,14 +283,14 @@ function (
 
 			this.oLayoutOverlay.attachEventOnce("geometryChanged", function() {
 				this.oStretchPlugin._onElementOverlayChanged(oEvent);
-				assert.notOk(isStretched(this.oLayout), "the style class was not set");
+				assert.notOk(isStretched(this.oLayoutOverlay), "the style class was not set");
 				done();
 			}, this);
 		});
 
 		QUnit.test("When the inner vbox gets destroyed", function(assert) {
 			this.oVBox2.destroy();
-			assert.notOk(isStretched(this.oVBox1), "the style class was removed");
+			assert.notOk(isStretched(this.oVBoxOverlay1), "the style class was removed");
 		});
 
 		QUnit.test("When the inner vbox gets destroyed while a plugin is busy", function(assert) {
@@ -245,7 +299,7 @@ function (
 			};
 
 			this.oVBox2.destroy();
-			assert.ok(isStretched(this.oVBox1), "the style class was not removed");
+			assert.ok(isStretched(this.oVBoxOverlay1), "the style class was not removed");
 		});
 	});
 
@@ -303,7 +357,7 @@ function (
 
 			this.oLayoutOverlay.attachEventOnce("geometryChanged", function() {
 				this.oStretchPlugin._onElementOverlayChanged(oEvent);
-				assert.notOk(isStretched(this.oLayout), "the style class was not set");
+				assert.notOk(isStretched(this.oLayoutOverlay), "the style class was not set");
 				done();
 			}, this);
 		});
@@ -333,8 +387,8 @@ function (
 			this.oLayout.placeAt("qunit-fixture");
 			sap.ui.getCore().applyChanges();
 
-			var oStretchPlugin = new Stretch();
-			sandbox.stub(oStretchPlugin, "_isEditable").callsFake(function(oOverlay) {
+			this.oStretchPlugin = new Stretch();
+			sandbox.stub(this.oStretchPlugin, "_isEditable").callsFake(function(oOverlay) {
 				if (oOverlay.getElement().getId() === "hbox" || oOverlay.getElement().getId() === "vbox2") {
 					return false;
 				}
@@ -343,7 +397,7 @@ function (
 
 			this.oDesignTime = new DesignTime({
 				rootElements : [this.oLayout],
-				plugins : [oStretchPlugin]
+				plugins : [this.oStretchPlugin]
 			});
 
 			this.oDesignTime.attachEventOnce("synced", function() {
@@ -360,30 +414,30 @@ function (
 		}
 	}, function() {
 		QUnit.test("After initialization", function(assert) {
-			assert.ok(isStretched(this.oLayout), "the style class was set");
-			assert.notOk(isStretched(this.oHBox), "the style class was not set");
+			assert.ok(isStretched(this.oLayoutOverlay), "the style class was set");
+			assert.notOk(isStretched(this.oHBoxOverlay), "the style class was not set");
 		});
 
 		QUnit.test("When the editable child changes editable", function(assert) {
 			this.oVBoxOverlay.setEditable(false);
-			assert.notOk(isStretched(this.oLayout), "the style class was removed");
-			assert.notOk(isStretched(this.oHBox), "the style class is not there");
-			assert.notOk(isStretched(this.oVBox), "the style class is not there");
+			assert.notOk(isStretched(this.oLayoutOverlay), "the style class was removed");
+			assert.notOk(isStretched(this.oHBoxOverlay), "the style class is not there");
+			assert.notOk(isStretched(this.oVBoxOverlay), "the style class is not there");
 
 			this.oVBoxOverlay.setEditable(true);
-			assert.ok(isStretched(this.oLayout), "the style class was added again");
-			assert.notOk(isStretched(this.oHBox), "the style class is not there");
-			assert.notOk(isStretched(this.oVBox), "the style class is not there");
+			assert.ok(isStretched(this.oLayoutOverlay), "the style class was added again");
+			assert.notOk(isStretched(this.oHBoxOverlay), "the style class is not there");
+			assert.notOk(isStretched(this.oVBoxOverlay), "the style class is not there");
 		});
 
 		QUnit.test("When the layout becomes not editable", function(assert) {
 			this.oLayoutOverlay.setEditable(false);
-			assert.notOk(isStretched(this.oLayout), "the style class was removed");
+			assert.notOk(isStretched(this.oLayoutOverlay), "the style class was removed");
 		});
 
 		QUnit.test("When the hbox becomes editable", function(assert) {
 			this.oHBoxOverlay.setEditable(true);
-			assert.ok(isStretched(this.oHBox), "the style class was added");
+			assert.ok(isStretched(this.oHBoxOverlay), "the style class was added");
 		});
 
 		QUnit.test("When the editable child becomes invisible", function(assert) {
@@ -392,14 +446,30 @@ function (
 			this.oVBox.setVisible(false);
 			// wait for the dom to update
 			var fnDebounced = DtUtil.debounce(function() {
-				assert.notOk(isStretched(this.oLayout), "the style class was removed");
-				assert.notOk(isStretched(this.oHBox), "the style class is not there");
-				assert.notOk(isStretched(this.oVBox), "the style class is not there");
+				assert.notOk(isStretched(this.oHBoxOverlay), "the style class is not there");
+				assert.notOk(isStretched(this.oLayoutOverlay), "the style class is not there");
 				this.oHBoxOverlay.detachEvent("geometryChanged", fnDebounced);
 				done();
 			}.bind(this));
 
 			this.oHBoxOverlay.attachEvent("geometryChanged", fnDebounced);
+		});
+
+		QUnit.test("When the layout becomes invisible", function(assert) {
+			var done = assert.async();
+			assert.ok(includes(this.oStretchPlugin.getStretchCandidates(), "layout"), "the layout is part of the candidates");
+			assert.ok(includes(this.oStretchPlugin.getStretchCandidates(), "hbox"), "the hbox is part of the candidates");
+
+			this.oHBox.setVisible(false);
+			// wait for the dom to update
+			var fnDebounced = DtUtil.debounce(function() {
+				assert.notOk(includes(this.oStretchPlugin.getStretchCandidates()), "layout", "the layout is not part of the candidates anymore");
+				assert.notOk(includes(this.oStretchPlugin.getStretchCandidates()), "hbox", "the hbox is not part of the candidates anymore");
+				this.oLayoutOverlay.detachEvent("geometryChanged", fnDebounced);
+				done();
+			}.bind(this));
+
+			this.oLayoutOverlay.attachEvent("geometryChanged", fnDebounced);
 		});
 	});
 
@@ -448,13 +518,13 @@ function (
 		}
 	}, function() {
 		QUnit.test("After initialization", function(assert) {
-			assert.notOk(isStretched(this.oLayout), "the style class was not set");
-			assert.notOk(isStretched(this.oHBox), "the style class was not set");
+			assert.notOk(isStretched(this.oLayoutOverlay), "the style class was not set");
+			assert.notOk(isStretched(this.oHBoxOverlay), "the style class was not set");
 		});
 
 		QUnit.test("When the hbox becomes editable", function(assert) {
 			this.oHBoxOverlay.setEditable(true);
-			assert.ok(isStretched(this.oLayout), "the style class was set");
+			assert.ok(isStretched(this.oLayoutOverlay), "the style class was set");
 		});
 
 		QUnit.test("When the hbox becomes editable but a plugin is busy", function(assert) {
@@ -463,7 +533,7 @@ function (
 			};
 
 			this.oHBoxOverlay.setEditable(true);
-			assert.notOk(isStretched(this.oLayout), "the style class was not set");
+			assert.notOk(isStretched(this.oLayoutOverlay), "the style class was not set");
 		});
 
 		QUnit.test("When the invisible hbox becomes visible", function(assert) {
@@ -471,7 +541,7 @@ function (
 			this.oHBox2.setVisible(true);
 			// wait for the dom to update
 			var fnDebounced = DtUtil.debounce(function() {
-				assert.ok(isStretched(this.oLayout), "the style class was added");
+				assert.ok(isStretched(this.oLayoutOverlay), "the style class was added");
 				this.oLayoutOverlay.detachEvent("geometryChanged", fnDebounced);
 				done();
 			}.bind(this));
@@ -484,7 +554,7 @@ function (
 				return true;
 			};
 			this.oHBox2.setVisible(true);
-			assert.notOk(isStretched(this.oLayout), "the style class was added");
+			assert.notOk(isStretched(this.oLayoutOverlay), "the style class was not added");
 		});
 	});
 
@@ -536,9 +606,9 @@ function (
 
 		QUnit.test("When the hbox becomes editable", function(assert) {
 			this.oHBoxOverlay.setEditable(true);
-			assert.notOk(isStretched(this.oLayout), "the style class was not set");
-			assert.notOk(isStretched(this.oHBox), "the style class was not set");
-			assert.notOk(isStretched(this.oVBox), "the style class was not set");
+			assert.notOk(isStretched(this.oLayoutOverlay), "the style class was not set");
+			assert.notOk(isStretched(this.oHBoxOverlay), "the style class was not set");
+			assert.notOk(isStretched(this.oVBoxOverlay), "the style class was not set");
 		});
 	});
 
@@ -607,7 +677,7 @@ function (
 			this.oStretchPlugin.destroy();
 			setTimeout(function() {
 				assert.ok(true, "there is no error thrown");
-				assert.notOk(isStretched(this.oLayout1), "then stretch-styleclass should not be set");
+				assert.notOk(isStretched(this.oOuterLayoutOverlay), "then stretch-styleclass should not be set");
 				fnDone();
 			}.bind(this), iTimeToWait);
 			this.clock.tick(iTimeToWait);
@@ -627,6 +697,52 @@ function (
 				fnDone();
 			}, iTimeToWait);
 			this.clock.tick(iTimeToWait);
+		});
+	});
+
+	QUnit.module("Given a Form containing Elements and Stretch Plugin", {
+		beforeEach: function(assert) {
+			var done = assert.async();
+
+			this.oFormElement = new FormElement("groupElement1", {
+				fields: [new Button({text: "fooooo"})],
+				label: "element1"
+			});
+			this.oFormContainer = new FormContainer("group1", {
+				formElements : [this.oFormElement]
+			});
+			this.oForm = new Form("smartForm", {
+				formContainers : [this.oFormContainer],
+				layout: new FormLayout()
+			});
+
+			this.oForm.placeAt('qunit-fixture');
+			sap.ui.getCore().applyChanges();
+
+			this.oStretchPlugin = new Stretch();
+
+			sandbox.stub(this.oStretchPlugin, "_isEditable").returns(true);
+
+			this.oDesignTime = new DesignTime({
+				rootElements : [this.oForm],
+				plugins : [this.oStretchPlugin]
+			});
+
+			this.oDesignTime.attachEventOnce("synced", function() {
+				this.oFormOverlay = OverlayRegistry.getOverlay(this.oForm);
+				this.oFormContainerOverlay = OverlayRegistry.getOverlay(this.oFormContainer);
+				this.oFormElementOverlay = OverlayRegistry.getOverlay(this.oFormElement);
+				done();
+			}.bind(this));
+		},
+		afterEach: function() {
+			sandbox.restore();
+			this.oDesignTime.destroy();
+			this.oForm.destroy();
+		}
+	}, function() {
+		QUnit.test("After initialization", function(assert) {
+			assert.ok(isStretched(this.oFormContainerOverlay), "the style class was set");
 		});
 	});
 

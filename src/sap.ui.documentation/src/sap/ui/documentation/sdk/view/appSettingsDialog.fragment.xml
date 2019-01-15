@@ -10,17 +10,22 @@
 		<content>
 			<VBox class="sapUiTinyMarginTop">
 					<Label text="Theme:" design="Standard" labelFor="ThemeSelect" />
-					<Select id="ThemeSelect" width="100%">
+					<Select id="ThemeSelect" width="100%" class="sapUiSmallMarginBottom">
+						<core:Item key="sap_fiori_3" text="Fiori 3"/>
 						<core:Item key="sap_belize" text="Belize"/>
 						<core:Item key="sap_belize_plus" text="Belize Deep"/>
 						<core:Item key="sap_belize_hcb" text="High Contrast Black"/>
 						<core:Item key="sap_belize_hcw" text="High Contrast White"/>
 					</Select>
 
-					<HBox class="sapUiTinyMarginTop" alignItems="Center" justifyContent="SpaceBetween">
-						<Label text="Compact Content Density:" design="Standard"  labelFor="CompactModeSwitch" />
-						<Switch id="CompactModeSwitch" state="false" />
-					</HBox>
+					<Label text="Content Density:" design="Standard"  labelFor="CompactModeSwitch" />
+					<Select id="DensityModeSwitch" width="100%">
+						<core:Item text="Cozy" key="cozy"/>
+						<core:Item text="Compact" key="compact"/>
+						<core:Item text="Condensed" key="condensed"/>
+					</Select>
+					<Link text="Read more about Content Densities" href="#/topic/e54f729da8e3405fae5e4fe8ae7784c1" target="_blank" />
+
 					<HBox class="sapUiTinyMarginTop" alignItems="Center" justifyContent="SpaceBetween">
 						<Label text="Right To Left Mode:" design="Standard" labelFor="RTLSwitch" />
 						<Switch id="RTLSwitch" state="false" />

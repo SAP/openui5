@@ -1795,13 +1795,15 @@ sap.ui.define([
 								break;
 							}
 
-							if (aSeparatedText[i]) {
+							var sPastedValue = aSeparatedText[i].trim();
+
+							if (sPastedValue) {
 								var oCondition = {
 									"key": that._createConditionKey(),
 									"exclude": that.getExclude(),
 									"operation": oOperation.getSelectedKey(),
 									"keyField": oKeyField.key,
-									"value1": aSeparatedText[i],
+									"value1": sPastedValue,
 									"value2": null
 								};
 								that._addCondition2Map(oCondition);

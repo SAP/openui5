@@ -3,8 +3,6 @@
 /* Base theme                               */
 /* ======================================== */
 
-@_sap_m_ValueStateMessage_HighlightBG: lighten(@sapUiHighlight, 48);
-
 .sapMValueStateMessage {
 	box-sizing: border-box;
 	background: @sapUiFieldBackground;
@@ -15,6 +13,7 @@
 	padding: 0.3rem 0.625rem;
 	min-width: 6rem;
 	white-space: pre-wrap;
+	word-break: break-all;
 }
 
 .sapMValueStateMessageError {
@@ -26,5 +25,5 @@
 }
 
 .sapMValueStateMessageInformation {
-	background: @_sap_m_ValueStateMessage_HighlightBG;
+	background: @sapUiInformationBG;
 }

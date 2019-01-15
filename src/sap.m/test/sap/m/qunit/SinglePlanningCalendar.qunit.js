@@ -241,6 +241,124 @@ sap.ui.define([
 		oSPC.destroy();
 	});
 
+	QUnit.module("Classes");
+
+	QUnit.test("Class for hidden actionsToolbar", function (assert) {
+		var oSPC = new SinglePlanningCalendar(),
+			$oSPCRef;
+
+		oSPC.placeAt("qunit-fixture");
+		sap.ui.getCore().applyChanges();
+		$oSPCRef = oSPC.$();
+
+		assert.ok($oSPCRef.hasClass("sapMSinglePCActionsHidden"), "Class for hidden actions is applied when they are empty");
+
+		oSPC.destroy();
+	});
+
+	QUnit.test("Class for non-hidden actionsToolbar", function (assert) {
+		var oSPC = new SinglePlanningCalendar({ title: "Something" }),
+			$oSPCRef;
+
+		oSPC.placeAt("qunit-fixture");
+		sap.ui.getCore().applyChanges();
+		$oSPCRef = oSPC.$();
+
+		assert.notOk($oSPCRef.hasClass("sapMSinglePCActionsHidden"),
+			"Class for hidden actions isn't applied when they aren't empty");
+
+		oSPC.destroy();
+	});
+
+	QUnit.test("Initial classes for stickyMode: None (Default)", function (assert) {
+		// Prepare
+		var oSPC = new SinglePlanningCalendar(),
+			$oSPCRef;
+
+		oSPC.placeAt("qunit-fixture");
+		sap.ui.getCore().applyChanges();
+		$oSPCRef = oSPC.$();
+
+		// Assert
+		assert.notOk($oSPCRef.hasClass("sapMSinglePCStickyAll"), "sapMSinglePCStickyAll class isn't applied");
+		assert.notOk($oSPCRef.hasClass("sapMSinglePCStickyNavBarAndColHeaders"), "sapMSinglePCStickyNavBarAndColHeaders class isn't applied");
+
+		// Clean up
+		oSPC.destroy();
+	});
+
+	QUnit.test("Initial classes for stickyMode: All", function (assert) {
+		// Prepare
+		var oSPC = new SinglePlanningCalendar({ stickyMode: "All" }),
+			$oSPCRef;
+
+		oSPC.placeAt("qunit-fixture");
+		sap.ui.getCore().applyChanges();
+		$oSPCRef = oSPC.$();
+
+		// Assert
+		assert.ok($oSPCRef.hasClass("sapMSinglePCStickyAll"), "sapMSinglePCStickyAll class is applied");
+		assert.notOk($oSPCRef.hasClass("sapMSinglePCStickyNavBarAndColHeaders"), "sapMSinglePCStickyNavBarAndColHeaders class isn't applied");
+
+		// Clean up
+		oSPC.destroy();
+	});
+
+	QUnit.test("Initial classes for stickyMode: NavBarAndColHeaders", function (assert) {
+		// Prepare
+		var oSPC = new SinglePlanningCalendar({ stickyMode: "NavBarAndColHeaders" }),
+			$oSPCRef;
+
+		oSPC.placeAt("qunit-fixture");
+		sap.ui.getCore().applyChanges();
+		$oSPCRef = oSPC.$();
+
+		// Assert
+		assert.notOk($oSPCRef.hasClass("sapMSinglePCStickyAll"), "sapMSinglePCStickyAll class isn't applied");
+		assert.ok($oSPCRef.hasClass("sapMSinglePCStickyNavBarAndColHeaders"), "sapMSinglePCStickyNavBarAndColHeaders class is applied");
+
+		// Clean up
+		oSPC.destroy();
+	});
+
+	QUnit.test("Classes application when stickyMode is changed runtime", function (assert) {
+		// Prepare
+		var oSPC = new SinglePlanningCalendar(),
+			$oSPCRef;
+
+		oSPC.placeAt("qunit-fixture");
+		sap.ui.getCore().applyChanges();
+
+		// Act
+		oSPC.setStickyMode("All");
+		sap.ui.getCore().applyChanges();
+		$oSPCRef = oSPC.$();
+
+		// Assert
+		assert.ok($oSPCRef.hasClass("sapMSinglePCStickyAll"), "sapMSinglePCStickyAll class is applied");
+		assert.notOk($oSPCRef.hasClass("sapMSinglePCStickyNavBarAndColHeaders"), "sapMSinglePCStickyNavBarAndColHeaders class isn't applied");
+
+		// Act
+		oSPC.setStickyMode("NavBarAndColHeaders");
+		sap.ui.getCore().applyChanges();
+		$oSPCRef = oSPC.$();
+
+		// Assert
+		assert.notOk($oSPCRef.hasClass("sapMSinglePCStickyAll"), "sapMSinglePCStickyAll class isn't applied");
+		assert.ok($oSPCRef.hasClass("sapMSinglePCStickyNavBarAndColHeaders"), "sapMSinglePCStickyNavBarAndColHeaders class is applied");
+
+		// Act
+		oSPC.setStickyMode("None");
+		sap.ui.getCore().applyChanges();
+		$oSPCRef = oSPC.$();
+
+		// Assert
+		assert.notOk($oSPCRef.hasClass("sapMSinglePCStickyAll"), "sapMSinglePCStickyAll class isn't applied");
+		assert.notOk($oSPCRef.hasClass("sapMSinglePCStickyNavBarAndColHeaders"), "sapMSinglePCStickyNavBarAndColHeaders class isn't applied");
+
+		// Clean up
+		oSPC.destroy();
+	});
 
 	QUnit.module("Views");
 

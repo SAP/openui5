@@ -376,7 +376,7 @@ sap.ui.define([
 			contentHeight: "2000px",
 			subHeader: this._oSubHeader,
 			content: [this._oBusyIndicator, this._oTable],
-			leftButton: this._getCancelButton(),
+			endButton: this._getCancelButton(),
 			initialFocus: ((Device.system.desktop && this._oSearchField) ? this._oSearchField : null)
 		});
 		this._dialog = this._oDialog; // for downward compatibility
@@ -617,11 +617,12 @@ sap.ui.define([
 		if (bMulti) {
 			this._oTable.setMode(ListMode.MultiSelect);
 			this._oTable.setIncludeItemInSelection(true);
-			this._oDialog.setRightButton(this._getCancelButton());
-			this._oDialog.setLeftButton(this._getOkButton());
+			this._oDialog.setEndButton(this._getCancelButton());
+			this._oDialog.setBeginButton(this._getOkButton());
 		} else {
 			this._oTable.setMode(ListMode.SingleSelectMaster);
-			this._oDialog.setLeftButton(this._getCancelButton());
+			this._oDialog.setEndButton(this._getCancelButton());
+			this._oDialog.destroyBeginButton();
 		}
 
 		return this;

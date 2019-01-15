@@ -15,7 +15,11 @@ sap.ui.define(["sap/ui/core/UIComponent"], function (UIComponent) {
 			config: {
 				sample: {
 					stretch: true,
-					files: ["ObjectPageHeaderContentPriorities.view.xml"]
+					files: [
+						"ObjectPageHeaderContentPriorities.view.xml",
+						"../SharedBlocks/goals/GoalsBlock.js",
+						"../SharedBlocks/goals/GoalsBlock.view.xml"
+					]
 				}
 			}
 		}

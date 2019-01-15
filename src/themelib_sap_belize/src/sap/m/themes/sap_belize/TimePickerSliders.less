@@ -3,9 +3,9 @@
 /* Belize theme                      */
 /* ================================= */
 
-@_sap_m_TimePicker_ItemColor: lighten(@sapUiContentForegroundColor, 5);
-@_sap_m_TimePicker_ItemHoverColor: darken(@sapUiContentForegroundColor, 5);
-@_sap_m_TimePicker_ItemBorderColor: lighten(@sapUiListBorderColor, 10);
+@_sap_m_TimePickerSliders_ItemColor: lighten(@sapUiContentForegroundColor, 5);
+@_sap_m_TimePickerSliders_ItemHoverColor: darken(@sapUiContentForegroundColor, 5);
+@_sap_m_TimePickerSliders_ItemBorderColor: lighten(@sapUiListBorderColor, 10);
 
 /* ======================================== */
 /* TimePicker Dropdown                      */
@@ -15,7 +15,7 @@
 	.sapMTPColumn {
 		.sapMTimePickerSlider {
 			.sapMTimePickerItem {
-				border: 1px solid @_sap_m_TimePicker_ItemBorderColor;
+				border: 1px solid @_sap_m_TimePickerSliders_ItemBorderColor;
 				&:hover {
 					background: darken(@sapUiSelected, 10);
 				}
@@ -24,10 +24,10 @@
 		&.sapMTPSliderExpanded {
 			.sapMTimePickerSlider {
 				.sapMTimePickerItem {
-					background: @_sap_m_TimePicker_ItemColor;
-					border: 1px solid @_sap_m_TimePicker_ItemBorderColor;
+					background: @_sap_m_TimePickerSliders_ItemColor;
+					border: 1px solid @_sap_m_TimePickerSliders_ItemBorderColor;
 					&:hover {
-						background: @_sap_m_TimePicker_ItemHoverColor;
+						background: @_sap_m_TimePickerSliders_ItemHoverColor;
 					}
 					&:active {
 						background: @sapUiHighlight;
@@ -40,7 +40,7 @@
 					outline-offset: -0.188rem;
 					&:hover {
 						+ ul > li.sapMTimePickerItem.sapMTimePickerItemSelected {
-							background: @_sap_m_TimePicker_ItemHoverColor;
+							background: @_sap_m_TimePickerSliders_ItemHoverColor;
 						}
 					}
 					&:active {
@@ -69,14 +69,14 @@
 		.sapMTPColumn {
 			.sapMTimePickerSlider {
 				.sapMTimePickerItem {
-					border: 1px solid @_sap_m_TimePicker_ItemBorderColor;
+					border: 1px solid @_sap_m_TimePickerSliders_ItemBorderColor;
 				}
 			}
 			&.sapMTPSliderExpanded {
 				.sapMTimePickerSlider {
 					.sapMTimePickerItem {
-						background: @_sap_m_TimePicker_ItemColor;
-						border: 1px solid @_sap_m_TimePicker_ItemBorderColor;
+						background: @_sap_m_TimePickerSliders_ItemColor;
+						border: 1px solid @_sap_m_TimePickerSliders_ItemBorderColor;
 					}
 					.sapMTPPickerSelectionFrame {
 						outline: 0.125rem solid @sapUiSelected;

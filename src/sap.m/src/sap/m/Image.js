@@ -369,6 +369,10 @@ sap.ui.define([
 	 */
 	Image.prototype.onBeforeRendering = function() {
 		this._defaultEventTriggered = false;
+		if (this.getMode() == ImageMode.Image) {
+			var $DomNode = this.getDetailBox() ? this.$().find(".sapMImg") : this.$();
+			$DomNode.off("load").off("error");
+		}
 	};
 
 	/**

@@ -72,6 +72,8 @@ sap.ui.define([
 		}
 		assert.strictEqual(sComponentName, "foo", "no additional duration is added");
 
+		Interaction.clear();
+
 	});
 
 	QUnit.module("InteractionMeasurement", {

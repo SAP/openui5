@@ -258,6 +258,18 @@ sap.ui.define([
 					this.iPressTheFilterButton();
 					this.iDeselectTheTechnoComFilter();
 					this.iPressOkButton();
+				},
+
+				iPressOnCompareLink: function (ProductId) {
+					return this.waitFor({
+						controlType: "sap.m.ObjectAttribute",
+						matchers: [
+							new BindingPath({path: "/Products('" + ProductId + "')"}),
+							new Properties({text: "Compare"})
+						],
+						actions: new Press(),
+						errorMessage: "The product list does not contain required selection " + ProductId
+					});
 				}
 			},
 
@@ -459,6 +471,17 @@ sap.ui.define([
 				iShouldSeeAllProductsAndNoInfoToolbar: function () {
 					this.iShouldSeeAllProductsOfTheCategory();
 					this.iShouldNotSeeAnInfoToolbar();
+				},
+
+				iShouldSeeCompareLinkOnListEntry: function () {
+					this.waitFor({
+						controlType: "sap.m.ObjectAttribute",
+						matchers: new Properties({text : "Compare"}),
+						success: function () {
+							Opa5.assert.ok(true, "List entry has an compare link");
+						},
+						errorMessage: "List entry has no compare link"
+					});
 				}
 			}
 		}

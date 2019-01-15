@@ -1,4 +1,3 @@
-/*global window*/
 sap.ui.define([
 	"sap/ui/core/UIComponent",
 	"./model/LocalStorageModel",
@@ -26,6 +25,14 @@ sap.ui.define([
 				savedForLaterEntries: {}
 			});
 			this.setModel(oCartModel, "cartProducts");
+
+			//create and set comparison model
+			var oComparisonModel = new LocalStorageModel("PRODUCT_COMPARISON", {
+				category: "",
+				item1: "",
+				item2: ""
+			});
+			this.setModel(oComparisonModel, "comparison");
 
 			// set the device model
 			this.setModel(models.createDeviceModel(), "device");

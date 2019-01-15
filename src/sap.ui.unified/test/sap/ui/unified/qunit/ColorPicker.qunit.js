@@ -241,11 +241,13 @@ sap.ui.define([
 			oAssert.strictEqual(this.oCP.oHueField.getAriaLabelledBy()[0], InvisibleText.getStaticId("sap.ui.unified", "COLORPICKER_HUE"),
 				"Hue input is properly labelled by an invisible text.");
 
-			oAssert.strictEqual(this.oCP.oSatField.getAriaLabelledBy()[0], InvisibleText.getStaticId("sap.ui.unified", "COLORPICKER_SAT"),
-				"Saturation input is properly labelled by an invisible text.");
+			oAssert.strictEqual(this.oCP.oSatField.getAriaLabelledBy()[0], InvisibleText.getStaticId("sap.ui.unified", "COLORPICKER_SAT") +
+				" " + InvisibleText.getStaticId("sap.ui.unified", "COLORPICKER_PERCENTAGE"),
+				"Saturation input is properly labelled by an invisible text, including percentage indication.");
 
-			oAssert.strictEqual(this.oCP.oLitField.getAriaLabelledBy()[0], InvisibleText.getStaticId("sap.ui.unified", "COLORPICKER_LIGHTNESS"),
-				"Lightness input is properly labelled by an invisible text.");
+			oAssert.strictEqual(this.oCP.oLitField.getAriaLabelledBy()[0], InvisibleText.getStaticId("sap.ui.unified", "COLORPICKER_LIGHTNESS") +
+				" " + InvisibleText.getStaticId("sap.ui.unified", "COLORPICKER_PERCENTAGE"),
+				"Lightness input is properly labelled by an invisible text, including percentage indication.");
 
 			oAssert.strictEqual(this.oCP.oAlphaField.getAriaLabelledBy()[0], InvisibleText.getStaticId("sap.ui.unified", "COLORPICKER_ALPHA"),
 				"Alpha input is properly labelled by an invisible text.");

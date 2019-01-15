@@ -1,0 +1,50 @@
+<mvc:View
+        controllerName="sap.ui.integration.sample.Playground.Playground"
+        xmlns="sap.m"
+		xmlns:l="sap.ui.layout"
+		xmlns:editor="sap.ui.codeeditor"
+		xmlns:sample="sap.ui.integration.sample.Playground"
+        xmlns:mvc="sap.ui.core.mvc"
+        class="sapUiContentPadding"
+        xmlns:widgets="sap.ui.integration.widgets" height="100%">
+		
+		<l:Splitter id="outersplitter" orientation="Vertical">
+			<OverflowToolbar id="contentTb" class="sapUiSmallMargin" style="Clear">
+				<layoutData>
+					<l:SplitterLayoutData size="80px" resizable="false"/>
+				</layoutData>
+				<MenuButton text="Load Manifest" buttonMode="Split" useDefaultActionOnly="true">
+					<menu>
+						<Menu itemSelected="onMenuAction" items="{samples>/}">
+							<items>
+								<MenuItem text="{samples>text}" />
+							</items>
+						</Menu>
+					</menu>
+				</MenuButton>
+			</OverflowToolbar>
+			<l:Splitter orientation="Horizontal" width="100%">
+				<ScrollContainer id="preview" horizontal="false" vertical="true" height="100%" class="sapUiContentPadding">
+					<layoutData>
+						<l:SplitterLayoutData size="auto" />
+					</layoutData>
+					<widgets:Card 
+					id="cardSample"
+						width="400px" height="500px">
+					</widgets:Card>
+				</ScrollContainer>
+				<!--sample:JSONSchemaEditor id="schemaEditor" schema="/test-resources/sap/ui/integration/demokit/sample/Playground/schema/Card.schema.json" dataStartPath="/sap.card" liveChange="onSchemaEditorLiveChange">
+					<sample:layoutData>
+						<l:SplitterLayoutData size="auto" />
+					</sample:layoutData>
+				</sample:JSONSchemaEditor -->
+			</l:Splitter>
+			<editor:CodeEditor id="editor" height="100%" editable="true" liveChange="onManifestEdited">
+				<editor:layoutData>
+					<l:SplitterLayoutData size="300px" />
+				</editor:layoutData>
+			</editor:CodeEditor>
+		</l:Splitter>
+	
+
+</mvc:View>

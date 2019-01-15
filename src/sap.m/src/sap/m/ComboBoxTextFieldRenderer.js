@@ -4,9 +4,10 @@
 sap.ui.define([
 	'./InputBaseRenderer',
 	'sap/ui/core/Renderer',
-	'sap/ui/core/LabelEnablement'
+	'sap/ui/core/LabelEnablement',
+	'sap/ui/Device'
 ],
-	function(InputBaseRenderer, Renderer, LabelEnablement) {
+	function(InputBaseRenderer, Renderer, LabelEnablement, Device) {
 		"use strict";
 
 		/**
@@ -66,6 +67,9 @@ sap.ui.define([
 		ComboBoxTextFieldRenderer.getAccessibilityState = function(oControl) {
 			var mAccessibilityState = InputBaseRenderer.getAccessibilityState.call(this, oControl);
 			mAccessibilityState.autocomplete = "both";
+			if (Device.browser.internet_explorer) {
+				mAccessibilityState.describedby = oControl.oInvisibleText.getId();
+			}
 			return mAccessibilityState;
 		};
 

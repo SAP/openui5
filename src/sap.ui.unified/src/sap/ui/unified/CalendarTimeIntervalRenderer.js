@@ -82,7 +82,12 @@ sap.ui.define([],
 		oRm.write("<div id=\"" + sId + "-end\" tabindex=\"0\" style=\"width:0;height:0;position:absolute;right:0;bottom:0;\"></div>");
 
 		if (oCal.getPickerPopup()) {
-			oRm.write("<div id=\"" + sId + "-contentOver\" class=\"sapUiCalContentOver\" style=\"display:none;\"></div>");
+			oRm.write("<div id=\"" + sId + "-contentOver\" class=\"sapUiCalContentOver\"");
+			if (!oCal._oPopup || !oCal._oPopup.isOpen()) {
+				oRm.write("style=\"display:none;\"");
+			}
+			oRm.write(">");
+			oRm.write("</div>");
 		}
 
 		oRm.write("</div>");

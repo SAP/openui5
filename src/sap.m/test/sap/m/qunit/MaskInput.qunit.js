@@ -1054,6 +1054,17 @@ sap.ui.define([
 		assert.equal(oSpyDestroyOldRule.callCount, 1, "The old rule is destroyed");
 	});
 
+	QUnit.test("empty MaskInput does not throw exception when it is focused", function (assert) {
+		// Arrange
+		var oMaskInput = new MaskInput();
+
+		// Act
+		oMaskInput.onfocusin();
+
+		// Assert
+		assert.ok(true, "No exception is thrown");
+	});
+
 	QUnit.module("Android", {
 		beforeEach: function() {
 			this.oMaskInput = new MaskInput();

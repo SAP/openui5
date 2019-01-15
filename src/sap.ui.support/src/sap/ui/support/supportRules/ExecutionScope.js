@@ -334,7 +334,14 @@ sap.ui.define(
 
 					return loggedObjects;
 				},
-				_getType: function () {
+				/**
+				 * Gets the type of the execution scope
+				 * @public
+				 * @function
+				 * @returns {string} The type of the execution scope
+				 * @alias sap.ui.support.ExecutionScope.getType
+				 */
+				getType: function () {
 					return _context.type;
 				},
 				_getContext: function () {

@@ -53,6 +53,7 @@ sap.ui.define([
 			this._bSkipSetupMaskVariables = null;
 
 			this._setDefaultRules();
+			this._setupMaskVariables();
 		};
 
 		/**

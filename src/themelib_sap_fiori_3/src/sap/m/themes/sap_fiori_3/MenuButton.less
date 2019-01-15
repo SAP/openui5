@@ -1,0 +1,29 @@
+/* ==================================== */
+/* CSS for control sap.m/MenuButton     */
+/* Fiori 3 theme                        */
+/* ==================================== */
+
+/* Compact size */
+.sapUiSizeCompact {
+	.sapMMenuBtn {
+		.sapMBtnIcon {
+			margin-left: 0.5rem;
+			margin-right: 0.375rem;
+		}
+		.sapMBtnInner.sapMBtnText .sapMBtnIcon {
+			margin-left: 0;
+			margin-right: 0;
+		}
+	}
+}
+
+.sapMMenuBtn {
+	.sapMBtn:hover > .sapMBtnHoverable.sapMBtnEmphasized,
+	span.sapMBtnInner.sapMBtnEmphasized {
+		border-left-color: @sapUiButtonEmphasizedTextColor;
+	}
+}
+
+.sapMMenuBtn.sapMMenuBtnSplit .sapMSBActive:not(.sapMBtnDisabled) > span.sapMBtnInner.sapMBtnEmphasized {
+	border-left-color: @sapUiButtonEmphasizedTextColor;
+}

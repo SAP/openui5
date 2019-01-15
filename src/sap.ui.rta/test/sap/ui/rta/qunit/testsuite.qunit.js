@@ -490,6 +490,9 @@ sap.ui.define([
 							"sap.ui.rta.test": "test-resources/sap/ui/rta/internal/testdata/rta/"
 						}
 					},
+					qunit: {
+						reorder: false
+					},
 					autostart: false // test calls QUnit.start after some async initialization
 				},
 				"integration/BasicFunctionality": {

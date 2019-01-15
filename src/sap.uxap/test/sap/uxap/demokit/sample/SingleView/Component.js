@@ -19,8 +19,8 @@ sap.ui.define(["sap/ui/core/UIComponent"], function (UIComponent) {
 					stretch: true,
 					files: [
 						"SingleView.view.xml",
-						"blocks/SimpleForm.js",
-						"blocks/SimpleForm.view.xml"
+						"../SharedBlocks/BlockBlue.js",
+						"../SharedBlocks/BlockBlue.view.xml"
 					]
 				}
 			}

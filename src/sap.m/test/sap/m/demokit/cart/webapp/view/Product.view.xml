@@ -4,8 +4,7 @@
 	xmlns:mvc="sap.ui.core.mvc">
 	<Page
 		id="page"
-		backgroundDesign="Solid"
-		>
+		backgroundDesign="Solid">
 		<landmarkInfo>
 			<PageAccessibleLandmarkInfo
 				rootRole="Region"
@@ -48,8 +47,9 @@
 			<Toolbar>
 				<ToolbarSpacer/>
 				<Button
-					icon="sap-icon://cart-3"
-					press=".onAddToCart"/>
+					text="{i18n>addToCartShort}"
+					type="Emphasized"
+					press=".onAddToCart" />
 			</Toolbar>
 		</footer>
 		<content>
@@ -110,6 +110,5 @@
 				</Image>
 			</VBox>
 		</content>
-
 	</Page>
 </mvc:View>

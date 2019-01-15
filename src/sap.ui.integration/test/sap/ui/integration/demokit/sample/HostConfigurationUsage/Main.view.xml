@@ -1,0 +1,93 @@
+<View xmlns="sap.m" xmlns:widgets="sap.ui.integration.widgets" xmlns:host="sap.ui.integration.host" xmlns:mvc="sap.ui.core.mvc" 
+	displayBlock="true"
+	controllerName="sap.ui.integration.sample.HostConfigurationUsage.Main" 
+	height="100%">
+	<!-- Create three HostConfigurations -->
+	<host:HostConfiguration config="./test-resources/sap/ui/integration/demokit/sample/HostConfigurationUsage/host/dark.json" id="Dark"></host:HostConfiguration>
+	<host:HostConfiguration config="./test-resources/sap/ui/integration/demokit/sample/HostConfigurationUsage/host/color.json" id="Color"></host:HostConfiguration>
+	<host:HostConfiguration config="./test-resources/sap/ui/integration/demokit/sample/HostConfigurationUsage/host/white.json" id="White"></host:HostConfiguration>
+	
+	<ScrollContainer width="100%" height="100%" vertical="true">
+		<Panel>
+			<headerToolbar>
+				<Toolbar>
+					<Title level="H2" text="Default Theme" />
+				</Toolbar>
+			</headerToolbar>
+			<FlexBox
+				height="500px"
+				width="100%"
+				alignItems="Start"
+				justifyContent="SpaceBetween">
+				<items>
+					<widgets:Card width="400px" manifest="./test-resources/sap/ui/integration/demokit/sample/HostConfigurationUsage/manifests/list.manifest.json"></widgets:Card>
+					<widgets:Card width="350px" manifest="./test-resources/sap/ui/integration/demokit/sample/HostConfigurationUsage/manifests/numeric.good.manifest.json"></widgets:Card>
+					<widgets:Card width="350px" manifest="./test-resources/sap/ui/integration/demokit/sample/HostConfigurationUsage/manifests/numeric.critical.manifest.json"></widgets:Card>
+					<widgets:Card width="350px" manifest="./test-resources/sap/ui/integration/demokit/sample/HostConfigurationUsage/manifests/numeric.error.manifest.json"></widgets:Card>
+				</items>
+			</FlexBox>
+		</Panel>
+
+		<Panel>
+			<headerToolbar>
+				<Toolbar>
+					<Title level="H2" text="Dark (./host/dark.json)" />
+				</Toolbar>
+			</headerToolbar>
+			<FlexBox
+				height="500px"
+				width="100%"
+				alignItems="Start"
+				justifyContent="SpaceBetween">
+				<items>
+					<widgets:Card width="400px" manifest="./test-resources/sap/ui/integration/demokit/sample/HostConfigurationUsage/manifests/list.manifest.json" hostConfigurationId="Dark"></widgets:Card>
+					<widgets:Card width="350px" manifest="./test-resources/sap/ui/integration/demokit/sample/HostConfigurationUsage/manifests/numeric.good.manifest.json" hostConfigurationId="Dark"></widgets:Card>
+					<widgets:Card width="350px" manifest="./test-resources/sap/ui/integration/demokit/sample/HostConfigurationUsage/manifests/numeric.critical.manifest.json" hostConfigurationId="Dark"></widgets:Card>
+					<widgets:Card width="350px" manifest="./test-resources/sap/ui/integration/demokit/sample/HostConfigurationUsage/manifests/numeric.error.manifest.json" hostConfigurationId="Dark"></widgets:Card>
+				</items>
+			</FlexBox>
+		</Panel>
+
+		<Panel>
+			<headerToolbar>
+				<Toolbar>
+					<Title level="H2" text="Color (./host/color.json)" />
+				</Toolbar>
+			</headerToolbar>
+			<FlexBox
+				height="500px"
+				width="100%"
+				alignItems="Start"
+				justifyContent="SpaceBetween">
+				<items>
+					<widgets:Card width="400px" manifest="./test-resources/sap/ui/integration/demokit/sample/HostConfigurationUsage/manifests/list.manifest.json" hostConfigurationId="Color"></widgets:Card>
+					<widgets:Card width="350px" manifest="./test-resources/sap/ui/integration/demokit/sample/HostConfigurationUsage/manifests/numeric.good.manifest.json" hostConfigurationId="Color"></widgets:Card>
+					<widgets:Card width="350px" manifest="./test-resources/sap/ui/integration/demokit/sample/HostConfigurationUsage/manifests/numeric.critical.manifest.json" hostConfigurationId="Color"></widgets:Card>
+					<widgets:Card width="350px" manifest="./test-resources/sap/ui/integration/demokit/sample/HostConfigurationUsage/manifests/numeric.error.manifest.json" hostConfigurationId="Color"></widgets:Card>
+				</items>
+			</FlexBox>
+		</Panel>
+
+		<Panel>
+			<headerToolbar>
+				<Toolbar>
+					<Title level="H2" text="White (./host/white.json)" />
+				</Toolbar>
+			</headerToolbar>
+			<FlexBox
+				height="500px"
+				width="100%"
+				alignItems="Start"
+				justifyContent="SpaceBetween">
+				<items>
+					<widgets:Card width="400px" manifest="./test-resources/sap/ui/integration/demokit/sample/HostConfigurationUsage/manifests/list.manifest.json" hostConfigurationId="White"></widgets:Card>
+					<widgets:Card width="350px" manifest="./test-resources/sap/ui/integration/demokit/sample/HostConfigurationUsage/manifests/numeric.good.manifest.json" hostConfigurationId="White"></widgets:Card>
+					<widgets:Card width="350px" manifest="./test-resources/sap/ui/integration/demokit/sample/HostConfigurationUsage/manifests/numeric.critical.manifest.json" hostConfigurationId="White"></widgets:Card>
+					<widgets:Card width="350px" manifest="./test-resources/sap/ui/integration/demokit/sample/HostConfigurationUsage/manifests/numeric.error.manifest.json" hostConfigurationId="White"></widgets:Card>
+				</items>
+			</FlexBox>
+		</Panel>
+	</ScrollContainer>
+</View>
+
+

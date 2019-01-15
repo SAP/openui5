@@ -16,7 +16,19 @@ sap.ui.define(["jquery.sap.global",
 			 library) {
 	"use strict";
 
-	var Extension = BaseObject.extend("sap.ui.core.support.RuleEngineOpaExtension", {
+	/**
+	 * @class
+	 * This class represents an extension for OPA tests which allows running Support Assistant checks.
+	 * It enriches the OPA assertions with the methods described in {@link sap.ui.core.support.RuleEngineOpaAssertions}
+	 *
+	 * For more information, see {@link topic:cfabbd4dfc054936997d9d00916e1668 Integrating the Support Assistant in OPA Tests}
+	 *
+	 * @extends sap.ui.base.Object
+	 * @alias sap.ui.core.support.RuleEngineOpaExtension
+	 * @since 1.48
+	 * @public
+	 */
+	var Extension = BaseObject.extend("sap.ui.core.support.RuleEngineOpaExtension", /** @lends sap.ui.core.support.RuleEngineOpaExtension.prototype */ {
 		metadata : {
 			publicMethods : [
 				"getAssertions"
@@ -49,6 +61,10 @@ sap.ui.define(["jquery.sap.global",
 			return deferred.promise();
 		},
 
+		/**
+		 * @public
+		 * @returns {sap.ui.core.support.RuleEngineOpaAssertions} Object with the methods which will enhance the OPA assertions.
+		 */
 		getAssertions : function () {
 
 			var fnShouldSkipRulesIssues = function () {
@@ -59,22 +75,37 @@ sap.ui.define(["jquery.sap.global",
 				opaWindow._$files = opaWindow._$files || [];
 				return opaWindow;
 			};
-			return {
+
+			/**
+			 * @class
+			 * RuleEngineOpaAssertions represents a set of methods with which OPA test assertions can be enhanced.
+			 * To use this functionality, {@link sap.ui.core.support.RuleEngineOpaExtension RuleEngineOpaExtension} should be provided in the OPA extensions list.
+			 *
+			 * @hideconstructor
+			 * @alias sap.ui.core.support.RuleEngineOpaAssertions
+			 * @public
+			 */
+			var oRuleEngineAssertions = {
 				/**
 				 * Run the Support Assistant and analyze against a specific state of the application.
 				 * Depending on the options passed the assertion might either fail or not if any issues were found.
 				 *
 				 * If "sap-skip-rules-issues=true" is set as an URI parameter, assertion result will be always positive.
 				 *
+				 * @function
+				 * @name sap.ui.core.support.RuleEngineOpaAssertions#noRuleFailures
 				 * @param {Object} [options] The options used to configure an analysis.
 				 * @param {boolean} [options.failOnAnyIssues=true] Should the test fail or not if there are issues of any severity.
 				 * @param {boolean} [options.failOnHighIssues] Should the test fail or not if there are issues of high severity.
 				 * This parameter will override failOnAnyIssues if set.
 				 * @param {Array.<{libName:string, ruleId:string}>} [options.rules] The rules to check.
-				 * @param {Object} [executionScope] The execution scope of the analysis.
-				 * @param {('global'|'subtree'|'components')} [executionScope.type=global] The type of the execution scope.
-				 * @param {string|string[]} [executionScope.selectors] The ids of the components or the subtree.
-				*/
+				 * @param {Object} [options.executionScope] The execution scope of the analysis.
+				 * @param {Object} [options.metadata] The metadata that will be passed to the analyse method.
+				 * @param {('global'|'subtree'|'components')} [options.executionScope.type=global] The type of the execution scope.
+				 * @param {string|string[]} [options.executionScope.selectors] The IDs of the components or the subtree.
+				 * @public
+				 * @returns {Promise} Promise.
+				 */
 				noRuleFailures: function(options) {
 					var ruleDeferred = jQueryDOM.Deferred(),
 						options = options[0] || {},
@@ -82,10 +113,11 @@ sap.ui.define(["jquery.sap.global",
 						failOnHighRuleIssues = options["failOnHighIssues"],
 						rules = options.rules,
 						preset = options.preset,
+						metadata = options.metadata,
 						executionScope = options.executionScope;
 
 					// private API provided by jquery.sap.global
-					RuleAnalyzer.analyze(executionScope, rules || preset).then(function () {
+					RuleAnalyzer.analyze(executionScope, rules || preset, metadata).then(function () {
 						var analysisHistory = RuleAnalyzer.getAnalysisHistory(),
 							lastAnalysis = { issues: [] };
 
@@ -122,12 +154,18 @@ sap.ui.define(["jquery.sap.global",
 
 					return ruleDeferred.promise();
 				},
+
 				/**
 				 * If there are issues found the assertion result will be false and a report with all the issues will be generated
 				 * in the message of the test. If no issues were found the assertion result will be true and no report will
 				 * be generated.
 				 *
 				 * If "sap-skip-rules-issues=true" is set as an URI parameter, assertion result will be always positive.
+				 *
+				 * @function
+				 * @name sap.ui.core.support.RuleEngineOpaAssertions#getFinalReport
+				 * @public
+				 * @returns {Promise} Promise.
 				 */
 				getFinalReport: function () {
 					var ruleDeferred = jQueryDOM.Deferred(),
@@ -161,13 +199,18 @@ sap.ui.define(["jquery.sap.global",
 				 * This stores the passed history format in window._$files array.
 				 * Accessing this array give an opportunity to store this history in file
 				 *
+				 * @function
+				 * @name sap.ui.core.support.RuleEngineOpaAssertions#getReportAsFileInFormat
 				 * @param {Object} [options] The options used for configuration
-				 * @param {String} [options.historyFormat] The format into which the history object will be converted. Possible values are listed in sap.ui.support.HistoryFormats.
+				 * @param {sap.ui.support.HistoryFormats} [options.historyFormat] The format into which the history object will be converted.
 				 * @param {String} [options.fileName] The name of the file. The file name must be in following format:
 				 *
-				 *     <name of the file> + . + <file extension>
+				 *     "name of the file" + . + "file extension"
 				 *
 				 *      Example: file.json
+				 *
+				 * @public
+				 * @returns {Promise} Promise.
 				 */
 				getReportAsFileInFormat: function (options) {
 					var oContext,
@@ -213,6 +256,8 @@ sap.ui.define(["jquery.sap.global",
 					return ruleDeferred.promise();
 				}
 			};
+
+			return oRuleEngineAssertions;
 		}
 	});
 

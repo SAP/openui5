@@ -60,6 +60,7 @@ module.exports = [
 	"SelectDialog.spec.js",
 	"SemanticPage.spec.js",
 	"SinglePlanningCalendar.spec.js",
+	"SinglePlanningCalendarStickyHeader.spec.js",
 	"SplitApp.spec.js",
 	"StepInput.spec.js",
 	"Switch.spec.js",

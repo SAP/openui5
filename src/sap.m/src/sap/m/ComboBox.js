@@ -552,7 +552,34 @@ sap.ui.define([
 
 		ComboBox.prototype.onBeforeRendering = function() {
 			ComboBoxBase.prototype.onBeforeRendering.apply(this, arguments);
+			this._fillList();
 			this.synchronizeSelection();
+		};
+
+		/**
+		 * Fill the list of items.
+		 *
+		 * @private
+		 */
+		ComboBox.prototype._fillList = function() {
+			var oList = this.getList(),
+				aItems, oListItem, aItemsLength, i;
+
+			if (!oList) {
+				return;
+			}
+
+			oList.destroyItems();
+			aItems = this.getVisibleItems();
+
+			for (i = 0, aItemsLength = aItems.length; i < aItemsLength; i++) {
+				// add a private property to the added item containing a reference
+				// to the corresponding mapped item
+				oListItem = this._mapItemToListItem(aItems[i]);
+
+				// add the mapped item type of sap.m.StandardListItem to the list
+				oList.addAggregation("items", oListItem, true);
+			}
 		};
 
 		ComboBox.prototype.exit = function () {

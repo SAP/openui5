@@ -14,7 +14,7 @@ sap.ui.define(['sap/ui/core/mvc/Controller'],
 			},
 			onSliderMoved: function (oEvent) {
 				var value = oEvent.getParameter("value");
-				this.byId("grid1").setWidth(value + "%");
+				this.byId("panelCSSGrid").setWidth(value + "%");
 			},
 			onLayoutChange: function (oEvent) {
 				var layout = oEvent.getParameter("layout");

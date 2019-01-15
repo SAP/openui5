@@ -175,15 +175,16 @@ function(
 			// make sure when rendering is called, the padding calc uses the correct deepest level
 			this._updateDeepestLevel(oItem);
 
+			var oBinding = this.getBinding("items");
 			if (bExpand == undefined) {
-				this.getBinding("items").toggleIndex(iIndex);
+				oBinding.toggleIndex(iIndex);
 			} else if (bExpand) {
-				this.getBinding("items").expand(iIndex);
+				oBinding.expand(iIndex);
 			} else {
-				this.getBinding("items").collapse(iIndex);
+				oBinding.collapse(iIndex);
 			}
 
-			bExpandedAfterPress = oItem.getExpanded();
+			bExpandedAfterPress = oBinding.isExpanded(iIndex);
 			if (bExpandedBeforePress !== bExpandedAfterPress && !oItem.isLeaf()) {
 				this.fireToggleOpenState({
 					itemIndex: iIndex,

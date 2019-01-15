@@ -119,11 +119,10 @@ sap.ui.define([
 	}
 
 	// creates optional FESR header string
-	function createFESRopt(oInteraction) {
-		var sComponent = oInteraction.stepComponent || oInteraction.component;
+	function createFESRopt(oInteraction, oFESRHandle) {
 		return [
-			format(sComponent, 20, true), // application_name
-			format(oInteraction.trigger + "_" + oInteraction.event, 20, true), // step_name
+			format(oFESRHandle.appNameShort, 20, true), // application_name
+			format(oFESRHandle.stepName, 20, true), // step_name
 			"", // not assigned
 			format(CLIENT_MODEL, 20), // client_model
 			format(oInteraction.bytesSent, 16), // client_data_sent
@@ -141,7 +140,7 @@ sap.ui.define([
 			format(CLIENT_DEVICE, 1), // extension_3 - client device
 			"", // extension_4
 			format(formatInteractionStartTimestamp(oInteraction.start), 20), // extension_5 - interaction start time
-			format(sComponent, 70, true) // application_name with 70 characters, trimmed from left
+			format(oFESRHandle.appNameLong, 70, true) // application_name with 70 characters, trimmed from left
 		].join(",");
 	}
 
@@ -168,10 +167,10 @@ sap.ui.define([
 		return "@" + oVersion.getMajor() + "." + oVersion.getMinor() + "." + oVersion.getPatch();
 	}
 
-	function createHeader(oFinishedInteraction) {
+	function createHeader(oFinishedInteraction, oFESRHandle) {
 		// create FESR from completed interaction
 		sFESR = createFESR(oFinishedInteraction);
-		sFESRopt = createFESRopt(oFinishedInteraction);
+		sFESRopt = createFESRopt(oFinishedInteraction, oFESRHandle);
 	}
 
 	/**
@@ -213,9 +212,15 @@ sap.ui.define([
 			iE2eTraceLevel = Passport.traceFlags();
 			registerXHROverride();
 			Interaction.onInteractionFinished = function(oFinishedInteraction) {
+				var oFESRHandle = FESR.onBeforeCreated({
+					stepName: oFinishedInteraction.trigger + "_" + oFinishedInteraction.event,
+					appNameLong: oFinishedInteraction.stepComponent || oFinishedInteraction.component,
+					appNameShort: oFinishedInteraction.stepComponent || oFinishedInteraction.component
+				}, oFinishedInteraction);
+
 				// only send FESR when requests have occured
 				if (oFinishedInteraction.requests.length > 0) {
-					createHeader(oFinishedInteraction);
+					createHeader(oFinishedInteraction, oFESRHandle);
 				}
 			};
 		} else if (!bActive && bFesrActive) {
@@ -240,6 +245,25 @@ sap.ui.define([
 	 */
 	FESR.getActive = function () {
 		return bFesrActive;
+	};
+
+	/**
+	 * Hook function that allows to override specific FESR header information.
+	 * @param {object} oFESRHandle The header information that can be modified
+	 * @param {string} oFESRHandle.stepName The step name with <Trigger>_<Event>
+	 * @param {string} oFESRHandle.appNameLong The application name with max 70 chars
+	 * @param {string} oFESRHandle.appNameShort The application name with max 20 chars
+	 * @param  {object} oInteraction The corresponding interaction object, read-only
+	 * @return {object} Modified header information
+	 * @private
+	 * @ui5-restricted sap.ui.core, sap.ushell
+	 */
+	FESR.onBeforeCreated = function(oFESRHandle, oInteraction) {
+		return {
+			stepName: oFESRHandle.stepName,
+			appNameLong: oFESRHandle.appNameLong,
+			appNameShort: oFESRHandle.appNameShort
+		};
 	};
 
 	return FESR;

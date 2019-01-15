@@ -35,10 +35,6 @@ sap.ui.define([],
 		if (aMonths.length > 1) {
 			oRm.addClass("sapUiCalMulti");
 		}
-		// This makes the calendar focusable and therefore
-		// the white empty areas can be clicked without closing the calendar
-		// by accident.
-		oRm.writeAttribute("tabindex", "-1");
 
 		var rb = sap.ui.getCore().getLibraryResourceBundle("sap.ui.unified");
 		var mAccProps = {labelledby: {value: "", append: false}}; // render on Month

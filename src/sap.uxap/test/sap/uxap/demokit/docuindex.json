@@ -117,7 +117,7 @@
 	  {
 		"id": "sap.uxap.sample.ObjectPageHeaderActionButtons",
 		"name": "Object Page with ObjectPageHeaderActionButtons",
-		"description": "This example demonstrates ObjectPage with ObjectPageHeaderActionButtons in the header."
+		"description": "This example demonstrates ObjectPage with ObjectPageHeaderActionButtons and a GenericTag in the header."
 	  },
 	  {
 		"id": "sap.uxap.sample.ObjectPageHeaderBackgroundDesign",

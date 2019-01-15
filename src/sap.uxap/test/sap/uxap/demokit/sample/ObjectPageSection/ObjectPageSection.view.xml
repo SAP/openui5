@@ -2,7 +2,6 @@
 		   xmlns="sap.uxap"
 		   xmlns:layout="sap.ui.layout"
 		   xmlns:m="sap.m"
-		   xmlns:sample="sap.uxap.sample.AnchorBar.block"
 		   xmlns:blockcolor="sap.uxap.sample.SharedBlocks"
 		   height="100%"
 		>

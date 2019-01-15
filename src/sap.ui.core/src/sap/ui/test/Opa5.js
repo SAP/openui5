@@ -55,6 +55,7 @@ sap.ui.define([
 				"visible",
 				"viewNamespace",
 				"viewName",
+				"viewId",
 				"autoWait"
 			].concat(Opa._aConfigValuesForWaitFor),
 			aPropertiesThatShouldBePassedToOpaWaitFor = [
@@ -453,8 +454,10 @@ sap.ui.define([
 		 * Although the IDs of the controls myView--bar and myView--baz contain a my,
 		 * they will not be matched since only the part you really write in your views will be matched.
 		 * @param {string} [options.viewName] The name of a view.
-		 * If this is set the id of the control is searched inside of the view. If an id is not be set, all controls of the view will be found.
-		 * @param {string} [options.viewNamespace] This string gets appended before the viewName - should probably be set to the {@link sap.ui.test.Opa5.extendConfig}.
+		 * If viewName is set, controls will be searched only inside this view. If control ID is given, it will be considered to be relative to the view.
+		 * @param {string} [options.viewNamespace] viewName prefix. Recommended to be set in {@link sap.ui.test.Opa5.extendConfig} instead.
+		 * @param {string} [options.viewId] @since 1.62 The ID of a view. Can be used alone or in combination with viewName and viewNamespace.
+		 * Always set view ID if there are multiple views with the same name
 		 * @param {function|array|sap.ui.test.matchers.Matcher} [options.matchers] A single matcher or an array of matchers {@link sap.ui.test.matchers}.
 		 * Matchers will be applied to an every control found by the waitFor function.
 		 * The matchers are a pipeline: the first matcher gets a control as an input parameter, each subsequent matcher gets the same input as the previous one, if the previous output is 'true'.
@@ -1059,7 +1062,9 @@ sap.ui.define([
 		 * 			});
 		 * 		</code>
 		 * </pre>
-		 * @param {function} [mPageObjects.&lt;your-page-object-name&gt;.baseClass] Base class for the page object's actions and assertions, default: Opa5
+		 * @param {function} [mPageObjects.&lt;your-page-object-name&gt;.viewId] When a viewId is given, all waitFors inside of the page object will get a viewId parameter.
+		 * Use when there are multiple views with the same viewName.
+		 * @param {function} [mPageObjects.<your-page-object-name&gt;.baseClass] Base class for the page object's actions and assertions, default: Opa5
 		 * @param {function} [mPageObjects.&lt;your-page-object-name&gt;.namespace] Namespace prefix for the page object's actions and assertions, default: sap.ui.test.opa.pageObject. Use it if you use page objects from multiple projects in the same test build.
 		 * @param {map} [mPageObjects.&lt;your-page-object-name&gt;.actions] Can be used as an arrangement and action in Opa tests. Only the test knows if an action is used as arrangement or action
 		 * @param {function} mPageObjects.&lt;your-page-object-name&gt;.actions.&lt;your-action-1&gt; This is your custom implementation containing one or multiple waitFor statements
@@ -1165,6 +1170,7 @@ sap.ui.define([
 			_stack: "string",
 			viewName: "string",
 			viewNamespace: "string",
+			viewId: "string",
 			visible: "bool",
 			matchers: "any",
 			actions: "any",

@@ -460,6 +460,17 @@
 		  ]
 		},
 		{
+		  "id": "sap.m.GenericTag",
+		  "name": "Generic Tag",
+		  "category": "Action",
+		  "since": "1.62.0",
+		  "samples": [
+			"sap.m.sample.GenericTag",
+			"sap.uxap.sample.ObjectPageHeaderActionButtons",
+			"sap.f.sample.DynamicPageFreeStyle"
+		  ]
+		},
+		{
 			"id": "sap.m.GenericTile",
 			"name": "Generic Tile",
 			"category": "Tile",
@@ -2913,6 +2924,11 @@
 		  "description": "The Draft Indicator shows that eighter currently a draft is saving or that it is already saved. It does not block the current UI screen so other operations could be triggered in parallel."
 		},
 		{
+		  "id": "sap.m.sample.GenericTag",
+		  "name": "Generic Tag with Different Configurations",
+		  "description": "Previews of the GenericTag control based on combinations of different sets of properties."
+		},
+		{
 		  "id": "sap.m.sample.SlideTile",
 		  "name": "Slide Tile",
 		  "description": "Shows Generic Tile with the 2x1 frame type displayed as sliding tiles."
@@ -3040,7 +3056,7 @@
 		{
 		  "id": "sap.m.sample.SinglePlanningCalendar",
 		  "name": "Single Planning Calendar",
-		  "description": "SinglePlanningCalendar, containing sap.m.Dialog for creating a new appointment. Note: Illustrates how the SinglePlanningCalendar can be used in combination with the sap.m.Dialog control for creating new appoitments. This feature is NOT part of the control."
+		  "description": "SinglePlanningCalendar, contains sap.m.Dialog for creating a new appointment and sap.m.ResponsivePopover for editing an already created appointment. Note: Illustrates how the SinglePlanningCalendar can be used in combination with the sap.m.Dialog control for creating new appoitments and sap.m.ResponsivePopover for editing alredy created appointments. This feature is NOT part of the control."
 		},
 		{
 		  "id": "sap.m.sample.ImageContent",

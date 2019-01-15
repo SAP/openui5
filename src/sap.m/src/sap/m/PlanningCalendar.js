@@ -2825,7 +2825,8 @@ sap.ui.define([
 			aggregations : {
 				intervalHeaders : {type : "sap.ui.unified.CalendarAppointment", multiple : true},
 				_intervalPlaceholders : {type : "IntervalPlaceholder", multiple : true, visibility : "hidden", dnd : {droppable: true}}
-			}
+			},
+			dnd: true
 		},
 		renderer: PlanningCalendarRowTimelineRenderer
 	});

@@ -21,7 +21,7 @@ sap.ui.define([
 	 * @author SAP SE
 	 * @version ${version}
 	 *
-	 * @extends sap.ui.base.GridLayoutBase
+	 * @extends sap.ui.layout.cssgrid.GridLayoutBase
 	 *
 	 * @since 1.60
 	 * @constructor

@@ -2,7 +2,6 @@
 		   xmlns="sap.uxap"
 		   xmlns:layout="sap.ui.layout"
 		   xmlns:m="sap.m"
-		   xmlns:sample="sap.uxap.sample.SharedBlocks"
 		   xmlns:goals="sap.uxap.sample.SharedBlocks.goals"
 		   xmlns:personal="sap.uxap.sample.SharedBlocks.personal"
 		   xmlns:employment="sap.uxap.sample.SharedBlocks.employment"

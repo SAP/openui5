@@ -1,8 +1,8 @@
 /*!
  * ${copyright}
  */
-sap.ui.define(['sap/ui/core/Control', 'sap/ui/model/json/JSONModel', 'sap/m/List', 'sap/m/StandardListItem', 'sap/ui/base/ManagedObject', "sap/f/cards/Data"],
-	function (Control, JSONModel, sapMList, StandardListItem, ManagedObject, Data) {
+sap.ui.define(["sap/ui/core/Control", "sap/ui/model/json/JSONModel", "sap/m/List", "sap/m/StandardListItem", "sap/ui/base/ManagedObject", "sap/f/cards/Data", "sap/base/Log"],
+	function (Control, JSONModel, sapMList, StandardListItem, ManagedObject, Data, Log) {
 		"use strict";
 
 		/**
@@ -35,7 +35,7 @@ sap.ui.define(['sap/ui/core/Control', 'sap/ui/model/json/JSONModel', 'sap/m/List
 			metadata: {
 				properties: {
 
-					manifestContent: { type: "object" }
+					configuration: { type: "object" }
 				},
 				aggregations: {
 
@@ -44,6 +44,18 @@ sap.ui.define(['sap/ui/core/Control', 'sap/ui/model/json/JSONModel', 'sap/m/List
 						visibility: "hidden"
 					}
 				}
+			},
+			constructor: function (vId, mSettings) {
+				if (typeof vId !== "string"){
+					mSettings = vId;
+				}
+
+				if (mSettings.serviceManager) {
+					this._oServiceManager = mSettings.serviceManager;
+					delete mSettings.serviceManager;
+				}
+
+				Control.apply(this, arguments);
 			},
 			renderer: function (oRm, oCardContent) {
 				oRm.write("<div");
@@ -54,6 +66,12 @@ sap.ui.define(['sap/ui/core/Control', 'sap/ui/model/json/JSONModel', 'sap/m/List
 			}
 		});
 
+		/**
+		 * Returns configured <code>sap.m.List</code> for ListContent.
+		 * @returns {object} <code>this</code> for chaining
+		 * @since 1.61
+		 * @private
+		 */
 		ListContent.prototype._getList = function () {
 
 			if (this._bIsBeingDestroyed) {
@@ -75,6 +93,9 @@ sap.ui.define(['sap/ui/core/Control', 'sap/ui/model/json/JSONModel', 'sap/m/List
 			return oList;
 		};
 
+		/**
+		 * Called when control is initialized.
+		 */
 		ListContent.prototype.init = function () {
 			var oList = this._getList();
 			var that = this;
@@ -91,11 +112,13 @@ sap.ui.define(['sap/ui/core/Control', 'sap/ui/model/json/JSONModel', 'sap/m/List
 			var oModel = new JSONModel();
 			this.setModel(oModel);
 			this._oItemTemplate = new StandardListItem({
-				iconDensityAware: false,
-				iconInset: false
+				iconDensityAware: false
 			});
 		};
 
+		/**
+		 * Called when control is destroyed.
+		 */
 		ListContent.prototype.exit = function () {
 			if (this._oItemTemplate) {
 				this._oItemTemplate.destroy();
@@ -112,9 +135,9 @@ sap.ui.define(['sap/ui/core/Control', 'sap/ui/model/json/JSONModel', 'sap/m/List
 		/**
 		 * @param {Object} oContent The content section of the manifest schema
 		 */
-		ListContent.prototype.setManifestContent = function (oContent) {
+		ListContent.prototype.setConfiguration = function (oContent) {
 
-			this.setProperty("manifestContent", oContent);
+			this.setProperty("configuration", oContent);
 
 			if (!oContent) {
 				return;
@@ -129,10 +152,26 @@ sap.ui.define(['sap/ui/core/Control', 'sap/ui/model/json/JSONModel', 'sap/m/List
 			}
 		};
 
-		ListContent.prototype._setItem = function (mItems) {
-			this._oItemTemplate.bindProperty("title", ManagedObject.bindingParser(mItems["title"].value));
-			this._oItemTemplate.bindProperty("description", ManagedObject.bindingParser(mItems["description"].value));
-			this._oItemTemplate.bindProperty("icon", ManagedObject.bindingParser(mItems["icon"].value));
+		/**
+		 * Returns configured <code>sap.m.List</code> for ListContent.
+		 * @returns {object} <code>this</code> for chaining
+		 * @since 1.61
+		 * @override
+		 * @private
+		 */
+		ListContent.prototype._setItem = function (mItem) {
+			/* eslint-disable no-unused-expressions */
+			mItem.title && this._bindItemProperty("title", mItem.title.value);
+			mItem.description && this._bindItemProperty("description", mItem.description.value);
+			mItem.icon && mItem.icon.src && this._bindItemProperty("icon", mItem.icon.src);
+			mItem.highlight && this._bindItemProperty("highlight", mItem.highlight);
+			mItem.info && this._bindItemProperty("info", mItem.info.value);
+			mItem.info && this._bindItemProperty("infoState", mItem.info.state);
+			mItem.interactionType && this._bindItemProperty("type", mItem.interactionType);
+			/* eslint-enable no-unused-expressions */
+
+			this._attachActions(mItem);
+
 			var oList = this._getList();
 			if (oList.isBound("items")) {
 				oList.bindItems({
@@ -143,25 +182,101 @@ sap.ui.define(['sap/ui/core/Control', 'sap/ui/model/json/JSONModel', 'sap/m/List
 			return this;
 		};
 
+		ListContent.prototype._bindItemProperty = function (sPropertyName, sPropertyValue) {
+			if (!sPropertyValue) {
+				return;
+			}
+
+			var oBindingInfo = ManagedObject.bindingParser(sPropertyValue);
+			if (oBindingInfo) {
+				this._oItemTemplate.bindProperty(sPropertyName, oBindingInfo);
+			} else {
+				this._oItemTemplate.setProperty(sPropertyName, sPropertyValue);
+			}
+		};
+
+		ListContent.prototype._attachActions = function (mItem) {
+			if (!mItem.actions) {
+				return;
+			}
+
+			// For now we allow for only one action of type navigation.
+			var oAction = mItem.actions[0];
+			if (oAction.type === "Navigation" && oAction.enabled) {
+				this._attachNavigationAction(oAction);
+			}
+		};
+
+		ListContent.prototype._attachNavigationAction = function (oAction) {
+
+			if (oAction.service) {
+				this._oItemTemplate.attachPress(function (oEvent) {
+					// How should we do this? Pass handler from card? Or maybe fire event requstService and wait for parent to return it?
+					this.getParent()._oServiceManager.getService("sap.ui.integration.services.Navigation").then(function (oNavigationService) {
+						if (oNavigationService) {
+							oNavigationService.navigate({
+								parameters: oEvent.getParameters(),
+								manifestParameters: oAction.parameters
+							});
+						}
+					}).catch(function () {
+						Log.error("Navigation service unavailable");
+					});
+				}.bind(this));
+			} else if (oAction.url) {
+				this._oItemTemplate.attachPress(function () {
+					window.open(oAction.url, oAction.target || "_blank");
+				});
+			}
+		};
+
+		/**
+		 * Sets data from manifest.
+		 * @returns {object} <code>this</code> for chaining
+		 * @since 1.61
+		 * @override
+		 * @private
+		 */
 		ListContent.prototype._setData = function (oData) {
 
 			var oRequest = oData.request;
+			var oService = oData.service;
 
 			if (oData.json && !oRequest) {
 				this._updateModel(oData.json, oData.path);
 			}
 
-			if (oRequest) {
+			if (oService) {
+				this._oServiceManager.getService("sap.ui.integration.services.Data").then(function (oDataService) {
+					if (oDataService) {
+						oDataService.getData().then(function (data) {
+							this._updateModel(data, oData.path);
+						}.bind(this)).catch(function () {
+							Log.error("Card content data service failed to get data");
+						});
+						oDataService.attachDataChanged(function (oEvent) {
+							this._updateModel(oEvent.data, oData.path);
+						}.bind(this), oData.service.parameters);
+					}
+				}.bind(this)).catch(function () {
+					Log.error("Data service unavailable");
+				});
+			} else if (oRequest) {
 				Data.fetch(oRequest).then(function (data) {
 					this._updateModel(data, oData.path);
 				}.bind(this)).catch(function (oError) {
-					// TODO: Handle errors. Maybe add error message
+					Log.error("Card content data request failed");
 				});
 			}
 
 			return this;
 		};
 
+		/**
+		 * Updates model when data is received.
+		 * @since 1.61
+		 * @private
+		 */
 		ListContent.prototype._updateModel = function (oData, sPath) {
 			this.getModel().setData(oData);
 			this._getList().bindItems({

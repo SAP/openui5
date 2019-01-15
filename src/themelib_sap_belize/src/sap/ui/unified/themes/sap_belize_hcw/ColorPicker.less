@@ -7,6 +7,11 @@
 	border-color: @sapUiBaseColor;
 }
 
-.sapUiColorPicker-ColorPickerMatrix.sapUnifiedColorPicker .sapMSliderHandle {
-	box-shadow: inset 0 0 0 0.125rem @sapUiContentForegroundColor;
+.sapUiColorPicker-ColorPickerMatrix.sapUnifiedColorPicker {
+	.sapUiColorPicker-ColorPickerSlider,
+	.sapUiColorPicker-ColorPickerAlphaSlider {
+		.sapMSliderHandle {
+			box-shadow: inset 0 0 0 0.125rem @sapUiContentForegroundColor;
+		}
+	}
 }

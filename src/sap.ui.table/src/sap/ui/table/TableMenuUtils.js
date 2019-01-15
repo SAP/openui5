@@ -212,9 +212,7 @@ sap.ui.define([
 				}
 
 				var oColumn = oColumns[iColumnIndex];
-				var oMenu = oColumn.getMenu();
-
-				oMenu.close();
+				oColumn._closeMenu();
 			},
 
 			/**

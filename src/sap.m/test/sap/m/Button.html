@@ -55,6 +55,10 @@
 			oButton.setText("Transparent Button");
 			oButton.setType(sap.m.ButtonType.Transparent);
 		},
+		typeGhost : function(oButton) {
+			oButton.setText("Ghost Button");
+			oButton.setType(sap.m.ButtonType.Ghost);
+		},
 		typeBack : function(oButton) {
 			oButton.setText("Back Button");
 			oButton.setType(sap.m.ButtonType.Back);
@@ -72,6 +76,9 @@
 		},
 		width100Pixel : function(oButton) {
 			oButton.setWidth("120px");
+		},
+		width300Pixel : function(oButton) {
+			oButton.setWidth("300px");
 		},
 		width100Percent : function(oButton) {
 			oButton.setWidth("100%");
@@ -231,6 +238,15 @@
 		}
 	});
 
+	var oButtonBarGhost = new sap.m.Button("myButtonBarGhost", {
+		type: sap.m.ButtonType.Default,
+		text: "Button Type Ghost",
+		enabled: true,
+		press : function() {
+			oHelper.typeGhost(oButtonBarButtonSample)
+		}
+	});
+
 	var oButtonBarBack = new sap.m.Button("myButtonBarBack", {
 		type: sap.m.ButtonType.Default,
 		text: "Button Type Back",
@@ -282,6 +298,15 @@
 		enabled: true,
 		press : function() {
 			oHelper.width100Percent(oButtonBarButtonSample)
+		}
+	});
+
+	var oButtonBarWidth300Pixel = new sap.m.Button("myButtonBarWidth300Pixel", {
+		type: sap.m.ButtonType.Default,
+		text: "Set width 300px",
+		enabled: true,
+		press : function() {
+			oHelper.width300Pixel(oButtonBarButtonSample)
 		}
 	});
 
@@ -686,6 +711,8 @@
 				.addContent(oButtonBarReject)
 				.addContent(new sap.ui.core.HTML("myHtmlBarTransparent", {content: "<div class='ButtonSpace'>&nbsp;</div>"}))
 				.addContent(oButtonBarTransparent)
+				.addContent(new sap.ui.core.HTML("myHtmlBarGhost", {content: "<div class='ButtonSpace'>&nbsp;</div>"}))
+				.addContent(oButtonBarGhost)
 				.addContent(new sap.ui.core.HTML("myHtmlBarBack", {content: "<div class='ButtonSpace'>&nbsp;</div>"}))
 				.addContent(oButtonBarBack)
 				.addContent(new sap.ui.core.HTML("myHtmlBarUp", {content: "<div class='ButtonSpace'>&nbsp;</div>"}))
@@ -696,6 +723,8 @@
 				.addContent(oButtonBarEnabled)
 				.addContent(new sap.ui.core.HTML("myHtmlBarWidth100Pixel", {content: "<div class='ButtonSpace'>&nbsp;</div>"}))
 				.addContent(oButtonBarWidth100Pixel)
+				.addContent(new sap.ui.core.HTML("myHtmlBarWidth300Pixel", {content: "<div class='ButtonSpace'>&nbsp;</div>"}))
+				.addContent(oButtonBarWidth300Pixel)
 				.addContent(new sap.ui.core.HTML("myHtmlBarWidth100Percent", {content: "<div class='ButtonSpace'>&nbsp;</div>"}))
 				.addContent(oButtonBarWidth100Percent)
 				.addContent(new sap.ui.core.HTML("myHtmlBarWidthReset", {content: "<div class='ButtonSpace'>&nbsp;</div>"}))

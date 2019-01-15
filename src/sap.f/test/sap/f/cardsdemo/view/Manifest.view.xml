@@ -2,9 +2,11 @@
     xmlns="sap.m"
     xmlns:mvc="sap.ui.core.mvc"
 	xmlns:f="sap.f"
+	xmlns:w="sap.ui.integration.widgets"
 	xmlns:editor="sap.ui.codeeditor"
     controllerName="sap.f.cardsdemo.controller.Manifest"
     displayBlock="true">
+
 	<Page title="{i18n>appTitle}">
 		<subHeader>
 			<Toolbar>
@@ -22,11 +24,11 @@
 						expandable="true"
 						headerText="Using manifest property with string value (URL)">
 						<HBox>
-							<f:SAPCard id="card1" manifest="./model/manifests/manifest_card1.json" width="500px" height="auto">
-								<f:layoutData>
+							<w:Card id="card1" manifest="./model/manifests/manifest_card1.json" width="500px" height="auto">
+								<w:layoutData>
 									<FlexItemData growFactor="1"/>
-								</f:layoutData>
-							</f:SAPCard>
+								</w:layoutData>
+							</w:Card>
 							<VBox>
 								<Text text="XMLView usage:" class="sapUiTinyMargin"/>
 								<editor:CodeEditor
@@ -56,11 +58,11 @@
 						expandable="true"
 						headerText="Using manifest property with object value (passed from a JSONModel)">
 						<HBox>
-							<f:SAPCard id="card2" manifest="{manifests>/manifestTests/manifest}" width="500px" height="auto">
-								<f:layoutData>
+							<w:Card id="card2" manifest="{manifests>/manifestTests/manifest}" width="500px" height="auto">
+								<w:layoutData>
 									<FlexItemData growFactor="1"/>
-								</f:layoutData>
-							</f:SAPCard>
+								</w:layoutData>
+							</w:Card>
 							<VBox>
 								<Text text="XMLView usage:" class="sapUiTinyMargin"/>
 								<editor:CodeEditor

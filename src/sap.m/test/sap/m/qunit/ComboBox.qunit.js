@@ -5008,6 +5008,41 @@ sap.ui.define([
 		oComboBox.destroy();
 	});
 
+	QUnit.test("list items title property should be updated after binding", function (assert) {
+
+		// system under test
+		var oComboBox = new ComboBox({
+			items: [
+				new Item({
+					key: "item1",
+					text: "{/item1}"
+				})
+			]
+		});
+
+		// arrange
+		oComboBox.placeAt("content");
+		sap.ui.getCore().applyChanges();
+
+		// assert
+		assert.strictEqual(oComboBox.getList().getItems()[0].getTitle(), "", "List item title is not updated");
+
+		// act
+		var oModel = new JSONModel();
+		oModel.setData({
+			item1: "Item 1"
+		});
+
+		oComboBox.setModel(oModel);
+		sap.ui.getCore().applyChanges();
+
+		// assert
+		assert.strictEqual(oComboBox.getList().getItems()[0].getTitle(), "Item 1", "List item title is updated");
+
+		// cleanup
+		oComboBox.destroy();
+	});
+
 	QUnit.module("onsapshow");
 
 	QUnit.test("onsapshow F4 - open the picker pop-up", function (assert) {
@@ -10267,6 +10302,25 @@ sap.ui.define([
 		oComboBox.destroy();
 	});
 
+	if (Device.browser.internet_explorer) {
+		QUnit.test("AriaDescribedBy", function(assert) {
+			var oComboBox = new ComboBox(),
+				oResourceBundle = sap.ui.getCore().getLibraryResourceBundle("sap.m").getText("ACC_CTR_TYPE_COMBO");
+
+			oComboBox.placeAt("content");
+			sap.ui.getCore().applyChanges();
+
+			var oInvisibleText = oComboBox.oInvisibleText;
+
+			//Assert
+			assert.ok(oComboBox.$("inner").attr("aria-describedby").length > 0, "Property aria-describedby should exist");
+			assert.strictEqual(oInvisibleText.getText(), oResourceBundle , "'Combobox' is announced.");
+
+			//Cleanup
+			oComboBox.destroy();
+		});
+	}
+
 	QUnit.module("Integration");
 
 	QUnit.test("Keep selected value on parent re-render", function (assert) {
@@ -11053,6 +11107,7 @@ sap.ui.define([
 	QUnit.test("Composititon events", function (assert) {
 		var oFakeEvent = {
 			isMarked: function () { },
+			setMarked: function () { },
 			srcControl: this.comboBox,
 			target: {
 				value: "서"

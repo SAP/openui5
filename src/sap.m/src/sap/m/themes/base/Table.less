@@ -57,12 +57,16 @@ tr.sapMListTblHeaderNone > .sapMTableTH {
 	word-wrap: normal;
 }
 
-/* inherit the alignment from the column */
-.sapMListTblCell .sapMObjectNumber {
-	display: inline-block;
-}
-
-.sapMListTblCell .sapMSltLabel {
+/**
+ * For compatibility reasons text alignment should inherit from the table cells.
+ * Default value of textAlign property is Begin(not Initial) for the following controls
+ * therefore they always set text-align as a style attribute in DOM, this blocks
+ * alignment inheritance from the table cells.
+ */
+.sapMListTblCell > .sapMSlt > .sapMSltLabel,
+.sapMListTblCell > .sapMObjectNumber,
+.sapMListTblCell > .sapMLabel,
+.sapMListTblCell > .sapMText {
 	text-align: inherit !important;
 }
 

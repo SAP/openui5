@@ -180,7 +180,7 @@ sap.ui.define(['sap/ui/core/Core', "sap/base/util/ObjectPath", "sap/base/Log", "
 
 	var aKnownRuntimeLayerLibraries = ["sap.ui.core","sap.chart","sap.f","sap.m","sap.makit","sap.me","sap.ndc",
 		   "sap.suite.ui.microchart","sap.tnt","sap.ui.codeeditor","sap.ui.commons","sap.ui.comp","sap.ui.dt",
-		   "sap.ui.fl","sap.ui.generic.app","sap.ui.generic.template","sap.ui.layout","sap.ui.mdc",
+		   "sap.ui.fl","sap.ui.integration","sap.ui.generic.app","sap.ui.generic.template","sap.ui.layout","sap.ui.mdc",
 		   "sap.ui.richtexteditor","sap.ui.rta","sap.ui.suite","sap.ui.table",
 		   "sap.ui.unified","sap.ui.ux3","sap.uxap","sap.viz"];
 

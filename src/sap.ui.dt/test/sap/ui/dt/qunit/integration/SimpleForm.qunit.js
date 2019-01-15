@@ -84,7 +84,7 @@ function (
 			var oSimpleFormForm = sap.ui.getCore().byId("testView--SimpleForm0--Form");
 			var aFormContainers = oSimpleFormForm.getFormContainers();
 			var iPosition = aFormContainers.indexOf(oElementGroup1.getParent());
-			assert.equal(iPosition, 2, "and the title1 is now located at index 2");
+			assert.equal(iPosition, 3, "and the title1 is now located at index 3");
 
 		});
 
@@ -101,7 +101,7 @@ function (
 			var oSimpleFormForm = sap.ui.getCore().byId("testView--SimpleForm0--Form");
 			var aFormContainers = oSimpleFormForm.getFormContainers();
 			var iPosition = aFormContainers.indexOf(oElementGroup1.getParent());
-			assert.equal(iPosition, 1, "and the title2 is now located at index 1");
+			assert.equal(iPosition, 2, "and the title2 is now located at index 2");
 
 		});
 

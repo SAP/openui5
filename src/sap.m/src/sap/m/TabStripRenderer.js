@@ -73,6 +73,8 @@ sap.ui.define(['./TabStripItem', 'sap/ui/Device', 'sap/ui/core/InvisibleText'], 
 	 * @param {boolean} bSelected Flag indicating if this is the currently selected item
 	 */
 	TabStripRenderer.renderItem = function (oRm, oControl, oItem, bSelected) {
+		var sTooltip = oItem.getTooltip();
+
 		oRm.write("<div id='" + oItem.getId() + "'");
 		oRm.addClass(TabStripItem.CSS_CLASS);
 		if (oItem.getModified()) {
@@ -83,9 +85,13 @@ sap.ui.define(['./TabStripItem', 'sap/ui/Device', 'sap/ui/core/InvisibleText'], 
 		}
 		oRm.writeClasses();
 
+		if (sTooltip){
+			oRm.writeAttributeEscaped("title", sTooltip);
+		}
+
 		oRm.writeElementData(oItem);
 
-		oRm.writeAccessibilityState(oItem, getTabStripItemAccAttributes(oItem, oControl.getParent(), sap.ui.getCore().byId(oControl.getSelectedItem())));
+		oRm.writeAccessibilityState(oItem, getTabStripItemAccAttributes(oItem, oControl, sap.ui.getCore().byId(oControl.getSelectedItem())));
 
 		oRm.write(">");
 
@@ -243,12 +249,18 @@ sap.ui.define(['./TabStripItem', 'sap/ui/Device', 'sap/ui/core/InvisibleText'], 
 	 * @returns {Object} The accessibility attributes for given <code>TabStripItem</code>
 	 * @private
 	 */
-	function getTabStripItemAccAttributes(oItem, oTabStripParent, oSelectedItem) {
-		var mAccAttributes = { role: "tab"},
+	function getTabStripItemAccAttributes(oItem, oTabStrip, oSelectedItem) {
+
+		var aItems = oTabStrip.getItems(),
+			iIndex = aItems.indexOf(oItem),
+			oTabStripParent = oTabStrip.getParent(),
+			mAccAttributes = { role: "tab"},
 			sDescribedBy = InvisibleText.getStaticId("sap.m", "TABSTRIP_ITEM_CLOSABLE") + " ";
 
 		sDescribedBy += InvisibleText.getStaticId("sap.m", oItem.getModified() ? "TABSTRIP_ITEM_MODIFIED" : "TABSTRIP_ITEM_NOT_MODIFIED");
 		mAccAttributes["describedby"] = sDescribedBy;
+		mAccAttributes["posinset"] = iIndex + 1;
+		mAccAttributes["setsize"] = aItems.length;
 		mAccAttributes["labelledby"] = getTabTextDomId(oItem);
 		if (oTabStripParent && oTabStripParent.getRenderer && oTabStripParent.getRenderer().getContentDomId) {
 			mAccAttributes["controls"] = oTabStripParent.getRenderer().getContentDomId(oTabStripParent);

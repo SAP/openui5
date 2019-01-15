@@ -15,6 +15,7 @@ sap.ui.define([
 	'sap/ui/model/SorterProcessor',
 	'sap/ui/model/FilterProcessor',
 	'sap/ui/model/FilterType',
+	'sap/ui/model/Context',
 	"sap/base/Log",
 	"sap/base/assert",
 	"sap/ui/thirdparty/jquery"
@@ -31,6 +32,7 @@ sap.ui.define([
 		SorterProcessor,
 		FilterProcessor,
 		FilterType,
+		Context,
 		Log,
 		assert,
 		jQuery
@@ -307,42 +309,44 @@ sap.ui.define([
 			this.mRequestHandles[sRequestKey].abort();
 		}
 		sGroupId = this.sRefreshGroupId ? this.sRefreshGroupId : this.sGroupId;
-		this.mRequestHandles[sRequestKey] = this.oModel.read(sNodeId, {
-			context: this.oContext,
-			groupId: sGroupId,
-			success: function (oData) {
-				var sNavPath = that._getNavPath(that.getPath());
+		var sAbsolutePath = this.oModel.resolve(this.getPath(), this.getContext());
+		if (sAbsolutePath) {
+			this.mRequestHandles[sRequestKey] = this.oModel.read(sAbsolutePath, {
+				groupId: sGroupId,
+				success: function (oData) {
+					var sNavPath = that._getNavPath(that.getPath());
 
-				if (oData) {
-					// we expect only one root node
-					var oEntry = oData;
-					var sKey =  that.oModel._getKey(oEntry);
-					var oNewContext = that.oModel.getContext('/' + sKey);
+					if (oData) {
+						// we expect only one root node
+						var oEntry = oData;
+						var sKey =  that.oModel._getKey(oEntry);
+						var oNewContext = that.oModel.getContext('/' + sKey);
 
-					that.oRootContext = oNewContext;
-					that._processODataObject(oNewContext.getObject(), sNodeId, sNavPath);
-				} else {
-					that._bRootMissing = true;
-				}
-				that.bNeedsUpdate = true;
-
-				delete that.mRequestHandles[sRequestKey];
-
-				that.oModel.callAfterUpdate(function() {
-					that.fireDataReceived({data: oData});
-				});
-			},
-			error: function (oError) {
-				//Only perform error handling if the request was not aborted intentionally
-				if (oError && oError.statusCode != 0 && oError.statusText != "abort") {
+						that.oRootContext = oNewContext;
+						that._processODataObject(oNewContext.getObject(), sNodeId, sNavPath);
+					} else {
+						that._bRootMissing = true;
+					}
 					that.bNeedsUpdate = true;
-					that._bRootMissing = true;
+
 					delete that.mRequestHandles[sRequestKey];
 
-					that.fireDataReceived();
+					that.oModel.callAfterUpdate(function() {
+						that.fireDataReceived({data: oData});
+					});
+				},
+				error: function (oError) {
+					//Only perform error handling if the request was not aborted intentionally
+					if (oError && oError.statusCode != 0 && oError.statusText != "abort") {
+						that.bNeedsUpdate = true;
+						that._bRootMissing = true;
+						delete that.mRequestHandles[sRequestKey];
+
+						that.fireDataReceived();
+					}
 				}
-			}
-		});
+			});
+		}
 	};
 
 	/**
@@ -1100,18 +1104,18 @@ sap.ui.define([
 
 			// execute the request and use the metadata if available
 			this.fireDataRequested();
+
 			sAbsolutePath = this.oModel.resolve(this.getPath(), this.getContext());
-
-			sGroupId = this.sRefreshGroupId ? this.sRefreshGroupId : this.sGroupId;
-			this.mRequestHandles[sRequestKey] = this.oModel.read(sAbsolutePath, {
-				urlParameters: aParams,
-				success: fnSuccess,
-				error: fnError,
-				sorters: this.aSorters,
-				groupId: sGroupId
-			});
-
-
+			if (sAbsolutePath) {
+				sGroupId = this.sRefreshGroupId ? this.sRefreshGroupId : this.sGroupId;
+				this.mRequestHandles[sRequestKey] = this.oModel.read(sAbsolutePath, {
+					urlParameters: aParams,
+					success: fnSuccess,
+					error: fnError,
+					sorters: this.aSorters,
+					groupId: sGroupId
+				});
+			}
 		}.bind(this));
 	};
 
@@ -1261,14 +1265,16 @@ sap.ui.define([
 			if (this.mRequestHandles[sRequestKey]) {
 				this.mRequestHandles[sRequestKey].abort();
 			}
-			sGroupId = this.sRefreshGroupId ? this.sRefreshGroupId : this.sGroupId;
-			this.mRequestHandles[sRequestKey] = this.oModel.read(sAbsolutePath, {
-				urlParameters: aParams,
-				success: fnSuccess,
-				error: fnError,
-				sorters: this.aSorters,
-				groupId: sGroupId
-			});
+			if (sAbsolutePath) {
+				sGroupId = this.sRefreshGroupId ? this.sRefreshGroupId : this.sGroupId;
+				this.mRequestHandles[sRequestKey] = this.oModel.read(sAbsolutePath, {
+					urlParameters: aParams,
+					success: fnSuccess,
+					error: fnError,
+					sorters: this.aSorters,
+					groupId: sGroupId
+				});
+			}
 		}
 	};
 
@@ -1384,24 +1390,33 @@ sap.ui.define([
 		if (this.mRequestHandles[sRequestKey]) {
 			this.mRequestHandles[sRequestKey].abort();
 		}
-		this.mRequestHandles[sRequestKey] = this.oModel.read(this.getPath(), {
-			context: this.oContext,
-			urlParameters: aURLParams,
-			success: fnSuccess,
-			error: fnError,
-			sorters: this.aSorters,
-			groupId: this.sRefreshGroupId ? this.sRefreshGroupId : this.sGroupId
-		});
+		var sAbsolutePath = this.oModel.resolve(this.getPath(), this.getContext());
+		if (sAbsolutePath) {
+			this.mRequestHandles[sRequestKey] = this.oModel.read(sAbsolutePath, {
+				urlParameters: aURLParams,
+				success: fnSuccess,
+				error: fnError,
+				sorters: this.aSorters,
+				groupId: this.sRefreshGroupId ? this.sRefreshGroupId : this.sGroupId
+			});
+		}
 	};
 
 	/**
 	 * Resets the current tree data and the lengths of the different nodes/groups.
 	 *
-	 * @param {object} oContext the context for which the lengths values should be resetted.
+	 * @param {object|boolean} vContextOrDoNotAbortReq If boolean, <code>true</code> will suppress abortion of pending requests.
+	 * If an object is supplied, it is treated as the context for which the lengths values should be resetted.
 	 *
 	 * @private
 	 */
-	ODataTreeBinding.prototype.resetData = function(oContext) {
+	ODataTreeBinding.prototype.resetData = function(vContextOrDoNotAbortReq) {
+		var oContext, bDoNotAbortRequests = false;
+		if (typeof vContextOrDoNotAbortReq === "boolean") {
+			bDoNotAbortRequests = vContextOrDoNotAbortReq;
+		} else {
+			oContext = vContextOrDoNotAbortReq;
+		}
 		if (oContext) {
 			//Only reset specific content
 			var sPath = oContext.getPath();
@@ -1440,13 +1455,9 @@ sap.ui.define([
 			this.oRootContext = null;
 			this._bRootMissing = false;
 
-			// abort running request and clear the map afterwards
-			jQuery.each(this.mRequestHandles, function (sRequestKey, oRequestHandle) {
-				if (oRequestHandle) {
-					oRequestHandle.abort();
-				}
-			});
-			this.mRequestHandles = {};
+			if (!bDoNotAbortRequests) {
+				this._abortPendingRequest();
+			}
 
 			this._mLoadedSections = {};
 			this._iPageSize = 0;
@@ -1603,12 +1614,6 @@ sap.ui.define([
 				}
 			} else {
 				this.resetData();
-				// abort running request, since new requests will be sent containing $orderby
-				jQuery.each(this.mRequestHandles, function (sRequestKey, oRequestHandle) {
-					if (oRequestHandle) {
-						oRequestHandle.abort();
-					}
-				});
 				this.sChangeReason = ChangeReason.Filter;
 				this._fireRefresh({reason: this.sChangeReason});
 			}
@@ -1724,12 +1729,7 @@ sap.ui.define([
 		this.aSorters = aSorters || [];
 
 		if (!this.bInitial) {
-			// abort running request, since new requests will be sent containing $orderby
-			jQuery.each(this.mRequestHandles, function (sRequestKey, oRequestHandle) {
-				if (oRequestHandle) {
-					oRequestHandle.abort();
-				}
-			});
+			this._abortPendingRequest();
 
 			if (this.bClientOperation) {
 				this.addSortComparators(aSorters, this.oEntityType);
@@ -2040,7 +2040,7 @@ sap.ui.define([
 	 * @private
 	 */
 	ODataTreeBinding.prototype.setContext = function(oContext) {
-		if (this.oContext !== oContext) {
+		if (Context.hasChanged(this.oContext, oContext)) {
 			this.oContext = oContext;
 
 			// If binding is not a relative binding, nothing to do here
@@ -2411,6 +2411,19 @@ sap.ui.define([
 		}
 
 		return this.sFilterParams;
+	};
+
+	/**
+	* Abort all pending requests
+	*/
+	ODataTreeBinding.prototype._abortPendingRequest = function() {
+		// abort running request and clear the map afterwards
+		jQuery.each(this.mRequestHandles, function (sRequestKey, oRequestHandle) {
+			if (oRequestHandle) {
+				oRequestHandle.abort();
+			}
+		});
+		this.mRequestHandles = {};
 	};
 
 	/**

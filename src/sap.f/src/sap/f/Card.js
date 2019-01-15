@@ -42,7 +42,7 @@ sap.ui.define([
 	var Card = Control.extend("sap.f.Card", /** @lends sap.f.Card.prototype */ {
 		metadata: {
 			library: "sap.f",
-			interfaces: ["sap.f.cards.ICard"],
+			interfaces: ["sap.f.ICard"],
 			properties: {
 
 				/**

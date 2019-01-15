@@ -343,6 +343,11 @@ sap.ui.define([
 										text: oControlData.uxGuidelinesLinkText,
 										href: oControlData.uxGuidelinesLink,
 										target: "_blank"
+									}),
+									new sap.m.Image({
+										src: "./resources/sap/ui/documentation/sdk/images/link-sap.png",
+										tooltip: "Information published on SAP site",
+										press: this.onDisclaimerLinkPress
 									})
 								]
 							}, true);

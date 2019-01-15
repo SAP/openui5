@@ -147,6 +147,7 @@ sap.ui.define([
 	createRule({
 		id : "AccessibleRowHighlight",
 		categories: [Categories.Accessibility],
+		minversion: "1.62",
 		title : "Accessible Row Highlight",
 		description : "Checks whether the row highlights of the 'sap.ui.table.Table' controls are accessible.",
 		resolution : "Use the 'highlightText' property of the 'sap.ui.table.RowSettings' to define the semantics of the row 'highlight'.",

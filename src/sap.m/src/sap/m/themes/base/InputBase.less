@@ -3,8 +3,16 @@
 /* Base theme                       */
 /* ================================ */
 
+@_sap_m_InputBase_InnerMinWidth: 3rem;
+@_sap_m_InputBase_InnerPadding: 0 0.75rem;
+@_sap_m_InputBase_Height: 2.5rem;
+@_sap_m_InputBase_DisabledOpacity: 0.5;
+@_sap_m_InputBase_IconLineHeight: 2.375rem;
+@_sap_m_InputBase_IconWidth: 2.375rem;
+@_sap_m_InputBase_IconMinWidth: 2.375rem;
+
 .sapMInputBase {
-	height: 2.5rem;
+	height: @_sap_m_InputBase_Height;
 	background: transparent;
 	position: relative;
 	display: inline-block;
@@ -31,11 +39,11 @@
 	font-size: @sapMFontMediumSize;
 	font-family: @sapUiFontFamily;
 	line-height: normal;
-	padding: 0 0.75rem;
+	padding: @_sap_m_InputBase_InnerPadding;
 	height: 100%;
 	box-sizing: border-box;
 	flex: auto;
-	min-width: 3rem;
+	min-width: @_sap_m_InputBase_InnerMinWidth;
 	text-overflow: ellipsis;
 }
 
@@ -81,10 +89,10 @@ html[data-sap-ui-browser^="ie"].sap-desktop .sapMInputBaseDynamicContent {
 }
 
 .sapMInputBaseIcon {
-	width: 2.375rem;
-	min-width: 2.375rem;
+	width: @_sap_m_InputBase_IconWidth;
+	min-width: @_sap_m_InputBase_IconMinWidth;
 	height: 100%;
-	line-height: 2.375rem;
+	line-height: @_sap_m_InputBase_IconLineHeight;
 	vertical-align: middle;
 	cursor: pointer;
 	background: transparent;
@@ -174,7 +182,7 @@ html[data-sap-ui-browser^="ed"].sap-desktop {
 }
 
 .sapMInputBaseDisabled {
-	opacity: 0.5;
+	opacity: @_sap_m_InputBase_DisabledOpacity;
 	.sapMInputBaseIcon {
 		cursor: default;
 	}
@@ -275,6 +283,10 @@ html[data-sap-ui-browser^="ed"].sap-desktop {
 	}
 	.sapMInputDescriptionWrapper span {
 		line-height: 1.625rem;
+	}
+
+	.sapMInputBaseHasBeginIcons .sapMInputBaseInner {
+		padding-left: 0.25rem;
 	}
 
 	.sapMInputBaseHasEndIcons .sapMInputBaseInner {

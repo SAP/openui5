@@ -2166,6 +2166,38 @@ sap.ui.define([
 			oSelect.destroy();
 		});
 
+		// BCP 1870551736
+		QUnit.test("it should synchronize the selected key in case of item property changes", function (assert) {
+
+			// system under test
+			var oItem1,
+				oItem2,
+				oSelect = new Select({
+				items: [
+					oItem1 = new Item({
+						key: "one",
+						text: "One"
+					}),
+					oItem2 = new Item({
+						key: "two",
+						text: "Two"
+					})
+				],
+				selectedKey: "one"
+			});
+			assert.strictEqual(oSelect.getAssociation("selectedItem"), oItem1.getId(), "The selected item is Item1 initially");
+
+			// act
+			oSelect.setSelectedKey("two");
+			oItem1.setKey("two").setText("Two");
+			oItem2.setKey("one").setText("One");
+
+			// assert
+			assert.strictEqual(oSelect.getAssociation("selectedItem"), oItem1.getId(), "The selected item is still Item1");
+
+			// cleanup
+			oSelect.destroy();
+		});
 
 		// BCP 1670351685
 		QUnit.test("it should select the selected item after the dropdown is open", function (assert) {

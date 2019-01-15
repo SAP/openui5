@@ -3,6 +3,12 @@
 /* Base theme                        */
 /* ================================= */
 
+@_sap_tnt_InfoLabel_Margin: 0.9375rem;
+@_sap_tnt_InfoLabel_NoText_Padding: 0.5625rem;
+@_sap_tnt_InfoLabel_NoTextDisplayOnly_Padding: 0.5rem;
+@_sap_tnt_InfoLabel_LineHeight: 1.125rem;
+@_sap_tnt_InfoLabel_LineHeightDisplayOnly: 1rem;
+
 /* ==========================================================================
    Root element
    ========================================================================== */
@@ -18,7 +24,7 @@
 	.sapTntInfoLabelInner {
 		font-size: @sapMFontSmallSize;
 		vertical-align: top;
-		line-height: 1.125rem;
+		line-height: @_sap_tnt_InfoLabel_LineHeight;
 		font-weight: 600;
 		letter-spacing: 0.0125rem;
 		text-transform: uppercase;
@@ -42,7 +48,7 @@
 
 	.sapTntInfoLabelInner {
 		font-size: 0.6875rem;
-		line-height: 1rem;
+		line-height: @_sap_tnt_InfoLabel_LineHeightDisplayOnly;
 	}
 }
 
@@ -50,10 +56,10 @@
    InfoLabel No Text
    ========================================================================== */
    .sapTntInfoLabel.sapTntInfoLabelNoText {
-	padding: 0 0.5625rem;
+	padding: 0 @_sap_tnt_InfoLabel_NoText_Padding;
 
 		&.sapTntInfoLabelDisplayOnly{
-			padding: 0 0.5rem;
+			padding: 0 @_sap_tnt_InfoLabel_NoTextDisplayOnly_Padding;
 		}
    }
 
@@ -66,7 +72,7 @@
 }
 
 .sapUiFormEdit .sapTntInfoLabel:not(.sapTntInfoLabelDisplayOnly) {
-	margin: 0.9375rem 0;
+	margin: @_sap_tnt_InfoLabel_Margin 0;
 }
 
 /* Compact size */

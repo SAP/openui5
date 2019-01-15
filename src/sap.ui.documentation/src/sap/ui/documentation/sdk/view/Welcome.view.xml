@@ -212,7 +212,6 @@
 						</l:VerticalLayout>
 						<Image
 								src="./resources/sap/ui/documentation/sdk/images/Fiori_design_examples.png"
-								class="sapUiSmallmarginBeginEnd"
 								densityAware="false"
 								width="100%">
 							<layoutData>
@@ -261,6 +260,52 @@
 				</l:BlockLayoutCell>
 			</l:BlockLayoutRow>
 
+
+			<l:BlockLayoutRow>
+				<l:BlockLayoutCell
+						class="sapUiDemokitLandingBlockHeadline"
+						backgroundColorSet="ColorSet9"
+						backgroundColorShade="ShadeA"
+						title="UI5 Evolution"
+						titleAlignment="Center"/>
+			</l:BlockLayoutRow>
+
+			<l:BlockLayoutRow>
+				<l:BlockLayoutCell
+						backgroundColorSet="ColorSet11"
+						backgroundColorShade="ShadeB">
+					<l:VerticalLayout
+							width="100%">
+						<custom:TitleLink
+								href="#/topic/28fcd55b04654977b63dacbee0552712"
+								text="UI5 Evolution"
+								class="sapUiSmallMarginBottom"
+								titleStyle="H2"/>
+						<Text
+								text="UI5 evolution stands for fundamental improvements as part of an ongoing effort to advance SAPUI5, to enable applications to run faster, and code to become more modular. By embracing web standards, asynchronous loading, and emerging technologies, SAPUI5 continues to be a future-proof,
+								 enterprise-proven solution."
+								class="sapUiSmallMarginBottom"/>
+						<Text text="We encourage developers to actively support and leverage the new capabilities." />
+					</l:VerticalLayout>
+				</l:BlockLayoutCell>
+
+				<l:BlockLayoutCell
+						backgroundColorSet="ColorSet11"
+						backgroundColorShade="ShadeB">
+						<HBox alignItems="Center" justifyContent="Center" width="100%" height="100%">
+							<Image
+								src="./resources/sap/ui/documentation/sdk/images/Evolution_demokit_illustration_single.png"
+								densityAware="false"
+								class="sapUiTinyMarginBeginEnd"
+								width="100%"
+								alt="The UI5 evolution is creating innovation, providing Build Tooling, Modular Core, Open Standards, gaining high performance using Asynchronus Loading.">
+								<layoutData>
+									<FlexItemData maxWidth="37.5rem" />
+								</layoutData>
+							</Image>
+						</HBox>
+				</l:BlockLayoutCell>
+			</l:BlockLayoutRow>
 
 			<l:BlockLayoutRow>
 				<l:BlockLayoutCell

@@ -36,13 +36,11 @@ function (
 		}
 	}, function () {
 		QUnit.test("when the test is started", function (assert) {
-			var fnDone = assert.async();
-
-			this.oLibraryEnablementTest.run().then(function(oResult) {
+			return this.oLibraryEnablementTest.run()
+			.then(function(oResult) {
 				assert.ok(oResult, "A result is returned");
 				assert.ok(oResult.children.length > 0, "Library Test was successfully performed");
 				assert.ok(this.fnSpyCreate.callCount, 1, "and the create function was called once");
-				fnDone();
 			}.bind(this));
 		});
 	});

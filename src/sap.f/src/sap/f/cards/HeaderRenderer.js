@@ -5,17 +5,26 @@
 sap.ui.define([], function () {
 	"use strict";
 
-	var HeaderRenderer = {};
+	var HeaderRenderer = {},
+		oRb = sap.ui.getCore().getLibraryResourceBundle("sap.f");
 
 	/**
-	 * Render a kpi header.
+	 * Render a header.
 	 *
 	 * @param {sap.ui.core.RenderManager} oRm The RenderManager that can be used for writing to the render output buffer
 	 * @param {sap.f.cards.Header} oControl An object representation of the control that should be rendered
 	 */
 	HeaderRenderer.render = function (oRm, oControl) {
-		oRm.write("<header");
+		oRm.write("<div");
+		oRm.writeControlData(oControl);
+		oRm.writeAttribute("tabindex", "0");
 		oRm.addClass("sapFCardHeader");
+		//Accessibility state
+		oRm.writeAccessibilityState(oControl, {
+			role: "group",
+			labelledBy: {value: oControl._getHeaderAccessibility(), append: true},
+			roledescription: {value: oRb.getText("ARIA_ROLEDESCRIPTION_CARD_HEADER"), append: true}
+		});
 		oRm.writeClasses();
 		oRm.write(">");
 
@@ -35,7 +44,7 @@ sap.ui.define([], function () {
 			oRm.write("</div>");
 		}
 
-		var sStatus = oControl.getStatus();
+		var sStatus = oControl.getStatusText();
 		if (sStatus) {
 			oRm.write("<span");
 			oRm.addClass("sapFCardStatus");
@@ -44,8 +53,7 @@ sap.ui.define([], function () {
 			oRm.writeEscaped(sStatus);
 			oRm.write("</span>");
 		}
-
-		oRm.write("</header>");
+		oRm.write("</div>");
 	};
 
 	return HeaderRenderer;

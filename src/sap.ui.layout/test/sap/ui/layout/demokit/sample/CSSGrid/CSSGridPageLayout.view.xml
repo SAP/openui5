@@ -4,6 +4,7 @@
 		xmlns:grid="sap.ui.layout.cssgrid"
 		xmlns:core="sap.ui.core"
 		controllerName="sap.ui.layout.sample.CSSGrid.CSSGridPageLayout">
+	<Slider class="sapUiSmallMarginBottom" value="100" liveChange="onSliderMoved" />
 	<Panel id="gridLayout" width="100%" height="100%">
 		<headerToolbar>
 			<Toolbar height="3rem">
@@ -11,7 +12,6 @@
 			</Toolbar>
 		</headerToolbar>
 		<content>
-			<Slider class="sapUiSmallMarginBottom" value="100" liveChange="onSliderMoved" />
 			<grid:CSSGrid id="grid1"
 						  gridTemplateColumns="1fr 2fr 1fr"
 						  gridTemplateRows="50px 200px 50px"

@@ -19,28 +19,44 @@
 	}
   },
   "sap.ui5": {
+	"services": {
+		"UserRecent": {
+			"factoryName": "cardsdemo.service.UserRecentFactory"
+		},
+		"Navigation": {
+			"factoryName": "cardsdemo.service.SampleNavigationFactory"
+		}
+	},
+	"dependencies": {
+		"minUI5Version": "1.30.0",
+		"libs": {
+			"sap.ui.core": {},
+			"sap.m": {},
+			"sap.ui.integration": {
+				"lazy": true
+			},
+			"sap.f": {},
+			"sap.ui.layout": {
+				"lazy": true
+			},
+			"sap.ui.codeeditor": {
+				"lazy": true
+			}
+		}
+	},
 	"rootView": {
 	  "viewName": "sap.f.cardsdemo.view.App",
 	  "type": "XML",
 	  "async": true,
 	  "id": "app"
 	},
-	"dependencies": {
-	  "minUI5Version": "1.30",
-	  "libs": {
-		"sap.m": {},
-		"sap.ui.core": {},
-		"sap.f": {},
-		"sap.ui.layout": {},
-		"sap.ui.codeeditor": {}
-	  }
-	},
 	"models": {
 	  "i18n": {
 		"type": "sap.ui.model.resource.ResourceModel",
 		"settings": {
 		  "bundleName": "sap.f.cardsdemo.i18n.i18n"
-		}
+		},
+		"preload": true
 	  }
 	},
 	"routing": {
@@ -102,9 +118,9 @@
 		  "name": "flp",
 		  "target": "flp"
 		}, {
-		  "pattern": "kpiHeader",
-		  "name": "kpiHeader",
-		  "target": "kpiHeader"
+		  "pattern": "numericHeader",
+		  "name": "numericHeader",
+		  "target": "numericHeader"
 		},
 		{
 		  "pattern": "analyticalContent",
@@ -120,6 +136,16 @@
 		  "pattern": "customContent",
 		  "name": "customContent",
 		  "target": "customContent"
+		},
+		{
+		  "pattern": "cardContainer",
+		  "name": "cardContainer",
+		  "target": "cardContainer"
+		},
+		{
+		  "pattern": "services",
+		  "name": "services",
+		  "target": "services"
 		}
 	  ],
 	  "targets": {
@@ -178,9 +204,9 @@
 		  "viewName": "Flp",
 		  "viewLevel": 1
 		},
-		"kpiHeader": {
-		  "viewId": "kpiHeader",
-		  "viewName": "kpiHeader",
+		"numericHeader": {
+		  "viewId": "numericHeader",
+		  "viewName": "numericHeader",
 		  "viewLevel": 1
 		},
 		"manifest": {
@@ -191,6 +217,16 @@
 		"customContent": {
 		  "viewId": "custom",
 		  "viewName": "Custom",
+		  "viewLevel": 1
+		},
+		"cardContainer": {
+		  "viewId": "CardContainer",
+		  "viewName": "CardContainer",
+		  "viewLevel": 1
+		},
+		"services": {
+		  "viewId": "services",
+		  "viewName": "Services",
 		  "viewLevel": 1
 		}
 	  }

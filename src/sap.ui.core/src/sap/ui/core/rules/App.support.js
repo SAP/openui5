@@ -173,32 +173,35 @@ sap.ui.define(["sap/ui/support/library"], function(SupportLib) {
 		minversion: "1.58",
 		async: true,
 		title: "Usage of deprecated jquery.sap module",
-		description: "Usage of deprecated jquery.sap API should be avoided and dependencies to jquery.sap are not needed any longer.",
+		description: "Usage of deprecated jquery.sap API should be avoided and dependencies to jquery.sap " +
+			"are not needed any longer. This rule only works on global execution scope.",
 		resolution: "Migrate to the modern module API as documented.",
 		resolutionurls: [{
 			text: 'Documentation: Modularization',
 			// TODO: link to the modularization dev guide
-			href: 'https://openui5.hana.ondemand.com/#/api'
+			href: 'https://openui5.hana.ondemand.com/#/topic/a075ed88ef324261bca41813a6ac4a1c'
 		}],
 		check: function(oIssueManager, oCoreFacade, oScope, fnResolve) {
-			sap.ui.require(["sap/base/util/LoaderExtensions"], function(LoaderExtensions) {
-				var sDetails = "Usage of deprecated jquery.sap modules detected: \n" +
-					LoaderExtensions.getAllRequiredModules().filter(function(sModuleName) {
-						return sModuleName.startsWith("jquery.sap");
-					}).reduce(function(sModuleList, sModuleName) {
-						return sModuleList + "\t- " + sModuleName + "\n";
-					}, "");
+			if (oScope.getType() === "global") {
+				sap.ui.require(["sap/base/util/LoaderExtensions"], function(LoaderExtensions) {
+					var sDetails = "Usage of deprecated jquery.sap modules detected: \n" +
+						LoaderExtensions.getAllRequiredModules().filter(function(sModuleName) {
+							return sModuleName.startsWith("jquery.sap");
+						}).reduce(function(sModuleList, sModuleName) {
+							return sModuleList + "\t- " + sModuleName + "\n";
+						}, "");
 
-				oIssueManager.addIssue({
-					severity: Severity.Medium,
-					details: sDetails,
-					context: {
-						id: "WEBPAGE"
-					}
+					oIssueManager.addIssue({
+						severity: Severity.Medium,
+						details: sDetails,
+						context: {
+							id: "WEBPAGE"
+						}
+					});
+
+					fnResolve();
 				});
-
-				fnResolve();
-			});
+			}
 		}
 	};
 

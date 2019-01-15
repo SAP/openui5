@@ -28,7 +28,7 @@
 		"type": "List",
 		"header": {
 			"title": "Request list content Card",
-			"subtitle": "Card Subtitle",
+			"subTitle": "Card Subtitle",
 			"icon":  {
 				"src": "sap-icon://accept"
 			},
@@ -43,16 +43,15 @@
 			},
 			"item": {
 				"icon": {
-				"label": "{{icon_label}}",
-				"value": "{icon}"
+					"src": "{icon}"
 				},
 				"title": {
-				"label": "{{title_label}}",
-				"value": "{Name}"
+					"label": "{{title_label}}",
+					"value": "{Name}"
 				},
 				"description": {
-				"label": "{{description_label}}",
-				"value": "{Description}"
+					"label": "{{description_label}}",
+					"value": "{Description}"
 				}
 			}
 		}

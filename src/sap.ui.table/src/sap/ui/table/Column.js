@@ -325,6 +325,7 @@ function(
 	 */
 	Column.prototype.exit = function() {
 		this._destroyTemplateClones();
+		ColumnMenu._destroyColumnVisibilityMenuItem();
 	};
 
 	/**
@@ -337,6 +338,7 @@ function(
 			//if menu is set update menus internal references
 			oMenu._updateReferences(this);
 		}
+		ColumnMenu._destroyColumnVisibilityMenuItem();
 		return vReturn;
 	};
 
@@ -1023,6 +1025,18 @@ function(
 			}
 		}
 		this._aTemplateClones = [];
+	};
+
+	Column.prototype._closeMenu = function() {
+		var oMenu = this.getAggregation("menu");
+		if (oMenu) {
+			oMenu.close();
+		}
+	};
+
+	Column.prototype.setVisible = function(bVisible) {
+		this.setProperty("visible", bVisible);
+		ColumnMenu._updateVisibilityIcon(this.getIndex(), bVisible);
 	};
 
 	return Column;

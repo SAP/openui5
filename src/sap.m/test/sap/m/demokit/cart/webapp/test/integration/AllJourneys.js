@@ -5,7 +5,8 @@ sap.ui.define([
 	"./NavigationJourney",
 	"./DeleteProductJourney",
 	"./BuyProductJourney",
-	"./FilterJourney"
+	"./FilterJourney",
+	"./ComparisonJourney"
 ], function (Opa5, Startup) {
 	"use strict";
 
@@ -15,4 +16,3 @@ sap.ui.define([
 		autoWait: true
 	});
 });
-

@@ -352,6 +352,21 @@ sap.ui.define(function() {
 			FormattedTextAnchorGenerator: {
 				title: "QUnit test for the sap.m.FormattedTextAnchorGenerator"
 			},
+			GenericTag: {
+				title: "QUnit Test Page for sap.m.GenericTag",
+				qunit: {
+					version: 2
+				},
+				sinon: {
+					version: 4
+				},
+				coverage: {
+					only: "//sap\/m\/GenericTag.*/"
+				},
+				ui5: {
+					language: "en"
+				}
+			},
 			GenericTile: {
 				title: "QUnit Test Page for sap.m.GenericTile",
 				qunit: {
