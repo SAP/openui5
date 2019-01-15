@@ -391,10 +391,13 @@ sap.ui.define([
 					sPath : "/ProductList",
 					applyParameters : function () {}
 				}),
-				oBindingMock = this.mock(oBinding);
+				oBindingMock = this.mock(oBinding),
+				sGroupId = "myGroup";
 
 			oBindingMock.expects("checkSuspended").never();
 			oBindingMock.expects("hasPendingChanges").returns(false);
+			oBindingMock.expects("getGroupId").withExactArgs().returns(sGroupId);
+			oBindingMock.expects("createReadGroupLock").withExactArgs(sGroupId, true);
 			oBindingMock.expects("applyParameters")
 				.withExactArgs(oFixture.mExpectedParameters,
 					oFixture.sChangeReason || ChangeReason.Change);
@@ -522,7 +525,10 @@ sap.ui.define([
 	//*********************************************************************************************
 	QUnit.test("changeParameters: cloning mParameters", function (assert) {
 		var oBinding = new ODataParentBinding({
-				oModel : {},
+				sGroupId : "myGroup",
+				oModel : {
+					lockGroup : function () { return new _GroupLock(); }
+				},
 				mParameters : {},
 				sPath : "/EMPLOYEES",
 				applyParameters : function (mParameters) {
