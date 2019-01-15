@@ -6,19 +6,13 @@ sap.ui.define(["sap/ui/core/Control", "sap/ui/model/json/JSONModel", "sap/m/List
 		"use strict";
 
 		/**
-		 * Constructor for a new <code>List</code>.
+		 * Constructor for a new <code>ListContent</code>.
 		 *
 		 * @param {string} [sId] ID for the new control, generated automatically if no ID is given
 		 * @param {object} [mSettings] Initial settings for the new control
 		 *
 		 * @class
-		 *
-		 * <h3>Overview</h3>
-		 *
-		 *
-		 * <h3>Usage</h3>
-		 *
-		 * <h3>Responsive Behavior</h3>
+		 * A control that is a wrapper of a <code>sap.m.List</code> and allows its creation based on a configuration.
 		 *
 		 * @extends sap.ui.core.Control
 		 *
@@ -26,19 +20,24 @@ sap.ui.define(["sap/ui/core/Control", "sap/ui/model/json/JSONModel", "sap/m/List
 		 * @version ${version}
 		 *
 		 * @constructor
-		 * @experimental
-		 * @since 1.60
-		 * @see {@link TODO Card}
+		 * @private
+		 * @since 1.62
 		 * @alias sap.f.cards.ListContent
 		 */
 		var ListContent = Control.extend("sap.f.cards.ListContent", {
 			metadata: {
 				properties: {
 
+					/**
+					 * The object configuration used to create a list content.
+					 */
 					configuration: { type: "object" }
 				},
 				aggregations: {
 
+					/**
+					 * Defines the content of the control.
+					 */
 					_content: {
 						multiple: false,
 						visibility: "hidden"
@@ -67,10 +66,10 @@ sap.ui.define(["sap/ui/core/Control", "sap/ui/model/json/JSONModel", "sap/m/List
 		});
 
 		/**
-		 * Returns configured <code>sap.m.List</code> for ListContent.
-		 * @returns {object} <code>this</code> for chaining
-		 * @since 1.61
+		 * Lazily get a configured <code>sap.m.List</code>.
+		 *
 		 * @private
+		 * @returns {sap.m.List} The inner list
 		 */
 		ListContent.prototype._getList = function () {
 
@@ -126,6 +125,11 @@ sap.ui.define(["sap/ui/core/Control", "sap/ui/model/json/JSONModel", "sap/m/List
 			}
 		};
 
+		/**
+		 * Called when control is destroyed.
+		 *
+		 * @returns {sap.f.cards.ListContent} <code>this</code> for chaining
+		 */
 		ListContent.prototype.destroy = function () {
 			this.setAggregation("_content", null);
 			this.setModel(null);
@@ -133,31 +137,37 @@ sap.ui.define(["sap/ui/core/Control", "sap/ui/model/json/JSONModel", "sap/m/List
 		};
 
 		/**
-		 * @param {Object} oContent The content section of the manifest schema
+		 * Setter for configuring a <code>sap.f.cards.ListContent</code>.
+		 *
+		 * @public
+		 * @param {Object} oConfiguration Configuration object used to create the internal list.
+		 * @returns {sap.f.cards.ListContent} Pointer to the control instance to allow method chaining.
 		 */
-		ListContent.prototype.setConfiguration = function (oContent) {
+		ListContent.prototype.setConfiguration = function (oConfiguration) {
 
-			this.setProperty("configuration", oContent);
+			this.setProperty("configuration", oConfiguration);
 
-			if (!oContent) {
-				return;
+			if (!oConfiguration) {
+				return this;
 			}
 
-			if (oContent.data) {
-				this._setData(oContent.data);
+			if (oConfiguration.data) {
+				this._setData(oConfiguration.data);
 			}
 
-			if (oContent.item) {
-				this._setItem(oContent.item);
+			if (oConfiguration.item) {
+				this._setItem(oConfiguration.item);
 			}
+
+			return this;
 		};
 
 		/**
-		 * Returns configured <code>sap.m.List</code> for ListContent.
-		 * @returns {object} <code>this</code> for chaining
-		 * @since 1.61
-		 * @override
+		 * Binds/Sets properties to the inner item template based on the configuration object item template.
+		 * Attaches all required actions.
+		 *
 		 * @private
+		 * @param {Object} mItem The item template of the configuration object
 		 */
 		ListContent.prototype._setItem = function (mItem) {
 			/* eslint-disable no-unused-expressions */
@@ -179,9 +189,17 @@ sap.ui.define(["sap/ui/core/Control", "sap/ui/model/json/JSONModel", "sap/m/List
 					template: this._oItemTemplate
 				});
 			}
-			return this;
 		};
 
+		/**
+		 * Tries to create a binding info object based on sPropertyValue.
+		 * If succeeds the binding info will be used for property binding.
+		 * Else sPropertyValue will be set directly on the item template.
+		 *
+		 * @private
+		 * @param {string} sPropertyName The name of the property
+		 * @param {string} sPropertyValue The value of the property
+		 */
 		ListContent.prototype._bindItemProperty = function (sPropertyName, sPropertyValue) {
 			if (!sPropertyValue) {
 				return;
@@ -195,6 +213,12 @@ sap.ui.define(["sap/ui/core/Control", "sap/ui/model/json/JSONModel", "sap/m/List
 			}
 		};
 
+		/**
+		 * Attaches all actions to the inner item template.
+		 *
+		 * @private
+		 * @param {Object} mItem The item template inside the configuration object
+		 */
 		ListContent.prototype._attachActions = function (mItem) {
 			if (!mItem.actions) {
 				return;
@@ -207,6 +231,12 @@ sap.ui.define(["sap/ui/core/Control", "sap/ui/model/json/JSONModel", "sap/m/List
 			}
 		};
 
+		/**
+		 * Attaches a navigation action to the inner item template.
+		 *
+		 * @private
+		 * @param {Object} oAction A navigation action
+		 */
 		ListContent.prototype._attachNavigationAction = function (oAction) {
 
 			if (oAction.service) {
@@ -231,11 +261,10 @@ sap.ui.define(["sap/ui/core/Control", "sap/ui/model/json/JSONModel", "sap/m/List
 		};
 
 		/**
-		 * Sets data from manifest.
-		 * @returns {object} <code>this</code> for chaining
-		 * @since 1.61
-		 * @override
+		 * Requests data and bind it to the item template.
+		 *
 		 * @private
+		 * @param {Object} oData The data part of the configuration object
 		 */
 		ListContent.prototype._setData = function (oData) {
 
@@ -268,14 +297,14 @@ sap.ui.define(["sap/ui/core/Control", "sap/ui/model/json/JSONModel", "sap/m/List
 					Log.error("Card content data request failed");
 				});
 			}
-
-			return this;
 		};
 
 		/**
-		 * Updates model when data is received.
-		 * @since 1.61
+		 * Updates the model and binds the data to the list.
+		 *
 		 * @private
+		 * @param {Object} oData the data to set
+		 * @param {string} sPath the binding path
 		 */
 		ListContent.prototype._updateModel = function (oData, sPath) {
 			this.getModel().setData(oData);

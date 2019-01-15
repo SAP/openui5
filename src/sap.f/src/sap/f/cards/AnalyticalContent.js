@@ -6,6 +6,9 @@ sap.ui.define(['sap/ui/core/Control', 'sap/ui/model/json/JSONModel', 'sap/m/Flex
 	function (Control, JSONModel, FlexBox, VizFrame, FeedItem, FlattenedDataset, DimensionDefinition, MeasureDefinition, Data, Log) {
 		"use strict";
 
+		/**
+		 * Enumeration with supported legend positions.
+		 */
 		var LegendPosition = {
 			"Top": "top",
 			"Bottom": "bottom",
@@ -13,17 +16,26 @@ sap.ui.define(['sap/ui/core/Control', 'sap/ui/model/json/JSONModel', 'sap/m/Flex
 			"Right": "right"
 		};
 
+		/**
+		 * Enumeration with supported legend alignments.
+		 */
 		var LegendAlignment = {
 			"TopLeft": "topLeft",
 			"Center" : "center"
 		};
 
+		/**
+		 * Enumeration with supported title alignments.
+		 */
 		var TitleAlignment = {
 			"Left": "left",
 			"Center": "center",
 			"Right": "right"
 		};
 
+		/**
+		 * Enumeration with supported chart types.
+		 */
 		var ChartTypes = {
 			"Line": "line",
 			"StackedColumn": "stacked_column",
@@ -38,13 +50,8 @@ sap.ui.define(['sap/ui/core/Control', 'sap/ui/model/json/JSONModel', 'sap/m/Flex
 		 * @param {object} [mSettings] Initial settings for the new control
 		 *
 		 * @class
-		 *
-		 * <h3>Overview</h3>
-		 *
-		 *
-		 * <h3>Usage</h3>
-		 *
-		 * <h3>Responsive Behavior</h3>
+		 * A control that is a wrapper around sap.viz library and allows the creation of analytical
+		 * controls (like charts) based on object configuration.
 		 *
 		 * @extends sap.ui.core.Control
 		 *
@@ -52,17 +59,24 @@ sap.ui.define(['sap/ui/core/Control', 'sap/ui/model/json/JSONModel', 'sap/m/Flex
 		 * @version ${version}
 		 *
 		 * @constructor
-		 * @experimental
-		 * @since 1.60
-		 * @see {@link TODO Card}
+		 * @private
+		 * @since 1.62
 		 * @alias sap.f.cards.AnalyticalContent
 		 */
 		var AnalyticalContent = Control.extend("sap.f.cards.AnalyticalContent", {
 			metadata: {
 				properties: {
+
+					/**
+					 * The object configuration used to create analytical content.
+					 */
 					configuration: { type: "object" }
 				},
 				aggregations: {
+
+					/**
+					 * Defines the content of the control.
+					 */
 					_content: { multiple: false, visibility: "hidden" }
 				}
 			},
@@ -71,7 +85,7 @@ sap.ui.define(['sap/ui/core/Control', 'sap/ui/model/json/JSONModel', 'sap/m/Flex
 					mSettings = vId;
 				}
 
-				if (mSettings.serviceManager) {
+				if (mSettings && mSettings.serviceManager) {
 					this._oServiceManager = mSettings.serviceManager;
 					delete mSettings.serviceManager;
 				}
@@ -89,30 +103,40 @@ sap.ui.define(['sap/ui/core/Control', 'sap/ui/model/json/JSONModel', 'sap/m/Flex
 			}
 		});
 
+		/**
+		 * Called on init of the control.
+		 */
 		AnalyticalContent.prototype.init = function () {
 			var oModel = new JSONModel();
 			this.setModel(oModel);
 		};
 
-		AnalyticalContent.prototype.setConfiguration = function (oContent) {
+		/**
+		 * Setter for configuring a <code>sap.f.cards.AnalyticalContent</code>.
+		 *
+		 * @public
+		 * @param {Object} oConfiguration Configuration object used to create the internal chart.
+		 * @returns {sap.f.cards.AnalyticalContent} Pointer to the control instance to allow method chaining.
+		 */
+		AnalyticalContent.prototype.setConfiguration = function (oConfiguration) {
 
-			this.setProperty("configuration", oContent);
+			this.setProperty("configuration", oConfiguration);
 
-			if (!oContent) {
-				return;
+			if (!oConfiguration) {
+				return this;
 			}
 
-			this._setChart(oContent);
-		};
+			this._setChart(oConfiguration);
 
-		AnalyticalContent.prototype.exit = function () {};
+			return this;
+		};
 
 		/**
 		 * Creates vizFrame readable vizProperties object.
+		 *
+		 * @private
 		 * @param {Object} oChartObject Chart information
 		 * @returns {Object} oVizPropertiesObject vizFrame vizProperties object
-		 * @since 1.61
-		 * @private
 		 */
 		AnalyticalContent.prototype._getVizPropertiesObject = function (oChartObject) {
 				var oTitle = oChartObject.title,
@@ -174,14 +198,20 @@ sap.ui.define(['sap/ui/core/Control', 'sap/ui/model/json/JSONModel', 'sap/m/Flex
 
 		};
 
+		/**
+		 * Create chart based on configuration object. The data is requested if needed.
+		 *
+		 * @private
+		 * @param {Object} oChartObject The content configuration.
+		 */
 		AnalyticalContent.prototype._setChart = function (oChartObject) {
+			var oRequest;
 			if (!oChartObject) {
 				return;
 			}
 
-			//handling the request
 			if (oChartObject.data) {
-				var oRequest = oChartObject.data.request;
+				oRequest = oChartObject.data.request;
 			}
 
 			if (oChartObject.data.json && !oRequest) {
@@ -199,12 +229,12 @@ sap.ui.define(['sap/ui/core/Control', 'sap/ui/model/json/JSONModel', 'sap/m/Flex
 		};
 
 		/**
-		 * Updates model when data is received.
+		 * Updates model when data is received and set chart as content.
+		 *
+		 * @private
 		 * @param {Object} oData Data to be set on the model
 		 * @param {Object} sPath Binding path
 		 * @param {Object} oChartObject Chart information
-		 * @since 1.61
-		 * @private
 		 */
 		AnalyticalContent.prototype._updateModel = function (oData, sPath, oChartObject) {
 			var sChartType = oChartObject.chartType;
@@ -221,12 +251,12 @@ sap.ui.define(['sap/ui/core/Control', 'sap/ui/model/json/JSONModel', 'sap/m/Flex
 		};
 
 		/**
-		 * Creates a chart depending one the configuration form the manifest.
-		 * @param {Object} sPath Binding path
-		 * @param {Object} oChartObject Chart information
-		 * @returns {object} oChart configured chart
-		 * @since 1.61
+		 * Creates a chart depending on the configuration from the manifest.
+		 *
 		 * @private
+		 * @param {Object} oChartObject Chart configuration
+		 * @param {Object} sPath Binding path
+		 * @returns {sap.viz.ui5.controls.VizFrame} The configured chart
 		 */
 		AnalyticalContent.prototype._createChart = function (oChartObject, sPath) {
 			var aDimensionNames = [];

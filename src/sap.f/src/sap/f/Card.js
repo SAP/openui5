@@ -17,15 +17,7 @@ sap.ui.define([
 	 * @param {object} [mSettings] Initial settings for the new control
 	 *
 	 * @class
-	 * A control that represents header and content area as a card. Content area of a card should use controls or component located in the sub package sal.f.cardcontents.
-	 *
-	 * <h3>Overview</h3>
-	 *
-	 * The control consist of a header and content section
-	 *
-	 * <h3>Usage</h3>
-	 *
-	 * <h3>Responsive Behavior</h3>
+	 * A control that represents a small container with a header and content.
 	 *
 	 * @extends sap.ui.core.Control
 	 *
@@ -35,7 +27,6 @@ sap.ui.define([
 	 * @constructor
 	 * @experimental
 	 * @since 1.60
-	 * @see {@link TODO Card}
 	 * @alias sap.f.Card
 	 * @ui5-metamodel This control/element also will be described in the UI5 (legacy) designtime metamodel
 	 */
@@ -46,35 +37,48 @@ sap.ui.define([
 			properties: {
 
 				/**
-				 * Defines the width of the Card
-				 *
-				 * <b>Note:</b> If no width is set, sap.f.Card will take 100% of its parent container
-				 * @since 1.61
+				 * Defines the width of the card.
 				 */
 				width: { type: "sap.ui.core.CSSSize", group: "Appearance", defaultValue: "100%" },
 
 				/**
-				 * Defines the height of the Card
-				 *
-				 * <b>Note:</b> If no height is set, sap.f.Card will take 100% of its parent container
-				 * @since 1.61
+				 * Defines the height of the card.
 				 */
-				height: { type: "sap.ui.core.CSSSize", group: "Appearance", defaultValue: "100%" }
+				height: { type: "sap.ui.core.CSSSize", group: "Appearance", defaultValue: "auto" }
 			},
 			aggregations: {
 
+				/**
+				 * Defines the header of the card.
+				 */
 				header: { type: "sap.f.cards.IHeader", multiple: false },
+
+				/**
+				 * Defines the content of the card.
+				 */
 				content: { type: "sap.ui.core.Control", multiple: false }
 			}
 		},
 		renderer: CardRenderer
 	});
 
-	Card.prototype._getHeader = function () {
+	/**
+	 * Implements sap.f.ICard interface.
+	 *
+	 * @returns {sap.f.cards.IHeader} The header of the card.
+	 * @protected
+	 */
+	Card.prototype.getCardHeader = function () {
 		return this.getHeader();
 	};
 
-	Card.prototype._getContent = function () {
+	/**
+	 * Implements sap.f.ICard interface.
+	 *
+	 * @returns {sap.ui.core.Control} The content of the card.
+	 * @protected
+	 */
+	Card.prototype.getCardContent = function () {
 		return this.getContent();
 	};
 

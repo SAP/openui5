@@ -381,6 +381,7 @@ sap.ui.define(["sap/ui/base/DataType",
 		 */
 		Initials: "Initials"
 	};
+
 	/**
 	 * Types of image size and position that determine how an image fits in the {@link sap.f.Avatar} control area.
 	 *
@@ -401,6 +402,44 @@ sap.ui.define(["sap/ui/base/DataType",
 		 */
 		Contain: "Contain"
 	};
+
+	/**
+	 * Interface for card controls
+	 *
+	 * @since 1.62
+	 * @public
+	 * @interface
+	 * @name sap.f.ICard
+	 */
+
+	/**
+	 * The function is used to allow for a common header renderer between different card implementations
+	 *
+	 * @returns {sap.f.cards.IHeader} The header of the card
+	 * @since 1.62
+	 * @public
+	 * @function
+	 * @name sap.f.ICard.getCardHeader
+	 */
+
+	/**
+	 * The function is used to allow for a common content renderer between different card implementations
+	 *
+	 * @returns {sap.ui.core.Control} The content of the card
+	 * @since 1.62
+	 * @public
+	 * @function
+	 * @name sap.f.ICard.getCardContent
+	 */
+
+	/**
+	 * Marker interface for card headers
+	 *
+	 * @since 1.62
+	 * @public
+	 * @interface
+	 * @name sap.f.cards.IHeader
+	 */
 
 	return thisLib;
 

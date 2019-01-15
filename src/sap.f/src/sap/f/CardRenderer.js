@@ -21,7 +21,7 @@ sap.ui.define([], function () {
 	 * @param {sap.ui.core.Control} oCard an object representation of the control that should be rendered
 	 */
 	CardRenderer.render = function (oRm, oCard) {
-		var oHeader = oCard._getHeader();
+		var oHeader = oCard.getCardHeader();
 		//start
 		oRm.write("<div");
 		oRm.writeElementData(oCard);
@@ -64,7 +64,7 @@ sap.ui.define([], function () {
 	 * @param {sap.ui.core.Control} oControl An object representation of the control that should be rendered.
 	 */
 	CardRenderer.renderContentSection = function (oRm, oCard) {
-		var oContent = oCard._getContent();
+		var oContent = oCard.getCardContent();
 
 		if (oContent) {
 			oRm.write("<div");

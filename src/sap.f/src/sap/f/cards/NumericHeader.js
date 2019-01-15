@@ -26,12 +26,7 @@ sap.ui.define([
 	 * @param {object} [mSettings] Initial settings for the new control
 	 *
 	 * @class
-	 *
-	 * <h3>Overview</h3>
-	 *
-	 *
-	 * <h3>Usage</h3>
-	 *
+	 * A control used to group a set of card numeric attributes in a header.
 	 *
 	 * @extends sap.ui.core.Control
 	 *
@@ -39,15 +34,15 @@ sap.ui.define([
 	 * @version ${version}
 	 *
 	 * @constructor
-	 * @experimental
+	 * @private
 	 * @since 1.62
-	 * @see {@link TODO Card}
 	 * @alias sap.f.cards.NumericHeader
 	 */
 	var NumericHeader = Control.extend("sap.f.cards.NumericHeader", {
 		metadata: {
 			interfaces: ["sap.f.cards.IHeader"],
 			properties: {
+
 				/**
 				 * The title of the card
 				 */
@@ -123,17 +118,21 @@ sap.ui.define([
 				_mainIndicator: { type: "sap.m.NumericContent", multiple: false }
 			},
 			events: {
+
+				/**
+				 * Fires when the user presses the control.
+				 */
 				press: {}
 			}
 		}
 	});
 
 	/**
-	 * Sets the title
-	 * @overwrite
+	 * Sets the title.
+	 *
 	 * @public
 	 * @param {string} sValue The text of the title
-	 * @return {sap.f.cards.NumericHeader} this pointer for chaining
+	 * @return {sap.f.cards.NumericHeader} <code>this</code> pointer for chaining
 	 */
 	NumericHeader.prototype.setTitle = function(sValue) {
 		this.setProperty("title", sValue, true);
@@ -142,11 +141,11 @@ sap.ui.define([
 	};
 
 	/**
-	 * Sets the subtitle
-	 * @overwrite
+	 * Sets the subtitle.
+	 *
 	 * @public
 	 * @param {string} sValue The text of the subtitle
-	 * @return {sap.f.cards.NumericHeader} this pointer for chaining
+	 * @return {sap.f.cards.NumericHeader} <code>this</code> pointer for chaining
 	 */
 	NumericHeader.prototype.setSubtitle = function(sValue) {
 		this.setProperty("subtitle", sValue, true);
@@ -156,10 +155,10 @@ sap.ui.define([
 
 	/**
 	 * Sets the general unit of measurement for the header. Displayed as side information to the subtitle.
-	 * @overwrite
+	 *
 	 * @public
 	 * @param {string} sValue The value of the unit of measurement
-	 * @return {sap.f.cards.NumericHeader} this pointer for chaining
+	 * @return {sap.f.cards.NumericHeader} <code>this</code> pointer for chaining
 	 */
 	NumericHeader.prototype.setUnitOfMeasurement = function(sValue) {
 		this.setProperty("unitOfMeasurement", sValue, true);
@@ -168,11 +167,11 @@ sap.ui.define([
 	};
 
 	/**
-	 * Sets additional text which adds more details to what is shown in the numeric header
-	 * @overwrite
+	 * Sets additional text which adds more details to what is shown in the numeric header.
+	 *
 	 * @public
 	 * @param {string} sValue The text of the details
-	 * @return {sap.f.cards.NumericHeader} this pointer for chaining
+	 * @return {sap.f.cards.NumericHeader} <code>this</code> pointer for chaining
 	 */
 	NumericHeader.prototype.setDetails = function(sValue) {
 		this.setProperty("details", sValue, true);
@@ -181,11 +180,11 @@ sap.ui.define([
 	};
 
 	/**
-	 * Sets the value of the main number indicator
-	 * @overwrite
+	 * Sets the value of the main number indicator.
+	 *
 	 * @public
 	 * @param {string} sValue A string representation of the number
-	 * @return {sap.f.cards.NumericHeader} this pointer for chaining
+	 * @return {sap.f.cards.NumericHeader} <code>this</code> pointer for chaining
 	 */
 	NumericHeader.prototype.setNumber = function(sValue) {
 		this.setProperty("number", sValue, true);
@@ -195,10 +194,10 @@ sap.ui.define([
 
 	/**
 	 * Sets the unit of measurement (scaling prefix) for the main indicator.
-	 * @overwrite
+	 *
 	 * @public
 	 * @param {string} sValue The text of the title
-	 * @return {sap.f.cards.NumericHeader} this pointer for chaining
+	 * @return {sap.f.cards.NumericHeader} <code>this</code> pointer for chaining
 	 */
 	NumericHeader.prototype.setUnit = function(sValue) {
 		this.setProperty("unit", sValue, true);
@@ -208,10 +207,10 @@ sap.ui.define([
 
 	/**
 	 * Sets the direction of the trend arrow.
-	 * @overwrite
+	 *
 	 * @public
 	 * @param {sap.m.DeviationIndicator} sValue The direction of the trend arrow
-	 * @return {sap.f.cards.NumericHeader} this pointer for chaining
+	 * @return {sap.f.cards.NumericHeader} <code>this</code> pointer for chaining
 	 */
 	NumericHeader.prototype.setTrend = function(sValue) {
 		this.setProperty("trend", sValue, true);
@@ -220,19 +219,21 @@ sap.ui.define([
 	};
 
 	/**
-	 * Sets the semantic color which represents the state of the main number indicator
-	 * @overwrite
+	 * Sets the semantic color which represents the state of the main number indicator.
+	 *
 	 * @public
 	 * @param {sap.m.ValueColor} sValue The semantic color which represents the state
-	 * @return {sap.f.cards.NumericHeader} this pointer for chaining
+	 * @return {sap.f.cards.NumericHeader} <code>this</code> pointer for chaining
 	 */
 	NumericHeader.prototype.setState = function(sValue) {
 		this.setProperty("state", sValue, true);
-		this._getMainIndicator().setValueColor(sValue); // TODO convert ValueState to ValueColor
+		this._getMainIndicator().setValueColor(sValue);
 		return this;
 	};
 
 	/**
+	 * Lazily create a title and return it.
+	 *
 	 * @private
 	 * @return {sap.m.Text} The title aggregation
 	 */
@@ -252,6 +253,8 @@ sap.ui.define([
 	};
 
 	/**
+	 * Lazily create a subtitle and return it.
+	 *
 	 * @private
 	 * @return {sap.m.Text} The subtitle aggregation
 	 */
@@ -271,6 +274,8 @@ sap.ui.define([
 	};
 
 	/**
+	 * Lazily create a unit of measurement and return it.
+	 *
 	 * @private
 	 * @return {sap.m.Text} The unit of measurement aggregation
 	 */
@@ -289,6 +294,8 @@ sap.ui.define([
 	};
 
 	/**
+	 * Lazily create details and return it.
+	 *
 	 * @private
 	 * @return {sap.m.Text} The details aggregation
 	 */
@@ -307,6 +314,8 @@ sap.ui.define([
 	};
 
 	/**
+	 * Lazily create numeric content and return it.
+	 *
 	 * @private
 	 * @return {sap.m.NumericContent} The main indicator aggregation
 	 */
@@ -327,7 +336,7 @@ sap.ui.define([
 	};
 
 	/**
-	 * Creates an instance of NumericHeader with the given options
+	 * Creates an instance of NumericHeader with the given options.
 	 *
 	 * @private
 	 * @static
@@ -399,10 +408,10 @@ sap.ui.define([
 	};
 
 	/**
-	 * Gets ids of controls that are contained in th numeric header.
+	 * Helper function used to create aria-labelledby attribute.
 	 *
 	 * @private
-	 * @returns {string} idS
+	 * @returns {string} IDs of controls
 	 */
 	NumericHeader.prototype._getHeaderAccessibility = function () {
 		var sTitleId = this._getTitle() ? this._getTitle().getId() : "",
@@ -416,10 +425,10 @@ sap.ui.define([
 	};
 
 	/**
-	 * Gets ids of <code>sap.f.cards.NumericSideIndicator</code>.
+	 * Helper function to get the IDs of <code>sap.f.cards.NumericSideIndicator</code>.
 	 *
 	 * @private
-	 * @returns {string} idS
+	 * @returns {string} IDs of controls
 	 */
 	NumericHeader.prototype._getSideIndicatorIds = function () {
 		var sSideIndicatorIds = "";

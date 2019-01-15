@@ -8,6 +8,7 @@ sap.ui.define(['./Service'], function (Service) {
 	 * @class Data
 	 * Provides an interface for a simple DataService
 	 * @experimental
+	 * @sap-restricted sap.ushell
 	 * @extends Service
 	 */
 	var Data = Service.extend();

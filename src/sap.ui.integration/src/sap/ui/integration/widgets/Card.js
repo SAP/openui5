@@ -25,24 +25,15 @@ sap.ui.define([
 	 * @param {object} [mSettings] Initial settings for the new control
 	 *
 	 * @class
-	 * A control that represents header and content area as a card. Content area of a card should use controls or component located in the sub package sal.f.cardcontents.
-	 *
-	 * <h3>Overview</h3>
-	 *
-	 * The control consist of a header and content section
-	 *
-	 * <h3>Usage</h3>
-	 *
-	 * <h3>Responsive Behavior</h3>
+	 * A control that represents a small container with a header and content.
 	 *
 	 * @extends sap.ui.core.Control
 	 *
 	 * @author SAP SE
 	 * @version ${version}
-	 *
+	 * @public
 	 * @constructor
-	 * @since 1.60
-	 * @see {@link TODO Card}
+	 * @since 1.62
 	 * @alias sap.ui.integration.widgets.Card
 	 * @ui5-metamodel This control/element also will be described in the UI5 (legacy) designtime metamodel
 	 */
@@ -52,15 +43,16 @@ sap.ui.define([
 			interfaces: ["sap.f.ICard"],
 			properties: {
 
+				/**
+				 * The URL of the manifest or an object.
+				 */
 				manifest: {
 					type: "any",
 					defaultValue: ""
 				},
 
 				/**
-				 * Defines the width of the Card
-				 *
-				 * @since 1.61
+				 * Defines the width of the card.
 				 */
 				width: {
 					type: "sap.ui.core.CSSSize",
@@ -69,9 +61,7 @@ sap.ui.define([
 				},
 
 				/**
-				 * Defines the height of the Card
-				 *
-				 * @since 1.61
+				 * Defines the height of the card.
 				 */
 				height: {
 					type: "sap.ui.core.CSSSize",
@@ -80,16 +70,30 @@ sap.ui.define([
 				}
 			},
 			aggregations: {
+
+				/**
+				 * Defines the header of the card.
+				 */
 				_header: {
 					type: "sap.f.cards.IHeader",
-					multiple: false
+					multiple: false,
+					visibility : "hidden"
 				},
+
+				/**
+				 * Defines the content of the card.
+				 */
 				_content: {
 					type: "sap.ui.core.Control",
-					multiple: false
+					multiple: false,
+					visibility : "hidden"
 				}
 			},
 			associations: {
+
+				/**
+				 * The ID of the host configuration.
+				 */
 				hostConfigurationId: {}
 			}
 		},
@@ -111,6 +115,13 @@ sap.ui.define([
 		}
 	};
 
+	/**
+	 * Setter for card manifest.
+	 *
+	 * @public
+	 * @param {string|Object} vValue The manifest object or its URL.
+	 * @returns {sap.ui.integration.widgets.Card} Pointer to the control instance to allow method chaining.
+	 */
 	Card.prototype.setManifest = function (vValue) {
 		this.setBusy(true);
 		this.setProperty("manifest", vValue, true);
@@ -125,6 +136,13 @@ sap.ui.define([
 		return this;
 	};
 
+	/**
+	 * Loads the card manifest based on a URL.
+	 *
+	 * @private
+	 * @param {string} sManifestUrl The URL of the manifest
+	 * @returns {Promise} A promise resolved when the manifest is ready.
+	 */
 	Card.prototype.initManifest = function (sManifestUrl) {
 		var oPromise = Manifest.load({
 			manifestUrl: sManifestUrl,
@@ -144,7 +162,10 @@ sap.ui.define([
 	};
 
 	/**
-	 * Apply all manifest settings after the manifest is fully ready
+	 * Apply all manifest settings after the manifest is fully ready.
+	 * This includes service registration, header and content creation, data requests.
+	 *
+	 * @private
 	 */
 	Card.prototype._applyManifestSettings = function () {
 		this._registerServices();
@@ -154,6 +175,8 @@ sap.ui.define([
 
 	/**
 	 * Register all required services in the ServiceManager based on the card manifest.
+	 *
+	 * @private
 	 */
 	Card.prototype._registerServices = function () {
 		var oServiceFactoryReferences = this._oCardManifest.get("sap.ui5/services");
@@ -197,14 +220,31 @@ sap.ui.define([
 		}
 	};
 
-	Card.prototype._getHeader = function () {
+	/**
+	 * Implements sap.f.ICard interface.
+	 *
+	 * @returns {sap.f.cards.IHeader} The header of the card
+	 * @protected
+	 */
+	Card.prototype.getCardHeader = function () {
 		return this.getAggregation("_header");
 	};
 
-	Card.prototype._getContent = function () {
+	/**
+	 * Implements sap.f.ICard interface.
+	 *
+	 * @returns {sap.ui.core.Control} The content of the card
+	 * @protected
+	 */
+	Card.prototype.getCardContent = function () {
 		return this.getAggregation("_content");
 	};
 
+	/**
+	 * Lazily load and create a specific type of card header based on sap.card/header part of the manifest
+	 *
+	 * @private
+	 */
 	Card.prototype._setHeaderFromManifest = function () {
 		var oHeader = this._oCardManifest.get("sap.card/header");
 
@@ -220,6 +260,11 @@ sap.ui.define([
 		}
 	};
 
+	/**
+	 * Lazily load and create a specific type of card content based on sap.card/content part of the manifest
+	 *
+	 * @private
+	 */
 	Card.prototype._setContentFromManifest = function () {
 		var sCardType = this._oCardManifest.get("sap.card/type");
 
@@ -247,6 +292,12 @@ sap.ui.define([
 		}
 	};
 
+	/**
+	 * Creates a header based on sap.card/header part of the manifest
+	 *
+	 * @private
+	 * @param {sap.f.cards.IHeader} CardHeader The header to be created
+	 */
 	Card.prototype._setCardHeaderFromManifest = function (CardHeader) {
 		var oClonedSettings = jQuery.extend(true, {}, this._oCardManifest.get("sap.card/header"));
 		var oHeader = CardHeader.create(oClonedSettings);
@@ -314,6 +365,10 @@ sap.ui.define([
 		oHeader.addStyleClass("sapFCardHeaderClickable");
 	};
 
+	/**
+	 * Called on before rendering of the control.
+	 * @private
+	 */
 	Card.prototype.onBeforeRendering = function () {
 		var sConfig = this.getHostConfigurationId();
 		if (sConfig) {
@@ -321,6 +376,12 @@ sap.ui.define([
 		}
 	};
 
+	/**
+	 * Instantiate a specific type of card content and set it as aggregation.
+	 *
+	 * @private
+	 * @param {sap.ui.core.Control} CardContent The content to be created
+	 */
 	Card.prototype._setCardContentFromManifest = function (CardContent) {
 		var mSettings = this._oCardManifest.get("sap.card/content");
 		if (!mSettings) {

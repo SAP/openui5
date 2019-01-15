@@ -39,7 +39,7 @@ sap.ui.define([], function () {
 	/**
 	 * @constructor
 	 * @private
-	 * @param {*} oManifestJson
+	 * @param {*} oManifestJson The JSON object to use a manifest
 	 */
 	function CardManifest(oManifestJson) {
 		this.oJson = oManifestJson;

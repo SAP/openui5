@@ -27,13 +27,7 @@ sap.ui.define([
 	 * @param {object} [mSettings] Initial settings for the new control
 	 *
 	 * @class
-	 *
-	 * <h3>Overview</h3>
-	 *
-	 *
-	 * <h3>Usage</h3>
-	 *
-	 * <h3>Responsive Behavior</h3>
+	 * A control used to group a set of card attributes in a header.
 	 *
 	 * @extends sap.ui.core.Control
 	 *
@@ -41,33 +35,77 @@ sap.ui.define([
 	 * @version ${version}
 	 *
 	 * @constructor
-	 * @experimental
-	 * @since 1.60
-	 * @see {@link TODO Card}
+	 * @private
+	 * @since 1.62
 	 * @alias sap.f.cards.Header
 	 */
 	var Header = Control.extend("sap.f.cards.Header", {
 		metadata: {
 			interfaces: ["sap.f.cards.IHeader"],
 			properties: {
+
+				/**
+				 * Defines the title.
+				 */
 				title: { type: "string", defaultValue: "" },
+
+				/**
+				 * Defines the subtitle.
+				 */
 				subtitle: { type: "string", defaultValue: "" },
+
+				/**
+				 * Defines the status text.
+				 */
 				statusText: { type: "string", defaultValue: "" },
+
+				/**
+				 * Defines the shape of the icon.
+				 */
 				iconDisplayShape: { type: "sap.f.AvatarShape", defaultValue: AvatarShape.Circle },
+
+				/**
+				 * Defines the icon source.
+				 */
 				iconSrc: { type: "sap.ui.core.URI", defaultValue: "" },
+
+				/**
+				 * Defines the initials of the icon.
+				 */
 				iconInitials: { type: "string", defaultValue: "" }
 			},
 			aggregations: {
+
+				/**
+				 * Defines the inner title control.
+				 */
 				_title: { type: "sap.m.Text", multiple: false, visibility: "hidden" },
+
+				/**
+				 * Defines the inner subtitle control.
+				 */
 				_subtitle: { type: "sap.m.Text", multiple: false, visibility: "hidden" },
+
+				/**
+				 * Defines the inner avatar control.
+				 */
 				_avatar: { type: "sap.f.Avatar", multiple: false, visibility: "hidden" }
 			},
 			events: {
+
+				/**
+				 * Fires when the user presses the control.
+				 */
 				press: {}
 			}
 		}
 	});
 
+	/**
+	 * Lazily creates a title and returns it.
+	 * @private
+	 * @returns {sap.m.Text} The inner title aggregation
+	 */
 	Header.prototype._getTitle = function () {
 		var oTitle = this.getAggregation("_title");
 		if (!oTitle) {
@@ -79,6 +117,11 @@ sap.ui.define([
 		return oTitle;
 	};
 
+	/**
+	 * Lazily creates a subtitle and returns it.
+	 * @private
+	 * @returns {sap.m.Text} The inner subtitle aggregation
+	 */
 	Header.prototype._getSubtitle = function () {
 		var oSubtitle = this.getAggregation("_subtitle");
 		if (!oSubtitle) {
@@ -90,6 +133,11 @@ sap.ui.define([
 		return oSubtitle;
 	};
 
+	/**
+	 * Lazily creates an avatar control and returns it.
+	 * @private
+	 * @returns {sap.f.Avatar} The inner avatar aggregation
+	 */
 	Header.prototype._getAvatar = function () {
 		var oAvatar = this.getAggregation("_avatar");
 		if (!oAvatar) {
@@ -99,6 +147,10 @@ sap.ui.define([
 		return oAvatar;
 	};
 
+	/**
+	 * Called before the control is rendered.
+	 * @private
+	 */
 	Header.prototype.onBeforeRendering = function () {
 		this._getTitle().setText(this.getTitle());
 		this._getSubtitle().setText(this.getSubtitle());
@@ -107,17 +159,22 @@ sap.ui.define([
 		this._getAvatar().setInitials(this.getIconInitials());
 	};
 
+	/**
+	 * Helper function used to create aria-labelledby attribute.
+	 *
+	 * @private
+	 * @returns {string} IDs of controls
+	 */
 	Header.prototype._getHeaderAccessibility = function () {
 		var sTitleId = this._getTitle() ? this._getTitle().getId() : "",
 			sSubtitleId = this._getSubtitle() ? this._getSubtitle().getId() : "",
 			sAvatarId = this._getAvatar() ? this._getAvatar().getId() : "";
 
-			return sTitleId + " " + sSubtitleId + " " + sAvatarId;
+		return sTitleId + " " + sSubtitleId + " " + sAvatarId;
 	};
 
 	/**
-	 * Called after control is rendered.
-	 * @private
+	 * Called after the control is rendered.
 	 */
 	Header.prototype.onAfterRendering = function() {
 		//TODO performance will be afected, but text should clamp on IE also - TBD
@@ -131,16 +188,19 @@ sap.ui.define([
 		}
 	};
 
+	/**
+	 * Fires the <code>sap.f.cards.Header</code> press event.
+	 */
 	Header.prototype.ontap = function () {
 		this.firePress();
 	};
 
 	/**
-	 * Creates an instance of Header with the given options
+	 * Creates an instance of Header with the given options.
 	 *
 	 * @private
 	 * @static
-	 * @param {map} mConfiguration A map containing the header configuration options.
+	 * @param {Object} mConfiguration A map containing the header configuration options
 	 * @return {sap.f.cards.Header} The created Header
 	 */
 	Header.create = function(mConfiguration) {
