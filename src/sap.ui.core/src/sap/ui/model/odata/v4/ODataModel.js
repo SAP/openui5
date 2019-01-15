@@ -592,8 +592,10 @@ sap.ui.define([
 	 * a '/'; a trailing '/' is allowed here, see
 	 * {@link sap.ui.model.odata.v4.ODataMetaModel#requestObject} for the effect it has.
 	 *
-	 * The binding may have an object value if the target type specified in the corresponding
-	 * control property's binding info is "any" and the binding is relative or points to metadata.
+	 * If the target type specified in the corresponding control property's binding info is "any"
+	 * and the binding is relative or points to metadata, the binding may have an object value;
+	 * in this case and unless the binding refers to an action advertisement the binding's mode must
+	 * be {@link sap.ui.model.BindingMode.OneTime}.
 	 *
 	 * @param {string} sPath
 	 *   The binding path in the model; must not be empty. Must not end with a '/' unless the
@@ -620,8 +622,7 @@ sap.ui.define([
 	 *   The property binding
 	 * @throws {Error}
 	 *   If disallowed binding parameters are provided or in case the binding's value is an object
-	 *   and the target type is not "any" or the binding is an absolute property binding not
-	 *   pointing to metadata
+	 *   and the preconditions specified above are not fulfilled
 	 *
 	 * @public
 	 * @see sap.ui.base.ManagedObject#bindProperty

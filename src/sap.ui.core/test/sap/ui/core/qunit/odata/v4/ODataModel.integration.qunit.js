@@ -1003,8 +1003,11 @@ sap.ui.define([
 	 *   The model (or the name of a function at <code>this</code> which creates it); it is attached
 	 *   to the view and to the test instance.
 	 *   If no model is given, the <code>TEA_BUSI</code> model is created and used.
+	 * @param {function} [fnAssert]
+	 *   A function containing additional assertions such as expected log messages which is called
+	 *   just before view creation with the test as "this"
 	 */
-	function testViewStart(sTitle, sView, mResponseByRequest, mValueByControl, vModel) {
+	function testViewStart(sTitle, sView, mResponseByRequest, mValueByControl, vModel, fnAssert) {
 
 		QUnit.test(sTitle, function (assert) {
 			var sControlId, sRequest, that = this;
@@ -1025,6 +1028,9 @@ sap.ui.define([
 			}
 			if (typeof vModel === "string") {
 				vModel = this[vModel]();
+			}
+			if (fnAssert) {
+				fnAssert.call(this);
 			}
 
 			return this.createView(assert, sView, vModel);
@@ -11700,10 +11706,17 @@ sap.ui.define([
 	// CPOUI5UISERVICESV3-1676
 	testViewStart("Metadata property binding with object value", '\
 <Text id="insertable"\
-	text="{= %{/Artists##@Org.OData.Capabilities.V1.InsertRestrictions}.Insertable }" />',
+	text="{:= %{/Artists##@Org.OData.Capabilities.V1.InsertRestrictions}.Insertable }" />',
 		/* no data request*/ undefined,
 		{"insertable" : true},
-		createSpecialCasesModel({autoExpandSelect : true})
+		createSpecialCasesModel({autoExpandSelect : true}),
+		function () {
+			//TODO Remove once ManagedObject no longer calls #destroy twice for OneTime bindings
+			this.oLogMock.expects("error")
+				.withExactArgs("Binding already destroyed",
+					"/Artists##@Org.OData.Capabilities.V1.InsertRestrictions",
+					"sap.ui.model.odata.v4.ODataPropertyBinding");
+		}
 	);
 
 	//*********************************************************************************************
@@ -11713,13 +11726,19 @@ sap.ui.define([
 	// CPOUI5UISERVICESV3-1676
 	testViewStart("Relative data property binding with object value", '\
 <FlexBox binding="{/Artists(\'42\')}">\
-	<Text id="publicationCount" text="{= %{_Publication}.length }" />\
+	<Text id="publicationCount" text="{:= %{_Publication}.length }" />\
 </FlexBox>',
 		{"Artists('42')?$select=ArtistID,IsActiveEntity&$expand=_Publication($select=PublicationID)" : {
 			//"ArtistID" : ..., "IsActiveEntity" : ...
 			"_Publication" : [{/*"PublicationID" : ...*/}, {}, {}]
 		}},
 		{"publicationCount" : 3},
-		createSpecialCasesModel({autoExpandSelect : true})
+		createSpecialCasesModel({autoExpandSelect : true}),
+		function () {
+			//TODO Remove once ManagedObject no longer calls #destroy twice for OneTime bindings
+			this.oLogMock.expects("error")
+				.withExactArgs("Binding already destroyed", "_Publication",
+					"sap.ui.model.odata.v4.ODataPropertyBinding");
+		}
 	);
 });
