@@ -5,10 +5,7 @@ sap.ui.define([
 
 	return UIComponent.extend("appUnderTest.Component", {
 		metadata: {
-			rootView: {
-				viewName: "view.Main",
-				type: "XML"
-			}
+			manifest: "json"
 		}
 	});
 });

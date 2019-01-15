@@ -19,6 +19,7 @@ sap.ui.define([
 						"iStartMyUIComponentWithURLParameters.html",
 						"iStartMyUIComponentWithURLParameters.js",
 						"applicationUnderTest/Component.js",
+						"applicationUnderTest/manifest.json",
 						"applicationUnderTest/view/Main.view.xml",
 						"applicationUnderTest/controller/Main.controller.js"
 					]
