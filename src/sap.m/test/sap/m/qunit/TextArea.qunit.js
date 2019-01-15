@@ -140,6 +140,55 @@ sap.ui.define([
 		sut.destroy();
 	});
 
+	QUnit.test("Should configure control without it being rendered", function(assert) {
+		var oConfig = {
+				rows : 10,
+				cols : 50,
+				width : "100px",
+				height : "100px",
+				maxLength : 100,
+				value : "Initial text value"
+			},
+			oSetters = {
+				rows : 5,
+				cols : 20,
+				width : "200px",
+				height : "200px",
+				maxLength : 40,
+				value : "Updated text value"
+			},
+
+			applySetters = function(setters) {
+				Object.getOwnPropertyNames(setters).forEach(function(key) {
+					oTextArea["set" + $.sap.charToUpperCase(key)](setters[key]);
+					core.applyChanges();
+				});
+
+				assert.ok(true, "All setters called.");
+			},
+			getAppliedValues = function(oSetters) {
+				var mExpectedValue, mActualValue;
+
+				Object.getOwnPropertyNames(oSetters).forEach(function(sKey) {
+					mExpectedValue = oSetters[sKey];
+					mActualValue = oTextArea["get" + $.sap.charToUpperCase(sKey)]();
+
+					assert.strictEqual(mActualValue, mExpectedValue, "The correct value is applied for property " + sKey);
+					core.applyChanges();
+				});
+			},
+			oTextArea = new TextArea(oConfig);
+
+		core.applyChanges();
+
+		// check setter functions
+		applySetters(oSetters);
+		getAppliedValues(oSetters);
+
+		//Cleanup
+		oTextArea.destroy();
+	});
+
 	QUnit.test("Should react on touchstart/move for INSIDE_SCROLLABLE_WITHOUT_FOCUS behaviour", function(assert) {
 		// turn on touch support during this test
 		this.stub(Device.support, "touch", true);
