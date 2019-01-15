@@ -5,7 +5,7 @@
 	"sap.card": {
 		"type": "List",
 		"header": {
-			"type": "numeric",
+			"type": "Numeric",
 			"data": {
 				"json": {
 					"kpiInfos": {
@@ -28,7 +28,7 @@
 				"path": "/kpiInfos/kpi"
 			},
 			"title": "Project Cloud Transformation",
-			"subtitle": "Revenue",
+			"subTitle": "Revenue",
 			"unitOfMeasurement": "EUR",
 			"mainIndicator": {
 				"number": "{number}",
@@ -36,7 +36,6 @@
 				"trend": "{trend}",
 				"state": "{state}"
 			}
-
 		},
 		"content": {
 			"data": {
