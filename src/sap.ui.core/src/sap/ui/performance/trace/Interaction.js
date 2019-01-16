@@ -451,7 +451,7 @@ sap.ui.define([
 					// update pending interaction infos
 					oPendingInteraction = oPI ? oPI : oPendingInteraction;
 					if (Interaction.onInteractionFinished && oFinshedInteraction) {
-						Interaction.onInteractionFinished(oFinshedInteraction);
+						Interaction.onInteractionFinished(oFinshedInteraction, bForce);
 					}
 					oCurrentBrowserEvent = null;
 				}
