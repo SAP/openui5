@@ -5,8 +5,8 @@
  * Adds support rules of the <code>sap.ui.fl</code>
  * library to the support infrastructure.
  */
-sap.ui.define(["sap/ui/support/library", "sap/ui/fl/Utils", "sap/ui/dt/DesignTime", "sap/ui/core/Component"],
-	function(SupportLib, Utils, DesignTime, Component) {
+sap.ui.define(["sap/ui/support/library", "sap/ui/fl/Utils", "sap/ui/dt/DesignTime", "sap/ui/core/Component", "sap/ui/fl/registry/ChangeRegistry"],
+	function(SupportLib, Utils, DesignTime, Component, ChangeRegistry) {
 		"use strict";
 
 		var Categories = SupportLib.Categories,
@@ -72,27 +72,32 @@ sap.ui.define(["sap/ui/support/library", "sap/ui/fl/Utils", "sap/ui/dt/DesignTim
 					aOverlays.forEach(function (oOverlay) {
 						var oElement = oOverlay.getElementInstance();
 						var sControlId = oElement.getId();
-
+						var sClassName = oElement.getMetadata().getName();
 						var sHasConcatenatedId = sControlId.indexOf("--") !== -1;
-						if (!Utils.checkControlId(sControlId, oAppComponent, true) && !isClonedElementFromListBinding(oElement)) {
-							if (!sHasConcatenatedId) {
-								issueManager.addIssue({
-									severity: Severity.High,
-									details: "The ID '" + sControlId + "' for the control was generated and flexibility features " +
-									"cannot support controls with generated IDs.",
-									context: {
-										id: sControlId
-									}
-								});
-							} else {
-								issueManager.addIssue({
-									severity: Severity.Low,
-									details: "The ID '" + sControlId + "' for the control was concatenated and has a generated onset.\n" +
-									"To enable the control for flexibility features, you must specify an ID for the control providing the onset, which is marked as high issue.",
-									context: {
-										id: sControlId
-									}
-								});
+
+						// check only controls who have an registered change handler - for components we have to check if its an instance of sap.ui.core.Component
+						// also check if an element has any actions - to exclude cloned ones from e.g. tables from the test
+						if (ChangeRegistry.getInstance().hasRegisteredChangeHandlersForControl(sClassName) || oElement instanceof Component || oOverlay.getDesignTimeMetadata().getData().actions) {
+							if (!Utils.checkControlId(sControlId, oAppComponent, true) && !isClonedElementFromListBinding(oElement)) {
+								if (!sHasConcatenatedId) {
+									issueManager.addIssue({
+										severity: Severity.High,
+										details: "The ID '" + sControlId + "' for the control was generated and flexibility features " +
+										"cannot support controls with generated IDs.",
+										context: {
+											id: sControlId
+										}
+									});
+								} else {
+									issueManager.addIssue({
+										severity: Severity.Low,
+										details: "The ID '" + sControlId + "' for the control was concatenated and has a generated onset.\n" +
+										"To enable the control for flexibility features, you must specify an ID for the control providing the onset, which is marked as high issue.",
+										context: {
+											id: sControlId
+										}
+									});
+								}
 							}
 						}
 					});
