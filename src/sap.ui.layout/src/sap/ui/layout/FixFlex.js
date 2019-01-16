@@ -103,7 +103,8 @@ sap.ui.define([
 					 */
 					flexContent: {type: "sap.ui.core.Control", multiple: false}
 				},
-				designtime: "sap/ui/layout/designtime/FixFlex.designtime"
+				designtime: "sap/ui/layout/designtime/FixFlex.designtime",
+				dnd: { draggable: false, droppable: true }
 			}
 		});
 
