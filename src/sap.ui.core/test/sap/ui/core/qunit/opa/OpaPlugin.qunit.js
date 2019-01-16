@@ -958,47 +958,61 @@ sap.ui.define([
 			this.fnLogSpy = sinon.spy(this.oPlugin._oLogger, "debug");
 			this.sViewName = "sample.viewNamespace.viewName";
 			this.oSampleView = viewUtils.createXmlView(this.sViewName, "mySampleView");
-			this.oOtherView = viewUtils.createXmlView(this.sViewName, "myOtherView");
-			this.oNoMatchView = viewUtils.createXmlView("differentName", "noMatch");
+			this.oDuplicateView = viewUtils.createXmlView(this.sViewName, "myOtherView");
+			this.oDifferentView = viewUtils.createXmlView("differentName", "myDifferentlyNamedView");
 			this.oSampleView.placeAt("qunit-fixture");
-			this.oOtherView.placeAt("qunit-fixture");
-			this.oNoMatchView.placeAt("qunit-fixture");
+			this.oDuplicateView.placeAt("qunit-fixture");
+			this.oDifferentView.placeAt("qunit-fixture");
 			sap.ui.getCore().applyChanges();
 		},
 		afterEach: function () {
 			this.fnLogSpy.restore();
 			this.oSampleView.destroy();
-			this.oOtherView.destroy();
-			this.oNoMatchView.destroy();
+			this.oDuplicateView.destroy();
+			this.oDifferentView.destroy();
 		}
 	});
 
-	QUnit.test("Should return only one visible view", function (assert) {
-		this.oOtherView.$().css("visibility", "hidden"); // hide view
+	QUnit.test("Should filter invisible views with a duplicate name", function (assert) {
+		this.oDuplicateView.$().css("visibility", "hidden"); // hide view
 
 		var aViews = this.oPlugin.getAllControls(View, "View");
 		var oMatchedView = this.oPlugin.getView(this.sViewName);
 
 		assert.strictEqual(aViews.length, 3, "Should find all controls of type View");
 		assert.strictEqual(oMatchedView.getId(), "mySampleView", "Should match only visible views");
-		sinon.assert.calledWith(this.fnLogSpy, "Found 1 views with viewName '" + this.sViewName + "'");
+		sinon.assert.calledWith(this.fnLogSpy, "Found 2 views with viewName '" + this.sViewName + "'");
+		sinon.assert.calledWith(this.fnLogSpy, "Found 1 visible views with viewName '" + this.sViewName + "'");
 
-		this.oOtherView.destroy();
-		this.oOtherView = viewUtils.createXmlView(this.sViewName, "myOtherView"); // do not render view
+
+		this.oDuplicateView.destroy();
+		this.oDuplicateView = viewUtils.createXmlView(this.sViewName, "myOtherView"); // do not render view
 
 		assert.strictEqual(aViews.length, 3, "Should find all controls of type View");
-		assert.strictEqual(oMatchedView.getId(), "mySampleView", "Should match only visible views");
-		sinon.assert.calledWith(this.fnLogSpy, "Found 1 views with viewName '" + this.sViewName + "'");
+		assert.strictEqual(oMatchedView.getId(), "mySampleView", "Should match only rendered views");
+		sinon.assert.calledWith(this.fnLogSpy, "Found 2 views with viewName '" + this.sViewName + "'");
+		sinon.assert.calledWith(this.fnLogSpy, "Found 1 visible views with viewName '" + this.sViewName + "'");
+
 	});
 
-	QUnit.test("Should return nothing when more than one views have the same name", function (assert) {
+	QUnit.test("Should return nothing when more than one visible views have the same name", function (assert) {
 		var aViews = this.oPlugin.getAllControls(View, "View");
 		var oMatchedView = this.oPlugin.getView(this.sViewName);
 
 		assert.strictEqual(aViews.length, 3, "Should find all controls of type View");
 		assert.ok(!oMatchedView, "Should not match views with duplicate name");
 		sinon.assert.calledWith(this.fnLogSpy, "Found 2 views with viewName '" + this.sViewName + "'");
+		sinon.assert.calledWith(this.fnLogSpy, "Found 2 visible views with viewName '" + this.sViewName + "'");
 		sinon.assert.calledWithMatch(this.fnLogSpy, "Please provide viewId");
+	});
+
+	QUnit.test("Should not filter out invisible views that have a unique viewname", function (assert) {
+		var aViews = this.oPlugin.getAllControls(View, "View");
+		var oMatchedView = this.oPlugin.getView("differentName");
+
+		assert.strictEqual(aViews.length, 3, "Should find all controls of type View");
+		assert.strictEqual(oMatchedView.getId(), "myDifferentlyNamedView", "Should match invisible views when they have a 'unique' name");
+		sinon.assert.calledWith(this.fnLogSpy, "Found 1 views with viewName 'differentName'");
 	});
 
 	jQuery(function () {

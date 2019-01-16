@@ -78,19 +78,26 @@ sap.ui.define([
 			getView: function (sViewName) {
 				var aViews = this.getAllControls(View, "View");
 				var aMatchingViews = aViews.filter(function (oViewInstance) {
-					var oViewDomRef = oViewInstance.$();
-					var bIsViewVisible = oViewDomRef.length > 0 && oViewDomRef.is(":visible") && oViewDomRef.css("visibility") !== "hidden";
-					return bIsViewVisible && oViewInstance.getViewName() === sViewName;
+					return oViewInstance.getViewName() === sViewName;
 				});
 
 				this._oLogger.debug("Found " + aMatchingViews.length + " views with viewName '" + sViewName + "'");
 
 				if (aMatchingViews.length > 1) {
-					this._oLogger.debug("Cannot identify controls uniquely. Please provide viewId to locate the exact view.");
-					return null;
-				} else {
-					return aMatchingViews[0];
+					aMatchingViews = aMatchingViews.filter(function (oViewInstance) {
+						var oViewDomRef = oViewInstance.$();
+						return oViewDomRef.length > 0 && oViewDomRef.is(":visible") && oViewDomRef.css("visibility") !== "hidden";
+					});
+
+					this._oLogger.debug("Found " + aMatchingViews.length + " visible views with viewName '" + sViewName + "'");
+
+					if (aMatchingViews.length !== 1) {
+						this._oLogger.debug("Cannot identify controls uniquely. Please provide viewId to locate the exact view.");
+						aMatchingViews = [];
+					}
 				}
+
+				return aMatchingViews[0];
 			},
 
 			// find view by ID and/or viewName
