@@ -240,7 +240,7 @@ sap.ui.define([
 			},
 
 			downloadMockFile : function(sFile) {
-				var sRef = sap.ui.require.toUrl("sap/ui/demo/") + "mock";
+				var sRef = sap.ui.require.toUrl("sap/ui/demo/mock");
 				var sWrongPath = "test-resources/sap/ui/documentation/sdk/images/";
 				var sCorrectPath = "https://openui5.hana.ondemand.com/test-resources/sap/ui/documentation/sdk/images/";
 				var oRegExp = new RegExp(sWrongPath,"g");
