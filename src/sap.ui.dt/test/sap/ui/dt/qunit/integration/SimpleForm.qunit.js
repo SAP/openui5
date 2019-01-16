@@ -84,7 +84,7 @@ function (
 			var oSimpleFormForm = sap.ui.getCore().byId("testView--SimpleForm0--Form");
 			var aFormContainers = oSimpleFormForm.getFormContainers();
 			var iPosition = aFormContainers.indexOf(oElementGroup1.getParent());
-			assert.equal(iPosition, 3, "and the title1 is now located at index 3");
+			assert.equal(iPosition, 2, "and the title1 is now located at index 3");
 
 		});
 
@@ -143,9 +143,36 @@ function (
 
 		});
 
-		// TODO!
-		// QUnit.test("When moving title1 to position of title2 using drag & drop", function(assert) {
-		// });
+		QUnit.test("When moving the first group element from group1 to the second element in group2", function(assert) {
+			var oCutPaste = this.oDesignTime.getPlugins()[2];
+			var oSourceElement = sap.ui.getCore().byId("testView--Input1").getParent();
+			var oTargetElement = sap.ui.getCore().byId("testView--Input6").getParent();
+			var oSourceOverlay = OverlayRegistry.getOverlay(oSourceElement);
+			var oTargetOverlay = OverlayRegistry.getOverlay(oTargetElement);
+
+			oCutPaste.cut(oSourceOverlay);
+			oCutPaste.paste(oTargetOverlay);
+
+			var oSimpleFormForm = sap.ui.getCore().byId("testView--SimpleForm0--Form").getParent();
+			var oElementInGroup2Position2  = oSimpleFormForm.getAggregation("form").getAggregation("formContainers")[2].getAggregation("formElements")[2];
+			assert.equal(oElementInGroup2Position2, oSourceElement, "the element was moved properly");
+		});
+
+		QUnit.test("When moving a group element from group1 to group2", function(assert) {
+			var oCutPaste = this.oDesignTime.getPlugins()[2];
+			var oSourceElement = sap.ui.getCore().byId("testView--Input1").getParent();
+			var oTargetElement = sap.ui.getCore().byId("testView--Input6").getParent().getParent();
+			var oSourceOverlay = OverlayRegistry.getOverlay(oSourceElement);
+			var oTargetOverlay = OverlayRegistry.getOverlay(oTargetElement);
+
+			oCutPaste.cut(oSourceOverlay);
+			oCutPaste.paste(oTargetOverlay);
+
+			var oSimpleFormForm = sap.ui.getCore().byId("testView--SimpleForm0--Form").getParent();
+			var oElementInGroup2Position0  = oSimpleFormForm.getAggregation("form").getAggregation("formContainers")[2].getAggregation("formElements")[0];
+			assert.equal(oElementInGroup2Position0, oSourceElement, "the element was moved properly");
+		});
+
 	};
 
 	fnParamerizedTest(sap.ui.layout.form.SimpleFormLayout.ResponsiveLayout);

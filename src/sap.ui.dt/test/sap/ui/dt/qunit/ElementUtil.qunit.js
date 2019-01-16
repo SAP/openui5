@@ -842,6 +842,26 @@ function(
 		});
 	});
 
+	QUnit.module("Given adjustIndexForMove()", {
+	}, function() {
+		QUnit.test("when adjustIndexForMove is called with non-similar source and target containers", function (assert) {
+			assert.strictEqual(ElementUtil.adjustIndexForMove({value: "sourceContainer"}, {value: "targetContainer"}, 5, 10)
+				, 10, "then the passed target index is returned");
+		});
+		QUnit.test("when adjustIndexForMove is called with similar source and target containers, and source index lower than the target index", function (assert) {
+			var oContainer = {value: "sameContainer"};
+			assert.strictEqual(ElementUtil.adjustIndexForMove(oContainer, oContainer, 5, 10), 9, "then the passed target index is returned decremented by 1");
+		});
+		QUnit.test("when adjustIndexForMove is called with similar source and target containers, and source index greater than the target index", function (assert) {
+			var oContainer = {value: "sameContainer"};
+			assert.strictEqual(ElementUtil.adjustIndexForMove(oContainer, oContainer, 15, 10), 10, "then the passed target index is returned");
+		});
+		QUnit.test("when adjustIndexForMove is called with similar source and target containers, and source index is not greater than -1", function (assert) {
+			var oContainer = {value: "sameContainer"};
+			assert.strictEqual(ElementUtil.adjustIndexForMove(oContainer, oContainer, -1, 10), 10, "then the passed target index is returned");
+		});
+	});
+
 	QUnit.module("Given a bound list control", {
 		beforeEach : function(assert) {
 			var done = assert.async();
