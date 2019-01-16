@@ -101,7 +101,7 @@ sap.ui.require([
 
 		if (!fnCreateColumns) {
 			fnCreateColumns = function(oTable) {
-				var oControl = new Text({text: "{" + sBindingPrefix + "lastName" + "}"});
+				var oControl = new Text({text: "{" + sBindingPrefix + "lastName" + "}", wrapping: false});
 				oTable.addColumn(new Column({
 					label: new Label({text: "Last Name"}),
 					template: oControl,
@@ -109,7 +109,7 @@ sap.ui.require([
 					filterProperty: "lastName",
 					width: "200px"
 				}));
-				oControl = new Text({text: "{" + sBindingPrefix + "name" + "}"});
+				oControl = new Text({text: "{" + sBindingPrefix + "name" + "}", wrapping: false});
 				oTable.addColumn(new Column({
 					label: new Label({text: "First Name"}),
 					template: oControl,
@@ -1122,6 +1122,12 @@ sap.ui.require([
 		assert.equal($table.find(".sapUiTableCCnt .sapUiTableCtrlScroll .sapUiTableCtrlCol th").length, 7, "Scroll tabled has 7 Columns");
 		assert.equal(jQuery(oTable._getScrollExtension().getHorizontalScrollbar()).css("margin-left"), getExpectedHScrollLeftMargin(3),
 			"Horizontal scrollbar has correct left margin");
+	});
+
+	QUnit.test("Content is wider than column", function(assert) {
+		oTable.getColumns()[0].setWidth("60px");
+		sap.ui.getCore().applyChanges();
+		assert.strictEqual(oTable.getDomRef("table-fixed").getBoundingClientRect().width, 160, "Fixed column table has the correct width");
 	});
 
 	QUnit.test("Hide one column in fixed area", function(assert) {
