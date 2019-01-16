@@ -9,10 +9,11 @@ sap.ui.define([
 	"./lib/_Helper",
 	"sap/base/Log",
 	"sap/ui/base/SyncPromise",
+	"sap/ui/model/BindingMode",
 	"sap/ui/model/ChangeReason",
 	"sap/ui/model/odata/v4/Context",
 	"sap/ui/model/PropertyBinding"
-], function (asODataBinding, _Cache, _Helper, Log, SyncPromise, ChangeReason, Context,
+], function (asODataBinding, _Cache, _Helper, Log, SyncPromise, BindingMode, ChangeReason, Context,
 		PropertyBinding) {
 	"use strict";
 	/*eslint max-nested-callbacks: 0 */
@@ -264,7 +265,8 @@ sap.ui.define([
 				if (!vValue || typeof vValue !== "object") {
 					return vValue;
 				}
-				if (that.sInternalType === "any") {
+				if (that.sInternalType === "any" && (that.getBindingMode() === BindingMode.OneTime
+						|| (that.sPath[that.sPath.lastIndexOf("/") + 1] === "#" && !bIsMeta))) {
 					if (bIsMeta) {
 						return vValue;
 					} else if (that.bRelative){
@@ -330,6 +332,13 @@ sap.ui.define([
 	 */
 	// @override
 	ODataPropertyBinding.prototype.destroy = function () {
+		// ManagedObject#_bindProperty destroys OneTime bindings on the first change event, but the
+		// control still knows the binding, so that it is destroyed a second time when the control
+		// is destroyed: Do not throw then, but log an error until this is fixed
+		if (this.getBindingMode() === BindingMode.OneTime && !this.oCachePromise) {
+			Log.error("Binding already destroyed", this.sPath, sClassName);
+			return;
+		}
 		this.deregisterChange();
 		this.oModel.bindingDestroyed(this);
 		this.oCachePromise = undefined;
@@ -450,17 +459,6 @@ sap.ui.define([
 	};
 
 	/**
-	 * Returns whether the binding is absolute or quasi-absolute.
-	 *
-	 * @returns {boolean} - Whether the binding is absolute or quasi-absolute
-	 *
-	 * @private
-	 */
-	ODataPropertyBinding.prototype.isRoot = function () {
-		return !this.bRelative || this.oContext && !this.oContext.getBinding;
-	};
-
-	/**
 	 * Change handler for the cache. The cache calls this method when the value is changed.
 	 *
 	 * @param {any} vValue
@@ -476,7 +474,12 @@ sap.ui.define([
 	 * @override
 	 * @see sap.ui.model.odata.v4.ODataBinding#refreshInternal
 	 */
-	ODataPropertyBinding.prototype.refreshInternal = function (sGroupId, bCheckUpdate) {
+	ODataPropertyBinding.prototype.refreshInternal = function (sResourcePathPrefix, sGroupId,
+			bCheckUpdate) {
+		if (this.isRootBindingSuspended()) {
+			this.sResumeChangeReason = ChangeReason.Refresh;
+			return SyncPromise.resolve();
+		}
 		this.fetchCache(this.oContext);
 		return bCheckUpdate
 			? this.checkUpdate(true, ChangeReason.Refresh, sGroupId)
@@ -594,8 +597,10 @@ sap.ui.define([
 	ODataPropertyBinding.prototype.resumeInternal = function (bCheckUpdate) {
 		this.fetchCache(this.oContext);
 		if (bCheckUpdate) {
-			this.checkUpdate();
+			this.checkUpdate(false, this.sResumeChangeReason);
 		}
+		// the change event is fired asynchronously, so it is safe to reset here
+		this.sResumeChangeReason = ChangeReason.Change;
 	};
 
 	/**
@@ -665,8 +670,9 @@ sap.ui.define([
 	 *   Valid values are <code>undefined</code>, '$auto', '$auto.*', '$direct' or application group
 	 *   IDs as specified in {@link sap.ui.model.odata.v4.ODataModel}.
 	 * @throws {Error}
-	 *   If the binding's root binding is suspended, the new value is not primitive or no value has
-	 *   been read before
+	 *   If the binding's root binding is suspended, the new value is not primitive, no value has
+	 *   been read before, or if the binding is not relative to a
+	 *   {@link sap.ui.model.odata.v4.Context}
 	 *
 	 * @public
 	 * @see sap.ui.model.PropertyBinding#setValue
@@ -697,7 +703,8 @@ sap.ui.define([
 			oGroupLock = that.lockGroup(sGroupId, true);
 			this.oCachePromise.then(function (oCache) {
 				if (oCache) {
-					reportError(new Error("Cannot set value on this binding"));
+					reportError(new Error("Cannot set value on this binding as it is not relative"
+						+ " to a sap.ui.model.odata.v4.Context"));
 					// do not update that.vValue!
 				} else {
 					return that.oModel.getMetaModel().fetchUpdateData(that.sPath, that.oContext)

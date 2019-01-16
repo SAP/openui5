@@ -268,7 +268,7 @@ sap.ui.define([
 			return;
 		}
 
-		this.removeCachesAndMessages();
+		this.removeCachesAndMessages("");
 		this.fetchCache(this.oContext);
 		this.reset(sChangeReason);
 	};
@@ -459,7 +459,7 @@ sap.ui.define([
 			var sGroupId;
 
 			that.iMaxLength += 1;
-			if (!bSkipRefresh && that.isRefreshable()) {
+			if (!bSkipRefresh && that.isRoot()) {
 				sGroupId = that.getGroupId();
 				if (!that.oModel.isDirectGroup(sGroupId) && !that.oModel.isAutoGroup(sGroupId)) {
 					sGroupId = "$auto";
@@ -676,7 +676,7 @@ sap.ui.define([
 
 		return this.fetchFilter(oContext, this.mQueryOptions.$filter)
 			.then(function (sFilter) {
-				return that.mergeQueryOptions(that.mQueryOptions, sOrderby, sFilter);
+				return _Helper.mergeQueryOptions(that.mQueryOptions, sOrderby, sFilter);
 			});
 	};
 
@@ -944,7 +944,7 @@ sap.ui.define([
 		}
 
 		this.createReadGroupLock(this.getGroupId(), true);
-		this.removeCachesAndMessages();
+		this.removeCachesAndMessages("");
 		this.fetchCache(this.oContext);
 		this.reset(ChangeReason.Filter);
 
@@ -1427,52 +1427,15 @@ sap.ui.define([
 	};
 
 	/**
-	 * Merges the given values for "$orderby" and "$filter" into the given map of query options.
-	 * Ensures that the original map is left unchanged, but creates a copy only if necessary.
-	 *
-	 * @param {object} [mQueryOptions]
-	 *   The map of query options
-	 * @param {string} [sOrderby]
-	 *   The new value for the query option "$orderby"
-	 * @param {string} [sFilter]
-	 *   The new value for the query option "$filter"
-	 * @returns {object}
-	 *   The merged map of query options
-	 *
-	 * @private
-	 */
-	ODataListBinding.prototype.mergeQueryOptions = function (mQueryOptions, sOrderby, sFilter) {
-		var mResult;
-
-		function set(sProperty, sValue) {
-			if (sValue && (!mQueryOptions || mQueryOptions[sProperty] !== sValue)) {
-				if (!mResult) {
-					mResult = mQueryOptions ? _Helper.clone(mQueryOptions) : {};
-				}
-				mResult[sProperty] = sValue;
-			}
-		}
-
-		set("$orderby", sOrderby);
-		set("$filter", sFilter);
-		return mResult || mQueryOptions;
-	};
-
-	/**
 	 * @override
 	 * @see sap.ui.model.odata.v4.ODataBinding#refreshInternal
 	 */
-	ODataListBinding.prototype.refreshInternal = function (sGroupId) {
+	ODataListBinding.prototype.refreshInternal = function (sResourcePathPrefix, sGroupId,
+			bCheckUpdate) {
 		var aContexts = this.aContexts, // keep it, because reset sets a new, empty array
 			that = this;
 
-		this.createReadGroupLock(sGroupId, this.isRefreshable());
-		return this.oCachePromise.then(function (oCache) {
-			if (oCache) {
-				that.removeCachesAndMessages();
-				that.fetchCache(that.oContext);
-			}
-			that.reset(ChangeReason.Refresh);
+		function refreshDependentBindings() {
 			// Do not use this.getDependentBindings() because this still contains the children of
 			// the -1 context which will not survive.
 			// The array may be sparse, but forEach skips the gaps and the -1
@@ -1483,9 +1446,25 @@ sap.ui.define([
 					// drill down..." when the row is no longer part of the collection. They get
 					// another update request in createContexts, when the context for the row is
 					// reused.
-					oDependentBinding.refreshInternal(sGroupId, false);
+					oDependentBinding.refreshInternal(sResourcePathPrefix, sGroupId, false);
 				});
 			});
+		}
+
+		if (this.isRootBindingSuspended()) {
+			this.refreshSuspended(sGroupId);
+			refreshDependentBindings();
+			return SyncPromise.resolve();
+		}
+
+		this.createReadGroupLock(sGroupId, this.isRoot());
+		return this.oCachePromise.then(function (oCache) {
+			if (oCache) {
+				that.removeCachesAndMessages(sResourcePathPrefix);
+				that.fetchCache(that.oContext);
+			}
+			that.reset(ChangeReason.Refresh);
+			refreshDependentBindings();
 		});
 	};
 
@@ -1510,7 +1489,8 @@ sap.ui.define([
 	 * @private
 	 */
 	ODataListBinding.prototype.refreshSingle = function (oContext, oGroupLock, bAllowRemoval) {
-		var that = this;
+		var sResourcePathPrefix = oContext.getPath().slice(1),
+			that = this;
 
 		return this.oCachePromise.then(function (oCache) {
 			var bDataRequested = false,
@@ -1560,7 +1540,8 @@ sap.ui.define([
 						aUpdatePromises.push(oContext.checkUpdate());
 						if (bAllowRemoval) {
 							aUpdatePromises.push(
-								that.refreshDependentBindings(oGroupLock.getGroupId(), false));
+								that.refreshDependentBindings(sResourcePathPrefix,
+									oGroupLock.getGroupId()));
 						}
 					}
 
@@ -1580,7 +1561,8 @@ sap.ui.define([
 			if (!bAllowRemoval) {
 				// call refreshInternal on all dependent bindings to ensure that all resulting data
 				// requests are in the same batch request
-				aPromises.push(that.refreshDependentBindings(oGroupLock.getGroupId(), false));
+				aPromises.push(that.refreshDependentBindings(sResourcePathPrefix,
+					oGroupLock.getGroupId()));
 			}
 
 			return SyncPromise.all(aPromises).then(function (aResults) {
@@ -1594,7 +1576,43 @@ sap.ui.define([
 	 * @see sap.ui.model.odata.v4.ODataParentBinding#requestSideEffects
 	 */
 	ODataListBinding.prototype.requestSideEffects = function (sGroupId, aPaths, oContext) {
-		return this.refreshInternal(sGroupId);
+		var oModel = this.oModel,
+			// Hash set of collection-valued navigation property meta paths (relative to the cache's
+			// root) which need to be refreshed, maps string to <code>true</code>
+			mNavigationPropertyPaths = {},
+			oPromise,
+			aPromises,
+			that = this;
+
+		/*
+		 * Adds an error handler to the given promise which reports errors to the model.
+		 *
+		 * @param {Promise} oPromise - A promise
+		 * @return {Promise} A promise including an error handler
+		 */
+		function reportError(oPromise) {
+			return oPromise.catch(function (oError) {
+				oModel.reportError("Failed to request side effects", sClassName, oError);
+				throw oError;
+			});
+		}
+
+		return this.oCachePromise.then(function (oCache) {
+			if (aPaths.indexOf("") < 0) {
+				oPromise = oCache.requestSideEffects(oModel.lockGroup(sGroupId),
+					aPaths, mNavigationPropertyPaths, that.iCurrentBegin,
+					that.iCurrentEnd - that.iCurrentBegin);
+				if (oPromise) {
+					aPromises = [oPromise];
+					that.visitSideEffects(sGroupId, aPaths, oContext, mNavigationPropertyPaths,
+						aPromises);
+
+					return SyncPromise.all(aPromises.map(reportError));
+				}
+			}
+
+			return that.refreshInternal("", sGroupId);
+		});
 	};
 
 	/**
@@ -1655,6 +1673,8 @@ sap.ui.define([
 			sChangeReason = this.sResumeChangeReason;
 
 		this.sResumeChangeReason = ChangeReason.Change;
+
+		this.removeCachesAndMessages("");
 		this.reset();
 		this.fetchCache(this.oContext);
 		aBindings.forEach(function (oDependentBinding) {
@@ -1663,6 +1683,11 @@ sap.ui.define([
 			oDependentBinding.resumeInternal(false);
 		});
 		this._fireChange({reason : sChangeReason});
+
+		// Update after the change event, otherwise $count is fetched before the request
+		this.oModel.getDependentBindings(this.oHeaderContext).forEach(function (oBinding) {
+			oBinding.checkUpdate();
+		});
 	};
 
 	/**
@@ -1737,7 +1762,7 @@ sap.ui.define([
 			return;
 		}
 
-		this.removeCachesAndMessages();
+		this.removeCachesAndMessages("");
 		this.fetchCache(this.oContext);
 		this.reset(ChangeReason.Change);
 	};
@@ -1831,7 +1856,7 @@ sap.ui.define([
 			return this;
 		}
 
-		this.removeCachesAndMessages();
+		this.removeCachesAndMessages("");
 		this.createReadGroupLock(this.getGroupId(), true);
 		this.fetchCache(this.oContext);
 		this.reset(ChangeReason.Sort);

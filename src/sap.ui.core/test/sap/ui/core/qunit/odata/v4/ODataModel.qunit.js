@@ -518,11 +518,14 @@ sap.ui.define([
 			oBaseContext = oModel.createBindingContext("/TEAMS('42')"),
 			oContext = Context.create(oModel, undefined, "/TEAMS('43')"),
 			oListBinding = oModel.bindList("/TEAMS"),
+			oListBindingMock = this.mock(oListBinding),
 			oListBinding2 = oModel.bindList("/TEAMS"),
 			oListBinding3 = oModel.bindList("TEAM_2_EMPLOYEES"),
+			oListBinding3Mock = this.mock(oListBinding3),
 			oRelativeContextBinding = oModel.bindContext("TEAM_2_MANAGER", oContext, {}),
 			oPropertyBinding = oModel.bindProperty("Name"),
-			oPropertyBinding2 = oModel.bindProperty("Team_Id");
+			oPropertyBinding2 = oModel.bindProperty("Team_Id"),
+			oPropertyBinding2Mock = this.mock(oPropertyBinding2);
 
 		oListBinding3.setContext(oBaseContext);
 		this.mock(oPropertyBinding2).expects("fetchCache");
@@ -534,9 +537,9 @@ sap.ui.define([
 		oPropertyBinding.attachChange(function () {});
 		oPropertyBinding2.attachChange(function () {});
 		oRelativeContextBinding.attachChange(function () {});
-		this.mock(oListBinding).expects("refresh").withExactArgs("myGroup");
-		this.mock(oListBinding3).expects("refresh").withExactArgs("myGroup");
-		this.mock(oPropertyBinding2).expects("refresh").withExactArgs("myGroup");
+		oListBindingMock.expects("refresh").withExactArgs("myGroup");
+		oListBinding3Mock.expects("refresh").withExactArgs("myGroup");
+		oPropertyBinding2Mock.expects("refresh").withExactArgs("myGroup");
 		// check: only bindings with change event handler are refreshed
 		this.mock(oListBinding2).expects("refresh").never();
 		// check: no refresh on binding with relative path
@@ -553,6 +556,20 @@ sap.ui.define([
 		assert.throws(function () {
 			oModel.refresh("$Invalid");
 		}, oError);
+
+		oModelMock.expects("checkGroupId").withExactArgs("myGroup2");
+		oPropertyBinding2Mock.expects("refresh").withExactArgs("myGroup2");
+
+		oListBinding.suspend();
+		oListBinding2.suspend();
+		oListBinding3.suspend();
+
+		oListBindingMock.expects("refresh").withExactArgs(undefined);
+		oListBinding3Mock.expects("refresh").withExactArgs(undefined);
+
+		// code under test (ignore group ID for suspended bindings)
+		oModel.refresh("myGroup2");
+
 	});
 
 	//*********************************************************************************************
@@ -2030,6 +2047,22 @@ sap.ui.define([
 
 		// code under test
 		oModel.reportBoundMessages("FOO", {});
+	});
+
+	//*********************************************************************************************
+	QUnit.test("getAllBindings", function (assert) {
+		var oModel = createModel(),
+			oBinding1 = new Binding(oModel, "relative"),
+			oBinding2 = new Binding(oModel, "/absolute");
+
+		// code under test
+		assert.deepEqual(oModel.getAllBindings(), []);
+
+		oModel.bindingCreated(oBinding1);
+		oModel.bindingCreated(oBinding2);
+
+		// code under test
+		assert.deepEqual(oModel.getAllBindings(), [oBinding1, oBinding2]);
 	});
 });
 

@@ -388,6 +388,7 @@ sap.ui.define([
 			vValue = {/* non-primitive */},
 			vValueClone = {};
 
+		oBinding.setBindingMode(BindingMode.OneTime);
 		oBinding.setType(null, "any");
 		this.mock(oContext).expects("fetchValue")
 			.withExactArgs(sPath, sinon.match.same(oBinding))
@@ -403,26 +404,72 @@ sap.ui.define([
 	});
 
 	//*********************************************************************************************
-	[{
-		path : "nonPrimitive",
-		internalType : "int"
-	}, {
-		path : "/EntitySet('bar')/nonPrimitive",
-		internalType : "any"
+	QUnit.test("checkUpdate with action advertisement object value, success", function (assert) {
+		var oContext = Context.create(this.oModel, {}, "/EntitySet('foo')"),
+			sPath = "#name.space.Advertisement",
+			oBinding = this.oModel.bindProperty(sPath, oContext),
+			vValue = {/* non-primitive */},
+			vValueClone = {};
+
+		// Note: we do not require BindingMode.OneTime for action advertisements
+		oBinding.setType(null, "any");
+		this.mock(oContext).expects("fetchValue")
+			.withExactArgs(sPath, sinon.match.same(oBinding))
+			.returns(SyncPromise.resolve(vValue));
+		this.mock(_Helper).expects("publicClone")
+			.withExactArgs(sinon.match.same(vValue))
+			.returns(vValueClone);
+
+		// code under test
+		return oBinding.checkUpdate().then(function () {
+			assert.strictEqual(oBinding.getValue(), vValueClone);
+		});
+	});
+
+	//*********************************************************************************************
+	[{ // must be type "any"
+		internalType : "int",
+		mode : BindingMode.OneTime,
+		path : "nonPrimitive"
+	}, { // must be relative
+		internalType : "any",
+		mode : BindingMode.OneTime,
+		path : "/EntitySet('bar')/nonPrimitive"
+	}, { // must have mode OneTime
+		internalType : "any",
+		mode : BindingMode.OneWay,
+		path : "nonPrimitive"
+	}, { // must have mode OneTime
+		internalType : "any",
+		mode : BindingMode.TwoWay,
+		path : "nonPrimitive"
+	}, { // must have mode OneTime, also for the case "branch into metadata via ##"
+		internalType : "any",
+		mode : BindingMode.OneWay,
+		path : "##@SAP_Common.Label"
 	}].forEach(function (oFixture, i) {
 		QUnit.test("checkUpdate with object value, error, " + i, function (assert) {
 			var bAbsolute = oFixture.path[0] === "/",
 				oCacheMock = bAbsolute && this.getPropertyCacheMock(),
 				oContext = Context.create(this.oModel, {}, "/EntitySet('foo')"),
 				oBinding = this.oModel.bindProperty(oFixture.path, oContext),
+				oMetaContext = {},
 				sResolvedPath = this.oModel.resolve(oFixture.path, oContext),
 				vValue = {/* non-primitive */};
 
+			oBinding.setBindingMode(oFixture.mode);
 			oBinding.setType(null, oFixture.internalType);
 			if (bAbsolute) {
 				oCacheMock.expects("fetchValue")
 					.withExactArgs(new _GroupLock("$auto", undefined, oBinding, 1), undefined,
 						sinon.match.func, sinon.match.same(oBinding))
+					.returns(SyncPromise.resolve(vValue));
+			} else if (oFixture.path.startsWith("##")) { // meta binding
+				this.mock(this.oModel.getMetaModel()).expects("getMetaContext")
+					.withExactArgs("/EntitySet('foo')")
+					.returns(oMetaContext);
+				this.mock(this.oModel.getMetaModel()).expects("fetchObject")
+					.withExactArgs("@SAP_Common.Label", sinon.match.same(oMetaContext))
 					.returns(SyncPromise.resolve(vValue));
 			} else {
 				this.mock(oContext).expects("fetchValue")
@@ -738,6 +785,7 @@ sap.ui.define([
 		// code under test
 		oBinding = this.oModel.bindProperty("/Artists##@Capabilities.InsertRestrictions", null);
 
+		oBinding.setBindingMode(BindingMode.OneTime);
 		oBinding.setType(undefined, "any");
 		this.mock(this.oModel.getMetaModel()).expects("getMetaContext")
 			.withExactArgs("/Artists")
@@ -1289,7 +1337,8 @@ sap.ui.define([
 			// Note: if setValue throws, ManagedObject#updateModelProperty does not roll back!
 			that.mock(that.oModel).expects("reportError")
 				.withExactArgs("Failed to update path /ProductList('HT-1000')/Name", sClassName,
-					sinon.match({message : "Cannot set value on this binding"}));
+					sinon.match({message : "Cannot set value on this binding as it is not relative"
+						+ " to a sap.ui.model.odata.v4.Context"}));
 
 			// code under test
 			oControl.setText("foo");
@@ -1323,7 +1372,8 @@ sap.ui.define([
 			// Note: if setValue throws, ManagedObject#updateModelProperty does not roll back!
 			that.mock(that.oModel).expects("reportError")
 				.withExactArgs("Failed to update path /ProductList('HT-1000')/Name", sClassName,
-					sinon.match({message : "Cannot set value on this binding"}));
+					sinon.match({message : "Cannot set value on this binding as it is not relative"
+						+ " to a sap.ui.model.odata.v4.Context"}));
 
 			// code under test
 			oControl.setText("foo");
@@ -1731,6 +1781,7 @@ sap.ui.define([
 			oCheckUpdatePromise = {},
 			oContext = Context.create(this.oModel, {}, "/EMPLOYEES/42");
 
+		oBindingMock.expects("isRootBindingSuspended").twice().withExactArgs().returns(false);
 		this.mock(ODataPropertyBinding.prototype).expects("fetchCache").thrice()
 			.withExactArgs(oContext)
 			.callsFake(function () {
@@ -1743,41 +1794,81 @@ sap.ui.define([
 			.returns(oCheckUpdatePromise);
 
 		// code under test
-		assert.strictEqual(oBinding.refreshInternal("myGroup", true), oCheckUpdatePromise);
+		assert.strictEqual(oBinding.refreshInternal("", "myGroup", true), oCheckUpdatePromise);
 
 		// code under test
-		assert.strictEqual(oBinding.refreshInternal("myGroup", false).getResult(), undefined);
+		assert.strictEqual(oBinding.refreshInternal("", "myGroup", false).getResult(), undefined);
 	});
 
 	//*********************************************************************************************
-	QUnit.test("destroy", function (assert) {
-		var oContext = {
-				getPath : function () {return "Name";}
-			},
-			oPromise = Promise.resolve(),
-			oPropertyBinding;
+	QUnit.test("refreshInternal: suspended", function (assert) {
+		var oBinding = this.oModel.bindProperty("NAME"),
+			oBindingMock = this.mock(oBinding);
 
-		this.mock(ODataPropertyBinding.prototype).expects("fetchCache")
-			.withExactArgs(sinon.match.same(oContext)).callsFake(function (oContext0) {
-				// we might become asynchronous due to auto $expand/$select reading $metadata
-				this.oCachePromise = SyncPromise.resolve(oPromise);
-			});
-		oPropertyBinding = this.oModel.bindProperty("Name", oContext);
-		oPropertyBinding.vValue = "foo";
-		this.mock(oPropertyBinding).expects("deregisterChange").withExactArgs();
-		this.mock(PropertyBinding.prototype).expects("destroy").on(oPropertyBinding);
-		this.mock(this.oModel).expects("bindingDestroyed")
-			.withExactArgs(sinon.match.same(oPropertyBinding));
+		oBindingMock.expects("isRootBindingSuspended").withExactArgs().returns(true);
+		oBindingMock.expects("fetchCache").never();
+		oBindingMock.expects("checkUpdate").never();
 
 		// code under test
-		oPropertyBinding.destroy();
+		assert.strictEqual(oBinding.refreshInternal("myGroup", true).isFulfilled(), true);
 
-		assert.strictEqual(oPropertyBinding.oCachePromise, undefined);
-		assert.strictEqual(oPropertyBinding.oContext, undefined);
-		assert.strictEqual(oPropertyBinding.vValue, undefined);
-		assert.strictEqual(oPropertyBinding.mQueryOptions, undefined);
+		assert.strictEqual(oBinding.sResumeChangeReason, ChangeReason.Refresh);
+	});
 
-		return oPromise;
+	//*********************************************************************************************
+	[BindingMode.TwoWay, BindingMode.OneTime].forEach(function (sBindingMode) {
+		QUnit.test("destroy, binding mode=" + sBindingMode, function (assert) {
+			var oContext = {
+					getPath : function () { return "/EMPLOYEES('42')"; }
+				},
+				oPromise = Promise.resolve(),
+				oPropertyBinding,
+				oPropertyBindingMock;
+
+			this.mock(ODataPropertyBinding.prototype).expects("fetchCache")
+				.withExactArgs(sinon.match.same(oContext)).callsFake(function (oContext0) {
+					// we might become asynchronous due to auto $expand/$select reading $metadata
+					this.oCachePromise = SyncPromise.resolve(oPromise);
+				});
+			oPropertyBinding = this.oModel.bindProperty("Name", oContext);
+			oPropertyBinding.setBindingMode(sBindingMode);
+			oPropertyBinding.vValue = "foo";
+			oPropertyBindingMock = this.mock(oPropertyBinding);
+			oPropertyBindingMock.expects("deregisterChange").withExactArgs();
+			this.mock(PropertyBinding.prototype).expects("destroy").on(oPropertyBinding);
+			this.mock(this.oModel).expects("bindingDestroyed")
+				.withExactArgs(sinon.match.same(oPropertyBinding));
+
+			// code under test
+			oPropertyBinding.destroy();
+
+			assert.strictEqual(oPropertyBinding.oCachePromise, undefined);
+			assert.strictEqual(oPropertyBinding.oContext, undefined);
+			assert.strictEqual(oPropertyBinding.vValue, undefined);
+			assert.strictEqual(oPropertyBinding.mQueryOptions, undefined);
+
+			oPropertyBindingMock.expects("deregisterChange")
+				.exactly(sBindingMode === BindingMode.OneTime ? 0 : 1)
+				.withExactArgs()
+				.throws(new Error("Must not destroy twice"));
+
+			// destroy an already destroyed binding
+			if (sBindingMode === BindingMode.OneTime) {
+				this.oLogMock.expects("error")
+					.withExactArgs("Binding already destroyed", "Name", sClassName);
+
+				// code under test
+				oPropertyBinding.destroy();
+			} else {
+				// code under test
+				assert.throws(function () {
+					oPropertyBinding.destroy();
+				}, new Error("Must not destroy twice"));
+			}
+
+
+			return oPromise;
+		});
 	});
 
 	//*********************************************************************************************
@@ -1828,31 +1919,6 @@ sap.ui.define([
 		oPromise = oBinding.doFetchQueryOptions();
 
 		assert.deepEqual(oPromise.getResult(), {});
-	});
-
-	//*********************************************************************************************
-	[{
-		path : "/absolute",
-		context : undefined,
-		result : true
-	}, {
-		path : "relative",
-		context : undefined,
-		result : false
-	}, {
-		path : "quasiAbsolute",
-		context : {getPath : function () {}},
-		result : true
-	}, {
-		path : "relativeToV4Context",
-		context : {getPath : function () {}, getBinding : function () {}},
-		result : false
-	}].forEach(function (oFixture, i) {
-		QUnit.test("isRoot, " + i, function (assert) {
-			var oBinding = this.oModel.bindProperty(oFixture.path, oFixture.context);
-
-			assert.strictEqual(!!oBinding.isRoot(), oFixture.result);
-		});
 	});
 
 	//*********************************************************************************************
@@ -1985,13 +2051,18 @@ sap.ui.define([
 		QUnit.test("resumeInternal: bCheckUpdate=" + bCheckUpdate, function (assert) {
 			var oContext = Context.create(this.oModel, {}, "/ProductList('42')"),
 				oBinding = this.oModel.bindProperty("Category", oContext),
-				oBindingMock = this.mock(oBinding);
+				oBindingMock = this.mock(oBinding),
+				sResumeChangeReason = {/*change or refresh*/};
 
+			oBinding.sResumeChangeReason = sResumeChangeReason;
 			oBindingMock.expects("fetchCache").withExactArgs(sinon.match.same(oContext));
-			oBindingMock.expects("checkUpdate").exactly(bCheckUpdate ? 1 : 0).withExactArgs();
+			oBindingMock.expects("checkUpdate").exactly(bCheckUpdate ? 1 : 0)
+				.withExactArgs(false, sinon.match.same(sResumeChangeReason));
 
 			// code under test
 			oBinding.resumeInternal(bCheckUpdate);
+
+			assert.strictEqual(oBinding.sResumeChangeReason, ChangeReason.Change);
 		});
 	});
 
