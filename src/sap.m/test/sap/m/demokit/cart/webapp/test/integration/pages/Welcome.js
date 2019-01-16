@@ -71,7 +71,7 @@ sap.ui.define([
 					});
 				},
 
-				iGoToTheCartPage : function () {
+				iToggleTheCart: function () {
 					return this.waitFor({
 						controlType : "sap.m.Button",
 						matchers : new Properties({icon : "sap-icon://cart"}),
