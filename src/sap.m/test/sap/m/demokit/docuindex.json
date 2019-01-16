@@ -468,7 +468,8 @@
 		  "samples": [
 			"sap.m.sample.GenericTag",
 			"sap.uxap.sample.ObjectPageHeaderActionButtons",
-			"sap.f.sample.DynamicPageFreeStyle"
+			"sap.f.sample.DynamicPageFreeStyle",
+			"sap.m.sample.OverflowToolbarSimple"
 		  ]
 		},
 		{
