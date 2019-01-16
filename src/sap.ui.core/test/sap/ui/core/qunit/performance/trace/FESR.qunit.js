@@ -1,5 +1,5 @@
 /*global QUnit, sinon*/
-sap.ui.define(['sap/ui/performance/trace/FESR', 'sap/ui/performance/XHRInterceptor'], function(FESR, XHRInterceptor) {
+sap.ui.define(['sap/ui/performance/trace/FESR', 'sap/ui/performance/trace/Interaction', 'sap/ui/performance/XHRInterceptor'], function(FESR, Interaction, XHRInterceptor) {
 	"use strict";
 
 	QUnit.module("FESR");
@@ -16,63 +16,49 @@ sap.ui.define(['sap/ui/performance/trace/FESR', 'sap/ui/performance/XHRIntercept
 		assert.notOk(XHRInterceptor.isRegistered("FESR", "open"), "FESR must not be registered");
 	});
 
-	QUnit.module("Interaction change");
+	QUnit.test("onBeforeCreated hook", function(assert) {
+		var oHandle = {
+			stepName:"undetermined_undefined",
+			appNameLong:"undetermined",
+			appNameShort:"undetermined"
+		};
 
-	QUnit.test("FESR", function(assert) {
-		var done = assert.async();
+		var oHeaderSpy = sinon.spy(XMLHttpRequest.prototype, "setRequestHeader");
 
-		sap.ui.require(["sap/ui/performance/trace/Interaction"], function(Interaction) {
-			var onBeforeCreatedSpy,
-			 oSpyReturnValue,
-			 aAllInteractions,
-			 oLastInteraction,
-			 oInitialFESRHandle = {
-			  stepName:"undetermined_startup",
-			  appNameLong:"undetermined",
-			  appNameShort:"undetermined"
-			 };
-
-			// implement hook
-			FESR.onBeforeCreated = function(oFESRHandle, oInteraction) {
-				assert.throws(function() { oInteraction.component = "badComponent"; }, "Should throw an error after trying to overwrite the interaction object.");
-
-				return {
-					stepName: "newStepName",
-					appNameLong: "newAppNameLong",
-					appNameShort: "newAppNameShort"
-				};
+		// implement hook
+		FESR.onBeforeCreated = function(oFESRHandle, oInteraction) {
+			assert.deepEqual(oFESRHandle, oHandle, "Passed FESRHandle should be correct.");
+			assert.throws(function() { oInteraction.component = "badComponent"; }, "Should throw an error after trying to overwrite the interaction object.");
+			assert.ok(Object.isFrozen(oInteraction), "Interaction is not editable.");
+			return {
+				stepName: "newStepName",
+				appNameLong: "newAppNameLong",
+				appNameShort: "newAppNameShort"
 			};
+		};
 
-			onBeforeCreatedSpy = sinon.spy(FESR, "onBeforeCreated");
+		assert.expect(4);
 
-			FESR.setActive(true);
-			Interaction.notifyStepStart(null, true);
+		FESR.setActive(true);
+		Interaction.start();
+		// first interaction ends with notifyStepStart - second interaction starts
+		Interaction.notifyStepStart(null, true);
+		// trigger header creation
+		var xhr = new XMLHttpRequest();
+		xhr.open("GET", "resources/sap-ui-core.js?noCache=" + Date.now());
+		xhr.send();
 
-			assert.ok(Interaction.getActive(), "Implicit interaction activation successful");
+		assert.ok(oHeaderSpy.args.some(function(args) {
+			if (args[0] === "SAP-Perf-FESRec-opt") {
+				var values = args[1].split(",");
+				return values[0] === "newAppNameShort" && values[1] === "newStepName" && values[19] === "newAppNameLong";
+			}
+		}), "Found the new FESR header field values.");
 
-			Interaction.end(true);
-
-			aAllInteractions = Interaction.getAll();
-			oLastInteraction = aAllInteractions[aAllInteractions.length - 1];
-
-			assert.equal(onBeforeCreatedSpy.callCount, 1, "onBeforeCreated should be called once.");
-			assert.deepEqual(onBeforeCreatedSpy.getCall(0).args[0], oInitialFESRHandle, "Passed FESRHandle should be correct.");
-
-			assert.equal(oLastInteraction.component, "undetermined", "Component name is not modified.");
-			assert.equal(oLastInteraction.event, "startup", "Event name is not modified.");
-			assert.equal(oLastInteraction.trigger, "undetermined", "Trigger name is not modified.");
-
-			oSpyReturnValue = onBeforeCreatedSpy.returnValues[0];
-			assert.equal(oSpyReturnValue.stepName, "newStepName", "The correct stepName should be returned.");
-			assert.equal(oSpyReturnValue.appNameLong, "newAppNameLong", "The correct appNameLong should be returned.");
-			assert.equal(oSpyReturnValue.appNameShort, "newAppNameShort", "The correct appNameShort should be returned.");
-
-			Interaction.clear();
-			onBeforeCreatedSpy.restore();
-
-			done();
-		});
-
+		Interaction.end(true);
+		Interaction.clear();
+		FESR.setActive(false);
+		oHeaderSpy.restore();
 	});
 
 });
