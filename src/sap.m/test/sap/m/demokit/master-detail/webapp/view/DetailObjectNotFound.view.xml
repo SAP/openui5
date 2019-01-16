@@ -1,5 +1,5 @@
 <mvc:View
-	controllerName="sap.ui.demo.masterdetail.controller.BaseController"
+	controllerName="sap.ui.demo.masterdetail.controller.DetailObjectNotFound"
 	xmlns="sap.m"
 	xmlns:mvc="sap.ui.core.mvc">
 
