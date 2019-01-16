@@ -206,7 +206,7 @@
 		},
 		"numericHeader": {
 		  "viewId": "numericHeader",
-		  "viewName": "numericHeader",
+		  "viewName": "NumericHeader",
 		  "viewLevel": 1
 		},
 		"manifest": {

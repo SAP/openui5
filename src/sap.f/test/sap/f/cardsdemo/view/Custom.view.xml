@@ -85,7 +85,7 @@
 				width="650px"
 				height="1600px">
 				<f:header>
-					<card:numericHeader
+					<card:NumericHeader
 					 	title="Numeric"
 						subtitle="Basic Numeric subtitle"
 						unitOfMeasurement="%"
