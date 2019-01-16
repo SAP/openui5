@@ -13,6 +13,54 @@
         "type": "FIX",
         "text": " sap.uxap.ObjectPageLayout: Ensure scroll position preserved",
         "references": []
+      },
+      {
+        "id": "86e0875a2d7882987a9a909d76fc80a9e00c673f",
+        "type": "FEATURE",
+        "text": " sap.m.GenericTag: Implemented new control",
+        "references": []
+      },
+      {
+        "id": "645315bd29235a4f4e05428017d36aeca7534842",
+        "type": "FIX",
+        "text": " DynamicSideContent: Getters Always Return the Property States",
+        "references": []
+      },
+      {
+        "id": "a8979d5f1ffa02693036f50c5765b87fe8f7a4fb",
+        "type": "FIX",
+        "text": " sap.uxap.BlockBaseColumnLayout: A missing value in the type description added",
+        "references": []
+      },
+      {
+        "id": "3571b7df3c851511943833affb9d86f1133d6436",
+        "type": "FIX",
+        "text": " sap.uxap.ObjectPageLayout: Added missing files in samples",
+        "references": []
+      },
+      {
+        "id": "8ca040baf0aad1c6feced06a3b5a16786c1839b2",
+        "type": "FIX",
+        "text": " sap.uxap.ObjectPageLayout: Flickering is fixed",
+        "references": []
+      },
+      {
+        "id": "2b1f64ad2f1f5aa5be6e4acb6f634a559256a0bc",
+        "type": "FIX",
+        "text": " sap.uxap.ObjectPageLayout: Restore relative scroll position",
+        "references": []
+      },
+      {
+        "id": "f0e65abad9d4ec44a991b88a5f1988e1951ef160",
+        "type": "FIX",
+        "text": " sap.uxap.ObjectPageSubSection: Enabled fitContent for BlockBase",
+        "references": []
+      },
+      {
+        "id": "69e235b3766efc59d73a0453978a00df0186165f",
+        "type": "FIX",
+        "text": " sap.uxap.ObjectPageSubSection: Restored css for fitContainer",
+        "references": []
       }
     ]
   }

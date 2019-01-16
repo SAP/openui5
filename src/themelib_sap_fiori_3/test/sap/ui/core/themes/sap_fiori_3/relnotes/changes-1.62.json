@@ -7,6 +7,12 @@
         "type": "FEATURE",
         "text": " sap_fiori_3: initial commit of Fiori 3 Default",
         "references": []
+      },
+      {
+        "id": "08ed8fcdf8d2496b2eb77606eec824bb1cf24999",
+        "type": "FIX",
+        "text": " Font 72 loading issue",
+        "references": []
       }
     ]
   }
