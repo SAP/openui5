@@ -405,15 +405,17 @@ sap.ui.define([
 				this.oPlugin.attachEventOnce("elementModified", function(oEvent){
 					var oCompositeCommand = oEvent.getParameter("command");
 					if (test.sibling) {
-						assert.equal(oCompositeCommand.getCommands().length, 2, "then for the one selected to be revealed element reveal and move command is created as target position differs");
+						assert.equal(oCompositeCommand.getCommands().length, 2, "then for the one selected to be revealed element two commands are created");
 						assert.equal(oCompositeCommand.getCommands()[0].getName(), "reveal", "then one reveal command is created");
 						assert.equal(oCompositeCommand.getCommands()[0].getChangeType(), "unstashControl", "then the reveal command has the right changeType");
 						assert.equal(oCompositeCommand.getCommands()[1].getName(), "move", "then one move command is created");
 						assert.equal(oCompositeCommand.getCommands()[1].getMovedElements()[0].targetIndex, 1, "then the move command goes to the right position");
 					} else {
-						assert.equal(oCompositeCommand.getCommands().length, 1, "then for the one selected to be revealed element reveal command is created as target position is the same as its origin");
+						assert.equal(oCompositeCommand.getCommands().length, 2, "then for the one selected to be revealed element two commands are created");
 						assert.equal(oCompositeCommand.getCommands()[0].getName(), "reveal", "then one reveal command is created");
 						assert.equal(oCompositeCommand.getCommands()[0].getChangeType(), "unstashControl", "then the reveal command has the right changeType");
+						assert.equal(oCompositeCommand.getCommands()[1].getName(), "move", "then one move command is created");
+						assert.equal(oCompositeCommand.getCommands()[1].getMovedElements()[0].targetIndex, 0, "then the move command moves the element to the first position");
 					}
 					done();
 				});
@@ -465,7 +467,7 @@ sap.ui.define([
 				this.oPlugin.attachEventOnce("elementModified", function(oEvent){
 					var oCompositeCommand = oEvent.getParameter("command");
 					var aCommands = oCompositeCommand.getCommands();
-					var iExpectedIndex = test.sibling ? 1 : 4;
+					var iExpectedIndex = test.sibling ? 1 : 0;
 					assert.equal(aCommands.length, 1, "then one command for each selected element is created");
 					assert.equal(aCommands[0].getChangeType(), "addFields", "then add command is created");
 					assert.equal(aCommands[0].getIndex(), iExpectedIndex, "then the index to add the field is set correctly");

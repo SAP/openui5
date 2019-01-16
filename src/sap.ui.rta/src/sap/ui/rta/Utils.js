@@ -411,12 +411,8 @@ function(
 			var sGetter = oAggregation._sGetter;
 			var aContainers = oParentElement[sGetter]();
 
-			if (Array.isArray(aContainers)) {
-				if (oChildElement) {
-					iIndex = aContainers.indexOf(oChildElement) + 1;
-				} else {
-					iIndex = aContainers.length;
-				}
+			if (Array.isArray(aContainers) && oChildElement) {
+				iIndex = aContainers.indexOf(oChildElement) + 1;
 			} else {
 				iIndex = 0;
 			}
