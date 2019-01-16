@@ -246,7 +246,13 @@ sap.ui.define([
 			width = $that.innerWidth(),
 			columnsCount = Math.floor((width - gapSize) / (itemWidth + gapSize)),
 			topOffset = parseInt($that.css("padding-top").replace("px", "")),
-			leftOffset = parseInt($that.css("padding-left").replace("px", ""));
+			leftOffset = parseInt($that.css("padding-left").replace("px", "")),
+			items = this.getItems(),
+			$children = this.$().children();
+
+		if (!items.length) {
+			return;
+		}
 
 		var virtualGrid = new VirtualGrid();
 		virtualGrid.init({
@@ -258,9 +264,6 @@ sap.ui.define([
 			topOffset: topOffset ? topOffset : 0,
 			leftOffset: leftOffset ? leftOffset : 0
 		});
-
-		var items = this.getItems();
-		var $children = this.$().children();
 
 		for (var i = 0; i < items.length; i++) {
 			var item = items[i];
