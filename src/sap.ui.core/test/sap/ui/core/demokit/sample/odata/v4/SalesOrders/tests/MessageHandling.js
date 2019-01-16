@@ -156,8 +156,7 @@ sap.ui.define([
 			When.onTheMainPage.changeQuantityInFirstLineItem("2.0");
 			When.onTheMainPage.pressSaveSalesOrderButton();
 			When.onTheSuccessInfo.confirm();
-			//TODO: checkMessageCount should be 1 because expected still one for 0500000001
-			Then.onTheMainPage.checkMessageCount(0);
+			Then.onTheMainPage.checkMessageCount(1);
 
 			Then.onAnyPage.checkLog([{
 					component : "sap.ui.model.odata.v4.ODataPropertyBinding",

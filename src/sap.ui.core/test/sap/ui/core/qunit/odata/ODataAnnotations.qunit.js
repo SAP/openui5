@@ -1,5 +1,5 @@
 sap.ui.define([
-	"test-resources/sap/ui/core/qunit/odata/data/ODataAnnotationsFakeService",
+	"sap/ui/core/qunit/odata/data/ODataAnnotationsFakeService",
 	"sap/ui/model/odata/ODataModel",
 	"sap/ui/model/odata/v2/ODataModel",
 	'sap/ui/Device'

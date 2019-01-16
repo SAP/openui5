@@ -291,7 +291,7 @@ sap.ui.define([
 			oBindingMock.expects("fetchCache").exactly(bSuspended ? 0 : 1)
 				.withExactArgs(sinon.match.same(oContext));
 			oBindingMock.expects("refreshInternal").exactly(bSuspended ? 0 : 1)
-				.withExactArgs(undefined, true);
+				.withExactArgs("", undefined, true);
 
 			// code under test (as called by ODataParentBinding#changeParameters)
 			oBinding.applyParameters(mParameters, ChangeReason.Filter);
@@ -610,7 +610,7 @@ sap.ui.define([
 			.returns(oGroupLock2);
 
 		// code under test (as called by ODataBinding#refresh)
-		oBinding.refreshInternal("group", true);
+		oBinding.refreshInternal("", "group", true);
 
 		return oPromise;
 	});
@@ -1045,7 +1045,7 @@ sap.ui.define([
 		oBindingMock.expects("getDependentBindings").never();
 
 		// code under test (as called by ODataBinding#refresh)
-		assert.strictEqual(oBinding.refreshInternal(undefined, true).isFulfilled(), true);
+		assert.strictEqual(oBinding.refreshInternal("", undefined, true).isFulfilled(), true);
 
 		assert.strictEqual(oBinding.oCachePromise, oCachePromise, "must not recreate the cache");
 
@@ -1064,7 +1064,7 @@ sap.ui.define([
 		assert.strictEqual(oBinding.oCachePromise.getResult(), undefined);
 
 		// code under test (as called by ODataBinding#refresh)
-		assert.strictEqual(oBinding.refreshInternal(undefined, true).isFulfilled(), true);
+		assert.strictEqual(oBinding.refreshInternal("", undefined, true).isFulfilled(), true);
 
 		return oBinding.fetchValue("").then(function (vValue) {
 			assert.strictEqual(vValue, undefined);
@@ -1087,7 +1087,7 @@ sap.ui.define([
 
 			function expectChangeAndRefreshDependent() {
 				oBindingMock.expects("_fireChange").withExactArgs({reason : ChangeReason.Change});
-				oBindingMock.expects("refreshDependentBindings").withExactArgs("groupId", true)
+				oBindingMock.expects("refreshDependentBindings").withExactArgs("", "groupId", true)
 					.returns(SyncPromise.resolve(Promise.resolve()));
 			}
 
@@ -1149,7 +1149,7 @@ sap.ui.define([
 					oBindingMock.expects("_fireChange")
 						.withExactArgs({reason : ChangeReason.Change});
 					oBindingMock.expects("refreshDependentBindings")
-						.withExactArgs("groupId", true)
+						.withExactArgs("", "groupId", true)
 						.returns(SyncPromise.resolve(Promise.resolve()));
 				}
 
@@ -1225,87 +1225,118 @@ sap.ui.define([
 	});
 
 	//*********************************************************************************************
-	QUnit.test("_execute: bound operation with return value context", function (assert) {
-		var oContextMock = this.mock(Context),
-			bDependentsRefreshed,
-			oError = {},
-			oGroupLock = new _GroupLock("groupId"),
-			oOperationMetadata = {},
-			oRootBinding = {
-				getRootBinding : function () { return oRootBinding; },
-				isSuspended : function () { return false; }
-			},
-			oParentContext = Context.create(this.oModel, oRootBinding, "/TEAMS('42')"),
-			oBinding = this.bindContext("name.space.Operation(...)", oParentContext,
-				{$$groupId : "groupId"}),
-			oBindingMock = this.mock(oBinding),
-			oModelMock = this.mock(this.oModel),
-			oParentEntity = {},
-			oResponseEntity = {},
-			oReturnValueContextFirstExecute = {destroy : function () {}},
-			oReturnValueContextSecondExecute = {destroy : function () {}},
-			that = this;
+	[false, true].forEach(function (bOnCollection) {
+		var sTitle = "_execute: bound operation " + (bOnCollection ? "on a collection " : "")
+				+ "with return value context";
 
-		function asyncRefresh() {
-			bDependentsRefreshed = false;
-			return new SyncPromise(function (resolve) {
-				setTimeout(function () {
-					bDependentsRefreshed = true;
-					resolve();
+		QUnit.test(sTitle, function (assert) {
+			var oContextMock = this.mock(Context),
+				bDependentsRefreshed,
+				oError = {},
+				oGroupLock = new _GroupLock("groupId"),
+				oGroupLockMock = this.mock(oGroupLock),
+				oOperationMetadata = {},
+				oRootBinding = {
+					getRootBinding : function () { return oRootBinding; },
+					isSuspended : function () { return false; }
+				},
+				sParentContextPath = bOnCollection ? "/TEAMS" : "/TEAMS('42')",
+				oParentContext = Context.create(this.oModel, oRootBinding, sParentContextPath),
+				oParentContextMock = this.mock(oParentContext),
+				oBinding = this.bindContext("name.space.Operation(...)", oParentContext,
+					{$$groupId : "groupId"}),
+				oBindingMock = this.mock(oBinding),
+				oMetaModelMock = this.mock(this.oModel.getMetaModel()),
+				oModelMock = this.mock(this.oModel),
+				oParentEntity = {},
+				oResponseEntity = {},
+				oReturnValueContextFirstExecute = {destroy : function () {}},
+				oReturnValueContextSecondExecute = {destroy : function () {}},
+				that = this;
+
+			function asyncRefresh() {
+				bDependentsRefreshed = false;
+				return new SyncPromise(function (resolve) {
+					setTimeout(function () {
+						bDependentsRefreshed = true;
+						resolve();
+					});
 				});
-			});
-		}
+			}
 
-		this.mock(oGroupLock).expects("setGroupId").withExactArgs("groupId").thrice();
-		this.mock(this.oModel.getMetaModel()).expects("fetchObject").thrice()
-			.withExactArgs("/TEAMS/name.space.Operation/@$ui5.overload")
-			.returns(SyncPromise.resolve([oOperationMetadata]));
-		_Helper.setPrivateAnnotation(oParentEntity, "predicate", "('42')");
-		_Helper.setPrivateAnnotation(oResponseEntity, "predicate", "('77')");
-		oBindingMock.expects("createCacheAndRequest").twice()
-			.withExactArgs(sinon.match.same(oGroupLock),
-				"/TEAMS('42')/name.space.Operation(...)",
-				sinon.match.same(oOperationMetadata), sinon.match.func)
-			.returns(Promise.resolve(oResponseEntity));
-		oBindingMock.expects("_fireChange").twice()
-			.withExactArgs({reason : ChangeReason.Change});
-		oBindingMock.expects("refreshDependentBindings")
-			.withExactArgs("groupId", true).returns(asyncRefresh());
-		oBindingMock.expects("hasReturnValueContext").twice()
-			.withExactArgs(sinon.match.same(oOperationMetadata))
-			.returns(true);
-		this.mock(oParentContext).expects("fetchValue").twice()
-			.returns(SyncPromise.resolve(oParentEntity));
-		oContextMock.expects("createReturnValueContext")
-			.withExactArgs(sinon.match.same(this.oModel), sinon.match.same(oBinding),
-				"/TEAMS('77')")
-			.returns(oReturnValueContextFirstExecute);
-		oContextMock.expects("createReturnValueContext")
-			.withExactArgs(sinon.match.same(this.oModel), sinon.match.same(oBinding),
-				"/TEAMS('77')")
-			.returns(oReturnValueContextSecondExecute);
-
-		// code under test
-		return oBinding._execute(oGroupLock).then(function (oReturnValueContext0) {
-			assert.strictEqual(oReturnValueContext0, oReturnValueContextFirstExecute);
-			assert.strictEqual(bDependentsRefreshed, true);
-
-			that.mock(oReturnValueContextFirstExecute).expects("destroy").withExactArgs();
+			oGroupLockMock.expects("setGroupId").withExactArgs("groupId");
+			oMetaModelMock.expects("fetchObject")
+				.withExactArgs("/TEAMS/name.space.Operation/@$ui5.overload")
+				.returns(SyncPromise.resolve([oOperationMetadata]));
+			if (!bOnCollection) {
+				_Helper.setPrivateAnnotation(oParentEntity, "predicate", "('42')");
+			}
+			_Helper.setPrivateAnnotation(oResponseEntity, "predicate", "('77')");
+			oBindingMock.expects("createCacheAndRequest")
+				.withExactArgs(sinon.match.same(oGroupLock),
+					sParentContextPath + "/name.space.Operation(...)",
+					sinon.match.same(oOperationMetadata), sinon.match.func)
+				.returns(Promise.resolve(oResponseEntity));
+			oBindingMock.expects("_fireChange")
+				.withExactArgs({reason : ChangeReason.Change});
 			oBindingMock.expects("refreshDependentBindings")
-				.withExactArgs("groupId", true).returns(asyncRefresh());
+				.withExactArgs("", "groupId", true).returns(asyncRefresh());
+			oBindingMock.expects("hasReturnValueContext")
+				.withExactArgs(sinon.match.same(oOperationMetadata))
+				.returns(true);
+			oParentContextMock.expects("fetchValue")
+				.returns(SyncPromise.resolve(oParentEntity));
+			oContextMock.expects("createReturnValueContext")
+				.withExactArgs(sinon.match.same(this.oModel), sinon.match.same(oBinding),
+					"/TEAMS('77')")
+				.returns(oReturnValueContextFirstExecute);
 
 			// code under test
-			return oBinding._execute(oGroupLock).then(function (oReturnValueContext1) {
-				assert.strictEqual(oReturnValueContext1, oReturnValueContextSecondExecute);
+			return oBinding._execute(oGroupLock).then(function (oReturnValueContext0) {
+				assert.strictEqual(oReturnValueContext0, oReturnValueContextFirstExecute);
+				assert.strictEqual(bDependentsRefreshed, true);
 
+				oGroupLockMock.expects("setGroupId").withExactArgs("groupId");
+				oMetaModelMock.expects("fetchObject")
+					.withExactArgs("/TEAMS/name.space.Operation/@$ui5.overload")
+					.returns(SyncPromise.resolve([oOperationMetadata]));
 				oBindingMock.expects("createCacheAndRequest")
 					.withExactArgs(sinon.match.same(oGroupLock),
-						"/TEAMS('42')/name.space.Operation(...)",
+						sParentContextPath + "/name.space.Operation(...)",
+						sinon.match.same(oOperationMetadata), sinon.match.func)
+					.returns(Promise.resolve(oResponseEntity));
+				oBindingMock.expects("_fireChange")
+					.withExactArgs({reason : ChangeReason.Change});
+				oBindingMock.expects("refreshDependentBindings")
+					.withExactArgs("", "groupId", true).returns(asyncRefresh());
+				oBindingMock.expects("hasReturnValueContext")
+					.withExactArgs(sinon.match.same(oOperationMetadata))
+					.returns(true);
+				oParentContextMock.expects("fetchValue")
+					.returns(SyncPromise.resolve(oParentEntity));
+				that.mock(oReturnValueContextFirstExecute).expects("destroy").withExactArgs();
+				oContextMock.expects("createReturnValueContext")
+					.withExactArgs(sinon.match.same(that.oModel), sinon.match.same(oBinding),
+						"/TEAMS('77')")
+					.returns(oReturnValueContextSecondExecute);
+
+				// code under test
+				return oBinding._execute(oGroupLock);
+			}).then(function (oReturnValueContext1) {
+				assert.strictEqual(oReturnValueContext1, oReturnValueContextSecondExecute);
+
+				oGroupLockMock.expects("setGroupId").withExactArgs("groupId");
+				oMetaModelMock.expects("fetchObject")
+					.withExactArgs("/TEAMS/name.space.Operation/@$ui5.overload")
+					.returns(SyncPromise.resolve([oOperationMetadata]));
+				oBindingMock.expects("createCacheAndRequest")
+					.withExactArgs(sinon.match.same(oGroupLock),
+						sParentContextPath + "/name.space.Operation(...)",
 						sinon.match.same(oOperationMetadata), sinon.match.func)
 					.returns(Promise.reject(oError));
 				oBindingMock.expects("_fireChange")
 					.withExactArgs({reason : ChangeReason.Change});
-				oBindingMock.expects("refreshDependentBindings").withExactArgs("groupId", true)
+				oBindingMock.expects("refreshDependentBindings").withExactArgs("", "groupId", true)
 					.returns(SyncPromise.resolve(Promise.resolve()));
 				that.mock(oReturnValueContextSecondExecute).expects("destroy").withExactArgs();
 				oModelMock.expects("reportError");
@@ -1380,7 +1411,7 @@ sap.ui.define([
 				"/OperationImport(...)", sinon.match.same(oOperationMetadata), undefined)
 			.returns(SyncPromise.reject(oError));
 		oBindingMock.expects("_fireChange").withExactArgs({reason : ChangeReason.Change});
-		oBindingMock.expects("refreshDependentBindings").withExactArgs("groupId", true)
+		oBindingMock.expects("refreshDependentBindings").withExactArgs("", "groupId", true)
 			.returns(new SyncPromise(function (resolve) {
 				setTimeout(function () {
 					bDependentsRefreshed = true;
@@ -1984,7 +2015,7 @@ sap.ui.define([
 			oBinding.attachChange(fnOnRefresh);
 
 			// code under test
-			return oBinding.refreshInternal();
+			return oBinding.refreshInternal("");
 		});
 	});
 
@@ -2003,8 +2034,7 @@ sap.ui.define([
 
 	//*********************************************************************************************
 	QUnit.test("refreshInternal", function (assert) {
-		var oCache = {},
-			oBinding,
+		var oBinding,
 			oBindingMock = this.mock(ODataContextBinding.prototype),
 			oContext = Context.create(this.oModel, {}, "/EMPLOYEE('42')"),
 			bCheckUpdate = {/*true or false*/},
@@ -2015,27 +2045,58 @@ sap.ui.define([
 					resolve();
 				});
 			}),
-			oGroupLock = {};
+			oGroupLock = {},
+			sPath = {/*EMPLOYEES('42')*/};
 
-		oBindingMock.expects("fetchCache").withExactArgs(undefined).callsFake(function () {
-			// Note: c'tor calls this.applyParameters() before this.setContext()
-			this.oCachePromise = SyncPromise.resolve();
-		});
-		oBindingMock.expects("fetchCache").atLeast(1).withExactArgs(sinon.match.same(oContext))
-			.callsFake(function () {
-				this.oCachePromise = SyncPromise.resolve(oCache);
-			});
 		oBinding = this.bindContext("EMPLOYEE_2_TEAM", oContext, {"foo" : "bar"});
 
+		this.mock(oBinding).expects("isRootBindingSuspended").withExactArgs().returns(false);
+		this.mock(oBinding).expects("getGroupId").never();
+		this.mock(oBinding).expects("setResumeChangeReason").never();
 		this.mock(oBinding).expects("createReadGroupLock").withExactArgs("myGroup", false)
 			.returns(oGroupLock);
-		this.mock(oBinding).expects("removeCachesAndMessages").withExactArgs();
+		this.mock(oBinding).expects("removeCachesAndMessages")
+			.withExactArgs(sinon.match.same(sPath));
+		oBindingMock.expects("fetchCache").withExactArgs(sinon.match.same(oContext));
 		this.mock(oBinding).expects("refreshDependentBindings")
-			.withExactArgs("myGroup", sinon.match.same(bCheckUpdate))
+			.withExactArgs(sinon.match.same(sPath), "myGroup", sinon.match.same(bCheckUpdate))
 			.returns(oDependentsPromise);
 
 		// code under test
-		return oBinding.refreshInternal("myGroup", bCheckUpdate).then(function (oResult) {
+		return oBinding.refreshInternal(sPath, "myGroup", bCheckUpdate).then(function (oResult) {
+			assert.strictEqual(bDependentsRefreshed, true);
+		});
+	});
+
+	//*********************************************************************************************
+	QUnit.test("refreshInternal: suspended", function (assert) {
+		var oBinding,
+			oBindingMock = this.mock(ODataContextBinding.prototype),
+			oContext = Context.create(this.oModel, {}, "/EMPLOYEE('42')"),
+			bCheckUpdate = {/*true or false*/},
+			bDependentsRefreshed = false,
+			oDependentsPromise = new SyncPromise(function (resolve) {
+				setTimeout(function () {
+					bDependentsRefreshed = true;
+					resolve();
+				});
+			}),
+			sGroupId = {},
+			sPath = {/*EMPLOYEES('42')*/};
+
+		oBinding = this.bindContext("EMPLOYEE_2_TEAM", oContext, {"foo" : "bar"});
+
+		this.mock(oBinding).expects("isRootBindingSuspended").withExactArgs().returns(true);
+		this.mock(oBinding).expects("refreshSuspended").withExactArgs(sinon.match.same(sGroupId));
+		this.mock(oBinding).expects("createReadGroupLock").never();
+		this.mock(oBinding).expects("removeCachesAndMessages").never();
+		oBindingMock.expects("fetchCache").never();
+		this.mock(oBinding).expects("refreshDependentBindings")
+			.withExactArgs(sinon.match.same(sPath), sGroupId, sinon.match.same(bCheckUpdate))
+			.returns(oDependentsPromise);
+
+		// code under test
+		return oBinding.refreshInternal(sPath, sGroupId, bCheckUpdate).then(function (oResult) {
 			assert.strictEqual(bDependentsRefreshed, true);
 		});
 	});
@@ -2063,7 +2124,7 @@ sap.ui.define([
 			this.mock(_Cache).expects("createSingle").returns(oCache);
 
 			// code under test
-			oBinding.refreshInternal("myGroup");
+			oBinding.refreshInternal("", "myGroup", false);
 
 			this.mock(oBinding).expects("lockGroup")
 				.withExactArgs("$auto", sinon.match.same(oReadGroupLock))
@@ -2107,7 +2168,7 @@ sap.ui.define([
 				.returns(oExecutePromise);
 
 			// code under test
-			oPromise = oBinding.refreshInternal("myGroup");
+			oPromise = oBinding.refreshInternal("", "myGroup");
 
 			assert.strictEqual(oBinding.oReadGroupLock, undefined);
 
@@ -2127,18 +2188,20 @@ sap.ui.define([
 			oChild1 = {
 				refreshInternal : function () {}
 			},
-			bCheckUpdate = {/*true or false*/};
+			bCheckUpdate = {/*true or false*/},
+			sResourcePathPrefix = "TEAMS('42')";
 
+		this.mock(oBinding).expects("isRootBindingSuspended").withExactArgs().returns(false);
 		this.mock(oBinding).expects("getDependentBindings")
 			.withExactArgs()
 			.returns([oChild0, oChild1]);
 		this.mock(oChild0).expects("refreshInternal")
-			.withExactArgs("myGroup", sinon.match.same(bCheckUpdate));
+			.withExactArgs(sResourcePathPrefix, "myGroup", sinon.match.same(bCheckUpdate));
 		this.mock(oChild1).expects("refreshInternal")
-			.withExactArgs("myGroup", sinon.match.same(bCheckUpdate));
+			.withExactArgs(sResourcePathPrefix, "myGroup", sinon.match.same(bCheckUpdate));
 
 		// code under test
-		return oBinding.refreshInternal("myGroup", bCheckUpdate);
+		return oBinding.refreshInternal(sResourcePathPrefix, "myGroup", bCheckUpdate);
 	});
 
 	//*********************************************************************************************
@@ -2157,8 +2220,10 @@ sap.ui.define([
 		oBinding.oElementContext = null; // simulate a delete
 		oBinding.attachChange(fnOnRefresh);
 
+		this.mock(oBinding).expects("isRootBindingSuspended").withExactArgs().returns(false);
+
 		// code under test
-		return oBinding.refreshInternal().then(function () {
+		return oBinding.refreshInternal("").then(function () {
 			sinon.assert.calledOnce(fnOnRefresh);
 		});
 	});
@@ -2206,10 +2271,12 @@ sap.ui.define([
 			oDependent1 = {resumeInternal : function () {}},
 			oFetchCacheExpectation,
 			oFireChangeExpectation,
+			sResumeChangeReason = {/*change or refresh*/},
 			oResumeInternalExpectation0,
 			oResumeInternalExpectation1;
 
-		this.mock(oBinding).expects("removeCachesAndMessages").withExactArgs();
+		oBinding.sResumeChangeReason = sResumeChangeReason;
+		this.mock(oBinding).expects("removeCachesAndMessages").withExactArgs("");
 		oFetchCacheExpectation = oBindingMock.expects("fetchCache")
 			.withExactArgs(sinon.match.same(oContext))
 			// check correct sequence: on fetchCache call, aggregated query options must be reset
@@ -2225,7 +2292,7 @@ sap.ui.define([
 		oResumeInternalExpectation1 = this.mock(oDependent1).expects("resumeInternal")
 			.withExactArgs(sinon.match.same(bCheckUpdate));
 		oFireChangeExpectation = oBindingMock.expects("_fireChange")
-			.withExactArgs({reason : ChangeReason.Change});
+			.withExactArgs({reason : sinon.match.same(sResumeChangeReason)});
 		oBinding.mAggregatedQueryOptions = {$select : ["Team_Id"]};
 		oBinding.bAggregatedQueryOptionsInitial = false;
 
@@ -2235,6 +2302,7 @@ sap.ui.define([
 		assert.ok(oResumeInternalExpectation0.calledAfter(oFetchCacheExpectation));
 		assert.ok(oResumeInternalExpectation1.calledAfter(oFetchCacheExpectation));
 		assert.ok(oFireChangeExpectation.calledAfter(oResumeInternalExpectation1));
+		assert.strictEqual(oBinding.sResumeChangeReason, ChangeReason.Change);
 	});
 
 	//*********************************************************************************************
@@ -2524,7 +2592,7 @@ sap.ui.define([
 			.returns(oCache);
 		this.mock(oBinding).expects("createReadGroupLock")
 			.withExactArgs("group", true);
-		this.mock(oBinding).expects("refreshDependentBindings").withExactArgs("group", true)
+		this.mock(oBinding).expects("refreshDependentBindings").withExactArgs("", "group", true)
 			.returns(oDependentsPromise);
 
 		// code under test
@@ -2577,8 +2645,6 @@ sap.ui.define([
 					.withExactArgs(sinon.match.same(oGroupLock), sinon.match.same(aPaths), {},
 						bWithContext ? "Me" : undefined)
 					.callsFake(function (oGroupLock, aPaths, mNavigationPropertyPaths) {
-						mNavigationPropertyPaths["refresh/toN"] = true;
-
 						that.mock(oBinding).expects("visitSideEffects")
 							.withExactArgs(sGroupId, sinon.match.same(aPaths),
 								sinon.match.same(oContext),
@@ -2694,7 +2760,7 @@ sap.ui.define([
 				this.mock(oBinding).expects("refreshReturnValueContext")
 					.withExactArgs(sinon.match.same(oContext), sGroupId)
 					.returns(oRefreshPromise);
-				this.mock(oBinding).expects("refreshInternal").withExactArgs(sGroupId, true)
+				this.mock(oBinding).expects("refreshInternal").withExactArgs("", sGroupId, true)
 					.exactly(bReturnValueContext ? 0 : 1)
 					.returns(oRefreshInternalPromise);
 				this.mock(this.oModel).expects("getDependentBindings").never();
@@ -2733,7 +2799,7 @@ sap.ui.define([
 					.throws(oError);
 			}
 			this.mock(oBinding).expects("refreshReturnValueContext").never();
-			this.mock(oBinding).expects("refreshInternal").withExactArgs(sGroupId, true)
+			this.mock(oBinding).expects("refreshInternal").withExactArgs("", sGroupId, true)
 				.returns(oPromise);
 			this.mock(this.oModel).expects("getDependentBindings").never();
 			this.mock(oBinding).expects("getDependentBindings").never();

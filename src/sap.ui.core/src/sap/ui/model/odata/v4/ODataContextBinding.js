@@ -30,14 +30,22 @@ sap.ui.define([
 		};
 
 	/**
-	 * Returns the path for the return value context.
+	 * Returns the path for the return value context. Supports bound operations on an entity or a
+	 * collection.
 	 *
-	 * @param {string} sPath The bindings's path
+	 * @param {string} sPath
+	 *   The bindings's path; either a resolved model path or a resource path; for example:
+	 *   "Artists(ArtistID='42',IsActiveEntity=true)/special.cases.EditAction(...)" or
+	 *   "/Artists(ArtistID='42',IsActiveEntity=true)/special.cases.EditAction(...)" or
+	 *   "Artists/special.cases.Create(...)" or "/Artists/special.cases.Create(...)"
 	 * @param {string} sResponsePredicate The key predicate of the response entity
 	 * @returns {string} The path for the return value context.
 	 */
 	function getReturnValueContextPath(sPath, sResponsePredicate) {
-		return sPath.slice(0, sPath.indexOf("(")) + sResponsePredicate;
+		var sBoundParameterPath = sPath.slice(0, sPath.lastIndexOf("/")),
+			i = sBoundParameterPath.indexOf("(");
+
+		return (i < 0 ? sBoundParameterPath : sPath.slice(0, i)) + sResponsePredicate;
 	}
 
 	/**
@@ -231,7 +239,7 @@ sap.ui.define([
 		 */
 		function fireChangeAndRefreshDependentBindings() {
 			that._fireChange({reason : ChangeReason.Change});
-			return that.refreshDependentBindings(oGroupLock.getGroupId(), true);
+			return that.refreshDependentBindings("", oGroupLock.getGroupId(), true);
 		}
 
 		oGroupLock.setGroupId(this.getGroupId());
@@ -354,7 +362,7 @@ sap.ui.define([
 		if (!this.oOperation) {
 			this.fetchCache(this.oContext);
 			if (sChangeReason) {
-				this.refreshInternal(undefined, true);
+				this.refreshInternal("", undefined, true);
 			} else {
 				this.checkUpdate();
 			}
@@ -872,14 +880,20 @@ sap.ui.define([
 	 * @override
 	 * @see sap.ui.model.odata.v4.ODataBinding#refreshInternal
 	 */
-	ODataContextBinding.prototype.refreshInternal = function (sGroupId, bCheckUpdate) {
+	ODataContextBinding.prototype.refreshInternal = function (sResourcePathPrefix, sGroupId,
+			bCheckUpdate) {
 		var that = this;
 
 		if (this.oOperation && this.oOperation.bAction !== false) {
 			return SyncPromise.resolve();
 		}
 
-		this.createReadGroupLock(sGroupId, this.isRefreshable());
+		if (this.isRootBindingSuspended()) {
+			this.refreshSuspended(sGroupId);
+			return this.refreshDependentBindings(sResourcePathPrefix, sGroupId, bCheckUpdate);
+		}
+
+		this.createReadGroupLock(sGroupId, this.isRoot());
 		return this.oCachePromise.then(function (oCache) {
 			var oReadGroupLock = that.oReadGroupLock;
 
@@ -896,12 +910,12 @@ sap.ui.define([
 			}
 			if (oCache) {
 				// remove all cached Caches before fetching a new one
-				that.removeCachesAndMessages();
+				that.removeCachesAndMessages(sResourcePathPrefix);
 				that.fetchCache(that.oContext);
 				// Do not fire a change event, or else ManagedObject destroys and recreates the
 				// binding hierarchy causing a flood of events
 			}
-			return that.refreshDependentBindings(sGroupId, bCheckUpdate);
+			return that.refreshDependentBindings(sResourcePathPrefix, sGroupId, bCheckUpdate);
 		});
 	};
 
@@ -931,7 +945,7 @@ sap.ui.define([
 			this.oReturnValueContext.getPath().slice(1), this.mCacheQueryOptions, true);
 		this.oCachePromise = SyncPromise.resolve(oCache);
 		this.createReadGroupLock(sGroupId, true);
-		return this.refreshDependentBindings(sGroupId, true);
+		return this.refreshDependentBindings("", sGroupId, true);
 	};
 
 	/**
@@ -939,8 +953,7 @@ sap.ui.define([
 	 * @see sap.ui.model.odata.v4.ODataParentBinding#requestSideEffects
 	 */
 	ODataContextBinding.prototype.requestSideEffects = function (sGroupId, aPaths, oContext) {
-		var oCache = this.oCachePromise.getResult(),
-			oModel = this.oModel,
+		var oModel = this.oModel,
 			// Hash set of collection-valued navigation property meta paths (relative to the cache's
 			// root) which need to be refreshed, maps string to <code>true</code>
 			mNavigationPropertyPaths = {},
@@ -961,8 +974,9 @@ sap.ui.define([
 
 		if (aPaths.indexOf("") < 0) {
 			try {
-				aPromises.push(oCache.requestSideEffects(oModel.lockGroup(sGroupId), aPaths,
-					mNavigationPropertyPaths, oContext && oContext.getPath().slice(1)));
+				aPromises.push(
+					this.oCachePromise.getResult().requestSideEffects(oModel.lockGroup(sGroupId),
+						aPaths, mNavigationPropertyPaths, oContext && oContext.getPath().slice(1)));
 
 				this.visitSideEffects(sGroupId, aPaths, oContext, mNavigationPropertyPaths,
 					aPromises);
@@ -975,7 +989,7 @@ sap.ui.define([
 			}
 		}
 		return oContext && this.refreshReturnValueContext(oContext, sGroupId)
-			|| this.refreshInternal(sGroupId, true);
+			|| this.refreshInternal("", sGroupId, true);
 	};
 
 	/**
@@ -987,15 +1001,19 @@ sap.ui.define([
 	 * @private
 	 */
 	ODataContextBinding.prototype.resumeInternal = function (bCheckUpdate) {
+		var sChangeReason = this.sResumeChangeReason;
+
+		this.sResumeChangeReason = ChangeReason.Change;
+
 		if (!this.oOperation) {
 			this.mAggregatedQueryOptions = {};
 			this.bAggregatedQueryOptionsInitial = true;
-			this.removeCachesAndMessages();
+			this.removeCachesAndMessages("");
 			this.fetchCache(this.oContext);
 			this.getDependentBindings().forEach(function (oDependentBinding) {
 				oDependentBinding.resumeInternal(bCheckUpdate);
 			});
-			this._fireChange({reason : ChangeReason.Change});
+			this._fireChange({reason : sChangeReason});
 		} else if (this.oOperation.bAction === false) {
 			// ignore returned promise, error handling takes place in execute
 			this.execute();

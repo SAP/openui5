@@ -160,6 +160,7 @@ sap.ui.define([
 	 * Returns a promise that is resolved without data when the entity represented by this context
 	 * has been created in the backend and all selected properties of this entity are available.
 	 * Expanded navigation properties are only available if the context's binding is refreshable.
+	 * {@link sap.ui.model.odata.v4.ODataBinding#refresh} describes which bindings are refreshable.
 	 *
 	 * As long as the promise is not yet resolved or rejected, the entity represented by this
 	 * context is transient.
@@ -178,7 +179,6 @@ sap.ui.define([
 	 *   {@link sap.ui.model.odata.v4.ODataListBinding#create}.
 	 *
 	 * @public
-	 * @see sap.ui.model.odata.v4.ODataListBinding#isRefreshable
 	 * @since 1.43.0
 	 */
 	Context.prototype.created = function () {
@@ -512,20 +512,20 @@ sap.ui.define([
 	};
 
 	/**
-	 * Returns <code>true</code> if there are pending changes for the single entity in a
-	 * {@link sap.ui.model.odata.v4.ODataListBinding} represented by this context or there are
-	 * pending changes in dependent bindings relative to this context.
+	 * Returns whether there are pending changes for bindings dependent on this context, or for
+	 * unresolved bindings which were dependent on this context at the time the pending change
+	 * was created.
 	 *
 	 * @returns {boolean}
-	 *   <code>true</code> if there are pending changes
+	 *   Whether there are pending changes
 	 *
 	 * @public
 	 * @since 1.53.0
 	 */
 	Context.prototype.hasPendingChanges = function () {
 		return this.oModel.getDependentBindings(this).some(function (oDependentBinding) {
-			return oDependentBinding.hasPendingChanges();
-		});
+				return oDependentBinding.hasPendingChanges();
+			}) || this.withUnresolvedBindings("hasPendingChangesInCaches");
 	};
 
 	/**
@@ -583,13 +583,12 @@ sap.ui.define([
 	Context.prototype.refresh = function (sGroupId, bAllowRemoval) {
 		this.oModel.checkGroupId(sGroupId);
 		this.oBinding.checkSuspended();
-		if (this.oBinding.hasPendingChangesForPath(this.getPath())
-				|| this.oBinding.hasPendingChangesInDependents(this)) {
+		if (this.hasPendingChanges()) {
 			throw new Error("Cannot refresh entity due to pending changes: " + this);
 		}
 
 		if (this.oBinding.refreshSingle) {
-			if (!this.oBinding.isRefreshable()) {
+			if (!this.oBinding.isRoot()) {
 				throw new Error("Binding is not refreshable; cannot refresh entity: " + this);
 			}
 
@@ -604,6 +603,7 @@ sap.ui.define([
 				this.oBinding.refresh(sGroupId);
 			}
 		}
+		this.withUnresolvedBindings("removeCachesAndMessages");
 	};
 
 	/**
@@ -805,6 +805,28 @@ sap.ui.define([
 		}
 		return this.oBinding.withCache(fnProcessor,
 			sPath[0] === "/" ? sPath : _Helper.buildPath(this.sPath, sPath));
+	};
+
+	/**
+	 * Iterates over the model's unresolved bindings and calls the function with the given name on
+	 * each unresolved binding, passing the resource path of this context.
+	 * Iteration stops if a function call on some unresolved binding returns a truthy value.
+	 *
+	 * @param {string} sCallbackName The name of the function to be called on unresolved bindings;
+	 *   the function is called with this context's path without the leading "/"
+	 * @returns {boolean} <code>true</code> if for one unresolved binding the function call returned
+	 *   a truthy value.
+	 *
+	 * @private
+	 */
+	Context.prototype.withUnresolvedBindings = function (sCallbackName) {
+		var sResourcePath = this.sPath.slice(1);
+
+		return this.oModel.getAllBindings().filter(function (oBinding) {
+			return oBinding.isRelative() && !oBinding.getContext();
+		}).some(function (oBinding) {
+			return oBinding[sCallbackName](sResourcePath);
+		});
 	};
 
 	oModule = {

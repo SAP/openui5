@@ -122,14 +122,25 @@ sap.ui.define([
 
 		/**
 		 * Creates a collection cache. Only resource path and query options must be supplied. Uses
-		 * this.oRequestor, does not calculate key predicates, does not sort query options.
+		 * this.oRequestor, does not sort query options.
 		 *
 		 * @param {string} sResourcePath The resource path
 		 * @param {object} [mQueryOptions] The query options.
+		 * @param {boolean} [bWithKeyPredicates=false] Whether key predicates are calculated
 		 * @returns {sap.ui.model.odata.v4.lib._Cache}
 		 *   The cache
 		 */
-		createCache : function (sResourcePath, mQueryOptions) {
+		createCache : function (sResourcePath, mQueryOptions, bWithKeyPredicates) {
+			if (bWithKeyPredicates) {
+				this.oRequestor.fetchTypeForPath = function () { // enables key predicates
+					return SyncPromise.resolve({
+						$Key : ["key"],
+						key : {
+							$Type : "Edm.String"
+						}
+					});
+				};
+			}
 			return _Cache.create(this.oRequestor, sResourcePath, mQueryOptions, false);
 		},
 
@@ -4116,6 +4127,351 @@ sap.ui.define([
 	//if (vDeleteProperty === -1) { // TODO might be string, might be result of failed indexOf
 
 	//*********************************************************************************************
+	[{ // no visible rows: discard everything including persistent created element
+		iLength : 0,
+		iStart : 3,
+		bTransientElement : false,
+		aValues : []
+	}, { // no visible rows: discard everything except transient created element
+		bKeepCreatedElement : true,
+		iLength : 0,
+		iStart : 3,
+		bTransientElement : true,
+		aValues : []
+	}, { // only transient created element is visible: no GET
+		bKeepCreatedElement : true,
+		iLength : 1,
+		iStart : -1,
+		bTransientElement : true,
+		aValues : []
+	}, { // a single visible row (persistent created element is discarded)
+		sFilter : "key eq 'a0'",
+		iLength : 1,
+		iStart : 0,
+		bTransientElement : false,
+		aValues : [{key : "a"}]
+	}, { // a single visible row (transient created element is kept)
+		sFilter : "key eq 'a0'",
+		bKeepCreatedElement : true,
+		iLength : 1,
+		iStart : 0,
+		bTransientElement : true,
+		aValues : [{key : "a"}]
+	}, { // a single visible row, but not at top
+		sFilter : "key eq 'a3'",
+		iLength : 1,
+		iStart : 3,
+		aValues : [{key : "d"}]
+	}, { // multiple visible rows including a persistent created element
+		sFilter : "key eq 'a-1' or key eq 'a0'",
+		bKeepCreatedElement : true,
+		iLength : 2,
+		iStart : -1,
+		bTransientElement : false,
+		aValues : [{key : "@"}, {key : "a"}]
+	}, { // multiple visible rows including a transient created element which is not part of GET
+		sFilter : "key eq 'a0'",
+		bKeepCreatedElement : true,
+		iLength : 2,
+		iStart : -1,
+		bTransientElement : true,
+		aValues : [{key : "a"}]
+	}, { // multiple visible rows
+		sFilter : "key eq 'a0' or key eq 'a1'",
+		iLength : 2,
+		iStart : 0,
+		aValues : [{key : "a"}, {key : "b"}]
+	}, { // multiple visible rows, but not at top; unexpected order of response
+		sFilter : "key eq 'a3' or key eq 'a4'",
+		iLength : 2,
+		iStart : 3,
+		aValues : [{key : "e"}, {key : "d"}]
+	}, { // short read and infinite length (should both work, independently)
+		sFilter : "key eq 'a24' or key eq 'a25'",
+		iLength : Infinity,
+		iStart : 24,
+		aValues : [{key : "y"}, {key : "z"}] // short read
+	}].forEach(function (oFixture, iFixtureIndex) {
+		QUnit.test("CollectionCache#requestSideEffects, " + iFixtureIndex, function (assert) {
+			var oCreatedElement,
+				iLength = oFixture.iLength,
+				iStart = oFixture.iStart,
+				iFillLength = Math.min(Math.max(iLength, 10), 26), // read at least 10, at most 26
+				iFillStart = iStart < 10 ? 0 : iStart, // some old values due to previous paging
+				mQueryOptions = {},
+				iReceivedLength = oFixture.aValues.length,
+				sResourcePath = "TEAMS('42')/Foo",
+				oCache = this.createCache(sResourcePath, mQueryOptions, true),
+				that = this,
+				i;
+
+			// Note: fill cache with more than just "visible" rows
+			this.mockRequest(sResourcePath, iFillStart, iFillLength, undefined, "26");
+			//TODO this.fetchValue(_GroupLock.$cached, "").then(...) would be needed in _Cache in
+			// case we do not wait for read() to finish here!
+			return oCache.read(iFillStart, iFillLength, 0, new _GroupLock("group"))
+				.then(function () {
+					var oGroupLock = {},
+						oHelperMock = that.mock(_Helper),
+						mMergedQueryOptions = {
+							$apply : "A.P.P.L.E.", // must be kept
+							$count : true, // dropped
+							$expand : {expand : null},
+							$filter : "filter", // is replaced completely
+							$orderby : "orderby", // dropped
+							$search : "search", // dropped
+							$select : ["Name"],
+							foo : "bar",
+							"sap-client" : "123"
+						},
+						mNavigationPropertyPaths = {},
+						aPaths = ["ROOM_ID"],
+						iRequestStart = iStart < 0 && oFixture.bTransientElement
+							? 0 // transient element not affected by side effect
+							: iStart,
+						oResult = {value : oFixture.aValues},
+						mTypeForMetaPath = {
+							"/TEAMS/Foo" : {}
+						};
+
+					aTestData[-1] = "@"; // predecessor of "A"
+					if ("bTransientElement" in oFixture) { // add created element
+						//TODO what if POST for transient element is still "in flight"?
+						oCreatedElement = oFixture.bTransientElement
+							? {"@$ui5._" : {"transient" : true}}
+							: {"@$ui5._" : {"predicate" : "('@')"}}; // persistent
+						oCache.aElements[-1] = oCreatedElement;
+						if (!oFixture.bTransientElement) {
+							oCache.aElements.$byPredicate["('@')"] = oCreatedElement;
+						}
+					}
+					// Note: fetchTypes() would have been triggered by read() already
+					that.mock(oCache).expects("fetchTypes").withExactArgs()
+						.returns(SyncPromise.resolve(mTypeForMetaPath));
+					for (i = 0; i < iReceivedLength; i += 1) { // prepare request/response
+						oHelperMock.expects("getKeyFilter").withExactArgs(
+								sinon.match.same(oCache.aElements[iRequestStart + i]), "/TEAMS/Foo",
+								sinon.match.same(mTypeForMetaPath))
+							.returns("key eq 'a" + (iRequestStart + i) + "'");
+						oHelperMock.expects("updateExisting")
+							.withExactArgs(sinon.match.same(oCache.mChangeListeners),
+								"('" + oFixture.aValues[i].key + "')",
+								sinon.match.same(oCache.aElements.$byPredicate[
+									"('" + oFixture.aValues[i].key + "')"]),
+								sinon.match.same(oFixture.aValues[i]));
+					}
+					if (iReceivedLength > 0) { // expect a GET iff. there is s.th. to do
+						that.mock(_Helper).expects("intersectQueryOptions").withExactArgs(
+								sinon.match.same(mQueryOptions), sinon.match.same(aPaths),
+								sinon.match.same(
+									that.oRequestor.getModelInterface().fetchMetadata),
+								"/TEAMS/Foo", sinon.match.same(mNavigationPropertyPaths))
+							.returns(mMergedQueryOptions);
+						that.mock(_Helper).expects("selectKeyProperties")
+							.withExactArgs(sinon.match.same(mMergedQueryOptions),
+								sinon.match.same(mTypeForMetaPath["/TEAMS/Foo"]));
+						that.mock(that.oRequestor).expects("buildQueryString")
+							.withExactArgs("/TEAMS/Foo", {
+								$apply : "A.P.P.L.E.",
+								$expand : {expand : null},
+								$filter : oFixture.sFilter,
+								$select : ["Name"],
+								foo : "bar",
+								"sap-client" : "123"
+							}, false, true)
+							.returns("?bar");
+						that.oRequestorMock.expects("request").withExactArgs("GET",
+								"TEAMS('42')/Foo?bar", sinon.match.same(oGroupLock))
+							.resolves(oResult);
+						that.mock(oCache).expects("visitResponse").withExactArgs(
+								sinon.match.same(oResult), sinon.match.same(mTypeForMetaPath),
+								undefined, "", false, iRequestStart)
+							.callsFake(function () {
+								for (i = 0; i < iReceivedLength; i += 1) {
+									_Helper.setPrivateAnnotation(oFixture.aValues[i], "predicate",
+										"('" + oFixture.aValues[i].key + "')");
+								}
+							});
+					}
+
+					// code under test
+					return oCache.requestSideEffects(oGroupLock, aPaths, mNavigationPropertyPaths,
+							iStart, iLength)
+						.then(function () {
+							var oElement, i;
+
+							// check that all elements outside of range are discarded
+							if (oFixture.bKeepCreatedElement) {
+								assert.strictEqual(oCache.aElements[-1], oCreatedElement);
+							} else {
+								assert.notOk("-1" in oCache.aElements, "-1");
+							}
+							for (i = 0; i < iStart; i += 1) {
+								assert.notOk(i in oCache.aElements, "" + i);
+							}
+							assert.strictEqual(oCache.aElements.length,
+								iLength ? iRequestStart + iReceivedLength : 0);
+
+							assert.strictEqual(oCache.aElements.$count, 26, "$count is preserved");
+
+							assert.strictEqual(Object.keys(oCache.aElements.$byPredicate).length,
+								iReceivedLength, "$byPredicate up-to-date");
+							for (i = 0; i < iReceivedLength; i += 1) {
+								oElement = oCache.aElements[iRequestStart + i];
+								assert.strictEqual(
+									oCache.aElements.$byPredicate[
+										_Helper.getPrivateAnnotation(oElement, "predicate")],
+									oElement);
+							}
+						});
+				});
+		});
+	});
+
+	//*********************************************************************************************
+	QUnit.test("CollectionCache#requestSideEffects: nothing to do", function (assert) {
+		var mNavigationPropertyPaths = {},
+			aPaths = [],
+			oPromise,
+			mQueryOptions = {},
+			sResourcePath = "TEAMS('42')/Foo",
+			mTypeForMetaPath = {},
+			oCache = this.createCache(sResourcePath, mQueryOptions, true);
+
+		// cache preparation
+		oCache.aElements[0] = {};
+
+		this.mock(oCache).expects("fetchTypes").withExactArgs()
+			.returns(SyncPromise.resolve(mTypeForMetaPath));
+		this.mock(_Helper).expects("intersectQueryOptions").withExactArgs(
+				sinon.match.same(mQueryOptions), sinon.match.same(aPaths),
+				sinon.match.same(this.oRequestor.getModelInterface().fetchMetadata),
+				"/TEAMS/Foo", sinon.match.same(mNavigationPropertyPaths))
+			.returns(null); // "nothing to do"
+		this.mock(_Helper).expects("getKeyFilter").never();
+		this.mock(_Helper).expects("selectKeyProperties").never();
+		this.oRequestorMock.expects("buildQueryString").never();
+		this.oRequestorMock.expects("request").never();
+
+		// code under test
+		oPromise = oCache.requestSideEffects(null, aPaths, mNavigationPropertyPaths, 0, 1);
+
+		assert.ok(oPromise instanceof SyncPromise);
+		assert.strictEqual(oPromise.getResult(), undefined);
+	});
+
+	//*********************************************************************************************
+	[-1, 0, 3].forEach(function (iStart) {
+		var sTitle = "CollectionCache#requestSideEffects: Missing key property @" + iStart;
+
+		QUnit.test(sTitle, function (assert) {
+			var oCache = this.createCache("TEAMS('42')/Foo"),
+				oInstance = {},
+				mTypeForMetaPath = {};
+
+			// cache preparation
+			oCache.aElements[iStart] = oInstance;
+
+			this.mock(oCache).expects("fetchTypes").withExactArgs()
+				.returns(SyncPromise.resolve(mTypeForMetaPath));
+			this.mock(_Helper).expects("intersectQueryOptions").returns({/*don't care*/});
+			this.mock(_Helper).expects("getKeyFilter")
+				.withExactArgs(sinon.match.same(oInstance), "/TEAMS/Foo",
+					sinon.match.same(mTypeForMetaPath))
+				.returns(undefined); // at least one key property is undefined
+			this.mock(_Helper).expects("selectKeyProperties").never();
+			this.oRequestorMock.expects("buildQueryString").never();
+			this.oRequestorMock.expects("request").never();
+
+			// code under test
+			assert.strictEqual(oCache.requestSideEffects(null, null, {}, iStart, 1), null);
+		});
+	});
+
+	//*********************************************************************************************
+	QUnit.test("CollectionCache#requestSideEffects: no data to update", function (assert) {
+		var sResourcePath = "TEAMS('42')/Foo",
+			oCache = this.createCache(sResourcePath, null, true),
+			that = this;
+
+		// Note: fill cache with more than just "visible" rows
+		this.mockRequest(sResourcePath, 0, 4, undefined, "26");
+		return oCache.read(0, 4, 0, new _GroupLock("group")).then(function () {
+			var mTypeForMetaPath = {};
+
+			that.mock(oCache).expects("fetchTypes").withExactArgs()
+				.returns(SyncPromise.resolve(mTypeForMetaPath));
+			that.mock(_Helper).expects("intersectQueryOptions").never();
+			that.mock(_Helper).expects("getKeyFilter").never();
+			that.mock(_Helper).expects("selectKeyProperties").never();
+			that.oRequestorMock.expects("buildQueryString").never();
+			that.oRequestorMock.expects("request").never();
+
+			// code under test
+			assert.strictEqual(oCache.requestSideEffects(null, null, {}, 2, 0),
+				SyncPromise.resolve());
+
+			assert.deepEqual(oCache.aElements, [], "all elements discarded");
+			assert.deepEqual(oCache.aElements.$byPredicate, {}, "$byPredicate up-to-date");
+			assert.strictEqual(oCache.aElements.$count, 26, "$count is preserved");
+		});
+	});
+
+	//*********************************************************************************************
+	[[/*no data*/], [{}, {/*too much*/}]].forEach(function (aData, i) {
+		var sTitle = "CollectionCache#requestSideEffects: unexpected response " + i;
+
+		QUnit.test(sTitle, function (assert) {
+			var oGroupLock = {},
+				mMergedQueryOptions = {},
+				mNavigationPropertyPaths = {},
+				aPaths = [],
+				mQueryOptions = {},
+				sResourcePath = "TEAMS('42')/Foo",
+				oCache = this.createCache(sResourcePath, mQueryOptions, true),
+				that = this;
+
+			// Note: fill cache with more than just "visible" rows
+			this.mockRequest(sResourcePath, 0, 4, undefined, "26");
+			return oCache.read(0, 4, 0, new _GroupLock("group")).then(function () {
+				var mTypeForMetaPath = {};
+
+				that.mock(oCache).expects("fetchTypes").withExactArgs()
+					.returns(SyncPromise.resolve(mTypeForMetaPath));
+				that.mock(_Helper).expects("intersectQueryOptions").withExactArgs(
+						sinon.match.same(mQueryOptions), sinon.match.same(aPaths),
+						sinon.match.same(that.oRequestor.getModelInterface().fetchMetadata),
+						"/TEAMS/Foo", sinon.match.same(mNavigationPropertyPaths))
+					.returns(mMergedQueryOptions);
+				that.mock(_Helper).expects("getKeyFilter")
+					.withExactArgs(sinon.match.same(oCache.aElements[2]), "/TEAMS/Foo",
+						sinon.match.same(mTypeForMetaPath))
+					.returns("~key_filter~");
+				that.mock(_Helper).expects("selectKeyProperties")
+					.withExactArgs(sinon.match.same(mMergedQueryOptions),
+						sinon.match.same(mTypeForMetaPath["/TEAMS/Foo"]));
+				that.mock(that.oRequestor).expects("buildQueryString")
+					.withExactArgs("/TEAMS/Foo", {$filter : "~key_filter~"}, false, true)
+					.returns("?bar");
+				that.oRequestorMock.expects("request").withExactArgs("GET",
+						"TEAMS('42')/Foo?bar", sinon.match.same(oGroupLock))
+					.resolves({value : aData});
+				that.mock(oCache).expects("visitResponse").never();
+
+				// code under test
+				return oCache.requestSideEffects(oGroupLock, aPaths, mNavigationPropertyPaths, 2, 1)
+					.then(function () {
+						assert.ok(false);
+					}, function (oError) {
+						assert.throws(function () {
+							throw oError; // Note: assert.deepEqual() does not work in IE11 here
+						}, new Error("Expected 1 row(s), but instead saw " + aData.length));
+					});
+			});
+		});
+	});
+
+	//*********************************************************************************************
 	QUnit.test("SingleCache#fetchValue", function (assert) {
 		var oCache,
 			oCacheMock,
@@ -4657,8 +5013,7 @@ sap.ui.define([
 				.withExactArgs(sinon.match.same(_GroupLock.$cached), "")
 				.returns(SyncPromise.resolve(oOldValue));
 			oVisitResponseExpectation = oCacheMock.expects("visitResponse")
-				.withExactArgs(sinon.match.same(oNewValue), sinon.match.same(mTypeForMetaPath),
-					"/Employees");
+				.withExactArgs(sinon.match.same(oNewValue), sinon.match.same(mTypeForMetaPath));
 			oUpdateExistingExpectation = this.mock(_Helper).expects("updateExisting")
 				.withExactArgs(sinon.match.same(oCache.mChangeListeners), "",
 					sinon.match.same(oOldValue), sinon.match.same(oNewValue))
@@ -5191,7 +5546,7 @@ sap.ui.define([
 			.returns(SyncPromise.resolve(mTypeForMetaPath));
 		oCacheMock.expects("visitResponse")
 			.withExactArgs(sinon.match.same(oResponse), sinon.match.same(mTypeForMetaPath),
-				oCache.sMetapath, sKeyPredicate);
+				undefined, sKeyPredicate);
 
 		oCache.aElements = aElements;
 		oCache.aElements.$byPredicate = {};
@@ -5215,47 +5570,38 @@ sap.ui.define([
 	[{
 		mBindingQueryOptions : {$filter: "age gt 40"},
 		iIndex : 1,
-		mKeyProperties : {"ID" : "'0'"},
-		sQueryString : "?$filter=(age%20gt%2040)%20and%20ID%20eq%20'0'",
-		mQueryOptionsForRequest : {$filter: "(age gt 40) and ID eq '0'"},
+		sQueryString : "?$filter=(age%20gt%2040)%20and%20~key%20filter~",
+		mQueryOptionsForRequest : {$filter: "(age gt 40) and ~key filter~"},
 		bRemoved : true
 	}, {
 		mBindingQueryOptions : {$filter: "age gt 40"},
 		iIndex : 1,
-		mKeyProperties : {"ID" : "'0'"},
-		sQueryString : "?$filter=%28age%20gt%2040%29%20and%20ID%20eq%20'0'",
-		mQueryOptionsForRequest : {$filter: "(age gt 40) and ID eq '0'"},
+		sQueryString : "?$filter=%28age%20gt%2040%29%20and%20~key%20filter~",
+		mQueryOptionsForRequest : {$filter: "(age gt 40) and ~key filter~"},
 		bRemoved : false
 	}, {
 		mBindingQueryOptions : {$filter: "age gt 40 or age lt 20"},
 		iIndex : 1,
-		mKeyProperties : {"ID" : "'0'", "Name" : "'Foo'"},
-		sQueryString : "?$filter=(age%20gt%2040%20or%20age%20lt%2020)%20and%20ID%20eq%20'0'%20"
-			+ "and%20Name%20eq%20'Foo'",
-			mQueryOptionsForRequest : {$filter: "(age gt 40 or age lt 20) and ID eq '0'"
-				+ " and Name eq 'Foo'"},
+		sQueryString : "?$filter=(age%20gt%2040%20or%20age%20lt%2020)%20and%20~key%20filter~",
+			mQueryOptionsForRequest : {$filter: "(age gt 40 or age lt 20) and ~key filter~"},
 		bRemoved : true
 	}, {
 		mBindingQueryOptions : {$filter: "age gt 40"},
 		iIndex : 1,
-		mKeyProperties : {"ID" : "'0'", "Name" : "'Foo'"},
-		sQueryString : "?$filter=age%20gt%2040%20and%20ID%20eq%20'0'%20"
-			+ "and%20Name%20eq%20'Foo'",
-		mQueryOptionsForRequest : {$filter: "(age gt 40) and ID eq '0' and Name eq 'Foo'"},
+		sQueryString : "?$filter=age%20gt%2040%20and%20~key%20filter~",
+		mQueryOptionsForRequest : {$filter: "(age gt 40) and ~key filter~"},
 		bRemoved : false
 	}, {
 		mBindingQueryOptions : {},
 		iIndex : 1,
-		mKeyProperties : {"ID" : "'0'", "Name" : "'Foo'"},
-		sQueryString : "?$filter=ID%20eq%20'0'%20and%20Name%20eq%20'Foo'",
-		mQueryOptionsForRequest : {$filter: "ID eq '0' and Name eq 'Foo'"},
+		sQueryString : "?$filter=~key%20filter~",
+		mQueryOptionsForRequest : {$filter: "~key filter~"},
 		bRemoved : false
 	}, { // with transient
 		mBindingQueryOptions : {},
 		iIndex : -1,
-		mKeyProperties : {"ID" : "'0'", "Name" : "'Foo'"},
-		sQueryString : "?$filter=ID%20eq%20'0'%20and%20Name%20eq%20'Foo'",
-		mQueryOptionsForRequest : {$filter: "ID eq '0' and Name eq 'Foo'"},
+		sQueryString : "?$filter=~key%20filter~",
+		mQueryOptionsForRequest : {$filter: "~key filter~"},
 		bRemoved : true
 	}].forEach(function (oFixture) {
 		var sTitle = "CollectionCache#refreshSingleWithRemove: removed=" + oFixture.bRemoved;
@@ -5301,9 +5647,9 @@ sap.ui.define([
 						.returns(oPromiseRequest);
 					return oPromiseFetchTypes;
 				});
-			this.mock(_Helper).expects("getKeyProperties")
-				.withExactArgs(oElement, "/" + sResourcePath, sinon.match.same(mTypeForMetaPath))
-				.returns(oFixture.mKeyProperties);
+			this.mock(_Helper).expects("getKeyFilter")
+				.withExactArgs(oElement, "/Employees", sinon.match.same(mTypeForMetaPath))
+				.returns("~key filter~");
 			this.oRequestorMock.expects("buildQueryString")
 				.withExactArgs(oCache.sMetaPath, oFixture.mQueryOptionsForRequest, false,
 					oCache.bSortExpandSelect)
@@ -5311,7 +5657,7 @@ sap.ui.define([
 			oCacheMock.expects("visitResponse")
 				.exactly(oFixture.bRemoved ? 0 : 1)
 				.withExactArgs(sinon.match.same(oResponse.value[0]),
-					sinon.match.same(mTypeForMetaPath), oCache.sMetapath, sKeyPredicate);
+					sinon.match.same(mTypeForMetaPath), undefined, sKeyPredicate);
 
 			// code under test
 			oPromise = oCache.refreshSingleWithRemove(oGroupLock, oFixture.iIndex, fnDataRequested,
@@ -5343,8 +5689,7 @@ sap.ui.define([
 	[false, true].forEach(function (bRemoved) {
 		QUnit.test("refreshSingleWithRemove: parallel delete, " + bRemoved, function (assert) {
 			var fnOnRemove = this.spy(),
-				sResourcePath = "Employees",
-				oCache = this.createCache(sResourcePath, {$filter: "age gt 40"}),
+				oCache = this.createCache("Employees", {$filter: "age gt 40"}),
 				oCacheMock = this.mock(oCache),
 				oElement = {"@$ui5._" : {"predicate" : "('3')"}},
 				aElements = [{}, {}, {}, oElement],
@@ -5358,16 +5703,16 @@ sap.ui.define([
 
 			oCacheMock.expects("fetchTypes").withExactArgs()
 				.returns(SyncPromise.resolve(mTypeForMetaPath));
-			this.mock(_Helper).expects("getKeyProperties")
-				.withExactArgs(oElement, "/" + sResourcePath, sinon.match.same(mTypeForMetaPath))
-				.returns({"ID" : "'3'"});
+			this.mock(_Helper).expects("getKeyFilter")
+				.withExactArgs(oElement, "/Employees", sinon.match.same(mTypeForMetaPath))
+				.returns("~key filter~");
 			this.oRequestorMock.expects("buildQueryString")
-				.withExactArgs(oCache.sMetaPath, {$filter: "(age gt 40) and ID eq '3'"}, false,
+				.withExactArgs(oCache.sMetaPath, {$filter: "(age gt 40) and ~key filter~"}, false,
 					oCache.bSortExpandSelect)
-				.returns("?$filter=%28age%20gt%2040%29%20and%20ID%20eq%20'3'");
+				.returns("?$filter=%28age%20gt%2040%29%20and%20~key%20filter~");
 			this.oRequestorMock.expects("request")
 				.withExactArgs("GET",
-					sResourcePath + "?$filter=%28age%20gt%2040%29%20and%20ID%20eq%20'3'",
+					"Employees?$filter=%28age%20gt%2040%29%20and%20~key%20filter~",
 					sinon.match.same(oGroupLock), undefined, undefined, undefined)
 				.callsFake(function () {
 					// simulate another delete while this one is waiting for its promise
@@ -5404,10 +5749,12 @@ sap.ui.define([
 
 		oCacheMock.expects("fetchTypes").withExactArgs()
 			.returns(SyncPromise.resolve(mTypeForMetaPath));
-		this.mock(_Helper).expects("getKeyProperties")
-			.returns({"ID" : "'3'"});
+		this.mock(_Helper).expects("getKeyFilter")
+			.withExactArgs(oElement, "/Employees", sinon.match.same(mTypeForMetaPath))
+			.returns("~key filter~");
 		this.oRequestorMock.expects("buildQueryString")
-			.returns("?$filter=%28age%20gt%2040%29%20and%20ID%20eq%20'3'");
+			.withExactArgs("/Employees", {$filter : "(age gt 40) and ~key filter~"}, false, false)
+			.returns("?$filter=%28age%20gt%2040%29%20and%20~key%20filter~");
 		this.oRequestorMock.expects("request")
 			.callsFake(function () {
 				return Promise.resolve({value : [oResult, oResult]});
