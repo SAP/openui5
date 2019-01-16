@@ -209,11 +209,11 @@ function(
 					selectedItems : {type : "sap.m.StandardListItem[]"},
 
 					/**
-					 * Returns the binding contexts of the selected items including the non-visible items.
+					 * Returns the binding contexts of the selected items including the non-visible items. See {@link sap.m.ListBase#getSelectedContexts getSelectedContexts} of <code>sap.m.ListBase</code>.
 					 * NOTE: In contrast to the parameter "selectedItems", this parameter will also include the selected but NOT visible items (e.g. due to list filtering). An empty array will be set for this parameter if no data binding is used.
 					 * NOTE: When the list binding is pre-filtered and there are items in the selection that are not visible upon opening the dialog, these contexts are not loaded. Therefore, these items will not be included in the selectedContexts array unless they are displayed at least once.
 					 */
-					selectedContexts : {type : "string[]"}
+					selectedContexts : {type : "object[]"}
 				}
 			},
 
