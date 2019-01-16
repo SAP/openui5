@@ -1,0 +1,10 @@
+<mvc:View xmlns:core="sap.ui.core" xmlns:mvc="sap.ui.core.mvc"
+          xmlns="sap.m" xmlns:html="http://www.w3.org/1999/xhtml"
+          width="100%">
+
+	<List id="somelist">
+		<items>
+			<StandardListItem title="My first item" description="This is the first item in the list" icon="sap-icon://bell"/>
+		</items>
+	</List>
+</mvc:View>

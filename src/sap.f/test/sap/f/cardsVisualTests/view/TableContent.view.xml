@@ -1,0 +1,25 @@
+<mvc:View
+	xmlns="sap.m"
+	xmlns:mvc="sap.ui.core.mvc"
+	xmlns:f="sap.f"
+	xmlns:w="sap.ui.integration.widgets"
+	displayBlock="true">
+
+    <Page title="{i18n>appTitle}">
+
+        <subHeader>
+            <Toolbar>
+                <ToolbarSpacer/>
+                <Title text="List Content Card "/>
+                <ToolbarSpacer/>
+            </Toolbar>
+        </subHeader>
+
+        <content>
+
+            <Panel>
+                <w:Card id="tablecard1" manifest="{manifests>/tableManifests/tablecard1}" width="400px" height="auto"/>
+            </Panel>
+        </content>
+    </Page>
+</mvc:View>
