@@ -11,10 +11,6 @@
 		"text": "List Card: Numeric Header",
 		"url": "./manifests/list.numeric.manifest.json"
 	}, {
-		"text": "Table Card",
-		"url": "./manifests/table.manifest.json"
-	},
-	{
 		"text": "Analytical Card",
 		"url": "./manifests/analytical.manifest.json"
 	}

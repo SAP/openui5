@@ -6,11 +6,13 @@
 		"type": "Table",
 		"header": {
 			"title": "Table Card with Top 5 Products",
-			"subtitle": "These are the top sellers this month",
+			"subTitle": "These are the top sellers this month",
 			"icon": {
 				"src": "sap-icon://sales-order"
 			},
-			"status": "5 of 100"
+			"status": {
+				"text": "5 of 100"
+			}
 		},
 		"content": {
 			"data": {
