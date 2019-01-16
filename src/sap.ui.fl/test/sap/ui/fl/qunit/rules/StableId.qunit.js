@@ -75,7 +75,7 @@ sap.ui.define([
 		executionScopeType: "global",
 		libName: "sap.ui.fl",
 		ruleId: "stableId",
-		expectedNumberOfIssues: 5
+		expectedNumberOfIssues: 4
 	});
 
 	QUnit.done(function() {
