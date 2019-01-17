@@ -279,11 +279,49 @@ sap.ui.define([
 						asExpression : false,
 						model : sinon.match.same(oMetaModel),
 						path : "/my/path", // trailing slash removed!
-						value : sinon.match.same(vRawValue)
+						value : sinon.match.same(vRawValue),
+						$$valueAsPromise : undefined
 					})
 				.returns(sResult);
 
 			assert.strictEqual(AnnotationHelper.value(vRawValue, {context : oContext}), sResult);
+		});
+	});
+
+	//*********************************************************************************************
+	QUnit.test("value: $$valueAsPromise", function (assert) {
+		var oModel = {
+				fetchObject : function () {}
+			},
+			oContext = {
+				getModel : function () {
+					return oModel;
+				},
+				getPath : function () {
+					return "/Equipments/@com.sap.vocabularies.UI.v1.LineItem/4/Value/";
+				}
+			},
+			oPromise,
+			vRawValue = {$Path: "EQUIPMENT_2_PRODUCT/Name"};
+
+		this.mock(Expression).expects("getExpression").withExactArgs({
+				asExpression : false,
+				model : sinon.match.same(oModel),
+				path : "/Equipments/@com.sap.vocabularies.UI.v1.LineItem/4/Value",
+				value : sinon.match.same(vRawValue),
+				$$valueAsPromise : true
+			}).callThrough();
+		this.mock(oModel).expects("fetchObject")
+			.withExactArgs("/Equipments/@com.sap.vocabularies.UI.v1.LineItem/4/Value/$Path/$Type")
+			.returns(SyncPromise.resolve(Promise.resolve("Edm.String")));
+
+		// code under test
+		oPromise = AnnotationHelper.value(vRawValue, {$$valueAsPromise : true, context : oContext});
+
+		assert.ok(oPromise instanceof Promise);
+
+		return oPromise.then(function (sValue) {
+			assert.strictEqual(sValue, "{EQUIPMENT_2_PRODUCT/Name}");
 		});
 	});
 
@@ -316,7 +354,7 @@ sap.ui.define([
 	//*********************************************************************************************
 	QUnit.test("value: 14.5.3.1.2 Function odata.fillUriTemplate", function (assert) {
 		var oMetaModel = {
-				getProperty : function (sPath) {}
+				fetchObject : function (sPath) {}
 			},
 			oMetaModelMock = this.mock(oMetaModel),
 			oModel = new JSONModel({
@@ -329,12 +367,12 @@ sap.ui.define([
 				.replace(/ /g, "%20")
 				.replace(/'/g, "%27");
 
-		oMetaModelMock.expects("getProperty")
+		oMetaModelMock.expects("fetchObject")
 			.withExactArgs("/$Apply/1/$LabeledElement/$Apply/0/$Path/$Type")
-			.returns("Edm.Guid"); // City; just kidding
-		oMetaModelMock.expects("getProperty")
+			.returns(SyncPromise.resolve("Edm.Guid")); // City; just kidding
+		oMetaModelMock.expects("fetchObject")
 			.withExactArgs("/$Apply/2/$LabeledElement/$Apply/0/$Path/$Type")
-			.returns("Edm.String"); // Street
+			.returns(SyncPromise.resolve("Edm.String")); // Street
 
 		check(assert, {
 			$Apply : [

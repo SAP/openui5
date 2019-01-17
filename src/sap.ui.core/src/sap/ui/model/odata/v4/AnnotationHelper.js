@@ -331,7 +331,8 @@ sap.ui.define([
 						asExpression : false,
 						model : oDetails.context.getModel(),
 						path : sPath,
-						value : vRawValue
+						value : vRawValue,
+						$$valueAsPromise : oDetails.$$valueAsPromise
 					});
 			}
 		};
