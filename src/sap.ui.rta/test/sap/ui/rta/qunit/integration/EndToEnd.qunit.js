@@ -1,16 +1,17 @@
 /* global QUnit */
 
 sap.ui.define([
-	'sap/ui/thirdparty/jquery',
-	'sap/ui/rta/RuntimeAuthoring',
-	'sap/ui/fl/FakeLrepConnectorSessionStorage',
-	'sap/ui/fl/FakeLrepSessionStorage',
-	'sap/ui/dt/OverlayRegistry',
-	'qunit/RtaQunitUtils',
+	"sap/ui/thirdparty/jquery",
+	"sap/ui/rta/RuntimeAuthoring",
+	"sap/ui/fl/FakeLrepConnectorSessionStorage",
+	"sap/ui/fl/FakeLrepSessionStorage",
+	"sap/ui/dt/OverlayRegistry",
+	"qunit/RtaQunitUtils",
 	"sap/ui/fl/ChangePersistenceFactory",
 	"sap/ui/qunit/QUnitUtils",
 	"sap/ui/events/KeyCodes",
-	'sap/ui/thirdparty/sinon-4'
+	"sap/ui/qunit/utils/waitForThemeApplied",
+	"sap/ui/thirdparty/sinon-4"
 
 ], function (
 	jQuery,
@@ -22,6 +23,7 @@ sap.ui.define([
 	ChangePersistenceFactory,
 	QUnitUtils,
 	KeyCodes,
+	waitForThemeApplied,
 	sinon
 ) {
 	"use strict";
@@ -487,4 +489,6 @@ sap.ui.define([
 		oCompCont.destroy();
 		jQuery("#qunit-fixture").hide();
 	});
+
+	return waitForThemeApplied();
 });

@@ -1,9 +1,11 @@
 /*global QUnit*/
 
 sap.ui.define([
-	'sap/ui/rta/test/controlEnablingCheck'
+	"sap/ui/rta/test/controlEnablingCheck",
+	"sap/ui/qunit/utils/waitForThemeApplied"
 ], function (
-	rtaControlEnablingCheck
+	rtaControlEnablingCheck,
+	waitForThemeApplied
 ) {
 	"use strict";
 
@@ -86,4 +88,6 @@ sap.ui.define([
 	QUnit.done(function () {
 		jQuery("#qunit-fixture").hide();
 	});
+
+	return waitForThemeApplied();
 });

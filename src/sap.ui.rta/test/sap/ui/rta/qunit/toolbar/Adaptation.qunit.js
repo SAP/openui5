@@ -1,13 +1,15 @@
 /*global QUnit*/
 
 sap.ui.define([
-	'sap/ui/rta/toolbar/Adaptation',
-	'sap/ui/Device',
-	'sap/ui/thirdparty/sinon-4'
+	"sap/ui/rta/toolbar/Adaptation",
+	"sap/ui/Device",
+	"sap/ui/qunit/utils/waitForThemeApplied",
+	"sap/ui/thirdparty/sinon-4"
 ],
 function(
 	Adaptation,
 	Device,
+	waitForThemeApplied,
 	sinon
 ) {
 	'use strict';
@@ -156,4 +158,6 @@ function(
 	QUnit.done(function () {
 		jQuery("#qunit-fixture").hide();
 	});
+
+	return waitForThemeApplied();
 });

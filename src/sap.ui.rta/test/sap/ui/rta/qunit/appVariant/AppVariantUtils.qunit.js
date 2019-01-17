@@ -9,6 +9,7 @@ sap.ui.define([
 	"sap/ui/rta/Utils",
 	"sap/ui/fl/descriptorRelated/internal/Utils",
 	"sap/base/Log",
+	"sap/ui/qunit/utils/waitForThemeApplied",
 	"sap/ui/thirdparty/sinon-4"
 ], function (
 	jQuery,
@@ -19,6 +20,7 @@ sap.ui.define([
 	RtaUtils,
 	DescriptorUtils,
 	Log,
+	waitForThemeApplied,
 	sinon
 ) {
 	"use strict";
@@ -783,4 +785,6 @@ sap.ui.define([
 	QUnit.done(function () {
 		jQuery("#qunit-fixture").hide();
 	});
+
+	return waitForThemeApplied();
 });

@@ -14,7 +14,8 @@ sap.ui.define([
 	"sap/ui/core/Control",
 	"sap/ui/core/Manifest",
 	"sap/base/Log",
-	"sap/base/util/UriParameters"
+	"sap/base/util/UriParameters",
+	"sap/ui/qunit/utils/waitForThemeApplied"
 ], function (
 	jQuery,
 	sinon,
@@ -29,7 +30,8 @@ sap.ui.define([
 	Control,
 	Manifest,
 	Log,
-	UriParameters
+	UriParameters,
+	waitForThemeApplied
 ) {
 	"use strict";
 
@@ -588,4 +590,6 @@ sap.ui.define([
 	QUnit.done(function () {
 		jQuery("#qunit-fixture").hide();
 	});
+
+	return waitForThemeApplied();
 });

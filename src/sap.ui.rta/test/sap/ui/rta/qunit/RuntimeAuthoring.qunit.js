@@ -1,35 +1,36 @@
 /* global QUnit */
 
 sap.ui.define([
-	'sap/m/MessageBox',
-	'sap/ui/comp/smartform/Group',
-	'sap/ui/comp/smartform/GroupElement',
-	'sap/ui/comp/smartform/SmartForm',
+	"sap/m/MessageBox",
+	"sap/ui/comp/smartform/Group",
+	"sap/ui/comp/smartform/GroupElement",
+	"sap/ui/comp/smartform/SmartForm",
 	"sap/ui/core/BusyIndicator",
-	'sap/ui/Device',
-	'sap/ui/dt/plugin/ContextMenu',
-	'sap/ui/dt/DesignTimeMetadata',
-	'sap/ui/dt/OverlayRegistry',
-	'sap/ui/dt/Overlay',
-	'sap/ui/fl/registry/ChangeRegistry',
-	'sap/ui/fl/Change',
-	'sap/ui/fl/Utils',
-	'sap/ui/rta/Utils',
+	"sap/ui/Device",
+	"sap/ui/dt/plugin/ContextMenu",
+	"sap/ui/dt/DesignTimeMetadata",
+	"sap/ui/dt/OverlayRegistry",
+	"sap/ui/dt/Overlay",
+	"sap/ui/fl/registry/ChangeRegistry",
+	"sap/ui/fl/Change",
+	"sap/ui/fl/Utils",
+	"sap/ui/rta/Utils",
 	"sap/ui/rta/appVariant/AppVariantUtils",
-	'sap/ui/fl/FakeLrepSessionStorage',
-	'sap/ui/rta/RuntimeAuthoring',
-	'sap/ui/rta/command/Stack',
-	'sap/ui/rta/command/CommandFactory',
-	'sap/ui/rta/plugin/Remove',
-	'sap/ui/base/Event',
-	'sap/ui/base/EventProvider',
-	'sap/ui/rta/command/BaseCommand',
-	'qunit/RtaQunitUtils',
-	'sap/ui/rta/appVariant/Feature',
-	'sap/base/Log',
+	"sap/ui/fl/FakeLrepSessionStorage",
+	"sap/ui/rta/RuntimeAuthoring",
+	"sap/ui/rta/command/Stack",
+	"sap/ui/rta/command/CommandFactory",
+	"sap/ui/rta/plugin/Remove",
+	"sap/ui/base/Event",
+	"sap/ui/base/EventProvider",
+	"sap/ui/rta/command/BaseCommand",
+	"qunit/RtaQunitUtils",
+	"sap/ui/rta/appVariant/Feature",
+	"sap/base/Log",
 	"sap/base/util/UriParameters",
-	'sap/ui/qunit/QUnitUtils',
-	'sap/ui/thirdparty/sinon-4'
+	"sap/ui/qunit/QUnitUtils",
+	"sap/ui/qunit/utils/waitForThemeApplied",
+	"sap/ui/thirdparty/sinon-4"
 ],
 function(
 	MessageBox,
@@ -60,6 +61,7 @@ function(
 	Log,
 	UriParameters,
 	QUnitUtils,
+	waitForThemeApplied,
 	sinon
 ) {
 	"use strict";
@@ -1149,4 +1151,6 @@ function(
 		oComp.destroy();
 		jQuery("#qunit-fixture").hide();
 	});
+
+	return waitForThemeApplied();
 });

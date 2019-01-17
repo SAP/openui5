@@ -1,16 +1,17 @@
 /*global QUnit */
 
 sap.ui.define([
-	'sap/ui/thirdparty/jquery',
-	'sap/ui/dt/DesignTime',
-	'sap/ui/rta/command/CommandFactory',
-	'sap/ui/dt/OverlayRegistry',
-	'sap/ui/fl/registry/ChangeRegistry',
-	'sap/ui/fl/Utils',
-	'sap/ui/rta/plugin/Split',
-	'sap/m/Button',
-	'sap/m/Panel',
-	'sap/ui/thirdparty/sinon-4'
+	"sap/ui/thirdparty/jquery",
+	"sap/ui/dt/DesignTime",
+	"sap/ui/rta/command/CommandFactory",
+	"sap/ui/dt/OverlayRegistry",
+	"sap/ui/fl/registry/ChangeRegistry",
+	"sap/ui/fl/Utils",
+	"sap/ui/rta/plugin/Split",
+	"sap/m/Button",
+	"sap/m/Panel",
+	"sap/ui/qunit/utils/waitForThemeApplied",
+	"sap/ui/thirdparty/sinon-4"
 ],
 function (
 	jQuery,
@@ -22,6 +23,7 @@ function (
 	SplitPlugin,
 	Button,
 	Panel,
+	waitForThemeApplied,
 	sinon
 ) {
 	'use strict';
@@ -356,4 +358,6 @@ function (
 	QUnit.done(function () {
 		jQuery("#qunit-fixture").hide();
 	});
+
+	return waitForThemeApplied();
 });

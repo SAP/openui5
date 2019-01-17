@@ -16,6 +16,7 @@ sap.ui.define([
 	"sap/base/Log",
 	"sap/m/MessageBox",
 	"sap/ui/core/Manifest",
+	"sap/ui/qunit/utils/waitForThemeApplied",
 	"sap/ui/thirdparty/sinon-4"
 ],
 function (
@@ -34,6 +35,7 @@ function (
 	Log,
 	MessageBox,
 	Manifest,
+	waitForThemeApplied,
 	sinon
 ) {
 	"use strict";
@@ -714,4 +716,6 @@ function (
 	QUnit.done(function () {
 		jQuery("#qunit-fixture").hide();
 	});
+
+	return waitForThemeApplied();
 });

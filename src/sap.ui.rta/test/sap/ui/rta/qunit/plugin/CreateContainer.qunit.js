@@ -13,6 +13,7 @@ sap.ui.define([
 	"sap/ui/layout/form/SimpleForm",
 	"sap/ui/rta/plugin/CreateContainer",
 	"sap/ui/core/Title",
+	"sap/ui/qunit/utils/waitForThemeApplied",
 	"sap/ui/thirdparty/sinon-4"
 ],
 function (
@@ -28,6 +29,7 @@ function (
 	SimpleForm,
 	CreateContainerPlugin,
 	Title,
+	waitForThemeApplied,
 	sinon
 ) {
 	"use strict";
@@ -540,4 +542,6 @@ function (
 	QUnit.done(function () {
 		jQuery("#qunit-fixture").hide();
 	});
+
+	return waitForThemeApplied();
 });

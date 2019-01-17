@@ -6,17 +6,18 @@ sap.ui.define([
 	"sap/m/Page",
 	"sap/ui/rta/RuntimeAuthoring",
 	"sap/ui/rta/service/index",
-	"sap/ui/thirdparty/sinon-4",
-	"sap/ui/dt/Util"
-],
-function (
+	"sap/ui/dt/Util",
+	"sap/ui/qunit/utils/waitForThemeApplied",
+	"sap/ui/thirdparty/sinon-4"
+], function (
 	UIComponent,
 	ComponentContainer,
 	Page,
 	RuntimeAuthoring,
 	mServicesDictionary,
-	sinon,
-	DtUtil
+	DtUtil,
+	waitForThemeApplied,
+	sinon
 ) {
 	"use strict";
 
@@ -630,4 +631,6 @@ function (
 	QUnit.done(function() {
 		jQuery("#qunit-fixture").hide();
 	});
+
+	return waitForThemeApplied();
 });
