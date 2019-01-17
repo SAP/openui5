@@ -33,32 +33,16 @@ sap.ui.define(['./ComboBoxBaseRenderer','./ComboBoxTextFieldRenderer', 'sap/ui/c
 		}
 	};
 	/**
-	 * Returns the accessibility state of the control.
+	 * Returns the inner aria describedby ids for the accessibility.
 	 *
 	 * @param {sap.ui.core.Control} oControl an object representation of the control.
-	 * @returns {Object}
+	 * @returns {String|undefined}
 	 */
-	MultiComboBoxRenderer.getAccessibilityState = function (oControl) {
-		var mAccessibilityState = ComboBoxTextFieldRenderer.getAccessibilityState.call(this, oControl),
-			oInvisibleTextId = oControl._oTokenizer && oControl._oTokenizer.getTokensInfoId();
+	MultiComboBoxRenderer.getAriaDescribedBy = function(oControl) {
+		var sAriaDescribedBy = ComboBoxTextFieldRenderer.getAriaDescribedBy.apply(this, arguments),
+		oInvisibleTextId = oControl._oTokenizer && oControl._oTokenizer.getTokensInfoId();
 
-		mAccessibilityState.expanded = oControl.isOpen();
-
-		if (sap.ui.getCore().getConfiguration().getAccessibility()) {
-			if (Device.browser.internet_explorer && mAccessibilityState.describedby) {
-				mAccessibilityState.describedby = {
-					value: (mAccessibilityState.describedby + " " + oInvisibleTextId).trim(),
-					append: true
-				};
-			}else {
-				mAccessibilityState.describedby = {
-					value: oInvisibleTextId.trim(),
-					append: true
-				};
-			}
-		}
-
-		return mAccessibilityState;
+		return (sAriaDescribedBy || "") + " " + oInvisibleTextId;
 	};
 
 	MultiComboBoxRenderer.prependInnerContent = function (oRm, oControl) {
