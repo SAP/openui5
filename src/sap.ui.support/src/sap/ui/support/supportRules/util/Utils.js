@@ -8,8 +8,10 @@
 sap.ui.define([],
 	function() {
 		"use strict";
+		var sInternalPingFilePath = jQuery.sap.getModulePath("sap.ui.support").replace(/(^|\/)resources\//, "$1test-resources/") + "/internal/.ping";
 
 		var Utils = {
+			bCanLoadInternalRules: null,
 
 			/**
 			 * Checks the distribution of UI5 that the  Application is using
@@ -31,27 +33,65 @@ sap.ui.define([],
 
 				return bResult;
 			},
+
 			/**
 			 * Checks if there are internal rules files that has to be loaded
 			 * @returns {boolean} whether there could be internal rules to load
 			 */
 			canLoadInternalRules: function () {
-				var sFilePath = jQuery.sap.getModulePath("sap.ui.support").replace(/(^|\/)resources\//, "$1test-resources/") + "/internal/.ping";
-				var bCanLoadInternalRules;
+				var that = this;
+
+				if (that.bCanLoadInternalRules !== null) {
+					return that.bCanLoadInternalRules;
+				}
 
 				jQuery.ajax({
 					type: "HEAD",
 					async: false,
-					url: sFilePath,
+					url: sInternalPingFilePath,
 					success: function () {
-						bCanLoadInternalRules =  true;
+						that.bCanLoadInternalRules = true;
 					},
 					error: function() {
-						bCanLoadInternalRules =  false;
+						that.bCanLoadInternalRules = false;
 					}
 				});
 
-				return bCanLoadInternalRules;
+				return that.bCanLoadInternalRules;
+			},
+
+			/**
+			 * Checks if there are internal rules files that has to be loaded
+			 * @returns {Promise} The returned promise resolves with an argument showing
+			 * whether internal rules can be loaded or not
+			 */
+			canLoadInternalRulesAsync: function () {
+				var that = this;
+
+				var oInternalRulesPromise = new Promise(function (resolve) {
+
+					if (that.bCanLoadInternalRules !== null) {
+						resolve(that.bCanLoadInternalRules);
+
+						return;
+					}
+
+
+					jQuery.ajax({
+						type: "HEAD",
+						url: sInternalPingFilePath,
+						success: function () {
+							that.bCanLoadInternalRules = true;
+							resolve(that.bCanLoadInternalRules);
+						},
+						error: function() {
+							that.bCanLoadInternalRules = false;
+							resolve(that.bCanLoadInternalRules);
+						}
+					});
+				});
+
+				return oInternalRulesPromise;
 			},
 
 			/**

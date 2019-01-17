@@ -38,7 +38,6 @@ sap.ui.define([
 		var sSupportModulePath = jQuery.sap.getModulePath("sap.ui.support");
 		var sSupportModuleRootPath = sSupportModulePath.replace('/sap/ui/support', '');
 		var sAbsUrl = getAbsoluteUrl(sSupportModuleRootPath);
-		var bCanLoadInternalRules = Utils.canLoadInternalRules();
 
 		var RuleSetLoader = {};
 
@@ -129,61 +128,65 @@ sap.ui.define([
 		RuleSetLoader._fetchLibraryNamesWithSupportRules = function (oLoadedLibraries) {
 			return new Promise(function (mainResolve) {
 
-				var oLibNames = {
-					publicRules: [],
-					internalRules: [],
-					allRules: []
-				};
+				Utils.canLoadInternalRulesAsync().then(function (bCanLoadInternalRules) {
 
-				oLoadedLibraries = oLoadedLibraries || {};
+					var oLibNames = {
+						publicRules: [],
+						internalRules: [],
+						allRules: []
+					};
 
-				var aAllMetaPromises = [];
+					oLoadedLibraries = oLoadedLibraries || {};
 
-				Object.keys(oLoadedLibraries).forEach(function (sLibName) {
-					var oMetaPromise = new Promise(function (resolve) {
-						var rcFilePath = sAbsUrl + "/" + sLibName.replace(/\./g, '/') + "/.supportrc";
-						jQuery.ajax({
-							type: "GET",
-							dataType: "json",
-							url: rcFilePath,
-							success: function (data) {
-								resolve({
-									lib: sLibName,
-									rcData: data
-								});
-							},
-							error: function () {
-								resolve({
-									lib: sLibName,
-									rcData: null
-								});
+					var aAllMetaPromises = [];
+
+					Object.keys(oLoadedLibraries).forEach(function (sLibName) {
+						var oMetaPromise = new Promise(function (resolve) {
+							var rcFilePath = sAbsUrl + "/" + sLibName.replace(/\./g, '/') + "/.supportrc";
+							jQuery.ajax({
+								type: "GET",
+								dataType: "json",
+								url: rcFilePath,
+								success: function (data) {
+									resolve({
+										lib: sLibName,
+										rcData: data
+									});
+								},
+								error: function () {
+									resolve({
+										lib: sLibName,
+										rcData: null
+									});
+								}
+							});
+						});
+
+						aAllMetaPromises.push(oMetaPromise);
+					});
+
+					Promise.all(aAllMetaPromises).then(function (metaArgs) {
+						metaArgs.forEach(function (metaInfo) {
+							if (metaInfo.rcData) {
+								var bHasRules = false;
+
+								if (metaInfo.rcData.publicRules) {
+									oLibNames.publicRules.push(metaInfo.lib);
+									bHasRules = true;
+								}
+								if (bCanLoadInternalRules && metaInfo.rcData.internalRules) {
+									oLibNames.internalRules.push(metaInfo.lib);
+									bHasRules = true;
+								}
+								if (bHasRules && oLibNames.allRules.indexOf(metaInfo.lib) < 0) {
+									oLibNames.allRules.push(metaInfo.lib);
+								}
 							}
+
+							mainResolve(oLibNames);
 						});
 					});
 
-					aAllMetaPromises.push(oMetaPromise);
-				});
-
-				Promise.all(aAllMetaPromises).then(function (metaArgs) {
-					metaArgs.forEach(function (metaInfo) {
-						if (metaInfo.rcData) {
-							var bHasRules = false;
-
-							if (metaInfo.rcData.publicRules) {
-								oLibNames.publicRules.push(metaInfo.lib);
-								bHasRules = true;
-							}
-							if (bCanLoadInternalRules && metaInfo.rcData.internalRules) {
-								oLibNames.internalRules.push(metaInfo.lib);
-								bHasRules = true;
-							}
-							if (bHasRules && oLibNames.allRules.indexOf(metaInfo.lib) < 0) {
-								oLibNames.allRules.push(metaInfo.lib);
-							}
-						}
-
-						mainResolve(oLibNames);
-					});
 				});
 			});
 		};
@@ -202,6 +205,7 @@ sap.ui.define([
 				that = this,
 				supportModulePath = jQuery.sap.getModulePath("sap.ui.support"),
 				supportModulesRoot = supportModulePath.replace("sap/ui/support", ""),
+				bCanLoadInternalRules = Utils.canLoadInternalRules(),
 				bHasInternalRules = bCanLoadInternalRules && aLibNames.internalRules.length > 0,
 				iProgress = 0,
 				iRulesNumber = aLibNames.publicRules.length;
