@@ -10,7 +10,8 @@ sap.ui.define([
 	"sap/m/Input",
 	"sap/m/DatePicker",
 	"sap/ui/layout/VerticalLayout",
-	"sap/m/Button"
+	"sap/m/Button",
+	"sap/ui/qunit/utils/waitForThemeApplied"
 ],
 function(
 	DesignTime,
@@ -22,7 +23,8 @@ function(
 	Input,
 	DatePicker,
 	VerticalLayout,
-	Button
+	Button,
+	waitForThemeApplied
 ) {
 	"use strict";
 
@@ -148,4 +150,6 @@ function(
 	QUnit.done(function() {
 		jQuery("#qunit-fixture").hide();
 	});
+
+	return waitForThemeApplied();
 });

@@ -15,8 +15,9 @@ sap.ui.define([
 	"sap/m/OverflowToolbarButton",
 	"sap/m/FlexBox",
 	"sap/ui/layout/VerticalLayout",
-	"sap/ui/thirdparty/sinon-4",
-	"sap/ui/events/KeyCodes"
+	"sap/ui/events/KeyCodes",
+	"sap/ui/qunit/utils/waitForThemeApplied",
+	"sap/ui/thirdparty/sinon-4"
 ], function (
 	ContextMenuPlugin,
 	OverlayRegistry,
@@ -32,8 +33,9 @@ sap.ui.define([
 	OverflowToolbarButton,
 	FlexBox,
 	VerticalLayout,
-	sinon,
-	KeyCodes
+	KeyCodes,
+	waitForThemeApplied,
+	sinon
 ) {
 	"use strict";
 	var oSandbox = sinon.sandbox.create();
@@ -1830,4 +1832,6 @@ sap.ui.define([
 	QUnit.done(function () {
 		jQuery("#qunit-fixture").hide();
 	});
+
+	return waitForThemeApplied();
 });

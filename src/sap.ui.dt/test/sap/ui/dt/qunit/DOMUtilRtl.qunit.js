@@ -2,11 +2,13 @@
 
 sap.ui.define([
 	"sap/ui/dt/DOMUtil",
-	'sap/ui/Device'
+	"sap/ui/Device",
+	"sap/ui/qunit/utils/waitForThemeApplied"
 ],
 function(
 	DOMUtil,
-	Device
+	Device,
+	waitForThemeApplied
 ) {
 	"use strict";
 
@@ -97,4 +99,6 @@ function(
 	QUnit.done(function() {
 		jQuery("#qunit-fixture").hide();
 	});
+
+	return waitForThemeApplied();
 });

@@ -54,8 +54,7 @@ sap.ui.define(function () {
 			"DOMUtil": {
 				coverage: {
 					only: ['sap/ui/dt/DOMUtil']
-				},
-				autostart: false
+				}
 			},
 			"DOMUtilRtl": {
 				coverage: {

@@ -3,10 +3,12 @@
 sap.ui.define([
 	"sap/ui/dt/ManagedObjectObserver",
 	"sap/ui/core/Element",
+	"sap/ui/qunit/utils/waitForThemeApplied",
 	"sap/ui/thirdparty/sinon-4"
 ], function (
 	ManagedObjectObserver,
 	Element,
+	waitForThemeApplied,
 	sinon
 ) {
 	'use strict';
@@ -278,4 +280,6 @@ sap.ui.define([
 	QUnit.done(function() {
 		jQuery("#qunit-fixture").hide();
 	});
+
+	return waitForThemeApplied();
 });

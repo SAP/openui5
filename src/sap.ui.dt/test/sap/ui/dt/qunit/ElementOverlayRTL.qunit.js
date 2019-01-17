@@ -1,21 +1,21 @@
 /* global QUnit */
 
-QUnit.config.autostart = false;
-
 sap.ui.define([
 	"sap/ui/dt/ElementOverlay",
 	"sap/ui/dt/DesignTime",
 	"sap/ui/dt/OverlayRegistry",
 	"sap/m/Button",
 	"sap/m/Panel",
-	"sap/ui/Device"
-], function(
+	"sap/ui/Device",
+	"sap/ui/qunit/utils/waitForThemeApplied"
+], function (
 	ElementOverlay,
 	DesignTime,
 	OverlayRegistry,
 	Button,
 	Panel,
-	Device
+	Device,
+	waitForThemeApplied
 ) {
 	'use strict';
 
@@ -123,4 +123,6 @@ sap.ui.define([
 	QUnit.done(function() {
 		jQuery("#qunit-fixture").hide();
 	});
+
+	return waitForThemeApplied();
 });

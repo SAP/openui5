@@ -6,6 +6,7 @@ sap.ui.define([
 	"sap/ui/core/Popup",
 	"sap/ui/dt/Util",
 	"sap/base/Log",
+	"sap/ui/qunit/utils/waitForThemeApplied",
 	"sap/ui/thirdparty/sinon-4"
 ],
 function(
@@ -14,6 +15,7 @@ function(
 	Popup,
 	Util,
 	Log,
+	waitForThemeApplied,
 	sinon
 ){
 	"use strict";
@@ -156,8 +158,9 @@ function(
 		});
 	});
 
-
 	QUnit.done(function() {
 		document.getElementById("qunit-fixture").style.display = "none";
 	});
+
+	return waitForThemeApplied();
 });

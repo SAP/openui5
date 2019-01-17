@@ -1,16 +1,16 @@
 /* global QUnit*/
 
 sap.ui.define([
-	'sap/ui/dt/DesignTime',
-	'sap/ui/dt/OverlayRegistry',
-	'sap/ui/dt/ElementUtil',
-	'sap/ui/core/UIComponent',
-	'sap/ui/core/ComponentContainer',
-	'sap/ui/layout/VerticalLayout',
-	'sap/m/Button',
-	'sap/ui/dt/DOMUtil'
-],
-function(
+	"sap/ui/dt/DesignTime",
+	"sap/ui/dt/OverlayRegistry",
+	"sap/ui/dt/ElementUtil",
+	"sap/ui/core/UIComponent",
+	"sap/ui/core/ComponentContainer",
+	"sap/ui/layout/VerticalLayout",
+	"sap/m/Button",
+	"sap/ui/dt/DOMUtil",
+	"sap/ui/qunit/utils/waitForThemeApplied"
+], function (
 	DesignTime,
 	OverlayRegistry,
 	ElementUtil,
@@ -18,7 +18,8 @@ function(
 	ComponentContainer,
 	VerticalLayout,
 	Button,
-	DOMUtil
+	DOMUtil,
+	waitForThemeApplied
 ) {
 	'use strict';
 
@@ -203,4 +204,6 @@ function(
 	QUnit.done(function() {
 		jQuery("#qunit-fixture").hide();
 	});
+
+	return waitForThemeApplied();
 });
