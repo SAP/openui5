@@ -140,6 +140,9 @@ sap.ui.define(['sap/m/library',
 				oOverflowButton.addStyleClass('sapMBtnNoText');
 			}
 
+			// used to vertically center the button in Fiori 3 theme
+			oOverflowButton.addStyleClass("sapMITHVerticallyCenteredArrow");
+
 			oRM.renderControl(oOverflowButton);
 		}
 
