@@ -245,8 +245,14 @@ sap.ui.define([
 	 * Helper function that creates suggestion popup.
 	 */
 	SuggestionsPopover.prototype._createSuggestionPopup = function () {
-		var oInput = this._oInput;
-		var oMessageBundle = oInput._oRb; // TODO create own message bundle
+		var oInput = this._oInput,
+			oMessageBundle = oInput._oRb, // TODO create own message bundle
+			bShouldNotDestroyItems = function (oList) {
+				// In case the list is in MultSelect mode, the popover might be opened by MultiComboBox.
+				// The MultiComboBox stores references to the list items in its items, so it can manage
+				// the synchronization of their selection state and the tokens created in the tokenizer.
+				return !(oList && oList instanceof List && oList.getMode() !== ListMode.MultiSelect);
+			};
 
 		this._oPopover = !this._bUseDialog ?
 			(new Popover(oInput.getId() + "-popup", {
@@ -256,16 +262,16 @@ sap.ui.define([
 				initialFocus: oInput,
 				horizontalScrolling: true
 			}).attachAfterClose(function() {
+				if (bShouldNotDestroyItems(this._oList)) {
+					return;
+				}
+
 				// only destroy items in simple suggestion mode
 				if (this._oList instanceof Table) {
 					this._oList.removeSelections(true);
 				} else {
 					this._oList.destroyItems();
 				}
-				this._deregisterResize();
-			}.bind(this)).attachBeforeOpen(function () {
-				this._resizePopup();
-				this._registerResize();
 			}.bind(this)))
 			:
 			(new Dialog(oInput.getId() + "-popup", {
@@ -281,13 +287,14 @@ sap.ui.define([
 				horizontalScrolling : false,
 				initialFocus : this._oPopupInput
 			}).attachAfterClose(function() {
-				// only destroy items in simple suggestion mode
-				if (this._oList) {
-					if (Table && !(this._oList instanceof Table)) {
-						this._oList.destroyItems();
-					} else {
-						this._oList.removeSelections(true);
-					}
+				if (bShouldNotDestroyItems(this._oList)) {
+					return;
+				}
+
+				if (Table && !(this._oList instanceof Table)) {
+					this._oList.destroyItems();
+				} else {
+					this._oList.removeSelections(true);
 				}
 			}.bind(this)));
 
@@ -450,6 +457,10 @@ sap.ui.define([
 	SuggestionsPopover.prototype._onsaparrowkey = function(oEvent, sDir, iItems) {
 		var oInput = this._oInput;
 
+		if (oEvent.isMarked()) {
+			return;
+		}
+
 		if (!oInput.getEnabled() || !oInput.getEditable()) {
 			return;
 		}
@@ -596,6 +607,10 @@ sap.ui.define([
 	 * @returns {boolean} Determines if the Input has tabular suggestions.
 	 */
 	SuggestionsPopover.prototype._hasTabularSuggestions = function() {
+		if (!this._oSuggestionTable) {
+			return;
+		}
+
 		return !!(this._oSuggestionTable.getColumns() && this._oSuggestionTable.getColumns().length);
 	};
 
