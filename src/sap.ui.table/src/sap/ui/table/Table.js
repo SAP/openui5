@@ -3491,7 +3491,8 @@ sap.ui.define([
 	 * @private
 	 */
 	Table.prototype._updateRows = function(iNumberOfRows, sReason, bUpdateUI) {
-		if (isNaN(iNumberOfRows)) {
+		if (isNaN(iNumberOfRows) || this.bIsDestroyed || this._bIsBeingDestroyed) {
+			// Rows of a destroyed table should not be updated.
 			return false;
 		}
 
