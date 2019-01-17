@@ -92,19 +92,6 @@ sap.ui.define([
 					});
 				},
 
-				iWaitUntilTheListIsNotVisible : function () {
-					return this.waitFor({
-						id : sTableId,
-						viewName : sViewName,
-						visible: false,
-						matchers : function (oTable) {
-							// visible false also returns visible controls so we need an extra check here
-							return !oTable.$().is(":visible");
-						},
-						errorMessage : "The Table is still visible"
-					});
-				},
-
 				iSearchForTheFirstObject: function() {
 					var sFirstObjectTitle;
 
