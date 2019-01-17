@@ -10321,6 +10321,28 @@ sap.ui.define([
 		});
 	}
 
+	if (Device.browser.internet_explorer) {
+		QUnit.test("setTooltip()", function(assert) {
+			var oComboBox = new ComboBox({
+				value: "Value",
+				tooltip: "Tooltip",
+				placeholder: "Placeholder"
+			});
+
+			oComboBox.placeAt("content");
+			sap.ui.getCore().applyChanges();
+
+			oComboBox.setTooltip('');
+			sap.ui.getCore().applyChanges();
+
+			//Assert
+			assert.strictEqual(oComboBox.getTooltip(), null, 'setTooltip() method should not throw an error');
+
+			//Cleanup
+			oComboBox.destroy();
+		});
+	}
+
 	QUnit.module("Integration");
 
 	QUnit.test("Keep selected value on parent re-render", function (assert) {
