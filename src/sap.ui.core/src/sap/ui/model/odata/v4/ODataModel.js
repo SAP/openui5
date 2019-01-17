@@ -713,7 +713,7 @@ sap.ui.define([
 							aExpandQueryOptions);
 					}
 				}
-			} else if (sOptionName === "$count" ) {
+			} else if (sOptionName === "$count") {
 				if (typeof vValue  === "boolean") {
 					if (!vValue) {
 						delete mOptions.$count;

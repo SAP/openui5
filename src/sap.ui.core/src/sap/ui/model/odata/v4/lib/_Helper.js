@@ -88,7 +88,7 @@ sap.ui.define([
 		addToSelect : function (mQueryOptions, aSelectPaths) {
 			mQueryOptions.$select = mQueryOptions.$select || [];
 			aSelectPaths.forEach(function (sPath) {
-				if (mQueryOptions.$select.indexOf(sPath) < 0 ) {
+				if (mQueryOptions.$select.indexOf(sPath) < 0) {
 					mQueryOptions.$select.push(sPath);
 				}
 			});
