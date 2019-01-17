@@ -10,6 +10,7 @@ sap.ui.define([
 	"sap/ui/fl/registry/ChangeRegistry",
 	"sap/ui/fl/Utils",
 	"sap/ui/qunit/QUnitUtils",
+	"sap/ui/qunit/utils/waitForThemeApplied",
 	"sap/ui/thirdparty/sinon-4"
 ],
 function (
@@ -22,6 +23,7 @@ function (
 	ChangeRegistry,
 	FlUtils,
 	QUnitUtils,
+	waitForThemeApplied,
 	sinon
 ) {
 	"use strict";
@@ -405,4 +407,6 @@ function (
 	QUnit.done(function () {
 		jQuery("#qunit-fixture").hide();
 	});
+
+	return waitForThemeApplied();
 });

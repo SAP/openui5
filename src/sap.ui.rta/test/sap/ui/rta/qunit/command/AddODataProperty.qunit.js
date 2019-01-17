@@ -1,14 +1,15 @@
 /* global QUnit */
 
 sap.ui.define([
-	'sap/ui/rta/command/CommandFactory',
-	'sap/ui/rta/command/AddODataProperty',
-	'sap/ui/dt/DesignTimeMetadata',
-	'sap/ui/fl/registry/ChangeRegistry',
-	'sap/ui/dt/ElementDesignTimeMetadata',
-	'sap/ui/fl/Utils',
-	'sap/m/Button',
-	'sap/ui/thirdparty/sinon-4'
+	"sap/ui/rta/command/CommandFactory",
+	"sap/ui/rta/command/AddODataProperty",
+	"sap/ui/dt/DesignTimeMetadata",
+	"sap/ui/fl/registry/ChangeRegistry",
+	"sap/ui/dt/ElementDesignTimeMetadata",
+	"sap/ui/fl/Utils",
+	"sap/m/Button",
+	"sap/ui/qunit/utils/waitForThemeApplied",
+	"sap/ui/thirdparty/sinon-4"
 ],
 function(
 	CommandFactory,
@@ -18,6 +19,7 @@ function(
 	ElementDesignTimeMetadata,
 	Utils,
 	Button,
+	waitForThemeApplied,
 	sinon
 ) {
 	"use strict";
@@ -114,4 +116,6 @@ function(
 	QUnit.done(function () {
 		jQuery("#qunit-fixture").hide();
 	});
+
+	return waitForThemeApplied();
 });

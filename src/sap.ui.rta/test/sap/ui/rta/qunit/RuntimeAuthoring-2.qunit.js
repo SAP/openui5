@@ -12,6 +12,7 @@ sap.ui.define([
 	"sap/ui/rta/command/CommandFactory",
 	"sap/ui/rta/plugin/Remove",
 	"qunit/RtaQunitUtils",
+	"sap/ui/qunit/utils/waitForThemeApplied",
 	"sap/ui/thirdparty/sinon-4"
 ], function (
 	MessageToast,
@@ -25,6 +26,7 @@ sap.ui.define([
 	CommandFactory,
 	Remove,
 	RtaQunitUtils,
+	waitForThemeApplied,
 	sinon
 ) {
 	"use strict";
@@ -716,4 +718,6 @@ sap.ui.define([
 		oComp.destroy();
 		jQuery("#qunit-fixture").hide();
 	});
+
+	return waitForThemeApplied();
 });

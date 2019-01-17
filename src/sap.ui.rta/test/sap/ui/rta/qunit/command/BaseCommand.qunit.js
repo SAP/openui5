@@ -1,35 +1,36 @@
 /*global QUnit*/
 
 sap.ui.define([
-	'sap/m/Button',
-	'sap/m/Input',
-	'sap/m/Text',
-	'sap/m/VBox',
-	'sap/m/List',
-	'sap/m/CustomListItem',
-	'sap/m/ObjectHeader',
-	'sap/m/ObjectAttribute',
-	'sap/ui/layout/VerticalLayout',
-	'sap/ui/table/Column',
-	'sap/ui/dt/DesignTime',
+	"sap/m/Button",
+	"sap/m/Input",
+	"sap/m/Text",
+	"sap/m/VBox",
+	"sap/m/List",
+	"sap/m/CustomListItem",
+	"sap/m/ObjectHeader",
+	"sap/m/ObjectAttribute",
+	"sap/ui/layout/VerticalLayout",
+	"sap/ui/table/Column",
+	"sap/ui/dt/DesignTime",
 	"sap/ui/dt/OverlayRegistry",
-	'sap/ui/dt/ElementDesignTimeMetadata',
-	'sap/ui/rta/command/CommandFactory',
-	'sap/ui/rta/command/FlexCommand',
-	'sap/ui/rta/command/BaseCommand',
-	'sap/ui/rta/command/CompositeCommand',
-	'sap/ui/rta/command/Stack',
-	'sap/ui/fl/changeHandler/MoveControls',
-	'sap/ui/fl/changeHandler/HideControl',
-	'sap/ui/fl/registry/ChangeRegistry',
-	'sap/ui/fl/registry/SimpleChanges',
-	'sap/ui/fl/FlexControllerFactory',
-	'sap/ui/fl/ChangePersistenceFactory',
-	'sap/ui/fl/Change',
-	'sap/ui/model/json/JSONModel',
-	'sap/ui/fl/Utils',
-	'sap/ui/rta/ControlTreeModifier',
-	'sap/ui/thirdparty/sinon-4'
+	"sap/ui/dt/ElementDesignTimeMetadata",
+	"sap/ui/rta/command/CommandFactory",
+	"sap/ui/rta/command/FlexCommand",
+	"sap/ui/rta/command/BaseCommand",
+	"sap/ui/rta/command/CompositeCommand",
+	"sap/ui/rta/command/Stack",
+	"sap/ui/fl/changeHandler/MoveControls",
+	"sap/ui/fl/changeHandler/HideControl",
+	"sap/ui/fl/registry/ChangeRegistry",
+	"sap/ui/fl/registry/SimpleChanges",
+	"sap/ui/fl/FlexControllerFactory",
+	"sap/ui/fl/ChangePersistenceFactory",
+	"sap/ui/fl/Change",
+	"sap/ui/model/json/JSONModel",
+	"sap/ui/fl/Utils",
+	"sap/ui/rta/ControlTreeModifier",
+	"sap/ui/qunit/utils/waitForThemeApplied",
+	"sap/ui/thirdparty/sinon-4"
 ],
 function (
 	Button,
@@ -60,6 +61,7 @@ function (
 	JSONModel,
 	FlexUtils,
 	RtaControlTreeModifier,
+	waitForThemeApplied,
 	sinon
 ) {
 	"use strict";
@@ -1488,4 +1490,6 @@ function (
 	QUnit.done(function () {
 		jQuery("#qunit-fixture").hide();
 	});
+
+	return waitForThemeApplied();
 });

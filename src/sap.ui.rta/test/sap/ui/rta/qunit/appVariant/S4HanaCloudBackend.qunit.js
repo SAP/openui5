@@ -3,10 +3,12 @@
 sap.ui.define([
 	"sap/ui/rta/appVariant/S4HanaCloudBackend",
 	"sap/ui/thirdparty/jquery",
+	"sap/ui/qunit/utils/waitForThemeApplied",
 	"sap/ui/thirdparty/sinon-4"
 ], function (
 	S4HanaCloudBackend,
 	jQuery,
+	waitForThemeApplied,
 	sinon
 ) {
 	"use strict";
@@ -223,4 +225,6 @@ sap.ui.define([
 	QUnit.done(function () {
 		jQuery("#qunit-fixture").hide();
 	});
+
+	return waitForThemeApplied();
 });

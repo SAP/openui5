@@ -1,10 +1,12 @@
 /*global QUnit*/
 
 sap.ui.define([
-	"sap/ui/rta/util/BindingsExtractor"
+	"sap/ui/rta/util/BindingsExtractor",
+	"sap/ui/qunit/utils/waitForThemeApplied"
 ],
-function(
-	BindingsExtractor
+function (
+	BindingsExtractor,
+	waitForThemeApplied
 ) {
 	"use strict";
 
@@ -108,4 +110,6 @@ function(
 	QUnit.done(function () {
 		jQuery("#qunit-fixture").hide();
 	});
+
+	return waitForThemeApplied();
 });

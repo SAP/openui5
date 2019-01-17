@@ -1,15 +1,16 @@
 /* global QUnit */
 
 sap.ui.define([
-	'sap/ui/fl/Utils',
-	'sap/ui/fl/registry/ChangeRegistry',
-	'sap/ui/rta/command/CommandFactory',
-	'sap/ui/dt/ElementDesignTimeMetadata',
-	'sap/ui/dt/OverlayRegistry',
-	'sap/ui/dt/ElementOverlay',
-	'sap/m/Button',
-	'sap/m/Panel',
-	'sap/ui/thirdparty/sinon-4'
+	"sap/ui/fl/Utils",
+	"sap/ui/fl/registry/ChangeRegistry",
+	"sap/ui/rta/command/CommandFactory",
+	"sap/ui/dt/ElementDesignTimeMetadata",
+	"sap/ui/dt/OverlayRegistry",
+	"sap/ui/dt/ElementOverlay",
+	"sap/m/Button",
+	"sap/m/Panel",
+	"sap/ui/qunit/utils/waitForThemeApplied",
+	"sap/ui/thirdparty/sinon-4"
 ],
 function (
 	FlUtils,
@@ -20,6 +21,7 @@ function (
 	ElementOverlay,
 	Button,
 	Panel,
+	waitForThemeApplied,
 	sinon
 ) {
 	'use strict';
@@ -125,7 +127,7 @@ function (
 			}.bind(this))
 
 			.catch(function (oError) {
-				assert.ok(false, 'catch must never be called - Error: ' + oError);
+				assert.ok(false, "catch must never be called - Error: " + oError);
 			});
 		});
 	});
@@ -133,4 +135,6 @@ function (
 	QUnit.done(function () {
 		jQuery("#qunit-fixture").hide();
 	});
+
+	return waitForThemeApplied();
 });

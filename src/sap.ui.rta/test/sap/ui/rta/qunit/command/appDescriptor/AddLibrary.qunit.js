@@ -1,12 +1,13 @@
 /* global QUnit */
 
 sap.ui.define([
-	'sap/ui/fl/Utils',
-	'sap/ui/fl/descriptorRelated/api/DescriptorInlineChangeFactory',
-	'sap/ui/fl/descriptorRelated/api/DescriptorChangeFactory',
-	'sap/ui/rta/command/CommandFactory',
-	'sap/m/Button',
-	'sap/ui/thirdparty/sinon-4'
+	"sap/ui/fl/Utils",
+	"sap/ui/fl/descriptorRelated/api/DescriptorInlineChangeFactory",
+	"sap/ui/fl/descriptorRelated/api/DescriptorChangeFactory",
+	"sap/ui/rta/command/CommandFactory",
+	"sap/m/Button",
+	"sap/ui/qunit/utils/waitForThemeApplied",
+	"sap/ui/thirdparty/sinon-4"
 ],
 function (
 	FlUtils,
@@ -14,6 +15,7 @@ function (
 	DescriptorChangeFactory,
 	CommandFactory,
 	Button,
+	waitForThemeApplied,
 	sinon
 ) {
 	'use strict';
@@ -150,8 +152,9 @@ function (
 		});
 	});
 
-
 	QUnit.done(function () {
 		jQuery("#qunit-fixture").hide();
 	});
+
+	return waitForThemeApplied();
 });

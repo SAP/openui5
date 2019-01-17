@@ -1,19 +1,20 @@
 /* global QUnit */
 
 sap.ui.define([
-	'sap/ui/fl/Utils',
-	'sap/ui/fl/Change',
-	'sap/ui/core/Manifest',
-	'sap/ui/rta/command/CommandFactory',
-	'sap/ui/dt/ElementDesignTimeMetadata',
-	'sap/ui/dt/OverlayRegistry',
-	'sap/ui/dt/ElementOverlay',
-	'sap/ui/fl/variants/VariantManagement',
-	'sap/ui/rta/plugin/ControlVariant',
-	'sap/ui/fl/variants/VariantModel',
-	'sap/ui/fl/variants/VariantController',
-	'sap/ui/fl/FlexControllerFactory',
-	'sap/ui/thirdparty/sinon-4'
+	"sap/ui/fl/Utils",
+	"sap/ui/fl/Change",
+	"sap/ui/core/Manifest",
+	"sap/ui/rta/command/CommandFactory",
+	"sap/ui/dt/ElementDesignTimeMetadata",
+	"sap/ui/dt/OverlayRegistry",
+	"sap/ui/dt/ElementOverlay",
+	"sap/ui/fl/variants/VariantManagement",
+	"sap/ui/rta/plugin/ControlVariant",
+	"sap/ui/fl/variants/VariantModel",
+	"sap/ui/fl/variants/VariantController",
+	"sap/ui/fl/FlexControllerFactory",
+	"sap/ui/qunit/utils/waitForThemeApplied",
+	"sap/ui/thirdparty/sinon-4"
 ],
 function (
 	FlUtils,
@@ -28,6 +29,7 @@ function (
 	VariantModel,
 	VariantController,
 	FlexControllerFactory,
+	waitForThemeApplied,
 	sinon
 ) {
 	'use strict';
@@ -192,4 +194,6 @@ function (
 	QUnit.done(function () {
 		jQuery("#qunit-fixture").hide();
 	});
+
+	return waitForThemeApplied();
 });

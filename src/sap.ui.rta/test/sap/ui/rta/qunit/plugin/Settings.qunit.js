@@ -18,7 +18,8 @@ sap.ui.define([
 	"sap/ui/fl/Utils",
 	"sap/ui/dt/Util",
 	'sap/ui/base/ManagedObject',
-	"sap/base/Log"
+	"sap/base/Log",
+	"sap/ui/qunit/utils/waitForThemeApplied"
 ],
 function (
 	sinon,
@@ -38,7 +39,8 @@ function (
 	Utils,
 	DtUtil,
 	ManagedObject,
-	BaseLog
+	BaseLog,
+	waitForThemeApplied
 ) {
 	"use strict";
 
@@ -983,4 +985,6 @@ function (
 	QUnit.done(function () {
 		jQuery("#qunit-fixture").hide();
 	});
+
+	return waitForThemeApplied();
 });
