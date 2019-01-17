@@ -3842,7 +3842,7 @@ sap.ui.define([
 		assert.equal(fnInvalidateRowsAggregation.callCount, 5, "invalidateRowsAggregation() called after changing the column template");
 	});
 
-	QUnit.test("Destruction of the table", function(assert) {
+	QUnit.test("Destruction of the table if showNoData = true", function(assert) {
 		var oFakeRow = {
 			destroy: function() {},
 			getIndex: function() {return -1;}
@@ -3852,7 +3852,23 @@ sap.ui.define([
 		oTable._aRowClones.push(oFakeRow);
 		oTable.destroy();
 		assert.ok(oFakeRowDestroySpy.calledOnce, "Rows that are not in the aggregation were destroyed");
-		assert.deepEqual(oTable._aRowClones, [], "The row pool has been cleared");
+		assert.strictEqual(oTable._aRowClones.length, 0, "The row pool has been cleared");
+		assert.strictEqual(oTable.getRows().length, 0, "The rows aggregation has been cleared");
+	});
+
+	QUnit.test("Destruction of the table if showNoData = false", function(assert) {
+		var oFakeRow = {
+			destroy: function() {},
+			getIndex: function() {return -1;}
+		};
+		var oFakeRowDestroySpy = sinon.spy(oFakeRow, "destroy");
+
+		oTable._aRowClones.push(oFakeRow);
+		oTable.setShowNoData(false);
+		oTable.destroy();
+		assert.ok(oFakeRowDestroySpy.calledOnce, "Rows that are not in the aggregation were destroyed");
+		assert.strictEqual(oTable._aRowClones.length, 0, "The row pool has been cleared");
+		assert.strictEqual(oTable.getRows().length, 0, "The rows aggregation has been cleared");
 	});
 
 	QUnit.test("Destruction of the rows aggregation", function(assert) {
@@ -3865,7 +3881,8 @@ sap.ui.define([
 		oTable._aRowClones.push(oFakeRow);
 		oTable.destroyAggregation("rows");
 		assert.ok(oFakeRowDestroySpy.calledOnce, "Rows that are not in the aggregation were destroyed");
-		assert.deepEqual(oTable._aRowClones, [], "The row pool has been cleared");
+		assert.strictEqual(oTable._aRowClones.length, 0, "The row pool has been cleared");
+		assert.strictEqual(oTable.getRows().length, 0, "The rows aggregation has been cleared");
 	});
 
 	QUnit.test("Lazy row creation - VisibleRowCountMode = Fixed|Interactive", function(assert) {
