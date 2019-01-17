@@ -1,12 +1,13 @@
-/* global QUnit*/
+/* global QUnit */
 
 sap.ui.define([
 	"sap/ui/dt/DOMUtil",
-	'sap/m/Button'
-],
-function(
+	"sap/m/Button",
+	"sap/ui/qunit/utils/waitForThemeApplied"
+], function (
 	DOMUtil,
-	Button
+	Button,
+	waitForThemeApplied
 ){
 	"use strict";
 
@@ -602,14 +603,5 @@ function(
 		jQuery("#qunit-fixture").hide();
 	});
 
-	var oCore = sap.ui.getCore();
-	if (oCore.isThemeApplied()) {
-		QUnit.start();
-	} else {
-		var fnThemeChanged = function () {
-			QUnit.start();
-			oCore.detachThemeChanged(fnThemeChanged);
-		};
-		oCore.attachThemeChanged(fnThemeChanged);
-	}
+	return waitForThemeApplied();
 });

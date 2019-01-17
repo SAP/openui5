@@ -10,6 +10,7 @@ sap.ui.define([
 	"sap/m/Text",
 	"sap/m/Toolbar",
 	"sap/ui/layout/VerticalLayout",
+	"sap/ui/qunit/utils/waitForThemeApplied",
 	"sap/ui/thirdparty/sinon-4"
 ], function(
 	MetadataPropagationUtil,
@@ -21,6 +22,7 @@ sap.ui.define([
 	Text,
 	Toolbar,
 	VerticalLayout,
+	waitForThemeApplied,
 	sinon
 ) {
 	"use strict";
@@ -637,4 +639,6 @@ sap.ui.define([
 	QUnit.done(function() {
 		jQuery("#qunit-fixture").hide();
 	});
+
+	return waitForThemeApplied();
 });

@@ -1,4 +1,4 @@
-/* global QUnit*/
+/* global QUnit */
 
 sap.ui.define([
 	"sap/ui/dt/DesignTime",
@@ -8,7 +8,8 @@ sap.ui.define([
 	"sap/ui/table/AnalyticalTable",
 	"sap/ui/table/AnalyticalColumn",
 	"sap/m/Label",
-	"sap/ui/Device"
+	"sap/ui/Device",
+	"sap/ui/qunit/utils/waitForThemeApplied"
 ],
 function (
 	DesignTime,
@@ -18,7 +19,8 @@ function (
 	AnalyticalTable,
 	AnalyticalColumn,
 	Label,
-	Device
+	Device,
+	waitForThemeApplied
 ) {
 	"use strict";
 
@@ -195,8 +197,9 @@ function (
 		});
 	});
 
-
 	QUnit.done(function() {
 		jQuery("#qunit-fixture").hide();
 	});
+
+	return waitForThemeApplied();
 });

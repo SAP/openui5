@@ -1,14 +1,15 @@
 /* global QUnit */
 
 sap.ui.define([
-	'sap/ui/dt/DesignTime',
-	'sap/ui/dt/OverlayRegistry',
-	'sap/uxap/ObjectPageLayout',
-	'sap/uxap/ObjectPageSection',
-	'sap/uxap/ObjectPageSubSection',
-	'sap/uxap/ObjectPageHeader',
-	'sap/m/Button',
-	'sap/m/VBox'
+	"sap/ui/dt/DesignTime",
+	"sap/ui/dt/OverlayRegistry",
+	"sap/uxap/ObjectPageLayout",
+	"sap/uxap/ObjectPageSection",
+	"sap/uxap/ObjectPageSubSection",
+	"sap/uxap/ObjectPageHeader",
+	"sap/m/Button",
+	"sap/m/VBox",
+	"sap/ui/qunit/utils/waitForThemeApplied"
 ],
 function (
 	DesignTime,
@@ -18,7 +19,8 @@ function (
 	ObjectPageSubSection,
 	ObjectPageHeader,
 	Button,
-	VBox
+	VBox,
+	waitForThemeApplied
 ) {
 	'use strict';
 
@@ -84,8 +86,9 @@ function (
 		});
 	});
 
-
 	QUnit.done(function() {
 		jQuery("#qunit-fixture").hide();
 	});
+
+	return waitForThemeApplied();
 });

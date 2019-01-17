@@ -5,14 +5,16 @@ sap.ui.define([
 	"sap/ui/dt/DesignTime",
 	"sap/ui/dt/plugin/TabHandling",
 	"sap/m/Button",
-	"sap/ui/layout/VerticalLayout"
+	"sap/ui/layout/VerticalLayout",
+	"sap/ui/qunit/utils/waitForThemeApplied"
 ],
 function(
 	jQuery,
 	DesignTime,
 	TabHandling,
 	Button,
-	VerticalLayout
+	VerticalLayout,
+	waitForThemeApplied
 ) {
 	"use strict";
 
@@ -63,4 +65,6 @@ function(
 	QUnit.done(function () {
 		jQuery("#qunit-fixture").hide();
 	});
+
+	return waitForThemeApplied();
 });

@@ -5,12 +5,14 @@ sap.ui.define([
 	"sap/ui/core/Core",
 	"sap/ui/dt/ElementUtil",
 	"sap/ui/core/Element",
+	"sap/ui/qunit/utils/waitForThemeApplied",
 	"sap/ui/thirdparty/sinon-4"
 ],function (
 	ElementDesignTimeMetadata,
 	Core,
 	ElementUtil,
 	Element,
+	waitForThemeApplied,
 	sinon
 ) {
 	"use strict";
@@ -302,7 +304,10 @@ sap.ui.define([
 			assert.deepEqual(oExpectedScrollContainer, aScrollContainers[0], "the scrollContainer is correctly returned");
 		});
 	});
+
 	QUnit.done(function() {
 		jQuery("#qunit-fixture").hide();
 	});
+
+	return waitForThemeApplied();
 });

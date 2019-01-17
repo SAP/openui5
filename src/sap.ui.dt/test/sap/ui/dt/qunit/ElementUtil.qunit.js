@@ -30,6 +30,7 @@ sap.ui.define([
 	"sap/f/DynamicPage",
 	"sap/f/DynamicPageTitle",
 	"sap/ui/base/ManagedObject",
+	"sap/ui/qunit/utils/waitForThemeApplied",
 	"sap/ui/thirdparty/sinon-4"
 	],
 function(
@@ -62,6 +63,7 @@ function(
 	DynamicPage,
 	DynamicPageTitle,
 	ManagedObject,
+	waitForThemeApplied,
 	sinon
 ) {
 	"use strict";
@@ -936,4 +938,5 @@ function(
 		jQuery("#qunit-fixture").hide();
 	});
 
+	return waitForThemeApplied();
 });

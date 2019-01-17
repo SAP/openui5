@@ -9,8 +9,9 @@ sap.ui.define([
 	'sap/ui/dt/plugin/CutPaste',
 	'sap/ui/Device',
 	"sap/ui/qunit/QUnitUtils",
-	'sap/ui/thirdparty/sinon-4',
-	"sap/ui/events/KeyCodes"
+	"sap/ui/events/KeyCodes",
+	"sap/ui/qunit/utils/waitForThemeApplied",
+	'sap/ui/thirdparty/sinon-4'
 ],
 function(
 	jQuery,
@@ -21,8 +22,9 @@ function(
 	CutPaste,
 	Device,
 	QUnitUtils,
-	sinon,
-	KeyCodes
+	KeyCodes,
+	waitForThemeApplied,
+	sinon
 ) {
 	"use strict";
 
@@ -177,4 +179,6 @@ function(
 	QUnit.done(function () {
 		jQuery("#qunit-fixture").hide();
 	});
+
+	return waitForThemeApplied();
 });
