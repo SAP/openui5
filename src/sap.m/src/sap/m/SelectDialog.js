@@ -1066,7 +1066,20 @@ function(
 		if (!this._oClearButton) {
 			this._oClearButton = new Button(this.getId() + "-clear", {
 				text: this._oRb.getText("SELECTDIALOG_CLEARBUTTON"),
-				press: this.clearSelection.bind(this)
+				press: function() {
+					this.clearSelection();
+					if (!this.getMultiSelect()) {
+						fnClearAfterClose = function () {
+							this._oSelectedItem = this._oList.getSelectedItem();
+							this._aSelectedItems = this._oList.getSelectedItems();
+
+							this._oDialog.detachAfterClose(fnClearAfterClose);
+							this._fireConfirmAndUpdateSelection();
+						}.bind(this);
+						this._oDialog.attachAfterClose(fnClearAfterClose);
+						this._oDialog.close();
+					}
+				}.bind(this)
 			});
 		}
 		return this._oClearButton;
@@ -1112,7 +1125,7 @@ function(
 			oInfoBar = this._oList.getInfoToolbar();
 
 		if (this.getShowClearButton() && this._oClearButton) {
-			this._oClearButton.setEnabled(iSelectedContexts > 0);
+			this._oClearButton.setEnabled(iSelectedContexts > 0 || !this.getMultiSelect());
 		}
 		// update the selection label
 		oInfoBar.setVisible(!!iSelectedContexts && this.getMultiSelect());
