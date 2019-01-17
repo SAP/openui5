@@ -204,7 +204,7 @@ sap.ui.define([
 		XHRInterceptor.register(INTERACTION, "send" ,function() {
 			if (this.pendingInteraction) {
 				// double string length for byte length as in js characters are stored as 16 bit ints
-				this.pendingInteraction.bytesSent += arguments[0] ? arguments[0].length * 2 : 0;
+				this.pendingInteraction.bytesSent += arguments[0] ? arguments[0].length : 0;
 			}
 		});
 
@@ -214,9 +214,8 @@ sap.ui.define([
 			if (!this.requestHeaderLength) {
 				this.requestHeaderLength = 0;
 			}
-			// double string length for byte length as in js characters are stored as 16 bit ints
-			// sHeader + ": " + sValue + " "   --  means two blank and one colon === 3
-			this.requestHeaderLength += ((sHeader + "").length + (sValue + "").length + 3) * 2;
+			// assume request header byte size
+			this.requestHeaderLength += (sHeader + "").length + (sValue + "").length;
 		});
 
 		// register the response handler for data collection
@@ -239,8 +238,7 @@ sap.ui.define([
 				bCompressed = this.getResponseHeader("content-encoding") === "gzip",
 				sFesrec = this.getResponseHeader("sap-perf-fesrec");
 			this.pendingInteraction.bytesReceived += sContentLength ? parseInt(sContentLength) : 0;
-			// double string length for byte length as in js characters are stored as 16 bit ints
-			this.pendingInteraction.bytesReceived += this.getAllResponseHeaders().length * 2;
+			this.pendingInteraction.bytesReceived += this.getAllResponseHeaders().length;
 			this.pendingInteraction.bytesSent += this.requestHeaderLength || 0;
 			// this should be true only if all responses are compressed
 			this.pendingInteraction.requestCompression = bCompressed && (this.pendingInteraction.requestCompression !== false);
