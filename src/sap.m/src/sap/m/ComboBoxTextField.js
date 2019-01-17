@@ -109,7 +109,7 @@ sap.ui.define([
 			}, this);
 
 			//Creates an invisible aria node for the given message bundle text in the static UIArea for ARIA announcements.
-			if (!this.oInvisibleText) {
+			if (!this.oInvisibleText && Device.browser.msie) {
 				this.oInvisibleText = new InvisibleText(this.getId() + '-describedby', {
 					text: oRb.getText("ACC_CTR_TYPE_COMBO")
 				}).toStatic();

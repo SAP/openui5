@@ -1038,7 +1038,7 @@ function(
 
 				oDomRef.appendChild(oDescribedByDomRef);
 			} else if (oDescribedByDomRef && !sAnnouncement) {
-				oDomRef.removeChild(oDescribedByDomRef);
+				oDescribedByDomRef.parentNode.removeChild(oDescribedByDomRef);
 				var sDescribedByDomRefId = oDescribedByDomRef.id;
 
 				if (sAriaDescribedby && sDescribedByDomRefId) {
