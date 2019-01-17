@@ -1323,10 +1323,12 @@ sap.ui.define([
 	thisLib.GenericTagDesign = {
 		/**
 		 * Everything from the control is rendered.
+		 * @public
 		 */
 		Full : "Full",
 		/**
 		 * Everything from the control is rendered except the status icon.
+		 * @public
 		 */
 		StatusIconHidden : "StatusIconHidden"
 	};
@@ -1342,11 +1344,13 @@ sap.ui.define([
 	thisLib.GenericTagValueState = {
 		/**
 		 * The value is rendered in its normal state.
+		 * @public
 		 */
 		None : "None",
 		/**
 		 * Warning icon is rendered that overrides the control set in the <code>value</code>
 		 * aggregation of the <code>GenericTag</code> control.
+		 * @public
 		 */
 		Error : "Error"
 	};
