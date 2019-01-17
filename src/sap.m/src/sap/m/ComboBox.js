@@ -242,7 +242,8 @@ sap.ui.define([
 		ComboBox.prototype.scrollToItem = function(oItem) {
 			var oPicker = this.getPicker(),
 				oPickerDomRef = oPicker.getDomRef("cont"),
-				oItemDomRef = oItem && this.getListItem(oItem).getDomRef();
+				oListItem = this.getListItem(oItem),
+				oItemDomRef = oItem && oListItem && oListItem.getDomRef();
 
 			if (!oPicker || !oPickerDomRef || !oItemDomRef) {
 				return;
@@ -274,9 +275,10 @@ sap.ui.define([
 
 		function fnSelectedItemOnViewPort(bIsListHidden) {
 			var oItem = this.getSelectedItem(),
-				oItemDomRef = oItem && this.getListItem(oItem).getDomRef(),
-				oItemOffsetTop = oItem && oItemDomRef.offsetTop,
-				oItemOffsetHeight = oItem && oItemDomRef.offsetHeight,
+				oListItem = this.getListItem(oItem),
+				oItemDomRef = oItem && oListItem && oListItem.getDomRef(),
+				oItemOffsetTop = oItemDomRef && oItemDomRef.offsetTop,
+				oItemOffsetHeight = oItemDomRef && oItemDomRef.offsetHeight,
 				oPicker = this.getPicker(),
 				oPickerDomRef = oPicker.getDomRef("cont"),
 				oPickerClientHeight = oPickerDomRef.clientHeight;
@@ -312,7 +314,7 @@ sap.ui.define([
 			if (oDomRef) {
 
 				// the aria-activedescendant attribute is set when the list is rendered
-				if (vItem && oListItem.getDomRef() && this.isOpen()) {
+				if (vItem && oListItem && oListItem.getDomRef() && this.isOpen()) {
 					oDomRef.setAttribute(sActivedescendant, vItem.getId());
 				} else {
 					oDomRef.removeAttribute(sActivedescendant);
