@@ -170,7 +170,7 @@ function(
 			 * This flag controls whether the Clear button is shown. When set to <code>true</code>, it provides a way to clear selection mode in Select Dialog.
 			 * We recommended enabling of the Clear button in the following cases, where a mechanism to clear the value is needed:
 			 * In case of single selection mode(default mode) for Select Dialog and <code>rememberSelections</code> is set to <code>true</code>. Clear button needs to be enabled in order to allow users to clear the selection.
-			 * In case of using <code>sap.m.Input</code> with <code>valueHepOnly</code> set to <code>true</code>, Clear button could be used for clearing selection.
+			 * In case of using <code>sap.m.Input</code> with <code>valueHelpOnly</code> set to <code>true</code>, the Clear button could be used for clearing selection.
 			 * In case the application stores a value and uses only Select Dialog to edit/maintain it.
 			 * <b>Note:</b>When used with oData, only the loaded selections will be cleared.
 			 * @since 1.58
