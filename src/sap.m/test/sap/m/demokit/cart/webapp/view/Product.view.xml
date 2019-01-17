@@ -21,7 +21,7 @@
 				<contentLeft>
 					<Button
 						type="Back"
-						visible="{device>/system/phone}"
+						visible="{appView>/smallScreenMode}"
 						press=".onBack"/>
 				</contentLeft>
 				<contentMiddle>

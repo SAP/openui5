@@ -33,7 +33,7 @@ sap.ui.define([
 		// Actions
 		When.onTheCategory.iPressOnTheFirstProduct();
 		When.onTheProduct.iAddTheDisplayedProductToTheCart();
-		When.onTheProduct.iGoToTheCartPage();
+		When.onTheProduct.iToggleTheCart();
 
 		// Assertions
 		Then.onTheCart.iShouldSeeTheProductInMyCart().

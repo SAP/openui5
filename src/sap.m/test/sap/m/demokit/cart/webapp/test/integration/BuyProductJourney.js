@@ -47,7 +47,7 @@ sap.ui.define([
 
 		When.onTheProduct.iAddTheDisplayedProductToTheCart();
 
-		When.onTheProduct.iGoToTheCartPage();
+		When.onTheProduct.iToggleTheCart();
 
 		// Assertions
 		Then.onTheCart.iShouldSeeTheProductInMyCart()
@@ -65,7 +65,7 @@ sap.ui.define([
 
 		// Actions
 		When.onHome.iPressOnTheFlatScreensCategory();
-		When.onTheWelcomePage.iGoToTheCartPage();
+		When.onTheWelcomePage.iToggleTheCart();
 
 		// Assertions
 		Then.onTheCart.iShouldSeeTheProductInMyCart();
@@ -108,7 +108,7 @@ sap.ui.define([
 	opaTest("Should return to checkout", function (Given, When, Then) {
 
 		// Actions
-		When.onTheWelcomePage.iGoToTheCartPage();
+		When.onTheWelcomePage.iToggleTheCart();
 		When.onTheCart.iPressOnTheProceedButton();
 
 		// Assertions

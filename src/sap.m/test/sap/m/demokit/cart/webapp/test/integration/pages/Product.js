@@ -49,7 +49,7 @@ sap.ui.define([
 					});
 				},
 
-				iGoToTheCartPage: function () {
+				iToggleTheCart: function () {
 					return this.waitFor({
 						controlType: "sap.m.Button",
 						matchers: new PropertyStrictEquals({name: "icon", value: "sap-icon://cart"}),
