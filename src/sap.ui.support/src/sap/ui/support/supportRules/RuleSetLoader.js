@@ -68,11 +68,12 @@ sap.ui.define([
 		 *
 		 * @private
 		 * @param {function} [fnReadyCbk] the function to be called after all rules are loaded.
+		 * @param {object} [mLibraries] Explicitly specify which libraries' rules to be loaded.
 		 * @returns {Promise<CommunicationBus>} mainPromise Has promises for all libraries regarding rulesets in the SupportAssistant
 		 */
-		RuleSetLoader._fetchSupportRuleSets = function (fnReadyCbk) {
+		RuleSetLoader._fetchSupportRuleSets = function (fnReadyCbk, mLibraries) {
 			var that = this,
-				mLoadedLibraries = sap.ui.getCore().getLoadedLibraries(),
+				mLoadedLibraries = mLibraries || sap.ui.getCore().getLoadedLibraries(),
 				oLibNamesWithRulesPromise = this._fetchLibraryNamesWithSupportRules(mLoadedLibraries);
 
 			var oMainPromise = new Promise(function (resolve) {

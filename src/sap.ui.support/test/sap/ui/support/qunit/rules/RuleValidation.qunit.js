@@ -4,19 +4,20 @@ sap.ui.define(
 	[ 'sap/ui/support/supportRules/RuleSetLoader', 'sap/ui/support/supportRules/util/RuleValidator' ],
 	function(RuleSetLoader, RuleValidator) {
 		'use strict';
+
 		// Constants
-		var aLibrariesToLoad = [
-				'sap.m',
-				'sap.ui.table',
-				'sap.ui.core',
-				'sap.ui.layout',
-				'sap.uxap',
-				'sap.f',
-				'sap.viz',
-				'sap.ui.fl',
-				'sap.ui.comp',
-				'sap.ui.unified'
-			],
+		var mLibrariesToLoad = {
+				'sap.ui.core': 0,
+				'sap.m': 1,
+				'sap.ui.table': 2,
+				'sap.ui.layout': 3,
+				'sap.uxap': 4,
+				'sap.f': 5,
+				'sap.viz': 6,
+				'sap.ui.fl': 7,
+				'sap.ui.comp': 8,
+				'sap.ui.unified': 9
+			},
 			oLibraries = {};
 
 		function test(sLibraryName) {
@@ -91,7 +92,9 @@ sap.ui.define(
 			});
 		}
 
-		RuleSetLoader._fetchSupportRuleSets(aLibrariesToLoad).then(function() {
+		RuleSetLoader._fetchSupportRuleSets(null, mLibrariesToLoad).then(function() {
+			QUnit.start();
+
 			Object.keys(RuleSetLoader._mRuleSets).map(function(sKey) {
 				var oLibrary = RuleSetLoader._mRuleSets[sKey];
 
