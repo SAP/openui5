@@ -943,6 +943,43 @@ sap.ui.define([
 		assert.equal(aChangeFileNames.indexOf(aVariants[2].controlChanges[1].getDefinition().fileName), "-1", "then CUSTOMER layer change not referenced");
 	});
 
+	QUnit.test("when calling 'addVariantToVariantManagement' on USER layer and a variant reference from the VENDOR layer with 2 VENDOR and one CUSTOMER change", function(assert) {
+		var oChange0 = new Change({
+			"fileName": "change0",
+			"selector": {
+				"id": "abc123"
+			}
+		});
+
+		var oFakeVariantData1 = {
+			"content" : {
+				"fileName": "newVariant1",
+				"variantReference": "variant0",
+				"layer": "USER",
+				"content": {
+					"title": "AA"
+				}
+			},
+			"controlChanges" : [oChange0]
+		};
+
+		var oVariantController = new VariantController("MyComponent", "1.2.3", this.oResponse);
+		var iIndex1 = oVariantController.addVariantToVariantManagement(oFakeVariantData1, "idMain1--variantManagementOrdersTable");
+
+		var aVariants = oVariantController.getVariants("idMain1--variantManagementOrdersTable");
+		var aChangeFileNames = aVariants[1].controlChanges.map(function (oChange) {
+			return oChange.getDefinition().fileName;
+		});
+
+		assert.equal(iIndex1, 1, "then index 1 received on adding variant AA");
+		assert.equal(aVariants[1].content.fileName, "newVariant1", "then the new variant with title AA added to the second position after Standard Variant (ascending sort)");
+		assert.equal(aVariants[1].controlChanges.length, 4, "then one own change and 3 referenced changes exists");
+		assert.equal(aChangeFileNames[0], aVariants[2].controlChanges[0].getDefinition().fileName, "then referenced change exists");
+		assert.equal(aChangeFileNames[1], aVariants[2].controlChanges[1].getDefinition().fileName, "then referenced change exists");
+		assert.equal(aChangeFileNames[2], aVariants[2].controlChanges[2].getDefinition().fileName, "then referenced change exists");
+		assert.equal(aChangeFileNames[3], oChange0.getDefinition().fileName, "then own change exists and placed to the array end");
+	});
+
 	QUnit.test("when calling 'removeVariantFromVariantManagement' with a variant", function(assert) {
 		var oVariantController = new VariantController("MyComponent", "1.2.3", this.oResponse);
 
