@@ -95,6 +95,7 @@ sap.ui.define([
 
 		AppVariantUtils.createDescriptorVariant = function(mParameters){
 			mParameters.layer = FlexUtils.getCurrentLayer(false);
+			mParameters.version = "1.0.0"; // Application variant version should be 1.0.0 which is expected by backend
 			return DescriptorVariantFactory.createNew(mParameters);
 		};
 
