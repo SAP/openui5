@@ -674,8 +674,8 @@ sap.ui.define([
 					};
 				});
 
-			QuickViewPage.prototype.setProperty = function () {
-				Control.prototype.setProperty.apply(this, arguments);
+			QuickViewPage.prototype.setProperty = function (sName, oValue) {
+				Control.prototype.setProperty.call(this, sName, oValue, true);
 
 				this._updatePage();
 			};
