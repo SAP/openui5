@@ -1,4 +1,4 @@
-sap.ui.define(["sap/ui/integration/services/Data", "sap/ui/core/EventBus"], function (Data, EventBus) {
+sap.ui.define(["sap/ui/integration/services/Data", "sap/ui/base/EventProvider"], function (Data, EventProvider) {
 	"use strict";
 
 	//Provide meaningful initial data
@@ -46,24 +46,36 @@ sap.ui.define(["sap/ui/integration/services/Data", "sap/ui/core/EventBus"], func
 	var UserRecent = Data.extend();
 
 	/**
-	 * All UserRecent instances share an EventBus to notify all subscribers of the service.
+	 * All UserRecent instances share an EventProvider to notify all subscribers of the service.
 	 */
-	var _oEventBus = new EventBus();
+	var _oEventProvider = new EventProvider();
+
+	var _CallbackRefs = new WeakMap();
 
 	UserRecent.prototype.attachDataChanged = function (fnHandler, oParams) {
 
 		// Do something with the oParams (if needed).
 
-		_oEventBus.subscribe("cardChannel", "dataChanged", function (sChannel, sEventId, oData) {
+		_CallbackRefs.set(fnHandler, function (oEvent) {
 			fnHandler({
-				data: oData
+				data: oEvent.getParameter("data")
 			});
 		});
+
+		_oEventProvider.attachEvent("dataChanged", _CallbackRefs.get(fnHandler));
+	};
+
+	UserRecent.prototype.detachDataChanged = function (fnHandler) {
+		var fnHandlerWrapper = _CallbackRefs.get(fnHandler);
+		if (fnHandlerWrapper) {
+			_oEventProvider.detachEvent("dataChanged", fnHandlerWrapper);
+			_CallbackRefs.set(fnHandler, null);
+		}
 	};
 
 	UserRecent.prototype.addData = function (oAddedData) {
 		oData.unshift(oAddedData);
-		_oEventBus.publish("cardChannel", "dataChanged", oData);
+		_oEventProvider.fireEvent("dataChanged", { data: oData });
 	};
 
 	UserRecent.prototype.getData = function () {

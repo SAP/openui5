@@ -17,16 +17,22 @@ sap.ui.define(['./Service'], function (Service) {
 	 * @callback fnDataChangeCallback
 	 * @param {Object} oEvent The event object.
 	 * @param {Object} oEvent.data The data.
-	 * @param {Object} oData Additional parameters which should be send along with the callback. Provided by attachDataChange function.
 	 */
 
 	/**
 	 * Attaches an event handler to the event with the given identifier.
 	 * @param {function} fnDataChangeCallback The handler function to call when the dataChange event occurs.
-	 * @param {Object} [oData] An object that will be passed to the handler along with the event object when the event is fired
+	 * @param {Object} [oParams] Additional parameters that can be used by the data service.
 	 * @abstract
 	 */
-	Data.prototype.attachDataChanged = function (fnDataChangeCallback, oData) {};
+	Data.prototype.attachDataChanged = function (fnDataChangeCallback, oParams) {};
+
+	/**
+	 * Detaches an event handler to the event with the given identifier.
+	 * @param {function} fnDataChangeCallback The handler function to call when the dataChange event occurs.
+	 * @abstract
+	 */
+	Data.prototype.detachDataChanged = function (fnDataChangeCallback) {};
 
 	/**
 	 * Expected by a consumer of a data service to retrieve updates of the data.

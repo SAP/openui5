@@ -133,6 +133,13 @@ sap.ui.define(["sap/ui/core/Control", "sap/ui/model/json/JSONModel", "sap/m/List
 		ListContent.prototype.destroy = function () {
 			this.setAggregation("_content", null);
 			this.setModel(null);
+
+			if (this._dataChangeHandler && this._oDataService) {
+				this._oDataService.detachDataChanged(this._dataChangeHandler);
+				this._dataChangeHandler = null;
+				this._oDataService = null;
+			}
+
 			return Control.prototype.destroy.apply(this, arguments);
 		};
 
@@ -278,14 +285,19 @@ sap.ui.define(["sap/ui/core/Control", "sap/ui/model/json/JSONModel", "sap/m/List
 			if (oService) {
 				this._oServiceManager.getService("sap.ui.integration.services.Data").then(function (oDataService) {
 					if (oDataService) {
+						this._dataChangeHandler = function (oEvent) {
+							this._updateModel(oEvent.data, oData.path);
+						}.bind(this);
+
 						oDataService.getData().then(function (data) {
 							this._updateModel(data, oData.path);
 						}.bind(this)).catch(function () {
 							Log.error("Card content data service failed to get data");
 						});
-						oDataService.attachDataChanged(function (oEvent) {
-							this._updateModel(oEvent.data, oData.path);
-						}.bind(this), oData.service.parameters);
+
+						oDataService.attachDataChanged(this._dataChangeHandler, oData.service.parameters);
+
+						this._oDataService = oDataService;
 					}
 				}.bind(this)).catch(function () {
 					Log.error("Data service unavailable");
