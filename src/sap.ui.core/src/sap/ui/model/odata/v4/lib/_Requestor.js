@@ -850,7 +850,7 @@ sap.ui.define([
 					fnResolve();
 				}, function (jqXHR, sTextStatus, sErrorMessage) {
 					that.oSecurityTokenPromise = null;
-					fnReject(_Helper.createError(jqXHR));
+					fnReject(_Helper.createError(jqXHR, "Could not refresh security token"));
 				});
 			});
 		}
@@ -1222,7 +1222,8 @@ sap.ui.define([
 							send(true);
 						}, fnReject);
 					} else {
-						fnReject(_Helper.createError(jqXHR, sRequestUrl, sOriginalResourcePath));
+                        fnReject(_Helper.createError(jqXHR, "Communication error", sRequestUrl,
+                            sOriginalResourcePath));
 					}
 				});
 			}
@@ -1274,7 +1275,8 @@ sap.ui.define([
 					vRequest.$reject(oError);
 				} else if (vResponse.status >= 400) {
 					vResponse.getResponseHeader = getResponseHeader;
-					oCause = _Helper.createError(vResponse, vRequest.url, vRequest.$resourcePath);
+					oCause = _Helper.createError(vResponse, "Communication error", vRequest.url,
+						vRequest.$resourcePath);
 					reject(oCause, vRequest);
 				} else if (vResponse.responseText) {
 					oResponse = JSON.parse(vResponse.responseText);

@@ -899,7 +899,8 @@ sap.ui.define([
 	 * @param {object} [mParameters.scope]
 	 *   Optional scope for lookup of aliases for computed annotations (since 1.43.0)
 	 * @returns {sap.ui.base.SyncPromise}
-	 *   A promise which is resolved with the requested metadata object as soon as it is available
+	 *   A promise which is resolved with the requested metadata object as soon as it is available;
+	 *   it is rejected if the requested metadata cannot be loaded
 	 *
 	 * @private
 	 * @see #requestObject
@@ -1300,7 +1301,9 @@ sap.ui.define([
 			return SyncPromise.resolve(oCountType);
 		}
 		// Note: undefined is more efficient than "" here
-		return this.fetchObject(undefined, oMetaContext).then(function (oProperty) {
+		return this.fetchObject(undefined, oMetaContext).catch(function () {
+			// do not log, we log a warning "No metadata for path..." afterwards
+		}).then(function (oProperty) {
 			var mConstraints,
 				sConstraintPath,
 				oType,
@@ -1378,6 +1381,8 @@ sap.ui.define([
 	 *    <li><code>entityPath</code>: The resolved, absolute path of the entity to be PATCHed
 	 *    <li><code>propertyPath</code>: The path of the property relative to the entity
 	 *   </ul>
+	 *   The promise is rejected if the requested metadata cannot be loaded or the key predicate
+     *   cannot be determined.
 	 *
 	 * @private
 	 */
@@ -2098,8 +2103,8 @@ sap.ui.define([
 	 * @param {object} [mParameters.scope]
 	 *   Optional scope for lookup of aliases for computed annotations (since 1.43.0)
 	 * @returns {Promise}
-	 *   A promise which is resolved with the requested metadata value as soon as it is
-	 *   available
+	 *   A promise which is resolved with the requested metadata value as soon as it is available;
+	 *   it is rejected if the requested metadata cannot be loaded
 	 *
 	 * @function
 	 * @public

@@ -2033,6 +2033,25 @@ sap.ui.define([
 	//TODO later: support for facet DefaultValue?
 
 	//*********************************************************************************************
+	QUnit.test("fetchUI5Type: fetchObject fails", function (assert) {
+		var oMetaContext = {};
+
+		this.mock(this.oMetaModel).expects("getMetaContext")
+			.withExactArgs("/Foo/bar").returns(oMetaContext);
+		this.mock(this.oMetaModel).expects("fetchObject")
+			.withExactArgs(undefined, sinon.match.same(oMetaContext))
+			.returns(SyncPromise.resolve(Promise.reject(new Error())));
+		this.oLogMock.expects("warning")
+			.withExactArgs("No metadata for path '/Foo/bar', using sap.ui.model.odata.type.Raw",
+				undefined, sODataMetaModel);
+
+		// code under test
+		return this.oMetaModel.fetchUI5Type("/Foo/bar").then(function (oType) {
+			assert.strictEqual(oType.getName(), "sap.ui.model.odata.type.Raw");
+		});
+	});
+
+	//*********************************************************************************************
 	QUnit.test("fetchUI5Type: $count", function (assert) {
 		var sPath = "/T€AMS/$count",
 			oType;

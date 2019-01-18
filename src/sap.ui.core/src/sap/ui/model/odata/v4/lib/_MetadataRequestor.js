@@ -95,7 +95,7 @@ sap.ui.define([
 								}
 								fnResolve(oJSON);
 							}, function (jqXHR, sTextStatus, sErrorMessage) {
-								var oError = _Helper.createError(jqXHR);
+								var oError = _Helper.createError(jqXHR, "Could not load metadata");
 
 								Log.error("GET " + sUrl, oError.message,
 									"sap.ui.model.odata.v4.lib._MetadataRequestor");
