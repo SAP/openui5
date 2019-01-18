@@ -5,9 +5,10 @@
 
 @_sap_f_Avatar_Color: @sapUiContentContrastTextColor;
 
-.sapFAvatarImageContain {
+.sapFAvatarImage {
 	background-color: @sapUiAccent7;
 	border-color: @sapUiAccent7;
+	color: @_sap_f_Avatar_Color;
 }
 .sapFAvatarIcon {
 	background-color: @sapUiAccent7;
@@ -18,14 +19,19 @@
 .sapFAvatarInitials {
 	background-color: @sapUiAccent7;
 	border-color: @sapUiAccent7;
+}
 
-	.sapFAvatarInitialsHolder {
-		color: @_sap_f_Avatar_Color;
-	}
+.sapFAvatarInitialsHolder {
+	color: @_sap_f_Avatar_Color;
 }
 
 .sapFAvatarSquare {
 	border-radius: 0.25rem;
+	.sapMImg,
+	.sapFAvatarImageHolder {
+		border-radius: 0.25rem;
+		-webkit-border-radius: 0.25rem;
+	}
 }
 
 .sapFAvatarM .sapFAvatarInitialsHolder {
