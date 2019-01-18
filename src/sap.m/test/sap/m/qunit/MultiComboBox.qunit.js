@@ -6268,6 +6268,7 @@ sap.ui.define([
 	QUnit.test("value state message should be opened if the input field is on focus", function(assert) {
 
 		// act
+		this.oMultiComboBox.focus();
 		this.oMultiComboBox.open();
 		sap.ui.getCore().applyChanges();
 		this.clock.tick(500);
