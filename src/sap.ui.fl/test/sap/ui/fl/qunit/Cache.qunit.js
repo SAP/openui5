@@ -352,9 +352,11 @@ sap.ui.define([
 		});
 
 		QUnit.test('getCacheKey is called and cache entry, etag, and current variant management-id are available', function(assert) {
-			var sEtag = "abc123";
+			// etag is returned from backend with double quotes and possibly also with W/ value at the begining
+			// returned cacheKey shouldn't contain this chars 'W/"abc123"' --> 'abc123'
+			var sEtag = 'W/"abc123"';
 			var sControlVariantId = "id_1541412437845_176_Copy";
-			var sCacheKeyResult = sEtag.concat('-', sControlVariantId);
+			var sCacheKeyResult = 'abc123'.concat('-', sControlVariantId);
 			var mComponentMock = {
 				name : "testComponent",
 				appVersion : "oldVersion"
