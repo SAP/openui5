@@ -1304,17 +1304,9 @@ sap.ui.define([
 		// Note: undefined is more efficient than "" here
 		return this.fetchObject(undefined, oMetaContext).then(function (oProperty) {
 			var mConstraints,
-				sConstraintPath,
 				oType,
 				oTypeInfo,
 				sTypeName = oRawType.getName();
-
-			function setConstraint(sKey, vValue) {
-				if (vValue !== undefined) {
-					mConstraints = mConstraints || {};
-					mConstraints[sKey] = vValue;
-				}
-			}
 
 			if (!oProperty) {
 				Log.warning("No metadata for path '" + sPath + "', using " + sTypeName, undefined,
@@ -1334,16 +1326,7 @@ sap.ui.define([
 				oTypeInfo = mUi5TypeForEdmType[oProperty.$Type];
 				if (oTypeInfo) {
 					sTypeName = oTypeInfo.type;
-					for (sConstraintPath in oTypeInfo.constraints) {
-						setConstraint(oTypeInfo.constraints[sConstraintPath],
-							sConstraintPath[0] === "@"
-								// external targeting
-								? that.getObject(sConstraintPath, oMetaContext)
-								: oProperty[sConstraintPath]);
-					}
-					if (oProperty.$Nullable === false) {
-						setConstraint("nullable", false);
-					}
+					mConstraints = that.getConstraints(oProperty, oMetaContext);
 				} else {
 					Log.warning("Unsupported type '" + oProperty.$Type + "', using " + sTypeName,
 						sPath, sODataMetaModel);
@@ -1658,6 +1641,55 @@ sap.ui.define([
 	// @override
 	ODataMetaModel.prototype.getAdapterFactoryModulePath = function () {
 		return "sap/ui/mdc/experimental/adapter/odata/v4/ODataAdapterFactory";
+	};
+
+	/**
+	 * Returns the type constraints for the given property.
+	 *
+	 * @param {object} oProperty
+	 *   The property
+	 * @param {object} oMetaContext
+	 *   The OData metadata model context corresponding to the given property
+	 * @returns {object}
+	 *   The type constraints for the property or <code>undefined</code> if the property's type is
+	 *   not supported
+	 *
+	 * @private
+	 */
+	ODataMetaModel.prototype.getConstraints = function (oProperty, oMetaContext) {
+		var sConstraintPath,
+			mConstraints,
+			oTypeConstraints,
+			oTypeInfo = mUi5TypeForEdmType[oProperty.$Type];
+
+		/*
+		 * Adds a constraint to the map of constraints if a value is given. Does not create the map
+		 * or a constraint if not needed.
+		 *
+		 * @param {string} sKey The constraint's name
+		 * @param {any} vValue The contraint's value
+		 */
+		function setConstraint(sKey, vValue) {
+			if (vValue !== undefined) {
+				mConstraints = mConstraints || {};
+				mConstraints[sKey] = vValue;
+			}
+		}
+
+		if (oTypeInfo) {
+			oTypeConstraints = oTypeInfo.constraints;
+			for (sConstraintPath in oTypeConstraints) {
+				setConstraint(oTypeConstraints[sConstraintPath],
+					sConstraintPath[0] === "@"
+						// external targeting
+						? this.getObject(sConstraintPath, oMetaContext)
+						: oProperty[sConstraintPath]);
+			}
+			if (oProperty.$Nullable === false) {
+				setConstraint("nullable", false);
+			}
+		}
+		return mConstraints;
 	};
 
 	/**
