@@ -552,10 +552,11 @@ sap.ui.define(['sap/ui/base/ManagedObject', 'sap/ui/core/Element', 'sap/ui/core/
 			this.itemTemplate = new SimpleElement("item", {
 				text: "{name}"
 			});
-			this.composite.bindAggregation("outerAggregationWithForwardedBinding", {
+			var result = this.composite.bindAggregation("outerAggregationWithForwardedBinding", {
 				path: "/",
 				template: this.itemTemplate
 			});
+			assert.equal(result, this.composite, "bindAggregation should return the outer control even if the binding is forwarded"); // GitHub issue #2378
 			this.composite.setModel(this.model);
 
 			assert.equal(this.composite.getOuterAggregationWithForwardedBinding().length, 4, "outer control should have 4 items initially");
