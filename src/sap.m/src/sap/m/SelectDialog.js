@@ -1069,7 +1069,7 @@ function(
 				press: function() {
 					this.clearSelection();
 					if (!this.getMultiSelect()) {
-						fnClearAfterClose = function () {
+						var fnClearAfterClose = function () {
 							this._oSelectedItem = this._oList.getSelectedItem();
 							this._aSelectedItems = this._oList.getSelectedItems();
 
