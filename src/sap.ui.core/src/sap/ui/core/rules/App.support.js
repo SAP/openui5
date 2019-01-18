@@ -4,7 +4,7 @@
 /**
  * Defines Application related support rules.
  */
-sap.ui.define(["sap/ui/support/library"], function(SupportLib) {
+sap.ui.define(["sap/ui/support/library", "sap/ui/core/mvc/View", "sap/ui/core/mvc/Controller"], function(SupportLib, View, Controller) {
 	"use strict";
 
 	// shortcuts
@@ -45,9 +45,8 @@ sap.ui.define(["sap/ui/support/library"], function(SupportLib) {
 			href: 'https://sapui5.hana.ondemand.com/#docs/guide/d12024e38385472a89c1ad204e1edb48.html'
 		}],
 		check: function(oIssueManager, oCoreFacade, oScope) {
-
 			// get the controllers and the associated viewId
-			var aElements = oScope.getElementsByClassName(sap.ui.core.mvc.View);
+			var aElements = oScope.getElementsByClassName(View);
 			var aControllersWithViewId = [];
 			aElements.forEach(function(oElement) {
 				if (oElement.getController) {
@@ -100,7 +99,7 @@ sap.ui.define(["sap/ui/support/library"], function(SupportLib) {
 					fnGatherInvalidControllerFunctions(oController, oControllerWithViewId.viewId, aObsoleteFunctionNames, fnMapUsingViewIds);
 					var oControllerPrototype = Object.getPrototypeOf(oController);
 					// sanity check to avoid potential endless loops and limit recursion only up to the Controller itself
-					if (oController === oControllerPrototype || oControllerPrototype === sap.ui.core.mvc.Controller.prototype) {
+					if (oController === oControllerPrototype || oControllerPrototype === Controller.prototype) {
 						break;
 					}
 					oController = oControllerPrototype;
@@ -124,7 +123,6 @@ sap.ui.define(["sap/ui/support/library"], function(SupportLib) {
 				});
 
 			});
-
 		}
 
 	};

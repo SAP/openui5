@@ -4,8 +4,8 @@
 /**
  * Defines support rules related to the view.
  */
-sap.ui.define(["sap/ui/support/library"],
-	function(SupportLib) {
+sap.ui.define(["sap/ui/support/library", "sap/ui/core/Element"],
+	function(SupportLib, Element) {
 	"use strict";
 
 	// shortcuts
@@ -216,29 +216,28 @@ sap.ui.define(["sap/ui/support/library"],
 			href: "https://sapui5.hana.ondemand.com/#/api/deprecated"
 		}],
 		check: function(oIssueManager, oCoreFacade, oScope) {
-			oScope.getElementsByClassName(sap.ui.core.Element)
-				.forEach(function(oElement) {
+			oScope.getElementsByClassName(Element).forEach(function(oElement) {
 
-					var oMetadata = oElement.getMetadata(),
-						mProperties = oMetadata.getAllProperties();
+				var oMetadata = oElement.getMetadata(),
+					mProperties = oMetadata.getAllProperties();
 
-					for (var sProperty in mProperties) {
-						// if property is deprecated and it is set to a different from the default value
-						// Checks only the deprecated properties with defaultValue property is not null
-						if (mProperties[sProperty].deprecated
-							&& mProperties[sProperty].defaultValue != oElement.getProperty(sProperty)
-							&& mProperties[sProperty].defaultValue !== null) {
+				for (var sProperty in mProperties) {
+					// if property is deprecated and it is set to a different from the default value
+					// Checks only the deprecated properties with defaultValue property is not null
+					if (mProperties[sProperty].deprecated
+						&& mProperties[sProperty].defaultValue != oElement.getProperty(sProperty)
+						&& mProperties[sProperty].defaultValue !== null) {
 
-							oIssueManager.addIssue({
-								severity: Severity.Medium,
-								details: "Deprecated property '" + sProperty + "' is used for element '" + oElement.getId() + "'.",
-								context: {
-									id: oElement.getId()
-								}
-							});
-						}
+						oIssueManager.addIssue({
+							severity: Severity.Medium,
+							details: "Deprecated property '" + sProperty + "' is used for element '" + oElement.getId() + "'.",
+							context: {
+								id: oElement.getId()
+							}
+						});
 					}
-				});
+				}
+			});
 		}
 	};
 
@@ -259,27 +258,26 @@ sap.ui.define(["sap/ui/support/library"],
 			href: "https://sapui5.hana.ondemand.com/#/api/deprecated"
 		}],
 		check: function(oIssueManager, oCoreFacade, oScope) {
-			oScope.getElementsByClassName(sap.ui.core.Element)
-				.forEach(function(oElement) {
+			oScope.getElementsByClassName(Element).forEach(function(oElement) {
 
-					var oMetadata = oElement.getMetadata(),
-						mAggregations = oMetadata.getAllAggregations();
+				var oMetadata = oElement.getMetadata(),
+					mAggregations = oMetadata.getAllAggregations();
 
-					for (var sAggregation in mAggregations) {
-						// if aggregation is deprecated and contains elements
-						if (mAggregations[sAggregation].deprecated
-							&& !jQuery.isEmptyObject(oElement.getAggregation(sAggregation))) {
+				for (var sAggregation in mAggregations) {
+					// if aggregation is deprecated and contains elements
+					if (mAggregations[sAggregation].deprecated
+						&& !jQuery.isEmptyObject(oElement.getAggregation(sAggregation))) {
 
-							oIssueManager.addIssue({
-								severity: Severity.Medium,
-								details: "Deprecated aggregation '" + sAggregation + "' is used for element '" + oElement.getId() + "'.",
-								context: {
-									id: oElement.getId()
-								}
-							});
-						}
+						oIssueManager.addIssue({
+							severity: Severity.Medium,
+							details: "Deprecated aggregation '" + sAggregation + "' is used for element '" + oElement.getId() + "'.",
+							context: {
+								id: oElement.getId()
+							}
+						});
 					}
-				});
+				}
+			});
 		}
 	};
 
@@ -300,27 +298,26 @@ sap.ui.define(["sap/ui/support/library"],
 			href: "https://sapui5.hana.ondemand.com/#/api/deprecated"
 		}],
 		check: function(oIssueManager, oCoreFacade, oScope) {
-			oScope.getElementsByClassName(sap.ui.core.Element)
-				.forEach(function(oElement) {
+			oScope.getElementsByClassName(Element).forEach(function(oElement) {
 
-					var oMetadata = oElement.getMetadata(),
-						mAssociations = oMetadata.getAllAssociations();
+				var oMetadata = oElement.getMetadata(),
+					mAssociations = oMetadata.getAllAssociations();
 
-					for (var sAssociation in mAssociations) {
-						// if association is deprecated and set by developer
-						if (mAssociations[sAssociation].deprecated
-							&& !jQuery.isEmptyObject(oElement.getAssociation(sAssociation))) {
+				for (var sAssociation in mAssociations) {
+					// if association is deprecated and set by developer
+					if (mAssociations[sAssociation].deprecated
+						&& !jQuery.isEmptyObject(oElement.getAssociation(sAssociation))) {
 
-							oIssueManager.addIssue({
-								severity: Severity.Medium,
-								details: "Deprecated association '" + sAssociation + "' is used for element '" + oElement.getId() + "'.",
-								context: {
-									id: oElement.getId()
-								}
-							});
-						}
+						oIssueManager.addIssue({
+							severity: Severity.Medium,
+							details: "Deprecated association '" + sAssociation + "' is used for element '" + oElement.getId() + "'.",
+							context: {
+								id: oElement.getId()
+							}
+						});
 					}
-				});
+				}
+			});
 		}
 	};
 
@@ -341,27 +338,26 @@ sap.ui.define(["sap/ui/support/library"],
 			href: "https://sapui5.hana.ondemand.com/#/api/deprecated"
 		}],
 		check: function(oIssueManager, oCoreFacade, oScope) {
-			oScope.getElementsByClassName(sap.ui.core.Element)
-				.forEach(function(oElement) {
+			oScope.getElementsByClassName(Element).forEach(function(oElement) {
 
-					var oMetadata = oElement.getMetadata(),
-						mEvents = oMetadata.getAllEvents();
+				var oMetadata = oElement.getMetadata(),
+					mEvents = oMetadata.getAllEvents();
 
-					for (var sEvent in mEvents) {
-						// if event is deprecated and developer added event handler
-						if (mEvents[sEvent].deprecated
-							&& oElement.mEventRegistry[sEvent] && oElement.mEventRegistry[sEvent].length > 0) {
+				for (var sEvent in mEvents) {
+					// if event is deprecated and developer added event handler
+					if (mEvents[sEvent].deprecated
+						&& oElement.mEventRegistry[sEvent] && oElement.mEventRegistry[sEvent].length > 0) {
 
-							oIssueManager.addIssue({
-								severity: Severity.Medium,
-								details: "Deprecated event '" + sEvent + "' is used for element '" + oElement.getId() + "'.",
-								context: {
-									id: oElement.getId()
-								}
-							});
-						}
+						oIssueManager.addIssue({
+							severity: Severity.Medium,
+							details: "Deprecated event '" + sEvent + "' is used for element '" + oElement.getId() + "'.",
+							context: {
+								id: oElement.getId()
+							}
+						});
 					}
-				});
+				}
+			});
 		}
 	};
 
