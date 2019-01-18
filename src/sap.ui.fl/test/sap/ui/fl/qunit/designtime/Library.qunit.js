@@ -11,9 +11,12 @@ sap.ui.require([
 	jQuery
 ) {
 	"use strict";
-	LibraryTest("sap.ui.fl", QUnit);
+
+	var pTestsCreated = LibraryTest("sap.ui.fl", QUnit);
 
 	QUnit.done(function () {
 		jQuery("#qunit-fixture").hide();
 	});
+
+	return pTestsCreated;
 });

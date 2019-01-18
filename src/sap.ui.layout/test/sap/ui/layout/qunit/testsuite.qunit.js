@@ -283,8 +283,7 @@ sap.ui.define([
 
 			//complete libraries dt files general json data
 			"designtime/Library": {
-				group: "Designtime",
-				page: "test-resources/sap/ui/layout/qunit/designtime/Library.qunit.html"
+				group: "Designtime"
 			},
 
 			//individual controls

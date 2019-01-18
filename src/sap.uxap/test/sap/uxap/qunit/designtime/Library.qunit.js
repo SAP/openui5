@@ -5,5 +5,5 @@
  */
 sap.ui.define(["sap/ui/dt/test/LibraryTest"], function (LibraryTest) {
 	"use strict";
-	LibraryTest("sap.uxap", QUnit);
+	return LibraryTest("sap.uxap", QUnit);
 });

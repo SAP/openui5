@@ -283,9 +283,7 @@ sap.ui.define(function () {
 
 			"Designtime-Library": {
 				group: "Designtime",
-				module: "./designtime/Library.qunit",
-				qunit: 1,
-				autostart: false
+				module: "./designtime/Library.qunit"
 			},
 			"Designtime-ObjectPageDynamicHeaderTitle": {
 				group: "Designtime",

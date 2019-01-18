@@ -328,11 +328,7 @@ sap.ui.define(function() {
 			// Design Time & RTA Enabling
 			"Designtime-Library": {
 				group: "Designtime",
-				module: "./designtime/Library.qunit",
-				qunit: {
-					version: 1
-				},
-				autostart: false
+				module: "./designtime/Library.qunit"
 			}
 		}
 	};
