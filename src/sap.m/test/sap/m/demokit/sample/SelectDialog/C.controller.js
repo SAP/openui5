@@ -102,7 +102,7 @@ sap.ui.define([
 			}
 
 			if (!oSelectedItem) {
-				oInput.resetProperty("");
+				oInput.resetProperty("value");
 			}
 		}
 	});
