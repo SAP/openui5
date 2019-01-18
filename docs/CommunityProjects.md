@@ -62,6 +62,7 @@ Name | Owner | Category | Description | License
 [Brackets UI5](https://github.com/wozjac/brackets-ui5) | [@wozjac](https://github.com/wozjac) | Brackets extension | An extension for Brackets providing support (code hints, quick docs and more) for OpenUI5/SAPUI5 libraries. | MIT
 [vscode-ui5-explorer](https://github.com/kozubikmichal/vscode-ui5-explorer) | [@kozubikmichal](https://github.com/kozubikmichal) | Extension | UI5 Explorer for Visual Studio Code | MIT
 [UI5 Build and Development Tooling](https://github.com/SAP/ui5-tooling) | [@SAP](https://github.com/SAP) | Tool | An open and modular toolchain to develop state of the art UI5 applications | Apache 2.0
+[electron-openui5-boilerplate](https://github.com/thbonk/electron-openui5-boilerplate) | [Thomas Bonk](https://github.com/thbonk) | Application Template | A template to jumpstart the development of Electron applications with an OpenUI5-based user interface | Apache 2.0
 
 
 ## Add a new project
