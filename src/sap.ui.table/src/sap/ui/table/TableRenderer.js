@@ -688,11 +688,7 @@ sap.ui.define(['sap/ui/core/Control', 'sap/ui/core/theming/Parameters', 'sap/ui/
 		}
 		rm.writeClasses();
 
-		if (bFixedTable) {
-			rm.addStyle("width", "auto");
-		} else {
-			rm.addStyle("min-width", oTable._getColumnsWidth(iStartColumn, iEndColumn) + "px");
-		}
+		rm.addStyle(bFixedTable ? "width" : "min-width", oTable._getColumnsWidth(iStartColumn, iEndColumn) + "px");
 
 		rm.writeStyles();
 		rm.write(">");
