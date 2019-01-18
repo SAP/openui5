@@ -8,11 +8,12 @@ sap.ui.define([
 	"sap/ui/fl/Utils",
 	"sap/base/util/merge",
 	"sap/ui/dom/includeScript"
-], function(jQuery,
-			uri,
-			FlexUtils,
-			fnBaseMerge,
-			fnIncludeScript
+], function(
+	jQuery,
+	uri,
+	FlexUtils,
+	fnBaseMerge,
+	fnIncludeScript
 ) {
 	"use strict";
 
@@ -404,14 +405,14 @@ sap.ui.define([
 	 * @param {string} [mPropertyBag.layer] - Layer up to which changes shall be read (excluding the specified layer)
 	 * @param {string} [mPropertyBag.appVersion] - Version of application whose changes shall be read
 	 * @param {string} [mPropertyBag.flexModulesUrl] - address to which the request for modules should be sent in case modules are present
+	 * @param {boolean} [mPropertyBag.isTrial] - true if the system is a trial system
 	 *
 	 * @returns {Promise} Returns a Promise with the changes (changes, contexts, optional messagebundle), <code>componentClassName</code> and <code>etag</code> value;
 	 * in case modules are present the Promise is resolved after the module request is finished
 	 * @public
 	 */
 	LrepConnector.prototype.loadChanges = function(oComponent, mPropertyBag) {
-
-		function _createRequestOptions(oComponent, mPropertyBag) {
+		function _createRequestOptions(mPropertyBag) {
 			var mOptions = {};
 
 			if (mPropertyBag.cacheKey) {
@@ -482,17 +483,47 @@ sap.ui.define([
 			return Promise.reject(new Error("Component name not specified"));
 		}
 
-		var mOptions = _createRequestOptions(oComponent, mPropertyBag);
+		var mOptions = _createRequestOptions(mPropertyBag);
 
 		var mUrls = _createUrls.call(this, oComponent, mPropertyBag, this._sClient);
 
 		return this.send(mUrls.flexDataUrl, undefined, undefined, mOptions)
-			.then(this._onChangeResponseReceived.bind(this, oComponent.name, mUrls.flexModulesUrl), function (oError) {
-				if (oError.code === 404) {
-					LrepConnector._bServiceAvailability = false;
-				}
-				throw (oError);
+		.then(this._onChangeResponseReceived.bind(this, oComponent.name, mUrls.flexModulesUrl))
+		.then(function(mFlexData) {
+			if (mPropertyBag.isTrial) {
+				return this.enableFakeConnectorForTrial(oComponent, mFlexData);
+			}
+			return mFlexData;
+		}.bind(this))
+		.catch(function (oError) {
+			if (oError.code === 404) {
+				LrepConnector._bServiceAvailability = false;
+			}
+			throw (oError);
+		});
+	};
+
+	/**
+	 * Enables the FakeLrepConnectorLocalStorage that will be used instead of the standard LrepConnector.
+	 * The data/changes from the FakeConnector will be combined with the flex data passed to this function
+	 *
+	 * @param {object} oComponent Contains component data needed for reading changes
+	 * @param {string} oComponent.name Name of component
+	 * @param {string} [oComponent.appVersion] Current running version of application
+	 * @param {map} mFlexData Contains the response of the original changes request
+	 * @returns {Promise} Returns a Promise with the initial response enhanced with the changes from the FakeConnector
+	 */
+	LrepConnector.prototype.enableFakeConnectorForTrial = function(oComponent, mFlexData) {
+		return new Promise(function(resolve) {
+			sap.ui.require(["sap/ui/fl/FakeLrepConnectorLocalStorage", "sap/ui/fl/registry/Settings"], function(FakeLrepConnectorLocalStorage, Settings) {
+				// in trial user case the settings instance is created initially, so it is always available
+				var oSettings = Settings.getInstanceOrUndef()._oSettings;
+				FakeLrepConnectorLocalStorage.enableFakeConnector(oSettings, oComponent.name, oComponent.appVersion, true);
+
+				var oFakeConnector = LrepConnector.createConnector();
+				resolve(oFakeConnector.loadChanges(oComponent.name, mFlexData.changes.changes));
 			});
+		});
 	};
 
 	LrepConnector.prototype._onChangeResponseReceived = function (sComponentName, sFlexModulesUri, oResponse) {

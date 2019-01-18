@@ -185,6 +185,20 @@ function(
 		},
 
 		/**
+		 * Returns a boolean indicating whether the current system is a trial system (only available for S/4 HANA Cloud) or not.
+		 * This function needs a ushell container to be available, otherwise it will also return false.
+		 *
+		 * @returns {boolean} Returns true if the system is a trial system, false otherwise
+		 */
+		isTrialSystem: function() {
+			var oUshellContainer = Utils.getUshellContainer();
+			if (oUshellContainer) {
+				return oUshellContainer.getLogonSystem().isTrial();
+			}
+			return false;
+		},
+
+		/**
 		 * Returns the class name of the application component owning the passed component or the component name itself if
 		 * this is already an application component.
 		 *

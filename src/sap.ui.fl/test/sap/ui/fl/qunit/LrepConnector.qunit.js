@@ -17,16 +17,15 @@ sap.ui.define([
 
 	var sandbox = sinon.sandbox.create();
 
-	QUnit.module("LrepConnector", function (hook) {
-		hook.beforeEach(function() {
+	QUnit.module("LrepConnector", {
+		beforeEach: function() {
 			LrepConnector._bServiceAvailability = undefined;
 			this.oLrepConnector = LrepConnector.createConnector();
 			sandbox.stub(ContextManager, "getActiveContexts").callsFake(function () {
 				return [];
 			});
-		});
-
-		hook.afterEach(function() {
+		},
+		afterEach: function() {
 			sandbox.restore();
 			if (this.server) {
 				this.server.restore();
@@ -34,8 +33,8 @@ sap.ui.define([
 
 			LrepConnector.prototype._aSentRequestListeners = [];
 			LrepConnector.prototype._sRequestUrlPrefix = "";
-		});
-
+		}
+	}, function() {
 		QUnit.test("isFlexServiceAvailable returns the value of availability flag if it was defined", function (assert) {
 			LrepConnector._bServiceAvailability = true;
 			return LrepConnector.isFlexServiceAvailable().then(function (bStatus) {
@@ -468,6 +467,7 @@ sap.ui.define([
 				'{ "changes": [ ], "settings": { "isKeyUser": true, "isAtoAvailable": false, "isAtoEnabled": false, "isProductiveSystem": false }, "messagebundle": {"i_123": "translatedKey"} }'
 			]);
 			this.server.autoRespond = true;
+			var oEnableTrialStub = sandbox.stub(this.oLrepConnector, "enableFakeConnectorForTrial");
 
 			sComponentClassName = "smartFilterBar.Component";
 			return this.oLrepConnector.loadChanges({name: sComponentClassName}, {}).then(function(oResult) {
@@ -476,7 +476,34 @@ sap.ui.define([
 				assert.equal(oResult.changes.componentClassName, this.sComponentClassName);
 				assert.equal(oResult.etag, sEtag);
 				assert.deepEqual(oResult.changes.messagebundle, {"i_123": "translatedKey"}, "returns the responded messagebundle within the result");
+				assert.equal(oEnableTrialStub.callCount, 0, "the fakeLrep was not enabled because isTrial was not set");
 			}.bind(this));
+		});
+
+		QUnit.test("loadChanges with 'isTrial' set to true", function(assert) {
+			var sComponentClassName;
+			var oReturn = {
+				changes: [{fileType: "change"}, {fileType: "change"}],
+				messagebundle: {
+					i_123: "translatedKey"
+				}
+			};
+
+			var oEnableTrialStub = sandbox.stub(this.oLrepConnector, "enableFakeConnectorForTrial");
+
+			this.server = sinon.fakeServer.create();
+			var sEtag = "abc123";
+			this.server.respondWith([200,
+				{"Content-Type": "application/json", "Content-Length": 13, "X-CSRF-Token": "0987654321", "etag": sEtag},
+				JSON.stringify(oReturn)
+			]);
+			this.server.autoRespond = true;
+
+			sComponentClassName = "smartFilterBar.Component";
+			return this.oLrepConnector.loadChanges({name: sComponentClassName}, {isTrial: true})
+			.then(function() {
+				assert.equal(oEnableTrialStub.callCount, 1, "the enableFakeLrep function was called");
+			});
 		});
 
 		QUnit.test("loadChanges can handle a undefined mPropertyBag", function(assert) {
@@ -649,6 +676,50 @@ sap.ui.define([
 				var oCall = oSendStub.getCall(0);
 				var aCallArguments = oCall.args;
 				assert.equal(aCallArguments[0], sExpectedCallUrl, "the request URL was correctly built and the appVersion parameter was not included");
+			});
+		});
+
+		QUnit.test("enableFakeConnectorForTrial", function(assert) {
+			assert.expect(8);
+			var oSettingsInstance = {
+				_oSettings: {
+					fakeSettings: "true"
+				}
+			};
+			var oFakeLrepConnectorLocalStorageStub = {
+				enableFakeConnector: function(oSettings, sName, oAppVersion, bSuppressCacheInvalidation) {
+					assert.equal(oSettings, oSettingsInstance._oSettings);
+					assert.equal(sName, "name");
+					assert.equal(oAppVersion, "appVersion");
+					assert.equal(bSuppressCacheInvalidation, true);
+				}
+			};
+			var oSettingsStub = {
+				getInstanceOrUndef: function() {
+					return oSettingsInstance;
+				}
+			};
+			sandbox.stub(LrepConnector, "createConnector").returns({
+				loadChanges: function(sName, oChanges) {
+					assert.ok(true, "loadChanges in FakeConnector was called");
+					assert.equal(sName, "name");
+					assert.equal(oChanges, "changes");
+					return "foo";
+				}
+			});
+			sandbox.stub(sap.ui, "require")
+				.callThrough()
+				.withArgs(["sap/ui/fl/FakeLrepConnectorLocalStorage", "sap/ui/fl/registry/Settings"])
+				.callsArgWithAsync(1, oFakeLrepConnectorLocalStorageStub, oSettingsStub);
+
+			var mFlexData = {
+				changes: {
+					changes: "changes"
+				}
+			};
+			return this.oLrepConnector.enableFakeConnectorForTrial({name: "name", appVersion: "appVersion"}, mFlexData)
+			.then(function(oReturn) {
+				assert.equal(oReturn, "foo", "the function returns the result of loadChanges");
 			});
 		});
 
@@ -1252,8 +1323,8 @@ sap.ui.define([
 		});
 	});
 
-	QUnit.module("Load With CodeExt & XML", function (hooks) {
-		hooks.beforeEach(function (assert) {
+	QUnit.module("Load With CodeExt & XML", {
+		beforeEach: function () {
 			this.server = sinon.fakeServer.create();
 			LrepConnector._bServiceAvailability = undefined;
 			this.oLrepConnector = LrepConnector.createConnector();
@@ -1262,16 +1333,15 @@ sap.ui.define([
 			});
 
 			this.oLoadModulesStub = sandbox.stub(this.oLrepConnector, "_loadModules").returns(Promise.resolve());
-		});
-
-		hooks.afterEach(function () {
+		},
+		afterEach: function () {
 			this.server.restore();
 			sandbox.restore();
 
 			LrepConnector.prototype._aSentRequestListeners = [];
 			LrepConnector.prototype._sRequestUrlPrefix = "";
-		});
-
+		}
+	}, function() {
 		QUnit.test("no additional request is sent in case the '/flex/data' has the flag 'loadModules' set to false", function (assert) {
 			var sComponentName = "test.component";
 			var sAppVersion = "1.2.3";

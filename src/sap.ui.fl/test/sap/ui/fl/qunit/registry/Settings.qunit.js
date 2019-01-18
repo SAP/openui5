@@ -4,16 +4,19 @@ sap.ui.define([
 	"sap/ui/thirdparty/jquery",
 	"sap/ui/fl/registry/Settings",
 	"sap/ui/fl/Cache",
+	"sap/ui/fl/Utils",
 	"sap/ui/thirdparty/sinon-4"
 ], function(
 	jQuery,
 	Settings,
 	Cache,
+	Utils,
 	sinon
 ) {
 	"use strict";
 
 	var bPresetFlexChangeMode, bFlexibilityAdaptationButtonAllowed;
+	var sandbox = sinon.sandbox.create();
 
 	QUnit.module("sapbyDefault.ui.fl.registry.Settings", {
 		beforeEach: function() {
@@ -44,6 +47,8 @@ sap.ui.define([
 					Settings.detachEvent(sEventKey, oRegisteredEvent.fFunction);
 				});
 			});
+
+			sandbox.restore();
 		}
 	}, function() {
 		QUnit.test("init", function(assert) {
@@ -66,31 +71,6 @@ sap.ui.define([
 			assert.equal(this.cut._oSettings.isAtoEnabled, false);
 			var bIsAtoEnabled = this.cut.isAtoEnabled();
 			assert.equal(bIsAtoEnabled, false);
-		});
-
-		QUnit.test("isTrial returns false when settings file has no isTrial flag", function(assert) {
-		    var oSettings = {};
-		    this.cut = new Settings(oSettings);
-		    var bIsTrial = this.cut.isTrial();
-		    assert.equal(bIsTrial, false);
-		});
-
-		QUnit.test("isTrial returns false when settings file has isTrial flag that is set to false", function(assert) {
-		    var oSettings = {
-			    "isTrial": false
-		    };
-		    this.cut = new Settings(oSettings);
-		    var bIsTrial = this.cut.isTrial();
-		    assert.equal(bIsTrial, false);
-		});
-
-		QUnit.test("isTrial returns false when settings file has isTrial flag that is set to false", function(assert) {
-		    var oSettings = {
-			    "isTrial": true
-		    };
-		    this.cut = new Settings(oSettings);
-		    var bIsTrial = this.cut.isTrial();
-		    assert.equal(bIsTrial, true);
 		});
 
 		QUnit.test("variants sharing is enabled by default", function(assert) {
@@ -117,12 +97,12 @@ sap.ui.define([
 				isAtoAvailable: true
 			};
 
-			var oStubCreateConnector = sinon.stub(sap.ui.fl.LrepConnector, "createConnector").returns({
+			var oStubCreateConnector = sandbox.stub(sap.ui.fl.LrepConnector, "createConnector").returns({
 				loadSettings : function(){
 					return Promise.resolve(oSetting);
 				}
 			});
-			var oStubGetFlexDataPromise = sinon.stub(Cache, "getFlexDataPromise").returns(undefined);
+			var oStubGetFlexDataPromise = sandbox.stub(Cache, "getFlexDataPromise").returns(undefined);
 			Settings.getInstance().then(function(oSettings) {
 				assert.equal(oStubGetFlexDataPromise.callCount, 1);
 				assert.equal(oStubCreateConnector.callCount, 1);
@@ -145,12 +125,12 @@ sap.ui.define([
 				isKeyUser: true,
 				isAtoAvailable: true
 			};
-			var oStubCreateConnector = sinon.stub(sap.ui.fl.LrepConnector, "createConnector").returns({
+			var oStubCreateConnector = sandbox.stub(sap.ui.fl.LrepConnector, "createConnector").returns({
 				loadSettings : function(){
 					return Promise.resolve(oSetting);
 				}
 			});
-			var oStubGetFlexDataPromise = sinon.stub(Cache, "getFlexDataPromise").rejects();
+			var oStubGetFlexDataPromise = sandbox.stub(Cache, "getFlexDataPromise").rejects();
 			Settings.getInstance().then(function(oSettings) {
 				assert.equal(oStubGetFlexDataPromise.callCount, 1);
 				assert.equal(oStubCreateConnector.callCount, 1);
@@ -177,7 +157,7 @@ sap.ui.define([
 					}
 				}
 			};
-			var oStubGetFlexDataPromise = sinon.stub(Cache, "getFlexDataPromise").resolves(oFileContent);
+			var oStubGetFlexDataPromise = sandbox.stub(Cache, "getFlexDataPromise").resolves(oFileContent);
 			Settings.getInstance().then(function(oSettings) {
 				assert.equal(oStubGetFlexDataPromise.callCount, 1);
 				assert.equal(oSettings.isKeyUser(), true);
@@ -197,7 +177,7 @@ sap.ui.define([
 				isKeyUser: true,
 				isAtoAvailable: true
 			};
-			var oStubCreateConnector = sinon.stub(sap.ui.fl.LrepConnector, "createConnector").returns({
+			var oStubCreateConnector = sandbox.stub(sap.ui.fl.LrepConnector, "createConnector").returns({
 				loadSettings : function(){
 					return Promise.resolve(oSetting);
 				}
@@ -222,7 +202,7 @@ sap.ui.define([
 			var UriParameters = sap.ui.require("sap/base/util/UriParameters");
 			assert.ok(UriParameters, "UriParameters must be loaded");
 
-			var oStub = sinon.stub(UriParameters.prototype, "get");
+			var oStub = sandbox.stub(UriParameters.prototype, "get");
 			oStub.withArgs("sap-ui-fl-changeMode").returns("true");
 
 			bFlexChangeMode = Settings._isFlexChangeModeFromUrl();
@@ -249,7 +229,7 @@ sap.ui.define([
 			var UriParameters = sap.ui.require("sap/base/util/UriParameters");
 			assert.ok(UriParameters, "UriParameters must be loaded");
 
-			var oStub = sinon.stub(UriParameters.prototype, "get");
+			var oStub = sandbox.stub(UriParameters.prototype, "get");
 			oStub.withArgs("sap-ui-fl-changeMode").returns("false");
 
 			bFlexChangeMode = Settings.isFlexChangeMode();
@@ -336,6 +316,28 @@ sap.ui.define([
 			sap.ui.fl.registry.Settings.setFlexibilityAdaptationButtonAllowed(true);
 			Settings.attachEvent(sap.ui.fl.registry.Settings.events.flexibilityAdaptationButtonAllowedChanged, fOnChangeModeUpdated.bind(this));
 			sap.ui.fl.registry.Settings.setFlexibilityAdaptationButtonAllowed(false);
+		});
+	});
+
+	QUnit.module("Given that Settings file is loaded", {
+		afterEach: function() {
+			sandbox.restore();
+		}
+	}, function() {
+		QUnit.test("and the system is a trial system", function(assert) {
+			assert.notOk(Settings.getInstanceOrUndef(), "initially the instance is undefined");
+
+			// call initialize function again to initialize with trial
+			sandbox.stub(Utils, "isTrialSystem").returns(true);
+			Settings._initInstance();
+
+			var oSettings = Settings.getInstanceOrUndef();
+			assert.ok(oSettings, "the settings instance is available");
+			assert.equal(oSettings.isKeyUser(), true);
+			assert.equal(oSettings.isAtoAvailable(), false);
+			assert.equal(oSettings.isAtoEnabled(), false);
+			assert.equal(oSettings.isProductiveSystem(), false);
+			assert.equal(oSettings.isVariantSharingEnabled(), false);
 		});
 	});
 
