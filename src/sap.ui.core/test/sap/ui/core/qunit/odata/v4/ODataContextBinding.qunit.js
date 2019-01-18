@@ -4,7 +4,6 @@
 sap.ui.define([
 	"jquery.sap.global",
 	"sap/base/Log",
-	"sap/ui/base/ManagedObject",
 	"sap/ui/base/SyncPromise",
 	"sap/ui/model/Binding",
 	"sap/ui/model/ChangeReason",
@@ -17,8 +16,8 @@ sap.ui.define([
 	"sap/ui/model/odata/v4/lib/_GroupLock",
 	"sap/ui/model/odata/v4/lib/_Helper",
 	"sap/ui/test/TestUtils"
-], function (jQuery, Log, ManagedObject, SyncPromise, Binding, ChangeReason, ContextBinding,
-		Context, ODataContextBinding, ODataModel, asODataParentBinding, _Cache, _GroupLock, _Helper,
+], function (jQuery, Log, SyncPromise, Binding, ChangeReason, ContextBinding, Context,
+		ODataContextBinding, ODataModel, asODataParentBinding, _Cache, _GroupLock, _Helper,
 		TestUtils) {
 	/*global QUnit, sinon */
 	/*eslint max-nested-callbacks: 0, no-warning-comments: 0 */
@@ -44,7 +43,8 @@ sap.ui.define([
 			// ensure that the requestor does not trigger requests
 			this.oRequestorMock.expects("request").never();
 			// avoid that the cache requests actual metadata for faked responses
-			this.oRequestorMock.expects("fetchMetadata").atLeast(0)
+			this.mock(this.oModel.oRequestor.oModelInterface)
+				.expects("fetchMetadata").atLeast(0)
 				.returns(SyncPromise.resolve());
 		},
 

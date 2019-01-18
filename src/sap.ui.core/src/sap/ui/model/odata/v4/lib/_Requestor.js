@@ -9,10 +9,9 @@ sap.ui.define([
 	"./_Helper",
 	"./_V2Requestor",
 	"sap/base/Log",
-	"sap/base/util/deepEqual",
 	"sap/ui/base/SyncPromise",
 	"sap/ui/thirdparty/jquery"
-], function (_Batch, _GroupLock, _Helper, asV2Requestor, Log, deepEqual, SyncPromise, jQuery) {
+], function (_Batch, _GroupLock, _Helper, asV2Requestor, Log, SyncPromise, jQuery) {
 	"use strict";
 
 	var mBatchHeaders = { // headers for the $batch request
@@ -582,20 +581,6 @@ sap.ui.define([
 	};
 
 	/**
-	 * Fetches the metadata instance for the given meta path.
-	 *
-	 * @param {string} sMetaPath
-	 *   The meta path, for example "/SalesOrderList/SO_2_BP"
-	 * @returns {sap.ui.base.SyncPromise}
-	 *   A promise that is resolved with the metadata instance for the given meta path
-	 *
-	 * @private
-	 */
-	Requestor.prototype.fetchMetadata = function (sMetaPath) {
-		return this.oModelInterface.fetchMetadata(sMetaPath);
-	};
-
-	/**
 	 * Fetches the type of the given meta path from the metadata.
 	 *
 	 * @param {string} sMetaPath
@@ -610,7 +595,7 @@ sap.ui.define([
 	 * @private
 	 */
 	Requestor.prototype.fetchTypeForPath = function (sMetaPath, bAsName) {
-		return this.fetchMetadata(sMetaPath + (bAsName ? "/$Type" : "/"));
+		return this.oModelInterface.fetchMetadata(sMetaPath + (bAsName ? "/$Type" : "/"));
 	};
 
 	/**
@@ -995,38 +980,6 @@ sap.ui.define([
 	};
 
 	/**
-	 * Reports the given bound OData messages via the owning model's interface.
-	 *
-	 * @param {string} sResourcePath
-	 *   The resource path
-	 * @param {object} mPathToODataMessages
-	 *   Maps a resource path with key predicates to an array of messages belonging to this path.
-	 *   The path is relative to the given <code>sResourcePath</code>.
-	 *   The messages have at least the following properties:
-	 *   {string} code - The error code
-	 *   {string} longtextUrl - The URL for the message's long text relative to the resource path
-	 *      with key predicates
-	 *   {string} message - The message text
-	 *   {number} numericSeverity - The numeric message severity (1 for "success", 2 for "info",
-	 *      3 for "warning" and 4 for "error")
-	 *   {string} target - The target for the message relative to the resource path with key
-	 *      predicates
-	 *   {boolean} transition - Whether the message is reported as <code>persistent=true</code> and
-	 *      therefore needs to be managed by the application
-	 * @param {string[]} [aCachePaths]
-	 *    An array of cache-relative paths of the entities for which non-persistent messages have to
-	 *    be removed; if the array is not given, all non-persistent messages whose target start with
-	 *    the given resource path are removed
-	 *
-	 * @private
-	 */
-	Requestor.prototype.reportBoundMessages = function (sResourcePath, mPathToODataMessages,
-			aCachePaths) {
-		this.oModelInterface.reportBoundMessages(sResourcePath, mPathToODataMessages,
-			aCachePaths);
-	};
-
-	/**
 	 * Reports unbound OData messages.
 	 *
 	 * @param {string} sResourcePath
@@ -1036,7 +989,7 @@ sap.ui.define([
 	 *
 	 * @private
 	 */
-	Requestor.prototype.reportUnboundMessages = function (sResourcePath, sMessages) {
+	Requestor.prototype.reportUnboundMessagesAsJSON = function (sResourcePath, sMessages) {
 		this.oModelInterface.reportUnboundMessages(sResourcePath, JSON.parse(sMessages || null));
 	};
 
@@ -1154,7 +1107,7 @@ sap.ui.define([
 			jQuery.extend({}, mHeaders, this.mFinalHeaders),
 			JSON.stringify(_Requestor.cleanPayload(oPayload)), sOriginalResourcePath
 		).then(function (oResponse) {
-			that.reportUnboundMessages(oResponse.resourcePath, oResponse.messages);
+			that.reportUnboundMessagesAsJSON(oResponse.resourcePath, oResponse.messages);
 			return that.doConvertResponse(oResponse.body, sMetaPath);
 		});
 	};
@@ -1365,14 +1318,14 @@ sap.ui.define([
 					try {
 						that.doCheckVersionHeader(getResponseHeader.bind(vResponse), vRequest.url,
 							true);
-						that.reportUnboundMessages(vRequest.url,
+						that.reportUnboundMessagesAsJSON(vRequest.url,
 							getResponseHeader.call(vResponse, "sap-messages"));
 						vRequest.$resolve(that.doConvertResponse(oResponse, vRequest.$metaPath));
 					} catch (oErr) {
 						vRequest.$reject(oErr);
 					}
 				} else {
-					that.reportUnboundMessages(vRequest.url,
+					that.reportUnboundMessagesAsJSON(vRequest.url,
 						getResponseHeader.call(vResponse, "sap-messages"));
 					vRequest.$resolve();
 				}
