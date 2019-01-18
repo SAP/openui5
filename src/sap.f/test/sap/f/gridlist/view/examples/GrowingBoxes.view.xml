@@ -19,7 +19,7 @@
 						}
 					}"
 		growing="true"
-		growingThreshold="4">
+		growingThreshold="10">
 
         <f:customLayout>
             <grid:GridBoxLayout/>

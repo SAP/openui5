@@ -11,7 +11,9 @@ sap.ui.define([
 	"sap/m/CustomListItem",
 	"sap/m/Text",
 	"sap/ui/model/json/JSONModel",
-	"sap/ui/model/Sorter"
+	"sap/ui/model/Sorter",
+	"sap/ui/qunit/QUnitUtils",
+	"sap/ui/events/KeyCodes"
 ], function (
 	jQuery,
 	GridLayoutBase,
@@ -23,7 +25,9 @@ sap.ui.define([
 	CustomListItem,
 	Text,
 	JSONModel,
-	Sorter
+	Sorter,
+	qutils,
+	KeyCodes
 ) {
 	"use strict";
 
@@ -212,9 +216,12 @@ sap.ui.define([
 		assert.ok(GridLayoutBase.prototype._applySingleGridLayout.calledOnce, "Should call _applySingleGridLayout once");
 		assert.ok(GridLayoutBase.prototype._setGridLayout.calledOnce, "Should call _setGridLayout once");
 		assert.ok(GridLayoutBase.prototype._removeGridLayout.notCalled, "Should NOT call _removeGridLayout");
-		assert.equal(Object.keys(this.oHTMLElementMock.style._styles).length, Object.keys(oExpectedStyles).length, "Should have expected number of styles");
+		assert.equal(Object.keys(this.oHTMLElementMock.style._styles).length, (Object.keys(oExpectedStyles).length - 2), "Should have expected number of styles (all minus 'grid-column-gap' and 'grid-row-gap')");
 
 		for (var sProp in oExpectedStyles) {
+			if (sProp == "grid-column-gap" || sProp == "grid-row-gap") {
+				continue;
+			}
 			assert.equal(this.oHTMLElementMock.style._styles[sProp], oExpectedStyles[sProp], "Should have set value '" + oExpectedStyles[sProp] + "' for property " + sProp);
 		}
 	});
@@ -396,8 +403,6 @@ sap.ui.define([
 			sap.ui.getCore().setModel(model);
 		var oGridList = new GridList("gListGrouping", {
 			customLayout: oGridBoxLayout,
-			// growing: true,
-			// growingThreshold: 1,
 			items: {
 				path: '/',
 				sorter: new Sorter('group', false, true),
@@ -434,8 +439,6 @@ sap.ui.define([
 			sap.ui.getCore().setModel(model);
 		var oGridList = new GridList("gListNoGrouping", {
 			customLayout: oGridBoxLayout,
-			// growing: true,
-			// growingThreshold: 1,
 			items: {
 				path: '/',
 				template: new CustomListItem({
@@ -460,4 +463,85 @@ sap.ui.define([
 		}
 	});
 
+	QUnit.test("Is class correct depending on CSS Grid support", function (assert) {
+		var oGridBoxLayout = new GridBoxLayout();
+		var oGridList = new GridList("gListClass", {
+			customLayout: oGridBoxLayout
+		});
+
+		oGridList.placeAt("qunit-fixture");
+		sap.ui.getCore().applyChanges();
+
+		var id = "#" + oGridList.sId + "-listUl";
+		var isCSSGridSupported = oGridBoxLayout.isGridSupportedByBrowser();
+
+		if (isCSSGridSupported) {
+			assert.equal(document.querySelector(id).classList.contains("sapUiLayoutCSSGridBoxLayoutContainer"), true,  "'sapUiLayoutCSSGridBoxLayoutContainer' class is applied'");
+			assert.equal(document.querySelector(id).classList.contains("sapUiLayoutCSSGridBoxLayoutPolyfill"), false,  "'sapUiLayoutCSSGridBoxLayoutPolyfill' class is not applied");
+		} else {
+			assert.equal(document.querySelector(id).classList.contains("sapUiLayoutCSSGridBoxLayoutPolyfill"), true,  "'sapUiLayoutCSSGridBoxLayoutPolyfill' class is applied'");
+			assert.equal(document.querySelector(id).classList.contains("sapUiLayoutCSSGridBoxLayoutContainer"), false,  "'sapUiLayoutCSSGridBoxLayoutContainer' class is not applied'");
+		}
+	});
+
+	QUnit.test("Is growing works correct", function (assert) {
+		var oGridBoxLayout = new GridBoxLayout();
+		var data = [
+			{ title: "Grid item title 1", subtitle: "Subtitle 1"},
+			{ title: "Grid item title 2", subtitle: "Subtitle 2"}];
+			var model = new JSONModel();
+			model.setData(data);
+			sap.ui.getCore().setModel(model);
+
+			var oGridList = new GridList("gListGrowing", {
+			customLayout: oGridBoxLayout,
+			growing: true,
+			growingThreshold: 1,
+			items: {
+				path: '/',
+				template: new CustomListItem({
+					content: [
+								new Text({text:"{subtitle}"})
+					]
+				})
+			}
+		});
+
+		oGridList.placeAt("qunit-fixture");
+		sap.ui.getCore().applyChanges();
+
+		var id = oGridList.sId + "-listUl";
+
+		assert.equal(document.getElementById(id).childElementCount, 1,  "there is one item in the list");
+		sap.ui.test.qunit.triggerKeydown(document.getElementById("gListGrowing-trigger"), KeyCodes.ENTER);
+		assert.equal(document.getElementById(id).childElementCount, 2,  "there are two items in the list");
+	});
+
+	QUnit.test("Is boxWidth works correct", function (assert) {
+		var data = [
+			{ title: "Grid item title 1", subtitle: "Subtitle 1"},
+			{ title: "Grid item title 2", subtitle: "Subtitle 2"}];
+			var model = new JSONModel();
+			model.setData(data);
+			sap.ui.getCore().setModel(model);
+
+			var oGridList = new GridList("gListResizing", {
+			customLayout: new GridBoxLayout({boxWidth: "100px"}),
+			growing: true,
+			width: "500px",
+			items: {
+				path: '/',
+				template: new CustomListItem({
+					content: [
+						new Text({text: "{subtitle}"})
+					]
+				})
+			}
+		});
+
+		oGridList.placeAt("qunit-fixture");
+		sap.ui.getCore().applyChanges();
+
+		assert.equal(oGridList.getItems()[0].getDomRef().clientWidth, 100, "boxWidth is set correctly to the GridBoxLayout");
+	});
 });
