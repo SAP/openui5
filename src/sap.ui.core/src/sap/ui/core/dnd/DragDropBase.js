@@ -30,6 +30,8 @@ sap.ui.define(['../Element', '../library', 'sap/base/Log', './DragAndDrop'],
 	 *   <li>The text of input fields in draggable controls can be selected, but not dragged.</li>
 	 * </ul>
 	 *
+	 * @see {@link topic:3ddb6cde6a8d416598ac8ced3f5d82d5 Drag and Drop}
+	 *
 	 * @extends sap.ui.core.Element
 	 * @author SAP SE
 	 * @version ${version}
