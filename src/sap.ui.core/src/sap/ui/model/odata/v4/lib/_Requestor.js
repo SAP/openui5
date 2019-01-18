@@ -18,6 +18,7 @@ sap.ui.define([
 	var mBatchHeaders = { // headers for the $batch request
 			"Accept" : "multipart/mixed"
 		},
+		sClassName = "sap.ui.model.odata.v4.lib._Requestor",
 		_Requestor;
 
 	/**
@@ -874,7 +875,7 @@ sap.ui.define([
 					fnResolve();
 				}, function (jqXHR, sTextStatus, sErrorMessage) {
 					that.oSecurityTokenPromise = null;
-					fnReject(_Helper.createError(jqXHR));
+					fnReject(_Helper.createError(jqXHR, "Could not refresh security token"));
 				});
 			});
 		}
@@ -1256,9 +1257,11 @@ sap.ui.define([
 								jqXHR.getResponseHeader("Keep-Alive"));
 						} else if (jqXHR.getResponseHeader("SAP-Err-Id") === "ICMENOSESSION") {
 							// The server could not find the context ID ("ICM Error NO SESSION")
+							Log.error("Session not found on server", undefined, sClassName);
 							that.clearSessionContext();
 						} // else keep the session untouched
-						fnReject(_Helper.createError(jqXHR, sRequestUrl, sOriginalResourcePath));
+						fnReject(_Helper.createError(jqXHR, "Communication error", sRequestUrl,
+							sOriginalResourcePath));
 					}
 				});
 			}
@@ -1306,14 +1309,14 @@ sap.ui.define([
 						}).fail(function (jqXHR) {
 							if (jqXHR.getResponseHeader("SAP-Err-Id") === "ICMENOSESSION") {
 								// The server could not find the context ID ("ICM Error NO SESSION")
+								Log.error("Session not found on server", undefined, sClassName);
 								that.clearSessionContext();
 							} // else keep the timer running
 						});
 					}
 				}, (iKeepAliveSeconds - 5) * 1000);
 			} else if (sKeepAlive) {
-				Log.warning("Unsupported Keep-Alive header", sKeepAlive,
-					"sap.ui.model.odata.v4.lib._Requestor");
+				Log.warning("Unsupported Keep-Alive header", sKeepAlive, sClassName);
 			}
 		}
 	};
@@ -1358,7 +1361,8 @@ sap.ui.define([
 					vRequest.$reject(oError);
 				} else if (vResponse.status >= 400) {
 					vResponse.getResponseHeader = getResponseHeader;
-					oCause = _Helper.createError(vResponse, vRequest.url, vRequest.$resourcePath);
+					oCause = _Helper.createError(vResponse, "Communication error", vRequest.url,
+						vRequest.$resourcePath);
 					reject(oCause, vRequest);
 				} else if (vResponse.responseText) {
 					oResponse = JSON.parse(vResponse.responseText);
