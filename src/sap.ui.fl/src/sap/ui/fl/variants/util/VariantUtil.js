@@ -162,6 +162,12 @@ sap.ui.define([
 						mHashParameters && mHashParameters[VariantUtil.variantTechnicalParameterName]
 					) || [];
 
+					var bURLUpdateRequired = VariantUtil._adjustForDuplicateParameters.call(this, aVariantParamValues);
+
+					aVariantParamValues = aVariantParamValues.map( function(sParameterValue) {
+						return decodeURIComponent(sParameterValue);
+					});
+
 					// check if variant management control for previously existing register entry exists
 					// if yes, reset to default variant
 					var aExisitingParams = this._oHashRegister.variantControlIds[this._oHashRegister.currentIndex];
@@ -173,9 +179,8 @@ sap.ui.define([
 
 					// do not update URL parameters if new entry/unknown
 					mPropertyBag = {
-						parameters: aVariantParamValues.map( function(sParameterValue) {
-							return decodeURIComponent(sParameterValue);
-						} )
+						parameters: aVariantParamValues,
+						updateURL: !!bURLUpdateRequired
 					};
 				} else {
 					aVariantParamValues = this._oHashRegister.hashParams[this._oHashRegister.currentIndex];
@@ -194,6 +199,28 @@ sap.ui.define([
 				};
 			}
 			this.updateHasherEntry(mPropertyBag);
+		},
+
+		_adjustForDuplicateParameters: function(aVariantParamValues) {
+			// calculate if duplicate / higher level variant parameter exists
+			var bURLUpdateRequired = false;
+			if (aVariantParamValues.length > 1) {
+				Object.keys(this.oData).forEach(function(sVariantManagementReference) {
+					this.oData[sVariantManagementReference].variants.reduce(function(bVariantExists, oVariant) {
+						var iVariantIndex = aVariantParamValues.indexOf(oVariant.key);
+						if (iVariantIndex > -1) {
+							if (!bVariantExists) {
+								bVariantExists = true;
+							} else {
+								aVariantParamValues.splice(iVariantIndex, 1);
+								bURLUpdateRequired = true;
+							}
+						}
+						return bVariantExists;
+					}, false);
+				}.bind(this));
+			}
+			return bURLUpdateRequired;
 		},
 
 		_setOrUnsetCustomNavigationForParameter: function(bSet) {
@@ -273,7 +300,6 @@ sap.ui.define([
 				return Array.prototype.slice.call(this._oHashRegister.hashParams[this._oHashRegister.currentIndex]);
 			}
 		}
-
 	};
 	return VariantUtil;
 }, true);
