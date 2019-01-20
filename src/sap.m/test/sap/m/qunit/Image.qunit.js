@@ -6,8 +6,9 @@ sap.ui.define([
 	"sap/m/library",
 	"sap/m/LightBox",
 	"sap/m/Text",
-	"sap/ui/core/Core"
-], function(Image, jQuery, mobileLibrary, LightBox, Text, Core) {
+	"sap/ui/core/Core",
+	"sap/ui/Device"
+], function(Image, jQuery, mobileLibrary, LightBox, Text, Core, Device) {
 	// shortcut for sap.m.ImageMode
 	var ImageMode = mobileLibrary.ImageMode;
 
@@ -81,8 +82,10 @@ sap.ui.define([
 		var oImage = createImage({
 			mode: "Background"
 		}),
-		aTestInputValues = ["left top", "right bottom", "right center", "50% 50%", "10px 20px", "initial", " left  top ", "50px;5px solid red", '50px" onerror='],
-		aExpOutputValues = ["left top", "right bottom", "right center", "50% 50%", "10px 20px", "initial", "left top", "" /*invalid value should be discarded*/, "" /*invalid value should be discarded*/];
+		// BCP: 1970042795 - "initial" value for IE is "0% 0%"
+		sInitial = Device.browser.msie ? "0% 0%" : "initial",
+		aTestInputValues = ["left top", "right bottom", "right top", "50% 50%", "10px 20px", sInitial, " left  top ", "50px;5px solid red", '50px" onerror='],
+		aExpOutputValues = ["left top", "right bottom", "right top", "50% 50%", "10px 20px", sInitial, "left top", "" /*invalid value should be discarded*/, "" /*invalid value should be discarded*/];
 
 		// System under test
 		oImage.placeAt("qunit-fixture");
@@ -106,8 +109,12 @@ sap.ui.define([
 		var oImage = createImage({
 				mode: "Background"
 			}),
-			aTestInputValues = ["50% 50%", "10px 20px", "initial", "auto", "cover", "contain", "50px;5px solid red", '50px" onerror='],
-			aExpOutputValues = ["50% 50%", "10px 20px", "initial", "auto", "cover", "contain", "" /*invalid value should be discarded*/, "" /*invalid value should be discarded*/];
+			// BCP: 1970042795 - "initial" value for IE is "auto", but since it will break FireFox, we set it to "0% 0%"
+			sInitial = Device.browser.msie ? "0% 0%" : "initial",
+			// BCP: 1970042795 - There is no "auto" value for FireFox
+			sAuto = Device.browser.firefox ? "initial" : "auto",
+			aTestInputValues = ["50% 50%", "10px 20px", sInitial, sAuto, "cover", "contain", "50px;5px solid red", '50px" onerror='],
+			aExpOutputValues = ["50% 50%", "10px 20px", sInitial, sAuto, "cover", "contain", "" /*invalid value should be discarded*/, "" /*invalid value should be discarded*/];
 
 		// System under test
 		oImage.placeAt("qunit-fixture");
@@ -131,8 +138,10 @@ sap.ui.define([
 		var oImage = createImage({
 				mode: "Background"
 			}),
-			aTestInputValues = ["repeat", "repeat-x", "repeat-y", "no-repeat", "space", "round", "initial", "initial;5px solid red", 'initial" onerror='],
-			aExpOutputValues = ["repeat", "repeat-x", "repeat-y", "no-repeat", "space", "round", "initial", "" /*invalid value should be discarded*/, "" /*invalid value should be discarded*/];
+			// BCP: 1970042795 - "initial" value for IE is "repeat"
+			sInitial = Device.browser.msie ? "repeat" : "initial",
+			aTestInputValues = ["repeat", "repeat-x", "repeat-y", "no-repeat", "space", "round", sInitial, "initial;5px solid red", 'initial" onerror='],
+			aExpOutputValues = ["repeat", "repeat-x", "repeat-y", "no-repeat", "space", "round", sInitial, "" /*invalid value should be discarded*/, "" /*invalid value should be discarded*/];
 
 		// System under test
 		oImage.placeAt("qunit-fixture");
