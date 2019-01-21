@@ -83,6 +83,8 @@ function (
 			var oFlexController = FlexControllerFactory.createForControl(oMockedAppComponent, this.oManifest);
 
 			this.oModel = new VariantModel(oData, oFlexController, oMockedAppComponent);
+			// non-personalization mode
+			this.oModel._bDesignTimeMode = true;
 
 			var oChange1 = new Change({
 				"fileName": "change44",
