@@ -1,0 +1,19 @@
+{
+  "1.63.0": {
+    "date": "January 2019",
+    "notes": [
+      {
+        "id": "08d469c76f3d141a86ce7448539d2bd40a4aa4c6",
+        "type": "FIX",
+        "text": " ManagedObject.bindAggregation returns \u0027this\u0027 even when forwarded",
+        "references": []
+      },
+      {
+        "id": "40a2bb89528a96e15c247a7ae20d5ece8201e7c3",
+        "type": "FIX",
+        "text": " util/Storage: fixed removeAll function",
+        "references": []
+      }
+    ]
+  }
+}

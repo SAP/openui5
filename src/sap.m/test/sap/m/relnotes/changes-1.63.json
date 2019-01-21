@@ -1,0 +1,49 @@
+{
+  "1.63.0": {
+    "date": "January 2019",
+    "notes": [
+      {
+        "id": "97006ee3c568c95b1614065f0c9b4afa43931920",
+        "type": "FIX",
+        "text": " sap.m.Combobox: Selecting an unexisting item does not throw an error",
+        "references": []
+      },
+      {
+        "id": "ab10cbd2e1f52456d004368e15b3086371bb7d5e",
+        "type": "FIX",
+        "text": " sap.m.FlexBox\u0026FixFlex: Controls are now valid droppable area",
+        "references": []
+      },
+      {
+        "id": "20306f944dbd785a66fe7b240ba9769d0a255b79",
+        "type": "FIX",
+        "text": " sap.m.GenericTagDesign/GenericTagValueState: Missing documentation",
+        "references": []
+      },
+      {
+        "id": "4635cfd47b3ffa47296cef9afaf006363cc0354d",
+        "type": "FIX",
+        "text": " sap.m.InputBase: Removing aria-describedby node correctly",
+        "references": []
+      },
+      {
+        "id": "68f055b89d2d1c9abbf19bd0f4043554c07b5cc0",
+        "type": "FIX",
+        "text": " sap.m.MultiComboBox: QUnit fix for IE",
+        "references": []
+      },
+      {
+        "id": "6d46cf0b46b9660a6028a51f36f41a3086d15090",
+        "type": "FIX",
+        "text": " sap.m.NavContainer: autoFocus false negative fixed",
+        "references": []
+      },
+      {
+        "id": "0858eda105d2c85e8041dea7e0fac965718bb2a5",
+        "type": "FIX",
+        "text": " sap.m.SelectDialog: Sample fixed",
+        "references": []
+      }
+    ]
+  }
+}
