@@ -194,10 +194,11 @@ sap.ui.define([
 				sTypedValue = oDomRef.value.substring(0, oDomRef.selectionStart),
 				oSelectedItem = this.getSelectedItem();
 
+			this.setSelection(oItem);
+
 			if (oItem !== oSelectedItem) {
 				oControl.updateDomValue(oItem.getText());
 
-				this.setSelection(oItem);
 				this.fireSelectionChange({ selectedItem: oItem });
 
 				// update the selected item after the change event is fired (the selection may change)
@@ -208,7 +209,13 @@ sap.ui.define([
 				}
 
 				oControl.selectText(iSelectionStart, oDomRef.value.length);
-				this.$().toggleClass("sapMFocus", !this.isOpen());
+			}
+
+			if (this.isOpen()) {
+				this.$().removeClass("sapMFocus");
+				this.getList().addStyleClass("sapMSelectListFocus");
+			} else {
+				this.$().addClass("sapMFocus");
 			}
 
 			this.scrollToItem(oItem);
@@ -730,6 +737,10 @@ sap.ui.define([
 					setTimeout(fnSelectTextIfFocused.bind(oInput, sValue.length, oInput.getValue().length), 0);
 				}
 			}
+
+			// always focus input field when typing in it
+			this.$().addClass("sapMFocus");
+			this.getList().removeStyleClass("sapMSelectListFocus");
 		};
 
 		/**
@@ -814,16 +825,6 @@ sap.ui.define([
 			fnPickerTypeBeforeOpen && fnPickerTypeBeforeOpen.call(this);
 		};
 
-		/**
-		 * This event handler is called before the picker popup is opened.
-		 *
-		 */
-		ComboBox.prototype.onBeforeOpenDropdown = function() {
-			if (this.getSelectedItem()) {
-				this.$().removeClass("sapMFocus");
-			}
-		};
-
 		ComboBox.prototype.onBeforeOpenDialog = function() {
 			var oPickerTextField = this.getPickerTextField();
 
@@ -903,10 +904,6 @@ sap.ui.define([
 			// the value state message should be reopen
 			if (this.shouldValueStateMessageBeOpened() && (document.activeElement === oDomRef)) {
 				this.openValueStateMessage();
-			}
-
-			if (document.activeElement === this.getFocusDomRef()) {
-				this.$().addClass("sapMFocus");
 			}
 		};
 
@@ -1023,8 +1020,15 @@ sap.ui.define([
 			oEvent.preventDefault();
 
 			this.loadItems(function navigateToNextSelectableItem() {
-				var aSelectableItems = this.getSelectableItems();
-				var oNextSelectableItem = aSelectableItems[aSelectableItems.indexOf(this.getSelectedItem()) + 1];
+				var aSelectableItems = this.getSelectableItems(),
+					oNextSelectableItem;
+
+				if (this.$().hasClass("sapMFocus") && this.isOpen()) {
+					oNextSelectableItem = aSelectableItems[0];
+				} else {
+					oNextSelectableItem = aSelectableItems[aSelectableItems.indexOf(this.getSelectedItem()) + 1];
+				}
+
 				fnHandleKeyboardNavigation.call(this, oControl, oNextSelectableItem);
 			});
 		};
@@ -1263,7 +1267,9 @@ sap.ui.define([
 				this.bOpenValueStateMessage = true;
 			}
 
-			this.$().addClass("sapMFocus");
+			if (!this.isOpen() || !this.getSelectedItem() || !this.getList().hasStyleClass("sapMSelectListFocus")) {
+				this.$().addClass("sapMFocus");
+			}
 		};
 
 		/**
@@ -1322,10 +1328,6 @@ sap.ui.define([
 				oList.setSelection(vItem);
 			}
 
-			// if there is selected item, put the visual focus on it
-			// instead on the input field
-			this.$().toggleClass("sapMFocus", !vItem);
-
 			this.setAssociation("selectedItem", vItem, true);
 			this.setProperty("selectedItemId", (vItem instanceof Item) ? vItem.getId() : vItem, true);
 
@@ -1336,7 +1338,6 @@ sap.ui.define([
 			sKey = vItem ? vItem.getKey() : "";
 			this.setProperty("selectedKey", sKey, true);
 			this._handleAriaActiveDescendant(vItem);
-			this.toggleStyleClass(this.getRenderer().CSS_CLASS_COMBOBOX + "SelectionActive", !!sKey);
 		};
 
 		/**
@@ -1577,6 +1578,42 @@ sap.ui.define([
 		/* ----------------------------------------------------------- */
 		/* public methods                                              */
 		/* ----------------------------------------------------------- */
+
+		/**
+		 * Opens the control's picker popup.
+		 *
+		 * @returns {sap.m.ComboBoxBase} <code>this</code> to allow method chaining.
+		 * @protected
+		 */
+		ComboBox.prototype.open = function() {
+			var oList = this.getList();
+
+			ComboBoxBase.prototype.open.call(this);
+
+			if (this.getSelectedItem()) {
+				oList.addStyleClass("sapMSelectListFocus");
+				this.$().removeClass("sapMFocus");
+			}
+
+			return this;
+		};
+
+		/**
+		 * Closes the control's picker popup and focus input field.
+		 *
+		 * @returns {sap.m.ComboBox} <code>this</code> to allow method chaining.
+		 * @public
+		 */
+		ComboBox.prototype.close = function() {
+			var oList = this.getList();
+			ComboBoxBase.prototype.close.call(this);
+
+			this.$().addClass("sapMFocus");
+			//Remove focusing class from the list
+			oList && oList.removeStyleClass("sapMSelectListFocus");
+
+			return this;
+		};
 
 		ComboBox.prototype.findAggregatedObjects = function() {
 			var oList = this.getList();
