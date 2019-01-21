@@ -3326,7 +3326,10 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/model/BindingMode', 'sap/ui/model/Co
 			this.oAnnotations.detachLoaded(this.onAnnotationsLoaded);
 			this.oAnnotations.destroy();
 			delete this.oAnnotations;
+			delete this.pAnnotationsLoaded;
 		}
+
+
 
 		Model.prototype.destroy.apply(this, arguments);
 	};
