@@ -83,7 +83,7 @@ sap.ui.define([
 		 * Whether the current operating system is Windows Phone
 		 * @type {boolean}
 		 * @public
-		 * @deprecated since 1.20 use {@link sap.ui.Device.os.winphone} instead
+		 * @deprecated since 1.20 use {@link sap.ui.Device.os.windows_phone} instead
 		 * @name jQuery.os.winphone
 		 */
 

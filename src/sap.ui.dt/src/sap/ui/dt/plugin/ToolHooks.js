@@ -12,7 +12,7 @@ sap.ui.define([
 	/**
 	 * Constructor for a new ToolHooks Plugin.
 	 *
-	 * @extends sap.ui.dt.plugin.Plugin
+	 * @extends sap.ui.dt.Plugin
 	 * @author SAP SE
 	 * @version ${version}
 	 * @constructor

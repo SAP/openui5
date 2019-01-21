@@ -598,7 +598,7 @@ sap.ui.define([
 		 * The promise is not directly chained, but instead its result is awaited in a new waitFor statement.
 		 * This means that any "thenable" should be acceptable.
 		 * @public
-		 * @param {jQuery.promise|oPromise} oPromise promise to schedule on the OPA queue
+		 * @param {jQuery.promise|Promise} oPromise promise to schedule on the OPA queue
 		 * @returns {jQuery.promise} promise which is the result of a {@link sap.ui.test.Opa.waitFor}
 		 */
 		iWaitForPromise: function (oPromise) {

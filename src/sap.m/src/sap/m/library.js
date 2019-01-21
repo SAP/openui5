@@ -1529,7 +1529,7 @@ sap.ui.define([
 	 * regardless of the value that this method returns.
 	 *
 	 * @param {object} mOptions The option array
-	 * @returns {integer} The number of tickmarks
+	 * @returns {int} The number of tickmarks
 	 *
 	 * @function
 	 * @name sap.m.IScale.getTickmarksBetweenLabels
@@ -1544,7 +1544,7 @@ sap.ui.define([
 	 * for the later calculations.
 	 *
 	 * @param {object} mOptions The option array
-	 * @returns {integer} The number of tickmarks
+	 * @returns {int} The number of tickmarks
 	 *
 	 * @function
 	 * @name sap.m.IScale.calcNumberOfTickmarks

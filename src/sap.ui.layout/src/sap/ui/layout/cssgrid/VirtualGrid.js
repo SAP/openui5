@@ -84,7 +84,7 @@ sap.ui.define([
 
 	/**
 	 *
-	 * @returns {Array|[*]}
+	 * @returns {any[][]}
 	 */
 	VirtualGrid.prototype.getMatrix = function () {
 		return this.virtualGridMatrix;
