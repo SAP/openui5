@@ -1890,17 +1890,33 @@ function(
 		},
 		afterEach: function() {}
 	}, function() {
-		QUnit.test("scenario APP_VARIANT: AppVariant", function(assert) {
-			this.sErrorText += "in an app variant scenario you additionaly need a project ID";
+		QUnit.test("scenario " + sap.ui.fl.Scenario.VersionedAppVariant + ": New VersionedAppVariant", function(assert) {
+			this.sErrorText += "in a versioned app variant scenario you additionaly need a project ID";
 			var sLrepRootNamespace = "apps/baseId/appVariants/projectId/";
-			assert.equal(Utils.buildLrepRootNamespace("baseId", "APP_VARIANT", "projectId"), sLrepRootNamespace, "then the root namespace got build correctly");
+			assert.equal(Utils.buildLrepRootNamespace("baseId", sap.ui.fl.Scenario.VersionedAppVariant, "projectId"), sLrepRootNamespace, "then the root namespace got build correctly");
 			assert.throws(
-				function() {Utils.buildLrepRootNamespace("", "APP_VARIANT", "projectId");},
+				function() {Utils.buildLrepRootNamespace("", sap.ui.fl.Scenario.VersionedAppVariant, "projectId");},
 				Error(this.sNoBaseIdErrorText),
 				"without base id calling 'buildLrepRootNamespace' for app variants throws an error"
 			);
 			assert.throws(
-				function() {Utils.buildLrepRootNamespace("baseId", "APP_VARIANT", "");},
+				function() {Utils.buildLrepRootNamespace("baseId", sap.ui.fl.Scenario.VersionedAppVariant, "");},
+				Error(this.sErrorText),
+				"without project id calling 'buildLrepRootNamespace' for app variants throws an error"
+			);
+		});
+
+		QUnit.test("scenario " + sap.ui.fl.Scenario.AppVariant + ": New AppVariant", function(assert) {
+			this.sErrorText += "in an app variant scenario you additionaly need a project ID";
+			var sLrepRootNamespace = "apps/baseId/appVariants/projectId/";
+			assert.equal(Utils.buildLrepRootNamespace("baseId", sap.ui.fl.Scenario.AppVariant, "projectId"), sLrepRootNamespace, "then the root namespace got build correctly");
+			assert.throws(
+				function() {Utils.buildLrepRootNamespace("", sap.ui.fl.Scenario.AppVariant, "projectId");},
+				Error(this.sNoBaseIdErrorText),
+				"without base id calling 'buildLrepRootNamespace' for app variants throws an error"
+			);
+			assert.throws(
+				function() {Utils.buildLrepRootNamespace("baseId", sap.ui.fl.Scenario.AppVariant, "");},
 				Error(this.sErrorText),
 				"without project id calling 'buildLrepRootNamespace' for app variants throws an error"
 			);
