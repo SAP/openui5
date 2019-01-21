@@ -773,4 +773,15 @@ sap.ui.define([
 
 		assert.strictEqual(fnPageInvalidate.callCount, 0, "Page.invalidate should not be called");
 	});
+
+	QUnit.test("Element Property change", function (assert) {
+
+		var fnQuickViewInvalidate = sinon.spy(this.oQuickView, "invalidate");
+		var fnQuickViewPopoverInvalidate = sinon.spy(this.oQuickView._oPopover, "invalidate");
+
+		this.oQuickView.getPages()[0].getGroups()[0].setHeading('new heading');
+
+		assert.strictEqual(fnQuickViewInvalidate.callCount, 0, "QuickView.invalidate should not be called");
+		assert.strictEqual(fnQuickViewPopoverInvalidate.callCount, 0, "QuickView.Popover.invalidate should not be called");
+	});
 });
