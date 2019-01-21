@@ -371,32 +371,20 @@
 	<OverflowToolbar id="otb9">
 		<Label text="Multiple Generic Tag instances:"/>
 		<ToolbarSpacer />
-		<GenericTag text= "Shortage Expected" status="Warning">
-			<layoutData>
-				<OverflowToolbarLayoutData
-					shrinkable="true"/>
-			</layoutData>
+		<GenericTag text="Project Cost" design="StatusIconHidden" status="Error">
+			<ObjectNumber state="Error" emphasized="false" number="3.5M" numberUnit="EUR"/>
 		</GenericTag>
-		<GenericTag text="Project Cost" status="Error">
+
+		<GenericTag text="Shortage Expected" status="Warning">
+		</GenericTag>
+
+		<GenericTag text="Project Cost"  design="StatusIconHidden" status="Success">
+			<ObjectNumber state="Success" emphasized="false" number="96" numberUnit="%" />
 			<layoutData>
-				<OverflowToolbarLayoutData
-					shrinkable="true"
-					minWidth="80px"/>
+				<OverflowToolbarLayoutData shrinkable="true" group="2" minWidth="70px"/>
 			</layoutData>
 		</GenericTag>
 		<GenericTag text="In Stock" status="Success">
-			<layoutData>
-				<OverflowToolbarLayoutData
-					shrinkable="true"
-					minWidth="70px"/>
-			</layoutData>
-		</GenericTag>
-		<GenericTag text="Total Cost" status= "Warning" valueState="Error">
-			<layoutData>
-				<OverflowToolbarLayoutData
-					shrinkable="true"
-					minWidth="100px"/>
-			</layoutData>
 		</GenericTag>
 	</OverflowToolbar>
 
