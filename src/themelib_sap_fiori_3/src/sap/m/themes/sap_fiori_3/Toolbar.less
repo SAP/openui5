@@ -8,11 +8,45 @@ html.sap-desktop .sapMTBActive:focus {
 	outline-offset: -0.125rem;
 }
 
-/* Info Toolbar Context */
-.sapMTB-Info-CTX.sapMTB {
+.sapMTB {
 	height: 2rem;
 	padding: 0 0.5rem;
+	background: @sapUiListHeaderBackground;
+}
+
+.sapUiSizeCozy .sapMTB {
+	height: 2.75rem;
+}
+
+/* Transparent Toolbar Context */
+.sapMTB-Transparent-CTX.sapMTB {
+	background: @sapUiToolbarBackground;
+	border-bottom: 1px solid @sapUiGroupTitleBorderColor;
+}
+
+/* Info Toolbar Context */
+.sapMTB-Info-CTX.sapMTB {
+	background: @sapUiInfobarBackground;
 	border-bottom: none;
+}
+
+.sapMIBar.sapMTB {
+
+	.sapMBarChild {
+		margin: 0 0.25rem;
+	}
+
+	.sapMBarChild:first-child {
+		margin: 0 0.25rem 0 0;
+	}
+
+	.sapMBarChild:last-child {
+		margin: 0 0 0 0.25rem;
+	}
+
+	.sapMBarChild:only-child {
+		margin: 0;
+	}
 }
 
 html.sap-desktop .sapMTB-Info-CTX.sapMTBActive:focus {
