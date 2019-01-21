@@ -75,6 +75,10 @@ sap.ui.define(["sap/ui/fl/Utils", "sap/base/util/uid", 'sap/ui/base/ManagedObjec
 					return oButton.firePress(oEvent);
 				});
 
+				oButton.getCustomData = function() {
+					return (oButton.getAggregation("customData").length) ? oButton.getAggregation("customData") : oMenuItem.getCustomData();
+				};
+
 				// observe the Button enabled property so in case it is changed the new value should be applied to the MenuItem also
 				new ManagedObjectObserver(function (oChanges) {
 					oModifier.setProperty(oMenuItem, "enabled", oChanges.current);
