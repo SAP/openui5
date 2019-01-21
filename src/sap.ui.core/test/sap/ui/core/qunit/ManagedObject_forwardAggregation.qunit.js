@@ -1283,7 +1283,8 @@ sap.ui.define(['sap/ui/base/ManagedObject', 'sap/ui/core/Element', 'sap/ui/core/
 			assert.equal(this.composite.getOuterAggregationWithForwardedBinding().length, 4, "outer control should have 4 items");
 			assert.equal(this.innerElement.getInnerAggregationWithForwardedBinding().length, 4, "inner control should have 4 items");
 
-			this.composite.unbindAggregation("outerAggregationWithForwardedBinding");
+			var result = this.composite.unbindAggregation("outerAggregationWithForwardedBinding");
+			assert.equal(result, this.composite, "unbindAggregation should return the outer element, not the forwarding target");
 
 			assert.equal(this.composite.getOuterAggregation().length, 0, "outer control should have 0 items");
 			assert.equal(this.innerElement.getInnerAggregation().length, 0, "inner control should have 0 items");

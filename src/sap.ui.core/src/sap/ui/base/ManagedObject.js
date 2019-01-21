@@ -3718,7 +3718,8 @@ sap.ui.define([
 	ManagedObject.prototype.unbindAggregation = function(sName, bSuppressReset){
 		var oForwarder = this.getMetadata().getAggregationForwarder(sName);
 		if (oForwarder && oForwarder.forwardBinding) {
-			return oForwarder.getTarget(this).unbindAggregation(oForwarder.targetAggregationName, bSuppressReset);
+			oForwarder.getTarget(this).unbindAggregation(oForwarder.targetAggregationName, bSuppressReset);
+			return this;
 		}
 
 		var oBindingInfo = this.mBindingInfos[sName],
