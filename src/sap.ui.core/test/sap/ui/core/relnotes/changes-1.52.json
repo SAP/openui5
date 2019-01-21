@@ -1528,5 +1528,57 @@
         "references": []
       }
     ]
+  },
+  "1.52.23": {
+    "date": "December 2018",
+    "notes": [
+      {
+        "id": "db49ccb4964067d5a791dfd362cd6a087b30e604",
+        "type": "FIX",
+        "text": " Model.removeBinding: performance",
+        "references": []
+      },
+      {
+        "id": "cc8bdc7029aae7f54f3e3b4ce6ecb4104205b3c4",
+        "type": "FIX",
+        "text": " v2.ODataModel: memory leak",
+        "references": []
+      }
+    ]
+  },
+  "1.52.24": {
+    "date": "January 2019",
+    "notes": [
+      {
+        "id": "a0a4a2785cbf3fe9e40993a9f6416d2b572ecbb4",
+        "type": "FIX",
+        "text": " ComboBoxBase: Support for composition characters",
+        "references": []
+      },
+      {
+        "id": "47cb34ec4f0bcebab95d65934be368c3001981cd",
+        "type": "FIX",
+        "text": " Device.js: use maxTouchPoints for touch support detection",
+        "references": []
+      },
+      {
+        "id": "fec120cec3d65d005e679868f4754f87f4e39358",
+        "type": "FIX",
+        "text": " ODataUtils: Enhance setAnnotationOrigin for HanaXS Use Case",
+        "references": []
+      },
+      {
+        "id": "9c7e30c2ffb67cf17e92dcf708fa4f22058618f5",
+        "type": "FIX",
+        "text": " core.Popup: modal popup should blur the previous DOM after open",
+        "references": []
+      },
+      {
+        "id": "607ee0a786047e577608d88e7fe4675017b5b703",
+        "type": "FIX",
+        "text": " sap/ui/dom/ActiveElementFix: empty object document.activeElement",
+        "references": []
+      }
+    ]
   }
 }

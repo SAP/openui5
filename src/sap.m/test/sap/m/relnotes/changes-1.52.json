@@ -3563,5 +3563,93 @@
         "references": []
       }
     ]
+  },
+  "1.52.23": {
+    "date": "December 2018",
+    "notes": [
+      {
+        "id": "00900cbd9d2e0b6b821d214c51cb1f95c6ea6aa8",
+        "type": "FIX",
+        "text": " sap.m.Input: showValueStateMessage now works correctly",
+        "references": []
+      },
+      {
+        "id": "36d23945750a250211b845bdda3b447164c4afd1",
+        "type": "FIX",
+        "text": " sap.m.MultiInput: Pressing left arrow no longer deletes a token",
+        "references": []
+      },
+      {
+        "id": "244bc4dd9d6f827c9eaa27914ac302c48344b396",
+        "type": "FIX",
+        "text": " sap.m.ObjectListItem: Now the press event is correctly fired",
+        "references": []
+      },
+      {
+        "id": "8ed19d5c5ca8744614d72e376d961458071b8054",
+        "type": "FIX",
+        "text": " sap.m.Popover: Correct reposition",
+        "references": []
+      },
+      {
+        "id": "2bc6b60f1ad6aa1fd8ce9c4452d19e85ddd88b38",
+        "type": "FIX",
+        "text": " sap.m.uploadCollectionItem : Fixed .csv file download issue.",
+        "references": []
+      }
+    ]
+  },
+  "1.52.24": {
+    "date": "January 2019",
+    "notes": [
+      {
+        "id": "a0a4a2785cbf3fe9e40993a9f6416d2b572ecbb4",
+        "type": "FIX",
+        "text": " ComboBoxBase: Support for composition characters",
+        "references": []
+      },
+      {
+        "id": "029f98e35e6b4e827b5857b6c9d033f161a3c9dc",
+        "type": "FIX",
+        "text": " P13nDimMeasurePanel: alphabetical sorting of invisible list items",
+        "references": []
+      },
+      {
+        "id": "ec495b49f0103a6f313bd08cffe0b04294db9e9e",
+        "type": "FIX",
+        "text": " sap.m.Dialog: Improve aria-labelledby",
+        "references": []
+      },
+      {
+        "id": "a8ac7145e01bba309f39af7afa4b91b970886099",
+        "type": "FIX",
+        "text": " sap.m.FacetFilter: search on all binding parts for text",
+        "references": []
+      },
+      {
+        "id": "3473945a86d6b13d5f087685bcbaa2539cdb7079",
+        "type": "FIX",
+        "text": " sap.m.GenericTile : Refractored default Tooltip to contain Header,Sub-header and TileContent.",
+        "references": []
+      },
+      {
+        "id": "da9ebfbd66d29b3bb38f20b50962d4b37b1d42a3",
+        "type": "FIX",
+        "text": " sap.m.MessagePopover: MessageView\u0027s auto binding fix",
+        "references": []
+      },
+      {
+        "id": "7c60b5f2a62713bf57f5ac7e567dabc6714b243e",
+        "type": "FIX",
+        "text": " sap.m.ObjectAttribute: do not throw exception  when special chars are used in title",
+        "references": []
+      },
+      {
+        "id": "4357a6c612af151d3f6bbf8573cbe3ff0f76f222",
+        "type": "FIX",
+        "text": " sap.m.ObjectListItem: Markers layout fixed",
+        "references": []
+      }
+    ]
   }
 }
