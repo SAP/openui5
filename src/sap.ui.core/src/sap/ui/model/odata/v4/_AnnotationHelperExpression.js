@@ -108,6 +108,8 @@ sap.ui.define([
 	 *  <li><code>asExpression</code>: {boolean} parser state: if this property is
 	 *    <code>true</code>, an embedded <code>concat</code> must be rendered as an expression
 	 *    binding and not a composite binding.
+	 *  <li><code>complexBinding</code>: {boolean} parser state: if this property is
+	 *    <code>true</code>, bindings shall have type and constraints information
 	 *  <li><code>path</code>: {string} the path in the metamodel that leads to the value
 	 *  <li><code>value</code>: {any} the value of the (sub) expression from the metamodel
 	 * </ul>
@@ -124,6 +126,7 @@ sap.ui.define([
 	 *    <li>when "expression": {string} the expression unwrapped (no "{=" and "}")
 	 *   </ul>
 	 *  <li><code>type</code>:  the EDM data type (like "Edm.String") if it could be determined
+	 *  <li><code>constraints</code>: {object} type constraints if result is "binding"
 	 * </ul>
 	 */
 	Expression = {
@@ -211,7 +214,8 @@ sap.ui.define([
 						Expression.wrapExpression(oParameter);
 					}
 
-					return Basics.resultToString(oParameter, bExpression);
+					return Basics.resultToString(oParameter, bExpression,
+						oPathValue.complexBinding);
 				});
 				oResult = bExpression
 					? {result : "expression", value : aParts.join("+")}
@@ -234,8 +238,23 @@ sap.ui.define([
 		 *   a sync promise which resolves with the result object or is rejected with an error
 		 */
 		conditional : function (oPathValue) {
+			var bComplexBinding = oPathValue.complexBinding,
+				oPathValueForCondition = bComplexBinding
+					? Object.assign({}, oPathValue, {complexBinding : false})
+					: oPathValue;
+
+			/*
+			 * Returns the string representation of the given parameter value.
+			 * @param {object} oParameterValue the parameter value
+			 * @param {boolean} bComplex whether the result is a complex binding or a simple binding
+			 */
+			function toString(oParameterValue, bComplex) {
+				return Basics.resultToString(Expression.wrapExpression(oParameterValue), true,
+					bComplex);
+			}
+
 			return SyncPromise.all([
-				Expression.parameter(oPathValue, 0, "Edm.Boolean"),
+				Expression.parameter(oPathValueForCondition, 0, "Edm.Boolean"),
 				Expression.parameter(oPathValue, 1),
 				Expression.parameter(oPathValue, 2)
 			]).then(function (aResults) {
@@ -254,9 +273,9 @@ sap.ui.define([
 				return {
 					result : "expression",
 					type : sType,
-					value : Basics.resultToString(Expression.wrapExpression(oCondition), true)
-						+ "?" + Basics.resultToString(Expression.wrapExpression(oThen), true)
-						+ ":" + Basics.resultToString(Expression.wrapExpression(oElse), true)
+					value : toString(oCondition, false)
+						+ "?" + toString(oThen, bComplexBinding)
+						+ ":" + toString(oElse, bComplexBinding)
 				};
 			});
 		},
@@ -376,12 +395,10 @@ sap.ui.define([
 					// 14.5.1 Comparison and Logical Operators
 					return Expression.operator(oSubPathValue, sType);
 
-				case "Not":
-					// 14.5.1 Comparison and Logical Operators
+				case "Not": // 14.5.1 Comparison and Logical Operators
 					return Expression.not(oSubPathValue);
 
-				case "Null":
-					// 14.5.10 Expression edm:Null
+				case "Null": // 14.5.10 Expression edm:Null
 					return SyncPromise.resolve({
 						result : "constant",
 						type : "edm:Null",
@@ -404,7 +421,12 @@ sap.ui.define([
 		fillUriTemplate : function (oPathValue) {
 			var i,
 				aParameters = [],
-				aPromises = [Expression.parameter(oPathValue, 0, "Edm.String")];
+				aPromises;
+
+			// Note: it is safe to modify the caller's object here
+			oPathValue.complexBinding = false;
+
+			aPromises = [Expression.parameter(oPathValue, 0, "Edm.String")];
 
 			for (i = 1; i < oPathValue.value.length; i += 1) {
 				aParameters[i] = Basics.descend(oPathValue, i, "object");
@@ -417,12 +439,13 @@ sap.ui.define([
 					aParts = [],
 					sPrefix = "";
 
-				aParts.push('odata.fillUriTemplate(', Basics.resultToString(aResults[0], true),
+				aParts.push('odata.fillUriTemplate(',
+					Basics.resultToString(aResults[0], true, false),
 					',{');
 				for (i = 1; i < oPathValue.value.length; i += 1) {
 					sName = Basics.property(aParameters[i], "$Name", "string");
 					aParts.push(sPrefix, Basics.toJSON(sName), ":",
-						Basics.resultToString(aResults[i], true));
+						Basics.resultToString(aResults[i], true, false));
 					sPrefix = ",";
 				}
 				aParts.push("})");
@@ -438,11 +461,6 @@ sap.ui.define([
 		 * Formats the result to be an operand for a logical or comparison operator. Handles
 		 * constants accordingly.
 		 *
-		 * @param {object} oPathValue
-		 *   path and value information pointing to the parameter array (for a possible error
-		 *   message, see above)
-		 * @param {number} iIndex
-		 *   the parameter index (for a possible error message)
 		 * @param {object} oResult
 	 	 *   a result object with category
 		 * @param {boolean} bWrapExpression
@@ -450,7 +468,7 @@ sap.ui.define([
 		 * @returns {string}
 		 *   the formatted result
 		 */
-		formatOperand : function (oPathValue, iIndex, oResult, bWrapExpression) {
+		formatOperand : function (oResult, bWrapExpression) {
 			if (oResult.result === "constant") {
 				switch (oResult.category) {
 					case "boolean":
@@ -462,7 +480,7 @@ sap.ui.define([
 			if (bWrapExpression) {
 				Expression.wrapExpression(oResult);
 			}
-			return Basics.resultToString(oResult, true);
+			return Basics.resultToString(oResult, true, false);
 		},
 
 		/**
@@ -490,7 +508,7 @@ sap.ui.define([
 			}
 
 			return Expression.expression(oPathValue).then(function (oResult) {
-				return Basics.resultToString(oResult, false);
+				return Basics.resultToString(oResult, false, oPathValue.complexBinding);
 			}, function (e) {
 				if (e instanceof SyntaxError) {
 					return "Unsupported: " + BindingParser.complexParser.escape(
@@ -513,12 +531,14 @@ sap.ui.define([
 		not : function (oPathValue) {
 			// Note: it is safe to modify the caller's object here
 			oPathValue.asExpression = true;
+			oPathValue.complexBinding = false;
 
 			return Expression.expression(oPathValue).then(function (oParameter) {
 				return {
 					result : "expression",
 					type : "Edm.Boolean",
-					value : "!" + Basics.resultToString(Expression.wrapExpression(oParameter), true)
+					value : "!"
+						+ Basics.resultToString(Expression.wrapExpression(oParameter), true, false)
 				};
 			});
 		},
@@ -535,6 +555,9 @@ sap.ui.define([
 		 */
 		operator : function (oPathValue, sType) {
 			var sExpectedEdmType = sType === "And" || sType === "Or" ? "Edm.Boolean" : undefined;
+
+			// Note: it is safe to modify the caller's object here
+			oPathValue.complexBinding = false;
 
 			return SyncPromise.all([
 				Expression.parameter(oPathValue, 0, sExpectedEdmType),
@@ -568,8 +591,8 @@ sap.ui.define([
 					}
 					bNeedsCompare = mTypeCategoryNeedsCompare[oParameter0.category];
 				}
-				sValue0 = Expression.formatOperand(oPathValue, 0, oParameter0, !bNeedsCompare);
-				sValue1 = Expression.formatOperand(oPathValue, 1, oParameter1, !bNeedsCompare);
+				sValue0 = Expression.formatOperand(oParameter0, !bNeedsCompare);
+				sValue1 = Expression.formatOperand(oParameter1, !bNeedsCompare);
 				return {
 					result : "expression",
 					type : "Edm.Boolean",
@@ -621,16 +644,22 @@ sap.ui.define([
 			var oPromise;
 
 			Basics.expectType(oPathValue, "string");
-			oPromise = oPathValue.model.fetchObject(oPathValue.path + "/$Type");
+			oPromise = oPathValue.model.fetchObject(oPathValue.path + "/$");
 			if (oPromise.isPending() && !oPathValue.$$valueAsPromise) {
 				oPromise.caught();
 				oPromise = SyncPromise.resolve();
 			}
 
-			return oPromise.then(function (sType) {
+			return oPromise.then(function (oProperty) {
+				var mConstraints;
+
+				if (oProperty && oPathValue.complexBinding) {
+					mConstraints = oPathValue.model.getConstraints(oProperty, oPathValue.path);
+				}
 				return {
+					constraints : mConstraints,
 					result : "binding",
-					type : sType,
+					type : oProperty && oProperty.$Type,
 					value : oPathValue.value
 				};
 			});
@@ -651,10 +680,10 @@ sap.ui.define([
 					type : "Edm.String",
 					value : oResult.type === "Edm.String"
 						// Note: odata.uriEncode() is V2, but safe for Edm.String!
-						? 'odata.uriEncode(' + Basics.resultToString(oResult, true) + ","
+						? 'odata.uriEncode(' + Basics.resultToString(oResult, true, false) + ","
 							+ Basics.toJSON(oResult.type) + ")"
 						// Note: see _Helper.formatLiteral()
-						: 'String(' + Basics.resultToString(oResult, true) + ")"
+						: 'String(' + Basics.resultToString(oResult, true, false) + ")"
 				};
 			});
 		},

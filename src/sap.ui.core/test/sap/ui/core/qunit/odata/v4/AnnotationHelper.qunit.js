@@ -276,12 +276,13 @@ sap.ui.define([
 
 			this.mock(Expression).expects("getExpression")
 				.withExactArgs({
-						asExpression : false,
-						model : sinon.match.same(oMetaModel),
-						path : "/my/path", // trailing slash removed!
-						value : sinon.match.same(vRawValue),
-						$$valueAsPromise : undefined
-					})
+					asExpression : false,
+					complexBinding : false,
+					model : sinon.match.same(oMetaModel),
+					path : "/my/path", // trailing slash removed!
+					value : sinon.match.same(vRawValue),
+					$$valueAsPromise : undefined
+				})
 				.returns(sResult);
 
 			assert.strictEqual(AnnotationHelper.value(vRawValue, {context : oContext}), sResult);
@@ -302,18 +303,22 @@ sap.ui.define([
 				}
 			},
 			oPromise,
+			oProperty = {
+				$Type : "Edm.String"
+			},
 			vRawValue = {$Path: "EQUIPMENT_2_PRODUCT/Name"};
 
 		this.mock(Expression).expects("getExpression").withExactArgs({
 				asExpression : false,
+				complexBinding : false,
 				model : sinon.match.same(oModel),
 				path : "/Equipments/@com.sap.vocabularies.UI.v1.LineItem/4/Value",
 				value : sinon.match.same(vRawValue),
 				$$valueAsPromise : true
 			}).callThrough();
 		this.mock(oModel).expects("fetchObject")
-			.withExactArgs("/Equipments/@com.sap.vocabularies.UI.v1.LineItem/4/Value/$Path/$Type")
-			.returns(SyncPromise.resolve(Promise.resolve("Edm.String")));
+			.withExactArgs("/Equipments/@com.sap.vocabularies.UI.v1.LineItem/4/Value/$Path/$")
+			.returns(SyncPromise.resolve(Promise.resolve(oProperty)));
 
 		// code under test
 		oPromise = AnnotationHelper.value(vRawValue, {$$valueAsPromise : true, context : oContext});
@@ -368,11 +373,11 @@ sap.ui.define([
 				.replace(/'/g, "%27");
 
 		oMetaModelMock.expects("fetchObject")
-			.withExactArgs("/$Apply/1/$LabeledElement/$Apply/0/$Path/$Type")
-			.returns(SyncPromise.resolve("Edm.Guid")); // City; just kidding
+			.withExactArgs("/$Apply/1/$LabeledElement/$Apply/0/$Path/$")
+			.returns(SyncPromise.resolve({$Type : "Edm.Guid"})); // City; just kidding
 		oMetaModelMock.expects("fetchObject")
-			.withExactArgs("/$Apply/2/$LabeledElement/$Apply/0/$Path/$Type")
-			.returns(SyncPromise.resolve("Edm.String")); // Street
+			.withExactArgs("/$Apply/2/$LabeledElement/$Apply/0/$Path/$")
+			.returns(SyncPromise.resolve({$Type : "Edm.String"})); // Street
 
 		check(assert, {
 			$Apply : [
@@ -591,5 +596,74 @@ sap.ui.define([
 			// code under test
 			assert.strictEqual(AnnotationHelper.label(vRawValue, {/*oDetails*/}), undefined);
 		});
+	});
+
+	//*********************************************************************************************
+	["/my/path", "/my/path/"].forEach(function (sPath) {
+		QUnit.test("format", function (assert) {
+			var oMetaModel = {},
+				oContext = new BaseContext(oMetaModel, sPath),
+				vRawValue = {},
+				vResult = {/*string or Promise*/};
+
+			this.mock(Expression).expects("getExpression")
+				.withExactArgs({
+					asExpression : false,
+					complexBinding : true,
+					model : sinon.match.same(oMetaModel),
+					path : "/my/path", // trailing slash removed!
+					value : sinon.match.same(vRawValue),
+					$$valueAsPromise : true
+				})
+				.returns(vResult);
+
+			assert.strictEqual(AnnotationHelper.format(vRawValue, {context : oContext}), vResult);
+		});
+	});
+
+	//*********************************************************************************************
+	QUnit.test("format: integration test", function (assert) {
+		var mConstraints = {
+				maxLength : 10
+			},
+			oModel = {
+				fetchObject : function () {},
+				getConstraints : function () {}
+			},
+			oContext = {
+				getModel : function () {
+					return oModel;
+				},
+				getPath : function () {
+					return "/Equipments/@com.sap.vocabularies.UI.v1.LineItem/4/Value/";
+				}
+			},
+			sMetaPath = "/Equipments/@com.sap.vocabularies.UI.v1.LineItem/4/Value/$Path",
+			oModelMock = this.mock(oModel),
+			oProperty = {
+				$MaxLength : "10",
+				$Type : "Edm.String"
+			},
+			vRawValue = {$Path: "EQUIPMENT_2_PRODUCT/Name"};
+
+		this.mock(Expression).expects("getExpression").withExactArgs({
+				asExpression : false,
+				complexBinding : true,
+				model : sinon.match.same(oModel),
+				path : "/Equipments/@com.sap.vocabularies.UI.v1.LineItem/4/Value",
+				value : sinon.match.same(vRawValue),
+				$$valueAsPromise : true
+			}).callThrough();
+		oModelMock.expects("fetchObject")
+			.withExactArgs("/Equipments/@com.sap.vocabularies.UI.v1.LineItem/4/Value/$Path/$")
+			.returns(SyncPromise.resolve(oProperty));
+		oModelMock.expects("getConstraints")
+			.withExactArgs(sinon.match.same(oProperty), sMetaPath)
+			.returns(mConstraints);
+
+		// code under test
+		assert.strictEqual(AnnotationHelper.format(vRawValue, {context : oContext}),
+			"{path:'EQUIPMENT_2_PRODUCT/Name',type:'sap.ui.model.odata.type.String',"
+			+ "constraints:{'maxLength':10}}");
 	});
 });

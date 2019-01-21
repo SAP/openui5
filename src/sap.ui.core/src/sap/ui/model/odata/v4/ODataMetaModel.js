@@ -1326,7 +1326,7 @@ sap.ui.define([
 				oTypeInfo = mUi5TypeForEdmType[oProperty.$Type];
 				if (oTypeInfo) {
 					sTypeName = oTypeInfo.type;
-					mConstraints = that.getConstraints(oProperty, oMetaContext);
+					mConstraints = that.getConstraints(oProperty, oMetaContext.getPath());
 				} else {
 					Log.warning("Unsupported type '" + oProperty.$Type + "', using " + sTypeName,
 						sPath, sODataMetaModel);
@@ -1648,15 +1648,15 @@ sap.ui.define([
 	 *
 	 * @param {object} oProperty
 	 *   The property
-	 * @param {object} oMetaContext
-	 *   The OData metadata model context corresponding to the given property
+	 * @param {string} sMetaPath
+	 *   The OData metadata model path corresponding to the given property
 	 * @returns {object}
 	 *   The type constraints for the property or <code>undefined</code> if the property's type is
 	 *   not supported
 	 *
 	 * @private
 	 */
-	ODataMetaModel.prototype.getConstraints = function (oProperty, oMetaContext) {
+	ODataMetaModel.prototype.getConstraints = function (oProperty, sMetaPath) {
 		var sConstraintPath,
 			mConstraints,
 			oTypeConstraints,
@@ -1682,7 +1682,7 @@ sap.ui.define([
 				setConstraint(oTypeConstraints[sConstraintPath],
 					sConstraintPath[0] === "@"
 						// external targeting
-						? this.getObject(sConstraintPath, oMetaContext)
+						? this.getObject(sMetaPath + sConstraintPath)
 						: oProperty[sConstraintPath]);
 			}
 			if (oProperty.$Nullable === false) {

@@ -9,19 +9,20 @@
 	xmlns:template="http://schemas.sap.com/sapui5/extension/sap.ui.core.template/1">
 	<template:alias name="getValueListType" value="AnnotationHelper.getValueListType">
 	<template:alias name="stringify" value="Helper.stringify">
+	<template:alias name="format" value="AnnotationHelper.format">
 	<template:alias name="value" value="AnnotationHelper.value">
 	<template:alias name="label" value="AnnotationHelper.label">
 	<VBox>
  		<Panel expandable="true" headerText="(Technical Tests)">
 			<VBox>
-				<Title level="H1" text="async helper"/>
+				<Title text="async helper" titleStyle="H2"/>
 				<template:with var="product" path="meta>/Equipments" helper="Helper.asyncHelper">
 					<template:repeat list="{product>}" var="productProperty">
 						<Text text="{productProperty>@sapui.name}: {productProperty>$Type}"/>
 					</template:repeat>
 				</template:with>
 				<Text text="- - - - - - - - - -"/>
-				<Title level="H1" text="isMultiple"/>
+				<Title text="isMultiple" titleStyle="H2"/>
 				<template:repeat list="{meta>/}" var="topLevel">
 					<template:if test="{:= ${topLevel>$kind} === 'EntitySet' }">
 						<Label design="Bold" text="{topLevel>$Type}"/>
@@ -89,12 +90,18 @@
 					<Text text="ValueListType: {property>@@getValueListType}"/>
 				</template:repeat>
 				<Text text="- - - - - - - - - -"/>
-				<Title level="H1" text="async repeat"/>
+				<Title text="async repeat" titleStyle="H2"/>
 				<template:repeat
 					list="{meta>/com.sap.gateway.default.iwbep.tea_busi_supplier.v0001.Supplier/}"
 					var="property">
 					<Text text="{property>@sapui.name}"/>
 				</template:repeat>
+				<Text text="- - - - - - - - - -"/>
+				<Title text="AnnotationHelper.value vs. AnnotationHelper.format" titleStyle="H2"/>
+				<Label design="Bold" text="meta>/Equipments/@com.sap.vocabularies.UI.v1.LineItem/5/Value/@@format" />
+				<Text text="{path : 'meta>/Equipments/@com.sap.vocabularies.UI.v1.LineItem/5/Value/@@format', formatter : 'stringify'}" />
+				<Label design="Bold" text="meta>/Equipments/@com.sap.vocabularies.UI.v1.LineItem/5/Value/@@value" />
+				<Text text="{path : 'meta>/Equipments/@com.sap.vocabularies.UI.v1.LineItem/5/Value/@@value', formatter : 'stringify'}" />
 				<!-- TODO repeat over $* properties! -->
 			</VBox>
 		</Panel>
@@ -129,7 +136,7 @@
 										</template:if>
 									</template:elseif>
 									<template:else>
-										<Text text="{field>Value/@@value}" />
+										<Text text="{field>Value/@@format}" />
 									</template:else>
 								</template:if>
 							</template:with>
@@ -139,6 +146,7 @@
 			</template:with>
 		</template:with>
 	</VBox>
+	</template:alias>
 	</template:alias>
 	</template:alias>
 	</template:alias>
