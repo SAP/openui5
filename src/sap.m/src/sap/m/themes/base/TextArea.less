@@ -39,7 +39,8 @@
 		overflow: hidden;
 		font-family: @sapUiFontFamily;
 		font-size: @sapMFontSmallSize;
-		padding: 0.125rem 0.125rem 0.5rem;
+		color: @sapUiContentLabelColor;
+		padding: 0.3725rem 0.125rem 0.5rem;
 	}
 
 	& .sapMInputBaseContentWrapper {
@@ -71,6 +72,13 @@
 		.sapMTextAreaInner {
 			line-height: 1.4;
 			padding: 0.1875rem 0.5rem;
+		}
+	}
+
+
+	.sapMTextAreaWithCounter {
+		& .sapMTextAreaCounter {
+			padding-top: 0.3125rem;
 		}
 	}
 }
