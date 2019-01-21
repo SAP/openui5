@@ -81,7 +81,7 @@ sap.ui.define([
 
 			oView.getModel("ui").setProperty("/codeVisible", bVisible);
 			if (bVisible) {
-				sSource = XMLHelper.serializeXML(this._getDetailView()._xContent)
+				sSource = XMLHelper.serialize(this._getDetailView()._xContent)
 					.replace(/<!--.*-->/g, "") // remove comments
 					.replace(/\t/g, "  ") // indent by just 2 spaces
 					.replace(/\n\s*\n/g, "\n"); // remove empty lines
