@@ -52,14 +52,18 @@ sap.ui.define(["sap/ui/util/Storage"], function(Storage) {
 				val = store.get("testkey3");
 				assert.equal(val, "testvalue3", "Value correct after put");
 
-				res = store.removeAll("Test");
+				store.put("RemoveTestkey", "removetestvalue");
+				store.put("RemoveTestkey2", "removetestvalue2");
+				res = store.removeAll("RemoveTest");
 				assert.ok(res, "removeAll returns true when storage is supported");
+
+				val = store.get("RemoveTestkey");
+				assert.equal(val, null);
+				val = store.get("RemoveTestkey2");
+				assert.equal(val, null);
 
 				val = store.get("testkey");
 				assert.equal(val, "testvalue", "Value still there after removeAll");
-
-				val = store.get("Testkey2");
-				assert.ok(!val, "Value not there after removeAll");
 
 				val = store.get("testkey3");
 				assert.equal(val, "testvalue3", "Value still there after removeAll");
