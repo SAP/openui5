@@ -2431,11 +2431,11 @@ sap.ui.define([
 		qutils.triggerEvent("click", "PC1-DateInt--Head-prev");
 		assert.ok(bStartDateChange, "startDateChange fired");
 		oStartDate = oPC1.getStartDate();
-		oExpectedDate = new Date("2014", "11", "17", "00", "00");
+		oExpectedDate = new Date("2014", "11", "17", "20", "00");
 		if (jQuery("#PC1").outerWidth() < Device.media._predefinedRangeSets[Device.media.RANGESETS.SAP_STANDARD_EXTENDED].points[0]) {
-			oExpectedDate = new Date("2014", "11", "25", "00", "00");
+			oExpectedDate = new Date("2014", "11", "25", "02", "00");
 		} else if (jQuery("#PC1").outerWidth() < Device.media._predefinedRangeSets[Device.media.RANGESETS.SAP_STANDARD_EXTENDED].points[1]) {
-			oExpectedDate = new Date("2014", "11", "25", "00", "00");
+			oExpectedDate = new Date("2014", "11", "25", "02", "00");
 		}
 		assert.equal(oExpectedDate.getTime(), oStartDate.getTime(), "Start date is OK");
 
@@ -2446,11 +2446,11 @@ sap.ui.define([
 		qutils.triggerEvent("click", "PC1-MonthInt--Head-prev");
 		assert.ok(bStartDateChange, "startDateChange fired");
 		oStartDate = oPC1.getStartDate();
-		oExpectedDate = new Date("2013", "11", "01", "00", "00");
+		oExpectedDate = new Date("2013", "11", "01", "20", "00");
 		if (jQuery("#PC1").outerWidth() < Device.media._predefinedRangeSets[Device.media.RANGESETS.SAP_STANDARD_EXTENDED].points[0]) {
-			oExpectedDate = new Date("2014", "08", "01", "00", "00");
+			oExpectedDate = new Date("2014", "08", "01", "02", "00");
 		} else if (jQuery("#PC1").outerWidth() < Device.media._predefinedRangeSets[Device.media.RANGESETS.SAP_STANDARD_EXTENDED].points[1]) {
-			oExpectedDate = new Date("2014", "05", "01", "00", "00");
+			oExpectedDate = new Date("2014", "05", "01", "02", "00");
 		}
 		assert.equal(oExpectedDate.getTime(), oStartDate.getTime(), "Start date is OK");
 
@@ -3392,6 +3392,45 @@ sap.ui.define([
 					new Date(2016, 8, 3),
 					new Date(2016, 8, 4)],
 				this.oPC2, "Initial week should not be changed");
+	});
+
+	QUnit.test("setStartDate should preserve the hours when navigation occurs in all views except hours view", function (assert) {
+		// Prepare
+		var oEvent = {
+			oSource: {
+				getStartDate: function () {
+					return new Date(2015, 1, 12);
+				}
+			}
+		};
+
+		// Act
+		_switchToView(CalendarIntervalType.Day, this.oPC2);
+		this.oPC2._handleStartDateChange(oEvent);
+
+		// Assert
+		assert.strictEqual(this.oPC2.getStartDate().getHours(), 1, "The Hours are not changed to 00, but instead the original hours are preserved in Day view");
+
+		// Act
+		_switchToView(CalendarIntervalType.Week, this.oPC2);
+		this.oPC2._handleStartDateChange(oEvent);
+
+		// Assert
+		assert.strictEqual(this.oPC2.getStartDate().getHours(), 1, "The Hours are not changed to 00, but instead the original hours are preserved in Week view");
+
+		// Act
+		_switchToView(CalendarIntervalType.Month, this.oPC2);
+		this.oPC2._handleStartDateChange(oEvent);
+
+		// Assert
+		assert.strictEqual(this.oPC2.getStartDate().getHours(), 1, "The Hours are not changed to 00, but instead the original hours are preserved in Month view");
+
+		// Act
+		_switchToView(CalendarIntervalType.OneMonth, this.oPC2);
+		this.oPC2._handleStartDateChange(oEvent);
+
+		// Assert
+		assert.strictEqual(this.oPC2.getStartDate().getHours(), 1, "The Hours are not changed to 00, but instead the original hours are preserved in OneMonth view");
 	});
 
 	QUnit.module("OneMonth view", {
