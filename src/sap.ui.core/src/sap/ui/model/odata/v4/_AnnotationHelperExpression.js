@@ -9,8 +9,9 @@ sap.ui.define([
 	"sap/base/Log",
 	"sap/ui/base/BindingParser",
 	"sap/ui/base/ManagedObject",
+	"sap/ui/base/SyncPromise",
 	"sap/ui/performance/Measurement"
-], function (Basics, Log, BindingParser, ManagedObject, Measurement) {
+], function (Basics, Log, BindingParser, ManagedObject, SyncPromise, Measurement) {
 	'use strict';
 
 	// see http://docs.oasis-open.org/odata/odata/v4.0/errata02/os/complete/abnf/odata-abnf-construction-rules.txt
@@ -72,6 +73,20 @@ sap.ui.define([
 			"string" : false,
 			"TimeOfDay" : false
 		};
+
+	/*
+	 * Logs the given error message for the given path and returns a sync promise that rejects with
+	 * a SyntaxError.
+	 *
+	 * @param {object} oPathValue
+	 * @param {string} sMessage
+	 * @returns {sap.ui.base.SyncPromise}
+	 */
+	function asyncError(oPathValue, sMessage) {
+		return SyncPromise.resolve().then(function () {
+			error(oPathValue, sMessage);
+		});
+	}
 
 	/*
 	 * Logs the given error message for the given path and throws a SyntaxError.
@@ -141,8 +156,8 @@ sap.ui.define([
 		 *   path and value information pointing to the apply (see Expression object)
 		 * @param {object} oParameters
 		 *   path and value information pointing to the parameter array (see Expression object)
-		 * @returns {object}
-		 *   the result object
+		 * @returns {sap.ui.base.SyncPromise}
+		 *   a sync promise which resolves with the result object or is rejected with an error
 		 */
 		apply : function (oPathValue, oParameters) {
 			var oFunction = Basics.descend(oPathValue, "$Function", "string");
@@ -155,7 +170,7 @@ sap.ui.define([
 				case "odata.uriEncode": // 14.5.3.1.3 Function odata.uriEncode
 					return Expression.uriEncode(oParameters);
 				default:
-					error(oFunction, "unknown function: " + oFunction.value);
+					return asyncError(oFunction, "unknown function: " + oFunction.value);
 			}
 		},
 
@@ -164,40 +179,47 @@ sap.ui.define([
 		 *
 		 * @param {object} oPathValue
 		 *   path and value information pointing to the parameter array (see Expression object)
-		 * @returns {object}
-		 *   the result object
+		 * @returns {sap.ui.base.SyncPromise}
+		 *   a sync promise which resolves with the result object or is rejected with an error
 		 */
 		concat : function (oPathValue) {
-			var bExpression = oPathValue.asExpression,
-				aParts = [],
-				oResult,
-				aResults = [];
+			var aPromises;
 
 			// needed so that we can safely call the forEach
 			Basics.expectType(oPathValue, "array");
-			oPathValue.value.forEach(function (oUnused, i) {
+			aPromises = oPathValue.value.map(function (oUnused, i) {
 				// an embedded concat must use expression binding
-				oResult = Expression.parameter(oPathValue, i);
-				// if any parameter is type expression, the concat must become expression, too
-				bExpression = bExpression || oResult.result === "expression";
-				aResults.push(oResult);
+				return Expression.parameter(oPathValue, i);
 			});
-			// convert the results to strings after we know whether the result is expression
-			aResults.forEach(function (oResult) {
-				if (bExpression) {
-					// the expression might have a lower operator precedence than '+'
-					Expression.wrapExpression(oResult);
-				}
-				if (oResult.type !== 'edm:Null') {
+
+			return SyncPromise.all(aPromises).then(function (aParameters) {
+				var bExpression,
+					aParts,
+					oResult;
+
+				bExpression = oPathValue.asExpression || aParameters.some(function (oParameter) {
+					// if any parameter is type expression, the concat must become expression, too
+					return oParameter.result === "expression";
+				});
+				// convert the results to strings after we know whether the result is expression
+				aParts = aParameters.filter(function (oParameter) {
 					// ignore null (otherwise the string 'null' would appear in expressions)
-					aParts.push(Basics.resultToString(oResult, bExpression));
-				}
+					return oParameter.type !== 'edm:Null';
+				}).map(function (oParameter) {
+					if (bExpression) {
+						// the expression might have a lower operator precedence than '+'
+						Expression.wrapExpression(oParameter);
+					}
+
+					return Basics.resultToString(oParameter, bExpression);
+				});
+				oResult = bExpression
+					? {result : "expression", value : aParts.join("+")}
+					: {result : "composite", value : aParts.join("")};
+				oResult.type = "Edm.String";
+
+				return oResult;
 			});
-			oResult = bExpression
-				? {result : "expression", value : aParts.join("+")}
-				: {result : "composite", value : aParts.join("")};
-			oResult.type = "Edm.String";
-			return oResult;
 		},
 
 		/**
@@ -208,28 +230,35 @@ sap.ui.define([
 		 *   The first parameter element is the conditional expression and must evaluate to an
 		 *   Edm.Boolean. The second and third child elements are the expressions, which are
 		 *   evaluated conditionally.
-		 * @returns {object}
-		 *   the result object
+		 * @returns {sap.ui.base.SyncPromise}
+		 *   a sync promise which resolves with the result object or is rejected with an error
 		 */
 		conditional : function (oPathValue) {
-			var oCondition = Expression.parameter(oPathValue, 0, "Edm.Boolean"),
-				oThen = Expression.parameter(oPathValue, 1),
-				oElse = Expression.parameter(oPathValue, 2),
-				sType = oThen.type;
+			return SyncPromise.all([
+				Expression.parameter(oPathValue, 0, "Edm.Boolean"),
+				Expression.parameter(oPathValue, 1),
+				Expression.parameter(oPathValue, 2)
+			]).then(function (aResults) {
+				var oCondition = aResults[0],
+					oThen = aResults[1],
+					oElse = aResults[2],
+					sType = oThen.type;
 
-			if (oThen.type === "edm:Null") {
-				sType = oElse.type;
-			} else if (oElse.type !== "edm:Null" && oThen.type !== oElse.type) {
-				error(oPathValue, "Expected same type for second and third parameter, types are '"
-					+ oThen.type + "' and '" + oElse.type + "'");
-			}
-			return {
-				result : "expression",
-				type : sType,
-				value : Basics.resultToString(Expression.wrapExpression(oCondition), true)
-					+ "?" + Basics.resultToString(Expression.wrapExpression(oThen), true)
-					+ ":" + Basics.resultToString(Expression.wrapExpression(oElse), true)
-			};
+				if (oThen.type === "edm:Null") {
+					sType = oElse.type;
+				} else if (oElse.type !== "edm:Null" && oThen.type !== oElse.type) {
+					error(oPathValue,
+						"Expected same type for second and third parameter, types are '"
+						+ oThen.type + "' and '" + oElse.type + "'");
+				}
+				return {
+					result : "expression",
+					type : sType,
+					value : Basics.resultToString(Expression.wrapExpression(oCondition), true)
+						+ "?" + Basics.resultToString(Expression.wrapExpression(oThen), true)
+						+ ":" + Basics.resultToString(Expression.wrapExpression(oElse), true)
+				};
+			});
 		},
 
 		/**
@@ -279,8 +308,8 @@ sap.ui.define([
 		 *
 		 * @param {object} oPathValue
 		 *   path and value information pointing to the expression (see Expression object)
-		 * @returns {object}
-		 *   the result object
+		 * @returns {sap.ui.base.SyncPromise}
+		 *   a sync promise which resolves with the result object or is rejected with an error
 		 */
 		expression : function (oPathValue) {
 			var oRawValue = oPathValue.value,
@@ -334,7 +363,7 @@ sap.ui.define([
 				case "Bool": // 14.4.2 Expression edm:Bool
 				case "Float": // 14.4.8 Expression edm:Float
 				case "Int32": // 14.4.10 Expression edm:Int
-					return Expression.constant(oSubPathValue, sType);
+					return SyncPromise.resolve(Expression.constant(oSubPathValue, sType));
 
 				case "And":
 				case "Eq":
@@ -353,14 +382,14 @@ sap.ui.define([
 
 				case "Null":
 					// 14.5.10 Expression edm:Null
-					return {
+					return SyncPromise.resolve({
 						result : "constant",
 						type : "edm:Null",
 						value : null
-					};
+					});
 
 				default:
-					error(oPathValue, "Unsupported OData expression");
+					return asyncError(oPathValue, "Unsupported OData expression");
 			}
 		},
 
@@ -369,35 +398,40 @@ sap.ui.define([
 		 *
 		 * @param {object} oPathValue
 		 *   path and value information pointing to the parameter array (see Expression object)
-		 * @returns {object}
-		 *   the result object
+		 * @returns {sap.ui.base.SyncPromise}
+		 *   a sync promise which resolves with the result object or is rejected with an error
 		 */
 		fillUriTemplate : function (oPathValue) {
 			var i,
-				sName,
-				oParameter,
-				aParameters = oPathValue.value,
-				aParts = [],
-				sPrefix = "",
-				oResult,
-				oTemplate = Expression.parameter(oPathValue, 0, "Edm.String");
+				aParameters = [],
+				aPromises = [Expression.parameter(oPathValue, 0, "Edm.String")];
 
-			aParts.push('odata.fillUriTemplate(', Basics.resultToString(oTemplate, true), ',{');
-			for (i = 1; i < aParameters.length; i += 1) {
-				oParameter = Basics.descend(oPathValue, i, "object");
-				sName = Basics.property(oParameter, "$Name", "string");
-				oResult = Expression.expression(
-					Basics.descend(oParameter, "$LabeledElement", true/*"as expression"*/));
-				aParts.push(sPrefix, Basics.toJSON(sName), ":",
-					Basics.resultToString(oResult, true));
-				sPrefix = ",";
+			for (i = 1; i < oPathValue.value.length; i += 1) {
+				aParameters[i] = Basics.descend(oPathValue, i, "object");
+				aPromises.push(Expression.expression(
+					Basics.descend(aParameters[i], "$LabeledElement", true/*"as expression"*/)));
 			}
-			aParts.push("})");
-			return {
-				result : "expression",
-				type : "Edm.String",
-				value : aParts.join("")
-			};
+
+			return SyncPromise.all(aPromises).then(function (aResults) {
+				var sName,
+					aParts = [],
+					sPrefix = "";
+
+				aParts.push('odata.fillUriTemplate(', Basics.resultToString(aResults[0], true),
+					',{');
+				for (i = 1; i < oPathValue.value.length; i += 1) {
+					sName = Basics.property(aParameters[i], "$Name", "string");
+					aParts.push(sPrefix, Basics.toJSON(sName), ":",
+						Basics.resultToString(aResults[i], true));
+					sPrefix = ",";
+				}
+				aParts.push("})");
+				return {
+					result : "expression",
+					type : "Edm.String",
+					value : aParts.join("")
+				};
+			});
 		},
 
 		/**
@@ -432,18 +466,17 @@ sap.ui.define([
 		},
 
 		/**
-		 * Calculates an expression. Ensures that errors that are thrown via {#error} while
-		 * processing are handled accordingly.
+		 * Calculates an expression. Ensures that errors that are thrown while processing are
+		 * handled accordingly.
 		 *
 		 * @param {object} oPathValue
 		 *   path and value information pointing to the expression (see Expression object)
-		 * @returns {string}
+		 * @returns {Promise|string}
 		 *   the expression value or "Unsupported: oRawValue" in case of an error or
-		 *   <code>undefined</code> in case the raw value is undefined.
+		 *   <code>undefined</code> in case the raw value is undefined; may instead return a
+		 *   <code>Promise</code> resolving with that result.
 		 */
 		getExpression : function (oPathValue) {
-			var oResult;
-
 			if (oPathValue.value === undefined) {
 				return undefined;
 			}
@@ -456,18 +489,17 @@ sap.ui.define([
 				bSimpleParserWarningLogged = true;
 			}
 
-			try {
-				oResult = Expression.expression(oPathValue);
-				Measurement.end(sPerformanceGetExpression);
+			return Expression.expression(oPathValue).then(function (oResult) {
 				return Basics.resultToString(oResult, false);
-			} catch (e) {
-				Measurement.end(sPerformanceGetExpression);
+			}, function (e) {
 				if (e instanceof SyntaxError) {
 					return "Unsupported: " + BindingParser.complexParser.escape(
 						Basics.toErrorString(oPathValue.value));
 				}
 				throw e;
-			}
+			}).finally(function () {
+				Measurement.end(sPerformanceGetExpression);
+			}).unwrap();
 		},
 
 		/**
@@ -475,20 +507,20 @@ sap.ui.define([
 		 *
 		 * @param {object} oPathValue
 		 *   path and value information pointing to the parameter (see Expression object)
-		 * @returns {object}
-		 *   the result object
+		 * @returns {sap.ui.base.SyncPromise}
+		 *   a sync promise which resolves with the result object or is rejected with an error
 		 */
 		not : function (oPathValue) {
-			var oParameter;
-
 			// Note: it is safe to modify the caller's object here
 			oPathValue.asExpression = true;
-			oParameter = Expression.expression(oPathValue);
-			return {
-				result : "expression",
-				type : "Edm.Boolean",
-				value : "!" + Basics.resultToString(Expression.wrapExpression(oParameter), true)
-			};
+
+			return Expression.expression(oPathValue).then(function (oParameter) {
+				return {
+					result : "expression",
+					type : "Edm.Boolean",
+					value : "!" + Basics.resultToString(Expression.wrapExpression(oParameter), true)
+				};
+			});
 		},
 
 		/**
@@ -498,49 +530,55 @@ sap.ui.define([
 		 *   path and value information pointing to the parameter array (see Expression object)
 		 * @param {string} sType
 		 *   the operator as text (like "And" or "Or")
-		 * @returns {object}
-		 *   the result object
+		 * @returns {sap.ui.base.SyncPromise}
+		 *   a sync promise which resolves with the result object or is rejected with an error
 		 */
 		operator : function (oPathValue, sType) {
-			var sExpectedEdmType = sType === "And" || sType === "Or" ? "Edm.Boolean" : undefined,
-				bNeedsCompare,
-				oParameter0 = Expression.parameter(oPathValue, 0, sExpectedEdmType),
-				oParameter1 = Expression.parameter(oPathValue, 1, sExpectedEdmType),
-				sSpecialType = "",
-				sValue0,
-				sValue1;
+			var sExpectedEdmType = sType === "And" || sType === "Or" ? "Edm.Boolean" : undefined;
 
-			if (oParameter0.type !== "edm:Null" && oParameter1.type !== "edm:Null") {
-				oParameter0.category = mType2Category[oParameter0.type];
-				oParameter1.category = mType2Category[oParameter1.type];
-				Expression.adjustOperands(oParameter0, oParameter1);
-				Expression.adjustOperands(oParameter1, oParameter0);
+			return SyncPromise.all([
+				Expression.parameter(oPathValue, 0, sExpectedEdmType),
+				Expression.parameter(oPathValue, 1, sExpectedEdmType)
+			]).then(function (aResults) {
+				var bNeedsCompare,
+					oParameter0 = aResults[0],
+					oParameter1 = aResults[1],
+					sSpecialType = "",
+					sValue0,
+					sValue1;
 
-				if (oParameter0.category !== oParameter1.category) {
-					error(oPathValue, "Expected two comparable parameters but instead saw "
-						+ oParameter0.type + " and " + oParameter1.type);
+				if (oParameter0.type !== "edm:Null" && oParameter1.type !== "edm:Null") {
+					oParameter0.category = mType2Category[oParameter0.type];
+					oParameter1.category = mType2Category[oParameter1.type];
+					Expression.adjustOperands(oParameter0, oParameter1);
+					Expression.adjustOperands(oParameter1, oParameter0);
+
+					if (oParameter0.category !== oParameter1.category) {
+						error(oPathValue, "Expected two comparable parameters but instead saw "
+							+ oParameter0.type + " and " + oParameter1.type);
+					}
+					switch (oParameter0.category) {
+						case "Decimal":
+							sSpecialType = ",'Decimal'";
+							break;
+						case "DateTimeOffset":
+							sSpecialType = ",'DateTime'";
+							break;
+						// no default
+					}
+					bNeedsCompare = mTypeCategoryNeedsCompare[oParameter0.category];
 				}
-				switch (oParameter0.category) {
-					case "Decimal":
-						sSpecialType = ",'Decimal'";
-						break;
-					case "DateTimeOffset":
-						sSpecialType = ",'DateTime'";
-						break;
-					// no default
-				}
-				bNeedsCompare = mTypeCategoryNeedsCompare[oParameter0.category];
-			}
-			sValue0 = Expression.formatOperand(oPathValue, 0, oParameter0, !bNeedsCompare);
-			sValue1 = Expression.formatOperand(oPathValue, 1, oParameter1, !bNeedsCompare);
-			return {
-				result : "expression",
-				type : "Edm.Boolean",
-				value : bNeedsCompare
-					? "odata.compare(" + sValue0 + "," + sValue1 + sSpecialType + ")"
-						+ mOData2JSOperators[sType] + "0"
-					: sValue0 + mOData2JSOperators[sType] + sValue1
-			};
+				sValue0 = Expression.formatOperand(oPathValue, 0, oParameter0, !bNeedsCompare);
+				sValue1 = Expression.formatOperand(oPathValue, 1, oParameter1, !bNeedsCompare);
+				return {
+					result : "expression",
+					type : "Edm.Boolean",
+					value : bNeedsCompare
+						? "odata.compare(" + sValue0 + "," + sValue1 + sSpecialType + ")"
+							+ mOData2JSOperators[sType] + "0"
+						: sValue0 + mOData2JSOperators[sType] + sValue1
+				};
+			});
 		},
 
 		/**
@@ -557,17 +595,18 @@ sap.ui.define([
 		 *   the parameter index
 		 * @param {string} [sEdmType]
 		 *   the expected EDM type or <code>undefined</code> if any type is allowed
-		 * @returns {object}
-		 *   the result object
+		 * @returns {sap.ui.base.SyncPromise}
+		 *   a sync promise which resolves with the result object or is rejected with an error
 		 */
 		parameter : function (oPathValue, iIndex, sEdmType) {
-			var oParameter = Basics.descend(oPathValue, iIndex, true/*"as expression"*/),
-				oResult = Expression.expression(oParameter);
+			var oParameter = Basics.descend(oPathValue, iIndex, true/*"as expression"*/);
 
-			if (sEdmType && sEdmType !== oResult.type) {
-				error(oParameter, "Expected " + sEdmType + " but instead saw " + oResult.type);
-			}
-			return oResult;
+			return Expression.expression(oParameter).then(function (oResult) {
+				if (sEdmType && sEdmType !== oResult.type) {
+					error(oParameter, "Expected " + sEdmType + " but instead saw " + oResult.type);
+				}
+				return oResult;
+			});
 		},
 
 		/**
@@ -575,17 +614,26 @@ sap.ui.define([
 		 *
 		 * @param {object} oPathValue
 		 *   model(!), path and value information pointing to the path (see Expression object)
-		 * @returns {object}
-		 *   the result object
+		 * @returns {sap.ui.base.SyncPromise}
+		 *   a sync promise which resolves with the result object or is rejected with an error
 		 */
 		path : function (oPathValue) {
-			Basics.expectType(oPathValue, "string");
+			var oPromise;
 
-			return {
+			Basics.expectType(oPathValue, "string");
+			oPromise = oPathValue.model.fetchObject(oPathValue.path + "/$Type");
+			if (oPromise.isPending() && !oPathValue.$$valueAsPromise) {
+				oPromise.caught();
+				oPromise = SyncPromise.resolve();
+			}
+
+			return oPromise.then(function (sType) {
+				return {
 					result : "binding",
-					type : oPathValue.model.getProperty(oPathValue.path + "/$Type"),
+					type : sType,
 					value : oPathValue.value
 				};
+			});
 		},
 
 		/**
@@ -593,13 +641,12 @@ sap.ui.define([
 		 *
 		 * @param {object} oPathValue
 		 *   path and value information pointing to the parameter array (see Expression object)
-		 * @returns {object}
-		 *   the result object
+		 * @returns {sap.ui.base.SyncPromise}
+		 *   a sync promise which resolves with the result object or is rejected with an error
 		 */
 		uriEncode : function (oPathValue) {
-			var oResult = Expression.parameter(oPathValue, 0);
-
-			return {
+			return Expression.parameter(oPathValue, 0).then(function (oResult) {
+				return {
 					result : "expression",
 					type : "Edm.String",
 					value : oResult.type === "Edm.String"
@@ -609,12 +656,13 @@ sap.ui.define([
 						// Note: see _Helper.formatLiteral()
 						: 'String(' + Basics.resultToString(oResult, true) + ")"
 				};
+			});
 		},
 
 		/**
 		 * Wraps the result's value with "()" in case it is an expression because the result will be
-		 * become a parameter of an infix operator and we have to ensure that the operator precedence
-		 * remains correct.
+		 * become a parameter of an infix operator and we have to ensure that the operator
+		 * precedence remains correct.
 		 *
 		 * @param {object} oResult
 		 *   a result object
