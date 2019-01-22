@@ -3322,8 +3322,6 @@ sap.ui.define([
 						oBinding.detachAggregatedDataStateChange(fnDataStateChangeHandler);
 					}
 					oBinding.detachEvents(oBindingInfo.events);
-					oBinding.destroy();
-					// TODO remove the binding from the binding info or mark it somehow as "deactivated"?
 				}
 			},
 			fnDataStateChangeHandler = function(){
