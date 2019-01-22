@@ -9,8 +9,8 @@ sap.ui.define([
 		/**
 		 * Starts the mocked app in an iframe
 		 * @param {object} oOptionsParameter An object that contains the configuration for starting up the app.
-		 * @param {integer} oOptionsParameter.delay A custom delay to start the app with
-		 * @param {integer} oOptionsParameter.keepStorage Does not clear the local storage when set to true
+		 * @param {int} oOptionsParameter.delay A custom delay to start the app with
+		 * @param {int} oOptionsParameter.keepStorage Does not clear the local storage when set to true
 		 * @param {string} [oOptionsParameter.hash] The in app hash can also be passed separately for better readability in tests
 		 * @param {boolean} [oOptionsParameter.autoWait=true] Automatically wait for pending requests while the application is starting up.
 		 */

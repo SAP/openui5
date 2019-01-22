@@ -101,7 +101,7 @@ sap.ui.define(["jquery.sap.global",
 				 * @param {Array.<{libName:string, ruleId:string}>} [options.rules] The rules to check.
 				 * @param {Object} [options.executionScope] The execution scope of the analysis.
 				 * @param {Object} [options.metadata] The metadata that will be passed to the analyse method.
-				 * @param {('global'|'subtree'|'components')} [options.executionScope.type=global] The type of the execution scope.
+				 * @param {string} [options.executionScope.type=global] The type of the execution scope, one of 'global', 'subtree' or 'components'.
 				 * @param {string|string[]} [options.executionScope.selectors] The IDs of the components or the subtree.
 				 * @public
 				 * @returns {Promise} Promise.

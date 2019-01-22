@@ -109,7 +109,7 @@ sap.ui.define([
 						* <ul>
 						* <li>If set to <code>Link</code>, the PDF viewer appears as a toolbar with a download
 						* button that can be used to download the PDF file.<br>
-						* When the {@link open} method is called, the user can either open the PDF file in a
+						* When the {@link #open} method is called, the user can either open the PDF file in a
 						* new tab or download it.</li>
 						* <li>If set to <code>Embedded</code>, the PDF viewer appears embedded in the parent
 						* container and displays either the PDF document or the message defined by the

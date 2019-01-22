@@ -1171,7 +1171,7 @@ function(
 		 *
 		 * @param {object[]} aArray Array of objects
 		 * @param {object} oObject object that should be part of the array
-		 * @returns {integer} Returns the index of the object in the array, -1 if it is not in the array
+		 * @returns {int} Returns the index of the object in the array, -1 if it is not in the array
 		 * @public
 		 */
 		indexOfObject: function(aArray, oObject) {

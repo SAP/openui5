@@ -436,8 +436,8 @@ function(
 
 	/**
 	 * Returns the lower z-index value after comparing the passed value with the lowest z-index value from open popups
-	 * @param {integer} iCurrentZIndex - The current z-index value
-	 * @returns {integer|undefined} - Returns the z-index value appropriate to be set below open popups
+	 * @param {int} iCurrentZIndex - The current z-index value
+	 * @returns {int|undefined} - Returns the z-index value appropriate to be set below open popups
 	 */
 	ElementUtil.getZIndexBelowOpenPopups = function(iCurrentZIndex) {
 		if (Util.isInteger(this.iMaxAllowedZIndex) && this.iMaxAllowedZIndex < iCurrentZIndex) {
@@ -449,7 +449,7 @@ function(
 
 	/**
 	 * Sets the value for the max allowed z-index below open popups
-	 * @param {integer} iZIndex - The z-index value to be set
+	 * @param {int} iZIndex - The z-index value to be set
 	 */
 	ElementUtil.setMaxAllowedZIndex = function(iZIndex) {
 		this.iMaxAllowedZIndex = iZIndex;
@@ -460,9 +460,9 @@ function(
 	 * To compensate the fact that the lower source index is also removed during move.
 	 * @param {object} oSourceContainer - Source container
 	 * @param {object} oTargetContainer - Target container
-	 * @param {integer} iSourceIndex - Source index
-	 * @param {integer} iTargetIndex - Target index
-	 * @returns {integer} - Index for move
+	 * @param {int} iSourceIndex - Source index
+	 * @param {int} iTargetIndex - Target index
+	 * @returns {int} - Index for move
 	 */
 	ElementUtil.adjustIndexForMove = function(oSourceContainer, oTargetContainer, iSourceIndex, iTargetIndex) {
 		if (oSourceContainer === oTargetContainer && iSourceIndex < iTargetIndex && iSourceIndex > -1) {

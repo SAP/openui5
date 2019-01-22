@@ -549,7 +549,7 @@ sap.ui.define([
 		 * @param {object} oOverlay the dimensions of the overlay
 		 * @param {object} oPopover the dimensions of the popover
 		 * @param {object} oViewport the dimensions of the viewport
-		 * @return {integer} the left position of the "fakeDiv"
+		 * @return {int} the left position of the "fakeDiv"
 		 */
 		_getContextMenuSidewaysPlacement: function (oOverlay, oPopover, oViewport) {
 
@@ -583,7 +583,7 @@ sap.ui.define([
 		 * Works out the middle of the overlay and viewport edges incase the overlay edges are outside of the viewport
 		 * @param {object} oOverlay the dimensions of the overlay
 		 * @param {object} oViewport the dimensions of the viewport
-		 * @return {integer} the top position of the "fakeDiv"
+		 * @return {int} the top position of the "fakeDiv"
 		 */
 		_getMiddleOfOverlayAndViewportEdges: function (oOverlay, oViewport) {
 
@@ -1011,7 +1011,7 @@ sap.ui.define([
 		/**
 		 * Sets focus on next button
 		 * @param {Array} aButtons the array of Buttons
-		 * @param {integer} iIndex the index of the currently focused buttons
+		 * @param {int} iIndex the index of the currently focused buttons
 		 */
 		_setFocusOnNextButton: function (aButtons, iIndex) {
 			for (var i0 = iIndex + 1; i0 < aButtons.length; i0++) {
@@ -1030,7 +1030,7 @@ sap.ui.define([
 		/**
 		 * Sets focus on previous button
 		 * @param {Array} aButtons the array of Buttons
-		 * @param {integer} iIndex the index of the currently focused buttons
+		 * @param {int} iIndex the index of the currently focused buttons
 		 */
 		_setFocusOnPreviousButton: function (aButtons, iIndex) {
 

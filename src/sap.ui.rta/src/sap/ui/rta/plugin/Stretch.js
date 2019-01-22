@@ -27,7 +27,7 @@ function (
 	 *
 	 * @class
 	 * The Stretch plugin adds functionality/styling required for RTA.
-	 * @extends sap.ui.rta.plugin.Stretch
+	 * @extends sap.ui.rta.plugin.Plugin
 	 *
 	 * @author SAP SE
 	 * @version ${version}

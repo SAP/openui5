@@ -124,7 +124,7 @@ sap.ui.define([
 			 * Create the JSON model and the Sub View. The model will be used in both lifecycle phases of the sub view
 			 * by the preprocessor and by the view initiation afterwards.
 			 * @param {object} oBorrowedData the data extracted by the borrowed methods promise
-			 * @return {promise} sap.ui.view.loaded promise
+			 * @return {Promise} sap.ui.view.loaded promise
 			 * @private
 			 */
 			_createModelAndSubView: function (oBorrowedData) {
@@ -202,7 +202,7 @@ sap.ui.define([
 			 * symbol library. If the symbol is not resolved this method returns a rejected promise which triggers
 			 * navigation to not found page.
 			 * @param {array} aData data from api-index file
-			 * @return {promise} resolved or rejected promise
+			 * @return {Promise} resolved or rejected promise
 			 * @private
 			 */
 			_processApiIndexAndLoadApiJson: function (aData) {
