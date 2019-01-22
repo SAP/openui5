@@ -12,6 +12,7 @@
 @sapBackgroundImageOpacity: 1.0;
 @sapBackgroundImageRepeat: false;
 
+@sapContent_GridSize: 16px;
 
 @sapSelectedColor: #2e9cea;
 @sapActiveColor: @sapHighlightColor;
@@ -59,6 +60,9 @@
 @sapIndicationColor_4: #2b7c2b;
 @sapIndicationColor_5: #8fb5ff;
 
+@sapElement_LineHeight: 26px;  //<=new
+@sapElement_Height: 22px;  //<=new
+@sapElement_BorderWidth: 1px;  //<=new
 @sapContent_LineHeight: 1.3;  //<=new
 @sapContent_ElementHeight: 1.37em;  //<=new
 @sapContent_ElementHeight_PX: 22px;  //<=new
@@ -95,8 +99,8 @@
 @sapShell_TextColor: contrast(@sapShell_Background, @sapTextColor, @sapContent_ContrastTextColor, @sapContent_ContrastTextThreshold);
 @sapShell_Favicon: none;
 
-@sapButton_BorderWidth: 1px; //<=new
-@sapButton_BorderCornerRadius: 0; //<=new
+@sapButton_BorderWidth: @sapElement_BorderWidth; //<=new
+@sapButton_BorderCornerRadius: 2px; //<=new
 @sapButton_Background: #fff;
 @sapButton_BorderColor: #000;
 @sapButton_TextColor: contrast(@sapButton_Background, @sapTextColor, @sapContent_ContrastTextColor, @sapContent_ContrastTextThreshold);
@@ -116,7 +120,7 @@
 @sapField_BorderColor: #000;
 @sapField_TextColor: #000;
 @sapField_HelpBackground: #fff;
-@sapField_BorderWidth: 1px; //<=new
+@sapField_BorderWidth: @sapElement_BorderWidth; //<=new
 @sapField_BorderCornerRadius: 0; //<=new
 @sapField_Hover_Background: @sapField_Background;
 @sapField_Hover_BorderColor: @sapField_BorderColor;
@@ -145,7 +149,7 @@
 @sapGroup_Title_FontSize: 1.0em; //<=new
 @sapGroup_ContentBackground: @sapField_Background;
 @sapGroup_ContentBorderColor: #000;
-@sapGroup_BorderWidth: 1px; //<=new
+@sapGroup_BorderWidth: @sapElement_BorderWidth; //<=new
 @sapGroup_BorderCornerRadius: 0; //<=new
 @sapGroup_FooterBackground: #fff;
 
@@ -156,7 +160,7 @@
 @sapList_HeaderBorderColor: #000;
 @sapList_HeaderTextColor: contrast(@sapList_HeaderBackground, @sapTextColor, @sapContent_ContrastTextColor, @sapContent_ContrastTextThreshold);
 @sapList_BorderColor: #4f4f4f;
-@sapList_BorderWidth: 1px; //<=new
+@sapList_BorderWidth: @sapElement_BorderWidth; //<=new
 @sapList_HighlightColor: @sapHighlightColor;
 @sapList_SelectionBackgroundColor: #2e9cea;
 @sapList_Background: #fff;

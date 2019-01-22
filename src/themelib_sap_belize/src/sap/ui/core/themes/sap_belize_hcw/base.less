@@ -41,7 +41,7 @@
 // [Label "Font Size"]
 // [Description "The preferred font size"]
 // [Tags "Quick", "Base", "Content", "Dimension", "Font", "Protected"]
-@sapFontSize: 0.75em;
+@sapFontSize: 0.875 * @sapContent_GridSize; // 0.75em;
 
 // [Label "Text Color"]
 // [Description "The preferred text color"]
@@ -77,6 +77,8 @@
 /*
  UX COLOR SET
 */
+
+@sapContent_GridSize: 1rem;
 
 // [Label "High-Contrast Standard Background"]
 // [Description "The high-contrast reference background color for most backgrounds"]
@@ -249,10 +251,25 @@
 // [Tags "Base", "Color", "Font"]
 @sapTitleColor: @sapTextColor;
 
-// [Label "Content Line Height EM"]
-// [Description "The height of lines in the content area (in em)."]
+// [Label "Element Line Height"]
+// [Description "The height of the line box surrounding the inline elements in the content area."]
 // [Tags "Base", "Content", "Dimension", "Protected"]
-@sapContent_LineHeight: 1.3;
+@sapElement_LineHeight: 3 * @sapContent_GridSize;
+
+// [Label "Element Height"]
+// [Description "The height of inline elements in the content area."]
+// [Tags "Base", "Content", "Dimension", "Protected"]
+@sapElement_Height: 2.5 * @sapContent_GridSize;
+
+// [Label "Element Border Thickness"]
+// [Description "The standard thickness of element borders."]
+// [Tags "Base", "Button", "Dimension", "Protected"]
+@sapElement_BorderWidth: 0.0625 * @sapContent_GridSize;
+
+// [Label "Content Line Height EM"]
+// [Description "The height of lines in the content area (in em). Basically this is used as the CSS line-height property."]
+// [Tags "Base", "Content", "Dimension", "Protected"]
+@sapContent_LineHeight: 1.4; // 1.3;
 
 // [Label "Content Element Height"]
 // [Description "The height of inline elements in the content area (in em)."]
@@ -267,7 +284,7 @@
 // [Label "Content Icon Height"]
 // [Description "The height of inline icons in the content area (in pixel)."]
 // [Tags "Base", "Content", "Dimension", "Protected"]
-@sapContent_IconHeight: 16px;
+@sapContent_IconHeight: @sapContent_GridSize; // 16px;
 
 // [Label "Content Icon Color"]
 // [Description "The color of icons."]
@@ -427,12 +444,12 @@
 // [Label "Button Border Thickness"]
 // [Description "The thickness of button borders."]
 // [Tags "Base", "Button", "Dimension"]
-@sapButton_BorderWidth: 1px;
+@sapButton_BorderWidth: @sapElement_BorderWidth; // 1px;
 
 // [Label "Button Corner Radius"]
 // [Description "Defines whether a button has rounded corners."]
 // [Tags "Base", "Button", "Dimension"]
-@sapButton_BorderCornerRadius: 6px;
+@sapButton_BorderCornerRadius: 0.2 * @sapContent_GridSize; // 6px;
 
 // [Label "Button Background Color"]
 // [Description "The background color of buttons."]
@@ -513,7 +530,7 @@
 // [Label "Field Border Thickness"]
 // [Description "The thickness of an input field's borders."]
 // [Tags "Base", "Field", "Dimension"]
-@sapField_BorderWidth: 1px;
+@sapField_BorderWidth: @sapElement_BorderWidth; // 1px;
 
 // [Label "Field Corner Radius"]
 // [Description "Defines whether an input field has rounded corners."]
@@ -619,7 +636,7 @@
 // [Label "Group Title Font Size"]
 // [Description "The font size of the group title."]
 // [Tags "Base", "Group", "Dimension", "Font", "Protected"]
-@sapGroup_Title_FontSize: 1.0em;
+@sapGroup_Title_FontSize: @sapFontSize; // 1.0em;
 
 // [Label "Group Content Background Color"]
 // [Description "The background color of the content area of a group."]
@@ -634,7 +651,7 @@
 // [Label "Group Border Thickness"]
 // [Description "The thickness of the borders of a group's content area."]
 // [Tags "Base", "Group", "Dimension", "Protected"]
-@sapGroup_BorderWidth: 1px;
+@sapGroup_BorderWidth: @sapElement_BorderWidth; // 1px;
 
 // [Label "Group Corner Radius"]
 // [Description "Defines whether a group has rounded corners."]
@@ -679,7 +696,7 @@
 // [Label "List Grid Thickness"]
 // [Description "The thickness of the border in a list separating the entries."]
 // [Tags "Base", "List", "Dimension"]
-@sapList_BorderWidth: 1px;
+@sapList_BorderWidth: @sapElement_BorderWidth; // 1px;
 
 // [Label "List Highlight Color"]
 // [Description "The color of highlighted elements in lists."]
@@ -725,7 +742,7 @@
 // [Label "Scrollbar Dimension"]
 // [Description "The size of the scrollbar (in pixel)."]
 // [Tags "Base", "Scrollbar", "Dimension", "Protected"]
-@sapScrollBar_Dimension: 16px;
+@sapScrollBar_Dimension: 0.7 * @sapContent_GridSize; // 16px;
 
 // [Label "Scrollbar Hover Face Color"]
 // [Description "The hover color of the surface of a scrollbar."]
