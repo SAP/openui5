@@ -21,7 +21,7 @@
 		after: function(assert) {
 			var iCount = 4;
 			// Only in IE: the Normalize Polyfill is required sync by the FilterProcessor
-			if (sap.ui.Device.browser.msie) {
+			if (!String.prototype.normalize && !sap.ui.Device.browser.mobile) {
 				iCount = 5;
 			}
 			assert.equal(this.requireSyncStub.callCount, iCount);
