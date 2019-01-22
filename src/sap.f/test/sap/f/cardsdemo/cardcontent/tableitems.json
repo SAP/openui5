@@ -1,9 +1,146 @@
 {
-	"names": [
-		{"firstName": "Peter", "lastName": "Mueller"},
-		{"firstName": "Petra", "lastName": "Maier"},
-		{"firstName": "Thomas", "lastName": "Smith"},
-		{"firstName": "John", "lastName": "Williams"},
-		{"firstName": "Maria", "lastName": "Jones"}
+	"names": [{
+			"firstName": "Peter",
+			"lastName": "Mueller",
+			"icon": "../images/Woman_avatar_01.png",
+			"urlText": "link text",
+			"url": "http://www.sap.com"
+		},
+		{
+			"firstName": "Petra",
+			"lastName": "Maier",
+			"icon": "sap-icon://accept",
+			"urlText": "link text",
+			"url": "http://www.sap.com"
+		},
+		{
+			"firstName": "Thomas",
+			"lastName": "Smith",
+			"icon": "../images/Woman_avatar_01.png",
+			"urlText": "link text",
+			"url": "http://www.sap.com"
+		},
+		{
+			"firstName": "John",
+			"lastName": "Williams",
+			"icon": "../images/Woman_avatar_01.png",
+			"urlText": "link text",
+			"url": "http://www.sap.com"
+		},
+		{
+			"firstName": "Maria",
+			"lastName": "Jones",
+			"icon": "../images/Woman_avatar_01.png",
+			"urlText": "link text",
+			"url": "http://www.sap.com"
+		}
+	],
+	"tableCard2": [
+		{
+			"radialPercentage": 88,
+			"radialValueColor": "green",
+			"columnMicroChartContent": [
+				{
+					"columnColor": "red",
+					"columnValue": 5
+				},
+				{
+					"columnColor": "red",
+					"columnValue": 6
+				},
+				{
+					"columnColor": "red",
+					"columnValue": 9
+				}
+			]
+		},
+		{
+			"radialPercentage": 50,
+			"radialValueColor": "red",
+			"columnMicroChartContent": [
+				{
+					"columnColor": "green",
+					"columnValue": 10
+				},
+				{
+					"columnColor": "green",
+					"columnValue": 12
+				},
+				{
+					"columnColor": "green",
+					"columnValue": 14
+				}
+			]
+		}
+
+	],
+	"tableCard3": [
+		{
+			"orderId": "102223882",
+			"orderUrl": "http://www.sap.com",
+			"name": "Viktor Sanchez",
+			"status": "Approved",
+			"statusState": "None"
+		},
+		{
+			"orderId": "102223882",
+			"orderUrl": "http://www.sap.com",
+			"name": "Monique Legran",
+			"status": "Rejected",
+			"statusState": "None"
+		},
+		{
+			"orderId": "102223882",
+			"orderUrl": "http://www.sap.com",
+			"name": "John Li",
+			"status": "Approved",
+			"statusState": "None"
+		},
+		{
+			"orderId": "102223882",
+			"orderUrl": "http://www.sap.com",
+			"name": "Viktor Sanchez",
+			"status": "Approved",
+			"statusState": "None"
+		}
+
+	],
+	"tableCard4": [
+		{
+			"salesOrder": "5000010050",
+			"name": "Robert Brown Entertainment",
+			"netAmount": "2K USD",
+			"status": "Delivered",
+			"statusState": "Success"
+		},
+		{
+			"salesOrder": "5000010051",
+			"name": "Entertainment Argentinia",
+			"netAmount": "127k USD",
+			"status": "Canceled",
+			"statusState": "Error"
+		},
+		{
+			"salesOrder": "5000010052",
+			"name": "Brazil Technologies",
+			"netAmount": "8K USD",
+			"status": "In Progress",
+			"statusState": "Warning"
+		},
+		{
+			"salesOrder": "5000010053",
+			"name": "Quimica Madrilenos",
+			"netAmount": "25K USD",
+			"status": "Delivered",
+			"statusState": "Success"
+		},
+		{
+			"salesOrder": "5000010054",
+			"name": "Development Para O Governo",
+			"netAmount": "7K USD",
+			"status": "Delivered",
+			"statusState": "Success"
+		}
+
 	]
 }

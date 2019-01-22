@@ -5,21 +5,35 @@
 	xmlns:w="sap.ui.integration.widgets"
 	displayBlock="true">
 
-    <Page title="{i18n>appTitle}">
+	<Page title="{i18n>appTitle}">
 
-        <subHeader>
-            <Toolbar>
-                <ToolbarSpacer/>
-                <Title text="List Content Card "/>
-                <ToolbarSpacer/>
-            </Toolbar>
-        </subHeader>
+		<subHeader>
+			<Toolbar>
+				<ToolbarSpacer/>
+				<Title text="Table Content Card "/>
+				<ToolbarSpacer/>
+			</Toolbar>
+		</subHeader>
 
-        <content>
+		<content>
 
-            <Panel>
-                <w:Card id="tablecard1" manifest="{manifests>/tableManifests/tablecard1}" width="400px" height="auto"/>
-            </Panel>
-        </content>
-    </Page>
+			<f:CardContainer>
+				<w:Card id="tablecard1" manifest="{manifests>/tableManifests/tablecard1}" height="auto" class="sapUiMediumMarginEnd">
+					<w:layoutData>
+						<f:CardItemLayoutData columns="7" />
+					</w:layoutData>
+				</w:Card>
+				<w:Card id="tablecard3" manifest="{manifests>/tableManifests/tablecard3}" height="auto">
+					<w:layoutData>
+						<f:CardItemLayoutData columns="4" />
+					</w:layoutData>
+				</w:Card>
+				<w:Card id="tablecard4" manifest="{manifests>/tableManifests/tablecard4}" height="auto">
+					<w:layoutData>
+						<f:CardItemLayoutData columns="5" />
+					</w:layoutData>
+				</w:Card>
+			</f:CardContainer>
+		</content>
+	</Page>
 </mvc:View>

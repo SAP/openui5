@@ -2,8 +2,35 @@
  * ${copyright}
  */
 
-sap.ui.define(["sap/m/Table", "sap/ui/core/Control", "sap/ui/model/json/JSONModel", "sap/f/cards/Data"],
-	function (ResponsiveTable, Control, JSONModel, Data) {
+sap.ui.define([
+		"sap/m/Table",
+		"sap/ui/core/Control",
+		"sap/ui/model/json/JSONModel",
+		"sap/f/cards/Data",
+		"sap/base/Log",
+		"sap/m/Column",
+		"sap/m/ColumnListItem",
+		"sap/m/Text",
+		"sap/m/Link",
+		"sap/m/ProgressIndicator",
+		"sap/m/ObjectIdentifier",
+		"sap/m/ObjectStatus",
+		"sap/f/Avatar"
+	], function (
+		ResponsiveTable,
+		Control,
+		JSONModel,
+		Data,
+		Log,
+		Column,
+		ColumnListItem,
+		Text,
+		Link,
+		ProgressIndicator,
+		ObjectIdentifier,
+		ObjectStatus,
+		Avatar
+	) {
 		"use strict";
 
 		/**
@@ -91,19 +118,71 @@ sap.ui.define(["sap/m/Table", "sap/ui/core/Control", "sap/ui/model/json/JSONMode
 		};
 
 		TableContent.prototype._setColumns = function (aColumns) {
-			var aCells = [];
+			var aCells = [],
+				oTable = this._getTable();
 
 			aColumns.forEach(function (oColumn) {
-				this._getTable().addColumn(new sap.m.Column({ header: new sap.m.Text({ text: oColumn.label }) }));
-				aCells.push(new sap.m.Text({ text: oColumn.value }));
+				this._getTable().addColumn(new Column({ header: new Text({ text: oColumn.label }) }));
+				aCells.push(this._createCell(oColumn));
 			}.bind(this));
 
-			this._getTable().bindItems({
-				path: this._getTable().getBindingContext().getPath(),
-				template: new sap.m.ColumnListItem({
+			oTable.bindItems({
+				path: oTable.getBindingContext().getPath(),
+				template: new ColumnListItem({
 					cells: aCells
 				})
 			});
+		};
+
+		/**
+		 * Factory method that returns a control from the correct type for each column.
+		 *
+		 * @param {Object} oColumn Object with settings from the schema.
+		 * @returns {sap.ui.core.Control} The control of the proper type.
+		 * @private
+		 */
+		TableContent.prototype._createCell = function (oColumn) {
+
+			if (oColumn.url) {
+				return new Link({
+					text: oColumn.value,
+					href: oColumn.url
+				});
+			}
+
+			if (oColumn.identifier) {
+				return new ObjectIdentifier({
+					title: oColumn.value
+				});
+			}
+
+			if (oColumn.state) {
+				return new ObjectStatus({
+					text: oColumn.value,
+					state: oColumn.state
+				});
+			}
+
+			if (oColumn.value) {
+				return new Text({
+					text: oColumn.value
+				});
+			}
+
+			if (oColumn.icon) {
+				return new Avatar({
+					src: oColumn.icon.src,
+					displayShape: oColumn.icon.shape
+				});
+			}
+
+			if (oColumn.progressIndicator) {
+				return new ProgressIndicator({
+					percentValue: oColumn.progressIndicator.percent,
+					displayValue: oColumn.progressIndicator.text,
+					state: oColumn.progressIndicator.state
+				});
+			}
 		};
 
 		TableContent.prototype.applySettings = function (mSettings, oScope) {
