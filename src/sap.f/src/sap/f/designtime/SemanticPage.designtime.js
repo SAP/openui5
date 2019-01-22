@@ -51,6 +51,9 @@ sap.ui.define([],
 						return fnShouldIgnoreSingleAggregation(oControl, "getTitleExpandedHeading");
 					}
 				},
+				titleSnappedOnMobile : {
+					ignore : true
+				},
 				titleBreadcrumbs : {
 					domRef : function (oControl) {
 						return oControl.getTitleBreadcrumbs().getDomRef();

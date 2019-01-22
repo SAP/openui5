@@ -237,6 +237,15 @@ function (
 			"SemanticPage content is destroyed successfully.");
 	});
 
+	QUnit.test("test SemanticPage titleSnappedOnMobile is successfully forwarded", function (assert) {
+		// Arrange
+		var sForwardedAggregationName = this.oSemanticPage.getMetadata().getAggregationForwarder("titleSnappedOnMobile").targetAggregationName;
+
+		// Assert
+		assert.strictEqual(sForwardedAggregationName, "snappedTitleOnMobile",
+				"DynamicPageTitle has successfully forwarded its snappedTitleOnMobile aggregation.");
+	});
+
 	QUnit.test("test SemanticPage titleExpandedHeading aggregation methods", function (assert) {
 		var oTitle = oFactory.getTitle(),
 			vResult;

@@ -204,7 +204,18 @@ sap.ui.define([
 				* A typical usage is the <code>sap.m.Title</code> or any other UI5 control,
 				* that serves as a heading for an object.
 				*
-				* <b>Note:</b> The control will be placed in the title`s leftmost area.
+				* <b>Notes:</b>
+				* <ul>
+				* <li>The control will be placed in the title`s leftmost area.</li>
+				* <li><code>titleHeading</code> is mutually exclusive with <code>titleSnappedHeading</code>
+				* and <code>titleExpandedHeading</code>. If <code>titleHeading</code> is provided, both
+				* <code>titleSnappedHeading</code> and <code>titleExpandedHeading</code> are ignored.
+				* <code>titleHeading</code> is useful when the content of <code>titleSnappedHeading</code> and
+				* <code>titleExpandedHeading</code> needs to be the same as it replaces them both.</li>
+				* <li>If the <code>titleSnappedOnMobile</code> aggregation is set, its content
+				* overrides this aggregation when the control is viewed on a phone mobile device and
+				* the <code>SemanticPage</code> header is in its collapsed (snapped) state.</li>
+				* </ul>
 				*/
 				titleHeading: {type: "sap.ui.core.Control", multiple: false, defaultValue: null, forwarding: {getter: "_getTitle", aggregation: "heading"}},
 
@@ -227,9 +238,15 @@ sap.ui.define([
 				* Use this aggregation to display a title (or any other UI5 control that serves
 				* as a heading) that has to be present in collapsed state only.
 				*
-				* <b>Note:</b> In order for <code>titleSnappedHeading</code> to be taken into account,
+				* <b>Notes:</b>
+				* <ul>
+				* <li>In order for <code>titleSnappedHeading</code> to be taken into account,
 				* <code>titleHeading</code> has to be empty. Combine <code>titleSnappedHeading</code> with
-				* <code>titleExpandedHeading</code> to switch content when the header switches state.
+				* <code>titleExpandedHeading</code> to switch content when the header switches state.</li>
+				* <li>If the <code>titleSnappedOnMobile</code> aggregation is set, its content
+				* overrides this aggregation when the control is viewed on a phone mobile device and
+				* the <code>SemanticPage</code> header is in its collapsed (snapped) state.</li>
+				* </ul>
 				* @since 1.58
 				*/
 				titleSnappedHeading: {type: "sap.ui.core.Control", multiple: false, defaultValue: null, forwarding: {getter: "_getTitle", aggregation: "snappedHeading"}},
@@ -240,16 +257,46 @@ sap.ui.define([
 				 * A typical usage is the <code>sap.m.Breadcrumbs</code> control or any other UI5 control,
 				 * that implements the <code>sap.m.IBreadcrumbs</code> interface.
 				 *
-				 * <b>Note:</b> The control will be placed in the title`s top-left area.
+				 * <b>Notes:</b>
+				 * <ul>
+				 * <li>The control will be placed in the title`s top-left area.</li>
+				 * <li>If the <code>titleSnappedOnMobile</code> aggregation is set, its content
+				 * overrides this aggregation when the control is viewed on a phone mobile device and
+				 * the <code>SemanticPage</code> header is in its collapsed (snapped) state.</li>
+				 * </ul>
 				 * @since 1.52
 				 */
 				titleBreadcrumbs: {type: "sap.m.IBreadcrumbs", multiple: false, defaultValue: null, forwarding: {getter: "_getTitle", aggregation: "breadcrumbs"}},
 
 				/**
+				 * The only content that is displayed in the <code>SemanticPage</code> title
+				 * when it is viewed on a phone mobile device and the <code>SemanticPage</code> header
+				 * is in collapsed (snapped) state.
+				 *
+				 * Using this aggregation enables you to provide a simple, single-line title that
+				 * takes less space on the smaller phone screens when the
+				 * <code>SemanticPage</code> header is in its collapsed (snapped) state.
+				 *
+				 * <b>Note:</b> The content set in this aggregation overrides all the other
+				 * <code>SemanticPage</code> aggregations displayed in the title and is only visible
+				 * on phone mobile devices in collapsed (snapped) state of the
+				 * <code>SemanticPage</code> header.
+				 *
+				 * @since 1.63
+				 */
+				titleSnappedOnMobile: {type: "sap.m.Title", multiple: false, forwarding: {getter: "_getTitle", aggregation: "snappedTitleOnMobile"}},
+
+				/**
 				* The content, displayed in the title, when the header is in collapsed state.
 				*
-				* <b>Note:</b> The controls will be placed in the title`s left area,
-				* under the <code>titleHeading</code> aggregation.
+				* <b>Notes:</b>
+				* <ul>
+				* <li>The controls will be placed in the title`s left area,
+				* under the <code>titleHeading</code> aggregation.</li>
+				* <li>If the <code>titleSnappedOnMobile</code> aggregation is set, its
+				* content overrides this aggregation when the control is viewed on a phone mobile
+				* device and the <code>SemanticPage</code> header is in its collapsed (snapped) state.</li>
+				* </ul>
 				*/
 				titleSnappedContent: {type: "sap.ui.core.Control", multiple: true, forwarding: {getter: "_getTitle", aggregation: "snappedContent"}},
 
@@ -264,71 +311,126 @@ sap.ui.define([
 				/**
 				 * The content, displayed in the title.
 				 *
-				 * <b>Note:</b> The controls will be placed in the middle area.
+				 * <b>Notes:</b>
+				 * <ul>
+				 * <li>The controls will be placed in the middle area.</li>
+				 * <li>If the <code>titleSnappedOnMobile</code> aggregation is set, its
+				 * content overrides this aggregation when the control is viewed on a phone mobile
+				 * device and the <code>SemanticPage</code> header is in its collapsed (snapped) state.</li>
+				 * </ul>
 				 * @since 1.52
 				 */
 				titleContent: {type: "sap.ui.core.Control", multiple: true, forwarding: {getter: "_getTitle", aggregation: "content"}},
 
 				/**
 				* A semantic-specific button which is placed in the <code>SemanticPage</code> title as first action.
+				*
+				* <b>Note:</b> If the <code>titleSnappedOnMobile</code> aggregation is set, its
+				* content overrides this aggregation when the control is viewed on a phone mobile
+				* device and the <code>SemanticPage</code> header is in its collapsed (snapped) state.
 				*/
 				titleMainAction: {type: "sap.f.semantic.TitleMainAction", multiple: false},
 
 				/**
 				 * A semantic-specific button which is placed in the <code>TextActions</code> area of the <code>SemanticPage</code> title.
+				 *
+				 * <b>Note:</b> If the <code>titleSnappedOnMobile</code> aggregation is set, its
+				 * content overrides this aggregation when the control is viewed on a phone mobile
+				 * device and the <code>SemanticPage</code> header is in its collapsed (snapped) state.
+				 *
 				 * @since 1.50
 				 */
 				editAction: {type: "sap.f.semantic.EditAction", multiple: false},
 
 				/**
 				* A semantic-specific button which is placed in the <code>TextActions</code> area of the <code>SemanticPage</code> title.
+				*
+				* <b>Note:</b> If the <code>titleSnappedOnMobile</code> aggregation is set, its
+				* content overrides this aggregation when the control is viewed on a phone mobile
+				* device and the <code>SemanticPage</code> header is in its collapsed (snapped) state.
 				*/
 				deleteAction: {type: "sap.f.semantic.DeleteAction", multiple: false},
 
 				/**
 				* A semantic-specific button which is placed in the <code>TextActions</code> area of the <code>SemanticPage</code> title.
+				*
+				* <b>Note:</b> If the <code>titleSnappedOnMobile</code> aggregation is set, its
+				* content overrides this aggregation when the control is viewed on a phone mobile
+				* device and the <code>SemanticPage</code> header is in its collapsed (snapped) state.
 				*/
 				copyAction: {type: "sap.f.semantic.CopyAction", multiple: false},
 
 				/**
 				 * A semantic-specific button which is placed in the <code>TextActions</code> area of the <code>SemanticPage</code> title.
+				 *
+				 * <b>Note:</b> If the <code>titleSnappedOnMobile</code> aggregation is set, its
+				 * content overrides this aggregation when the control is viewed on a phone mobile
+				 * device and the <code>SemanticPage</code> header is in its collapsed (snapped) state.
 				 */
 				addAction: {type: "sap.f.semantic.AddAction", multiple: false},
 
 				/**
 				* A semantic-specific button which is placed in the <code>IconActions</code> area of the <code>SemanticPage</code> title.
+				*
+				* <b>Note:</b> If the <code>titleSnappedOnMobile</code> aggregation is set, its
+				* content overrides this aggregation when the control is viewed on a phone mobile
+				* device and the <code>SemanticPage</code> header is in its collapsed (snapped) state.
 				*/
 				flagAction: {type: "sap.f.semantic.FlagAction", multiple: false},
 
 				/**
 				* A semantic-specific button which is placed in the <code>IconActions</code> area of the <code>SemanticPage</code> title.
+				*
+				* <b>Note:</b> If the <code>titleSnappedOnMobile</code> aggregation is set, its
+				* content overrides this aggregation when the control is viewed on a phone mobile
+				* device and the <code>SemanticPage</code> header is in its collapsed (snapped) state.
 				*/
 				favoriteAction: {type: "sap.f.semantic.FavoriteAction", multiple: false},
 
 				/**
 				* A semantic-specific button which is placed in the <code>IconActions</code> area of the <code>SemanticPage</code> title.
+				*
+				* <b>Note:</b> If the <code>titleSnappedOnMobile</code> aggregation is set, its
+				* content overrides this aggregation when the control is viewed on a phone mobile
+				* device and the <code>SemanticPage</code> header is in its collapsed (snapped) state.
 				*/
 				fullScreenAction: {type: "sap.f.semantic.FullScreenAction", multiple: false},
 
 				/**
 				* A semantic-specific button which is placed in the <code>IconActions</code> area of the <code>SemanticPage</code> title.
+				*
+				* <b>Note:</b> If the <code>titleSnappedOnMobile</code> aggregation is set, its
+				* content overrides this aggregation when the control is viewed on a phone mobile
+				* device and the <code>SemanticPage</code> header is in its collapsed (snapped) state.
 				*/
 				exitFullScreenAction: {type: "sap.f.semantic.ExitFullScreenAction", multiple: false},
 
 				/**
 				* A semantic-specific button which is placed in the <code>IconActions</code> area of the <code>SemanticPage</code> title.
+				*
+				* <b>Note:</b> If the <code>titleSnappedOnMobile</code> aggregation is set, its
+				* content overrides this aggregation when the control is viewed on a phone mobile
+				* device and the <code>SemanticPage</code> header is in its collapsed (snapped) state.
 				*/
 				closeAction: {type: "sap.f.semantic.CloseAction", multiple: false},
 
 				/**
 				* The <code>titleCustomTextActions</code> are placed in the <code>TextActions</code> area of the
 				* <code>SemanticPage</code> title, right before the semantic text action.
+				*
+				* <b>Note:</b> If the <code>titleSnappedOnMobile</code> aggregation is set, its
+				* content overrides this aggregation when the control is viewed on a phone mobile
+				* device and the <code>SemanticPage</code> header is in its collapsed (snapped) state.
 				*/
 				titleCustomTextActions: {type: "sap.m.Button", multiple: true},
 
 				/**
 				* The <code>titleCustomIconActions</code> are placed in the <code>IconActions</code> area of the
 				* <code>SemanticPage</code> title, right before the semantic icon action.
+				*
+				* <b>Note:</b> If the <code>titleSnappedOnMobile</code> aggregation is set, its
+				* content overrides this aggregation when the control is viewed on a phone mobile
+				* device and the <code>SemanticPage</code> header is in its collapsed (snapped) state.
 				*/
 				titleCustomIconActions: {type: "sap.m.OverflowToolbarButton", multiple: true},
 
@@ -402,37 +504,65 @@ sap.ui.define([
 
 				/**
 				* A semantic-specific button which is placed in the <code>ShareMenu</code> area of the <code>SemanticPage</code> title.
+				*
+				* <b>Note:</b> If the <code>titleSnappedOnMobile</code> aggregation is set, its
+				* content overrides this aggregation when the control is viewed on a phone mobile
+				* device and the <code>SemanticPage</code> header is in its collapsed (snapped) state.
 				*/
 				discussInJamAction: {type: "sap.f.semantic.DiscussInJamAction", multiple: false},
 
 				/**
 				* A button which is placed in the <code>ShareMenu</code> area of the <code>SemanticPage</code> title.
+				*
+				* <b>Note:</b> If the <code>titleSnappedOnMobile</code> aggregation is set, its
+				* content overrides this aggregation when the control is viewed on a phone mobile
+				* device and the <code>SemanticPage</code> header is in its collapsed (snapped) state.
 				*/
 				saveAsTileAction: {type: "sap.m.Button", multiple: false},
 
 				/**
 				* A semantic-specific button which is placed in the <code>ShareMenu</code> area of the <code>SemanticPage</code> title.
+				*
+				* <b>Note:</b> If the <code>titleSnappedOnMobile</code> aggregation is set, its
+				* content overrides this aggregation when the control is viewed on a phone mobile
+				* device and the <code>SemanticPage</code> header is in its collapsed (snapped) state.
 				*/
 				shareInJamAction: {type: "sap.f.semantic.ShareInJamAction", multiple: false},
 
 				/**
 				* A semantic-specific button which is placed in the <code>ShareMenu</code> area of the <code>SemanticPage</code> title.
+				*
+				* <b>Note:</b> If the <code>titleSnappedOnMobile</code> aggregation is set, its
+				* content overrides this aggregation when the control is viewed on a phone mobile
+				* device and the <code>SemanticPage</code> header is in its collapsed (snapped) state.
 				*/
 				sendMessageAction: {type: "sap.f.semantic.SendMessageAction", multiple: false},
 
 				/**
 				* A semantic-specific button which is placed in the <code>ShareMenu</code> area of the <code>SemanticPage</code> title.
+				*
+				* <b>Note:</b> If the <code>titleSnappedOnMobile</code> aggregation is set, its
+				* content overrides this aggregation when the control is viewed on a phone mobile
+				* device and the <code>SemanticPage</code> header is in its collapsed (snapped) state.
 				*/
 				sendEmailAction: {type: "sap.f.semantic.SendEmailAction", multiple: false},
 
 				/**
 				* A semantic-specific button which is placed in the <code>ShareMenu</code> area of the <code>SemanticPage</code> title.
+				*
+				* <b>Note:</b> If the <code>titleSnappedOnMobile</code> aggregation is set, its
+				* content overrides this aggregation when the control is viewed on a phone mobile
+				* device and the <code>SemanticPage</code> header is in its collapsed (snapped) state.
 				*/
 				printAction: {type: "sap.f.semantic.PrintAction", multiple: false},
 
 				/**
 				* The <code>customShareActions</code> are placed in the <code>ShareMenu</code> area of the
 				* <code>SemanticPage</code> title, right after the semantic actions.
+				*
+				* <b>Note:</b> If the <code>titleSnappedOnMobile</code> aggregation is set, its
+				* content overrides this aggregation when the control is viewed on a phone mobile
+				* device and the <code>SemanticPage</code> header is in its collapsed (snapped) state.
 				*/
 				customShareActions: {type: "sap.m.Button", multiple: true},
 
