@@ -145,13 +145,13 @@ sap.ui.define([
 	return includeStylesheet({
 		url: sap.ui.require.toUrl("test-resources/sap/m/qunit/FlexBoxFit.css")
 	}).then(function() {
+		// HACK: enforce scrollbars
+		// - with a dedicated *.qunit.html page, the QUnit header + 100% body always enforced a scrollbar
+		// - with the generic test starter, the QUnit header get a height only after all tests have been created
+		document.getElementById("qunit").setAttribute("style", "height:200px;");
+
 		return new Promise(function(resolve) {
 			setTimeout(function() {
-
-				// HACK: enforce scrollbars
-				// - with a dedicated *.qunit.html page, the QUnit header + 100% body always enforced a scrollbar
-				// - with the generic test starter, the QUnit header get a height only after all tests have been created
-				document.getElementById("qunit").setAttribute("style", "height:200px;");
 
 				// Calculate width and height for the elements
 				outerhboxWidth = jQuery.sap.domById("page-cont").offsetWidth;
