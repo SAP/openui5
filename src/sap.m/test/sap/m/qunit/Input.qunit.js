@@ -3659,5 +3659,38 @@ sap.ui.define([
 		assert.strictEqual(jQuery(this.inputWithSuggestions._oValueStateMessage._oPopup.getContent()).css('z-index'), '1', 'z-index is correct');
 	});
 
+	QUnit.module("Input inside a Dialog and Value State Message", {
+		beforeEach: function () {
+
+			this.input = new Input({
+				valueStateText: 'Some Error',
+				showValueStateMessage: true
+			});
+
+			this.dialog = new Dialog({
+				content: this.input
+			});
+
+			sap.ui.getCore().applyChanges();
+		},
+		afterEach: function () {
+
+			this.dialog.destroy();
+			this.dialog = null;
+			this.input = null;
+		}
+	});
+
+	QUnit.test("valueStateMsg z-index", function (assert) {
+		this.dialog.open();
+
+		this.clock.tick(300);
+
+		this.input.setValueState("Error");
+		this.input.onfocusin();
+
+		assert.ok(parseFloat(jQuery(this.input._oValueStateMessage._oPopup.getContent()).css('z-index')) > 1, 'z-index is correct');
+	});
+
 	return waitForThemeApplied();
 });
