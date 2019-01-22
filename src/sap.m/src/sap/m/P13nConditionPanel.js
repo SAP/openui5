@@ -543,6 +543,8 @@ sap.ui.define([
 	};
 
 	P13nConditionPanel._createKeyFieldTypeInstance = function(oKeyField) {
+		var oConstraints;
+
 		//check if typeInstance exists, if not create the type instance
 		if (!oKeyField.typeInstance) {
 			switch (oKeyField.type) {
@@ -555,7 +557,7 @@ sap.ui.define([
 						Log.error("sap.m.P13nConditionPanel", "NUMC type support requires isDigitSequence==true!");
 						oKeyField.formatSettings = jQuery.extend({}, oKeyField.formatSettings, { isDigitSequence: true });
 					}
-					var oConstraints = oKeyField.formatSettings;
+					oConstraints = oKeyField.formatSettings;
 					if (oKeyField.maxLength) {
 						oConstraints = jQuery.extend({}, oConstraints, { maxLength: oKeyField.maxLength });
 					}
@@ -574,6 +576,19 @@ sap.ui.define([
 					break;
 				case "datetime":
 					oKeyField.typeInstance = new DateTimeOdataType(jQuery.extend({}, oKeyField.formatSettings, { strictParsing: true }), { displayFormat: "Date" });
+
+					// when the type is a DateTime type and isDateOnly==true, the type internal might use UTC=true
+					// result is that date values which we format via formatValue(oDate, "string") are shown as the wrong date.
+					// The current Date format is yyyy-mm-ddT00:00:00 GMT+01
+					// Workaround: changing the oFormat.oFormatOptions.UTC to false!
+					var oType = oKeyField.typeInstance;
+					if (!oType.oFormat) {
+						// create a oFormat of the type by formating a dummy date
+						oType.formatValue(new Date(), "string");
+					}
+					if (oType.oFormat) {
+						oType.oFormat.oFormatOptions.UTC = false;
+					}
 					break;
 				case "stringdate":
 					// TODO: Do we really need the COMP library here???
@@ -582,17 +597,16 @@ sap.ui.define([
 					oKeyField.typeInstance = new StringDateType(jQuery.extend({}, oKeyField.formatSettings, { strictParsing: true }));
 					break;
 				case "numeric":
-					var oContraints;
 					if (oKeyField.precision || oKeyField.scale) {
-						oContraints = {};
+						oConstraints = {};
 						if (oKeyField.precision) {
-							oContraints["maxIntegerDigits"] = parseInt(oKeyField.precision);
+							oConstraints["maxIntegerDigits"] = parseInt(oKeyField.precision);
 						}
 						if (oKeyField.scale) {
-							oContraints["maxFractionDigits"] = parseInt(oKeyField.scale);
+							oConstraints["maxFractionDigits"] = parseInt(oKeyField.scale);
 						}
 					}
-					oKeyField.typeInstance = new FloatType(oContraints);
+					oKeyField.typeInstance = new FloatType(oConstraints);
 					break;
 				default:
 					var oFormatOptions = oKeyField.formatSettings;
@@ -2366,15 +2380,6 @@ sap.ui.define([
 			if (oControl.getDateValue && !(oControl.isA("sap.m.TimePicker"))) {
 				oValue = oControl.getDateValue();
 				if (oType && oValue) {
-					// TODO when we have a DateTime type and isDateOnly==true, the type is using UTC=true
-					// result is that the local time from the DatePicker is converted and we have the wrong date.
-					//Workaround: change the oFormat.oFormatOptions.UTC to false!
-					if (oType.getName() === "sap.ui.model.odata.type.DateTime") {
-						oType.formatValue(oValue, "string");
-						if (oType.oFormatOptions.UTC == false && oType.oFormat.oFormatOptions.UTC == true) {
-							oType.oFormat.oFormatOptions.UTC = false;
-						}
-					}
 					sValue = oType.formatValue(oValue, "string");
 				}
 			} else {
