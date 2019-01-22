@@ -990,13 +990,19 @@ function(
 		buildLrepRootNamespace: function(sBaseId, sScenario, sProjectId) {
 			var sRootNamespace = "apps/";
 			var oError = new Error("Error in sap.ui.fl.Utils#buildLrepRootNamespace: ");
-
 			if (!sBaseId) {
 				oError.message += "for every scenario you need a base ID";
 				throw oError;
 			}
 
 			switch (sScenario) {
+				case sap.ui.fl.Scenario.VersionedAppVariant:
+					if (!sProjectId) {
+						oError.message += "in a versioned app variant scenario you additionaly need a project ID";
+						throw oError;
+					}
+					sRootNamespace += sBaseId + "/appVariants/" + sProjectId + "/";
+					break;
 				case sap.ui.fl.Scenario.AppVariant:
 					if (!sProjectId) {
 						oError.message += "in an app variant scenario you additionaly need a project ID";
