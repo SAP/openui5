@@ -3,11 +3,11 @@
  */
 sap.ui.define([
 	'sap/ui/model/SelectionModel',
-	'./SelectionAdapter',
-	'./library'
+	'./SelectionPlugin',
+	'../library'
 ], function(
 	SelectionModel,
-	SelectionAdapter,
+	SelectionPlugin,
 	library
 ) {
 
@@ -16,33 +16,52 @@ sap.ui.define([
 	var SelectionMode = library.SelectionMode;
 
 	/**
-	 * Constructs an instance of sap.ui.table.SelectionModelAdapter
+	 * Constructs an instance of sap.ui.table.plugins.SelectionModelPlugin
 	 *
 	 * @class Implements the selection methods for a Table
-	 * @extends sap.ui.table.SelectionAdapter
+	 * @extends sap.ui.table.plugins.SelectionPlugin
 	 * @version ${version}
 	 * @constructor
 	 * @private
-	 * @alias sap.ui.table.SelectionModelAdapter
+	 * @alias sap.ui.table.plugins.SelectionModelPlugin
 	 */
-	var SelectionModelAdapter = SelectionAdapter.extend("sap.ui.table.SelectionModelAdapter");
+	var SelectionModelPlugin = SelectionPlugin.extend("sap.ui.table.plugins.SelectionModelPlugin", {metadata: {
+		events: {
+			/**
+			 * This event is fired when the selection is changed.
+			 */
+			selectionChange: {
+				parameters: {
+					/**
+					 * Array of indices whose selection has been changed (either selected or deselected)
+					 */
+					indices: {type: "int[]"},
+
+					/**
+					 * Indicates whether the Select All function is used to select rows.
+					 */
+					selectAll: {type: "boolean"}
+				}
+			}
+		}
+	}});
 
 	/**
-	 * Initialization of the SelectionModelAdapter
+	 * Initialization of the SelectionModelPlugin
 	 * @public
 	 */
-	SelectionModelAdapter.prototype.init = function() {
-		this.oSelectionModel = new SelectionModel(this.getSelectionMode);
+	SelectionModelPlugin.prototype.init = function() {
+		this.oSelectionModel = new SelectionModel(this._getSelectionMode);
 		this.oSelectionModel.attachEvent("selectionChanged", this._onSelectionChange, this);
 
-		SelectionAdapter.prototype.init.call(this);
+		SelectionPlugin.prototype.init.call(this);
 	};
 
 	/**
 	 * @override
 	 * @inheritDoc
 	 */
-	SelectionModelAdapter.prototype.exit = function() {
+	SelectionModelPlugin.prototype.exit = function() {
 		var oBinding = this._getBinding();
 		if (oBinding) {
 			oBinding.detachEvent("change", this._onBindingChange);
@@ -51,15 +70,15 @@ sap.ui.define([
 			this.oSelectionModel.destroy();
 			this.oSelectionModel = null;
 		}
-		SelectionAdapter.prototype.exit.call(this);
+		SelectionPlugin.prototype.exit.call(this);
 	};
 
 	/**
 	 * @override
 	 * @inheritDoc
 	 */
-	SelectionModelAdapter.prototype.addSelectionInterval = function(iIndexFrom, iIndexTo) {
-		if (!this.oSelectionModel || this.getSelectionMode() === SelectionMode.None) {
+	SelectionModelPlugin.prototype.addSelectionInterval = function(iIndexFrom, iIndexTo) {
+		if (!this.oSelectionModel || this._getSelectionMode() === SelectionMode.None) {
 			return;
 		}
 		this.oSelectionModel.addSelectionInterval(iIndexFrom, iIndexTo);
@@ -69,7 +88,7 @@ sap.ui.define([
 	 * @override
 	 * @inheritDoc
 	 */
-	SelectionModelAdapter.prototype.clearSelection = function() {
+	SelectionModelPlugin.prototype.clearSelection = function() {
 		if (this.oSelectionModel) {
 			this.oSelectionModel.clearSelection();
 		}
@@ -79,7 +98,7 @@ sap.ui.define([
 	 * @override
 	 * @inheritDoc
 	 */
-	SelectionModelAdapter.prototype.getSelectedIndex = function() {
+	SelectionModelPlugin.prototype.getSelectedIndex = function() {
 		if (this.oSelectionModel) {
 			return this.oSelectionModel.getLeadSelectedIndex();
 		}
@@ -90,7 +109,7 @@ sap.ui.define([
 	 * @override
 	 * @inheritDoc
 	 */
-	SelectionModelAdapter.prototype.getSelectedIndices = function() {
+	SelectionModelPlugin.prototype.getSelectedIndices = function() {
 		if (this.oSelectionModel) {
 			return this.oSelectionModel.getSelectedIndices();
 		}
@@ -101,7 +120,7 @@ sap.ui.define([
 	 * @override
 	 * @inheritDoc
 	 */
-	SelectionModelAdapter.prototype.getSelectableCount = function() {
+	SelectionModelPlugin.prototype.getSelectableCount = function() {
 		var oBinding = this._getBinding();
 		return oBinding ? oBinding.getLength() : 0;
 	};
@@ -110,7 +129,7 @@ sap.ui.define([
 	 * @override
 	 * @inheritDoc
 	 */
-	SelectionModelAdapter.prototype.getSelectedCount = function() {
+	SelectionModelPlugin.prototype.getSelectedCount = function() {
 		return this.getSelectedIndices().length;
 	};
 
@@ -118,7 +137,7 @@ sap.ui.define([
 	 * @override
 	 * @inheritDoc
 	 */
-	SelectionModelAdapter.prototype.isIndexSelectable = function(iIndex) {
+	SelectionModelPlugin.prototype.isIndexSelectable = function(iIndex) {
 		var iCount = this._getLastIndex();
 		return iIndex >= 0 && iIndex <= iCount;
 	};
@@ -127,7 +146,7 @@ sap.ui.define([
 	 * @override
 	 * @inheritDoc
 	 */
-	SelectionModelAdapter.prototype.isIndexSelected = function(iIndex) {
+	SelectionModelPlugin.prototype.isIndexSelected = function(iIndex) {
 		return this.getSelectedIndices().indexOf(iIndex) !== -1;
 	};
 
@@ -135,7 +154,7 @@ sap.ui.define([
 	 * @override
 	 * @inheritDoc
 	 */
-	SelectionModelAdapter.prototype.removeSelectionInterval = function(iIndexFrom, iIndexTo) {
+	SelectionModelPlugin.prototype.removeSelectionInterval = function(iIndexFrom, iIndexTo) {
 		if (this.oSelectionModel) {
 			this.oSelectionModel.removeSelectionInterval(iIndexFrom, iIndexTo);
 		}
@@ -145,8 +164,8 @@ sap.ui.define([
 	 * @override
 	 * @inheritDoc
 	 */
-	SelectionModelAdapter.prototype.selectAll = function() {
-		if (!this.oSelectionModel || this.getSelectionMode() === SelectionMode.None) {
+	SelectionModelPlugin.prototype.selectAll = function() {
+		if (!this.oSelectionModel || this._getSelectionMode() === SelectionMode.None) {
 			return;
 		}
 		this.oSelectionModel.selectAll(this._getLastIndex());
@@ -156,8 +175,8 @@ sap.ui.define([
 	 * @override
 	 * @inheritDoc
 	 */
-	SelectionModelAdapter.prototype.setSelectedIndex = function(iIndex) {
-		if (this.getSelectionMode() === SelectionMode.None) {
+	SelectionModelPlugin.prototype.setSelectedIndex = function(iIndex) {
+		if (this._getSelectionMode() === SelectionMode.None) {
 			return;
 		}
 		if (iIndex === -1) {
@@ -172,8 +191,8 @@ sap.ui.define([
 	 * @override
 	 * @inheritDoc
 	 */
-	SelectionModelAdapter.prototype.setSelectionInterval = function(iIndexFrom, iIndexTo) {
-		if (!this.oSelectionModel || this.getSelectionMode() === SelectionMode.None) {
+	SelectionModelPlugin.prototype.setSelectionInterval = function(iIndexFrom, iIndexTo) {
+		if (!this.oSelectionModel || this._getSelectionMode() === SelectionMode.None) {
 			return;
 		}
 		this.oSelectionModel.setSelectionInterval(iIndexFrom, iIndexTo);
@@ -183,15 +202,15 @@ sap.ui.define([
 	 * Sets the selection mode. The current selection is lost.
 	 *
 	 * @param {string} sSelectionMode The new selection mode.
-	 * @returns {sap.ui.table.SelectionModelAdapter} Reference to <code>this</code> in order to allow method chaining
+	 * @returns {sap.ui.table.plugins.SelectionModelPlugin} Reference to <code>this</code> in order to allow method chaining
 	 * @public
 	 */
-	SelectionModelAdapter.prototype.setSelectionMode = function(sSelectionMode) {
-		var sOldSelectionMode = this.getSelectionMode();
+	SelectionModelPlugin.prototype.setSelectionMode = function(sSelectionMode) {
+		var sOldSelectionMode = this._getSelectionMode();
 
-		SelectionAdapter.prototype.setSelectionMode.apply(this, arguments);
+		SelectionPlugin.prototype._setSelectionMode.apply(this, arguments);
 
-		if (this.getSelectionMode() !== sOldSelectionMode) {
+		if (this._getSelectionMode() !== sOldSelectionMode) {
 			this.clearSelection();
 		}
 
@@ -209,7 +228,7 @@ sap.ui.define([
 	 * @return {int} the last index of the binding
 	 * @private
 	 */
-	SelectionModelAdapter.prototype._getLastIndex = function() {
+	SelectionModelPlugin.prototype._getLastIndex = function() {
 		if (!this._getBinding()) {
 			return 0;
 		}
@@ -222,7 +241,7 @@ sap.ui.define([
 	 * @param {sap.ui.base.Event} oEvent
 	 * @private
 	 */
-	SelectionModelAdapter.prototype._onSelectionChange = function(oEvent) {
+	SelectionModelPlugin.prototype._onSelectionChange = function(oEvent) {
 		var aRowIndices = oEvent.getParameter("rowIndices");
 		var bSelectAll = oEvent.getParameter("selectAll");
 
@@ -239,9 +258,9 @@ sap.ui.define([
 	 * @param {sap.ui.model.Binding} oBinding
 	 * @private
 	 */
-	SelectionModelAdapter.prototype._setBinding = function(oBinding) {
+	SelectionModelPlugin.prototype._setBinding = function(oBinding) {
 		var oCurrentBinding = this._getBinding();
-		SelectionAdapter.prototype._setBinding.call(this, oBinding);
+		SelectionPlugin.prototype._setBinding.call(this, oBinding);
 
 		if (oCurrentBinding !== oBinding) {
 			this._suspend();
@@ -261,7 +280,7 @@ sap.ui.define([
 	 * @param {sap.ui.base.Event} oEvent
 	 * @private
 	 */
-	SelectionModelAdapter.prototype._onBindingChange = function(oEvent) {
+	SelectionModelPlugin.prototype._onBindingChange = function(oEvent) {
 		var sReason = typeof (oEvent) === "object" ? oEvent.getParameter("reason") : oEvent;
 
 		if (sReason === "sort" || sReason === "filter") {
@@ -269,5 +288,5 @@ sap.ui.define([
 		}
 	};
 
-	return SelectionModelAdapter;
+	return SelectionModelPlugin;
 });

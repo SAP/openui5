@@ -321,6 +321,52 @@
 							}
 						}
 					}
+				},
+				SELECTIONPLUGIN: {
+					text: "Selection Plugin",
+					value: function(oTable) {
+						return (oTable._oSelectionPlugin.isA("sap.ui.table.plugins.MultiSelectionPlugin") ? "MULTISELECTION" : "NONE");
+					},
+					choice: {
+						NONE: {
+							text: "None",
+							action: function(oTable) {
+								oTable.removeAllPlugins();
+							}
+						},
+						MULTISELECTION: {
+							text: "MultiSelection",
+							action: function(oTable) {
+								var MultiSelectionPlugin = sap.ui.requireSync("sap/ui/table/plugins/MultiSelectionPlugin");
+								oTable.addPlugin(new MultiSelectionPlugin({
+									selectionChange: function(oEvent) {
+										var oPlugin = oEvent.getSource();
+										var bLimitReached = oEvent.getParameters().limitReached;
+										var iIndices = oPlugin.getSelectedIndices();
+										var sMessage = "";
+										if (iIndices.length > 0) {
+											sMessage = iIndices.length + " row(s) selected.";
+											if (bLimitReached) {
+												sMessage = sMessage + " The recently selected range was limited to " + oPlugin.getLimit() + " rows!";
+											}
+										}
+
+										if (!this.message) {
+											this.message = new sap.m.MessageStrip({
+												showCloseButton: true,
+												showIcon: true
+											});
+											oTable.addExtension(this.message);
+										}
+
+										this.message.setText(sMessage);
+										this.message.setVisible(!!sMessage);
+										return this;
+									}
+								}));
+							}
+						}
+					}
 				}
 			}
 		},
