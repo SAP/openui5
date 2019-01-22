@@ -97,6 +97,7 @@ function (
 				content: [this.oBoundList, this.oUnBoundList]
 			});
 			this.oHorizontalLayout.placeAt("qunit-fixture");
+			sap.ui.getCore().applyChanges();
 
 			this.oDesignTime = new DesignTime({
 				rootElements : [this.oHorizontalLayout]
