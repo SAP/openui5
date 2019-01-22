@@ -2,8 +2,8 @@
  * ${copyright}
  */
 
- sap.ui.define(['sap/ui/core/Renderer', 'sap/ui/core/LabelEnablement', 'sap/ui/core/library'],
-	function(Renderer, LabelEnablement, coreLibrary) {
+ sap.ui.define(['sap/ui/core/Renderer', 'sap/ui/core/library'],
+	function(Renderer, coreLibrary) {
 	"use strict";
 
 
@@ -28,10 +28,7 @@
 	LinkRenderer.render = function(oRm, oControl) {
 		var sTextDir = oControl.getTextDirection(),
 			sTextAlign = Renderer.getTextAlign(oControl.getTextAlign(), sTextDir),
-			bShouldHaveOwnLabelledBy = oControl.getAriaLabelledBy().indexOf(oControl.getId()) === -1 &&
-							(oControl.getAriaLabelledBy().length > 0 ||
-							LabelEnablement.getReferencingLabels(oControl).length > 0 ||
-							(oControl.getParent() && oControl.getParent().enhanceAccessibilityState)),
+			bShouldHaveOwnLabelledBy = oControl._determineSelfReferencePresence(),
 			oAccAttributes =  {
 				role: 'link',
 				labelledby: bShouldHaveOwnLabelledBy ? {value: oControl.getId(), append: true } : undefined
