@@ -73,9 +73,8 @@ sap.ui.define(["sap/ui/support/library", "sap/ui/fl/Utils", "sap/ui/dt/DesignTim
 						var sClassName = oElement.getMetadata().getName();
 						var sHasConcatenatedId = sControlId.indexOf("--") !== -1;
 
-						// check only controls who have an registered change handler - for components we have to check if its an instance of sap.ui.core.Component
-						// also check if an element has any actions - to exclude cloned ones from e.g. tables from the test
-						if (ChangeRegistry.getInstance().hasRegisteredChangeHandlersForControl(sClassName) || oElement instanceof Component || oOverlay.getDesignTimeMetadata().getData().actions) {
+						// check only elements who have an registered change handler and any actions (to exclude cloned elements) - for components we have to check if its an instance of sap.ui.core.Component
+						if ((ChangeRegistry.getInstance().hasRegisteredChangeHandlersForControl(sClassName) && oOverlay.getDesignTimeMetadata().getData().actions) || oElement instanceof Component) {
 							if (!Utils.checkControlId(sControlId, oAppComponent, true) && !isClonedElementFromListBinding(oElement)) {
 								if (!sHasConcatenatedId) {
 									issueManager.addIssue({
