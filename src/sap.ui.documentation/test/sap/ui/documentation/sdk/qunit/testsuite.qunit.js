@@ -1,4 +1,4 @@
-sap.ui.define(function() {
+sap.ui.define(["sap/ui/Device"], function(Device) {
 
 	"use strict";
 
@@ -46,7 +46,8 @@ sap.ui.define(function() {
 			"LiveEditorOutput": {
 				coverage: {
 					only : ["sap/ui/documentation/sdk/util/LiveEditorOutput.html"]
-				}
+				},
+				skip: Device.browser.msie
 			}
 
 			// "Forwarding": {
