@@ -36,6 +36,8 @@
 
 	<!-- Test functions -->
 	<script>
+		// set language to en-GB, since we have specific language strings tested
+		sap.ui.getCore().getConfiguration().setLanguage("en_GB");
 
 		jQuery.sap.require("sap.ui.model.type.Date");
 		var oFormatYyyyMMddHHmm = sap.ui.core.format.DateFormat.getInstance({pattern: "yyyyMMddHHmm"});
