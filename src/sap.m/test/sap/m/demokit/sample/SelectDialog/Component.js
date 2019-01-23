@@ -21,7 +21,8 @@ sap.ui.define(['sap/ui/core/UIComponent'],
 					files : [
 						"V.view.xml",
 						"C.controller.js",
-						"Dialog.fragment.xml"
+						"Dialog.fragment.xml",
+						"ValueHelp.fragment.xml"
 					]
 				}
 			}
