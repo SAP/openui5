@@ -1958,7 +1958,7 @@ sap.ui.define([
 		$Precision : 20,
 		$Scale : "variable",
 		$Type : "Edm.Decimal",
-		__constraints : {precision : 20, scale : Infinity}
+		__constraints : {precision : 20, scale : "variable"}
 	}, {
 		$Type : "Edm.Double"
 	}, {
@@ -2009,52 +2009,44 @@ sap.ui.define([
 				// which check correctness of constraints
 				var fnFetchModuleSpy = this.spy(this.oMetaModel, "fetchModule"),
 					sPath = "/EMPLOYEES/0/ENTRYDATE",
-					oMetaContext = this.oMetaModel.getMetaContext(sPath),
+					oMetaContext = {},
 					that = this;
 
-				this.oMetaModelMock.expects("fetchObject").twice()
-					.withExactArgs(undefined, oMetaContext)
+				this.oMetaModelMock.expects("getMetaContext")
+					.withExactArgs(sPath)
+					.returns(oMetaContext);
+				this.oMetaModelMock.expects("fetchObject")
+					.withExactArgs(undefined, sinon.match.same(oMetaContext))
 					.returns(SyncPromise.resolve(oProperty));
-				if (oProperty.$Type === "Edm.String") { // simulate annotation for strings
-					this.oMetaModelMock.expects("fetchObject")
-						.withExactArgs("@com.sap.vocabularies.Common.v1.IsDigitSequence",
-							oMetaContext)
-						.returns(
-							SyncPromise.resolve(oConstraints && oConstraints.isDigitSequence));
-				} else if (oProperty.$Type === "Edm.Decimal") { // simulate annotation for decimals
-					this.oMetaModelMock.expects("fetchObject")
-						.withExactArgs("@Org.OData.Validation.V1.Minimum/$Decimal", oMetaContext)
-						.returns(
-							SyncPromise.resolve(oConstraints && oConstraints.minimum));
-					this.oMetaModelMock.expects("fetchObject")
-						.withExactArgs(
-							"@Org.OData.Validation.V1.Minimum@Org.OData.Validation.V1.Exclusive",
-							oMetaContext)
-						.returns(
-							SyncPromise.resolve(oConstraints && oConstraints.minimumExlusive));
-					this.oMetaModelMock.expects("fetchObject")
-						.withExactArgs("@Org.OData.Validation.V1.Maximum/$Decimal", oMetaContext)
-						.returns(
-							SyncPromise.resolve(oConstraints && oConstraints.maximum));
-					this.oMetaModelMock.expects("fetchObject")
-						.withExactArgs(
-							"@Org.OData.Validation.V1.Maximum@Org.OData.Validation.V1.Exclusive",
-							oMetaContext)
-						.returns(
-							SyncPromise.resolve(oConstraints && oConstraints.maximumExclusive));
-				}
+				this.oMetaModelMock.expects("getConstraints")
+					.withExactArgs(sinon.match.same(oProperty), sinon.match.same(oMetaContext))
+					.returns(oConstraints);
 
 				// code under test
 				return this.oMetaModel.fetchUI5Type(sPath).then(function (oType) {
 					var sExpectedTypeName = "sap.ui.model.odata.type."
-						+ oProperty.$Type.slice(4)/*cut off "Edm."*/;
+							+ oProperty.$Type.slice(4)/*cut off "Edm."*/;
 
 					assert.strictEqual(fnFetchModuleSpy.callCount, 1);
 					assert.ok(fnFetchModuleSpy.calledOn(that.oMetaModel));
 					assert.ok(fnFetchModuleSpy.calledWithExactly(sExpectedTypeName),
 						fnFetchModuleSpy.printf("%C"));
 					assert.strictEqual(oType.getName(), sExpectedTypeName);
+					if (oConstraints && oConstraints.scale === "variable") {
+						// the type converts "variable" to Infinity
+						oConstraints.scale = Infinity;
+					}
 					assert.deepEqual(oType.oConstraints, oConstraints);
+
+					oMetaContext = {/*new meta context*/};
+					that.oMetaModelMock.expects("getMetaContext")
+						.withExactArgs(sPath)
+						.returns(oMetaContext);
+					that.oMetaModelMock.expects("fetchObject")
+						.withExactArgs(undefined, sinon.match.same(oMetaContext))
+						.returns(SyncPromise.resolve(oProperty));
+
+					// code under test
 					assert.strictEqual(that.oMetaModel.getUI5Type(sPath), oType, "cached");
 				});
 			});
@@ -2146,6 +2138,138 @@ sap.ui.define([
 
 			// code under test
 			assert.strictEqual(that.oMetaModel.getUI5Type(sPath), oType, "Type is cached");
+		});
+	});
+
+	//*********************************************************************************************
+	[{
+		oProperty : {$Nullable : false, $Type : "Edm.Boolean"},
+		oResult : {nullable : false}
+	}, {
+		oProperty : {$Nullable : true, $Type : "Edm.Boolean"},
+		oResult : undefined
+	}, {
+		oProperty : {$Type : "Edm.Boolean"},
+		oResult : undefined
+	}, {
+		oProperty : {$Type : "Edm.Byte"},
+		oResult : undefined
+	}, {
+		oProperty : {$Type : "Edm.Date"},
+		oResult : undefined
+	}, {
+		oProperty : {$Precision : 7, $Type : "Edm.DateTimeOffset"},
+		oResult : {precision : 7}
+	}, {
+		oProperty : {$Nullable : false, $Precision : 7, $Type : "Edm.DateTimeOffset"},
+		oResult : {nullable : false, precision : 7}
+	}, {
+		oProperty : {$Nullable : false, $Type : "Edm.DateTimeOffset"},
+		oResult : {nullable : false}
+	}, {
+		mGetObjectResults : {
+			"@Org.OData.Validation.V1.Minimum/$Decimal" : "0.00",
+			"@Org.OData.Validation.V1.Minimum@Org.OData.Validation.V1.Exclusive" : undefined,
+			"@Org.OData.Validation.V1.Maximum/$Decimal" : undefined,
+			"@Org.OData.Validation.V1.Maximum@Org.OData.Validation.V1.Exclusive" : undefined
+		},
+		oProperty : {
+			$Scale : "variable",
+			$Type : "Edm.Decimal"
+		},
+		oResult : {minimum : "0.00", scale : "variable"}
+	}, {
+		mGetObjectResults : {
+			"@Org.OData.Validation.V1.Minimum/$Decimal" : "0.50",
+			"@Org.OData.Validation.V1.Minimum@Org.OData.Validation.V1.Exclusive" : true,
+			"@Org.OData.Validation.V1.Maximum/$Decimal" : "100.00",
+			"@Org.OData.Validation.V1.Maximum@Org.OData.Validation.V1.Exclusive" : true
+		},
+		oProperty : {
+			$Precision : 2,
+			$Scale : 20,
+			$Type : "Edm.Decimal"
+		},
+		oResult : {
+			minimum : "0.50",
+			minimumExclusive : true,
+			maximum : "100.00",
+			maximumExclusive : true,
+			precision : 2,
+			scale : 20
+		}
+	}, {
+		oProperty : {$Type : "Edm.Double"},
+		oResult : undefined
+	}, {
+		oProperty : {$Type : "Edm.Guid"},
+		oResult : undefined
+	}, {
+		oProperty : {$Type : "Edm.Int16"},
+		oResult : undefined
+	}, {
+		oProperty : {$Type : "Edm.Int32"},
+		oResult : undefined
+	}, {
+		oProperty : {$Type : "Edm.Int64"},
+		oResult : undefined
+	}, {
+		oProperty : {$Type : "Edm.SByte"},
+		oResult : undefined
+	}, {
+		oProperty : {$Type : "Edm.Single"},
+		oResult : undefined
+	}, {
+		oProperty : {$Type : "Edm.Stream"},
+		oResult : undefined
+	}, {
+		mGetObjectResults : {
+			"@com.sap.vocabularies.Common.v1.IsDigitSequence" : undefined
+		},
+		oProperty : {$Type : "Edm.String"},
+		oResult : undefined
+	}, {
+		mGetObjectResults : {
+			"@com.sap.vocabularies.Common.v1.IsDigitSequence" : undefined
+		},
+		oProperty : {$Nullable : false, $MaxLength : 23, $Type : "Edm.String"},
+		oResult : {nullable : false, maxLength : 23}
+	}, {
+		mGetObjectResults : {
+			"@com.sap.vocabularies.Common.v1.IsDigitSequence" : true
+		},
+		oProperty : {
+			$MaxLength : 23,
+			$Type : "Edm.String"
+		},
+		oResult : {isDigitSequence : true, maxLength : 23}
+	}, {
+		oProperty : {$Precision : 23, $Type : "Edm.TimeOfDay"},
+		oResult : {precision : 23}
+	}, { // unsupported type
+		oProperty : {$Nullable : false, $Type : "acme.Type"},
+		oResult : undefined
+	}, { // not yet supported
+		oProperty : {$Nullable : false, $Type : "Edm.Duration"},
+		oResult : undefined
+	}, { // not yet supported
+		oProperty : {$Nullable : false, $Type : "Edm.GeographyPoint"},
+		oResult : undefined
+	}].forEach(function (oFixture) {
+		QUnit.test("getConstraints: " + JSON.stringify(oFixture.oProperty), function (assert) {
+			var oMetaContext = {},
+				that = this;
+
+			if (oFixture.mGetObjectResults) {
+				Object.keys(oFixture.mGetObjectResults).forEach(function (sConstraintPath) {
+					that.oMetaModelMock.expects("getObject")
+						.withExactArgs(sConstraintPath, sinon.match.same(oMetaContext))
+						.returns(oFixture.mGetObjectResults[sConstraintPath]);
+				});
+			}
+
+			assert.deepEqual(this.oMetaModel.getConstraints(oFixture.oProperty, oMetaContext),
+				oFixture.oResult);
 		});
 	});
 
