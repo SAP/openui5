@@ -3849,6 +3849,12 @@
 			}
 		}
 	},
+	"miscPattern": {
+		"approximately": "~{0}",
+		"atLeast": "{0}+",
+		"atMost": "≤{0}",
+		"range": "{0} – {1}"
+	},
 	"currencyFormat-short": {
 		"1000-one": "0000¤",
 		"1000-few": "0000¤",

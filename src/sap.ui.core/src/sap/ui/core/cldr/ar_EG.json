@@ -4060,6 +4060,12 @@
 			}
 		}
 	},
+	"miscPattern": {
+		"approximately": "~{0}",
+		"atLeast": "+{0}",
+		"atMost": "≤{0}",
+		"range": "{0}–{1}"
+	},
 	"currencyFormat-short": {
 		"1000-zero": "‫¤‎‬ 0 ألف",
 		"1000-one": "‫¤‎‬ 0 ألف",

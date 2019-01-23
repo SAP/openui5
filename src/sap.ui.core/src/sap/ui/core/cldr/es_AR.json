@@ -3813,6 +3813,12 @@
 			}
 		}
 	},
+	"miscPattern": {
+		"approximately": "~{0}",
+		"atLeast": "Más de {0}",
+		"atMost": "≤{0}",
+		"range": "{0}-{1}"
+	},
 	"currencyFormat-short": {
 		"1000-one": "¤0 K",
 		"1000-other": "¤0 K",
