@@ -2,7 +2,8 @@
 
 module.exports = [
 	"Avatar.spec.js",
+	"CardsVisualTests.spec.js",
 	"DynamicPage.spec.js",
-	"FlexibleColumnLayout.spec.js",
-	"GridListVisualTests.spec.js"
+	"GridListVisualTests.spec.js",
+	"FlexibleColumnLayout.spec.js"
 ];

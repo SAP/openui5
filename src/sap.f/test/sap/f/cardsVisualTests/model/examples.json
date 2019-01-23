@@ -1,0 +1,33 @@
+[
+	{
+		"title": "No layout",
+		"description": "The cards are placed in a panel. They just wrap when not enough space. The size is calculated based on verticalSize & horizontalSize and 80px multiplier.",
+		"route": "nolayout",
+		"usage": "The cards height and width should always be dividable by 80 (e.g. 80, 160, 240, 320 etc...)",
+		"group": "Layout Examples"
+	},
+	{
+		"title": "List Card",
+		"description": "Example page for Card of type List",
+		"route": "listContent",
+		"group": "Card Type Examples"
+	},
+	{
+		"title": "Table Card",
+		"description": "Example page for Card of type Table",
+		"route": "tableContent",
+		"group": "Card Type Examples"
+	},
+	{
+		"title": "Numeric Header",
+		"description": "Example page for Card with Numeric Header",
+		"route": "numericHeader",
+		"group": "Other Card Examples"
+	},
+	{
+		"title": "Card Container",
+		"description": "Card Container",
+		"route": "cardContainer",
+		"group": "Other Card Examples"
+	}
+]

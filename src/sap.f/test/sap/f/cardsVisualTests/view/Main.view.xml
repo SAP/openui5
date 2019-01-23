@@ -1,0 +1,60 @@
+<mvc:View
+    xmlns="sap.m"
+    xmlns:mvc="sap.ui.core.mvc"
+	xmlns:f="sap.f"
+	xmlns:grid="sap.ui.layout.cssgrid"
+    controllerName="sap.f.cardsVisualTests.controller.Main"
+    displayBlock="true">
+
+	<Page title="{i18n>appTitle}">
+
+		<subHeader>
+			<Toolbar>
+				<ToolbarSpacer/>
+				<Title text="Card layout use cases"/>
+				<ToolbarSpacer/>
+			</Toolbar>
+		</subHeader>
+
+		<content>
+			<VBox class="sapUiMediumMargin">
+				<f:GridList
+					class="sapUiMediumMarginBottom sapUiMediumMarginTop visualTestsGridList"
+					id="useCases"
+					items="{
+						path: '/',
+						sorter: {
+							path: 'group',
+							descending: false,
+							group: true
+						}
+					}">
+
+					<f:customLayout>
+						<grid:GridBasicLayout
+							gridTemplateColumns="repeat(6, minmax(10rem, 20rem))"
+							gridGap="0.5rem 0.5rem"/>
+					</f:customLayout>
+
+					<CustomListItem type="Navigation" press="onSelectExample">
+						<VBox height="100%">
+							<VBox justifyContent="SpaceBetween">
+								<layoutData>
+									<FlexItemData growFactor="1" shrinkFactor="0" /><!-- Don't shrink below minimum size. Fill space if available. -->
+								</layoutData>
+
+								<VBox class="sapUiSmallMargin">
+									<Title text="{title}" wrapping="true"/>
+									<Text text="{description}" wrapping="true"/>
+									<Title visible="{= ${usage} ? true : false }" text="Use case" wrapping="true" class="sapUiSmallMarginTop"/>
+									<Text text="{usage}" wrapping="true"/>
+								</VBox>
+							</VBox>
+						</VBox>
+					</CustomListItem>
+				</f:GridList>
+
+			</VBox>
+		</content>
+	</Page>
+</mvc:View>
