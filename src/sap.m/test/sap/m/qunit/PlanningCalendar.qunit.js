@@ -68,6 +68,9 @@ sap.ui.define([
 	Control,
 	waitForThemeApplied
 ) {
+	// set language to en-GB, since we have specific language strings tested
+	sap.ui.getCore().getConfiguration().setLanguage("en_GB");
+
 	// shortcut for sap.m.PlanningCalendarBuiltInView
 	var PlanningCalendarBuiltInView = mobileLibrary.PlanningCalendarBuiltInView;
 
