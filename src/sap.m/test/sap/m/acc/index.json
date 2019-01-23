@@ -392,11 +392,6 @@
 			"appComponent": "CA-UI5-CTR-PIR"
 		},
 		{
-			"control": "sap.m.Shell",
-			"url": "../Shell.html",
-			"appComponent": "CA-UI5-CTR-BAL"
-		},
-		{
 			"control": "sap.m.Slider",
 			"url": "../Slider.html",
 			"appComponent": "CA-UI5-CTR-RIL"
