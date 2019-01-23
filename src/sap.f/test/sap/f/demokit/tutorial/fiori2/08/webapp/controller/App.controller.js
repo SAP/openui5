@@ -1,8 +1,7 @@
 sap.ui.define([
 	"sap/ui/model/json/JSONModel",
-	"sap/ui/core/mvc/Controller",
-	'sap/f/library'
-], function (JSONModel, Controller, fioriLibrary) {
+	"sap/ui/core/mvc/Controller"
+], function (JSONModel, Controller) {
 	"use strict";
 
 	return Controller.extend("sap.ui.demo.fiori2.controller.App", {
@@ -10,19 +9,6 @@ sap.ui.define([
 			this.oOwnerComponent = this.getOwnerComponent();
 			this.oRouter = this.oOwnerComponent.getRouter();
 			this.oRouter.attachRouteMatched(this.onRouteMatched, this);
-			this.oRouter.attachBeforeRouteMatched(this.onBeforeRouteMatched, this);
-		},
-
-		onBeforeRouteMatched: function(oEvent) {
-			var oModel = this.oOwnerComponent.getModel(),
-				sLayout = oEvent.getParameters().arguments.layout;
-
-			// If there is no layout parameter, query for the default level 0 layout (normally OneColumn)
-			if (!sLayout) {
-				sLayout = fioriLibrary.LayoutType.OneColumn;
-			}
-
-			oModel.setProperty("/layout", sLayout);
 		},
 
 		onRouteMatched: function (oEvent) {
@@ -46,7 +32,6 @@ sap.ui.define([
 
 		onExit: function () {
 			this.oRouter.detachRouteMatched(this.onRouteMatched, this);
-			this.oRouter.detachBeforeRouteMatched(this.onBeforeRouteMatched, this);
 		}
 	});
 });

@@ -18,9 +18,16 @@ sap.ui.define([
 		onSupplierPress: function (oEvent) {
 			var supplierPath = oEvent.getSource().getBindingContext("products").getPath(),
 				supplier = supplierPath.split("/").slice(-1).pop(),
-				oNextUIState = this.oOwnerComponent.getHelper().getNextUIState(2);
+				oNextUIState;
 
-			this.oRouter.navTo("detailDetail", {layout: oNextUIState.layout, supplier: supplier, product: this._product});
+			this.oOwnerComponent.getHelper().then(function (oHelper) {
+				oNextUIState = oHelper.getNextUIState(2);
+				this.oRouter.navTo("detailDetail", {
+					layout: oNextUIState.layout,
+					supplier: supplier,
+					product: this._product
+				});
+			}.bind(this));
 		},
 
 		_onProductMatched: function (oEvent) {

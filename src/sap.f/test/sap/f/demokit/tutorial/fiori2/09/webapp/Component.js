@@ -1,7 +1,8 @@
 sap.ui.define([
 	'sap/ui/core/UIComponent',
-	'sap/ui/model/json/JSONModel'
-], function(UIComponent, JSONModel) {
+	'sap/ui/model/json/JSONModel',
+	'sap/f/library'
+], function(UIComponent, JSONModel, fioriLibrary) {
 	'use strict';
 
 	return UIComponent.extend('sap.ui.demo.fiori2.Component', {
@@ -12,7 +13,8 @@ sap.ui.define([
 
 		init: function () {
 			var oModel,
-				oProductsModel;
+				oProductsModel,
+				oRouter;
 
 			UIComponent.prototype.init.apply(this, arguments);
 
@@ -24,7 +26,21 @@ sap.ui.define([
 			oProductsModel.setSizeLimit(1000);
 			this.setModel(oProductsModel, 'products');
 
-			this.getRouter().initialize();
+			oRouter = this.getRouter();
+			oRouter.attachBeforeRouteMatched(this._onBeforeRouteMatched, this);
+			oRouter.initialize();
+		},
+
+		_onBeforeRouteMatched: function(oEvent) {
+			var oModel = this.getModel(),
+				sLayout = oEvent.getParameters().arguments.layout;
+
+			// If there is no layout parameter, set a default layout (normally OneColumn)
+			if (!sLayout) {
+				sLayout = fioriLibrary.LayoutType.OneColumn;
+			}
+
+			oModel.setProperty("/layout", sLayout);
 		}
 	});
 });
