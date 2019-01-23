@@ -118,6 +118,9 @@ sap.ui.define([
 		assert.notOk(oDragInfo.isDraggable(oChild), "Not draggable: Aggregation metadata does not allow dragging");
 		assert.strictEqual(fnLogSpy.callCount, 2, "Not draggable is logged again");
 
+		oDragInfo.bIgnoreMetadataCheck = true;
+		assert.ok(oDragInfo.isDraggable(oChild), "Draggable: private flag ignores metadata check");
+
 		oParent.destroy();
 	});
 

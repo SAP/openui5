@@ -371,7 +371,7 @@ sap.ui.define([
 			/**
 			 * Columns of the Table
 			 */
-			columns : {type : "sap.ui.table.Column", multiple : true, singularName : "column", bindable : "bindable"},
+			columns : {type : "sap.ui.table.Column", multiple : true, singularName : "column", bindable : "bindable", dnd : { layout: "Horizontal" } },
 
 			/**
 			 * Rows of the Table

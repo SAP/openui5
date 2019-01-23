@@ -827,27 +827,38 @@ sap.ui.define([
 		return "sapMListTblAlternateRowColors";
 	};
 
-		/**
-		 * Handles paste event and fires Paste event of the Table , so that it can be used in the application
-		 * @private
-		 * @param oEvent -browser paste event that occurs when a user pastes the data from the clipboard into the table
-		 */
-		Table.prototype.onpaste = function(oEvent) {
+	/**
+	 * Handles paste event and fires Paste event of the Table, so that it can be used in the application
+	 * @private
+	 * @param oEvent -browser paste event that occurs when a user pastes the data from the clipboard into the table
+	 */
+	Table.prototype.onpaste = function(oEvent) {
 
-			// Check whether the paste event is already handled by input enabled control and avoid pasting into this input-enabled control when focus is in there.
-			if (oEvent.isMarked() || (/^(input|textarea)$/i.test(oEvent.target.tagName))) {
-				return;
-			}
+		// Check whether the paste event is already handled by input enabled control and avoid pasting into this input-enabled control when focus is in there.
+		if (oEvent.isMarked() || (/^(input|textarea)$/i.test(oEvent.target.tagName))) {
+			return;
+		}
 
-			// Get the data from the PasteHelper utility in format of 2D Array
-			var aData = PasteHelper.getPastedDataAs2DArray(oEvent.originalEvent);
-			if (!aData || aData.length === 0 /* no rows pasted */ || aData[0].length === 0 /* no columns pasted */) {
-				return; // no pasted data
-			}
+		// Get the data from the PasteHelper utility in format of 2D Array
+		var aData = PasteHelper.getPastedDataAs2DArray(oEvent.originalEvent);
+		if (!aData || aData.length === 0 /* no rows pasted */ || aData[0].length === 0 /* no columns pasted */) {
+			return; // no pasted data
+		}
 
-			//var oRow = sap.ui.getCore().byId(jQuery(oEvent.target).closest(".sapMLIB").attr("id"));
-			this.firePaste({data: aData});
-		};
+		//var oRow = sap.ui.getCore().byId(jQuery(oEvent.target).closest(".sapMLIB").attr("id"));
+		this.firePaste({data: aData});
+	};
+
+	Table.prototype.ondragenter = function(oEvent) {
+		var oDragSession = oEvent.dragSession;
+		if (!oDragSession || !oDragSession.getDropControl() || !oDragSession.getDropControl().isA("sap.m.Column")) {
+			return;
+		}
+
+		oDragSession.setIndicatorConfig({
+			height: this.getTableDomRef().clientHeight
+		});
+	};
 
 	return Table;
 

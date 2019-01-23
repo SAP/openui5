@@ -61,6 +61,13 @@ sap.ui.define(['../Element', '../library', 'sap/base/Log', './DragAndDrop'],
 	});
 
 	/**
+	 * This private flag determines whether or not to check dnd metadata settings.
+	 * @private
+	 * @ui5-restricted sap.ui.mdc
+	 */
+	DragDropBase.prototype.bIgnoreMetadataCheck = false;
+
+	/**
 	 * @abstract
 	 */
 	DragDropBase.prototype.isDraggable = function(oControl) {
@@ -77,7 +84,11 @@ sap.ui.define(['../Element', '../library', 'sap/base/Log', './DragAndDrop'],
 	/**
 	 * Checks control metadata restrictions.
 	 */
-	DragDropBase.checkMetadata = function(oControl, sAggregation, sRestriction) {
+	DragDropBase.prototype.checkMetadata = function(oControl, sAggregation, sRestriction) {
+		if (this.bIgnoreMetadataCheck) {
+			return true;
+		}
+
 		var oMetadata = oControl.getMetadata().getDragDropInfo(sAggregation);
 		if (!oMetadata[sRestriction]) {
 			Log.warning((sAggregation ? sAggregation + " aggregation of " : "") + oControl + " is not configured to be " + sRestriction);
