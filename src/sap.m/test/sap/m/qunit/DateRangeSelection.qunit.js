@@ -606,6 +606,32 @@ sap.ui.define([
 		});
 	});
 
+	QUnit.test("Binded value is not accepted if it's not from the correct type", function(assert) {
+		//prepare
+		var oModel = new sap.ui.model.json.JSONModel([
+			{ value: "02.02.2019-03.03.2019" }
+		]),
+			oDSR4 = new sap.m.DateRangeSelection({
+				value: {
+					path: "value",
+					type: "sap.ui.model.type.DateInterval"
+				}
+			}).placeAt('qunit-fixture');
+
+		sap.ui.getCore().setModel(oModel);
+		sap.ui.getCore().applyChanges();
+
+		//act
+		var aDates = oDSR4._parseValue("123");
+
+		//assert
+		assert.ok(!aDates[0], "The value is not of the right type so it's not accepted &" +
+			"handled from the catch block");
+
+		//cleanup
+		oDSR4.destroy();
+	});
+
 	QUnit.module("API");
 
 	QUnit.test("setMinDate when dateValue & secondDateValue do not match the new min date", function (assert) {
