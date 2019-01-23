@@ -1502,6 +1502,7 @@ sap.ui.define([
 
 		// assert
 		assert.ok(oComboBox.getFirstItem() === oItem);
+		assert.strictEqual(oComboBox.getList().getItems().length, 1, "List should have 1 item");
 		assert.ok(fnInsertItem.returned(oComboBox), 'oComboBox.insertAggregation() method return the "this" reference');
 		assert.ok(oItem.hasListeners("_change"));
 		assert.ok(oComboBox.isItemVisible(oItem));

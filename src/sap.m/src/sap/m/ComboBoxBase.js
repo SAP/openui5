@@ -1337,7 +1337,11 @@ sap.ui.define([
 		 */
 		ComboBoxBase.prototype.clearFilter = function() {
 			this.getItems().forEach(function(oItem) {
-				this.getListItem(oItem).setVisible(oItem.getEnabled() && this.getSelectable(oItem));
+				var oListItem = this.getListItem(oItem);
+
+				if (oListItem) {
+					oListItem.setVisible(oItem.getEnabled() && this.getSelectable(oItem));
+				}
 			}, this);
 		};
 
@@ -1409,6 +1413,10 @@ sap.ui.define([
 
 			if (oItem) {
 				oItem.attachEvent("_change", this.onItemChange, this);
+			}
+
+			if (this.getList()) {
+				this.getList().insertItem(this._mapItemToListItem(oItem), iIndex);
 			}
 
 			this._scheduleOnItemsLoadedOnce();
