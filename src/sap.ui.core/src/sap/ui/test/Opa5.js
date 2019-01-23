@@ -58,6 +58,7 @@ sap.ui.define([
 				"viewNamespace",
 				"viewName",
 				"viewId",
+				"fragmentId",
 				"autoWait"
 			].concat(Opa._aConfigValuesForWaitFor),
 			aPropertiesThatShouldBePassedToOpaWaitFor = [
@@ -431,6 +432,7 @@ sap.ui.define([
 		 * @param {string} [options.viewNamespace] viewName prefix. Recommended to be set in {@link sap.ui.test.Opa5.extendConfig} instead.
 		 * @param {string} [options.viewId] @since 1.62 The ID of a view. Can be used alone or in combination with viewName and viewNamespace.
 		 * Always set view ID if there are multiple views with the same name
+		 * @param {string} [options.fragmentId] @since 1.63 The ID of a fragment. If set, controls will match only if their IDs contain the fragment ID prefix
 		 * @param {function|array|sap.ui.test.matchers.Matcher} [options.matchers] A single matcher or an array of matchers {@link sap.ui.test.matchers}.
 		 * Matchers will be applied to an every control found by the waitFor function.
 		 * The matchers are a pipeline: the first matcher gets a control as an input parameter, each subsequent matcher gets the same input as the previous one, if the previous output is 'true'.
@@ -1144,6 +1146,7 @@ sap.ui.define([
 			viewName: "string",
 			viewNamespace: "string",
 			viewId: "string",
+			fragmentId: "string",
 			visible: "bool",
 			matchers: "any",
 			actions: "any",

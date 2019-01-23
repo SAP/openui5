@@ -387,7 +387,12 @@ sap.ui.define([
 				qunitBridge: true
 			},
 			module: "./OpaPlugin.qunit",
-			autostart: false
+			autostart: false,
+			loader: {
+				paths: {
+					"fixture": "test-resources/sap/ui/core/qunit/opa/fixture/"
+				}
+			}
 		},
 		"opaQunit": {
 			title: "QUnit Page for sap.ui.test.opaQunit",

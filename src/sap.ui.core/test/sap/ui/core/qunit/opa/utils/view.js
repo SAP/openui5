@@ -1,9 +1,10 @@
 sap.ui.define([
-], function () {
+    "sap/m/Button"
+], function (Button) {
 	"use strict";
 
 	return {
-		createXmlView: function (sViewName, sViewId) {
+		createXmlView: function (sViewName, sViewId, mFragment) {
             var sView = [
                 '<core:View xmlns:core="sap.ui.core" xmlns="sap.m">',
                 '<Button id="foo">',
@@ -13,6 +14,7 @@ sap.ui.define([
                 '<Button id="baz">',
                 '</Button>',
                 '<Image id="boo"></Image>',
+                _getFragment(mFragment),
                 '</core:View>'
             ].join('');
             var oView;
@@ -21,5 +23,21 @@ sap.ui.define([
             oView.setViewName(sViewName);
             return oView;
         }
-	};
+    };
+
+    function _getFragment(mFragment) {
+        var sFragment = '';
+        if (mFragment) {
+            sFragment = '<core:Fragment ';
+            if (mFragment.id) {
+                sFragment += 'id="' + mFragment.id + '" ';
+            }
+            if (mFragment.name) {
+                sFragment += 'fragmentName="' + mFragment.name + '" ';
+            }
+            sFragment += 'type="JS" />';
+        }
+
+        return  sFragment;
+    }
 });

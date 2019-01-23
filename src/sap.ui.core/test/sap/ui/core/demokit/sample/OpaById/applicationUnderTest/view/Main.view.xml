@@ -1,6 +1,7 @@
-<mvc:View controllerName="appUnderTest.view.Main"
+<mvc:View controllerName="appUnderTest.controller.Main"
 	xmlns="sap.m"
-	xmlns:mvc="sap.ui.core.mvc">
+	xmlns:mvc="sap.ui.core.mvc"
+	xmlns:core="sap.ui.core">
 	<Shell>
 		<App id="myApp">
 			<Page id="fistPage">
@@ -13,6 +14,9 @@
 					<Button id="firstButtonOnSecondPage" text="I am the first Button!"/>
 					<Button id="secondButtonOnSecondPage" text="I am the second Button!"/>
 				</headerContent>
+				<content>
+					<core:Fragment id="secondPageFragment" fragmentName="appUnderTest.view.Hello" type="XML" />
+				</content>
 			</Page>
 		</App>
 	</Shell>

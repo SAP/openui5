@@ -8,7 +8,9 @@ sap.ui.define([
 	"sap/m/Button",
 	"sap/m/Dialog",
 	"sap/ui/core/mvc/View",
-	"./utils/view"
+	"sap/ui/core/Fragment",
+	"./utils/view",
+	"sap/ui/thirdparty/jquery"
 ], function (OpaPlugin,
 			 Interactable,
 			 Visible,
@@ -17,7 +19,9 @@ sap.ui.define([
 			 Button,
 			 Dialog,
 			 View,
-			 viewUtils) {
+			 Fragment,
+			 viewUtils,
+			$) {
 	"use strict";
 
 
@@ -1014,6 +1018,78 @@ sap.ui.define([
 		assert.strictEqual(oMatchedView.getId(), "myDifferentlyNamedView", "Should match invisible views when they have a 'unique' name");
 		sinon.assert.calledWith(this.fnLogSpy, "Found 1 views with viewName 'differentName'");
 	});
+
+	QUnit.module("OpaPlugin - fragmentId in view-relative match", {
+		beforeEach: function () {
+			this.oView = viewUtils.createXmlView("testViewName", "myView", {
+				id: "testFragment",
+				name: "fixture.OpaPlugin"
+			});
+			this.oView.placeAt("qunit-fixture");
+			sap.ui.getCore().applyChanges();
+		},
+		afterEach: function () {
+			this.oView.destroy();
+		}
+	});
+
+	QUnit.test("Should match controls by fragment ID inside view", function (assert) {
+		testWithFragmentId(new OpaPlugin(), assert);
+	});
+
+	QUnit.module("OpaPlugin - fragmentId in static area", {
+		beforeEach: function () {
+			var sView = [
+				'<core:View xmlns:core="sap.ui.core" xmlns:l="sap.ui.layout" xmlns="sap.m">',
+				'<Dialog id="myDialog">',
+				'<core:Fragment id="testFragment" fragmentName="fixture.OpaPlugin" type="JS"/>',
+				'</Dialog>',
+				'</core:View>'
+			].join('');
+			this.oView = sap.ui.xmlview({id: "myView", viewContent: sView});
+			this.oView.placeAt("qunit-fixture");
+			sap.ui.getCore().applyChanges();
+		},
+		afterEach: function () {
+			this.oView.destroy();
+		}
+	});
+
+	QUnit.test("Should match controls by fragment ID inside static area", function (assert) {
+		var fnStart = assert.async();
+		var oDialog = sap.ui.getCore().byId("myView--myDialog");
+		oDialog.attachAfterOpen(function () {
+			testWithFragmentId(new OpaPlugin(), assert);
+			fnStart();
+		});
+
+		oDialog.open();
+	});
+
+	function testWithFragmentId(oPlugin, assert) {
+		var oMatchingString = oPlugin.getMatchingControls({
+			viewId: "myView",
+			fragmentId: "testFragment",
+			id: "fragmentButton"
+		});
+		var aMatchingRegex = oPlugin.getMatchingControls({
+			viewId: "myView",
+			fragmentId: "testFragment",
+			id: /^frag.*Bu/
+		});
+		var aMatchingArray = oPlugin.getMatchingControls({
+			viewId: "myView",
+			fragmentId: "testFragment",
+			id: ["fragmentButton", "test"]
+		});
+
+		assert.ok(oMatchingString.getId(), "myView--testFragment--fragmentButton", "Should match button inside fragment  by string ID");
+		assert.strictEqual(aMatchingRegex.length, 1, "Should match only inside view and fragment");
+		assert.ok(aMatchingRegex[0].getId(), "myView--testFragment--fragmentButton", "Should match button inside fragment");
+		assert.strictEqual(aMatchingArray.length, 1, "Should match only inside view and fragment");
+		assert.ok(aMatchingArray[0].getId(), "myView--testFragment--fragmentButton", "Should match button inside fragment");
+
+	}
 
 	jQuery(function () {
 		// hack for IE - dialog introduces a global when opened so i open it before the test starts
