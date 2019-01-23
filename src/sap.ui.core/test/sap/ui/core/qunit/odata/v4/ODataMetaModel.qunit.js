@@ -4,6 +4,7 @@
 sap.ui.define([
 	"jquery.sap.global",
 	"sap/base/Log",
+	"sap/base/util/uid",
 	"sap/ui/base/SyncPromise",
 	"sap/ui/model/BindingMode",
 	"sap/ui/model/ChangeReason",
@@ -25,10 +26,10 @@ sap.ui.define([
 	"sap/ui/model/odata/v4/lib/_Helper",
 	"sap/ui/test/TestUtils",
 	"sap/ui/thirdparty/URI"
-], function (jQuery, Log, SyncPromise, BindingMode, ChangeReason, ClientListBinding, BaseContext,
-		ContextBinding, Filter, MetaModel, PropertyBinding, Sorter, OperationMode, Int64, Raw,
-		AnnotationHelper, Context, ODataMetaModel, ODataModel, ValueListType, _Helper, TestUtils,
-		URI) {
+], function (jQuery, Log, uid, SyncPromise, BindingMode, ChangeReason, ClientListBinding,
+		BaseContext, ContextBinding, Filter, MetaModel, PropertyBinding, Sorter, OperationMode,
+		Int64, Raw, AnnotationHelper, Context, ODataMetaModel, ODataModel, ValueListType, _Helper,
+		TestUtils, URI) {
 	/*global QUnit, sinon */
 	/*eslint max-nested-callbacks: 0, no-loop-func: 0, no-warning-comments: 0 */
 	"use strict";
@@ -1342,6 +1343,8 @@ sap.ui.define([
 			"/@@sap.ui.model.odata.v4.AnnotationHelper"
 				: "sap.ui.model.odata.v4.AnnotationHelper is not a function but: "
 					+ sap.ui.model.odata.v4.AnnotationHelper,
+			"/@@.requestUnitsOfMeasure" // "." looks in given scope only!
+				: ".requestUnitsOfMeasure is not a function but: undefined",
 			// Unsupported overloads --------------------------------------------------------------
 			"/name.space.EmptyOverloads/" : "Unsupported overloads",
 			"/name.space.OverloadedAction/" : "Unsupported overloads",
@@ -1362,7 +1365,7 @@ sap.ui.define([
 					.withExactArgs(sWarning, sPath, sODataMetaModel);
 
 				// code under test
-				oSyncPromise = this.oMetaModel.fetchObject(sPath);
+				oSyncPromise = this.oMetaModel.fetchObject(sPath, null, {scope : {}});
 
 				assert.strictEqual(oSyncPromise.isFulfilled(), true);
 				assert.deepEqual(oSyncPromise.getResult(), undefined);
@@ -1442,6 +1445,35 @@ sap.ui.define([
 			assert.strictEqual(oContext.getPath(), oFixture.sPath);
 			assert.strictEqual(oContext.getObject(), oInput);
 		});
+	});
+
+	//*********************************************************************************************
+	QUnit.test("fetchObject: @@requestUnitsOfMeasure", function (assert) {
+		var oResult = {};
+
+		this.oMetaModelMock.expects("fetchEntityContainer").returns(SyncPromise.resolve(mScope));
+		this.oMetaModelMock.expects("requestUnitsOfMeasure").on(this.oMetaModel).resolves(oResult);
+
+		// code under test
+		return this.oMetaModel.fetchObject("/T€AMS/@@requestUnitsOfMeasure")
+			.then(function (oResult0) {
+				assert.strictEqual(oResult0, oResult);
+			});
+	});
+
+	//*********************************************************************************************
+	QUnit.test("fetchObject: @@requestUnitsOfMeasure from given scope wins", function (assert) {
+		var oResult = {},
+			oScope = {requestUnitsOfMeasure : function () {}};
+
+		this.oMetaModelMock.expects("fetchEntityContainer").returns(SyncPromise.resolve(mScope));
+		this.mock(oScope).expects("requestUnitsOfMeasure").resolves(oResult);
+
+		// code under test
+		return this.oMetaModel.fetchObject("/T€AMS/@@requestUnitsOfMeasure", null, {scope : oScope})
+			.then(function (oResult0) {
+				assert.strictEqual(oResult0, oResult);
+			});
 	});
 
 	//*********************************************************************************************
@@ -4065,66 +4097,111 @@ sap.ui.define([
 	);
 
 	//*********************************************************************************************
-	QUnit.test("getOrCreateValueListModel", function (assert) {
+	QUnit.test("getAbsoluteServiceUrl", function (assert) {
 		var oModel = new ODataModel({
 				serviceUrl : "/Foo/DataService/",
 				synchronizationMode : "None"
 			}),
-			oMetaModel = oModel.getMetaModel(),
-			oValueListModel;
-
-		oModel.oRequestor.mHeaders["X-CSRF-Token"] = "xyz";
+			oMetaModel = oModel.getMetaModel();
 
 		// code under test
-		oValueListModel = oMetaModel.getOrCreateValueListModel("../ValueListService/$metadata");
-
-		assert.ok(oValueListModel instanceof ODataModel);
-		assert.strictEqual(oValueListModel.sServiceUrl, "/Foo/ValueListService/");
-		assert.strictEqual(oValueListModel.getDefaultBindingMode(), BindingMode.OneWay);
-		assert.strictEqual(oValueListModel.sOperationMode, OperationMode.Server);
-		assert.strictEqual(oValueListModel.oRequestor.mHeaders["X-CSRF-Token"], "xyz");
+		assert.strictEqual(oMetaModel.getAbsoluteServiceUrl("../ValueListService/$metadata"),
+			"/Foo/ValueListService/");
 
 		// code under test
-		assert.strictEqual(oMetaModel.getOrCreateValueListModel("/Foo/ValueListService/$metadata"),
-			oValueListModel);
+		assert.strictEqual(oMetaModel.getAbsoluteServiceUrl("/Foo/ValueListService/$metadata"),
+			"/Foo/ValueListService/");
 
 		// code under test
-		assert.strictEqual(oValueListModel.getMetaModel()
-				.getOrCreateValueListModel("/Foo/ValueListService/$metadata"),
-			oValueListModel);
+		assert.strictEqual(oMetaModel.getAbsoluteServiceUrl("$metadata"),
+			"/Foo/DataService/");
 
 		// code under test
-		assert.strictEqual(oValueListModel.getMetaModel().getOrCreateValueListModel("$metadata"),
-			oValueListModel);
-
-		oModel = new ODataModel({
-			serviceUrl : "/Foo/DataService2/",
-			synchronizationMode : "None"
-		});
-
-		// code under test - even a totally different model gets the very same value list model
-		assert.strictEqual(oModel.getMetaModel()
-				.getOrCreateValueListModel("../ValueListService/$metadata"),
-			oValueListModel);
+		assert.strictEqual(oMetaModel.getAbsoluteServiceUrl(
+				"$metadata?sap-context-token=XYZ&sap-client=123&sap-language=ABC"),
+			"/Foo/DataService/?sap-context-token=XYZ&sap-client=123&sap-language=ABC");
 	});
 
 	//*********************************************************************************************
-	QUnit.test("getOrCreateValueListModel: relative data service URL", function (assert) {
+	QUnit.test("getAbsoluteServiceUrl: relative data service URL", function (assert) {
 		var sRelativePath = "../../../DataService/",
 			sAbsolutePath =
 				new URI(sRelativePath).absoluteTo(document.baseURI).pathname().toString(),
 			oModel = new ODataModel({
 				serviceUrl : sRelativePath,
 				synchronizationMode : "None"
-			}),
-			oValueListModel;
+			});
 
 		// code under test
-		oValueListModel = oModel.getMetaModel()
-			.getOrCreateValueListModel("../ValueListService/$metadata");
-
-		assert.strictEqual(oValueListModel.sServiceUrl,
+		assert.strictEqual(oModel.getMetaModel()
+				.getAbsoluteServiceUrl("../ValueListService/$metadata"),
 			new URI("../ValueListService/").absoluteTo(sAbsolutePath).toString());
+	});
+
+	//*********************************************************************************************
+	QUnit.test("getOrCreateSharedModel", function (assert) {
+		var oMapGetExpectation,
+			oMapSetExpectation,
+			oModel = new ODataModel({
+				serviceUrl : "/Foo/DataService/",
+				synchronizationMode : "None"
+			}),
+			oMetaModel = oModel.getMetaModel(),
+			oMetaModelMock = this.mock(oMetaModel),
+			oSharedModel;
+
+		oModel.oRequestor.mHeaders["X-CSRF-Token"] = "xyz";
+		oMetaModelMock.expects("getAbsoluteServiceUrl")
+			.withExactArgs("../ValueListService/$metadata")
+			.returns("/Foo/ValueListService/");
+		oMetaModelMock.expects("getAbsoluteServiceUrl") // for second code under test
+			.withExactArgs("/Foo/ValueListService/$metadata")
+			.returns("/Foo/ValueListService/");
+		oMapGetExpectation = this.mock(Map.prototype).expects("get").twice() //for both c.u.t
+			.withExactArgs("/Foo/ValueListService/").callThrough();
+		oMapSetExpectation = this.mock(Map.prototype).expects("set")
+			.withArgs("/Foo/ValueListService/").callThrough();
+
+		// code under test
+		oSharedModel = oMetaModel.getOrCreateSharedModel("../ValueListService/$metadata");
+
+		assert.ok(oSharedModel instanceof ODataModel);
+		assert.strictEqual(oSharedModel.sServiceUrl, "/Foo/ValueListService/");
+		assert.strictEqual(oSharedModel.getDefaultBindingMode(), BindingMode.OneWay);
+		assert.strictEqual(oSharedModel.sOperationMode, OperationMode.Server);
+		assert.strictEqual(oSharedModel.oRequestor.mHeaders["X-CSRF-Token"], "xyz");
+		assert.strictEqual(oSharedModel.getGroupId(), "$auto");
+
+		// code under test
+		assert.strictEqual(oMetaModel.getOrCreateSharedModel("/Foo/ValueListService/$metadata"),
+			oSharedModel);
+
+		assert.ok(oMapGetExpectation.alwaysCalledOn(oMapSetExpectation.thisValues[0]));
+	});
+
+	//*********************************************************************************************
+	["$auto", "$direct"].forEach(function (sGroupId, i) {
+		var sTitle = "getOrCreateSharedModel: relative data service URL: " + sGroupId;
+
+		QUnit.test(sTitle, function (assert) {
+			var sAbsolutePath = "/" + uid() + "/", // circumvent caching
+				oModel = new ODataModel({
+					serviceUrl : "/Foo/DataService/",
+					synchronizationMode : "None"
+				}),
+				oSharedModel;
+
+			this.mock(oModel.getMetaModel()).expects("getAbsoluteServiceUrl")
+				.withExactArgs("../ValueListService/$metadata")
+				.returns(sAbsolutePath);
+
+			// code under test
+			oSharedModel = oModel.getMetaModel()
+				.getOrCreateSharedModel("../ValueListService/$metadata", sGroupId);
+
+			assert.strictEqual(oSharedModel.sServiceUrl, sAbsolutePath);
+			assert.strictEqual(oSharedModel.getGroupId(), sGroupId);
+		});
 	});
 
 	//*********************************************************************************************
@@ -4499,21 +4576,21 @@ sap.ui.define([
 			oValueListMappingsBar[bDuplicate ? "" : "bar"] = {CollectionPath : "bar"};
 			oMetaModelMock.expects("fetchEntityContainer").atLeast(1)
 				.returns(SyncPromise.resolve(oMetadata));
-			oMetaModelMock.expects("getOrCreateValueListModel")
+			oMetaModelMock.expects("getOrCreateSharedModel")
 				.withExactArgs(sMappingUrl1)
 				.returns(oValueListModel1);
 			oMetaModelMock.expects("fetchValueListMappings")
 				.withExactArgs(sinon.match.same(oValueListModel1), "zui5_epm_sample",
 					sinon.match.same(oProperty))
 				.returns(Promise.resolve(oValueListMappings1));
-			oMetaModelMock.expects("getOrCreateValueListModel")
+			oMetaModelMock.expects("getOrCreateSharedModel")
 				.withExactArgs(sMappingUrl2)
 				.returns(oValueListModel2);
 			oMetaModelMock.expects("fetchValueListMappings")
 				.withExactArgs(sinon.match.same(oValueListModel2), "zui5_epm_sample",
 					sinon.match.same(oProperty))
 				.returns(Promise.resolve(oValueListMappings2));
-			oMetaModelMock.expects("getOrCreateValueListModel")
+			oMetaModelMock.expects("getOrCreateSharedModel")
 				.withExactArgs(sMappingUrlBar)
 				.returns(oValueListModelBar);
 			oMetaModelMock.expects("fetchValueListMappings")
@@ -4726,7 +4803,7 @@ sap.ui.define([
 			.returns(Promise.resolve(oMetadata));
 		oRequestorMock.expects("read").withExactArgs("/Foo/EpmSample/$metadata")
 			.returns(Promise.resolve(oMetadataProduct));
-		oMetaModelMock.expects("getOrCreateValueListModel")
+		oMetaModelMock.expects("getOrCreateSharedModel")
 			.withExactArgs(sMappingUrl)
 			.returns(oValueListModel);
 		oMetaModelMock.expects("fetchValueListMappings")
@@ -4784,7 +4861,7 @@ sap.ui.define([
 			oAnnotations["@com.sap.vocabularies.Common.v1." + sValueList + "#foo"] = {};
 			oMetaModelMock.expects("fetchEntityContainer").atLeast(1)
 				.returns(SyncPromise.resolve(oMetadata));
-			oMetaModelMock.expects("getOrCreateValueListModel")
+			oMetaModelMock.expects("getOrCreateSharedModel")
 				.withExactArgs(sMappingUrl)
 				.returns(oValueListModel);
 			oMetaModelMock.expects("fetchValueListMappings")
@@ -4843,7 +4920,7 @@ sap.ui.define([
 
 		oMetaModelMock.expects("fetchEntityContainer").atLeast(1)
 			.returns(SyncPromise.resolve(oMetadata));
-		oMetaModelMock.expects("getOrCreateValueListModel")
+		oMetaModelMock.expects("getOrCreateSharedModel")
 			.withExactArgs(sMappingUrl)
 			.returns(oValueListModel);
 
@@ -4911,10 +4988,10 @@ sap.ui.define([
 
 			oMetaModelMock.expects("fetchEntityContainer").atLeast(1)
 				.returns(SyncPromise.resolve(oMetadata));
-			oMetaModelMock.expects("getOrCreateValueListModel")
+			oMetaModelMock.expects("getOrCreateSharedModel")
 				.withExactArgs(sValueListService)
 				.returns(oValueListModel);
-			oMetaModelMock.expects("getOrCreateValueListModel")
+			oMetaModelMock.expects("getOrCreateSharedModel")
 				.withExactArgs(sCollectionRoot)
 				.returns(oValueListModel2);
 			oMetaModelMock.expects("fetchValueListMappings")
@@ -5050,6 +5127,604 @@ sap.ui.define([
 	//*********************************************************************************************
 	QUnit.test("getData, requestData", function (assert) {
 		return checkGetAndRequest(this, assert, "fetchData");
+	});
+
+	//*********************************************************************************************
+	[0, false, true].forEach(function (bHasAlternateKey) {
+		var sTitle = "requestUnitsOfMeasure, with alternate key: " + bHasAlternateKey;
+
+		QUnit.test(sTitle, function (assert) {
+			var sAbsoluteServiceUrl = "/" + uid() + "/", // circumvent caching
+				oAttachChangeExpectation,
+				oAttachDataReceivedExpectation,
+				oCodeListBinding = {
+					attachChange : function () {},
+					attachDataReceived : function () {},
+					getContexts : function () {}
+				},
+				oCodeListBindingMock = this.mock(oCodeListBinding),
+				oCodeListMetaModel = {
+					getObject : function () {},
+					requestObject : function () {}
+				},
+				oCodeListMetaModelMock = this.mock(oCodeListMetaModel),
+				oCodeListModel = {
+					bindList : function () {},
+					getMetaModel : function () {}
+				},
+				oGetContextsExpectation,
+				oMapGetExpectation,
+				oMapSetExpectation,
+				sUrl = "../../../../default/iwbep/common/0001/$metadata",
+				that = this;
+
+			/*
+			 * Returns mock context instances for the given data rows, properly set up with
+			 * expectations.
+			 *
+			 * @param {object[]} aData - some data rows
+			 * @returns {object[]} mock context instances
+			 */
+			function mock(aData) {
+				return aData.map(function (oData) {
+					var oContext = {getProperty : function () {}},
+						oContextMock = that.mock(oContext);
+
+					Object.keys(oData).forEach(function (sKey) {
+						oContextMock.expects("getProperty").withExactArgs(sKey)
+							.returns(oData[sKey]);
+					});
+
+					return oContext;
+				});
+			}
+
+			this.oMetaModelMock.expects("fetchEntityContainer").twice()
+				.returns(SyncPromise.resolve(mScope));
+			this.mock(this.oMetaModel).expects("requestObject").twice()
+				.withExactArgs("/@com.sap.vocabularies.CodeList.v1.UnitsOfMeasure")
+				.resolves({
+					CollectionPath: "UnitsOfMeasure",
+					Url: sUrl
+				});
+			this.mock(this.oMetaModel).expects("getAbsoluteServiceUrl").twice()
+				.withExactArgs(sUrl).returns(sAbsoluteServiceUrl);
+			oMapGetExpectation = this.mock(Map.prototype).expects("get").twice()
+				.withExactArgs(sAbsoluteServiceUrl + "#UnitsOfMeasure").callThrough();
+			oMapSetExpectation = this.mock(Map.prototype).expects("set")
+				.withArgs(sAbsoluteServiceUrl + "#UnitsOfMeasure").callThrough();
+			this.mock(this.oMetaModel).expects("getOrCreateSharedModel")
+				.withExactArgs(sUrl, "$direct")
+				.returns(oCodeListModel);
+			this.mock(oCodeListModel).expects("getMetaModel").withExactArgs()
+				.returns(oCodeListMetaModel);
+			oCodeListMetaModelMock.expects("requestObject")
+				.withExactArgs("/UnitsOfMeasure/")
+				.resolves({
+//					$kind : "EntityType",
+					$Key : bHasAlternateKey === 0
+						? [{"MyAlias" : "UnitCode"}] // special case: alias is given
+						: ["UnitCode"]
+				});
+			oCodeListMetaModelMock.expects("getObject")
+				.withExactArgs("/UnitsOfMeasure/@Org.OData.Core.V1.AlternateKeys")
+				.returns(bHasAlternateKey ? [{
+					Key : [{
+//						Alias : "ExternalCode",
+						Name : {$PropertyPath : "ExternalCode"}
+					}]
+				}] : undefined);
+			oCodeListMetaModelMock.expects("getObject")
+				.withExactArgs("/UnitsOfMeasure/UnitCode@com.sap.vocabularies.Common.v1.Text")
+				.returns({$Path : "MyText"});
+			oCodeListMetaModelMock.expects("getObject")
+				.withExactArgs(
+					"/UnitsOfMeasure/UnitCode@com.sap.vocabularies.Common.v1.UnitSpecificScale")
+				.returns({$Path : "DecimalPlaces"});
+			this.mock(oCodeListModel).expects("bindList")
+				.withExactArgs("/UnitsOfMeasure", null, null, null, {
+					$select :
+						[bHasAlternateKey ? "ExternalCode" : "UnitCode", "DecimalPlaces", "MyText"]
+				}).returns(oCodeListBinding);
+			oAttachChangeExpectation = oCodeListBindingMock.expects("attachChange");
+			oAttachChangeExpectation.withExactArgs(sinon.match.func)
+				.callsFake(function (fnChangeListener) {
+					Promise.resolve().then(function () { // later, call back that listener
+						var aContexts = mock(bHasAlternateKey ? [
+								{DecimalPlaces : null, ExternalCode : "ONE", MyText : "One"},
+								{DecimalPlaces : 2, ExternalCode : "%", MyText : "Percentage"},
+								{DecimalPlaces : 3, ExternalCode : "%O", MyText : "Per mille"}
+							] : [
+								{DecimalPlaces : null, UnitCode : "ONE", MyText : "One"},
+								{DecimalPlaces : 2, UnitCode : "%", MyText : "Percentage"},
+								{DecimalPlaces : 3, UnitCode : "%O", MyText : "Per mille"}
+							]);
+
+						assert.ok(oGetContextsExpectation.calledAfter(oAttachChangeExpectation),
+							"getContexts will trigger the change event after listener is attached");
+
+						oCodeListBindingMock.expects("getContexts").withExactArgs(0, Infinity)
+							.returns(aContexts);
+
+						// simulate "change" event to call code under test
+						fnChangeListener();
+					});
+				});
+			oAttachDataReceivedExpectation = oCodeListBindingMock.expects("attachDataReceived");
+			oAttachDataReceivedExpectation.withExactArgs(sinon.match.func)
+				.callsFake(function (fnDataReceivedListener) {
+					Promise.resolve().then(function () { // later, call back that listener
+						var oEvent = {getParameter : function () {}};
+
+						assert.ok(
+							oGetContextsExpectation.calledAfter(oAttachDataReceivedExpectation),
+							"getContexts will trigger event after listener is attached");
+						that.mock(oEvent).expects("getParameter").withExactArgs("error")
+							.returns();
+
+						// simulate "dataReceived" event to call code under test
+						fnDataReceivedListener(oEvent);
+					});
+				});
+			oGetContextsExpectation = oCodeListBindingMock.expects("getContexts")
+				.withExactArgs(0, Infinity);
+
+			return Promise.all([
+				// code under test
+				this.oMetaModel.requestUnitsOfMeasure(mScope[mScope.$EntityContainer]),
+				// code under test - must not request customizing again
+				this.oMetaModel.requestUnitsOfMeasure()
+			]).then(function (aResults) {
+				assert.deepEqual(aResults[0], {
+					"ONE" : {UnitSpecificScale : 0, Text : "One"},
+					"%" : {UnitSpecificScale : 2, Text : "Percentage"},
+					"%O" : {UnitSpecificScale : 3, Text : "Per mille"}
+				});
+				assert.strictEqual(aResults[1], aResults[0]);
+				assert.ok(oMapGetExpectation.alwaysCalledOn(oMapSetExpectation.thisValues[0]));
+			});
+		});
+	});
+
+	//*********************************************************************************************
+	QUnit.test("requestUnitsOfMeasure, no code list", function (assert) {
+		this.oMetaModelMock.expects("fetchEntityContainer").returns(SyncPromise.resolve(mScope));
+		this.mock(this.oMetaModel).expects("requestObject")
+			.withExactArgs("/@com.sap.vocabularies.CodeList.v1.UnitsOfMeasure")
+			.resolves();
+
+		// code under test
+		return this.oMetaModel.requestUnitsOfMeasure()
+			.then(function (mUnits) {
+				assert.strictEqual(mUnits, null); // Note: null, not undefined!
+			});
+	});
+
+	//*********************************************************************************************
+	[{
+		aAlternateKeys : [{
+			Key : [{
+//				Alias : "ExternalCode",
+				Name : {$PropertyPath : "ExternalCode"}
+			}]
+		}, {}, {}],
+		oError : new Error("Single alternative expected: "
+			+ "/UnitsOfMeasure/@Org.OData.Core.V1.AlternateKeys")
+	}, {
+		aAlternateKeys : [],
+		oError : new Error("Single alternative expected: "
+			+ "/UnitsOfMeasure/@Org.OData.Core.V1.AlternateKeys")
+	}, {
+		aAlternateKeys : [{
+			Key : [{
+//				Alias : "ExternalCode",
+				Name : {$PropertyPath : "ExternalCode"}
+			}, {
+//				Alias : "foo",
+				Name : {$PropertyPath : "foo"}
+			}]
+		}],
+		oError : new Error("Single key expected: "
+			+ "/UnitsOfMeasure/@Org.OData.Core.V1.AlternateKeys/0/Key")
+	}, {
+		aAlternateKeys : [{
+			Key : []
+		}],
+		oError : new Error("Single key expected: "
+			+ "/UnitsOfMeasure/@Org.OData.Core.V1.AlternateKeys/0/Key")
+	}].forEach(function (oFixture, i) {
+		QUnit.test("requestUnitsOfMeasure, alternate key error case #" + i, function (assert) {
+			var sAbsoluteServiceUrl = "/" + uid() + "/", // circumvent caching
+				oCodeListMetaModel = {
+					getObject : function () {},
+					requestObject : function () {}
+				},
+				oCodeListMetaModelMock = this.mock(oCodeListMetaModel),
+				oCodeListModel = {
+					bindList : function () {},
+					getMetaModel : function () {}
+				},
+				sUrl = "../../../../default/iwbep/common/0001/$metadata",
+				that = this;
+
+			this.oMetaModelMock.expects("fetchEntityContainer").twice()
+				.returns(SyncPromise.resolve(mScope));
+			this.mock(this.oMetaModel).expects("requestObject").twice()
+				.withExactArgs("/@com.sap.vocabularies.CodeList.v1.UnitsOfMeasure")
+				.resolves({
+					CollectionPath: "UnitsOfMeasure",
+					Url: sUrl
+				});
+			this.mock(this.oMetaModel).expects("getAbsoluteServiceUrl").twice()
+				.withExactArgs(sUrl).returns(sAbsoluteServiceUrl);
+			this.mock(Map.prototype).expects("get").twice()
+				.withExactArgs(sAbsoluteServiceUrl + "#UnitsOfMeasure").callThrough();
+			this.mock(Map.prototype).expects("set")
+				.withArgs(sAbsoluteServiceUrl + "#UnitsOfMeasure").callThrough();
+			this.mock(this.oMetaModel).expects("getOrCreateSharedModel")
+				.withExactArgs(sUrl, "$direct")
+				.returns(oCodeListModel);
+			this.mock(oCodeListModel).expects("getMetaModel").withExactArgs()
+				.returns(oCodeListMetaModel);
+			oCodeListMetaModelMock.expects("requestObject")
+				.withExactArgs("/UnitsOfMeasure/")
+				.resolves({
+//					$kind : "EntityType",
+					$Key : ["UnitCode"]
+				});
+			oCodeListMetaModelMock.expects("getObject")
+				.withExactArgs("/UnitsOfMeasure/@Org.OData.Core.V1.AlternateKeys")
+				.returns(oFixture.aAlternateKeys);
+
+			// code under test
+			return this.oMetaModel.requestUnitsOfMeasure()
+				.then(function () {
+					assert.ok(false);
+				}, function (oError) {
+					assert.throws(function () {
+						throw oError; // Note: assert.deepEqual() does not work in IE11 here
+					}, oFixture.oError);
+
+					// code under test
+					return that.oMetaModel.requestUnitsOfMeasure()
+						.then(function () {
+							assert.ok(false);
+						}, function (oError1) {
+							assert.strictEqual(oError1, oError);
+						});
+				});
+		});
+	});
+
+	//*********************************************************************************************
+	[["UnitCode", "InternalCode"], [], undefined].forEach(function (aKeys) {
+		QUnit.test("requestUnitsOfMeasure, not a single key: " + aKeys, function (assert) {
+			var sAbsoluteServiceUrl = "/" + uid() + "/", // circumvent caching
+				oCodeListMetaModel = {
+					getObject : function () {},
+					requestObject : function () {}
+				},
+				oCodeListMetaModelMock = this.mock(oCodeListMetaModel),
+				oCodeListModel = {
+					bindList : function () {},
+					getMetaModel : function () {}
+				},
+				oError = new Error("Single key expected: /UnitsOfMeasure/"),
+				sUrl = "../../../../default/iwbep/common/0001/$metadata",
+				that = this;
+
+			this.oMetaModelMock.expects("fetchEntityContainer").twice()
+				.returns(SyncPromise.resolve(mScope));
+			this.mock(this.oMetaModel).expects("requestObject").twice()
+				.withExactArgs("/@com.sap.vocabularies.CodeList.v1.UnitsOfMeasure")
+				.resolves({
+					CollectionPath: "UnitsOfMeasure",
+					Url: sUrl
+				});
+			this.mock(this.oMetaModel).expects("getAbsoluteServiceUrl").twice()
+				.withExactArgs(sUrl).returns(sAbsoluteServiceUrl);
+			this.mock(Map.prototype).expects("get").twice()
+				.withExactArgs(sAbsoluteServiceUrl + "#UnitsOfMeasure").callThrough();
+			this.mock(Map.prototype).expects("set")
+				.withArgs(sAbsoluteServiceUrl + "#UnitsOfMeasure").callThrough();
+			this.mock(this.oMetaModel).expects("getOrCreateSharedModel")
+				.withExactArgs(sUrl, "$direct")
+				.returns(oCodeListModel);
+			this.mock(oCodeListModel).expects("getMetaModel").withExactArgs()
+				.returns(oCodeListMetaModel);
+			oCodeListMetaModelMock.expects("requestObject")
+				.withExactArgs("/UnitsOfMeasure/")
+				.resolves({
+//					$kind : "EntityType",
+					$Key : aKeys
+				});
+
+			// code under test
+			return this.oMetaModel.requestUnitsOfMeasure()
+				.then(function () {
+					assert.ok(false);
+				}, function (oError0) {
+					assert.throws(function () {
+						throw oError0; // Note: assert.deepEqual() does not work in IE11 here
+					}, oError);
+
+					// code under test
+					return that.oMetaModel.requestUnitsOfMeasure()
+						.then(function () {
+							assert.ok(false);
+						}, function (oError1) {
+							assert.strictEqual(oError1, oError0);
+						});
+				});
+		});
+	});
+
+	//*********************************************************************************************
+	QUnit.test("requestUnitsOfMeasure: foreign context", function (assert) {
+		var oMetaModel = new ODataMetaModel(this.oMetaModel.oRequestor, "/~/$metadata"),
+			oContext = oMetaModel.createBindingContext("/"),
+			that = this;
+
+		this.oMetaModelMock.expects("fetchEntityContainer").returns(SyncPromise.resolve(mScope));
+
+		assert.throws(function () {
+			// code under test
+			that.oMetaModel.requestUnitsOfMeasure(null, {context : oContext});
+		}, new Error("Unsupported context: /"));
+	});
+
+	//*********************************************************************************************
+	QUnit.test("requestUnitsOfMeasure: context does not point to raw value", function (assert) {
+		var oContext = this.oMetaModel.createBindingContext("/empty.Container"),
+			that = this;
+
+		this.oMetaModelMock.expects("fetchEntityContainer").returns(SyncPromise.resolve(mScope));
+
+		assert.throws(function () {
+			// code under test
+			that.oMetaModel.requestUnitsOfMeasure(null, {context : oContext});
+		}, new Error("Unsupported context: /empty.Container"));
+	});
+
+	//*********************************************************************************************
+	[null, {$kind : "EntityContainer"}].forEach(function (vRawValue) {
+		QUnit.test("requestUnitsOfMeasure: unsupported raw value " + vRawValue, function (assert) {
+			var oContext = this.oMetaModel.createBindingContext("/"),
+				that = this;
+
+			this.oMetaModelMock.expects("fetchEntityContainer")
+				.returns(SyncPromise.resolve(mScope));
+
+			assert.throws(function () {
+				// code under test
+				that.oMetaModel.requestUnitsOfMeasure(vRawValue, {context : oContext});
+			}, new Error("Unsupported raw value: " + vRawValue));
+		});
+	});
+
+	//*********************************************************************************************
+	QUnit.test("requestUnitsOfMeasure: 1st requestObject fails", function (assert) {
+		var oError = new Error("Could not load metadata");
+
+		this.oMetaModelMock.expects("fetchEntityContainer").returns(SyncPromise.resolve(mScope));
+		this.mock(this.oMetaModel).expects("requestObject")
+			.withExactArgs("/@com.sap.vocabularies.CodeList.v1.UnitsOfMeasure")
+			.rejects(oError);
+
+		// code under test
+		return this.oMetaModel.requestUnitsOfMeasure(undefined, {/*context : oContext*/})
+			.then(function () {
+				assert.ok(false);
+			}, function (oError0) {
+				assert.strictEqual(oError0, oError);
+			});
+	});
+
+	//*********************************************************************************************
+	QUnit.test("requestUnitsOfMeasure: 2nd requestObject fails", function (assert) {
+		var sAbsoluteServiceUrl = "/" + uid() + "/", // circumvent caching
+			oCodeListMetaModel = {
+				getObject : function () {},
+				requestObject : function () {}
+			},
+			oCodeListModel = {
+				bindList : function () {},
+				getMetaModel : function () {}
+			},
+			// Note: we might need to follow an <Edmx:Reference> to the entity type
+			oError = new Error("A schema cannot span more than one document: ..."),
+			sUrl = "../../../../default/iwbep/common/0001/$metadata";
+
+		this.oMetaModelMock.expects("fetchEntityContainer").returns(SyncPromise.resolve(mScope));
+		this.mock(this.oMetaModel).expects("requestObject")
+			.withExactArgs("/@com.sap.vocabularies.CodeList.v1.UnitsOfMeasure")
+			.resolves({
+				CollectionPath: "UnitsOfMeasure",
+				Url: sUrl
+			});
+		this.mock(this.oMetaModel).expects("getAbsoluteServiceUrl")
+			.withExactArgs(sUrl).returns(sAbsoluteServiceUrl);
+		this.mock(this.oMetaModel).expects("getOrCreateSharedModel").withExactArgs(sUrl, "$direct")
+			.returns(oCodeListModel);
+		this.mock(oCodeListModel).expects("getMetaModel").withExactArgs()
+			.returns(oCodeListMetaModel);
+		this.mock(oCodeListMetaModel).expects("requestObject").withExactArgs("/UnitsOfMeasure/")
+			.rejects(oError);
+
+		// code under test
+		return this.oMetaModel.requestUnitsOfMeasure()
+			.then(function () {
+				assert.ok(false);
+			}, function (oError0) {
+				assert.strictEqual(oError0, oError);
+			});
+	});
+
+	//*********************************************************************************************
+	QUnit.test("requestUnitsOfMeasure, change handler fails", function (assert) {
+		var sAbsoluteServiceUrl = "/" + uid() + "/", // circumvent caching
+			oCodeListBinding = {
+				attachChange : function () {},
+				attachDataReceived : function () {},
+				getContexts : function () {}
+			},
+			oCodeListBindingMock = this.mock(oCodeListBinding),
+			oCodeListMetaModel = {
+				getObject : function () {},
+				requestObject : function () {}
+			},
+			oCodeListMetaModelMock = this.mock(oCodeListMetaModel),
+			oCodeListModel = {
+				bindList : function () {},
+				getMetaModel : function () { return oCodeListMetaModel; }
+			},
+			oError = new Error("Accessed value is not primitive: ..."),
+			sUrl = "../../../../default/iwbep/common/0001/$metadata",
+			that = this;
+
+		this.oMetaModelMock.expects("fetchEntityContainer").returns(SyncPromise.resolve(mScope));
+		this.mock(this.oMetaModel).expects("requestObject")
+			.withExactArgs("/@com.sap.vocabularies.CodeList.v1.UnitsOfMeasure")
+			.resolves({
+				CollectionPath: "UnitsOfMeasure",
+				Url: sUrl
+			});
+		this.mock(this.oMetaModel).expects("getAbsoluteServiceUrl")
+			.withExactArgs(sUrl).returns(sAbsoluteServiceUrl);
+		this.mock(this.oMetaModel).expects("getOrCreateSharedModel")
+			.withExactArgs(sUrl, "$direct")
+			.returns(oCodeListModel);
+		oCodeListMetaModelMock.expects("requestObject")
+			.withExactArgs("/UnitsOfMeasure/")
+			.resolves({
+//				$kind : "EntityType",
+				$Key : ["UnitCode"]
+			});
+		oCodeListMetaModelMock.expects("getObject")
+			.withExactArgs("/UnitsOfMeasure/@Org.OData.Core.V1.AlternateKeys")
+			.returns(undefined);
+		oCodeListMetaModelMock.expects("getObject")
+			.withExactArgs("/UnitsOfMeasure/UnitCode@com.sap.vocabularies.Common.v1.Text")
+			.returns({$Path : "MyText"});
+		oCodeListMetaModelMock.expects("getObject")
+			.withExactArgs(
+				"/UnitsOfMeasure/UnitCode@com.sap.vocabularies.Common.v1.UnitSpecificScale")
+			.returns({$Path : "DecimalPlaces"});
+		this.mock(oCodeListModel).expects("bindList")
+			.withExactArgs("/UnitsOfMeasure", null, null, null, {
+				$select : ["UnitCode", "DecimalPlaces", "MyText"]
+			}).returns(oCodeListBinding);
+		oCodeListBindingMock.expects("attachChange").withExactArgs(sinon.match.func)
+			.callsFake(function (fnChangeListener) {
+				Promise.resolve().then(function () { // later, call back that listener
+					oCodeListBindingMock.expects("getContexts").withExactArgs(0, Infinity)
+						.returns([{
+							getProperty : function () { throw oError; }}
+						]);
+
+					// simulate "change" event to call code under test
+					fnChangeListener();
+				});
+			});
+		oCodeListBindingMock.expects("attachDataReceived").withExactArgs(sinon.match.func)
+			.callsFake(function (fnDataReceivedListener) {
+				Promise.resolve().then(function () { // later, call back that listener
+					var oEvent = {getParameter : function () {}};
+
+					that.mock(oEvent).expects("getParameter").withExactArgs("error")
+						.returns();
+
+					// simulate "dataReceived" event to call code under test
+					fnDataReceivedListener(oEvent);
+				});
+			});
+		oCodeListBindingMock.expects("getContexts").withExactArgs(0, Infinity);
+
+		// code under test
+		return this.oMetaModel.requestUnitsOfMeasure()
+			.then(function () {
+				assert.ok(false);
+			}, function (oError0) {
+				assert.strictEqual(oError0, oError);
+			});
+	});
+
+	//*********************************************************************************************
+	QUnit.test("requestUnitsOfMeasure, data request fails", function (assert) {
+		var sAbsoluteServiceUrl = "/" + uid() + "/", // circumvent caching
+			oCodeListBinding = {
+				attachChange : function () {},
+				attachDataReceived : function () {},
+				getContexts : function () {}
+			},
+			oCodeListBindingMock = this.mock(oCodeListBinding),
+			oCodeListMetaModel = {
+				getObject : function () {},
+				requestObject : function () {}
+			},
+			oCodeListMetaModelMock = this.mock(oCodeListMetaModel),
+			oCodeListModel = {
+				bindList : function () {},
+				getMetaModel : function () { return oCodeListMetaModel; }
+			},
+			oError = new Error("500 Internal Server Error"),
+			sUrl = "../../../../default/iwbep/common/0001/$metadata",
+			that = this;
+
+		this.oMetaModelMock.expects("fetchEntityContainer").returns(SyncPromise.resolve(mScope));
+		this.mock(this.oMetaModel).expects("requestObject")
+			.withExactArgs("/@com.sap.vocabularies.CodeList.v1.UnitsOfMeasure")
+			.resolves({
+				CollectionPath: "UnitsOfMeasure",
+				Url: sUrl
+			});
+		this.mock(this.oMetaModel).expects("getAbsoluteServiceUrl")
+			.withExactArgs(sUrl).returns(sAbsoluteServiceUrl);
+		this.mock(this.oMetaModel).expects("getOrCreateSharedModel")
+			.withExactArgs(sUrl, "$direct")
+			.returns(oCodeListModel);
+		oCodeListMetaModelMock.expects("requestObject")
+			.withExactArgs("/UnitsOfMeasure/")
+			.resolves({
+//				$kind : "EntityType",
+				$Key : ["UnitCode"]
+			});
+		oCodeListMetaModelMock.expects("getObject")
+			.withExactArgs("/UnitsOfMeasure/@Org.OData.Core.V1.AlternateKeys")
+			.returns(undefined);
+		oCodeListMetaModelMock.expects("getObject")
+			.withExactArgs("/UnitsOfMeasure/UnitCode@com.sap.vocabularies.Common.v1.Text")
+			.returns({$Path : "MyText"});
+		oCodeListMetaModelMock.expects("getObject")
+			.withExactArgs(
+				"/UnitsOfMeasure/UnitCode@com.sap.vocabularies.Common.v1.UnitSpecificScale")
+			.returns({$Path : "DecimalPlaces"});
+		this.mock(oCodeListModel).expects("bindList")
+			.withExactArgs("/UnitsOfMeasure", null, null, null, {
+				$select : ["UnitCode", "DecimalPlaces", "MyText"]
+			}).returns(oCodeListBinding);
+		oCodeListBindingMock.expects("attachChange");
+		oCodeListBindingMock.expects("attachDataReceived").withExactArgs(sinon.match.func)
+			.callsFake(function (fnDataReceivedListener) {
+				Promise.resolve().then(function () { // later, call back that listener
+					var oEvent = {getParameter : function () {}};
+
+					that.mock(oEvent).expects("getParameter").withExactArgs("error")
+						.returns(oError);
+
+					// simulate "dataReceived" event to call code under test
+					fnDataReceivedListener(oEvent);
+				});
+			});
+		oCodeListBindingMock.expects("getContexts").withExactArgs(0, Infinity);
+
+		// code under test
+		return this.oMetaModel.requestUnitsOfMeasure()
+			.then(function () {
+				assert.ok(false);
+			}, function (oError0) {
+				assert.strictEqual(oError0, oError);
+			});
 	});
 
 	//*********************************************************************************************
