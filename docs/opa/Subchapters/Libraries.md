@@ -114,9 +114,9 @@ Given.iSetupTheApp();
 ```
 
 ## Creating a Test Library
-The test library consists of OPA5 statements written the same way as in a regular test. We recommend
-you use the page objects pattern described in
-[Cookbook for OPA5](https://github.com/SAP/openui5/blob/master/docs/opa/Subchapters/Cookbook.md).
+The test library consists of OPA5 statements written the same way as in a regular test. Users
+should be able to provide app-specific parameters, such as app ID, view names, control IDs,
+control labels and texts.
 
 The test library can access the configuration provided by the consumer test in the following manner:
 
