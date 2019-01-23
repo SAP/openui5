@@ -1885,5 +1885,64 @@
         "references": []
       }
     ]
+  },
+  "1.56.17": {
+    "date": "January 2019",
+    "notes": [
+      {
+        "id": "608ea9065fb7f004517f662e98753ed7dd110f17",
+        "type": "FIX",
+        "text": " ComboBoxBase: Support for composition characters",
+        "references": []
+      },
+      {
+        "id": "b89a0942e353aa15d012cb28b575b4e4e35289cb",
+        "type": "FIX",
+        "text": " sap.m.Dialog: Improve aria-labelledby",
+        "references": []
+      },
+      {
+        "id": "f377b87ea1a74c01e55523e8f30bcc8d95694d1c",
+        "type": "FIX",
+        "text": " sap.m.FacetFilter: search on all binding parts for text",
+        "references": []
+      },
+      {
+        "id": "d9b50a0ec08431c5c56ed9809210268072cf8964",
+        "type": "FIX",
+        "text": " sap.m.GenericTile : Refractored default Tooltip to contain Header,Sub-header and TileContent.",
+        "references": []
+      },
+      {
+        "id": "78b9259eec382a947519ee52fd76c7c6e88d01f8",
+        "type": "FIX",
+        "text": " sap.m.LightBox: Image is now loading correctly",
+        "references": []
+      },
+      {
+        "id": "cf974b4455b394ddfd3c9829304a90cd8a6bc27d",
+        "type": "FIX",
+        "text": " sap.m.MessagePopover: MessageView\u0027s auto binding fix",
+        "references": []
+      },
+      {
+        "id": "737ab1426812348f407f630d478c0f4b96f53caa",
+        "type": "FIX",
+        "text": " sap.m.MultiInput: Pressing left arrow no longer deletes a token",
+        "references": []
+      },
+      {
+        "id": "0e34be048eaa00ecf36e114a023bd2bff09be67d",
+        "type": "FIX",
+        "text": " sap.m.ObjectAttribute: do not throw exception  when special chars are used in title",
+        "references": []
+      },
+      {
+        "id": "e8902fc80b7814931ea71ca044563329aa0271c9",
+        "type": "FIX",
+        "text": " sap.m.ObjectListItem: Markers layout fixed",
+        "references": []
+      }
+    ]
   }
 }
