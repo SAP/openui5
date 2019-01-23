@@ -10,10 +10,13 @@ sap.ui.define([
 		onInit: function () {
 			var oViewModel = new JSONModel({
 				items: [{
+					key: "1",
 					name: "Sample11"
 				}, {
+					key: "2",
 					name: "Sample12"
 				}, {
+					key: "3",
 					name: "Sample3"
 				}]
 			});
@@ -34,6 +37,9 @@ sap.ui.define([
 
 			oItemsModel.setProperty("selected", sItemName);
 			this.byId("app").to(this.getView().byId(sItemName));
+		},
+		onBack: function () {
+			this.byId("app").to(this.byId("list").getId());
 		}
 	});
 

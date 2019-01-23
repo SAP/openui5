@@ -1058,8 +1058,8 @@ sap.ui.define([
 		 * @since 1.25
 		 */
 		Opa5.createPageObjects = function(mPageObjects) {
-			//prevent circular dependency
-			return PageObjectFactory.create(mPageObjects,Opa5);
+			// prevent circular dependency by passing Opa5 as parameter
+			return PageObjectFactory.create(mPageObjects, Opa5);
 		};
 
 		/*
