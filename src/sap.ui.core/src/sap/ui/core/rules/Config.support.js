@@ -42,6 +42,10 @@ sap.ui.define([
 			{
 				text: "Best Practices for Loading Modules Asynchronously",
 				href: "https://openui5.hana.ondemand.com/#/topic/00737d6c1b864dc3ab72ef56611491c4.html#loio00737d6c1b864dc3ab72ef56611491c4"
+			},
+			{
+				text: "Is Your Application Ready for Asynchronous Loading?",
+				href: "https://sapui5.hana.ondemand.com/#/topic/493a15aa978d4fe9a67ea9407166eb01.html"
 			}
 		]
 	};
@@ -61,15 +65,15 @@ sap.ui.define([
 		var vPreloadMode = sap.ui.getCore().getConfiguration().getPreload(),
 			bLoaderIsAsync = sap.ui.loader.config().async;
 
-		var sDetails = "It is recommended to use the configuration parameter " +
+		var sDetails = "It is recommended to use the configuration option " +
 			"'data-sap-ui-async=\"true\"' instead of 'data-sap-ui-preload=\"async\"'. " +
 			"With this option single modules and preload files will be loaded asynchronously. " +
-			"Note: Enabling this behaviour requires testing and active cooperation by the application.";
+			"Note: Enabling this behaviour requires intensive testing of the application.";
 
 		// "data-sap-ui-preload" attribute is set to async and could be replaced with "data-sap-ui-async" (recommended).
-		if (vPreloadMode === "async") {
-			oPreloadAsyncCheck.resolution = "Replace 'data-sap-ui-preload=\"async\"' with 'data-sap-ui-async=\"true\"' " +
-				"in the bootstrap script.";
+		if (vPreloadMode === "async" && !bLoaderIsAsync) {
+			oPreloadAsyncCheck.resolution = "Please replace 'data-sap-ui-preload=\"async\"' with 'data-sap-ui-async=\"true\"' " +
+				"in the bootstrap script, as it implicitly sets the loading behaviour of preload files to be asynchronous.";
 			oIssueManager.addIssue({
 				severity: Severity.High,
 				details: sDetails,
@@ -78,20 +82,10 @@ sap.ui.define([
 				}
 			});
 		// "data-sap-ui-preload" attribute is set to any value, but not async.
-		// This should be changed to async or (if possible) replaced with "data-sap-ui-async".
-		} else if (vPreloadMode !== "") {
-			oPreloadAsyncCheck.resolution = "Change to 'data-sap-ui-preload=\"async\"' or replace the attribute with " +
-				"'data-sap-ui-async=\"true\"' in the bootstrap script.";
-			oIssueManager.addIssue({
-				severity: Severity.High,
-				details: sDetails,
-				context: {
-					id: "WEBPAGE"
-				}
-			});
-		// "data-sap-ui-async" is false or not set. It should be added and set to true.
-		} else if (!bLoaderIsAsync) {
-			oPreloadAsyncCheck.resolution = "Add 'data-sap-ui-async=\"true\"' to bootstrap script.";
+		} else if (vPreloadMode !== "async" && !bLoaderIsAsync) {
+			oPreloadAsyncCheck.resolution = "Please configure 'data-sap-ui-async=\"true\"' in the bootstrap script, " +
+				"as it implicitly sets the loading behaviour of preload files to be asynchronous. " +
+				"In case you have already configured the 'data-sap-ui-preload' option, you should remove it.";
 			oIssueManager.addIssue({
 				severity: Severity.High,
 				details: sDetails,
