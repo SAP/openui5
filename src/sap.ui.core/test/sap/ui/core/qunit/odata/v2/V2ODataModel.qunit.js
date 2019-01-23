@@ -15,7 +15,8 @@ sap.ui.define([
 	"sap/m/List",
 	"sap/m/StandardListItem",
 	"sap/ui/table/Table",
-	"sap/ui/table/Column"
+	"sap/ui/table/Column",
+	"sap/base/util/isEmptyObject"
 ], function(
 		MockServer,
 		ODataModel,
@@ -32,7 +33,8 @@ sap.ui.define([
 		List,
 		ListItem,
 		Table,
-		Column
+		Column,
+		isEmptyObject
 	) {
 
 	"use strict";
@@ -1653,7 +1655,11 @@ sap.ui.define([
 									oModel.submitChanges({
 										success : function(oData, oResponse) {
 											// no request should go out
-											assert.ok(false, "no request should go out");
+											assert.ok(oSpy.callCount == 0, "No request sent");
+											assert.ok(true, "success handler called even no changes were submitted");
+											assert.ok(!oResponse, "no response passed");
+											assert.ok(typeof oData == 'object', "data is object");
+											assert.ok(isEmptyObject(oData), "data is empty object");
 										},
 										error : function(oError) {
 											assert.ok(false, "request failed");
@@ -3242,9 +3248,14 @@ sap.ui.define([
 			}, batchGroupId: "myId"});
 
 			oModel.deleteCreatedEntry(oContext);
+			var oSpy = sinon.spy(oModel, "_submitBatchRequest");
 			oModel.submitChanges({
 				success : function(oData, oResponse) {
-					assert.ok(false, "should not land here");
+					assert.ok(oSpy.callCount == 0, "No request sent");
+					assert.ok(true, "success handler called even no changes were submitted");
+					assert.ok(!oResponse, "no response passed");
+					assert.ok(typeof oData == 'object', "data is object");
+					assert.ok(isEmptyObject(oData), "data is empty object");
 				},
 				error : function(oError) {
 					assert.ok(false, "should not land here");

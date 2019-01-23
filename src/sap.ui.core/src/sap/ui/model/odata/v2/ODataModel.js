@@ -3484,15 +3484,12 @@ sap.ui.define([
 	 */
 	ODataModel.prototype._processRequestQueueAsync = function(mRequestQueue) {
 		var that = this;
-		if (!this.pCallAsnyc) {
-			this.pCallAsnyc = new Promise(function(resolve, reject) {
-				that.oMetadata.loaded().then(function() {
-					resolve();
+		if (!this.pCallAsync) {
+			this.pCallAsync = this.oMetadata.loaded().then(function() {
+				return Promise.resolve().then(function() {
+					that._processRequestQueue(mRequestQueue);
+					that.pCallAsync = undefined;
 				});
-			});
-			this.pCallAsnyc.then(function() {
-				that._processRequestQueue(mRequestQueue);
-				that.pCallAsnyc = undefined;
 			});
 		}
 	};
@@ -4866,6 +4863,10 @@ sap.ui.define([
 			vRequestHandleInternal = that._processRequestQueue(that.mDeferredRequests, sGroupId, fnSuccess, fnError);
 			if (bAborted) {
 				oRequestHandle.abort();
+			}
+			//call sucess handler even no changes were submitted
+			if (Array.isArray(vRequestHandleInternal) && vRequestHandleInternal.length == 0 && fnSuccess) {
+				fnSuccess({}, undefined);
 			}
 		});
 
