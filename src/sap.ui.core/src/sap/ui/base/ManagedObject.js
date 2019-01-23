@@ -1113,10 +1113,12 @@ sap.ui.define([
 			oValue = mSettings[sKey];
 			// get info object for the key
 			if ( (oKeyInfo = mValidKeys[sKey]) !== undefined ) {
-				var oBindingInfo;
+				var oBindingInfo, oType, oPrimitiveTypeName;
 				switch (oKeyInfo._iKind) {
 				case 0: // PROPERTY
-					oBindingInfo = this.extractBindingInfo(oValue, oScope);
+					oType = DataType.getType(oKeyInfo.type);
+					oPrimitiveTypeName = oType && oType.getPrimitiveType().getName();
+					oBindingInfo = this.extractBindingInfo(oValue, oScope, oPrimitiveTypeName !== "object" && oPrimitiveTypeName !== "any");
 					if (oBindingInfo && typeof oBindingInfo === "object") {
 						this.bindProperty(sKey, oBindingInfo);
 					} else {
@@ -2854,6 +2856,7 @@ sap.ui.define([
 	 *
 	 * @param {object} oValue
 	 * @param {object} oScope
+	 * @param {boolean} bDetectValue
 	 *
 	 * @returns {object} the binding info object or an unescaped string or undefined.
 	 *     If a binding info is returned, it contains at least a path property
@@ -2862,7 +2865,7 @@ sap.ui.define([
 	 *
 	 * @private
 	 */
-	ManagedObject.prototype.extractBindingInfo = function(oValue, oScope) {
+	ManagedObject.prototype.extractBindingInfo = function(oValue, oScope, bDetectValue) {
 
 		// property:{path:"path", template:oTemplate}
 		if (oValue && typeof oValue === "object") {
@@ -2870,7 +2873,7 @@ sap.ui.define([
 				// if value contains ui5object property, this is not a binding info,
 				// remove it and not check for path or parts property
 				delete oValue.ui5object;
-			} else if (oValue.path != undefined || oValue.parts) {
+			} else if (oValue.path != undefined || oValue.parts || (bDetectValue && oValue.value != undefined)) {
 				// allow JSON syntax for templates
 				if (oValue.template) {
 					oValue.template = ManagedObject.create(oValue.template);
