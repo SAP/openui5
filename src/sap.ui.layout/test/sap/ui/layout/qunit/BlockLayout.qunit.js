@@ -7,6 +7,7 @@ sap.ui.define([
 	'sap/ui/layout/BlockLayoutCellData',
 	'sap/ui/layout/BlockLayoutRow',
 	'sap/ui/layout/BlockLayout',
+	'sap/m/Dialog',
 	'sap/m/Link',
 	'sap/m/Text'
 ], function(
@@ -16,6 +17,7 @@ sap.ui.define([
 	BlockLayoutCellData,
 	BlockLayoutRow,
 	BlockLayout,
+	Dialog,
 	Link,
 	Text) {
 	'use strict';
@@ -501,5 +503,52 @@ sap.ui.define([
 		sap.ui.getCore().applyChanges();
 
 		assert.deepEqual(oBlockLayoutRow._getCellArangementForCurrentSize(), [[1, 1, 1]], "Arrangement should be [1, 1, 1] for cells with equal height on size M");
+	});
+
+	QUnit.module("BlockLayout in a Dialog", {
+		beforeEach: function () {
+			this.oBlockLayout = new BlockLayout({
+				content: [
+					new BlockLayoutRow({
+						content: [
+							new BlockLayoutCell({
+								width: 1,
+								content: [
+									new Text({text: "button 1"})
+								]
+							}),
+							new BlockLayoutCell({
+								width: 2,
+								content: [
+									new Text({text: "button 2"})
+								]
+							})
+						]
+					})
+				]
+			});
+
+			this.oDialog = new Dialog({
+				contentHeight: '50px',
+				content: this.oBlockLayout
+			});
+
+			this.clock = sinon.useFakeTimers();
+		},
+		afterEach: function () {
+			this.oDialog.destroy();
+			this.oDialog = null;
+			this.oBlockLayout = null;
+
+			this.clock.restore();
+		}
+	});
+
+	QUnit.test("BlockLayout auto size", function (assert) {
+		this.oDialog.open();
+
+		this.clock.tick(1000);
+
+		assert.ok(this.oBlockLayout.$().width() > 0, 'auto width is correct');
 	});
 });
