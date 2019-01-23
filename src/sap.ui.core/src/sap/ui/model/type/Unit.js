@@ -34,6 +34,23 @@ sap.ui.define([
 	 *
 	 * @extends sap.ui.model.CompositeType
 	 *
+	 * @example MeterType with dynamic decimals coming from the model
+	 * // defining a new custom Type as a subclass of the sap.ui.model.type.Unit type
+	 * sap.ui.require(["sap/ui/model/type/Unit"], function(UnitType) {
+	 *
+	 *  UnitType.extend("sap.ui.core.samples.MeterType", {
+	 *      constructor: function(oFormatOptions, oConstraints){
+	 *          // define the dynamic format options as the third argument
+	 *          // ‘aDynamicFormatOptionNames’
+	 *          UnitType.call(this, oFormatOptions, oConstraints, ["decimals"]);
+	 *      }
+	 *  });
+	 * });
+	 *
+	 * in the view
+	 * {parts:['energyModel>value', 'energyModel>unit', 'energyModel>decimals'],type: 'sap.ui.core.samples.MeterType'}
+	 *
+	 *
 	 * @author SAP SE
 	 * @version ${version}
 	 *
