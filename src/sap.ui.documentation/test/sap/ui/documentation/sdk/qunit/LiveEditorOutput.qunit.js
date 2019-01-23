@@ -1,11 +1,7 @@
 /*global QUnit*/
-sap.ui.define(["sap/ui/Device", "sap/ui/thirdparty/URI"],
-	function (Device, URI) {
+sap.ui.define(["sap/ui/thirdparty/URI"],
+	function (URI) {
 		"use strict";
-
-		if (Device.browser["msie"]) {
-			return; // not supported for IE
-		}
 
 		var sCoreUrl = new URI(sap.ui.require.toUrl("sap-ui-core.js"), document.baseURI).href(),
 			sFrameURL = sap.ui.require.toUrl("sap/ui/documentation/sdk/util/liveEditorOutput.html"),
