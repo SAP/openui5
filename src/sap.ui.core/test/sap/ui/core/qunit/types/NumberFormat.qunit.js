@@ -1159,6 +1159,27 @@ sap.ui.define(["sap/ui/core/format/NumberFormat", "sap/ui/core/Locale"], functio
 		return getUniqueKey(numberOfPlaces, sChars) + cChar;
 	}
 
+	QUnit.test("NumberFormat.getDefaultUnitPattern() - Default unitPattern-count-other pattern", function(assert) {
+		var sDefaultPattern = NumberFormat.getDefaultUnitPattern("MyOwnUnit");
+
+		assert.equal(sDefaultPattern, "{0} MyOwnUnit", "Correct default pattern was created");
+
+		// check usage
+		var oFormat = NumberFormat.getUnitInstance({
+			customUnits: {
+				"MY": {
+					"decimals": 2,
+					"unitPattern-count-other": sDefaultPattern
+				}
+			}
+		});
+
+		var sFormatted = oFormat.format(1234, "MY");
+
+		assert.equal(sFormatted.toString(), "1,234.00 MyOwnUnit", "Pattern can be used for formatting");
+		assert.deepEqual(oFormat.parse(sFormatted.toString()), [1234, "MY"], "Pattern can be used for parsing");
+	});
+
 	QUnit.test("Unit format custom units performance", function (assert) {
 		var oLocale = new Locale("en");
 		var oCustomUnits = {
