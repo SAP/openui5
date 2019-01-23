@@ -131,48 +131,42 @@ sap.ui.define([
 	QUnit.test("Dimension Changes", function(assert) {
 		var done = assert.async();
 		// test changed dimensions
+		i2.setWidth("292px");
+		i2.setHeight("292px");
+		sap.ui.getCore().applyChanges();
 		setTimeout(function() {
-			i2.setWidth("292px");
-			i2.setHeight("292px");
-			sap.ui.getCore().applyChanges();
-			setTimeout(function() {
-				var oDomRef = window.document.getElementById("i2");
-				assert.equal(oDomRef.offsetWidth, 292, "i2.offsetWidth should equal 292");
-				assert.equal(oDomRef.offsetHeight, 292, "i2.offsetHeight should equal 292");
-				done();
-			}, 0);
-		}, 0);
+			var oDomRef = window.document.getElementById("i2");
+			assert.equal(oDomRef.offsetWidth, 292, "i2.offsetWidth should equal 292");
+			assert.equal(oDomRef.offsetHeight, 292, "i2.offsetHeight should equal 292");
+			done();
+		}, 100);
 	});
 
 	QUnit.test("Aspect Ratio", function(assert) {
 		var done = assert.async();
 		// test aspect ratio after changed dimensions
+		i2.setWidth("292px");
+		i2.setHeight("");
+		sap.ui.getCore().applyChanges();
 		setTimeout(function() {
-			i2.setWidth("292px");
-			i2.setHeight("");
-			sap.ui.getCore().applyChanges();
-			setTimeout(function() {
-				var oDomRef = window.document.getElementById("i2");
-				assert.equal(oDomRef.offsetWidth, 292, "i2.offsetWidth should equal 292");
-				assert.equal(oDomRef.offsetHeight, 144, "i2.offsetHeight should equal 144");
-				done();
-			}, 0);
-		}, 0);
+			var oDomRef = window.document.getElementById("i2");
+			assert.equal(oDomRef.offsetWidth, 292, "i2.offsetWidth should equal 292");
+			assert.equal(oDomRef.offsetHeight, 144, "i2.offsetHeight should equal 144");
+			done();
+		}, 100);
 	});
 
 	QUnit.test("Original Width", function(assert) {
 		var done = assert.async();
 		// test original width
+		i2.setWidth("");
+		i2.setHeight("");
+		sap.ui.getCore().applyChanges();
 		setTimeout(function() {
-			i2.setWidth("");
-			i2.setHeight("");
-			sap.ui.getCore().applyChanges();
-			setTimeout(function() {
-				var oDomRef = window.document.getElementById("i2");
-				assert.equal(oDomRef.offsetWidth, 73, "i2.offsetWidth should equal 73");
-				assert.equal(oDomRef.offsetHeight, 36, "i2.offsetHeight should equal 36");
-				done();
-			}, 0);
-		}, 0);
+			var oDomRef = window.document.getElementById("i2");
+			assert.equal(oDomRef.offsetWidth, 73, "i2.offsetWidth should equal 73");
+			assert.equal(oDomRef.offsetHeight, 36, "i2.offsetHeight should equal 36");
+			done();
+		}, 100);
 	});
 });
