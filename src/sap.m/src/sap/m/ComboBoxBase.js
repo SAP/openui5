@@ -450,16 +450,6 @@ sap.ui.define([
 		};
 
 		/**
-		 * Gets the control's List.
-		 *
-		 * @returns {sap.m.List} The list
-		 * @private
-		 */
-		ComboBoxBase.prototype.getList = function() {
-			return this._oList;
-		};
-
-		/**
 		 * Gets the item corresponding to given list item.
 		 *
 		 * @param {sap.m.StandardListItem | null} oListItem The given list item
@@ -752,13 +742,18 @@ sap.ui.define([
 		/**
 		 * Gets the <code>list</code>.
 		 *
-		 * @returns {sap.m.SelectList} The list instance object or <code>null</code>.
+		 * @returns {sap.m.List} The list instance object or <code>null</code>.
 		 * @protected
+		 * @deprecated Deprecated as of version 1.62. The list structure should not be used as per SAP note: 2746748.
 		 */
 		ComboBoxBase.prototype.getList = function() {
 			if (this.bIsDestroyed) {
 				return null;
 			}
+			Log.warning(
+				"[Warning]:",
+				"You are attempting to use deprecated method 'getList()', please refer to SAP note 2746748.",
+				this);
 
 			return this._oList;
 		};
