@@ -22,6 +22,7 @@ sap.ui.define([
 	"sap/m/SuggestionItem",
 	"sap/ui/qunit/utils/waitForThemeApplied",
 	"sap/ui/events/KeyCodes",
+	"sap/m/Link",
 	"jquery.sap.global"
 ], function(
 	qutils,
@@ -44,7 +45,8 @@ sap.ui.define([
 	Button,
 	SuggestionItem,
 	waitForThemeApplied,
-	KeyCodes
+	KeyCodes,
+	Link
 ) {
 	// shortcut for sap.m.InputTextFormatMode
 	var InputTextFormatMode = mobileLibrary.InputTextFormatMode;
@@ -958,6 +960,57 @@ sap.ui.define([
 		assert.equal(spyCall.args[0].getParameter("value"), "abc", "change event fired with the right parameter");
 		oInput.destroy();
 		oNextInput.destroy();
+	});
+
+	QUnit.test("Suggestion on Desktop should allow focus to be set into the suggestion item", function(assert){
+		var oPopup;
+
+		var oModel = new JSONModel({
+			names: [
+				{ name: "abcTom" },
+				{ name: "abcPhilips" },
+				{ name: "abcAnna" }
+			]
+		});
+
+		var oInput = new Input("sInput", {
+			showSuggestion: true,
+			showTableSuggestionValueHelp: false,
+			suggestionRows: {
+				path: "/names",
+				template: new ColumnListItem("suggestionItem", {
+					cells: [new Link("link", {
+						text: "{name}"
+					})]
+				})
+			},
+			suggestionColumns: [new Column({
+				hAlign: "Begin"
+			})]
+		});
+
+		oInput.setModel(oModel);
+
+		oInput.placeAt("content");
+		sap.ui.getCore().applyChanges();
+
+		oInput.onfocusin(); // for some reason this is not triggered when calling focus via API
+		oInput._$input.focus().val("abc").trigger("input");
+
+		this.clock.tick(300);
+
+		oPopup = oInput._oSuggPopover._oPopover;
+		assert.ok(oPopup instanceof sap.m.Popover, "Suggestion Popup is created and is a Popover instance");
+		assert.ok(oPopup.isOpen(), "Suggestion Popup is open now");
+
+		// set focus into the suggestion popup
+		var oLink = sap.ui.getCore().byId("link-sInput-0");
+		oLink.focus();
+		this.clock.tick(100);
+
+		assert.equal(document.activeElement, oLink.getFocusDomRef(), "The focus should stay on the link");
+
+		oInput.destroy();
 	});
 
 	QUnit.test("Two Value Suggestion on Desktop", function(assert){
