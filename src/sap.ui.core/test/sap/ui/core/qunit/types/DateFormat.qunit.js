@@ -1597,6 +1597,22 @@ sap.ui.define(["sap/ui/core/format/DateFormat", "sap/ui/core/Locale", "sap/ui/co
 			assert.deepEqual(oIntervalFormat.parse(sResult), [oDate, oDate]);
 		});
 
+		QUnit.test("Interval with two identical dates after formatting different dates", function (assert) {
+			var oIntervalFormat = DateFormat.getDateInstance({
+				interval: true,
+				format: "yMMMd"
+			});
+
+			// if two dates are identical on the fields which we compare, no diff field will be returned
+			var oDate1 = new Date(2017, 3, 11);
+			var oDate2 = new Date(2017, 3, 12);
+			var sResult = oIntervalFormat.format([oDate1, oDate2]);
+			assert.equal(sResult.toString(), "Apr 11 – 12, 2017", "Different dates are formatted correctly");
+
+			var sResult = oIntervalFormat.format([oDate1, oDate1]);
+			assert.equal(sResult.toString(), "Apr 11, 2017", "Single Date if formatted correctly afterwards");
+		});
+
 		QUnit.test("Interval with two identical dates without format property", function (assert) {
 			var oIntervalFormat = DateFormat.getDateInstance({
 				interval: true
