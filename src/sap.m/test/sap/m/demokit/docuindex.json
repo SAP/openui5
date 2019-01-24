@@ -461,6 +461,15 @@
 		  ]
 		},
 		{
+			"id": "sap.m.UploadSet",
+			"name": "Upload Set",
+			"category": "Action",
+			"since": "1.62",
+			"samples": [
+				"sap.m.sample.UploadSet"
+			]
+		},
+		{
 		  "id": "sap.m.GenericTag",
 		  "name": "Generic Tag",
 		  "category": "Action",
@@ -2819,6 +2828,11 @@
 		  "id": "sap.m.sample.UploadCollectionFolderHierarchy",
 		  "name": "Upload Collection with Folder Hierarchy",
 		  "description": "Shows the UploadCollection with a navigable folder structure."
+		},
+		{
+		  "id": "sap.m.sample.UploadSet",
+		  "name": "Upload Set",
+		  "description": "This sample demonstrates how to use an Upload Set."
 		},
 		{
 		  "id": "sap.m.sample.StandardMarginsAll",

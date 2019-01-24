@@ -111,6 +111,7 @@ sap.ui.define([
 			"sap.m.TimePickerMaskMode",
 			"sap.m.TileSizeBehavior",
 			"sap.m.ToolbarDesign",
+			"sap.m.UploadState",
 			"sap.m.VerticalPlacementType",
 			"sap.m.semantic.SemanticRuleSetType"
 		],
@@ -279,6 +280,7 @@ sap.ui.define([
 			"sap.m.TreeItemBase",
 			"sap.m.UploadCollection",
 			"sap.m.UploadCollectionToolbarPlaceholder",
+			"sap.m.upload.UploadSet",
 			"sap.m.VBox",
 			"sap.m.ViewSettingsDialog",
 			"sap.m.ViewSettingsPopover",
@@ -328,6 +330,8 @@ sap.ui.define([
 			"sap.m.ToolbarLayoutData",
 			"sap.m.UploadCollectionItem",
 			"sap.m.UploadCollectionParameter",
+			"sap.m.upload.Uploader",
+			"sap.m.upload.UploadSetItem",
 			"sap.m.ViewSettingsCustomItem",
 			"sap.m.ViewSettingsCustomTab",
 			"sap.m.ViewSettingsFilterItem",
@@ -3557,6 +3561,36 @@ sap.ui.define([
 		 * @public
 		 */
 		Multiple: "Multiple"
+	};
+
+	/**
+	 * States of the upload process for {@link sap.m.UploadCollectionItem}.
+	 *
+	 * @enum {string}
+	 * @public
+	 * @ui5-metamodel This enumeration also will be described in the UI5 (legacy) designtime metamodel
+	 */
+	thisLib.UploadState = {
+		/**
+		 * The file has been uploaded successfuly.
+		 * @public
+		 */
+		Complete: "Complete",
+		/**
+		 * The file cannot be uploaded due to an error.
+		 * @public
+		 */
+		Error: "Error",
+		/**
+		 * The file is awaiting an explicit command to start being uploaded.
+		 * @public
+		 */
+		Ready: "Ready",
+		/**
+		 * The file is currently being uploaded.
+		 * @public
+		 */
+		Uploading: "Uploading"
 	};
 
 	/**
