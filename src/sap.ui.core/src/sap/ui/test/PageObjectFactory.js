@@ -64,14 +64,12 @@ sap.ui.define([
 			var oPageObject = {};
 
 			["actions", "assertions"].forEach(function (sOperationType) {
-				if (!$.isEmptyObject(mPage[sOperationType])) {
-					var OperationPrototype = _createOperationPrototype(sOperationType, mPage);
-					var oOperation = new OperationPrototype();
-					_configureWaitFor(oOperation, mPage.view);
-					_mixinTestLibraries(oOperation, sOperationType);
-					_registerOperation(oOperation, sOperationType, mPage.name);
-					oPageObject[sOperationType] = oOperation;
-				}
+				var OperationPrototype = _createOperationPrototype(sOperationType, mPage);
+				var oOperation = new OperationPrototype();
+				_configureWaitFor(oOperation, mPage.view);
+				_mixinTestLibraries(oOperation, sOperationType);
+				_registerOperation(oOperation, sOperationType, mPage.name);
+				oPageObject[sOperationType] = oOperation;
 			});
 
 			return oPageObject;
@@ -98,7 +96,8 @@ sap.ui.define([
 			var sClassName = sNamespace + "." + sPageObjectName + "." + sOperationType;
 			var oObj = $.sap.getObject(sClassName,NaN);
 			if (oObj){
-				Log.error("Opa5 Page Object namespace clash: You have loaded multiple page objects with the same name. To prevent overriding themself, specify the namespace parameter.");
+				Log.error("Opa5 Page Object namespace clash: You have loaded multiple page objects with the same name '" + sClassName + "'. " +
+					"To prevent override, specify the namespace parameter.");
 			}
 			return sClassName;
 		}

@@ -85,8 +85,45 @@ sap.ui.define([
 			}
 		});
 
-		assertPageObjectBase(assert, oPages,fnOtherBase);
-		assertPageObjectNamespaces(assert, oPages);
+		assert.ok(oPages.onMyFirstPage.actions instanceof fnOtherBase, "onMyFirstPage has other base class");
+		assert.ok(oPages.onMySecondPage.assertions instanceof Opa5, "onMySecondPage has default base class");
+
+		assert.ok(oPages.onMyFirstPage.actions instanceof sap.ui.test.opa.pageObject.onMyFirstPage.actions, "onMyFirstPage has default namespace");
+		assert.ok(oPages.onMySecondPage.assertions instanceof foo.bar.onMySecondPage.assertions, "onMySecondPage has given namespace");
+	});
+
+	QUnit.test("Should create an object with missing actions or assertions", function(assert) {
+		var fnOtherBase = Opa5.extend("sap.ui.test.opa.otherBase", {
+			commonFoo: function () {}
+		});
+
+		var oPages = Opa5.createPageObjects({
+			onThePageWithNoAssertions: {
+				baseClass: fnOtherBase,
+				actions: {
+					iCanDoMagic: function () {}
+				}
+			},
+			onThePageWithNoActions: {
+				baseClass: fnOtherBase,
+				actions: {},
+				assertions: {
+					iCanSeeIt: function () {}
+				}
+			}
+		});
+
+		assert.ok(oPages.onThePageWithNoAssertions.actions instanceof fnOtherBase, "onThePageWithNoAssertions actions have the required base class");
+		assert.ok(oPages.onThePageWithNoAssertions.assertions instanceof fnOtherBase, "onThePageWithNoAssertions assertions have the required base class");
+		assert.ok(oPages.onThePageWithNoAssertions.actions.iCanDoMagic && oPages.onThePageWithNoAssertions.actions.commonFoo, "onThePageWithNoAssertions has all actions");
+		assert.strictEqual(getProtoKeyCount(oPages.onThePageWithNoAssertions.assertions), 0, "onThePageWithNoAssertions should not have own assertions");
+		assert.ok(oPages.onThePageWithNoAssertions.assertions.commonFoo, "onThePageWithNoAssertions has baseClass assertions");
+
+		assert.ok(oPages.onThePageWithNoActions.actions instanceof fnOtherBase, "onThePageWithNoActions actions have the required base class");
+		assert.ok(oPages.onThePageWithNoActions.assertions instanceof fnOtherBase, "onThePageWithNoActions assertion have the required base class");
+		assert.ok(oPages.onThePageWithNoActions.assertions.iCanSeeIt && oPages.onThePageWithNoActions.assertions.commonFoo, "onThePageWithNoActions has all assertions");
+		assert.strictEqual(getProtoKeyCount(oPages.onThePageWithNoActions.actions), 0, "onThePageWithNoActions should not have own actions");
+		assert.ok(oPages.onThePageWithNoActions.actions.commonFoo, "onThePageWithNoActions has baseClass actions");
 	});
 
 	QUnit.test("Should prevent namespaces clashes by logging an error", function preventNamespaceClashTest (assert) {
@@ -100,7 +137,8 @@ sap.ui.define([
 				}
 			}
 		});
-		assertNamespaceClashErrorLogged(assert, false);
+
+		assert.ok(Log.error.notCalled, "Error log is not called");
 
 		Opa5.createPageObjects({
 			onMyFirstPage : {
@@ -110,7 +148,10 @@ sap.ui.define([
 				}
 			}
 		});
-		assertNamespaceClashErrorLogged(assert, true);
+
+		assert.strictEqual(Log.error.callCount, 2, "Error log is called");
+		assert.ok(Log.error.getCall(0).args[0].match(/Opa5 Page Object namespace clash.*duplicate\.onMyFirstPage\.actions/), "Should log namespace clash for actions");
+		assert.ok(Log.error.getCall(1).args[0].match(/Opa5 Page Object namespace clash.*duplicate\.onMyFirstPage\.assertions/), "Should log namespace clash for assertions");
 	});
 
 	QUnit.test("Should keep the page if you extend the Opa config", function (assert) {
@@ -374,18 +415,23 @@ sap.ui.define([
 
 		// page object without own assertions
 		assert.ok(mPageObjects.onTheBarPage.actions.fooLib.fooAction, "Should add test library actions to page object");
-		assert.ok(!mPageObjects.onTheBarPage.assertions);
+		assert.strictEqual(getProtoKeyCount(mPageObjects.onTheBarPage.assertions), 1, "Should not have own assertions");
+		assert.ok(mPageObjects.onTheBarPage.assertions.fooLib.barAssert, "Should have only test library assertions");
 
 		assert.ok(Opa.config.actions.onTheBarPage.fooLib.fooAction, "Should add test library actions to OPA actions");
 		assert.ok(Opa.config.arrangements.onTheBarPage.fooLib.fooAction, "Should add test library arrangements to OPA arrangements");
-		assert.ok(!Opa.config.assertions.onTheBarPage, "Should add test library assertions to OPA assertions");
+		assert.strictEqual(getProtoKeyCount(Opa.config.assertions.onTheBarPage), 1, "Should not have own assertions in config");
+		assert.ok(Opa.config.assertions.onTheBarPage.fooLib.barAssert, "Should have only test library assertions in config");
 
 		// page object without own actions
-		assert.ok(!mPageObjects.onTheBazPage.actions);
+		assert.strictEqual(getProtoKeyCount(mPageObjects.onTheBazPage.actions), 1, "Should not have own actions");
+		assert.ok(mPageObjects.onTheBazPage.actions.fooLib.fooAction, "Should have only test library actions");
 		assert.ok(mPageObjects.onTheBazPage.assertions.fooLib.barAssert, "Should add test library assertions to page object");
 
-		assert.ok(!Opa.config.actions.onTheBazPage);
-		assert.ok(!Opa.config.arrangements.onTheBazPage);
+		assert.strictEqual(getProtoKeyCount(Opa.config.actions.onTheBazPage), 1, "Should not have own assertions in config");
+		assert.ok(Opa.config.actions.onTheBazPage.fooLib.fooAction, "Should have only test library assertions in config");
+		assert.strictEqual(getProtoKeyCount(Opa.config.arrangements.onTheBazPage), 1, "Should not have own assertions in config");
+		assert.ok(Opa.config.arrangements.onTheBazPage.fooLib.fooAction, "Should have only test library assertions in config");
 		assert.ok(Opa.config.assertions.onTheBazPage.fooLib.barAssert, "Should add test library assertions to OPA assertions");
 	});
 
@@ -510,21 +556,8 @@ sap.ui.define([
 		assert.ok(!(Opa.config.arrangements[sPageName] && Opa.config.arrangements[sPageName].iCanHearIt), "Page Object assertions are not added to the arrangements");
 	}
 
-	function assertPageObjectBase(assert, oPages,fnOtherBase){
-		assert.ok(oPages.onMyFirstPage.actions instanceof fnOtherBase, "onMyFirstPage has other base class");
-		assert.ok(oPages.onMySecondPage.assertions instanceof Opa5, "onMySecondPage has default base class");
-	}
-
-	function assertPageObjectNamespaces(assert, oPages){
-		assert.ok(oPages.onMyFirstPage.actions instanceof sap.ui.test.opa.pageObject.onMyFirstPage.actions, "onMyFirstPage has default namespace");
-		assert.ok(oPages.onMySecondPage.assertions instanceof foo.bar.onMySecondPage.assertions, "onMySecondPage has given namespace");
-	}
-
-	function assertNamespaceClashErrorLogged(assert, bIsCalled){
-		assert.equal(Log.error.calledOnce,bIsCalled,"Error log is called");
-		if (bIsCalled) {
-			assert.equal(Log.error.args[0][0],"Opa5 Page Object namespace clash: You have loaded multiple page objects with the same name. To prevent overriding themself, specify the namespace parameter.","Should log namespace clash error message");
-		}
+	function getProtoKeyCount(mObject) {
+		return Object.keys(Object.getPrototypeOf(mObject)).length - 2; // without counstructor and getMetadata
 	}
 
 });
