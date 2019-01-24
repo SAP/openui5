@@ -10745,6 +10745,7 @@
 			var oFunctionRef = sap.m.ComboBox.prototype._boldItemRef;
 
 			assert.strictEqual(oFunctionRef("Test", /^t/i, 1), "<b>T</b>est");
+			assert.strictEqual(oFunctionRef("*", /\*/i, 1), "<b>&#x2a;</b>");
 			assert.strictEqual(oFunctionRef("Test", /^Test/i, 4), "<b>Test</b>");
 			assert.strictEqual(oFunctionRef("Test", /^/i, 0), "Test");
 			assert.strictEqual(oFunctionRef("Test (TE)", /^Test/i, 4), "<b>Test</b>&#x20;&#x28;TE&#x29;");
