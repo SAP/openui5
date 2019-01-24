@@ -60,6 +60,12 @@
 		"group": "Card Type Examples"
 	},
 	{
+		"title": "Object Card",
+		"description": "Example page for Card of type Object",
+		"route": "objectContent",
+		"group": "Card Type Examples"
+	},
+	{
 		"title": "Custom Card",
 		"description": "Example page for Card of type Custom (Where a ComponentContainer is rendered)",
 		"route": "customContent",

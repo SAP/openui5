@@ -151,6 +151,11 @@
 		  "pattern": "services",
 		  "name": "services",
 		  "target": "services"
+		},
+		{
+		  "pattern": "objectContent",
+		  "name": "objectContent",
+		  "target": "objectContent"
 		}
 	  ],
 	  "targets": {
@@ -237,6 +242,11 @@
 		"timelineContent": {
 		  "viewId": "timelineContent",
 		  "viewName": "timelineContent",
+		  "viewLevel": 1
+		},
+		"objectContent": {
+		  "viewId": "object",
+		  "viewName": "ObjectContent",
 		  "viewLevel": 1
 		}
 	  }

@@ -7,6 +7,8 @@ sap.ui.define([
 	"sap/m/Text",
 	"sap/f/Avatar",
 	"sap/ui/Device",
+	'sap/f/cards/Data',
+	'sap/ui/model/json/JSONModel',
 	"sap/f/cards/HeaderRenderer"
 ], function (
 	library,
@@ -14,6 +16,8 @@ sap.ui.define([
 	Text,
 	Avatar,
 	Device,
+	Data,
+	JSONModel,
 	HeaderRenderer
 ) {
 	"use strict";
@@ -222,6 +226,32 @@ sap.ui.define([
 		var oHeader = new Header(mSettings);
 
 		return oHeader;
+	};
+
+	Header._handleData = function (oHeader, oData) {
+		var oModel = new JSONModel();
+
+		var oRequest = oData.request;
+		if (oData.json && !oRequest) {
+			oModel.setData(oData.json);
+		}
+
+		if (oRequest) {
+			Data.fetch(oRequest).then(function (data) {
+				oModel.setData(data);
+				oModel.refresh();
+				this.fireEvent("_updated");
+			}.bind(this)).catch(function (oError) {
+				// TODO: Handle errors. Maybe add error message
+			});
+		}
+
+		oHeader.setModel(oModel)
+			.bindElement({
+				path: oData.path || "/"
+			});
+
+		// TODO Check if model is destroyed when header is destroyed
 	};
 
 	return Header;

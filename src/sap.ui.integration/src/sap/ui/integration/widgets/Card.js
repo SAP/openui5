@@ -7,6 +7,8 @@ sap.ui.define([
 	"sap/ui/integration/util/CardManifest",
 	"sap/ui/integration/util/ServiceManager",
 	"sap/base/Log",
+	"sap/ui/model/json/JSONModel",
+	"sap/f/cards/Data",
 	"sap/f/CardRenderer"
 ], function (
 	Control,
@@ -14,6 +16,8 @@ sap.ui.define([
 	CardManifest,
 	ServiceManager,
 	Log,
+	JSONModel,
+	Data,
 	CardRenderer
 ) {
 	"use strict";
@@ -130,6 +134,7 @@ sap.ui.define([
 				this._applyManifestSettings();
 			}.bind(this));
 		} else if (typeof vValue === "object") {
+			// TODO: The i18n files are not loaded this way as Manifest.load is not called.
 			this._oCardManifest = new CardManifest(vValue);
 			this._applyManifestSettings();
 		}
@@ -169,8 +174,43 @@ sap.ui.define([
 	 */
 	Card.prototype._applyManifestSettings = function () {
 		this._registerServices();
+		this._setData();
 		this._setHeaderFromManifest();
 		this._setContentFromManifest();
+	};
+
+	Card.prototype._setData = function () {
+		var oData = this._oCardManifest.get("sap.card/data");
+		if (!oData) {
+			return;
+		}
+
+		// Do request and set to the model
+		this._oDataPromise = new Promise(function (resolve, reject) {
+
+			var oRequest = oData.request;
+
+			if (oData.json) {
+				resolve({
+					json: oData.json,
+					path: oData.path
+				});
+				return;
+			}
+
+			if (oRequest) {
+				Data.fetch(oRequest).then(function (data) {
+					resolve({
+						json: data,
+						path: oData.path
+					});
+				}).catch(function (oError) {
+					reject(oError);
+				});
+			}
+
+			// TODO: Service implementation on Card level
+		});
 	};
 
 	/**
@@ -280,6 +320,9 @@ sap.ui.define([
 			case "table":
 				sap.ui.require(["sap/f/cards/TableContent"], this._setCardContentFromManifest.bind(this));
 				break;
+			case "object":
+				sap.ui.require(["sap/f/cards/ObjectContent"], this._setCardContentFromManifest.bind(this));
+				break;
 			case "analytical":
 				sap.ui.getCore().loadLibrary("sap.viz", {
 					async: true
@@ -330,6 +373,19 @@ sap.ui.define([
 		}
 
 		this.setAggregation("_header", oHeader);
+
+		// TODO: Refactor. All headers should have a _setData function. Move to a BaseHeader class. Remove type checking.
+		if (this._oDataPromise) {
+			this._oDataPromise.then(function (oData) {
+				if (oHeader.isA("sap.f.cards.NumericHeader")) {
+					sap.f.cards.NumericHeader._handleData(oHeader, oData);
+				} else {
+					sap.f.cards.Header._handleData(oHeader, oData);
+				}
+			}).catch(function (oError) {
+				// TODO: Handle error
+			});
+		}
 	};
 
 	/**
@@ -420,6 +476,15 @@ sap.ui.define([
 		}
 
 		this.setAggregation("_content", oContent);
+
+		if (this._oDataPromise) {
+			this._oDataPromise.then(function (oData) {
+				oContent._setData(oData);
+			}).catch(function (oError) {
+				// TODO: Handle error
+			});
+		}
+
 		this.setBusy(false);
 	};
 
