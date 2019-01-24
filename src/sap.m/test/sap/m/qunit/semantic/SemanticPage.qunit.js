@@ -5,6 +5,7 @@ sap.ui.define([
 	"sap/ui/qunit/utils/createAndAppendDiv",
 	"sap/m/semantic/SemanticPage",
 	"sap/m/semantic/SemanticButton",
+	"sap/m/semantic/MessagesIndicator",
 	"sap/m/semantic/PositiveAction",
 	"sap/m/semantic/FlagAction",
 	"sap/m/semantic/FavoriteAction",
@@ -19,12 +20,14 @@ sap.ui.define([
 	"sap/m/PagingButton",
 	"sap/m/semantic/MultiSelectAction",
 	"sap/m/library",
-	"sap/m/Label"
+	"sap/m/Label",
+	"sap/ui/core/InvisibleText"
 ], function(
 	qutils,
 	createAndAppendDiv,
 	SemanticPage,
 	SemanticButton,
+	MessagesIndicator,
 	PositiveAction,
 	FlagAction,
 	FavoriteAction,
@@ -39,7 +42,8 @@ sap.ui.define([
 	PagingButton,
 	MultiSelectAction,
 	mobileLibrary,
-	Label
+	Label,
+	InvisibleText
 ) {
 	// shortcut for sap.m.OverflowToolbarPriority
 	var OverflowToolbarPriority = mobileLibrary.OverflowToolbarPriority;
@@ -271,6 +275,14 @@ sap.ui.define([
 		oSemanticPage.setFloatingFooter(false);
 		assert.strictEqual(oSemanticPage._getPage().getFloatingFooter(), false);
 		oSemanticPage.destroy();
+	});
+
+	QUnit.test("MessagesIndicator aria-labelledby is correct", function (assert) {
+		var oMessagesIndicator = new MessagesIndicator(),
+			sAriaLabelledBy = oMessagesIndicator._getControl().getAriaLabelledBy()[0],
+			sTextId = InvisibleText.getStaticId("sap.m", "SEMANTIC_CONTROL_MESSAGES_INDICATOR");
+
+		assert.strictEqual(sAriaLabelledBy, sTextId, "MessagesIndicator button aria-labelledby is set correctly.");
 	});
 
 	QUnit.module("Aggregations", {
