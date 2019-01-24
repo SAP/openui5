@@ -99,7 +99,8 @@ sap.ui.define([
 			layoutS: getGridSettings(),
 			layoutM: getGridSettings(),
 			layoutL: getGridSettings(),
-			layoutXL: getGridSettings()
+			layoutXL: getGridSettings(),
+			containerQuery: true
 		});
 
 		// Act
@@ -222,7 +223,8 @@ sap.ui.define([
 		beforeEach: function () {
 			this.fnLayoutChangeHandler = sinon.spy();
 			this.oGridLayout = new GridResponsiveLayout({
-				layoutChange: this.fnLayoutChangeHandler
+				layoutChange: this.fnLayoutChangeHandler,
+				containerQuery: true
 			});
 			sinon.spy(this.oGridLayout, "applySizeClass");
 		},
