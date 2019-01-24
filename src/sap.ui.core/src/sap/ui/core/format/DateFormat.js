@@ -1498,6 +1498,7 @@ sap.ui.define([
 		var oDiffField = this._getGreatestDiffField([oFromDate, oToDate], bUTC);
 
 		if (!oDiffField) {
+			this.aFormatArray = this.parseCldrDatePattern(this.oFormatOptions.pattern);
 			return this._format(aJSDates[0], bUTC);
 		}
 
