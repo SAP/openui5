@@ -711,6 +711,7 @@ sap.ui.define([
 		// Some options need to be overridden to stay compatible with the formatting defaults
 		// before pattern parsing was added to the NumberFormat
 		switch (iType) {
+			case mNumberType.UNIT:
 			case mNumberType.FLOAT:
 			case mNumberType.PERCENT:
 				// Unlimited fraction digits for float and percent values

@@ -737,7 +737,7 @@ sap.ui.define(["sap/ui/model/ValidateException",
 			assert.equal(unitType.formatValue([1.0, "electric-ohm"], "string"), "1", "format test");
 			assert.equal(unitType.formatValue([1.0000, "speed-mile-per-hour"], "string"), "1", "format test");
 			assert.equal(unitType.formatValue([1.009, "duration-hour"], "string"), "1.009", "format test");
-			assert.equal(unitType.formatValue([1.00001, "electric-ohm"], "string"), "1", "format test");
+			assert.equal(unitType.formatValue([1.00001, "electric-ohm"], "string"), "1.00001", "format test");
 
 		});
 
