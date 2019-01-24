@@ -3,13 +3,15 @@ sap.ui.define([
 	"qunit/SemanticUtil",
 	"sap/ui/model/resource/ResourceModel",
 	"sap/ui/core/Core",
-	"sap/f/DynamicPageAccessibleLandmarkInfo"
+	"sap/f/DynamicPageAccessibleLandmarkInfo",
+	"sap/ui/core/InvisibleText"
 ],
 function (
 	SemanticUtil,
 	ResourceModel,
 	Core,
-	DynamicPageAccessibleLandmarkInfo
+	DynamicPageAccessibleLandmarkInfo,
+	InvisibleText
 ) {
 	"use strict";
 
@@ -906,6 +908,14 @@ function (
 		assert.strictEqual(this.oSemanticPage.$("page-header").attr("aria-label"), "Header", "Header label is set correctly.");
 		assert.strictEqual(this.oSemanticPage.$("page-footerWrapper").attr("role"), "region", "Footer role is set correctly.");
 		assert.strictEqual(this.oSemanticPage.$("page-footerWrapper").attr("aria-label"), "Footer", "Footer label is set correctly.");
+	});
+
+	QUnit.test("MessagesIndicator aria-labelledby is correct", function (assert) {
+		var oMessagesIndicator = new sap.f.semantic.MessagesIndicator(),
+			sAriaLabelledBy = oMessagesIndicator._getControl().getAriaLabelledBy()[0],
+			sTextId = InvisibleText.getStaticId("sap.f", "SEMANTIC_CONTROL_MESSAGES_INDICATOR");
+
+		assert.strictEqual(sAriaLabelledBy, sTextId, "MessagesIndicator button aria-labelledby is set correctly.");
 	});
 
 	/* --------------------------- SemanticPage Rendering ---------------------------------- */
