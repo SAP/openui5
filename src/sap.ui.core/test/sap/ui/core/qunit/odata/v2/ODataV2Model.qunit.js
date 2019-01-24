@@ -1776,7 +1776,10 @@ sap.ui.define([
 			assert.equal(oLabel.getBindingContext().getPath(), "/Categories(2)", "context must be set in change handler");
 			oLabel.getElementBinding().detachChange(fnHandler);
 			oLabel.getElementBinding().attachChange(fnHandler2);
-			oModel.oData["Products(2)"].Category.__ref = "Categories(7)";
+			var oProduct = oModel.getProperty("/Products(2)");
+			var oCategory = oModel.getProperty("/Categories(7)");
+			oProduct.Category = oCategory;
+			oModel._importData(oProduct, {}, {}, "/Products(2)", "/Products(2)");
 			oModel.checkUpdate();
 		};
 		var fnHandler2 = function(oEvent) {
