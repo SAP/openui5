@@ -42,6 +42,10 @@
 				active="true"
 				state="Error"
 				icon="sap-icon://alert" />
+			<ObjectStatus
+				class="sapUiSmallMarginBottom"
+				text="Currently closed"
+				state="Information" />
 		</l:content>
 	</l:VerticalLayout>
 </mvc:View>
