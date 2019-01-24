@@ -1318,6 +1318,101 @@
 						{
 							"label": "Last Name",
 							"value": "{lastName}"
+						},
+						{
+							"label": "Avatar",
+							"icon": {
+								"src": "{icon}"
+							}
+						},
+						{
+							"label": "Link",
+							"value": "{urlText}",
+							"url": "{url}"
+						},
+						{
+							"label": "Progress",
+							"progressIndicator": {
+								"percent": 99,
+								"text": "99GB of 100",
+								"state": "Error"
+							}
+						},
+						{
+							"label": "Progress",
+							"progressIndicator": {
+								"percent": 30,
+								"text": "30%",
+								"state": "Error"
+							}
+						}
+					]
+				}
+			}
+		},
+		"tablecard3": {
+			"sap.card": {
+				"type": "Table",
+				"header": {
+					"title": "New Purchase Orders"
+				},
+				"content": {
+					"data": {
+						"request": {
+							"url": "./cardcontent/tableitems.json"
+						},
+						"path": "/tableCard3"
+					},
+					"columns": [
+						{
+							"label": "Order ID",
+							"value": "{orderId}",
+							"url": "{orderUrl}"
+						},
+						{
+							"label": "Created By",
+							"value": "{name}"
+						},
+						{
+							"label": "Status",
+							"value": "{status}",
+							"state": "{statusState}"
+						}
+					]
+				}
+			}
+		},
+		"tablecard4": {
+			"sap.card": {
+				"type": "Table",
+				"header": {
+					"title": "Sales Orders for Key Accounts"
+				},
+				"content": {
+					"data": {
+						"request": {
+							"url": "./cardcontent/tableitems.json"
+						},
+						"path": "/tableCard4"
+					},
+					"columns": [
+						{
+							"label": "Sales Order",
+							"value": "{salesOrder}",
+							"identifier": true
+						},
+						{
+							"label": "Customer",
+							"value": "{name}"
+						},
+						{
+							"label": "Net Amount",
+							"value": "{netAmount}"
+						},
+						{
+							"label": "Status",
+							"value": "{status}",
+							"state": "{statusState}"
 						}
 					]
 				}
