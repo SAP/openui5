@@ -10,7 +10,7 @@ describe("sap.m.FacetFilter", function() {
 	// verify facet list opens and contains the correct items
 	it("should open listUpdateModelAsync FacetFilter", function() {
 		element(by.id("listUpdateModelAsync")).click();
-		var oFacetDialog = element(by.control({ controlType: "sap.m.Dialog" }));
+		var oFacetDialog = element(by.css('.sapMDialog'));
 		expect(takeScreenshot(oFacetDialog)).toLookAs("listUpdateModelAsync_FacetFilter");
 	});
 
@@ -20,7 +20,7 @@ describe("sap.m.FacetFilter", function() {
 				controlType: "sap.m.StandardListItem"
 			})).click();
 
-		var oFacetDialog = element(by.control({ controlType: "sap.m.Dialog" }));
+		var oFacetDialog = element(by.css('.sapMDialog'));
 		expect(takeScreenshot(oFacetDialog)).toLookAs("listUpdateModelAsync_SecondPage");
 	});
 
@@ -33,7 +33,7 @@ describe("sap.m.FacetFilter", function() {
 				controlType: "sap.m.Button"
 			})).click();
 
-		var oFacetDialog = element(by.control({ controlType: "sap.m.Dialog" }));
+		var oFacetDialog = element(by.css('.sapMDialog'));
 
 		expect(takeScreenshot(oFacetDialog)).toLookAs("listUpdateModelAsync_updatedFacetPage");
 	});
