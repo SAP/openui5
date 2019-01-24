@@ -149,4 +149,39 @@ sap.ui.define([
 		this.clock.tick(1000);
 		assert.ok(!oFT.getDomRef(), "The control is removed");
 	});
+
+
+	QUnit.module("Others");
+
+	QUnit.test("proper CSS classes for overflow are added when width is set", function (assert) {
+		// Arrange
+		var oFT = new FormattedText({
+			width: "200px"
+		});
+
+		oFT.placeAt("content");
+		sap.ui.getCore().applyChanges();
+
+		// Assert
+		assert.ok(oFT.getDomRef().classList.contains("sapMFTOverflowWidth"), "sapMFTOverflowWidth is set");
+
+		// Cleanup
+		oFT.destroy();
+	});
+
+	QUnit.test("proper CSS classes for overflow are added when height is set", function (assert) {
+		// Arrange
+		var oFT = new FormattedText({
+			height: "200px"
+		});
+
+		oFT.placeAt("content");
+		sap.ui.getCore().applyChanges();
+
+		// Assert
+		assert.ok(oFT.getDomRef().classList.contains("sapMFTOverflowHeight"), "sapMFTOverflowHeight is set");
+
+		// Cleanup
+		oFT.destroy();
+	});
 });
