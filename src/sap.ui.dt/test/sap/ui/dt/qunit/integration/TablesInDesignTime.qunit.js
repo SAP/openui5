@@ -158,12 +158,8 @@ function (
 			this.oDesignTime.attachEventOnce("synced", function () {
 				sap.ui.getCore().applyChanges();
 
-				// TODO: Temporal solution. Remove when synced in DesignTime event wait for all async processes to be done.
-				if (Device.browser.internet_explorer) {
-					setTimeout(done, 16);
-				} else {
-					done();
-				}
+				// TODO: Temporal solution. Remove when the synced event in DesignTime waits for all async processes to be completed.
+				setTimeout(done, 16);
 			});
 		},
 		afterEach : function() {
