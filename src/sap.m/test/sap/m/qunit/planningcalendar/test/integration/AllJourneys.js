@@ -164,7 +164,7 @@ sap.ui.define([
 		autoWait: true
 	});
 
-	sap.ui.require([
-		"sap/ui/demo/PlanningCalendar/test/integration/PlanningCalendarJourney"
-	]);
+	return new Promise(function(resolve, reject) {
+		sap.ui.require(["sap/ui/demo/PlanningCalendar/test/integration/PlanningCalendarJourney"], resolve, reject);
+	});
 });
