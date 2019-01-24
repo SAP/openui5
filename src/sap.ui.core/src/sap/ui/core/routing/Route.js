@@ -20,7 +20,7 @@ sap.ui.define([
 		 * Instantiates an SAPUI5 Route
 		 *
 		 * @class
-		 * @param {sap.ui.core.routing.Router} The router instance, the route will be added to.
+		 * @param {sap.ui.core.routing.Router} oRouter The router instance the route will be added to.
 		 * @param {object} oConfig configuration object for the route
 		 * @param {string} oConfig.name the name of the route - it will be used to retrieve the route from the router, it needs to be unique per router instance.</li>
 		 * @param {string} [oConfig.pattern] the url pattern where it needs to match again. A pattern may consist of the following:
