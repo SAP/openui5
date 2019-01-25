@@ -24,6 +24,103 @@ sap.ui.define([
 		 */
 		AnnotationHelper = {
 			/**
+			 * A function that helps to interpret OData V4 annotations. It knows about the following
+			 * expressions:
+			 * <ul>
+			 *   <li>"14.4 Constant Expressions" for "edm:Bool", "edm:Date",
+			 *   "edm:DateTimeOffset", "edm:Decimal", "edm:Float", "edm:Guid", "edm:Int",
+			 *   "edm:TimeOfDay".
+			 *   <li>constant "14.4.11 Expression edm:String": This is turned into a fixed
+			 *   text (e.g. <code>"Width"</code>). String constants that contain a simple binding
+			 *   <code>"{@i18n>...}"</code> to the hard-coded model name "@i18n" with arbitrary path
+			 *   are not turned into a fixed text, but kept as a data binding expression; this
+			 *   allows local annotation files to refer to a resource bundle for
+			 *   internationalization.
+			 *   <li>dynamic "14.5.1 Comparison and Logical Operators": These are turned into
+			 *   expression bindings to perform the operations at runtime.
+			 *   <li>dynamic "14.5.3 Expression edm:Apply":
+			 *   <ul>
+			 *     <li>"14.5.3.1.1 Function odata.concat": This is turned into a data binding
+			 *     expression relative to an entity.
+			 *     <li>"14.5.3.1.2 Function odata.fillUriTemplate": This is turned into an
+			 *     expression binding to fill the template at runtime.
+			 *     <li>"14.5.3.1.3 Function odata.uriEncode": This is turned into an expression
+			 *     binding to encode the parameter at runtime.
+			 *     <li>Apply functions may be nested arbitrarily.
+			 *   </ul>
+			 *   <li>dynamic "14.5.6 Expression edm:If": This is turned into an expression
+			 *   binding to be evaluated at runtime. The expression is a conditional expression
+			 *   like <code>"{=condition ? expression1 : expression2}"</code>.
+			 *   <li>dynamic "14.5.10 Expression edm:Null": This is turned into a
+			 *   <code>null</code> value. It is ignored in <code>odata.concat</code>.
+			 *   <li>dynamic "14.5.12 Expression edm:Path" and "14.5.13 Expression
+			 *   edm:PropertyPath": This is turned into a data binding relative to an entity,
+			 *   including type information and constraints as available from metadata,
+			 *   e.g. <code>"{path : 'Name', type : 'sap.ui.model.odata.type.String',
+			 *   constraints : {'maxLength':'255'}}"</code>.
+			 *   Depending on the used type, some additional constraints of this type are set:
+			 *   <ul>
+			 *     <li>Edm.DateTime: The "displayFormat" constraint is set to the value of the
+			 *     "sap:display-format" annotation of the referenced property.
+			 *     <li>Edm.Decimal: The "precision" and "scale" constraints are set to the values
+			 *     of the corresponding attributes of the referenced property. The "minimum",
+			 *     "maximum", "minimumExclusive" and "maximumExlusive" constraints are set to the
+			 *     values of the corresponding "Org.OData.Validation.V1" annotation of the
+			 *     referenced property; note that in this case only constant expressions are
+			 *     supported to determine the annotation value.
+			 *     <li>Edm.String: The "maxLength" constraint is set to the value of the
+			 *     corresponding attribute of the referenced property, and the "isDigitSequence"
+			 *     constraint is set to the value of the
+			 *     "com.sap.vocabularies.Common.v1.IsDigitSequence" annotation of the referenced
+			 *     property; note that in this case only constant expressions are supported to
+			 *     determine the annotation value.
+			 *   </ul>
+			 * </ul>
+			 * Unsupported or incorrect values are turned into a string nevertheless, but indicated
+			 * as such. Proper escaping is used to make sure that data binding syntax is not
+			 * corrupted. In such a case, an error describing the problem is logged to the console.
+			 *
+			 * Example:
+			 * <pre>
+			 * &lt;Text text="{meta>Value/@@sap.ui.model.odata.v4.AnnotationHelper.format}" />
+			 * </pre>
+			 *
+			 * @param {any} vRawValue
+			 *   The raw value from the meta model
+			 * @param {object} oDetails
+			 *   The details object
+			 * @param {sap.ui.model.Context} oDetails.context
+			 *   Points to the given raw value, that is
+			 *   <code>oDetails.context.getProperty("") === vRawValue</code>
+			 * @returns {string|Promise}
+			 *   A data binding, or a fixed text, or a sequence thereof, or a <code>Promise</code>
+			 *   resolving with that string, for example if not all type information is already
+			 *   available
+			 *
+			 * @public
+			 * @since 1.63.0
+			 */
+			format : function (vRawValue, oDetails) {
+				var sPath = oDetails.context.getPath();
+
+				if (sPath.slice(-1) === "/") {
+					// cut off trailing slash, happens with computed annotations
+					sPath = sPath.slice(0, -1);
+				}
+				return Expression.getExpression({
+						asExpression : false,
+						complexBinding : true,
+						model : oDetails.context.getModel(),
+						path : sPath,
+						value : vRawValue,
+						// ensure that type information is available in sub paths of the expression
+						// even if for that sub path no complex binding is needed, e.g. see
+						// sap.ui.model.odata.v4_AnnotationHelperExpression.operator
+						$$valueAsPromise : true
+					});
+			},
+
+			/**
 			 * Returns a data binding according to the result of {@link #getNavigationPath}.
 			 *
 			 * @param {string} sPath
@@ -267,40 +364,41 @@ sap.ui.define([
 			},
 
 			/**
-			 * A function that helps to interpret OData V4 annotations. It knows about
+			 * A function that helps to interpret OData V4 annotations. It knows about the following
+			 * expressions:
 			 * <ul>
-			 *   <li> the "14.4 Constant Expressions" for "edm:Bool", "edm:Date",
+			 *   <li>"14.4 Constant Expressions" for "edm:Bool", "edm:Date",
 			 *   "edm:DateTimeOffset", "edm:Decimal", "edm:Float", "edm:Guid", "edm:Int",
 			 *   "edm:TimeOfDay".
-			 *   <li> the constant "14.4.11 Expression edm:String": This is turned into a fixed
+			 *   <li>constant "14.4.11 Expression edm:String": This is turned into a fixed
 			 *   text (e.g. <code>"Width"</code>). String constants that contain a simple binding
 			 *   <code>"{@i18n>...}"</code> to the hard-coded model name "@i18n" with arbitrary path
 			 *   are not turned into a fixed text, but kept as a data binding expression; this
 			 *   allows local annotation files to refer to a resource bundle for
 			 *   internationalization.
-			 *   <li> the dynamic "14.5.1 Comparison and Logical Operators": These are turned into
-			 *   expression bindings to perform the operations at run-time.
-			 *   <li> the dynamic "14.5.3 Expression edm:Apply":
+			 *   <li>dynamic "14.5.1 Comparison and Logical Operators": These are turned into
+			 *   expression bindings to perform the operations at runtime.
+			 *   <li>dynamic "14.5.3 Expression edm:Apply":
 			 *   <ul>
-			 *     <li> "14.5.3.1.1 Function odata.concat": This is turned into a data binding
+			 *     <li>"14.5.3.1.1 Function odata.concat": This is turned into a data binding
 			 *     expression.
-			 *     <li> "14.5.3.1.2 Function odata.fillUriTemplate": This is turned into an
-			 *     expression binding to fill the template at run-time.
-			 *     <li> "14.5.3.1.3 Function odata.uriEncode": This is turned into an expression
-			 *     binding to encode the parameter at run-time.
-			 *     <li> Apply functions may be nested arbitrarily.
+			 *     <li>"14.5.3.1.2 Function odata.fillUriTemplate": This is turned into an
+			 *     expression binding to fill the template at runtime.
+			 *     <li>"14.5.3.1.3 Function odata.uriEncode": This is turned into an expression
+			 *     binding to encode the parameter at runtime.
+			 *     <li>Apply functions may be nested arbitrarily.
 			 *   </ul>
-			 *   <li> the dynamic "14.5.6 Expression edm:If": This is turned into an expression
-			 *   binding to be evaluated at run-time. The expression is a conditional expression
+			 *   <li>dynamic "14.5.6 Expression edm:If": This is turned into an expression
+			 *   binding to be evaluated at runtime. The expression is a conditional expression
 			 *   like <code>"{=condition ? expression1 : expression2}"</code>.
-			 *   <li> the dynamic "14.5.10 Expression edm:Null": This is turned into a
-			 *   <code>null</code> value. In <code>odata.concat</code> it is ignored.
-			 *   <li> the dynamic "14.5.12 Expression edm:Path" and "14.5.13 Expression
+			 *   <li>dynamic "14.5.10 Expression edm:Null": This is turned into a
+			 *   <code>null</code> value. It is ignored in <code>odata.concat</code>.
+			 *   <li>dynamic "14.5.12 Expression edm:Path" and "14.5.13 Expression
 			 *   edm:PropertyPath": This is turned into a simple data binding, e.g.
 			 *   <code>"{Name}"</code>.
 			 * </ul>
 			 * Unsupported or incorrect values are turned into a string nevertheless, but indicated
-			 * as such. An error describing the problem is logged to the console in such a case.
+			 * as such. In such a case, an error describing the problem is logged to the console.
 			 *
 			 * Example:
 			 * <pre>
@@ -329,6 +427,7 @@ sap.ui.define([
 				}
 				return Expression.getExpression({
 						asExpression : false,
+						complexBinding : false,
 						model : oDetails.context.getModel(),
 						path : sPath,
 						value : vRawValue,

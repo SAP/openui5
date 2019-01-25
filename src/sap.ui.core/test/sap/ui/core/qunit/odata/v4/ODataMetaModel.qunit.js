@@ -2008,8 +2008,11 @@ sap.ui.define([
 				// Note: just spy on fetchModule() to make sure that the real types are used
 				// which check correctness of constraints
 				var fnFetchModuleSpy = this.spy(this.oMetaModel, "fetchModule"),
+					sMetaPath = "/EMPLOYEES/ENTRYDATE",
+					oMetaContext = {
+						getPath : function () {}
+					},
 					sPath = "/EMPLOYEES/0/ENTRYDATE",
-					oMetaContext = {},
 					that = this;
 
 				this.oMetaModelMock.expects("getMetaContext")
@@ -2018,8 +2021,9 @@ sap.ui.define([
 				this.oMetaModelMock.expects("fetchObject")
 					.withExactArgs(undefined, sinon.match.same(oMetaContext))
 					.returns(SyncPromise.resolve(oProperty));
+				this.mock(oMetaContext).expects("getPath").withExactArgs().returns(sMetaPath);
 				this.oMetaModelMock.expects("getConstraints")
-					.withExactArgs(sinon.match.same(oProperty), sinon.match.same(oMetaContext))
+					.withExactArgs(sinon.match.same(oProperty), sMetaPath)
 					.returns(oConstraints);
 
 				// code under test
@@ -2168,10 +2172,10 @@ sap.ui.define([
 		oResult : {nullable : false}
 	}, {
 		mGetObjectResults : {
-			"@Org.OData.Validation.V1.Minimum/$Decimal" : "0.00",
-			"@Org.OData.Validation.V1.Minimum@Org.OData.Validation.V1.Exclusive" : undefined,
-			"@Org.OData.Validation.V1.Maximum/$Decimal" : undefined,
-			"@Org.OData.Validation.V1.Maximum@Org.OData.Validation.V1.Exclusive" : undefined
+			"/foo@Org.OData.Validation.V1.Minimum/$Decimal" : "0.00",
+			"/foo@Org.OData.Validation.V1.Minimum@Org.OData.Validation.V1.Exclusive" : undefined,
+			"/foo@Org.OData.Validation.V1.Maximum/$Decimal" : undefined,
+			"/foo@Org.OData.Validation.V1.Maximum@Org.OData.Validation.V1.Exclusive" : undefined
 		},
 		oProperty : {
 			$Scale : "variable",
@@ -2180,10 +2184,10 @@ sap.ui.define([
 		oResult : {minimum : "0.00", scale : "variable"}
 	}, {
 		mGetObjectResults : {
-			"@Org.OData.Validation.V1.Minimum/$Decimal" : "0.50",
-			"@Org.OData.Validation.V1.Minimum@Org.OData.Validation.V1.Exclusive" : true,
-			"@Org.OData.Validation.V1.Maximum/$Decimal" : "100.00",
-			"@Org.OData.Validation.V1.Maximum@Org.OData.Validation.V1.Exclusive" : true
+			"/foo@Org.OData.Validation.V1.Minimum/$Decimal" : "0.50",
+			"/foo@Org.OData.Validation.V1.Minimum@Org.OData.Validation.V1.Exclusive" : true,
+			"/foo@Org.OData.Validation.V1.Maximum/$Decimal" : "100.00",
+			"/foo@Org.OData.Validation.V1.Maximum@Org.OData.Validation.V1.Exclusive" : true
 		},
 		oProperty : {
 			$Precision : 2,
@@ -2224,19 +2228,19 @@ sap.ui.define([
 		oResult : undefined
 	}, {
 		mGetObjectResults : {
-			"@com.sap.vocabularies.Common.v1.IsDigitSequence" : undefined
+			"/foo@com.sap.vocabularies.Common.v1.IsDigitSequence" : undefined
 		},
 		oProperty : {$Type : "Edm.String"},
 		oResult : undefined
 	}, {
 		mGetObjectResults : {
-			"@com.sap.vocabularies.Common.v1.IsDigitSequence" : undefined
+			"/foo@com.sap.vocabularies.Common.v1.IsDigitSequence" : undefined
 		},
 		oProperty : {$Nullable : false, $MaxLength : 23, $Type : "Edm.String"},
 		oResult : {nullable : false, maxLength : 23}
 	}, {
 		mGetObjectResults : {
-			"@com.sap.vocabularies.Common.v1.IsDigitSequence" : true
+			"/foo@com.sap.vocabularies.Common.v1.IsDigitSequence" : true
 		},
 		oProperty : {
 			$MaxLength : 23,
@@ -2257,18 +2261,18 @@ sap.ui.define([
 		oResult : undefined
 	}].forEach(function (oFixture) {
 		QUnit.test("getConstraints: " + JSON.stringify(oFixture.oProperty), function (assert) {
-			var oMetaContext = {},
+			var sMetaContextPath = "/foo",
 				that = this;
 
 			if (oFixture.mGetObjectResults) {
 				Object.keys(oFixture.mGetObjectResults).forEach(function (sConstraintPath) {
 					that.oMetaModelMock.expects("getObject")
-						.withExactArgs(sConstraintPath, sinon.match.same(oMetaContext))
+						.withExactArgs(sConstraintPath)
 						.returns(oFixture.mGetObjectResults[sConstraintPath]);
 				});
 			}
 
-			assert.deepEqual(this.oMetaModel.getConstraints(oFixture.oProperty, oMetaContext),
+			assert.deepEqual(this.oMetaModel.getConstraints(oFixture.oProperty, sMetaContextPath),
 				oFixture.oResult);
 		});
 	});
