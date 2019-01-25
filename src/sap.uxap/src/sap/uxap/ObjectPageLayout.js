@@ -4020,7 +4020,8 @@ sap.ui.define([
 	 * @return {Number} the width of the control
 	 */
 	ObjectPageLayout.prototype._getWidth = function (oControl) {
-		return !(oControl instanceof Control) ? 0 : oControl.$().outerWidth() || 0;
+		var oDomReference = oControl.getDomRef();
+		return !(oControl instanceof Control) ? 0 : (oDomReference && oDomReference.offsetWidth) || 0;
 	};
 
 	/**
