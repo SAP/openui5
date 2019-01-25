@@ -34,7 +34,7 @@ sap.ui.define(['sap/ui/base/Object', "sap/base/util/isPlainObject"],
 			this.oModel = oModel;
 			this.sPath = sPath;
 			this.bForceRefresh = false;
-			this.sDeepPath = "";
+
 		},
 
 		metadata : {
