@@ -198,7 +198,7 @@ sap.ui.define([],
 				content : {
 					domRef : ":sap-domref .sapFDynamicPageContent",
 					ignore : function (oControl) {
-						return fnShouldIgnoreSingleAggregation(oControl, "getContent");
+						return !(oControl && oControl.getContent());
 					}
 				},
 				footerMainAction : {
