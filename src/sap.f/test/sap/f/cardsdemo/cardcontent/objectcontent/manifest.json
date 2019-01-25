@@ -20,27 +20,27 @@
 		"content": {
 			"groups": [
 				{
-					"title": "Contact Details",
+					"title": "{{contactDetails}}",
 					"items": [
 						{
-							"label": "First Name",
+							"label": "{{firstName}}",
 							"value": "{firstName}"
 						},
 						{
-							"label": "Last Name",
+							"label": "{{lastName}}",
 							"value": "{lastName}"
 						},
 						{
-							"label": "Phone",
+							"label": "{{phone}}",
 							"value": "{phone}"
 						}
 					]
 				},
 				{
-					"title": "Organizational Details",
+					"title": "{{organizationalDetails}}",
 					"items": [
 						{
-							"label": "Direct Manager",
+							"label": "{{directManager}}",
 							"value": "{manager/firstName} {manager/lastName}",
 							"icon": {
 								"src": "{manager/photo}"
@@ -49,18 +49,18 @@
 					]
 				},
 				{
-					"title": "Company Details",
+					"title": "{{companyDetails}}",
 					"items": [
 						{
-							"label": "Company Name",
+							"label": "{{companyName}}",
 							"value": "{company/name}"
 						},
 						{
-							"label": "Address",
+							"label": "{address}",
 							"value": "{company/address}"
 						},
 						{
-							"label": "Website",
+							"label": "{website}",
 							"link": "{company/website}"
 						}
 					]

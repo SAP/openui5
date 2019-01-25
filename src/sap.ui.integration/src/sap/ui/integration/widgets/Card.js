@@ -2,25 +2,32 @@
  * ${copyright}
  */
 sap.ui.define([
+	"sap/ui/thirdparty/jquery",
 	"sap/ui/core/Control",
-	"sap/ui/core/Manifest",
 	"sap/ui/integration/util/CardManifest",
 	"sap/ui/integration/util/ServiceManager",
 	"sap/base/Log",
-	"sap/ui/model/json/JSONModel",
 	"sap/f/cards/Data",
 	"sap/f/CardRenderer"
 ], function (
+	jQuery,
 	Control,
-	Manifest,
 	CardManifest,
 	ServiceManager,
 	Log,
-	JSONModel,
 	Data,
 	CardRenderer
 ) {
 	"use strict";
+
+	var MANIFEST_PATHS = {
+		TYPE: "/sap.card/type",
+		DATA: "/sap.card/data",
+		HEADER: "/sap.card/header",
+		CONTENT: "/sap.card/content",
+		SERVICES: "/sap.ui5/services",
+		APP_TYPE: "/sap.app/type"
+	};
 
 	/**
 	 * Constructor for a new <code>Card</code>.
@@ -129,41 +136,18 @@ sap.ui.define([
 	Card.prototype.setManifest = function (vValue) {
 		this.setBusy(true);
 		this.setProperty("manifest", vValue, true);
-		if (typeof vValue === "string") {
-			this.initManifest(vValue).then(function () {
+
+		if (typeof vValue === "string" && vValue !== "") {
+			this._oCardManifest = new CardManifest();
+			this._oCardManifest.load({ manifestUrl: vValue }).then(function () {
 				this._applyManifestSettings();
 			}.bind(this));
-		} else if (typeof vValue === "object") {
-			// TODO: The i18n files are not loaded this way as Manifest.load is not called.
+		} else if (typeof vValue === "object" && !jQuery.isEmptyObject(vValue)) {
 			this._oCardManifest = new CardManifest(vValue);
 			this._applyManifestSettings();
 		}
+
 		return this;
-	};
-
-	/**
-	 * Loads the card manifest based on a URL.
-	 *
-	 * @private
-	 * @param {string} sManifestUrl The URL of the manifest
-	 * @returns {Promise} A promise resolved when the manifest is ready.
-	 */
-	Card.prototype.initManifest = function (sManifestUrl) {
-		var oPromise = Manifest.load({
-			manifestUrl: sManifestUrl,
-			async: true
-		});
-
-		return oPromise.then(function (oManifest) {
-			var oJson = oManifest._oRawManifest;
-			this._oCardManifest = new CardManifest(oJson);
-			return oManifest._loadI18n(true).then(function (oBundle) {
-				this._oCardManifest.registerTranslator(oBundle);
-				if (this._oCardManifest.get("sap.app/type") !== "card") {
-					throw Error("sap.app/type entry in manifest is not 'card'");
-				}
-			}.bind(this));
-		}.bind(this));
 	};
 
 	/**
@@ -173,6 +157,10 @@ sap.ui.define([
 	 * @private
 	 */
 	Card.prototype._applyManifestSettings = function () {
+		if (this._oCardManifest.get(MANIFEST_PATHS.APP_TYPE) !== "card") {
+			Log.error("sap.app/type entry in manifest is not 'card'");
+		}
+
 		this._registerServices();
 		this._setData();
 		this._setHeaderFromManifest();
@@ -180,7 +168,7 @@ sap.ui.define([
 	};
 
 	Card.prototype._setData = function () {
-		var oData = this._oCardManifest.get("sap.card/data");
+		var oData = this._oCardManifest.get(MANIFEST_PATHS.DATA);
 		if (!oData) {
 			return;
 		}
@@ -219,7 +207,7 @@ sap.ui.define([
 	 * @private
 	 */
 	Card.prototype._registerServices = function () {
-		var oServiceFactoryReferences = this._oCardManifest.get("sap.ui5/services");
+		var oServiceFactoryReferences = this._oCardManifest.get(MANIFEST_PATHS.SERVICES);
 		if (!oServiceFactoryReferences) {
 			return;
 		}
@@ -228,8 +216,8 @@ sap.ui.define([
 			this._oServiceManager = new ServiceManager(oServiceFactoryReferences);
 		}
 
-		var oHeader = this._oCardManifest.get("sap.card/header");
-		var oContent = this._oCardManifest.get("sap.card/content");
+		var oHeader = this._oCardManifest.get(MANIFEST_PATHS.HEADER);
+		var oContent = this._oCardManifest.get(MANIFEST_PATHS.CONTENT);
 
 		var bHeaderWithServiceNavigation = oHeader
 			&& oHeader.actions
@@ -286,7 +274,7 @@ sap.ui.define([
 	 * @private
 	 */
 	Card.prototype._setHeaderFromManifest = function () {
-		var oHeader = this._oCardManifest.get("sap.card/header");
+		var oHeader = this._oCardManifest.get(MANIFEST_PATHS.HEADER);
 
 		if (!oHeader) {
 			Log.error("Card header is mandatory!");
@@ -306,7 +294,7 @@ sap.ui.define([
 	 * @private
 	 */
 	Card.prototype._setContentFromManifest = function () {
-		var sCardType = this._oCardManifest.get("sap.card/type");
+		var sCardType = this._oCardManifest.get(MANIFEST_PATHS.TYPE);
 
 		if (!sCardType) {
 			Log.error("Card type property is mandatory!");
@@ -351,7 +339,7 @@ sap.ui.define([
 	 * @param {sap.f.cards.IHeader} CardHeader The header to be created
 	 */
 	Card.prototype._setCardHeaderFromManifest = function (CardHeader) {
-		var oClonedSettings = jQuery.extend(true, {}, this._oCardManifest.get("sap.card/header"));
+		var oClonedSettings = jQuery.extend(true, {}, this._oCardManifest.get(MANIFEST_PATHS.HEADER));
 		var oHeader = CardHeader.create(oClonedSettings);
 
 		oHeader.attachEvent("_updated", function () {
@@ -448,7 +436,7 @@ sap.ui.define([
 	 * @param {sap.ui.core.Control} CardContent The content to be created
 	 */
 	Card.prototype._setCardContentFromManifest = function (CardContent) {
-		var mSettings = this._oCardManifest.get("sap.card/content");
+		var mSettings = this._oCardManifest.get(MANIFEST_PATHS.CONTENT);
 		if (!mSettings) {
 			this.setBusy(false);
 			return;
