@@ -6,12 +6,14 @@ sap.ui.define([
 	"sap/ui/thirdparty/jquery",
 	'sap/ui/Device',
 	'sap/base/util/includes',
-	'sap/base/util/isPlainObject'
+	'sap/base/util/isPlainObject',
+	'sap/ui/dt/DesignTimeStatus'
 ], function(
 	jQuery,
 	Device,
 	includes,
-	isPlainObject
+	isPlainObject,
+	DesignTimeStatus
 ) {
 	"use strict";
 
@@ -291,6 +293,30 @@ sap.ui.define([
 
 			return mResult;
 		}, {});
+	};
+
+	/**
+	 * Checks if the passed designTime instance's status is syncing.
+	 * Returns a promise resolving to the return value of the passed function, when the passed designTime instances's status changes to synced.
+	 *
+	 * @param {function} fnOriginal function for which value needs to be returned
+	 * @param {sap.ui.dt.DesignTime} oDtInstance designTime instance
+	 * @returns {Promise} Returns a Promise.resolve() to the passed function's return value or a Promise.reject() when designTime fails to sync
+	 */
+	Util.waitForSynced = function(fnOriginal, oDtInstance) {
+		return function () {
+			var aArguments = arguments;
+			return new Promise(function (fnResolve, fnReject) {
+				if (oDtInstance.getStatus() === DesignTimeStatus.SYNCING) {
+					oDtInstance.attachEventOnce("synced", function () {
+						fnResolve(fnOriginal.apply(null, aArguments));
+					});
+					oDtInstance.attachEventOnce("syncFailed", fnReject);
+				} else {
+					fnResolve(fnOriginal.apply(null, aArguments));
+				}
+			});
+		};
 	};
 
 	return Util;

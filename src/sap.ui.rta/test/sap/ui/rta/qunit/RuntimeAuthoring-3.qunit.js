@@ -3,16 +3,20 @@
 sap.ui.define([
 	"sap/ui/core/UIComponent",
 	"sap/m/Page",
+	"sap/m/Button",
 	"sap/ui/rta/RuntimeAuthoring",
 	"sap/ui/rta/service/index",
+	"sap/ui/base/ManagedObjectMetadata",
 	"sap/ui/thirdparty/sinon-4",
 	"sap/ui/dt/Util"
 ],
 function (
 	UIComponent,
 	Page,
+	Button,
 	RuntimeAuthoring,
 	mServicesDictionary,
+	ManagedObjectMetadata,
 	sinon,
 	DtUtil
 ) {
@@ -89,7 +93,7 @@ function (
 					}
 				},
 				createContent: function() {
-					return new Page();
+					return new Page("mockPage");
 				}
 			});
 
@@ -264,6 +268,54 @@ function (
 							assert.strictEqual(aResults[0], "value1");
 							assert.strictEqual(aResults[1], "value2");
 						});
+				});
+		});
+
+		QUnit.test("service methods should be returned only when designTime status is synced", function (assert) {
+			assert.expect(3);
+			var sServiceName = Object.keys(mServicesDictionary).shift();
+			var sServiceLocation = mServicesDictionary[sServiceName].replace(/\./g, '/');
+			var fnMockService = function () {
+				return {
+					exports: {
+						method1: function () { return 'value1'; }
+					}
+				};
+			};
+			var oMockButton = new Button("mockButton");
+			var fnDtSynced;
+
+			sandbox.stub(sap.ui, "require")
+				.callThrough()
+				.withArgs([sServiceLocation]).callsArgWithAsync(1, fnMockService);
+
+			sandbox.stub(ManagedObjectMetadata.prototype, "loadDesignTime")
+				.callThrough()
+				.withArgs(oMockButton).callsFake(function () {
+					return new Promise(function (fnResolve) {
+						fnDtSynced = fnResolve;
+					});
+				});
+
+			this.oComponent.getRootControl().addContent(oMockButton);
+			var fnServiceMethod1Stub = sandbox.stub().callsFake(function(oResult) {
+				assert.strictEqual(oResult, "value1", "then the service method returns the correct value");
+			});
+			var fnSyncedEventStub = sandbox.stub().callsFake(function() {
+				assert.ok(true, "then dt is synced");
+			});
+
+			// at this moment DT has syncing status since designTime for mockButton is still an unresolved promise
+			return this.oRta
+				.startService(sServiceName)
+				.then(function (oService) {
+					var oReturn = oService.method1().then(fnServiceMethod1Stub);
+					this.oRta._oDesignTime.attachEventOnce("synced", fnSyncedEventStub);
+					fnDtSynced({});
+					return oReturn;
+				}.bind(this))
+				.then(function() {
+					assert.ok(fnSyncedEventStub.calledBefore(fnServiceMethod1Stub), "then first the designTime was synced and then the service method is called");
 				});
 		});
 
