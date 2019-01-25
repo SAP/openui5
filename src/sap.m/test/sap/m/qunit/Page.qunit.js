@@ -688,5 +688,30 @@ sap.ui.define([
 		oControl.destroy();
 	});
 
+	QUnit.test("Page _updateMedia: correct media class is applied against the container size", function (assert) {
+
+		var fnCheckMediaClasses = function(sMediaClass) {
+			Object.keys(Page.MEDIA).forEach(function (sMedia) {
+				var sCurrentMediaClass = Page.MEDIA[sMedia],
+					bMediaShouldBeApplied = sMediaClass === sCurrentMediaClass;
+
+					assert.strictEqual(oPage.hasStyleClass(sCurrentMediaClass), bMediaShouldBeApplied,
+								sCurrentMediaClass + " is applied: " + bMediaShouldBeApplied);
+			}, this);
+		};
+
+		oPage._updateMedia(Page.BREAK_POINTS.PHONE);
+		fnCheckMediaClasses(Page.MEDIA.PHONE);
+
+		oPage._updateMedia(Page.BREAK_POINTS.TABLET);
+		fnCheckMediaClasses(Page.MEDIA.TABLET);
+
+		oPage._updateMedia(Page.BREAK_POINTS.LAPTOP);
+		fnCheckMediaClasses(Page.MEDIA.LAPTOP);
+
+		oPage._updateMedia(Page.BREAK_POINTS.DESKTOP);
+		fnCheckMediaClasses(Page.MEDIA.DESKTOP);
+	});
+
 	return waitForThemeApplied();
 });
