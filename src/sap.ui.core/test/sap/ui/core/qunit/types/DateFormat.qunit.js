@@ -505,6 +505,22 @@ sap.ui.define(["sap/ui/core/format/DateFormat", "sap/ui/core/Locale", "sap/ui/co
 			assert.equal(oFormat.parse("a.m."), null, "the variant can only be parsed in locale where it's supported");
 		});
 
+		QUnit.test("format and parse time with am/pm in locale pt_PT", function(assert) {
+			// the dayPeriod pattern is defined as the following in pt_PT
+			// ["a.m.", "p.m."]
+			// The "." in the pattern also needs to be removed before it's compared with the unified variant
+			var oFormat = DateFormat.getTimeInstance({
+					pattern: "hh:mm a"
+				}, new Locale("pt_PT")),
+				oDate = new Date(),
+				sFormattedTime = oFormat.format(oDate),
+				oParsedDate = oFormat.parse(sFormattedTime);
+
+			assert.ok(oParsedDate, "The formatted date string can be parsed");
+			assert.equal(oParsedDate.getHours(), oDate.getHours(), "The hours can be correctly parsed");
+			assert.equal(oParsedDate.getMinutes(), oDate.getMinutes(), "The minutes can be correctly parsed");
+		});
+
 		QUnit.test("parse with tolerance for the number of spaces", function (assert) {
 			var oFormat = DateFormat.getDateInstance({
 				pattern: "dd MMMM, yyyy"
