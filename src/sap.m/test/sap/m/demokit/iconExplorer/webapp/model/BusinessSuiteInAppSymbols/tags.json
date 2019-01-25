@@ -2443,13 +2443,27 @@
 			"folder"
 		]
 	},
-	"icon-alert-groups": {
+	"icon-alert-groups" : {
 		"tags": [
 			"indicator",
 			"groups",
 			"alert",
 			"status",
 			"folder"
-	]
-  }
+		]
+	},
+	"icon-function-alert" : {
+		"tags": [
+			"status",
+			"function",
+			"alert"
+		]
+	},
+	"icon-function-hierarchy" : {
+		"tags": [
+			"status",
+			"function",
+			"hierarchy"
+		]
+	}
 }
