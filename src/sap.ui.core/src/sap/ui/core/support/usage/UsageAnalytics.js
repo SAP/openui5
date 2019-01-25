@@ -14,7 +14,8 @@ sap.ui.define(['jquery.sap.global', '../../Element', '../../routing/Router'],
 		"use strict";
 
 		var EVENTS_BLACKLIST = ["modelContextChange", "beforeRendering", "afterRendering", "propertyChanged",
-			"aggregationChanged", "componentCreated", "afterInit", "updateStarted", "updateFinished", "load", "scroll"];
+			"aggregationChanged", "componentCreated", "afterInit", "updateStarted", "updateFinished", "load", "scroll",
+			"beforeGeometryChanged", "geometryChanged"];
 
 		/**
 		 * Usage Analytics routines. This class is meant for private usages. Apps are not supposed to used it.
