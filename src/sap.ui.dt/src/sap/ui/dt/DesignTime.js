@@ -21,7 +21,8 @@ sap.ui.define([
 	"sap/base/util/isPlainObject",
 	"sap/base/util/merge",
 	"sap/ui/dt/SelectionMode",
-	"sap/base/util/includes"
+	"sap/base/util/includes",
+	"sap/ui/dt/DesignTimeStatus"
 ],
 function (
 	ManagedObject,
@@ -42,12 +43,10 @@ function (
 	isPlainObject,
 	merge,
 	SelectionMode,
-	includes
+	includes,
+	DesignTimeStatus
 ) {
 	"use strict";
-
-	var STATUS_SYNCING = 'syncing';
-	var STATUS_SYNCED = 'synced';
 
 	/**
 	 * Constructor for a new DesignTime.
@@ -241,19 +240,19 @@ function (
 		},
 		constructor: function () {
 			// Storage for promises of pending overlays (overlays that are in creation phase)
-			this._sStatus = STATUS_SYNCED;
+			this._sStatus = DesignTimeStatus.SYNCED;
 			this._mPendingOverlays = {};
 			this._oTaskManager = new TaskManager({
 				complete: function (oEvent) {
 					if (oEvent.getSource().isEmpty()) {
 						this._registerElementOverlays();
-						this._sStatus = STATUS_SYNCED;
+						this._sStatus = DesignTimeStatus.SYNCED;
 						this.fireSynced();
 					}
 				}.bind(this),
 				add: function (oEvent) {
 					if (oEvent.getSource().count() === 1) {
-						this._sStatus = STATUS_SYNCING;
+						this._sStatus = DesignTimeStatus.SYNCING;
 						this.fireSyncing();
 					}
 				}.bind(this)
@@ -960,7 +959,7 @@ function (
 				delete oParams.type;
 				delete oParams.target;
 
-				if (this._sStatus === STATUS_SYNCING) {
+				if (this.getStatus() === DesignTimeStatus.SYNCING) {
 					this.attachEventOnce('synced', function (oParams) {
 						this.fireElementPropertyChanged(oParams);
 					}.bind(this, oParams));
@@ -978,7 +977,7 @@ function (
 	DesignTime.prototype._onEditableChanged = function(oEvent) {
 		var oParams = merge({}, oEvent.getParameters());
 		oParams.id = oEvent.getSource().getId();
-		if (this._sStatus === STATUS_SYNCING) {
+		if (this.getStatus() === DesignTimeStatus.SYNCING) {
 			this.attachEventOnce('synced', function () {
 				this.fireElementOverlayEditableChanged(oParams);
 			}, this);
@@ -1167,6 +1166,15 @@ function (
 			});
 		}
 	};
+
+	/**
+	 * Returns the current status of the designTime instance
+	 * @public
+	 */
+	DesignTime.prototype.getStatus = function () {
+		return this._sStatus;
+	};
+
 
 	return DesignTime;
 }, /* bExport= */ true);
