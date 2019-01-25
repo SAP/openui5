@@ -46,6 +46,29 @@
 					}"
 				unit="{CurrencyCode}"
 				state="Success" />
+			<ObjectNumber
+				class="sapUiSmallMarginBottom"
+				binding="{/ProductCollection/4}"
+				number="{
+						parts:[{path:'Price'},{path:'CurrencyCode'}],
+						type: 'sap.ui.model.type.Currency',
+						formatOptions: {showMeasure: false}
+					}"
+				unit="{CurrencyCode}"
+				state="Information" />
+
+			<Label text="ObjectNumber with style sapMObjectNumberLarge applied" class="sapUiSmallMarginTop"/>
+			<ObjectNumber
+				class="sapMObjectNumberLarge"
+				binding="{/ProductCollection/5}"
+				number="{
+						parts:[{path:'Price'},{path:'CurrencyCode'}],
+						type: 'sap.ui.model.type.Currency',
+						formatOptions: {showMeasure: false}
+					}"
+				unit="{CurrencyCode}"
+				emphasized="false"
+				state="None" />
 		</l:content>
 	</l:VerticalLayout>
 </mvc:View>

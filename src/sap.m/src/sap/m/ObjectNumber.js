@@ -33,6 +33,12 @@ sap.ui.define([
 	 * @class
 	 * The ObjectNumber control displays number and number unit properties for an object. The number can be displayed using semantic
 	 * colors to provide additional meaning about the object to the user.
+	 *
+	 *
+	 * Since 1.63, Large design of the control is supported by setting <code>sapMObjectNumberLarge</code> CSS class to the <code>ObjectNumber</code>.
+	 *
+	 * <b>Note:</b> To fulfill the design guidelines, when you are using <code>sapMObjectNumberLarge</code> CSS class you have to set the property <code>emphasized</code> to <code>false</code>.
+	 *
 	 * @extends sap.ui.core.Control
 	 * @implements sap.ui.core.IFormContent
 	 * @version ${version}

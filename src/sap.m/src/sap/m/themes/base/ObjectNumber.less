@@ -12,6 +12,7 @@
 	word-wrap: normal;
 	color: @sapUiGroupTitleTextColor;
 	font-size: @sapMFontMediumSize;
+	font-family: @sapUiFontFamily;
 }
 
 .sapMObjectNumberText {
@@ -37,6 +38,12 @@
 	vertical-align: middle;
 	padding-top: 0.125rem;
 	font-size: @sapMFontSmallSize;
+}
+
+.sapMObjectNumberLarge .sapMObjectNumberText,
+.sapMObjectNumberLarge .sapMObjectNumberUnit {
+	font-size: 1.125rem;
+	vertical-align: bottom;
 }
 
 // Android fix
@@ -85,4 +92,8 @@ html[data-sap-ui-os^="Android"] {
 
 .sapMObjectNumberStatusSuccess {
 	color: @sapUiPositiveText;
+}
+
+.sapMObjectNumberStatusInformation {
+	color: @sapUiInformativeText;
 }
