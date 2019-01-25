@@ -903,11 +903,10 @@ function (
 			this.oDynamicPage = oFactory.getDynamicPage();
 			this.oDynamicPage.setHeaderExpanded(false);
 			this.oDynamicPageTitle = this.oDynamicPage.getTitle();
-			this.oDynamicPageTitle.setAggregation("snappedTitleOnMobile", new Title("Test"));
+			this.oDynamicPageTitle.setAggregation("snappedTitleOnMobile", new Title({text: "Test"}));
 		},
 		afterEach: function () {
 			this.oDynamicPage.destroy();
-			this.oDynamicPageTitle.destroy();
 			this.oDynamicPage = null;
 			this.oDynamicPageTitle = null;
 		}
