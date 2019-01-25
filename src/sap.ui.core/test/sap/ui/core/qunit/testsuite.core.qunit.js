@@ -279,6 +279,7 @@ sap.ui.define(function() {
 					"testdata/core/base/strings/toHex.qunit",
 
 					// sap/base/util/*
+					"testdata/core/base/util/deepClone.qunit",
 					"testdata/core/base/util/deepEqual.qunit",
 					"testdata/core/base/util/each.qunit",
 					"testdata/core/base/util/merge.qunit",

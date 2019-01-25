@@ -37,7 +37,8 @@ sap.ui.define([
 				intArray : {type: "int[]", group: "Appearance", defaultValue: []},
 				booleanArray : {type: "boolean[]", group: "Appearance", defaultValue: []},
 				objectValue : {type: "object", group: "Misc", defaultValue: null},
-				_hiddenValue: { type: "string", defaultValue: "", visibility: "hidden"}
+				_hiddenValue: { type: "string", defaultValue: "", visibility: "hidden"},
+				byValueArray: { type: "object[]", defaultValue: [], byValue: true}
 			},
 			aggregations : {
 				singleAggr : { type : "sap.ui.core.TestManagedObject", multiple : false },
@@ -441,6 +442,38 @@ sap.ui.define([
 		setAndTest("_hiddenValue", undefined, '');
 
 		setAndTest("unknown", "testtest", ERROR);
+	});
+
+	QUnit.test("By Value properties are deeply cloned", function(assert) {
+		var aTestArray = [ {
+				hugo: "is a",
+				real: "deep",
+				"array": ['as', "you"]
+			}, {
+				can: "see",
+				so: {
+					deep: [42],
+					could: "ever be"
+				}
+			}];
+
+		this.obj.setByValueArray(aTestArray);
+		var aProperty = this.obj.getByValueArray();
+		assert.equal(aTestArray.length, 2, "The test data has length 2");
+		assert.equal(aProperty.length, 2, "The property value has also length 2");
+
+		//length change from outside
+		aTestArray[2] = { enhance: "me"};
+		aProperty = this.obj.getByValueArray();
+		assert.equal(aTestArray.length, 3, "Now the test data has length 3");
+		assert.equal(aProperty.length, 2, "While the property value has still length 2");
+
+		//change of an inner property
+		assert.deepEqual(aProperty, this.obj.getByValueArray(), "The array values are equal before an inner change");
+		aProperty[0].hugo = "is not a";
+		var aValue = this.obj.getByValueArray();
+		assert.notDeepEqual(aProperty, aValue, "Now they are now longer equal");
+		assert.equal(aValue[0].hugo, "is a", "The inner property value has not changed");
 	});
 
 	QUnit.test("Escape property before setting", function(assert) {

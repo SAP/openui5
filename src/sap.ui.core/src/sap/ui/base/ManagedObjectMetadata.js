@@ -174,6 +174,7 @@ function(
 		this.bindable = !!info.bindable;
 		this.deprecated = !!info.deprecated || false;
 		this.visibility = info.visibility || 'public';
+		this.byValue = info.byValue === true; // non-boolean values reserved for the future
 		this.selector = typeof info.selector === "string" ? info.selector : null;
 		this.appData = remainder(this, info);
 		this._oParent = oClass;
