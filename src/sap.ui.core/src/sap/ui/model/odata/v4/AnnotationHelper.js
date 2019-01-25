@@ -10,6 +10,9 @@ sap.ui.define([
 
 	var rBadChars = /[\\\{\}:]/, // @see sap.ui.base.BindingParser: rObject, rBindingChars
 		rCount = /\/\$count$/,
+		rSplitPathSegment = /^(.+?\/(\$(?:Annotation)?Path))(\/?)(.*)$/,
+		rUnsupportedPathSegments = /\$(?:Navigation)?PropertyPath/,
+
 		/**
 		 * @classdesc
 		 * A collection of methods which help to consume
@@ -76,6 +79,12 @@ sap.ui.define([
 			 *     determine the annotation value.
 			 *   </ul>
 			 * </ul>
+			 *
+			 * If <code>oDetails.context.getPath()</code> contains a single "$AnnotationPath" or
+			 * "$Path" segment, the value corresponding to that segment is considered as a data
+			 * binding path prefix whenever a dynamic "14.5.12 Expression edm:Path" or
+			 * "14.5.13 Expression edm:PropertyPath" is turned into a data binding.
+			 *
 			 * Unsupported or incorrect values are turned into a string nevertheless, but indicated
 			 * as such. Proper escaping is used to make sure that data binding syntax is not
 			 * corrupted. In such a case, an error describing the problem is logged to the console.
@@ -84,6 +93,47 @@ sap.ui.define([
 			 * <pre>
 			 * &lt;Text text="{meta>Value/@@sap.ui.model.odata.v4.AnnotationHelper.format}" />
 			 * </pre>
+			 *
+			 * Example for "$Path" in the context's path:
+			 * <pre>
+			 * &lt;Annotations Target="com.sap.gateway.default.iwbep.tea_busi.v0001.EQUIPMENT">
+			 *	&lt;Annotation Term="com.sap.vocabularies.UI.v1.LineItem">
+			 *		&lt;Collection>
+			 *			&lt;Record Type="com.sap.vocabularies.UI.v1.DataField">
+			 *				&lt;PropertyValue Property="Value" Path="EQUIPMENT_2_PRODUCT/Name" />
+			 *			&lt;/Record>
+			 *		&lt;/Collection>
+			 *	&lt;/Annotation>
+			 * &lt;/Annotations>
+			 * &lt;Annotations Target="com.sap.gateway.default.iwbep.tea_busi_product.v0001.Product/Name">
+			 *	&lt;Annotation Term="com.sap.vocabularies.Common.v1.QuickInfo" Path="PRODUCT_2_SUPPLIER/Supplier_Name" />
+			 * &lt;/Annotations>
+			 * </pre>
+			 * <pre>
+			 * &lt;Text text="{meta>/Equipments/@com.sap.vocabularies.UI.v1.LineItem/0/Value/$Path@com.sap.vocabularies.Common.v1.QuickInfo@@sap.ui.model.odata.v4.AnnotationHelper.format}" />
+			 * </pre>
+			 * <code>format</code> returns a binding with path
+			 * "EQUIPMENT_2_PRODUCT/PRODUCT_2_SUPPLIER/Supplier_Name".
+			 *
+			 * Example for "$AnnotationPath" in the context's path:
+			 * <pre>
+			 * &lt;Annotations Target="com.sap.gateway.default.iwbep.tea_busi.v0001.EQUIPMENT">
+			 *	&lt;Annotation Term="com.sap.vocabularies.UI.v1.Facets">
+			 *		&lt;Collection>
+			 *			&lt;Record Type="com.sap.vocabularies.UI.v1.ReferenceFacet">
+			 *				&lt;PropertyValue Property="Target" AnnotationPath="EQUIPMENT_2_PRODUCT/@com.sap.vocabularies.Common.v1.QuickInfo" />
+			 *			&lt;/Record>
+			 *		&lt;/Collection>
+			 *	&lt;/Annotation>
+			 * &lt;/Annotations>
+			 * &lt;Annotations Target="com.sap.gateway.default.iwbep.tea_busi_product.v0001.Product">
+			 *	&lt;Annotation Term="com.sap.vocabularies.Common.v1.QuickInfo" Path="Name" />
+			 * &lt;/Annotations>
+			 * </pre>
+			 * <pre>
+			 * &lt;Text text="{meta>/Equipments/@com.sap.vocabularies.UI.v1.Facets/0/Target/$AnnotationPath/@@sap.ui.model.odata.v4.AnnotationHelper.format}" />
+			 * </pre>
+			 * <code>format</code> returns a binding with path "EQUIPMENT_2_PRODUCT/Name".
 			 *
 			 * @param {any} vRawValue
 			 *   The raw value from the meta model
@@ -96,28 +146,74 @@ sap.ui.define([
 			 *   A data binding, or a fixed text, or a sequence thereof, or a <code>Promise</code>
 			 *   resolving with that string, for example if not all type information is already
 			 *   available
+			 * @throws {Error}
+			 *   If <code>oDetails.context.getPath()</code> contains a "$PropertyPath" or a
+			 *   "$NavigationPropertyPath" segment, or if it contains more than one
+			 *   "$AnnotationPath" or "$Path" segment
 			 *
 			 * @public
 			 * @since 1.63.0
 			 */
 			format : function (vRawValue, oDetails) {
-				var sPath = oDetails.context.getPath();
+				var aMatches,
+					oModel = oDetails.context.getModel(),
+					sPath = oDetails.context.getPath();
 
-				if (sPath.slice(-1) === "/") {
-					// cut off trailing slash, happens with computed annotations
-					sPath = sPath.slice(0, -1);
+				function getExpression(sPrefix) {
+					if (sPath.slice(-1) === "/") {
+						// cut off trailing slash, happens with computed annotations
+						sPath = sPath.slice(0, -1);
+					}
+					return Expression.getExpression({
+							asExpression : false,
+							complexBinding : true,
+							model : oModel,
+							path : sPath,
+							prefix : sPrefix, // prefix for computing paths
+							value : vRawValue,
+							// ensure that type information is available in sub paths of the
+							// expression even if for that sub path no complex binding is needed,
+							// e.g. see sap.ui.model.odata.v4_AnnotationHelperExpression.operator
+							$$valueAsPromise : true
+						});
 				}
-				return Expression.getExpression({
-						asExpression : false,
-						complexBinding : true,
-						model : oDetails.context.getModel(),
-						path : sPath,
-						value : vRawValue,
-						// ensure that type information is available in sub paths of the expression
-						// even if for that sub path no complex binding is needed, e.g. see
-						// sap.ui.model.odata.v4_AnnotationHelperExpression.operator
-						$$valueAsPromise : true
+
+				aMatches = rUnsupportedPathSegments.exec(sPath);
+				if (aMatches) {
+					throw new Error("Unsupported path segment " + aMatches[0] + " in " + sPath);
+				}
+
+				// aMatches[0] - sPath, e.g. "/Equipments/@UI.LineItem/4/Value/$Path@Common.Label"
+				// aMatches[1] - prefix of sPath including $Path or $AnnotationPath, e.g.
+				//             "/Equipments/@UI.LineItem/4/Value/$Path"
+				// aMatches[2] - "$AnnotationPath" or "$Path"
+				// aMatches[3] - optional "/" after "$AnnotationPath" or "$Path"
+				// aMatches[4] - rest of sPath, e.g. "@Common.Label"
+				aMatches = rSplitPathSegment.exec(sPath);
+				if (aMatches && sPath.length > aMatches[1].length) {
+					if (rSplitPathSegment.test(aMatches[4])) {
+						throw new Error("Only one $Path or $AnnotationPath segment is supported: "
+							+ sPath);
+					}
+
+					return oModel.fetchObject(aMatches[1]).then(function (sPathValue) {
+						var i,
+							bIsAnnotationPath = aMatches[2] === "$AnnotationPath",
+							sPrefix = bIsAnnotationPath
+								? sPathValue.split("@")[0]
+								: sPathValue;
+
+						if (!bIsAnnotationPath && aMatches[3]) {
+							sPrefix = sPrefix + "/";
+						}
+						if (!sPrefix.endsWith("/")) {
+							i = sPrefix.lastIndexOf("/");
+							sPrefix = i < 0 ? "" : sPrefix.slice(0, i + 1);
+						}
+						return getExpression(sPrefix);
 					});
+				}
+				return getExpression("");
 			},
 
 			/**
@@ -216,7 +312,7 @@ sap.ui.define([
 			 *   found, for example "name.space.EntityType"
 			 * @returns {sap.ui.model.odata.v4.ValueListType|Promise}
 			 *   The type of the value list or a <code>Promise</code> resolving with the type of the
-			 *   value list or rejected if the property cannot be found in the metadata
+			 *   value list or rejected, if the property cannot be found in the metadata
 			 * @throws {Error}
 			 *   If the property cannot be found in the metadata, or if
 			 *   <code>$$valueAsPromise</code> is not set to <code>true</code> and the metadata is
@@ -248,7 +344,7 @@ sap.ui.define([
 			 * multi-valued structural or navigation property. Term casts and annotations of
 			 * navigation properties are ignored.
 			 *
-			 * Examples:
+			 * Example:
 			 * <pre>
 			 * &lt;template:if test="{facet>Target/$AnnotationPath@@sap.ui.model.odata.v4.AnnotationHelper.isMultiple}">
 			 * </pre>
@@ -430,6 +526,7 @@ sap.ui.define([
 						complexBinding : false,
 						model : oDetails.context.getModel(),
 						path : sPath,
+						prefix : "",
 						value : vRawValue,
 						$$valueAsPromise : oDetails.$$valueAsPromise
 					});

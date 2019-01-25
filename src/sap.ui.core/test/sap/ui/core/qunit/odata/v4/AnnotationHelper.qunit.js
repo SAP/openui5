@@ -280,6 +280,7 @@ sap.ui.define([
 					complexBinding : false,
 					model : sinon.match.same(oMetaModel),
 					path : "/my/path", // trailing slash removed!
+					prefix : "",
 					value : sinon.match.same(vRawValue),
 					$$valueAsPromise : undefined
 				})
@@ -313,6 +314,7 @@ sap.ui.define([
 				complexBinding : false,
 				model : sinon.match.same(oModel),
 				path : "/Equipments/@com.sap.vocabularies.UI.v1.LineItem/4/Value",
+				prefix : "",
 				value : sinon.match.same(vRawValue),
 				$$valueAsPromise : true
 			}).callThrough();
@@ -612,12 +614,134 @@ sap.ui.define([
 					complexBinding : true,
 					model : sinon.match.same(oMetaModel),
 					path : "/my/path", // trailing slash removed!
+					prefix : "",
 					value : sinon.match.same(vRawValue),
 					$$valueAsPromise : true
 				})
 				.returns(vResult);
 
 			assert.strictEqual(AnnotationHelper.format(vRawValue, {context : oContext}), vResult);
+		});
+	});
+
+	//*********************************************************************************************
+	QUnit.test("format: path ends with /$Path", function (assert) {
+		var oMetaModel = {},
+			sPath = "/Equipments/@UI.LineItem/4/Value/$Path",
+			oContext = new BaseContext(oMetaModel, sPath),
+			vRawValue = {},
+			vResult = {/*string or Promise*/};
+
+		this.mock(Expression).expects("getExpression")
+			.withExactArgs({
+				asExpression : false,
+				complexBinding : true,
+				model : sinon.match.same(oMetaModel),
+				path : sPath,
+				prefix : "",
+				value : sinon.match.same(vRawValue),
+				$$valueAsPromise : true
+			})
+			.returns(vResult);
+
+		assert.strictEqual(AnnotationHelper.format(vRawValue, {context : oContext}), vResult);
+	});
+
+	//*********************************************************************************************
+	[{
+		sPath : "/Equipments/@UI.LineItem/0/Value/$Path@Common.Label",
+		sPathForFetchObject : "/Equipments/@UI.LineItem/0/Value/$Path",
+		sPathValue : "EQUIPMENT_2_PRODUCT/Name",
+		sPrefix : "EQUIPMENT_2_PRODUCT/"
+	}, {
+		sPath : "/Equipments/@UI.LineItem/0/Value/$Path@Common.Label",
+		sPathForFetchObject : "/Equipments/@UI.LineItem/0/Value/$Path",
+		sPathValue : "Name",
+		sPrefix : ""
+	}, {
+		sPath : "/Equipments/@UI.LineItem/0/Value/$Path/@Common.Label",
+		sPathForFetchObject : "/Equipments/@UI.LineItem/0/Value/$Path",
+		sPathValue : "EQUIPMENT_2_PRODUCT",
+		sPrefix : "EQUIPMENT_2_PRODUCT/"
+	}, {
+		sPath : "/Products/@namespace.foo/0/Value/$AnnotationPath/",
+		sPathForGetExpression : "/Products/@namespace.foo/0/Value/$AnnotationPath",
+		sPathForFetchObject : "/Products/@namespace.foo/0/Value/$AnnotationPath",
+		sPathValue : "PRODUCT_2_SUPPLIER/@namespace.bar",
+		sPrefix : "PRODUCT_2_SUPPLIER/"
+	}, {
+		sPath : "/Products/@namespace.foo/0/Value/$AnnotationPath/",
+		sPathForGetExpression : "/Products/@namespace.foo/0/Value/$AnnotationPath",
+		sPathForFetchObject : "/Products/@namespace.foo/0/Value/$AnnotationPath",
+		sPathValue : "PRODUCT_2_SUPPLIER/@namespace.bar",
+		sPrefix : "PRODUCT_2_SUPPLIER/"
+	}, {
+		sPath : "/Products/@namespace.foo/0/Value/$AnnotationPath/",
+		sPathForGetExpression : "/Products/@namespace.foo/0/Value/$AnnotationPath",
+		sPathForFetchObject : "/Products/@namespace.foo/0/Value/$AnnotationPath",
+		sPathValue : "PRODUCT_2_SUPPLIER@namespace.bar",
+		sPrefix : ""
+	}].forEach(function (oFixture, i) {
+		QUnit.test("format: with $Path in value - " + i, function (assert) {
+			var oMetaModel = {
+					fetchObject : function () {},
+					getObject : function () {}
+				},
+				oMetaModelMock = this.mock(oMetaModel),
+				oContext = new BaseContext(oMetaModel, oFixture.sPath),
+				vRawValue = {},
+				vResult = {/*string or Promise*/};
+
+			oMetaModelMock.expects("fetchObject")
+				.withExactArgs(oFixture.sPathForFetchObject)
+				.returns(SyncPromise.resolve(oFixture.sPathValue));
+			this.mock(Expression).expects("getExpression")
+				.withExactArgs({
+					asExpression : false,
+					complexBinding : true,
+					model : sinon.match.same(oMetaModel),
+					path : oFixture.sPathForGetExpression || oFixture.sPath,
+					prefix : oFixture.sPrefix,
+					value : sinon.match.same(vRawValue),
+					$$valueAsPromise : true
+				})
+				.returns(vResult);
+
+			// code under test
+			AnnotationHelper.format(vRawValue, {context : oContext}).then(function (vResult0) {
+				assert.strictEqual(vResult0, vResult);
+			});
+		});
+	});
+
+	//*********************************************************************************************
+	["$PropertyPath", "$NavigationPropertyPath"].forEach(function (sPathSuffix) {
+		QUnit.test("format: unsupported path: " + sPathSuffix, function (assert) {
+			var sPath = "/Foo/@namespace.annotation/Value/" + sPathSuffix + "/";
+
+			this.mock(Expression).expects("getExpression").never();
+
+			assert.throws(function () {
+				// code under test
+				AnnotationHelper.format({}, {context : new BaseContext({}, sPath)});
+			}, new Error("Unsupported path segment " + sPathSuffix + " in " + sPath));
+		});
+	});
+
+	//*********************************************************************************************
+	[
+		"/Foo/@namespace.annotation/Value/$Path/@namespace.other/Value/$Path/",
+		"/Foo/@namespace.annotation/Value/$AnnotationPath/@namespace.other/Value/$Path/",
+		"/Foo/@namespace.annotation/Value/$Path/@namespace.other/Value/$AnnotationPath/",
+		"/Foo/@namespace.annotation/Value/$AnnotationPath/@namespace.other/Value/$AnnotationPath/"
+	].forEach(function (sPath) {
+		QUnit.test("format: unsupported path: " + sPath, function (assert) {
+			this.mock(Expression).expects("getExpression").never();
+
+			assert.throws(function () {
+				// code under test
+				AnnotationHelper.format({}, {context : new BaseContext({}, sPath)});
+			}, new Error("Only one $Path or $AnnotationPath segment is supported: " + sPath));
 		});
 	});
 
@@ -651,6 +775,7 @@ sap.ui.define([
 				complexBinding : true,
 				model : sinon.match.same(oModel),
 				path : "/Equipments/@com.sap.vocabularies.UI.v1.LineItem/4/Value",
+				prefix : "",
 				value : sinon.match.same(vRawValue),
 				$$valueAsPromise : true
 			}).callThrough();
