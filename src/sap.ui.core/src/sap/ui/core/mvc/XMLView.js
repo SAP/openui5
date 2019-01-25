@@ -792,7 +792,7 @@ sap.ui.define([
 				library: "sap.ui.core"
 			},
 			renderer: function(oRM, oControl) {
-				oRM.write(""); // onAfterRendering is only called if control produces output
+				oRM.text(""); // onAfterRendering is only called if control produces output
 			}
 		});
 
