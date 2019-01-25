@@ -32,6 +32,11 @@
 			</Breadcrumbs>
 		</semantic:titleBreadcrumbs>
 
+		<!-- Title Snapped On Mobile Content-->
+		<semantic:titleSnappedOnMobile>
+			<Title text="Header Title On Phone"/>
+		</semantic:titleSnappedOnMobile>
+
 		<!-- Title Content-->
 		<semantic:titleContent>
 			<Image src="./test-resources/sap/f/images/KPI.png" tooltip="This is just a placeholder, not a real KPI control." height="2rem" width="3.5rem"/>
