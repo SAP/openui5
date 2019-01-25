@@ -143,6 +143,11 @@
 		  "target": "cardContainer"
 		},
 		{
+		  "pattern": "timelineContent",
+		  "name": "timelineContent",
+		  "target": "timelineContent"
+		},
+		{
 		  "pattern": "services",
 		  "name": "services",
 		  "target": "services"
@@ -227,6 +232,11 @@
 		"services": {
 		  "viewId": "services",
 		  "viewName": "Services",
+		  "viewLevel": 1
+		},
+		"timelineContent": {
+		  "viewId": "timelineContent",
+		  "viewName": "timelineContent",
 		  "viewLevel": 1
 		}
 	  }
