@@ -580,7 +580,12 @@ sap.ui.define(['jquery.sap.global',
 					oDTPEnd = oFrag.byId("myPopoverFrag", "endDate"),
 					oOKButton = oFrag.byId("myPopoverFrag", "OKButton");
 
-				this._validateDateTimePicker(oDTPStart, oDTPEnd);
+				if (oEvent.getParameter("valid")) {
+					this._validateDateTimePicker(oDTPStart, oDTPEnd);
+				} else {
+					oEvent.getSource().setValueState("Error");
+				}
+
 				this.updateButtonEnabledState(oDTPStart, oDTPEnd, oOKButton);
 			},
 
@@ -590,7 +595,12 @@ sap.ui.define(['jquery.sap.global',
 					oDateTimePickerEnd = oFrag.byId("myFrag", "endDate"),
 					oBeginButton = this.oNewAppointmentDialog.getBeginButton();
 
-				this._validateDateTimePicker(oDateTimePickerStart, oDateTimePickerEnd);
+				if (oEvent.getParameter("valid")) {
+					this._validateDateTimePicker(oDateTimePickerStart, oDateTimePickerEnd);
+				} else {
+					oEvent.getSource().setValueState("Error");
+				}
+
 				this.updateButtonEnabledState(oDateTimePickerStart, oDateTimePickerEnd, oBeginButton);
 			},
 
