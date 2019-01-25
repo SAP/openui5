@@ -598,6 +598,31 @@ sap.ui.define([
 		return oFormat;
 	};
 
+	/**
+	 * Returns a default unit format/parse pattern for the given unit short name.
+	 * The returned pattern can then be used for custom units, for example as a <code>unitPattern-count-other</code> pattern.
+	 * The <code>unitPattern-count-other</code> pattern is then used by NumberFormat instances as a fallback in case
+	 * no other patterns are defined, see the below example:
+	 *
+	 * <pre>
+	 * var oFormat = NumberFormat.getUnitInstance({
+	 *     "customUnits": {
+	 *         "myUnit": {
+	 *             "unitPattern-count-other": NumberFormat.getDefaultUnitPattern("Bottles"); // returns "{0} Bottles"
+	 *         }
+	 *     }
+	 * });
+	 * oFormat.format(1234, "myUnit"); // returns "1.234,00 Bottles"
+	 * </pre>
+	 *
+	 * @param {string} sShortName the short name of the unit used in the created pattern
+	 * @returns {string} a pattern, which can be used for formatting and parsing a custom unit of measure
+	 * @sap-restricted sap.ui.model.odata.type
+	 * @private
+	 */
+	NumberFormat.getDefaultUnitPattern = function(sShortName) {
+		return "{0} " + sShortName;
+	};
 
 	/**
 	 * Get locale dependent default format options.
