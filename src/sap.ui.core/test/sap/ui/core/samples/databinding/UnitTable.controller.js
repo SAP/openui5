@@ -127,6 +127,17 @@ sap.ui.define([
 
 			this.getView().setModel(new JSONModel(aLocales), "loc");
 
+			this.getView().setModel(new JSONModel({
+				value: 128,
+				unit: "gigabyte",
+				customUnits: {
+					gigabyte: {
+						"displayName": "GB",
+						"unitPattern-count-other": "{0} GIGABYTE!"
+					}
+				}
+			}), "boundUnits");
+
 			this.setupFormatters();
 		},
 
