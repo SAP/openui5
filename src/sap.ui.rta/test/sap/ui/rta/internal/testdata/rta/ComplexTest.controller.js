@@ -243,7 +243,8 @@ sap.ui.define([
 						this._oDialog = new Dialog({
 							id: oComponent.createId("SmartFormDialog"),
 							showHeader: false,
-							content: this._oDialogForm
+							content: this._oDialogForm,
+							contentHeight: "85%"
 						});
 						this.getView().addDependent(this._oDialog);
 
