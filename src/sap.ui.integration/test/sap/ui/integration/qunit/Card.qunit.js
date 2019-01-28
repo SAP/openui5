@@ -288,6 +288,91 @@ function (
 		}
 	};
 
+	var oManifest_ObjectCard = {
+		"sap.app": {
+			"type": "card"
+		},
+		"sap.card": {
+			"type": "Object",
+			"data": {
+				"json": {
+					"firstName": "Donna",
+					"lastName": "Moore",
+					"position": "Sales Executive",
+					"phone": "+1 202 555 5555",
+					"photo": "../images/Woman_avatar_01.png",
+					"manager": {
+						"firstName": "John",
+						"lastName": "Miller",
+						"photo": "../images/Woman_avatar_02.png"
+					},
+					"company": {
+						"name": "Company A",
+						"address": "481 West Street, Anytown OH 45066, USA",
+						"website": "www.company_a.example.com"
+					}
+				}
+			},
+			"header": {
+				"icon": {
+					"src": "{photo}"
+				},
+				"title": "{firstName} {lastName}",
+				"subTitle": "{position}"
+			},
+			"content": {
+				"groups": [
+					{
+						"title": "Contact Details",
+						"items": [
+							{
+								"label": "First Name",
+								"value": "{firstName}"
+							},
+							{
+								"label": "Last Name",
+								"value": "{lastName}"
+							},
+							{
+								"label": "Phone",
+								"value": "{phone}"
+							}
+						]
+					},
+					{
+						"title": "Organizational Details",
+						"items": [
+							{
+								"label": "Direct Manager",
+								"value": "{manager/firstName} {manager/lastName}",
+								"icon": {
+									"src": "{manager/photo}"
+								}
+							}
+						]
+					},
+					{
+						"title": "Company Details",
+						"items": [
+							{
+								"label": "Company Name",
+								"value": "{company/name}"
+							},
+							{
+								"label": "Address",
+								"value": "{company/address}"
+							},
+							{
+								"label": "Website",
+								"link": "{company/website}"
+							}
+						]
+					}
+				]
+			}
+		}
+	};
+
 	var oManifest_AvatarHeader = {
 		"sap.card": {
 			"type": "List",
@@ -640,6 +725,87 @@ function (
 
 		// Act
 		this.oCard.setManifest(oManifest_AnalyticalCard);
+	});
+
+	QUnit.module("Object Card", {
+		beforeEach: function () {
+			this.oCard = new Card({
+				width: "400px",
+				height: "600px"
+			});
+
+			this.oCard.placeAt(DOM_RENDER_LOCATION);
+			Core.applyChanges();
+		},
+		afterEach: function () {
+			this.oCard.destroy();
+			this.oCard = null;
+		}
+	});
+
+	QUnit.test("Object Card - using manifest", function (assert) {
+
+		// Arrange
+		var done = assert.async();
+		var oHeaderPromise = new Promise(function (resolve) {
+			this.oCard.attachEvent("_headerUpdated", function () {
+				resolve();
+			});
+		}.bind(this));
+		var oContentPromise = new Promise(function (resolve) {
+			this.oCard.attachEvent("_contentUpdated", function () {
+				resolve();
+			});
+		}.bind(this));
+
+		Promise.all([oHeaderPromise, oContentPromise]).then(function () {
+			var oObjectContent = this.oCard.getAggregation("_content");
+			var oContent = oObjectContent.getAggregation("_content");
+			var oHeader = this.oCard.getAggregation("_header");
+			var aGroups = oContent.getItems();
+			var oData = oManifest_ObjectCard["sap.card"].data.json;
+			var oManifestContent = oManifest_ObjectCard["sap.card"].content;
+
+			assert.equal(aGroups.length, 3, "Should have 3 groups.");
+
+			// Header assertions
+			assert.equal(oHeader.getTitle(), oData.firstName + " " + oData.lastName, "Should have correct header title.");
+			assert.equal(oHeader.getSubtitle(), oData.position, "Should have correct header subtitle.");
+			assert.equal(oHeader.getIconSrc(), oData.photo, "Should have correct header icon source.");
+
+			// Group 1 assertions
+			assert.equal(aGroups[0].getItems().length, 7, "Should have 7 items.");
+			assert.equal(aGroups[0].getItems()[0].getText(), oManifestContent.groups[0].title, "Should have correct group title.");
+			assert.equal(aGroups[0].getItems()[1].getText(), oManifestContent.groups[0].items[0].label, "Should have correct item label.");
+			assert.equal(aGroups[0].getItems()[2].getText(), oData.firstName, "Should have correct item value.");
+			assert.equal(aGroups[0].getItems()[3].getText(), oManifestContent.groups[0].items[1].label, "Should have correct item label.");
+			assert.equal(aGroups[0].getItems()[4].getText(), oData.lastName, "Should have correct item value.");
+			assert.equal(aGroups[0].getItems()[5].getText(), oManifestContent.groups[0].items[2].label, "Should have correct item label.");
+			assert.equal(aGroups[0].getItems()[6].getText(), oData.phone, "Should have correct item value.");
+
+			// Group 2 assertions
+			assert.equal(aGroups[1].getItems().length, 2, "Should have 2 items.");
+			assert.equal(aGroups[1].getItems()[0].getText(), oManifestContent.groups[1].title, "Should have correct group title.");
+			assert.equal(aGroups[1].getItems()[1].getItems()[0].getSrc(), oData.manager.photo, "Should have correct image source.");
+			assert.equal(aGroups[1].getItems()[1].getItems()[1].getItems()[0].getText(), oManifestContent.groups[1].items[0].label, "Should have correct item label");
+			assert.equal(aGroups[1].getItems()[1].getItems()[1].getItems()[1].getText(), oData.manager.firstName + " " + oData.manager.lastName, "Should have correct item value.");
+
+			// Group 3 assertions
+			assert.equal(aGroups[2].getItems().length, 7, "Should have 7 items.");
+			assert.equal(aGroups[2].getItems()[0].getText(), oManifestContent.groups[2].title, "Should have correct group title.");
+			assert.equal(aGroups[2].getItems()[1].getText(), oManifestContent.groups[2].items[0].label, "Should have correct item label.");
+			assert.equal(aGroups[2].getItems()[2].getText(), oData.company.name, "Should have correct item value.");
+			assert.equal(aGroups[2].getItems()[3].getText(), oManifestContent.groups[2].items[1].label, "Should have correct item label.");
+			assert.equal(aGroups[2].getItems()[4].getText(), oData.company.address, "Should have correct item value.");
+			assert.equal(aGroups[2].getItems()[5].getText(), oManifestContent.groups[2].items[2].label, "Should have correct item label.");
+			assert.equal(aGroups[2].getItems()[6].getText(), oData.company.website, "Should have correct item value.");
+			assert.equal(aGroups[2].getItems()[6].getHref(), oData.company.website, "Should have correct item link.");
+
+			done();
+		}.bind(this));
+
+		// Act
+		this.oCard.setManifest(oManifest_ObjectCard);
 	});
 
 	QUnit.module("Card Accessibility", {
