@@ -364,7 +364,7 @@ sap.ui.define([
 		var oNode = this.isLegacySyntax() ? this.oData : null;
 		if (oContext instanceof Context) {
 			oNode = this._getObject(oContext.getPath());
-		} else if (oContext) {
+		} else if (oContext != null) {
 			oNode = oContext;
 		}
 		if (!sPath) {
