@@ -129,7 +129,7 @@ sap.ui.define(["./DragDropBase"],
 
 		// droppable by default
 		var sTargetAggregation = this.getTargetAggregation();
-		if (!DragDropBase.checkMetadata(oDropTarget, sTargetAggregation, "droppable")) {
+		if (!this.checkMetadata(oDropTarget, sTargetAggregation, "droppable")) {
 			return false;
 		}
 

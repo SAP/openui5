@@ -88,7 +88,7 @@ sap.ui.define(["./DragDropBase"],
 
 		// metadata restrictions
 		var sSourceAggregation = this.getSourceAggregation();
-		if (!DragDropBase.checkMetadata(oDragSource, sSourceAggregation, "draggable")) {
+		if (!this.checkMetadata(oDragSource, sSourceAggregation, "draggable")) {
 			return false;
 		}
 
