@@ -5,7 +5,6 @@
 
 .sapMMsgStrip {
 	border-radius: 0.25rem;
-	padding: 0.5rem 1rem;
 }
 
 .sapMMsgStripCloseButton {
@@ -43,5 +42,15 @@
 		// we need white color in both light and
 		// dark versions when close button is active
 		border-color: @sapUiContentContrastFocusColor;
+	}
+}
+
+.sapMMsgStripInformation {
+	background-color: @sapInformationBackground;
+	border-color: @sapInformationBorderColor;
+	color: @sapUiBaseText;
+
+	& .sapMMsgStripIcon {
+		color: @sapInformativeElementColor;
 	}
 }
