@@ -17,5 +17,20 @@
 }
 
 html.sap-desktop .sapMShellCentralBox {
-	box-shadow: 0 0 24px fade(@sapUiContentShadowColor, 15);
+	box-shadow: none;
+}
+
+.sapMShellBrandingBar {
+	background-color: transparent;
+}
+
+.sapMShellGlobalOuterBackground {
+	background: @sapUiShellColor;
+}
+
+html.sap-desktop {
+	.sapMShellLogo,
+	.sapMShellAppWidthLimited .sapMShellLogo {
+		margin: 1rem 1rem 0 0;
+	}
 }
