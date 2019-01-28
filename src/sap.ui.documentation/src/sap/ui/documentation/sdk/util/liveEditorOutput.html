@@ -77,7 +77,9 @@
                         var oErrorOutput = document.createElement("span");
                         oErrorOutput.innerText = error.message; // use save API
                         oErrorOutput.style.cssText = "position:absolute; top:1rem; left:1rem";
-                        document.write("<span></span>"); // add content via document.write to ensure document.body is created;
+                        if (!document.body) {
+                            document.write("<span></span>"); // add content via document.write to ensure document.body is created;
+                        }
                         document.body.appendChild(oErrorOutput);
                     })
                 },
