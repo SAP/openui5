@@ -10,7 +10,7 @@
 				<ToolbarSpacer/>
 				<SearchField
 					width="50%"
-					search="onFilterInvoices"/>
+					search=".onFilterInvoices"/>
 			</Toolbar>
 		</headerToolbar>
 		<Table
@@ -53,7 +53,7 @@
 			<items>
 				<ColumnListItem
 					type="Navigation"
-					press="onPress">
+					press=".onPress">
 					<cells>
 						<ObjectNumber number="{invoice>Quantity}" emphasized="false"/>
 						<ObjectIdentifier title="{invoice>ProductName}"/>

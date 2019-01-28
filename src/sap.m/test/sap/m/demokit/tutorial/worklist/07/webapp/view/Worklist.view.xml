@@ -75,7 +75,7 @@
 							<SearchField
 								id="searchField"
 								tooltip="{i18n>worklistSearchTooltip}"
-								search="onSearch"
+								search=".onSearch"
 								width="auto">
 							</SearchField>
 						</Toolbar>
@@ -115,7 +115,7 @@
 					<items>
 						<ColumnListItem
 							type="Navigation"
-							press="onPress">
+							press=".onPress">
 							<cells>
 								<ObjectIdentifier
 									title="{ProductName}"/>

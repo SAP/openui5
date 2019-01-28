@@ -35,14 +35,14 @@
 				mode="{= ${device>/system/phone} ? 'None' : 'SingleSelectMaster'}"
 				growing="true"
 				growingScrollToLoad="true"
-				updateFinished="onUpdateFinished"
-				selectionChange="onSelectionChange">
+				updateFinished=".onUpdateFinished"
+				selectionChange=".onSelectionChange">
 				<infoToolbar>
 					<Toolbar
 						active="true"
 						id="filterBar"
 						visible="{masterView>/isFilterBarVisible}"
-						press="onOpenViewSettings">
+						press=".onOpenViewSettings">
 						<Title
 							id="filterBarLabel"
 							text="{masterView>/filterBarLabel}" />
@@ -55,7 +55,7 @@
 							showRefreshButton="true"
 							tooltip="{i18n>masterSearchTooltip}"
 							width="100%"
-							search="onSearch">
+							search=".onSearch">
 							<layoutData>
 								<OverflowToolbarLayoutData
 									minWidth="150px"
@@ -67,12 +67,12 @@
 						<ToolbarSpacer/>
 						<Button
 							id="filterButton"
-							press="onOpenViewSettings"
+							press=".onOpenViewSettings"
 							icon="sap-icon://filter"
 							type="Transparent"/>
 						<Button
 							id="groupButton"
-							press="onOpenViewSettings"
+							press=".onOpenViewSettings"
 							icon="sap-icon://group-2"
 							type="Transparent"/>
 					</OverflowToolbar>
@@ -80,7 +80,7 @@
 				<items>
 					<ObjectListItem
 						type="{= ${device>/system/phone} ? 'Active' : 'Inactive'}"
-						press="onSelectionChange"
+						press=".onSelectionChange"
 						title="{
 							parts: [
 								'i18n>commonItemTitle',

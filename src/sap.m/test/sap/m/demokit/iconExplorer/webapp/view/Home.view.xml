@@ -38,7 +38,7 @@
 							suggestionRows="{
 								path: '/AllIcons'
 							}"
-							suggestionItemSelected="onSuggestionSelect"
+							suggestionItemSelected=".onSuggestionSelect"
 							valueLiveUpdate="true"
 							startSuggestion="2"
 							liveChange=".onSearch">
