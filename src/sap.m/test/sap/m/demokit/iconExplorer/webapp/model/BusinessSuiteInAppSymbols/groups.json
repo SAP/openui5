@@ -280,7 +280,9 @@
 				{"name" : "icon-alternative-sequence"},
 				{"name" : "icon-main-sequence"},
 				{"name" : "icon-causes"},
-				{"name" : "icon-effects"}
+				{"name" : "icon-effects"},
+				{"name" : "icon-function-alert"},
+				{"name" : "icon-function-hierarchy"}
 			]
 		},
 		{
@@ -519,7 +521,9 @@
 				{"name" : "icon-alternative-sequence"},
 				{"name" : "icon-main-sequence"},
 				{"name" : "icon-delay"},
-				{"name" : "icon-alert-groups"}
+				{"name" : "icon-alert-groups"},
+				{"name" : "icon-function-alert"},
+				{"name" : "icon-function-hierarchy"}
 			]
 		},
 		{
