@@ -526,6 +526,7 @@ sap.ui.define([
 				var bValid = true;
 				var iValueIndex = 0;
 				var iPatternIndex = 0;
+				var rDelimiter = /[\u002d\u007E\u2010\u2011\u2012\u2013\u2014\ufe58\ufe63\uff0d\uFF5E]/;
 
 				// Compare the letters in oPart.value (the pattern) and sValue (the given string to parse)
 				// one by one.
@@ -534,18 +535,22 @@ sap.ui.define([
 				for (; iPatternIndex < oPart.value.length; iPatternIndex++) {
 					sChar = oPart.value.charAt(iPatternIndex);
 
-					if (sChar !== " ") {
-						// if it's not a space, there must be an exact match
-						if (sValue.charAt(iValueIndex) !== sChar) {
-							bValid = false;
-						}
-
-						iValueIndex++;
-					} else {
+					if (sChar === " ") {
 						// allows to have multiple spaces
 						while (sValue.charAt(iValueIndex) === " ") {
 							iValueIndex++;
 						}
+					} else if (rDelimiter.test(sChar)) {
+						if (!rDelimiter.test(sValue.charAt(iValueIndex))) {
+								bValid = false;
+						}
+						iValueIndex++;
+					} else {
+						if (sValue.charAt(iValueIndex) !== sChar) {
+							// if it's not a space, there must be an exact match
+							bValid = false;
+						}
+						iValueIndex++;
 					}
 
 					if (!bValid) {
