@@ -1263,6 +1263,9 @@ sap.ui.define([
 			bShrinkable = oLayoutData && oLayoutData.isA("sap.m.ToolbarLayoutData") ? oLayoutData.getShrinkable() : false,
 			iMinWidth = bShrinkable ? parseInt(oLayoutData.getMinWidth()) : 0,
 			bVisible = oControl.getVisible();
+		if (!oControl.getDomRef()) {
+			return typeof iOldSize !== "undefined" ? iOldSize : 0;
+		}
 
 		// For spacers, get the min-width + margins
 		if (oControl.isA("sap.m.ToolbarSpacer")) {
@@ -1273,10 +1276,6 @@ sap.ui.define([
 		// For other elements, get the outer width
 		} else {
 			iOptimalWidth = bVisible ? oControl.$().outerWidth(true) : 0;
-		}
-
-		if (iOptimalWidth === null) {
-			iOptimalWidth = typeof iOldSize !== "undefined" ? iOldSize : 0;
 		}
 
 		return iOptimalWidth;
