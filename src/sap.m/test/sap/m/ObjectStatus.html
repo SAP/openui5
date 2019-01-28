@@ -193,13 +193,14 @@
 					new sap.m.MessageToast.show("you click me");
 				}
 			}), new sap.m.ObjectStatus({
-				text : "John Doe Ñagçyfox",
+				text : "Large status",
 				state: "Error",
 				active : true,
 				press : function() {
 					new sap.m.MessageToast.show("you click me");
 				}
-			}), new sap.m.ObjectStatus({
+			}).addStyleClass("sapMObjectStatusLarge"),
+			new sap.m.ObjectStatus({
 				text : "John Doe Ñagçyfox",
 				state: "Warning"
 			}), new sap.m.ObjectStatus({
@@ -421,6 +422,12 @@
 	addToPage(new sap.m.ObjectStatus({
 		text : "Ñagçyfox Contract #D1234567890"
 	}), oPage);
+
+	addToPage(new sap.m.ObjectStatus({
+		title: "ObjectStatus with added Large class",
+		text : "and some text",
+		state: "Success"
+	}).addStyleClass("sapMObjectStatusLarge"), oPage);
 
 	addToPage(new sap.m.ObjectStatus({
 		state: "Error",
