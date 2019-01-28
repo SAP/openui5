@@ -7,6 +7,18 @@
         "type": "FIX",
         "text": " sap.m.FlexBox\u0026FixFlex: Controls are now valid droppable area",
         "references": []
+      },
+      {
+        "id": "52827031ba0582f39ab214df2627c1312a0cce48",
+        "type": "FIX",
+        "text": " DynamicSideContent: setShowMain/SideContent do not set the same value",
+        "references": []
+      },
+      {
+        "id": "c2033878d1186c2154cbd9fd81d0e5e0fe77eb1b",
+        "type": "FIX",
+        "text": " sap.ui.layout.BlockLayout: Correctly displayed in a Dialog in IE",
+        "references": []
       }
     ]
   }

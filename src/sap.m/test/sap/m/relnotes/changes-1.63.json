@@ -43,6 +43,150 @@
         "type": "FIX",
         "text": " sap.m.SelectDialog: Sample fixed",
         "references": []
+      },
+      {
+        "id": "11ca8007837726d8f56a76b63a461b8b493d8c36",
+        "type": "FEATURE",
+        "text": " sap.m.ObjectNumber: now supports Information state and Large design",
+        "references": []
+      },
+      {
+        "id": "97e8d9f78f67d6f0c1c57e996c0746b5be778f86",
+        "type": "FEATURE",
+        "text": " sap.m.ObjectStatus: Information value state is supported now",
+        "references": []
+      },
+      {
+        "id": "2a0feef7c58a84843e0daf90a1a36b033dfa5a2d",
+        "type": "FEATURE",
+        "text": " sap.m.OverflowToolbar: Updated Sample containing GenericTag",
+        "references": []
+      },
+      {
+        "id": "e1e3ec036ce9e2318eafb4ba5dd0b83f180559fd",
+        "type": "FIX",
+        "text": " m.Link: Self-reference application enhanced",
+        "references": []
+      },
+      {
+        "id": "6abdf1218f2772b27cb0a5b2dc9940ab0a514a66",
+        "type": "FIX",
+        "text": " sap.f/sap.m.SemanticPage: Messages indicator reading improved",
+        "references": []
+      },
+      {
+        "id": "638bb1dc14915947cc3d5eff066cb8035f1126f0",
+        "type": "FIX",
+        "text": " sap.m.Button: getCustomData function is overwritten inside CombineButtons",
+        "references": []
+      },
+      {
+        "id": "3536752fcb519c08d3c5fb6417d38c88ecab644d",
+        "type": "FIX",
+        "text": " sap.m.CheckBox: Focus outline in a Form for IE11 fixed",
+        "references": []
+      },
+      {
+        "id": "84a049560e960c5f4d2abccef181c8881f6ef995",
+        "type": "FIX",
+        "text": " sap.m.ComboBoxBase: `clearFilter` and `insertItem` corrected",
+        "references": []
+      },
+      {
+        "id": "c800a0e8618aeb59d7dc691742fcc014c7c73bf5",
+        "type": "FIX",
+        "text": " sap.m.DateRangeSelection: Error handling is correct now in case of parsing binded value",
+        "references": []
+      },
+      {
+        "id": "71446174015ae31f509467faf179ae93f3f715ce",
+        "type": "FIX",
+        "text": " sap.m.FormattedText: add overflow classes when needed",
+        "references": []
+      },
+      {
+        "id": "c7237702c2ff882bf7c3693cbb4f9c655c82df58",
+        "type": "FIX",
+        "text": " sap.m.Image: Fixed failing qUnit tests in IE and Edge",
+        "references": []
+      },
+      {
+        "id": "32900dbd71f2de24a1caa7cc3bf49ba0521b8f6a",
+        "type": "FIX",
+        "text": " sap.m.Input: allow focus to be set in suggestion popup",
+        "references": []
+      },
+      {
+        "id": "5488d9a3ef8adb04a5a9dbd08ac2caba33590e0e",
+        "type": "FIX",
+        "text": " sap.m.MultiComboBox: Adjust tokenizer padding",
+        "references": []
+      },
+      {
+        "id": "ac5fd008a838cba6e1c60dbfd0274439492e1c3f",
+        "type": "FIX",
+        "text": " sap.m.MultiComboBox: adaptation for qUnit in IE after Popup Change",
+        "references": []
+      },
+      {
+        "id": "61da95aa77926ebad9bc09aa720203a2ab83d7e2",
+        "type": "FIX",
+        "text": " sap.m.ObjectAttribute: correct vertical alignment",
+        "references": []
+      },
+      {
+        "id": "127e5dcc8436b2907816f3b586e9ce3899c93904",
+        "type": "FIX",
+        "text": " sap.m.ObjectAttribute: remove regex for the title",
+        "references": []
+      },
+      {
+        "id": "f50e5de7e592d2b5c57084369985f1544f03c923",
+        "type": "FIX",
+        "text": " sap.m.ObjectStatus: misalignment in table",
+        "references": []
+      },
+      {
+        "id": "03f9616157babaf3f1e33b9e553b192afa9c1637",
+        "type": "FIX",
+        "text": " sap.m.PlanningCalendar: Preserve hours on navigating in all views",
+        "references": []
+      },
+      {
+        "id": "cc08e6ef8098aa5401e2c54c258be8ebf49ca496",
+        "type": "FIX",
+        "text": " sap.m.PlanningCalendar: sample handles correctly invalid dates",
+        "references": []
+      },
+      {
+        "id": "ec564e6df06a9360e3861f68dd0330b5fb40b55d",
+        "type": "FIX",
+        "text": " sap.m.SelectDialog Fixed broken link and grammar in doc",
+        "references": []
+      },
+      {
+        "id": "08879023e481eb6f62e47c8b31f76342bd2643f9",
+        "type": "FIX",
+        "text": " sap.m.SelectDialog: fixed missing source in SDK sample",
+        "references": []
+      },
+      {
+        "id": "aae99841abfb24cba3a842ae62256698d6a4556c",
+        "type": "FIX",
+        "text": " sap.m.StepInput: mouse wheel behavior",
+        "references": []
+      },
+      {
+        "id": "b7c28993ccd75c118fdf98dbcb81b856b45c0991",
+        "type": "FIX",
+        "text": " sap.m.ValueStateMsg: Text is correctly displayed in a Dialog",
+        "references": []
+      },
+      {
+        "id": "0c9bdd8452c054ca137eb8d73c0e9aa3953bf1f8",
+        "type": "FIX",
+        "text": " sap.m.Wizard: showNextButton\u003dfalse now works on initial rendering",
+        "references": []
       }
     ]
   }

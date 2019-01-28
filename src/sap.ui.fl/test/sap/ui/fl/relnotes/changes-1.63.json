@@ -7,6 +7,12 @@
         "type": "FIX",
         "text": " sap.ui.fl - trim etag for cachekey",
         "references": []
+      },
+      {
+        "id": "4392d0bec29b80885eb13e96c805a698fc8ac93e",
+        "type": "FEATURE",
+        "text": " Modify the RTA publish functionality in order to publish the",
+        "references": []
       }
     ]
   }

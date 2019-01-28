@@ -1,0 +1,13 @@
+{
+  "1.63.0": {
+    "date": "January 2019",
+    "notes": [
+      {
+        "id": "1f55855bea5ae4157f9daff2437271701470a548",
+        "type": "FIX",
+        "text": " sap.uxap.ObjectPageLayout: Fixed wrong width calculation",
+        "references": []
+      }
+    ]
+  }
+}

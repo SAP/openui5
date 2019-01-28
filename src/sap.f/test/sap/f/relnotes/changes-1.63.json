@@ -7,6 +7,24 @@
         "type": "FEATURE",
         "text": " sap.f.Avatar: Fallback image behavior added",
         "references": []
+      },
+      {
+        "id": "10ae8ed63c7c172d2b77a2964579290c983deea6",
+        "type": "FEATURE",
+        "text": " sap.f.DynamicPageTitle: Added snappedTitleOnMobile aggregation",
+        "references": []
+      },
+      {
+        "id": "76c50df7ede3853beea4eb6cf8ac154a53ffef58",
+        "type": "FEATURE",
+        "text": " sap.f.SemanticPage: Implemented single-line title on phone",
+        "references": []
+      },
+      {
+        "id": "6abdf1218f2772b27cb0a5b2dc9940ab0a514a66",
+        "type": "FIX",
+        "text": " sap.f/sap.m.SemanticPage: Messages indicator reading improved",
+        "references": []
       }
     ]
   }
