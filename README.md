@@ -1,0 +1,1 @@
+# THE OPENUI5 WEBSITE (http://openui5.org) HAS BEEN MOVED TO A SEPARATE REPOSITORY — https://github.com/SAP/openui5-website

@@ -1,4 +1,0 @@
-User-agent: *
-Disallow: 
-
-Sitemap: http://SAP.github.io/openui5/sitemap.xml 
