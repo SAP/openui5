@@ -237,18 +237,30 @@ sap.ui.define([
 	GridBoxLayout.prototype._flattenHeight = function (oControl) {
 		var iMaxHeight = 0;
 
-		this._loopOverGridItems(oControl, function (oGridItem) {
-			// Collect max height of all items
-			oGridItem.style.height = null;
-			iMaxHeight = Math.max(oGridItem.getBoundingClientRect().height, iMaxHeight);
-		});
+		// We should set every item's height to auto and measure its value. If this is done on the real item this will result in flickering of the grid list.
+		// In order to avoid this we create one "hidden" container, which we will use for those measurements.
+		var $measuringContainer =  jQuery('<div style="position:absolute;top=-10000px;left=-10000px"></div>').appendTo(document.body);
 
 		this._loopOverGridItems(oControl, function (oGridItem) {
-			// apply height to all items
-			if (oGridItem.getBoundingClientRect().height < iMaxHeight) {
-				if (!oGridItem.classList.contains("sapMGHLI")) { // the item is not group header
-					oGridItem.style.height = iMaxHeight + "px";
-				}
+			// Collect max height of all items (except group headers)
+			if (!oGridItem.classList.contains("sapMGHLI")) {
+				var $oClonedItem = jQuery(jQuery.clone(oGridItem)).appendTo($measuringContainer);
+				$oClonedItem.css({
+					height: 'auto',
+					width: oGridItem.getBoundingClientRect().width
+				});
+
+				iMaxHeight = Math.max($oClonedItem.outerHeight(), iMaxHeight);
+				$oClonedItem.remove();
+			}
+		});
+
+		$measuringContainer.remove();
+
+		this._loopOverGridItems(oControl, function (oGridItem) {
+			// Apply height to all items
+			if (!oGridItem.classList.contains("sapMGHLI")) { // the item is not group header
+				oGridItem.style.height = iMaxHeight + "px";
 			}
 		});
 	};

@@ -29,14 +29,14 @@
 					<Toolbar>
 						<content>
 							<Title text="GridList, using custom header with SearchField" />
-							<ToolbarSpacer />
-							<SearchField width="15rem" />
+							<ToolbarSpacer/>
+							<SearchField width="15rem"/>
 						</content>
 					</Toolbar>
 				</f:headerToolbar>
 
 				<f:customLayout>
-					<grid:GridBoxLayout boxMinWidth="17rem"/>
+					<grid:GridBoxLayout/>
 				</f:customLayout>
 
 				<CustomListItem>
