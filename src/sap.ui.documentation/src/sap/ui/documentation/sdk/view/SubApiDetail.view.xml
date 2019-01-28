@@ -22,8 +22,7 @@
 							  upperCaseAnchorBar="false"
 							  busyIndicatorDelay="0">
 				<headerTitle>
-					<ObjectPageHeader id="title" objectTitle="{path:'/title', formatter:'.formatter.apiRefEntityName'}"
-									  objectSubtitle="{/subTitle}">
+					<ObjectPageHeader id="title" objectTitle="{/title}" objectSubtitle="{/subTitle}">
 						<actions>
 							<ObjectPageHeaderActionButton id="apiDetailBackToSearch" text="Back to search results" hideIcon="true" hideText="false" press="backToSearch" visible="false"/>
 							<ObjectPageHeaderActionButton
@@ -126,7 +125,7 @@
 															   columnTitles="Returns,Description"
 															   class="sapUiDocumentation2ColumnsEqualTable">
 												<custom:Row>
-													<m:Text text="{data>/returnValue/type}" wrapping="false"/>
+													<m:Text text="{path: 'data>/returnValue/type', formatter: 'sap.ui.base.ManagedObject.escapeSettingsValue'}" wrapping="false"/>
 													<custom:JSDocText text="{path: 'data>/returnValue/description', formatter: 'sap.ui.base.ManagedObject.escapeSettingsValue'}"/>
 												</custom:Row>
 											</custom:LightTable>

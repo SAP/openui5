@@ -1,4 +1,3 @@
-
 /*!
  * ${copyright}
  */
@@ -8,7 +7,39 @@ function(TreeItemBaseRenderer, Renderer) {
 
 	var DemokitTreeItemRender = Renderer.extend(TreeItemBaseRenderer);
 
-	DemokitTreeItemRender.renderLIContent = function(oRm, oControl) {
+	DemokitTreeItemRender.renderEntityType = function (oRm, oControl) {
+		var sType = oControl.getEntityType(),
+			sTypeAbbreviation = sType ? sType[0].toUpperCase() : "";
+
+		if (!sType) {
+			return;
+		}
+
+		oRm.write('<span');
+		oRm.addClass("sapUiDemoKitTreeItemIcon");
+		oRm.addClass("sapUiDemoKitTreeItem" + sTypeAbbreviation);
+		oRm.writeClasses();
+		oRm.write('>');
+
+		oRm.write(sTypeAbbreviation);
+
+		oRm.write('</span>');
+	};
+
+	DemokitTreeItemRender.renderTooltip = function(oRm, oControl) {
+		var sType = oControl.getEntityType(),
+			sTarget = oControl.getTarget();
+
+		if (sType && sTarget) {
+			oRm.writeAttributeEscaped("title", sType + " " + sTarget);
+		}
+	};
+
+	DemokitTreeItemRender.renderLIContent = function (oRm, oControl) {
+
+		this.renderEntityType(oRm, oControl);
+
+		oRm.write('<a href="' + oControl.getHref() + '">');
 
 		oRm.write('<span');
 		oRm.addClass("sapDemokitTreeItemTitle");
@@ -17,6 +48,8 @@ function(TreeItemBaseRenderer, Renderer) {
 		oRm.write('>');
 		oRm.writeEscaped(oControl.getTitle());
 		oRm.write('</span>');
+
+		oRm.write('</a>');
 
 		if (oControl.getDeprecated()) {
 			oRm.write('<span');

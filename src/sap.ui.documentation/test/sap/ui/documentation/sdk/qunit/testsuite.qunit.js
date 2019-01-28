@@ -37,12 +37,6 @@ sap.ui.define(["sap/ui/Device"], function(Device) {
 				}
 			},
 
-			"ApiMasterController": {
-				coverage: {
-					only : ["sap/ui/documentation/sdk/ApiMaster.controller"]
-				}
-			},
-
 			"LiveEditorOutput": {
 				coverage: {
 					only : ["sap/ui/documentation/sdk/util/LiveEditorOutput.html"]
