@@ -8,12 +8,17 @@ sap.ui.define([
 	'./Popover',
 	'sap/ui/core/Item',
 	'./ColumnListItem',
+	'./DisplayListItem',
+	'./StandardListItem',
 	'./Table',
 	'./library',
 	'sap/ui/core/IconPool',
 	'sap/ui/Device',
 	'sap/ui/core/Control',
+	'./Dialog',
 	'./SuggestionsPopover',
+	'./Toolbar',
+	'./ToolbarSpacer',
 	"sap/ui/dom/containsOrEquals",
 	"sap/base/assert",
 	"sap/base/util/deepEqual",
@@ -27,12 +32,17 @@ function(
 	Popover,
 	Item,
 	ColumnListItem,
+	DisplayListItem,
+	StandardListItem,
 	Table,
 	library,
 	IconPool,
 	Device,
 	Control,
+	Dialog,
 	SuggestionsPopover,
+	Toolbar,
+	ToolbarSpacer,
 	containsOrEquals,
 	assert,
 	deepEqual,
@@ -437,6 +447,16 @@ function(
 			this._oSuggPopover.destroy();
 			this._oSuggPopover = null;
 		}
+
+		if (this._oShowMoreButton) {
+			this._oShowMoreButton.destroy();
+			this._oShowMoreButton = null;
+		}
+
+		if (this._oButtonToolbar) {
+			this._oButtonToolbar.destroy();
+			this._oButtonToolbar = null;
+		}
 	};
 
 	/**
@@ -460,10 +480,15 @@ function(
 		}
 
 		if (this.getShowSuggestion()) {
+			this._oSuggPopover._sPopoverContentWidth = this.getMaxSuggestionWidth();
+			this._oSuggPopover._bEnableHighlighting = this.getEnableSuggestionsHighlighting();
+			this._oSuggPopover._bAutocompleEnabled = this.getAutocomplete();
+			this._oSuggPopover._bIsInputIncrementalType = this._isIncrementalType();
+
 			if (this.getShowTableSuggestionValueHelp()) {
-				this._oSuggPopover._addShowMoreButton();
+				this._addShowMoreButton();
 			} else {
-				this._oSuggPopover._removeShowMoreButton();
+				this._removeShowMoreButton();
 			}
 
 			oPopupInput = this._oSuggPopover._oPopupInput;
@@ -586,7 +611,7 @@ function(
 	 * @returns {boolean} Indicates if an item or row is selected
 	 */
 	Input.prototype._updateSelectionFromList = function () {
-		if (this._iPopupListSelectedIndex  < 0) {
+		if (this._oSuggPopover._iPopupListSelectedIndex  < 0) {
 			return false;
 		}
 
@@ -644,7 +669,7 @@ function(
 
 		this.updateInputField(sNewValue);
 
-		this._iPopupListSelectedIndex = -1;
+		this._oSuggPopover._iPopupListSelectedIndex = -1;
 
 		if (!(this._bUseDialog && this instanceof sap.m.MultiInput && this._isMultiLineMode)) {
 			this._closeSuggestionPopup();
@@ -797,7 +822,7 @@ function(
 
 		this.updateInputField(sNewValue);
 
-		this._iPopupListSelectedIndex = -1;
+		this._oSuggPopover._iPopupListSelectedIndex = -1;
 
 		if (!(this._bUseDialog && this instanceof sap.m.MultiInput && this._isMultiLineMode)) {
 			this._closeSuggestionPopup();
@@ -1007,20 +1032,6 @@ function(
 	};
 
 	/**
-	 * Helper method for keyboard navigation in suggestion items.
-	 *
-	 * @private
-	 * @param {sap.ui.core.Item} oItem Suggestion item.
-	 * @returns {boolean} Is the suggestion item selectable.
-	 */
-	Input.prototype._isSuggestionItemSelectable = function(oItem) {
-		// CSN# 1390866/2014: The default for ListItemBase type is "Inactive", therefore disabled entries are only supported for single and two-value suggestions
-		// for tabular suggestions: only check visible
-		// for two-value and single suggestions: check also if item is not inactive
-		return oItem.getVisible() && (this._hasTabularSuggestions() || oItem.getType() !== ListType.Inactive);
-	};
-
-	/**
 	 *  Helper method for distinguishing between incremental and non-incremental types of input.
 	 *
 	 * @private
@@ -1048,7 +1059,7 @@ function(
 		if (this._oSuggPopover && this._oSuggPopover._oPopover.isOpen()) {
 			// mark the event as already handled
 			oEvent.originalEvent._sapui_handledByControl = true;
-			this._iPopupListSelectedIndex = -1;
+			this._oSuggPopover._iPopupListSelectedIndex = -1;
 			this._closeSuggestionPopup();
 
 			// restore the initial value that was there before suggestion dialog
@@ -1254,7 +1265,7 @@ function(
 			setTimeout(function () {
 				var sNewValue = this.getDOMValue() || '';
 				if (sNewValue < this.getStartSuggestion()) {
-					this._iPopupListSelectedIndex = -1;
+					this._oSuggPopover._iPopupListSelectedIndex = -1;
 					this._closeSuggestionPopup();
 				}
 			}.bind(this), 0);
@@ -1271,12 +1282,17 @@ function(
 	 	 */
 		Input.prototype.setShowSuggestion = function(bValue){
 			this.setProperty("showSuggestion", bValue, true);
-			this._iPopupListSelectedIndex = -1;
+
 			if (bValue) {
 				this._oSuggPopover = this._getSuggestionsPopover();
+				this._oSuggPopover._iPopupListSelectedIndex = -1;
 			} else {
-				this._oSuggPopover && this._oSuggPopover._destroySuggestionPopup();
+				if (this._oSuggPopover) {
+					this._oSuggPopover._destroySuggestionPopup();
+					this._oSuggPopover._iPopupListSelectedIndex = -1;
+				}
 			}
+
 			return this;
 		};
 
@@ -1295,9 +1311,9 @@ function(
 			}
 
 			if (bValue) {
-				this._oSuggPopover._addShowMoreButton();
+				this._addShowMoreButton();
 			} else {
-				this._oSuggPopover._removeShowMoreButton();
+				this._removeShowMoreButton();
 			}
 			return this;
 		};
@@ -1354,9 +1370,168 @@ function(
 
 			this._iRefreshListTimeout = setTimeout(function () {
 				if (this._oSuggPopover) {
-					this._oSuggPopover._refreshListItems();
+					this._refreshListItems();
 				}
 			}.bind(this), 0);
+		};
+
+		/**
+		 * Helper function that refreshes list all items.
+		 */
+		Input.prototype._refreshListItems = function () {
+			var bShowSuggestion = this.getShowSuggestion();
+			var oRb = this._oRb;
+
+			this._oSuggPopover._iPopupListSelectedIndex = -1;
+
+			if (!bShowSuggestion ||
+				!this._bShouldRefreshListItems ||
+				!this.getDomRef() ||
+				(!this._bUseDialog && !this.$().hasClass("sapMInputFocused"))) {
+
+				return;
+			}
+
+			var oItem,
+				aItems = this.getSuggestionItems(),
+				aTabularRows = this.getSuggestionRows(),
+				sTypedChars = this._oSuggPopover._sTypedInValue || this.getDOMValue() || "",
+				bFilter = this.getFilterSuggests(),
+				aHitItems = [],
+				iItemsLength = 0,
+				oPopup = this._oSuggPopover._oPopover,
+				oListItemDelegate = {
+					ontouchstart : function(oEvent) {
+						(oEvent.originalEvent || oEvent)._sapui_cancelAutoClose = true;
+					}
+				},
+				oListItem,
+				i;
+
+			// only destroy items in simple suggestion mode
+			if (this._oSuggPopover._oList) {
+				if (this._oSuggPopover._oList instanceof Table) {
+					this._oSuggPopover._oList.removeSelections(true);
+				} else {
+					//TODO: avoid flickering when !bFilter
+					this._oSuggPopover._oList.destroyItems();
+				}
+			}
+
+			// hide suggestions list/table if the number of characters is smaller than limit
+			if (sTypedChars.length < this.getStartSuggestion()) {
+				// when the input has no value, close the Popup when not runs on the phone because the opened dialog on phone shouldn't be closed.
+				if (!this._bUseDialog) {
+					this._oSuggPopover._iPopupListSelectedIndex = -1;
+					this.cancelPendingSuggest();
+					oPopup.close();
+				} else {
+					// hide table on phone when value is empty
+					if (this._hasTabularSuggestions() && this._oSuggPopover._oList) {
+						this._oSuggPopover._oList.addStyleClass("sapMInputSuggestionTableHidden");
+					}
+				}
+
+				this.$("SuggDescr").text(""); // clear suggestion text
+				this.$("inner").removeAttr("aria-haspopup");
+				this.$("inner").removeAttr("aria-activedescendant");
+				return false;
+			}
+
+			if (this._hasTabularSuggestions()) {
+				// show list on phone (is hidden when search string is empty)
+				if (this._bUseDialog && this._oSuggPopover._oList) {
+					this._oSuggPopover._oList.removeStyleClass("sapMInputSuggestionTableHidden");
+				}
+
+				// filter tabular items
+				for (i = 0; i < aTabularRows.length; i++) {
+					if (!bFilter || this._fnFilter(sTypedChars, aTabularRows[i])) {
+						aTabularRows[i].setVisible(true);
+						aHitItems.push(aTabularRows[i]);
+					} else {
+						aTabularRows[i].setVisible(false);
+					}
+				}
+				this._getSuggestionsTable().invalidate();
+			} else {
+				// filter standard items
+				for (i = 0; i < aItems.length; i++) {
+					oItem = aItems[i];
+					if (!bFilter || this._fnFilter(sTypedChars, oItem)) {
+						if (aItems[i].isA("sap.ui.core.ListItem")) {
+							oListItem = new DisplayListItem(oItem.getId() + "-dli");
+							oListItem.setLabel(oItem.getText());
+							oListItem.setValue(oItem.getAdditionalText());
+						} else {
+							oListItem = new StandardListItem(oItem.getId() + "-sli");
+							oListItem.setTitle(oItem.getText());
+						}
+
+						oListItem.setType(oItem.getEnabled() ? ListType.Active : ListType.Inactive);
+						oListItem._oItem = oItem;
+						oListItem.addEventDelegate(oListItemDelegate);
+						aHitItems.push(oListItem);
+					}
+				}
+			}
+
+			iItemsLength = aHitItems.length;
+			var sAriaText = "";
+			if (iItemsLength > 0) {
+				// add items to list
+				if (iItemsLength == 1) {
+					sAriaText = oRb.getText("INPUT_SUGGESTIONS_ONE_HIT");
+				} else {
+					sAriaText = oRb.getText("INPUT_SUGGESTIONS_MORE_HITS", iItemsLength);
+				}
+				this.$("inner").attr("aria-haspopup", "true");
+
+				if (!this._hasTabularSuggestions()) {
+					for (i = 0; i < iItemsLength; i++) {
+						this._oSuggPopover._oList.addItem(aHitItems[i]);
+					}
+				}
+
+				if (!this._bUseDialog) {
+					if (this._sCloseTimer) {
+						clearTimeout(this._sCloseTimer);
+						this._sCloseTimer = null;
+					}
+					if (!oPopup.isOpen() && !this._sOpenTimer && (this.getValue().length >= this.getStartSuggestion())) {
+						this._sOpenTimer = setTimeout(function() {
+							this._sOpenTimer = null;
+							oPopup.open();
+						}.bind(this), 0);
+					}
+				}
+			} else {
+				sAriaText = oRb.getText("INPUT_SUGGESTIONS_NO_HIT");
+				this.$("inner").removeAttr("aria-haspopup");
+				this.$("inner").removeAttr("aria-activedescendant");
+
+				if (!this._bUseDialog) {
+					if (oPopup.isOpen()) {
+						this._sCloseTimer = setTimeout(function() {
+							this._oSuggPopover._iPopupListSelectedIndex = -1;
+							this.cancelPendingSuggest();
+							if (this._oSuggPopover._sTypedInValue) {
+								this.setDOMValue(this._oSuggPopover._sTypedInValue);
+							}
+							this._oSuggPopover._oProposedItem = null;
+							oPopup.close();
+						}.bind(this), 0);
+					}
+				} else {
+					// hide table on phone when there are no items to display
+					if (this._hasTabularSuggestions() && this._oSuggPopover._oList) {
+						this._oSuggPopover._oList.addStyleClass("sapMInputSuggestionTableHidden");
+					}
+				}
+			}
+
+			// update Accessibility text for suggestion
+			this.$("SuggDescr").text(sAriaText);
 		};
 
 		/**
@@ -1371,7 +1546,7 @@ function(
 
 			if (this._oSuggPopover) {
 				this._synchronizeSuggestions();
-				this._oSuggPopover._createSuggestionPopupContent();
+				this._createSuggestionPopupContent();
 			}
 
 			return this;
@@ -1390,7 +1565,7 @@ function(
 
 			if (this._oSuggPopover) {
 				this._synchronizeSuggestions();
-				this._oSuggPopover._createSuggestionPopupContent();
+				this._createSuggestionPopupContent();
 			}
 
 			return this;
@@ -1444,7 +1619,7 @@ function(
 			oItem.setType(ListType.Active);
 			this.addAggregation("suggestionRows", oItem);
 			this._synchronizeSuggestions();
-			this._oSuggPopover._createSuggestionPopupContent();
+			this._createSuggestionPopupContent();
 			return this;
 		};
 
@@ -1460,7 +1635,7 @@ function(
 			oItem.setType(ListType.Active);
 			this.insertAggregation("suggestionRows", oItem, iIndex);
 			this._synchronizeSuggestions();
-			this._oSuggPopover._createSuggestionPopupContent();
+			this._createSuggestionPopupContent();
 			return this;
 		};
 
@@ -1503,7 +1678,7 @@ function(
 
 		Input.prototype.bindAggregation = function() {
 			if (arguments[0] === "suggestionRows" || arguments[0] === "suggestionColumns" || arguments[0] === "suggestionItems") {
-				this._getSuggestionsPopover()._createSuggestionPopupContent(arguments[0] === "suggestionRows" || arguments[0] === "suggestionColumns");
+				this._createSuggestionPopupContent(arguments[0] === "suggestionRows" || arguments[0] === "suggestionColumns");
 				this._bBindingUpdated = true;
 			}
 			return InputBase.prototype.bindAggregation.apply(this, arguments);
@@ -1817,6 +1992,173 @@ function(
 	};
 
 	/**
+	 * Gets show more button.
+	 *
+	 * @private
+	 * @return {sap.m.Button} Show more button.
+	 */
+	Input.prototype._getShowMoreButton = function() {
+		return this._oShowMoreButton || (this._oShowMoreButton = new sap.m.Button({
+			text : this._oRb.getText("INPUT_SUGGESTIONS_SHOW_ALL"),
+			press : function() {
+				if (this.getShowTableSuggestionValueHelp()) {
+					this.fireValueHelpRequest({fromSuggestions: true});
+					this._oSuggPopover._iPopupListSelectedIndex = -1;
+					this._closeSuggestionPopup();
+				}
+			}.bind(this)
+		}));
+	};
+
+	/**
+	 * Adds a show more button to the footer of the tabular suggestion popup/dialog.
+	 *
+	 * @private
+	 * @param{boolean} [bTabular] optional parameter to force override the tabular suggestions check
+	 */
+	Input.prototype._addShowMoreButton = function(bTabular) {
+		var oPopup = this._oSuggPopover && this._oSuggPopover._oPopover;
+
+		if (!oPopup || !bTabular && !this._hasTabularSuggestions()) {
+			return;
+		}
+
+		if (oPopup instanceof Dialog) {
+			// phone variant, use endButton (beginButton is close)
+			var oShowMoreButton = this._getShowMoreButton();
+			oPopup.setEndButton(oShowMoreButton);
+		} else {
+			var oButtonToolbar = this._getButtonToolbar();
+			// desktop/tablet variant, use popover footer
+			oPopup.setFooter(oButtonToolbar);
+		}
+	};
+
+	/**
+	 * Removes the show more button from the footer of the tabular suggestion popup/dialog.
+	 *
+	 * @private
+	 */
+	Input.prototype._removeShowMoreButton = function() {
+		var oPopup = this._oSuggPopover && this._oSuggPopover._oPopover;
+
+		if (!oPopup || !this._hasTabularSuggestions()) {
+			return;
+		}
+
+		if (oPopup instanceof Dialog) {
+			oPopup.setEndButton(null);
+		} else {
+			oPopup.setFooter(null);
+		}
+	};
+
+	/**
+	 * Gets button toolbar.
+	 *
+	 * @private
+	 * @return {sap.m.Toolbar} Button toolbar.
+	 */
+	Input.prototype._getButtonToolbar = function() {
+		var oShowMoreButton = this._getShowMoreButton();
+
+		return this._oButtonToolbar || (this._oButtonToolbar = new Toolbar({
+			content: [
+				new ToolbarSpacer(),
+				oShowMoreButton
+			]
+		}));
+	};
+
+	/**
+	 * Helper function that creates content for the suggestion popup.
+	 *
+	 * @param {boolean|null} bTabular Content for the popup.
+	 * @private
+	 */
+	Input.prototype._createSuggestionPopupContent = function(bTabular) {
+		// only initialize the content once
+		if (this._bIsBeingDestroyed || this._getSuggestionsPopover()._oList) {
+			return;
+		}
+
+		this._oSuggPopover._createSuggestionPopupContent(bTabular, this._hasTabularSuggestions());
+
+		if (!this._hasTabularSuggestions() && !bTabular) {
+			this._oSuggPopover._oList.attachItemPress(function (oEvent) {
+				this._oSuggPopover._bSuggestionItemTapped = true;
+				var oListItem = oEvent.getParameter("listItem");
+				this.setSelectionItem(oListItem._oItem, true);
+			}, this);
+		} else {
+			// tabular suggestions
+			// if no custom filter is set we replace the default filter function here
+			if (this._fnFilter === SuggestionsPopover._DEFAULTFILTER) {
+				this._fnFilter = SuggestionsPopover._DEFAULTFILTER_TABULAR;
+			}
+
+			// if not custom row result function is set we set the default one
+			if (!this._fnRowResultFilter) {
+				this._fnRowResultFilter = SuggestionsPopover._DEFAULTRESULT_TABULAR;
+			}
+
+			if (this.getShowTableSuggestionValueHelp()) {
+				this._addShowMoreButton(bTabular);
+			}
+		}
+	};
+
+	/**
+	 * Creates input that will be used inside a dialog.
+	 *
+	 * @returns {sap.m.Input}
+	 * @private
+	 */
+	Input.prototype._createPopupInput = function() {
+		var oPopupInput = new Input(this.getId() + "-popup-input", {
+			width: "100%",
+			valueLiveUpdate: true,
+			showValueHelp: this.getShowValueHelp(),
+			valueHelpRequest: function (oEvent) {
+				// it is the same behavior as by ShowMoreButton:
+				this.fireValueHelpRequest({fromSuggestions: true});
+				this._oSuggPopover._iPopupListSelectedIndex = -1;
+				this._closeSuggestionPopup();
+			}.bind(this),
+			liveChange: function (oEvent) {
+				var sValue = oEvent.getParameter("newValue");
+				// call _getInputValue to apply the maxLength to the typed value
+				this.setDOMValue(this
+					._getInputValue(this._oSuggPopover._oPopupInput
+						.getValue()));
+
+				this._triggerSuggest(sValue);
+
+				// make sure the live change handler on the original input is also called
+				this.fireLiveChange({
+					value: sValue,
+
+					// backwards compatibility
+					newValue: sValue
+				});
+			}.bind(this)
+		}).addStyleClass("sapMInputSuggInDialog");
+
+		oPopupInput.addEventDelegate({
+			onsapenter: function () {
+				if (!(sap.m.MultiInput && this instanceof sap.m.MultiInput)) {
+					if (this.getAutocomplete()) {
+						this._oSuggPopover._finalizeAutocomplete();
+					}
+					this._closeSuggestionPopup();
+				}
+			}
+		}, this);
+
+		return oPopupInput;
+	};
+
+	/**
 	 * Lazily retrieves the <code>SuggestionsPopover</code>.
 	 *
 	 * @returns {sap.m.SuggestionsPopover}
@@ -1825,7 +2167,73 @@ function(
 	Input.prototype._getSuggestionsPopover = function () {
 		if (!this._oSuggPopover) {
 			this._oSuggPopover = new SuggestionsPopover(this);
+
+			if (this._bUseDialog) {
+				this._oSuggPopover._oPopupInput = this._createPopupInput();
+			}
+
 			this._oSuggPopover._createSuggestionPopup(); // TODO move this call to SuggestionsPopover constructor
+
+			this._oSuggPopover._bAutocompleEnabled = this.getAutocomplete();
+
+			this._oSuggPopover.attachEvent(SuggestionsPopover.M_EVENTS.SELECTION_CHANGE, function (oEvent) {
+				var sNewValue = oEvent.getParameter("newValue");
+
+				// setValue isn't used because here is too early to modify the lastValue of input
+				this.setDOMValue(sNewValue);
+
+				// memorize the value set by calling jQuery.val, because browser doesn't fire a change event when the value is set programmatically.
+				this._sSelectedSuggViaKeyboard = sNewValue;
+
+				this._doSelect();
+			}, this);
+
+			if (this.getShowTableSuggestionValueHelp()) {
+				this._addShowMoreButton();
+			}
+
+			if (this._bUseDialog) {
+				this._oSuggPopover._oPopover
+					.attachBeforeClose(function () {
+						// call _getInputValue to apply the maxLength to the typed value
+						this.setDOMValue(this
+							._getInputValue(this._oSuggPopover._oPopupInput
+								.getValue()));
+						this.onChange();
+
+						if (this instanceof sap.m.MultiInput && this._bUseDialog) {
+							this._onDialogClose();
+						}
+
+					}, this)
+					.attachAfterOpen(function () {
+						var sValue = this.getValue();
+
+						this._oSuggPopover._oPopupInput.setValue(sValue);
+						this._triggerSuggest(sValue);
+						this._refreshListItems();
+					}, this)
+					.attachBeforeOpen(function() {
+						// set the same placeholder and maxLength as the original input
+						this._oSuggPopover._oPopupInput.setPlaceholder(this.getPlaceholder());
+						this._oSuggPopover._oPopupInput.setMaxLength(this.getMaxLength());
+					}, this);
+
+				this._oSuggPopover._oPopover.getBeginButton()
+					.attachPress(function() {
+						this._closeSuggestionPopup();
+					}, this);
+			} else {
+				this._oSuggPopover._oPopover
+					.attachBeforeClose(this._updateSelectionFromList, this)
+					.attachBeforeOpen(function () {
+						this._sBeforeSuggest = this.getValue();
+					}, this);
+			}
+
+			// add popup to a hidden aggregation to also propagate the model and bindings to the content of the popover
+			this.setAggregation("_suggestionPopup", this._oSuggPopover._oPopover);
+
 			this._oSuggestionPopup = this._oSuggPopover._oPopover; // for backward compatibility (used in some other controls)
 		}
 
