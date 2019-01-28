@@ -41,6 +41,8 @@
 
 	<!-- Test functions -->
 	<script>
+		// set language to en-GB, since we have specific language strings tested
+		sap.ui.getCore().getConfiguration().setLanguage("en_GB");
 
 		jQuery.sap.require("sap.ui.model.type.Date");
 		jQuery.sap.require("sap.ui.unified.calendar.CalendarDate");
