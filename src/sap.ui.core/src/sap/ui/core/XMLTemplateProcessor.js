@@ -709,6 +709,8 @@ function(
 							}));
 						} else if (attr.namespaceURI === "http://schemas.sap.com/sapui5/extension/sap.ui.core.support.Support.info/1") {
 							sSupportData = sValue;
+						} else if (attr.namespaceURI.indexOf("http://schemas.sap.com/sapui5/preprocessorextension/") === 0) {
+							Log.debug(oView + ": XMLView parser ignored preprocessor attribute '" + sName + "' (value: '" + sValue + "')");
 						} else if (sName.indexOf("xmlns:") !== 0 ) { // other, unknown namespace and not an xml namespace alias definition
 							if (!mCustomSettings) {
 								mCustomSettings = {};
