@@ -1,1 +1,3 @@
-# THE OPENUI5 WEBSITE (http://openui5.org) HAS BEEN MOVED TO A SEPARATE REPOSITORY — https://github.com/SAP/openui5-website
+# The official OpenUI5 website has a new home!
+
+Source files for [openui5.org](http://openui5.org) are now located in a separate GitHub repository — https://github.com/SAP/openui5-website
