@@ -33,16 +33,10 @@ sap.ui.define([
 	 * Constructor for a new VariantManagement.
 	 * @param {string} [sId] ID for the new control, generated automatically if no ID is given
 	 * @param {object} [mSettings] Initial settings for the new control
-	 *
-	 * @class
-	 * The <code>VariantManagement</code> control can be used to manage variants.
-	 *
-	 * <h3>Usage</h3>
-	 *
-	 * You can use this control in most controls that are enabled for <i>UI adaptation at runtime</i>.
-	 *
+	 * @class The <code>VariantManagement</code> control can be used to manage variants.
+	 *        <h3>Usage</h3>
+	 *        You can use this control in most controls that are enabled for <i>UI adaptation at runtime</i>.
 	 * @see {@link topic:f1430c0337534d469da3a56307ff76af UI Adaptation at Runtime: Enable Your App}
-	 *
 	 * @extends sap.ui.core.Control
 	 * @constructor
 	 * @public
@@ -991,7 +985,7 @@ sap.ui.define([
 			this.oLabelKey.setLabelFor(this.oInputManualKey);
 
 			this.oSaveSave = new Button(this.getId() + "-variantsave", {
-				text: this._oRb.getText("VARIANT_MANAGEMENT_OK"),
+				text: this._oRb.getText("VARIANT_MANAGEMENT_SAVE"),
 				press: function() {
 					this._bSaveCanceled = false;
 					this._handleVariantSaveAs(this.oInputName.getValue());
