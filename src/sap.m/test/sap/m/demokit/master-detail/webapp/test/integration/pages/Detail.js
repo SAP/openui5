@@ -171,18 +171,6 @@ sap.ui.define([
 					});
 				},
 
-				theAppShowsFCLDesign: function (sLayout) {
-					return this.waitFor({
-						id : "layout",
-						viewName : "App",
-						matchers : new PropertyStrictEquals({name: "layout", value: sLayout}),
-						success : function () {
-							Opa5.assert.ok(true, "the app shows " + sLayout + " layout");
-						},
-						errorMessage : "The app does not show " + sLayout + " layout"
-					});
-				},
-
 				iShouldSeeTheFullScreenToggleButton : function (sId) {
 					return this.waitFor({
 						id : sId,
