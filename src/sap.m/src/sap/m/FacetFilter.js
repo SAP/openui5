@@ -484,7 +484,6 @@ sap.ui.define(['jquery.sap.global', './NavContainer', './library', 'sap/ui/core/
 			var oSummaryBar = this.getAggregation("summaryBar");
 			var oText = oSummaryBar.getContent()[0];
 			oText.setText(this._getSummaryText());
-			oText.setTooltip(this._getSummaryText());
 		}
 
 			// Detach the interval timer attached in onAfterRendering
@@ -505,6 +504,8 @@ sap.ui.define(['jquery.sap.global', './NavContainer', './library', 'sap/ui/core/
 		if (this.getType() !== FacetFilterType.Light) {
 			this._startItemNavigation();
 		}
+
+		this._getSummaryBar().$().attr('aria-label', this._getSummaryText());
 	};
 
 	/* Keyboard Handling */
