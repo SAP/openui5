@@ -512,7 +512,6 @@ sap.ui.define([
 			var oSummaryBar = this.getAggregation("summaryBar");
 			var oText = oSummaryBar.getContent()[0];
 			oText.setText(this._getSummaryText());
-			oText.setTooltip(this._getSummaryText());
 		}
 
 			// Detach the interval timer attached in onAfterRendering
@@ -533,6 +532,8 @@ sap.ui.define([
 		if (this.getType() !== FacetFilterType.Light) {
 			this._startItemNavigation();
 		}
+
+		this._getSummaryBar().$().attr('aria-label', this._getSummaryText());
 	};
 
 	/* Keyboard Handling */
