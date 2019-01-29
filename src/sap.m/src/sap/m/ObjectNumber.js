@@ -35,9 +35,9 @@ sap.ui.define([
 	 * colors to provide additional meaning about the object to the user.
 	 *
 	 *
-	 * Since 1.63, Large design of the control is supported by setting <code>sapMObjectNumberLarge</code> CSS class to the <code>ObjectNumber</code>.
+	 * With 1.63, large design of the control is supported by setting <code>sapMObjectNumberLarge</code> CSS class to the <code>ObjectNumber</code>.
 	 *
-	 * <b>Note:</b> To fulfill the design guidelines, when you are using <code>sapMObjectNumberLarge</code> CSS class you have to set the property <code>emphasized</code> to <code>false</code>.
+	 * <b>Note:</b> To fulfill the design guidelines when you are using <code>sapMObjectNumberLarge</code> CSS class set the <code>emphasized</code> property to <code>false</code>.
 	 *
 	 * @extends sap.ui.core.Control
 	 * @implements sap.ui.core.IFormContent
