@@ -23,6 +23,10 @@ sap.ui.define(['sap/ui/core/mvc/Controller'],
 				} else {
 					this.byId("infoTxt").setText('Layout size is: ' + layout);
 				}
+			},
+			onSwitchChange: function (oEvent) {
+				var bState = oEvent.getParameter("state");
+				this.byId("grid1").getCustomLayout().setContainerQuery(bState);
 			}
 		});
 
