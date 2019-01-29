@@ -34,6 +34,8 @@ sap.ui.define([
 			 * @public
 			 */
 			onInit : function () {
+				var oComponent = this.getOwnerComponent();
+
 				// Routing
 				this._oRouter = this.getRouter();
 				this._oRouter.getRoute("api").attachPatternMatched(this._onMatched, this);
@@ -54,10 +56,18 @@ sap.ui.define([
 				this._oTree = this.byId("tree");
 
 				// Load model data
-				this._oDataLoadedPromise = this.getOwnerComponent().loadVersionInfo()
+				this._oDataLoadedPromise = oComponent.loadVersionInfo()
+					.then(function () {
+						// Cache allowed members
+						this._aAllowedMembers = oComponent.aAllowedMembers;
+					}.bind(this))
 					.then(APIInfo.getIndexJsonPromise)
 					.then(this._bindTreeModel.bind(this))
 					.then(function () {
+						// Apply default filters
+						this.buildAndApplyFilters();
+
+						// Init tree util
 						this._initTreeUtil("name", "nodes");
 					}.bind(this));
 			},
@@ -69,26 +79,24 @@ sap.ui.define([
 						isSelected: false,
 						name : "experimental",
 						displayName : "Experimental APIs",
-						bIsDeprecated: false
+						bIsDeprecated: false,
+						visibility: "public"
 					}, {
 						isSelected: false,
 						name : "deprecated",
 						displayName : "Deprecated APIs",
-						bIsDeprecated: false
+						bIsDeprecated: false,
+						visibility: "public"
 					}, {
 						isSelected: false,
 						name : "since",
 						displayName : "Index by Version",
-						bIsDeprecated: false
+						bIsDeprecated: false,
+						visibility: "public"
 					});
 				}
 
 				this._oTreeModel.setData(aTreeContent, false);
-			},
-
-			onBeforeRendering : function () {
-				// Apply default filters
-				this.buildAndApplyFilters();
 			},
 
 			/**
@@ -159,6 +167,14 @@ sap.ui.define([
 			 */
 			buildAndApplyFilters: function () {
 				var aFilters = [];
+
+				// Visibility filter
+				aFilters.push(new Filter({
+					path: "visibility",
+					test: function (sValue) {
+						return this._aAllowedMembers.indexOf(sValue.toLowerCase()) >= 0;
+					}.bind(this)
+				}));
 
 				if (!this._bIncludeDeprecated) {
 					aFilters.push(new Filter({

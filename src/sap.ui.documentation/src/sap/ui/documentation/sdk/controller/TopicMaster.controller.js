@@ -117,7 +117,7 @@ sap.ui.define([
 
 			onNodeSelect : function (oEvent) {
 				var oNode = oEvent.getParameter("listItem"),
-					sTopicId = oNode.getCustomData()[0].getValue(),
+					sTopicId = oNode.getTarget(),
 					oRouter;
 
 				if (!sTopicId) {
