@@ -166,7 +166,7 @@ sap.ui.define(["sap/ui/thirdparty/URI"],
 				'\n' +
 				'    <script>\n' +
 				'    sap.ui.getCore().attachInit(function () {\n' +
-				'    throw new Error("<script>alert()<\\/script>");' +
+				'    throw new Error("<tag>");' +
 				'       sap.ui.xmlview({\n' +
 				'          id: "myView3",' +
 				'          async: true,' +
@@ -341,7 +341,7 @@ sap.ui.define(["sap/ui/thirdparty/URI"],
 				}
 				oFrame.onload = function() {
 					setTimeout(function() {
-						assert.ok(oFrame.contentWindow.document.body.innerText.indexOf("alert()") >= 0, "code is displayed as text");
+						assert.ok(oFrame.contentWindow.document.body.innerText.indexOf("<tag>") >= 0, "code is displayed as text");
 						done();
 					}, 1000);
 					oFrame.onload = null;
