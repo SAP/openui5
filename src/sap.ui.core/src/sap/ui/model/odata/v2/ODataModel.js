@@ -6132,7 +6132,7 @@ sap.ui.define([
 			}
 
 			this._writePathCache(sResolvedPath, sCanonicalPath);
-			return sCanonicalPath;
+			return sCanonicalPath || sResolvedPath; //defaulkt to resolved path to be compatible
 		}
 		return sResolvedPath;
 	};
