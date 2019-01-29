@@ -1,6 +1,6 @@
 {
   "lastPerVersion": {
-    "master": {
+    "rel-1.62": {
       "changes": {
         "default": {
           "pom.xml": "2",
@@ -50,7 +50,7 @@
           "src/themelib_sap_belize/pom.xml": "1"
         }
       },
-      "lastCommitId": "d763345264d9e1d46be2dc0bdd152da0676b6d67"
+      "lastCommitId": "7e961654dc2673177bbdb351a0d8eb7b9767aced"
     }
   }
 }
