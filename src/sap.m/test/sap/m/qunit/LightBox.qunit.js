@@ -1,8 +1,8 @@
 /*global QUnit*/
 
 sap.ui.define(
-	["sap/m/LightBox", "sap/m/LightBoxItem"],
-	function(LightBox, LightBoxItem) {
+	["sap/m/LightBox", "sap/m/LightBoxItem", "sap/ui/qunit/QUnitUtils"],
+	function(LightBox, LightBoxItem, qutils) {
 		'use strict';
 
 
@@ -264,6 +264,29 @@ sap.ui.define(
 
 			assert.ok($popupContent.attr('aria-labelledby'), 'aria-labelledby attribute is set');
 			assert.strictEqual($popupContent.attr('role'), 'dialog', 'correct role is set');
+		});
+
+		QUnit.test('ESC should close LightBox', function(assert) {
+			// arrange
+			var done = assert.async();
+			var oImageContent = this.LightBox.getImageContent()[0],
+				sImageSource = IMAGE_PATH + 'demo/nature/elephant.jpg';
+
+			oImageContent.setImageSrc(sImageSource);
+			sap.ui.getCore().applyChanges();
+
+			// act
+			this.LightBox.open();
+			setTimeout(function () {
+				// Assert
+				qutils.triggerKeydown(this.LightBox.getDomRef(), jQuery.sap.KeyCodes.ESCAPE);
+			}.bind(this), 500);
+
+			setTimeout(function () {
+				// Assert
+				assert.strictEqual(this.LightBox.isOpen(), false, 'Dialog should be closed.');
+				done();
+			}.bind(this), 1000);
 		});
 
 
