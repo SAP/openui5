@@ -63,7 +63,7 @@
 				<IconTabBar
 					id="iconTabBar"
 					headerBackgroundDesign="Transparent"
-					select="onTabSelect"
+					select=".onTabSelect"
 					selectedKey="{detailView>/selectedTab}">
 					<items>
 						<IconTabFilter
@@ -85,7 +85,7 @@
 					class="sapUiSmallMarginTop"
 					width="auto"
 					items="{Order_Details}"
-					updateFinished="onListUpdateFinished"
+					updateFinished=".onListUpdateFinished"
 					noDataText="{i18n>detailLineItemTableNoDataText}"
 					busyIndicatorDelay="{detailView>/lineItemTableDelay}">
 					<headerToolbar>
@@ -151,12 +151,12 @@
 		<semantic:sendEmailAction>
 			<semantic:SendEmailAction
 				id="shareEmail"
-				press="onSendEmailPress"/>
+				press=".onSendEmailPress"/>
 		</semantic:sendEmailAction>
 		<semantic:closeAction>
 			<semantic:CloseAction
 				id="closeColumn"
-				press="onCloseDetailPress"/>
+				press=".onCloseDetailPress"/>
 		</semantic:closeAction>
 		<semantic:fullScreenAction>
 			<semantic:FullScreenAction

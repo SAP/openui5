@@ -81,7 +81,7 @@
 				<items>
 					<ColumnListItem
 						type="Navigation"
-						press="onPress">
+						press=".onPress">
 						<cells>
 							<ObjectIdentifier
 								title="{ProductName}"/>
