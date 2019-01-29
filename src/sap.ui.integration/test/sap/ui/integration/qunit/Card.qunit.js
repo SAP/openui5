@@ -373,6 +373,111 @@ function (
 		}
 	};
 
+	var oManifest_TableCard = {
+		"sap.card": {
+			"type": "Table",
+			"header": {
+				"title": "Sales Orders for Key Accounts"
+			},
+			"content": {
+				"data": {
+					"json": [
+						{
+							"salesOrder": "5000010050",
+							"customer": "Robert Brown Entertainment",
+							"status": "Delivered",
+							"statusState": "Success",
+							"orderUrl": "http://www.sap.com",
+							"percent": 30,
+							"percentValue": "30%",
+							"progressState": "Error",
+							"iconSrc": "sap-icon://help"
+						},
+						{
+							"salesOrder": "5000010051",
+							"customer": "Entertainment Argentinia",
+							"status": "Canceled",
+							"statusState": "Error",
+							"orderUrl": "http://www.sap.com",
+							"percent": 70,
+							"percentValue": "70 of 100",
+							"progressState": "Success",
+							"iconSrc": "sap-icon://help"
+						},
+						{
+							"salesOrder": "5000010052",
+							"customer": "Brazil Technologies",
+							"status": "In Progress",
+							"statusState": "Warning",
+							"orderUrl": "http://www.sap.com",
+							"percent": 55,
+							"percentValue": "55GB of 100",
+							"progressState": "Warning",
+							"iconSrc": "sap-icon://help"
+						},
+						{
+							"salesOrder": "5000010053",
+							"customer": "Quimica Madrilenos",
+							"status": "Delivered",
+							"statusState": "Success",
+							"orderUrl": "http://www.sap.com",
+							"percent": 10,
+							"percentValue": "10GB",
+							"progressState": "Error",
+							"iconSrc": "sap-icon://help"
+						},
+						{
+							"salesOrder": "5000010054",
+							"customer": "Development Para O Governo",
+							"status": "Delivered",
+							"statusState": "Success",
+							"orderUrl": "http://www.sap.com",
+							"percent": 100,
+							"percentValue": "100%",
+							"progressState": "Success",
+							"iconSrc": "sap-icon://help"
+						}
+					]
+				},
+				"columns": [
+					{
+						"label": "Sales Order",
+						"value": "{salesOrder}",
+						"identifier": true
+					},
+					{
+						"label": "Customer",
+						"value": "{customer}"
+					},
+					{
+						"label": "Status",
+						"value": "{status}",
+						"state": "{statusState}"
+					},
+					{
+						"label": "Order ID",
+						"value": "{orderUrl}",
+						"url": "{orderUrl}"
+					},
+					{
+						"label": "Progress",
+						"progressIndicator": {
+							"percent": "{percent}",
+							"text": "{percentValue}",
+							"state": "{progressState}"
+						}
+					},
+					{
+						"label": "Avatar",
+						"icon": {
+							"src": "{iconSrc}"
+						}
+					}
+				]
+			}
+		}
+	};
+
 	var oManifest_AvatarHeader = {
 		"sap.card": {
 			"type": "List",
@@ -806,6 +911,72 @@ function (
 
 		// Act
 		this.oCard.setManifest(oManifest_ObjectCard);
+	});
+
+	QUnit.module("Table Card", {
+		beforeEach: function () {
+			this.oCard = new Card({
+				width: "800px"
+			});
+
+			this.oCard.placeAt(DOM_RENDER_LOCATION);
+			Core.applyChanges();
+		},
+		afterEach: function () {
+			this.oCard.destroy();
+			this.oCard = null;
+		}
+	});
+
+	QUnit.test("Table Card - using manifest", function (assert) {
+
+		// Arrange
+		var done = assert.async();
+
+		this.oCard.attachEvent("_contentUpdated", function () {
+			var oManifestData = oManifest_TableCard["sap.card"].content.data.json;
+			var oManifestContent = oManifest_TableCard["sap.card"].content;
+			var oCardContent = this.oCard.getAggregation("_content");
+			var oTable = oCardContent.getAggregation("_content");
+			var aColumns = oTable.getColumns();
+			var aCells = oTable.getItems()[0].getCells();
+
+			// Assert
+			assert.equal(aColumns.length, 6, "Should have 6 columns.");
+
+			// Columns titles
+			assert.equal(aColumns[0].getHeader().getText(), oManifestContent.columns[0].label, "Should have correct column title");
+			assert.equal(aColumns[1].getHeader().getText(), oManifestContent.columns[1].label, "Should have correct column title");
+			assert.equal(aColumns[2].getHeader().getText(), oManifestContent.columns[2].label, "Should have correct column title");
+			assert.equal(aColumns[3].getHeader().getText(), oManifestContent.columns[3].label, "Should have correct column title");
+			assert.equal(aColumns[4].getHeader().getText(), oManifestContent.columns[4].label, "Should have correct column title");
+			assert.equal(aColumns[5].getHeader().getText(), oManifestContent.columns[5].label, "Should have correct column title");
+
+			// Column cells types
+			assert.ok(aCells[0].isA("sap.m.ObjectIdentifier"), "Column with provided 'identifier' should be of type 'ObjectIdentifier'");
+			assert.ok(aCells[1].isA("sap.m.Text"), "Column with 'value' only should be of type 'Text'");
+			assert.ok(aCells[2].isA("sap.m.ObjectStatus"), "Column with a 'state' should be of type 'ObjectStatus'");
+			assert.ok(aCells[3].isA("sap.m.Link"), "Column with an 'url' should be of type 'Link'");
+			assert.ok(aCells[4].isA("sap.m.ProgressIndicator"), "Column with a 'progressIndicator' should be of type 'ProgressIndicator'");
+			assert.ok(aCells[5].isA("sap.f.Avatar"), "Column with an 'icon' should be of type 'Avatar'");
+
+			// Column values
+			assert.equal(aCells[0].getTitle(), oManifestData[0].salesOrder, "Should have correct identifier value.");
+			assert.equal(aCells[1].getText(), oManifestData[0].customer, "Should have correct text value.");
+			assert.equal(aCells[2].getText(), oManifestData[0].status, "Should have correct text value.");
+			assert.equal(aCells[2].getState(), oManifestData[0].statusState, "Should have correct state.");
+			assert.equal(aCells[3].getText(), oManifestData[0].orderUrl, "Should have correct text value.");
+			assert.equal(aCells[3].getHref(), oManifestData[0].orderUrl, "Should have correct url value.");
+			assert.equal(aCells[4].getPercentValue(), oManifestData[0].percent, "Should have correct percentage.");
+			assert.equal(aCells[4].getDisplayValue(), oManifestData[0].percentValue, "Should have correct progress text.");
+			assert.equal(aCells[4].getState(), oManifestData[0].progressState, "Should have correct progress state.");
+			assert.equal(aCells[5].getSrc(), oManifestData[0].iconSrc, "Should have correct icon src.");
+
+			done();
+		}.bind(this));
+
+		// Act
+		this.oCard.setManifest(oManifest_TableCard);
 	});
 
 	QUnit.module("Card Accessibility", {

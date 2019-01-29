@@ -1320,12 +1320,6 @@
 							"value": "{lastName}"
 						},
 						{
-							"label": "Avatar",
-							"icon": {
-								"src": "{icon}"
-							}
-						},
-						{
 							"label": "Link",
 							"value": "{urlText}",
 							"url": "{url}"
@@ -1333,17 +1327,9 @@
 						{
 							"label": "Progress",
 							"progressIndicator": {
-								"percent": 99,
-								"text": "99GB of 100",
-								"state": "Error"
-							}
-						},
-						{
-							"label": "Progress",
-							"progressIndicator": {
-								"percent": 30,
-								"text": "30%",
-								"state": "Error"
+								"percent": "{percent}",
+								"text": "{percentValue}",
+								"state": "{progressState}"
 							}
 						}
 					]
