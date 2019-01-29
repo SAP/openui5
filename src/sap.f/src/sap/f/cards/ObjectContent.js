@@ -142,6 +142,12 @@ sap.ui.define(["sap/ui/core/Control", "sap/ui/model/json/JSONModel", "sap/m/HBox
 			this.bindElement({
 				path: sPath || "/"
 			});
+
+			// bindElements triggers rerendering. Have to trigger _updated on the first onAfterRendering after _updateModel is called.
+			setTimeout(function () {
+
+				this.fireEvent("_updated");
+			}.bind(this), 0);
 		};
 
 		ObjectContent.prototype._addGroups = function () {
