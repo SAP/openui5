@@ -141,5 +141,67 @@
         "references": []
       }
     ]
+  },
+  "1.50.1": {
+    "date": "August 2017",
+    "notes": [
+      {
+        "id": "77e5aac277eb5f5b6d665d1c18bb963e7711aa43",
+        "type": "FIX",
+        "text": " sap.ui.layout.BlockLayout - Added BlockLayoutCellData class",
+        "references": []
+      },
+      {
+        "id": "bd39148d6ce835cc53f977311bc624ad831b9c24",
+        "type": "FIX",
+        "text": " sap.ui.layout.BlockLayoutCellData: JSDoc is now fixed.",
+        "references": []
+      }
+    ]
+  },
+  "1.50.2": {
+    "date": "August 2017",
+    "notes": [
+      {
+        "id": "dcd79d37e226801afc0ebb2a18e5111d0db4fc36",
+        "type": "FIX",
+        "text": " FormContainer: render role\u003d\"form\" only if title exist",
+        "references": []
+      }
+    ]
+  },
+  "1.50.3": {
+    "date": "September 2017",
+    "notes": [
+      {
+        "id": "c72bab68f2568950586ace4f8e92977e461e991a",
+        "type": "FIX",
+        "text": " sap.ui.layout.DynamicSideContent: sideContentVisibility works correct with containerQuery now",
+        "references": []
+      }
+    ]
+  },
+  "1.50.5": {
+    "date": "October 2017",
+    "notes": [
+      {
+        "id": "5cd55c01e6e9dc1012bb0bcb38c8f6104cf828fa",
+        "type": "FIX",
+        "text": " Form: don\u0027t close FormContainer if focus on Input field",
+        "references": []
+      },
+      {
+        "id": "e50d7be395529a3de6f879e09bf8c47bb9b75b51",
+        "type": "FIX",
+        "text": " sap.ui.fl Correctly apply changes on xml views",
+        "references": []
+      },
+      {
+        "id": "65f7e7d56d41e7c15adb60d017d0b3cf49490a4e",
+        "type": "FIX",
+        "text": " sap.ui.layout.Splitter: Focus in HCB under IE is now correct",
+        "references": []
+      }
+    ]
   }
 }

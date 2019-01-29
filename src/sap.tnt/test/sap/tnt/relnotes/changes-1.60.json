@@ -1,0 +1,13 @@
+{
+  "1.60.2": {
+    "date": "November 2018",
+    "notes": [
+      {
+        "id": "444f1591b83b7f1817d41b9615e4efe013e94de0",
+        "type": "FIX",
+        "text": " sap.tnt.ToolPage: Rendering without SideNavigation",
+        "references": []
+      }
+    ]
+  }
+}

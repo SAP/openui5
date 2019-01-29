@@ -1,0 +1,13 @@
+{
+  "1.36.11": {
+    "date": "May 2016",
+    "notes": [
+      {
+        "id": "b0bc5423fa3cf2e41183ed367398e9ee23141bb5",
+        "type": "FIX",
+        "text": "sap.ui.dt prevent cut for not movable overlays",
+        "references": []
+      }
+    ]
+  }
+}
