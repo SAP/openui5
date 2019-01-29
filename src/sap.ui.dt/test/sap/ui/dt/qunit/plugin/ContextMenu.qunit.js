@@ -1247,7 +1247,7 @@ sap.ui.define([
 			assert.strictEqual(this.oContextMenuControl.getPopover().getShowArrow(), true, "Arrow should be visible");
 			// menu placed at the bottom
 			oOverlay = {
-				top: 50
+				top: 100
 			};
 			oPopover = {
 				height: 60,
