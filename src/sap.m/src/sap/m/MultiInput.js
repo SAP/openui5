@@ -350,8 +350,12 @@ function(
 	 * @private
 	 */
 	MultiInput.prototype._onResize = function () {
+		this._deregisterResizeHandler();
+
 		this._tokenizer.setMaxWidth(this._calculateSpaceForTokenizer());
 		this._handleInnerVisibility();
+
+		this._registerResizeHandler();
 	};
 
 	MultiInput.prototype._onTokenChange = function (args) {
