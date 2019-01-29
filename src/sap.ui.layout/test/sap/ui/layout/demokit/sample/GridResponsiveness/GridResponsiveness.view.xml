@@ -14,7 +14,11 @@
 		</headerToolbar>
 		<content>
 			<Text class="message sapUiSmallMarginBottom" id="infoTxt" width="100%" text="Layout size is: "/>
-			<Text text="Responsive behaviour is fully configurable by the developer. It is possible to pass a GridResponsiveLayout to the customLayout aggregation of the CSSGrid and configure how it will look in different breakpoints (S, M, L, XL)"/>
+			<Text text="Responsive behaviour is fully configurable by the developer. It is possible to pass a GridResponsiveLayout to the customLayout aggregation of the CSSGrid and configure how it will look in different breakpoints (S, M, L, XL). The breakpoints can be calculated either by the screen size or by the grid container (with containerQuery property)."/>
+			<HBox alignItems="Center" renderType="Bare" class="sapUiSmallMarginBottom sapUiSmallMarginTop">
+				<Text text="GridResponsiveLayout containerQuery:" class="sapUiTinyMarginEnd"/>
+				<Switch change="onSwitchChange" customTextOn="true" customTextOff="false"/>
+			</HBox>
 			<grid:CSSGrid id="grid1">
 				<grid:customLayout>
 					<grid:GridResponsiveLayout layoutChange="onLayoutChange">
