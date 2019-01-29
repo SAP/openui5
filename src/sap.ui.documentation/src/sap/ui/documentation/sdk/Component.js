@@ -10,7 +10,6 @@ sap.ui.define([
     "sap/ui/documentation/sdk/controller/ErrorHandler",
     "sap/ui/model/json/JSONModel",
     "sap/ui/documentation/sdk/controller/util/ConfigUtil",
-    "sap/ui/documentation/sdk/controller/util/APIInfo",
     "sap/base/util/Version",
     "sap/ui/VersionInfo",
     // used via manifest.json
@@ -25,15 +24,10 @@ sap.ui.define([
 	ErrorHandler,
 	JSONModel,
 	ConfigUtil,
-	APIInfo,
 	Version,
 	VersionInfo /*, DocumentationRouter, ColumnListItem*/
 ) {
 		"use strict";
-
-		var aTreeContent = [],
-			oLibsData = {},
-			iTreeModelLimit = 1000000;
 
 		return UIComponent.extend("sap.ui.documentation.sdk.Component", {
 
@@ -56,9 +50,6 @@ sap.ui.define([
 
 				// set the device model
 				this.setModel(models.createDeviceModel(), "device");
-
-				// set the global tree data
-				this.setModel(new JSONModel(), "treeData");
 
 				// set the global libs data
 				this.setModel(new JSONModel(), "libsData");
@@ -123,168 +114,6 @@ sap.ui.define([
 				}
 
 				return this._oVersionInfoPromise;
-			},
-
-			fetchAPIIndex: function () {
-				if (this._indexPromise) {
-					return this._indexPromise;
-				}
-
-				this._indexPromise = new Promise(function (resolve, reject) {
-					APIInfo.getIndexJsonPromise().then(function (aData) {
-						this._aLibraryElements = aData;
-						this._parseLibraryElements(aData);
-						this._bindTreeModel(aTreeContent);
-						resolve(aData);
-					}.bind(this));
-				}.bind(this));
-
-				return this._indexPromise;
-			},
-
-
-			_parseLibraryElements : function (aLibraryElementsJSON) {
-
-				for (var i = 0; i < aLibraryElementsJSON.length; i++) {
-					if (!aLibraryElementsJSON[i].children) {
-						oLibsData[aLibraryElementsJSON[i].name] = aLibraryElementsJSON[i];
-					}
-
-					this._addElementToTreeData(aLibraryElementsJSON[i]);
-
-					if (aLibraryElementsJSON[i].children) {
-						this._parseLibraryElements(aLibraryElementsJSON[i].children, true);
-					}
-				}
-			},
-
-			_addElementToTreeData : function (oJSONElement) {
-				var oNewNodeNamespace,
-					oHiddenNamespace,
-					aAllowedMembers = this.aAllowedMembers;
-
-				if (aAllowedMembers.indexOf(oJSONElement.visibility) !== -1) {
-					if (oJSONElement.kind !== "namespace") {
-						var aNameParts = oJSONElement.name.split("."),
-							sBaseName = aNameParts.pop(),
-							sNodeNamespace = aNameParts.join("."), // Note: Array.pop() on the previous line modifies the array itself
-							oTreeNode = this._createTreeNode(sBaseName, oJSONElement.name, oJSONElement.name === this._topicId, oJSONElement.lib, !!oJSONElement.deprecated),
-							oExistingNodeNamespace = this._findNodeNamespaceInTreeStructure(sNodeNamespace);
-
-						if (oExistingNodeNamespace) {
-							if (!oExistingNodeNamespace.nodes) {
-								oExistingNodeNamespace.nodes = [];
-							}
-
-							oExistingNodeNamespace.nodes.push(oTreeNode);
-						} else if (sNodeNamespace) {
-
-							// Check for existing hidden namespace - In case we have a namespace with visibility that
-							// we should not show in this scenario we should also omit it's children
-							oHiddenNamespace = this._aLibraryElements.some(function (oNode) {
-								return oNode.name === sNodeNamespace && aAllowedMembers.indexOf(oNode.visibility) === -1;
-							});
-
-							if (!oHiddenNamespace) {
-								oNewNodeNamespace = this._createTreeNode(sNodeNamespace,
-									sNodeNamespace,
-									sNodeNamespace === this._topicId,
-									oJSONElement.lib,
-									false /* Virtual namespace can't be deprecated */);
-
-								oNewNodeNamespace.nodes = [];
-								oNewNodeNamespace.nodes.push(oTreeNode);
-
-								aTreeContent.push(oNewNodeNamespace);
-
-								this._removeDuplicatedNodeFromTree(sNodeNamespace);
-
-							}
-						} else {
-							// Entities for which we can't resolve namespace are shown in the root level
-							oNewNodeNamespace = this._createTreeNode(oJSONElement.name, oJSONElement.name, oJSONElement.name === this._topicId, oJSONElement.lib, !!oJSONElement.deprecated);
-							aTreeContent.push(oNewNodeNamespace);
-						}
-					} else {
-						oNewNodeNamespace = this._createTreeNode(oJSONElement.name, oJSONElement.name, oJSONElement.name === this._topicId, oJSONElement.lib, !!oJSONElement.deprecated);
-						aTreeContent.push(oNewNodeNamespace);
-					}
-				}
-			},
-
-			_createTreeNode : function (text, name, isSelected, sLib, bIsDeprecated) {
-				var oTreeNode = {};
-				oTreeNode.text = text;
-				oTreeNode.name = name;
-				oTreeNode.ref = "#/api/" + name;
-				oTreeNode.isSelected = isSelected;
-				oTreeNode.bIsDeprecated = bIsDeprecated;
-				oTreeNode.lib = sLib;
-				return oTreeNode;
-			},
-
-			_findNodeNamespaceInTreeStructure : function (sNodeNamespace, aTreeStructure) {
-				aTreeStructure = aTreeStructure || aTreeContent;
-				for (var i = 0; i < aTreeStructure.length; i++) {
-					var oTreeNode = aTreeStructure[i];
-					if (oTreeNode.name === sNodeNamespace) {
-						return oTreeNode;
-					}
-					if (oTreeNode.nodes) {
-						var oChildNode = this._findNodeNamespaceInTreeStructure(sNodeNamespace, oTreeNode.nodes);
-						if (oChildNode) {
-							return oChildNode;
-						}
-					}
-				}
-			},
-
-			_removeNodeFromNamespace : function (sNode, oNamespace) {
-				for (var i = 0; i < oNamespace.nodes.length; i++) {
-					if (oNamespace.nodes[i].text === sNode) {
-						oNamespace.nodes.splice(i, 1);
-						return;
-					}
-				}
-			},
-
-			_removeDuplicatedNodeFromTree : function (sNodeFullName) {
-				if (oLibsData[sNodeFullName]) {
-					var sNodeNamespace = sNodeFullName.substring(0, sNodeFullName.lastIndexOf("."));
-					var oNamespace = this._findNodeNamespaceInTreeStructure(sNodeNamespace);
-					var sNode = sNodeFullName.substring(sNodeFullName.lastIndexOf(".") + 1, sNodeFullName.lenght);
-					this._removeNodeFromNamespace(sNode, oNamespace);
-				}
-			},
-
-			_bindTreeModel : function (aTreeContent) {
-				var treeModel = this.getModel("treeData");
-				treeModel.setSizeLimit(iTreeModelLimit);
-
-				// Inject Deprecated, Experimental and Since links
-				if (aTreeContent.length > 0) {
-					aTreeContent.push({
-						isSelected: false,
-						name : "experimental",
-						ref: "#/api/experimental",
-						text: "Experimental APIs",
-						bIsDeprecated: false
-					}, {
-						isSelected: false,
-						name : "deprecated",
-						ref: "#/api/deprecated",
-						text: "Deprecated APIs",
-						bIsDeprecated: false
-					}, {
-						isSelected: false,
-						name : "since",
-						ref: "#/api/since",
-						text: "Index by Version",
-						bIsDeprecated: false
-					});
-				}
-
-				treeModel.setData(aTreeContent, false);
 			},
 
 			_bindVersionModel : function (oVersionInfo) {

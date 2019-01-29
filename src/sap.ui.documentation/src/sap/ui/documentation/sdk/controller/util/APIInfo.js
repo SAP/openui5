@@ -13,12 +13,6 @@ sap.ui.define(["sap/ui/thirdparty/jquery", "sap/base/Log"],
 		var sTestResourcesRoot;
 
 		var oLibraryDataCache = {};
-		var oAllLibrariesPromise = null;
-
-		// Libraries that should be ommitted from the tree
-		var LIBRARIES_BLACK_LIST = ["sap.ui.demokit", "sap.ui.documentation"];
-		// Libraries that start with these prefixes should be ommitted from the tree
-		var LIBRARY_PREFIXES_BLACK_LIST = ["themelib_"];
 
 		function getIndexJsonPromise() {
 
@@ -114,35 +108,6 @@ sap.ui.define(["sap/ui/thirdparty/jquery", "sap/base/Log"],
 
 		}
 
-		function getLibraryElementsJSONSync(sLibraryName) {
-			var oResponse = [];
-
-			if ( !sLibraryName ) {
-				return oResponse;
-			}
-
-			if (oLibraryDataCache[sLibraryName]) {
-				return oLibraryDataCache[sLibraryName];
-			}
-
-			jQuery.ajax({
-				async: false,
-				url : sTestResourcesRoot + sLibraryName.replace(/\./g, '/') + '/designtime/apiref/api.json',
-				dataType : 'json',
-				success : function(vResponse) {
-					oResponse = vResponse.symbols;
-				},
-				error : function () {
-					oResponse = [];
-					Log.error("failed to load api.json for: " + sLibraryName);
-				}
-			});
-
-			oLibraryDataCache[sLibraryName] = oResponse;
-
-			return oResponse;
-		}
-
 		function getLibraryElementsJSONPromise(sLibraryName) {
 
 			// If no library name given, resolve immediately with empty array
@@ -175,33 +140,6 @@ sap.ui.define(["sap/ui/thirdparty/jquery", "sap/base/Log"],
 
 		}
 
-		function isLibraryAllowed(oLibrary) {
-			var bIsBlacklisted = LIBRARIES_BLACK_LIST.indexOf(oLibrary.name) !== -1;
-			var bStartsWithBlacklistedPrefix = LIBRARY_PREFIXES_BLACK_LIST.some(function (sPrefix) {
-				return oLibrary.name.indexOf(sPrefix) === 0;
-			});
-
-			return !bIsBlacklisted && !bStartsWithBlacklistedPrefix;
-		}
-
-		function getAllLibrariesElementsJSONPromise(aLibraries) {
-			if (oAllLibrariesPromise) {
-				return oAllLibrariesPromise;
-			}
-
-			aLibraries = aLibraries || sap.ui.getVersionInfo().libraries || [];
-			aLibraries = aLibraries.filter(isLibraryAllowed);
-
-			// Get a list of promises for each library (these never reject, but can resolve with an empty array)
-			var aPromises = aLibraries.map(function (oLibrary) {
-				return getLibraryElementsJSONPromise(oLibrary.name);
-			});
-
-			oAllLibrariesPromise = Promise.all(aPromises);
-
-			return oAllLibrariesPromise;
-		}
-
 		function setRoot(sRoot) {
 			sRoot = sRoot == null ? sap.ui.require.toUrl("") + "/" + '../test-resources/' : sRoot;
 			if ( sRoot.slice(-1) != '/' ) {
@@ -218,9 +156,7 @@ sap.ui.define(["sap/ui/thirdparty/jquery", "sap/base/Log"],
 			getDeprecatedPromise: getDeprecatedPromise,
 			getExperimentalPromise: getExperimentalPromise,
 			getSincePromise: getSincePromise,
-			getLibraryElementsJSONSync : getLibraryElementsJSONSync,
-			getLibraryElementsJSONPromise: getLibraryElementsJSONPromise,
-			getAllLibrariesElementsJSONPromise: getAllLibrariesElementsJSONPromise
+			getLibraryElementsJSONPromise: getLibraryElementsJSONPromise
 		};
 
 	});

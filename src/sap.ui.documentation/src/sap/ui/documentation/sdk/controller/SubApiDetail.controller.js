@@ -180,15 +180,15 @@ sap.ui.define([
 			},
 
 			/* =========================================================== */
-			/* begin: internal methods									   */
+			/* begin: internal methods									   aa*/
 			/* =========================================================== */
 
 			_navigateRouter: function(sEntityType, sEntityId, bShouldStoreToHistory) {
 				this._oRouter.stop();
 				this._oRouter.navTo("apiId", {
-					id: formatter.encodeModuleName(this._sTopicId),
+					id: encodeURIComponent(this._sTopicId),
 					entityType: sEntityType,
-					entityId: formatter.encodeModuleName(sEntityId)
+					entityId: encodeURIComponent(sEntityId)
 				}, !bShouldStoreToHistory);
 				this._oRouter.initialize(true);
 			},

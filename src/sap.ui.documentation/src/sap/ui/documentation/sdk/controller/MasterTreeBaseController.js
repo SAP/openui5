@@ -76,8 +76,7 @@ sap.ui.define([
 				var oItems = this.byId("tree").getItems();
 
 				for (var i = 0; i < oItems.length; i++) {
-					var oCustomData = oItems[i].getCustomData()[0]; // assumes one custom data element only
-					if (oCustomData.getKey() === "nodeId" && oCustomData.getValue() === sId) {
+					if (oItems[i].getTarget() === sId) {
 						return oItems[i];
 					}
 				}

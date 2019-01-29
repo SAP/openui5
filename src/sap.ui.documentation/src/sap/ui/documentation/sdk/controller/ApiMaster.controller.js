@@ -6,47 +6,84 @@
 sap.ui.define([
 		"sap/ui/Device",
 		"sap/ui/documentation/sdk/controller/MasterTreeBaseController",
-		"sap/ui/documentation/sdk/model/formatter",
 		"sap/m/library",
 		"sap/base/Log",
 		"sap/ui/model/Filter",
-		"sap/ui/model/FilterOperator"
-	], function (Device, MasterTreeBaseController, formatter, mobileLibrary, Log, Filter, FilterOperator) {
+		"sap/ui/model/FilterOperator",
+		"sap/ui/documentation/sdk/controller/util/APIInfo",
+		"sap/ui/model/json/JSONModel"
+	], function (
+		Device,
+		MasterTreeBaseController,
+		mobileLibrary,
+		Log,
+		Filter,
+		FilterOperator,
+		APIInfo,
+		JSONModel
+	) {
 		"use strict";
-
-
 
 		// shortcut for sap.m.SplitAppMode
 		var SplitAppMode = mobileLibrary.SplitAppMode;
 
-
-
 		return MasterTreeBaseController.extend("sap.ui.documentation.sdk.controller.ApiMaster", {
 
-			formatter: formatter,
 			/**
 			 * Called when the master list controller is instantiated. It sets up the event handling for the master/detail communication and other lifecycle tasks.
 			 * @public
 			 */
 			onInit : function () {
+				// Routing
+				this._oRouter = this.getRouter();
+				this._oRouter.getRoute("api").attachPatternMatched(this._onMatched, this);
+				this._oRouter.getRoute("apiId").attachPatternMatched(this._onTopicMatched, this);
+				this._oRouter.getRoute("deprecated").attachPatternMatched(this._onTopicMatched, this);
+				this._oRouter.getRoute("experimental").attachPatternMatched(this._onTopicMatched, this);
+				this._oRouter.getRoute("since").attachPatternMatched(this._onTopicMatched, this);
+
+				// Create the model
+				this._oTreeModel = new JSONModel();
+				this._oTreeModel.setSizeLimit(10000);
+				this.setModel(this._oTreeModel, "treeData");
+
 				// By default we don't show deprecated symbols in the tree
 				this._bIncludeDeprecated = false;
 
-				var oComponent = this.getOwnerComponent();
+				// Cache references
+				this._oTree = this.byId("tree");
 
-				oComponent.loadVersionInfo()
-					.then(oComponent.fetchAPIIndex.bind(oComponent))
+				// Load model data
+				this._oDataLoadedPromise = this.getOwnerComponent().loadVersionInfo()
+					.then(APIInfo.getIndexJsonPromise)
+					.then(this._bindTreeModel.bind(this))
 					.then(function () {
-						this._expandTreeToNode(this._topicId, this.getOwnerComponent().getModel("treeData"));
+						this._initTreeUtil("name", "nodes");
 					}.bind(this));
+			},
 
-				this._initTreeUtil("name", "nodes");
+			_bindTreeModel : function (aTreeContent) {
+				// Inject Deprecated, Experimental and Since links
+				if (aTreeContent.length > 0) {
+					aTreeContent.push({
+						isSelected: false,
+						name : "experimental",
+						displayName : "Experimental APIs",
+						bIsDeprecated: false
+					}, {
+						isSelected: false,
+						name : "deprecated",
+						displayName : "Deprecated APIs",
+						bIsDeprecated: false
+					}, {
+						isSelected: false,
+						name : "since",
+						displayName : "Index by Version",
+						bIsDeprecated: false
+					});
+				}
 
-				this.getRouter().getRoute("api").attachPatternMatched(this._onMatched, this);
-				this.getRouter().getRoute("apiId").attachPatternMatched(this._onTopicMatched, this);
-				this.getRouter().getRoute("deprecated").attachPatternMatched(this._onTopicMatched, this);
-				this.getRouter().getRoute("experimental").attachPatternMatched(this._onTopicMatched, this);
-				this.getRouter().getRoute("since").attachPatternMatched(this._onTopicMatched, this);
+				this._oTreeModel.setData(aTreeContent, false);
 			},
 
 			onBeforeRendering : function () {
@@ -76,6 +113,7 @@ sap.ui.define([
 			 * @private
 			 */
 			_onTopicMatched: function (event) {
+				var sTopicId = decodeURIComponent(event.getParameter("arguments").id) || event.getParameter("name");
 
 				try {
 					this.showMasterSide();
@@ -84,23 +122,25 @@ sap.ui.define([
 					Log.error(e);
 				}
 
-				this._topicId = formatter.decodeModuleName(event.getParameter("arguments").id) ||
-					event.getParameter("name");
-
-				this._expandTreeToNode(this._topicId, this.getOwnerComponent().getModel("treeData"));
+				// Expand tree node when the data is loaded
+				this._oDataLoadedPromise.then(function () {
+					this._expandTreeToNode(sTopicId, this._oTreeModel);
+				}.bind(this));
 			},
 
 			_onMatched: function () {
 				var splitApp = this.getView().getParent().getParent(),
-					masterTree = this.byId('tree'),
-					selectedItem;
+					selectedItem = this._oTree.getSelectedItem();
+
+				// We reset selected item
+				selectedItem && selectedItem.setSelected(false);
+
+				// Expand only 'sap' namespace
+				this._oDataLoadedPromise.then(function () {
+					this._oTree.collapseAll().expand(0);
+				}.bind(this));
 
 				splitApp.setMode(SplitAppMode.ShowHideMode);
-
-				if (masterTree) {
-					selectedItem = masterTree.getSelectedItem();
-					selectedItem && selectedItem.setSelected(false);
-				}
 
 				if (Device.system.desktop) {
 					setTimeout(function () {
@@ -109,46 +149,9 @@ sap.ui.define([
 				}
 			},
 
-			compareTreeNodes: function (sNode1, sNode2) {
-				if (sNode1 === "EXPERIMENTAL") {
-					return 1;
-				}
-
-				if (sNode2 === "EXPERIMENTAL") {
-					return -1;
-				}
-
-				if (sNode1 === "DEPRECATED") {
-					return 1;
-				}
-
-				if (sNode2 === "DEPRECATED") {
-					return -1;
-				}
-
-				if (sNode1 < sNode2) {
-					return -1;
-				}
-
-				if (sNode1 > sNode2) {
-					return 1;
-				}
-
-				if (sNode1 === sNode2) {
-					return 0;
-				}
-			},
-
 			onNodeSelect : function (oEvent) {
-				var node = oEvent.getParameter("listItem");
-				var apiId = node.getCustomData()[0].getValue();
-
-				if (!apiId) {
-					Log.warning("Missing name for entity: " + node.getId() + " - cannot navigate to API ref");
-					return;
-				}
-
-				this.getRouter().navTo("apiId", {id : formatter.encodeModuleName(apiId)}, false);
+				var sTarget = oEvent.getParameter("listItem").getTarget();
+				this._oRouter.navTo("apiId", {id : encodeURIComponent(sTarget)}, false);
 			},
 
 			/**
@@ -183,7 +186,7 @@ sap.ui.define([
 					}));
 				}
 
-				this.byId("tree").getBinding("items").filter(new Filter({
+				this._oTree.getBinding("items").filter(new Filter({
 					and: true,
 					filters: aFilters
 				}));
