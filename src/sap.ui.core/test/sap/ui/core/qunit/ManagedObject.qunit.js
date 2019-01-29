@@ -755,32 +755,32 @@ sap.ui.define([
 		// set
 		this.obj.setSingleAggr(this.subObj);
 		assert.equal(this.obj.invalidate.callCount, 1, "set calls invalidate only called once");
-		this.obj.invalidate.reset();
+		this.obj.invalidate.resetHistory();
 
 		// set to null
 		this.obj.setSingleAggr(null);
 		assert.equal(this.obj.invalidate.callCount, 1, "set to null calls invalidate only once");
-		this.obj.invalidate.reset();
+		this.obj.invalidate.resetHistory();
 
 		// set another object
 		this.obj.setSingleAggr(this.subObj2);
-		this.obj.invalidate.reset();
+		this.obj.invalidate.resetHistory();
 		this.obj.setSingleAggr(this.subObj);
 		assert.equal(this.obj.invalidate.callCount, 1, "setting another object calls invalidate only once");
-		this.obj.invalidate.reset();
+		this.obj.invalidate.resetHistory();
 
 		// setting an object a second time
 		this.obj.setSingleAggr(this.subObj);
-		this.obj.invalidate.reset();
+		this.obj.invalidate.resetHistory();
 		this.obj.setSingleAggr(this.subObj);
 		// for a 0..n aggr, the "no-change" situation is easier to detect
 		assert.equal(this.obj.invalidate.callCount, 0, "move within aggregation doesn't call invalidate");
-		this.obj.invalidate.reset();
+		this.obj.invalidate.resetHistory();
 
 		// moving a child elsewhere
 		new TestManagedObject().addSubObj(this.subObj);
 		assert.equal(this.obj.invalidate.callCount, 1, "moving child elsehwere calls invalidate only once");
-		this.obj.invalidate.reset();
+		this.obj.invalidate.resetHistory();
 
 		this.obj.invalidate.restore();
 	});
@@ -807,6 +807,8 @@ sap.ui.define([
 	});
 
 	QUnit.test("Add, Get, Remove and Destroy multiple aggregation", function(assert) {
+		var fnInvalidationSpy = sinon.spy(this.obj, "invalidate");
+
 		this.obj.addAggregation("subObjects", this.subObj);
 		assert.deepEqual(this.obj.getAggregation("subObjects"), [this.subObj], "Getter must return objects array");
 		assert.childOf(this.subObj.getId(), this.obj.getId());
@@ -825,6 +827,9 @@ sap.ui.define([
 		assert.checkIfParentCleared(this.subObj2);
 		this.obj.removeAllAggregation("subObjects");
 		assert.deepEqual(this.obj.getAggregation("subObjects", []), [], "Getter must return empty array");
+		fnInvalidationSpy.resetHistory();
+		this.obj.removeAllAggregation("subObjects");
+		assert.ok(fnInvalidationSpy.notCalled, "there is no invalidation if there is no aggregation");
 		assert.checkIfParentCleared(this.subObj);
 		assert.checkIfParentCleared(this.subObj3);
 
@@ -832,6 +837,9 @@ sap.ui.define([
 		this.obj.addAggregation("subObjects", this.subObj2);
 		this.obj.addAggregation("subObjects", this.subObj3);
 		this.obj.destroyAggregation("subObjects");
+		fnInvalidationSpy.resetHistory();
+		this.obj.destroyAggregation("subObjects");
+		assert.ok(fnInvalidationSpy.notCalled, "there is no invalidation if there is no aggregation");
 		assert.checkIfDestroyed(this.subObj);
 		assert.checkIfDestroyed(this.subObj2);
 		assert.checkIfDestroyed(this.subObj3);
@@ -844,35 +852,35 @@ sap.ui.define([
 		// add
 		this.obj.addSubObj(this.subObj);
 		assert.equal(this.obj.invalidate.callCount, 1, "add calls invalidate only called once");
-		this.obj.invalidate.reset();
+		this.obj.invalidate.resetHistory();
 
 		// insert
 		this.obj.insertSubObj(this.subObj2, 0);
 		assert.equal(this.obj.invalidate.callCount, 1, "insert calls invalidate only once");
-		this.obj.invalidate.reset();
+		this.obj.invalidate.resetHistory();
 
 		// remove
 		this.obj.removeSubObj(this.subObj);
 		assert.equal(this.obj.invalidate.callCount, 1, "remove calls invalidate only once");
-		this.obj.invalidate.reset();
+		this.obj.invalidate.resetHistory();
 
 		// destroy child
 		this.subObj2.destroy();
 		assert.equal(this.obj.invalidate.callCount, 1, "destroy of child calls invalidate only once");
-		this.obj.invalidate.reset();
+		this.obj.invalidate.resetHistory();
 
 		// adding an object a second time
 		this.obj.addSubObj(this.subObj);
-		this.obj.invalidate.reset();
+		this.obj.invalidate.resetHistory();
 		this.obj.addSubObj(this.subObj);
 		// subObj internally will be removed and added again
 		assert.equal(this.obj.invalidate.callCount, 2, "move within aggregation calls invalidate atmost twice");
-		this.obj.invalidate.reset();
+		this.obj.invalidate.resetHistory();
 
 		// moving a child elsewhere
 		new TestManagedObject().addSubObj(this.subObj);
 		assert.equal(this.obj.invalidate.callCount, 1, "moving child elsehwere calls invalidate only once");
-		this.obj.invalidate.reset();
+		this.obj.invalidate.resetHistory();
 
 		this.obj.invalidate.restore();
 	});
@@ -1753,6 +1761,9 @@ sap.ui.define([
 
 		var remaining = this.obj.getAssociation("associatedObjects", []);
 		assert.ok(remaining.length == 0, "returned value must be an empty array");
+		sinon.spy(this.obj, "invalidate");
+		this.obj.removeAllAssociation("associatedObjects");
+		assert.ok(this.obj.invalidate.notCalled, "there is no invalidation if there is no association");
 	});
 
 	QUnit.module("Cloning Elements", {
