@@ -3,7 +3,7 @@
 /**
  * General consistency checks on designtime metadata of controls in the sap.ui.fl library
  */
-sap.ui.require([
+sap.ui.define([
 	"sap/ui/dt/test/LibraryTest",
 	"sap/ui/thirdparty/jquery"
 ], function (
