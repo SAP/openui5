@@ -1,8 +1,8 @@
 /*!
  * ${copyright}
  */
-sap.ui.define(["sap/ui/core/Control", "sap/ui/model/json/JSONModel", "sap/m/List", "sap/m/StandardListItem", "sap/ui/base/ManagedObject", "sap/f/cards/Data", "sap/base/Log"],
-	function (Control, JSONModel, sapMList, StandardListItem, ManagedObject, Data, Log) {
+sap.ui.define(["sap/f/cards/BaseContent", "sap/m/List", "sap/m/StandardListItem", "sap/ui/base/ManagedObject", "sap/base/Log"],
+	function (BaseContent, sapMList, StandardListItem, ManagedObject, Log) {
 		"use strict";
 
 		/**
@@ -14,7 +14,7 @@ sap.ui.define(["sap/ui/core/Control", "sap/ui/model/json/JSONModel", "sap/m/List
 		 * @class
 		 * A control that is a wrapper of a <code>sap.m.List</code> and allows its creation based on a configuration.
 		 *
-		 * @extends sap.ui.core.Control
+		 * @extends sap.f.cards.BaseContent
 		 *
 		 * @author SAP SE
 		 * @version ${version}
@@ -24,45 +24,8 @@ sap.ui.define(["sap/ui/core/Control", "sap/ui/model/json/JSONModel", "sap/m/List
 		 * @since 1.62
 		 * @alias sap.f.cards.ListContent
 		 */
-		var ListContent = Control.extend("sap.f.cards.ListContent", {
-			metadata: {
-				properties: {
-
-					/**
-					 * The object configuration used to create a list content.
-					 */
-					configuration: { type: "object" }
-				},
-				aggregations: {
-
-					/**
-					 * Defines the content of the control.
-					 */
-					_content: {
-						multiple: false,
-						visibility: "hidden"
-					}
-				}
-			},
-			constructor: function (vId, mSettings) {
-				if (typeof vId !== "string"){
-					mSettings = vId;
-				}
-
-				if (mSettings && mSettings.serviceManager) {
-					this._oServiceManager = mSettings.serviceManager;
-					delete mSettings.serviceManager;
-				}
-
-				Control.apply(this, arguments);
-			},
-			renderer: function (oRm, oCardContent) {
-				oRm.write("<div");
-				oRm.writeElementData(oCardContent);
-				oRm.write(">");
-				oRm.renderControl(oCardContent.getAggregation("_content"));
-				oRm.write("</div>");
-			}
+		var ListContent = BaseContent.extend("sap.f.cards.ListContent", {
+			renderer: {}
 		});
 
 		/**
@@ -96,6 +59,8 @@ sap.ui.define(["sap/ui/core/Control", "sap/ui/model/json/JSONModel", "sap/m/List
 		 * Called when control is initialized.
 		 */
 		ListContent.prototype.init = function () {
+			BaseContent.prototype.init.apply(this, arguments);
+
 			var oList = this._getList();
 			var that = this;
 
@@ -108,8 +73,6 @@ sap.ui.define(["sap/ui/core/Control", "sap/ui/model/json/JSONModel", "sap/m/List
 				}
 			});
 
-			var oModel = new JSONModel();
-			this.setModel(oModel);
 			this._oItemTemplate = new StandardListItem({
 				iconDensityAware: false
 			});
@@ -126,24 +89,6 @@ sap.ui.define(["sap/ui/core/Control", "sap/ui/model/json/JSONModel", "sap/m/List
 		};
 
 		/**
-		 * Called when control is destroyed.
-		 *
-		 * @returns {sap.f.cards.ListContent} <code>this</code> for chaining
-		 */
-		ListContent.prototype.destroy = function () {
-			this.setAggregation("_content", null);
-			this.setModel(null);
-
-			if (this._dataChangeHandler && this._oDataService) {
-				this._oDataService.detachDataChanged(this._dataChangeHandler);
-				this._dataChangeHandler = null;
-				this._oDataService = null;
-			}
-
-			return Control.prototype.destroy.apply(this, arguments);
-		};
-
-		/**
 		 * Setter for configuring a <code>sap.f.cards.ListContent</code>.
 		 *
 		 * @public
@@ -152,14 +97,10 @@ sap.ui.define(["sap/ui/core/Control", "sap/ui/model/json/JSONModel", "sap/m/List
 		 */
 		ListContent.prototype.setConfiguration = function (oConfiguration) {
 
-			this.setProperty("configuration", oConfiguration);
+			BaseContent.prototype.setConfiguration.apply(this, arguments);
 
 			if (!oConfiguration) {
 				return this;
-			}
-
-			if (oConfiguration.data) {
-				this._setData(oConfiguration.data);
 			}
 
 			if (oConfiguration.item) {
@@ -189,13 +130,16 @@ sap.ui.define(["sap/ui/core/Control", "sap/ui/model/json/JSONModel", "sap/m/List
 
 			this._attachActions(mItem);
 
-			var oList = this._getList();
-			if (oList.isBound("items")) {
-				oList.bindItems({
-					path: oList.getBindingInfo("items").path,
-					template: this._oItemTemplate
-				});
+			var sPath = "/";
+			var oConfiguration = this.getConfiguration();
+			if (oConfiguration.data && oConfiguration.data.path) {
+				sPath = oConfiguration.data.path;
 			}
+
+			this._getList().bindItems({
+				path: sPath,
+				template: this._oItemTemplate
+			});
 		};
 
 		/**
@@ -265,67 +209,6 @@ sap.ui.define(["sap/ui/core/Control", "sap/ui/model/json/JSONModel", "sap/m/List
 					window.open(oAction.url, oAction.target || "_blank");
 				});
 			}
-		};
-
-		/**
-		 * Requests data and bind it to the item template.
-		 *
-		 * @private
-		 * @param {Object} oData The data part of the configuration object
-		 */
-		ListContent.prototype._setData = function (oData) {
-
-			var oRequest = oData.request;
-			var oService = oData.service;
-
-			if (oData.json && !oRequest) {
-				this._updateModel(oData.json, oData.path);
-			}
-
-			if (oService) {
-				this._oServiceManager.getService("sap.ui.integration.services.Data").then(function (oDataService) {
-					if (oDataService) {
-						this._dataChangeHandler = function (oEvent) {
-							this._updateModel(oEvent.data, oData.path);
-						}.bind(this);
-
-						oDataService.getData().then(function (data) {
-							this._updateModel(data, oData.path);
-						}.bind(this)).catch(function () {
-							Log.error("Card content data service failed to get data");
-						});
-
-						oDataService.attachDataChanged(this._dataChangeHandler, oData.service.parameters);
-
-						this._oDataService = oDataService;
-					}
-				}.bind(this)).catch(function () {
-					Log.error("Data service unavailable");
-				});
-			} else if (oRequest) {
-				Data.fetch(oRequest).then(function (data) {
-					this._updateModel(data, oData.path);
-				}.bind(this)).catch(function (oError) {
-					Log.error("Card content data request failed");
-				});
-			}
-		};
-
-		/**
-		 * Updates the model and binds the data to the list.
-		 *
-		 * @private
-		 * @param {Object} oData the data to set
-		 * @param {string} sPath the binding path
-		 */
-		ListContent.prototype._updateModel = function (oData, sPath) {
-			this.getModel().setData(oData);
-			this._getList().bindItems({
-				path: sPath || "/",
-				template: this._oItemTemplate
-			});
-
-			this.fireEvent("_updated");
 		};
 
 	return ListContent;

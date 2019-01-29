@@ -1,8 +1,8 @@
 /*!
  * ${copyright}
  */
-sap.ui.define(['sap/ui/core/Control', 'sap/ui/model/json/JSONModel','sap/f/cards/Data', "sap/base/Log", "sap/suite/ui/commons/Timeline", "sap/suite/ui/commons/library", "sap/suite/ui/commons/TimelineItem", 'sap/ui/base/ManagedObject'],
-	function (Control, JSONModel,  Data, Log, Timeline, suiteLibrary, TimelineItem, ManagedObject) {
+sap.ui.define(["sap/f/cards/BaseContent", 'sap/ui/model/json/JSONModel','sap/f/cards/Data', "sap/base/Log", "sap/suite/ui/commons/Timeline", "sap/suite/ui/commons/library", "sap/suite/ui/commons/TimelineItem", 'sap/ui/base/ManagedObject'],
+	function (BaseContent, JSONModel,  Data, Log, Timeline, suiteLibrary, TimelineItem, ManagedObject) {
 		"use strict";
 
 		/**
@@ -20,7 +20,7 @@ sap.ui.define(['sap/ui/core/Control', 'sap/ui/model/json/JSONModel','sap/f/cards
 		 *
 		 * <h3>Responsive Behavior</h3>
 		 *
-		 * @extends sap.ui.core.Control
+		 * @extends sap.f.cards.BaseContent
 		 *
 		 * @author SAP SE
 		 * @version ${version}
@@ -33,42 +33,9 @@ sap.ui.define(['sap/ui/core/Control', 'sap/ui/model/json/JSONModel','sap/f/cards
 		 *
 		 *
 		 */
-
-		var TimelineContent = Control.extend("sap.f.cards.TimelineContent", {
-			metadata: {
-				properties: {
-					configuration: { type: "object" }
-				},
-				aggregations: {
-					_content: { multiple: false, visibility: "hidden" }
-				}
-			},
-			renderer: function (oRm, oCardContent) {
-				oRm.write("<div");
-				oRm.writeElementData(oCardContent);
-				oRm.write(">");
-				oRm.renderControl(oCardContent.getAggregation("_content"));
-				oRm.write("</div>");
-			}
+		var TimelineContent = BaseContent.extend("sap.f.cards.TimelineContent", {
+			renderer: {}
 		});
-
-		/**
-		 * Called when control is initialized.
-		 */
-		TimelineContent.prototype.init = function () {
-			var oModel = new JSONModel();
-			this.setModel(oModel);
-		};
-
-		/**
-		 * Called when control is destroyed.
-		 *
-		 * @returns {sap.f.cards.TimelineContent} <code>this</code> for chaining
-		 */
-		TimelineContent.prototype.destroy = function () {
-			this.setModel(null);
-			return Control.prototype.destroy.apply(this, arguments);
-		};
 
 		/**
 		 * Called when control is destroyed.
@@ -87,10 +54,7 @@ sap.ui.define(['sap/ui/core/Control', 'sap/ui/model/json/JSONModel','sap/f/cards
 		 * @returns {sap.suite.common.Timeline} The Timeline control
 		 */
 		TimelineContent.prototype._getTimeline = function () {
-
-			var oModel = new JSONModel(),
-				oTimeline = this.getAggregation("_content");
-			this.setModel(oModel);
+			var oTimeline = this.getAggregation("_content");
 
 			if (this._bIsBeingDestroyed) {
 				return null;
@@ -115,20 +79,15 @@ sap.ui.define(['sap/ui/core/Control', 'sap/ui/model/json/JSONModel','sap/f/cards
 		 * @param {Object} oConfiguration Configuration object used to create the internal list.
 		 * @returns {sap.f.cards.TimelineContent} Pointer to the control instance to allow method chaining.
 		 */
-		TimelineContent.prototype.setConfiguration = function (oContent) {
+		TimelineContent.prototype.setConfiguration = function (oConfiguration) {
+			BaseContent.prototype.setConfiguration.apply(this, arguments);
 
-			this.setProperty("configuration", oContent);
-
-			if (!oContent) {
+			if (!oConfiguration) {
 				return;
 			}
 
-			if (oContent.data) {
-				this._setData(oContent.data);
-			}
-
-			if (oContent.item && oContent.data) {
-				this._setTimelineItem(oContent.item, oContent.data);
+			if (oConfiguration.item) {
+				this._setTimelineItem(oConfiguration.item);
 			}
 		};
 
@@ -137,13 +96,13 @@ sap.ui.define(['sap/ui/core/Control', 'sap/ui/model/json/JSONModel','sap/f/cards
 		 *
 		 * @private
 		 * @param {Object} mItem The item template of the configuration object
-		 * @param {Object} oData the data to set
 		 * @returns <code>this</code> for chaining
 		 */
-		TimelineContent.prototype._setTimelineItem = function (mItem, oData) {
-				this._oTimeLineItemTemplate =  new TimelineItem({
-					userNameClickable : false
-				});
+		TimelineContent.prototype._setTimelineItem = function (mItem) {
+			this._oTimeLineItemTemplate =  new TimelineItem({
+				userNameClickable : false
+			});
+
 			/* eslint-disable no-unused-expressions */
 			mItem.title && this._bindItemProperty("title", mItem.title.value);
 			mItem.description && this._bindItemProperty("text", mItem.description.value);
@@ -153,8 +112,9 @@ sap.ui.define(['sap/ui/core/Control', 'sap/ui/model/json/JSONModel','sap/f/cards
 			mItem.icon && this._bindItemProperty("icon", mItem.icon.value);
 			/* eslint-enable no-unused-expressions */
 
-			this._getTimeline().bindAggregation("content", {
-				path: oData.path,
+			var oTimeline = this._getTimeline();
+			oTimeline.bindAggregation("content", {
+				path: this.getBindingContext().getPath(),
 				template: this._oTimeLineItemTemplate
 			});
 
@@ -174,7 +134,6 @@ sap.ui.define(['sap/ui/core/Control', 'sap/ui/model/json/JSONModel','sap/f/cards
 			var oBindingInfo = ManagedObject.bindingParser(sPropertyValue);
 
 			if (!sPropertyValue) {
-
 				return;
 			}
 
@@ -183,49 +142,6 @@ sap.ui.define(['sap/ui/core/Control', 'sap/ui/model/json/JSONModel','sap/f/cards
 			} else {
 				this._oTimeLineItemTemplate.setProperty(sPropertyName, sPropertyValue);
 			}
-		};
-
-		/**
-		 * Requests data and bind it to the item template.
-		 *
-		 * @private
-		 * @param {Object} oData The data part of the configuration object
-		 * @returns <code>this</code> for chaining
-		 */
-		TimelineContent.prototype._setData = function (oData) {
-
-			var oRequest = oData.request;
-
-			if (oData.json && !oRequest) {
-				this._updateModel(oData.json, oData.path);
-			}
-
-			if (oRequest) {
-				Data.fetch(oRequest).then(function (data) {
-					this._updateModel(data, oData.path);
-				}.bind(this)).catch(function (oError) {
-					Log.error("Card content data request failed");
-				});
-			}
-
-			return this;
-		};
-
-		/**
-		 * Updates the model and binds the data to the list.
-		 *
-		 * @private
-		 * @param {Object} oData the data to set
-		 * @param {string} sPath the binding path
-		 */
-		TimelineContent.prototype._updateModel = function (oData, sPath) {
-
-			var oTimeline = this. _getTimeline();
-			this.getModel().setData(oData);
-			oTimeline.bindAggregation("content", {
-				path: sPath,
-				template: this._oTimeLineItemTemplate
-			}.bind(this));
 		};
 
 		return TimelineContent;

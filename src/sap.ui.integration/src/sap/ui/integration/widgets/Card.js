@@ -465,16 +465,6 @@ sap.ui.define([
 			this.fireEvent("_contentUpdated");
 		}.bind(this));
 
-		if (mSettings.data && mSettings.data.json) {
-			var oDelegate = {
-				onAfterRendering: function () {
-					this.fireEvent("_contentUpdated");
-					oContent.removeEventDelegate(oDelegate);
-				}
-			};
-			oContent.addEventDelegate(oDelegate, this);
-		}
-
 		this.setAggregation("_content", oContent);
 
 		if (this._oDataPromise) {

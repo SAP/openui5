@@ -4,10 +4,7 @@
 
 sap.ui.define([
 		"sap/m/Table",
-		"sap/ui/core/Control",
-		"sap/ui/model/json/JSONModel",
-		"sap/f/cards/Data",
-		"sap/base/Log",
+		"sap/f/cards/BaseContent",
 		"sap/m/Column",
 		"sap/m/ColumnListItem",
 		"sap/m/Text",
@@ -18,10 +15,7 @@ sap.ui.define([
 		"sap/f/Avatar"
 	], function (
 		ResponsiveTable,
-		Control,
-		JSONModel,
-		Data,
-		Log,
+		BaseContent,
 		Column,
 		ColumnListItem,
 		Text,
@@ -48,7 +42,7 @@ sap.ui.define([
 		 *
 		 * <h3>Responsive Behavior</h3>
 		 *
-		 * @extends sap.ui.core.Control
+		 * @extends sap.f.cards.BaseContent
 		 *
 		 * @author SAP SE
 		 * @version ${version}
@@ -59,27 +53,8 @@ sap.ui.define([
 		 * @see {@link TODO Card}
 		 * @alias sap.f.cards.TableContent
 		 */
-		var TableContent = Control.extend("sap.f.cards.TableContent", {
-			metadata: {
-				properties: {
-					configuration: { type: "object" }
-				},
-				defaultAggregation: "columns",
-				aggregations: {
-
-					_content: {
-						multiple: false,
-						visibility: "hidden"
-					}
-				}
-			},
-			renderer: function (oRm, oCardContent) {
-				oRm.write("<div");
-				oRm.writeElementData(oCardContent);
-				oRm.write(">");
-				oRm.renderControl(oCardContent.getAggregation("_content"));
-				oRm.write("</div>");
-			}
+		var TableContent = BaseContent.extend("sap.f.cards.TableContent", {
+			renderer: {}
 		});
 
 		TableContent.prototype._getTable = function () {
@@ -101,15 +76,10 @@ sap.ui.define([
 		};
 
 		TableContent.prototype.setConfiguration = function (oContent) {
-
-			this.setProperty("configuration", oContent);
+			BaseContent.prototype.setConfiguration.apply(this, arguments);
 
 			if (!oContent) {
 				return;
-			}
-
-			if (oContent.data) {
-				this._setData(oContent.data);
 			}
 
 			if (oContent.columns) {
@@ -127,7 +97,7 @@ sap.ui.define([
 			}.bind(this));
 
 			oTable.bindItems({
-				path: oTable.getBindingContext().getPath(),
+				path: this.getBindingContext().getPath(),
 				template: new ColumnListItem({
 					cells: aCells
 				})
@@ -183,55 +153,6 @@ sap.ui.define([
 					state: oColumn.progressIndicator.state
 				});
 			}
-		};
-
-		TableContent.prototype.applySettings = function (mSettings, oScope) {
-
-			var oData = mSettings.data;
-
-			if (oData) {
-				this._setData(oData);
-				delete mSettings.data;
-			}
-
-			Control.prototype.applySettings.apply(this, [mSettings, oScope]);
-
-			mSettings.data = oData;
-
-			return this;
-		};
-
-		TableContent.prototype.init = function () {
-			var oModel = new JSONModel();
-			this.setModel(oModel);
-		};
-
-		TableContent.prototype.destroy = function () {
-			this.setModel(null);
-			return Control.prototype.destroy.apply(this, arguments);
-		};
-
-		TableContent.prototype._setData = function (oData) {
-
-			this._getTable().bindElement({
-				path: oData.path || "/"
-			});
-
-			var oRequest = oData.request;
-
-			if (oData.json && !oRequest) {
-				this.getModel().setData(oData.json);
-			}
-
-			if (oRequest) {
-				Data.fetch(oRequest).then(function (data) {
-					this.getModel().setData(data);
-				}.bind(this)).catch(function (oError) {
-					// TODO: Handle errors. Maybe add error message
-				});
-			}
-
-			return this;
 		};
 
 		return TableContent;
