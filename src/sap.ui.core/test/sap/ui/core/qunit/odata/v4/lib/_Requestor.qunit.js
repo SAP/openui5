@@ -14,7 +14,8 @@ sap.ui.define([
 	/*eslint max-nested-callbacks: 0, no-warning-comments: 0 */
 	"use strict";
 
-	var oModelInterface = {
+	var sClassName = "sap.ui.model.odata.v4.lib._Requestor",
+		oModelInterface = {
 			fetchMetadata : function () {
 				throw new Error("Do not call me!");
 			},
@@ -341,8 +342,8 @@ sap.ui.define([
 
 			oHelperMock.expects("createError")
 				.exactly(bSuccess || o.bReadFails ? 0 : 1)
-				.withExactArgs(sinon.match.same(oTokenRequiredResponse), "/Service/foo",
-					"original/path")
+				.withExactArgs(sinon.match.same(oTokenRequiredResponse), "Communication error",
+					"/Service/foo", "original/path")
 				.returns(oError);
 			oHelperMock.expects("resolveIfMatchHeader").exactly(o.iRequests)
 				.withExactArgs(sinon.match.same(mHeaders))
@@ -544,6 +545,8 @@ sap.ui.define([
 				oJQueryMock.expects("ajax")
 					.withExactArgs("/", sinon.match({headers : {"SAP-ContextId" : "abc123"}}))
 					.returns(jqXHRMock);
+				that.oLogMock.expects("error").exactly(bErrorId ? 1 : 0)
+					.withExactArgs("Session not found on server", undefined, sClassName);
 				that.mock(oRequestor).expects("clearSessionContext").exactly(bErrorId ? 1 : 0)
 					.withExactArgs();
 				that.mock(_Helper).expects("createError").returns(oExpectedError);
@@ -968,7 +971,8 @@ sap.ui.define([
 			// do not check parameters
 			.returns(Promise.resolve([oResponse]));
 		this.mock(_Helper).expects("createError")
-			.withExactArgs(sinon.match.same(oResponse), "EMPLOYEES", sOriginalPath)
+			.withExactArgs(sinon.match.same(oResponse), "Communication error", "EMPLOYEES",
+				sOriginalPath)
 			.returns(new Error());
 
 		// code under test
@@ -1118,7 +1122,8 @@ sap.ui.define([
 
 			this.mock(_Helper).expects("createError")
 				.exactly(bSuccess ? 0 : 2)
-				.withExactArgs(sinon.match.same(oTokenRequiredResponse))
+				.withExactArgs(sinon.match.same(oTokenRequiredResponse),
+					"Could not refresh security token")
 				.returns(oError);
 
 			this.mock(jQuery).expects("ajax").twice()
@@ -3238,7 +3243,7 @@ sap.ui.define([
 			} else if (oFixture.error) {
 				this.oLogMock.expects("warning")
 					.withExactArgs("Unsupported Keep-Alive header", oFixture.keepAlive,
-						"sap.ui.model.odata.v4.lib._Requestor");
+						sClassName);
 			}
 
 			// code under test
@@ -3319,6 +3324,8 @@ sap.ui.define([
 						}, 0);
 						return jqXHR;
 					});
+				that.oLogMock.expects("error").exactly(bErrorId ? 1 : 0)
+					.withExactArgs("Session not found on server", undefined, sClassName);
 				that.mock(oRequestor).expects("clearSessionContext").exactly(bErrorId ? 1 : 0)
 					.withExactArgs();
 

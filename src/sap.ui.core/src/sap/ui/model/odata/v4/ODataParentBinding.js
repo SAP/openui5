@@ -627,10 +627,12 @@ sap.ui.define([
 						that.mAggregatedQueryOptions));
 				}
 				return oCache;
-			}).catch(function (oError) {
-				that.oModel.reportError("Failed to update cache for binding " + that, sClassName,
-					oError);
 			});
+		// catch the error, but keep the rejected promise
+		this.oCachePromise.catch(function (oError) {
+			that.oModel.reportError(that + ": Failed to enhance query options for "
+				+ "auto-$expand/$select for child " + sChildPath,  sClassName, oError);
+		});
 		return oCanUseCachePromise;
 	};
 

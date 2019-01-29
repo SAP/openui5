@@ -30,6 +30,7 @@ sap.ui.define([
 
 	var sClassName = "sap.ui.model.odata.v4.lib._V2MetadataConverter",
 		sDefaultLanguage = sap.ui.getCore().getConfiguration().getLanguage(),
+		sInvalidModel = "/invalid/model/",
 		sSalesOrderService = "/sap/opu/odata4/sap/zui5_testv4/default/sap/zui5_epm_sample/0002/",
 		sTeaBusi = "/sap/opu/odata4/IWBEP/TEA/default/IWBEP/TEA_BUSI/0001/";
 
@@ -162,6 +163,8 @@ sap.ui.define([
 
 			// These metadata files are _always_ faked, the query option "realOData" is ignored
 			TestUtils.useFakeServer(this._oSandbox, "sap/ui/core/qunit", {
+				"/invalid/model/" : {code : 500},
+				"/invalid/model/$metadata" : {code : 500},
 				"/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/$metadata"
 					: {source : "model/GWSAMPLE_BASIC.metadata.xml"},
 				"/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/annotations.xml"
@@ -12774,4 +12777,38 @@ sap.ui.define([
 					"sap.ui.model.odata.v4.ODataPropertyBinding");
 		}
 	);
+
+	//*********************************************************************************************
+	// Scenario: list binding with auto-$expand/$select and filter (so that metadata is required to
+	// build the query string), but the metadata could not be loaded (CPOUI5UISERVICESV3-1723)
+	QUnit.test("Auto-$expand/$select with dynamic filter, but no metadata", function (assert) {
+		var oModel = createModel(sInvalidModel, {autoExpandSelect : true}),
+			sView = '\
+<Table items="{path : \'/Artists\', \
+		filters : {path : \'IsActiveEntity\', operator : \'EQ\', value1 : \'true\'}}">\
+	<columns><Column/></columns>\
+	<ColumnListItem>\
+		<Text id="id" text="{ID}"/>\
+	</ColumnListItem>\
+</Table>';
+
+		this.oLogMock.restore(); // the exact errors do not interest
+		this.stub(Log, "error");
+		this.expectMessages([{
+			"code": undefined,
+			"descriptionUrl": undefined,
+			"message": "Could not load metadata: 500 Internal Server Error",
+			"persistent": true,
+			"target": "",
+			"technical": true,
+			"type": "Error"
+		}]);
+
+		return this.createView(assert, sView, oModel).then(function () {
+			// check that the first error message complains about the metadata access
+			sinon.assert.calledWithExactly(Log.error.firstCall, "GET /invalid/model/$metadata",
+				"Could not load metadata: 500 Internal Server Error",
+				"sap.ui.model.odata.v4.lib._MetadataRequestor");
+		});
+	});
 });
