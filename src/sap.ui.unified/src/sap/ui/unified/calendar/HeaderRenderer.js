@@ -76,8 +76,31 @@ sap.ui.define(['jquery.sap.global'],
 			// for Chinese and Japanese the date should be displayed in year, month, day order
 			if (sLanguage.toLowerCase() === "ja" || sLanguage.toLowerCase() === "zh") {
 				iBtn = MAX_HEADER_BUTTONS - 1 - i;
+				// when we have two months displayed next to each other, we have 4 buttons
+				// and they should be arranged in order to show year, first month, year, second month
+				// this is why the numbers of the buttons are hard-coded
+				if (this._isTwoMonthsCalendar(oHead)) {
+					switch (i) {
+						case 0:
+							iBtn = 2;
+							break;
+						case 2:
+							iBtn = 4;
+							break;
+						case 1:
+							iBtn = 1;
+							break;
+						case 3:
+							iBtn = 3;
+							break;
+					}
+				}
 			} else {
 				iBtn = i;
+			}
+			if (this._isTwoMonthsCalendar(oHead)) {
+				iFirst = 2;
+				iLast = 3;
 			}
 			this.renderCalendarButtons(oRm, oHead, sId, iFirst, iLast, mAccProps, iBtn);
 		}
@@ -193,6 +216,10 @@ sap.ui.define(['jquery.sap.global'],
 		}
 
 		return sText;
+	};
+
+	HeaderRenderer._isTwoMonthsCalendar = function (oHead) {
+		return (oHead.getParent() instanceof sap.ui.unified.Calendar && (oHead.getParent().getMonths() >= 2));
 	};
 
 	return HeaderRenderer;

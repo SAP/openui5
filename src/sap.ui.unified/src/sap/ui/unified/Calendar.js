@@ -39,6 +39,8 @@ sap.ui.define([
 ) {
 	"use strict";
 
+	var sLanguage = sap.ui.getCore().getConfiguration().getLocale().getLanguage();
+
 	/*
 	 * Inside the Calendar CalendarDate objects are used. But in the API JS dates are used.
 	 * So conversion must be done on API functions.
@@ -2246,9 +2248,17 @@ sap.ui.define([
 	 */
 	Calendar.prototype._toggleTwoMonthsInTwoColumnsCSS = function () {
 		if (this._isTwoMonthsInTwoColumns()) {
-			this.addStyleClass("sapUiCalTwoMonthsTwoColumns");
+			if (sLanguage.toLowerCase() === "ja" || sLanguage.toLowerCase() === "zh") {
+				this.addStyleClass("sapUiCalTwoMonthsTwoColumnsJaZh");
+			} else {
+				this.addStyleClass("sapUiCalTwoMonthsTwoColumns");
+			}
 		} else {
-			this.removeStyleClass("sapUiCalTwoMonthsTwoColumns");
+			if (sLanguage.toLowerCase() === "ja" || sLanguage.toLowerCase() === "zh") {
+				this.removeStyleClass("sapUiCalTwoMonthsTwoColumnsJaZh");
+			} else {
+				this.removeStyleClass("sapUiCalTwoMonthsTwoColumns");
+			}
 		}
 	};
 
