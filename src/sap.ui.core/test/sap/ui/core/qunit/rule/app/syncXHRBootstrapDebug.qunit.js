@@ -4,11 +4,19 @@
 
 	QUnit.module("Core boot Debug", {
 		before: function() {
-
+			var oTestModule = this;
 			this.requireSyncStub = sinon.spy(sap.ui, "requireSync");
 			window["sap-ui-config"] = {debug: true};
 			return new Promise(function(resolve) {
-				sap.ui.require(["sap/base/Log"], function(Log) {
+				sap.ui.require(["sap/ui/Device", "sap/base/Log"], function(Device, Log) {
+
+					oTestModule.iExptectedSyncCalls = 4;
+
+					// the Normalize Polyfill is optionally required sync by the FilterProcessor
+					if (!String.prototype.normalize && !sap.ui.Device.browser.mobile) {
+						oTestModule.iExptectedSyncCalls = 5;
+					}
+
 					Log.logSupportInfo(true);
 					Log.setLevel(4);
 					sap.ui.require(["sap/ui/core/Core"], function(core) {
@@ -19,12 +27,7 @@
 			});
 		},
 		after: function(assert) {
-			var iCount = 4;
-			// Only in IE: the Normalize Polyfill is required sync by the FilterProcessor
-			if (!String.prototype.normalize && !sap.ui.Device.browser.mobile) {
-				iCount = 5;
-			}
-			assert.equal(this.requireSyncStub.callCount, iCount);
+			assert.equal(this.requireSyncStub.callCount, this.iExptectedSyncCalls);
 			this.requireSyncStub.restore();
 		}
 	});
