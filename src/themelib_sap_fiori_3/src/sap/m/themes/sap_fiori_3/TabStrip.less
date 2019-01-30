@@ -7,14 +7,26 @@
 @_sap_m_TabStrip_ItemSelectedTextColor: darken(@sapUiGroupTitleTextColor, 20);
 
 .sapMTabStrip {
+	background: @sapUiShellBackground;
+	box-shadow: none;
+}
+
+.sapMTabStrip,
+.sapUiSizeCozy .sapMTabStrip {
+	height: 2.75rem;
+}
+
+.sapMTabStrip {
 	.sapMTSTabsContainer {
 		.sapMTSTabs {
 			.sapMTabStripItem {
 				&:hover {
 					color: @_sap_m_TabStrip_ItemHoverTextColor;
+					background-color: @sapUiListHoverBackground;
 				}
 				&.sapMTabStripItemSelected {
-					color: @_sap_m_TabStrip_ItemSelectedTextColor;
+					color: @sapUiSelected;
+					background: @sapUiListBackground;
 				}
 			}
 		}
@@ -23,5 +35,32 @@
 
 html.sap-phone .sapMTabStrip .sapMTSOverflowSelect {
 	border: none;
+	background: transparent;
+}
+
+.sapMTabStrip .sapMTSTabsContainer .sapMTSTabs .sapMTabStripItem.sapMTabStripItemSelected {
+	border-top: solid 0.125rem @sapUiSelected;
+	border-radius: 0.125rem 0.125rem 0 0;
+	border-bottom: none;
+}
+
+html[dir=ltr] .sapMTabStrip .sapMTSLeftOverflowButtons,
+html[dir=rtl] .sapMTabStrip .sapMTSRightOverflowButtons {
+	background: linear-gradient(90deg, @sapUiShellBackground 0%, @sapUiShellBackground 75%, fade(@sapUiShellBackground, 0) 100%);
+}
+
+html[dir=ltr] .sapMTabStrip .sapMTSLeftOverflowButtons::after,
+html[dir=rtl] .sapMTabStrip .sapMTSRightOverflowButtons::after {
+	background: transparent;
+
+}
+
+html[dir=ltr] .sapMTabStrip .sapMTSRightOverflowButtons,
+html[dir=rtl] .sapMTabStrip .sapMTSLeftOverflowButtons {
+	background: linear-gradient(90deg, fade(@sapUiShellBackground, 0) 0%, @sapUiShellBackground 25%, @sapUiShellBackground 100%);
+}
+
+html[dir=ltr] .sapMTabStrip .sapMTSRightOverflowButtons::after,
+html[dir=rtl] .sapMTabStrip .sapMTSLeftOverflowButtons::after {
 	background: transparent;
 }
