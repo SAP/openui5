@@ -1730,6 +1730,30 @@ sap.ui.define([
 		assert.ok(oMultiInput._oSelectedItemsList != oList, "The SelectedItemsList gets cleaned properly");
 	});
 
+	QUnit.test("Destroy & reinit on mobile", function (assert) {
+		// Setup
+		this.stub(Device, "system", {
+			desktop: false,
+			phone: true,
+			tablet: false
+		});
+
+		// arrange
+		var oMultiInput = new MultiInput("test-input").placeAt("qunit-fixture");
+		sap.ui.getCore().applyChanges();
+
+		// Act
+		oMultiInput.destroy();
+		oMultiInput = new MultiInput("test-input").placeAt("qunit-fixture");
+		sap.ui.getCore().applyChanges();
+
+		// assert
+		assert.ok(true, "If there's no exception so far, everything is ok");
+
+		// Cleanup
+		oMultiInput.destroy();
+	});
+
 
 	QUnit.module("IE11", {
 		beforeEach : function() {
