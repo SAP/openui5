@@ -8,6 +8,11 @@
 		vertical-align: top;
 		margin: 0 0.5rem 0.5rem 0;
 	}
+
+	.sapMGHLI {
+		margin-bottom: 0.5rem;
+	}
+
 	.sapUiLayoutCSSGridBoxLayoutGenerateIEBreakpoints(S);
 	.sapUiLayoutCSSGridBoxLayoutGenerateIEBreakpoints(M);
 	.sapUiLayoutCSSGridBoxLayoutGenerateIEBreakpoints(L);
@@ -17,7 +22,6 @@
 	display: grid;
 	grid-auto-rows: 1fr;
 	grid-gap: 0.5rem 0.5rem;
-	margin-bottom: 0.5rem;
 
 	.sapUiLayoutCSSGridBoxLayoutGenerateBreakpoints(S);
 	.sapUiLayoutCSSGridBoxLayoutGenerateBreakpoints(M);
@@ -36,7 +40,7 @@
  */
 .sapUiLayoutCSSGridBoxLayoutGenerateBreakpoints(@size, @counter: 0, @i: 1) when (@i =< 12) {
 	&.sapUiLayoutCSSGridBoxLayoutSize@{size}.sapUiLayoutCSSGridBoxLayoutSpan@{size}@{i} {
-			grid-template-columns: repeat(auto-fit, minmax(calc(~"(100% - @{counter} * 0.5rem) / @{i}"), 1fr));
+		grid-template-columns: repeat(auto-fit, minmax(calc(~"(100% - @{counter} * 0.5rem - 1px) / @{i}"), 1fr));
 	}
 
 	.sapUiLayoutCSSGridBoxLayoutGenerateBreakpoints(@size, (@counter + 1), (@i + 1));
@@ -52,11 +56,11 @@
 			> .sapUiLayoutCSSGridItem {
 				width: calc(~"(100% - @{counter} * 0.5rem - 0.1px) / @{i}");
 			}
-
-			>  .sapUiLayoutCSSGridItem:nth-of-type(@{i}n) {
-				margin-right: 0; // if there is Grouping (and headers) this doesn't calculates correctly. Should be reworked
-			}
 	}
 
 	.sapUiLayoutCSSGridBoxLayoutGenerateIEBreakpoints(@size, (@counter + 1), (@i + 1));
+}
+
+.sapUiLayoutCSSGridItem.sapUiLayoutCSSGridItemLastOnRow {
+	margin-right: 0;
 }
