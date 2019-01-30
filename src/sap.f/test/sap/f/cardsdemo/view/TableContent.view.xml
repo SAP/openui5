@@ -20,7 +20,7 @@
 			<f:CardContainer>
 				<w:Card id="tablecard1" manifest="{manifests>/tableManifests/tablecard1}" height="auto" class="sapUiMediumMarginEnd">
 					<w:layoutData>
-						<f:CardItemLayoutData columns="7" />
+						<f:CardItemLayoutData columns="6" />
 					</w:layoutData>
 				</w:Card>
 				<w:Card id="tablecard3" manifest="{manifests>/tableManifests/tablecard3}" height="auto">
