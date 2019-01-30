@@ -13,6 +13,7 @@ sap.ui.define([
 	var oLogger = _OpaLogger.getLogger("sap.ui.test.actions.Press");
 
 	/**
+	 * @class
 	 * The Press action is used to simulate a press interaction on a Control's dom ref.
 	 * This will work out of the box for most of the controls (even custom controls).
 	 *
@@ -20,23 +21,22 @@ sap.ui.define([
 	 *
 	 * <ul>
 	 *     <li>sap.m.Button</li>
-	 *     <li>sap.m.Link</li>
-	 *     <li>sap.m.StandardListItem</li>
+	 *     <li>sap.m.ComboBox</li>
 	 *     <li>sap.m.IconTabFilter</li>
 	 *     <li>sap.m.Input - Value help</li>
-	 *     <li>sap.m.SearchField - Search Button</li>
-	 *     <li>sap.m.Page - Back Button</li>
-	 *     <li>sap.m.semantic.FullscreenPage - Back Button</li>
-	 *     <li>sap.m.semantic.DetailPage - Back Button</li>
+	 *     <li>sap.m.Link</li>
 	 *     <li>sap.m.List - More Button</li>
-	 *     <li>sap.m.Table - More Button</li>
-	 *     <li>sap.m.StandardTile</li>
-	 *     <li>sap.m.ComboBox</li>
 	 *     <li>sap.m.ObjectIdentifier</li>
+	 *     <li>sap.m.Page - Back Button</li>
+	 *     <li>sap.m.SearchField - Search Button</li>
+	 *     <li>sap.m.semantic.DetailPage - Back Button</li>
+	 *     <li>sap.m.semantic.FullscreenPage - Back Button</li>
+	 *     <li>sap.m.StandardListItem</li>
+	 *     <li>sap.m.StandardTile</li>
+	 *     <li>sap.m.Table - More Button</li>
 	 *     <li>sap.ui.comp.smartfilterbar.SmartFilterBar - Go Button</li>
 	 * </ul>
 	 *
-	 * @class
 	 * @extends sap.ui.test.actions.Action
 	 * @public
 	 * @name sap.ui.test.actions.Press
