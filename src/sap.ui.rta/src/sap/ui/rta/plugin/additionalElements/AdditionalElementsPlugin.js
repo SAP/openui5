@@ -553,6 +553,17 @@ sap.ui.define([
 
 			var aSelectedElements = this.getDialog().getSelectedElements();
 
+			// sort elements by label in descending order. When added the fields will be in ascending order on the UI
+			aSelectedElements.sort(function(oElement1, oElement2) {
+				if (oElement1.label > oElement2.label) {
+					return -1;
+				}
+				if (oElement1.label < oElement2.label) {
+					return 1;
+				}
+				return 0;
+			});
+
 			if (aSelectedElements.length > 0) {
 				//at least one element selected
 				return this.getCommandFactory().getCommandFor(mParents.parent, "composite")
