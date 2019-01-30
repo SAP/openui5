@@ -396,6 +396,11 @@
 // [Tags "Base", "Content", "Color", "Font"]
 @sapContent_ForegroundTextColor: contrast(@sapContent_ForegroundColor, @sapTextColor, @sapContent_ContrastTextColor, @sapContent_ContrastTextThreshold);
 
+// [Label "Content Badge Background"]
+// [Description "The background color of badges."]
+// [Tags "Base", "Content", "Color"]
+@sapContent_BadgeBackground: @sapHighlightColor;
+
 // [Label "Shell Background Color"]
 // [Description "The background color of the shell."]
 // [Tags "Base", "Shell", "Color"]
@@ -435,6 +440,11 @@
 // [Description "The color of texts in the shell."]
 // [Tags "Base", "Shell", "Color", "Font"]
 @sapShell_TextColor: @sapTextColor;
+
+// [Label "Shell Interactive Text Color"]
+// [Description "The color of interactive texts in the shell."]
+// [Tags "Base", "Shell", "Color", "Font"]
+@sapShell_InteractiveTextColor: @sapShell_TextColor;
 
 // [Label "Shell Favicon"]
 // [Description "The URI to the favorite or shortcut icon displayed for the shell."]
