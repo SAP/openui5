@@ -1657,9 +1657,11 @@ function(
 												mService.exports,
 												Object.keys(mExports).reduce(function (mResult, sKey) {
 													var vValue = mExports[sKey];
-													mResult[sKey] = typeof vValue === "function" ?  DtUtil.wrapIntoPromise(vValue) : vValue;
+													mResult[sKey] = typeof vValue === "function"
+														? DtUtil.waitForSynced(vValue, this._oDesignTime)
+														: vValue;
 													return mResult;
-												}, {})
+												}.bind(this), {})
 											);
 
 											mService.status = SERVICE_STARTED;
