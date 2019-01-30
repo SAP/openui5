@@ -70,7 +70,7 @@ sap.ui.define([
 	 * @version ${version}
 	 *
 	 * @extends sap.m.ListBase
-	 * @implements {sap.ui.layout.cssgrid.IGridConfigurable}
+	 * @implements sap.ui.layout.cssgrid.IGridConfigurable
 	 *
 	 * @since 1.60
 	 * @constructor
