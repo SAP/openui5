@@ -89,6 +89,7 @@
 @sapContent_ForegroundColor: #e5e5e5;
 @sapContent_ForegroundBorderColor: #000;
 @sapContent_ForegroundTextColor: contrast(@sapContent_ForegroundColor, @sapTextColor, @sapContent_ContrastTextColor, @sapContent_ContrastTextThreshold);
+@sapContent_BadgeBackground: @sapHighlightColor;
 
 @sapShell_Background: @sapShellColor;
 @sapShell_BackgroundImage: @sapShell_Background;
@@ -97,6 +98,7 @@
 @sapShell_BackgroundImageRepeat: @sapBackgroundImageRepeat;
 @sapShell_BorderColor: #666;
 @sapShell_TextColor: contrast(@sapShell_Background, @sapTextColor, @sapContent_ContrastTextColor, @sapContent_ContrastTextThreshold);
+@sapShell_InteractiveTextColor: @sapShell_TextColor;
 @sapShell_Favicon: none;
 
 @sapButton_BorderWidth: @sapElement_BorderWidth; //<=new
