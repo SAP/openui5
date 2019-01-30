@@ -3,13 +3,17 @@
 /* Base theme                          */
 /* =================================== */
 
+@_sap_tnt_ToolHeader_ITHContentArrowHeight: 0.75rem;
+@_sap_tnt_ToolHeader_ITHOverflowButtonTop: 0.5rem;
+@_sap_tnt_ToolHeader_ITHHeight: 3rem;
+
 .sapTntToolHeaderPopover.sapMOTAPopover.sapMPopover .sapMPopoverCont .sapMPopoverScroll,
 .sapTntToolHeaderPopover.sapMOTAPopover.sapMPopover .sapMPopoverCont .sapMPopoverScroll .sapMBtn {
 	padding: 0;
 }
 
 .sapTntToolHeader.sapMTB {
-	height: 3rem;
+	height: @_sap_tnt_ToolHeader_ITHHeight;
 }
 
 .sapTntToolHeader .sapMITH {
@@ -25,7 +29,7 @@
 		}
 
 		.sapMITBFilter .sapMITBText + .sapMITBContentArrow  {
-			height: 0.75rem;
+			height: @_sap_tnt_ToolHeader_ITHContentArrowHeight;
 		}
 	}
 
@@ -45,7 +49,7 @@
 }
 
 .sapUiSizeCompact .sapTntToolHeader .sapMITH .sapMBtnInline {
-	top: 0.5rem;
+	top: @_sap_tnt_ToolHeader_ITHOverflowButtonTop;
 }
 
 .sap-phone .sapTntToolHeader .sapMITH .sapMITBHead .sapMITBFilter .sapMITBText + .sapMITBContentArrow  {
