@@ -1413,6 +1413,8 @@ function(
 				that._bShowListWithTokens = false;
 			});
 
+		this._oSuggPopover._oPopover.getCustomHeader().removeAllContentMiddle();
+		this._oSuggPopover._oPopover.destroyCustomHeader(true);
 		this._oSuggPopover._oPopover.setCustomHeader(new Bar({
 			contentMiddle: [new Title()],
 			contentRight: new Button({
