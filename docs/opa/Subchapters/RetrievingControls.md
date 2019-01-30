@@ -232,6 +232,28 @@ iPressOrderNow : function () {
 }
 ```
 
+## Searching for Controls inside a Fragment
+
+As of version 1.63, you can limit control search to a fragment with the option `fragmentId`.
+
+`fragmentId` is effective only when searching by control ID inside a view.
+Whether a control belongs to a fragment is only relevant when the fragment has a user-assigned ID,
+which is different from the ID of its parent view. In this case, the fragment ID takes part in
+the formation of control ID and you should use the `fragmentId` option to simplify test maintenance.
+
+The next example shows the use case where we want to press a button with ID `theMainView--greeting--helloWorld`,
+located inside a fragment with ID `greeting` and view with ID `theMainView`:
+
+```javascript
+this.waitFor({
+    viewId: "theMainView",
+    fragmentId: "greeting",
+    id: "hello",
+    actions: new Press(),
+    errorMessage : "Did not find the Hello button"
+});
+```
+
 ## Writing Nested Arrangements and Actions
 
 UI elements may be recursive, for example in a tree. Instead of triggering the action for each known element, you can also define it recursively (see the code snippet below). OPA ensures that the `waitFor` statements triggered in a `success` handler are executed before the next arrangement, action, or assertion. That also allows you to work with an unknown number of entries, for example in a list. First, you wait for the list, and then trigger actions on each list item.
