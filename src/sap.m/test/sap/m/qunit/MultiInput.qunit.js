@@ -174,6 +174,19 @@ sap.ui.define([
 	});
 
 	QUnit.test("_calculateSpaceForTokenizer", function(assert) {
+		var multiInput = new MultiInput({
+			width: "500px"
+		});
+
+		multiInput.placeAt("qunit-fixture");
+		sap.ui.getCore().applyChanges();
+
+		assert.strictEqual(multiInput._calculateSpaceForTokenizer(), "398px", "_calculateSpaceForTokenizer returns a correct px value");
+
+		multiInput.destroy();
+	});
+
+	QUnit.test("_calculateSpaceForTokenizer with null DOM element reference", function(assert) {
 		var multiInput = new MultiInput(),
 			output;
 
@@ -186,6 +199,8 @@ sap.ui.define([
 		output = multiInput._calculateSpaceForTokenizer();
 
 		assert.strictEqual(isNaN(parseInt(output)), false, "_calculateSpaceForTokenizer returns a valid value");
+
+		multiInput.destroy();
 	});
 
 	QUnit.test("token data binding", function(assert) {

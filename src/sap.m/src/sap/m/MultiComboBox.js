@@ -413,24 +413,6 @@ function(
 	};
 
 	/**
-	 * Function calculates the available space for the tokenizer
-	 *
-	 * @private
-	 * @return {String | null} CSSSize in px
-	 */
-	MultiComboBox.prototype._calculateSpaceForTokenizer = function () {
-		if (this.getDomRef()) {
-			var iWidth = this.getDomRef().offsetWidth,
-				iArrowButtonWidth = parseInt(this.getDomRef("arrow").offsetWidth),
-				iInputWidth = parseInt(this.$().find(".sapMInputBaseInner").css("min-width")) || 0,
-				iInputPadding = parseInt(this.$().find(".sapMInputBaseInner").css("padding-right")) || 0;
-
-			return iWidth - (iArrowButtonWidth + iInputWidth + iInputPadding) + "px";
-		} else {
-			return null;
-		}
-	};
-	/**
 	 * Handle when enter is pressed.
 	 *
 	 * @param {jQuery.Event} oEvent The event object

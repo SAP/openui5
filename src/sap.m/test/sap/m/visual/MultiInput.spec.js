@@ -91,9 +91,17 @@ describe('sap.m.MultiInput', function() {
 		expect(takeScreenshot(element(by.id("multiInputNotEditable")))).toLookAs("multi-input-not-editable");
 	});
 
+
 	//Show multi input with N-more and whole N-more label
 	it("should show  multiInput with N-more and reduced width", function () {
 		expect(takeScreenshot(element(by.id("minWidthMI")))).toLookAs("multi-input-min-width");
+	});
+
+	//Multiinput read-only
+	it("should show multiInput in read-only-state", function () {
+		browser.executeScript('document.getElementById("multiInputReadOnlyInitial").scrollIntoView()').then(function() {
+			expect(takeScreenshot(element(by.id("multiInputReadOnlyInitial")))).toLookAs("multi-input-readonly-initial");
+		});
 	});
 
 	//Show selected multi input no placeholder

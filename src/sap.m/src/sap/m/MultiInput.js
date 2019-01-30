@@ -479,24 +479,6 @@ function(
 	};
 
 	/**
-	 * Function calculates the available space for the tokenizer
-	 *
-	 * @private
-	 * @return {String | null} CSSSize in px
-	 */
-	MultiInput.prototype._calculateSpaceForTokenizer = function () {
-		if (this.getDomRef()) {
-			var iWidth = this.getDomRef().offsetWidth,
-				iValueHelpButtonWidth = this.getDomRef("vhi") ? parseInt(this.getDomRef("vhi").offsetWidth) : 0,
-				iInputWidth = parseInt(this.$().find(".sapMInputBaseInner").css("min-width")) || 0;
-
-			return iWidth - (iValueHelpButtonWidth + iInputWidth) + "px";
-		} else {
-			return null;
-		}
-	};
-
-	/**
 	 * Setter for property <code>enableMultiLineMode</code>.
 	 * @param {boolean} bMultiLineMode Property value
 	 * @returns {sap.m.MultiInput} Pointer to the control instance for chaining
