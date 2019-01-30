@@ -16,12 +16,24 @@ sap.ui.define(function() {
 		},
 		tests: {
 			"Buddhist": {
+				coverage : {
+					only : "sap/ui/core/date/Buddhist"
+				}
 			},
 			"Islamic": {
+				coverage : {
+					only : "sap/ui/core/date/Islamic"
+				}
 			},
 			"Japanese": {
+				coverage : {
+					only : "sap/ui/core/date/Japanese"
+				}
 			},
 			"Locale": {
+				coverage : {
+					only : "sap/ui/core/Locale"
+				}
 			},
 			"LocaleData": {
 				qunit: {
@@ -380,8 +392,14 @@ sap.ui.define(function() {
 			},
 
 			"Persian": {
+				coverage : {
+					only : "sap/ui/core/date/Persian"
+				}
 			},
 			"UniversalDate": {
+				coverage : {
+					only : "sap/ui/core/date/UniversalDate"
+				}
 			}
 		}
 	};
