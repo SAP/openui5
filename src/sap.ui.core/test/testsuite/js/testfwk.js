@@ -165,8 +165,8 @@ sap.ui.testfwk.TestFWK.updateContent = function(sLibName) {
 		return;
 	}
 	this.fireContentWillChange(sLibName);
-	var sURL = this.addSettingsToURL(this.sContentURL);
-	this.oContentWindow.document.location.href = sURL;
+	var sURL = this.addSettingsToURL(this.sContentURL, null, true);
+	this.oContentWindow.document.location.replace(sURL); // do not create a new history entry for the inner frame (back button should only address top frame)
 };
 
 sap.ui.testfwk.TestFWK.getLanguage = function() {
@@ -284,11 +284,17 @@ sap.ui.testfwk.TestFWK.applySettings = function() {
 	this.updateContent();
 };
 
-sap.ui.testfwk.TestFWK.addSettingsToURL = function(sURL, oThemeConstraints) {
+sap.ui.testfwk.TestFWK.addSettingsToURL = function(sURL, oThemeConstraints, bActualNavigation) {
 
-	// hash rewriting currently doesn't work with webkit browsers and framesets
-	if ( !sap.ui.Device.browser.webkit ) {
-		top.window.location.hash = sURL.replace(/\?/g, "_");
+	if (bActualNavigation) { // this method is called twice on navigation: once to modify the link, once when actual navigation occurs
+		var hash = sURL.replace(/\?/g, "_");
+		var sUrlToDisplay = top.window.document.location.href.split("#")[0];
+		if (sURL === "/test-resources/testsuite/welcome.html") { // looks better not to see a hash on the initial page
+			top.window.history.replaceState(sURL, null, sUrlToDisplay); // the browser already saves a history state for the initial page
+		} else {
+			sUrlToDisplay = sUrlToDisplay + "#" + hash;
+			top.window.history.pushState(sURL, null, sUrlToDisplay);
+		}
 	}
 
 	function add(sParam, vValue) {
