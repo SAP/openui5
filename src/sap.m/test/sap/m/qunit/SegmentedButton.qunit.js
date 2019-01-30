@@ -2532,8 +2532,8 @@ sap.ui.define([
 		sap.ui.test.qunit.triggerKeyup(btn.getDomRef(), options.keycode);
 
 		//Assert
-		var focussedButton = SegmentedIcons.$().find('.sapMSegBBtn').filter(":focus");
-		assert.strictEqual(focussedButton.attr('id'),
+		var focussedButtonId = document.activeElement.id;
+		assert.strictEqual(focussedButtonId,
 				'buttonIcon' + options.expectedFocusedIndex,
 				"Button with index " + options.expectedFocusedIndex + " should be focussed.");
 
