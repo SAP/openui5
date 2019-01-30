@@ -26,9 +26,11 @@ sap.ui.define([
 		ChangeReason, ClientListBinding, BaseContext, ContextBinding, MetaModel, PropertyBinding,
 		OperationMode, Int64, Raw, jQuery, URI) {
 	"use strict";
+	/*global Map */
 	/*eslint max-nested-callbacks: 0 */
 
 	var oCountType,
+		mCodeListUrl2Promise = new Map(),
 		DEBUG = Log.Level.DEBUG,
 		rNumber = /^-?\d+$/,
 		ODataMetaContextBinding,
@@ -36,6 +38,7 @@ sap.ui.define([
 		sODataMetaModel = "sap.ui.model.odata.v4.ODataMetaModel",
 		ODataMetaPropertyBinding,
 		oRawType = new Raw(),
+		mSharedModelByUrl = new Map(),
 		mSupportedEvents = {
 			messageChange : true
 		},
@@ -87,7 +90,6 @@ sap.ui.define([
 		UNBOUND = {},
 		sValueList = "@com.sap.vocabularies.Common.v1.ValueList",
 		sValueListMapping = "@com.sap.vocabularies.Common.v1.ValueListMapping",
-		mValueListModelByUrl = {},
 		sValueListReferences = "@com.sap.vocabularies.Common.v1.ValueListReferences",
 		sValueListWithFixedValues = "@com.sap.vocabularies.Common.v1.ValueListWithFixedValues",
 		WARNING = Log.Level.WARNING;
@@ -953,7 +955,9 @@ sap.ui.define([
 				fnAnnotation = sSegment[0] === "."
 					? ObjectPath.get(sSegment.slice(1), mParameters.scope)
 					: mParameters && ObjectPath.get(sSegment, mParameters.scope)
-						|| ObjectPath.get(sSegment);
+						|| (sSegment === "requestUnitsOfMeasure"
+							? that.requestUnitsOfMeasure.bind(that)
+							: ObjectPath.get(sSegment));
 				if (typeof fnAnnotation !== "function") {
 					// Note: "varargs" syntax does not help because Array#join ignores undefined
 					return log(WARNING, sSegment, " is not a function but: " + fnAnnotation);
@@ -1634,6 +1638,27 @@ sap.ui.define([
 	};
 
 	/**
+	 * Returns the absolute service URL corresponding to the given relative $metadata URL.
+	 *
+	 * @param {string} sUrl
+	 *   A $metadata URL, for example "../ValueListService/$metadata?sap-client=123", interpreted
+	 *   relative to this meta model's URL
+	 * @returns {string}
+	 *   The corresponding absolute service URL
+	 *
+	 * @private
+	 */
+	ODataMetaModel.prototype.getAbsoluteServiceUrl = function (sUrl) {
+		// Note: make our $metadata URL absolute because URI#absoluteTo requires an absolute base
+		// URL (and it fails if the base URL starts with "..")
+		var sAbsoluteUrl = new URI(this.sUrl).absoluteTo(document.baseURI).pathname().toString();
+
+		// sUrl references the metadata document, make it absolute based on our $metadata URL to get
+		// rid of ".." segments and remove the filename part
+		return new URI(sUrl).absoluteTo(sAbsoluteUrl).filename("").toString();
+	};
+
+	/**
 	 * Returns the module path to the model specific adapter factory.
 	 *
 	 * @returns {string}
@@ -1811,39 +1836,37 @@ sap.ui.define([
 	ODataMetaModel.prototype.getObject = _Helper.createGetMethod("fetchObject");
 
 	/**
-	 * Creates a value list model for the given mapping URL. Normalizes the path. Caches it and
-	 * retrieves it from the cache upon further requests.
+	 * Creates an OData model for the given URL, normalizes the path, caches it, and retrieves it
+	 * from the cache upon further requests. The model is read-only ("OneWay") and can, thus, safely
+	 * be shared. It shares this meta model's security token.
 	 *
-	 * @param {string} sMappingUrl
-	 *   The mapping URL, for example "../ValueListService/$metadata"
+	 * @param {string} sUrl
+	 *   The (relative) $metadata URL, for example "../ValueListService/$metadata"
+	 * @param {string} [sGroupId]
+	 *   The group ID, for example "$direct"
 	 * @returns {sap.ui.model.odata.v4.ODataModel}
 	 *   The value list model
 	 *
 	 * @private
 	 */
-	ODataMetaModel.prototype.getOrCreateValueListModel = function (sMappingUrl) {
-		// Note: make the service URL absolute because URI#absoluteTo requires an absolute base URL
-		// (and it fails if the base URL starts with "..")
-		var sAbsoluteUrl = new URI(this.sUrl).absoluteTo(document.baseURI).pathname().toString(),
-			oValueListModel,
-			sValueListUrl;
+	ODataMetaModel.prototype.getOrCreateSharedModel = function (sUrl, sGroupId) {
+		var oSharedModel;
 
-		// the MappingUrl references the metadata document, make it absolute based on the data
-		// service URL to get rid of ".." segments and remove the filename part
-		sValueListUrl = new URI(sMappingUrl).absoluteTo(sAbsoluteUrl).filename("").toString();
-		oValueListModel = mValueListModelByUrl[sValueListUrl];
-		if (!oValueListModel) {
-			oValueListModel = new this.oModel.constructor({
+		sUrl = this.getAbsoluteServiceUrl(sUrl);
+		oSharedModel = mSharedModelByUrl.get(sUrl);
+		if (!oSharedModel) {
+			oSharedModel = new this.oModel.constructor({
+				groupId : sGroupId,
 				operationMode : OperationMode.Server,
-				serviceUrl : sValueListUrl,
+				serviceUrl : sUrl,
 				synchronizationMode : "None"
 			});
-			oValueListModel.setDefaultBindingMode(BindingMode.OneWay);
-			mValueListModelByUrl[sValueListUrl] = oValueListModel;
-			oValueListModel.oRequestor.mHeaders["X-CSRF-Token"]
+			oSharedModel.setDefaultBindingMode(BindingMode.OneWay);
+			mSharedModelByUrl.set(sUrl, oSharedModel);
+			oSharedModel.oRequestor.mHeaders["X-CSRF-Token"]
 				= this.oModel.oRequestor.mHeaders["X-CSRF-Token"];
 		}
-		return oValueListModel;
+		return oSharedModel;
 	};
 
 	/**
@@ -2068,10 +2091,11 @@ sap.ui.define([
 	 * refer to a function in <code>mParameters.scope</code> in case of a relative name starting
 	 * with a dot, which is stripped before lookup; see the <code>&lt;template:alias></code>
 	 * instruction for XML Templating. In case of an absolute name, it is searched in
-	 * <code>mParameters.scope</code> first and then in the global namespace. This function is
-	 * called with the current object (or primitive value) and additional details and returns the
-	 * result of this {@link #requestObject} call. The additional details are given as an object
-	 * with the following properties:
+	 * <code>mParameters.scope</code> first and then in the global namespace. The name
+	 * "requestUnitsOfMeasure" defaults to {@link #requestUnitsOfMeasure} if not present in
+	 * <code>mParameters.scope</code>. This function is called with the current object (or primitive
+	 * value) and additional details and returns the result of this {@link #requestObject} call. The
+	 * additional details are given as an object with the following properties:
 	 * <ul>
 	 * <li><code>{boolean} $$valueAsPromise</code> Whether the computed annotation may return a
 	 *   <code>Promise</code> resolving with its value (since 1.57.0)
@@ -2177,6 +2201,159 @@ sap.ui.define([
 		= _Helper.createRequestMethod("fetchUI5Type");
 
 	/**
+	 * Request unit customizing based on the code list reference given in the entity container's
+	 * <code>com.sap.vocabularies.CodeList.v1.UnitOfMeasure</code> annotation.
+	 *
+	 * @param {any} [vRawValue]
+	 *   If present, it must be this meta model's root entity container
+	 * @param {object} [oDetails]
+	 *   The details object
+	 * @param {sap.ui.model.Context} [oDetails.context]
+	 *   If present, it must point to this meta model's root entity container, that is,
+	 *   <code>oDetails.context.getModel() === this</code> and
+	 *   <code>oDetails.context.getPath() === "/"</code>
+	 * @returns {Promise}
+	 *   A promise resolving with the unit customizing which is a map from unit key to an object
+	 *   with the following properties:
+	 *   <ul>
+	 *   <li>Text: The language-dependent text for the unit as referred to via the
+	 *     <code>com.sap.vocabularies.Common.v1.Text</code> annotation on the unit's key
+	 *   <li>UnitSpecificScale: The decimals for the unit as referred to via the
+	 *     <code>com.sap.vocabularies.Common.v1.UnitSpecificScale</code> annotation on the unit's
+	 *     key
+	 *   <li>
+	 *   </ul>
+	 *   It resolves with <code>null</code>, if no
+	 *   <code>com.sap.vocabularies.CodeList.v1.UnitOfMeasure</code> annotation is found.
+	 *   It is rejected, if there is not exactly one unit key, or if the unit customizing cannot be
+	 *   loaded.
+	 * @throws {Error}
+	 *   If <code>vRawValue</code> or <code>oDetails.context</code> are present, but unsupported
+	 *
+	 * @public
+	 * @since 1.63.0
+	 */
+	ODataMetaModel.prototype.requestUnitsOfMeasure = function (vRawValue, oDetails) {
+		var mScope = this.fetchEntityContainer().getResult(),
+			oEntityContainer = mScope[mScope.$EntityContainer],
+			that = this;
+
+		if (oDetails && oDetails.context) {
+			if (oDetails.context.getModel() !== this || oDetails.context.getPath() !== "/") {
+				throw new Error("Unsupported context: " + oDetails.context);
+			}
+		}
+		if (vRawValue !== undefined && vRawValue !== oEntityContainer) {
+			throw new Error("Unsupported raw value: " + vRawValue);
+		}
+
+		return this.requestObject("/@com.sap.vocabularies.CodeList.v1.UnitsOfMeasure")
+			.then(function (oUnitsOfMeasure) {
+				var sCacheKey,
+					oCodeListMetaModel,
+					oCodeListModel,
+					oPromise,
+					sTypePath;
+
+				if (!oUnitsOfMeasure) {
+					return null;
+				}
+
+				sCacheKey = that.getAbsoluteServiceUrl(oUnitsOfMeasure.Url)
+					+ "#" + oUnitsOfMeasure.CollectionPath;
+				oPromise = mCodeListUrl2Promise.get(sCacheKey);
+				if (oPromise) {
+					return oPromise;
+				}
+
+				oCodeListModel = that.getOrCreateSharedModel(oUnitsOfMeasure.Url, "$direct");
+				oCodeListMetaModel = oCodeListModel.getMetaModel();
+				sTypePath = "/" + oUnitsOfMeasure.CollectionPath + "/";
+				oPromise = oCodeListMetaModel.requestObject(sTypePath).then(function (oType) {
+					return new Promise(function (resolve, reject) {
+						var sAlternateKeysPath = sTypePath + "@Org.OData.Core.V1.AlternateKeys",
+							aAlternateKeys = oCodeListMetaModel.getObject(sAlternateKeysPath),
+							oCodeListBinding,
+							sKeyPath = getKeyPath(oType.$Key),
+							sKeyAnnotationPathPrefix = sTypePath + sKeyPath
+								+ "@com.sap.vocabularies.Common.v1.",
+							sScalePropertyPath,
+							sTextPropertyPath;
+
+						/*
+						 * @param {object[]} aKeys
+						 *   The type's keys
+						 * @returns {string}
+						 *   The property path to the type's single key
+						 * @throws {Error}
+						 *   If the type does not have a single key
+						 */
+						function getKeyPath(aKeys) {
+							var vKey;
+
+							if (aKeys && aKeys.length === 1) {
+								vKey = aKeys[0];
+							} else {
+								throw new Error("Single key expected: " + sTypePath);
+							}
+
+							return typeof vKey === "string" ? vKey : vKey[Object.keys(vKey)[0]];
+						}
+
+						if (aAlternateKeys) {
+							if (aAlternateKeys.length !== 1) {
+								throw new Error("Single alternative expected: "
+									+ sAlternateKeysPath);
+							} else if (aAlternateKeys[0].Key.length !== 1) {
+								throw new Error("Single key expected: " + sAlternateKeysPath
+									+ "/0/Key");
+							}
+							sKeyPath = aAlternateKeys[0].Key[0].Name.$PropertyPath;
+						}
+
+						sScalePropertyPath = oCodeListMetaModel
+							.getObject(sKeyAnnotationPathPrefix + "UnitSpecificScale").$Path;
+						sTextPropertyPath = oCodeListMetaModel
+							.getObject(sKeyAnnotationPathPrefix + "Text").$Path;
+						oCodeListBinding = oCodeListModel.bindList(
+							"/" + oUnitsOfMeasure.CollectionPath, null, null, null, {
+								$select : [sKeyPath, sScalePropertyPath, sTextPropertyPath]
+							});
+						oCodeListBinding.attachChange(function () {
+							var aContexts,
+								mUnits = {};
+
+							try {
+								aContexts = oCodeListBinding.getContexts(0, Infinity);
+								aContexts.forEach(function (oContext) {
+									mUnits[oContext.getProperty(sKeyPath)] = {
+										Text : oContext.getProperty(sTextPropertyPath),
+										UnitSpecificScale : oContext.getProperty(sScalePropertyPath)
+											|| 0 // ABAP sends null and has a default of 0
+									};
+								});
+								resolve(mUnits);
+							} catch (e) {
+								reject(e);
+							}
+						});
+						oCodeListBinding.attachDataReceived(function (oEvent) {
+							var oError = oEvent.getParameter("error");
+
+							if (oError) {
+								reject(oError);
+							}
+						});
+						oCodeListBinding.getContexts(0, Infinity);
+					});
+				});
+				mCodeListUrl2Promise.set(sCacheKey, oPromise);
+
+				return oPromise;
+			});
+	};
+
+	/**
 	 * Requests information to retrieve a value list for the property given by
 	 * <code>sPropertyPath</code>.
 	 *
@@ -2252,7 +2429,7 @@ sap.ui.define([
 						+ "'com.sap.vocabularies.Common.v1.ValueListWithFixedValues'");
 				}
 				if ("CollectionRoot" in mValueListMapping) {
-					oModel = that.getOrCreateValueListModel(mValueListMapping.CollectionRoot);
+					oModel = that.getOrCreateSharedModel(mValueListMapping.CollectionRoot);
 					if (oValueListInfo[sQualifier]
 							&& oValueListInfo[sQualifier].$model === oModel) {
 						// same model -> allow overriding the qualifier
@@ -2287,7 +2464,7 @@ sap.ui.define([
 
 				// fetch mappings for each entry and wait for all
 				return Promise.all(aMappingUrls.map(function (sMappingUrl) {
-					var oValueListModel = that.getOrCreateValueListModel(sMappingUrl);
+					var oValueListModel = that.getOrCreateSharedModel(sMappingUrl);
 					// fetch the mappings for the given mapping URL
 					return that.fetchValueListMappings(
 						oValueListModel, sNamespace, oProperty
