@@ -44,6 +44,16 @@ sap.ui.require([
 			errorMessage : "Did not find the button with corresponding id"
 		});
 
+		Then.waitFor({
+			viewName: "Main",
+			fragmentId: "secondPageFragment",
+			id: /^hello/,
+			success: function (aButtons) {
+				Opa5.assert.ok(true, "Found the button: " + aButtons[0]);
+			},
+			errorMessage : "Did not find the button with corresponding ID inside specified fragment"
+		});
+
 		Then.iTeardownMyAppFrame();
 	});
 
