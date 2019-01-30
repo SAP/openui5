@@ -54,11 +54,31 @@
 	background-color: fade(@sapUiListBackground, 90%);
 }
 
-.sapMSinglePCAppointments .sapUiCalendarApp.sapUiCalendarAppSel,
-.sapMSinglePCAppointments .sapUiCalendarApp:active,
-.sapMSinglePCAppointments .sapUiCalendarApp.sapUiCalendarAppSel:active{
-	color: @sapUiListActiveTextColor;
-	background-color: fade(@sapUiListActiveBackground, 90%);
+.sapMSinglePCBlockers,
+.sapMSinglePCAppointments {
+	.sapUiCalendarApp {
+		&:active::after,
+		&.sapUiCalendarAppSel::after {
+			content: "";
+			position: absolute;
+			display: block;
+			top: 0;
+			left: 0;
+			width: 100%;
+			height: 100%;
+			z-index: 0;
+			color: @sapUiListActiveTextColor;
+			background-color: fade(@sapUiListActiveBackground, 90%);
+		}
+		&.sapUiCalendarAppSel:hover::after {
+			background-color: darken(@sapUiListActiveBackground, 10);
+		}
+
+		& > .sapUiCalendarAppCont > span {
+			position: relative;
+			z-index: 1;
+		}
+	}
 }
 
 // TODO: Consider refactoring the coloring logic of Appointments
@@ -96,6 +116,20 @@ html.sap-desktop .sapMSinglePC .sapUiCalItemWeekEnd:not(.sapUiCalItemSel):hover 
 
 html.sap-desktop .sapMSinglePC .sapUiCalItemOtherMonth:not(.sapUiCalItemSel):hover {
 	background-color: darken(@sapUiListBackground, 10);
+}
+
+
+html {
+	&.sap-phone,
+	&.sap-tablet {
+		.sapUiCalendarApp.sapUiCalendarAppSel {
+			&:hover:not(:active),
+			&:focus:not(:active) {
+				color: @sapUiListActiveTextColor;
+				background-color: fade(@sapUiListActiveBackground, 90%);
+			}
+		}
+	}
 }
 
 html.sap-desktop .sapMSinglePC .sapUiCalItem:not(.sapUiCalItemSel) :not(.sapUiCalWeekNum):hover {
