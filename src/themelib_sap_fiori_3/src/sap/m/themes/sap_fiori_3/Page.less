@@ -6,6 +6,11 @@
 @_sap_m_Header_Height: 3.75rem;
 @_sap_m_Header_Height_Compact: 3.5rem;
 @_sap_m_SubHeader_Height_Compact: 3rem;
+
+/* mixin call for creating container content padding classes (arguments: rootContainer, contentSelector) */
+.sapUiContainerContentPadding(~".sapMPage", ~"> section");
+
+
 .sapMPageWithSubHeader {
 	.sapMPageHeader {
 		border-bottom: none;
@@ -130,7 +135,7 @@
 	}
 }
 
-.sapMPage.sapMPage-Std-Phone {
+.sapMPage-Std-Phone {
 	.sapMPageHeader .sapMBar.sapMHeader-CTX,
 	.sapMPageHeader .sapMIBar.sapMHeader-CTX {
 		padding: 0.5rem 1rem;
@@ -144,7 +149,7 @@
 	}
 	.sapMPageSubHeader .sapMBar.sapMSubHeader-CTX,
 	.sapMPageSubHeader .sapMIBar.sapMSubHeader-CTX {
-		padding: 0 1rem 1rem 1rem;
+		padding: 0.5rem 1rem;
 
 		.sapMBarLeft {
 			padding-left: 1rem;
@@ -159,8 +164,8 @@
 	}
 }
 
-.sapMPage.sapMPage-Std-Tablet,
-.sapMPage.sapMPage-Std-Laptop {
+.sapMPage-Std-Tablet,
+.sapMPage-Std-Laptop {
 	.sapMPageHeader .sapMBar.sapMHeader-CTX,
 	.sapMPageHeader .sapMIBar.sapMHeader-CTX {
 		padding: 0.5rem 2rem;
@@ -174,7 +179,7 @@
 	}
 	.sapMPageSubHeader .sapMBar.sapMSubHeader-CTX,
 	.sapMPageSubHeader .sapMIBar.sapMSubHeader-CTX {
-		padding: 0 2rem 1rem 2rem;
+		padding: 0.5rem 2rem;
 
 		.sapMBarLeft {
 			padding-left: 2rem;
@@ -189,8 +194,8 @@
 	}
 }
 
-.sapMPage.sapMPage-Std-Phone,
-.sapMPage.sapMPage-Std-Tablet {
+.sapMPage-Std-Phone,
+.sapMPage-Std-Tablet {
 	.sapMPageFooter .sapMBar.sapMFooter-CTX,
 	.sapMPageFooter .sapMIBar.sapMFooter-CTX {
 		padding: 0.5rem 1rem;
@@ -204,7 +209,7 @@
 	}
 }
 
-.sapMPage.sapMPage-Std-Laptop {
+.sapMPage-Std-Laptop {
 	.sapMPageFooter .sapMBar.sapMFooter-CTX,
 	.sapMPageFooter .sapMIBar.sapMFooter-CTX {
 		padding: 0.5rem 2rem;
@@ -218,8 +223,8 @@
 	}
 }
 
-.sapMPage.sapMPage-Std-Desktop,
-.sapMPage.sapMPage-Std-DesktopXL {
+.sapMPage-Std-Desktop,
+.sapMPage-Std-DesktopXL {
 	.sapMPageHeader .sapMBar.sapMHeader-CTX,
 	.sapMPageHeader .sapMIBar.sapMHeader-CTX {
 		padding: 0.5rem 3rem;
@@ -233,7 +238,7 @@
 	}
 	.sapMPageSubHeader .sapMBar.sapMSubHeader-CTX,
 	.sapMPageSubHeader .sapMIBar.sapMSubHeader-CTX {
-		padding: 0 3rem 1rem 3rem;
+		padding: 0.5rem 3rem;
 
 		.sapMBarLeft {
 			padding-left: 3rem;
@@ -289,4 +294,14 @@
 			padding-right: 0.25rem;
 		}
 	}
+}
+
+.sapMPage.sapUiNoContentPadding > section {
+	width: 100%;
+}
+
+.sapMPageHeader + .sapMPageSubHeader .sapMBar.sapMSubHeader-CTX,
+.sapMPageHeader + .sapMPageSubHeader .sapMIBar.sapMSubHeader-CTX {
+	padding-top: 0;
+	padding-bottom: 1rem;
 }
