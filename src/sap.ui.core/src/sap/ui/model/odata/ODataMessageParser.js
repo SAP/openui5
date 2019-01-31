@@ -331,6 +331,8 @@ ODataMessageParser.prototype._createMessage = function(oMessageObject, mRequestI
 		oMessageObject.target = oMessageObject.target.substr(12);
 	} else if (oMessageObject.transient) {
 		bPersistent = true;
+	} else if (oMessageObject.transition) {
+		bPersistent = true;
 	}
 
 	var sTarget = this._createTarget(oMessageObject, mRequestInfo);
