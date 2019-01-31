@@ -29,7 +29,9 @@ sap.ui.define([
 	 * @public
 	 */
 	StashControl.applyChange = function(oChange, oControl, mPropertyBag) {
-		this.setChangeRevertData(oChange, mPropertyBag.modifier.getStashed(oControl));
+		var bStashed = mPropertyBag.modifier.getStashed(oControl);
+		var iOriginalIndex = mPropertyBag.modifier.findIndexInParentAggregation(oControl);
+		this.setChangeRevertData(oChange, bStashed, iOriginalIndex);
 		mPropertyBag.modifier.setStashed(oControl, true);
 		return true;
 	};
@@ -48,7 +50,16 @@ sap.ui.define([
 		var mRevertData = oChange.getRevertData();
 
 		if (mRevertData) {
-			mPropertyBag.modifier.setStashed(oControl, mRevertData.originalValue, mPropertyBag.appComponent);
+			var oUnstashedControl = mPropertyBag.modifier.setStashed(oControl, mRevertData.originalValue, mPropertyBag.appComponent);
+			if (oUnstashedControl) {
+				var iUnstashedIndex = mPropertyBag.modifier.findIndexInParentAggregation((oUnstashedControl));
+				if (iUnstashedIndex !== mRevertData.originalIndex) {
+					var oParent = mPropertyBag.modifier.getParent(oUnstashedControl);
+					var sAggregationName = mPropertyBag.modifier.getParentAggregationName(oUnstashedControl);
+					mPropertyBag.modifier.removeAggregation(oParent, sAggregationName, oUnstashedControl);
+					mPropertyBag.modifier.insertAggregation(oParent, sAggregationName, oUnstashedControl, mRevertData.originalIndex);
+				}
+			}
 			oChange.resetRevertData();
 		} else {
 			Log.error("Attempt to revert an unapplied change.");
@@ -68,9 +79,10 @@ sap.ui.define([
 	StashControl.completeChangeContent = function(oChange, oSpecificChangeInfo) {
 	};
 
-	StashControl.setChangeRevertData = function(oChange, bValue) {
+	StashControl.setChangeRevertData = function(oChange, bValue, iOriginalIndex) {
 		oChange.setRevertData({
-			originalValue: bValue
+			originalValue: bValue,
+			originalIndex: iOriginalIndex
 		});
 	};
 
