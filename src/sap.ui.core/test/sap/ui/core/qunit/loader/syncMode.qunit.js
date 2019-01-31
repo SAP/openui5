@@ -1068,6 +1068,18 @@
 				return MyClass;
 			});
 
+			// an AMD module that defines a native (Non-UI5) ES5 class whose constructor also can act as a cast
+			sap.ui.predefine("sap/test/lazy/ClassWithCastBehavior", ['sap/base/util/ObjectPath'], function(ObjectPath) {
+				function ClassWithCastBehavior(arg) {
+					if ( !(this instanceof ClassWithCastBehavior) ) {
+						return new ClassWithCastBehavior(arg);
+					}
+					this.value = arg;
+				}
+				ObjectPath.set("sap.test.lazy.ClassWithCastBehavior", ClassWithCastBehavior);
+				return ClassWithCastBehavior;
+			});
+
 			// a module implemented with declare/require that defines a simple class
 			jQuery.sap.registerPreloadedModules({
 				version: "2.0",
@@ -1111,6 +1123,7 @@
 		},
 
 		afterEach: function(assert) {
+			jQuery.sap.unloadResources('sap/test/lazy/ClassWithCastBehavior.js', false, true, true);
 			jQuery.sap.unloadResources('sap/test/lazy/MyClass.js', false, true, true);
 			jQuery.sap.unloadResources('sap/test/lazy/MyLegacyClass.js', false, true, true);
 			jQuery.sap.unloadResources('sap/test/lazy/MyUtility.js', false, true, true);
@@ -1255,6 +1268,48 @@
 		assert.ok(sap.ui.require('sap/test/lazy/MyUtility'), "read access should load the expected module");
 
 		delete sap.test.noSuchFactory;
+
+	});
+
+	QUnit.test("constructor with new", function(assert) {
+
+		var Log = sap.ui.require("sap/base/Log");
+		assert.ok(Log, "Log module should be available");
+		this.spy(Log, 'error');
+
+		Log.error.resetHistory();
+		sap.ui.lazyRequire('sap.test.lazy.MyClass');
+		new sap.test.lazy.MyClass();
+		assert.ok(!sap.ui.lazyRequire._isStub("sap.test.lazy.MyClass"), "lazy stub has been resolved");
+		assert.equal(Log.error.callCount, 0, "No error was logged");
+
+		Log.error.resetHistory();
+		sap.ui.lazyRequire('sap.test.lazy.ClassWithCastBehavior');
+		new sap.test.lazy.ClassWithCastBehavior(5);
+		assert.ok(!sap.ui.lazyRequire._isStub("sap.test.lazy.ClassWithCastBehavior"), "lazy stub has been resolved");
+		assert.equal(Log.error.callCount, 0, "No error was logged");
+
+	});
+
+	QUnit.test("constructor without new", function(assert) {
+
+		var Log = sap.ui.require("sap/base/Log");
+		assert.ok(Log, "Log module should be available");
+		this.spy(Log, 'error');
+
+		Log.error.resetHistory();
+		sap.ui.lazyRequire('sap.test.lazy.MyClass');
+		sap.test.lazy.MyClass();
+		assert.ok(!sap.ui.lazyRequire._isStub("sap.test.lazy.MyClass"), "lazy stub has been resolved");
+		assert.ok(Log.error.calledOnce, "One error was logged");
+		assert.ok(Log.error.calledWithMatch(sinon.match(/called without "?new"? operator/)), "Error message mentions 'new' operator");
+
+		Log.error.resetHistory();
+		sap.ui.lazyRequire('sap.test.lazy.ClassWithCastBehavior');
+		var result = sap.test.lazy.ClassWithCastBehavior(5);
+		assert.ok(!sap.ui.lazyRequire._isStub("sap.test.lazy.ClassWithCastBehavior"), "lazy stub has been resolved");
+		assert.equal(Log.error.callCount, 0, "No error was logged");
+		assert.ok(result instanceof sap.test.lazy.ClassWithCastBehavior, "Cast behavior works");
 
 	});
 
