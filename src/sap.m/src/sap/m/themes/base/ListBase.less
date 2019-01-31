@@ -252,35 +252,34 @@ html.sap-phone .sapMListInsetBG > .sapMListSwp {
 	position: -webkit-sticky;
 }
 
-.sapMSticky > .sapMListHdr {
-	background-color: @sapUiListHeaderBackground;
+/* sticky headerToolbar/headerText background when transparent */
+.sapMSticky > sapMListHdrText,
+.sapMSticky > .sapMListHdrTBar.sapMTB-Transparent-CTX {
+	background: @sapUiListHeaderBackground;
 }
 
-.sapMSticky > .sapMListHdr {
-	z-index: 3
+.sapMSticky > .sapMListHdr,
+.sapMSticky > .sapUiLocalBusyIndicator {
+	z-index: 3;
 }
 
 .sapMSticky > .sapMListInfoTBarContainer {
-	z-index: 2
-}
-
-.sapMSticky > .sapMListInfoTBarContainer {
-	background-color: @sapUiInfobarBackground;
+	z-index: 2;
 }
 
 /* .sapMSticky3 denotes that the headerToolbar/headerText and the infoToolbar are sticky */
 /* .sapMSticky2 denotes that only the infoToolbar is sticky */
 /* .sapMSticky1 denotes that only the headerToolbar/headerText is sticky */
-/* top: 0 sticky conditions */
+/* top: 0 sticky conditions : 1st sticky elements */
 .sapMSticky1 > .sapMListHdr,
 .sapMSticky2 > .sapMListInfoTBarContainer,
 .sapMSticky3 > .sapMListHdr {
 	top: 0;
 }
 
-/* top: 3rem sticky conditions */
+/* top: 3rem sticky conditions : 2nd sticky elements*/
 .sapMSticky3 > .sapMListInfoTBarContainer {
-	top: 3rem;
+	top: @sapUiElementLineHeight;
 }
 
 /* Compact size */
