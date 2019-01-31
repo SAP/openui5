@@ -1,7 +1,6 @@
 /*global QUnit*/
-QUnit.config.autostart = false;
 
-sap.ui.require([
+sap.ui.define([
 	"sap/ui/core/Title",
 	"sap/ui/core/mvc/View",
 	"sap/ui/core/util/reflection/JsControlTreeModifier",
@@ -46,7 +45,6 @@ function (
 			sandbox.restore();
 		}
 	}, function() {
-
 		QUnit.test('Add the same smart form container to Form two times', function (assert) {
 			var oTitle = new Title("NewGroup");
 
@@ -92,9 +90,5 @@ function (
 				return oReturn && oReturn.message ? oReturn.message.indexOf("Control to be created already exists") >= 0 : false;
 			}, "the second change to add the same field throws a not applicable info message");
 		});
-
 	});
-
-	QUnit.start();
-
 });
