@@ -747,4 +747,40 @@ sap.ui.define([
 		oFileUploader.destroy();
 	});
 
+	QUnit.test("Description for default FileUploader", function (assert) {
+		// Setup
+		var oFileUploader = new sap.ui.unified.FileUploader("fu"),
+			oRB = sap.ui.getCore().getLibraryResourceBundle("sap.ui.unified");
+
+		oFileUploader.placeAt("qunit-fixture");
+		sap.ui.getCore().applyChanges();
+
+		// Assert
+		var $description = oFileUploader.$().find("#fu-AccDescr");
+		assert.strictEqual($description.text(), oRB.getText("FILEUPLOAD_ACC"), "Description contains information just for activating.");
+
+		// Cleanup
+		oFileUploader.destroy();
+	});
+
+	QUnit.test("Description for FileUploader with tooltip and placeholder", function (assert) {
+		// Setup
+		var oFileUploader = new sap.ui.unified.FileUploader("fu", {
+				tooltip: "the-tooltip",
+				placeholder: "the-placeholder"
+			}),
+			oRB = sap.ui.getCore().getLibraryResourceBundle("sap.ui.unified");
+
+		oFileUploader.placeAt("qunit-fixture");
+		sap.ui.getCore().applyChanges();
+
+		// Assert
+		var sDescriptionText = oFileUploader.$().find("#fu-AccDescr").text();
+		assert.ok(sDescriptionText.indexOf(oRB.getText("FILEUPLOAD_ACC")) !== -1, "Activation information is placed in the description");
+		assert.ok(sDescriptionText.indexOf("the-tooltip") !== -1, "FileUploader's tooltip is in the description");
+		assert.ok(sDescriptionText.indexOf("the-placeholder") !== -1, "FileUploader's placeholder is in the description");
+
+		// Cleanup
+		oFileUploader.destroy();
+	});
 });
