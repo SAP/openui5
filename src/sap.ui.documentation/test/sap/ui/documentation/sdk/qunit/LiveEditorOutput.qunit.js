@@ -208,10 +208,23 @@ sap.ui.define(["sap/ui/thirdparty/URI"],
 				}
 				oFrame.onload = function() {
 					setTimeout(function() {
-						assert.ok(oFrame.contentWindow.sap.ui.getCore().byId("myView1"), "the view is created");
-						assert.ok(oFrame.contentWindow.sap.ui.getCore().byId("myView1--myPage"), "the page is created");
-						assert.ok(oFrame.contentWindow.sap.ui.getCore().byId("myView1--helloButton"), "the button is created");
-						done();
+						var oCore = oFrame.contentWindow.sap.ui.getCore(),
+							oView = oCore && oCore.byId("myView1");
+
+						assert.ok(oView, "the view is created");
+
+						function isViewContentCreated() {
+							assert.ok(oView.byId("myPage"), "the page is created");
+							assert.ok(oView.byId("helloButton"), "the button is created");
+
+							done();
+						}
+
+						if (!oView.getContent().length) {
+							oView.attachAfterInit(isViewContentCreated, this);
+						} else {
+							isViewContentCreated();
+						}
 					}, 1000);
 					oFrame.onload = null;
 				};
@@ -261,11 +274,24 @@ sap.ui.define(["sap/ui/thirdparty/URI"],
 					oFrame.contentWindow.postMessage(oData, "*");
 				}
 				oFrame.onload = function() {
-					assert.ok(oFrame.contentWindow.sap.ui.getCore().byId("myView3"), "the view is created");
-					assert.ok(oFrame.contentWindow.sap.ui.getCore().byId("myView3--myPage"), "the page is created");
-					assert.ok(oFrame.contentWindow.sap.ui.getCore().byId("myView3--helloButton"), "the button is created");
+					var oCore = oFrame.contentWindow.sap.ui.getCore(),
+						oView = oCore && oCore.byId("myView3");
+
+					assert.ok(oView, "the view is created");
+
+					function isViewContentCreated() {
+						assert.ok(oView.byId("myPage"), "the page is created");
+						assert.ok(oView.byId("helloButton"), "the button is created");
+
+						done();
+					}
+
+					if (!oView.getContent().length) {
+						oView.attachAfterInit(isViewContentCreated, this);
+					} else {
+						isViewContentCreated();
+					}
 					oFrame.onload = null;
-					done();
 				};
 			};
 
