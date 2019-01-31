@@ -167,7 +167,7 @@ sap.ui.define([
 				iPressResetButton: function () {
 					this.waitFor({
 						controlType: "sap.m.Button",
-						matchers: new PropertyStrictEquals({name: "icon", value: "sap-icon://clear-filter"}),
+						matchers: new PropertyStrictEquals({name: "text", value: "Reset"}),
 						actions: new Press(),
 						errorMessage: "The reset button in the dialog was not found and could not be pressed"
 					});
