@@ -19,7 +19,7 @@ sap.ui.define([
 				selectFirstEmployee : function () {
 					return this.waitFor({
 						controlType : "sap.m.Text",
-						id : /--Employee_ID/,
+						id : /Employee_ID/,
 						success : function (aControls) {
 							new Press().executeOn(aControls[0]);
 							Opa5.assert.ok(true, "First Employee selected");

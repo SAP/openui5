@@ -189,7 +189,7 @@ sap.ui.define([
 						matchers : function (oControl) {
 							return oControl.getBindingContext().getIndex() === iRow;
 						},
-						id : /--Note-__clone/,
+						id : /Note-__clone/,
 						success : function (oControls) {
 							Opa5.assert.ok(true,
 								"Note of Sales Order " + oControls[0].getBindingContext().getPath()
@@ -528,7 +528,7 @@ sap.ui.define([
 				selectSalesOrderItemWithPosition : function (sPosition) {
 					return this.waitFor({
 						controlType : "sap.m.Text",
-						id : /--SO_2_SOITEM-/,
+						id : /SO_2_SOITEM-/,
 						matchers : new Properties({text: sPosition}),
 						success : function (aControls) {
 							new Press().executeOn(aControls[0]);
@@ -540,7 +540,7 @@ sap.ui.define([
 				selectSalesOrderWithId : function (sSalesOrderId) {
 					return this.waitFor({
 						controlType : "sap.m.Text",
-						id : /--SalesOrderID-/,
+						id : /SalesOrderID-/,
 						matchers : new Properties({text: sSalesOrderId}),
 						success : function (aControls) {
 							new Press().executeOn(aControls[0]);
