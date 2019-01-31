@@ -129,8 +129,10 @@ sap.ui.define([
 			var mConstraints = {},
 				oMetaModel = {
 					getConstraints : function () {},
+					getObject : function () {},
 					fetchObject : function () {}
 				},
+				oMetaModelMock = this.mock(oMetaModel),
 				sPath = "/BusinessPartnerList/@UI.LineItem/0/Value/$Path",
 				oPathValue = {
 					complexBinding : bComplexBinding,
@@ -146,13 +148,17 @@ sap.ui.define([
 
 			this.mock(Basics).expects("expectType")
 				.withExactArgs(sinon.match.same(oPathValue), "string");
-			this.mock(oMetaModel).expects("fetchObject")
+			oMetaModelMock.expects("fetchObject")
 				.withExactArgs("/BusinessPartnerList/@UI.LineItem/0/Value/$Path/$")
 				.returns(SyncPromise.resolve(oProperty));
-			this.mock(oMetaModel).expects("getConstraints")
+			oMetaModelMock.expects("getConstraints")
 				.withExactArgs(sinon.match.same(oProperty), sPath)
 				.exactly(bComplexBinding ? 1 : 0)
 				.returns(mConstraints);
+			oMetaModelMock.expects("getObject")
+				.withExactArgs(sPath + "@Org.OData.Measures.V1.Unit")
+				.exactly(bComplexBinding ? 1 : 0)
+				.returns(undefined);
 
 			// code under test
 			oResult = Expression.path(oPathValue).unwrap();
@@ -162,6 +168,98 @@ sap.ui.define([
 				result : "binding",
 				type : "Edm.String",
 				value : oPathValue.value
+			});
+		});
+	});
+
+	//*********************************************************************************************
+	[
+		// no format options
+		"Edm.Decimal", "Edm.Int64",
+		// with format option parseAsString=false
+		"Edm.Byte", "Edm.Double", "Edm.Int16", "Edm.Int32", "Edm.SByte", "Edm.Single"
+	].forEach(function (sMeasureType, i) {
+		[false, true].forEach(function (bAsync) {
+			var sTitle = "path: for Unit type, bAsync = " + bAsync + ", measure type = "
+					+ sMeasureType;
+
+			QUnit.test(sTitle, function (assert) {
+				var oBasicsMock = this.mock(Basics),
+					mConstraints = {},
+					oMetaModel = {
+						getConstraints : function () {},
+						getObject : function () {},
+						fetchObject : function () {}
+					},
+					oMetaModelMock = this.mock(oMetaModel),
+					sPath = "/ProductList/@UI.LineItem/0/Value/$Path",
+					oPathValue = {
+						complexBinding : true,
+						model : oMetaModel,
+						path : sPath,
+						prefix : "~prefix~/",
+						value : "WeightMeasure"
+					},
+					oProperty = {
+						$Type : sMeasureType
+					},
+					mUnitConstraints = {},
+					oUnitProperty = {
+						$Type : "Edm.String"
+					}, oResult;
+
+				oBasicsMock.expects("expectType")
+					.withExactArgs(sinon.match.same(oPathValue), "string");
+				oMetaModelMock.expects("fetchObject")
+					.withExactArgs("/ProductList/@UI.LineItem/0/Value/$Path/$")
+					.returns(SyncPromise.resolve(oProperty));
+				oMetaModelMock.expects("getConstraints")
+					.withExactArgs(sinon.match.same(oProperty), sPath)
+					.returns(mConstraints);
+				oMetaModelMock.expects("getObject")
+					.withExactArgs(sPath + "@Org.OData.Measures.V1.Unit")
+					.returns({$Path : "WeightUnit"});
+				oMetaModelMock.expects("fetchObject")
+					.withExactArgs(sPath + "@Org.OData.Measures.V1.Unit/$Path/$")
+					.returns(SyncPromise.resolve(bAsync
+						? Promise.resolve(oUnitProperty)
+						: oUnitProperty));
+				oMetaModelMock.expects("getConstraints")
+					.withExactArgs(sinon.match.same(oUnitProperty),
+						sPath + "@Org.OData.Measures.V1.Unit/$Path")
+					.returns(mUnitConstraints);
+				oBasicsMock.expects("resultToString")
+					.withExactArgs({
+							constraints : sinon.match.same(mConstraints),
+							result : "binding",
+							type : sMeasureType,
+							value : "~prefix~/WeightMeasure"
+						}, false, true)
+					.returns("~Measure~");
+				oBasicsMock.expects("resultToString")
+					.withExactArgs({
+							constraints : sinon.match.same(mUnitConstraints),
+							result : "binding",
+							type : "Edm.String",
+							value : "~prefix~/WeightUnit"
+						}, false, true)
+					.returns("~Unit~");
+
+				// code under test
+				oResult = Expression.path(oPathValue);
+
+				assert.strictEqual(oResult.isPending(), bAsync);
+
+				return oResult.then(function (oResult0) {
+					assert.deepEqual(oResult0, {
+						result : "composite",
+						type : "sap.ui.model.odata.type.Unit",
+						value : "{" + (i > 1 ? "formatOptions:{parseAsString:false}," : "")
+							+ "mode:'TwoWay',parts:[~Measure~,~Unit~,"
+							+ "{mode:'OneTime',path:'/##@@requestUnitsOfMeasure',"
+							+ "targetType:'any'}],type:'sap.ui.model.odata.type.Unit'}"
+					});
+				});
 			});
 		});
 	});

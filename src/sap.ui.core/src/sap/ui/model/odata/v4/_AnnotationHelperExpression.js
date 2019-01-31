@@ -22,6 +22,9 @@ sap.ui.define([
 		// a simple binding (see sap.ui.base.BindingParser.simpleParser) to "@i18n" model
 		// w/o bad chars (see _AnnotationHelperBasics: rBadChars) inside path!
 		rI18n = /^\{@i18n>[^\\\{\}:]+\}$/,
+		// data types with number as internal representation
+		aNumberBased = ["Edm.Byte", "Edm.Double", "Edm.Int16", "Edm.Int32", "Edm.SByte",
+			"Edm.Single"],
 		mOData2JSOperators = { // mapping of OData operator to JavaScript operator
 			And : "&&",
 			Eq : "===",
@@ -110,6 +113,7 @@ sap.ui.define([
 	 *    binding and not a composite binding.
 	 *  <li><code>complexBinding</code>: {boolean} parser state: if this property is
 	 *    <code>true</code>, bindings shall have type and constraints information
+	 *  <li><code>model</code>: {sap.ui.model.odata.v4.ODataMetaModel} the metamodel
 	 *  <li><code>path</code>: {string} the path in the metamodel that leads to the value
 	 *  <li><code>prefix</code>: {string} used in a path expression as a prefix for the
 	 *    value; is either an empty string or a path ending with a "/"
@@ -636,34 +640,72 @@ sap.ui.define([
 
 		/**
 		 * Handling of "14.5.12 Expression edm:Path" and "14.5.13 Expression edm:PropertyPath".
+		 * If <code>oPathValue.path</code> references a property which has an
+		 * <code>Org.OData.Measures.V1.Unit</code> annotation, a composite binding info for a
+		 * <code>sap.ui.model.odata.type.Unit</code> type with the measures, the unit and the unit
+		 * customizing as parts is returned.
 		 *
 		 * @param {object} oPathValue
-		 *   model(!), path and value information pointing to the path (see Expression object)
+		 *   model, path and value information pointing to the path (see Expression object)
 		 * @returns {sap.ui.base.SyncPromise}
 		 *   a sync promise which resolves with the result object or is rejected with an error
 		 */
 		path : function (oPathValue) {
-			var oPromise;
+			var oModel = oPathValue.model,
+				oPromise;
 
 			Basics.expectType(oPathValue, "string");
-			oPromise = oPathValue.model.fetchObject(oPathValue.path + "/$");
+			oPromise = oModel.fetchObject(oPathValue.path + "/$");
 			if (oPromise.isPending() && !oPathValue.$$valueAsPromise) {
 				oPromise.caught();
 				oPromise = SyncPromise.resolve();
 			}
 
 			return oPromise.then(function (oProperty) {
-				var mConstraints;
+				var mConstraints, sUnitAnnotationPath, oUnitAnnotation, sUnitPath, sValue;
+
+				function getBinding(bAsString, vValue, oProperty0, mConstraints0) {
+					var oBinding = {
+							constraints : mConstraints0,
+							result : "binding",
+							type : oProperty0 && oProperty0.$Type,
+							value : oPathValue.prefix + vValue
+						};
+
+					return bAsString ? Basics.resultToString(oBinding, false, true) : oBinding;
+				}
 
 				if (oProperty && oPathValue.complexBinding) {
-					mConstraints = oPathValue.model.getConstraints(oProperty, oPathValue.path);
+					mConstraints = oModel.getConstraints(oProperty, oPathValue.path);
+					sUnitAnnotationPath = oPathValue.path + "@Org.OData.Measures.V1.Unit";
+					oUnitAnnotation = oModel.getObject(sUnitAnnotationPath);
+					sUnitPath = oUnitAnnotation && oUnitAnnotation.$Path;
+
+					if (sUnitPath) {
+						return oModel.fetchObject(sUnitAnnotationPath + "/$Path/$")
+							.then(function (oUnitProperty) {
+								var mUnitConstraints = oModel.getConstraints(oUnitProperty,
+										sUnitAnnotationPath + "/$Path");
+								sValue = (aNumberBased.indexOf(oProperty.$Type) >= 0
+										? "{formatOptions:{parseAsString:false},"
+										: "{")
+									+ "mode:'TwoWay',parts:["
+									+ getBinding(true, oPathValue.value, oProperty, mConstraints)
+									+ ","
+									+ getBinding(true, sUnitPath, oUnitProperty, mUnitConstraints)
+									+ ",{mode:'OneTime',path:'/##@@requestUnitsOfMeasure',"
+										+ "targetType:'any'}"
+									+ "],type:'sap.ui.model.odata.type.Unit'}";
+
+								return {
+									result : "composite",
+									type : "sap.ui.model.odata.type.Unit",
+									value : sValue
+								};
+							});
+					}
 				}
-				return {
-					constraints : mConstraints,
-					result : "binding",
-					type : oProperty && oProperty.$Type,
-					value : oPathValue.prefix + oPathValue.value
-				};
+				return getBinding(false, oPathValue.value, oProperty, mConstraints);
 			});
 		},
 
