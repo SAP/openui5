@@ -131,7 +131,7 @@
 @sapNegativeTextColor:     @sapNegativeColor; // #bb0000
 @sapCriticalTextColor:     @sapCriticalColor; // #e9730c // #e78c07
 @sapPositiveTextColor:     @sapPositiveColor; // #107e3e // #2b7c2b
-@sapInformativeTextColor:  @sapInformativeColor; // #0a6ed1
+@sapInformativeTextColor:  darken(@sapInformativeColor, 20); // #053b70
 @sapNeutralTextColor:      @sapNeutralColor; // #6a6d70 // #5e696e
 
 
@@ -345,7 +345,7 @@
 // [Label "Content Foreground Color"]
 // [Description "The foreground color of the content area."]
 // [Tags "Base", "Content", "Color"]
-@sapContent_ForegroundColor: @sapPrimary7;
+@sapContent_ForegroundColor: darken(@sapBaseColor, 6);
 
 // [Label "Content Foreground Border Color"]
 // [Description "The foreground color of the borders of the content area."]
@@ -729,7 +729,7 @@
 // [Label "Page Header Border Color"]
 // [Description "The border color of page headers."]
 // [Tags "Base", "Page", "Color"]
-@sapPageHeader_BorderColor: darken(@sapPageHeader_Background, 23);
+@sapPageHeader_BorderColor: darken(@sapPageHeader_Background, 15);
 
 // [Label "Page Header Text Color"]
 // [Description "The color of texts on page headers."]
