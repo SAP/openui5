@@ -235,7 +235,7 @@ sap.ui.define([
 				Then.waitFor({
 					controlType : "sap.m.Text",
 					// sales order IDs are in controls with ID "SalesOrderList:SalesOrderID"
-					id : /--SalesOrderID-/,
+					id : /SalesOrderID-/,
 					success : function () {
 						var aSalesOrderIds = sap.ui.getCore().byId(sViewName).byId("SalesOrderList")
 								.getItems().map(function (oItem) {

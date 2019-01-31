@@ -1082,13 +1082,18 @@ sap.ui.define([
 			fragmentId: "testFragment",
 			id: ["fragmentButton", "test"]
 		});
+		var oMatchingWrongFragment = oPlugin.getMatchingControls({
+			viewId: "myView",
+			fragmentId: "otherFragment",
+			id: "fragmentButton"
+		});
 
 		assert.ok(oMatchingString.getId(), "myView--testFragment--fragmentButton", "Should match button inside fragment  by string ID");
 		assert.strictEqual(aMatchingRegex.length, 1, "Should match only inside view and fragment");
 		assert.ok(aMatchingRegex[0].getId(), "myView--testFragment--fragmentButton", "Should match button inside fragment");
 		assert.strictEqual(aMatchingArray.length, 1, "Should match only inside view and fragment");
 		assert.ok(aMatchingArray[0].getId(), "myView--testFragment--fragmentButton", "Should match button inside fragment");
-
+		assert.ok(!oMatchingWrongFragment, "Should not match with wrong fragmentID");
 	}
 
 	jQuery(function () {

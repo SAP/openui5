@@ -184,11 +184,10 @@ sap.ui.define([
 				var bMatchById = $.type(oOptions.id) === "regexp";
 
 				if (bMatchById) {
-					var sPrefix = oView.getId() + (sFragmentPrefix ? OpaPlugin.VIEW_ID_DELIMITER + sFragmentPrefix : "");
 					aAllControlsOfTheView = aAllControlsOfTheView.filter(function (oControl) {
-						var sUnprefixedControlId = oControl.getId().substring(sPrefix.length);
+						var sUnprefixedControlId = this._getUnprefixedControlId(oControl.getId(), oView.getId(), oOptions.fragmentId);
 						return oOptions.id.test(sUnprefixedControlId);
-					});
+					}.bind(this));
 				}
 
 				this._oLogger.debug("Found " + aAllControlsOfTheView.length + " controls of type " + oOptions.sOriginalControlType +
@@ -228,17 +227,7 @@ sap.ui.define([
 							// - if the control is actually inside the view - the control ID will be considered view-relative
 							// - otherwise, the control ID will be considered global
 							if (this._isControlInView(oControl, oView.getViewName())) {
-								sUnprefixedControlId = sUnprefixedControlId.replace(oView.getId() + "--", "");
-
-								if (oOptions.fragmentId) {
-									var sFragmentPrefix = oOptions.fragmentId + OpaPlugin.VIEW_ID_DELIMITER;
-									if (sUnprefixedControlId.startsWith(sFragmentPrefix)) {
-										sUnprefixedControlId = sUnprefixedControlId.substring(sFragmentPrefix.length);
-									} else {
-										// don't match control that doesn't have the required fragment ID
-										return false;
-									}
-								}
+								sUnprefixedControlId = this._getUnprefixedControlId(oControl.getId(), oView.getId(), oOptions.fragmentId);
 							}
 						}
 
@@ -597,6 +586,20 @@ sap.ui.define([
 				oOptions.sOriginalControlType = vControlType;
 				oOptions.controlType = fnControlConstructor;
 				return true;
+			},
+
+			_getUnprefixedControlId: function (sControlId, sViewId, sFragmentId) {
+				// viewID might not be a prefix. strip prefixes only when needed
+				var sUnprefixedControlId = sControlId.replace(sViewId + OpaPlugin.VIEW_ID_DELIMITER, "");
+				if (sFragmentId) {
+					if (sUnprefixedControlId.startsWith(sFragmentId + OpaPlugin.VIEW_ID_DELIMITER)) {
+						sUnprefixedControlId = sUnprefixedControlId.replace(sFragmentId + OpaPlugin.VIEW_ID_DELIMITER, "");
+					} else {
+						// don't match control that doesn't have the required fragment ID
+						sUnprefixedControlId = "";
+					}
+				}
+				return sUnprefixedControlId;
 			}
 		});
 
