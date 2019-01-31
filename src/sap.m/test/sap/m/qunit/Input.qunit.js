@@ -3745,5 +3745,69 @@ sap.ui.define([
 		assert.ok(parseFloat(jQuery(this.input._oValueStateMessage._oPopup.getContent()).css('z-index')) > 1, 'z-index is correct');
 	});
 
+
+	QUnit.module("Input with suggestions - change event", {
+		beforeEach: function () {
+			this.oInput = new Input({
+					showSuggestion: true
+				});
+
+			var aData = [
+				{name: "Dente, Al", userid: "U01"},
+				{name: "Friese, Andy", userid: "U02"},
+				{name: "Mann, Anita", userid: "U03"},
+				{name: "Schutt, Doris", userid: "U04"},
+				{name: "Open, Doris", userid: "U05"},
+				{name: "Dewit, Kenya", userid: "U06"},
+				{name: "Zar, Lou", userid: "U07"},
+				{name: "Burr, Tim", userid: "U08"},
+				{name: "Hughes, Tish", userid: "U09"},
+				{name: "Town, Mo", userid: "U10"},
+				{name: "Case, Justin", userid: "U11"},
+				{name: "Time, Justin", userid: "U12"},
+				{name: "Barr, Sandy", userid: "U13"},
+				{name: "Poole, Gene", userid: "U14"},
+				{name: "Ander, Corey", userid: "U15"},
+				{name: "Early, Brighton", userid: "U16"},
+				{name: "Noring, Constance", userid: "U17"},
+				{name: "O'Lantern, Jack", userid: "U18"},
+				{name: "Tress, Matt", userid: "U19"},
+				{name: "Turner, Paige", userid: "U20"}
+			];
+
+			var oModel = new JSONModel();
+			oModel.setData(aData);
+
+			this.oInput.setModel(oModel);
+			this.oInput.bindAggregation("suggestionItems", "/", new Item({text: "{userid}"}));
+
+			this.oInput.placeAt("content");
+			sap.ui.getCore().applyChanges();
+		},
+		afterEach: function () {
+
+			this.oInput.destroy();
+			this.oInput = null;
+		}
+	});
+
+	QUnit.test("Change event should be fired if entered value is not part of the suggestion list", function(assert) {
+
+		var fnFireChangeSpy = this.spy(this.oInput, "fireChange");
+		this.oInput.onfocusin();
+		this.oInput._$input.focus().val("u2").trigger("input");
+		this.clock.tick(300);
+
+		this.oInput._$input.focus().val("U21").trigger("input");
+		this.clock.tick(300);
+		//ASSERT
+		assert.equal(this.oInput.getValue() ,"U21", "Value is set");
+		assert.equal(fnFireChangeSpy.callCount , 0 , "Change event should not be fired");
+
+		sap.ui.test.qunit.triggerKeydown(this.oInput.getFocusDomRef(), "ENTER");
+		this.clock.tick(300);
+		assert.equal(fnFireChangeSpy.callCount , 1 , "Change event should be fired");
+	});
+
 	return waitForThemeApplied();
 });
