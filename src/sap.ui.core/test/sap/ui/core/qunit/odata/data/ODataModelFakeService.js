@@ -57,7 +57,8 @@ sap.ui.define([], function() {
 
   window.odataFakeServiceData = {
     forbidHeadRequest: false,
-    csrfRequests: []
+    csrfRequests: [],
+    requests: []
   };
 
   xhr.useFilters = true;
@@ -481,7 +482,10 @@ sap.ui.define([], function() {
         return;
       }
 
-
+      // Log all requests containing a CSRF token
+      if (csrfToken && request.url !== baseURL && getHeader(request.requestHeaders, "X-CSRF-Token")) {
+        window.odataFakeServiceData.requests.push(request.method);
+      }
 
       if (["GET", "HEAD"].indexOf(request.method) === -1 && csrfToken) {
         if (getHeader(request.requestHeaders, "X-CSRF-Token") != csrfToken) {
