@@ -165,8 +165,8 @@ function (
 				oDuplicateVariant = oControlVariantDuplicateCommand.getVariantChange();
 				aPreparedChanges = oControlVariantDuplicateCommand.getPreparedChange();
 				assert.equal(aPreparedChanges.length, 3, "then the prepared changes are available");
-				assert.ok(fnCreateDefaultFileNameSpy.calledWith("Copy"), "then Copy appended to the fileName of the duplicate variant");
-				assert.notEqual(oDuplicateVariant.getId().indexOf("_Copy"), -1, "then fileName correctly duplicated");
+				assert.strictEqual(fnCreateDefaultFileNameSpy.callCount, 3, "then sap.ui.fl.Utils.createDefaultFileName() called thrice; once for variant duplicate and twice for the copied changes");
+				assert.strictEqual(fnCreateDefaultFileNameSpy.returnValues[0], oDuplicateVariant.getId(), "then the duplicated variant has the correct ID");
 				assert.equal(oDuplicateVariant.getVariantReference(), this.oVariant.content.variantReference, "then variant reference correctly duplicated");
 				assert.equal(oDuplicateVariant.getTitle(), "variant A" + " Copy", "then variant reference correctly duplicated");
 				assert.equal(oDuplicateVariant.getControlChanges().length, 2, "then 2 changes duplicated");

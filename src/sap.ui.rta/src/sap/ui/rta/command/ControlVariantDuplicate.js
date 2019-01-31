@@ -68,7 +68,7 @@ sap.ui.define([
 		this.oAppComponent = flUtils.getAppComponentForControl(oVariantManagementControl);
 
 		if (!sNewVariantReference) {
-			sNewVariantReference = flUtils.createDefaultFileName("Copy");
+			sNewVariantReference = flUtils.createDefaultFileName();
 			this.setNewVariantReference(sNewVariantReference);
 		}
 
