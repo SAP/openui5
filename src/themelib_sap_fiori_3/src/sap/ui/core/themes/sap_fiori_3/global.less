@@ -587,13 +587,13 @@
 
 
 // Shell
-@sapUiShellHoverBackground: darken(@sapUiBrand, 10);
-@sapUiShellActiveBackground: darken(@sapUiBrand, 17);
-@sapUiShellActiveTextColor: lighten(@sapUiBrand, 55);
-@sapUiShellHoverToggleBackground: darken(@sapUiBrand, 32);
-@sapUiShellContainerBackground: lighten(@sapUiShellBackground, 16);
-@sapUiShellAltContainerBackground: darken(saturate(@sapUiShellBackground, 6), 28);
-@sapUiShellGroupTextColor: darken(desaturate(@sapUiShellTextColor, 100), 16.5);
+@sapUiShellHoverBackground: darken(desaturate(@sapShellColor, 7), 5);
+@sapUiShellActiveBackground: darken(desaturate(@sapShellColor, 7), 8);
+@sapUiShellActiveTextColor: contrast(@sapUiShellActiveBackground, @sapUiBaseText, @sapUiContentContrastTextColor, @sapUiContentContrastTextThreshold);
+@sapUiShellHoverToggleBackground: darken(desaturate(@sapShellColor, 7), 8);
+@sapUiShellContainerBackground: @sapUiGroupContentBackground;
+@sapUiShellAltContainerBackground: @sapUiShellContainerBackground;
+@sapUiShellGroupTextColor: @sapUiTextTitle;
 
 @sapUiUx3ShellHeaderColor: @sapShellColor;			// "Quick"
 @sapUiUx3ShellBackgroundColor: @sapUiPrimary3;
@@ -699,19 +699,19 @@
 @sapUiListFooterTextColor: @sapUiListTextColor;
 @sapUiListGroupHeaderBackground: @sapUiListBackground;
 @sapUiListTableGroupHeaderBackground: darken(@sapUiListBackground, 3);
-@sapUiListTableGroupHeaderBorderColor: @sapUiListBorderColor;
+@sapUiListTableGroupHeaderBorderColor: darken(@sapUiListBorderColor, 8);
 @sapUiListTableGroupHeaderTextColor: contrast(@sapUiListTableGroupHeaderBackground, @sapUiListTextColor, @sapUiContentContrastTextColor, @sapUiContentContrastTextThreshold);
 @sapUiListTableFooterBorder: @sapUiListBorderColor;
 @sapUiListTableFixedBorder: darken(@sapUiListBorderColor, 8);
 @sapUiListTableTextSize: 0.875rem;
 @sapUiListTableIconSize: 1rem;
 
-@sapUiPageFooterBorderColor: contrast(@sapUiPageFooterBackground, darken(@sapUiPageFooterBackground, 8), lighten(@sapUiPageFooterBackground, 12));
+@sapUiPageFooterBorderColor: contrast(@sapUiPageFooterBackground, darken(@sapUiPageFooterBackground, 15), lighten(@sapUiPageFooterBackground, 12), @sapUiContentContrastTextThreshold);
 
 @sapUiInfobarHoverBackground: darken(@sapUiInfobarBackground, 3);
 @sapUiInfobarActiveBackground: @sapUiListActiveBackground;
 
-@sapUiObjectHeaderBorderColor: darken(@sapUiObjectHeaderBackground, 41);
+@sapUiObjectHeaderBorderColor: darken(@sapUiObjectHeaderBackground, 15);
 
 @sapUiCalendarColorToday: @sapUiAccent4;
 
