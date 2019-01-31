@@ -1,8 +1,8 @@
 /*!
  * ${copyright}
  */
-sap.ui.define(["sap/ui/core/Control", "sap/ui/model/json/JSONModel", "sap/m/HBox", "sap/m/VBox", "sap/m/Text", "sap/m/Title", "sap/f/Avatar", "sap/m/Link", "sap/f/cards/Data", "sap/ui/base/ManagedObject"],
-	function (Control, JSONModel, HBox, VBox, Text, Title, Avatar, Link, Data, ManagedObject) {
+sap.ui.define(["sap/f/cards/BaseContent", "sap/m/HBox", "sap/m/VBox", "sap/m/Text", "sap/m/Title", "sap/f/Avatar", "sap/m/Link"],
+	function (BaseContent, HBox, VBox, Text, Title, Avatar, Link) {
 		"use strict";
 
 		/**
@@ -20,7 +20,7 @@ sap.ui.define(["sap/ui/core/Control", "sap/ui/model/json/JSONModel", "sap/m/HBox
 		 *
 		 * <h3>Responsive Behavior</h3>
 		 *
-		 * @extends sap.ui.core.Control
+		 * @extends sap.f.cards.BaseContent
 		 *
 		 * @author SAP SE
 		 * @version ${version}
@@ -31,45 +31,8 @@ sap.ui.define(["sap/ui/core/Control", "sap/ui/model/json/JSONModel", "sap/m/HBox
 		 * @see {@link TODO Card}
 		 * @alias sap.f.cards.ObjectContent
 		 */
-		var ObjectContent = Control.extend("sap.f.cards.ObjectContent", {
-			metadata: {
-				properties: {
-
-					/**
-					 * The object configuration used to create a list content.
-					 */
-					configuration: { type: "object" }
-				},
-				aggregations: {
-
-					/**
-					 * Defines the internal content aggregation.
-					 */
-					_content: {
-						multiple: false,
-						visibility: "hidden"
-					}
-				}
-			},
-			constructor: function (vId, mSettings) {
-				if (typeof vId !== "string"){
-					mSettings = vId;
-				}
-
-				if (mSettings && mSettings.serviceManager) {
-					this._oServiceManager = mSettings.serviceManager;
-					delete mSettings.serviceManager;
-				}
-
-				Control.apply(this, arguments);
-			},
-			renderer: function (oRm, oCardContent) {
-				oRm.write("<div");
-				oRm.writeElementData(oCardContent);
-				oRm.write(">");
-				oRm.renderControl(oCardContent.getAggregation("_content"));
-				oRm.write("</div>");
-			}
+		var ObjectContent = BaseContent.extend("sap.f.cards.ObjectContent", {
+			renderer: {}
 		});
 
 		ObjectContent.prototype._getRootContainer = function () {
@@ -89,65 +52,13 @@ sap.ui.define(["sap/ui/core/Control", "sap/ui/model/json/JSONModel", "sap/m/HBox
 		};
 
 		ObjectContent.prototype.init = function () {
+			BaseContent.prototype.init.apply(this, arguments);
 			this._getRootContainer();
-			var oModel = new JSONModel();
-			this.setModel(oModel);
 		};
 
-		ObjectContent.prototype.destroy = function () {
-			this.setAggregation("_content", null);
-			this.setModel(null);
-			return Control.prototype.destroy.apply(this, arguments);
-		};
-
-		/**
-		 * @param {Object} oContent The content section of the manifest schema
-		 */
-		ObjectContent.prototype.setConfiguration = function (oContent) {
-			this.setProperty("configuration", oContent);
-
-			if (!oContent) {
-				return;
-			}
-
-			if (oContent.data) {
-				this._setData(oContent.data);
-			}
-		};
-
-		ObjectContent.prototype._setData = function (oData) {
-			var oRequest = oData.request;
-
-			if (oData.json && !oRequest) {
-				this._updateModel(oData.json, oData.path);
-			}
-
-			if (oRequest) {
-				Data.fetch(oRequest).then(function (data) {
-					this._updateModel(data, oData.path);
-				}.bind(this)).catch(function (oError) {
-					// TODO: Handle errors. Maybe add error message
-				});
-			}
-			return this;
-		};
-
-		ObjectContent.prototype._updateModel = function (oData, sPath) {
-			this.getModel().setData(oData);
-			// this._getRootContainer().bindItems({
-			// 	path: sPath || "/",
-			// 	template: this._oItemTemplate
-			// });
+		ObjectContent.prototype._updateModel = function () {
 			this._addGroups();
-			this.bindElement({
-				path: sPath || "/"
-			});
-
-			// bindElements triggers rerendering. Have to trigger _updated on the first onAfterRendering after _updateModel is called.
-			setTimeout(function () {
-
-				this.fireEvent("_updated");
-			}.bind(this), 0);
+			BaseContent.prototype._updateModel.apply(this, arguments);
 		};
 
 		ObjectContent.prototype._addGroups = function () {
