@@ -470,7 +470,9 @@ sap.ui.define([
 				left: null
 			};
 
-			if (oOverlay.top >= oPopover.height && !oOverlay.isOverlappedAtTop) {
+			if (oOverlay.top >= (oPopover.height + 50) && !oOverlay.isOverlappedAtTop) {
+				// because we don't want to show the Minimenu inside the Toolbar,
+				// we have to add 50 Pixel to the Height of the PopOver
 				oPos = this._placeContextMenuOnTop(oOverlay);
 			} else if (oViewport.height - oOverlay.top >= parseInt(oPopover.height) + 5) {
 				oPos = this._placeContextMenuAtTheBottom(oOverlay, oPopover, oViewport);
