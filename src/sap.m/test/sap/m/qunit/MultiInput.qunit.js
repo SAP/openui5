@@ -1707,6 +1707,89 @@ sap.ui.define([
 		oMultiInput.destroy();
 	});
 
+	QUnit.test("input's visibility onsapfocusleave + n-more label", function(assert) {
+		var oIndicator,
+			oVisibleInputSpy = this.spy(this.multiInput, "_setValueVisible"),
+			oInvisibleInputSpy = this.spy(this.multiInput, "_setValueInvisible");
+
+		this.multiInput.setWidth("200px");
+		this.multiInput.setValue("XXXX");
+		this.multiInput.setTokens([
+			new Token({text: "XXXX"}),
+			new Token({text: "XXXX"}),
+			new Token({text: "XXXX"}),
+			new Token({text: "XXXX"})
+		]);
+
+		sap.ui.getCore().applyChanges();
+
+		oIndicator = this.multiInput.$().find(".sapMTokenizerIndicator");
+		assert.notOk(oIndicator.hasClass("sapUiHidden"), "The n-more indicator is visible.");
+
+		this.multiInput.onsapfocusleave({});
+		sap.ui.getCore().applyChanges();
+
+		// assert
+		assert.ok(oInvisibleInputSpy.called, "The input field is hidden onfocusout.");
+		assert.notOk(oVisibleInputSpy.called, "The input field is not shown onfocusout.");
+		assert.notOk(oIndicator.hasClass("sapUiHidden"), "The n-more indicator is visible");
+	});
+
+	QUnit.test("input's visibility onsapfocusleave + without n-more label", function(assert) {
+		var oIndicator,
+			oVisibleInputSpy = this.spy(this.multiInput, "_setValueVisible"),
+			oInvisibleInputSpy = this.spy(this.multiInput, "_setValueInvisible");
+
+		this.multiInput.setWidth("200px");
+		this.multiInput.setTokens([
+			new Token({text: "XXXX"})
+		]);
+
+		sap.ui.getCore().applyChanges();
+
+		oIndicator = this.multiInput.$().find(".sapMTokenizerIndicator");
+		assert.ok(oIndicator.hasClass("sapUiHidden"), "The n-more indicator is not visible.");
+
+		// act
+		this.multiInput.onsapfocusleave({});
+
+		// assert
+		assert.ok(oVisibleInputSpy.called, "The input field is shown onfocusout.");
+		assert.notOk(oInvisibleInputSpy.called, "The input field is not hidden onfocusout.");
+		assert.ok(oIndicator.hasClass("sapUiHidden"), "The n-more indicator is hidden");
+	});
+
+	QUnit.test("input's visibility on rerendering", function(assert) {
+		var oIndicator,
+			oVisibleInputSpy = this.spy(this.multiInput, "_setValueVisible"),
+			oInvisibleInputSpy = this.spy(this.multiInput, "_setValueInvisible");
+
+		this.multiInput.setWidth("200px");
+		this.multiInput.setValue("XXXX");
+		this.multiInput.setTokens([
+			new Token({text: "XXXX"}),
+			new Token({text: "XXXX"}),
+			new Token({text: "XXXX"}),
+			new Token({text: "XXXX"})
+		]);
+
+		sap.ui.getCore().applyChanges();
+
+		oIndicator = this.multiInput.$().find(".sapMTokenizerIndicator");
+
+		//assert that the n-more indicator is shown
+		assert.ok(oIndicator[0], "A n-more label is rendered");
+		assert.notOk(oIndicator.hasClass("sapUiHidden"), "The n-more indicator is visible.");
+
+		this.multiInput.invalidate({});
+		sap.ui.getCore().applyChanges();
+
+		// assert
+		assert.ok(oInvisibleInputSpy.called, "The input field is hidden.");
+		assert.notOk(oVisibleInputSpy.called, "The input field is not shown.");
+		assert.notOk(oIndicator.hasClass("sapUiHidden"), "The n-more indicator is visible");
+	});
+
 	QUnit.test("Do not listen for resize while resizing", function (assert) {
 		// Setup
 		var oRegisterResizeSpy = this.spy(this.multiInput, "_registerResizeHandler"),

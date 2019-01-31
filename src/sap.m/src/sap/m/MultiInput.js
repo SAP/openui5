@@ -308,10 +308,8 @@ function(
 	};
 
 	MultiInput.prototype._handleInnerVisibility = function () {
-		if (this._oReadOnlyPopover && !this.getEditable()) {
-			var bHideInnerInput = this._tokenizer._hasMoreIndicator();
-			this[bHideInnerInput ? "_setValueInvisible" : "_setValueVisible"].call(this);
-		}
+		var bHideInnerInput = this._tokenizer._hasMoreIndicator();
+		this[bHideInnerInput ? "_setValueInvisible" : "_setValueVisible"].call(this);
 	};
 
 	/**
@@ -970,14 +968,13 @@ function(
 
 		if (!bFocusIsInSelectedItemPopup && !bNewFocusIsInTokenizer) {
 			this._tokenizer._useCollapsedMode(true);
-
-			// hide the text value only if the indicator is visible
-			this._tokenizer._getIndicatorVisibility() && this._setValueInvisible();
 		}
 
 		if (this._oReadOnlyPopover && this._oReadOnlyPopover.isOpen() && !bNewFocusIsInTokenizer) {
 			this._oReadOnlyPopover.close();
 		}
+
+		this._handleInnerVisibility();
 	};
 
 	MultiInput.prototype._onDialogClose = function () {
