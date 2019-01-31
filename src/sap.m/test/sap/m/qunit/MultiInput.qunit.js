@@ -1388,7 +1388,8 @@ sap.ui.define([
 
 	QUnit.test("_syncTokensWithSelection - selection", function(assert) {
 		var oListItem = new StandardListItem(), aTokens,
-			oSpy = this.spy(this.multiInput, "addToken");
+			oSpy = this.spy(this.multiInput, "addToken"),
+			oTokenUpdateSpy = this.spy(this.multiInput, "fireTokenUpdate");
 
 		oListItem.data("key", "key123");
 		oListItem.data("text", "text123");
@@ -1404,6 +1405,7 @@ sap.ui.define([
 
 		// assert
 		assert.ok(oSpy.called, "addToken is called.");
+		assert.ok(oTokenUpdateSpy.called, "tokenUpdate is fired.");
 		assert.strictEqual(aTokens.length, 1, "One token was added");
 		assert.strictEqual(aTokens[0].getText(), "text123", "The token's text is correct.");
 		assert.strictEqual(aTokens[0].getKey(), "key123", "The token's key is correct.");
