@@ -9628,6 +9628,228 @@ sap.ui.define([
 	});
 
 	//*********************************************************************************************
+	// Scenario: Object page bound to active entity: Call the "Edit" bound action on an active
+	// entity which responds with the inactive entity. The execute for the "Edit" operation binding
+	// resolves with the context for the inactive entity. Data for the inactive entity is displayed
+	// when setting this context on the object page. Then call the "Activate" bound action to switch
+	// back to the active entity. The actions are part of the form.
+	// CPOUI5UISERVICESV3-1712
+	QUnit.test("bound operation: switching between active and inactive entity", function (assert) {
+		var oHiddenBinding, // to be kept in the controller
+			oModel = createSpecialCasesModel({autoExpandSelect : true}),
+			mNames = {
+				"23" : "The Rolling Stones",
+				"42" : "The Beatles"
+			},
+			mPrices = {
+				"23" : "12.99",
+				"42" : "9.99"
+			},
+			oObjectPage,
+			sView = '\
+<Table id="table" items="{path : \'/Artists\', parameters : {$filter : \'IsActiveEntity\'}}">\
+	<columns><Column/></columns>\
+	<items>\
+		<ColumnListItem>\
+			<Text id="listId" text="{ArtistID}"/>\
+		</ColumnListItem>\
+	</items>\
+</Table>\
+<FlexBox id="objectPage" binding="{}">\
+	<Text id="id" text="{ArtistID}" />\
+	<Text id="isActive" text="{IsActiveEntity}" />\
+	<Text id="name" text="{Name}" />\
+	<Table items="{path : \'_Publication\', parameters : {$$ownRequest : true}}">\
+		<columns><Column/></columns>\
+		<ColumnListItem>\
+			<Input id="price" value="{Price}" />\
+		</ColumnListItem>\
+	</Table>\
+</FlexBox>',
+			that = this;
+
+		function expectArtistRequest(sId, bIsActive) {
+			that.expectRequest("Artists(ArtistID='" + sId + "',IsActiveEntity=" + bIsActive
+				+ ")?$select=ArtistID,IsActiveEntity,Name", {
+					"ArtistID" : sId,
+					"IsActiveEntity" : bIsActive,
+					"Name" : mNames[sId]
+				})
+				.expectChange("id", sId)
+				.expectChange("isActive", bIsActive ? "Yes" : "No")
+				.expectChange("name", mNames[sId]);
+		}
+
+		function expectPublicationRequest(sId, bIsActive) {
+			that.expectRequest("Artists(ArtistID='" + sId + "',IsActiveEntity=" + bIsActive
+				+ ")/_Publication?$select=Price,PublicationID&$skip=0&$top=100", {
+					value : [{
+						"Price" : mPrices[sId],
+						"PublicationID" : "42-0"
+					}]
+				})
+				.expectChange("price", [mPrices[sId]]);
+		}
+
+		/*
+		 * Fires the given action on the given entity, set the object page to its return value
+		 * context and wait for the expected changes.
+		 *
+		 * @param {string} sAction - The name of the action
+		 * @param {string} sId - The artist ID
+		 * @param {string} [sName] - The resulting artist's name if it differs from the default
+		 * @returns {Promise} - A promise that waits for the expected changes
+ 		 */
+		function action(sAction, sId, sName) {
+			var bIsActive = sAction === "ActivationAction", // The resulting artist's bIsActive
+				// TODO The object page's parent context may be the return value context of the
+				//   previous operation. By using it as parent for the new operation we build a long
+				//   chain of bindings that we never release as long as we switch between draft and
+				//   active entity. -> CPOUI5UISERVICESV3-1746
+				oEntityContext = oObjectPage.getObjectBinding().getContext(),
+				oAction = that.oModel.bindContext("special.cases." + sAction + "(...)",
+					oEntityContext, {
+						$$inheritExpandSelect : true
+					});
+
+			that.expectRequest({
+					method : "POST",
+					url : "Artists(ArtistID='" + sId + "',IsActiveEntity=" + !bIsActive
+						+ ")/special.cases." + sAction + "?$select=ArtistID,IsActiveEntity,Name",
+					payload : {}
+				}, {
+					"ArtistID" : sId,
+					"IsActiveEntity" : bIsActive,
+					"Name" : sName || mNames[sId]
+				});
+
+			// code under test
+			return Promise.all([
+				oAction.execute(),
+				that.waitForChanges(assert)
+			]).then(function (aPromiseResults) {
+				var oReturnValueContext = aPromiseResults[0];
+
+				that.expectChange("isActive", bIsActive ? "Yes" : "No");
+				expectPublicationRequest(sId, bIsActive);
+
+				return bindObjectPage(oReturnValueContext, true);
+			});
+		}
+
+		/*
+		 * Binds the object page. A return value context directly becomes the binding context of the
+		 * object page. Everything else becomes the parent context of the hidden binding, which
+		 * itself becomes the parent binding of the object page.
+		 *
+		 * @param {string|sap.ui.model.odata.v4.Context} vSource
+		 *   The source, either a path or a list context or a return value context
+		 * @param {boolean} bIsReturnValueContext
+		 *   Whether vSource is a return value context
+		 * @returns {Promise}
+		 *   A promise that waits for the expected changes
+		 */
+		function bindObjectPage(vSource, bIsReturnValueContext) {
+			var oInnerContext,
+				oOuterContext;
+
+			if (bIsReturnValueContext) {
+				oInnerContext = vSource;
+			} else {
+				oOuterContext = typeof vSource === "string"
+					? that.oModel.createBindingContext(vSource)
+					: vSource;
+				oHiddenBinding.setContext(oOuterContext);
+				oInnerContext = oHiddenBinding.getBoundContext();
+			}
+			oObjectPage.setBindingContext(oInnerContext);
+
+			if (vSource) {
+				assert.ok(oObjectPage.getObjectBinding().isPatchWithoutSideEffects(),
+					oObjectPage.getObjectBinding() + " has $$patchWithoutSideEffects");
+			}
+			return that.waitForChanges(assert);
+		}
+
+		// start here :-)
+		this.expectRequest("Artists?$filter=IsActiveEntity&$select=ArtistID,IsActiveEntity"
+			+ "&$skip=0&$top=100", {
+				"value" : [{"ArtistID" : "42", "IsActiveEntity" : true}]
+			})
+			.expectChange("listId", ["42"])
+			.expectChange("id")
+			.expectChange("isActive")
+			.expectChange("name")
+			.expectChange("price", false);
+
+		return this.createView(assert, sView, oModel).then(function () {
+			var oRowContext;
+
+			// create the hidden binding when creating the controller
+			oHiddenBinding = that.oModel.bindContext("", undefined,
+				{$$patchWithoutSideEffects : true});
+			oObjectPage = that.oView.byId("objectPage"); // just to keep the test shorter
+
+			expectArtistRequest("42", true);
+			expectPublicationRequest("42", true);
+
+			// first start with the list
+			oRowContext = that.oView.byId("table").getItems()[0].getBindingContext();
+			return bindObjectPage(oRowContext, false);
+		}).then(function () {
+			return action("EditAction", "42");
+		}).then(function () {
+			that.expectRequest({
+					method : "PATCH",
+					url : "Artists(ArtistID='42',IsActiveEntity=false)",
+					payload : {"Name" : "The Beatles (modified)"}
+				}, {})
+				.expectChange("name", "The Beatles (modified)");
+
+			that.oView.byId("name").getBinding("text").setValue("The Beatles (modified)");
+			return that.waitForChanges(assert);
+		}).then(function () {
+			return action("ActivationAction", "42", "The Beatles (modified)");
+		}).then(function () {
+			expectArtistRequest("23", false);
+			expectPublicationRequest("23", false);
+
+			// now start directly with the entity
+			return bindObjectPage("/Artists(ArtistID='23',IsActiveEntity=false)");
+		}).then(function () {
+			return action("ActivationAction", "23");
+		}).then(function () {
+			return action("EditAction", "23");
+		}).then(function () {
+			var oRowContext;
+
+			that.expectChange("id", "42")
+				.expectChange("isActive", "Yes")
+				.expectChange("name", "The Beatles");
+			expectPublicationRequest("42", true);
+
+			// Now return to the artist from the list.
+			// There is no request for the artist; its cache is reused.
+			// The publication is requested again, it was relative to a return value context before
+			// and the return value context ID changed.
+			// The list must be updated manually.
+			oRowContext = that.oView.byId("table").getItems()[0].getBindingContext();
+			bindObjectPage(oRowContext, false);
+
+			return that.waitForChanges(assert);
+		}).then(function () {
+			// clear the object page
+			that.expectChange("id", null)
+				.expectChange("isActive", null)
+				.expectChange("name", null);
+
+			bindObjectPage(null, false);
+
+			return that.waitForChanges(assert);
+		});
+	});
+
+	//*********************************************************************************************
 	// Scenario: Object page bound to an active entity and its navigation property is $expand'ed via
 	// an own request. Trigger "Edit" bound action to start editing using a return value context and
 	// modify a property in the entity referenced by the navigation property. Activate the inactive
