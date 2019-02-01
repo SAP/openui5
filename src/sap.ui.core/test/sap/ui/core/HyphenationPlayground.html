@@ -236,7 +236,11 @@
 					var value = oEvent.getParameter("value");
 					var sLang = oEvent.getParameter("id").slice(7);
 					document.getElementById("txt-" + sLang).style.width = value + "%";
-					document.getElementById("hyph-" + sLang).style.width = value + "%";
+
+					var oThirdPartyTextDomRef = document.getElementById("hyph-" + sLang);
+					if (oThirdPartyTextDomRef) {
+						oThirdPartyTextDomRef.style.width = value + "%";
+					}
 				};
 
 				filteredLangs.forEach(function (lang) {
