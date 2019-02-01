@@ -3,8 +3,8 @@
 /* Fiori 3 theme                           */
 /* ======================================= */
 
-@_sap_ui_layout_Splitter_BarColor: darken(@sapUiGlobalBackgroundColor, 11);
-@_sap_ui_layout_Splitter_BarHoverColor: darken(@sapUiGlobalBackgroundColor, 21);
+@_sap_ui_layout_Splitter_BarColor: darken(@sapUiBaseBG, 40);
+@_sap_ui_layout_Splitter_BarHoverColor: darken(@sapUiBaseBG, 50);
 
 html.sap-desktop .sapUiLoSplitterH.sapUiLoSplitter > .sapUiLoSplitterBar,
 html.sap-desktop .sapUiLoSplitterH > .sapUiLoSplitterOverlay > .sapUiLoSplitterOverlayBar {
@@ -20,10 +20,9 @@ html.sap-desktop .sapUiLoSplitterV > .sapUiLoSplitterOverlay > .sapUiLoSplitterO
 
 .sapUiLoSplitter > .sapUiLoSplitterBar {
 	background-color: @_sap_ui_layout_Splitter_BarColor;
-}
-
-.sapUiLoSplitter > .sapUiLoSplitterBar:hover {
-	background-color: @_sap_ui_layout_Splitter_BarHoverColor;
+	&:hover {
+		background-color: @_sap_ui_layout_Splitter_BarHoverColor;
+	}
 }
 
 .sapUiLoSplitterOverlay > .sapUiLoSplitterOverlayBar {

@@ -3,6 +3,12 @@
 /* Base theme                                        */
 /* ================================================= */
 
+@_sap_ui_layout_ResponsiveSplitter_PaginatorHeight: 2.5rem;
+@_sap_ui_layout_ResponsiveSplitter_PaginatorButtonWidth: 2.5rem;
+@_sap_ui_layout_ResponsiveSplitter_PaginatorButtonHeight: 2.375rem;
+@_sap_ui_layout_ResponsiveSplitter_PaginatorButtonFocusWidth: 2.125rem;
+@_sap_ui_layout_ResponsiveSplitter_PaginatorButtonFocusHeight: 2.125rem;
+
 .sapUiResponsiveSplitter {
 	width: 100%;
 	height: 100%;
@@ -23,13 +29,13 @@
 		justify-content: center;
 		box-sizing: border-box;
 		outline: none;
-		height: 2.5rem;
+		height: @_sap_ui_layout_ResponsiveSplitter_PaginatorHeight;
 		background-color: @sapUiPageFooterBackground;
 		border: 1px solid @sapUiPageFooterBorderColor;
 	}
 
 	& .sapUiResponsiveSplitterPage {
-		height: ~"calc(100% - 2.5rem)";
+		height: calc(100% ~"-" @_sap_ui_layout_ResponsiveSplitter_PaginatorHeight);
 	}
 
 	& .sapUiResponsiveSplitterPaginator.sapUiResponsiveSplitterWithNavButtons {
@@ -38,8 +44,8 @@
 }
 
 .sapUiResponsiveSplitterPaginatorButton {
-	width: 2.5rem;
-	height: 2.375rem;
+	width: @_sap_ui_layout_ResponsiveSplitter_PaginatorButtonWidth;
+	height: @_sap_ui_layout_ResponsiveSplitter_PaginatorButtonHeight;
 	cursor: pointer;
 	background-color: transparent;
 	display: inline-block;
@@ -62,8 +68,8 @@
 	&:focus:before {
 		content: "";
 		position: absolute;
-		width: 2.125rem;
-		height: 2.125rem;
+		width: @_sap_ui_layout_ResponsiveSplitter_PaginatorButtonFocusWidth;
+		height: @_sap_ui_layout_ResponsiveSplitter_PaginatorButtonFocusHeight;
 		margin: 1px 0 0 2px;
 	}
 }
