@@ -23,7 +23,8 @@ sap.ui.define(['sap/ui/unified/library', "sap/ui/thirdparty/jquery"],
 	 */
 	FileUploaderRenderer.render = function(oRm, oFileUploader) {
 		var accessibility = sap.ui.getCore().getConfiguration().getAccessibility(),
-			bEnabled = oFileUploader.getEnabled();
+			bEnabled = oFileUploader.getEnabled(),
+			sAccDescription;
 
 		oRm.write('<div');
 		oRm.writeControlData(oFileUploader);
@@ -87,21 +88,20 @@ sap.ui.define(['sap/ui/unified/library', "sap/ui/thirdparty/jquery"],
 			sValue = oFileUploader.getValue();
 		}
 
-		var sButtonText = "";
-		if (oFileUploader.getButtonText()) {
-			sButtonText = oFileUploader.getButtonText();
+		if (!sValue) {
+			sAriaText = sTooltip + " " + sPlaceholder;
 		} else {
-			sButtonText = oFileUploader.getBrowseText();
+			sAriaText = sTooltip + " " + sValue;
 		}
 
-		if (!sValue) {
-			sAriaText = sTooltip + " " + sPlaceholder + " " + sButtonText;
+		if (sAriaText === " ") {
+			sAccDescription = oFileUploader._sAccText;
 		} else {
-			sAriaText = sTooltip + " " + sValue + " " + sButtonText;
+			sAccDescription = sAriaText + " " + oFileUploader._sAccText;
 		}
 
 		oRm.write('<span id="' + oFileUploader.getId() + '-AccDescr" class="sapUiInvisibleText" aria-hidden="true">');
-		oRm.writeEscaped(sAriaText + " " + oFileUploader._sAccText);
+		oRm.writeEscaped(sAccDescription);
 		oRm.write('</span>');
 		oRm.write('</div></div></div>');
 
