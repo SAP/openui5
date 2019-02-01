@@ -72,6 +72,7 @@ module.exports = function(grunt) {
 							'!sap/ui/thirdparty/baseuri.js',
 							'!sap/ui/thirdparty/es6-promise.js',
 							'!sap/ui/thirdparty/es6-string-methods.js',
+							'!sap/ui/thirdparty/es6-object-assign.js',
 							'!ui5loader*.js',
 
 							// exclude all merged files as well as the top level jQuery copy (not visible in OpenUI5)
