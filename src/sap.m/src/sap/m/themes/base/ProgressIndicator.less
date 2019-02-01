@@ -131,7 +131,11 @@
 }
 
 .sapMPIBarInformation {
-	background: @sapUiHighlight;
+	background: @sapUiInformativeElement;
+}
+
+.sapMPIDisplayOnly:not(.sapMPIBarDisabled) .sapMPIBarNeutral {
+	background: @sapUiBaseText;
 }
 
 /* Progress Indicator Remaining Bar */
@@ -142,23 +146,27 @@
 
 /* Progress Indicator Value Text */
 .sapMPIBarNeutral .sapMPIText.sapMPITextLeft {
-	color: contrast(@sapUiNeutralElement, @sapUiContentForegroundTextColor, @sapUiContentContrastTextColor, @sapUiContentContrastTextThreshold);
+	color: contrast(@sapUiNeutralElement, @sapUiContentContrastTextColor, @sapUiBaseText, @sapUiContentContrastTextThreshold);
 }
 
 .sapMPIBarPositive .sapMPIText.sapMPITextLeft {
-	color: contrast(@sapUiPositiveElement, @sapUiContentForegroundTextColor, @sapUiContentContrastTextColor, @sapUiContentContrastTextThreshold);
+	color: contrast(@sapUiPositiveElement, @sapUiContentContrastTextColor, @sapUiBaseText, @sapUiContentContrastTextThreshold);
 }
 
 .sapMPIBarNegative .sapMPIText.sapMPITextLeft {
-	color: contrast(@sapUiNegativeElement, @sapUiContentForegroundTextColor, @sapUiContentContrastTextColor, @sapUiContentContrastTextThreshold);
+	color: contrast(@sapUiNegativeElement, @sapUiContentContrastTextColor, @sapUiBaseText, @sapUiContentContrastTextThreshold);
 }
 
 .sapMPIBarCritical .sapMPIText.sapMPITextLeft {
-	color: contrast(@sapUiCriticalElement, @sapUiContentForegroundTextColor, @sapUiContentContrastTextColor, @sapUiContentContrastTextThreshold);
+	color: contrast(@sapUiCriticalElement, @sapUiContentContrastTextColor, @sapUiBaseText, @sapUiContentContrastTextThreshold);
 }
 
 .sapMPIBarInformation .sapMPIText.sapMPITextLeft {
-	color: contrast(@sapUiHighlight, @sapUiContentForegroundTextColor, @sapUiContentContrastTextColor, @sapUiContentContrastTextThreshold);
+	color: contrast(@sapUiHighlight, @sapUiContentContrastTextColor, @sapUiBaseText, @sapUiContentContrastTextThreshold);
+}
+
+.sapMPIBarInformation.sapMPIDisplayOnly .sapMPIText.sapMPITextLeft {
+	color: contrast(@sapUiBaseText, @sapUiContentContrastTextColor, @sapUiBaseText, @sapUiContentContrastTextThreshold);
 }
 
 /* Compact */
