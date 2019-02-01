@@ -338,7 +338,7 @@ sap.ui.define(
 				 * Gets the type of the execution scope
 				 * @public
 				 * @function
-				 * @returns {string} The type of the execution scope
+				 * @returns {string} The type of the execution scope. Possible values are <code>global</code>, <code>subtree</code> or <code>components</code>.
 				 * @alias sap.ui.support.ExecutionScope.getType
 				 */
 				getType: function () {
