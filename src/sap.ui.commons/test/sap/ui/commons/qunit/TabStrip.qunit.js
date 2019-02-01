@@ -529,8 +529,6 @@ sap.ui.define([
 		this.clock.tick(1000);
 
 		assert.ok(oTabStrip.$().hasClass("sapUiTabStripScrollable"), "TabStrip is scrollable");
-		assert.ok(oTabStrip.$().hasClass("sapUiTabStripScrollForward"), "sapUiTabStripScrollForward class is set");
-		assert.ok(oTabStrip.$().hasClass("sapUiTabStripScrollBack") == false, "sapUiTabStripScrollBack is not set");
 
 		oTabStrip.setWidth('700px');
 
@@ -551,28 +549,6 @@ sap.ui.define([
 		oTabStrip._updateScrollingAppearance();
 
 		assert.ok(oTabStrip.$().hasClass("sapUiTabStripScrollForward"), "sapUiTabStripScrollForward class is set");
-		assert.ok(oTabStrip.$().hasClass("sapUiTabStripScrollBack"), "sapUiTabStripScrollBack is set");
-	});
-
-	QUnit.test("keyboard navigation", function(assert) {
-		var oTab = oTabStrip.getTabs()[4];
-		oTab.$().focus();
-		qutils.triggerKeyboardEvent(oTab.getId(), "HOME");
-
-		this.clock.tick(1000);
-		// forcing updating, because of the ScrollEnablement
-		oTabStrip._updateScrollingAppearance();
-
-		assert.ok(oTabStrip.$().hasClass("sapUiTabStripScrollForward"), "sapUiTabStripScrollForward class is set");
-		assert.ok(oTabStrip.$().hasClass("sapUiTabStripScrollBack") == false, "sapUiTabStripScrollBack is not set");
-
-		qutils.triggerKeyboardEvent(oTab.getId(), "END");
-
-		this.clock.tick(1000);
-		// forcing updating, because of the ScrollEnablement
-		oTabStrip._updateScrollingAppearance();
-
-		assert.ok(oTabStrip.$().hasClass("sapUiTabStripScrollForward") == false, "sapUiTabStripScrollForward class not is set");
 		assert.ok(oTabStrip.$().hasClass("sapUiTabStripScrollBack"), "sapUiTabStripScrollBack is set");
 	});
 
