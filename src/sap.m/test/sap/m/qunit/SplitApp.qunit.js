@@ -1,4 +1,4 @@
-/*global QUnit */
+/*global QUnit, sinon */
 /*eslint no-undef:1, no-unused-vars:1, strict: 1 */
 sap.ui.define([
 	"sap/ui/qunit/QUnitUtils",
@@ -31,7 +31,11 @@ sap.ui.define([
 
 	createAndAppendDiv("content");
 
+	function getBgDomElement(oApp) {
+		return document.getElementById(oApp.getId() + "-BG");
+	}
 
+	var sBackroungImageSrc  = "test-resources/sap/m/images/SAPLogo.jpg";
 
 	QUnit.module("Initial Check");
 
@@ -790,5 +794,129 @@ sap.ui.define([
 			oSplitApp1.destroy();
 			done();
 		}, 500);
+	});
+
+	QUnit.module("backgroundColor", {
+		beforeEach: function () {
+			this.oSplitApp = new sap.m.SplitApp();
+			this.oSplitApp.placeAt("qunit-fixture");
+			sap.ui.getCore().applyChanges();
+		},
+		afterEach: function () {
+			this.oSplitApp.destroy();
+			this.oSplitApp = null;
+		}
+	});
+
+	QUnit.test("_getValidatedBackgroundColor filters-out invalid color", function(assert) {
+		var oApp = this.oSplitApp;
+
+		// Act
+		oApp.setBackgroundColor("blue;5px solid red;");
+
+		//Check
+		assert.strictEqual(oApp._getValidatedBackgroundColor(), "", "invalid value is not returned");
+	});
+
+	QUnit.test("only valid color is set to DOM element", function(assert) {
+		var oApp = this.oSplitApp,
+			oValidateSpy = sinon.spy(oApp, "_getValidatedBackgroundColor");
+
+		oApp.setBackgroundColor("blue;5px solid red;");
+		oValidateSpy.reset();
+
+		// Act
+		oApp.rerender();
+
+		// Check
+		assert.ok(oValidateSpy.called,
+			"_getValidatedBackgroundColor is called upon rendering");
+
+		assert.strictEqual(getBgDomElement(oApp).style.backgroundColor, '', "correct property value");
+	});
+
+
+	QUnit.module("backgroundImage", {
+		beforeEach: function () {
+			this.oSplitApp = new sap.m.SplitApp();
+			this.oSplitApp.placeAt("qunit-fixture");
+			sap.ui.getCore().applyChanges();
+		},
+		afterEach: function () {
+			this.oSplitApp.destroy();
+			this.oSplitApp = null;
+		}
+	});
+
+	QUnit.test("style is set to DOM element", function(assert) {
+		var oApp = this.oSplitApp;
+
+		// Act
+		oApp.setBackgroundImage(sBackroungImageSrc);
+		sap.ui.getCore().applyChanges();
+
+		// Check
+		assert.strictEqual(getBgDomElement(oApp).style.backgroundImage, 'url(\"' + sBackroungImageSrc + '\")',
+			"correct property value");
+	});
+
+
+	QUnit.test("url value with special characters", function(assert) {
+		var oApp = this.oSplitApp,
+			sPath = "images/",
+			sUnreservedChars = "img100-._~",
+			sReservedChars1 = encodeURIComponent("#[]@"), // skipped  :/?  because of OS restriction
+			sReservedChars2 = encodeURIComponent("!$&'()+,;="),
+			sOtherChars = encodeURIComponent(" çéд"),
+			sReservedCharsUnencoded = "$",
+			sFileExtension = ".png",
+			sQuery = "?q1=1&q2=2",
+			sImgSrc1 = "data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAYAAAAfFcSJAAAADUlEQVR42mP8/5+hHgAHggJ/PchI7wAAAABJRU5ErkJggg==",
+			sImgSrc2 = sPath + sUnreservedChars + sReservedChars1 + sReservedChars2 + sOtherChars + sReservedCharsUnencoded + sFileExtension + sQuery,
+			aImgSrc = [sImgSrc1, sImgSrc2];
+
+		aImgSrc.forEach(function(sImgSrc) {
+			// Act
+			oApp.setBackgroundImage(sImgSrc);
+			sap.ui.getCore().applyChanges();
+
+			// Check
+			assert.strictEqual(getBgDomElement(oApp).style.backgroundImage, 'url(\"' + sImgSrc + '\")',
+				"correct property value");
+		});
+	});
+
+
+	QUnit.test("encodes css-specific chars in backgroundImage value", function(assert) {
+		// Arrange
+		var sImageSrc = sBackroungImageSrc + ");border:5px solid red;",
+			oApp = this.oSplitApp,
+			oAppDom = getBgDomElement(oApp),
+			sBorderBeforeTest = oAppDom.style.border;
+
+		// Act
+		oApp.setBackgroundImage(sImageSrc);
+		sap.ui.getCore().applyChanges();
+
+		// Check
+		oAppDom = getBgDomElement(oApp);
+		assert.strictEqual(oAppDom.style.border, sBorderBeforeTest, "preserved border style value");
+	});
+
+
+	QUnit.test("encodes html-specific chars in backgroundImage style", function(assert) {
+		// Arrange
+		var sImageSrc = sBackroungImageSrc + ')"; onmouseover="console.log"',
+			oApp = this.oSplitApp,
+			oAppDom = getBgDomElement(oApp),
+			oHandlerBeforeTest = oAppDom.onmouseover;
+
+		// Act
+		oApp.setBackgroundImage(sImageSrc);
+		sap.ui.getCore().applyChanges();
+
+		// Check
+		oAppDom = getBgDomElement(oApp);
+		assert.strictEqual(oAppDom.onmouseover, oHandlerBeforeTest, "preserved handler value");
 	});
 });
