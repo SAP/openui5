@@ -18,8 +18,14 @@ sap.ui.define([
 		onInit: function () {
 			var oComponent = this.getOwnerComponent();
 			this._router = oComponent.getRouter();
-			// trigger first search to set visibilities right
-			this._search();
+			this._router.getRoute("categories").attachMatched(this._onRouteMatched, this);
+		},
+
+		_onRouteMatched: function() {
+			var bSmallScreen = this.getModel("appView").getProperty("/smallScreenMode");
+			if (bSmallScreen) {
+				this._setLayout("One");
+			}
 		},
 
 		onSearch: function () {
@@ -66,7 +72,7 @@ sap.ui.define([
 			var oModel = oBindContext.getModel();
 			var sCategoryId = oModel.getData(oBindContext.getPath()).Category;
 
-			this._router.navTo(Device.system.phone ? "categoryPhone" : "category", {id: sCategoryId});
+			this._router.navTo("category", {id: sCategoryId});
 			this._unhideMiddlePage();
 		},
 
@@ -80,18 +86,21 @@ sap.ui.define([
 			this._showProduct(oItem);
 		},
 
-		onBackToHome: function () {
-			this.getRouter().navTo("welcome");
-			this._unhideMiddlePage();
+		_showProduct: function (oItem) {
+			var oEntry = oItem.getBindingContext().getObject();
 
+			this._router.navTo("product", {
+				id: oEntry.Category,
+				productId: oEntry.ProductId
+			}, !Device.system.phone);
 		},
 
-		_showProduct: function (oItem) {
-			var oBindContext = oItem.getBindingContext();
-			var oModel = oBindContext.getModel();
-			var sId = oModel.getData(oBindContext.getPath()).ProductId;
-			this._router.navTo("cartProduct", {productId: sId}, !Device.system.phone);
+		/**
+		 * Always navigates back to home
+		 * @override
+		 */
+		onBack: function () {
+			this.getRouter().navTo("home");
 		}
-
 	});
 });

@@ -1557,11 +1557,10 @@ function(
 
 		if (this._resetButton === undefined) {
 			this._resetButton = new sap.m.Button(this.getId() + "-resetbutton", {
-				icon : IconPool.getIconURI("clear-filter"),
 				press : function() {
 					that._onClearFilters();
 				},
-				tooltip : this._rb.getText("VIEWSETTINGS_CLEAR_FILTER_TOOLTIP")
+				text : this._rb.getText("VIEWSETTINGS_RESET")
 			});
 		}
 		return this._resetButton;
@@ -1732,11 +1731,10 @@ function(
 			});
 			oDetailResetButton = new sap.m.Button(this.getId()
 			+ "-detailresetbutton", {
-				icon : IconPool.getIconURI("clear-filter"),
 				press : function() {
 					that._onClearFilters();
 				},
-				tooltip : this._rb.getText("VIEWSETTINGS_CLEAR_FILTER_TOOLTIP")
+				text : this._rb.getText("VIEWSETTINGS_RESET")
 			});
 			oDetailHeader = new sap.m.Bar({
 				contentLeft     : [ oBackButton ],
@@ -3081,15 +3079,13 @@ function(
 			if (!this._getPage1().getSubHeader()) {
 				this._getPage1().setSubHeader(oSubHeader);
 			}
-			// show reset button in subheader
-			oSubHeader.addContentRight(oResetButton);
 		} else {
 			if (this._getPage1().getSubHeader()) {
 				this._getPage1().setSubHeader();
 			}
-			// show reset button in header
-			oHeader.addContentRight(oResetButton);
 		}
+		// show reset button in header
+		oHeader.addContentRight(oResetButton);
 	};
 	/* =========================================================== */
 	/* end: event handlers */

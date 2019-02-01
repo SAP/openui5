@@ -1,7 +1,8 @@
 <mvc:View
 	controllerName="view.Main"
 	xmlns="sap.m"
-	xmlns:mvc="sap.ui.core.mvc">
+	xmlns:mvc="sap.ui.core.mvc"
+	xmlns:core="sap.ui.core">
 	<App id="app">
 		<Page id="list">
 			<Table
@@ -30,13 +31,29 @@
 				</items>
 			</Table>
 		</Page>
-		<Page id="Sample11">
+		<Page id="Sample11"
+			showNavButton="true"
+			navButtonPress="onBack">
 			<Title text="Sample11"/>
 		</Page>
-		<Page id="Sample12">
-			<Title text="Sample12"/>
+		<Page id="Sample12"
+			showNavButton="true"
+			navButtonPress="onBack">
+			<headerContent>
+				<Title text="Sample12"/>
+			</headerContent>
+			<Select
+				selectedKey="{items>/items/0/key}"
+				items="{
+					path: 'items>/items',
+					sorter: { path: 'items>name' }
+				}">
+				<core:Item key="{items>key}" text="{items>name}"/>
+			</Select>
 		</Page>
-		<Page id="Sample3">
+		<Page id="Sample3"
+			showNavButton="true"
+			navButtonPress="onBack">
 			<Title text="Sample3"/>
 		</Page>
 	</App>

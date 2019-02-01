@@ -268,7 +268,8 @@ sap.ui.define([
 		}).placeAt("uiArea1");
 		sap.ui.getCore().applyChanges();
 
-		var $oLink = oLink1.$();
+		var $oLink = oLink1.$(),
+			oBrowserStub;
 
 		// ARIA role
 		assert.strictEqual($oLink.attr("role"), "link", "Property 'role' should be 'link'");
@@ -304,6 +305,13 @@ sap.ui.define([
 		oLink1.removeAriaLabelledBy("id1");
 		sap.ui.getCore().applyChanges();
 		assert.strictEqual(oLink1.$().attr("aria-labelledby"), undefined, "Property 'aria-labelledby' should not exist");
+
+		// No self-reference on IE
+		oBrowserStub = this.stub(sap.ui.Device, "browser", { msie: true });
+		oLink1.addAriaLabelledBy("id1");
+		sap.ui.getCore().applyChanges();
+		assert.strictEqual(oLink1.$().attr("aria-labelledby"), "id1", "Link has no self-reference on IE");
+		oBrowserStub.restore();
 
 		oLink1.destroy();
 	});

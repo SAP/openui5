@@ -78,17 +78,26 @@ sap.ui.define([
 			getView: function (sViewName) {
 				var aViews = this.getAllControls(View, "View");
 				var aMatchingViews = aViews.filter(function (oViewInstance) {
-					return oViewInstance.$().length > 0 && oViewInstance.getViewName() === sViewName;
+					return oViewInstance.getViewName() === sViewName;
 				});
 
 				this._oLogger.debug("Found " + aMatchingViews.length + " views with viewName '" + sViewName + "'");
 
 				if (aMatchingViews.length > 1) {
-					this._oLogger.debug("Cannot identify controls uniquely. Please provide viewId to locate the exact view.");
-					return null;
-				} else {
-					return aMatchingViews[0];
+					aMatchingViews = aMatchingViews.filter(function (oViewInstance) {
+						var oViewDomRef = oViewInstance.$();
+						return oViewDomRef.length > 0 && oViewDomRef.is(":visible") && oViewDomRef.css("visibility") !== "hidden";
+					});
+
+					this._oLogger.debug("Found " + aMatchingViews.length + " visible views with viewName '" + sViewName + "'");
+
+					if (aMatchingViews.length !== 1) {
+						this._oLogger.debug("Cannot identify controls uniquely. Please provide viewId to locate the exact view.");
+						aMatchingViews = [];
+					}
 				}
+
+				return aMatchingViews[0];
 			},
 
 			// find view by ID and/or viewName
@@ -126,7 +135,7 @@ sap.ui.define([
 			 * eg : { viewName : "bar", viewNamespace : "baz." } will return all the Controls in the view with the name baz.bar<br/>
 			 * eg : { viewId : "viewBar" } will return all the controls inside the view with the ID viewBar<br/>
 			 *
-			 * @param {object} oOptions can contain a viewName, viewNamespace, viewId, id and controlType properties.
+			 * @param {object} oOptions can contain a viewName, viewNamespace, viewId, fragmentId, id and controlType properties.
 			 * oOptions.id can be string, array or regular expression
 			 * @returns {sap.ui.core.Element|sap.ui.core.Element[]|null}
 			 * If oOptions.id is a string, will return the control with such an ID or null.<br/>
@@ -143,11 +152,14 @@ sap.ui.define([
 				}
 
 				var sViewName = oView.getViewName();
+				var sFragmentPrefix = oOptions.fragmentId ? oOptions.fragmentId + OpaPlugin.VIEW_ID_DELIMITER : "";
 
 				if ($.isArray(oOptions.id)) {
 					var aControls = [];
 					var aUnmatchedIds = [];
-					$.each(oOptions.id, function (iIndex, sId) {
+					oOptions.id.map(function (sId) {
+						return sFragmentPrefix + sId;
+					}).forEach(function (sId) {
 						var oControl = oView.byId(sId);
 						if (oControl) {
 							aControls.push(oControl);
@@ -162,8 +174,9 @@ sap.ui.define([
 				}
 
 				if (bSearchForSingleControl) {
-					var oControl = oView.byId(oOptions.id) || null;
-					this._oLogger.debug("Found " + (oControl ? "" : "no ") + "control with ID '" + oOptions.id + "' in view '" + sViewName + "'");
+					var sId = sFragmentPrefix + oOptions.id;
+					var oControl = oView.byId(sId) || null;
+					this._oLogger.debug("Found " + (oControl ? "" : "no ") + "control with ID '" + sId + "' in view '" + sViewName + "'");
 					return oControl;
 				}
 
@@ -171,11 +184,10 @@ sap.ui.define([
 				var bMatchById = $.type(oOptions.id) === "regexp";
 
 				if (bMatchById) {
-					var sViewId = oView.getId();
 					aAllControlsOfTheView = aAllControlsOfTheView.filter(function (oControl) {
-						var sUnprefixedControlId = oControl.getId().replace(sViewId, "");
+						var sUnprefixedControlId = this._getUnprefixedControlId(oControl.getId(), oView.getId(), oOptions.fragmentId);
 						return oOptions.id.test(sUnprefixedControlId);
-					});
+					}.bind(this));
 				}
 
 				this._oLogger.debug("Found " + aAllControlsOfTheView.length + " controls of type " + oOptions.sOriginalControlType +
@@ -201,13 +213,12 @@ sap.ui.define([
 				return aControls;
 			},
 
-			// get control in static area that matches a control type, ID (string, array, regex) or both
+			// get control in static area that matches a control type, ID (string, array, regex), viewId, viewName, fragmentId
 			_getControlsInStaticArea: function (oOptions) {
 				var vControls = this._getControlsInContainer($("#sap-ui-static")) || [];
 
 				if (oOptions.id) {
 					vControls = this._filterUniqueControlsByCondition(vControls, function (oControl) {
-						var bIdMatches = false;
 						var sUnprefixedControlId = oControl.getId();
 						var oView = this._getMatchingView(oOptions);
 
@@ -216,9 +227,11 @@ sap.ui.define([
 							// - if the control is actually inside the view - the control ID will be considered view-relative
 							// - otherwise, the control ID will be considered global
 							if (this._isControlInView(oControl, oView.getViewName())) {
-								sUnprefixedControlId = sUnprefixedControlId.replace(oView.getId() + "--", "");
+								sUnprefixedControlId = this._getUnprefixedControlId(oControl.getId(), oView.getId(), oOptions.fragmentId);
 							}
 						}
+
+						var bIdMatches = false;
 
 						if (typeof oOptions.id === "string") {
 							bIdMatches = sUnprefixedControlId === oOptions.id;
@@ -235,7 +248,8 @@ sap.ui.define([
 						return bIdMatches;
 					}.bind(this));
 
-					this._oLogger.debug("Found " + (vControls.length ? vControls.length : "no") + " controls in the static area with ID matching '" + oOptions.id + "'");
+					this._oLogger.debug("Found " + (vControls.length ? vControls.length : "no") + " controls in the static area with ID matching '" + oOptions.id + "'" +
+						(oOptions.fragmentId ? " and fragmentId: '" + oOptions.fragmentId + "'" : ""));
 				}
 
 				if (vControls.length && oOptions.controlType) {
@@ -473,7 +487,9 @@ sap.ui.define([
 							aMatchIds.push(sElement);
 						}
 					}
-				} else if ($.isArray(oOptions.id)) {
+				}
+
+				if ($.isArray(oOptions.id)) {
 					aMatchIds = oOptions.id;
 				}
 
@@ -570,6 +586,20 @@ sap.ui.define([
 				oOptions.sOriginalControlType = vControlType;
 				oOptions.controlType = fnControlConstructor;
 				return true;
+			},
+
+			_getUnprefixedControlId: function (sControlId, sViewId, sFragmentId) {
+				// viewID might not be a prefix. strip prefixes only when needed
+				var sUnprefixedControlId = sControlId.replace(sViewId + OpaPlugin.VIEW_ID_DELIMITER, "");
+				if (sFragmentId) {
+					if (sUnprefixedControlId.startsWith(sFragmentId + OpaPlugin.VIEW_ID_DELIMITER)) {
+						sUnprefixedControlId = sUnprefixedControlId.replace(sFragmentId + OpaPlugin.VIEW_ID_DELIMITER, "");
+					} else {
+						// don't match control that doesn't have the required fragment ID
+						sUnprefixedControlId = "";
+					}
+				}
+				return sUnprefixedControlId;
 			}
 		});
 
@@ -579,6 +609,9 @@ sap.ui.define([
 		 * @type {{}}
 		 */
 		OpaPlugin.FILTER_FOUND_NO_CONTROLS = "FILTER_FOUND_NO_CONTROL";
+
+		// delimiter after view or fragment prefix in control IDs
+		OpaPlugin.VIEW_ID_DELIMITER = "--";
 
 		return OpaPlugin;
 	});

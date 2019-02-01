@@ -24,9 +24,11 @@
 	bottom: calc(%scrollWidth% + 2px);
 }
 
-.sapUiRta .sapUiDtOverlayFocusable.sapUiDtOverlayWithScrollBar.sapUiDtOverlayWithScrollBarHorizontal:focus:before {
+.sapUiRta .sapUiDtOverlayFocusable.sapUiDtOverlayWithScrollBar.sapUiDtOverlayWithScrollBarHorizontal:focus:before,
+.sapUiRta .sapUiRtaOverlayHover.sapUiDtOverlayWithScrollBar.sapUiDtOverlayWithScrollBarHorizontal:after {
 	bottom: %scrollWidth%;
 }
-.sapUiRta .sapUiDtOverlayFocusable.sapUiDtOverlayWithScrollBar.sapUiDtOverlayWithScrollBarVertical:focus:before {
+.sapUiRta .sapUiDtOverlayFocusable.sapUiDtOverlayWithScrollBar.sapUiDtOverlayWithScrollBarVertical:focus:before,
+.sapUiRta .sapUiRtaOverlayHover.sapUiDtOverlayWithScrollBar.sapUiDtOverlayWithScrollBarVertical:after {
 	right: %scrollWidth%;
 }

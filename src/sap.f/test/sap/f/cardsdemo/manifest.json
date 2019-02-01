@@ -143,9 +143,19 @@
 		  "target": "cardContainer"
 		},
 		{
+		  "pattern": "timelineContent",
+		  "name": "timelineContent",
+		  "target": "timelineContent"
+		},
+		{
 		  "pattern": "services",
 		  "name": "services",
 		  "target": "services"
+		},
+		{
+		  "pattern": "objectContent",
+		  "name": "objectContent",
+		  "target": "objectContent"
 		}
 	  ],
 	  "targets": {
@@ -206,7 +216,7 @@
 		},
 		"numericHeader": {
 		  "viewId": "numericHeader",
-		  "viewName": "numericHeader",
+		  "viewName": "NumericHeader",
 		  "viewLevel": 1
 		},
 		"manifest": {
@@ -227,6 +237,16 @@
 		"services": {
 		  "viewId": "services",
 		  "viewName": "Services",
+		  "viewLevel": 1
+		},
+		"timelineContent": {
+		  "viewId": "timelineContent",
+		  "viewName": "timelineContent",
+		  "viewLevel": 1
+		},
+		"objectContent": {
+		  "viewId": "object",
+		  "viewName": "ObjectContent",
 		  "viewLevel": 1
 		}
 	  }

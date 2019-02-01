@@ -127,7 +127,7 @@
 								id="creditCardStep"
 								title="{i18n>checkoutCreditCardCreditCardInfo}"
 								nextStep="invoiceStep"
-								activate="onCheckStepActivation"
+								activate=".onCheckStepActivation"
 								icon="sap-icon://credit-card"
 								validated="false">
 							<form:SimpleForm
@@ -272,7 +272,7 @@
 							id="cashOnDeliveryStep"
 							title="{i18n>checkoutCodTitle}"
 							nextStep="invoiceStep"
-							activate="onCheckStepActivation"
+							activate=".onCheckStepActivation"
 							icon="sap-icon://money-bills"
 							validated="false">
 							<form:SimpleForm
@@ -373,7 +373,7 @@
 							id="invoiceStep"
 							title="{i18n>checkoutInvoiceAddressTitle}"
 							subsequentSteps="deliveryAddressStep, deliveryTypeStep"
-							activate="onCheckStepActivation"
+							activate=".onCheckStepActivation"
 							complete="invoiceAddressComplete"
 							icon="sap-icon://sales-quote"
 							validated="false">
@@ -508,7 +508,7 @@
 						</WizardStep>
 						<WizardStep
 								id="deliveryAddressStep"
-								activate="onCheckStepActivation"
+								activate=".onCheckStepActivation"
 								validated="false"
 								title="{i18n>checkoutDeliveryAddressTitle}"
 								nextStep="deliveryTypeStep"

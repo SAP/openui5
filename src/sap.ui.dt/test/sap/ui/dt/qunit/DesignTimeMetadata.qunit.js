@@ -8,7 +8,8 @@ sap.ui.define([
 	"sap/ui/core/Title",
 	"sap/m/Button",
 	"sap/m/Label",
-	"sap/m/Input"
+	"sap/m/Input",
+	"sap/ui/qunit/utils/waitForThemeApplied"
 ],
 function(
 	jQuery,
@@ -18,7 +19,8 @@ function(
 	Title,
 	Button,
 	Label,
-	Input
+	Input,
+	waitForThemeApplied
 ) {
 	"use strict";
 
@@ -348,4 +350,6 @@ function(
 	QUnit.done(function() {
 		jQuery("#qunit-fixture").hide();
 	});
+
+	return waitForThemeApplied();
 });

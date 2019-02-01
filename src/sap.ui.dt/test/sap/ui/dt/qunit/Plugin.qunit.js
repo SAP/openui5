@@ -1,13 +1,14 @@
 /* global QUnit */
 
 sap.ui.define([
-	'sap/ui/dt/DesignTime',
-	'sap/ui/dt/OverlayRegistry',
-	'sap/ui/dt/Plugin',
-	'sap/m/Button',
-	'sap/ui/layout/VerticalLayout',
-	'sap/ui/thirdparty/jquery',
-	'sap/ui/thirdparty/sinon-4'
+	"sap/ui/dt/DesignTime",
+	"sap/ui/dt/OverlayRegistry",
+	"sap/ui/dt/Plugin",
+	"sap/m/Button",
+	"sap/ui/layout/VerticalLayout",
+	"sap/ui/thirdparty/jquery",
+	"sap/ui/qunit/utils/waitForThemeApplied",
+	"sap/ui/thirdparty/sinon-4"
 ],
 function(
 	DesignTime,
@@ -16,6 +17,7 @@ function(
 	Button,
 	VerticalLayout,
 	jQuery,
+	waitForThemeApplied,
 	sinon
 ) {
 	"use strict";
@@ -271,4 +273,6 @@ function(
 	QUnit.done(function() {
 		jQuery("#qunit-fixture").hide();
 	});
+
+	return waitForThemeApplied();
 });

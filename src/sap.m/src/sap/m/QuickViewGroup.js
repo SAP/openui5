@@ -87,8 +87,8 @@ sap.ui.define([
 				};
 			});
 
-		Group.prototype.setProperty = function () {
-			Element.prototype.setProperty.apply(this, arguments);
+		Group.prototype.setProperty = function (sName, oValue) {
+			Element.prototype.setProperty.call(this, sName, oValue, true);
 
 			var oPage = this.getParent();
 			if (oPage) {

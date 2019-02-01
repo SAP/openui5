@@ -60,32 +60,6 @@ sap.ui.define(["sap/ui/documentation/sdk/controller/util/JSDocUtil"], function (
 		},
 
 		/**
-		 * Encodes a module name that can be included in URL.
-		 *
-		 * @public
-		 * @param {string} sModuleName the name of the module
-		 * @returns {string} the encoded module name
-		 */
-		encodeModuleName: function (sModuleName) {
-			if (sModuleName) {
-				return encodeURIComponent(sModuleName);
-			}
-		},
-
-		/**
-		 * Decodes a module name that is comming from URL parameter.
-		 *
-		 * @public
-		 * @param {string} sModuleName the encoded module name
-		 * @returns {string} the decoded module name
-		 */
-		decodeModuleName: function (sModuleName) {
-			if (sModuleName) {
-				return decodeURIComponent(sModuleName);
-			}
-		},
-
-		/**
 		 * Formats an ApiRef entity name.
 		 *
 		 * @public

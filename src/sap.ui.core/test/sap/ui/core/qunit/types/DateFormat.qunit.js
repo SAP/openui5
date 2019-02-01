@@ -512,6 +512,22 @@ sap.ui.define(["sap/ui/core/format/DateFormat", "sap/ui/core/Locale", "sap/ui/co
 			assert.equal(oFormat.parse("a.m."), null, "the variant can only be parsed in locale where it's supported");
 		});
 
+		QUnit.test("format and parse time with am/pm in locale pt_PT", function(assert) {
+			// the dayPeriod pattern is defined as the following in pt_PT
+			// ["a.m.", "p.m."]
+			// The "." in the pattern also needs to be removed before it's compared with the unified variant
+			var oFormat = DateFormat.getTimeInstance({
+					pattern: "hh:mm a"
+				}, new Locale("pt_PT")),
+				oDate = new Date(),
+				sFormattedTime = oFormat.format(oDate),
+				oParsedDate = oFormat.parse(sFormattedTime);
+
+			assert.ok(oParsedDate, "The formatted date string can be parsed");
+			assert.equal(oParsedDate.getHours(), oDate.getHours(), "The hours can be correctly parsed");
+			assert.equal(oParsedDate.getMinutes(), oDate.getMinutes(), "The minutes can be correctly parsed");
+		});
+
 		QUnit.test("parse with tolerance for the number of spaces", function (assert) {
 			var oFormat = DateFormat.getDateInstance({
 				pattern: "dd MMMM, yyyy"
@@ -1595,6 +1611,22 @@ sap.ui.define(["sap/ui/core/format/DateFormat", "sap/ui/core/Locale", "sap/ui/co
 
 			assert.equal(sResult.toString(), oIntervalFormat._format(oDate).toString(), "if two dates are identical on the fields which we compare, a single date will be formatted.");
 			assert.deepEqual(oIntervalFormat.parse(sResult), [oDate, oDate]);
+		});
+
+		QUnit.test("Interval with two identical dates after formatting different dates", function (assert) {
+			var oIntervalFormat = DateFormat.getDateInstance({
+				interval: true,
+				format: "yMMMd"
+			});
+
+			// if two dates are identical on the fields which we compare, no diff field will be returned
+			var oDate1 = new Date(2017, 3, 11);
+			var oDate2 = new Date(2017, 3, 12);
+			var sResult = oIntervalFormat.format([oDate1, oDate2]);
+			assert.equal(sResult.toString(), "Apr 11 – 12, 2017", "Different dates are formatted correctly");
+
+			var sResult = oIntervalFormat.format([oDate1, oDate1]);
+			assert.equal(sResult.toString(), "Apr 11, 2017", "Single Date if formatted correctly afterwards");
 		});
 
 		QUnit.test("Interval with two identical dates without format property", function (assert) {

@@ -160,6 +160,7 @@ sap.ui.define([
 		this._sActualType = null;
 		// Property that determines if the created icon is going to be the default one
 		this._bIsDefaultIcon = true;
+		this._sImageFallbackType = null;
 	};
 
 	Avatar.prototype.exit = function () {
@@ -307,6 +308,7 @@ sap.ui.define([
 			this._sActualType = AvatarType.Icon;
 			this._bIsDefaultIcon = false;
 		} else {
+			this._bIsDefaultIcon = true;
 			this._sActualType = AvatarType.Image;
 		}
 
@@ -334,6 +336,23 @@ sap.ui.define([
 		}
 
 		return this._sActualType;
+	};
+
+	/**
+	 * Indicates what type of fallback we should show if there is invalid image source.
+	 *
+	 * @returns {sap.f.AvatarType}
+	 * @private
+	 */
+	Avatar.prototype._getImageFallbackType = function () {
+		var sInitials = this.getInitials();
+
+		if (this._sActualType === AvatarType.Image) {
+			this._sImageFallbackType = sInitials && this._areInitialsValid(sInitials) ?
+			AvatarType.Initials : AvatarType.Icon;
+		}
+
+		return this._sImageFallbackType;
 	};
 
 	/**

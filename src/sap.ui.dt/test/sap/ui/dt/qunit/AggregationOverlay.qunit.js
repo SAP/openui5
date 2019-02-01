@@ -10,6 +10,7 @@ sap.ui.define([
 	"sap/m/Page",
 	"sap/m/Button",
 	"sap/m/Panel",
+	"sap/ui/qunit/utils/waitForThemeApplied",
 	"sap/ui/thirdparty/jquery",
 	"sap/ui/thirdparty/sinon-4"
 ],
@@ -23,6 +24,7 @@ function(
 	Page,
 	Button,
 	Panel,
+	waitForThemeApplied,
 	jQuery,
 	sinon
 ) {
@@ -53,8 +55,7 @@ function(
 	});
 
 	QUnit.module("Given that an AggregationOverlay is created for an aggregation with domRef DT metadata", {
-		beforeEach: function(assert) {
-			var done = assert.async();
+		beforeEach: function () {
 			this.oPage = new Page();
 			this.oPage.placeAt("qunit-fixture");
 			sap.ui.getCore().applyChanges();
@@ -69,12 +70,6 @@ function(
 				})
 			});
 			Overlay.getOverlayContainer().append(this.oAggregationOverlay.render());
-
-			var fnDebounced = DtUtil.debounce(function() {
-				this.oAggregationOverlay.detachEvent("geometryChanged", fnDebounced);
-				done();
-			}.bind(this), 100);
-			this.oAggregationOverlay.attachEvent("geometryChanged", fnDebounced);
 
 			this.oAggregationOverlay.applyStyles();
 		},
@@ -260,7 +255,7 @@ function(
 	});
 
 	QUnit.module("Given that an AggregationOverlay is created and is not rendered", {
-		beforeEach: function(assert) {
+		beforeEach: function () {
 			this.oPage = new Page();
 
 			this.oAggregationOverlay = new AggregationOverlay({
@@ -303,4 +298,6 @@ function(
 	QUnit.done(function() {
 		jQuery("#qunit-fixture").hide();
 	});
+
+	return waitForThemeApplied();
 });

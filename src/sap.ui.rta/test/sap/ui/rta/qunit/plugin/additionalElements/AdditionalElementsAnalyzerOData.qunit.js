@@ -3,12 +3,14 @@
 sap.ui.define([
 	"sap/ui/rta/plugin/additionalElements/AdditionalElementsAnalyzer",
 	"sap/ui/model/json/JSONModel",
-	"sap/ui/layout/form/SimpleForm"
+	"sap/ui/layout/form/SimpleForm",
+	"sap/ui/qunit/utils/waitForThemeApplied"
 ],
 function(
 	AdditionalElementsAnalyzer,
 	JSONModel,
-	SimpleForm
+	SimpleForm,
+	waitForThemeApplied
 ) {
 	"use strict";
 
@@ -116,4 +118,6 @@ function(
 	QUnit.done(function () {
 		jQuery("#qunit-fixture").hide();
 	});
+
+	return waitForThemeApplied();
 });

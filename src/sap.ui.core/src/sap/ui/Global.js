@@ -17,13 +17,12 @@
  * sap.ui.lazyRequire("sap.ui.commons.Button");
  *
  * @version ${version}
- * @author  Martin Schaus, Daniel Brinkmann
+ * @author  SAP SE
  * @public
  */
 
-/*global OpenAjax */// declare unusual global vars for JSLint/SAPUI5 validation
+/*global OpenAjax */
 
-// Register to the OpenAjax Hub if it exists
 sap.ui.define([
 	'sap/ui/VersionInfo',
 	'sap/base/Log',
@@ -33,9 +32,13 @@ sap.ui.define([
 	function(VersionInfo, Log, assert, ObjectPath) {
 	"use strict";
 
+	// Register to the OpenAjax Hub if it exists
 	if (window.OpenAjax && window.OpenAjax.hub) {
 		OpenAjax.hub.registerLibrary("sap", "http://www.sap.com/", "0.1", {});
 	}
+
+	// soft dependency to sap/ui/base/Object
+	var BaseObject;
 
 	/**
 	 * Root namespace for JavaScript functionality provided by SAP SE.
@@ -151,20 +154,21 @@ sap.ui.define([
 	 * Otherwise, a plain object is created.
 	 *
 	 * <b>Note</b>: Accessing any stub as a plain object without executing it (no matter
-	 * whether it is a function or an object) won't load the module and therefore most like
+	 * whether it is a function or an object) won't load the module and therefore most likely
 	 * won't work as expected. This is a fundamental restriction of the lazy loader approach.
-	 * It could only be fixed with JavaScript 1.5 features that are not available in all
-	 * UI5 target browsers (e.g. not in IE8).
 	 *
 	 * <b>Note</b>: As a side effect of this method, the namespace containing the given
 	 * class is created <b>immediately</b>.
 	 *
 	 * @param {string} sClassName Fully qualified name (dot notation) of the class that should be prepared
-	 * @param {string} [sMethods='new'] space separated list of additional (static) methods that should be created as stubs
-	 * @param {string} [sModuleName] name of the module to load, defaults to the class name
+	 * @param {string} [sMethods='new'] Space separated list of additional (static) methods that should be created as stubs
+	 * @param {string} [sModuleName] Name of the module to load, defaults to the class name
 	 * @public
 	 * @static
-	 * @deprecated since 1.56
+	 * @deprecated since 1.56 Lazy loading enforces synchronous requests and therefore has been deprecated
+	 *     without a replacement. Instead of loading classes via lazy stubs, they should be required as
+	 *     dependencies of an AMD module (using {@link sap.ui.define}) or on demand with a call to {@link
+	 *     sap.ui.require}.
 	 */
 	sap.ui.lazyRequire = function(sClassName, sMethods, sModuleName) {
 
@@ -209,6 +213,22 @@ sap.ui.define([
 
 					// create a new instance and invoke the constructor
 					var oInstance = Object.create(oRealClass.prototype);
+					if ( !(this instanceof oClass) ) {
+						// sap.ui.base.Object and its subclasses throw an error when the constructor is called as a function.
+						// Lazy stubs for those classes should behave consistently, but for compatibility with older
+						// releases (< 1.63), only a log entry can be written.
+						// To facilitate a support rule, the log entry provides a stack trace on demand ("support info")
+						BaseObject = BaseObject || sap.ui.require("sap/ui/base/Object");
+						if ( BaseObject && oInstance instanceof BaseObject ) {
+							Log.error("Constructor " + sClassName + " has been called without \"new\" operator!", null, null, function() {
+								try {
+									throw new Error();
+								} catch (e) {
+									return e;
+								}
+							});
+						}
+					}
 					var oResult = oRealClass.apply(oInstance, arguments);
 					if (oResult && (typeof oResult === "function" || typeof oResult === "object")) {
 						oInstance = oResult;

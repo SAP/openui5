@@ -147,6 +147,11 @@ sap.ui.define([
 						});
 					}
 				}
+			} else if (oDropControl.isA("sap.ui.table.Column")) {
+				var mTableCntRect = this.getDomRef("sapUiTableCnt").getBoundingClientRect();
+				oDragSession.setIndicatorConfig({
+					height: mTableCntRect.height - (this._getScrollExtension().isHorizontalScrollbarVisible() ? 16 : 0)
+				});
 			} else if (oDraggedControl === oDropControl) {
 				oEvent.setMarked("NonDroppable");
 			}

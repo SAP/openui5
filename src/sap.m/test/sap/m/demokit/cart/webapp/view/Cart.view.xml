@@ -6,7 +6,7 @@
 		id="page"
 		title="{cfg>/pageTitle}"
 		backgroundDesign="Solid"
-		showNavButton="{device>/system/phone}"
+		showNavButton="{appView>/smallScreenMode}"
 		navButtonPress=".onBack"
 		showFooter="true">
 		<landmarkInfo>
@@ -68,8 +68,8 @@
 					formatter : '.formatter.footerTextForCart'
 				}"
 				mode="{cfg>/listMode}"
-				delete="onCartEntriesDelete"
-				selectionChange="onEntryListSelect"
+				delete=".onCartEntriesDelete"
+				selectionChange=".onEntryListSelect"
 				noDataText="{i18n>cartNoData}"
 				items="{
 					path : 'cartProducts>/cartEntries',
@@ -97,7 +97,7 @@
 						<attributes>
 							<ObjectAttribute
 								active="true"
-								press="onSaveForLater"
+								press=".onSaveForLater"
 								text="{i18n>cartSaveForLaterLinkText}"/>
 						</attributes>
 						<firstStatus>
@@ -118,8 +118,8 @@
 				id="saveForLaterList"
 				mode="{cfg>/listMode}"
 				showNoData="false"
-				delete="onSaveForLaterDelete"
-				selectionChange="onEntryListSelect"
+				delete=".onSaveForLaterDelete"
+				selectionChange=".onEntryListSelect"
 				items="{
 					path : 'cartProducts>/savedForLaterEntries',
 					sorter : {
@@ -145,7 +145,7 @@
 						<attributes>
 							<ObjectAttribute
 								active="true"
-								press="onAddBackToBasket"
+								press=".onAddBackToBasket"
 								text="{i18n>cartAddToCartLinkText}"/>
 						</attributes>
 						<firstStatus>

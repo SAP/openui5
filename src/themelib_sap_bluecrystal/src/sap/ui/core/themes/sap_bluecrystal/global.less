@@ -18,6 +18,9 @@
 @sapUiBaseBG: @sapBackgroundColor;						// #f2f2f2
 @sapUiGlobalBackgroundColor: @sapBackgroundColor;
 
+@sapUiFontFamily: @sapFontFamily;
+@sapUiFontSize: 16px; // @sapFontSize;
+
 @sapUiBaseText: @sapTextColor;							// #000000
 @sapUiLink: @sapLinkColor;								// #00679e, rgb(0, 103, 158)
 
@@ -55,6 +58,14 @@
 // [Tags "Content", "Color"]
 @sapUiGlobalBackgroundGradientEndColor: extract(@sapUiHighlight @sapContent_BackgroundGradientEndColor, @sapUiGlobalBackgroundVariant);
 
+@sapUiElementLineHeight: @sapElement_LineHeight;
+@sapUiElementHeight: @sapElement_Height;
+@sapUiElementBorderWidth: @sapElement_BorderWidth;
+
+@sapUiContentLineHeight: @sapContent_LineHeight; // 1.3;
+@sapUiContentElementHeight: @sapContent_ElementHeight; // 1.37em;
+@sapUiContentElementHeightPX: @sapContent_ElementHeight_PX; // 22px;
+@sapUiContentIconHeight: @sapContent_IconHeight; // 16px;
 @sapUiContentIconColor: @sapContent_IconColor;
 @sapUiContentContrastIconColor: @sapContent_ContrastIconColor;
 @sapUiContentNonInteractiveIconColor: @sapContent_NonInteractiveIconColor;
@@ -74,6 +85,7 @@
 @sapUiContentForegroundColor: @sapContent_ForegroundColor;
 @sapUiContentForegroundBorderColor: @sapContent_ForegroundBorderColor;
 @sapUiContentForegroundTextColor: @sapContent_ForegroundTextColor;
+@sapUiContentBadgeBackground: @sapContent_BadgeBackground;
 
 @sapUiShellBackground: @sapShell_Background;
 @sapUiShellBackgroundImage: @sapShell_BackgroundImage;
@@ -81,8 +93,11 @@
 @sapUiShellBackgroundImageRepeat: @sapShell_BackgroundImageRepeat;
 @sapUiShellBorderColor: @sapShell_BorderColor;
 @sapUiShellTextColor: @sapShell_TextColor;
+@sapUiShellInteractiveTextColor: @sapShell_InteractiveTextColor;
 @sapUiShellFavicon: @sapShell_Favicon;
 
+@sapUiButtonBorderWidth: @sapButton_BorderWidth;
+@sapUiButtonBorderCornerRadius: @sapButton_BorderCornerRadius; // 2px;
 @sapUiButtonBackground: @sapButton_Background;
 @sapUiButtonBorderColor: @sapButton_BorderColor;
 @sapUiButtonTextColor: @sapButton_TextColor;
@@ -98,6 +113,8 @@
 @sapUiButtonRejectBackground: @sapButton_Reject_Background;
 @sapUiButtonAcceptBackground: @sapButton_Accept_Background;
 
+@sapUiFieldBorderWidth: @sapField_BorderWidth;
+@sapUiFieldBorderCornerRadius: @sapField_BorderCornerRadius;
 @sapUiFieldBackground: @sapField_Background;
 @sapUiFieldBorderColor: @sapField_BorderColor;
 @sapUiFieldHelpBackground: @sapField_HelpBackground;
@@ -126,6 +143,7 @@
 @sapUiGroupTitleTextColor: @sapGroup_TitleTextColor;
 @sapUiGroupContentBackground: @sapGroup_ContentBackground;
 @sapUiGroupContentBorderColor: @sapGroup_ContentBorderColor;
+@sapUiGroupBorderWidth: @sapGroup_BorderWidth;
 @sapUiGroupFooterBackground: @sapGroup_FooterBackground;
 
 @sapUiToolbarBackground: @sapToolbar_Background;
@@ -135,6 +153,7 @@
 @sapUiListHeaderBorderColor: @sapList_HeaderBorderColor;
 @sapUiListHeaderTextColor: @sapList_HeaderTextColor;
 @sapUiListBorderColor: @sapList_BorderColor;
+@sapUiListBorderWidth: @sapList_BorderWidth;
 @sapUiListHighlightColor: @sapList_HighlightColor;
 @sapUiListSelectionBackgroundColor: @sapList_SelectionBackgroundColor;
 @sapUiListBackground: @sapList_Background;
@@ -144,6 +163,7 @@
 @sapUiScrollBarTrackColor: @sapScrollBar_TrackColor;
 @sapUiScrollBarBorderColor: @sapScrollBar_BorderColor;
 @sapUiScrollBarSymbolColor: @sapScrollBar_SymbolColor;
+@sapUiScrollBarDimension: @sapScrollBar_Dimension;
 @sapUiScrollBarHoverFaceColor: @sapScrollBar_Hover_FaceColor;
 
 @sapUiPageHeaderBackground: @sapPageHeader_Background;
@@ -221,6 +241,8 @@
 /* ============================================ */
 /* UX Reference Set - do not use in Controls!!  */
 /* ============================================ */
+
+@sapUiContentGridSize: @sapContent_GridSize; // 1rem;
 
 /* ===================================== */
 /* Accent Colors                         */
@@ -456,9 +478,6 @@
 /* ===================================== */
 /* Font                                  */
 /* ===================================== */
-
-@sapUiFontFamily: @sapFontFamily;
-@sapUiFontSize: 16px;
 
 @sapUiFontCondensedFamily: 'Arial Narrow', HelveticaNeue-CondensedBold, Arial, sans-serif;
 

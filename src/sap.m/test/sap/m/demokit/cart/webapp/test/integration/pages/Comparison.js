@@ -38,7 +38,7 @@ sap.ui.define([
 						errorMessage: "The press action could not be executed"
 					});
 				},
-				iGoToTheCartPage: function () {
+				iToggleTheCart: function () {
 					return this.waitFor({
 						controlType: "sap.m.Button",
 						matchers: new PropertyStrictEquals({name: "icon", value: "sap-icon://cart"}),

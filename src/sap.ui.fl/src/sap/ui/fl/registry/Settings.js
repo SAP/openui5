@@ -59,7 +59,22 @@ sap.ui.define([
 		changeModeUpdated: "changeModeUpdated"
 	};
 
-	Settings._instance = undefined;
+	/**
+	 * Sets the initial value of the settings instance. If the current system is a trial system it will create an instance with default parameters.
+	 * Otherwise the instance remains undefined.
+	 */
+	Settings._initInstance = function () {
+		var oSettings;
+		if (Utils.isTrialSystem()) {
+			oSettings = new Settings({
+				isKeyUser: true,
+				isVariantSharingEnabled: false
+			});
+		}
+		Settings._instance = oSettings;
+	};
+
+	Settings._initInstance();
 	Settings._bFlexChangeMode = true;
 	Settings._bFlexibilityAdaptationButtonAllowed = false;
 	Settings._oEventProvider = new EventProvider();
@@ -112,6 +127,7 @@ sap.ui.define([
 		if (Settings._instance) {
 			return Promise.resolve(Settings._instance);
 		}
+
 		var oPromise = Cache.getFlexDataPromise();
 		if (oPromise) {
 			return oPromise.then(
@@ -358,16 +374,6 @@ sap.ui.define([
 	 */
 	Settings.prototype.isProductiveSystem = function() {
 		return  this._getBooleanProperty("isProductiveSystem");
-	};
-
-	/**
-	 * Checks whether the current tenant is a trial tenant.
-	 *
-	 * @public
-	 * @returns {boolean} true if tenant is a trial tenant
-	 */
-	Settings.prototype.isTrial = function() {
-		return this._getBooleanProperty("isTrial");
 	};
 
 	/**

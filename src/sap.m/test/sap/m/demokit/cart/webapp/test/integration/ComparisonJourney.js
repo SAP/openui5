@@ -43,7 +43,7 @@ sap.ui.define([
 
 		When.onTheComparison.iAddTheDisplayedProductToTheCart();
 
-		When.onTheComparison.iGoToTheCartPage();
+		When.onTheComparison.iToggleTheCart();
 
 		// Assertions
 		Then.onTheCart.iShouldSeeTheProductInMyCart()
@@ -52,6 +52,7 @@ sap.ui.define([
 
 		opaTest("Should see comparison view with two products", function (Given, When, Then) {
 		// Actions
+		When.onTheComparison.iToggleTheCart();
 		When.onTheCategory.iPressOnCompareLink(productTwo);
 
 		// Assertions

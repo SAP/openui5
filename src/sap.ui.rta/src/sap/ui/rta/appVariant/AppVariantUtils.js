@@ -95,6 +95,7 @@ sap.ui.define([
 
 		AppVariantUtils.createDescriptorVariant = function(mParameters){
 			mParameters.layer = FlexUtils.getCurrentLayer(false);
+			mParameters.version = "1.0.0"; // Application variant version should be 1.0.0 which is expected by backend
 			return DescriptorVariantFactory.createNew(mParameters);
 		};
 
@@ -126,13 +127,6 @@ sap.ui.define([
 			};
 		};
 
-		AppVariantUtils.getURLParsedHash = function() {
-			var oURLParser = sap.ushell.Container.getService("URLParsing");
-			if (oURLParser.parseShellHash && oURLParser.getHash){
-				return oURLParser.parseShellHash(hasher.getHash());
-			}
-		};
-
 		AppVariantUtils.getInboundInfo = function(oInbounds) {
 			var oInboundInfo = {};
 			if (!oInbounds) {
@@ -141,7 +135,7 @@ sap.ui.define([
 				return oInboundInfo;
 			}
 
-			var oParsedHash = this.getURLParsedHash();
+			var oParsedHash = FlexUtils.getParsedURLHash();
 			var aInbounds = Object.keys(oInbounds);
 			var aInboundsFound = [];
 
@@ -215,7 +209,7 @@ sap.ui.define([
 		};
 
 		AppVariantUtils.getInlineChangeCreateInbound = function(sCurrentRunningInboundId) {
-			var oParsedHash = this.getURLParsedHash();
+			var oParsedHash = FlexUtils.getParsedURLHash();
 			var oProperty = {
 				"inbound": {}
 			};
@@ -410,8 +404,9 @@ sap.ui.define([
 			var oComponentInstance = oApplication.componentHandle.getInstance();
 
 			if (oComponentInstance) {
-				var oCrossAppNav = sap.ushell.Container.getService("CrossApplicationNavigation");
-				if (oCrossAppNav.toExternal){
+				var oUshellContainer = FlexUtils.getUshellContainer();
+				var oCrossAppNav = oUshellContainer && oUshellContainer.getService("CrossApplicationNavigation");
+				if (oCrossAppNav && oCrossAppNav.toExternal){
 					oCrossAppNav.toExternal({target: {shellHash: "#"}}, oComponentInstance);
 				}
 			}
@@ -480,6 +475,10 @@ sap.ui.define([
 				}.bind(this));
 
 			}.bind(this));
+		};
+
+		AppVariantUtils.getDescriptorFromLREP = function(sAppVariantId) {
+			return DescriptorVariantFactory.createForExisting(sAppVariantId);
 		};
 
 		return AppVariantUtils;

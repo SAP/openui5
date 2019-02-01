@@ -4,13 +4,15 @@ sap.ui.define([
 	"sap/ui/dt/test/LibraryEnablementTest",
 	"dt/control/SimpleScrollControl",
 	"sap/ui/thirdparty/sinon-4",
+	"sap/ui/qunit/utils/waitForThemeApplied",
 	// ensure the test library is loaded so it can be used in the library enablement test
 	"sap/ui/testLibrary/library"
 ],
 function (
 	LibraryEnablementTest,
 	SimpleScrollControl,
-	sinon
+	sinon,
+	waitForThemeApplied
 ) {
 	"use strict";
 
@@ -48,4 +50,6 @@ function (
 	QUnit.done(function() {
 		jQuery("#qunit-fixture").hide();
 	});
+
+	return waitForThemeApplied();
 });

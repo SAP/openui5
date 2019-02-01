@@ -355,8 +355,12 @@ function(
 	 * @private
 	 */
 	MultiInput.prototype._onResize = function () {
+		this._deregisterResizeHandler();
+
 		this._tokenizer.setMaxWidth(this._calculateSpaceForTokenizer());
 		this._handleInnerVisibility();
+
+		this._registerResizeHandler();
 	};
 
 	MultiInput.prototype._onTokenChange = function (args) {
@@ -472,24 +476,6 @@ function(
 	 */
 	MultiInput.prototype._setValueVisible = function () {
 		this.$("inner").css("opacity", "1");
-	};
-
-	/**
-	 * Function calculates the available space for the tokenizer
-	 *
-	 * @private
-	 * @return {String | null} CSSSize in px
-	 */
-	MultiInput.prototype._calculateSpaceForTokenizer = function () {
-		if (this.getDomRef()) {
-			var iWidth = this.getDomRef().offsetWidth,
-				iValueHelpButtonWidth = this.getDomRef("vhi") ? parseInt(this.getDomRef("vhi").offsetWidth) : 0,
-				iInputWidth = parseInt(this.$().find(".sapMInputBaseInner").css("min-width")) || 0;
-
-			return iWidth - (iValueHelpButtonWidth + iInputWidth) + "px";
-		} else {
-			return null;
-		}
 	};
 
 	/**
@@ -1427,6 +1413,8 @@ function(
 				that._bShowListWithTokens = false;
 			});
 
+		this._oSuggPopover._oPopover.getCustomHeader().removeAllContentMiddle();
+		this._oSuggPopover._oPopover.destroyCustomHeader(true);
 		this._oSuggPopover._oPopover.setCustomHeader(new Bar({
 			contentMiddle: [new Title()],
 			contentRight: new Button({

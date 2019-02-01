@@ -6,6 +6,7 @@ sap.ui.define([
 	"sap/ui/rta/appVariant/Utils",
 	"sap/ui/rta/appVariant/AppVariantUtils",
 	"sap/ui/fl/Utils",
+	"sap/ui/qunit/utils/waitForThemeApplied",
 	"sap/ui/thirdparty/sinon-4"
 ], function (
 	jQuery,
@@ -13,6 +14,7 @@ sap.ui.define([
 	AppVariantOverviewUtils,
 	AppVariantUtils,
 	FlUtils,
+	waitForThemeApplied,
 	sinon
 ) {
 	"use strict";
@@ -232,4 +234,6 @@ sap.ui.define([
 	QUnit.done(function () {
 		jQuery("#qunit-fixture").hide();
 	});
+
+	return waitForThemeApplied();
 });

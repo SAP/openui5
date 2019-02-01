@@ -44,7 +44,7 @@
 	new sap.m.ObjectStatus({
 		title: "Some title",
 		text : "Contract #D1234567890 Ñagçyfox",
-		state: "Success",
+		state: "Information",
 		icon: "sap-icon://alert",
 		active : true,
 		press : function() {
@@ -107,6 +107,9 @@
 		text : "John Doe Ñagçyfox",
 		state: "Warning"
 	}), new sap.m.ObjectStatus({
+		text : "John Doe Ñagçyfox",
+		state: "Information"
+	}), new sap.m.ObjectStatus({
 		title: "Created by",
 		icon: "sap-icon://alert",
 		text : "John Doe Ñagçyfox",
@@ -150,7 +153,7 @@
 		number: "Ñ99999",
 		numberUnit: "Euro",
 		firstStatus: new sap.m.ObjectStatus("activeStatus", {text: "Positive Ñagçyfox", state: "Success", tooltip: "Status tip", active:true}),
-		secondStatus: new sap.m.ObjectStatus({text: "Negative Ñagçyfox", state: "Error", tooltip: "Status tip", icon: "sap-icon://alert", active:true}),
+		secondStatus: new sap.m.ObjectStatus({text: "Negative Ñagçyfox", state: "Information", tooltip: "Status tip", icon: "sap-icon://alert", active:true}),
 		showMarkers: true,
 		markFavorite: true
 	});
@@ -190,13 +193,14 @@
 					new sap.m.MessageToast.show("you click me");
 				}
 			}), new sap.m.ObjectStatus({
-				text : "John Doe Ñagçyfox",
+				text : "Large status",
 				state: "Error",
 				active : true,
 				press : function() {
 					new sap.m.MessageToast.show("you click me");
 				}
-			}), new sap.m.ObjectStatus({
+			}).addStyleClass("sapMObjectStatusLarge"),
+			new sap.m.ObjectStatus({
 				text : "John Doe Ñagçyfox",
 				state: "Warning"
 			}), new sap.m.ObjectStatus({
@@ -207,7 +211,7 @@
 				title: "Some title",
 				text : "Contract #D1234567890 Ñagçyfox",
 				icon: "sap-icon://alert",
-				state: "Success",
+				state: "Information",
 				active : true,
 				press : function() {
 					new sap.m.MessageToast.show("you click me");
@@ -252,6 +256,9 @@
 								}
 							}), new sap.m.ObjectStatus({
 								text : "John Doe Ñagçyfox"
+							}), new sap.m.ObjectStatus({
+								text : "John Doe Ñagçyfox",
+								state: "Information"
 							}), new sap.m.ObjectStatus({
 								title: "Created by",
 								text : "John Doe Ñagçyfox",
@@ -376,7 +383,7 @@
 				}), new sap.m.ObjectStatus({
 					title: "Created by",
 					text : "John Doe Ñagçyfox",
-					state: "Warning"
+					state: "Information"
 				}), new sap.m.ObjectStatus({
 					title : "Some title",
 					state: "Success",
@@ -417,6 +424,12 @@
 	}), oPage);
 
 	addToPage(new sap.m.ObjectStatus({
+		title: "ObjectStatus with added Large class",
+		text : "and some text",
+		state: "Success"
+	}).addStyleClass("sapMObjectStatusLarge"), oPage);
+
+	addToPage(new sap.m.ObjectStatus({
 		state: "Error",
 		icon: "sap-icon://alert",
 		text : "Very long not active status containing only text Ñagçyfox Created by John Doe Ñagçyfox Created by: John Doe Ñagçyfox Created by: John Doe Ñagçyfox Created by: John Doe Ñagçyfox Created by: John Doe Ñagçyfox Created by: John Doe Ñagçyfox Created by: John Doe Ñagçyfox Created by: John Doe Ñagçyfox Created by: John Doe Ñagçyfox Created by: John Doe Ñagçyfox Created by: John Doe Ñagçyfox Created by: John DoeÑagçyfox Created by: John Doe Ñagçyfox Created by: John Doe Ñagçyfox Created by: John Doe Ñagçyfox Created by: John Doe"
@@ -430,7 +443,7 @@
 	}), oPage);
 
 	addToPage(new sap.m.ObjectStatus({
-		state: "Success",
+		state: "Information",
 		active: true,
 		text : "Very long active status containing only text Ñagçyfox Created by John Doe Ñagçyfox Created by: John Doe Ñagçyfox Created by: John Doe Ñagçyfox Created by: John Doe Ñagçyfox Created by: John Doe Ñagçyfox Created by: John Doe Ñagçyfox Created by: John Doe Ñagçyfox Created by: John Doe Ñagçyfox Created by: John Doe Ñagçyfox Created by: John Doe Ñagçyfox Created by: John Doe Ñagçyfox Created by: John DoeÑagçyfox Created by: John Doe Ñagçyfox Created by: John Doe Ñagçyfox Created by: John Doe Ñagçyfox Created by: John Doe"
 	}), oPage);

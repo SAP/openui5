@@ -373,13 +373,14 @@ sap.ui.define([
 	 * @param {string} oTransportInfo.packageName - name of the package
 	 * @param {string} oTransportInfo.transport - ID of the transport
 	 * @param {Array} aAllLocalChanges - array that includes all local changes
+	 * @param {Array} [aAppVariantDescriptors] - array that includes all app variant descriptors
 	 * @returns {Promise} Returns a Promise which resolves without parameters
 	 */
-	TransportSelection.prototype._prepareChangesForTransport = function(oTransportInfo, aAllLocalChanges) {
+	TransportSelection.prototype._prepareChangesForTransport = function(oTransportInfo, aAllLocalChanges, aAppVariantDescriptors) {
 		if (aAllLocalChanges.length > 0) {
 			// Pass list of changes to be transported with transport request to backend
 			var oTransports = new Transports();
-			var aTransportData = oTransports._convertToChangeTransportData(aAllLocalChanges);
+			var aTransportData = oTransports._convertToChangeTransportData(aAllLocalChanges, aAppVariantDescriptors);
 			var oTransportParams = {};
 			//packageName is '' in CUSTOMER layer (no package input field in transport dialog)
 			oTransportParams.package = oTransportInfo.packageName;

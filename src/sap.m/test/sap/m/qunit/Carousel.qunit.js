@@ -3,6 +3,7 @@
 sap.ui.define([
 	"sap/ui/qunit/QUnitUtils",
 	"sap/m/Carousel",
+	"sap/m/CarouselLayout",
 	"sap/m/library",
 	"sap/m/Image",
 	"sap/m/Page",
@@ -16,6 +17,7 @@ sap.ui.define([
 ], function(
 	qutils,
 	Carousel,
+	CarouselLayout,
 	mobileLibrary,
 	Image,
 	Page,
@@ -46,6 +48,12 @@ sap.ui.define([
 	// use the sinon faketimers for this test
 
 	var sinonClockTickValue = 600;
+
+	function checkSizeWithTolerance(iActualSize, iExpectedSize) {
+		return iActualSize === iExpectedSize
+			|| iActualSize === iExpectedSize - 1
+			|| iActualSize === iExpectedSize + 1;
+	}
 
 	//================================================================================
 	// Carousel Properties
@@ -256,6 +264,283 @@ sap.ui.define([
 		assert.strictEqual(this.oCarousel.$().find('.sapMCrslControls ').length, 1, "Arrows should be rendered in the 'controls' area");
 	});
 
+	QUnit.test("#_createScrollContainer() adds 'sapMCrsPage' class to each Page", function (assert) {
+		// Assert
+		this.oCarousel.getPages().forEach(function (oPage) {
+			assert.ok(oPage.$().hasClass("sapMCrsPage"), oPage.getId() + " page has 'sapMCrsPage' class");
+		});
+	});
+
+	QUnit.test("#_calculatePagesWidth(4)", function (assert) {
+		// Set up
+		var iActualResult;
+		this.oCarousel.$().width("460px");
+
+		// Act
+		iActualResult = this.oCarousel._calculatePagesWidth(4);
+
+		// Assert
+		assert.strictEqual(Math.round(iActualResult), 22,
+			"Width of each page should be 22% when number of items to show are 4 and Carousel's width is 460px");
+	});
+
+	QUnit.test("#_calculatePagesWidth(1)", function (assert) {
+		// Act
+		var iActualResult = this.oCarousel._calculatePagesWidth(1);
+
+		// Assert
+		assert.strictEqual(iActualResult, 100, "Width of the page should be 100% when number of items to show is 1");
+	});
+
+	QUnit.test("#_setWidthOfPages(6)", function (assert) {
+		// Set up
+		this.oCarousel.setWidth("700px");
+
+		// Act
+		this.oCarousel._setWidthOfPages(6);
+		var oPagesDomRefs = Array.prototype.slice.call(this.oCarousel.getDomRef().getElementsByClassName("sapMCrslItem"));
+
+		// Assert
+		oPagesDomRefs.forEach(function (oPage) {
+			assert.ok(checkSizeWithTolerance(jQuery(oPage).width(), 100),
+				"Width of each page should be 100px when number of items to show are 6 and Carousel's width is 700px");
+		});
+	});
+
+	QUnit.test("#_getNumberOfItemsToShow() with no customLayout aggregation", function (assert) {
+		// Act
+		var iActualResult = this.oCarousel._getNumberOfItemsToShow();
+
+		// Assert
+		assert.strictEqual(iActualResult, 1, "Carousel should show only 1 page when no customLayout aggregation is set");
+	});
+
+	QUnit.test("#_getNumberOfItemsToShow() with customLayout aggregation", function (assert) {
+		// Set up
+		var iPagesToShow = 4;
+
+		// Act
+		this.oCarousel.setCustomLayout(new CarouselLayout({
+			visiblePagesCount: iPagesToShow
+		}));
+		var iActualResult = this.oCarousel._getNumberOfItemsToShow();
+
+		// Assert
+		assert.strictEqual(iActualResult, iPagesToShow,
+			"Carousel should show 4 pages when customLayout aggregation with visiblePagesCount = 4 is set and it has more pages");
+	});
+
+	QUnit.test("#_getNumberOfItemsToShow() with customLayout aggregation with visiblePagesCount higher than all pages count", function (assert) {
+		// Set up
+		var iPagesToShow = 6;
+
+		this.oCarousel.setCustomLayout(new CarouselLayout({
+			visiblePagesCount: iPagesToShow
+		}));
+
+		// Act
+		var iActualResult = this.oCarousel._getNumberOfItemsToShow();
+
+		// Assert
+		assert.strictEqual(iActualResult, this.oCarousel.getPages().length,
+			"The maxmimum number of pages that Carousel can show it its actual number of pages");
+	});
+
+	QUnit.test("#setCustomLayout() with no DomRef available", function (assert) {
+		// Set up
+		var iPagesToShow = 4,
+			oDomRefStub = this.stub(this.oCarousel, "getDomRef", null),
+			oMoveToPageSpy = this.spy(this.oCarousel, "_moveToPage"),
+			oRerenderSpy = this.spy(this.oCarousel, "rerender");
+
+		// Act
+		this.oCarousel.setCustomLayout(new CarouselLayout({
+			visiblePagesCount: iPagesToShow
+		}));
+
+		// Assert
+		assert.ok(oMoveToPageSpy.notCalled, "moveToPage is not called");
+		assert.ok(oRerenderSpy.notCalled, "Rerender is not called");
+
+		// Cleanup
+		oDomRefStub.restore();
+		oMoveToPageSpy.restore();
+		oRerenderSpy.restore();
+	});
+
+	QUnit.test("#onAfterRendering() _setWidthOfPages is not called when no customLayout aggregation is set", function (assert) {
+		// Set up
+		var oSetWidthOfPagesSpy = this.spy(this.oCarousel, "_setWidthOfPages");
+
+		// Act
+		this.oCarousel.onAfterRendering();
+
+		// Assert
+		assert.ok(oSetWidthOfPagesSpy.notCalled, "_setWidthOfPages is not called");
+
+		// Cleanup
+		oSetWidthOfPagesSpy.restore();
+	});
+
+	QUnit.test("#onAfterRendering() _setWidthOfPages is called with corect number of items to be shown", function (assert) {
+		// Set up
+		var iPagesToShow = 4,
+			oSetWidthOfPagesSpy = this.spy(this.oCarousel, "_setWidthOfPages");
+
+		this.oCarousel.setCustomLayout(new CarouselLayout({
+			visiblePagesCount: iPagesToShow
+		}));
+
+		// Act
+		this.oCarousel.onAfterRendering();
+
+		// Assert
+		assert.ok(oSetWidthOfPagesSpy.calledWith, iPagesToShow, "_setWidthOfPages is called with 4");
+
+		// Cleanup
+		oSetWidthOfPagesSpy.restore();
+	});
+
+	QUnit.test("#_getPageIndicatorText(2) correct number of pages is shown when customLayout aggregation is set", function (assert) {
+		// Set up
+		var iPagesToShow = 4,
+			sActualResult;
+
+		this.oCarousel.setCustomLayout(new CarouselLayout({
+			visiblePagesCount: iPagesToShow
+		}));
+
+		// Act
+		sActualResult = this.oCarousel._getPageIndicatorText(2);
+
+		// Assert
+		assert.strictEqual(sActualResult, "2 of 3",
+			"'2 of 3' should be shown when  _getPageIndicatorText is called with 3, total pages are 6 and number of pages to show is 4");
+	});
+
+	QUnit.test("#_adjustHUDVisibility(1) with maximum number of pages to be shown", function (assert) {
+		// Set up
+		var iPagesToShow = 6;
+
+		this.oCarousel.setCustomLayout(new CarouselLayout({
+			visiblePagesCount: iPagesToShow
+		}));
+		sap.ui.getCore().applyChanges();
+
+		// Act
+		this.oCarousel._adjustHUDVisibility(1);
+
+		// Assert
+		assert.strictEqual(this.oCarousel.$('hud').length, 0, "Hud arrows are not rendered");
+	});
+
+	QUnit.test("#_updateFocusedPagesOrder('keyTestPage_2') _aOrderOfFocusedElements collection is updated correctly when " +
+		"the currently active page has already been focused before", function (assert) {
+			// Set up
+			this.oCarousel._aOrderOfFocusedElements = ["keyTestPage_3", "keyTestPage_4", "keyTestPage_2"];
+
+			// Act
+			this.oCarousel._updateFocusedPagesOrder("keyTestPage_2");
+
+			// Assert
+			assert.strictEqual(this.oCarousel._aOrderOfFocusedElements[0], "keyTestPage_2",
+				"'keyTestPage_2' is on the first place of _aOrderOfFocusedElements collection");
+			assert.strictEqual(this.oCarousel._aOrderOfFocusedElements[2], "keyTestPage_4",
+			"'keyTestPage_2' is on the last place of _aOrderOfFocusedElements collection");
+	});
+
+	QUnit.test("#_updateFocusedPagesOrder('keyTestPage_2') _aOrderOfFocusedElements collection is updated correctly when " +
+		"the currently active page has never been focused before", function (assert) {
+			// Set up
+			this.oCarousel._aOrderOfFocusedElements = ["keyTestPage_3", "keyTestPage_4"];
+
+			// Act
+			this.oCarousel._updateFocusedPagesOrder("keyTestPage_2");
+
+			// Assert
+			assert.strictEqual(this.oCarousel._aOrderOfFocusedElements[0], "keyTestPage_2",
+				"'keyTestPage_2' is on the first place of _aOrderOfFocusedElements collection");
+			assert.strictEqual(this.oCarousel._aOrderOfFocusedElements[2], "keyTestPage_4",
+				"'keyTestPage_2' is on the last place of _aOrderOfFocusedElements collection");
+	});
+
+	QUnit.test("#_updateActivePages('keyTestPage_4') active pages are correct, depending on numberOfPagesToShow and the new active page",
+		function (assert) {
+			// Set up
+			var iPagesToShow = 2;
+
+			this.oCarousel._aAllActivePages = ["keyTestPage_2", "keyTestPage_3"];
+			this.oCarousel._aAllActivePagesIndexes = [1, 2];
+
+			this.oCarousel.setCustomLayout(new CarouselLayout({
+				visiblePagesCount: iPagesToShow
+			}));
+
+			// Act
+			this.oCarousel._updateActivePages("keyTestPage_4");
+
+			// Assert
+			assert.strictEqual(this.oCarousel._aAllActivePages.length, iPagesToShow, "Active pages count is equal to numberOfPagesToShow");
+			assert.ok(this.oCarousel._aAllActivePages[0] === "keyTestPage_4" && this.oCarousel._aAllActivePages[1] === "keyTestPage_5",
+				"'keyTestPage_4' and 'keyTestPage_5' are the active pages' ids after page change");
+			assert.ok(this.oCarousel._aAllActivePagesIndexes[0] === 3 && this.oCarousel._aAllActivePagesIndexes[1] === 4,
+				"3 and 4 are the active pages' indexes after page change");
+
+			// Act
+			this.oCarousel._updateActivePages("keyTestPage_6");
+
+			// Assert
+			assert.ok(true, "Error is not thrown when the index of the set active page exceeds total pages count minus pages to be shown");
+	});
+
+	QUnit.test("#_getLastFocusedActivePage() when the last focused page is still active ", function (assert) {
+		// Set up
+		var sResult;
+
+		this.oCarousel._aOrderOfFocusedElements = ["keyTestPage_3", "keyTestPage_4"];
+		this.oCarousel._aAllActivePages = ["keyTestPage_2", "keyTestPage_3"];
+
+		// Act
+		sResult = this.oCarousel._getLastFocusedActivePage();
+
+		// Assert
+		assert.strictEqual(sResult, "keyTestPage_3", "'keyTestPage_3' is the last focused page which is still active");
+	});
+
+	QUnit.test("#_getLastFocusedActivePage() when all focused pages are currently not active ", function (assert) {
+		// Set up
+		var sResult;
+
+		this.oCarousel._aOrderOfFocusedElements = ["keyTestPage_3", "keyTestPage_4"];
+		this.oCarousel._aAllActivePages = ["keyTestPage_1", "keyTestPage_2"];
+
+		// Act
+		sResult = this.oCarousel._getLastFocusedActivePage();
+
+		// Assert
+		assert.strictEqual(sResult, "keyTestPage_1", "'keyTestPage_1' is the first currently active page");
+	});
+
+	QUnit.test("#_getActivePageLastFocusedElement()", function (assert) {
+		// Set up
+		var sResult,
+			sFocusedPage = "keyTestPage_3",
+			oGetLastFocusedActivePageStub = this.stub(this.oCarousel, "_getLastFocusedActivePage", function() { return sFocusedPage; }),
+			oFocusedElement = {};
+
+			this.oCarousel._lastFocusablePageElement = {};
+			this.oCarousel._lastFocusablePageElement[sFocusedPage] = oFocusedElement;
+
+		// Act
+		sResult = this.oCarousel._getActivePageLastFocusedElement();
+
+		// Assert
+		assert.strictEqual(sResult, oFocusedElement, "The correct last focused HTML element is returned for the last focused still active page");
+
+		// Clean up
+		oGetLastFocusedActivePageStub.restore();
+	});
+
 	QUnit.module("Methods", {
 		beforeEach: function () {
 			this.oCarousel = new Carousel({
@@ -354,11 +639,13 @@ sap.ui.define([
 		// Arrange
 		var bPageNewOK = false,
 			bPageOldOK = false,
+			bPagesNewIndexdOK = false,
 			done = assert.async();
 
 		this.oCarousel.attachPageChanged(function (oControlEvent) {
-			bPageNewOK = oControlEvent.getParameters().oldActivePageId == "keyTestPage_2";
-			bPageOldOK = oControlEvent.getParameters().newActivePageId == "keyTestPage_3";
+			bPageNewOK = oControlEvent.getParameters().oldActivePageId === "keyTestPage_2";
+			bPageOldOK = oControlEvent.getParameters().newActivePageId === "keyTestPage_3";
+			bPagesNewIndexdOK = oControlEvent.getParameters().activePages[0] === 2;
 		});
 
 		// Wait for CSS animation caused by activePage in constructor to complete
@@ -371,6 +658,7 @@ sap.ui.define([
 				// Assert
 				assert.ok(bPageNewOK, "Old active page should be 'keyTestPage_2'");
 				assert.ok(bPageOldOK, "New active page should be 'keyTestPage_3'");
+				assert.ok(bPagesNewIndexdOK, "New page index should be 2");
 				done();
 			}, sinonClockTickValue);
 
@@ -379,13 +667,18 @@ sap.ui.define([
 
 	QUnit.test("Should fire 'pageChanged' only once when using #setActivePage() (CSN 0120061532 0001323934 2014)", function (assert) {
 		// Arrange
-		var done = assert.async();
-		var spy = this.spy;
+		var done = assert.async(),
+			spy = this.spy,
+			oChangePageSpy,
+			oUpdateActivePagesSpy;
+
+		assert.expect(2);
 
 		// Wait for CSS animation caused by activePage in constructor to complete
 		setTimeout(function () {
 			// Arrange
-			var oChangePageSpy = spy(this.oCarousel, "_changePage");
+			oChangePageSpy = spy(this.oCarousel, "_changePage");
+			oUpdateActivePagesSpy = spy(this.oCarousel, "_updateActivePages");
 
 			// Act
 			this.oCarousel.setActivePage('keyTestPage_3');
@@ -393,11 +686,13 @@ sap.ui.define([
 			// Wait for CSS animation to complete
 			setTimeout(function () {
 				assert.ok(oChangePageSpy.calledOnce, "PageChanged fired once");
+				assert.ok(oUpdateActivePagesSpy.calledWith("keyTestPage_3"), "_updateActivePages is called with the correct new active page Id");
 
 				// Reset sinon spy
-				this.oCarousel._changePage.restore();
+				oChangePageSpy.restore();
+				oUpdateActivePagesSpy.restore();
 				done();
-			}.bind(this), sinonClockTickValue);
+			}, sinonClockTickValue);
 
 		}.bind(this), sinonClockTickValue);
 	});

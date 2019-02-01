@@ -454,11 +454,7 @@ sap.ui.define(function () {
 				}
 			},
 			"designtime/Library": {
-				group: "designTime",
-				autostart: false,
-				qunit: {
-					version: 1 // TODO: Waits for sap/ui/dt/test/LibraryTest refactoring
-				}
+				group: "designTime"
 			},
 			"fieldExt/Access": {
 				group: "fieldExt",

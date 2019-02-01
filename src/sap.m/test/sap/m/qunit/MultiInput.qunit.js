@@ -174,6 +174,19 @@ sap.ui.define([
 	});
 
 	QUnit.test("_calculateSpaceForTokenizer", function(assert) {
+		var multiInput = new MultiInput({
+			width: "500px"
+		});
+
+		multiInput.placeAt("qunit-fixture");
+		sap.ui.getCore().applyChanges();
+
+		assert.strictEqual(multiInput._calculateSpaceForTokenizer(), "398px", "_calculateSpaceForTokenizer returns a correct px value");
+
+		multiInput.destroy();
+	});
+
+	QUnit.test("_calculateSpaceForTokenizer with null DOM element reference", function(assert) {
 		var multiInput = new MultiInput(),
 			output;
 
@@ -186,6 +199,8 @@ sap.ui.define([
 		output = multiInput._calculateSpaceForTokenizer();
 
 		assert.strictEqual(isNaN(parseInt(output)), false, "_calculateSpaceForTokenizer returns a valid value");
+
+		multiInput.destroy();
 	});
 
 	QUnit.test("token data binding", function(assert) {
@@ -1692,6 +1707,24 @@ sap.ui.define([
 		oMultiInput.destroy();
 	});
 
+	QUnit.test("Do not listen for resize while resizing", function (assert) {
+		// Setup
+		var oRegisterResizeSpy = this.spy(this.multiInput, "_registerResizeHandler"),
+			oDeregisterResizeSpy = this.spy(this.multiInput, "_deregisterResizeHandler"),
+			oMaxWidthSetterSpy = this.spy(this.multiInput._tokenizer, "setMaxWidth");
+
+		// Act
+		this.multiInput._onResize();
+
+		//Assert
+		assert.ok(oDeregisterResizeSpy.calledOnce, "Deregister resize handler");
+		assert.ok(oRegisterResizeSpy.calledOnce, "Register resize handler");
+		assert.ok(oMaxWidthSetterSpy.calledOnce, "Tokens MaxWidth setter called");
+		assert.ok(oDeregisterResizeSpy.calledBefore(oRegisterResizeSpy), "Deregister, do something and register again");
+		assert.ok(oDeregisterResizeSpy.calledBefore(oMaxWidthSetterSpy), "Deregister and the resize");
+		assert.ok(oMaxWidthSetterSpy.calledBefore(oRegisterResizeSpy), "Finally, subscribe again for the resize handler");
+	});
+
 	QUnit.module("Destroyers");
 
 	QUnit.test("Destroy properly internal lists", function (assert) {
@@ -1710,6 +1743,30 @@ sap.ui.define([
 		// assert
 		assert.ok(!oMultiInput._oSelectedItemsList, "The SelectedItemsList gets detached");
 		assert.ok(oMultiInput._oSelectedItemsList != oList, "The SelectedItemsList gets cleaned properly");
+	});
+
+	QUnit.test("Destroy & reinit on mobile", function (assert) {
+		// Setup
+		this.stub(Device, "system", {
+			desktop: false,
+			phone: true,
+			tablet: false
+		});
+
+		// arrange
+		var oMultiInput = new MultiInput("test-input").placeAt("qunit-fixture");
+		sap.ui.getCore().applyChanges();
+
+		// Act
+		oMultiInput.destroy();
+		oMultiInput = new MultiInput("test-input").placeAt("qunit-fixture");
+		sap.ui.getCore().applyChanges();
+
+		// assert
+		assert.ok(true, "If there's no exception so far, everything is ok");
+
+		// Cleanup
+		oMultiInput.destroy();
 	});
 
 

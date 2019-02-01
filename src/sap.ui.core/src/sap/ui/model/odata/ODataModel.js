@@ -3384,7 +3384,10 @@ sap.ui.define([
 			this.oAnnotations.detachLoaded(this.onAnnotationsLoaded);
 			this.oAnnotations.destroy();
 			delete this.oAnnotations;
+			delete this.pAnnotationsLoaded;
 		}
+
+
 
 		Model.prototype.destroy.apply(this, arguments);
 	};

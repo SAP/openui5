@@ -8,8 +8,8 @@
 				"desc": "The classic business process of finding and ordering products",
 				"ref": "test-resources/sap/m/demokit/cart/webapp/index.html",
 				"links": {
-					"Run Integration Tests (OPA5)": "test-resources/sap/m/demokit/cart/webapp/test/integration/opaTestsWithComponent.qunit.html",
-					"Run Integration Tests (Gherkin)": "test-resources/sap/m/demokit/cart/webapp/test/integration/opaTestsWithGherkinAndComponent.qunit.html",
+					"Run Integration Tests (OPA5)": "test-resources/sap/m/demokit/cart/webapp/test/integration/opaTestsComponent.qunit.html",
+					"Run Integration Tests (Gherkin)": "test-resources/sap/m/demokit/cart/webapp/test/integration/opaTestsGherkinComponent.qunit.html",
 					"Run Unit Tests": "test-resources/sap/m/demokit/cart/webapp/test/unit/unitTests.qunit.html"
 				},
 				"category": "Showcase",
@@ -228,7 +228,8 @@
 		  "samples": [
 			  "sap.m.sample.Carousel",
 			  "sap.m.sample.CarouselWithControls",
-			  "sap.m.sample.CarouselWithDisplayOptions"
+			  "sap.m.sample.CarouselWithDisplayOptions",
+			  "sap.m.sample.CarouselWithMorePages"
 		  ]
 		},
 		{
@@ -460,6 +461,15 @@
 		  ]
 		},
 		{
+			"id": "sap.m.UploadSet",
+			"name": "Upload Set",
+			"category": "Action",
+			"since": "1.62",
+			"samples": [
+				"sap.m.sample.UploadSet"
+			]
+		},
+		{
 		  "id": "sap.m.GenericTag",
 		  "name": "Generic Tag",
 		  "category": "Action",
@@ -467,7 +477,8 @@
 		  "samples": [
 			"sap.m.sample.GenericTag",
 			"sap.uxap.sample.ObjectPageHeaderActionButtons",
-			"sap.f.sample.DynamicPageFreeStyle"
+			"sap.f.sample.DynamicPageFreeStyle",
+			"sap.m.sample.OverflowToolbarSimple"
 		  ]
 		},
 		{
@@ -1680,6 +1691,11 @@
 		  "description": "The Carousel have options for the arrows placement, page indicator placement and page indicator visibility."
 		},
 		{
+			"id": "sap.m.sample.CarouselWithMorePages",
+			"name": "Carousel with Multiple Items at Once",
+			"description": "The customLayout aggregation determines how many pages are displayed in Carousel's visible area."
+		},
+		{
 		  "id": "sap.m.sample.NavContainer",
 		  "name": "Nav Container",
 		  "description": "The Nav Container stacks multiple pages and offers an API to switch between them with some animation. Typically application developers would use the App control which inherits from NavContainer."
@@ -2812,6 +2828,11 @@
 		  "id": "sap.m.sample.UploadCollectionFolderHierarchy",
 		  "name": "Upload Collection with Folder Hierarchy",
 		  "description": "Shows the UploadCollection with a navigable folder structure."
+		},
+		{
+		  "id": "sap.m.sample.UploadSet",
+		  "name": "Upload Set",
+		  "description": "This sample demonstrates how to use an Upload Set."
 		},
 		{
 		  "id": "sap.m.sample.StandardMarginsAll",

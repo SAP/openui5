@@ -23,6 +23,7 @@ sap.ui.define([
 	"sap/ui/thirdparty/jquery",
 	"sap/ui/core/Popup",
 	"sap/ui/dt/DOMUtil",
+	"sap/ui/qunit/utils/waitForThemeApplied",
 	"sap/ui/thirdparty/sinon-4"
 ],
 function (
@@ -48,6 +49,7 @@ function (
 	jQuery,
 	Popup,
 	DOMUtil,
+	waitForThemeApplied,
 	sinon
 ) {
 	"use strict";
@@ -1388,4 +1390,6 @@ function (
 	QUnit.done(function() {
 		jQuery("#qunit-fixture").hide();
 	});
+
+	return waitForThemeApplied();
 });

@@ -20,7 +20,7 @@
 					<Button
 						icon="sap-icon://menu2"
 						press=".onShowCategories"
-						visible="{device>/system/phone}"/>
+						visible="{appView>/smallScreenMode}"/>
 				</contentLeft>
 				<contentMiddle>
 					<Title
@@ -50,7 +50,7 @@
 							id="welcomeCarousel"
 							showPageIndicator="false"
 							loop="true"
-							pageChanged="onCarouselPageChanged"
+							pageChanged=".onCarouselPageChanged"
 							visible="{=!${device>/system/phone}}"
 							tooltip="{i18n>welcomeDescription}">
 							<pages>

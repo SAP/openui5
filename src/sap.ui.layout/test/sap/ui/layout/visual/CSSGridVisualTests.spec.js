@@ -60,6 +60,23 @@ describe("sap.ui.layout.CSSGridVisualTests", function () {
 					expect(takeScreenshot(oGrid)).toLookAs(iPictureIndex++ + "_grid_S_" + sPictureTitle);
 				}
 		});
+
+		browser.executeScript("sap.ui.getCore().byId('" + sFullGridId + "').getCustomLayout().setContainerQuery(false);");
+
+		browser.executeScript(
+			"return sap.ui.Device.system.desktop;")
+			.then(function (bDesktop) {
+				if (bDesktop) {
+					setSize(sFullPanelId, mSizes.L);
+					expect(takeScreenshot(oGrid)).toLookAs(iPictureIndex + "_containerQuery_grid_L_" + sPictureTitle);
+
+					setSize(sFullPanelId, mSizes.M);
+					expect(takeScreenshot(oGrid)).toLookAs(iPictureIndex + "_containerQuery_grid_M_" + sPictureTitle);
+
+					setSize(sFullPanelId, mSizes.S);
+					expect(takeScreenshot(oGrid)).toLookAs(iPictureIndex + "_containerQuery_grid_S_" + sPictureTitle);
+				}
+		});
 	}
 
 	function expandPanelAndTakePictures (sDescription, i) {

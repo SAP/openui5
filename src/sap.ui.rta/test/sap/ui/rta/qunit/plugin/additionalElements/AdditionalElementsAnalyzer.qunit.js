@@ -4,14 +4,16 @@ sap.ui.define([
 	"sap/ui/rta/plugin/additionalElements/AdditionalElementsAnalyzer",
 	"sap/ui/model/json/JSONModel",
 	"sap/m/ColumnListItem",
-	'sap/ui/rta/util/BindingsExtractor',
-	'sap/ui/thirdparty/sinon-4'
+	"sap/ui/rta/util/BindingsExtractor",
+	"sap/ui/qunit/utils/waitForThemeApplied",
+	"sap/ui/thirdparty/sinon-4"
 ],
 function(
 	AdditionalElementsAnalyzer,
 	JSONModel,
 	ColumnListItem,
 	BindingsExtractor,
+	waitForThemeApplied,
 	sinon
 ) {
 	"use strict";
@@ -724,4 +726,6 @@ function(
 		oView.destroy();
 		jQuery("#qunit-fixture").hide();
 	});
+
+	return waitForThemeApplied();
 });

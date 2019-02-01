@@ -1,16 +1,17 @@
 /* global QUnit */
 
 sap.ui.define([
-	'sap/ui/rta/plugin/CutPaste',
-	'sap/ui/rta/command/CommandFactory',
-	'sap/ui/layout/form/SimpleForm',
-	'sap/ui/layout/VerticalLayout',
-	'sap/m/ObjectStatus',
-	'sap/ui/rta/plugin/Plugin',
-	'sap/ui/dt/OverlayRegistry',
-	'sap/ui/dt/DesignTime',
-	'sap/m/Page',
-	'sap/ui/thirdparty/sinon-4'
+	"sap/ui/rta/plugin/CutPaste",
+	"sap/ui/rta/command/CommandFactory",
+	"sap/ui/layout/form/SimpleForm",
+	"sap/ui/layout/VerticalLayout",
+	"sap/m/ObjectStatus",
+	"sap/ui/rta/plugin/Plugin",
+	"sap/ui/dt/OverlayRegistry",
+	"sap/ui/dt/DesignTime",
+	"sap/m/Page",
+	"sap/ui/qunit/utils/waitForThemeApplied",
+	"sap/ui/thirdparty/sinon-4"
 ],
 function(
 	CutPastePlugin,
@@ -22,6 +23,7 @@ function(
 	OverlayRegistry,
 	DesignTime,
 	Page,
+	waitForThemeApplied,
 	sinon
 ) {
 	'use strict';
@@ -214,4 +216,6 @@ function(
 	QUnit.done(function () {
 		jQuery("#qunit-fixture").hide();
 	});
+
+	return waitForThemeApplied();
 });

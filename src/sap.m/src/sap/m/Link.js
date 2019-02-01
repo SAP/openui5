@@ -8,6 +8,7 @@ sap.ui.define([
 	'sap/ui/core/Control',
 	'sap/ui/core/InvisibleText',
 	'sap/ui/core/EnabledPropagator',
+	'sap/ui/core/LabelEnablement',
 	'sap/ui/core/library',
 	'sap/ui/Device',
 	'./LinkRenderer',
@@ -20,6 +21,7 @@ function(
 	Control,
 	InvisibleText,
 	EnabledPropagator,
+	LabelEnablement,
 	coreLibrary,
 	Device,
 	LinkRenderer,
@@ -130,7 +132,7 @@ function(
 			 * If validation fails, the value of the <code>href</code> property will still be set, but will not be applied to the DOM.
 			 *
 			 * <b>Note:</b> Additional whitelisting of URLs is allowed through
-			 * {@link sap.base.security.URLWhiteList}.
+			 * {@link module:sap/base/security/URLWhitelist URLWhitelist}.
 			 *
 			 * @since 1.54.0
 			 */
@@ -510,6 +512,27 @@ function(
 	 */
 	Link.prototype._getTabindex = function() {
 		return this.getText() ? "0" : "-1";
+	};
+
+	/*
+	 * Determines whether self-reference should be added.
+	 *
+	 * @returns {boolean}
+	 * @private
+	 */
+	Link.prototype._determineSelfReferencePresence = function () {
+		var aAriaLabelledBy = this.getAriaLabelledBy(),
+			bBrowserIsIE = Device.browser.msie,
+			bAlreadyHasSelfReference = aAriaLabelledBy.indexOf(this.getId()) !== -1,
+			bHasReferencingLabels = LabelEnablement.getReferencingLabels(this).length > 0,
+			oParent = this.getParent(),
+			bAllowEnhancingByParent = !!(oParent && oParent.enhanceAccessibilityState);
+
+		// When the link has aria-labelledby attribute, screen readers will read the references inside, rather
+		// than the link's text. For this reason a self-reference should be added in such cases.
+		// Note: self-reference isn't needed in IE. Adding it would result in the link's text being read out twice.
+		return !bBrowserIsIE && !bAlreadyHasSelfReference &&
+			(aAriaLabelledBy.length > 0 || bHasReferencingLabels || bAllowEnhancingByParent);
 	};
 
 	return Link;

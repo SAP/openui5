@@ -14,6 +14,7 @@ sap.ui.define([
 	'sap/uxap/ObjectPageSubSection',
 	'sap/uxap/ObjectPageLayout',
 	'sap/uxap/ObjectPageSubSectionLayout',
+	"sap/ui/qunit/utils/waitForThemeApplied",
 	'sap/ui/thirdparty/sinon-4'
 ],
 function(
@@ -30,6 +31,7 @@ function(
 	ObjectPageSubSection,
 	ObjectPageLayout,
 	ObjectPageSubSectionLayout,
+	waitForThemeApplied,
 	sinon
 ) {
 	'use strict';
@@ -594,4 +596,6 @@ function(
 	QUnit.done(function () {
 		jQuery("#qunit-fixture").hide();
 	});
+
+	return waitForThemeApplied();
 });

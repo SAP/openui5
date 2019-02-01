@@ -1318,6 +1318,87 @@
 						{
 							"label": "Last Name",
 							"value": "{lastName}"
+						},
+						{
+							"label": "Link",
+							"value": "{urlText}",
+							"url": "{url}"
+						},
+						{
+							"label": "Progress",
+							"progressIndicator": {
+								"percent": "{percent}",
+								"text": "{percentValue}",
+								"state": "{progressState}"
+							}
+						}
+					]
+				}
+			}
+		},
+		"tablecard3": {
+			"sap.card": {
+				"type": "Table",
+				"header": {
+					"title": "New Purchase Orders"
+				},
+				"content": {
+					"data": {
+						"request": {
+							"url": "./cardcontent/tableitems.json"
+						},
+						"path": "/tableCard3"
+					},
+					"columns": [
+						{
+							"label": "Order ID",
+							"value": "{orderId}",
+							"url": "{orderUrl}"
+						},
+						{
+							"label": "Created By",
+							"value": "{name}"
+						},
+						{
+							"label": "Status",
+							"value": "{status}",
+							"state": "{statusState}"
+						}
+					]
+				}
+			}
+		},
+		"tablecard4": {
+			"sap.card": {
+				"type": "Table",
+				"header": {
+					"title": "Sales Orders for Key Accounts"
+				},
+				"content": {
+					"data": {
+						"request": {
+							"url": "./cardcontent/tableitems.json"
+						},
+						"path": "/tableCard4"
+					},
+					"columns": [
+						{
+							"label": "Sales Order",
+							"value": "{salesOrder}",
+							"identifier": true
+						},
+						{
+							"label": "Customer",
+							"value": "{name}"
+						},
+						{
+							"label": "Net Amount",
+							"value": "{netAmount}"
+						},
+						{
+							"label": "Status",
+							"value": "{status}",
+							"state": "{statusState}"
 						}
 					]
 				}
@@ -1881,5 +1962,87 @@
 				}
 			}
 		}
+	},
+	"timelineContent": {
+	  "card0": {
+		"sap.card": {
+		  "type": "Timeline",
+		  "header": {
+			"title": "New Team Members",
+			"icon": {
+			  "src": "sap-icon://group"
+			}
+		  },
+		  "content": {
+			"data": {
+			  "request": {
+				"url": "./cardcontent/employees.json"
+			  },
+			  "path": "/Employees"
+			},
+			"item": {
+			  "dateTime" : {
+				"label": "{{hireDate_label}}",
+				"value": "{HireDate}"
+			  },
+			  "description" : {
+				"label": "{{jobResponsibilities_label}}",
+				"value": "{JobResponsibilities}"
+			  },
+			  "title" : {
+				"label": "{{jobTitle_label}}",
+				"value": "{JobTitle}"
+			  },
+			  "owner" : {
+				"label": "{{name_label}}",
+				"value": "{Name}"
+			  },
+			  "ownerImage" : {
+				"label": "{{picture_label}}",
+				"value": "{Photo}"
+			  },
+			  "icon": {
+				"label": "{{icon_label}}",
+				"value": "{Icon}"
+			  }
+			}
+		  }
+		}
+	  },
+	  "card1": {
+		"sap.card": {
+		  "type": "Timeline",
+		  "header": {
+			"title": "Upcoming Activities",
+			"subTitle": "For Today"
+		  },
+		  "content": {
+			"data": {
+			  "request": {
+				"url": "./cardcontent/employees.json"
+			  },
+			  "path": "/Activities"
+			},
+			"item": {
+			  "dateTime" : {
+				"label": "{{time_label}}",
+				"value": "{Time}"
+			  },
+			  "description" : {
+				"label": "{{description_label}}",
+				"value": "{Description}"
+			  },
+			  "title" : {
+				"label": "{{title_label}}",
+				"value": "{Title}"
+			  },
+			  "icon": {
+				"label": "{{icon_label}}",
+				"value": "{Icon}"
+			  }
+			}
+		  }
+		}
+	  }
 	}
 }

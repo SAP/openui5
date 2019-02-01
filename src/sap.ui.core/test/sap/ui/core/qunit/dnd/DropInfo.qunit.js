@@ -189,6 +189,9 @@ sap.ui.define([
 		assert.notOk(oDropInfo.isDroppable(oChild), "Not droppable: Aggregation metadata does not allow dropping");
 		assert.strictEqual(fnLogSpy.callCount, 2, "Not droppable is logged again");
 
+		oDropInfo.bIgnoreMetadataCheck = true;
+		assert.ok(oDropInfo.isDroppable(oChild), "Droppable: private flag ignores metadata check");
+
 		oParent.destroy();
 	});
 

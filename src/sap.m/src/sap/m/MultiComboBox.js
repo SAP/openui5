@@ -200,6 +200,12 @@ function(
 	IconPool.insertFontFaceStyle();
 	EnabledPropagator.apply(MultiComboBox.prototype, [true]);
 
+	MultiComboBox.prototype.open = function() {
+		this._bPickerIsOpening = true;
+
+		ComboBoxBase.prototype.open.apply(this, arguments);
+	};
+
 	/* ----------------------------------------------------------- */
 	/* Keyboard handling */
 	/* ----------------------------------------------------------- */
@@ -407,24 +413,6 @@ function(
 	};
 
 	/**
-	 * Function calculates the available space for the tokenizer
-	 *
-	 * @private
-	 * @return {String | null} CSSSize in px
-	 */
-	MultiComboBox.prototype._calculateSpaceForTokenizer = function () {
-		if (this.getDomRef()) {
-			var iWidth = this.getDomRef().offsetWidth,
-				iArrowButtonWidth = parseInt(this.getDomRef("arrow").offsetWidth),
-				iInputWidth = parseInt(this.$().find(".sapMInputBaseInner").css("min-width")) || 0,
-				iInputPadding = parseInt(this.$().find(".sapMInputBaseInner").css("padding-right")) || 0;
-
-			return iWidth - (iArrowButtonWidth + iInputWidth + iInputPadding) + "px";
-		} else {
-			return null;
-		}
-	};
-	/**
 	 * Handle when enter is pressed.
 	 *
 	 * @param {jQuery.Event} oEvent The event object
@@ -476,9 +464,8 @@ function(
 			oFocusDomRef = oControl && oControl.getFocusDomRef(),
 			sOldValue = this.getValue();
 
-		// If focus target is outside of picker
-		if (!oPicker || !oPicker.getFocusDomRef() || !oFocusDomRef || !jQuery.contains(oPicker.getFocusDomRef(), oFocusDomRef)) {
-
+		// If focus target is outside of picker and the picker is fully opened
+		if (!this._bPickerIsOpening && (!oPicker || !oPicker.getFocusDomRef() || !oFocusDomRef || !jQuery.contains(oPicker.getFocusDomRef(), oFocusDomRef))) {
 			this.setValue(null);
 
 			// fire change event only if the value of the MCB is not empty
@@ -1038,6 +1025,8 @@ function(
 		var oDomRef = this.getFocusDomRef();
 
 		oDomRef && oDomRef.setAttribute("aria-expanded", "true");
+
+		this._bPickerIsOpening = false;
 
 		// reset the initial focus back to the input
 		if (!this.isPlatformTablet()) {

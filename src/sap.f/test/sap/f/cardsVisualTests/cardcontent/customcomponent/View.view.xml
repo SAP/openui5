@@ -1,0 +1,7 @@
+<mvc:View xmlns:core="sap.ui.core" xmlns:mvc="sap.ui.core.mvc"
+          xmlns="sap.m" xmlns:html="http://www.w3.org/1999/xhtml"
+          width="100%">
+
+	<Text class="sapUiMediumMargin" text="Hello from the root View of the Component"></Text>
+
+</mvc:View>

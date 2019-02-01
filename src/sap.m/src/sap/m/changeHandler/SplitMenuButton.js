@@ -111,6 +111,9 @@ sap.ui.define(["sap/ui/fl/Utils"], function(FlexUtils) {
 					aMenuItemCustomData.forEach(function (oCustomData, index) {
 						if (oModifier.getId(oCustomData) !== sCheckForId) {
 							oModifier.insertAggregation(oButton, "customData", oCustomData);
+							oButton.getCustomData = function() {
+								return oButton.getAggregation("customData");
+							};
 						}
 					});
 				}

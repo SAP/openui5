@@ -3192,7 +3192,7 @@ sap.ui.define([
 		oMultiComboBox.destroy();
 	});
 
-	QUnit.test("Scenario 'EVENT_VALUE_ENTER_OPENLIST': 'alg' + ALT+DOWNKEY + ENTER + ALT+UPKEY", function(assert) {
+	QUnit.test("Scenario 'EVENT_VALUE_ENTER_OPENLIST': 'alg' + ENTER", function(assert) {
 		var oSystem = {
 			desktop : true,
 			phone : false,
@@ -3259,11 +3259,10 @@ sap.ui.define([
 		oMultiComboBox.focus();
 
 		// act - 'alg' + OpenList + Enter
-		sap.ui.test.qunit.triggerCharacterInput(oMultiComboBox.getFocusDomRef(), "alg");
-		sap.ui.test.qunit.triggerKeyboardEvent(oMultiComboBox.getFocusDomRef(), KeyCodes.ARROW_DOWN, false, true);
-		sap.ui.test.qunit.triggerKeyboardEvent(oMultiComboBox.getFocusDomRef(), KeyCodes.ENTER);
-		sap.ui.test.qunit.triggerKeyboardEvent(oMultiComboBox.getFocusDomRef(), KeyCodes.ARROW_UP, false, true);
-		this.clock.tick(500);
+		sap.ui.test.qunit.triggerCharacterInput(document.activeElement, "alg");
+		sap.ui.test.qunit.triggerKeyboardEvent(document.activeElement, KeyCodes.ENTER);
+		sap.ui.test.qunit.triggerKeyboardEvent(document.activeElement, KeyCodes.ARROW_DOWN, false, true);
+		sap.ui.test.qunit.triggerKeyboardEvent(document.activeElement, KeyCodes.ARROW_UP, false, true);
 
 		// assertions
 		assert.deepEqual(oMultiComboBox.getSelectedItems(), [oItem2]);
@@ -3283,12 +3282,11 @@ sap.ui.define([
 		this.stub(jQuery.device, "is", oSystem);
 
 		// system under test
-		var oItem1, oItem2;
 		var oMultiComboBox = new MultiComboBox({
-			items : [oItem1 = new Item({
+			items : [new Item({
 				key : "DZ",
 				text : "Algeria"
-			}), oItem2 = new Item({
+			}), new Item({
 				key : "DZ",
 				text : "Alg"
 			})]
@@ -3300,10 +3298,10 @@ sap.ui.define([
 		oMultiComboBox.focus();
 
 		// act - 'al' + OpenList + Enter
-		sap.ui.test.qunit.triggerCharacterInput(oMultiComboBox.getFocusDomRef(), "al");
-		sap.ui.test.qunit.triggerKeyboardEvent(oMultiComboBox.getFocusDomRef(), KeyCodes.ARROW_DOWN, false, true);
-		sap.ui.test.qunit.triggerKeyboardEvent(oMultiComboBox.getFocusDomRef(), KeyCodes.ENTER);
-		sap.ui.test.qunit.triggerKeyboardEvent(oMultiComboBox.getFocusDomRef(), KeyCodes.ARROW_UP, false, true);
+		sap.ui.test.qunit.triggerCharacterInput(document.activeElement, "al");
+		sap.ui.test.qunit.triggerKeyboardEvent(document.activeElement, KeyCodes.ENTER);
+		sap.ui.test.qunit.triggerKeyboardEvent(document.activeElement, KeyCodes.ARROW_DOWN, false, true);
+		sap.ui.test.qunit.triggerKeyboardEvent(document.activeElement, KeyCodes.ARROW_UP, false, true);
 		this.clock.tick(500);
 
 		// assertions
@@ -5780,6 +5778,22 @@ sap.ui.define([
 	});
 
 	QUnit.test("_calculateSpaceForTokenizer", function(assert) {
+		var oMultiComboBox = new MultiComboBox({
+				width: "500px"
+			});
+
+		oMultiComboBox.placeAt("MultiComboBox-content");
+		sap.ui.getCore().applyChanges();
+
+		oMultiComboBox.$().find(".sapMMultiComboBoxInputContainer").removeClass("sapMMultiComboBoxInputContainer");
+		sap.ui.getCore().applyChanges();
+
+		assert.strictEqual(oMultiComboBox._calculateSpaceForTokenizer(), "398px", "_calculateSpaceForTokenizer returns a correct px value");
+
+		oMultiComboBox.destroy();
+	});
+
+	QUnit.test("_calculateSpaceForTokenizer with null DOM element reference", function(assert) {
 		var oMultiComboBox = new MultiComboBox(),
 			output;
 
@@ -6268,6 +6282,7 @@ sap.ui.define([
 	QUnit.test("value state message should be opened if the input field is on focus", function(assert) {
 
 		// act
+		this.oMultiComboBox.focus();
 		this.oMultiComboBox.open();
 		sap.ui.getCore().applyChanges();
 		this.clock.tick(500);

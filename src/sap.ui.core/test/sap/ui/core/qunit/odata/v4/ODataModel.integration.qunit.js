@@ -12745,14 +12745,7 @@ sap.ui.define([
 	text="{:= %{/Artists##@Org.OData.Capabilities.V1.InsertRestrictions}.Insertable }" />',
 		/* no data request*/ undefined,
 		{"insertable" : true},
-		createSpecialCasesModel({autoExpandSelect : true}),
-		function () {
-			//TODO Remove once ManagedObject no longer calls #destroy twice for OneTime bindings
-			this.oLogMock.expects("error")
-				.withExactArgs("Binding already destroyed",
-					"/Artists##@Org.OData.Capabilities.V1.InsertRestrictions",
-					"sap.ui.model.odata.v4.ODataPropertyBinding");
-		}
+		createSpecialCasesModel({autoExpandSelect : true})
 	);
 
 	//*********************************************************************************************
@@ -12769,13 +12762,7 @@ sap.ui.define([
 			"_Publication" : [{/*"PublicationID" : ...*/}, {}, {}]
 		}},
 		{"publicationCount" : 3},
-		createSpecialCasesModel({autoExpandSelect : true}),
-		function () {
-			//TODO Remove once ManagedObject no longer calls #destroy twice for OneTime bindings
-			this.oLogMock.expects("error")
-				.withExactArgs("Binding already destroyed", "_Publication",
-					"sap.ui.model.odata.v4.ODataPropertyBinding");
-		}
+		createSpecialCasesModel({autoExpandSelect : true})
 	);
 
 	//*********************************************************************************************

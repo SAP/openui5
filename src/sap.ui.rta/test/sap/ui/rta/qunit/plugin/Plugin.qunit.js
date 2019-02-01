@@ -1,29 +1,30 @@
 /*global QUnit*/
 
 sap.ui.define([
-	'sap/ui/dt/DesignTime',
-	'sap/ui/rta/plugin/Plugin',
-	'sap/ui/rta/plugin/Remove',
-	'sap/ui/rta/plugin/Rename',
-	'sap/ui/rta/plugin/ControlVariant',
-	'sap/ui/rta/command/CommandFactory',
-	'sap/ui/fl/registry/ChangeRegistry',
-	'sap/m/Button',
-	'sap/ui/layout/VerticalLayout',
-	'sap/ui/dt/ElementOverlay',
-	'sap/ui/dt/OverlayRegistry',
-	'sap/ui/dt/OverlayUtil',
-	'sap/m/Label',
-	'sap/ui/core/Title',
-	'sap/m/Input',
-	'sap/ui/layout/form/Form',
-	'sap/ui/layout/form/FormContainer',
-	'sap/ui/layout/form/SimpleForm',
-	'sap/uxap/ObjectPageSection',
-	'sap/ui/fl/Utils',
-	'sap/ui/dt/ElementDesignTimeMetadata',
-	'sap/ui/fl/changeHandler/MoveControls',
-	'sap/ui/thirdparty/sinon-4'
+	"sap/ui/dt/DesignTime",
+	"sap/ui/rta/plugin/Plugin",
+	"sap/ui/rta/plugin/Remove",
+	"sap/ui/rta/plugin/Rename",
+	"sap/ui/rta/plugin/ControlVariant",
+	"sap/ui/rta/command/CommandFactory",
+	"sap/ui/fl/registry/ChangeRegistry",
+	"sap/m/Button",
+	"sap/ui/layout/VerticalLayout",
+	"sap/ui/dt/ElementOverlay",
+	"sap/ui/dt/OverlayRegistry",
+	"sap/ui/dt/OverlayUtil",
+	"sap/m/Label",
+	"sap/ui/core/Title",
+	"sap/m/Input",
+	"sap/ui/layout/form/Form",
+	"sap/ui/layout/form/FormContainer",
+	"sap/ui/layout/form/SimpleForm",
+	"sap/uxap/ObjectPageSection",
+	"sap/ui/fl/Utils",
+	"sap/ui/dt/ElementDesignTimeMetadata",
+	"sap/ui/fl/changeHandler/MoveControls",
+	"sap/ui/qunit/utils/waitForThemeApplied",
+	"sap/ui/thirdparty/sinon-4"
 ],
 function (
 	DesignTime,
@@ -48,6 +49,7 @@ function (
 	FlexUtils,
 	ElementDesignTimeMetadata,
 	MoveControlsChangeHandler,
+	waitForThemeApplied,
 	sinon
 ) {
 	"use strict";
@@ -846,4 +848,6 @@ function (
 	QUnit.done(function () {
 		jQuery("#qunit-fixture").hide();
 	});
+
+	return waitForThemeApplied();
 });

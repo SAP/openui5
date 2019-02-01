@@ -761,6 +761,23 @@ sap.ui.define([
 
 	});
 
+	QUnit.test("showNextButton set to false initially", function (assert) {
+		var oWizard = new Wizard({
+			steps: [new sap.m.WizardStep({validated: true})],
+			showNextButton: false
+		});
+
+		// act
+		oWizard.placeAt("qunit-fixture");
+		sap.ui.getCore().applyChanges();
+
+		// assert
+		assert.notOk(oWizard._getNextButton().getVisible(), "The next button for step 1 should be hidden.");
+
+		// clean up
+		oWizard.destroy();
+	});
+
 	QUnit.test("nextButton visibility on discardProgress", function (assert) {
 		// act
 		this.oWizard.nextStep().nextStep();

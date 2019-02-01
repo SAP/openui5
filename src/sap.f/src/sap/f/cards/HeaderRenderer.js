@@ -57,4 +57,4 @@ sap.ui.define([], function () {
 	};
 
 	return HeaderRenderer;
-});
+}, /* bExport= */ true);

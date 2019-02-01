@@ -1,16 +1,17 @@
 /* global QUnit*/
 
 sap.ui.define([
-	'sap/ui/dt/DesignTime',
-	'sap/ui/dt/OverlayRegistry',
-	'sap/ui/dt/ElementUtil',
-	'sap/ui/layout/form/FormElement',
-	'sap/ui/layout/form/FormContainer',
-	'sap/ui/layout/form/Form',
-	'sap/m/Label',
-	'sap/m/Input',
-	'sap/ui/core/Title',
-	'sap/m/CheckBox'
+	"sap/ui/dt/DesignTime",
+	"sap/ui/dt/OverlayRegistry",
+	"sap/ui/dt/ElementUtil",
+	"sap/ui/layout/form/FormElement",
+	"sap/ui/layout/form/FormContainer",
+	"sap/ui/layout/form/Form",
+	"sap/m/Label",
+	"sap/m/Input",
+	"sap/ui/core/Title",
+	"sap/m/CheckBox",
+	"sap/ui/qunit/utils/waitForThemeApplied"
 ],
 function(
 	DesignTime,
@@ -22,7 +23,8 @@ function(
 	Label,
 	Input,
 	Title,
-	CheckBox
+	CheckBox,
+	waitForThemeApplied
 ) {
 	'use strict';
 
@@ -198,4 +200,6 @@ function(
 	QUnit.done(function() {
 		jQuery("#qunit-fixture").hide();
 	});
+
+	return waitForThemeApplied();
 });

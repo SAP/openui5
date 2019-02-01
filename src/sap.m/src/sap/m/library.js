@@ -19,6 +19,7 @@ sap.ui.define([
 	"sap/base/Log",
 	"sap/base/util/defineLazyProperty",
 	"sap/base/security/encodeXML",
+	"sap/base/security/encodeCSS",
 	// referenced here to enable the Support feature
 	'./Support'
 ],
@@ -34,7 +35,8 @@ sap.ui.define([
 	assert,
 	Log,
 	defineLazyProperty,
-	encodeXML
+	encodeXML,
+	encodeCSS
 ) {
 
 	"use strict";
@@ -109,6 +111,7 @@ sap.ui.define([
 			"sap.m.TimePickerMaskMode",
 			"sap.m.TileSizeBehavior",
 			"sap.m.ToolbarDesign",
+			"sap.m.UploadState",
 			"sap.m.VerticalPlacementType",
 			"sap.m.semantic.SemanticRuleSetType"
 		],
@@ -277,6 +280,7 @@ sap.ui.define([
 			"sap.m.TreeItemBase",
 			"sap.m.UploadCollection",
 			"sap.m.UploadCollectionToolbarPlaceholder",
+			"sap.m.upload.UploadSet",
 			"sap.m.VBox",
 			"sap.m.ViewSettingsDialog",
 			"sap.m.ViewSettingsPopover",
@@ -290,6 +294,7 @@ sap.ui.define([
 		],
 		elements: [
 			"sap.m.CalendarAppointment",
+			"sap.m.CarouselLayout",
 			"sap.m.Column",
 			"sap.m.FlexItemData",
 			"sap.m.FeedListItemAction",
@@ -325,6 +330,8 @@ sap.ui.define([
 			"sap.m.ToolbarLayoutData",
 			"sap.m.UploadCollectionItem",
 			"sap.m.UploadCollectionParameter",
+			"sap.m.upload.Uploader",
+			"sap.m.upload.UploadSetItem",
 			"sap.m.ViewSettingsCustomItem",
 			"sap.m.ViewSettingsCustomTab",
 			"sap.m.ViewSettingsFilterItem",
@@ -1322,10 +1329,12 @@ sap.ui.define([
 	thisLib.GenericTagDesign = {
 		/**
 		 * Everything from the control is rendered.
+		 * @public
 		 */
 		Full : "Full",
 		/**
 		 * Everything from the control is rendered except the status icon.
+		 * @public
 		 */
 		StatusIconHidden : "StatusIconHidden"
 	};
@@ -1341,11 +1350,13 @@ sap.ui.define([
 	thisLib.GenericTagValueState = {
 		/**
 		 * The value is rendered in its normal state.
+		 * @public
 		 */
 		None : "None",
 		/**
 		 * Warning icon is rendered that overrides the control set in the <code>value</code>
 		 * aggregation of the <code>GenericTag</code> control.
+		 * @public
 		 */
 		Error : "Error"
 	};
@@ -1524,7 +1535,7 @@ sap.ui.define([
 	 * regardless of the value that this method returns.
 	 *
 	 * @param {object} mOptions The option array
-	 * @returns {integer} The number of tickmarks
+	 * @returns {int} The number of tickmarks
 	 *
 	 * @function
 	 * @name sap.m.IScale.getTickmarksBetweenLabels
@@ -1539,7 +1550,7 @@ sap.ui.define([
 	 * for the later calculations.
 	 *
 	 * @param {object} mOptions The option array
-	 * @returns {integer} The number of tickmarks
+	 * @returns {int} The number of tickmarks
 	 *
 	 * @function
 	 * @name sap.m.IScale.calcNumberOfTickmarks
@@ -3553,6 +3564,36 @@ sap.ui.define([
 	};
 
 	/**
+	 * States of the upload process for {@link sap.m.UploadCollectionItem}.
+	 *
+	 * @enum {string}
+	 * @public
+	 * @ui5-metamodel This enumeration also will be described in the UI5 (legacy) designtime metamodel
+	 */
+	thisLib.UploadState = {
+		/**
+		 * The file has been uploaded successfuly.
+		 * @public
+		 */
+		Complete: "Complete",
+		/**
+		 * The file cannot be uploaded due to an error.
+		 * @public
+		 */
+		Error: "Error",
+		/**
+		 * The file is awaiting an explicit command to start being uploaded.
+		 * @public
+		 */
+		Ready: "Ready",
+		/**
+		 * The file is currently being uploaded.
+		 * @public
+		 */
+		Uploading: "Uploading"
+	};
+
+	/**
 	 * Available wrapping types for text controls that can be wrapped that enable you
 	 * to display the text as hyphenated.
 	 *
@@ -4169,7 +4210,7 @@ sap.ui.define([
 
 			if (sBgImgUrl) { // use the settings only if a background image is configured
 				rm.addStyle("display", "block"); // enforce visibility even if a parent has also a background image
-				rm.addStyle("background-image", "url(" + encodeXML(sBgImgUrl) + ")");
+				rm.addStyle("background-image", "url(" + encodeXML(encodeCSS(sBgImgUrl)) + ")");
 
 				rm.addStyle("background-repeat", bRepeat ? "repeat" : "no-repeat");
 				if (!bRepeat) {

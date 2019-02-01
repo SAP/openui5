@@ -57,7 +57,7 @@ sap.ui.define(["sap/m/library", "sap/ui/Device"],
 
 		this._renderInnerDiv(rm, oCarousel, aPages, sPageIndicatorPlacement);
 
-		if (Device.system.desktop && iPageCount > 1 && sArrowsPlacement === CarouselArrowsPlacement.Content) {
+		if (Device.system.desktop && iPageCount > oCarousel._getNumberOfItemsToShow() && sArrowsPlacement === CarouselArrowsPlacement.Content) {
 			this._renderHudArrows(rm, oCarousel);
 		}
 
@@ -185,10 +185,13 @@ sap.ui.define(["sap/m/library", "sap/ui/Device"],
 			sPageIndicatorDisplayStyle = bShowPageIndicator ? '' : 'opacity: 0',
 			oResourceBundle = sap.ui.getCore().getLibraryResourceBundle('sap.m'),
 			sOffsetCSSClass = "",
-			sTextBetweenNumbers = oResourceBundle.getText("CAROUSEL_PAGE_INDICATOR_TEXT", [iIndex + 1, iPageCount]);
+			sTextBetweenNumbers = oResourceBundle.getText("CAROUSEL_PAGE_INDICATOR_TEXT", [iIndex + 1, iPageCount]),
+			iNumberOfItemsToShow = oCarousel._getNumberOfItemsToShow(),
+			sTextBetweenNumbers = oResourceBundle.getText("CAROUSEL_PAGE_INDICATOR_TEXT", [iIndex + 1, iPageCount - iNumberOfItemsToShow + 1]),
+			iPageNumber = 1;
 
 		// If there is only one page - do not render the indicator
-		if (iPageCount <= 1) {
+		if (iPageCount <= oCarousel._getNumberOfItemsToShow()) {
 			return;
 		}
 		if (!bShowPageIndicator && !bShowIndicatorArrows) {
@@ -221,8 +224,9 @@ sap.ui.define(["sap/m/library", "sap/ui/Device"],
 		rm.write('<div id="' + sPageIndicatorId + '" style="' + sPageIndicatorDisplayStyle + '"');
 		if (iPageCount < iBulletsToNumbersThreshold) {
 			rm.write(' class="sapMCrslBulleted">');
-			for ( var i = 1; i <= iPageCount; i++) {
-				rm.write("<span role='img' data-slide=" + i + " aria-label='" + oResourceBundle.getText('CAROUSEL_POSITION', [i, iPageCount]) + "'>" + i + "</span>");
+			for ( var i = 1; i <= iPageCount - iNumberOfItemsToShow + 1; i++) {
+				rm.write("<span role='img' data-slide=" + iPageNumber + " aria-label='" + oResourceBundle.getText('CAROUSEL_POSITION', [i, iPageCount]) + "'>" + i + "</span>");
+				iPageNumber++;
 			}
 		} else {
 			rm.write(' class="sapMCrslNumeric">');

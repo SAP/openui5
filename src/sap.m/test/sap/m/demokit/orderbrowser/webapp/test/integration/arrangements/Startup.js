@@ -10,7 +10,7 @@ sap.ui.define([
 		/**
 		 * Initializes mock server, then starts the app component
 		 * @param {object} oOptionsParameter An object that contains the configuration for starting up the app
-		 * @param {integer} oOptionsParameter.delay A custom delay to start the app with
+		 * @param {int} oOptionsParameter.delay A custom delay to start the app with
 		 * @param {string} [oOptionsParameter.hash] The in-app hash can also be passed separately for better readability in tests
 		 * @param {boolean} [oOptionsParameter.autoWait=true] Automatically wait for pending requests while the application is starting up
 		 */

@@ -19,6 +19,8 @@ sap.ui.define([
 						"iStartMyAppInAFrameWithURLParameters.html",
 						"iStartMyAppInAFrameWithURLParameters.js",
 						"applicationUnderTest/index.html",
+						"applicationUnderTest/Component.js",
+						"applicationUnderTest/manifest.json",
 						"applicationUnderTest/view/Main.view.xml",
 						"applicationUnderTest/controller/Main.controller.js"
 					]

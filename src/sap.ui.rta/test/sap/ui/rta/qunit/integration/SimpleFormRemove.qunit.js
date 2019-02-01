@@ -1,4 +1,4 @@
-/* global QUnit*/
+/* global QUnit */
 
 sap.ui.define([
 	"sap/ui/dt/DesignTime",
@@ -10,6 +10,7 @@ sap.ui.define([
 	"sap/ui/fl/Utils",
 	"sap/ui/core/UIComponent",
 	"sap/ui/layout/form/SimpleFormLayout",
+	"sap/ui/qunit/utils/waitForThemeApplied",
 	"sap/ui/thirdparty/sinon-4"
 ],
 function(
@@ -22,6 +23,7 @@ function(
 	Utils,
 	UIComponent,
 	SimpleFormLayout,
+	waitForThemeApplied,
 	sinon
 ) {
 
@@ -166,4 +168,6 @@ function(
 	QUnit.done(function () {
 		jQuery("#qunit-fixture").hide();
 	});
+
+	return waitForThemeApplied();
 });

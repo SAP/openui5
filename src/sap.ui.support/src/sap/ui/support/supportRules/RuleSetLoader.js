@@ -38,7 +38,6 @@ sap.ui.define([
 		var sSupportModulePath = jQuery.sap.getModulePath("sap.ui.support");
 		var sSupportModuleRootPath = sSupportModulePath.replace('/sap/ui/support', '');
 		var sAbsUrl = getAbsoluteUrl(sSupportModuleRootPath);
-		var bCanLoadInternalRules = Utils.canLoadInternalRules();
 
 		var RuleSetLoader = {};
 
@@ -69,11 +68,12 @@ sap.ui.define([
 		 *
 		 * @private
 		 * @param {function} [fnReadyCbk] the function to be called after all rules are loaded.
+		 * @param {object} [mLibraries] Explicitly specify which libraries' rules to be loaded.
 		 * @returns {Promise<CommunicationBus>} mainPromise Has promises for all libraries regarding rulesets in the SupportAssistant
 		 */
-		RuleSetLoader._fetchSupportRuleSets = function (fnReadyCbk) {
+		RuleSetLoader._fetchSupportRuleSets = function (fnReadyCbk, mLibraries) {
 			var that = this,
-				mLoadedLibraries = sap.ui.getCore().getLoadedLibraries(),
+				mLoadedLibraries = mLibraries || sap.ui.getCore().getLoadedLibraries(),
 				oLibNamesWithRulesPromise = this._fetchLibraryNamesWithSupportRules(mLoadedLibraries);
 
 			var oMainPromise = new Promise(function (resolve) {
@@ -129,61 +129,65 @@ sap.ui.define([
 		RuleSetLoader._fetchLibraryNamesWithSupportRules = function (oLoadedLibraries) {
 			return new Promise(function (mainResolve) {
 
-				var oLibNames = {
-					publicRules: [],
-					internalRules: [],
-					allRules: []
-				};
+				Utils.canLoadInternalRulesAsync().then(function (bCanLoadInternalRules) {
 
-				oLoadedLibraries = oLoadedLibraries || {};
+					var oLibNames = {
+						publicRules: [],
+						internalRules: [],
+						allRules: []
+					};
 
-				var aAllMetaPromises = [];
+					oLoadedLibraries = oLoadedLibraries || {};
 
-				Object.keys(oLoadedLibraries).forEach(function (sLibName) {
-					var oMetaPromise = new Promise(function (resolve) {
-						var rcFilePath = sAbsUrl + "/" + sLibName.replace(/\./g, '/') + "/.supportrc";
-						jQuery.ajax({
-							type: "GET",
-							dataType: "json",
-							url: rcFilePath,
-							success: function (data) {
-								resolve({
-									lib: sLibName,
-									rcData: data
-								});
-							},
-							error: function () {
-								resolve({
-									lib: sLibName,
-									rcData: null
-								});
+					var aAllMetaPromises = [];
+
+					Object.keys(oLoadedLibraries).forEach(function (sLibName) {
+						var oMetaPromise = new Promise(function (resolve) {
+							var rcFilePath = sAbsUrl + "/" + sLibName.replace(/\./g, '/') + "/.supportrc";
+							jQuery.ajax({
+								type: "GET",
+								dataType: "json",
+								url: rcFilePath,
+								success: function (data) {
+									resolve({
+										lib: sLibName,
+										rcData: data
+									});
+								},
+								error: function () {
+									resolve({
+										lib: sLibName,
+										rcData: null
+									});
+								}
+							});
+						});
+
+						aAllMetaPromises.push(oMetaPromise);
+					});
+
+					Promise.all(aAllMetaPromises).then(function (metaArgs) {
+						metaArgs.forEach(function (metaInfo) {
+							if (metaInfo.rcData) {
+								var bHasRules = false;
+
+								if (metaInfo.rcData.publicRules) {
+									oLibNames.publicRules.push(metaInfo.lib);
+									bHasRules = true;
+								}
+								if (bCanLoadInternalRules && metaInfo.rcData.internalRules) {
+									oLibNames.internalRules.push(metaInfo.lib);
+									bHasRules = true;
+								}
+								if (bHasRules && oLibNames.allRules.indexOf(metaInfo.lib) < 0) {
+									oLibNames.allRules.push(metaInfo.lib);
+								}
 							}
+
+							mainResolve(oLibNames);
 						});
 					});
 
-					aAllMetaPromises.push(oMetaPromise);
-				});
-
-				Promise.all(aAllMetaPromises).then(function (metaArgs) {
-					metaArgs.forEach(function (metaInfo) {
-						if (metaInfo.rcData) {
-							var bHasRules = false;
-
-							if (metaInfo.rcData.publicRules) {
-								oLibNames.publicRules.push(metaInfo.lib);
-								bHasRules = true;
-							}
-							if (bCanLoadInternalRules && metaInfo.rcData.internalRules) {
-								oLibNames.internalRules.push(metaInfo.lib);
-								bHasRules = true;
-							}
-							if (bHasRules && oLibNames.allRules.indexOf(metaInfo.lib) < 0) {
-								oLibNames.allRules.push(metaInfo.lib);
-							}
-						}
-
-						mainResolve(oLibNames);
-					});
 				});
 			});
 		};
@@ -202,6 +206,7 @@ sap.ui.define([
 				that = this,
 				supportModulePath = jQuery.sap.getModulePath("sap.ui.support"),
 				supportModulesRoot = supportModulePath.replace("sap/ui/support", ""),
+				bCanLoadInternalRules = Utils.canLoadInternalRules(),
 				bHasInternalRules = bCanLoadInternalRules && aLibNames.internalRules.length > 0,
 				iProgress = 0,
 				iRulesNumber = aLibNames.publicRules.length;

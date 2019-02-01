@@ -298,7 +298,7 @@ sap.ui.define([
 			variantChanges: {}
 		};
 
-		var iCurrentLayerComp = Utils.compareAgainstCurrentLayer(oSourceVariant.content.layer);
+		var iCurrentLayerComp = Utils.compareAgainstCurrentLayer(oSourceVariant.content.layer, !this._bDesignTimeMode ? "USER" : "");
 
 		Object.keys(oSourceVariant.content).forEach(function(sKey) {
 			if (sKey === "fileName") {
@@ -323,7 +323,7 @@ sap.ui.define([
 		var oDuplicateChangeData = {};
 		var oDuplicateChangeContent;
 		oDuplicateVariant.controlChanges = aVariantChanges.reduce(function (aSameLayerChanges, oChange) {
-			if (Utils.compareAgainstCurrentLayer(oChange.layer) === 0) {
+			if (Utils.compareAgainstCurrentLayer(oChange.layer, !this._bDesignTimeMode ? "USER" : "") === 0) {
 				oDuplicateChangeData = fnBaseMerge({}, oChange);
 				oDuplicateChangeData.variantReference = oDuplicateVariant.content.fileName;
 				if (!oDuplicateChangeData.support) {
@@ -336,7 +336,7 @@ sap.ui.define([
 				aSameLayerChanges.push(new Change(oDuplicateChangeContent));
 			}
 			return aSameLayerChanges;
-		}, []);
+		}.bind(this), []);
 
 		return oDuplicateVariant;
 	};

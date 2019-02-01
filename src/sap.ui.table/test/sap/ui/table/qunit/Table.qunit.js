@@ -112,7 +112,7 @@ sap.ui.define([
 
 		if (!fnCreateColumns) {
 			fnCreateColumns = function(oTable) {
-				var oControl = new Text({text: "{" + sBindingPrefix + "lastName" + "}"});
+				var oControl = new Text({text: "{" + sBindingPrefix + "lastName" + "}", wrapping: false});
 				oTable.addColumn(new Column({
 					label: new Label({text: "Last Name"}),
 					template: oControl,
@@ -120,7 +120,7 @@ sap.ui.define([
 					filterProperty: "lastName",
 					width: "200px"
 				}));
-				oControl = new Text({text: "{" + sBindingPrefix + "name" + "}"});
+				oControl = new Text({text: "{" + sBindingPrefix + "name" + "}", wrapping: false});
 				oTable.addColumn(new Column({
 					label: new Label({text: "First Name"}),
 					template: oControl,
@@ -1406,6 +1406,12 @@ sap.ui.define([
 		assert.equal($table.find(".sapUiTableCCnt .sapUiTableCtrlScroll .sapUiTableCtrlCol th").length, 7, "Scroll tabled has 7 Columns");
 		assert.equal(jQuery(oTable._getScrollExtension().getHorizontalScrollbar()).css("margin-left"), getExpectedHScrollLeftMargin(3),
 			"Horizontal scrollbar has correct left margin");
+	});
+
+	QUnit.test("Content is wider than column", function(assert) {
+		oTable.getColumns()[0].setWidth("60px");
+		sap.ui.getCore().applyChanges();
+		assert.strictEqual(oTable.getDomRef("table-fixed").getBoundingClientRect().width, 160, "Fixed column table has the correct width");
 	});
 
 	QUnit.test("Hide one column in fixed area", function(assert) {
@@ -3842,7 +3848,7 @@ sap.ui.define([
 		assert.equal(fnInvalidateRowsAggregation.callCount, 5, "invalidateRowsAggregation() called after changing the column template");
 	});
 
-	QUnit.test("Destruction of the table", function(assert) {
+	QUnit.test("Destruction of the table if showNoData = true", function(assert) {
 		var oFakeRow = {
 			destroy: function() {},
 			getIndex: function() {return -1;}
@@ -3852,7 +3858,23 @@ sap.ui.define([
 		oTable._aRowClones.push(oFakeRow);
 		oTable.destroy();
 		assert.ok(oFakeRowDestroySpy.calledOnce, "Rows that are not in the aggregation were destroyed");
-		assert.deepEqual(oTable._aRowClones, [], "The row pool has been cleared");
+		assert.strictEqual(oTable._aRowClones.length, 0, "The row pool has been cleared");
+		assert.strictEqual(oTable.getRows().length, 0, "The rows aggregation has been cleared");
+	});
+
+	QUnit.test("Destruction of the table if showNoData = false", function(assert) {
+		var oFakeRow = {
+			destroy: function() {},
+			getIndex: function() {return -1;}
+		};
+		var oFakeRowDestroySpy = sinon.spy(oFakeRow, "destroy");
+
+		oTable._aRowClones.push(oFakeRow);
+		oTable.setShowNoData(false);
+		oTable.destroy();
+		assert.ok(oFakeRowDestroySpy.calledOnce, "Rows that are not in the aggregation were destroyed");
+		assert.strictEqual(oTable._aRowClones.length, 0, "The row pool has been cleared");
+		assert.strictEqual(oTable.getRows().length, 0, "The rows aggregation has been cleared");
 	});
 
 	QUnit.test("Destruction of the rows aggregation", function(assert) {
@@ -3865,7 +3887,8 @@ sap.ui.define([
 		oTable._aRowClones.push(oFakeRow);
 		oTable.destroyAggregation("rows");
 		assert.ok(oFakeRowDestroySpy.calledOnce, "Rows that are not in the aggregation were destroyed");
-		assert.deepEqual(oTable._aRowClones, [], "The row pool has been cleared");
+		assert.strictEqual(oTable._aRowClones.length, 0, "The row pool has been cleared");
+		assert.strictEqual(oTable.getRows().length, 0, "The rows aggregation has been cleared");
 	});
 
 	QUnit.test("Lazy row creation - VisibleRowCountMode = Fixed|Interactive", function(assert) {

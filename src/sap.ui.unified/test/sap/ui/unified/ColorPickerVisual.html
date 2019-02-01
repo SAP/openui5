@@ -45,13 +45,19 @@
 								width: "100%",
 								content: [
 									new sap.m.Label({text: "HSV:"}),
-									new sap.ui.layout.VerticalLayout({
+									new sap.ui.layout.HorizontalLayout({
 										width: "100%",
 										content: [
 											oCP = new sap.ui.unified.ColorPicker("cp", {
 												colorString: "azure",
 												mode: sap.ui.unified.ColorPickerMode.HSL
 											}),
+											new sap.m.Button("remove_focus_btn", {
+												text: "focus",
+												press: function () {
+													document.activeElement.blur();
+												}
+											})
 										]
 									}),
 									oSelect,

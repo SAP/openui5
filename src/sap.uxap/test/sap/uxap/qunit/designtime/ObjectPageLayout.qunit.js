@@ -308,4 +308,28 @@ sap.ui.define([
 
 		assert.ok(bNoException, "should throw no exceptions when called on a freshly instantiated ObjectPageLayout");
 	});
+
+	QUnit.module("Layout calculations", {
+		beforeEach : function() {
+			this.oSimpleObjectPageLayout = new ObjectPageLayout();
+		},
+		afterEach : function() {
+			this.oSimpleObjectPageLayout.destroy();
+		}
+	});
+
+	QUnit.test("Width calculation after rendering inside hidden parent element", function (assert) {
+		var iWidth,
+			oParentNode = document.getElementById("content");
+
+		//hiding parent element
+		oParentNode.style.display = "none";
+		this.oSimpleObjectPageLayout.placeAt("content");
+		sap.ui.getCore().applyChanges();
+		iWidth = this.oSimpleObjectPageLayout._getWidth(this.oSimpleObjectPageLayout);
+
+		assert.equal(iWidth, 0, "The width of the DOM Element is calculated correctly");
+		//returning visibility of the parent element
+		oParentNode.style.display = "block";
+	});
 });

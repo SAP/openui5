@@ -61,9 +61,9 @@ sap.ui.define([
 
 				var oComponent = this.getOwnerComponent();
 
-				this._sTopicid = formatter.decodeModuleName(oEvent.getParameter("arguments").id);
+				this._sTopicid = decodeURIComponent(oEvent.getParameter("arguments").id);
 				this._sEntityType = oEvent.getParameter("arguments").entityType;
-				this._sEntityId = formatter.decodeModuleName(oEvent.getParameter("arguments").entityId);
+				this._sEntityId = decodeURIComponent(oEvent.getParameter("arguments").entityId);
 
 				// API Reference lifecycle
 				oComponent.loadVersionInfo()
@@ -71,7 +71,7 @@ sap.ui.define([
 						// Cache allowed members
 						this._aAllowedMembers = this.getModel("versionData").getProperty("/allowedMembers");
 					}.bind(this))
-					.then(oComponent.fetchAPIIndex.bind(oComponent))
+					.then(APIInfo.getIndexJsonPromise)
 					.then(this._processApiIndexAndLoadApiJson.bind(this))
 					.then(this._findEntityInApiJsonData.bind(this))
 					.then(this._buildBorrowedModel.bind(this))
@@ -124,7 +124,7 @@ sap.ui.define([
 			 * Create the JSON model and the Sub View. The model will be used in both lifecycle phases of the sub view
 			 * by the preprocessor and by the view initiation afterwards.
 			 * @param {object} oBorrowedData the data extracted by the borrowed methods promise
-			 * @return {promise} sap.ui.view.loaded promise
+			 * @return {Promise} sap.ui.view.loaded promise
 			 * @private
 			 */
 			_createModelAndSubView: function (oBorrowedData) {
@@ -202,44 +202,38 @@ sap.ui.define([
 			 * symbol library. If the symbol is not resolved this method returns a rejected promise which triggers
 			 * navigation to not found page.
 			 * @param {array} aData data from api-index file
-			 * @return {promise} resolved or rejected promise
+			 * @return {Promise} resolved or rejected promise
 			 * @private
 			 */
 			_processApiIndexAndLoadApiJson: function (aData) {
 				var oEntityData,
 					oMasterController,
-					bVirtualNamespace,
 					sTopicId = this._sTopicid;
 
 				// Cache api-index data
 				this._aApiIndex = aData;
 
-				aData.some(function (oEntry) {
-					if (oEntry.name === sTopicId) {
-						oEntityData = oEntry;
-						return true;
-					}
-				});
-
-				if (!oEntityData) {
-					// Search for possible virtual namespace
-					aData.some(function (oEntry) {
-						// This check is not perfect but will handle both modules and global namespace items
-						if (oEntry.name.indexOf(sTopicId) === 0) {
-							oEntityData = oEntry;
-							bVirtualNamespace = true;
+				// Find symbol
+				function findSymbol (a) {
+					return a.some(function (o) {
+						var bFound = o.name === sTopicId;
+						if (!bFound && o.nodes) {
+							return findSymbol(o.nodes);
+						} else if (bFound) {
+							oEntityData = o;
 							return true;
 						}
+						return false;
 					});
 				}
+				findSymbol(aData);
 
 				if (oEntityData) {
 					// Cache entity data
 					this._oEntityData = oEntityData;
 
 					// If target symbol is deprecated - all deprecated records should be shown in the tree
-					// Virtual namespace's can't be deprecated
-					if (!bVirtualNamespace && oEntityData.deprecated) {
+					if (oEntityData.deprecated) {
 						oMasterController = this.getOwnerComponent().getConfigUtil().getMasterView("apiId").getController();
 						oMasterController.selectDeprecatedSymbol(this._sTopicid);
 					}

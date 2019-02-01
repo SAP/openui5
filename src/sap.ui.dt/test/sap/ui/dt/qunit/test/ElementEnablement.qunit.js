@@ -3,11 +3,13 @@
 sap.ui.define([
 	"sap/ui/dt/test/ElementEnablementTest",
 	"sap/m/Button",
+	"sap/ui/qunit/utils/waitForThemeApplied",
 	"sap/ui/thirdparty/sinon-4"
 ],
 function (
 	ElementEnablementTest,
 	Button,
+	waitForThemeApplied,
 	sinon
 ) {
 	"use strict";
@@ -76,4 +78,6 @@ function (
 	QUnit.done(function() {
 		jQuery("#qunit-fixture").hide();
 	});
+
+	return waitForThemeApplied();
 });

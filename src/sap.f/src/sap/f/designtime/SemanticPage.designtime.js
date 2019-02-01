@@ -51,6 +51,9 @@ sap.ui.define([],
 						return fnShouldIgnoreSingleAggregation(oControl, "getTitleExpandedHeading");
 					}
 				},
+				titleSnappedOnMobile : {
+					ignore : true
+				},
 				titleBreadcrumbs : {
 					domRef : function (oControl) {
 						return oControl.getTitleBreadcrumbs().getDomRef();
@@ -198,7 +201,7 @@ sap.ui.define([],
 				content : {
 					domRef : ":sap-domref .sapFDynamicPageContent",
 					ignore : function (oControl) {
-						return fnShouldIgnoreSingleAggregation(oControl, "getContent");
+						return !(oControl && oControl.getContent());
 					}
 				},
 				footerMainAction : {

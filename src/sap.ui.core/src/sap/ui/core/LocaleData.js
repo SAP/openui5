@@ -832,6 +832,18 @@ sap.ui.define(['sap/ui/thirdparty/jquery', 'sap/ui/base/Object', './CalendarType
 		},
 
 		/**
+		 * Get miscellaneous pattern.
+		 *
+		 * @param {string} sName the name of the misc pattern, can be "approximately", "atLeast", "atMost" or "range"
+		 * @returns {string} The pattern
+		 * @public
+		 */
+		getMiscPattern: function(sName) {
+			assert(sName == "approximately" || sName == "atLeast" || sName == "atMost" || sName == "range", "sName must be approximately, atLeast, atMost or range");
+			return this._get("miscPattern")[sName];
+		},
+
+		/**
 		 * Returns the required minimal number of days for the first week of a year.
 		 *
 		 * This is the minimal number of days of the week which must be contained in the new year
@@ -2338,6 +2350,12 @@ sap.ui.define(['sap/ui/thirdparty/jquery', 'sap/ui/base/Object', './CalendarType
 				}
 			},
 			"percentFormat": { "standard": "#,##0%"},
+			"miscPattern": {
+				"approximately": "~{0}",
+				"atLeast": "{0}+",
+				"atMost": "≤{0}",
+				"range": "{0}–{1}"
+			},
 			"symbols-latn-decimal":".",
 			"symbols-latn-group":",",
 			"symbols-latn-plusSign":"+",

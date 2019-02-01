@@ -1,0 +1,156 @@
+<mvc:View
+    xmlns="sap.m"
+    xmlns:mvc="sap.ui.core.mvc"
+	xmlns:f="sap.f"
+	xmlns:grid="sap.ui.layout.cssgrid"
+	xmlns:w="sap.ui.integration.widgets"
+    controllerName="sap.f.cardsVisualTests.controller.Grid"
+    displayBlock="true">
+
+	<Page title="{i18n>appTitle}">
+
+		<subHeader>
+			<Toolbar>
+				<ToolbarSpacer/>
+				<Title text="Using stable sap.ui.layout.cssgrid.CSSGrid"/>
+				<ToolbarSpacer/>
+			</Toolbar>
+		</subHeader>
+
+		<content>
+
+			<Panel expandable="true" headerText="Notes">
+				<VBox>
+					<Text text="The example uses sap.ui.layout.cssgrid.CSSGrid"/>
+					<Text text="Every card has a dimension (2x2, 6x2, etc...)"/>
+					<Text text="The Grid defines the meaning of card dimensions"/>
+					<Text text="Margins are added around the Grid to ensure stability between L/XL screen sizes."/>
+					<Text text="Cards tries to fill empty spaces if any (Done by grid configuration)."/>
+					<Text text="Breathing works."/>
+					<Text text="The app developer has to switch card dimensions when needed to ensure stable UI."/>
+					<Text text="The Grid is configured by the Fiori 3 specification."/>
+				</VBox>
+			</Panel>
+			<Panel>
+				<Label text="Grid Auto Flow - Dense (If the cards should try to fill empty spaces in the grid)"/>
+				<Switch change="onSwitchChange" state="true"/>
+			</Panel>
+
+			<Panel>
+				<grid:CSSGrid id="cssgrid" class="centered">
+
+					<grid:customLayout>
+						<grid:GridResponsiveLayout layoutChange="onLayoutChange">
+							<grid:layoutS>
+								<grid:GridSettings
+									gridTemplateColumns="repeat(4, 1fr)"
+									gridAutoRows="80px"
+									gridAutoFlow="RowDense"
+									gridRowGap="8px"
+									gridColumnGap="8px"/>
+							</grid:layoutS>
+							<grid:layoutM>
+								<grid:GridSettings
+									gridTemplateColumns="repeat(8, 1fr)"
+									gridAutoRows="80px"
+									gridAutoFlow="RowDense"
+									gridRowGap="16px"
+									gridColumnGap="16px"/>
+							</grid:layoutM>
+							<grid:layoutL>
+								<grid:GridSettings
+									gridTemplateColumns="repeat(12, 1fr)"
+									gridAutoRows="80px"
+									gridAutoFlow="RowDense"
+									gridRowGap="16px"
+									gridColumnGap="16px"/>
+							</grid:layoutL>
+							<grid:layoutXL>
+								<grid:GridSettings
+									gridTemplateColumns="repeat(16, 1fr)"
+									gridAutoRows="80px"
+									gridAutoFlow="RowDense"
+									gridRowGap="16px"
+									gridColumnGap="16px"/>
+							</grid:layoutXL>
+						</grid:GridResponsiveLayout>
+					</grid:customLayout>
+
+					<grid:items>
+
+						<w:Card id="default2x2" manifest="{manifests>/grid/card1}">
+							<w:layoutData>
+								<grid:GridItemLayoutData gridRow="span 2" gridColumn="span 2" />
+							</w:layoutData>
+						</w:Card>
+
+						<w:Card id="default4x2" manifest="{manifests>/grid/card2}">
+							<w:layoutData>
+								<grid:GridItemLayoutData gridRow="span 2" gridColumn="span 4" />
+							</w:layoutData>
+						</w:Card>
+
+						<w:Card id="default1x1" manifest="{manifests>/grid/card3}"></w:Card>
+
+						<w:Card id="default2x1" manifest="{manifests>/grid/card4}">
+							<w:layoutData>
+								<grid:GridItemLayoutData gridColumn="span 2" />
+							</w:layoutData>
+						</w:Card>
+
+						<w:Card id="ddefault1x1" manifest="{manifests>/grid/card5}"></w:Card>
+
+						<w:Card id="default4x1" manifest="{manifests>/grid/card6}">
+							<w:layoutData>
+								<grid:GridItemLayoutData gridColumn="span 4" />
+							</w:layoutData>
+						</w:Card>
+
+						<w:Card id="ddefault6x2" manifest="{manifests>/grid/card7}">
+							<w:layoutData>
+								<grid:GridItemLayoutData gridRow="span 6" gridColumn="span 2" />
+							</w:layoutData>
+						</w:Card>
+
+						<w:Card id="default4x4" manifest="{manifests>/grid/card8}">
+							<w:layoutData>
+								<grid:GridItemLayoutData gridRow="span 4" gridColumn="span 4" />
+							</w:layoutData>
+						</w:Card>
+
+						<w:Card id="default4x4Image" manifest="{manifests>/grid/card9}">
+							<w:layoutData>
+								<grid:GridItemLayoutData gridRow="span 4" gridColumn="span 4" />
+							</w:layoutData>
+						</w:Card>
+
+						<w:Card id="1default2x2" manifest="{manifests>/grid/card10}">
+							<w:layoutData>
+								<grid:GridItemLayoutData gridRow="span 2" gridColumn="span 2" />
+							</w:layoutData>
+						</w:Card>
+
+						<w:Card id="2default2x2" manifest="{manifests>/grid/card11}">
+							<w:layoutData>
+								<grid:GridItemLayoutData gridRow="span 2" gridColumn="span 2" />
+							</w:layoutData>
+						</w:Card>
+
+						<w:Card id="default6x4" manifest="{manifests>/grid/card12}">
+							<w:layoutData>
+								<grid:GridItemLayoutData gridRow="span 4" gridColumn="span 6" />
+							</w:layoutData>
+						</w:Card>
+
+						<w:Card id="2default6x4" manifest="{manifests>/grid/card13}">
+							<w:layoutData>
+								<grid:GridItemLayoutData gridRow="span 4" gridColumn="span 6" />
+							</w:layoutData>
+						</w:Card>
+
+					</grid:items>
+				</grid:CSSGrid>
+			</Panel>
+		</content>
+	</Page>
+</mvc:View>

@@ -109,6 +109,32 @@ sap.ui.define([
 		oSPC.destroy();
 	});
 
+	QUnit.test("getSelectedAppointments", function (assert) {
+		var oAppointment1 = new CalendarAppointment({
+				title: "Appointment1",
+				startDate: new Date(2018, 11, 24, 15, 30, 0),
+				endDate: new Date(2018, 11, 24, 16, 30, 0)
+			}),
+			oAppointment2 = new CalendarAppointment({
+				title: "Appointment1",
+				startDate: new Date(2018, 11, 24, 16, 30, 0),
+				endDate: new Date(2018, 11, 24, 17, 30, 0),
+				selected: true
+			}),
+			oSPC = new SinglePlanningCalendar({
+				appointments: [
+					oAppointment1,
+					oAppointment2
+				]
+			});
+
+		//assert
+		assert.ok(oSPC.getSelectedAppointments().length, 1, "one appointment selected");
+
+		//clean up
+		oSPC.destroy();
+	});
+
 	QUnit.module("Events");
 
 	QUnit.test("appointmentSelect", function (assert) {

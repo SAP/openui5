@@ -2,7 +2,6 @@
 		controllerName="sap.ui.documentation.sdk.controller.ApiMaster"
 		xmlns:mvc="sap.ui.core.mvc"
 		xmlns="sap.m"
-		xmlns:core="sap.ui.core"
 		xmlns:custom="sap.ui.documentation.sdk.controls"
 		class="sapContrast sapContrastPlus">
 
@@ -30,22 +29,19 @@
 		<content>
 
 			<Tree
-					id="tree"
-					mode="SingleSelectMaster"
-					selectionChange="onNodeSelect"
-					noDataText="No data, please try with the global search"
-					items="{
-						path: 'treeData>/',
-						sorter : {
-							path : 'name',
-							comparator : '.compareTreeNodes'
-						}
-					}">
-				<custom:DemokitTreeItem title="{path: 'treeData>text', formatter : '.formatter.apiRefEntityName'}" deprecated="{treeData>bIsDeprecated}">
-					<custom:customData>
-						<core:CustomData key="nodeId" value="{treeData>name}" />
-					</custom:customData>
-				</custom:DemokitTreeItem>
+				id="tree"
+				mode="SingleSelectMaster"
+				noDataText="No data, please try with the global search"
+				selectionChange="onNodeSelect"
+				items="{treeData>/}">
+				<custom:DemokitTreeItem
+						title="{treeData>displayName}"
+						target="{treeData>name}"
+                        entityType="{treeData>kind}"
+						encodeTarget="true"
+						section="api"
+						class="sapDemokitTreeItem"
+						deprecated="{treeData>bIsDeprecated}"/>
 			</Tree>
 
 		</content>

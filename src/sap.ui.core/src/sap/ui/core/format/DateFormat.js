@@ -1080,8 +1080,8 @@ sap.ui.define([
 
 				if (bVariant) {
 					sValue = aMatch[0].replace(/\./g, "").toLowerCase() + sValue.substring(aMatch[0].length);
-					sAM = sAM.toLowerCase();
-					sPM = sPM.toLowerCase();
+					sAM = sAM.replace(/\./g, "").toLowerCase();
+					sPM = sPM.replace(/\./g, "").toLowerCase();
 				}
 				if (sValue.indexOf(sAM) === 0) {
 					bPM = false;
@@ -1498,6 +1498,7 @@ sap.ui.define([
 		var oDiffField = this._getGreatestDiffField([oFromDate, oToDate], bUTC);
 
 		if (!oDiffField) {
+			this.aFormatArray = this.parseCldrDatePattern(this.oFormatOptions.pattern);
 			return this._format(aJSDates[0], bUTC);
 		}
 

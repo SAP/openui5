@@ -34,11 +34,28 @@ sap.ui.define([
 	 *
 	 * @extends sap.ui.model.CompositeType
 	 *
+	 * @example MeterType with dynamic decimals coming from the model
+	 * // defining a new custom Type as a subclass of the sap.ui.model.type.Unit type
+	 * sap.ui.require(["sap/ui/model/type/Unit"], function(UnitType) {
+	 *
+	 *  UnitType.extend("sap.ui.core.samples.MeterType", {
+	 *      constructor: function(oFormatOptions, oConstraints){
+	 *          // define the dynamic format options as the third argument
+	 *          // ‘aDynamicFormatOptionNames’
+	 *          UnitType.call(this, oFormatOptions, oConstraints, ["decimals"]);
+	 *      }
+	 *  });
+	 * });
+	 *
+	 * in the view
+	 * {parts:['energyModel>value', 'energyModel>unit', 'energyModel>decimals'],type: 'sap.ui.core.samples.MeterType'}
+	 *
+	 *
 	 * @author SAP SE
 	 * @version ${version}
 	 *
 	 * @public
-	 * @param {object} [oFormatOptions] Formatting options. For a list of all available options, see {@link sap.ui.core.format.NumberFormat#getUnitInstance NumberFormat}.
+	 * @param {object} [oFormatOptions] Formatting options. For a list of all available options, see {@link sap.ui.core.format.NumberFormat.getUnitInstance NumberFormat}.
 	 * @param {object} [oFormatOptions.source] Additional set of format options to be used if the property in the model is not of type <code>string</code> and needs formatting as well.
 	 * 										   If an empty object is given, the grouping is disabled and a dot is used as decimal separator.
 	 * @param {object} [oConstraints] Value constraints

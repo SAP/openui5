@@ -32,6 +32,14 @@ sap.ui.define([
 	var GridResponsiveLayout = GridLayoutBase.extend("sap.ui.layout.cssgrid.GridResponsiveLayout", {
 		metadata: {
 			library: "sap.ui.layout",
+			properties: {
+
+				/**
+				 * If set to <code>true</code>, the current range (large, medium or small) is defined by the size of the
+				 * container surrounding the <code>CSSGrid</code> instead of the device screen size (media Query).
+				 */
+				containerQuery: { type: "boolean", group: "Behavior", defaultValue: false }
+			},
 			aggregations: {
 
 				/**
@@ -151,7 +159,8 @@ sap.ui.define([
 	 * @param {boolean} bTriggerLayoutChange If changing the active layout should trigger layoutChange event
 	 */
 	GridResponsiveLayout.prototype.setActiveLayout = function (oGrid, bTriggerLayoutChange) {
-		var oRange = Device.media.getCurrentRange("StdExt", oGrid.$().width()),
+		var iWidth = this.getContainerQuery() ? oGrid.$().outerWidth() : window.innerWidth;
+		var oRange = Device.media.getCurrentRange("StdExt", iWidth),
 			sLayout = GridResponsiveLayout.mSizeLayouts[oRange.name],
 			sLayoutToApply = this._getLayoutToApply(sLayout);
 

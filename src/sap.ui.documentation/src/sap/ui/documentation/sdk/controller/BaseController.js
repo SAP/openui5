@@ -204,14 +204,17 @@ sap.ui.define([
 			 * @return {Promise} A promise that resolves to {boolean}
 			 */
             getAPIReferenceCheckPromise: function (sControlName) {
-				return APIInfo.getIndexJsonPromise().then(function (result) {
-					var aFilteredResult;
-
-					aFilteredResult = result.filter(function (element) {
-						return element.name === sControlName;
-					});
-
-					return aFilteredResult && aFilteredResult.length > 0;
+				return APIInfo.getIndexJsonPromise().then(function (aData) {
+					function findSymbol (a) {
+						return a.some(function (o) {
+							var bFound = o.name === sControlName;
+							if (!bFound && o.nodes) {
+								return findSymbol(o.nodes);
+							}
+							return bFound;
+						});
+					}
+					return findSymbol(aData);
 				});
 			}
 		});

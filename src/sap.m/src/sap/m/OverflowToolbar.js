@@ -82,6 +82,7 @@ sap.ui.define([
 	 * <li>{@link sap.m.DatePicker}</li>
 	 * <li>{@link sap.m.DateTimeInput}</li>
 	 * <li>{@link sap.m.DateTimePicker}</li>
+	 * <li>{@link sap.m.GenericTag}</li>
 	 * <li>{@link sap.m.Input}</li>
 	 * <li>{@link sap.m.Label}</li>
 	 * <li>{@link sap.m.MenuButton}</li>

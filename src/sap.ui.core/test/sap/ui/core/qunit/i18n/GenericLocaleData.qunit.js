@@ -133,6 +133,13 @@ sap.ui.define([
 		assert.equal(typeof oLocaleData.getPluralCategory("-2.00"), "string", "getPluralCategory(\"-2.00\")");
 		assert.equal(typeof oLocaleData.getPluralCategory("123.456"), "string", "getPluralCategory(\"123.456\")");
 
+		assert.equal(typeof oLocaleData.getDecimalPattern(), "string", "getDecimalPattern");
+		assert.equal(typeof oLocaleData.getCurrencyPattern(), "string", "getCurrencyPattern");
+		assert.equal(typeof oLocaleData.getPercentPattern(), "string", "getPercentPattern");
+		assert.equal(typeof oLocaleData.getMiscPattern("approximately"), "string", "getMiscPattern approximately");
+		assert.equal(typeof oLocaleData.getMiscPattern("atLeast"), "string", "getMiscPattern atLeast");
+		assert.equal(typeof oLocaleData.getMiscPattern("atMost"), "string", "getMiscPattern atMost");
+		assert.equal(typeof oLocaleData.getMiscPattern("range"), "string", "getMiscPattern range");
 
 		// there's no currency symbol defined for EUR and USD in 'es_MX' locale in CLDR data version 26
 		if (sLocale !== "xx_XX" /*&& sLocale !== "es_MX"*/) {

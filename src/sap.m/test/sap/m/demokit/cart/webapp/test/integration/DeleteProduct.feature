@@ -5,7 +5,7 @@ Feature: Delete a Product
     When on home: I press on "The Flat Screens category"
     When on the category: I press on "The first Product"
     When on the product: I add the displayed product to the cart
-    When on the product: I go to the cart page
+    When on the product: I toggle the cart
     When on the cart: I press on the edit button
     When on the cart: I press on the delete button
 

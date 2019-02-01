@@ -11,6 +11,11 @@ sap.ui.define(function() {
 				version: 4,
 				qunitBridge: true,
 				useFakeTimers: false
+			},
+			loader : {
+				paths : {
+					"sap/ui/core/qunit" : "test-resources/sap/ui/core/qunit"
+				}
 			}
 		},
 		tests: {

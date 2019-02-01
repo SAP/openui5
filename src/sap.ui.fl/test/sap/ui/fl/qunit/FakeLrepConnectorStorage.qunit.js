@@ -23,10 +23,6 @@ sap.ui.define([
 
 	var sandbox = sinon.sandbox.create();
 
-	FakeLrepConnectorSessionStorage.enableFakeConnector();
-
-	var oFakeLrepConnectorSessionStorage = sap.ui.fl.LrepConnector.createConnector();
-
 	var oTestData = { "fileName": "id_1445501120486_25", "fileType": "change", "changeType": "hideControl", "reference": "sap.ui.rta.test.Demo.md.Component", "packageName": "$TMP", "content": {}, "selector": { "id": "RTADemoAppMD---detail--GroupElementDatesShippingStatus" }, "layer": "CUSTOMER", "texts": {}, "namespace": "sap.ui.rta.test.Demo.md.Component", "creation": "2018-10-16T08:00:01", "originalLanguage": "EN", "conditions": {}, "support": { "generator": "Change.createInitialFileContent", "service": "", "user": "" }, "validAppVersions": { "creation": "1.0.0", "from": "1.0.0" } };
 
 	var aTestData = [
@@ -36,24 +32,26 @@ sap.ui.define([
 		{ "fileName": "id_1540450338001_81", "fileType": "change", "changeType": "appdescr_ui5_addLibraries", "moduleName": "", "reference": "sap.ui.rta.test.Demo.md", "packageName": "$TMP", "content": {"libraries": {"sap.ui.comp": {"minVersion": "1.48", "lazy": false}}}, "selector": {}, "layer": "CUSTOMER", "namespace": "apps/sap.ui.rta.test.Demo.md/changes/", "projectId": "sap.ui.rta.test.Demo.md", "creation": "2018-10-25T06: 52: 23.279Z", "originalLanguage": "EN", "conditions": {}, "context": "", "support": {"generator": "Change.createInitialFileContent", "service": "", "user": "", "sapui5Version": "1.59.0-SNAPSHOT", "sourceChangeFileName": "", "compositeCommand": ""}, "oDataInformation": {}, "dependentSelector": {}, "validAppVersions": {"creation": "1.0.0", "from": "1.0.0"}, "jsOnly": false, "variantReference": ""}
 	];
 
-	QUnit.module("Given I use SAP RTA Fake Lrep Connector Local Storage", {
+	QUnit.module("Given I use FakeLrepConnectorStorage", {
 		beforeEach: function () {
-			oFakeLrepConnectorSessionStorage.deleteChanges();
+			FakeLrepConnectorSessionStorage.enableFakeConnector();
+			this.oFakeLrepConnectorSessionStorage = sap.ui.fl.LrepConnector.createConnector();
 		},
 		afterEach: function () {
-			oFakeLrepConnectorSessionStorage.deleteChanges();
+			this.oFakeLrepConnectorSessionStorage.deleteChanges();
+			FakeLrepConnectorSessionStorage.disableFakeConnector();
 			sandbox.restore();
 		}
 	}, function () {
 		QUnit.test("when in INITAL status", function (assert) {
-			return oFakeLrepConnectorSessionStorage.loadChanges("sap.ui.fl.qunit.FakeLrepConnector")
+			return this.oFakeLrepConnectorSessionStorage.loadChanges("sap.ui.fl.qunit.FakeLrepConnector")
 			.then(function (oChanges) {
 				assert.equal(oChanges.changes.changes.length, 0, "then no changes are available");
 			});
 		});
 
 		QUnit.test("when settings are requested", function (assert) {
-			return oFakeLrepConnectorSessionStorage.loadSettings("sap.ui.fl.qunit.FakeLrepConnector")
+			return this.oFakeLrepConnectorSessionStorage.loadSettings("sap.ui.fl.qunit.FakeLrepConnector")
 			.then(function (oSettings) {
 				assert.ok(oSettings);
 			});
@@ -70,11 +68,11 @@ sap.ui.define([
 
 			var fnDeleteChangeSpy = sandbox.spy(FakeLrepSessionStorage, "deleteChange");
 
-			return oFakeLrepConnectorSessionStorage.create(aMixedTestData)
+			return this.oFakeLrepConnectorSessionStorage.create(aMixedTestData)
 			.then(function () {
 				assert.equal(FakeLrepSessionStorage.getNumChanges(), 5, "Local Storage contains five changes in the beginning");
 			})
-			.then(oFakeLrepConnectorSessionStorage.send(sUri, "DELETE"))
+			.then(this.oFakeLrepConnectorSessionStorage.send(sUri, "DELETE"))
 			.then(function () {
 				assert.equal(fnDeleteChangeSpy.callCount, 4, "deleteChange of FakeLrepSessionStorage has been called four times");
 				assert.equal(FakeLrepSessionStorage.getNumChanges(), 1, "Finally one change is in the Local Storage");
@@ -95,11 +93,11 @@ sap.ui.define([
 
 			var fnDeleteChangeSpy = sandbox.spy(FakeLrepSessionStorage, "deleteChange");
 
-			return oFakeLrepConnectorSessionStorage.create(aMixedTestData)
+			return this.oFakeLrepConnectorSessionStorage.create(aMixedTestData)
 			.then(function () {
 				assert.equal(FakeLrepSessionStorage.getNumChanges(), 5, "Local Storage contains five changes in the beginning");
 			})
-			.then(oFakeLrepConnectorSessionStorage.send(sUri, "DELETE"))
+			.then(this.oFakeLrepConnectorSessionStorage.send(sUri, "DELETE"))
 			.then(function () {
 				assert.equal(fnDeleteChangeSpy.callCount, 4, "deleteChange of FakeLrepSessionStorage has been called four times");
 				assert.equal(FakeLrepSessionStorage.getNumChanges(), 1, "Finally one change is in the Local Storage");
@@ -120,11 +118,11 @@ sap.ui.define([
 
 			var fnDeleteChangeSpy = sandbox.spy(FakeLrepSessionStorage, "deleteChange");
 
-			return oFakeLrepConnectorSessionStorage.create(aMixedTestData)
+			return this.oFakeLrepConnectorSessionStorage.create(aMixedTestData)
 			.then(function () {
 				assert.equal(FakeLrepSessionStorage.getNumChanges(), 5, "Local Storage contains five changes in the beginning");
 			})
-			.then(oFakeLrepConnectorSessionStorage.send(sUri, "DELETE"))
+			.then(this.oFakeLrepConnectorSessionStorage.send(sUri, "DELETE"))
 			.then(function () {
 				assert.equal(fnDeleteChangeSpy.callCount, 1, "deleteChange of FakeLrepSessionStorage has been called four times");
 				assert.equal(FakeLrepSessionStorage.getNumChanges(), 4, "Finally three changes are in the Local Storage");
@@ -134,20 +132,34 @@ sap.ui.define([
 				assert.equal(FakeLrepSessionStorage.getChanges()[3].layer, "CUSTOMER", "and it is in a different layer");
 			});
 		});
+
+		QUnit.test("when calling loadChanges with already existing changes", function(assert) {
+			FakeLrepConnectorSessionStorage.disableFakeConnector();
+			var mSettings = {};
+			FakeLrepConnectorSessionStorage.enableFakeConnector(mSettings);
+			var oFakeLrepConnectorSessionStorage = sap.ui.fl.LrepConnector.createConnector();
+
+			return oFakeLrepConnectorSessionStorage.loadChanges("sap.ui.fl.qunit.FakeLrepConnector", aTestData)
+			.then(function (oChanges) {
+				assert.equal(oChanges.changes.changes.length, 4, "then 4 changes are available");
+				FakeLrepConnectorSessionStorage.disableFakeConnector();
+			});
+		});
 	});
 
 	QUnit.module("Given I want to create changes", {
 		beforeEach: function () {
-			oFakeLrepConnectorSessionStorage.deleteChanges();
-
+			FakeLrepConnectorSessionStorage.enableFakeConnector();
+			this.oFakeLrepConnectorSessionStorage = sap.ui.fl.LrepConnector.createConnector();
 		},
 		afterEach: function () {
-			oFakeLrepConnectorSessionStorage.deleteChanges();
+			this.oFakeLrepConnectorSessionStorage.deleteChanges();
+			FakeLrepConnectorSessionStorage.disableFakeConnector();
 			sandbox.restore();
 		}
 	}, function () {
 		QUnit.test("when saving a single change", function (assert) {
-			return oFakeLrepConnectorSessionStorage.create(oTestData)
+			return this.oFakeLrepConnectorSessionStorage.create(oTestData)
 			.then(function (oResult) {
 				assert.equal(FakeLrepSessionStorage.getNumChanges(), 1, "then the Local Storage saves one change.");
 				assert.deepEqual(oResult.response, oTestData, "and the change definition is returned as response");
@@ -155,13 +167,13 @@ sap.ui.define([
 		});
 
 		QUnit.test("when updating a single change", function (assert) {
-			return oFakeLrepConnectorSessionStorage.create(oTestData)
+			return this.oFakeLrepConnectorSessionStorage.create(oTestData)
 			.then(function () {
 				//any update on change
 				oTestData.layer = "USER";
 
-				return oFakeLrepConnectorSessionStorage.update(oTestData);
-			})
+				return this.oFakeLrepConnectorSessionStorage.update(oTestData);
+			}.bind(this))
 			.then(function (oResult) {
 				assert.equal(FakeLrepSessionStorage.getNumChanges(), 1, "then the Local Storage still has one change.");
 				assert.deepEqual(oResult.response, FakeLrepSessionStorage.getChange(oTestData.fileName), "and the change definition is updated and updated returned");
@@ -169,7 +181,7 @@ sap.ui.define([
 		});
 
 		QUnit.test("when saving four changes", function (assert) {
-			return oFakeLrepConnectorSessionStorage.create(aTestData)
+			return this.oFakeLrepConnectorSessionStorage.create(aTestData)
 			.then(function (oResult) {
 				assert.equal(FakeLrepSessionStorage.getNumChanges(), 4, "then the Local Storage saves four changes.");
 				assert.deepEqual(oResult.response, aTestData, "and the change definitions are returned");
@@ -177,15 +189,15 @@ sap.ui.define([
 		});
 
 		QUnit.test("when deleting a change", function (assert) {
-			return oFakeLrepConnectorSessionStorage.create(aTestData)
+			return this.oFakeLrepConnectorSessionStorage.create(aTestData)
 			.then(function () {
-				oFakeLrepConnectorSessionStorage.deleteChange({
+				this.oFakeLrepConnectorSessionStorage.deleteChange({
 					sChangeName: aTestData[0].fileName,
 					sLayer: aTestData[0].layer,
 					sNamespace: aTestData[0].namespace,
 					sChangelist: aTestData[0].packageName
 				});
-			})
+			}.bind(this))
 			.then(function () {
 				assert.equal(FakeLrepSessionStorage.getNumChanges(), aTestData.length - 1, "then the Local Storage has a change less.");
 			});
@@ -193,8 +205,8 @@ sap.ui.define([
 
 		QUnit.test("when enabled for 2. time", function (assert) {
 			FakeLrepConnectorSessionStorage.enableFakeConnector({ foo: 3 });
-			var oFakeLrepConnectorSessionStorage = sap.ui.fl.LrepConnector.createConnector();
-			return oFakeLrepConnectorSessionStorage.loadChanges("some.component")
+			this.oFakeLrepConnectorSessionStorage = sap.ui.fl.LrepConnector.createConnector();
+			return this.oFakeLrepConnectorSessionStorage.loadChanges("some.component")
 			.then(function (mResult) {
 				assert.deepEqual(mResult.changes.settings, {
 					"isKeyUser": true,
@@ -209,8 +221,8 @@ sap.ui.define([
 			FakeLrepConnectorSessionStorage.enableFakeConnector({
 				isAtoAvailable: true
 			});
-			var oFakeLrepConnectorSessionStorage = sap.ui.fl.LrepConnector.createConnector();
-			return oFakeLrepConnectorSessionStorage.loadChanges("some.component")
+			this.oFakeLrepConnectorSessionStorage = sap.ui.fl.LrepConnector.createConnector();
+			return this.oFakeLrepConnectorSessionStorage.loadChanges("some.component")
 			.then(function (mResult) {
 				assert.deepEqual(mResult.changes.settings, {
 					"isKeyUser": true,
@@ -240,6 +252,7 @@ sap.ui.define([
 		});
 
 		QUnit.test("when enable then disable fake connector with app component data", function (assert) {
+			FakeLrepConnectorSessionStorage.disableFakeConnector();
 			var sAppComponentName = "testComponent";
 			var sAppVersion = "1.2.3";
 			//enable
@@ -272,6 +285,7 @@ sap.ui.define([
 					variantManagementReference: "idMain1--variantManagementOrdersTable"
 				}
 			];
+			FakeLrepConnectorSessionStorage.disableFakeConnector();
 			FakeLrepConnectorSessionStorage.enableFakeConnector({}, "json.component", "1.0.1");
 			this.oFakeLrepConnectorSessionStorage = sap.ui.fl.LrepConnector.createConnector();
 			var mResult = {
@@ -394,9 +408,6 @@ sap.ui.define([
 
 	QUnit.module("Given JSON data passed during initiailization of FakeLrepConnectorSessionStorage", {
 		beforeEach: function () {
-			//TODO: Cleanup missing: this setup code is influencing other modules
-			oFakeLrepConnectorSessionStorage.deleteChanges();
-			FakeLrepConnectorSessionStorage.disableFakeConnector();
 			var mSettings = {};
 			mSettings.sInitialComponentJsonPath = jQuery.sap.getModulePath("sap.ui.fl.qunit.testResources") + "/TestFakeVariantLrepResponse.json";
 			mSettings.isAtoAvailable = false;
@@ -404,7 +415,8 @@ sap.ui.define([
 			this.oFakeLrepConnectorSessionStorage = sap.ui.fl.LrepConnector.createConnector();
 		},
 		afterEach: function () {
-			oFakeLrepConnectorSessionStorage.deleteChanges();
+			this.oFakeLrepConnectorSessionStorage.deleteChanges();
+			FakeLrepConnectorSessionStorage.disableFakeConnector();
 			sandbox.restore();
 		}
 	}, function () {

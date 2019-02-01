@@ -237,6 +237,15 @@ html[data-sap-ui-browser^="ff"].sap-desktop {
 
 /* Tablet Size */
 .sapFDynamicPage-Std-Tablet {
+
+	// Needed because on some high-end phones in landscape mode,
+	// the width of the viewport is bigger than 600 (Tablet breakpoint).
+	.sapFDynamicPageTitleWrapper.sapFDynamicPageTitleSnappedTitleOnMobile > .sapFDynamicPageTitle {
+		padding: 0 1rem 0 2rem;
+		min-height: 2rem;
+		height: 2rem;
+	}
+
 	.sapFDynamicPageTitleWrapper.sapFDynamicPageTitleSnapped > .sapFDynamicPageTitle {
 		padding: 0.5rem 1rem 1rem 2rem;
 	}
@@ -262,6 +271,18 @@ html[data-sap-ui-browser^="ff"].sap-desktop {
 	}
 }
 
+.sapFDynamicPageTitle .sapFDynamicPageTitleSnappedTitleOnMobile {
+	min-height: 100%;
+	display: flex;
+	align-items: center;
+	justify-content: space-between;
+	flex: 0 1 auto;
+
+	.sapUiIcon {
+		flex: 0 0 2rem;
+	}
+}
+
 /* Phone Size */
 .sapFDynamicPage-Std-Phone {
 
@@ -271,6 +292,12 @@ html[data-sap-ui-browser^="ff"].sap-desktop {
 				padding-bottom: 0;
 			}
 		}
+	}
+
+	.sapFDynamicPageTitleWrapper.sapFDynamicPageTitleSnappedTitleOnMobile > .sapFDynamicPageTitle {
+		padding: 0 0.5rem 0 1rem;
+		min-height: 2rem;
+		height: 2rem;
 	}
 
 	.sapFDynamicPageTitleWrapper.sapFDynamicPageTitleSnapped > .sapFDynamicPageTitle {

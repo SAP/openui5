@@ -190,8 +190,7 @@ sap.ui.define([
 
 			// Select/Deselect row.
 		} else if (oCellInfo.isOfType(CellType.ROWHEADER)) {
-			TableUtils.toggleRowSelection(oTable, oEvent.target);
-
+			selectItems();
 		} else if (oCellInfo.isOfType(CellType.DATACELL | CellType.ROWACTION)) {
 			// The action mode should only be entered when cellClick is not handled and no selection is performed.
 			var bEnterActionMode = !oTable.hasListeners("cellClick");
@@ -201,7 +200,7 @@ sap.ui.define([
 
 				// Select/Deselect row.
 				if (TableUtils.isRowSelectionAllowed(oTable)) {
-					TableUtils.toggleRowSelection(oTable, oEvent.target);
+					selectItems();
 					bEnterActionMode = false;
 				}
 			}
@@ -212,6 +211,17 @@ sap.ui.define([
 					oTable._getKeyboardExtension().setActionMode(true);
 				}
 			}
+		}
+
+		function selectItems() {
+			var _doSelect = null;
+			if (oTable._legacyMultiSelection) {
+				_doSelect = function(iRowIndex) {
+					oTable._legacyMultiSelection(iRowIndex, oEvent);
+					return true;
+				};
+			}
+			TableUtils.toggleRowSelection(oTable, oEvent.target, null, _doSelect);
 		}
 	};
 
@@ -1000,20 +1010,16 @@ sap.ui.define([
 			delete this._oRangeSelection;
 		}
 
-		if (TableKeyboardDelegate._isKeyCombination(oEvent, KeyCodes.SPACE)) {
-			// Open the column menu.
-			if (oCellInfo.isOfType(CellType.COLUMNHEADER)) {
+		if (oCellInfo.isOfType(CellType.COLUMNHEADER)) {
+			if (TableKeyboardDelegate._isKeyCombination(oEvent, KeyCodes.SPACE) || TableKeyboardDelegate._isKeyCombination(oEvent, KeyCodes.ENTER)) {
 				TableUtils.Menu.openContextMenu(this, oEvent.target, true);
-			} else {
+			}
+		} else if (TableKeyboardDelegate._isKeyCombination(oEvent, KeyCodes.SPACE)) {
 				TableKeyboardDelegate._handleSpaceAndEnter(this, oEvent);
-			}
-		}
-
-		if (TableKeyboardDelegate._isKeyCombination(oEvent, KeyCodes.ENTER)) {
-			// Open the column menu.
-			if (oCellInfo.isOfType(CellType.COLUMNHEADER)) {
-				TableUtils.Menu.openContextMenu(this, oEvent.target, true);
-			}
+		} else if (this._legacyMultiSelection && !oCellInfo.isOfType(CellType.COLUMNROWHEADER) &&
+				   (TableKeyboardDelegate._isKeyCombination(oEvent, KeyCodes.SPACE, ModKey.CTRL) ||
+				   TableKeyboardDelegate._isKeyCombination(oEvent, KeyCodes.ENTER, ModKey.CTRL))) {
+			TableKeyboardDelegate._handleSpaceAndEnter(this, oEvent);
 		}
 	};
 

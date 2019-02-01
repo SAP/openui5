@@ -264,6 +264,21 @@
 // [Tags "Base", "Content", "Color", "Protected"]
 @sapContent_BackgroundGradientMixedEndColor: mix(@sapContent_BackgroundGradientEndColor, #fff, 15); // should be #dde4ec
 
+// [Label "Element Line Height"]
+// [Description "The height of the line box surrounding the inline elements in the content area."]
+// [Tags "Base", "Content", "Dimension", "Protected"]
+@sapElement_LineHeight: 26px;
+
+// [Label "Element Height"]
+// [Description "The height of inline elements in the content area."]
+// [Tags "Base", "Content", "Dimension", "Protected"]
+@sapElement_Height: 22px;
+
+// [Label "Element Border Thickness"]
+// [Description "The standard thickness of element borders."]
+// [Tags "Base", "Button", "Dimension", "Protected"]
+@sapElement_BorderWidth: 1px;
+
 // [Label "Content Line Height EM"]
 // [Description "The height of lines in the content area (in em)."]
 // [Tags "Base", "Content", "Dimension", "Protected"]
@@ -383,6 +398,11 @@
 // [Tags "Base", "Content", "Color", "Font"]
 @sapContent_ForegroundTextColor: contrast(@sapContent_ForegroundColor, @sapTextColor, @sapContent_ContrastTextColor, @sapContent_ContrastTextThreshold);
 
+// [Label "Content Badge Background"]
+// [Description "The background color of badges."]
+// [Tags "Base", "Content", "Color"]
+@sapContent_BadgeBackground: @sapAccentColor3;
+
 // [Label "Shell Background Color"]
 // [Description "The background color of the shell."]
 // [Tags "Base", "Shell", "Color"]
@@ -428,6 +448,11 @@
 // [Tags "Base", "Shell", "Color", "Font"]
 @sapShell_TextColor: contrast(@sapShell_Background, @sapLightTextColor, @sapContent_ContrastTextColor, @sapContent_ContrastTextThreshold);
 
+// [Label "Shell Interactive Text Color"]
+// [Description "The color of interactive texts in the shell."]
+// [Tags "Base", "Shell", "Color", "Font"]
+@sapShell_InteractiveTextColor: @sapShell_TextColor;
+
 // [Label "Shell Favicon"]
 // [Description "The URI to the favorite or shortcut icon displayed for the shell."]
 // [Tags "Base", "Shell", "URI", "Image"]
@@ -436,12 +461,12 @@
 // [Label "Button Border Thickness"]
 // [Description "The thickness of button borders."]
 // [Tags "Base", "Button", "Dimension"]
-@sapButton_BorderWidth: 1px;
+@sapButton_BorderWidth: @sapElement_BorderWidth;
 
 // [Label "Button Corner Radius"]
 // [Description "Defines whether a button has rounded corners."]
 // [Tags "Base", "Button", "Dimension"]
-@sapButton_BorderCornerRadius: 0;
+@sapButton_BorderCornerRadius: 2px;
 
 // [Label "Button Background Color"]
 // [Description "The background color of buttons."]
@@ -532,7 +557,7 @@
 // [Label "Field Border Thickness"]
 // [Description "The thickness of an input field's borders."]
 // [Tags "Base", "Field", "Dimension"]
-@sapField_BorderWidth: 1px;
+@sapField_BorderWidth: @sapElement_BorderWidth;
 
 // [Label "Field Corner Radius"]
 // [Description "Defines whether an input field has rounded corners."]
@@ -669,7 +694,7 @@
 // [Label "Group Border Thickness"]
 // [Description "The thickness of the borders of a group's content area."]
 // [Tags "Base", "Group", "Dimension", "Protected"]
-@sapGroup_BorderWidth: 1px;
+@sapGroup_BorderWidth: @sapElement_BorderWidth;
 
 // [Label "Group Corner Radius"]
 // [Description "Defines whether a group has rounded corners."]
@@ -714,7 +739,7 @@
 // [Label "List Grid Thickness"]
 // [Description "The thickness of the border in a list separating the entries."]
 // [Tags "Base", "List", "Dimension"]
-@sapList_BorderWidth: 1px;
+@sapList_BorderWidth: @sapElement_BorderWidth;
 
 // [Label "List Highlight Color"]
 // [Description "The color of highlighted elements in lists."]

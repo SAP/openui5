@@ -37,6 +37,9 @@ sap.ui.define([
 
 		'use strict';
 
+		// shortcut for sap.ui.core.OpenState
+		var OpenState = coreLibrary.OpenState;
+
 		// shortcut for sap.ui.core.TextAlign
 		var TextAlign = coreLibrary.TextAlign;
 
@@ -718,6 +721,23 @@ sap.ui.define([
 
 			return 0;
 		}
+
+		/**
+		 * Event handler for the escape key pressed event.
+		 *
+		 * @param {jQuery.Event} oEvent The event object
+		 * @private
+		 */
+		LightBox.prototype.onsapescape = function(oEvent) {
+			var eOpenState = this._oPopup.getOpenState();
+			if (eOpenState !== OpenState.CLOSED && eOpenState !== OpenState.CLOSING) {
+				this.close();
+				//event should not trigger any further actions
+				oEvent.stopPropagation();
+			}
+
+		};
+
 
 		return LightBox;
 	});

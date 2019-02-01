@@ -89,16 +89,12 @@
 					]
 				},
 				{
-					"pattern": "",
-					"name": "welcome",
-					"target": [
-						"welcome"
-					]
-				},
-				{
 					"pattern": "categories",
 					"name": "categories",
-					"target": ["homePhone"]
+					"target": [
+						"home",
+						"welcome"
+					]
 				},
 				{
 					"pattern": "category/{id}",
@@ -106,14 +102,6 @@
 					"target": [
 						"welcome",
 						"category"
-					],
-					"titleTarget": "category"
-				},
-				{
-					"pattern": "categoryPhone/{id}",
-					"name": "categoryPhone",
-					"target": [
-						"categoryPhone"
 					],
 					"titleTarget": "category"
 				},
@@ -198,18 +186,6 @@
 						]
 					}
 				},
-				"categoryPhone": {
-					"viewName": "Category",
-					"viewLevel": 2,
-					"controlAggregation": "midColumnPages",
-					"viewId": "category",
-					"title": {
-						"parts": [
-							"i18n>tabTitle",
-							"CategoryName"
-						]
-					}
-				},
 				"notFound": {
 					"viewName": "NotFound",
 					"viewLevel": 3,
@@ -229,11 +205,6 @@
 					"controlAggregation": "beginColumnPages",
 					"viewId": "homeView",
 					"title": "{i18n>appTitle}"
-				},
-				"homePhone": {
-					"viewName": "Home",
-					"viewLevel": -1,
-					"controlAggregation": "midColumnPages"
 				},
 				"cart": {
 					"viewName": "Cart",

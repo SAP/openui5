@@ -8,7 +8,9 @@ sap.ui.define([
 	"sap/m/Button",
 	"sap/m/Dialog",
 	"sap/ui/core/mvc/View",
-	"./utils/view"
+	"sap/ui/core/Fragment",
+	"./utils/view",
+	"sap/ui/thirdparty/jquery"
 ], function (OpaPlugin,
 			 Interactable,
 			 Visible,
@@ -17,7 +19,9 @@ sap.ui.define([
 			 Button,
 			 Dialog,
 			 View,
-			 viewUtils) {
+			 Fragment,
+			 viewUtils,
+			$) {
 	"use strict";
 
 
@@ -958,55 +962,139 @@ sap.ui.define([
 			this.fnLogSpy = sinon.spy(this.oPlugin._oLogger, "debug");
 			this.sViewName = "sample.viewNamespace.viewName";
 			this.oSampleView = viewUtils.createXmlView(this.sViewName, "mySampleView");
-			this.oOtherView = viewUtils.createXmlView(this.sViewName, "myOtherView");
-			this.oNoMatchView = viewUtils.createXmlView("differentName", "noMatch");
+			this.oDuplicateView = viewUtils.createXmlView(this.sViewName, "myOtherView");
+			this.oDifferentView = viewUtils.createXmlView("differentName", "myDifferentlyNamedView");
+			this.oSampleView.placeAt("qunit-fixture");
+			this.oDuplicateView.placeAt("qunit-fixture");
+			this.oDifferentView.placeAt("qunit-fixture");
+			sap.ui.getCore().applyChanges();
 		},
 		afterEach: function () {
 			this.fnLogSpy.restore();
 			this.oSampleView.destroy();
-			this.oOtherView.destroy();
-			this.oNoMatchView.destroy();
+			this.oDuplicateView.destroy();
+			this.oDifferentView.destroy();
 		}
 	});
 
-	QUnit.test("Should return only one visible view", function (assert) {
-		this.oSampleView.placeAt("qunit-fixture");
-		sap.ui.getCore().applyChanges();
+	QUnit.test("Should filter invisible views with a duplicate name", function (assert) {
+		this.oDuplicateView.$().css("visibility", "hidden"); // hide view
 
 		var aViews = this.oPlugin.getAllControls(View, "View");
 		var oMatchedView = this.oPlugin.getView(this.sViewName);
 
 		assert.strictEqual(aViews.length, 3, "Should find all controls of type View");
 		assert.strictEqual(oMatchedView.getId(), "mySampleView", "Should match only visible views");
-		sinon.assert.calledWith(this.fnLogSpy, "Found 1 views with viewName '" + this.sViewName + "'");
-	});
+		sinon.assert.calledWith(this.fnLogSpy, "Found 2 views with viewName '" + this.sViewName + "'");
+		sinon.assert.calledWith(this.fnLogSpy, "Found 1 visible views with viewName '" + this.sViewName + "'");
 
-	QUnit.test("Should return view with matching name", function (assert) {
-		this.oSampleView.placeAt("qunit-fixture");
-		this.oNoMatchView.placeAt("qunit-fixture");
-		sap.ui.getCore().applyChanges();
 
-		var aViews = this.oPlugin.getAllControls(View, "View");
-		var oMatchedView = this.oPlugin.getView(this.sViewName);
+		this.oDuplicateView.destroy();
+		this.oDuplicateView = viewUtils.createXmlView(this.sViewName, "myOtherView"); // do not render view
 
 		assert.strictEqual(aViews.length, 3, "Should find all controls of type View");
-		assert.strictEqual(oMatchedView.getId(), "mySampleView", "Should match only views with correct viewName");
-		sinon.assert.calledWith(this.fnLogSpy, "Found 1 views with viewName '" + this.sViewName + "'");
+		assert.strictEqual(oMatchedView.getId(), "mySampleView", "Should match only rendered views");
+		sinon.assert.calledWith(this.fnLogSpy, "Found 2 views with viewName '" + this.sViewName + "'");
+		sinon.assert.calledWith(this.fnLogSpy, "Found 1 visible views with viewName '" + this.sViewName + "'");
+
 	});
 
-	QUnit.test("Should return nothing when more than one views have the same name", function (assert) {
-		this.oSampleView.placeAt("qunit-fixture");
-		this.oOtherView.placeAt("qunit-fixture");
-		sap.ui.getCore().applyChanges();
-
+	QUnit.test("Should return nothing when more than one visible views have the same name", function (assert) {
 		var aViews = this.oPlugin.getAllControls(View, "View");
 		var oMatchedView = this.oPlugin.getView(this.sViewName);
 
 		assert.strictEqual(aViews.length, 3, "Should find all controls of type View");
 		assert.ok(!oMatchedView, "Should not match views with duplicate name");
 		sinon.assert.calledWith(this.fnLogSpy, "Found 2 views with viewName '" + this.sViewName + "'");
+		sinon.assert.calledWith(this.fnLogSpy, "Found 2 visible views with viewName '" + this.sViewName + "'");
 		sinon.assert.calledWithMatch(this.fnLogSpy, "Please provide viewId");
 	});
+
+	QUnit.test("Should not filter out invisible views that have a unique viewname", function (assert) {
+		var aViews = this.oPlugin.getAllControls(View, "View");
+		var oMatchedView = this.oPlugin.getView("differentName");
+
+		assert.strictEqual(aViews.length, 3, "Should find all controls of type View");
+		assert.strictEqual(oMatchedView.getId(), "myDifferentlyNamedView", "Should match invisible views when they have a 'unique' name");
+		sinon.assert.calledWith(this.fnLogSpy, "Found 1 views with viewName 'differentName'");
+	});
+
+	QUnit.module("OpaPlugin - fragmentId in view-relative match", {
+		beforeEach: function () {
+			this.oView = viewUtils.createXmlView("testViewName", "myView", {
+				id: "testFragment",
+				name: "fixture.OpaPlugin"
+			});
+			this.oView.placeAt("qunit-fixture");
+			sap.ui.getCore().applyChanges();
+		},
+		afterEach: function () {
+			this.oView.destroy();
+		}
+	});
+
+	QUnit.test("Should match controls by fragment ID inside view", function (assert) {
+		testWithFragmentId(new OpaPlugin(), assert);
+	});
+
+	QUnit.module("OpaPlugin - fragmentId in static area", {
+		beforeEach: function () {
+			var sView = [
+				'<core:View xmlns:core="sap.ui.core" xmlns:l="sap.ui.layout" xmlns="sap.m">',
+				'<Dialog id="myDialog">',
+				'<core:Fragment id="testFragment" fragmentName="fixture.OpaPlugin" type="JS"/>',
+				'</Dialog>',
+				'</core:View>'
+			].join('');
+			this.oView = sap.ui.xmlview({id: "myView", viewContent: sView});
+			this.oView.placeAt("qunit-fixture");
+			sap.ui.getCore().applyChanges();
+		},
+		afterEach: function () {
+			this.oView.destroy();
+		}
+	});
+
+	QUnit.test("Should match controls by fragment ID inside static area", function (assert) {
+		var fnStart = assert.async();
+		var oDialog = sap.ui.getCore().byId("myView--myDialog");
+		oDialog.attachAfterOpen(function () {
+			testWithFragmentId(new OpaPlugin(), assert);
+			fnStart();
+		});
+
+		oDialog.open();
+	});
+
+	function testWithFragmentId(oPlugin, assert) {
+		var oMatchingString = oPlugin.getMatchingControls({
+			viewId: "myView",
+			fragmentId: "testFragment",
+			id: "fragmentButton"
+		});
+		var aMatchingRegex = oPlugin.getMatchingControls({
+			viewId: "myView",
+			fragmentId: "testFragment",
+			id: /^frag.*Bu/
+		});
+		var aMatchingArray = oPlugin.getMatchingControls({
+			viewId: "myView",
+			fragmentId: "testFragment",
+			id: ["fragmentButton", "test"]
+		});
+		var oMatchingWrongFragment = oPlugin.getMatchingControls({
+			viewId: "myView",
+			fragmentId: "otherFragment",
+			id: "fragmentButton"
+		});
+
+		assert.ok(oMatchingString.getId(), "myView--testFragment--fragmentButton", "Should match button inside fragment  by string ID");
+		assert.strictEqual(aMatchingRegex.length, 1, "Should match only inside view and fragment");
+		assert.ok(aMatchingRegex[0].getId(), "myView--testFragment--fragmentButton", "Should match button inside fragment");
+		assert.strictEqual(aMatchingArray.length, 1, "Should match only inside view and fragment");
+		assert.ok(aMatchingArray[0].getId(), "myView--testFragment--fragmentButton", "Should match button inside fragment");
+		assert.ok(!oMatchingWrongFragment, "Should not match with wrong fragmentID");
+	}
 
 	jQuery(function () {
 		// hack for IE - dialog introduces a global when opened so i open it before the test starts

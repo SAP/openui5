@@ -7,6 +7,7 @@ sap.ui.define([
 	"sap/ui/core/UIComponent",
 	"sap/ui/core/ComponentContainer",
 	"sap/ui/core/mvc/View",
+	"sap/ui/qunit/utils/waitForThemeApplied",
 	"sap/ui/thirdparty/sinon-4"
 ],
 function(
@@ -16,6 +17,7 @@ function(
 	UIComponent,
 	ComponentContainer,
 	View,
+	waitForThemeApplied,
 	sinon
 ) {
 	"use strict";
@@ -222,4 +224,6 @@ function(
 	QUnit.done(function () {
 		jQuery("#qunit-fixture").hide();
 	});
+
+	return waitForThemeApplied();
 });

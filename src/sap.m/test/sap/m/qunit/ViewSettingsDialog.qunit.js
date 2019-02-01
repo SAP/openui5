@@ -2380,7 +2380,7 @@ sap.ui.define([
 
 		this.oVSD.setModel(model2);
 		this.oVSD.open();
-		assert.strictEqual(this.oVSD._getSubHeader().getContentRight().length, 1, "Reset Button should be available on page1 when the dialog is opened again");
+		assert.strictEqual(this.oVSD._getHeader().getContentRight().length, 1, "Reset Button should be available on page1 when the dialog is opened again");
 	});
 
 	QUnit.test("Reset group items selection on cancel", function (assert) {

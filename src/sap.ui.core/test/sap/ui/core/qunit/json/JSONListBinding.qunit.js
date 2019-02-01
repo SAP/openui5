@@ -82,6 +82,12 @@ sap.ui.define([
 				{firstName:"ANDREAS", lastName:"KLARK", gender:"MALE"},
 				{firstName:"PETER", lastName:"MILLER", gender:"MALE"}
 			],
+			flatNumbers: [
+				4, 6, 3, 0, 1, 2, 5
+			],
+			flatStrings: [
+				"Andreas", "Peter", "", "Marc"
+			],
 			"root":[
 				{
 					"name": "item1",
@@ -586,6 +592,26 @@ sap.ui.define([
 		assert.equal(sorted[4], "Andreas", "ListBinding after sort");
 		assert.equal(sorted[5], "Frank", "ListBinding after sort");
 		assert.equal(sorted[6], "Steave", "ListBinding after sort");
+	});
+
+	QUnit.test("flat arrays", function(assert) {
+
+		createListBinding("/flatNumbers");
+		var listBinding = bindings[0];
+		listBinding.sort(new Sorter(""));
+		var sorted = listBinding.getContexts().map(function(oContext, i) {
+			return oContext.getProperty("");
+		});
+		assert.deepEqual(sorted, [0,1,2,3,4,5,6], "sorted array of numbers");
+
+		createListBinding("/flatStrings");
+		var listBinding = bindings[0];
+		listBinding.sort(new Sorter(""));
+		var sorted = listBinding.getContexts().map(function(oContext, i) {
+			return oContext.getProperty("");
+		});
+		assert.deepEqual(sorted, ["", "Andreas", "Marc", "Peter"], "sorted array of strings");
+
 	});
 
 	QUnit.test("change event test", function(assert) {

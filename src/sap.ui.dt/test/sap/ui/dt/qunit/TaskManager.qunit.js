@@ -1,11 +1,13 @@
 /*global QUnit*/
 
 sap.ui.define([
-	'sap/ui/dt/TaskManager',
-	'sap/ui/dt/Util'
+	"sap/ui/dt/TaskManager",
+	"sap/ui/dt/Util",
+	"sap/ui/qunit/utils/waitForThemeApplied"
 ], function (
 	TaskManager,
-	Util
+	Util,
+	waitForThemeApplied
 ) {
 	"use strict";
 
@@ -186,4 +188,6 @@ sap.ui.define([
 	QUnit.done(function() {
 		jQuery("#qunit-fixture").hide();
 	});
+
+	return waitForThemeApplied();
 });

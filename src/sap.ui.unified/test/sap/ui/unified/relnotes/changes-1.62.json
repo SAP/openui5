@@ -31,6 +31,54 @@
         "type": "FIX",
         "text": " sap.ui.unified.Menu: Menu works correctly on combi devices",
         "references": []
+      },
+      {
+        "id": "8b3da3b345c01d459d18f653b5e23b1dcf618ce1",
+        "type": "FEATURE",
+        "text": " sap.m.SinglePlanningCalendar: Appointments selection is introduced",
+        "references": []
+      },
+      {
+        "id": "bb5677151ce0704e0e0a676ad2478cf9117185f3",
+        "type": "FIX",
+        "text": " sap.m.ColorPicker: Handles now have correct width \u0026 color",
+        "references": []
+      },
+      {
+        "id": "cd583b07396dbc53a6e7949b575ef1f3d5edf60f",
+        "type": "FIX",
+        "text": " sap.m.PlanningCalendar: correct focus when picker is closed",
+        "references": []
+      },
+      {
+        "id": "426c07426696bb8a015fd75da3d149ea0a0b9e30",
+        "type": "FIX",
+        "text": " sap.m.PlanningCalendar: overlay  is shown every time one Picker is open",
+        "references": []
+      },
+      {
+        "id": "e0dc2fbbc780b19e1f7c66b8649d61d2cea47f24",
+        "type": "FIX",
+        "text": " sap.ui.unified.Calendar: remove tabindex from the root element",
+        "references": []
+      },
+      {
+        "id": "609aa19bbfd8a8f4684717dc7bbef74fc36d9e57",
+        "type": "FIX",
+        "text": " sap.ui.unified.CalendarDateInterval: fix failing build",
+        "references": []
+      },
+      {
+        "id": "b11ca328c6772a85dc475285049661d6c7c84e67",
+        "type": "FIX",
+        "text": " ui.unified.CalendarDateInterval: Test page adjusted",
+        "references": []
+      },
+      {
+        "id": "e6914760d7e646f896f1d7baa2104cf0184156a2",
+        "type": "FIX",
+        "text": " ui.unified.ColorPicker: Test page adjusted",
+        "references": []
       }
     ]
   }

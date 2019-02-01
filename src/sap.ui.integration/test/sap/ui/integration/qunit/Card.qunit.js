@@ -20,7 +20,6 @@ function (
 ) {
 	"use strict";
 
-	var iTimeout = 1000;
 	var DOM_RENDER_LOCATION = "qunit-fixture";
 
 	var oManifest_Header = {
@@ -289,6 +288,196 @@ function (
 		}
 	};
 
+	var oManifest_ObjectCard = {
+		"sap.app": {
+			"type": "card"
+		},
+		"sap.card": {
+			"type": "Object",
+			"data": {
+				"json": {
+					"firstName": "Donna",
+					"lastName": "Moore",
+					"position": "Sales Executive",
+					"phone": "+1 202 555 5555",
+					"photo": "../images/Woman_avatar_01.png",
+					"manager": {
+						"firstName": "John",
+						"lastName": "Miller",
+						"photo": "../images/Woman_avatar_02.png"
+					},
+					"company": {
+						"name": "Company A",
+						"address": "481 West Street, Anytown OH 45066, USA",
+						"website": "www.company_a.example.com"
+					}
+				}
+			},
+			"header": {
+				"icon": {
+					"src": "{photo}"
+				},
+				"title": "{firstName} {lastName}",
+				"subTitle": "{position}"
+			},
+			"content": {
+				"groups": [
+					{
+						"title": "Contact Details",
+						"items": [
+							{
+								"label": "First Name",
+								"value": "{firstName}"
+							},
+							{
+								"label": "Last Name",
+								"value": "{lastName}"
+							},
+							{
+								"label": "Phone",
+								"value": "{phone}"
+							}
+						]
+					},
+					{
+						"title": "Organizational Details",
+						"items": [
+							{
+								"label": "Direct Manager",
+								"value": "{manager/firstName} {manager/lastName}",
+								"icon": {
+									"src": "{manager/photo}"
+								}
+							}
+						]
+					},
+					{
+						"title": "Company Details",
+						"items": [
+							{
+								"label": "Company Name",
+								"value": "{company/name}"
+							},
+							{
+								"label": "Address",
+								"value": "{company/address}"
+							},
+							{
+								"label": "Website",
+								"link": "{company/website}"
+							}
+						]
+					}
+				]
+			}
+		}
+	};
+
+	var oManifest_TableCard = {
+		"sap.card": {
+			"type": "Table",
+			"header": {
+				"title": "Sales Orders for Key Accounts"
+			},
+			"content": {
+				"data": {
+					"json": [
+						{
+							"salesOrder": "5000010050",
+							"customer": "Robert Brown Entertainment",
+							"status": "Delivered",
+							"statusState": "Success",
+							"orderUrl": "http://www.sap.com",
+							"percent": 30,
+							"percentValue": "30%",
+							"progressState": "Error",
+							"iconSrc": "sap-icon://help"
+						},
+						{
+							"salesOrder": "5000010051",
+							"customer": "Entertainment Argentinia",
+							"status": "Canceled",
+							"statusState": "Error",
+							"orderUrl": "http://www.sap.com",
+							"percent": 70,
+							"percentValue": "70 of 100",
+							"progressState": "Success",
+							"iconSrc": "sap-icon://help"
+						},
+						{
+							"salesOrder": "5000010052",
+							"customer": "Brazil Technologies",
+							"status": "In Progress",
+							"statusState": "Warning",
+							"orderUrl": "http://www.sap.com",
+							"percent": 55,
+							"percentValue": "55GB of 100",
+							"progressState": "Warning",
+							"iconSrc": "sap-icon://help"
+						},
+						{
+							"salesOrder": "5000010053",
+							"customer": "Quimica Madrilenos",
+							"status": "Delivered",
+							"statusState": "Success",
+							"orderUrl": "http://www.sap.com",
+							"percent": 10,
+							"percentValue": "10GB",
+							"progressState": "Error",
+							"iconSrc": "sap-icon://help"
+						},
+						{
+							"salesOrder": "5000010054",
+							"customer": "Development Para O Governo",
+							"status": "Delivered",
+							"statusState": "Success",
+							"orderUrl": "http://www.sap.com",
+							"percent": 100,
+							"percentValue": "100%",
+							"progressState": "Success",
+							"iconSrc": "sap-icon://help"
+						}
+					]
+				},
+				"columns": [
+					{
+						"label": "Sales Order",
+						"value": "{salesOrder}",
+						"identifier": true
+					},
+					{
+						"label": "Customer",
+						"value": "{customer}"
+					},
+					{
+						"label": "Status",
+						"value": "{status}",
+						"state": "{statusState}"
+					},
+					{
+						"label": "Order ID",
+						"value": "{orderUrl}",
+						"url": "{orderUrl}"
+					},
+					{
+						"label": "Progress",
+						"progressIndicator": {
+							"percent": "{percent}",
+							"text": "{percentValue}",
+							"state": "{progressState}"
+						}
+					},
+					{
+						"label": "Avatar",
+						"icon": {
+							"src": "{iconSrc}"
+						}
+					}
+				]
+			}
+		}
+	};
+
 	var oManifest_AvatarHeader = {
 		"sap.card": {
 			"type": "List",
@@ -379,53 +568,48 @@ function (
 		}
 	};
 
-	QUnit.module("Init");
-
-	QUnit.test("Initialization", function (assert) {
+	function testContentInitialization(oManifest, assert) {
 
 		// Arrange
 		var done = assert.async();
 
 		var oCard = new Card("somecard", {
-			manifest: oManifest_ListCard,
-			width: "400px",
-			height: "600px"
-		});
-		var oAnalyticalCard = new Card("analyticalCard", {
-			manifest: oManifest_AnalyticalCard,
+			manifest: oManifest,
 			width: "400px",
 			height: "600px"
 		});
 
 		// Act
 		oCard.placeAt(DOM_RENDER_LOCATION);
-		oAnalyticalCard.placeAt(DOM_RENDER_LOCATION);
 		Core.applyChanges();
 
 		// Assert
 		assert.notOk(oCard.getAggregation("_header"), "Card header should be empty.");
 		assert.notOk(oCard.getAggregation("_content"), "Card content should be empty.");
-		assert.notOk(oAnalyticalCard.getAggregation("_content"), "Analytical Card content should be empty.");
 		assert.ok(oCard.getDomRef(), "Card should be rendered.");
-		assert.ok(oAnalyticalCard.getDomRef(), "Analytical Card should be rendered.");
 		assert.equal(oCard.getDomRef().clientWidth, 400, "Card should have width set to 400px.");
 		assert.equal(oCard.getDomRef().clientHeight, 600, "Card should have height set to 600px.");
-		assert.equal(oAnalyticalCard.getDomRef().clientWidth, 400, "Analytical Card should have width set to 400px.");
-		assert.equal(oAnalyticalCard.getDomRef().clientHeight, 600, "Analytical Card should have height set to 600px.");
 
-		// setTimeout until there are proper events to attach to.
-		setTimeout(function () {
-
+		oCard.attachEvent("_contentUpdated", function () {
 			// Assert
 			assert.ok(oCard.getAggregation("_header").getDomRef(), "Card header should be rendered.");
 			assert.ok(oCard.getAggregation("_content").getDomRef(), "Card content should be rendered.");
-			assert.ok(oAnalyticalCard.getAggregation("_content").getDomRef(), "Card content should be rendered.");
 
 			// Cleanup
 			oCard.destroy();
 
 			done();
-		}, iTimeout);
+		});
+	}
+
+	QUnit.module("Init");
+
+	QUnit.test("Initialization - ListContent", function (assert) {
+		testContentInitialization(oManifest_ListCard, assert);
+	});
+
+	QUnit.test("Initialization - AnalyticalContent", function (assert) {
+		testContentInitialization(oManifest_AnalyticalCard, assert);
 	});
 
 	QUnit.module("Card headers", {
@@ -450,15 +634,7 @@ function (
 		var done = assert.async();
 
 		// Act
-		this.oCard.setManifest(oManifest_Header);
-		Core.applyChanges();
-
-		// Assert
-		assert.notOk(this.oCard.getAggregation("_header"), "Card header should be empty.");
-		assert.notOk(this.oCard.getAggregation("_content"), "Card content should be empty.");
-
-		// setTimeout until there are proper events to attach to.
-		setTimeout(function () {
+		this.oCard.attachEvent("_headerUpdated", function () {
 
 			// Assert
 			var oHeader = this.oCard.getAggregation("_header");
@@ -474,7 +650,13 @@ function (
 			assert.equal(oHeader.getStatusText(), oManifest_Header["sap.card"].header.status.text, "Card header status should be correct.");
 
 			done();
-		}.bind(this), iTimeout);
+		}.bind(this));
+		this.oCard.setManifest(oManifest_Header);
+		Core.applyChanges();
+
+		// Assert
+		assert.notOk(this.oCard.getAggregation("_header"), "Card header should be empty.");
+		assert.notOk(this.oCard.getAggregation("_content"), "Card content should be empty.");
 	});
 
 	QUnit.test("Card - Default Header Avatar", function (assert) {
@@ -483,11 +665,7 @@ function (
 		var done = assert.async();
 
 		// Act
-		this.oCard.setManifest(oManifest_AvatarHeader);
-		Core.applyChanges();
-
-		// setTimeout until there are proper events to attach to.
-		setTimeout(function () {
+		this.oCard.attachEvent("_headerUpdated", function () {
 
 			// Assert
 			var oHeader = this.oCard.getAggregation("_header");
@@ -496,7 +674,9 @@ function (
 			assert.equal(oHeader.getAggregation("_avatar").getInitials(), "AJ", "Card header initials should be 'AJ'.");
 
 			done();
-		}.bind(this), iTimeout);
+		}.bind(this));
+		this.oCard.setManifest(oManifest_AvatarHeader);
+		Core.applyChanges();
 	});
 
 	QUnit.test("Card - Numeric Header generic", function (assert) {
@@ -505,11 +685,7 @@ function (
 		var done = assert.async();
 
 		// Act
-		this.oCard.setManifest(oManifest_NumericHeader);
-		Core.applyChanges();
-
-		// setTimeout until there are proper events to attach to.
-		setTimeout(function () {
+		this.oCard.attachEvent("_headerUpdated", function () {
 
 			// Assert
 			var oHeader = this.oCard.getAggregation("_header");
@@ -522,7 +698,9 @@ function (
 			assert.equal(oHeader.getAggregation("_details").getText(), oManifest_NumericHeader["sap.card"].header.details, "Card header details should be correct.");
 
 			done();
-		}.bind(this), iTimeout);
+		}.bind(this));
+		this.oCard.setManifest(oManifest_NumericHeader);
+		Core.applyChanges();
 	});
 
 	QUnit.test("Card - Numeric Header main indicator with json data", function (assert) {
@@ -531,12 +709,7 @@ function (
 		var done = assert.async();
 
 		// Act
-		this.oCard.setManifest(oManifest_NumericHeader);
-		Core.applyChanges();
-
-		// setTimeout until there are proper events to attach to.
-		setTimeout(function () {
-
+		this.oCard.attachEvent("_headerUpdated", function () {
 			var oHeader = this.oCard.getAggregation("_header");
 
 			// Assert aggregation _mainIndicator
@@ -547,7 +720,9 @@ function (
 			assert.equal(oHeader.getAggregation("_mainIndicator").getValueColor(), oManifest_NumericHeader["sap.card"].header.data.json["valueColor"], "Card header main indicator valueColor should be correct.");
 
 			done();
-		}.bind(this), iTimeout);
+		}.bind(this));
+		this.oCard.setManifest(oManifest_NumericHeader);
+		Core.applyChanges();
 	});
 
 	QUnit.test("Card - Numeric Header main indicator without 'data'", function (assert) {
@@ -556,12 +731,7 @@ function (
 		var done = assert.async();
 
 		// Act
-		this.oCard.setManifest(oManifest_NumericHeader2);
-		Core.applyChanges();
-
-		// setTimeout until there are proper events to attach to.
-		setTimeout(function () {
-
+		this.oCard.attachEvent("_headerUpdated", function () {
 			var oHeader = this.oCard.getAggregation("_header");
 
 			// Assert aggregation _mainIndicator
@@ -572,7 +742,9 @@ function (
 			assert.equal(oHeader.getAggregation("_mainIndicator").getValueColor(), oManifest_NumericHeader2["sap.card"].header.mainIndicator.state, "Card header main indicator valueColor should be correct.");
 
 			done();
-		}.bind(this), iTimeout);
+		}.bind(this));
+		this.oCard.setManifest(oManifest_NumericHeader2);
+		Core.applyChanges();
 	});
 
 	QUnit.test("Card - Numeric Header side indicators", function (assert) {
@@ -581,12 +753,7 @@ function (
 		var done = assert.async();
 
 		// Act
-		this.oCard.setManifest(oManifest_NumericHeader);
-		Core.applyChanges();
-
-		// setTimeout until there are proper events to attach to.
-		setTimeout(function () {
-
+		this.oCard.attachEvent("_headerUpdated", function () {
 			var oHeader = this.oCard.getAggregation("_header");
 
 			// Assert aggregation sideIndicators
@@ -602,13 +769,14 @@ function (
 			});
 
 			done();
-		}.bind(this), iTimeout);
+		}.bind(this));
+		this.oCard.setManifest(oManifest_NumericHeader);
+		Core.applyChanges();
 	});
 
 	QUnit.module("Analytical Card", {
 		beforeEach: function () {
 			this.oCard = new Card({
-				manifest: oManifest_AnalyticalCard,
 				width: "400px",
 				height: "600px"
 			});
@@ -627,13 +795,11 @@ function (
 		// Arrange
 		var done = assert.async(),
 			window = {
-			"start": "firstDataPoint",
-			"end": "lastDataPoint"
-		};
+				"start": "firstDataPoint",
+				"end": "lastDataPoint"
+			};
 
-		// setTimeout until there are proper events to attach to.
-		setTimeout(function () {
-
+		this.oCard.attachEvent("_contentUpdated", function () {
 			var oContent = this.oCard.getAggregation("_content"),
 				oChart = oContent.getAggregation("_content"),
 				oVizProperites = oChart.getVizProperties();
@@ -660,32 +826,180 @@ function (
 			assert.equal(oChart.getFeeds()[1].getProperty("type"), "Dimension", "Chart should have a feed item whit property 'Measure'");
 
 			done();
-		}.bind(this), iTimeout);
+		}.bind(this));
+
+		// Act
+		this.oCard.setManifest(oManifest_AnalyticalCard);
+	});
+
+	QUnit.module("Object Card", {
+		beforeEach: function () {
+			this.oCard = new Card({
+				width: "400px",
+				height: "600px"
+			});
+
+			this.oCard.placeAt(DOM_RENDER_LOCATION);
+			Core.applyChanges();
+		},
+		afterEach: function () {
+			this.oCard.destroy();
+			this.oCard = null;
+		}
+	});
+
+	QUnit.test("Object Card - using manifest", function (assert) {
+
+		// Arrange
+		var done = assert.async();
+		var oHeaderPromise = new Promise(function (resolve) {
+			this.oCard.attachEvent("_headerUpdated", function () {
+				resolve();
+			});
+		}.bind(this));
+		var oContentPromise = new Promise(function (resolve) {
+			this.oCard.attachEvent("_contentUpdated", function () {
+				resolve();
+			});
+		}.bind(this));
+
+		Promise.all([oHeaderPromise, oContentPromise]).then(function () {
+			var oObjectContent = this.oCard.getAggregation("_content");
+			var oContent = oObjectContent.getAggregation("_content");
+			var oHeader = this.oCard.getAggregation("_header");
+			var aGroups = oContent.getItems();
+			var oData = oManifest_ObjectCard["sap.card"].data.json;
+			var oManifestContent = oManifest_ObjectCard["sap.card"].content;
+
+			assert.equal(aGroups.length, 3, "Should have 3 groups.");
+
+			// Header assertions
+			assert.equal(oHeader.getTitle(), oData.firstName + " " + oData.lastName, "Should have correct header title.");
+			assert.equal(oHeader.getSubtitle(), oData.position, "Should have correct header subtitle.");
+			assert.equal(oHeader.getIconSrc(), oData.photo, "Should have correct header icon source.");
+
+			// Group 1 assertions
+			assert.equal(aGroups[0].getItems().length, 7, "Should have 7 items.");
+			assert.equal(aGroups[0].getItems()[0].getText(), oManifestContent.groups[0].title, "Should have correct group title.");
+			assert.equal(aGroups[0].getItems()[1].getText(), oManifestContent.groups[0].items[0].label, "Should have correct item label.");
+			assert.equal(aGroups[0].getItems()[2].getText(), oData.firstName, "Should have correct item value.");
+			assert.equal(aGroups[0].getItems()[3].getText(), oManifestContent.groups[0].items[1].label, "Should have correct item label.");
+			assert.equal(aGroups[0].getItems()[4].getText(), oData.lastName, "Should have correct item value.");
+			assert.equal(aGroups[0].getItems()[5].getText(), oManifestContent.groups[0].items[2].label, "Should have correct item label.");
+			assert.equal(aGroups[0].getItems()[6].getText(), oData.phone, "Should have correct item value.");
+
+			// Group 2 assertions
+			assert.equal(aGroups[1].getItems().length, 2, "Should have 2 items.");
+			assert.equal(aGroups[1].getItems()[0].getText(), oManifestContent.groups[1].title, "Should have correct group title.");
+			assert.equal(aGroups[1].getItems()[1].getItems()[0].getSrc(), oData.manager.photo, "Should have correct image source.");
+			assert.equal(aGroups[1].getItems()[1].getItems()[1].getItems()[0].getText(), oManifestContent.groups[1].items[0].label, "Should have correct item label");
+			assert.equal(aGroups[1].getItems()[1].getItems()[1].getItems()[1].getText(), oData.manager.firstName + " " + oData.manager.lastName, "Should have correct item value.");
+
+			// Group 3 assertions
+			assert.equal(aGroups[2].getItems().length, 7, "Should have 7 items.");
+			assert.equal(aGroups[2].getItems()[0].getText(), oManifestContent.groups[2].title, "Should have correct group title.");
+			assert.equal(aGroups[2].getItems()[1].getText(), oManifestContent.groups[2].items[0].label, "Should have correct item label.");
+			assert.equal(aGroups[2].getItems()[2].getText(), oData.company.name, "Should have correct item value.");
+			assert.equal(aGroups[2].getItems()[3].getText(), oManifestContent.groups[2].items[1].label, "Should have correct item label.");
+			assert.equal(aGroups[2].getItems()[4].getText(), oData.company.address, "Should have correct item value.");
+			assert.equal(aGroups[2].getItems()[5].getText(), oManifestContent.groups[2].items[2].label, "Should have correct item label.");
+			assert.equal(aGroups[2].getItems()[6].getText(), oData.company.website, "Should have correct item value.");
+			assert.equal(aGroups[2].getItems()[6].getHref(), oData.company.website, "Should have correct item link.");
+
+			done();
+		}.bind(this));
+
+		// Act
+		this.oCard.setManifest(oManifest_ObjectCard);
+	});
+
+	QUnit.module("Table Card", {
+		beforeEach: function () {
+			this.oCard = new Card({
+				width: "800px"
+			});
+
+			this.oCard.placeAt(DOM_RENDER_LOCATION);
+			Core.applyChanges();
+		},
+		afterEach: function () {
+			this.oCard.destroy();
+			this.oCard = null;
+		}
+	});
+
+	QUnit.test("Table Card - using manifest", function (assert) {
+
+		// Arrange
+		var done = assert.async();
+
+		this.oCard.attachEvent("_contentUpdated", function () {
+			var oManifestData = oManifest_TableCard["sap.card"].content.data.json;
+			var oManifestContent = oManifest_TableCard["sap.card"].content;
+			var oCardContent = this.oCard.getAggregation("_content");
+			var oTable = oCardContent.getAggregation("_content");
+			var aColumns = oTable.getColumns();
+			var aCells = oTable.getItems()[0].getCells();
+
+			// Assert
+			assert.equal(aColumns.length, 6, "Should have 6 columns.");
+
+			// Columns titles
+			assert.equal(aColumns[0].getHeader().getText(), oManifestContent.columns[0].label, "Should have correct column title");
+			assert.equal(aColumns[1].getHeader().getText(), oManifestContent.columns[1].label, "Should have correct column title");
+			assert.equal(aColumns[2].getHeader().getText(), oManifestContent.columns[2].label, "Should have correct column title");
+			assert.equal(aColumns[3].getHeader().getText(), oManifestContent.columns[3].label, "Should have correct column title");
+			assert.equal(aColumns[4].getHeader().getText(), oManifestContent.columns[4].label, "Should have correct column title");
+			assert.equal(aColumns[5].getHeader().getText(), oManifestContent.columns[5].label, "Should have correct column title");
+
+			// Column cells types
+			assert.ok(aCells[0].isA("sap.m.ObjectIdentifier"), "Column with provided 'identifier' should be of type 'ObjectIdentifier'");
+			assert.ok(aCells[1].isA("sap.m.Text"), "Column with 'value' only should be of type 'Text'");
+			assert.ok(aCells[2].isA("sap.m.ObjectStatus"), "Column with a 'state' should be of type 'ObjectStatus'");
+			assert.ok(aCells[3].isA("sap.m.Link"), "Column with an 'url' should be of type 'Link'");
+			assert.ok(aCells[4].isA("sap.m.ProgressIndicator"), "Column with a 'progressIndicator' should be of type 'ProgressIndicator'");
+			assert.ok(aCells[5].isA("sap.f.Avatar"), "Column with an 'icon' should be of type 'Avatar'");
+
+			// Column values
+			assert.equal(aCells[0].getTitle(), oManifestData[0].salesOrder, "Should have correct identifier value.");
+			assert.equal(aCells[1].getText(), oManifestData[0].customer, "Should have correct text value.");
+			assert.equal(aCells[2].getText(), oManifestData[0].status, "Should have correct text value.");
+			assert.equal(aCells[2].getState(), oManifestData[0].statusState, "Should have correct state.");
+			assert.equal(aCells[3].getText(), oManifestData[0].orderUrl, "Should have correct text value.");
+			assert.equal(aCells[3].getHref(), oManifestData[0].orderUrl, "Should have correct url value.");
+			assert.equal(aCells[4].getPercentValue(), oManifestData[0].percent, "Should have correct percentage.");
+			assert.equal(aCells[4].getDisplayValue(), oManifestData[0].percentValue, "Should have correct progress text.");
+			assert.equal(aCells[4].getState(), oManifestData[0].progressState, "Should have correct progress state.");
+			assert.equal(aCells[5].getSrc(), oManifestData[0].iconSrc, "Should have correct icon src.");
+
+			done();
+		}.bind(this));
+
+		// Act
+		this.oCard.setManifest(oManifest_TableCard);
 	});
 
 	QUnit.module("Card Accessibility", {
 		beforeEach: function () {
 			this.oRb = sap.ui.getCore().getLibraryResourceBundle("sap.f");
 			this.oCard = new Card("somecard", {
-				manifest: oManifest_ListCard,
 				width: "400px",
 				height: "600px"
 			});
-			this.oNumercHeader = new Card("numericCard", {
-				manifest: oManifest_NumericHeader,
+			this.oNumericHeaderCard = new Card("numericCard", {
 				width: "400px",
 				height: "600px"
 			});
 
 			this.oCard.placeAt(DOM_RENDER_LOCATION);
-			this.oNumercHeader.placeAt(DOM_RENDER_LOCATION);
+			this.oNumericHeaderCard.placeAt(DOM_RENDER_LOCATION);
 			Core.applyChanges();
 		},
 		afterEach: function () {
 			this.oCard.destroy();
 			this.oCard = null;
-			this.oNumercHeader.destroy();
-			this.oNumercHeader = null;
+			this.oNumericHeaderCard.destroy();
+			this.oNumericHeaderCard = null;
 			this.oRb = null;
 		}
 	});
@@ -694,31 +1008,45 @@ function (
 
 		// Arrange
 		var done = assert.async();
+		var oHeaderPromise = new Promise(function (resolve) {
+			this.oCard.attachEvent("_headerUpdated", function () {
+				resolve();
+			});
+		}.bind(this));
+		var oContentPromise = new Promise(function (resolve) {
+			this.oCard.attachEvent("_contentUpdated", function () {
+				resolve();
+			});
+		}.bind(this));
 
-		// setTimeout until there are proper events to attach to.
-		setTimeout(function () {
-				var oCardDomRef = this.oCard.getDomRef(),
-					oHeader = this.oCard.getAggregation("_header"),
-					oHeaderDomRef = oHeader.getDomRef(),
-					oContentDomRef = document.getElementsByClassName("sapFCardContent")[0],
-					sAriaLabelledByIds = oHeader._getTitle().getId() + " " + oHeader._getSubtitle().getId() + " " + oHeader._getAvatar().getId();
+		Promise.all([oHeaderPromise, oContentPromise]).then(function () {
 
-			//Card Container
+			// Assert
+			var oCardDomRef = this.oCard.getDomRef(),
+				oHeader = this.oCard.getAggregation("_header"),
+				oHeaderDomRef = oHeader.getDomRef(),
+				oContentDomRef = document.getElementsByClassName("sapFCardContent")[0],
+				sAriaLabelledByIds = oHeader._getTitle().getId() + " " + oHeader._getSubtitle().getId() + " " + oHeader._getAvatar().getId();
+
+			// Assert Card Container
 			assert.equal(oCardDomRef.getAttribute("role"), "region", "Card container should have a role - region");
 			assert.equal(oCardDomRef.getAttribute("aria-roledescription"), this.oRb.getText("ARIA_ROLEDESCRIPTION_CARD"), "Card container should have aria-roledescription - Card");
 			assert.equal(oCardDomRef.getAttribute("aria-labelledby"), oHeader._getTitle().getId(), "Card container should have aria-lebelledby - pointing to the title id if there is one");
 
-			//Card Header
+			// Assert Card Header
 			assert.equal(oHeaderDomRef.getAttribute("role"), "group", "Card header should have a role - group");
 			assert.equal(oHeaderDomRef.getAttribute("aria-roledescription"), this.oRb.getText("ARIA_ROLEDESCRIPTION_CARD_HEADER"), "Card header should have aria-roledescription - Card Header");
 			assert.equal(oHeaderDomRef.getAttribute("aria-labelledby"), sAriaLabelledByIds, "Card container should have aria-lebelledby - pointing to the title, subtitle and avatar ids if there is one");
 			assert.equal(oHeaderDomRef.getAttribute("tabindex"), 0, "Card header should have tabindex=0");
 
-			//Card Content
+			// Assert Card Content
 			assert.equal(oContentDomRef.getAttribute("role"), "group", "Card content should have a role - group");
 			assert.equal(oContentDomRef.getAttribute("aria-label"), this.oRb.getText("ARIA_LABEL_CARD_CONTENT"), "Card container should have aria-label - Card Content");
 			done();
-		}.bind(this), iTimeout);
+		}.bind(this));
+
+		// Act
+		this.oCard.setManifest(oManifest_ListCard);
 	});
 
 	QUnit.test("Card - Numeric Header", function (assert) {
@@ -726,19 +1054,20 @@ function (
 		// Arrange
 		var done = assert.async();
 
-		// setTimeout until there are proper events to attach to.
-		setTimeout(function () {
-			var oHeader = this.oNumercHeader.getAggregation("_header"),
+		this.oNumericHeaderCard.attachEvent("_headerUpdated", function () {
+			var oHeader = this.oNumericHeaderCard.getAggregation("_header"),
 				oHeaderDomRef = oHeader.getDomRef(),
 				sAriaLabelledByIds = oHeader._getTitle().getId() + " " + oHeader._getSubtitle().getId() + " " + oHeader._getUnitOfMeasurement().getId() + " " + oHeader._getMainIndicator().getId() +  oHeader._getSideIndicatorIds() + " " + oHeader._getDetails().getId();
 
-			//Card Header
 			assert.equal(oHeaderDomRef.getAttribute("role"), "group", "Card header should have a role - group");
 			assert.equal(oHeaderDomRef.getAttribute("aria-roledescription"), this.oRb.getText("ARIA_ROLEDESCRIPTION_CARD_HEADER"), "Card header should have aria-roledescription - Card Header");
 			assert.equal(oHeaderDomRef.getAttribute("aria-labelledby"),  sAriaLabelledByIds, "Card container should have aria-lebelledby - pointing to the title, subtitle and avatar ids if there is one");
 			assert.equal(oHeaderDomRef.getAttribute("tabindex"), 0, "Card header should have tabindex=0");
 			done();
-		}.bind(this), iTimeout);
+		}.bind(this));
+
+		// Act
+		this.oNumericHeaderCard.setManifest(oManifest_NumericHeader);
 	});
 
 });

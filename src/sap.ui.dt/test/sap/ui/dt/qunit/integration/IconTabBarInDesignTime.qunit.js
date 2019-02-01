@@ -8,7 +8,8 @@ sap.ui.define([
 	"sap/m/Button",
 	"sap/m/IconTabBar",
 	"sap/m/IconTabFilter",
-	"sap/ui/dt/DOMUtil"
+	"sap/ui/dt/DOMUtil",
+	"sap/ui/qunit/utils/waitForThemeApplied"
 ], function(
 	DesignTime,
 	OverlayRegistry,
@@ -17,7 +18,8 @@ sap.ui.define([
 	Button,
 	IconTabBar,
 	IconTabFilter,
-	DOMUtil
+	DOMUtil,
+	waitForThemeApplied
 ) {
 	'use strict';
 
@@ -119,4 +121,6 @@ sap.ui.define([
 	QUnit.done(function() {
 		jQuery("#qunit-fixture").hide();
 	});
+
+	return waitForThemeApplied();
 });

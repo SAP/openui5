@@ -426,7 +426,7 @@ function (jQuery, ManagedObject, Log, Locale, LocaleData) {
 	 *
 	 * It is used internally by controls that support the <code>wrappingType:{@link sap.m.WrappingType WrappingType.Hyphenated}</code> property.
 	 *
-	 * As the class is singleton, an instance should be acquired from {@link sap.ui.core.hyphenation.Hyphenation#sap.ui.core.hyphenation.Hyphenation.getInstance Hyphenation#getInstance}.
+	 * As the class is singleton, an instance should be acquired from {@link sap.ui.core.hyphenation.Hyphenation.getInstance Hyphenation.getInstance}.
 	 *
 	 * <h3>Usage</h3>
 	 * <h4>When to use:</h4>

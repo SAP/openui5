@@ -1734,12 +1734,14 @@ html[data-sap-ui-browser^="ff"] .sapUiDemokit .landingImage {
         padding-top: 34%;
 	}
 }
+
 @media (max-width: 64rem) and (orientation: portrait) {
     .sapUiDemokit .welcomeImageCell:before {
 		/* Aspect ratio on a landscape mode differs */
         padding-top: 40%;
 	}
 }
+
 @media (min-width: 64rem) {
     .sapUiDemokit .welcomeImageCell:before {
 		/* Keeping aspect ratio according to the image set */
@@ -2135,6 +2137,10 @@ html:not(.sapUiMedia-Std-Phone) .sapUiParamText.depth-5 {
 	word-break: break-word;
 }
 
+.sapDemokitTreeItemTitle {
+	color: #fff;
+}
+
 .sapDemokitTreeItemLabel,
 .sapDemokitTreeItemTitle {
 	display: inline-block;
@@ -2202,3 +2208,76 @@ html:not(.sapUiMedia-Std-Phone) .sapUiParamText.depth-5 {
 	margin-top: 1.5rem;
 	margin-left: -0.125rem;
 }
+
+/* Fixes size of welcome and landing images on landscape mode, phone mobile device */
+
+@media (orientation: landscape) {
+	.sap-phone .sapUiDemokit .welcomeImage {
+		position: absolute;
+		height: 100%;
+	}
+
+	.sap-phone.sapUiDemokit .sapUiDemokitLandingImageCell {
+		position: relative;
+	}
+
+	.sap-phone .sapUiDemokit .landingImage {
+		position: absolute;
+		left: 0;
+		top: 0;
+		right: 0;
+		bottom: 0;
+	}
+
+	.sap-phone .sapUiDemokit .sapUiDemokitLandingImageCell:not(.welcomeImageCell):before {
+		content: '';
+		display: block;
+		float: left;
+		padding-top: 24.6%;
+	}
+
+	.sap-phone .sapUiDemokit .sapMText.sapUiDocumentationApiHeaderTitleText {
+		top: 1.25rem;
+		font-size: 1.625rem;
+		padding-left: 1rem;
+	}
+}
+
+/* API Ref Tree - start */
+.sapDemokitTreeItem > .sapMLIBContent {
+	white-space: nowrap;
+}
+
+.sapUiDemoKitTreeItemIcon {
+	font-size: 12px;
+	font-weight: bold;
+	margin-right: 4px;
+	border-radius: 13px;
+	width: 13px;
+	height: 13px;
+	display: inline-block;
+	padding-left: 2px;
+	box-sizing: border-box;
+	border: none;
+	background: #FFFFFF;
+	color: #346187;
+}
+
+/* Symbol type specific classes - constructed as follows sapUiDemoKitTreeItem(Abbreviation of the symbol type) */
+.sapUiDemoKitTreeItemE {
+	padding-left: 3px;
+}
+
+.sapUiDemoKitTreeItemI {
+	padding-left: 5px;
+}
+
+.sapUiDemoKitTreeItemF {
+	padding-left: 3px;
+}
+
+.sapUiDemoKitTreeItemT {
+	padding-left: 3px;
+}
+
+/* API Ref Tree - end */

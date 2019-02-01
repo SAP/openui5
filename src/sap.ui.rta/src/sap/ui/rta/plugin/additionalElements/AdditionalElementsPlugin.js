@@ -553,6 +553,17 @@ sap.ui.define([
 
 			var aSelectedElements = this.getDialog().getSelectedElements();
 
+			// sort elements by label in descending order. When added the fields will be in ascending order on the UI
+			aSelectedElements.sort(function(oElement1, oElement2) {
+				if (oElement1.label > oElement2.label) {
+					return -1;
+				}
+				if (oElement1.label < oElement2.label) {
+					return 1;
+				}
+				return 0;
+			});
+
 			if (aSelectedElements.length > 0) {
 				//at least one element selected
 				return this.getCommandFactory().getCommandFor(mParents.parent, "composite")
@@ -733,7 +744,7 @@ sap.ui.define([
 			var iRevealTargetIndex = Utils.getIndex(mParents.parent, oSiblingElement, sParentAggregationName);
 			var iRevealedSourceIndex = Utils.getIndex(oSourceParent, oRevealedElement, sParentAggregationName) - 1;
 
-			iRevealTargetIndex = iIndex !== undefined ? iIndex : _adjustTargetIndex(oSourceParent, oTargetParent, iRevealedSourceIndex, iRevealTargetIndex);
+			iRevealTargetIndex = iIndex !== undefined ? iIndex : ElementUtil.adjustIndexForMove(oSourceParent, oTargetParent, iRevealedSourceIndex, iRevealTargetIndex);
 
 			if (iRevealTargetIndex !== iRevealedSourceIndex || mParents.parent !== oRevealedElement.getParent()){
 				var oSourceParentOverlay = OverlayRegistry.getOverlay(oRevealedElement) ? OverlayRegistry.getOverlay(oRevealedElement).getParentAggregationOverlay() : mParents.relevantContainerOverlay;
@@ -762,7 +773,7 @@ sap.ui.define([
 			return Promise.resolve();
 		},
 
-		/**
+		/**el
 		 * This function gets called on startup. It checks if the Overlay is editable by this plugin.
 		 * @param {sap.ui.dt.Overlay} oOverlay - overlay to be checked
 		 * @returns {object} Returns object with editable boolean values for "asChild" and "asSibling"
@@ -869,14 +880,6 @@ sap.ui.define([
 			oParent = mParents.parent;
 		}
 		return oParent;
-	}
-
-	//in case an element is moved inside the same container above its current position, its own position has to be removed
-	function _adjustTargetIndex (oSourceContainer, oTargetContainer, iSourceIndex, iTargetIndex) {
-		if (oSourceContainer === oTargetContainer && iSourceIndex < iTargetIndex && iSourceIndex > -1) {
-			return iTargetIndex - 1;
-		}
-		return iTargetIndex;
 	}
 
 	return AdditionalElementsPlugin;

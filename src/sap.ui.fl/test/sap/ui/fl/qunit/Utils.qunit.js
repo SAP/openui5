@@ -819,6 +819,43 @@ function(
 			aArray = [{a: 1, b: 2, c: 3}, undefined, {a: 7, b: 8, c: 9}];
 			assert.equal(Utils.indexOfObject(aArray, oObject), 1, "the function returns the correct index");
 		});
+
+		QUnit.test("isTrialSystem with ushellContainer available and returning true", function(assert) {
+			assert.expect(2);
+			sandbox.stub(Utils, "getUshellContainer").returns({
+				getLogonSystem: function() {
+					return {
+						isTrial: function() {
+							assert.ok(true, "the function was called");
+							return true;
+						}
+					};
+				}
+			});
+
+			assert.ok(Utils.isTrialSystem(), "the function returns true");
+		});
+
+		QUnit.test("isTrialSystem with ushellContainer available and returning false", function(assert) {
+			assert.expect(2);
+			sandbox.stub(Utils, "getUshellContainer").returns({
+				getLogonSystem: function() {
+					return {
+						isTrial: function() {
+							assert.ok(true, "the function was called");
+							return false;
+						}
+					};
+				}
+			});
+
+			assert.notOk(Utils.isTrialSystem(), "the function returns false");
+		});
+
+		QUnit.test("isTrialSystem without ushellContainer available", function(assert) {
+			sandbox.stub(Utils, "getUshellContainer").returns(undefined);
+			assert.notOk(Utils.isTrialSystem(), "the function does not break and returns false");
+		});
 	});
 
 	function fnCreateComponentMockup(mTechnicalParameters) {
@@ -1853,17 +1890,33 @@ function(
 		},
 		afterEach: function() {}
 	}, function() {
-		QUnit.test("scenario APP_VARIANT: AppVariant", function(assert) {
-			this.sErrorText += "in an app variant scenario you additionaly need a project ID";
+		QUnit.test("scenario " + sap.ui.fl.Scenario.VersionedAppVariant + ": New VersionedAppVariant", function(assert) {
+			this.sErrorText += "in a versioned app variant scenario you additionaly need a project ID";
 			var sLrepRootNamespace = "apps/baseId/appVariants/projectId/";
-			assert.equal(Utils.buildLrepRootNamespace("baseId", "APP_VARIANT", "projectId"), sLrepRootNamespace, "then the root namespace got build correctly");
+			assert.equal(Utils.buildLrepRootNamespace("baseId", sap.ui.fl.Scenario.VersionedAppVariant, "projectId"), sLrepRootNamespace, "then the root namespace got build correctly");
 			assert.throws(
-				function() {Utils.buildLrepRootNamespace("", "APP_VARIANT", "projectId");},
+				function() {Utils.buildLrepRootNamespace("", sap.ui.fl.Scenario.VersionedAppVariant, "projectId");},
 				Error(this.sNoBaseIdErrorText),
 				"without base id calling 'buildLrepRootNamespace' for app variants throws an error"
 			);
 			assert.throws(
-				function() {Utils.buildLrepRootNamespace("baseId", "APP_VARIANT", "");},
+				function() {Utils.buildLrepRootNamespace("baseId", sap.ui.fl.Scenario.VersionedAppVariant, "");},
+				Error(this.sErrorText),
+				"without project id calling 'buildLrepRootNamespace' for app variants throws an error"
+			);
+		});
+
+		QUnit.test("scenario " + sap.ui.fl.Scenario.AppVariant + ": New AppVariant", function(assert) {
+			this.sErrorText += "in an app variant scenario you additionaly need a project ID";
+			var sLrepRootNamespace = "apps/baseId/appVariants/projectId/";
+			assert.equal(Utils.buildLrepRootNamespace("baseId", sap.ui.fl.Scenario.AppVariant, "projectId"), sLrepRootNamespace, "then the root namespace got build correctly");
+			assert.throws(
+				function() {Utils.buildLrepRootNamespace("", sap.ui.fl.Scenario.AppVariant, "projectId");},
+				Error(this.sNoBaseIdErrorText),
+				"without base id calling 'buildLrepRootNamespace' for app variants throws an error"
+			);
+			assert.throws(
+				function() {Utils.buildLrepRootNamespace("baseId", sap.ui.fl.Scenario.AppVariant, "");},
 				Error(this.sErrorText),
 				"without project id calling 'buildLrepRootNamespace' for app variants throws an error"
 			);

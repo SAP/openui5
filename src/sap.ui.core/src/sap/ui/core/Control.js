@@ -124,7 +124,10 @@ sap.ui.define([
 				 * All fields in a logical field group should share the same <code>fieldGroupId</code>.
 				 * Once a logical field group is left, the <code>validateFieldGroup</code> event is raised.
 				 *
-				 * See {@link sap.ui.core.Control#attachValidateFieldGroup}.
+				 * For backward compatibility with older releases, field group IDs are syntactically not
+				 * limited, but it is suggested to use only valid {@link sap.ui.core.ID}s.
+				 *
+				 * See {@link #attachValidateFieldGroup}.
 				 * @since 1.31
 				 */
 				"fieldGroupIds" : { type: "string[]", defaultValue: [] }
@@ -136,7 +139,7 @@ sap.ui.define([
 				 * or the user explicitly pressed a key combination that triggers validation.
 				 *
 				 * Listen to this event to validate data of the controls belonging to a field group.
-				 * See {@link sap.ui.core.Control#setFieldGroupIds}.
+				 * See {@link #setFieldGroupIds}.
 				 */
 				validateFieldGroup : {
 					enableEventBubbling:true,
@@ -400,7 +403,7 @@ sap.ui.define([
 	 * In the event handler, <code>this</code> refers to the Control - not to the root DOM element like in jQuery. While the DOM element can
 	 * be used and modified, the general caveats for working with SAPUI5 control DOM elements apply. In particular the DOM element
 	 * may be destroyed and replaced by a new one at any time, so modifications that are required to have permanent effect may not
-	 * be done. E.g. use {@link sap.ui.core.Control.prototype.addStyleClass} instead if the modification is of visual nature.
+	 * be done. E.g. use {@link #addStyleClass} instead if the modification is of visual nature.
 	 *
 	 * Use {@link #detachBrowserEvent} to remove the event handler(s) again.
 	 *
@@ -1009,34 +1012,37 @@ sap.ui.define([
 	};
 
 	/**
-	 * Returns whether the control has a given field group.
-	 * If <code>vFieldGroupIds</code> is not given it checks whether at least one field group ID is given for this control.
-	 * If <code>vFieldGroupIds</code> is an empty array or empty string, true is returned if there is no field group ID set for this control.
-	 * If <code>vFieldGroupIds</code> is a string array or a string all expected field group IDs are checked and true is returned if all are contained for given for this control.
-	 * The comma delimiter can be used to separate multiple field group IDs in one string.
+	 * Returns whether this control belongs to a given combination of field groups.
 	 *
-	 * @param {string|string[]} [vFieldGroupIds] ID of the field group or an array of field group IDs to match
-	 * @return {boolean} true if a field group ID matches
+	 * If the <code>vFieldGroupIds</code> parameter is not specified, the method checks whether this control belongs
+	 * to <strong>any</strong> field group, that is, whether any field group ID is defined for it.
+	 *
+	 * If a list of field group IDs is specified, either as an array of strings or as a single string (interpreted as
+	 * a comma separated list of IDs), then the method will check whether this control belongs to <strong>all</strong>
+	 * given field groups. Accordingly, an empty list of IDs (empty array or empty string) will always return true.
+	 *
+	 * Note that a string value for <code>vFieldGroupIds</code> (comma separated list) will not be trimmed.
+	 * All whitespace characters are significant, but in general not recommended in field group IDs.
+	 *
+	 * @param {string|string[]} [vFieldGroupIds] An array of field group IDs or a single string with a comma separated list of IDs to match
+	 * @return {boolean} Whether the field group IDs defined for the control match the given ones
 	 * @public
+	 * @see {@link #setFieldGroupIds}
 	 */
 	Control.prototype.checkFieldGroupIds = function(vFieldGroupIds) {
 		if (typeof vFieldGroupIds === "string") {
-			if (vFieldGroupIds === "") {
-				return this.checkFieldGroupIds([]);
-			}
-			return this.checkFieldGroupIds(vFieldGroupIds.split(","));
+			// normalize single field group ID or a comma separated list of field group IDs to an array
+			vFieldGroupIds = vFieldGroupIds ? vFieldGroupIds.split(",") : [];
 		}
 		var aFieldGroups = this._getFieldGroupIds();
 		if (Array.isArray(vFieldGroupIds)) {
-			var iFound = 0;
-			for (var i = 0; i < vFieldGroupIds.length; i++) {
-				if (aFieldGroups.indexOf(vFieldGroupIds[i]) > -1) {
-					iFound++;
-				}
-			}
-			return iFound === vFieldGroupIds.length;
-		} else if (!vFieldGroupIds && aFieldGroups.length > 0) {
-			return true;
+			// all given field group IDs must be defined for the control
+			return vFieldGroupIds.every(function(sFieldGroupId) {
+				return aFieldGroups.indexOf(sFieldGroupId) >= 0;
+			});
+		} else if ( !vFieldGroupIds ) {
+			// no field group ID(s) given: check if any field group is defined for the control
+			return aFieldGroups.length > 0;
 		}
 		return false;
 	};

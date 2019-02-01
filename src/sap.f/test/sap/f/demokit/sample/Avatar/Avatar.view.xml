@@ -368,12 +368,13 @@
 				<m:VBox
 					alignItems="Center">
 					<m:Text
-							text="If there is no picture, icon or initials set, the Avatar displays a placeholder:"
+							text="If there is no image, icon or initials set, the Avatar displays a placeholder.
+							If there is invalid image src, the control displays either initials (if provided) or icon placeholder (if no initials are proivided):"
 							width="100%"
-							class="sapUiMediumMarginTop sapUiMediumMarginBottom">
+							class="sapUiMediumMarginBottom sapUiMediumMarginTop">
 					</m:Text>
 					<l:Grid
-						defaultSpan="XL6 L6 M6 S6">
+						defaultSpan="XL4 L4 M4 S4">
 						<l:content>
 							<m:VBox
 								alignItems="Center">
@@ -394,6 +395,19 @@
 								<m:Text
 										text="With person icon"
 										class="sapUiSmallMarginTop">
+								</m:Text>
+							</m:VBox>
+							<m:VBox
+									alignItems="Center">
+								<f:Avatar
+										displaySize="XL"
+										initials="PB"
+										src="images/cannotfind_Woman_avatar_01.png">
+								</f:Avatar>
+								<m:Text
+										text="With invalid image source, but initials provided"
+										class="sapUiSmallMarginTop"
+										textAlign="Center">
 								</m:Text>
 							</m:VBox>
 						</l:content>

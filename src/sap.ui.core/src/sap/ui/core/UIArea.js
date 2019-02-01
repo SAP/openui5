@@ -39,9 +39,6 @@ sap.ui.define([
 	"use strict";
 
 
-	//lazy dependency (to avoid cycle)
-	var Control;
-
 	EventExtension.apply();
 
 	// Activate F6Navigation
@@ -1151,40 +1148,18 @@ sap.ui.define([
 	 */
 	UIArea.prototype.setFieldGroupControl = function(oElement) {
 
-		function findParent(oElement, fnCondition) {
-			var oParent = oElement.getParent();
-			if (oParent) {
-				if (fnCondition(oParent)) {
-					return oParent;
-				} else {
-					return findParent(oParent, fnCondition);
-				}
-			}
-			return null;
+		var oControl = oElement;
+		while ( oControl  && !(oControl instanceof Element && oControl.isA("sap.ui.core.Control")) ) {
+			oControl = oControl.getParent();
 		}
 
 		var oCurrentControl = this.getFieldGroupControl();
-		if (oElement != oCurrentControl) {
-			var oControl = null;
-			Control = Control || sap.ui.require('sap/ui/core/Control'); // resolve lazy dependency
-			if ( Control ) {
-				if (oElement instanceof Control) {
-					oControl = oElement;
-				} else {
-					oControl = findParent(oElement,function(oElement){
-						return oElement instanceof Control;
-					});
-				}
-			}
+		if ( oControl != oCurrentControl ) {
 			var aCurrentGroupIds = (oCurrentControl ? oCurrentControl._getFieldGroupIds() : []),
 				aNewGroupIds = (oControl ? oControl._getFieldGroupIds() : []),
-				aTargetFieldGroupIds = [];
-			for (var i = 0; i < aCurrentGroupIds.length; i++) {
-				var sCurrentGroupId = aCurrentGroupIds[i];
-				if (aNewGroupIds.indexOf(sCurrentGroupId) === -1) {
-					aTargetFieldGroupIds.push(sCurrentGroupId);
-				}
-			}
+				aTargetFieldGroupIds = aCurrentGroupIds.filter(function(sCurrentGroupId) {
+					return aNewGroupIds.indexOf(sCurrentGroupId) < 0;
+				});
 			if (aTargetFieldGroupIds.length > 0) {
 				oCurrentControl.triggerValidateFieldGroup(aTargetFieldGroupIds);
 			}
@@ -1209,13 +1184,28 @@ sap.ui.define([
 	};
 
 	// field group static members
-	UIArea._oFieldGroupControl = null; // group control for all UI areas to handle change of field groups
-	UIArea._iFieldGroupDelayTimer = null; // delay timer for triggering field group changes if focus is forwarded or temporarily dispatched by selection
-	UIArea._oFieldGroupValidationKey = {// keycode and modifier combination that is used to fire a change group event (reason: validate)
-			keyCode : KeyCodes.ENTER,
-			shiftKey : false,
-			altKey: false,
-			ctrlKey: false
+
+	/*
+	 * Group control for all UI areas to handle change of field groups
+	 * @private
+	 */
+	UIArea._oFieldGroupControl = null;
+
+	/*
+	 * delay timer for triggering field group changes if focus is forwarded or temporarily dispatched by selection
+	 * @private
+	 */
+	UIArea._iFieldGroupDelayTimer = null;
+
+	/*
+	 * Keycode and modifier combination that is used to fire a change group event (reason: validate)
+	 * @private
+	 */
+	UIArea._oFieldGroupValidationKey = {
+		keyCode : KeyCodes.ENTER,
+		shiftKey : false,
+		altKey: false,
+		ctrlKey: false
 	};
 
 	// share the render log with Core

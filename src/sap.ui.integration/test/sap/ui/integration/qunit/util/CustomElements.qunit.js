@@ -9,6 +9,7 @@ sap.ui.define([
 		Core
 	) {
 		"use strict";
+
 		var DOM_RENDER_LOCATION = "qunit-fixture";
 
 		var aTags, sPrefix;

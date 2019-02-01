@@ -60,6 +60,12 @@
 		"group": "Card Type Examples"
 	},
 	{
+		"title": "Object Card",
+		"description": "Example page for Card of type Object",
+		"route": "objectContent",
+		"group": "Card Type Examples"
+	},
+	{
 		"title": "Custom Card",
 		"description": "Example page for Card of type Custom (Where a ComponentContainer is rendered)",
 		"route": "customContent",
@@ -88,5 +94,11 @@
 		"description": "Navigation & Data services",
 		"route": "services",
 		"group": "Other Card Examples"
+	},
+	{
+	  "title": "TimelineContent Card",
+	  "description": "Example  POC TimelineContent",
+	  "route": "timelineContent",
+	  "group": "Card Type Examples"
 	}
 ]

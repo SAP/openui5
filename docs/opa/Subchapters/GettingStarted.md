@@ -168,7 +168,10 @@ Note:
 Please note that OPA5 tests can only run for a single UIComponent. You first have to tear down the current UIComponent before starting an OPA5 test for another UIComponent, for example:
 
 ```javascript
-new sap.ui.test.Opa5().iTeardownMyUIComponent();
+// "Opa5" required from "sap/ui/test/Opa5"
+new Opa5().iTeardownMyApp();
+// or
+new Opa5().iTeardownMyUIComponent();
 ```
 
 ## Starting an App in an iFrame

@@ -1,15 +1,15 @@
-/*global describe, it,element,by,takeScreenshot,expect*/
+/*global describe, it,element,by,takeScreenshot,browser,expect*/
 
 describe("sap.m.SinglePlanningCalendarStickyHeader", function () {
 	"use strict";
 
-
+	browser.testrunner.currentSuite.meta.controlName = "sap.m.SinglePlanningCalendar";
 
 	// ************************************
 	// Day view
 	// ************************************
 
-	it("[Day view] Header shouldn't stick for stickyMode: None", function () {
+	it("[Day view] Header should not stick for stickyMode: None", function () {
 		var oSPC = element(by.id("SinglePlanningCalendar"));
 
 		_overrideTime();
@@ -46,7 +46,7 @@ describe("sap.m.SinglePlanningCalendarStickyHeader", function () {
 	// Work week view
 	// ************************************
 
-	it("[Work week view] Header shouldn't stick for stickyMode: None", function () {
+	it("[Work week view] Header should not stick for stickyMode: None", function () {
 		var oSPC = element(by.id("SinglePlanningCalendar"));
 
 		_scrollToTop();
@@ -86,7 +86,7 @@ describe("sap.m.SinglePlanningCalendarStickyHeader", function () {
 	// Week view
 	// ************************************
 
-	it("[Week view] Header shouldn't stick for stickyMode: None", function () {
+	it("[Week view] Header should not stick for stickyMode: None", function () {
 		var oSPC = element(by.id("SinglePlanningCalendar"));
 
 		_scrollToTop();

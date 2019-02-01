@@ -4,7 +4,7 @@
 
 /**
  * Card request handler
- * @experimental
+ * @private
  */
 sap.ui.define(["jquery.sap.global", "sap/base/Log"], function (jQuery, log) {
 	"use strict";

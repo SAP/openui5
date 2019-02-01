@@ -6,10 +6,9 @@ sap.ui.require([
 	"sap/ui/test/Opa5",
 	"sap/ui/test/opaQunit",
 	// require test library modules
-	"testLibrary/pageObjects/List",
-	// require pageObjects only for this test
-	"appUnderTest/test/pageObjects/Item"
-], function (Opa5, opaTest, Common) {
+	// the test library should be loaded before any page objects that need to use the test library utilities!
+	"testLibrary/SampleTestLibrary"
+], function (Opa5, opaTest) {
 	"use strict";
 
 	// setup test libraries
@@ -17,43 +16,53 @@ sap.ui.require([
 		viewNamespace: "view.",
 		autoWait: true,
 		testLibs: {
-			// plain object libraries can provide 'constants' commonly used by tests
-			viewsLibrary: {
+			// declare that the test wants to use this library's utilities
+			// and set constants that can be used by the test library
+			sampleLibrary: {
 				listViewName: "Main"
 			}
 		}
 	});
 
-	QUnit.module("List Journey");
+	sap.ui.require([
+		// require pageObjects only for this test
+		"appUnderTest/test/pageObjects/Item"
+	], function () {
 
-	opaTest("Should filter list", function (Given, When, Then) {
-		// arrangement created in testLibrary.pageObjects.Common1
-		// and declared in testLibrary.pageObjects.List
-		Given.iStartMyApp();
+		QUnit.module("List Journey");
 
-		// Action defined in tstLibrary.pageObjects.List.
-		// We can use it directly without further configuration because
-		// the page object is already registered in the imported library module
-		When.onTheListPage
-			.iSetTheFilter("Sample1");
+		opaTest("Should filter list", function (Given, When, Then) {
+			// arrangement created in testLibrary.pageObjects.Common1
+			// and declared in testLibrary.pageObjects.List
+			Given.iStartMyApp();
 
-		Then.onTheListPage
-			.theResultListIsVisible(2);
+			// Action defined in tstLibrary.pageObjects.List.
+			// We can use it directly without further configuration because
+			// the page object is already registered in the imported library module
+			When.onTheListPage
+				.iSetTheFilter("Sample1");
 
-		// assertion defined in testLibrary.pageObjects.Common2
-		Then.iLeaveMyApp();
+			Then.onTheListPage
+				.theResultListIsVisible(2);
+
+			// assertion defined in testLibrary.pageObjects.Common2
+			Then.iLeaveMyApp();
+		});
+
+		opaTest("Should navigate to details", function (Given, When, Then) {
+			When.onTheListPage
+				.iNavigateFromListItem("name", "Sample12");
+
+			// this action will use test library utilities
+			When.onTheItemPage.iSelectItem("2");
+
+			// you can also define and use test-specific page objects like appUnderTest.test.pageObjects.Item
+			Then.onTheItemPage
+				.theTitleIsCorrect("Sample12")
+				.and
+				.iTeardownMyApp();
+		});
+
+		QUnit.start();
 	});
-
-	opaTest("Should navigate to details", function (Given, When, Then) {
-		When.onTheListPage
-			.iNavigateFromListItem("name", "Sample12");
-
-		// you can also define and use test-specific page objects like appUnderTest.test.pageObjects.Item
-		Then.onTheItemPage
-			.theTitleIsCorrect("Sample12")
-			.and
-			.iTeardownMyApp();
-	});
-
-	QUnit.start();
 });

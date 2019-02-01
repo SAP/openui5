@@ -147,11 +147,16 @@ sap.ui.define([
 		 * the changes from the local storage.
 		 *
 		 * @param {String} sComponentClassName - Component class name
+		 * @param {sap.ui.fl.Change[]} [aBackendChanges] - array of changes that will get added to the result
 		 * @returns {Promise} Returns a Promise with the changes and componentClassName
 		 * @public
 		 */
-		FakeLrepConnectorStorage.prototype.loadChanges = function(sComponentClassName) {
+		FakeLrepConnectorStorage.prototype.loadChanges = function(sComponentClassName, aBackendChanges) {
 			var aChanges = oFakeLrepStorage.getChanges();
+
+			if (aBackendChanges) {
+				aChanges = aChanges.concat(aBackendChanges);
+			}
 
 			return new Promise(function(resolve, reject) {
 				var mResult = {};
@@ -405,8 +410,9 @@ sap.ui.define([
 		 * @param {object} [mSettings] - map of FakeLrepConnector settings
 		 * @param {string} [sAppComponentName] - Name of application component to overwrite the existing LRep connector
 		 * @param {string} [sAppVersion] - Version of application to overwrite the existing LRep connector
+		 * @param {boolean} [bSuppressCacheInvalidation] - If true the cache entry will not be deleted
 		 */
-		FakeLrepConnectorStorage.enableFakeConnector = function(mSettings, sAppComponentName, sAppVersion){
+		FakeLrepConnectorStorage.enableFakeConnector = function(mSettings, sAppComponentName, sAppVersion, bSuppressCacheInvalidation){
 			mSettings = mSettings || {};
 
 			function replaceConnectorFactory() {
@@ -422,7 +428,9 @@ sap.ui.define([
 			if (sAppComponentName && sAppVersion) {
 				var oChangePersistence = ChangePersistenceFactory.getChangePersistenceForComponent(sAppComponentName, sAppVersion);
 				if (!(oChangePersistence._oConnector instanceof FakeLrepConnectorStorage)) {
-					Cache.clearEntry(sAppComponentName, sAppVersion);
+					if (!bSuppressCacheInvalidation) {
+						Cache.clearEntry(sAppComponentName, sAppVersion);
+					}
 					if (!FakeLrepConnectorStorage._oBackendInstances[sAppComponentName]){
 						FakeLrepConnectorStorage._oBackendInstances[sAppComponentName] = {};
 					}
@@ -435,7 +443,9 @@ sap.ui.define([
 				return;
 			}
 
-			Cache.clearEntries();
+			if (!bSuppressCacheInvalidation) {
+				Cache.clearEntries();
+			}
 
 			if (FakeLrepConnectorStorage.enableFakeConnector.original){
 				return;

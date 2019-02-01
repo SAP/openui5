@@ -18,6 +18,7 @@ sap.ui.define([
 	"sap/ui/fl/registry/SimpleChanges",
 	"sap/ui/fl/registry/Settings",
 	"sap/base/Log",
+	"sap/ui/qunit/utils/waitForThemeApplied",
 	"sap/ui/thirdparty/sinon-4"
 ], function (
 	AdditionalElementsPlugin,
@@ -37,6 +38,7 @@ sap.ui.define([
 	SimpleChanges,
 	Settings,
 	Log,
+	waitForThemeApplied,
 	sinon
 ){
 	"use strict";
@@ -79,7 +81,7 @@ sap.ui.define([
 		]
 	});
 
-	sinon.stub(Settings, 'getInstance').returns(Promise.resolve(new Settings({})));
+	sinon.stub(Settings, 'getInstance').resolves(new Settings({}));
 
 	var oMockedAppComponent = {
 		getLocalId: function () {
@@ -347,7 +349,7 @@ sap.ui.define([
 		QUnit.test(" when the control's dt metadata has a reveal action with function allowing reveal only for some instances", function(assert) {
 			var REVEALABLE_CTRL_ID = "Invisible1";
 			this.fnEnhanceInvisibleElementsStub.restore();
-			this.fnEnhanceInvisibleElementsStub = sandbox.stub(AdditionalElementsAnalyzer,"enhanceInvisibleElements").returns(Promise.resolve([]));
+			this.fnEnhanceInvisibleElementsStub = sandbox.stub(AdditionalElementsAnalyzer,"enhanceInvisibleElements").resolves([]);
 
 			return createOverlayWithAggregationActions.call(this, {
 				"reveal" : function(oControl){
@@ -405,15 +407,17 @@ sap.ui.define([
 				this.oPlugin.attachEventOnce("elementModified", function(oEvent){
 					var oCompositeCommand = oEvent.getParameter("command");
 					if (test.sibling) {
-						assert.equal(oCompositeCommand.getCommands().length, 2, "then for the one selected to be revealed element reveal and move command is created as target position differs");
+						assert.equal(oCompositeCommand.getCommands().length, 2, "then for the one selected to be revealed element two commands are created");
 						assert.equal(oCompositeCommand.getCommands()[0].getName(), "reveal", "then one reveal command is created");
 						assert.equal(oCompositeCommand.getCommands()[0].getChangeType(), "unstashControl", "then the reveal command has the right changeType");
 						assert.equal(oCompositeCommand.getCommands()[1].getName(), "move", "then one move command is created");
 						assert.equal(oCompositeCommand.getCommands()[1].getMovedElements()[0].targetIndex, 1, "then the move command goes to the right position");
 					} else {
-						assert.equal(oCompositeCommand.getCommands().length, 1, "then for the one selected to be revealed element reveal command is created as target position is the same as its origin");
+						assert.equal(oCompositeCommand.getCommands().length, 2, "then for the one selected to be revealed element two commands are created");
 						assert.equal(oCompositeCommand.getCommands()[0].getName(), "reveal", "then one reveal command is created");
 						assert.equal(oCompositeCommand.getCommands()[0].getChangeType(), "unstashControl", "then the reveal command has the right changeType");
+						assert.equal(oCompositeCommand.getCommands()[1].getName(), "move", "then one move command is created");
+						assert.equal(oCompositeCommand.getCommands()[1].getMovedElements()[0].targetIndex, 0, "then the move command moves the element to the first position");
 					}
 					done();
 				});
@@ -465,7 +469,7 @@ sap.ui.define([
 				this.oPlugin.attachEventOnce("elementModified", function(oEvent){
 					var oCompositeCommand = oEvent.getParameter("command");
 					var aCommands = oCompositeCommand.getCommands();
-					var iExpectedIndex = test.sibling ? 1 : 4;
+					var iExpectedIndex = test.sibling ? 1 : 0;
 					assert.equal(aCommands.length, 1, "then one command for each selected element is created");
 					assert.equal(aCommands[0].getChangeType(), "addFields", "then add command is created");
 					assert.equal(aCommands[0].getIndex(), iExpectedIndex, "then the index to add the field is set correctly");
@@ -498,8 +502,8 @@ sap.ui.define([
 				this.oPlugin.attachEventOnce("elementModified", function(oEvent){
 					var oCompositeCommand = oEvent.getParameter("command");
 					assert.equal(oCompositeCommand.getCommands().length, 2, "then one command for each selected element is created");
-					assert.equal(oCompositeCommand.getCommands()[0].getName(), "reveal", "reveal was created");
-					assert.equal(oCompositeCommand.getCommands()[1].getName(), "addODataProperty", "addODataProperty was created");
+					assert.equal(oCompositeCommand.getCommands()[0].getName(), "addODataProperty", "addODataProperty was created");
+					assert.equal(oCompositeCommand.getCommands()[1].getName(), "reveal", "reveal was created");
 					//move is not created as move was not enabled for this control
 					done();
 				});
@@ -537,14 +541,13 @@ sap.ui.define([
 			this.oPlugin.attachEventOnce("elementModified", function(oEvent){
 				var oCompositeCommand = oEvent.getParameter("command");
 					assert.equal(oCompositeCommand.getCommands().length, 3, "then for the one selected to be revealed element reveal and move command is created as target position differs");
-					assert.equal(oCompositeCommand.getCommands()[0].getName(), "reveal", "then one reveal command is created");
-					assert.equal(oCompositeCommand.getCommands()[0].getChangeType(), "unhideControl", "then the reveal command has the right changeType");
-					assert.equal(oCompositeCommand.getCommands()[1].getName(), "move", "then one move command is created");
-					assert.equal(oCompositeCommand.getCommands()[1].getMovedElements()[0].targetIndex, 0, "then the move command goes to the right position");
-					assert.equal(oCompositeCommand.getCommands()[2].getName(), "addODataProperty", "then one reveal command is created");
-					assert.equal(oCompositeCommand.getCommands()[2].getChangeType(), "addFields", "then the reveal command has the right changeType");
-					assert.equal(oCompositeCommand.getCommands()[2].getIndex(), 0, "then the move command goes to the right position");
-
+					assert.equal(oCompositeCommand.getCommands()[0].getName(), "addODataProperty", "then one reveal command is created");
+					assert.equal(oCompositeCommand.getCommands()[0].getChangeType(), "addFields", "then the reveal command has the right changeType");
+					assert.equal(oCompositeCommand.getCommands()[0].getIndex(), 0, "then the move command goes to the right position");
+					assert.equal(oCompositeCommand.getCommands()[1].getName(), "reveal", "then one reveal command is created");
+					assert.equal(oCompositeCommand.getCommands()[1].getChangeType(), "unhideControl", "then the reveal command has the right changeType");
+					assert.equal(oCompositeCommand.getCommands()[2].getName(), "move", "then one move command is created");
+					assert.equal(oCompositeCommand.getCommands()[2].getMovedElements()[0].targetIndex, 0, "then the move command goes to the right position");
 				done();
 			});
 
@@ -841,8 +844,6 @@ sap.ui.define([
 
 	QUnit.module("Given an app that is field extensible enabled...", {
 		beforeEach : function(assert) {
-			sandbox = sinon.sandbox.create();
-
 			this.STUB_EXTENSIBILITY_BUSINESS_CTXT = {
 				BusinessContexts : ["some context"],
 				ServiceName : "servive name",
@@ -886,7 +887,7 @@ sap.ui.define([
 	}, function () {
 
 		QUnit.test("when the service is not up to date and no addODataProperty action is available", function (assert) {
-			var fnServiceUpToDateStub = sandbox.stub(RTAUtils, "isServiceUpToDate").returns(Promise.reject());
+			var fnServiceUpToDateStub = sandbox.stub(RTAUtils, "isServiceUpToDate").rejects();
 			return createOverlayWithAggregationActions.call(this, {
 				"reveal" : {
 					changeType : "unhideControl"
@@ -906,7 +907,7 @@ sap.ui.define([
 		});
 
 		QUnit.test("when the service is up to date and addODataProperty action is available", function (assert) {
-			var fnServiceUpToDateStub = sandbox.stub(RTAUtils, "isServiceUpToDate").returns(Promise.resolve());
+			var fnServiceUpToDateStub = sandbox.stub(RTAUtils, "isServiceUpToDate").resolves();
 
 			return createOverlayWithAggregationActions.call(this, {
 				"addODataProperty" : {
@@ -927,7 +928,7 @@ sap.ui.define([
 		});
 
 		QUnit.test("when the service is not up to date and addODataProperty action is available", function (assert) {
-			sandbox.stub(RTAUtils, "isServiceUpToDate").returns(Promise.reject());
+			sandbox.stub(RTAUtils, "isServiceUpToDate").rejects();
 			return createOverlayWithAggregationActions.call(this, {
 				"addODataProperty" : {
 					changeType : "addFields"
@@ -942,7 +943,7 @@ sap.ui.define([
 				return this.oPlugin.showAvailableElements(false, [oOverlay]);
 			}.bind(this))
 
-			.then(function() {
+			.catch(function() {
 				assert.ok(this.fnDialogOpen.notCalled, "then the dialog was not opened");
 			}.bind(this));
 		});
@@ -970,8 +971,8 @@ sap.ui.define([
 			var done = assert.async();
 			var that = this;
 
-			var fnServiceUpToDateStub = sandbox.stub(RTAUtils, "isServiceUpToDate").returns(Promise.resolve());
-			sandbox.stub(RTAUtils, "isCustomFieldAvailable").returns(Promise.resolve(this.STUB_EXTENSIBILITY_BUSINESS_CTXT));
+			var fnServiceUpToDateStub = sandbox.stub(RTAUtils, "isServiceUpToDate").resolves();
+			sandbox.stub(RTAUtils, "isCustomFieldAvailable").resolves(this.STUB_EXTENSIBILITY_BUSINESS_CTXT);
 
 			sandbox.stub(RTAUtils, "openNewWindow").callsFake(function(sUrl) {
 				assert.equal(sUrl, that.STUB_EXTENSIBILITY_USHELL_URL,
@@ -1003,8 +1004,8 @@ sap.ui.define([
 		QUnit.test("when addODataProperty action is available and showAvailableElements is called 3 times and simulating a click on open custom field the last time", function (assert) {
 			var done = assert.async();
 
-			sandbox.stub(RTAUtils, "isServiceUpToDate").returns(Promise.resolve());
-			sandbox.stub(RTAUtils, "isCustomFieldAvailable").returns(Promise.resolve(this.STUB_EXTENSIBILITY_BUSINESS_CTXT));
+			sandbox.stub(RTAUtils, "isServiceUpToDate").resolves();
+			sandbox.stub(RTAUtils, "isCustomFieldAvailable").resolves(this.STUB_EXTENSIBILITY_BUSINESS_CTXT);
 			var onOpenCustomFieldSpy = sandbox.spy(this.oPlugin, "_onOpenCustomField");
 			var showAvailableElementsSpy = sandbox.spy(this.oPlugin, "showAvailableElements");
 
@@ -1083,7 +1084,7 @@ sap.ui.define([
 
 
 	function givenSomeBoundControls() {
-		sandbox.stub(sap.ui.fl.Utils, "_getAppComponentForComponent").returns(oMockedAppComponent);
+		sandbox.stub(FlexUtils, "getAppComponentForControl").returns(oMockedAppComponent);
 
 		this.oSibling = new Button({id: "Sibling", visible : true});
 		this.oUnsupportedInvisible = new Input({id: "UnsupportedInvisible", visible : false});
@@ -1269,4 +1270,6 @@ sap.ui.define([
 	QUnit.done(function () {
 		jQuery("#qunit-fixture").hide();
 	});
+
+	return waitForThemeApplied();
 });

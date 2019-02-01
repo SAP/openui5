@@ -1,0 +1,235 @@
+{
+  "_version": "1.8.0",
+  "sap.app": {
+	"id": "sap.f.cardsVisualTests",
+	"type": "application",
+	"i18n": "i18n/i18n.properties",
+	"title": "{{appTitle}}",
+	"description": "{{appDescription}}",
+	"applicationVersion": {
+	  "version": "1.0.0"
+	}
+  },
+  "sap.ui": {
+	"technology": "UI5",
+	"deviceTypes": {
+	  "desktop": true,
+	  "tablet": true,
+	  "phone": true
+	}
+  },
+  "sap.ui5": {
+	"services": {
+		"UserRecent": {
+			"factoryName": "cardsVisualTests.service.UserRecentFactory"
+		},
+		"Navigation": {
+			"factoryName": "cardsVisualTests.service.SampleNavigationFactory"
+		}
+	},
+	"dependencies": {
+		"minUI5Version": "1.30.0",
+		"libs": {
+			"sap.ui.core": {},
+			"sap.m": {},
+			"sap.ui.integration": {
+				"lazy": true
+			},
+			"sap.f": {},
+			"sap.ui.layout": {
+				"lazy": true
+			},
+			"sap.ui.codeeditor": {
+				"lazy": true
+			}
+		}
+	},
+	"rootView": {
+	  "viewName": "sap.f.cardsVisualTests.view.App",
+	  "type": "XML",
+	  "async": true,
+	  "id": "app"
+	},
+	"models": {
+	  "i18n": {
+		"type": "sap.ui.model.resource.ResourceModel",
+		"settings": {
+		  "bundleName": "sap.f.cardsVisualTests.i18n.i18n"
+		},
+		"preload": true
+	  }
+	},
+	"routing": {
+	  "config": {
+		"routerClass": "sap.m.routing.Router",
+		"viewType": "XML",
+		"viewPath": "sap.f.cardsVisualTests.view",
+		"controlId": "app",
+		"controlAggregation": "pages",
+		"transition": "slide",
+		"bypassed": {
+		  "target": "notFound"
+		},
+		"async": true
+	  },
+	  "routes": [
+		{
+		  "pattern": "",
+		  "name": "appMain",
+		  "target": "main"
+		},
+		{
+		  "pattern": "grid",
+		  "name": "grid",
+		  "target": "grid"
+		},
+		{
+		  "pattern": "zflow",
+		  "name": "zflow",
+		  "target": "zflow"
+		},
+		{
+		  "pattern": "flexibleHeight",
+		  "name": "flexibleHeight",
+		  "target": "flexibleHeight"
+		},
+		{
+		  "pattern": "splitter",
+		  "name": "splitter",
+		  "target": "splitter"
+		},
+		{
+		  "pattern": "nolayout",
+		  "name": "nolayout",
+		  "target": "nolayout"
+		},
+		{
+		  "pattern": "listContent",
+		  "name": "listContent",
+		  "target": "listContent"
+		},
+		{
+		  "pattern": "tableContent",
+		  "name": "tableContent",
+		  "target": "tableContent"
+		},
+		{
+		  "pattern": "flp",
+		  "name": "flp",
+		  "target": "flp"
+		}, {
+		  "pattern": "numericHeader",
+		  "name": "numericHeader",
+		  "target": "numericHeader"
+		},
+		{
+		  "pattern": "analyticalContent",
+		  "name": "analyticalContent",
+		  "target": "analyticalContent"
+		},
+		{
+		  "pattern": "manifest",
+		  "name": "manifest",
+		  "target": "manifest"
+		},
+		{
+		  "pattern": "customContent",
+		  "name": "customContent",
+		  "target": "customContent"
+		},
+		{
+		  "pattern": "cardContainer",
+		  "name": "cardContainer",
+		  "target": "cardContainer"
+		},
+		{
+		  "pattern": "services",
+		  "name": "services",
+		  "target": "services"
+		}
+	  ],
+	  "targets": {
+		"main": {
+		  "viewId": "main",
+		  "viewName": "Main",
+		  "viewLevel": 1
+		},
+		"grid": {
+		  "viewId": "grid",
+		  "viewName": "Grid",
+		  "viewLevel": 1
+		},
+		"zflow": {
+		  "viewId": "zflow",
+		  "viewName": "Zflow",
+		  "viewLevel": 1
+		},
+		"flexibleHeight": {
+		  "viewId": "flexibleHeight",
+		  "viewName": "FlexibleHeight",
+		  "viewLevel": 1
+		},
+		"splitter": {
+		  "viewId": "splitter",
+		  "viewName": "Splitter",
+		  "viewLevel": 1
+		},
+		"nolayout": {
+		  "viewId": "nolayout",
+		  "viewName": "NoLayout",
+		  "viewLevel": 1
+		},
+		"notFound": {
+		  "viewId": "notFound",
+		  "viewName": "NotFound",
+		  "transition": "show"
+		},
+		"listContent": {
+		  "viewId": "listContent",
+		  "viewName": "ListContent",
+		  "viewLevel": 1
+		},
+		"tableContent": {
+		  "viewId": "tableContent",
+		  "viewName": "TableContent",
+		  "viewLevel": 1
+		},
+		"analyticalContent": {
+		  "viewId": "analyticalContent",
+		  "viewName": "AnalyticalContent",
+		  "viewLevel": 1
+		},
+		"flp": {
+		  "viewId": "flp",
+		  "viewName": "Flp",
+		  "viewLevel": 1
+		},
+		"numericHeader": {
+		  "viewId": "numericHeader",
+		  "viewName": "NumericHeader",
+		  "viewLevel": 1
+		},
+		"manifest": {
+		  "viewId": "manifest",
+		  "viewName": "Manifest",
+		  "viewLevel": 1
+		},
+		"customContent": {
+		  "viewId": "custom",
+		  "viewName": "Custom",
+		  "viewLevel": 1
+		},
+		"cardContainer": {
+		  "viewId": "CardContainer",
+		  "viewName": "CardContainer",
+		  "viewLevel": 1
+		},
+		"services": {
+		  "viewId": "services",
+		  "viewName": "Services",
+		  "viewLevel": 1
+		}
+	  }
+	}
+  }
+}

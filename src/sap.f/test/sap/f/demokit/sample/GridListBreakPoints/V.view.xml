@@ -16,7 +16,6 @@
 			</Toolbar>
 		</headerToolbar>
 		<content>
-			<Text class="message sapUiTinyMarginBottom" id="infoTxt" width="100%" text="Layout size is: "/>
 			<f:GridList
 					id="gridList"
 					headerText="GridList header"

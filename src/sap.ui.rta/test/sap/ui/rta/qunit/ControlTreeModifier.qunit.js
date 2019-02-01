@@ -1,13 +1,14 @@
 /*global QUnit*/
 
 sap.ui.define([
-	'sap/ui/rta/ControlTreeModifier',
-	'sap/ui/fl/changeHandler/JsControlTreeModifier',
-	'sap/m/Button',
-	'sap/ui/layout/HorizontalLayout',
-	'sap/ui/core/TooltipBase',
-	'sap/ui/model/json/JSONModel',
-	'sap/ui/thirdparty/sinon-4'
+	"sap/ui/rta/ControlTreeModifier",
+	"sap/ui/fl/changeHandler/JsControlTreeModifier",
+	"sap/m/Button",
+	"sap/ui/layout/HorizontalLayout",
+	"sap/ui/core/TooltipBase",
+	"sap/ui/model/json/JSONModel",
+	"sap/ui/qunit/utils/waitForThemeApplied",
+	"sap/ui/thirdparty/sinon-4"
 ],
 function(
 	RtaControlTreeModifier,
@@ -16,6 +17,7 @@ function(
 	HorizontalLayout,
 	TooltipBase,
 	JSONModel,
+	waitForThemeApplied,
 	sinon
 ){
 	"use strict";
@@ -377,4 +379,6 @@ function(
 	QUnit.done(function() {
 		jQuery("#qunit-fixture").hide();
 	});
+
+	return waitForThemeApplied();
 });

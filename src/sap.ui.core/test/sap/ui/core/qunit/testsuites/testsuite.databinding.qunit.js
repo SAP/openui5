@@ -13,6 +13,11 @@ sap.ui.define(function() {
 				qunitBridge: true,
 				useFakeTimers: false
 			},
+			loader : {
+				paths : {
+					"sap/ui/core/qunit" : "test-resources/sap/ui/core/qunit"
+				}
+			},
 			module: "test-resources/sap/ui/core/qunit/{name}.qunit"
 		},
 		tests: {

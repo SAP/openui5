@@ -6,13 +6,15 @@ sap.ui.define([
 	"sap/ui/fl/Utils",
 	"sap/ui/fl/variants/VariantManagement",
 	"sap/ui/fl/variants/VariantModel",
-	'sap/ui/thirdparty/sinon-4'
+	"sap/ui/qunit/utils/waitForThemeApplied",
+	"sap/ui/thirdparty/sinon-4"
 ], function (
 	CommandFactory,
 	ControlVariantSwitch,
 	Utils,
 	VariantManagement,
 	VariantModel,
+	waitForThemeApplied,
 	sinon
 ) {
 	"use strict";
@@ -126,4 +128,6 @@ sap.ui.define([
 	QUnit.done(function () {
 		jQuery("#qunit-fixture").hide();
 	});
+
+	return waitForThemeApplied();
 });

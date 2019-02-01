@@ -53,6 +53,14 @@ sap.ui.define([
 		return oJQueryDragEvent;
 	}
 
+	function triggerDragEvent(sType, oControl) {
+		var oEvent = createDragEvent(sType);
+		var oDomRef = oControl.getDomRef ? oControl.getDomRef() : oControl;
+		if (oDomRef) {
+			jQuery(oDomRef).trigger(oEvent);
+		}
+	}
+
 	QUnit.module("Common", {
 		beforeEach: function() {
 			createTables();
@@ -569,5 +577,70 @@ sap.ui.define([
 		assert.ok(oToggleGroupHeaderSpy.notCalled, "TableUtils.Grouping.ToggleGroupHeader was not called");
 
 		oToggleGroupHeaderSpy.restore();
+	});
+
+	QUnit.module("Columns", {
+		beforeEach: function() {
+			createTables();
+
+			this.oDDI = new DragDropInfo({
+				sourceAggregation: "columns",
+				targetAggregation: "columns",
+				dropPosition: "Between"
+			});
+
+			oTable.addDragDropConfig(this.oDDI);
+			sap.ui.getCore().applyChanges();
+		},
+		afterEach: function() {
+			destroyTables();
+			this.oDDI = null;
+		}
+	});
+
+	QUnit.test("Draggable", function(assert) {
+		var aColumns = oTable.getColumns();
+		assert.notOk(this.oDDI.isDraggable(aColumns[0]), "Columns are not draggable by default");
+
+		this.oDDI.bIgnoreMetadataCheck = true;
+		assert.ok(this.oDDI.isDraggable(aColumns[0]), "Columns are now draggable");
+	});
+
+	QUnit.test("Droppable", function(assert) {
+		var aColumns = oTable.getColumns();
+		var oDragEnterEvent = createDragEvent("dragenter");
+		oDragEnterEvent.target = aColumns[0].getDomRef();
+		assert.notOk(this.oDDI.isDroppable(aColumns[0], oDragEnterEvent), "Columns are not droppable by default");
+
+		this.oDDI.bIgnoreMetadataCheck = true;
+		assert.ok(this.oDDI.isDroppable(aColumns[0], oDragEnterEvent), "Columns are now droppable");
+	});
+
+	QUnit.test("Indicator Size", function(assert) {
+		var aColumns = oTable.getColumns();
+
+		this.oDDI.bIgnoreMetadataCheck = true;
+		oTable.rerender();
+
+		triggerDragEvent("dragstart", aColumns[0]);
+		triggerDragEvent("dragenter", aColumns[1]);
+		assert.equal(
+			document.querySelector(".sapUiDnDIndicator").getBoundingClientRect().height,
+			oTable.getDomRef("sapUiTableCnt").getBoundingClientRect().height,
+			"Drop indicaator's height is set to Table height"
+		);
+
+		// force horizontal scrolling
+		aColumns[2].setWidth("5000px");
+		sap.ui.getCore().applyChanges();
+
+		triggerDragEvent("dragenter", aColumns[2]);
+		assert.equal(
+			document.querySelector(".sapUiDnDIndicator").getBoundingClientRect().height,
+			oTable.getDomRef("sapUiTableCnt").getBoundingClientRect().height - 16,
+			"Drop indicaator is not visible on the horizontal scrollbar"
+		);
+
+		triggerDragEvent("drop", aColumns[2]);
 	});
 });

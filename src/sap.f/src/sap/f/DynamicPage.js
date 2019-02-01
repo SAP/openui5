@@ -585,7 +585,8 @@ sap.ui.define([
 
 		this.setProperty("headerExpanded", false, true);
 		if (this._hasVisibleTitleAndHeader()) {
-			this.$titleArea.addClass("sapFDynamicPageTitleSnapped");
+			this.$titleArea.addClass(Device.system.phone && oDynamicPageTitle.getSnappedTitleOnMobile() ?
+					"sapFDynamicPageTitleSnappedTitleOnMobile" : "sapFDynamicPageTitleSnapped");
 			this._updateToggleHeaderVisualIndicators();
 			this._togglePinButtonVisibility(false);
 		}
@@ -621,7 +622,8 @@ sap.ui.define([
 
 		this.setProperty("headerExpanded", true, true);
 		if (this._hasVisibleTitleAndHeader()) {
-			this.$titleArea.removeClass("sapFDynamicPageTitleSnapped");
+			this.$titleArea.removeClass(Device.system.phone && oDynamicPageTitle.getSnappedTitleOnMobile() ?
+					"sapFDynamicPageTitleSnappedTitleOnMobile" : "sapFDynamicPageTitleSnapped");
 			this._updateToggleHeaderVisualIndicators();
 			if (!this.getPreserveHeaderStateOnScroll()) {
 				this._togglePinButtonVisibility(true);
@@ -1256,7 +1258,7 @@ sap.ui.define([
 		} else {
 			bHeaderExpanded = this.getHeaderExpanded();
 			bCollapseVisualIndicatorVisible = bHeaderExpanded;
-			bExpandVisualIndicatorVisible = !bHeaderExpanded;
+			bExpandVisualIndicatorVisible = Device.system.phone && this.getTitle().getAggregation("snappedTitleOnMobile") ? false : !bHeaderExpanded;
 		}
 
 		this._toggleCollapseVisualIndicator(bCollapseVisualIndicatorVisible);
@@ -1271,7 +1273,7 @@ sap.ui.define([
 		var oTitle = this.getTitle(),
 			bTitleActive = this._hasVisibleTitleAndHeader() && this.getToggleHeaderOnTitleClick();
 
-		this.$().toggleClass("sapFDynamicPageTitleClickEnabled", bTitleActive);
+		this.$().toggleClass("sapFDynamicPageTitleClickEnabled", bTitleActive && !Device.system.phone);
 		if (exists(oTitle)) {
 			oTitle._toggleFocusableState(bTitleActive);
 		}

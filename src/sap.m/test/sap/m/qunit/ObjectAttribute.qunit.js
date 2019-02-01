@@ -534,5 +534,21 @@ sap.ui.define([
 		assert.ok(true, "Exception is not thrown");
 
 		// Clean up
+		oAttr.destroy();
+	});
+
+	QUnit.test("Object attribute does not prepend special symbols with backslash", function (assert) {
+		// Arrange
+		var oAttr = new ObjectAttribute({ title: ".*+", text: "text" });
+
+		// Act
+		oAttr.placeAt("qunit-fixture");
+		sap.ui.getCore().applyChanges();
+
+		// Assert
+		assert.equal(oAttr.$().find(".sapMTextMaxLine").text(), ".*+: text", "Title is correct");
+
+		// Clean up
+		oAttr.destroy();
 	});
 });

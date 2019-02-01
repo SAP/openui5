@@ -362,5 +362,31 @@
 			</layoutData>
 		</Input>
 	</OverflowToolbar>
+	<MessageStrip
+		class="sapUiTinyMargin"
+		text="Generic Tag controls in Overflow Toolbar"
+		type="Information"
+		showIcon="true">
+	</MessageStrip>
+	<OverflowToolbar id="otb9">
+		<Label text="Multiple Generic Tag instances:"/>
+		<ToolbarSpacer />
+		<GenericTag text="Project Cost" design="StatusIconHidden" status="Error">
+			<ObjectNumber state="Error" emphasized="false" number="3.5M" numberUnit="EUR"/>
+		</GenericTag>
+
+		<GenericTag text="Shortage Expected" status="Warning">
+		</GenericTag>
+
+		<GenericTag text="Project Cost"  design="StatusIconHidden" status="Success">
+			<ObjectNumber state="Success" emphasized="false" number="96" numberUnit="%" />
+			<layoutData>
+				<OverflowToolbarLayoutData shrinkable="true" group="2" minWidth="70px"/>
+			</layoutData>
+		</GenericTag>
+		<GenericTag text="In Stock" status="Success">
+		</GenericTag>
+	</OverflowToolbar>
+
 	<Slider class="sapUiTinyMarginTopBottom" value="{/viewPortPercentWidth}" liveChange="onSliderMoved"/>
 </mvc:View>

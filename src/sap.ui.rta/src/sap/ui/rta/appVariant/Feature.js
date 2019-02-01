@@ -3,14 +3,12 @@
  */
 
 sap.ui.define([
-	"sap/ui/rta/Utils",
 	"sap/ui/fl/Utils",
 	"sap/ui/rta/appVariant/AppVariantUtils",
 	"sap/ui/core/BusyIndicator",
 	"sap/ui/thirdparty/jquery",
 	"sap/base/util/UriParameters"
 ], function(
-	RtaUtils,
 	FlexUtils,
 	AppVariantUtils,
 	BusyIndicator,
@@ -160,6 +158,19 @@ sap.ui.define([
 			}
 
 			return false;
+		},
+		/**
+		 * @param {object} oRootControl
+		 * @returns {Promise} returns a resolved Promise with an app variant descriptor
+		 * @description Getting here an app variant descriptor from the layered repository
+		 */
+		getAppVariantDescriptor : function(oRootControl) {
+			oRootControlRunningApp = oRootControl;
+			var oDescriptor = fnGetDescriptor();
+			if (oDescriptor["sap.app"] && oDescriptor["sap.app"].id) {
+				return AppVariantUtils.getDescriptorFromLREP(oDescriptor["sap.app"].id);
+			}
+			return Promise.resolve(false);
 		},
 		// When 'Save As' triggered from RTA toolbar, we set both flags bSaveAsTriggeredFromRtaToolbar and bCopyUnsavedChanges equal to true
 		onSaveAsFromRtaToolbar : function(bSaveAsTriggeredFromRtaToolbar, bCopyUnsavedChanges) {

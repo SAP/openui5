@@ -14,6 +14,7 @@ sap.ui.define([
 	"sap/m/Text",
 	"sap/m/List",
 	"sap/m/CustomListItem",
+	"sap/ui/qunit/utils/waitForThemeApplied",
 	"sap/ui/thirdparty/sinon-4"
 ],
 function (
@@ -30,6 +31,7 @@ function (
 	Text,
 	List,
 	CustomListItem,
+	waitForThemeApplied,
 	sinon
 ) {
 	"use strict";
@@ -289,4 +291,6 @@ function (
 	QUnit.done(function () {
 		jQuery("#qunit-fixture").hide();
 	});
+
+	return waitForThemeApplied();
 });

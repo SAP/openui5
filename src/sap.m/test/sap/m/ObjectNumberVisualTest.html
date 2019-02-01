@@ -16,10 +16,16 @@
 				unit: "Euro"
 			});
 
+			var on2 = new sap.m.ObjectNumber("on2", {
+				number: "300,000,000",
+				unit: "Euro"
+			}).addStyleClass("sapMObjectNumberLarge");
+
 			var oButtonEmphasized =new sap.m.Button("emphasized", {
 				text:"Toggle emphasized",
 				press: function(){
 					on1.setEmphasized(!on1.getEmphasized());
+					on2.setEmphasized(!on2.getEmphasized());
 				}
 			});
 
@@ -27,6 +33,7 @@
 				text:"Set number",
 				press: function(){
 					on1.setNumber("100");
+					on2.setNumber("100");
 				}
 			});
 
@@ -34,6 +41,7 @@
 				text:"Set unit",
 				press: function(){
 					on1.setUnit("Dollars");
+					on2.setUnit("Dollars");
 				}
 			});
 
@@ -41,6 +49,7 @@
 				text:"Success state",
 				press: function(){
 					on1.setState(sap.ui.core.ValueState.Success);
+					on2.setState(sap.ui.core.ValueState.Success);
 				}
 			});
 
@@ -48,6 +57,7 @@
 				text:"Error state",
 				press: function(){
 					on1.setState(sap.ui.core.ValueState.Error);
+					on2.setState(sap.ui.core.ValueState.Error);
 				}
 			});
 
@@ -55,6 +65,15 @@
 				text:"Warning state",
 				press: function(){
 					on1.setState(sap.ui.core.ValueState.Warning);
+					on2.setState(sap.ui.core.ValueState.Warning);
+				}
+			});
+
+			var oButtonStateW =new sap.m.Button("change_stateI", {
+				text:"Information state",
+				press: function(){
+					on1.setState(sap.ui.core.ValueState.Information);
+					on2.setState(sap.ui.core.ValueState.Information);
 				}
 			});
 
@@ -64,6 +83,7 @@
 				enableScrolling : true,
 				content: [
 					on1,
+					on2,
 					oButtonEmphasized,
 					oButtonNum,
 					oButtonUnit,

@@ -1,0 +1,34 @@
+{
+	"sap.app": {
+		"type": "card"
+	},
+	"sap.card": {
+		"type": "List",
+		"header": {
+			"title": "Request list content Card",
+			"subTitle": "Card Subtitle",
+			"icon":  {
+				"src": "sap-icon://accept"
+			},
+			"status": "100 of 200"
+		},
+		"content": {
+			"data": {
+				"request": {
+					"url": "./cardsVisualTests/cardcontent/someitems.json"
+				}
+			},
+			"item": {
+				"icon": {
+					"src": "{icon}"
+				},
+				"title": {
+					"value": "{Name}"
+				},
+				"description": {
+					"value": "{Description}"
+				}
+			}
+		}
+	}
+}

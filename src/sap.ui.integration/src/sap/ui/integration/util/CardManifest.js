@@ -39,7 +39,7 @@ sap.ui.define([], function () {
 	/**
 	 * @constructor
 	 * @private
-	 * @param {*} oManifestJson
+	 * @param {*} oManifestJson The JSON object to use a manifest
 	 */
 	function CardManifest(oManifestJson) {
 		this.oJson = oManifestJson;
@@ -73,7 +73,7 @@ sap.ui.define([], function () {
 					oNode.indexOf("{{") === 0 &&
 					oNode.indexOf("}}") === oNode.length - 2) {
 					oNode = this.oTranslator.getText(oNode.substring(2, oNode.length - 2));
-				} else if (sPart === "header" && typeof oNode === "object") {
+				} else if ((sPart === "header" || sPart === "content") && typeof oNode === "object") {
 					oNode = jQuery.extend({}, oNode);
 					var oSubParts = Object.keys(oNode);
 					for (var iSubPart in oSubParts) {

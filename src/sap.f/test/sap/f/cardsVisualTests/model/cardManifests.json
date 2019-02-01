@@ -1,0 +1,1871 @@
+{
+	"noLayout": {
+		"card1": {
+			"sap.card": {
+				"header": {
+					"iconSrc": "sap-icon://accept",
+					"title": "Card Title 2x2",
+					"subTitle": "Card subtitle",
+					"status": {
+						"text": "Count"
+					}
+				},
+				"type": "List",
+				"content": {
+					"data": {
+						"json": [
+							{
+								"Name": "Notebook Basic 15",
+								"Description": "Notebook Basic 15 with 2,80 GHz quad core, 15\" LCD, 4 GB DDR3 RAM, 500 GB Hard Disc, Windows 8 Pro",
+								"Id": "HT-1000",
+								"SubCategoryId": "Notebooks",
+								"icon": "../f/images/Woman_avatar_01.png"
+							},
+							{
+								"Name": "Notebook Basic 17",
+								"Description": "Notebook Basic 17 with 2,80 GHz quad core, 17\" LCD, 4 GB DDR3 RAM, 500 GB Hard Disc, Windows 8 Pro",
+								"Id": "HT-1001",
+								"SubCategoryId": "Notebooks",
+								"icon": "../f/images/Woman_avatar_01.png"
+							},
+							{
+								"Name": "Notebook Basic 18",
+								"Description": "Notebook Basic 18 with 2,80 GHz quad core, 18\" LCD, 8 GB DDR3 RAM, 1000 GB Hard Disc, Windows 8 Pro",
+								"Id": "HT-1002",
+								"SubCategoryId": "Notebooks",
+								"icon": "../f/images/Woman_avatar_01.png"
+							}
+						]
+					},
+					"item": {
+						"icon": {
+							"src": "{icon}"
+						},
+						"title": {
+							"label": "{{title_label}}",
+							"value": "{Name}"
+						},
+						"description": {
+							"label": "{{description_label}}",
+							"value": "{Description}"
+						}
+					}
+				}
+			}
+		},
+		"card2": {
+			"sap.card": {
+				"header": {
+					"title": "This line is the title of sap.f.Card",
+					"status": {
+						"text": "Count"
+					}
+				},
+				"type": "List",
+				"content": {
+					"data": {
+						"json": [
+							{
+								"Name": "Notebook Basic 15",
+								"Description": "Notebook Basic 15 with 2,80 GHz quad core, 15\" LCD, 4 GB DDR3 RAM, 500 GB Hard Disc, Windows 8 Pro",
+								"Id": "HT-1000",
+								"SubCategoryId": "Notebooks",
+								"icon": "../f/images/Woman_avatar_01.png"
+							}
+						]
+					},
+					"item": {
+						"icon": {
+							"src": "{icon}"
+						},
+						"title": {
+							"label": "{{title_label}}",
+							"value": "{Name}"
+						},
+						"description": {
+							"label": "{{description_label}}",
+							"value": "{Description}"
+						}
+					}
+				}
+			}
+		},
+		"card3": {
+			"sap.card": {
+				"header": {
+					"title": "This line is the title of sap.f.Card",
+					"subTitle": " Thi is a sap.f.Card subtitle",
+					"status": {
+						"text": "Count"
+					}
+				},
+				"type": "List",
+				"content": {
+					"data": {
+						"json": [
+							{
+								"Name": "Notebook Basic 17",
+								"Description": "Notebook Basic 17 with 2,80 GHz quad core, 17\" LCD, 4 GB DDR3 RAM, 500 GB Hard Disc, Windows 8 Pro",
+								"Id": "HT-1001",
+								"SubCategoryId": "Notebooks",
+								"icon": "../f/images/Woman_avatar_01.png"
+							},
+							{
+								"Name": "Notebook Basic 18",
+								"Description": "Notebook Basic 18 with 2,80 GHz quad core, 18\" LCD, 8 GB DDR3 RAM, 1000 GB Hard Disc, Windows 8 Pro",
+								"Id": "HT-1002",
+								"SubCategoryId": "Notebooks",
+								"icon": "../f/images/Woman_avatar_01.png"
+							}
+						]
+					},
+					"item": {
+						"icon": {
+							"src": "{icon}"
+						},
+						"title": {
+							"label": "{{title_label}}",
+							"value": "{Name}"
+						},
+						"description": {
+							"label": "{{description_label}}",
+							"value": "{Description}"
+						}
+					}
+				}
+			}
+		},
+		"card4": {
+			"sap.card": {
+				"header": {
+					"title": "This line is the title of sap.f.Card and a very very very very very very very very very very very very very very very very very very long one",
+					"subTitle": " Thi is a sap.f.Card subtitle and a very very  very very very very very very very very very very very very very very very very  very very long one",
+					"icon": {
+						"src": "../f/images/Woman_avatar_01.png",
+						"shape": "Square"
+					},
+					"status": {
+						"text": "100 of 200"
+					}
+				},
+				"type": "List",
+				"content": {
+					"data": {
+						"json": [
+							{
+								"Name": "Notebook Basic 15",
+								"Description": "Notebook Basic 15 with 2,80 GHz quad core, 15\" LCD, 4 GB DDR3 RAM, 500 GB Hard Disc, Windows 8 Pro",
+								"Id": "HT-1000",
+								"SubCategoryId": "Notebooks",
+								"icon": "../f/images/Woman_avatar_01.png"
+							},
+							{
+								"Name": "Notebook Basic 17",
+								"Description": "Notebook Basic 17 with 2,80 GHz quad core, 17\" LCD, 4 GB DDR3 RAM, 500 GB Hard Disc, Windows 8 Pro",
+								"Id": "HT-1001",
+								"SubCategoryId": "Notebooks",
+								"icon": "../f/images/Woman_avatar_01.png"
+							},
+							{
+								"Name": "Notebook Basic 18",
+								"Description": "Notebook Basic 18 with 2,80 GHz quad core, 18\" LCD, 8 GB DDR3 RAM, 1000 GB Hard Disc, Windows 8 Pro",
+								"Id": "HT-1002",
+								"SubCategoryId": "Notebooks",
+								"icon": "../f/images/Woman_avatar_01.png"
+							}
+						]
+					},
+					"item": {
+						"icon": {
+							"src": "{icon}"
+						},
+						"title": {
+							"label": "{{title_label}}",
+							"value": "{Name}"
+						},
+						"description": {
+							"label": "{{description_label}}",
+							"value": "{Description}"
+						}
+					}
+				}
+			}
+		},
+		"card5": {
+			"sap.card": {
+				"type": "List",
+				"header": {
+					"title": "L3 Request list content Card",
+					"subTitle": "Card subtitle",
+					"icon": {
+						"src": "sap-icon://activity-items"
+					},
+					"status": {
+						"text": "Count"
+					}
+				},
+				"content": {
+					"data": {
+						"json": [
+							{
+								"Name": "Notebook Basic 15",
+								"Description": "Notebook Basic 15 with 2,80 GHz quad core, 15\" LCD, 4 GB DDR3 RAM, 500 GB Hard Disc, Windows 8 Pro",
+								"Id": "HT-1000",
+								"SubCategoryId": "Notebooks",
+								"icon": "../f/images/Woman_avatar_01.png"
+							},
+							{
+								"Name": "Notebook Basic 17",
+								"Description": "Notebook Basic 17 with 2,80 GHz quad core, 17\" LCD, 4 GB DDR3 RAM, 500 GB Hard Disc, Windows 8 Pro",
+								"Id": "HT-1001",
+								"SubCategoryId": "Notebooks",
+								"icon": "../f/images/Woman_avatar_01.png"
+							},
+							{
+								"Name": "Notebook Basic 18",
+								"Description": "Notebook Basic 18 with 2,80 GHz quad core, 18\" LCD, 8 GB DDR3 RAM, 1000 GB Hard Disc, Windows 8 Pro",
+								"Id": "HT-1002",
+								"SubCategoryId": "Notebooks",
+								"icon": "../f/images/Woman_avatar_01.png"
+							},
+							{
+								"Name": "Notebook Basic 19",
+								"Description": "Notebook Basic 19 with 2,80 GHz quad core, 19\" LCD, 8 GB DDR3 RAM, 1000 GB Hard Disc, Windows 8 Pro",
+								"Id": "HT-1003",
+								"SubCategoryId": "Notebooks",
+								"icon": "../f/images/Woman_avatar_01.png"
+							},
+							{
+								"Name": "ITelO Vault",
+								"Description": "Digital Organizer with State-of-the-Art Storage Encryption",
+								"Id": "HT-1007",
+								"SubCategoryId": "PDAs & Organizers",
+								"icon": "../f/images/Woman_avatar_01.png"
+							},
+							{
+								"Name": "Notebook Professional 15",
+								"Description": "Notebook Professional 15 with 2,80 GHz quad core, 15\" Multitouch LCD, 8 GB DDR3 RAM, 500 GB SSD - DVD-Writer (DVD-R/+R/-RW/-RAM),Windows 8 Pro",
+								"Id": "HT-1010",
+								"SubCategoryId": "Notebooks",
+								"icon": "../f/images/Woman_avatar_01.png"
+							},
+							{
+								"Name": "Notebook Professional 26",
+								"Description": "Notebook Professional 15 with 2,80 GHz quad core, 15\" Multitouch LCD, 8 GB DDR3 RAM, 500 GB SSD - DVD-Writer (DVD-R/+R/-RW/-RAM),Windows 8 Pro",
+								"Id": "HT-1022",
+								"SubCategoryId": "Notebooks",
+								"icon": "../f/images/Woman_avatar_01.png"
+							},
+							{
+								"Name": "Notebook Professional 27",
+								"Description": "Notebook Professional 15 with 2,80 GHz quad core, 15\" Multitouch LCD, 8 GB DDR3 RAM, 500 GB SSD - DVD-Writer (DVD-R/+R/-RW/-RAM),Windows 8 Pro",
+								"Id": "HT-1024",
+								"SubCategoryId": "Notebooks",
+								"icon": "../f/images/Woman_avatar_01.png"
+							}
+						]
+					},
+					"item": {
+						"icon": {
+							"src": "{icon}"
+						},
+						"title": {
+							"label": "{{title_label}}",
+							"value": "{Name}"
+						},
+						"description": {
+							"label": "{{description_label}}",
+							"value": "{Description}"
+						}
+					}
+				}
+			}
+		},
+		"card6": {
+			"sap.card": {
+				"header": {
+					"title": "This line is the title of sap.f.Card and a very very very very very very very very very very very very very very very very very very long one",
+					"subTitle": " Thi is a sap.f.Card subtitle and a very very  very very very very very very very very very very very very very very very very  very very long one",
+					"icon": {
+						"text": "GK"
+					},
+					"status": {
+						"text": "Count"
+					}
+				},
+				"type": "List",
+				"content": {
+					"data": {
+						"json": [
+							{
+								"Name": "Notebook Basic 15",
+								"Description": "Notebook Basic 15 with 2,80 GHz quad core, 15\" LCD, 4 GB DDR3 RAM, 500 GB Hard Disc, Windows 8 Pro",
+								"Id": "HT-1000",
+								"SubCategoryId": "Notebooks",
+								"icon": "../f/images/Woman_avatar_01.png"
+							},
+							{
+								"Name": "Notebook Basic 17",
+								"Description": "Notebook Basic 17 with 2,80 GHz quad core, 17\" LCD, 4 GB DDR3 RAM, 500 GB Hard Disc, Windows 8 Pro",
+								"Id": "HT-1001",
+								"SubCategoryId": "Notebooks",
+								"icon": "../f/images/Woman_avatar_01.png"
+							},
+							{
+								"Name": "Notebook Basic 18",
+								"Description": "Notebook Basic 18 with 2,80 GHz quad core, 18\" LCD, 8 GB DDR3 RAM, 1000 GB Hard Disc, Windows 8 Pro",
+								"Id": "HT-1002",
+								"SubCategoryId": "Notebooks",
+								"icon": "../f/images/Woman_avatar_01.png"
+							}
+						]
+					},
+					"item": {
+						"icon": {
+							"src": "{icon}"
+						},
+						"title": {
+							"label": "{{title_label}}",
+							"value": "{Name}"
+						},
+						"description": {
+							"label": "{{description_label}}",
+							"value": "{Description}"
+						}
+					}
+				}
+			}
+		},
+		"card7": {
+			"sap.card": {
+				"type": "List",
+				"header": {
+					"title": "L4 Card Title 2x3",
+					"subTitle": "Card subtitle",
+					"icon": {
+						"src": "sap-icon://activity-items"
+					}
+				},
+				"content": {
+					"data": {
+						"json": [
+							{
+								"Name": "Notebook Basic 15",
+								"Description": "Notebook Basic 15 with 2,80 GHz quad core, 15\" LCD, 4 GB DDR3 RAM, 500 GB Hard Disc, Windows 8 Pro",
+								"Id": "HT-1000",
+								"SubCategoryId": "Notebooks"
+							}
+						]
+					},
+					"item": {
+						"title": {
+							"label": "{{title_label}}",
+							"value": "{Name}",
+							"type": "string",
+							"importance": 0
+						},
+						"description": {
+							"label": "{{description_label}}",
+							"value": "{Description}",
+							"type": "string",
+							"importance": 0
+						}
+					}
+				}
+			}
+		},
+		"line": {
+			"sap.card": {
+				"type": "Analytical",
+				"header": {
+					"type": "Numeric",
+					"data": {
+						"request": {
+							"url": "./cardsVisualTests/cardcontent/kpi.json"
+						},
+						"path": "/kpiInfos/kpi"
+					},
+					"title": "Project Cloud Transformation",
+					"subTitle": "Revenue",
+					"unitOfMeasurement": "EUR",
+					"mainIndicator": {
+						"number": "{number}",
+						"unit": "{unit}",
+						"trend": "{trend}",
+						"state": "{state}",
+						"range": {
+							"WE CAN OFFER THE USE OF RANGE OR STATE": "WE CAN OFFER THE USE OF RANGE OR STATE",
+							"Critical": [
+								0,
+								100
+							],
+							"Good": [
+								100,
+								1000
+							]
+						}
+					},
+					"details": "{details}",
+					"sideIndicators": [
+						{
+							"title": "Target",
+							"number": "{target/number}",
+							"unit": "{target/unit}"
+						},
+						{
+							"title": "Deviation",
+							"number": "{deviation/number}",
+							"unit": "%"
+						}
+					]
+				},
+				"content": {
+					"chartType": "Line",
+					"legend": {
+						"visible": true,
+						"position": "Right",
+						"alignment": "Center"
+					},
+					"plotArea": {
+						"dataLabel": {
+							"visible": true
+						}
+					},
+					"title": {
+						"text": "Line chart",
+						"visible": true,
+						"alignment": "Bottom"
+					},
+					"measureAxis": "valueAxis",
+					"dimensionAxis": "categoryAxis",
+					"data": {
+						"request": {
+							"url": "./cardcontent/revenue.json"
+						},
+						"path": "/list"
+					},
+					"dimensions": [
+						{
+							"label": "Weeks",
+							"value": "{Week}"
+						}
+					],
+					"measures": [
+						{
+							"label": "Revenue",
+							"value": "{Revenue}"
+						},
+						{
+							"label": "Cost",
+							"value": "{Cost}"
+						}
+					]
+				}
+			}
+		},
+		"stackedColumn": {
+			"sap.card": {
+				"type": "Analytical",
+				"header": {
+					"type": "Numeric",
+					"data": {
+						"json": {
+							"n": "56",
+							"u": "%",
+							"trend": "Up",
+							"valueColor": "Good"
+						}
+					},
+					"title": "Project Cloud Transformation Project Cloud Transformation Project Cloud Transformation Project Cloud Transformation Project Cloud Transformation Project Cloud Transformation Project Cloud Transformation ",
+					"subTitle": "Forecasted goal achievement depending on business logic and other important information Forecasted goal achievement depending on business logic and other important information",
+					"unitOfMeasurement": "EUR",
+					"mainIndicator": {
+						"number": "{n}",
+						"unit": "{u}",
+						"trend": "{trend}",
+						"state": "{valueColor}"
+					},
+					"details": "Details, additional information, will directly truncate after there is no more space.Details, additional information, will directly truncate after there is no more space.",
+					"sideIndicators": [
+						{
+							"title": "Long Target Long Target Long Target Long Target Long Target Long Target Long Target Long Target Long Target Long Target Long Target Long Target Long Target Long Target Long Target",
+							"number": "3252.234",
+							"unit": "K"
+						},
+						{
+							"title": "Long Deviation Long Deviation",
+							"number": "22.43",
+							"unit": "%"
+						}
+					]
+				},
+				"content": {
+					"chartType": "StackedColumn",
+					"legend": {
+						"visible": false
+					},
+					"plotArea": {
+						"dataLabel": {
+							"visible": false,
+							"showTotal": true
+						}
+					},
+					"title": {
+						"text": "Stacked column chart",
+						"visible": true,
+						"alignment": "Bottom"
+					},
+					"measureAxis": "valueAxis",
+					"dimensionAxis": "categoryAxis",
+					"data": {
+						"request": {
+							"url": "./cardcontent/revenue.json"
+						},
+						"path": "/list"
+					},
+					"dimensions": [
+						{
+							"label": "Weeks",
+							"value": "{Week}"
+						}
+					],
+					"measures": [
+						{
+							"label": "Revenue",
+							"value": "{Revenue}"
+						},
+						{
+							"label": "Cost",
+							"value": "{Cost}"
+						}
+					]
+				}
+			}
+		},
+		"stackedBar": {
+			"sap.card": {
+				"type": "Analytical",
+				"header": {
+					"type": "Numeric",
+					"data": {
+						"json": {
+							"n": 6547394.45496,
+							"u": "М $",
+							"trend": "Down",
+							"valueColor": "Critical"
+						}
+					},
+					"subTitle": "Success Rate",
+					"mainIndicator": {
+						"number": "{n}",
+						"unit": "{u}",
+						"trend": "{trend}",
+						"state": "{valueColor}"
+					},
+					"sideIndicators": [
+						{
+							"title": "Decrease",
+							"number": "24",
+							"unit": "weeks"
+						}
+					]
+				},
+				"content": {
+					"chartType": "StackedBar",
+					"legend": {
+						"visible": true,
+						"position": "Bottom",
+						"alignment": "Center"
+					},
+					"plotArea": {
+						"dataLabel": {
+							"visible": true,
+							"showTotal": false
+						},
+						"categoryAxisText": {
+							"visible": false
+						},
+						"valueAxisText": {
+							"text": "Value Axis text"
+						}
+					},
+					"title": {
+						"text": "Stacked Bar chart",
+						"visible": true,
+						"alignment": "Bottom"
+					},
+					"measureAxis": "valueAxis",
+					"dimensionAxis": "categoryAxis",
+					"data": {
+						"request": {
+							"url": "./cardcontent/revenue.json"
+						},
+						"path": "/list"
+					},
+					"dimensions": [
+						{
+							"label": "Weeks",
+							"value": "{Week}"
+						}
+					],
+					"measures": [
+						{
+							"label": "Revenue",
+							"value": "{Revenue}"
+						}
+					]
+				}
+			}
+		},
+		"Donut": {
+			"sap.card": {
+				"type": "Analytical",
+				"header": {
+					"type": "Numeric",
+					"data": {
+						"json": {
+							"n": 6547394.45496,
+							"u": "М $",
+							"trend": "Down",
+							"valueColor": "Critical"
+						}
+					},
+					"subTitle": "Success Rate",
+					"mainIndicator": {
+						"number": "{n}",
+						"unit": "{u}",
+						"trend": "{trend}",
+						"state": "{valueColor}"
+					},
+					"sideIndicators": [
+						{
+							"title": "Decrease",
+							"number": "24",
+							"unit": "weeks"
+						}
+					]
+				},
+				"content": {
+					"chartType": "Donut",
+					"legend": {
+						"visible": true,
+						"position": "Top",
+						"alignment": "Center"
+					},
+					"plotArea": {
+						"dataLabel": {
+							"visible": true,
+							"showTotal": true
+						}
+					},
+					"title": {
+						"text": "Donut chart",
+						"visible": true,
+						"alignment": "Bottom"
+					},
+					"measureAxis": "size",
+					"dimensionAxis": "color",
+					"data": {
+						"request": {
+							"url": "./cardcontent/cost.json"
+						},
+						"path": "/milk"
+					},
+					"dimensions": [
+						{
+							"label": "Store Name",
+							"value": "{Store Name}"
+						}
+					],
+					"measures": [
+						{
+							"label": "Revenue",
+							"value": "{Revenue}"
+						}
+					]
+				}
+			}
+		}
+	},
+	"splitter": {
+		"card1": {
+			"sap.card": {
+				"header": {
+					"icon": {
+						"src": "sap-icon://accept"
+					},
+					"title": "Card Title 2x2",
+					"subTitle": "Card subtitle",
+					"status": "Count"
+				},
+				"type": "List"
+			}
+		},
+		"card2": {
+			"sap.card": {
+				"header": {
+					"icon": {
+						"src": "sap-icon://accept"
+					},
+					"title": "Card Title 1x1",
+					"subTitle": "Card subtitle",
+					"status": "Count"
+				},
+				"type": "List"
+			}
+		},
+		"card3": {
+			"sap.card": {
+				"header": {
+					"icon": {
+						"src": "sap-icon://accept"
+					},
+					"title": "Card Title 2x1",
+					"subTitle": "Card subtitle",
+					"status": "Count"
+				},
+				"type": "List"
+			}
+		}
+	},
+	"flexibleHeight": {
+		"card1": {
+			"sap.card": {
+				"header": {
+					"icon": {
+						"src": "sap-icon://accept"
+					},
+					"title": "Card Title 2x2",
+					"subTitle": "Card subtitle",
+					"status": "Count"
+				},
+				"type": "List"
+			}
+		},
+		"card2": {
+			"sap.card": {
+				"header": {
+					"icon": {
+						"src": "sap-icon://accept"
+					},
+					"title": "Card Title 2x2",
+					"subTitle": "Card subtitle",
+					"status": "Count"
+				},
+				"type": "List"
+			}
+		},
+		"card3": {
+			"sap.card": {
+				"header": {
+					"icon": {
+						"src": "sap-icon://accept"
+					},
+					"title": "Card Title 1x1",
+					"subTitle": "Card subtitle",
+					"status": "Count"
+				},
+				"type": "List"
+			}
+		},
+		"card4": {
+			"sap.card": {
+				"header": {
+					"icon": {
+						"src": "sap-icon://accept"
+					},
+					"title": "Card Title 2x1",
+					"subTitle": "Card subtitle",
+					"status": "Count"
+				},
+				"type": "List"
+			}
+		},
+		"card5": {
+			"sap.card": {
+				"header": {
+					"icon": {
+						"src": "sap-icon://accept"
+					},
+					"title": "Card Title 1x1",
+					"subTitle": "Card subtitle",
+					"status": "Count"
+				},
+				"type": "List"
+			}
+		},
+		"card6": {
+			"sap.card": {
+				"header": {
+					"icon": {
+						"src": "sap-icon://accept"
+					},
+					"title": "Card Title 4x1",
+					"subTitle": "Card subtitle",
+					"status": "Count"
+				},
+				"type": "List"
+			}
+		},
+		"card7": {
+			"sap.card": {
+				"header": {
+					"icon": {
+						"src": "sap-icon://accept"
+					},
+					"title": "Card Title 2x6",
+					"subTitle": "Card subtitle",
+					"status": "Count"
+				},
+				"type": "List"
+			}
+		},
+		"card8": {
+			"sap.card": {
+				"header": {
+					"icon": {
+						"src": "sap-icon://accept"
+					},
+					"title": "Card Title 4x4",
+					"subTitle": "Card subtitle",
+					"status": "Count"
+				},
+				"type": "List"
+			}
+		},
+		"card9": {
+			"sap.card": {
+				"header": {
+					"icon": {
+						"src": "sap-icon://accept"
+					},
+					"title": "Card Title 4x4 with image",
+					"subTitle": "Card subtitle",
+					"status": "Count"
+				},
+				"type": "List"
+			}
+		},
+		"card10": {
+			"sap.card": {
+				"header": {
+					"icon": {
+						"src": "sap-icon://accept"
+					},
+					"title": "Card Title 2x2",
+					"subTitle": "Card subtitle",
+					"status": "Count"
+				},
+				"type": "List"
+			}
+		},
+		"card11": {
+			"sap.card": {
+				"header": {
+					"icon": {
+						"src": "sap-icon://accept"
+					},
+					"title": "Card Title 2x2",
+					"subTitle": "Card subtitle",
+					"status": "Count"
+				},
+				"type": "List"
+			}
+		},
+		"card12": {
+			"sap.card": {
+				"header": {
+					"icon": {
+						"src": "sap-icon://accept"
+					},
+					"title": "Card Title 6x4",
+					"subTitle": "Card subtitle",
+					"status": "Count"
+				},
+				"type": "List"
+			}
+		},
+		"card13": {
+			"sap.card": {
+				"header": {
+					"icon": {
+						"src": "sap-icon://accept"
+					},
+					"title": "Card Title 6x4",
+					"subTitle": "Card subtitle",
+					"status": "Count"
+				},
+				"type": "List"
+			}
+		}
+	},
+	"grid": {
+		"card1": {
+			"sap.card": {
+				"header": {
+					"icon": {
+						"src": "sap-icon://accept"
+					},
+					"title": "Card Title 2x2",
+					"subTitle": "Card subtitle",
+					"status": "Count"
+				},
+				"type": "List"
+			}
+		},
+		"card2": {
+			"sap.card": {
+				"header": {
+					"icon": {
+						"src": "sap-icon://accept"
+					},
+					"title": "Card Title 4x2",
+					"subTitle": "Card subtitle",
+					"status": "Count"
+				},
+				"type": "List"
+			}
+		},
+		"card3": {
+			"sap.card": {
+				"header": {
+					"icon": {
+						"src": "sap-icon://accept"
+					},
+					"title": "Card Title 1x1",
+					"subTitle": "Card subtitle",
+					"status": "Count"
+				},
+				"type": "List"
+			}
+		},
+		"card4": {
+			"sap.card": {
+				"header": {
+					"icon": {
+						"src": "sap-icon://accept"
+					},
+					"title": "Card Title 2x1",
+					"subTitle": "Card subtitle",
+					"status": "Count"
+				},
+				"type": "List"
+			}
+		},
+		"card5": {
+			"sap.card": {
+				"header": {
+					"icon": {
+						"src": "sap-icon://accept"
+					},
+					"title": "Card Title 1x1",
+					"subTitle": "Card subtitle",
+					"status": "Count"
+				},
+				"type": "List"
+			}
+		},
+		"card6": {
+			"sap.card": {
+				"header": {
+					"icon": {
+						"src": "sap-icon://accept"
+					},
+					"title": "Card Title 4x1",
+					"subTitle": "Card subtitle",
+					"status": "Count"
+				},
+				"type": "List"
+			}
+		},
+		"card7": {
+			"sap.card": {
+				"header": {
+					"icon": {
+						"src": "sap-icon://accept"
+					},
+					"title": "Card Title 2x6",
+					"subTitle": "Card subtitle",
+					"status": "Count"
+				},
+				"type": "List"
+			}
+		},
+		"card8": {
+			"sap.card": {
+				"header": {
+					"icon": {
+						"src": "sap-icon://accept"
+					},
+					"title": "Card Title 4x4",
+					"subTitle": "Card subtitle",
+					"status": "Count"
+				},
+				"type": "List"
+			}
+		},
+		"card9": {
+			"sap.card": {
+				"header": {
+					"icon": {
+						"src": "sap-icon://accept"
+					},
+					"title": "Card Title 4x4 with image",
+					"subTitle": "Card subtitle",
+					"status": "Count"
+				},
+				"type": "List"
+			}
+		},
+		"card10": {
+			"sap.card": {
+				"header": {
+					"icon": {
+						"src": "sap-icon://accept"
+					},
+					"title": "Card Title 2x2",
+					"subTitle": "Card subtitle",
+					"status": "Count"
+				},
+				"type": "List"
+			}
+		},
+		"card11": {
+			"sap.card": {
+				"header": {
+					"icon": {
+						"src": "sap-icon://accept"
+					},
+					"title": "Card Title 2x2",
+					"subTitle": "Card subtitle",
+					"status": "Count"
+				},
+				"type": "List"
+			}
+		},
+		"card12": {
+			"sap.card": {
+				"header": {
+					"icon": {
+						"src": "sap-icon://accept"
+					},
+					"title": "Card Title 6x4",
+					"subTitle": "Card subtitle",
+					"status": "Count"
+				},
+				"type": "List"
+			}
+		},
+		"card13": {
+			"sap.card": {
+				"header": {
+					"icon": {
+						"src": "sap-icon://accept"
+					},
+					"title": "Card Title 6x4",
+					"subTitle": "Card subtitle",
+					"status": "Count"
+				},
+				"type": "List"
+			}
+		}
+	},
+	"zflow": {
+		"card1": {
+			"sap.card": {
+				"header": {
+					"icon": {
+						"src": "sap-icon://accept"
+					},
+					"title": "Card Title 2x2",
+					"subTitle": "Card subtitle",
+					"status": "Count"
+				},
+				"type": "List"
+			}
+		},
+		"card2": {
+			"sap.card": {
+				"header": {
+					"icon": {
+						"src": "sap-icon://accept"
+					},
+					"title": "Card Title 4x2",
+					"subTitle": "Card subtitle",
+					"status": "Count"
+				},
+				"type": "List"
+			}
+		},
+		"card3": {
+			"sap.card": {
+				"header": {
+					"icon": {
+						"src": "sap-icon://accept"
+					},
+					"title": "Card Title 1x1",
+					"subTitle": "Card subtitle",
+					"status": "Count"
+				},
+				"type": "List"
+			}
+		},
+		"card4": {
+			"sap.card": {
+				"header": {
+					"icon": {
+						"src": "sap-icon://accept"
+					},
+					"title": "Card Title 2x1",
+					"subTitle": "Card subtitle",
+					"status": "Count"
+				},
+				"type": "List"
+			}
+		},
+		"card5": {
+			"sap.card": {
+				"header": {
+					"icon": {
+						"src": "sap-icon://accept"
+					},
+					"title": "Card Title 1x1",
+					"subTitle": "Card subtitle",
+					"status": "Count"
+				},
+				"type": "List"
+			}
+		},
+		"card6": {
+			"sap.card": {
+				"header": {
+					"icon": {
+						"src": "sap-icon://accept"
+					},
+					"title": "Card Title 4x1",
+					"subTitle": "Card subtitle",
+					"status": "Count"
+				},
+				"type": "List"
+			}
+		},
+		"card7": {
+			"sap.card": {
+				"header": {
+					"icon": {
+						"src": "sap-icon://accept"
+					},
+					"title": "Card Title 2x6",
+					"subTitle": "Card subtitle",
+					"status": "Count"
+				},
+				"type": "List"
+			}
+		},
+		"card8": {
+			"sap.card": {
+				"header": {
+					"icon": {
+						"src": "sap-icon://accept"
+					},
+					"title": "Card Title 4x4",
+					"subTitle": "Card subtitle",
+					"status": "Count"
+				},
+				"type": "List"
+			}
+		},
+		"card9": {
+			"sap.card": {
+				"header": {
+					"icon": {
+						"src": "../f/images/Woman_avatar_01.png"
+					},
+					"title": "Card Title 4x4 with image",
+					"subTitle": "Card subtitle",
+					"status": "Count"
+				},
+				"type": "List"
+			}
+		},
+		"card10": {
+			"sap.card": {
+				"header": {
+					"icon": {
+						"src": "sap-icon://accept"
+					},
+					"title": "Card Title 2x2",
+					"subTitle": "Card subtitle",
+					"status": "Count"
+				},
+				"type": "List"
+			}
+		},
+		"card11": {
+			"sap.card": {
+				"header": {
+					"icon": {
+						"src": "sap-icon://accept"
+					},
+					"title": "Card Title 2x2",
+					"subTitle": "Card subtitle",
+					"status": "Count"
+				},
+				"type": "List"
+			}
+		},
+		"card12": {
+			"sap.card": {
+				"header": {
+					"icon": {
+						"src": "sap-icon://accept"
+					},
+					"title": "Card Title 6x4",
+					"subTitle": "Card subtitle",
+					"status": "Count"
+				},
+				"type": "List"
+			}
+		},
+		"card13": {
+			"sap.card": {
+				"header": {
+					"icon": {
+						"src": "sap-icon://accept"
+					},
+					"title": "Card Title 6x4",
+					"subTitle": "Card subtitle",
+					"status": "Count"
+				},
+				"type": "List"
+			}
+		}
+	},
+	"listContent": {
+		"card13": {
+			"sap.card": {
+				"type": "List",
+				"header": {
+					"title": "Request list content Card",
+					"subTitle": "Card subtitle",
+					"icon": {
+						"src": "sap-icon://accept"
+					},
+					"status": "100 of 200"
+				},
+				"content": {
+					"data": {
+						"request": {
+							"url": "./cardsVisualTests/cardcontent/someitems.json"
+						}
+					},
+					"item": {
+						"icon": {
+							"src": "{icon}"
+						},
+						"title": {
+							"label": "{{title_label}}",
+							"value": "{Name}"
+						},
+						"description": {
+							"label": "{{description_label}}",
+							"value": "{Description}"
+						},
+						"highlight": "{state}",
+						"info": {
+							"value": "{info}",
+							"state": "{infoState}"
+						}
+					}
+				}
+			}
+		}
+	},
+	"tableManifests": {
+		"tablecard1": {
+			"sap.card": {
+				"type": "Table",
+				"header": {
+					"title": "Table Card",
+					"subTitle": "Table Card subtitle"
+				},
+				"content": {
+					"data": {
+						"request": {
+							"url": "./cardcontent/tableitems.json"
+						},
+						"path": "/names"
+					},
+					"columns": [
+						{
+							"label": "First Name",
+							"value": "{firstName}"
+						},
+						{
+							"label": "Last Name",
+							"value": "{lastName}"
+						}
+					]
+				}
+			}
+		}
+	},
+	"kpiManifests": {
+		"kpicard1": {
+			"sap.card": {
+				"type": "List",
+				"header": {
+					"type": "Numeric",
+					"data": {
+						"request": {
+							"url": "./cardsVisualTests/cardcontent/kpi.json"
+						},
+						"path": "/kpiInfos/kpi"
+					},
+					"title": "Project Cloud Transformation",
+					"subTitle": "Revenue",
+					"unitOfMeasurement": "EUR",
+					"mainIndicator": {
+						"number": "{number}",
+						"unit": "{unit}",
+						"trend": "{trend}",
+						"state": "{state}",
+						"range": {
+							"WE CAN OFFER THE USE OF RANGE OR STATE": "WE CAN OFFER THE USE OF RANGE OR STATE",
+							"Critical": [
+								0,
+								100
+							],
+							"Good": [
+								100,
+								1000
+							]
+						}
+					},
+					"details": "{details}",
+					"sideIndicators": [
+						{
+							"title": "Target",
+							"number": "{target/number}",
+							"unit": "{target/unit}"
+						},
+						{
+							"title": "Deviation",
+							"number": "{deviation/number}",
+							"unit": "%"
+						}
+					]
+				},
+				"content": {}
+			}
+		},
+		"kpicard2": {
+			"sap.card": {
+				"type": "List",
+				"header": {
+					"type": "Numeric",
+					"data": {
+						"json": {
+							"n": 6547394.45496,
+							"u": "М $",
+							"trend": "Down",
+							"valueColor": "Critical"
+						}
+					},
+					"subTitle": "Success Rate",
+					"mainIndicator": {
+						"number": "{n}",
+						"unit": "{u}",
+						"trend": "{trend}",
+						"state": "{valueColor}"
+					},
+					"sideIndicators": [
+						{
+							"title": "Decrease",
+							"number": "245438095430954.4532423",
+							"unit": "%"
+						}
+					]
+				}
+			}
+		},
+		"kpicard3": {
+			"sap.card": {
+				"type": "List",
+				"header": {
+					"type": "Numeric",
+					"data": {
+						"json": {
+							"n": "56",
+							"u": "%",
+							"trend": "Up",
+							"valueColor": "Good"
+						}
+					},
+					"title": "Project Cloud Transformation Project Cloud Transformation Project Cloud Transformation Project Cloud Transformation Project Cloud Transformation Project Cloud Transformation Project Cloud Transformation ",
+					"subTitle": "Forecasted goal achievement depending on business logic and other important information Forecasted goal achievement depending on business logic and other important information",
+					"unitOfMeasurement": "EUR",
+					"mainIndicator": {
+						"number": "{n}",
+						"unit": "{u}",
+						"trend": "{trend}",
+						"state": "{valueColor}"
+					},
+					"details": "Details, additional information, will directly truncate after there is no more space.Details, additional information, will directly truncate after there is no more space.",
+					"sideIndicators": [
+						{
+							"title": "Target Long Target Long Target Long Target Long",
+							"number": "3252.234",
+							"unit": "K"
+						},
+						{
+							"title": "Deviation Long Deviation Deviation Long Deviation",
+							"number": "22.43",
+							"unit": "%"
+						}
+					]
+				}
+			}
+		},
+		"kpicard4": {
+			"sap.card": {
+				"type": "List",
+				"header": {
+					"title": "List card",
+					"subTitle": "Card to check that kpi changes don't brake other cards Card to check that kpi changes don't brake other cards Card to check that kpi changes don't brake other cards Card to check that kpi changes don't brake other cards "
+				},
+				"content": {
+					"data": {
+						"request": {
+							"url": "./cardsVisualTests/cardcontent/someitems.json"
+						}
+					},
+					"item": {
+						"icon": {
+							"src": "{icon}"
+						},
+						"title": {
+							"label": "{{title_label}}",
+							"value": "{Name}"
+						},
+						"description": {
+							"label": "{{description_label}}",
+							"value": "{Description}"
+						}
+					}
+				}
+			}
+		},
+		"tablecard1": {
+			"sap.card": {
+				"header": {
+					"type": "Numeric",
+					"data": {
+						"request": {
+							"url": "./cardsVisualTests/cardcontent/kpi.json"
+						},
+						"path": "/kpiInfos/kpi"
+					},
+					"title": "Project Cloud Transformation",
+					"subTitle": "Revenue",
+					"unitOfMeasurement": "EUR",
+					"mainIndicator": {
+						"number": "{number}",
+						"unit": "{unit}",
+						"trend": "{trend}",
+						"state": "{state}",
+						"range": {
+							"WE CAN OFFER THE USE OF RANGE OR STATE": "WE CAN OFFER THE USE OF RANGE OR STATE",
+							"Critical": [
+								0,
+								100
+							],
+							"Good": [
+								100,
+								1000
+							]
+						}
+					},
+					"details": "{details}",
+					"sideIndicators": [
+						{
+							"title": "Target",
+							"number": "{target/number}",
+							"unit": "{target/unit}"
+						},
+						{
+							"title": "Deviation",
+							"number": "{deviation/number}",
+							"unit": "%"
+						}
+					]
+				},
+				"type": "Table",
+				"content": {
+					"data": {
+						"request": {
+							"url": "./cardcontent/tableitems.json"
+						},
+						"path": "/names"
+					},
+					"columns": [
+						{
+							"label": "First Name",
+							"value": "{firstName}"
+						},
+						{
+							"label": "Last Name",
+							"value": "{lastName}"
+						}
+					]
+				}
+			}
+		}
+	},
+	"analyticalContent": {
+		"line": {
+			"sap.card": {
+				"type": "Analytical",
+				"header": {
+					"type": "Numeric",
+					"data": {
+						"request": {
+							"url": "./cardsVisualTests/cardcontent/kpi.json"
+						},
+						"path": "/kpiInfos/kpi"
+					},
+					"title": "Project Cloud Transformation",
+					"subTitle": "Revenue",
+					"unitOfMeasurement": "EUR",
+					"mainIndicator": {
+						"number": "{number}",
+						"unit": "{unit}",
+						"trend": "{trend}",
+						"state": "{state}",
+						"range": {
+							"WE CAN OFFER THE USE OF RANGE OR STATE": "WE CAN OFFER THE USE OF RANGE OR STATE",
+							"Critical": [
+								0,
+								100
+							],
+							"Good": [
+								100,
+								1000
+							]
+						}
+					},
+					"details": "{details}",
+					"sideIndicators": [
+						{
+							"title": "Target",
+							"number": "{target/number}",
+							"unit": "{target/unit}"
+						},
+						{
+							"title": "Deviation",
+							"number": "{deviation/number}",
+							"unit": "%"
+						}
+					]
+				},
+				"content": {
+					"chartType": "Line",
+					"legend": {
+						"visible": true,
+						"position": "Right",
+						"alignment": "Center"
+					},
+					"plotArea": {
+						"dataLabel": {
+							"visible": true
+						}
+					},
+					"title": {
+						"text": "Line chart",
+						"visible": true,
+						"alignment": "Bottom"
+					},
+					"measureAxis": "valueAxis",
+					"dimensionAxis": "categoryAxis",
+					"data": {
+						"request": {
+							"url": "./cardcontent/revenue.json"
+						},
+						"path": "/list"
+					},
+					"dimensions": [
+						{
+							"label": "Weeks",
+							"value": "{Week}"
+						}
+					],
+					"measures": [
+						{
+							"label": "Revenue",
+							"value": "{Revenue}"
+						},
+						{
+							"label": "Cost",
+							"value": "{Cost}"
+						}
+					]
+				}
+			}
+		},
+		"stackedColumn": {
+			"sap.card": {
+				"type": "Analytical",
+				"header": {
+					"type": "Numeric",
+					"data": {
+						"json": {
+							"n": "56",
+							"u": "%",
+							"trend": "Up",
+							"valueColor": "Good"
+						}
+					},
+					"title": "Project Cloud Transformation Project Cloud Transformation Project Cloud Transformation Project Cloud Transformation Project Cloud Transformation Project Cloud Transformation Project Cloud Transformation ",
+					"subTitle": "Forecasted goal achievement depending on business logic and other important information Forecasted goal achievement depending on business logic and other important information",
+					"unitOfMeasurement": "EUR",
+					"mainIndicator": {
+						"number": "{n}",
+						"unit": "{u}",
+						"trend": "{trend}",
+						"state": "{valueColor}"
+					},
+					"details": "Details, additional information, will directly truncate after there is no more space.Details, additional information, will directly truncate after there is no more space.",
+					"sideIndicators": [
+						{
+							"title": "Long Target Long Target Long Target Long Target Long Target Long Target Long Target Long Target Long Target Long Target Long Target Long Target Long Target Long Target Long Target",
+							"number": "3252.234",
+							"unit": "K"
+						},
+						{
+							"title": "Long Deviation Long Deviation",
+							"number": "22.43",
+							"unit": "%"
+						}
+					]
+				},
+				"content": {
+					"chartType": "StackedColumn",
+					"legend": {
+						"visible": false
+					},
+					"plotArea": {
+						"dataLabel": {
+							"visible": false,
+							"showTotal": true
+						}
+					},
+					"title": {
+						"text": "Stacked column chart",
+						"visible": true,
+						"alignment": "Bottom"
+					},
+					"measureAxis": "valueAxis",
+					"dimensionAxis": "categoryAxis",
+					"data": {
+						"request": {
+							"url": "./cardcontent/revenue.json"
+						},
+						"path": "/list"
+					},
+					"dimensions": [
+						{
+							"label": "Weeks",
+							"value": "{Week}"
+						}
+					],
+					"measures": [
+						{
+							"label": "Revenue",
+							"value": "{Revenue}"
+						},
+						{
+							"label": "Cost",
+							"value": "{Cost}"
+						}
+					]
+				}
+			}
+		},
+		"stackedBar": {
+			"sap.card": {
+				"type": "Analytical",
+				"header": {
+					"type": "Numeric",
+					"data": {
+						"json": {
+							"n": 6547394.45496,
+							"u": "М $",
+							"trend": "Down",
+							"valueColor": "Critical"
+						}
+					},
+					"subTitle": "Success Rate",
+					"mainIndicator": {
+						"number": "{n}",
+						"unit": "{u}",
+						"trend": "{trend}",
+						"state": "{valueColor}"
+					},
+					"sideIndicators": [
+						{
+							"title": "Decrease",
+							"number": "24",
+							"unit": "weeks"
+						}
+					]
+				},
+				"content": {
+					"chartType": "StackedBar",
+					"legend": {
+						"visible": true,
+						"position": "Bottom",
+						"alignment": "Center"
+					},
+					"plotArea": {
+						"dataLabel": {
+							"visible": true,
+							"showTotal": false
+						},
+						"categoryAxisText": {
+							"visible": false
+						}
+					},
+					"title": {
+						"text": "Stacked Bar chart",
+						"visible": true,
+						"alignment": "Bottom"
+					},
+					"measureAxis": "valueAxis",
+					"dimensionAxis": "categoryAxis",
+					"data": {
+						"request": {
+							"url": "./cardcontent/revenue.json"
+						},
+						"path": "/list"
+					},
+					"dimensions": [
+						{
+							"label": "Weeks",
+							"value": "{Week}"
+						}
+					],
+					"measures": [
+						{
+							"label": "Revenue",
+							"value": "{Revenue}"
+						}
+					]
+				}
+			}
+		},
+		"donut": {
+			"sap.card": {
+				"type": "Analytical",
+				"header": {
+					"type": "Numeric",
+					"data": {
+						"json": {
+							"n": 6547394.45496,
+							"u": "М $",
+							"trend": "Down",
+							"valueColor": "Critical"
+						}
+					},
+					"subTitle": "Success Rate",
+					"mainIndicator": {
+						"number": "{n}",
+						"unit": "{u}",
+						"trend": "{trend}",
+						"state": "{valueColor}"
+					},
+					"sideIndicators": [
+						{
+							"title": "Decrease",
+							"number": "24",
+							"unit": "weeks"
+						}
+					]
+				},
+				"content": {
+					"chartType": "Donut",
+					"legend": {
+						"visible": true,
+						"position": "Top",
+						"alignment": "Center"
+					},
+					"plotArea": {
+						"dataLabel": {
+							"visible": true,
+							"showTotal": true
+						}
+					},
+					"title": {
+						"text": "Donut chart",
+						"visible": true,
+						"alignment": "Bottom"
+					},
+					"measureAxis": "size",
+					"dimensionAxis": "color",
+					"data": {
+						"request": {
+							"url": "./cardcontent/cost.json"
+						},
+						"path": "/milk"
+					},
+					"dimensions": [
+						{
+							"label": "Store Name",
+							"value": "{Store Name}"
+						}
+					],
+					"measures": [
+						{
+							"label": "Revenue",
+							"value": "{Revenue}"
+						}
+					]
+				}
+			}
+		}
+	},
+	"manifestTests": {
+		"manifest": {
+			"sap.card": {
+				"type": "List",
+				"header": {
+					"title": "Request list content Card",
+					"subTitle": "Card subtitle",
+					"icon": {
+						"src": "sap-icon://accept"
+					},
+					"status": "100 of 200"
+				},
+				"content": {
+					"data": {
+						"request": {
+							"url": "./cardsVisualTests/cardcontent/someitems.json"
+						}
+					},
+					"item": {
+						"icon": {
+							"src": "{icon}"
+						},
+						"title": {
+							"label": "{{title_label}}",
+							"value": "{Name}"
+						},
+						"description": {
+							"label": "{{description_label}}",
+							"value": "{Description}"
+						}
+					}
+				}
+			}
+		}
+	}
+}

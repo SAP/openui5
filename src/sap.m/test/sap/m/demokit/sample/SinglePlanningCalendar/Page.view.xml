@@ -4,23 +4,25 @@
 	xmlns:core="sap.ui.core"
 	xmlns="sap.m">
 	<VBox class="sapUiSmallMargin">
+		<Label text="Select sticky mode" labelFor="stickyModeSelect" />
+		<Select id="stickyModeSelect" change="handleStickyModeChange">
+			<items>
+				<core:ListItem text="None" />
+				<core:ListItem text="All" />
+				<core:ListItem text="NavBarAndColHeaders" />
+			</items>
+		</Select>
 		<SinglePlanningCalendar
 			id="SPC1"
-			title= "My calendar"
+			class="sapUiSmallMarginTop"
+			title= "My Calendar"
 			appointmentSelect="handleAppointmentSelect"
 			headerDateSelect="handleHeaderDateSelect"
 			startDateChange="handleStartDateChange"
 			startDate="{path: '/startDate'}"
 			appointments="{path: '/appointments'}">
 			<actions>
-				<Select tooltip="Select sticky mode" change="handleStickyModeChange">
-					<items>
-						<core:ListItem text="None" />
-						<core:ListItem text="All" />
-						<core:ListItem text="NavBarAndColHeaders" />
-					</items>
-				</Select>
-				<Button id="addNewAppointment" icon="sap-icon://add" text="Add appointment" press="handleAppointmentCreate" tooltip="Add new appointment" />
+				<Button id="addNewAppointment" icon="sap-icon://add" press="handleAppointmentCreate" tooltip="Add new appointment" />
 			</actions>
 			<views>
 				<SinglePlanningCalendarWeekView key="WeekView" title="Week" />

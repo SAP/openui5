@@ -70,6 +70,9 @@ sap.ui.define([],
 						}
 					}
 				},
+				snappedTitleOnMobile: {
+					ignore: true
+				},
 				navigationActions: {
 					ignore: true
 				},

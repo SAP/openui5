@@ -55,10 +55,11 @@ html.sap-desktop .sapMToken.sapMTokenSelected:hover {
 .sapMTokenIcon {
 	font-size: @sapMFontSmallSize;
 	color: @sapUiContentIconColor;
+	line-height: 1.5625rem;
 }
 
 .sapMToken.sapMTokenReadOnly {
-	color: @sapUiContentForegroundTextColor;
+	color: @sapUiContentLabelColor
 }
 
 html.sap-desktop .sapMToken:focus {
@@ -83,4 +84,12 @@ html[data-sap-ui-browser^="ed"].sap-desktop {
 			border: 1px dashed @sapUiContentContrastFocusColor; //dashed only in IE due to visual issues with dotted - ticket 1670468323
 		}
 	}
+}
+
+.sapUiSizeCompact .sapMTokenText {
+	font-size: @sapMFontMediumSize;
+}
+
+.sapUiSizeCompact .sapMTokenIcon {
+	line-height: 1.1875rem;
 }

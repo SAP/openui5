@@ -11,21 +11,21 @@ sap.ui.define(function () {
 
 		tests: {
 			// sap.m Demo Apps
-			"sap/m/demokit/cart/webapp/test/integration/opaTestsWithComponent": {
+			"sap/m/demokit/cart/webapp/test/integration/opaTestsComponent": {
 				group: "ShoppingCart",
-				page: "test-resources/sap/m/demokit/cart/webapp/test/integration/opaTestsWithComponent.qunit.html"
+				page: "test-resources/sap/m/demokit/cart/webapp/test/integration/opaTestsComponent.qunit.html"
 			},
-			"sap/m/demokit/cart/webapp/test/integration/opaTestsWithGherkin": {
+			"sap/m/demokit/cart/webapp/test/integration/opaTestsGherkinIFrame": {
 				group: "ShoppingCart",
-				page: "test-resources/sap/m/demokit/cart/webapp/test/integration/opaTestsWithGherkin.qunit.html"
+				page: "test-resources/sap/m/demokit/cart/webapp/test/integration/opaTestsGherkinIFrame.qunit.html"
 			},
-			"sap/m/demokit/cart/webapp/test/integration/opaTestsWithGherkinAndComponent": {
+			"sap/m/demokit/cart/webapp/test/integration/opaTestsGherkinComponent": {
 				group: "ShoppingCart",
-				page: "test-resources/sap/m/demokit/cart/webapp/test/integration/opaTestsWithGherkinAndComponent.qunit.html"
+				page: "test-resources/sap/m/demokit/cart/webapp/test/integration/opaTestsGherkinComponent.qunit.html"
 			},
-			"sap/m/demokit/cart/webapp/test/integration/opaTestsWithIFrame": {
+			"sap/m/demokit/cart/webapp/test/integration/opaTestsIFrame": {
 				group: "ShoppingCart",
-				page: "test-resources/sap/m/demokit/cart/webapp/test/integration/opaTestsWithIFrame.qunit.html"
+				page: "test-resources/sap/m/demokit/cart/webapp/test/integration/opaTestsIFrame.qunit.html"
 			},
 			"sap/m/demokit/cart/webapp/test/unit/unitTests": {
 				group: "ShoppingCart",

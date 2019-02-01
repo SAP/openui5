@@ -10,6 +10,7 @@ sap.ui.define([
 	"sap/ui/base/Event",
 	"sap/base/Log",
 	"sap/ui/thirdparty/jquery",
+	"sap/ui/qunit/utils/waitForThemeApplied",
 	"sap/ui/thirdparty/sinon-4"
 ], function (
 	ManageAppsController,
@@ -21,6 +22,7 @@ sap.ui.define([
 	Event,
 	Log,
 	jQuery,
+	waitForThemeApplied,
 	sinon
 ) {
 	"use strict";
@@ -403,4 +405,6 @@ sap.ui.define([
 	QUnit.done(function () {
 		jQuery("#qunit-fixture").hide();
 	});
+
+	return waitForThemeApplied();
 });

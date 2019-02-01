@@ -281,7 +281,8 @@ function(
 			VariantUtil._navigationHandler.call(this);
 			assert.strictEqual(this._oHashRegister.currentIndex, 0, "then the oHashRegister.currentIndex is initialized to 0");
 			assert.ok(this.updateHasherEntry.calledWithExactly({
-				parameters: [sExistingParameters]
+				parameters: [sExistingParameters],
+				updateURL: false
 			}), "then VarintModel.updateHasherEntry() called with the required decoded URI parameters");
 		});
 
@@ -324,7 +325,8 @@ function(
 			assert.strictEqual(this.switchToDefaultForVariant.getCall(0).args.length, 0, "then  VariantModel.switchToDefaultForVariant() called with no parameters");
 			assert.strictEqual(this._oHashRegister.currentIndex, 0, "then the oHashRegister.currentIndex is reset to 0");
 			assert.ok(this.updateHasherEntry.calledWithExactly({
-				parameters: [sExistingParameters]
+				parameters: [sExistingParameters],
+				updateURL: false
 			}), "then VariantModel.updateHasherEntry() called with new decoded variant URI parameters, no URL update and _oHashRegister update");
 		});
 
@@ -431,7 +433,8 @@ function(
 			VariantUtil._navigationHandler.call(this);
 			assert.strictEqual(this._oHashRegister.currentIndex, 1, "then the oHashRegister.currentIndex is increased by 1");
 			assert.ok(this.updateHasherEntry.calledWithExactly({
-				parameters: [sExistingParameters]
+				parameters: [sExistingParameters],
+				updateURL: false
 			}), "then VariantModel.updateHasherEntry() called with the decoded variant URI parameters from next index, no URL update and no _oHashRegister update");
 		});
 
@@ -466,7 +469,8 @@ function(
 			VariantUtil._navigationHandler.call(this);
 			assert.strictEqual(this._oHashRegister.currentIndex, 1, "then the oHashRegister.currentIndex is increased by 1");
 			assert.ok(this.updateHasherEntry.calledWithExactly({
-				parameters: [sExistingParameters]
+				parameters: [sExistingParameters],
+				updateURL: false
 			}), "then VariantModel.updateHasherEntry() called with the decoded variant URI parameters from next index, no URL update and no _oHashRegister update");
 			assert.ok(this.switchToDefaultForVariantManagement.getCall(0).calledWithExactly("variantManagement1"), "then VariantModel.switchToDefaultForVariant() called with existing hash parameters for the incremented index");
 			assert.ok(this.switchToDefaultForVariantManagement.getCall(1).calledWithExactly("variantManagement2"), "then VariantModel.switchToDefaultForVariant() called with existing hash parameters for the incremented index");
@@ -517,9 +521,56 @@ function(
 			HashChanger.getInstance().fireEvent("hashReplaced", oEventReturn);
 			assert.strictEqual(this._sReplacedHash, oEventReturn.sHash, "then hash is replaced, _sReplacedHash set to the replaced hash");
 		});
+
+		QUnit.test("when '_adjustForDuplicateParameters' is called with an array of URL parameters containing a duplicate", function (assert) {
+			var aExistingParameters = ["existingParameter2", "existingParameter3"];
+			var aResultantParameters = aExistingParameters.slice(0);
+
+			this.oData = {
+				"sVariantManagementReference": {
+					variants: [
+						{key: "existingParameter2"},
+						{key: "existingParameter3"}
+					]
+				}
+			};
+			var bRestartRequired = VariantUtil._adjustForDuplicateParameters.call(this, aResultantParameters);
+			aExistingParameters.splice(1, 1);
+			assert.strictEqual(bRestartRequired, true, "then restart required is returned, since the URL parameters are adjusted");
+			assert.deepEqual(aResultantParameters, aExistingParameters, "then the duplicate URL parameter is removed");
+		});
+
+		QUnit.test("when '_adjustForDuplicateParameters' is called with an array of URL parameters containing no duplicate", function (assert) {
+			var aExistingParameters = ["existingParameter2", "existingParameter3"];
+			var aResultantParameters = aExistingParameters.slice(0);
+
+			this.oData = {
+				"sVariantManagementReference": {
+					variants: [
+						{key: "existingParameter2"},
+						{key: "existingParameter4"}
+					]
+				}
+			};
+			var bRestartRequired = VariantUtil._adjustForDuplicateParameters.call(this, aResultantParameters);
+
+			assert.strictEqual(bRestartRequired, false, "then no restart required is returned, since the URL parameters are not adjusted");
+			assert.deepEqual(aResultantParameters, aExistingParameters, "then the URL parameters are unchanged");
+		});
+
+		QUnit.test("when '_adjustForDuplicateParameters' is called with an array of only one URL parameter", function (assert) {
+			var aExistingParameters = ["existingParameter2"];
+			var aResultantParameters = aExistingParameters.slice(0);
+
+			var bRestartRequired = VariantUtil._adjustForDuplicateParameters.call(this, aResultantParameters);
+
+			assert.strictEqual(bRestartRequired, false, "then no restart required is returned, since the URL parameters are not adjusted");
+			assert.deepEqual(aResultantParameters, aExistingParameters, "then the URL parameters are unchanged");
+		});
+
 	});
 
-	QUnit.module("Given an instance of VariantModel", {
+	QUnit.module("Given an instance of VariantModel and a function is registered as a navigation filter", {
 		beforeEach: function (assert) {
 			var sCustomStatus = "Custom";
 			var sDefaultStatus = "Continue";

@@ -219,6 +219,14 @@ sap.ui.define([
 		return this._getMap().namespace;
 	};
 
+	DescriptorVariant.prototype.getPackage = function() {
+		return this._getMap().packageName;
+	};
+
+	DescriptorVariant.prototype.getDefinition = function() {
+		return this._getMap();
+	};
+
 	DescriptorVariant.prototype.getSettings = function() {
 		return this._oSettings;
 	};

@@ -4,12 +4,13 @@
 
 sap.ui.define([
 	'sap/ui/core/Control',
+	'sap/ui/Device',
 	'./library',
 	"./BlockLayoutCellRenderer",
 	"sap/base/Log",
 	"sap/ui/thirdparty/jquery"
 ],
-	function(Control, library, BlockLayoutCellRenderer, Log, jQuery) {
+	function(Control, Device, library, BlockLayoutCellRenderer, Log, jQuery) {
 		"use strict";
 
 		/**
@@ -141,6 +142,13 @@ sap.ui.define([
 		};
 
 		BlockLayoutCell.prototype._getFlexWidth = function () {
+
+			// fixes the issue in IE when the block layout size is auto
+			// like BlockLayout in a Dialog
+			if (Device.browser.internet_explorer) {
+				return this._flexWidth + ' 1 auto';
+			}
+
 			return this._flexWidth;
 		};
 

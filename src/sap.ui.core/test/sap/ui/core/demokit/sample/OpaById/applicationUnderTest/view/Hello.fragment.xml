@@ -1,0 +1,11 @@
+<core:FragmentDefinition
+	xmlns="sap.m"
+	xmlns:core="sap.ui.core"
+    xmlns:l="sap.ui.layout">
+    <l:HorizontalLayout class="sapUiContentPadding">
+        <Button
+            id="helloWorld"
+            text="Hello world">
+        </Button>
+    </l:HorizontalLayout>
+</core:FragmentDefinition>

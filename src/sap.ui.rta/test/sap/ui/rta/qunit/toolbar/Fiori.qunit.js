@@ -1,20 +1,22 @@
 /*global QUnit*/
 
 sap.ui.define([
-	'sap/ui/thirdparty/jquery',
-	'sap/ui/rta/toolbar/Fiori',
-	'sap/ui/rta/toolbar/Adaptation',
-	'sap/m/Image',
-	"sap/ui/thirdparty/sinon-4",
-	"sap/base/Log"
+	"sap/ui/thirdparty/jquery",
+	"sap/ui/rta/toolbar/Fiori",
+	"sap/ui/rta/toolbar/Adaptation",
+	"sap/m/Image",
+	"sap/base/Log",
+	"sap/ui/qunit/utils/waitForThemeApplied",
+	"sap/ui/thirdparty/sinon-4"
 ],
 function(
 	jQuery,
 	Fiori,
 	Adaptation,
 	Image,
-	sinon,
-	Log
+	Log,
+	waitForThemeApplied,
+	sinon
 ) {
 	'use strict';
 
@@ -100,4 +102,6 @@ function(
 	QUnit.done(function () {
 		jQuery("#qunit-fixture").hide();
 	});
+
+	return waitForThemeApplied();
 });

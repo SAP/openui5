@@ -26,7 +26,7 @@ function (library, SinglePlanningCalendarView) {
 	 * its official public release. Use at your own discretion.
 	 *
 	 *
-	 * @extends sap.ui.core.Element
+	 * @extends sap.m.SinglePlanningCalendarView
 	 *
 	 * @author SAP SE
 	 * @version ${version}

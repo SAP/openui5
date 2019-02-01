@@ -15,8 +15,9 @@ sap.ui.define([
 	"sap/m/Page",
 	"sap/m/SplitContainer",
 	"sap/ui/qunit/QUnitUtils",
-	"sap/ui/thirdparty/sinon-4",
-	"sap/ui/events/KeyCodes"
+	"sap/ui/events/KeyCodes",
+	"sap/ui/qunit/utils/waitForThemeApplied",
+	"sap/ui/thirdparty/sinon-4"
 ],
 function (
 	jQuery,
@@ -33,8 +34,9 @@ function (
 	Page,
 	SplitContainer,
 	QUnitUtils,
-	sinon,
-	KeyCodes
+	KeyCodes,
+	waitForThemeApplied,
+	sinon
 ) {
 	"use strict";
 
@@ -435,4 +437,6 @@ function (
 	QUnit.done(function () {
 		jQuery("#qunit-fixture").hide();
 	});
+
+	return waitForThemeApplied();
 });

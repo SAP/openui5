@@ -98,7 +98,7 @@ sap.ui.define([
 	 * @version ${version}
 	 *
 	 * @extends sap.ui.core.Control
-	 * @implements {sap.ui.layout.cssgrid.IGridConfigurable}
+	 * @implements sap.ui.layout.cssgrid.IGridConfigurable
 	 *
 	 * @since 1.60
 	 * @constructor
@@ -303,7 +303,7 @@ sap.ui.define([
 	/**
 	 * Updates the <code>CSSGrid</code> depending on change mutations.
 	 *
-	 * @param {object} [oChange] Change that must be applied to CSSGrid
+	 * @param {object} [oChanges] Changes that must be applied to CSSGrid
 	 * @private
 	 */
 	CSSGrid.prototype._onGridChange = function (oChanges) {

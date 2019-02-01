@@ -1,0 +1,47 @@
+<mvc:View
+    xmlns="sap.m"
+    xmlns:mvc="sap.ui.core.mvc"
+	xmlns:f="sap.f"
+	xmlns:w="sap.ui.integration.widgets"
+    displayBlock="true">
+
+	<Page title="{i18n>appTitle}">
+
+		<subHeader>
+			<Toolbar>
+				<ToolbarSpacer/>
+				<Title text="No layout provided (inline-block)"/>
+				<ToolbarSpacer/>
+			</Toolbar>
+		</subHeader>
+
+		<content>
+
+			<Panel expandable="true" headerText="Notes">
+				<VBox>
+					<Text text="There is no layout in this example. Cards wrap when there is not enough space."/>
+					<Text text="Every card has fixed width and height specified with a multiplier."/>
+					<Text text="A 2x1 card width would be 2*80px and height 1*80px."/>
+					<Text text="Margins are added by the cards."/>
+					<Text text="Empty spaces between the cards are not handled."/>
+					<Text text="No breathing."/>
+					<Text text="The app developer / card developer has to ensure the content is not bigger than the card itself"/>
+				</VBox>
+			</Panel>
+
+			<Panel>
+				<w:Card id="somedfault" manifest="{manifests>/noLayout/card1}"  width="300px"/>
+				<w:Card id="default1x1" manifest="{manifests>/noLayout/card2}"  width="300px"/>
+				<w:Card id="default2x1" manifest="{manifests>/noLayout/card3}"  width="300px"/>
+				<w:Card id="stackedColumn" manifest="{manifests>/noLayout/stackedColumn}"   height="500px" width="700px"/>
+				<w:Card id="default4x1" manifest="{manifests>/noLayout/card4}"  width="300px" />
+				<w:Card id="default2x2" manifest="{manifests>/noLayout/card5}"  width="300px" height="200px"/>
+				<w:Card id="line" manifest="{manifests>/noLayout/line}"  height="500px" width="700px"/>
+				<w:Card id="default4x2" manifest="{manifests>/noLayout/card6}"  width="320px"/>
+				<w:Card id="default4x4" manifest="{manifests>/noLayout/card7}"  width="320px"/>
+				<w:Card id="stackedBar" manifest="{manifests>/noLayout/stackedBar}"  height="500px" width="700px"/>
+				<w:Card id="Donut" manifest="{manifests>/noLayout/donut}"  height="500px" width="700px"/>
+			</Panel>
+		</content>
+	</Page>
+</mvc:View>

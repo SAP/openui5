@@ -130,4 +130,11 @@ describe('sap.m.MessageView', function() {
 		element(by.id("__button12")).click();
 	});
 
+
+	it("should open MessageView with long title", function () {
+		element(by.id("mMView2-information")).click();
+		element(by.jq("#mMView2listPage-cont > div > ul > li:nth-child(3) > div > span")).click();
+		expect(takeScreenshot()).toLookAs("message-view-long-title");
+		element(by.jq("#mMView2-detailsPage > header > div > button")).click();
+	});
 });

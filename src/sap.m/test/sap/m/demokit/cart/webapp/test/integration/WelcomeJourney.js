@@ -54,7 +54,7 @@ sap.ui.define([
 		// Actions
 		When.onHome.iPressOnTheFlatScreensCategory();
 		When.onTheWelcomePage.iPressOnTheCartButton();
-		When.onTheWelcomePage.iGoToTheCartPage();
+		When.onTheWelcomePage.iToggleTheCart();
 		// Assertions
 		Then.onTheCart.iShouldSeeTheProductInMyCart();
 		// Cleanup

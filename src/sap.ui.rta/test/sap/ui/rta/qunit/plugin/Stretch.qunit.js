@@ -2,7 +2,6 @@
 
 sap.ui.define([
 	"sap/ui/thirdparty/jquery",
-	"sap/ui/thirdparty/sinon-4",
 	"sap/ui/base/ManagedObject",
 	"sap/ui/dt/DesignTime",
 	"sap/ui/dt/OverlayRegistry",
@@ -16,11 +15,12 @@ sap.ui.define([
 	"sap/m/HBox",
 	"sap/m/VBox",
 	"sap/m/Button",
-	"sap/base/util/includes"
+	"sap/base/util/includes",
+	"sap/ui/qunit/utils/waitForThemeApplied",
+	"sap/ui/thirdparty/sinon-4"
 ],
 function (
 	jQuery,
-	sinon,
 	ManagedObject,
 	DesignTime,
 	OverlayRegistry,
@@ -34,7 +34,9 @@ function (
 	HBox,
 	VBox,
 	Button,
-	includes
+	includes,
+	waitForThemeApplied,
+	sinon
 ) {
 	'use strict';
 
@@ -749,4 +751,6 @@ function (
 	QUnit.done(function () {
 		jQuery("#qunit-fixture").hide();
 	});
+
+	return waitForThemeApplied();
 });

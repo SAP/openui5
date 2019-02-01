@@ -8,6 +8,6 @@
 		text="{i18n>notFoundText}"
 		icon="sap-icon://document"
 		showNavButton="true"
-		navButtonPress="onNavBack">
+		navButtonPress=".onNavBack">
 	</MessagePage>
 </mvc:View>

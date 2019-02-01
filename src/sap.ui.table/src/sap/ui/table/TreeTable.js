@@ -44,7 +44,6 @@ sap.ui.define([
 	 * @public
 	 * @alias sap.ui.table.TreeTable
 	 * @see {@link topic:08197fa68e4f479cbe30f639cc1cd22c sap.ui.table}
-	 * @see {@link topic:a05fe0659b9c49729168a48697ce0000 sap.ui.table.TreeTable}
 	 * @see {@link topic:148892ff9aea4a18b912829791e38f3e Tables: Which One Should I Choose?}
 	 * @see {@link fiori:/tree-table/ Tree Table}
 	 * @ui5-metamodel This control/element also will be described in the UI5 (legacy) designtime metamodel

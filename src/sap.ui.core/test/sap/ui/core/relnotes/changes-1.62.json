@@ -43,6 +43,168 @@
         "type": "FIX",
         "text": " i18n.ResourceBundle: Norwegian language support for \"nb\"",
         "references": []
+      },
+      {
+        "id": "a322f3a330522a7d02300e66729af27cbcd2e80f",
+        "type": "FEATURE",
+        "text": " Activates XMLProcessing Mode for Async XMLViews",
+        "references": []
+      },
+      {
+        "id": "65c4f232cf6c17540b9a4c427eec6bd4bce5da27",
+        "type": "FEATURE",
+        "text": " New library sap.ui.integration",
+        "references": []
+      },
+      {
+        "id": "1d4bc819c860b4f56701ac12ac99a1ba1f4143ab",
+        "type": "FEATURE",
+        "text": " Opa: search by ID in open dialogs",
+        "references": []
+      },
+      {
+        "id": "af48ff743019c0d06e4f8a31bcbf3d46fb859e62",
+        "type": "FEATURE",
+        "text": " Opa: search by view ID",
+        "references": []
+      },
+      {
+        "id": "ab2d27b0a39cd0df0f6a29b551bef1ea32ec8375",
+        "type": "FEATURE",
+        "text": " UIArea: allow to configure the set of logged events",
+        "references": []
+      },
+      {
+        "id": "faa9912ccf3e0c5e28fd68b72efa4a5dd811542f",
+        "type": "FEATURE",
+        "text": " core/routing/Target: ComponentContainer configuration",
+        "references": []
+      },
+      {
+        "id": "e4a5d8cd01b194db81a7f5970f28983a9ef5f13b",
+        "type": "FEATURE",
+        "text": " core/routing: support routing in nested components",
+        "references": []
+      },
+      {
+        "id": "b34c535ffb45d262e2181446943df75d5e11f1e1",
+        "type": "FEATURE",
+        "text": " sap.m.Carousel: Ability to display several items at once",
+        "references": []
+      },
+      {
+        "id": "196f180f06407d1160e3bb156f6de8afaa4f2e40",
+        "type": "FEATURE",
+        "text": " trace/FESR: Enhance API for improved FESR performance logging",
+        "references": []
+      },
+      {
+        "id": "f4f1803f4c9a018216230f3705d3c33759293553",
+        "type": "FIX",
+        "text": " ComboBoxBase: Support for composition characters",
+        "references": []
+      },
+      {
+        "id": "068997b82b9dc572511e6610de14b5be8acd0b95",
+        "type": "FIX",
+        "text": " Core: detect bootstrap script even when query params are present",
+        "references": []
+      },
+      {
+        "id": "fba2daa657d5415984b71db787ed8e5540a5e6a0",
+        "type": "FIX",
+        "text": " Device.js: use maxTouchPoints for touch support detection",
+        "references": []
+      },
+      {
+        "id": "133a975a2f4bb967a76f1931b1b8892ce9fa0054",
+        "type": "FIX",
+        "text": " Icon: properly validate multi-typed color properties",
+        "references": []
+      },
+      {
+        "id": "d0b9950a732344830cb8c2498ac820e3586cb9c6",
+        "type": "FIX",
+        "text": " ManagedObject: clone only public properties and associations",
+        "references": []
+      },
+      {
+        "id": "28542bce40ee1f3cc90f7e6811d82f7efc07e1f9",
+        "type": "FIX",
+        "text": " ODataTreeBinding: Fix context change detection",
+        "references": []
+      },
+      {
+        "id": "1c882fbfc28e8567c06a0ef6244df754e7bf02e3",
+        "type": "FIX",
+        "text": " ODataTreeBinding: Prevent exception when setting context to null",
+        "references": []
+      },
+      {
+        "id": "1d5f9d99b520ccfc42c97261d4cf99f1f1162e93",
+        "type": "FIX",
+        "text": " Revert for: \"v2.ODataModel: improve checkUpdate performance\"",
+        "references": []
+      },
+      {
+        "id": "f823f1c5a315cac71d207337b614161e6ca87bc6",
+        "type": "FIX",
+        "text": " TreeBindingCompatibilityAdapter: Safe Array indexOf",
+        "references": []
+      },
+      {
+        "id": "3daa553eaa89ba944741c8754312fe24210e1b74",
+        "type": "FIX",
+        "text": " XMLComposite: detect parser error in given fragment content",
+        "references": []
+      },
+      {
+        "id": "5aec8e608d152fad9417f46c07f34eeae81661fc",
+        "type": "FIX",
+        "text": " base.DataType: make type \u0027int\u0027 accept NaN as a valid value",
+        "references": []
+      },
+      {
+        "id": "5471178bdddbae1cb510ba4ab4ae0fb92cd13260",
+        "type": "FIX",
+        "text": " core.support.plugins.ControlTree: context for OData v4 fixed",
+        "references": []
+      },
+      {
+        "id": "e55f873a97452bad09fa3fb53a231015644fec89",
+        "type": "FIX",
+        "text": " core/rules/App.support.js: Adapt scope of jquerySapUsage rule",
+        "references": []
+      },
+      {
+        "id": "34d8cd353ed0cf912847f3188dc95fb91df3e944",
+        "type": "FIX",
+        "text": " sap.ui.core/Component: improved variant determination",
+        "references": []
+      },
+      {
+        "id": "3085b0ca7c647b3f3d3ee1eaf3eda05ebb92dd32",
+        "type": "FIX",
+        "text": " syncXHRBootstrap(Debug).qunit.js - IE support",
+        "references": []
+      },
+      {
+        "id": "951562e45ec5385d165ccdf4ef4dd83422c525d7",
+        "type": "FIX",
+        "text": " trace/FESR: Fix FESR tests",
+        "references": []
+      },
+      {
+        "id": "583d498abbbe237ff5af2ef21a7a8517f12925e6",
+        "type": "FIX",
+        "text": " v2.ODataModel: improve checkUpdate performance",
+        "references": []
+      },
+      {
+        "id": "789edd1cd3a77f7464b6a570585a31add5b7b73d",
+        "type": "FIX",
+        "text": " v2.ODataModel: memory leak",
+        "references": []
       }
     ]
   }

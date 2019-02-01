@@ -197,7 +197,7 @@ sap.ui.define([
 		if (oCurrentVariant.content.variantReference) {
 			aReferencedVariantChanges = this.getVariantChanges(sVariantManagementReference, oCurrentVariant.content.variantReference, true);
 			return aReferencedVariantChanges.filter( function(oReferencedChange) {
-				return Utils.compareAgainstCurrentLayer(oReferencedChange.getDefinition().layer) === -1; /* Referenced change layer below current layer*/
+				return Utils.compareAgainstCurrentLayer(oReferencedChange.getDefinition().layer, oCurrentVariant.content.layer) === -1; /* Referenced change layer below current layer*/
 			});
 		}
 		return aReferencedVariantChanges;

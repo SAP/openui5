@@ -38,7 +38,7 @@ sap.ui.define([
 
 	opaTest("Should navigate to cart", function (Given, When, Then) {
 		// Actions
-		When.onTheWelcomePage.iGoToTheCartPage();
+		When.onTheWelcomePage.iToggleTheCart();
 		// Assertions
 		Then.onTheCart.iShouldSeeTheCart();
 		Then.onTheWelcomePage.iShouldSeeTheWelcomePage();
@@ -46,6 +46,7 @@ sap.ui.define([
 
 	opaTest("Should navigate from welcome to product view", function (Given, When, Then) {
 		// Actions
+		When.onTheWelcomePage.iToggleTheCart();
 		When.onTheWelcomePage.iPressOnTheProductSmartphoneAlphaTitle();
 		// Assertions
 		Then.onTheProduct.iShouldSeeTheSmartphoneAlphaDetailPage();

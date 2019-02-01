@@ -6,9 +6,11 @@ sap.ui.define([
 	"sap/ui/fl/FakeLrepConnectorSessionStorage",
 	"sap/ui/fl/registry/Settings",
 	"sap/ui/fl/transport/Transports",
+	"sap/ui/fl/Utils",
 	"sap/ui/rta/Utils",
 	"sap/ui/fl/descriptorRelated/internal/Utils",
 	"sap/base/Log",
+	"sap/ui/qunit/utils/waitForThemeApplied",
 	"sap/ui/thirdparty/sinon-4"
 ], function (
 	jQuery,
@@ -16,9 +18,11 @@ sap.ui.define([
 	FakeLrepConnectorSessionStorage,
 	Settings,
 	Transports,
+	FlUtils,
 	RtaUtils,
 	DescriptorUtils,
 	Log,
+	waitForThemeApplied,
 	sinon
 ) {
 	"use strict";
@@ -33,31 +37,32 @@ sap.ui.define([
 			FakeLrepConnectorSessionStorage.disableFakeConnector();
 		},
 		beforeEach: function () {
-			this.originalUShell = sap.ushell;
-			// this overrides the ushell globally => we need to restore it!
-
-			sap.ushell = Object.assign({}, sap.ushell, {
-				Container : {
-					getService : function () {
-						return {
-							getHash : function() {
-								return "testSemanticObject-testAction";
-							},
-							parseShellHash : function() {
-								return {
-									semanticObject : "testSemanticObject",
-									action : "testAction"
-								};
-							}
-						};
-					}
+			var oUshellContainerStub = {
+				getService : function () {
+					return {
+						getHash : function() {
+							return "testSemanticObject-testAction";
+						},
+						parseShellHash : function() {
+							return {
+								semanticObject : "testSemanticObject",
+								action : "testAction"
+							};
+						}
+					};
+				},
+				getLogonSystem: function() {
+					return {
+						isTrial: function() {
+							return false;
+						}
+					};
 				}
-			});
-
+			};
+			sandbox.stub(FlUtils, "getUshellContainer").returns(oUshellContainerStub);
 		},
 		afterEach: function () {
 			sandbox.restore();
-			sap.ushell = this.originalUShell;
 		}
 	}, function () {
 		QUnit.test("When getManifirstSupport() method is called", function (assert) {
@@ -89,10 +94,11 @@ sap.ui.define([
 		});
 
 		QUnit.test("When createDescriptorVariant() is called", function (assert) {
-			return AppVariantUtils.createDescriptorVariant({id: "testId", reference: "testReference"}).then(function(oDescriptorVariant) {
+			return AppVariantUtils.createDescriptorVariant({id: "testId", version: "1.0.0", reference: "testReference"}).then(function(oDescriptorVariant) {
 				assert.ok(true, "then the descriptor variant is created");
 				assert.strictEqual(oDescriptorVariant._id, "testId", "then the id of the descriptor variant is correct");
 				assert.strictEqual(oDescriptorVariant._reference, "testReference", "then the reference of the descriptor variant is correct");
+				assert.strictEqual(oDescriptorVariant._version, "1.0.0", "then the version of the application variant is correct");
 			});
 		});
 
@@ -243,7 +249,7 @@ sap.ui.define([
 				semanticObject: "testSemanticObject",
 				action: "testAction"
 			};
-			sandbox.stub(AppVariantUtils, "getURLParsedHash").returns(oParsedHash);
+			sandbox.stub(FlUtils, "getParsedURLHash").returns(oParsedHash);
 
 			assert.deepEqual(AppVariantUtils.getInlineChangeCreateInbound("testInbound"), oInboundPropertyChange, "then the inbound property change is correct");
 		});
@@ -439,7 +445,7 @@ sap.ui.define([
 		});
 
 		QUnit.test("When isS4HanaCloud() method is called", function (assert) {
-			return AppVariantUtils.createDescriptorVariant({id: "testId", reference: "testReference"}).then(function(oDescriptorVariant) {
+			return AppVariantUtils.createDescriptorVariant({id: "testId", version: "1.0.0", reference: "testReference"}).then(function(oDescriptorVariant) {
 				assert.equal(AppVariantUtils.isS4HanaCloud(oDescriptorVariant._oSettings), false, "then the platform is not S4 Hana Cloud");
 			});
 		});
@@ -677,73 +683,79 @@ sap.ui.define([
 		});
 
 		QUnit.test("When navigateToFLPHomepage() method is called and navigation to launchad gets triggered", function (assert) {
+			sandbox.restore();
 			window.bUShellNavigationTriggered = false;
-			var originalUShell = sap.ushell;
+			if (!sap.ushell) {
+				sap.ushell = {};
+			}
+			var originalUShell = sap.ushell.services;
 
-			sap.ushell = Object.assign({}, sap.ushell, {
-				Container : {
-					getService : function() {
+			sap.ushell.services = Object.assign({}, sap.ushell.services, {
+				AppConfiguration: {
+					getCurrentApplication: function() {
 						return {
-							toExternal : function() {
-								window.bUShellNavigationTriggered = true;
+							componentHandle: {
+								getInstance: function() {
+									return "testInstance";
+								}
 							}
 						};
 					}
-				},
-				services : {
-					AppConfiguration: {
-						getCurrentApplication: function() {
-							return {
-								componentHandle: {
-									getInstance: function() {
-										return "testInstance";
-									}
-								}
-							};
+				}
+			});
+
+			sandbox.stub(FlUtils, "getUshellContainer").returns({
+				getService : function() {
+					return {
+						toExternal : function() {
+							window.bUShellNavigationTriggered = true;
 						}
-					}
+					};
 				}
 			});
 
 			return AppVariantUtils.navigateToFLPHomepage().then(function() {
 				assert.equal(window.bUShellNavigationTriggered, true, "then the navigation to fiorilaunchpad gets triggered");
-				sap.ushell = originalUShell;
+				sap.ushell.services = originalUShell;
 				delete window.bUShellNavigationTriggered;
 			});
 		});
 
 		QUnit.test("When navigateToFLPHomepage() method is called and navigation to launchad does not get triggered", function (assert) {
+			sandbox.restore();
 			window.bUShellNavigationTriggered = false;
-			var originalUShell = sap.ushell;
+			if (!sap.ushell) {
+				sap.ushell = {};
+			}
+			var originalUShell = sap.ushell.services;
 
-			sap.ushell = Object.assign({}, sap.ushell, {
-				Container : {
-					getService : function() {
+			sap.ushell.services = Object.assign({}, sap.ushell.services, {
+				AppConfiguration: {
+					getCurrentApplication: function() {
 						return {
-							toExternal : function() {
-								window.bUShellNavigationTriggered = true;
+							componentHandle: {
+								getInstance: function() {
+									return undefined;
+								}
 							}
 						};
 					}
-				},
-				services : {
-					AppConfiguration: {
-						getCurrentApplication: function() {
-							return {
-								componentHandle: {
-									getInstance: function() {
-										return undefined;
-									}
-								}
-							};
+				}
+			});
+
+			sandbox.stub(FlUtils, "getUshellContainer").returns({
+				getService : function() {
+					return {
+						toExternal : function() {
+							window.bUShellNavigationTriggered = true;
 						}
-					}
+					};
 				}
 			});
 
 			return AppVariantUtils.navigateToFLPHomepage().then(function() {
 				assert.equal(window.bUShellNavigationTriggered, false, "then the navigation to fiorilaunchpad does not get triggered");
-				sap.ushell = originalUShell;
+				sap.ushell.services = originalUShell;
 				delete window.bUShellNavigationTriggered;
 			});
 		});
@@ -783,4 +795,6 @@ sap.ui.define([
 	QUnit.done(function () {
 		jQuery("#qunit-fixture").hide();
 	});
+
+	return waitForThemeApplied();
 });

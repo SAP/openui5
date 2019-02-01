@@ -139,7 +139,7 @@ sap.ui.define([
 			assert.equal(oDomRef.offsetWidth, 292, "i2.offsetWidth should equal 292");
 			assert.equal(oDomRef.offsetHeight, 292, "i2.offsetHeight should equal 292");
 			done();
-		}, 10);
+		}, 100);
 	});
 
 	QUnit.test("Aspect Ratio", function(assert) {
@@ -153,7 +153,7 @@ sap.ui.define([
 			assert.equal(oDomRef.offsetWidth, 292, "i2.offsetWidth should equal 292");
 			assert.equal(oDomRef.offsetHeight, 144, "i2.offsetHeight should equal 144");
 			done();
-		}, 10);
+		}, 100);
 	});
 
 	QUnit.test("Original Width", function(assert) {
@@ -167,6 +167,6 @@ sap.ui.define([
 			assert.equal(oDomRef.offsetWidth, 73, "i2.offsetWidth should equal 73");
 			assert.equal(oDomRef.offsetHeight, 36, "i2.offsetHeight should equal 36");
 			done();
-		}, 10);
+		}, 100);
 	});
 });

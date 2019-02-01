@@ -1,15 +1,16 @@
 /* global QUnit */
 
 sap.ui.define([
-	'sap/ui/fl/Utils',
-	'sap/ui/core/Manifest',
-	'sap/ui/rta/command/CommandFactory',
-	'sap/ui/dt/ElementDesignTimeMetadata',
-	'sap/ui/dt/OverlayRegistry',
-	'sap/ui/fl/variants/VariantManagement',
-	'sap/ui/fl/variants/VariantModel',
-	'sap/ui/fl/FlexControllerFactory',
-	'sap/ui/thirdparty/sinon-4'
+	"sap/ui/fl/Utils",
+	"sap/ui/core/Manifest",
+	"sap/ui/rta/command/CommandFactory",
+	"sap/ui/dt/ElementDesignTimeMetadata",
+	"sap/ui/dt/OverlayRegistry",
+	"sap/ui/fl/variants/VariantManagement",
+	"sap/ui/fl/variants/VariantModel",
+	"sap/ui/fl/FlexControllerFactory",
+	"sap/ui/qunit/utils/waitForThemeApplied",
+	"sap/ui/thirdparty/sinon-4"
 ], function (
 	FlUtils,
 	Manifest,
@@ -19,6 +20,7 @@ sap.ui.define([
 	VariantManagement,
 	VariantModel,
 	FlexControllerFactory,
+	waitForThemeApplied,
 	sinon
 ) {
 	'use strict';
@@ -174,4 +176,6 @@ sap.ui.define([
 	QUnit.done(function () {
 		jQuery("#qunit-fixture").hide();
 	});
+
+	return waitForThemeApplied();
 });

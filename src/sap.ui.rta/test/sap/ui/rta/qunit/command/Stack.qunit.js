@@ -1,19 +1,20 @@
 /* global QUnit */
 
 sap.ui.define([
-	'sap/ui/rta/command/CommandFactory',
-	'sap/ui/dt/DesignTimeMetadata',
-	'sap/ui/rta/command/LREPSerializer',
-	'sap/ui/rta/command/Stack',
-	'sap/ui/fl/registry/ChangeRegistry',
-	'sap/ui/fl/Utils',
-	'sap/ui/fl/Change',
-	'sap/ui/fl/ChangePersistence',
-	'sap/ui/fl/ChangePersistenceFactory',
-	'sap/m/Input',
-	'sap/m/Panel',
-	'sap/ui/core/UIComponent',
-	'sap/ui/thirdparty/sinon-4'
+	"sap/ui/rta/command/CommandFactory",
+	"sap/ui/dt/DesignTimeMetadata",
+	"sap/ui/rta/command/LREPSerializer",
+	"sap/ui/rta/command/Stack",
+	"sap/ui/fl/registry/ChangeRegistry",
+	"sap/ui/fl/Utils",
+	"sap/ui/fl/Change",
+	"sap/ui/fl/ChangePersistence",
+	"sap/ui/fl/ChangePersistenceFactory",
+	"sap/m/Input",
+	"sap/m/Panel",
+	"sap/ui/core/UIComponent",
+	"sap/ui/qunit/utils/waitForThemeApplied",
+	"sap/ui/thirdparty/sinon-4"
 ], function(
 	CommandFactory,
 	DesignTimeMetadata,
@@ -27,6 +28,7 @@ sap.ui.define([
 	Input,
 	Panel,
 	UIComponent,
+	waitForThemeApplied,
 	sinon
 ){
 	"use strict";
@@ -230,4 +232,6 @@ sap.ui.define([
 	QUnit.done(function () {
 		jQuery("#qunit-fixture").hide();
 	});
+
+	return waitForThemeApplied();
 });

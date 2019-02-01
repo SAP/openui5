@@ -890,6 +890,39 @@ function(
 				this.getShowValueStateMessage();
 	};
 
+	/**
+	 * Function calculates the available space for the tokenizer
+	 *
+	 * @sap-restricted sap.m.MultiInput sap.m.MultiComboBox
+	 * @private
+	 * @return {String | null} CSSSize in px
+	 */
+	InputBase.prototype._calculateSpaceForTokenizer = function () {
+		if (this.getDomRef()) {
+			var iControlWidth = this.getDomRef().offsetWidth;
+
+			// calculate space taken up by icons
+			var aIcons = this.getAggregation("_endIcon").concat(this.getAggregation("_beginIcon")),
+				iIconWidth,
+				iSummedIconsWidth = aIcons.reduce(function(iAcc, oIcon){
+					iIconWidth = oIcon && oIcon.getDomRef() ? oIcon.getDomRef().offsetWidth : 0;
+
+					return iAcc + iIconWidth;
+				}, 0);
+
+			// calculate width of the input html element based on its min-width
+			var oInputRef = this.$().find(".sapMInputBaseInner"),
+				aInputRelevantCss = ["min-width", "padding-right", "padding-left"],
+				iInputWidth = aInputRelevantCss.reduce(function(iAcc, sProperty) {
+					return iAcc + (parseInt(oInputRef.css(sProperty)) || 0);
+				}, 0);
+
+			return iControlWidth - (iSummedIconsWidth + iInputWidth) + "px";
+		} else {
+			return null;
+		}
+	};
+
 	/* ----------------------------------------------------------- */
 	/* public methods                                              */
 	/* ----------------------------------------------------------- */
@@ -1038,7 +1071,7 @@ function(
 
 				oDomRef.appendChild(oDescribedByDomRef);
 			} else if (oDescribedByDomRef && !sAnnouncement) {
-				oDomRef.removeChild(oDescribedByDomRef);
+				oDescribedByDomRef.parentNode.removeChild(oDescribedByDomRef);
 				var sDescribedByDomRefId = oDescribedByDomRef.id;
 
 				if (sAriaDescribedby && sDescribedByDomRefId) {

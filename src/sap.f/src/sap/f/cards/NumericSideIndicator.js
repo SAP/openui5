@@ -18,12 +18,7 @@ sap.ui.define([
 		 * @param {object} [mSettings] Initial settings for the new control
 		 *
 		 * @class
-		 *
-		 * <h3>Overview</h3>
-		 *
-		 *
-		 * <h3>Usage</h3>
-		 *
+		 * A control used by <code>sap.f.cards.NumericHeader</code> to hold a set of side indicator attributes.
 		 *
 		 * @extends sap.ui.core.Control
 		 *
@@ -31,14 +26,14 @@ sap.ui.define([
 		 * @version ${version}
 		 *
 		 * @constructor
-		 * @experimental
+		 * @private
 		 * @since 1.62
-		 * @see {@link TODO Card}
 		 * @alias sap.f.cards.NumericSideIndicator
 		 */
 		var NumericSideIndicator = Control.extend("sap.f.cards.NumericSideIndicator", {
 			metadata: {
 				properties: {
+
 					/**
 					 * The title of the indicator
 					 */
@@ -55,6 +50,7 @@ sap.ui.define([
 					unit: { "type": "string", group : "Data" }
 				},
 				aggregations: {
+
 					/**
 					 * Used to display title
 					 */
@@ -74,8 +70,8 @@ sap.ui.define([
 		});
 
 		/**
-		 * Sets the title
-		 * @overwrite
+		 * Sets the title.
+		 *
 		 * @public
 		 * @param {string} sValue The text of the title
 		 * @return {sap.f.cards.NumericSideIndicator} this pointer for chaining
@@ -87,8 +83,8 @@ sap.ui.define([
 		};
 
 		/**
-		 * Sets the numeric value
-		 * @overwrite
+		 * Sets the numeric value.
+		 *
 		 * @public
 		 * @param {string} sValue The text of the title
 		 * @return {sap.f.cards.NumericSideIndicator} this pointer for chaining
@@ -100,8 +96,8 @@ sap.ui.define([
 		};
 
 		/**
-		 * Sets the unit of measurement
-		 * @overwrite
+		 * Sets the unit of measurement.
+		 *
 		 * @public
 		 * @param {string} sValue The text of the title
 		 * @return {sap.f.cards.NumericSideIndicator} this pointer for chaining
@@ -113,6 +109,8 @@ sap.ui.define([
 		};
 
 		/**
+		 * Lazily create a title and return it.
+		 *
 		 * @private
 		 * @return {sap.m.Text} The title aggregation
 		 */
@@ -131,6 +129,8 @@ sap.ui.define([
 		};
 
 		/**
+		 * Lazily create a number and return it.
+		 *
 		 * @private
 		 * @return {sap.m.Text} The number aggregation
 		 */
@@ -148,6 +148,8 @@ sap.ui.define([
 		};
 
 		/**
+		 * Lazily create a unit and return it.
+		 *
 		 * @private
 		 * @return {sap.m.Text} The unit of measurement aggregation
 		 */

@@ -1684,11 +1684,14 @@ sap.ui.define([
 	 * @private
 	*/
 	function registerPreloadedModules(oData, sURL) {
-		var modules = oData.modules;
+		var modules = oData.modules,
+				fnUI5ToRJS = function(sName) {
+					return /^jquery\.sap\./.test(sName) ? sName : sName.replace(/\./g, "/");
+				};
 			if ( Version(oData.version || "1.0").compareTo("2.0") < 0 ) {
 				modules = {};
 				for ( var sName in oData.modules ) {
-					modules[LoaderExtensions.ui5ToRJS(sName) + ".js"] = oData.modules[sName];
+					modules[fnUI5ToRJS(sName) + ".js"] = oData.modules[sName];
 				}
 			}
 			sap.ui.require.preload(modules, oData.name, sURL);

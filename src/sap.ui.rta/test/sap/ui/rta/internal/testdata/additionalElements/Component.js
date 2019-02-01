@@ -121,6 +121,9 @@ sap.ui.define([
 							},
 							getClient: function() {
 								return "123";
+							},
+							isTrial: function() {
+								return false;
 							}
 						};
 					},

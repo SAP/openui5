@@ -185,6 +185,20 @@ function(
 		},
 
 		/**
+		 * Returns a boolean indicating whether the current system is a trial system (only available for S/4 HANA Cloud) or not.
+		 * This function needs a ushell container to be available, otherwise it will also return false.
+		 *
+		 * @returns {boolean} Returns true if the system is a trial system, false otherwise
+		 */
+		isTrialSystem: function() {
+			var oUshellContainer = Utils.getUshellContainer();
+			if (oUshellContainer) {
+				return oUshellContainer.getLogonSystem().isTrial();
+			}
+			return false;
+		},
+
+		/**
 		 * Returns the class name of the application component owning the passed component or the component name itself if
 		 * this is already an application component.
 		 *
@@ -976,13 +990,19 @@ function(
 		buildLrepRootNamespace: function(sBaseId, sScenario, sProjectId) {
 			var sRootNamespace = "apps/";
 			var oError = new Error("Error in sap.ui.fl.Utils#buildLrepRootNamespace: ");
-
 			if (!sBaseId) {
 				oError.message += "for every scenario you need a base ID";
 				throw oError;
 			}
 
 			switch (sScenario) {
+				case sap.ui.fl.Scenario.VersionedAppVariant:
+					if (!sProjectId) {
+						oError.message += "in a versioned app variant scenario you additionaly need a project ID";
+						throw oError;
+					}
+					sRootNamespace += sBaseId + "/appVariants/" + sProjectId + "/";
+					break;
 				case sap.ui.fl.Scenario.AppVariant:
 					if (!sProjectId) {
 						oError.message += "in an app variant scenario you additionaly need a project ID";
@@ -1151,7 +1171,7 @@ function(
 		 *
 		 * @param {object[]} aArray Array of objects
 		 * @param {object} oObject object that should be part of the array
-		 * @returns {integer} Returns the index of the object in the array, -1 if it is not in the array
+		 * @returns {int} Returns the index of the object in the array, -1 if it is not in the array
 		 * @public
 		 */
 		indexOfObject: function(aArray, oObject) {

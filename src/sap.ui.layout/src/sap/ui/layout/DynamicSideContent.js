@@ -217,6 +217,10 @@ sap.ui.define([
 		 * @public
 		 */
 		DynamicSideContent.prototype.setShowSideContent = function (bVisible, bSuppressVisualUpdate) {
+			if (bVisible === this.getShowSideContent()) {
+				return this;
+			}
+
 			this.setProperty("showSideContent", bVisible, true);
 			this._SCVisible = bVisible;
 			if (!bSuppressVisualUpdate && this.$().length) {
@@ -238,6 +242,10 @@ sap.ui.define([
 		 * @public
 		 */
 		DynamicSideContent.prototype.setShowMainContent = function (bVisible, bSuppressVisualUpdate) {
+			if (bVisible === this.getShowMainContent()) {
+				return this;
+			}
+
 			this.setProperty("showMainContent", bVisible, true);
 			this._MCVisible = bVisible;
 			if (!bSuppressVisualUpdate && this.$().length) {

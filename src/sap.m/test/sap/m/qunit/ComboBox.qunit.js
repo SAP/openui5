@@ -1502,6 +1502,7 @@ sap.ui.define([
 
 		// assert
 		assert.ok(oComboBox.getFirstItem() === oItem);
+		assert.strictEqual(oComboBox.getList().getItems().length, 1, "List should have 1 item");
 		assert.ok(fnInsertItem.returned(oComboBox), 'oComboBox.insertAggregation() method return the "this" reference');
 		assert.ok(oItem.hasListeners("_change"));
 		assert.ok(oComboBox.isItemVisible(oItem));
@@ -10315,6 +10316,28 @@ sap.ui.define([
 			//Assert
 			assert.ok(oComboBox.$("inner").attr("aria-describedby").length > 0, "Property aria-describedby should exist");
 			assert.strictEqual(oInvisibleText.getText(), oResourceBundle , "'Combobox' is announced.");
+
+			//Cleanup
+			oComboBox.destroy();
+		});
+	}
+
+	if (Device.browser.internet_explorer) {
+		QUnit.test("setTooltip()", function(assert) {
+			var oComboBox = new ComboBox({
+				value: "Value",
+				tooltip: "Tooltip",
+				placeholder: "Placeholder"
+			});
+
+			oComboBox.placeAt("content");
+			sap.ui.getCore().applyChanges();
+
+			oComboBox.setTooltip('');
+			sap.ui.getCore().applyChanges();
+
+			//Assert
+			assert.strictEqual(oComboBox.getTooltip(), null, 'setTooltip() method should not throw an error');
 
 			//Cleanup
 			oComboBox.destroy();

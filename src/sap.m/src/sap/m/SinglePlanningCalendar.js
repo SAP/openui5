@@ -496,6 +496,17 @@ function(
 	};
 
 	/**
+	 * Holds the selected appointments. If no appointments are selected, an empty array is returned.
+	 *
+	 * @returns {sap.ui.unified.CalendarAppointment[]} All selected appointments
+	 * @since 1.62
+	 * @public
+	 */
+	SinglePlanningCalendar.prototype.getSelectedAppointments = function() {
+		return this._getGrid().getSelectedAppointments();
+	};
+
+	/**
 	 * Switches the visibility of the SegmentedButton in the _header and aligns the columns in the grid after an
 	 * operation (add, insert, remove, removeAll, destroy) with the views is performed.
 	 *

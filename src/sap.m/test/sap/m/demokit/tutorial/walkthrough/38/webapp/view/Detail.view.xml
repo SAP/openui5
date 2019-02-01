@@ -6,7 +6,7 @@
 	<Page
 		title="{i18n>detailPageTitle}"
 		showNavButton="true"
-		navButtonPress="onNavBack">
+		navButtonPress=".onNavBack">
 		<landmarkInfo>
 			<PageAccessibleLandmarkInfo
 				rootRole="Region"
@@ -46,7 +46,7 @@
 		<Panel
 				headerText="{i18n>ratingTitle}"
 				accessibleRole="Region">
-				<wt:ProductRating id="rating" class="sapUiSmallMarginBeginEnd" change="onRatingChange"/>
+				<wt:ProductRating id="rating" class="sapUiSmallMarginBeginEnd" change=".onRatingChange"/>
 		</Panel>
 	</Page>
 </mvc:View>

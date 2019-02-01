@@ -218,6 +218,7 @@ sap.ui.define([
 	ElementMover.prototype.repositionOn = function(oMovedOverlay, oTargetElementOverlay, bInsertAfterElement) {
 		var oMovedElement = oMovedOverlay.getElement();
 		var oTargetParentInformation = OverlayUtil.getParentInformation(oTargetElementOverlay);
+		var oSourceParentInformation = OverlayUtil.getParentInformation(oMovedOverlay);
 		var oAggregationDesignTimeMetadata;
 
 		var oParentAggregationOverlay = oMovedOverlay.getParentAggregationOverlay();
@@ -233,8 +234,12 @@ sap.ui.define([
 			if (oAggregationDesignTimeMetadata && oAggregationDesignTimeMetadata.beforeMove){
 				oAggregationDesignTimeMetadata.beforeMove(oRelevantContainerElement, oMovedElement);
 			}
-			if (bInsertAfterElement){
+			if (bInsertAfterElement) {
 				oTargetParentInformation.index++;
+				if (oSourceParentInformation.aggregation === oTargetParentInformation.aggregation) {
+					// index should not be incremented if cut-paste occurs inside the same container, where source index is less than the target index
+					oTargetParentInformation.index = ElementUtil.adjustIndexForMove(oSourceParentInformation.parent, oTargetParentInformation.parent, oSourceParentInformation.index, oTargetParentInformation.index);
+				}
 			}
 			ElementUtil.insertAggregation(oTargetParentInformation.parent, oTargetParentInformation.aggregation,
 				oMovedElement, oTargetParentInformation.index);

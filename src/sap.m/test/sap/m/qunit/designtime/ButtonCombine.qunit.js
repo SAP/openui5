@@ -9,7 +9,8 @@ sap.ui.define([
 	"sap/ui/core/util/reflection/JsControlTreeModifier",
 	"sap/ui/core/util/reflection/XmlTreeModifier",
 	"sap/ui/events/jquery/EventExtension",
-	"sap/ui/model/json/JSONModel"
+	"sap/ui/model/json/JSONModel",
+	"sap/ui/core/CustomData"
 ],
 	function(
 		Title,
@@ -21,7 +22,8 @@ sap.ui.define([
 		JsControlTreeModifier,
 		XmlTreeModifier,
 		EventExtension,
-		JSONModel
+		JSONModel,
+		CustomData
 	) {
 		'use strict';
 
@@ -196,13 +198,14 @@ sap.ui.define([
 
 
 		QUnit.test('CustomData of the Button is copied to MenuItem', function (assert) {
+			// Arrange
 			var oBtn1 = new Button({
 				id: "btn1",
 				text: "button",
 				enabled: false
 			}),
 			oBtn2 = new Button({id: "btn2"}),
-			oMyCustomData = new sap.ui.core.CustomData({key : "myCustomData", value : "my custom data value"});
+			oMyCustomData = new CustomData({key : "myCustomData", value : "my custom data value"});
 
 			this.oBar = new Bar({
 				id: "idBar",
@@ -221,6 +224,7 @@ sap.ui.define([
 
 			var oChange = new Change({"changeType" : "combineButtons", "content" : {}});
 
+			// Act
 			CombineButtons.completeChangeContent(oChange, mSpecificChangeInfo,{modifier: JsControlTreeModifier, view : oView, appComponent: this.oMockedAppComponent});
 			CombineButtons.applyChange(oChange, this.oBar, {modifier: JsControlTreeModifier, view : oView, appComponent : this.oMockedAppComponent});
 
@@ -235,7 +239,61 @@ sap.ui.define([
 			var bIsFound = aCustomData.some(function (oCustomData) {
 				return oCustomData === oMyCustomData;
 			});
+
+			// Assert
 			assert.ok(bIsFound, "First menuItem has the the customData that was set to the button from which was created");
+
+			// clean up
+			oBtn1.destroy();
+			oBtn2.destroy();
+
+		});
+
+		QUnit.test('getCustomData function of the Button is overwritten to return either the customData of the button or the one of the MenuItem', function (assert) {
+			// Arrange
+			var oBtn1 = new Button({
+				id: "btn1",
+				text: "button",
+				enabled: false
+			}),
+			oBtn2 = new Button({id: "btn2"}),
+			oMyCustomData = new CustomData({key : "myCustomData", value : "my custom data value"});
+
+			this.oBar = new Bar({
+				id: "idBar",
+				contentRight: [ oBtn1, oBtn2 ]
+			});
+			var oView = new View({content : [
+				this.oBar
+			]});
+
+			oBtn1.insertAggregation("customData", oMyCustomData);
+
+			var mSpecificChangeInfo = {
+				"parentId": "idFormContainer",
+				"combineFieldIds" : ["btn1", "btn2"]
+			};
+
+			var oChange = new Change({"changeType" : "combineButtons", "content" : {}});
+
+			// Act
+			CombineButtons.completeChangeContent(oChange, mSpecificChangeInfo,{modifier: JsControlTreeModifier, view : oView, appComponent: this.oMockedAppComponent});
+			CombineButtons.applyChange(oChange, this.oBar, {modifier: JsControlTreeModifier, view : oView, appComponent : this.oMockedAppComponent});
+
+			var oCreatedMenuButton = sap.ui.getCore().byId("idBar").getContentRight()[0];
+
+			oCreatedMenuButton.placeAt("content");
+			sap.ui.getCore().applyChanges();
+
+			var aCustomData = oBtn1.getCustomData();
+
+			var bIsFound = aCustomData.some(function (oCustomData) {
+				return oCustomData === oMyCustomData;
+			});
+
+			// Assert
+			assert.ok(bIsFound, "The getCustomData function of the Button has returned the customData that was set to the menuItem");
+			assert.equal(oBtn1.getAggregation("customData").length, 0, "customData is empty for the Button since it is copied inside the MenuItem");
 
 			// clean up
 			oBtn1.destroy();

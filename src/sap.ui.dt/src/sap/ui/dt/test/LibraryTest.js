@@ -1,7 +1,7 @@
 /*!
  * ${copyright}
  */
-// Provides class sap.ui.dt.test.LibraryTest.
+// Provides function sap.ui.dt.test.LibraryTest.
 sap.ui.define(['sap/ui/model/resource/ResourceModel', 'sap/ui/model/json/JSONModel', 'sap/ui/thirdparty/jquery'
 ], function(ResourceModel, JSONModel, jQuery) {
 	"use strict";
@@ -12,10 +12,36 @@ sap.ui.define(['sap/ui/model/resource/ResourceModel', 'sap/ui/model/json/JSONMod
 	function hasText(sKey, oBundle) {
 		return oBundle.hasText(sKey) || oBundle.getText(sKey, [], true) !== undefined;
 	}
+
+	/*
+	 * Creates unit tests to check the consistency of a library's designtime metadata.
+	 *
+	 * <code>LibraryTest</code> creates QUnit tests asynchronously. Therefore, a caller must ensure that QUnit
+	 * does not start automatically. When the returned promise resolves, all tests have been created and QUnit can
+	 * be started. Callers that are executed by the generic test starter can simply return the returned promise
+	 * as their module export. The test starter will wait for that promise and start QUnit afterwards.
+	 *
+	 * @example <caption>Using generic test starter</caption>
+	 *
+	 *   sap.ui.define(["sap/ui/dt/test/LibraryTest"], function (LibraryTest) {
+	 *       "use strict";
+	 *       return LibraryTest("sap.f", QUnit);
+	 *   });
+	 *
+	 *
+	 * @example <caption>Without test starter</caption>
+	 *   QUnit.config.autostart = false;
+	 *
+	 *   sap.ui.require(["sap/ui/dt/test/LibraryTest"], function (LibraryTest) {
+	 *       "use strict";
+	 *       LibraryTest("sap.f", QUnit).then(function() {
+	 *       	QUnit.start();
+	 *       );;
+	 *   });
+	 *
+	 */
 	var LibraryTest = function(sTestLibrary, QUnit) {
-		//switching off autostart needs to be done in the individual test files before the LibraryTest.js is loaded.
-		//QUnit.config.autostart = false;
-		var oPromise = new Promise(function(resolve) {
+		return new Promise(function(resolve) {
 			sap.ui.getCore().loadLibraries([sTestLibrary]).then(function() {
 				var oLibrary = sap.ui.getCore().getLoadedLibraries()[sTestLibrary],
 					aElements = oLibrary.controls.concat(oLibrary.elements);
@@ -70,14 +96,13 @@ sap.ui.define(['sap/ui/model/resource/ResourceModel', 'sap/ui/model/json/JSONMod
 							return oModel;
 						});
 						addTests(QUnit);
-						QUnit.start();
 						resolve();
 					});
 				});
 			});
 		});
-		return oPromise;
 	};
+	LibraryTest.version = 2.0;
 	var mModelChecks = {
 		"/" : {
 			optional: false,
@@ -199,16 +224,16 @@ sap.ui.define(['sap/ui/model/resource/ResourceModel', 'sap/ui/model/json/JSONMod
 		}
 	};
 	function addTests(QUnit) {
-		QUnit.asyncTest("Checking library.designtime.js", function(assert) {
+		QUnit.test("Checking library.designtime.js", function(assert) {
 			var oLibrary = sap.ui.getCore().getLoadedLibraries()[sLibrary];
 			if (oLibrary.designtime) {
+				var done = assert.async();
 				sap.ui.require([oLibrary.designtime], function(o) {
 					assert.ok(o !== null, oLibrary.designtime + " loaded successfully");
-					QUnit.start();
+					done();
 				});
 			} else {
 				assert.ok(true, "No library.designtime.js " + sLibrary);
-				QUnit.start();
 			}
 		});
 		QUnit.test("Checking loaded designtime data", function(assert) {

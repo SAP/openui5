@@ -7,6 +7,13 @@
 		"type"
 	],
 	"properties": {
+		"_version": {
+			"description": "Represents SAP.CARD attributes format version. It is managed by namespace owner",
+			"type": "string",
+			"enum": [
+				"1.0.0"
+			]
+		},
 		"type": {
 			"description": "Represents type of a card and can be List or Analytical",
 			"type": "string",
@@ -16,16 +23,18 @@
 			]
 		},
 		"header": {
+			"description": "Represents card header attributes",
 			"$ref": "#/definitions/HeaderType"
 		},
 		"content": {
-			"$ref": "#/definitions/ContentType",
-			"description": "Content type depends on the Card type"
+			"description": "Represents card content attributes. Content type should be the same as card type e.g. if card type List is used the content type should also be List",
+			"$ref": "#/definitions/ContentType"
 		}
 	},
 	"definitions": {
 		"HeaderType": {
-			"anyOf": [{
+			"oneOf": [
+				{
 					"$ref": "#/definitions/HeaderType.Default"
 				},
 				{
@@ -33,34 +42,34 @@
 				}
 			]
 		},
-		"HeaderType.Default": {
-			"description": "Represents header default type attributes",
+		"HeaderType.BaseHeader": {
 			"type": "object",
 			"additionalProperties": false,
 			"properties": {
-				"type": {
-					"description": "Represents language-dependent title",
-					"type": "string",
-					"enum": [
-						"Default",
-						"Numeric"
-					],
-					"default": "Default"
-				},
 				"title": {
 					"description": "Represents language-dependent title",
 					"$ref": "#/definitions/i18n_key"
 				},
-				"subtitle": {
-					"description": "Represents language-dependent additional information to the subTitle",
+				"subTitle": {
+					"description": "Represents language-dependent additional information to the title",
 					"$ref": "#/definitions/i18n_key"
-				},
+				}
+			}
+		},
+		"HeaderType.Default": {
+			"description": "Represents default header attributes",
+			"allOf": [
+				{
+					"$ref": "#/definitions/HeaderType.BaseHeader"
+				}
+			],
+			"properties": {
 				"icon": {
-					"description": "Represents icon of the Card",
+					"description": "Represents the icon of the card",
 					"$ref": "#/definitions/icon"
 				},
 				"status": {
-					"description": "Represents the status of the Card",
+					"description": "Represents the status of the card",
 					"$ref": "#/definitions/status"
 				}
 			}
@@ -68,96 +77,101 @@
 		"HeaderType.Numeric": {
 			"description": "Represents header with numeric data",
 			"type": "object",
+			"allOf": [
+				{
+					"$ref": "#/definitions/HeaderType.BaseHeader"
+				}
+			],
 			"properties": {
 				"type": {
-					"description": "Represents language-dependent title",
+					"description": "Represents the type of the header",
 					"type": "string",
 					"enum": [
-						"Default",
 						"Numeric"
-					],
-					"default": "Default"
+					]
 				},
 				"data": {
 					"$ref": "#/definitions/data"
-				},
-				"title": {
-					"description": "Represents language-dependent title",
-					"$ref": "#/definitions/i18n_key"
-				},
-				"subTitle": {
-					"description": "Represents language-dependent additional information to the subTitle",
-					"$ref": "#/definitions/i18n_key"
 				},
 				"unitOfMeasurement": {
 					"description": "Represents unit of measurement for the whole numeric header",
 					"type": "string"
 				},
 				"mainIndicator": {
-					"description": "Represents the main numeric for the header",
-					"type": "object",
-					"properties": {
-						"number": {
-							"description": "The value of the numeric",
-							"type": "string"
-						},
-						"unit": {
-							"description": "The unit of measurement of the numeric",
-							"type": "string"
-						},
-						"trend": {
-							"description": "The trend indicator (direction) of the numeric",
-							"type": "string",
-							"enum": [
-								"Down",
-								"None",
-								"Up"
-							],
-							"default": "None"
-						},
-						"state": {
-							"description": "The state color of the numeric",
-							"type": "string",
-							"enum": [
-								"Critical",
-								"Error",
-								"Good",
-								"Neutral"
-							],
-							"default": "None"
-						}
-					}
+					"$ref": "#/definitions/HeaderType.Numeric.MainIndicator"
 				},
 				"details": {
-					"description": "Additional information about the numeric header",
+					"description": "Represents additional information about the numeric header",
 					"type": "string"
 				},
 				"sideIndicators": {
+					"description": "Multiple side indicators that relate to the main numeric indicator",
 					"type": "array",
 					"maxItems": 2,
 					"items": {
-						"description": "Multiple side indicators that relate to the main numeric",
-						"type": "object",
-						"properties": {
-							"title": {
-								"description": "Title for the side indicator",
-								"$ref": "#/definitions/i18n_key"
-							},
-							"number": {
-								"description": "The value of the side indicator",
-								"type": "string"
-							},
-							"unit": {
-								"description": "The unit of measurement of the side indicator",
-								"type": "string"
-							}
-						}
+						"$ref": "#/definitions/HeaderType.Numeric.SideIndicator"
 					}
 				}
 			}
 		},
+		"HeaderType.Numeric.MainIndicator": {
+			"description": "Represents the main numeric indicator of the header",
+			"type": "object",
+			"additionalProperties": false,
+			"properties": {
+				"number": {
+					"description": "The value of the main indicator",
+					"type": "string"
+				},
+				"unit": {
+					"description": "The unit of the main indicator",
+					"type": "string"
+				},
+				"trend": {
+					"description": "The trend indicator (direction)",
+					"type": "string",
+					"enum": [
+						"Down",
+						"None",
+						"Up"
+					],
+					"default": "None"
+				},
+				"state": {
+					"description": "The state color of the main indicator",
+					"type": "string",
+					"enum": [
+						"Critical",
+						"Error",
+						"Good",
+						"Neutral"
+					],
+					"default": "Neutral"
+				}
+			}
+		},
+		"HeaderType.Numeric.SideIndicator": {
+			"description": "Represents side indicator attributes which are used for additional information about the main indicator",
+			"type": "object",
+			"additionalProperties": false,
+			"properties": {
+				"title": {
+					"description": "Represents language-dependent title of the side indicator",
+					"$ref": "#/definitions/i18n_key"
+				},
+				"number": {
+					"description": "Represents value of the side indicator",
+					"type": "string"
+				},
+				"unit": {
+					"description": "Represents unit of measurement of the side indicator",
+					"type": "string"
+				}
+			}
+		},
 		"ContentType": {
-			"anyOf": [{
+			"oneOf": [
+				{
 					"$ref": "#/definitions/ContentType.List"
 				},
 				{
@@ -183,96 +197,194 @@
 			"type": "object",
 			"additionalProperties": false,
 			"properties": {
-				"chart": {
-					"description": "The template for all charts",
+				"data": {
+					"$ref": "#/definitions/data"
+				},
+				"chartType": {
+					"description": "Describes the type of the chart",
+					"type": "string",
+					"enum": [
+						"Line",
+						"StackedColumn",
+						"StackedBar",
+						"Donut"
+					]
+				},
+				"legend": {
+					"$ref": "#/definitions/ContentType.Analytical.Legend"
+				},
+				"plotArea": {
+					"description": "Describes the plotArea properties",
 					"type": "object",
 					"additionalProperties": false,
 					"properties": {
-						"chartType": {
-							"description": "Describes the type of the chart",
-							"enum": [
-								"line",
-								"stacked_column",
-								"stacked_bar",
-								"donut"
-							],
-							"default": "None"
+						"dataLabel": {
+							"$ref": "#/definitions/ContentType.Analytical.DataLabel"
 						},
-						"legend": {
-							"description": "Describes legend properties",
-							"type": "object",
-							"additionalProperties": false,
-							"properties": {
-								"legend": {
-									"$ref": "#/definitions/legend"
-								}
-							}
+						"categoryAxisText": {
+							"$ref": "#/definitions/ContentType.Analytical.AxisText"
 						},
-						"plotArea": {
-							"description": "Describes the plotArea properties",
-							"type": "object",
-							"additionalProperties": false,
-							"properties": {
-								"dataLabel": {
-									"$ref": "#/definitions/dataLabel"
-								},
-								"categoryAxisText": {
-									"$ref": "#/definitions/axisText"
-								},
-								"valueAxisText": {
-									"$ref": "#/definitions/axisText"
-								}
-							}
-						},
-						"title": {
-							"description": "Describes the title properties",
-							"type": "object",
-							"additionalProperties": false,
-							"properties": {
-								"visible": {
-									"description": "Represent the visibility state of the title",
-									"type": "boolean",
-									"default": true
-								},
-								"text": {
-									"description": "Representation of the text title",
-									"type": "string"
-								},
-								"alignment": {
-									"description": "Representation of how the title will be aligned",
-									"enum": [
-										"Left",
-										"Center",
-										"Right"
-									],
-									"default": "Center"
-								}
-							}
-						},
-						"measureAxis": {
-							"description": "Represents the value set for measure axis",
-							"type": "string"
-						},
-						"dimensionAxis": {
-							"description": "Represents the value set for  dimension axis",
-							"type": "string"
-						},
-						"data": {
-							"$ref": "#/definitions/data"
-						},
-						"dimensions": {
-							"$ref": "#/definitions/field"
-						},
-						"measures": {
-							"$ref": "#/definitions/field"
+						"valueAxisText": {
+							"$ref": "#/definitions/ContentType.Analytical.AxisText"
 						}
 					}
+				},
+				"title": {
+					"description": "Represents title attributes",
+					"type": "object",
+					"additionalProperties": false,
+					"properties": {
+						"visible": {
+							"description": "Represents the visibility state of the title",
+							"type": "boolean",
+							"default": true
+						},
+						"text": {
+							"description": "Represents title text",
+							"type": "string"
+						},
+						"alignment": {
+							"description": "Represents the title alignment",
+							"enum": [
+								"Left",
+								"Center",
+								"Right"
+							],
+							"default": "Center"
+						}
+					}
+				},
+				"measureAxis": {
+					"description": "Represents the value set for measure axis",
+					"type": "string"
+				},
+				"dimensionAxis": {
+					"description": "Represents the value set for dimension axis",
+					"type": "string"
+				},
+				"dimensions": {
+					"$ref": "#/definitions/field"
+				},
+				"measures": {
+					"$ref": "#/definitions/field"
+				}
+			}
+		},
+		"ContentType.Analytical.DataLabel": {
+			"description": "Represents value attributes in the plot area",
+			"type": "object",
+			"additionalProperties": false,
+			"properties": {
+				"visible": {
+					"description": "Represents the visibility state of the dataLabel",
+					"type": "boolean",
+					"default": true
+				},
+				"showTotal": {
+					"description": "Represents the visibility state of 'show total' indicator",
+					"type": "boolean",
+					"default": true
+				}
+			}
+		},
+		"ContentType.Analytical.AxisText": {
+			"description": "Represents descriptive text of the axis",
+			"type": "object",
+			"additionalProperties": false,
+			"properties": {
+				"visible": {
+					"description": "Represents the visibility state of the descriptive axis text",
+					"type": "boolean",
+					"default": true
+				}
+			}
+		},
+		"ContentType.Analytical.Legend": {
+			"description": "Represents chart legend attributes",
+			"type": "object",
+			"additionalProperties": false,
+			"properties": {
+				"visible": {
+					"description": "Represent the visibility state of the legend",
+					"type": "boolean",
+					"default": false
+				},
+				"position": {
+					"description": "Representation of where the legend will be positioned",
+					"type": "string",
+					"enum": [
+						"Top",
+						"Bottom",
+						"Left",
+						"Right"
+					],
+					"default": "Right"
+				},
+				"alignment": {
+					"description": "Representation of how the legend will be aligned",
+					"type": "string",
+					"enum": [
+						"TopLeft",
+						"Center"
+					],
+					"default": "TopLeft"
+				}
+			}
+		},
+		"item": {
+			"description": "The template for all items",
+			"type": "object",
+			"additionalProperties": false,
+			"properties": {
+				"title": {
+					"description": "The title of the item",
+					"$ref": "#/definitions/field"
+				},
+				"description": {
+					"description": "The description of the item",
+					"$ref": "#/definitions/field"
+				},
+				"info": {
+					"allOf": [
+						{
+							"$ref": "#/definitions/field"
+						}
+					],
+					"properties": {
+						"state": {
+							"type": "string",
+							"description": "The state of the info",
+							"enum": [
+								"Error",
+								"Success",
+								"Warning",
+								"None"
+							],
+							"default": "None"
+						}
+					}
+				},
+				"highlight": {
+					"type": "string",
+					"description": "The highlight of the item",
+					"enum": [
+						"Error",
+						"Success",
+						"Warning",
+						"None",
+						"Information"
+					],
+					"default": "None"
+				},
+				"icon": {
+					"$ref": "#/definitions/icon"
 				}
 			}
 		},
 		"icon": {
 			"description": "Represents icon attributes",
 			"type": "object",
+			"additionalProperties": false,
 			"properties": {
 				"src": {
 					"type": "string",
@@ -312,7 +424,7 @@
 			"properties": {
 				"text": {
 					"type": "string",
-					"description": "Text that represents the status"
+					"description": "Represents status text"
 				}
 			}
 		},
@@ -380,66 +492,13 @@
 				}
 			}
 		},
-		"item": {
-			"description": "The template for all items",
-			"type": "object",
-			"additionalProperties": false,
-			"properties": {
-				"type": {},
-				"title": {
-					"description": "The title of the item",
-					"$ref": "#/definitions/field"
-				},
-				"description": {
-					"description": "The description of the item",
-					"$ref": "#/definitions/field"
-				},
-				"info": {
-					"allOf": [{
-						"$ref": "#/definitions/field"
-					}],
-					"properties": {
-						"state": {
-							"type": "string",
-							"description": "The state of the info",
-							"enum": [
-								"Error",
-								"Success",
-								"Warning",
-								"None"
-							],
-							"default": "None"
-						}
-					}
-				},
-				"highlight": {
-					"type": "string",
-					"description": "The highlight of the item",
-					"enum": [
-						"Error",
-						"Success",
-						"Warning",
-						"None",
-						"Information"
-					],
-					"default": "None"
-				},
-				"icon": {
-					"$ref": "#/definitions/icon"
-				}
-			}
-		},
 		"field": {
 			"type": "object",
 			"additionalProperties": false,
-			"required": [
-				"label",
-				"value"
-			],
 			"properties": {
 				"label": {
-					"type": "string",
-					"description": "The label of the field"
+					"description": "Represents language-dependent label of the field",
+					"$ref": "#/definitions/i18n_key"
 				},
 				"value": {
 					"type": "string",
@@ -447,61 +506,9 @@
 				}
 			}
 		},
-		"dataLabel": {
-			"type": "object",
-			"additionalProperties": false,
-			"properties": {
-				"visible": {
-					"description": "Represent the visibility state of the legend",
-					"type": "boolean",
-					"default": true
-				},
-				"showTotal": {
-					"description": "Represent the visibility state show total indicator",
-					"type": "boolean",
-					"default": true
-				}
-			}
-		},
-		"axisText": {
-			"type": "object",
-			"additionalProperties": false,
-			"properties": {
-				"visible": {
-					"description": "Represent the visibility state of axis text",
-					"type": "boolean",
-					"default": true
-				}
-			}
-		},
-		"legend": {
-			"type": "object",
-			"additionalProperties": false,
-			"properties": {
-				"visible": {
-					"description": "Represent the visibility state of the legend",
-					"type": "boolean",
-					"default": false
-				},
-				"position": {
-					"description": "Representation of where the legend will be positioned",
-					"enum": [
-						"Top",
-						"Bottom",
-						"Left",
-						"Right"
-					],
-					"default": "Right"
-				},
-				"alignment": {
-					"description": "Representation of how the legend will be aligned",
-					"enum": [
-						"TopLeft",
-						"center"
-					],
-					"default": "TopLeft"
-				}
-			}
+		"i18n_key": {
+			"type": "string",
+			"pattern": "^\\{\\{[\\w][\\w\\.\\-]*\\}\\}$"
 		}
 	}
 }

@@ -1,18 +1,19 @@
 /* global QUnit */
 
 sap.ui.define([
-	'sap/ui/rta/RuntimeAuthoring',
-	'sap/ui/rta/command/Stack',
-	'sap/ui/rta/command/CommandFactory',
-	'qunit/RtaQunitUtils',
-	'sap/ui/fl/FakeLrepConnectorSessionStorage',
-	'sap/ui/fl/FakeLrepSessionStorage',
-	'sap/ui/fl/Utils',
-	'sap/ui/dt/OverlayRegistry',
-	'sap/ui/Device',
-	'sap/ui/qunit/QUnitUtils',
-	'sap/ui/events/KeyCodes',
-	'sap/ui/thirdparty/sinon-4'
+	"sap/ui/rta/RuntimeAuthoring",
+	"sap/ui/rta/command/Stack",
+	"sap/ui/rta/command/CommandFactory",
+	"qunit/RtaQunitUtils",
+	"sap/ui/fl/FakeLrepConnectorSessionStorage",
+	"sap/ui/fl/FakeLrepSessionStorage",
+	"sap/ui/fl/Utils",
+	"sap/ui/dt/OverlayRegistry",
+	"sap/ui/Device",
+	"sap/ui/qunit/QUnitUtils",
+	"sap/ui/events/KeyCodes",
+	"sap/ui/qunit/utils/waitForThemeApplied",
+	"sap/ui/thirdparty/sinon-4"
 ], function(
 	RuntimeAuthoring,
 	Stack,
@@ -25,6 +26,7 @@ sap.ui.define([
 	Device,
 	QUnitUtils,
 	KeyCodes,
+	waitForThemeApplied,
 	sinon
 ) {
 	"use strict";
@@ -256,4 +258,6 @@ sap.ui.define([
 	QUnit.done(function () {
 		jQuery("#qunit-fixture").hide();
 	});
+
+	return waitForThemeApplied();
 });

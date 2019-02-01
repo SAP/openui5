@@ -72,7 +72,7 @@ When the application is started with `Opa5.iStartMyAppInAFrame()`, its parameter
 application URL as provided in the first parameter. Application parameters overwrite any duplicated string in
 the URL that is given as first parameter of `iStartMyAppInAFrame()`. Alternatively, when
 `Opa5.iStartMyUIComponent()` is used, the URL parameters are appended to the current URL as the
-component is started in the same browser window. On `Opa5.iTeardownMyUIComponent()`, the application
+component is started in the same browser window. On `Opa5.iTeardownMyApp()`, the application
 parameters are cleared from the current URL.
 
 For more details, see the **API Reference** for [Opa5](https://openui5nightly.hana.ondemand.com/#/api/sap.ui.test.Opa5).

@@ -216,7 +216,8 @@ function(
 
 	var mCommands = { 	// Command names camel case with first char lower case
 		"composite" : {
-			clazz : 'sap.ui.rta.command.CompositeCommand'
+			clazz : 'sap.ui.rta.command.CompositeCommand',
+			noSelector: true
 		},
 		"property" : {
 			clazz : 'sap.ui.rta.command.Property'
@@ -283,10 +284,12 @@ function(
 			clazz : 'sap.ui.rta.command.Settings'
 		},
 		"addLibrary" : {
-			clazz : 'sap.ui.rta.command.appDescriptor.AddLibrary'
+			clazz : 'sap.ui.rta.command.appDescriptor.AddLibrary',
+			noSelector: true
 		},
 		"appDescriptor" : {
-			clazz : 'sap.ui.rta.command.AppDescriptorCommand'
+			clazz : 'sap.ui.rta.command.AppDescriptorCommand',
+			noSelector: true
 		}
 	};
 
@@ -310,8 +313,8 @@ function(
 			var oAction, oElementOverlay, bPrepareStatus, oCommand, mTemplateSettings;
 			var bIsUiElement = vElement instanceof ManagedObject;
 
-			if (sCommand !== "appDescriptor" && sCommand !== "composite"){
-				// sap.ui.rta.command.BaseCommand do not require a selector property
+			// only sap.ui.rta.command.FlexCommand requires a selector property
+			if (!mCommand.noSelector) {
 				mSettings = Object.assign({}, mSettings, !bIsUiElement && {selector : vElement});
 			}
 

@@ -4,13 +4,15 @@ sap.ui.define([
 	"sap/ui/dt/test/LibraryEnablementTest",
 	"sap/ui/dt/test/report/Table",
 	"sap/ui/qunit/QUnitUtils",
+	"sap/ui/qunit/utils/waitForThemeApplied",
 	// ensure the test library is loaded so it can be used in the library enablement test
 	"sap/ui/testLibrary/library"
 ],
 function (
 	LibraryEnablementTest,
 	Table,
-	QUnitUtils
+	QUnitUtils,
+	waitForThemeApplied
 ) {
 	"use strict";
 
@@ -25,7 +27,8 @@ function (
 		}
 	}, function () {
 		QUnit.test("when the result is returned and displayed with the Table report", function (assert) {
-			return this.oLibraryEnablementTest.run()
+			var fnDone = assert.async();
+			this.oLibraryEnablementTest.run()
 			.then(function(oResult) {
 				var oTable = new Table({
 					data : oResult
@@ -48,6 +51,7 @@ function (
 					window.setTimeout(function() {
 						assert.ok(!oTable._getTable().isExpanded(0), "and when the collapse button is pressed then the table is collapsed again");
 						oTable.destroy();
+						fnDone();
 					});
 				});
 
@@ -58,4 +62,6 @@ function (
 	QUnit.done(function() {
 		jQuery("#qunit-fixture").hide();
 	});
+
+	return waitForThemeApplied();
 });

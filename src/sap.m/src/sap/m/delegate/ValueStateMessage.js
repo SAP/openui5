@@ -274,7 +274,8 @@ sap.ui.define([
 		ValueStateMessage.prototype._getCorrectZIndex = function() {
 
 			var aParents = this._oControl.$().parents().filter(function() {
-				return jQuery(this).css('z-index') !== 'auto';
+				var sZIndex = jQuery(this).css('z-index');
+				return sZIndex && sZIndex !== 'auto' && sZIndex !== '0';
 			});
 
 			if (!aParents.length) {

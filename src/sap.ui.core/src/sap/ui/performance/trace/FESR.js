@@ -205,13 +205,13 @@ sap.ui.define([
 	 * @ui5-restricted sap.ui.core
 	 */
 	FESR.setActive = function (bActive) {
-		if (bActive) {
+		if (bActive && !bFesrActive) {
 			bFesrActive = true;
 			Passport.setActive(true);
 			Interaction.setActive(true);
 			iE2eTraceLevel = Passport.traceFlags();
 			registerXHROverride();
-			Interaction.onInteractionFinished = function(oFinishedInteraction) {
+			Interaction.onInteractionFinished = function(oFinishedInteraction, bForced) {
 				var oFESRHandle = FESR.onBeforeCreated({
 					stepName: oFinishedInteraction.trigger + "_" + oFinishedInteraction.event,
 					appNameLong: oFinishedInteraction.stepComponent || oFinishedInteraction.component,
@@ -219,7 +219,7 @@ sap.ui.define([
 				}, oFinishedInteraction);
 
 				// only send FESR when requests have occured
-				if (oFinishedInteraction.requests.length > 0) {
+				if (oFinishedInteraction.requests.length > 0 || bForced) {
 					createHeader(oFinishedInteraction, oFESRHandle);
 				}
 			};

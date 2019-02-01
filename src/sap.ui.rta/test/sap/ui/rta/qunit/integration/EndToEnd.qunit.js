@@ -1,16 +1,17 @@
 /* global QUnit */
 
 sap.ui.define([
-	'sap/ui/thirdparty/jquery',
-	'sap/ui/rta/RuntimeAuthoring',
-	'sap/ui/fl/FakeLrepConnectorSessionStorage',
-	'sap/ui/fl/FakeLrepSessionStorage',
-	'sap/ui/dt/OverlayRegistry',
-	'qunit/RtaQunitUtils',
+	"sap/ui/thirdparty/jquery",
+	"sap/ui/rta/RuntimeAuthoring",
+	"sap/ui/fl/FakeLrepConnectorSessionStorage",
+	"sap/ui/fl/FakeLrepSessionStorage",
+	"sap/ui/dt/OverlayRegistry",
+	"qunit/RtaQunitUtils",
 	"sap/ui/fl/ChangePersistenceFactory",
 	"sap/ui/qunit/QUnitUtils",
 	"sap/ui/events/KeyCodes",
-	'sap/ui/thirdparty/sinon-4'
+	"sap/ui/qunit/utils/waitForThemeApplied",
+	"sap/ui/thirdparty/sinon-4"
 
 ], function (
 	jQuery,
@@ -22,6 +23,7 @@ sap.ui.define([
 	ChangePersistenceFactory,
 	QUnitUtils,
 	KeyCodes,
+	waitForThemeApplied,
 	sinon
 ) {
 	"use strict";
@@ -40,6 +42,7 @@ sap.ui.define([
 		beforeEach : function(assert) {
 			FakeLrepSessionStorage.deleteChanges();
 			assert.equal(FakeLrepSessionStorage.getNumChanges(), 0, "Session storage based LREP is empty");
+			this.oVictim = sap.ui.getCore().byId("Comp1---idMain1--Victim");
 			this.oCompanyCodeField = sap.ui.getCore().byId("Comp1---idMain1--GeneralLedgerDocument.CompanyCode");
 			this.oBoundButton35Field = sap.ui.getCore().byId("Comp1---idMain1--Dates.BoundButton35");
 			this.oGroup = sap.ui.getCore().byId("Comp1---idMain1--Dates");
@@ -53,6 +56,7 @@ sap.ui.define([
 			return Promise.all([
 				new Promise(function (fnResolve) {
 					this.oRta.attachStart(function () {
+						this.oVictimOverlay = OverlayRegistry.getOverlay(this.oVictim);
 						this.oCompanyCodeFieldOverlay = OverlayRegistry.getOverlay(this.oCompanyCodeField);
 						this.oGroupOverlay = OverlayRegistry.getOverlay(this.oGroup);
 						this.ooGeneralGroupOverlay = OverlayRegistry.getOverlay(this.oGeneralGroup);
@@ -228,31 +232,31 @@ sap.ui.define([
 		});
 
 		QUnit.test("when removing a field,", function(assert) {
+			var fnDone = assert.async();
 			RtaQunitUtils.waitForChangesToReachedLrepAtTheEnd(1, assert);
 
 			var oCommandStack = this.oRta.getCommandStack();
 
-			var oChangePersistence = ChangePersistenceFactory.getChangePersistenceForControl(this.oBoundButton35Field);
+			var oChangePersistence = ChangePersistenceFactory.getChangePersistenceForControl(this.oVictim);
 			assert.equal(oChangePersistence.getDirtyChanges().length, 0, "then there is no dirty change in the FL ChangePersistence");
 
 			oCommandStack.attachModified(function() {
 				var oFirstExecutedCommand = oCommandStack.getAllExecutedCommands()[0];
-				if (oFirstExecutedCommand &&
-					oFirstExecutedCommand.getName() === 'remove') {
-						//TODO fix timing as modified is called before serializer is triggered...
+				if (oFirstExecutedCommand && oFirstExecutedCommand.getName() === 'remove') {
+					//TODO fix timing as modified is called before serializer is triggered...
 					fnWaitForExecutionAndSerializationBeingDone.call(this).then(function() {
-						assert.strictEqual(this.oBoundButton35Field.getVisible(), false, " then field is not visible");
+						assert.strictEqual(this.oVictim.getVisible(), false, " then field is not visible");
 						assert.equal(oChangePersistence.getDirtyChanges().length, 1, "then there is 1 dirty change in the FL ChangePersistence");
-						this.oRta.stop();
+						this.oRta.stop().then(fnDone);
 					}.bind(this));
 				}
 			}.bind(this));
 
-			this.oBoundButton35FieldOverlay.focus();
-			QUnitUtils.triggerKeydown(this.oBoundButton35FieldOverlay.getDomRef(), KeyCodes.ENTER, false, false, false);
+			this.oVictimOverlay.focus();
+			QUnitUtils.triggerKeydown(this.oVictimOverlay.getDomRef(), KeyCodes.ENTER, false, false, false);
 
-			this.oBoundButton35FieldOverlay.focus();
-			QUnitUtils.triggerKeydown(this.oBoundButton35FieldOverlay.getDomRef(), KeyCodes.DELETE);
+			this.oVictimOverlay.focus();
+			QUnitUtils.triggerKeydown(this.oVictimOverlay.getDomRef(), KeyCodes.DELETE);
 		});
 
 		QUnit.test("when moving a field (via cut and paste),", function(assert) {
@@ -487,4 +491,6 @@ sap.ui.define([
 		oCompCont.destroy();
 		jQuery("#qunit-fixture").hide();
 	});
+
+	return waitForThemeApplied();
 });

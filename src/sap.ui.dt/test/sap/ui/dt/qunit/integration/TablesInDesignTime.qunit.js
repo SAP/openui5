@@ -1,4 +1,4 @@
-/* global QUnit*/
+/* global QUnit */
 
 sap.ui.define([
 	"sap/ui/dt/DesignTime",
@@ -8,7 +8,8 @@ sap.ui.define([
 	"sap/ui/table/AnalyticalTable",
 	"sap/ui/table/AnalyticalColumn",
 	"sap/m/Label",
-	"sap/ui/Device"
+	"sap/ui/Device",
+	"sap/ui/qunit/utils/waitForThemeApplied"
 ],
 function (
 	DesignTime,
@@ -18,7 +19,8 @@ function (
 	AnalyticalTable,
 	AnalyticalColumn,
 	Label,
-	Device
+	Device,
+	waitForThemeApplied
 ) {
 	"use strict";
 
@@ -156,12 +158,8 @@ function (
 			this.oDesignTime.attachEventOnce("synced", function () {
 				sap.ui.getCore().applyChanges();
 
-				// TODO: Temporal solution. Remove when synced in DesignTime event wait for all async processes to be done.
-				if (Device.browser.internet_explorer) {
-					setTimeout(done, 16);
-				} else {
-					done();
-				}
+				// TODO: Temporal solution. Remove when the synced event in DesignTime waits for all async processes to be completed.
+				setTimeout(done, 16);
 			});
 		},
 		afterEach : function() {
@@ -195,8 +193,9 @@ function (
 		});
 	});
 
-
 	QUnit.done(function() {
 		jQuery("#qunit-fixture").hide();
 	});
+
+	return waitForThemeApplied();
 });

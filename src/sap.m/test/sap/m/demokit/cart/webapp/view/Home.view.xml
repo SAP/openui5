@@ -20,14 +20,14 @@
 		<headerContent>
 			<Button
 				icon="sap-icon://home"
-				press=".onBackToHome"
-				visible="{device>/system/phone}"/>
+				press=".onBack"
+				visible="{appView>/smallScreenMode}"/>
 		</headerContent>
 		<subHeader>
 			<Toolbar id="searchBar33343">
 				<SearchField
 					id="searchField"
-					liveChange="onSearch"
+					liveChange=".onSearch"
 					placeholder="{i18n>homeSearchPlaceholder}"
 					tooltip="{i18n>homeSearchTooltip}"
 					width="100%">
@@ -38,13 +38,13 @@
 			<PullToRefresh
 				id="pullToRefresh"
 				visible="{device>/support/touch}"
-				refresh="onRefresh"/>
+				refresh=".onRefresh"/>
 			<!-- This list shows the search results -->
 			<List
 				visible="false"
 				id="productList"
 				mode="{= ${device>/system/phone} ? 'None' : 'SingleSelectMaster'}"
-				selectionChange="onProductListSelect"
+				selectionChange=".onProductListSelect"
 				noDataText="{i18n>homeNoData}"
 				busyIndicatorDelay="0"
 				items="{

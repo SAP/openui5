@@ -1,10 +1,12 @@
 /*global QUnit*/
 
 sap.ui.define([
-	"sap/ui/dt/ScrollbarSynchronizer"
+	"sap/ui/dt/ScrollbarSynchronizer",
+	"sap/ui/qunit/utils/waitForThemeApplied"
 ],
 function(
-	ScrollbarSynchronizer
+	ScrollbarSynchronizer,
+	waitForThemeApplied
 ) {
 	"use strict";
 
@@ -183,4 +185,6 @@ function(
 	QUnit.done(function() {
 		jQuery("#qunit-fixture").hide();
 	});
+
+	return waitForThemeApplied();
 });

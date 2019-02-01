@@ -68,6 +68,9 @@ sap.ui.define([
 	Control,
 	waitForThemeApplied
 ) {
+	// set language to en-GB, since we have specific language strings tested
+	sap.ui.getCore().getConfiguration().setLanguage("en_GB");
+
 	// shortcut for sap.m.PlanningCalendarBuiltInView
 	var PlanningCalendarBuiltInView = mobileLibrary.PlanningCalendarBuiltInView;
 
@@ -107,14 +110,9 @@ sap.ui.define([
 		"	width: 1024px;" +
 		"}";
 	document.head.appendChild(styleElement);
-	createAndAppendDiv("uiArea1");
-	createAndAppendDiv("uiArea2");
-	createAndAppendDiv("uiArea3");
 	createAndAppendDiv("verySmallUiArea").className = "width300";
 	createAndAppendDiv("smallUiArea").className = "width600";
 	createAndAppendDiv("bigUiArea").className = "width1024";
-
-
 
 	var CalendarDate = sap.ui.unified.calendar.CalendarDate,
 		DateTypeRange = sap.ui.unified.DateTypeRange,
@@ -722,7 +720,7 @@ sap.ui.define([
 	var oSearchField1, oButton1;
 	createToolbarContent("SF1", "B1");
 	var oPC1 = createPlanningCalendar("PC1", oSearchField1, oButton1);
-	oPC1.placeAt("uiArea1");
+	oPC1.placeAt("bigUiArea");
 
 
 	QUnit.module("internal controls");
@@ -1528,6 +1526,7 @@ sap.ui.define([
 	});
 
 	QUnit.test("specialDates", function(assert) {
+
 		var oTimeInterval = sap.ui.getCore().byId("PC1-TimeInt");
 		assert.equal(oTimeInterval.getSpecialDates().length, 2, "TimeInterval gets SpecialDates from PlanningCalendar");
 		assert.ok(jQuery("#PC1-TimeInt--TimesRow-201501011200").hasClass("sapUiCalItemType02"), "SpecialDate rendered");
@@ -1729,7 +1728,7 @@ sap.ui.define([
 			);
 
 		// act
-		oPC.placeAt("uiArea2");
+		oPC.placeAt("bigUiArea");
 		sap.ui.getCore().applyChanges();
 
 		var aRows = oPC.getRows();
@@ -1890,7 +1889,7 @@ sap.ui.define([
 
 		//act
 		oPC.setCustomAppointmentsSorterCallback(oSortSpy);
-		oPC.placeAt('uiArea3');
+		oPC.placeAt("bigUiArea");
 		sap.ui.getCore().applyChanges();
 
 		//assert
@@ -1908,7 +1907,7 @@ sap.ui.define([
 			oPC = new PlanningCalendar({
 				customAppointmentsSorterCallback: fnCustom
 			});
-		oPC.placeAt('uiArea3');
+		oPC.placeAt("bigUiArea");
 		sap.ui.getCore().applyChanges();
 
 		//act
@@ -1929,7 +1928,7 @@ sap.ui.define([
 				customAppointmentsSorterCallback: fnCustom
 			}),
 			oRow = new PlanningCalendarRow();
-		oPC.placeAt('uiArea3');
+		oPC.placeAt("bigUiArea");
 		sap.ui.getCore().applyChanges();
 
 		//act
@@ -1950,7 +1949,7 @@ sap.ui.define([
 					customAppointmentsSorterCallback: fnCustom
 				}),
 				oRow = new PlanningCalendarRow();
-		oPC.placeAt('uiArea3');
+		oPC.placeAt("bigUiArea");
 		sap.ui.getCore().applyChanges();
 
 		//act
@@ -1977,7 +1976,7 @@ sap.ui.define([
 			);
 
 		// act
-		oPC.placeAt("uiArea2");
+		oPC.placeAt("bigUiArea");
 		sap.ui.getCore().applyChanges();
 
 		// assert
@@ -2151,7 +2150,7 @@ sap.ui.define([
 				startDate: new Date(2015, 1, 2, 15, 30),
 				type: CalendarDayType.NonWorking
 			});
-			this.oPC.placeAt("uiArea2");
+			this.oPC.placeAt("bigUiArea");
 		},
 		afterEach: function() {
 			//Cleanup
@@ -2205,7 +2204,7 @@ sap.ui.define([
 				endDate: new Date(2015, 0, 9),
 				type: CalendarDayType.Type04
 			});
-			this.oPC.placeAt("uiArea2");
+			this.oPC.placeAt("bigUiArea");
 		},
 		afterEach: function() {
 			//Cleanup
@@ -2431,11 +2430,11 @@ sap.ui.define([
 		qutils.triggerEvent("click", "PC1-DateInt--Head-prev");
 		assert.ok(bStartDateChange, "startDateChange fired");
 		oStartDate = oPC1.getStartDate();
-		oExpectedDate = new Date("2014", "11", "17", "00", "00");
+		oExpectedDate = new Date("2014", "11", "17", "20", "00");
 		if (jQuery("#PC1").outerWidth() < Device.media._predefinedRangeSets[Device.media.RANGESETS.SAP_STANDARD_EXTENDED].points[0]) {
-			oExpectedDate = new Date("2014", "11", "25", "00", "00");
+			oExpectedDate = new Date("2014", "11", "25", "02", "00");
 		} else if (jQuery("#PC1").outerWidth() < Device.media._predefinedRangeSets[Device.media.RANGESETS.SAP_STANDARD_EXTENDED].points[1]) {
-			oExpectedDate = new Date("2014", "11", "25", "00", "00");
+			oExpectedDate = new Date("2014", "11", "25", "02", "00");
 		}
 		assert.equal(oExpectedDate.getTime(), oStartDate.getTime(), "Start date is OK");
 
@@ -2446,11 +2445,11 @@ sap.ui.define([
 		qutils.triggerEvent("click", "PC1-MonthInt--Head-prev");
 		assert.ok(bStartDateChange, "startDateChange fired");
 		oStartDate = oPC1.getStartDate();
-		oExpectedDate = new Date("2013", "11", "01", "00", "00");
+		oExpectedDate = new Date("2013", "11", "01", "20", "00");
 		if (jQuery("#PC1").outerWidth() < Device.media._predefinedRangeSets[Device.media.RANGESETS.SAP_STANDARD_EXTENDED].points[0]) {
-			oExpectedDate = new Date("2014", "08", "01", "00", "00");
+			oExpectedDate = new Date("2014", "08", "01", "02", "00");
 		} else if (jQuery("#PC1").outerWidth() < Device.media._predefinedRangeSets[Device.media.RANGESETS.SAP_STANDARD_EXTENDED].points[1]) {
-			oExpectedDate = new Date("2014", "05", "01", "00", "00");
+			oExpectedDate = new Date("2014", "05", "01", "02", "00");
 		}
 		assert.equal(oExpectedDate.getTime(), oStartDate.getTime(), "Start date is OK");
 
@@ -2560,7 +2559,7 @@ sap.ui.define([
 		beforeEach: function () {
 			this.sut = createPlanningCalendar("invalidationExample", new SearchField(), new Button(), new Date(2015, 0, 7), CalendarIntervalType.Week);
 			this.sutInterval = this.sut.getAggregation("table").getAggregation("infoToolbar").getContent()[1];
-			this.sut.placeAt('uiArea2');
+			this.sut.placeAt("bigUiArea");
 			sap.ui.getCore().applyChanges();
 		},
 		afterEach: function () {
@@ -2621,7 +2620,7 @@ sap.ui.define([
 		beforeEach: function () {
 			this.sut = createPlanningCalendar("invalidationExample", new SearchField(), new Button(), new Date(Date.UTC(2015, 0, 7)), CalendarIntervalType.Week);
 			this.sutInterval = this.sut.getAggregation("table").getAggregation("infoToolbar").getContent()[1];
-			this.sut.placeAt('uiArea2');
+			this.sut.placeAt("bigUiArea");
 			sap.ui.getCore().applyChanges();
 		},
 		afterEach: function () {
@@ -2724,7 +2723,7 @@ sap.ui.define([
 			this.o10Sep2016 = new Date(2016, 8, 10);
 			this.oPC2 = createPlanningCalendar("startDateAtTheMiddleOfTheWeek", oSearchField, oButton, this.o1Sep2016MidOfWeek,
 					CalendarIntervalType.Week);
-			this.oPC2.placeAt("uiArea1");
+			this.oPC2.placeAt("bigUiArea");
 			sap.ui.getCore().applyChanges();
 			this.oPC2Interval = this.oPC2.getAggregation("table").getAggregation("infoToolbar").getContent()[1];
 			this.oPC2IntervalRow = this.oPC2Interval.getAggregation('month')[0];
@@ -3394,6 +3393,45 @@ sap.ui.define([
 				this.oPC2, "Initial week should not be changed");
 	});
 
+	QUnit.test("setStartDate should preserve the hours when navigation occurs in all views except hours view", function (assert) {
+		// Prepare
+		var oEvent = {
+			oSource: {
+				getStartDate: function () {
+					return new Date(2015, 1, 12);
+				}
+			}
+		};
+
+		// Act
+		_switchToView(CalendarIntervalType.Day, this.oPC2);
+		this.oPC2._handleStartDateChange(oEvent);
+
+		// Assert
+		assert.strictEqual(this.oPC2.getStartDate().getHours(), 1, "The Hours are not changed to 00, but instead the original hours are preserved in Day view");
+
+		// Act
+		_switchToView(CalendarIntervalType.Week, this.oPC2);
+		this.oPC2._handleStartDateChange(oEvent);
+
+		// Assert
+		assert.strictEqual(this.oPC2.getStartDate().getHours(), 1, "The Hours are not changed to 00, but instead the original hours are preserved in Week view");
+
+		// Act
+		_switchToView(CalendarIntervalType.Month, this.oPC2);
+		this.oPC2._handleStartDateChange(oEvent);
+
+		// Assert
+		assert.strictEqual(this.oPC2.getStartDate().getHours(), 1, "The Hours are not changed to 00, but instead the original hours are preserved in Month view");
+
+		// Act
+		_switchToView(CalendarIntervalType.OneMonth, this.oPC2);
+		this.oPC2._handleStartDateChange(oEvent);
+
+		// Assert
+		assert.strictEqual(this.oPC2.getStartDate().getHours(), 1, "The Hours are not changed to 00, but instead the original hours are preserved in OneMonth view");
+	});
+
 	QUnit.module("OneMonth view", {
 		beforeEach: function() {
 			var oSearchField = new SearchField(),
@@ -3402,7 +3440,7 @@ sap.ui.define([
 			this.o10Feb2016 = new Date(2016, 1, 10);
 			this.oPC = createPlanningCalendar("oneMonthPlanningCalendar", oSearchField, oButton, this.o14Sep2016MidOfMonth,
 					CalendarIntervalType.OneMonth);
-			this.oPC.placeAt("uiArea1");
+			this.oPC.placeAt("bigUiArea");
 			sap.ui.getCore().applyChanges();
 			this.oPCInterval = this.oPC.getAggregation("table").getAggregation("infoToolbar").getContent()[1];
 		},
@@ -3701,7 +3739,7 @@ sap.ui.define([
 		},
 		_createCalendar: function (oStartDate) {
 			this._oPC = createPlanningCalendar("_oPC", new SearchField(), new Button(), (oStartDate || this.o14Sep2016MidOfMonth), CalendarIntervalType.OneMonth);
-			this._oPC.placeAt('uiArea3');
+			this._oPC.placeAt("smallUiArea");
 			this._oPCOneMonthInterval = this._oPC.getAggregation('table').getAggregation('infoToolbar').getContent()[1];
 			sap.ui.getCore().applyChanges();
 		},
@@ -3813,36 +3851,52 @@ sap.ui.define([
 		oOneMonthIntervalCreateMonthSpy.restore();
 	});
 
-	QUnit.test("'OneMonthDatesRow.init()' calls its super class 'init()' and sets its internal private property 'iMode' to the default value '2'", function (assert) {
+	QUnit.test("'OneMonthDatesRow.init()' calls its super class 'init()' and then 'OneMonthDatesRow()' gets called and sets the internal private property 'iMode' to the value '1'", function (assert) {
 		//arrange
-		var oOneMonthDatesRow = sap.ui.unified.calendar.OneMonthDatesRow,
-			oOneMonthDatesRowSpy = this.spy(oOneMonthDatesRow.prototype, "init"),
-			oDatesRowSpy = this.spy(DatesRow.prototype, "init");
+		var oOneMonthDatesRowInitSpy = this.spy(OneMonthDatesRow.prototype, "init"),
+			oDatesRowSpy = this.spy(DatesRow.prototype, "init"),
+			oCalendarOneMonthIntervalSpy = this.spy(CalendarOneMonthInterval.prototype, "_setDisplayMode"),
+			oOneMonthDatesRowSetModeSpy = this.spy(OneMonthDatesRow.prototype, "setMode");
 
 		this._createCalendar();
 		//assert
-		assert.strictEqual(oOneMonthDatesRowSpy.callCount, 1, "'OneMonthDatesRow.init()' method was called once");
+		assert.strictEqual(oOneMonthDatesRowInitSpy.callCount, 1, "'OneMonthDatesRow.init()' method was called once");
 		assert.strictEqual(oDatesRowSpy.callCount, 1, "'OneMonthDatesRow.init()' method was called once");
-		assert.ok(oOneMonthDatesRowSpy.calledBefore(oDatesRowSpy), "The call sequence is as expected");
-		assert.strictEqual(this._oPCOneMonthInterval.getAggregation("month")[0].iMode, 2, "'OneMonthDatesRow.init()' correctly set the internal 'iMode' property to its default value");
+		assert.ok(oOneMonthDatesRowInitSpy.calledBefore(oDatesRowSpy), "The call sequence is as expected");
+		assert.ok(oCalendarOneMonthIntervalSpy.calledWithExactly(1), "'CalendarOneMonthInterval._setDisplayMode(1)' method was called");
+		assert.ok(oCalendarOneMonthIntervalSpy.calledAfter(oOneMonthDatesRowInitSpy), "'CalendarOneMonthInterval._setDisplayMode()' method was called after 'OneMonthDatesRow.init()'");
+		assert.ok(oOneMonthDatesRowSetModeSpy.calledAfter(oCalendarOneMonthIntervalSpy), "'OneMonthDatesRow.setMode()' method was called after 'OneMonthDatesRow.init()'");
+		assert.ok(oOneMonthDatesRowSetModeSpy.calledWithExactly(1), "'OneMonthDatesRow.setMode(1)' method was called");
+		assert.strictEqual(this._oPCOneMonthInterval.getAggregation("month")[0].iMode, 1, "'OneMonthDatesRow.setMode()' correctly set the internal 'iMode' property value");
 		//clean
-		oOneMonthDatesRowSpy.restore();
+		oOneMonthDatesRowInitSpy.restore();
 		oDatesRowSpy.restore();
+		oOneMonthDatesRowSetModeSpy.restore();
+		oCalendarOneMonthIntervalSpy.restore();
 	});
 
 	QUnit.test("'OneMonthDatesRow.setMode()' updates the iMode property", function (assert) {
 		//arrange
+		var oOneMonthDatesRowInitSpy = this.spy(OneMonthDatesRow.prototype, "init"),
+			oOneMonthDatesRowSetModeSpy = this.spy(OneMonthDatesRow.prototype, "setMode");
 		this._createCalendar();
+
 		//assert
-		assert.strictEqual(this._oPCOneMonthInterval.getAggregation("month")[0].iMode, 2, "'OneMonthDatesRow.init()' correctly sets the internal 'iMode' property to its default value");
+		assert.ok(oOneMonthDatesRowSetModeSpy.calledAfter(oOneMonthDatesRowInitSpy), "'OneMonthDatesRow.setMode()' method was called after 'OneMonthDatesRow.init()'");
+		assert.ok(oOneMonthDatesRowSetModeSpy.calledWithExactly(1), "'OneMonthDatesRow.setMode(1)' method was called");
+		assert.strictEqual(this._oPCOneMonthInterval.getAggregation("month")[0].iMode, 1, "'OneMonthDatesRow.setMode()' correctly sets the internal 'iMode' property value");
 		//arrange
 		this._oPCOneMonthInterval.getAggregation("month")[0].setMode(0);
 		//assert
 		assert.strictEqual(this._oPCOneMonthInterval.getAggregation("month")[0].iMode, 0, "'OneMonthDatesRow.setMode()' sets the internal 'iMode' property as expected");
 		//arrange
-		this._oPCOneMonthInterval.getAggregation("month")[0].setMode(1);
+		this._oPCOneMonthInterval.getAggregation("month")[0].setMode(2);
 		//assert
-		assert.strictEqual(this._oPCOneMonthInterval.getAggregation("month")[0].iMode, 1, "'OneMonthDatesRow.setMode()' sets the internal 'iMode' property as expected");
+		assert.strictEqual(this._oPCOneMonthInterval.getAggregation("month")[0].iMode, 2, "'OneMonthDatesRow.setMode()' sets the internal 'iMode' property as expected");
+
+		//clean
+		oOneMonthDatesRowInitSpy.restore();
+		oOneMonthDatesRowSetModeSpy.restore();
 	});
 
 	QUnit.test("'OneMonthDatesRow.setDate()' setter with a date calls its super class 'setDate()' setter", function (assert) {
@@ -3878,7 +3932,7 @@ sap.ui.define([
 
 		this._createCalendar();
 		//assert
-		assert.strictEqual(oTimelineRendererSpy.callCount, 2, "'renderSingleDayInterval()' is called as expected"); //Two rows
+		assert.strictEqual(oTimelineRendererSpy.callCount, 4, "'renderSingleDayInterval()' is called as expected"); //Two rows
 		//clean
 		oTimelineRendererSpy.restore();
 	});
@@ -4161,7 +4215,7 @@ sap.ui.define([
 
 		//Act
 		oSut.setViewKey(CalendarIntervalType.Day);
-		oSut.placeAt('uiArea1');
+		oSut.placeAt("bigUiArea");
 		sap.ui.getCore().applyChanges();
 
 		//Assert
@@ -4179,7 +4233,7 @@ sap.ui.define([
 
 		//Act
 		oSut.setViewKey(CalendarIntervalType.Hour);
-		oSut.placeAt('uiArea1');
+		oSut.placeAt("bigUiArea");
 		sap.ui.getCore().applyChanges();
 
 		//Assert
@@ -4225,7 +4279,7 @@ sap.ui.define([
 
 		//Act
 		oSut.setViewKey(CalendarIntervalType.Hour);
-		oSut.placeAt('uiArea1');
+		oSut.placeAt("bigUiArea");
 		sap.ui.getCore().applyChanges();
 
 		//Assert
@@ -4333,7 +4387,7 @@ sap.ui.define([
 
 	QUnit.test("default built-in views", function (assert) {
 		var aViewKey = PlanningCalendarBuiltInView.Hour;
-		this.oPC.placeAt('qunit-fixture');
+		this.oPC.placeAt("bigUiArea");
 		sap.ui.getCore().applyChanges();
 		assert.equal(this.oPC._oIntervalTypeSelect.getItems().length, 5, "By default the planning calendar is " +
 			"created with 5 predefined views");
@@ -4345,7 +4399,7 @@ sap.ui.define([
 		var oItemKey,
 			aViewType = PlanningCalendarBuiltInView,
 			aViewKey = PlanningCalendarBuiltInView.Day;
-		this.oPC.placeAt('qunit-fixture');
+		this.oPC.placeAt("bigUiArea");
 		sap.ui.getCore().applyChanges();
 
 		this.oPC.setBuiltInViews([aViewType.Day, aViewType.Hour]);
@@ -4369,7 +4423,7 @@ sap.ui.define([
 		var oItemKey,
 			aViewType = PlanningCalendarBuiltInView,
 			aViewKey = PlanningCalendarBuiltInView.Hour;
-		this.oPC.placeAt('qunit-fixture');
+		this.oPC.placeAt("bigUiArea");
 		sap.ui.getCore().applyChanges();
 
 		this.oPC.setBuiltInViews([]);
@@ -4393,7 +4447,7 @@ sap.ui.define([
 
 	QUnit.test("with custom view", function (assert) {
 		var oItemKey;
-		this.oPC.placeAt('qunit-fixture');
+		this.oPC.placeAt("bigUiArea");
 		sap.ui.getCore().applyChanges();
 		this.oPC.addView(
 			new PlanningCalendarView({
@@ -4420,7 +4474,7 @@ sap.ui.define([
 		var oItemKey,
 			aViewType = PlanningCalendarBuiltInView,
 			aViewKey = PlanningCalendarBuiltInView.Day;
-		this.oPC.placeAt('qunit-fixture');
+		this.oPC.placeAt("bigUiArea");
 		sap.ui.getCore().applyChanges();
 
 		this.oPC.addView(
@@ -4540,7 +4594,7 @@ sap.ui.define([
 	QUnit.module('showDayNamesLine', {
 		beforeEach: function () {
 			this.oPC = new PlanningCalendar("OPC");
-			this.oPC.placeAt('uiArea1');
+			this.oPC.placeAt("bigUiArea");
 		},
 
 		afterEach: function () {
@@ -4623,7 +4677,7 @@ sap.ui.define([
 	QUnit.module('Destroy', {
 		beforeEach: function () {
 			this.oPC = new PlanningCalendar();
-			this.oPC.placeAt('uiArea1');
+			this.oPC.placeAt("bigUiArea");
 		},
 		afterEach: function () {
 			this.oPC.destroy();

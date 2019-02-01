@@ -4,13 +4,15 @@ sap.ui.define([
 	"sap/ui/dt/ElementOverlay",
 	"sap/ui/dt/plugin/ToolHooks",
 	"sap/m/Button",
-	"sap/ui/thirdparty/jquery"
+	"sap/ui/thirdparty/jquery",
+	"sap/ui/qunit/utils/waitForThemeApplied"
 ],
 function (
 	ElementOverlay,
 	ToolHooks,
 	Button,
-	jQuery
+	jQuery,
+	waitForThemeApplied
 ) {
 	"use strict";
 
@@ -74,4 +76,6 @@ function (
 	QUnit.done(function() {
 		jQuery("#qunit-fixture").hide();
 	});
+
+	return waitForThemeApplied();
 });

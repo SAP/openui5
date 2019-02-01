@@ -105,12 +105,26 @@ sap.ui.define([
 	 * Get list of changes which should be added to a transport
 	 *
 	 * @param {Array} aLocalChanges List of changes which data have to be extracted
+	 * @param {Array} [aAppVariantDescriptors] List of app variant descriptors which data have to be extracted
 	 * @returns {Array} Returns an array of object containing all required data to transport the existing local changes
 	 */
-	Transports.prototype._convertToChangeTransportData = function(aLocalChanges) {
+	Transports.prototype._convertToChangeTransportData = function(aLocalChanges, aAppVariantDescriptors) {
 		var aTransportData = [];
+		var i;
+
+		if (aAppVariantDescriptors && aAppVariantDescriptors.length) {
+			for (i = 0; i < aAppVariantDescriptors.length; i++) {
+				var oAppVariantDescriptor = aAppVariantDescriptors[i];
+				var oPreparedData = {};
+				oPreparedData.namespace = oAppVariantDescriptor.getNamespace();
+				oPreparedData.fileName = oAppVariantDescriptor.getDefinition().fileName;
+				oPreparedData.fileType = oAppVariantDescriptor.getDefinition().fileType;
+				aTransportData.push(oPreparedData);
+			}
+		}
+
 		var len = aLocalChanges.length;
-		for (var i = 0; i < len; i++) {
+		for (i = 0; i < len; i++) {
 			var oCurrentChange = aLocalChanges[i];
 			var oData = {};
 			oData.namespace = oCurrentChange.getNamespace();

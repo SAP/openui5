@@ -161,7 +161,8 @@ function(
 			 */
 			items : {type : "sap.ui.core.Control", multiple : true, singularName : "item"}
 		},
-		designtime: "sap/m/designtime/FlexBox.designtime"
+		designtime: "sap/m/designtime/FlexBox.designtime",
+		dnd: { draggable: false, droppable: true }
 	}});
 
 	/**

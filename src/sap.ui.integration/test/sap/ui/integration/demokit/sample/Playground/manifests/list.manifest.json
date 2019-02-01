@@ -6,8 +6,10 @@
 		"type": "List",
 		"header": {
 			"title": "List Card with Top 5 Products with a very Long text description that should wrap to at least 2 lines",
-			"subtitle": "These are the top sellers this month",
-			"status": "5 of 20"
+			"subTitle": "These are the top sellers this month",
+			"status": {
+				"text": "5 of 20"
+			}
 		},
 		"content": {
 			"data": {
