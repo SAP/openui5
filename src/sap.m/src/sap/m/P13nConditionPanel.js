@@ -1480,16 +1480,21 @@ sap.ui.define([
 							}
 						} else if (vValue !== null && oConditionGrid.oType) {
 
-							// In case vValue is of type string, we try to convert it into the type based format.
-							if (typeof vValue === "string" && ["String", "sap.ui.model.odata.type.String", "sap.ui.model.odata.type.Decimal", "sap.ui.comp.odata.type.StringDate"].indexOf(oConditionGrid.oType.getName()) == -1) {
-								try {
-									vValue = oConditionGrid.oType.parseValue(vValue, "string");
-									oControl.setValue(oConditionGrid.oType.formatValue(vValue, "string"));
-								} catch (err) {
-									Log.error("sap.m.P13nConditionPanel", "Value '" + vValue + "' does not have the expected type format for " + oConditionGrid.oType.getName() + ".parseValue()");
-								}
+							// In case vValue is of type string, and type is StringDate we can set the value without formatting.
+							if (typeof vValue === "string" && oConditionGrid.oType.getName() === "sap.ui.comp.odata.type.StringDate") {
+								oControl.setValue(vValue);
 							} else {
-								oControl.setValue(oConditionGrid.oType.formatValue(vValue, "string"));
+								// In case vValue is of type string, we try to convert it into the type based format.
+								if (typeof vValue === "string" && ["String", "sap.ui.model.odata.type.String", "sap.ui.model.odata.type.Decimal"].indexOf(oConditionGrid.oType.getName()) == -1) {
+									try {
+										vValue = oConditionGrid.oType.parseValue(vValue, "string");
+										oControl.setValue(oConditionGrid.oType.formatValue(vValue, "string"));
+									} catch (err) {
+										Log.error("sap.m.P13nConditionPanel", "Value '" + vValue + "' does not have the expected type format for " + oConditionGrid.oType.getName() + ".parseValue()");
+									}
+								} else {
+									oControl.setValue(oConditionGrid.oType.formatValue(vValue, "string"));
+								}
 							}
 
 						} else {
@@ -1758,6 +1763,12 @@ sap.ui.define([
 					params.displayFormat = oType.oFormatOptions.style;
 				}
 				oControl = new DatePicker(params);
+
+				if (oType && oType.getName() === "sap.ui.comp.odata.type.StringDate") {
+					oControl.setValueFormat("yyyyMMdd");
+					oControl.setDisplayFormat(oType.oFormatOptions.style || oType.oFormatOptions.pattern);
+				}
+
 			} else {
 				oControl = new Input(params);
 
@@ -2377,7 +2388,7 @@ sap.ui.define([
 		var getValuesFromField = function(oControl, oType) {
 			var sValue;
 			var oValue;
-			if (oControl.getDateValue && !(oControl.isA("sap.m.TimePicker"))) {
+			if (oControl.getDateValue && !(oControl.isA("sap.m.TimePicker")) && oType.getName() !== "sap.ui.comp.odata.type.StringDate") {
 				oValue = oControl.getDateValue();
 				if (oType && oValue) {
 					sValue = oType.formatValue(oValue, "string");
@@ -2385,7 +2396,9 @@ sap.ui.define([
 			} else {
 				sValue = this._getValueTextFromField(oControl);
 				oValue = sValue;
-				if (oType && sValue) {
+				if (oType && oType.getName() === "sap.ui.comp.odata.type.StringDate") {
+					sValue = oType.formatValue(oValue, "string");
+				} else if (oType && sValue) {
 					try {
 						oValue = oType.parseValue(sValue, "string");
 						oType.validateValue(oValue);
