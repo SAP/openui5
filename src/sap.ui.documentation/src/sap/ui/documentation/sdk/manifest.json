@@ -4,7 +4,7 @@
 	"sap.app": {
 	"id": "sap.ui.documentation.sdk",
 		"type": "application",
-		"title": "OpenUI5 SDK - Demo Kit v2.0",
+		"title": "OpenUI5 SDK - Demo Kit",
 		"applicationVersion": {
 			"version": "1.0.0"
 		}
