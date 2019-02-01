@@ -1,0 +1,50 @@
+@_sap_f_Shell_Bar_Copilot_Design: dark; // Possible designs are "dark" and "light"
+
+.sapFShellBar {
+	background: @sapUiShellColor;
+	.sapMTB-Transparent-CTX .sapMBtn {
+		&:focus .sapMBtnInner {
+			outline-color: contrast(@sapShellColor, @sapUiContentFocusColor, @sapUiContentContrastFocusColor, @sapContent_ContrastTextThreshold);
+		}
+		.sapMBtnContent,
+		.sapMBtnInner::after,
+		.sapMBtnIcon {
+			background: transparent;
+			color: @sapUiShellTextColor;
+		}
+		&:hover {
+			.sapMBtnContent,
+			.sapMBtnInner,
+			.sapMBtnIcon {
+				background: @sapUiShellHoverBackground !important;
+			}
+		}
+		.sapMToggleBtnPressed {
+			background: @sapUiShellActiveBackground !important;
+			border-color: @sapUiShellActiveBackground !important;
+		}
+		&:active {
+			.sapMBtnContent,
+			.sapMBtnInner,
+			.sapMBtnIcon {
+				background: @sapUiShellActiveBackground !important;
+				border-color: @sapUiShellActiveBackground !important;
+				text: @sapUiShellActiveTextColor;
+			}
+		}
+		&:disabled {
+			opacity: 0.4;
+		}
+	}
+
+	.sapMLabel.sapMLabelTBHeader {
+		color: @sapUiShellTextColor;
+	}
+
+	.sapMSF {
+		.sapMSFF {
+			background: transparent;
+		}
+	}
+
+}

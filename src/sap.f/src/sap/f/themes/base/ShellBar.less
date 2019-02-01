@@ -1,0 +1,87 @@
+@_sap_f_Shell_Bar_Padding_Desktop: 3;
+@_sap_f_Shell_Bar_Padding_Tablet: 2;
+@_sap_f_Shell_Bar_Padding_Phone: 1;
+
+.sapFShellBar {
+	height: 3rem;
+	padding-left: ~"@{_sap_f_Shell_Bar_Padding_Desktop}rem";
+	padding-right: ~"@{_sap_f_Shell_Bar_Padding_Desktop}rem";
+	box-sizing: border-box;
+	overflow: hidden;
+
+	.sapFShellBarOTB {
+		height: 3rem;
+		padding-left: 0;
+		padding-right: 0;
+
+		:first-child {
+			margin-left: 0;
+		}
+
+		.sapUiHiddenPlaceholder:first-child + * {
+			margin-left: 0;
+		}
+
+		.sapFShellBarOverflowButton {
+			order: 1;
+		}
+
+		.sapFShellBarGridButton {
+			order: 3;
+			margin-right: 0;
+		}
+
+		.sapFShellBarProfile {
+			order: 2;
+		}
+	}
+
+	.sapMBtn .sapFAvatar {
+		margin-top: 0.05rem;
+	}
+
+	.sapFSHMegaMenu {
+		max-width: none;
+		display: inline-block;
+		font-weight: bold;
+		img {
+			margin-top: 0.05rem;
+			margin-left: 0.15rem;
+			width: auto;
+			height: 2rem;
+		}
+	}
+
+	.sapFShellBarHomeIcon {
+		height: 2rem;
+	}
+
+	.sapMImg.CPImage {
+		width: 48px;
+		margin-left: 0.5rem;
+		margin-right: 0.5rem;
+		&:hover {
+			transition: transform 0.30s;
+			transform: scale(1.1);
+		}
+		&:active {
+			transition: transform 0.05s;
+			transform: scale(1.2);
+		}
+	}
+
+	.sapFSHMegaMenu .sapMBtnContent {
+		font-weight: bold;
+	}
+
+	&.sapFShellBarSizeTablet {
+		padding: 0 ~"@{_sap_f_Shell_Bar_Padding_Tablet}rem";
+	}
+
+	&.sapFShellBarSizePhone {
+		padding: 0 ~"@{_sap_f_Shell_Bar_Padding_Phone}rem";
+		.sapFShellBarProfile {
+			margin-right: 0;
+		}
+	}
+}
