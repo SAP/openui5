@@ -186,6 +186,9 @@ sap.ui.define([
 		that may be set via setter method */
 		var mTCItemToTSItemProperties = {
 			"name": "text",
+			"additionalText": "additionalText",
+			"icon": "icon",
+			"iconTooltip": "iconTooltip",
 			"modified": "modified"
 		};
 
@@ -348,7 +351,9 @@ sap.ui.define([
 				if (mTCItemToTSItemProperties[sPropertyKey]) {//forward only if such property exists in TabStripItem
 					sPropertyKey = mTCItemToTSItemProperties[sPropertyKey];
 					var oTabStripItem = this._toTabStripItem(oEvent.getSource());
-					oTabStripItem && oTabStripItem.setProperty(sPropertyKey, oEvent['mParameters'].propertyValue, false);
+					// call it directly with the setter name so overwritten functions can be called and not setProperty method directly
+					var sMethodName = "set" + sPropertyKey.substr(0,1).toUpperCase() + sPropertyKey.substr(1);
+					oTabStripItem && oTabStripItem[sMethodName](oEvent['mParameters'].propertyValue);
 				}
 			}.bind(this));
 		};
@@ -425,6 +430,9 @@ sap.ui.define([
 				new sap.m.TabStripItem({
 					key: oItem.getId(),
 					text: oItem.getName(),
+					additionalText: oItem.getAdditionalText(),
+					icon: oItem.getIcon(),
+					iconTooltip: oItem.getIconTooltip(),
 					modified: oItem.getModified(),
 					tooltip: oItem.getTooltip()
 				})
@@ -459,6 +467,9 @@ sap.ui.define([
 				new sap.m.TabStripItem({
 					key: oItem.getId(),
 					text: oItem.getName(),
+					additionalText: oItem.getAdditionalText(),
+					icon: oItem.getIcon(),
+					iconTooltip: oItem.getIconTooltip(),
 					modified: oItem.getModified(),
 					tooltip: oItem.getTooltip()
 				}),

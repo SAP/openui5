@@ -9,6 +9,9 @@ sap.ui.define(["./library", "sap/ui/core/Item", "sap/ui/base/ManagedObject", "sa
 		// shortcut for sap.m.ButtonType
 		var ButtonType = library.ButtonType;
 
+		// shortcut for sap.m.ImageHelper
+		var ImageHelper = library.ImageHelper;
+
 		/**
 		 * Constructor for a new <code>TabStripItem</code>.
 		 *
@@ -33,6 +36,28 @@ sap.ui.define(["./library", "sap/ui/core/Item", "sap/ui/base/ManagedObject", "sa
 				properties: {
 
 					/**
+					 * Determines additional text to be displayed for the item.
+					 * @experimental
+					 * since 1.63 Disclaimer: this property is in a beta state - incompatible API changes may be done before its official public release. Use at your own discretion.
+					 */
+					additionalText : {type : "string", group : "Misc", defaultValue : ""},
+
+					/**
+					 * Defines the icon to be displayed as graphical element within the <code>TabStripItem</code>.
+					 * It can be an image or an icon from the icon font.
+					 * @experimental
+					 * since 1.63 Disclaimer: this property is in a beta state - incompatible API changes may be done before its official public release. Use at your own discretion.
+					 */
+					icon : {type : "sap.ui.core.URI", group : "Appearance", defaultValue : null},
+
+					/**
+					 * Determines the tooltip text of the <code>TabStripItem</code> icon.
+					 * @experimental
+					 * since 1.63 Disclaimer: this property is in a beta state - incompatible API changes may be done before its official public release. Use at your own discretion.
+					 */
+					iconTooltip : {type : "string", group : "Accessibility", defaultValue : null},
+
+					/**
 					 * Shows if a control is edited (default is false). Items that are marked as modified have a * symbol to indicate that they haven't been saved.
 					 */
 					modified: {type : "boolean", group : "Misc", defaultValue : false}
@@ -42,7 +67,13 @@ sap.ui.define(["./library", "sap/ui/core/Item", "sap/ui/base/ManagedObject", "sa
 					/**
 					 * Internal aggregation to hold the Close button.
 					 */
-					_closeButton: { type : "sap.m.Button", multiple: false}
+					_closeButton: { type : "sap.m.Button", multiple: false},
+
+					/**
+					 *
+					 * Icon / Image for the <code>TabContainerItem</code> are managed in this aggregation.
+					 */
+					_image: {type: "sap.ui.core.Control", multiple: false, visibility: "hidden"}
 				},
 				events: {
 
@@ -107,6 +138,13 @@ sap.ui.define(["./library", "sap/ui/core/Item", "sap/ui/base/ManagedObject", "sa
 		 * @type {string}
 		 */
 		TabStripItem.CSS_CLASS_LABEL = "sapMTabStripItemLabel";
+
+		/**
+		 * The default CSS class name of the <code>TabStripItem</code>'s additional text in context of <code>TabStrip</code>.
+		 *
+		 * @type {string}
+		 */
+		TabStripItem.CSS_CLASS_TEXT = "sapMTabStripItemAddText";
 
 		/**
 		 * The default CSS class name of <code>TabStripItem</code>'s button in context of <code>TabStrip</code>.
@@ -199,6 +237,57 @@ sap.ui.define(["./library", "sap/ui/core/Item", "sap/ui/base/ManagedObject", "sa
 			});
 
 			return this;
+		};
+
+
+		/**
+		 * Property setter for the icon
+		 *
+		 * @param {sap.ui.core.URI} sIcon - new value of the Icon property
+		 * @return {sap.m.TabStripItem} this to allow method chaining
+		 * @public
+		 */
+		TabStripItem.prototype.setIcon = function(sIcon) {
+			return this._setIcon(sIcon);
+		};
+
+		TabStripItem.prototype._setIcon = function(sIcon, bSuppressRendering) {
+			var mProperties,
+				aCssClasses = ['sapMTabContIcon'],
+				oImage = this.getAggregation("_image"),
+				sImgId = this.getId() + "-img";
+
+			if (!sIcon) {
+				this.setProperty("icon", sIcon, bSuppressRendering);
+				if (oImage) {
+					this.destroyAggregation("_image");
+				}
+				return this;
+			}
+
+			if (this.getIcon() !== sIcon) {
+				this.setProperty("icon", sIcon, bSuppressRendering);
+
+				mProperties = {
+					src : sIcon,
+					id: sImgId,
+					tooltip: this.getIconTooltip()
+				};
+
+				oImage = ImageHelper.getImageControl(sImgId, oImage, undefined, mProperties, aCssClasses);
+				this.setAggregation("_image", oImage, bSuppressRendering);
+			}
+			return this;
+		};
+
+		/**
+		 * Function is called when image control needs to be loaded.
+		 *
+		 * @return {sap.m.TabStripItem} this to allow method chaining
+		 * @private
+		 */
+		TabStripItem.prototype._getImage = function () {
+			return this.getAggregation("_image");
 		};
 
 		return TabStripItem;

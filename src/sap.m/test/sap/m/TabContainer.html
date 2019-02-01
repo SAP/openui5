@@ -59,7 +59,33 @@
 					"SupplierName": "Red Point Stores",
 					"Description": "Should be one line in height",
 					"Price": 39.99,
-					"CurrencyCode": "EUR"
+					"CurrencyCode": "EUR",
+					"icon": "sap-icon://notes"
+				},
+				{
+					"Name": "Laser Allround Pro2",
+					"Category": "Printer",
+					"SupplierName": "",
+					"Description": "Should be one line in height",
+					"Price": 39.99,
+					"CurrencyCode": "EUR",
+					"icon": "../ui/documentation/sdk/images/HT-6120.jpg"
+				},
+				{
+					"Name": "Hurricane GX",
+					"Category": "Printer",
+					"SupplierName": "",
+					"Description": "Should be one line in height",
+					"Price": 39.99,
+					"CurrencyCode": "EUR",
+				},
+				{
+					"icon": "sap-icon://notes",
+					"Category": "Projector",
+					"SupplierName": "",
+					"Description": "Should be one line in height",
+					"Price": 39.99,
+					"CurrencyCode": "EUR",
 				}
 			]
 		});
@@ -68,11 +94,16 @@
 
 		var oTemplate = new sap.m.TabContainerItem({
 			name: "{Name}",
+			additionalText: "{SupplierName}",
+			icon: "{icon}",
+			iconTooltip: "{Category}",
 			modified: "{modified}",
 			content: new sap.uxap.ObjectPageLayout({
 				headerTitle: new sap.uxap.ObjectPageHeader({
 					objectTitle:"{Name}",
-					objectSubtitle: "{SupplierName}"
+					objectSubtitle: "{SupplierName}",
+					objectImageURI: "{icon}",
+					isObjectIconAlwaysVisible: true
 				}),
 				sections: [
 					new sap.uxap.ObjectPageSection({
@@ -139,6 +170,7 @@
 				tabContainer.addItem(
 						new sap.m.TabContainerItem({
 							name: "SAP",
+							additionalText: "Customer",
 							modified: true
 						})
 				);
@@ -152,6 +184,7 @@
 				tabContainer.insertItem(
 						new sap.m.TabContainerItem({
 							name: "Apple",
+							additionalText: "Customer",
 							content: new sap.m.Text({ text: "Apple tab" })
 						}),
 						2
@@ -200,21 +233,21 @@
 		});
 
 		var changeTabButton1 = new sap.m.Button({
-			text: "1",
+			text: "0",
 			press: function() {
 				tabContainer.setSelectedItem(tabContainer.getItems()[0]);
 			}
 		});
 
 		var changeTabButton2 = new sap.m.Button({
-			text: "2",
+			text: "1",
 			press: function() {
 				tabContainer.setSelectedItem(tabContainer.getItems()[1]);
 			}
 		});
 
 		var changeTabButton3 = new sap.m.Button({
-			text: "3",
+			text: "2",
 			press: function() {
 				tabContainer.setSelectedItem(tabContainer.getItems()[2]);
 			}
@@ -224,6 +257,30 @@
 			text: "Change Name (3)",
 			press: function() {
 				tabContainer.getItems()[3].setName("New Name");
+			}
+		});
+
+		var addIconButton = new sap.m.Button({
+			type: "Emphasized",
+			text: "Add Icon (3)",
+			press: function() {
+				tabContainer.getItems()[3].setIcon("sap-icon://syringe");
+			}
+		});
+
+		var removeIconButton = new sap.m.Button({
+			type: "Emphasized",
+			text: "Remove Icon (4)",
+			press: function() {
+				tabContainer.getItems()[4].setIcon("");
+			}
+		});
+
+		var changeIconButton = new sap.m.Button({
+			type: "Emphasized",
+			text: "Change Icon (5)",
+			press: function() {
+				tabContainer.getItems()[5].setIcon("sap-icon://syringe");
 			}
 		});
 
@@ -245,6 +302,9 @@
 				],
 				contentMiddle: [
 					changeNameButton,
+					addIconButton,
+					changeIconButton,
+					removeIconButton,
 					toggleModifiedButton
 				],
 				contentRight: [

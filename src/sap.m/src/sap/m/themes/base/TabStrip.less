@@ -127,6 +127,46 @@
 	}
 }
 
+.sapMTSOverflowSelectListItem {
+	vertical-align: middle;
+}
+
+.sapMTabStripItemAddText,
+.sapMTabStripItemLabel {
+	line-height: normal;
+}
+
+.sapMTSOverflowSelectListItem .sapMTabStripItemAddText,
+.sapMTabStripItem .sapMTabStripItemAddText {
+	color: @sapUiContentLabelColor;
+	font-family: @sapUiFontFamily;
+	font-size: @sapMFontSmallSize;
+}
+.sapMSelectListItemBase.sapMSelectListItemBasePressed.sapMTSOverflowSelectListItem .sapMTabStripSelectListItemCloseBtn .sapMBtnIcon,
+.sapMSelectListItemBase.sapMSelectListItemBasePressed.sapMTSOverflowSelectListItem .sapMSelectListItemText .sapMTabContIcon.sapUiIcon,
+.sapMSelectListItemBase.sapMSelectListItemBasePressed.sapMTSOverflowSelectListItem .sapMTabStripItemAddText {
+	color: @sapUiListActiveTextColor;
+}
+
+.sapMTSTexts {
+	display: inline-block;
+	vertical-align: middle;
+}
+
+.sapMTabContIcon.sapUiIcon {
+	font-size: 2rem;
+	color: @sapUiSelected;
+	vertical-align: middle;
+	padding-right: 0.5rem;
+	cursor: pointer;
+}
+
+.sapMTabContIcon.sapMImg {
+	height: 2rem;
+	width: 2rem;
+	vertical-align: middle;
+	padding-right: 0.5rem;
+}
 /* ============================================= */
 /* Phone                                         */
 /* ============================================= */
@@ -224,15 +264,6 @@ html .sapMTabStripSelectListItemCloseBtn .sapMBtnInner {
 
 .sapUiSizeCozy .sapMTabStrip {
 	height: 3rem;
-	.sapMTSTabsContainer {
-		.sapMTSTabs {
-			.sapMTabStripItem {
-				.sapMTabStripItemLabel {
-					line-height: 3rem;
-				}
-			}
-		}
-	}
 	.sapMTSLeftOverflowButtons {
 		width: 3.5rem;
 	}
@@ -247,14 +278,12 @@ html .sapMTabStripSelectListItemCloseBtn .sapMBtnInner {
 /* ============================================= */
 
 .sapUiSizeCompact .sapMTabStrip {
-	height: 2rem;
+	height: 2.5rem;
 	.sapMTSTabsContainer {
 		.sapMTSTabs {
 			.sapMTabStripItem {
 				padding: 0 1rem;
-				.sapMTabStripItemLabel {
-					line-height: 2rem;
-				}
+				line-height: 2.5rem;
 				.sapMTSItemCloseBtnCnt {
 					width: 1.5rem;
 					position: absolute;
@@ -273,6 +302,24 @@ html .sapMTabStripSelectListItemCloseBtn .sapMBtnInner {
 				}
 			}
 		}
+	}
+	.sapMTSTouchArea .sapMBtn,
+	.sapMTSLeftOverflowButtons .sapMBtn,
+	.sapMTSRightOverflowButtons .sapMBtn {
+		height: 2.5rem;
+	}
+	.sapMTSTouchArea .sapMSlt {
+		margin-top: 0.49375rem;
+	}
+}
+
+.sapUiSizeCompact {
+	.sapMTabContIcon.sapUiIcon {
+		font-size: 1.5rem;
+	}
+	.sapMTabContIcon.sapMImg {
+		height: 1.5rem;
+		width: 1.5rem;
 	}
 }
 
@@ -367,5 +414,14 @@ html .sapMTabStripSelectListItemCloseBtn .sapMBtnInner {
 				padding: 0;
 			}
 		}
+	}
+	.sapMTSItemCloseBtnCnt .sapMBtn {
+		height: 2.5rem;
+	}
+	.sapMTSOverflowSelectListItem.sapMSelectListItemBase {
+		height: 2.5rem;
+	}
+	.sapMTSOverflowSelectListItem.sapMSelectListItem {
+		line-height: 2.5rem;
 	}
 }
