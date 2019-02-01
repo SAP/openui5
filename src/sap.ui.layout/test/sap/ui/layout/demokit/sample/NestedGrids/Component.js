@@ -5,27 +5,7 @@ sap.ui.define(['sap/ui/core/UIComponent'],
 		var Component = UIComponent.extend("sap.ui.layout.sample.NestedGrids.Component", {
 
 			metadata : {
-				rootView : {
-					"viewName": "sap.ui.layout.sample.NestedGrids.NestedGrids",
-					"type": "XML",
-					"async": true
-				},
-				dependencies : {
-					libs : [
-						"sap.ui.layout",
-						"sap.m"
-					]
-				},
-				includes : [ "main.css" ],
-				config : {
-					sample : {
-						files : [
-							"NestedGrids.view.xml",
-							"NestedGrids.controller.js",
-							"main.css"
-						]
-					}
-				}
+			    manifest: "json"
 			}
 		});
 

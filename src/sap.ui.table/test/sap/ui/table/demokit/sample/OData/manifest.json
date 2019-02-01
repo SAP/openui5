@@ -1,0 +1,30 @@
+{
+	"sap.app": {
+		"id": "sap.ui.table.sample.OData",
+		"applicationVersion": {
+			"version": "1.0.0"
+		}
+	},
+	"sap.ui5": {
+		"rootView": {
+			"viewName": "sap.ui.table.sample.OData.View",
+			"type": "XML",
+			"async": true
+		},
+		"libs": {
+			"sap.m": {}
+		},
+		"config": {
+			"sample": {
+				"stretch": true,
+				"files": [
+					"View.view.xml",
+					"Controller.controller.js",
+					"metadata.xml",
+					"ProductSet.json",
+					"manifest.json"
+				]
+			}
+		}
+	}
+}

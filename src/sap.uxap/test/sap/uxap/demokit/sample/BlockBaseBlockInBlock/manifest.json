@@ -1,0 +1,31 @@
+{
+	"sap.app": {
+		"id": "sap.uxap.sample.BlockBaseBlockInBlock",
+		"applicationVersion": {
+			"version": "1.0.0"
+		}
+	},
+	"sap.ui5": {
+		"rootView": {
+			"viewName": "sap.uxap.sample.BlockBaseBlockInBlock.BlockInBlock",
+			"type": "XML",
+			"async": true
+		},
+		"libs": {
+			"sap.m": {}
+		},
+		"config": {
+			"sample": {
+				"stretch": true,
+				"files": [
+					"BlockInBlock.view.xml",
+					"Block.js",
+					"Block.view.xml",
+					"InnerBlock.js",
+					"InnerBlock.view.xml",
+					"manifest.json"
+				]
+			}
+		}
+	}
+}

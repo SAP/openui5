@@ -1,0 +1,24 @@
+{
+	"sap.app": {
+		"id": "sap.ui.table.sample.DnD",
+		"applicationVersion": {
+			"version": "1.0.0"
+		}
+	},
+	"sap.ui5": {
+		"rootView": "sap.ui.table.sample.DnD.View",
+		"libs": {
+			"sap.m": {}
+		},
+		"config": {
+			"sample": {
+				"stretch": true,
+				"files": [
+					"View.view.xml",
+					"Controller.controller.js",
+					"manifest.json"
+				]
+			}
+		}
+	}
+}

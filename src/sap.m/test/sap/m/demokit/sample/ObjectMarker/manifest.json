@@ -1,0 +1,22 @@
+{
+	"sap.app": {
+		"id": "sap.m.sample.ObjectMarker",
+		"applicationVersion": {
+			"version": "1.0.0"
+		}
+	},
+	"sap.ui5": {
+		"libs": {
+			"sap.m": {}
+		},
+		"config": {
+			"sample": {
+				"files": [
+					"Table.view.xml",
+					"Table.controller.js",
+					"manifest.json"
+				]
+			}
+		}
+	}
+}

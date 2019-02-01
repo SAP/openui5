@@ -4,24 +4,7 @@ sap.ui.define(["sap/ui/core/UIComponent"], function (UIComponent) {
 	var Component = UIComponent.extend("sap.uxap.sample.ObjectPageHeaderContentPriorities.Component", {
 
 		metadata: {
-			rootView: {
-				"viewName": "sap.uxap.sample.ObjectPageHeaderContentPriorities.ObjectPageHeaderContentPriorities",
-				"type": "XML",
-				"async": true
-			},
-			dependencies: {
-				libs: ["sap.m"]
-			},
-			config: {
-				sample: {
-					stretch: true,
-					files: [
-						"ObjectPageHeaderContentPriorities.view.xml",
-						"../SharedBlocks/goals/GoalsBlock.js",
-						"../SharedBlocks/goals/GoalsBlock.view.xml"
-					]
-				}
-			}
+		    manifest: "json"
 		}
 	});
 

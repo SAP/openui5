@@ -1,0 +1,24 @@
+{
+	"sap.app": {
+		"id": "sap.tnt.sample.ToolHeader",
+		"applicationVersion": {
+			"version": "1.0.0"
+		}
+	},
+	"sap.ui5": {
+		"rootView": "sap.tnt.sample.ToolHeader.V",
+		"libs": {
+			"sap.m": {}
+		},
+		"config": {
+			"sample": {
+				"stretch": true,
+				"files": [
+					"V.view.xml",
+					"V.controller.js",
+					"manifest.json"
+				]
+			}
+		}
+	}
+}

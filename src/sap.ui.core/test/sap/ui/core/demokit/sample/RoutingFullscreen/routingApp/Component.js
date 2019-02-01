@@ -3,44 +3,7 @@ sap.ui.define( ["sap/ui/core/UIComponent"], function (UIComponent) {
 	return UIComponent.extend("sap.ui.core.sample.RoutingFullscreen.routingApp", {
 
 		metadata: {
-			rootView: {
-				"viewName": "sap.ui.core.sample.RoutingFullscreen.routingApp.view.App",
-				"type": "XML",
-				"async": true
-			},
-			routing: {
-				config: {
-					routerClass: "sap.m.routing.Router",
-					viewPath: "sap.ui.core.sample.RoutingFullscreen.routingApp.view",
-					controlId: "rootControl",
-					controlAggregation: "pages",
-					viewType: "XML",
-					async: true
-				},
-				routes: [
-					{
-						name: "page1",
-						// empty hash - normally the start page
-						pattern: "",
-						target: "page1"
-					},
-					{
-						name: "page2",
-						pattern: "Page2",
-						target: "page2"
-					}
-				],
-				targets: {
-					page1: {
-						viewName: "View1",
-						viewLevel: 0
-					},
-					page2: {
-						viewName: "View2",
-						viewLevel: 1
-					}
-				}
-			}
+		    manifest: "json"
 		},
 
 		init : function () {

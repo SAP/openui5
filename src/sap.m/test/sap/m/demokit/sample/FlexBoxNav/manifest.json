@@ -1,0 +1,34 @@
+{
+	"sap.app": {
+		"id": "sap.m.sample.FlexBoxNav",
+		"applicationVersion": {
+			"version": "1.0.0"
+		}
+	},
+	"sap.ui5": {
+		"rootView": {
+			"viewName": "sap.m.sample.FlexBoxNav.V",
+			"type": "XML",
+			"async": true
+		},
+		"libs": {
+			"sap.ui.layout": {}
+		},
+		"resources": {
+			"css": [
+				{
+					"url": "style.css"
+				}
+			]
+		},
+		"config": {
+			"sample": {
+				"files": [
+					"V.view.xml",
+					"style.css",
+					"manifest.json"
+				]
+			}
+		}
+	}
+}

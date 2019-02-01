@@ -1,0 +1,29 @@
+{
+	"sap.app": {
+		"id": "sap.m.sample.QuickViewCardScrollBar",
+		"applicationVersion": {
+			"version": "1.0.0"
+		}
+	},
+	"sap.ui5": {
+		"rootView": {
+			"viewName": "sap.m.sample.QuickViewCardScrollBar.QuickView",
+			"type": "XML",
+			"async": true
+		},
+		"libs": {
+			"sap.ui.layout": {}
+		},
+		"config": {
+			"sample": {
+				"stretch": true,
+				"files": [
+					"QuickView.view.xml",
+					"QuickView.controller.js",
+					"QuickView.fragment.xml",
+					"manifest.json"
+				]
+			}
+		}
+	}
+}

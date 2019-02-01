@@ -1,0 +1,30 @@
+{
+	"sap.app": {
+		"id": "sap.uxap.sample.MPModelMapping",
+		"applicationVersion": {
+			"version": "1.0.0"
+		}
+	},
+	"sap.ui5": {
+		"rootView": {
+			"viewName": "sap.uxap.sample.MPModelMapping.ModelMapping",
+			"type": "XML",
+			"async": true
+		},
+		"libs": {
+			"sap.m": {}
+		},
+		"config": {
+			"sample": {
+				"stretch": true,
+				"files": [
+					"ModelMapping.view.xml",
+					"ModelMapping.controller.js",
+					"ModelMappingBlock.js",
+					"ModelMappingBlock.view.xml",
+					"manifest.json"
+				]
+			}
+		}
+	}
+}
