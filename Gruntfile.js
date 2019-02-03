@@ -71,8 +71,7 @@ module.exports = function(grunt) {
 							// files are already part of sap-ui-core.js
 							'!sap/ui/thirdparty/baseuri.js',
 							'!sap/ui/thirdparty/es6-promise.js',
-							'!sap/ui/thirdparty/es6-string-methods.js',
-							'!sap/ui/thirdparty/es6-object-assign.js',
+							'!sap/ui/thirdparty/es6-shim-nopromise.js',
 							'!ui5loader*.js',
 
 							// exclude all merged files as well as the top level jQuery copy (not visible in OpenUI5)
@@ -98,6 +97,8 @@ module.exports = function(grunt) {
 							// '!sap/ui/thirdparty/caja-htmlsanitizer.js'
 							'!sap/ui/thirdparty/d3.js',
 							'!sap/ui/thirdparty/datajs.js',
+							'!sap/ui/thirdparty/es6-object-assign.js',
+							'!sap/ui/thirdparty/es6-string-methods.js',
 							'!sap/ui/thirdparty/flexie.js',
 							'!sap/ui/thirdparty/handlebars.js',
 							// '!sap/ui/thirdparty/hasher.js'

@@ -508,8 +508,7 @@
 	if ( typeof ES6Promise !== 'undefined' ) {
 		defineModuleSync('sap/ui/thirdparty/es6-promise.js', ES6Promise);
 	}
-	defineModuleSync('sap/ui/thirdparty/es6-object-assign.js', null);
-	defineModuleSync('sap/ui/thirdparty/es6-string-methods.js', null);
+	defineModuleSync('sap/ui/thirdparty/es6-shim-nopromise.js', null);
 
 	defineModuleSync('ui5loader.js', null);
 	defineModuleSync('ui5loader-autoconfig.js', null);
