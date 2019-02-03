@@ -18,7 +18,8 @@ sap.ui.define([
 				supplierPath = oEvent.getSource().getBindingContext("products").getPath(),
 				supplier = supplierPath.split("/").slice(-1).pop();
 
-			this.oRouter.navTo("detailDetail", {layout: oNextUIState.layout, supplier: supplier});
+			this.oRouter.navTo("detailDetail", {layout: oNextUIState.layout,
+				product: this._product, supplier: supplier});
 		},
 		handleFullScreen: function () {
 			var sNextLayout = this.oModel.getProperty("/actionButtonsInfo/midColumn/fullScreen");
