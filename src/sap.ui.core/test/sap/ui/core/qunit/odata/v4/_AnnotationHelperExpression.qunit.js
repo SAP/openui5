@@ -136,6 +136,7 @@ sap.ui.define([
 					complexBinding : bComplexBinding,
 					model : oMetaModel,
 					path : sPath,
+					prefix : "",
 					value : "BusinessPartnerID"
 				},
 				oProperty = {
@@ -174,6 +175,7 @@ sap.ui.define([
 			oPathValue = {
 				model : oMetaModel,
 				path : "/BusinessPartnerList/@UI.LineItem/0/Value/$Path",
+				prefix : "",
 				value : "BusinessPartnerID"
 			},
 			oResult,
@@ -204,6 +206,7 @@ sap.ui.define([
 			oPathValue = {
 				model : oMetaModel,
 				path : "/BusinessPartnerList/@UI.LineItem/0/Value/$Path",
+				prefix : "",
 				value : "BusinessPartnerID"
 			},
 			oResult;
@@ -224,31 +227,34 @@ sap.ui.define([
 	});
 
 	//*********************************************************************************************
-	QUnit.test("path asynchronous", function (assert) {
-		var oMetaModel = {
-				fetchObject : function () {}
-			},
-			oPathValue = {
-				model : oMetaModel,
-				path : "/BusinessPartnerList/@UI.LineItem/0/Value/$Path",
-				value : "BusinessPartnerID",
-				$$valueAsPromise : true
-			},
-			oPromise;
+	[false, true].forEach(function (bWithPrefix) {
+		QUnit.test("path asynchronous; with prefix: " + bWithPrefix, function (assert) {
+			var oMetaModel = {
+					fetchObject : function () {}
+				},
+				oPathValue = {
+					model : oMetaModel,
+					path : "/BusinessPartnerList/@UI.LineItem/0/Value/$Path",
+					prefix : bWithPrefix ? "~prefix~/" : "",
+					value : "BusinessPartnerID",
+					$$valueAsPromise : true
+				},
+				oPromise;
 
-		this.mock(oMetaModel).expects("fetchObject")
-			.withExactArgs("/BusinessPartnerList/@UI.LineItem/0/Value/$Path/$")
-			.returns(SyncPromise.resolve(Promise.resolve({$Type : "Edm.Foo"})));
+			this.mock(oMetaModel).expects("fetchObject")
+				.withExactArgs("/BusinessPartnerList/@UI.LineItem/0/Value/$Path/$")
+				.returns(SyncPromise.resolve(Promise.resolve({$Type : "Edm.Foo"})));
 
-		// code under test
-		oPromise = Expression.path(oPathValue).unwrap();
+			// code under test
+			oPromise = Expression.path(oPathValue).unwrap();
 
-		return oPromise.then(function (oResult) {
-			assert.deepEqual(oResult, {
-				constraints : undefined,
-				result : "binding",
-				type : "Edm.Foo",
-				value : oPathValue.value
+			return oPromise.then(function (oResult) {
+				assert.deepEqual(oResult, {
+					constraints : undefined,
+					result : "binding",
+					type : "Edm.Foo",
+					value : bWithPrefix ? "~prefix~/BusinessPartnerID" : "BusinessPartnerID"
+				});
 			});
 		});
 	});

@@ -111,6 +111,8 @@ sap.ui.define([
 	 *  <li><code>complexBinding</code>: {boolean} parser state: if this property is
 	 *    <code>true</code>, bindings shall have type and constraints information
 	 *  <li><code>path</code>: {string} the path in the metamodel that leads to the value
+	 *  <li><code>prefix</code>: {string} used in a path expression as a prefix for the
+	 *    value; is either an empty string or a path ending with a "/"
 	 *  <li><code>value</code>: {any} the value of the (sub) expression from the metamodel
 	 * </ul>
 	 *
@@ -660,7 +662,7 @@ sap.ui.define([
 					constraints : mConstraints,
 					result : "binding",
 					type : oProperty && oProperty.$Type,
-					value : oPathValue.value
+					value : oPathValue.prefix + oPathValue.value
 				};
 			});
 		},
