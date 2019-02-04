@@ -219,19 +219,57 @@ function(oCore, Device, URI) {
 	});
 
 	QUnit.test("Show fallback initials when image source is invalid and initials are set and valid", function (assert) {
-		this.oAvatar.setSrc("_" + sImagePath);
+		//Arrange
+		var done = assert.async(),
+		oStub = sinon.stub(this.oAvatar, "_onImageError", function() {
+			//Assert
+			assert.ok(true, "When image inside sap.f.Avatar is not loaded, error callback launches");
+			done();
+		}),
+		$oAvatar;
 		this.oAvatar.setInitials("PB");
+		assert.expect(2);
+
+		//Act
+		this.oAvatar.setSrc("_");
 		oCore.applyChanges();
 
-		var $oAvatar = this.oAvatar.$();
-		assert.ok($oAvatar.find(".sapFAvatarInitialsHolder").text(), 'PB');
+		//Assert
+		$oAvatar = this.oAvatar.$();
+		assert.equal($oAvatar.find(".sapFAvatarInitialsHolder").text(),"PB", "When type of sap.f.Avatar is 'Image'" +
+		 " and initials are set we load fallback initials container");
+		//Cleanup
+		oStub.restore();
 	});
 	QUnit.test("Show fallback default Icon when image source is invalid and initials are not set", function (assert) {
-		this.oAvatar.setSrc("_" + sImagePath);
+		//Act
+		this.oAvatar.setSrc("_");
 		oCore.applyChanges();
 
+		//Assert
 		var $oAvatar = this.oAvatar.$();
-		assert.ok($oAvatar.find(".sapUiIcon") !== undefined);
+		assert.ok($oAvatar.find(".sapUiIcon") !== undefined, "When type of sap.f.Avatar is 'Image'" +
+		"we load fallback icon container");
+
+	});
+
+	QUnit.test("Fallback content is loaded, but hidden when sap.f.Avatar type Image has valid image source", function (assert) {
+		//Arrange
+		assert.expect(2);
+		var done = assert.async(),
+			that = this,
+
+			oStub = sinon.stub(this.oAvatar, "_onImageLoad", function() {
+				oStub.restore();
+				that.oAvatar._onImageLoad();
+				//Assert
+				assert.ok(true, "When image inside sap.f.Avatar is loaded, success callback launches");
+				assert.equal(that.oAvatar.$().find(".sapUiIcon").hasClass('sapUiHidden'), true, "Hiding fallback content valid");
+				done();
+			});
+		//Act
+		this.oAvatar.setSrc(sImagePath);
+		oCore.applyChanges();
 	});
 
 	QUnit.module("Aggregations", {
