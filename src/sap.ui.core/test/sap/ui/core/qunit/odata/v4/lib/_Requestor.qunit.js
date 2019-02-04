@@ -549,7 +549,11 @@ sap.ui.define([
 					.withExactArgs("Session not found on server", undefined, sClassName);
 				that.mock(oRequestor).expects("clearSessionContext").exactly(bErrorId ? 1 : 0)
 					.withExactArgs();
-				that.mock(_Helper).expects("createError").returns(oExpectedError);
+				that.mock(_Helper).expects("createError")
+					.withExactArgs(sinon.match.object,
+						bErrorId ? "Session not found on server" : "Communication error",
+						"/", undefined)
+					.returns(oExpectedError);
 
 				// code under test
 				return oRequestor.sendRequest("GET", "").then(function () {

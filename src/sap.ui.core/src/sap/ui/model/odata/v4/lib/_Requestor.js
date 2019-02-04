@@ -1194,7 +1194,8 @@ sap.ui.define([
 					});
 				}, function (jqXHR, sTextStatus, sErrorMessage) {
 					var sContextId = jqXHR.getResponseHeader("SAP-ContextId"),
-						sCsrfToken = jqXHR.getResponseHeader("X-CSRF-Token");
+						sCsrfToken = jqXHR.getResponseHeader("X-CSRF-Token"),
+						sMessage;
 
 					if (!bIsFreshToken && jqXHR.status === 403
 							&& sCsrfToken && sCsrfToken.toLowerCase() === "required") {
@@ -1203,6 +1204,7 @@ sap.ui.define([
 							send(true);
 						}, fnReject);
 					} else {
+						sMessage = "Communication error";
 						if (sContextId) {
 							// an error response within the session (e.g. a failed save) refreshes
 							// the session
@@ -1210,10 +1212,11 @@ sap.ui.define([
 								jqXHR.getResponseHeader("Keep-Alive"));
 						} else if (jqXHR.getResponseHeader("SAP-Err-Id") === "ICMENOSESSION") {
 							// The server could not find the context ID ("ICM Error NO SESSION")
-							Log.error("Session not found on server", undefined, sClassName);
+							sMessage = "Session not found on server";
+							Log.error(sMessage, undefined, sClassName);
 							that.clearSessionContext();
 						} // else keep the session untouched
-						fnReject(_Helper.createError(jqXHR, "Communication error", sRequestUrl,
+						fnReject(_Helper.createError(jqXHR, sMessage, sRequestUrl,
 							sOriginalResourcePath));
 					}
 				});
