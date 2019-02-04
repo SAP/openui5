@@ -369,8 +369,7 @@ sap.ui.define([
 					aMethodNames,
 					aInheritanceChain,
 					aRequiredLibs = [],
-					oItem,
-					i;
+					oSymbol;
 
 				if (!oControlData) {
 					return Promise.resolve({events: [], methods: []});
@@ -399,25 +398,36 @@ sap.ui.define([
 				};
 
 				// Find all libs needed to resolve the inheritance chain
+
+				// Find symbol utility method
+				function findSymbol (a, sTopicId) {
+					return a.some(function (o) {
+						var bFound = o.name === sTopicId;
+						if (!bFound && o.nodes) {
+							return findSymbol(o.nodes, sTopicId);
+						} else if (bFound) {
+							oSymbol = o;
+							return true;
+						}
+						return false;
+					});
+				}
+
 				aInheritanceChain = [sBaseClass /* We need the first base class here also */];
 				while (sBaseClass) {
-					i = this._aApiIndex.length;
-					while (i--) {
-						oItem = this._aApiIndex[i];
-						if (oItem.name === sBaseClass) {
-							sBaseClass = oItem.extends;
-							if (sBaseClass) {
-								aInheritanceChain.push(sBaseClass);
-							}
-							if (aRequiredLibs.indexOf(oItem.lib) === -1) {
-								aRequiredLibs.push(oItem.lib);
-							}
-							break;
+					findSymbol(this._aApiIndex, sBaseClass);
+					if (oSymbol) {
+						sBaseClass = oSymbol.extends;
+						if (sBaseClass) {
+							aInheritanceChain.push(sBaseClass);
 						}
-					}
-					if (i === -1) {
+						if (aRequiredLibs.indexOf(oSymbol.lib) === -1) {
+							aRequiredLibs.push(oSymbol.lib);
+						}
+					} else {
 						// There is a symbol without documentation in the inheritance chain and we can
 						// not continue. BCP: 1770492427
+						sBaseClass = false;
 						break;
 					}
 				}
