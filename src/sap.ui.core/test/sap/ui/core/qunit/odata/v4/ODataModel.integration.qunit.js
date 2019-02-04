@@ -11371,6 +11371,84 @@ sap.ui.define([
 	});
 
 	//*********************************************************************************************
+	// Scenario: Modify a property within a list binding with $$patchWithoutSideEffects, then modify
+	// in a context binding that inherits the parameter
+	// CPOUI5UISERVICESV3-1684
+	QUnit.test("$$patchWithoutSideEffects in list binding and inherited", function (assert) {
+		var oModel = createModel(sSalesOrderService, {autoExpandSelect : true}),
+			sView = '\
+<Table id="table" items="{path : \'/SalesOrderList\',\
+		parameters : {$$patchWithoutSideEffects : true}}">\
+	<columns><Column/></columns>\
+	<ColumnListItem>\
+		<Text id="listNote" text="{Note}" />\
+	</ColumnListItem>\
+</Table>\
+<FlexBox id="form" binding="{path : \'\', parameters : {$$ownRequest : true}}">\
+	<Text id="formNote" text="{Note}"/>\
+</FlexBox>',
+			that = this;
+
+		this.expectRequest("SalesOrderList?$select=Note,SalesOrderID&$skip=0&$top=100", {
+				"value" : [{
+					"@odata.etag" : "ETag0",
+					"Note" : "Note",
+					"SalesOrderID" : "42"
+				}]
+			})
+			.expectChange("listNote", ["Note"])
+			.expectChange("formNote");
+
+		return this.createView(assert, sView, oModel).then(function () {
+			that.expectChange("listNote", ["Note (entered)"])
+				.expectRequest({
+					method : "PATCH",
+					url : "SalesOrderList('42')",
+					headers : {"If-Match" : "ETag0"},
+					payload : {"Note" : "Note (entered)"}
+				}, {
+					"@odata.etag" : "ETag1",
+					"Note" : "Note (from server)", // side effect
+					"SalesOrderID" : "42"
+				});
+
+			that.oView.byId("table").getItems()[0].getCells()[0].getBinding("text")
+				.setValue("Note (entered)");
+
+			return that.waitForChanges(assert);
+		}).then(function () {
+			that.expectRequest("SalesOrderList('42')?$select=Note,SalesOrderID", {
+					"@odata.etag" : "ETag1",
+					"Note" : "Note (from server)",
+					"SalesOrderID" : "42"
+				})
+				.expectChange("formNote", "Note (from server)");
+
+			that.oView.byId("form").setBindingContext(
+				that.oView.byId("table").getBinding("items").getCurrentContexts()[0]
+			);
+
+			return that.waitForChanges(assert);
+		}).then(function () {
+			that.expectChange("formNote", "Note (entered)")
+				.expectRequest({
+					method : "PATCH",
+					url : "SalesOrderList('42')",
+					headers : {"If-Match" : "ETag1"},
+					payload : {"Note" : "Note (entered)"}
+				}, {
+					"@odata.etag" : "ETag2",
+					"Note" : "Note (from server)", // side effect
+					"SalesOrderID" : "42"
+				});
+
+			that.oView.byId("formNote").getBinding("text").setValue("Note (entered)");
+
+			return that.waitForChanges(assert);
+		});
+	});
+
+	//*********************************************************************************************
 	// Scenario: Read side effects which include navigation properties while there are pending
 	// changes.
 	QUnit.test("requestSideEffects with navigation properties", function (assert) {
