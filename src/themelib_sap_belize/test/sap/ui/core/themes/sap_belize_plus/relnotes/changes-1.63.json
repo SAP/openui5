@@ -31,6 +31,12 @@
         "type": "FIX",
         "text": " sap.m.DatePicker: Icon has correct disabled hover/active colors",
         "references": []
+      },
+      {
+        "id": "93f1ec03cb488e21841643d0b1e79ae9e4f7ebc4",
+        "type": "FIX",
+        "text": " sap.m.GenericTag: Fixed focus outline",
+        "references": []
       }
     ]
   }

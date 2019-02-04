@@ -79,6 +79,66 @@
         "type": "FIX",
         "text": " trace/Interaction.js: fixed header length calculation",
         "references": []
+      },
+      {
+        "id": "3ba97c7c8fe99ae1bac9f0436ee71933d471ce87",
+        "type": "FEATURE",
+        "text": " CLDR: Support misc patterns for numbers",
+        "references": []
+      },
+      {
+        "id": "ecf126cdb226d4c10b15ed757463327e8891d6b0",
+        "type": "FEATURE",
+        "text": " Opa: fragmentId in view-relative control search",
+        "references": []
+      },
+      {
+        "id": "acdea2aa99cbfb8268a2331418bf38773b55e66d",
+        "type": "FEATURE",
+        "text": " m.ColumnHeaderPopover: new control to Table ColumnBehavior",
+        "references": []
+      },
+      {
+        "id": "c272ff76f5a303aa6e5e793a21cf8148e79e45c6",
+        "type": "FIX",
+        "text": " Core: lazy stub for constructors should behave like ctor itself",
+        "references": []
+      },
+      {
+        "id": "e3152d90546aafa0f28adbc87d0ffae82947a4c0",
+        "type": "FIX",
+        "text": " JSONModel: sorting a binding of a flat number array fails on zeros",
+        "references": []
+      },
+      {
+        "id": "bdf52f0be653250958c8366042099623db3c3c94",
+        "type": "FIX",
+        "text": " ODataMessageParser: support \u0027transition\u0027 flag",
+        "references": []
+      },
+      {
+        "id": "8db84af48f09b7701ac960d0fe1914460ebc69d2",
+        "type": "FIX",
+        "text": " ODataModel: Don\u0027t send CSRF token for GET requests",
+        "references": []
+      },
+      {
+        "id": "b5592e5f26125110c4b1245923e236a309dba2c8",
+        "type": "FIX",
+        "text": " syncXHRBootstrap(Debug).qunit.js - IE support",
+        "references": []
+      },
+      {
+        "id": "659712b797c1728a69044f09c9ee2381c0e82cfe",
+        "type": "FIX",
+        "text": " v2.ODataModel: resolve canonical shouldn\u0027t return undefined",
+        "references": []
+      },
+      {
+        "id": "674d942519241beac2b8374ed8587e5778a81b21",
+        "type": "FIX",
+        "text": " v2.ODataModel: submitChanges",
+        "references": []
       }
     ]
   }

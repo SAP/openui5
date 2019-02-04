@@ -1,0 +1,19 @@
+{
+  "1.63.0": {
+    "date": "February 2019",
+    "notes": [
+      {
+        "id": "ceb3e15dcfb3ff760faf949755d08a0e026cf9f8",
+        "type": "FIX",
+        "text": " sap.ui.unified.Calendar: month and year displayed in correct order in Japanese and Chinese when the calendar has more months",
+        "references": []
+      },
+      {
+        "id": "64c15ffe3fc4d5f195f1f6c435b89ee757b833bd",
+        "type": "FIX",
+        "text": " ui.unified.FileUploader: Accessibility description adjusted",
+        "references": []
+      }
+    ]
+  }
+}

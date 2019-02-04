@@ -187,6 +187,114 @@
         "type": "FIX",
         "text": " sap.m.Wizard: showNextButton\u003dfalse now works on initial rendering",
         "references": []
+      },
+      {
+        "id": "bcee1baf2c9f6770baf32d1793d3a1348d24734f",
+        "type": "FEATURE",
+        "text": " UploadSet control implementation, initial integration",
+        "references": []
+      },
+      {
+        "id": "acdea2aa99cbfb8268a2331418bf38773b55e66d",
+        "type": "FEATURE",
+        "text": " m.ColumnHeaderPopover: new control to Table ColumnBehavior",
+        "references": []
+      },
+      {
+        "id": "769073453455e2305779b67d69988e9252539b14",
+        "type": "FEATURE",
+        "text": " sap.m.ObjectStatus: supports Large design now",
+        "references": []
+      },
+      {
+        "id": "a7878e88c001bc22abd0fbb375af5c68c9448230",
+        "type": "FIX",
+        "text": " P13nConditionPanel.js : StringDate value handling",
+        "references": []
+      },
+      {
+        "id": "3be854c11a0e40b4096b51fccc0325b323e29e1e",
+        "type": "FIX",
+        "text": " P13nConditionPanel: DateTime type value handling",
+        "references": []
+      },
+      {
+        "id": "113f09e72093df98e57dba2b5e00db1944216268",
+        "type": "FIX",
+        "text": " sap.m.App: Enhanced validation and encoding",
+        "references": []
+      },
+      {
+        "id": "206afc733c66bd44c8a42def7d865900e66db0e1",
+        "type": "FIX",
+        "text": " sap.m.FacetFilter: Now the light version has correct screen reader output",
+        "references": []
+      },
+      {
+        "id": "93f1ec03cb488e21841643d0b1e79ae9e4f7ebc4",
+        "type": "FIX",
+        "text": " sap.m.GenericTag: Fixed focus outline",
+        "references": []
+      },
+      {
+        "id": "49601e455eef7e7d87ec323ef58522eef4e5d519",
+        "type": "FIX",
+        "text": " sap.m.Input: Change event is now fired correctly",
+        "references": []
+      },
+      {
+        "id": "972660040edb4d1da832c0fb22d38248e588fa76",
+        "type": "FIX",
+        "text": " sap.m.LightBox: Popup closes on esc now",
+        "references": []
+      },
+      {
+        "id": "e68bfb663c11be52a905d37d396d401d00de5467",
+        "type": "FIX",
+        "text": " sap.m.MessageView - Long title in sap.m.Link corrected",
+        "references": []
+      },
+      {
+        "id": "be72dce7df6d797b57596e04c85afb66db0befe4",
+        "type": "FIX",
+        "text": " sap.m.MultiInput: Deregister resize handler while resizing",
+        "references": []
+      },
+      {
+        "id": "48aea0137b4a289d0bb4c7144211e742c593fb32",
+        "type": "FIX",
+        "text": " sap.m.MultiInput: Exception on reinit fixed",
+        "references": []
+      },
+      {
+        "id": "656770ac3fba462b568e3caa01774a63623b0634",
+        "type": "FIX",
+        "text": " sap.m.MultiInput: Input value hidden when N-more label is shown",
+        "references": []
+      },
+      {
+        "id": "77a19f803319fd44296b503e68e8f8813145b15d",
+        "type": "FIX",
+        "text": " sap.m.OverflowToolbar: Fix width calculations",
+        "references": []
+      },
+      {
+        "id": "b1e78a82586ffd01000d3a3eb6ad5e99d94f099d",
+        "type": "FIX",
+        "text": " sap.m.OverflowToolbar: Fixed visibility of editing options",
+        "references": []
+      },
+      {
+        "id": "e98740a4294a1df21ab7e738575638a13cb729a1",
+        "type": "FIX",
+        "text": " sap.m.SplitApp: Enhanced validation and encoding",
+        "references": []
+      },
+      {
+        "id": "a4bf43d7fa0b83af25c218919ac1aacf09813558",
+        "type": "FIX",
+        "text": " sap.m.Tokenizer: Calculate available space correctly",
+        "references": []
       }
     ]
   }

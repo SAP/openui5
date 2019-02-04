@@ -25,6 +25,12 @@
         "type": "FIX",
         "text": " sap.f/sap.m.SemanticPage: Messages indicator reading improved",
         "references": []
+      },
+      {
+        "id": "4c245726eebbf77334c149e1d94a126ebd5f2a07",
+        "type": "FIX",
+        "text": " sap.m.DynamicPageTitle: Fixed qUnit tests on all browsers",
+        "references": []
       }
     ]
   }

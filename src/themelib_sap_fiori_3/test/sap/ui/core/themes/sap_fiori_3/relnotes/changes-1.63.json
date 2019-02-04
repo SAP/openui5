@@ -37,6 +37,18 @@
         "type": "FIX",
         "text": " sap.m.Toolbar: Fixed InfoToolbar height in Fiori 3 theme",
         "references": []
+      },
+      {
+        "id": "769073453455e2305779b67d69988e9252539b14",
+        "type": "FEATURE",
+        "text": " sap.m.ObjectStatus: supports Large design now",
+        "references": []
+      },
+      {
+        "id": "21bad87da63c349f461c7ca08351e0d71d5a0faa",
+        "type": "FIX",
+        "text": " sap.m.Toolbar: Fixed incorrect height in Fiori 3 theme",
+        "references": []
       }
     ]
   }
