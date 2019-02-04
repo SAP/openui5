@@ -1612,19 +1612,33 @@ sap.ui.define([
 
 		if (TableUtils.hasRowActions(this)) {
 			var bHasFlexibleRowActions = $this.hasClass("sapUiTableRActFlexible");
-			var oDummyCol = this.getDomRef("dummycolhdr");
-			var iDummyColWidth = oDummyCol ? oDummyCol.clientWidth : 0;
-			if (!bHasFlexibleRowActions && iDummyColWidth > 0) {
-				var iRowActionPos = oTableSizes.tableCtrlScrWidth + oTableSizes.tableRowHdrScrWidth + oTableSizes.tableCtrlFixedWidth - iDummyColWidth;
-				var oRowActionStyles = {width: "auto"};
-				oRowActionStyles[this._bRtlMode ? "right" : "left"] = iRowActionPos;
-				this.$("sapUiTableRowActionScr").css(oRowActionStyles);
-				this.$("rowacthdr").css(oRowActionStyles);
-				$this.toggleClass("sapUiTableRActFlexible", true);
-			} else if (bHasFlexibleRowActions && iDummyColWidth <= 0) {
-				this.$("sapUiTableRowActionScr").removeAttr("style");
-				this.$("rowacthdr").removeAttr("style");
-				$this.toggleClass("sapUiTableRActFlexible", false);
+			var oDummyColumn = this.getDomRef("dummycolhdr");
+
+			if (oDummyColumn) {
+				// This complexity is required because of Chrome's zoom math.
+				var oTableElement = this.getDomRef("header");
+				var iTableWidth = oTableElement.clientWidth;
+				var iColumnsWidth = this.getColumns().reduce(function(iColumnsWidth, oColumn) {
+					if (oColumn.getDomRef() && oColumn.getIndex() >= this.getComputedFixedColumnCount()) {
+						return iColumnsWidth + this._CSSSizeToPixel(oColumn.getWidth());
+					}
+					return iColumnsWidth;
+				}.bind(this), 0);
+				var iDummyColWidth = oDummyColumn.clientWidth;
+				var bDummyColumnHasWidth = iTableWidth > iColumnsWidth;
+
+				if (!bHasFlexibleRowActions && bDummyColumnHasWidth) {
+					var iRowActionPos = oTableSizes.tableCtrlScrWidth + oTableSizes.tableRowHdrScrWidth + oTableSizes.tableCtrlFixedWidth - iDummyColWidth;
+					var oRowActionStyles = {width: "auto"};
+					oRowActionStyles[this._bRtlMode ? "right" : "left"] = iRowActionPos;
+					this.$("sapUiTableRowActionScr").css(oRowActionStyles);
+					this.$("rowacthdr").css(oRowActionStyles);
+					$this.toggleClass("sapUiTableRActFlexible", true);
+				} else if (bHasFlexibleRowActions && !bDummyColumnHasWidth) {
+					this.$("sapUiTableRowActionScr").removeAttr("style");
+					this.$("rowacthdr").removeAttr("style");
+					$this.toggleClass("sapUiTableRActFlexible", false);
+				}
 			}
 		}
 
