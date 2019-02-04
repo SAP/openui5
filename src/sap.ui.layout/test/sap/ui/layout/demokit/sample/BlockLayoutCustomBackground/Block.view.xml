@@ -78,11 +78,31 @@
         <l:BlockLayoutRow>
             <l:BlockLayoutCell id="cell-4"
                                title="Right Aligned Title"
-                               titleAlignment="End"
+                               titleAlignment="Right"
                                backgroundColorSet="{/colorSet}"
                                backgroundColorShade="{/shades/3}">
                 <Text text="Morbi id ullamcorper lorem, vestibulum facilisis velit. Ut elementum aliquam nisl a pretium. Donec auctor mattis convallis. Aenean sodales tortor nec facilisis fringilla. Nam feugiat nulla at diam sollicitudin pretium. Sed at lacus volutpat, finibus arcu ultricies, convallis elit. Aliquam sollicitudin tortor sit amet mi consequat fringilla. Fusce nisl leo, tempor et nulla id, pellentesque suscipit augue. Morbi cursus molestie tellus. Ut volutpat orci interdum, condimentum risus sed, iaculis tellus. Proin nisi eros, tristique nec tortor quis, suscipit sodales dui."/>
             </l:BlockLayoutCell>
         </l:BlockLayoutRow>
+
+        <l:BlockLayoutRow>
+            <l:BlockLayoutCell id="cell-5"
+                               title="Left Aligned Title (background only for Fiori 3 theme)"
+                               titleAlignment="Left"
+                               backgroundColorSet="{/colorSet}"
+                               backgroundColorShade="{/shades/4}">
+                <Text text="Morbi id ullamcorper lorem, vestibulum facilisis velit. Ut elementum aliquam nisl a pretium. Donec auctor mattis convallis. Aenean sodales tortor nec facilisis fringilla. Nam feugiat nulla at diam sollicitudin pretium. Sed at lacus volutpat, finibus arcu ultricies, convallis elit. Aliquam sollicitudin tortor sit amet mi consequat fringilla. Fusce nisl leo, tempor et nulla id, pellentesque suscipit augue. Morbi cursus molestie tellus. Ut volutpat orci interdum, condimentum risus sed, iaculis tellus. Proin nisi eros, tristique nec tortor quis, suscipit sodales dui."/>
+            </l:BlockLayoutCell>
+        </l:BlockLayoutRow>
+
+        <l:BlockLayoutRow>
+            <l:BlockLayoutCell id="cell-6"
+                               title="Default Aligned Title (background only for Fiori 3 theme)"
+                               backgroundColorSet="{/colorSet}"
+                               backgroundColorShade="{/shades/5}">
+                <Text text="Morbi id ullamcorper lorem, vestibulum facilisis velit. Ut elementum aliquam nisl a pretium. Donec auctor mattis convallis. Aenean sodales tortor nec facilisis fringilla. Nam feugiat nulla at diam sollicitudin pretium. Sed at lacus volutpat, finibus arcu ultricies, convallis elit. Aliquam sollicitudin tortor sit amet mi consequat fringilla. Fusce nisl leo, tempor et nulla id, pellentesque suscipit augue. Morbi cursus molestie tellus. Ut volutpat orci interdum, condimentum risus sed, iaculis tellus. Proin nisi eros, tristique nec tortor quis, suscipit sodales dui."/>
+            </l:BlockLayoutCell>
+        </l:BlockLayoutRow>
+
     </l:BlockLayout>
 </mvc:View>

@@ -20,7 +20,10 @@ sap.ui.define([
 				sap.ui.layout.BlockLayoutCellColorShade.ShadeA,
 				sap.ui.layout.BlockLayoutCellColorShade.ShadeB,
 				sap.ui.layout.BlockLayoutCellColorShade.ShadeC,
-				sap.ui.layout.BlockLayoutCellColorShade.ShadeD
+				sap.ui.layout.BlockLayoutCellColorShade.ShadeD,
+				sap.ui.layout.BlockLayoutCellColorShade.ShadeE,
+				sap.ui.layout.BlockLayoutCellColorShade.ShadeF
+
 			],
 			contrastCells: []
 		},
