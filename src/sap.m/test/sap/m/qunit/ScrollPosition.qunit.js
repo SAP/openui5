@@ -3,6 +3,7 @@
 sap.ui.define([
 	"sap/ui/qunit/QUnitUtils",
 	"sap/ui/qunit/utils/createAndAppendDiv",
+	"sap/ui/qunit/utils/waitForThemeApplied",
 	"sap/ui/Device",
 	"jquery.sap.global",
 	"sap/m/App",
@@ -16,6 +17,7 @@ sap.ui.define([
 ], function(
 	qutils,
 	createAndAppendDiv,
+	waitForThemeApplied,
 	Device,
 	jQuery,
 	App,
@@ -401,4 +403,6 @@ sap.ui.define([
 			done();
 		}, 700); // required for scroll duration plus iScroll with resize Handler plus rubberband effect
 	});
+
+	return waitForThemeApplied();
 });
