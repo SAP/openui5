@@ -6,12 +6,16 @@
 @_sap_m_Tokenizer_OutlineOffset: 5px;
 
 .sapMTokenizer {
-	padding-left: 2 * @_sap_m_Tokenizer_OutlineOffset;
+	padding-left: @_sap_m_Tokenizer_OutlineOffset;
 	position: relative;
 	display: inline-block;
 	white-space: nowrap;
 	overflow: hidden;
 	box-sizing: border-box;
+}
+
+.sapMTokenizer.sapMTokenizerEmpty {
+	padding-left: 2 * @_sap_m_Tokenizer_OutlineOffset;
 }
 
 .sapMTokenizer .sapMToken {
@@ -37,10 +41,19 @@ html[data-sap-ui-browser^="ed"].sap-desktop {
 /* editable tokens in read-only tokenizer */
 .sapMTokenizer.sapMTokenizerReadonly {
 	.sapMToken {
-		color: @sapUiContentForegroundTextColor;
+		color: @sapUiContentLabelColor;
 
 		&.sapMTokenSelected {
 			color: @sapUiToggleButtonPressedTextColor;
 		}
+	}
+}
+
+.sapUiSizeCompact {
+	.sapMTokenizer {
+		padding-left: 0.25rem;
+	}
+	.sapMTokenizer.sapMTokenizerEmpty {
+		padding-left: 0.5rem;
 	}
 }
