@@ -275,56 +275,37 @@
 				var oPage = new Page("myPage", {
 					title: "sap.m.GenericTag Test Page",
 					content: [
-						new VerticalLayout({
-							width: "100%",
-							content: [
-								new HTML({ content: "<h3>sap.m.GenericTagDesign.Full + sap.m.GenericTagValueState.None</h3>" }),
-								new HBox({
-									items: [
-										oNeutralGenericTag,
-										oInformationGenericTag,
-										oErrorGenericTag,
-										oWarningGenericTag,
-										oSuccessGenericTag
-									]
-								}),
-								new HTML({ content: "<hr>" }),
-								new HTML({ content: "<h3>sap.m.GenericTagDesign.Full + sap.m.GenericTagValueState.Error</h3>" }),
-								new HBox({
-									items: [
-										oNeutralGenericTagError,
-										oInformationGenericTagError,
-										oErrorGenericTagError,
-										oWarningGenericTagError,
-										oSuccessGenericTagError
-									]
-								}),
-								new HTML({ content: "<hr>" }),
-								new HTML({ content: "<h3>sap.m.GenericTagDesign.StatusIconHidden + sap.m.GenericTagValueState.None</h3>" }),
-								new HBox({
-									items: [
-										oNeutralGenericTagIconHidden,
-										oInformationGenericTagIconHidden,
-										oErrorGenericTagIconHidden,
-										oWarningGenericTagIconHidden,
-										oSuccessGenericTagIconHidden
-									]
-								}),
-								new HTML({ content: "<hr>" }),
-								new HTML({ content: "<h3>sap.m.GenericTagDesign.StatusIconHidden + sap.m.GenericTagValueState.Error</h3>" }),
-								new HBox({
-									items: [
-										oNeutralGenericTagIconHiddenError,
-										oInformationGenericTagIconHiddenError,
-										oErrorGenericTagIconHiddenError,
-										oWarningGenericTagIconHiddenError,
-										oSuccessGenericTagIconHiddenError
-									]
-								})
-							]
-						})
+						new HTML({ content: "<h3>sap.m.GenericTagDesign.Full + sap.m.GenericTagValueState.None</h3>" }),
+						oNeutralGenericTag,
+						oInformationGenericTag,
+						oErrorGenericTag,
+						oWarningGenericTag,
+						oSuccessGenericTag,
+						new HTML({ content: "<hr>" }),
+						new HTML({ content: "<h3>sap.m.GenericTagDesign.Full + sap.m.GenericTagValueState.Error</h3>" }),
+						oNeutralGenericTagError,
+						oInformationGenericTagError,
+						oErrorGenericTagError,
+						oWarningGenericTagError,
+						oSuccessGenericTagError,
+						new HTML({ content: "<hr>" }),
+						new HTML({ content: "<h3>sap.m.GenericTagDesign.StatusIconHidden + sap.m.GenericTagValueState.None</h3>" }),
+						oNeutralGenericTagIconHidden,
+						oInformationGenericTagIconHidden,
+						oErrorGenericTagIconHidden,
+						oWarningGenericTagIconHidden,
+						oSuccessGenericTagIconHidden,
+						new HTML({ content: "<hr>" }),
+						new HTML({ content: "<h3>sap.m.GenericTagDesign.StatusIconHidden + sap.m.GenericTagValueState.Error</h3>" }),
+						oNeutralGenericTagIconHiddenError,
+						oInformationGenericTagIconHiddenError,
+						oErrorGenericTagIconHiddenError,
+						oWarningGenericTagIconHiddenError,
+						oSuccessGenericTagIconHiddenError
 					]
 				});
+
+				oPage.addStyleClass("sapUiContentPadding");
 
 				new App("myApp", {
 					initialPage: "myPage",
@@ -333,11 +314,6 @@
 			})
 		});
 	</script>
-	<style>
-		.sapMGenericTag {
-			margin-left: 1rem;
-		}
-	</style>
 </head>
 
 <body id="body" class="sapUiBody">
