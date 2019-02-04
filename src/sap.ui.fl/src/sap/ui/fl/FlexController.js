@@ -906,10 +906,16 @@ sap.ui.define([
 	/**
 	 * Reset changes on the server.
 	 *
-	 * @returns {Promise} Promise that resolves without parameters
+	 * @param {string} sLayer - Layer for which changes shall be deleted
+	 * @param {string} [sGenerator] - Generator of changes (optional)
+	 * @param {sap.ui.core.Component} [oComponent] - Component instance (optional)
+	 * @param {string} [sSelectorString] - Selector IDs as comma-separated list (optional)
+	 * @param {string} [sChangeTypeString] - Types of changes as comma-separated list (optional)
+	 *
+	 * @returns {Promise} Promise that resolves with a list of the deleted changes in the response
 	 */
-	FlexController.prototype.resetChanges = function (sLayer, sGenerator, oComponent) {
-		return this._oChangePersistence.resetChanges(sLayer, sGenerator)
+	FlexController.prototype.resetChanges = function (sLayer, sGenerator, oComponent, sSelectorString, sChangeTypeString) {
+		return this._oChangePersistence.resetChanges(sLayer, sGenerator, sSelectorString, sChangeTypeString)
 			.then( function(oResponse) {
 				if (oComponent) {
 					var oModel = oComponent.getModel("$FlexVariants");

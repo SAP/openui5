@@ -1257,40 +1257,56 @@ sap.ui.define([
 	};
 
 	/**
-	 * Reset changes on the server.
+	 * Reset changes on the server. Specification of a generator, selector string or change type string is optional
+	 * but at least one of these parameters has to be filled.
 	 *
-	 * @returns {Promise} promise that resolves without parameters
+	 * @param {string} sLayer - Layer for which changes shall be deleted
+	 * @param {string} [sGenerator] - Generator of changes (optional)
+	 * @param {string} [sSelectorString] - Selector IDs as comma-separated list (optional)
+	 * @param {string} [sChangeTypeString] - Types of changes as comma-separated list (optional)
+	 *
+	 * @returns {Promise} promise that resolves with list of content IDs of deleted changes in response
 	 */
-	ChangePersistence.prototype.resetChanges = function (sLayer, sGenerator) {
+	ChangePersistence.prototype.resetChanges = function (sLayer, sGenerator, sSelectorString, sChangeTypeString) {
+		if (!sGenerator && !sSelectorString && !sChangeTypeString) {
+			Utils.log.error("Of the generator, selector string and change type string parameters at least one has to filled");
+			return Promise.reject("Of the generator, selector string or change type string parameters at least one has to filled");
+		}
+
+		var aChanges;
 		return this.getChangesForComponent({currentLayer: sLayer, includeCtrlVariants: true})
-			.then(function(aChanges) {
-				return Settings.getInstance(this.getComponentName())
-					.then(function(oSettings) {
-						if (!oSettings.isProductiveSystem() && !oSettings.hasMergeErrorOccured()) {
-							return this._oTransportSelection.setTransports(aChanges, Component.get(this.getComponentName()));
-						}
-					}.bind(this))
-					.then(function() {
-						var sUriOptions =
-							"?reference=" + this.getComponentName() +
-							"&appVersion=" + this._mComponent.appVersion +
-							"&layer=" + sLayer +
-							"&generator=" + sGenerator;
-						//Make sure we include one request in case of mixed changes (local and transported)
-						var sChangeList = "";
-						aChanges.some(function(oChange) {
-							if (oChange.getRequest()) {
-								sChangeList = oChange.getRequest();
-								return true;
-							}
-							return false;
-						});
-						sUriOptions = sUriOptions + "&changelist=" + sChangeList;
+		.then(function(aChangesForComponent) {
+			aChanges = aChangesForComponent;
+			return Settings.getInstance(this.getComponentName());
+		}.bind(this))
+		.then(function(oSettings) {
+			if (!oSettings.isProductiveSystem() && !oSettings.hasMergeErrorOccured()) {
+				return this._oTransportSelection.setTransports(aChanges, Component.get(this.getComponentName()));
+			}
+		}.bind(this))
+		.then(function() {
+			//Make sure we include one request in case of mixed changes (local and transported)
+			var sChangeList = "";
+			aChanges.some(function(oChange) {
+				if (oChange.getRequest()) {
+					sChangeList = oChange.getRequest();
+					return true;
+				}
+				return false;
+			});
 
-						return this._oConnector.send("/sap/bc/lrep/changes/" + sUriOptions, "DELETE");
-					}.bind(this));
-			}.bind(this));
+			var mParams = {
+				reference : this.getComponentName(),
+				appVersion : this._mComponent.appVersion,
+				layer : sLayer,
+				changelist : sChangeList
+			};
+			if (sGenerator) {mParams.generator = sGenerator;}
+			if (sSelectorString) {mParams.selector = sSelectorString;}
+			if (sChangeTypeString) {mParams.changeType = sChangeTypeString;}
+
+			return this._oConnector.send("/changes/", "DELETE", mParams);
+		}.bind(this));
 	};
-
 	return ChangePersistence;
 }, true);
