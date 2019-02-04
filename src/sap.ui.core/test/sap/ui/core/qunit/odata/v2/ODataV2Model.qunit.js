@@ -4728,6 +4728,7 @@ sap.ui.define([
 		beforeEach: function() {
 			window.odataFakeServiceData.forbidHeadRequest = false;
 			window.odataFakeServiceData.csrfRequests = [];
+			window.odataFakeServiceData.requests = [];
 			this.oModel = initModel(sURI, {useBatch: true});
 			fakeService.updateCsrfToken();
 		},
@@ -4751,13 +4752,42 @@ sap.ui.define([
 		});
 	});
 
+	QUnit.test("No token included in GET requests", function(assert) {
+		var done = assert.async();
+		this.oModel.setUseBatch(false);
+		this.oModel.read("/Categories(1)", {
+			success: function() {
+				assert.equal(window.odataFakeServiceData.requests.length, 0, "No request with token sent");
+				done();
+			}
+		});
+	});
+
+	QUnit.test("No token included in GET requests after POST", function(assert) {
+		var done = assert.async();
+		this.oModel.setUseBatch(false);
+		this.oModel.create("/Categories(1)", {}, {
+			success: function() {
+				this.oModel.read("/Categories(1)", {
+					success: function() {
+						assert.equal(window.odataFakeServiceData.requests.length, 1, "Only one request with token sent");
+						assert.equal(window.odataFakeServiceData.requests[0], "POST", "Token only included for POST request");
+						done();
+					}
+				});
+			}.bind(this)
+		});
+	});
+
 	QUnit.test("Token request for GET request inside batch", function(assert) {
 		var done = assert.async();
 		var refreshSpy = sinon.spy(this.oModel, "refreshSecurityToken");
 		this.oModel.read("/Categories(1)", {
 			success: function() {
 				assert.ok(refreshSpy.calledOnce, "Token requested for GET inside batch");
-				done();
+				assert.equal(window.odataFakeServiceData.requests.length, 1, "Only one request with token sent");
+				assert.equal(window.odataFakeServiceData.requests[0], "POST", "Token only included for POST request");
+		done();
 			}
 		});
 	});
@@ -4772,6 +4802,9 @@ sap.ui.define([
 				this.oModel.create("/Categories(1)", {}, {
 					success: function() {
 						assert.ok(refreshSpy.calledOnce, "No additional token request");
+						assert.equal(window.odataFakeServiceData.requests.length, 2, "Two requests with token sent");
+						assert.equal(window.odataFakeServiceData.requests[0], "POST", "Token included for POST request");
+						assert.equal(window.odataFakeServiceData.requests[1], "POST", "Token included for POST request");
 						done();
 					}
 				});
@@ -4791,6 +4824,10 @@ sap.ui.define([
 					success: function() {
 						assert.ok(resetSpy.calledOnce, "Token was reset, as it was invalid");
 						assert.ok(refreshSpy.calledTwice, "Token was fetched again after update");
+						assert.equal(window.odataFakeServiceData.requests.length, 3, "Three requests with token sent (one retry)");
+						assert.equal(window.odataFakeServiceData.requests[0], "POST", "Token included for POST request");
+						assert.equal(window.odataFakeServiceData.requests[1], "POST", "Token included for POST request");
+						assert.equal(window.odataFakeServiceData.requests[2], "POST", "Token included for POST request");
 						done();
 					}
 				});
@@ -4811,6 +4848,9 @@ sap.ui.define([
 					success: function() {
 						assert.ok(!resetSpy.called, "No reset, as token was explicitely refreshed before");
 						assert.ok(refreshSpy.calledTwice, "Token was fetched in explicit refresh call");
+						assert.equal(window.odataFakeServiceData.requests.length, 2, "Two requests with token sent");
+						assert.equal(window.odataFakeServiceData.requests[0], "POST", "Token included for POST request");
+						assert.equal(window.odataFakeServiceData.requests[1], "POST", "Token included for POST request");
 						done();
 					}
 				});
@@ -4831,6 +4871,9 @@ sap.ui.define([
 					success: function() {
 						assert.equal(window.odataFakeServiceData.csrfRequests.length, 1, "Only one CSRF request replied to");
 						assert.ok(refreshSpy.calledOnce, "No additional token request");
+						assert.equal(window.odataFakeServiceData.requests.length, 2, "Two requests with token sent");
+						assert.equal(window.odataFakeServiceData.requests[0], "POST", "Token included for POST request");
+						assert.equal(window.odataFakeServiceData.requests[1], "POST", "Token included for POST request");
 						done();
 					}
 				});
@@ -4853,6 +4896,9 @@ sap.ui.define([
 					success: function() {
 						assert.equal(window.odataFakeServiceData.csrfRequests.length, 2, "Two CSRF requests replied to");
 						assert.ok(refreshSpy.calledOnce, "No additional token request");
+						assert.equal(window.odataFakeServiceData.requests.length, 2, "Two requests with token sent");
+						assert.equal(window.odataFakeServiceData.requests[0], "POST", "Token included for POST request");
+						assert.equal(window.odataFakeServiceData.requests[1], "POST", "Token included for POST request");
 						done();
 					}
 				});
@@ -4881,6 +4927,9 @@ sap.ui.define([
 					success: function() {
 						assert.equal(window.odataFakeServiceData.csrfRequests.length, 1, "One CSRF requests replied to");
 						assert.ok(refreshSpy.calledOnce, "No additional token request");
+						assert.equal(window.odataFakeServiceData.requests.length, 2, "Two requests with token sent");
+						assert.equal(window.odataFakeServiceData.requests[0], "POST", "Token included for POST request");
+						assert.equal(window.odataFakeServiceData.requests[1], "POST", "Token included for POST request");
 						done();
 					}
 				});
