@@ -1313,6 +1313,7 @@ function(
 				return this.vValue;
 			}
 		},
+
 		/**
 		 * Function that gets a specific change from a map of changes.
 		 *
@@ -1331,6 +1332,23 @@ function(
 				});
 			});
 			return oResult;
+		},
+
+		/**
+		 * Wraps the async sap.ui.require call into a Promise.
+		 * @param {string} sModuleName Name of the required module
+		 * @returns {Promise} Returns a promise.
+		 */
+		requireAsync: function(sModuleName) {
+			//TODO: get rid of require async as soon as sap.ui.require has learned Promises as return value
+			return new Promise(function(fnResolve, fnReject) {
+				sap.ui.require([sModuleName], function(oModule) {
+					fnResolve(oModule);
+				},
+				function(oError) {
+					fnReject(oError);
+				});
+			});
 		}
 	};
 	return Utils;

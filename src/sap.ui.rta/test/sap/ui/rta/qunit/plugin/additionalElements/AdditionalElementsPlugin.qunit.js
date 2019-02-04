@@ -48,7 +48,6 @@ sap.ui.define([
 	// 5. avoid creation of many DesignTime instances just for creating one single overlay <=
 	// 6. add comprehensive comments at least to each module - what is going on there
 
-
 	var oChangeRegistry = ChangeRegistry.getInstance();
 	var oDummyChangeHandler = {
 		applyChange : function(){
@@ -58,32 +57,36 @@ sap.ui.define([
 			return true;
 		}
 	};
-	oChangeRegistry.registerControlsForChanges({
-		"sap.m.Button": [
-			SimpleChanges.unhideControl,
-			SimpleChanges.unstashControl
-		],
-		"sap.m.Bar": [
-			{
-				changeType: "addFields",
-				changeHandler : oDummyChangeHandler
-			},
-			{
-				changeType: "customAdd",
-				changeHandler : oDummyChangeHandler
-			},
-			SimpleChanges.moveControls
-		],
-		"sap.ui.layout.VerticalLayout": [
-			{
-				changeType: "addFields",
-				changeHandler : oDummyChangeHandler
-			},
-			SimpleChanges.moveControls,
-			SimpleChanges.unhideControl,
-			SimpleChanges.unstashControl
-		]
-	});
+
+	var fnRegisterControlsForChanges = function() {
+		// asynchronous registration. Returns a promise
+		return oChangeRegistry.registerControlsForChanges({
+			"sap.m.Button": [
+				SimpleChanges.unhideControl,
+				SimpleChanges.unstashControl
+			],
+			"sap.m.Bar": [
+				{
+					changeType: "addFields",
+					changeHandler : oDummyChangeHandler
+				},
+				{
+					changeType: "customAdd",
+					changeHandler : oDummyChangeHandler
+				},
+				SimpleChanges.moveControls
+			],
+			"sap.ui.layout.VerticalLayout": [
+				{
+					changeType: "addFields",
+					changeHandler : oDummyChangeHandler
+				},
+				SimpleChanges.moveControls,
+				SimpleChanges.unhideControl,
+				SimpleChanges.unstashControl
+			]
+		});
+	};
 
 	sinon.stub(Settings, 'getInstance').resolves(new Settings({}));
 
@@ -120,6 +123,9 @@ sap.ui.define([
 		ON_IRRELEVANT = "IRRELEVANT";
 
 	QUnit.module("Context Menu Operations: Given a plugin whose dialog always close with OK", {
+		before: function() {
+			return fnRegisterControlsForChanges();
+		},
 		beforeEach : function(assert) {
 			this.oRTATexts = sap.ui.getCore().getLibraryResourceBundle("sap.ui.rta");
 			var fnOriginalGetLibraryResourceBundle = sap.ui.getCore().getLibraryResourceBundle;
@@ -309,6 +315,9 @@ sap.ui.define([
 	});
 
 	QUnit.module("Given a plugin whose dialog always close with CANCEL", {
+		before: function() {
+			return fnRegisterControlsForChanges();
+		},
 		beforeEach : function(assert) {
 			givenSomeBoundControls.call(this, assert);
 
@@ -407,6 +416,9 @@ sap.ui.define([
 	});
 
 	QUnit.module("Given a plugin whose dialog always close with OK", {
+		before: function() {
+			return fnRegisterControlsForChanges();
+		},
 		beforeEach : function(assert) {
 			givenSomeBoundControls.call(this, assert);
 			sandbox.stub(RTAPlugin.prototype, "hasChangeHandler").callsFake(function () {return true;});
@@ -899,7 +911,8 @@ sap.ui.define([
 										"minVersion": "1.44",
 										"lazy": "false"
 									}
-								}
+								},
+								createFunction: function() {}
 							}
 						}
 					}
@@ -915,6 +928,38 @@ sap.ui.define([
 				assert.ok(true, "then the plugin should not complain about it");
 			});
 
+		});
+
+		QUnit.test("when the control's dt metadata has an addODataProperty on relevant container with required libraries but without createFunction defined", function(assert) {
+			var oFireElementModifiedStub = sandbox.spy(this.oPlugin, "fireElementModified");
+			return createOverlayWithAggregationActions.call(this, {
+					"addODataProperty" : {
+						changeType : "addFields",
+						changeOnRelevantContainer : true,
+						changeHandlerSettings : {
+							key : {
+								oDataServiceVersion : "2.0"
+							},
+							content : {
+								requiredLibraries : {
+									"sap.uxap": {
+										"minVersion": "1.44",
+										"lazy": "false"
+									}
+								}
+							}
+						}
+					}
+				},
+				ON_CHILD
+			)
+			.then(function(oOverlay) {
+				return this.oPlugin.showAvailableElements(false, [oOverlay]);
+			}.bind(this))
+			.then(function() {
+				assert.ok(true, "then the plugin should not complain about it");
+				assert.equal(oFireElementModifiedStub.callCount, 0, "then the plugin should not fire element modified event");
+			});
 		});
 
 		QUnit.test("when 'registerElementOverlay' is called and the metamodel is not loaded yet", function(assert) {
@@ -950,6 +995,9 @@ sap.ui.define([
 	});
 
 	QUnit.module("Given an app that is field extensible enabled...", {
+		before: function() {
+			return fnRegisterControlsForChanges();
+		},
 		beforeEach : function(assert) {
 			this.STUB_EXTENSIBILITY_BUSINESS_CTXT = {
 				BusinessContexts : ["some context"],

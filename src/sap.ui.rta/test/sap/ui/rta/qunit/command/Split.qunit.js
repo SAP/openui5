@@ -73,7 +73,7 @@ function(
 			this.fnCompleteChangeContentSpy = sinon.spy();
 			this.fnApplyChangeSpy = sinon.spy();
 
-			oChangeRegistry.registerControlsForChanges({
+			return oChangeRegistry.registerControlsForChanges({
 				"sap.m.Panel": {
 					"splitStuff" : {
 						completeChangeContent: this.fnCompleteChangeContentSpy,

@@ -58,28 +58,28 @@ function(
 			this.fnApplyChangeSpy = sinon.spy();
 			this.fnCompleteChangeContentSpy = sinon.spy();
 
-			oChangeRegistry.registerControlsForChanges({
+			return oChangeRegistry.registerControlsForChanges({
 				"sap.m.Button" : {
 					"addODataProperty" : {
 						completeChangeContent: this.fnCompleteChangeContentSpy,
 						applyChange: this.fnApplyChangeSpy
 					}
 				}
-			});
+			})
+			.then(function() {
+				this.oButton = new Button("button");
 
-			this.oButton = new Button("button");
-
-			this.oDesignTimeMetadata = new ElementDesignTimeMetadata({
-				data : {
-					actions : {
-						addODataProperty : {
-							changeType: "addODataProperty",
-							isEnabled : true
+				this.oDesignTimeMetadata = new ElementDesignTimeMetadata({
+					data : {
+						actions : {
+							addODataProperty : {
+								changeType: "addODataProperty",
+								isEnabled : true
+							}
 						}
 					}
-				}
-			});
-
+				});
+			}.bind(this));
 		},
 		afterEach : function(assert) {
 		}

@@ -45,46 +45,43 @@ function (
 			var done = assert.async();
 
 			var oChangeRegistry = ChangeRegistry.getInstance();
-			oChangeRegistry.registerControlsForChanges({
+			return oChangeRegistry.registerControlsForChanges({
 				"sap.ui.layout.form.FormContainer" : {
 					"renameGroup": { completeChangeContent: function () {} }
 				}
-			});
+			})
+			.then(function() {
+				this.oRenamePlugin = new RenamePlugin({
+					commandFactory : new CommandFactory()
+				});
+				this.oFormContainer = new FormContainer("formContainer",{
+					title: new Title("title", {
+						text: "title"
+					})
+				});
+				this.oForm = new Form("form", {
+					formContainers: [this.oFormContainer],
+					layout: new FormLayout({
+					})
+				});
+				this.oVerticalLayout = new VerticalLayout({
+					content : [this.oForm]
+				}).placeAt("qunit-fixture");
 
-			this.oRenamePlugin = new RenamePlugin({
-				commandFactory : new CommandFactory()
-			});
+				sap.ui.getCore().applyChanges();
 
-			this.oFormContainer = new FormContainer("formContainer",{
-				title: new Title("title", {
-					text: "title"
-				})
-			});
+				this.oDesignTime = new DesignTime({
+					rootElements : [this.oForm],
+					plugins : [this.oRenamePlugin]
+				});
 
-			this.oForm = new Form("form", {
-				formContainers: [this.oFormContainer],
-				layout: new FormLayout({
-				})
-			});
-
-			this.oVerticalLayout = new VerticalLayout({
-				content : [this.oForm]
-			}).placeAt("qunit-fixture");
-
-			sap.ui.getCore().applyChanges();
-
-			this.oDesignTime = new DesignTime({
-				rootElements : [this.oForm],
-				plugins : [this.oRenamePlugin]
-			});
-
-			this.oDesignTime.attachEventOnce("synced", function() {
-				this.oFormOverlay = OverlayRegistry.getOverlay(this.oForm);
-				this.oFormContainerOverlay = OverlayRegistry.getOverlay(this.oFormContainer);
-				this.oFormContainerOverlay.setSelectable(true);
-				done();
-			}, this);
-
+				this.oDesignTime.attachEventOnce("synced", function() {
+					this.oFormOverlay = OverlayRegistry.getOverlay(this.oForm);
+					this.oFormContainerOverlay = OverlayRegistry.getOverlay(this.oFormContainer);
+					this.oFormContainerOverlay.setSelectable(true);
+					done();
+				}, this);
+			}.bind(this));
 		},
 		afterEach: function () {
 			sandbox.restore();

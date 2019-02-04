@@ -54,25 +54,26 @@ function(
 		},
 		beforeEach: function () {
 			var oChangeRegistry = ChangeRegistry.getInstance();
-			oChangeRegistry.registerControlsForChanges({
+			return oChangeRegistry.registerControlsForChanges({
 				"sap.m.Button" : {
 					"changeSettings" : "sap/ui/fl/changeHandler/PropertyChange"
 				}
-			});
+			})
+			.then(function() {
+				sandbox.stub(PropertyChange, "completeChangeContent");
 
-			sandbox.stub(PropertyChange, "completeChangeContent");
-
-			this.oSettingsChange = {
-				selectorControl : {
-					id : "button",
-					controlType : "sap.m.Button",
-					appComponent : this.oMockedAppComponent
-				},
-				changeSpecificData : {
-					changeType : "changeSettings",
-					content : "testchange"
-				}
-			};
+				this.oSettingsChange = {
+					selectorControl : {
+						id : "button",
+						controlType : "sap.m.Button",
+						appComponent : this.oMockedAppComponent
+					},
+					changeSpecificData : {
+						changeType : "changeSettings",
+						content : "testchange"
+					}
+				};
+			}.bind(this));
 		},
 		afterEach: function () {
 			sandbox.restore();

@@ -308,7 +308,7 @@ sap.ui.define([
 				selectorControl: this.oElement
 			};
 			var oChangeRegistry = ChangeRegistry.getInstance();
-			oChangeRegistry.registerControlsForChanges({
+			return oChangeRegistry.registerControlsForChanges({
 				"sap.ui.core.Element" : {
 					"foo" : function() {
 						return {
@@ -317,13 +317,15 @@ sap.ui.define([
 						};
 					}
 				}
-			});
-			var vCheckResult = ControlPersonalizationAPI._checkChangeSpecificData(oChange);
-			assert.equal(vCheckResult, "ChangeHandler has no revertChange function", "the function returns an error");
-			// remove registry item after test is complete
-			oChangeRegistry.removeRegistryItem({
-				changeTypeName: "foo",
-				controlType: "sap.ui.core.Element"
+			})
+			.then(function() {
+				var vCheckResult = ControlPersonalizationAPI._checkChangeSpecificData(oChange);
+				assert.equal(vCheckResult, "ChangeHandler has no revertChange function", "the function returns an error");
+				// remove registry item after test is complete
+				oChangeRegistry.removeRegistryItem({
+					changeTypeName: "foo",
+					controlType: "sap.ui.core.Element"
+				});
 			});
 		});
 	});

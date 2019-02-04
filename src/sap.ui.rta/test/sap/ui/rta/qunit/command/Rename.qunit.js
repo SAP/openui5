@@ -59,25 +59,25 @@ sap.ui.define([
 			this.fnApplyChangeSpy = sinon.spy();
 			this.fnCompleteChangeContentSpy = sinon.spy();
 
-			oChangeRegistry.registerControlsForChanges({
+			return oChangeRegistry.registerControlsForChanges({
 				"sap.m.Button": {
 					"rename" : {
 						applyChange: this.fnApplyChangeSpy,
 						completeChangeContent: this.fnCompleteChangeContentSpy
 					}
 				}
-			});
-
-			this.oButtonDesignTimeMetadata = new DesignTimeMetadata({
-				data : {
-					actions : {
-						rename : {
-							changeType : "rename"
+			})
+			.then(function() {
+				this.oButtonDesignTimeMetadata = new DesignTimeMetadata({
+					data : {
+						actions : {
+							rename : {
+								changeType : "rename"
+							}
 						}
 					}
-				}
-			});
-
+				});
+			}.bind(this));
 		},
 		afterEach: function () {
 			this.oButton.destroy();
