@@ -452,7 +452,8 @@ sap.ui.define([
 	 * @param {boolean} [mParameters.$$patchWithoutSideEffects]
 	 *   Whether implicit loading of side effects via PATCH requests is switched off; only the value
 	 *   <code>true</code> is allowed. This requires the service to return an ETag header even for
-	 *   "204 No Content" responses (for example, if the "return=minimal" preference is used).
+	 *   "204 No Content" responses (for example, if the "return=minimal" preference is used). If
+	 *   not specified, the value of the parent binding is used.
 	 * @param {string} [mParameters.$$updateGroupId]
 	 *   The group ID to be used for <b>update</b> requests triggered by this binding;
 	 *   if not specified, either the parent binding's update group ID (if the binding is relative)
@@ -555,6 +556,11 @@ sap.ui.define([
 	 *   model's group ID is used, see {@link sap.ui.model.odata.v4.ODataModel#constructor}.
 	 *   Valid values are <code>undefined</code>, '$auto', '$auto.*', '$direct' or application group
 	 *   IDs as specified in {@link sap.ui.model.odata.v4.ODataModel}.
+	 * @param {boolean} [mParameters.$$patchWithoutSideEffects]
+	 *   Whether implicit loading of side effects via PATCH requests is switched off; only the value
+	 *   <code>true</code> is allowed. This requires the service to return an ETag header even for
+	 *   "204 No Content" responses (for example, if the "return=minimal" preference is used). If
+	 *   not specified, the value of the parent binding is used.
 	 * @param {boolean} [mParameters.$$ownRequest]
 	 *   Whether the binding always uses an own service request to read its data; only the value
 	 *   <code>true</code> is allowed.
