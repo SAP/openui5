@@ -40,7 +40,7 @@
 				window.addEventListener("popstate", function(evt) {
 					var sURL = evt.state;
 					if (!sURL) { // can happen when the user directly launches the testsuite with a hash: the browser still creates a history entry with no hash and no data
-						sURL = "/test-resources/testsuite/welcome.html"; // for this additional history entry, just add the homepage as initial page
+						sURL = "../testsuite/welcome.html"; // for this additional history entry, just add the homepage as initial page
 						window.history.replaceState(sURL, null, document.location.href.split("#")[0]);
 					}
 					oContentWindow.document.location.replace(sURL);

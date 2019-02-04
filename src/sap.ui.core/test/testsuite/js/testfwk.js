@@ -289,7 +289,7 @@ sap.ui.testfwk.TestFWK.addSettingsToURL = function(sURL, oThemeConstraints, bAct
 	if (bActualNavigation) { // this method is called twice on navigation: once to modify the link, once when actual navigation occurs
 		var hash = sURL.replace(/\?/g, "_");
 		var sUrlToDisplay = top.window.document.location.href.split("#")[0];
-		if (sURL === "/test-resources/testsuite/welcome.html") { // looks better not to see a hash on the initial page
+		if (sURL.endsWith("testsuite/welcome.html")) { // looks better not to see a hash on the initial page
 			top.window.history.replaceState(sURL, null, sUrlToDisplay); // the browser already saves a history state for the initial page
 		} else {
 			sUrlToDisplay = sUrlToDisplay + "#" + hash;
