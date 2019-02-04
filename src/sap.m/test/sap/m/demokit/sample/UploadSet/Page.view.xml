@@ -17,6 +17,18 @@
 				mediaTypes="text/plain,application/msword,image/jpeg"
 				uploadUrl="../../../../upload"
 				items="{path: '/items', templateShareable: false}">
+			<upload:toolbar>
+				<OverflowToolbar>
+					<Button
+							id="uploadSelectedButton"
+							text="Upload selected"
+							press="onUploadSelectedButton"/>
+					<Button
+							id="downloadSelectedButton"
+							text="Download selected"
+							press="onDownloadSelectedButton"/>
+				</OverflowToolbar>
+			</upload:toolbar>
 			<upload:items>
 				<upload:UploadSetItem
 						fileName="{fileName}"
