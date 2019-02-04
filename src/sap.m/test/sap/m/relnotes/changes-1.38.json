@@ -6061,5 +6061,16 @@
         "references": []
       }
     ]
+  },
+  "1.38.39": {
+    "date": "December 2018",
+    "notes": [
+      {
+        "id": "810fa094493f13ab35f293e5dd00087499492112",
+        "type": "FIX",
+        "text": " sap.m.TimePicker: if binding format differs from input, \"change\" is fired",
+        "references": []
+      }
+    ]
   }
 }

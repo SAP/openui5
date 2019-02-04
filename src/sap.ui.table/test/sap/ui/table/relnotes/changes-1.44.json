@@ -871,5 +871,16 @@
         "references": []
       }
     ]
+  },
+  "1.44.39": {
+    "date": "February 2019",
+    "notes": [
+      {
+        "id": "53844a6dff6d20cdb1a597ca66075cc52beecfbc",
+        "type": "FIX",
+        "text": " Table: Avoid infinite rendering loop with fixed columns in Edge 44",
+        "references": []
+      }
+    ]
   }
 }

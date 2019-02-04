@@ -3425,5 +3425,16 @@
         "references": []
       }
     ]
+  },
+  "1.38.39": {
+    "date": "December 2018",
+    "notes": [
+      {
+        "id": "5a90acd0d33885acc79f1e3965d97912766dd1b2",
+        "type": "FIX",
+        "text": " Model.removeBinding: performance",
+        "references": []
+      }
+    ]
   }
 }
