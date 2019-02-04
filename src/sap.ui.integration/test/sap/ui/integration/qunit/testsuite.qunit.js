@@ -24,7 +24,13 @@ sap.ui.define(function () {
 			"Card": {
 				coverage: {
 					only: [
-						"sap/ui/integration/widgets/Card",
+						"sap/ui/integration/widgets/Card"
+					]
+				}
+			},
+			"util/CardManifest": {
+				coverage: {
+					only: [
 						"sap/ui/integration/util/CardManifest"
 					]
 				}
