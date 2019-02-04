@@ -1731,6 +1731,12 @@ function(
 			});
 			oItemData.data("tokenId", oToken.getId());
 			this.addToken(oToken);
+
+			this.fireTokenUpdate({
+				addedTokens: [oToken],
+				removedTokens: [],
+				type: Tokenizer.TokenUpdateType.Added
+			});
 		} else {
 			var sSelectedId = oItemData.data("tokenId");
 
