@@ -345,6 +345,7 @@ sap.ui.define([
 					oControlData.hasImplementsData = false;
 				}
 
+				oControlData.isFunction = oControlData.kind === "function";
 				oControlData.isClass = oControlData.kind === "class";
 				oControlData.isNamespace = oControlData.kind === "namespace";
 				oControlData.isDerived = !!oControlData.extends;
