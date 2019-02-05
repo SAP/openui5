@@ -4630,6 +4630,57 @@ sap.ui.define([
 		oFocusinStub.restore();
 	});
 
+	QUnit.test("Selecting an item checkbox should not add the old input value in the field", function(assert) {
+		// arrange
+		var oFakeEvent = new Event(),
+			oItem = new Item({
+				text: "test1"
+			}),
+			oMultiComboBox = new MultiComboBox({
+				items: [oItem]
+			}),
+			oFakeInput = {
+				target: {
+					value: "t"
+				},
+				setMarked: function () { },
+				srcControl: oMultiComboBox
+			},
+			oHandleTokensStub = sinon.stub(Event.prototype, "getParameter"),
+			oFocusinStub = sinon.stub(MultiComboBox.prototype, "onfocusin");
+
+
+		// act
+		oMultiComboBox.placeAt("MultiComboBox-content");
+		sap.ui.getCore().applyChanges();
+		oMultiComboBox.getFocusDomRef().focus();
+
+		oMultiComboBox.setValue("t");
+		oMultiComboBox.fireChange({ value: "t" });
+		oMultiComboBox.oninput(oFakeInput);
+
+		oHandleTokensStub.withArgs("listItem").returns(oMultiComboBox.getListItem(oItem));
+		oHandleTokensStub.withArgs("selected").returns(true);
+
+		oMultiComboBox.getFocusDomRef().blur();
+		this.clock.tick(300);
+
+		oMultiComboBox.open();
+		this.clock.tick(300);
+
+		oMultiComboBox._handleSelectionLiveChange(oFakeEvent);
+		sap.ui.getCore().applyChanges();
+
+		// assert
+		assert.strictEqual(oMultiComboBox.getValue(), "", "Value should be cleared");
+
+		// clean up
+		oFakeInput = null;
+		oMultiComboBox.destroy();
+		oHandleTokensStub.restore();
+		oFocusinStub.restore();
+	});
+
 	QUnit.module("Focus handling");
 
 	QUnit.test("Focusing a token inside the MCB should not add css focus indication to the MCB itself", function(assert) {

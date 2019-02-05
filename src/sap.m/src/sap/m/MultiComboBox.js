@@ -1064,7 +1064,10 @@ function(
 
 		// resets or not the value of the input depending on the event (enter does not clear the value)
 		!this.isComposingCharacter() && !this._bPreventValueRemove && this.setValue("");
+
+		// clear old values
 		this._sOldValue = "";
+		this._sOldInput = "";
 
 		if (this.isPickerDialog()) {
 			// reset the value state after the dialog is closed
