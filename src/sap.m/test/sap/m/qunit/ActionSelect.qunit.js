@@ -398,6 +398,15 @@ sap.ui.define([
 		},
 		afterEach: function () {
 			this.oActionSelect.destroy();
+		},
+		getTutorMessageIndex: function() {
+			return this.oPicker.getAriaLabelledBy().indexOf(this.oActionSelect._getTutorMessageId());
+		},
+		getTutorMessageText: function(iTutorMessageIndex) {
+			return sap.ui.getCore().byId(this.oPicker.getAriaLabelledBy()[iTutorMessageIndex]).getText();
+		},
+		assertTutorMessageIndexValue: function(assert, iTutorMessageIndex) {
+			assert.strictEqual(iTutorMessageIndex, this.oPicker.getAriaLabelledBy().length - 1, "Tutor message id should be at the end of ariaLabelledBy");
 		}
 	});
 
@@ -410,7 +419,10 @@ sap.ui.define([
 		sap.ui.getCore().applyChanges();
 
 		// assert
-		var sInvisibleText = sap.ui.getCore().byId(this.oPicker.getAriaLabelledBy()[1]).getText();
+		var iTutorMessageIndex = this.getTutorMessageIndex();
+		this.assertTutorMessageIndexValue(assert, iTutorMessageIndex);
+
+		var sInvisibleText = this.getTutorMessageText(iTutorMessageIndex);
 		assert.strictEqual(sInvisibleText, this._oRb.getText("ACTION_SELECT_TUTOR_MESSAGE"), "The tutor message is set correctly");
 
 		// act
@@ -429,8 +441,8 @@ sap.ui.define([
 		sap.ui.getCore().applyChanges();
 
 		// assert
-		var sInvisibleText = sap.ui.getCore().byId(this.oPicker.getAriaLabelledBy()[1]);
-		assert.strictEqual(sInvisibleText, undefined, "The tutor message is not added, when there are no buttons");
+		var iTutorMessageIndex =  this.getTutorMessageIndex();
+		assert.strictEqual(iTutorMessageIndex, -1, "The tutor message is not added, when there are no buttons");
 
 		this.oActionSelect.close();
 
@@ -439,7 +451,10 @@ sap.ui.define([
 		sap.ui.getCore().applyChanges();
 
 		// assert
-		var sInvisibleTextMessage = sap.ui.getCore().byId(this.oPicker.getAriaLabelledBy()[1]).getText();
+		iTutorMessageIndex =  this.getTutorMessageIndex();
+		this.assertTutorMessageIndexValue(assert, iTutorMessageIndex);
+
+		var sInvisibleTextMessage = this.getTutorMessageText(iTutorMessageIndex);
 		assert.strictEqual(sInvisibleTextMessage, this._oRb.getText("ACTION_SELECT_TUTOR_MESSAGE"), "The tutor message is set correctly when adding buttons");
 	});
 });
