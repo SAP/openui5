@@ -587,10 +587,10 @@
 
 
 // Shell
-@sapUiShellHoverBackground: darken(desaturate(@sapShellColor, 7), 5);
-@sapUiShellActiveBackground: darken(desaturate(@sapShellColor, 7), 8);
+@sapUiShellHoverBackground: darken(@sapUiShellColor, 7);
+@sapUiShellActiveBackground: darken(@sapUiShellColor, 10);
 @sapUiShellActiveTextColor: contrast(@sapUiShellActiveBackground, @sapUiBaseText, @sapUiContentContrastTextColor, @sapUiContentContrastTextThreshold);
-@sapUiShellHoverToggleBackground: darken(desaturate(@sapShellColor, 7), 8);
+@sapUiShellHoverToggleBackground: darken(@sapUiShellColor, 10);
 @sapUiShellContainerBackground: @sapUiGroupContentBackground;
 @sapUiShellAltContainerBackground: @sapUiShellContainerBackground;
 @sapUiShellGroupTextColor: @sapUiTextTitle;
@@ -613,7 +613,7 @@
 @sapUiLinkActive:     @sapUiLink;
 @sapUiLinkVisited:    @sapUiLink;
 @sapUiLinkHover:      darken(@sapUiLink, 10);
-@sapUiLinkInverted:   lighten(@sapUiLink, 40);
+@sapUiLinkInverted:   lighten(saturate(@sapUiLink, 9), 48);
 
 // Notification Bar
 @sapUiNotificationBarBG: fade(@sapUiPrimary7, 98);
@@ -639,13 +639,13 @@
 @sapUiButtonEmphasizedActiveBorderColor: @sapUiButtonEmphasizedActiveBackground;
 @sapUiButtonEmphasizedTextShadow: transparent;
 @sapUiButtonAcceptBorderColor: @sapUiPositiveElement;
-@sapUiButtonAcceptHoverBackground: darken(@sapUiButtonAcceptBackground, 2);
+@sapUiButtonAcceptHoverBackground: @sapUiSuccessBG;
 @sapUiButtonAcceptHoverBorderColor: @sapUiButtonAcceptBorderColor;
 @sapUiButtonAcceptActiveBackground: darken(@sapUiPositiveElement, 5);
 @sapUiButtonAcceptActiveBorderColor: @sapUiButtonAcceptActiveBackground;
 @sapUiButtonAcceptTextColor: contrast(@sapUiButtonAcceptBackground, @sapUiPositiveText, @sapUiContentContrastTextColor, @sapUiContentContrastTextThreshold);
 @sapUiButtonRejectBorderColor: @sapUiNegativeElement;
-@sapUiButtonRejectHoverBackground: darken(@sapUiButtonRejectBackground, 2);
+@sapUiButtonRejectHoverBackground: @sapUiErrorBG;
 @sapUiButtonRejectHoverBorderColor: @sapUiButtonRejectBorderColor;
 @sapUiButtonRejectActiveBackground: darken(@sapUiNegativeElement, 5);
 @sapUiButtonRejectActiveBorderColor: @sapUiButtonRejectActiveBackground;
@@ -653,7 +653,7 @@
 @sapUiButtonLiteBackground: transparent;
 @sapUiButtonLiteBorderColor: transparent;
 @sapUiButtonLiteTextColor: @sapUiButtonTextColor;
-@sapUiButtonLiteHoverBackground: fade(darken(@sapUiButtonHoverBackground, 10), 50);
+@sapUiButtonLiteHoverBackground: @sapUiButtonHoverBackground;
 @sapUiButtonLiteHoverBorderColor: @sapUiButtonLiteHoverBackground;
 @sapUiButtonLiteActiveBackground: @sapUiButtonActiveBackground;
 @sapUiButtonLiteActiveBorderColor: @sapUiButtonLiteActiveBackground;
@@ -664,7 +664,7 @@
 @sapUiButtonActionSelectBackground: @sapUiListBackground;
 @sapUiButtonActionSelectBorderColor: @sapUiListBorderColor;
 @sapUiButtonLiteActionSelectHoverBackground: @sapUiListHoverBackground;
-@sapUiToggleButtonPressedBackground: darken(@sapUiSelected, 10);
+@sapUiToggleButtonPressedBackground: @sapUiSelected;
 @sapUiToggleButtonPressedBorderColor: @sapUiToggleButtonPressedBackground;
 @sapUiToggleButtonPressedTextColor: contrast(@sapUiToggleButtonPressedBackground, @sapUiButtonTextColor, @sapUiContentContrastTextColor, @sapUiContentContrastTextThreshold);
 @sapUiToggleButtonPressedHoverBackground: lighten(@sapUiToggleButtonPressedBackground, 3);
