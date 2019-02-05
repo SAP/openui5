@@ -22,10 +22,9 @@
 			"actions": [
 				{
 					"type": "Navigation",
-					"enabled": true,
 					"service": "Navigation2",
 					"parameters": {
-						"somekey": "somevalue"
+						"url": "https://www.sap.com"
 					}
 				}
 			]
@@ -47,13 +46,15 @@
 				"description": {
 					"value": "{Description}"
 				},
-				"interactionType": "Navigation",
 				"actions": [
 					{
 						"type": "Navigation",
-						"enabled": true,
 						"target": "_blank",
-						"url": "https://www.sap.com/corporate/en.html"
+						"enabled": "{= ${url}}",
+						"url": "{url}",
+						"parameters": {
+							"somekey": "{someparam}"
+						}
 					}
 				]
 			}

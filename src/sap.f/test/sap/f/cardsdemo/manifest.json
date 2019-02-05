@@ -153,9 +153,14 @@
 		  "target": "timelineContent"
 		},
 		{
-		  "pattern": "services",
-		  "name": "services",
-		  "target": "services"
+		  "pattern": "navigationService",
+		  "name": "navigationService",
+		  "target": "navigationService"
+		},
+		{
+		  "pattern": "dataService",
+		  "name": "dataService",
+		  "target": "dataService"
 		},
 		{
 		  "pattern": "objectContent",
@@ -244,9 +249,14 @@
 		  "viewName": "CardContainer",
 		  "viewLevel": 1
 		},
-		"services": {
-		  "viewId": "services",
-		  "viewName": "Services",
+		"navigationService": {
+		  "viewId": "navigationService",
+		  "viewName": "NavigationService",
+		  "viewLevel": 1
+		},
+		"dataService": {
+		  "viewId": "dataService",
+		  "viewName": "DataService",
 		  "viewLevel": 1
 		},
 		"timelineContent": {

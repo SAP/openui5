@@ -1,0 +1,34 @@
+<mvc:View
+	xmlns="sap.m"
+	xmlns:mvc="sap.ui.core.mvc"
+	xmlns:f="sap.f"
+	xmlns:w="sap.ui.integration.widgets"
+    controllerName="sap.f.cardsdemo.controller.DataService"
+	displayBlock="true">
+
+    <Page title="{i18n>appTitle}">
+
+        <subHeader>
+            <Toolbar>
+                <ToolbarSpacer/>
+                <Title text="Data service"/>
+                <ToolbarSpacer/>
+            </Toolbar>
+        </subHeader>
+
+        <content>
+            <Panel>
+				<VBox>
+					<HBox class="sapUiMediumMarginLeft">
+						<Text class="sapUiMediumMarginRight" text="Cards using the same data service."/>
+						<Button text="Add data" press="onPress"/>
+					</HBox>
+					<HBox>
+						<w:Card class="sapUiMediumMargin" manifest="./model/manifests/manifest_dataService.json" width="400px" height="auto"/>
+						<w:Card class="sapUiMediumMargin" manifest="./model/manifests/manifest_dataService2.json" width="400px" height="auto"/>
+					</HBox>
+				</VBox>
+            </Panel>
+        </content>
+    </Page>
+</mvc:View>

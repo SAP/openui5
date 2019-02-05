@@ -213,7 +213,7 @@ sap.ui.define([
 		}
 
 		if (!this._oServiceManager) {
-			this._oServiceManager = new ServiceManager(oServiceFactoryReferences);
+			this._oServiceManager = new ServiceManager(oServiceFactoryReferences, this);
 		}
 
 		var oHeader = this._oCardManifest.get(MANIFEST_PATHS.HEADER);
@@ -340,10 +340,17 @@ sap.ui.define([
 	 */
 	Card.prototype._setCardHeaderFromManifest = function (CardHeader) {
 		var oClonedSettings = jQuery.extend(true, {}, this._oCardManifest.get(MANIFEST_PATHS.HEADER));
-		var oHeader = CardHeader.create(oClonedSettings);
+		var oHeader = CardHeader.create(oClonedSettings, this._oServiceManager);
 
 		oHeader.attachEvent("_updated", function () {
 			this.fireEvent("_headerUpdated");
+		}.bind(this));
+		oHeader.attachEvent("onAction", function (oEvent) {
+			this.fireEvent("onAction", {
+				manifestParameters: oEvent.getParameter("manifestParameters"),
+				semanticObject: oEvent.getParameter("semanticObject"),
+				type: oEvent.getParameter("type")
+			});
 		}.bind(this));
 
 		if (!oClonedSettings.data || (oClonedSettings.data && oClonedSettings.data.json)) {
@@ -357,7 +364,8 @@ sap.ui.define([
 		}
 
 		if (Array.isArray(oClonedSettings.actions) && oClonedSettings.actions.length > 0) {
-			this._setCardHeaderActions(oHeader, oClonedSettings.actions);
+			//this._setCardHeaderActions(oHeader, oClonedSettings.actions);
+			oHeader._attachActions(oClonedSettings);
 		}
 
 		this.setAggregation("_header", oHeader);
@@ -374,48 +382,6 @@ sap.ui.define([
 				// TODO: Handle error
 			});
 		}
-	};
-
-	/**
-	 * Sets all header actions by parsing the 'actions' property of the manifest
-	 * and attaching the respective handlers.
-	 *
-	 * @param {sap.f.cards.IHeader} oHeader The header to set actions to.
-	 * @param {Object[]} aActions The actions to set on the header.
-	 */
-	Card.prototype._setCardHeaderActions = function (oHeader, aActions) {
-		var oAction;
-
-		// For now only take the first Navigation action and set it on the header.
-		// Refactor when additional actions are needed.
-		for (var i = 0; i < aActions.length; i++) {
-			if (aActions[i].type === "Navigation" && aActions[i].enabled) {
-				oAction = aActions[i];
-				break;
-			}
-		}
-
-		if (!oAction) {
-			return;
-		}
-
-		if (oAction.service) {
-			oHeader.attachPress(function () {
-				this._oServiceManager.getService("sap.ui.integration.services.Navigation").then(function (oNavigationService) {
-					if (oNavigationService) {
-						oNavigationService.navigate(oAction.parameters);
-					}
-				}).catch(function () {
-					Log.error("Navigation service unavailable");
-				});
-			}.bind(this));
-		} else if (oAction.url) {
-			oHeader.attachPress(function () {
-				window.open(oAction.url, oAction.target || "_blank");
-			});
-		}
-
-		oHeader.addStyleClass("sapFCardHeaderClickable");
 	};
 
 	/**
@@ -451,6 +417,13 @@ sap.ui.define([
 		var oContent = new CardContent(oClonedSettings);
 		oContent.attachEvent("_updated", function () {
 			this.fireEvent("_contentUpdated");
+		}.bind(this));
+		oContent.attachEvent("onAction", function (oEvent) {
+			this.fireEvent("onAction", {
+				manifestParameters: oEvent.getParameter("manifestParameters"),
+				semanticObject: oEvent.getParameter("semanticObject"),
+				type: oEvent.getParameter("type")
+			});
 		}.bind(this));
 
 		this.setAggregation("_content", oContent);

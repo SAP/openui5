@@ -1,9 +1,9 @@
 sap.ui.define([
 	"sap/ui/core/mvc/Controller"
-], function (Controller, Services) {
+], function (Controller) {
 	"use strict";
 
-	return Controller.extend("sap.f.cardsdemo.controller.Services", {
+	return Controller.extend("sap.f.cardsdemo.controller.DataService", {
 		onPress: function () {
 			this.getOwnerComponent().getService("UserRecent").then(function (oService) {
 				oService.addData({

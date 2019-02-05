@@ -3,13 +3,6 @@
 	"sap.app": {
 		"type": "card"
 	},
-	"sap.ui5": {
-		"services": {
-			"Navigation2": {
-				"factoryName": "cardsdemo.service.SampleNavigationFactory"
-			}
-		}
-	},
 	"sap.card": {
 		"type": "List",
 		"header": {
@@ -22,15 +15,18 @@
 			"actions": [
 				{
 					"type": "Navigation",
-					"url": "https://www.sap.com"
+					"parameters": {
+						"url": "https://www.sap.com"
+					}
 				}
 			]
 		},
 		"content": {
 			"data": {
 				"request": {
-					"url": "./cardcontent/someitems_services.json"
-				}
+					"url": "./cardcontent/someitems_services2.json"
+				},
+				"path": "/items"
 			},
 			"item": {
 				"icon": {
@@ -45,9 +41,9 @@
 				"actions": [
 					{
 						"type": "Navigation",
-						"service": "Navigation2",
+						"enabled": "{= ${url}}",
 						"parameters": {
-							"somekey": "{someparam}"
+							"url": "{url}"
 						}
 					}
 				]
