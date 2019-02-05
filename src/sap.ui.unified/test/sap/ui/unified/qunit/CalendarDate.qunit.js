@@ -392,6 +392,21 @@ sap.ui.define([
 		iframe = null;
 	});
 
+	QUnit.test("'setMonth' with a date as a second passed parameter does not shift the month" +
+		"(months with 31 days scenario)", function(assert){
+		//prepare
+		var oCD = new CalendarDate(2017, 0, 31);
+
+		//act
+		oCD.setMonth(1, 1);
+
+		//assert
+		assert.equal(oCD.getMonth(), 1, "the first argument is the month and it's February");
+		assert.equal(oCD.getDate(), 1, "there is an optional second argument - date and it's 1st");
+
+		//cleanup
+		oCD.destroy();
+	});
 
 	QUnit.module("isBefore");
 	QUnit.test("checks if a CalendarDate is before another one", function (assert) {

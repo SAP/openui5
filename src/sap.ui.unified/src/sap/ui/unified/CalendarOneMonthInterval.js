@@ -224,9 +224,12 @@ sap.ui.define([
 			}
 
 			oStartDate.setMonth(oStartDate.getMonth() + iShiftAmount);
+
 			oFocusedDate.setYear(oStartDate.getYear());
-			oFocusedDate.setMonth(oStartDate.getMonth());
-			oFocusedDate.setDate(oStartDate.getDate());
+			//BCP: 002075129400005182132018
+			//setting separately month and date afterwards could lead to not needed shifting of the month
+			oFocusedDate.setMonth(oStartDate.getMonth(), oStartDate.getDate());
+
 			this._setFocusedDate(oFocusedDate);
 			this._setStartDate(oStartDate, true);
 			oOneMonthDateRow.selectDate(oStartDate.toLocalJSDate());//TODO old behavior worked with UTC date set on public api
