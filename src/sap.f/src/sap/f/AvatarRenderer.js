@@ -3,8 +3,8 @@
  */
 
 // Provides default renderer for control sap.f.Avatar
-sap.ui.define(["sap/f/library", "sap/base/security/encodeXML"],
-	function (library, encodeXML) {
+sap.ui.define(["sap/f/library", "sap/base/security/encodeXML", "sap/base/security/encodeCSS"],
+	function (library, encodeXML, encodeCSS) {
 		"use strict";
 
 		// shortcut for sap.f.AvatarSize
@@ -94,7 +94,7 @@ sap.ui.define(["sap/f/library", "sap/base/security/encodeXML"],
 				oRm.write("<span");
 				oRm.addClass("sapFAvatarImageHolder");
 				oRm.addClass(sAvatarClass + sActualDisplayType + sImageFitType);
-				oRm.addStyle("background-image", "url('" + encodeXML(sSrc) + "')");
+				oRm.addStyle("background-image", "url('" + encodeXML(encodeCSS(sSrc)) + "')");
 				oRm.writeClasses();
 				oRm.writeStyles();
 				oRm.write(">");

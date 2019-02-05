@@ -1,10 +1,11 @@
 /*global QUnit, sinon*/
-sap.ui.define(["sap/ui/core/Core"],
-function(oCore) {
+sap.ui.define(["sap/ui/core/Core", "sap/ui/Device", "sap/ui/thirdparty/URI"],
+function(oCore, Device, URI) {
 	"use strict";
 
 	var sControlId = "AvatarId",
-		sImagePath = "../images/Woman_avatar_01.png",
+		sImagePath = "test-resources/sap/f/images/Woman_avatar_01.png",
+		sAbsoluteImageUrl = new URI(sap.ui.require.toUrl("test-resources/sap/f/images/Woman_avatar_01.png"), document.baseURI).href(),
 		sIconPath = "sap-icon://lab",
 		sPreAvatarSize = "Avatar's size is ",
 		sPreAvatarShape = "Avatar's shape is ",
@@ -149,6 +150,17 @@ function(oCore) {
 
 		var $oAvatar = this.oAvatar.$();
 		assert.ok($oAvatar.hasClass("sapFAvatarImage"), sPreAvatarType + "Image");
+	});
+
+	QUnit.test("Avatar with src leading to an image has correct css style", function (assert) {
+		var sExpectedOutputImage = Device.browser.safari ? // safari returns the absolute url
+			'url(' + sAbsoluteImageUrl + ')' :
+			'url("' + sImagePath + '")';
+		this.oAvatar.setSrc(sImagePath);
+		oCore.applyChanges();
+
+		var $oAvatarImageHolder = this.oAvatar.$().find('.sapFAvatarImageHolder').get(0);
+		assert.strictEqual($oAvatarImageHolder.style.backgroundImage, sExpectedOutputImage, "correct style value");
 	});
 
 	QUnit.test("Avatar with initials in valid format", function (assert) {
