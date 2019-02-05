@@ -10753,6 +10753,29 @@ sap.ui.define([
 		oComboBox.destroy();
 	});
 
+	QUnit.test("Disabled ComboBox should not have focus", function (assert) {
+
+		// system under test
+		var oComboBox = new ComboBox({
+				enabled: false
+			});
+
+		// arrange
+		oComboBox.placeAt("content");
+		sap.ui.getCore().applyChanges();
+
+		// act
+		sap.ui.qunit.QUnitUtils.triggerEvent("focusin", oComboBox.getOpenArea(), {
+			target: oComboBox.getOpenArea()
+		});
+
+		// assert
+		assert.ok(!oComboBox.$().hasClass("sapMFocus"), "The input field should not have visual focus.");
+
+		// cleanup
+		oComboBox.destroy();
+	});
+
 
 	QUnit.module("highlighting");
 

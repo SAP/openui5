@@ -1329,7 +1329,7 @@ sap.ui.define([
 				this.bOpenValueStateMessage = true;
 			}
 
-			if (!this.isOpen() || !this.getSelectedItem() || !this.getList().hasStyleClass("sapMListFocus")) {
+			if (this.getEnabled() && (!this.isOpen() || !this.getSelectedItem() || !this.getList().hasStyleClass("sapMListFocus"))) {
 				this.$().addClass("sapMFocus");
 			}
 		};
