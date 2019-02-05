@@ -1402,7 +1402,7 @@ sap.ui.define([
 					if (Array.isArray(oResult)) {
 						oEntry[sName] = { __list: oResult };
 					} else {
-						if (oEntry[sName].__ref) {
+						if (oEntry[sName] && oEntry[sName].__ref) {
 							if (oEntry[sName].__ref !== oResult) {
 								that.mInvalidatedPaths[sPath.substr(sPath.lastIndexOf("(")) + "/" + sName] = "/" + oResult;
 							}
