@@ -22,6 +22,7 @@ module.exports = function(grunt, config) {
 				sSourcesFolder + 'sap/ui/thirdparty/baseuri.js',
 				sSourcesFolder + 'sap/ui/thirdparty/es6-promise.js',
 				sSourcesFolder + "sap/ui/thirdparty/es6-string-methods.js",
+				sSourcesFolder + "sap/ui/thirdparty/es6-object-assign.js",
 				sSourcesFolder + "ui5loader.js",
 				sSourcesFolder + "ui5loader-autoconfig.js"
 			],
@@ -35,6 +36,7 @@ module.exports = function(grunt, config) {
 				sSourcesFolder + 'sap/ui/thirdparty/baseuri.js',
 				sSourcesFolder + 'sap/ui/thirdparty/es6-promise.js',
 				sSourcesFolder + "sap/ui/thirdparty/es6-string-methods.js",
+				sSourcesFolder + "sap/ui/thirdparty/es6-object-assign.js",
 				sSourcesFolder + "ui5loader.js",
 				sSourcesFolder + "ui5loader-autoconfig.js"
 			],
