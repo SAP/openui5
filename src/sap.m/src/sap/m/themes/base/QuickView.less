@@ -3,6 +3,11 @@
 /* Base theme                       */
 /* ================================ */
 
+@_sap_m_QuickView_HorizontalLayoutMarginBottom: 2rem;
+@_sap_m_QuickView_HorizontalLayoutIconFontSize: 2.25rem;
+@_sap_m_QuickView_PagePaddingTop: 3rem;
+@_sap_m_QuickView_Compact_PagePaddingTop: 2.5rem;
+
 .sapMQuickView .sapMNav,
 .sapMQuickViewCard .sapMNav {
 	white-space: nowrap;
@@ -35,8 +40,8 @@
 	width: 100% !important;
 }
 
-html.sap-desktop .sapMQuickViewPage .sapUiFormResGrid > div,
-html.sap-tablet .sapMQuickViewPage .sapUiFormResGrid > div {
+html.sap-desktop .sapMQuickViewPage .sapUiForm .sapUiFormResGrid > div,
+html.sap-tablet .sapMQuickViewPage .sapUiForm .sapUiFormResGrid > div {
 	padding: 0;
 	margin: 0;
 }
@@ -46,7 +51,7 @@ html.sap-tablet .sapMQuickViewPage .sapUiFormResGrid > div {
 	position: relative;
 	height: 100%;
 	box-sizing: border-box;
-	padding-top: 3rem;
+	padding-top: @_sap_m_QuickView_PagePaddingTop;
 }
 
 .sapMQuickView.sapMPopover .sapMQuickViewPage.sapMScrollContScroll,
@@ -58,7 +63,7 @@ html.sap-tablet .sapMQuickViewPage .sapUiFormResGrid > div {
 
 .sapUiSizeCompact .sapMQuickView.sapMPopover .sapMQuickViewPage.sapMScrollContScroll,
 .sapUiSizeCompact .sapMQuickView.sapMPopover .sapMQuickViewPage.sapMPage {
-	padding-top: 2.5rem;
+	padding-top: @_sap_m_QuickView_Compact_PagePaddingTop;
 }
 
 html.sap-phone .sapMQuickViewPage.sapMNavItem.sapMPage {
@@ -97,7 +102,7 @@ html.sap-tablet .sapMQuickViewPage > section {
 .sapMQuickViewPage .sapUiHLayout .sapUiIcon {
 	line-height: 3rem;
 	margin-right: .75rem;
-	font-size: 2.25rem;
+	font-size: @_sap_m_QuickView_HorizontalLayoutIconFontSize;
 	font-weight: normal;
 }
 
@@ -144,7 +149,7 @@ html.sap-tablet .sapMQuickViewPage > section {
 }
 
 .sapMQuickViewPage .sapUiHLayout {
-	margin-bottom: 2rem;
+	margin-bottom: @_sap_m_QuickView_HorizontalLayoutMarginBottom;
 }
 
 .sapMQuickViewPage .sapUiHLayout,
