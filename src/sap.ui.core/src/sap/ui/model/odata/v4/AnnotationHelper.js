@@ -10,6 +10,7 @@ sap.ui.define([
 
 	var rBadChars = /[\\\{\}:]/, // @see sap.ui.base.BindingParser: rObject, rBindingChars
 		rCount = /\/\$count$/,
+		rPaths = /\$(?:(?:Annotation)|(?:(?:Navigation)?Property))?Path/,
 		rSplitPathSegment = /^(.+?\/(\$(?:Annotation)?Path))(\/?)(.*)$/,
 		rUnsupportedPathSegments = /\$(?:Navigation)?PropertyPath/,
 
@@ -83,7 +84,9 @@ sap.ui.define([
 			 * If <code>oDetails.context.getPath()</code> contains a single "$AnnotationPath" or
 			 * "$Path" segment, the value corresponding to that segment is considered as a data
 			 * binding path prefix whenever a dynamic "14.5.12 Expression edm:Path" or
-			 * "14.5.13 Expression edm:PropertyPath" is turned into a data binding.
+			 * "14.5.13 Expression edm:PropertyPath" is turned into a data binding. Use
+			 * {@link sap.ui.model.odata.v4.AnnotationHelper.resolve$Path} to avoid these prefixes
+			 * in cases where they are not applicable.
 			 *
 			 * Unsupported or incorrect values are turned into a string nevertheless, but indicated
 			 * as such. Proper escaping is used to make sure that data binding syntax is not
@@ -152,6 +155,7 @@ sap.ui.define([
 			 *   "$AnnotationPath" or "$Path" segment
 			 *
 			 * @public
+			 * @see sap.ui.model.odata.v4.AnnotationHelper.resolve$Path
 			 * @since 1.63.0
 			 */
 			format : function (vRawValue, oDetails) {
@@ -217,18 +221,21 @@ sap.ui.define([
 			},
 
 			/**
-			 * Returns a data binding according to the result of {@link #getNavigationPath}.
+			 * Returns a data binding according to the result of
+			 * {@link sap.ui.model.odata.v4.AnnotationHelper.getNavigationPath}.
 			 *
 			 * @param {string} sPath
 			 *   The path value from the meta model, for example
 			 *   "ToSupplier/@com.sap.vocabularies.Communication.v1.Address" or
 			 *   "@com.sap.vocabularies.UI.v1.FieldGroup#Dimensions"
 			 * @returns {string}
-			 *   A data binding according to the result of {@link #getNavigationPath}, for example
+			 *   A data binding according to the result of
+			 *   {@link sap.ui.model.odata.v4.AnnotationHelper.getNavigationPath}, for example
 			 *   "{ToSupplier}" or ""
 			 * @throws {Error}
-			 *   If the result of {@link #getNavigationPath} contains segments which are not valid
-			 *   OData identifiers and violate the data binding syntax
+			 *   If the result of {@link sap.ui.model.odata.v4.AnnotationHelper.getNavigationPath}
+			 *   contains segments which are not valid OData identifiers and violate the data
+			 *   binding syntax
 			 *
 			 * @public
 			 * @since 1.43.0
@@ -456,6 +463,64 @@ sap.ui.define([
 					return AnnotationHelper.value(oNewContext.getObject(""), {
 						context : oNewContext
 					});
+				}
+			},
+
+			/**
+			 * Helper function for a <code>template:with</code> instruction that returns an
+			 * equivalent to the given context's path, without "$AnnotationPath",
+			 * "$NavigationPropertyPath", "$Path", and "$PropertyPath" segments.
+			 *
+			 * @param {sap.ui.model.Context} oContext
+			 *   A context which belongs to an {@link sap.ui.model.odata.v4.ODataMetaModel}
+			 * @returns {string}
+			 *   An equivalent to the given context's path, without the mentioned segments
+			 * @throws {Error}
+			 *   If one of the mentioned segments has a non-string value and thus the path cannot
+			 *   be resolved
+			 *
+			 * @public
+			 * @see sap.ui.model.odata.v4.AnnotationHelper.format
+			 * @since 1.63.0
+			 */
+			resolve$Path : function (oContext) {
+				var iEndOfPath, // after $*Path
+					iIndexOfAt, // first "@" before $*Path
+					iIndexOfPath, // begin of $*Path
+					iLastIndexOfSlash, // last "/" before iIndexOfAt
+					aMatches,
+					sPath = oContext.getPath(),
+					sPrefix,
+					vValue;
+
+				for (;;) {
+					aMatches = sPath.match(rPaths);
+					if (!aMatches) {
+						return sPath;
+					}
+
+					iIndexOfPath = aMatches.index;
+					iEndOfPath = iIndexOfPath + aMatches[0].length;
+					sPrefix = sPath.slice(0, iEndOfPath);
+					vValue = oContext.getModel().getObject(sPrefix);
+					if (typeof vValue !== "string") {
+						throw new Error("Cannot resolve " + sPrefix
+							+ " due to unexpected value " + vValue);
+					}
+
+					sPrefix = sPath.slice(0, iIndexOfPath);
+					iIndexOfAt = sPrefix.indexOf("@");
+					iLastIndexOfSlash = sPrefix.lastIndexOf("/", iIndexOfAt);
+					if (iLastIndexOfSlash === 0) { // do not cut off entity set
+						sPrefix = sPrefix.slice(0, iIndexOfAt);
+						if (iIndexOfAt > 1 && vValue) {
+							sPrefix += "/";
+						}
+					} else { // cut off property, but end with slash
+						sPrefix = sPrefix.slice(0, iLastIndexOfSlash + 1);
+					}
+
+					sPath = sPrefix + vValue + sPath.slice(iEndOfPath);
 				}
 			},
 

@@ -114,6 +114,11 @@
 				<Label text="meta>/Equipments/@com.sap.vocabularies.UI.v1.LineItem/4/Value/$Path@com.sap.vocabularies.Common.v1.QuickInfo@@value" />
 				<Text text="{path : 'meta>/Equipments/@com.sap.vocabularies.UI.v1.LineItem/4/Value/$Path@com.sap.vocabularies.Common.v1.QuickInfo@@value', formatter : 'stringify'}" />
 
+				<template:with path="meta>/Equipments/@com.sap.vocabularies.UI.v1.LineItem/4/Value/$Path" helper="AnnotationHelper.resolve$Path" var="value">
+					<Label text="value>@com.sap.vocabularies.Common.v1.QuickInfo@@format" />
+					<Text text="{path : 'value>@com.sap.vocabularies.Common.v1.QuickInfo@@format', formatter : 'stringify'}" />
+				</template:with>
+
 				<Text text="- - - - - - - - - format with $Path; multiple navigation steps"/>
 				<!--
 					@com.sap.vocabularies.UI.v1.LineItem/0/Value/$Path = EMPLOYEE_2_MANAGER/Manager_to_Team/Name;

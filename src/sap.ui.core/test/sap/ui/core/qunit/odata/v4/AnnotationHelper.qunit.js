@@ -20,6 +20,27 @@ sap.ui.define([
 
 	var mScope = {
 			"$Annotations" : {
+				"tea_busi.DefaultContainer/EMPLOYEES" : {
+					"@Common.Text" : {
+						"$Path" : "ID"
+					}
+				},
+				"tea_busi.TEAM" : {
+					"@UI.LineItem" : [{
+						"@UI.Importance" : {
+							"$EnumMember" : "UI.ImportanceType/High"
+						},
+						"$Type" : "UI.DataFieldWithNavigationPath",
+						"Label" : "Team ID",
+						"Label@Common.Label" : "Team ID's Label",
+						"Target" : {
+							"$NavigationPropertyPath" : "TEAM_2_EMPLOYEES"
+						},
+						"Value" : {
+							"$Path" : "Team_Id"
+						}
+					}]
+				},
 				"tea_busi.Worker" : {
 					"@UI.Facets" : [{
 						"$Type" : "UI.ReferenceFacet",
@@ -47,6 +68,15 @@ sap.ui.define([
 								: "tea_busi.TEAM/TEAM_2_EMPLOYEES/EMPLOYEE_2_TEAM/@UI.LineItem"
 						}
 					}]
+				},
+				"tea_busi.Worker/ID" : {
+					"@Common.Label" : "Worker's ID",
+					"@Common.Text" : {
+						"$Path" : "Name"
+					}
+				},
+				"tea_busi.Worker/Name" : {
+					"@Common.Label" : "Worker's Name"
 				}
 			},
 			"$EntityContainer" : "tea_busi.DefaultContainer",
@@ -95,6 +125,10 @@ sap.ui.define([
 					"$Type" : "Edm.String",
 					"$Nullable" : false,
 					"$MaxLength" : 4
+				},
+				"Name" : {
+					"$kind" : "Property",
+					"$Type" : "Edm.String"
 				},
 				"EMPLOYEE_2_TEAM" : {
 					"$kind" : "NavigationProperty",
@@ -790,5 +824,298 @@ sap.ui.define([
 		assert.strictEqual(AnnotationHelper.format(vRawValue, {context : oContext}),
 			"{path:'EQUIPMENT_2_PRODUCT/Name',type:'sap.ui.model.odata.type.String',"
 			+ "constraints:{'maxLength':10}}");
+	});
+
+	//*********************************************************************************************
+	QUnit.test("resolve$Path: no $Path, just $P...", function (assert) {
+		var sPath = "/Equipments@com.sap.vocabularies.UI.v1.LineItem/4/Value/$Precision",
+			oContext = {
+				getPath : function () { return sPath; }
+			};
+
+		// code under test
+		assert.strictEqual(AnnotationHelper.resolve$Path(oContext), sPath);
+	});
+
+	//*********************************************************************************************
+	["", "/@bar"].forEach(function (sSuffix) {
+		[
+			"/Equipments/@foo/Value/$Path", // at entity type
+			"/Equipments@foo/Value/$Path" // at entity set
+		].forEach(function (sPath) {
+			QUnit.test("resolve$Path: " + sPath + sSuffix, function (assert) {
+				var oMetaModel = {
+						getObject : function () {}
+					},
+					oContext = {
+						getModel : function () { return oMetaModel; },
+						getPath : function () { return sPath + sSuffix; }
+					};
+
+				this.mock(oMetaModel).expects("getObject").withExactArgs(sPath)
+					.returns("EQUIPMENT_2_PRODUCT/Name");
+
+				// code under test
+				assert.strictEqual(AnnotationHelper.resolve$Path(oContext),
+					"/Equipments/EQUIPMENT_2_PRODUCT/Name" + sSuffix);
+			});
+		});
+	});
+
+	//*********************************************************************************************
+	["$AnnotationPath", "$NavigationPropertyPath", "$Path", "$PropertyPath"
+	].forEach(function (sName) {
+		QUnit.test("resolve$Path: " + sName + " at entity container", function (assert) {
+			var oMetaModel = {
+					getObject : function () {}
+				},
+				sPath = "/@foo/" + sName + "/@bar",
+				oContext = {
+					getModel : function () { return oMetaModel; },
+					getPath : function () { return sPath; }
+				};
+
+			this.mock(oMetaModel).expects("getObject").withExactArgs("/@foo/" + sName)
+				.returns("Me/Name");
+
+			// code under test
+			assert.strictEqual(AnnotationHelper.resolve$Path(oContext), "/Me/Name/@bar");
+		});
+	});
+
+	//*********************************************************************************************
+	QUnit.test("resolve$Path: at property", function (assert) {
+		var oMetaModel = {
+				getObject : function () {}
+			},
+			sPath = "/Equipments/Category@foo#Q1@foobar#Q2/$Path/@baz",
+			oContext = {
+				getModel : function () { return oMetaModel; },
+				getPath : function () { return sPath; }
+			};
+
+		this.mock(oMetaModel).expects("getObject")
+			.withExactArgs("/Equipments/Category@foo#Q1@foobar#Q2/$Path")
+			.returns("EQUIPMENT_2_PRODUCT/Name");
+
+		// code under test
+		assert.strictEqual(AnnotationHelper.resolve$Path(oContext),
+			"/Equipments/EQUIPMENT_2_PRODUCT/Name/@baz");
+	});
+
+	//*********************************************************************************************
+	QUnit.test("resolve$Path: no slash after $Path", function (assert) {
+		var oMetaModel = {
+				getObject : function () {}
+			},
+			sPath = "/Equipments/Category@foo/$Path@bar",
+			oContext = {
+				getModel : function () { return oMetaModel; },
+				getPath : function () { return sPath; }
+			};
+
+		this.mock(oMetaModel).expects("getObject").withExactArgs("/Equipments/Category@foo/$Path")
+			.returns("EQUIPMENT_2_PRODUCT/Name");
+
+		// code under test
+		assert.strictEqual(AnnotationHelper.resolve$Path(oContext),
+			"/Equipments/EQUIPMENT_2_PRODUCT/Name@bar");
+	});
+
+	//*********************************************************************************************
+	["$NavigationPropertyPath", "$Path", "$PropertyPath"].forEach(function (sName) {
+		QUnit.test("resolve$Path: multiple " + sName, function (assert) {
+			var oMetaModel = {
+					getObject : function () {}
+				},
+				oMetaModelMock = this.mock(oMetaModel),
+				// @bar is an annotation at ID itself
+				sPath = "/Equipments@foo/" + sName + "@bar/" + sName + "/@baz",
+				oContext = {
+					getModel : function () { return oMetaModel; },
+					getPath : function () { return sPath; }
+				};
+
+			//     /Equipments@foo/$*Path@bar/$*Path/@baz
+			// --> /Equipments/EQUIPMENT_2_PRODUCT/ID@bar/$*Path/@baz
+			// --> /Equipments/EQUIPMENT_2_PRODUCT/PRODUCT_2_SUPPLIER/Supplier_Name/@baz
+			oMetaModelMock.expects("getObject").withExactArgs("/Equipments@foo/" + sName)
+				.returns("EQUIPMENT_2_PRODUCT/ID");
+			oMetaModelMock.expects("getObject")
+				.withExactArgs("/Equipments/EQUIPMENT_2_PRODUCT/ID@bar/" + sName)
+				.returns("PRODUCT_2_SUPPLIER/Supplier_Name");
+
+			// code under test
+			assert.strictEqual(AnnotationHelper.resolve$Path(oContext),
+				"/Equipments/EQUIPMENT_2_PRODUCT/PRODUCT_2_SUPPLIER/Supplier_Name/@baz");
+		});
+	});
+
+	//*********************************************************************************************
+	[
+		"/Equipments/@com.sap.vocabularies.UI.v1.Facets/0/Target/$AnnotationPath",
+		"/Equipments@com.sap.vocabularies.UI.v1.Facets/0/Target/$AnnotationPath"
+	].forEach(function (sPath) {
+		QUnit.test("resolve$Path: " + sPath, function (assert) {
+			var oMetaModel = {
+					getObject : function () {}
+				},
+				oContext = {
+					getModel : function () { return oMetaModel; },
+					getPath : function () { return sPath; }
+				};
+
+			this.mock(oMetaModel).expects("getObject").withExactArgs(sPath)
+				.returns("EQUIPMENT_2_PRODUCT/@com.sap.vocabularies.Common.v1.QuickInfo");
+
+			// code under test
+			assert.strictEqual(AnnotationHelper.resolve$Path(oContext),
+				"/Equipments/EQUIPMENT_2_PRODUCT/@com.sap.vocabularies.Common.v1.QuickInfo");
+		});
+	});
+
+	//*********************************************************************************************
+	QUnit.test("resolve$Path: resulting path is equivalent", function (assert) {
+		var oMetaModel = new ODataMetaModel(),
+			sPath = "/EMPLOYEES/@UI.Facets/2/Target/$AnnotationPath/",
+			oContext = {
+				getModel : function () { return oMetaModel; },
+				getPath : function () { return sPath; }
+			};
+
+		this.mock(oMetaModel).expects("fetchEntityContainer").atLeast(1)
+			.returns(SyncPromise.resolve(mScope));
+
+		// code under test
+		assert.strictEqual(oMetaModel.getObject(AnnotationHelper.resolve$Path(oContext)),
+			oMetaModel.getObject(sPath));
+	});
+
+	//*********************************************************************************************
+	QUnit.test("resolve$Path: empty $Path resolves to entity container", function (assert) {
+		var oMetaModel = {
+				getObject : function () {}
+			},
+			sPath = "/@foo/$Path@bar",
+			oContext = {
+				getModel : function () { return oMetaModel; },
+				getPath : function () { return sPath; }
+			};
+
+		this.mock(oMetaModel).expects("getObject").withExactArgs("/@foo/$Path").returns("");
+
+		// code under test
+		assert.strictEqual(AnnotationHelper.resolve$Path(oContext), "/@bar");
+	});
+
+	//*********************************************************************************************
+	QUnit.test("resolve$Path: empty $Path resolves to entity set", function (assert) {
+		var oMetaModel = {
+				getObject : function () {}
+			},
+			sPath = "/Equipments@foo/$Path@bar",
+			oContext = {
+				getModel : function () { return oMetaModel; },
+				getPath : function () { return sPath; }
+			};
+
+		this.mock(oMetaModel).expects("getObject").withExactArgs("/Equipments@foo/$Path")
+			.returns("");
+
+		// code under test
+		assert.strictEqual(AnnotationHelper.resolve$Path(oContext), "/Equipments@bar");
+	});
+
+	//*********************************************************************************************
+	QUnit.test("resolve$Path: empty $Path resolves to entity type", function (assert) {
+		var oMetaModel = {
+				getObject : function () {}
+			},
+			sPath = "/Equipments/@foo/$Path@bar",
+			oContext = {
+				getModel : function () { return oMetaModel; },
+				getPath : function () { return sPath; }
+			};
+
+		this.mock(oMetaModel).expects("getObject").withExactArgs("/Equipments/@foo/$Path")
+			.returns("");
+
+		// code under test
+		assert.strictEqual(AnnotationHelper.resolve$Path(oContext), "/Equipments/@bar");
+	});
+
+	//*********************************************************************************************
+	QUnit.test("resolve$Path: empty $Path resolves to enclosing type", function (assert) {
+		var oMetaModel = {
+				getObject : function () {}
+			},
+			sPath = "/Equipments/Category@foo/$Path@bar",
+			oContext = {
+				getModel : function () { return oMetaModel; },
+				getPath : function () { return sPath; }
+			};
+
+		this.mock(oMetaModel).expects("getObject").withExactArgs("/Equipments/Category@foo/$Path")
+			.returns("");
+
+		// code under test
+		assert.strictEqual(AnnotationHelper.resolve$Path(oContext), "/Equipments/@bar");
+	});
+
+	// Note: only $Path may be empty and the others have additional constraints, but we are not
+	// validating $metadata here!
+	//*********************************************************************************************
+	[undefined, null, false, true, 0, 1, {}, ["a"]].forEach(function (vValue) {
+		var sTitle = "resolve$Path: cannot resolve path, unexpected value " + vValue;
+
+		QUnit.test(sTitle, function (assert) {
+				var oMetaModel = {
+						getObject : function () {}
+					},
+					sPath = "/@foo/$Path/@bar",
+					oContext = {
+						getModel : function () { return oMetaModel; },
+						getPath : function () { return sPath; }
+					};
+
+				this.mock(oMetaModel).expects("getObject").withExactArgs("/@foo/$Path")
+					.returns(vValue);
+
+			assert.throws(function () {
+				// code under test
+				AnnotationHelper.resolve$Path(oContext);
+			}, new Error("Cannot resolve /@foo/$Path due to unexpected value " + vValue));
+		});
+	});
+
+	//*********************************************************************************************
+	[{
+//TODO Unknown child ID of tea_busi.DefaultContainer at /tea_busi.DefaultContainer/EMPLOYEES@Common.Text
+//		sInput : "/tea_busi.DefaultContainer/EMPLOYEES@Common.Text/$Path@Common.Label",
+//		sOutput : "/tea_busi.DefaultContainer/EMPLOYEES/ID@Common.Label"
+//	}, {
+		sInput : "/tea_busi.Worker/ID@Common.Text/$Path@Common.Label",
+		sOutput : "/tea_busi.Worker/Name@Common.Label"
+	}].forEach(function (oFixture) {
+		var sPath = oFixture.sInput;
+
+		QUnit.test("resolve$Path: " + sPath, function (assert) {
+			var oMetaModel = new ODataMetaModel(),
+				oContext = {
+					getModel : function () { return oMetaModel; },
+					getPath : function () { return sPath; }
+				},
+				sResolvedPath;
+
+			this.mock(oMetaModel).expects("fetchEntityContainer").atLeast(1)
+				.returns(SyncPromise.resolve(mScope));
+			assert.notStrictEqual(oMetaModel.getObject(sPath), undefined, "sanity check");
+
+			// code under test
+			sResolvedPath = AnnotationHelper.resolve$Path(oContext);
+
+			assert.strictEqual(sResolvedPath, oFixture.sOutput);
+			assert.strictEqual(oMetaModel.getObject(sResolvedPath), oMetaModel.getObject(sPath));
+		});
 	});
 });
