@@ -759,13 +759,14 @@ sap.ui.define([
 			press: function() {
 				this._handleVariantSave();
 			}.bind(this),
-			enabled: {
+			visible: {
 				path: "modified",
 				model: this._sModelName,
 				formatter: function(bValue) {
 					return bValue;
 				}
 			},
+			type: sap.m.ButtonType.Emphasized,
 			layoutData: new OverflowToolbarLayoutData({
 				priority: OverflowToolbarPriority.Low
 			})
@@ -877,6 +878,21 @@ sap.ui.define([
 		// this._oVariantList.getBinding("items").filter(this._getFilters());
 	};
 
+	/**
+	 * Hide or show "Save" button and emphasize "most positive action" - either "Save" button when visible, "Save As" button if "Save" is hidden.
+	 * @param bShow indicator if "Save" button should be visible
+	 * @private
+	 */
+	VariantManagement.prototype.showSaveButton = function(bShow) {
+		if (bShow === false) {
+			this.oVariantSaveAsBtn.setType(sap.m.ButtonType.Emphasized);
+			this.oVariantSaveBtn.setVisible(false);
+		} else {
+			this.oVariantSaveAsBtn.setType(sap.m.ButtonType.Default);
+			this.oVariantSaveBtn.setVisible(true);
+		}
+	};
+
 	VariantManagement.prototype._openVariantList = function() {
 		var oItem;
 
@@ -901,13 +917,12 @@ sap.ui.define([
 
 		this.oVariantSelectionPage.setShowSubHeader(this._oVariantList.getItems().length > 9 ? true : false);
 
-		this.oVariantSaveBtn.setEnabled(false);
-		this.oVariantSaveAsBtn.setEnabled(true);
+		this.showSaveButton(false);
 
 		if (this.getModified()) {
 			oItem = this._getItemByKey(this.getCurrentVariantKey());
 			if (oItem && oItem.change) {
-				this.oVariantSaveBtn.setEnabled(true);
+				this.showSaveButton(true);
 			}
 		}
 
@@ -985,7 +1000,7 @@ sap.ui.define([
 			this.oLabelKey.setLabelFor(this.oInputManualKey);
 
 			this.oSaveSave = new Button(this.getId() + "-variantsave", {
-				text: this._oRb.getText("VARIANT_MANAGEMENT_SAVE"),
+				text: this._oRb.getText("VARIANT_MANAGEMENT_OK"),
 				press: function() {
 					this._bSaveCanceled = false;
 					this._handleVariantSaveAs(this.oInputName.getValue());

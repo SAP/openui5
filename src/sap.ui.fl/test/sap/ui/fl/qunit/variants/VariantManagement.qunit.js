@@ -1,23 +1,8 @@
-/* global QUnit*/
+/* global QUnit */
 
 sap.ui.define([
-	"sap/ui/fl/variants/VariantManagement",
-	"sap/ui/fl/variants/VariantModel",
-	"sap/ui/layout/Grid",
-	"sap/m/Input",
-	"sap/ui/core/Icon",
-	"sap/ui/thirdparty/jquery",
-	"sap/ui/thirdparty/sinon-4"
-],
-function(
-	VariantManagement,
-	VariantModel,
-	Grid,
-	Input,
-	Icon,
-	jQuery,
-	sinon
-) {
+	"sap/ui/fl/variants/VariantManagement", "sap/ui/fl/variants/VariantModel", "sap/ui/layout/Grid", "sap/m/Input", "sap/ui/core/Icon", "sap/ui/thirdparty/jquery", "sap/ui/thirdparty/sinon-4"
+], function(VariantManagement, VariantModel, Grid, Input, Icon, jQuery, sinon) {
 	"use strict";
 
 	var oModel;
@@ -260,29 +245,29 @@ function(
 
 			this.oVariantManagement._openVariantList();
 
-			assert.ok(!this.oVariantManagement.oVariantSaveBtn.getEnabled());
-			assert.ok(this.oVariantManagement.oVariantSaveAsBtn.setEnabled());
+			assert.ok(!this.oVariantManagement.oVariantSaveBtn.getVisible());
+			assert.ok(this.oVariantManagement.oVariantSaveAsBtn.getVisible());
 
 			this.oVariantManagement._openVariantList();
 
 			assert.ok(!this.oVariantManagement.getModified());
-			assert.ok(!this.oVariantManagement.oVariantSaveBtn.getEnabled());
-			assert.ok(this.oVariantManagement.oVariantSaveAsBtn.setEnabled());
+			assert.ok(!this.oVariantManagement.oVariantSaveBtn.getVisible());
+			assert.ok(this.oVariantManagement.oVariantSaveAsBtn.getVisible());
 
 			this.oVariantManagement.setModified(true);
 			assert.ok(this.oVariantManagement.getModified());
-			assert.ok(this.oVariantManagement.oVariantSaveBtn.getEnabled());
-			assert.ok(this.oVariantManagement.oVariantSaveAsBtn.setEnabled());
+			assert.ok(this.oVariantManagement.oVariantSaveBtn.getVisible());
+			assert.ok(this.oVariantManagement.oVariantSaveAsBtn.getVisible());
 
 			this.oVariantManagement.setCurrentVariantKey("4");
 			this.oVariantManagement._openVariantList();
-			assert.ok(!this.oVariantManagement.oVariantSaveBtn.getEnabled());
-			assert.ok(this.oVariantManagement.oVariantSaveAsBtn.setEnabled());
+			assert.ok(!this.oVariantManagement.oVariantSaveBtn.getVisible());
+			assert.ok(this.oVariantManagement.oVariantSaveAsBtn.getVisible());
 
 			this.oVariantManagement.setCurrentVariantKey("1");
 			this.oVariantManagement._openVariantList();
-			assert.ok(this.oVariantManagement.oVariantSaveBtn.getEnabled());
-			assert.ok(this.oVariantManagement.oVariantSaveAsBtn.setEnabled());
+			assert.ok(this.oVariantManagement.oVariantSaveBtn.getVisible());
+			assert.ok(this.oVariantManagement.oVariantSaveAsBtn.getVisible());
 
 		});
 
