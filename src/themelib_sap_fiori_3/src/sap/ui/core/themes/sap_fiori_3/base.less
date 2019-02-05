@@ -12,7 +12,7 @@
 // [Label "Highlight Color"]
 // [Description "The color which is used to highlight screen elements"]
 // [Tags "Quick", "Base", "Content", "Color"]
-@sapHighlightColor: @sapBrandColor;
+@sapHighlightColor: darken(@sapBrandColor, 10);
 
 // [Label "Base Color"]
 // [Description "The color which is used to derive the most dominant background colors"]
@@ -201,7 +201,7 @@
 // [Label "Active Color"]
 // [Description "The color of activated elements"]
 // [Tags "Base", "Color"]
-@sapActiveColor: darken(@sapHighlightColor, 10);
+@sapActiveColor: @sapHighlightColor;
 
 // [Label "Highlight Text Color"]
 // [Description "The text color of highlighted screen elements"]
@@ -431,17 +431,17 @@
 // [Label "Button Border Color"]
 // [Description "The color of a button's borders."]
 // [Tags "Base", "Button", "Color"]
-@sapButton_BorderColor: @sapBrandColor; /* darken(@sapButton_Background, 30); //should be #ababab */
+@sapButton_BorderColor: darken(@sapBrandColor, 10); /* darken(@sapButton_Background, 30); //should be #ababab */
 
 // [Label "Button Text Color"]
 // [Description "The color of texts on buttons."]
 // [Tags "Base", "Button", "Color", "Font"]
-@sapButton_TextColor: contrast(@sapButton_Background, @sapBrandColor, @sapContent_ContrastTextColor, @sapContent_ContrastTextThreshold); /* contrast(@sapButton_Background, darken(@sapHighlightColor, 10), @sapContent_ContrastTextColor, @sapContent_ContrastTextThreshold); //should be #346187 */
+@sapButton_TextColor: contrast(@sapButton_Background, darken(@sapBrandColor, 10), @sapContent_ContrastTextColor, @sapContent_ContrastTextThreshold); /* contrast(@sapButton_Background, darken(@sapHighlightColor, 10), @sapContent_ContrastTextColor, @sapContent_ContrastTextThreshold); //should be #346187 */
 
 // [Label "Button Hover Background Color"]
 // [Description "The background color of buttons on hover."]
 // [Tags "Base", "Button", "Color"]
-@sapButton_Hover_Background: darken(@sapButton_Background, 2); // darken(@sapButton_Background, 5);
+@sapButton_Hover_Background: lighten(@sapHighlightColor, 63); // darken(@sapButton_Background, 5);
 
 // [Label "Button Hover Border Color"]
 // [Description "The color of a button's borders on hover."]
@@ -451,7 +451,7 @@
 // [Label "Button Hover Text Color"]
 // [Description "The color of texts on buttons on hover."]
 // [Tags "Base", "Button", "Color", "Font"]
-@sapButton_Hover_TextColor: contrast(@sapButton_Hover_Background, @sapBrandColor, @sapContent_ContrastTextColor, @sapContent_ContrastTextThreshold);
+@sapButton_Hover_TextColor: contrast(@sapButton_Hover_Background, darken(@sapBrandColor, 10), @sapContent_ContrastTextColor, @sapContent_ContrastTextThreshold);
 
 // [Label "Emphasized Button Background Color"]
 // [Description "The background color of emphasized buttons."]
@@ -517,7 +517,7 @@
 // [Label "Field Hover Border Color"]
 // [Description "The color of an input field's borders on hover."]
 // [Tags "Base", "Field", "Color"]
-@sapField_Hover_BorderColor: darken(@sapHighlightColor, 10);
+@sapField_Hover_BorderColor: @sapHighlightColor;
 
 // [Label "Field Help Hover Background Color"]
 // [Description "The color of the value help icon on hover."]
@@ -547,7 +547,7 @@
 // [Label "Read Only Field Border Color"]
 // [Description "The color of a read-only input field's borders."]
 // [Tags "Base", "Field", "Color"]
-@sapField_ReadOnly_BorderColor: lighten(@sapField_BorderColor, 5);
+@sapField_ReadOnly_BorderColor: @sapField_BorderColor;
 
 // [Label "Read Only Field Help Color"]
 // [Description "The background color of a read-only input field's value help icon."]
@@ -598,7 +598,7 @@
 // [Label "Group Title Border Color"]
 // [Description "The color of the borders of the group header area."]
 // [Tags "Base", "Group", "Color"]
-@sapGroup_TitleBorderColor: darken(@sapPrimary3, 15); // lighten(@sapPrimary6, 5);
+@sapGroup_TitleBorderColor: darken(@sapBaseColor, 15); // lighten(@sapPrimary6, 5);
 
 // [Label "Group Title Text Color"]
 // [Description "The text color of the group title. The text color of the title of a group."]
@@ -643,12 +643,12 @@
 // [Label "Toolbar Separator Color"]
 // [Description "The color of a toolbar's separators."]
 // [Tags "Base", "Toolbar", "Color"]
-@sapToolbar_SeparatorColor: darken(@sapBaseColor, 7); // fade(@sapPrimary1, 20);
+@sapToolbar_SeparatorColor: darken(@sapBaseColor, 15); // fade(@sapPrimary1, 20);
 
 // [Label "List Column Header Background Color"]
 // [Description "The background color of the column header area of lists."]
 // [Tags "Base", "List", "Color"]
-@sapList_HeaderBackground: darken(@sapList_Background, 2); // darken(@sapPrimary4, 3);
+@sapList_HeaderBackground: darken(@sapList_Background, 3); // darken(@sapPrimary4, 3);
 
 // [Label "List Column Header Border Color"]
 // [Description "The color of the borders of the list column header area."]
@@ -673,13 +673,13 @@
 // [Label "List Highlight Color"]
 // [Description "The color of highlighted elements in lists."]
 // [Tags "Base", "List", "Color"]
-@sapList_HighlightColor: darken(@sapHighlightColor, 10);
+@sapList_HighlightColor: @sapHighlightColor;
 
 // [Label "List Selection Background Color"]
 // [Description "The background color of selected elements in lists."]
 // [TranslationKey "sapList_SelectBackgrndColor"]
 // [Tags "Base", "List", "Color"]
-@sapList_SelectionBackgroundColor: lighten(desaturate(@sapSelectedColor, 24), 51); // lighten(desaturate(@sapSelectedColor, 2), 47);
+@sapList_SelectionBackgroundColor: lighten(desaturate(@sapSelectedColor, 24), 61); // lighten(desaturate(@sapSelectedColor, 2), 47);
 
 // [Label "List Background Color"]
 // [Description "The background color of lists."]
@@ -734,7 +734,7 @@
 // [Label "Page Header Text Color"]
 // [Description "The color of texts on page headers."]
 // [Tags "Base", "Page", "Color", "Font"]
-@sapPageHeader_TextColor: contrast(@sapPageHeader_Background, lighten(desaturate(@sapTextColor,2),12), @sapContent_ContrastTextColor, @sapContent_ContrastTextThreshold); // contrast(@sapPageHeader_Background, lighten(@sapTextColor, 20), @sapContent_ContrastTextColor, @sapContent_ContrastTextThreshold);
+@sapPageHeader_TextColor: contrast(@sapPageHeader_Background, @sapTextColor, @sapContent_ContrastTextColor, @sapContent_ContrastTextThreshold); // contrast(@sapPageHeader_Background, lighten(@sapTextColor, 20), @sapContent_ContrastTextColor, @sapContent_ContrastTextThreshold);
 
 // [Label "Page Footer Background Color"]
 // [Description "The background color of page footers."]
@@ -744,7 +744,7 @@
 // [Label "Page Footer Text Color"]
 // [Description "The color of texts on page footers."]
 // [Tags "Base", "Page", "Color", "Font"]
-@sapPageFooter_TextColor: contrast(@sapPageFooter_Background, lighten(desaturate(@sapTextColor,2),12), @sapContent_ContrastTextColor, @sapContent_ContrastTextThreshold);  // contrast(@sapPageFooter_Background, @sapTextColor, @sapContent_ContrastTextColor, @sapContent_ContrastTextThreshold);
+@sapPageFooter_TextColor: contrast(@sapPageFooter_Background, @sapTextColor, @sapContent_ContrastTextColor, @sapContent_ContrastTextThreshold);  // contrast(@sapPageFooter_Background, @sapTextColor, @sapContent_ContrastTextColor, @sapContent_ContrastTextThreshold);
 
 // [Label "Infobar Background Color"]
 // [Description "The background color of infobars."]
