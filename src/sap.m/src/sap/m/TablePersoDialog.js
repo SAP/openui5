@@ -393,7 +393,8 @@ sap.ui.define([
 					that._oSelectAllToolbar.setVisible(true);
 					Device.resize.detachHandler(that._fnHandleResize);
 					that.fireConfirm();
-				}
+				},
+				type : sap.m.ButtonType.Emphasized
 			}),
 			rightButton : new Button(this.getId() + "-buttonCancel", {
 				text: this._oRb.getText("PERSODIALOG_CANCEL"),
