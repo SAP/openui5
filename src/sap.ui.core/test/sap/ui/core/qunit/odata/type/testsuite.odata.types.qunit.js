@@ -36,7 +36,8 @@ sap.ui.define(function () {
 			"Stream" : {},
 			"String" : {},
 			"Time" : {},
-			"TimeOfDay" : {}
+			"TimeOfDay" : {},
+			"Unit" : {}
 		}
 	};
 });

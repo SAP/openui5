@@ -65,6 +65,10 @@ sap.ui.define(function () {
 				autostart : false,
 				module : ["sap/ui/core/sample/odata/v4/ListBindingTemplate/Opa.qunit"]
 			},
+			"OPA.Products" : {
+				autostart : false,
+				module : ["sap/ui/core/sample/odata/v4/Products/Opa.qunit"]
+			},
 			"OPA.SalesOrders" : {
 				autostart : false,
 				module : ["sap/ui/core/sample/odata/v4/SalesOrders/Opa.qunit"]

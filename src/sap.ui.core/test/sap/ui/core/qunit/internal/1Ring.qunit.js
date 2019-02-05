@@ -38,6 +38,7 @@ sap.ui.require([
 		"sap/ui/core/qunit/odata/type/String.qunit",
 		"sap/ui/core/qunit/odata/type/Time.qunit",
 		"sap/ui/core/qunit/odata/type/TimeOfDay.qunit",
+		"sap/ui/core/qunit/odata/type/Unit.qunit",
 		// OData V2
 		// Note: some types use lazy loading and are used by AnnotationHelper tests!
 		"sap/ui/core/qunit/odata/AnnotationHelper.qunit",
