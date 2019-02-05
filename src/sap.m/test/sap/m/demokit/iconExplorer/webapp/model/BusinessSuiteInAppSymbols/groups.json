@@ -103,7 +103,8 @@
 				{"name" : "icon-alternative-sequence"},
 				{"name" : "icon-main-sequence"},
 				{"name" : "icon-legal-section"},
-				{"name" : "icon-main-milestone"}
+				{"name" : "icon-main-milestone"},
+				{"name" : "icon-rfid"}
 			]
 		},
 		{
@@ -167,7 +168,8 @@
 				{"name" : "icon-recipe"},
 				{"name" : "icon-fire"},
 				{"name" : "icon-marital-status"},
-				{"name" : "icon-birthday"}
+				{"name" : "icon-birthday"},
+				{"name" : "icon-rfid"}
 			]
 		},
 		{
@@ -282,7 +284,8 @@
 				{"name" : "icon-causes"},
 				{"name" : "icon-effects"},
 				{"name" : "icon-function-alert"},
-				{"name" : "icon-function-hierarchy"}
+				{"name" : "icon-function-hierarchy"},
+				{"name" : "icon-input"}
 			]
 		},
 		{
@@ -291,7 +294,8 @@
 			"icons" : [
 				{"name" : "icon-sms"},
 				{"name" : "icon-tv"},
-				{"name" : "icon-radio"}
+				{"name" : "icon-radio"},
+				{"name" : "icon-rfid"}
 			]
 		},
 		{
@@ -376,7 +380,8 @@
 				{"name" : "icon-causes"},
 				{"name" : "icon-effects"},
 				{"name" : "icon-shared-by-me"},
-				{"name" : "icon-shared-with-me"}
+				{"name" : "icon-shared-with-me"},
+				{"name" : "icon-input"}
 			]
 		},
 		{
@@ -523,7 +528,8 @@
 				{"name" : "icon-delay"},
 				{"name" : "icon-alert-groups"},
 				{"name" : "icon-function-alert"},
-				{"name" : "icon-function-hierarchy"}
+				{"name" : "icon-function-hierarchy"},
+				{"name" : "icon-input"}
 			]
 		},
 		{
