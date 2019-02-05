@@ -1,20 +1,20 @@
 /*global QUnit*/
 sap.ui.define([
 	"sap/ui/thirdparty/jquery",
-	"sap/m/UploadCollection",
-	"sap/m/UploadCollectionItem",
+	"sap/m/upload/UploadSet",
+	"sap/m/upload/UploadSetItem",
 	"sap/m/Toolbar",
 	"sap/m/Label",
-	"sap/m/UploadCollectionRenderer",
+	"sap/m/upload/UploadSetRenderer",
 	"sap/m/ListItemBaseRenderer",
 	"sap/m/Dialog",
 	"sap/ui/Device",
 	"sap/m/ListSeparators",
 	"sap/m/ListMode",
 	"sap/ui/model/json/JSONModel",
-	"test-resources/sap/m/qunit/uploadCollection/UploadCollectionTestUtils"
-], function (jQuery, UploadCollection, UploadCollectionItem, Toolbar, Label, UploadCollectionRenderer,
-			 ListItemBaseRenderer, Dialog, Device, ListSeparators, ListMode, JSONModel, TestUtils) {
+	"test-resources/sap/m/qunit/upload/UploadSetTestUtils"
+], function (jQuery, UploadSet, UploadSetItem, Toolbar, Label, UploadSetRenderer, ListItemBaseRenderer, Dialog, Device,
+			 ListSeparators, ListMode, JSONModel, TestUtils) {
 	"use strict";
 
 	function getData() {
@@ -22,15 +22,11 @@ sap.ui.define([
 			items: [
 				{
 					fileType: "jpg",
-					fileName: "Screenshot.jpg",
-					fileSize: 20,
-					mimeType: "image/jpg"
+					fileName: "Screenshot.jpg"
 				},
 				{
 					fileType: "mp4",
-					fileName: "LookHowLongVideoNameThisIsYeah.mp4",
-					fileSize: 40,
-					mimeType: "video/mp4"
+					fileName: "LookHowLongVideoNameThisIsYeah.mp4"
 				}
 			]
 		};
@@ -38,26 +34,26 @@ sap.ui.define([
 
 	function getItemRestrictionMask(oItem) {
 		return (oItem._bFileTypeRestricted ? "1" : "0")
-			+ (oItem._bFileNameLengthRestricted ? "1" : "0")
-			+ (oItem._bFileSizeRestricted ? "1" : "0")
-			+ (oItem._bMimeTypeRestricted ? "1" : "0");
+			+ (oItem._bNameLengthRestricted ? "1" : "0")
+			+ (oItem._bSizeRestricted ? "1" : "0")
+			+ (oItem._bMediaTypeRestricted ? "1" : "0");
 	}
 
-	QUnit.module("Restrictions", {
+	QUnit.module("UploadSet restrictions", {
 		beforeEach: function () {
-			this.oUploadCollection = new UploadCollection("uploadCollection", {
+			this.oUploadSet = new UploadSet("uploadSet", {
 				items: {
 					path: "/items",
 					template: TestUtils.createItemTemplate(),
 					templateShareable: false
 				}
 			}).setModel(new JSONModel(getData()));
-			this.oUploadCollection.placeAt("qunit-fixture");
+			this.oUploadSet.placeAt("qunit-fixture");
 			sap.ui.getCore().applyChanges();
 		},
 		afterEach: function () {
-			this.oUploadCollection.destroy();
-			this.oUploadCollection = null;
+			this.oUploadSet.destroy();
+			this.oUploadSet = null;
 		}
 	});
 
@@ -65,20 +61,20 @@ sap.ui.define([
 		assert.expect(11);
 
 		var iEventCounter = 0,
-			oJpgItem = this.oUploadCollection.getItems()[0],
-			oMp4Item = this.oUploadCollection.getItems()[1],
+			oJpgItem = this.oUploadSet.getItems()[0],
+			oMp4Item = this.oUploadSet.getItems()[1],
 			fnCheckEvent = function () {
-				assert.ok(true, "Event 'TypeMissmatch' should be fired 3 times after restriction introduced (this is " + (++iEventCounter) + ". time).");
+				assert.ok(iEventCounter < 3, "Event 'TypeMissmatch' should be fired 3 times after restriction introduced (this is " + (++iEventCounter) + ". time).");
 			};
 
-		this.oUploadCollection.attachTypeMissmatch(fnCheckEvent);
+		this.oUploadSet.attachFileTypeMismatch(fnCheckEvent);
 		assert.equal(oJpgItem._isRestricted() || oMp4Item._isRestricted(), false, "Files should not be restricted at the start.");
 
 		// Messing with restriction
-		this.oUploadCollection.setFileType(["doc"]);
+		this.oUploadSet.setFileTypes(["doc"]);
 		assert.equal(oJpgItem._isRestricted() && oMp4Item._isRestricted(), true, "After changing file type restriction both files should now be restricted.");
 		assert.equal(getItemRestrictionMask(oJpgItem), "1000", "Only 'file type' restriction should be flagged.");
-		this.oUploadCollection.setFileType(["doc", "jpg"]);
+		this.oUploadSet.setFileTypes(["doc", "jpg"]);
 		assert.equal(oJpgItem._isRestricted(), false, "After enlarging white list with JPG, picture file should again not be restricted.");
 		assert.equal(oMp4Item._isRestricted(), true, "After enlarging white list with JPG, video file should still be restricted.");
 
@@ -89,64 +85,76 @@ sap.ui.define([
 		assert.equal(oMp4Item._isRestricted(), false, "After moving its type back to white list file should not be restricted.");
 
 		// Final null
-		this.oUploadCollection.setFileType(null);
+		this.oUploadSet.setFileTypes(null);
 		assert.equal(oJpgItem._isRestricted() || oMp4Item._isRestricted(), false, "After removing file type restriction both files should now be unrestricted.");
 
-		this.oUploadCollection.detachTypeMissmatch(fnCheckEvent);
+		this.oUploadSet.detachFileTypeMismatch(fnCheckEvent);
 	});
 
 	QUnit.test("File size restriction and actual file size of an item are interdependent", function (assert) {
 		assert.expect(11);
 
 		var iEventCounter = 0,
-			oSmallerItem = this.oUploadCollection.getItems()[0],
-			oBiggerItem = this.oUploadCollection.getItems()[1],
+			oSmallerItem = this.oUploadSet.getItems()[0],
+			oBiggerItem = this.oUploadSet.getItems()[1],
 			fnCheckEvent = function () {
-				assert.ok(true, "Event 'FileSizeExceed' should be fired 3 times after restriction introduced (this is " + (++iEventCounter) + ". time).");
+				assert.ok(iEventCounter < 3, "Event 'FileSizeExceed' should be fired 3 times after restriction introduced (this is " + (++iEventCounter) + ". time).");
 			};
 
-		this.oUploadCollection.attachFileSizeExceed(fnCheckEvent);
+		// Hack file sizes manualy
+		oSmallerItem._setFileObject({
+			size: UploadSetItem.MEGABYTE * 20
+		});
+		oBiggerItem._setFileObject({
+			size: UploadSetItem.MEGABYTE * 40
+		});
+
+		this.oUploadSet.attachFileSizeExceeded(fnCheckEvent);
 		assert.equal(oSmallerItem._isRestricted() || oBiggerItem._isRestricted(), false, "Files should not be restricted at the start.");
 
 		// Messing with restriction
-		this.oUploadCollection.setMaximumFileSize(10);
+		this.oUploadSet.setMaxFileSize(10);
 		assert.equal(oSmallerItem._isRestricted() && oBiggerItem._isRestricted(), true, "After changing size restriction both files should now be restricted.");
 		assert.equal(getItemRestrictionMask(oSmallerItem), "0010", "Only 'file size' restriction should be flagged.");
-		this.oUploadCollection.setMaximumFileSize(30);
+		this.oUploadSet.setMaxFileSize(30);
 		assert.equal(oSmallerItem._isRestricted(), false, "After rising size restriction enough smaller file should again not be restricted.");
 		assert.equal(oBiggerItem._isRestricted(), true, "After rising size restriction bigger file should still be restricted.");
 
 		// Messing with file size
-		oSmallerItem.setFileSize(40);
+		oSmallerItem._setFileObject({
+			size: UploadSetItem.MEGABYTE * 40
+		});
 		assert.equal(oSmallerItem._isRestricted(), true, "After rising its size file should be again restricted.");
-		oBiggerItem.setFileSize(20);
+		oBiggerItem._setFileObject({
+			size: UploadSetItem.MEGABYTE * 20
+		});
 		assert.equal(oBiggerItem._isRestricted(), false, "After lowering its size file should not be restricted.");
 
 		// Final null
-		this.oUploadCollection.setMaximumFileSize(null);
+		this.oUploadSet.setMaxFileSize(null);
 		assert.equal(oSmallerItem._isRestricted() || oBiggerItem._isRestricted(), false, "After removing file size restriction both files should now be unrestricted.");
 
-		this.oUploadCollection.detachFileSizeExceed(fnCheckEvent);
+		this.oUploadSet.detachFileSizeExceeded(fnCheckEvent);
 	});
 
 	QUnit.test("File name length restriction and actual file name length of an item are interdependent", function (assert) {
 		assert.expect(11);
 
 		var iEventCounter = 0,
-			oShorterItem = this.oUploadCollection.getItems()[0],
-			oLongerItem = this.oUploadCollection.getItems()[1],
+			oShorterItem = this.oUploadSet.getItems()[0],
+			oLongerItem = this.oUploadSet.getItems()[1],
 			fnCheckEvent = function () {
-				assert.ok(true, "Event 'FilenameLengthExceed' should be fired 3 times after restriction introduced (this is " + (++iEventCounter) + ". time).");
+				assert.ok(iEventCounter < 3, "Event 'FilenameLengthExceed' should be fired 3 times after restriction introduced (this is " + (++iEventCounter) + ". time).");
 			};
 
-		this.oUploadCollection.attachFilenameLengthExceed(fnCheckEvent);
+		this.oUploadSet.attachFileNameLengthExceeded(fnCheckEvent);
 		assert.equal(oShorterItem._isRestricted() || oLongerItem._isRestricted(), false, "Files should not be restricted at the start.");
 
 		// Messing with restriction
-		this.oUploadCollection.setMaximumFilenameLength(5);
+		this.oUploadSet.setMaxFileNameLength(5);
 		assert.equal(oShorterItem._isRestricted() && oLongerItem._isRestricted(), true, "After changing length restriction both files should now be restricted.");
 		assert.equal(getItemRestrictionMask(oShorterItem), "0100", "Only 'file name length' restriction should be flagged.");
-		this.oUploadCollection.setMaximumFilenameLength(20);
+		this.oUploadSet.setMaxFileNameLength(20);
 		assert.equal(oShorterItem._isRestricted(), false, "After rising length restriction enough shorter file should again not be restricted.");
 		assert.equal(oLongerItem._isRestricted(), true, "After rising size restriction longer file should still be restricted.");
 
@@ -157,43 +165,54 @@ sap.ui.define([
 		assert.equal(oLongerItem._isRestricted(), false, "After lowering its size the formerly longer file should not be restricted.");
 
 		// Final null
-		this.oUploadCollection.setMaximumFilenameLength(null);
+		this.oUploadSet.setMaxFileNameLength(null);
 		assert.equal(oShorterItem._isRestricted() || oLongerItem._isRestricted(), false, "After removing file size restriction both files should now be unrestricted.");
 
-		this.oUploadCollection.detachFilenameLengthExceed(fnCheckEvent);
+		this.oUploadSet.detachFileNameLengthExceeded(fnCheckEvent);
 	});
 
 	QUnit.test("Mime type restriction and actual mime type of an item are interdependent", function (assert) {
 		assert.expect(11);
 
 		var iEventCounter = 0,
-			oJpgItem = this.oUploadCollection.getItems()[0],
-			oMp4Item = this.oUploadCollection.getItems()[1],
+			oJpgItem = this.oUploadSet.getItems()[0],
+			oMp4Item = this.oUploadSet.getItems()[1],
 			fnCheckEvent = function () {
-				assert.ok(true, "Event 'TypeMissmatch' should be fired 3 times after restriction introduced (this is " + (++iEventCounter) + ". time).");
+				assert.ok(iEventCounter < 3, "Event 'TypeMissmatch' should be fired 3 times after restriction introduced (this is " + (++iEventCounter) + ". time).");
 			};
 
-		this.oUploadCollection.attachTypeMissmatch(fnCheckEvent);
+		oJpgItem._setFileObject({
+			type: "image/jpg"
+		});
+		oMp4Item._setFileObject({
+			type: "video/mp4"
+		});
+
+		this.oUploadSet.attachMediaTypeMismatch(fnCheckEvent);
 		assert.equal(oJpgItem._isRestricted() || oMp4Item._isRestricted(), false, "Files should not be restricted at the start.");
 
 		// Messing with restriction
-		this.oUploadCollection.setMimeType(["application/msword"]);
+		this.oUploadSet.setMediaTypes(["application/msword"]);
 		assert.equal(oJpgItem._isRestricted() && oMp4Item._isRestricted(), true, "After changing mime type restriction both files should now be restricted.");
 		assert.equal(getItemRestrictionMask(oJpgItem), "0001", "Only 'mime type' restriction should be flagged.");
-		this.oUploadCollection.setMimeType(["application/msword", "image/jpg"]);
+		this.oUploadSet.setMediaTypes(["application/msword", "image/jpg"]);
 		assert.equal(oJpgItem._isRestricted(), false, "After enlarging white list with JPG, picture file should again not be restricted.");
 		assert.equal(oMp4Item._isRestricted(), true, "After enlarging white list with JPG, video file should still be restricted.");
 
 		// Messing with type of the files
-		oJpgItem.setMimeType(["text/plain"]);
+		oJpgItem._setFileObject({
+			type: "text/plain"
+		});
 		assert.equal(oJpgItem._isRestricted(), true, "After moving its mime type out of white list file should be again restricted.");
-		oMp4Item.setMimeType(["application/msword"]);
+		oMp4Item._setFileObject({
+			type: "application/msword"
+		});
 		assert.equal(oMp4Item._isRestricted(), false, "After moving its mime type back to white list file should not be restricted.");
 
 		// Final null
-		this.oUploadCollection.setMimeType(null);
+		this.oUploadSet.setMediaTypes(null);
 		assert.equal(oJpgItem._isRestricted() || oMp4Item._isRestricted(), false, "After removing mime type restriction both files should now be unrestricted.");
 
-		this.oUploadCollection.detachTypeMissmatch(fnCheckEvent);
+		this.oUploadSet.detachMediaTypeMismatch(fnCheckEvent);
 	});
 });

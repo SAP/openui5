@@ -1324,6 +1324,26 @@ sap.ui.define(function() {
 					"./UploadCollectionToolbar.qunit"
 				]
 			},
+			UploadSet: {
+				title: "Test Page for sap.m.upload.UploadSet",
+				qunit: {
+					version: 2
+				},
+				sinon: {
+					version: 1
+				},
+				coverage: {
+					only: "[sap/m/upload/UploadSet.js,sap/m/upload/UploadSetItem.js,sap/m/upload/UploadSetRenderer.js,sap/m/upload/Uploader.js]"
+				},
+				ui5: {
+					language: "en"
+				},
+				module: [
+					"./upload/UploadSet.qunit",
+					"./upload/UploadSetItem.qunit",
+					"./upload/UploadSetRestrictions.qunit"
+				]
+			},
 			VBox: {
 				title: "QUnit Page for sap.m.VBox"
 			},

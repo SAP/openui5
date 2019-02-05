@@ -296,6 +296,7 @@ sap.ui.define([
 				this._oToolbar = new OverflowToolbar(this.getId() + "-toolbar", {
 					content: [this._oNumberOfAttachmentsTitle, new ToolbarSpacer(), this.getDefaultFileUploader()]
 				});
+				this.addDependent(this._oToolbar);
 			} else {
 				this._oToolbar.addContent(this.getDefaultFileUploader());
 			}
@@ -305,10 +306,6 @@ sap.ui.define([
 	};
 
 	UploadSet.prototype.setToolbar = function (oToolbar) {
-		if (this._oToolbar) {
-			this._oToolbar.destroy();
-			this._oToolbar = null;
-		}
 		this.setAggregation("toolbar", oToolbar);
 		this.getToolbar();
 
@@ -476,6 +473,14 @@ sap.ui.define([
 	};
 
 	/**
+	 * In case the upload is enabled and the specified item matches all necessary criteria like restrictions this starts uploading that item.
+	 * @param {object} oItem Item to upload.
+	 */
+	UploadSet.prototype.uploadItem = function (oItem) {
+		this._uploadItemIfGoodToGo(oItem);
+	};
+
+	/**
 	 * Returns an instance of the default <code>sap.ui.unified.FileUploader</code> used for adding files via OS open file dialog,
 	 * so that it can be customized like made invisible or have a different icon.
 	 *
@@ -622,6 +627,10 @@ sap.ui.define([
 			}
 		}
 
+		if (!oItem.fireDeletePressed({item: oItem})) {
+			return;
+		}
+
 		if (!this.fireBeforeItemDeleted({item: oItem})) {
 			return;
 		}
@@ -633,6 +642,7 @@ sap.ui.define([
 		}
 		this._oItemToBeDeleted = oItem;
 		MessageBox.show(sMessageText, {
+			id: this.getId() + "-deleteDialog",
 			title: this._oRb.getText("UPLOAD_SET_DELETE_TITLE"),
 			actions: [MessageBox.Action.OK, MessageBox.Action.CANCEL],
 			onClose: this._handleClosedDeleteDialog.bind(this),

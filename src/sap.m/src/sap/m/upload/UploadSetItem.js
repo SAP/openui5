@@ -118,7 +118,8 @@ sap.ui.define([
 					/**
 					 * The item on which open action was invoked.
 					 */
-					item: {type: "sap.m.upload.UploadSetItem"}
+					item: {type: "sap.m.upload.UploadSetItem"},
+					allowPreventDefault: true
 				},
 				/**
 				 * The event is raised when an item's delete action is invoked.
@@ -127,7 +128,8 @@ sap.ui.define([
 					/**
 					 * The item on which delete action was invoked.
 					 */
-					item: {type: "sap.m.upload.UploadSetItem"}
+					item: {type: "sap.m.upload.UploadSetItem"},
+					allowPreventDefault: true
 				}
 			}
 		}
@@ -372,7 +374,7 @@ sap.ui.define([
 			this._oListItem = new CustomListItem(this.getId() + "-listItem", {
 				content: [
 					this._getIcon(),
-					this._getDynamicContainer()
+					this._getDynamicContent()
 				]
 			});
 			this._oListItem.addStyleClass("sapMUCItem");
@@ -389,6 +391,10 @@ sap.ui.define([
 		} else {
 			this._fFileSize = null;
 			this.setMediaType(null);
+		}
+		if (this.getParent()) {
+			this._checkSizeRestriction(this.getParent().getMaxFileSize());
+			this._checkMediaTypeRestriction(this.getParent().getMediaTypes());
 		}
 	};
 
@@ -408,7 +414,6 @@ sap.ui.define([
 				this._oIcon.addStyleClass("sapMUCItemIcon");
 			}
 			this.addDependent(this._oIcon);
-			// oItemIcon.setAlt(this._getAriaLabelForPicture(item));
 		}
 
 		return this._oIcon;
@@ -461,7 +466,7 @@ sap.ui.define([
 		return this._oFileNameLink;
 	};
 
-	UploadSetItem.prototype._getDynamicContainer = function () {
+	UploadSetItem.prototype._getDynamicContent = function () {
 		if (!this._oDynamicContent) {
 			this._oDynamicContent = new DynamicItemContent({item: this});
 			this.addDependent(this._oDynamicContent);
@@ -844,7 +849,7 @@ sap.ui.define([
 	 * @private
 	 */
 	UploadSetItem.prototype._checkMediaTypeRestriction = function (aTypes) {
-		var bRestricted = (!!aTypes && (aTypes.length > 0) && this.getMediaType() && aTypes.indexOf(this.getMediaType()) === -1);
+		var bRestricted = (!!aTypes && (aTypes.length > 0) && !!this.getMediaType() && aTypes.indexOf(this.getMediaType()) === -1);
 		if (bRestricted !== this._bMediaTypeRestricted) {
 			this._bMediaTypeRestricted = bRestricted;
 			this.invalidate();
