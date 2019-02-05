@@ -310,6 +310,13 @@ sap.ui.define([
 		} else {
 			this._bIsDefaultIcon = true;
 			this._sActualType = AvatarType.Image;
+
+		// we perform this action in order to validate the image source and
+		// take further actions depending on that
+			this.preloadedImage = new window.Image();
+			this.preloadedImage.src = sSrc;
+			this.preloadedImage.onload = this._onImageLoad.bind(this);
+			this.preloadedImage.onerror = this._onImageError.bind(this);
 		}
 
 		return this;
@@ -414,6 +421,29 @@ sap.ui.define([
 
 	Avatar.prototype._getDefaultTooltip = function() {
 		return sap.ui.getCore().getLibraryResourceBundle("sap.f").getText("AVATAR_TOOLTIP");
+	};
+
+
+	/**
+	 * We use this callback to make sure we hide fallback content if our original image source
+	 * is loaded.
+	 *
+	 * @private
+	 */
+	Avatar.prototype._onImageLoad = function() {
+		//we need to remove fallback content
+		this.$().find(this._sImageFallbackType === AvatarType.Initials ?
+			 ".sapFAvatarInitialsHolder" : ".sapUiIcon").addClass('sapUiHidden');
+		delete this.preloadedImage;
+	};
+
+	/**
+	 * We use the negative callback to clean the useless property.
+	 *
+	 * @private
+	 */
+	 Avatar.prototype._onImageError = function() {
+		delete this.preloadedImage;
 	};
 
 	return Avatar;
