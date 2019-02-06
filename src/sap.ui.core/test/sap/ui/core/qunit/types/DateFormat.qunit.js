@@ -1555,6 +1555,36 @@ sap.ui.define(["sap/ui/core/format/DateFormat", "sap/ui/core/Locale", "sap/ui/co
 			assert.deepEqual(oIntervalFormat.parse(sResult), [oDate, oDate1]);
 		});
 
+		QUnit.test("Allow single date", function(assert) {
+			var oDate1 = new Date(2019, 0, 24),
+				oDate2 = new Date(2019, 0, 31);
+
+			// default interval formatting
+			var oIntervalFormat = DateFormat.getDateInstance({ interval: true	});
+			assert.equal(oIntervalFormat.format([oDate1, oDate2]), "Jan 24, 2019 – Jan 31, 2019", "Date interval returned");
+			assert.equal(oIntervalFormat.format([oDate1, null]), "", "Empty String returned");
+			assert.equal(oIntervalFormat.format([oDate1, oDate1]), "Jan 24, 2019", "Single Date returned: Jan 24, 2019");
+			assert.deepEqual(oIntervalFormat.parse("Jan 24, 2019"), [oDate1, oDate1], "Array with two dates returned.");
+			assert.deepEqual(oIntervalFormat.parse("Jan 24, 2019 - Jan 31, 2019"), [oDate1, oDate2], "Array with two dates returned.");
+
+			// allow single date option set
+			oIntervalFormat = DateFormat.getDateInstance({
+				interval: true,
+				singleIntervalValue: true
+			});
+
+			assert.equal(oIntervalFormat.format([oDate1, null]), "Jan 24, 2019", "Single Date returned: Jan 24, 2019");
+			assert.equal(oIntervalFormat.format([oDate1, oDate2]), "Jan 24, 2019 – Jan 31, 2019", "Date interval returned");
+			assert.equal(oIntervalFormat.format([oDate1, null]), "Jan 24, 2019", "Single Date returned: Jan 24, 2019");
+			assert.equal(oIntervalFormat.format([null, oDate1]), "", "Empty String returned.");
+			assert.equal(oIntervalFormat.format([null, null]), "", "Empty String returned.");
+			assert.equal(oIntervalFormat.format([oDate1, oDate1]), "Jan 24, 2019", "Single Date returned: Jan 24, 2019");
+
+			assert.deepEqual(oIntervalFormat.parse("Jan 24, 2019"), [oDate1, null], "Array with single Date and null returned.");
+			assert.deepEqual(oIntervalFormat.parse("Jan 24, 2019 – Jan 24, 2019"), [oDate1, null], "Array with two date objects is returned.");
+			assert.deepEqual(oIntervalFormat.parse("Jan 24, 2019 – Jan 31, 2019"), [oDate1, oDate2], "Array with two date objects is returned.");
+		});
+
 		QUnit.test("am/pm", function (assert) {
 			var oLocale = new Locale("en");
 
