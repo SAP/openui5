@@ -785,6 +785,7 @@ sap.ui.define([
 		assert.equal(oRowHeader.getTitle(), oRow.getTitle(), "row header Title");
 		assert.equal(oRowHeader.getIcon(), oRow.getIcon(), "row header icon");
 		assert.equal(oRowHeader.getDescription(), oRow.getText(), "row header Text");
+		assert.notOk(oRowHeader.$().attr("role"), "row header doesn't have unnecessary role attribute");
 
 		assert.ok(_getRowTimeline(oRow), "CalendarRow exist");
 		assert.ok(_getRowTimeline(oRow) instanceof sap.ui.unified.CalendarRow, "CalendarRow control");

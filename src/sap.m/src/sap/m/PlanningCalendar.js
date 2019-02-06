@@ -2715,6 +2715,9 @@ sap.ui.define([
 	PlanningCalendarRowHeaderRenderer.renderTabIndex = function(oRm, oLI) {
 	};
 
+	PlanningCalendarRowHeaderRenderer.getAriaRole = function (oRm, oLI) {
+	};
+
 	var PlanningCalendarRowTimelineRenderer = Renderer.extend(CalendarRowRenderer);
 
 	/* Returns AppointmentItems or Items depends on the Legend type:
