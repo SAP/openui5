@@ -190,9 +190,7 @@ sap.ui.define([
 				constructor : function (mParameters) {
 					var sGroupId,
 						oGroupProperties,
-						mHeaders = {
-							"Accept-Language" : sap.ui.getCore().getConfiguration().getLanguageTag()
-						},
+						sLanguageTag = sap.ui.getCore().getConfiguration().getLanguageTag(),
 						sODataVersion,
 						sParameter,
 						sServiceUrl,
@@ -265,8 +263,10 @@ sap.ui.define([
 					}
 					this.bAutoExpandSelect = mParameters.autoExpandSelect === true;
 
+					// BEWARE: do not share mHeaders between _MetadataRequestor and _Requestor!
 					this.oMetaModel = new ODataMetaModel(
-						_MetadataRequestor.create(mHeaders, sODataVersion, this.mUriParameters),
+						_MetadataRequestor.create({"Accept-Language" : sLanguageTag}, sODataVersion,
+							this.mUriParameters),
 						this.sServiceUrl + "$metadata", mParameters.annotationURI, this,
 						mParameters.supportReferences);
 					this.oRequestor = _Requestor.create(this.sServiceUrl, {
@@ -283,7 +283,7 @@ sap.ui.define([
 							},
 							reportBoundMessages : this.reportBoundMessages.bind(this),
 							reportUnboundMessages : this.reportUnboundMessages.bind(this)
-						}, mHeaders, this.mUriParameters, sODataVersion);
+						}, {"Accept-Language" : sLanguageTag}, this.mUriParameters, sODataVersion);
 					if (mParameters.earlyRequests) {
 						this.oMetaModel.fetchEntityContainer(true);
 						this.initializeSecurityToken();
