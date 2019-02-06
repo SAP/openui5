@@ -109,7 +109,7 @@ sap.ui.define(["sap/f/cards/BaseContent", 'sap/ui/model/json/JSONModel','sap/f/c
 			mItem.ownerImage && this._bindItemProperty("userPicture", mItem.ownerImage.value);
 			mItem.dateTime && this._bindItemProperty("dateTime", mItem.dateTime.value);
 			mItem.owner && this._bindItemProperty("userName", mItem.owner.value);
-			mItem.icon && this._bindItemProperty("icon", mItem.icon.value);
+			mItem.icon && this._bindItemProperty("icon", mItem.icon.src);
 			/* eslint-enable no-unused-expressions */
 
 			var oTimeline = this._getTimeline();
