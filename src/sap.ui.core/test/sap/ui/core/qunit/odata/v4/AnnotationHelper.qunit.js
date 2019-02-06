@@ -822,7 +822,11 @@ sap.ui.define([
 			.returns(mConstraints);
 		oModelMock.expects("getObject")
 			.withExactArgs("/Equipments/@com.sap.vocabularies.UI.v1.LineItem/4/Value/$Path"
-				+ "@Org.OData.Measures.V1.Unit")
+				+ "@Org.OData.Measures.V1.Unit/$Path")
+			.returns(undefined);
+		oModelMock.expects("getObject")
+			.withExactArgs("/Equipments/@com.sap.vocabularies.UI.v1.LineItem/4/Value/$Path"
+				+ "@Org.OData.Measures.V1.ISOCurrency/$Path")
 			.returns(undefined);
 
 		// code under test
