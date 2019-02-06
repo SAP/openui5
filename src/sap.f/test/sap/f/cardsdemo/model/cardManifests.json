@@ -2002,8 +2002,7 @@
 				"value": "{Photo}"
 			  },
 			  "icon": {
-				"label": "{{icon_label}}",
-				"value": "{Icon}"
+				"src": "{Icon}"
 			  }
 			}
 		  }
@@ -2037,8 +2036,7 @@
 				"value": "{Title}"
 			  },
 			  "icon": {
-				"label": "{{icon_label}}",
-				"value": "{Icon}"
+				"src": "{Icon}"
 			  }
 			}
 		  }
