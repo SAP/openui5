@@ -72,13 +72,19 @@ sap.ui.define([
 			//					verticalLayout
 			//						button
 			this.oPage.addContent(
-				this.oObjectPageLayout = new ObjectPageLayout("objPage",{
+				this.oObjectPageLayout = new ObjectPageLayout({
+					id: "objPage",
 					sections: [
-						this.oObjectPageSection = new ObjectPageSection("objSection",{
+						this.oObjectPageSection = new ObjectPageSection({
+							id: "objSection",
+							title: "Section Title",
 							subSections: [
-								this.oObjectPageSubSection = new ObjectPageSubSection("objSubSection", {
+								this.oObjectPageSubSection = new ObjectPageSubSection({
+									id: "objSubSection",
+									title: "Subsection Title",
 									blocks: [
-										this.oLayout = new VerticalLayout("layout1",{
+										this.oLayout = new VerticalLayout({
+											id: "layout1",
 											content: [
 												this.oButton1 = new Button("button1")
 											]
@@ -94,15 +100,28 @@ sap.ui.define([
 			// --Root control 2
 			//	verticalLayout
 			//		button
-			this.oOuterLayout = new VerticalLayout("layout2",{
+			this.oOuterLayout = new VerticalLayout({
+				id: "layout2",
 				content: [
-					this.oButton2 = new Button("button2")
+					this.oButton2 = new Button("button2"),
+					new VerticalLayout({
+						id: "layout3",
+						content: [
+							new Button({
+								id: "button3",
+								visible: true // visible control inside a hidden control
+							})
+						],
+						visible: false
+					})
 				]
 			});
 			this.oOuterLayout.placeAt('qunit-fixture');
 
-			this.oComponentContainer = new ComponentContainer("CompCont", {
-				component: this.oComp
+			this.oComponentContainer = new ComponentContainer({
+				id: "CompCont",
+				component: this.oComp,
+				height: "100%"
 			});
 			this.oComponentContainer.placeAt('qunit-fixture');
 			sap.ui.getCore().applyChanges();
@@ -279,14 +298,22 @@ sap.ui.define([
 			//		verticalLayout
 			//			button
 
-			this.oButton = new Button("button", {text: "Button 1"});
-			this.oButton1 = new Button("button1", {text: "Button 2"});
+			this.oButton = new Button({
+				id: "button",
+				text: "Button 1"
+			});
+			this.oButton1 = new Button({
+				id: "button1",
+				text: "Button 2"
+			});
 
-			this.oLayout = new VerticalLayout("layout0",{
+			this.oLayout = new VerticalLayout({
+				id: "layout0",
 				content : [this.oButton]
 			});
 
-			this.oLayout1 = new VerticalLayout("layout1",{
+			this.oLayout1 = new VerticalLayout({
+				id: "layout1",
 				content : [this.oButton1]
 			});
 
@@ -296,8 +323,10 @@ sap.ui.define([
 			var oPlugin = new Plugin({});
 			oPlugin.isEditable = function() { return false; };
 
-			this.oComponentContainer = new ComponentContainer("CompCont", {
-				component: this.oComp
+			this.oComponentContainer = new ComponentContainer({
+				id: "CompCont",
+				component: this.oComp,
+				height: "100%"
 			});
 			this.oComponentContainer.placeAt('qunit-fixture');
 			sap.ui.getCore().applyChanges();
@@ -360,7 +389,8 @@ sap.ui.define([
 					"technicalName": "sap.m.Button",
 					"editable": false,
 					"icon": "sap/m/designtime/Button.icon.svg",
-					"type": "element"
+					"type": "element",
+					"visible": true
 				}
 			};
 			var oExpectedResponse2 = {
@@ -375,7 +405,7 @@ sap.ui.define([
 				aUpdates.some(function(oUpdate) {
 					switch (oUpdate.type) {
 						case "new":
-							assert.deepEqual(oUpdate, oExpectedResponse1, "then expected reponse for new update was received");
+							assert.deepEqual(oUpdate, oExpectedResponse1, "then expected response for new update was received");
 							var oNewButton = this.oLayout.getContent().filter(function(oControl) {
 								return oControl.getId() === "newButton";
 							})[0];
@@ -393,6 +423,7 @@ sap.ui.define([
 
 			}, this);
 			this.oLayout.addContent(new Button("newButton")); //inserts new overlay
+			sap.ui.getCore().applyChanges();
 		});
 
 		QUnit.test("when setEditable is called for an existing overlay", function (assert) {
@@ -431,7 +462,8 @@ sap.ui.define([
 					"technicalName": "sap.m.Button",
 					"editable": false,
 					"icon": "sap/m/designtime/Button.icon.svg",
-					"type": "element"
+					"type": "element",
+					"visible": true
 				}
 			};
 			var oCommandFactory = new CommandFactory({
@@ -478,7 +510,8 @@ sap.ui.define([
 					"id": "button",
 					"instanceName": "newText",
 					"technicalName": "sap.m.Button",
-					"type": "element"
+					"type": "element",
+					"visible": true
 				},
 				"name": "text",
 				"oldValue": "Button 1",
@@ -493,14 +526,7 @@ sap.ui.define([
 					"name": "type",
 					"value": "Back",
 					"oldValue": "Default",
-					"element": {
-						"id": "button",
-						"instanceName": "newText",
-						"technicalName": "sap.m.Button",
-						"editable": false,
-						"icon": "sap/m/designtime/Button.icon.svg",
-						"type": "element"
-					}
+					"element": oExpectedResponse.element // unchanged
 				};
 				//property change operation #2
 				this.oButton.setType("Back");
@@ -515,7 +541,7 @@ sap.ui.define([
 		QUnit.test("when a root element is added to the design time", function (assert) {
 			var done = assert.async();
 			jQuery.getJSON("test-resources/sap/ui/rta/qunit/service/Outline.json", function (aExpectedOutlineData) {
-				var oButton = new Button("button2");
+				aExpectedOutlineData[1].elements[0].elements.splice(1, 1); // clean-up of unwanted element
 
 				// control editable property is initially false
 				aExpectedOutlineData[1].editable = false;
@@ -525,8 +551,9 @@ sap.ui.define([
 					type: "new",
 					element: aExpectedOutlineData[1]
 				};
-				var oOuterLayout = new VerticalLayout("layout2", {
-					content: [oButton]
+				var oOuterLayout = new VerticalLayout({
+					id: "layout2",
+					content: [new Button("button2")]
 				});
 				oOuterLayout.placeAt('qunit-fixture');
 				sap.ui.getCore().applyChanges();

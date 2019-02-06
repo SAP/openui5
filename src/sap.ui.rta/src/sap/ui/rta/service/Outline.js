@@ -56,7 +56,8 @@ sap.ui.define([
 	 * @property {string} technicalName - class type for element nodes / aggregation name for aggregation nodes
 	 * @property {boolean} editable - whether the node is editable
 	 * @property {string} [icon] - icon path for the node
-	 * @property {string} type - type of control node
+	 * @property {string} type - type of node
+	 * @property {boolean} [visible] - visibility of node of type "element"
 	 * @property {sap.ui.rta.service.Outline.OutlineObject[]} elements - outline data for child nodes
 	 */
 
@@ -159,14 +160,15 @@ sap.ui.define([
 		oOutline._getNodeProperties = function (oOverlay, oParentOverlay) {
 			var oDtName;
 			var sAggregationName;
-			var sInstanceName;
 			var sType;
+			var bVisible;
 			var bIsEditable = false; //default for aggregation overlays
 			var oElement = oOverlay.getElement();
 			var sId = oElement.getId();
 			var sElementClass = oElement.getMetadata().getName();
 			var oDtMetadata = oOverlay.getDesignTimeMetadata();
 			var oDtMetadataData = oDtMetadata.getData();
+			var sInstanceName = oDtMetadata.getLabel(oElement);
 			var sIconType = (
 				oDtMetadataData.palette
 				&& oDtMetadataData.palette.icons
@@ -176,40 +178,30 @@ sap.ui.define([
 
 			if (oOverlay instanceof ElementOverlay) {
 				sType = "element";
-				sInstanceName = oDtMetadata.getLabel(oElement);
 				bIsEditable = oOverlay.getEditable();
 				oDtName = oDtMetadata.getName(oElement);
+				bVisible = oOverlay.isVisible();
 			} else {
 				sType = "aggregation";
 				sAggregationName = oOverlay.getAggregationName();
-				sInstanceName = oDtMetadata.getLabel(oElement);
 				oDtName = oParentOverlay.getAggregation(sAggregationName)
 					? oParentOverlay.getDesignTimeMetadata().getAggregationDescription(sAggregationName, oElement)
 					: undefined;
 			}
 
 			//add all mandatory info to data
-			var oData = {
-				id: sId,
-				technicalName: sAggregationName ? sAggregationName : sElementClass, //aggregation name / class name
-				editable: bIsEditable,
-				type: sType //either "element" or "aggregation"
-			};
-
-			// element's id should not be set
-			if (sInstanceName !== sId && sInstanceName !== undefined) {
-				oData.instanceName = sInstanceName;
-			}
-
-			// from designtime metadata
-			if (oDtName && oDtName.singular) {
-				oData.name = oDtName.singular;
-			}
-
-			// designtime metadata icon type
-			if (sIconType !== undefined) {
-				oData.icon = sIconType;
-			}
+			var oData = Object.assign(
+				{
+					id: sId,
+					technicalName: sAggregationName ? sAggregationName : sElementClass, //aggregation name / class name
+					editable: bIsEditable,
+					type: sType //either "element" or "aggregation"
+				},
+				sInstanceName !== sId && sInstanceName !== undefined && { instanceName: sInstanceName }, // element's id should not be set as instanceName
+				oDtName && oDtName.singular && { name: oDtName.singular }, // designTime metadata name.singular
+				sIconType !== undefined && { icon: sIconType }, // designTime metadata icon type
+				typeof bVisible === "boolean" && { visible: bVisible } // visible
+			);
 
 			return oData;
 		};
