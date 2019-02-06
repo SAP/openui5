@@ -303,8 +303,9 @@ sap.ui.define([
 		},
 
 		/**
-		 * Checks the messages and finishes the test if no pending changes are left and all
-		 * expected requests have been received.
+		 * Checks the messages and finishes the test if no pending changes are left, all
+		 * expected requests have been received and the expected number of messages have been
+		 * reported.
 		 *
 		 * @param {object} assert The QUnit assert object
 		 */
@@ -313,6 +314,10 @@ sap.ui.define([
 
 			if (this.aRequests.length || this.iPendingResponses) {
 				return;
+			}
+			if (sap.ui.getCore().getMessageManager().getMessageModel().getObject("/").length
+					< this.aMessages.length) {
+				return; // expected messages still missing
 			}
 			for (sControlId in this.mChanges) {
 				if (this.mChanges[sControlId].length) {
@@ -1010,6 +1015,7 @@ sap.ui.define([
 						}
 					}
 				}
+				that.checkMessages(assert);
 			});
 		}
 	});
@@ -1851,7 +1857,7 @@ sap.ui.define([
 				.expectMessages([oMessage1, oMessage2]);
 
 			oTable.setFirstVisibleRow(1);
-			return that.waitForChanges();
+			return that.waitForChanges(assert);
 		});
 		//TODO: using an index for a bound message leads to a wrong target if for example
 		//      an entity with a lower index gets deleted, see CPOUI5UISERVICESV3-413
