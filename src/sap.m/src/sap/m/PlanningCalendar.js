@@ -2637,7 +2637,8 @@ sap.ui.define([
 		oRowHeader = new PlanningCalendarRowHeader(oRow.getId() + "-Head", {
 			icon : oRow.getIcon(),
 			description : oRow.getText(),
-			title : oRow.getTitle()
+			title : oRow.getTitle(),
+			tooltip : oRow.getTooltip()
 		});
 
 		oRowTimeline = new PlanningCalendarRowTimeline(oRow.getId() + "-CalRow", {
