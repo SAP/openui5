@@ -15,6 +15,7 @@ sap.ui.define([
 	"sap/m/Title",
 	"sap/m/Button",
 	"sap/m/List",
+	"sap/m/BusyIndicator",
 	"sap/m/StandardListItem",
 	"sap/ui/unified/FileUploaderParameter",
 	"sap/ui/unified/FileUploader",
@@ -47,6 +48,7 @@ sap.ui.define([
 	Title,
 	Button,
 	List,
+	BusyIndicator,
 	StandardListItem,
 	FileUploaderParameter,
 	FileUploader,
@@ -1542,9 +1544,10 @@ sap.ui.define([
 		sFileNameLong = item.getFileName();
 
 		if (sStatus === UploadCollection._uploadingStatus) {
-			oBusyIndicator = item._getBusyIndicator ? item._getBusyIndicator() : item._getControl("sap.m.BusyIndicator", {
+			oBusyIndicator = new BusyIndicator({
 				id: sItemId + "-ia_indicator"
-			}, "BusyIndicator").addStyleClass("sapMUCloadingIcon");
+			});
+			oBusyIndicator.addStyleClass("sapMUCloadingIcon");
 		} else {
 			oItemIcon = this._createIcon(item, sItemId, sFileNameLong);
 		}
