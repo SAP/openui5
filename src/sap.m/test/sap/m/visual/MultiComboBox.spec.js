@@ -19,6 +19,7 @@ describe('sap.m.MultiComboBox', function() {
 		var defaultMultiComboBoxArrow = element(by.id("MultiComboBox2-arrow"));
 		defaultMultiComboBoxArrow.click();
 		expect(takeScreenshot()).toLookAs("default_fullscreen");
+		defaultMultiComboBoxArrow.click();
 	});
 
 	//MultiComboBox - 50% width
@@ -40,13 +41,17 @@ describe('sap.m.MultiComboBox', function() {
 		var selectableItemMultiComboBoxArrow = element(by.id("MultiComboBoxDisabledListItemSelectable-arrow"));
 		selectableItemMultiComboBoxArrow.click();
 		expect(takeScreenshot()).toLookAs("selectable_disabled_item");
+		selectableItemMultiComboBoxArrow.click();
 	});
 
 	//MultiComboBox - Read only
 	it("should visualize a MultiComboBox - Read only", function(){
-		var readOnlyMultiComboBox = element(by.id("MultiComboBoxReadOnly"));
-		readOnlyMultiComboBox.click();
-		expect(takeScreenshot(readOnlyMultiComboBox)).toLookAs("read_only");
+		browser.executeScript('sap.ui.getCore().byId("MultiComboBoxReadOnly")._oTokenizer.getTokens()[4].setSelected(true);')
+		.then(function() {
+			var readOnlyMultiComboBox = element(by.id("MultiComboBoxReadOnly"));
+			expect(takeScreenshot(readOnlyMultiComboBox)).toLookAs("read_only");
+		});
+		browser.executeScript('sap.ui.getCore().byId("MultiComboBoxReadOnly")._oTokenizer.getTokens()[4].setSelected(false);');
 	});
 
 	//MultiComboBox - Disabled
@@ -63,9 +68,9 @@ describe('sap.m.MultiComboBox', function() {
 
 	//MultiComboBox Compact Mode
 	it("should select Compact mode", function(){
-		element(by.id("__box1")).click();
+		element(by.id("compactMode")).click();
 		expect(takeScreenshot()).toLookAs("compact_mode");
-		element(by.id("__box1")).click();
+		element(by.id("compactMode")).click();
 	});
 
 	//MultiComboBox - Error state
