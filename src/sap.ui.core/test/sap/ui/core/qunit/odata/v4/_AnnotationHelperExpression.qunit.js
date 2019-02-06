@@ -265,8 +265,9 @@ sap.ui.define([
 	});
 
 	//*********************************************************************************************
-	QUnit.test("path fails sync, uncaught expected", function (assert) {
+	QUnit.test("path fails sync, 'uncaught (in promise)' expected", function (assert) {
 		var oError = new Error("foo"),
+			fnListener = SyncPromise.listener,
 			oMetaModel = {
 				fetchObject : function () {}
 			},
@@ -277,21 +278,23 @@ sap.ui.define([
 				value : "BusinessPartnerID"
 			},
 			oResult,
-			oSyncPromiseMock = this.mock(SyncPromise);
+			oSyncPromiseMock = sinon.mock(SyncPromise);
 
 		this.mock(oMetaModel).expects("fetchObject")
 			.withExactArgs(oPathValue.path + "/$")
 			.returns(SyncPromise.reject(oError));
-		if (!SyncPromise.listener) {
-			// Note: this cannot be cleaned up again as there is no good point in time :-(
-			SyncPromise.listener = function () {};
+		try {
+			if (!fnListener) {
+				SyncPromise.listener = function () {};
+			}
+			oSyncPromiseMock.expects("listener").never(); // path() must not call SyncPromise#caught
+
+			// code under test
+			oResult = Expression.path(oPathValue);
+		} finally {
+			oSyncPromiseMock.restore(); // Note: SyncPromise#then internally calls #caught
+			SyncPromise.listener = fnListener;
 		}
-		oSyncPromiseMock.expects("listener").never(); // path() must not call SyncPromise#caught
-
-		// code under test
-		oResult = Expression.path(oPathValue);
-
-		oSyncPromiseMock.restore();
 
 		return oResult.then(function () {
 			assert.ok(false);
