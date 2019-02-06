@@ -194,14 +194,13 @@ sap.ui.define([
 	//*********************************************************************************************
 	["2.0", "4.0"].forEach(function (sODataVersion) {
 		QUnit.test("create requestors for odataVersion: " + sODataVersion, function (assert) {
-			var oModel;
+			var fnMetadataRequestorCreateSpy, oModel, fnRequestorCreateSpy;
 
-			this.mock(_Requestor).expects("create")
+			fnRequestorCreateSpy = this.mock(_Requestor).expects("create")
 				.withExactArgs(getServiceUrl(), sinon.match.object, {"Accept-Language" : "ab-CD"},
 					sinon.match.object, sODataVersion)
 				.returns({});
-
-			this.mock(_MetadataRequestor).expects("create")
+			fnMetadataRequestorCreateSpy = this.mock(_MetadataRequestor).expects("create")
 				.withExactArgs({"Accept-Language" : "ab-CD"}, sODataVersion, sinon.match.object)
 				.returns({});
 
@@ -209,6 +208,8 @@ sap.ui.define([
 			oModel = createModel("", {odataVersion : sODataVersion});
 
 			assert.strictEqual(oModel.getODataVersion(), sODataVersion);
+			assert.notStrictEqual(fnRequestorCreateSpy.args[0][2],
+				fnMetadataRequestorCreateSpy.args[0][0]);
 		});
 	});
 
