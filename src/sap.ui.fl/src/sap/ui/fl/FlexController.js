@@ -105,6 +105,27 @@ sap.ui.define([
 	};
 
 	/**
+	 * Sets the variant switch promise
+	 *
+	 * @param {promise} oPromise variant switch promise
+	 */
+	FlexController.prototype.setVariantSwitchPromise = function(oPromise) {
+		this._oVariantSwitchPromise = oPromise;
+	};
+
+	/**
+	 * Returns the variant switch promise. By default this is a resolved promise
+	 *
+	 * @returns {promise} variant switch promise
+	 */
+	FlexController.prototype.waitForVariantSwitch = function() {
+		if (!this._oVariantSwitchPromise) {
+			this._oVariantSwitchPromise = Promise.resolve();
+		}
+		return this._oVariantSwitchPromise;
+	};
+
+	/**
 	 * Base function for creation of a change
 	 *
 	 * @param {object} oChangeSpecificData - Property bag (nvp) holding the change information (see sap.ui.fl.Change#createInitialFileContent)
@@ -366,15 +387,11 @@ sap.ui.define([
 		});
 	};
 
-	FlexController.prototype._hasChangeProcessingCompleted = function(oControl, oChange, JsControlTreeModifier) {
-		var aCustomDataFunctionNames = [
-			"hasAppliedCustomData",
-			"hasFailedCustomDataJs",
-			"hasNotApplicableCustomData"
-		];
-		return aCustomDataFunctionNames.some(function(sCustomDataFunction) {
-			return !!FlexCustomData[sCustomDataFunction](oControl, oChange, JsControlTreeModifier);
-		});
+	FlexController.prototype._hasChangeProcessingCompleted = function(oChange) {
+		if (oChange.isQueuedForRevert()) {
+			return oChange.isRevertProcessFinished();
+		}
+		return oChange.isApplyProcessFinished();
 	};
 
 	/**
@@ -390,7 +407,7 @@ sap.ui.define([
 		var mChanges = mChangesMap.mChanges;
 		var aChangesForControl = mChanges[oControl.getId()] || [];
 		var aNotYetProcessedChanges = aChangesForControl.filter(function(oChange) {
-			return !this._hasChangeProcessingCompleted(oControl, oChange, JsControlTreeModifier);
+			return !this._hasChangeProcessingCompleted(oChange);
 		}, this);
 		var oAppComponent = Utils.getAppComponentForControl(oControl);
 		var aRelevantChanges = [];
@@ -406,31 +423,22 @@ sap.ui.define([
 
 		// attach aRelevantChanges to the promises and wait for them to be applied
 		aRelevantChanges.forEach(function(oWaitForChange) {
-			if (!oWaitForChange.aPromiseFn) {
-				oWaitForChange.aPromiseFn = [];
-			}
 			aPromises.push(
-				new Promise(function(resolve, reject) {
-					oWaitForChange.aPromiseFn.push({
-						resolve: resolve,
-						reject: reject
-					});
-				})
+				oWaitForChange.addChangeProcessingPromise()
 				.catch(function(oChange) {
 					// check mDependentChangesOnMe, reject all changes in aRelevantChanges.
 					var aDependentOnMe = oChange.getId && mChangesMap.mDependentChangesOnMe[oChange.getId()] || [];
 					aDependentOnMe.forEach(function(sDependencyKey) {
 						var oDependentChange = Utils.getChangeFromChangesMap(mChanges, sDependencyKey);
-						if (oDependentChange.aPromiseFn) {
-							oDependentChange.aPromiseFn.forEach(function(oPromiseFn) {
-								oPromiseFn.reject(oDependentChange);
-							});
-						}
+						oDependentChange.rejectChangeProcessingPromises();
 					});
 					Promise.resolve();
 				})
 			);
 		}, this);
+
+		// also wait for a potential variant switch to be done
+		aPromises.push(this.waitForVariantSwitch());
 
 		return Promise.all(aPromises);
 	};
@@ -539,6 +547,11 @@ sap.ui.define([
 				this._checkForDependentSelectorControls(oChange, mPropertyBag);
 
 				aPromiseStack.push(function() {
+					// reset the Change.applyStatus if the change is actually not applied anymore
+					if (oChange.isApplyProcessFinished() && !this._isChangeCurrentlyApplied(oControl, oChange, mPropertyBag.modifier)) {
+						oChange.setInitialApplyState();
+					}
+
 					return this.checkTargetAndApplyChange(oChange, oControl, mPropertyBag)
 
 					.then(function(oReturn) {
@@ -612,7 +625,7 @@ sap.ui.define([
 			//change is not capable of xml modifier
 			return new Utils.FakePromise({success: false, error: new Error("Change cannot be applied in XML. Retrying in JS.")});
 		}
-		if (!this._isChangeCurrentlyApplied(oControl, oChange, oModifier)) {
+		if (!oChange.isApplyProcessFinished()) {
 			var bRevertible = this.isChangeHandlerRevertible(oChange, mControl.control, oChangeHandler);
 			return new Utils.FakePromise()
 			.then(function() {
@@ -638,7 +651,7 @@ sap.ui.define([
 				}
 			})
 			.then(function() {
-				oChange.PROCESSING = oChange.PROCESSING ? oChange.PROCESSING : true;
+				oChange.startApplying();
 				var oInitializedControl = oChangeHandler.applyChange(oChange, mControl.control, mPropertyBag);
 				if (mControl.bTemplateAffected) {
 					oModifier.updateAggregation(oControl, oChange.getContent().boundAggregation);
@@ -657,24 +670,15 @@ sap.ui.define([
 				// only save the revert data in the custom data when the change is revertible and being processed in XML,
 				// as it's only relevant for viewCache at the moment
 				FlexCustomData.addAppliedCustomData(oControl, oChange, mPropertyBag, bRevertible && bXmlModifier);
-				if (oChange.aPromiseFn) {
-					oChange.aPromiseFn.forEach(function(oPromiseFn) {
-						oPromiseFn.resolve(oChange);
-					});
-				}
-				delete oChange.PROCESSING;
-				oChange.PROCESSED = true;
+				oChange.resolveChangeProcessingPromises();
+				// if a change was reverted previously remove the flag as it is not reverted anymore
+				oChange.markFinished();
 				return {success: true};
 			})
 			.catch(function(oRejectionReason) {
 				this._logErrorAndWriteCustomData(oRejectionReason, oChange, mPropertyBag, oControl, bXmlModifier);
-				if (oChange.aPromiseFn) {
-					oChange.aPromiseFn.forEach(function(oPromiseFn) {
-						oPromiseFn.reject(oChange);
-					});
-				}
-				delete oChange.PROCESSING;
-				oChange.PROCESSED = true;
+				oChange.rejectChangeProcessingPromises();
+				oChange.markFinished();
 				return {success: false, error: oRejectionReason};
 			}.bind(this));
 		}
@@ -705,16 +709,10 @@ sap.ui.define([
 			}
 		}
 
-		var bIsCurrentlyApplied = this._isChangeCurrentlyApplied(oControl, oChange, oModifier);
-		if (!bIsCurrentlyApplied && (oChange.PROCESSING || oChange.QUEUED)) {
+		var bIsCurrentlyApplied = oChange.isApplyProcessFinished();
+		if (!bIsCurrentlyApplied && oChange.hasApplyProcessStarted()) {
 			// wait for the change to be applied
-			vResult = new Promise(function(resolve, reject) {
-				oChange.aPromiseFn = oChange.aPromiseFn || [];
-				oChange.aPromiseFn.push({
-					resolve: resolve,
-					reject: reject
-				});
-			})
+			vResult = oChange.addChangeProcessingPromise()
 			.then(function() {
 				return true;
 			});
@@ -732,6 +730,7 @@ sap.ui.define([
 					oChange.setRevertData(FlexCustomData.getParsedRevertDataFromCustomData(oControl, oChange, oModifier));
 				}
 
+				oChange.startReverting();
 				var oResponse = oChangeHandler.revertChange(oChange, mControl.control, mPropertyBag);
 				if (mControl.bTemplateAffected) {
 					oModifier.updateAggregation(oControl, oChange.getContent().boundAggregation);
@@ -745,10 +744,14 @@ sap.ui.define([
 			// therefore it must be retrieved again
 			oControl = mPropertyBag.modifier.bySelector(oChange.getSelector(), mPropertyBag.appComponent, mPropertyBag.view);
 			FlexCustomData.destroyAppliedCustomData(oControl, oChange, mPropertyBag.modifier);
+			oChange.resolveChangeProcessingPromises();
+			oChange.markRevertFinished();
 		})
 
 		.catch(function(oError) {
 			Utils.log.error("Change could not be reverted:", oError);
+			oChange.rejectChangeProcessingPromises();
+			oChange.markRevertFinished();
 		});
 	};
 
@@ -775,7 +778,7 @@ sap.ui.define([
 	};
 
 	FlexController.prototype._isChangeCurrentlyApplied = function(oControl, oChange, oModifier) {
-		return !!FlexCustomData.getAppliedCustomDataValue(oControl, oChange, oModifier);
+		return FlexCustomData.hasChangeApplyFinishedCustomData(oControl, oChange, oModifier);
 	};
 
 	FlexController.prototype._handlePromiseChainError = function (oView, oError) {
@@ -997,7 +1000,7 @@ sap.ui.define([
 
 	FlexController.prototype._checkIfDependencyIsStillValid = function(oAppComponent, oModifier, sChangeId) {
 		var oChange = Utils.getChangeFromChangesMap(this._oChangePersistence._mChanges.mChanges, sChangeId);
-		if (!oChange.PROCESSED) {
+		if (!oChange.hasApplyProcessStarted()) {
 			return true;
 		}
 
@@ -1034,21 +1037,19 @@ sap.ui.define([
 
 			// if a change was already processed and is not applied anymore,
 			// then the control was destroyed and recreated. In this case we need to recreate/copy the dependencies.
-			if (oChange.PROCESSED && !this._isChangeCurrentlyApplied(oControl, oChange, mPropertyBag.modifier)) {
+			if (oChange.isApplyProcessFinished() && !this._isChangeCurrentlyApplied(oControl, oChange, mPropertyBag.modifier)) {
 				mChangesMap = this._oChangePersistence.copyDependenciesFromInitialChangesMap(oChange, this._checkIfDependencyIsStillValid.bind(this, oAppComponent, mPropertyBag.modifier));
 
 				mDependencies = mChangesMap.mDependencies;
 				mDependentChangesOnMe = mChangesMap.mDependentChangesOnMe;
-				delete oChange.PROCESSED;
+				oChange.setInitialApplyState();
 			}
 
 			if (!mDependencies[oChange.getId()]) {
-				oChange.QUEUED = true;
 				aPromiseStack.push(function() {
 					return this.checkTargetAndApplyChange(oChange, oControl, mPropertyBag)
-					.then(function(oResult) {
+					.then(function() {
 						this._updateDependencies(mDependencies, mDependentChangesOnMe, oChange.getId());
-						delete oChange.QUEUED;
 					}.bind(this));
 				}.bind(this));
 			} else {
@@ -1093,6 +1094,8 @@ sap.ui.define([
 	FlexController.prototype.revertChangesOnControl = function(aChanges, oAppComponent) {
 		var aPromiseStack = [];
 		aChanges.forEach(function(oChange) {
+			// Queued 'state' will be removed once the revert process is done
+			oChange.setQueuedForRevert();
 			aPromiseStack.push(function() {
 				var oSelector = this._getSelectorOfChange(oChange);
 				var oControl = JsControlTreeModifier.bySelector(oSelector, oAppComponent);

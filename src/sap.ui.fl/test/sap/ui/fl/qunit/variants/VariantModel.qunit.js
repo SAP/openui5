@@ -95,8 +95,8 @@ function(
 
 			this.oFlexController = FlexControllerFactory.createForControl(this.oComponent, oManifest);
 			this.fnLoadSwitchChangesStub = sandbox.stub(this.oFlexController._oChangePersistence, "loadSwitchChangesMapForComponent").returns({aRevert:[], aNew:[]});
-			this.fnRevertChangesStub = sandbox.stub(this.oFlexController, "revertChangesOnControl");
-			this.fnApplyChangesStub = sandbox.stub(this.oFlexController, "applyVariantChanges");
+			this.fnRevertChangesStub = sandbox.stub(this.oFlexController, "revertChangesOnControl").resolves();
+			this.fnApplyChangesStub = sandbox.stub(this.oFlexController, "applyVariantChanges").resolves();
 			this.fnDeleteChangeStub = sandbox.stub(this.oFlexController, "deleteChange");
 
 			sandbox.spy(VariantUtil, "initializeHashRegister");
@@ -535,6 +535,62 @@ function(
 			return this.oModel.updateCurrentVariant("variantMgmtId1", "variant0")
 			.then(function() {
 				assert.ok(fnRemoveDirtyChangesStub.calledOnce, "then '_removeDirtyChanges' called once");
+				assert.equal(this.oModel.oData["variantMgmtId1"].originalCurrentVariant, "variant0", "then original current variant updated to variant0");
+			}.bind(this));
+		});
+
+		QUnit.test("when calling 'updateCurrentVariant' twice without waiting for the first one to be finished", function(assert) {
+			sandbox.stub(this.oModel.oVariantController, "updateCurrentVariantInMap");
+			assert.equal(this.oModel.oData["variantMgmtId1"].currentVariant, "variant1", "then initially current variant is variant1");
+			assert.equal(this.oModel.oData["variantMgmtId1"].originalCurrentVariant, "variant1", "then initially original current variant is variant1");
+
+			var oSetVariantSwitchPromiseStub = sandbox.stub(this.oFlexController, "setVariantSwitchPromise");
+			this.oFlexController.revertChangesOnControl.restore();
+			var oRevertChangesStub = sandbox.stub(this.oFlexController, "revertChangesOnControl")
+			.onCall(0).returns(new Promise(function(resolve) {
+				setTimeout(function() {
+					resolve();
+				}, 0);
+			}))
+			.onCall(1).resolves();
+			this.oModel.updateCurrentVariant("variantMgmtId1", "variant2", this.oModel.oAppComponent);
+			return this.oModel.updateCurrentVariant("variantMgmtId1", "variant0", this.oModel.oAppComponent)
+			.then(this.oModel._oVariantSwitchPromise)
+			.then(function() {
+				assert.ok(true, "the internal promise '_oVariantSwitchPromise' is resolved");
+				assert.equal(this.fnLoadSwitchChangesStub.callCount, 2, "then loadSwitchChangesMapForComponent called twice from ChangePersitence");
+				assert.equal(oRevertChangesStub.callCount, 2, "then revertChangesOnControl called twice in FlexController");
+				assert.equal(oSetVariantSwitchPromiseStub.callCount, 2, "then oSetVariantSwitchPromiseStub called twice in FlexController");
+				assert.equal(this.fnApplyChangesStub.callCount, 2, "then applyVariantChanges called twice in FlexController");
+				assert.equal(this.oModel.oData["variantMgmtId1"].currentVariant, "variant0", "then current variant updated to variant0");
+				assert.equal(this.oModel.oData["variantMgmtId1"].originalCurrentVariant, "variant0", "then original current variant updated to variant0");
+			}.bind(this));
+		});
+
+		QUnit.test("when calling 'updateCurrentVariant' twice without waiting for the first one to be failed and finished", function(assert) {
+			sandbox.stub(this.oModel.oVariantController, "updateCurrentVariantInMap");
+			assert.equal(this.oModel.oData["variantMgmtId1"].currentVariant, "variant1", "then initially current variant is variant1");
+			assert.equal(this.oModel.oData["variantMgmtId1"].originalCurrentVariant, "variant1", "then initially original current variant is variant1");
+
+			var oSetVariantSwitchPromiseStub = sandbox.stub(this.oFlexController, "setVariantSwitchPromise");
+			this.oFlexController.revertChangesOnControl.restore();
+			var oRevertChangesStub = sandbox.stub(this.oFlexController, "revertChangesOnControl")
+			.onCall(0).returns(new Promise(function(resolve, reject) {
+				setTimeout(function() {
+					reject();
+				}, 0);
+			}))
+			.onCall(1).resolves();
+			this.oModel.updateCurrentVariant("variantMgmtId1", "variant2", this.oModel.oAppComponent);
+			return this.oModel.updateCurrentVariant("variantMgmtId1", "variant0", this.oModel.oAppComponent)
+			.then(this.oModel._oVariantSwitchPromise)
+			.then(function() {
+				assert.ok(true, "the internal promise '_oVariantSwitchPromise' is resolved");
+				assert.equal(this.fnLoadSwitchChangesStub.callCount, 2, "then loadSwitchChangesMapForComponent called twice from ChangePersitence");
+				assert.equal(oRevertChangesStub.callCount, 2, "then revertChangesOnControl called twice in FlexController");
+				assert.equal(oSetVariantSwitchPromiseStub.callCount, 2, "then oSetVariantSwitchPromiseStub called twice in FlexController");
+				assert.equal(this.fnApplyChangesStub.callCount, 1, "then applyVariantChanges called only for the first call");
+				assert.equal(this.oModel.oData["variantMgmtId1"].currentVariant, "variant0", "then current variant updated to variant0");
 				assert.equal(this.oModel.oData["variantMgmtId1"].originalCurrentVariant, "variant0", "then original current variant updated to variant0");
 			}.bind(this));
 		});

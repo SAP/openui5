@@ -44,6 +44,7 @@ sap.ui.define([
 			this._aUndoOperations = null;
 			this.setState(Change.states.NEW);
 			this.setModuleName(oFile.moduleName);
+			this.setInitialApplyState();
 		},
 		metadata : {
 			properties : {
@@ -52,6 +53,14 @@ sap.ui.define([
 				},
 				moduleName: {
 					type: "string"
+				},
+				/**
+				 * describes the current state of the change in regards to change applying and reverting.
+				 * To change or retrieve the state please use the getters and setters defined in this class.
+				 * Initially the state is <code>Change.applyState.INITIAL</code>.
+				 */
+				applyState: {
+					type: "int"
 				}
 			}
 		}
@@ -64,11 +73,96 @@ sap.ui.define([
 		DIRTY: "UPDATE"
 	};
 
+	Change.applyState = {
+		INITIAL: 0,
+		APPLYING: 1,
+		APPLY_FINISHED: 2,
+		REVERTING: 3,
+		REVERT_FINISHED: 4
+	};
+
 	Change.prototype.setState = function(sState) {
 		if (this._isValidState(sState)) {
 			this.setProperty("state", sState);
 		}
 		return this;
+	};
+
+	Change.prototype.setQueuedForRevert = function() {
+		this.QUEUED_FOR_REVERT = true;
+	};
+
+	Change.prototype.isQueuedForRevert = function() {
+		return this.QUEUED_FOR_REVERT;
+	};
+
+	Change.prototype.setInitialApplyState = function() {
+		this.setApplyState(Change.applyState.INITIAL);
+	};
+
+	Change.prototype.startApplying = function() {
+		this.setApplyState(Change.applyState.APPLYING);
+	};
+
+	Change.prototype.markFinished = function() {
+		this.setApplyState(Change.applyState.APPLY_FINISHED);
+	};
+
+	Change.prototype.startReverting = function() {
+		this.setApplyState(Change.applyState.REVERTING);
+	};
+
+	Change.prototype.markRevertFinished = function() {
+		delete this.QUEUED_FOR_REVERT;
+		this.setApplyState(Change.applyState.REVERT_FINISHED);
+	};
+
+	Change.prototype.hasApplyProcessStarted = function() {
+		return this.getApplyState() === Change.applyState.APPLYING;
+	};
+
+	Change.prototype.isApplyProcessFinished = function() {
+		return this.getApplyState() === Change.applyState.APPLY_FINISHED;
+	};
+
+	Change.prototype.hasRevertProcessStarted = function() {
+		return this.getApplyState() === Change.applyState.REVERTING;
+	};
+
+	Change.prototype.isRevertProcessFinished = function() {
+		return this.getApplyState() === Change.applyState.REVERT_FINISHED;
+	};
+
+	/**
+	 * Adds and returns a Promise that resolves/rejects as soon as
+	 * resolveChangeProcessingPromises or rejectChangeProcessingPromises is called
+	 *
+	 * @returns {Promise} Returns the promise
+	 */
+	Change.prototype.addChangeProcessingPromise = function() {
+		return new Promise(function(resolve, reject) {
+			this._aChangeProcessingPromises = this._aChangeProcessingPromises || [];
+			this._aChangeProcessingPromises.push({
+				resolve: resolve,
+				reject: reject
+			});
+		}.bind(this));
+	};
+
+	Change.prototype.resolveChangeProcessingPromises = function() {
+		if (this._aChangeProcessingPromises) {
+			this._aChangeProcessingPromises.forEach(function(oPromise) {
+				oPromise.resolve(this);
+			}, this);
+		}
+	};
+
+	Change.prototype.rejectChangeProcessingPromises = function() {
+		if (this._aChangeProcessingPromises) {
+			this._aChangeProcessingPromises.forEach(function(oPromise) {
+				oPromise.reject(this);
+			}, this);
+		}
 	};
 
 	/**

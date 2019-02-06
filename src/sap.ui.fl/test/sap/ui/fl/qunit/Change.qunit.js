@@ -109,6 +109,71 @@ function(
 			assert.equal(oInstance.getUndoOperations(), null, "the undoOperations were reset to null");
 		});
 
+		QUnit.test("Change.applyState", function(assert) {
+			var oChange = new Change(this.oChangeDef);
+			assert.equal(oChange.getProperty("applyState"), Change.applyState.INITIAL, "initially the state is INITIAL");
+
+			oChange.startApplying();
+			assert.equal(oChange.getProperty("applyState"), Change.applyState.APPLYING, "the applyState got changed correctly");
+			assert.ok(oChange.hasApplyProcessStarted(), "the function returns the correct value");
+
+			oChange.markFinished();
+			assert.equal(oChange.getProperty("applyState"), Change.applyState.APPLY_FINISHED, "the applyState got changed correctly");
+			assert.ok(oChange.isApplyProcessFinished(), "the function returns the correct value");
+
+			oChange.startReverting();
+			assert.equal(oChange.getProperty("applyState"), Change.applyState.REVERTING, "the applyState got changed correctly");
+			assert.ok(oChange.hasRevertProcessStarted(), "the function returns the correct value");
+
+			oChange.markRevertFinished();
+			assert.equal(oChange.getProperty("applyState"), Change.applyState.REVERT_FINISHED, "the applyState got changed correctly");
+			assert.ok(oChange.isRevertProcessFinished(), "the function returns the correct value");
+		});
+
+		QUnit.test("Change.QUEUED_FOR_REVERT", function(assert) {
+			var oChange = new Change(this.oChangeDef);
+			assert.notOk(oChange.QUEUED_FOR_REVERT, "initially the change is not queued");
+
+			oChange.setQueuedForRevert();
+			assert.ok(oChange.QUEUED_FOR_REVERT, "the queued flag was turned to true");
+			assert.ok(oChange.isQueuedForRevert(), "the function returns the correct value");
+
+			oChange.markRevertFinished();
+			assert.notOk(oChange.QUEUED_FOR_REVERT, "the queued flag was turned to false");
+			assert.notOk(oChange.isQueuedForRevert(), "the function returns the correct value");
+		});
+
+		QUnit.test("ChangeProcessingPromise resolve", function(assert) {
+			var done = assert.async();
+			var oChange = new Change(this.oChangeDef);
+			var oPromise = oChange.addChangeProcessingPromise();
+			var oPromise2 = oChange.addChangeProcessingPromise();
+
+			Promise.all([oPromise, oPromise2])
+			.then(function(aResult) {
+				assert.deepEqual(aResult[0], oChange, "the promise resolves with the change as result");
+				assert.deepEqual(aResult[1], oChange, "the promise resolves with the change as result");
+				done();
+			});
+
+			oChange.resolveChangeProcessingPromises();
+		});
+
+		QUnit.test("ChangeProcessingPromise reject", function(assert) {
+			var done = assert.async();
+			var oChange = new Change(this.oChangeDef);
+			var oPromise = oChange.addChangeProcessingPromise();
+			var oPromise2 = oChange.addChangeProcessingPromise();
+
+			Promise.all([oPromise, oPromise2])
+			.catch(function(oResult) {
+				assert.deepEqual(oResult, oChange, "the promise rejects with the change as result");
+				done();
+			});
+
+			oChange.rejectChangeProcessingPromises();
+		});
+
 		QUnit.test("Change.isVariant", function(assert) {
 			var oInstance = new Change(this.oChangeDef);
 			assert.equal(oInstance.isVariant(), true);
