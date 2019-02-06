@@ -739,7 +739,9 @@ sap.ui.define([
 	 * @private
 	 */
 	ODataParentBinding.prototype.isPatchWithoutSideEffects = function () {
-		return !!this.mParameters.$$patchWithoutSideEffects;
+		return this.mParameters.$$patchWithoutSideEffects
+			|| !this.isRoot() && this.oContext
+				&& this.oContext.getBinding().isPatchWithoutSideEffects();
 	};
 
 	/**
