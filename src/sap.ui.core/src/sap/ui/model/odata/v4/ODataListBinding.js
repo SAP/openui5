@@ -239,7 +239,7 @@ sap.ui.define([
 
 		this.checkBindingParameters(mParameters,
 			["$$aggregation", "$$canonicalPath", "$$groupId", "$$operationMode", "$$ownRequest",
-				"$$updateGroupId"]);
+				"$$patchWithoutSideEffects", "$$updateGroupId"]);
 
 		sOperationMode = mParameters.$$operationMode || this.oModel.sOperationMode;
 		// Note: $$operationMode is validated before, this.oModel.sOperationMode also

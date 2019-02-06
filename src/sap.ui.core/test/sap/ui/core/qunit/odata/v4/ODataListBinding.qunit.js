@@ -33,7 +33,7 @@ sap.ui.define([
 	"use strict";
 
 	var aAllowedBindingParameters = ["$$aggregation", "$$canonicalPath", "$$groupId",
-			"$$operationMode", "$$ownRequest", "$$updateGroupId"],
+			"$$operationMode", "$$ownRequest", "$$patchWithoutSideEffects", "$$updateGroupId"],
 		sClassName = "sap.ui.model.odata.v4.ODataListBinding",
 		TestControl = ManagedObject.extend("test.sap.ui.model.odata.v4.ODataListBinding", {
 			metadata : {

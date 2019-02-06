@@ -2176,16 +2176,56 @@ sap.ui.define([
 	});
 
 	//*********************************************************************************************
-	[{}, {$$patchWithoutSideEffects : true}].forEach(function (mParameters, i) {
-		QUnit.test("isPatchWithoutSideEffects: " + i, function (assert) {
-			var oBinding = new ODataParentBinding({
-					mParameters : mParameters
-				});
+	QUnit.test("isPatchWithoutSideEffects: set locally", function (assert) {
+		var oBinding = new ODataParentBinding({
+				mParameters : {$$patchWithoutSideEffects : true}
+			});
 
-			// code under test
-			assert.strictEqual(oBinding.isPatchWithoutSideEffects(),
-				!!mParameters.$$patchWithoutSideEffects);
-		});
+		// code under test
+		assert.strictEqual(oBinding.isPatchWithoutSideEffects(), true);
+	});
+
+	//*********************************************************************************************
+	QUnit.test("isPatchWithoutSideEffects: unset, root", function (assert) {
+		var oBinding = new ODataParentBinding({mParameters : {}});
+
+		this.mock(oBinding).expects("isRoot").withExactArgs().returns(true);
+
+		// code under test
+		assert.strictEqual(oBinding.isPatchWithoutSideEffects(), false);
+	});
+
+	//*********************************************************************************************
+	QUnit.test("isPatchWithoutSideEffects: unresolved", function (assert) {
+		var oBinding = new ODataParentBinding({
+				oContext : null,
+				mParameters : {}
+			});
+
+		this.mock(oBinding).expects("isRoot").withExactArgs().returns(false);
+
+		// code under test
+		assert.notOk(oBinding.isPatchWithoutSideEffects());
+	});
+
+	//*********************************************************************************************
+	QUnit.test("isPatchWithoutSideEffects: inherited", function (assert) {
+		var oParentBinding = new ODataParentBinding(),
+			oContext = {
+				getBinding : function () { return oParentBinding; }
+			},
+			oBinding = new ODataParentBinding({
+				oContext : oContext,
+				mParameters : {}
+			}),
+			bResult = {/*false or true*/};
+
+		this.mock(oBinding).expects("isRoot").withExactArgs().returns(false);
+		this.mock(oParentBinding).expects("isPatchWithoutSideEffects").withExactArgs()
+			.returns(bResult);
+
+		// code under test
+		assert.strictEqual(oBinding.isPatchWithoutSideEffects(), bResult);
 	});
 
 	//*********************************************************************************************
