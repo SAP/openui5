@@ -22,6 +22,10 @@ sap.ui.define([
 		return document.getElementById(oApp.getId() + "-BG");
 	}
 
+	function getAbsoluteURL(sRelPath) {
+		return document.baseURI + sRelPath;
+	}
+
 	var sBackroungImageSrc  = "test-resources/sap/m/images/SAPLogo.jpg",
 
 
@@ -147,21 +151,28 @@ sap.ui.define([
 	});
 
 	QUnit.test("style is set to DOM element", function(assert) {
-		var oApp = this.oApp;
+		// Arrange
+		var oApp = this.oApp,
+			sExpectedOutputImagePath = 'url("' + (Device.browser.safari ? getAbsoluteURL(sBackroungImageSrc) : sBackroungImageSrc) + '")',
+			$oAppImageHolder;
 
 		// Act
 		oApp.setBackgroundImage(sBackroungImageSrc);
 		sap.ui.getCore().applyChanges();
 
-		// Check
-		assert.strictEqual(getBgDomElement(oApp).style.backgroundImage, 'url(\"' + sBackroungImageSrc + '\")',
-			"correct property value");
+		// Arrange
+		$oAppImageHolder = oApp.$().find('.sapUiGlobalBackgroundImage').get(0);
+
+		// Assert
+		assert.strictEqual($oAppImageHolder.style.backgroundImage, sExpectedOutputImagePath,
+				"background-image URL is correct.");
 	});
 
 
 	QUnit.test("url value with special characters", function(assert) {
+		// Arrange
 		var oApp = this.oApp,
-			sPath = "images/",
+			sPath = "test-resources/sap/m/images/",
 			sUnreservedChars = "img100-._~",
 			sReservedChars1 = encodeURIComponent("#[]@"), // skipped  :/?  because of OS restriction
 			sReservedChars2 = encodeURIComponent("!$&'()+,;="),
@@ -169,19 +180,39 @@ sap.ui.define([
 			sReservedCharsUnencoded = "$",
 			sFileExtension = ".png",
 			sQuery = "?q1=1&q2=2",
-			sImgSrc1 = "data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAYAAAAfFcSJAAAADUlEQVR42mP8/5+hHgAHggJ/PchI7wAAAABJRU5ErkJggg==",
-			sImgSrc2 = sPath + sUnreservedChars + sReservedChars1 + sReservedChars2 + sOtherChars + sReservedCharsUnencoded + sFileExtension + sQuery,
-			aImgSrc = [sImgSrc1, sImgSrc2];
+			sImgSrc = sPath + sUnreservedChars + sReservedChars1 + sReservedChars2 + sOtherChars + sReservedCharsUnencoded + sFileExtension + sQuery,
+			$oAppImageHolder,
+			sExpectedOutputImagePath = 'url("' + (Device.browser.safari ? getAbsoluteURL(sImgSrc) : sImgSrc) + '")';
 
-		aImgSrc.forEach(function(sImgSrc) {
-			// Act
-			oApp.setBackgroundImage(sImgSrc);
-			sap.ui.getCore().applyChanges();
+		// Act
+		oApp.setBackgroundImage(sImgSrc);
+		sap.ui.getCore().applyChanges();
 
-			// Check
-			assert.strictEqual(getBgDomElement(oApp).style.backgroundImage, 'url(\"' + sImgSrc + '\")',
-				"correct property value");
-		});
+		// Arrange
+		$oAppImageHolder = oApp.$().find('.sapUiGlobalBackgroundImage').get(0);
+
+		// Assert
+		assert.strictEqual($oAppImageHolder.style.backgroundImage, sExpectedOutputImagePath,
+				"background-image URL is correct.");
+	});
+
+	QUnit.test("url value with base64 encoding", function(assert) {
+		// Arrange
+		var oApp = this.oApp,
+			sImgSrc = "data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAYAAAAfFcSJAAAADUlEQVR42mP8/5+hHgAHggJ/PchI7wAAAABJRU5ErkJggg==",
+			$oAppImageHolder,
+			sExpectedOutputImagePath = 'url("' + sImgSrc + '")';
+
+		// Act
+		oApp.setBackgroundImage(sImgSrc);
+		sap.ui.getCore().applyChanges();
+
+		// Arrange
+		$oAppImageHolder = oApp.$().find('.sapUiGlobalBackgroundImage').get(0);
+
+		// Assert
+		assert.strictEqual($oAppImageHolder.style.backgroundImage, sExpectedOutputImagePath,
+				"background-image URL is correct.");
 	});
 
 
