@@ -58,6 +58,12 @@ sap.ui.define([
 					group: "Appearance",
 					defaultValue: []
 				},
+                objectArray: {
+                    type: "object[]",
+                    group: "Data",
+                    defaultValue: [],
+                    byValue: true
+                },
 				objectValue: {
 					type: "object",
 					group: "Misc",
@@ -868,4 +874,104 @@ sap.ui.define([
 		assert.equal(aTrueBindings.length, 1, "The test is called an delivers true for one binding");
 		assert.deepEqual(aTrueBindings[0], oBinding1, "And this is exactly the first binding");
 	});
+
+    QUnit.test("ManagedObject Model  - handle array properties", function(assert) {
+        var aData = [{operator: "EQ", values: [1, 2]}];
+        var oModel = new JSONModel({
+            data: aData
+        });
+
+        var iPropertyChange = 0;
+        var sPropertyChangePath;
+        var fnHandlePropertyChange = function(oEvent) {
+            iPropertyChange++;
+            sPropertyChangePath = oEvent.getParameter("path");
+        };
+        oModel.attachPropertyChange(fnHandlePropertyChange);
+
+        this.obj.setModel(oModel);
+        this.obj.bindProperty("objectArray", "/data");
+
+        var iChange = 0;
+        var fnHandleChange = function(oEvent) {
+            if (oEvent.getParameter("name") === "objectArray") {
+                iChange++;
+            }
+        };
+        this.obj.attachEvent("_change", fnHandleChange);
+
+        var fnFormatter = function(aConditions) {
+            if (aConditions[0]) {
+                return aConditions[0].operator + ": " + aConditions[0].values[0] + ", " + aConditions[0].values[1];
+            }
+        };
+        var oText1 = new Text("T1", {
+            text: {path: "/data", formatter: fnFormatter}
+        });
+        oText1.setModel(oModel);
+        var oText2 = new Text("T2", {
+            text: {path: "$obj>/objectArray", formatter: fnFormatter}
+        });
+        oText2.setModel(this.oManagedObjectModel,"$obj");
+
+        var oInput = new Input({
+            value: "{$obj>/objectArray/0/values/0}"
+        });
+        oInput.setModel(this.oManagedObjectModel,"$obj");
+
+        assert.deepEqual(this.obj.getObjectArray(),aData, "The data is in the original element");
+        assert.equal(oText1.getText(), "EQ: 1, 2", "Text bound to model");
+        assert.equal(oText2.getText(), "EQ: 1, 2", "Text bound to ManagedObjectModel");
+        assert.equal(oInput.getValue(),"1", "The first value of data is in the input");
+
+        //now change the input with the input value a part of the object array
+        oInput.setValue(3);//hier is no int
+        var fnDone = assert.async();
+
+        setTimeout(function() {
+            var aNewData = [{operator: "EQ", values: ["3", 2]}];
+            assert.deepEqual(this.obj.getObjectArray(), aNewData, "The new data is in the original element");
+            assert.deepEqual(oModel.getProperty("/data"), aNewData, "The new data is also in the model");
+            assert.equal(oText1.getText(), "EQ: 3, 2", "Text bound to model");
+            assert.equal(oText2.getText(), "EQ: 3, 2", "Text bound to ManagedObjectModel");
+            assert.equal(iPropertyChange, 1, "propertyChange Event fired on outerModel");
+            assert.equal(sPropertyChangePath, "/data", "propertyChange Event path");
+            assert.equal(iChange, 1, " _Change Event fired on control");
+
+            iPropertyChange = 0;
+            iChange = 0;
+            aData = this.obj.getObjectArray();
+            aData[0].values[0] = 4;
+            this.obj.setObjectArray(aData); // not sure if this is still a real use case
+            setTimeout(function() {
+                assert.deepEqual(oModel.getProperty("/data"), [{operator: "EQ", values: [4, 2]}], "The new data is also in the model");
+                assert.equal(oInput.getValue(), "4", "The first value of data is in the input");
+                assert.equal(oText1.getText(), "EQ: 4, 2", "Text bound to model");
+                assert.equal(oText2.getText(), "EQ: 4, 2", "Text bound to ManagedObjectModel");
+                assert.equal(iPropertyChange, 1, "propertyChange Event fired on outerModel");
+                assert.equal(sPropertyChangePath, "/data", "propertyChange Event path");
+                assert.equal(iChange, 1, " _Change Event fired on control");
+
+                iPropertyChange = 0;
+                iChange = 0;
+                aData = [{operator: "EQ", values: [5, 6]}];
+                this.obj.setObjectArray(aData);
+                setTimeout(function() {
+                    assert.deepEqual(oModel.getProperty("/data"), [{operator: "EQ", values: [5, 6]}], "The new data is also in the model");
+                    assert.equal(oInput.getValue(), "5", "The first value of data is in the input");
+                    assert.equal(oText1.getText(), "EQ: 5, 6", "Text bound to model");
+                    assert.equal(oText2.getText(), "EQ: 5, 6", "Text bound to ManagedObjectModel");
+                    assert.equal(iPropertyChange, 1, "propertyChange Event fired on outerModel");
+                    assert.equal(sPropertyChangePath, "/data", "propertyChange Event path");
+                    assert.equal(iChange, 1, " _Change Event fired on control");
+
+                    oText1.destroy();
+                    oText2.destroy();
+                    oInput.destroy();
+                    fnDone();
+                }.bind(this), 0);
+            }.bind(this), 0);
+        }.bind(this), 0);
+
+    });
 });

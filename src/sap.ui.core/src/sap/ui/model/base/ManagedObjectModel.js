@@ -137,15 +137,19 @@ sap.ui.define([
 		// In case there is only one slash at the beginning, sObjectPath must contain this slash
 		sObjectPath = sResolvedPath.substring(0, iLastSlash || 1);
 		sProperty = sResolvedPath.substr(iLastSlash + 1);
-
-		var oObject = this._getObject(sObjectPath);
+		var aNodeStack = [], oObject = this._getObject(sObjectPath, null, aNodeStack);
 		if (oObject) {
 			if (oObject instanceof ManagedObject) {
 				var oProperty = oObject.getMetadata().getManagedProperty(sProperty);
 				if (oProperty) {
 					if (oProperty.get(oObject) !== oValue) {
 						oProperty.set(oObject, oValue);
-						this.checkUpdate(false, bAsyncUpdate);
+						//update only property and sub properties
+						var fnFilter = function(oBinding) {
+							var sPath = this.resolve(oBinding.sPath, oBinding.oContext);
+							return sPath.startsWith(sResolvedPath);
+						}.bind(this);
+						this.checkUpdate(false, bAsyncUpdate, fnFilter);
 						return true;
 					}
 				} else {
@@ -154,9 +158,32 @@ sap.ui.define([
 			} else if (oObject[sProperty] !== oValue) {
 				// get get an update of a property that was bound on a target
 				// control but which is only a data structure
-				oObject[sProperty] = oValue;
-				this.checkUpdate(false, bAsyncUpdate);
-				return true;
+
+				//Determine last managed object via node stack of getProperty
+				var sMember, i = aNodeStack.length - 1, aParts = [];
+				while (!(aNodeStack[i].node instanceof ManagedObject)) {
+					if (sMember) {
+						aParts.splice(0, 0, sMember);
+					}
+					sMember = aNodeStack[i].path;
+					i--;
+				}
+
+				//change the value of the property with structure
+				var oMOMValue = aNodeStack[i + 1].node;
+				var oPointer = oMOMValue;
+				for (i = 0; i < aParts.length; i++) {
+					oPointer = oPointer[aParts[i]];
+				}
+				oPointer[sProperty] = oValue;
+
+				//do not change the inner property structure part
+                // but ideally the surrounding managed objects property
+				var sSuffix = "/" + aParts.join("/") + "/" + sProperty;
+				var iDelimiter = sResolvedPath.lastIndexOf(sSuffix);
+				var sUpdatePath = sResolvedPath.substr(0, iDelimiter);
+				//re-call no instead of /objectArray/0/value/0 directly to /objectArray
+				return this.setProperty(sUpdatePath, oMOMValue, oContext);
 			}
 		}
 		return false;
@@ -446,8 +473,12 @@ sap.ui.define([
 	 * Supported selectors -> see _getSpecialNode
 	 * @private
 	 */
-	ManagedObjectModel.prototype._getObject = function(sPath, oContext) {
+	ManagedObjectModel.prototype._getObject = function(sPath, oContext, aNodeStack) {
 		var oNode = this._oObject, sResolvedPath = "", that = this;
+
+		if (aNodeStack) {
+            aNodeStack.push( {path: "/", node: oNode }); // remember first node
+        }
 
 		this.aBindings.forEach(function(oBinding) {
 			if (!oBinding._bAttached) {
@@ -534,6 +565,9 @@ sap.ui.define([
 				}
 			}
 
+            if (aNodeStack) {
+                aNodeStack.push({ path: sPart, node: oNode});
+            }
 			iIndex++;
 		}
 		return oNode;
