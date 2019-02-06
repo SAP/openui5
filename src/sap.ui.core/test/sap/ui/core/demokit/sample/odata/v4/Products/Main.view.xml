@@ -27,6 +27,10 @@
 					<Toolbar>
 					<Title level="H1" text="Products"/>
 					<ToolbarSpacer/>
+	 				<Link text="Unit Codes" target="unitCodes"
+						href="proxy/sap/opu/odata4/sap/zui5_testv4/default/iwbep/common/0001/UnitsOfMeasure?$select=ExternalCode,DecimalPlaces,Text,ISOCode"/>
+					<Link text="Currency Codes" target="currencyCodes"
+						href="proxy/sap/opu/odata4/sap/zui5_testv4/default/iwbep/common/0001/Currencies?$select=CurrencyCode,DecimalPlaces,Text,ISOCode"/>
 					<Button icon="sap-icon://message-popup" id="messagesButton"
 						press="onToggleMessagePopover" text="{ui>/iMessages}"
 						tooltip="Show messages"
@@ -36,7 +40,7 @@
 				<columns>
 					<template:repeat list="{lineItem>}" var="field">
 						<Column>
-							<Label design="Bold" text="{field>@@label}"/>
+							<Label text="{field>@@label}"/>
 						</Column>
 					</template:repeat>
 				</columns>

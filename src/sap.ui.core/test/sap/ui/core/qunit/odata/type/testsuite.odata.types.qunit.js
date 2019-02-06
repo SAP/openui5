@@ -23,6 +23,7 @@ sap.ui.define(function () {
 		},
 		tests : {
 			"Boolean" : {},
+			"Currency" : {},
 			"Date" : {},
 			"DateTimeBase" : {},
 			"Decimal" : {},

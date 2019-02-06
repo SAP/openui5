@@ -26,6 +26,9 @@
 	<edmx:Reference Uri="/sap/opu/odata/IWFND/CATALOGSERVICE;v=2/Vocabularies(TechnicalName='%2FIWBEP%2FVOC_CODELIST',Version='0001',SAP__Origin='LOCAL')/$value">
 		<edmx:Include Namespace="com.sap.vocabularies.CodeList.v1" Alias="SAP__CodeList" />
 	</edmx:Reference>
+	<edmx:Reference Uri="/sap/opu/odata/IWFND/CATALOGSERVICE;v=2/Vocabularies(TechnicalName='%2FIWBEP%2FVOC_UI',Version='0001',SAP__Origin='LOCAL')/$value">
+		<edmx:Include Namespace="com.sap.vocabularies.UI.v1" Alias="SAP__UI" />
+	</edmx:Reference>
 	<edmx:DataServices>
 		<Schema Namespace="com.sap.gateway.default.zui5_epm_sample.v0002" Alias="SAP__self">
 			<EntityType Name="BusinessPartner">
@@ -997,7 +1000,7 @@
 				<Annotation Term="SAP__CodeList.CurrencyCodes">
 					<Record>
 						<PropertyValue Property="Url" String="../../../../default/iwbep/common/0001/$metadata" />
-						<PropertyValue Property="CollectionPath" String="I_Currency" />
+						<PropertyValue Property="CollectionPath" String="Currencies" />
 					</Record>
 				</Annotation>
 			</Annotations>
@@ -1365,7 +1368,7 @@
 			<Annotations Target="SAP__self.BusinessPartner/BusinessPartnerRole">
 				<Annotation Term="SAP__common.ValueListReferences">
 					<Collection>
-						<String>../../../../f4/sap/d_bp_role-fv/0001;va='com.sap.gateway.default.zui5_epm_sample.v0002.ET-BUSINESSPARTNER.BP_ROLE'/$metadata</String>
+						<String>../../../../f4/sap/d_bp_role-fv/0001;ps='default-zui5_epm_sample-0002';va='com.sap.gateway.default.zui5_epm_sample.v0002.ET-BUSINESSPARTNER.BP_ROLE'/$metadata</String>
 					</Collection>
 				</Annotation>
 				<Annotation Term="SAP__common.ValueListWithFixedValues" />
@@ -1373,14 +1376,14 @@
 			<Annotations Target="SAP__self.BusinessPartner/CurrencyCode">
 				<Annotation Term="SAP__common.ValueListReferences">
 					<Collection>
-						<String>../../../../f4/sap/h_tcurc-sh/0001;va='com.sap.gateway.default.zui5_epm_sample.v0002.ET-BUSINESSPARTNER.CURRENCY_CODE'/$metadata</String>
+						<String>../../../../f4/sap/h_tcurc-sh/0001;ps='default-zui5_epm_sample-0002';va='com.sap.gateway.default.zui5_epm_sample.v0002.ET-BUSINESSPARTNER.CURRENCY_CODE'/$metadata</String>
 					</Collection>
 				</Annotation>
 			</Annotations>
 			<Annotations Target="SAP__self.Contact/Sex">
 				<Annotation Term="SAP__common.ValueListReferences">
 					<Collection>
-						<String>../../../../f4/sap/d_mf-fv/0001;va='com.sap.gateway.default.zui5_epm_sample.v0002.ET-CONTACT.SEX'/$metadata</String>
+						<String>../../../../f4/sap/d_mf-fv/0001;ps='default-zui5_epm_sample-0002';va='com.sap.gateway.default.zui5_epm_sample.v0002.ET-CONTACT.SEX'/$metadata</String>
 					</Collection>
 				</Annotation>
 				<Annotation Term="SAP__common.ValueListWithFixedValues" />
@@ -1388,14 +1391,14 @@
 			<Annotations Target="SAP__self.Product/ProductID">
 				<Annotation Term="SAP__common.ValueListReferences">
 					<Collection>
-						<String>../../../../f4/sap/h_epm_pr-sh/0001;va='com.sap.gateway.default.zui5_epm_sample.v0002.ET-PRODUCT.PRODUCT_ID'/$metadata</String>
+						<String>../../../../f4/sap/h_epm_pr-sh/0001;ps='default-zui5_epm_sample-0002';va='com.sap.gateway.default.zui5_epm_sample.v0002.ET-PRODUCT.PRODUCT_ID'/$metadata</String>
 					</Collection>
 				</Annotation>
 			</Annotations>
 			<Annotations Target="SAP__self.Product/TypeCode">
 				<Annotation Term="SAP__common.ValueListReferences">
 					<Collection>
-						<String>../../../../f4/sap/d_pr_type-fv/0001;va='com.sap.gateway.default.zui5_epm_sample.v0002.ET-PRODUCT.TYPE_CODE'/$metadata</String>
+						<String>../../../../f4/sap/d_pr_type-fv/0001;ps='default-zui5_epm_sample-0002';va='com.sap.gateway.default.zui5_epm_sample.v0002.ET-PRODUCT.TYPE_CODE'/$metadata</String>
 					</Collection>
 				</Annotation>
 				<Annotation Term="SAP__common.ValueListWithFixedValues" />
@@ -1403,28 +1406,28 @@
 			<Annotations Target="SAP__self.Product/Category">
 				<Annotation Term="SAP__common.ValueListReferences">
 					<Collection>
-						<String>../../../../f4/sap/h_epm_pd_cats-sh/0001;va='com.sap.gateway.default.zui5_epm_sample.v0002.ET-PRODUCT.CATEGORY'/$metadata</String>
+						<String>../../../../f4/sap/h_epm_pd_cats-sh/0001;ps='default-zui5_epm_sample-0002';va='com.sap.gateway.default.zui5_epm_sample.v0002.ET-PRODUCT.CATEGORY'/$metadata</String>
 					</Collection>
 				</Annotation>
 			</Annotations>
 			<Annotations Target="SAP__self.Product/NameLanguage">
 				<Annotation Term="SAP__common.ValueListReferences">
 					<Collection>
-						<String>../../../../f4/sap/h_t002-sh/0001;va='com.sap.gateway.default.zui5_epm_sample.v0002.ET-PRODUCT.NAME_LANGUAGE'/$metadata</String>
+						<String>../../../../f4/sap/h_t002-sh/0001;ps='default-zui5_epm_sample-0002';va='com.sap.gateway.default.zui5_epm_sample.v0002.ET-PRODUCT.NAME_LANGUAGE'/$metadata</String>
 					</Collection>
 				</Annotation>
 			</Annotations>
 			<Annotations Target="SAP__self.Product/DescriptionLanguage">
 				<Annotation Term="SAP__common.ValueListReferences">
 					<Collection>
-						<String>../../../../f4/sap/h_t002-sh/0001;va='com.sap.gateway.default.zui5_epm_sample.v0002.ET-PRODUCT.DESCRIPTION_LANGUAGE'/$metadata</String>
+						<String>../../../../f4/sap/h_t002-sh/0001;ps='default-zui5_epm_sample-0002';va='com.sap.gateway.default.zui5_epm_sample.v0002.ET-PRODUCT.DESCRIPTION_LANGUAGE'/$metadata</String>
 					</Collection>
 				</Annotation>
 			</Annotations>
 			<Annotations Target="SAP__self.Product/TaxTarifCode">
 				<Annotation Term="SAP__common.ValueListReferences">
 					<Collection>
-						<String>../../../../f4/sap/d_pr_tax-fv/0001;va='com.sap.gateway.default.zui5_epm_sample.v0002.ET-PRODUCT.TAX_TARIF_CODE'/$metadata</String>
+						<String>../../../../f4/sap/d_pr_tax-fv/0001;ps='default-zui5_epm_sample-0002';va='com.sap.gateway.default.zui5_epm_sample.v0002.ET-PRODUCT.TAX_TARIF_CODE'/$metadata</String>
 					</Collection>
 				</Annotation>
 				<Annotation Term="SAP__common.ValueListWithFixedValues" />
@@ -1432,56 +1435,56 @@
 			<Annotations Target="SAP__self.Product/MeasureUnit">
 				<Annotation Term="SAP__common.ValueListReferences">
 					<Collection>
-						<String>../../../../f4/sap/h_epm_t006-sh/0001;va='com.sap.gateway.default.zui5_epm_sample.v0002.ET-PRODUCT.MEASURE_UNIT'/$metadata</String>
+						<String>../../../../f4/sap/h_epm_t006-sh/0001;ps='default-zui5_epm_sample-0002';va='com.sap.gateway.default.zui5_epm_sample.v0002.ET-PRODUCT.MEASURE_UNIT'/$metadata</String>
 					</Collection>
 				</Annotation>
 			</Annotations>
 			<Annotations Target="SAP__self.Product/WeightUnit">
 				<Annotation Term="SAP__common.ValueListReferences">
 					<Collection>
-						<String>../../../../f4/sap/h_epm_t006_qu-sh/0001;va='com.sap.gateway.default.zui5_epm_sample.v0002.ET-PRODUCT.WEIGHT_UNIT'/$metadata</String>
+						<String>../../../../f4/sap/h_epm_t006_qu-sh/0001;ps='default-zui5_epm_sample-0002';va='com.sap.gateway.default.zui5_epm_sample.v0002.ET-PRODUCT.WEIGHT_UNIT'/$metadata</String>
 					</Collection>
 				</Annotation>
 			</Annotations>
 			<Annotations Target="SAP__self.Product/CurrencyCode">
 				<Annotation Term="SAP__common.ValueListReferences">
 					<Collection>
-						<String>../../../../f4/sap/h_tcurc-sh/0001;va='com.sap.gateway.default.zui5_epm_sample.v0002.ET-PRODUCT.CURRENCY_CODE'/$metadata</String>
+						<String>../../../../f4/sap/h_tcurc-sh/0001;ps='default-zui5_epm_sample-0002';va='com.sap.gateway.default.zui5_epm_sample.v0002.ET-PRODUCT.CURRENCY_CODE'/$metadata</String>
 					</Collection>
 				</Annotation>
 			</Annotations>
 			<Annotations Target="SAP__self.Product/DimUnit">
 				<Annotation Term="SAP__common.ValueListReferences">
 					<Collection>
-						<String>../../../../f4/sap/h_epm_t006_le-sh/0001;va='com.sap.gateway.default.zui5_epm_sample.v0002.ET-PRODUCT.DIM_UNIT'/$metadata</String>
+						<String>../../../../f4/sap/h_epm_t006_le-sh/0001;ps='default-zui5_epm_sample-0002';va='com.sap.gateway.default.zui5_epm_sample.v0002.ET-PRODUCT.DIM_UNIT'/$metadata</String>
 					</Collection>
 				</Annotation>
 			</Annotations>
 			<Annotations Target="SAP__self.SalesOrder/BuyerID">
 				<Annotation Term="SAP__common.ValueListReferences">
 					<Collection>
-						<String>../../../../f4/iwbep/v4_sample_sh_account-sh/0001;va='com.sap.gateway.default.zui5_epm_sample.v0002.ET-SALESORDER.BUYER_ID'/$metadata</String>
+						<String>../../../../f4/iwbep/v4_sample_sh_account-sh/0001;ps='default-zui5_epm_sample-0002';va='com.sap.gateway.default.zui5_epm_sample.v0002.ET-SALESORDER.BUYER_ID'/$metadata</String>
 					</Collection>
 				</Annotation>
 			</Annotations>
 			<Annotations Target="SAP__self.SalesOrder/CurrencyCode">
 				<Annotation Term="SAP__common.ValueListReferences">
 					<Collection>
-						<String>../../../../f4/sap/h_tcurc-sh/0001;va='com.sap.gateway.default.zui5_epm_sample.v0002.ET-SALESORDER.CURRENCY_CODE'/$metadata</String>
+						<String>../../../../f4/sap/h_tcurc-sh/0001;ps='default-zui5_epm_sample-0002';va='com.sap.gateway.default.zui5_epm_sample.v0002.ET-SALESORDER.CURRENCY_CODE'/$metadata</String>
 					</Collection>
 				</Annotation>
 			</Annotations>
 			<Annotations Target="SAP__self.Address/Country">
 				<Annotation Term="SAP__common.ValueListReferences">
 					<Collection>
-						<String>../../../../f4/sap/f4_intca-sh/0001;va='com.sap.gateway.default.zui5_epm_sample.v0002.CT-CT_ADDRESS.COUNTRY'/$metadata</String>
+						<String>../../../../f4/sap/f4_intca-sh/0001;ps='default-zui5_epm_sample-0002';va='com.sap.gateway.default.zui5_epm_sample.v0002.CT-CT_ADDRESS.COUNTRY'/$metadata</String>
 					</Collection>
 				</Annotation>
 			</Annotations>
 			<Annotations Target="SAP__self.Address/AddressType">
 				<Annotation Term="SAP__common.ValueListReferences">
 					<Collection>
-						<String>../../../../f4/sap/d_ad_type-fv/0001;va='com.sap.gateway.default.zui5_epm_sample.v0002.CT-CT_ADDRESS.ADDRESS_TYPE'/$metadata</String>
+						<String>../../../../f4/sap/d_ad_type-fv/0001;ps='default-zui5_epm_sample-0002';va='com.sap.gateway.default.zui5_epm_sample.v0002.CT-CT_ADDRESS.ADDRESS_TYPE'/$metadata</String>
 					</Collection>
 				</Annotation>
 				<Annotation Term="SAP__common.ValueListWithFixedValues" />

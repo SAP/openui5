@@ -24,6 +24,7 @@ sap.ui.require([
 		"sap/ui/core/qunit/util/XMLPreprocessor.qunit",
 		// OData types
 		"sap/ui/core/qunit/odata/type/Boolean.qunit",
+		"sap/ui/core/qunit/odata/type/Currency.qunit",
 		"sap/ui/core/qunit/odata/type/Date.qunit",
 		"sap/ui/core/qunit/odata/type/DateTimeBase.qunit",
 		"sap/ui/core/qunit/odata/type/Decimal.qunit",
