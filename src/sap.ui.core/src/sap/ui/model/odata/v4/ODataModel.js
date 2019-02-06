@@ -713,7 +713,7 @@ sap.ui.define([
 							aExpandQueryOptions);
 					}
 				}
-			} else if (sOptionName === "$count" ) {
+			} else if (sOptionName === "$count") {
 				if (typeof vValue  === "boolean") {
 					if (!vValue) {
 						delete mOptions.$count;
@@ -1120,7 +1120,8 @@ sap.ui.define([
 	 * @private
 	 */
 	ODataModel.prototype.initializeSecurityToken = function () {
-		this.oRequestor.refreshSecurityToken();
+		// a failure is not logged, only the failed request for the service document appears
+		this.oRequestor.refreshSecurityToken().catch(function () {});
 	};
 
 	/**

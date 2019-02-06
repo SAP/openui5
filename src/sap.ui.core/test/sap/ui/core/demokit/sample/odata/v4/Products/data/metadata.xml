@@ -176,7 +176,7 @@
 				<Property Name="GeoLocation" Type="com.sap.gateway.default.zui5_epm_sample.v0002.GeoLocation" Nullable="false" />
 			</ComplexType>
 			<ComplexType Name="GeoLocation">
-				<Property Name="Longitude" Type="Edm.Decimal" Nullable="false" Precision="15" Scale="12" DefaultValue="0.0"/><!-- BEWARE: manual change! -->
+				<Property Name="Longitude" Type="Edm.Decimal" Nullable="false" Precision="15" Scale="12" />
 				<Property Name="Latitude" Type="Edm.Decimal" Nullable="false" Precision="15" Scale="12" />
 			</ComplexType>
 			<ComplexType Name="Message">
@@ -221,11 +221,6 @@
 			<Function Name="FuGetSOContactList">
 				<Parameter Name="SalesOrderID" Type="Edm.String" Nullable="false" MaxLength="10" />
 				<ReturnType Type="Collection(com.sap.gateway.default.zui5_epm_sample.v0002.Contact)" />
-			</Function>
-			<!--TODO: adjust zui5_emp_sample in back-end as soon as gateway allows bound operations with return types others than entity types-->
-			<Function Name="SalesOrderLineItem_CheckAvailability" IsBound="true">
-				<Parameter Name="SalesOrderLineItem" Type="com.sap.gateway.default.zui5_epm_sample.v0002.SOLineItem" Nullable="false" />
-				<ReturnType Type="Edm.Decimal" Nullable="false"/>
 			</Function>
 			<EntityContainer Name="Container">
 				<EntitySet Name="BusinessPartnerList" EntityType="com.sap.gateway.default.zui5_epm_sample.v0002.BusinessPartner">

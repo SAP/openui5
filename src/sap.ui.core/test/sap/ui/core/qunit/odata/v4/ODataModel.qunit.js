@@ -1628,9 +1628,10 @@ sap.ui.define([
 	QUnit.test("initializeSecurityToken", function (assert) {
 		var oModel = createModel("");
 
-		this.mock(oModel.oRequestor).expects("refreshSecurityToken").withExactArgs();
+		this.mock(oModel.oRequestor).expects("refreshSecurityToken").withExactArgs()
+			.rejects(new Error()); // simulate that the request failed
 
-		// code under test
+		// code under test - must not cause "Uncaught in promise"
 		oModel.initializeSecurityToken();
 	});
 

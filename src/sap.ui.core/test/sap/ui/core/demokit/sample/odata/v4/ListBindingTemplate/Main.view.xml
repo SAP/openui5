@@ -9,19 +9,20 @@
 	xmlns:template="http://schemas.sap.com/sapui5/extension/sap.ui.core.template/1">
 	<template:alias name="getValueListType" value="AnnotationHelper.getValueListType">
 	<template:alias name="stringify" value="Helper.stringify">
+	<template:alias name="format" value="AnnotationHelper.format">
 	<template:alias name="value" value="AnnotationHelper.value">
 	<template:alias name="label" value="AnnotationHelper.label">
 	<VBox>
  		<Panel expandable="true" headerText="(Technical Tests)">
 			<VBox>
-				<Title level="H1" text="async helper"/>
+				<Title text="async helper" titleStyle="H2"/>
 				<template:with var="product" path="meta>/Equipments" helper="Helper.asyncHelper">
 					<template:repeat list="{product>}" var="productProperty">
 						<Text text="{productProperty>@sapui.name}: {productProperty>$Type}"/>
 					</template:repeat>
 				</template:with>
 				<Text text="- - - - - - - - - -"/>
-				<Title level="H1" text="isMultiple"/>
+				<Title text="isMultiple" titleStyle="H2"/>
 				<template:repeat list="{meta>/}" var="topLevel">
 					<template:if test="{:= ${topLevel>$kind} === 'EntitySet' }">
 						<Label design="Bold" text="{topLevel>$Type}"/>
@@ -89,12 +90,91 @@
 					<Text text="ValueListType: {property>@@getValueListType}"/>
 				</template:repeat>
 				<Text text="- - - - - - - - - -"/>
-				<Title level="H1" text="async repeat"/>
+				<Title text="async repeat" titleStyle="H2"/>
 				<template:repeat
 					list="{meta>/com.sap.gateway.default.iwbep.tea_busi_supplier.v0001.Supplier/}"
 					var="property">
 					<Text text="{property>@sapui.name}"/>
 				</template:repeat>
+				<Text text="- - - - - - - - - -"/>
+				<Title text="AnnotationHelper.value vs. AnnotationHelper.format" titleStyle="H2"/>
+				<Label text="meta>/Equipments/@com.sap.vocabularies.UI.v1.LineItem/5/Value@@format" />
+				<Text text="{path : 'meta>/Equipments/@com.sap.vocabularies.UI.v1.LineItem/5/Value@@format', formatter : 'stringify'}" />
+				<Label text="meta>/Equipments/@com.sap.vocabularies.UI.v1.LineItem/5/Value@@value" />
+				<Text text="{path : 'meta>/Equipments/@com.sap.vocabularies.UI.v1.LineItem/5/Value@@value', formatter : 'stringify'}" />
+
+				<Text text="- - - - - - - - - format with $Path"/>
+				<!--
+					@com.sap.vocabularies.UI.v1.LineItem/4/Value/$Path = EQUIPMENT_2_PRODUCT/Name;
+					@com.sap.vocabularies.Common.v1.QuickInfo = PRODUCT_2_SUPPLIER/Supplier_Name
+					Expected Result: {path:'EQUIPMENT_2_PRODUCT/PRODUCT_2_SUPPLIER/Supplier_Name',type:'sap.ui.model.odata.type.String',constraints:{'nullable':false}}
+				 -->
+				<Label text="meta>/Equipments/@com.sap.vocabularies.UI.v1.LineItem/4/Value/$Path@com.sap.vocabularies.Common.v1.QuickInfo@@format" />
+				<Text text="{path : 'meta>/Equipments/@com.sap.vocabularies.UI.v1.LineItem/4/Value/$Path@com.sap.vocabularies.Common.v1.QuickInfo@@format', formatter : 'stringify'}" />
+				<Label text="meta>/Equipments/@com.sap.vocabularies.UI.v1.LineItem/4/Value/$Path@com.sap.vocabularies.Common.v1.QuickInfo@@value" />
+				<Text text="{path : 'meta>/Equipments/@com.sap.vocabularies.UI.v1.LineItem/4/Value/$Path@com.sap.vocabularies.Common.v1.QuickInfo@@value', formatter : 'stringify'}" />
+
+				<template:with path="meta>/Equipments/@com.sap.vocabularies.UI.v1.LineItem/4/Value/$Path" helper="AnnotationHelper.resolve$Path" var="value">
+					<Label text="value>@com.sap.vocabularies.Common.v1.QuickInfo@@format" />
+					<Text text="{path : 'value>@com.sap.vocabularies.Common.v1.QuickInfo@@format', formatter : 'stringify'}" />
+				</template:with>
+
+				<Text text="- - - - - - - - - format with $Path; multiple navigation steps"/>
+				<!--
+					@com.sap.vocabularies.UI.v1.LineItem/0/Value/$Path = EMPLOYEE_2_MANAGER/Manager_to_Team/Name;
+					@com.sap.vocabularies.Common.v1.QuickInfo = TEAM_2_MANAGER/ID
+					Expected Result: {path:'EMPLOYEE_2_MANAGER/Manager_to_Team/TEAM_2_MANAGER/ID',type:'sap.ui.model.odata.type.Int32',constraints:{'maxLength':4,'nullable':false}}
+				 -->
+				<Label text="meta>/EMPLOYEES/@com.sap.vocabularies.UI.v1.LineItem/0/Value/$Path@com.sap.vocabularies.Common.v1.QuickInfo@@format" />
+				<Text text="{path : 'meta>/EMPLOYEES/@com.sap.vocabularies.UI.v1.LineItem/0/Value/$Path@com.sap.vocabularies.Common.v1.QuickInfo@@format', formatter : 'stringify'}" />
+				<Label text="meta>/EMPLOYEES/@com.sap.vocabularies.UI.v1.LineItem/0/Value/$Path@com.sap.vocabularies.Common.v1.QuickInfo@@value" />
+				<Text text="{path : 'meta>/EMPLOYEES/@com.sap.vocabularies.UI.v1.LineItem/0/Value/$Path@com.sap.vocabularies.Common.v1.QuickInfo@@value', formatter : 'stringify'}" />
+
+				<Text text="- - - - - - - - - format $Path pointing to navigation property"/>
+				<!--
+					@com.sap.vocabularies.UI.v1.LineItem#test/0/Value/$Path = EQUIPMENT_2_PRODUCT;
+					@com.sap.vocabularies.Common.v1.QuickInfo = Name
+					Expected Result: {path:'EQUIPMENT_2_PRODUCT/Name',type:'sap.ui.model.odata.type.String',constraints:{'nullable':false}}
+				 -->
+				<Label text="meta>/Equipments/@com.sap.vocabularies.UI.v1.LineItem#test/0/Value/$Path/@com.sap.vocabularies.Common.v1.QuickInfo@@format" />
+				<Text text="{path : 'meta>/Equipments/@com.sap.vocabularies.UI.v1.LineItem#test/0/Value/$Path/@com.sap.vocabularies.Common.v1.QuickInfo@@format', formatter : 'stringify'}" />
+
+				<Text text="- - - - - - - - - format $Path pointing to navigation property; annotation at the navigation property"/>
+				<!--
+					@com.sap.vocabularies.UI.v1.LineItem#test/0/Value/$Path = EQUIPMENT_2_PRODUCT;
+					@com.sap.vocabularies.Common.v1.QuickInfo = Category (at Equipments)
+					Expected Result: {path:'Category',type:'sap.ui.model.odata.type.String',constraints:{'nullable':false}}
+				 -->
+				<Label text="meta>/Equipments/@com.sap.vocabularies.UI.v1.LineItem#test/0/Value/$Path@com.sap.vocabularies.Common.v1.QuickInfo@@format" />
+				<Text text="{path : 'meta>/Equipments/@com.sap.vocabularies.UI.v1.LineItem#test/0/Value/$Path@com.sap.vocabularies.Common.v1.QuickInfo@@format', formatter : 'stringify'}" />
+
+				<Text text="- - - - - - - - - format $Path pointing to a property of a complex type"/>
+				<!--
+					@com.sap.vocabularies.UI.v1.LineItem/1/Value/$Path = LOCATION/City
+					@com.sap.vocabularies.Common.v1.QuickInfo = COUNTRY
+					Expected Result: {path:'LOCATION/COUNTRY',type:'sap.ui.model.odata.type.String',constraints:{'maxLength':255,'nullable':false}}
+				 -->
+				<Label text="meta>/EMPLOYEES/@com.sap.vocabularies.UI.v1.LineItem/1/Value/$Path@com.sap.vocabularies.Common.v1.QuickInfo@@format" />
+				<Text text="{path : 'meta>/EMPLOYEES/@com.sap.vocabularies.UI.v1.LineItem/1/Value/$Path@com.sap.vocabularies.Common.v1.QuickInfo@@format', formatter : 'stringify'}" />
+
+				<Text text="- - - - - - - - - format with $AnnotationPath"/>
+				<!--
+					@com.sap.vocabularies.UI.v1.Facets/0/Target/$AnnotationPath = EQUIPMENT_2_PRODUCT/@com.sap.vocabularies.Common.v1.QuickInfo;
+					@com.sap.vocabularies.Common.v1.QuickInfo = Name
+					Expected Result: {path:'EQUIPMENT_2_PRODUCT/Name',type:'sap.ui.model.odata.type.String',constraints:{'nullable':false}}
+				 -->
+				<Label text="meta>/Equipments/@com.sap.vocabularies.UI.v1.Facets/0/Target/$AnnotationPath/@@format" />
+				<Text text="{path : 'meta>/Equipments/@com.sap.vocabularies.UI.v1.Facets/0/Target/$AnnotationPath/@@format', formatter : 'stringify'}" />
+
+				<Text text="- - - - - - - - - format with $AnnotationPath; annotation at navigation property"/>
+				<!--
+					@com.sap.vocabularies.UI.v1.Facets/1/Target/$AnnotationPath = EQUIPMENT_2_PRODUCT@com.sap.vocabularies.Common.v1.QuickInfo;
+					@com.sap.vocabularies.Common.v1.QuickInfo = Category (at Equipments)
+					Expected Result: {path:'Category',type:'sap.ui.model.odata.type.String',constraints:{'nullable':false}}
+				 -->
+				<Label text="meta>/Equipments/@com.sap.vocabularies.UI.v1.Facets/1/Target/$AnnotationPath/@@format" />
+				<Text text="{path : 'meta>/Equipments/@com.sap.vocabularies.UI.v1.Facets/1/Target/$AnnotationPath/@@format', formatter : 'stringify'}" />
+
 				<!-- TODO repeat over $* properties! -->
 			</VBox>
 		</Panel>
@@ -129,7 +209,7 @@
 										</template:if>
 									</template:elseif>
 									<template:else>
-										<Text text="{field>Value/@@value}" />
+										<Text text="{field>Value/@@format}" />
 									</template:else>
 								</template:if>
 							</template:with>
@@ -139,6 +219,7 @@
 			</template:with>
 		</template:with>
 	</VBox>
+	</template:alias>
 	</template:alias>
 	</template:alias>
 	</template:alias>

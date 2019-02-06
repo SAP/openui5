@@ -30,6 +30,7 @@ sap.ui.define([
 
 	var sClassName = "sap.ui.model.odata.v4.lib._V2MetadataConverter",
 		sDefaultLanguage = sap.ui.getCore().getConfiguration().getLanguage(),
+		sInvalidModel = "/invalid/model/",
 		sSalesOrderService = "/sap/opu/odata4/sap/zui5_testv4/default/sap/zui5_epm_sample/0002/",
 		sTeaBusi = "/sap/opu/odata4/IWBEP/TEA/default/IWBEP/TEA_BUSI/0001/";
 
@@ -162,6 +163,8 @@ sap.ui.define([
 
 			// These metadata files are _always_ faked, the query option "realOData" is ignored
 			TestUtils.useFakeServer(this._oSandbox, "sap/ui/core/qunit", {
+				"/invalid/model/" : {code : 500},
+				"/invalid/model/$metadata" : {code : 500},
 				"/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/$metadata"
 					: {source : "model/GWSAMPLE_BASIC.metadata.xml"},
 				"/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/annotations.xml"
@@ -183,7 +186,9 @@ sap.ui.define([
 				"/special/cases/$metadata"
 					: {source : "odata/v4/data/metadata_special_cases.xml"},
 				"/special/cases/$metadata?sap-client=123"
-					: {source : "odata/v4/data/metadata_special_cases.xml"}
+					: {source : "odata/v4/data/metadata_special_cases.xml"},
+				"/sap/opu/odata4/sap/zui5_testv4/default/iwbep/common/0001/$metadata"
+					: {source : "odata/v4/data/metadata_codelist.xml"}
 			});
 			this.oLogMock = this.mock(Log);
 			this.oLogMock.expects("warning").never();
@@ -298,8 +303,9 @@ sap.ui.define([
 		},
 
 		/**
-		 * Checks the messages and finishes the test if no pending changes are left and all
-		 * expected requests have been received.
+		 * Checks the messages and finishes the test if no pending changes are left, all
+		 * expected requests have been received and the expected number of messages have been
+		 * reported.
 		 *
 		 * @param {object} assert The QUnit assert object
 		 */
@@ -308,6 +314,10 @@ sap.ui.define([
 
 			if (this.aRequests.length || this.iPendingResponses) {
 				return;
+			}
+			if (sap.ui.getCore().getMessageManager().getMessageModel().getObject("/").length
+					< this.aMessages.length) {
+				return; // expected messages still missing
 			}
 			for (sControlId in this.mChanges) {
 				if (this.mChanges[sControlId].length) {
@@ -709,8 +719,12 @@ sap.ui.define([
 
 			this.oModel = oModel || createTeaBusiModel();
 			if (this.oModel.submitBatch) {
-				this.oModel.oRequestor.sendBatch = checkBatch;
-				this.oModel.oRequestor.sendRequest = checkRequest;
+				// stub request methods for the requestor prototype to also check requests from
+				// "hidden" model instances like the code list model
+				this.mock(Object.getPrototypeOf(this.oModel.oRequestor)).expects("sendBatch")
+					.atLeast(0).callsFake(checkBatch);
+				this.mock(Object.getPrototypeOf(this.oModel.oRequestor)).expects("sendRequest")
+					.atLeast(0).callsFake(checkRequest);
 				fnLockGroup = this.oModel.lockGroup;
 				this.oModel.lockGroup = lockGroup;
 			} // else: it's a meta model
@@ -933,6 +947,8 @@ sap.ui.define([
 		setFormatter : function (assert, oControl, sControlId, bInList) {
 			var oBindingInfo = oControl.getBindingInfo("text") || oControl.getBindingInfo("value"),
 				fnOriginalFormatter = oBindingInfo.formatter,
+				oType = oBindingInfo.type,
+				bIsCompositeType = oType && oType.getMetadata().isA("sap.ui.model.CompositeType"),
 				that = this;
 
 			oBindingInfo.formatter = function (sValue) {
@@ -940,9 +956,20 @@ sap.ui.define([
 
 				if (fnOriginalFormatter) {
 					sValue = fnOriginalFormatter.apply(this, arguments);
+				} else if (bIsCompositeType) {
+					// composite type at binding with type and no original formatter: call the
+					// type's formatValue, as CompositeBinding#getExternalValue calls only the
+					// formatter if it is set
+					sValue = oType.formatValue.call(oType, Array.prototype.slice.call(arguments),
+						"string");
 				}
-				that.checkValue(assert, sValue, sControlId,
-					oContext && (oContext.getIndex ? oContext.getIndex() : oContext.getPath()));
+				// CompositeType#formatValue is called each time a part changes; we expect null if
+				// not all parts are set as it is the case for sap.ui.model.odata.type.Unit.
+				// Only check the value once all parts are available.
+				if (!bIsCompositeType || sValue !== null) {
+					that.checkValue(assert, sValue, sControlId,
+						oContext && (oContext.getIndex ? oContext.getIndex() : oContext.getPath()));
+				}
 
 				return sValue;
 			};
@@ -988,6 +1015,7 @@ sap.ui.define([
 						}
 					}
 				}
+				that.checkMessages(assert);
 			});
 		}
 	});
@@ -1829,7 +1857,7 @@ sap.ui.define([
 				.expectMessages([oMessage1, oMessage2]);
 
 			oTable.setFirstVisibleRow(1);
-			return that.waitForChanges();
+			return that.waitForChanges(assert);
 		});
 		//TODO: using an index for a bound message leads to a wrong target if for example
 		//      an entity with a lower index gets deleted, see CPOUI5UISERVICESV3-413
@@ -12761,4 +12789,89 @@ sap.ui.define([
 		{"publicationCount" : 3},
 		createSpecialCasesModel({autoExpandSelect : true})
 	);
+
+	//*********************************************************************************************
+	// Scenario: list binding with auto-$expand/$select and filter (so that metadata is required to
+	// build the query string), but the metadata could not be loaded (CPOUI5UISERVICESV3-1723)
+	QUnit.test("Auto-$expand/$select with dynamic filter, but no metadata", function (assert) {
+		var oModel = createModel(sInvalidModel, {autoExpandSelect : true}),
+			sView = '\
+<Table items="{path : \'/Artists\', \
+		filters : {path : \'IsActiveEntity\', operator : \'EQ\', value1 : \'true\'}}">\
+	<columns><Column/></columns>\
+	<ColumnListItem>\
+		<Text id="id" text="{ID}"/>\
+	</ColumnListItem>\
+</Table>';
+
+		this.oLogMock.restore(); // the exact errors do not interest
+		this.stub(Log, "error");
+		this.expectMessages([{
+			"code": undefined,
+			"descriptionUrl": undefined,
+			"message": "Could not load metadata: 500 Internal Server Error",
+			"persistent": true,
+			"target": "",
+			"technical": true,
+			"type": "Error"
+		}]);
+
+		return this.createView(assert, sView, oModel).then(function () {
+			// check that the first error message complains about the metadata access
+			sinon.assert.calledWithExactly(Log.error.firstCall, "GET /invalid/model/$metadata",
+				"Could not load metadata: 500 Internal Server Error",
+				"sap.ui.model.odata.v4.lib._MetadataRequestor");
+		});
+	});
+
+	//*********************************************************************************************
+	// Scenario: Display a measure with unit using the customizing loaded from the backend
+	// based on the "com.sap.vocabularies.CodeList.v1.UnitsOfMeasure" on the service's entity
+	// container.
+	// CPOUI5UISERVICESV3-1711
+	QUnit.test("OData Unit type considering unit customizing", function (assert) {
+		var oModel = createSalesOrdersModel({autoExpandSelect : true}),
+			sView = '\
+<FlexBox binding="{/ProductList(\'HT-1000\')}">\
+	<Input id="weight" value="{parts: [\'WeightMeasure\', \'WeightUnit\',\
+					{path : \'/##@@requestUnitsOfMeasure\',\
+						mode : \'OneTime\', targetType : \'any\'}],\
+				mode : \'TwoWay\',\
+				type : \'sap.ui.model.odata.type.Unit\'}" />\
+	<Text id="weightMeasure" text="{WeightMeasure}"/>\
+</FlexBox>',
+			that = this;
+
+		this.expectRequest("ProductList(\'HT-1000\')?$select=ProductID,WeightMeasure,WeightUnit", {
+				"@odata.etag" : "ETag",
+				"ProductID" : "HT-1000",
+				"WeightMeasure" : "12.34",
+				"WeightUnit" : "KG"
+			})
+			.expectRequest("UnitsOfMeasure?$select=ExternalCode,DecimalPlaces,Text", {
+				value : [{
+				   "UnitCode" : "KG",
+				   "Text" : "Kilogramm",
+				   "DecimalPlaces" : 5,
+				   "ExternalCode" : "KG"
+			   }]
+			})
+			.expectChange("weightMeasure", "12.340")  // Scale=3 in property metadata => 3 decimals
+			.expectChange("weight", "12.34000 KG");
+
+		return this.createView(assert, sView, oModel).then(function () {
+			that.expectChange("weight", "23.40000 KG")
+				.expectChange("weightMeasure", "23.400")
+				.expectRequest({
+					method : "PATCH",
+					url : "ProductList('HT-1000')",
+					headers : {"If-Match" : "ETag"},
+					payload : {"WeightMeasure" : "23.4", "WeightUnit" : "KG"}
+				});
+
+			that.oView.byId("weight").getBinding("value").setRawValue(["23.4", "KG"]);
+
+			return that.waitForChanges(assert);
+		});
+	});
 });

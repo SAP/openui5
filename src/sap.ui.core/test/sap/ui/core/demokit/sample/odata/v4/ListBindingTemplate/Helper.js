@@ -15,7 +15,9 @@ sap.ui.define([
 			return "*" + vRawValue + "*";
 		},
 		stringify : function (vRawValue) {
-			return BindingParser.complexParser.escape(JSON.stringify(vRawValue));
+			return vRawValue === undefined
+				? undefined
+				: BindingParser.complexParser.escape(JSON.stringify(vRawValue));
 		}
 	};
 }, /* bExport= */ true);

@@ -1,0 +1,42 @@
+<mvc:View
+	class="sapUiSizeCompact"
+	controllerName="sap.ui.core.sample.odata.v4.Products.Main"
+	xmlns="sap.m"
+	xmlns:mvc="sap.ui.core.mvc">
+	<VBox>
+		<Table growing="true" growingThreshold="20" items="{
+				path : '/ProductList',
+				parameters : {$count : true}}"
+			mode="SingleSelectMaster">
+			<headerToolbar>
+				<Toolbar>
+				<Title level="H1" text="Products"/>
+				<ToolbarSpacer/>
+				<Button id="messagesButton" icon="sap-icon://message-popup" tooltip="Show messages"
+					press="onToggleMessagePopover" text="{ui>/iMessages}"
+					type="{= ${ui>/iMessages} ? 'Emphasized' : 'Default' }"/>
+			</Toolbar>
+			</headerToolbar>
+			<columns>
+				<Column>
+					<Text text="Product ID"/>
+				</Column>
+				<Column>
+					<Text text="Name"/>
+				</Column>
+				<Column>
+					<Text text="Weight"/>
+				</Column>
+			</columns>
+			<ColumnListItem>
+				<Text id="ProductID" text="{ProductID}"/>
+				<Text text="{Name}"/>
+				<Input id="WeightMeasure" value="{parts: ['WeightMeasure', 'WeightUnit', {
+							path : '/##@@requestUnitsOfMeasure',
+							mode : 'OneTime', targetType : 'any'}],
+						mode : 'TwoWay', type : 'sap.ui.model.odata.type.Unit'}"
+					textAlign="Right"/>
+			</ColumnListItem>
+		</Table>
+	</VBox>
+</mvc:View>

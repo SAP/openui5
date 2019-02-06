@@ -264,7 +264,7 @@ sap.ui.define([
 		this.mock(jQuery).expects("ajax")
 			.returns(createMock(jqXHR, true)); // true  = fail
 		this.mock(_Helper).expects("createError")
-			.withExactArgs(sinon.match.same(jqXHR))
+			.withExactArgs(sinon.match.same(jqXHR), "Could not load metadata")
 			.returns(oExpectedError);
 		this.oLogMock.expects("error")
 			.withExactArgs("GET " + sUrl, oExpectedError.message,

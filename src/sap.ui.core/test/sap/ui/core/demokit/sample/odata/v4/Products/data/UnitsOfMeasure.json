@@ -1,0 +1,1998 @@
+{
+  "@odata.context": "$metadata#UnitsOfMeasure(ExternalCode,DecimalPlaces,Text,UnitCode)",
+  "@odata.metadataEtag": "W/\"20190204140701\"",
+  "value": [
+    {
+      "UnitCode": "%",
+      "ExternalCode": "%",
+      "Text": "Percentage",
+      "DecimalPlaces": 0
+    },
+    {
+      "UnitCode": "%%",
+      "ExternalCode": "010",
+      "Text": "",
+      "DecimalPlaces": 2
+    },
+    {
+      "UnitCode": "%O",
+      "ExternalCode": "%O",
+      "Text": "Per mille",
+      "DecimalPlaces": 0
+    },
+    {
+      "UnitCode": "/MI",
+      "ExternalCode": "009",
+      "Text": "",
+      "DecimalPlaces": 0
+    },
+    {
+      "UnitCode": "001",
+      "ExternalCode": "002",
+      "Text": "KT per PC",
+      "DecimalPlaces": 3
+    },
+    {
+      "UnitCode": "002",
+      "ExternalCode": "016",
+      "Text": "KT per M",
+      "DecimalPlaces": 3
+    },
+    {
+      "UnitCode": "003",
+      "ExternalCode": "/NL",
+      "Text": "",
+      "DecimalPlaces": 1
+    },
+    {
+      "UnitCode": "004",
+      "ExternalCode": "/PL",
+      "Text": "",
+      "DecimalPlaces": 1
+    },
+    {
+      "UnitCode": "005",
+      "ExternalCode": "U/L",
+      "Text": "",
+      "DecimalPlaces": 0
+    },
+    {
+      "UnitCode": "006",
+      "ExternalCode": "GDL",
+      "Text": "",
+      "DecimalPlaces": 1
+    },
+    {
+      "UnitCode": "007",
+      "ExternalCode": "MGD",
+      "Text": "",
+      "DecimalPlaces": 2
+    },
+    {
+      "UnitCode": "021",
+      "ExternalCode": "021",
+      "Text": "M per PC",
+      "DecimalPlaces": 3
+    },
+    {
+      "UnitCode": "1",
+      "ExternalCode": "ONE",
+      "Text": "One",
+      "DecimalPlaces": 0
+    },
+    {
+      "UnitCode": "10",
+      "ExternalCode": "D",
+      "Text": "Days",
+      "DecimalPlaces": 0
+    },
+    {
+      "UnitCode": "15M",
+      "ExternalCode": "15M",
+      "Text": "15 minutes",
+      "DecimalPlaces": 0
+    },
+    {
+      "UnitCode": "22S",
+      "ExternalCode": "22S",
+      "Text": "Square millimeter/second",
+      "DecimalPlaces": 0
+    },
+    {
+      "UnitCode": "2M",
+      "ExternalCode": "CMS",
+      "Text": "Centimeter/second",
+      "DecimalPlaces": 0
+    },
+    {
+      "UnitCode": "2X",
+      "ExternalCode": "000",
+      "Text": "Meter/Minute",
+      "DecimalPlaces": 0
+    },
+    {
+      "UnitCode": "4G",
+      "ExternalCode": "µL",
+      "Text": "Microliter",
+      "DecimalPlaces": 0
+    },
+    {
+      "UnitCode": "4O",
+      "ExternalCode": "µF",
+      "Text": "Microfarad",
+      "DecimalPlaces": 0
+    },
+    {
+      "UnitCode": "4T",
+      "ExternalCode": "PF",
+      "Text": "Pikofarad",
+      "DecimalPlaces": 0
+    },
+    {
+      "UnitCode": "999",
+      "ExternalCode": "999",
+      "Text": "",
+      "DecimalPlaces": 0
+    },
+    {
+      "UnitCode": "A",
+      "ExternalCode": "A",
+      "Text": "Ampere",
+      "DecimalPlaces": 0
+    },
+    {
+      "UnitCode": "A87",
+      "ExternalCode": "GOH",
+      "Text": "Gigaohm",
+      "DecimalPlaces": 0
+    },
+    {
+      "UnitCode": "A93",
+      "ExternalCode": "GM3",
+      "Text": "Gram/cubic meter",
+      "DecimalPlaces": 0
+    },
+    {
+      "UnitCode": "ACR",
+      "ExternalCode": "ACR",
+      "Text": "Acre",
+      "DecimalPlaces": 0
+    },
+    {
+      "UnitCode": "B34",
+      "ExternalCode": "KD3",
+      "Text": "Kilogram/cubic decimeter",
+      "DecimalPlaces": 0
+    },
+    {
+      "UnitCode": "B45",
+      "ExternalCode": "KML",
+      "Text": "Kilomol",
+      "DecimalPlaces": 0
+    },
+    {
+      "UnitCode": "B47",
+      "ExternalCode": "NI",
+      "Text": "Kilonewton",
+      "DecimalPlaces": 0
+    },
+    {
+      "UnitCode": "B73",
+      "ExternalCode": "MN",
+      "Text": "Meganewton",
+      "DecimalPlaces": 0
+    },
+    {
+      "UnitCode": "B75",
+      "ExternalCode": "MGO",
+      "Text": "Megohm",
+      "DecimalPlaces": 0
+    },
+    {
+      "UnitCode": "B78",
+      "ExternalCode": "MHV",
+      "Text": "Megavolt",
+      "DecimalPlaces": 0
+    },
+    {
+      "UnitCode": "B84",
+      "ExternalCode": "µA",
+      "Text": "Microampere",
+      "DecimalPlaces": 0
+    },
+    {
+      "UnitCode": "BAG",
+      "ExternalCode": "BAG",
+      "Text": "Bag",
+      "DecimalPlaces": 0
+    },
+    {
+      "UnitCode": "BAR",
+      "ExternalCode": "BAR",
+      "Text": "bar",
+      "DecimalPlaces": 0
+    },
+    {
+      "UnitCode": "BOT",
+      "ExternalCode": "BT",
+      "Text": "Bottle",
+      "DecimalPlaces": 0
+    },
+    {
+      "UnitCode": "BOX",
+      "ExternalCode": "BOX",
+      "Text": "Cardboard box",
+      "DecimalPlaces": 0
+    },
+    {
+      "UnitCode": "BQK",
+      "ExternalCode": "BQK",
+      "Text": "Becquerel/kilogram",
+      "DecimalPlaces": 0
+    },
+    {
+      "UnitCode": "BT",
+      "ExternalCode": "003",
+      "Text": "Bottle",
+      "DecimalPlaces": 0
+    },
+    {
+      "UnitCode": "C",
+      "ExternalCode": "C",
+      "Text": "Degrees Celsius",
+      "DecimalPlaces": 0
+    },
+    {
+      "UnitCode": "C10",
+      "ExternalCode": "RF",
+      "Text": "Millifarad",
+      "DecimalPlaces": 0
+    },
+    {
+      "UnitCode": "C36",
+      "ExternalCode": "M/M",
+      "Text": "Mole per Cubic Meter",
+      "DecimalPlaces": 3
+    },
+    {
+      "UnitCode": "C38",
+      "ExternalCode": "M/L",
+      "Text": "Mole per Liter",
+      "DecimalPlaces": 3
+    },
+    {
+      "UnitCode": "C39",
+      "ExternalCode": "NA",
+      "Text": "Nanoampere",
+      "DecimalPlaces": 0
+    },
+    {
+      "UnitCode": "C3S",
+      "ExternalCode": "C3S",
+      "Text": "Cubic centimeter/second",
+      "DecimalPlaces": 0
+    },
+    {
+      "UnitCode": "C41",
+      "ExternalCode": "R-U",
+      "Text": "Nanofarad",
+      "DecimalPlaces": 0
+    },
+    {
+      "UnitCode": "C56",
+      "ExternalCode": "NMM",
+      "Text": "Newton/square millimeter",
+      "DecimalPlaces": 0
+    },
+    {
+      "UnitCode": "CCM",
+      "ExternalCode": "CCM",
+      "Text": "Cubic centimeter",
+      "DecimalPlaces": 0
+    },
+    {
+      "UnitCode": "CD",
+      "ExternalCode": "CD",
+      "Text": "Candela",
+      "DecimalPlaces": 0
+    },
+    {
+      "UnitCode": "CDM",
+      "ExternalCode": "CD3",
+      "Text": "Cubic decimeter",
+      "DecimalPlaces": 0
+    },
+    {
+      "UnitCode": "CFU",
+      "ExternalCode": "CFU",
+      "Text": "CFU",
+      "DecimalPlaces": 0
+    },
+    {
+      "UnitCode": "CHG",
+      "ExternalCode": "CHG",
+      "Text": "Charge",
+      "DecimalPlaces": 0
+    },
+    {
+      "UnitCode": "CM",
+      "ExternalCode": "CM",
+      "Text": "Centimeter",
+      "DecimalPlaces": 0
+    },
+    {
+      "UnitCode": "CM2",
+      "ExternalCode": "CM2",
+      "Text": "Square centimeter",
+      "DecimalPlaces": 0
+    },
+    {
+      "UnitCode": "CMH",
+      "ExternalCode": "CMH",
+      "Text": "Centimeter/hour",
+      "DecimalPlaces": 0
+    },
+    {
+      "UnitCode": "CPA",
+      "ExternalCode": "CP",
+      "Text": "Centipoise",
+      "DecimalPlaces": 0
+    },
+    {
+      "UnitCode": "CS",
+      "ExternalCode": "CV",
+      "Text": "Case",
+      "DecimalPlaces": 0
+    },
+    {
+      "UnitCode": "CSE",
+      "ExternalCode": "CSE",
+      "Text": "Case",
+      "DecimalPlaces": 0
+    },
+    {
+      "UnitCode": "CTL",
+      "ExternalCode": "CL",
+      "Text": "Centiliter",
+      "DecimalPlaces": 0
+    },
+    {
+      "UnitCode": "CWT",
+      "ExternalCode": "CWT",
+      "Text": "Hundred Weight",
+      "DecimalPlaces": 2
+    },
+    {
+      "UnitCode": "D10",
+      "ExternalCode": "S/M",
+      "Text": "Siemens per meter",
+      "DecimalPlaces": 3
+    },
+    {
+      "UnitCode": "D41",
+      "ExternalCode": "TOM",
+      "Text": "Ton/cubic meter",
+      "DecimalPlaces": 0
+    },
+    {
+      "UnitCode": "D46",
+      "ExternalCode": "VAM",
+      "Text": "Voltampere",
+      "DecimalPlaces": 0
+    },
+    {
+      "UnitCode": "DEG",
+      "ExternalCode": "DEG",
+      "Text": "Degree",
+      "DecimalPlaces": 1
+    },
+    {
+      "UnitCode": "DM",
+      "ExternalCode": "DM",
+      "Text": "Decimeter",
+      "DecimalPlaces": 0
+    },
+    {
+      "UnitCode": "DR",
+      "ExternalCode": "DR",
+      "Text": "Drum",
+      "DecimalPlaces": 0
+    },
+    {
+      "UnitCode": "DZ",
+      "ExternalCode": "DZ",
+      "Text": "Dozen",
+      "DecimalPlaces": 0
+    },
+    {
+      "UnitCode": "EA",
+      "ExternalCode": "EA",
+      "Text": "each",
+      "DecimalPlaces": 0
+    },
+    {
+      "UnitCode": "EE",
+      "ExternalCode": "EU",
+      "Text": "Enzyme Units",
+      "DecimalPlaces": 0
+    },
+    {
+      "UnitCode": "EH",
+      "ExternalCode": "UN",
+      "Text": "Unit",
+      "DecimalPlaces": 0
+    },
+    {
+      "UnitCode": "EML",
+      "ExternalCode": "EML",
+      "Text": "Enzyme Units/Milliliter",
+      "DecimalPlaces": 0
+    },
+    {
+      "UnitCode": "F",
+      "ExternalCode": "F",
+      "Text": "Farad",
+      "DecimalPlaces": 0
+    },
+    {
+      "UnitCode": "FA",
+      "ExternalCode": "°F",
+      "Text": "Fahrenheit",
+      "DecimalPlaces": 0
+    },
+    {
+      "UnitCode": "FT",
+      "ExternalCode": "FT",
+      "Text": "Foot",
+      "DecimalPlaces": 0
+    },
+    {
+      "UnitCode": "FT2",
+      "ExternalCode": "FT2",
+      "Text": "Square foot",
+      "DecimalPlaces": 0
+    },
+    {
+      "UnitCode": "FT3",
+      "ExternalCode": "FT3",
+      "Text": "Cubic foot",
+      "DecimalPlaces": 0
+    },
+    {
+      "UnitCode": "FUM",
+      "ExternalCode": "FUM",
+      "Text": "Forecast Unit of Measure",
+      "DecimalPlaces": 0
+    },
+    {
+      "UnitCode": "G",
+      "ExternalCode": "G",
+      "Text": "Gram",
+      "DecimalPlaces": 0
+    },
+    {
+      "UnitCode": "G/L",
+      "ExternalCode": "G/L",
+      "Text": "Gram Active Ingredient/Liter",
+      "DecimalPlaces": 0
+    },
+    {
+      "UnitCode": "GAU",
+      "ExternalCode": "GAU",
+      "Text": "Gram Gold",
+      "DecimalPlaces": 0
+    },
+    {
+      "UnitCode": "GC",
+      "ExternalCode": "°C",
+      "Text": "Degrees Celsius",
+      "DecimalPlaces": 0
+    },
+    {
+      "UnitCode": "GHG",
+      "ExternalCode": "GHG",
+      "Text": "Gram/hectogram",
+      "DecimalPlaces": 0
+    },
+    {
+      "UnitCode": "GJ",
+      "ExternalCode": "GJ",
+      "Text": "Gigajoule",
+      "DecimalPlaces": 0
+    },
+    {
+      "UnitCode": "GKG",
+      "ExternalCode": "GKG",
+      "Text": "Gram/kilogram",
+      "DecimalPlaces": 0
+    },
+    {
+      "UnitCode": "GLI",
+      "ExternalCode": "GLI",
+      "Text": "Gram/liter",
+      "DecimalPlaces": 0
+    },
+    {
+      "UnitCode": "GLL",
+      "ExternalCode": "GAL",
+      "Text": "US gallon",
+      "DecimalPlaces": 0
+    },
+    {
+      "UnitCode": "GLM",
+      "ExternalCode": "GPM",
+      "Text": "Gallons per mile (US)",
+      "DecimalPlaces": 0
+    },
+    {
+      "UnitCode": "GM",
+      "ExternalCode": "GM",
+      "Text": "Gram/Mole",
+      "DecimalPlaces": 0
+    },
+    {
+      "UnitCode": "GM2",
+      "ExternalCode": "GM2",
+      "Text": "Gram/square meter",
+      "DecimalPlaces": 0
+    },
+    {
+      "UnitCode": "GPH",
+      "ExternalCode": "GPH",
+      "Text": "Gallons per hour (US)",
+      "DecimalPlaces": 0
+    },
+    {
+      "UnitCode": "GQ",
+      "ExternalCode": "µGQ",
+      "Text": "Microgram/cubic meter",
+      "DecimalPlaces": 0
+    },
+    {
+      "UnitCode": "GRO",
+      "ExternalCode": "GRO",
+      "Text": "Gross",
+      "DecimalPlaces": 0
+    },
+    {
+      "UnitCode": "GV",
+      "ExternalCode": "GC3",
+      "Text": "Gramm/Cubic centimeter",
+      "DecimalPlaces": 0
+    },
+    {
+      "UnitCode": "GW",
+      "ExternalCode": "GAI",
+      "Text": "Gram Active Ingredient",
+      "DecimalPlaces": 0
+    },
+    {
+      "UnitCode": "H",
+      "ExternalCode": "H",
+      "Text": "Hour",
+      "DecimalPlaces": 0
+    },
+    {
+      "UnitCode": "HAR",
+      "ExternalCode": "HA",
+      "Text": "Hectare",
+      "DecimalPlaces": 0
+    },
+    {
+      "UnitCode": "HL",
+      "ExternalCode": "HL",
+      "Text": "Hectoliter",
+      "DecimalPlaces": 0
+    },
+    {
+      "UnitCode": "HPA",
+      "ExternalCode": "HPA",
+      "Text": "Hectopascal",
+      "DecimalPlaces": 0
+    },
+    {
+      "UnitCode": "HUR",
+      "ExternalCode": "HUR",
+      "Text": "Hours",
+      "DecimalPlaces": 0
+    },
+    {
+      "UnitCode": "HZ",
+      "ExternalCode": "HZ",
+      "Text": "Hertz (1/second)",
+      "DecimalPlaces": 0
+    },
+    {
+      "UnitCode": "IN",
+      "ExternalCode": "\"",
+      "Text": "Inch",
+      "DecimalPlaces": 0
+    },
+    {
+      "UnitCode": "IN2",
+      "ExternalCode": "\"2",
+      "Text": "Square inch",
+      "DecimalPlaces": 0
+    },
+    {
+      "UnitCode": "IN3",
+      "ExternalCode": "\"3",
+      "Text": "Cubic inch",
+      "DecimalPlaces": 0
+    },
+    {
+      "UnitCode": "J",
+      "ExternalCode": "J",
+      "Text": "Joule",
+      "DecimalPlaces": 0
+    },
+    {
+      "UnitCode": "JHR",
+      "ExternalCode": "YR",
+      "Text": "Years",
+      "DecimalPlaces": 0
+    },
+    {
+      "UnitCode": "JKG",
+      "ExternalCode": "JKG",
+      "Text": "Joule/Kilogram",
+      "DecimalPlaces": 0
+    },
+    {
+      "UnitCode": "JKK",
+      "ExternalCode": "JKK",
+      "Text": "Specific Heat Capacity",
+      "DecimalPlaces": 0
+    },
+    {
+      "UnitCode": "JMO",
+      "ExternalCode": "JMO",
+      "Text": "Joule/Mole",
+      "DecimalPlaces": 0
+    },
+    {
+      "UnitCode": "K",
+      "ExternalCode": "K",
+      "Text": "Kelvin",
+      "DecimalPlaces": 0
+    },
+    {
+      "UnitCode": "KA",
+      "ExternalCode": "KA",
+      "Text": "Kiloampere",
+      "DecimalPlaces": 0
+    },
+    {
+      "UnitCode": "KAN",
+      "ExternalCode": "CAN",
+      "Text": "Canister",
+      "DecimalPlaces": 0
+    },
+    {
+      "UnitCode": "KAR",
+      "ExternalCode": "CAR",
+      "Text": "Carton",
+      "DecimalPlaces": 0
+    },
+    {
+      "UnitCode": "KBK",
+      "ExternalCode": "KBK",
+      "Text": "Kilobecquerel/Kilogram",
+      "DecimalPlaces": 0
+    },
+    {
+      "UnitCode": "KG",
+      "ExternalCode": "KG",
+      "Text": "Kilogram",
+      "DecimalPlaces": 0
+    },
+    {
+      "UnitCode": "KGF",
+      "ExternalCode": "KGF",
+      "Text": "Kilogram/Square meter",
+      "DecimalPlaces": 0
+    },
+    {
+      "UnitCode": "KGK",
+      "ExternalCode": "KGK",
+      "Text": "Kilogram/Kilogram",
+      "DecimalPlaces": 0
+    },
+    {
+      "UnitCode": "KGM",
+      "ExternalCode": "KGM",
+      "Text": "Kilogram/Mole",
+      "DecimalPlaces": 0
+    },
+    {
+      "UnitCode": "KGS",
+      "ExternalCode": "KGS",
+      "Text": "Kilogram/second",
+      "DecimalPlaces": 0
+    },
+    {
+      "UnitCode": "KGV",
+      "ExternalCode": "KGV",
+      "Text": "Kilogram/cubic meter",
+      "DecimalPlaces": 0
+    },
+    {
+      "UnitCode": "KGW",
+      "ExternalCode": "KAI",
+      "Text": "Kilogram Active Ingredient",
+      "DecimalPlaces": 0
+    },
+    {
+      "UnitCode": "KHZ",
+      "ExternalCode": "KHZ",
+      "Text": "Kilohertz",
+      "DecimalPlaces": 0
+    },
+    {
+      "UnitCode": "KI",
+      "ExternalCode": "CRT",
+      "Text": "Crate",
+      "DecimalPlaces": 0
+    },
+    {
+      "UnitCode": "KIT",
+      "ExternalCode": "KIT",
+      "Text": "Patient Kit",
+      "DecimalPlaces": 0
+    },
+    {
+      "UnitCode": "KJ",
+      "ExternalCode": "KJ",
+      "Text": "Kilojoule",
+      "DecimalPlaces": 0
+    },
+    {
+      "UnitCode": "KJK",
+      "ExternalCode": "KJK",
+      "Text": "Kilojoule/kilogram",
+      "DecimalPlaces": 0
+    },
+    {
+      "UnitCode": "KJM",
+      "ExternalCode": "KJM",
+      "Text": "Kilojoule/Mole",
+      "DecimalPlaces": 0
+    },
+    {
+      "UnitCode": "KM",
+      "ExternalCode": "KM",
+      "Text": "Kilometer",
+      "DecimalPlaces": 0
+    },
+    {
+      "UnitCode": "KM2",
+      "ExternalCode": "KM2",
+      "Text": "Square kilometer",
+      "DecimalPlaces": 0
+    },
+    {
+      "UnitCode": "KMH",
+      "ExternalCode": "KMH",
+      "Text": "Kilometer/hour",
+      "DecimalPlaces": 0
+    },
+    {
+      "UnitCode": "KMK",
+      "ExternalCode": "KMK",
+      "Text": "Cubic meter/Cubic meter",
+      "DecimalPlaces": 0
+    },
+    {
+      "UnitCode": "KMN",
+      "ExternalCode": "KMN",
+      "Text": "Kelvin/Minute",
+      "DecimalPlaces": 0
+    },
+    {
+      "UnitCode": "KMS",
+      "ExternalCode": "KMS",
+      "Text": "Kelvin/Second",
+      "DecimalPlaces": 0
+    },
+    {
+      "UnitCode": "KNM",
+      "ExternalCode": "KNM",
+      "Text": "Kilonewton per square meter",
+      "DecimalPlaces": 0
+    },
+    {
+      "UnitCode": "KOH",
+      "ExternalCode": "KOH",
+      "Text": "Kiloohm",
+      "DecimalPlaces": 0
+    },
+    {
+      "UnitCode": "KPA",
+      "ExternalCode": "KPA",
+      "Text": "Kilopascal",
+      "DecimalPlaces": 0
+    },
+    {
+      "UnitCode": "KT",
+      "ExternalCode": "KT",
+      "Text": "Kiloton",
+      "DecimalPlaces": 0
+    },
+    {
+      "UnitCode": "KV",
+      "ExternalCode": "KV",
+      "Text": "Kilovolt",
+      "DecimalPlaces": 0
+    },
+    {
+      "UnitCode": "KVA",
+      "ExternalCode": "KVA",
+      "Text": "Kilovoltampere",
+      "DecimalPlaces": 0
+    },
+    {
+      "UnitCode": "KW",
+      "ExternalCode": "KW",
+      "Text": "Kilowatt",
+      "DecimalPlaces": 0
+    },
+    {
+      "UnitCode": "KW1",
+      "ExternalCode": "KI1",
+      "Text": "KG Active ingredient aroma",
+      "DecimalPlaces": 3
+    },
+    {
+      "UnitCode": "KW2",
+      "ExternalCode": "KI2",
+      "Text": "KG Active ingred. fruit pulp",
+      "DecimalPlaces": 3
+    },
+    {
+      "UnitCode": "KWH",
+      "ExternalCode": "KWH",
+      "Text": "Kilowatt hours",
+      "DecimalPlaces": 0
+    },
+    {
+      "UnitCode": "KWK",
+      "ExternalCode": "KIK",
+      "Text": "kg Active Ingredient/kg",
+      "DecimalPlaces": 0
+    },
+    {
+      "UnitCode": "L",
+      "ExternalCode": "L",
+      "Text": "Liter",
+      "DecimalPlaces": 0
+    },
+    {
+      "UnitCode": "L2",
+      "ExternalCode": "LMI",
+      "Text": "Liter/Minute",
+      "DecimalPlaces": 0
+    },
+    {
+      "UnitCode": "LAG",
+      "ExternalCode": "LAG",
+      "Text": "Stor",
+      "DecimalPlaces": 0
+    },
+    {
+      "UnitCode": "LB",
+      "ExternalCode": "LB",
+      "Text": "Pound",
+      "DecimalPlaces": 0
+    },
+    {
+      "UnitCode": "LE",
+      "ExternalCode": "AU",
+      "Text": "Activity unit",
+      "DecimalPlaces": 0
+    },
+    {
+      "UnitCode": "LF",
+      "ExternalCode": "017",
+      "Text": "",
+      "DecimalPlaces": 3
+    },
+    {
+      "UnitCode": "LH",
+      "ExternalCode": "L/H",
+      "Text": "Liter per hour",
+      "DecimalPlaces": 0
+    },
+    {
+      "UnitCode": "LHK",
+      "ExternalCode": "LHK",
+      "Text": "Liter per 100 km",
+      "DecimalPlaces": 0
+    },
+    {
+      "UnitCode": "LMS",
+      "ExternalCode": "LMS",
+      "Text": "Liter/Mole Second",
+      "DecimalPlaces": 0
+    },
+    {
+      "UnitCode": "LPH",
+      "ExternalCode": "LPH",
+      "Text": "Liter per hour",
+      "DecimalPlaces": 0
+    },
+    {
+      "UnitCode": "LPL",
+      "ExternalCode": "LPL",
+      "Text": "liters per liter",
+      "DecimalPlaces": 2
+    },
+    {
+      "UnitCode": "LS",
+      "ExternalCode": "004",
+      "Text": "",
+      "DecimalPlaces": 3
+    },
+    {
+      "UnitCode": "LSL",
+      "ExternalCode": "LIL",
+      "Text": "Liter Active ingredient/Liter",
+      "DecimalPlaces": 3
+    },
+    {
+      "UnitCode": "LW1",
+      "ExternalCode": "LI1",
+      "Text": "Liter Active ingredient 1",
+      "DecimalPlaces": 3
+    },
+    {
+      "UnitCode": "M",
+      "ExternalCode": "M",
+      "Text": "Meter",
+      "DecimalPlaces": 0
+    },
+    {
+      "UnitCode": "M%",
+      "ExternalCode": "M%",
+      "Text": "Percent mass",
+      "DecimalPlaces": 0
+    },
+    {
+      "UnitCode": "M%O",
+      "ExternalCode": "M%O",
+      "Text": "Permille mass",
+      "DecimalPlaces": 0
+    },
+    {
+      "UnitCode": "M/S",
+      "ExternalCode": "M/S",
+      "Text": "Meter/second",
+      "DecimalPlaces": 0
+    },
+    {
+      "UnitCode": "M2",
+      "ExternalCode": "M2",
+      "Text": "Square meter",
+      "DecimalPlaces": 0
+    },
+    {
+      "UnitCode": "M2H",
+      "ExternalCode": "M2H",
+      "Text": "mm/1h",
+      "DecimalPlaces": 0
+    },
+    {
+      "UnitCode": "M2I",
+      "ExternalCode": "M-2",
+      "Text": "1/Square Meter",
+      "DecimalPlaces": 0
+    },
+    {
+      "UnitCode": "M2S",
+      "ExternalCode": "M2S",
+      "Text": "Square meter/second",
+      "DecimalPlaces": 0
+    },
+    {
+      "UnitCode": "M3",
+      "ExternalCode": "M3",
+      "Text": "Cubic meter",
+      "DecimalPlaces": 0
+    },
+    {
+      "UnitCode": "M3D",
+      "ExternalCode": "M3D",
+      "Text": "Cubic meter/day",
+      "DecimalPlaces": 0
+    },
+    {
+      "UnitCode": "M3S",
+      "ExternalCode": "M3S",
+      "Text": "Cubic meter/second",
+      "DecimalPlaces": 0
+    },
+    {
+      "UnitCode": "MA",
+      "ExternalCode": "MA",
+      "Text": "Milliampere",
+      "DecimalPlaces": 0
+    },
+    {
+      "UnitCode": "MBA",
+      "ExternalCode": "MBA",
+      "Text": "Millibar",
+      "DecimalPlaces": 0
+    },
+    {
+      "UnitCode": "MBZ",
+      "ExternalCode": "MBZ",
+      "Text": "Meterbar/second",
+      "DecimalPlaces": 0
+    },
+    {
+      "UnitCode": "MEJ",
+      "ExternalCode": "MEJ",
+      "Text": "Megajoule",
+      "DecimalPlaces": 0
+    },
+    {
+      "UnitCode": "MET",
+      "ExternalCode": "MET",
+      "Text": "Meter",
+      "DecimalPlaces": 0
+    },
+    {
+      "UnitCode": "MG",
+      "ExternalCode": "MG",
+      "Text": "Milligram",
+      "DecimalPlaces": 0
+    },
+    {
+      "UnitCode": "MGF",
+      "ExternalCode": "MGE",
+      "Text": "Milligram/Square centimeter",
+      "DecimalPlaces": 0
+    },
+    {
+      "UnitCode": "MGG",
+      "ExternalCode": "MGG",
+      "Text": "Milligram/gram",
+      "DecimalPlaces": 0
+    },
+    {
+      "UnitCode": "MGK",
+      "ExternalCode": "MGK",
+      "Text": "Milligram/kilogram",
+      "DecimalPlaces": 0
+    },
+    {
+      "UnitCode": "MGL",
+      "ExternalCode": "MGL",
+      "Text": "Milligram/liter",
+      "DecimalPlaces": 0
+    },
+    {
+      "UnitCode": "MGQ",
+      "ExternalCode": "MGQ",
+      "Text": "Milligram/cubic meter",
+      "DecimalPlaces": 0
+    },
+    {
+      "UnitCode": "MGW",
+      "ExternalCode": "MGW",
+      "Text": "Megawatt",
+      "DecimalPlaces": 0
+    },
+    {
+      "UnitCode": "MHG",
+      "ExternalCode": "MHG",
+      "Text": "mmHG",
+      "DecimalPlaces": 0
+    },
+    {
+      "UnitCode": "MHZ",
+      "ExternalCode": "MHZ",
+      "Text": "Megahertz",
+      "DecimalPlaces": 0
+    },
+    {
+      "UnitCode": "MI",
+      "ExternalCode": "MI",
+      "Text": "Mile",
+      "DecimalPlaces": 0
+    },
+    {
+      "UnitCode": "MI2",
+      "ExternalCode": "MI2",
+      "Text": "Square mile",
+      "DecimalPlaces": 0
+    },
+    {
+      "UnitCode": "MIM",
+      "ExternalCode": "µM",
+      "Text": "Micrometer",
+      "DecimalPlaces": 0
+    },
+    {
+      "UnitCode": "MIN",
+      "ExternalCode": "MIN",
+      "Text": "Minute",
+      "DecimalPlaces": 0
+    },
+    {
+      "UnitCode": "MIS",
+      "ExternalCode": "MIS",
+      "Text": "Microsecond",
+      "DecimalPlaces": 0
+    },
+    {
+      "UnitCode": "MJ",
+      "ExternalCode": "MIJ",
+      "Text": "Millijoule",
+      "DecimalPlaces": 0
+    },
+    {
+      "UnitCode": "ML",
+      "ExternalCode": "ML",
+      "Text": "Milliliter",
+      "DecimalPlaces": 0
+    },
+    {
+      "UnitCode": "MLK",
+      "ExternalCode": "MLK",
+      "Text": "Milliliter/cubic meter",
+      "DecimalPlaces": 0
+    },
+    {
+      "UnitCode": "MLM",
+      "ExternalCode": "MLM",
+      "Text": "Mililiter/Minute",
+      "DecimalPlaces": 0
+    },
+    {
+      "UnitCode": "MLW",
+      "ExternalCode": "MLI",
+      "Text": "Milliliter Active Ingredient",
+      "DecimalPlaces": 0
+    },
+    {
+      "UnitCode": "MM",
+      "ExternalCode": "MM",
+      "Text": "Millimeter",
+      "DecimalPlaces": 0
+    },
+    {
+      "UnitCode": "MM2",
+      "ExternalCode": "MM2",
+      "Text": "Square millimeter",
+      "DecimalPlaces": 0
+    },
+    {
+      "UnitCode": "MMA",
+      "ExternalCode": "MMA",
+      "Text": "Millimeter/year",
+      "DecimalPlaces": 0
+    },
+    {
+      "UnitCode": "MMG",
+      "ExternalCode": "MMG",
+      "Text": "Millimole/Gram",
+      "DecimalPlaces": 0
+    },
+    {
+      "UnitCode": "MMH",
+      "ExternalCode": "MMH",
+      "Text": "Millimeter/hour",
+      "DecimalPlaces": 0
+    },
+    {
+      "UnitCode": "MMK",
+      "ExternalCode": "MMK",
+      "Text": "Millimole/Kilogram",
+      "DecimalPlaces": 0
+    },
+    {
+      "UnitCode": "MMO",
+      "ExternalCode": "MMO",
+      "Text": "Millimole",
+      "DecimalPlaces": 0
+    },
+    {
+      "UnitCode": "MMQ",
+      "ExternalCode": "MM3",
+      "Text": "Cubic millimeter",
+      "DecimalPlaces": 0
+    },
+    {
+      "UnitCode": "MMS",
+      "ExternalCode": "MMS",
+      "Text": "Millimeter/second",
+      "DecimalPlaces": 0
+    },
+    {
+      "UnitCode": "MNM",
+      "ExternalCode": "MNM",
+      "Text": "Millinewton/meter",
+      "DecimalPlaces": 0
+    },
+    {
+      "UnitCode": "MOK",
+      "ExternalCode": "MOK",
+      "Text": "Mole/Kilogram",
+      "DecimalPlaces": 0
+    },
+    {
+      "UnitCode": "MOL",
+      "ExternalCode": "MOL",
+      "Text": "Mole",
+      "DecimalPlaces": 0
+    },
+    {
+      "UnitCode": "MON",
+      "ExternalCode": "MON",
+      "Text": "Months",
+      "DecimalPlaces": 0
+    },
+    {
+      "UnitCode": "MPA",
+      "ExternalCode": "MPA",
+      "Text": "Megapascal",
+      "DecimalPlaces": 0
+    },
+    {
+      "UnitCode": "MPB",
+      "ExternalCode": "MPB",
+      "Text": "Mass parts per billion",
+      "DecimalPlaces": 0
+    },
+    {
+      "UnitCode": "MPG",
+      "ExternalCode": "MPG",
+      "Text": "Miles per gallon (US)",
+      "DecimalPlaces": 0
+    },
+    {
+      "UnitCode": "MPM",
+      "ExternalCode": "MPM",
+      "Text": "Mass parts per million",
+      "DecimalPlaces": 0
+    },
+    {
+      "UnitCode": "MPS",
+      "ExternalCode": "MPS",
+      "Text": "Millipascal seconds",
+      "DecimalPlaces": 0
+    },
+    {
+      "UnitCode": "MPT",
+      "ExternalCode": "MPT",
+      "Text": "Mass parts per trillion",
+      "DecimalPlaces": 0
+    },
+    {
+      "UnitCode": "MPZ",
+      "ExternalCode": "MPZ",
+      "Text": "Meterpascal/second",
+      "DecimalPlaces": 0
+    },
+    {
+      "UnitCode": "MQH",
+      "ExternalCode": "M3H",
+      "Text": "Cubic meter/Hour",
+      "DecimalPlaces": 0
+    },
+    {
+      "UnitCode": "MS",
+      "ExternalCode": "MSE",
+      "Text": "Millisecond",
+      "DecimalPlaces": 0
+    },
+    {
+      "UnitCode": "MS2",
+      "ExternalCode": "MS2",
+      "Text": "Meter/Square Second",
+      "DecimalPlaces": 0
+    },
+    {
+      "UnitCode": "MTE",
+      "ExternalCode": "MTE",
+      "Text": "Millitesla",
+      "DecimalPlaces": 0
+    },
+    {
+      "UnitCode": "MTL",
+      "ExternalCode": "MTL",
+      "Text": "Mil/ul",
+      "DecimalPlaces": 0
+    },
+    {
+      "UnitCode": "MTS",
+      "ExternalCode": "M/H",
+      "Text": "Meter/Hour",
+      "DecimalPlaces": 0
+    },
+    {
+      "UnitCode": "MUG",
+      "ExternalCode": "µG",
+      "Text": "Microgramm",
+      "DecimalPlaces": 6
+    },
+    {
+      "UnitCode": "MV",
+      "ExternalCode": "MV",
+      "Text": "Millivolt",
+      "DecimalPlaces": 0
+    },
+    {
+      "UnitCode": "MVA",
+      "ExternalCode": "MVA",
+      "Text": "Megavoltampere",
+      "DecimalPlaces": 0
+    },
+    {
+      "UnitCode": "MW",
+      "ExternalCode": "MW",
+      "Text": "Milliwatt",
+      "DecimalPlaces": 0
+    },
+    {
+      "UnitCode": "MWH",
+      "ExternalCode": "MWH",
+      "Text": "Megawatt hour",
+      "DecimalPlaces": 0
+    },
+    {
+      "UnitCode": "MYL",
+      "ExternalCode": "/µ",
+      "Text": "",
+      "DecimalPlaces": 0
+    },
+    {
+      "UnitCode": "N",
+      "ExternalCode": "N",
+      "Text": "Newton",
+      "DecimalPlaces": 0
+    },
+    {
+      "UnitCode": "NAM",
+      "ExternalCode": "NAM",
+      "Text": "Nanometer",
+      "DecimalPlaces": 0
+    },
+    {
+      "UnitCode": "NM",
+      "ExternalCode": "NM",
+      "Text": "Newton/meter",
+      "DecimalPlaces": 0
+    },
+    {
+      "UnitCode": "NO",
+      "ExternalCode": "NO",
+      "Text": "Without unit of measure",
+      "DecimalPlaces": 2
+    },
+    {
+      "UnitCode": "NS",
+      "ExternalCode": "NS",
+      "Text": "Nanosecond",
+      "DecimalPlaces": 0
+    },
+    {
+      "UnitCode": "OCM",
+      "ExternalCode": "OCM",
+      "Text": "Specific Electrical Resistance",
+      "DecimalPlaces": 0
+    },
+    {
+      "UnitCode": "OHM",
+      "ExternalCode": "OHM",
+      "Text": "Ohm",
+      "DecimalPlaces": 0
+    },
+    {
+      "UnitCode": "OM",
+      "ExternalCode": "OM",
+      "Text": "Specific Electrical Resistance",
+      "DecimalPlaces": 0
+    },
+    {
+      "UnitCode": "OPH",
+      "ExternalCode": "OPH",
+      "Text": "Operating hours",
+      "DecimalPlaces": 0
+    },
+    {
+      "UnitCode": "OZ",
+      "ExternalCode": "OZ",
+      "Text": "Ounce",
+      "DecimalPlaces": 0
+    },
+    {
+      "UnitCode": "OZA",
+      "ExternalCode": "FOZ",
+      "Text": "Fluid Ounce US",
+      "DecimalPlaces": 0
+    },
+    {
+      "UnitCode": "P",
+      "ExternalCode": "P",
+      "Text": "Points",
+      "DecimalPlaces": 0
+    },
+    {
+      "UnitCode": "PA",
+      "ExternalCode": "PA",
+      "Text": "Pascal",
+      "DecimalPlaces": 0
+    },
+    {
+      "UnitCode": "PAA",
+      "ExternalCode": "PAA",
+      "Text": "Pair",
+      "DecimalPlaces": 0
+    },
+    {
+      "UnitCode": "PAK",
+      "ExternalCode": "PAC",
+      "Text": "Pack",
+      "DecimalPlaces": 0
+    },
+    {
+      "UnitCode": "PAL",
+      "ExternalCode": "PAL",
+      "Text": "Pallet",
+      "DecimalPlaces": 0
+    },
+    {
+      "UnitCode": "PAS",
+      "ExternalCode": "PAS",
+      "Text": "Pascal second",
+      "DecimalPlaces": 0
+    },
+    {
+      "UnitCode": "PC",
+      "ExternalCode": "013",
+      "Text": "",
+      "DecimalPlaces": 0
+    },
+    {
+      "UnitCode": "PDA",
+      "ExternalCode": "PDA",
+      "Text": "Consultant Day",
+      "DecimalPlaces": 0
+    },
+    {
+      "UnitCode": "PER",
+      "ExternalCode": "PER",
+      "Text": "Persons",
+      "DecimalPlaces": 0
+    },
+    {
+      "UnitCode": "PGR",
+      "ExternalCode": "PGR",
+      "Text": "Pikogram",
+      "DecimalPlaces": 0
+    },
+    {
+      "UnitCode": "PH",
+      "ExternalCode": "PH",
+      "Text": "pH value",
+      "DecimalPlaces": 0
+    },
+    {
+      "UnitCode": "PKT",
+      "ExternalCode": "PKT",
+      "Text": "",
+      "DecimalPlaces": 0
+    },
+    {
+      "UnitCode": "PMI",
+      "ExternalCode": "PMI",
+      "Text": "1/minute",
+      "DecimalPlaces": 0
+    },
+    {
+      "UnitCode": "PMR",
+      "ExternalCode": "PMR",
+      "Text": "Permeation Rate SI",
+      "DecimalPlaces": 3
+    },
+    {
+      "UnitCode": "PNS",
+      "ExternalCode": "PNS",
+      "Text": "GRNSPack",
+      "DecimalPlaces": 0
+    },
+    {
+      "UnitCode": "PPB",
+      "ExternalCode": "PPB",
+      "Text": "Parts per billion",
+      "DecimalPlaces": 0
+    },
+    {
+      "UnitCode": "PPM",
+      "ExternalCode": "PPM",
+      "Text": "Parts per million",
+      "DecimalPlaces": 0
+    },
+    {
+      "UnitCode": "PPT",
+      "ExternalCode": "PPT",
+      "Text": "Parts per trillion",
+      "DecimalPlaces": 0
+    },
+    {
+      "UnitCode": "PRM",
+      "ExternalCode": "PRM",
+      "Text": "Permeation Rate",
+      "DecimalPlaces": 3
+    },
+    {
+      "UnitCode": "PRS",
+      "ExternalCode": "PRS",
+      "Text": "Number of Persons",
+      "DecimalPlaces": 0
+    },
+    {
+      "UnitCode": "PS",
+      "ExternalCode": "PS",
+      "Text": "Picosecond",
+      "DecimalPlaces": 0
+    },
+    {
+      "UnitCode": "PSI",
+      "ExternalCode": "PSI",
+      "Text": "Pound/square inch",
+      "DecimalPlaces": 1
+    },
+    {
+      "UnitCode": "PT",
+      "ExternalCode": "PT",
+      "Text": "Pint, US liquid",
+      "DecimalPlaces": 0
+    },
+    {
+      "UnitCode": "QT",
+      "ExternalCode": "QT",
+      "Text": "Quart, US liquid",
+      "DecimalPlaces": 0
+    },
+    {
+      "UnitCode": "REP",
+      "ExternalCode": "REP",
+      "Text": "Rep",
+      "DecimalPlaces": 0
+    },
+    {
+      "UnitCode": "RHO",
+      "ExternalCode": "RHO",
+      "Text": "Gram/Cubic Centimeter",
+      "DecimalPlaces": 0
+    },
+    {
+      "UnitCode": "RL",
+      "ExternalCode": "RL",
+      "Text": "Reel",
+      "DecimalPlaces": 0
+    },
+    {
+      "UnitCode": "RM",
+      "ExternalCode": "RM",
+      "Text": "Ream",
+      "DecimalPlaces": 0
+    },
+    {
+      "UnitCode": "ROL",
+      "ExternalCode": "ROL",
+      "Text": "Roll",
+      "DecimalPlaces": 0
+    },
+    {
+      "UnitCode": "RPM",
+      "ExternalCode": "RPM",
+      "Text": "Rotation per minute",
+      "DecimalPlaces": 0
+    },
+    {
+      "UnitCode": "RZ1",
+      "ExternalCode": "015",
+      "Text": "",
+      "DecimalPlaces": 0
+    },
+    {
+      "UnitCode": "S",
+      "ExternalCode": "S",
+      "Text": "Second",
+      "DecimalPlaces": 0
+    },
+    {
+      "UnitCode": "SCM",
+      "ExternalCode": "SCM",
+      "Text": "SCM",
+      "DecimalPlaces": 0
+    },
+    {
+      "UnitCode": "SET",
+      "ExternalCode": "SET",
+      "Text": "SET",
+      "DecimalPlaces": 0
+    },
+    {
+      "UnitCode": "SHT",
+      "ExternalCode": "SHT",
+      "Text": "Sheet",
+      "DecimalPlaces": 0
+    },
+    {
+      "UnitCode": "ST",
+      "ExternalCode": "PC",
+      "Text": "Piece",
+      "DecimalPlaces": 0
+    },
+    {
+      "UnitCode": "STD",
+      "ExternalCode": "HR",
+      "Text": "Hours",
+      "DecimalPlaces": 1
+    },
+    {
+      "UnitCode": "TAG",
+      "ExternalCode": "DAY",
+      "Text": "Days",
+      "DecimalPlaces": 0
+    },
+    {
+      "UnitCode": "TC3",
+      "ExternalCode": "TC3",
+      "Text": "1/cubic centimeter",
+      "DecimalPlaces": 0
+    },
+    {
+      "UnitCode": "TE",
+      "ExternalCode": "TE",
+      "Text": "Each time",
+      "DecimalPlaces": 0
+    },
+    {
+      "UnitCode": "TES",
+      "ExternalCode": "TES",
+      "Text": "Tesla",
+      "DecimalPlaces": 0
+    },
+    {
+      "UnitCode": "TH",
+      "ExternalCode": "TS",
+      "Text": "Thousands",
+      "DecimalPlaces": 0
+    },
+    {
+      "UnitCode": "TK",
+      "ExternalCode": "TP",
+      "Text": "Tank pallet",
+      "DecimalPlaces": 0
+    },
+    {
+      "UnitCode": "TL",
+      "ExternalCode": "TL",
+      "Text": "Truck Load",
+      "DecimalPlaces": 0
+    },
+    {
+      "UnitCode": "TM",
+      "ExternalCode": "TM",
+      "Text": "Meter",
+      "DecimalPlaces": 0
+    },
+    {
+      "UnitCode": "TM3",
+      "ExternalCode": "TM3",
+      "Text": "1/cubic meter",
+      "DecimalPlaces": 0
+    },
+    {
+      "UnitCode": "TO",
+      "ExternalCode": "TO",
+      "Text": "Ton",
+      "DecimalPlaces": 0
+    },
+    {
+      "UnitCode": "TON",
+      "ExternalCode": "TON",
+      "Text": "US Ton",
+      "DecimalPlaces": 0
+    },
+    {
+      "UnitCode": "TST",
+      "ExternalCode": "001",
+      "Text": "",
+      "DecimalPlaces": 0
+    },
+    {
+      "UnitCode": "UGL",
+      "ExternalCode": "µGL",
+      "Text": "Microgram/liter",
+      "DecimalPlaces": 0
+    },
+    {
+      "UnitCode": "UK",
+      "ExternalCode": "UK",
+      "Text": "",
+      "DecimalPlaces": 0
+    },
+    {
+      "UnitCode": "UNX",
+      "ExternalCode": "022",
+      "Text": "",
+      "DecimalPlaces": 0
+    },
+    {
+      "UnitCode": "V",
+      "ExternalCode": "V",
+      "Text": "Volt",
+      "DecimalPlaces": 0
+    },
+    {
+      "UnitCode": "V%",
+      "ExternalCode": "V%",
+      "Text": "Percent volume",
+      "DecimalPlaces": 0
+    },
+    {
+      "UnitCode": "V%O",
+      "ExternalCode": "V%O",
+      "Text": "Permille volume",
+      "DecimalPlaces": 0
+    },
+    {
+      "UnitCode": "V01",
+      "ExternalCode": "MSC",
+      "Text": "Microsiemens per centimeter",
+      "DecimalPlaces": 3
+    },
+    {
+      "UnitCode": "V02",
+      "ExternalCode": "MPL",
+      "Text": "Millimole per Liter",
+      "DecimalPlaces": 3
+    },
+    {
+      "UnitCode": "VAL",
+      "ExternalCode": "VAL",
+      "Text": "Value-Only Material",
+      "DecimalPlaces": 0
+    },
+    {
+      "UnitCode": "VPB",
+      "ExternalCode": "VPB",
+      "Text": "Volume parts per billion",
+      "DecimalPlaces": 0
+    },
+    {
+      "UnitCode": "VPM",
+      "ExternalCode": "VPM",
+      "Text": "Volume parts per million",
+      "DecimalPlaces": 0
+    },
+    {
+      "UnitCode": "VPT",
+      "ExternalCode": "VPT",
+      "Text": "Volume parts per trillion",
+      "DecimalPlaces": 0
+    },
+    {
+      "UnitCode": "W",
+      "ExternalCode": "W",
+      "Text": "Watt",
+      "DecimalPlaces": 0
+    },
+    {
+      "UnitCode": "WCH",
+      "ExternalCode": "WK",
+      "Text": "Weeks",
+      "DecimalPlaces": 0
+    },
+    {
+      "UnitCode": "WMK",
+      "ExternalCode": "WMK",
+      "Text": "Heat Conductivity",
+      "DecimalPlaces": 0
+    },
+    {
+      "UnitCode": "WTL",
+      "ExternalCode": "WKY",
+      "Text": "Evaporation Rate",
+      "DecimalPlaces": 0
+    },
+    {
+      "UnitCode": "YD",
+      "ExternalCode": "YD",
+      "Text": "Yards",
+      "DecimalPlaces": 0
+    },
+    {
+      "UnitCode": "YD2",
+      "ExternalCode": "YD2",
+      "Text": "Square Yard",
+      "DecimalPlaces": 0
+    },
+    {
+      "UnitCode": "YD3",
+      "ExternalCode": "YD3",
+      "Text": "Cubic yard",
+      "DecimalPlaces": 0
+    },
+    {
+      "UnitCode": "bbl",
+      "ExternalCode": "bbl",
+      "Text": "British Thermal Unit/US Barrel",
+      "DecimalPlaces": 0
+    },
+    {
+      "UnitCode": "bft",
+      "ExternalCode": "bft",
+      "Text": "British Thermal Unit/Cubic Ft",
+      "DecimalPlaces": 0
+    },
+    {
+      "UnitCode": "bgl",
+      "ExternalCode": "bgl",
+      "Text": "British Thermal Unit/US Gallon",
+      "DecimalPlaces": 0
+    },
+    {
+      "UnitCode": "btl",
+      "ExternalCode": "btl",
+      "Text": "British Thermal Unit/US Pound",
+      "DecimalPlaces": 0
+    },
+    {
+      "UnitCode": "gj3",
+      "ExternalCode": "gj3",
+      "Text": "Gigajoule/1000 Cubic Meters",
+      "DecimalPlaces": 0
+    },
+    {
+      "UnitCode": "gjm",
+      "ExternalCode": "gjm",
+      "Text": "Gigajoule/Cubic Meter",
+      "DecimalPlaces": 0
+    },
+    {
+      "UnitCode": "gjt",
+      "ExternalCode": "gjt",
+      "Text": "Gigajoule/US Ton",
+      "DecimalPlaces": 0
+    },
+    {
+      "UnitCode": "jm3",
+      "ExternalCode": "jm3",
+      "Text": "Joule/Cubic Meter",
+      "DecimalPlaces": 0
+    },
+    {
+      "UnitCode": "kgb",
+      "ExternalCode": "kgb",
+      "Text": "Kilogram/US Barrel",
+      "DecimalPlaces": 0
+    },
+    {
+      "UnitCode": "kgj",
+      "ExternalCode": "kgj",
+      "Text": "Kilogram/Joule",
+      "DecimalPlaces": 0
+    },
+    {
+      "UnitCode": "kgm",
+      "ExternalCode": "kgm",
+      "Text": "Kilogram/Million BTU",
+      "DecimalPlaces": 0
+    },
+    {
+      "UnitCode": "kgs",
+      "ExternalCode": "kgs",
+      "Text": "Kilogram/Standard Cubic Foot",
+      "DecimalPlaces": 0
+    },
+    {
+      "UnitCode": "kgt",
+      "ExternalCode": "kgt",
+      "Text": "Kilogram/US Ton",
+      "DecimalPlaces": 0
+    },
+    {
+      "UnitCode": "kml",
+      "ExternalCode": "kml",
+      "Text": "Kilogram/Kilogram Mole",
+      "DecimalPlaces": 0
+    },
+    {
+      "UnitCode": "lbb",
+      "ExternalCode": "lbb",
+      "Text": "US Pound/British Thermal Unit",
+      "DecimalPlaces": 0
+    },
+    {
+      "UnitCode": "lbg",
+      "ExternalCode": "lbg",
+      "Text": "US Pound/US Gallon",
+      "DecimalPlaces": 0
+    },
+    {
+      "UnitCode": "lbl",
+      "ExternalCode": "lbl",
+      "Text": "US Pound/US Pound Mole",
+      "DecimalPlaces": 0
+    },
+    {
+      "UnitCode": "lbm",
+      "ExternalCode": "lbm",
+      "Text": "US Pound/Million BTU",
+      "DecimalPlaces": 0
+    },
+    {
+      "UnitCode": "lbs",
+      "ExternalCode": "lbs",
+      "Text": "US Pound/Standard Cubic Foot",
+      "DecimalPlaces": 0
+    },
+    {
+      "UnitCode": "lbt",
+      "ExternalCode": "lbt",
+      "Text": "US Pound/US Ton",
+      "DecimalPlaces": 0
+    },
+    {
+      "UnitCode": "mbb",
+      "ExternalCode": "mbb",
+      "Text": "Million BTU/US Barrel",
+      "DecimalPlaces": 0
+    },
+    {
+      "UnitCode": "mbt",
+      "ExternalCode": "mbt",
+      "Text": "Million BTU/US Ton",
+      "DecimalPlaces": 0
+    },
+    {
+      "UnitCode": "tbl",
+      "ExternalCode": "tbl",
+      "Text": "Ton/US Barrel",
+      "DecimalPlaces": 0
+    },
+    {
+      "UnitCode": "tbt",
+      "ExternalCode": "tbt",
+      "Text": "Ton/British Thermal Unit",
+      "DecimalPlaces": 0
+    },
+    {
+      "UnitCode": "tgl",
+      "ExternalCode": "tgl",
+      "Text": "US Ton/US Gallon",
+      "DecimalPlaces": 0
+    },
+    {
+      "UnitCode": "tjl",
+      "ExternalCode": "tjl",
+      "Text": "Ton/Joule",
+      "DecimalPlaces": 0
+    },
+    {
+      "UnitCode": "tm3",
+      "ExternalCode": "tm3",
+      "Text": "Ton/1000 Cubic Meters",
+      "DecimalPlaces": 0
+    },
+    {
+      "UnitCode": "tt",
+      "ExternalCode": "tt",
+      "Text": "Ton/Ton",
+      "DecimalPlaces": 0
+    },
+    {
+      "UnitCode": "ttj",
+      "ExternalCode": "ttj",
+      "Text": "Ton/Terajoule",
+      "DecimalPlaces": 0
+    }
+  ]
+}

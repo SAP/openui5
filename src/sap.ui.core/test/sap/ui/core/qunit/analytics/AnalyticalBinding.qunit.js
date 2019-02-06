@@ -298,7 +298,9 @@ sap.ui.define([
 					? mParameters.provideGrandTotals
 					: undefined,
 				select: mParameters.select,
-				useBatchRequests: true
+				useBatchRequests: "useBatchRequests" in mParameters
+					? mParameters.useBatchRequests
+					: true
 			}
 		);
 		AnalyticalTreeBindingAdapter.apply(oBinding);
@@ -477,6 +479,26 @@ sap.ui.define([
 				done();
 			}
 		});
+	});
+
+	//*********************************************************************************************
+	QUnit.test("No $batch used, but percent encoding for spaces", function (assert) {
+		var sBindingPath = "/ActualPlannedCosts(P_ControllingArea='US 1'"
+				+ ",P_CostCenter='100-1000',P_CostCenterTo='999-9999')/Results",
+			sExpectedPath = "/ActualPlannedCosts(P_ControllingArea='US%201'"
+				+ ",P_CostCenter='100-1000',P_CostCenterTo='999-9999')/Results",
+			done = assert.async();
+
+		setupAnalyticalBinding(2, {useBatchRequests: false}, function (oBinding, oModel) {
+			sinon.stub(oModel, "read", function (sPath) {
+				assert.strictEqual(sPath, sExpectedPath, "percent encoding of space done");
+
+				oModel.read.restore();
+				done();
+			});
+
+			oBinding.getContexts();
+		}, undefined/*aAnalyticalInfo*/, sBindingPath);
 	});
 
 	//*********************************************************************************************
