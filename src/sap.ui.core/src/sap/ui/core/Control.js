@@ -8,7 +8,6 @@ sap.ui.define([
 	'./Element',
 	'./UIArea',
 	'./RenderManager',
-	'./ResizeHandler',
 	'./BusyIndicatorUtils',
 	'./BlockLayerUtils',
 	"sap/base/Log",
@@ -19,13 +18,15 @@ sap.ui.define([
 		Element,
 		UIArea,
 		RenderManager,
-		ResizeHandler,
 		BusyIndicatorUtils,
 		BlockLayerUtils,
 		Log,
 		jQuery
 	) {
 	"use strict";
+
+	// soft dependency
+	var ResizeHandler;
 
 	/**
 	 * Creates and initializes a new control with the given <code>sId</code> and settings.
@@ -660,7 +661,11 @@ sap.ui.define([
 		//Cleanup Busy Indicator
 		this._cleanupBusyIndicator();
 
-		ResizeHandler.deregisterAllForControl(this.getId());
+		// do not load ResizeHandler - if it isn't there, there should be no resize handler registrations
+		ResizeHandler = ResizeHandler || sap.ui.require("sap/ui/core/ResizeHandler");
+		if ( ResizeHandler ) {
+			ResizeHandler.deregisterAllForControl(this.getId());
+		}
 
 		// Controls can have their visible-property set to "false" in which case the Element's destroy method will
 		// fail to remove the placeholder content from the DOM. We have to remove it here in that case
