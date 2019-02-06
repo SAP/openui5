@@ -3212,10 +3212,42 @@ sap.ui.define([
 		}.bind(this), 500);
 	});
 
-	QUnit.test("ViewSettingsDialog sets ariaLabeldBy of the Dialog to the title id", function (assert) {
-		var sExpectedId = this.oVSD._sTitleLabelId;
+	QUnit.test("ViewSettingsDialog sets ariaLabelledBy of the Dialog to the title id", function (assert) {
+		// Prepare
+		var sExpectedId = this.oVSD._sTitleLabelId,
+			aDialogAriaLabelledBy = this.oVSD._getDialog().getAriaLabelledBy();
+
+		// Assert
 		assert.strictEqual(this.oVSD._getTitleLabel().getId(), sExpectedId, "id of the Dialog title is equal to the 'dialogId + -title' suffix");
-		assert.strictEqual(this.oVSD._getDialog().getAriaLabelledBy()[0], sExpectedId, "ariaLabeledBy attribute of the Dialog is equal to the Dialog title id");
+		assert.strictEqual(aDialogAriaLabelledBy[0], sExpectedId, "ariaLabeledBy attribute of the Dialog is equal to the Dialog title id");
+		assert.strictEqual(aDialogAriaLabelledBy.indexOf(this.oVSD._sFilterDetailTitleLabelId), -1,
+			"VSD's filter detail title isn't referenced when the filter detail page isn't currently opened");
+	});
+
+	QUnit.test("VSD sets adjusts Dialog's ariaLabelledBy for the detailed filter page", function (assert) {
+		// Prepare
+		var aAriaLabelledBy;
+
+		function openAndNavigateToFilterDetailsPage(oVSD) {
+			oVSD.open("filter");
+			var oItem = oVSD._filterList.getItems()[1].data("item"); //since the header is the 0 element, get the actual first item
+			//this is a simulation of click on the single filter item, that provokes slide to the nav container's page2
+			oVSD._switchToPage(3, oItem);
+			oVSD._prevSelectedFilterItem = oItem;
+			oVSD._navContainer.to(oVSD.getId() + '-page2', "slide");
+		}
+
+		// Act
+		openAndNavigateToFilterDetailsPage(this.oVSD);
+		sap.ui.getCore().applyChanges();
+
+		aAriaLabelledBy = this.oVSD._getDialog().getAriaLabelledBy();
+
+		// Assert
+		assert.strictEqual(aAriaLabelledBy[0], this.oVSD._sFilterDetailTitleLabelId,  "The filter detail title is applied");
+		assert.strictEqual(aAriaLabelledBy.indexOf(this.oVSD._sTitleLabelId), -1,
+			"VSD's standard title isn't referenced in aria-labelledby for the filter details");
+
 	});
 
 	return waitForThemeApplied();
