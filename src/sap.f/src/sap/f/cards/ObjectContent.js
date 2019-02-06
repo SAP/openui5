@@ -1,8 +1,8 @@
 /*!
  * ${copyright}
  */
-sap.ui.define(["sap/f/cards/BaseContent", "sap/m/HBox", "sap/m/VBox", "sap/m/Text", "sap/m/Title", "sap/f/Avatar", "sap/m/Link"],
-	function (BaseContent, HBox, VBox, Text, Title, Avatar, Link) {
+sap.ui.define(["sap/f/cards/BaseContent", "sap/m/HBox", "sap/m/VBox", "sap/m/Text", "sap/m/Title", "sap/f/Avatar", "sap/m/Link","sap/m/Label",  "sap/ui/layout/AlignedFlowLayout"],
+	function (BaseContent, HBox, VBox, Text, Title, Avatar, Link , Label, AlignedFlowLayout) {
 		"use strict";
 
 		/**
@@ -40,15 +40,13 @@ sap.ui.define(["sap/f/cards/BaseContent", "sap/m/HBox", "sap/m/VBox", "sap/m/Tex
 				return null;
 			}
 
-			var oHBox = this.getAggregation("_content");
-			if (!oHBox) {
-				oHBox = new HBox({
-					wrap: "Wrap"
-				});
-				this.setAggregation("_content", oHBox);
+			var oAlignedFlowLayout = this.getAggregation("_content");
+			if (!oAlignedFlowLayout) {
+				oAlignedFlowLayout = new AlignedFlowLayout();
+				this.setAggregation("_content", oAlignedFlowLayout);
 			}
 
-			return oHBox;
+			return oAlignedFlowLayout;
 		};
 
 		ObjectContent.prototype.init = function () {
@@ -66,15 +64,22 @@ sap.ui.define(["sap/f/cards/BaseContent", "sap/m/HBox", "sap/m/VBox", "sap/m/Tex
 			var aGroups = this.getConfiguration().groups;
 
 			aGroups.forEach(function (oGroup) {
+
 				var oGroupContainer = new VBox();
 				oGroupContainer.addStyleClass("sapFCardObjectGroup");
-				oGroupContainer.addItem(new Title({ text: oGroup.title }));
+				var oTitle = new Title({ text: oGroup.title });
+				oTitle.addStyleClass("sapFCardObjectItemTitle");
+				oGroupContainer.addItem(oTitle);
 
 				oGroup.items.forEach(function (oItem) {
-					var oItemLabel = new Text({ text: oItem.label });
-					oItemLabel.addStyleClass("sapFCardObjectItemLabel");
-					var oItemText;
+					if (oItem.label) {
+						//Checks if the label ends with ":" and if not we just add the ":"
+						var sLabelText = oItem.label[oItem.label.length - 1] === ":" ? oItem.label : oItem.label += ":";
+						var oItemLabel = new Label({text: sLabelText});
+						oItemLabel.addStyleClass("sapFCardObjectItemLabel");
+					}
 
+					var oItemText;
 					if (oItem.value) {
 						oItemText = new Text({ text: oItem.value });
 					} else if (oItem.link) {
@@ -89,7 +94,7 @@ sap.ui.define(["sap/f/cards/BaseContent", "sap/m/HBox", "sap/m/VBox", "sap/m/Tex
 									customDisplaySize: "2.5rem",
 									displaySize: "Custom",
 									src: oItem.icon.src
-								}),
+								}).addStyleClass("sapFCardObjectItemAvatar sapFCardObjectItemLabel"),
 								new VBox({
 									items: [
 										oItemLabel,
@@ -105,7 +110,7 @@ sap.ui.define(["sap/f/cards/BaseContent", "sap/m/HBox", "sap/m/VBox", "sap/m/Tex
 					}
 				});
 
-				oContainer.addItem(oGroupContainer);
+				oContainer.addContent(oGroupContainer);
 			});
 		};
 
