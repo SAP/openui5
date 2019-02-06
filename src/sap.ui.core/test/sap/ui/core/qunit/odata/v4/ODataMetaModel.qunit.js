@@ -159,6 +159,11 @@ sap.ui.define([
 					}
 				},
 				"tea_busi.Worker" : {
+					"@Common.Text" : {
+						"$If" : [true, {
+							"$Path" : "Name"
+						}] // "else" is missing!
+					},
 					"@UI.Facets" : [{
 						"$Type" : "UI.ReferenceFacet",
 						"Target" : {
@@ -1218,6 +1223,9 @@ sap.ui.define([
 		// annotations ----------------------------------------------------------------------------
 		"/tea_busi.Worker@missing",
 		"/tea_busi.Worker/@missing",
+		"/tea_busi.Worker/@missing/foo",
+		"/tea_busi.AcChangeManagerOfTeam/0/$ReturnType/@missing/foo",
+		"/tea_busi.Worker/@Common.Text/$If/2/$Path",
 		// "@" to access to all annotations, e.g. for iteration
 		"/tea_busi.Worker/@/@missing",
 		// operations -----------------------------------------------------------------------------
@@ -1231,6 +1239,8 @@ sap.ui.define([
 
 			this.oMetaModelMock.expects("fetchEntityContainer")
 				.returns(SyncPromise.resolve(mScope));
+			this.oLogMock.expects("isLoggable").never();
+			this.oLogMock.expects("debug").never();
 
 			// code under test
 			oSyncPromise = this.oMetaModel.fetchObject(sPath);
@@ -1386,7 +1396,8 @@ sap.ui.define([
 			"/$Foo/$Bar/$Baz" : "Invalid segment: $Bar",
 			"/$EntityContainer/T€AMS/Team_Id/$MaxLength/." : "Invalid segment: .",
 			"/$EntityContainer/T€AMS/Team_Id/$Nullable/." : "Invalid segment: .",
-			"/$EntityContainer/T€AMS/Team_Id/NotFound/Invalid" : "Invalid segment: Invalid"
+			"/$EntityContainer/T€AMS/Team_Id/NotFound/Invalid" : "Invalid segment: Invalid",
+			"/T€AMS/@Common.Text/$Path/$Foo/$Bar" : "Invalid segment: $Bar"
 		}, function (sPath, sMessage) {
 			QUnit.test("fetchObject fails: " + sPath + ", debug = " + bDebug, function (assert) {
 				var oSyncPromise;
@@ -5251,15 +5262,16 @@ sap.ui.define([
 						}]
 					}] : undefined);
 				oCodeListMetaModelMock.expects("getObject")
-					.withExactArgs(
-						"/UnitsOfMeasure/UnitCode@com.sap.vocabularies.Common.v1.UnitSpecificScale")
-					.returns({$Path : "DecimalPlaces"});
+					.withExactArgs("/UnitsOfMeasure/UnitCode"
+						+ "@com.sap.vocabularies.Common.v1.UnitSpecificScale/$Path")
+					.returns("DecimalPlaces");
 				oCodeListMetaModelMock.expects("getObject")
-					.withExactArgs("/UnitsOfMeasure/UnitCode@com.sap.vocabularies.Common.v1.Text")
-					.returns({$Path : "MyText"});
+					.withExactArgs("/UnitsOfMeasure/UnitCode"
+						+ "@com.sap.vocabularies.Common.v1.Text/$Path")
+					.returns("MyText");
 				oCodeListMetaModelMock.expects("getObject").withExactArgs("/UnitsOfMeasure/UnitCode"
-						+ "@com.sap.vocabularies.CodeList.v1.StandardCode")
-					.returns(bHasStandardCode ? {$Path : "ISOCode"} : undefined);
+						+ "@com.sap.vocabularies.CodeList.v1.StandardCode/$Path")
+					.returns(bHasStandardCode ? "ISOCode" : undefined);
 				this.mock(oCodeListModel).expects("bindList")
 					.withExactArgs("/UnitsOfMeasure", null, null, null, {$select : aSelect})
 					.returns(oCodeListBinding);
@@ -5658,13 +5670,13 @@ sap.ui.define([
 			.returns(undefined);
 		oCodeListMetaModelMock.expects("getObject")
 			.withExactArgs(
-				"/UnitsOfMeasure/UnitCode@com.sap.vocabularies.Common.v1.UnitSpecificScale")
-			.returns({$Path : "DecimalPlaces"});
+				"/UnitsOfMeasure/UnitCode@com.sap.vocabularies.Common.v1.UnitSpecificScale/$Path")
+			.returns("DecimalPlaces");
 		oCodeListMetaModelMock.expects("getObject")
-			.withExactArgs("/UnitsOfMeasure/UnitCode@com.sap.vocabularies.Common.v1.Text")
-			.returns({$Path : "MyText"});
+			.withExactArgs("/UnitsOfMeasure/UnitCode@com.sap.vocabularies.Common.v1.Text/$Path")
+			.returns("MyText");
 		oCodeListMetaModelMock.expects("getObject").withExactArgs("/UnitsOfMeasure/UnitCode"
-				+ "@com.sap.vocabularies.CodeList.v1.StandardCode")
+				+ "@com.sap.vocabularies.CodeList.v1.StandardCode/$Path")
 			.returns(undefined);
 		this.mock(oCodeListModel).expects("bindList")
 			.withExactArgs("/UnitsOfMeasure", null, null, null, {
@@ -5750,13 +5762,13 @@ sap.ui.define([
 			.returns(undefined);
 		oCodeListMetaModelMock.expects("getObject")
 			.withExactArgs(
-				"/UnitsOfMeasure/UnitCode@com.sap.vocabularies.Common.v1.UnitSpecificScale")
-			.returns({$Path : "DecimalPlaces"});
+				"/UnitsOfMeasure/UnitCode@com.sap.vocabularies.Common.v1.UnitSpecificScale/$Path")
+			.returns("DecimalPlaces");
 		oCodeListMetaModelMock.expects("getObject")
-			.withExactArgs("/UnitsOfMeasure/UnitCode@com.sap.vocabularies.Common.v1.Text")
-			.returns({$Path : "MyText"});
+			.withExactArgs("/UnitsOfMeasure/UnitCode@com.sap.vocabularies.Common.v1.Text/$Path")
+			.returns("MyText");
 		oCodeListMetaModelMock.expects("getObject").withExactArgs("/UnitsOfMeasure/UnitCode"
-				+ "@com.sap.vocabularies.CodeList.v1.StandardCode")
+				+ "@com.sap.vocabularies.CodeList.v1.StandardCode/$Path")
 			.returns(undefined);
 		this.mock(oCodeListModel).expects("bindList")
 			.withExactArgs("/UnitsOfMeasure", null, null, null, {

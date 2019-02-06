@@ -920,6 +920,7 @@ sap.ui.define([
 				// binding parameter's type name ({string}) for overloading of bound operations
 				// or UNBOUND ({object}) for unbound operations called via an import
 			var vBindingParameterType,
+				bInsideAnnotation = false,
 				vLocation, // {string[]|string} location of indirection
 				sName, // what "@sapui.name" refers to: OData or annotation name
 				bODataMode = true, // OData navigation mode with scope lookup etc.
@@ -1223,13 +1224,14 @@ sap.ui.define([
 					if (!vResult || typeof vResult !== "object") {
 						// Note: even an OData path cannot continue here (e.g. by type cast)
 						vResult = undefined;
-						return log(DEBUG, "Invalid segment: ", sSegment);
+						return !bInsideAnnotation && log(DEBUG, "Invalid segment: ", sSegment);
 					}
 					if (bODataMode && sSegment[0] === "@") {
 						// annotation(s) via external targeting
 						// Note: inline annotations can only be reached via pure "JSON" drill-down,
 						//       e.g. ".../$ReturnType/@..."
 						vResult = (mScope.$Annotations || {})[sTarget] || {};
+						bInsideAnnotation = true;
 						bODataMode = false; // switch to pure "JSON" drill-down
 					} else if (sSegment === "$" && i + 1 < aSegments.length) {
 						return log(WARNING, "Unsupported path after $");
@@ -1237,6 +1239,9 @@ sap.ui.define([
 				}
 
 				if (sSegment !== "@" && sSegment !== "$") {
+					if (sSegment[0] === "@") {
+						bInsideAnnotation = true;
+					}
 					sName = bODataMode || sSegment[0] === "@" ? sSegment : undefined;
 					sTarget = bODataMode ? sTarget + "/" + sSegment : undefined;
 					vResult = vResult[sSegment];
@@ -1265,6 +1270,7 @@ sap.ui.define([
 				}
 				vLocation = vNewLocation;
 
+				bInsideAnnotation = false;
 				bODataMode = true;
 				vResult = mScope;
 				bContinue = sRelativePath.split("/").every(step);
@@ -2043,9 +2049,8 @@ sap.ui.define([
 								+ "@com.sap.vocabularies.Common.v1.",
 							aSelect,
 							sScalePropertyPath,
-							oStandardCode,
 							sStandardCodePath = sTypePath + sKeyPath
-								+ "@com.sap.vocabularies.CodeList.v1.StandardCode",
+								+ "@com.sap.vocabularies.CodeList.v1.StandardCode/$Path",
 							sStandardPropertyPath,
 							sTextPropertyPath;
 
@@ -2114,14 +2119,13 @@ sap.ui.define([
 						}
 
 						sScalePropertyPath = oCodeListMetaModel
-							.getObject(sKeyAnnotationPathPrefix + "UnitSpecificScale").$Path;
+							.getObject(sKeyAnnotationPathPrefix + "UnitSpecificScale/$Path");
 						sTextPropertyPath = oCodeListMetaModel
-							.getObject(sKeyAnnotationPathPrefix + "Text").$Path;
+							.getObject(sKeyAnnotationPathPrefix + "Text/$Path");
 						aSelect = [sKeyPath, sScalePropertyPath, sTextPropertyPath];
 
-						oStandardCode = oCodeListMetaModel.getObject(sStandardCodePath);
-						if (oStandardCode) {
-							sStandardPropertyPath = oStandardCode.$Path;
+						sStandardPropertyPath = oCodeListMetaModel.getObject(sStandardCodePath);
+						if (sStandardPropertyPath) {
 							aSelect.push(sStandardPropertyPath);
 						}
 
