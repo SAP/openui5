@@ -51,23 +51,29 @@ jQuery.sap.require("sap.ui.fl.EventHistory");
 		var sEventId = EventHistory._aEventIds[0];
 		var mParameters1 = {
 			"param11": "value11",
-			"param12": "value12"
+			"param12": "value12",
+			"getId": function () {
+				return "id1";
+			}
 		};
 		var mParameters2 = {
 			"param21": "value21",
-			"param22": "value22"
+			"param22": "value22",
+			"getId": function () {
+				return "id2";
+			}
 		};
 
 		var oExpectedEvent1 = {
 			"channelId": sChannelId,
 			"eventId": sEventId,
-			"parameters": mParameters1
+			"parameters": mParameters1.getId()
 		};
 
 		var oExpectedEvent2 = {
 			"channelId": sChannelId,
 			"eventId": sEventId,
-			"parameters": mParameters2
+			"parameters": mParameters2.getId()
 		};
 
 		EventHistory.start();
@@ -87,23 +93,29 @@ jQuery.sap.require("sap.ui.fl.EventHistory");
 		var sEventId = EventHistory._aEventIds[0];
 		var mParameters1 = {
 			"param11": "value11",
-			"param12": "value12"
+			"param12": "value12",
+			"getId": function () {
+				return "id1";
+			}
 		};
 		var mParameters2 = {
 			"param21": "value21",
-			"param22": "value22"
+			"param22": "value22",
+			"getId": function () {
+				return "id2";
+			}
 		};
 
 		var oExpectedEvent1 = {
 			"channelId": sChannelId,
 			"eventId": sEventId,
-			"parameters": mParameters1
+			"parameters": mParameters1.getId()
 		};
 
 		var oExpectedEvent2 = {
 			"channelId": sChannelId,
 			"eventId": sEventId,
-			"parameters": mParameters2
+			"parameters": mParameters2.getId()
 		};
 
 		EventHistory.start();
@@ -119,5 +131,53 @@ jQuery.sap.require("sap.ui.fl.EventHistory");
 		assert.equal(Array.isArray(aItemsAnother), true);
 		assert.equal(aItemsAnother.length, 0);
 		assert.equal(oUnsubscribeStub.callCount, 2);
+	});
+
+	QUnit.test("saveEvent saves the event in the history object and ignores duplicates", function(assert) {
+		var sChannelId = "sap.ui";
+		var sEventId = EventHistory._aEventIds[0];
+		var mParameters1 = {
+			"param11": "value11",
+			"param12": "value12",
+			"getId": function () {
+				return "id1";
+			}
+		};
+		var mParameters2 = {
+			"param21": "value21",
+			"param22": "value22",
+			"getId": function () {
+				return "id2";
+			}
+		};
+
+		var oExpectedEvent1 = {
+			"channelId": sChannelId,
+			"eventId": sEventId,
+			"parameters": mParameters1.getId()
+		};
+
+		var oExpectedEvent2 = {
+			"channelId": sChannelId,
+			"eventId": sEventId,
+			"parameters": mParameters2.getId()
+		};
+
+		EventHistory.start();
+		EventHistory.saveEvent(sChannelId, sEventId, mParameters1);
+		EventHistory.saveEvent(sChannelId, sEventId, mParameters1);
+		EventHistory.saveEvent(sChannelId, sEventId, mParameters1);
+		EventHistory.saveEvent(sChannelId, "anotherEventId", mParameters1);
+		EventHistory.saveEvent(sChannelId, "anotherEventId", mParameters1);
+		EventHistory.saveEvent(sChannelId, "anotherEventId", mParameters1);
+		EventHistory.saveEvent(sChannelId, sEventId, mParameters2);
+		EventHistory.saveEvent(sChannelId, sEventId, mParameters2);
+		EventHistory.saveEvent(sChannelId, sEventId, mParameters2);
+
+		var sEventId = EventHistory._aEventIds[0];
+		var oHistory = EventHistory._oHistory[sEventId];
+		assert.equal(oHistory.length, 2);
+		assert.deepEqual(oHistory[0], oExpectedEvent1);
+		assert.deepEqual(oHistory[1], oExpectedEvent2);
 	});
 }(QUnit, sinon, sap.ui.fl.EventHistory));
