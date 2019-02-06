@@ -12926,13 +12926,14 @@ sap.ui.define([
 				"WeightMeasure" : "12.34",
 				"WeightUnit" : "KG"
 			})
-			.expectRequest("UnitsOfMeasure?$select=ExternalCode,DecimalPlaces,Text", {
+			.expectRequest("UnitsOfMeasure?$select=ExternalCode,DecimalPlaces,Text,ISOCode", {
 				value : [{
-				   "UnitCode" : "KG",
-				   "Text" : "Kilogramm",
-				   "DecimalPlaces" : 5,
-				   "ExternalCode" : "KG"
-			   }]
+					"ExternalCode" : "KG",
+					"DecimalPlaces" : 5,
+					"ISOCode" : "",
+					"Text" : "Kilogramm",
+					"UnitCode" : "KG"
+				}]
 			})
 			.expectChange("weightMeasure", "12.340")  // Scale=3 in property metadata => 3 decimals
 			.expectChange("weight", "12.34000 KG");
