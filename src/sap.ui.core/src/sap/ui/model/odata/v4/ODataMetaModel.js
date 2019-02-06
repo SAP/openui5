@@ -1177,6 +1177,14 @@ sap.ui.define([
 									return true;
 								}
 								if (vResult.length !== 1) {
+									if (sSegment !== aSegments[i]) {
+										// not looking for parameter itself, but for an annotation:
+										// "the annotation applies to [...] all parameters of that
+										// name across all overloads"
+										sName = sSegment;
+										sTarget = sTarget + "/" + sSegment;
+										return true;
+									}
 									return log(WARNING, "Unsupported overloads");
 								}
 								vResult = vResult[0].$ReturnType;

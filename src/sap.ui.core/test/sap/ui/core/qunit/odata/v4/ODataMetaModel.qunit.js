@@ -101,6 +101,21 @@ sap.ui.define([
 				"name.space.Id" : {
 					"@Common.Label" : "ID"
 				},
+				"name.space.OverloadedAction/_it" : {
+					"@Common.Label" : "_it's own label"
+				},
+				"name.space.OverloadedFunction/A" : {
+					"@Common.Label" : "A's own label"
+				},
+				"name.space.OverloadedFunction/B" : {
+					"@Common.Label" : "B's own label",
+					"@Common.Text" : {
+						"$Path" : "Road_2_Nowhere"
+					},
+					"@Common.Text@UI.TextArrangement" : {
+						"$EnumMember" : "UI.TextArrangementType/TextLast"
+					}
+				},
 				"tea_busi.DefaultContainer" : {
 					"@DefaultContainer" : {}
 				},
@@ -255,7 +270,7 @@ sap.ui.define([
 				"$kind" : "Action",
 				"$IsBound" : true,
 				"$Parameter" : [{
-//					"$Name" : "_it",
+					"$Name" : "_it",
 					"$Type" : "tea_busi.EQUIPMENT"
 				}],
 				"$ReturnType" : {
@@ -265,7 +280,7 @@ sap.ui.define([
 				"$kind" : "Action",
 				"$IsBound" : true,
 				"$Parameter" : [{
-//					"$Name" : "_it",
+					"$Name" : "_it",
 					"$Type" : "tea_busi.TEAM"
 				}],
 				"$ReturnType" : {
@@ -280,7 +295,7 @@ sap.ui.define([
 				"$kind" : "Action",
 				"$IsBound" : true,
 				"$Parameter" : [{
-//					"$Name" : "_it",
+					"$Name" : "_it",
 					"$Type" : "tea_busi.Worker"
 				}],
 				"$ReturnType" : {
@@ -289,11 +304,19 @@ sap.ui.define([
 			}],
 			"name.space.OverloadedFunction" : [{
 				"$kind" : "Function",
+				"$Parameter" : [{
+					"$Name" : "A",
+					"$Type" : "Edm.String"
+				}],
 				"$ReturnType" : {
 					"$Type" : "Edm.String"
 				}
 			}, {
 				"$kind" : "Function",
+				"$Parameter" : [{
+					"$Name" : "B",
+					"$Type" : "Edm.String"
+				}],
 				"$ReturnType" : {
 					"$Type" : "Edm.String"
 				}
@@ -1109,6 +1132,18 @@ sap.ui.define([
 		"/T€AMS/Team_Id@Common.Text@UI.TextArrangement"
 			: mScope.$Annotations["tea_busi.TEAM/Team_Id"]["@Common.Text@UI.TextArrangement"],
 		"/tea_busi./@Schema" : mScope["tea_busi."]["@Schema"],
+		// annotations at parameters apply across all overloads
+		"/name.space.OverloadedAction/_it@Common.Label"
+			: mScope.$Annotations["name.space.OverloadedAction/_it"]["@Common.Label"],
+		"/name.space.OverloadedAction/_it@sapui.name" : "_it",
+		"/name.space.OverloadedFunction/A@Common.Label"
+			: mScope.$Annotations["name.space.OverloadedFunction/A"]["@Common.Label"],
+		"/name.space.OverloadedFunction/B@Common.Label"
+			: mScope.$Annotations["name.space.OverloadedFunction/B"]["@Common.Label"],
+		"/name.space.OverloadedFunction/B@Common.Text/$Path" : "Road_2_Nowhere",
+		"/name.space.OverloadedFunction/B@Common.Text@UI.TextArrangement"
+			: mScope.$Annotations["name.space.OverloadedFunction/B"]
+				["@Common.Text@UI.TextArrangement"],
 		// inline annotations
 		"/ChangeManagerOfTeam/$Action/0/$ReturnType/@Common.Label" : "Hail to the Chief",
 		"/T€AMS/TEAM_2_EMPLOYEES/$OnDelete@Common.Label" : "None of my business",
@@ -1120,6 +1155,8 @@ sap.ui.define([
 		"/T€AMS@" : mScope.$Annotations["tea_busi.DefaultContainer/T€AMS"],
 		"/T€AMS/@" : mScope.$Annotations["tea_busi.TEAM"],
 		"/T€AMS/Team_Id@" : mScope.$Annotations["tea_busi.TEAM/Team_Id"],
+		"/name.space.OverloadedAction/_it@"
+			: mScope.$Annotations["name.space.OverloadedAction/_it"],
 		// "14.5.12 Expression edm:Path"
 		// Note: see integration test "{field>Value/$Path@com.sap.vocabularies.Common.v1.Label}"
 		"/T€AMS/@UI.LineItem/0/Value/$Path@Common.Text"
@@ -1352,6 +1389,7 @@ sap.ui.define([
 			// Unsupported overloads --------------------------------------------------------------
 			"/name.space.EmptyOverloads/" : "Unsupported overloads",
 			"/name.space.OverloadedAction/" : "Unsupported overloads",
+			"/name.space.OverloadedAction/_it" : "Unsupported overloads",
 			"/name.space.OverloadedFunction/" : "Unsupported overloads",
 			// Unsupported path after $ -----------------------------------------------------------
 			"/T€AMS/@UI.LineItem/0/$/Value" : "Unsupported path after $", // in "JSON" mode
