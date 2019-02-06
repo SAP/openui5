@@ -389,8 +389,8 @@ sap.ui.define([
 
 				if (oColumn.getVisible() && (oColumn.getResizable() || oColumn._menuHasItems())) {
 					var $Column = $TableCell || oColumn.$();
-					var $ColumnCell = $Column.find(".sapUiTableColCell");
-					var bCellMenuAlreadyExists = $Column.find(".sapUiTableColCellMenu").length > 0;
+					var $ColumnCell = $Column.find(".sapUiTableCellInner");
+					var bCellMenuAlreadyExists = $Column.find(".sapUiTableCellTouchMenu").length > 0;
 
 					if (!bCellMenuAlreadyExists) {
 						MenuUtils.removeColumnHeaderCellMenu(oTable); // First remove any existing column header cell menu of another column.
@@ -403,10 +403,10 @@ sap.ui.define([
 
 						var sColumnResizerButton = "";
 						if (oColumn.getResizable()) {
-							sColumnResizerButton = "<div class='sapUiTableColResizer''></div>";
+							sColumnResizerButton = "<div class='sapUiTableColResizer'></div>";
 						}
 
-						var $ColumnCellMenu = jQuery("<div class='sapUiTableColCellMenu'>" + sColumnContextMenuButton + sColumnResizerButton + "</div>");
+						var $ColumnCellMenu = jQuery("<div class='sapUiTableCellTouchMenu'>" + sColumnContextMenuButton + sColumnResizerButton + "</div>");
 
 						$Column.append($ColumnCellMenu);
 
@@ -430,9 +430,9 @@ sap.ui.define([
 			 * @private
 			 */
 			removeColumnHeaderCellMenu: function(oTable) {
-				var $ColumnCellMenu = oTable && oTable.$().find(".sapUiTableCHT .sapUiTableColCellMenu");
+				var $ColumnCellMenu = oTable && oTable.$().find(".sapUiTableCHT .sapUiTableCellTouchMenu");
 				if ($ColumnCellMenu.length) {
-					$ColumnCellMenu.parent().find(".sapUiTableColCell").show();
+					$ColumnCellMenu.parent().find(".sapUiTableCellInner").show();
 					$ColumnCellMenu.remove();
 				}
 			},

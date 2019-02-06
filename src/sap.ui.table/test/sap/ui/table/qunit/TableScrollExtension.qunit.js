@@ -584,7 +584,7 @@ sap.ui.define([
 		sap.ui.getCore().applyChanges();
 		oTable.getDomRef().querySelector(".sapUiTableColHdrCnt").style.height = "78px";
 		this.oScrollExtension.updateVerticalScrollbarPosition();
-		iExpectedTopPosition = oTable.getDomRef("tableCCnt").offsetTop + 48;
+		iExpectedTopPosition = oTable.getDomRef("tableCCnt").offsetTop + TableUtils.BaseSize.sapUiSizeCozy;
 		assert.strictEqual(window.getComputedStyle(this.oScrollExtension.getVerticalScrollbar()).top, iExpectedTopPosition + "px",
 			"The top position is " + iExpectedTopPosition + "px");
 	});
@@ -1517,6 +1517,10 @@ sap.ui.define([
 
 			TableQUnitUtils.createTable(null, mOptions, function(oTable, mOptions) {
 				this.oTable = oTable;
+
+				oTable._getDefaultRowHeight = function() {
+					return 49;
+				};
 
 				oTable.addColumn(new Column({
 					template: new HeightControl({height: "{rowHeight}"})
@@ -5543,7 +5547,7 @@ sap.ui.define([
 			}).then(function(resolve) {
 				return new Promise(function(resolve) {
 					window.setTimeout(function() {
-						var $InnerCellElement = TableUtils.getCell(oTreeTable, oCellContentInColumn).find(".sapUiTableCell");
+						var $InnerCellElement = TableUtils.getCell(oTreeTable, oCellContentInColumn).find(".sapUiTableCellInner");
 
 						assert.strictEqual(document.activeElement, oCellContentInColumn,
 							"The content of the cell in row " + iRowIndex + " column " + iColumnIndex + " is focused");

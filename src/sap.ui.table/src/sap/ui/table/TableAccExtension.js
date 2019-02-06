@@ -196,7 +196,7 @@ sap.ui.define([
 
 			var bIsRowHidden = $Cell.parent().hasClass("sapUiTableRowHidden");
 			var bIsCellHidden = $Cell.hasClass("sapUiTableCellHidden");
-			var bNoMeasureInFirstCellInGroup = bGroup && $Cell.hasClass("sapUiTableTdFirst") && !$Cell.hasClass("sapUiTableMeasureCell");
+			var bNoMeasureInFirstCellInGroup = bGroup && $Cell.hasClass("sapUiTableCellFirst") && !$Cell.hasClass("sapUiTableMeasureCell");
 			var bGroupCellHiddenByApp = bGroup && bSupportStyleClass && oCell.hasStyleClass("sapUiAnalyticalTableGroupCellHidden");
 			var bSumCellHiddenByApp = bSum && bSupportStyleClass && oCell.hasStyleClass("sapUiAnalyticalTableSumCellHidden");
 
@@ -207,7 +207,7 @@ sap.ui.define([
 		 * Returns whether the given cell is in the tree column of a TreeTable
 		 */
 		isTreeColumnCell: function(oExtension, $Cell) {
-			return TableUtils.Grouping.isTreeMode(oExtension.getTable()) && $Cell.hasClass("sapUiTableTdFirst");
+			return TableUtils.Grouping.isTreeMode(oExtension.getTable()) && $Cell.hasClass("sapUiTableCellFirst");
 		},
 
 		/*

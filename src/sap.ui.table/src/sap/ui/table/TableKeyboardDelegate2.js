@@ -46,7 +46,7 @@ sap.ui.define([
 
 	// Workaround until (if ever) these values can be set by applications.
 	var HORIZONTAL_SCROLLING_PAGE_SIZE = 5;
-	var COLUMN_RESIZE_STEP_CSS_SIZE = "1em";
+	var COLUMN_RESIZE_STEP_CSS_SIZE = "1rem";
 
 	/**
 	 * Prevent forwarding the keyboard event to the item navigation.
@@ -523,7 +523,7 @@ sap.ui.define([
 	TableKeyboardDelegate._isElementGroupToggler = function(oTable, oElement) {
 		return TableUtils.Grouping.isInGroupingRow(oElement)
 			   || (TableUtils.Grouping.isTreeMode(oTable)
-				   && oElement.classList.contains("sapUiTableTdFirst")
+				   && oElement.classList.contains("sapUiTableCellFirst")
 				   && (oElement.querySelector(".sapUiTableTreeIconNodeOpen")
 					   || oElement.querySelector(".sapUiTableTreeIconNodeClosed")))
 			   || oElement.classList.contains("sapUiTableTreeIconNodeOpen")
@@ -1447,7 +1447,7 @@ sap.ui.define([
 			/* Column Resizing */
 
 			} else if (oCellInfo.isOfType(CellType.COLUMNHEADER)) {
-				var iResizeDelta = -this._CSSSizeToPixel(COLUMN_RESIZE_STEP_CSS_SIZE);
+				var iResizeDelta = -TableUtils.convertCSSSizeToPixel(COLUMN_RESIZE_STEP_CSS_SIZE);
 				var iColumnSpanWidth = 0;
 
 				if (bIsRTL) {
@@ -1513,7 +1513,7 @@ sap.ui.define([
 			/* Column Resizing */
 
 			} else if (oCellInfo.isOfType(CellType.COLUMNHEADER)) {
-				var iResizeDelta = this._CSSSizeToPixel(COLUMN_RESIZE_STEP_CSS_SIZE);
+				var iResizeDelta = TableUtils.convertCSSSizeToPixel(COLUMN_RESIZE_STEP_CSS_SIZE);
 				var iColumnSpanWidth = 0;
 
 				if (bIsRTL) {

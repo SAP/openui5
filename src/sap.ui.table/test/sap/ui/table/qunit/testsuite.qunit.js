@@ -129,11 +129,11 @@ sap.ui.define([
 					libs: ["sap.ui.table", "sap.m"]
 				}
 			},
-			"ControlsUsedInTable": {
+			/*"ControlsUsedInTable": {
 				ui5: {
 					libs: ["sap.ui.table", "sap.m"]
 				}
-			},
+			},*/
 
 			// Utils
 			"TableUtils": {

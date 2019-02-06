@@ -484,7 +484,7 @@ sap.ui.define([
 
 	AnalyticalTable.prototype._onContextMenu = function(oEvent) {
 		if (jQuery(oEvent.target).closest('tr').hasClass('sapUiTableGroupHeader') ||
-				jQuery(oEvent.target).closest('.sapUiTableRowHdr.sapUiTableGroupHeader').length > 0) {
+				jQuery(oEvent.target).closest('.sapUiTableRowSelectionCell.sapUiTableGroupHeader').length > 0) {
 			this._iGroupedLevel = jQuery(oEvent.target).closest('[data-sap-ui-level]').data('sap-ui-level');
 			var oMenu = this._getGroupHeaderMenu();
 			var eDock = Popup.Dock;

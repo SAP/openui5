@@ -63,7 +63,7 @@ sap.ui.define([
 		SortOrder = library.SortOrder,
 		VisibleRowCountMode = library.VisibleRowCountMode;
 
-	var MAX_RENDERING_ITERATIONS = 20; // Consistent with Core.MAX_RENDERING_ITERATIONS
+	var MAX_RENDERING_ITERATIONS = 5;
 
 	/**
 	 * Constructor for a new Table.
@@ -807,7 +807,6 @@ sap.ui.define([
 	 * @private
 	 */
 	Table.prototype.init = function() {
-		this._iBaseFontSize = parseFloat(jQuery("body").css("font-size")) || 16;
 		// create an information object which contains always required infos
 		this._bRtlMode = sap.ui.getCore().getConfiguration().getRTL();
 
@@ -874,6 +873,10 @@ sap.ui.define([
 		// this.data("sap-ui-fastnavgroup", "true", true); // Define group for F6 handling
 
 		this._nDevicePixelRatio = window.devicePixelRatio;
+
+		if (sap.ui.getCore().isThemeApplied()) {
+			TableUtils.readThemeParameters();
+		}
 
 		this._bInvalid = true;
 	};
@@ -962,6 +965,7 @@ sap.ui.define([
 	 * @private
 	 */
 	Table.prototype.onThemeChanged = function() {
+		TableUtils.readThemeParameters();
 		if (this.getDomRef()) {
 			this.invalidate();
 		}
@@ -1298,8 +1302,8 @@ sap.ui.define([
 
 		// select rows
 		var cssClass = bHeader ? ".sapUiTableColHdrTr" : ".sapUiTableTr";
-		var aRowHeaderItems = bHeader ? [] : oDomRef.querySelectorAll(".sapUiTableRowHdr");
-		var aRowActionItems = bHeader ? [] : oDomRef.querySelectorAll(".sapUiTableRowAction");
+		var aRowHeaderItems = bHeader ? [] : oDomRef.querySelectorAll(".sapUiTableRowSelectionCell");
+		var aRowActionItems = bHeader ? [] : oDomRef.querySelectorAll(".sapUiTableRowActionCell");
 		var aFixedRowItems = oDomRef.querySelectorAll(".sapUiTableCtrlFixed > tbody > tr" + cssClass);
 		var aScrollRowItems = oDomRef.querySelectorAll(".sapUiTableCtrlScroll > tbody > tr" + cssClass);
 
@@ -1620,7 +1624,7 @@ sap.ui.define([
 				var iTableWidth = oTableElement.clientWidth;
 				var iColumnsWidth = this.getColumns().reduce(function(iColumnsWidth, oColumn) {
 					if (oColumn.getDomRef() && oColumn.getIndex() >= this.getComputedFixedColumnCount()) {
-						return iColumnsWidth + this._CSSSizeToPixel(oColumn.getWidth());
+						return iColumnsWidth + TableUtils.convertCSSSizeToPixel(oColumn.getWidth());
 					}
 					return iColumnsWidth;
 				}.bind(this), 0);
@@ -1692,22 +1696,22 @@ sap.ui.define([
 
 		var oDomRef = this.getDomRef();
 		if (oDomRef && iFixedBottomRows > 0) {
-			var $sapUiTableFixedPreBottomRow = jQuery(oDomRef).find(".sapUiTableFixedPreBottomRow");
-			$sapUiTableFixedPreBottomRow.removeClass("sapUiTableFixedPreBottomRow");
-			var $sapUiTableFixedFirstBottomRow = jQuery(oDomRef).find(".sapUiTableFixedFirstBottomRow");
-			$sapUiTableFixedFirstBottomRow.removeClass("sapUiTableFixedFirstBottomRow");
+			var $sapUiTableFixedPreBottomRow = jQuery(oDomRef).find(".sapUiTableRowLastScrollable");
+			$sapUiTableFixedPreBottomRow.removeClass("sapUiTableRowLastScrollable");
+			var $sapUiTableFixedFirstBottomRow = jQuery(oDomRef).find(".sapUiTableRowFirstFixedBottom");
+			$sapUiTableFixedFirstBottomRow.removeClass("sapUiTableRowFirstFixedBottom");
 
-			var iFirstFixedButtomRowIndex = TableUtils.getFirstFixedButtomRowIndex(this);
+			var iFirstFixedButtomRowIndex = TableUtils.getFirstFixedBottomRowIndex(this);
 			var aRows = this.getRows();
 			var $rowDomRefs;
 
 			if (iFirstFixedButtomRowIndex >= 0 && iFirstFixedButtomRowIndex < aRows.length) {
 				$rowDomRefs = aRows[iFirstFixedButtomRowIndex].getDomRefs(true);
-				$rowDomRefs.row.addClass("sapUiTableFixedFirstBottomRow", true);
+				$rowDomRefs.row.addClass("sapUiTableRowFirstFixedBottom", true);
 			}
 			if (iFirstFixedButtomRowIndex >= 1 && iFirstFixedButtomRowIndex < aRows.length) {
 				$rowDomRefs = aRows[iFirstFixedButtomRowIndex - 1].getDomRefs(true);
-				$rowDomRefs.row.addClass("sapUiTableFixedPreBottomRow", true);
+				$rowDomRefs.row.addClass("sapUiTableRowLastScrollable", true);
 			}
 		}
 	};
@@ -2153,7 +2157,7 @@ sap.ui.define([
 
 	Table.prototype._computeRequestLength = function(iLength) {
 		if (this.getVisibleRowCountMode() === VisibleRowCountMode.Auto && !this._bContextsRequested) {
-			var iEstimatedRowCount = Math.ceil(Device.resize.height / TableUtils.DEFAULT_ROW_HEIGHT.sapUiSizeCondensed);
+			var iEstimatedRowCount = Math.ceil(Device.resize.height / TableUtils.DefaultRowHeight.sapUiSizeCondensed);
 			return Math.max(iLength, iEstimatedRowCount);
 		}
 		return iLength;
@@ -2699,41 +2703,18 @@ sap.ui.define([
 
 		for (var i = iStartColumn, l = iEndColumn; i < l; i++) {
 			if (aCols[i] && aCols[i].shouldRender()) {
-				iColsWidth += this._CSSSizeToPixel(aCols[i].getWidth());
+				var iColumnWidth = TableUtils.convertCSSSizeToPixel(aCols[i].getWidth());
+
+				if (iColumnWidth == null) {
+					iColumnWidth = TableUtils.Column.getMinColumnWidth();
+				}
+
+				iColsWidth += iColumnWidth;
 			}
 		}
 
 		return iColsWidth;
 
-	};
-
-	/**
-	 * Calculates the pixel value from a given CSS size and returns it with or without unit.
-	 * @param {string} sCSSSize
-	 * @param {boolean} bReturnWithUnit
-	 * @returns {string|number} Converted CSS value in pixel
-	 * @private
-	 */
-	Table.prototype._CSSSizeToPixel = function(sCSSSize, bReturnWithUnit) {
-		var sPixelValue = TableUtils.Column.getMinColumnWidth();
-
-		if (sCSSSize) {
-			if (sCSSSize.endsWith("px")) {
-				sPixelValue = parseInt(sCSSSize);
-			} else if (sCSSSize.endsWith("em") || sCSSSize.endsWith("rem")) {
-				sPixelValue = Math.ceil(parseFloat(sCSSSize) * this._getBaseFontSize());
-			}
-		}
-
-		if (bReturnWithUnit) {
-			return sPixelValue + "px";
-		} else {
-			return parseInt(sPixelValue);
-		}
-	};
-
-	Table.prototype._getBaseFontSize = function() {
-		return this._iBaseFontSize;
 	};
 
 	/**
@@ -2829,7 +2810,7 @@ sap.ui.define([
 	Table.prototype._findAndfireCellEvent = function(fnFire, oEvent, fnContextMenu) {
 		var $target = jQuery(oEvent.target);
 		// find out which cell has been clicked
-		var $cell = $target.closest("td.sapUiTableTd");
+		var $cell = $target.closest(".sapUiTableDataCell");
 		var sId = $cell.attr("id");
 		var aMatches = /.*-row(\d*)-col(\d*)/i.exec(sId);
 		var bCancel = false;
@@ -3628,10 +3609,10 @@ sap.ui.define([
 		var iRowContentHeight = this.getRowHeight();
 
 		if (iRowContentHeight > 0) {
-			return iRowContentHeight + TableUtils.ROW_HORIZONTAL_FRAME_SIZE;
+			return iRowContentHeight + TableUtils.RowHorizontalFrameSize;
 		} else {
 			var sContentDensity = TableUtils.getContentDensity(this);
-			return TableUtils.DEFAULT_ROW_HEIGHT[sContentDensity];
+			return TableUtils.DefaultRowHeight[sContentDensity];
 		}
 	};
 

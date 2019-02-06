@@ -38,14 +38,8 @@ sap.ui.define(['sap/ui/table/Row'],
 		rm.write(">");
 
 		var aIcons = oAction.getAggregation("_icons");
-
-		rm.write("<div>");
 		rm.renderControl(aIcons[0]);
-		rm.write("</div>");
-
-		rm.write("<div>");
 		rm.renderControl(aIcons[1]);
-		rm.write("</div>");
 
 		rm.write("</div>");
 	};

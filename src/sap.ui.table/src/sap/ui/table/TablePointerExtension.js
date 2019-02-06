@@ -292,7 +292,7 @@ sap.ui.define([
 		_calculateAutomaticColumnWidth: function(oCol, iColIndex) {
 			oCol = oCol || this.getColumns()[iColIndex];
 			var $this = this.$();
-			var $hiddenArea = jQuery("<div>").addClass("sapUiTableHiddenSizeDetector");
+			var $hiddenArea = jQuery("<div>").addClass("sapUiTableHiddenSizeDetector sapUiTableHeaderDataCell sapUiTableDataCell");
 			$this.append($hiddenArea);
 
 			// Create a copy of  all visible cells in the column, including the header cells without colspan
@@ -300,14 +300,14 @@ sap.ui.define([
 							  .filter(function(index, element) {
 								  return element.style.display != "none";
 							  }).children().clone();
-			$cells.find("[id]").removeAttr("id"); // remove all id attributes
+			$cells.removeAttr("id"); // remove all id attributes
 
 			// Determine the column width
 			var iWidth = $hiddenArea.append($cells).width() + 4; // widest cell + 4px for borders, padding and rounding
 			iWidth = Math.min(iWidth, $this.find(".sapUiTableCnt").width()); // no wider as the table
 			iWidth = Math.max(iWidth + 4, TableUtils.Column.getMinColumnWidth()); // not to small
 
-			$hiddenArea.remove();
+			//$hiddenArea.remove();
 
 			return iWidth;
 		},
@@ -686,7 +686,7 @@ sap.ui.define([
 	var RowHoverHandler = {
 
 		ROWAREAS: [
-			".sapUiTableRowHdr", ".sapUiTableRowAction", ".sapUiTableCtrlFixed > tbody > .sapUiTableTr",
+			".sapUiTableRowSelectionCell", ".sapUiTableRowActionCell", ".sapUiTableCtrlFixed > tbody > .sapUiTableTr",
 			".sapUiTableCtrlScroll > tbody > .sapUiTableTr"
 		],
 
@@ -745,7 +745,7 @@ sap.ui.define([
 					ColumnResizeHelper.initColumnResizing(this, oEvent);
 
 				} else if ($Target.hasClass("sapUiTableColResizer")) { // mousedown on mobile column resize button
-					var iColIndex = $Target.closest(".sapUiTableCol").attr("data-sap-ui-colindex");
+					var iColIndex = $Target.closest(".sapUiTableHeaderCell").attr("data-sap-ui-colindex");
 					this._iLastHoveredColumnIndex = parseInt(iColIndex);
 					ColumnResizeHelper.initColumnResizing(this, oEvent);
 
@@ -963,7 +963,7 @@ sap.ui.define([
 
 				// Cleans up the basic event handling for row hover effect
 				$Table.find(".sapUiTableCtrl > tbody > tr").unbind();
-				$Table.find(".sapUiTableRowHdr").unbind();
+				$Table.find(".sapUiTableRowSelectionCell").unbind();
 			}
 		},
 

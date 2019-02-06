@@ -254,7 +254,7 @@ sap.ui.define([
 		assert.equal(oTable.getSelectionMode(), "Single", "Selection mode is Single!");
 		assert.equal(oTable.getSelectedIndex(), -1, "Selected Index is -1!");
 		assert.equal(jQuery(".sapUiTableCtrl tr.sapUiTableTr").length, oTable.getVisibleRowCount(), "Visible Row Count correct!");
-		assert.equal(jQuery(".sapUiTableRowHdr").length, oTable.getVisibleRowCount(), "Visible Row Count correct!");
+		assert.equal(jQuery(".sapUiTableRowSelectionCell").length, oTable.getVisibleRowCount(), "Visible Row Count correct!");
 		assert.equal(oTable.getFirstVisibleRow(), 5, "First Visible Row correct!");
 		assert.ok(oTable.getContextMenu() instanceof MenuM, "Context menu created as specified by the application");
 	});
@@ -472,8 +472,6 @@ sap.ui.define([
 			document.getElementById("qunit-fixture").classList.remove("visible");
 		}
 
-		// TODO: There are already several occurrences of utilities for async testing like below. Move them to TableQUnitUtils for reuse.
-
 		function wait() {
 			return new Promise(function(resolve) {
 				setTimeout(resolve, 0);
@@ -547,28 +545,28 @@ sap.ui.define([
 				title: "Default height",
 				visibleRowCountMode: sVisibleRowCountMode,
 				density: "sapUiSizeCozy",
-				expectedHeight: 49
+				expectedHeight: TableUtils.DefaultRowHeight.sapUiSizeCozy
 			});
 
 			test({
 				title: "Default height",
 				visibleRowCountMode: sVisibleRowCountMode,
 				density: "sapUiSizeCompact",
-				expectedHeight: 33
+				expectedHeight: TableUtils.DefaultRowHeight.sapUiSizeCompact
 			});
 
 			test({
 				title: "Default height",
 				visibleRowCountMode: sVisibleRowCountMode,
 				density: "sapUiSizeCondensed",
-				expectedHeight: 25
+				expectedHeight: TableUtils.DefaultRowHeight.sapUiSizeCondensed
 			});
 
 			test({
 				title: "Default height",
 				visibleRowCountMode: sVisibleRowCountMode,
 				density: undefined,
-				expectedHeight: 33
+				expectedHeight: TableUtils.DefaultRowHeight.undefined
 			});
 		});
 
@@ -625,6 +623,7 @@ sap.ui.define([
 		var aDensities = ["sapUiSizeCozy", "sapUiSizeCompact", "sapUiSizeCondensed", undefined];
 		var sequence = Promise.resolve();
 		var done = assert.async();
+		var iPadding = 14;
 
 		/* BCP: 1880420532 (IE), 1880455493 (Edge) */
 		if (Device.browser.msie || Device.browser.edge) {
@@ -665,7 +664,7 @@ sap.ui.define([
 				oTable.setVisibleRowCountMode(mTestSettings.visibleRowCountMode);
 				oTable.setColumnHeaderHeight(mTestSettings.columnHeaderHeight || 0);
 				oTable.setRowHeight(mTestSettings.rowHeight || 0);
-				oTable.getColumns()[1].setLabel(new DummyControl({height: (mTestSettings.templateHeight || 1) + "px"}));
+				oTable.getColumns()[1].setLabel(new DummyControl({height: (mTestSettings.labelHeight || 1) + "px"}));
 				oBody.classList.remove("sapUiSizeCozy");
 				oBody.classList.remove("sapUiSizeCompact");
 				oTable.removeStyleClass("sapUiSizeCondensed");
@@ -695,7 +694,7 @@ sap.ui.define([
 								   mTestSettings.title + ": Fixed part height is ok");
 				assert.strictEqual(aRowDomRefs[1].getBoundingClientRect().height, mTestSettings.expectedHeight,
 								   mTestSettings.title + ": Scrollable part height is ok");
-				assert.strictEqual(oColumnHeaderCnt.getBoundingClientRect().height, mTestSettings.expectedHeight + 1,
+				assert.strictEqual(oColumnHeaderCnt.getBoundingClientRect().height, mTestSettings.expectedHeight + 1 /* border */,
 								   mTestSettings.title + ": Column header container height is ok");
 			});
 		}
@@ -705,28 +704,28 @@ sap.ui.define([
 				title: "Default height",
 				visibleRowCountMode: sVisibleRowCountMode,
 				density: "sapUiSizeCozy",
-				expectedHeight: 49
+				expectedHeight: TableUtils.DefaultRowHeight.sapUiSizeCozy
 			});
 
 			test({
 				title: "Default height",
 				visibleRowCountMode: sVisibleRowCountMode,
 				density: "sapUiSizeCompact",
-				expectedHeight: 33
+				expectedHeight: TableUtils.DefaultRowHeight.sapUiSizeCompact
 			});
 
 			test({
 				title: "Default height",
 				visibleRowCountMode: sVisibleRowCountMode,
 				density: "sapUiSizeCondensed",
-				expectedHeight: 33
+				expectedHeight: TableUtils.DefaultRowHeight.sapUiSizeCompact
 			});
 
 			test({
 				title: "Default height",
 				visibleRowCountMode: sVisibleRowCountMode,
 				density: undefined,
-				expectedHeight: 33
+				expectedHeight: TableUtils.DefaultRowHeight.undefined
 			});
 		});
 
@@ -736,8 +735,8 @@ sap.ui.define([
 					title: "Default height with large content",
 					visibleRowCountMode: sVisibleRowCountMode,
 					density: sDensity,
-					templateHeight: 87,
-					expectedHeight: 102
+					labelHeight: 87,
+					expectedHeight: 87 + iPadding
 				});
 			});
 		});
@@ -812,8 +811,8 @@ sap.ui.define([
 					visibleRowCountMode: sVisibleRowCountMode,
 					density: sDensity,
 					rowHeight: 55,
-					templateHeight: 87,
-					expectedHeight: 102
+					labelHeight: 87,
+					expectedHeight: 87 + iPadding
 				});
 			});
 		});
@@ -825,8 +824,8 @@ sap.ui.define([
 					visibleRowCountMode: sVisibleRowCountMode,
 					density: sDensity,
 					columnHeaderHeight: 55,
-					templateHeight: 87,
-					expectedHeight: 102
+					labelHeight: 87,
+					expectedHeight: 87 + iPadding
 				});
 			});
 		});
@@ -839,8 +838,8 @@ sap.ui.define([
 					density: sDensity,
 					rowHeight: 55,
 					columnHeaderHeight: 55,
-					templateHeight: 87,
-					expectedHeight: 102
+					labelHeight: 87,
+					expectedHeight: 87 + iPadding
 				});
 			});
 		});
@@ -853,8 +852,8 @@ sap.ui.define([
 					density: sDensity,
 					rowHeight: 55,
 					columnHeaderHeight: 80,
-					templateHeight: 87,
-					expectedHeight: 102
+					labelHeight: 87,
+					expectedHeight: 87 + iPadding
 				});
 			});
 		});
@@ -867,8 +866,8 @@ sap.ui.define([
 					density: sDensity,
 					rowHeight: 80,
 					columnHeaderHeight: 55,
-					templateHeight: 87,
-					expectedHeight: 102
+					labelHeight: 87,
+					expectedHeight: 87 + iPadding
 				});
 			});
 		});
@@ -1341,9 +1340,13 @@ sap.ui.define([
 			sinon.spy(Table.prototype, "_computeRequestLength");
 			createTable({
 				visibleRowCountMode: VisibleRowCountMode.Auto
+			}, function(oTable) {
+				sinon.stub(oTable, "_getDefaultRowHeight", function() {
+					return 50;
+				});
 			});
-			this.iExpectedVisibleRowCountInitial = Device.browser.msie ? 18 : 19;
-			this.iExpectedVisibleRowCountAfterResize = 14;
+			this.iExpectedVisibleRowCountInitial = 18;
+			this.iExpectedVisibleRowCountAfterResize = 13;
 		},
 		afterEach: function() {
 			destroyTable();
@@ -1395,7 +1398,7 @@ sap.ui.define([
 	});
 
 	function getExpectedHScrollLeftMargin(iNumberOfFixedCols) {
-		var iWidth = iNumberOfFixedCols * 100 /* Columns */ + 48; /* Default row header width in cozy */
+		var iWidth = iNumberOfFixedCols * 100 /* Columns */ + TableUtils.BaseSize.sapUiSizeCozy; /* Default row header width in cozy */
 		return iWidth + "px";
 	}
 
@@ -1526,11 +1529,17 @@ sap.ui.define([
 
 	QUnit.module("Fixed top and bottom rows and columns", {
 		beforeEach: function() {
+			var TestControl = TableQUnitUtils.getTestControl();
+
 			createTable({
 				fixedRowCount: 2,
 				fixedBottomRowCount: 2,
 				fixedColumnCount: 2,
 				visibleRowCount: 8
+			}, function(oTable) {
+				for (var i = 0; i < 8; i++) {
+					oTable.addColumn(new Column({label: new TestControl(), template: new TestControl()}));
+				}
 			});
 		},
 		afterEach: function() {
@@ -1717,7 +1726,7 @@ sap.ui.define([
 
 	QUnit.test("Headers", function(assert) {
 		assert.expect(1);
-		assert.equal(oTable.$().find(".sapUiTableColHdrTr .sapUiTableCol").length, 6, "Total count of headers");
+		assert.equal(oTable.$().find(".sapUiTableColHdrTr .sapUiTableHeaderCell").length, 6, "Total count of headers");
 	});
 
 	QUnit.test("Equal widths", function(assert) {
@@ -1725,11 +1734,11 @@ sap.ui.define([
 		var $Table = oTable.$();
 		var $Head1 = $Table.find(".sapUiTableColHdrTr:eq(0)");
 		var $Head2 = $Table.find(".sapUiTableColHdrTr:eq(1)");
-		assert.equal($Head1.find(".sapUiTableCol:eq(0)").width(), $Head2.find(".sapUiTableCol:eq(0)").width(),
+		assert.equal($Head1.find(".sapUiTableHeaderCell:eq(0)").width(), $Head2.find(".sapUiTableHeaderCell:eq(0)").width(),
 			"First column headers have equal width");
-		assert.equal($Head1.find(".sapUiTableCol:eq(1)").width(), $Head2.find(".sapUiTableCol:eq(1)").width(),
+		assert.equal($Head1.find(".sapUiTableHeaderCell:eq(1)").width(), $Head2.find(".sapUiTableHeaderCell:eq(1)").width(),
 			"Second column headers have equal width");
-		assert.equal($Head1.find(".sapUiTableCol:eq(2)").width(), $Head2.find(".sapUiTableCol:eq(2)").width(),
+		assert.equal($Head1.find(".sapUiTableHeaderCell:eq(2)").width(), $Head2.find(".sapUiTableHeaderCell:eq(2)").width(),
 			"Third column headers have equal width");
 	});
 
@@ -1741,7 +1750,7 @@ sap.ui.define([
 			var rowIndex = index;
 			var $row = jQuery(row);
 			var rowHeight = $row.height();
-			$row.children(".sapUiTableCol").each(function(index, cell) {
+			$row.children(".sapUiTableHeaderCell").each(function(index, cell) {
 				assert.equal(cell.offsetHeight, rowHeight, "Cell [" + index + "," + rowIndex + "] has correct height");
 			});
 		});
@@ -1921,13 +1930,11 @@ sap.ui.define([
 			var cell;
 
 			if (aSortedColumns.length === 2) {
-				cell = aSortedColumns[0].$().find(".sapUiTableColCell");
-				assert.ok(cell.hasClass("sapUiTableColSF"), "Icons are shown");
+				cell = aSortedColumns[0].$();
 				assert.ok(cell.hasClass("sapUiTableColSorted"), "Sort icon is shown");
 				assert.ok(!cell.hasClass("sapUiTableColSortedD"), "sort icon is ascending");
 
-				cell = aSortedColumns[1].$().find(".sapUiTableColCell");
-				assert.ok(cell.hasClass("sapUiTableColSF"), "Icons are shown");
+				cell = aSortedColumns[1].$();
 				assert.ok(cell.hasClass("sapUiTableColSorted"), "Sort icon is shown");
 				assert.ok(cell.hasClass("sapUiTableColSortedD"), "sort icon is descending");
 
@@ -3730,15 +3737,6 @@ sap.ui.define([
 		assert.equal(oTable._getFixedBottomRowContexts().length, 0, "Binding does not exist, hence empty context returned");
 	});
 
-	QUnit.test("test _getBaseFontSize function", function(assert) {
-		assert.equal(oTable._getBaseFontSize(), 16, "Base font size returned");
-	});
-
-	QUnit.test("test _CSSSizeToPixel function", function(assert) {
-		assert.equal(oTable._CSSSizeToPixel("10em", true), "160px", "CSS size converted to pixel correctly.");
-		assert.equal(oTable._CSSSizeToPixel("100px", false), 100, "CSS size returned without unit.");
-	});
-
 	QUnit.test("test _getColumnsWidth function", function(assert) {
 		assert.ok(oTable._getColumnsWidth() > 600 && oTable._getColumnsWidth() < 900, "Columns width returned");
 	});
@@ -3753,18 +3751,22 @@ sap.ui.define([
 		assert.strictEqual(oTable._getDefaultRowHeight(), 10, "The default row height is application defined (10)");
 
 		oTable.setRowHeight(0);
-		assert.strictEqual(oTable._getDefaultRowHeight(), 49, "The default row height is correct in cozy size (49)");
+		assert.strictEqual(oTable._getDefaultRowHeight(), TableUtils.DefaultRowHeight.sapUiSizeCozy,
+			"The default row height is correct in cozy size (49)");
 
 		oBody.classList.remove("sapUiSizeCozy");
 		oBody.classList.add("sapUiSizeCompact");
-		assert.strictEqual(oTable._getDefaultRowHeight(), 33, "The default row height is correct in compact size (33)");
+		assert.strictEqual(oTable._getDefaultRowHeight(), TableUtils.DefaultRowHeight.sapUiSizeCompact,
+			"The default row height is correct in compact size (33)");
 
 		oBody.classList.remove("sapUiSizeCompact");
 		oBody.classList.add("sapUiSizeCondensed");
-		assert.strictEqual(oTable._getDefaultRowHeight(), 25, "The default row height is correct in condensed size (25)");
+		assert.strictEqual(oTable._getDefaultRowHeight(), TableUtils.DefaultRowHeight.sapUiSizeCondensed,
+			"The default row height is correct in condensed size (25)");
 
 		oBody.classList.remove("sapUiSizeCondensed");
-		assert.strictEqual(oTable._getDefaultRowHeight(), 33, "The default row height is correct in undefined size (33)");
+		assert.strictEqual(oTable._getDefaultRowHeight(), TableUtils.DefaultRowHeight.undefined,
+			"The default row height is correct in undefined size (33)");
 
 		oBody.classList.add("sapUiSizeCozy");
 	});

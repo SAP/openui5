@@ -5,6 +5,7 @@ sap.ui.define([
 	"sap/ui/model/json/JSONModel",
 	"sap/ui/Device",
 	"sap/base/util/UriParameters",
+	"sap/ui/core/Control",
 	"sap/m/Text",
 	"sap/m/Label",
 	"sap/m/ObjectStatus",
@@ -25,8 +26,8 @@ sap.ui.define([
 	"sap/ui/table/Column",
 	"sap/ui/table/TreeTable",
 	"sap/ui/qunit/utils/waitForThemeApplied"
-], function(TableUtils, JSONModel, Device, UriParameters, Text, Label, ObjectStatus, Icon, Button, Input, DatePicker, Select, ComboBox, MultiComboBox,
-			CheckBox, Link, Currency, ProgressIndicator, RatingIndicator, HBox, Table, Column, TreeTable, waitForThemeApplied) {
+], function(TableUtils, JSONModel, Device, UriParameters, Control, Text, Label, ObjectStatus, Icon, Button, Input, DatePicker, Select, ComboBox,
+			MultiComboBox, CheckBox, Link, Currency, ProgressIndicator, RatingIndicator, HBox, Table, Column, TreeTable, waitForThemeApplied) {
 	"use strict";
 
 	var bExecuteAllTests = (new UriParameters()).get("sap-ui-xx-table-testall") === "true";
@@ -226,6 +227,7 @@ sap.ui.define([
 					var sControlName = getControlName(oControl);
 
 					oTable.getColumns()[0][bHeader ? "setLabel" : "setTemplate"](oControl);
+					oTable.getColumns()[0][bHeader ? "setTemplate" : "setLabel"](new Control());
 					sap.ui.getCore().applyChanges();
 
 					var iActualRowHeight = getElementHeight(oTable[bHeader ? "getColumns" : "getRows"]()[0].getDomRef());
@@ -239,7 +241,10 @@ sap.ui.define([
 			}
 		},
 		_assertHeaderRowHeight: function(assert, iActualRowHeight, sContentDensity, sControlName) {
-			var iExpectedRowHeight = TableUtils.DEFAULT_ROW_HEIGHT[sContentDensity];
+			if (sContentDensity === "sapUiSizeCondensed") {
+				sContentDensity = "sapUiSizeCompact";
+			}
+			var iExpectedRowHeight = TableUtils.DefaultRowHeight[sContentDensity];
 
 			assert.strictEqual(iActualRowHeight, iExpectedRowHeight,
 				"Density: " + sContentDensity
@@ -248,12 +253,7 @@ sap.ui.define([
 			);
 		},
 		_assertContentRowHeight: function(assert, iActualRowHeight, sContentDensity, sControlName) {
-			var iExpectedRowHeight = TableUtils.DEFAULT_ROW_HEIGHT[sContentDensity];
-
-			if (Device.browser.phantomJS) {
-				this._assertContentRowHeightInCrappyPhantomJS(assert, iActualRowHeight, iExpectedRowHeight, sContentDensity, sControlName);
-				return;
-			}
+			var iExpectedRowHeight = TableUtils.DefaultRowHeight[sContentDensity];
 
 			if (sContentDensity != null) {
 				assert.strictEqual(iActualRowHeight, iExpectedRowHeight,
@@ -263,7 +263,7 @@ sap.ui.define([
 					+ " (Actual height: " + iActualRowHeight + "px)"
 				);
 			} else {
-				var iMaxDefaultRowHeight = TableUtils.DEFAULT_ROW_HEIGHT[aContentDensities[0]]; // sapUiSizeCozy
+				var iMaxDefaultRowHeight = TableUtils.DefaultRowHeight[aContentDensities[0]]; // sapUiSizeCozy
 
 				assert.ok(
 					iActualRowHeight >= iExpectedRowHeight && iActualRowHeight <= iMaxDefaultRowHeight,
@@ -437,6 +437,7 @@ sap.ui.define([
 					var sControlName = getControlName(oControl);
 
 					oTable.getColumns()[0].setLabel(oControl);
+					oTable.getColumns()[0].setTemplate(new Control());
 					sap.ui.getCore().applyChanges();
 
 					var iRowHeight = getElementHeight(oTable.getColumns()[0].getDomRef().parentElement);
