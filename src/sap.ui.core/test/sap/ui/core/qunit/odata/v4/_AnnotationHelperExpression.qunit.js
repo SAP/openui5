@@ -184,6 +184,10 @@ sap.ui.define([
 		this.mock(oMetaModel).expects("fetchObject")
 			.withExactArgs(oPathValue.path + "/$")
 			.returns(SyncPromise.reject(oError));
+		if (!SyncPromise.listener) {
+			// Note: this cannot be cleaned up again as there is no good point in time :-(
+			SyncPromise.listener = function () {};
+		}
 		oSyncPromiseMock.expects("listener").never(); // path() must not call SyncPromise#caught
 
 		// code under test
