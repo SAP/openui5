@@ -52,6 +52,9 @@ with "A schema cannot span more than one document: ..."
 						EnumMember="com.sap.vocabularies.UI.v1.TextArrangementType/TextLast"/>
 				</Annotation>
 			</Annotations>
+			<Annotations Target="com.sap.gateway.default.zui5_epm_sample.v0002.SalesOrder_Cancel/SalesOrder">
+				<Annotation Term="com.sap.vocabularies.Common.v1.Label" String="Label of SalesOrder parameter"/>
+			</Annotations>
 		</Schema>
 	</edmx:DataServices>
 </edmx:Edmx>
