@@ -84,12 +84,12 @@ sap.ui.define([
 
 			oView.getModel("ui").setProperty("/codeVisible", bVisible);
 			if (bVisible) {
-				sSource = XMLHelper.serializeXML(oView._xContent)
+				sSource = XMLHelper.serialize(oView._xContent)
 					.replace(/<!--.*-->/g, "") // remove comments
 					.replace(/\t/g, "  ") // indent by just 2 spaces
 					.replace(/\n\s*\n/g, "\n") // remove empty lines
 					.replace("<HBox id=\"identificationBox\"/>",
-						XMLHelper.serializeXML(
+						XMLHelper.serialize(
 							oView.getViewData()[oView.getModel("ui").getProperty("/v4")]._xContent)
 						)
 					.replace("</mvc:View>", "      </mvc:View>") // indent by just 6 spaces

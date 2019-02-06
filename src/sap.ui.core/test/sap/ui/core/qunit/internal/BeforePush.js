@@ -34,6 +34,7 @@
 		'demokit/sample/odata/v4/ListBinding/Opa.qunit.html?realOData=true' : 'both',
 		'demokit/sample/odata/v4/ListBindingTemplate/Opa.qunit.html?supportAssistant=true' : 'both',
 		'demokit/sample/odata/v4/ListBindingTemplate/Opa.qunit.html?realOData=true' : 'both',
+		'demokit/sample/odata/v4/Products/Opa.qunit.html?supportAssistant=true' : 'both',
 		'demokit/sample/odata/v4/SalesOrders/Opa.qunit.html?supportAssistant=true' : 'both',
 		'demokit/sample/odata/v4/SalesOrders/Opa.qunit.html?realOData=true' : 'both',
 		'demokit/sample/odata/v4/SalesOrdersRTATest/Opa.qunit.html?supportAssistant=true' : 'both',

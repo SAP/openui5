@@ -88,7 +88,7 @@ sap.ui.define([
 		addToSelect : function (mQueryOptions, aSelectPaths) {
 			mQueryOptions.$select = mQueryOptions.$select || [];
 			aSelectPaths.forEach(function (sPath) {
-				if (mQueryOptions.$select.indexOf(sPath) < 0 ) {
+				if (mQueryOptions.$select.indexOf(sPath) < 0) {
 					mQueryOptions.$select.push(sPath);
 				}
 			});
@@ -205,6 +205,9 @@ sap.ui.define([
 		 *   HTTP status code
 		 * @param {string} jqXHR.statusText
 		 *   HTTP status text
+		 * @param {string} sMessage
+		 *   The message for the <code>Error</code> instance; code and status text of the HTTP error
+		 *   are appended
 		 * @param {string} [sRequestUrl]
 		 *   The request URL
 		 * @param {string} [sResourcePath]
@@ -227,10 +230,10 @@ sap.ui.define([
 		 * "http://docs.oasis-open.org/odata/odata-json-format/v4.0/os/odata-json-format-v4.0-os.html"
 		 * >"19 Error Response"</a>
 		 */
-		createError : function (jqXHR, sRequestUrl, sResourcePath) {
+		createError : function (jqXHR, sMessage, sRequestUrl, sResourcePath) {
 			var sBody = jqXHR.responseText,
 				sContentType = jqXHR.getResponseHeader("Content-Type"),
-				oResult = new Error(jqXHR.status + " " + jqXHR.statusText);
+				oResult = new Error(sMessage + ": " + jqXHR.status + " " + jqXHR.statusText);
 
 			oResult.status = jqXHR.status;
 			oResult.statusText = jqXHR.statusText;

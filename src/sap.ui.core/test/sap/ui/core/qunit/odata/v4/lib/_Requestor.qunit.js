@@ -14,7 +14,8 @@ sap.ui.define([
 	/*eslint max-nested-callbacks: 0, no-warning-comments: 0 */
 	"use strict";
 
-	var oModelInterface = {
+	var sClassName = "sap.ui.model.odata.v4.lib._Requestor",
+		oModelInterface = {
 			fetchMetadata : function () {
 				throw new Error("Do not call me!");
 			},
@@ -341,8 +342,8 @@ sap.ui.define([
 
 			oHelperMock.expects("createError")
 				.exactly(bSuccess || o.bReadFails ? 0 : 1)
-				.withExactArgs(sinon.match.same(oTokenRequiredResponse), "/Service/foo",
-					"original/path")
+				.withExactArgs(sinon.match.same(oTokenRequiredResponse), "Communication error",
+					"/Service/foo", "original/path")
 				.returns(oError);
 			oHelperMock.expects("resolveIfMatchHeader").exactly(o.iRequests)
 				.withExactArgs(sinon.match.same(mHeaders))
@@ -544,9 +545,15 @@ sap.ui.define([
 				oJQueryMock.expects("ajax")
 					.withExactArgs("/", sinon.match({headers : {"SAP-ContextId" : "abc123"}}))
 					.returns(jqXHRMock);
+				that.oLogMock.expects("error").exactly(bErrorId ? 1 : 0)
+					.withExactArgs("Session not found on server", undefined, sClassName);
 				that.mock(oRequestor).expects("clearSessionContext").exactly(bErrorId ? 1 : 0)
 					.withExactArgs();
-				that.mock(_Helper).expects("createError").returns(oExpectedError);
+				that.mock(_Helper).expects("createError")
+					.withExactArgs(sinon.match.object,
+						bErrorId ? "Session not found on server" : "Communication error",
+						"/", undefined)
+					.returns(oExpectedError);
 
 				// code under test
 				return oRequestor.sendRequest("GET", "").then(function () {
@@ -717,7 +724,7 @@ sap.ui.define([
 						"Content-Type" : "application/json;charset=UTF-8;IEEE754Compatible=true"
 					}, JSON.stringify(oChangedPayload), "~Employees~?custom=value")
 				.resolves(oResponse);
-			this.mock(oRequestor).expects("reportUnboundMessages")
+			this.mock(oRequestor).expects("reportUnboundMessagesAsJSON")
 				.withExactArgs(oResponse.resourcePath, sinon.match.same(oResponse.messages));
 			this.mock(oRequestor).expects("doConvertResponse")
 				.withExactArgs(sinon.match.same(oResponse.body), "meta/path")
@@ -968,7 +975,8 @@ sap.ui.define([
 			// do not check parameters
 			.returns(Promise.resolve([oResponse]));
 		this.mock(_Helper).expects("createError")
-			.withExactArgs(sinon.match.same(oResponse), "EMPLOYEES", sOriginalPath)
+			.withExactArgs(sinon.match.same(oResponse), "Communication error", "EMPLOYEES",
+				sOriginalPath)
 			.returns(new Error());
 
 		// code under test
@@ -1118,7 +1126,8 @@ sap.ui.define([
 
 			this.mock(_Helper).expects("createError")
 				.exactly(bSuccess ? 0 : 2)
-				.withExactArgs(sinon.match.same(oTokenRequiredResponse))
+				.withExactArgs(sinon.match.same(oTokenRequiredResponse),
+					"Could not refresh security token")
 				.returns(oError);
 
 			this.mock(jQuery).expects("ajax").twice()
@@ -1573,7 +1582,7 @@ sap.ui.define([
 				oRequestPromise = oRequestor.request(oFixture.method, "Products(42)",
 					new _GroupLock("group1"));
 
-			oRequestorMock.expects("reportUnboundMessages")
+			oRequestorMock.expects("reportUnboundMessagesAsJSON")
 				.withExactArgs("Products(42)", sinon.match.same(mHeaders["SAP-Messages"]));
 			oRequestorMock.expects("sendBatch") // arguments don't matter
 				.resolves([createResponse(oFixture.response, mHeaders)]);
@@ -2673,7 +2682,7 @@ sap.ui.define([
 		var oPromise = {},
 			oRequestor = _Requestor.create("/", oModelInterface);
 
-		this.mock(oRequestor).expects("fetchMetadata")
+		this.mock(oRequestor.oModelInterface).expects("fetchMetadata")
 			.withExactArgs("/EMPLOYEES/EMPLOYEE_2_TEAM/").returns(oPromise);
 
 		// code under test
@@ -2685,7 +2694,7 @@ sap.ui.define([
 		var oPromise = {},
 			oRequestor = _Requestor.create("/", oModelInterface);
 
-		this.mock(oRequestor).expects("fetchMetadata")
+		this.mock(oRequestor.oModelInterface).expects("fetchMetadata")
 			.withExactArgs("/EMPLOYEES/EMPLOYEE_2_TEAM/$Type").returns(oPromise);
 
 		// code under test
@@ -2970,20 +2979,6 @@ sap.ui.define([
 	});
 
 	//*****************************************************************************************
-	QUnit.test("fetchMetadata", function (assert) {
-		var sPath = {/*{string} any metadata path */},
-			oPromise = {},
-			oRequestor = _Requestor.create("/", oModelInterface);
-
-		this.mock(oModelInterface).expects("fetchMetadata")
-			.withExactArgs(sinon.match.same(sPath))
-			.returns(oPromise);
-
-		// code under test
-		assert.strictEqual(oRequestor.fetchMetadata(sPath), oPromise);
-	});
-
-	//*****************************************************************************************
 	QUnit.test("reportUnboundMessages", function (assert) {
 		var sMessages = '[{"code" : "42"}]',
 			oRequestor = _Requestor.create("/", oModelInterface),
@@ -2993,7 +2988,7 @@ sap.ui.define([
 			.withExactArgs(sResourcePath, [{code : "42"}]);
 
 		// code under test
-		oRequestor.reportUnboundMessages(sResourcePath, sMessages);
+		oRequestor.reportUnboundMessagesAsJSON(sResourcePath, sMessages);
 	});
 
 	//*****************************************************************************************
@@ -3004,22 +2999,7 @@ sap.ui.define([
 			.withExactArgs("foo(42)/to_bar", null);
 
 		// code under test
-		oRequestor.reportUnboundMessages("foo(42)/to_bar");
-	});
-
-	//*****************************************************************************************
-	QUnit.test("reportBoundMessages", function (assert) {
-		var aKeyPredicates = [/*any array of key predicates*/],
-			mPathToMessages = {/*any map of resource path to message object*/},
-			oRequestor = _Requestor.create("/", oModelInterface),
-			sResourcePath = {/*{string} any resource path*/};
-
-		this.mock(oModelInterface).expects("reportBoundMessages")
-			.withExactArgs(sinon.match.same(sResourcePath), sinon.match.same(mPathToMessages),
-				sinon.match.same(aKeyPredicates));
-
-		// code under test
-		oRequestor.reportBoundMessages(sResourcePath, mPathToMessages, aKeyPredicates);
+		oRequestor.reportUnboundMessagesAsJSON("foo(42)/to_bar");
 	});
 
 	//*****************************************************************************************
@@ -3267,7 +3247,7 @@ sap.ui.define([
 			} else if (oFixture.error) {
 				this.oLogMock.expects("warning")
 					.withExactArgs("Unsupported Keep-Alive header", oFixture.keepAlive,
-						"sap.ui.model.odata.v4.lib._Requestor");
+						sClassName);
 			}
 
 			// code under test
@@ -3348,6 +3328,8 @@ sap.ui.define([
 						}, 0);
 						return jqXHR;
 					});
+				that.oLogMock.expects("error").exactly(bErrorId ? 1 : 0)
+					.withExactArgs("Session not found on server", undefined, sClassName);
 				that.mock(oRequestor).expects("clearSessionContext").exactly(bErrorId ? 1 : 0)
 					.withExactArgs();
 

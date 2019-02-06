@@ -1,0 +1,36 @@
+{
+	"@odata.context" : "$metadata#ProductList(Name,ProductID,WeightMeasure,WeightUnit)",
+	"@odata.metadataEtag" : "W/\"20190123140814\"",
+	"@odata.count" : 151,
+	"value" : [{
+		"@odata.etag" : "W/\"20190123150953.5139530 \"",
+		"ProductID" : "H-100",
+		"Name" : "Notebook Basic 15",
+		"WeightMeasure" : 4002.000,
+		"WeightUnit" : "KG"
+	}, {
+		"@odata.etag" : "W/\"20180704104609.4168550 \"",
+		"ProductID" : "H-1000",
+		"Name" : "Notebook Basic 15",
+		"WeightMeasure" : 4.200,
+		"WeightUnit" : "KG"
+	}, {
+		"@odata.etag" : "W/\"20180705125019.1778050 \"",
+		"ProductID" : "H-1002",
+		"Name" : "Notebook Basic 15",
+		"WeightMeasure" : 4.200,
+		"WeightUnit" : "KG"
+	}, {
+		"@odata.etag" : "W/\"20180705132100.9255970 \"",
+		"ProductID" : "H-1003",
+		"Name" : "Notebook Basic 16",
+		"WeightMeasure" : 4.200,
+		"WeightUnit" : "KG"
+	}, {
+		"@odata.etag" : "W/\"20180705202552.1428650 \"",
+		"ProductID" : "H-1005",
+		"Name" : "myy jay notebook",
+		"WeightMeasure" : 4.200,
+		"WeightUnit" : "KG"
+	}]
+}
