@@ -341,5 +341,23 @@ sap.ui.define([
 		};
 	};
 
+	/**
+	 * Returns the maximum value of array.
+	 *
+	 * @param {Array.<*>} aSource - Source array
+	 * @returns {*} - the maximum value
+	 */
+	Util.max = function (aSource) {
+		if (Array.isArray(aSource) && aSource.length > 0) {
+			var vResult = aSource[0];
+			for (var i = 1, l = aSource.length; i < l; i++) {
+				if (aSource[i] > vResult) {
+					vResult = aSource[i];
+				}
+			}
+			return vResult;
+		}
+	};
+
 	return Util;
 }, true);

@@ -1050,13 +1050,17 @@ function (
 		});
 	});
 
-	QUnit.module("Scrollbar classes removal", function () {
-		QUnit.test("when one aggregation loses its scrolling, the scrollbar classes must persist on the parent overlay", function (assert) {
+	QUnit.module("Scrollbar classes", function () {
+		QUnit.test("when one aggregation loses its scrolling, the scrollbar classes must not persist on the parent overlay (as the aggregation with scrollbar doesn't take the whole space inside the control)", function (assert) {
 			var ScrollControl = SimpleScrollControl.extend('sap.ui.dt.test.controls.ScrollControl', {
 				metadata: {
-					designtime: {
-						scrollContainers: null
-					}
+					designtime: Object.assign(
+						{},
+						SimpleScrollControl.getMetadata()._oDesignTime,
+						{
+							scrollContainers: null
+						}
+					)
 				},
 				renderer: SimpleScrollControl.getMetadata().getRenderer().render
 			});
@@ -1065,6 +1069,7 @@ function (
 
 			this.oScrollControl = new ScrollControl({
 				id: "scrollControl",
+				scrollcontainerEnabled: false,
 				content1: [
 					new TextArea({
 						height: "500px",
@@ -1099,14 +1104,14 @@ function (
 
 			this.oDesignTime.attachEventOnce("synced", function() {
 				this.oScrollControlOverlay = OverlayRegistry.getOverlay(this.oScrollControl);
-				assert.ok(
+				assert.notOk(
 					this.oScrollControlOverlay.hasStyleClass('sapUiDtOverlayWithScrollBar')
 					&& this.oScrollControlOverlay.hasStyleClass('sapUiDtOverlayWithScrollBarVertical')
 				);
 				this.oScrollControlOverlay.getAggregationOverlay('content2').attachEventOnce('geometryChanged', function (oEvent) {
 					var oAggregationOverlay = oEvent.getSource();
 					assert.strictEqual(oAggregationOverlay.$().find('>.sapUiDtDummyScrollContainer').length, 0, 'make sure dummy container has been removed');
-					assert.ok(
+					assert.notOk(
 						this.oScrollControlOverlay.hasStyleClass('sapUiDtOverlayWithScrollBar')
 						&& this.oScrollControlOverlay.hasStyleClass('sapUiDtOverlayWithScrollBarVertical')
 					);
@@ -1117,6 +1122,70 @@ function (
 					}, this);
 				}, this);
 				this.oScrollControl.getContent2()[0].$().height(250);
+			}.bind(this));
+		});
+
+		QUnit.test("when the aggregation has a scrolling which takes the whole space of the control", function (assert) {
+			var ScrollControl = SimpleScrollControl.extend('sap.ui.dt.test.controls.ScrollControl', {
+				metadata: {
+					designtime: Object.assign(
+						{},
+						SimpleScrollControl.getMetadata()._oDesignTime,
+						{
+							scrollContainers: null
+						}
+					)
+				},
+				renderer: SimpleScrollControl.getMetadata().getRenderer().render
+			});
+
+			var fnDone = assert.async();
+
+			this.oScrollControl = new ScrollControl({
+				id: "scrollControl",
+				scrollcontainerEnabled: false,
+				content1: [
+					new TextArea({
+						height: "300px",
+						width: "400px",
+						value: "foo"
+					})
+				]
+			});
+
+			this.oScrollControl.placeAt("qunit-fixture");
+			sap.ui.getCore().applyChanges();
+
+			this.oScrollControl.$('content1').css({
+				height: 500,
+				overflow: 'auto'
+			});
+
+			this.oDesignTime = new DesignTime({
+				rootElements: [this.oScrollControl]
+			});
+
+			this.oDesignTime.attachEventOnce("synced", function() {
+				this.oScrollControlOverlay = OverlayRegistry.getOverlay(this.oScrollControl);
+				assert.notOk(
+					this.oScrollControlOverlay.hasStyleClass('sapUiDtOverlayWithScrollBar')
+					&& this.oScrollControlOverlay.hasStyleClass('sapUiDtOverlayWithScrollBarVertical')
+				);
+
+				this.oScrollControlOverlay.getAggregationOverlay('content1').attachEventOnce('geometryChanged', function (oEvent) {
+					var oAggregationOverlay = oEvent.getSource();
+					assert.strictEqual(oAggregationOverlay.$().find('>.sapUiDtDummyScrollContainer').length, 1, 'make sure dummy container has been created');
+					assert.ok(
+						this.oScrollControlOverlay.hasStyleClass('sapUiDtOverlayWithScrollBar')
+						&& this.oScrollControlOverlay.hasStyleClass('sapUiDtOverlayWithScrollBarVertical')
+					);
+					this.oScrollControlOverlay.attachEventOnce("geometryChanged",function () {
+						this.oDesignTime.destroy();
+						this.oScrollControl.destroy();
+						fnDone();
+					}, this);
+				}, this);
+				this.oScrollControl.getContent1()[0].$().height(700);
 			}.bind(this));
 		});
 
