@@ -618,6 +618,197 @@ sap.ui.define([
 		});
 	});
 
+	QUnit.test("Row Height with sapUiTableFixedRowHeights CSS class", function(assert) {
+		var oBody = document.body;
+		var aDensities = ["sapUiSizeCozy", "sapUiSizeCompact", "sapUiSizeCondensed", undefined];
+		var sequence = Promise.resolve();
+		var done = assert.async();
+
+		/* BCP: 1880420532 (IE), 1880455493 (Edge) */
+		if (Device.browser.msie || Device.browser.edge) {
+			document.getElementById("qunit-fixture").classList.remove("visible");
+		}
+
+		function wait() {
+			return new Promise(function(resolve) {
+				setTimeout(resolve, 0);
+			});
+		}
+
+		var aPromiseResolvers = [];
+		oTable.addEventDelegate({
+			onAfterRendering: function() {
+				aPromiseResolvers.forEach(function(fnPromiseResolver) {
+					fnPromiseResolver();
+				});
+				aPromiseResolvers = [];
+			}
+		});
+
+		function afterRendering() {
+			return new Promise(function(resolve) {
+				aPromiseResolvers.push(resolve);
+			});
+		}
+
+		oTable.removeAllColumns();
+		oTable.addColumn(new Column({template: new DummyControl({height: "1px"})}));
+		oTable.addColumn(new Column({template: new DummyControl({height: "1px"})}));
+		oTable.setFixedColumnCount(1);
+		oTable.setRowActionCount(1);
+		oTable.setRowActionTemplate(new RowAction());
+		oTable.addStyleClass("sapUiTableFixedRowHeights");
+
+		function test(mTestSettings) {
+			sequence = sequence.then(function() {
+				oTable.setVisibleRowCountMode(mTestSettings.visibleRowCountMode);
+				oTable.setRowHeight(mTestSettings.rowHeight || 0);
+				oTable.getColumns()[1].setTemplate(new DummyControl({height: (mTestSettings.templateHeight || 1) + "px"}));
+				oBody.classList.remove("sapUiSizeCozy");
+				oBody.classList.remove("sapUiSizeCompact");
+				oTable.removeStyleClass("sapUiSizeCondensed");
+
+				if (mTestSettings.density != null) {
+					if (mTestSettings.density === "sapUiSizeCondensed") {
+						oBody.classList.add("sapUiSizeCompact");
+						oTable.addStyleClass("sapUiSizeCondensed");
+					} else {
+						oBody.classList.add(mTestSettings.density);
+					}
+				}
+
+				var pAfterRendering = afterRendering();
+				sap.ui.getCore().applyChanges();
+				return pAfterRendering;
+
+			}).then(wait).then(function() {
+				var sDensity = mTestSettings.density ? mTestSettings.density.replace("sapUiSize", "") : "undefined";
+				mTestSettings.title += " (VisibleRowCountMode=\"" + mTestSettings.visibleRowCountMode + "\""
+									   + ", Density=\"" + sDensity + "\")";
+
+				var aRowDomRefs = oTable.getRows()[0].getDomRefs();
+				assert.strictEqual(aRowDomRefs.rowSelector.getBoundingClientRect().height, mTestSettings.expectedHeight,
+					mTestSettings.title + ": Selector height is ok");
+				assert.strictEqual(aRowDomRefs.rowFixedPart.getBoundingClientRect().height, mTestSettings.expectedHeight,
+					mTestSettings.title + ": Fixed part height is ok");
+				assert.strictEqual(aRowDomRefs.rowScrollPart.getBoundingClientRect().height, mTestSettings.expectedHeight,
+					mTestSettings.title + ": Scrollable part height is ok");
+				assert.strictEqual(aRowDomRefs.rowAction.getBoundingClientRect().height, mTestSettings.expectedHeight,
+					mTestSettings.title + ": Action height is ok");
+			});
+		}
+
+		[VisibleRowCountMode.Fixed, VisibleRowCountMode.Interactive, VisibleRowCountMode.Auto].forEach(function(sVisibleRowCountMode) {
+			test({
+				title: "Row height should be fixed to default height",
+				visibleRowCountMode: sVisibleRowCountMode,
+				density: "sapUiSizeCozy",
+				templateHeight: TableUtils.DefaultRowHeight.sapUiSizeCozy * 2,
+				expectedHeight: TableUtils.DefaultRowHeight.sapUiSizeCozy
+			});
+
+			test({
+				title: "Row height should be fixed to default height",
+				visibleRowCountMode: sVisibleRowCountMode,
+				density: "sapUiSizeCozy",
+				expectedHeight: TableUtils.DefaultRowHeight.sapUiSizeCozy
+			});
+
+			test({
+				title: "Row height should be fixed to default height",
+				visibleRowCountMode: sVisibleRowCountMode,
+				density: "sapUiSizeCompact",
+				templateHeight: TableUtils.DefaultRowHeight.sapUiSizeCompact * 2,
+				expectedHeight: TableUtils.DefaultRowHeight.sapUiSizeCompact
+			});
+
+			test({
+				title: "Row height should be fixed to default height",
+				visibleRowCountMode: sVisibleRowCountMode,
+				density: "sapUiSizeCompact",
+				expectedHeight: TableUtils.DefaultRowHeight.sapUiSizeCompact
+			});
+
+			test({
+				title: "Row height should be fixed to default height",
+				visibleRowCountMode: sVisibleRowCountMode,
+				density: "sapUiSizeCondensed",
+				templateHeight: TableUtils.DefaultRowHeight.sapUiSizeCondensed * 2,
+				expectedHeight: TableUtils.DefaultRowHeight.sapUiSizeCondensed
+			});
+
+			test({
+				title: "Row height should be fixed to default height",
+				visibleRowCountMode: sVisibleRowCountMode,
+				density: "sapUiSizeCondensed",
+				expectedHeight: TableUtils.DefaultRowHeight.sapUiSizeCondensed
+			});
+
+			test({
+				title: "Row height should be fixed to default height",
+				visibleRowCountMode: sVisibleRowCountMode,
+				density: undefined,
+				templateHeight: TableUtils.DefaultRowHeight.undefined * 2,
+				expectedHeight: TableUtils.DefaultRowHeight.undefined
+			});
+
+			test({
+				title: "Row height should be fixed to default height",
+				visibleRowCountMode: sVisibleRowCountMode,
+				density: undefined,
+				expectedHeight: TableUtils.DefaultRowHeight.undefined
+			});
+		});
+
+		[VisibleRowCountMode.Fixed, VisibleRowCountMode.Interactive, VisibleRowCountMode.Auto].forEach(function(sVisibleRowCountMode) {
+			aDensities.forEach(function(sDensity) {
+				test({
+					title: "Application defined height should override default height",
+					visibleRowCountMode: sVisibleRowCountMode,
+					density: sDensity,
+					rowHeight: 20,
+					expectedHeight: 21
+				});
+
+				test({
+					title: "Application defined height should override default height",
+					visibleRowCountMode: sVisibleRowCountMode,
+					density: sDensity,
+					rowHeight: 20,
+					templateHeight: 100,
+					expectedHeight: 21
+				});
+
+				test({
+					title: "Application defined height should override default height",
+					visibleRowCountMode: sVisibleRowCountMode,
+					density: sDensity,
+					rowHeight: 100,
+					expectedHeight: 101
+				});
+
+				test({
+					title: "Application defined height should override default height",
+					visibleRowCountMode: sVisibleRowCountMode,
+					density: sDensity,
+					rowHeight: 100,
+					templateHeight: 120,
+					expectedHeight: 101
+				});
+			});
+		});
+
+		sequence.then(function() {
+			oBody.classList.remove("sapUiSizeCompact");
+			oBody.classList.add("sapUiSizeCozy");
+			/* BCP: 1880420532 (IE), 1880455493 (Edge) */
+			if (Device.browser.msie || Device.browser.edge) {
+				document.getElementById("qunit-fixture").classList.add("visible");
+			}
+			done();
+		});
+	});
+
 	QUnit.test("Column Header Height", function(assert) {
 		var oBody = document.body;
 		var aDensities = ["sapUiSizeCozy", "sapUiSizeCompact", "sapUiSizeCondensed", undefined];
@@ -901,6 +1092,135 @@ sap.ui.define([
 			assert.strictEqual(iFixedPartHeight, iHeightWithoutIcons, "After removing the icons, the height is the same as before");
 			assert.strictEqual(iFixedPartHeight, iScrollablePartHeight, "Fixed and scrollable part have the same height after removing icons");
 		}).then(function() {
+			oBody.classList.remove("sapUiSizeCompact");
+			oBody.classList.add("sapUiSizeCozy");
+			/* BCP: 1880420532 (IE), 1880455493 (Edge) */
+			if (Device.browser.msie || Device.browser.edge) {
+				document.getElementById("qunit-fixture").classList.add("visible");
+			}
+			done();
+		});
+	});
+
+	QUnit.test("Column Header Height with sapUiTableFixedRowHeights CSS class", function(assert) {
+		var oBody = document.body;
+		var aDensities = ["sapUiSizeCozy", "sapUiSizeCompact", "sapUiSizeCondensed", undefined];
+		var sequence = Promise.resolve();
+		var done = assert.async();
+		var iPadding = 14;
+
+		/* BCP: 1880420532 (IE), 1880455493 (Edge) */
+		if (Device.browser.msie || Device.browser.edge) {
+			document.getElementById("qunit-fixture").classList.remove("visible");
+		}
+
+		function wait() {
+			return new Promise(function(resolve) {
+				setTimeout(resolve, 0);
+			});
+		}
+
+		var aPromiseResolvers = [];
+		oTable.addEventDelegate({
+			onAfterRendering: function() {
+				aPromiseResolvers.forEach(function(fnPromiseResolver) {
+					fnPromiseResolver();
+				});
+				aPromiseResolvers = [];
+			}
+		});
+
+		function afterRendering() {
+			return new Promise(function(resolve) {
+				aPromiseResolvers.push(resolve);
+			});
+		}
+
+		oTable.removeAllColumns();
+		oTable.addColumn(new Column({label: new DummyControl({height: "1px"}), template: new DummyControl()}));
+		oTable.addColumn(new Column({label: new DummyControl({height: "1px"}), template: new DummyControl()}));
+		oTable.setFixedColumnCount(1);
+		oTable.setRowActionCount(1);
+		oTable.setRowActionTemplate(new RowAction());
+		oTable.addStyleClass("sapUiTableFixedRowHeights");
+
+		function test(mTestSettings) {
+			sequence = sequence.then(function() {
+				oTable.setVisibleRowCountMode(mTestSettings.visibleRowCountMode);
+				oTable.setColumnHeaderHeight(mTestSettings.columnHeaderHeight || 0);
+				oTable.setRowHeight(mTestSettings.rowHeight || 0);
+				oTable.getColumns()[1].setLabel(new DummyControl({height: (mTestSettings.labelHeight || 1) + "px"}));
+				oBody.classList.remove("sapUiSizeCozy");
+				oBody.classList.remove("sapUiSizeCompact");
+				oTable.removeStyleClass("sapUiSizeCondensed");
+
+				if (mTestSettings.density != null) {
+					if (mTestSettings.density === "sapUiSizeCondensed") {
+						oBody.classList.add("sapUiSizeCompact");
+						oTable.addStyleClass("sapUiSizeCondensed");
+					} else {
+						oBody.classList.add(mTestSettings.density);
+					}
+				}
+
+				var pAfterRendering = afterRendering();
+				sap.ui.getCore().applyChanges();
+				return pAfterRendering;
+
+			}).then(wait).then(function() {
+				var sDensity = mTestSettings.density ? mTestSettings.density.replace("sapUiSize", "") : "undefined";
+				mTestSettings.title += " (VisibleRowCountMode=\"" + mTestSettings.visibleRowCountMode + "\""
+									   + ", Density=\"" + sDensity + "\")";
+
+				var aRowDomRefs = oTable.getDomRef().querySelectorAll(".sapUiTableColHdrTr");
+				var oColumnHeaderCnt = oTable.getDomRef().querySelector(".sapUiTableColHdrCnt");
+
+				assert.strictEqual(aRowDomRefs[0].getBoundingClientRect().height, mTestSettings.expectedHeight,
+					mTestSettings.title + ": Fixed part height is ok");
+				assert.strictEqual(aRowDomRefs[1].getBoundingClientRect().height, mTestSettings.expectedHeight,
+					mTestSettings.title + ": Scrollable part height is ok");
+				assert.strictEqual(oColumnHeaderCnt.getBoundingClientRect().height, mTestSettings.expectedHeight + 1 /* border */,
+					mTestSettings.title + ": Column header container height is ok");
+			});
+		}
+
+		[VisibleRowCountMode.Fixed, VisibleRowCountMode.Interactive, VisibleRowCountMode.Auto].forEach(function(sVisibleRowCountMode) {
+			aDensities.forEach(function(sDensity) {
+				test({
+					title: "CSS height should not apply to header rows with default height",
+					visibleRowCountMode: sVisibleRowCountMode,
+					density: sDensity,
+					labelHeight: 87,
+					expectedHeight: 87 + iPadding
+				});
+			});
+		});
+
+		[VisibleRowCountMode.Fixed, VisibleRowCountMode.Interactive, VisibleRowCountMode.Auto].forEach(function(sVisibleRowCountMode) {
+			aDensities.forEach(function(sDensity) {
+				test({
+					title: "CSS height should not apply to header rows with rowHeight",
+					visibleRowCountMode: sVisibleRowCountMode,
+					density: sDensity,
+					rowHeight: 55,
+					expectedHeight: 56
+				});
+			});
+		});
+
+		[VisibleRowCountMode.Fixed, VisibleRowCountMode.Interactive, VisibleRowCountMode.Auto].forEach(function(sVisibleRowCountMode) {
+			aDensities.forEach(function(sDensity) {
+				test({
+					title: "CSS height should not apply to header rows with columnHeaderHeight",
+					visibleRowCountMode: sVisibleRowCountMode,
+					density: sDensity,
+					columnHeaderHeight: 55,
+					expectedHeight: 55
+				});
+			});
+		});
+
+		sequence = sequence.then(function() {
 			oBody.classList.remove("sapUiSizeCompact");
 			oBody.classList.add("sapUiSizeCozy");
 			/* BCP: 1880420532 (IE), 1880455493 (Edge) */

@@ -1091,7 +1091,10 @@ sap.ui.define(['sap/ui/core/Control', 'sap/ui/core/theming/Parameters', 'sap/ui/
 
 			rm.writeClasses();
 
-			if (oTable.getRowHeight() && oTable.getVisibleRowCountMode() == VisibleRowCountMode.Auto) {
+			if (oTable.getRowHeight() > 0
+				&& (oTable.getVisibleRowCountMode() == VisibleRowCountMode.Auto
+					|| oTable.hasStyleClass("sapUiTableFixedRowHeights"))) {
+
 				rm.addStyle("max-height", oTable.getRowHeight() + "px");
 			}
 			rm.writeStyles();
