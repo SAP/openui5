@@ -100,7 +100,7 @@ sap.ui.define([
     var checkIfCacheEntriesAreValid = function(oModel, assert){
 
         //Cache entries should look like Entity(id=123)/ToNavigationProperty...
-        var rCheckPath = new RegExp(/^\/(?:SalesOrderSet|SalesOrderLineItemSet|ProductSet|BusinessPartnerSet)/, "g");
+        var rCheckPath = /^\/(?:SalesOrderSet|SalesOrderLineItemSet|ProductSet|BusinessPartnerSet)/g;
         //var rCheckKey = new RegExp(/^\([^\/]+?\)\/To/, "g");
         var bMatch;
 
@@ -437,7 +437,7 @@ sap.ui.define([
                 oODataListBinding.initialize();
                 oODataListBinding.attachDataReceived(function(){
                     var aContexts = oODataListBinding.getContexts(1, 2);
-                    assert.equal(that.oModel.resolveDeep("ToProduct", aContexts[0]), "/SalesOrderSet('0500000000')/ToLineItems(SalesOrderID='0500000000',ItemPosition='0000000010')/ToProduct/ToSalesOrderLineItems/ToProduct",
+                    assert.equal(that.oModel.resolveDeep("ToProduct", aContexts[0]), "/SalesOrderSet('0500000000')/ToLineItems(SalesOrderID='0500000000',ItemPosition='0000000010')/ToProduct/ToSalesOrderLineItems(SalesOrderID='0500000007',ItemPosition='0000000070')/ToProduct",
                     "Context is enriched with parent context information.");
                     done();
                 });
