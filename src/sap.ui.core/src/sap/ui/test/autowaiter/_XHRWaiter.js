@@ -64,12 +64,13 @@ sap.ui.define([
 		return fnOriginalSend.apply(this, arguments);
 	};
 
-	function hookIntoXHROpen(sMethod, sUrl) {
+	function hookIntoXHROpen(sMethod, sUrl, bAsync) {
 		var sIgnoreTag = "XHR_WAITER_IGNORE:";
 
-		// attach method and url to XHR object
+		// attach arguments to XHR object
 		this.url = sUrl;
 		this.method = sMethod;
+		this.async = bAsync;
 
 		// mark OPA XHRs 'ignored'
 		if (sMethod.startsWith(sIgnoreTag)) {
@@ -86,24 +87,34 @@ sap.ui.define([
 		if (this.ignored) {
 			return;
 		}
-		var sXHRType = bIsFake ? "FakeXHR" : "XHR";
-		var oNewPendingXHRInfo = {url: this.url, method: this.method, fake: bIsFake, trace: _utils.resolveStackTrace()};
+
+		var oNewPendingXHRInfo = {
+			url: this.url,
+			method: this.method,
+			async: this.async,
+			fake: bIsFake,
+			trace: _utils.resolveStackTrace()
+		};
 		var oNewPendingXHRLog = createLogForSingleRequest(oNewPendingXHRInfo);
 
-		aXHRs.push(oNewPendingXHRInfo);
-		oLogger.trace("New pending " + sXHRType + ":" + oNewPendingXHRLog);
+		if (this.async) {
+			aXHRs.push(oNewPendingXHRInfo);
+			oLogger.trace("New pending:" + oNewPendingXHRLog);
 
-		this.addEventListener("readystatechange", function() {
-			if (this.readyState === 4) {
-				aXHRs.splice(aXHRs.indexOf(oNewPendingXHRInfo), 1);
-				oLogger.trace(sXHRType + " finished:" + oNewPendingXHRLog);
-			}
-		});
+			this.addEventListener("readystatechange", function() {
+				if (this.readyState === 4) {
+					aXHRs.splice(aXHRs.indexOf(oNewPendingXHRInfo), 1);
+					oLogger.trace("Finished:" + oNewPendingXHRLog);
+				}
+			});
+		} else {
+			oLogger.trace("Finished:" + oNewPendingXHRLog);
+		}
 	}
 
 	function createLogForSingleRequest (oXHR) {
 		var sMessage = oXHR.fake ? "\nFakeXHR: " : "\nXHR: ";
-		sMessage += "URL: '" + oXHR.url + "' Method: '" + oXHR.method + "'\nStack: " + oXHR.trace;
+		sMessage += "URL: '" + oXHR.url + "' Method: '" + oXHR.method + "' Async: '" + oXHR.async + "'\nStack: " + oXHR.trace;
 		return sMessage;
 	}
 
