@@ -857,10 +857,9 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/message/MessageProcessor', './B
 	 * @public
 	 */
 	Model.prototype.setMessages = function(mMessages) {
-		//jQuery.sap.assert(!jQuery.isEmptyObject(mMessages), this + ": mMessages passed as emptyObject( {} ). Use null instead!");
-
-		this.mMessages = mMessages || {};
-		if (mMessages !== null || !jQuery.sap.equal(this.mMessages, mMessages)) {
+		mMessages = mMessages || {};
+		if (!jQuery.sap.equal(this.mMessages, mMessages)) {
+			this.mMessages = mMessages;
 			this.checkMessages();
 		}
 	};
