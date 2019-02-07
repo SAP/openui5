@@ -37,6 +37,7 @@ sap.ui.define(['sap/ui/core/library', 'sap/ui/core/ValueStateSupport', 'sap/ui/D
 			sValueState = oCheckBox.getValueState(),
 			bInErrorState = ValueState.Error === sValueState,
 			bInWarningState = ValueState.Warning === sValueState,
+			bInSuccessState = ValueState.Success === sValueState,
 			bInInformationState = ValueState.Information === sValueState,
 			bUseEntireWidth = oCheckBox.getUseEntireWidth();
 
@@ -60,6 +61,8 @@ sap.ui.define(['sap/ui/core/library', 'sap/ui/core/ValueStateSupport', 'sap/ui/D
 			oRm.addClass("sapMCbErr");
 		} else if (bInWarningState) {
 			oRm.addClass("sapMCbWarn");
+		} else if (bInSuccessState) {
+			oRm.addClass("sapMCbSucc");
 		} else if (bInInformationState) {
 			oRm.addClass("sapMCbInfo");
 		}
