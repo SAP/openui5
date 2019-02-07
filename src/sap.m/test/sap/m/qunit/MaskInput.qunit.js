@@ -1068,28 +1068,56 @@ sap.ui.define([
 		}
 	});
 
-	QUnit.test("Private: _buildKeyboardEventInfo(old, new) when both strings are empty", function(assert) {
+	QUnit.test("Private: _buildKeyboardEventInfo(old, new, selection) when both strings are empty", function(assert) {
 		// Act && Assert
-		assert.equal(JSON.stringify(this.oMaskInput._buildKeyboardEventInfo("", "")), "{}", "..should return empty object");
+		assert.equal(JSON.stringify(this.oMaskInput._buildKeyboardEventInfo("", "", {})), "{}", "..should return empty object");
 	});
 
-	QUnit.test("Private: _buildKeyboardEventInfo(old, new) when both strings are empty", function(assert) {
-		// Act && Assert
-		assert.equal(JSON.stringify(this.oMaskInput._buildKeyboardEventInfo("", "")), "{}", "..should return empty object");
-	});
+	QUnit.test("Private, Android specific:: _buildKeyboardEventInfo(old, new, selection) when second string contains new chars",
+		function (assert) {
 
-	QUnit.test("Private, Android specific:: _buildKeyboardEventInfo(old, new) when second string contains new chars", function(assert) {
+			// Act && Assert
+			assert.equal(JSON.stringify(this.oMaskInput._buildKeyboardEventInfo("SAP-__", "SAP-98", {})), JSON.stringify({sChar: "9"}),
+				"..should return info about the pressed key");
+		});
 
-		// Act && Assert
-		assert.equal(JSON.stringify(this.oMaskInput._buildKeyboardEventInfo("SAP-__", "SAP-98")), JSON.stringify({ sChar: "9"}),
-			"..should return info about the pressed key");
-	});
+	QUnit.test("Private, Android specific: _buildKeyboardEventInfo(old, new, previous selection) when second string is with fewer chars",
+		function (assert) {
+			// Act && Assert
+			assert.equal(JSON.stringify(this.oMaskInput._buildKeyboardEventInfo("SAP-9_", "SAP-_", {})),
+				JSON.stringify({bBackspace: true, sChar: "_"}),
+				"..should return info about the backspace key and the corresponding pressed key");
+		});
 
-	QUnit.test("Private, Android specific: _buildKeyboardEventInfo(old, new) when second string is with fewer chars", function(assert) {
-		// Act && Assert
-		assert.equal(JSON.stringify(this.oMaskInput._buildKeyboardEventInfo("SAP-9_", "SAP-_")), JSON.stringify({ bBackspace: true}),
-			"..should return info about the backspace key");
-	});
+	QUnit.test("Private, Android specific: _buildKeyboardEventInfo(old, new, selection) when some part of the old string had been selected",
+		function (assert) {
+			// Act && Assert
+			assert.equal(JSON.stringify(this.oMaskInput._buildKeyboardEventInfo("19:25", "19:3", {
+					bHasSelection: true,
+					iFrom: 3,
+					iTo: 3
+				})),
+				JSON.stringify({
+					bBackspace: true,
+					sChar: "3"
+				}),
+				"..should return info about the backspace key and corresponding pressed key");
+		});
+
+	QUnit.test("Private, Android specific: _buildKeyboardEventInfo(old, new, selection) when the whole old string had been selected",
+		function (assert) {
+			// Act && Assert
+			assert.equal(JSON.stringify(this.oMaskInput._buildKeyboardEventInfo("19:25", "1", {
+					bHasSelection: true,
+					iFrom: 0,
+					iTo: 5
+				})),
+				JSON.stringify({
+					bBackspace: true,
+					sChar: "1"
+				}),
+				"..should return info about the backspace key");
+		});
 
 	QUnit.test("Private, Android specific: onkeydown, current state is stored", function(assert) {
 		// Prepare
@@ -1102,7 +1130,9 @@ sap.ui.define([
 		qutils.triggerKeydown(this.oMaskInput.getDomRef(), 229); // this is what Chrome for Android sends
 
 		// Assert
-		assert.equal(JSON.stringify(this.oMaskInput._oKeyDownStateAndroid), JSON.stringify({sValue: "_____", iCursorPosition: 2}), "State");
+		assert.equal(JSON.stringify(this.oMaskInput._oKeyDownStateAndroid),
+			JSON.stringify({sValue: "_____", iCursorPosition: 2, oSelection: {iFrom: 2, iTo:2, bHasSelection: false}}),
+			"State");
 	});
 
 	QUnit.test("Private, Android specific: When input event fires _onInputForAndroidHandler is called", function(assert) {
@@ -1169,7 +1199,7 @@ sap.ui.define([
 
 			this.oMaskInput.setMask("99999");
 			sap.ui.getCore().applyChanges();
-			this.oMaskInput._oKeyDownStateAndroid = {};
+			this.oMaskInput._oKeyDownStateAndroid = {oSelection: {}};
 
 			// Act
 			this.oMaskInput._onInputForAndroidHandler(oOnInputEvent);
@@ -1180,7 +1210,7 @@ sap.ui.define([
 
 			setTimeout(function() {
 				assert.equal(fnRevertKeyStub.callCount, 1, "..should call _revertKey");
-				assert.deepEqual(fnRevertKeyStub.getCall(0).args, [oBuildKeyboardEventInfoResponse],
+				assert.deepEqual(fnRevertKeyStub.getCall(0).args, [oBuildKeyboardEventInfoResponse, {}],
 					"..should call _revertKey handler with certain parameters");
 
 				// Cleanup
