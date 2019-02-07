@@ -42,7 +42,8 @@ sap.ui.define([
 		HEADER: "/sap.card/header",
 		CONTENT: "/sap.card/content",
 		SERVICES: "/sap.ui5/services",
-		APP_TYPE: "/sap.app/type"
+		APP_TYPE: "/sap.app/type",
+		PARAMS: "/sap.card/configuration/parameters"
 	};
 
 	/**
@@ -580,6 +581,15 @@ sap.ui.define([
 				},
 
 				/**
+				 * The parameters used in the manifest.
+				 * @experimental Since 1.65. This property might be changed in future.
+				 */
+				parameters: {
+					type: "object",
+					defaultValue: null
+				},
+
+				/**
 				 * Defines the width of the card.
 				 */
 				width: {
@@ -667,6 +677,7 @@ sap.ui.define([
 	 */
 	Card.prototype.init = function () {
 		this._aReadyPromises = [];
+		this._bApplyManifest = true;
 
 		this._awaitEvent("_headerReady");
 		this._awaitEvent("_contentReady");
@@ -678,6 +689,25 @@ sap.ui.define([
 		}.bind(this));
 
 		this.setBusyIndicatorDelay(0);
+	};
+
+	/**
+	 * Called on before rendering of the control.
+	 * @private
+	 */
+	Card.prototype.onBeforeRendering = function () {
+		var sConfig = this.getHostConfigurationId(),
+			oParameters = this.getParameters();
+
+		if (sConfig) {
+			this.addStyleClass(sConfig.replace(/-/g, "_"));
+		}
+
+		if (this._oCardManifest && this._bApplyManifest) {
+			this._oCardManifest.processParameters(oParameters);
+			this._applyManifestSettings();
+			this._bApplyManifest = false;
+		}
 	};
 
 	/**
@@ -723,7 +753,7 @@ sap.ui.define([
 	};
 
 	/**
-	 * Setter for card manifest.
+	 * Overwrites setter for card manifest.
 	 *
 	 * @public
 	 * @param {string|Object} vValue The manifest object or its URL.
@@ -736,14 +766,54 @@ sap.ui.define([
 		if (typeof vValue === "string" && vValue !== "") {
 			this._oCardManifest = new CardManifest();
 			this._oCardManifest.load({ manifestUrl: vValue }).then(function () {
-				this._applyManifestSettings();
+				this._bApplyManifest = true;
+				this.invalidate();
 			}.bind(this));
 		} else if (typeof vValue === "object" && !jQuery.isEmptyObject(vValue)) {
+			this._bApplyManifest = true;
 			this._oCardManifest = new CardManifest(vValue);
-			this._applyManifestSettings();
 		}
 
 		return this;
+	};
+
+	/**
+	 * Overwrites getter for card manifest.
+	 *
+	 * @public
+	 * @returns {string|Object} Cloned of the parameters.
+	 */
+	Card.prototype.getManifest = function () {
+		var oClonedManifest = jQuery.extend(true, {}, this.getProperty("manifest"));
+
+		return oClonedManifest;
+	};
+
+	/**
+	 * Overwrites setter for card params.
+	 *
+	 * @public
+	 * @param {Object} vValue oParameters Parameters set in the card trough parameters property.
+	 * @returns {sap.ui.integration.widgets.Card} Pointer to the control instance to allow method chaining.
+	 */
+	Card.prototype.setParameters = function (vValue) {
+		this._bApplyManifest = true;
+		this.setBusy(true);
+		this.setProperty("parameters", vValue);
+
+		return this;
+	};
+
+	/**
+	 * Overwrites getter for card parameters.
+	 *
+	 * @public
+	 * @returns {Object} A Clone of the parameters.
+	 */
+	Card.prototype.getParameters = function () {
+		var oClonedParameters = jQuery.extend(true, {}, this.getProperty("parameters"));
+
+		return oClonedParameters;
 	};
 
 	/**
@@ -858,7 +928,7 @@ sap.ui.define([
 	 */
 	Card.prototype._applyContentManifestSettings = function () {
 		var sCardType = this._oCardManifest.get(MANIFEST_PATHS.TYPE),
-			bIsComponent = sCardType.toLowerCase() === "component",
+			bIsComponent = sCardType && sCardType.toLowerCase() === "component",
 			oManifestContent = this._oCardManifest.get(MANIFEST_PATHS.CONTENT),
 			bHasContent = !!oManifestContent;
 
@@ -900,8 +970,8 @@ sap.ui.define([
 	 * @param {sap.f.cards.IHeader} CardHeader The header to be created
 	 */
 	Card.prototype._setCardHeader = function (CardHeader) {
-		var oSettings = this._oCardManifest.get(MANIFEST_PATHS.HEADER);
-		var oHeader = CardHeader.create(oSettings, this._oServiceManager);
+		var oSettings = this._oCardManifest.get(MANIFEST_PATHS.HEADER),
+			oHeader = CardHeader.create(oSettings, this._oServiceManager);
 
 		oHeader.attachEvent("action", function (oEvent) {
 			this.fireEvent("action", {
@@ -935,17 +1005,6 @@ sap.ui.define([
 				this.fireEvent(sReadyEventName);
 				this.setBusy(false);
 			}.bind(this));
-		}
-	};
-
-	/**
-	 * Called on before rendering of the control.
-	 * @private
-	 */
-	Card.prototype.onBeforeRendering = function () {
-		var sConfig = this.getHostConfigurationId();
-		if (sConfig) {
-			this.addStyleClass(sConfig.replace(/-/g, "_"));
 		}
 	};
 

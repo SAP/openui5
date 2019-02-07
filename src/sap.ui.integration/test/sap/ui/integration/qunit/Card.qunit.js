@@ -163,6 +163,119 @@ function (
 		}
 	};
 
+	var oManifest_DefaultParameters = {
+		"sap.card": {
+			"configuration": {
+				"parameters": {
+					"city": {
+						"value": "Vratza"
+					},
+					"country": {
+						"value": "Bulgaria"
+					}
+				}
+			},
+			"type": "List",
+			"header": {
+				"title": "Default manifest parameters",
+				"subTitle": "Default parameter from manifest"
+			},
+			"content": {
+				"data": {
+					"json": [
+						{
+							"Name": "Notebook Basic 15",
+							"Description": "Notebook Basic 15 with 2,80 GHz quad core, 15\" LCD, 4 GB DDR3 RAM, 500 GB Hard Disc, Windows 8 Pro",
+							"Id": "HT-1000",
+							"SubCategoryId": "Notebooks",
+							"icon": "../images/Woman_avatar_01.png",
+							"state": "Information",
+							"info": "27.45 EUR",
+							"infoState": "Success"
+						},
+						{
+							"Name": "Notebook Basic 17",
+							"Description": "Notebook Basic 17 with 2,80 GHz quad core, 17\" LCD, 4 GB DDR3 RAM, 500 GB Hard Disc, Windows 8 Pro",
+							"Id": "HT-1001",
+							"SubCategoryId": "Notebooks",
+							"icon": "../images/Woman_avatar_01.png",
+							"state": "Success",
+							"info": "27.45 EUR",
+							"infoState": "Success"
+
+						}
+					]
+				},
+				"item": {
+					"icon": {
+						"src": "{icon}"
+					},
+					"title": {
+						"label": "{{title_label}}",
+						"value": "{Name}, {{parameters.TODAY_ISO}}"
+					},
+					"description": {
+						"value": "Stationed in: {{parameters.city}}, {{parameters.country}}"
+					},
+					"highlight": "{state}"
+				}
+			}
+		}
+	};
+
+	var oManifest_WithoutParameters = {
+		"sap.card": {
+			"configuration": {
+				"parameters": {}
+			},
+			"type": "List",
+			"header": {
+				"title": "Default manifest parameters",
+				"subTitle": "Default parameter from manifest"
+			},
+			"content": {
+				"data": {
+					"json": [
+						{
+							"Name": "Notebook Basic 15",
+							"Description": "Notebook Basic 15 with 2,80 GHz quad core, 15\" LCD, 4 GB DDR3 RAM, 500 GB Hard Disc, Windows 8 Pro",
+							"Id": "HT-1000",
+							"SubCategoryId": "Notebooks",
+							"icon": "../images/Woman_avatar_01.png",
+							"state": "Information",
+							"info": "27.45 EUR",
+							"infoState": "Success"
+						},
+						{
+							"Name": "Notebook Basic 17",
+							"Description": "Notebook Basic 17 with 2,80 GHz quad core, 17\" LCD, 4 GB DDR3 RAM, 500 GB Hard Disc, Windows 8 Pro",
+							"Id": "HT-1001",
+							"SubCategoryId": "Notebooks",
+							"icon": "../images/Woman_avatar_01.png",
+							"state": "Success",
+							"info": "27.45 EUR",
+							"infoState": "Success"
+
+						}
+					]
+				},
+				"item": {
+					"icon": {
+						"src": "{icon}"
+					},
+					"title": {
+						"label": "{{title_label}}",
+						"value": "{Name}, {{parameters.TODAY_ISO}}"
+					},
+					"description": {
+						"value": "Stationed in: {{parameters.city}}, {{parameters.country}}"
+					},
+					"highlight": "{state}"
+				}
+			}
+		}
+	};
+
 	var oManifest_AnalyticalCard = {
 		"sap.card": {
 			"type": "Analytical",
@@ -770,7 +883,6 @@ function (
 			oStub = sinon.stub(ComponentContainer.prototype, "applySettings"),
 			oCard = new Card();
 
-		// Assert
 		assert.expect(1);
 		oStub.callsFake(function (mSettings) {
 			assert.deepEqual(
@@ -786,6 +898,8 @@ function (
 
 		// Act
 		oCard.setManifest(oCardManifest);
+		oCard.placeAt(DOM_RENDER_LOCATION);
+		Core.applyChanges();
 	}
 
 	QUnit.module("Init");
@@ -844,6 +958,7 @@ function (
 			done();
 		}.bind(this));
 		this.oCard.setManifest(oManifest_Header);
+		this.oCard.placeAt(DOM_RENDER_LOCATION);
 		Core.applyChanges();
 
 		// Assert
@@ -870,6 +985,7 @@ function (
 			done();
 		}.bind(this));
 		this.oCard.setManifest(oManifest_AvatarHeader);
+		this.oCard.placeAt(DOM_RENDER_LOCATION);
 		Core.applyChanges();
 	});
 
@@ -896,6 +1012,7 @@ function (
 			done();
 		}.bind(this));
 		this.oCard.setManifest(oManifest_NumericHeader);
+		this.oCard.placeAt(DOM_RENDER_LOCATION);
 		Core.applyChanges();
 	});
 
@@ -920,6 +1037,7 @@ function (
 			done();
 		}.bind(this));
 		this.oCard.setManifest(oManifest_NumericHeader);
+		this.oCard.placeAt(DOM_RENDER_LOCATION);
 		Core.applyChanges();
 	});
 
@@ -944,6 +1062,7 @@ function (
 			done();
 		}.bind(this));
 		this.oCard.setManifest(oManifest_NumericHeader2);
+		this.oCard.placeAt(DOM_RENDER_LOCATION);
 		Core.applyChanges();
 	});
 
@@ -973,6 +1092,7 @@ function (
 			done();
 		}.bind(this));
 		this.oCard.setManifest(oManifest_NumericHeader);
+		this.oCard.placeAt(DOM_RENDER_LOCATION);
 		Core.applyChanges();
 	});
 
@@ -1034,6 +1154,7 @@ function (
 
 		// Act
 		this.oCard.setManifest(oManifest_AnalyticalCard);
+		this.oCard.placeAt(DOM_RENDER_LOCATION);
 	});
 
 	QUnit.module("Object Card", {
@@ -1110,6 +1231,7 @@ function (
 
 		// Act
 		this.oCard.setManifest(oManifest_ObjectCard);
+		this.oCard.placeAt(DOM_RENDER_LOCATION);
 	});
 
 	QUnit.test("Object Card - Spacing between groups are correctly calculated", function (assert) {
@@ -1148,6 +1270,7 @@ function (
 
 		// Act
 		this.oCard.setManifest(oManifest_ObjectCard);
+		this.oCard.placeAt(DOM_RENDER_LOCATION);
 	});
 	QUnit.module("Table Card", {
 		beforeEach: function () {
@@ -1219,6 +1342,7 @@ function (
 
 		// Act
 		this.oCard.setManifest(oManifest_TableCard);
+		this.oCard.placeAt(DOM_RENDER_LOCATION);
 	});
 
 	QUnit.test("Table Card - using manifest with card level data section", function (assert) {
@@ -1245,6 +1369,7 @@ function (
 
 		// Act
 		this.oCard.setManifest(oManifest_TableCard_WithCardLevelData);
+		this.oCard.placeAt(DOM_RENDER_LOCATION);
 	});
 
 	QUnit.module("Card Accessibility", {
@@ -1307,6 +1432,7 @@ function (
 
 		// Act
 		this.oCard.setManifest(oManifest_ListCard);
+		this.oCard.placeAt(DOM_RENDER_LOCATION);
 	});
 
 	QUnit.test("Card - Numeric Header", function (assert) {
@@ -1330,6 +1456,7 @@ function (
 
 		// Act
 		this.oNumericHeaderCard.setManifest(oManifest_NumericHeader);
+		this.oCard.placeAt(DOM_RENDER_LOCATION);
 	});
 
 	QUnit.module("Error handling", {
@@ -1363,7 +1490,6 @@ function (
 		// Arrange
 		var oSpy = sinon.spy(Card.prototype, "_handleError"),
 			done = assert.async();
-
 		this.oCard.attachEvent("_error", function () {
 
 			// Assert
@@ -1383,6 +1509,8 @@ function (
 				"request": "invalidurl"
 			}
 		}});
+		this.oCard.placeAt(DOM_RENDER_LOCATION);
+		Core.applyChanges();
 	});
 
 	QUnit.module("Component Card");
@@ -1401,5 +1529,183 @@ function (
 			oManifest_ComponentCardAllInOne,
 			assert
 		);
+	});
+
+	QUnit.module("Parameters", {
+		beforeEach: function () {
+
+			var oData = {
+				"location": {
+					"city": "Waldorf",
+					"country": "Germany"
+				}
+			};
+			this.oCard = new Card({
+				width: "400px",
+				height: "600px"
+			});
+
+			this.oCardWithParameters = new Card({
+				width: "400px",
+				height: "600px",
+				parameters: oData.location
+			});
+
+		},
+		afterEach: function () {
+			this.oCard.destroy();
+			this.oCard = null;
+
+			this.oCardWithParameters.destroy();
+			this.oCardWithParameters = null;
+		}
+	});
+
+	QUnit.test("Property is set with correct values", function (assert) {
+		// Act
+		this.oCard.setParameters({"city": "Sofia"});
+
+		var oParameters = this.oCardWithParameters.getParameters(),
+			oSetterProperties = this.oCard.getParameters();
+		// Assert
+		assert.strictEqual(oParameters.city, "Waldorf", "Parameter property is set correctly");
+		assert.strictEqual(oParameters.country, "Germany", "Parameter property is set correctly");
+		assert.strictEqual(oSetterProperties.city, "Sofia", "Parameter property is set correctly");
+
+	});
+
+	QUnit.test("Default Parameters - In manifest only parameters", function (assert) {
+
+		// Arrange
+		var done = assert.async();
+
+		this.oCard.attachEvent("_ready", function () {
+
+			Core.applyChanges();
+			var oListItems = this.oCard.getCardContent()._getList().getItems();
+			// Assert
+			assert.ok(oListItems[0].getDescription().indexOf("Vratza") > -1, "Card parameter 'city' should be replaced in rendered html  with 'Vratza'");
+			assert.ok(oListItems[0].getDescription().indexOf("Bulgaria") > -1, "Card parameter 'country' should be replaced in rendered html  with 'Bulgaria'");
+
+			done();
+		}.bind(this));
+
+		// Act
+		this.oCard.setManifest(oManifest_DefaultParameters);
+		this.oCard.placeAt(DOM_RENDER_LOCATION);
+		Core.applyChanges();
+	});
+
+	QUnit.test("Overwrite Parameters - Default value from manifest and one overwritten trough property", function (assert) {
+
+		// Arrange
+		var done = assert.async();
+
+		// Act
+		this.oCard.placeAt(DOM_RENDER_LOCATION);
+		Core.applyChanges();
+		this.oCard.attachEvent("_ready", function () {
+
+			Core.applyChanges();
+			var oListItems = this.oCard.getCardContent()._getList().getItems();
+			// Assert
+			assert.ok(oListItems[0].getDescription().indexOf("Sofia") > -1, "Card parameter 'city' should be replaced in rendered html  with 'Sofia'");
+			assert.ok(oListItems[0].getDescription().indexOf("Bulgaria") > -1, "Card parameter 'country' should be replaced in rendered html  with 'Bulgaria'");
+
+			done();
+		}.bind(this));
+
+		// Act
+		this.oCard.setParameters({"city": "Sofia"});
+		this.oCard.setManifest(oManifest_DefaultParameters);
+		this.oCard.placeAt(DOM_RENDER_LOCATION);
+		Core.applyChanges();
+	});
+
+	QUnit.test("Default Parameters - In manifest and overwrite from property", function (assert) {
+
+		// Arrange
+		var done = assert.async(),
+			oData = {
+			"location": {
+				"city": "Waldorf",
+				"country": "Germany"
+			}
+		};
+		this.oCard.attachEvent("_ready", function () {
+
+			Core.applyChanges();
+
+			var oListItems = this.oCard.getCardContent()._getList().getItems();
+			// Assert
+			assert.ok(oListItems[0].getDescription().indexOf("Waldorf") > -1, "Card parameter 'city' should be replaced in rendered html with 'Waldorf'");
+			assert.ok(oListItems[0].getDescription().indexOf("Germany") > -1, "Card parameter 'country' should be replaced in rendered html  with 'Germany'");
+
+			done();
+		}.bind(this));
+
+		// Act
+		this.oCard.setParameters(oData.location);
+		this.oCard.setManifest(oManifest_DefaultParameters);
+		this.oCard.placeAt(DOM_RENDER_LOCATION);
+		Core.applyChanges();
+	});
+
+	QUnit.test("Only parameter property set", function (assert) {
+
+		// Arrange
+		var done = assert.async(),
+			oData = {
+				"location": {
+					"city": "Vratza",
+					"country": "Bulgaria"
+				}
+			};
+		this.oCard.attachEvent("_ready", function () {
+
+			Core.applyChanges();
+			var oListItems = this.oCard.getCardContent()._getList().getItems();
+			// Assert
+			assert.ok(oListItems[0].getDescription().indexOf("Vratza") === -1, "Card parameter 'city' should NOT  be replaced in rendered html with 'Vratza'");
+			assert.ok(oListItems[0].getDescription().indexOf("Bulgaria") === -1, "Card parameter 'country' NOT should be replaced in rendered html  with 'Bulgaria'");
+
+			done();
+		}.bind(this));
+
+		// Act
+		this.oCard.setParameters(oData.location);
+		this.oCard.setManifest(oManifest_WithoutParameters);
+		this.oCard.placeAt(DOM_RENDER_LOCATION);
+		Core.applyChanges();
+	});
+
+	QUnit.test("Parameters are set after card is rendered once - In manifest and overwrite from property", function (assert) {
+
+		// Arrange
+		var done = assert.async(),
+			oData = {
+				"location": {
+					"city": "Waldorf",
+					"country": "Germany"
+				}
+			};
+
+		this.oCard.attachEventOnce("_ready", function () {
+
+			// Act
+			this.oCard.setParameters(oData.location);
+			this.oCard.placeAt(DOM_RENDER_LOCATION);
+			Core.applyChanges();
+			setTimeout(function() {
+				var oListItems = this.oCard.getCardContent()._getList().getItems();
+				assert.ok(oListItems[0].getDescription().indexOf("Waldorf") > -1, "Card parameter 'city' should be replaced in rendered html with 'Waldorf'");
+				assert.ok(oListItems[0].getDescription().indexOf("Germany") > -1, "Card parameter 'country' should be replaced in rendered html  with 'Germany'");
+				done();
+			}.bind(this), 100);
+
+		}.bind(this));
+		this.oCard.setManifest(oManifest_DefaultParameters);
+		this.oCard.placeAt(DOM_RENDER_LOCATION);
+		Core.applyChanges();
 	});
 });

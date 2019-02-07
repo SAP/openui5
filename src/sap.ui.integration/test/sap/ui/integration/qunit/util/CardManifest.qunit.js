@@ -1,9 +1,48 @@
 /* global QUnit, sinon */
 
-sap.ui.define(["sap/ui/integration/util/CardManifest", "sap/ui/core/Manifest"], function (CardManifest, Manifest) {
+sap.ui.define(["sap/ui/integration/util/CardManifest", "sap/ui/core/Manifest", "sap/base/Log"], function (CardManifest, Manifest, Log) {
 	"use strict";
 
 	var oJson = {
+		"sap.card": {
+			"type": "Object",
+			"configuration": {
+				"parameters": {
+					"city": {
+						"value": "Sofia"
+					},
+					"country": {
+						"value": "Bulgaria"
+					}
+				}
+			},
+			"header": {
+				"data": {
+					"url": "someurltotest"
+				},
+				"title": "{{title}}",
+				"subTitle": "{TODAY_ISO}"
+			},
+			"content": {
+				"items": [
+					{
+						"id": "item1"
+					},
+					{
+						"id": "item2",
+						"date": "{NOW_ISO}",
+						"date2": "Some formatted string {{parameters.NOW_ISO}} and some more {{parameters.TODAY_ISO}} {{parameters.city}}, {{parameters.country}}"
+					},
+					{
+						"id": "{{id}}"
+					},
+					"{{text}}",
+					"{{parameters.NOW_ISO}}"
+				]
+			}
+		}
+	},
+	oManifestWithOutPrameters = {
 		"sap.card": {
 			"type": "Object",
 			"header": {
@@ -21,13 +60,13 @@ sap.ui.define(["sap/ui/integration/util/CardManifest", "sap/ui/core/Manifest"], 
 					{
 						"id": "item2",
 						"date": "{NOW_ISO}",
-						"date2": "Some formatted string {NOW_ISO} and some more {TODAY_ISO}"
+						"date2": "Some formatted string {{parameters.NOW_ISO}} and some more {{parameters.TODAY_ISO}} {{parameters.city}}, {{parameters.country}}"
 					},
 					{
 						"id": "{{id}}"
 					},
 					"{{text}}",
-					"{NOW_ISO}"
+					"{{parameters.NOW_ISO}}"
 				]
 			}
 		}
@@ -140,13 +179,13 @@ sap.ui.define(["sap/ui/integration/util/CardManifest", "sap/ui/core/Manifest"], 
 			assert.ok(oManifest.oJson, "Should have created a JSON.");
 			assert.ok(Object.isFrozen(oManifest.oJson), "Should have frozen the JSON.");
 			assert.equal(oManifest.get("/sap.card/header/title"), sTranslatedText, "Should have translated the title.");
-			assert.notOk(oManifest.get("/sap.card/header/subTitle").indexOf("{TODAY_ISO}") > -1, "Should have replaced the placeholder inside the subTitle.");
+			assert.notOk(oManifest.get("/sap.card/header/subTitle").indexOf("{{parameters.TODAY_ISO}}") > -1, "Should have replaced the placeholder inside the subTitle.");
 			assert.equal(oManifest.get("/sap.card/content/items/2/id"), sTranslatedText, "Should have translated the item id.");
-			assert.notOk(oManifest.get("/sap.card/content/items/1/date").indexOf("{NOW_ISO}") > -1, "Should have replaced the placeholder inside the item date.");
-			assert.notOk(oManifest.get("/sap.card/content/items/1/date2").indexOf("{NOW_ISO}") > -1, "Should have replaced the placeholder inside the item date2.");
-			assert.notOk(oManifest.get("/sap.card/content/items/1/date2").indexOf("{TODAY_ISO}") > -1, "Should have replaced the placeholder inside the item date2.");
+			assert.notOk(oManifest.get("/sap.card/content/items/1/date").indexOf("{{parameters.NOW_ISO}}") > -1, "Should have replaced the placeholder inside the item date.");
+			assert.notOk(oManifest.get("/sap.card/content/items/1/date2").indexOf("{{parameters.NOW_ISO}}") > -1, "Should have replaced the placeholder inside the item date2.");
+			assert.notOk(oManifest.get("/sap.card/content/items/1/date2").indexOf("{{parameters.TODAY_ISO}}") > -1, "Should have replaced the placeholder inside the item date2.");
 			assert.equal(oManifest.get("/sap.card/content/items/3"), sTranslatedText, "Should have translated the item.");
-			assert.notOk(oManifest.get("/sap.card/content/items/4").indexOf("{NOW_ISO}") > -1, "Should have replaced the placeholder inside the item.");
+			assert.notOk(oManifest.get("/sap.card/content/items/4").indexOf("{{parameters.NOW_ISO}}") > -1, "Should have replaced the placeholder inside the item.");
 
 			// Cleanup
 			oManifest.destroy();
@@ -154,5 +193,79 @@ sap.ui.define(["sap/ui/integration/util/CardManifest", "sap/ui/core/Manifest"], 
 			Manifest.prototype._loadI18n.restore();
 			done();
 		});
+	});
+
+	QUnit.module("Manifest parameters", {
+		beforeEach: function () {
+
+			this.oManifest = new CardManifest(oJson);
+			this.oManifestWhitoutParams = new CardManifest(oManifestWithOutPrameters);
+
+			this.oManifestParameter = {
+				"city": {
+					"value": "Sofia"
+				},
+				"country": {
+					"value": "Bulgaria"
+				}
+			};
+
+			this.oParameter = {
+				"city": "Vratza"
+			};
+		},
+		afterEach: function () {
+			this.oManifest.destroy();
+			this.oManifest = null;
+			this.oManifestWhitoutParams.destroy();
+			this.oManifestWhitoutParams = null;
+			this.oManifestParameter = null;
+			this.oParameter = null;
+		}
+	});
+
+	QUnit.test("_syncParameters return correct object with default parameters", function (assert) {
+
+		// Act
+		var oSyncParametersResult = this.oManifest._syncParameters(null, this.oManifestParameter);
+
+		//Assert
+		assert.strictEqual(oSyncParametersResult, this.oManifestParameter, "Should return the correct object.");
+	});
+
+	QUnit.test("_syncParameters return correct object with overwritten parameters parameters", function (assert) {
+		// Act
+		var oSyncParametersResult = this.oManifest._syncParameters(this.oParameter, this.oManifestParameter);
+
+		//Assert
+		assert.strictEqual(oSyncParametersResult.city.value, "Vratza", "Should return the correct city value.");
+		assert.strictEqual(oSyncParametersResult.country.value, "Bulgaria", "Should return the correct country value.");
+
+	});
+
+	QUnit.test("processParameters - parameters in the property, but not in the manifest", function (assert) {
+
+		var oLogSpy = sinon.spy(Log, "error");
+		// Act
+		this.oManifestWhitoutParams.processParameters(this.oManifestParameter);
+
+		//Assert
+		assert.ok(oLogSpy.calledOnce, "An error should be logged");
+	});
+
+
+	QUnit.test("processParameters - parameters in the property, but not in the manifest", function (assert) {
+
+		var oSyncParametersSpy = sinon.spy(this.oManifest, "_syncParameters"),
+		oProcessManifestSpy = sinon.spy(this.oManifest, "processManifest");
+
+		// Act
+		this.oManifest.processParameters(this.oParameter);
+
+
+		//Assert
+		assert.ok(oSyncParametersSpy.calledOnce, "_syncParameters should be called");
+		assert.ok(oProcessManifestSpy.calledOnce, "processManifest should be called");
+
 	});
 });
