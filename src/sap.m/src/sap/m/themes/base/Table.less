@@ -74,9 +74,14 @@ tr.sapMListTblHeaderNone > .sapMTableTH {
 	display: none;
 }
 
+.sapMListTblSelCol,
+.sapMListTblCell,
+.sapMListTblNavCol {
+  vertical-align: middle;
+}
+
 .sapMListTblNavCol {
 	width: 0;
-	vertical-align: top;
 	line-height: 3rem;
 }
 
@@ -212,7 +217,6 @@ html[data-sap-ui-browser='ie11'] .sapMListTblHighlightCell > .sapMLIBHighlight {
 
 .sapMListTblCell {
 	padding: .875rem .5rem;
-	vertical-align: top;
 	font-size: @sapUiListTableTextSize;
 }
 
@@ -425,7 +429,6 @@ html[data-sap-ui-browser='ie11'] .sapMListTblHighlightCell > .sapMLIBHighlight {
 .sapUiSizeCompact .sapMListTblCell {
 	padding-top: 0.25rem;
 	padding-bottom: 0.25rem;
-	vertical-align: middle;
 }
 
 .sapUiSizeCompact .sapMListTblCell.sapMListTblCellNoData {
@@ -451,7 +454,6 @@ html[data-sap-ui-browser='ie11'] .sapMListTblHighlightCell > .sapMLIBHighlight {
 /* navigation and selection columns are in the middle */
 .sapUiSizeCompact .sapMListTblNavCol,
 .sapUiSizeCompact .sapMListTblSelCol {
-	vertical-align: middle;
 	line-height: 2rem;
 	text-align: center;
 }
