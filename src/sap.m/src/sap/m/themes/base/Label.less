@@ -310,15 +310,14 @@ html[dir=rtl][data-sap-ui-browser^=ed] .sapUiFormCL.sapUiFormCLWideColumns .sapU
 
 .sapUiSizeCompact,
 .sapUiSizeCondensed {
-	.sapUiTableCell .sapMLabel,
-	.sapUiTableColCell > .sapMLabel {
+	.sapUiTableCell .sapMLabel {
 		font-weight: normal;
 		font-size: @sapMFontHeader6Size;
 	}
 }
 
 .sapUiSizeCondensed {
-	.sapUiTableTd {
+	.sapUiTableCell {
 		:not(.sapMRbBLabel):not(.sapMCbLabel) .sapMLabel {
 			line-height: 1.5rem;
 			vertical-align: middle;
@@ -326,17 +325,11 @@ html[dir=rtl][data-sap-ui-browser^=ed] .sapUiFormCL.sapUiFormCLWideColumns .sapU
 	}
 }
 
-.sapUiTableCell .sapMLabel,
-.sapUiTableColCell > .sapMLabel {
+.sapUiTableCell .sapMLabel {
 	color: @sapUiListTextColor;
 }
 
 .sapUiAnalyticalTable {
-	.sapUiTableCell > .sapMLabel,
-	.sapUiTableColCell > .sapMLabel {
-		width: 100%;
-	}
-
 	.sapUiAnalyticalTableSum .sapUiTableCell .sapMLabel {
 		font-weight: bold;
 	}
