@@ -31,7 +31,7 @@ sap.ui.define([
 				"ProductList?custom-option=value&$count=true&$select=Name,ProductID,WeightMeasure,WeightUnit&$skip=0&$top=20" : {
 					source : "ProductList.json"
 				},
-				"/sap/opu/odata4/sap/zui5_testv4/default/iwbep/common/0001/UnitsOfMeasure?$select=ExternalCode,DecimalPlaces,Text" : {
+				"/sap/opu/odata4/sap/zui5_testv4/default/iwbep/common/0001/UnitsOfMeasure?$select=ExternalCode,DecimalPlaces,Text,ISOCode" : {
 					source : "UnitsOfMeasure.json"
 				}
 			}, "sap/ui/core/sample/odata/v4/Products/data",
