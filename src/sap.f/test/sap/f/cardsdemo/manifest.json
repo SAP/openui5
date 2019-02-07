@@ -138,6 +138,11 @@
 		  "target": "customContent"
 		},
 		{
+		  "pattern": "sapFCard",
+		  "name": "sapFCard",
+		  "target": "sapFCard"
+		},
+		{
 		  "pattern": "cardContainer",
 		  "name": "cardContainer",
 		  "target": "cardContainer"
@@ -227,6 +232,11 @@
 		"customContent": {
 		  "viewId": "custom",
 		  "viewName": "Custom",
+		  "viewLevel": 1
+		},
+		"sapFCard": {
+		  "viewId": "sapFCard",
+		  "viewName": "sapFCard",
 		  "viewLevel": 1
 		},
 		"cardContainer": {
