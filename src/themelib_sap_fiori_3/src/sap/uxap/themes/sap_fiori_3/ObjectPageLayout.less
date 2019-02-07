@@ -44,13 +44,11 @@
 		color: @sapUiContentLabelColor;
 	}
 }
-
-.sapUxAPObjectPageNavigation .sapUxAPObjectChildPage {
-	height: 2.875rem;
-}
-
-.sapUiSizeCompact .sapUxAPObjectPageNavigation .sapUxAPObjectChildPage {
-	height: 1.875rem;
+.sapUiSizeCompact .sapUxAPObjectPageNavigation,
+.sapUxAPObjectPageNavigation {
+	.sapUxAPObjectChildPage {
+		height: @sapElement_LineHeight;
+	}
 }
 
 .sapUxAPObjectPageNavigation .sapUxAPITBar.sapUxAPObjectChildPage {

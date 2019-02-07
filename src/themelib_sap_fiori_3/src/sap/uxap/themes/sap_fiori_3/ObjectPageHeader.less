@@ -17,14 +17,21 @@
 	}
 }
 
-.sapUxAPObjectPageHeaderIdentifier {
-	.sapUxAPObjectPageHeaderIdentifierTitle {
-		color: @sapUiGroupTitleTextColor;
-	}
+.sapUxAPObjectPageHeaderIdentifierTitle {
+	font-family: @sapUiFontHeaderFamily;
+	font-size: @sapMFontHeader3Size;
+	font-weight: @sapUiFontHeaderWeight;
+	color: @sapUiGroupTitleTextColor;
+}
 
-	.sapUxAPObjectPageHeaderIdentifierDescription {
-		color: @sapUiContentLabelColor;
-	}
+.sapUxAPObjectPageHeaderIdentifierDescription {
+	font-family: @sapUiFontFamily;
+	font-size: @sapMFontMediumSize;
+	color: @sapUiContentLabelColor;
+	vertical-align: baseline;
+}
+
+.sapUxAPObjectPageHeaderIdentifier {
 
 	.sapUxAPObjectPageHeaderIdentifierActions {
 		&.sapUxAPObjectPageHeaderIdentifierActionsForce, .sapUxAPObjectPageHeaderStickied & {
