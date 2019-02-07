@@ -247,7 +247,7 @@ sap.ui.define([
 		},
 
 		onMarkAsChanged: function(oEvent) {
-			this.oVM.setModified(true);
+			this.oVM.setModified(!this.oVM.getModified());
 		},
 
 		onSelect: function(oEvent) {
