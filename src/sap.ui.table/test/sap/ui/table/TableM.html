@@ -73,7 +73,7 @@ var oControl, oColumn;
 
 // sap.m.Text
 oControl = new sap.m.Text({text: "{lastName}", wrapping: false});
-oColumn = new sap.ui.table.Column({label: new sap.m.Label({text: "m.Text"}), template: oControl, sortProperty: "lastName", filterProperty: "lastName", width: "120px"});
+oColumn = new sap.ui.table.Column({label: new sap.m.Text({text: "m.Text"}), template: oControl, sortProperty: "lastName", filterProperty: "lastName", width: "120px"});
 oTable.addColumn(oColumn);
 
 // sap.m.Label
