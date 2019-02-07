@@ -2,7 +2,19 @@
 /* CSS for control sap.m/Carousel  */
 /* Base theme                      */
 /* =============================== */
+
 @_sap_m_Carousel_PagesMarginRight: 1.25rem;
+@_sap_m_Carousel_MinWidth: 20rem;
+@_sap_m_Carousel_ControlsNoArrowsHeight: 2rem;
+@_sap_m_Carousel_BulletBackgroundColor: @sapUiContentForegroundColor;
+@_sap_m_Carousel_NumericIndicatorTextColor: @sapUiContentLabelColor;
+@_sap_m_Carousel_PrevAndNextSize: 2rem;
+@_sap_m_Carousel_PrevAndNextPosition: 0.625rem;
+@_sap_m_Carousel_PageIndicatorContainerPadding: 1rem;
+@_sap_m_Carousel_PageIndicatorWidthSizeS: 12rem;
+@_sap_m_Carousel_PageIndicatorWidthSizeM: 16rem;
+@_sap_m_Carousel_PageIndicatorWidthSizeL: 20rem;
+@_sap_m_Carousel_PageIndicatorWidthSizeXL: 24rem;
 
 .sapMCrsl {
 	position: relative;
@@ -14,7 +26,7 @@
 	/* This element receives events when not panning in vertical direction */
 	touch-action: pan-y;
 	-ms-touch-action: pan-y;
-	min-width: 20rem;
+	min-width: @_sap_m_Carousel_MinWidth;
 }
 
 .sapMCrsl:focus {
@@ -157,7 +169,7 @@ html[dir=rtl][data-sap-ui-browser^="ed"] .sapMCrslInner {
 
 .sapMCrslControlsNoArrows {
 	text-align: center;
-	height: 2rem;
+	height: @_sap_m_Carousel_ControlsNoArrowsHeight;
 	display: flex;
 	justify-content: center;
 	width: 100%;
@@ -168,8 +180,8 @@ html[dir=rtl][data-sap-ui-browser^="ed"] .sapMCrslInner {
 	opacity: 0;
 	display: none;
 	position: absolute;
-	width: 2rem;
-	height: 2rem;
+	width: @_sap_m_Carousel_PrevAndNextSize;
+	height: @_sap_m_Carousel_PrevAndNextSize;
 	margin: -1.5625px 0 0 0;
 	padding: 0;
 	text-decoration: none;
@@ -220,7 +232,7 @@ html[dir=rtl][data-sap-ui-browser^="ed"] .sapMCrslInner {
 	align-self: center;
 	box-sizing: border-box;
   	color: @sapUiContentLabelColor;
-	background-color: @sapUiContentForegroundColor;
+	background-color: @_sap_m_Carousel_BulletBackgroundColor;
 }
 
 // 2rem indicator height + 1px border
@@ -294,8 +306,8 @@ html[dir=rtl][data-sap-ui-browser^="ed"] .sapMCrslInner {
 
 .sapMCrslControls .sapMCrslPrev,
 .sapMCrslControls .sapMCrslNext {
-	width: 2rem;
-	height: 2rem;
+	width: @_sap_m_Carousel_PrevAndNextSize;
+	height: @_sap_m_Carousel_PrevAndNextSize;
 	display: inline-block;
 	padding: 0;
 	text-decoration: none;
@@ -344,8 +356,8 @@ html[dir=rtl][data-sap-ui-browser^="ed"] .sapMCrslInner {
 
 .sapMCrslBulleted,
 .sapMCrslNumeric {
-	padding-left: 1rem;
-	padding-right: 1rem;
+	padding-left: @_sap_m_Carousel_PageIndicatorContainerPadding;
+	padding-right: @_sap_m_Carousel_PageIndicatorContainerPadding;
 	height: 2rem;
 	bottom: 1.0625rem;
 	max-width: calc(~"100% - 6.5rem");
@@ -367,7 +379,7 @@ html[dir=rtl][data-sap-ui-browser^="ed"] .sapMCrslInner {
 @media screen and (max-width: 599px) {
 	 .sapMCrslBulleted,
 	 .sapMCrslNumeric {
-		width: 12rem;
+		width: @_sap_m_Carousel_PageIndicatorWidthSizeS;
 	 }
 }
 
@@ -375,7 +387,7 @@ html[dir=rtl][data-sap-ui-browser^="ed"] .sapMCrslInner {
 @media screen and (min-width : 600px) and (max-width: 1023px) {
 	 .sapMCrslBulleted,
 	 .sapMCrslNumeric {
-		width: 16rem;
+		width: @_sap_m_Carousel_PageIndicatorWidthSizeM;
 	 }
 }
 
@@ -383,7 +395,7 @@ html[dir=rtl][data-sap-ui-browser^="ed"] .sapMCrslInner {
 @media screen and (min-width : 1024px) and (max-width: 1439px) {
 	 .sapMCrslBulleted,
 	 .sapMCrslNumeric {
-		width: 20rem;
+		width: @_sap_m_Carousel_PageIndicatorWidthSizeL;
 	 }
 }
 
@@ -391,7 +403,7 @@ html[dir=rtl][data-sap-ui-browser^="ed"] .sapMCrslInner {
 @media screen and (min-width: 1440px) {
 	 .sapMCrslBulleted,
 	 .sapMCrslNumeric {
-		width: 24rem;
+		width: @_sap_m_Carousel_PageIndicatorWidthSizeXL;
 	 }
 }
 
@@ -411,7 +423,7 @@ html[dir=rtl][data-sap-ui-browser^="ed"] .sapMCrslInner {
 	font-family: @sapUiFontFamily;
 	font-size: @sapMFontMediumSize;
 	font-weight: normal;
-	color: @sapUiContentLabelColor;
+	color: @_sap_m_Carousel_NumericIndicatorTextColor;
 	white-space: nowrap;
 	overflow: hidden;
 	text-align: left;
@@ -474,11 +486,11 @@ html[data-sap-ui-animation='off'] {
 }
 
 .sapMCrslHud .sapMCrslPrev {
-	left: 0.625rem;
+	left: @_sap_m_Carousel_PrevAndNextPosition;
 }
 
 .sapMCrslHud .sapMCrslNext {
-	right: 0.625rem;
+	right: @_sap_m_Carousel_PrevAndNextPosition;
 }
 
 /* extra bits */
