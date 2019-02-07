@@ -5,12 +5,56 @@
 
 @_sap_m_RadioButton_SelectedWarningColor: darken(@sapUiFieldWarningColor, 100);
 
+.sapMRbB {
+	height:2.75rem;
+	line-height: 2.75rem;
+	width: 2.75rem;
+}
+
+.sapMRb > .sapMLabel {
+		max-width: calc(~"100% - 2.75rem");
+}
+
+.sapMRbHasLabel .sapMRbB {
+	width: 2.75rem;
+}
+
+.sapUiSizeCompact {
+	.sapMRbB {
+		height:2rem;
+		line-height: 2rem;
+		width: 2rem;
+		.sapMRbBOut {
+			border-width: 0.0625rem;
+		}
+	}
+
+	.sapMRbErr .sapMRbBOut,
+	.sapMRbErr.sapMRbBTouched .sapMRbBOut,
+	.sapMRbWarn .sapMRbBOut,
+	.sapMRbWarn.sapMRbBTouched .sapMRbBOut,
+	.sapMRbInfo .sapMRbBOut,
+	.sapMRbInfo.sapMRbBTouched .sapMRbBOut {
+		border-width: 0.125rem;
+	}
+}
+
+.sapMRbSel:not(.sapMRbErr):not(.sapMRbWarn):not(.sapMRbInfo):not(.sapMRbSucc) .sapMRbHoverable:hover {
+	.sapMRbBInn {
+		background-color: @sapUiSelected;
+	}
+}
+
 .sapMRb:focus:before {
 	border: 1px dotted @sapUiContentFocusColor;
 }
 
 .sapMLIBActive .sapMRbB .sapMRbBOut {
-	border: 2px solid @sapUiListActiveTextColor;
+	border: 1px solid @sapUiListActiveTextColor;
+}
+
+.sapMRbB .sapMRbBOut{
+	border-width: 0.0625rem;
 }
 
 .sapMLIBActive .sapMRbSel .sapMRbBOut {
@@ -29,7 +73,7 @@
 
 .sapMRbErr .sapMRbBOut,
 .sapMRbErr.sapMRbBTouched .sapMRbBOut {
-	border-color: @sapUiFieldInvalidColor;
+	border: 0.125rem solid @sapUiFieldInvalidColor;
 	background-color: @sapUiFieldInvalidBackground;
 }
 
@@ -39,8 +83,28 @@
 
 .sapMRbWarn .sapMRbBOut,
 .sapMRbWarn.sapMRbBTouched .sapMRbBOut {
-	border-color: @sapUiFieldWarningColor;
+	border: 0.125rem solid @sapUiFieldWarningColor;
 	background-color: @sapUiFieldWarningBackground;
+}
+
+.sapMRbSucc.sapMRbSel .sapMRbBInn {
+	background-color: @sapUiFieldSuccessColor;
+}
+
+.sapMRbSucc .sapMRbBOut,
+.sapMRbSucc.sapMRbBTouched .sapMRbBOut {
+	border-color: @sapUiFieldSuccessColor;
+	background-color: @sapUiFieldSuccessBackground;
+}
+
+.sapMRbInfo.sapMRbSel .sapMRbBInn {
+	background-color: @sapUiFieldInformationColor;
+}
+
+.sapMRbInfo .sapMRbBOut,
+.sapMRbInfo.sapMRbBTouched .sapMRbBOut {
+	border: 0.125rem solid @sapUiFieldInformationColor;
+	background-color: @sapUiFieldInformationBackground;
 }
 
 /* When printing border is needed for the selection */
@@ -55,5 +119,13 @@
 
 	.sapMRbWarn.sapMRbSel .sapMRbBInn {
 		border-color: @_sap_m_RadioButton_SelectedWarningColor;
+	}
+
+	.sapMRbSucc.sapMRbSel .sapMRbBInn {
+		border-color: @sapUiFieldSuccessColor;
+	}
+
+	.sapMRbInfo.sapMRbSel .sapMRbBInn {
+		border-color: @sapUiFieldInformationColor;
 	}
 }
