@@ -1879,6 +1879,10 @@ sap.ui.define([
 
 		// if path cannot be resolved, call the callback function and return null
 		sResolvedPath = this.resolve(sPath, oContext, this.bCanonicalRequests);
+		if (!sResolvedPath && this.bCanonicalRequests) {
+			sResolvedPath = this.resolve(sPath, oContext);
+		}
+
 		if (!sResolvedPath) {
 			if (fnCallBack) {
 				fnCallBack(null);
@@ -2619,9 +2623,13 @@ sap.ui.define([
 	 * @private
 	 */
 	ODataModel.prototype._getObject = function(sPath, oContext, bOriginalValue) {
-		var oNode = this.isLegacySyntax() ? this.oData : null, oChangedNode, oOrigNode,
-			sResolvedPath = this.resolve(sPath, oContext, this.bCanonicalRequests) || this.resolve(sPath, oContext),
+		var oNode = this.isLegacySyntax() ? this.oData : null, oChangedNode, oOrigNode, sResolvedPath,
 			iSeparator, sDataPath, sMetaPath, oMetaContext, sKey, oMetaModel;
+
+		sResolvedPath = this.resolve(sPath, oContext, this.bCanonicalRequests);
+		if (!sResolvedPath && this.bCanonicalRequests) {
+			sResolvedPath = this.resolve(sPath, oContext);
+		}
 
 		if (!sResolvedPath) {
 			return oNode;
