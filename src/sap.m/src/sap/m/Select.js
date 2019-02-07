@@ -1424,12 +1424,12 @@ function(
 		};
 
 		/**
-		 * Handle when the spacebar key is pressed.
+		 * Handles the keyup event for SPACE.
 		 *
 		 * @param {jQuery.Event} oEvent The event object.
 		 * @private
 		 */
-		Select.prototype.onsapspace = function(oEvent) {
+		Select.prototype.onkeyup = function(oEvent) {
 
 			// prevents actions from occurring when the control is disabled,
 			// IE11 browser focus non-focusable elements
@@ -1437,17 +1437,19 @@ function(
 				return;
 			}
 
-			// mark the event for components that needs to know if the event was handled
-			oEvent.setMarked();
+			if (oEvent.which === KeyCodes.SPACE) {
+				// mark the event for components that needs to know if the event was handled
+				oEvent.setMarked();
 
-			// note: prevent document scrolling when the spacebar key is pressed
-			oEvent.preventDefault();
+				// note: prevent document scrolling when the spacebar key is pressed
+				oEvent.preventDefault();
 
-			if (this.isOpen()) {
-				this._checkSelectionChange();
+				if (this.isOpen()) {
+					this._checkSelectionChange();
+				}
+
+				this.toggleOpenState();
 			}
-
-			this.toggleOpenState();
 		};
 
 		/**

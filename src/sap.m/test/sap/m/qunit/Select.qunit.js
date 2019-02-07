@@ -6756,7 +6756,7 @@ sap.ui.define([
 			oSelect.focus();
 
 			// act
-			qutils.triggerKeydown(oSelect.getDomRef(), KeyCodes.SPACE);
+			qutils.triggerKeyup(oSelect.getDomRef(), KeyCodes.SPACE);
 			this.clock.tick(1000); // wait 1s after the open animation is completed
 			assert.strictEqual(oSelect.isOpen(), true);
 
@@ -7242,7 +7242,7 @@ sap.ui.define([
 			var fnFireChangeSpy = this.spy(oSelect, "fireChange");
 
 			// act
-			qutils.triggerKeydown(oSelect.getDomRef(), KeyCodes.SPACE);
+			qutils.triggerKeyup(oSelect.getDomRef(), KeyCodes.SPACE);
 			this.clock.tick(1000);	// wait 1s after the open animation is completed
 
 			// assert
@@ -7278,7 +7278,7 @@ sap.ui.define([
 			this.clock.tick(1000);
 
 			// act
-			qutils.triggerKeydown(oSelect.getDomRef(), KeyCodes.SPACE);
+			qutils.triggerKeyup(oSelect.getDomRef(), KeyCodes.SPACE);
 			this.clock.tick(1000);
 
 			// assert
@@ -7315,7 +7315,7 @@ sap.ui.define([
 			var fnFireChangeSpy = this.spy(oSelect, "fireChange");
 
 			// act
-			qutils.triggerKeydown(oSelect.getDomRef(), KeyCodes.SPACE);
+			qutils.triggerKeyup(oSelect.getDomRef(), KeyCodes.SPACE);
 
 			// assert
 			assert.strictEqual(fnFireChangeSpy.callCount, 1, "The change event is fired");
