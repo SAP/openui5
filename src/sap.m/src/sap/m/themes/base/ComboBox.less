@@ -2,3 +2,14 @@
 /* CSS for control sap.m/ComboBox  */
 /* Base theme                      */
 /* =============================== */
+
+.sapMComboBoxBasePicker-CTX .sapMComboBoxList.sapMListFocus .sapMLIBSelected {
+	outline: 1px dotted @sapUiContentFocusColor;
+	outline-offset: -2px;
+}
+
+/* IE ignores outline-offset */
+.sapMComboBoxBasePicker-CTX  .sapMComboBoxList.sapMListFocus .sapMLIBLegacyOutline.sapMLIBSelected {
+	outline: none;
+	border: 1px dotted @sapUiContentFocusColor;
+}
