@@ -111,7 +111,7 @@ sap.ui.define([
 	 * Starts the process of uploading the specified file.
 	 *
 	 * @param {UploadSetItem} oItem Item representing the file to be uploaded.
-	 * @param {HeaderField[]} aHeaderFields Collection of request header fields to be send along.
+	 * @param {Item[]} aHeaderFields Collection of request header fields to be send along.
 	 * @public
 	 */
 	Uploader.prototype.uploadItem = function (oItem, aHeaderFields) {
@@ -176,10 +176,11 @@ sap.ui.define([
 	 * Starts the process of downloading a file.
 	 *
 	 * @param {UploadSetItem} oItem Item representing the file to be downloaded.
+	 * @param {sap.ui.core.Item[]} aHeaderFields List of header fields to be added to the GET request.
 	 * @param {boolean} bAskForLocation True if the location to where download the file should be first queried by a browser dialog.
 	 * @return {boolean} True if the download process successfully
 	 */
-	Uploader.prototype.downloadItem = function (oItem, bAskForLocation) {
+	Uploader.prototype.downloadItem = function (oItem, aHeaderFields, bAskForLocation) {
 		var sUrl = this.getDownloadUrl() || oItem.getUrl();
 
 		// File.save doesn't work in Safari but URLHelper.redirect does work.
@@ -194,6 +195,11 @@ sap.ui.define([
 			var oBlob = null,
 				oXhr = new window.XMLHttpRequest();
 			oXhr.open("GET", sUrl);
+
+			aHeaderFields.forEach(function (oHeader) {
+				oXhr.setRequestHeader(oHeader.getKey(), oHeader.getText());
+			});
+
 			oXhr.responseType = "blob"; // force the HTTP response, response-type header to be blob
 			oXhr.onload = function () {
 				var sFileName = oItem.getFileName(),
