@@ -352,7 +352,7 @@ sap.ui.define([
 			return false;
 		}
 
-		return oParent._getActiveUploader().downloadItem(this, bAskForLocation);
+		return oParent._getActiveUploader().downloadItem(this, [], bAskForLocation);
 	};
 
 	/* ============== */

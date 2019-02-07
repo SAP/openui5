@@ -2,9 +2,10 @@ sap.ui.define([
 	"jquery.sap.global",
 	"sap/m/library",
 	"sap/ui/core/mvc/Controller",
+	"sap/ui/core/Item",
 	"sap/ui/model/json/JSONModel",
 	"sap/m/upload/Uploader"
-], function (jQuery, MobileLibrary, Controller, JSONModel, Uploader) {
+], function (jQuery, MobileLibrary, Controller, Item, JSONModel, Uploader) {
 	"use strict";
 
 	var CustomUploader = Uploader.extend("sap.m.sample.UploadSet.CustomUploader", {
@@ -13,16 +14,18 @@ sap.ui.define([
 
 	CustomUploader.prototype.uploadItem = function (oItem, aHeaders) {
 		var sNewUploadUrl = "../../../../upload"; // This value may be result of a backend request eg.
+		aHeaders.push(new Item({key: "SomePostKey", text: "SomePostText"}));
 		this.setUploadUrl(sNewUploadUrl);
 
 		Uploader.prototype.uploadItem.call(this, oItem, aHeaders);
 	};
 
-	CustomUploader.prototype.downloadItem = function (oItem, bAskForLocation) {
+	CustomUploader.prototype.downloadItem = function (oItem, aHeaders, bAskForLocation) {
 		var sNewDownloadUrl = oItem.getUrl(); // This value may be result of a backend request eg.
+		aHeaders.push(new Item({key: "SomeGetKey", text: "SomeGetText"}));
 		this.setDownloadUrl(sNewDownloadUrl);
 
-		Uploader.prototype.downloadItem.call(this, oItem, bAskForLocation);
+		Uploader.prototype.downloadItem.call(this, oItem, aHeaders, bAskForLocation);
 	};
 
 	return Controller.extend("sap.m.sample.UploadSet.Page", {
@@ -51,7 +54,7 @@ sap.ui.define([
 
 			oUploadSet.getItems().forEach(function (oItem) {
 				if (oItem.getListItem().getSelected()) {
-					oItem.download(false);
+					oItem.download(true);
 				}
 			});
 		}
