@@ -7,21 +7,30 @@ sap.ui.define([
 		"sap/ui/documentation/sdk/controller/BaseController",
 		"sap/m/library",
 		"sap/ui/model/json/JSONModel",
+		"sap/ui/thirdparty/URI",
 		"sap/uxap/ThrottledTaskHelper"
-	], function (BaseController, mobileLibrary, JSONModel, ThrottledTask) {
+	], function (BaseController, mobileLibrary, JSONModel, URI, ThrottledTask) {
 		"use strict";
 
 		var SRC_FILE_NAMES = {
 			HTML: "index.html",
 			XML: "App.view.xml",
-			JS: "App.controller.js"
+			INDEX_JS: "index.js",
+			CONTROLLER_JS: "App.controller.js"
+		},
+
+		SRC_RESOURCE_ROOT = "HelloWorld",
+
+		fnGetFullResourceName = function (sFileName) {
+			return SRC_RESOURCE_ROOT + "/" + sFileName;
 		},
 
 		/* acceptable values for the <code>type</code> property of the <code>sap.ui.codeeditor.CodeEditor</code> */
 		SRC_FILE_TYPES = {};
-		SRC_FILE_TYPES[SRC_FILE_NAMES.HTML] = "html";
+		SRC_FILE_TYPES[SRC_FILE_NAMES.HTML] = "text";
 		SRC_FILE_TYPES[SRC_FILE_NAMES.XML] = "xml";
-		SRC_FILE_TYPES[SRC_FILE_NAMES.JS] = "javascript";
+		SRC_FILE_TYPES[SRC_FILE_NAMES.INDEX_JS] = "javascript";
+		SRC_FILE_TYPES[SRC_FILE_NAMES.CONTROLLER_JS] = "javascript";
 
 
 		return BaseController.extend("sap.ui.documentation.sdk.controller.LiveEditor", {
@@ -45,9 +54,10 @@ sap.ui.define([
 
 				// fetch the initial content of the sample files
 				new JSONModel(sap.ui.require.toUrl('sap/ui/documentation/sdk/model') + '/LiveEditorData.json').attachRequestCompleted(function (oEvent) {
-					var oData = oEvent.getSource().getData();
+					var oData = oEvent.getSource().getData(),
+						sCoreUrl = new URI(sap.ui.require.toUrl("sap-ui-core.js"), document.baseURI).href();
 					if (oData[SRC_FILE_NAMES.HTML]) {
-						oData[SRC_FILE_NAMES.HTML] = oData[SRC_FILE_NAMES.HTML].replace(/&sol;/g, "/");
+						oData[SRC_FILE_NAMES.HTML] = oData[SRC_FILE_NAMES.HTML].replace(/&sol;/g, "/").replace("resources/sap-ui-core.js", sCoreUrl);
 					}
 					this._oSrcFileContent = oData;
 					this.showFileInEditor(SRC_FILE_NAMES.XML); // initially show the xml file
@@ -133,6 +143,24 @@ sap.ui.define([
 				this._oViewModel.setProperty("/selectedFileType", SRC_FILE_TYPES[sSrcFileName]);
 			},
 
+			_getDataToPost: function() {
+				var oModulesToPost = {},
+					sInitModuleName = fnGetFullResourceName(SRC_FILE_NAMES.INDEX_JS).slice(0, -3),
+					sNextModuleName,
+					sNextFileName;
+
+				Object.keys(SRC_FILE_NAMES).forEach(function(sKey) {
+					sNextFileName = SRC_FILE_NAMES[sKey];
+					sNextModuleName = fnGetFullResourceName(sNextFileName);
+					oModulesToPost[sNextModuleName] = this._oSrcFileContent[sNextFileName];
+				}, this);
+
+				return {
+					src: oModulesToPost,
+					moduleNameToRequire: sInitModuleName
+				};
+			},
+
 			_getExecuteSrcThrottledTask: function() {
 				var fnExecuteCurrentSrc;
 
@@ -151,7 +179,7 @@ sap.ui.define([
 							oFrameEl = this.createFrame();
 							oFrameEl.onload = function(){
 								if (oFrameEl.contentWindow) {
-									oFrameEl.contentWindow.postMessage(jQuery.extend({}, this._oSrcFileContent), "*");
+									oFrameEl.contentWindow.postMessage(this._getDataToPost(), "*");
 									oFrameEl.onload = null;
 								}
 							}.bind(this);
