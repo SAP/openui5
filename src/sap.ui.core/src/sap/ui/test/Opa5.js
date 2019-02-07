@@ -70,14 +70,17 @@ sap.ui.define([
 		var appUriParams = _OpaUriParameterParser._getAppParams();
 
 		/**
-		 * Helps you when writing tests for UI5 applications.
-		 * Provides convenience to wait and retrieve for UI5 controls without relying on global IDs.
-		 * Makes it easy to wait until your UI is in the state you need for testing, e.g.: waiting for backend data.
+		 * @class
+		 * UI5 extension of the OPA framework.
 		 *
-		 * @class UI5 extension of the OPA framework
+		 * Helps you when writing tests for UI5 apps.
+		 * Provides convenience to wait and retrieve for UI5 controls without relying on global IDs.
+		 * Makes it easy to wait until your UI is in the state you need for testing, for example waiting for back-end data.
+		 *
 		 * @extends sap.ui.base.Object
 		 * @public
 		 * @alias sap.ui.test.Opa5
+		 * @see {@link topic:2696ab50faad458f9b4027ec2f9b884d Opa5}
 		 * @author SAP SE
 		 * @since 1.22
 		 */
@@ -149,7 +152,7 @@ sap.ui.define([
 		/**
 		 * Starts a UIComponent.
 		 * @param {object} oOptions An Object that contains the configuration for starting up a UIComponent.
-		 * @param {object} oOptions.componentConfig Will be passed to {@link sap.ui.component component}, please read the respective documentation.
+		 * @param {object} oOptions.componentConfig Will be passed to {@link sap.ui.core.UIComponent UIComponent}, please read the respective documentation.
 		 * @param {string} [oOptions.hash] Sets the hash {@link sap.ui.core.routing.HashChanger#setHash} to the given value.
 		 * If this parameter is omitted, the hash will always be reset to the empty hash - "".
 		 * @param {number} [oOptions.timeout=15] The timeout for loading the UIComponent in seconds - {@link sap.ui.test.Opa5#waitFor}.
@@ -575,7 +578,7 @@ sap.ui.define([
 		 *     });
 		 *     </pre>
 		 * </code>
-		 * Why is it recommended:
+		 * Why it is recommended:
 		 * When writing a huge set of tests and executing them frequently you might face tests that are sometimes successful but sometimes they are not.
 		 * Setting the autoWait to true should stabilize most of those tests.
 		 * The default "false" could not be changed since it causes existing tests to fail.
@@ -1000,8 +1003,8 @@ sap.ui.define([
 		 * Create a page object configured as arrangement, action and assertion to the Opa.config.
 		 * Use it to structure your arrangement, action and assertion based on parts of the screen to avoid name clashes and help to structure your tests.
 		 * @param {map} mPageObjects
-		 * @param {map} mPageObjects.&lt;your-page-object-name&gt; Multiple page objects are possible, provide at least actions or assertions
-		 * @param {function} [mPageObjects.&lt;your-page-object-name&gt;.viewName] When a viewName is given, all waitFors inside of the page object will get a viewName parameter.
+		 * @param {map} mPageObjects.<your-page-object-name> Multiple page objects are possible, provide at least actions or assertions
+		 * @param {function} [mPageObjects.<your-page-object-name>.viewName] When a viewName is given, all waitFors inside of the page object will get a viewName parameter.
 		 * Here is an example:
 		 * <pre>
 		 * 		<code>
@@ -1037,16 +1040,16 @@ sap.ui.define([
 		 * 			});
 		 * 		</code>
 		 * </pre>
-		 * @param {function} [mPageObjects.&lt;your-page-object-name&gt;.viewId] When a viewId is given, all waitFors inside of the page object will get a viewId parameter.
+		 * @param {function} [mPageObjects.<your-page-object-name>.viewId] When a viewId is given, all waitFors inside of the page object will get a viewId parameter.
 		 * Use when there are multiple views with the same viewName.
-		 * @param {function} [mPageObjects.<your-page-object-name&gt;.baseClass] Base class for the page object's actions and assertions, default: Opa5
-		 * @param {function} [mPageObjects.&lt;your-page-object-name&gt;.namespace] Namespace prefix for the page object's actions and assertions, default: sap.ui.test.opa.pageObject. Use it if you use page objects from multiple projects in the same test build.
-		 * @param {map} [mPageObjects.&lt;your-page-object-name&gt;.actions] Can be used as an arrangement and action in Opa tests. Only the test knows if an action is used as arrangement or action
-		 * @param {function} mPageObjects.&lt;your-page-object-name&gt;.actions.&lt;your-action-1&gt; This is your custom implementation containing one or multiple waitFor statements
-		 * @param {function} mPageObjects.&lt;your-page-object-name&gt;.actions.&lt;your-action-2&gt; This is your custom implementation containing one or multiple waitFor statements
-		 * @param {map} [mPageObjects.&lt;your-page-object-name&gt;.assertions] Can be used as an assertions in Opa tests.
-		 * @param {function} mPageObjects.&lt;your-page-object-name&gt;.assertions.&lt;your-assertions-1&gt; This is your custom implementation containing one or multiple waitFor statements
-		 * @param {function} mPageObjects.&lt;your-page-object-name&gt;.assertions.&lt;your-assertions-2&gt; This is your custom implementation containing one or multiple waitFor statements
+		 * @param {function} [mPageObjects.<your-page-object-name>.baseClass] Base class for the page object's actions and assertions, default: Opa5
+		 * @param {function} [mPageObjects.<your-page-object-name>.namespace] Namespace prefix for the page object's actions and assertions, default: sap.ui.test.opa.pageObject. Use it if you use page objects from multiple projects in the same test build.
+		 * @param {map} [mPageObjects.<your-page-object-name>.actions] Can be used as an arrangement and action in Opa tests. Only the test knows if an action is used as arrangement or action
+		 * @param {function} mPageObjects.<your-page-object-name>.actions.<your-action-1> This is your custom implementation containing one or multiple waitFor statements
+		 * @param {function} mPageObjects.<your-page-object-name>.actions.<your-action-2> This is your custom implementation containing one or multiple waitFor statements
+		 * @param {map} [mPageObjects.<your-page-object-name>.assertions] Can be used as assertions in Opa tests
+		 * @param {function} mPageObjects.<your-page-object-name>.assertions.<your-assertions-1> This is your custom implementation containing one or multiple waitFor statements
+		 * @param {function} mPageObjects.<your-page-object-name>.assertions.<your-assertions-2> This is your custom implementation containing one or multiple waitFor statements
 		 * @returns {map} mPageObject The created page object. It will look like this:
 		 * <pre><code>
 		 *  {
