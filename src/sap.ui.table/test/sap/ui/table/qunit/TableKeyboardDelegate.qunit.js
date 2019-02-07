@@ -4133,7 +4133,7 @@ sap.ui.define([
 
 	QUnit.test("Default Test Table - Resize fixed column", function(assert) {
 		var iMinColumnWidth = TableUtils.Column.getMinColumnWidth();
-		var iColumnResizeStep = oTable._CSSSizeToPixel("1em");
+		var iColumnResizeStep = TableUtils.convertCSSSizeToPixel("1rem");
 		var i;
 
 		var oElem = getColumnHeader(0, true);
@@ -4162,7 +4162,7 @@ sap.ui.define([
 
 	QUnit.test("Default Test Table - Resize column", function(assert) {
 		var iMinColumnWidth = TableUtils.Column.getMinColumnWidth();
-		var iColumnResizeStep = oTable._CSSSizeToPixel("1em");
+		var iColumnResizeStep = TableUtils.convertCSSSizeToPixel("1rem");
 		var i;
 
 		var oElem = getColumnHeader(1, true);
@@ -4205,7 +4205,7 @@ sap.ui.define([
 
 		var aVisibleColumns = oTable._getVisibleColumns();
 		var iMinColumnWidth = TableUtils.Column.getMinColumnWidth();
-		var iColumnResizeStep = oTable._CSSSizeToPixel("1em");
+		var iColumnResizeStep = TableUtils.convertCSSSizeToPixel("1rem");
 		var oElem;
 
 		function testLocal(aResizingColumns, aNotResizingColumns) {

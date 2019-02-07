@@ -707,7 +707,7 @@ sap.ui.define(['sap/ui/Device', './library', "sap/base/Log"],
 						return 0;
 					}
 				} else {
-					return oTable._CSSSizeToPixel(sColumnWidth);
+					return TableColumnUtils.TableUtils.convertCSSSizeToPixel(sColumnWidth);
 				}
 			},
 

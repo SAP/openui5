@@ -3,9 +3,10 @@
 sap.ui.define([
 	"sap/ui/table/qunit/TableQUnitUtils",
 	"sap/ui/table/TableExtension",
+	"sap/ui/table/TableUtils",
 	"sap/ui/Device",
 	"sap/ui/table/library"
-], function(TableQUnitUtils, TableExtension, Device, tableLibrary) {
+], function(TableQUnitUtils, TableExtension, TableUtils, Device, tableLibrary) {
 	"use strict";
 
 	// mapping of global function calls
@@ -305,7 +306,8 @@ sap.ui.define([
 			sap.ui.getCore().applyChanges();
 
 		}).then(whenRowsUpdated).then(function() {
-			assert.ok(oSyncInterface.rowHeights.calledWithExactly([49, 49, 49]), "The row heights were correctly synced");
+			var iHeight = TableUtils.DefaultRowHeight.sapUiSizeCozy;
+			assert.ok(oSyncInterface.rowHeights.calledWithExactly([iHeight, iHeight, iHeight]), "The row heights were correctly synced");
 			assert.strictEqual(oSyncInterface.rowHeights.callCount, 1, "The row heights were synced once");
 
 		}).then(done);
@@ -564,7 +566,9 @@ sap.ui.define([
 
 		oTable.setFirstVisibleRow(0);
 
-		oTable._enableSynchronization().then(function(oSyncInterface) {
+		Promise.resolve().then(function() {
+			return oTable._enableSynchronization();
+		}).then(function(oSyncInterface) {
 			oSyncInterface.registerVerticalScrolling({
 				wheelAreas: [Div1, Div2],
 				touchAreas: [Div1, Div3]
@@ -613,7 +617,9 @@ sap.ui.define([
 		Div.appendChild(document.createElement("div"));
 		document.getElementById("qunit-fixture").appendChild(Div);
 
-		oTable._enableSynchronization().then(function(_oSyncInterface) {
+		Promise.resolve().then(function() {
+			return oTable._enableSynchronization();
+		}).then(function(_oSyncInterface) {
 			oSyncInterface = _oSyncInterface;
 			afterRendering = function() {
 				return new Promise(function(resolve) {

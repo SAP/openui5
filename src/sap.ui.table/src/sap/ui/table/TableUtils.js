@@ -8,6 +8,7 @@ sap.ui.define([
 	"sap/ui/core/Control",
 	"sap/ui/core/ResizeHandler",
 	"sap/ui/core/library",
+	"sap/ui/core/theming/Parameters",
 	"sap/ui/model/ChangeReason",
 	"./TableGrouping",
 	"./TableColumnUtils",
@@ -21,6 +22,7 @@ sap.ui.define([
 	Control,
 	ResizeHandler,
 	coreLibrary,
+	ThemeParameters,
 	ChangeReason,
 	TableGrouping,
 	TableColumnUtils,
@@ -42,6 +44,7 @@ sap.ui.define([
 	 * @type {jQuery.sap.util.ResourceBundle}
 	 */
 	var oResourceBundle;
+	var iBaseFontSize = null;
 
 	/**
 	 * Table cell type.
@@ -73,27 +76,17 @@ sap.ui.define([
 	CELLTYPE.ANY = CELLTYPE.ANYCONTENTCELL | CELLTYPE.ANYCOLUMNHEADER;
 
 	/**
-	 * The horizontal frame size of a row in pixels. This is the height of a row excluding the content height.
+	 * The default row base size in pixels for the different content densities for the current theme. If no theme is applied, default values are used.
 	 *
-	 * @type {int}
+	 * @type {sap.ui.table.TableUtils.BaseSize}
 	 * @static
-	 * @constant
+	 * @typedef {Object} sap.ui.table.TableUtils.BaseSize
+	 * @property {int} sapUiSizeCondensed - The default base size in pixels in condensed content density.
+	 * @property {int} sapUiSizeCompact - The default base siz in pixels in compact content density.
+	 * @property {int} sapUiSizeCozy - The default base siz in pixels in cozy content density.
+	 * @property {int} undefined - The default base siz in pixels in case no content density information is available.
 	 */
-	var ROW_HORIZONTAL_FRAME_SIZE = 1; /* 1px border */
-
-	/**
-	 * The default row content heights in pixels for the different content densities.
-	 *
-	 * @type {sap.ui.table.TableUtils.DefaultRowContentHeight}
-	 * @static
-	 * @constant
-	 * @typedef {Object} sap.ui.table.TableUtils.DefaultRowContentHeight
-	 * @property {int} sapUiSizeCondensed - The default content height of a row in pixels in condensed content density.
-	 * @property {int} sapUiSizeCompact - The default content height of a row in pixels in compact content density.
-	 * @property {int} sapUiSizeCozy - The default content height of a row in pixels in cozy content density.
-	 * @property {int} undefined - The default content height of a row in pixels in case no content density information is available.
-	 */
-	var DEFAULT_ROW_CONTENT_HEIGHT = {
+	var mBaseSize = {
 		sapUiSizeCozy: 48,
 		sapUiSizeCompact: 32,
 		sapUiSizeCondensed: 24,
@@ -101,22 +94,38 @@ sap.ui.define([
 	};
 
 	/**
-	 * The default row heights in pixels for the different content densities.
+	 * The base border width in pixels for the current theme. If no theme is applied, a default value is used.
+	 *
+	 * @type {int}
+	 * @static
+	 */
+	var iBaseBorderWidth = 1;
+
+	/**
+	 * The horizontal frame size of a row in pixels for the current theme. The frame size includes, for example, the row border width. If no theme is
+	 * applied, a default value is used.
+	 *
+	 * @type {int}
+	 * @static
+	 */
+	var iRowHorizontalFrameSize = 1;
+
+	/**
+	 * The default row heights in pixels for the different content densities for the current theme. If no theme is applied, default values are used.
 	 *
 	 * @type {sap.ui.table.TableUtils.DefaultRowHeight}
 	 * @static
-	 * @constant
 	 * @typedef {Object} sap.ui.table.TableUtils.DefaultRowHeight
 	 * @property {int} sapUiSizeCondensed - The default height of a row in pixels in condensed content density.
 	 * @property {int} sapUiSizeCompact - The default height of a row in pixels in compact content density.
 	 * @property {int} sapUiSizeCozy - The default height of a row in pixels in cozy content density.
 	 * @property {int} undefined - The default height of a row in pixels in case no content density information is available.
 	 */
-	var DEFAULT_ROW_HEIGHT = {
-		sapUiSizeCozy: DEFAULT_ROW_CONTENT_HEIGHT.sapUiSizeCozy + ROW_HORIZONTAL_FRAME_SIZE,
-		sapUiSizeCompact: DEFAULT_ROW_CONTENT_HEIGHT.sapUiSizeCompact + ROW_HORIZONTAL_FRAME_SIZE,
-		sapUiSizeCondensed: DEFAULT_ROW_CONTENT_HEIGHT.sapUiSizeCondensed + ROW_HORIZONTAL_FRAME_SIZE,
-		undefined: DEFAULT_ROW_CONTENT_HEIGHT.undefined + ROW_HORIZONTAL_FRAME_SIZE
+	var mDefaultRowHeight = {
+		sapUiSizeCozy: mBaseSize.sapUiSizeCozy + iRowHorizontalFrameSize,
+		sapUiSizeCompact: mBaseSize.sapUiSizeCompact + iRowHorizontalFrameSize,
+		sapUiSizeCondensed: mBaseSize.sapUiSizeCondensed + iRowHorizontalFrameSize,
+		undefined: mBaseSize.undefined + iRowHorizontalFrameSize
 	};
 
 	/**
@@ -184,8 +193,10 @@ sap.ui.define([
 		Binding: TableBindingUtils,
 
 		CELLTYPE: CELLTYPE,
-		ROW_HORIZONTAL_FRAME_SIZE: ROW_HORIZONTAL_FRAME_SIZE,
-		DEFAULT_ROW_HEIGHT: DEFAULT_ROW_HEIGHT,
+		BaseSize: mBaseSize,
+		BaseBorderWidth: iBaseBorderWidth,
+		RowHorizontalFrameSize: iRowHorizontalFrameSize,
+		DefaultRowHeight: mDefaultRowHeight,
 		RowsUpdateReason: ROWS_UPDATE_REASON,
 		INTERACTIVE_ELEMENT_SELECTORS: INTERACTIVE_ELEMENT_SELECTORS,
 
@@ -544,33 +555,6 @@ sap.ui.define([
 			return oTable._iHeaderRowCount;
 		},
 
-		/* *
-		 * Returns the height of the defined row, identified by its row index.
-		 * @param {Object} oTable current table object
-		 * @param {int} iRowIndex the index of the row which height is needed
-		 * @private
-		 * @returns {int}
-		 * /
-		getRowHeightByIndex : function(oTable, iRowIndex) {
-			var iRowHeight = 0;
-
-			if (oTable) {
-				var aRows = oTable.getRows();
-				if (aRows && aRows.length && iRowIndex > -1 && iRowIndex < aRows.length) {
-					var oDomRefs = aRows[iRowIndex].getDomRefs();
-					if (oDomRefs) {
-						if (oDomRefs.rowScrollPart && oDomRefs.rowFixedPart) {
-							iRowHeight = Math.max(oDomRefs.rowScrollPart.clientHeight, oDomRefs.rowFixedPart.clientHeight);
-						} else if (!oDomRefs.rowFixedPart) {
-							iRowHeight = oDomRefs.rowScrollPart.clientHeight;
-						}
-					}
-				}
-			}
-
-			return iRowHeight;
-		},*/
-
 		/**
 		 * Checks whether all conditions for pixel-based scrolling (Variable Row Height) are fulfilled.
 		 * @param {Object} oTable current table object
@@ -735,7 +719,7 @@ sap.ui.define([
 				columnSpan: null
 			};
 
-			if ($Cell.hasClass("sapUiTableTd")) { // Data Cell
+			if ($Cell.hasClass("sapUiTableDataCell")) {
 				sColumnId = $Cell.data("sap-ui-colid");
 				oColumn = sap.ui.getCore().byId(sColumnId);
 
@@ -744,7 +728,7 @@ sap.ui.define([
 				oCellInfo.columnIndex = oColumn.getIndex();
 				oCellInfo.columnSpan = 1;
 
-			} else if ($Cell.hasClass("sapUiTableCol")) { // Column Header Cell
+			} else if ($Cell.hasClass("sapUiTableHeaderDataCell")) {
 				rRowIndex = /_([\d]+)/;
 				sColumnId = $Cell.attr("id");
 				aRowIndexMatch = rRowIndex.exec(sColumnId);
@@ -755,19 +739,19 @@ sap.ui.define([
 				oCellInfo.columnIndex = parseInt($Cell.data("sap-ui-colindex"));
 				oCellInfo.columnSpan = parseInt($Cell.attr("colspan") || 1);
 
-			} else if ($Cell.hasClass("sapUiTableRowHdr")) { // Row Header Cell
+			} else if ($Cell.hasClass("sapUiTableRowSelectionCell")) {
 				oCellInfo.type = TableUtils.CELLTYPE.ROWHEADER;
 				oCellInfo.rowIndex = parseInt($Cell.data("sap-ui-rowindex"));
 				oCellInfo.columnIndex = -1;
 				oCellInfo.columnSpan = 1;
 
-			} else if ($Cell.hasClass("sapUiTableRowAction")) { // Row Action Cell
+			} else if ($Cell.hasClass("sapUiTableRowActionCell")) {
 				oCellInfo.type = TableUtils.CELLTYPE.ROWACTION;
 				oCellInfo.rowIndex = parseInt($Cell.data("sap-ui-rowindex"));
 				oCellInfo.columnIndex = -2;
 				oCellInfo.columnSpan = 1;
 
-			} else if ($Cell.hasClass("sapUiTableColRowHdr")) { // SelectAll Cell
+			} else if ($Cell.hasClass("sapUiTableRowSelectionHeaderCell")) {
 				oCellInfo.type = TableUtils.CELLTYPE.COLUMNROWHEADER;
 				oCellInfo.columnIndex = -1;
 				oCellInfo.columnSpan = 1;
@@ -863,24 +847,11 @@ sap.ui.define([
 			}
 
 			var $Element = jQuery(oElement);
-			var $Cell;
 			var oTableElement = oTable.getDomRef();
-			var aTableCellSelectors = [
-				".sapUiTableTd",
-				".sapUiTableCol",
-				".sapUiTableRowHdr",
-				".sapUiTableRowAction",
-				".sapUiTableColRowHdr"
-			];
-			var sSelector;
+			var $Cell = $Element.closest(".sapUiTableCell", oTableElement);
 
-			for (var i = 0; i < aTableCellSelectors.length; i++) {
-				sSelector = aTableCellSelectors[i];
-				$Cell = $Element.closest(sSelector, oTableElement);
-
-				if ($Cell.length > 0) {
-					return $Cell;
-				}
+			if ($Cell.length > 0) {
+				return $Cell;
 			}
 
 			return null;
@@ -1115,16 +1086,16 @@ sap.ui.define([
 		},
 
 		/**
-		 * Returns the index of the first fixed buttom row in the <code>rows</code> aggregation.
+		 * Returns the index of the first fixed bottom row in the <code>rows</code> aggregation.
 		 *
 		 * @param {sap.ui.table.Table} oTable Instance of the table
-		 * @returns {int} The index of the first fixed buttom row in the <code>rows</code> aggregation, or <code>-1</code>.
+		 * @returns {int} The index of the first fixed bottom row in the <code>rows</code> aggregation, or <code>-1</code>.
 		 * @private
 		 */
-		getFirstFixedButtomRowIndex: function(oTable) {
+		getFirstFixedBottomRowIndex: function(oTable) {
 			var iFixedBottomRowCount = oTable.getFixedBottomRowCount();
 			var oBinding = oTable.getBinding("rows");
-			var iFirstFixedButtomIndex = -1;
+			var iFirstFixedBottomIndex = -1;
 
 			if (oBinding && iFixedBottomRowCount > 0) {
 				var iVisibleRowCount = oTable.getVisibleRowCount();
@@ -1132,16 +1103,16 @@ sap.ui.define([
 				var iTotalRowCount = oTable._getTotalRowCount();
 
 				if (iTotalRowCount >= iVisibleRowCount) {
-					iFirstFixedButtomIndex = iVisibleRowCount - iFixedBottomRowCount;
+					iFirstFixedBottomIndex = iVisibleRowCount - iFixedBottomRowCount;
 				} else {
 					var iIdx = iTotalRowCount - iFixedBottomRowCount - iFirstVisibleRow;
 					if (iIdx >= 0 && (iFirstVisibleRow + iIdx) < iTotalRowCount) {
-						iFirstFixedButtomIndex = iIdx;
+						iFirstFixedBottomIndex = iIdx;
 					}
 				}
 			}
 
-			return iFirstFixedButtomIndex;
+			return iFirstFixedBottomIndex;
 		},
 
 		/**
@@ -1448,6 +1419,77 @@ sap.ui.define([
 			}
 
 			return null;
+		},
+
+		/**
+		 * Converts the CSS size to pixels and returns it with or without unit. Can also be used to parse a pixel value string to an integer.
+		 *
+		 * @param {string} sCSSSize The CSSSize to convert.
+		 * @param {boolean} [bWithUnit=false] Whether the value should be returned as a string with the unit.
+		 * @returns {string|int|null} The pixel value as an integer, or string if <code>bWithUnit</code> is <code>true</code>. Returns
+		 *                            <code>null</code> if the CSS size could not be converted.
+		 */
+		convertCSSSizeToPixel: function(sCSSSize, bWithUnit) {
+			var iPixelValue;
+
+			if (typeof sCSSSize !== "string") {
+				return null;
+			}
+
+			if (sCSSSize.endsWith("px")) {
+				iPixelValue = parseInt(sCSSSize);
+			} else if (sCSSSize.endsWith("em") || sCSSSize.endsWith("rem")) {
+				iPixelValue = Math.ceil(parseFloat(sCSSSize) * TableUtils.getBaseFontSize());
+			} else {
+				return null;
+			}
+
+			if (bWithUnit) {
+				return iPixelValue + "px";
+			} else {
+				return iPixelValue;
+			}
+		},
+
+		/**
+		 * Gets the base font size of the document in pixels. If this method is called while the base size cannot be retrieved from the document, a
+		 * default font size of 16 (pixels) is returned.
+		 *
+		 * @returns {int} The base font size in pixels.
+		 */
+		getBaseFontSize: function() {
+			if (iBaseFontSize == null) {
+				var oDocumentRootElement = document.documentElement;
+				if (oDocumentRootElement) {
+					iBaseFontSize = parseInt(window.getComputedStyle(oDocumentRootElement).fontSize);
+				}
+			}
+
+			return iBaseFontSize == null ? 16 : iBaseFontSize;
+		},
+
+		/**
+		 * Reads the theme parameters and updates the corresponding variables used and provided by the utilities, e.g. row height values.
+		 */
+		readThemeParameters: function() {
+			// Converting the row height CSS parameters (e.g. _sap_ui_table_RowHeight) is too complex (CSS calc()).
+			// Therefore, the base sizes are used and calculation is done in JavaScript.
+
+			function getPixelValue(sThemeParameterName) {
+				return TableUtils.convertCSSSizeToPixel(ThemeParameters.get(sThemeParameterName));
+			}
+
+			mBaseSize.undefined = getPixelValue("_sap_ui_table_BaseSize");
+			mBaseSize.sapUiSizeCozy = getPixelValue("_sap_ui_table_BaseSizeCozy");
+			mBaseSize.sapUiSizeCompact = getPixelValue("_sap_ui_table_BaseSizeCompact");
+			mBaseSize.sapUiSizeCondensed = getPixelValue("_sap_ui_table_BaseSizeCondensed");
+			iBaseBorderWidth = getPixelValue("_sap_ui_table_BaseBorderWidth");
+
+			iRowHorizontalFrameSize = iBaseBorderWidth;
+			mDefaultRowHeight.undefined = mBaseSize.undefined + iRowHorizontalFrameSize;
+			mDefaultRowHeight.sapUiSizeCozy = mBaseSize.sapUiSizeCozy + iRowHorizontalFrameSize;
+			mDefaultRowHeight.sapUiSizeCompact = mBaseSize.sapUiSizeCompact + iRowHorizontalFrameSize;
+			mDefaultRowHeight.sapUiSizeCondensed = mBaseSize.sapUiSizeCondensed + iRowHorizontalFrameSize;
 		}
 	};
 

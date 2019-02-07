@@ -1239,7 +1239,7 @@ sap.ui.define([
 
 			if ($ParentCell) {
 				Promise.resolve().then(function() {
-					var $InnerCellElement = $ParentCell.find(".sapUiTableCell");
+					var $InnerCellElement = $ParentCell.find(".sapUiTableCellInner");
 
 					if ($InnerCellElement.length > 0) {
 						if (this._bRtlMode) {

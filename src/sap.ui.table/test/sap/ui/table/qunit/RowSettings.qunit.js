@@ -237,19 +237,19 @@ sap.ui.define([
 
 		// Cozy
 		this.assertWidths(assert, "sapUiSizeCozy");
-		this.assertRowHeaderWidths(assert, 48, "sapUiSizeCozy");
+		this.assertRowHeaderWidths(assert, TableUtils.BaseSize.sapUiSizeCozy, "sapUiSizeCozy");
 
 		// Compact
 		oBody.classList.remove("sapUiSizeCozy");
 		oBody.classList.add("sapUiSizeCompact");
 		this.assertWidths(assert, "sapUiSizeCompact");
-		this.assertRowHeaderWidths(assert, 32, "sapUiSizeCompact");
+		this.assertRowHeaderWidths(assert, TableUtils.BaseSize.sapUiSizeCompact, "sapUiSizeCompact");
 
 		// Condensed
 		oBody.classList.remove("sapUiSizeCompact");
 		oBody.classList.add("sapUiSizeCondensed");
 		this.assertWidths(assert, "sapUiSizeCondensed");
-		this.assertRowHeaderWidths(assert, 32, "sapUiSizeCondensed");
+		this.assertRowHeaderWidths(assert, TableUtils.BaseSize.sapUiSizeCompact, "sapUiSizeCondensed");
 
 		// Reset density
 		oBody.classList.remove("sapUiSizeCondensed");

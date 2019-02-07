@@ -585,7 +585,7 @@ sap.ui.define([
 		assert.strictEqual(oInfo.cell.getText(), "D3", "Cell 2,2");
 	});
 
-	QUnit.test("getFirstFixedButtomRowIndex", function(assert) {
+	QUnit.test("getFirstFixedBottomRowIndex", function(assert) {
 		function initTest(iFixedBottomCount, iRowCount) {
 			oTable.setFixedBottomRowCount(iFixedBottomCount);
 			oTable.setVisibleRowCount(iRowCount);
@@ -593,7 +593,7 @@ sap.ui.define([
 		}
 
 		initTest(0, iNumberOfRows - 3);
-		assert.equal(TableUtils.getFirstFixedButtomRowIndex(oTable), -1, "No fixed buttom rows");
+		assert.equal(TableUtils.getFirstFixedBottomRowIndex(oTable), -1, "No fixed buttom rows");
 
 		var iVisibleRows,
 			iFixedBottomRows = 2;
@@ -602,10 +602,10 @@ sap.ui.define([
 			initTest(iFixedBottomRows, iVisibleRows);
 
 			if (i <= 3) {
-				assert.equal(TableUtils.getFirstFixedButtomRowIndex(oTable), iVisibleRows - iFixedBottomRows,
+				assert.equal(TableUtils.getFirstFixedBottomRowIndex(oTable), iVisibleRows - iFixedBottomRows,
 					"Fixed buttom rows, VisibleRowCount=" + iVisibleRows);
 			} else {
-				assert.equal(TableUtils.getFirstFixedButtomRowIndex(oTable), iNumberOfRows - iFixedBottomRows,
+				assert.equal(TableUtils.getFirstFixedBottomRowIndex(oTable), iNumberOfRows - iFixedBottomRows,
 					"Fixed buttom rows, VisibleRowCount=" + iVisibleRows);
 			}
 		}
@@ -1139,6 +1139,21 @@ sap.ui.define([
 		assert.strictEqual($InteractiveElements, null, "(HTMLElement) Tree icon cell of leaf node: No element was returned");
 	});
 
+	QUnit.test("convertCSSSizeToPixel", function(assert) {
+		assert.equal(TableUtils.convertCSSSizeToPixel("10em", true), "160px", "10em converted to pixel string correctly.");
+		assert.equal(TableUtils.convertCSSSizeToPixel("10rem"), 160, "10rem converted to pixel integer correctly.");
+		assert.equal(TableUtils.convertCSSSizeToPixel("100px"), 100, "100px converted to pixel integer correctly.");
+
+		assert.equal(TableUtils.convertCSSSizeToPixel(), null, "undefined could not be converted. Returned null.");
+		assert.equal(TableUtils.convertCSSSizeToPixel("100"), null, "100 could not be converted. Returned null.");
+		assert.equal(TableUtils.convertCSSSizeToPixel("10vh"), null, "100vh could not be converted. Returned null.");
+		assert.equal(TableUtils.convertCSSSizeToPixel(100), null, "Integer could not be converted. Returned null.");
+	});
+
+	QUnit.test("getBaseFontSize", function(assert) {
+		assert.equal(TableUtils.getBaseFontSize(), 16, "Base font size returned");
+	});
+
 	QUnit.module("Cozy", {
 		beforeEach: function() {
 			jQuery(document.body).toggleClass("sapUiSizeCozy", true);
@@ -1149,21 +1164,6 @@ sap.ui.define([
 			jQuery(document.body).toggleClass("sapUiSizeCozy", false);
 		}
 	});
-
-	/*QUnit.test("getRowHeightByIndex", function(assert) {
-		var iDefaultRowHeight = oTable._getDefaultRowHeight();
-
-		assert.equal(TableUtils.getRowHeightByIndex(oTable, 0), iDefaultRowHeight, "First Row Height is 48");
-		assert.equal(TableUtils.getRowHeightByIndex(oTable, oTable.getRows().length - 1), iDefaultRowHeight, "Last Row Height is 48");
-		assert.equal(TableUtils.getRowHeightByIndex(oTable, 50), 0, "Invalid Row Height is 0");
-		assert.equal(TableUtils.getRowHeightByIndex(null, 0), 0, "No Table available returns 0px as row height");
-
-		oTable.setFixedColumnCount(0);
-		sap.ui.getCore().applyChanges();
-
-		assert.equal(TableUtils.getRowHeightByIndex(oTable, 0), iDefaultRowHeight, "First Row Height is 48, with Table with no fixed columns");
-		jQuery(document.body).toggleClass("sapUiSizeCozy", false);
-	});*/
 
 	QUnit.module("Resize Handler", {
 		beforeEach: function() {

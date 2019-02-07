@@ -1,0 +1,51 @@
+/* ================================= */
+/* CSS for control sap.ui.table/Row  */
+/* Base theme                        */
+/* ================================= */
+
+.sapUiTableTr,
+.sapUiTableColHdrTr {
+	color: @sapUiListTextColor;
+	height: @_sap_ui_table_RowHeight;
+
+	.sapUiSizeCozy & {
+		height: @_sap_ui_table_RowHeightCozy;
+	}
+}
+
+.sapUiTableColHdrTr {
+	background-color: @sapUiListHeaderBackground;
+}
+
+.sapUiTableTr {
+	font-weight: normal;
+	box-sizing: border-box;
+
+	.sapUiSizeCondensed & {
+		height: @_sap_ui_table_RowHeightCondensed;
+	}
+
+	.sapUiTableResizing .sapUiTableCtrlCnt & {
+		pointer-events: none;
+	}
+}
+
+.sapUiTableTr,
+.sapUiTableRowSelectionCell, // In the current DOM structure, row selection cells are also CSS rows, as they are a section of the full table row.
+.sapUiTableRowActionCell { // In the current DOM structure, row action cells are also CSS rows, as they are a section of the full table row.
+	&.sapUiTableRowAlternate {
+		background-color: darken(@sapUiListBackground, 2);
+	}
+
+	&.sapUiTableRowSel {
+		background-color: @sapUiListSelectionBackgroundColor;
+	}
+
+	&.sapUiTableRowHvr {
+		background-color: @sapUiListHoverBackground;
+	}
+
+	&.sapUiTableRowSel.sapUiTableRowHvr {
+		background-color: @sapUiListSelectionHoverBackground;
+	}
+}

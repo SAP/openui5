@@ -837,8 +837,8 @@ sap.ui.define([
 		aVisibleColumns[1].setWidth("123px");
 		assert.strictEqual(ColumnUtils.getColumnWidth(oTable, 1), 123, "Returned 123");
 
-		aVisibleColumns[2].setWidth("2em");
-		var i2emInPixel = oTable._CSSSizeToPixel("2em");
+		aVisibleColumns[2].setWidth("2rem");
+		var i2emInPixel = TableUtils.convertCSSSizeToPixel("2rem");
 		assert.strictEqual(ColumnUtils.getColumnWidth(oTable, 2), i2emInPixel, "Returned 2em in pixels: " + i2emInPixel);
 
 		aVisibleColumns[3].setVisible(false);

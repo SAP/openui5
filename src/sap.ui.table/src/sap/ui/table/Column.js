@@ -708,8 +708,7 @@ function(
 
 		this.$()
 			.parents(".sapUiTableCHT")
-			.find('td[data-sap-ui-colindex="' + this.getIndex() + '"]:not([colspan]):not(.sapUiTableColInvisible):first .sapUiTableColCell')
-			.toggleClass("sapUiTableColSF", bSorted || bFiltered)
+			.find('td[data-sap-ui-colindex="' + this.getIndex() + '"]:not([colspan]):not(.sapUiTableHidden):first')
 			.toggleClass("sapUiTableColFiltered", bFiltered)
 			.toggleClass("sapUiTableColSorted", bSorted)
 			.toggleClass("sapUiTableColSortedD", bSorted && this.getSortOrder() === SortOrder.Descending);

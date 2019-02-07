@@ -80,25 +80,25 @@ sap.ui.define([
 		assertColumnHeaderCellMenuExists: function(assert, $Column, bExists) {
 			var iColumnIndex = $Column.data("sap-ui-colindex");
 
-			var bCellExists = $Column.find(".sapUiTableColCell").is(":hidden");
+			var bCellExists = $Column.find(".sapUiTableCellInner").is(":hidden");
 			assert.strictEqual(bExists, bCellExists,
 				"The cell is" + (bExists ? " not " : " ") + "visible (Column: " + (iColumnIndex + 1) + ")");
 
-			var bCellMenuExists = $Column.find(".sapUiTableColCellMenu").length > 0;
+			var bCellMenuExists = $Column.find(".sapUiTableCellTouchMenu").length > 0;
 			assert.strictEqual(bExists, bCellMenuExists,
 				"The cell menu does" + (bExists ? " " : " not ") + "exist (Column: " + (iColumnIndex + 1) + ")");
 		},
 		assertColumnHeaderCellMenuButtonExists: function(assert, $Column, bExists) {
 			var iColumnIndex = $Column.data("sap-ui-colindex");
 
-			var bContextMenuButtonExists = $Column.find(".sapUiTableColCellMenu > .sapUiTableColDropDown").length > 0;
+			var bContextMenuButtonExists = $Column.find(".sapUiTableCellTouchMenu > .sapUiTableColDropDown").length > 0;
 			assert.strictEqual(bExists, bContextMenuButtonExists,
 				"The context menu button does" + (bExists ? " " : " not ") + "exist (Column: " + (iColumnIndex + 1) + ")");
 		},
 		assertColumnHeaderCellResizeButtonExists: function(assert, $Column, bExists) {
 			var iColumnIndex = $Column.data("sap-ui-colindex");
 
-			var bResizeButtonExists = $Column.find(".sapUiTableColCellMenu > .sapUiTableColResizer").length > 0;
+			var bResizeButtonExists = $Column.find(".sapUiTableCellTouchMenu > .sapUiTableColResizer").length > 0;
 			assert.strictEqual(bExists, bResizeButtonExists,
 				"The resize button does" + (bExists ? " " : " not ") + "exist (Column: " + iColumnIndex + ")");
 		}

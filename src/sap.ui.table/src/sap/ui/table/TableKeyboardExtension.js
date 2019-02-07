@@ -146,12 +146,12 @@ sap.ui.define([
 			var $bottomRight = $Table.find(".sapUiTableCtrlScroll.sapUiTableCtrlRowFixedBottom:not(.sapUiTableCHT)");
 
 			if (bHasRowHeader) {
-				aRowHdrDomRefs = $Table.find(".sapUiTableRowHdr").get();
+				aRowHdrDomRefs = $Table.find(".sapUiTableRowSelectionCell").get();
 				iTotalColumnCount++;
 			}
 
 			if (bHasRowActions) {
-				aRowActionDomRefs = $Table.find(".sapUiTableRowAction").get();
+				aRowActionDomRefs = $Table.find(".sapUiTableRowActionCell").get();
 				iTotalColumnCount++;
 			}
 
@@ -191,16 +191,16 @@ sap.ui.define([
 					}
 
 					if ($FixedHeaders.length) {
-						aHeaderDomRefs = aHeaderDomRefs.concat(jQuery($FixedHeaders.get(i)).find(".sapUiTableCol").get());
+						aHeaderDomRefs = aHeaderDomRefs.concat(jQuery($FixedHeaders.get(i)).find(".sapUiTableHeaderCell").get());
 					}
 					if ($ScrollHeaders.length) {
-						aHeaderDomRefs = aHeaderDomRefs.concat(jQuery($ScrollHeaders.get(i)).find(".sapUiTableCol").get());
+						aHeaderDomRefs = aHeaderDomRefs.concat(jQuery($ScrollHeaders.get(i)).find(".sapUiTableHeaderCell").get());
 					}
 
 					if (bHasRowActions) {
 						// Only add a dummy (inivisible inner text) to fullfill matrix for item navigation.
 						// Header should not be focuable.
-						aHeaderDomRefs.push($Table.find(".sapUiTableRowActionHeader").children().get(0));
+						aHeaderDomRefs.push($Table.find(".sapUiTableRowActionHeaderCell").children().get(0));
 					}
 				}
 

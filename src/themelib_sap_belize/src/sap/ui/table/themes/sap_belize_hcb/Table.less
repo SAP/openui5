@@ -11,43 +11,15 @@
 
 .sapUiTableTbr,
 .sapUiTableExt {
-	border-bottom: 1px solid @sapUiListHeaderBorderColor;
+	border-bottom: @_sap_ui_table_BaseBorderWidth solid @sapUiListHeaderBorderColor;
 	padding: 0.125rem;
 	box-sizing: content-box;
 }
 
 .sapUiTableCnt {
-	border: 1px solid @sapUiListBorderColor;
+	border: @_sap_ui_table_BaseBorderWidth solid @sapUiListBorderColor;
 }
 
 .sapUiTableColHdrCnt {
 	border-bottom-width: 3px;
-}
-
-.sapUiTableCol:hover,
-.sapUiTableColRowHdr:hover {
-	background-color: @sapUiListHoverBackground;
-}
-
-.sapUiTableRowHdr::after,
-.sapUiTableColRowHdrIco::after {
-	color: @sapUiContentIconColor;
-}
-
-.sapUiTableCtrl tr.sapUiTableRowHvr,
-.sapUiTableRowHdr.sapUiTableRowHvr {
-	color: @sapUiContentContrastTextColor;
-}
-
-.sapUiTableRowHdr.sapUiTableRowHvr::after {
-	background-color: @sapUiSelected;
-}
-
-.sapUiTableColRowHdrIco::before,
-.sapUiTableRowHdr::before {
-	color: @sapUiContentIconColor;
-}
-
-.sapUiTableRowHighlight.sapUiTableRowHighlightInformation {
-	background-color: @sapUiAccent6;
 }

@@ -1,0 +1,61 @@
+/* ================================== */
+/* CSS for sap.ui.table/RowHighlight  */
+/* Base theme                         */
+/* ================================== */
+
+.sapUiTableRowHighlight {
+	height: 100%;
+	width: @_sap_ui_table_RowHighlightWidth;
+	border-bottom: @_sap_ui_table_BaseBorderWidth solid @sapUiListBorderColor;
+
+	.sapUiTableRowLastFixedTop > &,
+	.sapUiTableRowLastScrollable > & {
+		border-bottom-color: @sapUiListTableFixedBorder;
+	}
+
+	.sapUiAnalyticalTableDummy &,
+	.sapUiTableGroupHeader &,
+	.sapUiAnalyticalTableSum & {
+		display: none;
+	}
+
+	&.sapUiTableRowHighlightSuccess {
+		background-color: @sapUiSuccessBorder;
+	}
+
+	&.sapUiTableRowHighlightError {
+		background-color: @sapUiErrorBorder;
+	}
+
+	&.sapUiTableRowHighlightWarning {
+		background-color: @sapUiWarningBorder;
+	}
+
+	&.sapUiTableRowHighlightInformation {
+		background-color: @sapUiInformationBorder;
+	}
+
+	&.sapUiTableRowHighlightNone {
+		background-color: transparent;
+	}
+
+	&.sapUiTableRowHighlightIndication01 {
+		background-color: @sapUiIndication1;
+	}
+
+	&.sapUiTableRowHighlightIndication02 {
+		background-color: @sapUiIndication2;
+	}
+
+	&.sapUiTableRowHighlightIndication03 {
+		background-color: @sapUiIndication3;
+	}
+
+	&.sapUiTableRowHighlightIndication04 {
+		background-color: @sapUiIndication4;
+	}
+
+	&.sapUiTableRowHighlightIndication05 {
+		background-color: @sapUiIndication5;
+	}
+}

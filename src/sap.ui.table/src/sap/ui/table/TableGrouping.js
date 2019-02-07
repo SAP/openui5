@@ -215,7 +215,7 @@ sap.ui.define([
 			var $Ref = jQuery(oRef);
 			var $GroupRef;
 
-			if ($Ref.hasClass("sapUiTableTreeIcon") || (TableGrouping.isTreeMode(oTable) && $Ref.hasClass("sapUiTableTdFirst"))) {
+			if ($Ref.hasClass("sapUiTableTreeIcon") || (TableGrouping.isTreeMode(oTable) && $Ref.hasClass("sapUiTableCellFirst"))) {
 				$GroupRef = $Ref.closest("tr", oTable.getDomRef());
 			} else {
 				$GroupRef = $Ref.closest(".sapUiTableGroupHeader", oTable.getDomRef());
@@ -343,7 +343,7 @@ sap.ui.define([
 		 */
 		_setIndent : function(oTable, $Row, $RowHdr, iIndent) {
 			var bRTL = oTable._bRtlMode,
-				$FirstCellContentInRow = $Row.find("td.sapUiTableTdFirst > .sapUiTableCell"),
+				$FirstCellContentInRow = $Row.find("td.sapUiTableCellFirst > .sapUiTableCellInner"),
 				$Shield = $RowHdr.find(".sapUiTableGroupShield");
 
 			if (iIndent <= 0) {
@@ -355,7 +355,7 @@ sap.ui.define([
 				// Apply indent on table row
 				$RowHdr.css(bRTL ? "right" : "left", iIndent + "px");
 				$Shield.css("width", iIndent + "px").css(bRTL ? "margin-right" : "margin-left", ((-1) * iIndent) + "px");
-				$FirstCellContentInRow.css(bRTL ? "padding-right" : "padding-left", (iIndent + 8/* +8px standard padding .sapUiTableCell */) + "px");
+				$FirstCellContentInRow.css(bRTL ? "padding-right" : "padding-left", (iIndent + 8/* +8px standard padding .sapUiTableCellInner */) + "px");
 			}
 		},
 
