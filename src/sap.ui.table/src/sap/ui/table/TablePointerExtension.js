@@ -307,7 +307,7 @@ sap.ui.define([
 			iWidth = Math.min(iWidth, $this.find(".sapUiTableCnt").width()); // no wider as the table
 			iWidth = Math.max(iWidth + 4, TableUtils.Column.getMinColumnWidth()); // not to small
 
-			//$hiddenArea.remove();
+			$hiddenArea.remove();
 
 			return iWidth;
 		},
