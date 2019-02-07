@@ -1,0 +1,104 @@
+<mvc:View
+	xmlns="sap.m"
+	xmlns:mvc="sap.ui.core.mvc"
+	xmlns:f="sap.f"
+	xmlns:core="sap.ui.core"
+	xmlns:card="sap.f.cards"
+	xmlns:viz="sap.viz.ui5.controls"
+	xmlns:viz.data="sap.viz.ui5.data"
+	xmlns:viz.feeds="sap.viz.ui5.controls.common.feeds"
+	displayBlock="true"
+	controllerName="sap.f.cardsdemo.controller.sapFCard">
+
+	<Page title="{i18n>appTitle}">
+
+		<subHeader>
+			<Toolbar>
+				<ToolbarSpacer/>
+				<Title text="sap.f.Card example"/>
+				<ToolbarSpacer/>
+			</Toolbar>
+		</subHeader>
+
+		<content>
+
+			<f:Card class="sapUiMediumMargin" width="300px" height="auto">
+				<f:header>
+					<card:Header title="Some title" subtitle="Some long subtitle" iconSrc="sap-icon://accept"/>
+				</f:header>
+				<f:content>
+					<List items="{listItems>/ProductCollection}" headerText="Products">
+						<StandardListItem
+							title="{listItems>Name}"
+							description="{listItems>ProductId}"
+							icon="{listItems>ProductPicUrl}"
+							iconDensityAware="false"
+							iconInset="false" />
+					</List>
+				</f:content>
+			</f:Card>
+
+			<f:Card class="sapUiMediumMargin" width="300px" height="auto">
+				<f:header>
+					<card:Header
+						title="Activity items"
+						subtitle="Recent activities"
+						iconSrc="sap-icon://activity-items"/>
+				</f:header>
+				<f:content>
+					<Table items="{tableData>/Names}">
+						<columns>
+							<Column>
+								<Text text="First Name"/>
+							</Column>
+							<Column>
+								<Text text="Last Name"/>
+							</Column>
+						</columns>
+						<items>
+							<ColumnListItem type="Navigation">
+								<cells>
+									<Text text="{tableData>firstName}"/>
+									<Text text="{tableData>lastName}"/>
+								</cells>
+							</ColumnListItem>
+						</items>
+					</Table>
+				</f:content>
+			</f:Card>
+
+			<f:Card
+				class="sapUiMediumMargin"
+				width="650px"
+				height="500px">
+				<f:header>
+					<card:NumericHeader
+						title="Numeric"
+						subtitle="Basic Numeric subtitle"
+						unitOfMeasurement="%"
+						details="Some details also"/>
+				</f:header>
+				<f:content>
+					 <viz:VizFrame id="idVizFrame" height='100%' width="100%" vizType='column'>
+						<viz:dataset>
+							<viz.data:FlattenedDataset data="{analyticalData>/list}">
+								<viz.data:dimensions>
+									<viz.data:DimensionDefinition name="Week" value="{analyticalData>Week}" />
+								</viz.data:dimensions>
+								<viz.data:measures>
+									<viz.data:MeasureDefinition name="Revenue" value="{analyticalData>Revenue}" />
+									<viz.data:MeasureDefinition name="Cost" value="{analyticalData>Cost}" />
+								</viz.data:measures>
+							</viz.data:FlattenedDataset>
+						</viz:dataset>
+						<viz:feeds>
+							<viz.feeds:FeedItem id='valueAxisFeed' uid="valueAxis" type="Measure" values="Revenue" />
+							<viz.feeds:FeedItem id='categoryAxisFeed' uid="categoryAxis" type="Dimension" values="Week" />
+						</viz:feeds>
+					</viz:VizFrame>
+				</f:content>
+			</f:Card>
+
+		</content>
+	</Page>
+</mvc:View>
