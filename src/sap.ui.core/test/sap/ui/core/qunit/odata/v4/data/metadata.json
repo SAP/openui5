@@ -386,6 +386,7 @@
 	}],
 	"com.sap.gateway.default.iwbep.tea_busi.v0001.AcChangeTeamOfEmployee" : [{
 		"$kind" : "Action",
+		"$EntitySetPath" : "EMPLOYEE",
 		"$IsBound" : true,
 		"$Parameter" : [{
 			"$Type" : "com.sap.gateway.default.iwbep.tea_busi.v0001.Worker",
