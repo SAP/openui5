@@ -48,9 +48,6 @@ sap.ui.define([
 ) {
 	"use strict";
 
-	// shortcut for sap.ui.core.CalendarType
-	var CalendarType = coreLibrary.CalendarType;
-
 	/*
 	 * Inside the CalendarTimeInterval UniversalDate objects are used. But in the API JS dates are used.
 	 * So conversion must be done on API functions.
@@ -1726,7 +1723,6 @@ sap.ui.define([
 		var sAriaLabel;
 		var bShort = false;
 		var aDay;
-		var sCalendarType = CalendarType.Gregorian;
 		var bRelative = false;
 
 		if (oLocaleData.oLocale.sLanguage.toLowerCase() === "ja" || oLocaleData.oLocale.sLanguage.toLowerCase() === "zh") {
@@ -1755,7 +1751,7 @@ sap.ui.define([
 			oHeader.setTextButton1(sText);
 			oHeader.setTextButton2(this._oYearFormat.format(oStartDate, true));
 		} else {
-			oDateFormat = DateFormat.getInstance({style: "long", strictParsing: true, relative: bRelative, calendarType: sCalendarType}, oLocaleData.oLocale);
+			oDateFormat = DateFormat.getInstance({style: "long", strictParsing: true, relative: bRelative}, oLocaleData.oLocale);
 			sAriaLabel = aDay = oDateFormat.format(CalendarUtils._createLocalDate(oStartDate, true));
 			oHeader.setTextButton1(aDay);
 		}
