@@ -76,9 +76,12 @@ html .sapUiContainer-Wide .sapUxAPAnchorBarOverflow:not(.sapUxAPAnchorBarScrollR
 	max-width: 100%;
 
 	.sapMSB {
-		padding-left: 1rem;
 		padding-right: 1.5rem;
 		width: auto !important;
+	}
+
+	.sapMSBText {
+		padding-left: 1rem;
 	}
 
 	.sapMSB .sapMSBText.sapMSBTextIE {
@@ -349,4 +352,12 @@ Compact
 // Scroll button container
 .sapUiSizeCompact .sapUxAPAnchorBar .anchorBarArrow > .sapUiHLayoutChildWrapper {
 	height: 2rem;
+}
+
+//Override showing focus of the internal button of MenuButton in IE and Edge
+html[data-sap-ui-browser^="ie"],
+html[data-sap-ui-browser^="ed"] {
+	.sapUxAPAnchorBarButton.sapMMenuBtn .sapMSBInner .sapMBtnFocusDiv {
+		border: 0 none;
+	}
 }
