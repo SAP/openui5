@@ -642,6 +642,8 @@ sap.ui.define([
 			bPagesNewIndexdOK = false,
 			done = assert.async();
 
+		assert.expect(3);
+
 		this.oCarousel.attachPageChanged(function (oControlEvent) {
 			bPageNewOK = oControlEvent.getParameters().oldActivePageId === "keyTestPage_2";
 			bPageOldOK = oControlEvent.getParameters().newActivePageId === "keyTestPage_3";
@@ -658,6 +660,32 @@ sap.ui.define([
 				// Assert
 				assert.ok(bPageNewOK, "Old active page should be 'keyTestPage_2'");
 				assert.ok(bPageOldOK, "New active page should be 'keyTestPage_3'");
+				assert.ok(bPagesNewIndexdOK, "New page index should be 2");
+				done();
+			}, sinonClockTickValue);
+
+		}.bind(this), sinonClockTickValue);
+	});
+
+	QUnit.test("Listen to 'beforePageChanged' event", function (assert) {
+		// Arrange
+		var bPagesNewIndexdOK = false,
+			done = assert.async();
+
+		assert.expect(1);
+
+		this.oCarousel.attachBeforePageChanged(function (oControlEvent) {
+			bPagesNewIndexdOK = oControlEvent.getParameters().activePages[0] === 2;
+		});
+
+		// Wait for CSS animation caused by activePage in constructor to complete
+		setTimeout(function () {
+			// Act
+			this.oCarousel.next();
+
+			// Wait for CSS animation to complete
+			setTimeout(function () {
+				// Assert
 				assert.ok(bPagesNewIndexdOK, "New page index should be 2");
 				done();
 			}, sinonClockTickValue);
