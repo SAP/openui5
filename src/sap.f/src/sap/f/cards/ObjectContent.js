@@ -54,9 +54,18 @@ sap.ui.define(["sap/f/cards/BaseContent", "sap/m/HBox", "sap/m/VBox", "sap/m/Tex
 			this._getRootContainer();
 		};
 
-		ObjectContent.prototype._updateModel = function () {
-			this._addGroups();
-			BaseContent.prototype._updateModel.apply(this, arguments);
+		ObjectContent.prototype.setConfiguration = function (oConfiguration) {
+			BaseContent.prototype.setConfiguration.apply(this, arguments);
+
+			if (!oConfiguration) {
+				return this;
+			}
+
+			if (oConfiguration.groups) {
+				this._addGroups();
+			}
+
+			return this;
 		};
 
 		ObjectContent.prototype._addGroups = function () {
