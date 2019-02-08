@@ -74,7 +74,7 @@
 	{
 		"title": "sap.f.Card",
 		"description": "Example page for Card of type sap.f.Card",
-		"route": "sapFCard",
+		"route": "sapfCard",
 		"group": "Card Type Examples"
 	},
 	{

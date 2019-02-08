@@ -138,9 +138,9 @@
 		  "target": "customContent"
 		},
 		{
-		  "pattern": "sapFCard",
-		  "name": "sapFCard",
-		  "target": "sapFCard"
+		  "pattern": "sapfCard",
+		  "name": "sapfCard",
+		  "target": "sapfCard"
 		},
 		{
 		  "pattern": "cardContainer",
@@ -234,9 +234,9 @@
 		  "viewName": "Custom",
 		  "viewLevel": 1
 		},
-		"sapFCard": {
-		  "viewId": "sapFCard",
-		  "viewName": "sapFCard",
+		"sapfCard": {
+		  "viewId": "sapfCard",
+		  "viewName": "sapfCard",
 		  "viewLevel": 1
 		},
 		"cardContainer": {

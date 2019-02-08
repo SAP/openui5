@@ -4,7 +4,7 @@ sap.ui.define([
 ], function (Controller, JSONModel) {
 	"use strict";
 
-	return Controller.extend("sap.f.cardsdemo.controller.Custom", {
+	return Controller.extend("sap.f.cardsdemo.controller.sapfCard", {
 		onInit: function () {
 			this._createListModel();
 			this._createTableModel();
