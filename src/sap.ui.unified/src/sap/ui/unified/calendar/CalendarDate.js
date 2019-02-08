@@ -139,7 +139,7 @@ sap.ui.define([
 		 * 32 will result in:
 		 * - first day of the next month if the current month has 31 days.
 		 * - second day of the next month if the current month has 30 days.
-		 * Other value will result in adding or substracting days according to the given value.
+		 * Other value will result in adding or subtracting days according to the given value.
 		 * @returns {sap.ui.unified.calendar.CalendarDate} <code>this</code> for method chaining.
 		 */
 		CalendarDate.prototype.setMonth = function (month, date) {

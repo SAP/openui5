@@ -241,7 +241,7 @@ sap.ui.define([
 		oSut._shiftStartFocusDates(oStartDate, oFocusedDate, iDays); //navigate to March 1st
 
 		//assert
-		assert.equal(jQuery('#' + oSut.getId() + '-content div:visible:last')[0].innerText,
+		assert.equal(jQuery('#' + oSut.getId() + '-content div:visible:last')[0].textContent,
 			"31Fri", "the last visible date is March 31st");
 	});
 
