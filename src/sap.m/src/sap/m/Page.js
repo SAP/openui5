@@ -16,8 +16,7 @@ sap.ui.define([
 	"sap/ui/core/Element",
 	"./TitlePropagationSupport",
 	"./PageRenderer",
-	"sap/ui/thirdparty/jquery",
-	'sap/ui/core/ResizeHandler'
+	"sap/ui/thirdparty/jquery"
 ],
 function(
 	library,
@@ -32,8 +31,7 @@ function(
 	Element,
 	TitlePropagationSupport,
 	PageRenderer,
-	jQuery,
-	ResizeHandler
+	jQuery
 ) {
 		"use strict";
 
@@ -265,24 +263,6 @@ function(
 			return this._headerTitle ? this._headerTitle.getId() : false;
 		});
 
-		// container`s breakpoints
-		Page.BREAK_POINTS = {
-			PHONE: 600,
-			TABLET: 1024,
-			LAPTOP: 1440,
-			DESKTOP: 1920
-		};
-
-		//class to be added against the used container
-		Page.MEDIA = {
-			PHONE: "sapMPage-Std-Phone",
-			TABLET: "sapMPage-Std-Tablet",
-			LAPTOP: "sapMPage-Std-Laptop",
-			DESKTOP: "sapMPage-Std-Desktop",
-			DESKTOPXL: "sapMPage-Std-DesktopXL"
-		};
-
-
 		Page.FOOTER_ANIMATION_DURATION = 350;
 
 		Page.prototype.init = function () {
@@ -309,48 +289,10 @@ function(
 			if (this._headerTitle) {
 				this._headerTitle.setLevel(this.getTitleLevel());
 			}
-
-			this._deregisterResizeHandler();
 		};
 
 		Page.prototype.onAfterRendering = function () {
 			setTimeout(this._adjustFooterWidth.bind(this), 10);
-			this._registerResizeHandler();
-		};
-
-		/**
-		 * Registers resize handler
-		 *
-		 * @private
-		 */
-		Page.prototype._registerResizeHandler = function () {
-			if (!this._iResizeHandlerId) {
-				this._iResizeHandlerId = ResizeHandler.register(this, this._onResize.bind(this));
-			}
-		};
-
-		/**
-		 * Deregisters resize handler
-		 *
-		 * @private
-		 */
-		Page.prototype._deregisterResizeHandler = function () {
-			if (this._iResizeHandlerId) {
-				ResizeHandler.deregister(this._iResizeHandlerId);
-				this._iResizeHandlerId = null;
-			}
-		};
-
-		/**
-		 * Handler for resizing
-		 *
-		 * @private
-		 */
-		Page.prototype._onResize = function () {
-			var iWidth = this._getWidth(this);
-				if (iWidth > 0) {
-					this._updateMedia(iWidth);
-				}
 		};
 
 		/**
@@ -375,8 +317,6 @@ function(
 				this._appIcon.destroy();
 				this._appIcon = null;
 			}
-
-			this._deregisterResizeHandler();
 		};
 
 		Page.prototype.setBackgroundDesign = function (sBgDesign) {
@@ -710,21 +650,6 @@ function(
 			return FOOTER;
 		};
 
-		/**
-		 * Determines the width of a control safely. If the control doesn't exist, it returns 0.
-		 * If it exists, it returns the DOM element width.
-		 * @param  {sap.ui.core.Control} oControl
-		 * @return {Number} the width of the control
-		 */
-		Page.prototype._getWidth = function (oControl) {
-			var iWidth = 0;
-			var bControlExists = oControl instanceof Control;
-			if (bControlExists) {
-				iWidth = oControl.$().outerWidth() || 0;
-			}
-			return iWidth;
-		};
-
 		//*** API Methods ***
 
 
@@ -796,43 +721,6 @@ function(
 
 		Page.prototype._getAdaptableContent = function () {
 			return this._getAnyHeader();
-		};
-
-		/**
-		* Updates the media style class of the control, based on its own width,
-		* not depending on the screen size (which media query does).
-		* This is necessary to maintain appropriate paddings, as the control is
-		* not using the entire screen width since it is embedded in other controls,
-		* such as the <code>sap.m.MessagePopover</code>.
-		* <b>Note:</b>
-		* @param {Number} iWidth - the actual width of the control
-		* @private
-		*/
-		Page.prototype._updateMedia = function (iWidth) {
-			// Applies the provided CSS Media (MEDIA) class and removes the rest.
-			// Example: If the <code>sapMPage-Std-Phone</code> class should be applied,
-			// the <code>sapMPage-Std-Tablet</code>, <code>sapMPage-Std-Laptop</code>
-			// <code>sapMPage-Std-Desktop</code> and <code>sapMPage-Std-DesktopXL</code> classes will be removed.
-			var fnUpdateMediaStyleClass = function (sMediaClass) {
-				Object.keys(Page.MEDIA).forEach(function (sMedia) {
-					var sCurrentMediaClass = Page.MEDIA[sMedia],
-						bEnable = sMediaClass === sCurrentMediaClass;
-
-					this.toggleStyleClass(sCurrentMediaClass, bEnable);
-				}, this);
-			}.bind(this);
-
-			if (iWidth <= Page.BREAK_POINTS.PHONE) {
-				fnUpdateMediaStyleClass(Page.MEDIA.PHONE);
-			} else if (iWidth <= Page.BREAK_POINTS.TABLET) {
-				fnUpdateMediaStyleClass(Page.MEDIA.TABLET);
-			} else if (iWidth <= Page.BREAK_POINTS.LAPTOP) {
-				fnUpdateMediaStyleClass(Page.MEDIA.LAPTOP);
-			} else if (iWidth <= Page.BREAK_POINTS.DESKTOP) {
-				fnUpdateMediaStyleClass(Page.MEDIA.DESKTOP);
-			} else {
-				fnUpdateMediaStyleClass(Page.MEDIA.DESKTOPXL);
-			}
 		};
 
 		return Page;
