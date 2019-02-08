@@ -70,6 +70,7 @@
 			</Action>
 			<Action Name="Create" EntitySetPath="_it" IsBound="true">
 				<Parameter Name="_it" Type="Collection(special.cases.ArtistsType)" Nullable="false"/>
+				<Parameter Name="Countryoforigin" Type="Edm.String" />
 				<ReturnType Type="special.cases.ArtistsType" Nullable="false"/>
 			</Action>
 			<Function Name="GetDraft" EntitySetPath="_it" IsBound="true">
@@ -92,6 +93,15 @@
 			</Annotations>
 			<Annotations Target="special.cases.ArtistsType">
 				<Annotation Term="com.sap.vocabularies.Common.v1.Label" String="Artist" />
+			</Annotations>
+			<Annotations Target="special.cases.Create/Countryoforigin">
+				<Annotation Term="com.sap.vocabularies.Common.v1.Label" String="Country of Origin"/>
+				<Annotation Term="com.sap.vocabularies.Common.v1.ValueListWithFixedValues"/>
+				<Annotation Term="com.sap.vocabularies.Common.v1.ValueListReferences">
+					<Collection>
+						<String>../countryoforigin/$metadata</String>
+					</Collection>
+				</Annotation>
 			</Annotations>
 		</Schema>
 	</edmx:DataServices>

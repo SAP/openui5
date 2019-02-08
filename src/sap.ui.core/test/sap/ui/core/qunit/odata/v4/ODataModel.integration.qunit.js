@@ -169,14 +169,16 @@ sap.ui.define([
 					: {source : "model/GWSAMPLE_BASIC.metadata.xml"},
 				"/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/annotations.xml"
 					: {source : "model/GWSAMPLE_BASIC.annotations.xml"},
-				"/sap/opu/odata/IWFND/RMTSAMPLEFLIGHT/$metadata"
-					: {source : "model/RMTSAMPLEFLIGHT.metadata.xml"},
 				"/sap/opu/odata4/IWBEP/TEA/default/IWBEP/TEA_BUSI/0001/$metadata"
 					: {source : "odata/v4/data/metadata.xml"},
 				"/sap/opu/odata4/IWBEP/TEA/default/IWBEP/TEA_BUSI/0001/$metadata?c1=a&c2=b"
 					: {source : "odata/v4/data/metadata.xml"},
 				"/sap/opu/odata4/IWBEP/TEA/default/iwbep/tea_busi_product/0001/$metadata"
 					: {source : "odata/v4/data/metadata_tea_busi_product.xml"},
+				"/sap/opu/odata/IWFND/RMTSAMPLEFLIGHT/$metadata"
+					: {source : "model/RMTSAMPLEFLIGHT.metadata.xml"},
+				"/sap/opu/odata4/sap/zui5_testv4/default/iwbep/common/0001/$metadata"
+					: {source : "odata/v4/data/metadata_codelist.xml"},
 				"/sap/opu/odata4/sap/zui5_testv4/default/sap/zui5_epm_sample/0002/$metadata"
 					: {source : "odata/v4/data/metadata_zui5_epm_sample.xml"},
 				"/sap/opu/odata4/sap/zui5_testv4/default/sap/zui5_epm_sample/0002/$metadata?sap-client=123"
@@ -187,8 +189,8 @@ sap.ui.define([
 					: {source : "odata/v4/data/metadata_special_cases.xml"},
 				"/special/cases/$metadata?sap-client=123"
 					: {source : "odata/v4/data/metadata_special_cases.xml"},
-				"/sap/opu/odata4/sap/zui5_testv4/default/iwbep/common/0001/$metadata"
-					: {source : "odata/v4/data/metadata_codelist.xml"}
+				"/special/countryoforigin/$metadata"
+					: {source : "odata/v4/data/metadata_countryoforigin.xml"}
 			});
 			this.oLogMock = this.mock(Log);
 			this.oLogMock.expects("warning").never();
@@ -13286,4 +13288,39 @@ sap.ui.define([
 	//  Solution idea: Only execute $direct requests in prerendering task
 	//  Is this critical? - Productive scenario runs with $batch. However: What if amount and
 	//  currency are in two different fields in draft scenario (no save button)?
+
+	//*********************************************************************************************
+	// Scenario: Request value list information for an action's parameter.
+	// BCP: 1970116818
+	// JIRA: CPOUI5UISERVICESV3-1744
+	QUnit.test("Value help at action parameter", function (assert) {
+		var oModel = createSpecialCasesModel(),
+			sPropertyPath = "/Artists/special.cases.Create/Countryoforigin";
+
+		return oModel.getMetaModel().requestValueListType(sPropertyPath)
+			.then(function (sValueListType) {
+				assert.strictEqual(sValueListType, "Fixed");
+
+				return oModel.getMetaModel().requestValueListInfo(sPropertyPath);
+			}).then(function (mQualifier2ValueListType) {
+				var oValueHelpModel = mQualifier2ValueListType[""].$model;
+
+				delete mQualifier2ValueListType[""].$model;
+				assert.deepEqual(mQualifier2ValueListType, {
+					"" : {
+						"CollectionPath" : "I_AIVS_CountryCode",
+						"Label" : "Country Code Value Help",
+						"Parameters" : [{
+							"$Type" : "com.sap.vocabularies.Common.v1.ValueListParameterInOut",
+							"LocalDataProperty" : {
+								"$PropertyPath" : "Countryoforigin"
+							},
+							"ValueListProperty" : "CountryCode"
+						}]
+					}
+				});
+				assert.strictEqual(oValueHelpModel.toString(),
+					"sap.ui.model.odata.v4.ODataModel: /special/countryoforigin/");
+			});
+	});
 });

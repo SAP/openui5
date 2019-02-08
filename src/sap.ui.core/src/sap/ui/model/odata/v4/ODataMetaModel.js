@@ -243,6 +243,25 @@ sap.ui.define([
 	}
 
 	/**
+	 * Tells whether the given name matches a parameter of at least one of the given overloads.
+	 *
+	 * @param {string} sName
+	 *   A path segment which maybe is a parameter name
+	 * @param {object[]} aOverloads
+	 *   Operation overload(s)
+	 * @returns {boolean}
+	 *   <code>true</code> iff at least one of the given overloads has a parameter with the given
+	 *   name.
+	 */
+	function maybeParameter(sName, aOverloads) {
+		return aOverloads.some(function (oOverload) {
+			return oOverload.$Parameter && oOverload.$Parameter.some(function (oParameter) {
+				return oParameter.$Name === sName;
+			});
+		});
+	}
+
+	/**
 	 * Merges the given schema's annotations into the root scope's $Annotations.
 	 *
 	 * @param {object} oSchema
@@ -423,7 +442,7 @@ sap.ui.define([
 				}
 				return Object.keys(oResult).filter(function (sKey) {
 					// always filter technical properties;
-					// filter annotations iff. not iterating them
+					// filter annotations iff not iterating them
 					return sKey[0] !== "$" &&  bIterateAnnotations !== (sKey[0] !== "@");
 				}).map(function (sKey) {
 					return new BaseContext(that.oModel, sResolvedPath + sKey);
@@ -920,7 +939,7 @@ sap.ui.define([
 				// binding parameter's type name ({string}) for overloading of bound operations
 				// or UNBOUND ({object}) for unbound operations called via an import
 			var vBindingParameterType,
-				bInsideAnnotation = false,
+				bInsideAnnotation = false, // inside an annotation, invalid names are OK
 				vLocation, // {string[]|string} location of indirection
 				sName, // what "@sapui.name" refers to: OData or annotation name
 				bODataMode = true, // OData navigation mode with scope lookup etc.
@@ -979,13 +998,43 @@ sap.ui.define([
 			}
 
 			/*
+			 * Tells whether the given segment matches a parameter of the given overload; changes
+			 * <code>vResult</code> etc. accordingly.
+			 *
+			 * @param {string} sSegment
+			 *   A segment
+			 * @param {object} oOverload
+			 *   A single operation overload
+			 * @returns {boolean}
+			 *   <code>true</code> iff the given overload has a parameter with the given name.
+			 */
+			function isParameter(sSegment, oOverload) {
+				var aMatches;
+
+				if (sSegment && oOverload.$Parameter) {
+					aMatches = oOverload.$Parameter.filter(function (oParameter) {
+						return oParameter.$Name === sSegment;
+					});
+					if (aMatches.length) { // there can be at most one match
+						// Note: annotations at parameter are handled before this method is called
+						// sName = sSegment; sTarget = sTarget + "/" + sSegment;
+						vResult = aMatches[0];
+
+						return true;
+					}
+				}
+
+				return false;
+			}
+
+			/*
 			 * Tells whether the given overload is the right one.
 			 *
 			 * @param {object} oOverload
 			 *   A single operation overload
-			 * @returns {true}
-			 *   Iff the given overload is an action with the appropriate binding parameter (bound
-			 *   and unbound cases), or not an action at all.
+			 * @returns {boolean}
+			 *   <code>true</code> iff the given overload is an action with the appropriate binding
+			 *   parameter (bound and unbound cases), or not an action at all.
 			 */
 			function isRightOverload(oOverload) {
 				return oOverload.$kind !== "Action"
@@ -1000,7 +1049,7 @@ sap.ui.define([
 			 * @param {object} [o]
 			 *   Any object
 			 * @returns {boolean}
-			 *   <code>true</code> iff. an object is given which has a method called "then"
+			 *   <code>true</code> iff an object is given which has a method called "then"
 			 */
 			function isThenable(o) {
 				return o && typeof o.then === "function";
@@ -1173,23 +1222,27 @@ sap.ui.define([
 								}
 							}
 							if (Array.isArray(vResult)) { // overloads of Action or Function
+								if (sSegment !== aSegments[i]
+									&& maybeParameter(sSegment, vResult)) {
+									// not looking for parameter itself, but for an annotation:
+									// "the annotation applies to [...] all parameters of that
+									// name across all overloads"
+									sName = sSegment;
+									sTarget = sTarget + "/" + sSegment;
+									return true;
+								}
 								vResult = vResult.filter(isRightOverload);
 								if (sSegment === "@$ui5.overload") {
 									return true;
 								}
 								if (vResult.length !== 1) {
-									if (sSegment !== aSegments[i]) {
-										// not looking for parameter itself, but for an annotation:
-										// "the annotation applies to [...] all parameters of that
-										// name across all overloads"
-										sName = sSegment;
-										sTarget = sTarget + "/" + sSegment;
-										return true;
-									}
 									return log(WARNING, "Unsupported overloads");
 								}
+								if (isParameter(sSegment, vResult[0])) {
+									return true;
+								}
 								vResult = vResult[0].$ReturnType;
-								sTarget = sTarget + "/0/$ReturnType";
+								sTarget = sTarget + "/0/$ReturnType"; // for logWithLocation() only
 								if (vResult) {
 									if (sSegment === "value"
 										&& !(mScope[vResult.$Type]
@@ -1201,6 +1254,9 @@ sap.ui.define([
 									if (!scopeLookup(vResult.$Type, "$Type")) {
 										return false;
 									}
+								}
+								if (!sSegment) { // empty segment forces $ReturnType insertion
+									return true;
 								}
 							}
 						}
@@ -1535,20 +1591,20 @@ sap.ui.define([
 	 * @param {string} sNamespace
 	 *   The namespace of the property in the data service; only annotations for that namespace are
 	 *   observed
-	 * @param {object} oProperty
-	 *   The property in the data service
+	 * @param {object|string} vTarget
+	 *   The property in the data service or the expected external annotation target
 	 * @returns {sap.ui.base.SyncPromise}
 	 *   A promise that gets resolved with a map containing all "ValueListMapping" annotations in
 	 *   the metadata of the given model by qualifier.
 	 *
 	 *   It is rejected with an error if the value list model contains annotation targets in the
-	 *   namespace of the data service that are not mappings for the given property, or if there are
-	 *   no mappings for the given property.
+	 *   namespace of the data service that are not mappings for the given target, or if there are
+	 *   no mappings for the given target.
 	 *
 	 * @private
 	 */
 	ODataMetaModel.prototype.fetchValueListMappings = function (oValueListModel, sNamespace,
-			oProperty) {
+			vTarget) {
 		var that = this,
 			oValueListMetaModel = oValueListModel.getMetaModel();
 
@@ -1567,7 +1623,9 @@ sap.ui.define([
 			// Note: This filter iterates over all targets, but matches at most once
 			aTargets = Object.keys(mAnnotationMapByTarget).filter(function (sTarget) {
 				if (_Helper.namespace(sTarget) === sNamespace) {
-					if (that.getObject("/" + sTarget) === oProperty) {
+					if (typeof vTarget === "string"
+							? sTarget === vTarget
+							: that.getObject("/" + sTarget) === vTarget) {
 						// this is the target for the given property
 						return true;
 					}
@@ -2268,10 +2326,11 @@ sap.ui.define([
 	 * "$Version" (typically "4.0") and "$EntityContainer" with the name of the single entity
 	 * container for this metadata model's service.
 	 *
-	 * An empty segment in between is invalid. An empty segment at the end caused by a trailing
-	 * slash differentiates between a name and the object it refers to. This way,
-	 * "/$EntityContainer" refers to the name of the single entity container and
-	 * "/$EntityContainer/" refers to the single entity container as an object.
+	 * An empty segment in between is invalid, except to force return type lookup for operation
+	 * overloads (see below). An empty segment at the end caused by a trailing slash differentiates
+	 * between a name and the object it refers to. This way, "/$EntityContainer" refers to the name
+	 * of the single entity container and "/$EntityContainer/" refers to the single entity container
+	 * as an object.
 	 *
 	 * The segment "@sapui.name" refers back to the last OData name (simple identifier or qualified
 	 * name) or annotation name encountered during path traversal immediately before "@sapui.name":
@@ -2380,13 +2439,28 @@ sap.ui.define([
 	 *    This way, "/EMPLOYEES" addresses the same object as "/$EntityContainer/EMPLOYEES", namely
 	 *    the "EMPLOYEES" child of the entity container.
 	 * <li> Afterwards, if the current object is an array, it represents overloads for an action or
-	 *    function. Multiple overloads are invalid. The overload's "$ReturnType/$Type" is used for
-	 *    scope lookup. This way, "/GetOldestWorker/AGE" addresses the same object as
-	 *    "/GetOldestWorker/0/$ReturnType/$Type/AGE". For primitive return types, the special
-	 *    segment "value" can be used to refer to the return type itself (see
-	 *    {@link sap.ui.model.odata.v4.ODataContextBinding#execute}). This way,
-	 *    "/GetOldestAge/value" addresses the same object as "/GetOldestAge/0/$ReturnType" (which
-	 *    is needed for automatic type determination, see {@link #requestUI5Type}).
+	 *    function. Annotations of a parameter can be immediately addressed because they apply
+	 *    across all overloads, for example "/TEAMS/acme.NewAction/Team_ID@". Action overloads are
+	 *    then filtered by binding parameter; multiple overloads after filtering are invalid except
+	 *    if addressing all overloads via the segment "@$ui5.overload", for example
+	 *    "/acme.NewAction/@$ui5.overload".
+	 *
+	 *    Once a single overload has been determined, its parameters can be immediately addressed,
+	 *    for example "/TEAMS/acme.NewAction/Team_ID". For all other names, the overload's
+	 *    "$ReturnType/$Type" is used for scope lookup. This way, "/GetOldestWorker/AGE" addresses
+	 *    the same object as "/GetOldestWorker/$Function/0/$ReturnType/$Type/AGE", and
+	 *    "/TEAMS/acme.NewAction/MemberCount" (assuming "MemberCount" is not a parameter in this
+	 *    example) addresses the same object as
+	 *    "/TEAMS/acme.NewAction/@$ui5.overload/0/$ReturnType/$Type/MemberCount". In case a name
+	 *    can refer both to a parameter and to a property of the return type, an empty segment can
+	 *    be used instead of "@$ui5.overload/0/$ReturnType/$Type" to force return type lookup,
+	 *    for example "/TEAMS/acme.NewAction//Team_ID".
+	 *
+	 *    For primitive return types, the special segment "value" can be used to refer to the return
+	 *    type itself (see {@link sap.ui.model.odata.v4.ODataContextBinding#execute}). This way,
+	 *    "/GetOldestAge/value" addresses the same object as "/GetOldestAge/$Function/0/$ReturnType"
+	 *    or as "/GetOldestAge/@$ui5.overload/0/$ReturnType" (which is needed for automatic type
+	 *    determination, see {@link #requestUI5Type}).
 	 * </ol>
 	 *
 	 * A trailing slash can be used to continue a path and thus force scope lookup or OData simple
@@ -2494,7 +2568,8 @@ sap.ui.define([
 	 * <code>sPropertyPath</code>.
 	 *
 	 * @param {string} sPropertyPath
-	 *   An absolute path to an OData property within the OData data model
+	 *   An absolute path to an OData property within the OData data model or a (meta) path to an
+	 *   operation parameter, for example "/TEAMS(1)/acme.NewAction/Team_ID"
 	 * @returns {Promise}
 	 *   A promise which is resolved with a map of qualifier to value list mapping objects
 	 *   structured as defined by <code>com.sap.vocabularies.Common.v1.ValueListType</code>;
@@ -2531,14 +2606,20 @@ sap.ui.define([
 	 */
 	ODataMetaModel.prototype.requestValueListInfo = function (sPropertyPath) {
 		var sPropertyMetaPath = this.getMetaPath(sPropertyPath),
-			sTypeMetaPath = sPropertyMetaPath.slice(0, sPropertyMetaPath.lastIndexOf("/") + 1),
+			sParentMetaPath = sPropertyMetaPath.slice(0, sPropertyMetaPath.lastIndexOf("/")),
+			sQualifiedName = sParentMetaPath.slice(sParentMetaPath.lastIndexOf("/") + 1),
 			that = this;
 
+		if (!sQualifiedName.includes(".")) {
+			sQualifiedName = undefined;
+		}
+
 		return Promise.all([
-			this.requestObject(sTypeMetaPath + "@sapui.name"),	// the name of the owning type
-			this.requestObject(sPropertyMetaPath),				// the property itself
-			this.requestObject(sPropertyMetaPath + "@"),		// all property annotations
-																// flag for "fixed values"
+			sQualifiedName
+			|| this.requestObject(sParentMetaPath + "/@sapui.name"), // the name of the owning type
+			this.requestObject(sPropertyMetaPath), // the property itself
+			this.requestObject(sPropertyMetaPath + "@"), // all property annotations
+			// flag for "fixed values"
 			this.requestObject(sPropertyMetaPath + sValueListWithFixedValues)
 		]).then(function (aResults) {
 			var mAnnotationByTerm = aResults[2],
@@ -2603,7 +2684,10 @@ sap.ui.define([
 					var oValueListModel = that.getOrCreateSharedModel(sMappingUrl);
 					// fetch the mappings for the given mapping URL
 					return that.fetchValueListMappings(
-						oValueListModel, sNamespace, oProperty
+						oValueListModel, sNamespace,
+						// operation parameters (those with $Name) require a different target
+						// Note: in this case, we always have a qualified name currently
+						oProperty.$Name ? sQualifiedName + "/" + oProperty.$Name : oProperty
 					).then(function (mValueListMappingByQualifier) {
 						// insert the returned mappings into oValueListInfo
 						Object.keys(mValueListMappingByQualifier).forEach(function (sQualifier) {
