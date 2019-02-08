@@ -17,6 +17,7 @@ sap.ui.define([
 	'sap/ui/core/ResizeHandler',
 	'sap/m/library',
 	'sap/ui/core/Icon',
+	'sap/m/Image',
 	'sap/m/SelectRenderer',
 	'sap/m/SelectListRenderer',
 	'./TabStripRenderer',
@@ -42,6 +43,7 @@ function(
 	ResizeHandler,
 	library,
 	Icon,
+	Image,
 	SelectRenderer,
 	SelectListRenderer,
 	TabStripRenderer,
@@ -939,7 +941,10 @@ function(
 		 */
 		TabStrip.prototype._handleItemPropertyChanged = function (oEvent) {
 			var oSelectItem = this._findSelectItemFromTabStripItem(oEvent.getSource());
-			oSelectItem.setProperty(oEvent['mParameters'].propertyKey, oEvent['mParameters'].propertyValue);
+			var sPropertyKey = oEvent['mParameters'].propertyKey;
+			// call it directly with the setter name so overwritten functions can be called and not setProperty method directly
+			var sMethodName = "set" + sPropertyKey.substr(0,1).toUpperCase() + sPropertyKey.substr(1);
+			oSelectItem[sMethodName](oEvent['mParameters'].propertyValue);
 		};
 
 		/**
@@ -1096,6 +1101,9 @@ function(
 			oSelectItem = new TabStripItem({
 				id: oTabStripItem.getId() + TabStrip.SELECT_ITEMS_ID_SUFFIX,
 				text: oTabStripItem.getText(),
+				additionalText: oTabStripItem.getAdditionalText(),
+				icon: oTabStripItem.getIcon(),
+				iconTooltip: oTabStripItem.getIconTooltip(),
 				modified: oTabStripItem.getModified(),
 				itemClosePressed: function (oEvent) {
 					this._handleItemClosePressed(oEvent);
@@ -1105,6 +1113,11 @@ function(
 			oSelectItem.addEventDelegate({
 				ontap: function (oEvent) {
 					var oTarget = oEvent.srcControl;
+					// if we clicked on the image/icon change the target to be the parent,
+					// so the change event in the select can be handled properly
+					if (oEvent.target.id === oTarget.getParent().getId() + "-img") {
+						oEvent.srcControl = oTarget = oTarget.getParent();
+					}
 					if ((oTarget instanceof AccButton || oTarget instanceof Icon)) {
 						this.fireItemClosePressed({item: this});
 					}
@@ -1222,6 +1235,7 @@ function(
 			if (oTargetItem instanceof TabStripItem ||
 				oTargetItem instanceof AccButton ||
 				oTargetItem instanceof Icon ||
+				oTargetItem instanceof Image ||
 				oTargetItem instanceof CustomSelect) {
 				// Support only single touch
 				// Store the pageX coordinate for for later usage in touchend
@@ -1242,6 +1256,10 @@ function(
 			}
 
 			oTarget = jQuery(oEvent.target).control(0);
+			// check if we click on the item Icon and if so, give the parent as a target
+			if (oEvent.target.id === oTarget.getParent().getId() + "-img") {
+				oTarget = oTarget.getParent();
+			}
 			// Support only single touch
 			iDeltaX = Math.abs(oEvent.changedTouches[0].pageX - this._oTouchStartX);
 
@@ -1362,18 +1380,39 @@ function(
 			this.writeItemAccessibilityState.apply(this, arguments);
 			oRm.write(">");
 
-			oRm.write('<p class=\"sapMSelectListItemText\">');
-			// always show the full text on phone
-			oRm.writeEscaped(oItem.getText().slice(0, (Device.system.phone ? oItem.getText().length : TabStripItem.DISPLAY_TEXT_MAX_LENGTH)));
-			// add three dots "..." at the end if not the whole text is shown
-			if (!Device.system.phone && oItem.getText().length > TabStripItem.DISPLAY_TEXT_MAX_LENGTH) {
-				oRm.write('...');
+			oRm.write('<div class=\"sapMSelectListItemText\">');
+
+			// write icon
+			if (oItem.getIcon()) {
+				oRm.renderControl(oItem._getImage());
 			}
-			oRm.write('</p>');
+
+			oRm.write("<div"); // Start texts container
+			oRm.addClass("sapMTSTexts");
+			oRm.writeClasses();
+			oRm.write(">");
+			// write additional text
+			this.renderItemText(oRm, oItem.getAdditionalText(), TabStripItem.CSS_CLASS_TEXT);
+
+			// write label text
+			this.renderItemText(oRm, oItem.getText(), TabStripItem.CSS_CLASS_LABEL);
+
+			oRm.write("</div>");
+			oRm.write('</div>');
 
 			oRm.renderControl(oItem.getAggregation('_closeButton'));
 
 			oRm.write("</li>");
+		};
+
+		CustomSelectListRenderer.renderItemText = function (oRm, sItemText, sCssClass) {
+			oRm.write("<div class='" + sCssClass + "'>");
+			oRm.writeEscaped(sItemText.slice(0, (Device.system.phone ? sItemText.length : TabStripItem.DISPLAY_TEXT_MAX_LENGTH)));
+			// add three dots "..." at the end if not the whole additional text is shown
+			if (!Device.system.phone && sItemText.length > TabStripItem.DISPLAY_TEXT_MAX_LENGTH) {
+				oRm.write('...');
+			}
+			oRm.write("</div>");
 		};
 
 		var CustomSelectList = SelectList.extend("sap.m.internal.TabStripSelectList", {

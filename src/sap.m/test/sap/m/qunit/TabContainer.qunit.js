@@ -128,7 +128,7 @@ sap.ui.define([
 		assert.strictEqual(this.oTabContainer.getSelectedItem(),oFirstItem.getId(),
 				"The default selected tab is the first one");
 
-		assert.equal(jQuery( "span." + TabStripItem.CSS_CLASS_LABEL + ":contains(" + sName + ")").length, 1, 'Element with name "' + sName + '" is in the DOM.');
+		assert.equal(jQuery( "div." + TabStripItem.CSS_CLASS_LABEL + ":contains(" + sName + ")").length, 1, 'Element with name "' + sName + '" is in the DOM.');
 		var aTargetTouches = [{pageX: oCloseButton.$().offset().left + 2}];
 
 		//when removing an item, the _moveToNextItem function is called where the focus is handled
@@ -139,7 +139,7 @@ sap.ui.define([
 
 		this.clock.tick(1000);
 
-			assert.equal(jQuery( "span." + TabStripItem.CSS_CLASS_LABEL + ":contains(" + sName + ")").length, 0, 'Element with name "' + sName + '" is not in the DOM.');
+			assert.equal(jQuery( "div." + TabStripItem.CSS_CLASS_LABEL + ":contains(" + sName + ")").length, 0, 'Element with name "' + sName + '" is not in the DOM.');
 
 		var oMessageBundle = sap.ui.getCore().getLibraryResourceBundle("sap.m");
 		assert.strictEqual(jQuery(this.oTabContainer._getTabStrip().getAggregation('_select').$()).attr('title'),
@@ -159,7 +159,7 @@ sap.ui.define([
 		this.oTabContainer.attachItemClose(function (oEvent) {oEvent.preventDefault();});
 		sap.ui.test.qunit.triggerEvent("tap", oItem.getAggregation('_closeButton').$());
 
-		assert.equal(jQuery( "span." + TabStripItem.CSS_CLASS_LABEL + ":contains(" + sName + ")").length, 1, 'Element with name "' + sName + '" is in the DOM.');
+		assert.equal(jQuery( "div." + TabStripItem.CSS_CLASS_LABEL + ":contains(" + sName + ")").length, 1, 'Element with name "' + sName + '" is in the DOM.');
 	});
 
 	QUnit.test("removeItem by index should remove item if 0 is passed", function (assert) {
@@ -424,10 +424,14 @@ sap.ui.define([
 		//arrange
 		oTabContainerAddedItem = new TabContainerItem({
 			name: "Apple",
+			additionalText: "test",
+			icon: "sap-icon://syringe",
 			tooltip: "added item"
 		});
 		oTabContainerInsertedItem = new TabContainerItem({
 			name: "Apple",
+			additionalText: "test",
+			icon: "sap-icon://syringe",
 			tooltip: "inserted item"
 		});
 		this.oTabContainer.addItem(oTabContainerAddedItem);
@@ -437,19 +441,25 @@ sap.ui.define([
 		oTabContainerAddedItem.setKey(null);
 		oTabContainerAddedItem.setModified(!oTabContainerAddedItem.getModified());
 		oTabContainerAddedItem.setName("Android");
+		oTabContainerAddedItem.setAdditionalText("intro");
 
 		oTabContainerInsertedItem.setKey(null);
 		oTabContainerInsertedItem.setModified(!oTabContainerInsertedItem.getModified());
 		oTabContainerInsertedItem.setName("Android");
+		oTabContainerAddedItem.setIcon("sap-icon://decline");
 
 		//assert
 		assert.equal(this.oTabStrip.getItems()[1].getKey(), oTabContainerAddedItem.getId(), "Added TabContainerItem.id should be propagated to TabStripItem.key");
 		assert.equal(this.oTabStrip.getItems()[1].getText(), oTabContainerAddedItem.getName(), "Added TabContainerItem.name should be propagated to TabStripItem.text");
+		assert.equal(this.oTabStrip.getItems()[1].getAdditionalText(), oTabContainerAddedItem.getAdditionalText(), "Added TabContainerItem.additionalText should be propagated to TabStripItem.additionalText");
+		assert.equal(this.oTabStrip.getItems()[1].getIcon(), oTabContainerAddedItem.getIcon(), "Added TabContainerItem.icon should be propagated to TabStripItem.icon");
 		assert.equal(this.oTabStrip.getItems()[1].getModified(), oTabContainerAddedItem.getModified(), "Added TabContainerItem.modified should be propagated to TabStripItem.modified");
 		assert.equal(this.oTabStrip.getItems()[1].getTooltip(), oTabContainerAddedItem.getTooltip(), "Added TabContainerItem.tooltip should be propagated to TabStripItem.tooltip");
 
 		assert.equal(this.oTabStrip.getItems()[0].getKey(), oTabContainerInsertedItem.getId(), "Inserted TabContainerItem.id should be propagated to TabStripItem.key");
 		assert.equal(this.oTabStrip.getItems()[0].getText(), oTabContainerInsertedItem.getName(), "Inserted TabContainerItem.name should be propagated to TabStripItem.text");
+		assert.equal(this.oTabStrip.getItems()[0].getAdditionalText(), oTabContainerInsertedItem.getAdditionalText(), "Inserted TabContainerItem.additionalText should be propagated to TabStripItem.additionalText");
+		assert.equal(this.oTabStrip.getItems()[0].getIcon(), oTabContainerInsertedItem.getIcon(), "Inserted TabContainerItem.icon should be propagated to TabStripItem.icon");
 		assert.equal(this.oTabStrip.getItems()[0].getModified(), oTabContainerInsertedItem.getModified(), "Inserted TabContainerItem.modified should be propagated to TabStripItem.modified");
 		assert.equal(this.oTabStrip.getItems()[0].getTooltip(), oTabContainerInsertedItem.getTooltip(), "Inserted TabContainerItem.tooltip should be propagated to TabStripItem.tooltip");
 	});
@@ -582,7 +592,7 @@ sap.ui.define([
 				path: '/employees',
 				template: new TabContainerItem({
 					key: '{id}',
-					text: '{name}'
+					name: '{name}'
 				})
 			}
 		});
