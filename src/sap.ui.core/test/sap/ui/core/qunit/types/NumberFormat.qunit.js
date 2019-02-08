@@ -2796,6 +2796,33 @@ sap.ui.define(["sap/ui/core/format/NumberFormat", "sap/ui/core/Locale", "sap/bas
 		assert.deepEqual(oFormat.parse("€12,345.679"), [12345.679, undefined], "Duplicated symbol found");
 	});
 
+	QUnit.test("Currencies with undefined symbol", function(assert) {
+		var oSpy = this.spy(Log, "error");
+
+		var oFormat = NumberFormat.getCurrencyInstance({
+			currencyCode: false,
+			customCurrencies: {
+				"BTC": {
+					symbol: "Ƀ"
+				},
+				"Bitcoin": {
+					isoCode: "foo",
+					"decimals": 3
+				},
+				"DOLLAR": {
+					isoCode: "foo",
+					"decimals": 4
+				}
+			}
+		});
+
+		assert.equal(oFormat.format(123, "Bitcoin"), "Bitcoin 123.000");
+
+		assert.equal(oSpy.callCount, 0, "Error log for duplicated currencies was was not called");
+
+		oSpy.restore();
+	});
+
 	QUnit.test("decimals = 0", function (assert) {
 		var oFormatEN = NumberFormat.getCurrencyInstance({
 			currencyCode: false,
