@@ -24,8 +24,9 @@
 	background: @sapUiFieldBackground;
 	&.sapMInputBaseContentWrapperState {
 		border-width: 2px;
+		/* calculated line-height excluding the top and bottom borders */
 		.sapMInputBaseIcon {
-			line-height: 2.25rem;
+			line-height: 2rem;
 		}
 		.sapMTokenizer .sapMToken {
 			margin-top: 0.1875rem;
@@ -48,8 +49,10 @@
 }
 
 .sapMInputBaseDisabledWrapper .sapMInputBaseIcon {
-	color: @sapUiContentDisabledTextColor;
-	background-color: @sapUiButtonBackground;
+	color: @sapUiContentIconColor;
+	&:hover {
+		background: transparent;
+	}
 }
 
 .sapMInputBaseContentWrapperWarning {
