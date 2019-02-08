@@ -3982,6 +3982,72 @@ sap.ui.define([
 		});
 	});
 
+	QUnit.module("Avoid DOM modification in onBeforeRendering", {
+		beforeEach: function() {
+			createTable(null, function() {
+				oTable.addColumn(new Column({
+					label: "Label",
+					template: "Text"
+				}));
+			});
+
+			this.sDOMStringA = oTable.getDomRef().outerHTML;
+			this.sDOMStringB = "";
+
+			oTable.addEventDelegate({
+				onBeforeRendering: function() {
+					this.sDOMStringB = oTable.getDomRef().outerHTML;
+				}.bind(this)
+			});
+		},
+		afterEach: function() {
+			destroyTable();
+		},
+		compareDOMStrings: function(assert) {
+			assert.strictEqual(this.sDOMStringB, this.sDOMStringA, "DOM did not change");
+		}
+	});
+
+	QUnit.test("Table invalidation", function(assert) {
+		oTable.invalidate();
+		sap.ui.getCore().applyChanges();
+		this.compareDOMStrings(assert);
+	});
+
+	QUnit.test("Rows invalidation", function(assert) {
+		oTable.invalidateRowsAggregation();
+		oTable.invalidate();
+		sap.ui.getCore().applyChanges();
+		this.compareDOMStrings(assert);
+	});
+
+	QUnit.test("Removing one row", function(assert) {
+		oTable.setVisibleRowCount(oTable.getVisibleRowCount() - 1);
+		sap.ui.getCore().applyChanges();
+		this.compareDOMStrings(assert);
+	});
+
+	QUnit.test("Adding one row", function(assert) {
+		oTable.setVisibleRowCount(oTable.getVisibleRowCount() + 1);
+		sap.ui.getCore().applyChanges();
+		this.compareDOMStrings(assert);
+	});
+
+	QUnit.test("Removing one column", function(assert) {
+		oTable.removeColumn(oTable.getColumns()[0]);
+		sap.ui.getCore().applyChanges();
+		this.compareDOMStrings(assert);
+	});
+
+	QUnit.test("Adding one column", function(assert) {
+		oTable.addColumn(new Column({
+			label: "Label",
+			template: "Template"
+		}));
+		sap.ui.getCore().applyChanges();
+		this.compareDOMStrings(assert);
+	});
+
 	QUnit.module("Extensions", {
 		beforeEach: function() {
 			createTable();
