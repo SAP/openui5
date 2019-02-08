@@ -430,6 +430,25 @@ sap.ui.define([
 	});
 
 	/* ----------------------------------------------- */
+	/* Test: 'ValueState=Success'						   */
+	/* ----------------------------------------------- */
+
+	QUnit.test("'ValueState=Success'", function(assert) {
+		// system under test
+		var oCheckBox = new CheckBox({valueState: ValueState.Success});
+
+		// arrange
+		oCheckBox.placeAt("content");
+		Core.applyChanges();
+
+		// assertions
+		assert.ok(oCheckBox.$().hasClass("sapMCbSucc"), "The CheckBox has value state success css class.");
+
+		// cleanup
+		oCheckBox.destroy();
+	});
+
+	/* ----------------------------------------------- */
 	/* Test: 'ValueState=Information'				   */
 	/* ----------------------------------------------- */
 
