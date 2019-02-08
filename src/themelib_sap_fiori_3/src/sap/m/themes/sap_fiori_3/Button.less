@@ -13,26 +13,6 @@
 	font-weight: bold;
 }
 
-.sapMBtnInner.sapMBtnText.sapMBtnBack.sapMBtnIconFirst {
-	padding-left: 0;
-}
-
-.sapMBtnInner.sapMBtnText {
-	padding-left: 0.5625rem;
-	padding-right: 0.5625rem;
-}
-
-.sapMBtn .sapMBtnInner,
-.sapMBtn .sapMBtnContent {
-	display: flex;
-	flex-direction: row;
-	justify-content: center;
-}
-
-.sapMBtn .sapMBtnContent {
-	order: 2;
-}
-
 /* --------------------- */
 /* Inner area            */
 /* --------------------- */
@@ -74,35 +54,10 @@
 	text-align: center;
 }
 
-.sapMBtnText > .sapMBtnIcon {
-	position: relative;
-}
-
 .sapMBtnInner.sapMBtnText .sapMBtnIcon.sapMImg {
-	height: 2.125rem;
+	height: 2.25rem;
 	width: auto;
-	padding-left: 0.5625rem;
-	padding-right: 0.375rem;
 }
-
-.sapMBtnIconFirst .sapMBtnContent {
-	display: inline-block;
-}
-
-.sapMBtnInner.sapMBtnText.sapMBtnBack .sapMBtnIconLeft {
-	padding-left: 0.5625rem;
-	order: 0;
-}
-
-.sapMBtnText > .sapMBtnIconLeft + .sapMBtnIconLeft {
-	left: 0;
-	order: 1;
-}
-
-.sapMBtnText > .sapMBtnIconLeft + .sapMBtnIconRight {
-	order: 3;
-}
-
 /* ------------------- */
 /* Content area        */
 /* ------------------- */
@@ -110,28 +65,39 @@
 	line-height: 2.125rem;
 }
 
-.sapMBtnInner.sapMBtnText.sapMBtnIconFirst,
-.sapMBtnInner.sapMBtnText.sapMBtnBack {
-	padding-left: 0;
-}
-
-.sapMBtnInner.sapMBtnText.sapMBtnIconLast .sapMBtnIconRight.sapMBtnIcon,
-.sapMBtnInner.sapMBtnText.sapMBtnIconLast .sapMBtnIcon {
-	padding-right: 0.5625rem;
-	padding-left: 0.375rem;
-}
-
-.sapMBtnInner.sapMBtnText.sapMBtnIconLast .sapMBtnIconLeft.sapMBtnIcon {
+.sapMBtnInner.sapMBtnText,
+.sapMBtnBack:not(.sapMBtnText) > .sapMBtnIconLeft,
+.sapMBtnIconLeft + .sapMBtnIconRight,
+.sapMBtnIconLeft + .sapMBtnIconLeft,
+.sapMBtnInner .sapMBtnIcon {
 	padding-left: 0.5625rem;
-	padding-right: 0.375rem;
+	padding-right: 0.5625rem;
 }
 
-.sapMBtnInner.sapMBtnText.sapMBtnIconLast .sapMBtnIconRight.sapMBtnIcon {
-	order: 3;
+.sapMBtnText .sapMBtnIconLeft + .sapMBtnIconLeft {
+	left: 0;
+}
+
+.sapMBtnInner.sapMBtnText.sapMBtnBack,
+.sapMBtnInner.sapMBtnText.sapMBtnIconFirst,
+.sapMBtnInner.sapMBtnText.sapMBtnBack.sapMBtnIconFirst > .sapMBtnCustomIcon {
+	padding-left: 1.9375rem;
 }
 
 .sapMBtnInner.sapMBtnText.sapMBtnIconLast {
-	padding-right: 0;
+	padding-right: 1.9375rem;
+}
+
+.sapMBtnInner.sapMBtnText.sapMBtnBack.sapMBtnIconFirst {
+	padding-left: 3.3125rem;
+}
+
+.sapMBtnInner.sapMBtnText > .sapMImg.sapMBtnIconRight ~ .sapMBtnContent {
+	padding-right: 1.25rem;
+}
+
+.sapMBtnInner.sapMBtnText > .sapMImg.sapMBtnIconLeft + .sapMBtnContent {
+	padding-left: 1.25rem;
 }
 
 .sapMBtnGhost {
@@ -162,42 +128,48 @@
 		left: 0;
 	}
 
+	.sapMBtnInner.sapMBtnText,
 	.sapMBtnBack:not(.sapMBtnText) > .sapMBtnIconLeft,
 	.sapMBtnIconLeft + .sapMBtnIconRight,
-	.sapMBtnIconLeft + .sapMBtnIconLeft {
-		padding-left: 0.5rem;
-		padding-right: 0.5rem;
+	.sapMBtnIconLeft + .sapMBtnIconLeft,
+	.sapMBtnInner .sapMBtnIcon {
+		padding-left: 0.4375rem;
+		padding-right: 0.4375rem;
 	}
 
 	.sapMBtnInner.sapMBtnText .sapMBtnIcon {
-		padding-left: 0.5rem;
 		padding-right: 0.375rem;
+	}
+
+	.sapMBtnInner.sapMBtnText .sapMBtnIcon.sapMBtnIconRight {
+		padding-right: 0.4375rem;
+		padding-left: 0.375rem;
 	}
 
 	.sapMBtnInner > img {
 		margin: 0;
 	}
 
-	.sapMBtnInner.sapMBtnText.sapMBtnBack.sapMBtnIconFirst,
+	.sapMBtnInner.sapMBtnText.sapMBtnBack,
 	.sapMBtnInner.sapMBtnText.sapMBtnIconFirst,
-	.sapMBtnInner.sapMBtnText.sapMBtnBack {
-		padding-left: 0;
+	.sapMBtnInner.sapMBtnText.sapMBtnBack.sapMBtnIconFirst > .sapMBtnCustomIcon {
+		padding-left: 1.8125rem;
 	}
 
 	.sapMBtnInner.sapMBtnText.sapMBtnIconLast {
-		padding-right: 0;
+		padding-right: 1.8125rem;
 	}
 
-	.sapMBtnInner.sapMBtnText.sapMBtnIconLast .sapMBtnIconLeft.sapMBtnIcon {
-		padding-left: 0.5rem;
-		padding-right: 0.375rem;
+	.sapMBtnInner.sapMBtnText.sapMBtnBack.sapMBtnIconFirst {
+		padding-left: 3.1875rem;
 	}
 
-	.sapMBtnInner .sapMBtnIconLast,
-	.sapMBtnInner.sapMBtnText.sapMBtnIconLast .sapMBtnIconRight.sapMBtnIcon,
-	.sapMBtnInner.sapMBtnText.sapMBtnIconLast .sapMBtnIcon {
+	.sapMBtnInner.sapMBtnText > .sapMImg.sapMBtnIconRight ~ .sapMBtnContent {
 		padding-right: 0.5rem;
-		padding-left: 0.375rem;
+	}
+
+	.sapMBtnInner.sapMBtnText > .sapMImg.sapMBtnIconLeft + .sapMBtnContent {
+		padding-left: 0.5rem;
 	}
 }
 
