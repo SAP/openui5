@@ -3481,7 +3481,7 @@ sap.ui.define([
 		}, this);
 
 		if (this._bRowAggregationInvalid) {
-			this.destroyAggregation("rows", true);
+			this.destroyAggregation("rows", this._bInvalid ? "KeepDom" : true);
 			aRows = [];
 		}
 
