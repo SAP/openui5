@@ -288,4 +288,22 @@ sap.ui.define([
 		assert.equal(oLocaleData.getCurrencyDigits("EUR"), 2, "number of digits for Euro");
 		assert.equal(oLocaleData.getCurrencyDigits("JPY"), 0, "number of digits for Japanese Yen");
 	});
+
+	QUnit.module("Currencies");
+
+	QUnit.test("getCurrencySymbols", function(assert) {
+		sap.ui.getCore().getConfiguration().getFormatSettings().addCustomCurrencies({
+			"BTC": {
+				symbol: "Ƀ"
+			}
+		});
+
+		var oLocaleData = LocaleData.getInstance(
+			sap.ui.getCore().getConfiguration().getFormatSettings().getFormatLocale()
+		);
+
+		var oCurrencySymbols = oLocaleData.getCurrencySymbols();
+
+		assert.strictEqual(oCurrencySymbols["BTC"], "Ƀ", "Custom currency symbol map contains the Bitcoin icon");
+	});
 });
