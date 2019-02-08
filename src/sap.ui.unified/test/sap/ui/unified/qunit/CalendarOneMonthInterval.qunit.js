@@ -23,7 +23,7 @@ sap.ui.define([
 	//the SUT won't be destroyed when single test is run
 	var bSkipDestroy = !!jQuery.sap.getUriParameters().get("testId");
 
-	QUnit.module("Events", {
+	QUnit.module("Private API", {
 		beforeEach: function () {
 			this.oPCStartDate = new Date(2015, 0, 1, 8, 0, 0);
 			this.oPC = new PlanningCalendar('pc1', {
@@ -207,6 +207,42 @@ sap.ui.define([
 		assert.equal(oSpy_setStartDate.getCall(0).args[0].toUTCJSDate().toString(),
 				new Date(Date.UTC(2014, 11, 1)).toString(),
 				"_setStartDate should be called with certain date parameter");
+	});
+
+	QUnit.test("'_shiftStartFocusDates' sets focused date correctly when the previous one is 31st of" +
+		"the previous month", function(assert) {
+		//prepare
+		var oSut = this.oPC._oOneMonthInterval,
+			oSpy_setFocusedDate = this.spy(oSut, "_setFocusedDate"),
+			oStartDate = new CalendarDate(2017, 0, 1),
+			oFocusedDate = new CalendarDate(2017, 0, 31),
+			iDays;
+
+		//act
+		iDays = 31; //to move to the next month
+		oSut._shiftStartFocusDates(oStartDate, oFocusedDate, iDays);
+
+		//assert
+		assert.equal(oSpy_setFocusedDate.getCall(0).args[0].toString(),
+			new CalendarDate(2017, 1, 1).toString(),
+			"the previously selected date was Jan 31st, shift to the right sets the focus to Feb 1st");
+	});
+
+	QUnit.test("navigation via right arrow works correctly", function(assert) {
+		//prepare
+		var oSut = this.oPC._oOneMonthInterval,
+			oStartDate = new CalendarDate(2017, 0, 1),
+			oFocusedDate = new CalendarDate(2017, 0, 31),
+			iDays;
+
+		//act
+		iDays = 31; //to move to the next month
+		oSut._shiftStartFocusDates(oStartDate, oFocusedDate, iDays); //navigate to Feb 1st
+		oSut._shiftStartFocusDates(oStartDate, oFocusedDate, iDays); //navigate to March 1st
+
+		//assert
+		assert.equal(jQuery('#' + oSut.getId() + '-content div:visible:last')[0].textContent,
+			"31Fri", "the last visible date is March 31st");
 	});
 
 	QUnit.module("Calendar Picker");
