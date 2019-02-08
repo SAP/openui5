@@ -4,6 +4,7 @@
 		"technicalName": "sap.ui.core.ComponentContainer",
 		"editable": false,
 		"type": "element",
+		"visible": true,
 		"elements": [
 			{
 				"id": "CompCont",
@@ -16,6 +17,7 @@
 						"technicalName": "MockController",
 						"editable": false,
 						"type": "element",
+						"visible": true,
 						"elements": [
 							{
 								"id": "testComponent",
@@ -25,11 +27,12 @@
 								"elements": [
 									{
 										"id": "mainPage",
-										"name": "Page",
 										"technicalName": "sap.m.Page",
 										"editable": true,
-										"icon": "sap/m/designtime/Page.icon.svg",
 										"type": "element",
+										"name": "Page",
+										"icon": "sap/m/designtime/Page.icon.svg",
+										"visible": true,
 										"elements": [
 											{
 												"id": "mainPage",
@@ -39,10 +42,11 @@
 												"elements": [
 													{
 														"id": "objPage",
-														"name": "LAYOUT_CONTROL_NAME",
 														"technicalName": "sap.uxap.ObjectPageLayout",
 														"editable": true,
 														"type": "element",
+														"name": "LAYOUT_CONTROL_NAME",
+														"visible": true,
 														"elements": [
 															{
 																"id": "objPage",
@@ -52,11 +56,13 @@
 																"elements": [
 																	{
 																		"id": "objSection",
-																		"name": "Section",
 																		"technicalName": "sap.uxap.ObjectPageSection",
 																		"editable": true,
-																		"icon": "sap/uxap/designtime/ObjectPageSection.icon.svg",
 																		"type": "element",
+																		"name": "Section",
+																		"icon": "sap/uxap/designtime/ObjectPageSection.icon.svg",
+																		"visible": true,
+																		"instanceName": "Section Title",
 																		"elements": [
 																			{
 																				"id": "objSection",
@@ -74,8 +80,10 @@
 																						"id": "objSubSection",
 																						"technicalName": "sap.uxap.ObjectPageSubSection",
 																						"editable": true,
-																						"icon": "sap/uxap/designtime/ObjectPageSubSection.icon.svg",
 																						"type": "element",
+																						"icon": "sap/uxap/designtime/ObjectPageSubSection.icon.svg",
+																						"visible": true,
+																						"instanceName": "Subsection Title",
 																						"elements": [
 																							{
 																								"id": "objSubSection",
@@ -91,12 +99,13 @@
 																								"elements": [
 																									{
 																										"id": "layout1",
-																										"instanceName": "Vertical Layout Label",
-																										"name": "Vertical Container",
 																										"technicalName": "sap.ui.layout.VerticalLayout",
 																										"editable": true,
-																										"icon": "sap/ui/layout/designtime/VerticalLayout.icon.svg",
 																										"type": "element",
+																										"instanceName": "Vertical Layout Label",
+																										"name": "Vertical Container",
+																										"icon": "sap/ui/layout/designtime/VerticalLayout.icon.svg",
+																										"visible": true,
 																										"elements": [
 																											{
 																												"id": "layout1",
@@ -108,8 +117,9 @@
 																														"id": "button1",
 																														"technicalName": "sap.m.Button",
 																														"editable": true,
+																														"type": "element",
 																														"icon": "sap/m/designtime/Button.icon.svg",
-																														"type": "element"
+																														"visible": true
 																													}
 																												]
 																											}
@@ -156,9 +166,9 @@
 																"type": "aggregation"
 															},
 															{
-																"editable": false,
 																"id": "objPage",
 																"technicalName": "landmarkInfo",
+																"editable": false,
 																"type": "aggregation"
 															}
 														]
@@ -201,11 +211,12 @@
 	},
 	{
 		"id": "layout2",
-		"name": "Vertical Container",
 		"technicalName": "sap.ui.layout.VerticalLayout",
 		"editable": true,
-		"icon": "sap/ui/layout/designtime/VerticalLayout.icon.svg",
 		"type": "element",
+		"name": "Vertical Container",
+		"icon": "sap/ui/layout/designtime/VerticalLayout.icon.svg",
+		"visible": true,
 		"elements": [
 			{
 				"id": "layout2",
@@ -217,8 +228,36 @@
 						"id": "button2",
 						"technicalName": "sap.m.Button",
 						"editable": true,
+						"type": "element",
 						"icon": "sap/m/designtime/Button.icon.svg",
-						"type": "element"
+						"visible": true
+					},
+					{
+						"editable": true,
+						"elements": [
+							{
+								"editable": false,
+								"elements": [
+									{
+										"editable": true,
+										"icon": "sap/m/designtime/Button.icon.svg",
+										"id": "button3",
+										"technicalName": "sap.m.Button",
+										"type": "element",
+										"visible": false
+									}
+								],
+								"id": "layout3",
+								"technicalName": "content",
+								"type": "aggregation"
+							}
+						],
+						"icon": "sap/ui/layout/designtime/VerticalLayout.icon.svg",
+						"id": "layout3",
+						"name": "Vertical Container",
+						"technicalName": "sap.ui.layout.VerticalLayout",
+						"type": "element",
+						"visible": false
 					}
 				]
 			}
