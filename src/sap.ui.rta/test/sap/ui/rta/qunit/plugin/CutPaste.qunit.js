@@ -139,7 +139,8 @@ function(
 		}
 	}, function () {
 		QUnit.test('when retrieving the context menu items and checking if paste is available', function(assert) {
-			var fnMoveAvailableOnRelevantContainerSpy = sandbox.spy(this.CutPastePlugin.getElementMover(), "_isMoveAvailableOnRelevantContainer");
+			var fnMoveAvailableOnRelevantContainerStub = sandbox.stub(this.CutPastePlugin.getElementMover(), "isMoveAvailableOnRelevantContainer").returns(true);
+			var fnMoveAvailableOnChildrenStub = sandbox.stub(this.CutPastePlugin.getElementMover(), "isMoveAvailableForChildren").returns(true);
 			var aMenuItemsForLayout = this.CutPastePlugin.getMenuItems([this.oVericalLayoutOverlay]);
 
 			sandbox.stub(this.oVericalLayoutOverlay, "getMovable").returns(false);
@@ -147,8 +148,10 @@ function(
 			assert.equal(this.oVerticalLayout.getContent()[0].getId(), "objectStatus1", "then 'Object Status 1' initially at the first position in the layout");
 			assert.equal(aMenuItemsForLayout[0].id, "CTX_PASTE", "'getMenuItems' for formContainer returns a context menu item for 'paste'");
 			assert.notOk(aMenuItemsForLayout[0].enabled([this.oVericalLayoutOverlay]), "'paste' is disabled for the formContainer");
-			assert.ok(fnMoveAvailableOnRelevantContainerSpy.calledOnce, "then RTAElementMover._isMoveAvailableOnRelevantContainer called once, when retrieving menu items for vertical layout");
-			fnMoveAvailableOnRelevantContainerSpy.restore();
+			assert.ok(fnMoveAvailableOnRelevantContainerStub.calledOnce, "then RTAElementMover.isMoveAvailableOnRelevantContainer called once, when retrieving menu items for vertical layout");
+			assert.ok(fnMoveAvailableOnChildrenStub.calledOnce, "then RTAElementMover.fnMoveAvailableOnChildren called once, when retrieving menu items for vertical layout");
+			fnMoveAvailableOnRelevantContainerStub.restore();
+			fnMoveAvailableOnChildrenStub.restore();
 
 			var aMenuItemsForObjectStatus = this.CutPastePlugin.getMenuItems([this.oObjectStatusOverlay1]);
 			assert.equal(aMenuItemsForObjectStatus[0].id, "CTX_CUT", "'getMenuItems' for formElement returns a context menu item for 'cut'");
@@ -158,6 +161,24 @@ function(
 			assert.ok(aMenuItemsForLayout[0].enabled([this.oVericalLayoutOverlay]), "'paste' is now enabled for the formContainer");
 			aMenuItemsForLayout[0].handler([this.oVericalLayoutOverlay]);
 			assert.equal(this.oVerticalLayout.getContent()[0].getId(), "objectStatus1", "then object status now pasted at the first position");
+		});
+
+		QUnit.test('when retrieving the context menu items and checking if paste is unavailable', function(assert) {
+			var fnMoveAvailableOnRelevantContainerStub = sandbox.stub(this.CutPastePlugin.getElementMover(), "isMoveAvailableOnRelevantContainer").returns(true);
+			var fnMoveAvailableOnChildrenStub = sandbox.stub(this.CutPastePlugin.getElementMover(), "isMoveAvailableForChildren").returns(false);
+			var aMenuItemsForLayout = this.CutPastePlugin.getMenuItems([this.oVericalLayoutOverlay]);
+
+			sandbox.stub(this.oVericalLayoutOverlay, "getMovable").returns(false);
+			sandbox.stub(this.oObjectStatusOverlay1, "getMovable").returns(false);
+			assert.equal(this.oVerticalLayout.getContent()[0].getId(), "objectStatus1", "then 'Object Status 1' initially at the first position in the layout");
+			assert.equal(aMenuItemsForLayout.length, 0, "'getMenuItems' for formContainer returns no menu item for 'paste'");
+			assert.ok(fnMoveAvailableOnRelevantContainerStub.calledOnce, "then RTAElementMover.isMoveAvailableOnRelevantContainer called once, when retrieving menu items for vertical layout");
+			assert.ok(fnMoveAvailableOnChildrenStub.calledOnce, "then RTAElementMover.fnMoveAvailableOnChildren called once, when retrieving menu items for vertical layout");
+			fnMoveAvailableOnRelevantContainerStub.restore();
+			fnMoveAvailableOnChildrenStub.restore();
+
+			var aMenuItemsForObjectStatus = this.CutPastePlugin.getMenuItems([this.oObjectStatusOverlay1]);
+			assert.equal(aMenuItemsForObjectStatus.length, 0, "'getMenuItems' for formElement returns no context menu item for 'cut'");
 		});
 	});
 

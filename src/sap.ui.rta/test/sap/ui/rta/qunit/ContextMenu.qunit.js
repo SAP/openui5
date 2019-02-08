@@ -544,12 +544,18 @@ function(
 				visible : false
 			});
 
+			this.oObjectPageSection2 = new ObjectPageSection({
+				title: "Section_2",
+				visible : false
+			});
+
 			var oEmbeddedPage = sap.ui.getCore().byId("Comp1---idMain1--mainPage");
 
 			this.oObjectPageLayout = new ObjectPageLayout({
 				id : oEmbeddedView.createId("ObjectPageLayout"),
 				sections : [
-					this.oObjectPageSection1
+					this.oObjectPageSection1,
+					this.oObjectPageSection2
 				]
 			});
 
@@ -577,9 +583,9 @@ function(
 			this.oRta.getPlugins()["contextMenu"].open({ pageX: 0, pageY: 0 }, oOverlay);
 
 			var oContextMenuControl = this.oRta.getPlugins()["contextMenu"].oContextMenuControl;
-			assert.ok(oContextMenuControl.bOpen, "then the context menu (context menu) opens");
-			assert.equal(oContextMenuControl.getButtons().length, 1, " and only one Menu Button is available");
-			assert.equal(oContextMenuControl.getButtons()[0].data("id"), "CTX_PASTE", "only paste menu Button is available, no possibility to add a section");
+			assert.notOk(oContextMenuControl.bOpen, "then the context menu (context menu) opens");
+			assert.notOk(oOverlay.isEditable(), "then the overlay is not editable");
+			// There is no paste action anymore available, when no children exists that are cut-able
 		});
 	});
 
