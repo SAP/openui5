@@ -87,6 +87,8 @@ sap.ui.define([
 					undefined : oModel,
 					metaModel : oMetaModel,
 					ui : new JSONModel({
+						sCode : "",
+						bCodeVisible : false,
 						bRealOData : bRealOData,
 						icon : bRealOData ? "sap-icon://building" : "sap-icon://record",
 						iconTooltip : bRealOData ? "real OData service" : "mock OData service"

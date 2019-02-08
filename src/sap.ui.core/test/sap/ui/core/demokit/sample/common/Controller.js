@@ -4,11 +4,23 @@
 sap.ui.define([
 	"sap/m/MessageItem",
 	"sap/m/MessagePopover",
-	"sap/ui/core/mvc/Controller"
-], function (MessageItem, MessagePopover, Controller) {
+	"sap/ui/core/mvc/Controller",
+	"sap/ui/util/XMLHelper"
+], function (MessageItem, MessagePopover, Controller, XMLHelper) {
 	"use strict";
 
 	return Controller.extend("sap.ui.core.sample.common.Controller", {
+		/**
+		 * Function is called by <code>onSourceCode</code> to modify source code before it is pretty
+		 * printed.
+		 *
+		 * @param {string} sSourceCode The source code
+		 * @returns {string} The modified source code
+		 */
+		beforePrettyPrinting : function (sSourceCode) {
+			return sSourceCode;
+		},
+
 		/**
 		 * Creates a new sap.m.MessagePopover within the controller which is bound to the global
 		 * sap.ui.model.message.MessageModel. The MessagePopover listens to MessageModel changes
@@ -77,7 +89,43 @@ sap.ui.define([
 		 * Destroys the MessagePopover when the controller is destroyed.
 		 */
 		onExit : function () {
-			this.messagePopover.destroy();
+			if (this.messagePopover) {
+				this.messagePopover.destroy();
+			}
+		},
+
+		/**
+		 * Sets "ui>/bCodeVisible" based on the event source's pressed state and if it is pressed,
+		 * gets the source code of the view after templating, pretty prints it and puts the result
+		 * into "ui>/sCode".
+		 *
+		 * @param {object} oEvent
+		 *   The event object with a <code>sap.m.ToggleButton</code> as source. If no event is
+		 *   given, "ui>/bCodeVisible" keeps unchanged.
+		 */
+		onSourceCode : function (oEvent) {
+			var oView = this.getView(),
+				oUIModel = oView.getModel("ui"),
+				bVisible = oEvent && oEvent.getSource().getPressed(),
+				sSource;
+
+			if (bVisible === undefined) {
+				bVisible = oUIModel.getProperty("/bCodeVisible");
+			} else {
+				oUIModel.setProperty("/bCodeVisible", bVisible);
+			}
+			if (bVisible) {
+				sSource = this.beforePrettyPrinting(XMLHelper.serialize(oView._xContent))
+					.replace(/<!--(.|\s)*?-->/g, "") // remove comments
+					.replace(/\{\s*/g, "{") // remove unnecessary whitespaces in complex binding
+					.replace(/,\s*/g, ", ") // remove unnecessary whitespaces in complex binding
+					.replace(/&gt;/g, ">") // decode >
+					.replace(/&quot;/g, "'") // decode '
+					.replace(/\t/g, "  ") // indent by just 2 spaces
+					.replace(/\n\s*\n/g, "\n"); // remove empty lines
+
+				oView.getModel("ui").setProperty("/sCode", sSource);
+			}
 		},
 
 		/**
