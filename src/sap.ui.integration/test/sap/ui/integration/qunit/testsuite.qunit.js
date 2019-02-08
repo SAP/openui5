@@ -11,7 +11,7 @@ sap.ui.define(function () {
 				version: "edge"
 			},
 			ui5: {
-				libs: ["sap.f", "sap.m"],	// Libraries to load upfront in addition to the library which is tested, if null no libs are loaded
+				libs: ["sap.f", "sap.m"], // Libraries to load upfront in addition to the library which is tested, if null no libs are loaded
 				noConflict: true,
 				preload: "auto"
 			},
@@ -32,13 +32,6 @@ sap.ui.define(function () {
 				coverage: {
 					only: [
 						"sap/ui/integration/util/CardManifest"
-					]
-				}
-			},
-			"util/CustomElements": {
-				coverage: {
-					only: [
-						"sap/ui/integration/util/CustomElements"
 					]
 				}
 			}
