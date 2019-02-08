@@ -448,7 +448,8 @@ function(
 		var sSelectedKey = this.getSelectedKey(),
 			bShowIcon = this.getShowValueHelp() && this.getEnabled() && this.getEditable(),
 			aEndIcons = this.getAggregation("_endIcon") || [],
-			oIcon = aEndIcons[0];
+			oIcon = aEndIcons[0],
+			oPopupInput;
 
 		InputBase.prototype.onBeforeRendering.call(this);
 
@@ -463,6 +464,12 @@ function(
 				this._oSuggPopover._addShowMoreButton();
 			} else {
 				this._oSuggPopover._removeShowMoreButton();
+			}
+
+			oPopupInput = this._oSuggPopover._oPopupInput;
+			// setting the property "type" of the Input inside the Suggestion popover
+			if (oPopupInput) {
+				oPopupInput.setType(this.getType());
 			}
 		}
 

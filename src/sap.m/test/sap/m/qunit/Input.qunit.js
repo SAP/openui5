@@ -1277,6 +1277,7 @@ sap.ui.define([
 		this.stub(Device, "system", oSystem);
 
 		var oInput = new Input({
+				type: mobileLibrary.InputType.Tel,
 				showSuggestion: true
 			}),
 			oPopup, // is lazy loaded
@@ -1303,6 +1304,8 @@ sap.ui.define([
 		oPopup = oInput._oSuggPopover._oPopover;
 		assert.ok(oPopup instanceof Dialog, "Suggestion Popup is created and is a Dialog instance");
 		assert.ok(oPopup.isOpen(), "Suggestion Popup is open now");
+
+		assert.equal(oInput._oSuggPopover._oPopupInput.getType(), mobileLibrary.InputType.Tel, "The type of the Input inside the Suggestion Popup is the same as the type of the original Input"); // BCP 1970125027
 
 		oInput._oSuggPopover._oPopupInput._$input.focus().val("abc").trigger("input");
 		this.clock.tick(400);
@@ -1345,6 +1348,7 @@ sap.ui.define([
 
 		var oInput = new Input({
 				showSuggestion: true,
+				type: mobileLibrary.InputType.Tel,
 				suggestionItemSelected: function(){
 					oInput.setValue("newValue");
 				}
@@ -1371,6 +1375,8 @@ sap.ui.define([
 		this.clock.tick(500);
 
 		oPopup = oInput._oSuggPopover._oPopover;
+
+		assert.equal(oInput._oSuggPopover._oPopupInput.getType(), mobileLibrary.InputType.Tel, "The type of the Input inside the Suggestion Popup is the same as the type of the original Input"); // BCP 1970125027
 
 		oInput._oSuggPopover._oPopupInput._$input.focus().val("abc").trigger("input");
 		this.clock.tick(400);
@@ -1420,6 +1426,8 @@ sap.ui.define([
 		oInput._$input.focus().trigger("click");
 		this.clock.tick(500);
 		oPopup = oInput._oSuggPopover._oPopover;
+
+		assert.equal(oInput._oSuggPopover._oPopupInput.getType(), mobileLibrary.InputType.Text, "The type of the Input inside the Suggestion Popup is the same as the type of the original Input - the default one ('Text')"); // BCP 1970125027
 
 		assert.ok(oPopup instanceof Dialog, "Two value Suggestion Popup is created and is a Dialog instance");
 		assert.ok(oPopup.isOpen(), "Suggestion Popup is open now");
