@@ -143,6 +143,7 @@ sap.ui.define([
 			oOverlay.addStyleClass("sapUiDtOverlayCutted");
 
 			this.getElementMover().activateAllValidTargetZones(this.getDesignTime());
+			oOverlay.focus();
 		}
 	};
 
