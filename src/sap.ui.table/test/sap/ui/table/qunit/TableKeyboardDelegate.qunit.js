@@ -880,7 +880,9 @@ sap.ui.define([
 				assert.ok(true, "[INFO] Navigate right to the top right cell.");
 			}
 
-			for (i = bHasRowHeaders ? 0 : 1; i < oTable.columnCount; i++) {
+			var iColumnCount = oTable.getGroupBy() ? oTable._getVisibleColumns().length : oTable.columnCount;
+
+			for (i = bHasRowHeaders ? 0 : 1; i < iColumnCount; i++) {
 				qutils.triggerKeydown(oElem, Key.Arrow.RIGHT, false, false, false);
 
 				if (bHasColumnHeaders) {
@@ -914,7 +916,7 @@ sap.ui.define([
 				checkFocus(oElem, assert);
 
 				qutils.triggerKeydown(oElem, Key.Arrow.DOWN, false, false, false);
-				oElem = checkFocus(getCell(0, oTable.columnCount - 1), assert);
+				oElem = checkFocus(getCell(0, iColumnCount - 1), assert);
 				qutils.triggerKeydown(oElem, Key.Arrow.RIGHT, false, false, false);
 				oElem = checkFocus(getRowAction(0), assert);
 
@@ -931,6 +933,8 @@ sap.ui.define([
 			if (bShowInfo) {
 				assert.ok(true, "[INFO] Navigate down to the bottom right cell, taking scrolling into account.");
 			}
+
+			iNumberOfRows = oTable.getGroupBy() ? 2 * window.iNumberOfRows : window.iNumberOfRows;
 
 			for (i = (bHasColumnHeaders && !bHasRowActions) ? 0 : 1; i < iNumberOfRows; i++) {
 				qutils.triggerKeydown(oElem, Key.Arrow.DOWN, false, false, false);
@@ -965,7 +969,9 @@ sap.ui.define([
 				assert.ok(true, "[INFO] Navigate left to the bottom left cell.");
 			}
 
-			for (i = oTable.columnCount - (bHasRowActions ? 1 : 2); i >= 0; i--) {
+			var iStartIndex = iColumnCount - (bHasRowActions || oTable.getGroupBy() ? 1 : 2);
+			var iEndIndex = oTable.getGroupBy() ? 1 : 0;
+			for (i = iStartIndex; i >= iEndIndex; i--) {
 				qutils.triggerKeydown(oElem, Key.Arrow.LEFT, false, false, false);
 				oElem = checkFocus(getCell(iVisibleRowCount - 1, i), assert);
 			}
@@ -1016,6 +1022,16 @@ sap.ui.define([
 				}
 			}
 		}
+	});
+
+	QUnit.test("Grouping", function(assert) {
+		oTable.setFixedColumnCount(0);
+		oTable.setEnableGrouping(true);
+		oTable.setGroupBy(oTable._getVisibleColumns()[0]);
+
+		sap.ui.getCore().applyChanges();
+
+		this.testArrowKeys(assert);
 	});
 
 	QUnit.test("Default Test Table - Row Header, Column Header", function(assert) {
