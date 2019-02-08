@@ -906,7 +906,6 @@ sap.ui.define([
 
 		if (iWidth > 0) {
 			this._updateMedia(iWidth, ObjectPageLayout.MEDIA);
-			this._bInitializedMedia = true;
 		}
 
 		this._$opWrapper.on("scroll.OPL", this._onScroll.bind(this));
@@ -987,9 +986,7 @@ sap.ui.define([
 
 		this.oCore.getEventBus().publish("sap.ui", "ControlForPersonalizationRendered", this);
 
-		if (!this._bInitializedMedia) {
-			this._updateMedia(this._getWidth(this), ObjectPageLayout.MEDIA);
-		}
+		this._updateMedia(this._getWidth(this), ObjectPageLayout.MEDIA);
 
 		if (this._hasDynamicTitle()) {
 			this._updateMedia(this._getWidth(this), ObjectPageLayout.DYNAMIC_HEADERS_MEDIA);
