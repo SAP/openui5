@@ -30,7 +30,7 @@ sap.ui.define([
 			this.iStartMyUIComponent({
 				componentConfig: {
 					name: "sap.ui.demo.masterdetail",
-					async: true
+					manifest: true
 				},
 				hash: oOptions.hash,
 				autoWait: oOptions.autoWait
