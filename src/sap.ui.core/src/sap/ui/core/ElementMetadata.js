@@ -67,6 +67,10 @@ sap.ui.define([
 	 */
 	ElementMetadata.prototype.getRenderer = function() {
 
+		if ( this._oRenderer ) {
+			return this._oRenderer;
+		}
+
 		// determine name via function for those legacy controls that override getRendererName()
 		var sRendererName = this.getRendererName();
 
@@ -76,9 +80,9 @@ sap.ui.define([
 
 		// check if renderer class exists already, in case it was passed inplace,
 		// and written to the global namespace during applySettings().
-		var fnRendererClass = ObjectPath.get(sRendererName);
-		if (fnRendererClass) {
-			return fnRendererClass;
+		this._oRenderer = ObjectPath.get(sRendererName);
+		if (this._oRenderer) {
+			return this._oRenderer;
 		}
 
 		// if not, try to load a module with the same name
@@ -88,8 +92,11 @@ sap.ui.define([
 				name: sRendererName
 			};
 		});
-		var fnClass = sap.ui.requireSync(sRendererName.replace(/\./g, "/"));
-		return fnClass || ObjectPath.get(sRendererName);
+		this._oRenderer =
+			sap.ui.requireSync(sRendererName.replace(/\./g, "/"))
+			|| ObjectPath.get(sRendererName);
+
+		return this._oRenderer;
 	};
 
 	ElementMetadata.prototype.applySettings = function(oClassInfo) {
@@ -120,6 +127,24 @@ sap.ui.define([
 				this._sRendererName = vRenderer || undefined;
 				return;
 			}
+
+			// try to identify fully built renderers
+			if ( typeof vRenderer === "object" ) {
+				var oRenderer = ObjectPath.get(this.getRendererName());
+				if ( oRenderer === vRenderer ) {
+					// the given renderer has been exported globally already, it can be used without further action
+					this._oRenderer = vRenderer;
+					return;
+				}
+				if ( oRenderer === undefined && typeof vRenderer.extend === "function" ) {
+					// the given renderer has an 'extend' method, so it most likely has been created by one of the
+					// extend methods and it is usable already; it just has to be exported globally
+					ObjectPath.set(this.getRendererName(), vRenderer);
+					this._oRenderer = vRenderer;
+					return;
+				}
+			}
+
 			if ( typeof vRenderer === "function" ) {
 				vRenderer = { render : vRenderer };
 			}
@@ -134,6 +159,7 @@ sap.ui.define([
 			}
 			var oRenderer = Object.create(oBaseRenderer);
 			jQuery.extend(oRenderer, vRenderer);
+			this._oRenderer = oRenderer;
 			ObjectPath.set(this.getRendererName(), oRenderer);
 		}
 	};
