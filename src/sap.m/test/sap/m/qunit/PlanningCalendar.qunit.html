@@ -684,12 +684,15 @@
 			assert.ok(_getListItem(oRow), "ColumnListItem exist");
 			assert.equal(_getListItem(oRow).getCells().length, 2, "row has 2 columns")
 
-			var oRowHeader = _getRowHeader(oRow);
+			var oRowHeader = _getRowHeader(oRow),
+				$oRowHeader = oRowHeader.$();
+
 			assert.ok(oRowHeader, "row header exist");
 			assert.equal(oRowHeader.getTitle(), oRow.getTitle(), "row header Title");
 			assert.equal(oRowHeader.getIcon(), oRow.getIcon(), "row header icon");
 			assert.equal(oRowHeader.getDescription(), oRow.getText(), "row header Text");
-			assert.notOk(oRowHeader.$().attr("role"), "row header doesn't have unnecessary role attribute");
+			assert.notOk($oRowHeader.attr("role"), "row header doesn't have unnecessary role attribute");
+			assert.strictEqual($oRowHeader.attr("title"), "Header tooltip", "row header has it's tooltip set in the DOM");
 
 			assert.ok(_getRowTimeline(oRow), "CalendarRow exist");
 			assert.ok(_getRowTimeline(oRow) instanceof sap.ui.unified.CalendarRow, "CalendarRow control");
