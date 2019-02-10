@@ -29,9 +29,8 @@ sap.ui.define([
 	"sap/ui/test/starter/_utils",
 	"require",
 	"./discovery",
-	"./filter",
-	"./TreeMapChart"
-], function(App, HBox, Label, Link, Page, SearchField, SegmentedButton, SegmentedButtonItem, Text, Toolbar, Table, Column, Filter, JSONModel, Log, includeStylesheet, Storage, _utils, require, discovery, makeFilterFunction, TreeMapChart) {
+	"./filter"
+], function(App, HBox, Label, Link, Page, SearchField, SegmentedButton, SegmentedButtonItem, Text, Toolbar, Table, Column, Filter, JSONModel, Log, includeStylesheet, Storage, _utils, require, discovery, makeFilterFunction) {
 	"use strict";
 
 	function compare(s1,s2) {
@@ -176,12 +175,16 @@ sap.ui.define([
 									let key = e.getSource().getSelectedKey();
 									if ( key === "table" ) {
 										oTable.setVisible(true);
-										oTreeMapChart.setVisible(false);
+										if ( oTreeMapChart ) {
+											oTreeMapChart.setVisible(false);
+										}
 									} else {
 										oTable.setVisible(false);
-										oTreeMapChart.setVisible(true);
-										oTreeMapChart.setData(oModel.getData().tests);
-										oTreeMapChart.invalidate();
+										if ( oTreeMapChart ) {
+											oTreeMapChart.setVisible(true);
+											oTreeMapChart.setData(oModel.getData().tests);
+											oTreeMapChart.invalidate();
+										}
 									}
 								},
 								items: [
@@ -191,7 +194,8 @@ sap.ui.define([
 									}),
 									new SegmentedButtonItem({
 										key: "treemap",
-										icon: "sap-icon://Chart-Tree-Map"
+										icon: "sap-icon://Chart-Tree-Map",
+										enabled: false
 									})
 								]
 							}).addStyleClass("sapUiSmallMarginBottom")
@@ -258,10 +262,6 @@ sap.ui.define([
 								path: "/tests"
 							},
 							footer: ""
-						}),
-						oTreeMapChart = new TreeMapChart({
-							id: "chart",
-							visible: false
 						})
 					]
 				})
@@ -305,44 +305,61 @@ sap.ui.define([
 
 	includeStylesheet(require.toUrl("./main.css"));
 
-	sap.ui.getCore().attachInit( () => {
+	const url = new URL(location.href);
 
-		let url = new URL(location.href);
-		let showSuite = url.searchParams.has('showSuite');
+	const uiCreated = new Promise( (resolve, reject) => {
+		sap.ui.getCore().attachInit(() => {
+			const showSuite = url.searchParams.has('showSuite');
+			createUI(showSuite).then( resolve, reject );
+		});
+	});
 
-		createUI(showSuite).then( () => {
+	uiCreated.then(() => {
 
-			let search = sap.ui.getCore().byId("search");
-			search.setValue( cleanURL(url.searchParams.get("testpage")) || "");
-			let entryPage = cleanURL(url.searchParams.get("root")) || _utils.getAttribute("data-sap-ui-root-testsuite") || "test-resources/qunit/testsuite.qunit.html";
+		let search = sap.ui.getCore().byId("search");
+		search.setValue( cleanURL(url.searchParams.get("testpage")) || "");
+		let entryPage = cleanURL(url.searchParams.get("root")) || _utils.getAttribute("data-sap-ui-root-testsuite") || "test-resources/qunit/testsuite.qunit.html";
 
-			if ( restoreData(entryPage) ) {
-				sap.ui.getCore().byId("app").setBusy(false);
-			}
+		if ( restoreData(entryPage) ) {
+			sap.ui.getCore().byId("app").setBusy(false);
+		}
 
-			discovery.findTests( entryPage, progress ).then( aTests => {
-				sap.ui.getCore().byId("app").setBusy(false);
-				oTable.setFooter("Refresh: done.");
-				let aTestPageUrls = [];
-				// filter duplicate tests and sort them
-				aTests = aTests.filter((e,i,a) => {
-					return aTestPageUrls.indexOf(e.fullpage) === -1 && aTestPageUrls.push(e.fullpage) > 0;
-				}).sort((t1,t2) => compare(t1.fullpage, t2.fullpage));
-				oModel.setData({
-					_$schemaVersion: SCHEMA_VERSION,
-					entryPage,
-					tests: aTests,
-					testCount: aTests.length,
-					filteredTestCount: aTests.length
-				});
-				saveData();
-				setTimeout(function() {
-					oTable.setFooter("");
-				}, 5000);
+		discovery.findTests( entryPage, progress ).then( aTests => {
+			sap.ui.getCore().byId("app").setBusy(false);
+			oTable.setFooter("Refresh: done.");
+			let aTestPageUrls = [];
+			// filter duplicate tests and sort them
+			aTests = aTests.filter((e,i,a) => {
+				return aTestPageUrls.indexOf(e.fullpage) === -1 && aTestPageUrls.push(e.fullpage) > 0;
+			}).sort((t1,t2) => compare(t1.fullpage, t2.fullpage));
+			oModel.setData({
+				_$schemaVersion: SCHEMA_VERSION,
+				entryPage,
+				tests: aTests,
+				testCount: aTests.length,
+				filteredTestCount: aTests.length
 			});
-
+			saveData();
+			setTimeout(function() {
+				oTable.setFooter("");
+			}, 5000);
 		});
 
 	});
+
+	return {
+		showChart(TreeMapChart) {
+			uiCreated.then(() => {
+				if ( oTreeMapChart == null ) {
+					oTreeMapChart = new TreeMapChart({
+						id: "chart",
+						visible: false
+					});
+					sap.ui.getCore().byId("page").addContent(oTreeMapChart);
+					sap.ui.getCore().byId("view").getItems()[1].setEnabled(true);
+				}
+			});
+		}
+	};
 
 });
