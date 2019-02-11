@@ -10,6 +10,8 @@ sap.ui.define([
 	'./Bar',
 	'./Text',
 	'./Title',
+	'./GroupHeaderListItem',
+	'sap/ui/core/SeparatorItem',
 	'sap/ui/core/InvisibleText',
 	'sap/ui/core/IconPool',
 	'sap/ui/core/ValueStateSupport',
@@ -32,6 +34,8 @@ sap.ui.define([
 		Bar,
 		Text,
 		Title,
+		GroupHeaderListItem,
+		SeparatorItem,
 		InvisibleText,
 		IconPool,
 		ValueStateSupport,
@@ -1475,6 +1479,45 @@ sap.ui.define([
 		 */
 		ComboBoxBase.prototype.getItemByKey = function(sKey) {
 			return this.findItem("key", sKey);
+		};
+
+		/**
+		 * Adds a sap.ui.core.SeparatorItem item to the aggregation named <code>items</code>.
+		 *
+		 * @param {sap.ui.core.Item} oGroup Item of that group
+		 * @param {sap.ui.core.SeparatorItem} oHeader The item to be added
+		 * @param {boolean} bSuppressInvalidate Flag indicating whether invalidation should be suppressed
+		 * @returns {sap.m.GroupHeaderListItem} The group header
+		 * @private
+		 */
+		ComboBoxBase.prototype.addItemGroup = function(oGroup, oHeader, bSuppressInvalidate) {
+			oHeader = oHeader || new SeparatorItem({
+				text: oGroup.text || oGroup.key
+			});
+
+			this.addAggregation("items", oHeader, bSuppressInvalidate);
+			return oHeader;
+		};
+
+		/**
+		 * Maps an item type of sap.ui.core.SeparatorItem to an item type of sap.m.GroupHeaderListItem.
+		 *
+		 * @param {sap.ui.core.SeparatorItem} oSeparatorItem The item to be matched
+		 * @param {sap.ui.core.Renderer} oControlRenderer The controls renderer
+		 * @returns {sap.m.GroupHeaderListItem} The matched GroupHeaderListItem
+		 * @private
+		 */
+		ComboBoxBase.prototype._mapSeparatorItemToGroupHeader = function (oSeparatorItem, oControlRenderer) {
+			var oGroupHeaderListItem = new GroupHeaderListItem({
+				title: oSeparatorItem.getText()
+			});
+
+			oGroupHeaderListItem.addStyleClass(oControlRenderer.CSS_CLASS_COMBOBOXBASE + "NonInteractiveItem");
+			if (oSeparatorItem.getText && !oSeparatorItem.getText()) {
+				oGroupHeaderListItem.addStyleClass(oControlRenderer.CSS_CLASS_COMBOBOXBASE + "SeparatorItemNoText");
+			}
+
+			return oGroupHeaderListItem;
 		};
 
 		/**

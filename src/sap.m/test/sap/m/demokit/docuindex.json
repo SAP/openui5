@@ -263,7 +263,8 @@
 			"sap.m.sample.ComboBoxSearchBoth",
 			"sap.m.sample.ComboBoxDefaultFiltering",
 			"sap.m.sample.ComboBoxFilteringContains",
-			"sap.m.sample.ComboBoxFilteringStartsWith"
+			"sap.m.sample.ComboBoxFilteringStartsWith",
+			"sap.m.sample.ComboBoxGrouping"
 		  ]
 		},
 		{
@@ -1556,6 +1557,11 @@
 		  "id": "sap.m.sample.ComboBoxFilteringStartsWith",
 		  "name": "Combo box - Custom filtering \"Starts with\"",
 		  "description": "You can override the default filtering \"Starts with per term\" with your own filter function using the setFilterFunction method. The \"Starts with\" approach searches only in the beginning of the entries in both columns."
+		},
+		{
+			"id": "sap.m.sample.ComboBoxGrouping",
+			"name": "ComboBox - Grouping of items",
+			"description": "Items in the ComboBox could be grouped by a property"
 		},
 		{
 		  "id": "sap.m.sample.DateRangeSelection",
