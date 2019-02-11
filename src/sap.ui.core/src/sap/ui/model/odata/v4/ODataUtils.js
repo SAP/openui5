@@ -65,7 +65,8 @@ sap.ui.define([
 			},
 
 			/**
-			 * Formats the given OData value into a literal suitable for usage in URLs.
+			 * Formats the given OData value into a literal suitable for usage in data binding paths
+			 * and URLs.
 			 *
 			 * @param {any} vValue
 			 *   The value according to "OData JSON Format Version 4.0" section
@@ -77,6 +78,17 @@ sap.ui.define([
 			 *   "5.1.1.6.1 Primitive Literals"
 			 * @throws {Error}
 			 *   If the value is undefined or the type is not supported
+			 *
+			 * @example <caption>Use <code>formatLiteral</code> together with
+			 *   <code>encodeURIComponent</code> to create a properly encoded data binding path for
+			 *   {@link sap.ui.model.odata.v4.ODataModel}.</caption>
+			 *   var sSalesOrderId = ODataUtils.formatLiteral("A/B&C", "Edm.String"),
+			 *           // expected result: "'A/B&C'"
+			 *       sPath = "/" + encodeURIComponent("SalesOrderList(" + sSalesOrderId + ")");
+			 *           // expected result: "/SalesOrderList('A%2FB%26C')"
+			 *
+			 * @public
+			 * @since 1.64.0
 			 */
 			formatLiteral : function (vValue, sType) {
 				return _Helper.formatLiteral(vValue, sType);
