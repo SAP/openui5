@@ -920,6 +920,7 @@ sap.ui.define([
 				// binding parameter's type name ({string}) for overloading of bound operations
 				// or UNBOUND ({object}) for unbound operations called via an import
 			var vBindingParameterType,
+				bInsideAnnotation = false,
 				vLocation, // {string[]|string} location of indirection
 				sName, // what "@sapui.name" refers to: OData or annotation name
 				bODataMode = true, // OData navigation mode with scope lookup etc.
@@ -955,8 +956,9 @@ sap.ui.define([
 				fnAnnotation = sSegment[0] === "."
 					? ObjectPath.get(sSegment.slice(1), mParameters.scope)
 					: mParameters && ObjectPath.get(sSegment, mParameters.scope)
-						|| (sSegment === "requestUnitsOfMeasure"
-							? that.requestUnitsOfMeasure.bind(that)
+						|| (sSegment === "requestCurrencyCodes"
+							|| sSegment === "requestUnitsOfMeasure"
+							? that[sSegment].bind(that)
 							: ObjectPath.get(sSegment));
 				if (typeof fnAnnotation !== "function") {
 					// Note: "varargs" syntax does not help because Array#join ignores undefined
@@ -1230,13 +1232,14 @@ sap.ui.define([
 					if (!vResult || typeof vResult !== "object") {
 						// Note: even an OData path cannot continue here (e.g. by type cast)
 						vResult = undefined;
-						return log(DEBUG, "Invalid segment: ", sSegment);
+						return !bInsideAnnotation && log(DEBUG, "Invalid segment: ", sSegment);
 					}
 					if (bODataMode && sSegment[0] === "@") {
 						// annotation(s) via external targeting
 						// Note: inline annotations can only be reached via pure "JSON" drill-down,
 						//       e.g. ".../$ReturnType/@..."
 						vResult = (mScope.$Annotations || {})[sTarget] || {};
+						bInsideAnnotation = true;
 						bODataMode = false; // switch to pure "JSON" drill-down
 					} else if (sSegment === "$" && i + 1 < aSegments.length) {
 						return log(WARNING, "Unsupported path after $");
@@ -1244,6 +1247,9 @@ sap.ui.define([
 				}
 
 				if (sSegment !== "@" && sSegment !== "$") {
+					if (sSegment[0] === "@") {
+						bInsideAnnotation = true;
+					}
 					sName = bODataMode || sSegment[0] === "@" ? sSegment : undefined;
 					sTarget = bODataMode ? sTarget + "/" + sSegment : undefined;
 					vResult = vResult[sSegment];
@@ -1272,6 +1278,7 @@ sap.ui.define([
 				}
 				vLocation = vNewLocation;
 
+				bInsideAnnotation = false;
 				bODataMode = true;
 				vResult = mScope;
 				bContinue = sRelativePath.split("/").every(step);
@@ -1379,7 +1386,7 @@ sap.ui.define([
 	 *    <li><code>propertyPath</code>: The path of the property relative to the entity
 	 *   </ul>
 	 *   The promise is rejected if the requested metadata cannot be loaded or the key predicate
-     *   cannot be determined.
+	 *   cannot be determined.
 	 *
 	 * @private
 	 */
@@ -1966,6 +1973,239 @@ sap.ui.define([
 	};
 
 	/**
+	 * Request customizing based on the code list reference given in the entity container's
+	 * given <code>com.sap.vocabularies.CodeList.v1.*</code> annotation.
+	 *
+	 * @param {string} sTerm
+	 *   The unqualified name of the term from the <code>com.sap.vocabularies.CodeList.v1</code>
+	 *   vocabulary used to annotate the entity container, e.g. "CurrencyCodes" or "UnitsOfMeasure"
+	 * @param {any} [vRawValue]
+	 *   If present, it must be this meta model's root entity container
+	 * @param {object} [oDetails]
+	 *   The details object
+	 * @param {sap.ui.model.Context} [oDetails.context]
+	 *   If present, it must point to this meta model's root entity container, that is,
+	 *   <code>oDetails.context.getModel() === this</code> and
+	 *   <code>oDetails.context.getPath() === "/"</code>
+	 * @returns {Promise}
+	 *   A promise resolving with the customizing which is a map from the code key to an object with
+	 *   the following properties:
+	 *   <ul>
+	 *   <li>StandardCode: The language-independent standard code (e.g. ISO) for the code as
+	 *     referred to via the <code>com.sap.vocabularies.CodeList.v1.StandardCode</code> annotation
+	 *     on the code's key, if present
+	 *   <li>Text: The language-dependent text for the code as referred to via the
+	 *     <code>com.sap.vocabularies.Common.v1.Text</code> annotation on the code's key
+	 *   <li>UnitSpecificScale: The decimals for the code as referred to via the
+	 *     <code>com.sap.vocabularies.Common.v1.UnitSpecificScale</code> annotation on the code's
+	 *     key; entries where this would be <code>null</code> are ignored, and an error is logged
+	 *   </ul>
+	 *   It resolves with <code>null</code>, if no given
+	 *   <code>com.sap.vocabularies.CodeList.v1.*</code> annotation is found.
+	 *   It is rejected, if there is not exactly one code key, or if the customizing cannot be
+	 *   loaded.
+	 * @throws {Error}
+	 *   If <code>vRawValue</code> or <code>oDetails.context</code> are present, but unsupported
+	 *
+	 * @private
+	 * @see #requestCurrencyCodes
+	 * @see #requestUnitsOfMeasure
+	 */
+	ODataMetaModel.prototype.requestCodeList = function (sTerm, vRawValue, oDetails) {
+		var mScope = this.fetchEntityContainer().getResult(),
+			oEntityContainer = mScope[mScope.$EntityContainer],
+			that = this;
+
+		if (oDetails && oDetails.context) {
+			if (oDetails.context.getModel() !== this || oDetails.context.getPath() !== "/") {
+				throw new Error("Unsupported context: " + oDetails.context);
+			}
+		}
+		if (vRawValue !== undefined && vRawValue !== oEntityContainer) {
+			throw new Error("Unsupported raw value: " + vRawValue);
+		}
+
+		return this.requestObject("/@com.sap.vocabularies.CodeList.v1." + sTerm)
+			.then(function (oCodeList) {
+				var sCacheKey,
+					oCodeListMetaModel,
+					oCodeListModel,
+					oPromise,
+					sTypePath;
+
+				if (!oCodeList) {
+					return null;
+				}
+
+				sCacheKey = that.getAbsoluteServiceUrl(oCodeList.Url)
+					+ "#" + oCodeList.CollectionPath;
+				oPromise = mCodeListUrl2Promise.get(sCacheKey);
+				if (oPromise) {
+					return oPromise;
+				}
+
+				oCodeListModel = that.getOrCreateSharedModel(oCodeList.Url, "$direct");
+				oCodeListMetaModel = oCodeListModel.getMetaModel();
+				sTypePath = "/" + oCodeList.CollectionPath + "/";
+				oPromise = oCodeListMetaModel.requestObject(sTypePath).then(function (oType) {
+					return new Promise(function (resolve, reject) {
+						var sAlternateKeysPath = sTypePath + "@Org.OData.Core.V1.AlternateKeys",
+							aAlternateKeys = oCodeListMetaModel.getObject(sAlternateKeysPath),
+							oCodeListBinding,
+							sKeyPath = getKeyPath(oType.$Key),
+							sKeyAnnotationPathPrefix = sTypePath + sKeyPath
+								+ "@com.sap.vocabularies.Common.v1.",
+							aSelect,
+							sScalePropertyPath,
+							sStandardCodePath = sTypePath + sKeyPath
+								+ "@com.sap.vocabularies.CodeList.v1.StandardCode/$Path",
+							sStandardPropertyPath,
+							sTextPropertyPath;
+
+						/*
+						 * Adds customizing for a single code to the result map. Ignores customizing
+						 * where the unit-specific scale is missing, and logs an error for this.
+						 *
+						 * @param {object} mCode2Customizing
+						 *   Map from code to its customizing
+						 * @param {sap.ui.model.odata.v4.Context} oContext
+						 *   Context for a single code's customizing
+						 * @returns {object}
+						 *   <code>mCode2Customizing</code>
+						 */
+						function addCustomizing(mCode2Customizing, oContext) {
+							var sCode = oContext.getProperty(sKeyPath),
+								oCustomizing = {
+									Text : oContext.getProperty(sTextPropertyPath),
+									UnitSpecificScale : oContext.getProperty(sScalePropertyPath)
+								};
+
+							if (sStandardPropertyPath) {
+								oCustomizing.StandardCode
+									= oContext.getProperty(sStandardPropertyPath);
+							}
+							if (oCustomizing.UnitSpecificScale === null) {
+								Log.error("Ignoring customizing w/o unit-specific scale for code "
+										+ sCode + " from " + oCodeList.CollectionPath,
+									oCodeList.Url, sODataMetaModel);
+							} else {
+								mCode2Customizing[sCode] = oCustomizing;
+							}
+
+							return mCode2Customizing;
+						}
+
+						/*
+						 * @param {object[]} aKeys
+						 *   The type's keys
+						 * @returns {string}
+						 *   The property path to the type's single key
+						 * @throws {Error}
+						 *   If the type does not have a single key
+						 */
+						function getKeyPath(aKeys) {
+							var vKey;
+
+							if (aKeys && aKeys.length === 1) {
+								vKey = aKeys[0];
+							} else {
+								throw new Error("Single key expected: " + sTypePath);
+							}
+
+							return typeof vKey === "string" ? vKey : vKey[Object.keys(vKey)[0]];
+						}
+
+						if (aAlternateKeys) {
+							if (aAlternateKeys.length !== 1) {
+								throw new Error("Single alternative expected: "
+									+ sAlternateKeysPath);
+							} else if (aAlternateKeys[0].Key.length !== 1) {
+								throw new Error("Single key expected: " + sAlternateKeysPath
+									+ "/0/Key");
+							}
+							sKeyPath = aAlternateKeys[0].Key[0].Name.$PropertyPath;
+						}
+
+						sScalePropertyPath = oCodeListMetaModel
+							.getObject(sKeyAnnotationPathPrefix + "UnitSpecificScale/$Path");
+						sTextPropertyPath = oCodeListMetaModel
+							.getObject(sKeyAnnotationPathPrefix + "Text/$Path");
+						aSelect = [sKeyPath, sScalePropertyPath, sTextPropertyPath];
+
+						sStandardPropertyPath = oCodeListMetaModel.getObject(sStandardCodePath);
+						if (sStandardPropertyPath) {
+							aSelect.push(sStandardPropertyPath);
+						}
+
+						oCodeListBinding = oCodeListModel.bindList(
+							"/" + oCodeList.CollectionPath, null, null, null,
+							{$select : aSelect});
+						oCodeListBinding.attachChange(function () {
+							try {
+								resolve(oCodeListBinding.getContexts(0, Infinity)
+									.reduce(addCustomizing, {}));
+							} catch (e) {
+								reject(e);
+							}
+						});
+						oCodeListBinding.attachDataReceived(function (oEvent) {
+							var oError = oEvent.getParameter("error");
+
+							if (oError) {
+								reject(oError);
+							}
+						});
+						oCodeListBinding.getContexts(0, Infinity);
+					});
+				});
+				mCodeListUrl2Promise.set(sCacheKey, oPromise);
+
+				return oPromise;
+			});
+	};
+
+	/**
+	 * Request currency customizing based on the code list reference given in the entity container's
+	 * <code>com.sap.vocabularies.CodeList.v1.CurrencyCodes</code> annotation.
+	 *
+	 * @param {any} [vRawValue]
+	 *   If present, it must be this meta model's root entity container
+	 * @param {object} [oDetails]
+	 *   The details object
+	 * @param {sap.ui.model.Context} [oDetails.context]
+	 *   If present, it must point to this meta model's root entity container, that is,
+	 *   <code>oDetails.context.getModel() === this</code> and
+	 *   <code>oDetails.context.getPath() === "/"</code>
+	 * @returns {Promise}
+	 *   A promise resolving with the currency customizing which is a map from currency key to an
+	 *   object with the following properties:
+	 *   <ul>
+	 *   <li>StandardCode: The language-independent standard code (e.g. ISO) for the currency as
+	 *     referred to via the <code>com.sap.vocabularies.CodeList.v1.StandardCode</code> annotation
+	 *     on the currency's key, if present
+	 *   <li>Text: The language-dependent text for the currency as referred to via the
+	 *     <code>com.sap.vocabularies.Common.v1.Text</code> annotation on the currency's key
+	 *   <li>UnitSpecificScale: The decimals for the currency as referred to via the
+	 *     <code>com.sap.vocabularies.Common.v1.UnitSpecificScale</code> annotation on the
+	 *     currency's key; entries where this would be <code>null</code> are ignored, and an error
+	 *     is logged
+	 *   </ul>
+	 *   It resolves with <code>null</code>, if no
+	 *   <code>com.sap.vocabularies.CodeList.v1.CurrencyCodes</code> annotation is found.
+	 *   It is rejected, if there is not exactly one currency key, or if the currency customizing
+	 *   cannot be loaded.
+	 * @throws {Error}
+	 *   If <code>vRawValue</code> or <code>oDetails.context</code> are present, but unsupported
+	 *
+	 * @public
+	 * @see #requestUnitsOfMeasure
+	 * @since 1.63.0
+	 */
+	ODataMetaModel.prototype.requestCurrencyCodes = function (vRawValue, oDetails) {
+		return this.requestCodeList("CurrencyCodes", vRawValue, oDetails);
+	};
+
+	/**
 	 * Requests a snapshot of each $metadata or annotation file loaded so far, combined into a
 	 * single "JSON" object according to the streamlined OData V4 Metadata JSON Format. It is a
 	 * map from all currently known qualified names to their values, with the special key
@@ -2099,11 +2339,12 @@ sap.ui.define([
 	 * refer to a function in <code>mParameters.scope</code> in case of a relative name starting
 	 * with a dot, which is stripped before lookup; see the <code>&lt;template:alias></code>
 	 * instruction for XML Templating. In case of an absolute name, it is searched in
-	 * <code>mParameters.scope</code> first and then in the global namespace. The name
-	 * "requestUnitsOfMeasure" defaults to {@link #requestUnitsOfMeasure} if not present in
-	 * <code>mParameters.scope</code>. This function is called with the current object (or primitive
-	 * value) and additional details and returns the result of this {@link #requestObject} call. The
-	 * additional details are given as an object with the following properties:
+	 * <code>mParameters.scope</code> first and then in the global namespace. The names
+	 * "requestCurrencyCodes" and "requestUnitsOfMeasure" default to {@link #requestCurrencyCodes}
+	 * and {@link #requestUnitsOfMeasure} resp. if not present in <code>mParameters.scope</code>.
+	 * This function is called with the current object (or primitive value) and additional details
+	 * and returns the result of this {@link #requestObject} call. The additional details are given
+	 * as an object with the following properties:
 	 * <ul>
 	 * <li><code>{boolean} $$valueAsPromise</code> Whether the computed annotation may return a
 	 *   <code>Promise</code> resolving with its value (since 1.57.0)
@@ -2224,12 +2465,14 @@ sap.ui.define([
 	 *   A promise resolving with the unit customizing which is a map from unit key to an object
 	 *   with the following properties:
 	 *   <ul>
+	 *   <li>StandardCode: The language-independent standard code (e.g. ISO) for the unit as
+	 *     referred to via the <code>com.sap.vocabularies.CodeList.v1.StandardCode</code> annotation
+	 *     on the unit's key, if present
 	 *   <li>Text: The language-dependent text for the unit as referred to via the
 	 *     <code>com.sap.vocabularies.Common.v1.Text</code> annotation on the unit's key
 	 *   <li>UnitSpecificScale: The decimals for the unit as referred to via the
 	 *     <code>com.sap.vocabularies.Common.v1.UnitSpecificScale</code> annotation on the unit's
-	 *     key
-	 *   <li>
+	 *     key; entries where this would be <code>null</code> are ignored, and an error is logged
 	 *   </ul>
 	 *   It resolves with <code>null</code>, if no
 	 *   <code>com.sap.vocabularies.CodeList.v1.UnitOfMeasure</code> annotation is found.
@@ -2239,126 +2482,11 @@ sap.ui.define([
 	 *   If <code>vRawValue</code> or <code>oDetails.context</code> are present, but unsupported
 	 *
 	 * @public
+	 * @see #requestCurrencyCodes
 	 * @since 1.63.0
 	 */
 	ODataMetaModel.prototype.requestUnitsOfMeasure = function (vRawValue, oDetails) {
-		var mScope = this.fetchEntityContainer().getResult(),
-			oEntityContainer = mScope[mScope.$EntityContainer],
-			that = this;
-
-		if (oDetails && oDetails.context) {
-			if (oDetails.context.getModel() !== this || oDetails.context.getPath() !== "/") {
-				throw new Error("Unsupported context: " + oDetails.context);
-			}
-		}
-		if (vRawValue !== undefined && vRawValue !== oEntityContainer) {
-			throw new Error("Unsupported raw value: " + vRawValue);
-		}
-
-		return this.requestObject("/@com.sap.vocabularies.CodeList.v1.UnitsOfMeasure")
-			.then(function (oUnitsOfMeasure) {
-				var sCacheKey,
-					oCodeListMetaModel,
-					oCodeListModel,
-					oPromise,
-					sTypePath;
-
-				if (!oUnitsOfMeasure) {
-					return null;
-				}
-
-				sCacheKey = that.getAbsoluteServiceUrl(oUnitsOfMeasure.Url)
-					+ "#" + oUnitsOfMeasure.CollectionPath;
-				oPromise = mCodeListUrl2Promise.get(sCacheKey);
-				if (oPromise) {
-					return oPromise;
-				}
-
-				oCodeListModel = that.getOrCreateSharedModel(oUnitsOfMeasure.Url, "$direct");
-				oCodeListMetaModel = oCodeListModel.getMetaModel();
-				sTypePath = "/" + oUnitsOfMeasure.CollectionPath + "/";
-				oPromise = oCodeListMetaModel.requestObject(sTypePath).then(function (oType) {
-					return new Promise(function (resolve, reject) {
-						var sAlternateKeysPath = sTypePath + "@Org.OData.Core.V1.AlternateKeys",
-							aAlternateKeys = oCodeListMetaModel.getObject(sAlternateKeysPath),
-							oCodeListBinding,
-							sKeyPath = getKeyPath(oType.$Key),
-							sKeyAnnotationPathPrefix = sTypePath + sKeyPath
-								+ "@com.sap.vocabularies.Common.v1.",
-							sScalePropertyPath,
-							sTextPropertyPath;
-
-						/*
-						 * @param {object[]} aKeys
-						 *   The type's keys
-						 * @returns {string}
-						 *   The property path to the type's single key
-						 * @throws {Error}
-						 *   If the type does not have a single key
-						 */
-						function getKeyPath(aKeys) {
-							var vKey;
-
-							if (aKeys && aKeys.length === 1) {
-								vKey = aKeys[0];
-							} else {
-								throw new Error("Single key expected: " + sTypePath);
-							}
-
-							return typeof vKey === "string" ? vKey : vKey[Object.keys(vKey)[0]];
-						}
-
-						if (aAlternateKeys) {
-							if (aAlternateKeys.length !== 1) {
-								throw new Error("Single alternative expected: "
-									+ sAlternateKeysPath);
-							} else if (aAlternateKeys[0].Key.length !== 1) {
-								throw new Error("Single key expected: " + sAlternateKeysPath
-									+ "/0/Key");
-							}
-							sKeyPath = aAlternateKeys[0].Key[0].Name.$PropertyPath;
-						}
-
-						sScalePropertyPath = oCodeListMetaModel
-							.getObject(sKeyAnnotationPathPrefix + "UnitSpecificScale").$Path;
-						sTextPropertyPath = oCodeListMetaModel
-							.getObject(sKeyAnnotationPathPrefix + "Text").$Path;
-						oCodeListBinding = oCodeListModel.bindList(
-							"/" + oUnitsOfMeasure.CollectionPath, null, null, null, {
-								$select : [sKeyPath, sScalePropertyPath, sTextPropertyPath]
-							});
-						oCodeListBinding.attachChange(function () {
-							var aContexts,
-								mUnits = {};
-
-							try {
-								aContexts = oCodeListBinding.getContexts(0, Infinity);
-								aContexts.forEach(function (oContext) {
-									mUnits[oContext.getProperty(sKeyPath)] = {
-										Text : oContext.getProperty(sTextPropertyPath),
-										UnitSpecificScale : oContext.getProperty(sScalePropertyPath)
-											|| 0 // ABAP sends null and has a default of 0
-									};
-								});
-								resolve(mUnits);
-							} catch (e) {
-								reject(e);
-							}
-						});
-						oCodeListBinding.attachDataReceived(function (oEvent) {
-							var oError = oEvent.getParameter("error");
-
-							if (oError) {
-								reject(oError);
-							}
-						});
-						oCodeListBinding.getContexts(0, Infinity);
-					});
-				});
-				mCodeListUrl2Promise.set(sCacheKey, oPromise);
-
-				return oPromise;
-			});
+		return this.requestCodeList("UnitsOfMeasure", vRawValue, oDetails);
 	};
 
 	/**

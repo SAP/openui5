@@ -474,6 +474,28 @@ sap.ui.define([
 		},
 
 		/**
+		 * Searches the incoming request in the list of expected requests by comparing the URL.
+		 * Removes the found request from the list.
+		 *
+		 * @param {object} oActualRequest The actual request
+		 * @returns {object} The matching expected request or undefined if none was found
+		 */
+		consumeExpectedRequest : function (oActualRequest) {
+			var oExpectedRequest, i;
+
+			if (this.aRequests.length === 1) {
+				return this.aRequests.shift(); // consume the one and only candidate to get a diff
+			}
+			for (i = 0; i < this.aRequests.length; i += 1) {
+				oExpectedRequest = this.aRequests[i];
+				if (oExpectedRequest.url === oActualRequest.url) {
+					this.aRequests.splice(i, 1);
+					return oExpectedRequest;
+				}
+			}
+		},
+
+		/**
 		 * Creates a V4 OData model for V2 service <code>RMTSAMPLEFLIGHT</code>.
 		 *
 		 * @param {object} mModelParameters Map of parameters for model construction to enhance and
@@ -626,7 +648,7 @@ sap.ui.define([
 						headers : mHeaders,
 						payload : typeof vPayload === "string" ? JSON.parse(vPayload) : vPayload
 					},
-					oExpectedRequest = that.aRequests.shift(),
+					oExpectedRequest = that.consumeExpectedRequest(oActualRequest),
 					sIfMatchValue,
 					oResponse,
 					mResponseHeaders,
@@ -12926,13 +12948,14 @@ sap.ui.define([
 				"WeightMeasure" : "12.34",
 				"WeightUnit" : "KG"
 			})
-			.expectRequest("UnitsOfMeasure?$select=ExternalCode,DecimalPlaces,Text", {
+			.expectRequest("UnitsOfMeasure?$select=ExternalCode,DecimalPlaces,Text,ISOCode", {
 				value : [{
-				   "UnitCode" : "KG",
-				   "Text" : "Kilogramm",
-				   "DecimalPlaces" : 5,
-				   "ExternalCode" : "KG"
-			   }]
+					"ExternalCode" : "KG",
+					"DecimalPlaces" : 5,
+					"ISOCode" : "",
+					"Text" : "Kilogramm",
+					"UnitCode" : "KG"
+				}]
 			})
 			.expectChange("weightMeasure", "12.340")  // Scale=3 in property metadata => 3 decimals
 			.expectChange("weight", "12.34000 KG");
