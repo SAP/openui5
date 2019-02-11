@@ -17,7 +17,9 @@ sap.ui.define([
 	var MyObject = ManagedObject.extend("MyObject", {
 		metadata: {
 			properties: {
-				value: {type: "string"}
+				value: {type: "string"},
+				objectValue: {type: "object"},
+				anyValue: {type: "any"}
 			}
 		}
 	});
@@ -91,43 +93,72 @@ sap.ui.define([
 			this.model = new JSONModel({
 				string: "foo"
 			});
-			this.object1 = new MyObject({
-				value: {
-					path: "", // path needed to identifiy binding info
-					value: "test"
-				}
-			});
-			this.object2 = new MyObject({
-				value: "{value:123}"
-			});
-			this.object3 = new MyObject({
-				models: this.model,
-				value: {
-					parts:[
-						{path: "/string"},
-						{value: "bar"}
-					]
-				}
-			});
 		},
 		afterEach: function() {
-			this.object1 = null;
-			this.object2 = null;
-			this.object3 = null;
+			this.model = null;
 		}
 	});
 
-	QUnit.test("Getter", function(assert) {
-		assert.equal(this.object1.getValue(), "test", "object getter returns static value");
-		assert.equal(this.object2.getValue(), 123, "object getter returns static value");
-		assert.equal(this.object3.getValue(), "foo bar", "object getter returns static value");
+	QUnit.test("Binding info as JS object, string property", function(assert) {
+		var object = new MyObject({
+			value: {
+				value: "test"
+			}
+		});
+		assert.ok(object.getBindingInfo("value"), "binding info is created");
+		assert.equal(object.getValue(), "test", "object getter returns static value");
+	});
+
+	QUnit.test("Binding info as JS object, object property", function(assert) {
+		var object = new MyObject({
+			objectValue: {
+				value: "test"
+			}
+		});
+		assert.notOk(object.getBindingInfo("value"), "binding info is not created");
+		assert.deepEqual(object.getObjectValue(), { value: "test" }, "object getter returns object for object properties");
+	});
+
+	QUnit.test("Binding info as JS object, any property", function(assert) {
+		var object = new MyObject({
+			anyValue: {
+				value: "test"
+			}
+		});
+		assert.notOk(object.getBindingInfo("value"), "binding info is not created");
+		assert.deepEqual(object.getAnyValue(), { value: "test" }, "object getter returns object for object properties");
+	});
+
+	QUnit.test("Binding info as string", function(assert) {
+		var object = new MyObject({
+			value: "{value:123}"
+		});
+		assert.equal(object.getValue(), 123, "object getter returns static value");
+	});
+
+	QUnit.test("Binding info composite binding", function(assert) {
+		var object = new MyObject({
+			models: this.model,
+			value: {
+				parts:[
+					{path: "/string"},
+					{value: "bar"}
+				]
+			}
+		});
+		assert.equal(object.getValue(), "foo bar", "object getter returns static value");
 	});
 
 	QUnit.test("Value change", function(assert) {
-		this.object1.setValue("control");
-		assert.equal(this.object1.getBinding("value").getValue(), "control", "Control property updates binding value");
-		this.object1.getBinding("value").setValue("binding");
-		assert.equal(this.object1.getValue(), "binding", "Binding updates control property value");
+		var object = new MyObject({
+			value: {
+				value: "test"
+			}
+		});
+		object.setValue("control");
+		assert.equal(object.getBinding("value").getValue(), "control", "Control property updates binding value");
+		object.getBinding("value").setValue("binding");
+		assert.equal(object.getValue(), "binding", "Binding updates control property value");
 	});
 
 });
