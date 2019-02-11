@@ -237,6 +237,12 @@ sap.ui.define([
 					only: ["sap/ui/rta/command/AppDescriptorCommand"]
 				}
 			},
+			"command/CustomAdd": {
+				group: "Command",
+				coverage: {
+					only: ["sap/ui/rta/command/CustomAdd"]
+				}
+			},
 			"command/Combine": {
 				group: "Command",
 				coverage: {
