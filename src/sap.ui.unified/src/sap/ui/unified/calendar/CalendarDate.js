@@ -192,6 +192,14 @@ sap.ui.define([
 		};
 
 		/**
+		 * Retrieves the date era.
+		 * @returns {int} era
+		 */
+		CalendarDate.prototype.getEra = function() {
+			return this._oUDate.getUTCEra();
+		};
+
+		/**
 		 * Compares the current date to the given date.
 		 * @param {sap.ui.unified.calendar.CalendarDate} oCalendarDate to compare with.
 		 * @returns {boolean} true if the current date preceds the given calendar date, false otherwise
