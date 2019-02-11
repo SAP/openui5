@@ -1759,6 +1759,10 @@ function(
 	 * @private
 	 */
 	ViewSettingsDialog.prototype._initFilterDetailItems = function(oItem) {
+		if (!(oItem instanceof sap.m.ViewSettingsFilterItem)) {
+			return;
+		}
+
 		var oListItem;
 		var bMultiSelectMode = oItem.getMultiSelect();
 		var aSubFilters = oItem.getItems();
