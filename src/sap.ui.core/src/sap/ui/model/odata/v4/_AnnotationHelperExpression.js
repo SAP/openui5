@@ -22,9 +22,6 @@ sap.ui.define([
 		// a simple binding (see sap.ui.base.BindingParser.simpleParser) to "@i18n" model
 		// w/o bad chars (see _AnnotationHelperBasics: rBadChars) inside path!
 		rI18n = /^\{@i18n>[^\\\{\}:]+\}$/,
-		// data types with number as internal representation
-		aNumberBased = ["Edm.Byte", "Edm.Double", "Edm.Int16", "Edm.Int32", "Edm.SByte",
-			"Edm.Single"],
 		mOData2JSOperators = { // mapping of OData operator to JavaScript operator
 			And : "&&",
 			Eq : "===",
@@ -417,6 +414,72 @@ sap.ui.define([
 		},
 
 		/**
+		 * Fetch the result object for a currency or a unit.
+		 * If <code>oPathValue.path</code> references a property which has an
+		 * <code>Org.OData.Measures.V1.ISOCurrency</code> annotation, a composite result object for
+		 * a <code>sap.ui.model.odata.type.Currency</code> type with the currency, the currency code
+		 * and the currency customizing as parts is returned.
+		 * If <code>oPathValue.path</code> references a property which has an
+		 * <code>Org.OData.Measures.V1.Unit</code> annotation, a composite result object for a
+		 * <code>sap.ui.model.odata.type.Unit</code> type with the measures, the unit and the unit
+		 * customizing as parts is returned.
+		 *
+		 * @param {object} oPathValue
+		 *   model, path and value information pointing to the path (see Expression object)
+		 * @param {string} sType
+		 *   the type of the property referenced by <code>oPathValue.path</code>
+		 * @param {object} mConstraints
+		 *   the type constraints for the property referenced by <code>oPathValue.path</code>
+		 * @returns {sap.ui.base.SyncPromise}
+		 *   a sync promise which resolves with a result object for the currency or unit;
+		 *   returns <code>undefined</code> if there are no unit and currency annotations for the
+		 *   property referenced by <code>oPathValue.path</code>; or it is rejected with an error
+		 */
+		fetchCurrencyOrUnit : function (oPathValue, sType, mConstraints) {
+			var sCompositeType = "sap.ui.model.odata.type.Unit",
+				sComputedAnnotation = "@@requestUnitsOfMeasure",
+				oModel = oPathValue.model,
+				sPath = oPathValue.path + "@Org.OData.Measures.V1.Unit/$Path",
+				sPrefix = oPathValue.prefix,
+				sTargetPath = oModel.getObject(sPath);
+
+			function getBinding(mConstraints0, sType0, sPath0) {
+				return Basics.resultToString({
+						constraints : mConstraints0,
+						result : "binding",
+						type : sType0,
+						value : sPrefix + sPath0
+					}, false, true);
+			}
+
+			if (!sTargetPath) {
+				sCompositeType = "sap.ui.model.odata.type.Currency";
+				sComputedAnnotation = "@@requestCurrencyCodes";
+				sPath = oPathValue.path + "@Org.OData.Measures.V1.ISOCurrency/$Path";
+				sTargetPath = oModel.getObject(sPath);
+			}
+			if (!sTargetPath) {
+				return undefined;
+			}
+			return oModel.fetchObject(sPath + "/$").then(function (oTarget) {
+				return {
+					result : "composite",
+					type : sCompositeType,
+					value : (mType2Category[sType] === "number"
+							? "{formatOptions:{parseAsString:false},"
+							: "{")
+						+ "mode:'TwoWay',parts:["
+						+ getBinding(mConstraints, sType, oPathValue.value)
+						+ ","
+						+ getBinding(oModel.getConstraints(oTarget, sPath), oTarget.$Type,
+							sTargetPath)
+						+ ",{mode:'OneTime',path:'/##" + sComputedAnnotation + "',targetType:'any'}"
+						+ "],type:'" + sCompositeType + "'}"
+				};
+			});
+		},
+
+		/**
 		 * Handling of "14.5.3.1.2 Function odata.fillUriTemplate".
 		 *
 		 * @param {object} oPathValue
@@ -641,7 +704,11 @@ sap.ui.define([
 		/**
 		 * Handling of "14.5.12 Expression edm:Path" and "14.5.13 Expression edm:PropertyPath".
 		 * If <code>oPathValue.path</code> references a property which has an
-		 * <code>Org.OData.Measures.V1.Unit</code> annotation, a composite binding info for a
+		 * <code>Org.OData.Measures.V1.ISOCurrency</code> annotation, a composite result object for
+		 * a <code>sap.ui.model.odata.type.Currency</code> type with the currency, the currency code
+		 * and the currency customizing as parts is returned.
+		 * If <code>oPathValue.path</code> references a property which has an
+		 * <code>Org.OData.Measures.V1.Unit</code> annotation, a composite result object for a
 		 * <code>sap.ui.model.odata.type.Unit</code> type with the measures, the unit and the unit
 		 * customizing as parts is returned.
 		 *
@@ -662,50 +729,21 @@ sap.ui.define([
 			}
 
 			return oPromise.then(function (oProperty) {
-				var mConstraints, sUnitAnnotationPath, oUnitAnnotation, sUnitPath, sValue;
-
-				function getBinding(bAsString, vValue, oProperty0, mConstraints0) {
-					var oBinding = {
-							constraints : mConstraints0,
-							result : "binding",
-							type : oProperty0 && oProperty0.$Type,
-							value : oPathValue.prefix + vValue
-						};
-
-					return bAsString ? Basics.resultToString(oBinding, false, true) : oBinding;
-				}
+				var mConstraints,
+					oCurrencyOrUnitPromise,
+					sType = oProperty && oProperty.$Type;
 
 				if (oProperty && oPathValue.complexBinding) {
 					mConstraints = oModel.getConstraints(oProperty, oPathValue.path);
-					sUnitAnnotationPath = oPathValue.path + "@Org.OData.Measures.V1.Unit";
-					oUnitAnnotation = oModel.getObject(sUnitAnnotationPath);
-					sUnitPath = oUnitAnnotation && oUnitAnnotation.$Path;
-
-					if (sUnitPath) {
-						return oModel.fetchObject(sUnitAnnotationPath + "/$Path/$")
-							.then(function (oUnitProperty) {
-								var mUnitConstraints = oModel.getConstraints(oUnitProperty,
-										sUnitAnnotationPath + "/$Path");
-								sValue = (aNumberBased.indexOf(oProperty.$Type) >= 0
-										? "{formatOptions:{parseAsString:false},"
-										: "{")
-									+ "mode:'TwoWay',parts:["
-									+ getBinding(true, oPathValue.value, oProperty, mConstraints)
-									+ ","
-									+ getBinding(true, sUnitPath, oUnitProperty, mUnitConstraints)
-									+ ",{mode:'OneTime',path:'/##@@requestUnitsOfMeasure',"
-										+ "targetType:'any'}"
-									+ "],type:'sap.ui.model.odata.type.Unit'}";
-
-								return {
-									result : "composite",
-									type : "sap.ui.model.odata.type.Unit",
-									value : sValue
-								};
-							});
-					}
+					oCurrencyOrUnitPromise
+						= Expression.fetchCurrencyOrUnit(oPathValue, sType, mConstraints);
 				}
-				return getBinding(false, oPathValue.value, oProperty, mConstraints);
+				return oCurrencyOrUnitPromise || {
+					constraints : mConstraints,
+					result : "binding",
+					type : sType,
+					value : oPathValue.prefix + oPathValue.value
+				};
 			});
 		},
 

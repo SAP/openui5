@@ -155,9 +155,10 @@ sap.ui.define([
 				.withExactArgs(sinon.match.same(oProperty), sPath)
 				.exactly(bComplexBinding ? 1 : 0)
 				.returns(mConstraints);
-			oMetaModelMock.expects("getObject")
-				.withExactArgs(sPath + "@Org.OData.Measures.V1.Unit")
+			this.mock(Expression).expects("fetchCurrencyOrUnit")
 				.exactly(bComplexBinding ? 1 : 0)
+				.withExactArgs(sinon.match.same(oPathValue), "Edm.String",
+					sinon.match.same(mConstraints))
 				.returns(undefined);
 
 			// code under test
@@ -173,93 +174,160 @@ sap.ui.define([
 	});
 
 	//*********************************************************************************************
-	[
-		// no format options
-		"Edm.Decimal", "Edm.Int64",
-		// with format option parseAsString=false
-		"Edm.Byte", "Edm.Double", "Edm.Int16", "Edm.Int32", "Edm.SByte", "Edm.Single"
-	].forEach(function (sMeasureType, i) {
-		[false, true].forEach(function (bAsync) {
-			var sTitle = "path: for Unit type, bAsync = " + bAsync + ", measure type = "
-					+ sMeasureType;
+	QUnit.test("fetchCurrencyOrUnit: neither unit nor currency", function (assert) {
+		var oModel = {
+				getObject : function () {}
+			},
+			oModelMock = this.mock(oModel),
+			oPathValue = {
+				model : oModel,
+				path : "~path~",
+				prefix : "~prefix~",
+				value : "~value~"
+			};
+
+		oModelMock.expects("getObject")
+			.withExactArgs("~path~@Org.OData.Measures.V1.Unit/$Path")
+			.returns(undefined);
+		oModelMock.expects("getObject")
+			.withExactArgs("~path~@Org.OData.Measures.V1.ISOCurrency/$Path")
+			.returns(undefined);
+
+		// code under test
+		assert.strictEqual(Expression.fetchCurrencyOrUnit(oPathValue, "foo", {}), undefined);
+	});
+
+	//*********************************************************************************************
+	[true, false].forEach(function (bUnit) {
+		[
+			// no format options
+			"Edm.Decimal", "Edm.Int64",
+			// with format option parseAsString=false
+			"Edm.Byte", "Edm.Double", "Edm.Int16", "Edm.Int32", "Edm.SByte", "Edm.Single"
+		].forEach(function (sType, i) {
+			var sTitle = "fetchCurrencyOrUnit: " + (bUnit ? "Measure" : "Amount") + " type = "
+					+ sType;
 
 			QUnit.test(sTitle, function (assert) {
 				var oBasicsMock = this.mock(Basics),
 					mConstraints = {},
-					oMetaModel = {
+					oModel = {
+						fetchObject : function () {},
 						getConstraints : function () {},
-						getObject : function () {},
-						fetchObject : function () {}
+						getObject : function () {}
 					},
-					oMetaModelMock = this.mock(oMetaModel),
-					sPath = "/ProductList/@UI.LineItem/0/Value/$Path",
+					oModelMock = this.mock(oModel),
+					sPathForFetchObject,
 					oPathValue = {
-						complexBinding : true,
-						model : oMetaModel,
-						path : sPath,
-						prefix : "~prefix~/",
-						value : "WeightMeasure"
+						model : oModel,
+						path : "~path~",
+						prefix : "~prefix~",
+						value : "~value~"
 					},
-					oProperty = {
-						$Type : sMeasureType
+					oResult,
+					oTarget = {
+						$Type : "~type1~"
 					},
-					mUnitConstraints = {},
-					oUnitProperty = {
-						$Type : "Edm.String"
-					}, oResult;
+					mUnitOrCurrencyConstraints = {},
+					sValue = "~prefix~" + (bUnit ? "~unit~" : "~currency~");
 
-				oBasicsMock.expects("expectType")
-					.withExactArgs(sinon.match.same(oPathValue), "string");
-				oMetaModelMock.expects("fetchObject")
-					.withExactArgs("/ProductList/@UI.LineItem/0/Value/$Path/$")
-					.returns(SyncPromise.resolve(oProperty));
-				oMetaModelMock.expects("getConstraints")
-					.withExactArgs(sinon.match.same(oProperty), sPath)
-					.returns(mConstraints);
-				oMetaModelMock.expects("getObject")
-					.withExactArgs(sPath + "@Org.OData.Measures.V1.Unit")
-					.returns({$Path : "WeightUnit"});
-				oMetaModelMock.expects("fetchObject")
-					.withExactArgs(sPath + "@Org.OData.Measures.V1.Unit/$Path/$")
-					.returns(SyncPromise.resolve(bAsync
-						? Promise.resolve(oUnitProperty)
-						: oUnitProperty));
-				oMetaModelMock.expects("getConstraints")
-					.withExactArgs(sinon.match.same(oUnitProperty),
-						sPath + "@Org.OData.Measures.V1.Unit/$Path")
-					.returns(mUnitConstraints);
+				oModelMock.expects("getObject")
+					.withExactArgs("~path~@Org.OData.Measures.V1.Unit/$Path")
+					.returns(bUnit ? "~unit~" : undefined);
+				oModelMock.expects("getObject")
+					.exactly(bUnit ? 0 : 1)
+					.withExactArgs("~path~@Org.OData.Measures.V1.ISOCurrency/$Path")
+					.returns(!bUnit ? "~currency~" : undefined);
+
+				sPathForFetchObject = bUnit
+					? "~path~@Org.OData.Measures.V1.Unit/$Path/$"
+					: "~path~@Org.OData.Measures.V1.ISOCurrency/$Path/$";
+				oResult = bUnit
+					? {
+						result : "composite",
+						type : "sap.ui.model.odata.type.Unit",
+						value : "{" + (i > 1 ? "formatOptions:{parseAsString:false}," : "")
+							+ "mode:'TwoWay',parts:[~binding0~,~binding1~,{mode:'OneTime',"
+							+ "path:'/##@@requestUnitsOfMeasure',targetType:'any'}],"
+							+ "type:'sap.ui.model.odata.type.Unit'}"
+					}
+					: {
+						result : "composite",
+						type : "sap.ui.model.odata.type.Currency",
+						value : "{" + (i > 1 ? "formatOptions:{parseAsString:false}," : "")
+							+ "mode:'TwoWay',parts:[~binding0~,~binding1~,{mode:'OneTime',"
+							+ "path:'/##@@requestCurrencyCodes',targetType:'any'}],"
+							+ "type:'sap.ui.model.odata.type.Currency'}"
+					};
+				oModelMock.expects("fetchObject")
+					.withExactArgs(sPathForFetchObject)
+					.returns(SyncPromise.resolve(oTarget));
 				oBasicsMock.expects("resultToString")
 					.withExactArgs({
 							constraints : sinon.match.same(mConstraints),
 							result : "binding",
-							type : sMeasureType,
-							value : "~prefix~/WeightMeasure"
+							type : sType,
+							value : "~prefix~~value~"
 						}, false, true)
-					.returns("~Measure~");
+					.returns("~binding0~");
+				oModelMock.expects("getConstraints")
+					.withExactArgs(sinon.match.same(oTarget), sPathForFetchObject.slice(0, -2))
+					.returns(mUnitOrCurrencyConstraints);
 				oBasicsMock.expects("resultToString")
 					.withExactArgs({
-							constraints : sinon.match.same(mUnitConstraints),
+							constraints : sinon.match.same(mUnitOrCurrencyConstraints),
 							result : "binding",
-							type : "Edm.String",
-							value : "~prefix~/WeightUnit"
+							type : "~type1~",
+							value : sValue
 						}, false, true)
-					.returns("~Unit~");
+					.returns("~binding1~");
 
 				// code under test
-				oResult = Expression.path(oPathValue);
-
-				assert.strictEqual(oResult.isPending(), bAsync);
-
-				return oResult.then(function (oResult0) {
-					assert.deepEqual(oResult0, {
-						result : "composite",
-						type : "sap.ui.model.odata.type.Unit",
-						value : "{" + (i > 1 ? "formatOptions:{parseAsString:false}," : "")
-							+ "mode:'TwoWay',parts:[~Measure~,~Unit~,"
-							+ "{mode:'OneTime',path:'/##@@requestUnitsOfMeasure',"
-							+ "targetType:'any'}],type:'sap.ui.model.odata.type.Unit'}"
+				Expression.fetchCurrencyOrUnit(oPathValue, sType, mConstraints)
+					.then(function (oResult0) {
+						assert.deepEqual(oResult0, oResult);
 					});
-				});
+			});
+		});
+	});
+
+	//*********************************************************************************************
+	[false, true].forEach(function (bAsync) {
+		QUnit.test("path: with Currency/Unit, bAsync = " + bAsync, function (assert) {
+			var mConstraints = {},
+				oMetaModel = {
+					getConstraints : function () {},
+					fetchObject : function () {}
+				},
+				sPath = "/ProductList/@UI.LineItem/0/Value/$Path",
+				oPathValue = {
+					complexBinding : true,
+					model : oMetaModel,
+					path : sPath
+				},
+				oPromise,
+				oProperty = {$Type : "type"},
+				oResult = {};
+
+			this.mock(Basics).expects("expectType")
+				.withExactArgs(sinon.match.same(oPathValue), "string");
+			this.mock(oMetaModel).expects("fetchObject")
+				.withExactArgs("/ProductList/@UI.LineItem/0/Value/$Path/$")
+				.returns(SyncPromise.resolve(oProperty));
+			this.mock(oMetaModel).expects("getConstraints")
+				.withExactArgs(sinon.match.same(oProperty), sPath)
+				.returns(mConstraints);
+			this.mock(Expression).expects("fetchCurrencyOrUnit")
+				.withExactArgs(sinon.match.same(oPathValue), "type", sinon.match.same(mConstraints))
+				.returns(SyncPromise.resolve(bAsync ? Promise.resolve(oResult) : oResult));
+
+			// code under test
+			oPromise = Expression.path(oPathValue);
+
+			assert.strictEqual(oPromise.isPending(), bAsync);
+
+			return oPromise.then(function (oResult0) {
+				assert.strictEqual(oResult0, oResult);
 			});
 		});
 	});

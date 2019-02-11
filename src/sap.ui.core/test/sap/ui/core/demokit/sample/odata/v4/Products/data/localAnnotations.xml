@@ -18,6 +18,10 @@
 							<PropertyValue Property="Label" String="Weight" />
 							<PropertyValue Property="Value" Path="WeightMeasure" />
 						</Record>
+						<Record Type="com.sap.vocabularies.UI.v1.DataField">
+							<PropertyValue Property="Label" String="Price" />
+							<PropertyValue Property="Value" Path="Price" />
+						</Record>
 					</Collection>
 				</Annotation>
 			</Annotations>

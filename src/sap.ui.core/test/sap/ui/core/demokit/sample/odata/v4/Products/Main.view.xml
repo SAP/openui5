@@ -42,19 +42,16 @@
 				</columns>
 				<ColumnListItem>
 					<template:repeat list="{lineItem>}" var="field">
-						<template:with var="fieldControl"
-							path="field>Value/$Path@com.sap.vocabularies.Common.v1.FieldControl/">
-							<template:if test="{= ${fieldControl>$EnumMember}
-								=== 'com.sap.vocabularies.Common.v1.FieldControlType/ReadOnly' }">
-								<template:then>
-									<Text id="{field>Value/$Path}" text="{field>Value/@@format}"/>
-								</template:then>
-								<template:else>
-									<Input id="{field>Value/$Path}" textAlign="Right"
-										value="{field>Value/@@format}"/>
-								</template:else>
-							</template:if>
-						</template:with>
+						<template:if test="{= ${field>Value/$Path@com.sap.vocabularies.Common.v1.FieldControl/$EnumMember}
+							=== 'com.sap.vocabularies.Common.v1.FieldControlType/ReadOnly' }">
+							<template:then>
+								<Text id="{field>Value/$Path}" text="{field>Value/@@format}"/>
+							</template:then>
+							<template:else>
+								<Input id="{field>Value/$Path}" textAlign="Right"
+									value="{field>Value/@@format}"/>
+							</template:else>
+						</template:if>
 					</template:repeat>
 				</ColumnListItem>
 			</Table>
