@@ -188,10 +188,10 @@ sap.ui.define([
 		}.bind(this);
 
 		assert.throws(fnAction, function(oErr) {
-			return !!oErr.message.match(/has no dom representation/);
+			return !!oErr.message.match(/has no focus DOM reference/);
 		}, "Exception has been thrown");
 
-		sinon.assert.calledWith(this.fnErrorSpy,  sinon.match(/has no dom representation/), sinon.match(oEnterText._sLogPrefix));
+		sinon.assert.calledWith(this.fnErrorSpy,  sinon.match(/has no focus DOM reference/), sinon.match(oEnterText._sLogPrefix));
 	});
 
 	QUnit.test("Should log a message if a control cannot be focused", function (assert) {

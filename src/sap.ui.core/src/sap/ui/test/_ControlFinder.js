@@ -94,7 +94,7 @@ sap.ui.define([
                 case "focus":
                     return oControl.getFocusDomRef();
                 case "press":
-                    var sIdSuffix = new Press()._getAdapter(oControl.getMetadata());
+                    var sIdSuffix = new Press()._getAdapter(oControl);
                     return oControl.$(sIdSuffix)[0];
                 case "auto":
                     return fnGetDefaultElement(oControl);

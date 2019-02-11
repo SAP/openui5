@@ -34,7 +34,8 @@ sap.ui.define([
 	"sap/ui/test/matchers/PropertyStrictEquals",
 	"sap/ui/test/matchers/Ancestor",
 	"sap/base/Log",
-	"sap/ui/thirdparty/jquery"
+	"sap/ui/thirdparty/jquery",
+	"sap/m/ObjectIdentifier"
 ],
 function(Press,
 		 Button,
@@ -70,7 +71,8 @@ function(Press,
 		 PropertyStrictEquals,
 		 Ancestor,
 		 Log,
-		 $
+		 $,
+		 ObjectIdentifier
 ){
 	"use strict";
 
@@ -462,7 +464,73 @@ function(Press,
 		});
 	})();
 
-	QUnit.module("SearchField",{
+	QUnit.module("Press - interact with ObjectIdentifier", {
+		beforeEach: function() {
+			this.oObjectIdentifier = new ObjectIdentifier({active: true});
+			this.oObjectIdentifier.placeAt("qunit-fixture");
+			sap.ui.getCore().applyChanges();
+		},
+		afterEach: function() {
+			this.oObjectIdentifier.destroy();
+		}
+	});
+
+	QUnit.test("Should press active ObjectIdentifier - press adapter", function (assert) {
+		var done = assert.async();
+		this.oObjectIdentifier.setTitle("sampleTitle");
+		this.oObjectIdentifier.setTitleActive(true);
+		sap.ui.getCore().applyChanges();
+
+		var oPressAction = new Press();
+
+		$("a").click(function () {
+			assert.ok(true, "Executed press action on link");
+			done();
+		});
+
+		oPressAction.executeOn(this.oObjectIdentifier);
+	});
+
+	QUnit.test("Should press inactive ObjectIdentifier - press adapter", function (assert) {
+		var done = assert.async();
+		this.oObjectIdentifier.setTitle("sampleTitle");
+		this.oObjectIdentifier.setTitleActive(false);
+		this.oObjectIdentifier.setText("sampleText");
+		sap.ui.getCore().applyChanges();
+
+		var oPressAction = new Press();
+		var that = this;
+
+		$(".sapMObjectIdentifierTitle").click(function () {
+			assert.ok(true, "Executed press action on title");
+
+			that.oObjectIdentifier.setTitle(null);
+			sap.ui.getCore().applyChanges();
+
+			$(".sapMObjectIdentifierText").click(function () {
+				assert.ok(true, "Executed press action on text");
+				done();
+			});
+
+			oPressAction.executeOn(that.oObjectIdentifier);
+		});
+
+		oPressAction.executeOn(this.oObjectIdentifier);
+	});
+
+	QUnit.test("Should press ObjectIdentifier - missing press adapter", function (assert) {
+		var done = assert.async();
+		var oPressAction = new Press();
+
+		$(".sapMObjectIdentifier").click(function () {
+			assert.ok(true, "Executed press action on link");
+			done();
+		});
+
+		oPressAction.executeOn(this.oObjectIdentifier);
+	});
+
+	QUnit.module("Press - interact with SearchField", {
 		beforeEach: function() {
 			this.oSearchField = new SearchField();
 			this.oSearchField.placeAt("qunit-fixture");
@@ -474,38 +542,46 @@ function(Press,
 	});
 
 
-	QUnit.test("Should press a SearchField", function (assert) {
+	QUnit.test("Should press SearchField search icon - press adapter", function (assert) {
 		var done = assert.async();
-
-		// System under Test
 		var oPressAction = new Press();
 
-		this.oSearchField.attachSearch(function () {
-			// Assert
-			assert.ok(true, "Fired the event");
+		$("div[title='Search']").click(function () {
+			assert.ok(true, "Executed press action on search icon");
 			done();
 		});
 
-		// Act
 		oPressAction.executeOn(this.oSearchField);
 	});
 
-	QUnit.test("Should refresh a SearchField", function (assert) {
+	QUnit.test("Should press SearchField - missing press adapter", function (assert) {
+		var done = assert.async();
+		var oPressAction = new Press();
+
+		this.oSearchField.setShowSearchButton(false);
+		sap.ui.getCore().applyChanges();
+
+		$("input[type='search']").mousedown(function () {
+			assert.ok(true, "Executed press action on search input field (focus DOM ref)");
+			done();
+		});
+
+		oPressAction.executeOn(this.oSearchField);
+	});
+
+	QUnit.test("Should press SearchField - user provided ID suffix", function (assert) {
 		var done = assert.async();
 
 		this.oSearchField.setShowRefreshButton(true);
 		sap.ui.getCore().applyChanges();
 
-		// System under Test
-		var oPressAction = new Press();
+		var oPressAction = new Press({idSuffix: "reset"});
 
-		this.oSearchField.attachSearch(function () {
-			// Assert
-			assert.ok(true, "Fired the event");
+		$("div[title='Search']").click(function () {
+			assert.ok(true, "Executed press action on search button");
 			done();
 		});
 
-		// Act
 		oPressAction.executeOn(this.oSearchField);
 	});
 
