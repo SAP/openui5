@@ -353,16 +353,15 @@ sap.ui.define(["sap/base/util/now"], function(now) {
 	 * @private
 	 */
 	function log(iLevel, sMessage, sDetails, sComponent, fnSupportInfo) {
-		if (bLogSupportInfo) {
-			if (!fnSupportInfo && !sComponent && typeof sDetails === "function") {
-				fnSupportInfo = sDetails;
-				sDetails = "";
-			}
-			if (!fnSupportInfo && typeof sComponent === "function") {
-				fnSupportInfo = sComponent;
-				sComponent = "";
-			}
+		if (!fnSupportInfo && !sComponent && typeof sDetails === "function") {
+			fnSupportInfo = sDetails;
+			sDetails = "";
 		}
+		if (!fnSupportInfo && typeof sComponent === "function") {
+			fnSupportInfo = sComponent;
+			sComponent = "";
+		}
+
 		sComponent = sComponent || sDefaultComponent;
 		if (iLevel <= level(sComponent) ) {
 			var fNow =  now(),
