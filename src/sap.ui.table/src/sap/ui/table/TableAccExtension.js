@@ -567,7 +567,7 @@ sap.ui.define([
 
 			var sText = "";
 			if (!bHidden) {
-				var oRowAction = oRow.getAggregation("_rowAction");
+				var oRowAction = oRow.getRowAction();
 				if (oRowAction) {
 					var oInfo = oRowAction.getAccessibilityInfo();
 					if (oInfo) {
