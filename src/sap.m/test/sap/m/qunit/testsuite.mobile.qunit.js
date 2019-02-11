@@ -1,4 +1,6 @@
-sap.ui.define(function() {
+sap.ui.define([
+	"sap/ui/Device"
+], function(Device) {
 
 	"use strict";
 	return {
@@ -459,6 +461,7 @@ sap.ui.define(function() {
 				}
 			},
 			Ios7: {
+				skip: Device.browser.msie || Device.browser.firefox,
 				title: "QUnit Page for sap.m.Ios7",
 				qunit: {
 					version: 2

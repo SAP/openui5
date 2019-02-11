@@ -59,10 +59,6 @@ sap.ui.define([
 		oSinonSandbox.stub(window, "innerHeight", 1000 - iDifference);
 	}
 
-	//IE 9 cannot stub the window properties.
-	if (Device.browser.msie || Device.browser.firefox) {
-		return;
-	}
 
 	QUnit.module("initialization");
 
