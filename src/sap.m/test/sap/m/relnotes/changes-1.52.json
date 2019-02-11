@@ -3651,5 +3651,28 @@
         "references": []
       }
     ]
+  },
+  "1.52.25": {
+    "date": "February 2019",
+    "notes": [
+      {
+        "id": "63ce21b79c7e20078908b619c2729bd8fd736397",
+        "type": "FIX",
+        "text": " sap.m.ComboBox: QUnit fix",
+        "references": []
+      },
+      {
+        "id": "2c6304fd93e2793cd57f90bd0b8fada7ed81f5ab",
+        "type": "FIX",
+        "text": " sap.m.FacetFilter: Now the light version has correct screen reader output",
+        "references": []
+      },
+      {
+        "id": "b34d4d2016924ba03799c54fa4b49703c2396bc1",
+        "type": "FIX",
+        "text": " sap.m.MaskInput:pressing key in selected value for Android is fixed.",
+        "references": []
+      }
+    ]
   }
 }

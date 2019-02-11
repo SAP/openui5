@@ -249,5 +249,16 @@
         "references": []
       }
     ]
+  },
+  "1.52.25": {
+    "date": "February 2019",
+    "notes": [
+      {
+        "id": "26755e85fc79c20dd38eddb9ef81cfab067d2fff",
+        "type": "FIX",
+        "text": " sap.uxap.ObjectPageLayout: Non existing sub-section is now handled",
+        "references": []
+      }
+    ]
   }
 }

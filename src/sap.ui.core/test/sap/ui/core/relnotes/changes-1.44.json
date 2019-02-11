@@ -2260,5 +2260,34 @@
         "references": []
       }
     ]
+  },
+  "1.44.39": {
+    "date": "February 2019",
+    "notes": [
+      {
+        "id": "b7af3d850445aaf9596d2e4fc90825df20e2c76b",
+        "type": "FIX",
+        "text": " Device.js: use maxTouchPoints for touch support detection",
+        "references": []
+      },
+      {
+        "id": "0690c50e2b9cc6ad0dbd98aa05806bfd493bca75",
+        "type": "FIX",
+        "text": " ODataMessageParser: support \u0027transition\u0027 flag",
+        "references": []
+      },
+      {
+        "id": "19dc8d5c408b7ab29ab9a8ac4e24c75be9c5044b",
+        "type": "FIX",
+        "text": " ODataModel: memory leak",
+        "references": []
+      },
+      {
+        "id": "48c068c689d1d3410e24025635d70822238d4dee",
+        "type": "FIX",
+        "text": " v2.ODataModel: memory leak",
+        "references": []
+      }
+    ]
   }
 }

@@ -5154,5 +5154,28 @@
         "references": []
       }
     ]
+  },
+  "1.44.39": {
+    "date": "February 2019",
+    "notes": [
+      {
+        "id": "f14fceb7a5c08252fc07f46d8c0377073acbbe87",
+        "type": "FIX",
+        "text": " Dialog: Fixed dialog jumping when drag starts",
+        "references": []
+      },
+      {
+        "id": "17c07d337ac28e290be811f1056c8dd1e6eafa10",
+        "type": "FIX",
+        "text": " sap.m.Popover: Correct reposition",
+        "references": []
+      },
+      {
+        "id": "1f327d71787b0ace1b634e40a182c5e0f835bacc",
+        "type": "FIX",
+        "text": " sap.m.uploadCollectionItem : Fixed .csv file download issue.",
+        "references": []
+      }
+    ]
   }
 }

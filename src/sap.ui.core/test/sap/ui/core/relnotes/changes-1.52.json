@@ -1580,5 +1580,28 @@
         "references": []
       }
     ]
+  },
+  "1.52.25": {
+    "date": "February 2019",
+    "notes": [
+      {
+        "id": "bb2e8487f64cc366fe67f5bf18a2c6db999edccf",
+        "type": "FIX",
+        "text": " ODataMessageParser: support \u0027transition\u0027 flag",
+        "references": []
+      },
+      {
+        "id": "381daccc69cc1adbdcc317bbb586e010b0197258",
+        "type": "FIX",
+        "text": " ODataModel: memory leak",
+        "references": []
+      },
+      {
+        "id": "d0d50cd27db3713417c49c623fa24e62b3d4a337",
+        "type": "FIX",
+        "text": " core.DateFormat: fix am/pm parsing with pattern which contains \".\"",
+        "references": []
+      }
+    ]
   }
 }
