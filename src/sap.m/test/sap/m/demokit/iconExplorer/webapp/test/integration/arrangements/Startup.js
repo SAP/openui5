@@ -54,7 +54,7 @@ sap.ui.define([
 					settings : {
 						id : "iconexplorer"
 					},
-					async: true
+					manifest: true
 				},
 				hash: oOptions.hash
 			});
