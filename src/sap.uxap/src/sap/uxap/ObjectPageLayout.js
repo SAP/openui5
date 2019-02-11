@@ -507,6 +507,7 @@ sap.ui.define([
 		this._bDelayDOMBasedCalculations = true;    //delay before obtaining DOM metrics to ensure that the final metrics are obtained
 		this._iStoredScrollTop = 0; // used by RTA to restore state upon drag'n'drop operation
 		this._oStoredScrolledSubSectionInfo = {}; // used to (re)store the position within the currently scrolled section upon rerender
+		this._bHasSingleVisibleSubSection = false; // indicates if the page has only one visible subSection in total
 
 		// anchorbar management
 		this._bInternalAnchorBarVisible = true;
@@ -530,6 +531,7 @@ sap.ui.define([
 		this.iHeaderTitleHeight = 0;                // original height of the header title
 		this.iHeaderTitleHeightStickied = 0;        // height of the header title when stickied (can be different from the collapsed height because of isXXXAlwaysVisible options or text wrapping)
 		this.iAnchorBarHeight = 0;                  // original height of the anchorBar
+		this.iFooterHeight = 0;                     // original height of the anchorBar
 		this.iTotalHeaderSize = 0;                  // total size of headerTitle + headerContent
 
 		this._iREMSize = parseInt(jQuery("body").css("font-size"));
@@ -1425,6 +1427,7 @@ sap.ui.define([
 		this._setInternalAnchorBarVisible(bVisibleAnchorBar, bInvalidate);
 		this._oFirstVisibleSection = oFirstVisibleSection;
 		this._oFirstVisibleSubSection = this._getFirstVisibleSubSection(oFirstVisibleSection);
+		this._bHasSingleVisibleSubSection = (iVisibleSection === 1) && (iVisibleSubSections === 1);
 
 		if (bFirstSectionTitleHidden && (iFirstVisibleSectionVisibleSubSections === 1)) {
 			// Title propagation support - set the borrowed title Dom ID to the first AnchorBar button
@@ -2010,6 +2013,9 @@ sap.ui.define([
 		if (this.iScreenHeight === 0) {
 			return; // element is hidden or not in DOM => the resulting calculations would be invalid
 		}
+
+		this.iFooterHeight = this._getFooterHeight();
+
 		var iSubSectionIndex = -1;
 
 		this._aSectionBases.forEach(function (oSectionBase) {
@@ -2103,7 +2109,7 @@ sap.ui.define([
 				bIsFirstVisibleSubSection = bParentIsFirstVisibleSection && (iSubSectionIndex === 0); /* index of *visible* subSections is first */
 				bIsFullscreenSection = oSectionBase.hasStyleClass(ObjectPageSubSection.FIT_CONTAINER_CLASS);
 
-				oSectionBase._setHeight(this._computeSubSectionHeight(bIsFirstVisibleSubSection, bIsFullscreenSection));
+				oSectionBase._setHeight(this._computeSubSectionHeight(bIsFirstVisibleSubSection, bIsFullscreenSection, oInfo.positionTop));
 			}
 
 		}, this);
@@ -2149,9 +2155,11 @@ sap.ui.define([
 		return true; // return success flag
 	};
 
-	ObjectPageLayout.prototype._computeSubSectionHeight = function(bFirstVisibleSubSection, bFullscreenSection) {
+	ObjectPageLayout.prototype._computeSubSectionHeight = function(bFirstVisibleSubSection, bFullscreenSection, iSubSectionOffsetTop) {
 
-		var iSectionsContainerHeight;
+		var bIsTheOnlyVisibleSubSection = bFullscreenSection && this._bHasSingleVisibleSubSection,
+			iSectionsContainerHeight,
+			iRemainingSectionContentHeight;
 
 		if (!bFullscreenSection) {
 			return ""; // default height
@@ -2167,6 +2175,17 @@ sap.ui.define([
 			// => obtain container height when *snapped* header
 			iSectionsContainerHeight = this._getSectionsContainerHeight(true /*snapped header */);
 		}
+
+
+		if (bIsTheOnlyVisibleSubSection) {
+			// if we have a single fullscreen subsection [that takes the entire height of the sections container]
+			// => then the only *other* content in the sections container [besides the subSection]
+			// is the title of its parent section and the footer space
+			// => subtract the above heights from the subSection height to *avoid having a scrollbar*
+			iRemainingSectionContentHeight = (iSubSectionOffsetTop - this.iHeaderContentHeight - this.iAnchorBarHeight) + this.iFooterHeight;
+			iSectionsContainerHeight -= iRemainingSectionContentHeight;
+		}
+
 		return iSectionsContainerHeight + "px";
 	};
 
@@ -2301,18 +2320,13 @@ sap.ui.define([
 
 	ObjectPageLayout.prototype._checkContentBottomRequiresSnap = function(oSection) {
 		var bSnappedMode = false; // calculate for expanded mode
-		return this._getSectionPositionBottom(oSection, bSnappedMode) >= (this._getScrollableViewportHeight(bSnappedMode) + this._getSnapPosition());
+		return this._getSectionPositionBottom(oSection, bSnappedMode) > (this._getScrollableViewportHeight(bSnappedMode) + this._getSnapPosition());
 	};
 
 	ObjectPageLayout.prototype._computeSpacerHeight = function(oLastVisibleSubSection, iLastVisibleHeight, bAllowSpaceToSnapViaScroll, bStickyTitleMode) {
 
 		var iSpacerHeight,
-			iScrollableViewportHeight,
-			iFooterHeight;
-
-		if (this.getFooter() && this.getShowFooter()) {
-			iFooterHeight = this.$("footerWrapper").outerHeight();
-		}
+			iScrollableViewportHeight;
 
 		iScrollableViewportHeight = this._getScrollableViewportHeight(bStickyTitleMode);
 
@@ -2336,8 +2350,8 @@ sap.ui.define([
 			iSpacerHeight = 0;
 		}
 
-		if (iFooterHeight > iSpacerHeight) {
-			iSpacerHeight += iFooterHeight;
+		if ((this.iFooterHeight > iSpacerHeight)) {
+			iSpacerHeight += this.iFooterHeight;
 		}
 
 		return iSpacerHeight;
@@ -4052,6 +4066,19 @@ sap.ui.define([
 		}
 
 		return sAriaLabelText;
+	};
+
+	/**
+	 * Returns the footer height, by either obtaining its DOM element height
+	 * or directly returning 0 if no visible footer
+	 * @returns {number}
+	 * @private
+	 */
+	ObjectPageLayout.prototype._getFooterHeight = function () {
+		if (this.getFooter() && this.getShowFooter()) {
+			return this._getDOMRefHeight(this.$("footerWrapper").get(0));
+		}
+		return 0;
 	};
 
 	/*

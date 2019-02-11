@@ -1237,7 +1237,6 @@ function($, Core, Lib, ObjectPageSection, ObjectPageSubSectionClass, BlockBase, 
 		var oPage = this.oObjectPage,
 			oSection = this.oObjectPage.getSections()[0],
 			oSubSection = oSection.getSubSections()[0],
-			oSpy = sinon.spy(oSubSection, "_setHeight"),
 			done = assert.async();
 
 		//act
@@ -1246,8 +1245,30 @@ function($, Core, Lib, ObjectPageSection, ObjectPageSubSectionClass, BlockBase, 
 		//setup
 		oPage.attachEventOnce("onAfterRenderingDOMReady", function() {
 			//check
-			var iViewportHeight = oPage._getScrollableViewportHeight(false);
-			assert.ok(oSpy.calledWith(iViewportHeight + "px"), true, "_setHeight is called");
+			var iViewportHeight = oPage._getScrollableViewportHeight(false),
+				iOffsetTop = oSubSection.$().position().top,
+				iExpectedSubSectionHeight = Math.round(iViewportHeight - iOffsetTop);
+			assert.ok(oSubSection.$().height(), iExpectedSubSectionHeight, "_setHeight is called");
+			done();
+		}, this);
+	});
+
+	QUnit.test("single subSection with sapUxAPObjectPageSubSectionFitContainer no scrolling", function (assert) {
+		var oPage = this.oObjectPage,
+			oSection = this.oObjectPage.getSections()[0],
+			oSubSection = oSection.getSubSections()[0],
+			done = assert.async();
+
+		//act
+		oSubSection.addStyleClass(ObjectPageSubSectionClass.FIT_CONTAINER_CLASS);
+
+		//setup
+		oPage.attachEventOnce("onAfterRenderingDOMReady", function() {
+			//check
+			function isPageScrollable() {
+				return oPage._$opWrapper.get(0).scrollHeight > oPage._$opWrapper.get(0).offsetHeight;
+			}
+			assert.strictEqual(isPageScrollable(), false, "no scrolling when single subsection fits container");
 			done();
 		}, this);
 	});
