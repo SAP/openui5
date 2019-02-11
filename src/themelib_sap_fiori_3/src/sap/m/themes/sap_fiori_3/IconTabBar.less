@@ -198,7 +198,19 @@
 }
 
 .sapMITBContentArrow {
-	border-radius: 0.125rem 0.125rem 0 0;
+	border-bottom: none;
+	position: relative;
+
+	// creates border bottom with rounded top corners
+	&::after {
+		content: "";
+		position: absolute;
+		bottom: 0;
+		left: 0;
+		right: 0;
+		border-bottom: @_sap_m_IconTabBar_ContentArrowBorderWidth solid transparent;
+		border-radius: 0.125rem 0.125rem 0 0;
+	}
 }
 
 .sapMITBHorizontal.sapMITBFilter {
@@ -309,23 +321,23 @@
 
 .sapMITBSelected {
 
-	> .sapMITBContentArrow {
+	> .sapMITBContentArrow::after {
 		border-bottom-color: @_sap_m_IconTabBar_SelectedTextColor;
 	}
 
-	&.sapMITBFilterNeutral > .sapMITBContentArrow {
+	&.sapMITBFilterNeutral > .sapMITBContentArrow::after {
 		border-bottom-color: @sapUiNeutralElement;
 	}
 
-	&.sapMITBFilterPositive > .sapMITBContentArrow {
+	&.sapMITBFilterPositive > .sapMITBContentArrow::after {
 		border-bottom-color: @sapUiPositiveElement;
 	}
 
-	&.sapMITBFilterNegative > .sapMITBContentArrow {
+	&.sapMITBFilterNegative > .sapMITBContentArrow::after {
 		border-bottom-color: @sapUiNegativeElement;
 	}
 
-	&.sapMITBFilterCritical > .sapMITBContentArrow {
+	&.sapMITBFilterCritical > .sapMITBContentArrow::after {
 		border-bottom-color: @sapUiCriticalElement;
 	}
 
