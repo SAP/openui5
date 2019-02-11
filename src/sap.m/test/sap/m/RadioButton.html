@@ -148,6 +148,13 @@
                             new sap.m.RadioButton("warning-vbox-button-notselected", {groupName:'v05', selected: false, valueState: sap.ui.core.ValueState.Warning, text: 'Not Selected'})
                         ]
                     }),
+                    new sap.m.VBox("success-vbox", {
+                        items: [
+                            new sap.m.Label({text: 'Success'}),
+                            new sap.m.RadioButton({groupName:'successGroup', selected: true, valueState: sap.ui.core.ValueState.Success, text: 'Selected'}),
+                            new sap.m.RadioButton("success-vbox-button-notselected", {groupName:'successGroup', selected: false, valueState: sap.ui.core.ValueState.Success, text: 'Not Selected'})
+                        ]
+                    }),
                     new sap.m.VBox("information-vbox", {
                         items: [
                             new sap.m.Label({text: 'Information'}),
@@ -193,6 +200,13 @@
                             new sap.m.Label({text: 'Warning Read Only'}),
                             new sap.m.RadioButton({groupName:'v10', selected: true, valueState: sap.ui.core.ValueState.Warning, text: 'Selected', editable: false}),
                             new sap.m.RadioButton({groupName:'v10', selected: false, valueState: sap.ui.core.ValueState.Warning, text: 'Not Selected', editable: false}),
+                        ]
+                    }),
+                    new sap.m.VBox({
+                        items: [
+                            new sap.m.Label({text: 'Success Read Only'}),
+                            new sap.m.RadioButton({groupName:'successROGroup', selected: true, valueState: sap.ui.core.ValueState.Success, text: 'Selected', editable: false}),
+                            new sap.m.RadioButton({groupName:'successROGroup', selected: false, valueState: sap.ui.core.ValueState.Success, text: 'Not Selected', editable: false}),
                         ]
                     }),
                     new sap.m.VBox({
