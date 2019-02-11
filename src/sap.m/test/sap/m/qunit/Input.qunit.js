@@ -3785,7 +3785,6 @@ sap.ui.define([
 			sap.ui.getCore().applyChanges();
 		},
 		afterEach: function () {
-
 			this.oInput.destroy();
 			this.oInput = null;
 		}
@@ -3807,6 +3806,23 @@ sap.ui.define([
 		sap.ui.test.qunit.triggerKeydown(this.oInput.getFocusDomRef(), "ENTER");
 		this.clock.tick(300);
 		assert.equal(fnFireChangeSpy.callCount , 1 , "Change event should be fired");
+	});
+
+	QUnit.test("Change event should be fired only once when there is a proposed item", function(assert) {
+
+		var fnFireChangeSpy = this.spy(this.oInput, "fireChange");
+		this.oInput.onfocusin();
+		this.oInput._$input.focus().val("u").trigger("input");
+		this.clock.tick(300);
+
+		this.oInput._oSuggPopover._bDoTypeAhead = true;
+		this.oInput._oSuggPopover._handleTypeAhead();
+
+		this.oInput.onsapfocusleave({relatedControlId: null});
+		document.getElementById('i2-inner').focus();
+
+		this.clock.tick(300);
+		assert.equal(fnFireChangeSpy.callCount , 1 , "Change event should be fired only once");
 	});
 
 	return waitForThemeApplied();
