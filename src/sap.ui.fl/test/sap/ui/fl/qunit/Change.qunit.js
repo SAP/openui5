@@ -113,65 +113,86 @@ function(
 			var oChange = new Change(this.oChangeDef);
 			assert.equal(oChange.getProperty("applyState"), Change.applyState.INITIAL, "initially the state is INITIAL");
 
+			oChange.setQueuedForApply();
 			oChange.startApplying();
 			assert.equal(oChange.getProperty("applyState"), Change.applyState.APPLYING, "the applyState got changed correctly");
 			assert.ok(oChange.hasApplyProcessStarted(), "the function returns the correct value");
+			assert.notOk(oChange.isCurrentProcessFinished());
+			assert.notOk(oChange.isQueuedForRevert());
+			assert.ok(oChange.isQueuedForApply());
 
 			oChange.markFinished();
 			assert.equal(oChange.getProperty("applyState"), Change.applyState.APPLY_FINISHED, "the applyState got changed correctly");
 			assert.ok(oChange.isApplyProcessFinished(), "the function returns the correct value");
+			assert.ok(oChange.isCurrentProcessFinished());
+			assert.notOk(oChange.isQueuedForRevert());
+			assert.notOk(oChange.isQueuedForApply());
 
+			oChange.setQueuedForRevert();
 			oChange.startReverting();
 			assert.equal(oChange.getProperty("applyState"), Change.applyState.REVERTING, "the applyState got changed correctly");
 			assert.ok(oChange.hasRevertProcessStarted(), "the function returns the correct value");
+			assert.notOk(oChange.isCurrentProcessFinished());
+			assert.ok(oChange.isQueuedForRevert());
+			assert.notOk(oChange.isQueuedForApply());
 
 			oChange.markRevertFinished();
 			assert.equal(oChange.getProperty("applyState"), Change.applyState.REVERT_FINISHED, "the applyState got changed correctly");
 			assert.ok(oChange.isRevertProcessFinished(), "the function returns the correct value");
+			assert.ok(oChange.isCurrentProcessFinished());
+			assert.notOk(oChange.isQueuedForRevert());
+			assert.notOk(oChange.isQueuedForApply());
 		});
 
-		QUnit.test("Change.QUEUED_FOR_REVERT", function(assert) {
+		QUnit.test("ChangeProcessingPromise: resolve", function(assert) {
+			var done = assert.async();
 			var oChange = new Change(this.oChangeDef);
-			assert.notOk(oChange.QUEUED_FOR_REVERT, "initially the change is not queued");
+			var oPromise = oChange.addPromiseForApplyProcessing();
+			var oPromise2 = oChange.addChangeProcessingPromise(Change.operations.REVERT);
 
-			oChange.setQueuedForRevert();
-			assert.ok(oChange.QUEUED_FOR_REVERT, "the queued flag was turned to true");
-			assert.ok(oChange.isQueuedForRevert(), "the function returns the correct value");
+			Promise.all([oPromise, oPromise2])
+			.then(function() {
+				assert.ok(true, "the function resolves");
+				done();
+			});
 
+			oChange.markFinished();
 			oChange.markRevertFinished();
-			assert.notOk(oChange.QUEUED_FOR_REVERT, "the queued flag was turned to false");
-			assert.notOk(oChange.isQueuedForRevert(), "the function returns the correct value");
 		});
 
-		QUnit.test("ChangeProcessingPromise resolve", function(assert) {
+		QUnit.test("ChangeProcessingPromise: reject", function(assert) {
 			var done = assert.async();
 			var oChange = new Change(this.oChangeDef);
-			var oPromise = oChange.addChangeProcessingPromise();
-			var oPromise2 = oChange.addChangeProcessingPromise();
+			var oPromise = oChange.addPromiseForApplyProcessing();
+			var oPromise2 = oChange.addChangeProcessingPromise(Change.operations.REVERT);
 
 			Promise.all([oPromise, oPromise2])
-			.then(function(aResult) {
-				assert.deepEqual(aResult[0], oChange, "the promise resolves with the change as result");
-				assert.deepEqual(aResult[1], oChange, "the promise resolves with the change as result");
+			.then(function() {
+				assert.ok(true, "the promises were resolved");
 				done();
 			});
 
-			oChange.resolveChangeProcessingPromises();
+			oChange.markFinished();
+			oChange.markRevertFinished();
 		});
 
-		QUnit.test("ChangeProcessingPromise reject", function(assert) {
+		QUnit.test("ChangeProcessingPromise: addChangeProcessingPromises", function(assert) {
 			var done = assert.async();
 			var oChange = new Change(this.oChangeDef);
-			var oPromise = oChange.addChangeProcessingPromise();
-			var oPromise2 = oChange.addChangeProcessingPromise();
+			oChange.setQueuedForApply();
+			oChange.setQueuedForRevert();
 
-			Promise.all([oPromise, oPromise2])
-			.catch(function(oResult) {
-				assert.deepEqual(oResult, oChange, "the promise rejects with the change as result");
+			var aPromises = oChange.addChangeProcessingPromises();
+			assert.equal(aPromises.length, 2, "two promises got added");
+
+			Promise.all(aPromises)
+			.then(function() {
+				assert.ok(true, "the function resolves");
 				done();
 			});
 
-			oChange.rejectChangeProcessingPromises();
+			oChange.markFinished();
+			oChange.markRevertFinished();
 		});
 
 		QUnit.test("Change.isVariant", function(assert) {

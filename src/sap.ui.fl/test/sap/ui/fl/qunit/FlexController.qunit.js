@@ -114,7 +114,9 @@ function (
 			var oChangeSpecificData = {};
 			var oControlType = {};
 			var oControl = {};
-			var oChange = {};
+			var oChange = {
+				setQueuedForApply: function() {}
+			};
 
 			sandbox.stub(this.oFlexController, "_getChangeHandler").returns(undefined);
 			sandbox.stub(JsControlTreeModifier, "getControlType").returns(oControlType);
@@ -2794,51 +2796,6 @@ function (
 			});
 		});
 
-		QUnit.test("rejects an exception if error occurs during adding custom data after change has been applied", function(assert) {
-			this.oXmlString =
-				'<mvc:View id="testComponent---myView" xmlns:mvc="sap.ui.core.mvc" xmlns="sap.m">' +
-					'<Label id="' + this.sLabelId  + '" />' +
-				'</mvc:View>';
-			this.oView = this.oDOMParser.parseFromString(this.oXmlString, "application/xml").documentElement;
-			this.oControl = this.oView.childNodes[0];
-			this.oAddAppliedCustomDataStub.restore();
-
-			// dependant promises
-			var oDependentChangePromise = new Promise(function(resolve, reject) {
-				this.oChange._aChangeProcessingPromises = [{
-					resolve: resolve,
-					reject: reject
-				}];
-				setTimeout(function() {
-					resolve("then dependent promise is not handled in FlexController and resolved in the test after timeout");
-				}, 1000);
-			}.bind(this))
-
-			.then(function(sMessage) {
-				assert.notOk(true, sMessage || "then dependent promise shouldn't be resolved");
-			})
-
-			.catch(function() {
-				assert.ok(true, "then dependent promises should be rejected as well");
-			});
-
-			sandbox.stub(XmlTreeModifier, "bySelector")
-				.onFirstCall().returns(false)
-				.onSecondCall().returns(true);
-			var oApplyChangePromise = this.oFlexController.checkTargetAndApplyChange(this.oChange, this.oControl, {modifier: XmlTreeModifier, view: this.oView})
-
-			.then(function(mResult) {
-				assert.notOk(mResult.success, "then the promise is resolved with parameter success: false");
-				assert.equal(mResult.error.message, "Can't create a control with duplicated ID undefined", "then the promise is resolved with the right error message");
-			})
-
-			.catch(function(vError) {
-				assert.notOk(true, "then the promise shouldn't be rejected");
-			});
-
-			return Promise.all([oDependentChangePromise, oApplyChangePromise]);
-		});
-
 		QUnit.test("adds custom data on the first change applied on a control", function (assert) {
 			this.oXmlString =
 				'<mvc:View id="testComponent---myView" xmlns:mvc="sap.ui.core.mvc" xmlns="sap.m">' +
@@ -3199,6 +3156,7 @@ function (
 
 			sandbox.stub(this.oFlexController, "_setMergeError");
 			this.oAddAppliedCustomDataSpy = sandbox.spy(FlexCustomData, "addAppliedCustomData");
+			this.oDestroyAppliedCustomDataSpy = sandbox.spy(FlexCustomData, "destroyAppliedCustomData");
 
 			this.oErrorLogStub = sandbox.stub(Log, "error");
 
@@ -3432,6 +3390,8 @@ function (
 			var oChangePromiseSpy3 = sandbox.spy(this.oChange3, "addChangeProcessingPromise");
 			var oChangePromiseSpy4 = sandbox.spy(this.oChange4, "addChangeProcessingPromise");
 
+			this.oFlexController._applyChangesOnControl(this.fnGetChangesMap, this.oComponent, this.oControl2);
+			this.oFlexController._applyChangesOnControl(this.fnGetChangesMap, this.oComponent, this.oControl);
 			this.oFlexController.waitForChangesToBeApplied(this.oControl)
 			.then(function() {
 				assert.equal(this.oAddAppliedCustomDataSpy.callCount, 3, "addCustomData was called 3 times");
@@ -3442,8 +3402,6 @@ function (
 				done();
 			}.bind(this));
 
-			this.oFlexController._applyChangesOnControl(this.fnGetChangesMap, this.oComponent, this.oControl2);
-			this.oFlexController._applyChangesOnControl(this.fnGetChangesMap, this.oComponent, this.oControl);
 		});
 
 		QUnit.test("with 4 async queued changes depending on on another and the last change already failed", function(assert) {
@@ -3520,7 +3478,7 @@ function (
 			return this.oFlexController.waitForChangesToBeApplied(this.oControl)
 			.then(function() {
 				assert.equal(this.oErrorLogStub.callCount, 1, "then the changeHandler threw an error");
-				assert.equal(this.oControl.getCustomData().length, 0,  "then the CustomData was never set");
+				assert.equal(this.oAddAppliedCustomDataSpy.callCount, 2, "two changes were applied");
 			}.bind(this));
 		});
 
@@ -3529,13 +3487,26 @@ function (
 			aChanges.forEach(function(oChange) {
 				oChange.markFinished();
 			});
-			var oDestroyAppliedCustomData = sinon.stub(FlexCustomData, "destroyAppliedCustomData");
 			this.mChanges.mChanges[this.sLabelId] = aChanges;
 			this.oFlexController.revertChangesOnControl(aChanges, this.oComponent);
 			return this.oFlexController.waitForChangesToBeApplied(this.oControl)
 			.then(function() {
-				assert.equal(oDestroyAppliedCustomData.callCount, 3, "all three changes got reverted");
-			});
+				assert.equal(this.oDestroyAppliedCustomDataSpy.callCount, 3, "all three changes got reverted");
+			}.bind(this));
+		});
+
+		QUnit.test("with 2 changes that are both queued for apply and revert", function(assert) {
+			var aChanges = [this.oChange, this.oChange2];
+			this.mChanges.mChanges[this.sLabelId] = aChanges;
+
+			this.oFlexController._applyChangesOnControl(this.fnGetChangesMap, this.oComponent, this.oControl);
+			this.oFlexController.revertChangesOnControl(aChanges, this.oComponent);
+
+			return this.oFlexController.waitForChangesToBeApplied(this.oControl)
+			.then(function() {
+				assert.equal(this.oAddAppliedCustomDataSpy.callCount, 2, "two changes were applied");
+				assert.equal(this.oDestroyAppliedCustomDataSpy.callCount, 2, "all two changes got reverted");
+			}.bind(this));
 		});
 
 		QUnit.test("with a variant switch going on", function(assert) {
