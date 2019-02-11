@@ -57,6 +57,13 @@
 		} else {
 			off = 'test';
 		}
+	} else {
+		// Create dummy test to report a "successful" test run.
+		// Ideally the skipped tests should be marked as "todo" instead of "skip"
+		// but this is not supported by the test reporting infrastructure
+		QUnit.test("Preconditions not met - skipping all tests", function(assert) {
+			assert.ok(true, "Preconditions not met - skipping all tests");
+		});
 	}
 
 	/*
