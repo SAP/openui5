@@ -6280,6 +6280,248 @@ sap.ui.define([
 	);
 
 	//*********************************************************************************************
+	// Scenario: updates for advertised action's title caused by: refresh, side effect of edit,
+	// bound action
+	// CPOUI5UISERVICESV3-905, CPOUI5UISERVICESV3-1714
+	//
+	// TODO automatic type determination cannot handle #com...AcSetIsAvailable/title
+	// TODO neither can autoExpandSelect
+	QUnit.test("Advertised actions: title updates", function (assert) {
+		var oModel = createTeaBusiModel(),
+			sView = '\
+<FlexBox binding="{/EMPLOYEES(\'2\')}" id="form">\
+	<Input id="name" value="{Name}" />\
+	<Text id="title" text="{\
+		path : \'#com.sap.gateway.default.iwbep.tea_busi.v0001.AcSetIsAvailable/title\',\
+		type : \'sap.ui.model.odata.type.String\'}" />\
+</FlexBox>',
+			that = this;
+
+		this.expectRequest("EMPLOYEES('2')", {
+				"#com.sap.gateway.default.iwbep.tea_busi.v0001.AcSetIsAvailable" : {
+					"title": "First Title"
+				},
+				"ID" : "2",
+				"Name" : "Frederic Fall"
+			})
+			.expectChange("name", "Frederic Fall")
+			.expectChange("title", "First Title");
+
+		return this.createView(assert, sView, oModel).then(function () {
+			var oContextBinding = that.oView.byId("form").getObjectBinding();
+
+			that.expectRequest("EMPLOYEES('2')", {
+					"#com.sap.gateway.default.iwbep.tea_busi.v0001.AcSetIsAvailable" : {
+						"title": "Second Title"
+					},
+					"ID" : "2",
+					"Name" : "Frederic Fall"
+				})
+				.expectChange("name", "Frederic Fall")
+				.expectChange("title", "Second Title");
+
+			// code under test
+			oContextBinding.refresh();
+
+			return that.waitForChanges(assert);
+		}).then(function () {
+			that.expectRequest({
+					"method": "PATCH",
+					"payload": {
+						"Name": "Frederic Spring"
+					},
+					"url": "EMPLOYEES('2')"
+				}, {
+					"#com.sap.gateway.default.iwbep.tea_busi.v0001.AcSetIsAvailable" : {
+						"title": "Third Title"
+					}
+//					"ID" : "2",
+//					"Name" : "Frederic Spring"
+				})
+				.expectChange("name", "Frederic Spring")
+				.expectChange("title", "Third Title");
+
+			// code under test
+			that.oView.byId("name").getBinding("value").setValue("Frederic Spring");
+
+			return that.waitForChanges(assert);
+		}).then(function () {
+			var sActionName = "com.sap.gateway.default.iwbep.tea_busi.v0001.AcChangeTeamOfEmployee",
+				oContext = that.oView.byId("form").getObjectBinding().getBoundContext(),
+				oActionBinding = oModel.bindContext(sActionName + "(...)", oContext);
+
+			that.expectRequest({
+					"method": "POST",
+					"payload": {
+						"TeamID": "TEAM_02"
+					},
+					"url": "EMPLOYEES('2')/" + sActionName
+				}, {
+					"#com.sap.gateway.default.iwbep.tea_busi.v0001.AcSetIsAvailable" : {
+						"title": "Fourth Title"
+					},
+					"ID" : "2",
+					"Name" : "Frederic Winter"
+				})
+				.expectChange("name", "Frederic Winter")
+				.expectChange("title", "Fourth Title");
+
+			// code under test
+			oActionBinding.setParameter("TeamID", "TEAM_02").execute();
+
+			return that.waitForChanges(assert);
+		});
+	});
+
+	//*********************************************************************************************
+	// Scenario: updates for advertised action (as an object) caused by: refresh, side effect of
+	// edit, bound action
+	// CPOUI5UISERVICESV3-905, CPOUI5UISERVICESV3-1714
+	QUnit.test("Advertised actions: object updates", function (assert) {
+		var oModel = createTeaBusiModel(),
+			sView = '\
+<FlexBox binding="{/EMPLOYEES(\'2\')}" id="form">\
+	<Text id="enabled"\
+		text="{= %{#com.sap.gateway.default.iwbep.tea_busi.v0001.AcSetIsAvailable} ? 1 : 0 }" />\
+	<Input id="name" value="{Name}" />\
+</FlexBox>',
+			that = this;
+
+		this.expectRequest("EMPLOYEES('2')", {
+				"#com.sap.gateway.default.iwbep.tea_busi.v0001.AcSetIsAvailable" : {},
+				"ID" : "2",
+				"Name" : "Frederic Fall"
+			})
+			.expectChange("enabled", 1)
+			.expectChange("name", "Frederic Fall");
+
+		return this.createView(assert, sView, oModel).then(function () {
+			var oContextBinding = that.oView.byId("form").getObjectBinding();
+
+			that.expectRequest("EMPLOYEES('2')", {
+					"#com.sap.gateway.default.iwbep.tea_busi.v0001.AcSetIsAvailable" : null,
+					"ID" : "2",
+					"Name" : "Frederic Fall"
+				})
+				// Note: "<code>false</code> to enforce listening to a template control" --> use 0!
+				.expectChange("enabled", 0)
+				.expectChange("name", "Frederic Fall");
+
+			// code under test
+			oContextBinding.refresh();
+
+			return that.waitForChanges(assert);
+		}).then(function () {
+			that.expectRequest({
+					"method": "PATCH",
+					"payload": {
+						"Name": "Frederic Spring"
+					},
+					"url": "EMPLOYEES('2')"
+				}, {
+					"#com.sap.gateway.default.iwbep.tea_busi.v0001.AcSetIsAvailable" : {}
+//					"ID" : "2",
+//					"Name" : "Frederic Spring"
+				})
+				.expectChange("enabled", 1)
+				.expectChange("name", "Frederic Spring");
+
+			// code under test
+			that.oView.byId("name").getBinding("value").setValue("Frederic Spring");
+
+			return that.waitForChanges(assert);
+		}).then(function () {
+			var sActionName = "com.sap.gateway.default.iwbep.tea_busi.v0001.AcChangeTeamOfEmployee",
+				oContext = that.oView.byId("form").getObjectBinding().getBoundContext(),
+				oActionBinding = oModel.bindContext(sActionName + "(...)", oContext);
+
+			that.expectRequest({
+					"method": "POST",
+					"payload": {
+						"TeamID": "TEAM_02"
+					},
+					"url": "EMPLOYEES('2')/" + sActionName
+				}, {
+					"ID" : "2",
+					"Name" : "Frederic Winter"
+				})
+				.expectChange("enabled", 0)
+				.expectChange("name", "Frederic Winter");
+
+			// code under test
+			oActionBinding.setParameter("TeamID", "TEAM_02").execute();
+
+			return that.waitForChanges(assert);
+		});
+	});
+
+	//*********************************************************************************************
+	// Scenario: updates for advertised action (as an object) incl. its title caused by bound action
+	// (refresh for sure works, side effect of edit works the same as bound action)
+	// CPOUI5UISERVICESV3-905, CPOUI5UISERVICESV3-1714
+	QUnit.test("Advertised actions: object & title updates", function (assert) {
+		var oActionBinding,
+			sActionName = "com.sap.gateway.default.iwbep.tea_busi.v0001.AcChangeTeamOfEmployee",
+			oModel = createTeaBusiModel(),
+			sView = '\
+<FlexBox binding="{/EMPLOYEES(\'2\')}" id="form">\
+	<Text id="enabled"\
+		text="{= %{#com.sap.gateway.default.iwbep.tea_busi.v0001.AcSetIsAvailable} ? 1 : 0 }" />\
+	<Text id="title" text="{\
+		path : \'#com.sap.gateway.default.iwbep.tea_busi.v0001.AcSetIsAvailable/title\',\
+		type : \'sap.ui.model.odata.type.String\'}" />\
+</FlexBox>',
+			that = this;
+
+		this.expectRequest("EMPLOYEES('2')", {
+				"#com.sap.gateway.default.iwbep.tea_busi.v0001.AcSetIsAvailable" : {
+					"title": "First Title"
+				},
+				"ID" : "2"
+			})
+			.expectChange("enabled", 1)
+			.expectChange("title", "First Title");
+
+		return this.createView(assert, sView, oModel).then(function () {
+			var oContext = that.oView.byId("form").getObjectBinding().getBoundContext();
+
+			oActionBinding = oModel.bindContext(sActionName + "(...)", oContext);
+			that.expectRequest({
+					"method": "POST",
+					"payload": {},
+					"url": "EMPLOYEES('2')/" + sActionName
+				}, {
+					"ID" : "2"
+				})
+				.expectChange("enabled", 0)
+				.expectChange("title", null);
+
+			// code under test
+			oActionBinding.execute();
+
+			return that.waitForChanges(assert);
+		}).then(function () {
+			that.expectRequest({
+					"method": "POST",
+					"payload": {},
+					"url": "EMPLOYEES('2')/" + sActionName
+				}, {
+					"#com.sap.gateway.default.iwbep.tea_busi.v0001.AcSetIsAvailable" : {
+						"title": "Second Title"
+					},
+					"ID" : "2"
+				})
+				.expectChange("enabled", 1)
+				.expectChange("title", "Second Title");
+
+			// code under test
+			oActionBinding.execute();
+
+			return that.waitForChanges(assert);
+		});
+	});
+
+	//*********************************************************************************************
 	// Scenario: master/detail with V2 adapter where the detail URI must be adjusted for V2
 	// Additionally properties of a contained complex type are used with auto-$expand/$select
 	QUnit.test("V2 adapter: master/detail", function (assert) {
