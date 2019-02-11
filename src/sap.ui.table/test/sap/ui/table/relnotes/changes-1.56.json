@@ -237,5 +237,28 @@
         "references": []
       }
     ]
+  },
+  "1.56.17": {
+    "date": "January 2019",
+    "notes": [
+      {
+        "id": "b2eacd9f2e45d8909c51b21b5e14939651410c93",
+        "type": "FIX",
+        "text": " Table: Avoid infinite rendering loop with fixed columns in Edge 44",
+        "references": []
+      },
+      {
+        "id": "1ae8266198f2a074c439cc6abc9589722dd729d3",
+        "type": "FIX",
+        "text": " Table: Fixed column layout corrected",
+        "references": []
+      },
+      {
+        "id": "bc8acb5d3116b0ef1cbd3b018fd2115e0e74ecf4",
+        "type": "FIX",
+        "text": " Table: Vertical scrollbar not visible in table with OData model",
+        "references": []
+      }
+    ]
   }
 }

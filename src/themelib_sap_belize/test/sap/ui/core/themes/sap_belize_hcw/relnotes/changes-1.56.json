@@ -276,5 +276,16 @@
         "references": []
       }
     ]
+  },
+  "1.56.17": {
+    "date": "January 2019",
+    "notes": [
+      {
+        "id": "c2d92a6af0a99a408190736948d0956b50488e96",
+        "type": "FIX",
+        "text": " Font 72 loading issue",
+        "references": []
+      }
+    ]
   }
 }

@@ -144,5 +144,22 @@
         "references": []
       }
     ]
+  },
+  "1.60.6": {
+    "date": "February 2019",
+    "notes": [
+      {
+        "id": "b8895f00b36ec81efb1615ba176c4c64b381a8c6",
+        "type": "FIX",
+        "text": " Table: Avoid duplicate id issues for rows",
+        "references": []
+      },
+      {
+        "id": "f4321753f0e6561af0081d99ff6dc6e7d7ede5a8",
+        "type": "FIX",
+        "text": " Table: Fixed column layout corrected",
+        "references": []
+      }
+    ]
   }
 }

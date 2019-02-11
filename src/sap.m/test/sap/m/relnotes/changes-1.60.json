@@ -1367,5 +1367,94 @@
         "references": []
       }
     ]
+  },
+  "1.60.6": {
+    "date": "February 2019",
+    "notes": [
+      {
+        "id": "263f5b4ab7d44507f25e9d68a272e635fa3a7e20",
+        "type": "FIX",
+        "text": " m.PlanningCalendar: Row tooltips are now shown",
+        "references": []
+      },
+      {
+        "id": "d00dd9a4f5fc3003dc9d0a54e5df0b1ee9367d8c",
+        "type": "FIX",
+        "text": " m.PlanningCalendar: Unnecessary row\u0027s role attribute removed",
+        "references": []
+      },
+      {
+        "id": "0784a211cb3409e39bb200778b33b9c05213bc5e",
+        "type": "FIX",
+        "text": " sap.m.Button: getCustomData function is overwritten inside CombineButtons",
+        "references": []
+      },
+      {
+        "id": "38d17f52eec9f45bbb5d344bd5e23a091d242bab",
+        "type": "FIX",
+        "text": " sap.m.CheckBox: Focus outline in a Form for IE11 fixed",
+        "references": []
+      },
+      {
+        "id": "d6cff3038530a6c64308982eef91942d45c848a1",
+        "type": "FIX",
+        "text": " sap.m.ComboBox: duplicated focus outline, spec implemented",
+        "references": []
+      },
+      {
+        "id": "5f91138b168fa612d7c24c801d46957fa0643234",
+        "type": "FIX",
+        "text": " sap.m.Combobox: QUnit fix",
+        "references": []
+      },
+      {
+        "id": "5426b47c1940cf771287a52ff63fc7086f015692",
+        "type": "FIX",
+        "text": " sap.m.DatePicker/TimePicker: hide picker icon when not editable",
+        "references": []
+      },
+      {
+        "id": "65b4a372df268d039a04e3000efc3e14e86743e5",
+        "type": "FIX",
+        "text": " sap.m.FacetFilter: Now the light version has correct screen reader output",
+        "references": []
+      },
+      {
+        "id": "58a2ee41413c3cc579863950aafe9e723e43e803",
+        "type": "FIX",
+        "text": " sap.m.FacetFilter: search on all binding parts for text",
+        "references": []
+      },
+      {
+        "id": "67daaaf42e896a0e6fb4f52b74bd7ce81805162c",
+        "type": "FIX",
+        "text": " sap.m.InputBase: Adjust flex properties for input content container",
+        "references": []
+      },
+      {
+        "id": "1329831f4985b84f3bc85e5117a190065ed1c641",
+        "type": "FIX",
+        "text": " sap.m.MultiInput: Deregister resize handler while resizing",
+        "references": []
+      },
+      {
+        "id": "ff10bf051422572ed90f18456d5513031e635438",
+        "type": "FIX",
+        "text": " sap.m.ObjectAttribute: remove regex for the title",
+        "references": []
+      },
+      {
+        "id": "a11335a13fc24bd4a14532324ab11bd5f21d5748",
+        "type": "FIX",
+        "text": " sap.m.ObjectListItem: Markers layout fixed",
+        "references": []
+      },
+      {
+        "id": "3b466655d2361b2c3273cbc83ce750f9ef129ee0",
+        "type": "FIX",
+        "text": " sap.m.PlanningCalendar: Create appointment by dragging corrected",
+        "references": []
+      }
+    ]
   }
 }

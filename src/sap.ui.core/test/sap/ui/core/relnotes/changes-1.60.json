@@ -547,8 +547,39 @@
       }
     ]
   },
-  "1.60.4": {
-    "date": "January 2019",
-    "notes": []
+  "1.60.6": {
+    "date": "February 2019",
+    "notes": [
+      {
+        "id": "72da2e919114457d94e6b62864bce0d73d31c320",
+        "type": "FIX",
+        "text": " ODataMessageParser: support \u0027transition\u0027 flag",
+        "references": []
+      },
+      {
+        "id": "74e9a598c6274aab7daf8d8895f4dd1119be7565",
+        "type": "FIX",
+        "text": " ODataModel: Don\u0027t send CSRF token for GET requests",
+        "references": []
+      },
+      {
+        "id": "e9ae2f59535a880ab82c025c43991d7f48589f95",
+        "type": "FIX",
+        "text": " ODataModel: memory leak",
+        "references": []
+      },
+      {
+        "id": "ecf2ec898549a9476811f29e18ff74253b579a04",
+        "type": "FIX",
+        "text": " core.DateFormat: fix am/pm parsing with pattern which contains \".\"",
+        "references": []
+      },
+      {
+        "id": "ff020bdb7089f2fa6ef461a0e0ad605ba9a54d66",
+        "type": "FIX",
+        "text": " util/Storage: fixed removeAll function",
+        "references": []
+      }
+    ]
   }
 }

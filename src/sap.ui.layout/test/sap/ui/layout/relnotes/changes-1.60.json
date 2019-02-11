@@ -103,5 +103,16 @@
         "references": []
       }
     ]
+  },
+  "1.60.6": {
+    "date": "February 2019",
+    "notes": [
+      {
+        "id": "6c9f7ce1a030c2cac964308a4f863c3bbe6cd187",
+        "type": "FIX",
+        "text": " sap.ui.layout.BlockLayout: Correctly displayed in a Dialog in IE",
+        "references": []
+      }
+    ]
   }
 }
