@@ -13,6 +13,12 @@
         "type": "FIX",
         "text": " Table: Fixed column layout corrected",
         "references": []
+      },
+      {
+        "id": "aec4f87ee719a55f9e4f5c5fe5d38ef807c70afa",
+        "type": "FIX",
+        "text": " Table: Alignment of row actions if zoomed in Chrome corrected",
+        "references": []
       }
     ]
   }

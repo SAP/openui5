@@ -13,6 +13,12 @@
         "type": "FIX",
         "text": " ui.unified.FileUploader: Accessibility description adjusted",
         "references": []
+      },
+      {
+        "id": "f150a47ec49ddb1d01dde561f51e1c9791e9f43d",
+        "type": "FIX",
+        "text": " sap.ui.unified.CalendarOneMonthInterval: Now arrow navigation is correct",
+        "references": []
       }
     ]
   }
