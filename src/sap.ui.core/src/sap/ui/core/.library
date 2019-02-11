@@ -322,6 +322,9 @@
         <lib name="array-polyfills" displayName="Array.prototype Polyfills" homepage="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Array/">
         	<license url="https://developer.mozilla.org/en-US/docs/MDN/About#Copyrights_and_licenses" type="CC0 1.0 Universal (CC0 1.0) Public Domain Dedication" file="../thirdparty/licenses/array-polyfills-LICENSE.txt" />
         </lib>
+        <lib name="Element-getAttributeNames-polyfill" displayName="Element.prototype.getAttributeNames Polyfill" homepage="https://developer.mozilla.org/en-US/docs/Web/API/Element/getAttributeNames#Polyfill">
+        	<license url="https://developer.mozilla.org/en-US/docs/MDN/About#Copyrights_and_licenses" type="CC0 1.0 Universal (CC0 1.0) Public Domain Dedication" file="../thirdparty/licenses/Element-getAttributeNames-LICENSE.txt" />
+        </lib>
         <lib name="object-assign-polyfill" displayName="Object.assign Polyfill" homepage="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Object/assign#Polyfill">
         	<license url="https://developer.mozilla.org/en-US/docs/MDN/About#Copyrights_and_licenses" type="CC0 1.0 Universal (CC0 1.0) Public Domain Dedication" file="../thirdparty/licenses/Object-assign-polyfill-LICENSE.txt" />
         </lib>
