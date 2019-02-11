@@ -951,5 +951,23 @@ function (
 		return oParentOverlay ? oParentOverlay.getElement() : undefined;
 	};
 
+	ElementOverlay.prototype._hasSameSize = function (mScrollContainerGeometry, sType) {
+		var aScrollContainers = this.getScrollContainers();
+		var iSize;
+
+		if (aScrollContainers.length) {
+			iSize = Util.max(
+				aScrollContainers.map(function (mScrollContainer, iIndex) {
+					var mGeometry = DOMUtil.getGeometry(this.getScrollContainerById(iIndex).get(0));
+					return mGeometry.size[sType];
+				}, this)
+			);
+		} else {
+			iSize = this.getGeometry().size[sType];
+		}
+
+		return mScrollContainerGeometry.size[sType] === iSize;
+	};
+
 	return ElementOverlay;
 }, /* bExport= */ true);

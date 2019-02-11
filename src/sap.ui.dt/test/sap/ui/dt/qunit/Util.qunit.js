@@ -406,6 +406,27 @@ function(
 		});
 	});
 
+	QUnit.module('max()', function () {
+		QUnit.test("when called with the array of numbers", function (assert) {
+			assert.strictEqual(Util.max([1, 2, 5, 3, 0]), 5);
+		});
+		QUnit.test("when called with the array of strings", function (assert) {
+			assert.strictEqual(Util.max(['1', '2', '5', '3', '0']), '5');
+		});
+		QUnit.test("when called with 1 element in the array", function (assert) {
+			assert.strictEqual(Util.max([1]), 1);
+		});
+		QUnit.test("when called with empty array", function (assert) {
+			assert.strictEqual(Util.max([]), undefined);
+		});
+		QUnit.test("when called without arguments", function (assert) {
+			assert.strictEqual(Util.max(), undefined);
+		});
+		QUnit.test("when called with non-array argument", function (assert) {
+			assert.strictEqual(Util.max(123), undefined);
+		});
+	});
+
 	QUnit.done(function() {
 		jQuery("#qunit-fixture").hide();
 	});

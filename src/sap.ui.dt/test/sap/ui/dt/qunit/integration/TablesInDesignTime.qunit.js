@@ -96,8 +96,6 @@ function (
 			var oScrollOverlay = oTableOverlay.getAggregationOverlay("hScroll");
 
 			var fnCallback = function() {
-				assert.ok(oTableOverlay.$()[0].className.indexOf("sapUiDtOverlayWithScrollBar") > -1, "then the ScrollBar Style Class was set");
-				assert.ok(oTableOverlay.$()[0].className.indexOf("sapUiDtOverlayWithScrollBarHorizontal") > -1, "then the ScrollBar Horizontal Style Class was set");
 				assert.strictEqual(this.oColumn.$().offset().left + 20, oInitialColumnOffset.left, "then columns are also scrolled");
 				assert.strictEqual(this.oColumn.$().offset().left + 20, oInitialColumnOffset.left, "if this test fails, check Table.designtime.js : hScroll and vScroll domRefs!");
 
@@ -178,8 +176,6 @@ function (
 			var oScrollOverlay = oTableOverlay.getAggregationOverlay("hScroll");
 
 			var fnCallback = function() {
-				assert.ok(oTableOverlay.$()[0].className.indexOf("sapUiDtOverlayWithScrollBar") > -1, "then the ScrollBar Style Class was set");
-				assert.ok(oTableOverlay.$()[0].className.indexOf("sapUiDtOverlayWithScrollBarHorizontal") > -1, "then the ScrollBar Horizontal Style Class was set");
 				assert.strictEqual(this.oColumn.$().offset().left + 20, oInitialColumnOffset.left, "then columns are also scrolled");
 				assert.strictEqual(this.oColumn.$().offset().left + 20, oInitialColumnOffset.left, "if this test fails, check AnalyticalTable.designtime.js : hScroll and vScroll domRefs!");
 
