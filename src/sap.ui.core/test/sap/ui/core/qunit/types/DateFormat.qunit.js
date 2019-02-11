@@ -1372,6 +1372,25 @@ sap.ui.define(["sap/ui/core/format/DateFormat", "sap/ui/core/Locale", "sap/ui/co
 			assert.equal(this.oErrorSpy.getCall(0).args[0], "Non-interval DateFormat can't format more than one date instance.");
 		});
 
+		QUnit.test("Check if end date is before start date", function (assert) {
+			var aParsedInterval,
+			 oIntervalFormat = DateFormat.getDateInstance({
+				interval: true,
+				strictParsing: true
+			});
+
+			var endDate = new Date(2018,1,1);
+			var startDate = new Date(2019,1,15);
+
+			// no strictParsing
+			aParsedInterval = this.oIntervalFormat.parse("Feb 15, 2019 – Feb 1, 2018");
+			assert.deepEqual(aParsedInterval, [startDate, endDate], "Parsed array is returned.");
+
+			// strictParsing
+			aParsedInterval = oIntervalFormat.parse("Feb 1, 2019 – Feb 15, 2018");
+			assert.deepEqual(aParsedInterval, [null, null], "[null, null] returned.");
+		});
+
 		QUnit.test("DateFormat with invalid date", function (assert) {
 			this.oFormat.format();
 			assert.equal(this.oErrorSpy.callCount, 1, "Error is logged");
