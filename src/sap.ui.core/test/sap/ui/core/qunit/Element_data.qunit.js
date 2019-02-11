@@ -1,12 +1,13 @@
-/*global QUnit */
+/*global QUnit, sinon */
 sap.ui.define([
+	"sap/base/Log",
 	"sap/ui/core/Element",
 	"sap/ui/core/CustomData",
 	"sap/ui/core/library",
 	"sap/ui/core/mvc/View",
 	"sap/ui/model/json/JSONModel",
 	"sap/m/Button"
-], function(Element, CustomData, library, View, JSONModel, Button) {
+], function(Log, Element, CustomData, library, View, JSONModel, Button) {
 	"use strict";
 
 	var ViewType = library.mvc.ViewType;
@@ -172,6 +173,61 @@ sap.ui.define([
 		assert.equal(object_data_ori.two, 3, "The object data of the original object should be changed as well, as only the reference to it is cloned");
 	});
 
+	QUnit.test("Calling data() after destroy", function(assert) {
+		// Setup: create an element, add some custom data and destroy it
+		this.stub(Log, "error");
+		var element = new Element();
+		element.data("test", "value");
+		element.destroy();
+
+		// Act/Assert
+
+		// get value for a single key
+		Log.error.resetHistory();
+		assert.strictEqual(element.data("test"), null, "no more custom data after destroy");
+		assert.strictEqual(Log.error.callCount, 0);
+
+		// get all key/value pairs
+		Log.error.resetHistory();
+		assert.deepEqual(element.data(), {}, "no more custom data after destroy");
+		assert.strictEqual(Log.error.callCount, 0);
+
+		// destroy  all
+		Log.error.resetHistory();
+		assert.strictEqual(element.data(null), element, "data(null) should return the element itself");
+		assert.strictEqual(element.getAggregation("customData"), null, "data(null) should not have modified aggregation 'customData'");
+		assert.strictEqual(Log.error.callCount, 0);
+
+		// add single key/value pairs
+		Log.error.resetHistory();
+		assert.strictEqual(element.data("a", "b"), element, "data(key,value) should return the element itself");
+		assert.strictEqual(element.getAggregation("customData"), null, "data(key,value) should not have modified aggregation 'customData'");
+		assert.ok(Log.error.calledWith(sinon.match(/Cannot create custom data on an already destroyed element/)));
+
+		// remove single key/value pairs
+		Log.error.resetHistory();
+		assert.strictEqual(element.data("a", null), element, "data(key,null) should return the element itself");
+		assert.strictEqual(element.getAggregation("customData"), null, "data(key,value) should not have modified aggregation 'customData'");
+		assert.strictEqual(Log.error.callCount, 0);
+
+		// add single key/value pair with DOM
+		Log.error.resetHistory();
+		assert.strictEqual(element.data("a", "b", false), element, "data(key,value,bool) should return the element itself");
+		assert.strictEqual(element.getAggregation("customData"), null, "data(key,value,bool) should not have modified aggregation 'customData'");
+		assert.ok(Log.error.calledWith(sinon.match(/Cannot create custom data on an already destroyed element/)));
+
+		// add single key/value pair with DOM
+		Log.error.resetHistory();
+		assert.strictEqual(element.data("a", "b", true), element, "data(key,value,bool) should return the element itself");
+		assert.strictEqual(element.getAggregation("customData"), null, "data(key,value,bool) should not have modified aggregation 'customData'");
+		assert.ok(Log.error.calledWith(sinon.match(/Cannot create custom data on an already destroyed element/)));
+
+		// add multiple key/value pairs
+		Log.error.resetHistory();
+		assert.strictEqual(element.data({a:"b",b:"c"}), element, "data({data}) should return the element itself");
+		assert.strictEqual(element.getAggregation("customData"), null, "data({data}) should not have modified aggregation 'customData'");
+		assert.ok(Log.error.calledWith(sinon.match(/Cannot create custom data on an already destroyed element/)));
+	});
 
 	// Data Binding
 
