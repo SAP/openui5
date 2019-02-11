@@ -11,16 +11,16 @@ sap.ui.define([
 
 	/*
 	 * Changes the value of the input control which matches the given <code>rId</code> and is in the
-	 * first line of a table to the given value. After that, sets the focus to a different to
-	 * trigger a PATCH for the update.
+	 * given row <code>iRow</code> of a table to the given value; changes the first row if none is
+	 * given. After that, sets the focus to a different field to trigger a PATCH for the update.
 	 */
-	function changeValue(oOpa, rId, sValue) {
+	function changeValue(oOpa, rId, sValue, iRow) {
 		return oOpa.waitFor({
 			actions : new EnterText({clearTextFirst : true, text : sValue}),
 			controlType : "sap.m.Input",
 			id : rId,
 			matchers : function (oControl) {
-				return oControl.getBindingContext().getIndex() === 0;
+				return oControl.getBindingContext().getIndex() === (iRow || 0);
 			},
 			success : function (aControls) {
 				var oInput = aControls[0];
@@ -32,7 +32,7 @@ sap.ui.define([
 				return oOpa.waitFor({
 					actions : new Press(),
 					matchers : function (oControl) {
-						return oControl.getBindingContext().getIndex() === 0;
+						return oControl.getBindingContext().getIndex() === (iRow || 0);
 					},
 					id : /ProductID/,
 					success : function (aControls) {
@@ -48,14 +48,15 @@ sap.ui.define([
 
 	/*
 	 * Checks whether the input control which matches the given <code>rId</code> and is in the
-	 * first line of a table has the given value state <code>sState</code>.
+	 * given row <code>iRow</code> of a table has the given value state <code>sState</code>; checks
+	 * the first row if none is given.
 	 */
-	function checkValueState(oOpa, rId, sState) {
+	function checkValueState(oOpa, rId, sState, iRow) {
 		return oOpa.waitFor({
 			controlType : "sap.m.Input",
 			id : rId,
 			matchers : function (oControl) {
-				return oControl.getBindingContext().getIndex() === 0;
+				return oControl.getBindingContext().getIndex() === (iRow || 0);
 			},
 			success : function (aControls) {
 				var oInput = aControls[0];
@@ -69,14 +70,15 @@ sap.ui.define([
 
 	/*
 	 * Checks whether the input control which matches the given <code>rId</code> and is in the
-	 * first line of a table has the given value <code>sValue</code>.
+	 * given row <code>iRow</code> of a table has the given value <code>sValue</code>; checks
+	 * the first row if none is given.
 	 */
-	function checkValue(oOpa, rId, sValue) {
+	function checkValue(oOpa, rId, sValue, iRow) {
 		return oOpa.waitFor({
 			controlType : "sap.m.Input",
 			id : rId,
 			matchers : function (oControl) {
-				return oControl.getBindingContext().getIndex() === 0;
+				return oControl.getBindingContext().getIndex() === (iRow || 0);
 			},
 			success : function (aControls) {
 				var oInput = aControls[0];
@@ -91,25 +93,25 @@ sap.ui.define([
 	Opa5.createPageObjects({
 		onTheMainPage : {
 			actions : {
-				changeMeasure : function (sValue) {
-					return changeValue(this, /WeightMeasure/, sValue);
+				changeMeasure : function (sValue, iRow) {
+					return changeValue(this, /WeightMeasure/, sValue, iRow);
 				},
-				changePrice : function (sValue) {
-					return changeValue(this, /Price/, sValue);
+				changePrice : function (sValue, iRow) {
+					return changeValue(this, /Price/, sValue, iRow);
 				}
 			},
 			assertions : {
-				checkMeasure : function (sValue) {
-					return checkValue(this, /WeightMeasure/, sValue);
+				checkMeasure : function (sValue, iRow) {
+					return checkValue(this, /WeightMeasure/, sValue, iRow);
 				},
-				checkMeasureValueState : function (sState) {
-					return checkValueState(this, /WeightMeasure/, sState);
+				checkMeasureValueState : function (sState, iRow) {
+					return checkValueState(this, /WeightMeasure/, sState, iRow);
 				},
-				checkPrice : function (sValue) {
-					return checkValue(this, /Price/, sValue);
+				checkPrice : function (sValue, iRow) {
+					return checkValue(this, /Price/, sValue, iRow);
 				},
-				checkPriceValueState : function (sState) {
-					return checkValueState(this, /Price/, sState);
+				checkPriceValueState : function (sState, iRow) {
+					return checkValueState(this, /Price/, sState, iRow);
 				}
 			}
 		}
