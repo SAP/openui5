@@ -15,7 +15,7 @@ sap.ui.define([
 	var mCustomizing2CustomUnits = new Map();
 
 	/**
-	 * Constructor for a Unit composite type.
+	 * Constructor for a <code>Unit</code> composite type.
 	 *
 	 * @param {object} [oFormatOptions]
 	 *   See parameter <code>oFormatOptions</code> of {@link sap.ui.model.type.Unit#constructor}.
@@ -33,9 +33,9 @@ sap.ui.define([
 	 *
 	 * @alias sap.ui.model.odata.type.Unit
 	 * @author SAP SE
-	 * @class This class represents the Unit composite type with the parts measure, unit, and
-	 * unit customizing. The measure part is formatted according to the customizing for the unit.
-	 * Use the result of the promise returned by
+	 * @class This class represents the <code>Unit</code> composite type with the parts measure,
+	 * unit, and unit customizing. The measure part is formatted according to the customizing for
+	 * the unit. Use the result of the promise returned by
 	 * {@link sap.ui.model.odata.v4.ODataMetaModel#requestUnitsOfMeasure} as unit customizing part.
 	 * If no unit customizing is available, UI5's default formatting applies. The type may only be
 	 * used for measure and unit parts from a {@link sap.ui.model.odata.v4.ODataModel}.
@@ -75,14 +75,15 @@ sap.ui.define([
 	});
 
 	/**
-	 * Formats the given values of the parts of the Unit composite type to the given target type.
+	 * Formats the given values of the parts of the <code>Unit</code> composite type to the given
+	 * target type.
 	 *
 	 * @param {any[]} aValues
 	 *   Array of part values to be formatted; contains measure, unit, unit customizing in this
 	 *   order. The first call to this method where all parts are set determines the unit
 	 *   customizing; subsequent calls use this customizing, so that the corresponding part may be
 	 *   omitted. Changes to the unit customizing part after this first method call are not
-	 *   considered: The unit customizing for this Unit instance remains unchanged.
+	 *   considered: The unit customizing for this <code>Unit</code> instance remains unchanged.
 	 * @param {string} sTargetType
 	 *   The target type; must be "string" or a type with "string" as its
 	 *   {@link sap.ui.base.DataType#getPrimitiveType primitive type}.
@@ -192,7 +193,7 @@ sap.ui.define([
 	};
 
 	/**
-	 * Does nothing as the Unit type does not support constraints.
+	 * Does nothing as the <code>Unit</code> type does not support constraints.
 	 *
 	 * @param {string} vValue
 	 *   The value to be validated
