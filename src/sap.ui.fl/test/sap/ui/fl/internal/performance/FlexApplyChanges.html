@@ -25,16 +25,37 @@
 		</script>
 
 		<script>
-			sap.ui.require([
-				'sap/ui/core/mvc/JSView',
-				"sap/ui/core/ComponentContainer",
-				'sap/ui/layout/VerticalLayout',
-				'sap/ui/layout/HorizontalLayout',
-				'sap/m/Label'
-			],
-			function(JSView, ComponentContainer, VerticalLayout, HorizontalLayout, Label) {
+			window.wpp = {
+				customMetrics: {}
+			};
 
+			sap.ui.require([
+				"sap/base/Log",
+				"sap/ui/core/mvc/JSView",
+				"sap/ui/core/mvc/Controller",
+				"sap/ui/core/ComponentContainer",
+				"sap/ui/core/Component",
+				"sap/ui/fl/FlexControllerFactory",
+				"sap/ui/fl/ChangePersistenceFactory",
+				"sap/ui/layout/VerticalLayout",
+				"sap/ui/layout/HorizontalLayout",
+				"sap/m/Label"
+			],
+			function(
+				BaseLog,
+				JSView,
+				Controller,
+				ComponentContainer,
+				Component,
+				FlexControllerFactory,
+				ChangePersistenceFactory,
+				VerticalLayout,
+				HorizontalLayout,
+				Label
+			) {
 				jQuery.sap.measure.setActive(true);
+				var oControlToBeChanged,
+					oAppComponent;
 
 				sap.ui.controller("my.own.controller", {});
 
@@ -45,11 +66,11 @@
 					},
 					createContent: function(oController) {
 						//create Vertical Layout
-						var oInitialLabel = new Label("initialLabel", {
+						oControlToBeChanged = new Label("initialLabel", {
 							text: "initialLabel"
 						});
 						var oLayout1 = new VerticalLayout("Layout1", {
-							content: [ oInitialLabel ]
+							content: [ oControlToBeChanged ]
 						});
 						window.oContainerLayout1 = new VerticalLayout({
 							id : "ContainerLayout1",
@@ -67,13 +88,42 @@
 					}
 				});
 
-				oComponentContainer = new ComponentContainer({
-					height : "100%",
-					component : sap.ui.component({ name: "Component", url: "./flexApplyChanges/" })
-				});
+				// start performance measurement
+				window.performance.mark("applyChangesMassive.start");
 
-				oComponentContainer.placeAt('content');
-				sap.ui.getCore().applyChanges();
+				Component.create({
+					name: "fl.performance.flexApplyChanges.Component",
+					url: "./flexApplyChanges/",
+					manifestFirst: true
+				})
+				.then(function(oComponent) {
+					oAppComponent = oComponent;
+					return new ComponentContainer({
+						height : "100%",
+						component : oAppComponent,
+						async: true
+					});
+				})
+				.then(function(oComponentContainer) {
+					oComponentContainer.placeAt('content');
+					sap.ui.getCore().applyChanges();
+					var mAppManifest = oAppComponent.getManifestEntry("sap.app");
+					return ChangePersistenceFactory
+						.getChangePersistenceForComponent(
+							"fl.performance.flexApplyChanges.Component",
+							mAppManifest.applicationVersion.version)
+						.getChangesForComponent();
+				})
+				.then(function() {
+					return FlexControllerFactory.createForControl(oAppComponent).waitForChangesToBeApplied(oControlToBeChanged)
+				})
+				.then(function() {
+					// stop performance measurement
+					window.performance.mark("applyChangesMassive.stop");
+					window.performance.measure("ApplyChangesMassive", "applyChangesMassive.start", "applyChangesMassive.stop");
+					window.wpp.customMetrics.applyChangesMassive = window.performance.getEntriesByName("ApplyChangesMassive")[0].duration;
+					BaseLog.info("ApplyChangesMassive = ", window.wpp.customMetrics.applyChangesMassive + "ms");
+				});
 			});
 		</script>
 	</head>

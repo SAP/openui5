@@ -2,7 +2,7 @@
 	"_version": "1.12.0",
 
 	"sap.app" : {
-		"id" : "fl.performance",
+		"id" : "fl.performance.flexApplyChanges",
 		"type": "application",
 		"title": "Flex - ApplyChanges",
 		"description": "mass applyChanges test",
