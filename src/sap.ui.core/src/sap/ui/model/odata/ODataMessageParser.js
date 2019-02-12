@@ -343,17 +343,18 @@ ODataMessageParser.prototype._createMessage = function(oMessageObject, mRequestI
 		bPersistent = true;
 	}
 
-	var sTarget = this._createTarget(oMessageObject, mRequestInfo);
+	this._createTarget(oMessageObject, mRequestInfo);
 
 	return new Message({
 		type:      sType,
 		code:      sCode,
 		message:   sText,
 		descriptionUrl: sDescriptionUrl,
-		target:    ODataUtils._normalizeKey(sTarget),
+		target:    ODataUtils._normalizeKey(oMessageObject.canonicalTarget),
 		processor: this._processor,
 		technical: bIsTechnical,
-		persistent: bPersistent
+		persistent: bPersistent,
+		fullTarget: oMessageObject.deepPath
 	});
 };
 
@@ -455,6 +456,27 @@ ODataMessageParser.prototype._getFunctionTarget = function(mFunctionInfo, mReque
  */
 ODataMessageParser.prototype._createTarget = function(oMessageObject, mRequestInfo) {
 	var sTarget = oMessageObject.target;
+	var sDeepPath;
+	var that = this;
+	var bCollection = false;
+
+	var isCollection = function(sPath){
+		var iIndex = sPath.lastIndexOf("/");
+		if (iIndex > 0){ //e.g. 0:'/SalesOrderSet', -1:'empty string'
+			var sEntityPath = sPath.substring(0, iIndex);
+			var oEntityType = that._metadata._getEntityTypeByPath(sEntityPath);
+
+			if (oEntityType) {
+				var oAssociation = that._metadata._getEntityAssociationEnd(oEntityType, sPath.substring(iIndex + 1));
+				if (oAssociation && oAssociation.multiplicity === "*") {
+					bCollection = true;
+				}
+			}
+		} else {
+			bCollection = true;
+		}
+		return bCollection;
+	};
 
 	if (sTarget.substr(0, 1) !== "/") {
 		var sRequestTarget = "";
@@ -484,9 +506,9 @@ ODataMessageParser.prototype._createTarget = function(oMessageObject, mRequestIn
 
 		var iPos = sUrl.lastIndexOf(this._serviceUrl);
 		if (iPos > -1) {
-			sRequestTarget = sUrl.substr(iPos + this._serviceUrl.length + 1);
+			sRequestTarget = sUrl.substr(iPos + this._serviceUrl.length);
 		} else {
-			sRequestTarget = sUrl;
+			sRequestTarget = "/" + sUrl;
 		}
 
 		// function import case
@@ -495,37 +517,36 @@ ODataMessageParser.prototype._createTarget = function(oMessageObject, mRequestIn
 
 			if (mFunctionInfo) {
 				sRequestTarget = this._getFunctionTarget(mFunctionInfo, mRequestInfo, mUrlData);
-
-				if (sTarget) {
-					sTarget = sRequestTarget + "/" + sTarget;
-				} else {
-					sTarget = sRequestTarget;
-				}
-				return sTarget;
 			}
 		}
-
-		sRequestTarget = "/" + sRequestTarget;
 
 		// If sRequestTarget is a collection, we have to add the target without a "/". In this case
 		// a target would start with the specific product (like "(23)"), but the request itself
 		// would not have the brackets
 		var iSlashPos = sRequestTarget.lastIndexOf("/");
 		var sRequestTargetName = iSlashPos > -1 ? sRequestTarget.substr(iSlashPos) : sRequestTarget;
+
+		sDeepPath = mRequestInfo.request && mRequestInfo.request.deepPath;
+
 		if (sRequestTargetName.indexOf("(") > -1) {
 			// It is an entity
 			sTarget = sTarget ? sRequestTarget + "/" + sTarget : sRequestTarget;
-		} else {
-			// It's a collection
-			sTarget = sRequestTarget + sTarget;
+			sDeepPath = oMessageObject.target ? sDeepPath + "/" + oMessageObject.target : sDeepPath;
+		} else if (isCollection(sRequestTarget)){ // (0:n) cardinality
+				sTarget = sRequestTarget + sTarget;
+				sDeepPath = sDeepPath + oMessageObject.target;
+		} else { // 0:1 cardinality
+			sTarget = sTarget ? sRequestTarget + "/" + sTarget : sRequestTarget;
+			sDeepPath = oMessageObject.target ? sDeepPath + "/" + oMessageObject.target : sDeepPath;
 		}
 
+	}
 
-	} /* else {
-		// Absolute target path, do not use base URL
-	} */
-
-	return sTarget;
+	oMessageObject.canonicalTarget = sTarget;
+	if (this._processor){
+		oMessageObject.deepPath = sDeepPath;
+		oMessageObject.canonicalTarget = this._processor.resolve(sTarget, undefined, true) || sTarget;
+	}
 };
 
 /**

@@ -47,7 +47,8 @@ sap.ui.define([
 			},
 			processor: new MessageProcessor(),
 			validation: true,
-			controlIds: []
+			controlIds: [],
+			fullTarget: ""
 		};
 
 		// Act
