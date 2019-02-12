@@ -1303,6 +1303,16 @@ sap.ui.define(["sap/ui/model/ValidateException",
 			assert.deepEqual(oDateIntervalType.parseValue("Nov 6 – Dec 6, 2003", "string"), ["2003-11-06", "2003-12-06"], "Interval string can be parsed into an array of defined dates");
 		});
 
+		QUnit.test("DateInterval parseValue - singleIntervalValue", function (assert) {
+			var oDateIntervalType = new DateIntervalType({
+				singleIntervalValue: true
+			});
+			var oDate1 = new Date(2003, 10, 6);
+
+			assert.deepEqual(oDateIntervalType.parseValue("Nov 6, 2003", "string"), [oDate1, null], "Interval string can be parsed into an array of dates");
+			assert.throws(function () { oDateIntervalType.parseValue("Nov 6", "string"); }, checkParseException, "parse test");
+		});
+
 		QUnit.test("DateInterval validateValue", function (assert) {
 			var oDate1 = new Date(2003, 10, 6);
 			var oDate2 = new Date(2003, 11, 6);
@@ -1355,6 +1365,48 @@ sap.ui.define(["sap/ui/model/ValidateException",
 			} catch (e) {
 				assert.ok(false, "validate test fails");
 			}
+		});
+
+		QUnit.test("DateInterval validateValue - singleIntervalValue", function (assert) {
+			var oDate1 = new Date(2003, 10, 6);
+			var oDate2 = new Date(2003, 11, 6);
+			var oPreDate = new Date(2003, 10, 5);
+			var oSufDate = new Date(2003, 11, 7);
+
+			var oDateIntervalType = new DateIntervalType({
+				format: "yMMMd",
+				singleIntervalValue: true
+			}, {
+				minimum: oDate1.getTime(),
+				maximum: oDate2.getTime()
+			});
+
+			assert.equal(oDateIntervalType.validateValue([oDate1.getTime(), null]), undefined, "Interval string can be parsed into an array of dates");
+			assert.equal(oDateIntervalType.validateValue([oDate1.getTime()]), undefined, "Interval string can be parsed into an array of dates");
+
+			assert.throws(function () {
+				oDateIntervalType.validateValue([oDate1.getTime(), oSufDate.getTime()]);
+			}, checkValidateException, "validate test");
+
+			assert.throws(function () {
+				oDateIntervalType.validateValue([oPreDate.getTime(), oDate2.getTime()]);
+			}, checkValidateException, "validate test");
+
+			assert.throws(function () {
+				oDateIntervalType.validateValue([oPreDate.getTime(), null]);
+			}, checkValidateException, "validate test");
+
+			assert.throws(function () {
+				oDateIntervalType.validateValue([oSufDate.getTime(), null]);
+			}, checkValidateException, "validate test");
+
+			assert.throws(function () {
+				oDateIntervalType.validateValue([null, oDate1.getTime()]);
+			}, checkValidateException, "validate test");
+
+			assert.throws(function () {
+				oDateIntervalType.validateValue([null, null]);
+			}, checkValidateException, "validate test");
 		});
 
 		QUnit.module("DateTimeInterval type");
