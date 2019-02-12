@@ -20,6 +20,11 @@
 	flex: none;
 }
 
+// prevent placing the multiinput over a busy indicator overlay
+.sapUiLocalBusy .sapMMultiInput .sapMTokenizer {
+	z-index: 0;
+}
+
 /* Workaround for missing disabled state of sap.m.Tokenizer */
 .sapMMultiInput.sapMInputBaseDisabled  {
 	pointer-events: none;
