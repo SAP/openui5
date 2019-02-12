@@ -2807,14 +2807,16 @@
 
 			var fnTestLight = function(oFF) {
 				var oSummaryBar = oFF.getAggregation("summaryBar"),
-						oResourceBundle = sap.ui.getCore().getLibraryResourceBundle("sap.m"),
-						sSelectedText = oResourceBundle.getText("FACETFILTER_INFOBAR_NO_FILTERS");
+					oSummaryBarText = oSummaryBar.getContent()[0];
+
 				assert.ok(oSummaryBar.getDomRef(), "Summary bar should be rendered");
 				assert.ok(oSummaryBar.getActive(), "Summary bar should be active when type is Light");
-				var oSummaryBarText = oSummaryBar.getContent()[0];
 				assert.ok(oSummaryBarText.getDomRef(), "Summary bar text should be rendered");
 				assert.ok(oSummaryBarText.getText(), "There should be text in the summary bar");
-				assert.equal(oSummaryBar.$().attr("aria-label"), sSelectedText, "The aria-label of the summary bar is " + sSelectedText);
+
+				assert.strictEqual(oSummaryBar.$().attr("aria-labelledby"),
+					oFF._getInvisibleFilterText().getId() + " " + oSummaryBarText.getId(),
+					"aria-labelledby should consist of a hidden 'Filter' label and the filter's text");
 
 				testResetInSummaryBar(oFF, true);
 

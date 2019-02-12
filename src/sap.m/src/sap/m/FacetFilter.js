@@ -472,6 +472,11 @@ sap.ui.define(['jquery.sap.global', './NavContainer', './library', 'sap/ui/core/
 			});
 			this._aOwnedLabels = null;
 		}
+
+		if (this._oInvisibleFilterText) {
+			this._oInvisibleFilterText.destroy();
+			this._oInvisibleFilterText = null;
+		}
 	};
 
 	/**
@@ -504,8 +509,6 @@ sap.ui.define(['jquery.sap.global', './NavContainer', './library', 'sap/ui/core/
 		if (this.getType() !== FacetFilterType.Light) {
 			this._startItemNavigation();
 		}
-
-		this._getSummaryBar().$().attr('aria-label', this._getSummaryText());
 	};
 
 	/* Keyboard Handling */
@@ -1406,7 +1409,7 @@ sap.ui.define(['jquery.sap.global', './NavContainer', './library', 'sap/ui/core/
 
 		var oPage = new sap.m.Page({
 			enableScrolling : true,
-			title : this._bundle.getText("FACETFILTER_TITLE"),
+			title : this._getInvisibleFilterText().getId(),
 			subHeader : new sap.m.Bar({
 			contentMiddle : oFacetsSearchField
 			}),
@@ -1873,6 +1876,19 @@ sap.ui.define(['jquery.sap.global', './NavContainer', './library', 'sap/ui/core/
 		return aSequencedLists;
 	};
 
+	/**
+	 * @private
+	 */
+	FacetFilter.prototype._getInvisibleFilterText = function () {
+		if (!this._oInvisibleFilterText) {
+			this._oInvisibleFilterText = new InvisibleText({
+				text : this._bundle.getText("FACETFILTER_TITLE")
+			}).toStatic();
+		}
+
+		return this._oInvisibleFilterText;
+	};
+
 
 	/**
 	 * @private
@@ -1893,6 +1909,10 @@ sap.ui.define(['jquery.sap.global', './NavContainer', './library', 'sap/ui/core/
 				content : [ oText ], // Text is set before rendering
 				active : this.getType() === FacetFilterType.Light ? true : false,
 				design : ToolbarDesign.Info,
+				ariaLabelledBy : [
+					that._getInvisibleFilterText().getId(),
+					oText
+				],
 				press : function(oEvent) {
 						that.openFilterDialog();
 				}
