@@ -567,7 +567,7 @@ ODataMessageParser.prototype._parseHeader = function(/* ref: */ aMessages, oResp
 				aMessages.push(this._createMessage(oServerMessage.details[i], mRequestInfo));
 			}
 		}
-
+		filterDuplicates(aMessages);
 	} catch (ex) {
 		Log.error("The message string returned by the back-end could not be parsed");
 		return;
@@ -593,16 +593,7 @@ ODataMessageParser.prototype._parseBody = function(/* ref: */ aMessages, oRespon
 		this._parseBodyJSON(/* ref: */ aMessages, oResponse, mRequestInfo);
 	}
 
-	// Messages from an error response should contain duplicate messages - the main error should be the
-	// same as the first errordetail error. If this is the case, remove the first one.
-	if (aMessages.length > 1) {
-		for (var iIndex = 1; iIndex < aMessages.length; iIndex++) {
-			if (aMessages[0].getCode() == aMessages[iIndex].getCode() && aMessages[0].getMessage() == aMessages[iIndex].getMessage()) {
-				aMessages.shift(); // Remove outer error, since inner error is more detailed
-				break;
-			}
-		}
-	}
+	filterDuplicates(aMessages);
 };
 
 
@@ -855,6 +846,39 @@ function getAllElements(oDocument, aElementNames) {
 
 	return aElements;
 }
+
+	/**
+	* The message container returned by the backend could contain duplicate messages in some scenarios.
+	* The outer error could be identical to an inner error. This makes sense when the outer error is only though as error message container
+	* for the inner errors and therefore shouldn't be end up in a seperate UI message.
+    *
+	* This function is used to filter out not relevant outer errors.
+	* @example
+	* {
+	*  "error": {
+	*    "code": "ABC",
+	*    "message": {
+	*      "value": "Bad things happened."
+	*    },
+	*    "innererror": {
+	*      "errordetails": [
+	*        {
+	*          "code": "ABC",
+	*          "message": "Bad things happened."
+	*        },
+	*   ...
+	* @private
+	*/
+	function filterDuplicates(/*ref*/ aMessages){
+		if (aMessages.length > 1) {
+			for (var iIndex = 1; iIndex < aMessages.length; iIndex++) {
+				if (aMessages[0].getCode() == aMessages[iIndex].getCode() && aMessages[0].getMessage() == aMessages[iIndex].getMessage()) {
+					aMessages.shift(); // Remove outer error, since inner error is more detailed
+					break;
+				}
+			}
+		}
+	}
 
 //////////////////////////////////////// Overridden Methods ////////////////////////////////////////
 
