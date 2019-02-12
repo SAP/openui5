@@ -423,7 +423,11 @@ sap.ui.define([
 		// also wait for a potential variant switch to be done
 		aPromises.push(this.waitForVariantSwitch());
 
-		return Promise.all(aPromises);
+		return Promise.all(aPromises)
+		.then(function() {
+			// the return value is not important in this function, only that it resolves
+			return undefined;
+		});
 	};
 
 	/**

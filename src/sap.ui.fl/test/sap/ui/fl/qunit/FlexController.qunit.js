@@ -3207,18 +3207,20 @@ function (
 	}, function() {
 		QUnit.test("with no changes", function(assert) {
 			return this.oFlexController.waitForChangesToBeApplied(this.oControl)
-			.then(function() {
+			.then(function(oReturn) {
 				assert.ok(true, "then the function resolves");
+				assert.equal(oReturn, undefined, "the return value is undefined");
 			});
 		});
 
 		QUnit.test("with 3 async queued changes", function(assert) {
-			assert.expect(1);
+			assert.expect(2);
 			this.mChanges.mChanges[this.sLabelId] = [this.oChange, this.oChange2, this.oChange3];
 			this.oFlexController._applyChangesOnControl(this.fnGetChangesMap, this.oComponent, this.oControl);
 			return this.oFlexController.waitForChangesToBeApplied(this.oControl)
-			.then(function() {
+			.then(function(oReturn) {
 				assert.equal(this.oAddAppliedCustomDataSpy.callCount, 3, "addCustomData was called 3 times");
+				assert.equal(oReturn, undefined, "the return value is undefined");
 			}.bind(this));
 		});
 
@@ -3293,7 +3295,8 @@ function (
 			this.oFlexController._applyChangesOnControl(this.fnGetChangesMap, this.oComponent, this.oControl);
 			this.oFlexController.waitForChangesToBeApplied(this.oControl);
 			return this.oFlexController.waitForChangesToBeApplied(this.oControl)
-			.then(function() {
+			.then(function(oReturn) {
+				assert.equal(oReturn, undefined, "the return value is undefined");
 				assert.equal(this.oErrorLogStub.callCount, 1, "then the changeHandler threw an error");
 				assert.ok(true, "then the function resolves");
 			}.bind(this));
@@ -3490,7 +3493,8 @@ function (
 			this.mChanges.mChanges[this.sLabelId] = aChanges;
 			this.oFlexController.revertChangesOnControl(aChanges, this.oComponent);
 			return this.oFlexController.waitForChangesToBeApplied(this.oControl)
-			.then(function() {
+			.then(function(oReturn) {
+				assert.equal(oReturn, undefined, "the return value is undefined");
 				assert.equal(this.oDestroyAppliedCustomDataSpy.callCount, 3, "all three changes got reverted");
 			}.bind(this));
 		});
@@ -3519,7 +3523,8 @@ function (
 			}));
 
 			return this.oFlexController.waitForChangesToBeApplied(this.oControl)
-			.then(function() {
+			.then(function(oReturn) {
+				assert.equal(oReturn, undefined, "the return value is undefined");
 				assert.ok(bCalled, "the function waited for the variant switch");
 			});
 		});
