@@ -65,6 +65,16 @@
 				]
 			});
 
+			var listItem2A = new sap.m.NotificationListItem('secondNotificationNoButtons', {
+				title: 'Notification List Title',
+				description : 'Notification List Item with no "Accept" and no "Reject" buttons.',
+				showCloseButton : false,
+				datetime : '3 days',
+				priority : sap.ui.core.Priority.Low,
+				authorName : 'Office Notification',
+				authorPicture : 'sap-icon://group',
+			});
+
 			var listItem3 = new sap.m.NotificationListItem({
 				title: 'Notification List Title',
 				description : 'Aliquam quis varius ligula. In justo lorem, lacinia ac ex at, vulputate dictum turpis.',
@@ -171,6 +181,7 @@
 				items: [
 					listItem,
 					listItem2,
+					listItem2A,
 					listItem3,
 					listItem4,
 					listItem5
