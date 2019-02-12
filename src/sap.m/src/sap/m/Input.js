@@ -1106,7 +1106,8 @@ function(
 	 * @param {jQuery.Event} oEvent Keyboard event.
 	 */
 	Input.prototype.onsapfocusleave = function(oEvent) {
-		var oPopup = this._oSuggPopover && this._oSuggPopover._oPopover,
+		var oSuggPopover = this._oSuggPopover,
+			oPopup = oSuggPopover && oSuggPopover._oPopover,
 			oFocusedControl = oEvent.relatedControlId && sap.ui.getCore().byId(oEvent.relatedControlId),
 			oFocusDomRef = oFocusedControl && oFocusedControl.getFocusDomRef(),
 			bFocusInPopup = oPopup
@@ -1132,7 +1133,7 @@ function(
 		}
 
 		// Inform InputBase to fire the change event on Input only when focus doesn't go into the suggestion popup
-		if (!bFocusInPopup) {
+		if (!bFocusInPopup && (!oSuggPopover || !oSuggPopover._sProposedItemText)) {
 			InputBase.prototype.onsapfocusleave.apply(this, arguments);
 		}
 
