@@ -243,12 +243,22 @@ Mobify.UI.Carousel = (function($, Utils) {
     }
 
     Carousel.prototype._update = function() {
-        if (!this._needsUpdate) {
-            return;
-        }
+		var $current,
+			currentOffset,
+			x;
 
-        var x = Math.round(this._offset + this._offsetDrag);
-        if(this.$inner) {
+		if (!this._needsUpdate) {
+            return;
+		}
+
+		$current = this.$items.eq(this._index - 1);
+		currentOffset = $current.prop('offsetLeft') + $current.prop('clientWidth') * this._alignment,
+			 startOffset = this.$start.prop('offsetLeft') + this.$start.prop('clientWidth') * this._alignment
+
+		this._offset = -(currentOffset - startOffset);
+        x = Math.round(this._offset + this._offsetDrag);
+
+		if(this.$inner) {
         	Utils.translateX(this.$inner[0], x);
         }
 
@@ -299,12 +309,6 @@ Mobify.UI.Carousel = (function($, Utils) {
     Carousel.prototype.resize = function() {
     	this.changeAnimation('sapMCrslHideNonActive');
 
-        var $current = this.$items.eq(this._index - 1);
-
-        var currentOffset = $current.prop('offsetLeft') + $current.prop('clientWidth') * this._alignment
-            , startOffset = this.$start.prop('offsetLeft') + this.$start.prop('clientWidth') * this._alignment
-
-        this._offset = -(currentOffset - startOffset);
         this.update();
     }
 
@@ -563,7 +567,9 @@ Mobify.UI.Carousel = (function($, Utils) {
         this.$element = null;
         this.$inner = null;
         this.$start = null;
-        this.$current = null;
+		this.$current = null;
+
+		this._needsUpdate = false;
     }
 
     Carousel.prototype.move = function(newIndex, opts) {
@@ -621,15 +627,6 @@ Mobify.UI.Carousel = (function($, Utils) {
         	$element.trigger('beforeSlide', [index, newIndex]);
         }
 
-        // Index must be decremented to convert between 1- and 0-based indexing.
-        this.$current = $current = $items.eq(newIndex - 1);
-
-        var currentOffset = $current.prop('offsetLeft') + $current.prop('clientWidth') * this._alignment
-            , startOffset = $start.prop('offsetLeft') + $start.prop('clientWidth') * this._alignment;
-
-        var transitionOffset = -(currentOffset - startOffset);
-
-        this._offset = transitionOffset;
         this._offsetDrag = 0;
         this._prevIndex = this._index;
         this._index = newIndex;
