@@ -43,9 +43,10 @@ sap.ui.define([
 			 *
 			 * @memberof sap.ui.support.RuleAnalyzer
 			 * @public
-			 * @param {object} [oExecutionScope] The execution scope of the analysis (see {@link topic:e15067d976f24b11907f4c262bd749a0 Execution Scopes}).
-			 * @param {string} [oExecutionScope.type = "global"] Possible values are <code>global</code>, <code>subtree</code> or <code>component</code>.
-			 * @param {string} [oExecutionScope.parentId] ID of the root element that forms a subtree. Use when the scope is not <code>global</code>.
+			 * @param {object} [oExecutionScope] The execution scope of the analysis (see {@link topic:e15067d976f24b11907f4c262bd749a0 Execution Scope}).
+			 * @param {string} [oExecutionScope.type=global] Possible values are <code>global</code>, <code>subtree</code> or <code>components</code>.
+			 * @param {string} [oExecutionScope.parentId] ID of the root element that forms a subtree. Use when the scope type is <code>subtree</code>.
+			 * @param {string[]} [oExecutionScope.components] List of IDs of the components to be analyzed. Use only when the scope type is <code>components</code>.
 			 * @param {object|string|object[]} [vPresetOrRules=All rules] This optional parameter allows for selection of subset of rules for the analysis.
 			 * You can pass:
 			 * <ul>
