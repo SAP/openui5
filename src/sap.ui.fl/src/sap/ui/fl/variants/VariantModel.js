@@ -360,16 +360,17 @@ sap.ui.define([
 
 	/**
 	 * Copies a variant
-	 * @param {Object} mPropertyBag with the following properties:
-	 * variantManagementControl : oVariantManagementControl
-	 * appComponent : oAppComponent
-	 * layer : sLayer
-	 * newVariantReference : sNewVariantReference
-	 * sourceVariantReference : sSourceVariantReference
-	 * @returns {sap.ui.fl.Variant} Returns the copied variant
+	 * @param {Object} mPropertyBag
+	 * @param {String} mPropertyBag.variantManagementReference variantManagementReference
+	 * @param {String} mPropertyBag.title title for the variant
+	 * @param {sap.ui.core.Component} mPropertyBag.appComponent model's app component
+	 * @param {String} mPropertyBag.layer layer on which the new variant should be created
+	 * @param {String} mPropertyBag.newVariantReference variantReference for the new variant
+	 * @param {String} mPropertyBag.sourceVariantReference variantReference of the source variant
+	 * @returns {Promise} Returns a promise resolving to dirty changes created during variant copy
 	 * @private
 	 */
-	VariantModel.prototype._copyVariant = function(mPropertyBag) {
+	VariantModel.prototype.copyVariant = function(mPropertyBag) {
 		var oDuplicateVariantData = this._duplicateVariant(mPropertyBag);
 		var oVariantModelData = {
 			key: oDuplicateVariantData.content.fileName,
@@ -397,7 +398,8 @@ sap.ui.define([
 
 		//Variant Model
 		this.oData[mPropertyBag.variantManagementReference].variants.splice(iIndex, 0, oVariantModelData);
-		return this.updateCurrentVariant(mPropertyBag.variantManagementReference, oVariant.getId(), mPropertyBag.appComponent).then( function () {
+		return this.updateCurrentVariant(mPropertyBag.variantManagementReference, oVariant.getId(), mPropertyBag.appComponent)
+		.then( function () {
 			return aChanges;
 		});
 	};
@@ -783,7 +785,7 @@ sap.ui.define([
 			return Promise.resolve();
 		} else {
 			// handle triggered "SaveAs" button
-			var sNewVariantReference = Utils.createDefaultFileName("Copy");
+			var sNewVariantReference = Utils.createDefaultFileName();
 			var mPropertyBag = {
 					variantManagementReference: sVariantManagementReference,
 					appComponent: oAppComponent,
@@ -793,26 +795,26 @@ sap.ui.define([
 					newVariantReference: sNewVariantReference
 			};
 
-			return this._copyVariant(mPropertyBag).then(function(aDirtyChanges) {
-				return this._removeDirtyChanges(aVariantChanges, sVariantManagementReference, sSourceVariantReference, mPropertyBag.appComponent).then(function() {
-					if (bSetDefault) {
-						var mPropertyBagSetDefault = {
-							changeType: "setDefault",
-							defaultVariant: sNewVariantReference,
-							originalDefaultVariant: this.oData[sVariantManagementReference].defaultVariant,
-							appComponent: oAppComponent,
-							layer: Utils.getCurrentLayer(true),
-							variantManagementReference: sVariantManagementReference
-						};
-						var oSetDefaultChange = this._setVariantProperties(sVariantManagementReference, mPropertyBagSetDefault, true);
-						aDirtyChanges.push(oSetDefaultChange);
-					}
-					this.oFlexController._oChangePersistence.saveSequenceOfDirtyChanges(aDirtyChanges);
-					this.oData[sVariantManagementReference].modified = false;
-					this.checkUpdate(true);
-					return Promise.resolve();
-				}.bind(this));
-			}.bind(this));
+			return this.copyVariant(mPropertyBag)
+			.then(function(aCopiedVariantDirtyChanges) {
+				if (bSetDefault) {
+					var mPropertyBagSetDefault = {
+						changeType: "setDefault",
+						defaultVariant: sNewVariantReference,
+						originalDefaultVariant: this.oData[sVariantManagementReference].defaultVariant,
+						appComponent: oAppComponent,
+						layer: Utils.getCurrentLayer(true),
+						variantManagementReference: sVariantManagementReference
+					};
+					var oSetDefaultChange = this._setVariantProperties(sVariantManagementReference, mPropertyBagSetDefault, true);
+					aCopiedVariantDirtyChanges.push(oSetDefaultChange);
+				}
+				this.oData[sVariantManagementReference].modified = false;
+				this.checkUpdate(true);
+				return this.oFlexController._oChangePersistence.saveSequenceOfDirtyChanges(aCopiedVariantDirtyChanges);
+			}.bind(this))
+			// unsaved changes on the source variant are removed
+			.then(this._removeDirtyChanges.bind(this, aVariantChanges, sVariantManagementReference, sSourceVariantReference, mPropertyBag.appComponent));
 		}
 	};
 

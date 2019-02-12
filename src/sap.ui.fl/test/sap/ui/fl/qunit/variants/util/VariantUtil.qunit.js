@@ -528,6 +528,7 @@ function(
 
 			this.oData = {
 				"sVariantManagementReference": {
+					currentVariant: "existingParameter3",
 					variants: [
 						{key: "existingParameter2"},
 						{key: "existingParameter3"}
@@ -535,7 +536,7 @@ function(
 				}
 			};
 			var bRestartRequired = VariantUtil._adjustForDuplicateParameters.call(this, aResultantParameters);
-			aExistingParameters.splice(1, 1);
+			aExistingParameters.splice(0, 1);
 			assert.strictEqual(bRestartRequired, true, "then restart required is returned, since the URL parameters are adjusted");
 			assert.deepEqual(aResultantParameters, aExistingParameters, "then the duplicate URL parameter is removed");
 		});
@@ -546,6 +547,7 @@ function(
 
 			this.oData = {
 				"sVariantManagementReference": {
+					currentVariant: "existingParameter2",
 					variants: [
 						{key: "existingParameter2"},
 						{key: "existingParameter4"}
@@ -564,7 +566,7 @@ function(
 
 			var bRestartRequired = VariantUtil._adjustForDuplicateParameters.call(this, aResultantParameters);
 
-			assert.strictEqual(bRestartRequired, false, "then no restart required is returned, since the URL parameters are not adjusted");
+			assert.notOk(bRestartRequired, "then no restart required is returned, since the URL parameters are not adjusted");
 			assert.deepEqual(aResultantParameters, aExistingParameters, "then the URL parameters are unchanged");
 		});
 
