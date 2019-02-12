@@ -5,8 +5,9 @@ sap.ui.define([
 	"sap/ui/unified/calendar/CalendarUtils",
 	"sap/ui/core/date/UniversalDate",
 	"sap/ui/unified/calendar/CalendarDate",
-	"sap/ui/core/Locale"
-], function(qutils, CalendarUtils, UniversalDate, CalendarDate, Locale) {
+	"sap/ui/core/Locale",
+	"sap/ui/core/CalendarType"
+], function(qutils, CalendarUtils, UniversalDate, CalendarDate, Locale, CalendarType) {
 	"use strict";
 
 	QUnit.module("getFirstDateOfWeek/Month for week Sunday-Saturday (en_US locale)", {
@@ -482,6 +483,18 @@ sap.ui.define([
 		assert.equal(CalendarUtils._isSameMonthAndYear(new CalendarDate(2017, 0, 5), new CalendarDate(2017, 1, 5)), false, "the date is not in the same month and year");
 		assert.equal(CalendarUtils._isSameMonthAndYear(new CalendarDate(2016, 1, 5), new CalendarDate(2017, 1, 5)), false, "the date is not in the same month and year");
 
+	});
+
+	// BCP: 1970123874
+	QUnit.test("_isSameMonthAndYear Japanese", function(assert) {
+		var o11_Feb_31_Showa = CalendarDate.fromLocalJSDate(new Date(-438307200000), CalendarType.Japanese);
+		var o11_Feb_31_Heisei = CalendarDate.fromLocalJSDate(new Date(1549843200000), CalendarType.Japanese);
+
+		assert.equal(
+			CalendarUtils._isSameMonthAndYear(o11_Feb_31_Showa, o11_Feb_31_Heisei),
+			false,
+			"not the same month and year"
+		);
 	});
 
 	QUnit.test("_checkCalendarDate", function(assert) {
