@@ -594,6 +594,8 @@ sap.ui.define([
 		oEvent.stopPropagation();
 	};
 
+	Menu.prototype.onsapnextmodifiers = Menu.prototype.onsapnext;
+
 	Menu.prototype.onsapprevious = function(oEvent){
 		//left or up (RTL: right or up)
 		if (oEvent.keyCode != KeyCodes.ARROW_UP) {
@@ -613,6 +615,8 @@ sap.ui.define([
 		oEvent.preventDefault();
 		oEvent.stopPropagation();
 	};
+
+	Menu.prototype.onsappreviousmodifiers = Menu.prototype.onsapprevious;
 
 	Menu.prototype.onsaphome = function(oEvent){
 		//Go to the first selectable item
