@@ -8,16 +8,51 @@
  * @version @version@
  */
 sap.ui.define([
+	"sap/m/HBox",
 	"sap/ui/core/UIComponent",
+	"sap/ui/core/mvc/View",
+	"sap/ui/core/mvc/ViewType",
 	"sap/ui/core/sample/common/Component",
 	"sap/ui/model/json/JSONModel",
 	"sap/ui/test/TestUtils"
-], function (UIComponent, BaseComponent, JSONModel, TestUtils) {
+], function (HBox, UIComponent, View, ViewType, BaseComponent, JSONModel, TestUtils) {
 	"use strict";
 
 	return BaseComponent.extend("sap.ui.core.sample.odata.v4.Products.Component", {
 		metadata : {
 			manifest : "json"
+		},
+
+		createContent : function () {
+			var oLayout = new HBox({
+					renderType : "Bare"
+				}),
+				oModel = this.getModel();
+
+			View.create({
+				async : true,
+				models : {
+					undefined : oModel,
+					ui : new JSONModel({
+						sCode : "",
+						bCodeVisible : false,
+						iMessages : 0
+					})
+				},
+				preprocessors : {
+					xml : {
+						models : {
+							meta : oModel.getMetaModel()
+						}
+					}
+				},
+				type : ViewType.XML,
+				viewName : "sap.ui.core.sample.odata.v4.Products.Main"
+			}).then(function (oView) {
+				oLayout.addItem(oView);
+			});
+
+			return oLayout;
 		},
 
 		exit : function () {
@@ -30,8 +65,6 @@ sap.ui.define([
 		init : function () {
 			// call the init function of the parent
 			UIComponent.prototype.init.apply(this, arguments);
-
-			this.setModel(new JSONModel({iMessages : 0}), "ui");
 		}
 	});
 });

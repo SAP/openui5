@@ -169,14 +169,16 @@ sap.ui.define([
 					: {source : "model/GWSAMPLE_BASIC.metadata.xml"},
 				"/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/annotations.xml"
 					: {source : "model/GWSAMPLE_BASIC.annotations.xml"},
-				"/sap/opu/odata/IWFND/RMTSAMPLEFLIGHT/$metadata"
-					: {source : "model/RMTSAMPLEFLIGHT.metadata.xml"},
 				"/sap/opu/odata4/IWBEP/TEA/default/IWBEP/TEA_BUSI/0001/$metadata"
 					: {source : "odata/v4/data/metadata.xml"},
 				"/sap/opu/odata4/IWBEP/TEA/default/IWBEP/TEA_BUSI/0001/$metadata?c1=a&c2=b"
 					: {source : "odata/v4/data/metadata.xml"},
 				"/sap/opu/odata4/IWBEP/TEA/default/iwbep/tea_busi_product/0001/$metadata"
 					: {source : "odata/v4/data/metadata_tea_busi_product.xml"},
+				"/sap/opu/odata/IWFND/RMTSAMPLEFLIGHT/$metadata"
+					: {source : "model/RMTSAMPLEFLIGHT.metadata.xml"},
+				"/sap/opu/odata4/sap/zui5_testv4/default/iwbep/common/0001/$metadata"
+					: {source : "odata/v4/data/metadata_codelist.xml"},
 				"/sap/opu/odata4/sap/zui5_testv4/default/sap/zui5_epm_sample/0002/$metadata"
 					: {source : "odata/v4/data/metadata_zui5_epm_sample.xml"},
 				"/sap/opu/odata4/sap/zui5_testv4/default/sap/zui5_epm_sample/0002/$metadata?sap-client=123"
@@ -187,8 +189,8 @@ sap.ui.define([
 					: {source : "odata/v4/data/metadata_special_cases.xml"},
 				"/special/cases/$metadata?sap-client=123"
 					: {source : "odata/v4/data/metadata_special_cases.xml"},
-				"/sap/opu/odata4/sap/zui5_testv4/default/iwbep/common/0001/$metadata"
-					: {source : "odata/v4/data/metadata_codelist.xml"}
+				"/special/countryoforigin/$metadata"
+					: {source : "odata/v4/data/metadata_countryoforigin.xml"}
 			});
 			this.oLogMock = this.mock(Log);
 			this.oLogMock.expects("warning").never();
@@ -474,6 +476,28 @@ sap.ui.define([
 		},
 
 		/**
+		 * Searches the incoming request in the list of expected requests by comparing the URL.
+		 * Removes the found request from the list.
+		 *
+		 * @param {object} oActualRequest The actual request
+		 * @returns {object} The matching expected request or undefined if none was found
+		 */
+		consumeExpectedRequest : function (oActualRequest) {
+			var oExpectedRequest, i;
+
+			if (this.aRequests.length === 1) {
+				return this.aRequests.shift(); // consume the one and only candidate to get a diff
+			}
+			for (i = 0; i < this.aRequests.length; i += 1) {
+				oExpectedRequest = this.aRequests[i];
+				if (oExpectedRequest.url === oActualRequest.url) {
+					this.aRequests.splice(i, 1);
+					return oExpectedRequest;
+				}
+			}
+		},
+
+		/**
 		 * Creates a V4 OData model for V2 service <code>RMTSAMPLEFLIGHT</code>.
 		 *
 		 * @param {object} mModelParameters Map of parameters for model construction to enhance and
@@ -626,7 +650,7 @@ sap.ui.define([
 						headers : mHeaders,
 						payload : typeof vPayload === "string" ? JSON.parse(vPayload) : vPayload
 					},
-					oExpectedRequest = that.aRequests.shift(),
+					oExpectedRequest = that.consumeExpectedRequest(oActualRequest),
 					sIfMatchValue,
 					oResponse,
 					mResponseHeaders,
@@ -6256,6 +6280,248 @@ sap.ui.define([
 			"name" : "Frederic Fall"
 		}], createTeaBusiModel({autoExpandSelect : true})
 	);
+
+	//*********************************************************************************************
+	// Scenario: updates for advertised action's title caused by: refresh, side effect of edit,
+	// bound action
+	// CPOUI5UISERVICESV3-905, CPOUI5UISERVICESV3-1714
+	//
+	// TODO automatic type determination cannot handle #com...AcSetIsAvailable/title
+	// TODO neither can autoExpandSelect
+	QUnit.test("Advertised actions: title updates", function (assert) {
+		var oModel = createTeaBusiModel(),
+			sView = '\
+<FlexBox binding="{/EMPLOYEES(\'2\')}" id="form">\
+	<Input id="name" value="{Name}" />\
+	<Text id="title" text="{\
+		path : \'#com.sap.gateway.default.iwbep.tea_busi.v0001.AcSetIsAvailable/title\',\
+		type : \'sap.ui.model.odata.type.String\'}" />\
+</FlexBox>',
+			that = this;
+
+		this.expectRequest("EMPLOYEES('2')", {
+				"#com.sap.gateway.default.iwbep.tea_busi.v0001.AcSetIsAvailable" : {
+					"title": "First Title"
+				},
+				"ID" : "2",
+				"Name" : "Frederic Fall"
+			})
+			.expectChange("name", "Frederic Fall")
+			.expectChange("title", "First Title");
+
+		return this.createView(assert, sView, oModel).then(function () {
+			var oContextBinding = that.oView.byId("form").getObjectBinding();
+
+			that.expectRequest("EMPLOYEES('2')", {
+					"#com.sap.gateway.default.iwbep.tea_busi.v0001.AcSetIsAvailable" : {
+						"title": "Second Title"
+					},
+					"ID" : "2",
+					"Name" : "Frederic Fall"
+				})
+				.expectChange("name", "Frederic Fall")
+				.expectChange("title", "Second Title");
+
+			// code under test
+			oContextBinding.refresh();
+
+			return that.waitForChanges(assert);
+		}).then(function () {
+			that.expectRequest({
+					"method": "PATCH",
+					"payload": {
+						"Name": "Frederic Spring"
+					},
+					"url": "EMPLOYEES('2')"
+				}, {
+					"#com.sap.gateway.default.iwbep.tea_busi.v0001.AcSetIsAvailable" : {
+						"title": "Third Title"
+					}
+//					"ID" : "2",
+//					"Name" : "Frederic Spring"
+				})
+				.expectChange("name", "Frederic Spring")
+				.expectChange("title", "Third Title");
+
+			// code under test
+			that.oView.byId("name").getBinding("value").setValue("Frederic Spring");
+
+			return that.waitForChanges(assert);
+		}).then(function () {
+			var sActionName = "com.sap.gateway.default.iwbep.tea_busi.v0001.AcChangeTeamOfEmployee",
+				oContext = that.oView.byId("form").getObjectBinding().getBoundContext(),
+				oActionBinding = oModel.bindContext(sActionName + "(...)", oContext);
+
+			that.expectRequest({
+					"method": "POST",
+					"payload": {
+						"TeamID": "TEAM_02"
+					},
+					"url": "EMPLOYEES('2')/" + sActionName
+				}, {
+					"#com.sap.gateway.default.iwbep.tea_busi.v0001.AcSetIsAvailable" : {
+						"title": "Fourth Title"
+					},
+					"ID" : "2",
+					"Name" : "Frederic Winter"
+				})
+				.expectChange("name", "Frederic Winter")
+				.expectChange("title", "Fourth Title");
+
+			// code under test
+			oActionBinding.setParameter("TeamID", "TEAM_02").execute();
+
+			return that.waitForChanges(assert);
+		});
+	});
+
+	//*********************************************************************************************
+	// Scenario: updates for advertised action (as an object) caused by: refresh, side effect of
+	// edit, bound action
+	// CPOUI5UISERVICESV3-905, CPOUI5UISERVICESV3-1714
+	QUnit.test("Advertised actions: object updates", function (assert) {
+		var oModel = createTeaBusiModel(),
+			sView = '\
+<FlexBox binding="{/EMPLOYEES(\'2\')}" id="form">\
+	<Text id="enabled"\
+		text="{= %{#com.sap.gateway.default.iwbep.tea_busi.v0001.AcSetIsAvailable} ? 1 : 0 }" />\
+	<Input id="name" value="{Name}" />\
+</FlexBox>',
+			that = this;
+
+		this.expectRequest("EMPLOYEES('2')", {
+				"#com.sap.gateway.default.iwbep.tea_busi.v0001.AcSetIsAvailable" : {},
+				"ID" : "2",
+				"Name" : "Frederic Fall"
+			})
+			.expectChange("enabled", 1)
+			.expectChange("name", "Frederic Fall");
+
+		return this.createView(assert, sView, oModel).then(function () {
+			var oContextBinding = that.oView.byId("form").getObjectBinding();
+
+			that.expectRequest("EMPLOYEES('2')", {
+					"#com.sap.gateway.default.iwbep.tea_busi.v0001.AcSetIsAvailable" : null,
+					"ID" : "2",
+					"Name" : "Frederic Fall"
+				})
+				// Note: "<code>false</code> to enforce listening to a template control" --> use 0!
+				.expectChange("enabled", 0)
+				.expectChange("name", "Frederic Fall");
+
+			// code under test
+			oContextBinding.refresh();
+
+			return that.waitForChanges(assert);
+		}).then(function () {
+			that.expectRequest({
+					"method": "PATCH",
+					"payload": {
+						"Name": "Frederic Spring"
+					},
+					"url": "EMPLOYEES('2')"
+				}, {
+					"#com.sap.gateway.default.iwbep.tea_busi.v0001.AcSetIsAvailable" : {}
+//					"ID" : "2",
+//					"Name" : "Frederic Spring"
+				})
+				.expectChange("enabled", 1)
+				.expectChange("name", "Frederic Spring");
+
+			// code under test
+			that.oView.byId("name").getBinding("value").setValue("Frederic Spring");
+
+			return that.waitForChanges(assert);
+		}).then(function () {
+			var sActionName = "com.sap.gateway.default.iwbep.tea_busi.v0001.AcChangeTeamOfEmployee",
+				oContext = that.oView.byId("form").getObjectBinding().getBoundContext(),
+				oActionBinding = oModel.bindContext(sActionName + "(...)", oContext);
+
+			that.expectRequest({
+					"method": "POST",
+					"payload": {
+						"TeamID": "TEAM_02"
+					},
+					"url": "EMPLOYEES('2')/" + sActionName
+				}, {
+					"ID" : "2",
+					"Name" : "Frederic Winter"
+				})
+				.expectChange("enabled", 0)
+				.expectChange("name", "Frederic Winter");
+
+			// code under test
+			oActionBinding.setParameter("TeamID", "TEAM_02").execute();
+
+			return that.waitForChanges(assert);
+		});
+	});
+
+	//*********************************************************************************************
+	// Scenario: updates for advertised action (as an object) incl. its title caused by bound action
+	// (refresh for sure works, side effect of edit works the same as bound action)
+	// CPOUI5UISERVICESV3-905, CPOUI5UISERVICESV3-1714
+	QUnit.test("Advertised actions: object & title updates", function (assert) {
+		var oActionBinding,
+			sActionName = "com.sap.gateway.default.iwbep.tea_busi.v0001.AcChangeTeamOfEmployee",
+			oModel = createTeaBusiModel(),
+			sView = '\
+<FlexBox binding="{/EMPLOYEES(\'2\')}" id="form">\
+	<Text id="enabled"\
+		text="{= %{#com.sap.gateway.default.iwbep.tea_busi.v0001.AcSetIsAvailable} ? 1 : 0 }" />\
+	<Text id="title" text="{\
+		path : \'#com.sap.gateway.default.iwbep.tea_busi.v0001.AcSetIsAvailable/title\',\
+		type : \'sap.ui.model.odata.type.String\'}" />\
+</FlexBox>',
+			that = this;
+
+		this.expectRequest("EMPLOYEES('2')", {
+				"#com.sap.gateway.default.iwbep.tea_busi.v0001.AcSetIsAvailable" : {
+					"title": "First Title"
+				},
+				"ID" : "2"
+			})
+			.expectChange("enabled", 1)
+			.expectChange("title", "First Title");
+
+		return this.createView(assert, sView, oModel).then(function () {
+			var oContext = that.oView.byId("form").getObjectBinding().getBoundContext();
+
+			oActionBinding = oModel.bindContext(sActionName + "(...)", oContext);
+			that.expectRequest({
+					"method": "POST",
+					"payload": {},
+					"url": "EMPLOYEES('2')/" + sActionName
+				}, {
+					"ID" : "2"
+				})
+				.expectChange("enabled", 0)
+				.expectChange("title", null);
+
+			// code under test
+			oActionBinding.execute();
+
+			return that.waitForChanges(assert);
+		}).then(function () {
+			that.expectRequest({
+					"method": "POST",
+					"payload": {},
+					"url": "EMPLOYEES('2')/" + sActionName
+				}, {
+					"#com.sap.gateway.default.iwbep.tea_busi.v0001.AcSetIsAvailable" : {
+						"title": "Second Title"
+					},
+					"ID" : "2"
+				})
+				.expectChange("enabled", 1)
+				.expectChange("title", "Second Title");
+
+			// code under test
+			oActionBinding.execute();
+
+			return that.waitForChanges(assert);
+		});
+	});
 
 	//*********************************************************************************************
 	// Scenario: master/detail with V2 adapter where the detail URI must be adjusted for V2
@@ -12926,13 +13192,14 @@ sap.ui.define([
 				"WeightMeasure" : "12.34",
 				"WeightUnit" : "KG"
 			})
-			.expectRequest("UnitsOfMeasure?$select=ExternalCode,DecimalPlaces,Text", {
+			.expectRequest("UnitsOfMeasure?$select=ExternalCode,DecimalPlaces,Text,ISOCode", {
 				value : [{
-				   "UnitCode" : "KG",
-				   "Text" : "Kilogramm",
-				   "DecimalPlaces" : 5,
-				   "ExternalCode" : "KG"
-			   }]
+					"DecimalPlaces" : 5,
+					"ExternalCode" : "KG",
+					"ISOCode" : "KGM",
+					"Text" : "Kilogramm",
+					"UnitCode" : "KG"
+				}]
 			})
 			.expectChange("weightMeasure", "12.340")  // Scale=3 in property metadata => 3 decimals
 			.expectChange("weight", "12.34000 KG");
@@ -12951,5 +13218,109 @@ sap.ui.define([
 
 			return that.waitForChanges(assert);
 		});
+	});
+
+	//*********************************************************************************************
+	// Scenario: Display an amount with currency using the customizing loaded from the backend
+	// based on the "com.sap.vocabularies.CodeList.v1.CurrencyCodes" on the service's entity
+	// container.
+	// CPOUI5UISERVICESV3-1733
+	QUnit.test("OData Currency type considering currency customizing", function (assert) {
+		var oModel = createSalesOrdersModel({autoExpandSelect : true, updateGroupId : "$auto"}),
+			sView = '\
+<FlexBox binding="{/ProductList(\'HT-1000\')}">\
+	<Input id="price" value="{parts: [\'Price\', \'CurrencyCode\',\
+					{path : \'/##@@requestCurrencyCodes\',\
+						mode : \'OneTime\', targetType : \'any\'}],\
+				mode : \'TwoWay\',\
+				type : \'sap.ui.model.odata.type.Currency\'}" />\
+	<Text id="amount" text="{Price}"/>\
+</FlexBox>',
+			that = this;
+
+		this.expectRequest("ProductList(\'HT-1000\')?$select=CurrencyCode,Price,ProductID", {
+				"@odata.etag" : "ETag",
+				"ProductID" : "HT-1000",
+				"Price" : "12.3",
+				"CurrencyCode" : "EUR"
+			})
+			.expectRequest("Currencies?$select=CurrencyCode,DecimalPlaces,Text,ISOCode", {
+				value : [{
+					"CurrencyCode" : "EUR",
+					"DecimalPlaces" : 2,
+					"ISOCode" : "EUR",
+					"Text" : "Euro"
+				}, {
+					"CurrencyCode" : "JPY",
+					"DecimalPlaces" : 0,
+					"ISOCode" : "JPY",
+					"Text" : "Yen"
+				}]
+			})
+			.expectChange("amount", "12.3")
+			.expectChange("price", "EUR\u00a012.30"); // "\u00a0" is a non-breaking space
+
+		return this.createView(assert, sView, oModel).then(function () {
+			//TODO get rid of first change event which is due to using setRawValue([...]) on the
+			//  composite binding. Solution idea: change integration test framework to not use
+			//  formatters but overwrite formatValue on the binding's type if ever possible. Without
+			//  formatters, one can then set the value on the control.
+			that.expectChange("price", "EUR\u00a042.00")
+				.expectChange("price", "JPY\u00a042")
+				.expectChange("amount", "42")
+				.expectRequest({
+					method : "PATCH",
+					url : "ProductList('HT-1000')",
+					headers : {"If-Match" : "ETag"},
+					payload : {"Price" : "42", "CurrencyCode" : "JPY"}
+				});
+
+			that.oView.byId("price").getBinding("value").setRawValue(["42", "JPY"]);
+
+			return that.waitForChanges(assert);
+		});
+	});
+	//TODO With updateGroupId $direct, changing *both* parts of a composite binding (amount and
+	//  currency) in one step triggers *two* PATCH requests:
+	//  The first request contains the new amount and also the old currency as PATCHes for amounts
+	//  are always sent with currency.
+	//  The second request only contains the new currency.
+	//  Solution idea: Only execute $direct requests in prerendering task
+	//  Is this critical? - Productive scenario runs with $batch. However: What if amount and
+	//  currency are in two different fields in draft scenario (no save button)?
+
+	//*********************************************************************************************
+	// Scenario: Request value list information for an action's parameter.
+	// BCP: 1970116818
+	// JIRA: CPOUI5UISERVICESV3-1744
+	QUnit.test("Value help at action parameter", function (assert) {
+		var oModel = createSpecialCasesModel(),
+			sPropertyPath = "/Artists/special.cases.Create/Countryoforigin";
+
+		return oModel.getMetaModel().requestValueListType(sPropertyPath)
+			.then(function (sValueListType) {
+				assert.strictEqual(sValueListType, "Fixed");
+
+				return oModel.getMetaModel().requestValueListInfo(sPropertyPath);
+			}).then(function (mQualifier2ValueListType) {
+				var oValueHelpModel = mQualifier2ValueListType[""].$model;
+
+				delete mQualifier2ValueListType[""].$model;
+				assert.deepEqual(mQualifier2ValueListType, {
+					"" : {
+						"CollectionPath" : "I_AIVS_CountryCode",
+						"Label" : "Country Code Value Help",
+						"Parameters" : [{
+							"$Type" : "com.sap.vocabularies.Common.v1.ValueListParameterInOut",
+							"LocalDataProperty" : {
+								"$PropertyPath" : "Countryoforigin"
+							},
+							"ValueListProperty" : "CountryCode"
+						}]
+					}
+				});
+				assert.strictEqual(oValueHelpModel.toString(),
+					"sap.ui.model.odata.v4.ODataModel: /special/countryoforigin/");
+			});
 	});
 });

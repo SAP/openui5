@@ -710,7 +710,9 @@ sap.ui.define([
 	 * @param {object[]} aPathExpressions
 	 *   The "14.5.11 Expression edm:NavigationPropertyPath" or
 	 *   "14.5.13 Expression edm:PropertyPath" objects describing which properties need to be
-	 *   loaded because they may have changed due to side effects of a previous update
+	 *   loaded because they may have changed due to side effects of a previous update, for example
+	 *   <code>[{$PropertyPath : "TEAM_ID"}, {$NavigationPropertyPath : "EMPLOYEE_2_MANAGER"},
+	 *   {$PropertyPath : "EMPLOYEE_2_TEAM/Team_Id"}]</code>
 	 * @returns {Promise}
 	 *   Promise resolved with <code>undefined</code>, or rejected with an error if loading of side
 	 *   effects fails. Use it to set fields affected by side effects to read-only before

@@ -129,8 +129,10 @@ sap.ui.define([
 			var mConstraints = {},
 				oMetaModel = {
 					getConstraints : function () {},
+					getObject : function () {},
 					fetchObject : function () {}
 				},
+				oMetaModelMock = this.mock(oMetaModel),
 				sPath = "/BusinessPartnerList/@UI.LineItem/0/Value/$Path",
 				oPathValue = {
 					complexBinding : bComplexBinding,
@@ -146,13 +148,18 @@ sap.ui.define([
 
 			this.mock(Basics).expects("expectType")
 				.withExactArgs(sinon.match.same(oPathValue), "string");
-			this.mock(oMetaModel).expects("fetchObject")
+			oMetaModelMock.expects("fetchObject")
 				.withExactArgs("/BusinessPartnerList/@UI.LineItem/0/Value/$Path/$")
 				.returns(SyncPromise.resolve(oProperty));
-			this.mock(oMetaModel).expects("getConstraints")
+			oMetaModelMock.expects("getConstraints")
 				.withExactArgs(sinon.match.same(oProperty), sPath)
 				.exactly(bComplexBinding ? 1 : 0)
 				.returns(mConstraints);
+			this.mock(Expression).expects("fetchCurrencyOrUnit")
+				.exactly(bComplexBinding ? 1 : 0)
+				.withExactArgs(sinon.match.same(oPathValue), "Edm.String",
+					sinon.match.same(mConstraints))
+				.returns(undefined);
 
 			// code under test
 			oResult = Expression.path(oPathValue).unwrap();
@@ -167,8 +174,168 @@ sap.ui.define([
 	});
 
 	//*********************************************************************************************
-	QUnit.test("path fails sync, uncaught expected", function (assert) {
+	QUnit.test("fetchCurrencyOrUnit: neither unit nor currency", function (assert) {
+		var oModel = {
+				getObject : function () {}
+			},
+			oModelMock = this.mock(oModel),
+			oPathValue = {
+				model : oModel,
+				path : "~path~",
+				prefix : "~prefix~",
+				value : "~value~"
+			};
+
+		oModelMock.expects("getObject")
+			.withExactArgs("~path~@Org.OData.Measures.V1.Unit/$Path")
+			.returns(undefined);
+		oModelMock.expects("getObject")
+			.withExactArgs("~path~@Org.OData.Measures.V1.ISOCurrency/$Path")
+			.returns(undefined);
+
+		// code under test
+		assert.strictEqual(Expression.fetchCurrencyOrUnit(oPathValue, "foo", {}), undefined);
+	});
+
+	//*********************************************************************************************
+	[true, false].forEach(function (bUnit) {
+		[
+			// no format options
+			"Edm.Decimal", "Edm.Int64",
+			// with format option parseAsString=false
+			"Edm.Byte", "Edm.Double", "Edm.Int16", "Edm.Int32", "Edm.SByte", "Edm.Single"
+		].forEach(function (sType, i) {
+			var sTitle = "fetchCurrencyOrUnit: " + (bUnit ? "Measure" : "Amount") + " type = "
+					+ sType;
+
+			QUnit.test(sTitle, function (assert) {
+				var oBasicsMock = this.mock(Basics),
+					mConstraints = {},
+					oModel = {
+						fetchObject : function () {},
+						getConstraints : function () {},
+						getObject : function () {}
+					},
+					oModelMock = this.mock(oModel),
+					sPathForFetchObject,
+					oPathValue = {
+						model : oModel,
+						path : "~path~",
+						prefix : "~prefix~",
+						value : "~value~"
+					},
+					oResult,
+					oTarget = {
+						$Type : "~type1~"
+					},
+					mUnitOrCurrencyConstraints = {},
+					sValue = "~prefix~" + (bUnit ? "~unit~" : "~currency~");
+
+				oModelMock.expects("getObject")
+					.withExactArgs("~path~@Org.OData.Measures.V1.Unit/$Path")
+					.returns(bUnit ? "~unit~" : undefined);
+				oModelMock.expects("getObject")
+					.exactly(bUnit ? 0 : 1)
+					.withExactArgs("~path~@Org.OData.Measures.V1.ISOCurrency/$Path")
+					.returns(!bUnit ? "~currency~" : undefined);
+
+				sPathForFetchObject = bUnit
+					? "~path~@Org.OData.Measures.V1.Unit/$Path/$"
+					: "~path~@Org.OData.Measures.V1.ISOCurrency/$Path/$";
+				oResult = bUnit
+					? {
+						result : "composite",
+						type : "sap.ui.model.odata.type.Unit",
+						value : "{" + (i > 1 ? "formatOptions:{parseAsString:false}," : "")
+							+ "mode:'TwoWay',parts:[~binding0~,~binding1~,{mode:'OneTime',"
+							+ "path:'/##@@requestUnitsOfMeasure',targetType:'any'}],"
+							+ "type:'sap.ui.model.odata.type.Unit'}"
+					}
+					: {
+						result : "composite",
+						type : "sap.ui.model.odata.type.Currency",
+						value : "{" + (i > 1 ? "formatOptions:{parseAsString:false}," : "")
+							+ "mode:'TwoWay',parts:[~binding0~,~binding1~,{mode:'OneTime',"
+							+ "path:'/##@@requestCurrencyCodes',targetType:'any'}],"
+							+ "type:'sap.ui.model.odata.type.Currency'}"
+					};
+				oModelMock.expects("fetchObject")
+					.withExactArgs(sPathForFetchObject)
+					.returns(SyncPromise.resolve(oTarget));
+				oBasicsMock.expects("resultToString")
+					.withExactArgs({
+							constraints : sinon.match.same(mConstraints),
+							result : "binding",
+							type : sType,
+							value : "~prefix~~value~"
+						}, false, true)
+					.returns("~binding0~");
+				oModelMock.expects("getConstraints")
+					.withExactArgs(sinon.match.same(oTarget), sPathForFetchObject.slice(0, -2))
+					.returns(mUnitOrCurrencyConstraints);
+				oBasicsMock.expects("resultToString")
+					.withExactArgs({
+							constraints : sinon.match.same(mUnitOrCurrencyConstraints),
+							result : "binding",
+							type : "~type1~",
+							value : sValue
+						}, false, true)
+					.returns("~binding1~");
+
+				// code under test
+				Expression.fetchCurrencyOrUnit(oPathValue, sType, mConstraints)
+					.then(function (oResult0) {
+						assert.deepEqual(oResult0, oResult);
+					});
+			});
+		});
+	});
+
+	//*********************************************************************************************
+	[false, true].forEach(function (bAsync) {
+		QUnit.test("path: with Currency/Unit, bAsync = " + bAsync, function (assert) {
+			var mConstraints = {},
+				oMetaModel = {
+					getConstraints : function () {},
+					fetchObject : function () {}
+				},
+				sPath = "/ProductList/@UI.LineItem/0/Value/$Path",
+				oPathValue = {
+					complexBinding : true,
+					model : oMetaModel,
+					path : sPath
+				},
+				oPromise,
+				oProperty = {$Type : "type"},
+				oResult = {};
+
+			this.mock(Basics).expects("expectType")
+				.withExactArgs(sinon.match.same(oPathValue), "string");
+			this.mock(oMetaModel).expects("fetchObject")
+				.withExactArgs("/ProductList/@UI.LineItem/0/Value/$Path/$")
+				.returns(SyncPromise.resolve(oProperty));
+			this.mock(oMetaModel).expects("getConstraints")
+				.withExactArgs(sinon.match.same(oProperty), sPath)
+				.returns(mConstraints);
+			this.mock(Expression).expects("fetchCurrencyOrUnit")
+				.withExactArgs(sinon.match.same(oPathValue), "type", sinon.match.same(mConstraints))
+				.returns(SyncPromise.resolve(bAsync ? Promise.resolve(oResult) : oResult));
+
+			// code under test
+			oPromise = Expression.path(oPathValue);
+
+			assert.strictEqual(oPromise.isPending(), bAsync);
+
+			return oPromise.then(function (oResult0) {
+				assert.strictEqual(oResult0, oResult);
+			});
+		});
+	});
+
+	//*********************************************************************************************
+	QUnit.test("path fails sync, 'uncaught (in promise)' expected", function (assert) {
 		var oError = new Error("foo"),
+			fnListener = SyncPromise.listener,
 			oMetaModel = {
 				fetchObject : function () {}
 			},
@@ -179,21 +346,23 @@ sap.ui.define([
 				value : "BusinessPartnerID"
 			},
 			oResult,
-			oSyncPromiseMock = this.mock(SyncPromise);
+			oSyncPromiseMock = sinon.mock(SyncPromise);
 
 		this.mock(oMetaModel).expects("fetchObject")
 			.withExactArgs(oPathValue.path + "/$")
 			.returns(SyncPromise.reject(oError));
-		if (!SyncPromise.listener) {
-			// Note: this cannot be cleaned up again as there is no good point in time :-(
-			SyncPromise.listener = function () {};
+		try {
+			if (!fnListener) {
+				SyncPromise.listener = function () {};
+			}
+			oSyncPromiseMock.expects("listener").never(); // path() must not call SyncPromise#caught
+
+			// code under test
+			oResult = Expression.path(oPathValue);
+		} finally {
+			oSyncPromiseMock.restore(); // Note: SyncPromise#then internally calls #caught
+			SyncPromise.listener = fnListener;
 		}
-		oSyncPromiseMock.expects("listener").never(); // path() must not call SyncPromise#caught
-
-		// code under test
-		oResult = Expression.path(oPathValue);
-
-		oSyncPromiseMock.restore();
 
 		return oResult.then(function () {
 			assert.ok(false);
