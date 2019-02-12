@@ -73,7 +73,15 @@ sap.ui.define([
 		function callback(mutationsList, observer) {
 			mutationsList.forEach(function (mutation) {
 				if (mutation.type == 'childList') {
-					mutation.addedNodes.forEach(function (node) {
+					var addedNodes = mutation.addedNodes,
+						removedNodes = mutation.removedNodes,
+						node,
+						xnode,
+						count,
+						aTags,
+						i;
+					for (count = 0; count < addedNodes.length; count++) {
+						node = addedNodes[count];
 						if (!document.createCustomElement._querySelector) {
 							return;
 						}
@@ -84,19 +92,20 @@ sap.ui.define([
 							node._control._connectedCallback();
 						}
 						if (node.tagName) {
-							var aTags = node.querySelectorAll(document.createCustomElement._querySelector);
-							for (var i = 0; i < aTags.length; i++) {
-								node = aTags[i];
-								if (node.tagName && document.createCustomElement.hasOwnProperty(node.tagName.toLowerCase())) {
-									if (!node._control) {
-										document.createCustomElement[node.tagName.toLowerCase()].connectToNode(node);
+							aTags = node.querySelectorAll(document.createCustomElement._querySelector);
+							for (i = 0; i < aTags.length; i++) {
+								xnode = aTags[i];
+								if (xnode.tagName && document.createCustomElement.hasOwnProperty(xnode.tagName.toLowerCase())) {
+									if (!xnode._control) {
+										document.createCustomElement[xnode.tagName.toLowerCase()].connectToNode(xnode);
 									}
-									node._control._connectedCallback();
+									xnode._control._connectedCallback();
 								}
 							}
 						}
-					});
-					mutation.removedNodes.forEach(function (node) {
+					}
+					for (count = 0; count < removedNodes.length; count++) {
+						node = removedNodes[count];
 						if (!document.createCustomElement._querySelector) {
 							return;
 						}
@@ -104,15 +113,15 @@ sap.ui.define([
 							node._control._disconnectedCallback();
 						}
 						if (node.tagName) {
-							var aTags = node.querySelectorAll(document.createCustomElement._querySelector);
-							for (var i = 0; i < aTags.length; i++) {
-								node = aTags[i];
-								if (node._control) {
-									node._control._disconnectedCallback();
+							aTags = node.querySelectorAll(document.createCustomElement._querySelector);
+							for (i = 0; i < aTags.length; i++) {
+								xnode = aTags[i];
+								if (xnode._control) {
+									xnode._control._disconnectedCallback();
 								}
 							}
 						}
-					});
+					}
 				} else if (mutation.type === "attributes" && mutation.target && mutation.target._control) {
 					mutation.target._control._changeProperty.call(mutation.target._control, mutation.attributeName, mutation.target.getAttribute(mutation.attributeName));
 				}
@@ -292,9 +301,10 @@ sap.ui.define([
 		var sSelector = prefixedTagName.replace("-", "\\-");
 		createElement._querySelector += sSelector;
 		var customTags = document.querySelectorAll(sSelector);
-		customTags.forEach(function (node) {
+		for (var i = 0; i < customTags.length; i++) {
+			var node = customTags[i];
 			createElement[prefixedTagName].connectToNode(node);
-		});
+		}
 		return Tag;
 
 	}
