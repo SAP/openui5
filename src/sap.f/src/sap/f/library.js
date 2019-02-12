@@ -38,7 +38,8 @@ sap.ui.define(["sap/ui/base/DataType",
 			"sap.f.DynamicPageTitle",
 			"sap.f.FlexibleColumnLayout",
 			"sap.f.semantic.SemanticPage",
-			"sap.f.GridList"
+			"sap.f.GridList",
+			"sap.f.ShellBar"
 		],
 		elements: [
 			"sap.f.CardItemLayoutData",
@@ -439,6 +440,16 @@ sap.ui.define(["sap/ui/base/DataType",
 	 * @public
 	 * @interface
 	 * @name sap.f.cards.IHeader
+	 */
+
+	/**
+	 * Interface for controls suitable for sap.f.ShellBar additionalContent aggregation
+	 *
+	 * @since 1.63
+	 * @experimental Since 1.63. This Interface is experimental and provides only limited functionality. It can be removed in future versions.
+	 * @public
+	 * @interface
+	 * @name sap.f.IShellBar
 	 */
 
 	return thisLib;

@@ -87,6 +87,13 @@
 			"sap.f.sample.GridListBoxContainerGrouping",
 			"sap.f.sample.GridListBoxContainerReal"
 		  ]
+		},
+		{
+		  "id": "sap.f.ShellBar",
+		  "name": "ShellBar (experimental)",
+		  "category": "Display",
+		  "since": "1.63",
+		  "samples": ["sap.f.sample.ShellBar"]
 		}
 	  ],
 	  "samples": [
@@ -159,7 +166,12 @@
 		  "id": "sap.f.sample.GridListBoxContainerReal",
 		  "name": "Grid List - Recommended Item Designs",
 		  "description": "This is a sample for GridList item templates representing a typical tools page dashboard style."
+		},
+		{
+		  "id": "sap.f.sample.ShellBar",
+		  "name": "ShellBar (experimental)",
+		  "description": "This sample demonstrates sap.f.ShellBar."
 		}
-		]
+	  ]
 	}
 }
