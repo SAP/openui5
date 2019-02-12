@@ -1126,7 +1126,8 @@ sap.ui.define([
 					this.mock(oCachePromise.getResult()).expects("setQueryOptions").never();
 				} else {
 					this.mock(oBinding.oModel).expects("reportError")
-						.withExactArgs("Failed to update cache for binding " + oBinding, sClassName,
+						.withExactArgs(oBinding + ": Failed to enhance query options for "
+							+ "auto-$expand/$select for child childPath", sClassName,
 							sinon.match.same(oCachePromise.getResult()));
 				}
 
@@ -1141,6 +1142,9 @@ sap.ui.define([
 						assert.strictEqual(oBinding.oCachePromise.getResult(),
 							oCachePromise.getResult());
 					}
+					// ensure that oCachePromise remains rejected
+					assert.strictEqual(oBinding.oCachePromise.isRejected(),
+						oCachePromise.isRejected());
 				});
 			}
 		);

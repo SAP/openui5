@@ -123,7 +123,7 @@ sap.ui.define([
 			"statusText" : "Forbidden"
 		}
 	}, {
-		message : "401 Unauthorized",
+		message : "message: 401 Unauthorized",
 		"response" : {
 			"headers" : {
 				"Content-Type" : "text/html;charset=utf-8"
@@ -169,7 +169,7 @@ sap.ui.define([
 			"statusText" : "Precondition Failed"
 		}
 	}, {
-		message : "999 Invalid JSON",
+		message : "message: 999 Invalid JSON",
 		"response" : {
 			"headers" : {
 				"Content-Type" : "application/json"
@@ -180,7 +180,7 @@ sap.ui.define([
 		},
 		warning : sinon.match(/SyntaxError/)
 	}, {
-		message : "403 Forbidden",
+		message : "message: 403 Forbidden",
 		"response" : {
 			"headers" : {
 				"Content-Type" : "text/plain-not-quite-right"
@@ -197,7 +197,7 @@ sap.ui.define([
 			"statusText" : "error"
 		}
 	}, {
-		message : "404 Not Found",
+		message : "message: 404 Not Found",
 		"response" : {
 			"headers" : {},
 			"status" : 404,
@@ -239,7 +239,7 @@ sap.ui.define([
 					oFixture.response.responseText, "sap.ui.model.odata.v4.lib._Helper");
 			}
 
-			oError = _Helper.createError(jqXHR, "/request/path", "original/path");
+			oError = _Helper.createError(jqXHR, "message", "/request/path", "original/path");
 
 			assert.ok(oError instanceof Error);
 			assert.deepEqual(oError.error, oFixture.body && oFixture.body.error);

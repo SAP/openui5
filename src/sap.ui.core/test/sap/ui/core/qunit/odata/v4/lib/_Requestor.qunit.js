@@ -293,8 +293,8 @@ sap.ui.define([
 
 			oHelperMock.expects("createError")
 				.exactly(bSuccess || o.bReadFails ? 0 : 1)
-				.withExactArgs(sinon.match.same(oTokenRequiredResponse), "/Service/foo",
-					"original/path")
+				.withExactArgs(sinon.match.same(oTokenRequiredResponse), "Communication error",
+					"/Service/foo", "original/path")
 				.returns(oError);
 			oHelperMock.expects("resolveIfMatchHeader").exactly(o.iRequests)
 				.withExactArgs(sinon.match.same(mHeaders))
@@ -802,7 +802,8 @@ sap.ui.define([
 			// do not check parameters
 			.returns(Promise.resolve([oResponse]));
 		this.mock(_Helper).expects("createError")
-			.withExactArgs(sinon.match.same(oResponse), "EMPLOYEES", sOriginalPath)
+			.withExactArgs(sinon.match.same(oResponse), "Communication error", "EMPLOYEES",
+				sOriginalPath)
 			.returns(new Error());
 
 		// code under test
@@ -952,7 +953,8 @@ sap.ui.define([
 
 			this.mock(_Helper).expects("createError")
 				.exactly(bSuccess ? 0 : 2)
-				.withExactArgs(sinon.match.same(oTokenRequiredResponse))
+				.withExactArgs(sinon.match.same(oTokenRequiredResponse),
+					"Could not refresh security token")
 				.returns(oError);
 
 			this.mock(jQuery).expects("ajax").twice()
