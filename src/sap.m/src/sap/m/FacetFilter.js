@@ -532,8 +532,6 @@ sap.ui.define([
 		if (this.getType() !== FacetFilterType.Light) {
 			this._startItemNavigation();
 		}
-
-		this._getSummaryBar().$().attr('aria-label', this._getSummaryText());
 	};
 
 	/* Keyboard Handling */
@@ -1919,6 +1917,10 @@ sap.ui.define([
 				content : [ oText ], // Text is set before rendering
 				active : this.getType() === FacetFilterType.Light ? true : false,
 				design : ToolbarDesign.Info,
+				ariaLabelledBy : [
+					InvisibleText.getStaticId("sap.m", "FACETFILTER_TITLE"),
+					oText
+				],
 				press : function(oEvent) {
 						that.openFilterDialog();
 				}
