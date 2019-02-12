@@ -234,9 +234,11 @@ sap.ui.define([
 		 *   <ul>
 		 *   <li>{number} <code>code</code>: The response code (<code>200</code> if not given)
 		 *   <li>{map} <code>headers</code>: A map of headers to set in the response
-		 *   <li>{RegExp} <code>ifMatch</code>: A regular expression the request body is matched
-		 *     against to select the response. If not given, all requests match. The first match in
-		 *     the list wins.
+		 *   <li>{RegExp|function} <code>ifMatch</code>: A filter to select the response. If not
+		 *     given, all requests match. The first match in the list wins. A regular expression is
+		 *     matched against the request body. A function is called with a request object having
+		 *     properties method, url, requestHeaders and requestBody; it must return truthy to
+		 *     indicate a match.
 		 *   <li>{string} <code>message</code>: The response message
 		 *   <li>{string} <code>source</code>: The path of a file relative to <code>sBase</code> to
 		 *     be used for the response message. It will be read synchronously in advance. In this
@@ -363,7 +365,7 @@ sap.ui.define([
 			/*
 			 * Formats the response to be inserted into the batch
 			 *
-			 * @param {object} oResponse The response with code, headers, message
+			 * @param {object} oResponse The response with code, contentId, headers, message
 			 * @param {map} mODataHeaders The OData headers from the batch to copy into the response
 			 * @returns {string} The response to be inserted into the batch
 			 */
@@ -435,15 +437,15 @@ sap.ui.define([
 								message : oRequest.requestBody
 							};
 							break;
-						default:
-							oResponse = error(404, oRequest, "No mock data found");
+						// no default
 					}
 				}
-				oResponse = {
-					code : oResponse.code,
-					headers : jQuery.extend({}, getODataHeaders(oRequest), oResponse.headers),
-					message : oResponse.message
-				};
+				if (oResponse) {
+					Log.info(oRequest.method + " " + oRequest.url, null, "sap.ui.test.TestUtils");
+				} else {
+					oResponse = error(404, oRequest, "No mock data found");
+				}
+				oResponse.headers = jQuery.extend({}, getODataHeaders(oRequest), oResponse.headers);
 				if (sContentId && oResponse.code < 300) {
 					oResponse.contentId = sContentId;
 				}

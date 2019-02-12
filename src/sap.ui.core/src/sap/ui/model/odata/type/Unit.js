@@ -5,9 +5,9 @@
 // Provides an OData Unit type which extends sap.ui.model.type.Unit by unit of measure
 // customizing
 sap.ui.define([
-	'sap/base/util/merge',
+	"sap/base/util/merge",
 	"sap/ui/core/format/NumberFormat",
-	'sap/ui/model/type/Unit'
+	"sap/ui/model/type/Unit"
 ], function (merge, NumberFormat, BaseUnit) {
 	"use strict";
 	/*global Map */
@@ -19,15 +19,17 @@ sap.ui.define([
 	 *
 	 * @param {object} [oFormatOptions]
 	 *   See parameter <code>oFormatOptions</code> of {@link sap.ui.model.type.Unit#constructor}.
-	 *   Format options are immutable, that is they can only be set once on construction.
+	 *   Format options are immutable, that is, they can only be set once on construction.
+	 * @param {object} [oFormatOptions.customUnits]
+	 *   Not supported; the type derives this from its unit customizing part.
 	 * @param {boolean} [oFormatOptions.parseAsString=true]
 	 *   Whether the measure is parsed to a string; set to <code>false</code> if the measure's
 	 *   underlying type is represented as a <code>number</code>, for example
 	 *   {@link sap.ui.model.odata.type.Int32}
 	 * @param {object} [oConstraints] Not supported
 	 * @param {string[]} [aDynamicFormatOptionNames] Not supported
-	 * @throws {Error} If called with one of the parameters <code>oConstraints</code> or
-	 *   <code>aDynamicFormatOptionNames</code>
+	 * @throws {Error} If called with more parameters than <code>oFormatOptions</code> or if the
+	 *   format option <code>customUnits</code> is set
 	 *
 	 * @alias sap.ui.model.odata.type.Unit
 	 * @author SAP SE
@@ -44,17 +46,19 @@ sap.ui.define([
 	 */
 	var Unit = BaseUnit.extend("sap.ui.model.odata.type.Unit", {
 		constructor : function (oFormatOptions, oConstraints, aDynamicFormatOptionNames) {
-			var oDefault = {parseAsString : true};
+			if (oFormatOptions && oFormatOptions["customUnits"]) {
+				throw new Error("Format option customUnits is not supported");
+			}
 
 			if (oConstraints) {
 				throw new Error("Constraints not supported");
 			}
 
 			if (arguments.length > 2) {
-				throw new Error("Dynamic format options not supported");
+				throw new Error("Only the parameter oFormatOptions is supported");
 			}
 
-			oFormatOptions = oFormatOptions ? merge(oDefault, oFormatOptions) : oDefault;
+			oFormatOptions = merge({parseAsString : true}, oFormatOptions);
 
 			BaseUnit.call(this, oFormatOptions, oConstraints, ["customUnits"]);
 
@@ -75,7 +79,10 @@ sap.ui.define([
 	 *
 	 * @param {any[]} aValues
 	 *   Array of part values to be formatted; contains measure, unit, unit customizing in this
-	 *   order
+	 *   order. The first call to this method where all parts are set determines the unit
+	 *   customizing; subsequent calls use this customizing, so that the corresponding part may be
+	 *   omitted. Changes to the unit customizing part after this first method call are not
+	 *   considered: The unit customizing for this Unit instance remains unchanged.
 	 * @param {string} sTargetType
 	 *   The target type; must be "string" or a type with "string" as its
 	 *   {@link sap.ui.base.DataType#getPrimitiveType primitive type}.
@@ -83,7 +90,7 @@ sap.ui.define([
 	 * @returns {string}
 	 *   The formatted output value; <code>null</code>, if <code>aValues</code> or the measure or
 	 *   unit value contained therein is <code>undefined</code> or <code>null</code> or if the
-	 *   unit customizing from <code>aValues</code> is <code>undefined</code>
+	 *   unit customizing is not set
 	 * @throws {sap.ui.model.FormatException}
 	 *   If <code>sTargetType</code> is unsupported
 	 *
@@ -98,26 +105,31 @@ sap.ui.define([
 		}
 
 		// composite binding calls formatValue several times, where some parts are not yet available
-		if (!aValues || isUnset(aValues[0]) || isUnset(aValues[1]) || aValues[2] === undefined) {
+		if (!aValues || isUnset(aValues[0]) || isUnset(aValues[1])
+			|| aValues[2] === undefined && this.mCustomUnits === undefined) {
 			return null;
 		}
 
-		if (aValues[2] === null) { // no unit customizing available
-			aValues = aValues.slice(0, 2);
-			this.mCustomUnits = null;
-		} else {
-			this.mCustomUnits = this.mCustomUnits || mCustomizing2CustomUnits.get(aValues[2]);
-			if (!this.mCustomUnits) {
-				this.mCustomUnits = {};
-				Object.keys(aValues[2]).forEach(function (sKey) {
-					that.mCustomUnits[sKey] = {
-						decimals : aValues[2][sKey].UnitSpecificScale,
-						displayName : aValues[2][sKey].Text,
-						"unitPattern-count-other": NumberFormat.getDefaultUnitPattern(sKey)
-					};
-				});
-				mCustomizing2CustomUnits.set(aValues[2], this.mCustomUnits);
+		if (this.mCustomUnits === undefined) {
+			if (aValues[2] === null) { // no unit customizing available
+				this.mCustomUnits = null;
+			} else {
+				this.mCustomUnits = mCustomizing2CustomUnits.get(aValues[2]);
+				if (!this.mCustomUnits) {
+					this.mCustomUnits = {};
+					Object.keys(aValues[2]).forEach(function (sKey) {
+						that.mCustomUnits[sKey] = {
+							decimals : aValues[2][sKey].UnitSpecificScale,
+							displayName : aValues[2][sKey].Text,
+							"unitPattern-count-other" : NumberFormat.getDefaultUnitPattern(sKey)
+						};
+					});
+					mCustomizing2CustomUnits.set(aValues[2], this.mCustomUnits);
+				}
 			}
+		}
+		aValues = aValues.slice(0, 2);
+		if (this.mCustomUnits) {
 			aValues[2] = this.mCustomUnits;
 		}
 		return BaseUnit.prototype.formatValue.call(this, aValues, sTargetType);
@@ -159,9 +171,9 @@ sap.ui.define([
 	 *   {@link sap.ui.base.DataType#getPrimitiveType primitive type}.
 	 *   See {@link sap.ui.model.odata.type} for more information.
 	 * @returns {any[]}
-	 *   An array containing measure and unit in this order. Both measure and unit are string values
-	 *   unless the format option <code>parseAsString</code> is <code>false</code>; in this case,
-	 *   the measure is a number.
+	 *   An array containing measure and unit in this order. Both, measure and unit, are string
+	 *   values unless the format option <code>parseAsString</code> is <code>false</code>; in this
+	 *   case, the measure is a number.
 	 * @throws {sap.ui.model.ParseException}
 	 *   If <code>sSourceType</code> is unsupported or if the given string cannot be parsed
 	 * @throws {Error}

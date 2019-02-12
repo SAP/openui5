@@ -88,6 +88,7 @@ sap.ui.define([
 	QUnit.module("sap.ui.test.TestUtils", {
 		beforeEach : function () {
 			this.oLogMock = this.mock(Log);
+			this.oLogMock.expects("info").never();
 			this.oLogMock.expects("warning").never();
 			this.oLogMock.expects("error").never();
 
@@ -235,6 +236,8 @@ sap.ui.define([
 				mHeaders[sKey] = oFixture.requestHeaders[sKey];
 			});
 			TestUtils.useFakeServer(this._oSandbox, "sap/ui/test/qunit/data", mServerFixture);
+			this.oLogMock.expects("info").withExactArgs(oFixture.method + " " + oFixture.url, null,
+				"sap.ui.test.TestUtils");
 
 			return request(oFixture.method, oFixture.url, mHeaders, oFixture.requestBody
 			).then(function (oXHR) {
@@ -249,6 +252,8 @@ sap.ui.define([
 			var sUrl = oFixture.url.replace("/Foo/", "");
 
 			TestUtils.useFakeServer(this._oSandbox, "sap/ui/test/qunit/data", mServerFixture);
+			this.oLogMock.expects("info").withExactArgs(oFixture.method + " " + oFixture.url, null,
+				"sap.ui.test.TestUtils");
 
 			return request("POST", "/Foo/$batch", {"OData-Version" : "4.0"},
 				"--batch_id-0123456789012-345\r\n"
@@ -287,6 +292,7 @@ sap.ui.define([
 	//*********************************************************************************************
 	QUnit.test("useFakeServer: HEAD /Foo/any (direct)", function (assert) {
 		TestUtils.useFakeServer(this._oSandbox, "sap/ui/test/qunit/data", mServerFixture);
+		this.oLogMock.expects("info").withExactArgs("HEAD /Foo/any", null, "sap.ui.test.TestUtils");
 
 		return request("HEAD", "/Foo/any", {"OData-Version": "4.0"}).then(function (oXHR) {
 			assert.strictEqual(oXHR.status, 200, "status");
@@ -299,6 +305,10 @@ sap.ui.define([
 	//*********************************************************************************************
 	QUnit.test("useFakeServer: change set - success", function (assert) {
 		TestUtils.useFakeServer(this._oSandbox, "sap/ui/test/qunit/data", mServerFixture);
+		this.oLogMock.expects("info").withExactArgs("PATCH /Foo/any", null,
+			"sap.ui.test.TestUtils");
+		this.oLogMock.expects("info").withExactArgs("PATCH /Foo/bar", null,
+			"sap.ui.test.TestUtils");
 
 		return request("POST", "/Foo/$batch", {"OData-Version" : "4.0"}, [
 			"--batch_id-1538663822135-19",
@@ -365,6 +375,8 @@ sap.ui.define([
 	//*********************************************************************************************
 	QUnit.test("useFakeServer: change set - failure", function (assert) {
 		TestUtils.useFakeServer(this._oSandbox, "sap/ui/test/qunit/data", mServerFixture);
+		this.oLogMock.expects("info").withExactArgs("POST /Foo/any", null, "sap.ui.test.TestUtils");
+		this.oLogMock.expects("info").withExactArgs("POST /Foo/baz", null, "sap.ui.test.TestUtils");
 
 		return request("POST", "/Foo/$batch", {"OData-Version" : "4.0"}, [
 			"--batch_id-1538663822135-19",
@@ -459,6 +471,8 @@ sap.ui.define([
 
 		QUnit.test("TestUtils: GET, " + i, function (assert) {
 			TestUtils.useFakeServer(this._oSandbox, "sap/ui/core/qunit/odata/v4/data", mUrls);
+			this.oLogMock.expects("info").withExactArgs("GET /Foo/bar", null,
+				"sap.ui.test.TestUtils");
 			return jQuery.ajax("/Foo/bar", {
 				method : "GET",
 				headers : oFixture.requestHeaders
@@ -474,6 +488,8 @@ sap.ui.define([
 
 		QUnit.test("TestUtils: $batch with GET, " + i, function (assert) {
 			TestUtils.useFakeServer(this._oSandbox, "sap/ui/core/qunit/odata/v4/data", mUrls);
+			this.oLogMock.expects("info").withExactArgs("GET /Foo/bar", null,
+				"sap.ui.test.TestUtils");
 			return jQuery.ajax("/$batch", {
 				data : "--batch_id-0123456789012-345\r\n"
 					+ "Content-Type:application/http\r\n"
@@ -554,6 +570,8 @@ sap.ui.define([
 
 			QUnit.test("TestUtils: " + sTitle, function (assert) {
 				TestUtils.useFakeServer(this._oSandbox, "sap/ui/core/qunit/odata/v4/data", {});
+				this.oLogMock.expects("info").withExactArgs(sMethod + " /Foo/bar", null,
+					"sap.ui.test.TestUtils");
 				return jQuery.ajax("/Foo/bar", {
 					data : sMethod === "DELETE" ? "" : "{\"foo\":\"bar\"}",
 					method : sMethod,
@@ -569,6 +587,8 @@ sap.ui.define([
 
 			QUnit.test("TestUtils: $batch with " + sTitle, function (assert) {
 				TestUtils.useFakeServer(this._oSandbox, "sap/ui/core/qunit/odata/v4/data", {});
+				this.oLogMock.expects("info").withExactArgs(sMethod + " /Foo/bar", null,
+					"sap.ui.test.TestUtils");
 				return jQuery.ajax("/$batch", {
 					data : "--batch_id-0123456789012-345\r\n"
 						+ "Content-Type:application/http\r\n"

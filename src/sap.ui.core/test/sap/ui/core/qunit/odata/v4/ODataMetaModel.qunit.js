@@ -122,6 +122,9 @@ sap.ui.define([
 				"tea_busi.DefaultContainer/T€AMS" : {
 					"@T€AMS" : {}
 				},
+				"tea_busi.NewAction/Team_Id" : {
+					"@Common.Label" : "New Team ID"
+				},
 				"tea_busi.TEAM" : {
 					"@Common.Text" : {
 						"$Path" : "Name"
@@ -161,6 +164,9 @@ sap.ui.define([
 						}
 					}]
 				},
+				"tea_busi.TEAM/Name" : {
+					"@Common.Label" : "Team Name"
+				},
 				"tea_busi.TEAM/TEAM_2_EMPLOYEES" : {
 					"@Common.MinOccurs" : 1
 				},
@@ -174,6 +180,11 @@ sap.ui.define([
 					}
 				},
 				"tea_busi.Worker" : {
+					"@Common.Text" : {
+						"$If" : [true, {
+							"$Path" : "Name"
+						}] // "else" is missing!
+					},
 					"@UI.Facets" : [{
 						"$Type" : "UI.ReferenceFacet",
 						"Target" : {
@@ -282,6 +293,12 @@ sap.ui.define([
 				"$Parameter" : [{
 					"$Name" : "_it",
 					"$Type" : "tea_busi.TEAM"
+				}, {
+					"$Name" : "parameter1",
+					"$Type" : "Edm.String"
+				}, {
+					"$Name" : "parameter2",
+					"$Type" : "Edm.Decimal"
 				}],
 				"$ReturnType" : {
 					"$Type" : "tea_busi.TEAM"
@@ -395,6 +412,7 @@ sap.ui.define([
 					"$kind" : "EntitySet",
 					"$Type" : "tea_busi.EQUIPMENT"
 				},
+				// Note: our JsDoc uses similar examples: GetOldestAge and GetOldestWorker
 				"GetEmployeeMaxAge" : {
 					"$kind" : "FunctionImport",
 					"$Function" : "tea_busi.FuGetEmployeeMaxAge"
@@ -450,6 +468,46 @@ sap.ui.define([
 					"$Type" : "Edm.Int16"
 				}
 			}],
+			// "NewAction" is overloaded by collection of type, returning instance of type
+			//TODO There can be one overload with "$isCollection" : true and another w/o, for the
+			// same binding parameter $Type! How to tell these apart?
+			"tea_busi.NewAction" : [{
+				"$kind" : "Action",
+				"$IsBound" : true,
+				"$Parameter" : [{
+					"$isCollection" : true,
+					"$Name" : "_it",
+					"$Type" : "tea_busi.EQUIPMENT"
+				}],
+				"$ReturnType" : {
+					"$Type" : "tea_busi.EQUIPMENT"
+				}
+			}, {
+				"$kind" : "Action",
+				"$IsBound" : true,
+				"$Parameter" : [{
+					"$isCollection" : true,
+					"$Name" : "_it",
+					"$Type" : "tea_busi.TEAM"
+				}, {
+					"$Name" : "Team_Id",
+					"$Type" : "name.space.Id"
+				}],
+				"$ReturnType" : {
+					"$Type" : "tea_busi.TEAM"
+				}
+			}, {
+				"$kind" : "Action",
+				"$IsBound" : true,
+				"$Parameter" : [{
+					"$isCollection" : true,
+					"$Name" : "_it",
+					"$Type" : "tea_busi.Worker"
+				}],
+				"$ReturnType" : {
+					"$Type" : "tea_busi.Worker"
+				}
+			}],
 			"tea_busi.ServiceGroup" : {
 				"$kind" : "EntityType",
 				"DefaultSystem" : {
@@ -502,7 +560,7 @@ sap.ui.define([
 					"$isCollection" : true,
 					"$Type" : "tea_busi.ContainedC"
 				},
-				// Note: "value" is a symbolic name for an operation's return type iff. it is
+				// Note: "value" is a symbolic name for an operation's return type iff it is
 				// primitive
 				"value" : {
 					"$kind" : "Property",
@@ -887,7 +945,7 @@ sap.ui.define([
 			function expectReads(bPrefetch) {
 				oRequestorMock.expects("read")
 					.withExactArgs(that.oMetaModel.sUrl, false, bPrefetch)
-					.returns(Promise.resolve(mRootScope));
+					.resolves(mRootScope);
 				aReadResults = [];
 				(aAnnotationURI || []).forEach(function (sAnnotationUrl) {
 					var oAnnotationResult = {};
@@ -895,7 +953,7 @@ sap.ui.define([
 					aReadResults.push(oAnnotationResult);
 					oRequestorMock.expects("read")
 						.withExactArgs(sAnnotationUrl, true, bPrefetch)
-						.returns(Promise.resolve(oAnnotationResult));
+						.resolves(oAnnotationResult);
 				});
 			}
 
@@ -942,7 +1000,7 @@ sap.ui.define([
 
 		this.mock(this.oMetaModel.oRequestor).expects("read")
 			.withExactArgs(this.oMetaModel.sUrl, false, undefined)
-			.returns(Promise.resolve({}));
+			.resolves({});
 		this.oMetaModelMock.expects("_mergeAnnotations").throws(oError);
 
 		return this.oMetaModel.fetchEntityContainer().then(function () {
@@ -998,6 +1056,7 @@ sap.ui.define([
 		"/foo/bar|./" : "/foo/bar/",
 		"/foo|./bar/" : "/foo/bar/",
 		"/foo/|./bar/" : "/foo/bar/",
+		"/foo/|.//bar/" : "/foo//bar/",
 		// annotations
 		"/foo|@bar" : "/foo@bar",
 		"/foo/|@bar" : "/foo/@bar",
@@ -1075,8 +1134,12 @@ sap.ui.define([
 		//     would live in case of entity/complex type, but we would like to avoid warnings for
 		//     primitive types - how to tell the difference?
 //		"/GetEmployeeMaxAge/" : "Edm.Int16",
-		// Note: "value" is a symbolic name for the whole return type iff. it is primitive
+		"/GetEmployeeMaxAge/$Function/0/$ReturnType"
+			: mScope["tea_busi.FuGetEmployeeMaxAge"][0].$ReturnType,
+		// Note: "value" is a symbolic name for the whole return type iff it is primitive
 		"/GetEmployeeMaxAge/value" : mScope["tea_busi.FuGetEmployeeMaxAge"][0].$ReturnType,
+		"/GetEmployeeMaxAge/@$ui5.overload/0/$ReturnType"
+			: mScope["tea_busi.FuGetEmployeeMaxAge"][0].$ReturnType,
 		"/GetEmployeeMaxAge/value/$Type" : "Edm.Int16", // path may continue!
 		"/tea_busi.FuGetEmployeeMaxAge/value"
 			: mScope["tea_busi.FuGetEmployeeMaxAge"][0].$ReturnType,
@@ -1100,12 +1163,24 @@ sap.ui.define([
 		"/OverloadedAction/@$ui5.overload/AMOUNT" : mScope["tea_busi.ComplexType_Salary"].AMOUNT,
 		"/OverloadedAction/AMOUNT" : mScope["tea_busi.ComplexType_Salary"].AMOUNT,
 		"/T€AMS/name.space.OverloadedAction/Team_Id" : oTeamData.Team_Id,
+		"/EMPLOYEES/EMPLOYEE_2_TEAM/name.space.OverloadedAction/Team_Id" : oTeamData.Team_Id,
 		"/T€AMS/name.space.OverloadedAction/@$ui5.overload"
 			: sinon.match.array.deepEquals([aOverloadedAction[1]]),
 		"/name.space.OverloadedAction/@$ui5.overload" : sinon.match.array.deepEquals([]),
 		// only "Action" and "Function" is expected as $kind, but others are not filtered out!
 		"/name.space.BrokenOverloads"
 			: sinon.match.array.deepEquals(mScope["name.space.BrokenOverloads"]),
+		"/T€AMS/name.space.OverloadedAction/_it@Common.Label"
+			: mScope.$Annotations["name.space.OverloadedAction/_it"]["@Common.Label"],
+		"/T€AMS/name.space.OverloadedAction/_it" : aOverloadedAction[1].$Parameter[0],
+		"/T€AMS/name.space.OverloadedAction/parameter1" : aOverloadedAction[1].$Parameter[1],
+		"/T€AMS/name.space.OverloadedAction/parameter2" : aOverloadedAction[1].$Parameter[2],
+		// parameters take precedence, empty segment disambiguates
+		"/T€AMS/tea_busi.NewAction/Name" : oTeamData.Name, // "Name" is not a parameter
+		"/T€AMS/tea_busi.NewAction/_it" : mScope["tea_busi.NewAction"][1].$Parameter[0],
+		"/T€AMS/tea_busi.NewAction/Team_Id" : mScope["tea_busi.NewAction"][1].$Parameter[1],
+		"/T€AMS/tea_busi.NewAction/@$ui5.overload/0/$ReturnType/$Type/Team_Id" : oTeamData.Team_Id,
+		"/T€AMS/tea_busi.NewAction//Team_Id" : oTeamData.Team_Id,
 		// annotations ----------------------------------------------------------------------------
 		"/@DefaultContainer"
 			: mScope.$Annotations["tea_busi.DefaultContainer"]["@DefaultContainer"],
@@ -1144,6 +1219,10 @@ sap.ui.define([
 		"/name.space.OverloadedFunction/B@Common.Text@UI.TextArrangement"
 			: mScope.$Annotations["name.space.OverloadedFunction/B"]
 				["@Common.Text@UI.TextArrangement"],
+		"/T€AMS/tea_busi.NewAction/Team_Id@" : mScope.$Annotations["tea_busi.NewAction/Team_Id"],
+		// annotations at properties of return type
+		"/T€AMS/tea_busi.NewAction/Name@" : mScope.$Annotations["tea_busi.TEAM/Name"],
+		"/T€AMS/tea_busi.NewAction//Team_Id@" : mScope.$Annotations["tea_busi.TEAM/Team_Id"],
 		// inline annotations
 		"/ChangeManagerOfTeam/$Action/0/$ReturnType/@Common.Label" : "Hail to the Chief",
 		"/T€AMS/TEAM_2_EMPLOYEES/$OnDelete@Common.Label" : "None of my business",
@@ -1191,6 +1270,11 @@ sap.ui.define([
 		"/T€AMS@/@T€AMS/@sapui.name" : "@T€AMS", // dito
 		"/T€AMS/@UI.LineItem/0/@UI.Importance/@sapui.name" : "@UI.Importance", // in "JSON" mode
 		"/T€AMS/Team_Id@/@Common.Label@sapui.name" : "@Common.Label", // avoid indirection here!
+		"/T€AMS/tea_busi.NewAction/@sapui.name" : "tea_busi.TEAM", // due to $ReturnType insertion
+		"/T€AMS/tea_busi.NewAction/Name@sapui.name" : "Name", // property at return type
+		"/T€AMS/tea_busi.NewAction//Name@sapui.name" : "Name", // property at return type
+		"/T€AMS/tea_busi.NewAction/Team_Id@sapui.name" : "Team_Id", // parameter
+		"/T€AMS/tea_busi.NewAction/Team_Id/@sapui.name" : "name.space.Id", // due to $Type insertion
 		// .../$ ----------------------------------------------------------------------------------
 		"/$" : mScope, // @see #fetchData, but no clone
 		// "/$@sapui.name" --> "Unsupported path before @sapui.name"
@@ -1255,6 +1339,9 @@ sap.ui.define([
 		// annotations ----------------------------------------------------------------------------
 		"/tea_busi.Worker@missing",
 		"/tea_busi.Worker/@missing",
+		"/tea_busi.Worker/@missing/foo",
+		"/tea_busi.AcChangeManagerOfTeam/0/$ReturnType/@missing/foo",
+		"/tea_busi.Worker/@Common.Text/$If/2/$Path",
 		// "@" to access to all annotations, e.g. for iteration
 		"/tea_busi.Worker/@/@missing",
 		// operations -----------------------------------------------------------------------------
@@ -1268,6 +1355,8 @@ sap.ui.define([
 
 			this.oMetaModelMock.expects("fetchEntityContainer")
 				.returns(SyncPromise.resolve(mScope));
+			this.oLogMock.expects("isLoggable").never();
+			this.oLogMock.expects("debug").never();
 
 			// code under test
 			oSyncPromise = this.oMetaModel.fetchObject(sPath);
@@ -1293,7 +1382,7 @@ sap.ui.define([
 	});
 
 	//*********************************************************************************************
-	["/empty.Container/@", "/T€AMS/Name@"].forEach(function (sPath) {
+	["/empty.Container/@", "/EMPLOYEES/AGE@"].forEach(function (sPath) {
 		QUnit.test("fetchObject returns {} (anonymous empty object): " + sPath, function (assert) {
 			var oSyncPromise;
 
@@ -1380,6 +1469,10 @@ sap.ui.define([
 			"/@@sap.ui.model.odata.v4.AnnotationHelper"
 				: "sap.ui.model.odata.v4.AnnotationHelper is not a function but: "
 					+ sap.ui.model.odata.v4.AnnotationHelper,
+			"/@@requestCodeList" // requestCodeList is @private!
+				: "requestCodeList is not a function but: undefined",
+			"/@@.requestCurrencyCodes" // "." looks in given scope only!
+				: ".requestCurrencyCodes is not a function but: undefined",
 			"/@@.requestUnitsOfMeasure" // "." looks in given scope only!
 				: ".requestUnitsOfMeasure is not a function but: undefined",
 			// Unsupported overloads --------------------------------------------------------------
@@ -1420,7 +1513,8 @@ sap.ui.define([
 			"/$Foo/$Bar/$Baz" : "Invalid segment: $Bar",
 			"/$EntityContainer/T€AMS/Team_Id/$MaxLength/." : "Invalid segment: .",
 			"/$EntityContainer/T€AMS/Team_Id/$Nullable/." : "Invalid segment: .",
-			"/$EntityContainer/T€AMS/Team_Id/NotFound/Invalid" : "Invalid segment: Invalid"
+			"/$EntityContainer/T€AMS/Team_Id/NotFound/Invalid" : "Invalid segment: Invalid",
+			"/T€AMS/@Common.Text/$Path/$Foo/$Bar" : "Invalid segment: $Bar"
 		}, function (sPath, sMessage) {
 			QUnit.test("fetchObject fails: " + sPath + ", debug = " + bDebug, function (assert) {
 				var oSyncPromise;
@@ -1485,33 +1579,38 @@ sap.ui.define([
 		});
 	});
 
-	//*********************************************************************************************
-	QUnit.test("fetchObject: @@requestUnitsOfMeasure", function (assert) {
-		var oResult = {};
+	["requestCurrencyCodes", "requestUnitsOfMeasure"].forEach(function (sName) {
+		//*****************************************************************************************
+		QUnit.test("fetchObject: @@" + sName, function (assert) {
+			var oResult = {};
 
-		this.oMetaModelMock.expects("fetchEntityContainer").returns(SyncPromise.resolve(mScope));
-		this.oMetaModelMock.expects("requestUnitsOfMeasure").on(this.oMetaModel).resolves(oResult);
+			this.oMetaModelMock.expects("fetchEntityContainer")
+				.returns(SyncPromise.resolve(mScope));
+			this.oMetaModelMock.expects(sName).on(this.oMetaModel).resolves(oResult);
 
-		// code under test
-		return this.oMetaModel.fetchObject("/T€AMS/@@requestUnitsOfMeasure")
-			.then(function (oResult0) {
-				assert.strictEqual(oResult0, oResult);
-			});
-	});
+			// code under test
+			return this.oMetaModel.fetchObject("/T€AMS/@@" + sName)
+				.then(function (oResult0) {
+					assert.strictEqual(oResult0, oResult);
+				});
+		});
 
-	//*********************************************************************************************
-	QUnit.test("fetchObject: @@requestUnitsOfMeasure from given scope wins", function (assert) {
-		var oResult = {},
-			oScope = {requestUnitsOfMeasure : function () {}};
+		//*****************************************************************************************
+		QUnit.test("fetchObject: @@" + sName + " from given scope wins", function (assert) {
+			var oResult = {},
+				oScope = {};
 
-		this.oMetaModelMock.expects("fetchEntityContainer").returns(SyncPromise.resolve(mScope));
-		this.mock(oScope).expects("requestUnitsOfMeasure").resolves(oResult);
+			oScope[sName] = function () {};
+			this.oMetaModelMock.expects("fetchEntityContainer")
+				.returns(SyncPromise.resolve(mScope));
+			this.mock(oScope).expects(sName).resolves(oResult);
 
-		// code under test
-		return this.oMetaModel.fetchObject("/T€AMS/@@requestUnitsOfMeasure", null, {scope : oScope})
-			.then(function (oResult0) {
-				assert.strictEqual(oResult0, oResult);
-			});
+			// code under test
+			return this.oMetaModel.fetchObject("/T€AMS/@@" + sName, null, {scope : oScope})
+				.then(function (oResult0) {
+					assert.strictEqual(oResult0, oResult);
+				});
+		});
 	});
 
 	//*********************************************************************************************
@@ -1636,13 +1735,13 @@ sap.ui.define([
 			this.expectFetchEntityContainer(mXServiceScope);
 			oRequestorMock.expects("read")
 				.withExactArgs("/a/default/iwbep/tea_busi_product/0001/$metadata")
-				.returns(Promise.resolve(mClonedProductScope));
+				.resolves(mClonedProductScope);
 			oRequestorMock.expects("read")
 				.withExactArgs("/a/default/iwbep/tea_busi_supplier/0001/$metadata")
-				.returns(Promise.resolve(mSupplierScope));
+				.resolves(mSupplierScope);
 			oRequestorMock.expects("read")
 				.withExactArgs("/empty/$metadata")
-				.returns(Promise.resolve(mMostlyEmptyScope));
+				.resolves(mMostlyEmptyScope);
 
 			expectDebug("Namespace tea_busi_product.v0001. found in $Include"
 				+ " of /a/default/iwbep/tea_busi_product/0001/$metadata"
@@ -1753,7 +1852,7 @@ sap.ui.define([
 			this.expectFetchEntityContainer(mXServiceScope);
 			this.mock(this.oMetaModel.oRequestor).expects("read")
 				.withExactArgs("/empty/$metadata")
-				.returns(Promise.resolve(mMostlyEmptyScope));
+				.resolves(mMostlyEmptyScope);
 			this.allowWarnings(assert, bWarn);
 			this.oLogMock.expects("warning").exactly(bWarn ? 1 : 0)
 				.withExactArgs("/empty/$metadata does not contain " + sSchemaName, sPath,
@@ -1803,7 +1902,7 @@ sap.ui.define([
 			this.expectFetchEntityContainer(mScope0);
 			oRequestorMock.expects("read")
 				.withExactArgs("/a/default/iwbep/tea_busi_product/0001/$metadata")
-				.returns(Promise.resolve(mReferencedScope));
+				.resolves(mReferencedScope);
 			this.allowWarnings(assert, bWarn);
 
 			// code under test
@@ -1853,7 +1952,7 @@ sap.ui.define([
 
 		this.expectFetchEntityContainer(mXServiceScope);
 		this.mock(this.oMetaModel.oRequestor).expects("read").withExactArgs(sUrl)
-			.returns(Promise.resolve(mReferencedScope));
+			.resolves(mReferencedScope);
 		this.oMetaModelMock.expects("validate")
 			.withExactArgs(sUrl, mReferencedScope)
 			.throws(oError);
@@ -1936,9 +2035,9 @@ sap.ui.define([
 
 		this.expectFetchEntityContainer(mScope0);
 		oRequestorMock.expects("read").withExactArgs("/A/$metadata")
-			.returns(Promise.resolve(mScopeA));
+			.resolves(mScopeA);
 		oRequestorMock.expects("read").withExactArgs("/B/$metadata")
-			.returns(Promise.resolve(mScopeB));
+			.resolves(mScopeB);
 
 		return this.oMetaModel.fetchObject("/B.")
 			.then(function (vResult) {
@@ -1984,7 +2083,7 @@ sap.ui.define([
 			this.mock(this.oMetaModel.oRequestor).expects("read")
 				.exactly(bSupportReferences ? 1 : 0)
 				.withExactArgs(sUrl)
-				.returns(Promise.resolve(mClonedProductScope));
+				.resolves(mClonedProductScope);
 			this.allowWarnings(assert, true);
 			this.oLogMock.expects("warning").exactly(bSupportReferences ? 0 : 1)
 				.withExactArgs("Unknown qualified name " + sPath.slice(1), sPath, sODataMetaModel);
@@ -3369,7 +3468,7 @@ sap.ui.define([
 	}, {
 		// <template:repeat list="{property>@}" ...>
 		// Iterate all external targeting annotations.
-		contextPath : "/T€AMS/Name",
+		contextPath : "/EMPLOYEES/AGE",
 		metaPath : "@",
 		result : []
 	}, {
@@ -4064,7 +4163,7 @@ sap.ui.define([
 			.returns(SyncPromise.resolve(mScope0));
 		this.mock(this.oMetaModel.oRequestor).expects("read")
 			.withExactArgs("/a/default/iwbep/tea_busi_foo/0001/$metadata")
-			.returns(Promise.resolve(mScope1));
+			.resolves(mScope1);
 		this.oMetaModelMock.expects("validate")
 			.withExactArgs("/a/default/iwbep/tea_busi_foo/0001/$metadata", mScope1)
 			.returns(mScope1);
@@ -4269,7 +4368,7 @@ sap.ui.define([
 		this.oMetaModelMock.expects("getMetaContext").withExactArgs(sPath).returns(oContext);
 		this.oMetaModelMock.expects("fetchObject")
 			.withExactArgs(undefined, sinon.match.same(oContext))
-			.returns(Promise.resolve());
+			.resolves();
 
 		// code under test
 		return this.oMetaModel.fetchValueListType(sPath).then(function () {
@@ -4374,53 +4473,60 @@ sap.ui.define([
 
 	//*********************************************************************************************
 	["ValueList", "ValueListMapping"].forEach(function (sValueList) {
-		QUnit.test("fetchValueListMappings: " + sValueList + ", success", function (assert) {
-			var oAnnotations = {},
-				oModel = new ODataModel({
-					serviceUrl : "/Foo/DataService/",
-					synchronizationMode : "None"
-				}),
-				oMetaModelMock = this.mock(oModel.getMetaModel()),
-				oDefaultMapping = {
-					"CollectionPath" : "VH_Category1Set",
-					"Parameters" : [{"p1" : "foo"}]
-				},
-				oFooMapping = {
-					"CollectionPath" : "VH_Category2Set",
-					"Parameters" : [{"p2" : "bar"}]
-				},
-				oProperty = {},
-				oValueListMetadata = {
-					"$Annotations" : {
-						"zui5_epm_sample.Product/Category" : oAnnotations,
-						"some.other.Target" : {}
-					}
-				},
-				oValueListModel = {
-					getMetaModel : function () {
-						return {
-							fetchEntityContainer : function () {
-								return Promise.resolve(oValueListMetadata);
-							}
-						};
-					}
-				};
+		[false, true].forEach(function (bTargetAsString) {
+			var sTitle = "fetchValueListMappings: " + sValueList + ", success, targetAsString="
+					+ bTargetAsString;
 
-			oAnnotations["@com.sap.vocabularies.Common.v1." + sValueList] = oDefaultMapping;
-			oAnnotations["@com.sap.vocabularies.Common.v1." + sValueList + "#foo"] = oFooMapping;
-			oMetaModelMock.expects("getObject")
-				.withExactArgs("/zui5_epm_sample.Product/Category")
-				.returns(oProperty);
+			QUnit.test(sTitle, function (assert) {
+				var oAnnotations = {},
+					oModel = new ODataModel({
+						serviceUrl : "/Foo/DataService/",
+						synchronizationMode : "None"
+					}),
+					oMetaModelMock = this.mock(oModel.getMetaModel()),
+					oDefaultMapping = {
+						"CollectionPath" : "VH_Category1Set",
+						"Parameters" : [{"p1" : "foo"}]
+					},
+					oFooMapping = {
+						"CollectionPath" : "VH_Category2Set",
+						"Parameters" : [{"p2" : "bar"}]
+					},
+					oProperty = {},
+					oValueListMetadata = {
+						"$Annotations" : {
+							"zui5_epm_sample.Product/Category" : oAnnotations,
+							"some.other.Target" : {}
+						}
+					},
+					oValueListModel = {
+						getMetaModel : function () {
+							return {
+								fetchEntityContainer : function () {
+									return Promise.resolve(oValueListMetadata);
+								}
+							};
+						}
+					};
 
-			// code under test
-			return oModel.getMetaModel()
-				.fetchValueListMappings(oValueListModel, "zui5_epm_sample", oProperty)
-				.then(function (oValueListMappings) {
-					assert.deepEqual(oValueListMappings, {
-						"" : oDefaultMapping,
-						"foo" : oFooMapping
+				oAnnotations["@com.sap.vocabularies.Common.v1." + sValueList] = oDefaultMapping;
+				oAnnotations["@com.sap.vocabularies.Common.v1." + sValueList + "#foo"]
+					= oFooMapping;
+				oMetaModelMock.expects("getObject").exactly(bTargetAsString ? 0 : 1)
+					.withExactArgs("/zui5_epm_sample.Product/Category")
+					.returns(oProperty);
+
+				// code under test
+				return oModel.getMetaModel()
+					.fetchValueListMappings(oValueListModel, "zui5_epm_sample",
+						bTargetAsString ? "zui5_epm_sample.Product/Category" : oProperty)
+					.then(function (oValueListMappings) {
+						assert.deepEqual(oValueListMappings, {
+							"" : oDefaultMapping,
+							"foo" : oFooMapping
+						});
 					});
-				});
+			});
 		});
 	});
 
@@ -4639,14 +4745,14 @@ sap.ui.define([
 			oMetaModelMock.expects("fetchValueListMappings")
 				.withExactArgs(sinon.match.same(oValueListModel1), "zui5_epm_sample",
 					sinon.match.same(oProperty))
-				.returns(Promise.resolve(oValueListMappings1));
+				.resolves(oValueListMappings1);
 			oMetaModelMock.expects("getOrCreateSharedModel")
 				.withExactArgs(sMappingUrl2)
 				.returns(oValueListModel2);
 			oMetaModelMock.expects("fetchValueListMappings")
 				.withExactArgs(sinon.match.same(oValueListModel2), "zui5_epm_sample",
 					sinon.match.same(oProperty))
-				.returns(Promise.resolve(oValueListMappings2));
+				.resolves(oValueListMappings2);
 			oMetaModelMock.expects("getOrCreateSharedModel")
 				.withExactArgs(sMappingUrlBar)
 				.returns(oValueListModelBar);
@@ -4682,6 +4788,125 @@ sap.ui.define([
 						+ " in " + sMappingUrlBar + " and " + sMappingUrl1);
 				});
 		});
+	});
+
+	//*********************************************************************************************
+	QUnit.test("requestValueListInfo: bound action parameter", function (assert) {
+		var sMappingUrl = "../ValueListService/$metadata",
+			oModel = new ODataModel({
+				serviceUrl : "/Foo/DataService/",
+				synchronizationMode : "None"
+			}),
+			oMetadata = {
+				"$Annotations" : {
+					"name.space.Action/Category" : {
+						"@com.sap.vocabularies.Common.v1.ValueListReferences" : [sMappingUrl]
+					}
+				},
+				"$EntityContainer" : "zui5_epm_sample.Container",
+				"name.space.Action" : [{
+					"$kind" : "Action",
+					"$IsBound" : true,
+					"$Parameter" : [{
+						"$Name" : "_it",
+						"$Type" : "zui5_epm_sample.Product"
+					}, {
+						"$Name" : "Category"
+					}],
+					"$ReturnType" : {
+						"$Type" : "some.other.Type"
+					}
+				}],
+				"zui5_epm_sample.Product" : {
+					"$kind" : "Entity"
+				},
+				"zui5_epm_sample.Container" : {
+					"ProductList" : {
+						"$kind" : "EntitySet",
+						"$Type" : "zui5_epm_sample.Product"
+					}
+				}
+			},
+			oMetaModelMock = this.mock(oModel.getMetaModel()),
+			oValueListMappings = {"" : {CollectionPath : ""}},
+			oValueListModel = {sServiceUrl : sMappingUrl};
+
+		oMetaModelMock.expects("fetchEntityContainer").atLeast(1)
+			.returns(SyncPromise.resolve(oMetadata));
+		oMetaModelMock.expects("getOrCreateSharedModel").withExactArgs(sMappingUrl)
+			.returns(oValueListModel);
+		oMetaModelMock.expects("fetchValueListMappings").withExactArgs(
+				sinon.match.same(oValueListModel), "name.space", "name.space.Action/Category")
+			.resolves(oValueListMappings);
+
+		// code under test
+		return oModel.getMetaModel()
+			.requestValueListInfo("/ProductList('HT-1000')/name.space.Action/Category")
+			.then(function (oResult) {
+				assert.deepEqual(oResult, {
+					"" : {
+						$model : oValueListModel,
+						CollectionPath : ""
+					}
+				});
+			});
+	});
+
+	//*********************************************************************************************
+	//TODO Unknown qualified name some.other.Type at /name.space.Action/0/$ReturnType/$Type,
+	//     /ActionImport/@sapui.name
+	// --> need to identify action import before we Promise.all([this.requestObject()])
+	QUnit.skip("requestValueListInfo: action import parameter", function (assert) {
+		var sMappingUrl = "../ValueListService/$metadata",
+			oModel = new ODataModel({
+				serviceUrl : "/Foo/DataService/",
+				synchronizationMode : "None"
+			}),
+			oMetadata = {
+				"$Annotations" : {
+					"name.space.Action/Category" : {
+						"@com.sap.vocabularies.Common.v1.ValueListReferences" : [sMappingUrl]
+					}
+				},
+				"$EntityContainer" : "zui5_epm_sample.Container",
+				"name.space.Action" : [{
+					"$kind" : "Action",
+					"$Parameter" : [{
+						"$Name" : "Category"
+					}],
+					"$ReturnType" : {
+						"$Type" : "some.other.Type"
+					}
+				}],
+				"zui5_epm_sample.Container" : {
+					"ActionImport" : {
+						"$kind" : "ActionImport",
+						"$Action" : "name.space.Action"
+					}
+				}
+			},
+			oMetaModelMock = this.mock(oModel.getMetaModel()),
+			oValueListMappings = {"" : {CollectionPath : ""}},
+			oValueListModel = {sServiceUrl : sMappingUrl};
+
+		oMetaModelMock.expects("fetchEntityContainer").atLeast(1)
+			.returns(SyncPromise.resolve(oMetadata));
+		oMetaModelMock.expects("getOrCreateSharedModel").withExactArgs(sMappingUrl)
+			.returns(oValueListModel);
+		oMetaModelMock.expects("fetchValueListMappings").withExactArgs(
+				sinon.match.same(oValueListModel), "name.space", "name.space.Action/Category")
+			.resolves(oValueListMappings);
+
+		// code under test
+		return oModel.getMetaModel().requestValueListInfo("/ActionImport/Category")
+			.then(function (oResult) {
+				assert.deepEqual(oResult, {
+					"" : {
+						$model : oValueListModel,
+						CollectionPath : ""
+					}
+				});
+			});
 	});
 
 	//*********************************************************************************************
@@ -4857,16 +5082,16 @@ sap.ui.define([
 			oValueListModel = {sServiceUrl : sMappingUrl};
 
 		oRequestorMock.expects("read").withExactArgs("/Foo/DataService/$metadata", false, undefined)
-			.returns(Promise.resolve(oMetadata));
+			.resolves(oMetadata);
 		oRequestorMock.expects("read").withExactArgs("/Foo/EpmSample/$metadata")
-			.returns(Promise.resolve(oMetadataProduct));
+			.resolves(oMetadataProduct);
 		oMetaModelMock.expects("getOrCreateSharedModel")
 			.withExactArgs(sMappingUrl)
 			.returns(oValueListModel);
 		oMetaModelMock.expects("fetchValueListMappings")
 			.withExactArgs(sinon.match.same(oValueListModel), "zui5_epm_sample",
 				sinon.match.same(oProperty))
-			.returns(Promise.resolve(oValueListMappings));
+			.resolves(oValueListMappings);
 
 		// code under test
 		return oModel.getMetaModel().requestValueListInfo(sPropertyPath).then(function (oResult) {
@@ -4924,7 +5149,7 @@ sap.ui.define([
 			oMetaModelMock.expects("fetchValueListMappings")
 				.withExactArgs(sinon.match.same(oValueListModel), "zui5_epm_sample",
 					sinon.match.same(oProperty))
-				.returns(Promise.resolve({"foo" : {}}));
+				.resolves({"foo" : {}});
 
 			// code under test
 			return oModel.getMetaModel().requestValueListInfo(sPropertyPath).then(function () {
@@ -5054,7 +5279,7 @@ sap.ui.define([
 			oMetaModelMock.expects("fetchValueListMappings")
 				.withExactArgs(sinon.match.same(oValueListModel), "zui5_epm_sample",
 					sinon.match.same(oProperty))
-				.returns(Promise.resolve({"bar" : oValueListMapping}));
+				.resolves({"bar" : oValueListMapping});
 
 			// code under test
 			return oModel.getMetaModel().requestValueListInfo(sPropertyPath)
@@ -5170,7 +5395,7 @@ sap.ui.define([
 
 		this.mock(this.oMetaModel).expects("fetchEntityContainer")
 			.withExactArgs()
-			.returns(Promise.resolve(oMetaData));
+			.resolves(oMetaData);
 
 		// code under test
 		return this.oMetaModel.fetchData().then(function (oResult) {
@@ -5187,171 +5412,197 @@ sap.ui.define([
 	});
 
 	//*********************************************************************************************
-	[0, false, true].forEach(function (bHasAlternateKey) {
-		var sTitle = "requestUnitsOfMeasure, with alternate key: " + bHasAlternateKey;
+	[false, true].forEach(function (bHasStandardCode) {
+		[0, false, true].forEach(function (bHasAlternateKey) {
+			var sTitle = "requestCodeList, with alternate key: " + bHasAlternateKey
+				+ ", with standard code: " + bHasStandardCode;
 
-		QUnit.test(sTitle, function (assert) {
-			var sAbsoluteServiceUrl = "/" + uid() + "/", // circumvent caching
-				oAttachChangeExpectation,
-				oAttachDataReceivedExpectation,
-				oCodeListBinding = {
-					attachChange : function () {},
-					attachDataReceived : function () {},
-					getContexts : function () {}
-				},
-				oCodeListBindingMock = this.mock(oCodeListBinding),
-				oCodeListMetaModel = {
-					getObject : function () {},
-					requestObject : function () {}
-				},
-				oCodeListMetaModelMock = this.mock(oCodeListMetaModel),
-				oCodeListModel = {
-					bindList : function () {},
-					getMetaModel : function () {}
-				},
-				oGetContextsExpectation,
-				oMapGetExpectation,
-				oMapSetExpectation,
-				sUrl = "../../../../default/iwbep/common/0001/$metadata",
-				that = this;
+			QUnit.test(sTitle, function (assert) {
+				var sAbsoluteServiceUrl = "/" + uid() + "/", // circumvent caching
+					oAttachChangeExpectation,
+					oAttachDataReceivedExpectation,
+					oCodeListBinding = {
+						attachChange : function () {},
+						attachDataReceived : function () {},
+						getContexts : function () {}
+					},
+					oCodeListBindingMock = this.mock(oCodeListBinding),
+					oCodeListMetaModel = {
+						getObject : function () {},
+						requestObject : function () {}
+					},
+					oCodeListMetaModelMock = this.mock(oCodeListMetaModel),
+					oCodeListModel = {
+						bindList : function () {},
+						getMetaModel : function () {}
+					},
+					oGetContextsExpectation,
+					oMapGetExpectation,
+					oMapSetExpectation,
+					aSelect = [
+						bHasAlternateKey ? "ExternalCode" : "UnitCode", "DecimalPlaces", "MyText"
+					],
+					sUrl = "../../../../default/iwbep/common/0001/$metadata",
+					that = this;
 
-			/*
-			 * Returns mock context instances for the given data rows, properly set up with
-			 * expectations.
-			 *
-			 * @param {object[]} aData - some data rows
-			 * @returns {object[]} mock context instances
-			 */
-			function mock(aData) {
-				return aData.map(function (oData) {
-					var oContext = {getProperty : function () {}},
-						oContextMock = that.mock(oContext);
+				/*
+				 * Returns mock context instances for the given data rows, properly set up with
+				 * expectations.
+				 *
+				 * @param {object[]} aData - some data rows
+				 * @returns {object[]} mock context instances
+				 */
+				function mock(aData) {
+					return aData.map(function (oData) {
+						var oContext = {getProperty : function () {}},
+							oContextMock = that.mock(oContext);
 
-					Object.keys(oData).forEach(function (sKey) {
-						oContextMock.expects("getProperty").withExactArgs(sKey)
-							.returns(oData[sKey]);
+						Object.keys(oData).forEach(function (sKey) {
+							oContextMock.expects("getProperty").withExactArgs(sKey)
+								.returns(oData[sKey]);
+						});
+
+						return oContext;
 					});
+				}
 
-					return oContext;
-				});
-			}
-
-			this.oMetaModelMock.expects("fetchEntityContainer").twice()
-				.returns(SyncPromise.resolve(mScope));
-			this.mock(this.oMetaModel).expects("requestObject").twice()
-				.withExactArgs("/@com.sap.vocabularies.CodeList.v1.UnitsOfMeasure")
-				.resolves({
-					CollectionPath: "UnitsOfMeasure",
-					Url: sUrl
-				});
-			this.mock(this.oMetaModel).expects("getAbsoluteServiceUrl").twice()
-				.withExactArgs(sUrl).returns(sAbsoluteServiceUrl);
-			oMapGetExpectation = this.mock(Map.prototype).expects("get").twice()
-				.withExactArgs(sAbsoluteServiceUrl + "#UnitsOfMeasure").callThrough();
-			oMapSetExpectation = this.mock(Map.prototype).expects("set")
-				.withArgs(sAbsoluteServiceUrl + "#UnitsOfMeasure").callThrough();
-			this.mock(this.oMetaModel).expects("getOrCreateSharedModel")
-				.withExactArgs(sUrl, "$direct")
-				.returns(oCodeListModel);
-			this.mock(oCodeListModel).expects("getMetaModel").withExactArgs()
-				.returns(oCodeListMetaModel);
-			oCodeListMetaModelMock.expects("requestObject")
-				.withExactArgs("/UnitsOfMeasure/")
-				.resolves({
-//					$kind : "EntityType",
-					$Key : bHasAlternateKey === 0
-						? [{"MyAlias" : "UnitCode"}] // special case: alias is given
-						: ["UnitCode"]
-				});
-			oCodeListMetaModelMock.expects("getObject")
-				.withExactArgs("/UnitsOfMeasure/@Org.OData.Core.V1.AlternateKeys")
-				.returns(bHasAlternateKey ? [{
-					Key : [{
-//						Alias : "ExternalCode",
-						Name : {$PropertyPath : "ExternalCode"}
-					}]
-				}] : undefined);
-			oCodeListMetaModelMock.expects("getObject")
-				.withExactArgs("/UnitsOfMeasure/UnitCode@com.sap.vocabularies.Common.v1.Text")
-				.returns({$Path : "MyText"});
-			oCodeListMetaModelMock.expects("getObject")
-				.withExactArgs(
-					"/UnitsOfMeasure/UnitCode@com.sap.vocabularies.Common.v1.UnitSpecificScale")
-				.returns({$Path : "DecimalPlaces"});
-			this.mock(oCodeListModel).expects("bindList")
-				.withExactArgs("/UnitsOfMeasure", null, null, null, {
-					$select :
-						[bHasAlternateKey ? "ExternalCode" : "UnitCode", "DecimalPlaces", "MyText"]
-				}).returns(oCodeListBinding);
-			oAttachChangeExpectation = oCodeListBindingMock.expects("attachChange");
-			oAttachChangeExpectation.withExactArgs(sinon.match.func)
-				.callsFake(function (fnChangeListener) {
-					Promise.resolve().then(function () { // later, call back that listener
-						var aContexts = mock(bHasAlternateKey ? [
-								{DecimalPlaces : null, ExternalCode : "ONE", MyText : "One"},
-								{DecimalPlaces : 2, ExternalCode : "%", MyText : "Percentage"},
-								{DecimalPlaces : 3, ExternalCode : "%O", MyText : "Per mille"}
-							] : [
-								{DecimalPlaces : null, UnitCode : "ONE", MyText : "One"},
-								{DecimalPlaces : 2, UnitCode : "%", MyText : "Percentage"},
-								{DecimalPlaces : 3, UnitCode : "%O", MyText : "Per mille"}
-							]);
-
-						assert.ok(oGetContextsExpectation.calledAfter(oAttachChangeExpectation),
-							"getContexts will trigger the change event after listener is attached");
-
-						oCodeListBindingMock.expects("getContexts").withExactArgs(0, Infinity)
-							.returns(aContexts);
-
-						// simulate "change" event to call code under test
-						fnChangeListener();
+				if (bHasStandardCode) {
+					aSelect.push("ISOCode");
+				}
+				this.oMetaModelMock.expects("fetchEntityContainer").twice()
+					.returns(SyncPromise.resolve(mScope));
+				this.mock(this.oMetaModel).expects("requestObject").twice()
+					.withExactArgs("/@com.sap.vocabularies.CodeList.v1.T€RM")
+					.resolves({
+						CollectionPath: "UnitsOfMeasure",
+						Url: sUrl
 					});
-				});
-			oAttachDataReceivedExpectation = oCodeListBindingMock.expects("attachDataReceived");
-			oAttachDataReceivedExpectation.withExactArgs(sinon.match.func)
-				.callsFake(function (fnDataReceivedListener) {
-					Promise.resolve().then(function () { // later, call back that listener
-						var oEvent = {getParameter : function () {}};
-
-						assert.ok(
-							oGetContextsExpectation.calledAfter(oAttachDataReceivedExpectation),
-							"getContexts will trigger event after listener is attached");
-						that.mock(oEvent).expects("getParameter").withExactArgs("error")
-							.returns();
-
-						// simulate "dataReceived" event to call code under test
-						fnDataReceivedListener(oEvent);
+				this.mock(this.oMetaModel).expects("getAbsoluteServiceUrl").twice()
+					.withExactArgs(sUrl).returns(sAbsoluteServiceUrl);
+				oMapGetExpectation = this.mock(Map.prototype).expects("get").twice()
+					.withExactArgs(sAbsoluteServiceUrl + "#UnitsOfMeasure").callThrough();
+				oMapSetExpectation = this.mock(Map.prototype).expects("set")
+					.withArgs(sAbsoluteServiceUrl + "#UnitsOfMeasure").callThrough();
+				this.mock(this.oMetaModel).expects("getOrCreateSharedModel")
+					.withExactArgs(sUrl, "$direct")
+					.returns(oCodeListModel);
+				this.mock(oCodeListModel).expects("getMetaModel").withExactArgs()
+					.returns(oCodeListMetaModel);
+				oCodeListMetaModelMock.expects("requestObject")
+					.withExactArgs("/UnitsOfMeasure/")
+					.resolves({
+//						$kind : "EntityType",
+						$Key : bHasAlternateKey === 0
+							? [{"MyAlias" : "UnitCode"}] // special case: alias is given
+							: ["UnitCode"]
 					});
-				});
-			oGetContextsExpectation = oCodeListBindingMock.expects("getContexts")
-				.withExactArgs(0, Infinity);
+				oCodeListMetaModelMock.expects("getObject")
+					.withExactArgs("/UnitsOfMeasure/@Org.OData.Core.V1.AlternateKeys")
+					.returns(bHasAlternateKey ? [{
+						Key : [{
+//							Alias : "ExternalCode",
+							Name : {$PropertyPath : "ExternalCode"}
+						}]
+					}] : undefined);
+				oCodeListMetaModelMock.expects("getObject")
+					.withExactArgs("/UnitsOfMeasure/UnitCode"
+						+ "@com.sap.vocabularies.Common.v1.UnitSpecificScale/$Path")
+					.returns("DecimalPlaces");
+				oCodeListMetaModelMock.expects("getObject")
+					.withExactArgs("/UnitsOfMeasure/UnitCode"
+						+ "@com.sap.vocabularies.Common.v1.Text/$Path")
+					.returns("MyText");
+				oCodeListMetaModelMock.expects("getObject").withExactArgs("/UnitsOfMeasure/UnitCode"
+						+ "@com.sap.vocabularies.CodeList.v1.StandardCode/$Path")
+					.returns(bHasStandardCode ? "ISOCode" : undefined);
+				this.mock(oCodeListModel).expects("bindList")
+					.withExactArgs("/UnitsOfMeasure", null, null, null, {$select : aSelect})
+					.returns(oCodeListBinding);
+				oAttachChangeExpectation = oCodeListBindingMock.expects("attachChange");
+				oAttachChangeExpectation.withExactArgs(sinon.match.func)
+					.callsFake(function (fnChangeListener) {
+						Promise.resolve().then(function () { // later, call back that listener
+							var aData = bHasAlternateKey ? [
+									{DecimalPlaces : 0, ExternalCode : "ONE", MyText : "One"},
+									{DecimalPlaces : 2, ExternalCode : "%", MyText : "Percentage"},
+									{DecimalPlaces : 3, ExternalCode : "%O", MyText : "Per mille"},
+									{DecimalPlaces : null, ExternalCode : "*", MyText : "ignore!"}
+								] : [
+									{DecimalPlaces : 0, UnitCode : "ONE", MyText : "One"},
+									{DecimalPlaces : 2, UnitCode : "%", MyText : "Percentage"},
+									{DecimalPlaces : 3, UnitCode : "%O", MyText : "Per mille"},
+									{DecimalPlaces : null, UnitCode : "*", MyText : "ignore!"}
+								];
 
-			return Promise.all([
-				// code under test
-				this.oMetaModel.requestUnitsOfMeasure(mScope[mScope.$EntityContainer]),
-				// code under test - must not request customizing again
-				this.oMetaModel.requestUnitsOfMeasure()
-			]).then(function (aResults) {
-				assert.deepEqual(aResults[0], {
-					"ONE" : {UnitSpecificScale : 0, Text : "One"},
-					"%" : {UnitSpecificScale : 2, Text : "Percentage"},
-					"%O" : {UnitSpecificScale : 3, Text : "Per mille"}
+							assert.ok(oGetContextsExpectation.calledAfter(oAttachChangeExpectation),
+								"getContexts will trigger 'change' after listener is attached");
+
+							if (bHasStandardCode) { // not realistic!
+								aData[0].ISOCode = "ENO";
+								aData[1].ISOCode = "P/C";
+								aData[2].ISOCode = "P/M";
+								aData[3].ISOCode = "n/a";
+							}
+							oCodeListBindingMock.expects("getContexts").withExactArgs(0, Infinity)
+								.returns(mock(aData));
+							that.oLogMock.expects("error").withExactArgs("Ignoring customizing w/o"
+									+ " unit-specific scale for code * from UnitsOfMeasure",
+								sUrl, sODataMetaModel);
+
+							// simulate "change" event to call code under test
+							fnChangeListener();
+						});
+					});
+				oAttachDataReceivedExpectation = oCodeListBindingMock.expects("attachDataReceived");
+				oAttachDataReceivedExpectation.withExactArgs(sinon.match.func)
+					.callsFake(function (fnDataReceivedListener) {
+						Promise.resolve().then(function () { // later, call back that listener
+							var oEvent = {getParameter : function () {}};
+
+							assert.ok(
+								oGetContextsExpectation.calledAfter(oAttachDataReceivedExpectation),
+								"getContexts will trigger event after listener is attached");
+							that.mock(oEvent).expects("getParameter").withExactArgs("error")
+								.returns();
+
+							// simulate "dataReceived" event to call code under test
+							fnDataReceivedListener(oEvent);
+						});
+					});
+				oGetContextsExpectation = oCodeListBindingMock.expects("getContexts")
+					.withExactArgs(0, Infinity);
+
+				return Promise.all([
+					// code under test
+					this.oMetaModel.requestCodeList("T€RM", mScope[mScope.$EntityContainer]),
+					// code under test - must not request customizing again
+					this.oMetaModel.requestCodeList("T€RM")
+				]).then(function (aResults) {
+					assert.deepEqual(aResults[0], bHasStandardCode ? {
+						"ONE" : {StandardCode : "ENO", Text : "One", UnitSpecificScale : 0},
+						"%" : {StandardCode : "P/C", Text : "Percentage", UnitSpecificScale : 2},
+						"%O" : {StandardCode : "P/M", Text : "Per mille", UnitSpecificScale : 3}
+					} : {
+						"ONE" : {Text : "One", UnitSpecificScale : 0},
+						"%" : {Text : "Percentage", UnitSpecificScale : 2},
+						"%O" : {Text : "Per mille", UnitSpecificScale : 3}
+					});
+					assert.strictEqual(aResults[1], aResults[0]);
+					assert.ok(oMapGetExpectation.alwaysCalledOn(oMapSetExpectation.thisValues[0]));
 				});
-				assert.strictEqual(aResults[1], aResults[0]);
-				assert.ok(oMapGetExpectation.alwaysCalledOn(oMapSetExpectation.thisValues[0]));
 			});
 		});
 	});
 
 	//*********************************************************************************************
-	QUnit.test("requestUnitsOfMeasure, no code list", function (assert) {
+	QUnit.test("requestCodeList, no code list", function (assert) {
 		this.oMetaModelMock.expects("fetchEntityContainer").returns(SyncPromise.resolve(mScope));
 		this.mock(this.oMetaModel).expects("requestObject")
-			.withExactArgs("/@com.sap.vocabularies.CodeList.v1.UnitsOfMeasure")
+			.withExactArgs("/@com.sap.vocabularies.CodeList.v1.T€RM")
 			.resolves();
 
 		// code under test
-		return this.oMetaModel.requestUnitsOfMeasure()
+		return this.oMetaModel.requestCodeList("T€RM")
 			.then(function (mUnits) {
 				assert.strictEqual(mUnits, null); // Note: null, not undefined!
 			});
@@ -5390,7 +5641,7 @@ sap.ui.define([
 		oError : new Error("Single key expected: "
 			+ "/UnitsOfMeasure/@Org.OData.Core.V1.AlternateKeys/0/Key")
 	}].forEach(function (oFixture, i) {
-		QUnit.test("requestUnitsOfMeasure, alternate key error case #" + i, function (assert) {
+		QUnit.test("requestCodeList, alternate key error case #" + i, function (assert) {
 			var sAbsoluteServiceUrl = "/" + uid() + "/", // circumvent caching
 				oCodeListMetaModel = {
 					getObject : function () {},
@@ -5407,7 +5658,7 @@ sap.ui.define([
 			this.oMetaModelMock.expects("fetchEntityContainer").twice()
 				.returns(SyncPromise.resolve(mScope));
 			this.mock(this.oMetaModel).expects("requestObject").twice()
-				.withExactArgs("/@com.sap.vocabularies.CodeList.v1.UnitsOfMeasure")
+				.withExactArgs("/@com.sap.vocabularies.CodeList.v1.T€RM")
 				.resolves({
 					CollectionPath: "UnitsOfMeasure",
 					Url: sUrl
@@ -5434,7 +5685,7 @@ sap.ui.define([
 				.returns(oFixture.aAlternateKeys);
 
 			// code under test
-			return this.oMetaModel.requestUnitsOfMeasure()
+			return this.oMetaModel.requestCodeList("T€RM")
 				.then(function () {
 					assert.ok(false);
 				}, function (oError) {
@@ -5443,7 +5694,7 @@ sap.ui.define([
 					}, oFixture.oError);
 
 					// code under test
-					return that.oMetaModel.requestUnitsOfMeasure()
+					return that.oMetaModel.requestCodeList("T€RM")
 						.then(function () {
 							assert.ok(false);
 						}, function (oError1) {
@@ -5455,7 +5706,7 @@ sap.ui.define([
 
 	//*********************************************************************************************
 	[["UnitCode", "InternalCode"], [], undefined].forEach(function (aKeys) {
-		QUnit.test("requestUnitsOfMeasure, not a single key: " + aKeys, function (assert) {
+		QUnit.test("requestCodeList, not a single key: " + aKeys, function (assert) {
 			var sAbsoluteServiceUrl = "/" + uid() + "/", // circumvent caching
 				oCodeListMetaModel = {
 					getObject : function () {},
@@ -5473,7 +5724,7 @@ sap.ui.define([
 			this.oMetaModelMock.expects("fetchEntityContainer").twice()
 				.returns(SyncPromise.resolve(mScope));
 			this.mock(this.oMetaModel).expects("requestObject").twice()
-				.withExactArgs("/@com.sap.vocabularies.CodeList.v1.UnitsOfMeasure")
+				.withExactArgs("/@com.sap.vocabularies.CodeList.v1.T€RM")
 				.resolves({
 					CollectionPath: "UnitsOfMeasure",
 					Url: sUrl
@@ -5497,7 +5748,7 @@ sap.ui.define([
 				});
 
 			// code under test
-			return this.oMetaModel.requestUnitsOfMeasure()
+			return this.oMetaModel.requestCodeList("T€RM")
 				.then(function () {
 					assert.ok(false);
 				}, function (oError0) {
@@ -5506,7 +5757,7 @@ sap.ui.define([
 					}, oError);
 
 					// code under test
-					return that.oMetaModel.requestUnitsOfMeasure()
+					return that.oMetaModel.requestCodeList("T€RM")
 						.then(function () {
 							assert.ok(false);
 						}, function (oError1) {
@@ -5517,7 +5768,7 @@ sap.ui.define([
 	});
 
 	//*********************************************************************************************
-	QUnit.test("requestUnitsOfMeasure: foreign context", function (assert) {
+	QUnit.test("requestCodeList: foreign context", function (assert) {
 		var oMetaModel = new ODataMetaModel(this.oMetaModel.oRequestor, "/~/$metadata"),
 			oContext = oMetaModel.createBindingContext("/"),
 			that = this;
@@ -5526,12 +5777,12 @@ sap.ui.define([
 
 		assert.throws(function () {
 			// code under test
-			that.oMetaModel.requestUnitsOfMeasure(null, {context : oContext});
+			that.oMetaModel.requestCodeList("T€RM", null, {context : oContext});
 		}, new Error("Unsupported context: /"));
 	});
 
 	//*********************************************************************************************
-	QUnit.test("requestUnitsOfMeasure: context does not point to raw value", function (assert) {
+	QUnit.test("requestCodeList: context does not point to raw value", function (assert) {
 		var oContext = this.oMetaModel.createBindingContext("/empty.Container"),
 			that = this;
 
@@ -5539,13 +5790,13 @@ sap.ui.define([
 
 		assert.throws(function () {
 			// code under test
-			that.oMetaModel.requestUnitsOfMeasure(null, {context : oContext});
+			that.oMetaModel.requestCodeList("T€RM", null, {context : oContext});
 		}, new Error("Unsupported context: /empty.Container"));
 	});
 
 	//*********************************************************************************************
 	[null, {$kind : "EntityContainer"}].forEach(function (vRawValue) {
-		QUnit.test("requestUnitsOfMeasure: unsupported raw value " + vRawValue, function (assert) {
+		QUnit.test("requestCodeList: unsupported raw value " + vRawValue, function (assert) {
 			var oContext = this.oMetaModel.createBindingContext("/"),
 				that = this;
 
@@ -5554,22 +5805,22 @@ sap.ui.define([
 
 			assert.throws(function () {
 				// code under test
-				that.oMetaModel.requestUnitsOfMeasure(vRawValue, {context : oContext});
+				that.oMetaModel.requestCodeList("T€RM", vRawValue, {context : oContext});
 			}, new Error("Unsupported raw value: " + vRawValue));
 		});
 	});
 
 	//*********************************************************************************************
-	QUnit.test("requestUnitsOfMeasure: 1st requestObject fails", function (assert) {
+	QUnit.test("requestCodeList: 1st requestObject fails", function (assert) {
 		var oError = new Error("Could not load metadata");
 
 		this.oMetaModelMock.expects("fetchEntityContainer").returns(SyncPromise.resolve(mScope));
 		this.mock(this.oMetaModel).expects("requestObject")
-			.withExactArgs("/@com.sap.vocabularies.CodeList.v1.UnitsOfMeasure")
+			.withExactArgs("/@com.sap.vocabularies.CodeList.v1.T€RM")
 			.rejects(oError);
 
 		// code under test
-		return this.oMetaModel.requestUnitsOfMeasure(undefined, {/*context : oContext*/})
+		return this.oMetaModel.requestCodeList("T€RM", undefined, {/*context : oContext*/})
 			.then(function () {
 				assert.ok(false);
 			}, function (oError0) {
@@ -5578,7 +5829,7 @@ sap.ui.define([
 	});
 
 	//*********************************************************************************************
-	QUnit.test("requestUnitsOfMeasure: 2nd requestObject fails", function (assert) {
+	QUnit.test("requestCodeList: 2nd requestObject fails", function (assert) {
 		var sAbsoluteServiceUrl = "/" + uid() + "/", // circumvent caching
 			oCodeListMetaModel = {
 				getObject : function () {},
@@ -5594,7 +5845,7 @@ sap.ui.define([
 
 		this.oMetaModelMock.expects("fetchEntityContainer").returns(SyncPromise.resolve(mScope));
 		this.mock(this.oMetaModel).expects("requestObject")
-			.withExactArgs("/@com.sap.vocabularies.CodeList.v1.UnitsOfMeasure")
+			.withExactArgs("/@com.sap.vocabularies.CodeList.v1.T€RM")
 			.resolves({
 				CollectionPath: "UnitsOfMeasure",
 				Url: sUrl
@@ -5609,7 +5860,7 @@ sap.ui.define([
 			.rejects(oError);
 
 		// code under test
-		return this.oMetaModel.requestUnitsOfMeasure()
+		return this.oMetaModel.requestCodeList("T€RM")
 			.then(function () {
 				assert.ok(false);
 			}, function (oError0) {
@@ -5618,7 +5869,7 @@ sap.ui.define([
 	});
 
 	//*********************************************************************************************
-	QUnit.test("requestUnitsOfMeasure, change handler fails", function (assert) {
+	QUnit.test("requestCodeList, change handler fails", function (assert) {
 		var sAbsoluteServiceUrl = "/" + uid() + "/", // circumvent caching
 			oCodeListBinding = {
 				attachChange : function () {},
@@ -5641,7 +5892,7 @@ sap.ui.define([
 
 		this.oMetaModelMock.expects("fetchEntityContainer").returns(SyncPromise.resolve(mScope));
 		this.mock(this.oMetaModel).expects("requestObject")
-			.withExactArgs("/@com.sap.vocabularies.CodeList.v1.UnitsOfMeasure")
+			.withExactArgs("/@com.sap.vocabularies.CodeList.v1.T€RM")
 			.resolves({
 				CollectionPath: "UnitsOfMeasure",
 				Url: sUrl
@@ -5661,12 +5912,15 @@ sap.ui.define([
 			.withExactArgs("/UnitsOfMeasure/@Org.OData.Core.V1.AlternateKeys")
 			.returns(undefined);
 		oCodeListMetaModelMock.expects("getObject")
-			.withExactArgs("/UnitsOfMeasure/UnitCode@com.sap.vocabularies.Common.v1.Text")
-			.returns({$Path : "MyText"});
-		oCodeListMetaModelMock.expects("getObject")
 			.withExactArgs(
-				"/UnitsOfMeasure/UnitCode@com.sap.vocabularies.Common.v1.UnitSpecificScale")
-			.returns({$Path : "DecimalPlaces"});
+				"/UnitsOfMeasure/UnitCode@com.sap.vocabularies.Common.v1.UnitSpecificScale/$Path")
+			.returns("DecimalPlaces");
+		oCodeListMetaModelMock.expects("getObject")
+			.withExactArgs("/UnitsOfMeasure/UnitCode@com.sap.vocabularies.Common.v1.Text/$Path")
+			.returns("MyText");
+		oCodeListMetaModelMock.expects("getObject").withExactArgs("/UnitsOfMeasure/UnitCode"
+				+ "@com.sap.vocabularies.CodeList.v1.StandardCode/$Path")
+			.returns(undefined);
 		this.mock(oCodeListModel).expects("bindList")
 			.withExactArgs("/UnitsOfMeasure", null, null, null, {
 				$select : ["UnitCode", "DecimalPlaces", "MyText"]
@@ -5698,7 +5952,7 @@ sap.ui.define([
 		oCodeListBindingMock.expects("getContexts").withExactArgs(0, Infinity);
 
 		// code under test
-		return this.oMetaModel.requestUnitsOfMeasure()
+		return this.oMetaModel.requestCodeList("T€RM")
 			.then(function () {
 				assert.ok(false);
 			}, function (oError0) {
@@ -5707,7 +5961,7 @@ sap.ui.define([
 	});
 
 	//*********************************************************************************************
-	QUnit.test("requestUnitsOfMeasure, data request fails", function (assert) {
+	QUnit.test("requestCodeList, data request fails", function (assert) {
 		var sAbsoluteServiceUrl = "/" + uid() + "/", // circumvent caching
 			oCodeListBinding = {
 				attachChange : function () {},
@@ -5730,7 +5984,7 @@ sap.ui.define([
 
 		this.oMetaModelMock.expects("fetchEntityContainer").returns(SyncPromise.resolve(mScope));
 		this.mock(this.oMetaModel).expects("requestObject")
-			.withExactArgs("/@com.sap.vocabularies.CodeList.v1.UnitsOfMeasure")
+			.withExactArgs("/@com.sap.vocabularies.CodeList.v1.T€RM")
 			.resolves({
 				CollectionPath: "UnitsOfMeasure",
 				Url: sUrl
@@ -5750,12 +6004,15 @@ sap.ui.define([
 			.withExactArgs("/UnitsOfMeasure/@Org.OData.Core.V1.AlternateKeys")
 			.returns(undefined);
 		oCodeListMetaModelMock.expects("getObject")
-			.withExactArgs("/UnitsOfMeasure/UnitCode@com.sap.vocabularies.Common.v1.Text")
-			.returns({$Path : "MyText"});
-		oCodeListMetaModelMock.expects("getObject")
 			.withExactArgs(
-				"/UnitsOfMeasure/UnitCode@com.sap.vocabularies.Common.v1.UnitSpecificScale")
-			.returns({$Path : "DecimalPlaces"});
+				"/UnitsOfMeasure/UnitCode@com.sap.vocabularies.Common.v1.UnitSpecificScale/$Path")
+			.returns("DecimalPlaces");
+		oCodeListMetaModelMock.expects("getObject")
+			.withExactArgs("/UnitsOfMeasure/UnitCode@com.sap.vocabularies.Common.v1.Text/$Path")
+			.returns("MyText");
+		oCodeListMetaModelMock.expects("getObject").withExactArgs("/UnitsOfMeasure/UnitCode"
+				+ "@com.sap.vocabularies.CodeList.v1.StandardCode/$Path")
+			.returns(undefined);
 		this.mock(oCodeListModel).expects("bindList")
 			.withExactArgs("/UnitsOfMeasure", null, null, null, {
 				$select : ["UnitCode", "DecimalPlaces", "MyText"]
@@ -5776,12 +6033,40 @@ sap.ui.define([
 		oCodeListBindingMock.expects("getContexts").withExactArgs(0, Infinity);
 
 		// code under test
-		return this.oMetaModel.requestUnitsOfMeasure()
+		return this.oMetaModel.requestCodeList("T€RM")
 			.then(function () {
 				assert.ok(false);
 			}, function (oError0) {
 				assert.strictEqual(oError0, oError);
 			});
+	});
+
+	//*********************************************************************************************
+	QUnit.test("requestCurrencyCodes", function (assert) {
+		var oDetails = {},
+			oPromise = {},
+			vRawValue = {};
+
+		this.mock(this.oMetaModel).expects("requestCodeList").withExactArgs("CurrencyCodes",
+				sinon.match.same(vRawValue), sinon.match.same(oDetails))
+			.returns(oPromise);
+
+		// code under test
+		assert.strictEqual(this.oMetaModel.requestCurrencyCodes(vRawValue, oDetails), oPromise);
+	});
+
+	//*********************************************************************************************
+	QUnit.test("requestUnitsOfMeasure", function (assert) {
+		var oDetails = {},
+			oPromise = {},
+			vRawValue = {};
+
+		this.mock(this.oMetaModel).expects("requestCodeList").withExactArgs("UnitsOfMeasure",
+				sinon.match.same(vRawValue), sinon.match.same(oDetails))
+			.returns(oPromise);
+
+		// code under test
+		assert.strictEqual(this.oMetaModel.requestUnitsOfMeasure(vRawValue, oDetails), oPromise);
 	});
 
 	//*********************************************************************************************

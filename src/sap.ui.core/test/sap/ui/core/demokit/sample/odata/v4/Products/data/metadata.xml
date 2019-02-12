@@ -992,7 +992,7 @@
 				<Annotation Term="SAP__CodeList.CurrencyCodes">
 					<Record>
 						<PropertyValue Property="Url" String="../../../../default/iwbep/common/0001/$metadata" />
-						<PropertyValue Property="CollectionPath" String="I_Currency" />
+						<PropertyValue Property="CollectionPath" String="Currencies" />
 					</Record>
 				</Annotation>
 			</Annotations>

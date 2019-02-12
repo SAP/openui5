@@ -148,7 +148,7 @@
 				<Parameter Name="Budget" Type="Edm.Decimal" Nullable="false" Precision="16" Scale="variable"/>
 				<ReturnType Type="com.sap.gateway.default.iwbep.tea_busi.v0001.TEAM" Nullable="false"/>
 			</Action>
-			<Action Name="AcChangeTeamOfEmployee" IsBound="true">
+			<Action Name="AcChangeTeamOfEmployee" IsBound="true" EntitySetPath="EMPLOYEE">
 				<Parameter Name="EMPLOYEE" Type="com.sap.gateway.default.iwbep.tea_busi.v0001.Worker"
 					Nullable="false"/>
 				<Parameter Name="TeamID" Type="Edm.String" Nullable="false" MaxLength="10"/>

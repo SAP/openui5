@@ -786,7 +786,8 @@ sap.ui.define([
 			},
 			oModel = {
 				fetchObject : function () {},
-				getConstraints : function () {}
+				getConstraints : function () {},
+				getObject : function () {}
 			},
 			oContext = {
 				getModel : function () {
@@ -819,6 +820,14 @@ sap.ui.define([
 		oModelMock.expects("getConstraints")
 			.withExactArgs(sinon.match.same(oProperty), sMetaPath)
 			.returns(mConstraints);
+		oModelMock.expects("getObject")
+			.withExactArgs("/Equipments/@com.sap.vocabularies.UI.v1.LineItem/4/Value/$Path"
+				+ "@Org.OData.Measures.V1.Unit/$Path")
+			.returns(undefined);
+		oModelMock.expects("getObject")
+			.withExactArgs("/Equipments/@com.sap.vocabularies.UI.v1.LineItem/4/Value/$Path"
+				+ "@Org.OData.Measures.V1.ISOCurrency/$Path")
+			.returns(undefined);
 
 		// code under test
 		assert.strictEqual(AnnotationHelper.format(vRawValue, {context : oContext}),

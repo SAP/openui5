@@ -376,17 +376,44 @@ sap.ui.define([
 	});
 
 	//*********************************************************************************************
-	QUnit.test("fireChanges: null value", function (assert) {
-		var mChangeListeners = {
-			"path/to/property/Foo" : [{onChange : function () {}}]
-		};
+	QUnit.test("fireChange: no listeners", function (assert) {
+		// code under test
+		_Helper.fireChange({}, "path/to/property", {});
+	});
 
-		this.mock(mChangeListeners["path/to/property/Foo"][0]).expects("onChange")
-			.withExactArgs(null);
+	//*********************************************************************************************
+	QUnit.test("fireChange: multiple listeners", function (assert) {
+		var oChangeListener0 = {onChange : function () {}},
+			oChangeListener1 = {onChange : function () {}},
+			oChangeListener2 = {onChange : function () {}},
+			vValue = {};
+
+		this.mock(oChangeListener0).expects("onChange").withExactArgs(sinon.match.same(vValue));
+		this.mock(oChangeListener1).expects("onChange").withExactArgs(sinon.match.same(vValue));
+		this.mock(oChangeListener2).expects("onChange").withExactArgs(sinon.match.same(vValue));
 
 		// code under test
-		_Helper.fireChanges(mChangeListeners, "path/to/property", {
-				Foo : null
+		_Helper.fireChange({
+				"path/to/property" : [oChangeListener0, oChangeListener1, oChangeListener2]
+			}, "path/to/property", vValue);
+	});
+
+	//*********************************************************************************************
+	[false, true].forEach(function (bRemove) {
+		QUnit.test("fireChanges: null value, bRemove: " + bRemove, function (assert) {
+			var mChangeListeners = {},
+				oHelperMock = this.mock(_Helper),
+				oValue = {Foo : null};
+
+			oHelperMock.expects("fireChange")
+				.withExactArgs(sinon.match.same(mChangeListeners), "path/to/property/Foo",
+					bRemove ? undefined : null);
+			oHelperMock.expects("fireChange")
+				.withExactArgs(sinon.match.same(mChangeListeners), "path/to/property",
+					bRemove ? undefined : sinon.match.same(oValue));
+
+			// code under test
+			_Helper.fireChanges(mChangeListeners, "path/to/property", oValue, bRemove);
 		});
 	});
 
@@ -542,19 +569,19 @@ sap.ui.define([
 
 	//*********************************************************************************************
 	QUnit.test("updateExisting: structured", function (assert) {
-		var mChangeListeners = {
-				"SO_2_BP/Address/City" : [{onChange : function () {}}]
-			},
+		var oAdvertisedAction = {title : "My Title"},
 			oCacheData = {
 				BusinessPartnerID : "42",
 				Address : {
 					City : "Walldorf",
 					PostalCode : "69190"
 				}
-			};
+			},
+			mChangeListeners = {},
+			oHelperMock = this.mock(_Helper);
 
-		this.mock(mChangeListeners["SO_2_BP/Address/City"][0]).expects("onChange")
-			.withExactArgs("Heidelberg");
+		oHelperMock.expects("fireChange").withExactArgs(sinon.match.same(mChangeListeners),
+			"SO_2_BP/Address/City", "Heidelberg");
 
 		// code under test: update cache with the value the user entered
 		_Helper.updateExisting(mChangeListeners, "SO_2_BP", oCacheData, {
@@ -571,8 +598,14 @@ sap.ui.define([
 			}
 		});
 
+		oHelperMock.expects("fireChange").withExactArgs(sinon.match.same(mChangeListeners),
+			"SO_2_BP/Address/PostalCode", "69115");
+		oHelperMock.expects("fireChanges").withExactArgs(sinon.match.same(mChangeListeners),
+			"SO_2_BP/#foo.bar.AcBaz", sinon.match.same(oAdvertisedAction), false);
+
 		// code under test: update cache with the patch result
 		_Helper.updateExisting(mChangeListeners, "SO_2_BP", oCacheData, {
+			"#foo.bar.AcBaz" : oAdvertisedAction,
 			BusinessPartnerID : "42",
 			Address : {
 				City : "Heidelberg",
@@ -581,11 +614,33 @@ sap.ui.define([
 		});
 
 		assert.deepEqual(oCacheData, {
+			"#foo.bar.AcBaz" : oAdvertisedAction,
 			BusinessPartnerID : "42",
 			Address : {
 				City : "Heidelberg",
 				PostalCode : "69115"
 			}
+		});
+	});
+
+	//*********************************************************************************************
+	QUnit.test("updateExisting: changed advertised action", function (assert) {
+		var oAdvertisedAction = {title : "My Title"},
+			oCacheData = {"#foo.bar.AcBaz" : oAdvertisedAction},
+			mChangeListeners = {},
+			oHelperMock = this.mock(_Helper);
+
+		oHelperMock.expects("fireChange").withExactArgs(sinon.match.same(mChangeListeners),
+			"SO_2_BP/#foo.bar.AcBaz/title", "My New Title");
+		oHelperMock.expects("fireChanges").never();
+
+		// code under test: update cache with the patch result
+		_Helper.updateExisting(mChangeListeners, "SO_2_BP", oCacheData, {
+			"#foo.bar.AcBaz" : {title : "My New Title"}
+		});
+
+		assert.deepEqual(oCacheData, {
+			"#foo.bar.AcBaz" : {title : "My New Title"}
 		});
 	});
 
