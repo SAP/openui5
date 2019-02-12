@@ -1,4 +1,8 @@
-(function () {
+sap.ui.define([
+	"sap/ui/core/library",
+	"sap/ui/core/mvc/Controller",
+	"sap/ui/core/mvc/View"
+], function (library, Controller, View) {
 	"use strict";
 
 	var VIEW_DEFINITION =
@@ -13,7 +17,7 @@
 	var fnLog = console.debug || console.log;
 	/* eslint-enable no-console */
 
-	sap.ui.controller("myController", {
+	Controller.extend("myController", {
 		onInit: function () {
 			setTimeout(function () {
 				fnLog("onInit timeout executed after 600ms");
@@ -26,11 +30,12 @@
 		}
 	});
 
-	var oView = sap.ui.view({
-		viewContent: VIEW_DEFINITION,
-		type:sap.ui.core.mvc.ViewType.XML
+	View.create({
+		definition: VIEW_DEFINITION,
+		type: library.mvc.ViewType.XML
+	}).then(function(oView) {
+		oView.setViewName("myView");
+		oView.placeAt("content");
 	});
 
-	oView.setViewName("myView");
-	oView.placeAt("content");
-}());
+});

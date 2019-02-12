@@ -1,4 +1,8 @@
-(function () {
+sap.ui.define([
+	"sap/ui/core/library",
+	"sap/ui/core/mvc/Controller",
+	"sap/ui/core/mvc/View"
+], function (library, Controller, View) {
 	"use strict";
 
 	var VIEW_DEFINITION =
@@ -14,14 +18,14 @@
 			'<Button id="buttonOutsideOfTheApp"></Button>' +
 		'</mvc:View>';
 
-	sap.ui.controller("myController", {
+	Controller.extend("myController", {});
+
+	View.create({
+		definition: VIEW_DEFINITION,
+		type: library.mvc.ViewType.XML
+	}).then(function(oView) {
+		oView.setViewName("myView");
+		oView.placeAt("content");
 	});
 
-	var oView = sap.ui.view({
-		viewContent: VIEW_DEFINITION,
-		type: sap.ui.core.mvc.ViewType.XML
-	});
-
-	oView.setViewName("myView");
-	oView.placeAt("content");
-}());
+});
