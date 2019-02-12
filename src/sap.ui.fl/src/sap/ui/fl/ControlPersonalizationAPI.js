@@ -299,6 +299,42 @@ sap.ui.define([
 		},
 
 		/**
+		 * Deletes changes recorded for control. Changes to be deleted can be filtered by specification of change type(s).
+		 *
+		 * @param {array} aSelector - Selectors IDs for which changes shall be deleted. At least for one selector ID an instantiated control has to exist
+		 * @param {array} [aChangeType] - Types of changes that shall be deleted
+		 *
+		 * @returns {Promise} Promise that resolves with a list of the deleted changes in the response
+		 *
+		 * @method sap.ui.fl.ControlPersonalizationAPI.resetChanges
+		 * @public
+		 */
+		resetChanges: function(aSelector, aChangeType) {
+			function reject(sMessage) {
+				Utils.log.error(sMessage);
+				return Promise.reject(sMessage);
+			}
+			if (!aSelector || (aSelector && aSelector.length === 0)) {
+				return reject("At least one selector has to be provided as a parameter");
+			}
+			// for at least one selector an instantiated control has to exist
+			var oControl;
+			aSelector.some(function(selector){
+				oControl = sap.ui.getCore().byId(selector);
+				return oControl ? true : false;
+			});
+			if (!oControl) {
+				return reject("For none of the provided selectors an instantiated control exists");
+			}
+			var oAppComponent = Utils.getAppComponentForControl(oControl);
+			var sSelectorString = sSelectorString = aSelector.join(",");
+			var sChangeTypeString;
+			if (aChangeType) { sChangeTypeString = aChangeType.join(",");}
+			var oFlexController = FlexControllerFactory.createForControl(oControl);
+			return oFlexController.resetChanges("USER", undefined, oAppComponent, sSelectorString, sChangeTypeString);
+		},
+
+		/**
 		 * Saves unsaved changes added to {@link sap.ui.fl.ChangePersistence}.
 		 *
 		 * @param {array} aChanges - Array of changes to be saved

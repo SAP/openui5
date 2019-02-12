@@ -685,13 +685,17 @@ function (
 			};
 			var sLayer = "testLayer";
 			var sGenerator = "test.Generator";
+			var sSelectorString = "abc123";
+			var sChangeTypeString = "labelChange";
 			sandbox.stub(Utils, "setTechnicalURLParameterValues");
 			sandbox.stub(this.oFlexController._oChangePersistence, "resetChanges").callsFake(function() {
 				assert.strictEqual(arguments[0], sLayer, "then correct layer passed");
 				assert.strictEqual(arguments[1], sGenerator, "then correct generator passed");
+				assert.strictEqual(arguments[2], sSelectorString, "then correct selector string passed");
+				assert.strictEqual(arguments[3], sChangeTypeString, "then correct change type string passed");
 				return Promise.resolve();
 			});
-			return this.oFlexController.resetChanges(sLayer, sGenerator, oComp)
+			return this.oFlexController.resetChanges(sLayer, sGenerator, oComp, sSelectorString, sChangeTypeString)
 				.then( function(){
 					assert.deepEqual(fnUpdateHasherStub.getCall(0).args[0], {
 						parameters: [],
