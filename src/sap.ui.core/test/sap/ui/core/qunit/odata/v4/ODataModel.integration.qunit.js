@@ -13192,9 +13192,9 @@ sap.ui.define([
 			})
 			.expectRequest("UnitsOfMeasure?$select=ExternalCode,DecimalPlaces,Text,ISOCode", {
 				value : [{
-					"ExternalCode" : "KG",
 					"DecimalPlaces" : 5,
-					"ISOCode" : "",
+					"ExternalCode" : "KG",
+					"ISOCode" : "KGM",
 					"Text" : "Kilogramm",
 					"UnitCode" : "KG"
 				}]
@@ -13217,4 +13217,73 @@ sap.ui.define([
 			return that.waitForChanges(assert);
 		});
 	});
+
+	//*********************************************************************************************
+	// Scenario: Display an amount with currency using the customizing loaded from the backend
+	// based on the "com.sap.vocabularies.CodeList.v1.CurrencyCodes" on the service's entity
+	// container.
+	// CPOUI5UISERVICESV3-1733
+	QUnit.test("OData Currency type considering currency customizing", function (assert) {
+		var oModel = createSalesOrdersModel({autoExpandSelect : true, updateGroupId : "$auto"}),
+			sView = '\
+<FlexBox binding="{/ProductList(\'HT-1000\')}">\
+	<Input id="price" value="{parts: [\'Price\', \'CurrencyCode\',\
+					{path : \'/##@@requestCurrencyCodes\',\
+						mode : \'OneTime\', targetType : \'any\'}],\
+				mode : \'TwoWay\',\
+				type : \'sap.ui.model.odata.type.Currency\'}" />\
+	<Text id="amount" text="{Price}"/>\
+</FlexBox>',
+			that = this;
+
+		this.expectRequest("ProductList(\'HT-1000\')?$select=CurrencyCode,Price,ProductID", {
+				"@odata.etag" : "ETag",
+				"ProductID" : "HT-1000",
+				"Price" : "12.3",
+				"CurrencyCode" : "EUR"
+			})
+			.expectRequest("Currencies?$select=CurrencyCode,DecimalPlaces,Text,ISOCode", {
+				value : [{
+					"CurrencyCode" : "EUR",
+					"DecimalPlaces" : 2,
+					"ISOCode" : "EUR",
+					"Text" : "Euro"
+				}, {
+					"CurrencyCode" : "JPY",
+					"DecimalPlaces" : 0,
+					"ISOCode" : "JPY",
+					"Text" : "Yen"
+				}]
+			})
+			.expectChange("amount", "12.3")
+			.expectChange("price", "EUR\u00a012.30"); // "\u00a0" is a non-breaking space
+
+		return this.createView(assert, sView, oModel).then(function () {
+			//TODO get rid of first change event which is due to using setRawValue([...]) on the
+			//  composite binding. Solution idea: change integration test framework to not use
+			//  formatters but overwrite formatValue on the binding's type if ever possible. Without
+			//  formatters, one can then set the value on the control.
+			that.expectChange("price", "EUR\u00a042.00")
+				.expectChange("price", "JPY\u00a042")
+				.expectChange("amount", "42")
+				.expectRequest({
+					method : "PATCH",
+					url : "ProductList('HT-1000')",
+					headers : {"If-Match" : "ETag"},
+					payload : {"Price" : "42", "CurrencyCode" : "JPY"}
+				});
+
+			that.oView.byId("price").getBinding("value").setRawValue(["42", "JPY"]);
+
+			return that.waitForChanges(assert);
+		});
+	});
+	//TODO With updateGroupId $direct, changing *both* parts of a composite binding (amount and
+	//  currency) in one step triggers *two* PATCH requests:
+	//  The first request contains the new amount and also the old currency as PATCHes for amounts
+	//  are always sent with currency.
+	//  The second request only contains the new currency.
+	//  Solution idea: Only execute $direct requests in prerendering task
+	//  Is this critical? - Productive scenario runs with $batch. However: What if amount and
+	//  currency are in two different fields in draft scenario (no save button)?
 });

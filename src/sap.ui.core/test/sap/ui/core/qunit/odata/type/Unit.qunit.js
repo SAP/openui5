@@ -2,12 +2,11 @@
  * ${copyright}
  */
 sap.ui.define([
-	"jquery.sap.global",
 	"sap/base/Log",
 	"sap/ui/core/format/NumberFormat",
 	"sap/ui/model/odata/type/Unit",
 	"sap/ui/model/type/Unit"
-], function (jQuery, Log, NumberFormat, Unit, BaseUnit) {
+], function (Log, NumberFormat, Unit, BaseUnit) {
 	/*global QUnit, sinon */
 	"use strict";
 
@@ -40,7 +39,6 @@ sap.ui.define([
 		assert.deepEqual(oType.oConstraints, {});
 		assert.notStrictEqual(oType.oFormatOptions, oFormatOptions);
 		assert.deepEqual(oType.oFormatOptions, {groupingEnabled : false, parseAsString : true});
-		assert.notStrictEqual(oType.oFormatOptions, oFormatOptions);
 		assert.deepEqual(oType.aDynamicFormatOptionNames, ["customUnits"]);
 		assert.strictEqual(oType.getInterface(), oType, "returns no interface facade");
 		assert.ok(oType.hasOwnProperty("mCustomUnits"));
@@ -66,12 +64,16 @@ sap.ui.define([
 		assert.notStrictEqual(oType.oFormatOptions, oFormatOptions);
 
 		assert.throws(function () {
-			oType = new Unit({}, {"Minimum" : 42});
+			oType = new Unit({}, {"minimum" : 42});
 		}, new Error("Constraints not supported"));
 
 		assert.throws(function () {
 			oType = new Unit({}, undefined, []);
-		}, new Error("Dynamic format options not supported"));
+		}, new Error("Only the parameter oFormatOptions is supported"));
+
+		assert.throws(function () {
+			oType = new Unit({customUnits : {}});
+		}, new Error("Format option customUnits is not supported"));
 	});
 
 	//*********************************************************************************************
@@ -96,17 +98,20 @@ sap.ui.define([
 		QUnit.test("formatValue returns null, " + i, function (assert) {
 			var oType = new Unit();
 
+			this.mock(BaseUnit.prototype).expects("formatValue").never();
+
 			assert.strictEqual(oType.formatValue(aValues, "foo"), null);
 		});
 	});
 
 	//*********************************************************************************************
 	QUnit.test("formatValue w/o customizing", function (assert) {
-		var oExpectation,
+		var oBaseUnitMock = this.mock(BaseUnit.prototype),
+			oExpectation,
 			oType = new Unit(),
 			aValues = [42, "KG", null];
 
-		oExpectation = this.mock(BaseUnit.prototype).expects("formatValue").on(oType)
+		oExpectation = oBaseUnitMock.expects("formatValue").on(oType)
 			.withExactArgs([42, "KG"], "foo")
 			.returns("42 KG");
 
@@ -114,6 +119,28 @@ sap.ui.define([
 		assert.strictEqual(oType.formatValue(aValues, "foo"), "42 KG");
 
 		assert.strictEqual(oType.mCustomUnits, null);
+		assert.notStrictEqual(oExpectation.firstCall.args[0], aValues);
+
+		aValues = [77, "KG", {/*customizing, not null*/}];
+		oExpectation = oBaseUnitMock.expects("formatValue").on(oType)
+			.withExactArgs([77, "KG"], "foo")
+			.returns("77 KG");
+
+		// code under test: change to aValues[2] does not change existing customizing null
+		assert.strictEqual(oType.formatValue(aValues, "foo"), "77 KG");
+
+		assert.strictEqual(oType.mCustomUnits, null, "remains null");
+		assert.notStrictEqual(oExpectation.firstCall.args[0], aValues);
+
+		aValues = [78, "KG", undefined];
+		oExpectation = oBaseUnitMock.expects("formatValue").on(oType)
+			.withExactArgs([78, "KG"], "foo")
+			.returns("78 KG");
+
+		// code under test: change to aValues[2] does not change existing customizing null
+		assert.strictEqual(oType.formatValue(aValues, "foo"), "78 KG");
+
+		assert.strictEqual(oType.mCustomUnits, null, "remains null");
 		assert.notStrictEqual(oExpectation.firstCall.args[0], aValues);
 	});
 
@@ -124,6 +151,7 @@ sap.ui.define([
 				"G" : {Text : "gram", UnitSpecificScale : 3},
 				"KG" : {Text : "kilogram", UnitSpecificScale : 2}
 			},
+			mCustomizing2,
 			mCustomUnits = {
 				"G" : {displayName : "gram", decimals : 3, "unitPattern-count-other" : "{0} G"},
 				"KG" : {displayName : "kilogram", decimals : 2,
@@ -131,7 +159,10 @@ sap.ui.define([
 			},
 			oExpectation,
 			oNumberFormatMock = this.mock(NumberFormat),
-			oType = new Unit();
+			oType = new Unit(),
+			oType2 = new Unit(),
+			oTypeCustomUnits,
+			aValues = ["42", "KG", mCustomizing];
 
 		oNumberFormatMock.expects("getDefaultUnitPattern").withExactArgs("G")
 			.returns(mCustomUnits["G"]["unitPattern-count-other"]);
@@ -142,10 +173,12 @@ sap.ui.define([
 			.returns("42 KG");
 
 		// code under test
-		assert.strictEqual(oType.formatValue(["42", "KG", mCustomizing], "foo"), "42 KG");
+		assert.strictEqual(oType.formatValue(aValues, "foo"), "42 KG");
 
+		assert.deepEqual(aValues, ["42", "KG", mCustomizing], "aValues unmodified");
 		assert.deepEqual(oType.mCustomUnits, mCustomUnits);
 
+		oTypeCustomUnits = oType.mCustomUnits;
 		oBaseUnitMock.expects("formatValue").on(oType)
 			.withExactArgs(["77", "G", sinon.match.same(oExpectation.firstCall.args[0][2])], "foo")
 			.returns("77 G");
@@ -153,22 +186,53 @@ sap.ui.define([
 		// code under test: 2nd call to formatValue reuses mCustomUnits from 1st call
 		assert.strictEqual(oType.formatValue(["77", "G", mCustomizing], "foo"), "77 G");
 
-		mCustomizing["G"].UnitSpecificScale = 2;
+		assert.deepEqual(oType.mCustomUnits, mCustomUnits);
+		assert.strictEqual(oType.mCustomUnits, oTypeCustomUnits);
+
 		oBaseUnitMock.expects("formatValue").on(oType)
-			.withExactArgs(["77.123", "G", oExpectation.firstCall.args[0][2]], "foo")
-			.returns("77.123 G");
+			.withExactArgs(["78", "G", sinon.match.same(oExpectation.firstCall.args[0][2])], "foo")
+			.returns("78 G");
 
-		// code under test: change of customizing object inside is ignored
-		assert.strictEqual(oType.formatValue(["77.123", "G", mCustomizing], "foo"), "77.123 G");
+		// code under test: "MDC input scenario": call formatValue with the result of parseValue
+		// as "aValues" which leaves the customizing part undefined -> use existing customizing
+		assert.strictEqual(oType.formatValue(["78", "G"], "foo"), "78 G");
 
-		mCustomizing = {"G" : {Text : "gram", UnitSpecificScale : 1}};
+		assert.deepEqual(oType.mCustomUnits, mCustomUnits);
+		assert.strictEqual(oType.mCustomUnits, oTypeCustomUnits);
+
+		mCustomizing2 = {"G" : {Text : "gram", UnitSpecificScale : 1}};
 		oBaseUnitMock.expects("formatValue").on(oType)
 			.withExactArgs(["77.123", "G", sinon.match.same(oExpectation.firstCall.args[0][2])],
 				"foo")
 			.returns("77.123 G");
 
 		// code under test: changed customizing reference is ignored
-		assert.strictEqual(oType.formatValue(["77.123", "G", mCustomizing], "foo"), "77.123 G");
+		assert.strictEqual(oType.formatValue(["77.123", "G", mCustomizing2], "foo"), "77.123 G");
+
+		assert.deepEqual(oType.mCustomUnits, mCustomUnits);
+		assert.strictEqual(oType.mCustomUnits, oTypeCustomUnits);
+
+		oBaseUnitMock.expects("formatValue").on(oType)
+			.withExactArgs(["78", "G", sinon.match.same(oExpectation.firstCall.args[0][2])],
+				"foo")
+			.returns("78 G");
+
+		// code under test: change customizing to null is ignored
+		assert.strictEqual(oType.formatValue(["78", "G", null], "foo"), "78 G");
+
+		assert.deepEqual(oType.mCustomUnits, mCustomUnits);
+		assert.strictEqual(oType.mCustomUnits, oTypeCustomUnits);
+
+		oBaseUnitMock.expects("formatValue").on(oType2)
+			.withExactArgs(["79", "G", sinon.match.same(oExpectation.firstCall.args[0][2])],
+				"foo")
+			.returns("79 G");
+
+		// code under test: new type instance reuses customizing
+		assert.strictEqual(oType2.formatValue(["79", "G", mCustomizing], "foo"), "79 G");
+
+		assert.deepEqual(oType2.mCustomUnits, mCustomUnits);
+		assert.strictEqual(oType2.mCustomUnits, oTypeCustomUnits);
 	});
 
 	//*********************************************************************************************
