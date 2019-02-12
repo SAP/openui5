@@ -17,14 +17,17 @@ sap.ui.define(['./Interface', './Metadata', "sap/base/Log"],
 
 
 	/**
-	 * Constructor for an sap.ui.base.Object.
+	 * Constructor for an <code>sap.ui.base.Object</code>.
 	 *
-	 * @class Base class for all SAPUI5 Objects
+	 * Subclasses of this class should always call the constructor of their base class.
+	 *
+	 * @class Base class for all SAPUI5 Objects.
 	 * @abstract
 	 * @author Malte Wedel
 	 * @version ${version}
 	 * @public
 	 * @alias sap.ui.base.Object
+	 * @throws {Error} When an instance of the class or its subclasses is created without the <code>new</code> operator.
 	 */
 	var BaseObject = Metadata.createClass("sap.ui.base.Object", {
 
@@ -38,16 +41,22 @@ sap.ui.define(['./Interface', './Metadata', "sap/base/Log"],
 	});
 
 	/**
-	 * Destructor method for objects
+	 * Destructor method for objects.
 	 * @public
 	 */
 	BaseObject.prototype.destroy = function() {
 	};
 
 	/**
-	 * Returns the public interface of the object.
+	 * Returns the public facade of this object.
 	 *
-	 * @return {sap.ui.base.Interface} the public interface of the object
+	 * By default, the public facade is implemented as an instance of {@link sap.ui.base.Interface},
+	 * exposing the <code>publicMethods</code> as defined in the metadata of the class of this object.
+	 *
+	 * See the documentation of the {@link #.extend extend} method for an explanation of <code>publicMethods</code>.
+	 *
+	 * The facade is created on the first call of <code>getInterface</code> and reused for all later calls.
+	 *
 	 * @public
 	 */
 	BaseObject.prototype.getInterface = function() {
@@ -107,6 +116,12 @@ sap.ui.define(['./Interface', './Metadata', "sap/base/Log"],
 	 * object of the newly created class. Callers can thereby add methods or properties to all instances of the
 	 * class. But be aware that the given values are shared between all instances of the class. Usually, it doesn't
 	 * make sense to use primitive values here other than to declare public constants.
+	 *
+	 * If such a property has a function as its value, and if the property name does not start with an underscore
+	 * or with the prefix "on", the property name will be automatically added to the list of public methods of the
+	 * class (see property <code>publicMethods</code> in the <code>metadata</code> section). If a method's name
+	 * matches that pattern, but is not meant to be public, it shouldn't be included in the class info object,
+	 * but be assigned to the prototype instead.
 	 * </li>
 	 *
 	 * </ul>

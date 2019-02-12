@@ -109,7 +109,10 @@ sap.ui.define([
 				sFilter = "";
 
 			if (aFilters.length === 1) {
-				return create(aFilters[0], bOmitBrackets);
+				if (aFilters[0]._bMultiFilter) {
+					return create(aFilters[0]);
+				}
+				return create(aFilters[0], true);
 			}
 
 			if (!bOmitBrackets) {

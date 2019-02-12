@@ -1,19 +1,25 @@
 /*global QUnit*/
 
 sap.ui.define([
+	"sap/ui/core/mvc/XMLView",
 	"sap/ui/rta/plugin/additionalElements/AdditionalElementsAnalyzer",
 	"sap/ui/model/json/JSONModel",
 	"sap/m/ColumnListItem",
 	"sap/ui/rta/util/BindingsExtractor",
+	"sap/ui/dt/ElementUtil",
 	"sap/ui/qunit/utils/waitForThemeApplied",
+	"sap/base/Log",
 	"sap/ui/thirdparty/sinon-4"
 ],
 function(
+	XMLView,
 	AdditionalElementsAnalyzer,
 	JSONModel,
 	ColumnListItem,
 	BindingsExtractor,
+	ElementUtil,
 	waitForThemeApplied,
+	Log,
 	sinon
 ) {
 	"use strict";
@@ -605,6 +611,138 @@ function(
 				assert.equal(aAdditionalElements.length, 5, "then 5 unbound elements are available");
 			});
 		});
+
+		QUnit.test("when checking group elements to find original label in add dialog, after renaming a custom add label and removing that group elements", function(assert) {
+			var oGroupElement1 = oView.byId("EntityType02.Prop2Button");
+			var sGroupElement1OriginalLabel = ElementUtil.getLabelForElement(oGroupElement1);
+			var sRenamedLabel = "Renamed Label";
+			oGroupElement1.setVisible(false);
+
+			var oGroupElement2 = oView.byId("EntityType02.CompProp1");
+			var sGroupElement2OriginalLabel = ElementUtil.getLabelForElement(oGroupElement2);
+			oGroupElement2.setVisible(false);
+
+			var oActionsObject = {
+				aggregation: "formElements",
+				reveal : {
+					elements : [{
+						element: oGroupElement1,
+						action : {
+							//nothing relevant for the analyzer test
+						}
+					},{
+						element: oGroupElement2,
+						action : {
+							//nothing relevant for the analyzer test
+						}
+					}]
+				},
+				custom : {
+					action : {
+						//not relevant for test
+					},
+					items: [{
+						label: sGroupElement1OriginalLabel,
+						tooltip: "Tooltip1",
+						id: "customItem1"
+					}, {
+						label: sGroupElement2OriginalLabel,
+						tooltip: "Tooltip2",
+						id: "customItem2"
+					}]
+				}
+			};
+
+			sandbox.stub(oGroupElement1, "getId").returns(oGroup.getParent().getId() + "--" + oActionsObject.custom.items[0].id);
+			sandbox.stub(oGroupElement2, "getId").returns(oGroup.getParent().getId() + "--" + oActionsObject.custom.items[1].id);
+
+			oGroupElement1.setLabel(sRenamedLabel);
+
+			return AdditionalElementsAnalyzer.enhanceInvisibleElements(oGroup, oActionsObject).then(function(aAdditionalElements) {
+				assert.strictEqual(oGroupElement1.fieldLabel, aAdditionalElements[0].label, "then first invisible element has fieldLabel property set");
+				assert.strictEqual(oGroupElement1.renamedLabel, true, "then first invisible element has the renamedLabel property set");
+				assert.strictEqual(oGroupElement1.quickInfo, oActionsObject.custom.items[0].tooltip, "then first invisible element has the correct quickInfo property");
+
+				assert.strictEqual(oGroupElement2.fieldLabel, aAdditionalElements[1].label, "then second invisible element has fieldLabel property set");
+				assert.notOk(oGroupElement2.renamedlabel, "then second invisible element has no renamedLabel property");
+				assert.strictEqual(oGroupElement2.quickInfo, oActionsObject.custom.items[1].tooltip, "then second invisible element has the correct quickInfo property");
+
+				assert.equal(aAdditionalElements.length, 2, "then the 2 invisible elements with oData are returned");
+
+				assert.equal(aAdditionalElements[0].label, sRenamedLabel, "then the first invisible item has the renamed label");
+				assert.equal(aAdditionalElements[0].originalLabel, sGroupElement1OriginalLabel, "then the first invisible item has the original label");
+				assert.equal(aAdditionalElements[0].type, "invisible", "then the first invisible item is if of type invisible");
+				assert.equal(aAdditionalElements[0].tooltip, oActionsObject.custom.items[0].tooltip, "then the first invisible item has the correct tooltip");
+
+				assert.equal(aAdditionalElements[1].label, sGroupElement2OriginalLabel, "then the second invisible item has the correct label");
+				assert.equal(aAdditionalElements[1].type, "invisible", "then the second invisible item if of type invisible");
+				assert.equal(aAdditionalElements[1].tooltip, oActionsObject.custom.items[1].tooltip, "then the second invisible item has the correct tooltip");
+			});
+		});
+
+		QUnit.test("when getCustomAddItems is called for an element and custom add action", function(assert) {
+			var mAction = {
+				"items": [{
+					"label": "CustomItem1",
+					"id": "customId1" // element exists
+				}, {
+					"label": "CustomItem2",
+					"id": "customId2" // element doesn't exist
+				}, {
+					"label": "CustomItem3" // no id was given
+				}]
+			};
+			var oGroup = oView.byId("OtherGroup");
+
+			sandbox.stub(ElementUtil, "getElementInstance")
+				.callThrough()
+				.withArgs(oGroup.getParent().getId() + "--" + mAction.items[0].id).returns({sId: "ElementExists"})
+				.withArgs(oGroup.getParent().getId() + "--" + mAction.items[1].id); // element doesn't exist
+			sandbox.stub(Log, "error");
+
+			return AdditionalElementsAnalyzer.getCustomAddItems(oGroup, mAction)
+				.then( function(aReturnValues) {
+					assert.ok(ElementUtil.getElementInstance.callCount, 3,  "then ElementUtil.getElementInstance called thrice for each custom item");
+					assert.strictEqual(aReturnValues.length, 1, "then one custom item2 are returned");
+					assert.strictEqual(aReturnValues[0].itemId, oGroup.getParent().getId() + "--" + mAction.items[1].id, "then the returned custom item has the itemId property correctly set");
+					assert.strictEqual(aReturnValues[0].key, oGroup.getParent().getId() + "--" + mAction.items[1].id, "then the returned custom item has the key property correctly set");
+					assert.ok(Log.error.calledWith("CustomAdd item with label " + mAction.items[2].label + " does not contain an 'id' property", "sap.ui.rta.plugin.AdditionalElementsAnalyzer#showAvailableElements"),
+						"then an error was logged for the item without an id property");
+				});
+		});
+
+		QUnit.test("when getFilteredItemsList is called with existing addODataProperty items, for filtering custom add items which also exist as invisible items", function(assert) {
+			var aInvisibleItems = [
+				[ { elementId: "invisibleElement1" }, { elementId: "invisibleElement2" } ],
+				[ { property: "oDataProperty1" } ],
+				[ { itemId: "invisibleElement1" }, { itemId: "customItem1" }, { itemId: "invisibleElement2" } ]
+			];
+			var aFilteredItems = AdditionalElementsAnalyzer.getFilteredItemsList(aInvisibleItems, true);
+			assert.strictEqual(aFilteredItems.length, 4, "then the filtered array has the correct length of items");
+			assert.deepEqual(aFilteredItems, aInvisibleItems[0].concat(aInvisibleItems[1], aInvisibleItems[2]), "then the filtered array was returned");
+		});
+
+		QUnit.test("when getFilteredItemsList is called without addODataProperty items, for filtering custom add items which also exist as invisible items", function(assert) {
+			var aInvisibleItems = [
+				[ { elementId: "invisibleElement1" }, { elementId: "invisibleElement2" } ],
+				[ ],
+				[ { itemId: "invisibleElement1" }, { itemId: "customItem1" }, { itemId: "invisibleElement2" } ]
+			];
+			var aFilteredItems = AdditionalElementsAnalyzer.getFilteredItemsList(aInvisibleItems, false);
+			assert.strictEqual(aFilteredItems.length, 3, "then the filtered array has the correct length of items");
+			assert.deepEqual(aFilteredItems, aInvisibleItems[0].concat(aInvisibleItems[1], aInvisibleItems[2]), "then the filtered array was returned");
+		});
+
+		QUnit.test("when getFilteredItemsList is called without addODataProperty items, for filtering custom add items which do not exist as invisible items", function(assert) {
+			var aInvisibleItems = [
+				[ { elementId: "invisibleElement1" }, { elementId: "invisibleElement2" } ],
+				[ ],
+				[ { itemId: "customItem1" }, { itemId: "customItem2" } ]
+			];
+			var aFilteredItems = AdditionalElementsAnalyzer.getFilteredItemsList(aInvisibleItems, false);
+			assert.strictEqual(aFilteredItems.length, 4, "then the filtered array has the correct length if items");
+			assert.deepEqual(aFilteredItems, aInvisibleItems[0].concat(aInvisibleItems[1], aInvisibleItems[2]), "then the filtered array was returned");
+		});
 	});
 
 	QUnit.module("Given a test view with bound Table", {
@@ -703,22 +841,27 @@ function(
 		assert.deepEqual(mActualAdditionalElement.bindingPaths, mExpected.bindingPaths, msg + " -bindingPaths");
 	}
 
-	var oView = renderComplexView();
+	renderComplexView();
 	var oGroup;
 	var mAddODataPropertyAction;
-	oView.getController().isDataReady().then(function () {
-		oGroup = oView.byId("GroupEntityType01");
-		return oGroup.getMetadata().loadDesignTime().then(function(oDesignTime) {
-			mAddODataPropertyAction = oDesignTime.aggregations.formElements.actions.addODataProperty;
-			QUnit.start();
-		});
-	});
+	var oView;
 
 	function renderComplexView() {
-		var oView = sap.ui.xmlview("idMain1", "sap.ui.rta.test.additionalElements.ComplexTest");
-		oView.placeAt("qunit-fixture");
-		sap.ui.getCore().applyChanges();
-		return oView;
+		return XMLView.create({
+			id: "idMain1",
+			viewName: "sap.ui.rta.test.additionalElements.ComplexTest"
+		}).then(function(oViewInstance) {
+			oView = oViewInstance;
+			oViewInstance.placeAt("qunit-fixture");
+			sap.ui.getCore().applyChanges();
+			oViewInstance.getController().isDataReady().then(function () {
+				oGroup = oViewInstance.byId("GroupEntityType01");
+				return oGroup.getMetadata().loadDesignTime().then(function (oDesignTime) {
+					mAddODataPropertyAction = oDesignTime.aggregations.formElements.actions.addODataProperty;
+					QUnit.start();
+				});
+			});
+		});
 	}
 
 	QUnit.done(function () {

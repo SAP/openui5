@@ -134,7 +134,7 @@ function(
 		});
 	};
 
-	ElementDesignTimeMetadata.prototype.getActionDataFromAggregations = function(sAction, oElement, aArgs) {
+	ElementDesignTimeMetadata.prototype.getActionDataFromAggregations = function(sAction, oElement, aArgs, sSubAction) {
 		var vAction;
 		var mAggregations = this.getAggregations();
 		var aActions = [];
@@ -142,6 +142,9 @@ function(
 		for (var sAggregation in mAggregations) {
 			if (mAggregations[sAggregation].actions && mAggregations[sAggregation].actions[sAction]) {
 				vAction = mAggregations[sAggregation].actions[sAction];
+				if (sSubAction) {
+					vAction = vAction[sSubAction];
+				}
 				if (typeof vAction === "function") {
 					var aActionParameters = [oElement];
 					if (aArgs){
@@ -154,8 +157,8 @@ function(
 				}
 				if (vAction) {
 					vAction.aggregation = sAggregation;
+					aActions.push(vAction);
 				}
-				aActions.push(vAction);
 			}
 		}
 		return aActions;

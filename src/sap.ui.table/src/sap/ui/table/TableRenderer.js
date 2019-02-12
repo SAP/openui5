@@ -599,7 +599,7 @@ sap.ui.define(['sap/ui/core/Control', 'sap/ui/core/theming/Parameters', 'sap/ui/
 			this.writeRowHighlightContent(rm, oTable, oRow, iRowIndex);
 			this.writeRowSelectorContent(rm, oTable, oRow, iRowIndex);
 		} else {
-			var oAction = oRow.getAggregation("_rowAction");
+			var oAction = oRow.getRowAction();
 			if (oAction) {
 				rm.renderControl(oAction);
 			}

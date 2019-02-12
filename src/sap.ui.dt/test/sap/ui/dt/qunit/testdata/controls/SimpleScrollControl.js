@@ -69,25 +69,18 @@ sap.ui.define(['sap/ui/thirdparty/jquery', 'sap/ui/core/Control'],
 		},
 
 		renderer: function(oRm, oCtrl) {
+			var sId;
+			var aContent;
 			oRm.write("<div");
 			oRm.writeControlData(oCtrl);
 			oRm.addClass("sapUiDtTestSSC");
 			oRm.writeClasses();
 			oRm.write(">");
 
-			if (oCtrl.getScrollcontainerEnabled()) {
-				oRm.write("<div id='scrollContainer'");
-				oRm.addClass("sapUiDtTestSSCScrollContainer");
-				oRm.addStyle("height", "600px");
-				oRm.addStyle("width", "450px");
-				oRm.addStyle("overflow", "auto");
-				oRm.writeStyles();
-				oRm.writeClasses();
-				oRm.write(">");
-
-				var sId = oCtrl.getId() + "-content1";
+			function renderAggregations() {
+				sId = oCtrl.getId() + "-content1";
 				oRm.write("<div id='" + sId + "'>");
-				var aContent = oCtrl.getAggregation("content1", []);
+				aContent = oCtrl.getAggregation("content1", []);
 				aContent.forEach(function(oCtrl){
 					oRm.renderControl(oCtrl);
 				});
@@ -100,9 +93,24 @@ sap.ui.define(['sap/ui/thirdparty/jquery', 'sap/ui/core/Control'],
 					oRm.renderControl(oCtrl);
 				});
 				oRm.write("</div>");
+			}
+
+			if (oCtrl.getScrollcontainerEnabled()) {
+				oRm.write("<div id='scrollContainer'");
+				oRm.addClass("sapUiDtTestSSCScrollContainer");
+				oRm.addStyle("height", "600px");
+				oRm.addStyle("width", "450px");
+				oRm.addStyle("overflow", "auto");
+				oRm.writeStyles();
+				oRm.writeClasses();
+				oRm.write(">");
+
+				renderAggregations();
 
 				//end scrollcontainer
 				oRm.write("</div>");
+			} else {
+				renderAggregations();
 			}
 
 			sId = oCtrl.getId() + "-footer";

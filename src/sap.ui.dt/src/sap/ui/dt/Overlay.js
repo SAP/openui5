@@ -783,11 +783,20 @@ function (
 				});
 				oDummyScrollContainer = jQuery("<div class='sapUiDtDummyScrollContainer' style='height: " + iScrollHeight + "px; width: " + iScrollWidth + "px;'></div>");
 
-				if (oTargetOverlay && DOMUtil.hasVerticalScrollBar(oOriginalDomRef)) {
+				if (
+					oTargetOverlay
+					&& DOMUtil.hasVerticalScrollBar(oOriginalDomRef)
+					&& oTargetOverlay._hasSameSize(oGeometry, 'height')
+				) {
 					oTargetOverlay.addStyleClass("sapUiDtOverlayWithScrollBar");
 					oTargetOverlay.addStyleClass("sapUiDtOverlayWithScrollBarVertical");
 				}
-				if (oTargetOverlay && DOMUtil.hasHorizontalScrollBar(oOriginalDomRef)) {
+
+				if (
+					oTargetOverlay
+					&& DOMUtil.hasHorizontalScrollBar(oOriginalDomRef)
+					&& oTargetOverlay._hasSameSize(oGeometry, 'width')
+				) {
 					oTargetOverlay.addStyleClass("sapUiDtOverlayWithScrollBar");
 					oTargetOverlay.addStyleClass("sapUiDtOverlayWithScrollBarHorizontal");
 				}

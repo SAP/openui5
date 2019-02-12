@@ -32,6 +32,7 @@ sap.ui.define(['sap/ui/core/ValueStateSupport', 'sap/ui/core/library', 'sap/ui/D
 		var bReadOnly = !bEnabled || bNonEditable;
 		var bInErrorState = ValueState.Error === oRadioButton.getValueState();
 		var bInWarningState = ValueState.Warning === oRadioButton.getValueState();
+		var bInSuccessState = ValueState.Success === oRadioButton.getValueState();
 		var bInInformationState = ValueState.Information === oRadioButton.getValueState();
 		var bUseEntireWidth = oRadioButton.getUseEntireWidth();
 
@@ -84,6 +85,10 @@ sap.ui.define(['sap/ui/core/ValueStateSupport', 'sap/ui/core/library', 'sap/ui/D
 
 		if (bInWarningState) {
 			oRm.addClass("sapMRbWarn");
+		}
+
+		if (bInSuccessState) {
+			oRm.addClass("sapMRbSucc");
 		}
 
 		if (bInInformationState) {

@@ -45,6 +45,8 @@ sap.ui.define([
 			this.setState(Change.states.NEW);
 			this.setModuleName(oFile.moduleName);
 			this.setInitialApplyState();
+			this._oChangeProcessingPromises = {};
+			this._aQueuedProcesses = [];
 		},
 		metadata : {
 			properties : {
@@ -81,6 +83,11 @@ sap.ui.define([
 		REVERT_FINISHED: 4
 	};
 
+	Change.operations = {
+		APPLY: 0,
+		REVERT: 1
+	};
+
 	Change.prototype.setState = function(sState) {
 		if (this._isValidState(sState)) {
 			this.setProperty("state", sState);
@@ -89,11 +96,19 @@ sap.ui.define([
 	};
 
 	Change.prototype.setQueuedForRevert = function() {
-		this.QUEUED_FOR_REVERT = true;
+		this._aQueuedProcesses.unshift(Change.operations.REVERT);
 	};
 
 	Change.prototype.isQueuedForRevert = function() {
-		return this.QUEUED_FOR_REVERT;
+		return this._aQueuedProcesses.indexOf(Change.operations.REVERT) > -1;
+	};
+
+	Change.prototype.setQueuedForApply = function() {
+		this._aQueuedProcesses.unshift(Change.operations.APPLY);
+	};
+
+	Change.prototype.isQueuedForApply = function() {
+		return this._aQueuedProcesses.indexOf(Change.operations.APPLY) > -1;
 	};
 
 	Change.prototype.setInitialApplyState = function() {
@@ -104,7 +119,9 @@ sap.ui.define([
 		this.setApplyState(Change.applyState.APPLYING);
 	};
 
-	Change.prototype.markFinished = function() {
+	Change.prototype.markFinished = function(sError) {
+		this._aQueuedProcesses.pop();
+		this._resolveChangeProcessingPromiseWithError(Change.operations.APPLY, {error: sError});
 		this.setApplyState(Change.applyState.APPLY_FINISHED);
 	};
 
@@ -112,8 +129,9 @@ sap.ui.define([
 		this.setApplyState(Change.applyState.REVERTING);
 	};
 
-	Change.prototype.markRevertFinished = function() {
-		delete this.QUEUED_FOR_REVERT;
+	Change.prototype.markRevertFinished = function(sError) {
+		this._aQueuedProcesses.pop();
+		this._resolveChangeProcessingPromiseWithError(Change.operations.REVERT, {error: sError});
 		this.setApplyState(Change.applyState.REVERT_FINISHED);
 	};
 
@@ -133,35 +151,65 @@ sap.ui.define([
 		return this.getApplyState() === Change.applyState.REVERT_FINISHED;
 	};
 
+	Change.prototype.isCurrentProcessFinished = function() {
+		return this._aQueuedProcesses.length === 0;
+	};
+
 	/**
-	 * Adds and returns a Promise that resolves/rejects as soon as
-	 * resolveChangeProcessingPromises or rejectChangeProcessingPromises is called
+	 * Adds and returns a Promise that resolves as soon as
+	 * 'resolveChangeProcessingPromise' or 'resolveChangeProcessingPromiseWithError' is called.
+	 * The promise will always resolve, either without parameter or with an object and a 'error' parameter inside.
+	 * There is only one object for apply or revert at a time, if this function is called multiple times for the same key
+	 * only the current promise will be returned
 	 *
+	 * 	_oChangeProcessingPromises: {
+	 * 		Change.operations.APPLY: {
+	 * 			promise: <Promise>,
+	 * 			resolveFunction: {}
+	 * 		},
+	 * 		Change.operations.REVERT: {
+	 * 			promise: <Promise>,
+	 * 			resolveFunction: {}
+	 * 		}
+	 * 	}
+	 *
+	 * @param {string} sKey indicates the current process, should be either Change.operations.APPLY or Change.operations.REVERT
 	 * @returns {Promise} Returns the promise
 	 */
-	Change.prototype.addChangeProcessingPromise = function() {
-		return new Promise(function(resolve, reject) {
-			this._aChangeProcessingPromises = this._aChangeProcessingPromises || [];
-			this._aChangeProcessingPromises.push({
-				resolve: resolve,
-				reject: reject
-			});
-		}.bind(this));
-	};
-
-	Change.prototype.resolveChangeProcessingPromises = function() {
-		if (this._aChangeProcessingPromises) {
-			this._aChangeProcessingPromises.forEach(function(oPromise) {
-				oPromise.resolve(this);
-			}, this);
+	Change.prototype.addChangeProcessingPromise = function(sKey) {
+		if (!this._oChangeProcessingPromises[sKey]) {
+			this._oChangeProcessingPromises[sKey] = {};
+			this._oChangeProcessingPromises[sKey].promise = new Promise(function(resolve) {
+				this._oChangeProcessingPromises[sKey].resolveFunction = {
+					resolve: resolve
+				};
+			}.bind(this));
 		}
+		return this._oChangeProcessingPromises[sKey].promise;
 	};
 
-	Change.prototype.rejectChangeProcessingPromises = function() {
-		if (this._aChangeProcessingPromises) {
-			this._aChangeProcessingPromises.forEach(function(oPromise) {
-				oPromise.reject(this);
-			}, this);
+	/**
+	 * Calls 'addChangeProcessingPromise' for all currently queued processes
+	 *
+	 * @returns {Promise[]} Returns an array with all a promise for every process
+	 */
+	Change.prototype.addChangeProcessingPromises = function() {
+		var aReturn = [];
+		this._aQueuedProcesses.forEach(function(sProcess) {
+			aReturn.push(this.addChangeProcessingPromise(sProcess));
+		}, this);
+		return aReturn;
+	};
+
+	Change.prototype.addPromiseForApplyProcessing = function() {
+		return this.addChangeProcessingPromise(Change.operations.APPLY);
+	};
+
+	Change.prototype._resolveChangeProcessingPromiseWithError = function(sKey, oError) {
+		if (this._oChangeProcessingPromises[sKey]) {
+			oError = oError || {};
+			this._oChangeProcessingPromises[sKey].resolveFunction.resolve(oError);
+			delete this._oChangeProcessingPromises[sKey];
 		}
 	};
 

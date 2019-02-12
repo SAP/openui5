@@ -49,6 +49,18 @@
         "type": "FIX",
         "text": " sap.m.Toolbar: Fixed incorrect height in Fiori 3 theme",
         "references": []
+      },
+      {
+        "id": "185b6c23a8ee3d593981ec8faccd51be7115d25b",
+        "type": "FIX",
+        "text": " sap.m.Button: The flex display of the button content is removed",
+        "references": []
+      },
+      {
+        "id": "cf26094179a789394b2b0b552dad5b43712fc0fc",
+        "type": "FIX",
+        "text": " sap.m.Tokenizer: Fiori 3 theme adjustment",
+        "references": []
       }
     ]
   }

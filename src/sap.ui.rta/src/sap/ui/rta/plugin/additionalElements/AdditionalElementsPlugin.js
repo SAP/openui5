@@ -91,9 +91,9 @@ sap.ui.define([
 		var aNames = [];
 		var mControlType;
 		var sControlType;
-		if (mActions.addODataProperty){
+		if (mActions.addODataProperty || mActions.custom){
 			var sAggregationName = mActions.aggregation;
-			var oDesignTimeMetadata = mActions.addODataProperty.designTimeMetadata;
+			var oDesignTimeMetadata = mActions[mActions.addODataProperty ? "addODataProperty" : "custom"].designTimeMetadata;
 			mControlType = oDesignTimeMetadata.getAggregationDescription(sAggregationName, oParentElement);
 			if (mControlType) {
 				sControlType = bSingular ? mControlType.singular : mControlType.plural;
@@ -394,6 +394,47 @@ sap.ui.define([
 
 		},
 
+		_getCustomAddActions: function(bSibling, oOverlay) {
+			var mParents = _getParents(bSibling, oOverlay);
+			var oDesignTimeMetadata = mParents.parentOverlay.getDesignTimeMetadata();
+			var aActions = oDesignTimeMetadata.getActionDataFromAggregations("add", mParents.parent, undefined, "custom");
+			var oCheckElement = mParents.parent;
+
+			var fnCallback = function(_mCustom, mAction){
+				if (mAction) {
+					var oCheckElementOverlay = OverlayRegistry.getOverlay(oCheckElement);
+					if (typeof mAction.getItems === "function" && this.hasStableId(oCheckElementOverlay)) {
+						var aItems = mAction.getItems(oCheckElement);
+						if (Array.isArray(aItems)) {
+							// check if all custom items are valid
+							var bValidItems = aItems.every(function(oItem) {
+								// adjust relevant container
+								if (oItem.changeSpecificData.relevantContainer) {
+									oCheckElement = mParents.relevantContainer;
+								}
+								return oItem.changeSpecificData.changeType && this.hasChangeHandler(oItem.changeSpecificData.changeType, oCheckElement);
+							}.bind(this));
+							if (bValidItems) {
+								_mCustom[mAction.aggregation] = {
+									custom : {
+										designTimeMetadata : oDesignTimeMetadata,
+										action : mAction,
+										items: aItems
+									}
+								};
+							}
+						}
+					}
+					return _mCustom;
+				}
+			};
+
+			if (aActions && aActions.length > 0){
+				return aActions.reduce(fnCallback.bind(this), {});
+			}
+
+		},
+
 		/**
 		 * Calculate a map with all "add/reveal" action relevant data collected:
 		 * <pre>
@@ -411,6 +452,11 @@ sap.ui.define([
 		 *            }],
 		 *            controlTypeNames : string[] <all controlTypeNames collected via designTimeMetadata>
 		 *        }
+		 *       custom : {
+		 *            designTimeMetadata : <sap.ui.dt.ElementDesignTimeMetadata of parent>,
+		 *            action : <customAdd action section from designTimeMetadata>
+		 *            items : <customAdd action's array of items from the getItems() function>
+		 *        }
 		 *    }
 		 * }
 		 * </pre>
@@ -422,11 +468,12 @@ sap.ui.define([
 		 * @private
 		 */
 		_getActions: function(bSibling, oOverlay) {
+			var mCustomAddActions = this._getCustomAddActions(bSibling, oOverlay);
 			var mRevealActions = this._getRevealActions(bSibling, oOverlay);
 			var mAddODataPropertyActions = this._getAddODataPropertyActions(bSibling, oOverlay);
 
 			//join and condense both action data
-			var mOverall = jQuery.extend(true, mRevealActions, mAddODataPropertyActions);
+			var mOverall = jQuery.extend(true, mRevealActions, mAddODataPropertyActions, mCustomAddActions);
 			var aAggregationNames = Object.keys(mOverall);
 			if (aAggregationNames.length === 0){
 				return {};
@@ -451,13 +498,17 @@ sap.ui.define([
 			var aPromises = [];
 
 			var mActions = this._getActions(bOverlayIsSibling, oElementOverlay);
-			if (mActions.reveal) {
-				aPromises.push(this.getAnalyzer().enhanceInvisibleElements(mParents.parent, mActions));
-			}
+
 			if (mActions.addODataProperty) {
 				mActions.addODataProperty.relevantContainer = oElementOverlay.getRelevantContainer(!bOverlayIsSibling);
-				aPromises.push(this.getAnalyzer().getUnboundODataProperties(mParents.parent, mActions.addODataProperty));
 			}
+
+			aPromises.push(
+				mActions.reveal ? this.getAnalyzer().enhanceInvisibleElements(mParents.parent, mActions) : [],
+				mActions.addODataProperty ? this.getAnalyzer().getUnboundODataProperties(mParents.parent, mActions.addODataProperty) : [],
+				mActions.custom ? this.getAnalyzer().getCustomAddItems(mParents.parent, mActions.custom, mActions.aggregation) : []
+			);
+
 			if (mActions.aggregation || sControlName) {
 				this._setDialogTitle(mActions, mParents.parent, sControlName);
 			}
@@ -486,9 +537,7 @@ sap.ui.define([
 				}
 			}.bind(this))
 
-			.then(
-				_getAllElements.bind(null, aPromises)
-			)
+			.then(_getAllElements.bind(this, aPromises))
 
 			.then(function(aAllElements){
 				this.getDialog().setElements(aAllElements);
@@ -579,6 +628,10 @@ sap.ui.define([
 							case "odata":
 								oPromise = oPromise.then(
 									this._createCommandsForODataElement.bind(this, oCompositeCommand, oSelectedElement, mParents, oSiblingElement, mActions, iIndex));
+								break;
+							case "custom":
+								oPromise = oPromise.then(
+									this._createCommandsForCustomElement.bind(this, oCompositeCommand, oSelectedElement, mParents, oSiblingElement, mActions, iIndex));
 								break;
 							default:
 								Log.error("Can't create command for untreated element.type " + oSelectedElement.type);
@@ -773,7 +826,41 @@ sap.ui.define([
 			return Promise.resolve();
 		},
 
-		/**el
+		_createCommandsForCustomElement: function (oCompositeCommand, oSelectedElement, mParents, oSiblingElement, mActions, iIndex) {
+			var oElement = mParents.parent;
+			var oParentAggregationDTMetadata = mParents.parentOverlay.getAggregationOverlay(mActions.aggregation).getDesignTimeMetadata();
+			var oActionSettings = Object.assign(
+				{
+					changeOnRelevantContainer: oSelectedElement.changeSpecificData.changeOnRelevantContainer,
+					aggregationName: mActions.aggregation,
+					changeType: oSelectedElement.changeSpecificData.changeType,
+					addElementInfo: oSelectedElement.changeSpecificData.content,
+					index: iIndex || Utils.getIndex(mParents.parent, oSiblingElement, mActions.aggregation)
+				},
+				oSelectedElement.itemId && { customItemId: oSelectedElement.itemId }
+			);
+
+			var sVariantManagementReference;
+			var oStashedElement;
+			var sType = oElement.getMetadata().getName();
+
+			if (sType === "sap.ui.core._StashedControl") {
+				oStashedElement = oElement;
+			}
+			if (mParents.relevantContainerOverlay) {
+				sVariantManagementReference = this.getVariantManagementReference(mParents.relevantContainerOverlay, oActionSettings, false, oStashedElement);
+			}
+
+			return this.getCommandFactory().getCommandFor(oElement, "customAdd", oActionSettings, oParentAggregationDTMetadata, sVariantManagementReference)
+			.then(function (oCustomAddCommand) {
+				if (oCustomAddCommand) {
+					oCompositeCommand.addCommand(oCustomAddCommand);
+				}
+				return oCompositeCommand;
+			});
+		},
+
+		/**
 		 * This function gets called on startup. It checks if the Overlay is editable by this plugin.
 		 * @param {sap.ui.dt.Overlay} oOverlay - overlay to be checked
 		 * @returns {object} Returns object with editable boolean values for "asChild" and "asSibling"
@@ -806,9 +893,13 @@ sap.ui.define([
 				bEditable = true;
 			}
 
+			if (!bEditable && mActions.custom) {
+				bEditable = true;
+			}
+
 			if (!bEditable && !bOverlayIsSibling) {
-				bEditable = this._hasRevealActionsOnChildren(oOverlay) ||
-					this.checkAggregationsOnSelf(mParents.parentOverlay, "addODataProperty");
+				bEditable = this._hasRevealActionsOnChildren(oOverlay)
+					|| this.checkAggregationsOnSelf(mParents.parentOverlay, "addODataProperty");
 			}
 
 			if (bEditable) {
@@ -823,7 +914,7 @@ sap.ui.define([
 		 * Retrieve the context menu item for the actions.
 		 * Two items are returned here: one for when the overlay is sibling and one for when it is child.
 		 * @param  {sap.ui.dt.ElementOverlay} oOverlay Overlay for which the context menu was opened
-		 * @return {object[]}          Returns array containing the items with required data
+		 * @return {object[]} Returns array containing the items with required data
 		 */
 		getMenuItems: function (aElementOverlays) {
 			var bOverlayIsSibling = true;
@@ -859,12 +950,8 @@ sap.ui.define([
 
 	function _getAllElements (aPromises) {
 		return Promise.all(aPromises).then(function(aAnalyzerValues) {
-			var aAllElements = aAnalyzerValues[0] || [];
-			if (aAllElements && aAnalyzerValues[1]) {
-				aAllElements = aAllElements.concat(aAnalyzerValues[1]);
-			}
-			return aAllElements;
-		});
+			return this.getAnalyzer().getFilteredItemsList(aAnalyzerValues);
+		}.bind(this));
 	}
 
 	function _getSourceParent(oRevealedElement, mParents, oRevealedElementOverlay){

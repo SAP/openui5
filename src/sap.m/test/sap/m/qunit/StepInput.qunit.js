@@ -1553,6 +1553,52 @@ sap.ui.define([
 		assert.strictEqual(oInput.$(sInputSuffix).attr('aria-invalid'), "true", "'aria-invalid' attribute was updated when the invalid value is typed and confirmed");
 	});
 
+	QUnit.test("labels are redirected to the inner input", function () {
+		// Prepare
+		var $label,
+			$innerInput,
+			oLabel = new sap.m.Label({
+				labelFor: this.stepInput,
+				text: "Doesn't matter"
+			});
+
+		oLabel.placeAt("qunit-fixture");
+		oCore.applyChanges();
+
+		$label = oLabel.$();
+		$innerInput = this.stepInput.$().find(".sapMInputBaseInner");
+
+		// Assert
+		assert.strictEqual($label.attr("for"), $innerInput.attr("id"), "label's 'for' points exactly towards the inner input");
+
+		// Cleanup
+		oLabel.destroy();
+	});
+
+	QUnit.test("Backwards reference to a label is added in aria-labelledby only on the inner input", function () {
+		// Prepare
+		var $label,
+			$innerInput,
+			oLabel = new sap.m.Label({
+				labelFor: this.stepInput,
+				text: "Doesn't matter"
+			});
+
+		oLabel.placeAt("qunit-fixture");
+		oCore.applyChanges();
+
+		$label = oLabel.$();
+		$innerInput = this.stepInput.$().find(".sapMInputBaseInner");
+
+		// Assert
+		assert.notOk($label.attr("aria-labelledby"), "Root element doesn't have aria-labelledby");
+		assert.strictEqual($innerInput.attr("aria-labelledby"), "__text0" + " " + oLabel.getId(),
+			"Internal input has reference to the label and the default ariaLabelledBy");
+
+		// Cleanup
+		oLabel.destroy();
+	});
+
 	QUnit.module("binding", {
 		beforeEach: function () {
 			this.stepInput = new StepInput({

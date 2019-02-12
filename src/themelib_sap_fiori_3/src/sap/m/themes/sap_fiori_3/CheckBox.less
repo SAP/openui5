@@ -3,21 +3,52 @@
 /* Fiori 3 theme                   */
 /* =============================== */
 
+.sapMCb {
+	height: 2.75rem;
+	line-height: 2.75rem;
+	padding: 0 0 0 2.75rem;
+}
+
+.sapMCbBg {
+	left: 0.575rem;
+	top: 0.575rem;
+	height: 1.375rem;
+	width: 1.375rem;
+	line-height: 1.375rem;
+	border-width: 0.0625rem;
+}
+
 @_sap_m_CheckBox_SelectedWarningColor: darken(@sapUiFieldWarningColor, 100);
 
 .sapMCb.sapMCbWarn .sapMCbBg {
 	background-color: @sapUiFieldWarningBackground;
-	border-color: @sapUiFieldWarningColor;
+	border: 0.125rem solid @sapUiFieldWarningColor;
 	&.sapMCbMarkChecked:before {
 		color: @_sap_m_CheckBox_SelectedWarningColor;
 	}
 }
 
+.sapMCb.sapMCbSucc .sapMCbBg {
+	background-color: @sapUiFieldSuccessBackground;
+	border: 0.0625rem solid @sapUiFieldSuccessColor;
+	&.sapMCbMarkChecked:before {
+		color: @sapUiFieldSuccessColor;
+	}
+}
+
 .sapMCb.sapMCbErr .sapMCbBg {
 	background-color: @sapUiFieldInvalidBackground;
-	border-color: @sapUiFieldInvalidColor;
+	border: 0.125rem solid @sapUiFieldInvalidColor;
 	&.sapMCbMarkChecked:before {
 		color: @sapUiFieldInvalidColor;
+	}
+}
+
+.sapMCb.sapMCbInfo .sapMCbBg {
+	background-color: @sapUiFieldInformationBackground;
+	border: 0.125rem solid @sapUiFieldInformationColor;
+	&.sapMCbMarkChecked:before {
+		color: @sapUiFieldInformationColor;
 	}
 }
 
@@ -48,15 +79,20 @@ html.sap-desktop {
 		outline-color: @sapUiContentFocusColor;
 	}
 
-	.sapMCb:not(.sapMCbBgDis):not(.sapMCbDisplayOnly).sapMCbHasLabel:focus:before {
-		content: "";
-		display: block;
-		position: absolute;
-		top: 0.6875rem;
-		bottom: 0.6875rem;
-		left: 0.6875rem;
-		right: 0;
-		border: 1px dotted @sapUiContentFocusColor;
+	.sapMCb:not(.sapMCbBgDis):not(.sapMCbDisplayOnly).sapMCbHasLabel {
+		&:focus:before {
+			content: "";
+			display: block;
+			position: absolute;
+			top: 0.45rem;
+			bottom: 0.42rem;
+			left: 0.45rem;
+			right: 0;
+			border: 1px dotted @sapUiContentFocusColor;
+		}
+		&:not(.sapMCbErr):not(.sapMCbInfo):not(.sapMCbWarn):focus:before {
+			bottom: 0.58rem;
+		}
 	}
 
 	.sapUiForm .sapMCb:not(.sapMCbBgDis).sapMCbHasLabel:focus:before {
@@ -119,14 +155,23 @@ html[data-sap-ui-browser^="ed"].sap-desktop {
 	.sapUiForm .sapMCbBg { /* In forms, align left with '0.0625rem(1px)' ( the focus width) */
 		left: 1px; // Must be in pixels to behave correctly in IE
 	}
+	.sapMCbBg {
+		border-radius: 0.125rem;
+	}
 }
 
 html.sap-desktop {
 	.sapUiSizeCompact {
-		.sapMCb:not(.sapMCbBgDis).sapMCbHasLabel:focus:before {
-			top:0.365rem;
-			bottom: 0.365rem;
-			left: 0.365rem;
+		.sapMCb:not(.sapMCbBgDis).sapMCbHasLabel {
+			&:focus:before {
+				top: 0.365rem;
+				bottom: 0.365rem;
+				left: 0.365rem;
+			}
+
+			&:not(.sapMCbErr):not(.sapMCbInfo):not(.sapMCbWarn):focus:before {
+				bottom: 0.5125rem;
+			}
 		}
 
 		.sapUiForm .sapMCb:not(.sapMCbBgDis):focus:before {

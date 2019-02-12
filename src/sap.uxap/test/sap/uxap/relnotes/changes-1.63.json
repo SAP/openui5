@@ -7,6 +7,12 @@
         "type": "FIX",
         "text": " sap.uxap.ObjectPageLayout: Fixed wrong width calculation",
         "references": []
+      },
+      {
+        "id": "6d84a7af1bec7feab51468df2c0e7d2e66a88d30",
+        "type": "FIX",
+        "text": " sap.uxap.ObjectPegeLayout: _updateMedia is now called on DOM ready",
+        "references": []
       }
     ]
   }

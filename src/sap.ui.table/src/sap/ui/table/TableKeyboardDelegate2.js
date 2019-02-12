@@ -565,7 +565,7 @@ sap.ui.define([
 		var $InteractiveElements;
 
 		if (TableUtils.hasRowActions(oTable)) {
-			aCells.push(oRow.getAggregation("_rowAction"));
+			aCells.push(oRow.getRowAction());
 		}
 
 		for (var i = 0; i < aCells.length; i++) {
@@ -599,7 +599,7 @@ sap.ui.define([
 		var $InteractiveElements;
 
 		if (TableUtils.hasRowActions(oTable)) {
-			aCells.push(oRow.getAggregation("_rowAction"));
+			aCells.push(oRow.getRowAction());
 		}
 
 		for (var i = aCells.length - 1; i >= 0; i--) {
@@ -736,7 +736,7 @@ sap.ui.define([
 
 		// Search in the row action cell.
 		if (TableUtils.hasRowActions(oTable)) {
-			$Cell = TableUtils.getParentCell(oTable, oRow.getAggregation("_rowAction").getDomRef());
+			$Cell = TableUtils.getParentCell(oTable, oRow.getRowAction().getDomRef());
 			$InteractiveElements = TableUtils.getInteractiveElements($Cell);
 
 			if ($InteractiveElements.get(-1) !== $Element[0]) {

@@ -1794,6 +1794,15 @@ sap.ui.define([
 		return oMergedObject;
 	}
 
+	// Checks if the given start date is before the end date.
+	function isValidDateRange(oStartDate, oEndDate) {
+		if (oStartDate.getTime() > oEndDate.getTime()) {
+			return false;
+		}
+
+		return true;
+	}
+
 	/**
 	 * Parse a string which is formatted according to the given format options.
 	 *
@@ -1853,6 +1862,13 @@ sap.ui.define([
 						&& oJSDate1.getTime() === oJSDate2.getTime()) {
 
 						return [oJSDate1, null];
+					}
+
+					var bValid = isValidDateRange(oJSDate1, oJSDate2);
+
+					if (bStrict && !bValid) {
+						Log.error("StrictParsing: Invalid date range. The given end date is before the start date.");
+						return [null, null];
 					}
 
 					return [oJSDate1, oJSDate2];

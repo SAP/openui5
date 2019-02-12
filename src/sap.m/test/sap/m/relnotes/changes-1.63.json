@@ -295,6 +295,78 @@
         "type": "FIX",
         "text": " sap.m.Tokenizer: Calculate available space correctly",
         "references": []
+      },
+      {
+        "id": "e8e7481c01af7355db705fb1fa0284d3bb7bd082",
+        "type": "FEATURE",
+        "text": " UploadSet control implementation, basic tests",
+        "references": []
+      },
+      {
+        "id": "1e03630dc4e2c519b3295d38b017561fe6f4c994",
+        "type": "FEATURE",
+        "text": " sap.m.Select: Display valueStateText when dropdown is opened",
+        "references": []
+      },
+      {
+        "id": "7eee29364572d4f68e13afe477c968565d01c0c7",
+        "type": "FEATURE",
+        "text": " sap.m.TabContainer: Now tabs support icon and additional text.",
+        "references": []
+      },
+      {
+        "id": "713f9811b42425b680549526751a4b2e7569a06d",
+        "type": "FIX",
+        "text": " m.PlanningCalendar: Row tooltips are now shown",
+        "references": []
+      },
+      {
+        "id": "4576f1c646edfdc2c829d8510b0598e20877b636",
+        "type": "FIX",
+        "text": " m.PlanningCalendar: Unnecessary row\u0027s role attribute removed",
+        "references": []
+      },
+      {
+        "id": "e546acc04c5cfa2b7ef46576d15dbdf45784c54c",
+        "type": "FIX",
+        "text": " m.ViewSettingsDialog: Dialog\u0027s title now updating",
+        "references": []
+      },
+      {
+        "id": "f8db01f82f3848a2beb971dca717c61bdb2b89ec",
+        "type": "FIX",
+        "text": " sap.m.App: Fixed failing qUnit tests on Safari",
+        "references": []
+      },
+      {
+        "id": "6ffa08b9157ebbdc47b80975ccf2451d631a53d4",
+        "type": "FIX",
+        "text": " sap.m.ComboBox: Clicking the arrow should not focus a disabled control",
+        "references": []
+      },
+      {
+        "id": "770eb100b4a20ab79e520af5a23c69ff4992f7ce",
+        "type": "FIX",
+        "text": " sap.m.ComboBox: Focus outline in IE corrected",
+        "references": []
+      },
+      {
+        "id": "6f9b6066ae7f66317a4ee4731f7687b42c618991",
+        "type": "FIX",
+        "text": " sap.m.GenericTag: Updated test pages",
+        "references": []
+      },
+      {
+        "id": "f81dc7063bb0061f104497aef7f1c7723454d483",
+        "type": "FIX",
+        "text": " sap.m.MultiComboBox: Value of old input is cleared after focusout",
+        "references": []
+      },
+      {
+        "id": "18f8f723cd3774e13c83bca2830bef7201c91486",
+        "type": "FIX",
+        "text": " sap.m.MultiInput: Fire tokenUpdate on interaction with N-more popup",
+        "references": []
       }
     ]
   }
