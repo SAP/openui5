@@ -291,7 +291,6 @@ sap.ui.define([
 	};
 
 	DynamicPage.MEDIA = {
-		INVISIBLE: "sapUiHidden",
 		PHONE: "sapFDynamicPage-Std-Phone",
 		TABLET: "sapFDynamicPage-Std-Tablet",
 		DESKTOP: "sapFDynamicPage-Std-Desktop"
@@ -1169,9 +1168,7 @@ sap.ui.define([
 	 * @private
 	 */
 	DynamicPage.prototype._updateMedia = function (iWidth) {
-		if (iWidth === 0) {
-			this._updateMediaStyle(DynamicPage.MEDIA.INVISIBLE);
-		} else if (iWidth <= DynamicPage.BREAK_POINTS.PHONE) {
+		if (iWidth <= DynamicPage.BREAK_POINTS.PHONE) {
 			this._updateMediaStyle(DynamicPage.MEDIA.PHONE);
 		} else if (iWidth <= DynamicPage.BREAK_POINTS.TABLET) {
 			this._updateMediaStyle(DynamicPage.MEDIA.TABLET);
