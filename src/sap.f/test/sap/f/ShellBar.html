@@ -63,20 +63,15 @@
 
 										new ShellBar({
 											homeIcon: sap.ui.require.toUrl("sap/ui/documentation/sdk/images/logo_sap.png"),
-											title: "Our company theme 213",
+											title: "Main title",
 											secondTitle: "Second title",
 											showCopilot: true,
 											showSearch: true,
-											showNavButton: true,
-											// showMenuButton: true,
 											showNotifications: true,
 											showProductSwitcher: true,
 											profile: new sap.f.Avatar({
 												initials: "DN"
 											}),
-											avatarPressed: function (oEvent) {
-												debugger;
-											},
 											menu: new sap.m.Menu({
 												title: "random 2",
 												items: [
@@ -139,9 +134,10 @@
 												]
 											}),
 											additionalContent: [
-												new sap.m.Button({icon: "sap-icon://home", type: "Transparent"}),
-												new sap.m.Button({icon: "sap-icon://action-settings", type: "Transparent"}),
-												new sap.m.Button({icon: "sap-icon://add-photo", type: "Transparent"})
+												new sap.m.OverflowToolbarButton({icon: "sap-icon://home", text: "home", type: "Transparent"}),
+												new sap.m.OverflowToolbarButton({icon: "sap-icon://action-settings", text: "Action settings", type: "Transparent"}),
+												new sap.m.OverflowToolbarButton({icon: "sap-icon://add-photo", text: "Add photo", type: "Transparent"})
+											]
 										})
 									]
 								}),

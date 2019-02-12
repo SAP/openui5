@@ -22,7 +22,8 @@ sap.ui.define(["sap/ui/base/DataType",
 		designtime: "sap/f/designtime/library.designtime",
 		interfaces: [
 			"sap.f.cards.IHeader",
-			"sap.f.ICard"
+			"sap.f.ICard",
+			"sap.f.IShellBar"
 		],
 		types: [
 			"sap.f.LayoutType",

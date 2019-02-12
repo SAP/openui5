@@ -63,10 +63,12 @@
 		&:hover {
 			transition: transform 0.30s;
 			transform: scale(1.1);
+			outline: none;
 		}
 		&:active {
 			transition: transform 0.05s;
 			transform: scale(1.2);
+			outline: none;
 		}
 	}
 
@@ -82,6 +84,73 @@
 		padding: 0 ~"@{_sap_f_Shell_Bar_Padding_Phone}rem";
 		.sapFShellBarProfile {
 			margin-right: 0;
+		}
+	}
+
+	// Resets of sizes for "Compact" mode - controls should remain in cozy mode
+	.sapUiSizeCompact & {
+		// Button
+		.sapMBtn {
+			height: 3rem;
+			padding: 0.250rem 0;
+		}
+
+		.sapMBtnInner {
+			height: 2.500rem;
+			min-width: 2.500rem;
+		}
+
+		.sapMBtnInner.sapMBtnText {
+			padding-left: 0.75rem;
+			padding-right: 0.75rem;
+		}
+		.sapMBtnInner.sapMBtnText.sapMBtnIconFirst,
+		.sapMBtnInner.sapMBtnText.sapMBtnBack {
+			padding-left: 2.375rem;
+		}
+		.sapMBtnInner.sapMBtnText.sapMBtnBack.sapMBtnIconFirst {
+			padding-left: 4.750rem;
+		}
+		.sapMBtnInner.sapMBtnText.sapMBtnIconLast {
+			padding-right: 2.375rem;
+		}
+
+		.sapMBtnContent {
+			line-height: 2.375rem;
+		}
+
+		.sapMBtnIcon {
+			line-height: 2.375rem;
+			width: 2.375rem;
+			font-size: 1.375rem;
+			max-height: 2.375rem;
+			margin: 0;
+		}
+		.sapMBtnIconLeft + .sapMBtnIconLeft {
+			left: 0;
+		}
+		.sapMBtnText {
+			.sapMBtnIconLeft + .sapMBtnIconLeft {
+				left: 2.375rem;
+			}
+		}
+		.sapMBtnInner > img {
+			height: 2.500rem;
+			width: 2.500rem;
+		}
+
+		// Menu Button
+		.sapMMenuBtn.sapMMenuBtnRegular .sapMBtnInner::after {
+			height: 38px; //ie does not accept rem for height in pseudo elements, but it works with px when you zoom
+			line-height: 38px;
+			padding-right: 0.75rem;
+			padding-left: 0.5625rem;
+		}
+		.sapMMenuBtn.sapMMenuBtnRegular .sapMBtnInner:not(.sapMBtnText) {
+			padding-right: 2rem;
+		}
+		.sapMMenuBtn.sapMMenuBtnRegular .sapMBtnInner {
+			padding-right: 2rem;
 		}
 	}
 }
