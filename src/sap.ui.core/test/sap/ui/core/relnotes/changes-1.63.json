@@ -139,6 +139,48 @@
         "type": "FIX",
         "text": " v2.ODataModel: submitChanges",
         "references": []
+      },
+      {
+        "id": "e3e58f02011d346657bcd2bc7fb52dc01dfd3952",
+        "type": "FEATURE",
+        "text": " Control.extend: allow to specify ready-made renderers",
+        "references": []
+      },
+      {
+        "id": "5a756f6848004634a55e4c19eb8313a77688f923",
+        "type": "FEATURE",
+        "text": " DateFormat: Allow DateInterval to handle single date",
+        "references": []
+      },
+      {
+        "id": "dd0c46d0ca7988332af627119893a570dead7acd",
+        "type": "FEATURE",
+        "text": " Enhance custom currencies for individual instances",
+        "references": []
+      },
+      {
+        "id": "ad66567b9b6b62c292e1183135153686b9c4479d",
+        "type": "FEATURE",
+        "text": " ManagedObject: Support handling of properties by value",
+        "references": []
+      },
+      {
+        "id": "25e5db5ed37fdf35a64f430824b3c3119be50c5e",
+        "type": "FIX",
+        "text": " CanonicalRequest.qunit: breaks in IE",
+        "references": []
+      },
+      {
+        "id": "89730e56ede38e6a765af01f709aa3bfbaa66e26",
+        "type": "FIX",
+        "text": " MockServer does not forward request headers inside a $batch",
+        "references": []
+      },
+      {
+        "id": "b7fa6c68a53dc6cca0dec173c3c4b00a69319ab7",
+        "type": "FIX",
+        "text": " v2.ODataModel: Missing instance check",
+        "references": []
       }
     ]
   }

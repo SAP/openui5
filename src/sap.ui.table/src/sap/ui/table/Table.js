@@ -3998,7 +3998,7 @@ sap.ui.define([
 			oRowAction._setCount(iCount);
 		}
 		for (var i = 0; i < this._aRowClones.length; i++) {
-			oRowAction = this._aRowClones[i].getAggregation("_rowAction");
+			oRowAction = this._aRowClones[i].getRowAction();
 			if (oRowAction) {
 				oRowAction._setCount(iCount);
 			}

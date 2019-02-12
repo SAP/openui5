@@ -3,14 +3,10 @@
  */
 
 sap.ui.define([
-	"sap/ui/test/_OpaLogger",
 	"sap/ui/test/actions/Action",
-	"sap/ui/events/KeyCodes",
-	"sap/base/Log"
-], function(_OpaLogger, Action, KeyCodes, Log) {
+	"sap/ui/events/KeyCodes"
+], function(Action, KeyCodes) {
 	"use strict";
-
-	var oLogger = _OpaLogger.getLogger("sap.ui.test.actions.EnterText");
 
 	/**
 	 * @class
@@ -68,14 +64,14 @@ sap.ui.define([
 				return;
 			}
 			if (this.getText() === undefined || (!this.getClearTextFirst() && !this.getText())) {
-				Log.error("Please provide a text for this EnterText action", this._sLogPrefix);
+				this.oLogger.error("Please provide a text for this EnterText action");
 				return;
 			}
 
 			var oUtils = this.getUtils();
 
-			oLogger.timestamp("opa.actions.enterText");
-			oLogger.debug("Enter text in control " + oControl);
+			this.oLogger.timestamp("opa.actions.enterText");
+			this.oLogger.debug("Enter text in control " + oControl);
 
 			this._tryOrSimulateFocusin($ActionDomRef, oControl);
 

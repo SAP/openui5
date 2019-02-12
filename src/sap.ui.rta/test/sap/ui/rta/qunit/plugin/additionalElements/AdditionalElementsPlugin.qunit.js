@@ -19,6 +19,7 @@ sap.ui.define([
 	"sap/ui/fl/registry/Settings",
 	"sap/base/Log",
 	"sap/ui/qunit/utils/waitForThemeApplied",
+	"sap/base/util/uid",
 	"sap/ui/thirdparty/sinon-4"
 ], function (
 	AdditionalElementsPlugin,
@@ -39,6 +40,7 @@ sap.ui.define([
 	Settings,
 	Log,
 	waitForThemeApplied,
+	uid,
 	sinon
 ){
 	"use strict";
@@ -66,6 +68,10 @@ sap.ui.define([
 		"sap.m.Bar": [
 			{
 				changeType: "addFields",
+				changeHandler : oDummyChangeHandler
+			},
+			{
+				changeType: "customAdd",
 				changeHandler : oDummyChangeHandler
 			},
 			SimpleChanges.moveControls
@@ -188,12 +194,33 @@ sap.ui.define([
 			},
 			sibling : true,
 			msg : " when the control's dt metadata has a reveal action with changeOnRelevantContainer"
+		},
+		{
+			dtMetadata : {
+				"add" : {
+					"custom": {
+						getItems: getCustomItems.bind(null, 2)
+					}
+				}
+			},
+			sibling : true,
+			msg : " when the control's dt metadata has an add action with a custom sub-action"
+		},
+		{
+			dtMetadata : {
+				"add" : {
+					"custom": {
+						getItems: getCustomItems.bind(null, 2)
+					}
+				}
+			},
+			sibling : false,
+			msg : " when the control's dt metadata has an add action with a custom sub-action"
 		}].forEach(function(test){
 			var sPrefix = test.sibling ? "On sibling: " : "On child: ";
 			var sOverlayType =  test.sibling ? ON_SIBLING : ON_CHILD;
 			QUnit.test(sPrefix + test.msg, function(assert) {
 				return createOverlayWithAggregationActions.call(this, test.dtMetadata, sOverlayType)
-
 				.then(function(oOverlay) {
 					this.oPlugin.setDesignTime(this.oDesignTime);
 					this.oPlugin.registerElementOverlay(oOverlay);
@@ -297,7 +324,7 @@ sap.ui.define([
 			sandbox.restore();
 		}
 	}, function () {
-		QUnit.test("when the control's dt metadata has addODataProperty and reveal action", function (assert) {
+		QUnit.test("when the control's dt metadata has addODataProperty, reveal and custom add actions", function (assert) {
 			var fnElementModifiedStub = sandbox.stub();
 
 			return createOverlayWithAggregationActions.call(this, {
@@ -306,6 +333,9 @@ sap.ui.define([
 				},
 				"reveal" : {
 					changeType : "unhideControl"
+				},
+				"add" : {
+					custom: getCustomItems.bind(null, 1)
 				}
 			},
 			ON_CHILD)
@@ -320,7 +350,7 @@ sap.ui.define([
 			}.bind(this));
 		});
 
-		QUnit.test("when the control's dt metadata has addODataProperty and reveal action with changeOnRelevantContainer", function (assert) {
+		QUnit.test("when the control's dt metadata has addODataProperty, reveal and custom add actions with changeOnRelevantContainer", function (assert) {
 			var fnElementModifiedStub = sandbox.stub();
 
 			return createOverlayWithAggregationActions.call(this, {
@@ -331,6 +361,9 @@ sap.ui.define([
 				"reveal" : {
 					changeType : "unhideControl",
 					changeOnRelevantContainer : true
+				},
+				"add" : {
+					custom: getCustomItems.bind(null, 2)
 				}
 			},
 			ON_CHILD)
@@ -374,7 +407,6 @@ sap.ui.define([
 
 		});
 	});
-
 
 	QUnit.module("Given a plugin whose dialog always close with OK", {
 		beforeEach : function(assert) {
@@ -444,7 +476,80 @@ sap.ui.define([
 				}.bind(this));
 			});
 
-			QUnit.test(sPrefix + "when the control's dt metadata has NO addODataProperty and NO reveal action", function (assert) {
+			QUnit.test(sPrefix + "when the control's dt metadata has a custom add action with 2 items, one with stable id and another with randomly generated stable id, and NO addODataProperty and reveal actions", function (assert) {
+				var done = assert.async();
+				var aCompleteChangeContentArgs = [];
+				sandbox.stub(ChangeRegistry.prototype, "getChangeHandler").returns(oDummyChangeHandler);
+				sandbox.spy(oDummyChangeHandler, "completeChangeContent");
+				this.oPlugin.attachEventOnce("elementModified", function(oEvent){
+					var oCompositeCommand = oEvent.getParameter("command");
+					var aCommands = oCompositeCommand.getCommands();
+					var aCustomItems = getCustomItems(2).reverse(); // to preserve sorting done in AdditionalElementsPlugin._createCommands()
+					var sAggregationName = "contentLeft";
+					var sChangeType = "customAdd";
+
+					assert.strictEqual(aCommands.length, 2, "then two commands ware created");
+					assert.ok(oDummyChangeHandler.completeChangeContent.calledTwice, "then customAdd change handler's completeChangeContent was called twice for each command");
+
+					aCommands.forEach(
+						function(oCommand, iIndex) {
+							assert.strictEqual(oCommand.getName(), sChangeType, "then created command is customAdd");
+							assert.strictEqual(oCommand.getChangeType(), sChangeType, "then the customAdd command has the right changeType");
+							assert.deepEqual(oCommand.getAddElementInfo(), aCustomItems[iIndex].changeSpecificData.content, "then the customAdd command has the correct additional element info");
+							assert.strictEqual(oCommand.getAggregationName(), sAggregationName, "then the customAdd command has the correct aggregation");
+
+							aCompleteChangeContentArgs = oDummyChangeHandler.completeChangeContent.getCall(iIndex).args;
+							assert.deepEqual(aCompleteChangeContentArgs[1].addElementInfo, aCustomItems[iIndex].changeSpecificData.content, "then the correct addElementInfo was passed to changeHandler.completeChangeContent()");
+							assert.deepEqual(aCompleteChangeContentArgs[1].index, oCommand.getIndex(), "then the correct index was passed to changeHandler.completeChangeContent()");
+							assert.deepEqual(aCompleteChangeContentArgs[1].changeType, sChangeType, "then the correct changeType was passed to changeHandler.completeChangeContent()");
+							assert.deepEqual(aCompleteChangeContentArgs[1].aggregationName, sAggregationName, "then the correct aggregationName was passed to changeHandler.completeChangeContent()");
+							if (iIndex === 0) {
+								assert.notEqual(aCompleteChangeContentArgs[1].customItemId.indexOf(oCommand.getElement().getId()), -1, "then the correct customItemId was passed to changeHandler.completeChangeContent() with changeOnRelevantContainer");
+							} else {
+								assert.deepEqual(aCompleteChangeContentArgs[1].customItemId, oCommand.getElement().getParent().getId() + "--" + aCustomItems[iIndex].id, "then the correct customItemId was passed to changeHandler.completeChangeContent() without changeOnRelevantContainer");
+							}
+							if (test.sibling) {
+								assert.equal(oCommand.getIndex(), 1, "then the customAdd command has the right index");
+							} else {
+								assert.equal(oCommand.getIndex(), 0, "then the customAdd command has the right index");
+							}
+						}
+					);
+					done();
+				});
+				var aCustomItems = getCustomItems(2);
+
+				aCustomItems[0].selected = true; // item selected
+				aCustomItems[1].selected = true; // tem selected
+				aCustomItems[1].changeSpecificData.changeOnRelevantContainer = true; // to mock change on relevant container
+
+
+				return test.overlay.call(this,
+					{
+						"add" : {
+							"custom":  {
+								getItems: sandbox.stub().returns(aCustomItems)
+							}
+						}
+					},
+					test.sibling ? ON_SIBLING : ON_CHILD
+				)
+
+				.then(function(oOverlay) {
+					return this.oPlugin.showAvailableElements(test.sibling, [oOverlay]);
+				}.bind(this))
+
+				.then(function() {
+					assert.ok(this.fnGetCustomAddItemsSpy.calledOnce, "then the analyzer is called to return the custom add elements");
+					assert.ok(this.fnEnhanceInvisibleElementsStub.notCalled, "then the analyzer is NOT called to return the invisible elements");
+					assert.ok(this.fnGetUnboundODataPropertiesStub.notCalled, "then the analyzer is NOT called to return the unbound odata properties");
+					assertDialogModelLength.call(this, assert, 2, "then both custom add elements are part of the dialog model");
+					assert.equal(this.oPlugin.getDialog().getElements()[0].label, aCustomItems[0].label, "then the first element is a custom add item");
+					assert.equal(this.oPlugin.getDialog().getElements()[1].label, aCustomItems[1].label, "then the second element is a custom add item");
+				}.bind(this));
+			});
+
+			QUnit.test(sPrefix + "when the control's dt metadata has NO addODataProperty or reveal or custom add actions", function (assert) {
 
 				var fnElementModifiedStub = sandbox.stub();
 				this.oPlugin.attachEventOnce("elementModified", fnElementModifiedStub);
@@ -576,7 +681,7 @@ sap.ui.define([
 			}.bind(this));
 		});
 
-		QUnit.test("when the control's dt metadata has an addODataProperty and a reveal action", function(assert) {
+		QUnit.test("when the control's dt metadata has addODataProperty, a reveal and a custom add actions", function(assert) {
 			var oOriginalRTATexts = sap.ui.getCore().getLibraryResourceBundle("sap.ui.rta");
 			var fnOriginalGetLibraryResourceBundle = sap.ui.getCore().getLibraryResourceBundle;
 			var oFakeLibBundle = {
@@ -596,6 +701,9 @@ sap.ui.define([
 					},
 					"reveal" : {
 						changeType : "unhideControl"
+					},
+					"custom" : {
+						getItems: getCustomItems.bind(null, 2)
 					}
 				},
 				ON_CHILD
@@ -713,6 +821,7 @@ sap.ui.define([
 					dummy: "value"
 				}
 			});
+			sandbox.stub(this.oPlugin, "_getCustomAddActions");
 
 			this.oPlugin._getActions();
 
@@ -1106,18 +1215,16 @@ sap.ui.define([
 		sap.ui.getCore().applyChanges();
 
 		//simulate analyzer returning some elements
-		this.fnEnhanceInvisibleElementsStub = sandbox.stub(AdditionalElementsAnalyzer,"enhanceInvisibleElements").callsFake(function (oParent, mActions) {
-			return Promise.resolve([
+		this.fnEnhanceInvisibleElementsStub = sandbox.stub(AdditionalElementsAnalyzer,"enhanceInvisibleElements").resolves([
 				{ selected : false, label : "Invisible1", tooltip : "", type : "invisible", elementId : this.oInvisible1.getId(), bindingPaths: ["Property01"]},
 				{ selected : true, label : "Invisible2", tooltip : "", type : "invisible", elementId : this.oInvisible2.getId(), bindingPaths: ["Property02"]}
-			]);
-		}.bind(this));
-		this.fnGetUnboundODataPropertiesStub = sandbox.stub(AdditionalElementsAnalyzer,"getUnboundODataProperties").returns(Promise.resolve([
+		]);
+		this.fnGetUnboundODataPropertiesStub = sandbox.stub(AdditionalElementsAnalyzer,"getUnboundODataProperties").resolves([
 			{selected : true, label : "OData1", tooltip : "", type : "odata", entityType : "EntityType01", bindingPath : "Property03"},
 			{selected : false, label : "OData2", tooltip : "", type : "odata", entityType : "EntityType01", bindingPath : "Property04"},
 			{selected : false, label : "OData3", tooltip : "", type : "odata", entityType : "EntityType01", bindingPath : "Property05"}
-		]));
-
+		]);
+		this.fnGetCustomAddItemsSpy = sandbox.spy(AdditionalElementsAnalyzer,"getCustomAddItems");
 	}
 
 	function givenThePluginWithCancelClosingDialog (){
@@ -1186,7 +1293,8 @@ sap.ui.define([
 			aggregations : {
 				contentLeft : {
 					childNames : mChildNames,
-					actions :  (mActions.addODataProperty || mActions.move) ? {
+					actions :  (mActions.addODataProperty || mActions.move || mActions.add) ? {
+						add : mActions.add || null,
 						addODataProperty : mActions.addODataProperty || null,
 						move : mActions.move || null
 					} : null
@@ -1265,6 +1373,44 @@ sap.ui.define([
 	function assertDialogModelLength(assert, iExpectedLength, sMsg) {
 		var aElements = this.oPlugin.getDialog().getElements();
 		assert.equal(aElements.length, iExpectedLength, sMsg);
+	}
+
+	function getCustomItems(iNumber) {
+		var aCustomItems = [];
+		[{
+			//dialog item specific data
+			label: "CustomLabel1",
+			tooltip: "Custom Entry 1",
+			id: "stableId",
+			//change specific data
+			changeSpecificData: {
+				changeOnRelevantContainer: false,
+				changeType: "customAdd",
+				content: {
+					text: "Custom Text 1",
+					foo: "CustomLabel1"
+				}
+			}
+		}, {
+			//dialog item specific data
+			label: "CustomLabel2",
+			tooltip: "Custom Entry 2",
+			id: uid(),
+			//change specific data
+			changeSpecificData: {
+				changeOnRelevantContainer: false,
+				changeType: "customAdd",
+				content: {
+					text: "Custom Text 2",
+					foo: "CustomLabel2"
+				}
+			}
+		}].forEach(function (oCustomItem, iIndex) {
+			if (iIndex < iNumber) {
+				aCustomItems.push(oCustomItem);
+			}
+		});
+	return aCustomItems;
 	}
 
 	QUnit.done(function () {

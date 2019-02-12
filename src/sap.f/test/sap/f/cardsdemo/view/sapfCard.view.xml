@@ -8,7 +8,7 @@
 	xmlns:viz.data="sap.viz.ui5.data"
 	xmlns:viz.feeds="sap.viz.ui5.controls.common.feeds"
 	displayBlock="true"
-	controllerName="sap.f.cardsdemo.controller.sapfCard">
+	controllerName="sap.f.cardsdemo.controller.sapFCard">
 
 	<Page title="{i18n>appTitle}">
 

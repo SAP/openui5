@@ -5,8 +5,9 @@ sap.ui.define([], function() {
 	"use strict";
 
 	/**
-	 * @alias module:sap/ui/events/KeyCodes
 	 * @enum {int}
+	 * @since 1.58
+	 * @alias module:sap/ui/events/KeyCodes
 	 * @public
 	 */
 	var mKeyCodes = {

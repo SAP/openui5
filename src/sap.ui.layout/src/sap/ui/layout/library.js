@@ -476,7 +476,19 @@ sap.ui.define([
 			 *
 			 * @public
 			 */
-			ShadeD: "ShadeD"
+			ShadeD: "ShadeD",
+			/**
+			 * Shade E - available only for Fiori 3 theme
+			 *
+			 * @public
+			 */
+			ShadeE: "ShadeE",
+			/**
+			 * Shade F - available only for Fiori 3 theme
+			 *
+			 * @public
+			 */
+			ShadeF: "ShadeF"
 		};
 
 

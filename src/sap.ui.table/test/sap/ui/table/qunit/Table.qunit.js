@@ -3421,7 +3421,7 @@ sap.ui.define([
 			var oControl = oTable.getRows()[0].getCells()[oColumn.getIndex()];
 			this.test(assert, "Content - Column " + oColumn.getIndex(), oControl.getDomRef(), oControl.allowsPasteOnTable());
 		}.bind(this));
-		this.test(assert, "Content - Row action", oTable.getRows()[0].getAggregation("_rowAction").getAggregation("_icons")[0].getDomRef(), true);
+		this.test(assert, "Content - Row action", oTable.getRows()[0].getRowAction().getAggregation("_icons")[0].getDomRef(), true);
 	});
 
 	QUnit.test("No paste data", function(assert) {

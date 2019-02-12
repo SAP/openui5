@@ -20,7 +20,10 @@ sap.ui.define([
 
 			this.getView().byId("multiCombo2").setFilterFunction(function(sTerm, oItem) {
 				// A case-insensitive 'string contains' filter
-				return oItem.getText().indexOf(sTerm) > -1;
+				var sItemText = oItem.getText().toLowerCase(),
+					sSearchTerm = sTerm.toLowerCase();
+
+				return sItemText.indexOf(sSearchTerm) > -1;
 			});
 		}
 	});

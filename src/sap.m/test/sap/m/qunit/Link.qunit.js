@@ -298,9 +298,11 @@ sap.ui.define([
 		oLink1.setEmphasized(false);
 		assert.strictEqual($oLink.attr("aria-describedby"), undefined, "Property 'aria-describedby' should not exist");
 
+		oBrowserStub = this.stub(sap.ui.Device, "browser", { msie: false });
 		oLink1.addAriaLabelledBy("id1");
 		sap.ui.getCore().applyChanges();
-		assert.strictEqual(oLink1.$().attr("aria-labelledby"), "id1 " + oLink1.getId(), "Property 'aria-labelledby' should contain the link ID");
+		assert.strictEqual(oLink1.$().attr("aria-labelledby"), "id1 " + oLink1.getId(),
+			"Property 'aria-labelledby' should contain the link ID for non-IE browsers");
 
 		oLink1.removeAriaLabelledBy("id1");
 		sap.ui.getCore().applyChanges();

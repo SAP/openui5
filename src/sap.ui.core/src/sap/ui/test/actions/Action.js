@@ -8,10 +8,10 @@ sap.ui.define([
 	'sap/ui/qunit/QUnitUtils',
 	'sap/ui/test/Opa5',
 	'sap/ui/Device',
-	"sap/base/Log",
-	"sap/ui/thirdparty/jquery"
+	"sap/ui/thirdparty/jquery",
+	"sap/ui/test/_OpaLogger"
 ],
-function (ManagedObject, QUnitUtils, Opa5, Device, Log, jQueryDOM) {
+function (ManagedObject, QUnitUtils, Opa5, Device, jQueryDOM, _OpaLogger) {
 	"use strict";
 
 	/**
@@ -58,37 +58,52 @@ function (ManagedObject, QUnitUtils, Opa5, Device, Log, jQueryDOM) {
 		},
 
 		/**
-		 * Used for retrieving the correct $ to execute your action on.
-		 * This will check the following conditions in order:
+		 * Finds the most suitable jQuery element to execute an action on.
+		 * A control may have many elements in its DOM representation. The most suitable one is chosen by priority:
 		 * <ol>
-		 *     <li>The user provided an idSuffix - return</li>
-		 *     <li>There is a control adapter for the action (most of them are provided out of the box) - use the adapter see {@link sap.ui.test.Press.controlAdapters} for an example</li>
-		 *     <li>The focusDomRef of the control is taken as fallback</li>
+		 *     <li>If the user provided an idSuffix, return the element that matches it, or null</li>
+		 *     <li>If there is a control adapter for the action - return the element that matches it. See {@link sap.ui.test.Press.controlAdapters} for an example</li>
+		 *     <li>If there is no control adapter, or it matches no elements, return the focusDomRef of the control. Note that some controls may not have a focusDomRef.</li>
 		 * </ol>
-		 * @returns {jQuery} The jQuery object of the domref the Action is going to be executed on.
+		 * @param {object} oControl the control to execute an action on
+		 * @returns {jQuery} the jQuery element which is most suitable for the action
 		 * @protected
 		 */
 		$: function (oControl) {
-			var $FocusDomRef,
-				sAdapter = this._getAdapter(oControl.getMetadata()),
-				sAdapterDomRefId = this.getIdSuffix() || sAdapter;
+			var $ActionDomRef;
+			var sErrorMessage = "";
 
-			if (sAdapterDomRefId) {
-				$FocusDomRef = oControl.$(sAdapterDomRefId);
+			if (this.getIdSuffix()) {
+				// if user requested an ID suffix, it should be used -- no fallback
+				$ActionDomRef = oControl.$(this.getIdSuffix());
+				sErrorMessage = $ActionDomRef.length ? "" : "DOM representation of control '" + oControl +
+					"' has no element with user-provided ID suffix '" + this.getIdSuffix() + "'";
 			} else {
-				$FocusDomRef = jQueryDOM(oControl.getFocusDomRef());
+				var sAdapter = this._getAdapter(oControl);
+				if (sAdapter) {
+					$ActionDomRef = oControl.$(sAdapter);
+					sErrorMessage = $ActionDomRef.length ? "" : "DOM representation of control '" + oControl +
+						"' has no element with ID suffix '" + sAdapter + "' which is the default adapter for '" + this.getMetadata().getName() + "'";
+				}
+
+				if (!$ActionDomRef || !$ActionDomRef.length) {
+					// if no adapter is set or no element is found for it -- fallback to control focus dom ref
+					$ActionDomRef = jQueryDOM(oControl.getFocusDomRef());
+					if (!$ActionDomRef.length) {
+						sErrorMessage += "DOM representation of control '" + oControl + "' has no focus DOM reference";
+					}
+				}
 			}
 
-			if (!$FocusDomRef.length) {
-				var sErrorMessage = "Control " + oControl + " has no dom representation idSuffix was " + sAdapterDomRefId;
-
-				Log.error(sErrorMessage, this._sLogPrefix);
+			if ($ActionDomRef.length) {
+				this.oLogger.info("Found a DOM reference for the control '" + oControl + "'. Executing '" + this.getMetadata().getName() +
+				"' on the DOM element with ID '" + $ActionDomRef[0].id + "'");
+				return $ActionDomRef;
+			} else {
+				// the control has no dom ref of any kind - action has no target
+				this.oLogger.error(sErrorMessage);
 				throw new Error(sErrorMessage);
-			} else {
-				Log.info("Found a domref for the Control " + oControl + " the action is going to be executed on the dom id" + $FocusDomRef[0].id, this._sLogPrefix);
 			}
-
-			return $FocusDomRef;
 		},
 
 		/**
@@ -102,26 +117,39 @@ function (ManagedObject, QUnitUtils, Opa5, Device, Log, jQueryDOM) {
 
 		init: function () {
 			this.controlAdapters = {};
+			this.oLogger = _OpaLogger.getLogger(this.getMetadata().getName());
 		},
 
 		/**
-		 * Traverses the metadata chain of ui5 to and looks for adapters
-		 * @param oMetadata a controls metadata
-		 * @returns {string|null}
+		 * Traverses the metadata chain of a control and looks for action adapters.
+		 * An action adapter is a suffix part of the ID of a DOM element, where
+		 * the DOM element is part of a control DOM representation and should be used as a target for events
+		 * @param {object} oControl the control for which to find an action adapter
+		 * @returns {string|null} the ID suffix of the DOM element to use as event target
 		 * @private
 		 */
-		_getAdapter : function (oMetadata) {
-			var sAdapter = this.controlAdapters[oMetadata.getName()];
+		_getAdapter : function (oControl) {
+			var fnGetAdapterByMeta = function (oMetadata) {
+				var vAdapter = this.controlAdapters[oMetadata.getName()];
 
-			if (sAdapter) {
-				return sAdapter;
-			}
-			var oParentMetadata = oMetadata.getParent();
-			if (oParentMetadata) {
-				return this._getAdapter(oParentMetadata);
-			}
+				if (vAdapter) {
+					if (jQueryDOM.isFunction(vAdapter)) {
+						return vAdapter(oControl);
+					}
+					if (typeof vAdapter === "string") {
+						return vAdapter;
+					}
+				}
 
-			return null;
+				var oParentMetadata = oMetadata.getParent();
+				if (oParentMetadata) {
+					return fnGetAdapterByMeta(oParentMetadata);
+				}
+
+				return null;
+			}.bind(this);
+
+			return fnGetAdapterByMeta(oControl.getMetadata());
 		},
 
 		_tryOrSimulateFocusin: function ($DomRef, oControl) {
@@ -146,7 +174,7 @@ function (ManagedObject, QUnitUtils, Opa5, Device, Log, jQueryDOM) {
 			}
 
 			if (bFireArtificialEvents) {
-				Log.debug("Control " + oControl + " could not be focused - maybe you are debugging?", this._sLogPrefix);
+				this.oLogger.debug("Control " + oControl + " could not be focused - maybe you are debugging?");
 
 				this._createAndDispatchFocusEvent("focusin", oDomRef);
 				this._createAndDispatchFocusEvent("focus", oDomRef);
@@ -208,10 +236,8 @@ function (ManagedObject, QUnitUtils, Opa5, Device, Log, jQueryDOM) {
 			}
 
 			oDomRef.dispatchEvent(oFocusEvent);
-			Log.info("Dispatched focus event: '" + sName + "'", this._sLogPrefix);
-		},
-
-		_sLogPrefix : "sap.ui.test.actions"
+			this.oLogger.info("Dispatched focus event: '" + sName + "'");
+		}
 	});
 
 });

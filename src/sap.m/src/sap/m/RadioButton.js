@@ -146,7 +146,7 @@ function(
 
 			/**
 			 *
-			 * Enumeration sap.ui.core.ValueState provides state values Error, Success, Warning, None
+			 * Enumeration sap.ui.core.ValueState provides state values Error, Success, Warning, Information, None
 			 * @since 1.25
 			 */
 			valueState : {type : "sap.ui.core.ValueState", group : "Data", defaultValue : ValueState.None},

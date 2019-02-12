@@ -518,5 +518,18 @@ sap.ui.define(['sap/ui/core/Element', 'sap/ui/model/Context', './TableUtils', "s
 		}
 	};
 
+	/**
+	 * Returns the related <code>RowAction</code> of the row.
+	 *
+	 * This function must only be used for application testing purposes.
+	 * The <code>RowAction</code> is generated based on a template. Manipulations of the object or its items are not supported.
+	 *
+	 * @return {sap.ui.table.RowAction} The related <code>RowAction</code> of the row.
+	 * @protected
+	 */
+	Row.prototype.getRowAction = function() {
+		return this.getAggregation("_rowAction");
+	};
+
 	return Row;
 });

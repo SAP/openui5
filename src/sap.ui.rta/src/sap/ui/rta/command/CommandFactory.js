@@ -8,8 +8,7 @@ sap.ui.define([
 	'sap/ui/dt/OverlayRegistry',
 	'sap/ui/fl/Utils',
 	'sap/ui/dt/Util',
-	'sap/base/util/merge',
-	'sap/ui/rta/command/AppDescriptorCommand'
+	'sap/base/util/merge'
 ],
 function(
 	ManagedObject,
@@ -18,8 +17,7 @@ function(
 	OverlayRegistry,
 	FlexUtils,
 	DtUtil,
-	merge,
-	AppDescriptorCommand
+	merge
 ) {
 	"use strict";
 
@@ -214,6 +212,18 @@ function(
 		return oAction;
 	}
 
+	function configureCustomAddCommand(oElement, mSettings, oDesignTimeMetadata){
+		var oAddAction = oDesignTimeMetadata.getAction("add", mSettings.element);
+		if (oAddAction && oAddAction.custom && typeof oAddAction.custom.getItems === "function") {
+			var oAction = {
+				changeOnRelevantContainer: mSettings.changeOnRelevantContainer,
+				changeType: mSettings.changeType
+			};
+			delete mSettings["changeOnRelevantContainer"]; // this property is not required for a sap.ui.rta.command.CustomAdd
+			return oAction;
+		}
+	}
+
 	var mCommands = { 	// Command names camel case with first char lower case
 		"composite" : {
 			clazz : 'sap.ui.rta.command.CompositeCommand',
@@ -257,6 +267,10 @@ function(
 		"reveal" : {
 			clazz : 'sap.ui.rta.command.Reveal',
 			configure : configureRevealCommand
+		},
+		"customAdd" : {
+			clazz : 'sap.ui.rta.command.CustomAdd',
+			configure : configureCustomAddCommand
 		},
 		"combine" : {
 			clazz : 'sap.ui.rta.command.Combine',

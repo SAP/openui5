@@ -25,19 +25,18 @@ sap.ui.define([
 		 * <h3>Structure</h3>
 		 * The BlockLayout contains BlockLayout cells. Every cell consists of a title and content. The title can be text or a link.
 		 *
+		 * Special full-width sections of the BlockLayout allow horizontal scrolling through a set of blocks.
+		 *
 		 * The BlockLayout comes in five predefined types for background colors:
 		 * <ul>
 		 * <li>Layout only (default) - a layout scheme and no background colors</li>
-		 * <li>Bright - a layout scheme with bright colors</li>
-		 * <li>Accent - a layout scheme with four pre-defined color sets</li>
+		 * <li>Light - a layout scheme with light colors</li>
+		 * <li>Accent - a layout scheme with 11 pre-defined color sets</li>
 		 * <li>Dashboard - a layout scheme with additional borders and no background colors</li>
-		 * <li>Mixed - a layout scheme with a mix of light and dark colors</li>
 		 * </ul>
 		 * Background colors are attached directly to the blocks of the layout.
 		 *
-		 * Special full-width sections of the BlockLayout allow horizontal scrolling through a set of blocks.
-		 *
-		 * <b>Note:</b> With version 1.48 colors can be set for each individual {@link sap.ui.layout.BlockLayoutCell cell}. There are 10 pre-defined color sets, each with 4 different shades.
+		 * <b>Note:</b> With version 1.48 colors can be set for each individual {@link sap.ui.layout.BlockLayoutCell cell}. There are 11 pre-defined color sets, each with 4 different shades for the Belize theme and 6 different shades for the Fiori 3 theme.
 		 * The main colors of the sets can be changed in Theme Designer. To change the background of a particular cell, set <code>backgroundColorSet</code> (main color)
 		 * and <code>backgroundColorShade</code> (shade).
 		 *

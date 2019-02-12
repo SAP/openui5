@@ -7,15 +7,16 @@
 	'sap/ui/core/StashedControlSupport',
 	'sap/ui/dt/ElementUtil',
 	'sap/ui/rta/Utils',
+	'sap/base/Log',
 	'sap/ui/rta/util/BindingsExtractor'
-	],
-	function (
-		jQuery,
-		StashedControlSupport,
-		ElementUtil,
-		RtaUtils,
-		BindingsExtractor
-	) {
+], function (
+	jQuery,
+	StashedControlSupport,
+	ElementUtil,
+	RtaUtils,
+	Log,
+	BindingsExtractor
+) {
 	"use strict";
 
 	function _enrichProperty(mProperty, mEntity){
@@ -137,6 +138,15 @@
 		}
 	}
 
+	function _assignCustomItemIds(sParentId, oCustomItem) {
+		oCustomItem.type = "custom";
+		if (oCustomItem.id) {
+			oCustomItem.itemId = sParentId + "--" + oCustomItem.id;
+			oCustomItem.key = oCustomItem.itemId;
+		}
+		return oCustomItem;
+	}
+
 	/**
 	 * Fetching all available properties of the Element's Model
 	 * @param {sap.ui.core.Control} oElement - Control instance
@@ -227,12 +237,12 @@
 		var mAction = mData.action;
 		return {
 			selected : false,
-			label : ElementUtil.getLabelForElement(oElement, mAction.getLabel),
-			tooltip : oElement.quickInfoFromOData || oElement.name || ElementUtil.getLabelForElement(oElement, mAction.getLabel),
+			label : oElement.fieldLabel || ElementUtil.getLabelForElement(oElement, mAction.getLabel),
+			tooltip : oElement.quickInfo || oElement.name || ElementUtil.getLabelForElement(oElement, mAction.getLabel),
 			referencedComplexPropertyName: oElement.referencedComplexPropertyName ? oElement.referencedComplexPropertyName : "",
 			duplicateComplexName: oElement.duplicateComplexName ? oElement.duplicateComplexName : false,
 			bindingPaths: oElement.bindingPaths,
-			originalLabel: oElement.renamedLabel && oElement.fieldLabel !== oElement.labelFromOData ? oElement.labelFromOData : "",
+			originalLabel: oElement.renamedLabel && oElement.fieldLabel !== oElement.originalLabel ? oElement.originalLabel : "",
 			//command relevant data
 			type : "invisible",
 			elementId : oElement.getId()
@@ -405,15 +415,22 @@
 	 *
 	 * @private
 	 */
-	function _enhanceInvisibleElement(oInvisibleElement, mODataProperty) {
-		oInvisibleElement.labelFromOData = mODataProperty.fieldLabel;
-		oInvisibleElement.quickInfoFromOData = mODataProperty.quickInfo;
-		oInvisibleElement.name = mODataProperty.name;
-		if (oInvisibleElement.fieldLabel !== oInvisibleElement.labelFromOData) {
+	function _enhanceInvisibleElement(oInvisibleElement, mODataOrCustomItem) {
+		// mODataOrCustomItem.fieldLabel - oData, mODataOrCustomItem.label - custom
+		oInvisibleElement.originalLabel = mODataOrCustomItem.fieldLabel || mODataOrCustomItem.label;
+
+		// mODataOrCustomItem.quickInfo - oData, mODataOrCustomItem.tooltip - custom
+		oInvisibleElement.quickInfo = mODataOrCustomItem.quickInfo || mODataOrCustomItem.tooltip;
+
+		// mODataOrCustomItem.name - oData
+		oInvisibleElement.name = mODataOrCustomItem.name;
+
+		// oInvisibleElement.fieldLabel has the current label
+		if (oInvisibleElement.fieldLabel !== oInvisibleElement.originalLabel) {
 			oInvisibleElement.renamedLabel = true;
 		}
-		if (mODataProperty.referencedComplexPropertyName) {
-			oInvisibleElement.referencedComplexPropertyName = mODataProperty.referencedComplexPropertyName;
+		if (mODataOrCustomItem.referencedComplexPropertyName) {
+			oInvisibleElement.referencedComplexPropertyName = mODataOrCustomItem.referencedComplexPropertyName;
 		}
 	}
 
@@ -463,6 +480,7 @@
 			var oModel = oElement.getModel();
 			var mRevealData = mActions.reveal;
 			var mAddODataProperty = mActions.addODataProperty;
+			var mCustom = mActions.custom;
 			var oDefaultAggregation = oElement.getMetadata().getAggregation();
 			var sAggregationName = oDefaultAggregation ? oDefaultAggregation.name : mActions.aggregation;
 
@@ -486,13 +504,13 @@
 						var oInvisibleElement = mInvisibleElement.element;
 						var mAction = mInvisibleElement.action;
 						var bIncludeElement = true;
+						oInvisibleElement.fieldLabel = ElementUtil.getLabelForElement(oInvisibleElement, mAction.getLabel);
 
 						// BCP: 1880498671
 						if (mAddODataProperty) {
 							if (_getBindingPath(oElement, sAggregationName) === _getBindingPath(oInvisibleElement, sAggregationName)) {
 								//TODO fix with stashed type support
 								oInvisibleElement = _collectBindingPaths(oInvisibleElement, oModel);
-								oInvisibleElement.fieldLabel = ElementUtil.getLabelForElement(oInvisibleElement, mAction.getLabel);
 								oInvisibleElement.duplicateComplexName = _checkForDuplicateLabels(oInvisibleElement, aODataProperties);
 
 								//Add information from the oDataProperty to the InvisibleProperty if available;
@@ -505,6 +523,15 @@
 							} else if (BindingsExtractor.getBindings(oInvisibleElement, oModel).length > 0) {
 								bIncludeElement = false;
 							}
+						}
+
+						if (mCustom && bIncludeElement) {
+							mCustom.items.forEach(function(oCustomItem) {
+								_assignCustomItemIds(oElement.getParent().getId(), oCustomItem);
+								if (oCustomItem.itemId === oInvisibleElement.getId()) {
+									_enhanceInvisibleElement(oInvisibleElement, oCustomItem);
+								}
+							});
 						}
 
 						if (bIncludeElement) {
@@ -570,6 +597,48 @@
 				.then(function(aUnboundODataProperties) {
 					return aUnboundODataProperties.map(_oDataPropertyToAdditionalElementInfo);
 				});
+		},
+
+		getCustomAddItems: function(oElement, mAction) {
+			return new Promise(function(fnResolve) {
+				if (Array.isArray(mAction.items)) {
+					// remove items already rendered
+					fnResolve(
+						mAction.items
+							.map(_assignCustomItemIds.bind(null, oElement.getParent().getId()))
+							.filter(function(oCustomItem) {
+								if (!oCustomItem.id) {
+									Log.error("CustomAdd item with label " + oCustomItem.label + " does not contain an 'id' property", "sap.ui.rta.plugin.AdditionalElementsAnalyzer#showAvailableElements");
+									return false;
+								}
+								return !ElementUtil.getElementInstance(oCustomItem.itemId);
+							})
+					);
+				} else {
+					fnResolve();
+				}
+			});
+		},
+
+		getFilteredItemsList: function(aAnalyzerValues) {
+			// promise index 0: invisible, 1: addOData, 2: custom
+			var iCustomItemsIndex = 2;
+			if (aAnalyzerValues[iCustomItemsIndex]) {
+				var aInvisibleElementIds = aAnalyzerValues[0].map(
+					function (oInvisibleItem) {
+						return oInvisibleItem.elementId;
+					}
+				);
+				// filter for hidden custom items
+				aAnalyzerValues[iCustomItemsIndex] = aAnalyzerValues[iCustomItemsIndex]
+					.filter(function(oCustomItem) {
+						return !oCustomItem.itemId || aInvisibleElementIds.indexOf(oCustomItem.itemId) === -1;
+					});
+			}
+			return aAnalyzerValues
+				.reduce(function (aAllElements, aAnalyzerValue) {
+					return aAllElements.concat(aAnalyzerValue);
+				}, []);
 		}
 	};
 	return oAnalyzer;

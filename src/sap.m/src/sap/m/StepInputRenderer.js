@@ -25,7 +25,6 @@ sap.ui.define([], function () {
 			oRm.addStyle("width", sWidth);
 			oRm.writeStyles();
 			oRm.writeControlData(oControl);
-			oRm.writeAccessibilityState(oControl);
 			oRm.addClass("sapMStepInput");
 			oRm.addClass("sapMStepInput-CTX");
 			!bEnabled && oRm.addClass("sapMStepInputReadOnly");

@@ -40,6 +40,16 @@ sap.ui.define([
 								},
 								action4 : function(oElement, foo, bar) {
 									return {changeType: oElement.name + foo + bar};
+								},
+								action5 : {
+									subAction: {
+										changeType : "subChangeType"
+									}
+								},
+								action6 : {
+									subAction: function(oElement, foo, bar) {
+										return {changeType: oElement.name + foo + bar};
+									}
 								}
 							},
 							childNames : {
@@ -110,6 +120,8 @@ sap.ui.define([
 			assert.deepEqual(this.oElementDesignTimeMetadata.getActionDataFromAggregations("action2"), [{changeType : "secondChangeType", aggregation : "testAggregation"}], "for object action, the correct object is returned");
 			assert.deepEqual(this.oElementDesignTimeMetadata.getActionDataFromAggregations("action3", {name:"thirdChangeType"}), [{changeType : "thirdChangeType", aggregation : "testAggregation"}], "for function action, the correct object is returned");
 			assert.deepEqual(this.oElementDesignTimeMetadata.getActionDataFromAggregations("action4", {name:"fourthChangeType"}, ["foo", "bar"]), [{changeType : "fourthChangeTypefoobar", aggregation : "testAggregation"}], "for function action with parameters , the correct object is returned");
+			assert.deepEqual(this.oElementDesignTimeMetadata.getActionDataFromAggregations("action5", {name:"subChangeType"}, ["foo", "bar"], "subAction"), [{changeType : "subChangeType", aggregation : "testAggregation"}], "when the function was called with an action, a sub-action and parameters, then the correct object is returned");
+			assert.deepEqual(this.oElementDesignTimeMetadata.getActionDataFromAggregations("action6", {name:"subChangeType"}, ["foo", "bar"], "subAction"), [{changeType : "subChangeTypefoobar", aggregation : "testAggregation"}], "for function action with a function action, a sub-action and parameters, then the correct object is returned");
 		});
 
 		QUnit.test("when getAggregationDescription is called", function(assert) {
