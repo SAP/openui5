@@ -78,8 +78,11 @@ sap.ui.define([
 				}));
 			}
 
-			function logError() {
+			function logError(oError) {
 				Log.error("[ODataMetadata] initial loading of metadata failed");
+				if (oError && oError.message) {
+					Log.error("Error: " + oError.message);
+				}
 			}
 
 			//check cache
