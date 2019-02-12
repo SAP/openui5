@@ -55,3 +55,29 @@ html.sap-desktop .sapMPlanCal .sapUiCalItemOtherMonth:not(.sapUiCalItemSel):hove
 html.sap-desktop .sapMPlanCal .sapUiCalItem:not(.sapUiCalItemSel) :not(.sapUiCalWeekNum):hover {
 	background-color: transparent;
 }
+
+.sapMPlanCal .sapMPlanCalRowHead .sapMSLIImg {
+	border-radius: 0.25rem;
+	height: auto;
+	width: 3rem;
+	line-height: 3rem;
+}
+
+.sapMPlanCal .sapMListTbl .sapMSLIImgIcon.sapUiIcon:not(.sapMLIBImgNav):not(.sapMBtnIcon) {
+	border-radius: 0.25rem;
+	background-color: @sapUiAccent7;
+	color: @sapUiContentContrastTextColor;
+	font-size: @sapMFontHeader4Size;
+	height: 3rem;
+	width: 3rem;
+	line-height: 3rem;
+}
+
+.sapMPlanCalRowHead .sapMSLI,
+.sapUiSizeCompact .sapMPlanCalRowHead .sapMSLI {
+	height: auto;
+}
+
+.sapMPlanCal:not(.sapMPlanCalNoHead) > .sapMList > table > tbody > tr > td > .sapUiCalendarRow:not(.sapMPlanCalRowLarge) > .sapUiCalendarRowApps {
+	min-height: 5rem;
+}
