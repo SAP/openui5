@@ -4,6 +4,7 @@ sap.ui.define([
 	"sap/m/MessageStrip",
 	"sap/m/Link",
 	"sap/m/FormattedText",
+	"sap/ui/Device",
 	"sap/ui/model/json/JSONModel",
 	"sap/ui/qunit/qunit-css",
 	"sap/ui/thirdparty/qunit",
@@ -12,7 +13,7 @@ sap.ui.define([
 	"sap/ui/qunit/QUnitUtils",
 	"sap/ui/thirdparty/sinon",
 	"sap/ui/thirdparty/sinon-qunit"
-], function(KeyCodes, MessageStrip, Link, FormattedText, JSONModel) {
+], function(KeyCodes, MessageStrip, Link, FormattedText, Device, JSONModel) {
 	"use strict";
 
 
@@ -394,8 +395,13 @@ sap.ui.define([
 			linkDom = link.getDomRef(),
 			labelledBy = linkDom.getAttribute("aria-labelledby");
 
-		assert.strictEqual(labelledBy, this.oMessageStrip.getId() + " " + link.getId(),
-			"link aria-labelledby should point to the MessageStrip id");
+			if (Device.browser.msie) {
+				assert.strictEqual(labelledBy, this.oMessageStrip.getId(),
+					"link aria-labelledby should point to the MessageStrip id");
+			} else {
+				assert.strictEqual(labelledBy, this.oMessageStrip.getId() + " " + link.getId(),
+					"link aria-labelledby should point to the MessageStrip and Link id");
+			}
 	});
 
 	QUnit.test("When we have a close button it should indicate that it closes a message strip", function (assert) {
