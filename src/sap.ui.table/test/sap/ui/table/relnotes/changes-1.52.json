@@ -420,5 +420,16 @@
         "references": []
       }
     ]
+  },
+  "1.52.25": {
+    "date": "February 2019",
+    "notes": [
+      {
+        "id": "f1085e25514b154d0ad8571bb5ff6d4d960918be",
+        "type": "FIX",
+        "text": " Table: Fixed column layout corrected",
+        "references": []
+      }
+    ]
   }
 }

@@ -1456,5 +1456,28 @@
         "references": []
       }
     ]
+  },
+  "1.60.7": {
+    "date": "February 2019",
+    "notes": [
+      {
+        "id": "744c3827179fc158467053f9280a5dc1c1f4e753",
+        "type": "FIX",
+        "text": " m.StepInput: Labels are redirected to the inner input now",
+        "references": []
+      },
+      {
+        "id": "a16b6bc2d82750ebff9f3bd5c9d8a68028eb04c1",
+        "type": "FIX",
+        "text": " sap.m.MaskInput:pressing key in selected value for Android is fixed.",
+        "references": []
+      },
+      {
+        "id": "035a8e13ff026e2fbb71803cd19bd7f62d11beec",
+        "type": "FIX",
+        "text": " sap.m.Tree: arrow key accessibility is improved",
+        "references": []
+      }
+    ]
   }
 }
