@@ -383,7 +383,7 @@ sap.ui.define([
 
 		assert.ok(!oTree.getItems()[0].getExpanded(), "first node is not expanded");
 		oTree.focus();
-		var oArrowDomRef = oTree.getItems()[0].$().find(".sapMTreeItemBaseExpander");
+		var oArrowDomRef = oTree.getItems()[0].$();
 
 		qutils.triggerKeydown(oArrowDomRef, KeyCodes.ARROW_RIGHT);
 		assert.ok(oTree.getItems()[0].getExpanded(), "first node is expanded");
