@@ -409,6 +409,33 @@ sap.ui.define([
 	 * oFormat.format(123.4567, "BTC"); // "Ƀ 123.457"
 	 * </pre>
 	 *
+	 * As an alternative to using a fixed <code>symbol</code> for your custom currencies, you can also provide an ISO-Code.
+	 * The provided ISO-Code will be used to look up the currency symbol in the global configuration,
+	 * either defined in the CLDR or custom defined on the Format Settings (see {@link sap.ui.core.Configuration.FormatSettings#setCustomCurrencies}, {@link sap.ui.core.Configuration.FormatSettings#addCustomCurrencies}).
+	 *
+	 * If no symbol is given at all, the custom currency key is used for formatting.
+	 *
+	 * <pre>
+	 * var oFormat = NumberFormat.getCurrencyInstance({
+	 *     "currencyCode": false,
+	 *     "customCurrencies": {
+	 *         "MyDollar": {
+	 *             "isoCode": "USD",
+	 *             "decimals": 3
+	 *         },
+	 *         "Bitcoin": {
+	 *             "decimals": 2
+	 *         }
+	 *     }
+	 * });
+	 *
+	 * // symbol looked up from global configuration
+	 * oFormat.format(123.4567, "MyDollar"); // "$123.457"
+	 *
+	 * // no symbol available, custom currency key is rendered
+	 * oFormat.format(777.888, "Bitcoin"); // "Bitcoin 777.89"
+	 * </pre>
+	 *
 	 * @param {object} [oFormatOptions] The option object which support the following parameters. If no options is given, default values according to the type and locale settings are used.
 	 * @param {int} [oFormatOptions.minIntegerDigits=1] defines minimal number of non-decimal digits
 	 * @param {int} [oFormatOptions.maxIntegerDigits=99] defines maximum number of non-decimal digits
@@ -805,13 +832,15 @@ sap.ui.define([
 
 		var fnFindDuplicates = function(mSymbols, mResult) {
 			var aUniqueSymbols = [];
+			var sSymbol;
 			for (var sKey in mSymbols) {
-				if (aUniqueSymbols.indexOf(mSymbols[sKey]) === -1) {
-					aUniqueSymbols.push(mSymbols[sKey]);
-				} else {
+				sSymbol = mSymbols[sKey];
+				if (aUniqueSymbols.indexOf(sSymbol) === -1) {
+					aUniqueSymbols.push(sSymbol);
+				} else if (sSymbol !== undefined) {
 					// Duplicated symbol found
-					mResult[mSymbols[sKey]] = true;
-					Log.error("Symbol '" + mSymbols[sKey] + "' is defined multiple times in custom currencies.", undefined, "NumberFormat");
+					mResult[sSymbol] = true;
+					Log.error("Symbol '" + sSymbol + "' is defined multiple times in custom currencies.", undefined, "NumberFormat");
 				}
 			}
 		};
