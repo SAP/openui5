@@ -49,6 +49,7 @@ function(
 	var ShellBar = Control.extend("sap.f.ShellBar", /** @lends sap.f.ShellBar.prototype */ {
 		metadata: {
 			library: "sap.f",
+			interfaces: ["sap.f.IShellBar"],
 			properties: {
 				/**
 				 * Main title of the control
@@ -106,7 +107,7 @@ function(
 				 * Additional content to be displayed in the control. Currently only a subset of controls are supported.
 				 * Only controls implementing sap.f.IShellBar interface will be allowed here.
 				 */
-				additionalContent: {type: "sap.ui.core.Control", multiple: true, singularName : "additionalContent"},
+				additionalContent: {type: "sap.f.IShellBar", multiple: true, singularName : "additionalContent"},
 				/**
 				 * Holds the internally created OverflowToolbar
 				 */
