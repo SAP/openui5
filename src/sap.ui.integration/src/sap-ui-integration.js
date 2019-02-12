@@ -29,51 +29,60 @@
 		//there is already a window.sap.ui.require defined, assume the loader is available and resolve immediately
 		if (window.sap && window.sap.ui && window.sap.ui.require) {
 			//assume the loader is already available
-			return Promise.resolve();
+			return boot();
 		}
-		//no loader present
-		return new Promise(function (resolve, reject) {
-			var oScript = document.createElement("script");
+		var oScript = document.createElement("script");
 
-			function loaderReady() {
-				sap.ui.loader.config({
-					baseUrl: sJSResourcePath + "/",
-					async: true
-				});
-				oScript.parentNode.removeChild(oScript);
-				resolve();
+		function loaderReady() {
+			if (!window.sap || !window.sap.ui || !window.sap.ui.require) {
+				setTimeout(loaderReady, 10);
+				return;
 			}
+			window.sap.ui.loader.config({
+				baseUrl: sJSResourcePath + "/",
+				paths: {
+					'sap': sJSResourcePath + "/sap"
+				},
+				async: true
+			});
+			oScript.parentNode.removeChild(oScript);
+			boot();
+		}
 
-			oScript.addEventListener("load", loaderReady);
-			oScript.setAttribute("src", sJSResourcePath + "/ui5loader.js");
-			oScript.setAttribute("async", "true");
-			oScript.setAttribute("data-sap-ui-theme", "sap_belize");
-			oScript.setAttribute("id", "sap-ui-bootstrap");
-			oScript.setAttribute("data-sap-ui-xx-bindingSyntax", "complex");
-			oScript.setAttribute("data-sap-ui-preload", "async");
-			window.document.head.appendChild(oScript);
-		});
+		oScript.addEventListener("load", loaderReady);
+		oScript.setAttribute("src", sJSResourcePath + "/sap-ui-boot.js");
+		oScript.setAttribute("async", "true");
+		oScript.setAttribute("id", "sap-ui-bootstrap");
+		window["sap-ui-config"] = {};
+		var sTheme = scriptTag.getAttribute("data-sap-ui-theme");
+		if (sTheme) {
+			window["sap-ui-config"]["theme"] = sTheme;
+
+		}
+		oScript.setAttribute("id", "sap-ui-bootstrap");
+		window["sap-ui-config"]["xx-bindingSyntax"] = "complex";
+		//window["sap-ui-config"]["preload"] = "async";
+		window.document.head.appendChild(oScript);
 	}
 
 	//initialize the loader
 	function boot() {
-		if (sap && sap.ui && sap.ui.getCore) {
-			coreInstance = sap.ui.getCore();
-			return Promise.resolve();
+		if (window.sap && window.sap.ui && window.sap.ui.getCore) {
+			coreInstance = window.sap.ui.getCore();
+			return initTags();
 		}
-		return new Promise(function (resolve, reject) {
-			sap.ui.require(['/ui5loader-autoconfig', 'sap/ui/core/Core', 'sap/ui/integration/util/CustomElements'],
-				function (config, Core, CE) {
-					CustomElements = CE;
-					Core.boot();
-					coreInstance = Core;
-					Core.attachInit(function () {
-						resolve();
-					});
-					//pass on the core instance to Customelements interface
-					CustomElements.coreInstance = coreInstance;
+		window.sap.ui.require(['/ui5loader-autoconfig', 'sap/ui/core/Core', 'sap/ui/integration/util/CustomElements'],
+			function (config, Core, CE) {
+				CustomElements = CE;
+				Core.boot();
+				coreInstance = Core;
+				Core.attachInit(function () {
+					initTags();
 				});
-		});
+				//pass on the core instance to Customelements interface
+				CustomElements.coreInstance = coreInstance;
+			});
+
 	}
 
 	function registerLibraryTags(sLibrary) {
@@ -86,7 +95,7 @@
 			aTags = sTags.split(",");
 		}
 		//collect all the implementation classes and require them
-		sap.ui.require(
+		window.sap.ui.require(
 			aTags.map(
 				function (o, i) {
 					return oLibrary.customTags[aTags[i]];
@@ -117,6 +126,5 @@
 
 	}
 
-	//pretty self explaining
-	initLoader().then(boot).then(initTags);
+	initLoader();
 })(window);
