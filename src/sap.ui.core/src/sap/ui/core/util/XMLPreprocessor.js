@@ -43,6 +43,10 @@ sap.ui.define([
 				aggregations : {
 					child : {multiple : false, type : "sap.ui.core.util._with"}
 				}
+			},
+			updateProperty : function () {
+				// Avoid Promise processing in ManagedObject and set Promise as value directly
+				this.setAny(this.mBindingInfos.any.binding.getExternalValue());
 			}
 		}),
 		/**

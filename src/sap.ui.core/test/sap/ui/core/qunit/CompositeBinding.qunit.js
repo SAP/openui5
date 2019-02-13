@@ -42,6 +42,38 @@ sap.ui.define([
 		}
 	});
 
+	var MyAsyncCompositeType = CompositeType.extend("MyCompositeType", {
+		constructor: function() {
+			CompositeType.apply(this);
+			this.sName = "MyAsyncCompositeType";
+		},
+		formatValue: function(aValues) {
+			return new Promise(function(resolve, reject) {
+				setTimeout(function() {
+					resolve(aValues.join(","));
+				}, 0);
+			});
+		},
+		parseValue: function(sValue) {
+			return new Promise(function(resolve, reject) {
+				setTimeout(function() {
+					resolve(sValue.split(","));
+				}, 0);
+			});
+		},
+		validateValue: function(aValues) {
+			return new Promise(function(resolve, reject) {
+				setTimeout(function() {
+					if (aValues[0] == 0) {
+						reject(new ValidateException("Value must not be zero"));
+					} else {
+						resolve();
+					}
+				}, 0);
+			});
+		}
+	});
+
 	var MyRawValueType = MyCompositeType.extend("MyRawValueType", {
 		constructor: function() {
 			MyCompositeType.apply(this);
@@ -138,6 +170,21 @@ sap.ui.define([
 		assert.equal(this.model.getProperty("/a"), 3, "setExternalValue() does change model value for contained bindings");
 		assert.throws(function(){this.composite.setExternalValue("0,0,0");}.bind(this),
 			ValidateException, "validation throws ValidateExpception for invalid values");
+	});
+
+	QUnit.test("async composite type", function(assert) {
+		var that = this;
+		this.composite.setType(new MyAsyncCompositeType());
+		var p1 = this.composite.getExternalValue().then(function(oValue) {
+			assert.equal(oValue, "1,2,3");
+		});
+		var p2 = this.composite.setExternalValue("3,2,1").then(function(oValue) {
+			assert.equal(that.model.getProperty("/a"), 3, "setExternalValue() does change model value for contained bindings");
+		});
+		var p3 = this.composite.setExternalValue("0,0,0").catch(function(oException) {
+			assert.ok(oException instanceof ValidateException, "Rejects with ValidateException for invalid values");
+		});
+		return Promise.all([p1, p2, p3]);
 	});
 
 	QUnit.test("array type", function(assert) {
