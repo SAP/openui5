@@ -1411,6 +1411,12 @@
 				"type": "List",
 				"header": {
 					"type": "Numeric",
+					"actions": [
+						{
+							"type": "Navigation",
+							"url": "https://www.sap.com"
+						}
+					],
 					"data": {
 						"request": {
 							"url": "./cardcontent/kpi.json"
