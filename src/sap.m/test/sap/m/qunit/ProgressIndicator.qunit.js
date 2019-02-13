@@ -169,26 +169,23 @@ sap.ui.define([
 	});
 
 	QUnit.test("setPercentValue to not valid type of values", function(assert) {
-		var oProgressIndicator = new ProgressIndicator({percentValue: 0}),
-				$progressIndicator,
-				aNotValidTypes = ["110", "110abc", {}, []],
-				fnTestPercentValue = function (fPercentValueToSet){
-
-					assert.throws(
-							function() {
-								oProgressIndicator.setPercentValue(fPercentValueToSet);
-							},
-							"throws error: expected type 'float' for property 'percentValue'"
-					);
-				};
+		var oProgressIndicator = new ProgressIndicator({percentValue: 0});
 
 		oProgressIndicator.placeAt("qunit-fixture");
 		Core.applyChanges();
-		$progressIndicator = oProgressIndicator.$();
 
-		aNotValidTypes.forEach(function (vValue){
-			fnTestPercentValue(vValue);
-		});
+		oProgressIndicator.setPercentValue("11");
+		assert.strictEqual(oProgressIndicator.getPercentValue(), 11, "Percent value should be cast correctly to the number 11.");
+
+		oProgressIndicator.setPercentValue("110");
+		assert.strictEqual(oProgressIndicator.getPercentValue(), 100, "Value greater than 100 should be set to 100.");
+
+		oProgressIndicator.setPercentValue("-10");
+		assert.strictEqual(oProgressIndicator.getPercentValue(), 0, "Value lower than 0 should be set to 0.");
+
+		oProgressIndicator.setPercentValue(50);
+		oProgressIndicator.setPercentValue("invalid");
+		assert.strictEqual(oProgressIndicator.getPercentValue(), 50, "Invalid value should not be set. Previous valid value should be maintained.");
 
 		oProgressIndicator.destroy();
 	});
