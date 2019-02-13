@@ -6,7 +6,7 @@ sap.ui.define([
 ], function (Visible, $, Button) {
 	"use strict";
 
-	QUnit.module("Matching", {
+	QUnit.module("Visible - matching", {
 		beforeEach: function () {
 			this.oVisibleMatcher = new Visible();
 			this.oSpy = sinon.spy(this.oVisibleMatcher._oLogger, "debug");
@@ -40,6 +40,18 @@ sap.ui.define([
 		// Assert
 		assert.ok(!oResult, "Control isn't matching");
 		sinon.assert.calledWith(this.oSpy,  sinon.match(/is not visible/));
+	});
+
+	QUnit.test("Should not match an Button with style invisibility", function (assert) {
+		this.oButton.placeAt("qunit-fixture");
+		sap.ui.getCore().applyChanges();
+		// make the button invisible after rendering it
+		this.oButton.$().css("visibility", "hidden");
+
+		var oResult = this.oVisibleMatcher.isMatching(this.oButton);
+
+		assert.ok(!oResult, "Should not match control with visibility: hidden");
+		sinon.assert.calledWith(this.oSpy, sinon.match(/is not visible/));
 	});
 
 	QUnit.test("Should match a visible Button", function (assert) {
