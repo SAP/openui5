@@ -13,6 +13,12 @@
         "type": "FEATURE",
         "text": " Modify the RTA publish functionality in order to publish the",
         "references": []
+      },
+      {
+        "id": "20e87871a1114bb4afa995bf46b6fd37902e1b14",
+        "type": "FIX",
+        "text": ": Personalization Toolbar placement",
+        "references": []
       }
     ]
   }
