@@ -294,6 +294,9 @@ sap.ui.define([
 			value : {type : "Edm.Byte", constraints : {nullable : false}},
 			binding : ",type:'sap.ui.model.odata.type.Byte',constraints:{'nullable':false}"
 		}, {
+			value : {type : "Edm.Date"},
+			binding : ",type:'sap.ui.model.odata.type.Date'"
+		}, {
 			value : {type : "Edm.DateTime", constraints : {displayFormat : "DateOnly"}},
 			binding : ",type:'sap.ui.model.odata.type.DateTime'," +
 				"constraints:{'displayFormat':'DateOnly'}"
@@ -330,8 +333,14 @@ sap.ui.define([
 			value : {type : "Edm.String", constraints : {maxLength : 30}},
 			binding : ",type:'sap.ui.model.odata.type.String',constraints:{'maxLength':30}"
 		}, {
+			value : {type : "Edm.Stream"},
+			binding : ",type:'sap.ui.model.odata.type.Stream'"
+		}, {
 			value : {type : "Edm.Time"},
 			binding : ",type:'sap.ui.model.odata.type.Time'"
+		}, {
+			value : {type : "Edm.TimeOfDay"},
+			binding : ",type:'sap.ui.model.odata.type.TimeOfDay'"
 		}].forEach(function (oFixture) {
 			oFixture.value.result = "binding";
 			oFixture.value.value = "foo/'bar'";
