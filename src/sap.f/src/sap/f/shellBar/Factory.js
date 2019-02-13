@@ -244,6 +244,9 @@ sap.ui.define([
 
 	Factory.prototype.setCPImage = function (sImage) {
 		this._sCPImage = sImage;
+		if (this._oControls.oCopilot) {
+			this._oControls.oCopilot.setSrc(this._getCopilotImagePath());
+		}
 	};
 
 	return Factory;
