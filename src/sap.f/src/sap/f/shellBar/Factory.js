@@ -78,9 +78,11 @@ sap.ui.define([
 
 	Factory.prototype.getSecondTitle = function () {
 		if (!this._oControls.oSecondTitle) {
-			this._oControls.oSecondTitle = new Label().setLayoutData(new OverflowToolbarLayoutData({
-				priority: OverflowToolbarPriority.NeverOverflow
-			}));
+			this._oControls.oSecondTitle = new Label()
+				.addStyleClass("sapFShellBarSecondTitle")
+				.setLayoutData(new OverflowToolbarLayoutData({
+					priority: OverflowToolbarPriority.NeverOverflow
+				}));
 		}
 		return this._oControls.oSecondTitle;
 	};
