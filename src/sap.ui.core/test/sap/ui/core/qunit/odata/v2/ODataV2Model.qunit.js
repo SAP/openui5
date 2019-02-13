@@ -2365,6 +2365,58 @@ sap.ui.define([
 		oModel.read("/Categories");
 	});
 
+	QUnit.test("test setProperty on property with referential constraint",function(assert) {
+		var done = assert.async();
+		var oModel = initModel(sURI, {useBatch : true});
+		oModel.attachMetadataLoaded(function() {
+			// create dummy testdata
+			oModel.oData = {
+				"Suppliers(0)" : {
+					Name : "Supplier One",
+					Address : {
+						City: "Boston",
+						Street: "140th",
+						Plz : 12345
+					},
+					"__metadata":{
+						uri : "http://test:8080/services.odata.org/V3/OData/OData.svc/Suppliers(0)",
+						type : "ODataDemo.Supplier"
+					}
+				},
+				"Suppliers(1)" : {
+					Name : "Supplier Two",
+					Address : {
+						City: "Chicago",
+						Street: "120th",
+						Plz : 23456
+					},
+					"__metadata":{
+						uri : "http://test:8080/services.odata.org/V3/OData/OData.svc/Suppliers(0)",
+						type : "ODataDemo.Supplier"
+					}
+				},
+				"Products(0)" : {
+					Name :"Beef",
+					SupplierID: 0,
+					Supplier : {
+						__ref: "Suppliers(0)"
+					},
+					"__metadata":{
+						uri : "http://test:8080/services.odata.org/V3/OData/OData.svc/Products(0)",
+						type : "ODataDemo.Product"
+					}
+				}
+			};
+
+			assert.equal(oModel.getProperty("/Products(0)/Supplier/Name"), "Supplier One", "Supplier Name is returned correctly");
+			oModel.setProperty("/Products(0)/SupplierID", 1);
+			assert.equal(oModel.getProperty("/Products(0)").Supplier.__ref, "Suppliers(1)", "Nav property is updated after changing SupplierID");
+			assert.equal(oModel.getProperty("/Products(0)/Supplier/Name"), "Supplier Two", "Supplier Name is resolved after changing SupplierID");
+
+			done();
+		});
+	});
+
 	QUnit.test("test setProperty on complex Types (internal)",function(assert) {
 		var done = assert.async();
 		var oModel = initModel(sURI, {useBatch : true});

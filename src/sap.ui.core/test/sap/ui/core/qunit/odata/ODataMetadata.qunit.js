@@ -38,6 +38,8 @@ sap.ui.define([
 		return oModel;
 	}
 
+	QUnit.module("ODataModel Annotation path");
+
 	QUnit.test("init MockServer Flight", function(assert) {
 		oServer = initServer(sServiceUri, "model/metadata1.xml", sDataRootPath);
 		assert.ok(oServer,"Server initialized");
@@ -428,4 +430,74 @@ sap.ui.define([
 	QUnit.test("Default value", fnTestHeaderRequest(undefined, true));
 	QUnit.test("Set to true via parameter", fnTestHeaderRequest(true, true));
 	QUnit.test("Set to false via parameter", fnTestHeaderRequest(false, false));
+
+	QUnit.module("Nav property reference info", {
+		beforeEach: function() {
+			this.oServer = initServer(sServiceUri, "model/GWSAMPLE_BASIC.metadata.xml", sDataRootPath);
+			this.oMetadata = new sap.ui.model.odata.ODataMetadata(sServiceUri + "$metadata", {});
+		},
+		afterEach: function() {
+			this.oServer.destroy();
+			this.oMetadata.destroy();
+		}
+	});
+
+	QUnit.test("_getAssociationSetByAssociation", function(assert) {
+		return this.oMetadata.loaded().then(function() {
+			var oBusinessPartnerProductsSet = {
+			  "association": "GWSAMPLE_BASIC.Assoc_BusinessPartner_Products",
+			  "end": [
+				{
+				  "entitySet": "BusinessPartnerSet",
+				  "role": "FromRole_Assoc_BusinessPartner_Products"
+				},
+				{
+				  "entitySet": "ProductSet",
+				  "role": "ToRole_Assoc_BusinessPartner_Products"
+				}
+			  ],
+			  "extensions": [
+				{
+				  "name": "creatable",
+				  "namespace": "http://www.sap.com/Protocols/SAPData",
+				  "value": "false"
+				},
+				{
+				  "name": "updatable",
+				  "namespace": "http://www.sap.com/Protocols/SAPData",
+				  "value": "false"
+				},
+				{
+				  "name": "deletable",
+				  "namespace": "http://www.sap.com/Protocols/SAPData",
+				  "value": "false"
+				},
+				{
+				  "name": "content-version",
+				  "namespace": "http://www.sap.com/Protocols/SAPData",
+				  "value": "1"
+				}
+			  ],
+			  "name": "Assoc_BusinessPartner_Products_AssocSet"
+			};
+			assert.deepEqual(this.oMetadata._getAssociationSetByAssociation("GWSAMPLE_BASIC.Assoc_BusinessPartner_Products"), oBusinessPartnerProductsSet, "Returns AssocationSet for association");
+			assert.equal(this.oMetadata._getAssociationSetByAssociation("GWSAMPLE_BASIC.Unknown"), null, "Returns null for unknown association");
+			assert.equal(this.oMetadata._getAssociationSetByAssociation("Unknown"), null, "Returns null for unknown association");
+		}.bind(this));
+	});
+
+	QUnit.test("_getNavPropRefInfo", function(assert) {
+		return this.oMetadata.loaded().then(function() {
+			var oEntity = this.oMetadata._getEntityTypeByName("Product"),
+				oNavPropRefInfo = {
+					name: "ToSupplier",
+					entitySet: "BusinessPartnerSet",
+					keys: ["BusinessPartnerID"]
+				};
+			assert.deepEqual(this.oMetadata._getNavPropertyRefInfo(oEntity, "SupplierID"), oNavPropRefInfo, "Returns AssocationSet for association");
+			assert.equal(this.oMetadata._getNavPropertyRefInfo(oEntity, "ProductID"), null, "Returns null for nav property in wrong role");
+			assert.equal(this.oMetadata._getNavPropertyRefInfo(oEntity, "Price"), null, "Returns null for property not used in referential constraint");
+			assert.equal(this.oMetadata._getNavPropertyRefInfo(oEntity, "Unknown"), null, "Returns null for unknown property");
+		}.bind(this));
+	});
 });

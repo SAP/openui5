@@ -5180,7 +5180,21 @@ sap.ui.define([
 
 		bFunction = oOriginalEntry.__metadata.created && oOriginalEntry.__metadata.created.functionImport;
 
+		// Update property value on change object
 		oChangeObject[sPropertyPath] = oValue;
+
+		// If property is key property of ReferentialConstraint, also update the corresponding
+		// navigation property
+		var oEntityType = this.oMetadata._getEntityTypeByPath(oEntityInfo.key);
+		var oNavPropRefInfo = this.oMetadata._getNavPropertyRefInfo(oEntityType, sPropertyPath);
+		if (oNavPropRefInfo && oNavPropRefInfo.keys.length === 1) {
+			var mKeys = {};
+			oNavPropRefInfo.keys.forEach(function(sName) {
+				mKeys[sName] = oEntry[sName] !== undefined ? oEntry[sName] : oOriginalEntry[sName];
+			});
+			mKeys[oNavPropRefInfo.keys[0]] = oValue;
+			oChangeObject[oNavPropRefInfo.name] = { __ref: this.createKey(oNavPropRefInfo.entitySet, mKeys) };
+		}
 
 		//reset clone if oValue equals the original value
 		if (deepEqual(oValue, oOriginalValue) && !this.isLaundering('/' + sKey) && !bFunction) {
