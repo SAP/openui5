@@ -2,13 +2,11 @@
 
 sap.ui.define([
 	"sap/ui/dt/test/report/QUnit",
-	"sap/ui/qunit/utils/waitForThemeApplied",
 	"sap/ui/thirdparty/sinon-4",
 	"sap/m/Button" // Used implicitly by ElementEnablementTest
 ],
 function (
 	ReportQUnit,
-	waitForThemeApplied,
 	sinon
 ) {
 	"use strict";
@@ -85,5 +83,4 @@ function (
 		jQuery("#qunit-fixture").hide();
 	});
 
-	return waitForThemeApplied();
 });

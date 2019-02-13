@@ -7,7 +7,6 @@ sap.ui.define([
 	"sap/m/Button",
 	"sap/ui/layout/VerticalLayout",
 	"sap/ui/thirdparty/jquery",
-	"sap/ui/qunit/utils/waitForThemeApplied",
 	"sap/ui/thirdparty/sinon-4"
 ],
 function(
@@ -17,7 +16,6 @@ function(
 	Button,
 	VerticalLayout,
 	jQuery,
-	waitForThemeApplied,
 	sinon
 ) {
 	"use strict";
@@ -274,5 +272,4 @@ function(
 		jQuery("#qunit-fixture").hide();
 	});
 
-	return waitForThemeApplied();
 });

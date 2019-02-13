@@ -5,14 +5,12 @@ sap.ui.define([
 	"sap/ui/core/Core",
 	"sap/ui/dt/ElementUtil",
 	"sap/ui/core/Element",
-	"sap/ui/qunit/utils/waitForThemeApplied",
 	"sap/ui/thirdparty/sinon-4"
 ],function (
 	ElementDesignTimeMetadata,
 	Core,
 	ElementUtil,
 	Element,
-	waitForThemeApplied,
 	sinon
 ) {
 	"use strict";
@@ -321,5 +319,4 @@ sap.ui.define([
 		jQuery("#qunit-fixture").hide();
 	});
 
-	return waitForThemeApplied();
 });

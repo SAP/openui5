@@ -1,12 +1,10 @@
 /*global QUnit*/
 
 sap.ui.define([
-	"sap/ui/dt/test/report/Statistic",
-	"sap/ui/qunit/utils/waitForThemeApplied"
+	"sap/ui/dt/test/report/Statistic"
 ],
 function (
-	Statistic,
-	waitForThemeApplied
+	Statistic
 ) {
 	"use strict";
 
@@ -49,5 +47,4 @@ function (
 		jQuery("#qunit-fixture").hide();
 	});
 
-	return waitForThemeApplied();
 });

@@ -24,7 +24,6 @@ sap.ui.define([
 	"qunit/MetadataTestUtil",
 	"sap/base/util/includes",
 	"sap/ui/dt/DOMUtil",
-	"sap/ui/qunit/utils/waitForThemeApplied",
 	"sap/ui/thirdparty/sinon-4"
 ],
 function(
@@ -51,7 +50,6 @@ function(
 	MetadataTestUtil,
 	includes,
 	DOMUtil,
-	waitForThemeApplied,
 	sinon
 ) {
 	"use strict";
@@ -1833,5 +1831,4 @@ function(
 		jQuery("#qunit-fixture").hide();
 	});
 
-	return waitForThemeApplied();
 });

@@ -12,8 +12,7 @@ sap.ui.define([
 	"sap/ui/layout/form/GridContainerData",
 	"sap/ui/layout/form/GridElementData",
 	"sap/ui/dt/plugin/ElementMover",
-	"sap/ui/core/mvc/XMLView",
-	"sap/ui/qunit/utils/waitForThemeApplied"
+	"sap/ui/core/mvc/XMLView"
 ],
 function (
 	DesignTime,
@@ -27,8 +26,7 @@ function (
 	GridContainerData,
 	GridElementData,
 	ElementMover,
-	XMLView,
-	waitForThemeApplied
+	XMLView
 ) {
 	"use strict";
 
@@ -185,5 +183,4 @@ function (
 		jQuery("#qunit-fixture").hide();
 	});
 
-	return waitForThemeApplied();
 });

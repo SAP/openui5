@@ -16,7 +16,6 @@ sap.ui.define([
 	"sap/m/SplitContainer",
 	"sap/ui/qunit/QUnitUtils",
 	"sap/ui/events/KeyCodes",
-	"sap/ui/qunit/utils/waitForThemeApplied",
 	"sap/ui/thirdparty/sinon-4"
 ],
 function (
@@ -35,7 +34,6 @@ function (
 	SplitContainer,
 	QUnitUtils,
 	KeyCodes,
-	waitForThemeApplied,
 	sinon
 ) {
 	"use strict";
@@ -438,5 +436,4 @@ function (
 		jQuery("#qunit-fixture").hide();
 	});
 
-	return waitForThemeApplied();
 });

@@ -10,8 +10,7 @@ sap.ui.define([
 	"sap/m/Label",
 	"sap/m/Input",
 	"sap/ui/core/Title",
-	"sap/m/CheckBox",
-	"sap/ui/qunit/utils/waitForThemeApplied"
+	"sap/m/CheckBox"
 ],
 function(
 	DesignTime,
@@ -23,8 +22,7 @@ function(
 	Label,
 	Input,
 	Title,
-	CheckBox,
-	waitForThemeApplied
+	CheckBox
 ) {
 	'use strict';
 
@@ -201,5 +199,4 @@ function(
 		jQuery("#qunit-fixture").hide();
 	});
 
-	return waitForThemeApplied();
 });

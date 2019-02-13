@@ -4,15 +4,13 @@ sap.ui.define([
 	"sap/ui/dt/test/Element",
 	"sap/ui/dt/DesignTime",
 	"sap/m/Button",
-	"sap/ui/layout/VerticalLayout",
-	"sap/ui/qunit/utils/waitForThemeApplied"
+	"sap/ui/layout/VerticalLayout"
 ],
 function (
 	Element,
 	DesignTime,
 	Button,
-	VerticalLayout,
-	waitForThemeApplied
+	VerticalLayout
 ) {
 	"use strict";
 
@@ -117,5 +115,4 @@ function (
 		jQuery("#qunit-fixture").hide();
 	});
 
-	return waitForThemeApplied();
 });

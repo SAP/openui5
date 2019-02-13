@@ -10,7 +10,6 @@ sap.ui.define([
 	"sap/m/Button",
 	"sap/ui/Device",
 	"sap/ui/qunit/QUnitUtils",
-	"sap/ui/qunit/utils/waitForThemeApplied",
 	"sap/ui/thirdparty/sinon-4"
 ], function (
 	ElementOverlay,
@@ -22,7 +21,6 @@ sap.ui.define([
 	Button,
 	Device,
 	QUnitUtils,
-	waitForThemeApplied,
 	sinon
 ) {
 	"use strict";
@@ -473,7 +471,6 @@ sap.ui.define([
 		jQuery("#qunit-fixture").hide();
 	});
 
-	return waitForThemeApplied();
 });
 
 
