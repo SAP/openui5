@@ -1000,7 +1000,7 @@ sap.ui.define([
 			this.oLabelKey.setLabelFor(this.oInputManualKey);
 
 			this.oSaveSave = new Button(this.getId() + "-variantsave", {
-				text: this._oRb.getText("VARIANT_MANAGEMENT_OK"),
+				text: this._oRb.getText("VARIANT_MANAGEMENT_SAVE"),
 				press: function() {
 					this._bSaveCanceled = false;
 					this._handleVariantSaveAs(this.oInputName.getValue());
@@ -1250,6 +1250,7 @@ sap.ui.define([
 			this.oManagementSave = new Button(this.getId() + "-managementsave", {
 				text: this._oRb.getText("VARIANT_MANAGEMENT_OK"),
 				enabled: true,
+				type: sap.m.ButtonType.Emphasized,
 				press: function() {
 					this._handleManageSavePressed();
 				}.bind(this)
