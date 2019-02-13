@@ -183,6 +183,7 @@ sap.ui.define([
 			var step = this._getStartingStep();
 			if (step && this._stepPath.indexOf(step) < 0) {
 				this._activateStep(step);
+				step._setNumberInvisibleText(1);
 				this._updateProgressNavigator();
 			}
 		};
@@ -310,6 +311,7 @@ sap.ui.define([
 				return this;
 			}
 
+			step._setNumberInvisibleText(this.getProgress());
 			var that = this,
 				scrollProps = {
 					scrollTop: this._getStepScrollOffset(step)

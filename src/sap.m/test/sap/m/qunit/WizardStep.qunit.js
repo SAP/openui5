@@ -2,6 +2,7 @@
 sap.ui.define(["sap/m/WizardStep", "sap/ui/qunit/QUnitUtils"], function(WizardStep, QUnitUtils) {
 	"use strict";
 
+	var oRb = sap.ui.getCore().getLibraryResourceBundle("sap.m");
 
 	QUnit.module("WizardStep API", {
 		beforeEach: function () {
@@ -34,7 +35,7 @@ sap.ui.define(["sap/m/WizardStep", "sap/ui/qunit/QUnitUtils"], function(WizardSt
 		sap.ui.getCore().applyChanges();
 		assert.strictEqual(this.wizardStep.$().attr("role"), "region", "Role should be region");
 		assert.strictEqual(this.wizardStep.$().attr("aria-labelledby"),
-			this.wizardStep.getId() + "-Title", "Region should be labelled by the title");
+			this.wizardStep.getId() + "-NumberedTitle", "Region should be labelled by the title and position");
 	});
 
 	QUnit.test("_isLeaf() should return TRUE WHEN NO SUBSEQUENT step are defined", function (assert) {
@@ -87,6 +88,25 @@ sap.ui.define(["sap/m/WizardStep", "sap/ui/qunit/QUnitUtils"], function(WizardSt
 		this.wizardStep._complete();
 
 		assert.strictEqual(spy.calledOnce, true, "complete event is fired once");
+	});
+
+	QUnit.test("_setNumberInvisibleText / _getNumberInvisibleText", function (assert) {
+		var sTitle = "Sample title",
+			iPosition = 1,
+			oStep = new WizardStep({
+				title: sTitle
+			});
+
+		assert.strictEqual(oStep._setNumberInvisibleText(iPosition).getText(),
+			oRb.getText("WIZARD_STEP") + iPosition + " " + sTitle,
+			"The invisible text is updated correctly.");
+
+		assert.strictEqual(oStep._setNumberInvisibleText(iPosition),
+			oStep._getNumberInvisibleText(),
+			"The correct object is returned from the getter.");
+
+		// Cleanup
+		oStep.destroy();
 	});
 
 	QUnit.module("Title ID propagation");

@@ -673,6 +673,38 @@ sap.ui.define([
 		assert.strictEqual(oNextButton.$().attr("aria-hidden"), "true", "The next button has aria-hidden=true for not validated steps.");
 	});
 
+	QUnit.test("WizardStep labelled-by reference number step and title", function (assert) {
+		var oSpy = sinon.spy(WizardStep.prototype, "_setNumberInvisibleText"),
+			oWizard = new Wizard({
+			steps: [
+				new WizardStep({
+					validated: true,
+					title: "Step 1"
+				}),
+				new WizardStep({
+					validated: true,
+					title: "Step 2"
+				})
+			]
+		});
+
+		oWizard.placeAt("qunit-fixture");
+		sap.ui.getCore().applyChanges();
+
+		// assert
+		assert.ok(oSpy.calledWith(1), "The correct step position is forwarded to the wizard step.");
+
+		// set-up
+		oWizard.nextStep();
+		sap.ui.getCore().applyChanges();
+
+		// assert
+		assert.ok(oSpy.calledWith(2), "The correct step position is forwarded to the wizard step.");
+
+		oSpy.restore();
+		oWizard.destroy();
+	});
+
 	QUnit.module("Wizard Navigation", {
 		sWizardId: "wizard-nav-id",
 		beforeEach: function () {
