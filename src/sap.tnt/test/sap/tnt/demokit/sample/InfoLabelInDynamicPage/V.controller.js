@@ -1,10 +1,11 @@
 sap.ui.define([
 	"jquery.sap.global",
 	"sap/ui/core/mvc/Controller",
-	"sap/f/DynamicPageTitleArea"
-], function (jQuery, Controller, DynamicPageTitleArea) {
+	"sap/f/library"
+], function (jQuery, Controller, fioriLibrary) {
 	"use strict";
 
+	var DynamicPageTitleArea = fioriLibrary.DynamicPageTitleArea;
 
 	return Controller.extend("sap.tnt.sample.InfoLabelInDynamicPage.V", {
 		getPage : function() {

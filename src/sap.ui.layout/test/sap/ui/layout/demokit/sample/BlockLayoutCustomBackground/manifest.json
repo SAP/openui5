@@ -1,0 +1,34 @@
+{
+	"sap.app": {
+		"id": "sap.ui.layout.sample.BlockLayoutCustomBackground",
+		"applicationVersion": {
+			"version": "1.0.0"
+		}
+	},
+	"sap.ui5": {
+		"rootView": {
+			"viewName": "sap.ui.layout.sample.BlockLayoutCustomBackground.Block",
+			"type": "XML",
+			"async": true
+		},
+		"resources": {
+			"css": [
+				{
+					"url": "resources/sample.css"
+				}
+			]
+		},
+		"libs": {
+			"sap.ui.layout": {}
+		},
+		"config": {
+			"sample": {
+				"files": [
+					"Block.view.xml",
+					"Block.controller.js",
+					"manifest.json"
+				]
+			}
+		}
+	}
+}

@@ -1,0 +1,28 @@
+{
+	"sap.app": {
+		"id": "sap.m.sample.CarouselWithControls",
+		"applicationVersion": {
+			"version": "1.0.0"
+		}
+	},
+	"sap.ui5": {
+		"rootView": {
+			"viewName": "sap.m.sample.CarouselWithControls.Carousel",
+			"type": "XML",
+			"async": true
+		},
+		"libs": {
+			"sap.ui.layout": {}
+		},
+		"config": {
+			"sample": {
+				"stretch": true,
+				"files": [
+					"Carousel.view.xml",
+					"Carousel.controller.js",
+					"manifest.json"
+				]
+			}
+		}
+	}
+}

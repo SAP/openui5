@@ -1,0 +1,26 @@
+{
+	"sap.app": {
+		"id": "sap.m.sample.InputValueState",
+		"applicationVersion": {
+			"version": "1.0.0"
+		}
+	},
+	"sap.ui5": {
+		"rootView": {
+			"viewName": "sap.m.sample.InputValueState.V",
+			"type": "XML",
+			"async": true
+		},
+		"libs": {
+			"sap.ui.layout": {}
+		},
+		"config": {
+			"sample": {
+				"files": [
+					"V.view.xml",
+					"manifest.json"
+				]
+			}
+		}
+	}
+}

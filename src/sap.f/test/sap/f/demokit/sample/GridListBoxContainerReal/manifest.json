@@ -1,0 +1,27 @@
+{
+	"sap.app": {
+		"id": "sap.f.sample.GridListBoxContainerReal",
+		"applicationVersion": {
+			"version": "1.0.0"
+		}
+	},
+	"sap.ui5": {
+		"rootView": {
+			"viewName": "sap.f.sample.GridListBoxContainerReal.GridListBoxContainerReal",
+			"type": "XML",
+			"async": true
+		},
+		"libs": {
+			"sap.m": {}
+		},
+		"config": {
+			"sample": {
+				"files": [
+					"GridListBoxContainerReal.view.xml",
+					"GridListBoxContainerReal.controller.js",
+					"manifest.json"
+				]
+			}
+		}
+	}
+}
