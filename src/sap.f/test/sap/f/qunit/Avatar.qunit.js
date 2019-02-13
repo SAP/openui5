@@ -57,6 +57,17 @@ function(oCore, Device, URI) {
 		assert.strictEqual($oAvatar.attr("role"), "button", "Aria role should be 'button'");
 	});
 
+	QUnit.test("Focus does not have outline-offset", function (assert) {
+		// Arrange
+		var $oAvatar = this.oAvatar.$();
+
+		// Act
+		$oAvatar.focus();
+
+		// Assert
+		assert.strictEqual($oAvatar.css("outline-offset"), "0px", "Outline-offset is 0px");
+	});
+
 	QUnit.module("Rendering different sizes", {
 		beforeEach: setupFunction,
 		afterEach: teardownFunction
