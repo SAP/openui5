@@ -465,6 +465,13 @@ function(
 		setTimeout(this._applyUxRules.bind(this), 0);
 	};
 
+	ShellBar.prototype.onThemeChanged = function () {
+		// Update Copilot on possible dark theme
+		if (Parameters.get("_sap_f_Shell_Bar_Copilot_Design") === "dark") {
+			this._oFactory.setCPImage("CoPilot_dark.svg");
+		}
+	};
+
 	ShellBar.prototype.getTargetWidth = function (oControl, bBold) {
 		if (!oControl) {return 0;}
 
