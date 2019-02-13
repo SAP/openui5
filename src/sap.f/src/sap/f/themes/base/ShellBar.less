@@ -1,11 +1,13 @@
-@_sap_f_Shell_Bar_Padding_Desktop: 3;
-@_sap_f_Shell_Bar_Padding_Tablet: 2;
-@_sap_f_Shell_Bar_Padding_Phone: 1;
+@_sap_f_ShellBar_PaddingDesktop: 3;
+@_sap_f_ShellBar_PaddingTablet: 2;
+@_sap_f_ShellBar_PaddingPhone: 1;
+@_sap_f_ShellBar_ChildMargin: 4;
+@_sap_f_ShellBar_CoPilotWidth: 48;
 
 .sapFShellBar {
 	height: 3rem;
-	padding-left: ~"@{_sap_f_Shell_Bar_Padding_Desktop}rem";
-	padding-right: ~"@{_sap_f_Shell_Bar_Padding_Desktop}rem";
+	padding-left: ~"@{_sap_f_ShellBar_PaddingDesktop}rem";
+	padding-right: ~"@{_sap_f_ShellBar_PaddingDesktop}rem";
 	box-sizing: border-box;
 	overflow: hidden;
 
@@ -34,21 +36,31 @@
 		.sapFShellBarProfile {
 			order: 2;
 		}
+		.sapFShellBarSecondTitle {
+			margin: 0;
+		}
 	}
 
 	.sapMBtn .sapFAvatar {
-		margin-top: 0.05rem;
+		margin-top: 0.20rem;
 	}
 
 	.sapFSHMegaMenu {
 		max-width: none;
 		display: inline-block;
 		font-weight: bold;
-		img {
+		overflow: hidden;
+		.sapMBtnInner > img {
 			margin-top: 0.05rem;
-			margin-left: 0.15rem;
-			width: auto;
+			margin-left: 0.05rem;
+			width: auto !important;
 			height: 2rem;
+		}
+		.sapMBtnInner::after {
+			content: '';
+			font-size: 1rem;
+			line-height: 2.2rem;
+			font-weight: bold;
 		}
 	}
 
@@ -57,9 +69,7 @@
 	}
 
 	.sapMImg.CPImage {
-		width: 48px;
-		margin-left: 0.5rem;
-		margin-right: 0.5rem;
+		width: ~"@{_sap_f_ShellBar_CoPilotWidth}px";
 		&:hover {
 			transition: transform 0.30s;
 			transform: scale(1.1);
@@ -77,11 +87,11 @@
 	}
 
 	&.sapFShellBarSizeTablet {
-		padding: 0 ~"@{_sap_f_Shell_Bar_Padding_Tablet}rem";
+		padding: 0 ~"@{_sap_f_ShellBar_PaddingTablet}rem";
 	}
 
 	&.sapFShellBarSizePhone {
-		padding: 0 ~"@{_sap_f_Shell_Bar_Padding_Phone}rem";
+		padding: 0 ~"@{_sap_f_ShellBar_PaddingPhone}rem";
 		.sapFShellBarProfile {
 			margin-right: 0;
 		}
@@ -136,8 +146,9 @@
 			}
 		}
 		.sapMBtnInner > img {
-			height: 2.500rem;
 			width: 2.500rem;
+			margin-top: 0.2rem;
+			margin-left: 0.2rem;
 		}
 
 		// Menu Button
@@ -148,10 +159,13 @@
 			padding-left: 0.5625rem;
 		}
 		.sapMMenuBtn.sapMMenuBtnRegular .sapMBtnInner:not(.sapMBtnText) {
-			padding-right: 2rem;
+			padding-right: 1.25rem;
 		}
 		.sapMMenuBtn.sapMMenuBtnRegular .sapMBtnInner {
-			padding-right: 2rem;
+			padding-right: 1.625rem;
+		}
+		.sapMMenuBtn .sapMBtnIconFirst .sapMBtnIcon {
+			padding-right: 0.75rem;
 		}
 	}
 }

@@ -6,19 +6,17 @@
 sap.ui.define([
 	"sap/ui/core/Control",
 	"./shellBar/Factory",
-	"sap/ui/Device",
 	"sap/ui/core/theming/Parameters",
 	"./shellBar/AdditionalContentSupport",
-	"./shellBar/SafeObject",
+	"./shellBar/ResponsiveHandler",
 	"./ShellBarRenderer"
 ],
 function(
 	Control,
 	Factory,
-	Device,
 	Parameters,
 	AdditionalContentSupport,
-	SafeObject
+	ResponsiveHandler
 	/*, ShellBarRenderer */
 ) {
 	"use strict";
@@ -212,13 +210,6 @@ function(
 
 	// Lifecycle
 	ShellBar.prototype.init = function () {
-		// Get and calculate padding's
-		this._iREMSize = parseInt(jQuery("body").css("font-size"));
-		this._aPadding = {
-			'Desktop': parseInt(Parameters.get("_sap_f_Shell_Bar_Padding_Desktop")) * this._iREMSize,
-			'Tablet': parseInt(Parameters.get("_sap_f_Shell_Bar_Padding_Tablet")) * this._iREMSize,
-			'Phone': parseInt(Parameters.get("_sap_f_Shell_Bar_Padding_Phone")) * this._iREMSize
-		};
 		this._oFactory = new Factory(this);
 
 		// Handle "Dark" CoPilot image
@@ -233,33 +224,30 @@ function(
 
 		this._oToolbarSpacer = this._oFactory.getToolbarSpacer();
 		this._oControlSpacer = this._oFactory.getControlSpacer();
+
+		// Init responsive handler
+		this._oResponsiveHandler = new ResponsiveHandler(this);
+
+		// List of controls that can go forcibly in the overflow
+		this._aOverflowControls = [];
 	};
 
 	ShellBar.prototype.onBeforeRendering = function () {
 		this._assignControlsToOverflowToolbar();
-
-		// Attach events
-		this._oOverflowToolbar.attachEvent("_controlWidthChanged", this._handleResize, this);
-		if (this._oHomeIcon) {
-			this._wHomeIcon = new SafeObject(this._oHomeIcon); // We need the SafeObject early
-			this._oHomeIcon.attachEvent("load", this._updateHomeIconWidth, this);
-		}
-	};
-
-	ShellBar.prototype.onAfterRendering = function () {
-		this.oStaticArea = sap.ui.getCore().getStaticAreaRef();
-		this._initUxRules();
 	};
 
 	ShellBar.prototype.exit = function () {
-		if (this._oOverflowToolbar) {
-			this._oOverflowToolbar.detachEvent("_controlWidthChanged", this._handleResize, this);
-		}
-		if (this._oHomeIcon) {
-			this._oHomeIcon.detachEvent("load", this._updateHomeIconWidth, this);
-		}
-
+		this._oResponsiveHandler.exit();
 		this._oFactory.destroy();
+	};
+
+	ShellBar.prototype.onThemeChanged = function () {
+		// Update Copilot on possible dark theme
+		if (Parameters.get("_sap_f_Shell_Bar_Copilot_Design") === "dark") {
+			this._oFactory.setCPImage("CoPilot_dark.svg");
+		} else {
+			this._oFactory.setCPImage("CoPilot_white.svg");
+		}
 	};
 
 	// Setters
@@ -391,6 +379,8 @@ function(
 		if (!this._oOverflowToolbar) {return;}
 		if (!this._bOTBUpdateNeeded) {return;}
 
+		this._aOverflowControls = [];
+
 		this._oOverflowToolbar.removeAllAggregation("content");
 
 		if (this._oNavButton) {
@@ -421,9 +411,11 @@ function(
 
 		if (this._oSearch) {
 			this._oOverflowToolbar.addContent(this._oSearch);
+			this._aOverflowControls.push(this._oSearch);
 		}
 		if (this._oNotifications) {
 			this._oOverflowToolbar.addContent(this._oNotifications);
+			this._aOverflowControls.push(this._oNotifications);
 		}
 
 		// Handle additional content
@@ -431,6 +423,7 @@ function(
 		if (aAdditionalContent) {
 			aAdditionalContent.forEach(function (oControl) {
 				this._oOverflowToolbar.addContent(oControl);
+				this._aOverflowControls.push(oControl);
 			}.bind(this));
 		}
 
@@ -439,6 +432,7 @@ function(
 		}
 		if (this._oProductSwitcher) {
 			this._oOverflowToolbar.addContent(this._oProductSwitcher);
+			this._aOverflowControls.push(this._oProductSwitcher);
 		}
 
 		this._bOTBUpdateNeeded = false;
@@ -458,243 +452,6 @@ function(
 
 	ShellBar.prototype._getOverflowToolbar = function () {
 		return this._oOverflowToolbar;
-	};
-
-	// Responsiveness
-	ShellBar.prototype._handleResize = function () {
-		setTimeout(this._applyUxRules.bind(this), 0);
-	};
-
-	ShellBar.prototype.onThemeChanged = function () {
-		// Update Copilot on possible dark theme
-		if (Parameters.get("_sap_f_Shell_Bar_Copilot_Design") === "dark") {
-			this._oFactory.setCPImage("CoPilot_dark.svg");
-		}
-	};
-
-	ShellBar.prototype.getTargetWidth = function (oControl, bBold) {
-		if (!oControl) {return 0;}
-
-		var sText = oControl.getText(),
-			oDiv = document.createElement("div"),
-			oText = document.createTextNode(sText),
-			iWidth;
-
-		// Create div and add to static area
-		oDiv.appendChild(oText);
-		oDiv.style.setProperty("white-space", "nowrap");
-		oDiv.style.setProperty("display", "inline-block");
-		oDiv.style.setProperty("font-size", "0.875rem");
-		if (bBold) {
-			oDiv.style.setProperty("font-weight", "bold");
-		}
-		this.oStaticArea.appendChild(oDiv);
-
-		// Record width
-		iWidth = oDiv.scrollWidth;
-
-		// Remove child from static area
-		this.oStaticArea.removeChild(oDiv);
-
-		return iWidth;
-	};
-
-	ShellBar.prototype._updateHomeIconWidth = function () {
-		this._iHomeWidth = this._wHomeIcon.getWidth();
-	};
-
-	ShellBar.prototype._initUxRules = function () {
-		// Create safe objects
-		this._wHomeIcon = new SafeObject(this._oHomeIcon);
-		this._wMegaMenu = new SafeObject(this._oMegaMenu);
-		this._wSecondTitle = new SafeObject(this._oSecondTitle);
-		this._wControlSpacer = new SafeObject(this._oControlSpacer);
-
-		// Cache widths
-		this._iHomeWidth = this._wHomeIcon.getWidth();
-		this._iMBTargetWidth = this._oMegaMenu ? (this.getTargetWidth(this._oMegaMenu, true) + 50) : 0;
-
-		// Static widths - items that don't change, disappear or overflow
-		this._iStaticWidth = 0;
-
-		if (this._oNavButton) {
-			this._iStaticWidth += 48; // Standard width including margin
-		}
-
-		if (this._oMenuButton) {
-			this._iStaticWidth += 48; // Standard width including margin
-		}
-
-		// Don't update width when the title is invisible
-		if (this._wSecondTitle.getVisible()) {
-			this._iTitleTargetWidth = this.getTargetWidth(this._oSecondTitle) + 8;
-		} else {
-			this._iTitleTargetWidth = 0;
-		}
-
-		this._handleResize();
-	};
-
-	ShellBar.prototype._applyUxRules = function () {
-		if (!this.getDomRef()) {return;}
-
-		if (this._oCopilot) {
-			this._applyUxRulesWithCoPilot();
-		} else {
-			this._appluUxRulesWithoutCoPilot();
-		}
-	};
-
-	ShellBar.prototype._appluUxRulesWithoutCoPilot = function () {
-		var $This = this.$(),
-			iWidth = $This.outerWidth(),
-			oCurrentRange = Device.media.getCurrentRange("Std", iWidth),
-			iPaddingCorrection = oCurrentRange ? parseInt(this._aPadding[oCurrentRange.name]) : 0,
-			iLeftWidth = iWidth - this._iStaticWidth - iPaddingCorrection - (10 * this._iREMSize),
-			iAvailableSpace = iLeftWidth - this._iHomeWidth,
-			iTitleAvailableWidth = iAvailableSpace - this._iMBTargetWidth,
-			iControlsPadding = (this._iHomeWidth > 0 ? 8 : 0) + (this._iMBTargetWidth > 0 ? 8 : 0) + (this._iTitleTargetWidth ? 8 : 0),
-			bPhoneRange;
-
-		if (oCurrentRange) {
-			bPhoneRange = oCurrentRange.name === "Phone";
-
-			$This.toggleClass("sapFShellBarSizeDesktop", oCurrentRange.name === "Desktop");
-			$This.toggleClass("sapFShellBarSizeTablet", oCurrentRange.name === "Tablet");
-			$This.toggleClass("sapFShellBarSizePhone", bPhoneRange);
-		}
-
-		if (iAvailableSpace < 0) {iAvailableSpace = 0;}
-		if (iTitleAvailableWidth < 0) {iTitleAvailableWidth = 0;}
-
-		if (bPhoneRange && !this.bWasInPhoneRange) {
-			this._wSecondTitle.setVisible(false);
-			this._wHomeIcon.setVisible(false);
-			if (this._oHomeIcon) {
-				this._wMegaMenu.setWidth("auto").setText("").setIcon(this.getHomeIcon());
-			}
-
-			this.bWasInPhoneRange = true;
-			this.invalidate();
-			return;
-		} else if (!bPhoneRange && this.bWasInPhoneRange) {
-			this._wSecondTitle.setVisible(true);
-			this._wHomeIcon.setVisible(true);
-			if (this._oHomeIcon) {
-				this._wMegaMenu.setText(this._sTitle).setIcon("");
-			}
-
-			this.bWasInPhoneRange = false;
-			this.invalidate();
-			return;
-		}
-
-		if (!bPhoneRange) {
-			if (this._iMBTargetWidth >= iAvailableSpace) {
-				// +8: Compensates for one less control's margin
-				this._wMegaMenu.setWidth((iAvailableSpace - iControlsPadding + 8) + "px");
-				this._wSecondTitle.setWidth("0px");
-				return;
-			} else {
-				this._wMegaMenu.setWidth(this._iMBTargetWidth + "px");
-			}
-
-			if (!this._wSecondTitle.getVisible() && iTitleAvailableWidth >= 48) {
-				this._wSecondTitle.setVisible(true);
-			} else if (iTitleAvailableWidth < 48) {
-				this._wSecondTitle.setVisible(false);
-			}
-
-			if (this._wSecondTitle.getVisible() && this._iTitleTargetWidth >= (iTitleAvailableWidth - iControlsPadding)) {
-				this._wSecondTitle.setWidth((iTitleAvailableWidth - iControlsPadding) + "px");
-			} else if (this._wSecondTitle.getVisible()) {
-				this._wSecondTitle.setWidth(this._iTitleTargetWidth + "px");
-			}
-		}
-
-	};
-
-	ShellBar.prototype._applyUxRulesWithCoPilot = function () {
-		var $This = this.$(),
-			iWidth = $This.outerWidth(),
-			oCurrentRange = Device.media.getCurrentRange("Std", iWidth),
-			iPaddingCorrection = oCurrentRange ? parseInt(this._aPadding[oCurrentRange.name]) : 0,
-			iLeftWidth = (iWidth / 2) - this._iStaticWidth - iPaddingCorrection - 32 /* Copilot half width */,
-			iAvailableSpace = iLeftWidth - this._iHomeWidth,
-			iTitleAvailableWidth = iAvailableSpace - this._iMBTargetWidth,
-			iSpacerAvailableWidth = iTitleAvailableWidth - this._iTitleTargetWidth,
-			iControlsPadding = (this._iHomeWidth > 0 ? 8 : 0) + (this._iMBTargetWidth > 0 ? 8 : 0) + (this._iTitleTargetWidth ? 8 : 0),
-			bPhoneRange;
-
-		if (oCurrentRange) {
-			bPhoneRange = oCurrentRange.name === "Phone";
-
-			$This.toggleClass("sapFShellBarSizeDesktop", oCurrentRange.name === "Desktop");
-			$This.toggleClass("sapFShellBarSizeTablet", oCurrentRange.name === "Tablet");
-			$This.toggleClass("sapFShellBarSizePhone", bPhoneRange);
-		}
-
-		if (iAvailableSpace < 0) {iAvailableSpace = 0;}
-		if (iTitleAvailableWidth < 0) {iTitleAvailableWidth = 0;}
-		if (iSpacerAvailableWidth < 0) {iSpacerAvailableWidth = 0;}
-
-		if (bPhoneRange && !this.bWasInPhoneRange) {
-			this._wSecondTitle.setVisible(false);
-			this._wHomeIcon.setVisible(false);
-			if (this._oHomeIcon) {
-				this._wMegaMenu.setWidth("auto").setText("").setIcon(this.getHomeIcon());
-			}
-
-			this.bWasInPhoneRange = true;
-			this.invalidate();
-			return;
-		} else if (!bPhoneRange && this.bWasInPhoneRange) {
-			this._wSecondTitle.setVisible(true);
-			this._wHomeIcon.setVisible(true);
-			if (this._oHomeIcon) {
-				this._wMegaMenu.setText(this._sTitle).setIcon("");
-			}
-
-			this.bWasInPhoneRange = false;
-			this.invalidate();
-			return;
-		}
-
-		if (!bPhoneRange) {
-			if (this._iMBTargetWidth >= iAvailableSpace) {
-				// +8: Compensates for one less control's margin
-				this._wMegaMenu.setWidth((iAvailableSpace - iControlsPadding + 8) + "px");
-				this._wSecondTitle.setWidth("0px");
-				this._wControlSpacer.setWidth("0px");
-				return;
-			} else {
-				this._wMegaMenu.setWidth(this._iMBTargetWidth + "px");
-			}
-
-			if (!this._wSecondTitle.getVisible() && iTitleAvailableWidth >= 48) {
-				this._wSecondTitle.setVisible(true);
-			} else if (iTitleAvailableWidth < 48) {
-				this._wSecondTitle.setVisible(false);
-			}
-
-			if (this._wSecondTitle.getVisible() && this._iTitleTargetWidth >= (iTitleAvailableWidth - iControlsPadding)) {
-				this._wSecondTitle.setWidth((iTitleAvailableWidth - iControlsPadding) + "px");
-				this._wControlSpacer.setWidth("0px");
-				return;
-			} else if (this._wSecondTitle.getVisible()) {
-				this._wSecondTitle.setWidth(this._iTitleTargetWidth + "px");
-			}
-
-
-			if (this._wSecondTitle.getVisible()) {
-				this._wControlSpacer.setWidth((iSpacerAvailableWidth - iControlsPadding) + "px");
-			} else {
-				// +8: Compensates for one less control's margin
-				this._wControlSpacer.setWidth((iTitleAvailableWidth - iControlsPadding + 8) + "px");
-			}
-		} else {
-			this._wControlSpacer.setWidth(iAvailableSpace - this._wMegaMenu.getWidth() - iControlsPadding + "px");
-		}
 	};
 
 	return ShellBar;

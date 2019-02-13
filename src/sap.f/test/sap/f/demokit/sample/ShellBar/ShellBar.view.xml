@@ -18,5 +18,8 @@
                     <m:MenuItem text="Car rental" icon="sap-icon://car-rental" />
                 </m:Menu>
             </menu>
+            <profile>
+                <Avatar initials="UI"/>
+            </profile>
     </ShellBar>
 </mvc:View>
