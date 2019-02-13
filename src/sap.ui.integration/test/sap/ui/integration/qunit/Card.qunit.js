@@ -300,16 +300,20 @@ function (
 					"lastName": "Moore",
 					"position": "Sales Executive",
 					"phone": "+1 202 555 5555",
-					"photo": "../images/Woman_avatar_01.png",
+					"email": "my@mymail.com",
+					"photo": "./Woman_avatar_01.png",
 					"manager": {
 						"firstName": "John",
 						"lastName": "Miller",
-						"photo": "../images/Woman_avatar_02.png"
+						"photo": "./Woman_avatar_02.png"
 					},
 					"company": {
-						"name": "Company A",
+						"name": "Robert Brown Entertainment",
 						"address": "481 West Street, Anytown OH 45066, USA",
-						"website": "www.company_a.example.com"
+						"email": "mail@mycompany.com",
+						"emailSubject": "Subject",
+						"website": "www.company_a.example.com",
+						"url": "http://www.company_a.example.com"
 					}
 				}
 			},
@@ -335,7 +339,13 @@ function (
 							},
 							{
 								"label": "Phone",
-								"value": "{phone}"
+								"value": "{phone}",
+								"type": "phone"
+							},
+							{
+								"label": "Email",
+								"value": "{email}",
+								"type": "email"
 							}
 						]
 					},
@@ -363,8 +373,16 @@ function (
 								"value": "{company/address}"
 							},
 							{
+								"label": "Email",
+								"value": "{company/email}",
+								"emailSubject": "{company/emailSubject}",
+								"type": "email"
+							},
+							{
 								"label": "Website",
-								"link": "{company/website}"
+								"value": "{company/website}",
+								"url": "{company/url}",
+								"type": "link"
 							}
 						]
 					}
@@ -879,7 +897,7 @@ function (
 			assert.equal(oHeader.getIconSrc(), oData.photo, "Should have correct header icon source.");
 
 			// Group 1 assertions
-			assert.equal(aGroups[0].getItems().length, 7, "Should have 7 items.");
+			assert.equal(aGroups[0].getItems().length, 9, "Should have 9 items.");
 			assert.equal(aGroups[0].getItems()[0].getText(), oManifestContent.groups[0].title, "Should have correct group title.");
 			assert.equal(aGroups[0].getItems()[1].getText(), oManifestContent.groups[0].items[0].label + ":", "Should have correct item label.");
 			assert.equal(aGroups[0].getItems()[2].getText(), oData.firstName, "Should have correct item value.");
@@ -887,6 +905,7 @@ function (
 			assert.equal(aGroups[0].getItems()[4].getText(), oData.lastName, "Should have correct item value.");
 			assert.equal(aGroups[0].getItems()[5].getText(), oManifestContent.groups[0].items[2].label + ":", "Should have correct item label.");
 			assert.equal(aGroups[0].getItems()[6].getText(), oData.phone, "Should have correct item value.");
+			assert.equal(aGroups[0].getItems()[6].getHref(), "tel:" + oData.phone, "Should have correct phone link.");
 
 			// Group 2 assertions
 			assert.equal(aGroups[1].getItems().length, 2, "Should have 2 items.");
@@ -896,15 +915,17 @@ function (
 			assert.equal(aGroups[1].getItems()[1].getItems()[1].getItems()[1].getText(), oData.manager.firstName + " " + oData.manager.lastName, "Should have correct item value.");
 
 			// Group 3 assertions
-			assert.equal(aGroups[2].getItems().length, 7, "Should have 7 items.");
+			assert.equal(aGroups[2].getItems().length, 9, "Should have 9 items.");
 			assert.equal(aGroups[2].getItems()[0].getText(), oManifestContent.groups[2].title, "Should have correct group title.");
 			assert.equal(aGroups[2].getItems()[1].getText(), oManifestContent.groups[2].items[0].label + ":", "Should have correct item label.");
 			assert.equal(aGroups[2].getItems()[2].getText(), oData.company.name, "Should have correct item value.");
 			assert.equal(aGroups[2].getItems()[3].getText(), oManifestContent.groups[2].items[1].label + ":", "Should have correct item label.");
 			assert.equal(aGroups[2].getItems()[4].getText(), oData.company.address, "Should have correct item value.");
 			assert.equal(aGroups[2].getItems()[5].getText(), oManifestContent.groups[2].items[2].label + ":", "Should have correct item label.");
-			assert.equal(aGroups[2].getItems()[6].getText(), oData.company.website, "Should have correct item value.");
-			assert.equal(aGroups[2].getItems()[6].getHref(), oData.company.website, "Should have correct item link.");
+			assert.equal(aGroups[2].getItems()[6].getText(), oData.company.email, "Should have correct item value.");
+			assert.equal(aGroups[2].getItems()[6].getHref(), "mailto:" + oData.company.email + "?subject=" + oData.company.emailSubject, "Should have correct item link.");
+			assert.equal(aGroups[2].getItems()[8].getText(), oData.company.website, "Should have correct item value.");
+			assert.equal(aGroups[2].getItems()[8].getHref(), oData.company.url, "Should have correct item URL.");
 
 			done();
 		}.bind(this));

@@ -6,19 +6,13 @@ sap.ui.define(["sap/f/cards/BaseContent", "sap/m/HBox", "sap/m/VBox", "sap/m/Tex
 		"use strict";
 
 		/**
-		 * Constructor for a new <code>List</code>.
+		 * Constructor for a new <code>ObjectContent</code>.
 		 *
 		 * @param {string} [sId] ID for the new control, generated automatically if no ID is given
 		 * @param {object} [mSettings] Initial settings for the new control
 		 *
 		 * @class
-		 *
-		 * <h3>Overview</h3>
-		 *
-		 *
-		 * <h3>Usage</h3>
-		 *
-		 * <h3>Responsive Behavior</h3>
+		 * Displays the basic details for an object, for example, a person or a sales order.
 		 *
 		 * @extends sap.f.cards.BaseContent
 		 *
@@ -27,7 +21,7 @@ sap.ui.define(["sap/f/cards/BaseContent", "sap/m/HBox", "sap/m/VBox", "sap/m/Tex
 		 *
 		 * @constructor
 		 * @experimental
-		 * @since 1.60
+		 * @since 1.64
 		 * @see {@link TODO Card}
 		 * @alias sap.f.cards.ObjectContent
 		 */
@@ -49,11 +43,6 @@ sap.ui.define(["sap/f/cards/BaseContent", "sap/m/HBox", "sap/m/VBox", "sap/m/Tex
 			return oAlignedFlowLayout;
 		};
 
-		ObjectContent.prototype.init = function () {
-			BaseContent.prototype.init.apply(this, arguments);
-			this._getRootContainer();
-		};
-
 		ObjectContent.prototype.setConfiguration = function (oConfiguration) {
 			BaseContent.prototype.setConfiguration.apply(this, arguments);
 
@@ -70,32 +59,57 @@ sap.ui.define(["sap/f/cards/BaseContent", "sap/m/HBox", "sap/m/VBox", "sap/m/Tex
 
 		ObjectContent.prototype._addGroups = function () {
 			var oContainer = this._getRootContainer();
-			var aGroups = this.getConfiguration().groups;
+			var aGroups = this.getConfiguration().groups || [];
 
 			aGroups.forEach(function (oGroup) {
 
-				var oGroupContainer = new VBox();
-				oGroupContainer.addStyleClass("sapFCardObjectGroup");
-				var oTitle = new Title({ text: oGroup.title });
-				oTitle.addStyleClass("sapFCardObjectItemTitle");
+				var oGroupContainer = new VBox().addStyleClass("sapFCardObjectGroup");
+				var oTitle = new Title({text: oGroup.title}).addStyleClass("sapFCardObjectItemTitle");
+
 				oGroupContainer.addItem(oTitle);
 
 				oGroup.items.forEach(function (oItem) {
-					if (oItem.label) {
-						//Checks if the label ends with ":" and if not we just add the ":"
-						var sLabelText = oItem.label[oItem.label.length - 1] === ":" ? oItem.label : oItem.label += ":";
-						var oItemLabel = new Label({text: sLabelText});
-						oItemLabel.addStyleClass("sapFCardObjectItemLabel");
+					var oItemValue,
+						sLabel = oItem.label,
+						sValue = oItem.value,
+						oItemLabel,
+						sHref;
+
+					if (sLabel) {
+						// Checks if the label ends with ":" and if not we just add the ":"
+						sLabel = sLabel[sLabel.length - 1] === ":" ? sLabel : sLabel += ":";
+						oItemLabel = new Label({text: sLabel}).addStyleClass("sapFCardObjectItemLabel");
 					}
 
-					var oItemText;
-					if (oItem.value) {
-						oItemText = new Text({ text: oItem.value });
-					} else if (oItem.link) {
-						oItemText = new Link({ href: oItem.link, text: oItem.link });
+					if (sValue) {
+						switch (oItem.type) {
+							case 'link':
+								oItemValue = new Link({
+									href: oItem.url || sValue,
+									text: sValue,
+									target: oItem.target || '_blank'
+								});
+								break;
+							case 'email':
+								sHref = "mailto:" + sValue;
+								if (oItem.emailSubject) {
+									sHref += '?subject=' + oItem.emailSubject;
+								}
+								oItemValue = new Link({href: sHref, text: sValue});
+								break;
+							case 'phone':
+								oItemValue = new Link({href: "tel:" + sValue, text: sValue});
+								break;
+							default:
+								oItemValue = new Text({text: sValue});
+								break;
+						}
 					}
 
-					oItemText.addStyleClass("sapFCardObjectItemText");
+					if (oItemValue) {
+						oItemValue.addStyleClass("sapFCardObjectItemText");
+					}
+
 					if (oItem.icon) {
 						var oHBox = new HBox({
 							items: [
@@ -107,7 +121,7 @@ sap.ui.define(["sap/f/cards/BaseContent", "sap/m/HBox", "sap/m/VBox", "sap/m/Tex
 								new VBox({
 									items: [
 										oItemLabel,
-										oItemText
+										oItemValue
 									]
 								})
 							]
@@ -115,7 +129,7 @@ sap.ui.define(["sap/f/cards/BaseContent", "sap/m/HBox", "sap/m/VBox", "sap/m/Tex
 						oGroupContainer.addItem(oHBox);
 					} else {
 						oGroupContainer.addItem(oItemLabel);
-						oGroupContainer.addItem(oItemText);
+						oGroupContainer.addItem(oItemValue);
 					}
 				});
 
