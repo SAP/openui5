@@ -368,6 +368,7 @@ function(
 
 					if (oTile.getRemovable()) {
 						this.deleteTile(oTile);
+						oTiles = this._getVisibleTiles();
 
 						if (this._iCurrentFocusIndex === oTiles.length) {
 							if (oTiles.length !== 0) {
