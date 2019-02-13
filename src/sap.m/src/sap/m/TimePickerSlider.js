@@ -1303,7 +1303,9 @@ sap.ui.define([
 					} else if (aMatchingItems.length === 1) {
 						this.setSelectedValue(aMatchingItems[0].getKey());
 						sCurrentKeyPrefix = "";
-					} // else - 0: do nothing, user just waits 1 second and the sCurrentKeyPrefix gets a reset next call
+					} else {
+						sCurrentKeyPrefix = "";
+					}
 
 					iLastTimeStamp = iTimeStamp;
 				};
