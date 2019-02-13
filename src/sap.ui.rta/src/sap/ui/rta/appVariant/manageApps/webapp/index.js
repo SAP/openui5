@@ -13,9 +13,9 @@ sap.ui.require([
         new Shell({
             app : new ComponentContainer({
                 height : "100%",
-                name : "manageApps",
+                name : "sap.ui.rta.appVariant.manageApps",
                 settings : {
-                    id : "manageApps"
+                    id : "sap.ui.rta.appVariant.manageApps"
                 }
             })
         }).placeAt("content");

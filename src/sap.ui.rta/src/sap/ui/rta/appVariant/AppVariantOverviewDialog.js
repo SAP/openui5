@@ -40,7 +40,7 @@ sap.ui.define([
 			this._oTextResources = sap.ui.getCore().getLibraryResourceBundle("sap.ui.rta");
 
 			// Create manage apps component
-			this.oManageAppsComponent = new ManageAppsComponent("manageApps", {
+			this.oManageAppsComponent = new ManageAppsComponent("sap.ui.rta.appVariant.manageApps", {
 				idRunningApp : this.getIdRunningApp(),
 				isOverviewForKeyUser: this.getIsOverviewForKeyUser()
 			});
