@@ -14,7 +14,8 @@ sap.ui.define([
 
 		init: function () {
 			var oModel,
-				oProductsModel;
+				oProductsModel,
+				oRouter;
 
 			UIComponent.prototype.init.apply(this, arguments);
 
@@ -26,17 +27,50 @@ sap.ui.define([
 			oProductsModel.setSizeLimit(1000);
 			this.setModel(oProductsModel, 'products');
 
-			this.getRouter().initialize();
+			oRouter = this.getRouter();
+			oRouter.attachBeforeRouteMatched(this._onBeforeRouteMatched, this);
+			oRouter.initialize();
 		},
 
 		getHelper: function () {
-			var oFCL = this.getRootControl().byId('flexibleColumnLayout'),
-				oSettings = {
+			return this._getFcl().then(function(oFCL) {
+				var oSettings = {
 					defaultTwoColumnLayoutType: fioriLibrary.LayoutType.TwoColumnsMidExpanded,
 					defaultThreeColumnLayoutType: fioriLibrary.LayoutType.ThreeColumnsMidExpanded
 				};
+				return (FlexibleColumnLayoutSemanticHelper.getInstanceFor(oFCL, oSettings));
+			});
+		},
 
-			return FlexibleColumnLayoutSemanticHelper.getInstanceFor(oFCL, oSettings);
+		_onBeforeRouteMatched: function(oEvent) {
+			var oModel = this.getModel(),
+				sLayout = oEvent.getParameters().arguments.layout,
+				oNextUIState;
+
+			// If there is no layout parameter, query for the default level 0 layout (normally OneColumn)
+			if (!sLayout) {
+				this.getHelper().then(function(oHelper) {
+					oNextUIState = oHelper.getNextUIState(0);
+					oModel.setProperty("/layout", oNextUIState.layout);
+				});
+				return;
+			}
+
+			oModel.setProperty("/layout", sLayout);
+		},
+
+		_getFcl: function () {
+			return new Promise(function(resolve, reject) {
+				var oFCL = this.getRootControl().byId('flexibleColumnLayout');
+				if (!oFCL) {
+					this.getRootControl().attachAfterInit(function(oEvent) {
+						resolve(oEvent.getSource().byId('flexibleColumnLayout'));
+					}, this);
+					return;
+				}
+				resolve(oFCL);
+
+			}.bind(this));
 		}
 	});
 });
