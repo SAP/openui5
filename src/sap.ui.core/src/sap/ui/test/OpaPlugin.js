@@ -53,7 +53,7 @@ sap.ui.define([
 
 			/**
 			 * Gets all the controls of a certain type that are currently instantiated.
-			 * If the control type is omitted, nothing is returned.
+			 * If the control type is omitted, all controls are returned.
 			 *
 			 * @param {Function} [fnConstructorType] the control type, e.g: sap.m.CheckBox
 			 * @param {string} [sControlType] optional control type name, e.g: "sap.m.CheckBox"
