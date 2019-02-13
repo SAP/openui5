@@ -1,4 +1,4 @@
-/*global describe,it,element,by,takeScreenshot,expect*/
+/*global describe,it,element,by,takeScreenshot,expect,browser,protractor*/
 
 describe("sap.m.FacetFilter", function() {
 	"use strict";
@@ -11,6 +11,10 @@ describe("sap.m.FacetFilter", function() {
 	it("should open listUpdateModelAsync FacetFilter", function() {
 		element(by.id("listUpdateModelAsync")).click();
 		var oFacetDialog = element(by.css('.sapMDialog'));
+		var oEC = protractor.ExpectedConditions;
+
+		browser.wait(oEC.presenceOf(oFacetDialog), 10000);
+
 		expect(takeScreenshot(oFacetDialog)).toLookAs("listUpdateModelAsync_FacetFilter");
 	});
 
@@ -21,6 +25,10 @@ describe("sap.m.FacetFilter", function() {
 			})).click();
 
 		var oFacetDialog = element(by.css('.sapMDialog'));
+		var oEC = protractor.ExpectedConditions;
+
+		browser.wait(oEC.presenceOf(oFacetDialog), 10000);
+
 		expect(takeScreenshot(oFacetDialog)).toLookAs("listUpdateModelAsync_SecondPage");
 	});
 
@@ -34,6 +42,9 @@ describe("sap.m.FacetFilter", function() {
 			})).click();
 
 		var oFacetDialog = element(by.css('.sapMDialog'));
+		var oEC = protractor.ExpectedConditions;
+
+		browser.wait(oEC.presenceOf(oFacetDialog), 10000);
 
 		expect(takeScreenshot(oFacetDialog)).toLookAs("listUpdateModelAsync_updatedFacetPage");
 	});
