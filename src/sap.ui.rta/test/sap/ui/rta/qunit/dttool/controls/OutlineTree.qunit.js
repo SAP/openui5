@@ -4,14 +4,12 @@ sap.ui.define([
 	"sap/m/StandardTreeItem",
 	"sap/ui/model/json/JSONModel",
 	"sap/m/ListMode",
-	"sap/ui/rta/dttool/controls/OutlineTree",
-	"sap/ui/qunit/utils/waitForThemeApplied"
+	"sap/ui/rta/dttool/controls/OutlineTree"
 ], function (
 	StandardTreeItem,
 	JSONModel,
 	ListMode,
-	OutlineTree,
-	waitForThemeApplied
+	OutlineTree
 ) {
 	"use strict";
 
@@ -113,5 +111,4 @@ sap.ui.define([
 		jQuery("#qunit-fixture").hide();
 	});
 
-	return waitForThemeApplied();
 });

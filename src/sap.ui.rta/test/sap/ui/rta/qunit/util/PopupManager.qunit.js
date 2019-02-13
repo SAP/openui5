@@ -21,7 +21,6 @@ sap.ui.define([
 	"sap/base/util/merge",
 	"sap/ui/fl/FakeLrepConnectorSessionStorage",
 	"sap/ui/rta/util/PopupManager",
-	"sap/ui/qunit/utils/waitForThemeApplied",
 	"sap/ui/thirdparty/sinon-4"
 ],
 function(
@@ -45,7 +44,6 @@ function(
 	merge,
 	FakeLrepConnectorSessionStorage,
 	PopupManager,
-	waitForThemeApplied,
 	sinon
 ) {
 	"use strict";
@@ -858,5 +856,4 @@ function(
 		jQuery("#qunit-fixture").hide();
 	});
 
-	return waitForThemeApplied();
 });

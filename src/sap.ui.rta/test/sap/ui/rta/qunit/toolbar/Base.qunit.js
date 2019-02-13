@@ -4,15 +4,13 @@ sap.ui.define([
 	"sap/ui/thirdparty/jquery",
 	"sap/ui/rta/toolbar/Base",
 	"sap/ui/core/BusyIndicator",
-	"sap/m/Button",
-	"sap/ui/qunit/utils/waitForThemeApplied"
+	"sap/m/Button"
 ],
 function(
 	jQuery,
 	BaseToolbar,
 	BusyIndicator,
-	Button,
-	waitForThemeApplied
+	Button
 ) {
 	'use strict';
 
@@ -232,5 +230,4 @@ function(
 		jQuery("#qunit-fixture").hide();
 	});
 
-	return waitForThemeApplied();
 });

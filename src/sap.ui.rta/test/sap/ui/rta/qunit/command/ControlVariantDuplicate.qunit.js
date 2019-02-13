@@ -13,7 +13,6 @@ sap.ui.define([
 	"sap/ui/fl/variants/VariantModel",
 	"sap/ui/fl/variants/VariantController",
 	"sap/ui/fl/FlexControllerFactory",
-	"sap/ui/qunit/utils/waitForThemeApplied",
 	"sap/ui/thirdparty/sinon-4"
 ],
 function (
@@ -29,7 +28,6 @@ function (
 	VariantModel,
 	VariantController,
 	FlexControllerFactory,
-	waitForThemeApplied,
 	sinon
 ) {
 	'use strict';
@@ -197,5 +195,4 @@ function (
 		jQuery("#qunit-fixture").hide();
 	});
 
-	return waitForThemeApplied();
 });

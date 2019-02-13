@@ -12,7 +12,6 @@ sap.ui.define([
 	'sap/m/Button',
 	'sap/ui/events/KeyCodes',
 	'sap/ui/qunit/QUnitUtils',
-	"sap/ui/qunit/utils/waitForThemeApplied",
 	'sap/ui/thirdparty/sinon-4'
 ],
 function(
@@ -27,7 +26,6 @@ function(
 	Button,
 	KeyCodes,
 	QUnitUtils,
-	waitForThemeApplied,
 	sinon
 ) {
 	"use strict";
@@ -590,5 +588,4 @@ function(
 		jQuery("#qunit-fixture").hide();
 	});
 
-	return waitForThemeApplied();
 });

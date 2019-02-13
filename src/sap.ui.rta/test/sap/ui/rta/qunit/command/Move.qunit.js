@@ -14,7 +14,6 @@ sap.ui.define([
 	"sap/ui/fl/FlexControllerFactory",
 	"sap/ui/rta/ControlTreeModifier",
 	"sap/base/Log",
-	"sap/ui/qunit/utils/waitForThemeApplied",
 	"sap/ui/thirdparty/sinon-4"
 ], function (
 	CommandFactory,
@@ -30,7 +29,6 @@ sap.ui.define([
 	FlexControllerFactory,
 	ControlTreeModifier,
 	Log,
-	waitForThemeApplied,
 	sinon
 ) {
 	"use strict";
@@ -263,5 +261,4 @@ sap.ui.define([
 		jQuery("#qunit-fixture").hide();
 	});
 
-	return waitForThemeApplied();
 });

@@ -17,7 +17,6 @@ sap.ui.define([
 	"sap/ui/core/UIComponent",
 	"sap/ui/core/ComponentContainer",
 	"testdata/StaticDesigntimeMetadata",
-	"sap/ui/qunit/utils/waitForThemeApplied",
 	"sap/ui/thirdparty/sinon-4"
 ], function (
 	RuntimeAuthoring,
@@ -34,7 +33,6 @@ sap.ui.define([
 	UIComponent,
 	ComponentContainer,
 	StaticDesigntimeMetadata,
-	waitForThemeApplied,
 	sinon
 ) {
 	"use strict";
@@ -572,5 +570,4 @@ sap.ui.define([
 		jQuery("#qunit-fixture").hide();
 	});
 
-	return waitForThemeApplied();
 });

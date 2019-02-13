@@ -20,7 +20,6 @@ sap.ui.define([
 	"sap/ui/fl/registry/SimpleChanges",
 	"sap/ui/core/UIComponent",
 	"sap/ui/events/KeyCodes",
-	"sap/ui/qunit/utils/waitForThemeApplied",
 	"sap/ui/thirdparty/sinon-4"
 ], function (
 	jQuery,
@@ -42,7 +41,6 @@ sap.ui.define([
 	SimpleChanges,
 	UIComponent,
 	KeyCodes,
-	waitForThemeApplied,
 	sinon
 ) {
 	"use strict";
@@ -487,5 +485,4 @@ sap.ui.define([
 		jQuery("#qunit-fixture").hide();
 	});
 
-	return waitForThemeApplied();
 });

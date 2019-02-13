@@ -29,7 +29,6 @@ sap.ui.define([
 	"sap/ui/model/json/JSONModel",
 	"sap/ui/fl/Utils",
 	"sap/ui/rta/ControlTreeModifier",
-	"sap/ui/qunit/utils/waitForThemeApplied",
 	"sap/ui/thirdparty/sinon-4"
 ],
 function (
@@ -61,7 +60,6 @@ function (
 	JSONModel,
 	FlexUtils,
 	RtaControlTreeModifier,
-	waitForThemeApplied,
 	sinon
 ) {
 	"use strict";
@@ -1491,5 +1489,4 @@ function (
 		jQuery("#qunit-fixture").hide();
 	});
 
-	return waitForThemeApplied();
 });

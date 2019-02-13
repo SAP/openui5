@@ -7,7 +7,6 @@ sap.ui.define([
 	"sap/m/ColumnListItem",
 	"sap/ui/rta/util/BindingsExtractor",
 	"sap/ui/dt/ElementUtil",
-	"sap/ui/qunit/utils/waitForThemeApplied",
 	"sap/base/Log",
 	"sap/ui/thirdparty/sinon-4"
 ],
@@ -18,7 +17,6 @@ function(
 	ColumnListItem,
 	BindingsExtractor,
 	ElementUtil,
-	waitForThemeApplied,
 	Log,
 	sinon
 ) {
@@ -870,5 +868,4 @@ function(
 		jQuery("#qunit-fixture").hide();
 	});
 
-	return waitForThemeApplied();
 });

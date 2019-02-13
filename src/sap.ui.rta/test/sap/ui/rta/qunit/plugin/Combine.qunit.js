@@ -14,7 +14,6 @@ sap.ui.define([
 	"sap/m/OverflowToolbar",
 	"sap/m/OverflowToolbarButton",
 	"sap/m/CheckBox",
-	"sap/ui/qunit/utils/waitForThemeApplied",
 	"sap/ui/thirdparty/sinon-4"
 ],
 function(
@@ -31,7 +30,6 @@ function(
 	OverflowToolbar,
 	OverflowToolbarButton,
 	CheckBox,
-	waitForThemeApplied,
 	sinon
 ) {
 	'use strict';
@@ -482,5 +480,4 @@ function(
 		jQuery("#qunit-fixture").hide();
 	});
 
-	return waitForThemeApplied();
 });
