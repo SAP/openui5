@@ -112,12 +112,12 @@ sap.ui.define([
 	 * Note: Due to browser security restrictions, most "Ajax" requests are subject to the same origin policy,
 	 * the request can not successfully retrieve data from a different domain, subdomain, or protocol.
 	 *
-	 * @param {string} sURL A string containing the URL to which the request is sent.
-	 * @param {object | string}[oParameters] A map or string that is sent to the server with the request.
-	 * @param {boolean} [bAsync=true] if the request should be asynchron or not. Default is true.
-	 * @param {string} [sType=GET] of request. Default is 'GET'
-	 * @param {string} [bCache=false] force no caching if false. Default is false
-	 * @param {object} mHeaders An object of additional header key/value pairs to send along with the request
+	 * @param {string} sURL A string containing the URL to which the request is sent
+	 * @param {object | string} [oParameters] A map of parameters or a single parameter string that is sent to the server with the request
+	 * @param {boolean} [bAsync=true] Whether the request should be asynchronous or not
+	 * @param {string} [sType=GET] HTTP method of request
+	 * @param {string} [bCache=false] Force no caching if false
+	 * @param {object} [mHeaders] An object of additional header key/value pairs to send along with the request
 	 *
 	 * @public
 	 */

@@ -551,7 +551,7 @@ sap.ui.define([
 		 *
 		 * @param {string} sName The controller name
 		 * @param {object} [oControllerImpl] An object literal defining the methods and properties of the controller
-		 * @param {boolean} bAsync Decides whether the controller gets loaded asynchronously or not
+		 * @param {boolean} [bAsync=false] Decides whether the controller gets loaded asynchronously or not
 		 * @return {void | sap.ui.core.mvc.Controller | Promise} void, the new controller instance or a Promise
 		 * 	resolving with the controller in async case
 		 * @static

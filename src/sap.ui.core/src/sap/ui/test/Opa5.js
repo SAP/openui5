@@ -256,7 +256,7 @@ sap.ui.define([
 
 		/**
 		 * Tears down the started application regardless of how it was started.
-		 * Removes the IFrame launched by {@link sap.ui.test.Opa5#iStartMyAppInAFrame}
+		 * Removes the iframe launched by {@link sap.ui.test.Opa5#iStartMyAppInAFrame}
 		 * or destroys the UIComponent launched by {@link sap.ui.test.Opa5#iStartMyUIComponent}.
 		 * This function is designed to make the test's teardown independent of the startup.
 		 * Use {@link sap.ui.test.Opa5#hasAppStarted} to ensure that the application has been started and teardown can be safely performed.
@@ -292,22 +292,30 @@ sap.ui.define([
 		};
 
 		/**
-		 * Starts an app in an IFrame. Only works reliably if running on the same server.
+		 * Starts an app in an iframe. Only works reliably if running on the same server.
 		 *
 		 * @since 1.48 If appParams are provided in {@link sap.ui.test.Opa.config}, they are
 		 * merged in the query params of app URL
 		 *
-		 * @param {string} sSource The source of the IFrame.
-		 * @param {number} [iTimeout=80] The timeout for loading the IFrame in seconds - default is 80.
+		 * @param {string|object} vSourceOrOptions The source URL of the iframe or, since 1.53, you can provide a
+		 * startup configuration object as the only parameter.
+		 * @param {number} [iTimeout=80] The timeout for loading the iframe in seconds - default is 80.
 		 * @param {boolean} [autoWait=false] Since 1.53, activates autoWait while the application is starting up.
 		 * This allows more time for application startup and stabilizes tests for slow-loading applications.
 		 * This parameter is false by default, regardless of the global autoWait value, to prevent issues in existing tests.
-		 * @param {string|number} width Since 1.57, sets a fixed width for the iFrame.
-		 * @param {string|number} height Since 1.57, sets a fixed height for the iFrame.
+		 * @param {string|number} [width=Opa.config.frameWidth] Since 1.57, sets a fixed width for the iframe.
+		 * @param {string|number} [height=Opa.config.frameHeight] Since 1.57, sets a fixed height for the iframe.
 		 * Setting width and/or height is useful when testing responsive applications on screens of varying sizes.
-		 * By default, the iFrame dimensions are 60% of the outer window dimensions.
-		 * @param {object} [oOptions] Since 1.53, you can provide a startup configuration object as an only parameter.
-		 * oOptions is expected to have keys among: source, timeout, autoWait, width, height.
+		 * By default, the iframe dimensions are 60% of the outer window dimensions.
+		 * @param {string} vSourceOrOptions.source The source of the iframe
+		 * @param {number} [vSourceOrOptions.timeout=80] The timeout for loading the iframe in seconds - default is 80
+		 * @param {boolean} [vSourceOrOptions.autoWait=false] Since 1.53, activates autoWait while the application is starting up.
+		 * This allows more time for application startup and stabilizes tests for slow-loading applications.
+		 * This parameter is false by default, regardless of the global autoWait value, to prevent issues in existing tests.
+		 * @param {string|number} [vSourceOrOptions.width=Opa.config.frameWidth] Since 1.57, sets a fixed width for the iframe.
+		 * @param {string|number} [vSourceOrOptions.height=Opa.config.frameHeight] Since 1.57, sets a fixed height for the iframe.
+		 * Setting width and/or height is useful when testing responsive applications on screens of varying sizes.
+		 * By default, the iframe dimensions are 60% of the outer window dimensions.
 		 * @returns {jQuery.promise} A promise that gets resolved on success
 		 * @public
 		 * @function
@@ -315,22 +323,30 @@ sap.ui.define([
 		Opa5.iStartMyAppInAFrame = iStartMyAppInAFrame;
 
 		/**
-		 * Starts an app in an IFrame. Only works reliably if running on the same server.
+		 * Starts an app in an iframe. Only works reliably if running on the same server.
 		 *
 		 * @since 1.48 If appParams are provided in {@link sap.ui.test.Opa.config}, they are
 		 * merged in the query params of app URL
 		 *
-		 * @param {string} sSource The source of the IFrame
-		 * @param {number} [iTimeout=80] The timeout for loading the IFrame in seconds - default is 80
+		 * @param {string|object} vSourceOrOptions The source URL of the iframe or, since 1.53, you can provide a
+		 * startup configuration object as the only parameter.
+		 * @param {number} [iTimeout=80] The timeout for loading the iframe in seconds - default is 80
 		 * @param {boolean} [autoWait=false] Since 1.53, activates autoWait while the application is starting up.
 		 * This allows more time for application startup and stabilizes tests for slow-loading applications.
 		 * This parameter is false by default, regardless of the global autoWait value, to prevent issues in existing tests.
-		 * @param {string|number} width Since 1.57, sets a fixed width for the iFrame.
-		 * @param {string|number} height Since 1.57, sets a fixed height for the iFrame.
+		 * @param {string|number} [width=Opa.config.frameWidth] Since 1.57, sets a fixed width for the iframe.
+		 * @param {string|number} [height=Opa.config.frameHeight] Since 1.57, sets a fixed height for the iframe.
 		 * Setting width and/or height is useful when testing responsive applications on screens of varying sizes.
-		 * By default, the iFrame dimensions are 60% of the outer window dimensions.
-		 * @param {object} [oOptions] Since 1.53, you can provide a startup configuration object as an only parameter.
-		 * oOptions is expected to have keys among: source, timeout, autoWait, width, height.
+		 * By default, the iframe dimensions are 60% of the outer window dimensions.
+		 * @param {string} vSourceOrOptions.source The source of the iframe
+		 * @param {number} [vSourceOrOptions.timeout=80] The timeout for loading the iframe in seconds - default is 80
+		 * @param {boolean} [vSourceOrOptions.autoWait=false] Since 1.53, activates autoWait while the application is starting up.
+		 * This allows more time for application startup and stabilizes tests for slow-loading applications.
+		 * This parameter is false by default, regardless of the global autoWait value, to prevent issues in existing tests.
+		 * @param {string|number} [vSourceOrOptions.width=Opa.config.frameWidth] Since 1.57, sets a fixed width for the iframe.
+		 * @param {string|number} [vSourceOrOptions.height=Opa.config.frameHeight] Since 1.57, sets a fixed height for the iframe.
+		 * Setting width and/or height is useful when testing responsive applications on screens of varying sizes.
+		 * By default, the iframe dimensions are 60% of the outer window dimensions.
 		 * @returns {jQuery.promise} A promise that gets resolved on success
 		 * @public
 		 * @function
@@ -347,10 +363,10 @@ sap.ui.define([
 		}
 
 		/**
-		 * Removes the IFrame from the DOM and removes all the references to its objects.
-		 * Use {@link sap.ui.test.Opa5#hasAppStartedInAFrame} to ensure that an IFrame has been started and teardown can be safely performed.
+		 * Removes the iframe from the DOM and removes all the references to its objects.
+		 * Use {@link sap.ui.test.Opa5#hasAppStartedInAFrame} to ensure that an iframe has been started and teardown can be safely performed.
 		 * @returns {jQuery.promise} A promise that gets resolved on success.
-		 * If no IFrame has been created or an error occurs, the promise is rejected with the options object.
+		 * If no iframe has been created or an error occurs, the promise is rejected with the options object.
 		 * A detailed error message containing the stack trace and Opa logs is available in options.errorMessage.
 		 * @public
 		 * @function
@@ -358,10 +374,10 @@ sap.ui.define([
 		Opa5.iTeardownMyAppFrame = iTeardownMyAppFrame;
 
 		/**
-		 * Removes the IFrame from the DOM and removes all the references to its objects
-		 * Use {@link sap.ui.test.Opa5#hasAppStartedInAFrame} to ensure that an IFrame has been started and teardown can be safely performed.
+		 * Removes the iframe from the DOM and removes all the references to its objects
+		 * Use {@link sap.ui.test.Opa5#hasAppStartedInAFrame} to ensure that an iframe has been started and teardown can be safely performed.
 		 * @returns {jQuery.promise} A promise that gets resolved on success.
-		 * If no IFrame has been created or an error occurs, the promise is rejected with the options object.
+		 * If no iframe has been created or an error occurs, the promise is rejected with the options object.
 		 * A detailed error message containing the stack trace and Opa logs is available in options.errorMessage.
 		 * @public
 		 * @function
@@ -370,7 +386,7 @@ sap.ui.define([
 
 		/**
 		 * Checks if the application has been started using {@link sap.ui.test.Opa5#iStartMyAppInAFrame}
-		 * @returns {boolean} A boolean indicating whether the application has been started in an iFrame
+		 * @returns {boolean} A boolean indicating whether the application has been started in an iframe
 		 * @public
 		 * @function
 		 */
@@ -743,7 +759,7 @@ sap.ui.define([
 		// in addition, principally, OPA5 could be used without a launched application
 
 		/**
-		 * Returns the Opa plugin used for retrieving controls. If an IFrame is launched, it will return the IFrame's plugin.
+		 * Returns the Opa plugin used for retrieving controls. If an iframe is launched, it will return the iframe's plugin.
 		 * @returns {sap.ui.test.OpaPlugin} The plugin instance
 		 * @public
 		 */
@@ -752,7 +768,7 @@ sap.ui.define([
 		};
 
 		/**
-		 * Returns the jQuery object in the current context. If an IFrame is launched, it will return the IFrame's jQuery object.
+		 * Returns the jQuery object in the current context. If an iframe is launched, it will return the iframe's jQuery object.
 		 * @returns {jQuery} The jQuery object
 		 * @public
 		 */
@@ -761,8 +777,8 @@ sap.ui.define([
 		};
 
 		/**
-		 * Returns the window object in the current context. If an IFrame is launched, it will return the IFrame's window.
-		 * @returns {Window} The window of the IFrame
+		 * Returns the window object in the current context. If an iframe is launched, it will return the iframe's window.
+		 * @returns {Window} The window of the iframe
 		 * @public
 		 */
 		Opa5.getWindow = function () {
@@ -770,7 +786,7 @@ sap.ui.define([
 		};
 
 		/**
-		 * Returns the QUnit utils object in the current context. If an IFrame is launched, it will return the IFrame's QUnit utils.
+		 * Returns the QUnit utils object in the current context. If an iframe is launched, it will return the iframe's QUnit utils.
 		 * @public
 		 * @returns {sap.ui.test.qunit} The QUnit utils
 		 */
@@ -779,7 +795,7 @@ sap.ui.define([
 		};
 
 		/**
-		 * Returns the HashChanger object in the current context. If an IFrame is launched, it will return the IFrame's HashChanger.
+		 * Returns the HashChanger object in the current context. If an iframe is launched, it will return the iframe's HashChanger.
 		 * @public
 		 * @returns {sap.ui.core.routing.HashChanger} The HashChanger instance
 		 */

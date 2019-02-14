@@ -11,6 +11,15 @@ sap.ui.define([
 function(Device, UIArea, jQuery) {
 	"use strict";
 
+	/**
+	 * Contains classes and helpers related to drag & drop functionality.
+	 *
+	 * @name sap.ui.core.dnd
+	 * @namespace
+	 * @public
+	 * @since 1.52
+	 */
+
 	var DnD = {},
 		oDragControl = null,		// the control being dragged
 		oDropControl = null,		// the current drop target control

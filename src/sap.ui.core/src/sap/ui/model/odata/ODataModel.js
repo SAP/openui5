@@ -2624,22 +2624,27 @@ sap.ui.define([
 	};
 
 	/**
-	 * Submits the collected changes in the batch which were collected via <code>addBatchReadOperations</code> or <code>addBatchChangeOperations</code>.
-	 * The batch will be cleared afterwards. If the batch is empty no request will be performed and false will be returned.
-	 * Note: No data will be stored in the model.
+	 * Submits the collected changes in the batch which were collected via <code>addBatchReadOperations</code> or
+	 * <code>addBatchChangeOperations</code>. The batch will be cleared afterwards. If the batch is empty, no request
+	 * will be sent and false will be returned.
 	 *
-	 * @param {function} [fnSuccess] a callback function which is called when the batch request has
-	 *            					 been successfully sent. Note: There might have errors occured in the single batch operations. These errors can be accessed in the
-	 *            aErrorResponses parameter in the callback handler.
-	 *            The handler can have the
-	 *            	                 following parameters: oData, oResponse and aErrorResponses.
+	 * <b>Note:</b> No data will be stored in the model as long as <code>bImportData</code> is not set.
 	 *
-	 * @param {function} [fnError] a callback function which is called when the batch request failed. The handler can have the parameter: oError which contains
-	 * additional error information.
-	 * @param {boolean} [bAsync] true for asynchronous request. Default is true.
-	 *
-	 * @param {boolean} bImportData
-	 * @return {object} an object which has an <code>abort</code> function to abort the current request. Returns false if no request will be performed because the batch is empty.
+	 * @param {function} [fnSuccess]
+	 *            A callback function which is called when the batch request has been successfully sent.
+	 *            Note: Errors that may have come up in the single batch operations can be accessed
+	 *            in the <code>aErrorResponses</code> parameter in the callback handler.
+	 *            The handler can have the following parameters: <code>oData</code>, <code>oResponse</code> and
+	 *            <code>aErrorResponses</code>.
+	 * @param {function} [fnError]
+	 *            A callback function which is called when the batch request failed.
+	 *            The handler can have the parameter <code>oError</code> which contains additional error information.
+	 * @param {boolean} [bAsync=true]
+	 *            true for asynchronous request
+	 * @param {boolean} [bImportData=false]
+	 *            Whether response data should be imported into the model
+	 * @return {object} An object which has an <code>abort</code> function to abort the current request.
+	 *            Returns false if no request will be performed because the batch is empty.
 	 *
 	 * @public
 	 */
