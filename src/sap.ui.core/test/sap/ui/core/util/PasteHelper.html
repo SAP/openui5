@@ -16,16 +16,19 @@
     <script>
         sap.ui.require([
                     'sap/ui/core/util/PasteHelper',
+                    'sap/ui/core/Core',
                     'sap/ui/model/json/JSONModel',
                     'sap/ui/table/Table',
                     'sap/ui/table/Column',
                     'sap/m/TextArea',
                     'sap/m/Text',
-                    'sap/m/Label'],
-                function(PasteHelper, JSONModel, Table, Column, TextArea, Text, Label) {
+                    'sap/m/Label',
+                    'sap/m/MessageBox'],
+                function(PasteHelper, Core, JSONModel, Table, Column, TextArea, Text, Label, MessageBox) {
 
                     // Test Data if not using Excel spreadsheet for copying.
-                    const testA = "ABC AG\tThe company ABC def 123 !\"§$%&/()=?`'\"-.,;:_#+~ accepts EUR\t15\t15\t15\t15,00\t15\t15,000 kg\t15,00 EUR\t05.12.14\t5 December 2014\tH26.12.5\t05.12.14 00:00\t00:00:00\t05-12-2014 12:00:00 AM\t15,00  EUR\tTRUE\tAVAILABLE";
+                    //var aData3_OK = [["Luis", "10", "yes", "2018-12-03", "5 USD"],["Leo", "8", "no","2018-12-18", "15.53 EUR"]];
+                    const testA = "Luis\t10\ttrue\t2018-12-03\t5 USD\nLeo\t8\tfalse\t2018-12-18\t10 EUR";
 
                     const testB = "\"$$ $$Cell 1 Test Multiline\nApple\nHP\nDELL SE\nIBM\nSAP\"\t\"Cell 2 Test Multiline\nSun\nApple\"\t15\t15,36\t15\t15,36\t15\t15,360 kg\t15,36 JPY\t05.12.14\t5 December 2014\tH26.12.5\t05.12.14 00:00\t00:00:00\t05-12-2014 12:00:00 AM\t15     JPY\tFALSE\tOUT OF STOCK";
 
@@ -54,7 +57,7 @@
                             for (var j = 0; j < aData[i].length; j++) {
                                 if (i == 0) {
                                     oTable.addColumn(new Column({
-                                        label: new Label({text: "Datapoint " + j}),
+                                        label: new Label({text: "Column " + (j+1)}),
                                         template: new Text({text: "{data" + j + "}", wrapping: false}),
                                         width: "200px"
                                     }));
@@ -71,25 +74,70 @@
                     function pasteListener(e) {
                         // call Utility pasteHelper
                         var aData = PasteHelper.getPastedDataAs2DArray(e);
-                        sap.ui.getCore().byId("ta2").setValue(aData);
-                        showDataInTable(aData);
+
+                        var aColumnsInfo = [
+                            {
+                                property: "name",
+                                type: "sap.ui.model.type.String" //not EDM, but UI5 data type
+                            },
+                            {
+                                property: "age",
+                                type: "sap.ui.model.odata.type.Byte" // OData type Edm.Byte
+                            },
+                            {
+                                property: "ValidAbo",
+                                type: "sap.ui.model.type.Boolean" // not EDM type, can be "true" or "false"
+                            },
+                            {
+                                property: "LastLoginDate",
+                                type: "sap.ui.model.odata.type.Date" // OData EDM type
+                            },
+                            {
+                                property: "AboPrice",
+                                type: "sap.ui.model.type.Currency"
+                            }
+                        ];
+                        var oResult = PasteHelper.validate(aData, aColumnsInfo);
+                        if (oResult.parsedData)
+                        {
+                            showDataInTable(aData);
+                            var msg = "";
+                            var myJSON = JSON.stringify(oResult.parsedData);
+                            Core.byId("ta2").setValue(myJSON);
+                            if (e.target.id == "ta1-inner") {
+                                Core.byId("ta1").setValue(e.clipboardData.getData("text"));
+                            }
+                            e.preventDefault();
+
+                        }  else {
+                            var msg = "";
+                            for (var i = 0; i < oResult.errors.length; i++) {
+                                msg = msg + "\n" + (oResult.errors)[i].message;
+                            }
+                            MessageBox.error(msg);
+                            Core.byId("ta2").setValue(msg);
+                            e.preventDefault();
+                        }
                     }
 
                     window.addEventListener('paste', pasteListener);
 
+                    var t1 = new Label({text: "Copy the content presenting data in the clipboard (copied from the excel) from the first text area and paste to the second text area:"});
+                    t1.placeAt('content');
+
                     var ta1 = new TextArea({
                         id: "ta1",
-                        width: "100%",
-                        height: "200px",
-                        value: testC
+                        width: "70%",
+                        height: "100px",
+                        value: testA
                     });
                     ta1.placeAt('content');
 
                     var ta2 = new TextArea({
                         id: "ta2",
-                        width: "100%",
-                        value: "Paste the data from excel or from the Text area above here and see the result",
-                        height: "200px"
+                        width: "70%",
+                        value: "Paste the data from excel or from the Text area above here",
+                        height: "100px"
                     });
                     ta2.placeAt('content');
                 });
