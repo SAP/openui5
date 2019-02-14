@@ -482,7 +482,7 @@ function(
 		if (this.getShowSuggestion()) {
 			this._oSuggPopover._sPopoverContentWidth = this.getMaxSuggestionWidth();
 			this._oSuggPopover._bEnableHighlighting = this.getEnableSuggestionsHighlighting();
-			this._oSuggPopover._bAutocompleEnabled = this.getAutocomplete();
+			this._oSuggPopover._bAutocompleteEnabled = this.getAutocomplete();
 			this._oSuggPopover._bIsInputIncrementalType = this._isIncrementalType();
 
 			if (this.getShowTableSuggestionValueHelp()) {
@@ -2086,6 +2086,9 @@ function(
 
 		if (!this._hasTabularSuggestions() && !bTabular) {
 			this._oSuggPopover._oList.attachItemPress(function (oEvent) {
+				if (Device.system.desktop) {
+					this.focus();
+				}
 				this._oSuggPopover._bSuggestionItemTapped = true;
 				var oListItem = oEvent.getParameter("listItem");
 				this.setSelectionItem(oListItem._oItem, true);
@@ -2174,7 +2177,7 @@ function(
 
 			this._oSuggPopover._createSuggestionPopup(); // TODO move this call to SuggestionsPopover constructor
 
-			this._oSuggPopover._bAutocompleEnabled = this.getAutocomplete();
+			this._oSuggPopover._bAutocompleteEnabled = this.getAutocomplete();
 
 			this._oSuggPopover.attachEvent(SuggestionsPopover.M_EVENTS.SELECTION_CHANGE, function (oEvent) {
 				var sNewValue = oEvent.getParameter("newValue");
