@@ -221,6 +221,25 @@ sap.ui.define([
 		oSwitch.destroy();
 	});
 
+	QUnit.test("setState() does not use css transition", function(assert) {
+		// system under test
+		var oSwitch = new Switch({
+			state: false
+		});
+
+		// arrange
+		oSwitch.placeAt("content");
+		sap.ui.getCore().applyChanges();
+
+		oSwitch.setState(true);
+
+		// assert
+		assert.ok(!oSwitch.$().find('.sapMSwt').hasClass('sapMSwtTrans'), 'setState does not use css transition');
+
+		// cleanup
+		oSwitch.destroy();
+	});
+
 	/* ------------------------------ */
 	/* ariaLabelledBy()               */
 	/* ------------------------------ */
