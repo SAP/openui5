@@ -272,7 +272,10 @@ sap.ui.define([
 					//Be careful not to invoke this method twice (the first time is on animate finish callback).
 					//If this is the first animation, the _iSelectedIndex will remain its initial value, so no need
 					//to notify the scroller about any snap completion
-					if (this._iSelectedIndex !== -1) {
+					if (this._animatingTargetIndex !== null) {
+						this._scrollerSnapped(this._animatingTargetIndex);
+						this._animatingTargetIndex = null;
+					} else if (this._iSelectedIndex !== -1) {
 						this._scrollerSnapped(this._iSelectedIndex);
 					}
 				}
@@ -1063,9 +1066,11 @@ sap.ui.define([
 			}
 
 			this._animatingSnap = true;
+			this._animatingTargetIndex = iSelIndex;
 			$Slider.animate({ scrollTop: iSnapScrollTop}, SCROLL_ANIMATION_DURATION, 'linear', function() {
 				$Slider.clearQueue();
 				oThat._animatingSnap = false;
+				oThat._animatingTargetIndex = null;
 				//make sure the DOM is still visible
 				if ($Slider.css("visibility") === "visible") {
 					oThat._scrollerSnapped(iSelIndex);
