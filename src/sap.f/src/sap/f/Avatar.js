@@ -443,6 +443,11 @@ sap.ui.define([
 	 * @private
 	 */
 	 Avatar.prototype._onImageError = function() {
+		 var sFallBackType = this._getImageFallbackType();
+
+		 this.$().removeClass("sapFAvatarImage")
+				.addClass("sapFAvatar" + sFallBackType);
+
 		delete this.preloadedImage;
 	};
 
