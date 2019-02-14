@@ -38,15 +38,13 @@ sap.ui.define([
 		assert.strictEqual(oType.getName(), "sap.ui.model.odata.type.Unit", "type name");
 		assert.deepEqual(oType.oConstraints, {});
 		assert.notStrictEqual(oType.oFormatOptions, oFormatOptions);
-		assert.deepEqual(oType.oFormatOptions, {groupingEnabled : false, parseAsString : true,
-			unitOptionalOnParse : true});
+		assert.deepEqual(oType.oFormatOptions, {groupingEnabled : false, parseAsString : true});
 		assert.deepEqual(oType.aDynamicFormatOptionNames, ["customUnits"]);
 		assert.strictEqual(oType.getInterface(), oType, "returns no interface facade");
 		assert.ok(oType.hasOwnProperty("mCustomUnits"));
 		assert.strictEqual(oType.mCustomUnits, undefined);
 
 		oFormatOptions.parseAsString = false;
-		oFormatOptions.unitOptionalOnParse = false;
 
 		// code under test
 		oType = new Unit(oFormatOptions);
@@ -57,7 +55,6 @@ sap.ui.define([
 			"format options are immutable: clone");
 
 		oFormatOptions.parseAsString = undefined;
-		oFormatOptions.unitOptionalOnParse = undefined;
 
 		// code under test
 		oType = new Unit(oFormatOptions);
