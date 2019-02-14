@@ -1487,6 +1487,45 @@ sap.ui.define(["sap/ui/core/format/NumberFormat", "sap/ui/core/Locale", "sap/bas
 		oFormatSettings.setUnitMappings(undefined);
 	});
 
+	QUnit.test("Unit format with private FormatOptions parameter unitOptional active", function (assert) {
+		var oFormatSettings = sap.ui.getCore().getConfiguration().getFormatSettings();
+		var oConfigObject = {
+			"electric-inductance": {
+				"displayName": "H",
+				"unitPattern-count-one": "{0} H",
+				"unitPattern-count-other": "{0} H"
+			}
+		};
+		oFormatSettings.setCustomUnits(oConfigObject);
+		var oFormat = NumberFormat.getUnitInstance({unitOptional:true});
+
+		assert.deepEqual(oFormat.format(20), "20", "can format 20");
+		assert.deepEqual(oFormat.format(20.000), "20", "can format 20.000");
+		assert.deepEqual(oFormat.format(200000), "200,000", "can format 200000");
+
+		oFormatSettings.setCustomUnits(undefined);
+	});
+
+
+	QUnit.test("Unit parse with private FormatOptions parameter unitOptional active", function (assert) {
+		var oFormatSettings = sap.ui.getCore().getConfiguration().getFormatSettings();
+		var oConfigObject = {
+			"electric-inductance": {
+				"displayName": "H",
+				"unitPattern-count-one": "{0} H",
+				"unitPattern-count-other": "{0} H"
+			}
+		};
+		oFormatSettings.setCustomUnits(oConfigObject);
+		var oFormat = NumberFormat.getUnitInstance({unitOptional:true});
+
+		assert.deepEqual(oFormat.parse("20"), [20, undefined], "can parse 20");
+		assert.deepEqual(oFormat.parse("20.000"), [20, undefined], "can parse 20");
+		assert.deepEqual(oFormat.parse("20,000"), [20000, undefined], "can parse 20");
+
+		oFormatSettings.setCustomUnits(undefined);
+	});
+
 	QUnit.test("Unit parse custom pattern in config", function (assert) {
 		var oFormatSettings = sap.ui.getCore().getConfiguration().getFormatSettings();
 		var oConfigObject = {
@@ -1601,7 +1640,7 @@ sap.ui.define(["sap/ui/core/format/NumberFormat", "sap/ui/core/Locale", "sap/bas
 
 		assert.deepEqual(oFormat.parse("20 ha"), [20, "area-hectare"], "parsed correctly");
 		assert.deepEqual(oFormat.parse("20 c"), [20, undefined], "number and ambigious unit duration-century and volume-cup");
-		assert.equal(oFormat.parse("20"), null, "number only '20'");
+		assert.deepEqual(oFormat.parse("20"), [20, undefined], "number only '20'");
 		assert.equal(oFormat.parse("ha"), null, "unit only 'ha'");
 		assert.equal(oFormat.parse("__ ha"), null, "no number area-hectare unit '__ ha'");
 		assert.equal(oFormat.parse("__ __"), null, "no number no unit '__ __'");

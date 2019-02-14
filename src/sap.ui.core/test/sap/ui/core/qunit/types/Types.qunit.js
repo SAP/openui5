@@ -783,7 +783,7 @@ sap.ui.define(["sap/ui/model/ValidateException",
 			});
 
 			var oMeterType = new MeterType();
-			var oMeterTypeInstanceSpy = this.spy(oMeterType, "_createInstance");
+			var oMeterTypeInstanceSpy = this.spy(NumberFormat, "getUnitInstance");
 			//4 digits
 			assert.equal(oMeterType.formatValue([123.123123, "length-meter", 4], "string"), "123.1231 m", "format 4 digits meters expected");
 			assert.deepEqual(oMeterType.parseValue("123.1231 m", "string"), [123.1231, "length-meter"], "parse 4 digits meters expected");
@@ -851,7 +851,7 @@ sap.ui.define(["sap/ui/model/ValidateException",
 			});
 
 			var oMeterType = new MeterType();
-			var oMeterTypeInstanceSpy = this.spy(oMeterType, "_createInstance");
+			var oMeterTypeInstanceSpy = this.spy(NumberFormat, "getUnitInstance");
 
 			// zero
 			assert.equal(oMeterType.formatValue([123.123123, "length-meter", 0], "string"), "123 m", "format with decimals 3 expected");
@@ -912,7 +912,7 @@ sap.ui.define(["sap/ui/model/ValidateException",
 			});
 
 			var oMeterType = new MeterType();
-			var oMeterTypeInstanceSpy = this.spy(oMeterType, "_createInstance");
+			var oMeterTypeInstanceSpy = this.spy(NumberFormat, "getUnitInstance");
 
 			// empty
 			assert.equal(oMeterType.formatValue([123.163123, "length-meter", 0], "string"), "123 m", "format with precision 4 expected");
@@ -948,6 +948,43 @@ sap.ui.define(["sap/ui/model/ValidateException",
 
 			assert.deepEqual(oMeterType.parseValue("123.100000000001 m", "string"), [123.100000000001, "length-meter"], " number with too many digits parse 5 digits meters expected");
 			assert.equal(oMeterTypeInstanceSpy.callCount, 10, "10 instances because 10 different precision options are provided");
+
+		});
+
+		QUnit.test("Multiple Unit-Instances with bound custom units and other distinct format options", function (assert) {
+
+			// new Meter type
+			var CustomUnitType = UnitType.extend("sap.ui.core.test.CustomUnitType", {
+				constructor: function (oFormatOptions, oConstraints) {
+					UnitType.apply(this, [oFormatOptions, oConstraints, ["customUnits"]]);
+				}
+			});
+
+			var oCustomUnitConfig = {
+				"length-meter": {
+					"unitPattern-count-one": "{0} m",
+					"unitPattern-count-many": "{0} m",
+					"unitPattern-count-other": "{0} m",
+					"decimals": 4
+				}
+			};
+
+			var oCustomUnitTypeInstanceSpy = this.spy(NumberFormat, "getUnitInstance");
+
+			var oCustomUnitType = new CustomUnitType(/* showMeasure is true by default*/);
+			var oCustomUnitType2 = new CustomUnitType({showMeasure: false});
+			var oCustomUnitType3 = new CustomUnitType({showMeasure: false});
+
+			// straight forward case
+			assert.equal(oCustomUnitType.formatValue([123.456789, "length-meter", oCustomUnitConfig], "string").toString(), "123.4568 m");
+			assert.equal(oCustomUnitTypeInstanceSpy.callCount, 1, "1st instance created");
+
+			// additional format options
+			assert.equal(oCustomUnitType2.formatValue([123.456789, "length-meter", oCustomUnitConfig], "string").toString(), "123.4568", "formatted value respects the 'decimals' of custom unit");
+			assert.equal(oCustomUnitTypeInstanceSpy.callCount, 2, "2nd instance created, because of different format options");
+
+			assert.equal(oCustomUnitType3.formatValue([123.456789, "length-meter", oCustomUnitConfig], "string").toString(), "123.4568", "formatted value respects the 'decimals' of custom unit");
+			assert.equal(oCustomUnitTypeInstanceSpy.callCount, 2, "No additional instance is created, 2nd instance is taken from cache");
 
 		});
 
