@@ -9,11 +9,13 @@
 				src="../../../../../../../resources/sap-ui-core.js"
 				data-sap-ui-libs="sap.m"
 				data-sap-ui-resourceroots='{
+					"local": "./",
 					"sampleOpaExtension" : "../opa/",
 					"testResources" : "../../../../../../../test-resources"
-				}'>
-		</script>
-		<script src="uncaughtError.js"></script>
+				}'
+				data-sap-ui-async='true'
+				data-sap-ui-onInit='module:local/uncaughtError'
+				></script>
 	</head>
 	<body id="content" class="sapUiBody">
 	</body>
