@@ -46,6 +46,7 @@ sap.ui.define(["sap/m/library"], function (library) {
 
 		oRm.write('<div');
 		oRm.writeControlData(oControl);
+		oRm.writeAttribute("tabindex", "-1");
 		oRm.addClass(className);
 
 		if (lightBoxItem.getSubtitle()) {
