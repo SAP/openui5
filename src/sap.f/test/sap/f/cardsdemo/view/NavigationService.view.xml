@@ -25,6 +25,7 @@
 					<HBox>
 						<w:Card class="sapUiMediumMargin" manifest="./model/manifests/manifest_navigationService.json" width="400px" height="auto"/>
                 		<w:Card class="sapUiMediumMargin" manifest="./model/manifests/manifest_navigationService2.json" width="400px" height="auto"/>
+                		<w:Card class="sapUiMediumMargin" manifest="./model/manifests/manifest_navigationService3.json" width="400px" height="auto"/>
 					</HBox>
 					<VBox class="sapUiMediumMarginLeft">
 						<Text text="Cards using navigation action event."/>

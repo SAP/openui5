@@ -1,0 +1,72 @@
+{
+	"_version": "1.8.0",
+	"sap.app": {
+		"type": "card"
+	},
+	"sap.ui5": {
+		"services": {
+			"IntentBasedNavigation": {
+				"factoryName": "cardsdemo.service.SampleNavigationFactory"
+			}
+		}
+	},
+	"sap.card": {
+		"type": "List",
+		"header": {
+			"title": "Sales Orders",
+			"subTitle": "Static Data",
+			"icon": {
+				"src": "sap-icon://sales-order"
+			},
+			"status": "100 of 200",
+			"actions": [
+				{
+					"type": "Navigation",
+					"service": "IntentBasedNavigation",
+					"parameters": {
+						"intentSemanticObject": "SalesOrder",
+						"intentAction": "display",
+						"intentParameters": {
+							"a": 1000,
+							"b": "foo"
+						}
+					}
+				}
+			]
+		},
+		"content": {
+			"data": {
+				"request": {
+					"url": "./cardcontent/salesOrders.json"
+				},
+				"path": "/items"
+			},
+			"item": {
+                "title": {
+                    "value": "{title}"
+                },
+                "description": {
+                    "value": "{state}"
+                },
+                "icon": {
+                    "value": "sap-icon://sales-order"
+                },
+				"actions": [
+					{
+						"type": "Navigation",
+						"service": "IntentBasedNavigation",
+						"parameters": {
+							"intentSemanticObject": "SalesOrder",
+							"intentAction": "display",
+							"intentParameters": {
+								"id": "{SO_ID}",
+								"a": 1000,
+								"b": "foo"
+							}
+						}
+					}
+				]
+			}
+		}
+	}
+}

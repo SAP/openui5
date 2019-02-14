@@ -43,14 +43,20 @@ sap.ui.define(["sap/ui/base/ManagedObject", "sap/base/Log"],
 						if (oNavigationService) {
 							oNavigationService
 								.enabled({
-									semanticObject: vValue,
-									manifestParameters: _resolveBinding(oAction.parameters, oBindingContext)
+									parameters: _resolveBinding(oAction.parameters, oBindingContext)
 								})
 								.then(function (bEnabled) {
 									vValue.__resolved = true;
 									vValue.__enabled = bEnabled;
 									that.getModel().checkUpdate(true);
+								})
+								.catch(function () {
+									vValue.__resolved = true;
+									vValue.__enabled = false;
 								});
+						} else {
+							vValue.__resolved = true;
+							vValue.__enabled = false;
 						}
 					});
 				}
@@ -63,17 +69,10 @@ sap.ui.define(["sap/ui/base/ManagedObject", "sap/base/Log"],
 		function _setHeaderActionEnabledState(mItem) {
 			var oAction = mItem.actions[0],
 				oBindingContext = this.getBindingContext(),
-				mManifestParameters = oAction.parameters,
-				oSemanticObject;
+				mParameters = oAction.parameters;
 
 			if (oBindingContext) {
-				oSemanticObject = oBindingContext.getObject();
-				mManifestParameters = _resolveBinding(oAction.parameters, oBindingContext);
-			} else {
-				oSemanticObject = {
-					title: mItem.title,
-					subtitle: mItem.subTitle
-				};
+				mParameters = _resolveBinding(oAction.parameters, oBindingContext);
 			}
 
 			return new Promise(function (resolve) {
@@ -82,12 +81,16 @@ sap.ui.define(["sap/ui/base/ManagedObject", "sap/base/Log"],
 						if (oNavigationService) {
 							oNavigationService
 								.enabled({
-									semanticObject: oSemanticObject,
-									manifestParameters: mManifestParameters
+									parameters: mParameters
 								})
 								.then(function (bEnabled) {
 									resolve(bEnabled);
+								})
+								.catch(function () {
+									resolve(false);
 								});
+						} else {
+							resolve(false);
 						}
 					})
 					.catch(function () {
@@ -134,11 +137,25 @@ sap.ui.define(["sap/ui/base/ManagedObject", "sap/base/Log"],
 			for (var sProp in mParams) {
 				var vProp = mParams[sProp];
 
-				if (vProp && typeof vProp === "string") {
-					mResolvedParams[sProp] = vProp;
-					var oBindingInfo = ManagedObject.bindingParser(vProp);
-					if (oBindingInfo) {
-						mResolvedParams[sProp] = oContext.getProperty(oBindingInfo.path);
+				if (vProp) {
+					if (typeof vProp === "string") {
+						mResolvedParams[sProp] = vProp;
+						var oBindingInfo = ManagedObject.bindingParser(vProp);
+						if (oBindingInfo) {
+							mResolvedParams[sProp] = oContext.getProperty(oBindingInfo.path);
+						}
+					} else if (typeof vProp === "object") {
+						mResolvedParams[sProp] = {};
+
+						// Keep it simple for now and just traverse one more level of object nesting.
+						// Improve the processing as a next step.
+						for (var sSubProp in vProp) {
+							mResolvedParams[sProp][sSubProp] = vProp[sSubProp];
+							var oBindingInfo1 = ManagedObject.bindingParser(vProp[sSubProp]);
+							if (oBindingInfo1) {
+								mResolvedParams[sProp][sSubProp] = oContext.getProperty(oBindingInfo1.path);
+							}
+						}
 					}
 				}
 			}
@@ -163,20 +180,20 @@ sap.ui.define(["sap/ui/base/ManagedObject", "sap/base/Log"],
 				}
 
 				fnHandler = function (oEvent) {
-					var mParameters = oEvent.getParameters();
-					var oBindingContext = oEvent.getSource().getBindingContext();
+					var oSource = oEvent.getSource();
+					var oBindingContext = oSource && oSource.getBindingContext();
 
-					this._oServiceManager.getService("sap.ui.integration.services.Navigation").then(function (oNavigationService) {
-						if (oNavigationService) {
-							oNavigationService.navigate({
-								parameters: mParameters,
-								manifestParameters: _resolveBinding(oAction.parameters, oBindingContext),
-								semanticObject: oBindingContext ? oBindingContext.getObject() : null
-							});
-						}
-					}).catch(function (e) {
-						Log.error("Navigation service unavailable", e);
-					});
+					this._oServiceManager.getService("sap.ui.integration.services.Navigation")
+						.then(function (oNavigationService) {
+							if (oNavigationService) {
+								oNavigationService.navigate({
+									parameters: _resolveBinding(oAction.parameters, oBindingContext)
+								});
+							}
+						})
+						.catch(function (e) {
+							Log.error("Navigation service unavailable", e);
+						});
 				};
 
 				// When there is a service let it handle the "enabled" state.
@@ -204,19 +221,10 @@ sap.ui.define(["sap/ui/base/ManagedObject", "sap/base/Log"],
 					fnHandler = function (oEvent) {
 						var oSource = oEvent.getSource();
 						var oBindingContext = oSource.getBindingContext();
-						var oSemanticObject = oBindingContext ? oBindingContext.getObject() : {};
-
-						if (oSource.isA("sap.f.cards.IHeader") && !oBindingContext) {
-							oSemanticObject = {
-								title: oSource.getTitle(),
-								subTitle: oSource.getSubtitle()
-							};
-						}
 
 						this.fireEvent("onAction", {
 							type: "Navigation",
-							manifestParameters: _resolveBinding(oAction.parameters, oBindingContext),
-							semanticObject: oSemanticObject
+							manifestParameters: _resolveBinding(oAction.parameters, oBindingContext)
 						});
 					};
 				}

@@ -3,15 +3,17 @@ sap.ui.define(["sap/ui/integration/services/Navigation"], function (Navigation) 
 
 	var SampleNavigation = Navigation.extend();
 
+	var _sBaseUrl = "https://www.sap.com";
+
 	function getUrl(oContext) {
 		var sUrl = "";
 
-		if (oContext.manifestParameters && oContext.manifestParameters.url && typeof oContext.manifestParameters.url === "string") {
-			sUrl = oContext.manifestParameters.url;
+		if (oContext.parameters.intentSemanticObject) {
+			return _sBaseUrl;
 		}
 
-		if (oContext.semanticObject && oContext.semanticObject.url && typeof oContext.semanticObject.url === "string") {
-			sUrl = oContext.semanticObject.url;
+		if (oContext.parameters && oContext.parameters.url && typeof oContext.parameters.url === "string") {
+			sUrl = oContext.parameters.url;
 		}
 
 		return sUrl;
