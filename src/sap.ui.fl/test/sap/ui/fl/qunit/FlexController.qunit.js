@@ -90,7 +90,6 @@ function (
 	var labelChangeContent3 = getLabelChangeContent("a3");
 	var labelChangeContent4 = getLabelChangeContent("a4", "foo");
 	var labelChangeContent5 = getLabelChangeContent("a5", "bar");
-	var labelChangeContent6 = getLabelChangeContent("a6", "bar");
 
 	QUnit.module("sap.ui.fl.FlexController", {
 		beforeEach: function () {
@@ -361,6 +360,7 @@ function (
 					}
 				}
 			};
+			sandbox.stub(this.oFlexController, "_isChangeCurrentlyApplied").returns(false);
 			var oLoggingStub = sandbox.stub(Log, "warning");
 			var oCheckTargetAndApplyChangeStub = sandbox.stub(this.oFlexController, "checkTargetAndApplyChange").callsFake(function() {
 				return new Utils.FakePromise({success: false});
@@ -370,6 +370,36 @@ function (
 			.then(function() {
 				assert.strictEqual(oCheckTargetAndApplyChangeStub.callCount, 2, "all changes  were processed");
 				assert.ok(oLoggingStub.calledTwice, "the issues were logged");
+			});
+		});
+
+		QUnit.test("_resolveGetChangesForView updates change status if change was already applied (viewCache)", function (assert) {
+			var oChange = new Change(labelChangeContent);
+			var oSelector = {};
+			oSelector.id = "id";
+
+			this.oChange.selector = oSelector;
+			this.oChange.getSelector = function(){return oSelector;};
+
+			var mPropertyBagStub = {
+				modifier: {
+					bySelector: function() {
+						return true;
+					}
+				}
+			};
+			var oLoggingStub = sandbox.stub(Log, "warning");
+			var oCheckTargetAndApplyChangeStub = sandbox.stub(this.oFlexController, "checkTargetAndApplyChange").callsFake(function() {
+				return new Utils.FakePromise({success: true});
+			});
+			sandbox.stub(this.oFlexController, "_isChangeCurrentlyApplied").returns(true);
+			var oMarkFinishedSpy = sandbox.spy(oChange, "markFinished");
+			return this.oFlexController._resolveGetChangesForView(mPropertyBagStub, [oChange])
+
+			.then(function() {
+				assert.equal(oCheckTargetAndApplyChangeStub.callCount, 0, "no change was processed");
+				assert.equal(oMarkFinishedSpy.callCount, 1, "the change was set to finished");
+				assert.equal(oLoggingStub.callCount, 0, "no issues were logged");
 			});
 		});
 
@@ -1558,10 +1588,41 @@ function (
 			.then(function() {
 				assert.equal(this.oCheckTargetAndApplyChangeStub.callCount, 2, "all four changes for the control were applied");
 				assert.equal(this.oCheckTargetAndApplyChangeStub.getCall(0).args[0], oChange0, "the first change was applied first");
-				assert.notOk(this.oCheckTargetAndApplyChangeStub.getCall(0).args[0].PROCESSED, "the PROCESSED flag got deleted");
 				assert.equal(this.oCheckTargetAndApplyChangeStub.getCall(1).args[0], oChange1, "the second change was applied second");
-				assert.notOk(this.oCheckTargetAndApplyChangeStub.getCall(1).args[0].PROCESSED, "the PROCESSED flag got deleted");
 				assert.equal(oCopyDependenciesFromInitialChangesMap.callCount, 2, "and update dependencies was called twice");
+			}.bind(this));
+		});
+
+		QUnit.test("updates change status if change was already applied (viewCache)", function(assert) {
+			var oChange0 = new Change(labelChangeContent);
+			var oChange1 = new Change(labelChangeContent);
+			var mChanges = {
+				"someId": [oChange0, oChange1]
+			};
+			var fnGetChangesMap = function () {
+				return {
+					"mChanges": mChanges,
+					"mDependencies": {},
+					"mDependentChangesOnMe": {}
+				};
+			};
+			var oAppComponent = {};
+			var oCopyDependenciesFromInitialChangesMap = sandbox.spy(this.oFlexController._oChangePersistence, "copyDependenciesFromInitialChangesMap");
+			sandbox.stub(this.oFlexController, "_isChangeCurrentlyApplied").returns(true);
+			var oMarkFinishedSpy0 = sandbox.spy(oChange0, "markFinished");
+			var oMarkFinishedSpy1 = sandbox.spy(oChange1, "markFinished");
+
+			return this.oFlexController._applyChangesOnControl(fnGetChangesMap, oAppComponent, this.oControl)
+
+			.then(function() {
+				assert.equal(this.oCheckTargetAndApplyChangeStub.callCount, 2, "all four changes for the control were applied");
+				assert.equal(this.oCheckTargetAndApplyChangeStub.getCall(0).args[0], oChange0, "the first change was applied first");
+				assert.equal(this.oCheckTargetAndApplyChangeStub.getCall(1).args[0], oChange1, "the second change was applied second");
+				assert.equal(oCopyDependenciesFromInitialChangesMap.callCount, 0, "and update dependencies was not called");
+				assert.equal(oMarkFinishedSpy0.callCount, 1, "the status of the change got updated");
+				assert.equal(oMarkFinishedSpy1.callCount, 1, "the status of the change got updated");
+				assert.ok(oChange0.isApplyProcessFinished(), "the status is APPLY_FINISHED");
+				assert.ok(oChange1.isApplyProcessFinished(), "the status is APPLY_FINISHED");
 			}.bind(this));
 		});
 
@@ -1759,7 +1820,7 @@ function (
 			.then(this.oFlexController._applyChangesOnControl.bind(this.oFlexController, fnGetChangesMap, oAppComponent, oControlForm1))
 
 			.then(function() {
-				// as checkTargetAndApplyChanges function is stubbed we set the PROCESSED flag manually
+				// as checkTargetAndApplyChanges function is stubbed we set the change status manually
 				Object.keys(oDependencySetup.mChanges).forEach(function(sKey) {
 					oDependencySetup.mChanges[sKey].forEach(function(oChange) {
 						oChange.markFinished();
@@ -3140,9 +3201,11 @@ function (
 	QUnit.module("waitForChangesToBeApplied is called with a control " , {
 		beforeEach: function () {
 			this.sLabelId = labelChangeContent.selector.id;
-			this.sLabelId2 = labelChangeContent6.selector.id;
+			this.sLabelId2 = labelChangeContent5.selector.id;
+			this.sLabelId3 = "foobar";
 			this.oControl = new Label(this.sLabelId);
 			this.oControl2 = new Label(this.sLabelId2);
+			this.oControl3 = new Label(this.sLabelId3);
 			this.oChange = new Change(labelChangeContent);
 			this.oChange2 = new Change(labelChangeContent2);
 			this.oChange3 = new Change(labelChangeContent3);
@@ -3206,6 +3269,7 @@ function (
 		afterEach: function () {
 			this.oControl.destroy();
 			this.oControl2.destroy();
+			this.oControl3.destroy();
 			sandbox.restore();
 		}
 	}, function() {
@@ -3388,7 +3452,7 @@ function (
 				"a4": ["a3"]
 			};
 			this.mChanges.mChanges[this.sLabelId] = [this.oChange, this.oChange2, this.oChange3];
-			this.mChanges.mChanges[this.sLabelId2] = [this.oChange4];
+			this.mChanges.mChanges[this.sLabelId3] = [this.oChange4];
 			this.mChanges.mDependencies = mDependencies;
 			this.mChanges.mDependentChangesOnMe = mDependentChangesOnMe;
 
@@ -3397,7 +3461,7 @@ function (
 			var oChangePromiseSpy3 = sandbox.spy(this.oChange3, "addChangeProcessingPromise");
 			var oChangePromiseSpy4 = sandbox.spy(this.oChange4, "addChangeProcessingPromise");
 
-			this.oFlexController._applyChangesOnControl(this.fnGetChangesMap, this.oComponent, this.oControl2);
+			this.oFlexController._applyChangesOnControl(this.fnGetChangesMap, this.oComponent, this.oControl3);
 			this.oFlexController._applyChangesOnControl(this.fnGetChangesMap, this.oComponent, this.oControl);
 			this.oFlexController.waitForChangesToBeApplied(this.oControl)
 			.then(function() {
@@ -3429,12 +3493,12 @@ function (
 				"a5": ["a3"]
 			};
 			this.mChanges.mChanges[this.sLabelId] = [this.oChange, this.oChange2, this.oChange3];
-			this.mChanges.mChanges[this.sLabelId2] = [this.oChange5];
+			this.mChanges.mChanges[this.sLabelId3] = [this.oChange5];
 			this.mChanges.mDependencies = mDependencies;
 			this.mChanges.mDependentChangesOnMe = mDependentChangesOnMe;
 
 			this.oFlexController._applyChangesOnControl(this.fnGetChangesMap, this.oComponent, this.oControl);
-			this.oFlexController._applyChangesOnControl(this.fnGetChangesMap, this.oComponent, this.oControl2);
+			this.oFlexController._applyChangesOnControl(this.fnGetChangesMap, this.oComponent, this.oControl3);
 
 			return this.oFlexController.waitForChangesToBeApplied(this.oControl)
 			.then(function() {
@@ -3458,7 +3522,7 @@ function (
 				"a3": ["a2"]
 			};
 			this.mChanges.mChanges[this.sLabelId] = [this.oChange, this.oChange2];
-			this.mChanges.mChanges[this.sLabelId2] = [this.oChange3];
+			this.mChanges.mChanges[this.sLabelId3] = [this.oChange3];
 			this.mChanges.mDependencies = mDependencies;
 			this.mChanges.mDependentChangesOnMe = mDependentChangesOnMe;
 
@@ -3479,7 +3543,7 @@ function (
 				applyChange: this.oChangeHandlerApplyChangeStub
 			});
 
-			this.oFlexController._applyChangesOnControl(this.fnGetChangesMap, this.oComponent, this.oControl2);
+			this.oFlexController._applyChangesOnControl(this.fnGetChangesMap, this.oComponent, this.oControl3);
 			this.oFlexController._applyChangesOnControl(this.fnGetChangesMap, this.oComponent, this.oControl);
 
 			return this.oFlexController.waitForChangesToBeApplied(this.oControl)
