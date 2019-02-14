@@ -17,7 +17,7 @@
 		"resources": {
 			"css": [
 				{
-					"url": "FixFlexFixedSize/style.css"
+					"uri": "FixFlexFixedSize/style.css"
 				}
 			]
 		},

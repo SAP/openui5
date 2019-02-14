@@ -20,7 +20,7 @@
 		"resources": {
 			"css": [
 				{
-					"url": "style.css"
+					"uri": "style.css"
 				}
 			]
 		},
