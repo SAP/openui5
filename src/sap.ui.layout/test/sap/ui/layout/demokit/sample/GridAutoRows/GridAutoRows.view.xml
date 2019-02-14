@@ -34,7 +34,7 @@
 				<Text text="1.5rem"/>
 			</form:SimpleForm>
 			<grid:CSSGrid id="grid1"
-						  gridAutoFlow="Rows"
+						  gridAutoFlow="Row"
 						  gridTemplateColumns="repeat(4, 10rem)"
 						  gridTemplateRows="repeat(2, 3rem)"
 						  gridAutoRows="1.5rem"
