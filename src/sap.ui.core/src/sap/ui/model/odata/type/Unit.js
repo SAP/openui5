@@ -58,8 +58,7 @@ sap.ui.define([
 				throw new Error("Only the parameter oFormatOptions is supported");
 			}
 
-			oFormatOptions = merge({parseAsString : true, unitOptionalOnParse : true},
-				oFormatOptions);
+			oFormatOptions = merge({parseAsString : true}, oFormatOptions);
 
 			BaseUnit.call(this, oFormatOptions, oConstraints, ["customUnits"]);
 
