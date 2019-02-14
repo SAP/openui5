@@ -170,6 +170,10 @@ sap.ui.define([
 	EnabledPropagator.call(Button.prototype);
 	ContextMenuSupport.apply(Button.prototype);
 
+	Button.prototype.init = function() {
+		this._onmouseenter = this._onmouseenter.bind(this);
+	};
+
 	/**
 	 * Function is called when exiting the control.
 	 *
@@ -185,6 +189,8 @@ sap.ui.define([
 		if (this._iconBtn) {
 			this._iconBtn.destroy();
 		}
+
+		this.$().off("mouseenter", this._onmouseenter);
 	};
 
 	/*
@@ -192,6 +198,8 @@ sap.ui.define([
 	 */
 	Button.prototype.onBeforeRendering = function() {
 		this._bRenderActive = this._bActive;
+
+		this.$().on("mouseenter", this._onmouseenter);
 	};
 
 	/*
@@ -204,6 +212,8 @@ sap.ui.define([
 			// now, this._bActive may be false if the button was disabled
 			this._bRenderActive = this._bActive;
 		}
+
+		this.$().on("mouseenter", this._onmouseenter);
 	};
 
 	/**
@@ -331,6 +341,12 @@ sap.ui.define([
 
 		if (oEvent.which === KeyCodes.SPACE) {
 			this.firePress({/* no parameters */});
+		}
+	};
+
+	Button.prototype._onmouseenter = function(oEvent) {
+		if (oEvent.originalEvent && oEvent.originalEvent.buttons & 1) {
+			this._activeButton();
 		}
 	};
 
