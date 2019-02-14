@@ -1204,7 +1204,7 @@ sap.ui.define([
 					return "";
 				}
 				sResult = sPattern.replace("{0}", sResult);
-			} else {
+			} else if (!oOptions.unitOptional) {
 				assert(mUnitPatterns, "Unit '" + sMeasure + "' is unknown");
 				return "";
 			}
@@ -1354,9 +1354,16 @@ sap.ui.define([
 			if (aUnitCode.length === 1) {
 				sMeasure = aUnitCode[0];
 			} else if (aUnitCode.length === 0) {
-				//unit not found
-				assert(aUnitCode.length === 1, "Cannot find unit for input: '" + (sValue) + "'");
-				return null;
+				// in case showMeasure is set to false or unitOptional is set to true
+				// we only try to parse the numberValue
+				// the currency format behaves the same
+				if ((oOptions.unitOptional || !oOptions.showMeasure) && typeof sValue === "string") {
+					oPatternAndResult.numberValue = sValue;
+				} else {
+					//unit not found
+					assert(aUnitCode.length === 1, "Cannot find unit for input: '" + (sValue) + "'");
+					return null;
+				}
 			} else {
 				//ambiguous unit
 				assert(aUnitCode.length === 1, "Ambiguous unit [" + aUnitCode.join(", ") + "] for input: '" + (sValue) + "'");
