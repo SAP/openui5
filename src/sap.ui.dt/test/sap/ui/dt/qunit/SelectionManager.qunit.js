@@ -7,7 +7,6 @@ sap.ui.define([
 	"sap/ui/dt/SelectionManager",
 	"sap/ui/dt/DesignTime",
 	"sap/ui/dt/OverlayRegistry",
-	"sap/ui/qunit/utils/waitForThemeApplied",
 	"sap/ui/thirdparty/sinon-4"
 ], function(
 	Button,
@@ -16,7 +15,6 @@ sap.ui.define([
 	SelectionManager,
 	DesignTime,
 	OverlayRegistry,
-	waitForThemeApplied,
 	sinon
 ) {
 	"use strict";
@@ -557,5 +555,4 @@ sap.ui.define([
 		jQuery("#qunit-fixture").hide();
 	});
 
-	return waitForThemeApplied();
 });

@@ -7,8 +7,7 @@ sap.ui.define([
 	"sap/ui/layout/form/Form",
 	"sap/ui/layout/form/FormContainer",
 	"sap/m/Button",
-	"sap/ui/layout/VerticalLayout",
-	"sap/ui/qunit/utils/waitForThemeApplied"
+	"sap/ui/layout/VerticalLayout"
 ], function(
 	ElementMover,
 	OverlayRegistry,
@@ -16,8 +15,7 @@ sap.ui.define([
 	Form,
 	FormContainer,
 	Button,
-	VerticalLayout,
-	waitForThemeApplied
+	VerticalLayout
 ) {
 	"use strict";
 
@@ -203,5 +201,4 @@ sap.ui.define([
 		jQuery("#qunit-fixture").hide();
 	});
 
-	return waitForThemeApplied();
 });

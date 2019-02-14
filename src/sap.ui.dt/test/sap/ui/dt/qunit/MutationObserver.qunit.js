@@ -11,7 +11,6 @@ sap.ui.define([
 	"sap/ui/layout/VerticalLayout",
 	"sap/ui/dt/DOMUtil",
 	"sap/base/util/includes",
-	"sap/ui/qunit/utils/waitForThemeApplied",
 	"sap/ui/thirdparty/sinon-4"
 ],
 function(
@@ -25,7 +24,6 @@ function(
 	VerticalLayout,
 	DOMUtil,
 	includes,
-	waitForThemeApplied,
 	sinon
 ) {
 	'use strict';
@@ -305,5 +303,4 @@ function(
 		jQuery("#qunit-fixture").hide();
 	});
 
-	return waitForThemeApplied();
 });

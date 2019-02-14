@@ -1,12 +1,10 @@
 /* global QUnit*/
 
 sap.ui.define([
-	"sap/ui/dt/test/LibraryEnablementTest2",
-	"sap/ui/qunit/utils/waitForThemeApplied"
+	"sap/ui/dt/test/LibraryEnablementTest2"
 ],
 function(
-	LibraryEnablementTest2,
-	waitForThemeApplied
+	LibraryEnablementTest2
 ) {
 	"use strict";
 
@@ -31,5 +29,4 @@ function(
 		jQuery("#qunit-fixture").hide();
 	});
 
-	return waitForThemeApplied();
 });

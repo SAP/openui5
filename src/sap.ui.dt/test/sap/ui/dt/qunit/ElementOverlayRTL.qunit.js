@@ -6,16 +6,14 @@ sap.ui.define([
 	"sap/ui/dt/OverlayRegistry",
 	"sap/m/Button",
 	"sap/m/Panel",
-	"sap/ui/Device",
-	"sap/ui/qunit/utils/waitForThemeApplied"
+	"sap/ui/Device"
 ], function (
 	ElementOverlay,
 	DesignTime,
 	OverlayRegistry,
 	Button,
 	Panel,
-	Device,
-	waitForThemeApplied
+	Device
 ) {
 	'use strict';
 
@@ -124,5 +122,4 @@ sap.ui.define([
 		jQuery("#qunit-fixture").hide();
 	});
 
-	return waitForThemeApplied();
 });

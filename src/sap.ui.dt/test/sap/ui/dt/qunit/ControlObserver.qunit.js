@@ -2,13 +2,11 @@
 
 sap.ui.define([
 	"sap/ui/dt/ControlObserver",
-	"sap/m/Button",
-	"sap/ui/qunit/utils/waitForThemeApplied"
+	"sap/m/Button"
 ],
 function (
 	ControlObserver,
-	Button,
-	waitForThemeApplied
+	Button
 ) {
 	'use strict';
 
@@ -55,5 +53,4 @@ function (
 		jQuery("#qunit-fixture").hide();
 	});
 
-	return waitForThemeApplied();
 });
