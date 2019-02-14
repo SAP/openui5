@@ -3,12 +3,10 @@
 sap.ui.define([
 	"sap/ui/thirdparty/jquery",
 	"sap/ui/rta/appVariant/AppVariantDialog",
-	"sap/ui/qunit/utils/waitForThemeApplied",
 	"sap/ui/thirdparty/sinon-4"
 ], function (
 	jQuery,
 	AppVariantDialog,
-	waitForThemeApplied,
 	sinon
 ) {
 	"use strict";
@@ -183,5 +181,4 @@ sap.ui.define([
 		jQuery("#qunit-fixture").hide();
 	});
 
-	return waitForThemeApplied();
 });

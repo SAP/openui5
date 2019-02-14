@@ -10,7 +10,6 @@ sap.ui.define([
 	"sap/ui/fl/ChangePersistenceFactory",
 	"sap/ui/qunit/QUnitUtils",
 	"sap/ui/events/KeyCodes",
-	"sap/ui/qunit/utils/waitForThemeApplied",
 	"sap/ui/thirdparty/sinon-4"
 
 ], function (
@@ -23,7 +22,6 @@ sap.ui.define([
 	ChangePersistenceFactory,
 	QUnitUtils,
 	KeyCodes,
-	waitForThemeApplied,
 	sinon
 ) {
 	"use strict";
@@ -492,5 +490,4 @@ sap.ui.define([
 		jQuery("#qunit-fixture").hide();
 	});
 
-	return waitForThemeApplied();
 });

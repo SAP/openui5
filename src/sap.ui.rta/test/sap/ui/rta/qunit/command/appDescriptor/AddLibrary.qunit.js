@@ -6,7 +6,6 @@ sap.ui.define([
 	"sap/ui/fl/descriptorRelated/api/DescriptorChangeFactory",
 	"sap/ui/rta/command/CommandFactory",
 	"sap/m/Button",
-	"sap/ui/qunit/utils/waitForThemeApplied",
 	"sap/ui/thirdparty/sinon-4"
 ],
 function (
@@ -15,7 +14,6 @@ function (
 	DescriptorChangeFactory,
 	CommandFactory,
 	Button,
-	waitForThemeApplied,
 	sinon
 ) {
 	'use strict';
@@ -156,5 +154,4 @@ function (
 		jQuery("#qunit-fixture").hide();
 	});
 
-	return waitForThemeApplied();
 });

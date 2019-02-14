@@ -10,7 +10,6 @@ sap.ui.define([
 	"sap/ui/dt/OverlayRegistry",
 	"sap/ui/dt/DesignTime",
 	"sap/m/Page",
-	"sap/ui/qunit/utils/waitForThemeApplied",
 	"sap/ui/thirdparty/sinon-4"
 ],
 function(
@@ -23,7 +22,6 @@ function(
 	OverlayRegistry,
 	DesignTime,
 	Page,
-	waitForThemeApplied,
 	sinon
 ) {
 	'use strict';
@@ -217,5 +215,4 @@ function(
 		jQuery("#qunit-fixture").hide();
 	});
 
-	return waitForThemeApplied();
 });

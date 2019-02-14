@@ -7,7 +7,6 @@ sap.ui.define([
 	"sap/ui/layout/HorizontalLayout",
 	"sap/ui/core/TooltipBase",
 	"sap/ui/model/json/JSONModel",
-	"sap/ui/qunit/utils/waitForThemeApplied",
 	"sap/ui/thirdparty/sinon-4"
 ],
 function(
@@ -17,7 +16,6 @@ function(
 	HorizontalLayout,
 	TooltipBase,
 	JSONModel,
-	waitForThemeApplied,
 	sinon
 ){
 	"use strict";
@@ -380,5 +378,4 @@ function(
 		jQuery("#qunit-fixture").hide();
 	});
 
-	return waitForThemeApplied();
 });

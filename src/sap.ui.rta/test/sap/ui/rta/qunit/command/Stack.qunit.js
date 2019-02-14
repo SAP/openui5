@@ -13,7 +13,6 @@ sap.ui.define([
 	"sap/m/Input",
 	"sap/m/Panel",
 	"sap/ui/core/UIComponent",
-	"sap/ui/qunit/utils/waitForThemeApplied",
 	"sap/ui/thirdparty/sinon-4"
 ], function(
 	CommandFactory,
@@ -28,7 +27,6 @@ sap.ui.define([
 	Input,
 	Panel,
 	UIComponent,
-	waitForThemeApplied,
 	sinon
 ){
 	"use strict";
@@ -233,5 +231,4 @@ sap.ui.define([
 		jQuery("#qunit-fixture").hide();
 	});
 
-	return waitForThemeApplied();
 });

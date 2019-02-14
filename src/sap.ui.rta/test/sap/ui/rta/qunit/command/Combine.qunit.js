@@ -9,7 +9,6 @@ sap.ui.define([
 	"sap/ui/dt/ElementOverlay",
 	"sap/m/Button",
 	"sap/m/Panel",
-	"sap/ui/qunit/utils/waitForThemeApplied",
 	"sap/ui/thirdparty/sinon-4"
 ],
 function (
@@ -21,7 +20,6 @@ function (
 	ElementOverlay,
 	Button,
 	Panel,
-	waitForThemeApplied,
 	sinon
 ) {
 	'use strict';
@@ -136,5 +134,4 @@ function (
 		jQuery("#qunit-fixture").hide();
 	});
 
-	return waitForThemeApplied();
 });

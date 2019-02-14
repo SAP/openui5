@@ -3,12 +3,10 @@
 sap.ui.define([
 	"sap/ui/rta/plugin/additionalElements/AddElementsDialog",
 	"sap/base/Log",
-	"sap/ui/qunit/utils/waitForThemeApplied",
 	"sap/ui/thirdparty/sinon-4"
 ], function (
 	AddElementsDialog,
 	Log,
-	waitForThemeApplied,
 	sinon
 ) {
 	"use strict";
@@ -218,5 +216,4 @@ sap.ui.define([
 		});
 	});
 
-	return waitForThemeApplied();
 });

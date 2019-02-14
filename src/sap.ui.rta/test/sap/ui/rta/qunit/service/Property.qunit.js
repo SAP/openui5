@@ -12,7 +12,6 @@ sap.ui.define([
 	"sap/ui/core/UIComponent",
 	"sap/ui/core/ComponentContainer",
 	"sap/ui/fl/FakeLrepConnectorSessionStorage",
-	"sap/ui/qunit/utils/waitForThemeApplied",
 	"sap/ui/thirdparty/sinon-4"
 ],
 	function(
@@ -26,7 +25,6 @@ sap.ui.define([
 	UIComponent,
 	ComponentContainer,
 	FakeLrepConnectorSessionStorage,
-	waitForThemeApplied,
 	sinon
 ) {
 	"use strict";
@@ -395,5 +393,4 @@ sap.ui.define([
 		jQuery("#qunit-fixture").hide();
 	});
 
-	return waitForThemeApplied();
 });

@@ -16,7 +16,6 @@ sap.ui.define([
 	"sap/m/VBox",
 	"sap/m/Button",
 	"sap/base/util/includes",
-	"sap/ui/qunit/utils/waitForThemeApplied",
 	"sap/ui/thirdparty/sinon-4"
 ],
 function (
@@ -35,7 +34,6 @@ function (
 	VBox,
 	Button,
 	includes,
-	waitForThemeApplied,
 	sinon
 ) {
 	'use strict';
@@ -752,5 +750,4 @@ function (
 		jQuery("#qunit-fixture").hide();
 	});
 
-	return waitForThemeApplied();
 });

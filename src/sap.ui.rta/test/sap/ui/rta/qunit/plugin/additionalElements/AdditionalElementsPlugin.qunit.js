@@ -18,7 +18,6 @@ sap.ui.define([
 	"sap/ui/fl/registry/SimpleChanges",
 	"sap/ui/fl/registry/Settings",
 	"sap/base/Log",
-	"sap/ui/qunit/utils/waitForThemeApplied",
 	"sap/base/util/uid",
 	"sap/ui/thirdparty/sinon-4"
 ], function (
@@ -39,7 +38,6 @@ sap.ui.define([
 	SimpleChanges,
 	Settings,
 	Log,
-	waitForThemeApplied,
 	uid,
 	sinon
 ){
@@ -1417,5 +1415,4 @@ sap.ui.define([
 		jQuery("#qunit-fixture").hide();
 	});
 
-	return waitForThemeApplied();
 });

@@ -27,7 +27,6 @@ sap.ui.define([
 	"sap/ui/fl/variants/VariantModel",
 	"sap/m/delegate/ValueStateMessage",
 	"sap/ui/rta/Utils",
-	"sap/ui/qunit/utils/waitForThemeApplied",
 	"sap/ui/thirdparty/sinon-4"
 ], function(
 	Utils,
@@ -56,7 +55,6 @@ sap.ui.define([
 	VariantModel,
 	ValueStateMessage,
 	RtaUtils,
-	waitForThemeApplied,
 	sinon
 ) {
 	"use strict";
@@ -1367,5 +1365,4 @@ sap.ui.define([
 		jQuery("#qunit-fixture").hide();
 	});
 
-	return waitForThemeApplied();
 });

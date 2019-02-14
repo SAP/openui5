@@ -10,7 +10,6 @@ sap.ui.define([
 	"sap/ui/fl/Utils",
 	"sap/ui/core/UIComponent",
 	"sap/ui/layout/form/SimpleFormLayout",
-	"sap/ui/qunit/utils/waitForThemeApplied",
 	"sap/ui/thirdparty/sinon-4"
 ],
 function(
@@ -23,7 +22,6 @@ function(
 	Utils,
 	UIComponent,
 	SimpleFormLayout,
-	waitForThemeApplied,
 	sinon
 ) {
 
@@ -169,5 +167,4 @@ function(
 		jQuery("#qunit-fixture").hide();
 	});
 
-	return waitForThemeApplied();
 });

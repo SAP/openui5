@@ -8,7 +8,6 @@ sap.ui.define([
 	"sap/ui/dt/ElementDesignTimeMetadata",
 	"sap/ui/fl/Utils",
 	"sap/m/Button",
-	"sap/ui/qunit/utils/waitForThemeApplied",
 	"sap/ui/thirdparty/sinon-4"
 ],
 function(
@@ -19,7 +18,6 @@ function(
 	ElementDesignTimeMetadata,
 	Utils,
 	Button,
-	waitForThemeApplied,
 	sinon
 ) {
 	"use strict";
@@ -117,5 +115,4 @@ function(
 		jQuery("#qunit-fixture").hide();
 	});
 
-	return waitForThemeApplied();
 });

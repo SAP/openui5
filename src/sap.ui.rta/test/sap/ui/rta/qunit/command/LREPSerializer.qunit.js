@@ -15,7 +15,6 @@ sap.ui.define([
 	"sap/ui/fl/variants/VariantManagement",
 	"sap/m/Input",
 	"sap/m/Panel",
-	"sap/ui/qunit/utils/waitForThemeApplied",
 	"sap/ui/thirdparty/sinon-4"
 ], function(
 	CommandFactory,
@@ -32,7 +31,6 @@ sap.ui.define([
 	VariantManagement,
 	Input,
 	Panel,
-	waitForThemeApplied,
 	sinon
 ) {
 	"use strict";
@@ -1169,5 +1167,4 @@ sap.ui.define([
 		jQuery("#qunit-fixture").hide();
 	});
 
-	return waitForThemeApplied();
 });
