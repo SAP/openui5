@@ -13,7 +13,7 @@
 		"resources": {
 			"css": [
 				{
-					"url": "TableBreadcrumb/style.css"
+					"uri": "TableBreadcrumb/style.css"
 				}
 			]
 		},

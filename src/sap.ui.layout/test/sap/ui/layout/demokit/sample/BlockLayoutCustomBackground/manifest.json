@@ -14,7 +14,7 @@
 		"resources": {
 			"css": [
 				{
-					"url": "resources/sample.css"
+					"uri": "resources/sample.css"
 				}
 			]
 		},

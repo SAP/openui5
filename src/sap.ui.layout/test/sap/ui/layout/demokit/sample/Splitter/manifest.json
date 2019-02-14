@@ -14,10 +14,10 @@
 		"resources": {
 			"css": [
 				{
-					"url": "css/splitter.css"
+					"uri": "css/splitter.css"
 				},
 				{
-					"url": "Splitter/css/splitter.css"
+					"uri": "Splitter/css/splitter.css"
 				}
 			]
 		},
