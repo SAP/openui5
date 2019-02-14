@@ -346,8 +346,7 @@
 			<Annotations Target="SAP__self.Department/ID">
 				<Annotation Term="SAP__common.ValueListReferences">
 					<Collection>
-						<String>../../../../f4/iwbep/v4_tea_department_id-fv/0001;ps='default-*iwbep*tea_busi-0001';va='com.sap.gateway.default.iwbep.tea_busi.v0001.ET-DEPARTMENT.ID'/$metadata
-						</String>
+						<String>../../../../f4/iwbep/v4_tea_department_id-fv/0001;ps='default-*iwbep*tea_busi-0001';va='com.sap.gateway.default.iwbep.tea_busi.v0001.ET-DEPARTMENT.ID'/$metadata</String>
 					</Collection>
 				</Annotation>
 				<Annotation Term="SAP__common.ValueListWithFixedValues"/>
@@ -355,8 +354,7 @@
 			<Annotations Target="SAP__self.Worker/STATUS">
 				<Annotation Term="SAP__common.ValueListReferences">
 					<Collection>
-						<String>../../../../f4/iwbep/v4_tea_emp_status-fv/0001;ps='default-*iwbep*tea_busi-0001';va='com.sap.gateway.default.iwbep.tea_busi.v0001.ET-EMPLOYEE.STATUS'/$metadata
-						</String>
+						<String>../../../../f4/iwbep/v4_tea_emp_status-fv/0001;ps='default-*iwbep*tea_busi-0001';va='com.sap.gateway.default.iwbep.tea_busi.v0001.ET-EMPLOYEE.STATUS'/$metadata</String>
 					</Collection>
 				</Annotation>
 				<Annotation Term="SAP__common.ValueListWithFixedValues"/>
@@ -364,16 +362,14 @@
 			<Annotations Target="SAP__self.TEAM/BudgetCurrency">
 				<Annotation Term="SAP__common.ValueListReferences">
 					<Collection>
-						<String>../../../../f4/sap/tcurc-ct/0001;ps='default-*iwbep*tea_busi-0001';va='com.sap.gateway.default.iwbep.tea_busi.v0001.ET-TEAM.BUDGET_CURRENCY'/$metadata
-						</String>
+						<String>../../../../f4/sap/tcurc-ct/0001;ps='default-*iwbep*tea_busi-0001';va='com.sap.gateway.default.iwbep.tea_busi.v0001.ET-TEAM.BUDGET_CURRENCY'/$metadata</String>
 					</Collection>
 				</Annotation>
 			</Annotations>
 			<Annotations Target="SAP__self.TEAM/DEPARTMENT_ID">
 				<Annotation Term="SAP__common.ValueListReferences">
 					<Collection>
-						<String>../../../../f4/iwbep/v4_tea_department_id-fv/0001;ps='default-*iwbep*tea_busi-0001';va='com.sap.gateway.default.iwbep.tea_busi.v0001.ET-TEAM.DEPARTMENT_ID'/$metadata
-						</String>
+						<String>../../../../f4/iwbep/v4_tea_department_id-fv/0001;ps='default-*iwbep*tea_busi-0001';va='com.sap.gateway.default.iwbep.tea_busi.v0001.ET-TEAM.DEPARTMENT_ID'/$metadata</String>
 					</Collection>
 				</Annotation>
 				<Annotation Term="SAP__common.ValueListWithFixedValues"/>
