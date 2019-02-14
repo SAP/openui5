@@ -35,7 +35,11 @@ sap.ui.define([
 		return document.getElementById(oApp.getId() + "-BG");
 	}
 
-	var sBackroungImageSrc  = "test-resources/sap/m/images/SAPLogo.jpg";
+	function getAbsoluteURL(sRelPath) {
+		return document.baseURI + sRelPath;
+	}
+
+	var sBackgroundImageSrc  = "test-resources/sap/m/images/SAPLogo.jpg";
 
 	QUnit.module("Initial Check");
 
@@ -849,14 +853,14 @@ sap.ui.define([
 	});
 
 	QUnit.test("style is set to DOM element", function(assert) {
-		var oApp = this.oSplitApp;
 
+		var oApp = this.oSplitApp;
 		// Act
-		oApp.setBackgroundImage(sBackroungImageSrc);
+		oApp.setBackgroundImage(sBackgroundImageSrc);
 		sap.ui.getCore().applyChanges();
 
 		// Check
-		assert.strictEqual(getBgDomElement(oApp).style.backgroundImage, 'url(\"' + sBackroungImageSrc + '\")',
+		assert.strictEqual(getBgDomElement(oApp).style.backgroundImage, 'url(\"' + (Device.browser.safari ? getAbsoluteURL(sBackgroundImageSrc) : sBackgroundImageSrc) + '\")',
 			"correct property value");
 	});
 
@@ -872,24 +876,25 @@ sap.ui.define([
 			sFileExtension = ".png",
 			sQuery = "?q1=1&q2=2",
 			sImgSrc1 = "data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAYAAAAfFcSJAAAADUlEQVR42mP8/5+hHgAHggJ/PchI7wAAAABJRU5ErkJggg==",
-			sImgSrc2 = sPath + sUnreservedChars + sReservedChars1 + sReservedChars2 + sOtherChars + sReservedCharsUnencoded + sFileExtension + sQuery,
-			aImgSrc = [sImgSrc1, sImgSrc2];
+			sImgSrc2 = sPath + sUnreservedChars + sReservedChars1 + sReservedChars2 + sOtherChars + sReservedCharsUnencoded + sFileExtension + sQuery;
 
-		aImgSrc.forEach(function(sImgSrc) {
-			// Act
-			oApp.setBackgroundImage(sImgSrc);
-			sap.ui.getCore().applyChanges();
+		oApp.setBackgroundImage(sImgSrc1);
+		sap.ui.getCore().applyChanges();
+		// Check
+		assert.strictEqual(getBgDomElement(oApp).style.backgroundImage, 'url(\"' + sImgSrc1 + '\")',
+			"correct property value");
 
-			// Check
-			assert.strictEqual(getBgDomElement(oApp).style.backgroundImage, 'url(\"' + sImgSrc + '\")',
-				"correct property value");
-		});
+		oApp.setBackgroundImage(sImgSrc2);
+		sap.ui.getCore().applyChanges();
+		// Check
+		assert.strictEqual(getBgDomElement(oApp).style.backgroundImage, 'url(\"' + (Device.browser.safari ? getAbsoluteURL(sImgSrc2) : sImgSrc2) + '\")',
+			"correct property value");
 	});
 
 
 	QUnit.test("encodes css-specific chars in backgroundImage value", function(assert) {
 		// Arrange
-		var sImageSrc = sBackroungImageSrc + ");border:5px solid red;",
+		var sImageSrc = sBackgroundImageSrc + ");border:5px solid red;",
 			oApp = this.oSplitApp,
 			oAppDom = getBgDomElement(oApp),
 			sBorderBeforeTest = oAppDom.style.border;
@@ -906,7 +911,7 @@ sap.ui.define([
 
 	QUnit.test("encodes html-specific chars in backgroundImage style", function(assert) {
 		// Arrange
-		var sImageSrc = sBackroungImageSrc + ')"; onmouseover="console.log"',
+		var sImageSrc = sBackgroundImageSrc + ')"; onmouseover="console.log"',
 			oApp = this.oSplitApp,
 			oAppDom = getBgDomElement(oApp),
 			oHandlerBeforeTest = oAppDom.onmouseover;
