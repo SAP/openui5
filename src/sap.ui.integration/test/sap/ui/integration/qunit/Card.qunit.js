@@ -881,28 +881,28 @@ function (
 			// Group 1 assertions
 			assert.equal(aGroups[0].getItems().length, 7, "Should have 7 items.");
 			assert.equal(aGroups[0].getItems()[0].getText(), oManifestContent.groups[0].title, "Should have correct group title.");
-			assert.equal(aGroups[0].getItems()[1].getText(), oManifestContent.groups[0].items[0].label += ":", "Should have correct item label.");
+			assert.equal(aGroups[0].getItems()[1].getText(), oManifestContent.groups[0].items[0].label + ":", "Should have correct item label.");
 			assert.equal(aGroups[0].getItems()[2].getText(), oData.firstName, "Should have correct item value.");
-			assert.equal(aGroups[0].getItems()[3].getText(), oManifestContent.groups[0].items[1].label += ":", "Should have correct item label.");
+			assert.equal(aGroups[0].getItems()[3].getText(), oManifestContent.groups[0].items[1].label + ":", "Should have correct item label.");
 			assert.equal(aGroups[0].getItems()[4].getText(), oData.lastName, "Should have correct item value.");
-			assert.equal(aGroups[0].getItems()[5].getText(), oManifestContent.groups[0].items[2].label += ":", "Should have correct item label.");
+			assert.equal(aGroups[0].getItems()[5].getText(), oManifestContent.groups[0].items[2].label + ":", "Should have correct item label.");
 			assert.equal(aGroups[0].getItems()[6].getText(), oData.phone, "Should have correct item value.");
 
 			// Group 2 assertions
 			assert.equal(aGroups[1].getItems().length, 2, "Should have 2 items.");
 			assert.equal(aGroups[1].getItems()[0].getText(), oManifestContent.groups[1].title, "Should have correct group title.");
 			assert.equal(aGroups[1].getItems()[1].getItems()[0].getSrc(), oData.manager.photo, "Should have correct image source.");
-			assert.equal(aGroups[1].getItems()[1].getItems()[1].getItems()[0].getText(), oManifestContent.groups[1].items[0].label += ":", "Should have correct item label");
+			assert.equal(aGroups[1].getItems()[1].getItems()[1].getItems()[0].getText(), oManifestContent.groups[1].items[0].label + ":", "Should have correct item label");
 			assert.equal(aGroups[1].getItems()[1].getItems()[1].getItems()[1].getText(), oData.manager.firstName + " " + oData.manager.lastName, "Should have correct item value.");
 
 			// Group 3 assertions
 			assert.equal(aGroups[2].getItems().length, 7, "Should have 7 items.");
 			assert.equal(aGroups[2].getItems()[0].getText(), oManifestContent.groups[2].title, "Should have correct group title.");
-			assert.equal(aGroups[2].getItems()[1].getText(), oManifestContent.groups[2].items[0].label += ":", "Should have correct item label.");
+			assert.equal(aGroups[2].getItems()[1].getText(), oManifestContent.groups[2].items[0].label + ":", "Should have correct item label.");
 			assert.equal(aGroups[2].getItems()[2].getText(), oData.company.name, "Should have correct item value.");
-			assert.equal(aGroups[2].getItems()[3].getText(), oManifestContent.groups[2].items[1].label += ":", "Should have correct item label.");
+			assert.equal(aGroups[2].getItems()[3].getText(), oManifestContent.groups[2].items[1].label + ":", "Should have correct item label.");
 			assert.equal(aGroups[2].getItems()[4].getText(), oData.company.address, "Should have correct item value.");
-			assert.equal(aGroups[2].getItems()[5].getText(), oManifestContent.groups[2].items[2].label += ":", "Should have correct item label.");
+			assert.equal(aGroups[2].getItems()[5].getText(), oManifestContent.groups[2].items[2].label + ":", "Should have correct item label.");
 			assert.equal(aGroups[2].getItems()[6].getText(), oData.company.website, "Should have correct item value.");
 			assert.equal(aGroups[2].getItems()[6].getHref(), oData.company.website, "Should have correct item link.");
 

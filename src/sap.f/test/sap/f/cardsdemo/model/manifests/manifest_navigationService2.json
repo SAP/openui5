@@ -13,7 +13,7 @@
 	"sap.card": {
 		"type": "List",
 		"header": {
-			"title": "Request list content Card",
+			"title": "Request list content Card 2",
 			"subTitle": "Card Subtitle",
 			"icon": {
 				"src": "sap-icon://accept"
@@ -47,7 +47,7 @@
 						"type": "Navigation",
 						"service": "Navigation2",
 						"parameters": {
-							"somekey": "{someparam}"
+							"url": "{url}"
 						}
 					}
 				]
