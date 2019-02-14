@@ -1041,7 +1041,7 @@ sap.ui.define([
 
 		if ($headerDomRef) {
 			sId = this.getId() + '-' + sId;
-			return jQuery(document.getElementById(sId));
+			return $headerDomRef.find("#" + sId);
 		}
 
 		return this.$(sId); //if no dom reference then search within its own id-space (prepended with own id)
