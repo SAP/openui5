@@ -10,28 +10,20 @@ sap.ui.define([
 
 	/**
 	 * @class
-	 * The Press action is used to simulate a press interaction on a Control's dom ref.
-	 * This will work out of the box for most of the controls (even custom controls).
+	 * The <code>Press</code> action is used to simulate a press interaction with a
+	 * control. Most controls are supported, for example buttons, links, list items,
+	 * tables, filters, and form controls.
 	 *
-	 * Here is a List of supported controls (some controls will trigger the press on a specific region):
+	 * The <code>Press</code> action targets a special DOM element representing the
+	 * control. This DOM element can be customized.
 	 *
-	 * <ul>
-	 *     <li>sap.m.Button</li>
-	 *     <li>sap.m.ComboBox</li>
-	 *     <li>sap.m.IconTabFilter</li>
-	 *     <li>sap.m.Input - Value help</li>
-	 *     <li>sap.m.Link</li>
-	 *     <li>sap.m.List - More Button</li>
-	 *     <li>sap.m.ObjectIdentifier</li>
-	 *     <li>sap.m.Page - Back Button</li>
-	 *     <li>sap.m.SearchField - Search Button</li>
-	 *     <li>sap.m.semantic.DetailPage - Back Button</li>
-	 *     <li>sap.m.semantic.FullscreenPage - Back Button</li>
-	 *     <li>sap.m.StandardListItem</li>
-	 *     <li>sap.m.StandardTile</li>
-	 *     <li>sap.m.Table - More Button</li>
-	 *     <li>sap.ui.comp.smartfilterbar.SmartFilterBar - Go Button</li>
-	 * </ul>
+	 * For most most controls (even custom ones), the DOM focus reference is an
+	 * appropriate choice. You can choose a different DOM element by specifying its ID
+	 * suffix. You can do this by directly passing the ID suffix to the Press constructor,
+	 * or by defining a control adapter.
+	 *
+	 * There are some basic controls for which OPA5 has defined <code>Press</code> control
+	 * adapters. For more information, see {@link sap.ui.test.actions.Press.controlAdapters}.
 	 *
 	 * @extends sap.ui.test.actions.Action
 	 * @public
@@ -80,7 +72,24 @@ sap.ui.define([
 	});
 
 	/**
-	 * A map that contains the id suffixes for certain controls of the library.
+	 * A map of ID suffixes for controls that require a special DOM reference for
+	 * <code>Press</code> interaction.
+	 *
+	 * Here is a sublist of supported controls and their <code>Press</code> control adapter:
+	 * <ul>
+	 *  <li>sap.m.ComboBox - Arrow button</li>
+	 *  <li>sap.m.SearchField - Search Button</li>
+	 *  <li>sap.m.Input - Value help</li>
+	 *  <li>sap.m.List - More Button</li>
+	 *  <li>sap.m.Table - More Button</li>
+	 *  <li>sap.m.ObjectIdentifier - Title</li>
+	 *  <li>sap.m.ObjectAttribute - Text</li>
+	 *  <li>sap.m.Page - Back Button</li>
+	 *  <li>sap.m.semantic.FullscreenPage - Back Button</li>
+	 *  <li>sap.m.semantic.DetailPage - Back Button</li>
+	 *  <li>sap.ui.comp.smartfilterbar.SmartFilterBar - Go Button</li>
+	 * </ul>
+	 *
 	 * @since 1.63 a control adapter can also be a function.
 	 * This is useful for controls with different modes where a different control adapter makes sense in different modes.
 	 *
