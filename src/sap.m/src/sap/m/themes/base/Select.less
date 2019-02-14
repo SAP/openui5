@@ -372,6 +372,20 @@ div.sapMSltPicker {
 .sapUiSizeCompact div.sapMSltPicker.sapMDialogWithSubHeader {
 	padding-top: @_sap_m_Dialog_BarCompactHeight;
 
+	.sapMDialogSubHeader,
+	.sapMPopoverSubHeader {
+		/*
+			using height:0 instead of display:none becase of the calculations
+			for the PopOver's content, since window.getComputedStyle gets the height,
+			even though you have specified display:none.
+			This results in a wrong calculation for the height of the content.
+		*/
+		height: 0;
+		.sapMSltPickerValueState.sapMSltPickerNoneState {
+			display: none;
+		}
+	}
+
 	&.sapMSltPickerWithSubHeader {
 		padding-top: @_sap_m_Dialog_BarCompactHeight + @_sap_m_SltPicker_SubHeader_BarHeight;
 	}
