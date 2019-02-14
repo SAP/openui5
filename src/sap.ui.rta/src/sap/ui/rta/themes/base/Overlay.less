@@ -1,11 +1,12 @@
 /******************************************************************
-	Style of the RTA Overlays
+	Style of the RTA Overlays - base Theme
 *******************************************************************/
 @_sap_ui_rta_Overlay_ActiveBG : fade(@sapUiSelected, 10%);
-@_sap_ui_rta_Overlay_BaseBG : white;
+@_sap_ui_rta_Overlay_BaseBG : @sapUiWhite;
 @_sap_ui_rta_Overlay_Border: @sapUiSelected;
 @_sap_ui_rta_Overlay_HoverBG : fade(darken(@_sap_ui_rta_Overlay_BaseBG, 100%), 10.8%);
 @_sap_ui_rta_Overlay_ActiveHoverBG : fade(@sapUiSelected, 20%);
+@_sap_ui_rta_Overlay_ErrorBorder : @sapUiErrorBorder;
 
 .sapUiRtaRoot {
 	.sapUiRtaMarginBottom {
@@ -45,10 +46,10 @@
 							background-color: @_sap_ui_rta_Overlay_Border;
 							box-shadow: 0px 0px 4px rgba(0,0,0,0.2);
 							cursor: pointer;
-							border: 0.125rem solid #ffffff;
+							border: 0.125rem solid @_sap_ui_rta_Overlay_BaseBG;
 
 							.sapUiIcon {
-								color: @sapUiWhite;
+								color: @_sap_ui_rta_Overlay_BaseBG;
 								font-size: 0.69rem;
 								line-height: 1.25rem;
 								width: 20px;
@@ -161,7 +162,7 @@
 		}
 
 		&.sapUiRtaErrorBg:after {
-			border: 2px solid @sapUiErrorBorder
+			border: 2px solid @_sap_ui_rta_Overlay_ErrorBorder;
 		}
 
 		&.sapUiDtOverlayFocusable {

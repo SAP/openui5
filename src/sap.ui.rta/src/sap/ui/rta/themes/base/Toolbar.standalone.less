@@ -1,20 +1,25 @@
-/* type: standalone */
+/******************************************************************
+	Style of the RTA Standalone Toolbar - base Theme
+*******************************************************************/
+@_sap_ui_rta_Toolbar_Standalone_TextColor: @sapUiWhite; // #fff
+@_sap_ui_rta_Toolbar_Standalone_BGColor : @sapUiDeepBG; // #000
+
 .sapUiRtaToolbar.type_standalone.color_default {
-	background-color: #000;
+	background-color: @_sap_ui_rta_Toolbar_Standalone_BGColor;
 	top: -50px;
 	transition: top 0.25s ease-out;
 	}
 	.sapUiRtaToolbar.type_standalone.color_default .sapMBtn .sapMBtnContent,
 	.sapUiRtaToolbar.type_standalone.color_default .sapMBtn .sapMBtnTransparent .sapMBtnIcon {
 		text-shadow: none; /* Override shadow of `.sapMBtnInner` in sap.m */
-		color: #fff;
+		color: @_sap_ui_rta_Toolbar_Standalone_TextColor;
 		}
 		.sapUiRtaToolbar.type_standalone.color_default .sapMBtn.sapMBtnDisabled .sapMBtnContent,
 		.sapUiRtaToolbar.type_standalone.color_default .sapMBtn.sapMBtnDisabled .sapMBtnIcon {
-			color: #666;
+			opacity: 0.7;
 			}
 		.sapUiRtaToolbar.type_standalone.color_default .sapMBtn:focus .sapMFocusable {
-			outline-color: #fff; /* Override of `html.sap-desktop .sapMBtn:focus > .sapMFocusable` */
+			outline-color: @_sap_ui_rta_Toolbar_Standalone_TextColor; /* Override of `html.sap-desktop .sapMBtn:focus > .sapMFocusable` */
 			}
 	.sapUiRtaToolbar.type_standalone.color_default.is_visible {
 		top: 0;
