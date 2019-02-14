@@ -344,7 +344,7 @@ sap.ui.define([
 				// Nothing relevant has been changed as item is not selected
 				return;
 			}
-			// Create a new dimMeasureItem if an item have been changed to 'selected'
+			// Create a new dimMeasureItem if an item have been changed to  'selected'
 			oDimMeasureItem = new sap.m.P13nDimMeasureItem({
 				columnKey: oModelItem.columnKey,
 				visible: oModelItem.persistentSelected,
@@ -361,6 +361,9 @@ sap.ui.define([
 	P13nDimMeasurePanel.prototype._syncPanel2Model = function() {
 		var oModel = this.getModel("$sapmP13nDimMeasurePanel");
 		var oData = oModel.getData();
+
+        // ChartTypeKey
+        oModel.setProperty("/selectedChartTypeKey", this.getChartTypeKey());
 
 		this.getDimMeasureItems().forEach(function(oDimMeasureItem) {
 			var oModelItem = this._getModelItemByColumnKey(oDimMeasureItem.getColumnKey());
@@ -690,6 +693,14 @@ sap.ui.define([
 	P13nDimMeasurePanel.prototype._onItemPressed = function(oEvent) {
 		this._switchMarkedTableItemTo(oEvent.getParameter('listItem'));
 	};
+
+    P13nDimMeasurePanel.prototype._onChartTypeChange = function(oEvent) {
+        this._notifyChange();
+    };
+
+    P13nDimMeasurePanel.prototype._onRoleChange = function(oEvent) {
+        this._notifyChange();
+    };
 
 	/**
 	 * @private
@@ -1055,7 +1066,8 @@ sap.ui.define([
 										text: oAvailableRoleType.text
 									});
 								}
-							}
+							},
+                            change: jQuery.proxy(this._onRoleChange, this)
 						})
 					],
 					visible: "{visible}",
@@ -1209,6 +1221,7 @@ sap.ui.define([
 			text: that._oRb.getText('COLUMNSPANEL_CHARTTYPE')
 		});
 		var oChartTypeComboBox = new sap.m.ComboBox({
+            placeholder: oInvisibleChartTypeText.getText(),
 			selectedKey: {
 				path: '/selectedChartTypeKey'
 			},
@@ -1221,6 +1234,7 @@ sap.ui.define([
 					text: "{text}"
 				})
 			},
+            selectionChange: jQuery.proxy(this._onChartTypeChange, this),
 			layoutData: new sap.m.OverflowToolbarLayoutData({
 				moveToOverflow: false,
 				stayInOverflow: false
