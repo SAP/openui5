@@ -2217,7 +2217,7 @@ html:not(.sapUiMedia-Std-Phone) .sapUiParamText.depth-5 {
 		height: 100%;
 	}
 
-	.sap-phone.sapUiDemokit .sapUiDemokitLandingImageCell {
+	.sap-phone .sapUiDemokit .sapUiDemokitLandingImageCell {
 		position: relative;
 	}
 
