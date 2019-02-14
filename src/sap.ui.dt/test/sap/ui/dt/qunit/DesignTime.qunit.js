@@ -108,6 +108,7 @@ function(
 
 			oOuterLayout = new VerticalLayout("outer-layout");
 			oOuterLayout.placeAt("qunit-fixture");
+			sap.ui.getCore().applyChanges();
 			this.oDesignTime.addRootElement(oOuterLayout);
 
 			this.oDesignTime.attachEventOnce("synced", function() {
