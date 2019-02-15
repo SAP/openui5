@@ -3,8 +3,16 @@
  */
 
 sap.ui.define([
-	"sap/ui/thirdparty/jquery", "sap/ui/thirdparty/URI", "sap/ui/fl/Utils", "sap/ui/fl/LrepConnector", "sap/ui/fl/Cache", "sap/ui/fl/ChangePersistenceFactory"
-], function(jQuery, uri, FlexUtils, LrepConnector, Cache, ChangePersistenceFactory) {
+	"sap/ui/thirdparty/jquery",
+	"sap/ui/fl/LrepConnector",
+	"sap/ui/fl/Cache",
+	"sap/ui/fl/ChangePersistenceFactory"
+], function(
+	jQuery,
+	LrepConnector,
+	Cache,
+	ChangePersistenceFactory
+) {
 	"use strict";
 	var oLrepConnector = Object.create(LrepConnector.prototype);
 	FakeLrepConnector._oBackendInstances = {};
@@ -14,7 +22,7 @@ sap.ui.define([
 	 * to enable the FakeLrepConnector.
 	 *
 	 * Provides a fake implementation for the sap.ui.fl.LrepConnector
-	 * @param {String} sInitialComponentJsonPath - the relative path to a test-component-changes.json file
+	 * @param {String} sInitialComponentJsonPath Relative path to a test-component-changes.json file
 	 *
 	 * @constructor
 	 * @alias sap.ui.fl.FakeLrepConnector
@@ -38,6 +46,17 @@ sap.ui.define([
 			/*eslint-enable noinspection, no-loop-func */
 		}
 	}
+
+	FakeLrepConnector.prototype._getFlexibilityServicesUrlPrefix = function() {
+		return sap.ui.getCore().getConfiguration().getFlexibilityServices();
+	};
+
+	FakeLrepConnector.prototype._getUrlPrefix = function(bIsVariant) {
+		if (bIsVariant) {
+			return this._getFlexibilityServicesUrlPrefix() + "/variants/";
+		}
+		return this._getFlexibilityServicesUrlPrefix() + "/changes/";
+	};
 
 	/**
 	 * Replaces the original {@link sap.ui.fl.LrepConnector.prototype.loadSettings} method.
@@ -69,7 +88,7 @@ sap.ui.define([
 	 * Sets the availability status of flexibility service.
 	 * This method allows testing application behavior when flexibility service is not available.
 	 *
-	 * @param {boolean} [bAvailability] - Availability status
+	 * @param {boolean} [bAvailability] Availability status
 	 */
 	FakeLrepConnector.prototype.setFlexServiceAvailability  = function(bAvailability){
 		LrepConnector._bServiceAvailability = bAvailability;
@@ -220,9 +239,9 @@ sap.ui.define([
 	 * If the <code>sAppComponentName</code> is provided, replaces the connector instance of corresponding {@link sap.ui.fl.ChangePersistence} by a fake one.
 	 * After enabling fake LRep connector, function {@link sap.ui.fl.FakeLrepConnector.disableFakeConnector} must be called to restore the original connector.
 	 *
-	 * @param {string} sInitialComponentJsonPath - Relative path to a test-component-changes.json file
-	 * @param {string} [sAppComponentName] - Name of application component to overwrite the existing LRep connector
-	 * @param {string} [sAppVersion] - Version of application to overwrite the existing LRep connector
+	 * @param {string} sInitialComponentJsonPath Relative path to a test-component-changes.json file
+	 * @param {string} [sAppComponentName] Name of application component to overwrite the existing LRep connector
+	 * @param {string} [sAppVersion] Version of application to overwrite the existing LRep connector
 	 */
 	FakeLrepConnector.enableFakeConnector = function(sInitialComponentJsonPath, sAppComponentName, sAppVersion){
 
@@ -262,8 +281,8 @@ sap.ui.define([
 	 * Restores the original {@link sap.ui.fl.LrepConnector.createConnector} factory function.
 	 * If the <code>sAppComponentName</code> is provided, restores the connector instance of corresponding {@link sap.ui.fl.ChangePersistence} by the original one.
 	 *
-	 * @param {string} [sAppComponentName] - Name of application component to restore the original LRep connector
-	 * @param {string} [sAppVersion] - Version of application to restore the original LRep connector
+	 * @param {string} [sAppComponentName] Name of application component to restore the original LRep connector
+	 * @param {string} [sAppVersion] Version of application to restore the original LRep connector
 	 */
 	FakeLrepConnector.disableFakeConnector = function(sAppComponentName, sAppVersion){
 

@@ -521,7 +521,7 @@ sap.ui.define([
 				FakeLrepConnectorLocalStorage.enableFakeConnector(oSettings, oComponent.name, oComponent.appVersion, true);
 
 				var oFakeConnector = LrepConnector.createConnector();
-				resolve(oFakeConnector.loadChanges(oComponent.name, mFlexData.changes.changes));
+				resolve(oFakeConnector.loadChanges(oComponent.name, undefined, mFlexData.changes.changes));
 			});
 		});
 	};

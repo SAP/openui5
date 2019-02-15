@@ -15,12 +15,14 @@ sap.ui.define([
 	var sandbox = sinon.sandbox.create();
 
 	var oTestData = {};
-	oTestData.oChange1 = {"fileName":"id_1445501120486_25","fileType":"change","changeType":"hideControl","component":"sap.ui.fl.test.Demo.md.Component","packageName":"$TMP","content":{},"selector":{"id":"FLDemoAppMD---detail--GroupElementDatesShippingStatus"},"layer":"CUSTOMER","texts":{},"namespace":"sap.ui.fl.test.Demo.md.Component","creation":"","originalLanguage":"EN","conditions":{},"support":{"generator":"Change.createInitialFileContent","service":"","user":""}};
-	oTestData.oChange2 = {"fileName":"id_1445517849455_16","fileType":"change","changeType":"addField","component":"sap.ui.fl.test.Demo.Component","packageName":"$TMP","content":{"field":{"value":"SalesOrderId","valueProperty":"value","id":"FLDemoApp---detail--GroupDates_SalesOrder_SalesOrderId","jsType":"sap.ui.comp.smartfield.SmartField","index":4}},"selector":{"id":"FLDemoApp---detail--GroupDates"},"layer":"CUSTOMER","texts":{"fieldLabel":{"value":"Sales Order ID","type":"XFLD"}},"namespace":"sap.ui.fl.test.Demo.Component","creation":"","originalLanguage":"DE","conditions":{},"support":{"generator":"Change.createInitialFileContent","service":"","user":""}};
+	oTestData.oChange1 = {"fileName":"id_1445501120486_25","fileType":"change","changeType":"hideControl","reference":"sap.ui.fl.test.Demo.md","component":"sap.ui.fl.test.Demo.md.Component","packageName":"$TMP","content":{},"selector":{"id":"FLDemoAppMD---detail--GroupElementDatesShippingStatus"},"layer":"CUSTOMER","texts":{},"namespace":"sap.ui.fl.test.Demo.md.Component","creation":"","originalLanguage":"EN","conditions":{},"support":{"generator":"Change.createInitialFileContent","service":"","user":""}};
+	oTestData.oChange2 = {"fileName":"id_1445517849455_16","fileType":"change","changeType":"addField","reference":"sap.ui.fl.test.Demo.Component","component":"sap.ui.fl.test.Demo.Component","packageName":"$TMP","content":{"field":{"value":"SalesOrderId","valueProperty":"value","id":"FLDemoApp---detail--GroupDates_SalesOrder_SalesOrderId","jsType":"sap.ui.comp.smartfield.SmartField","index":4}},"selector":{"id":"FLDemoApp---detail--GroupDates"},"layer":"USER","texts":{"fieldLabel":{"value":"Sales Order ID","type":"XFLD"}},"namespace":"sap.ui.fl.test.Demo.Component","creation":"","originalLanguage":"DE","conditions":{},"support":{"generator":"Change.createInitialFileContent","service":"","user":""}};
+	oTestData.oChange3 = {"fileName":"id_1445517849455_17","fileType":"change","changeType":"addField","reference":"sap.ui.fl.test.Demo","component":"sap.ui.fl.test.Demo.Component","packageName":"$TMP","content":{"field":{"value":"SalesOrderId","valueProperty":"value","id":"FLDemoApp---detail--GroupDates_SalesOrder_SalesOrderId","jsType":"sap.ui.comp.smartfield.SmartField","index":4}},"selector":{"id":"FLDemoApp---detail--GroupDates"},"layer":"CUSTOMER","texts":{"fieldLabel":{"value":"Sales Order ID","type":"XFLD"}},"namespace":"sap.ui.fl.test.Demo.Component","creation":"","originalLanguage":"DE","conditions":{},"support":{"generator":"Change.createInitialFileContent","service":"","user":""}};
 	oTestData.oVariant1 = {"fileName":"id_1445501120486_27", "fileType": "ctrl_variant", "variantManagementReference":"dummy"};
 
 	oTestData.sChangeId1 = oTestData.oChange1.fileName;
 	oTestData.sChangeId2 = oTestData.oChange2.fileName;
+	oTestData.sChangeId3 = oTestData.oChange3.fileName;
 	oTestData.sVariantId1 = oTestData.oVariant1.fileName;
 
 	QUnit.module("Given I use SAP Fake Lrep Local Storage", {
@@ -54,6 +56,7 @@ sap.ui.define([
 
 			FakeLrepSessionStorage.saveChange(oTestData.sChangeId1, oTestData.oChange1);
 			FakeLrepSessionStorage.saveChange(oTestData.sChangeId2, oTestData.oChange2);
+			FakeLrepSessionStorage.saveChange(oTestData.sChangeId3, oTestData.oChange3);
 			FakeLrepSessionStorage.saveChange(oTestData.sVariantId1, oTestData.oVariant1);
 		},
 		afterEach : function() {
@@ -65,22 +68,25 @@ sap.ui.define([
 			var oParsedChange1FromGetChange;
 			oParsedChange1FromGetChange = FakeLrepSessionStorage.getChange(oTestData.sChangeId1);
 
-			assert.equal(FakeLrepSessionStorage.getNumChanges(), 3, "then after saving there should be 3 changes");
+			assert.equal(FakeLrepSessionStorage.getNumChanges(), 4, "then after saving there should be 4 changes");
 			assert.deepEqual(oTestData.oChange1, oParsedChange1FromGetChange, "then the first saved and retrieved change should be the same");
-			assert.equal(FakeLrepSessionStorage.getChanges().length, 3, "then the received change array has 3 entries");
+			assert.equal(FakeLrepSessionStorage.getChanges().length, 4, "then the received change array has 4 entries");
+
+			assert.equal(FakeLrepSessionStorage.getChanges("sap.ui.fl.test.Demo.Component").length, 2, "then the received change array has 2 entries");
+			assert.equal(FakeLrepSessionStorage.getChanges("sap.ui.fl.test.Demo.Component", "USER").length, 1, "then the received change array has 1 entry");
 		});
 
 		QUnit.test("when I delete a specific change", function(assert) {
 			FakeLrepSessionStorage.deleteChange(oTestData.sChangeId1);
 
-			assert.equal(FakeLrepSessionStorage.getNumChanges(), 2, "then after deleting 1 change, there schould be 2 changes");
+			assert.equal(FakeLrepSessionStorage.getNumChanges(), 3, "then after deleting 1 change, there schould be 3 changes");
 			assert.equal(FakeLrepSessionStorage.getChange(oTestData.sChangeId1), undefined, "then if I try to get the deleted change it schould be undefined");
 		});
 
 		QUnit.test("when I delete a specific variant change", function(assert) {
 			FakeLrepSessionStorage.deleteChange(oTestData.sVariantId1);
 
-			assert.equal(FakeLrepSessionStorage.getNumChanges(), 2, "then after deleting 1 variant change, there schould be 2 changes");
+			assert.equal(FakeLrepSessionStorage.getNumChanges(), 3, "then after deleting 1 variant change, there schould be 3 changes");
 			assert.equal(FakeLrepSessionStorage.getChange(oTestData.sVariantId1), undefined, "then if I try to get the deleted change it schould be undefined");
 		});
 
