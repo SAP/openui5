@@ -495,6 +495,19 @@ function ($, Core, ObjectPageLayout, ObjectPageHeader, ObjectPageHeaderActionBut
 		assert.strictEqual(this.myView.byId("installButton").$().css("visibility"), "hidden", "ObjectPageHeaderActionButton is hidden");
 	});
 
+	QUnit.test("_findById can find within given element", function (assert) {
+
+		var oHeader = this.myView.byId("applicationHeader"),
+			$HeaderClone = oHeader.$().clone(),
+			$HeaderClone_identifier;
+
+		// Act: search element within the clone
+		$HeaderClone_identifier = oHeader._findById($HeaderClone, "identifierLine");
+
+		assert.ok(jQuery.contains($HeaderClone.get(0), $HeaderClone_identifier.get(0)), "returned element is part of clone");
+		assert.ok(!jQuery.contains(oHeader.getDomRef(), $HeaderClone_identifier.get(0)), "returned element is not part of the original element");
+	});
+
 	QUnit.module("Action buttons", {
 		beforeEach: function (assert) {
 			var done = assert.async();
