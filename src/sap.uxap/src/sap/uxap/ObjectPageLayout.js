@@ -874,7 +874,8 @@ sap.ui.define([
 
 	ObjectPageLayout.prototype._grepCurrentTabSectionBases = function () {
 		var oFiltered = [],
-			oSectionToLoad;
+			oSectionToLoad,
+			oSectionParent;
 
 		this._adjustSelectedSectionByUXRules();
 		oSectionToLoad = this.oCore.byId(this.getSelectedSection());
@@ -882,7 +883,8 @@ sap.ui.define([
 		if (oSectionToLoad) {
 			var sSectionToLoadId = oSectionToLoad.getId();
 			this._aSectionBases.forEach(function (oSection) {
-				if (oSection.getParent().getId() === sSectionToLoadId) {
+				oSectionParent = oSection.getParent();
+				if (oSectionParent && oSectionParent.getId() === sSectionToLoadId) {
 					oFiltered.push(oSection);
 				}
 			});
