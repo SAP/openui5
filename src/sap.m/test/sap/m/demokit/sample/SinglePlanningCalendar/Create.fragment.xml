@@ -14,6 +14,8 @@
 				<f:content>
 					<Label text="Title" labelFor="appTitle"/>
 					<Input id="appTitle"/>
+					<Label text="More information" labelFor="inputInfo"/>
+					<Input id="moreInfo"/>
 					<Label text="Type" labelFor="appType"/>
 					<Select
 						id="appType"
@@ -27,14 +29,27 @@
 					<DateTimePicker
 							id="startDate"
 							required="true"
-							change="handleCreateDateChange"/>
+							change="handleCreateDateChange"
+							dateValue="{/StartDate}"
+							visible="{= !${allDay>/allDay}}"/>
+					<DatePicker
+							id="dpStartDate"
+							change="handleCreateDatePickerChange"
+							dateValue="{/StartDate}"
+							visible="{= ${allDay>/allDay}}"/>
 					<Label text="End date" labelFor="endDate"/>
 					<DateTimePicker
 							id="endDate"
 							required="true"
-							change="handleCreateDateChange"/>
-					<Label text="More information" labelFor="inputInfo"/>
-					<Input id="moreInfo"/>
+							change="handleCreateDateChange"
+							dateValue="{/EndDate}"
+							visible="{= !${allDay>/allDay}}"/>
+					<DatePicker
+							id="dpEndDate"
+							change="handleCreateDatePickerChange"
+							dateValue="{/EndDate}"
+							visible="{= ${allDay>/allDay}}"/>
+					<CheckBox id="allDay" text="All-day" selected="{allDay>/allDay}" select="handleCheckBoxSelectCreate"/>
 				</f:content>
 			</f:SimpleForm>
 		</l:content>

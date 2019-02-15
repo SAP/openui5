@@ -2,6 +2,7 @@
 	controllerName="sap.m.sample.SinglePlanningCalendar.Page"
 	xmlns:mvc="sap.ui.core.mvc"
 	xmlns:core="sap.ui.core"
+	xmlns:unified="sap.ui.unified"
 	xmlns="sap.m">
 	<VBox class="sapUiSmallMargin">
 		<Label text="Select sticky mode" labelFor="stickyModeSelect" />
@@ -30,15 +31,14 @@
 				<SinglePlanningCalendarDayView key="DayView" title="Day" />
 			</views>
 			<appointments>
-				<CalendarAppointment
+				<unified:CalendarAppointment
 					title= "{title}"
 					text= "{text}"
 					type= "{type}"
 					icon= "{icon}"
-					fullDay= "{fullDay}"
 					startDate= "{startDate}"
 					endDate= "{endDate}">
-				</CalendarAppointment>
+				</unified:CalendarAppointment>
 			</appointments>
 		</SinglePlanningCalendar>
 	</VBox>

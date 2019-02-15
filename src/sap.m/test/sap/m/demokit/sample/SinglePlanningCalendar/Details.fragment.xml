@@ -20,6 +20,8 @@
 				<f:content>
 					<Label text="Title" labelFor="appTitle"/>
 					<Input id="appTitle"/>
+					<Label text="More information" labelFor="moreInfo"/>
+					<Input id="moreInfo"/>
 					<Label text="Type" labelFor="appType"/>
 					<Select
 						id="appType"
@@ -30,11 +32,28 @@
 						<core:Item key="{type}" text="{type}" />
 					</Select>
 					<Label text="Start date" labelFor="startDate"/>
-					<DateTimePicker id="startDate" change="handleDetailsDateChange"/>
+					<DateTimePicker
+							id="startDate"
+							change="handleDetailsDateChange"
+							dateValue="{/StartDate}"
+							visible="{= !${allDay>/allDay}}"/>
+					<DatePicker
+							id="dpStartDate"
+							change="handleDetailsDatePickerChange"
+							dateValue="{/StartDate}"
+							visible="{= ${allDay>/allDay}}"/>
 					<Label text="End date" labelFor="endDate"/>
-					<DateTimePicker id="endDate" change="handleDetailsDateChange"/>
-					<Label text="More information" labelFor="moreInfo"/>
-					<Input id="moreInfo"/>
+					<DateTimePicker
+							id="endDate"
+							change="handleDetailsDateChange"
+							dateValue="{/EndDate}"
+							visible="{= !${allDay>/allDay}}"/>
+					<DatePicker
+							id="dpEndDate"
+							change="handleDetailsDatePickerChange"
+							dateValue="{/EndDate}"
+							visible="{= ${allDay>/allDay}}"/>
+					<CheckBox id="allDay" text="All-day" selected="{allDay>/allDay}" select="handleCheckBoxSelectDetails"/>
 				</f:content>
 			</f:SimpleForm>
 		</content>

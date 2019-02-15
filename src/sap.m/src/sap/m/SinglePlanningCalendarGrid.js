@@ -26,7 +26,8 @@ sap.ui.define([
 			BLOCKER_ROW_HEIGHT_COZY = 34,
 			BLOCKER_ROW_HEIGHT_COMPACT = 25,
 			HALF_HOUR_MS = 3600000 / 2,
-			ONE_MIN_MS = 60 * 1000;
+			ONE_MIN_MS = 60 * 1000,
+			MILLISECONDS_IN_A_DAY = 86400000;
 
 		/**
 		 * Constructor for a new SinglePlanningCalendarGrid.
@@ -39,7 +40,7 @@ sap.ui.define([
 		 *
 		 * <h3>Overview</h3>
 		 *
-		 * Displays a grid in which appointments and blockers are rendered.
+		 * Displays a grid in which appointments are rendered.
 		 *
 		 * <b>Note:</b> The <code>PlanningCalendarGrid</code> uses parts of the <code>sap.ui.unified</code> library.
 		 * This library will be loaded after the <code>PlanningCalendarGrid</code>, if it wasn't previously loaded.
@@ -55,8 +56,8 @@ sap.ui.define([
 		 *     <li>Each column in the grid represents a single entity of the view type. For example in the week view one
 		 *     column represents a week day.</li>
 		 *     <li>Each row represents an hour from each day.</li>
-		 *     <li>There are also appointments and blockers displayed across the grid. To display blockers, see
-		 *     {@link #property:fullDay} of the <code>sap.ui.unified.CalendarAppointment</code>.</li>
+		 *     <li>There are also appointments displayed across the grid. To display an all-day appointment, the
+		 *     appointment must start at 00:00 and end on any day in the future in 00:00h.</li>
 		 * </ul>
 		 *
 		 * @extends sap.ui.core.Control
@@ -89,9 +90,10 @@ sap.ui.define([
 					/**
 					 * The appointments to be displayed in the grid. Appointments outside the visible time frame are not rendered.
 					 * Appointments, longer than a day, will be displayed in all of the affected days.
-					 * To display blockers, see {@link #property:fullDay} of the <code>sap.m.CalendarAppointment</code>.
+					 * An appointment which starts at 00:00 and ends in 00:00 on any day in the future is displayed as an all-day
+					 * appointment.
 					 */
-					appointments: {type: "sap.m.CalendarAppointment", multiple: true, singularName: "appointment"},
+					appointments: {type: "sap.ui.unified.CalendarAppointment", multiple: true, singularName: "appointment"},
 
 					/**
 					 * Hidden, for internal use only.
@@ -123,7 +125,7 @@ sap.ui.define([
 							/**
 							 * The selected appointment.
 							 */
-							appointment: {type: "sap.m.CalendarAppointment"}
+							appointment: {type: "sap.ui.unified.CalendarAppointment"}
 
 						}
 					}
@@ -238,7 +240,7 @@ sap.ui.define([
 			if (oEvent.which === KeyCodes.SPACE || oEvent.which === KeyCodes.ENTER) {
 				oAppointment = sap.ui.getCore().byId(oEvent.target.id);
 
-				if (oAppointment && oAppointment.isA("sap.m.CalendarAppointment")) {
+				if (oAppointment && oAppointment.isA("sap.ui.unified.CalendarAppointment")) {
 					this._toggleAppointmentSelection(oAppointment, !(oEvent.ctrlKey || oEvent.metaKey));
 					this.fireAppointmentSelect({
 						appointment: oAppointment
@@ -310,7 +312,7 @@ sap.ui.define([
 		SinglePlanningCalendarGrid.prototype.ontap = function (oEvent) {
 			var oAppointment = sap.ui.getCore().byId(oEvent.target.parentElement.id);
 
-			if (oAppointment && oAppointment.isA("sap.m.CalendarAppointment")) {
+			if (oAppointment && oAppointment.isA("sap.ui.unified.CalendarAppointment")) {
 				this._toggleAppointmentSelection(oAppointment, !(oEvent.ctrlKey || oEvent.metaKey));
 				this.fireAppointmentSelect({
 					appointment: oAppointment
@@ -443,7 +445,7 @@ sap.ui.define([
 		};
 
 		/**
-		 * Calculates the top position of the now marker, of a blocker or of an appointment.
+		 * Calculates the top position of the now marker of an appointment - a regular one or an all-day one.
 		 *
 		 * @param {object} oDate the date of the element to be displayed
 		 * @returns {int} the top position of the html element
@@ -526,10 +528,10 @@ sap.ui.define([
 		};
 
 		/**
-		 * Distributes the appointments and the blockers in clusters by their date grid.
+		 * Distributes the appointments and the all-day appointments in clusters by their date grid.
 		 *
 		 * @param {Array} aAppointments the appointments in the corresponding aggregation
-		 * @returns {object} the clustered appointments and the blockers
+		 * @returns {object} the clustered appointments - regular and all-day
 		 * @private
 		 */
 		SinglePlanningCalendarGrid.prototype._createAppointmentsMap = function (aAppointments) {
@@ -538,7 +540,6 @@ sap.ui.define([
 			return aAppointments.reduce(function (oMap, oAppointment) {
 				var oAppStartDate = oAppointment.getStartDate(),
 					oAppEndDate = oAppointment.getEndDate(),
-					bIsFullDay = oAppointment.getFullDay(),
 					oCurrentAppCalStartDate,
 					oCurrentAppCalEndDate,
 					sDay;
@@ -547,7 +548,7 @@ sap.ui.define([
 					return oMap;
 				}
 
-				if (!bIsFullDay) {
+				if (!that.isAllDayAppointment(oAppStartDate, oAppEndDate)) {
 					oCurrentAppCalStartDate = CalendarDate.fromLocalJSDate(oAppStartDate);
 					oCurrentAppCalEndDate = CalendarDate.fromLocalJSDate(oAppEndDate);
 
@@ -743,12 +744,12 @@ sap.ui.define([
 		};
 
 		/**
-		 * Selects the clusters of blockers which are in the visual port of the grid.
+		 * Selects the clusters of all-day appointments which are in the visual port of the grid.
 		 *
-		 * @param {object} aBlockers the blockers in the corresponding aggregation
+		 * @param {object} aBlockers the all-day appointments in the corresponding aggregation
 		 * @param {CalendarDate} oCalStartDate the start date of the grid
 		 * @param {int} iColumns the number of columns to be displayed in the grid
-		 * @returns {object} the clusters of blockers in the visual port of the grid
+		 * @returns {object} the clusters of all-day appointments in the visual port of the grid
 		 * @private
 		 */
 		SinglePlanningCalendarGrid.prototype._calculateVisibleBlockers = function (aBlockers, oCalStartDate, iColumns) {
@@ -781,10 +782,10 @@ sap.ui.define([
 		};
 
 		/**
-		 * Calculates the position of each blocker regarding the rest of them.
+		 * Calculates the position of each all-day appointment regarding the rest of them.
 		 *
-		 * @param {object} aVisibleBlockers the visible blockers in the grid
-		 * @returns {object} the visible blockers in the grid
+		 * @param {object} aVisibleBlockers the visible all-day appointments in the grid
+		 * @returns {object} the visible all-day appointments in the grid
 		 * @private
 		 */
 		SinglePlanningCalendarGrid.prototype._calculateBlockersLevelsAndWidth = function (aVisibleBlockers) {
@@ -862,9 +863,9 @@ sap.ui.define([
 		};
 
 		/**
-		 * Returns the visible blockers in the view port of the grid.
+		 * Returns the visible all-day appointments in the view port of the grid.
 		 *
-		 * @returns {object} the visual blockers
+		 * @returns {object} the visual all-day appointments
 		 * @private
 		 */
 		SinglePlanningCalendarGrid.prototype._getVisibleBlockers = function () {
@@ -872,9 +873,9 @@ sap.ui.define([
 		};
 
 		/**
-		 * Returns the visible blockers in the view port of the grid with their level and width.
+		 * Returns the visible all-day appointments in the view port of the grid with their level and width.
 		 *
-		 * @returns {object} the visual blockers
+		 * @returns {object} the visual all-day appointments
 		 * @private
 		 */
 		SinglePlanningCalendarGrid.prototype._getBlockersToRender = function () {
@@ -913,9 +914,9 @@ sap.ui.define([
 		};
 
 		/**
-		 * Returns the height of a blocker in the grid.
+		 * Returns the height of an all-day appointment in the grid.
 		 *
-		 * @returns {int} the height of a blocker
+		 * @returns {int} the height of an all-day appointment
 		 * @private
 		 */
 		SinglePlanningCalendarGrid.prototype._getBlockerRowHeight = function () {
@@ -1033,7 +1034,7 @@ sap.ui.define([
 		/**
 		 * Gets Start/End information for a given a appointment.
 		 *
-		 * @param {sap.m.CalendarAppointment} oAppointment - The appointment for which Start/End information will be generated.
+		 * @param {sap.ui.unified.CalendarAppointment} oAppointment - The appointment for which Start/End information will be generated.
 		 * @returns {string}
 		 * @private
 		 */
@@ -1060,6 +1061,40 @@ sap.ui.define([
 			if (oControl.getId() === this._getColumnHeaders().getId()) {
 				mAriaProps.labelledby = InvisibleText.getStaticId("sap.m", "PLANNINGCALENDAR_DAYS");
 			}
+		};
+
+		/**
+		 * Returns whether the appointment starts at 00:00 and ends in 00:00 on any day in the future.
+		 *
+		 * @param {Object} oAppStartDate - Start date of the appointment
+		 * @param {Object} oAppEndDate - End date of the appointment
+		 * @returns {boolean}
+		 */
+		SinglePlanningCalendarGrid.prototype.isAllDayAppointment = function(oAppStartDate, oAppEndDate) {
+			var bStartDateHours = oAppStartDate.getHours() === 0,
+				bStartDateMinutes = oAppStartDate.getMinutes() === 0,
+				bStartDateSeconds = oAppStartDate.getSeconds() === 0,
+				bStartDateMilliseconds = oAppStartDate.getMilliseconds() === 0,
+				bStartTimeIs0000 = bStartDateHours && bStartDateMinutes && bStartDateSeconds && bStartDateMilliseconds,
+				bAllDay = false;
+
+			if (bStartTimeIs0000) {
+				bAllDay = this._isEndTime0000(oAppStartDate, oAppEndDate);
+			}
+
+			return bAllDay;
+		};
+
+		/**
+		 * When we're inside this method we know for sure that the start time is 00:00.
+		 * It returns whether the end time is also 00:00.
+		 *
+		 * @param {Object} oAppStartDate - Start date of the appointment
+		 * @param {Object} oAppEndDate - End date of the appointment
+		 * @returns {boolean}
+		 */
+		SinglePlanningCalendarGrid.prototype._isEndTime0000 = function(oAppStartDate, oAppEndDate) {
+			return (oAppEndDate.getTime() - oAppStartDate.getTime()) % MILLISECONDS_IN_A_DAY === 0;
 		};
 
 		return SinglePlanningCalendarGrid;

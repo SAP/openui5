@@ -30,14 +30,14 @@
 				'sap/m/SinglePlanningCalendarWorkWeekView',
 				'sap/m/SinglePlanningCalendarWeekView',
 				'sap/m/Button',
-				'sap/m/CalendarAppointment',
 				'sap/m/MessageToast',
 				'sap/m/App',
 				'sap/m/Page',
 				'sap/m/ToolbarSeparator',
 				'sap/m/Label',
 				'sap/m/Select',
-				'sap/m/OverflowToolbarLayoutData'
+				'sap/m/OverflowToolbarLayoutData',
+				'sap/ui/unified/CalendarAppointment'
 			], function (
 					JSONModel,
 					ListItem,
@@ -46,14 +46,14 @@
 					SinglePlanningCalendarWorkWeekView,
 					SinglePlanningCalendarWeekView,
 					Button,
-					CalendarAppointment,
 					MessageToast,
 					App,
 					Page,
 					ToolbarSeparator,
 					Label,
 					Select,
-					OverflowToolbarLayoutData
+					OverflowToolbarLayoutData,
+					CalendarAppointment
 			) {
 				var aAppointments = [
 					{
@@ -289,39 +289,33 @@
 					/* Full day appointments/blockers */
 					{
 						title: "2 days - from 12th afternoon until 13th afternoon",
-						fullDay: true,
-						startDate: new Date(2018, 6, 12, 15, 30, 0),
-						endDate: new Date(2018, 6, 13, 16, 30, 0)
+						startDate: new Date(2018, 6, 12, 0, 0, 0),
+						endDate: new Date(2018, 6, 13, 0, 0, 0)
 					},
 					{
 						title: "3 days - from72th afternoon until 11th afternoon",
-						fullDay: true,
-						startDate: new Date(2018, 6, 7, 15, 30, 0),
-						endDate: new Date(2018, 6, 11, 16, 30, 0)
+						startDate: new Date(2018, 6, 7, 0, 0, 0),
+						endDate: new Date(2018, 6, 11, 0, 0, 0)
 					},
 					{
 						key: "scroll-to-bottom",
 						title: "[Scroll to bottom] 10 days - from 6th afternoon until 16th afternoon with custom color",
-						fullDay: true,
 						color: "#f230b1",
 						startDate: new Date(2018, 6, 6, 15, 30, 0),
 						endDate: new Date(2018, 6, 16, 16, 30, 0)
 					},
 					{
-						title: "6 days - from 14th afternoon until 10th afternoon",
-						fullDay: true,
-						startDate: new Date(2018, 6, 14, 15, 30, 0),
-						endDate: new Date(2018, 6, 20, 16, 30, 0)
+						title: "6 full days from 00 to 00h",
+						startDate: new Date(2018, 6, 14, 0, 0, 0),
+						endDate: new Date(2018, 6, 20, 0, 0, 0)
 					},
 					{
-						title: "2 days - from 15th afternoon until 17th afternoon",
-						fullDay: true,
-						startDate: new Date(2018, 6, 15, 15, 30, 0),
-						endDate: new Date(2018, 6, 17, 16, 30, 0)
+						title: "2 full days from 00 to 00h",
+						startDate: new Date(2018, 6, 15, 0, 0, 0),
+						endDate: new Date(2018, 6, 17, 0, 0, 0)
 					},
 					{
 						title: "2 days - from 7th afternoon until 8th afternoon",
-						fullDay: true,
 						startDate: new Date(2018, 6, 7, 15, 30, 0),
 						endDate: new Date(2018, 6, 8, 16, 30, 0)
 					}
@@ -404,7 +398,6 @@
 							type: "{type}",
 							icon: "{icon}",
 							color: "{color}",
-							fullDay: "{fullDay}",
 							startDate: "{startDate}",
 							endDate: "{endDate}"
 						})
