@@ -1,8 +1,8 @@
 /*!
  * ${copyright}
  */
-sap.ui.define(["sap/ui/base/ManagedObject", "sap/base/Log"],
-	function (ManagedObject, Log) {
+sap.ui.define(["sap/ui/base/ManagedObject", "sap/base/Log", "sap/f/cards/BindingResolver"],
+	function (ManagedObject, Log, BindingResolver) {
 		"use strict";
 
 		var ActionEnablement = {};
@@ -27,7 +27,15 @@ sap.ui.define(["sap/ui/base/ManagedObject", "sap/base/Log"],
 			// Async formatter to set ListItem type depending if the list item context is a correct navigation target (decided by the navigation service).
 			oBindingInfo.formatter = function (vValue) {
 
-				var oBindingContext = this.getBindingContext();
+				var oBindingContext = this.getBindingContext(),
+					oModel = this.getModel(),
+					sPath;
+
+				if (oBindingContext) {
+					sPath = oBindingContext.getPath();
+				}
+
+				var mParameters = BindingResolver.resolveValue(oAction.parameters, oModel, sPath);
 
 				if (vValue.__resolved) {
 					if (vValue.__enabled) {
@@ -43,7 +51,7 @@ sap.ui.define(["sap/ui/base/ManagedObject", "sap/base/Log"],
 						if (oNavigationService) {
 							oNavigationService
 								.enabled({
-									parameters: _resolveBinding(oAction.parameters, oBindingContext)
+									parameters: mParameters
 								})
 								.then(function (bEnabled) {
 									vValue.__resolved = true;
@@ -69,11 +77,15 @@ sap.ui.define(["sap/ui/base/ManagedObject", "sap/base/Log"],
 		function _setHeaderActionEnabledState(mItem) {
 			var oAction = mItem.actions[0],
 				oBindingContext = this.getBindingContext(),
-				mParameters = oAction.parameters;
+				mParameters = oAction.parameters,
+				oModel = this.getModel(),
+				sPath;
 
 			if (oBindingContext) {
-				mParameters = _resolveBinding(oAction.parameters, oBindingContext);
+				sPath = oBindingContext.getPath();
 			}
+
+			mParameters = BindingResolver.resolveValue(oAction.parameters, oModel, sPath);
 
 			return new Promise(function (resolve) {
 				this._oServiceManager.getService("sap.ui.integration.services.Navigation")
@@ -127,42 +139,6 @@ sap.ui.define(["sap/ui/base/ManagedObject", "sap/base/Log"],
 			this.addStyleClass("sapFCardHeaderClickable");
 		}
 
-		function _resolveBinding(mParams, oContext) {
-			var mResolvedParams = {};
-
-			if (!oContext) {
-				return mParams;
-			}
-
-			for (var sProp in mParams) {
-				var vProp = mParams[sProp];
-
-				if (vProp) {
-					if (typeof vProp === "string") {
-						mResolvedParams[sProp] = vProp;
-						var oBindingInfo = ManagedObject.bindingParser(vProp);
-						if (oBindingInfo) {
-							mResolvedParams[sProp] = oContext.getProperty(oBindingInfo.path);
-						}
-					} else if (typeof vProp === "object") {
-						mResolvedParams[sProp] = {};
-
-						// Keep it simple for now and just traverse one more level of object nesting.
-						// Improve the processing as a next step.
-						for (var sSubProp in vProp) {
-							mResolvedParams[sProp][sSubProp] = vProp[sSubProp];
-							var oBindingInfo1 = ManagedObject.bindingParser(vProp[sSubProp]);
-							if (oBindingInfo1) {
-								mResolvedParams[sProp][sSubProp] = oContext.getProperty(oBindingInfo1.path);
-							}
-						}
-					}
-				}
-			}
-
-			return mResolvedParams;
-		}
-
 		function _attachNavigationAction(mItem, oControl) {
 			var oAction = mItem.actions[0];
 			var fnHandler;
@@ -180,14 +156,20 @@ sap.ui.define(["sap/ui/base/ManagedObject", "sap/base/Log"],
 				}
 
 				fnHandler = function (oEvent) {
-					var oSource = oEvent.getSource();
-					var oBindingContext = oSource && oSource.getBindingContext();
+					var oSource = oEvent.getSource(),
+						oBindingContext = oSource.getBindingContext(),
+						oModel = oSource.getModel(),
+						sPath;
+
+					if (oBindingContext) {
+						sPath = oBindingContext.getPath();
+					}
 
 					this._oServiceManager.getService("sap.ui.integration.services.Navigation")
 						.then(function (oNavigationService) {
 							if (oNavigationService) {
 								oNavigationService.navigate({
-									parameters: _resolveBinding(oAction.parameters, oBindingContext)
+									parameters: BindingResolver.resolveValue(oAction.parameters, oModel, sPath)
 								});
 							}
 						})
@@ -208,12 +190,16 @@ sap.ui.define(["sap/ui/base/ManagedObject", "sap/base/Log"],
 
 				if (oAction.url) {
 					fnHandler = function (oEvent) {
-						var oBindingInfo = ManagedObject.bindingParser(oAction.url);
-						var sUrl = oAction.url;
+						var oSource = oEvent.getSource(),
+							oBindingContext = oSource.getBindingContext(),
+							oModel = oSource.getModel(),
+							sPath,
+							sUrl;
 
-						if (oBindingInfo) {
-							sUrl = oEvent.getSource().getBindingContext().getProperty(oBindingInfo.path);
+						if (oBindingContext) {
+							sPath = oBindingContext.getPath();
 						}
+						sUrl = BindingResolver.resolveValue(oAction.url, oModel, sPath);
 
 						window.open(sUrl, oAction.target || "_blank");
 					};
@@ -221,10 +207,15 @@ sap.ui.define(["sap/ui/base/ManagedObject", "sap/base/Log"],
 					fnHandler = function (oEvent) {
 						var oSource = oEvent.getSource();
 						var oBindingContext = oSource.getBindingContext();
+						var oModel = oSource.getModel();
+						var sPath;
+						if (oBindingContext) {
+							sPath = oBindingContext.getPath();
+						}
 
 						this.fireEvent("onAction", {
 							type: "Navigation",
-							manifestParameters: _resolveBinding(oAction.parameters, oBindingContext)
+							manifestParameters: BindingResolver.resolveValue(oAction.parameters, oModel, sPath)
 						});
 					};
 				}
