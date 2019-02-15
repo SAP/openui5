@@ -3,8 +3,8 @@
  */
 
 // Provides control sap.ui.table.RowActionItem.
-sap.ui.define(['sap/ui/core/Element', './library', 'sap/ui/unified/MenuItem', "sap/ui/table/TableUtils"],
-	function(Element, library, MenuItem, TableUtils) {
+sap.ui.define(['sap/ui/core/Element', './library', 'sap/ui/unified/MenuItem', "sap/ui/table/TableUtils", "sap/ui/core/IconPool"],
+	function(Element, library, MenuItem, TableUtils, IconPool) {
 	"use strict";
 
 	// shortcuts
@@ -167,10 +167,10 @@ sap.ui.define(['sap/ui/core/Element', './library', 'sap/ui/unified/MenuItem', "s
 			return oIcon;
 		}
 		if (this.getType() == RowActionType.Navigation) {
-			return "sap-icon://navigation-right-arrow";
+			return IconPool.getIconURI(TableUtils.ThemeParameters.sapUiTableActionNavigationIcon);
 		}
 		if (this.getType() == RowActionType.Delete) {
-			return "sap-icon://sys-cancel";
+			return IconPool.getIconURI(TableUtils.ThemeParameters.sapUiTableActionDeleteIcon);
 		}
 		return null;
 	};

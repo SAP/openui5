@@ -107,7 +107,7 @@ html[data-sap-ui-browser^="ie"] .sapUiTableTreeIcon:focus::before {
 .sapUiTableGroupIcon::before,
 .sapUiTableTreeIcon::before {
 	font-family: "SAP-icons";
-	font-size: 12px;
+	font-size: 0.75rem;
 	color: @sapUiContentIconColor;
 }
 
@@ -159,11 +159,7 @@ html[dir=rtl] {
 
 // Override row background and cell borders in group header rows.
 .sapUiTableGroupHeader {
-	&.sapUiTableTr,
-	&.sapUiTableRowSelectionCell,
-	&.sapUiTableRowActionCell {
-		background-color: @_sap_ui_table_Grouping_GroupHeaderBackground;
-	}
+	background-color: @_sap_ui_table_Grouping_GroupHeaderBackground;
 
 	&.sapUiTableCell.sapUiTableRowSelectionCell,
 	.sapUiTableCell.sapUiTableDataCell {
