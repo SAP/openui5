@@ -734,4 +734,22 @@ sap.ui.define([
 		stubGetDomRef.restore();
 		oButton.destroy();
 	});
+
+	//BCP: 1970026521
+	QUnit.test("on mouse enter, button returns to active if the left mouse button is pressed", function(assert) {
+		// System under Test
+		var oButton = new Button();
+
+		var spyActivate = this.spy(oButton, "_activeButton");
+
+		// Action
+		// enter when left mouse and wheel are depressed
+		oButton._onmouseenter({ originalEvent: { buttons: 5 } });
+
+		// Assert
+		assert.ok(spyActivate.calledOnce, "_activeButton was called");
+
+		// Cleanup
+		oButton.destroy();
+	});
 });
