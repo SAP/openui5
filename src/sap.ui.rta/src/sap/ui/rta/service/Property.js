@@ -71,14 +71,14 @@ sap.ui.define([
 			var oDesignTimeMetadata = oOverlay.getDesignTimeMetadata();
 			// require deep cloning so that original dt-metadata is not modified
 			var oDesignTimeMetadataData = merge({}, oDesignTimeMetadata.getData());
-			var mDtProperties = oDesignTimeMetadataData.properties || {};
+			var vDtProperties = oDesignTimeMetadataData.properties || {};
 			var mDtAnnotations = oDesignTimeMetadataData.annotations || {};
 			var vLabel = oDesignTimeMetadataData.getLabel;
 
 			return Promise.all(
 				[
 					oProperty._getConsolidatedAnnotations(mDtAnnotations, oElement),
-					oProperty._getConsolidatedProperties(mDtProperties || {}, mMetadataProperties, oElement),
+					oProperty._getConsolidatedProperties(vDtProperties || {}, mMetadataProperties, oElement),
 					oProperty._getResolvedFunction(vLabel, oElement),
 					oProperty._getResolvedLinks(oDesignTimeMetadataData.links, oElement)
 				]
@@ -99,14 +99,14 @@ sap.ui.define([
 		 * Calculates and returns properties
 		 * from the passed dt-metadata and control metadata objects.
 		 *
-		 * @param {object} mDtObj - dt-metadata properties object
+		 * @param {object|function} vDtProperties - dt-metadata properties
 		 * @param {object} mMetadataObj - control metadata properties object
 		 * @param {sap.ui.core.Element} oElement - element for which properties need to be calculated
 		 *
 		 * @return {object} promise resolving to an object containing all properties consolidated
 		 * @private
 		 */
-		oProperty._getConsolidatedProperties = function (mDtObj, mMetadataObj, oElement) {
+		oProperty._getConsolidatedProperties = function (vDtProperties, mMetadataObj, oElement) {
 			var mFilteredMetadataObject = Object.keys(mMetadataObj)
 				.reduce(function (mFiltered, sKey) {
 					mFiltered[sKey] = {
@@ -128,43 +128,47 @@ sap.ui.define([
 					return mFiltered;
 				}, {});
 
-			return Promise.all(
-				Object.keys(mDtObj)
-					.map(function (sKey) {
-						return oProperty._getResolvedFunction(mDtObj[sKey].ignore, oElement)
-							.then(function (bIgnore) {
+			return oProperty._getResolvedFunction(vDtProperties, oElement)
+				.then(function(mDtObj) {
+					return Promise.all(
+						// for each property in the mDtObj.properties a promise is returned
+						Object.keys(mDtObj)
+							.map(function (sKey) {
+								return oProperty._getResolvedFunction(mDtObj[sKey].ignore, oElement)
+									.then(function (bIgnore) {
 
-								if (typeof bIgnore !== "boolean" || typeof bIgnore === "undefined") {
-									throw DtUtil.createError(
-										"services.Property#get",
-										"Invalid ignore property value found in designtime for element with id " + oElement.getId() + " .", "sap.ui.rta"
-									);
-								}
+										if (typeof bIgnore !== "boolean") {
+											throw DtUtil.createError(
+												"services.Property#get",
+												"Invalid ignore property value found in designtime for element with id " + oElement.getId() + " .", "sap.ui.rta"
+											);
+										}
 
-								// ensure ignore function is replaced by a boolean value
-								if (bIgnore) {
-									// check if ignore property is set to true - remove from metadata object, if present
-									delete mFilteredMetadataObject[sKey];
-								} else if (!mFilteredMetadataObject[sKey]) {
-									//  if not available in control metadata
-									if (mDtObj[sKey].virtual === true) {
-										// virtual properties
-										return oProperty._getEvaluatedVirtualProperty(mDtObj, sKey, oElement);
-									} else {
-										// dt-metadata properties
-										var mEvaluatedProperty = {};
-										mEvaluatedProperty[sKey] = {
-											value: mDtObj[sKey],
-											virtual: false,
-											ignore: bIgnore
-										};
-										return mEvaluatedProperty;
-									}
-								}
-								return {};
-							});
-					})
-			)
+										// ensure ignore function is replaced by a boolean value
+										if (bIgnore) {
+											// check if ignore property is set to true - remove from metadata object, if present
+											delete mFilteredMetadataObject[sKey];
+										} else if (!mFilteredMetadataObject[sKey]) {
+											//  if not available in control metadata
+											if (mDtObj[sKey].virtual === true) {
+												// virtual properties
+												return oProperty._getEvaluatedVirtualProperty(mDtObj, sKey, oElement);
+											} else {
+												// dt-metadata properties
+												var mEvaluatedProperty = {};
+												mEvaluatedProperty[sKey] = {
+													value: mDtObj[sKey],
+													virtual: false,
+													ignore: bIgnore
+												};
+												return mEvaluatedProperty;
+											}
+										}
+										return {};
+									});
+							})
+					);
+				})
 				.then(function (aFilteredResults) {
 					return aFilteredResults.reduce(function (mConsolidatedObject, oFilteredResult) {
 						return Object.assign(mConsolidatedObject, oFilteredResult);
