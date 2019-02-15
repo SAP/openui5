@@ -238,7 +238,7 @@ sap.ui.define([
 			case "string":
 				this.oOutputFormat = this._getInstance(this.aDynamicValues);
 				vResult = this.oOutputFormat.parse(vValue);
-				if (!Array.isArray(vResult)) {
+				if (!Array.isArray(vResult) || isNaN(vResult[0])) {
 					oBundle = sap.ui.getCore().getLibraryResourceBundle();
 					throw new ParseException(oBundle.getText("Unit.Invalid", [vValue]));
 				}
