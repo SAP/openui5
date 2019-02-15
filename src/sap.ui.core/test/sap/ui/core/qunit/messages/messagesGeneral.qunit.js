@@ -12,8 +12,9 @@ sap.ui.define([
 	"sap/ui/model/type/String",
 	"sap/m/Input",
 	"sap/m/Label",
+	"sap/ui/model/odata/ODataMessageParser",
 	'sap/ui/qunit/utils/createAndAppendDiv'
-], function(coreLibrary, ControlMessageProcessor, Message, MessageManager, FormatException, Model, JSONModel, MessageModel, TypeInteger, TypeString, Input, Label, createAndAppendDiv) {
+], function(coreLibrary, ControlMessageProcessor, Message, MessageManager, FormatException, Model, JSONModel, MessageModel, TypeInteger, TypeString, Input, Label, ODataMessageParser, createAndAppendDiv) {
 	"use strict";
 
 	// create content div
@@ -435,6 +436,69 @@ sap.ui.define([
 		});
 
 		oMessageManager.addMessages(oMessage);
+	});
+
+
+
+	QUnit.test("Message parsing: Filter out duplicates with messages in response header", function(assert){
+
+		var oOdataMessageParser = new ODataMessageParser("fakeService", {_getFunctionImportMetadata: function(){}});
+		var oResponse = {
+			headers: {
+				"sap-message" : '{' +
+					'"code": "ABC",' +
+					'"message": "This is a duplicate message.",' +
+					'"target": "",' +
+					'"details": [{' +
+						'"code": "ABC",' +
+						'"message": "This is non duplicate message."' +
+						'}, {' +
+						'"code": "ABC",' +
+						'"message": "This is a duplicate message."' +
+						'}]' +
+					'}'
+			}
+		};
+		var aMessages = [];
+		oOdataMessageParser._parseHeader(aMessages, oResponse, {url: "myUrl"});
+		assert.equal(aMessages.length, 2, "Duplicate messages is ignored.");
+
+	});
+
+	QUnit.test("Message parsing: Filter out duplicates with messages in response body", function(assert){
+		var oOdataMessageParser = new ODataMessageParser("fakeService", {_getFunctionImportMetadata: function(){}});
+		var oResponse = {
+			body: '\<?xml version="1.0" encoding="utf-8"?>\
+				<error xmlns="http://schemas.microsoft.com/ado/2007/08/dataservices/metadata">\
+					<code>ABC</code>\
+					<message xml:lang="en">I am a duplicate.</message>\
+					<innererror>\
+						<transactionid>55025622675C2E69E10000000A4450F0</transactionid>\
+						<timestamp>20150318080838.2106030</timestamp>\
+						<Error_Resolution>\
+							<SAP_Transaction>Run transaction /IWFND/ERROR_LOG on SAP NW Gateway hub system and search for entries with the timestamp above for more details</SAP_Transaction>\
+							<SAP_Note>See SAP Note 1797736 for error analysis (https://service.sap.com/sap/support/notes/1797736)</SAP_Note>\
+							<Batch_SAP_Note>See SAP Note 1869434 for details about working with $batch (https://service.sap.com/sap/support/notes/1869434)</Batch_SAP_Note>\
+						</Error_Resolution>\
+						<errordetails>\
+							<errordetail>\
+								<code>ABC2</code>\
+								<message>I am not a duplicate.</message>\
+							</errordetail>\
+							<errordetail>\
+								<code>ABC</code>\
+								<message>I am a duplicate.</message>\
+							</errordetail>\
+						</errordetails>\
+					</innererror>\
+				</error>',
+				headers : {
+					"content-type": "text/xml"
+				}
+			};
+		var aMessages = [];
+		oOdataMessageParser._parseBody(aMessages, oResponse, {url: "myUrl"});
+		assert.equal(aMessages.length, 2, "Duplicate messages is ignored.");
 	});
 
 
