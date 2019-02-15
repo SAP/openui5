@@ -104,7 +104,54 @@ sap.ui.getCore().attachInit(function () {
 				When.onTheMainPage.changePrice("EUR", 1);
 				Then.onTheMainPage.checkPriceValueState("Error", 1); // cannot parse <only currency>
 
-				Then.onAnyPage.checkLog();
+				// Create new entry with invalid product ID
+				When.onTheMainPage.changeNewEntryProductID("0123456789ABC");
+				Then.onTheMainPage.checkProductIDValueStateNewEntry("Error");
+				Then.onTheMainPage.checkButtonDisabled("addButton");
+				When.onTheMainPage.pressClearRowButton();
+				Then.onTheMainPage.checkButtonEnabled("addButton");
+
+				// Create new entry for discard
+				When.onTheMainPage.changeNewEntryProductID("Do Not Add");
+				When.onTheMainPage.changeNewEntryProductName("Do Not Add");
+				When.onTheMainPage.changeNewEntryWeightMeasure("20 KG");
+				When.onTheMainPage.changeNewEntryPrice("600 USD");
+				When.onTheMainPage.pressClearRowButton();
+
+				// Check if new entry is empty after pressing clear row button
+				Then.onTheMainPage.checkProductIDNewEntry("");
+				Then.onTheMainPage.checkNameNewEntry("");
+				Then.onTheMainPage.checkMeasureNewEntry("");
+				Then.onTheMainPage.checkPriceNewEntry("");
+
+				// Create new entry for add
+				When.onTheMainPage.changeNewEntryProductID("H-100");
+				When.onTheMainPage.changeNewEntryProductName("Notebook Basic 16");
+				When.onTheMainPage.changeNewEntryWeightMeasure("18 KG");
+				When.onTheMainPage.changeNewEntryPrice("700 USD");
+				When.onTheMainPage.pressAddButton();
+
+				// Check added entry
+				Then.onTheMainPage.checkProductIDValueState("Error");
+				Then.onTheMainPage.checkProductID("H-100");
+				Then.onTheMainPage.checkName("Notebook Basic 16");
+				Then.onTheMainPage.checkMeasure("18 KG");
+				Then.onTheMainPage.checkPrice("USD\u00a0700.00");
+				Then.onTheMainPage.checkProductIDIsEditable(true);
+
+				When.onTheMainPage.changeProductID("H-1001");
+				Then.onTheMainPage.checkProductID("H-1001");
+				Then.onTheMainPage.checkName("Notebook Basic 16");
+				Then.onTheMainPage.checkMeasure("18 KG");
+				Then.onTheMainPage.checkPrice("USD\u00a0700.00");
+				Then.onTheMainPage.checkProductIDIsEditable(false);
+
+				Then.onAnyPage.checkLog([{
+					component : "sap.ui.model.odata.v4.ODataParentBinding",
+					level : Log.Level.ERROR,
+					message: "POST on 'ProductList' failed; will be repeated automatically",
+					details : "Error occurred while processing the request"
+				}]);
 				Then.onAnyPage.analyzeSupportAssistant();
 				Then.iTeardownMyUIComponent();
 			});

@@ -5,13 +5,63 @@
 sap.ui.define("sap/ui/core/sample/common/Helper", [
 	"sap/base/Log",
 	"sap/ui/test/Opa5",
-	"sap/ui/test/actions/Press"
-], function (Log, Opa5, Press) {
+	"sap/ui/test/actions/Press",
+	"sap/ui/test/matchers/Interactable"
+], function (Log, Opa5, Press, Interactable) {
 	"use strict";
 	var Helper;
 
 	// Helper functions used within sap.ui.core.sample.common namespace
 	Helper = {
+		/**
+		 * Checks if a sap.m.Button is disabled.
+		 *
+		 * @param {sap.ui.test.Opa5} oOpa5
+		 *  An instance of Opa5 to access the current page object
+		 * @param {string} sViewName
+		 *  The name of the view which contains the searched control
+		 * @param {string} sButtonId
+		 *  The ID of a "sap.m.Button" control inside the view sViewName
+		 * @returns {jQuery.promise}
+		 *  A promise resolved by {@link sap.ui.test.Opa5#waitFor}
+		 */
+		checkButtonDisabled : function (oOpa5, sViewName, sButtonId) {
+			return oOpa5.waitFor({
+				autoWait : false,
+				controlType : "sap.m.Button",
+				id : sButtonId,
+				success : function (oButton) {
+					Opa5.assert.ok(oButton.getEnabled() === false,
+						"Button is disabled: " + sButtonId);
+				},
+				viewName : sViewName
+			});
+		},
+
+		/**
+		 * Checks if a sap.m.Button is enabled.
+		 *
+		 * @param {sap.ui.test.Opa5} oOpa5
+		 *  An instance of Opa5 to access the current page object
+		 * @param {string} sViewName
+		 *  The name of the view which contains the searched control
+		 * @param {string} sButtonId
+		 *  The ID of a "sap.m.Button" control inside the view sViewName
+		 * @returns {jQuery.promise}
+		 *  A promise resolved by {@link sap.ui.test.Opa5#waitFor}
+		 */
+		checkButtonEnabled : function (oOpa5, sViewName, sButtonId) {
+			return oOpa5.waitFor({
+				controlType : "sap.m.Button",
+				id : sButtonId,
+				matchers : new Interactable(),
+				success : function (oButton) {
+					Opa5.assert.ok(oButton.getEnabled(), "Button is enabled: " + sButtonId);
+				},
+				viewName : sViewName
+			});
+		},
+
 		/**
 		 * Decides whether given log is related to OData V4 topic and has a log level which is at
 		 * least WARNING

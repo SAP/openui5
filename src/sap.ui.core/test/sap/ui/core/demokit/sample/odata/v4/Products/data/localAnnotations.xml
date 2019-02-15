@@ -29,10 +29,6 @@
 				<Annotation Term="com.sap.vocabularies.Common.v1.FieldControl"
 					EnumMember="com.sap.vocabularies.Common.v1.FieldControlType/ReadOnly" />
 			</Annotations>
-			<Annotations Target="com.sap.gateway.default.zui5_epm_sample.v0002.Product/Name">
-				<Annotation Term="com.sap.vocabularies.Common.v1.FieldControl"
-					EnumMember="com.sap.vocabularies.Common.v1.FieldControlType/ReadOnly" />
-			</Annotations>
 			<Annotations Target="com.sap.gateway.default.zui5_epm_sample.v0002.Product/WeightMeasure">
 				<Annotation Term="Org.OData.Validation.V1.Minimum" Decimal="0.00">
 					<Annotation Term="Org.OData.Validation.V1.Exclusive"/>
