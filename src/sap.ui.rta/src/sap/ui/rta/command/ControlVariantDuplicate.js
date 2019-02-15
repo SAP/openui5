@@ -84,7 +84,7 @@ sap.ui.define([
 				title: this.getNewVariantTitle()
 		};
 
-		return this.oModel._copyVariant(mPropertyBag)
+		return this.oModel.copyVariant(mPropertyBag)
 			.then(function(aChanges){
 				this._oVariantChange = aChanges[0];
 				this._aPreparedChanges = aChanges;

@@ -1140,7 +1140,7 @@ function(
 			assert.deepEqual(this.oModel.oVariantController._mVariantManagement["mockVariantManagement"], oVariantControllerContent, "then standard variant entry created for variant controller");
 		});
 
-		QUnit.test("when calling '_copyVariant'", function(assert) {
+		QUnit.test("when calling 'copyVariant'", function(assert) {
 			var fnAddVariantToControllerStub = sandbox.stub(this.oModel.oVariantController, "addVariantToVariantManagement").returns(3);
 			var oVariantData = {
 				"content": {
@@ -1181,7 +1181,7 @@ function(
 				variantManagementReference: "variantMgmtId1",
 				appComponent: this.oComponent
 			};
-			return this.oModel._copyVariant(mPropertyBag).then( function (aChanges) {
+			return this.oModel.copyVariant(mPropertyBag).then( function (aChanges) {
 				assert.ok(fnAddVariantToControllerStub.calledOnce, "then function to add variant to VariantController called");
 
 				//Mocking properties set inside Variant.createInitialFileContent
@@ -1350,13 +1350,27 @@ function(
 			sandbox.stub(this.oModel, "getLocalId").returns("variantMgmtId1");
 			sandbox.stub(this.oModel.oVariantController, "getVariantChanges").returns([oChange1, oChange2, oChange3]);
 			sandbox.stub(this.oFlexController._oChangePersistence, "getDirtyChanges").returns([oCopiedVariant, {fileName: "change1"}, {fileName: "change2"}, {fileName: "change3"}]);
-			var fnCopyVariantStub = sandbox.stub(this.oModel, "_copyVariant").returns(Promise.resolve([oCopiedVariant, {fileName: "change1"}, {fileName: "change2"}, {fileName: "change3"}]));
+			var fnCopyVariantStub = sandbox.stub(this.oModel, "copyVariant").returns(Promise.resolve([oCopiedVariant, {fileName: "change1"}, {fileName: "change2"}, {fileName: "change3"}]));
 			var fnRemoveDirtyChangesStub = sandbox.stub(this.oModel, "_removeDirtyChanges").returns(Promise.resolve());
 			var fnSetVariantPropertiesStub = sandbox.stub(this.oModel, "_setVariantProperties").returns({fileName: "changeWithSetDefault"});
 			var fnSaveSequenceOfDirtyChangesStub = sandbox.stub(this.oFlexController._oChangePersistence, "saveSequenceOfDirtyChanges");
+			var fnCreateDefaultFileNameSpy = sandbox.spy(Utils, "createDefaultFileName");
 
-			return this.oModel._handleSave(oEvent).then(function() {
+			return this.oModel._handleSave(oEvent)
+			.then(function() {
+				var sNewVariantReference = fnCreateDefaultFileNameSpy.getCall(0).returnValue;
+				assert.strictEqual(fnCreateDefaultFileNameSpy.getCall(0).args.length, 0, "then no argument was passed to sap.ui.fl.Utils.createDefaultFileName");
 				assert.ok(fnCopyVariantStub.calledOnce, "CopyVariant is called");
+				assert.ok(fnCopyVariantStub.calledWith({
+					appComponent: this.oComponent,
+					layer: Utils.getCurrentLayer(),
+					newVariantReference: sNewVariantReference,
+					sourceVariantReference: oCopiedVariant.getVariantReference(),
+					title: "Test",
+					variantManagementReference: "variantMgmtId1"
+				}), "CopyVariant is called");
+
+
 				assert.ok(fnRemoveDirtyChangesStub.calledOnce, "RemoveDirtyChanges is called");
 				assert.ok(fnSetVariantPropertiesStub.calledOnce, "SetVariantProperties is called");
 				assert.ok(fnSaveSequenceOfDirtyChangesStub.calledOnce, "SaveSequenceOfDirtyChanges is called");
@@ -1420,7 +1434,7 @@ function(
 			sandbox.stub(this.oModel, "getLocalId").returns("variantMgmtId1");
 			sandbox.stub(this.oModel.oVariantController, "getVariantChanges").returns([oChange1, oChange2, oChange3]);
 			sandbox.stub(this.oFlexController._oChangePersistence, "getDirtyChanges").returns([oCopiedVariant, {fileName: "change1"}, {fileName: "change2"}, {fileName: "change3"}]);
-			var fnCopyVariantStub = sandbox.stub(this.oModel, "_copyVariant").returns(Promise.resolve([oCopiedVariant, {fileName: "change1"}, {fileName: "change2"}, {fileName: "change3"}]));
+			var fnCopyVariantStub = sandbox.stub(this.oModel, "copyVariant").returns(Promise.resolve([oCopiedVariant, {fileName: "change1"}, {fileName: "change2"}, {fileName: "change3"}]));
 			var fnRemoveDirtyChangesStub = sandbox.stub(this.oModel, "_removeDirtyChanges").returns(Promise.resolve());
 			var fnSetVariantPropertiesStub = sandbox.stub(this.oModel, "_setVariantProperties");
 			var fnSaveSequenceOfDirtyChangesStub = sandbox.stub(this.oFlexController._oChangePersistence, "saveSequenceOfDirtyChanges");
@@ -1476,7 +1490,7 @@ function(
 
 			sandbox.stub(this.oModel, "getLocalId").returns("variantMgmtId1");
 			sandbox.stub(this.oModel.oVariantController, "getVariantChanges").returns([oChange1, oChange2, oChange3]);
-			var fnCopyVariantStub = sandbox.stub(this.oModel, "_copyVariant");
+			var fnCopyVariantStub = sandbox.stub(this.oModel, "copyVariant");
 			var fnRemoveDirtyChangesStub = sandbox.stub(this.oModel, "_removeDirtyChanges");
 			var fnSetVariantPropertiesStub = sandbox.stub(this.oModel, "_setVariantProperties");
 			var fnSaveSequenceOfDirtyChangesStub = sandbox.stub(this.oFlexController._oChangePersistence, "saveSequenceOfDirtyChanges");
