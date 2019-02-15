@@ -27,7 +27,18 @@ sap.ui.define(["sap/uxap/library"],
 				changeType : "stashControl"
 			},
 			reveal : {
-				changeType : "unstashControl"
+				changeType : "unstashControl",
+				getLabel: function(oControl) {
+					var aSubSection = oControl.getSubSections();
+
+					// If there is only one SubSection, its name is shown in the AnchorBar,
+					// instead of the name of the Section.
+					if (aSubSection.length === 1) {
+						return aSubSection[0].getTitle();
+					}
+
+					return oControl.getTitle();
+				}
 			},
 			rename: function () {
 				return {
