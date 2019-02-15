@@ -704,7 +704,7 @@ sap.ui.define([
 	 * @param {String} mParameters.sChangeName - name of the change
 	 * @param {String} [mParameters.sLayer="USER"] - other possible layers: VENDOR,PARTNER,CUSTOMER_BASE,CUSTOMER
 	 * @param {String} mParameters.sNamespace - the namespace of the change file
-	 * @param {String} mParameters.sChangelist - The transport ID.
+	 * @param {String} mParameters.sChangelist - The transport ID
 	 * @param {Boolean} bIsVariant - is it a variant?
 	 * @returns {Object} Returns the result from the request
 	 * @public
@@ -733,10 +733,82 @@ sap.ui.define([
 				value: mParameters.sChangelist
 			});
 		}
-
 		sRequestPath += this._buildParams(aParams);
 
 		return this.send(sRequestPath, "DELETE", {}, null);
+	};
+
+	/**
+	 * Resets changes via REST call; Filters by provided parameters like the application reference, its version,
+	 * the generator of the changes, the change type or changes on specific controls by their selector IDs.
+	 *
+	 * @param {String} mParameters property bag
+	 * @param {String} mParameters.sReference - flex reference
+	 * @param {String} mParameters.sAppVersion - version of the application for which the reset takes place
+	 * @param {String} [mParameters.sLayer="USER"] - other possible layers: VENDOR,PARTNER,CUSTOMER_BASE,CUSTOMER
+	 * @param {String} mParameters.sChangelist - The transport ID
+	 * @param {String} mParameters.sGenerator - generator with which the changes were created
+	 * @param {String} mParameters.aSelectorIds - selector IDs of controls for which the reset should filter
+	 * @param {String} mParameters.aChangeTypes - change types of the changes which should be reset
+	 * @public
+	 */
+	LrepConnector.prototype.resetChanges = function(mParameters) {
+
+		var sRequestPath = this._getUrlPrefix();
+
+		var aParams = [];
+
+		if (mParameters.sReference) {
+			aParams.push({
+				name: "reference",
+				value: mParameters.sReference
+			});
+		}
+
+		if (mParameters.sAppVersion) {
+			aParams.push({
+				name: "appVersion",
+				value: mParameters.sAppVersion
+			});
+		}
+
+		if (mParameters.sLayer) {
+			aParams.push({
+				name: "layer",
+				value: mParameters.sLayer
+			});
+		}
+
+		if (mParameters.sChangelist) {
+			aParams.push({
+				name : "changelist",
+				value : mParameters.sChangelist
+			});
+		}
+
+		if (mParameters.sGenerator) {
+			aParams.push({
+				name: "generator",
+				value: mParameters.sGenerator
+			});
+		}
+
+		if (mParameters.aSelectorIds) {
+			aParams.push({
+				name: "selector",
+				value: mParameters.aSelectorIds.join(",")
+			});
+		}
+
+		if (mParameters.aChangeTypes) {
+			aParams.push({
+				name : "changeType",
+				value : mParameters.aChangeTypes.join(",")
+			});
+		}
+
+		sRequestPath += this._buildParams(aParams);
+		return this.send(sRequestPath, "DELETE");
 	};
 
 	/**
