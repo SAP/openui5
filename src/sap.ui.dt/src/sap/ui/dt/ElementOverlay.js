@@ -175,6 +175,19 @@ function (
 			? Promise.resolve()
 			: this._loadDesignTimeMetadata()
 		).then(function () {
+			this.attachEvent("elementModified", function (oEvent) {
+				var oParams = oEvent.getParameters();
+				var sName = oParams.name;
+
+				if (oParams.type === "propertyChanged") {
+					if (sName === "visible") {
+						this.setRelevantOverlays([]);
+					}
+				} else if (sName) {
+					this.setRelevantOverlays([]);
+				}
+			}, this);
+
 			this._initMutationObserver();
 			this._initControlObserver();
 		}.bind(this));
@@ -226,11 +239,13 @@ function (
 	ElementOverlay.prototype._initControlObserver = function() {
 		if (this.getElement() instanceof Control) {
 			this._oObserver = new ControlObserver({
-				target: this.getElement()
+				target: this.getElement(),
+				aggregations: this.getAggregationNames()
 			});
 		} else {
 			this._oObserver = new ManagedObjectObserver({
-				target: this.getElement()
+				target: this.getElement(),
+				aggregations: this.getAggregationNames()
 			});
 		}
 		this._oObserver.attachModified(this._onElementModified, this);
@@ -260,23 +275,6 @@ function (
 	ElementOverlay.prototype.render = function () {
 		this.addStyleClass('sapUiDtElementOverlay');
 		return Overlay.prototype.render.apply(this, arguments);
-	};
-
-	/**
-	 * @override
-	 */
-	ElementOverlay.prototype.onAfterRendering = function() {
-		var bOldDomInvisible = !this._oDomRef;
-		Overlay.prototype.onAfterRendering.apply(this, arguments);
-
-		// fire ElementModified, when the overlay had no domRef before, but has one now
-		if (bOldDomInvisible && this._oDomRef) {
-			var oParams = {
-				id: this.getId(),
-				type: "overlayRendered"
-			};
-			this.fireElementModified(oParams);
-		}
 	};
 
 	/**
@@ -740,24 +738,8 @@ function (
 	 * @param {sap.ui.baseEvent} oEvent event object
 	 * @private
 	 */
-	ElementOverlay.prototype._onElementModified = function(oEvent) {
-		var oParams = oEvent.getParameters();
-		var sName = oParams.name;
-
-		if (oParams.type === "propertyChanged") {
-			if (sName === "visible") {
-				this.setRelevantOverlays([]);
-			}
-			this.fireElementModified(oParams);
-		} else if (sName) {
-			var oAggregationOverlay = this.getAggregationOverlay(sName);
-			if (oAggregationOverlay) {
-				this.setRelevantOverlays([]);
-				this.fireElementModified(oParams);
-			}
-		} else if (oEvent.getParameters().type === "setParent") {
-			this.fireElementModified(oParams);
-		}
+	ElementOverlay.prototype._onElementModified = function (oEvent) {
+		this.fireElementModified(oEvent.getParameters());
 	};
 
 	/**

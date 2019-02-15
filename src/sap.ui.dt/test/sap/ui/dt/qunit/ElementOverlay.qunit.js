@@ -139,66 +139,86 @@ function (
 			assert.strictEqual(sWidth, fnGetWidth(this.oElementOverlay), "overlay didn't change its width");
 		});
 
-		QUnit.test("When _onElementModified is called ", function (assert) {
-			var oEventSpy = sandbox.spy(this.oElementOverlay, "fireElementModified");
+		QUnit.test("elementModified event — property change ('visible')", function (assert) {
 			var oSetRelevantSpy = sandbox.spy(this.oElementOverlay, "setRelevantOverlays");
 
-			var oEvent = {
-				getParameters: function () {
-					return {};
-				}
-			};
-			this.oElementOverlay._onElementModified(oEvent);
-			assert.equal(oEventSpy.callCount, 0, "without parameters, the modified event is not fired");
-			assert.equal(oSetRelevantSpy.callCount, 0, "and setRelevantOverlays was not called");
+			this.oElementOverlay.attachEventOnce("elementModified", function (oEvent) {
+				assert.equal(oEvent.getParameter("type"), "propertyChanged");
+				assert.equal(oEvent.getParameter("name"), "visible");
+				assert.equal(oEvent.getParameter("value"), false);
+				assert.equal(oSetRelevantSpy.callCount, 1, "and setRelevantOverlays was called");
+			}, this);
 
-			oEvent = {
-				getParameters: function() {
-					return {
-						type: "propertyChanged",
-						name: "visible"
-					};
-				}
-			};
-			this.oElementOverlay._onElementModified(oEvent);
-			assert.equal(oEventSpy.callCount, 1, "with propertyChanged and visible as parameters,the modified event is fired");
-			assert.equal(oSetRelevantSpy.callCount, 1, "and setRelevantOverlays was called");
+			this.oButton.setVisible(false);
+		});
 
-			oEvent = {
-				getParameters: function() {
-					return {
-						type: "propertyChanged",
-						name: "text"
-					};
-				}
-			};
-			this.oElementOverlay._onElementModified(oEvent);
-			assert.equal(oEventSpy.callCount, 2, "with propertyChanged and text as parameters, the modified event is fired");
-			assert.equal(oSetRelevantSpy.callCount, 1, "and setRelevantOverlays was not called");
+		QUnit.test("elementModified event — property change ('text')", function (assert) {
+			var oSetRelevantSpy = sandbox.spy(this.oElementOverlay, "setRelevantOverlays");
 
-			sandbox.stub(this.oElementOverlay, "getAggregationOverlay").returns(this.oElementOverlay);
-			oEvent = {
-				getParameters: function() {
-					return {
-						type: "insertAggregation",
-						name: "aggregationName"
-					};
-				}
-			};
-			this.oElementOverlay._onElementModified(oEvent);
-			assert.equal(oEventSpy.callCount, 3, "with insertAggregation and a name, the modified event is fired");
-			assert.equal(oSetRelevantSpy.callCount, 2, "and setRelevantOverlays was called");
+			this.oElementOverlay.attachEventOnce("elementModified", function (oEvent) {
+				assert.equal(oEvent.getParameter("type"), "propertyChanged");
+				assert.equal(oEvent.getParameter("name"), "text");
+				assert.equal(oEvent.getParameter("value"), "My Button");
+				assert.equal(oSetRelevantSpy.callCount, 0, "and setRelevantOverlays was not called");
+			}, this);
 
-			oEvent = {
-				getParameters: function() {
-					return {
-						type: "setParent"
-					};
-				}
-			};
-			this.oElementOverlay._onElementModified(oEvent);
-			assert.equal(oEventSpy.callCount, 4, "with setParent as type, the modified event is fired");
-			assert.equal(oSetRelevantSpy.callCount, 2, "and setRelevantOverlays was not called");
+			this.oButton.setText("My Button");
+		});
+
+		QUnit.test("elementModified event — after rendering", function (assert) {
+			var oSetRelevantSpy = sandbox.spy(this.oElementOverlay, "setRelevantOverlays");
+
+			this.oElementOverlay.attachEventOnce("elementModified", function (oEvent) {
+				assert.equal(oEvent.getParameter("type"), "afterRendering");
+				assert.equal(oSetRelevantSpy.callCount, 0, "and setRelevantOverlays was not called");
+			}, this);
+
+			this.oButton.rerender();
+		});
+
+		QUnit.test("elementModified event — setParent", function (assert) {
+			var oSetRelevantSpy = sandbox.spy(this.oElementOverlay, "setRelevantOverlays");
+			var oLayout = new VerticalLayout();
+
+			this.oElementOverlay.attachEventOnce("elementModified", function (oEvent) {
+				assert.equal(oEvent.getParameter("type"), "setParent");
+				assert.equal(oEvent.getParameter("value"), oLayout);
+				assert.equal(oSetRelevantSpy.callCount, 0, "and setRelevantOverlays was not called");
+				oLayout.destroy();
+			}, this);
+
+			this.oButton.setParent(oLayout);
+		});
+
+		QUnit.test("elementModified event — insertAggregation", function (assert) {
+			var fnDone = assert.async();
+			var oLayout = new VerticalLayout();
+
+			oLayout.placeAt("qunit-fixture");
+			sap.ui.getCore().applyChanges();
+
+			new ElementOverlay({
+				isRoot: true,
+				element: oLayout,
+				init: function (oEvent) {
+					var oLayoutOverlay = oEvent.getSource();
+					var oSetRelevantSpy = sandbox.spy(oLayoutOverlay, "setRelevantOverlays");
+					oLayoutOverlay.placeInOverlayContainer();
+					oLayoutOverlay.attachEventOnce("elementModified", function (oEvent) {
+						assert.equal(oEvent.getParameter("type"), "addOrSetAggregation");
+						assert.equal(oEvent.getParameter("value"), this.oButton);
+						assert.equal(oSetRelevantSpy.callCount, 1, "and setRelevantOverlays was called");
+
+						// Putting Button back to qunit-fixture to avoid double destroy call
+						this.oButton.placeAt("qunit-fixture");
+						oLayout.destroy();
+						fnDone();
+					}, this);
+
+					oLayout.addContent(this.oButton);
+					sap.ui.getCore().applyChanges();
+				}.bind(this)
+			});
 		});
 
 		QUnit.test("when the control is rendered", function (assert) {

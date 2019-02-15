@@ -324,12 +324,13 @@ function (
 		QUnit.test("when the event elementModified is thrown with visibility change", function(assert) {
 			var oSetRelevantSpy = sandbox.spy(this.oButtonOverlay, "setRelevantOverlays");
 			var oGetRelevantSpy = sandbox.spy(this.oButtonOverlay, "getRelevantOverlays");
-			sandbox.stub(OverlayUtil, "findAllOverlaysInContainer").returns([this.oButtonOverlay]);
+			var oFindAllOverlaysInContainerStub = sandbox.stub(OverlayUtil, "findAllOverlaysInContainer").returns([this.oButtonOverlay]);
 			this.oButtonOverlay.fireElementModified({
 				type: "propertyChanged",
 				name: "visible"
 			});
-			assert.equal(oSetRelevantSpy.callCount, 1, "then findAllOverlaysInContainer is only called once");
+			assert.equal(oFindAllOverlaysInContainerStub.callCount, 1, "then findAllOverlaysInContainer is only called once");
+			assert.equal(oSetRelevantSpy.callCount, 2, "then setRelevantOverlays is called twice");
 			assert.equal(oGetRelevantSpy.callCount, 2, "then getRelevantOverlays is called twice");
 			assert.equal(this.oButtonOverlay.getRelevantOverlays().length, 1, "then only one overlay is relevant");
 		});
@@ -337,29 +338,30 @@ function (
 		QUnit.test("when the event elementModified is thrown with aggregation change", function(assert) {
 			var oSetRelevantSpy = sandbox.spy(this.oLayoutOverlay, "setRelevantOverlays");
 			var oGetRelevantSpy = sandbox.spy(this.oLayoutOverlay, "getRelevantOverlays");
-			sandbox.stub(OverlayUtil, "findAllOverlaysInContainer").returns([this.oLayoutOverlay]);
+			var oFindAllOverlaysInContainerStub = sandbox.stub(OverlayUtil, "findAllOverlaysInContainer").returns([this.oLayoutOverlay]);
 			this.oLayoutOverlay.fireElementModified({
 				type: "removeAggregation",
 				name: "content"
 			});
-			assert.equal(oSetRelevantSpy.callCount, 1, "then findAllOverlaysInContainer is only called once");
+			assert.equal(oFindAllOverlaysInContainerStub.callCount, 1, "then findAllOverlaysInContainer is only called once");
+			assert.equal(oSetRelevantSpy.callCount, 2, "then setRelevantOverlays is called twice");
 			assert.equal(oGetRelevantSpy.callCount, 2, "then getRelevantOverlays is called twice");
 			assert.equal(this.oLayoutOverlay.getRelevantOverlays().length, 2, "then two overlays are relevant");
 		});
 
-		QUnit.test("when the event elementModified is thrown with overlayRendered", function(assert) {
+		QUnit.test("when the event elementModified is thrown with afterRendering", function(assert) {
 			var oSetRelevantSpy = sandbox.spy(this.oLayoutOverlay, "setRelevantOverlays");
 			var oGetRelevantSpy = sandbox.spy(this.oLayoutOverlay, "getRelevantOverlays");
 			var oEvaluateSpy = sandbox.spy(this.oRenamePlugin, "evaluateEditable");
-			sandbox.stub(OverlayUtil, "findAllOverlaysInContainer").returns([this.oLayoutOverlay]);
+			var oFindAllOverlaysInContainerStub = sandbox.stub(OverlayUtil, "findAllOverlaysInContainer").returns([this.oLayoutOverlay]);
 			this.oLayoutOverlay.fireElementModified({
-				type: "overlayRendered",
-				id: this.oLayoutOverlay.getId()
+				type: "afterRendering"
 			});
-			assert.equal(oSetRelevantSpy.callCount, 0, "then findAllOverlaysInContainer is not called");
+			assert.equal(oFindAllOverlaysInContainerStub.callCount, 0, "then findAllOverlaysInContainer is not called");
+			assert.equal(oSetRelevantSpy.callCount, 0, "then setRelevantOverlays is not called");
 			assert.equal(oGetRelevantSpy.callCount, 0, "then getRelevantOverlays is not called");
 			assert.equal(oEvaluateSpy.callCount, 1, "then only evaluateEditable is called");
-			assert.deepEqual(oEvaluateSpy.args[0], [[this.oLayoutOverlay], {onRegistration: true}], "then evaluateEditable is called with the correct parameters");
+			assert.deepEqual(oEvaluateSpy.args[0], [[this.oLayoutOverlay], {onRegistration: false}], "then evaluateEditable is called with the correct parameters");
 		});
 
 		QUnit.test("when the event elementModified is thrown but the plugin is busy", function(assert) {
@@ -421,8 +423,8 @@ function (
 			}.bind(this));
 		},
 		afterEach : function(assert) {
-			this.oForm.destroy();
 			this.oDesignTime.destroy();
+			this.oForm.destroy();
 			sandbox.restore();
 		}
 	}, function() {
@@ -491,6 +493,7 @@ function (
 			});
 		},
 		afterEach : function(assert) {
+			this.oPlugin.destroy();
 			this.oVerticalLayout.destroy();
 			sandbox.restore();
 		}

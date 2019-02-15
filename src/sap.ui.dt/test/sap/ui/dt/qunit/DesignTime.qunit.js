@@ -284,8 +284,12 @@ function(
 			this.oDesignTime.attachElementOverlayCreated(oStub);
 
 			this.oDesignTime.attachEventOnce("synced", function () {
-				assert.strictEqual(oStub.callCount, 2);
-				fnDone();
+				// This timeout is needed because of the callback racing for the synced event
+				// FIXME: Needs to be removed when DesignTime class gets rid of usage of synced event internally.
+				setTimeout(function () {
+					assert.strictEqual(oStub.callCount, 2);
+					fnDone();
+				});
 			});
 
 			this.oOuterLayout.addContent(oButton3);
@@ -326,8 +330,12 @@ function(
 				});
 
 			this.oDesignTime.attachEventOnce("synced", function () {
-				assert.strictEqual(oStub.callCount, 2);
-				fnDone();
+				// This timeout is needed because of the callback racing for the synced event
+				// FIXME: Needs to be removed when DesignTime class gets rid of usage of synced event internally.
+				setTimeout(function () {
+					assert.strictEqual(oStub.callCount, 2);
+					fnDone();
+				});
 			});
 
 			this.oOuterLayout.addContent(oButton3);
