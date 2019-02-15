@@ -706,9 +706,9 @@ sap.ui.define([
 
 					mAttributes["aria-labelledby"] = aLabels;
 
-					/*if (oTable.getSelectionMode() !== SelectionMode.None) {
-					 mAttributes["aria-selected"] = "false";
-					 }*/
+					if (oTable.getSelectionMode() !== SelectionMode.None && mParams && mParams.rowSelected) {
+						mAttributes["aria-selected"] = "true";
+					}
 
 					// Handle expand state for first Column in TreeTable
 					if (TableUtils.Grouping.isTreeMode(oTable) && mParams && mParams.firstCol && mParams.row) {
