@@ -104,6 +104,29 @@ sap.ui.define(function () {
 					only: ["sap/f/SemanticPage"]
 				}
 			},
+			"ShellBar": {
+				title: "QUnit Test Page for sap.f.ShellBar",
+				qunit: {
+					version: 2
+				},
+				sinon: {
+					version: 4
+				},
+				coverage: {
+					only: [
+						"sap/f/ShellBar",
+						"sap/f/shellBar/Factory",
+						"sap/f/shellBar/ResponsiveHandler",
+						"sap/f/shellBar/AdditionalContentSupport",
+						"sap/f/shellBar/ContentButton",
+						"sap/f/shellBar/ControlSpacer",
+						"sap/f/shellBar/ToolbarSpacer"
+					]
+				},
+				ui5: {
+					language: "en"
+				}
+			},
 
 			// -------------------------------------------------------------------------------
 			// Designtime tests:
