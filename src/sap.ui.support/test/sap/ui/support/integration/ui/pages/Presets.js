@@ -4,8 +4,10 @@ sap.ui.define([
 	"sap/ui/test/matchers/PropertyStrictEquals",
 	"sap/ui/test/actions/EnterText",
 	"sap/ui/core/format/DateFormat",
-	"sap/ui/thirdparty/sinon"
-], function(Opa5, Press, PropertyStrictEquals, EnterText, DateFormat, sinon) {
+	"sap/ui/thirdparty/sinon",
+	"jquery.sap.sjax", // provides jQuery.sap.syncGet
+	"sap/ui/core/date/Gregorian" // indirect dependency, used by DateFormat for western locales
+], function(Opa5, Press, PropertyStrictEquals, EnterText, DateFormat, sinon, jQuery) {
 	"use strict";
 
 	var sViewName = "Analysis",
