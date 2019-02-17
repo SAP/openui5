@@ -28,7 +28,8 @@ sap.ui.getCore().attachInit(function() {
 					name: "sap.ui.documentation.sdk",
 					settings : {
 						id : "demokit"
-					}
+					},
+					manifest: true
 				},
 				hash: "demoapps"
 			});
