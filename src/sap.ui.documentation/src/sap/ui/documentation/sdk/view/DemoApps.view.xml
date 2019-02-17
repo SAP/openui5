@@ -104,7 +104,8 @@
 						</headerToolbar>
 						<l:BlockLayout
 							content="{rows}"
-							background="Light">
+							background="Light"
+							templateShareable="false">
 							<l:BlockLayoutRow content="{
 								path: '',
 								factory: '.createDemoAppCell'

@@ -220,7 +220,7 @@
 														class="sapUiDocumentationParamsTable">
 													<custom:Row>
 														<custom:ParamText text="{name}" phoneText="{phoneName}" depth="{depth}" optional="{optional}"/>
-														<layout:VerticalLayout content="{path: 'types', templateShareable: 'false'}" width="100%">
+														<layout:VerticalLayout content="{path: 'types', templateShareable: false}" width="100%">
 															<m:Link text="{name}"
 																	href="#/api/{name}"
 																	enabled="{= !!${linkEnabled} }"/>
@@ -232,7 +232,7 @@
 											</template:if>
 
 											<template:if test="{= ${data>/constructor/throws} !== undefined}">
-												<custom:LightTable rows="{path : '/constructor/throws', templateShareable: 'false'}"
+												<custom:LightTable rows="{path : '/constructor/throws', templateShareable: false}"
 														columnTitles="Throws,Desktop"
 														columnCount="2"
 														class="sapUiDocumentation2ColumnsEqualTable">
@@ -432,7 +432,7 @@
 											</template:if>
 											<template:if test="{= ${data>/borrowed/events/}.length > 0 }">
 												<m:Title text="Borrowed from:" class="sapUiSmallMarginTop sapUiDocumentationBorrowedTitle"/>
-												<layout:VerticalLayout width="100%" content="{path: '/borrowed/events/', templateShareable: 'false'}">
+												<layout:VerticalLayout width="100%" content="{path: '/borrowed/events/', templateShareable: false}">
 														<m:Panel class="borrowedListPanel"
 																expandable="true"
 																expanded="true"

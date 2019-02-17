@@ -18,7 +18,8 @@ sap.ui.define(['sap/ui/test/Opa5'], function (Opa5) {
 		iStartMyApp : function () {
 			return this.iStartMyUIComponent({
 				componentConfig: {
-					name: "sap.ui.documentation.sdk"
+					name: "sap.ui.documentation.sdk",
+					manifest: true
 				},
 				hash: ""
 			});
