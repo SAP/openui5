@@ -44,7 +44,6 @@ sap.ui.define(["sap/m/Text"], function (Text) {
 	BreadcrumbsRenderer._renderControlInListItem = function (oRm, oControl, bSkipSeparator, sAdditionalItemClass) {
 		oRm.write("<li");
 		oRm.writeAttribute("role", "presentation");
-		oRm.writeAttribute("aria-hidden", "true");
 		oRm.addClass("sapMBreadcrumbsItem");
 		oRm.addClass(sAdditionalItemClass);
 		oRm.writeClasses();

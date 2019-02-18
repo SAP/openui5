@@ -747,8 +747,8 @@ function(
 			$oLabel.attr("aria-live", null);
 
 			// expose a parent/child contextual relationship to assistive technologies
-			// note: the "aria-owns" attribute is set when the list is visible and in view
-			oDomRef.setAttribute("aria-owns", this.getList().getId());
+			// note: the "aria-controls" attribute is set when the list is visible and in view
+			oDomRef.setAttribute("aria-controls", this.getList().getId());
 
 			if (oItem) {
 
@@ -769,8 +769,8 @@ function(
 
 			if (oDomRef) {
 
-				// note: the "aria-owns" attribute is removed when the list is not visible and in view
-				oDomRef.removeAttribute("aria-owns");
+				// note: the "aria-controls" attribute is removed when the list is not visible and in view
+				oDomRef.removeAttribute("aria-controls");
 
 				// the "aria-activedescendant" attribute is removed when the currently active descendant is not visible
 				oDomRef.removeAttribute("aria-activedescendant");

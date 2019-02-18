@@ -485,7 +485,8 @@ sap.ui.define([
 		"GenericTag has the correct ARIA state - GenericTagDesign.Full and GenericTagValueState.None", function(assert){
 		//arrange
 		var $genericTag,
-			sValueId;
+			sValueId,
+			sValueState;
 
 		this.oGenericTag.setStatus(ValueState.Information);
 		this.oGenericTag.setDesign(GenericTagDesign.Full);
@@ -496,9 +497,10 @@ sap.ui.define([
 
 		$genericTag = this.oGenericTag.$();
 		sValueId = GenericTagRenderer._getTagValueId(this.oGenericTag);
+		sValueState = GenericTagRenderer._getTagValueId(this.oGenericTag) + '-state';
 
 		//assert
-		assert.equal($genericTag.attr("aria-labelledby"), [this.sStatusTextId, this.sTextId, sValueId].join(" "));
+		assert.equal($genericTag.attr("aria-labelledby"), [this.sStatusTextId, this.sTextId, sValueId, sValueState].join(" "));
 	});
 
 	QUnit.test(
@@ -525,7 +527,8 @@ sap.ui.define([
 		"GenericTag has the correct ARIA state - GenericTagDesign.StatusIconHidden and GenericTagValueState.None", function(assert){
 		//arrange
 		var $genericTag,
-			sValueId;
+			sValueId,
+			sValueState;
 
 		this.oGenericTag.setStatus(ValueState.Information);
 		this.oGenericTag.setDesign(GenericTagDesign.StatusIconHidden);
@@ -536,9 +539,10 @@ sap.ui.define([
 
 		$genericTag = this.oGenericTag.$();
 		sValueId = GenericTagRenderer._getTagValueId(this.oGenericTag);
+		sValueState = GenericTagRenderer._getTagValueId(this.oGenericTag) + '-state';
 
 		//assert
-		assert.equal($genericTag.attr("aria-labelledby"), [this.sStatusTextId, this.sTextId, sValueId].join(" "));
+		assert.equal($genericTag.attr("aria-labelledby"), [this.sStatusTextId, this.sTextId, sValueId, sValueState].join(" "));
 	});
 
 	QUnit.test(
