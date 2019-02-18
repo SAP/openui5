@@ -508,6 +508,57 @@ sap.ui.define(["sap/ui/model/ValidateException",
 
 		});
 
+		QUnit.test("Parse/Format emptyString values", function (assert) {
+			// default: "" --> NaN
+			var oCurrencyType = new CurrencyType(/* emptyString is NaN by default */);
+			assert.throws(function () {
+				oCurrencyType.parseValue("", "string");
+			}, new ParseException("Enter a valid currency amount"));
+
+			// "" --> NaN
+			var oCurrencyType2 = new CurrencyType({emptyString: NaN});
+			assert.throws(function () {
+				oCurrencyType2.parseValue("", "string");
+			}, new ParseException("Enter a valid currency amount"));
+
+			// "" --> ""
+			var oCurrencyType3 = new CurrencyType({emptyString: ""});
+			assert.deepEqual(oCurrencyType3.parseValue("", "string"), ["", undefined], "Empty string is returned");
+
+			// "" --> null
+			var oCurrencyType4 = new CurrencyType({emptyString: null});
+			assert.deepEqual(oCurrencyType4.parseValue("", "string"), [null, undefined], "null is returned");
+
+			// "" --> 0
+			var oCurrencyType5 = new CurrencyType({emptyString: 0});
+			assert.deepEqual(oCurrencyType5.parseValue("", "string"), [0, undefined], "0 is returned");
+		});
+
+		QUnit.test("Parse/Format emptyString values (parseAsString)", function (assert) {
+			// default: "" --> "NaN"
+			var oCurrencyType = new CurrencyType({parseAsString: true /* emptyString is NaN by default */});
+			assert.throws(function () {
+				oCurrencyType.parseValue("", "string");
+			}, new ParseException("Enter a valid currency amount"));
+
+			// "" --> "NaN"
+			var oCurrencyType2 = new CurrencyType({emptyString: NaN, parseAsString: true});
+			assert.throws(function () {
+				oCurrencyType2.parseValue("", "string");
+			}, new ParseException("Enter a valid currency amount"));
+
+			// "" --> ""
+			var oCurrencyType3 = new CurrencyType({emptyString: "", parseAsString: true});
+			assert.deepEqual(oCurrencyType3.parseValue("", "string"), ["", undefined], "Empty string is returned");
+
+			// "" --> null
+			var oCurrencyType4 = new CurrencyType({emptyString: null, parseAsString: true});
+			assert.deepEqual(oCurrencyType4.parseValue("", "string"), [null, undefined], "null is returned");
+
+			// "" --> 0
+			var oCurrencyType5 = new CurrencyType({emptyString: 0, parseAsString: true});
+			assert.deepEqual(oCurrencyType5.parseValue("", "string"), ["0", undefined], "0 is returned");
+		});
 
 		// Unit type tests
 		QUnit.module("unit type");
@@ -986,6 +1037,58 @@ sap.ui.define(["sap/ui/model/ValidateException",
 			assert.equal(oCustomUnitType3.formatValue([123.456789, "length-meter", oCustomUnitConfig], "string").toString(), "123.4568", "formatted value respects the 'decimals' of custom unit");
 			assert.equal(oCustomUnitTypeInstanceSpy.callCount, 2, "No additional instance is created, 2nd instance is taken from cache");
 
+		});
+
+		QUnit.test("Parse/Format emptyString values", function (assert) {
+			// default: "" --> NaN
+			var oUnitType = new UnitType(/* emptyString is NaN by default */);
+			assert.throws(function () {
+				oUnitType.parseValue("", "string");
+			}, new ParseException("Enter a valid unit amount"));
+
+			// "" --> NaN
+			var oUnitType2 = new UnitType({emptyString: NaN});
+			assert.throws(function () {
+				oUnitType2.parseValue("", "string");
+			}, new ParseException("Enter a valid unit amount"));
+
+			// "" --> ""
+			var oUnitType3 = new UnitType({emptyString: ""});
+			assert.deepEqual(oUnitType3.parseValue("", "string"), ["", undefined], "Empty string is returned");
+
+			// "" --> null
+			var oUnitType4 = new UnitType({emptyString: null});
+			assert.deepEqual(oUnitType4.parseValue("", "string"), [null, undefined], "null is returned");
+
+			// "" --> 0
+			var oUnitType5 = new UnitType({emptyString: 0});
+			assert.deepEqual(oUnitType5.parseValue("", "string"), [0, undefined], "0 is returned");
+		});
+
+		QUnit.test("Parse/Format emptyString values (parseAsString)", function (assert) {
+			// default: "" --> "NaN"
+			var oUnitType = new UnitType({parseAsString: true /* emptyString is NaN by default */});
+			assert.throws(function () {
+				oUnitType.parseValue("", "string");
+			}, new ParseException("Enter a valid unit amount"));
+
+			// "" --> "NaN"
+			var oUnitType2 = new UnitType({emptyString: NaN, parseAsString: true});
+			assert.throws(function () {
+				oUnitType2.parseValue("", "string");
+			}, new ParseException("Enter a valid unit amount"));
+
+			// "" --> ""
+			var oUnitType3 = new UnitType({emptyString: "", parseAsString: true});
+			assert.deepEqual(oUnitType3.parseValue("", "string"), ["", undefined], "Empty string is returned");
+
+			// "" --> null
+			var oUnitType4 = new UnitType({emptyString: null, parseAsString: true});
+			assert.deepEqual(oUnitType4.parseValue("", "string"), [null, undefined], "null is returned");
+
+			// "" --> 0
+			var oUnitType5 = new UnitType({emptyString: 0, parseAsString: true});
+			assert.deepEqual(oUnitType5.parseValue("", "string"), ["0", undefined], "0 is returned");
 		});
 
 		// date type tests

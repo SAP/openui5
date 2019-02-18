@@ -1625,13 +1625,24 @@ sap.ui.define(["sap/ui/core/format/NumberFormat", "sap/ui/core/Locale", "sap/bas
 		assert.equal(isNaN(oFormat.parse("")), true, "number no unit '' empty string option is by default NaN");
 
 		oFormat = NumberFormat.getUnitInstance({ emptyString: 0 }, oLocale);
-		assert.equal(oFormat.parse(""), 0, "empty string is 0");
+		assert.deepEqual(oFormat.parse(""), [0, undefined], "empty string is 0");
 
 		oFormat = NumberFormat.getUnitInstance({ emptyString: null }, oLocale);
-		assert.equal(oFormat.parse(""), null, "empty string is null");
+		assert.deepEqual(oFormat.parse(""), [null, undefined], "empty string is null");
 
 		oFormat = NumberFormat.getUnitInstance({ emptyString: NaN }, oLocale);
-		assert.deepEqual(oFormat.parse(""), NaN, "empty string is NaN");
+		assert.deepEqual(oFormat.parse(""), [NaN, undefined], "empty string is NaN");
+
+		// parseAsString
+		oFormat = NumberFormat.getUnitInstance({ emptyString: 0, parseAsString: true }, oLocale);
+		assert.deepEqual(oFormat.parse(""), ["0", undefined], "empty string is '0'");
+
+		oFormat = NumberFormat.getUnitInstance({ emptyString: null, parseAsString: true }, oLocale);
+		assert.deepEqual(oFormat.parse(""), [null, undefined], "empty string is null");
+
+		oFormat = NumberFormat.getUnitInstance({ emptyString: NaN, parseAsString: true }, oLocale);
+		assert.deepEqual(oFormat.parse(""), ["NaN", undefined], "empty string is 'NaN'");
+
 	});
 
 	QUnit.test("Unit parse edge cases CLDR - showMeasure = false", function (assert) {
@@ -1654,16 +1665,26 @@ sap.ui.define(["sap/ui/core/format/NumberFormat", "sap/ui/core/Locale", "sap/bas
 		assert.equal(oFormat.parse(NaN), null, "number no unit NaN");
 		assert.equal(oFormat.parse(22), null, "number no unit 22");
 		assert.equal(oFormat.parse(function () { }), null, "number no unit function");
-		assert.deepEqual(oFormat.parse(""), NaN, "number no unit '' empty string option is by default NaN");
+		assert.deepEqual(oFormat.parse(""), [NaN, undefined], "number no unit '' empty string option is by default NaN");
 
 		oFormat = NumberFormat.getUnitInstance({ emptyString: 0 }, oLocale);
-		assert.equal(oFormat.parse(""), 0, "empty string is 0");
+		assert.deepEqual(oFormat.parse(""), [0, undefined], "empty string is 0");
 
 		oFormat = NumberFormat.getUnitInstance({ emptyString: null }, oLocale);
-		assert.equal(oFormat.parse(""), null, "empty string is null");
+		assert.deepEqual(oFormat.parse(""),[null, undefined], "empty string is null");
 
 		oFormat = NumberFormat.getUnitInstance({ emptyString: NaN }, oLocale);
-		assert.deepEqual(oFormat.parse(""), NaN, "empty string is NaN");
+		assert.deepEqual(oFormat.parse(""), [NaN, undefined], "empty string is NaN");
+
+		// parseAsString
+		oFormat = NumberFormat.getUnitInstance({ emptyString: 0, parseAsString: true }, oLocale);
+		assert.deepEqual(oFormat.parse(""), ["0", undefined], "empty string is '0'");
+
+		oFormat = NumberFormat.getUnitInstance({ emptyString: null, parseAsString: true }, oLocale);
+		assert.deepEqual(oFormat.parse(""), [null, undefined], "empty string is null");
+
+		oFormat = NumberFormat.getUnitInstance({ emptyString: NaN, parseAsString: true }, oLocale);
+		assert.deepEqual(oFormat.parse(""), ["NaN", undefined], "empty string is 'NaN'");
 	});
 
 	QUnit.test("Unit format: restricted list of accepted unit types", function (assert) {
