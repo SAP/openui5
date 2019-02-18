@@ -26,6 +26,6 @@
 }
 
 /* BCP: 1780353075 */
-[data-sap-ui-browser=ie11] #qunit-tests.hidepass li.running {
+[data-sap-ui-browser^="ie"] #qunit-tests.hidepass li.running {
 	display: none;
 }

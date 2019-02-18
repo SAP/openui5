@@ -249,7 +249,11 @@ sap.ui.define([
 		var $Resizer = oTable.$("rsz");
 
 		// resizer should be way out of screen when the table gets rendered
-		assert.equal(oTable.$("rsz").position().left, "-5", "Resizer is at the correct initial position");
+		var nLeft = oTable.$("rsz").position().left;
+		if (Device.browser.msie) {
+			nLeft = Math.round(nLeft);
+		}
+		assert.equal(nLeft, "-5", "Resizer is at the correct initial position");
 
 		assert.ok(!oColumn.getAutoResizable(), "Column is not yet autoresizable");
 		assert.ok(!oColumn.getResizable(), "Column is not yet resizable");
