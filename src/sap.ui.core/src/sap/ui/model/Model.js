@@ -63,6 +63,8 @@ sap.ui.define([
 			this.mUnsupportedFilterOperators = {};
 			this.bLegacySyntax = false;
 			this.sUpdateTimer = null;
+			this.sRemoveTimer;
+			this.aBindingsToRemove = [];
 		},
 
 		metadata : {
@@ -715,12 +717,39 @@ sap.ui.define([
 	};
 
 	/**
+	 * Cleanup bindings
+	 */
+	Model.prototype._cleanUpBindings = function() {
+		var that = this;
+		if (this.sRemoveTimer) {
+			this.aBindings = this.aBindings.filter(function(oBinding) {
+				return that.aBindingsToRemove.indexOf(oBinding) === -1;
+			});
+			clearTimeout(this.sRemoveTimer);
+			this.sRemoveTimer = null;
+			this.aBindingsToRemove = [];
+		}
+	};
+
+	/**
 	 * Add a binding to this model
 	 *
 	 * @param {sap.ui.model.Binding} oBinding the binding to be added
 	 */
 	Model.prototype.addBinding = function(oBinding) {
+		this._cleanUpBindings();
 		this.aBindings.push(oBinding);
+	};
+
+	/**
+	 * Returns a copy of all active bindings of the model
+	 *
+	 * @return {array} aBindings the active bindings of the model
+	 * @private
+	 */
+	Model.prototype.getBindings = function() {
+		this._cleanUpBindings();
+		return this.aBindings.slice();
 	};
 
 	/**
@@ -729,9 +758,9 @@ sap.ui.define([
 	 * @param {sap.ui.model.Binding} oBinding the binding to be removed
 	 */
 	Model.prototype.removeBinding = function(oBinding) {
-		var i = this.aBindings.indexOf(oBinding);
-		if (i !== -1) {
-			this.aBindings.splice(i, 1);
+		this.aBindingsToRemove.push(oBinding);
+		if (!this.sRemoveTimer) {
+			this.sRemoveTimer = setTimeout(this._cleanUpBindings.bind(this), 0);
 		}
 	};
 
@@ -860,7 +889,7 @@ sap.ui.define([
 			clearTimeout(this.sUpdateTimer);
 			this.sUpdateTimer = null;
 		}
-		var aBindings = this.aBindings.slice(0);
+		var aBindings = this.getBindings();
 		jQuery.each(aBindings, function(iIndex, oBinding) {
 			oBinding.checkUpdate(bForceUpdate);
 		});
@@ -898,7 +927,7 @@ sap.ui.define([
 	 * @private
 	 */
 	Model.prototype.checkMessages = function() {
-		jQuery.each(this.aBindings, function(iIndex, oBinding) {
+		jQuery.each(this.getBindings(), function(iIndex, oBinding) {
 			if (oBinding.checkDataState) {
 				oBinding.checkDataState();
 			}
@@ -919,8 +948,14 @@ sap.ui.define([
 		this.oData = {};
 		this.aBindings = [];
 		this.mContexts = {};
+		if (this.sRemoveTimer) {
+			clearTimeout(this.sRemoveTimer);
+			this.sRemoveTimer = null;
+			this.aBindingsToRemove = [];
+		}
 		if (this.sUpdateTimer) {
 			clearTimeout(this.sUpdateTimer);
+			this.sUpdateTimer = null;
 		}
 		this.bDestroyed = true;
 	};

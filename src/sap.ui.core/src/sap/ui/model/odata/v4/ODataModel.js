@@ -1243,8 +1243,8 @@ sap.ui.define([
 	ODataModel.prototype.refresh = function (sGroupId) {
 		this.checkGroupId(sGroupId);
 
-		// Note: aBindings contains all bindings with change listeners (owned by Model)
-		this.aBindings.slice().forEach(function (oBinding) {
+		// Note: getBindings() returns an array that contains all bindings with change listeners (owned by Model)
+		this.getBindings().forEach(function (oBinding) {
 			if (oBinding.isRoot()) {
 				// ignore the group ID for suspended bindings to avoid mismatches and errors; they
 				// refresh via resume with their own group ID anyway

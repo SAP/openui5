@@ -792,9 +792,9 @@ sap.ui.define([
 				}
 
 			}
-			assert.equal(oModel.aBindings.length, iBindingCount, iBindingCount + " Bindings are available in the model ");
+			assert.equal(oModel.getBindings().length, iBindingCount, iBindingCount + " Bindings are available in the model ");
 			oModel.destroy();
-			assert.equal(oModel.aBindings.length, 0, "No more bindings after destroy");
+			assert.equal(oModel.getBindings().length, 0, "No more bindings after destroy");
 		}
 
 	});
@@ -860,7 +860,7 @@ sap.ui.define([
 		oModel.addBinding(oBinding2);
 		oModel.addBinding(oBinding3);
 
-		assert.equal(oModel.aBindings.length, 3, "There are three bindings");
+		assert.equal(oModel.getBindings().length, 3, "There are three bindings");
 
 		var fnFilter = function(oBinding) {
 			if (oBinding == oBinding1) {
