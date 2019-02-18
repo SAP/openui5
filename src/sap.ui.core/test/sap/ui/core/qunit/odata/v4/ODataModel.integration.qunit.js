@@ -11538,7 +11538,8 @@ sap.ui.define([
 	//*********************************************************************************************
 	// Scenario: Modify a property without side effects, i.e. the PATCH request's response is
 	// ignored; read the side effects later on via API Context#requestSideEffects and check that the
-	// corresponding fields on the UI change.
+	// corresponding fields on the UI change. This must work the same way if a first PATCH/GET
+	// $batch fails.
 	QUnit.test("$$patchWithoutSideEffects, then requestSideEffects", function (assert) {
 		var oModel = createModel(sSalesOrderService + "?sap-client=123", {
 				autoExpandSelect : true,
@@ -11567,9 +11568,81 @@ sap.ui.define([
 			.expectChange("grossAmount", "119.00");
 
 		return this.createView(assert, sView, oModel).then(function () {
-			that.expectChange("netAmount", "200.00")
+			var oError = new Error("This request intentionally failed"),
+				oPromise;
+
+			oError.errorResponse = {
+				headers : {
+					"Content-Type" : "application/json;odata.metadata=minimal;charset=utf-8"
+				},
+				responseText : '{"error":{"code":"CODE","message":"Value -1 not allowed"}}',
+				status : 400,
+				statusText : "Bad Request"
+			};
+			// don't care about other parameters
+			that.oLogMock.expects("error")
+				.withArgs("Failed to update path /SalesOrderList('42')/NetAmount");
+			that.oLogMock.expects("error")
+				.withArgs("Failed to request side effects");
+
+			that.expectChange("netAmount", "-1.00")
 				.expectRequest({
 					batchNo : 1,
+					method : "PATCH",
+					url : "SalesOrderList('42')?sap-client=123",
+					headers : {"If-Match" : "ETag0"},
+					payload : {"NetAmount" : "-1"}
+				}, oError)
+				.expectRequest({
+					batchNo : 1,
+					method : "GET",
+					url : "SalesOrderList('42')?sap-client=123&$select=GrossAmount"
+				}, /*not relevant as $batch uses oError.errorResponse for response*/undefined)
+				.expectMessages([{
+					"code" : "CODE",
+					"descriptionUrl" : undefined,
+					"message" : "Value -1 not allowed",
+					"persistent" : true,
+					"target" : "",
+					"technical" : true,
+					"type" : "Error"
+				}, {
+					"code" : undefined,
+					"descriptionUrl" : undefined,
+					"message"
+						: "HTTP request was not processed because the previous request failed",
+					"persistent" : true,
+					"target" : "",
+					"technical" : true,
+					"type" : "Error"
+				}]);
+
+			that.oView.byId("netAmount").getBinding("text").setValue("-1");
+
+			// code under test
+			oPromise = that.oView.byId("form").getBindingContext().requestSideEffects([{
+				$PropertyPath : "GrossAmount"
+			}]).catch(function (oError0) {
+				assert.strictEqual(oError0.message,
+					"HTTP request was not processed because the previous request failed");
+			});
+
+			return Promise.all([
+					oPromise,
+					oModel.submitBatch("update"),
+					that.waitForChanges(assert)
+				]);
+		}).then(function () {
+			// remove persistent, technical messages from above
+			sap.ui.getCore().getMessageManager().removeAllMessages();
+
+			that.expectMessages([]);
+
+			return that.waitForChanges(assert);
+		}).then(function () {
+			that.expectChange("netAmount", "200.00")
+				.expectRequest({
+					batchNo : 2,
 					method : "PATCH",
 					url : "SalesOrderList('42')?sap-client=123",
 					headers : {"If-Match" : "ETag0"},
@@ -11606,7 +11679,7 @@ sap.ui.define([
 				});
 
 			that.expectRequest({
-					batchNo : 2,
+					batchNo : 3,
 					method : "PATCH",
 					url : "SalesOrderList('42')?sap-client=123",
 					headers : {"If-Match" : "ETag1"}, // new ETag is used!
@@ -11624,7 +11697,7 @@ sap.ui.define([
 //					"SalesOrderID" : "42"
 				})
 				.expectRequest({
-					batchNo : 2,
+					batchNo : 3,
 					method : "GET",
 					url : "SalesOrderList('42')?sap-client=123&$select=GrossAmount,NetAmount"
 				}, {
