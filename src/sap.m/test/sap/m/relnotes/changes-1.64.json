@@ -1,0 +1,91 @@
+{
+  "1.64.0": {
+    "date": "February 2019",
+    "notes": [
+      {
+        "id": "10eaf123c7ed68f1d2a6f69aca601d297f2c3cb9",
+        "type": "FIX",
+        "text": " P13nFilterPanel : removes empty operations when maxLength\u003d\u003d1",
+        "references": []
+      },
+      {
+        "id": "14a15e8afc0bb481e6c7118cccf3663f1674c069",
+        "type": "FIX",
+        "text": " m.TimePickerSliders: Reset typing when no chance to match value",
+        "references": []
+      },
+      {
+        "id": "f96281c8ac9c87d32b9494de72675f4ae974022a",
+        "type": "FIX",
+        "text": " sap.m.Button: Returns to active on enter with pressed left button",
+        "references": []
+      },
+      {
+        "id": "59dd449a6106608fc77daf46a381475d4eba8ff7",
+        "type": "FIX",
+        "text": " sap.m.IconTabHeader: sapUiResponsiveContentPadding corrected",
+        "references": []
+      },
+      {
+        "id": "8563cf8d857fc06ce7e964bdfd500eb4669105c2",
+        "type": "FIX",
+        "text": " sap.m.LightBox: Keep the focus inside the lightbox",
+        "references": []
+      },
+      {
+        "id": "e8c4d71a04a9720dd810688ae0b1f0a3cdcba5ad",
+        "type": "FIX",
+        "text": " sap.m.MultiInput, sap.m.Slider: Busy form integration fixed",
+        "references": []
+      },
+      {
+        "id": "2b1f1e67071f476c30810efdba70191c8e5ceea5",
+        "type": "FIX",
+        "text": " sap.m.ProgressIndicator: Invalid percentValue handling corrected",
+        "references": []
+      },
+      {
+        "id": "37ec85220d11939d3a114030e142ea9b891f2480",
+        "type": "FIX",
+        "text": " sap.m.SegmentedButton: Works in an oveflow toolbar",
+        "references": []
+      },
+      {
+        "id": "ef49f4e422f929c22d12df46fbc310de890167e6",
+        "type": "FIX",
+        "text": " sap.m.Select: First item in list can now be selected on mobile",
+        "references": []
+      },
+      {
+        "id": "68676f2b7b022487349593a2461a220c2437738a",
+        "type": "FIX",
+        "text": " sap.m.Switch: Allow to set state without animation",
+        "references": []
+      },
+      {
+        "id": "6740f83ba423a6e55acd706b6adb64947506ffe2",
+        "type": "FIX",
+        "text": " sap.m.TileContainer: Deleting a tile keeps the focus",
+        "references": []
+      },
+      {
+        "id": "9898ab423c0e5ab19bb1a109471d94cda4d031fb",
+        "type": "FIX",
+        "text": " sap.m.TimePickerSlider: Apply animation snap when more are queued",
+        "references": []
+      },
+      {
+        "id": "19ce2d9049324a13f83de7653a7c8926f21a4185",
+        "type": "FIX",
+        "text": " sap.m.TimePickerSliders: apply animation snap when stopped",
+        "references": []
+      },
+      {
+        "id": "558b73bee756a268d399d7e2a36d797550309401",
+        "type": "FIX",
+        "text": " sap.m.WizardStep: Position is read out now",
+        "references": []
+      }
+    ]
+  }
+}

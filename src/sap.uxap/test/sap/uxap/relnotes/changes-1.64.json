@@ -1,0 +1,19 @@
+{
+  "1.64.0": {
+    "date": "February 2019",
+    "notes": [
+      {
+        "id": "57cd9718a68f3a26e28a92b4e24e5837641e7760",
+        "type": "FIX",
+        "text": " ObjectPageHeader: corrected search by id",
+        "references": []
+      },
+      {
+        "id": "ca8b90b03562f418b45ab2ae50e9677696bee4c0",
+        "type": "FIX",
+        "text": " sap.uxap.ObjectPageLayout: Filtering of lazy loaded sections fixed",
+        "references": []
+      }
+    ]
+  }
+}

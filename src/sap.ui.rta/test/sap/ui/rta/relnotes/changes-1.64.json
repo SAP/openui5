@@ -1,0 +1,19 @@
+{
+  "1.64.0": {
+    "date": "February 2019",
+    "notes": [
+      {
+        "id": "14004c9d8082d560ea4e17fa84e469c5f751e003",
+        "type": "FIX",
+        "text": " Correct namespace for manageApps",
+        "references": []
+      },
+      {
+        "id": "8c220c4cf04d019e022b1bf2b0b0fbe06062e948",
+        "type": "FIX",
+        "text": " sap.ui.rta - get rid of unnecessary paste in contextmenu",
+        "references": []
+      }
+    ]
+  }
+}
