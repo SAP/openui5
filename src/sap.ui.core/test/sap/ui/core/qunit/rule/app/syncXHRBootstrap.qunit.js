@@ -11,11 +11,11 @@
 			return new Promise(function(resolve) {
 				sap.ui.require(["sap/ui/Device", "sap/base/Log"], function(Device, Log) {
 
-					oTestModule.iExptectedSyncCalls = 4;
+					oTestModule.iExptectedSyncCalls = 3;
 
 					// the Normalize Polyfill is optionally required sync by the FilterProcessor
-					if (!String.prototype.normalize && !sap.ui.Device.browser.mobile) {
-						oTestModule.iExptectedSyncCalls = 5;
+					if (!String.prototype.normalize && !Device.browser.mobile) {
+						oTestModule.iExptectedSyncCalls = 4;
 					}
 
 					Log.logSupportInfo(true);
