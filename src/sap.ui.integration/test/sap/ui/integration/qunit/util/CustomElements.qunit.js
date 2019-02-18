@@ -157,7 +157,7 @@ sap.ui.define([
 		});
 		QUnit.test("Create a card tag and change attributes", function (assert) {
 			var done = assert.async(),
-				oElement = document.createCustomElement("sap-ui-integration-card");
+				oElement = document.createCustomElement("ui-card");
 			oElement.setAttribute("height", "100px");
 			oElement.setAttribute("width", 100); //invalid value
 			assert.notOk(oElement._control._controlImpl.getProperty("height") === "100px", "Property height not yet set correctly on the control, waitng for mutation observer to chip in");
@@ -170,7 +170,7 @@ sap.ui.define([
 		});
 		QUnit.test("Create a card tag and change property", function (assert) {
 			var done = assert.async(),
-				oElement = document.createCustomElement("sap-ui-integration-card");
+				oElement = document.createCustomElement("ui-card");
 			oElement.height = "100px";
 			oElement.width = 100;
 			setTimeout(function () {
@@ -190,7 +190,7 @@ sap.ui.define([
 		});
 		QUnit.test("Clone a card tag and change attributes", function (assert) {
 			var done = assert.async(),
-				oElement = document.createCustomElement("sap-ui-integration-card");
+				oElement = document.createCustomElement("ui-card");
 			oElement.setAttribute("height", "100px");
 			oElement.setAttribute("width", 100); //invalid value
 			var oClone = oElement.cloneNode();
@@ -211,7 +211,7 @@ sap.ui.define([
 		});
 		QUnit.test("Add and remove a classes and check whether it is correctly added to the control", function (assert) {
 			var done = assert.async(),
-				oElement = document.createCustomElement("sap-ui-integration-card");
+				oElement = document.createCustomElement("ui-card");
 			oElement.className = "test1 test2";
 			setTimeout(function () {
 				assert.ok(oElement._control._controlImpl.hasStyleClass("test1"), "Class test1 added to the control correctly");

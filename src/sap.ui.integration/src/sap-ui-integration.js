@@ -3,13 +3,17 @@
  */
 
 /*
- * Bootstrap to use sap ui integration in a HTML page.
+ * Bootstrap to use sap ui integration in a HTML page in local evironment
+ *
+ * CAUTION: This file is only used in local test environments and cause individual loading of required files
+ *          In production this file is replaced with an optimized bundling needed for Cards.
+ *
  * - Initialize the ui5 loader
  * - Initialize custom element registration
  * - Based on the dependencies (tags that should be used) automatic registration of these tags
  *   tags are additionally maintained in the library.js file
  * Usage:
- *   <script src="https://some/path/sap-ui-integration.js" tags="card,hostConfiguration" prefix="ui">
+ *   <script src="https://some/path/sap-ui-integration.js" id="sap-ui-bootstrap" data-sap-ui-theme="sap_fiori_3">
  *   </script>
  *
  *   <ui-card manifest="./path/to/manifest" />
@@ -17,53 +21,72 @@
 
 (function (window) {
 	"use strict";
+
+	//extract base URL from script tag
+	var oScriptTag, mMatch, sBaseUrl;
 	var coreInstance,
 		CustomElements;
 	//identify the own script include
-	var scriptTag = document.currentScript || document.querySelector("script[src*='/sap-ui-integration.js']");
-	//calculate the path to the loader file from the parent elements path
-	var sJSResourcePath = scriptTag.src.substring(0, scriptTag.src.indexOf("/sap-ui-integration.js"));
+	oScriptTag = document.getElementById("sap-ui-bootstrap");
 
-	//initialize the loader
-	function initLoader() {
-		//there is already a window.sap.ui.require defined, assume the loader is available and resolve immediately
-		if (window.sap && window.sap.ui && window.sap.ui.require) {
-			//assume the loader is already available
-			return boot();
+	if (oScriptTag) {
+		mMatch = /^(?:.*\/)?resources\//.exec(oScriptTag.getAttribute("src"));
+		if (mMatch) {
+			sBaseUrl = mMatch[0];
 		}
-		var oScript = document.createElement("script");
+	}
 
-		function loaderReady() {
-			if (!window.sap || !window.sap.ui || !window.sap.ui.require) {
-				setTimeout(loaderReady, 10);
-				return;
+	if (sBaseUrl == null) {
+		throw new Error("sap-ui-boot.js: could not identify script tag!");
+	}
+
+	function loadScripts(urls, callback) {
+		var pending = urls.length,
+			errors = 0;
+
+		function listener(e) {
+			pending--;
+			if (e.type === 'error') {
+				errors++;
 			}
-			window.sap.ui.loader.config({
-				baseUrl: sJSResourcePath + "/",
-				paths: {
-					'sap': sJSResourcePath + "/sap"
-				},
+			e.target.removeEventListener("load", listener);
+			e.target.removeEventListener("error", listener);
+			if (pending === 0 && errors === 0 && callback) {
+				callback();
+			}
+		}
+
+		for (var i = 0; i < urls.length; i++) {
+			var script = document.createElement("script");
+			script.addEventListener("load", listener);
+			script.addEventListener("error", listener);
+			script.src = sBaseUrl + urls[i];
+			document.head.appendChild(script);
+		}
+	}
+
+	// cascade 1: polyfills, can all be loaded in parallel
+	loadScripts([
+		"sap/ui/thirdparty/baseuri.js",
+		"sap/ui/thirdparty/es6-promise.js",
+		"sap/ui/thirdparty/es6-string-methods.js",
+		"sap/ui/thirdparty/es6-object-assign.js"
+	], function () {
+		// cascade 2: the loader
+		loadScripts([
+			"ui5loader.js"
+		], function () {
+			// cascade 3: the loader configuration script
+			sap.ui.loader.config({
 				async: true
 			});
-			oScript.parentNode.removeChild(oScript);
-			boot();
-		}
-
-		oScript.addEventListener("load", loaderReady);
-		oScript.setAttribute("src", sJSResourcePath + "/sap-ui-boot.js");
-		oScript.setAttribute("async", "true");
-		oScript.setAttribute("id", "sap-ui-bootstrap");
-		window["sap-ui-config"] = {};
-		var sTheme = scriptTag.getAttribute("data-sap-ui-theme");
-		if (sTheme) {
-			window["sap-ui-config"]["theme"] = sTheme;
-
-		}
-		oScript.setAttribute("id", "sap-ui-bootstrap");
-		window["sap-ui-config"]["xx-bindingSyntax"] = "complex";
-		//window["sap-ui-config"]["preload"] = "async";
-		window.document.head.appendChild(oScript);
-	}
+			loadScripts([
+				"ui5loader-autoconfig.js"
+			], function () {
+				boot();
+			});
+		});
+	});
 
 	//initialize the loader
 	function boot() {
@@ -88,12 +111,9 @@
 	function registerLibraryTags(sLibrary) {
 		var oLibrary = coreInstance.getLoadedLibraries()[sLibrary];
 		//collect the prefix and the relevant tags
-		var sPrefix = scriptTag.getAttribute("prefix") || oLibrary.defaultTagPrefix,
-			aTags = Object.keys(oLibrary.customTags),
-			sTags = scriptTag.getAttribute("tags");
-		if (sTags) {
-			aTags = sTags.split(",");
-		}
+		var sPrefix = oLibrary.defaultTagPrefix,
+			aTags = Object.keys(oLibrary.customTags);
+
 		//collect all the implementation classes and require them
 		window.sap.ui.require(
 			aTags.map(
@@ -125,6 +145,4 @@
 		});
 
 	}
-
-	initLoader();
 })(window);

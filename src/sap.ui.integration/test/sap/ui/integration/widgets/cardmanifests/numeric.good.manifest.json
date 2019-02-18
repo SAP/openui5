@@ -3,9 +3,9 @@
 		"type": "card"
 	},
 	"sap.card": {
-		"type": "List",
+		"type": "Object",
 		"header": {
-			"type": "numeric",
+			"type": "Numeric",
 			"data": {
 				"json": {
 					"kpiInfos": {
