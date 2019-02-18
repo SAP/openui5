@@ -36,7 +36,7 @@ sap.ui.define([
 				pageId: "customPageId",
 				header: "Employee Info",
 				title: "John Doe",
-				icon: "",
+				icon: "sap-icon://building",
 				description: "Department Manager1",
 				groups: [
 					{
@@ -297,6 +297,23 @@ sap.ui.define([
 		aQuickViewPages.forEach(function (page, index) {
 			assert.strictEqual(page.mProperties.header, mData.pages[index].header, "Header property is set correctly");
 		});
+	});
+
+	QUnit.test("Check if the Header can be removed if changing data", function(assert) {
+
+		var QVCardScrollContainer = document.getElementById(this.oQuickViewCard.sId + "-" + mData.pages[0].pageId + "-scroll");
+
+		assert.strictEqual(QVCardScrollContainer.children.length, 2, "ScrollContainer inside QuickViewCard contains header and SimpleForm");
+
+		mData.pages[0].title = "";
+		mData.pages[0].icon = "";
+		mData.pages[0].description = "";
+
+		oModel.setData(mData);
+		sap.ui.getCore().applyChanges();
+
+		QVCardScrollContainer = document.getElementById(this.oQuickViewCard.sId + "-" + mData.pages[0].pageId + "-scroll");
+		assert.strictEqual(QVCardScrollContainer.children.length, 1, "ScrollContainer inside QuickViewCard contains only SimpleForm");
 	});
 
 	QUnit.module("Rendering", {
