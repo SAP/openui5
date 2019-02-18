@@ -1409,7 +1409,7 @@ sap.ui.define(['jquery.sap.global', './NavContainer', './library', 'sap/ui/core/
 
 		var oPage = new sap.m.Page({
 			enableScrolling : true,
-			title : this._getInvisibleFilterText().getId(),
+			title : this._bundle.getText("FACETFILTER_TITLE"),
 			subHeader : new sap.m.Bar({
 			contentMiddle : oFacetsSearchField
 			}),
