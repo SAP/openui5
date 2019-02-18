@@ -508,6 +508,26 @@ function ($, Core, ObjectPageLayout, ObjectPageHeader, ObjectPageHeaderActionBut
 		assert.ok(!jQuery.contains(oHeader.getDomRef(), $HeaderClone_identifier.get(0)), "returned element is not part of the original element");
 	});
 
+	QUnit.test("_findById can find id with special characters", function (assert) {
+
+		var oHeader = this.myView.byId("applicationHeader"),
+			sIdWithSpecialChars = oHeader.getId() + "-my.action",
+			$HeaderClone,
+			$HeaderClone_action;
+
+		// setup
+		oHeader.addAction(new sap.m.Button(sIdWithSpecialChars));
+		sap.ui.getCore().applyChanges();
+
+		// create the search context
+		$HeaderClone = oHeader.$().clone();
+
+		// Act: search element within the context
+		$HeaderClone_action = oHeader._findById($HeaderClone, "my.action");
+
+		assert.ok(jQuery.contains($HeaderClone.get(0), $HeaderClone_action.get(0)), "returned element is part of clone");
+	});
+
 	QUnit.module("Action buttons", {
 		beforeEach: function (assert) {
 			var done = assert.async();
