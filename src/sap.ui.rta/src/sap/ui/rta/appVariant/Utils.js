@@ -69,7 +69,9 @@ function(
 					if (oPreparedObject.isS4HanaCloud) {
 						// S4 Hana Cloud and target mappings => deleteable
 						oDelAppVarObject.delAppVarButtonEnabled = true;
-						oDelAppVarObject.delAppVarButtonVisibility = true;
+						// TODO: When deletion works E2E, then uncomment line 73 and remove line 74
+						// oDelAppVarObject.delAppVarButtonVisibility = true;
+						oDelAppVarObject.delAppVarButtonVisibility = false;
 					} else {
 						// S4 Hana on premise and target mappings => not deleteable
 						oDelAppVarObject.delAppVarButtonEnabled = false;
@@ -78,7 +80,9 @@ function(
 				} else if (oPreparedObject.isS4HanaCloud) {
 					// S4 Hana Cloud and no target mappings => not deleteable
 					oDelAppVarObject.delAppVarButtonEnabled = false;
-					oDelAppVarObject.delAppVarButtonVisibility = true;
+					// TODO: When deletion works E2E, then uncomment line 82 and remove line 83
+					// oDelAppVarObject.delAppVarButtonVisibility = true;
+					oDelAppVarObject.delAppVarButtonVisibility = false;
 				} else {
 					// S4 Hana on Premise and no target mappings => deleteable
 					oDelAppVarObject.delAppVarButtonEnabled = true;
