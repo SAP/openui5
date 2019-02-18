@@ -165,7 +165,7 @@ function(oCore, Device, URI) {
 
 	QUnit.test("Avatar with src leading to an image has correct css style", function (assert) {
 		var sExpectedOutputImage = Device.browser.safari ? // safari returns the absolute url
-			'url(' + sAbsoluteImageUrl + ')' :
+			'url("' + sAbsoluteImageUrl + '")' :
 			'url("' + sImagePath + '")';
 		this.oAvatar.setSrc(sImagePath);
 		oCore.applyChanges();
