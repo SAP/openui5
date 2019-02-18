@@ -535,9 +535,18 @@ sap.ui.define([
 
 				oChange.setQueuedForApply();
 				aPromiseStack.push(function() {
-					// reset the Change.applyStatus if the change is actually not applied anymore
-					if (oChange.isApplyProcessFinished() && !this._isChangeCurrentlyApplied(oControl, oChange, mPropertyBag.modifier)) {
+					var bIsCurrentlyAppliedOnControl = this._isChangeCurrentlyApplied(oControl, oChange, mPropertyBag.modifier);
+					var bChangeStatusAppliedFinished = oChange.isApplyProcessFinished();
+					if (bChangeStatusAppliedFinished && !bIsCurrentlyAppliedOnControl) {
+						// if a change was already processed and is not applied anymore,
+						// then the control was destroyed and recreated. In this case we need to recreate/copy the dependencies.
 						oChange.setInitialApplyState();
+					} else if (!bChangeStatusAppliedFinished && bIsCurrentlyAppliedOnControl) {
+						// if a change is already applied on the control, but the status does not reflect that, the status has to be updated
+						// and the change does not need to be applied again
+						// e.g. viewCache scenario
+						oChange.markFinished();
+						return new Utils.FakePromise();
 					}
 
 					return this.checkTargetAndApplyChange(oChange, oControl, mPropertyBag)
@@ -1032,14 +1041,21 @@ sap.ui.define([
 		};
 		aChangesForControl.forEach(function (oChange) {
 
-			// if a change was already processed and is not applied anymore,
-			// then the control was destroyed and recreated. In this case we need to recreate/copy the dependencies.
-			if (oChange.isApplyProcessFinished() && !this._isChangeCurrentlyApplied(oControl, oChange, mPropertyBag.modifier)) {
+			var bIsCurrentlyAppliedOnControl = this._isChangeCurrentlyApplied(oControl, oChange, mPropertyBag.modifier);
+			var bChangeStatusAppliedFinished = oChange.isApplyProcessFinished();
+			if (bChangeStatusAppliedFinished && !bIsCurrentlyAppliedOnControl) {
+				// if a change was already processed and is not applied anymore,
+				// then the control was destroyed and recreated. In this case we need to recreate/copy the dependencies.
 				mChangesMap = this._oChangePersistence.copyDependenciesFromInitialChangesMap(oChange, this._checkIfDependencyIsStillValid.bind(this, oAppComponent, mPropertyBag.modifier));
 
 				mDependencies = mChangesMap.mDependencies;
 				mDependentChangesOnMe = mChangesMap.mDependentChangesOnMe;
 				oChange.setInitialApplyState();
+			} else if (!bChangeStatusAppliedFinished && bIsCurrentlyAppliedOnControl) {
+				// if a change is already applied on the control, but the status does not reflect that, the status has to be updated
+				// the change still needs to go through the process so that the dependencies are correctly updated and the whole process is not harmed
+				// scenario: viewCache
+				oChange.markFinished();
 			}
 
 			oChange.setQueuedForApply();
