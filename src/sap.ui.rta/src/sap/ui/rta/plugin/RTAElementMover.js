@@ -284,8 +284,12 @@ function(
 			aAggregationsWithMoveAction = oDesignTimeMetadata.getAggregationNamesWithAction("move");
 
 		return aAggregationsWithMoveAction.some(function(oAggregationWithAction) {
-			var aChildren = oOverlay.getAggregationOverlay(oAggregationWithAction).getChildren();
-			return aChildren.some(this.checkMovable.bind(this));
+			var aAggregationOverlays = oOverlay.getAggregationOverlay(oAggregationWithAction);
+			if (aAggregationOverlays) {
+				var aChildren = aAggregationOverlays.getChildren();
+				return aChildren.some(this.checkMovable.bind(this));
+			}
+			return false;
 		}.bind(this));
 	};
 
