@@ -665,7 +665,7 @@ sap.ui.define([
 			this.oButton1 = new Button("button1");
 			this.oButton2 = new Button("button2");
 			this.oBar = new Bar("bar1", {
-				contentLeft: [
+				contentRight: [
 					this.oButton1,
 					this.oButton2
 				]
@@ -691,6 +691,9 @@ sap.ui.define([
 						contentMiddle: {
 						},
 						contentRight: {
+							actions: {
+								move: "moveControls"
+							}
 						}
 					}
 				}
@@ -716,6 +719,7 @@ sap.ui.define([
 			}.bind(this));
 		},
 		afterEach : function() {
+			sandbox.restore();
 			this.oButton1Overlay.destroy();
 			this.oBarOverlay.destroy();
 			this.oDesignTime.destroy();
@@ -724,6 +728,10 @@ sap.ui.define([
 	}, function() {
 
 		QUnit.test("when isMoveAvailableForChildren is called with bar", function(assert) {
+			// should also work when AggregationOverlays are not defined
+			sandbox.stub(this.oBarOverlay, "getAggregationOverlay")
+				.callThrough()
+				.withArgs("contentLeft").returns(undefined);
 			assert.ok(this.oElementMover.isMoveAvailableForChildren(this.oBarOverlay),
 			"then the result is 'true'");
 		});
