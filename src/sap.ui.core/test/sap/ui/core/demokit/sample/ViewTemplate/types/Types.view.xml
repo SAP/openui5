@@ -16,12 +16,11 @@
 				type="{= ${ui>/iMessages} ? 'Emphasized' : 'Default' }" visible="{ui>/realOData}"/>
 			<Button id="resetModelButton" icon="sap-icon://sys-cancel" text="Reset Model" tooltip="Reset Model" press="onResetModel"/>
 			<ToggleButton id="toggleV4Button" icon="sap-icon://switch-views" press="onV4" pressed="{ui>/v4}" text="V4"/>
-			<ToggleButton id="toggleSourceCodeButton" icon="sap-icon://syntax" press="onSourceCode" text="Design-Time Source Code"/>
+			<ToggleButton id="toggleSourceCodeButton" icon="sap-icon://syntax" press="onSourceCode" text="Source Code after Templating"/>
 			<Button id="resetContextBindingButton" icon="sap-icon://sys-cancel" text="Reset ContextBinding" tooltip="Reset ContextBinding" press="onResetContextBinding" visible="{ui>/v4}"/>
 		</HBox>
-		<Panel expandable="false" visible="{ui>/codeVisible}" headerText="Design-Time Source Code"
-			width="auto" class="sapUiResponsiveMargin">
-			<ce:CodeEditor editable="false" height="500px" type="xml" value="{ui>/code}"/>
+		<Panel expandable="false" visible="{ui>/bCodeVisible}" headerText="Source Code after Templating" width="auto" class="sapUiResponsiveMargin">
+			<ce:CodeEditor editable="false" height="500px" type="xml" value="{ui>/sCode}"/>
 		</Panel>
 		<form:SimpleForm columnsL="3" columnsM="2" editable="true" id="simpleForm" labelSpanL="12"
 				labelSpanM="12" layout="ResponsiveGridLayout">

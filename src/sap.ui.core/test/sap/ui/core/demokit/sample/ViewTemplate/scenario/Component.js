@@ -14,10 +14,11 @@ sap.ui.define([
 	"sap/ui/core/sample/common/Component",
 	"sap/ui/core/util/MockServer",
 	"sap/ui/core/util/XMLPreprocessor",
+	"sap/ui/model/json/JSONModel",
 	"sap/ui/model/odata/ODataModel",
 	"sap/ui/model/odata/v2/ODataModel"
-], function (jQuery, View, ViewType, BaseComponent, MockServer, XMLPreprocessor, ODataModel,
-		ODataModel2) {
+], function (jQuery, View, ViewType, BaseComponent, MockServer, XMLPreprocessor, JSONModel,
+		ODataModel, ODataModel2) {
 	"use strict";
 
 	/*
@@ -73,12 +74,13 @@ sap.ui.define([
 		createContent : function () {
 			var sAnnotationUri,
 				sAnnotationUri2,
-				sServiceUri,
 				sMockServerBaseUri
 					= "test-resources/sap/ui/core/demokit/sample/ViewTemplate/scenario/data/",
+				oModel,
+				sServiceUri,
 				oUriParameters = jQuery.sap.getUriParameters(),
-				fnModel = oUriParameters.get("oldOData") === "true" ? ODataModel : ODataModel2,
-				oModel;
+				bIsRealOData = oUriParameters.get("realOData") === "true",
+				fnModel = oUriParameters.get("oldOData") === "true" ? ODataModel : ODataModel2;
 
 			// GWSAMPLE_BASIC with external annotations
 			sAnnotationUri = "/sap/opu/odata/IWFND/CATALOGSERVICE;v=2"
@@ -86,7 +88,7 @@ sap.ui.define([
 			sAnnotationUri2 = "/sap(====)/bc/bsp/sap/zanno_gwsample/annotations.xml";
 			sServiceUri = "/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/";
 
-			if (oUriParameters.get("realOData") === "true") {
+			if (bIsRealOData) {
 				sServiceUri = this.proxy(sServiceUri);
 			} else {
 				this.aMockServers.push(new MockServer({rootUri : sServiceUri}));
@@ -127,9 +129,21 @@ sap.ui.define([
 
 			return sap.ui.view({
 					async : true,
+					models : {
+						undefined : oModel,
+						ui : new JSONModel({
+							bindTexts : false,
+							sCode : "",
+							bCodeVisible : false,
+							entitySet : [],
+							icon : bIsRealOData ? "sap-icon://building" : "sap-icon://record",
+							iconTooltip
+								: bIsRealOData ? "real OData service" : "mock OData service",
+							selectedEntitySet : ""
+						})
+					},
 					type : ViewType.XML,
-					viewName : "sap.ui.core.sample.ViewTemplate.scenario.Main",
-					models : oModel
+					viewName : "sap.ui.core.sample.ViewTemplate.scenario.Main"
 				});
 		}
 	});
