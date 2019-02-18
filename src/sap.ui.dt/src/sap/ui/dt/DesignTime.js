@@ -327,15 +327,42 @@ function (
 		// 2. Register element overlays in plugins:
 		aElementOverlays.forEach(function (oElementOverlay) {
 			aPlugins.forEach(function (oPlugin) {
-				oPlugin.callElementOverlayRegistrationMethods(oElementOverlay);
+				try {
+					oPlugin.callElementOverlayRegistrationMethods(oElementOverlay);
+				} catch (vError) {
+					var oError = Util.propagateError(
+						vError,
+						"DesignTime#_registerElementOverlays",
+						Util.printf(
+							'registerElementOverlay() method of the plugin {0} has failed for overlay with id="{1}" (element id="{2}")',
+							oPlugin.getMetadata().getName(),
+							oElementOverlay.getId(),
+							oElementOverlay.getElement().getId()
+						)
+					);
+					Log.error(Util.errorToString(oError));
+				}
 			});
 		}, this);
 
 		// 3. Tell the world about this miracle
 		aElementOverlays.forEach(function (oElementOverlay) {
-			this.fireElementOverlayCreated({
-				elementOverlay: oElementOverlay
-			});
+			try {
+				this.fireElementOverlayCreated({
+					elementOverlay: oElementOverlay
+				});
+			} catch (vError) {
+				var oError = Util.propagateError(
+					vError,
+					"DesignTime#_registerElementOverlays",
+					Util.printf(
+						'One of the listeners of elementOverlayCreated event failed while precessing the overlay with id="{0}" for element with id="{1}"',
+						oElementOverlay.getId(),
+						oElementOverlay.getElement().getId()
+					)
+				);
+				Log.error(Util.errorToString(oError));
+			}
 		}, this);
 
 		this._aOverlaysCreatedInLastBatch = [];
