@@ -28,7 +28,7 @@ sap.ui.define([
 			this.oViews = new Views({async: true});
 			this.oViewOptions = {
 				viewName : "foo.bar",
-				viewType : "XML"
+				type : "XML"
 			};
 
 			this.oView = createXmlView();
@@ -40,7 +40,7 @@ sap.ui.define([
 
 	QUnit.test("Should create a view", function (assert) {
 		var done = assert.async();
-		var fnStub = this.stub(sap.ui, "view").callsFake(function () {
+		var fnStub = this.stub(View, "_legacyCreate").callsFake(function () {
 				return this.oView;
 			}.bind(this));
 
@@ -51,16 +51,43 @@ sap.ui.define([
 		oReturnValue.then(function (oView) {
 			assert.strictEqual(oView, this.oView, "the view was created");
 			assert.strictEqual(fnStub.callCount, 1, "the stub was invoked");
+
+			var oCall = fnStub.getCall(0);
+			assert.equal(oCall.args[0].processingMode, "sequential", "The default processing mode is set to sequential");
+
 			fnStub.restore();
 			done();
 		}.bind(this));
 	});
 
+	QUnit.test("Should not change the processingMode if it's set", function (assert) {
+		var done = assert.async();
+		var fnStub = this.stub(View, "_legacyCreate").callsFake(function () {
+				return this.oView;
+			}.bind(this));
+
+		this.oViewOptions.processingMode = "async";
+
+		//Act
+		var oReturnValue = this.oViews.getView(this.oViewOptions);
+
+		//Assert
+		oReturnValue.then(function (oView) {
+			assert.strictEqual(oView, this.oView, "the view was created");
+			assert.strictEqual(fnStub.callCount, 1, "the stub was invoked");
+
+			var oCall = fnStub.getCall(0);
+			assert.equal(oCall.args[0].processingMode, "async", "The provided processing mode isn't modified");
+
+			fnStub.restore();
+			done();
+		}.bind(this));
+	});
 
 	QUnit.test("Should set a view to the cache", function (assert) {
 		var done = assert.async();
 		var oReturnValue,
-			fnStub = this.stub(sap.ui, "view").callsFake(function () {
+			fnStub = this.stub(View, "_legacyCreate").callsFake(function () {
 				return this.oView;
 			}.bind(this));
 
@@ -94,13 +121,13 @@ sap.ui.define([
 	QUnit.test("Should create a view with an component", function (assert) {
 		// Arrange
 		var fnOwnerSpy = this.spy(this.oUIComponent, "runAsOwner"),
-			fnViewStub = this.stub(sap.ui, "view").callsFake(function () {
+			fnViewStub = this.stub(View, "_legacyCreate").callsFake(function () {
 				return this.oView;
 			}.bind(this));
 
 		// Act
 		this.oViews.getView({
-			viewType : "XML",
+			type : "XML",
 			viewName : "foo"
 		});
 
@@ -115,12 +142,12 @@ sap.ui.define([
 	QUnit.test("Should prefix the id with the components id", function (assert) {
 		// Arrange
 		var sViewId = "ViewId",
-			fnViewStub = this.stub(sap.ui, "view").callsFake(function () {
+			fnViewStub = this.stub(View, "_legacyCreate").callsFake(function () {
 				return this.oView;
 			}.bind(this)),
 			oOptions = {
 				id : sViewId,
-				viewType : "XML",
+				type : "XML",
 				viewName : "foo"
 			};
 
@@ -138,14 +165,14 @@ sap.ui.define([
 	QUnit.test("Should not prefix the id with the components id if the private getView is invoked (by the router)", function (assert) {
 		// Arrange
 		var sViewId = "ViewId",
-			fnViewStub = this.stub(sap.ui, "view").callsFake(function () {
+			fnViewStub = this.stub(View, "_legacyCreate").callsFake(function () {
 				return this.oView;
 			}.bind(this));
 
 		// Act
 		this.oViews._getViewWithGlobalId({
 			id : sViewId,
-			viewType : "XML",
+			type : "XML",
 			viewName : "foo"
 		});
 
@@ -195,7 +222,7 @@ sap.ui.define([
 
 	QUnit.test("Should log an error if the options are missing", function (assert) {
 		// Arrange
-		var fnStub = this.stub(sap.ui, "view").callsFake(this.fnView);
+		var fnStub = this.stub(View, "_legacyCreate").callsFake(this.fnView);
 		var fnErrorSpy = this.spy(Log, "error");
 
 		// Act
@@ -211,7 +238,7 @@ sap.ui.define([
 
 	QUnit.test("Should log an error if the viewName is missing", function (assert) {
 		// Arrange
-		var fnStub = this.stub(sap.ui, "view").callsFake(this.fnView);
+		var fnStub = this.stub(View, "_legacyCreate").callsFake(this.fnView);
 		var fnErrorSpy = this.spy(Log, "error");
 
 		// Act
@@ -263,11 +290,11 @@ sap.ui.define([
 	QUnit.test("Should fire the view created event if a view is created", function (assert) {
 		// Arrange
 		var oView = createXmlView(),
-			fnStub = this.stub(sap.ui, "view").callsFake(function () {
+			fnStub = this.stub(View, "_legacyCreate").callsFake(function () {
 				return oView;
 			}),
 			oViewOptions = {
-				viewType: "XML",
+				type: "XML",
 				viewName: "foo"
 			},
 			oParameters,
@@ -371,7 +398,7 @@ sap.ui.define([
 
 			this.oView = createXmlView();
 
-			this.oSapUiViewStub = sinon.stub(sap.ui, "view").callsFake(function () {
+			this.oSapUiViewStub = sinon.stub(View, "_legacyCreate").callsFake(function () {
 				return this.oView;
 			}.bind(this));
 		},
