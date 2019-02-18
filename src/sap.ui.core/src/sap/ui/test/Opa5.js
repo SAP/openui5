@@ -1000,6 +1000,27 @@ sap.ui.define([
 		Opa5.matchers.PropertyStrictEquals = PropertyStrictEquals;
 
 		/**
+		 * A map of QUnit-style assertions to be used in an opaTest.
+		 * Contains all methods available on QUnit.assert for the running QUnit version.
+		 * Available assertions are: ok, equal, propEqual, deepEqual, strictEqual and their negative counterparts.
+		 * You can define custom OPA5 assertions in the extensions section of {@link sap.ui.test.Opa5.extendConfig}
+		 *
+		 * Example usage:
+		 * oOpa5.waitFor({
+		 *   success: function () {
+		 *     Opa5.assert.ok(true, "Should be true");
+		 *   }
+		 * });
+		 *
+		 * For more information, see  {@link sap.ui.test.opaQunit}.
+		 *
+		 * @name sap.ui.test.Opa5.assert
+		 * @public
+		 * @static
+		 * @type map
+		*/
+
+		/**
 		 * Create a page object configured as arrangement, action and assertion to the Opa.config.
 		 * Use it to structure your arrangement, action and assertion based on parts of the screen to avoid name clashes and help to structure your tests.
 		 * @param {map} mPageObjects
