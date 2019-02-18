@@ -255,6 +255,85 @@ function(
 			this.oOuterLayout.addContent(oButton);
 		});
 
+		QUnit.test("when elementOverlayCreated listener fails with an exception", function (assert) {
+			var fnDone = assert.async(2);
+			var oButton3 = new Button("button3");
+			var oButton4 = new Button("button4");
+			var sErrorMessage = "some error";
+			var oStub = sandbox.stub();
+			oStub
+				.withArgs(
+					sinon.match(function (oEvent) {
+						return oEvent.getParameter("elementOverlay").getElement().getId() === oButton3.getId();
+					})
+				)
+				.throws(sErrorMessage);
+
+			sandbox.stub(Log, "error")
+				.callThrough()
+				.withArgs(
+					sinon.match(function (sMessage) {
+						return sMessage.includes(sErrorMessage);
+					})
+				)
+				.callsFake(function () {
+					assert.ok(true);
+					fnDone();
+				});
+
+			this.oDesignTime.attachElementOverlayCreated(oStub);
+
+			this.oDesignTime.attachEventOnce("synced", function () {
+				assert.strictEqual(oStub.callCount, 2);
+				fnDone();
+			});
+
+			this.oOuterLayout.addContent(oButton3);
+			this.oOuterLayout.addContent(oButton4);
+		});
+
+		QUnit.test("when registerElementOverlay fails for one of the overlays", function (assert) {
+			var fnDone = assert.async(2);
+			var oButton3 = new Button("button3");
+			var oButton4 = new Button("button4");
+			var sErrorMessage = "some error";
+			var oStub = sandbox.stub();
+			oStub
+				.withArgs(
+					sinon.match(function (oElementOverlay) {
+						return oElementOverlay.getElement().getId() === oButton3.getId();
+					})
+				)
+				.throws(sErrorMessage);
+
+			var CustomPlugin = Plugin.extend("qunit.CustomPlugin", {
+				registerElementOverlay: oStub,
+				_registerOverlays: function () {} // to avoid registration of existent overlays
+			});
+			var oCustomPlugin = new CustomPlugin();
+			this.oDesignTime.addPlugin(oCustomPlugin);
+
+			sandbox.stub(Log, "error")
+				.callThrough()
+				.withArgs(
+					sinon.match(function (sMessage) {
+						return sMessage.includes(sErrorMessage);
+					})
+				)
+				.callsFake(function () {
+					assert.ok(true);
+					fnDone();
+				});
+
+			this.oDesignTime.attachEventOnce("synced", function () {
+				assert.strictEqual(oStub.callCount, 2);
+				fnDone();
+			});
+
+			this.oOuterLayout.addContent(oButton3);
+			this.oOuterLayout.addContent(oButton4);
+		});
+
 		QUnit.test("when an existing control is moved from one control's aggregation to another control's aggregation", function (assert) {
 			var fnDone = assert.async();
 
