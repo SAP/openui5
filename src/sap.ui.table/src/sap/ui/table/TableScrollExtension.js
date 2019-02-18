@@ -931,6 +931,8 @@ sap.ui.define([
 					internal(this).bIsScrolledVerticallyByWheel = true;
 					internal(this).bIsScrolledVerticallyByKeyboard = false;
 
+					this._getKeyboardExtension().setActionMode(false);
+
 					VerticalScrollingHelper.updateScrollPosition(this, nScrollPosition + nPixelsToScroll, ScrollTrigger.MOUSEWHEEL);
 				}
 			}
@@ -1018,6 +1020,7 @@ sap.ui.define([
 
 					if (oVSb && (mOptions.scrollDirection === ScrollDirection.VERTICAL
 								 || mOptions.scrollDirection === ScrollDirection.BOTH)) {
+						this._getKeyboardExtension().setActionMode(false);
 
 						if (mTouchSessionData.initialScrolledToEnd == null) {
 							if (iTouchDistanceY < 0) { // Scrolling down.
