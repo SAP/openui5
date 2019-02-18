@@ -5030,6 +5030,8 @@ sap.ui.define([
 					assert.ok(oVisitResponseExpectation.calledBefore(oUpdateExistingExpectation));
 				});
 
+			assert.ok(!oPromise.isFulfilled());
+			assert.ok(!oPromise.isRejected());
 			oCacheMock.expects("fetchValue")
 				.withExactArgs(sinon.match.same(_GroupLock.$cached), "").callThrough();
 
@@ -5077,11 +5079,14 @@ sap.ui.define([
 	//*********************************************************************************************
 	QUnit.test("SingleCache#requestSideEffects: request fails", function (assert) {
 		var oCache = this.createSingle("Employees('42')"),
+			oCacheMock = this.mock(oCache),
 			oError = new Error(),
 			oGroupLock = new _GroupLock("$auto"),
 			mMergedQueryOptions = {},
 			mNavigationPropertyPaths = {},
-			aPaths = ["ROOM_ID"];
+			oOldValue = {},
+			aPaths = ["ROOM_ID"],
+			oPromise;
 
 		this.mock(_Helper).expects("intersectQueryOptions").withExactArgs(
 				sinon.match.same(oCache.mQueryOptions), sinon.match.same(aPaths),
@@ -5094,20 +5099,36 @@ sap.ui.define([
 		this.oRequestorMock.expects("request")
 			.withExactArgs("GET", "Employees('42')?~", sinon.match.same(oGroupLock))
 			.rejects(oError);
-		this.mock(oCache).expects("fetchTypes").withExactArgs()
+		oCacheMock.expects("fetchTypes").withExactArgs()
 			.returns(SyncPromise.resolve(/*don't care*/));
-		this.mock(oCache).expects("fetchValue")
+		oCacheMock.expects("fetchValue")
 			.withExactArgs(sinon.match.same(_GroupLock.$cached), "")
-			.returns(SyncPromise.resolve(/*don't care*/));
+			.returns(SyncPromise.resolve(oOldValue));
 		this.mock(_Helper).expects("updateExisting").never(); // ==> #patch also not called
 
 		// code under test
-		return oCache.requestSideEffects(oGroupLock, aPaths, mNavigationPropertyPaths)
+		oPromise = oCache.requestSideEffects(oGroupLock, aPaths, mNavigationPropertyPaths)
 			.then(function () {
 				assert.ok(false, "unexpected success");
 			}, function (oError0) {
 				assert.strictEqual(oError0, oError);
 			});
+
+		oCacheMock.expects("fetchValue").twice()
+			.withExactArgs(sinon.match.same(_GroupLock.$cached), "").callThrough();
+
+		return Promise.all([
+				oPromise.then(function () {
+					// code under test: check that a read afterwards returns the old value
+					return oCache.fetchValue(_GroupLock.$cached, "").then(function (vResult) {
+						assert.strictEqual(vResult, oOldValue);
+					});
+				}),
+				// code under test: check that a "parallel" read waits for oPromise
+				oCache.fetchValue(_GroupLock.$cached, "").then(function (vResult) {
+					assert.strictEqual(vResult, oOldValue);
+				})
+			]);
 	});
 
 	//*********************************************************************************************
@@ -5117,6 +5138,9 @@ sap.ui.define([
 			mNavigationPropertyPaths = {},
 			aPaths = ["B/C"];
 
+		this.mock(oCache).expects("fetchValue")
+			.withExactArgs(sinon.match.same(_GroupLock.$cached), "")
+			.returns(SyncPromise.resolve(/*don't care*/));
 		this.mock(_Helper).expects("intersectQueryOptions").withExactArgs(
 				sinon.match.same(oCache.mQueryOptions), sinon.match.same(aPaths),
 				sinon.match.same(this.oRequestor.getModelInterface().fetchMetadata), "/Me/$Type",
