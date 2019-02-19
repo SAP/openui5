@@ -362,7 +362,7 @@
 					var oThirdPartyTextHyphenated = new sap.ui.core.HTML({
 						id: "hyph-" + lang,
 						visible: isSupportedBy3rdParty,
-						content: ["<div style='font-size: 14px;'>" + hyph.hyphenate(oLangTexts[lang], lang) + "</div>"]
+						content: ["<div style='font-size: 14px;'>" + (isSupportedBy3rdParty ? hyph.hyphenate(oLangTexts[lang], lang) : oLangTexts[lang]) + "</div>"]
 					});
 
 					var fnConfigurationText = function () {
