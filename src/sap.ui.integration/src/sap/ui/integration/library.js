@@ -32,7 +32,7 @@ sap.ui.define(["sap/ui/base/DataType",
 				"card": "sap/ui/integration/widgets/Card",
 				"host-configuration": "sap/ui/integration/host/HostConfiguration"
 			},
-			defaultTagPrefix: "sap-ui-integration"
+			defaultTagPrefix: "ui"
 		});
 
 		/**
