@@ -12,8 +12,7 @@ sap.ui.define([
 	opaTest("Should see the homepage displayed", function (Given, When, Then) {
 		// Arrangements
 		Given.iStartMyApp({
-			hash: "",
-			delay:3000
+			hash: ""
 		});
 
 		// Assertions

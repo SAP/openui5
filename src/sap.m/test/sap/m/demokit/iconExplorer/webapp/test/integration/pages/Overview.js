@@ -14,8 +14,7 @@ sap.ui.define([
 			AggregationLengthEquals,
 			AggregationFilled,
 			Properties,
-			PropertyStrictEquals
-			) {
+			PropertyStrictEquals) {
 	"use strict";
 
 	var sViewName = "Overview",
@@ -198,7 +197,7 @@ sap.ui.define([
 					return this.waitFor({
 						id: sResultsId,
 						viewName: sViewName,
-						matchers: [ new AggregationFilled({name: "items"}) ],
+						matchers: new AggregationFilled({name: "items"}),
 						errorMessage: "The Table has not been loaded"
 					});
 				},
@@ -209,9 +208,7 @@ sap.ui.define([
 					return this.waitFor({
 						id: sResultsId,
 						viewName: sViewName,
-						matchers: new AggregationFilled({
-							name: "items"
-						}),
+						matchers: new AggregationFilled({name: "items"}),
 						success: function(oResults) {
 							sFirstObjectTitle = oResults.getItems()[0].getCells()[1].getText();
 
@@ -265,9 +262,7 @@ sap.ui.define([
 					return this.waitFor({
 						controlType: "sap.m.IconTabFilter",
 						viewName: sViewName,
-						matchers: new Properties({
-							key: sKey
-						}),
+						matchers: new Properties({key: sKey}),
 						actions: new Press(),
 						errorMessage: "Cannot find the icon tab filter"
 					});
@@ -555,20 +550,6 @@ sap.ui.define([
 							Opa5.assert.ok(true, "The growing Table had the double amount: " + iExpectedNumberOfItems + " of entries");
 						},
 						errorMessage: "Table does not have the double amount of entries"
-					});
-				},
-
-				iShouldSeeTheResultsTableBusyIndicatorOrItemsLoaded: function () {
-					return this.waitFor({
-						id: sResultsId,
-						viewName: sViewName,
-						matchers: function (oResults) {
-							return new AggregationFilled({name: "items"}).isMatching(oResults) || new PropertyStrictEquals({name: "busy", value: true}).isMatching(oResults);
-						},
-						success: function () {
-							Opa5.assert.ok(true, "The results table is busy or the data is already loaded");
-						},
-						errorMessage: "The results table is not busy"
 					});
 				},
 
