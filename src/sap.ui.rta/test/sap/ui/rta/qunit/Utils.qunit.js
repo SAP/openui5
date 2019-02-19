@@ -470,6 +470,7 @@ function(
 		beforeEach: function() {
 			if (oCompCont) {
 				oCompCont.destroy();
+				sap.ui.getCore().applyChanges();
 			}
 
 			this.$insideDom = jQuery('<input/>').appendTo('#qunit-fixture');
