@@ -362,21 +362,21 @@ function(
 	 *  });
 	 * });
 	 *
-	 * @example <caption>Definition of XML fragments</caption>
+	 * @example <caption>Creating an XML fragments</caption>
 	 * sap.ui.require(["sap/ui/core/Fragment"], function(Fragment){
 	 *     Fragment.load({
 	 *         type: "XML",
-	 *         definition: '<Button xmlns="sap.m" id="xmlfragbtn" text="This is an XML Fragment" press="doSomething"></Button>'
+	 *         definition: '&lt;Button xmlns=&quot;sap.m&quot; id=&quot;xmlfragbtn&quot; text=&quot;This is an XML Fragment&quot; press=&quot;doSomething&quot;&gt;&lt;/Button&gt;'
 	 *     }).then(function(oButton){
 	 *         // ...
 	 *     });
 	 * });
 	 *
-	 * @example <caption>Definition of HTML fragments</caption>
+	 * @example <caption>Creating an HTML fragments</caption>
 	 * sap.ui.require(["sap/ui/core/Fragment"], function(Fragment){
 	 *     Fragment.load({
 	 *         type: "HTML",
-	 *         definition: '<div id="htmlfragbtn" data-sap-ui-type="sap.m.Button" data-text="This is an HTML Fragment"></div>'
+	 *         definition: '&lt;div id=&quot;htmlfragbtn&quot; data-sap-ui-type=&quot;sap.m.Button&quot; data-text=&quot;This is an HTML Fragment&quot;&gt;&lt;/div&gt;'
 	 *     }).then(function(oButton){
 	 *         // ...
 	 *     });
