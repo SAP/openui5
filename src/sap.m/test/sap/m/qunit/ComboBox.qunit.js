@@ -143,10 +143,10 @@ sap.ui.define([
 		assert.ok(oComboBox.getSelectedItem() === null, "By default the selected items of the ComboBox control is null");
 		assert.strictEqual(oComboBox.getSelectedItemId(), "", 'By default the selected items id of the ComboBox control is ""');
 		assert.strictEqual(oComboBox.getSelectedKey(), "", 'By default the selected key of the ComboBox control is ""');
-		assert.strictEqual(oComboBox.getList().getBusyIndicatorDelay(), 0);
-		assert.strictEqual(oComboBox.getList().getWidth(), "100%");
-		assert.ok(oComboBox.getList().hasStyleClass(oComboBox.getRenderer().CSS_CLASS_COMBOBOXBASE + "List"));
-		assert.ok(oComboBox.getList().hasStyleClass(oComboBox.getRenderer().CSS_CLASS_COMBOBOX + "List"));
+		assert.strictEqual(oComboBox._getList().getBusyIndicatorDelay(), 0);
+		assert.strictEqual(oComboBox._getList().getWidth(), "100%");
+		assert.ok(oComboBox._getList().hasStyleClass(oComboBox.getRenderer().CSS_CLASS_COMBOBOXBASE + "List"));
+		assert.ok(oComboBox._getList().hasStyleClass(oComboBox.getRenderer().CSS_CLASS_COMBOBOX + "List"));
 		assert.strictEqual(oComboBox.getShowSecondaryValues(), false, 'By default the showSecondaryValues property of the ComboBox control is "false"');
 		assert.strictEqual(oComboBox.getFilterSecondaryValues(), false, 'By default the filterSecondaryValues property of the ComboBox control is "false"');
 
@@ -1506,7 +1506,7 @@ sap.ui.define([
 
 		// assert
 		assert.ok(oComboBox.getFirstItem() === oItem);
-		assert.strictEqual(oComboBox.getList().getItems().length, 1, "List should have 1 item");
+		assert.strictEqual(oComboBox._getList().getItems().length, 1, "List should have 1 item");
 		assert.ok(fnInsertItem.returned(oComboBox), 'oComboBox.insertAggregation() method return the "this" reference');
 		assert.ok(oItem.hasListeners("_change"));
 		assert.ok(oComboBox.isItemVisible(oItem));
@@ -1537,7 +1537,7 @@ sap.ui.define([
 		this.clock.tick(1000);
 
 		// act
-		sap.ui.test.qunit.triggerEvent("tap", oComboBox.getList().getItems()[0].getDomRef());
+		sap.ui.test.qunit.triggerEvent("tap", oComboBox._getList().getItems()[0].getDomRef());
 		this.clock.tick(1000);
 
 		// assert
@@ -2364,7 +2364,7 @@ sap.ui.define([
 		var oComboBox = new ComboBox();
 
 		// arrange
-		var fnRemoveAggregationSpy = this.spy(oComboBox.getList(), "removeAggregation");
+		var fnRemoveAggregationSpy = this.spy(oComboBox._getList(), "removeAggregation");
 		var fnRemoveItemSpy = this.spy(oComboBox, "removeItem");
 		var fnFireChangeSpy = this.spy(oComboBox, "fireChange");
 
@@ -2401,7 +2401,7 @@ sap.ui.define([
 
 		// arrange
 		var oModel = new JSONModel();
-		var fnRemoveAggregationSpy = this.spy(oComboBox.getList(), "removeAggregation");
+		var fnRemoveAggregationSpy = this.spy(oComboBox._getList(), "removeAggregation");
 		var mData = {
 			"items": [
 				{
@@ -2615,7 +2615,7 @@ sap.ui.define([
 		oComboBox.placeAt("content");
 		sap.ui.getCore().applyChanges();
 		var fnRemoveAllItemsSpy = this.spy(oComboBox, "removeAllItems");
-		// var fnListRemoveAllItemsSpy = this.spy(oComboBox.getList(), "removeAllItems");
+		// var fnListRemoveAllItemsSpy = this.spy(oComboBox._getList(), "removeAllItems");
 
 		// act
 		var oRemovedItems = oComboBox.removeAllItems();
@@ -2683,7 +2683,7 @@ sap.ui.define([
 			assert.strictEqual(aItems[i].hasListeners("_change"), false);
 		}
 
-		assert.strictEqual(oComboBox.getList().getItems().length, 0);
+		assert.strictEqual(oComboBox._getList().getItems().length, 0);
 
 		// cleanup
 		oComboBox.destroy();
@@ -3768,7 +3768,7 @@ sap.ui.define([
 		assert.strictEqual(oComboBox.getItems().length, 0);
 		assert.ok(oComboBox.getDomRef() === null);
 		assert.ok(oComboBox.getPicker() === null);
-		assert.ok(oComboBox.getList() === null);
+		assert.ok(oComboBox._getList() === null);
 
 		// cleanup
 		oComboBox.destroy();
@@ -3811,7 +3811,7 @@ sap.ui.define([
 		assert.strictEqual(oComboBox.getItems().length, 0);
 		assert.ok(oComboBox.getDomRef() === null);
 		assert.ok(oComboBox.getPicker() === null);
-		assert.ok(oComboBox.getList() === null);
+		assert.ok(oComboBox._getList() === null);
 		assert.ok(oComboBox.getAggregation("picker") === null);
 	});
 
@@ -4291,8 +4291,8 @@ sap.ui.define([
 		// assert
 		assert.strictEqual(oComboBox.getSelectedKey(), "GER");
 		assert.strictEqual(oComboBox.getProperty("selectedKey"), "GER");
-		// assert.strictEqual(oComboBox.getList().getSelectedKey(), "GER");
-		// assert.strictEqual(oComboBox.getList().getProperty("selectedKey"), "GER");
+		// assert.strictEqual(oComboBox._getList().getSelectedKey(), "GER");
+		// assert.strictEqual(oComboBox._getList().getProperty("selectedKey"), "GER");
 		assert.ok(fnInvalidateSpy.called);
 
 		// cleanup
@@ -4986,7 +4986,7 @@ sap.ui.define([
 		oComboBox.getFocusDomRef().value = "foo";
 
 		// act
-		sap.ui.test.qunit.triggerTouchEvent("tap", oComboBox.getList().getDomRef(), {
+		sap.ui.test.qunit.triggerTouchEvent("tap", oComboBox._getList().getDomRef(), {
 			srcControl: oItem,
 			changedTouches: {
 				0: {
@@ -5030,7 +5030,7 @@ sap.ui.define([
 		sap.ui.getCore().applyChanges();
 
 		// assert
-		assert.strictEqual(oComboBox.getList().getItems()[0].getTitle(), "", "List item title is not updated");
+		assert.strictEqual(oComboBox._getList().getItems()[0].getTitle(), "", "List item title is not updated");
 
 		// act
 		var oModel = new JSONModel();
@@ -5042,7 +5042,7 @@ sap.ui.define([
 		sap.ui.getCore().applyChanges();
 
 		// assert
-		assert.strictEqual(oComboBox.getList().getItems()[0].getTitle(), "Item 1", "List item title is updated");
+		assert.strictEqual(oComboBox._getList().getItems()[0].getTitle(), "Item 1", "List item title is updated");
 
 		// cleanup
 		oComboBox.destroy();
@@ -5391,7 +5391,7 @@ sap.ui.define([
 
 		// assert
 		assert.ok(oComboBox.isOpen(), "the dropdown list is open");
-		assert.strictEqual(oComboBox.getList().getBusy(), true, "the loading indicator in the dropdown list is shown");
+		assert.strictEqual(oComboBox._getList().getBusy(), true, "the loading indicator in the dropdown list is shown");
 		assert.strictEqual(oComboBox.getFocusDomRef().getAttribute("aria-busy"), "true");
 
 		// tick the clock ahead some ms millisecond (it should be at least more than the auto respond setting
@@ -5399,7 +5399,7 @@ sap.ui.define([
 		this.clock.tick(iAutoRespondAfter + 1);
 
 		assert.ok(oComboBox.getItems().length > 0, "the items are loaded");
-		assert.strictEqual(oComboBox.getList().getBusy(), false, "the loading indicator in the dropdown list is not shown");
+		assert.strictEqual(oComboBox._getList().getBusy(), false, "the loading indicator in the dropdown list is not shown");
 		assert.strictEqual(jQuery(oComboBox.getFocusDomRef()).attr("aria-busy"), undefined);
 
 		// cleanup
@@ -8766,7 +8766,7 @@ sap.ui.define([
 
 		// assert
 		assert.strictEqual(fnOnBeforeOpenSpy.callCount, 1, "onBeforeOpen() called exactly once");
-		assert.strictEqual(oComboBox.getFocusDomRef().getAttribute("aria-owns"), oComboBox.getList().getId(), 'the attribute "aria-owns" is set after the list is rendered');
+		assert.strictEqual(oComboBox.getFocusDomRef().getAttribute("aria-owns"), oComboBox._getList().getId(), 'the attribute "aria-owns" is set after the list is rendered');
 
 		// cleanup
 		oComboBox.destroy();
@@ -9756,7 +9756,7 @@ sap.ui.define([
 		// tick the clock ahead 1 second, after the open animation is completed
 		this.clock.tick(1000);
 
-		var oListDomRef = oComboBox.getList().getDomRef();
+		var oListDomRef = oComboBox._getList().getDomRef();
 		var oListItem = oComboBox.getListItem(oItem);
 		var oTouches = {
 			0: {
@@ -9997,7 +9997,7 @@ sap.ui.define([
 		oComboBox.focus();
 		var fnFireChangeSpy = this.spy(oComboBox, "fireChange");
 		oComboBox.updateDomValue("change the value");
-		var oControlEvent = new Event("selectionChange", oComboBox.getList(), {
+		var oControlEvent = new Event("selectionChange", oComboBox._getList(), {
 			listItem: oComboBox.getListItem(oItem)
 		});
 
@@ -10301,7 +10301,7 @@ sap.ui.define([
 		oComboBox.placeAt("content");
 		sap.ui.getCore().applyChanges();
 		var sAriaLabelledBy = oComboBox.getDomRef("arrow").getAttribute("aria-labelledby").split(" ");
-		assert.ok(sAriaLabelledBy.indexOf(oLabel.getId()) > -1, "Combobox aria-labelledby attribute is set to label id");
+		assert.ok(sAriaLabelledBy.indexOf(oLabel.getId()) > -1, "ComboBox aria-labelledby attribute is set to label id");
 
 		oLabel.destroy();
 		oComboBox.destroy();
@@ -10319,7 +10319,7 @@ sap.ui.define([
 
 			//Assert
 			assert.ok(oComboBox.$("inner").attr("aria-describedby").length > 0, "Property aria-describedby should exist");
-			assert.strictEqual(oInvisibleText.getText(), oResourceBundle , "'Combobox' is announced.");
+			assert.strictEqual(oInvisibleText.getText(), oResourceBundle , "'ComboBox' is announced.");
 
 			//Cleanup
 			oComboBox.destroy();
@@ -10654,7 +10654,7 @@ sap.ui.define([
 		sap.ui.getCore().applyChanges();
 
 		// assert
-		oList = oComboBox.getList();
+		oList = oComboBox._getList();
 		assert.ok(oComboBox.$().hasClass("sapMFocus"), "The input field should have visual focus.");
 		assert.notOk(oList.hasStyleClass("sapMListFocus"), "The list should not have .sapMListFocus applied.");
 		assert.strictEqual(oList.$().find(".sapMLIBSelected").length, 1, "The list items should be selected but without focus outline.");
@@ -10684,7 +10684,7 @@ sap.ui.define([
 			});
 
 		oComboBox.placeAt("content");
-		oList = oComboBox.getList();
+		oList = oComboBox._getList();
 
 		sap.ui.getCore().applyChanges();
 
@@ -10729,7 +10729,7 @@ sap.ui.define([
 
 		// arrange
 		oComboBox.placeAt("content");
-		oList = oComboBox.getList();
+		oList = oComboBox._getList();
 
 		sap.ui.getCore().applyChanges();
 
