@@ -2225,7 +2225,7 @@ sap.ui.define([
 		// arrange
 		oComboBox.placeAt("content");
 		sap.ui.getCore().applyChanges();
-		var sExpectedActiveDescendantId = oExpectedItem.getId();
+		var sExpectedActiveDescendantId = oComboBox.getListItem(oExpectedItem).getId();
 
 		oComboBox.open();
 		this.clock.tick(1000); // wait 1s after the open animation is completed
@@ -4852,8 +4852,8 @@ sap.ui.define([
 			assert.strictEqual(oComboBox.getFocusDomRef().getAttribute("autocomplete"), "off");
 			assert.strictEqual(oComboBox.getFocusDomRef().getAttribute("autocorrect"), "off");
 			assert.strictEqual(oComboBox.getFocusDomRef().getAttribute("autocapitalize"), "off");
-			assert.strictEqual(oComboBox.getFocusDomRef().getAttribute("aria-expanded"), "false");
-			assert.strictEqual(oComboBox.getFocusDomRef().getAttribute("aria-autocomplete"), "both");
+			assert.strictEqual(oComboBox.getFocusDomRef().parentNode.getAttribute("aria-expanded"), "false");
+			assert.strictEqual(oComboBox.getFocusDomRef().parentNode.getAttribute("aria-autocomplete"), "inline");
 			assert.strictEqual(jQuery(oComboBox.getFocusDomRef()).attr("aria-required"), undefined);
 			assert.ok(oComboBox.$().hasClass(oComboBox.getRenderer().CSS_CLASS_COMBOBOXBASE), 'The combo box element has the CSS class "' + oComboBox.getRenderer().CSS_CLASS_COMBOBOXBASE + '"');
 			assert.ok(oComboBox.getAggregation("_endIcon").length, "The HTML span element for the arrow exists");
@@ -6210,7 +6210,7 @@ sap.ui.define([
 		oComboBox.focus();
 		oComboBox.open();
 		this.clock.tick(1000); // wait after the open animation is completed
-		var sExpectedActiveDescendantId = oExpectedItem.getId();
+		var sExpectedActiveDescendantId = oComboBox.getListItem(oExpectedItem).getId();
 
 		// act
 		sap.ui.test.qunit.triggerKeydown(oComboBox.getFocusDomRef(), KeyCodes.ARROW_DOWN);
@@ -6662,7 +6662,7 @@ sap.ui.define([
 		this.clock.tick(0);	// tick the clock ahead 0ms millisecond to make sure the async call to .selectText() on the focusin event handler does not override the type ahead
 		oComboBox.open();
 		this.clock.tick(1000);	// wait after the open animation is completed
-		var sExpectedActiveDescendantId = oExpectedItem.getId();
+		var sExpectedActiveDescendantId = oComboBox.getListItem(oExpectedItem).getId();
 
 		// act
 		sap.ui.test.qunit.triggerKeydown(oComboBox.getFocusDomRef(), KeyCodes.ARROW_UP);
@@ -6927,7 +6927,7 @@ sap.ui.define([
 		this.clock.tick(0);	// tick the clock ahead 0ms millisecond to make sure the async call to .selectText() on the focusin event handler does not override the type ahead
 		oComboBox.open();
 		this.clock.tick(1000);	// wait after the open animation is completed
-		var sExpectedActiveDescendantId = oExpectedItem.getId();
+		var sExpectedActiveDescendantId = oComboBox.getListItem(oExpectedItem).getId();
 
 		// act
 		sap.ui.test.qunit.triggerKeydown(oComboBox.getFocusDomRef(), KeyCodes.HOME);
@@ -7173,7 +7173,7 @@ sap.ui.define([
 		oComboBox.focus();
 		oComboBox.open();
 		this.clock.tick(1000);	// wait after the open animation is completed
-		var sExpectedActiveDescendantId = oExpectedItem.getId();
+		var sExpectedActiveDescendantId = oComboBox.getListItem(oExpectedItem).getId();
 
 		// act
 		sap.ui.test.qunit.triggerKeydown(oComboBox.getFocusDomRef(), KeyCodes.END);
@@ -7538,7 +7538,7 @@ sap.ui.define([
 		oComboBox.focus();
 		oComboBox.open();
 		this.clock.tick(1000);	// wait after the open animation is completed
-		var sExpectedActiveDescendantId = oExpectedItem.getId();
+		var sExpectedActiveDescendantId = oComboBox.getListItem(oExpectedItem).getId();
 
 		// act
 		sap.ui.test.qunit.triggerKeydown(oComboBox.getFocusDomRef(), KeyCodes.PAGE_DOWN);
@@ -7907,7 +7907,7 @@ sap.ui.define([
 		oComboBox.focus();
 		oComboBox.open();
 		this.clock.tick(1000);	// wait 1s after the open animation is completed
-		var sExpectedActiveDescendantId = oExpectedItem.getId();
+		var sExpectedActiveDescendantId = oComboBox.getListItem(oExpectedItem).getId();
 
 		// act
 		sap.ui.test.qunit.triggerKeydown(oComboBox.getFocusDomRef(), KeyCodes.PAGE_UP);
@@ -7995,7 +7995,7 @@ sap.ui.define([
 		oComboBox.focus();
 		var fnOpenSpy = this.spy(oComboBox, "open");
 		var fnFireSelectionChangeSpy = this.spy(oComboBox, "fireSelectionChange");
-		var sExpectedActiveDescendantId = oExpectedItem.getId();
+		var sExpectedActiveDescendantId = oComboBox.getListItem(oExpectedItem).getId();
 
 		// act
 		oComboBox.getFocusDomRef().value = "G";
@@ -8766,7 +8766,6 @@ sap.ui.define([
 
 		// assert
 		assert.strictEqual(fnOnBeforeOpenSpy.callCount, 1, "onBeforeOpen() called exactly once");
-		assert.strictEqual(oComboBox.getFocusDomRef().getAttribute("aria-owns"), oComboBox._getList().getId(), 'the attribute "aria-owns" is set after the list is rendered');
 
 		// cleanup
 		oComboBox.destroy();
@@ -8798,7 +8797,7 @@ sap.ui.define([
 
 		// assert
 		assert.strictEqual(fnOnAfterOpenSpy.callCount, 1, "onAfterOpen() called exactly once");
-		assert.strictEqual(oComboBox.getFocusDomRef().getAttribute("aria-expanded"), "true");
+		assert.strictEqual(oComboBox.getFocusDomRef().parentNode.getAttribute("aria-expanded"), "true");
 		assert.strictEqual(oComboBox.$("inner").attr("aria-activedescendant"), undefined, 'The "aria-activedescendant" attribute is set when the active descendant is rendered and visible');
 
 		// cleanup
@@ -8823,7 +8822,7 @@ sap.ui.define([
 		oComboBox.placeAt("content");
 		sap.ui.getCore().applyChanges();
 		oComboBox.focus();
-		var sExpectedActiveDescendantId = oExpectedItem.getId();
+		var sExpectedActiveDescendantId = oComboBox.getListItem(oExpectedItem).getId();
 
 		// act
 		oComboBox.open();
@@ -9031,7 +9030,7 @@ sap.ui.define([
 
 		// assert
 		assert.strictEqual(fnOnAfterCloseSpy.callCount, 1, "onAfterClose() called exactly once");
-		assert.strictEqual(oComboBox.getFocusDomRef().getAttribute("aria-expanded"), "false");
+		assert.strictEqual(oComboBox.getFocusDomRef().parentNode.getAttribute("aria-expanded"), "false");
 		assert.strictEqual(oComboBox.$("inner").attr("aria-activedescendant"), undefined, 'The "aria-activedescendant" attribute is set when the active descendant is rendered and visible');
 
 		// cleanup
@@ -10251,7 +10250,7 @@ sap.ui.define([
 		oComboBox.placeAt("content");
 		sap.ui.getCore().applyChanges();
 
-		assert.strictEqual(oComboBox.getDomRef().getAttribute("role"), "combobox", "should be combobox");
+		assert.strictEqual(oComboBox.getFocusDomRef().parentNode.getAttribute("role"), "combobox", "should be combobox");
 		assert.strictEqual(oComboBox.getFocusDomRef().getAttribute("type"), "text", "should be text");
 		oComboBox.destroy();
 	});

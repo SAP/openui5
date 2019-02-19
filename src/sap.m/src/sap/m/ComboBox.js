@@ -331,7 +331,7 @@ sap.ui.define([
 
 				// the aria-activedescendant attribute is set when the list is rendered
 				if (vItem && oListItem && oListItem.getDomRef() && this.isOpen()) {
-					oDomRef.setAttribute(sActivedescendant, vItem.getId());
+					oDomRef.setAttribute(sActivedescendant, oListItem.getId());
 				} else {
 					oDomRef.removeAttribute(sActivedescendant);
 				}
@@ -1032,12 +1032,12 @@ sap.ui.define([
 
 			// add the active state to the control field
 			this.addStyleClass(InputBase.ICON_PRESSED_CSS_CLASS);
-
 			if (oDomRef) {
 
 				// expose a parent/child contextual relationship to assistive technologies,
 				// notice that the "aria-owns" attribute is set when the list is visible and in view
-				oDomRef.setAttribute("aria-owns", this._getList().getId());
+				this.getRoleComboNodeDomRef().setAttribute("aria-owns", this._getList().getId());
+
 			}
 
 			// call the hook to add additional content to the list
@@ -1067,14 +1067,15 @@ sap.ui.define([
 		 */
 		ComboBox.prototype.onAfterOpen = function() {
 			var oDomRef = this.getFocusDomRef(),
-				oItem = this.getSelectedItem();
+				oItem = this.getSelectedItem(),
+				oListItem = this.getListItem(oItem);
 
 			if (oDomRef) {
-				oDomRef.setAttribute("aria-expanded", "true");
+				this.getRoleComboNodeDomRef().setAttribute("aria-expanded", "true");
 
 				// notice that the "aria-activedescendant" attribute is set when the currently active descendant is
 				// visible and in view
-				oItem && oDomRef.setAttribute("aria-activedescendant", oItem.getId());
+				oListItem && oDomRef.setAttribute("aria-activedescendant", oListItem.getId());
 			}
 
 			// if there is a selected item, scroll and show the list
@@ -1090,9 +1091,8 @@ sap.ui.define([
 			var oDomRef = this.getFocusDomRef();
 
 			if (oDomRef) {
-
 				// notice that the "aria-owns" attribute is removed when the list is not visible and in view
-				oDomRef.removeAttribute("aria-owns");
+				this.getRoleComboNodeDomRef().removeAttribute("aria-owns");
 
 				// the "aria-activedescendant" attribute is removed when the currently active descendant is not visible
 				oDomRef.removeAttribute("aria-activedescendant");
@@ -1110,7 +1110,7 @@ sap.ui.define([
 			var oDomRef = this.getFocusDomRef();
 
 			if (oDomRef) {
-				oDomRef.setAttribute("aria-expanded", "false");
+				this.getRoleComboNodeDomRef().setAttribute("aria-expanded", "false");
 			}
 
 			// clear the filter to make all items visible,

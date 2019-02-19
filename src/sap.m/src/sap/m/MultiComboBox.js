@@ -1024,7 +1024,7 @@ function(
 	MultiComboBox.prototype.onAfterOpen = function() {
 		var oDomRef = this.getFocusDomRef();
 
-		oDomRef && oDomRef.setAttribute("aria-expanded", "true");
+		oDomRef && this.getRoleComboNodeDomRef().setAttribute("aria-expanded", "true");
 
 		this._bPickerIsOpening = false;
 
@@ -1054,7 +1054,7 @@ function(
 		var bUseCollapsed = !jQuery.contains(this.getDomRef(), document.activeElement) || this.isPickerDialog(),
 			oDomRef = this.getFocusDomRef();
 
-		oDomRef && oDomRef.setAttribute("aria-expanded", "false");
+		oDomRef && this.getRoleComboNodeDomRef().setAttribute("aria-expanded", "false");
 
 		// remove the active state of the MultiComboBox's field
 		this.removeStyleClass(InputBase.ICON_PRESSED_CSS_CLASS);
