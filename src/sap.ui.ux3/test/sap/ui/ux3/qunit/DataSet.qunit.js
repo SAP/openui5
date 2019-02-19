@@ -271,6 +271,29 @@ sap.ui.define([
 		assert.ok(!oButton.$().length, "Custom Toolbaritem removed");
 	});
 
+	QUnit.test("Dataset call invalidate when model data is changed when data is initially empty", function (assert) {
+		var oModel = new JSONModel(),
+			oDataSet = new DataSet({
+				items: {
+					path: "/items",
+					template: new DataSetItem({
+						title : "{key}"
+					})
+				}
+			});
+
+		oModel.setData({ items: []});
+		oDataSet.setModel(oModel);
+
+		var oDataInvalidateSpy = this.spy(oDataSet, "invalidate");
+		oModel.setData({ items: [{}, {}, {}] });
+
+		assert.equal(oDataInvalidateSpy.callCount, 1, "invalidate method is called once when model is changed");
+
+		oDataInvalidateSpy.restore();
+		oDataSet.destroy();
+	});
+
 	QUnit.module("DataSetSimpleView");
 
 	QUnit.test("selection", function(assert) {
