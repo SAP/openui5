@@ -629,6 +629,7 @@ sap.ui.define(['sap/ui/core/date/UniversalDate', 'sap/ui/unified/CalendarAppoint
 			iMonth = oRowStartDate.getMonth(),
 			iDaysLength = new Date(oRowStartDate.getFullYear(), iMonth + 1, 0).getDate(),
 			sNoAppointments,
+			oPC = oRow._getPlanningCalendar(),
 			// gets a concatenated array with appointments + interval headers, which intersect the visible interval
 			// then sorts the array using our custom comparer
 			aSortedAppInfos = aAppointments.concat(oRow.getIntervalHeaders().filter(function(oIntHeadApp) {
@@ -640,7 +641,12 @@ sap.ui.define(['sap/ui/core/date/UniversalDate', 'sap/ui/unified/CalendarAppoint
 			}).map(function(oIntHeadApp) {
 				return {appointment: oIntHeadApp, isHeader: true};
 			})).sort(CalendarAppointment._getComparer(oRowStartDate)),
-			oAppointmentInfo;
+			oAppointmentInfo,
+			aSelectedDates = [];
+
+		if (oPC) {
+			aSelectedDates = oPC._getSelectedDates();
+		}
 
 		oRm.write("<div id=\"" + sId + "\"");
 		oRm.addClass("sapUiCalendarRowAppsInt");
@@ -682,24 +688,26 @@ sap.ui.define(['sap/ui/core/date/UniversalDate', 'sap/ui/unified/CalendarAppoint
 			oRm.write("</div>");
 		}
 
-		for (i = 0; i < aSortedAppInfos.length; i++) {
-			oAppointmentInfo = aSortedAppInfos[i];
+		if (aSelectedDates.length > 0) {
+			for (i = 0; i < aSortedAppInfos.length; i++) {
+				oAppointmentInfo = aSortedAppInfos[i];
 
-			oRm.write("<div class=\"sapUiCalendarAppContainer\">");
+				oRm.write("<div class=\"sapUiCalendarAppContainer\">");
 				oRm.write("<div class=\"sapUiCalendarAppContainerLeft\">");
-					oRm.write("<div>" + oAppointmentInfo.appointment._getDateRangeIntersectionText(oRowStartDate) + "</div>");
+				oRm.write("<div>" + oAppointmentInfo.appointment._getDateRangeIntersectionText(oRowStartDate) + "</div>");
 				oRm.write("</div>");
 				oRm.write("<div class=\"sapUiCalendarAppContainerRight\">");
-					if (oAppointmentInfo.isHeader) {
-						this.renderIntervalHeader(oRm, oRow, oAppointmentInfo);
-					} else {
-						this.renderAppointment(oRm, oRow, oAppointmentInfo, aTypes, true);
-					}
+				if (oAppointmentInfo.isHeader) {
+					this.renderIntervalHeader(oRm, oRow, oAppointmentInfo);
+				} else {
+					this.renderAppointment(oRm, oRow, oAppointmentInfo, aTypes, true);
+				}
 				oRm.write("</div>");
-			oRm.write("</div>");
+				oRm.write("</div>");
+			}
 		}
 
-		if (aAppointments.length === 0) {
+		if (aAppointments.length === 0 || aSelectedDates.length === 0) {
 			oRm.write("<div class=\"sapUiCalendarNoApps\">");
 			sNoAppointments = sap.ui.getCore().getLibraryResourceBundle("sap.m").getText("PLANNINGCALENDAR_ROW_NO_APPOINTMENTS");
 			oRm.write(sNoAppointments);
