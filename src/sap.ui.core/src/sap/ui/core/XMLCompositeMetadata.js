@@ -31,7 +31,7 @@ sap.ui.define([
 	 * @version ${version}
 	 * @since 1.50.0
 	 * @alias sap.ui.core.XMLCompositeMetadata
-	 *
+	 * @extends sap.ui.core.ElementMetadata
 	 * @public
 	 * @experimental
 	 */

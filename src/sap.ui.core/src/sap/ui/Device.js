@@ -1334,7 +1334,7 @@ if (typeof window.sap.ui !== "object") {
 	 *            [oListener] The object that wants to be notified when the event occurs (<code>this</code> context within the
 	 *                        handler function). If it is not specified, the handler function is called in the context of the <code>window</code>.
 	 * @param {string}
-	 *            sName The name of the range set to listen to. The range set must be initialized beforehand
+	 *            [sName] The name of the range set to listen to. The range set must be initialized beforehand
 	 *                  ({@link sap.ui.Device.media.initRangeSet}). If no name is provided, the
 	 *                  {@link sap.ui.Device.media.RANGESETS.SAP_STANDARD default range set} is used.
 	 *
@@ -1357,7 +1357,7 @@ if (typeof window.sap.ui !== "object") {
 	 * @param {object}
 	 *            [oListener] The object that wanted to be notified when the event occurred
 	 * @param {string}
-	 *             sName The name of the range set to listen to. If no name is provided, the
+	 *            [sName] The name of the range set to listen to. If no name is provided, the
 	 *                   {@link sap.ui.Device.media.RANGESETS.SAP_STANDARD default range set} is used.
 	 *
 	 * @name sap.ui.Device.media.detachHandler

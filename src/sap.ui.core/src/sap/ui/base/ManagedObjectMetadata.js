@@ -76,6 +76,7 @@ function(
 	 * @version ${version}
 	 * @since 0.8.6
 	 * @alias sap.ui.base.ManagedObjectMetadata
+	 * @extends sap.ui.base.Metadata
 	 * @public
 	 */
 	var ManagedObjectMetadata = function(sClassName, oClassInfo) {

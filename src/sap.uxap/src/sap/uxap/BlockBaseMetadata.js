@@ -18,6 +18,7 @@ sap.ui.define(["sap/ui/thirdparty/jquery", "sap/ui/core/ElementMetadata", "sap/b
 	 * @version ${version}
 	 * @since 1.26
 	 * @alias sap.uxap.BlockBaseMetadata
+	 * @extends sap.ui.core.ElementMetadata
 	 */
 	var BlockBaseMetadata = function (sClassName, oClassInfo) {
 

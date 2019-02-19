@@ -670,10 +670,14 @@ function(
 		};
 
 		/**
-		 * Scrolls to an element(DOM or sap.ui.core.Element) within the page if the element is rendered.
+		 * Scrolls to an element (DOM or sap.ui.core.Element) within the page if the element is rendered.
 		 * @param {HTMLElement | sap.ui.core.Element} oElement The element to which should be scrolled.
-		 * @param {int} [iTime=0] The duration of animated scrolling. To scroll immediately without animation, give 0 as value or leave it default.
-		 * @param {Array} Specifies the offset left and top for the DOM Element.
+		 * @param {int} [iTime=0]
+		 *           The duration of animated scrolling in milliseconds. To scroll immediately without animation,
+		 *           give 0 as value.
+		 * @param {int[]} [aOffset=[0,0]]
+		 *           Specifies an additional left and top offset of the target scroll position, relative to
+		 *           the upper left corner of the DOM element
 		 * @returns {sap.m.Page} <code>this</code> to facilitate method chaining.
 		 * @since 1.30
 		 * @public
