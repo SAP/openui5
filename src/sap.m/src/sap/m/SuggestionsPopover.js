@@ -87,7 +87,7 @@ sap.ui.define([
 			this._bIsInputIncrementalType = false;
 
 			// specifies whether autocomplete is enabled
-			this._bAutocompleEnabled = false;
+			this._bAutocompleteEnabled = false;
 
 			// stores currently typed value
 			this._sTypedInValue = '';
@@ -570,7 +570,7 @@ sap.ui.define([
 
 		this._iPopupListSelectedIndex = iSelectedIndex;
 
-		this._oProposedItem = null;
+		this._bSuggestionItemChanged = true;
 
 		this.fireEvent(SuggestionsPopover.M_EVENTS.SELECTION_CHANGE, {newValue: sNewValue});
 	};
@@ -660,6 +660,9 @@ sap.ui.define([
 				enableBusyIndicator: false,
 				rememberSelections : false,
 				selectionChange: function (oEvent) {
+					if (Device.system.desktop) {
+						oInput.focus();
+					}
 					this._bSuggestionItemTapped = true;
 					var oSelectedListItem = oEvent.getParameter("listItem");
 					oInput.setSelectionRow(oSelectedListItem, true);
@@ -801,7 +804,7 @@ sap.ui.define([
 
 		this._oInputDelegate = {
 			onkeydown: function (oEvent) {
-				this._bDoTypeAhead = this._bAutocompleEnabled && (oEvent.which !== KeyCodes.BACKSPACE) && (oEvent.which !== KeyCodes.DELETE);
+				this._bDoTypeAhead = this._bAutocompleteEnabled && (oEvent.which !== KeyCodes.BACKSPACE) && (oEvent.which !== KeyCodes.DELETE);
 			},
 			oninput: this._handleTypeAhead
 		};
@@ -885,7 +888,11 @@ sap.ui.define([
 	 * @private
 	 */
 	SuggestionsPopover.prototype._finalizeAutocomplete = function () {
-		if (!this._bSuggestionItemTapped && this._oProposedItem) {
+		if (!this._bAutocompleteEnabled) {
+			return;
+		}
+
+		if (!this._bSuggestionItemTapped && !this._bSuggestionItemChanged && this._oProposedItem) {
 			if (this._hasTabularSuggestions()) {
 				this._oInput.setSelectionRow(this._oProposedItem, true);
 			} else {
@@ -893,7 +900,7 @@ sap.ui.define([
 			}
 		}
 
-		if (document.activeElement === this._oInput.getFocusDomRef()) {
+		if (this._oProposedItem && document.activeElement === this._oInput.getFocusDomRef()) {
 			var iLength = this._oInput.getValue().length;
 			this._oInput.selectText(iLength, iLength);
 		}
@@ -902,6 +909,7 @@ sap.ui.define([
 		this._sProposedItemText = null;
 		this._sTypedInValue = '';
 		this._bSuggestionItemTapped = false;
+		this._bSuggestionItemChanged = false;
 	};
 
 	/**
@@ -928,7 +936,7 @@ sap.ui.define([
 		var oInput = this._oInput,
 			sValue = oInput.getValue();
 
-		if (!this._bAutocompleEnabled) {
+		if (!this._bAutocompleteEnabled) {
 			return;
 		}
 

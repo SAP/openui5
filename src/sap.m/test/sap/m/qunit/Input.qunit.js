@@ -3491,6 +3491,41 @@ sap.ui.define([
 		oInput = null;
 	});
 
+	QUnit.test("Autocomplete should keep cursor on place when there are no suggestions", function (assert) {
+		// Arrange
+		var oInput = new Input({
+			showSuggestion: true,
+			filterSuggests: false,
+			suggestionItems: [
+				new Item({text: "Germany"}),
+				new Item({text: "Bulgaria"}),
+				new Item({text: "United Kingdom"}),
+				new Item({text: "Italy"})
+			]
+		}).placeAt("content");
+		sap.ui.getCore().applyChanges();
+
+		// Arrange - open the suggestions
+		oInput._$input.focus().val("Germ").trigger("input");
+
+		// Act - move the cursor
+		var iCursorPosition = 2;
+		oInput.selectText(iCursorPosition, iCursorPosition);
+		this.clock.tick(100);
+
+		// Act - remove all suggestions
+		oInput.removeAllSuggestionItems(); // simulate no suggestions found
+		// oModel.setProperty('/suggestions', []);
+		this.clock.tick(100);
+
+		// Assert that the cursor is on its original place
+		assert.ok(oInput._$input[0].selectionStart === iCursorPosition, "The cursor should be on its original position");
+
+		// clean up
+		oInput.destroy();
+		oInput = null;
+	});
+
 	QUnit.test("Autocomplete on phone", function (assert) {
 		if (Device.browser.internet_explorer && Device.browser.version < 11) { // TODO remove after 1.62 version
 			assert.ok(true, "Do not test phone functionality in unsupported versions of Internet Explorer");
