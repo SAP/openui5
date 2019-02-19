@@ -1430,8 +1430,7 @@ sap.ui.define([
 		}
 
 		if (item._status === "Edit") {
-			var sItemId = item.getId() + "-cli";
-			this.$().find("#" + sItemId).find(".sapMUCObjectMarkerContainer").attr("style", "display: none");// the markers are not displayed in edit mode
+			item._oListItem.$().find(".sapMUCObjectMarkerContainer").attr("style", "display: none");
 			return;
 		}
 		var iMarkersWidth = 0;
@@ -1441,7 +1440,7 @@ sap.ui.define([
 			iMarkersWidth = iMarkersWidth + aMarkers[i].$().width() + UploadCollection._markerMargin;
 		}
 		if (iMarkersWidth > 0) {
-			var $FileName = this.$().find("#" + item.getId() + "-ta_filenameHL");
+			var $FileName = item._oFileNameLink.$();
 			if ($FileName) {
 				sStyle = "max-width: calc(100% - " + iMarkersWidth + "px)";
 				if ($FileName.attr("style") !== sStyle) {
@@ -1577,6 +1576,8 @@ sap.ui.define([
 		oListItem._status = sStatus;
 		oListItem.addStyleClass("sapMUCItem");
 		oListItem.setTooltip(item.getTooltip_Text());
+		item._oListItem = oListItem;
+
 		return oListItem;
 	};
 
@@ -1718,6 +1719,8 @@ sap.ui.define([
 			oFileName.addStyleClass("sapMUCFileName");
 			oFileName.setModel(item.getModel());
 			oFileName.setText(sFileNameLong);
+			item._oFileNameLink = oFileName;
+
 			return oFileName;
 		} else {
 			oFile = UploadCollection._splitFilename(sFileNameLong);
