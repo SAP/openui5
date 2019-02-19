@@ -2692,9 +2692,8 @@ function(
 		sAdditionalText = (oItem.getAdditionalText && this.getShowSecondaryValues()) ? oItem.getAdditionalText() : "";
 
 		if (oItem.isA("sap.ui.core.SeparatorItem")) {
-			oListItem = this._mapSeparatorItemToGroupHeader(oItem);
+			oListItem = this._mapSeparatorItemToGroupHeader(oItem, oRenderer);
 			oItem.data(oRenderer.CSS_CLASS_COMBOBOXBASE + "ListItem", oListItem);
-			oListItem.addStyleClass(oRenderer.CSS_CLASS_MULTICOMBOBOX + "NonInteractiveItem");
 			this._decorateListItem(oListItem);
 
 			return oListItem;
@@ -2999,37 +2998,6 @@ function(
 		}
 
 		return this;
-	};
-
-	/**
-	 * Add an sap.ui.core.SeparatorItem item to the aggregation named <code>items</code>.
-	 *
-	 * @param {sap.ui.core.Item} oGroup Item of that group
-	 * @param {sap.ui.core.SeparatorItem} oHeader The item to be added
-	 * @param {boolean} bSuppressInvalidate Flag indicating whether invalidation should be suppressed
-	 * @returns {sap.m.GroupHeaderListItem} The group header
-	 * @private
-	 */
-	MultiComboBox.prototype.addItemGroup = function(oGroup, oHeader, bSuppressInvalidate) {
-		oHeader = oHeader || new SeparatorItem({
-			text: oGroup.text || oGroup.key
-		});
-
-		this.addAggregation("items", oHeader, bSuppressInvalidate);
-		return oHeader;
-	};
-
-	/**
-	 * Map an item type of sap.ui.core.SeparatorItem to an item type of sap.m.GroupHeaderListItem.
-	 *
-	 * @param {sap.ui.core.SeparatorItem} oSeparatorItem The item to be matched
-	 * @returns {sap.m.GroupHeaderListItem} The matched GroupHeaderListItem
-	 * @private
-	 */
-	MultiComboBox.prototype._mapSeparatorItemToGroupHeader = function (oSeparatorItem) {
-		return new GroupHeaderListItem({
-			title: oSeparatorItem.getText()
-		});
 	};
 
 	/**

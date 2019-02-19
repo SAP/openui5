@@ -6,8 +6,10 @@ sap.ui.define([
 	"sap/m/Label",
 	"sap/m/Select",
 	"sap/m/StandardListItem",
+	"sap/m/GroupHeaderListItem",
 	"sap/ui/core/Item",
 	"sap/ui/core/ListItem",
+	"sap/ui/core/SeparatorItem",
 	"sap/ui/layout/form/SimpleForm",
 	"sap/ui/model/json/JSONModel",
 	"sap/ui/model/odata/ODataModel",
@@ -36,8 +38,10 @@ sap.ui.define([
 	Label,
 	Select,
 	StandardListItem,
+	GroupHeaderListItem,
 	Item,
 	ListItem,
+	SeparatorItem,
 	SimpleForm,
 	JSONModel,
 	ODataModel,
@@ -11190,6 +11194,602 @@ sap.ui.define([
 		assert.strictEqual(fnWarningSpy.firstCall.args[1], "You are attempting to use deprecated method 'getList()', please refer to SAP note 2746748.", "Second argument correct.");
 		assert.strictEqual(fnWarningSpy.firstCall.args[2], oComboBox, "Third argument correct.");
 
+		oComboBox.destroy();
+	});
+
+	QUnit.module("_mapItemToListItem", {
+		beforeEach: function () {
+			this.oComboBox = new ComboBox();
+		},
+		afterEach: function () {
+			this.oComboBox.destroy();
+		}
+	});
+
+	QUnit.test("returns StandardListItem when called with Item.", function (assert) {
+		// system under test
+		var oItem = new Item({
+				text: "text",
+				key: "key"
+			}),
+			sClass = this.oComboBox.getRenderer().CSS_CLASS_COMBOBOXBASE + "Item",
+			oListItem;
+
+		// act
+		oListItem = this.oComboBox._mapItemToListItem(oItem);
+
+		// assert
+		assert.ok(oListItem.isA("sap.m.StandardListItem"), "The ListItem is of type 'sap.m.StandardListItem'.");
+		assert.ok(oListItem.aCustomStyleClasses.indexOf(sClass) > -1, "Class " + sClass + " was added to the ListItem");
+		assert.strictEqual(oListItem.getTitle(), "text", "The title of the ListItem was set correctly.");
+	});
+
+	QUnit.test("returns StandardListItem when called with ListItem with additional text", function (assert) {
+		// system under test
+		var oItem = new ListItem({
+				text: "text",
+				key: "key",
+				additionalText: "additional text"
+			}),
+			oListItem;
+
+		this.oComboBox.setShowSecondaryValues(true);
+
+		// act
+		oListItem = this.oComboBox._mapItemToListItem(oItem);
+
+		// assert
+		assert.ok(oListItem.isA("sap.m.StandardListItem"), "The ListItem is of type 'sap.m.StandardListItem'.");
+		assert.strictEqual(oListItem.getTitle(), "text", "The title of the ListItem was set correctly.");
+		assert.strictEqual(oListItem.getInfo(), "additional text", "The info of the ListItem was set correctly.");
+	});
+
+	QUnit.test("returns GroupHeaderListItem when called with SeparatorItem with text", function (assert) {
+		// system under test
+		var oItem = new SeparatorItem({
+				text: "Group header text",
+				key: "key"
+			}),
+			sClass = this.oComboBox.getRenderer().CSS_CLASS_COMBOBOXBASE + "NonInteractiveItem",
+			oListItem;
+
+		// act
+		oListItem = this.oComboBox._mapItemToListItem(oItem);
+
+		// assert
+		assert.ok(oListItem.isA("sap.m.GroupHeaderListItem"), "The ListItem is of type 'sap.m.GroupHeaderListItem'.");
+		assert.ok(oListItem.aCustomStyleClasses.indexOf(sClass) > -1, "Class " + sClass + " was added to the ListItem");
+		assert.strictEqual(oListItem.getTitle(), "Group header text", "The title of the GroupHeaderListItem was set correctly.");
+	});
+
+	QUnit.test("returns GroupHeaderListItem when called with SeparatorItem without text", function (assert) {
+		// system under test
+		var oItem = new SeparatorItem(),
+			sClass = this.oComboBox.getRenderer().CSS_CLASS_COMBOBOXBASE + "NonInteractiveItem",
+			sAdditionalClass = this.oComboBox.getRenderer().CSS_CLASS_COMBOBOXBASE + "SeparatorItemNoText",
+			oListItem;
+
+		// act
+		oListItem = this.oComboBox._mapItemToListItem(oItem);
+
+		// assert
+		assert.ok(oListItem.isA("sap.m.GroupHeaderListItem"), "The ListItem is of type 'sap.m.GroupHeaderListItem'.");
+		assert.ok(oListItem.aCustomStyleClasses.indexOf(sClass) > -1, "Class " + sClass + " was added to the ListItem");
+		assert.ok(oListItem.aCustomStyleClasses.indexOf(sAdditionalClass) > -1, "Class " + sAdditionalClass + " was added to the ListItem");
+	});
+
+	QUnit.module("Input field text selection", {
+		beforeEach: function () {
+			this.oComboBox = new ComboBox();
+
+			// Mocked control data
+			this.oFakeFocusDomRef = {
+				selectionStart: 0,
+				selectionEnd: 0,
+				value: {
+					substring: function () {}
+				}
+			};
+			this.oFakeControl = {
+				getFocusDomRef: function () {
+					return this.oFakeFocusDomRef;
+				}.bind(this),
+				_itemsTextStartsWithTypedValue: function () {
+					return true;
+				},
+				_bIsLastFocusedItemHeader: false
+			};
+		},
+		afterEach: function () {
+			this.oComboBox.destroy();
+		}
+	});
+
+	QUnit.test("_itemsTextStartsWithTypedValue - items text starts with sTypedText", function (assert) {
+		// system under test
+		var oItem = new Item({
+				text: "value1",
+				key: "key1"
+			}),
+			sTypedValue = "va";
+
+		// assert
+		assert.ok(this.oComboBox._itemsTextStartsWithTypedValue(oItem, sTypedValue), "Items text starts with sTypedText");
+	});
+
+	QUnit.test("_itemsTextStartsWithTypedValue - items text does not start with sTypedText", function (assert) {
+		// system under test
+		var oItem = new Item({
+				text: "1value1",
+				key: "key1"
+			}),
+			sTypedValue = "va";
+
+		// assert
+		assert.ok(!this.oComboBox._itemsTextStartsWithTypedValue(oItem, sTypedValue), "Items text does not start with sTypedText");
+	});
+
+	QUnit.test("_itemsTextStartsWithTypedValue - no item provided should result in false", function (assert) {
+		// system under test
+		var log = sap.ui.require('sap/base/Log'),
+			sTypedValue = "va",
+			fnErrorSpy = this.spy(log, "error");
+
+		// assert
+		assert.ok(!this.oComboBox._itemsTextStartsWithTypedValue(null, sTypedValue), "Correct 'false' returned");
+		assert.strictEqual(fnErrorSpy.callCount, 0, "No error was logged in the console.");
+	});
+
+	QUnit.test("shouldResetSelectionStart - scenario 1: Typed value with selected text and item starting with the typed value.", function (assert) {
+		// system under test
+		this.oFakeFocusDomRef.selectionStart = 2;
+		this.oFakeFocusDomRef.selectionEnd = 6;
+
+		// assert
+		assert.ok(!this.oComboBox.shouldResetSelectionStart(this.oFakeControl), "Selection should not be reset");
+	});
+
+	QUnit.test("shouldResetSelectionStart - scenario 2: Typed value without selected text and item starting with the typed value.", function (assert) {
+		// assert
+		assert.ok(this.oComboBox.shouldResetSelectionStart(this.oFakeControl), "Selection should be reset");
+	});
+
+	QUnit.test("shouldResetSelectionStart - scenario 3: Typed value without selected text, matching item and previous item was a group header item.", function (assert) {
+		// System under test
+		this.oFakeFocusDomRef.selectionStart = 2;
+		this.oFakeFocusDomRef.selectionEnd = 2;
+		this.oFakeControl._bIsLastFocusedItemHeader = true;
+
+		// assert
+		assert.ok(!this.oComboBox.shouldResetSelectionStart(this.oFakeControl), "Selection should not be reset");
+	});
+
+	QUnit.test("shouldResetSelectionStart - scenario 4: No item that starts with the typed value.", function (assert) {
+		// System under test
+		this.oFakeControl._itemsTextStartsWithTypedValue = function () { return false; };
+
+		// assert
+		assert.ok(this.oComboBox.shouldResetSelectionStart(this.oFakeControl), "Selection should be reset");
+	});
+
+	QUnit.module("addItemGroup", {
+		beforeEach: function () {
+			this.oComboBox = new ComboBox();
+		},
+		afterEach: function () {
+			this.oComboBox.destroy();
+		}
+	});
+
+	QUnit.test("adds new SeparatorItem to the items aggregation.", function (assert) {
+		// system under test
+		var oGroup1 = {
+				text: "Group header text",
+				key: "key"
+			},
+			oGroup2 = {
+				key: "key"
+			},
+			oSeparatorItem1, oSeparatorItem2;
+
+		// act
+		oSeparatorItem1 = this.oComboBox.addItemGroup(oGroup1);
+		oSeparatorItem2 = this.oComboBox.addItemGroup(oGroup2);
+
+		// assert
+		assert.ok(oSeparatorItem1.isA("sap.ui.core.SeparatorItem"), "The ListItem is of type 'sap.ui.core.SeparatorItem'.");
+		assert.strictEqual(oSeparatorItem1.getText(), "Group header text", "The title of the GroupHeaderListItem was set correctly.");
+
+		assert.ok(oSeparatorItem2.isA("sap.ui.core.SeparatorItem"), "The ListItem is of type 'sap.ui.core.SeparatorItem'.");
+		assert.strictEqual(oSeparatorItem2.getText(), "key", "The title of the GroupHeaderListItem was set correctly.");
+
+		assert.strictEqual(this.oComboBox.getItems().length, 2, "There are only two items the items aggregation");
+		assert.strictEqual(this.oComboBox.getItems()[0], oSeparatorItem1, "First item is correct");
+		assert.strictEqual(this.oComboBox.getItems()[1], oSeparatorItem2, "Second item is correct");
+	});
+
+	QUnit.module("Group headers and separators", {
+		beforeEach: function () {
+			// system under test
+			this.oComboBox = new ComboBox({
+				items: [
+					new SeparatorItem({text: "Group1"}),
+					new Item({text: "item11", key:"key11"}),
+					new Item({text: "item12", key:"key12"}),
+					new SeparatorItem({text: "Group2"}),
+					new Item({text: "item21", key:"key21"}),
+					new Item({text: "item22", key:"key22"})
+				]
+			});
+
+			// Checkes if the header and the two items which text starts with "item1" are present after filtering
+			this.fnCheckFilterWithGrouping = function (assert, aItems) {
+				assert.strictEqual(aItems.length, 3, "There should be 3 items after the filtering.");
+				assert.strictEqual(aItems[0].getText(), "Group1", "The first item's text is correct.");
+				assert.strictEqual(aItems[1].getText(), "item11", "The second item's text is correct.");
+				assert.strictEqual(aItems[2].getText(), "item12", "The second item's text is correct.");
+			};
+
+			// Checkes if the expected value was filled in and the expected item selected in the combo box
+			this.fnCheckSelectedItemAndValue = function (assert, oExpectedItem, sExpectedValue) {
+				assert.strictEqual(this.oComboBox.getFocusDomRef().value, sExpectedValue, "The expected text was filled in the combo box.");
+				assert.strictEqual(jQuery(this.oComboBox.getFocusDomRef()).getSelectedText(), sExpectedValue, "Correct text was selected in the combo box.");
+				assert.ok(this.oComboBox.getSelectedItem() === oExpectedItem, "The expected item was selected.");
+			};
+
+			// Checkes if the visual focus was moved from one item to another
+			this.fnCheckVisualFocusedMoved = function (assert, oInitiallySelectedListItem, oNextListItem) {
+				assert.ok(oNextListItem.hasStyleClass("sapMLIBFocused"), "Visual focus moved to the next list item.");
+				assert.ok(!oInitiallySelectedListItem.hasStyleClass("sapMLIBFocused"), "Visual focus removed from the previously selected list item.");
+			};
+
+			this.oComboBox.placeAt("content");
+			sap.ui.getCore().applyChanges();
+		},
+		afterEach: function () {
+			// clean
+			this.oComboBox.destroy();
+		}
+	});
+
+	QUnit.test("getNonSeparatorSelectableItems should return array with non separator items only.", function (assert) {
+		var aItems = this.oComboBox.getNonSeparatorSelectableItems(this.oComboBox.getSelectableItems());
+		assert.strictEqual(aItems.length, 4, "Items of type sap.ui.core.Separator items are filtered out.");
+	});
+
+	QUnit.test(" Group header shown when filtering", function (assert) {
+		assert.expect(4);
+		var aItems;
+
+		// act
+		this.oComboBox.filterItems({
+			properties: this.oComboBox._getFilters(),
+			value: "item1"
+		});
+
+		aItems = this.oComboBox.getVisibleItems();
+
+		// assert
+		this.fnCheckFilterWithGrouping(assert, aItems);
+	});
+
+	QUnit.test("Visual separator items not part of the filtering", function (assert) {
+		assert.expect(5);
+		var aItems,
+			oItem = new SeparatorItem();
+
+		// act
+		this.oComboBox.insertItem(oItem, 1);
+		aItems = this.oComboBox.getVisibleItems();
+
+		// assert
+		assert.strictEqual(aItems.length, 7, "There should be 7 items initially");
+
+		// act
+		this.oComboBox.filterItems({
+			properties: this.oComboBox._getFilters(),
+			value: "item1"
+		});
+		aItems = this.oComboBox.getVisibleItems();
+
+		// assert
+		// Note: The separator items were not part of the filtering even before
+		// and are hidden when the user starts filtering
+		this.fnCheckFilterWithGrouping(assert, aItems);
+	});
+
+	QUnit.test("onsapdown when picker closed should select first non separator item", function (assert) {
+		assert.expect(3);
+		var oExpectedItem = this.oComboBox.getItems()[1],
+			sExpectedValue = "item11";
+
+		// arrange
+		this.oComboBox.focus();
+		this.clock.tick(0);
+
+		// act
+		sap.ui.test.qunit.triggerKeydown(this.oComboBox.getFocusDomRef(), KeyCodes.ARROW_DOWN);
+
+		// assert
+		this.fnCheckSelectedItemAndValue(assert, oExpectedItem, sExpectedValue);
+	});
+
+	QUnit.test("onsapdown when picker opened should move visual focus to the first item (group header in this case)", function (assert) {
+		assert.expect(5);
+		var oGroupHeaderItem = this.oComboBox._oList.getItems()[0];
+
+		// arrange
+		this.oComboBox.focus();
+		this.clock.tick(0);
+
+		// act
+		sap.ui.test.qunit.triggerKeydown(this.oComboBox.getFocusDomRef(), KeyCodes.F4);
+		this.clock.tick(500);
+
+		assert.ok(this.oComboBox.isOpen(), "The combo box's picker is opened.");
+
+		sap.ui.test.qunit.triggerKeydown(this.oComboBox.getFocusDomRef(), KeyCodes.ARROW_DOWN);
+
+		// assert
+		// no selection was made, the value is empty and the group header has the visual focus
+		this.fnCheckSelectedItemAndValue(assert, null, "");
+		assert.ok(oGroupHeaderItem.hasStyleClass("sapMLIBFocused"), "Visual focus moved to the group header item.");
+	});
+
+	QUnit.test("onsapdown twice when picker opened should move visual focus to the first item", function (assert) {
+		var oExpectedItem = this.oComboBox.getItems()[1],
+			oExpectedListItem = this.oComboBox.getListItem(oExpectedItem),
+			oGroupHeaderListItem = this.oComboBox._oList.getItems()[0],
+			sExpectedValue = "item11";
+
+		// arrange
+		this.oComboBox.focus();
+		this.clock.tick(0);
+
+		// act
+		sap.ui.test.qunit.triggerKeydown(this.oComboBox.getFocusDomRef(), KeyCodes.F4);
+		this.clock.tick(500);
+
+		assert.ok(this.oComboBox.isOpen(), "The combo box's picker is opened.");
+
+		sap.ui.test.qunit.triggerKeydown(this.oComboBox.getFocusDomRef(), KeyCodes.ARROW_DOWN);
+		sap.ui.test.qunit.triggerKeydown(this.oComboBox.getFocusDomRef(), KeyCodes.ARROW_DOWN);
+
+		// assert
+		this.fnCheckSelectedItemAndValue(assert, oExpectedItem, sExpectedValue);
+		this.fnCheckVisualFocusedMoved(assert, oGroupHeaderListItem, oExpectedListItem);
+	});
+
+	QUnit.test("onsapdown when key already selected and picker is opened should move visual focus to the next item", function (assert) {
+		assert.expect(8);
+		var oExpectedItem = this.oComboBox.getItems()[5],
+			oInitiallySelectedItem = this.oComboBox.getItems()[4],
+			oExpectedListItem = this.oComboBox.getListItem(oExpectedItem),
+			oInitiallySelectedListItem = this.oComboBox.getListItem(oInitiallySelectedItem),
+			sExpectedValue = "item22";
+
+		// arrange
+		this.oComboBox.focus();
+		this.oComboBox.setSelectedItem(oInitiallySelectedItem);
+		this.clock.tick(0);
+
+		// act
+		sap.ui.test.qunit.triggerKeydown(this.oComboBox.getFocusDomRef(), KeyCodes.F4);
+		this.clock.tick(500);
+
+		// assert
+		assert.ok(this.oComboBox.isOpen(), "The combo box's picker is opened.");
+		assert.ok(this.oComboBox.getSelectedItem() === oInitiallySelectedItem, "The expected item was initially selected.");
+		assert.ok(this.oComboBox._oList.hasStyleClass("sapMListFocus"), "The visual focus was correctly on the combo box's list initially.");
+
+		// act
+		sap.ui.test.qunit.triggerKeydown(this.oComboBox.getFocusDomRef(), KeyCodes.ARROW_DOWN);
+
+		// assert
+		this.fnCheckSelectedItemAndValue(assert, oExpectedItem, sExpectedValue);
+		this.fnCheckVisualFocusedMoved(assert, oInitiallySelectedListItem, oExpectedListItem);
+	});
+
+	QUnit.test("onsapup when key already selected and picker is opened should move visual focus to the previous item", function (assert) {
+		assert.expect(8);
+		var oExpectedItem = this.oComboBox.getItems()[4],
+			oInitiallySelectedItem = this.oComboBox.getItems()[5],
+			oExpectedListItem = this.oComboBox.getListItem(oExpectedItem),
+			oInitiallySelectedListItem = this.oComboBox.getListItem(oInitiallySelectedItem),
+			sExpectedValue = "item21";
+
+		// arrange
+		this.oComboBox.focus();
+		this.oComboBox.setSelectedItem(oInitiallySelectedItem);
+		this.clock.tick(0);	// tick the clock ahead 0ms millisecond to make sure the async call to .selectText() on the focusin event handler does not override the type ahead
+
+		// act
+		sap.ui.test.qunit.triggerKeydown(this.oComboBox.getFocusDomRef(), KeyCodes.F4);
+		this.clock.tick(500);
+
+		// assert
+		assert.ok(this.oComboBox.isOpen(), "The combo box's picker is opened.");
+		assert.ok(this.oComboBox.getSelectedItem() === oInitiallySelectedItem, "The expected item was initially selected.");
+		assert.ok(this.oComboBox._oList.hasStyleClass("sapMListFocus"), "The visual focus was correctly on the combo box's list initially.");
+
+		// act
+		sap.ui.test.qunit.triggerKeydown(this.oComboBox.getFocusDomRef(), KeyCodes.ARROW_UP);
+
+		// assert
+		this.fnCheckSelectedItemAndValue(assert, oExpectedItem, sExpectedValue);
+		this.fnCheckVisualFocusedMoved(assert, oInitiallySelectedListItem, oExpectedListItem);
+	});
+
+	QUnit.test("onsapup when key already selected and picker is closed should move visual focus to the previous item and skip group items", function (assert) {
+		assert.expect(6);
+		var oExpectedItem = this.oComboBox.getItems()[2],
+			oInitiallySelectedItem = this.oComboBox.getItems()[4],
+			oExpectedListItem = this.oComboBox.getListItem(oExpectedItem),
+			oInitiallySelectedListItem = this.oComboBox.getListItem(oInitiallySelectedItem),
+			sExpectedValue = "item12";
+
+		// arrange
+		this.oComboBox.focus();
+		this.oComboBox.setSelectedItem(oInitiallySelectedItem);
+		this.clock.tick(0);
+
+		// assert
+		assert.ok(this.oComboBox.getSelectedItem() === oInitiallySelectedItem, "The expected item was initially selected.");
+
+		// act
+		sap.ui.test.qunit.triggerKeydown(this.oComboBox.getFocusDomRef(), KeyCodes.ARROW_UP);
+
+		// assert
+		this.fnCheckSelectedItemAndValue(assert, oExpectedItem, sExpectedValue);
+		this.fnCheckVisualFocusedMoved(assert, oInitiallySelectedListItem, oExpectedListItem);
+	});
+
+	QUnit.test("when focusing group header item with some input in the text field the input should stay", function (assert) {
+		var oExpectedItem = this.oComboBox.getItems()[0],
+			oExpectedListItem = this.oComboBox.getListItem(oExpectedItem),
+			oFakeEvent = {
+				target: {
+					value: "it"
+				},
+				srcControl: this.oComboBox,
+				setMarked: function () {},
+				isMarked: function () {}
+			};
+
+		// arrange
+		this.oComboBox.focus();
+		this.oComboBox.oninput(oFakeEvent);
+		this.clock.tick(0);
+
+		// act
+		sap.ui.test.qunit.triggerKeydown(this.oComboBox.getFocusDomRef(), KeyCodes.ARROW_DOWN);
+
+		// assert
+		assert.strictEqual(this.oComboBox.getFocusDomRef().value, "it", "The expected text was filled in the combo box.");
+		assert.strictEqual(jQuery(this.oComboBox.getFocusDomRef()).getSelectedText(), "", "Correct text was selected in the combo box.");
+		assert.ok(this.oComboBox.getSelectedItem() === null, "The expected item was selected.");
+		assert.ok(oExpectedListItem.hasStyleClass("sapMLIBFocused"), "The group header has visual focus");
+	});
+
+	QUnit.test("when moving through group header, the user input should stay and be autocompleted", function (assert) {
+		var oExpectedItem = this.oComboBox.getItems()[1],
+			oExpectedListItem = this.oComboBox.getListItem(oExpectedItem),
+			oFakeEvent = {
+				target: {
+					value: "it"
+				},
+				srcControl: this.oComboBox,
+				setMarked: function () {},
+				isMarked: function () {}
+			};
+
+		// arrange
+		this.oComboBox.focus();
+		this.oComboBox.oninput(oFakeEvent);
+		this.clock.tick(0);
+
+		// act
+		sap.ui.test.qunit.triggerKeydown(this.oComboBox.getFocusDomRef(), KeyCodes.ARROW_DOWN);
+		sap.ui.test.qunit.triggerKeydown(this.oComboBox.getFocusDomRef(), KeyCodes.ARROW_DOWN);
+
+		// assert
+		assert.strictEqual(this.oComboBox.getFocusDomRef().value, "item11", "The expected text was filled in the combo box.");
+		assert.strictEqual(jQuery(this.oComboBox.getFocusDomRef()).getSelectedText(), "em11", "Correct text was selected in the combo box.");
+		assert.ok(this.oComboBox.getSelectedItem() === oExpectedItem, "The expected item was selected.");
+		assert.ok(oExpectedListItem.hasStyleClass("sapMLIBFocused"), "The item has visual focus");
+	});
+
+	QUnit.module("Group header press");
+
+	QUnit.test("group header item press should not close the popover", function (assert) {
+		assert.expect(4);
+		// System under test
+		var oComboBox = new ComboBox({
+			items: [
+				new SeparatorItem({text: "Group1"}),
+				new Item({text: "item11", key:"key11"})
+			]
+		});
+
+		oComboBox.placeAt("content");
+		sap.ui.getCore().applyChanges();
+
+		// arrange
+		oComboBox.focus();
+		oComboBox.open();
+		this.clock.tick(500);
+
+		// act
+		sap.ui.test.qunit.triggerEvent("tap", oComboBox._oList.getItems()[0].getDomRef());
+		this.clock.tick(500);
+
+		// assert
+		assert.ok(oComboBox.isOpen(), "The combo box's picker is opened.");
+		assert.strictEqual(oComboBox.getFocusDomRef().value, "", "The expected text was filled in the combo box.");
+		assert.strictEqual(jQuery(oComboBox.getFocusDomRef()).getSelectedText(), "", "Correct text was selected in the combo box.");
+		assert.ok(oComboBox.getSelectedItem() === null, "Nothing was selected.");
+
+		// clean up
+		oComboBox.destroy();
+	});
+
+	QUnit.test("group header item press should not close the dialog on mobile", function (assert) {
+		assert.expect(4);
+		// System under test
+		this.stub(Device, "system", {
+			desktop: false,
+			phone: true,
+			tablet: false
+		});
+		var oComboBox = new ComboBox({
+			items: [
+				new SeparatorItem({text: "Group1"}),
+				new Item({text: "item11", key:"key11"})
+			]
+		});
+
+		oComboBox.placeAt("content");
+		sap.ui.getCore().applyChanges();
+
+		// arrange
+		oComboBox.focus();
+		oComboBox.open();
+		this.clock.tick(500);
+
+		// act
+		sap.ui.test.qunit.triggerEvent("tap", oComboBox._oList.getItems()[0].getDomRef());
+		this.clock.tick(500);
+
+		// assert
+		assert.ok(oComboBox.isOpen(), "The combo box's picker is opened.");
+		assert.strictEqual(oComboBox.getFocusDomRef().value, "", "The expected text was filled in the combo box.");
+		assert.strictEqual(jQuery(oComboBox.getFocusDomRef()).getSelectedText(), "", "Correct text was selected in the combo box.");
+		assert.ok(oComboBox.getSelectedItem() === null, "Nothing was selected.");
+
+		oComboBox.destroy();
+	});
+
+	QUnit.module("Separator item no text");
+
+	QUnit.test("should be have styleClass 'SeparatorItemNoText'.", function (assert) {
+		// System under test
+		var oComboBox = new ComboBox({
+			items: [
+				new Item({text: "item1", key:"key1"}),
+				new SeparatorItem(),
+				new Item({text: "item2", key:"key2"})
+			]
+		});
+		var oItem = oComboBox.getItems()[1],
+			oListItem = oComboBox.getListItem(oItem);
+
+		oComboBox.placeAt("content");
+		sap.ui.getCore().applyChanges();
+
+		// assert
+		assert.ok(oListItem.hasStyleClass("sapMComboBoxBaseSeparatorItemNoText"), "The separator item has the correct style class 'SeparatorItemNoText'.");
+
+		// clean up
 		oComboBox.destroy();
 	});
 });
