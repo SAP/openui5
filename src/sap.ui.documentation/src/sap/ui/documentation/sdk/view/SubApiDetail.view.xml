@@ -143,7 +143,11 @@
 												</custom:Row>
 											</custom:LightTable>
 										</template:if>
-
+										<template:if test="{data>/isFunction}">
+											<template:repeat list="{data>/examples}" var="example">
+												<custom:JSDocText text="{path: 'example>data', formatter: 'sap.ui.base.ManagedObject.escapeSettingsValue'}"/>
+											</template:repeat>
+										</template:if>
 									</layout:VerticalLayout>
 								</custom:blocks>
 							</custom:ObjectPageSubSection>
