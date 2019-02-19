@@ -542,6 +542,7 @@ sap.ui.define([
 	DataSet.prototype.destroyItems = function() {
 		var result = this.destroyAggregation("items");
 		this._bDirty = true;
+		this.invalidate();
 		return result;
 	};
 
