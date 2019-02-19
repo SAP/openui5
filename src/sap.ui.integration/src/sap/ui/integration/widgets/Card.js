@@ -8,6 +8,10 @@ sap.ui.define([
 	"sap/ui/integration/util/ServiceManager",
 	"sap/base/Log",
 	"sap/f/cards/Data",
+	"sap/f/cards/NumericHeader",
+	"sap/f/cards/Header",
+	"sap/f/cards/BaseContent",
+	"sap/m/HBox",
 	"sap/f/CardRenderer"
 ], function (
 	jQuery,
@@ -16,6 +20,10 @@ sap.ui.define([
 	ServiceManager,
 	Log,
 	Data,
+	NumericHeader,
+	Header,
+	BaseContent,
+	HBox,
 	CardRenderer
 ) {
 	"use strict";
@@ -110,6 +118,14 @@ sap.ui.define([
 		},
 		renderer: CardRenderer
 	});
+
+	/**
+	 * Initialization hook.
+	 * @private
+	 */
+	Card.prototype.init = function () {
+		this.setBusyIndicatorDelay(0);
+	};
 
 	/**
 	 * Called on destroying the control
@@ -274,18 +290,20 @@ sap.ui.define([
 	 * @private
 	 */
 	Card.prototype._setHeaderFromManifest = function () {
-		var oHeader = this._oCardManifest.get(MANIFEST_PATHS.HEADER);
+		var oManifestHeader = this._oCardManifest.get(MANIFEST_PATHS.HEADER);
 
-		if (!oHeader) {
+		if (!oManifestHeader) {
 			Log.error("Card header is mandatory!");
 			return;
 		}
 
-		if (oHeader.type === "Numeric") {
-			sap.ui.require(["sap/f/cards/NumericHeader"], this._setCardHeaderFromManifest.bind(this));
-		} else {
-			sap.ui.require(["sap/f/cards/Header"], this._setCardHeaderFromManifest.bind(this));
+		var oHeader = Header;
+
+		if (oManifestHeader.type === "Numeric") {
+			oHeader = NumericHeader;
 		}
+
+		this._setCardHeaderFromManifest(oHeader);
 	};
 
 	/**
@@ -294,12 +312,20 @@ sap.ui.define([
 	 * @private
 	 */
 	Card.prototype._setContentFromManifest = function () {
-		var sCardType = this._oCardManifest.get(MANIFEST_PATHS.TYPE);
+		var sCardType = this._oCardManifest.get(MANIFEST_PATHS.TYPE),
+			bHasContent = !!this._oCardManifest.get(MANIFEST_PATHS.CONTENT);
 
 		if (!sCardType) {
 			Log.error("Card type property is mandatory!");
 			return;
 		}
+
+		if (!bHasContent) {
+			this.setBusy(false);
+			return;
+		}
+
+		this._setTemporaryContent();
 
 		switch (sCardType.toLowerCase()) {
 			case "list":
@@ -344,6 +370,7 @@ sap.ui.define([
 
 		oHeader.attachEvent("_updated", function () {
 			this.fireEvent("_headerUpdated");
+			this.setBusy(false);
 		}.bind(this));
 		oHeader.attachEvent("onAction", function (oEvent) {
 			this.fireEvent("onAction", {
@@ -358,6 +385,7 @@ sap.ui.define([
 				onAfterRendering: function () {
 					this.fireEvent("_headerUpdated");
 					oHeader.removeEventDelegate(oDelegate);
+					this.setBusy(false);
 				}
 			};
 			oHeader.addEventDelegate(oDelegate, this);
@@ -402,12 +430,8 @@ sap.ui.define([
 	 * @param {sap.ui.core.Control} CardContent The content to be created
 	 */
 	Card.prototype._setCardContentFromManifest = function (CardContent) {
-		var mSettings = this._oCardManifest.get(MANIFEST_PATHS.CONTENT);
-		if (!mSettings) {
-			this.setBusy(false);
-			return;
-		}
 
+		var mSettings = this._oCardManifest.get(MANIFEST_PATHS.CONTENT);
 		var oClonedSettings = { configuration: jQuery.extend(true, {}, mSettings) };
 
 		if (this._oServiceManager) {
@@ -417,7 +441,9 @@ sap.ui.define([
 		var oContent = new CardContent(oClonedSettings);
 		oContent.attachEvent("_updated", function () {
 			this.fireEvent("_contentUpdated");
+			this.setBusy(false);
 		}.bind(this));
+
 		oContent.attachEvent("onAction", function (oEvent) {
 			this.fireEvent("onAction", {
 				manifestParameters: oEvent.getParameter("manifestParameters"),
@@ -426,6 +452,10 @@ sap.ui.define([
 			});
 		}.bind(this));
 
+		oContent.setBusyIndicatorDelay(0);
+		// TO DO: decide if we want to set the content only on _updated event.
+		// This will help to avoid appearance of empty table before its data comes,
+		// but prevent ObjectContent to render its template, which might be useful
 		this.setAggregation("_content", oContent);
 
 		if (this._oDataPromise) {
@@ -435,8 +465,30 @@ sap.ui.define([
 				// TODO: Handle error
 			});
 		}
+	};
 
-		this.setBusy(false);
+	/**
+	 * Sets a temporary content that will show a busy indicator while the actual content is loading.
+	 */
+	Card.prototype._setTemporaryContent = function () {
+
+		var oHBox = new HBox({ busy: true, busyIndicatorDelay: 0, height: "100%" });
+
+		oHBox.addEventDelegate({
+			onAfterRendering: function () {
+				if (!this._oCardManifest) {
+					return;
+				}
+
+				var sType = this._oCardManifest.get(MANIFEST_PATHS.TYPE) + "Content",
+					oContent = this._oCardManifest.get(MANIFEST_PATHS.CONTENT),
+					sHeight = BaseContent.getMinHeight(sType, oContent);
+
+					oHBox.$().css({ "min-height": sHeight });
+			}
+		}, this);
+
+		this.setAggregation("_content", oHBox);
 	};
 
 	return Card;

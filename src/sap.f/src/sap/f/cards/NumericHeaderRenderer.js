@@ -67,24 +67,27 @@ sap.ui.define([],
 				oRm.renderControl(oTitle);
 			}
 
-			oRm.write("<div");
-			oRm.addClass("sapFCardSubtitle");
-			oRm.writeClasses();
-			oRm.write(">");
+			if (oSubtitle || oUnitOfMeasurement) {
+				oRm.write("<div");
+				oRm.addClass("sapFCardSubtitle");
+				oRm.writeClasses();
+				oRm.write(">");
 
-			oRm.write("<div>");
-			if (oSubtitle) {
-				oRm.renderControl(oSubtitle);
-			}
-			oRm.write("</div>");
-			oRm.write("<div>");
-			if (oUnitOfMeasurement) {
-				oUnitOfMeasurement.addStyleClass("sapFCardHeaderUnitOfMeasurement");
-				oRm.renderControl(oUnitOfMeasurement);
-			}
-			oRm.write("</div>");
+				oRm.write("<div>");
+				if (oSubtitle) {
+					oRm.renderControl(oSubtitle);
+				}
+				oRm.write("</div>");
+				oRm.write("<div>");
+				if (oUnitOfMeasurement) {
+					oUnitOfMeasurement.addStyleClass("sapFCardHeaderUnitOfMeasurement");
+					oRm.renderControl(oUnitOfMeasurement);
+				}
+				oRm.write("</div>");
 
-			oRm.write("</div>");
+				oRm.write("</div>");
+			}
+
 			oRm.write("</div>");
 		};
 
