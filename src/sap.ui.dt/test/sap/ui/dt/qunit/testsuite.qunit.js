@@ -54,6 +54,9 @@ sap.ui.define(function () {
 			"DOMUtil": {
 				coverage: {
 					only: ['sap/ui/dt/DOMUtil']
+				},
+				ui5: {
+					"xx-waitForTheme": true
 				}
 			},
 			"DOMUtilRtl": {
