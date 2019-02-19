@@ -481,6 +481,10 @@ sap.ui.define([
 				qunitBridge: true
 			},
 			module: "./selectors/selectors.qunit"
+		},
+		"_BrowserLogCollector": {
+			title: "QUnit Page for sap.ui.test._BrowserLogCollector",
+			module: "./_BrowserLogCollector.qunit"
 		}
 	};
 
