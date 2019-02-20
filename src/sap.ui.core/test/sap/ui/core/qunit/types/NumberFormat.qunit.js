@@ -1371,6 +1371,32 @@ sap.ui.define(["sap/ui/core/format/NumberFormat", "sap/ui/core/Locale", "sap/bas
 
 	});
 
+	QUnit.test("'decimals' set on FormatOptions and custom units", function (assert) {
+		var oFormatOptions = {
+			customUnits: {
+				"cats": {
+					"displayName": "Cats",
+					"unitPattern-count-one": "{0} Cat",
+					"unitPattern-count-other": "{0} Cats",
+					"decimals": 5
+				}
+			},
+			decimals: 1
+		};
+
+		// en
+		var oLocale = new Locale("en");
+		var oFormat = NumberFormat.getUnitInstance(oFormatOptions, oLocale);
+
+		assert.equal(oFormat.format(1120.3, "cats"), "1,120.30000 Cats", "formatted with 5 decimals - en");
+
+		// de
+		oLocale = new Locale("de");
+		oFormat = NumberFormat.getUnitInstance(oFormatOptions, oLocale);
+
+		assert.equal(oFormat.format(1120.3, "cats"), "1.120,30000 Cats", "formatted with 5 decimals - de");
+	});
+
 	QUnit.test("Unit parse custom pattern", function (assert) {
 		var oLocale = new Locale("en");
 		var oFormat = NumberFormat.getUnitInstance({
@@ -2304,6 +2330,76 @@ sap.ui.define(["sap/ui/core/format/NumberFormat", "sap/ui/core/Locale", "sap/bas
 
 		assert.equal(sFormatted4, "123.456,789" + "\xa0" + "Ƀ", "123.456,789 Ƀ");
 		assert.deepEqual(oFormat4.parse(sFormatted4), [123456.789, "BTC"], "Array [123456.789, 'BTC'] is returned.");
+	});
+
+	QUnit.test("'decimals' set on FormatOptions and custom currency", function (assert) {
+		var oFormatEN = NumberFormat.getCurrencyInstance({
+			currencyCode: false,
+			customCurrencies: {
+				"FOB": {
+					symbol: "F€",
+					decimals: 6
+				}
+			},
+			decimals: 1
+		});
+
+		assert.equal(oFormatEN.format(1234.5728, "FOB"), "F€1,234.572800", "formatted with 6 decimals - en");
+
+		var oFormatDE = NumberFormat.getCurrencyInstance({
+			currencyCode: false,
+			customCurrencies: {
+				"HOD": {
+					symbol: "H$",
+					decimals: 4
+				}
+			},
+			decimals: 1
+		}, new Locale("de"));
+
+		assert.equal(oFormatDE.format(1234.5728, "HOD"), "1.234,5728" + "\xa0" + "H$", "formatted with 4 decimals - de");
+	});
+
+	QUnit.test("'decimals' only set on format-options", function (assert) {
+		// custom currency
+		var oFormatEN = NumberFormat.getCurrencyInstance({
+			currencyCode: false,
+			customCurrencies: {
+				"FOB": {
+					symbol: "F€"
+				}
+			},
+			decimals: 3
+		});
+
+		assert.equal(oFormatEN.format(1234.5728, "FOB"), "F€1,234.573", "formatted with default 2 decimals - en");
+
+		// known currency
+		var oFormatDE = NumberFormat.getCurrencyInstance({
+			currencyCode: false,
+			decimals: 1
+		}, new Locale("de"));
+
+		assert.equal(oFormatDE.format(1234.5728, "HUF"), "1.234,6" + "\xa0" + "HUF", "formatted with default 2 decimals - de");
+	});
+
+	QUnit.test("no 'decimals' set at all", function (assert) {
+		var oFormatEN = NumberFormat.getCurrencyInstance({
+			currencyCode: false,
+			customCurrencies: {
+				"FOB": {
+					symbol: "F€"
+				}
+			}
+		});
+
+		assert.equal(oFormatEN.format(1234.5728, "FOB"), "F€1,234.57", "formatted with default 2 decimals - en");
+
+		var oFormatDE = NumberFormat.getCurrencyInstance({
+			currencyCode: false
+		}, new Locale("de"));
+
+		assert.equal(oFormatDE.format(1234.5728, "HUF"), "1.235" + "\xa0" + "HUF", "formatted with default 2 decimals - de");
 	});
 
 	QUnit.module("Custom currencies - currencyCode: false", {

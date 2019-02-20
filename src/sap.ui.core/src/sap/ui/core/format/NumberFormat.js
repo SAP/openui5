@@ -941,10 +941,27 @@ sap.ui.define([
 				mUnitPatterns = this.oLocaleData.getUnitFormat(sLookupMeasure);
 			}
 
+			// either take the decimals/precision on the custom units or fallback to the given format-options
 			oOptions.decimals = (mUnitPatterns && (typeof mUnitPatterns.decimals === "number" && mUnitPatterns.decimals >= 0)) ? mUnitPatterns.decimals : oOptions.decimals;
 			oOptions.precision = (mUnitPatterns && (typeof mUnitPatterns.precision === "number" && mUnitPatterns.precision >= 0)) ? mUnitPatterns.precision : oOptions.precision;
 		}
 
+		if (oOptions.type == mNumberType.CURRENCY) {
+			// if decimals are given on a custom currency, they have precedence over the decimals defined on the format options
+			if (oOptions.customCurrencies && oOptions.customCurrencies[sMeasure]) {
+				// we either take the custom decimals or use decimals defined in the format-options
+				// we check for undefined here, since 0 is an accepted value
+				oOptions.decimals = oOptions.customCurrencies[sMeasure].decimals !== undefined ? oOptions.customCurrencies[sMeasure].decimals : oOptions.decimals;
+			}
+
+			// no custom currencies, and no decimals on the format-options
+			// --> look-up currency in the locale data, this also provides a global fallback value
+			if (oOptions.decimals === undefined) {
+				oOptions.decimals = this.oLocaleData.getCurrencyDigits(sMeasure);
+			}
+		}
+
+		// set fraction digits based on the given or derived decimals
 		if (oOptions.decimals !== undefined) {
 			oOptions.minFractionDigits = oOptions.decimals;
 			oOptions.maxFractionDigits = oOptions.decimals;
@@ -999,23 +1016,6 @@ sap.ui.define([
 
 		if (oOptions.type == mNumberType.PERCENT) {
 			vValue = NumberFormat._shiftDecimalPoint(vValue, 2);
-		}
-
-		//handle measure
-		if (oOptions.type == mNumberType.CURRENCY) {
-			var iDigits = this.oLocaleData.getCurrencyDigits(sMeasure);
-
-			// decimals might be undefined, yet 0 is accepted of course
-			if (oOptions.customCurrencies && oOptions.customCurrencies[sMeasure] && oOptions.customCurrencies[sMeasure].decimals !== undefined) {
-				iDigits = oOptions.customCurrencies[sMeasure].decimals;
-			}
-
-			if (oOptions.maxFractionDigits === undefined) {
-				oOptions.maxFractionDigits = iDigits;
-			}
-			if (oOptions.minFractionDigits === undefined) {
-				oOptions.minFractionDigits = iDigits;
-			}
 		}
 
 		// Rounding the value with oOptions.maxFractionDigits and oOptions.roundingMode.
