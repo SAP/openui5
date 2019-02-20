@@ -96,6 +96,19 @@ sap.ui.define([
 		}
 	});
 
+	var MyPartialUpdateType = MyCompositeType.extend("MyPartialUpdateType", {
+		constructor: function() {
+			MyCompositeType.apply(this);
+			this.sName = "MyPartialUpdateType";
+		},
+		formatValue: function(aValues) {
+			return aValues[1];
+		},
+		parseValue: function(oValue) {
+			return [undefined, oValue, undefined];
+		}
+	});
+
 
 	function myFormatter(a, b, c) {
 		return a + "-" + b + "-" + c;
@@ -185,6 +198,20 @@ sap.ui.define([
 			assert.ok(oException instanceof ValidateException, "Rejects with ValidateException for invalid values");
 		});
 		return Promise.all([p1, p2, p3]);
+	});
+
+	QUnit.test("with partial update", function(assert) {
+		var oType = new MyPartialUpdateType();
+		oType.validateValue = function(aValues) {
+			assert.equal(aValues[0], 1, "validateValue is called with all values");
+			assert.equal(aValues[1], 4, "validateValue is called with all values");
+			assert.equal(aValues[2], 3, "validateValue is called with all values");
+		};
+		this.composite.setType(oType);
+		this.composite.setExternalValue(4); // MyPartialUpdateType returns given value as second part
+		assert.equal(this.model.getProperty("/a"), 1, "first value is unchanged");
+		assert.equal(this.model.getProperty("/b"), 4, "second value is changed with partial update");
+		assert.equal(this.model.getProperty("/c"), 3, "third value is unchanged");
 	});
 
 	QUnit.test("array type", function(assert) {
