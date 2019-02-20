@@ -117,14 +117,14 @@ sap.ui.define([ "sap/base/util/ObjectPath"],
 
 	/**
 	 * Validates the data of a two-dimensional array against SAPUI5 standard and EDM types based on the <code>ColumnInfo</code> object
-	 * and returns parsed data if validation is successful and error information if the validation fails.
+	 * and returns result with parsed data (if the validation is successful) or error information (if the validation fails).
 	 *
 	 * @param {array} aData Two-dimensional array containing the pasted data
 	 * @param {array} aColumnInfo Provides information for each column, such as a property name and the corresponding data type,
-	 *				  as required in the target SAPUI5 table. Use <code>ignore: true</code> for read-only columns or for all other
-	 *				  columns that must not be pasted into a SAPUI5 table
+	 *	as required in the target SAPUI5 table. Use <code>ignore: true</code> for read-only columns or for all other columns
+	 *	that must not be pasted into a SAPUI5 table
 	 *
-	 *				  Example:
+	 *	Example:
 	 *					<pre>
 	 *						var aColumnsInfo = [
 	 *							{
@@ -140,11 +140,11 @@ sap.ui.define([ "sap/base/util/ObjectPath"],
 	 *							}
 	 *						];
 	 * 					</pre>
-	 * @returns {object} Result object that contains parsed data if the validation was successful (in this case,
-	 * 					 the error array has the value <code>null</code>) and all collected errors if the validation failed (in
-	 * 					 this case, the data array has the value <code>null</code>).
+	 * @returns {Promise} a Promise that gets resolved as soon as the validation is done with the result object. The result object contains parsed data if the validation was successful (in this case,
+	 * 	the error array has the value <code>null</code>), or it contains all collected errors if the validation failed (in this case,
+	 * 	the data array has the value <code>null</code>).
 	 *
-	 * 					 Example of the result object after the successful validation - the data array is filled, and the error object is empty:
+	 *	Example of the result object after the successful validation - the data array is filled, and the error object is empty:
 	 * 					 <pre>
 	 *  					oResult = {
 	 *   					  	parsedData: [
@@ -155,7 +155,7 @@ sap.ui.define([ "sap/base/util/ObjectPath"],
 	 *  					 });
 	 * 					</pre>
 	 *
-	 *					Example of the result object after the failed validation - error information is available, and the data array is empty:
+	 *	Example of the result object after the failed validation - error information is available, and the data array is empty:
 	 * 					<pre>
 	 *   					oResult = {
 	 *   						parsedData: null,
@@ -177,7 +177,7 @@ sap.ui.define([ "sap/base/util/ObjectPath"],
 
 		// Validate columns information
 		if (aColumnInfo) {
-			for ( var i = 0; i < aColumnInfo.length; i++) {
+			for (var i = 0; i < aColumnInfo.length; i++) {
 				var oColumnInfo = aColumnInfo[i]; // that should be only visible columns
 
 				// Ignore columns and go to the next
@@ -188,6 +188,7 @@ sap.ui.define([ "sap/base/util/ObjectPath"],
 				if (oColumnInfo.property) {
 					// Check with Andreas async functionality instead of parseValue, after this create oType only once pro data type
 					if (oColumnInfo.type) {
+						// change to async code in the future
 						var oType = ObjectPath.get(oColumnInfo.type);
 						if (oType) {
 							oColumnInfo.typeInstance = new oType();
@@ -222,7 +223,8 @@ sap.ui.define([ "sap/base/util/ObjectPath"],
 			oResult.errors = null;
 		}
 
-		return oResult;
+		//simulate async code here - tmp
+		return Promise.resolve(oResult);
 	};
 
 	/**
@@ -239,8 +241,7 @@ sap.ui.define([ "sap/base/util/ObjectPath"],
 	PasteHelper._validateRow = function(aRowData, aColumnInfo, iRowIndex, aErrors) {
 
 		var oBundle = sap.ui.getCore().getLibraryResourceBundle(),
-			oObject = {},
-			oError = {};
+			oObject = {};
 
 		for (var i = 0; (i < aColumnInfo.length) && (i < aRowData.length); i++) {
 
