@@ -491,7 +491,7 @@ sap.ui.define([
 		 * @private
 		 */
 		ComboBoxBase.prototype._isListInSuggestMode = function() {
-			return this.getList().getItems().some(function(oListItem) {
+			return this._getList().getItems().some(function(oListItem) {
 				return !oListItem.getVisible() && this._getItemByListItem(oListItem).getEnabled();
 			}, this);
 		};
@@ -599,8 +599,8 @@ sap.ui.define([
 		ComboBoxBase.prototype.exit = function() {
 			ComboBoxTextField.prototype.exit.apply(this, arguments);
 
-			if (this.getList()) {
-				this.getList().destroy();
+			if (this._getList()) {
+				this._getList().destroy();
 				this._oList = null;
 			}
 
@@ -751,13 +751,25 @@ sap.ui.define([
 		 * @deprecated Deprecated as of version 1.62. The list structure should not be used as per SAP note: 2746748.
 		 */
 		ComboBoxBase.prototype.getList = function() {
-			if (this.bIsDestroyed) {
-				return null;
-			}
 			Log.warning(
 				"[Warning]:",
 				"You are attempting to use deprecated method 'getList()', please refer to SAP note 2746748.",
 				this);
+
+			// This is needed for backward compatibility
+			return this._getList();
+		};
+
+		/**
+		 * Gets the <code>list</code>.
+		 *
+		 * @returns {sap.m.List} The list instance object or <code>null</code>.
+		 * @private
+		 */
+		ComboBoxBase.prototype._getList = function() {
+			if (this.bIsDestroyed) {
+				return null;
+			}
 
 			return this._oList;
 		};
@@ -1390,8 +1402,8 @@ sap.ui.define([
 				oItem.attachEvent("_change", this.onItemChange, this);
 			}
 
-			if (this.getList()) {
-				this.getList().addItem(this._mapItemToListItem(oItem));
+			if (this._getList()) {
+				this._getList().addItem(this._mapItemToListItem(oItem));
 			}
 
 			return this;
@@ -1414,8 +1426,8 @@ sap.ui.define([
 				oItem.attachEvent("_change", this.onItemChange, this);
 			}
 
-			if (this.getList()) {
-				this.getList().insertItem(this._mapItemToListItem(oItem), iIndex);
+			if (this._getList()) {
+				this._getList().insertItem(this._mapItemToListItem(oItem), iIndex);
 			}
 
 			this._scheduleOnItemsLoadedOnce();
