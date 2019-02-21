@@ -75,6 +75,9 @@ sap.ui.define(["sap/ui/Device"], function (Device) {
 		// Renders Dynamic Page Content
 		oRm.openStart("div", oDynamicPage.getId() + "-contentWrapper");
 		oRm.class("sapFDynamicPageContentWrapper");
+		if (oDynamicPage.getBackgroundDesign()) {
+			oRm.class("sapFDynamicPageContentWrapper" + oDynamicPage.getBackgroundDesign());
+		}
 		oRm.openEnd();
 		if (!bPreserveHeaderStateOnScroll) {
 			oRm.renderControl(oDynamicPageHeader);
