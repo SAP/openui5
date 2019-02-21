@@ -61,29 +61,33 @@ sap.ui.define([
 				"items": [
 					{
 						"key": "1",
-						"text": "Belize"
+						"text": "Fiori 3"
 					},
 					{
 						"key": "2",
-						"text": "Belize Plus"
+						"text": "Belize"
 					},
 					{
 						"key": "3",
-						"text": "High Contrast White"
+						"text": "Belize Plus"
 					},
 					{
 						"key": "4",
-						"text": "High Contrast Black"
+						"text": "High Contrast White"
 					},
 					{
 						"key": "5",
+						"text": "High Contrast Black"
+					},
+					{
+						"key": "6",
 						"text": "Blue Crystal"
 					}
 				]
 			};
 			oComboBoxModel.setData(mData);
-			sap.ui.getCore().setModel(oComboBoxModel);
-			var oValue = "Details for ''Belize''";
+			this.getView().byId("comboBox").setModel(oComboBoxModel);
+			var oValue = "Details for ''Fiori 3''";
 			this.byId("title").setText(oValue);
 
 			this.getView().setModel(oModel);
@@ -155,7 +159,9 @@ sap.ui.define([
 								if (element.indexOf(",") > -1) {
 									oBelize.themeNameUI = element.substring(0, element.indexOf(",") + 1).match(patternThemeNormalKomma)[0];
 								} else if (element.indexOf(":", element.indexOf(":") + 1)) {
-									oBelize.themeNameUI = element.match(patternThemeUi)[0];
+									if ((element.match(/@/g) || []).length == 2) {
+										oBelize.themeNameUI = element.match(patternThemeUi)[0];
+									}
 								} else {
 									oBelize.themeNameUI = element.match(patternThemeNormal)[0];
 								}
@@ -639,7 +645,6 @@ sap.ui.define([
 			this.onAction();
 			switch (value) {
 				case "Belize":
-				default:
 					sap.ui.getCore().applyTheme("sap_belize");
 					this.byId("title").setText("Details for ''Belize''");
 					break;
@@ -658,6 +663,10 @@ sap.ui.define([
 				case "High Contrast Black":
 					sap.ui.getCore().applyTheme("sap_belize_hcb");
 					this.byId("title").setText("Details for ''High Contrast Black''");
+					break;
+				case "Fiori 3":
+					sap.ui.getCore().applyTheme("sap_fiori_3");
+					this.byId("title").setText("Details for ''Fiori 3''");
 					break;
 			}
 		},
