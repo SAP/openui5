@@ -1,0 +1,45 @@
+{
+	"sap.card": {
+		"type": "Object",
+		"header": {
+			"icon": {
+				"src": "sap-icon://business-objects-experience"
+			},
+			"title": "Object Card",
+			"subTitle": "With Static content"
+		},
+		"content": {
+			"groups": [
+				{
+					"title": "Static Content",
+					"items": [
+						{
+							"label": "Name",
+							"value": "Ivan"
+						},
+						{
+							"label": "Surname",
+							"value": "Petrov"
+						},
+						{
+							"label": "Phone",
+							"value": "+1 1234 1234555"
+						}
+					]
+				},
+				{
+					"title": "Organization",
+					"items": [
+						{
+							"label": "Company Name",
+							"value": "Sap",
+							"icon": {
+								"src": "../images/Woman_avatar_02.png"
+							}
+						}
+					]
+				}
+			]
+		}
+	}
+}

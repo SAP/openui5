@@ -96,10 +96,14 @@ sap.ui.define(["sap/f/cards/BaseContent", "sap/m/List", "sap/m/StandardListItem"
 		 * @returns {sap.f.cards.ListContent} Pointer to the control instance to allow method chaining.
 		 */
 		ListContent.prototype.setConfiguration = function (oConfiguration) {
-
 			BaseContent.prototype.setConfiguration.apply(this, arguments);
 
 			if (!oConfiguration) {
+				return this;
+			}
+
+			if (oConfiguration.items) {
+				this._setStaticItems(oConfiguration.items);
 				return this;
 			}
 
@@ -138,6 +142,40 @@ sap.ui.define(["sap/f/cards/BaseContent", "sap/m/List", "sap/m/StandardListItem"
 			this._getList().bindItems({
 				path: sPath,
 				template: this._oItemTemplate
+			});
+		};
+
+		/**
+		 * Create static StandardListItems which will be mapped with the configuration that is passed.
+		 *
+		 * @private
+		 * @param {Array} mItems The list of static items that will be used
+		 */
+		ListContent.prototype._setStaticItems = function (mItems) {
+			var oList = this._getList();
+			mItems.forEach(function (oItem) {
+				var oListItem = new StandardListItem({
+					iconDensityAware: false,
+					title: oItem.title ? oItem.title : "",
+					description: oItem.description ? oItem.description : "",
+					icon: oItem.icon ? oItem.icon : "",
+					infoState: oItem.infoState ? oItem.infoState : "None",
+					info: oItem.info ? oItem.info : "",
+					highlight: oItem.highlight ? oItem.highlight : "None"
+				});
+
+				// Here can be called _attachNavigationAction so that navigation service can be used
+				if (oItem.action) {
+					oListItem.setType("Navigation");
+
+					if (oItem.action.url) {
+						oListItem.attachPress(function () {
+							window.open(oItem.action.url, oItem.target || "_blank");
+						});
+					}
+				}
+
+				oList.addItem(oListItem);
 			});
 		};
 

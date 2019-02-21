@@ -20,6 +20,7 @@
                 <w:Card manifest="./cardcontent/objectcontent/manifest.json" width="auto" height="auto" class="sapUiTinyMargin"/>
                 <w:Card manifest="./cardcontent/objectcontent/manifest.json" width="400px" height="auto" class="sapUiTinyMargin"/>
                 <w:Card manifest="./cardcontent/objectcontent/manifest.json" width="400px" height="275px" class="sapUiTinyMargin"/>
+                <w:Card manifest="./cardcontent/objectcontent/staticData.json"  width="auto" height="auto" class="sapUiTinyMargin"/>
             </Panel>
         </content>
     </Page>

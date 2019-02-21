@@ -17,7 +17,8 @@
 
         <content>
             <Panel>
-                <w:Card id="listCount" manifest="{manifests>/listContent/card13}" width="400px" height="auto"/>
+                <w:Card id="listCount" manifest="{manifests>/listContent/card13}" width="400px" height="auto" class="sapUiSmallMargin"/>
+                <w:Card id="listCountStatic" manifest="{manifests>/listContent/card14}" width="400px" height="auto" class="sapUiSmallMargin"/>
             </Panel>
         </content>
     </Page>
