@@ -1,6 +1,6 @@
 sap.ui.define([
-	"sap/ui/model/base/ManagedObjectModel", "sap/ui/model/json/JSONModel", "sap/m/Text", "sap/m/Input", "sap/m/DatePicker", "sap/ui/model/type/Date", "sap/ui/model/Context", "sap/m/VBox"
-], function(ManagedObjectModel, JSONModel, Text, Input, DatePicker, DateType, Context, VBox) {
+	"sap/ui/model/base/ManagedObjectModel", "sap/ui/model/json/JSONModel", "sap/m/Text", "sap/m/Input", "sap/m/List", "sap/m/Select", "sap/m/ColumnListItem", "sap/m/DatePicker", "sap/ui/model/type/Date", "sap/ui/model/Context", "sap/m/VBox"
+], function(ManagedObjectModel, JSONModel, Text, Input, List, Select, ColumnListItem, DatePicker, DateType, Context, VBox) {
 	/*global QUnit, sinon */
 	/*eslint no-warning-comments: 0 */
 	"use strict";
@@ -133,6 +133,34 @@ sap.ui.define([
 			this.addSubObj(oControl);
 		}
 	});
+
+    sap.ui.core.Element.extend("sap.ui.test.TestList", {
+        metadata: {
+            aggregations: {
+                selects: { type: "sap.ui.test.TestSelect", multiple: true }
+            }
+        }
+    });
+
+    sap.ui.core.Element.extend("sap.ui.test.TestSelect", {
+        metadata: {
+            properties: {
+                selected: { type: "string" }
+                },
+            aggregations: {
+                items: { type: "sap.ui.test.TestItem", multiple: true }
+            }
+        }
+    });
+
+    sap.ui.core.Element.extend("sap.ui.test.TestItem", {
+        metadata: {
+            properties: {
+                key: { type: "string" },
+                text: { type: "string" }
+            }
+        }
+    });
 
 	var oModel = new JSONModel({
 		value: "testvalue",
@@ -972,6 +1000,136 @@ sap.ui.define([
                 }.bind(this), 0);
             }.bind(this), 0);
         }.bind(this), 0);
+    });
+
+    QUnit.module("Binding against ManagedObject Model of a bound control", {
+        beforeEach: function() {
+            this.aItems0 = [
+                {
+                    key: "one",
+                    text: "One"
+                },
+                {
+                    key: "two",
+                    text: "Two"
+                },
+                {
+                    key: "three",
+                    text: "Three"
+                }
+            ];
+
+            this.aItems1 = [
+                {
+                    key: "three",
+                    text: "Three"
+                },
+                {
+                    key: "two",
+                    text: "Two"
+                },
+                {
+                    key: "one",
+                    text: "One"
+                }
+            ];
+
+            this.oJSONModel = new JSONModel({
+                list: [
+                    {
+                        selected: "one",
+                        items: this.aItems0
+                    },
+                    {
+                        selected: "three",
+                        items: this.aItems1
+                    }
+                ]
+            });
+
+            this._oModelList = new sap.ui.test.TestList({
+                models: this.oJSONModel,
+                selects: {
+                    path: "/list",
+                    template: new sap.ui.test.TestSelect({
+                        selected: "{selected}",
+                        items: {
+                            path: "items",
+                            template: new sap.ui.test.TestItem({
+                                key: "{key}",
+                                text: "{text}"
+                            })
+                        }
+                    })
+                }
+            });
+            this.oMOModel = new sap.ui.model.base.ManagedObjectModel(this._oModelList);
+
+            this._oBoundList = new sap.m.List({
+                models: this.oMOModel,
+                items: {
+                    path: "/selects",
+                    template: new sap.m.CustomListItem({
+                        content: [
+                            new sap.m.Select({
+                                selectedKey: "{selected}",
+                                items: {
+                                    path: "items",
+                                    template: new sap.ui.core.Item({
+                                        key: "{key}",
+                                        text: "{text}"
+                                    })
+                                }
+                            })
+                        ]
+                    })
+                }
+            });
+        },
+        afterEach: function() {
+            this._oBoundList.destroy();
+            this._oBoundList = null;
+            this._oModelList.destroy();
+            this._oModelList = null;
+        }
+    });
+
+    QUnit.test("Swap aggregation", function(assert) {
+        var aSelect = this._oBoundList.getItems();
+        var oSelect0 = aSelect[0].getContent()[0];
+        var oSelect1 = aSelect[1].getContent()[0];
+
+        function itemsToArray(oSelect) {
+            var aItems = oSelect.getItems(), aArray = [];
+
+            for (var i= 0; i < aItems.length; i++) {
+              aArray.push( {
+                 key: aItems[i].getKey(),
+                  text: aItems[i].getText()
+              });
+            };
+
+            return aArray;
+        }
+
+
+        assert.equal(oSelect0.getSelectedKey(), "one", "The first entry is selected that is 'one'");
+        assert.deepEqual(itemsToArray(oSelect0), this.aItems0, "The items are the items of the first list entry");
+
+        assert.equal(oSelect1.getSelectedKey(), "three", "The first entry is selected that is 'three'");
+        assert.deepEqual(itemsToArray(oSelect1), this.aItems1, "The items are the items of the second list entry");
+
+        //now swap
+        var list = this.oJSONModel.getProperty("/list");
+        this.oJSONModel.setProperty("/list", [
+            list[1], list[0]
+        ]);
+
+        assert.equal(oSelect0.getSelectedKey(), "three", "The first entry is selected that is 'one'");
+        assert.deepEqual(itemsToArray(oSelect0), this.aItems1, "The items are the items of the second list entry");
+
+        assert.equal(oSelect1.getSelectedKey(), "one", "The first entry is selected that is 'three'");
+        assert.deepEqual(itemsToArray(oSelect1), this.aItems0, "The items are the items of the first list entry");
 
     });
 });
