@@ -359,7 +359,7 @@ sap.ui.define([
 				   && (iColumnIndex != null && iColumnIndex >= 0)) {
 			var oColumn = oTable.getColumns()[iColumnIndex];
 			var iColumnIndexInCellsAggregation = TableKeyboardDelegate._getColumnIndexInVisibleAndGroupedColumns(oTable, oColumn);
-			if (iColumnIndexInCellsAggregation >= 0 && iColumnIndexInCellsAggregation < TableUtils.getVisibleColumnCount(oTable)) {
+			if (iColumnIndexInCellsAggregation >= 0) {
 				oCell = oRow.getDomRef("col" + iColumnIndexInCellsAggregation);
 			}
 		}
