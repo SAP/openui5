@@ -513,11 +513,6 @@
 			"appComponent": "CA-UI5-CTR-BAL"
 		},
 		{
-			"control": "sap.m.ViewSettingsPopover",
-			"url": "../ViewSettingsPopover.html",
-			"appComponent": "CA-UI5-TBL"
-		},
-		{
 			"control": "sap.m.Wizard",
 			"url": "Wizard.html",
 			"appComponent": "CA-UI5-CTR-RIL"
