@@ -3691,7 +3691,7 @@ sap.ui.define([
 			// assert
 			assert.ok(oSuccessSelect.$().attr("aria-labelledby").split(" ").indexOf(InvisibleText.getStaticId(sCoreLib, "VALUE_STATE_SUCCESS")) > -1, "success select is labelled by invisible text");
 			assert.ok(oWarningSelect.$().attr("aria-labelledby").split(" ").indexOf(InvisibleText.getStaticId(sCoreLib, "VALUE_STATE_WARNING")) > -1, "warning select is labelled by invisible text");
-			assert.ok(oErrorSelect.$().attr("aria-labelledby").split(" ").indexOf(InvisibleText.getStaticId(sCoreLib, "VALUE_STATE_ERROR")) > -1, "error select is labelled by invisible text");
+			assert.ok(oErrorSelect.$().attr("aria-labelledby").split(" ").indexOf(InvisibleText.getStaticId(sCoreLib, "VALUE_STATE_ERROR")) === -1, "error select should not be labelled by invisible text since it has aria-invalid set");
 			assert.ok(oInformationSelect.$().attr("aria-labelledby").split(" ").indexOf(InvisibleText.getStaticId(sCoreLib, "VALUE_STATE_INFORMATION")) > -1, "Information select is labelled by invisible text");
 
 			// act
@@ -3705,6 +3705,13 @@ sap.ui.define([
 
 			// assert
 			assert.ok(oErrorSelect.$().attr("aria-labelledby").split(" ").indexOf(InvisibleText.getStaticId(sCoreLib, "VALUE_STATE_SUCCESS")) > -1, "error select is now labelled by success invisible text");
+			assert.ok(oErrorSelect.$().attr("aria-labelledby").split(" ").indexOf(oErrorSelect.getId() + "-label") > -1, "error select is still labelled by its own label");
+
+			// act
+			oWarningSelect.setValueState("Error");
+
+			// assert
+			assert.ok(oWarningSelect.$().attr("aria-labelledby").split(" ").indexOf(InvisibleText.getStaticId(sCoreLib, "VALUE_STATE_ERROR")) === -1, "warning select is not labelled by the error invisible text");
 
 			// cleanup
 			oSuccessSelect.destroy();

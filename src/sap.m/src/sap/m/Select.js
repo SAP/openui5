@@ -2160,15 +2160,15 @@ function(
 
 		Select.prototype.updateAriaLabelledBy = function(sValueState, sOldValueState) {
 			var $this = this.$(),
-                            sAttr = $this.attr("aria-labelledby"),
+				sAttr = $this.attr("aria-labelledby"),
 				aIDs = sAttr ? sAttr.split(" ") : [],
 				sNewIDs;
 
-			if (sOldValueState !== ValueState.None) {
+			if (sOldValueState !== ValueState.None && sOldValueState !== ValueState.Error) {
 				aIDs.pop();
 			}
 
-			if (sValueState !== ValueState.None) {
+			if (sValueState !== ValueState.None && sValueState !== ValueState.Error) {
 				aIDs.push(InvisibleText.getStaticId("sap.ui.core", "VALUE_STATE_" + sValueState.toUpperCase()));
 			}
 
