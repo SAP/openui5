@@ -258,6 +258,7 @@ sap.ui.define([
 			// control metadata property values
 			sandbox.stub(this.oControl, "getProperty")
 				.withArgs("metadataProperty1").returns("metadataPropertyValue1")
+				.withArgs("metadataProperty2").returns("metadataPropertyValue2")
 				.withArgs("metadataProperty3").returns("metadataPropertyValue3");
 
 			// control metadata properties

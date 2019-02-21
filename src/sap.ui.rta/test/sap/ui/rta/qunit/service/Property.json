@@ -1,5 +1,12 @@
 {
 	"properties": {
+		"dtMetadataProperty1": {
+			"value": {
+				"mockKey1": "dtMetadataProperty1"
+			},
+			"virtual": false,
+			"ignore": true
+		},
 		"dtMetadataProperty2": {
 			"value": {
 				"mockKey2": "dtMetadataProperty2"
@@ -24,6 +31,21 @@
 				{
 					"possibleKey2": {
 						"displayName": "Possible Value 2"
+					}
+				}
+			]
+		},
+		"virtualProperty2": {
+			"value": "Virtual property value 2",
+			"virtual": true,
+			"type": "Virtual property type",
+			"name": "Virtual Property Name 2",
+			"group": "Virtual Property Group 2",
+			"ignore": true,
+			"possibleValues": [
+				{
+					"possibleKey3": {
+						"displayName": "Possible Value 3"
 					}
 				}
 			]
@@ -76,6 +98,17 @@
 				},
 				"bindingString": "bindingString"
 			}
+		},
+		"metadataProperty2": {
+			"value": "metadataPropertyValue2",
+			"virtual": false,
+			"type": "metadataPropertyType2",
+			"name": "metadataPropertyName2",
+			"ignore": true,
+			"group": "metadataPropertyGroup2",
+			"deprecated": true,
+			"defaultValue": "metadataPropertyDefaultValue2",
+			"visibility": "public"
 		},
 		"metadataProperty3": {
 			"value": "metadataPropertyValue3",
