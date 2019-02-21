@@ -953,12 +953,6 @@ sap.ui.define([
 				// we check for undefined here, since 0 is an accepted value
 				oOptions.decimals = oOptions.customCurrencies[sMeasure].decimals !== undefined ? oOptions.customCurrencies[sMeasure].decimals : oOptions.decimals;
 			}
-
-			// no custom currencies, and no decimals on the format-options
-			// --> look-up currency in the locale data, this also provides a global fallback value
-			if (oOptions.decimals === undefined) {
-				oOptions.decimals = this.oLocaleData.getCurrencyDigits(sMeasure);
-			}
 		}
 
 		// set fraction digits based on the given or derived decimals
@@ -1016,6 +1010,23 @@ sap.ui.define([
 
 		if (oOptions.type == mNumberType.PERCENT) {
 			vValue = NumberFormat._shiftDecimalPoint(vValue, 2);
+		}
+
+		//handle measure
+		if (oOptions.type == mNumberType.CURRENCY) {
+			var iDigits = this.oLocaleData.getCurrencyDigits(sMeasure);
+
+			// decimals might be undefined, yet 0 is accepted of course
+			if (oOptions.customCurrencies && oOptions.customCurrencies[sMeasure] && oOptions.customCurrencies[sMeasure].decimals !== undefined) {
+				iDigits = oOptions.customCurrencies[sMeasure].decimals;
+			}
+
+			if (oOptions.maxFractionDigits === undefined) {
+				oOptions.maxFractionDigits = iDigits;
+			}
+			if (oOptions.minFractionDigits === undefined) {
+				oOptions.minFractionDigits = iDigits;
+			}
 		}
 
 		// Rounding the value with oOptions.maxFractionDigits and oOptions.roundingMode.
