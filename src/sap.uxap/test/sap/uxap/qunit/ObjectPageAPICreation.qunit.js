@@ -10,6 +10,7 @@ sap.ui.define([
 	"sap/uxap/ObjectPageHeader",
 	"sap/uxap/ObjectPageDynamicHeaderTitle",
 	"sap/m/Text",
+	"sap/m/Title",
 	"sap/m/Link",
 	"sap/m/Button",
 	"sap/m/Page",
@@ -33,6 +34,7 @@ function (
 	ObjectPageHeader,
 	ObjectPageDynamicHeaderTitle,
 	Text,
+	Title,
 	Link,
 	Button,
 	Page,
@@ -153,6 +155,30 @@ function (
 				oSapUiObject.placeAt("qunit-fixture");
 				Core.applyChanges();
 				return oSapUiObject;
+			},
+			toPhoneMode: function (oObjectPage) {
+				oObjectPage.$().removeClass("sapUxAPObjectPageLayout-Std-Desktop")
+						.removeClass("sapUxAPObjectPageLayout-Std-Tablet")
+						.addClass("sapUxAPObjectPageLayout-Std-Phone");
+				sap.ui.Device.system.desktop = false;
+				sap.ui.Device.system.tablet = false;
+				sap.ui.Device.system.phone = true;
+			},
+			toTabletMode: function (oObjectPage) {
+				oObjectPage.$().removeClass("sapUxAPObjectPageLayout-Std-Desktop")
+						.removeClass("sapUxAPObjectPageLayout-Std-Phone")
+						.addClass("sapUxAPObjectPageLayout-Std-Tablet");
+				sap.ui.Device.system.desktop = false;
+				sap.ui.Device.system.phone = false;
+				sap.ui.Device.system.tablet = true;
+			},
+			toDesktopMode: function (oObjectPage) {
+				oObjectPage.$().addClass("sapUxAPObjectPageLayout-Std-Desktop")
+						.removeClass("sapUxAPObjectPageLayout-Std-Tablet")
+						.removeClass("sapUxAPObjectPageLayout-Std-Phone");
+				sap.ui.Device.system.desktop = true;
+				sap.ui.Device.system.tablet = false;
+				sap.ui.Device.system.phone = false;
 			},
 			exists: function (vObject) {
 				if (arguments.length === 1) {
@@ -1993,6 +2019,75 @@ function (
 		afterEach: function () {
 			this.oObjectPage.destroy();
 		}
+	});
+
+	QUnit.test("ObjectPageDynamicHeaderTitle with snappedTitleOnMobile on desktop", function (assert) {
+		// Arrange
+		var oObjectPage = this.oObjectPage,
+			oDomObjectPageHeaderTitle = document.getElementById(oObjectPage.getId() + "-headerTitle"),
+			oDynamicPageTitle = oObjectPage.getHeaderTitle();
+
+		// Act
+		helpers.toDesktopMode(oObjectPage);
+		oDynamicPageTitle.setAggregation("snappedTitleOnMobile", new Title("Test"));
+		oObjectPage._snapHeader();
+
+		// Assert
+		assert.notOk(oObjectPage._hasDynamicTitleWithSnappedTitleOnMobile(),
+				"ObjectPageDynamicHeaderTitle hasn't snappedTitleOnMobile while on desktop.");
+
+		assert.notOk(oDomObjectPageHeaderTitle.classList.contains("sapUxAPObjectPageHeaderSnappedTitleOnMobile"),
+				"Object Page Header Dom node hasn't sapUxAPObjectPageHeaderSnappedTitleOnMobile class while on desktop.");
+
+		assert.ok(oDynamicPageTitle._getShowExpandButton(), "Expand button of Dynamic Page Title is shown.");
+	});
+
+	QUnit.test("ObjectPageDynamicHeaderTitle with snappedTitleOnMobile on tablet", function (assert) {
+		// Arrange
+		var oObjectPage = this.oObjectPage,
+			oDomObjectPageHeaderTitle = document.getElementById(oObjectPage.getId() + "-headerTitle"),
+			oDynamicPageTitle = oObjectPage.getHeaderTitle();
+
+		// Act
+		helpers.toTabletMode(oObjectPage);
+		oDynamicPageTitle.setAggregation("snappedTitleOnMobile", new Title("Test"));
+		oObjectPage._snapHeader();
+
+		// Assert
+		assert.notOk(oObjectPage._hasDynamicTitleWithSnappedTitleOnMobile(),
+				"ObjectPageDynamicHeaderTitle hasn't snappedTitleOnMobile while on tablet.");
+
+		assert.notOk(oDomObjectPageHeaderTitle.classList.contains("sapUxAPObjectPageHeaderSnappedTitleOnMobile"),
+				"Object Page Header Dom node hasn't sapUxAPObjectPageHeaderSnappedTitleOnMobile class while on tablet.");
+
+		assert.ok(oDynamicPageTitle._getShowExpandButton(), "Expand button of Dynamic Page Title is shown.");
+
+		// Clean up
+		helpers.toDesktopMode(oObjectPage);
+	});
+
+	QUnit.test("ObjectPageDynamicHeaderTitle with snappedTitleOnMobile on phone", function (assert) {
+		// Arrange
+		var oObjectPage = this.oObjectPage,
+			oDomObjectPageHeaderTitle = document.getElementById(oObjectPage.getId() + "-headerTitle"),
+			oDynamicPageTitle = oObjectPage.getHeaderTitle();
+
+		// Act
+		helpers.toPhoneMode(oObjectPage);
+		oDynamicPageTitle.setAggregation("snappedTitleOnMobile", new Title("Test"));
+		oObjectPage._snapHeader();
+
+		// Assert
+		assert.ok(oObjectPage._hasDynamicTitleWithSnappedTitleOnMobile(),
+				"ObjectPageDynamicHeaderTitle has snappedTitleOnMobile while on phone.");
+
+		assert.ok(oDomObjectPageHeaderTitle.classList.contains("sapUxAPObjectPageHeaderSnappedTitleOnMobile"),
+				"Object Page Header Dom node has the sapUxAPObjectPageHeaderSnappedTitleOnMobile class while on phone.");
+
+		assert.notOk(oDynamicPageTitle._getShowExpandButton(), "Expand button of Dynamic Page Title is not shown.");
+
+		// Clean up
+		helpers.toDesktopMode(oObjectPage);
 	});
 
 	QUnit.test("ObjectPage Header pinnable and not pinnable", function (assert) {
