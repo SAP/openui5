@@ -343,8 +343,6 @@ sap.ui.define(['sap/ui/core/Renderer', 'sap/ui/core/IconPool', 'sap/m/library', 
 					return InvisibleText.getStaticId(sCoreLib, "VALUE_STATE_SUCCESS");
 				case ValueState.Warning:
 					return InvisibleText.getStaticId(sCoreLib, "VALUE_STATE_WARNING");
-				case ValueState.Error:
-					return InvisibleText.getStaticId(sCoreLib, "VALUE_STATE_ERROR");
 				case ValueState.Information:
 					return InvisibleText.getStaticId(sCoreLib, "VALUE_STATE_INFORMATION");
 			}
