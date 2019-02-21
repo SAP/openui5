@@ -1807,6 +1807,11 @@ function(
 		});
 	}
 
+	var PREDEFINED_MODULES = {
+		"not-adaptable": "sap/ui/dt/defaultDesigntime/notAdaptable.designtime",
+		"not-removable": "sap/ui/dt/defaultDesigntime/notRemovable.designtime"
+	};
+
 	/**
 	 * Returns a promise that resolves with the instance specific, unmerged designtime data.
 	 * If no instance is provided, the promise will resolve with {}.
@@ -1821,7 +1826,9 @@ function(
 			&& oInstance.data("sap-ui-custom-settings")["sap.ui.dt"]
 			&& oInstance.data("sap-ui-custom-settings")["sap.ui.dt"].designtime;
 
-		if (typeof sInstanceSpecificModule === "string"){
+		if (typeof sInstanceSpecificModule === "string") {
+			sInstanceSpecificModule = PREDEFINED_MODULES[sInstanceSpecificModule] || sInstanceSpecificModule;
+
 			return new Promise(function(fnResolve) {
 				sap.ui.require([sInstanceSpecificModule], function(oDesignTime) {
 					fnResolve(oDesignTime);
