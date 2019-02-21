@@ -1981,6 +1981,7 @@ sap.ui.define([
 		var aMonthNames = [];
 		var aMonthNamesWide = [];
 		var aMonthNamesSecondary = [];
+		var aMonthNamesSecondaryWide = [];
 		var sAriaLabel;
 		var bShort = false;
 		var sFirstMonthName;
@@ -1990,6 +1991,8 @@ sap.ui.define([
 		var sPattern;
 		var sPrimaryCalendarType = this.getPrimaryCalendarType();
 		var sSecondaryCalendarType = this._getSecondaryCalendarType();
+		var sSecondaryMonthInfo = "";
+
 		if (this._bLongMonth || !this._bNamesLengthChecked) {
 			aMonthNames = oLocaleData.getMonthsStandAlone("wide", sPrimaryCalendarType);
 		} else {
@@ -2002,12 +2005,17 @@ sap.ui.define([
 			// always use short month names because in most cases 2 months are displayed
 			aMonthNamesSecondary = oLocaleData.getMonthsStandAlone("abbreviated", sSecondaryCalendarType);
 
+			// always use wide month names for the screen reader
+			aMonthNamesSecondaryWide = oLocaleData.getMonthsStandAlone("wide", sSecondaryCalendarType);
+
 			var oSecondaryMonths = this._getDisplayedSecondaryMonths(sPrimaryCalendarType, sSecondaryCalendarType);
 			if (oSecondaryMonths.start == oSecondaryMonths.end) {
 				sText = aMonthNamesSecondary[oSecondaryMonths.start];
+				sSecondaryMonthInfo = aMonthNamesSecondaryWide[oSecondaryMonths.start];
 			} else {
 				sPattern = oLocaleData.getIntervalPattern();
 				sText = sPattern.replace(/\{0\}/, aMonthNamesSecondary[oSecondaryMonths.start]).replace(/\{1\}/, aMonthNamesSecondary[oSecondaryMonths.end]);
+				sSecondaryMonthInfo = sPattern.replace(/\{0\}/, aMonthNamesSecondaryWide[oSecondaryMonths.start]).replace(/\{1\}/, aMonthNamesSecondaryWide[oSecondaryMonths.end]);
 			}
 		}
 		oHeader.setAdditionalTextButton1(sText);
@@ -2030,6 +2038,11 @@ sap.ui.define([
 		}
 
 		if (!this._getSucessorsPickerPopup()) {
+			// Add info for the secondary month
+			if (sSecondaryMonthInfo) {
+				sAriaLabel += ", " + sSecondaryMonthInfo;
+			}
+
 			sAriaLabel += ". " + oLibraryResourceBundle.getText("CALENDAR_MONTH_PICKER_OPEN_HINT");
 		}
 
@@ -2339,7 +2352,12 @@ sap.ui.define([
 	Calendar.prototype._updateHeadersYearPrimaryText = function (sYear) {
 		var oHeader = this.getAggregation("header"),
 			oSecondMonthHeader = this.getAggregation("secondMonthHeader"),
-			sAriaLabel = sYear + (this._getSucessorsPickerPopup() ? "" : ". " + oLibraryResourceBundle.getText("CALENDAR_YEAR_PICKER_OPEN_HINT"));
+			sAriaLabel = sYear;
+
+		if (!this._getSecondaryCalendarType()) {
+			// If secondary type is set, than placing the hint should be done in the end.
+			sAriaLabel += (this._getSucessorsPickerPopup() ? "" : ". " + oLibraryResourceBundle.getText("CALENDAR_YEAR_PICKER_OPEN_HINT"));
+		}
 
 		oHeader.setTextButton2(sYear);
 		oHeader.setAriaLabelButton2(sAriaLabel);
@@ -2351,7 +2369,15 @@ sap.ui.define([
 
 	Calendar.prototype._updateHeadersYearAdditionalText = function (sYear) {
 		var oHeader = this.getAggregation("header"),
-			oSecondMonthHeader = this.getAggregation("secondMonthHeader");
+			oSecondMonthHeader = this.getAggregation("secondMonthHeader"),
+			sAriaLabel = oHeader.getAriaLabelButton2(); // Get what's already set with the primary text
+
+		if (sYear) {
+			// Add the secondary year info, as well as the hint.
+			// Keep in mind this method might be called from _handleNext/Previous without a year
+			sAriaLabel += ", " + sYear + (this._getSucessorsPickerPopup() ? "" : ". " + oLibraryResourceBundle.getText("CALENDAR_YEAR_PICKER_OPEN_HINT"));
+			oHeader.setAriaLabelButton2(sAriaLabel);
+		}
 
 		oHeader.setAdditionalTextButton2(sYear);
 		oHeader._setAdditionalTextButton4(sYear);
