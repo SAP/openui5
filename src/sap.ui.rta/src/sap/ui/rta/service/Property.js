@@ -7,13 +7,15 @@ sap.ui.define([
 	"sap/ui/dt/Util",
 	"sap/ui/dt/Overlay",
 	"sap/ui/dt/ElementUtil",
-	"sap/base/util/merge"
+	"sap/base/util/merge",
+	"sap/ui/rta/Utils"
 ], function(
 	OverlayRegistry,
 	DtUtil,
 	Overlay,
 	ElementUtil,
-	merge
+	merge,
+	RtaUtils
 ) {
 	"use strict";
 
@@ -45,9 +47,9 @@ sap.ui.define([
 	 * @property {object} [links] - links from dt-metadata
 	 */
 
-	return function(oRta) {
+	return function() {
 
-		var oProperty = { };
+		var oProperty = {};
 
 		/**
 		 * Returns properties, annotations, label and name
@@ -114,7 +116,7 @@ sap.ui.define([
 						virtual: false,
 						type: mMetadataObj[sKey].type,
 						name: mMetadataObj[sKey].name,
-						ignore: false,
+						ignore: false, // default value, might be overwritten below if required by designtime metadata
 						group: mMetadataObj[sKey].group,
 						deprecated: mMetadataObj[sKey].deprecated,
 						defaultValue: mMetadataObj[sKey].defaultValue,
@@ -144,34 +146,36 @@ sap.ui.define([
 											);
 										}
 
+										var mResult = {};
+
 										// ensure ignore function is replaced by a boolean value
-										if (bIgnore) {
-											// check if ignore property is set to true - remove from metadata object, if present
-											delete mFilteredMetadataObject[sKey];
-										} else if (!mFilteredMetadataObject[sKey]) {
+										if (!mFilteredMetadataObject[sKey]) {
 											//  if not available in control metadata
 											if (mDtObj[sKey].virtual === true) {
 												// virtual properties
-												return oProperty._getEvaluatedVirtualProperty(mDtObj, sKey, oElement);
+												mResult = oProperty._getEvaluatedVirtualProperty(mDtObj, sKey, oElement, bIgnore);
 											} else {
 												// dt-metadata properties
-												var mEvaluatedProperty = {};
-												mEvaluatedProperty[sKey] = {
-													value: mDtObj[sKey],
+												mResult[sKey] = {
+													value: RtaUtils.omit(mDtObj[sKey], "ignore"),
 													virtual: false,
 													ignore: bIgnore
 												};
-												return mEvaluatedProperty;
 											}
+										} else {
+											mResult[sKey] = {
+												ignore: bIgnore
+											};
 										}
-										return {};
+
+										return mResult;
 									});
 							})
 					);
 				})
 				.then(function (aFilteredResults) {
 					return aFilteredResults.reduce(function (mConsolidatedObject, oFilteredResult) {
-						return Object.assign(mConsolidatedObject, oFilteredResult);
+						return merge(mConsolidatedObject, oFilteredResult);
 					}, mFilteredMetadataObject);
 				});
 		};
@@ -182,11 +186,12 @@ sap.ui.define([
 		 * @param {object} mDtObj - dt-metadata properties object
 		 * @param {object} sPropertyName - virtual property name
 		 * @param {sap.ui.core.Element} oElement - element for which the virtual property needs to be evaluated
+		 * @param {boolean} bIgnore - evaluated value of ignore property
 		 *
 		 * @return {Promise} promise resolving to the evaluated virtual property object
 		 * @private
 		 */
-		oProperty._getEvaluatedVirtualProperty = function(mDtObj, sPropertyName, oElement) {
+		oProperty._getEvaluatedVirtualProperty = function(mDtObj, sPropertyName, oElement, bIgnore) {
 			var mEvaluatedProperty = {};
 			// evaluate if virtual - not found in metadata object
 			mEvaluatedProperty[sPropertyName] = {
@@ -195,7 +200,7 @@ sap.ui.define([
 				type: mDtObj[sPropertyName].type,
 				name: mDtObj[sPropertyName].name,
 				group: mDtObj[sPropertyName].group,
-				ignore: false
+				ignore: bIgnore
 			};
 			var mBindingInfo = oProperty._getBindingInfo(sPropertyName, oElement);
 

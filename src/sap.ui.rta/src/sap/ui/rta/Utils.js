@@ -8,6 +8,7 @@ sap.ui.define([
 	"sap/ui/fl/registry/Settings",
 	"sap/ui/dt/OverlayUtil",
 	"sap/ui/dt/DOMUtil",
+	"sap/ui/dt/Util",
 	"sap/m/MessageBox",
 	"sap/base/Log"
 ],
@@ -17,6 +18,7 @@ function(
 	Settings,
 	OverlayUtil,
 	DOMUtil,
+	DtUtil,
 	MessageBox,
 	Log
 ) {
@@ -624,12 +626,13 @@ function(
 	 * Example: for obj = { 'a': 1, 'b': '2', 'c': 3 };
 	 * omit(obj, ['a', 'c']); -> Returns { 'b': '2' }
 	 *
-	 * @param  {Object} oObject     Source object
-	 * @param  {string[]} aPropertyPaths Property paths to omit
-	 * @return {Object}             Returns new object
+	 * @param  {Object} oObject - Source object
+	 * @param  {string|string[]} vPropertyName - Property paths to omit
+	 * @return {Object} returns new object
 	 */
-	Utils.omit = function(oObject, aPropertyPaths){
+	Utils.omit = function (oObject, vPropertyName) {
 		var oNewObject = Object.assign({}, oObject);
+		var aPropertyPaths = DtUtil.castArray(vPropertyName);
 		aPropertyPaths.forEach(function (sProperty) {
 			delete oNewObject[sProperty];
 		});
