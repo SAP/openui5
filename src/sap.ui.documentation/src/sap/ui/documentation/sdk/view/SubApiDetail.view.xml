@@ -293,6 +293,9 @@
 														enableFormattedText="true"
 														class="sapUiTinyMarginBottom sapUiTinyMarginTop">
 													</m:MessageStrip>
+													<m:FormattedText visible="{=${borrowedFrom} !== undefined}"
+														htmlText="Borrowed from: &lt;a style='vertical-align:initial' target='_self' href='#/api/{borrowedFrom}' &gt;{borrowedFrom}&lt;/a&gt;">
+													</m:FormattedText>
 												</layout:VerticalLayout>
 											</custom:Row>
 										</custom:LightTable>
@@ -358,6 +361,9 @@
 														showCloseButton="false"
 														class="sapUiSmallMarginBottom sapUiSmallMarginTop">
 													</m:MessageStrip>
+													<m:FormattedText visible="{=${borrowedFrom} !== undefined}"
+														htmlText="Borrowed from: &lt;a style='vertical-align:initial' target='_self' href='#/api/{borrowedFrom}' &gt;{borrowedFrom}&lt;/a&gt;">
+													</m:FormattedText>
 												</layout:VerticalLayout>
 											</custom:Row>
 										</custom:LightTable>
@@ -404,6 +410,9 @@
 															enableFormattedText="true"
 															class="sapUiTinyMarginBottom sapUiTinyMarginTop">
 													</m:MessageStrip>
+													<m:FormattedText visible="{=${borrowedFrom} !== undefined}"
+														htmlText="Borrowed from: &lt;a style='vertical-align:initial' target='_self' href='#/api/{borrowedFrom}' &gt;{borrowedFrom}&lt;/a&gt;">
+													</m:FormattedText>
 												</layout:VerticalLayout>
 											</custom:Row>
 										</custom:LightTable>
