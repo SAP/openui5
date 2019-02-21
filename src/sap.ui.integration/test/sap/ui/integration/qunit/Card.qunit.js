@@ -8,7 +8,8 @@ sap.ui.define([
 	"sap/f/cards/NumericHeader",
 	"sap/f/cards/NumericSideIndicator",
 	"sap/f/cards/Header",
-	"sap/base/Log"
+	"sap/base/Log",
+	"sap/ui/core/ComponentContainer"
 ],
 function (
 	Card,
@@ -18,7 +19,8 @@ function (
 	NumericHeader,
 	NumericSideIndicator,
 	Header,
-	Log
+	Log,
+	ComponentContainer
 ) {
 	"use strict";
 
@@ -588,6 +590,29 @@ function (
 		}
 	};
 
+	var oManifest_ComponentCard = {
+		"sap.card": {
+			"type": "Component",
+			"content": {
+				"manifest": "dummy-url-to-manifest"
+			}
+		}
+	};
+
+	var oManifest_ComponentCardAllInOne = {
+		"_version": "1.12.0",
+		"sap.app": {
+		  "id": "sap.f.cardsdemo.cardcontent.componentContent.allInOne",
+		  "type": "card",
+		  "applicationVersion": {
+			"version": "1.0.0"
+		  }
+		},
+		"sap.card": {
+		  "type": "Component"
+		}
+	  };
+
 	function testContentInitialization(oManifest, assert) {
 
 		// Arrange
@@ -624,6 +649,30 @@ function (
 				}
 			}, this);
 		});
+	}
+
+	function testComponentContentCreation(oCardManifest, oExpectedComponentManifest, assert) {
+		// Arrange
+		var done = assert.async(),
+			oStub = sinon.stub(ComponentContainer.prototype, "applySettings"),
+			oCard = new Card();
+
+		// Assert
+		assert.expect(1);
+		oStub.callsFake(function (mSettings) {
+			assert.deepEqual(
+				mSettings.manifest,
+				oExpectedComponentManifest,
+				"A ComponentContainer is created with expected settings"
+			);
+
+			oStub.restore();
+			oCard.destroy();
+			done();
+		});
+
+		// Act
+		oCard.setManifest(oCardManifest);
 	}
 
 	QUnit.module("Init");
@@ -1150,4 +1199,21 @@ function (
 		}});
 	});
 
+	QUnit.module("Component Card");
+
+	QUnit.test("Component Card - card and component manifests are separate", function (assert) {
+		testComponentContentCreation(
+			oManifest_ComponentCard,
+			oManifest_ComponentCard["sap.card"].content.manifest,
+			assert
+		);
+	});
+
+	QUnit.test("Component Card - card and component manifests are in the same file", function (assert) {
+		testComponentContentCreation(
+			oManifest_ComponentCardAllInOne,
+			oManifest_ComponentCardAllInOne,
+			assert
+		);
+	});
 });

@@ -1,0 +1,17 @@
+{
+  "_version": "1.12.0",
+  "sap.app": {
+    "id": "sap.f.cardsdemo.cardcontent.componentContent.booking",
+    "applicationVersion": {
+      "version": "1.0.0"
+    }
+  },
+  "sap.ui5": {
+    "rootView": {
+      "viewName": "sap.f.cardsdemo.cardcontent.componentContent.booking.Main",
+      "type": "XML",
+      "async": true,
+      "id": "app"
+    }
+  }
+}

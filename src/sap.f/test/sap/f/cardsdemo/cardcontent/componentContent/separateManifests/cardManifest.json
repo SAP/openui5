@@ -1,0 +1,11 @@
+{
+    "sap.app": {
+        "type": "card"
+    },
+    "sap.card": {
+        "type": "Component",
+        "content": {
+            "manifest": "./cardcontent/componentContent/separateManifests/manifest.json"
+        }
+     }
+}

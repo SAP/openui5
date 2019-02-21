@@ -71,6 +71,12 @@
 		"route": "customContent",
 		"group": "Card Type Examples"
 	},
+    {
+      "title": "Component Card [EXPERIMENTAL]",
+      "description": "Example page for Card of type Component (Where a ComponentContainer is rendered)",
+      "route": "componentContent",
+      "group": "Card Type Examples"
+    },
 	{
 		"title": "sap.f.Card",
 		"description": "Example page for Card of type sap.f.Card",
