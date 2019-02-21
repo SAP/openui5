@@ -204,27 +204,42 @@ sap.ui.define([
 	};
 
 	function validate(assert, pastedData, columnsInfo, expectedResult, sMsg) {
-		var aResult = PasteHelper.validate(pastedData, columnsInfo);
-		if (aResult.errors){
-			for (var i = 0; i < aResult.errors.length; i++){
-				aResult.errors[i].message = "";
+
+		var done = assert.async();
+
+		var oPromise = PasteHelper.validate(pastedData, columnsInfo);
+
+		oPromise.then(function(aResult) {
+
+			if (aResult.errors) {
+				for (var i = 0; i < aResult.errors.length; i++) {
+					aResult.errors[i].message = "";
+				}
+
 			}
-		}
-		assert.deepEqual(aResult, expectedResult, "The result has to contain array of validated data or errors. In this test the validation has to be " + sMsg + ".");
+			assert.deepEqual(aResult, expectedResult, "The result has to contain array of validated data or errors. In this test the validation has to be " + sMsg + ".");
+			done();
+		});
 	}
 
-	QUnit.test("Simple data validation - string and number.", function(assert) {
+	QUnit.test("Simple data validation - string and number. Passing", function(assert) {
 		validate(assert, aData1_OK, aColumnsInfo1, oResult1_OK, " pass");
+	});
+	QUnit.test("Simple data validation - string and number.Failing", function(assert) {
 		validate(assert, aData1_ERR, aColumnsInfo1, oResult1_ERR, " fail");
 	});
 
-	QUnit.test("Date and core Boolean types validation.", function(assert) {
+	QUnit.test("Date and core Boolean types validation. Passing", function(assert) {
 		validate(assert, aData2_OK, aColumnsInfo2, oResult2_OK , " pass");
+	});
+	QUnit.test("Date and core Boolean types validation. Failing", function(assert) {
 		validate(assert, aData2_ERR, aColumnsInfo2, oResult2_ERR, " fail");
 	});
 
-	QUnit.test("EDM Boolean and Currency types Validation.", function(assert) {
+	QUnit.test("EDM Boolean and Currency types Validation. Passing", function(assert) {
 		validate(assert, aData3_OK, aColumnsInfo3, oResult3_OK, " pass");
+	});
+	QUnit.test("EDM Boolean and Currency types Validation. Failing", function(assert) {
 		validate(assert, aData3_ERR, aColumnsInfo3, oResult3_ERR, " fail");
 	});
 

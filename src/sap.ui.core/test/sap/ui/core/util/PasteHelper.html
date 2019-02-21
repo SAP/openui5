@@ -97,27 +97,29 @@
                                 type: "sap.ui.model.type.Currency"
                             }
                         ];
-                        var oResult = PasteHelper.validate(aData, aColumnsInfo);
-                        if (oResult.parsedData)
-                        {
-                            showDataInTable(aData);
-                            var msg = "";
-                            var myJSON = JSON.stringify(oResult.parsedData);
-                            Core.byId("ta2").setValue(myJSON);
-                            if (e.target.id == "ta1-inner") {
-                                Core.byId("ta1").setValue(e.clipboardData.getData("text"));
-                            }
-                            e.preventDefault();
+                        PasteHelper.validate(aData, aColumnsInfo).then(function(oResult) {
+                            if (oResult.parsedData)
+                            {
+                                showDataInTable(aData);
+                                var msg = "";
+                                var myJSON = JSON.stringify(oResult.parsedData);
+                                Core.byId("ta2").setValue(myJSON);
+                                if (e.target.id == "ta1-inner") {
+                                    Core.byId("ta1").setValue(e.clipboardData.getData("text"));
+                                }
+                                e.preventDefault();
 
-                        }  else {
-                            var msg = "";
-                            for (var i = 0; i < oResult.errors.length; i++) {
-                                msg = msg + "\n" + (oResult.errors)[i].message;
+                            }  else {
+                                var msg = "";
+                                for (var i = 0; i < oResult.errors.length; i++) {
+                                    msg = msg + "\n" + (oResult.errors)[i].message;
+                                }
+                                MessageBox.error(msg);
+                                Core.byId("ta2").setValue(msg);
+                                e.preventDefault();
                             }
-                            MessageBox.error(msg);
-                            Core.byId("ta2").setValue(msg);
-                            e.preventDefault();
-                        }
+                        });
+
                     }
 
                     window.addEventListener('paste', pasteListener);
