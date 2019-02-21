@@ -3,7 +3,8 @@
  */
 
 sap.ui.define([
-], function () {
+	'sap/m/ListItemBaseRenderer'
+], function (ListItemBaseRenderer) {
 	"use strict";
 
 	/**
@@ -45,7 +46,42 @@ sap.ui.define([
 	};
 
 	UploadSetRenderer.renderList = function (oRm, oControl) {
+		var fnOriginal = oControl.getList().getRenderer().renderNoData;
+		oControl.getList().getRenderer().renderNoData = this.renderNoData;
 		oRm.renderControl(oControl.getList());
+		oControl.getList().getRenderer().renderNoData = fnOriginal;
+	};
+
+	UploadSetRenderer.renderNoData = function(oRm, oControl) {
+		var oUploadSet = oControl.getParent();
+		oRm.write("<li");
+		oRm.writeAttribute("tabindex", 0);
+		oRm.writeAttribute("id", oUploadSet.getList().getId("nodata"));
+		oRm.addClass("sapMLIB sapMUCNoDataPage");
+		ListItemBaseRenderer.addFocusableClasses.call(ListItemBaseRenderer, oRm);
+		oRm.writeClasses();
+		oRm.write(">");
+
+		oRm.renderControl(oUploadSet._oNoDataIcon);
+
+		oRm.write("<div");
+		oRm.writeAttribute("id", oUploadSet.getId() + "-no-data-text");
+		oRm.addClass("sapMUCNoDataText");
+		oRm.writeClasses();
+		oRm.write(">");
+		oRm.writeEscaped(oUploadSet.getNoDataText());
+		oRm.write("</div>");
+
+		if (oUploadSet.getUploadEnabled()) {
+			oRm.write("<div");
+			oRm.writeAttribute("id", oUploadSet.getId() + "-no-data-description");
+			oRm.addClass("sapMUCNoDataDescription");
+			oRm.writeClasses();
+			oRm.write(">");
+			oRm.writeEscaped(oUploadSet.getNoDataDescription());
+			oRm.write("</div>");
+		}
+		oRm.write("</li>");
 	};
 
 	return UploadSetRenderer;

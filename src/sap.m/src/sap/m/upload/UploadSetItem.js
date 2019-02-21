@@ -31,7 +31,7 @@ sap.ui.define([
 	 *
 	 * @param {string} [sId] ID for the new control, will be generated automatically if no ID is provided.
 	 * @param {object} [mSettings] Initial settings for the new control.
-	 * @class Represents one file of the <code>sap.m.upload.UploadSet</code> control.
+	 * @class Item that represents one file to be uploaded using the {@link sap.m.upload.UploadSet} control.
 	 * @extends sap.ui.core.Element
 	 * @author SAP SE
 	 * @version ${version}
@@ -46,7 +46,7 @@ sap.ui.define([
 			library: "sap.m",
 			properties: {
 				/**
-				 * Enables or disables the delete button.
+				 * Enables or disables the remove button.
 				 */
 				enabledDelete: {type: "boolean", defaultValue: true},
 				/**
@@ -62,20 +62,21 @@ sap.ui.define([
 				 */
 				mediaType: {type: "string", defaultValue: null},
 				/**
-				 * Specifies the URL where the thumbnail of the file is located. This can also be an SAPUI5 icon URL.
+				 * Specifies the URL where the thumbnail of the file is located. Can also be set to an SAPUI5 icon URL.
 				 */
 				thumbnailUrl: {type: "string", defaultValue: null},
 				/**
-				 * State of the item with regard to its upload process.
+				 * State of the item relevant to its upload process.
 				 */
 				uploadState: {type: "sap.m.UploadState", defaultValue: null},
 				/**
 				 * Specifies the URL where the file is located.
-				 * If the application doesn't provide a value for this property, the icon and the file name of the <code>sap.m.upload.UploadSet</code> are not clickable.
+				 * <br>If the application doesn't provide a value for this property, the icon and
+				 * the file name are not clickable in {@link sap.m.upload.UploadSet}.
 				 */
 				url: {type: "string", defaultValue: null},
 				/**
-				 * Shows or hides the delete button.
+				 * Shows or hides the remove button.
 				 */
 				visibleDelete: {type: "boolean", defaultValue: true},
 				/**
@@ -86,7 +87,7 @@ sap.ui.define([
 			defaultAggregation: "attributes",
 			aggregations: {
 				/**
-				 * Statuses of the item.
+				 * Attributes of the item.
 				 */
 				attributes: {
 					type: "sap.m.ObjectAttribute",
@@ -112,21 +113,21 @@ sap.ui.define([
 			},
 			events: {
 				/**
-				 * The event is raised when an item's open action is invoked.
+				 * This event is fired when an open action is invoked on an item.
 				 */
 				openPressed: {
 					/**
-					 * The item on which open action was invoked.
+					 * The item on which the open action has been invoked.
 					 */
 					item: {type: "sap.m.upload.UploadSetItem"},
 					allowPreventDefault: true
 				},
 				/**
-				 * The event is raised when an item's delete action is invoked.
+				 * This event is fired when a remove action is invoked on an item.
 				 */
-				deletePressed: {
+				removePressed: {
 					/**
-					 * The item on which delete action was invoked.
+					 * The item on which the remove action was invoked.
 					 */
 					item: {type: "sap.m.upload.UploadSetItem"},
 					allowPreventDefault: true
@@ -272,7 +273,7 @@ sap.ui.define([
 			this._getRestartButton().setVisible(sUploadState === UploadState.Error);
 			this._getEditButton().setVisible(!bUploading);
 			this._getDeleteButton().setVisible(!bUploading);
-			this._getTerminateButton().setVisible(bUploading);
+			this._getTerminateButton().setVisible(this.getParent().getTerminationEnabled() && bUploading);
 		}
 
 		return this;
@@ -340,10 +341,10 @@ sap.ui.define([
 	};
 
 	/**
-	 * Downloads the item. Only possible when the items has a valid URL property.
-	 * @param {boolean} bAskForLocation Whether to ask for a location to download or not.
+	 * Downloads the item. Only possible when the item has a valid URL specified in the <code>url</code> property.
+	 * @param {boolean} bAskForLocation Whether to ask for a location where to download the file or not.
 	 * @public
-	 * @returns {boolean} <code>true</code> if download is possible, otherwise <code>false</code>
+	 * @returns {boolean} <code>true</code> if download is possible, <code>false</code> otherwise.
 	 */
 	UploadSetItem.prototype.download = function (bAskForLocation) {
 		var oParent = this.getParent();
@@ -484,7 +485,7 @@ sap.ui.define([
 				type: MobileLibrary.ButtonType.Standard,
 				visible: this.getUploadState() === UploadState.Error,
 				tooltip: this._oRb.getText("UPLOAD_SET_RESTART_BUTTON_TEXT"),
-				press: [oParent._handleItemRestart, oParent]
+				press: [this, oParent._handleItemRestart, oParent]
 			});
 			this.addDependent(this._oRestartButton);
 		}

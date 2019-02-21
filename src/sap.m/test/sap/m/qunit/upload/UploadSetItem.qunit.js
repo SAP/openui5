@@ -98,18 +98,18 @@ sap.ui.define([
 		oItem._getFileNameLink().firePress();
 	});
 
-	QUnit.test("Event 'deletePressed' is fired when delete button clicked, prevent default applies.", function (assert) {
+	QUnit.test("Event 'removePressed' is fired when delete button clicked, prevent default applies.", function (assert) {
 		assert.expect(2);
 		var oItem = this.oUploadSet.getItems()[0];
 
-		oItem.attachDeletePressed(function (oEvent) {
-			assert.ok(true, "deletePressed event should have been called.");
+		oItem.attachRemovePressed(function (oEvent) {
+			assert.ok(true, "removePressed event should have been called.");
 		});
 		oItem._getDeleteButton().firePress();
 
 		// Close the dialog
 		var oDialog = sap.ui.getCore().byId(this.oUploadSet.getId() + "-deleteDialog");
-		assert.ok(oDialog, "Delete dialog should now be presented.");
+		assert.ok(oDialog, "Remove dialog should now be presented.");
 		oDialog.getButtons()[1].firePress();
 		oDialog.destroy();
 	});
