@@ -15,11 +15,13 @@
                 <items>
                     <IconTabFilter text="App.view.xml" key="App.view.xml"/>
                     <IconTabFilter text="App.controller.js" key="App.controller.js"/>
+                    <IconTabFilter text="index.js" key="index.js"/>
                     <IconTabFilter text="index.html" key="index.html"/>
                 </items>
             </IconTabHeader>
             <html:div class="editorSrcWindow">
                 <editor:CodeEditor id="srcEditor"
+                                   editable="{= ${viewModel>/selectedFileType} !== 'text' }"
                                    value="{viewModel>/selectedFileContent}"
                                    type="{viewModel>/selectedFileType}"
                                    liveChange="onSrcLiveChange"/>
