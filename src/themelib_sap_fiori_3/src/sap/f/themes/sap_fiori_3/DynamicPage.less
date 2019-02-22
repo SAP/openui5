@@ -42,7 +42,7 @@
 .sapFDynamicPageHeaderPinButton {
 	width: 1.5rem;
 	height: 2rem;
-	bottom: -0.875rem;
+	bottom: -0.95rem; // needs refactoring in the base file
 
 	.sapMBtnInner {
 		border-color: @sapUiObjectHeaderBorderColor;
@@ -53,9 +53,15 @@
 
 		.sapMBtnIcon {
 			width: 100%;
-			line-height: 1.4375rem;
 			padding: 0;
 		}
+	}
+}
+
+html[data-sap-ui-browser^="cr"] .sapFDynamicPageToggleHeaderIndicator,
+html[data-sap-ui-browser^="cr"] .sapFDynamicPageHeaderPinButton {
+	.sapMBtnInner .sapMBtnIcon {
+		line-height: 1.375rem; // in Chrome we need to subtract the border bottom and top (total 2px) from original line-height
 	}
 }
 
@@ -63,6 +69,8 @@
 .sapUiSizeCompact {
 	.sapFDynamicPageToggleHeaderIndicator,
 	.sapFDynamicPageHeaderPinButton {
+		bottom: -0.95rem; // needs refactoring in the base file
+
 		.sapMBtnInner {
 			bottom: 0.25rem;
 		}
