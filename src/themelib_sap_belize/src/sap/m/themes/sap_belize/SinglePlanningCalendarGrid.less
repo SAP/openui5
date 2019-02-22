@@ -75,8 +75,13 @@
 		}
 
 		& > .sapUiCalendarAppCont > span {
-			position: relative;
-			z-index: 1;
+			&:not(.sapUiIcon) {
+				position: relative;
+				z-index: 1;
+			}
+			&.sapUiIcon {
+				z-index: 2
+			}
 		}
 	}
 }
