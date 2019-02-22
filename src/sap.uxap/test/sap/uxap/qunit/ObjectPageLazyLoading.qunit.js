@@ -157,6 +157,23 @@ function (jQuery, Core, JSONModel, ObjectPageLayout) {
 		}, iLoadingDelay);
 	});
 
+	QUnit.test("BCP: 1970115549 - _grepCurrentTabSectionBases should always return a value", function (assert) {
+		var oComponentContainer = this.oView.byId("objectPageContainer"),
+			oObjectPageLayout = oComponentContainer.getObjectPageLayoutInstance(),
+			aSectionBases = oObjectPageLayout._aSectionBases,
+			fnCustomGetParent = function () {
+				return undefined;
+			};
+
+		oObjectPageLayout.setSelectedSection(aSectionBases[0].getId());
+
+		assert.equal(oObjectPageLayout._grepCurrentTabSectionBases().length, 2, "_grepCurrentTabSectionBases returns 2 filtered sections initially");
+
+		aSectionBases[1].getParent = fnCustomGetParent;
+
+		assert.equal(oObjectPageLayout._grepCurrentTabSectionBases().length, 1, "_grepCurrentTabSectionBases returns a valid value if some of the sections parent is undefined");
+	});
+
 	QUnit.module("ObjectPageAfterRendering");
 
 	QUnit.test("triggering visible subsections calculations should not fail before rendering", function (assert) {
