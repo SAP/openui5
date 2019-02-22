@@ -61,10 +61,12 @@ sap.ui.define([
 			},
 
 			onNavToSample: function (oEvt) {
-				var sPath = oEvt.getSource().getBindingContext().getPath();
-				var oSample = this.getView().getModel().getProperty(sPath);
+				var sPath = oEvt.getSource().getBindingContext().getPath(),
+					oSample = this.getView().getModel().getProperty(sPath);
+
 				this.router.navTo("sample", {
-					id: oSample.id
+					entityId: this._sNewId,
+					sampleId: oSample.id
 				});
 			},
 

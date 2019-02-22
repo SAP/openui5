@@ -26,36 +26,33 @@ sap.ui.define([
 
 				this.router = this.getRouter();
 				this.router.getRoute("code").attachPatternMatched(this.onRouteMatched, this);
-				this.router.getRoute("code_file").attachPatternMatched(this.onRouteMatched, this);
+				this.router.getRoute("codeFile").attachPatternMatched(this.onRouteMatched, this);
+
 				this._codeCache = {};
 				this._aFilesAvailable = [];
 
 				this._bFirstLoad = true;
 			},
 
-			/**
-			 * Handles "code" routing
-			 * @function
-			 * @private
-			 */
 			onRouteMatched: function (oEvt) {
+				var oArguments = oEvt.getParameter("arguments");
+
 				this.showMasterSide();
-				this._sId = oEvt.getParameter("arguments").id;
-				this._sFileName = decodeURIComponent(oEvt.getParameter("arguments").fileName);
 
-				ControlsInfo.loadData().then(function(oData) {
-					this._loadCode(oData);
-				}.bind(this));
+				this._sId = oArguments.sampleId;
+				this._sEntityId = oArguments.entityId;
+				this._sFileName = decodeURIComponent(oArguments.fileName);
 
+				ControlsInfo.loadData().then(this._loadCode.bind(this));
 			},
 
 			_loadCode: function (oData) {
+				var sFileName = this._sFileName,
+					oSample = oData.samples[this._sId]; // retrieve sample object
 
-				var sFileName = this._sFileName;
-
-				// retrieve sample object
-				var oSample = oData.samples[this._sId];
-				if (!oSample) {
+				// If there is no sample or the context from the URL is for the wrong sample we redirect to not found page
+				// If you modify this expression please check with both class and tutorial which won't have a context.
+				if (!oSample || (oSample.contexts && !oSample.contexts[this._sEntityId])) {
 					this.router.myNavToWithoutHash("sap.ui.documentation.sdk.view.NotFound", "XML", false);
 					return;
 				}
@@ -258,7 +255,10 @@ sap.ui.define([
 			},
 
 			onNavBack : function () {
-				this.router.navTo("sample", { id : this._sId }, true);
+				this.router.navTo("sample", {
+					sampleId: this._sId,
+					entityId: this._sEntityId
+				}, true);
 			},
 
 			_convertCodeToHtml : function (code) {
@@ -293,8 +293,9 @@ sap.ui.define([
 				var sFileName = oEvent.getParameter("selectedKey");
 
 				this._bFirstLoad = false;
-				this.router.navTo("code_file", {
-					id : this._sId,
+				this.router.navTo("codeFile", {
+					entityId: this._sEntityId,
+					sampleId: this._sId,
 					fileName: encodeURIComponent(sFileName)
 				}, false);
 			},

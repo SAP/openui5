@@ -8,7 +8,7 @@
 	<Page
 			id="page"
 			showHeader="false"
-			showNavButton="{/showNavButton}"
+			showNavButton="true"
 			navButtonPress="onNavBack"
 			busyIndicatorDelay="0">
 		<landmarkInfo>
@@ -17,7 +17,7 @@
 		<subHeader>
 			<Bar id="header" class="sapContrast sapContrastPlus">
 				<contentLeft>
-					<Button type="Back" press="onNavBack" tooltip="Back"/>
+					<Button type="Back" press="onNavBack" tooltip="Back" enabled="{= ${/disableNavBack} === undefined }"/>
 				</contentLeft>
 				<contentMiddle>
 					<Title text="{/title}"/>

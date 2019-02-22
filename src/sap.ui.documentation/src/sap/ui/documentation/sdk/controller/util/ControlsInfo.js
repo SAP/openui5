@@ -289,14 +289,25 @@ sap.ui.define(["sap/ui/thirdparty/jquery", 'sap/ui/documentation/library', "sap/
 							if (!oSample) {
 								Log.warning("explored: cannot register sample '" + sId + "' for '" + oEnt.id + "'. not found in the available docu indizes");
 							} else {
-								// dynamically add a prev / next pointer to be able to cross-navigate between the samples of the same type
-								oSample.previousSampleId = (oPreviousSample ? oPreviousSample.id : undefined);
-								if (oPreviousSample) {
-									oPreviousSample.nextSampleId = oSample.id;
-								}
-								oPreviousSample = oSample;
 
 								oSample.entityId = oEnt.id;
+
+								// Record specifics based on sample contexts
+								if (!oSample.contexts) {
+									oSample.contexts = {};
+								}
+
+								if (!oSample.contexts[oSample.entityId]) {
+									oSample.contexts[oSample.entityId] = {};
+								}
+
+								// dynamically add a prev / next pointer to be able to cross-navigate between the samples of the same type
+								oSample.contexts[oSample.entityId].previousSampleId = (oPreviousSample ? oPreviousSample.id : undefined);
+
+								if (oPreviousSample) {
+									oPreviousSample.contexts[oSample.entityId].nextSampleId = oSample.id;
+								}
+								oPreviousSample = oSample;
 
 								// add the sample to the local store
 								aSamples.push(oSample);

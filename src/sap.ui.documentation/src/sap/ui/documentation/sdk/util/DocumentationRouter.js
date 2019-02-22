@@ -5,8 +5,9 @@
 sap.ui.define([
 	'sap/m/routing/Router',
 	'sap/ui/core/routing/History',
-	'sap/ui/thirdparty/hasher'
-], function(Router, History, Hasher) {
+	'sap/ui/thirdparty/hasher',
+	"sap/ui/documentation/sdk/controller/util/ControlsInfo"
+], function(Router, History, Hasher, ControlsInfo) {
 	"use strict";
 
 	// We need to set the global hasher instance to not encode URL's. This is specific for the SDK
@@ -28,6 +29,10 @@ sap.ui.define([
 
 			this.getRoute("topicIdLegacyRoute").attachPatternMatched(this._onOldTopicRouteMatched, this);
 			this.getRoute("apiIdLegacyRoute").attachPatternMatched(this._onOldApiRouteMatched, this);
+
+			this.getRoute("sampleLegacyRoute").attachPatternMatched({routeName: "sample"}, this._onOldSampleRouteMatched, this);
+			this.getRoute("codeLegacyRoute").attachPatternMatched({routeName: "code"}, this._onOldSampleRouteMatched, this);
+			this.getRoute("codeFileLegacyRoute").attachPatternMatched({routeName: "codeFile"}, this._onOldSampleRouteMatched, this);
 		},
 
 		_onEntityOldRouteMatched: function(oEvent) {
@@ -40,6 +45,26 @@ sap.ui.define([
 			oData || (oData = {});
 			oData['id'] = oEvent.getParameter("arguments").id;
 			this.navTo("apiId", oData);
+		},
+
+		_onOldSampleRouteMatched: function (oEvent, oEventData) {
+			var oArguments = oEvent.getParameter("arguments"),
+				sSampleId = oArguments.id;
+
+			ControlsInfo.loadData().then(function (oData) {
+				var oSample = oData.samples[sSampleId],
+					oNavigationObject = {
+						entityId: Object.keys(oSample.contexts)[0], // We always have first context
+						sampleId: sSampleId
+					};
+
+				if (oEventData.routeName === "codeFile") {
+					oNavigationObject['fileName'] = decodeURIComponent(oArguments.fileName);
+				}
+
+				// Nav to new route
+				this.navTo(oEventData.routeName, oNavigationObject);
+			}.bind(this));
 		},
 
 		/**
