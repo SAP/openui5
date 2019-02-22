@@ -1,0 +1,21 @@
+{
+	"firstName": "Donna",
+	"lastName": "Moore",
+	"position": "Sales Executive",
+	"phone": "+1 202 555 5555",
+	"email": "my@mymail.com",
+	"photo": "./test-resources/sap/ui/integration/demokit/sample/ObjectCard/images/Woman_avatar_01.png",
+	"manager": {
+		"firstName": "John",
+		"lastName": "Miller",
+		"photo": "./test-resources/sap/ui/integration/demokit/sample/ObjectCard/images/Woman_avatar_02.png"
+	},
+	"company": {
+		"name": "Robert Brown Entertainment",
+		"address": "481 West Street, Anytown OH 45066, USA",
+		"email": "mail@mycompany.com",
+	  	"emailSubject": "Subject",
+		"website": "www.company_a.example.com",
+	  	"url": "http://www.company_a.example.com"
+	}
+}
