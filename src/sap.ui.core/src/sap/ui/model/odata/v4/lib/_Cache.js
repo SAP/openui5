@@ -13,7 +13,11 @@ sap.ui.define([
 ], function (_GroupLock, _Helper, _Requestor, Log, SyncPromise, jQuery) {
 	"use strict";
 
-	var sMessagesAnnotation = "@com.sap.vocabularies.Common.v1.Messages",
+	var // Matches if ending with a transient key predicate:
+		//   EMPLOYEE($uid=id-1550828854217-16) -> aMatches[0] === "($uid=id-1550828854217-16)"
+		//   @see sap.base.util.uid
+		rEndsWithTransientPredicate = /\(\$uid=[-\w]+\)$/,
+		sMessagesAnnotation = "@com.sap.vocabularies.Common.v1.Messages",
 		// Matches two cases:  segment with predicate or simply predicate:
 		//   EMPLOYEE(ID='42') -> aMatches[1] === "EMPLOYEE", aMatches[2] === "(ID='42')"
 		//   (ID='42') ->  aMatches[1] === "",  aMatches[2] === "(ID='42')"
@@ -171,7 +175,7 @@ sap.ui.define([
 					} // else: map 404 to 200
 				})
 				.then(function () {
-					var sPredicate;
+					var sTransientPredicate;
 
 					if (Array.isArray(vCacheData)) {
 						if (vCacheData[vDeleteProperty] !== oEntity) {
@@ -181,11 +185,15 @@ sap.ui.define([
 						if (vDeleteProperty === "-1") {
 							delete vCacheData[-1];
 						} else {
-							sPredicate = _Helper.getPrivateAnnotation(oEntity, "predicate");
-							if (sPredicate) {
-								delete vCacheData.$byPredicate[sPredicate];
-							}
 							vCacheData.splice(vDeleteProperty, 1);
+						}
+						if (sKeyPredicate) {
+							delete vCacheData.$byPredicate[sKeyPredicate];
+						}
+						sTransientPredicate =
+							_Helper.getPrivateAnnotation(oEntity, "transientPredicate");
+						if (sTransientPredicate) {
+							delete vCacheData.$byPredicate[sTransientPredicate];
 						}
 						addToCount(that.mChangeListeners, sParentPath, vCacheData, -1);
 						that.iLimit -= 1;
@@ -263,6 +271,8 @@ sap.ui.define([
 	 *   A SyncPromise resolving with the resource path for the POST request
 	 * @param {string} sPath
 	 *   The collection's path within the cache
+	 * @param {string} sTransientPredicate
+	 *   A (temporary) key predicate for the transient entity: "($uid=...)"
 	 * @param {string} [oEntityData={}]
 	 *   The initial entity data
 	 * @param {function} fnCancelCallback
@@ -275,8 +285,8 @@ sap.ui.define([
 	 *
 	 * @public
 	 */
-	Cache.prototype.create = function (oGroupLock, oPostPathPromise, sPath, oEntityData,
-			fnCancelCallback, fnErrorCallback) {
+	Cache.prototype.create = function (oGroupLock, oPostPathPromise, sPath, sTransientPredicate,
+			oEntityData, fnCancelCallback, fnErrorCallback) {
 		var aCollection,
 			bKeepTransientPath = oEntityData && oEntityData["@$ui5.keepTransientPath"],
 			that = this;
@@ -285,6 +295,7 @@ sap.ui.define([
 		function cleanUp() {
 			_Helper.removeByPath(that.mPostRequests, sPath, oEntityData);
 			delete aCollection[-1];
+			delete aCollection.$byPredicate[sTransientPredicate];
 			fnCancelCallback();
 		}
 
@@ -302,7 +313,7 @@ sap.ui.define([
 			return SyncPromise.all([
 				that.oRequestor.request("POST", sPostPath, oPostGroupLock, null, oEntityData,
 					setCreatePending, cleanUp, undefined,
-					_Helper.buildPath(that.sResourcePath, sPath, "-1")),
+					_Helper.buildPath(that.sResourcePath, sPath, sTransientPredicate)),
 				that.fetchTypes()
 			]).then(function (aResult) {
 				var oCreatedEntity = aResult[0],
@@ -313,19 +324,22 @@ sap.ui.define([
 				addToCount(that.mChangeListeners, sPath, aCollection, 1);
 				_Helper.removeByPath(that.mPostRequests, sPath, oEntityData);
 				that.visitResponse(oCreatedEntity, aResult[1],
-					_Helper.getMetaPath(_Helper.buildPath(that.sMetaPath, sPath)), sPath + "/-1",
-					bKeepTransientPath);
+					_Helper.getMetaPath(_Helper.buildPath(that.sMetaPath, sPath)),
+					sPath + sTransientPredicate, bKeepTransientPath);
 				if (!bKeepTransientPath) {
 					sPredicate = _Helper.getPrivateAnnotation(oCreatedEntity, "predicate");
 					if (sPredicate) {
 						aCollection.$byPredicate[sPredicate] = oEntityData;
-						_Helper.updateTransientPaths(that.mChangeListeners, sPath, sPredicate);
+						_Helper.updateTransientPaths(that.mChangeListeners, sTransientPredicate,
+							sPredicate);
+						// Do not remove transient predicate from aCollection.$byPredicate; some
+						// contexts still use the transient predicate to access the data
 					}
 				}
 				// update the cache with the POST response
 				_Helper.updateSelected(that.mChangeListeners,
-					_Helper.buildPath(sPath, sPredicate || "-1"), oEntityData, oCreatedEntity,
-					_Helper.getSelectForPath(that.mQueryOptions, sPath));
+					_Helper.buildPath(sPath, sPredicate || sTransientPredicate), oEntityData,
+					oCreatedEntity, _Helper.getSelectForPath(that.mQueryOptions, sPath));
 
 				return oEntityData;
 			}, function (oError) {
@@ -344,6 +358,7 @@ sap.ui.define([
 		oEntityData = jQuery.extend(true, {}, oEntityData);
 		// remove any property starting with "@$ui5."
 		oEntityData = _Requestor.cleanPayload(oEntityData);
+		_Helper.setPrivateAnnotation(oEntityData, "transientPredicate", sTransientPredicate);
 
 		aCollection = this.fetchValue(_GroupLock.$cached, sPath).getResult();
 		if (!Array.isArray(aCollection)) {
@@ -351,6 +366,9 @@ sap.ui.define([
 					+ "' does not reference a collection");
 		}
 		aCollection[-1] = oEntityData;
+		// if the nested collection is empty $byPredicate is not available, create it on demand
+		aCollection.$byPredicate = aCollection.$byPredicate || {};
+		aCollection.$byPredicate[sTransientPredicate] = oEntityData;
 
 		return oPostPathPromise.then(function (sPostPath) {
 			sPostPath += that.oRequestor.buildQueryString(that.sMetaPath, that.mQueryOptions, true);
@@ -994,7 +1012,8 @@ sap.ui.define([
 		 *    The index in the collection if the instance is part of a collection
 		 */
 		function visitInstance(oInstance, sMetaPath, sInstancePath, sContextUrl, iIndex) {
-			var sPredicate,
+			var aMatches,
+				sPredicate,
 				oType = mTypeForMetaPath[sMetaPath],
 				sMessageProperty = oType && oType[sMessagesAnnotation]
 					&& oType[sMessagesAnnotation].$Path,
@@ -1004,8 +1023,11 @@ sap.ui.define([
 			sPredicate = that.calculateKeyPredicate(oInstance, mTypeForMetaPath, sMetaPath);
 			if (iIndex !== undefined) {
 				sInstancePath = _Helper.buildPath(sInstancePath, sPredicate || iIndex);
-			} else if (!bKeepTransientPath && sPredicate && sInstancePath.endsWith("/-1")) {
-				sInstancePath = sInstancePath.slice(0, -3) + sPredicate;
+			} else if (!bKeepTransientPath && sPredicate) {
+				aMatches = rEndsWithTransientPredicate.exec(sInstancePath);
+				if (aMatches) {
+					sInstancePath = sInstancePath.slice(0, -aMatches[0].length) + sPredicate;
+				}
 			}
 			if (sRootPath && !aCachePaths) {
 				// remove messages only for the part of the cache that is updated
@@ -1478,9 +1500,9 @@ sap.ui.define([
 			this.fetchTypes()
 		]).then(function (aResult) {
 			var oElement = aResult[0];
-			// _Helper.updateExisting cannot be used because navigation properties cannot be handled
-			that.aElements[iIndex] = that.aElements.$byPredicate[sPredicate] = oElement;
-			that.visitResponse(oElement, aResult[1], undefined, sPredicate);
+
+			that.replaceElement(iIndex, sPredicate, oElement, aResult[1]);
+
 			return oElement;
 		});
 
@@ -1530,6 +1552,8 @@ sap.ui.define([
 			return that.oRequestor
 				.request("GET", sReadUrl, oGroupLock, undefined, undefined, fnDataRequested)
 				.then(function (oResult) {
+					var sTransientPredicate;
+
 					if (that.aElements[iIndex] !== oEntity) {
 						// oEntity might have moved due to parallel insert/delete
 						iIndex = that.aElements.indexOf(oEntity);
@@ -1544,18 +1568,52 @@ sap.ui.define([
 							that.aElements.splice(iIndex, 1);
 						}
 						delete that.aElements.$byPredicate[sPredicate];
+						sTransientPredicate = _Helper.getPrivateAnnotation(oEntity,
+							"transientPredicate");
+						if (sTransientPredicate) {
+							delete that.aElements.$byPredicate[sTransientPredicate];
+						}
+
 						addToCount(that.mChangeListeners, "", that.aElements, -1);
 						that.iLimit -= 1;
 						fnOnRemove(iIndex);
 					} else {
-						oResult = oResult.value[0];
-						// _Helper.updateExisting cannot be used because navigation properties
-						// cannot be handled
-						that.aElements[iIndex] = that.aElements.$byPredicate[sPredicate] = oResult;
-						that.visitResponse(oResult, mTypeForMetaPath, undefined, sPredicate);
+						that.replaceElement(iIndex, sPredicate, oResult.value[0], mTypeForMetaPath);
 					}
 				});
 		});
+	};
+
+	/**
+	 * Replaces the old element at the given index by the given new element and calls
+	 * <code>visitReponse</code> for the new element. Updates also the reference in
+	 * <code>$byPredicate</code> for the transient predicate of the old element.
+	 *
+	 * @param {number} iIndex
+	 *   The position of the old element to be replaced
+	 * @param {string} sPredicate
+	 *   The key predicate of the old element to be replaced
+	 * @param {object} oElement
+	 *   The new element
+	 * @param {object} mTypeForMetaPath
+	 *   A map from meta path to the entity type (as delivered by {@link #fetchTypes})
+	 *
+	 * @private
+	 */
+	CollectionCache.prototype.replaceElement = function (iIndex, sPredicate, oElement,
+			mTypeForMetaPath) {
+		var oOldElement = this.aElements[iIndex],
+			sTransientPredicate,
+			that = this;
+
+		// _Helper.updateExisting cannot be used because navigation properties cannot be handled
+		this.aElements[iIndex] = this.aElements.$byPredicate[sPredicate] = oElement;
+		sTransientPredicate = _Helper.getPrivateAnnotation(oOldElement, "transientPredicate");
+		if (sTransientPredicate) {
+			that.aElements.$byPredicate[sTransientPredicate] = oElement;
+			_Helper.setPrivateAnnotation(oElement, "transientPredicate", sTransientPredicate);
+		}
+		this.visitResponse(oElement, mTypeForMetaPath, undefined, sPredicate);
 	};
 
 	/**
@@ -1591,6 +1649,7 @@ sap.ui.define([
 			sResourcePath,
 			bTransient = this.aElements[-1] // Note: undefined vs. false!
 				&& _Helper.hasPrivateAnnotation(this.aElements[-1], "transient"),
+			sTransientPredicate,
 			mTypeForMetaPath = this.fetchTypes().getResult(),
 			that = this,
 			i;
@@ -1607,8 +1666,13 @@ sap.ui.define([
 		 *   The instance's index inside <code>aElements</code>, relative to <code>iOffset</code>
 		 */
 		function discard(iOffset, oInstance, i) {
+			var sTransientPredicate = _Helper.getPrivateAnnotation(oInstance, "transientPredicate");
+
 			delete that.aElements.$byPredicate[
 				_Helper.getPrivateAnnotation(oInstance, "predicate")];
+			if (sTransientPredicate) {
+				delete that.aElements.$byPredicate[sTransientPredicate];
+			}
 			delete that.aElements[iOffset + i];
 		}
 
@@ -1618,11 +1682,17 @@ sap.ui.define([
 			iLength -= 1;
 		}
 		if (!iLength) { // no affected elements: discard all except transient
+			sTransientPredicate = this.aElements[-1]
+				&& _Helper.getPrivateAnnotation(this.aElements[-1], "transientPredicate");
+
+			this.aElements.length = 0; // discard all non-created elements
+			this.aElements.$byPredicate = {};
 			if (bTransient === false) {
 				delete this.aElements[-1]; // discard persistent created element
+			} else if (sTransientPredicate) {
+				// restore entry for transient entity
+				this.aElements.$byPredicate[sTransientPredicate] = this.aElements[-1];
 			}
-			this.aElements.length = 0; // discard all non-created elements
-			this.aElements.$byPredicate = {}; // Note: transient element not contained here
 			return SyncPromise.resolve(); // micro optimization: use *sync.* promise which is cached
 		}
 

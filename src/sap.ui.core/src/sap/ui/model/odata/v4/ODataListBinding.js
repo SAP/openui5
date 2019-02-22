@@ -12,6 +12,7 @@ sap.ui.define([
 	"./lib/_GroupLock",
 	"./lib/_Helper",
 	"sap/base/Log",
+	"sap/base/util/uid",
 	"sap/ui/base/SyncPromise",
 	"sap/ui/model/Binding",
 	"sap/ui/model/ChangeReason",
@@ -23,7 +24,7 @@ sap.ui.define([
 	"sap/ui/model/odata/OperationMode",
 	"sap/ui/thirdparty/jquery"
 ], function (Context, asODataParentBinding, _AggregationCache, _AggregationHelper, _Cache,
-		_GroupLock, _Helper, Log, SyncPromise, Binding, ChangeReason, FilterOperator,
+		_GroupLock, _Helper, Log, uid, SyncPromise, Binding, ChangeReason, FilterOperator,
 		FilterProcessor, FilterType, ListBinding, Sorter, OperationMode, jQuery) {
 	"use strict";
 
@@ -437,6 +438,7 @@ sap.ui.define([
 			oCreatePromise,
 			oGroupLock,
 			sResolvedPath = this.oModel.resolve(this.sPath, this.oContext),
+			sTransientPredicate,
 			that = this;
 
 		if (!sResolvedPath) {
@@ -447,8 +449,10 @@ sap.ui.define([
 		}
 		this.checkSuspended();
 
+		sTransientPredicate = "($uid=" + uid() + ")";
 		oGroupLock = this.lockGroup(this.getUpdateGroupId(), true); // only for createInCache
-		oCreatePromise = this.createInCache(oGroupLock, this.fetchResourcePath(), "", oInitialData,
+		oCreatePromise = this.createInCache(oGroupLock, this.fetchResourcePath(), "",
+			sTransientPredicate, oInitialData,
 			function () {
 				// cancel callback
 				oContext.destroy();
@@ -456,9 +460,16 @@ sap.ui.define([
 				that._fireChange({reason : ChangeReason.Remove});
 			}
 		).then(function (oCreatedEntity) {
-			var sGroupId;
+			var sGroupId, sPredicate;
 
 			that.iMaxLength += 1;
+			if (!(oInitialData && oInitialData["@$ui5.keepTransientPath"])) {
+				// refreshSingle requires the new key predicate in oContext.getPath()
+				sPredicate = _Helper.getPrivateAnnotation(oCreatedEntity, "predicate");
+				if (sPredicate) {
+					oContext.sPath = sResolvedPath + sPredicate;
+				}
+			}
 			if (!bSkipRefresh && that.isRoot()) {
 				sGroupId = that.getGroupId();
 				if (!that.oModel.isDirectGroup(sGroupId) && !that.oModel.isAutoGroup(sGroupId)) {
@@ -467,22 +478,12 @@ sap.ui.define([
 
 				return that.refreshSingle(oContext, that.lockGroup(sGroupId));
 			}
-
-			return oCreatedEntity;
 		}, function (oError) {
 			oGroupLock.unlock(true); // createInCache failed, so the lock might still be blocking
 			throw oError;
-		}).then(function (oCreatedEntity) {
-			var sPredicate;
-
-			if (!(oInitialData && oInitialData["@$ui5.keepTransientPath"])) {
-				sPredicate = _Helper.getPrivateAnnotation(oCreatedEntity, "predicate");
-				if (sPredicate) {
-					oContext.sPath = sResolvedPath + sPredicate;
-				}
-			}
 		});
-		oContext = Context.create(this.oModel, this, sResolvedPath + "/-1", -1, oCreatePromise);
+		oContext = Context.create(this.oModel, this, sResolvedPath + sTransientPredicate, -1,
+			oCreatePromise);
 
 		this.aContexts[-1] = oContext;
 		this._fireChange({reason : ChangeReason.Add});

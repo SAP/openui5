@@ -32,7 +32,8 @@ sap.ui.define([
 		sDefaultLanguage = sap.ui.getCore().getConfiguration().getLanguage(),
 		sInvalidModel = "/invalid/model/",
 		sSalesOrderService = "/sap/opu/odata4/sap/zui5_testv4/default/sap/zui5_epm_sample/0002/",
-		sTeaBusi = "/sap/opu/odata4/IWBEP/TEA/default/IWBEP/TEA_BUSI/0001/";
+		sTeaBusi = "/sap/opu/odata4/IWBEP/TEA/default/IWBEP/TEA_BUSI/0001/",
+		rTransientPredicate = /\(\$uid=.+\)/;
 
 	/**
 	 * Creates a V4 OData model for <code>serviceroot.svc</code>
@@ -358,12 +359,15 @@ sap.ui.define([
 		checkMessages : function (assert) {
 			var aCurrentMessages = sap.ui.getCore().getMessageManager().getMessageModel()
 					.getObject("/").map(function (oMessage) {
+						var sTarget = oMessage.getTarget()
+								.replace(rTransientPredicate, "($uid=...)");
+
 						return {
 							code : oMessage.getCode(),
 							descriptionUrl : oMessage.getDescriptionUrl(),
 							message : oMessage.getMessage(),
 							persistent : oMessage.getPersistent(),
-							target : oMessage.getTarget(),
+							target : sTarget,
 							technical : oMessage.getTechnical(),
 							type : oMessage.getType()
 						};
@@ -371,7 +375,7 @@ sap.ui.define([
 				aExpectedMessages = this.aMessages.slice().sort(compareMessages);
 
 			function compareMessages(oMessage1, oMessage2) {
-					return oMessage1.message.localeCompare(oMessage2.message);
+				return oMessage1.message.localeCompare(oMessage2.message);
 			}
 
 			assert.deepEqual(aCurrentMessages, aExpectedMessages,
@@ -2588,9 +2592,10 @@ sap.ui.define([
 		QUnit.test("Create with user input - bSkipRefresh: " + bSkipRefresh, function (assert) {
 			var sView = '\
 <Table id="table" items="{/SalesOrderList}">\
-	<columns><Column/></columns>\
+	<columns><Column/><Column/></columns>\
 	<ColumnListItem>\
 		<Text id="note" text="{Note}" />\
+		<Text id="companyName" binding="{SO_2_BP}" text="{CompanyName}"/>\
 	</ColumnListItem>\
 </Table>',
 				oModel = createSalesOrdersModel({
@@ -2599,18 +2604,29 @@ sap.ui.define([
 				}),
 				that = this;
 
-			this.expectRequest("SalesOrderList?$select=Note,SalesOrderID&$skip=0&$top=100", {
+			this.expectRequest("SalesOrderList?$select=Note,SalesOrderID"
+					+ "&$expand=SO_2_BP($select=BusinessPartnerID,CompanyName)&$skip=0&$top=100", {
 					"value" : [{
 						"Note" : "foo",
-						"SalesOrderID" : "42"
+						"SalesOrderID" : "42",
+						"SO_2_BP" : {
+							"BusinessPartnerID" : "123",
+							"CompanyName" : "SAP"
+						}
 					}]
 				})
-				.expectChange("note", ["foo"]);
+				.expectChange("note", ["foo"])
+				// companyName is embedded in a context binding; index not considered in test
+				// framework
+				.expectChange("companyName", "SAP");
 
 			return this.createView(assert, sView, oModel).then(function () {
 				var oTable = that.oView.byId("table");
 
-				that.expectChange("note", ["baz", "foo"]);
+				that.expectChange("note", ["bar", "foo"])
+					.expectChange("note", "baz", 0)
+					.expectChange("companyName", null)
+					.expectChange("companyName", "SAP");
 
 				oTable.getBinding("items").create({Note : "bar"}, bSkipRefresh);
 				oTable.getItems()[0].getCells()[0].getBinding("text").setValue("baz");
@@ -2622,17 +2638,22 @@ sap.ui.define([
 						url : "SalesOrderList",
 						payload : {"Note" : "baz"}
 					}, {
-						"CompanyName" : "Bar",
 						"Note" : "from server",
 						"SalesOrderID" : "43"
 					})
 					.expectChange("note", "from server", 0);
 				if (!bSkipRefresh){
-					that.expectRequest("SalesOrderList('43')?$select=Note,SalesOrderID", {
+					that.expectRequest("SalesOrderList('43')?$select=Note,SalesOrderID"
+							+ "&$expand=SO_2_BP($select=BusinessPartnerID,CompanyName)", {
 							"Note" : "fresh from server",
-							"SalesOrderID" : "43"
+							"SalesOrderID" : "43",
+							"SO_2_BP" : {
+								"BusinessPartnerID" : "456",
+								"CompanyName" : "ACM"
+							}
 						})
-						.expectChange("note", "fresh from server", 0);
+						.expectChange("note", "fresh from server", 0)
+						.expectChange("companyName", "ACM");
 				}
 
 				return Promise.all([
@@ -2844,7 +2865,7 @@ sap.ui.define([
 					code : "CODE",
 					message : "Enter a product ID",
 					persistent : true,
-					target : "/SalesOrderList('42')/SO_2_SOITEM/-1/ProductID",
+					target : "/SalesOrderList('42')/SO_2_SOITEM($uid=...)/ProductID",
 					technical : true,
 					type : "Error"
 				}]);
@@ -9081,6 +9102,8 @@ sap.ui.define([
 		</ColumnListItem>\
 	</items>\
 </Table>',
+			rMessage = new RegExp("^Failed to drill-down into \\(\\$uid=.+\\)\\/@\\$ui5\\.foo,"
+				+ " invalid segment: @\\$ui5\\.foo$"),
 			that = this;
 
 		this.expectRequest("Equipments?$skip=0&$top=100", {
@@ -9105,8 +9128,7 @@ sap.ui.define([
 			// code under test
 			oContext = oListBinding.create(oInitialData);
 
-			that.oLogMock.expects("error").withExactArgs(
-				"Failed to drill-down into -1/@$ui5.foo, invalid segment: @$ui5.foo",
+			that.oLogMock.expects("error").withExactArgs(sinon.match(rMessage),
 				"/sap/opu/odata4/IWBEP/TEA/default/IWBEP/TEA_BUSI/0001/Equipments",
 				"sap.ui.model.odata.v4.lib._Cache");
 
@@ -12914,7 +12936,9 @@ sap.ui.define([
 		QUnit.test(sTitle, function (assert) {
 			var oEmployeeCreatedContext,
 				oModel = createTeaBusiModel(),
+				sNestedTransientPath,
 				oTeamCreatedContext,
+				sTransientPath,
 				sView = '\
 <FlexBox binding="{path : \'\',\
 		parameters : {\
@@ -12949,6 +12973,7 @@ sap.ui.define([
 						// private annotation, not to be used unless explicitly adviced to do so
 						"@$ui5.keepTransientPath" : bKeepTransientPath
 					}, true);
+				sTransientPath = oTeamCreatedContext.getPath();
 
 				return Promise.all([
 					oTeamCreatedContext.created(),
@@ -12956,7 +12981,7 @@ sap.ui.define([
 				]);
 			}).then(function () {
 				assert.strictEqual(oTeamCreatedContext.getPath(),
-					bKeepTransientPath ? "/TEAMS/-1" : "/TEAMS('23')");
+					bKeepTransientPath ? sTransientPath : "/TEAMS('23')");
 
 				that.expectRequest("TEAMS('23')?$expand=TEAM_2_EMPLOYEES("
 						+ "$select=__CT__FAKE__Message/__FAKE__Messages,ID)", {
@@ -12999,7 +13024,7 @@ sap.ui.define([
 						"target" : bKeepTransientPath
 						//TODO why does ODataBinding.fetchCache compute a canonical path and how
 						// does this fit to message targets?
-							? "/TEAMS('23')/TEAM_2_EMPLOYEES/-1/Name"
+							? "/TEAMS('23')/TEAM_2_EMPLOYEES($uid=...)/Name"
 							: "/TEAMS('23')/TEAM_2_EMPLOYEES('7')/Name",
 						"type" : "Warning"
 					}]);
@@ -13009,6 +13034,7 @@ sap.ui.define([
 						"@$ui5.keepTransientPath" : bKeepTransientPath,
 						"ID" : null
 					}, true);
+				sNestedTransientPath = oEmployeeCreatedContext.getPath();
 
 				return Promise.all([
 					oEmployeeCreatedContext.created(),
@@ -13017,7 +13043,7 @@ sap.ui.define([
 			}).then(function () {
 				assert.strictEqual(oEmployeeCreatedContext.getPath(),
 					bKeepTransientPath
-					? "/TEAMS/-1/TEAM_2_EMPLOYEES/-1"
+					? sNestedTransientPath
 					: "/TEAMS('23')/TEAM_2_EMPLOYEES('7')");
 			});
 		});

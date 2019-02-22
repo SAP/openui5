@@ -980,7 +980,7 @@ sap.ui.define([
 		var oBinding,
 			oContext = {
 				isTransient : function () { return true;},
-				getPath: function () { return "/Employees/-1";}
+				getPath: function () { return "/Employees($uid=id-1-23)";}
 			};
 
 		oBinding = this.bindContext("schema.Operation(...)", oContext);
@@ -989,7 +989,7 @@ sap.ui.define([
 			// code under test
 			oBinding.execute();
 		}, new Error("Execute for transient context not allowed: "
-			+ "/Employees/-1/schema.Operation(...)"));
+			+ "/Employees($uid=id-1-23)/schema.Operation(...)"));
 	});
 
 	//*********************************************************************************************
@@ -2463,30 +2463,30 @@ sap.ui.define([
 		sPath : "/TEAMS('ABC-1')",
 		sResult : "/TEAMS('ABC-1')"
 	}, {
-		sPath : "/TEAMS/-1",
+		sPath : "/TEAMS($uid=id-1-23)",
 		aFetchValues : [{
 			oEntity : {},
-			sPath : "/TEAMS/-1",
+			sPath : "/TEAMS($uid=id-1-23)",
 			sPredicate : "('13')"
 		}],
 		sResult : "/TEAMS('13')"
 	}, {
-		sPath : "/TEAMS/-1/TEAM_2_EMPLOYEES",
+		sPath : "/TEAMS($uid=id-1-23)/TEAM_2_EMPLOYEES",
 		aFetchValues : [{
 			oEntity : {},
-			sPath : "/TEAMS/-1",
+			sPath : "/TEAMS($uid=id-1-23)",
 			sPredicate : "('13')"
 		}],
 		sResult : "/TEAMS('13')/TEAM_2_EMPLOYEES"
 	}, {
-		sPath : "/TEAMS/-1/TEAM_2_EMPLOYEES/-1",
+		sPath : "/TEAMS($uid=id-1-23)/TEAM_2_EMPLOYEES($uid=id-1-24)",
 		aFetchValues : [{
 			oEntity : {},
-			sPath : "/TEAMS/-1",
+			sPath : "/TEAMS($uid=id-1-23)",
 			sPredicate : "('13')"
 		}, {
 			oEntity : {},
-			sPath : "/TEAMS/-1/TEAM_2_EMPLOYEES/-1",
+			sPath : "/TEAMS($uid=id-1-23)/TEAM_2_EMPLOYEES($uid=id-1-24)",
 			sPredicate : "('6')"
 		}],
 		sResult : "/TEAMS('13')/TEAM_2_EMPLOYEES('6')"
@@ -2517,7 +2517,7 @@ sap.ui.define([
 
 	//*********************************************************************************************
 	QUnit.test("getResolvedPath error: no key predicates", function (assert) {
-		var sPath = "/TEAMS/-1",
+		var sPath = "/TEAMS($uid=id-1-23)",
 			oContext = Context.create(this.oModel, {}, sPath),
 			oEntity = {},
 			oBinding = this.bindContext("", oContext);

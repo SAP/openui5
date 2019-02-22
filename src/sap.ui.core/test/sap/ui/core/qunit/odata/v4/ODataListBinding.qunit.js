@@ -35,6 +35,7 @@ sap.ui.define([
 	var aAllowedBindingParameters = ["$$aggregation", "$$canonicalPath", "$$groupId",
 			"$$operationMode", "$$ownRequest", "$$patchWithoutSideEffects", "$$updateGroupId"],
 		sClassName = "sap.ui.model.odata.v4.ODataListBinding",
+		rTransientPredicate = /^\(\$uid=.+\)$/,
 		TestControl = ManagedObject.extend("test.sap.ui.model.odata.v4.ODataListBinding", {
 			metadata : {
 				aggregations : {
@@ -525,7 +526,8 @@ sap.ui.define([
 	//*********************************************************************************************
 	QUnit.test("reset", function (assert) {
 		var oBinding,
-			oCreatedContext = Context.create(this.oModel, oBinding, "/EMPLOYEES/-1", -1),
+			oCreatedContext = Context.create(this.oModel, oBinding,
+				"/EMPLOYEES($uid=id-1-23)", -1),
 			aPreviousContexts;
 
 		// code under test: reset called from ODLB constructor
@@ -2983,7 +2985,8 @@ sap.ui.define([
 	QUnit.test("_delete: transient context that has been persisted", function (assert) {
 		var oBinding = this.bindList("/EMPLOYEES"),
 			oBindingMock = this.mock(oBinding),
-			oContext = Context.create(this.oModel, oBinding, "/EMPLOYEES/-1", -1),
+			oContext = Context.create(this.oModel, oBinding, "/EMPLOYEES($uid=id-1-23)",
+				-1),
 			oContextMock = this.mock(oContext),
 			oExpectation;
 
@@ -3026,7 +3029,8 @@ sap.ui.define([
 		oExpectation = this.mock(oBinding.oCachePromise.getResult()).expects("create")
 			.withExactArgs(oGroupLock, sinon.match(function (oPromise) {
 					return oPromise.getResult() === "EMPLOYEES";
-				}), "", sinon.match.same(oInitialData), sinon.match.func, sinon.match.func)
+				}), "", sinon.match(rTransientPredicate), sinon.match.same(oInitialData),
+				sinon.match.func, sinon.match.func)
 			// we only want to observe fnCancelCallback, hence we neither resolve, nor reject
 			.returns(new SyncPromise(function () {}));
 
@@ -3039,7 +3043,7 @@ sap.ui.define([
 		this.mock(oBinding).expects("_fireChange").withExactArgs({reason : ChangeReason.Remove});
 
 		// code under test
-		oExpectation.args[0][4](); // call fnCancelCallback to simulate cancellation
+		oExpectation.args[0][5](); // call fnCancelCallback to simulate cancellation
 
 		assert.notOk(-1 in oBinding.aContexts);
 	});
@@ -3100,8 +3104,8 @@ sap.ui.define([
 			oCacheMock.expects("create")
 				.withExactArgs(sinon.match.same(oGroupLock), sinon.match(function (oPromise) {
 						return oPromise.getResult() === "EMPLOYEES";
-					}), "", sinon.match.same(oFixture.oInitialData), sinon.match.func,
-					sinon.match.func)
+					}), "", sinon.match(rTransientPredicate),
+					sinon.match.same(oFixture.oInitialData), sinon.match.func, sinon.match.func)
 				.returns(oCreatePromise);
 			oBinding.attachEventOnce("change", function (oEvent) {
 				assert.strictEqual(oEvent.getParameter("reason"), ChangeReason.Add);
@@ -3128,7 +3132,7 @@ sap.ui.define([
 
 			assert.strictEqual(oContext.getModel(), this.oModel);
 			assert.strictEqual(oContext.getBinding(), oBinding);
-			assert.strictEqual(oContext.getPath(), "/EMPLOYEES/-1");
+			assert.ok(/^\/EMPLOYEES\(\$uid=.+\)$/, "path with uid");
 			assert.strictEqual(oContext.getIndex(), 0, "view coordinates!");
 			assert.strictEqual(oContext.isTransient(), true);
 			assert.strictEqual(oBinding.iMaxLength, 42, "transient contexts are not counted");
@@ -3175,6 +3179,7 @@ sap.ui.define([
 				oGroupLock0 = {},
 				oGroupLock1 = {},
 				oInitialData = {},
+				sPredicate = "(ID=42)",
 				oRefreshedEntity = {},
 				that = this;
 
@@ -3183,21 +3188,24 @@ sap.ui.define([
 			oCacheMock.expects("create")
 				.withExactArgs(sinon.match.same(oGroupLock0), sinon.match(function (oPromise) {
 						return oPromise.getResult() === "EMPLOYEES";
-					}), "", sinon.match.same(oInitialData), sinon.match.func, sinon.match.func)
+					}), "", sinon.match(rTransientPredicate), sinon.match.same(oInitialData),
+					sinon.match.func, sinon.match.func)
 				.returns(oCreatePromise);
 			oCreatePromise.then(function () {
+				that.mock(_Helper).expects("getPrivateAnnotation")
+					.withExactArgs(sinon.match.same(oCreatedEntity), "predicate")
+					.returns(sPredicate);
 				oBindingMock.expects("lockGroup").withExactArgs("$auto")
 					.exactly(bSkipRefresh ? 0 : 1)
 					.returns(oGroupLock1);
 				oBindingMock.expects("refreshSingle")
-					.withExactArgs(sinon.match.same(oContext), sinon.match.same(oGroupLock1))
+					.withExactArgs(sinon.match(function (oContext0) {
+						return oContext0 === oContext
+							&& oContext0.getPath() === "/EMPLOYEES(ID=42)";
+					}), sinon.match.same(oGroupLock1))
 					.exactly(bSkipRefresh ? 0 : 1)
 					.returns(SyncPromise.resolve(oRefreshedEntity));
 			}).then(function (oEntity) {
-				that.mock(_Helper).expects("getPrivateAnnotation")
-					.withExactArgs(bSkipRefresh
-						? sinon.match.same(oCreatedEntity)
-						: sinon.match.same(oRefreshedEntity), "predicate");
 			});
 
 			// code under test
@@ -3209,18 +3217,18 @@ sap.ui.define([
 
 	//*********************************************************************************************
 	[{
-		sExpectedPath : "/TEAMS/1/TEAM_2_EMPLOYEES('bar')",
+		rExpectedPath : /^\/TEAMS\/1\/TEAM_2_EMPLOYEES\('bar'\)$/,
 		sPredicate : "('bar')"
 	}, {
 		oInitialData : {},
-		sExpectedPath : "/TEAMS/1/TEAM_2_EMPLOYEES('bar')",
+		rExpectedPath : /^\/TEAMS\/1\/TEAM_2_EMPLOYEES\('bar'\)$/,
 		sPredicate : "('bar')"
 	}, {
-		oInitialData : {},
-		sExpectedPath : "/TEAMS/1/TEAM_2_EMPLOYEES/-1"
+		rExpectedPath : /^\/TEAMS\/1\/TEAM_2_EMPLOYEES\(\$uid=.+\)$/,
+		oInitialData : {}
 	}, {
-		oInitialData : {"@$ui5.keepTransientPath" : true},
-		sExpectedPath : "/TEAMS/1/TEAM_2_EMPLOYEES/-1"
+		rExpectedPath : /^\/TEAMS\/1\/TEAM_2_EMPLOYEES\(\$uid=.+\)$/,
+		oInitialData : {"@$ui5.keepTransientPath" : true}
 	}].forEach(function (oFixture) {
 		var sTitle = "create: relative binding, inital data: "
 				+ JSON.stringify(oFixture.oInitialData) + ", predicate: " + oFixture.sPredicate;
@@ -3247,7 +3255,8 @@ sap.ui.define([
 				.returns(oGroupLock);
 			this.mock(oBinding).expects("createInCache")
 				.withExactArgs(sinon.match.same(oGroupLock), sinon.match.same(oPostPathPromise), "",
-					sinon.match.same(oFixture.oInitialData), sinon.match.func)
+					sinon.match(rTransientPredicate), sinon.match.same(oFixture.oInitialData),
+					sinon.match.func)
 				.returns(oCreatePromise);
 			oCreatePromise.then(function (oEntityCreated) {
 				that.mock(_Helper).expects("getPrivateAnnotation").atLeast(0)
@@ -3283,7 +3292,7 @@ sap.ui.define([
 				"exists: sap.ui.model.odata.v4.ODataListBinding: /TEAMS/1[1]|TEAM_2_EMPLOYEES"));
 
 			return oContext.created().then(function () {
-				assert.strictEqual(oContext.getPath(), oFixture.sExpectedPath);
+				assert.ok(oFixture.rExpectedPath.test(oContext.getPath()));
 
 				that.mock(oBinding).expects("reset").withExactArgs();
 				that.mock(oBinding).expects("fetchCache")
@@ -3317,7 +3326,7 @@ sap.ui.define([
 			.returns(oGroupLock);
 		this.mock(oBinding).expects("createInCache")
 			.withExactArgs(oGroupLock, sinon.match.same(oPostPathPromise), "",
-				sinon.match.same(oInitialData), sinon.match.func)
+				sinon.match(rTransientPredicate), sinon.match.same(oInitialData), sinon.match.func)
 			.returns(SyncPromise.resolve({}));
 
 		// code under test
@@ -3369,7 +3378,8 @@ sap.ui.define([
 		oCacheMock.expects("create")
 			.withExactArgs(sinon.match.same(oGroupLock), sinon.match(function (oPromise) {
 					return oPromise.getResult() === "EMPLOYEES";
-				}), "", sinon.match.same(oInitialData), sinon.match.func, sinon.match.func)
+				}), "", sinon.match(rTransientPredicate), sinon.match.same(oInitialData),
+				sinon.match.func, sinon.match.func)
 			.returns(oCreatePromise);
 
 		oBindingMock.expects("refreshSingle").never();
@@ -3399,7 +3409,8 @@ sap.ui.define([
 			.withExactArgs(new _GroupLock("update", true, oBinding, 2),
 				sinon.match(function (oPromise) {
 					return oPromise.getResult() === "EMPLOYEES";
-				}), "", undefined, sinon.match.func, sinon.match.func)
+				}), "", sinon.match(rTransientPredicate), undefined, sinon.match.func,
+				sinon.match.func)
 			.returns(SyncPromise.resolve({}));
 		oContext = oBinding.create();
 		oCacheMock.expects("read")
@@ -3460,7 +3471,8 @@ sap.ui.define([
 			.withExactArgs(new _GroupLock("update", true, oBinding, 2),
 				sinon.match(function (oPromise) {
 					return oPromise.getResult() === "EMPLOYEES";
-				}), "", undefined, sinon.match.func, sinon.match.func)
+				}), "", sinon.match(rTransientPredicate), undefined, sinon.match.func,
+				sinon.match.func)
 			.returns(SyncPromise.resolve({}));
 		oContext = oBinding.create();
 		oCacheMock.expects("read")
@@ -4114,7 +4126,7 @@ sap.ui.define([
 		var oBinding = this.bindList("/EMPLOYEES"),
 			oContext0 = { getPath : function () {}},
 			oContext1 = { getPath : function () {}},
-			aContextPaths = ["/-1", "/0", "/1"],
+			aContextPaths = ["($uid=id-1-23)", "/0", "/1"],
 			aDiff = [/*content does not matter*/],
 			aDiffResult,
 			oMock = this.mock(jQuery.sap),
@@ -4126,7 +4138,7 @@ sap.ui.define([
 		oBinding.aPreviousData = aPreviousData;
 		oBinding.aContexts = [oContext0, oContext1];
 		oBinding.aContexts[-1] = oTransientContext;
-		this.mock(oTransientContext).expects("getPath").returns("/-1");
+		this.mock(oTransientContext).expects("getPath").returns("($uid=id-1-23)");
 		this.mock(oContext0).expects("getPath").returns("/0");
 		this.mock(oContext1).expects("getPath").returns("/1");
 		oMock.expects("arraySymbolDiff")
@@ -4886,8 +4898,8 @@ sap.ui.define([
 				// [-1, 0, 1, 2, undefined, 4, 5]
 				oBinding.createContexts(0, 3, createData(3, 0, true, 3, true));
 				if (bTransient) {
-					oBinding.aContexts[-1] =
-						Context.create(this.oModel, oBinding, "/EMPLOYEES/-1", -1);
+					oBinding.aContexts[-1] = Context.create(this.oModel, oBinding,
+						"/EMPLOYEES($uid=id-1-23)", -1);
 				}
 				oBinding.createContexts(4, 10, createData(2, 4, true, 6, true));
 				oContext = oBinding.aContexts[iIndex];

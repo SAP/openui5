@@ -802,12 +802,12 @@ sap.ui.define([
 
 	/**
 	 * Returns the resolved path by calling {@link sap.ui.model.odata.v4.ODataModel#resolve} and
-	 * replacing all occurrences of "-1" with the corresponding key predicates.
+	 * replacing all occurrences of transient predicates with the corresponding key predicates.
 	 *
 	 * @returns {string}
-	 *   The resolved path with replaced "-1" segments
+	 *   The resolved path with replaced transient predicates
 	 * @throws {Error}
-	 *   If an entity related to a "-1" segment does not have key predicates
+	 *   If an entity related to a segment with a transient predicate does not have key predicates
 	 *
 	 * @private
 	 */
@@ -817,21 +817,21 @@ sap.ui.define([
 			aSegments,
 			that = this;
 
-		if (sResolvedPath && sResolvedPath.includes("/-1")) {
+		if (sResolvedPath && sResolvedPath.includes("($uid=")) {
 			aSegments = sResolvedPath.slice(1).split("/");
 			sResolvedPath = "";
 			aSegments.forEach(function (sSegment) {
-				var oEntity,
-					sPredicate;
+				var oEntity, sPredicate, iTransientPredicate;
 
 				sPath += "/" + sSegment;
-				if (sSegment === "-1") {
+				iTransientPredicate = sSegment.indexOf("($uid=");
+				if (iTransientPredicate >= 0) {
 					oEntity = that.oContext.fetchValue(sPath).getResult();
 					sPredicate = _Helper.getPrivateAnnotation(oEntity, "predicate");
 					if (!sPredicate) {
 						throw new Error("No key predicate known at " + sPath);
 					}
-					sResolvedPath += sPredicate;
+					sResolvedPath += "/" + sSegment.slice(0, iTransientPredicate) + sPredicate;
 				} else {
 					sResolvedPath += "/" + sSegment;
 				}

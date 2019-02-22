@@ -914,7 +914,7 @@ sap.ui.define([
 			},
 			oGroupLock = {},
 			oModel = {},
-			oContext = Context.create(oModel, oBinding, "/EMPLOYEES/-1", -1,
+			oContext = Context.create(oModel, oBinding, "/EMPLOYEES($uid=id-1-23)", -1,
 				new Promise(function () {}));
 
 		this.mock(oBinding).expects("_delete")
