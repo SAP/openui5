@@ -9,6 +9,60 @@ sap.ui.define([
 	var ManagedObjectModelAggregationBinding = JSONListBinding.extend("sap.ui.model.base.ManagedObjectModelAggregationBinding"), ManagedObjectModelPropertyBinding = JSONPropertyBinding.extend("sap.ui.model.base.ManagedObjectModelPropertyBinding"), CUSTOMDATAKEY = "@custom", ID_DELIMITER = "--";
 
 	/**
+	* Adapt the observation of child controls in order to be able to react when e.g. the value
+	* of a select inside a list changed. Currently the MOM is not updated then
+	*
+	* @param {object} the caller, here the managed object model
+	* @param {control} the control which shall be (un)observed
+	* @param {object} the observed aggregation
+	* @param {boolean} <code>true</code> for observing and <code>false</code> for unobserving
+	*
+	* @private
+	*/
+	function _adaptDeepChildObservation(caller, oControl, oAggregation, bObserve) {
+		var aChildren = oAggregation.get(oControl) || [], oChild, bRecord;
+
+		for (var i = 0; i < aChildren.length; i++) {
+			oChild = aChildren[i];
+			if (!(oChild instanceof ManagedObject)) {
+				continue;
+			}
+			bRecord = true;
+
+			if (bObserve) {
+				caller._oObserver.observe(oChild, {
+					properties: true,
+					aggegations: true
+				});
+			} else {
+				caller._oObserver.unobserve(oChild, {
+					properties: true,
+					aggegations: true
+				});
+			}
+
+			var mAggregations = oChild.getMetadata().getAllAggregations();
+
+			for (var sKey in mAggregations) {
+				_adaptDeepChildObservation(caller, oChild, mAggregations[sKey], bObserve);
+			}
+		}
+
+		if (bRecord) {
+			var sKey = oControl.getId() + "/@" + oAggregation.name;
+
+			if (bObserve) {
+				if (!caller._mObservedCount.aggregations[sKey]) {
+					caller._mObservedCount.aggregations[sKey] = 0;
+				}
+				caller._mObservedCount.aggregations[sKey]++;
+			} else {
+				delete caller._mObservedCount.aggregations[sKey];
+			}
+		}
+	}
+
+	/**
 	 * The ManagedObjectModel class allows you to bind to properties and aggregations of managed objects.
 	 *
 	 * @class The ManagedObjectModel class can be used for data binding of properties and aggregations for managed objects.
@@ -370,6 +424,11 @@ sap.ui.define([
 			});
 
 			this._mObservedCount.aggregations[sKey] = 1;
+
+			//also observe already present children
+			//note BCP 1870551736 where there where children present
+			//and the MOM did not realize changes on them
+			_adaptDeepChildObservation(this, oObject, oAggregation, true);
 		} else {
 			this._mObservedCount.aggregations[sKey]++;
 		}
@@ -650,6 +709,11 @@ sap.ui.define([
 
 	ManagedObjectModel.prototype.observerChanges = function(oChange) {
 		if (oChange.type == "aggregation") {
+			var mAggregations = {};
+			if (oChange.child instanceof ManagedObject) {
+				mAggregations = oChange.child.getMetadata().getAllAggregations();
+			}
+
 			if (oChange.mutation == "insert") {
 				// listen to inner changes only in case there is no alternative type used
 				if (oChange.child instanceof ManagedObject) {
@@ -657,6 +721,10 @@ sap.ui.define([
 						properties: true,
 						aggegations: true
 					});
+				}
+
+				for (var sKey in mAggregations) {
+					_adaptDeepChildObservation(this, oChange.child, mAggregations[sKey], true);
 				}
 
 				if (this.mListBinding[oChange.name]) {
@@ -674,6 +742,10 @@ sap.ui.define([
 						properties: true,
 						aggegations: true
 					});
+				}
+
+				for (var sKey in mAggregations) {
+					_adaptDeepChildObservation(this, oChange.child, mAggregations[sKey], false);
 				}
 			}
 		}
