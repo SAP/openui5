@@ -670,18 +670,42 @@ sap.ui.define([
 		assert.strictEqual(this.oPanel.$().attr("aria-labelledby"), this.oPanel.getHeaderToolbar().getTitleId(), "should have a labelledby reference to the toolbar title.");
 	});
 
-	QUnit.test("Expandable panel with headerText", function(assert) {
-		var sPanelHeaderId = this.oPanel.getId() + '-header';
+	QUnit.test("Expandable panel in IE and Edge", function(assert) {
+		this.stub(sap.ui.Device, "browser", { msie: true });
+		var oPanel = new Panel({
+				expandable: true,
+				accessibleRole: PanelAccessibleRole.Region
+			}),
+			sPanelHeaderId = oPanel.getId() + '-header',
+			sHeaderToolbarTitleId, sNewHeaderToolbarTitleId;
 
-		this.oPanel.setExpandable(true);
-		this.oPanel.setAccessibleRole(PanelAccessibleRole.Region);
+		oPanel.placeAt("qunit-fixture");
 		sap.ui.getCore().applyChanges();
 
-		assert.strictEqual(this.oPanel.$().attr("aria-labelledby"), sPanelHeaderId, "should have a labelledby reference to the header");
-		assert.strictEqual(this.oPanel.oIconCollapsed.$().attr("aria-labelledby"), sPanelHeaderId, "should have collapse button having a labelledby reference to the header");
+		assert.strictEqual(oPanel.$().attr("aria-labelledby"), sPanelHeaderId, "should have a labelledby reference to the header");
+		assert.strictEqual(oPanel.oIconCollapsed.$().attr("aria-labelledby"), sPanelHeaderId, "should have collapse button having a labelledby reference to the header");
+
+		oPanel.setAggregation("headerToolbar", this.createToolbar());
+		sap.ui.getCore().applyChanges();
+		sHeaderToolbarTitleId = oPanel.getHeaderToolbar().getTitleId();
+
+		assert.strictEqual(oPanel.$().attr("aria-labelledby"), sHeaderToolbarTitleId, "should have a labelledby reference to the toolbar title");
+		assert.strictEqual(oPanel.oIconCollapsed.$().attr("aria-labelledby"), sHeaderToolbarTitleId, "should have collapse button having a labelledby reference to the toolbar title");
+
+		// Initialize new header toolbar
+		oPanel.setAggregation("headerToolbar", this.createToolbar());
+		sap.ui.getCore().applyChanges();
+		sNewHeaderToolbarTitleId = oPanel.getHeaderToolbar().getTitleId();
+
+		assert.notStrictEqual(sHeaderToolbarTitleId, sNewHeaderToolbarTitleId, "The new header toolbar should have different id than the initial one");
+		assert.strictEqual(oPanel.$().attr("aria-labelledby"), sNewHeaderToolbarTitleId, "should have a labelledby reference to the new toolbar title");
+		assert.strictEqual(oPanel.oIconCollapsed.$().attr("aria-labelledby"), sNewHeaderToolbarTitleId, "should have collapse button having a labelledby reference to the new toolbar title");
+
+		oPanel.destroy();
 	});
 
 	QUnit.test("Expandable panel with headerText and header toolbar", function(assert) {
+		this.stub(sap.ui.Device, "browser", { msie: false });
 		this.oPanel.setExpandable(true);
 		this.oPanel.setAccessibleRole(PanelAccessibleRole.Region);
 		this.oPanel.setAggregation("headerToolbar", this.createToolbar());
@@ -690,10 +714,11 @@ sap.ui.define([
 		var sHeaderToolbarTitleId = this.oPanel.getHeaderToolbar().getTitleId();
 
 		assert.strictEqual(this.oPanel.$().attr("aria-labelledby"), sHeaderToolbarTitleId, "should have a labelledby reference to the toolbar title");
-		assert.strictEqual(this.oPanel.oIconCollapsed.$().attr("aria-labelledby"), sHeaderToolbarTitleId, "should have collapse button having a labelledby reference to the toolbar title");
+		assert.strictEqual(this.oPanel.oIconCollapsed.$().attr("aria-labelledby"), undefined, "should have collapse button with no labelledby reference to the toolbar title");
 	});
 
 	QUnit.test("Expandable panel with headerText and reinitialized header toolbar", function(assert) {
+		this.stub(sap.ui.Device, "browser", { msie: false });
 		var sHeaderToolbarTitleId, sNewHeaderToolbarTitleId;
 
 		this.oPanel.setExpandable(true);
@@ -709,7 +734,7 @@ sap.ui.define([
 
 		assert.notStrictEqual(sHeaderToolbarTitleId, sNewHeaderToolbarTitleId, "The new header toolbar should have different id than the initial one");
 		assert.strictEqual(this.oPanel.$().attr("aria-labelledby"), sNewHeaderToolbarTitleId, "should have a labelledby reference to the new toolbar title");
-		assert.strictEqual(this.oPanel.oIconCollapsed.$().attr("aria-labelledby"), sNewHeaderToolbarTitleId, "should have collapse button having a labelledby reference to the new toolbar title");
+		assert.strictEqual(this.oPanel.oIconCollapsed.$().attr("aria-labelledby"), undefined, "should have collapse button with no labelledby reference to the toolbar title");
 	});
 
 	QUnit.test("Expandable panel with role Form", function(assert) {

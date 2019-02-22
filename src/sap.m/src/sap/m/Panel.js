@@ -7,9 +7,10 @@ sap.ui.define([
 	'./library',
 	'sap/ui/core/Control',
 	'sap/ui/core/IconPool',
+	'sap/ui/Device',
 	'./PanelRenderer'
 ],
-	function(library, Control, IconPool, PanelRenderer) {
+	function(library, Control, IconPool, Device, PanelRenderer) {
 	"use strict";
 
 	// shortcut for sap.m.PanelAccessibleRole
@@ -294,7 +295,9 @@ sap.ui.define([
 	};
 
 	Panel.prototype.onBeforeRendering = function () {
-		this._updateIconAriaLabelledBy();
+		if (Device.browser.msie || Device.browser.edge) {
+			this._updateIconAriaLabelledBy();
+		}
 	};
 
 	Panel.prototype.onAfterRendering = function () {
