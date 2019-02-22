@@ -2048,6 +2048,26 @@ sap.ui.define([
 	});
 
 	//*********************************************************************************************
+	QUnit.test("getRootBindingResumePromise", function (assert) {
+		var oBinding = new ODataBinding(),
+			oBindingMock = this.mock(oBinding),
+			oResumePromise = {},
+			oRootBinding = new ODataBinding({getResumePromise : function () {}});
+
+		oBindingMock.expects("getRootBinding").withExactArgs().returns(undefined);
+
+		// code under test - no root binding
+		assert.strictEqual(oBinding.getRootBindingResumePromise(), SyncPromise.resolve());
+
+		oBindingMock.expects("getRootBinding").withExactArgs().returns(oRootBinding);
+		this.mock(oRootBinding).expects("getResumePromise").withExactArgs()
+			.returns(oResumePromise);
+
+		// code under test - with root binding
+		assert.strictEqual(oBinding.getRootBindingResumePromise(), oResumePromise);
+	});
+
+	//*********************************************************************************************
 	QUnit.test("setResumeChangeReason", function (assert) {
 		var oBinding = new ODataBinding();
 

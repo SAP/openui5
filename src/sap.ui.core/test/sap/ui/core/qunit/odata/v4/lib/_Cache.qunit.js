@@ -206,6 +206,9 @@ sap.ui.define([
 		assert.strictEqual(oCache.sResourcePath, sResourcePath);
 		assert.strictEqual(oCache.bSentReadRequest, false);
 		assert.strictEqual(oCache.oTypePromise, undefined);
+
+		// code under test
+		assert.strictEqual(oCache.getMeasureRangePromise(), undefined);
 	});
 
 	//*********************************************************************************************

@@ -398,6 +398,20 @@ sap.ui.define([
 	};
 
 	/**
+	 * Returns a promise which resolves as soon as this binding is resumed.
+	 *
+	 * @returns {sap.ui.base.SyncPromise}
+	 *   This binding's current promise for {@link sap.ui.model.odata.v4.ODataParentBinding#resume},
+	 *   or <code>undefined</code> in case it is not currently suspended.
+	 *
+	 * @abstract
+	 * @function
+	 * @name sap.ui.model.odata.v4.ODataBinding#getResumePromise
+	 * @private
+	 * @see sap.ui.model.Binding#isSuspended
+	 */
+
+	/**
 	 * Returns the root binding of this binding's hierarchy, see binding
 	 * {@link topic:54e0ddf695af4a6c978472cecb01c64d Initialization and Read Requests}.
 	 *
@@ -412,6 +426,25 @@ sap.ui.define([
 			return this.oContext.getBinding().getRootBinding();
 		}
 		return this.bRelative && !this.oContext ? undefined : this;
+	};
+
+	/**
+	 * Returns a promise which resolves as soon as this binding's root binding is resumed.
+	 *
+	 * @returns {sap.ui.base.SyncPromise}
+	 *   The root binding's current promise for {@link #resume}, or
+	 *   <code>SyncPromise.resolve()</code> in case we have no root binding or it is not currently
+	 *   suspended.
+	 *
+	 * @private
+	 * @see #checkSuspended
+	 * @see #getResumePromise
+	 * @see #isRootBindingSuspended
+	 */
+	ODataBinding.prototype.getRootBindingResumePromise = function () {
+		var oRootBinding = this.getRootBinding();
+
+		return oRootBinding && oRootBinding.getResumePromise() || SyncPromise.resolve();
 	};
 
 	/**
@@ -489,6 +522,7 @@ sap.ui.define([
 				&& that.mCacheByResourcePath[sResourcePath].hasPendingChangesForPath("");
 		});
 	};
+
 	/**
 	 * Returns whether any dependent binding of the given context has pending changes; checks all
 	 * dependent bindings of this binding if no context is given.

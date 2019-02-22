@@ -1889,12 +1889,12 @@ sap.ui.define([
 	 *   Its presence is used to detect a measure
 	 * @param {boolean} [aAggregation[].max]
 	 *   Measures only: Whether the maximum value (ignoring currencies or units of measure) for this
-	 *   measure is needed (since 1.55.0);
-	 *   <b>filtering and sorting is not supported in this case</b>
+	 *   measure is needed (since 1.55.0); filtering and sorting is supported in this case
+	 *   (since 1.58.0)
 	 * @param {boolean} [aAggregation[].min]
 	 *   Measures only: Whether the minimum value (ignoring currencies or units of measure) for this
-	 *   measure is needed (since 1.55.0);
-	 *   <b>filtering and sorting is not supported in this case</b>
+	 *   measure is needed (since 1.55.0); filtering and sorting is supported in this case
+	 *   (since 1.58.0)
 	 * @param {string} [aAggregation[].with]
 	 *   Measures only: The name of the method (for example "sum") used for aggregation of this
 	 *   measure; see "3.1.2 Keyword with" (since 1.55.0)
@@ -1906,10 +1906,13 @@ sap.ui.define([
 	 *   least one measure has requested a minimum or maximum value; its value is a
 	 *   promise which resolves with the measure range map as soon as data has been received; the
 	 *   measure range map contains measure names as keys and objects as values which have a
-	 *   <code>min</code> and <code>max</code> property as requested above.
+	 *   <code>min</code> and <code>max</code> property as requested above. In case of multiple
+	 *   calls to this method while the binding's root binding is suspended, only the last call's
+	 *   promise will resolve with the right result; the other calls just get the same result as the
+	 *   last call, which may or may not fit to their <code>aAggregation</code> argument.
 	 *   <code>undefined</code> is returned instead of an empty object.
 	 * @throws {Error}
-	 *   If the binding's root binding is suspended or a property is both a dimension and a measure
+	 *   If a property is both a dimension and a measure
 	 *
 	 * @protected
 	 * @see sap.ui.model.analytics.AnalyticalBinding#updateAnalyticalInfo
@@ -1922,7 +1925,8 @@ sap.ui.define([
 				aggregate : {},
 				group : {}
 			},
-			bHasMinMax = false;
+			bHasMinMax = false,
+			that = this;
 
 		aAggregation.forEach(function (oColumn) {
 			var oDetails = {};
@@ -1958,9 +1962,12 @@ sap.ui.define([
 		this.bHasAnalyticalInfo = true;
 		if (bHasMinMax) {
 			return {
-				measureRangePromise : Promise.resolve(this.oCachePromise.then(function (oCache) {
-					return oCache.getMeasureRangePromise();
-				}))
+				measureRangePromise : Promise.resolve(
+					this.getRootBindingResumePromise().then(function () {
+						return that.oCachePromise;
+					}).then(function (oCache) {
+						return oCache.getMeasureRangePromise();
+					}))
 			};
 		}
 	};
