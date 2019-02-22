@@ -1804,6 +1804,12 @@ sap.ui.define([
 		assert.strictEqual(oOverflowTB._aToolbarOnlyControls.length, 2, "The 2 texts are properly marked as toolbar only");
 		assert.strictEqual(oOverflowTB._aPopoverOnlyControls.length, 1, "The button with special layout is properly marked as popover only");
 
+		assert.strictEqual(oOverflowTB._aMovableControls, oOverflowTB._aAllCollections[0], 'before clear, _aMovableControls is correctly referenced from _aAllCollections');
+
+		oOverflowTB._clearAllControlsCollections();
+
+		assert.strictEqual(oOverflowTB._aMovableControls, oOverflowTB._aAllCollections[0], 'after clear, _aMovableControls is correctly referenced from _aAllCollections');
+
 		// Note: control sizes and total content size are not checked here because they depend on margins and calculations are not always predictable
 
 		oOverflowTB.destroy();
