@@ -502,6 +502,18 @@ sap.ui.define([
 			"The value state is None as it should be because the value is equal to the min");
 	});
 
+	QUnit.test("_shouldDisableDecrementButton should work with valid and invalid values for min", function (assert) {
+		assert.ok(this.stepInput._shouldDisableDecrementButton(1, 1), "Should disable decrement button if min and value are equal");
+		assert.ok(this.stepInput._shouldDisableDecrementButton(1, 2), "Should disable decrement button if min is more than value");
+		assert.notOk(this.stepInput._shouldDisableDecrementButton(1, undefined), "Should NOT disable decrement button if min value is 'undefined'");
+	});
+
+	QUnit.test("_shouldDisableIncrementButton should work with valid and invalid values for max", function (assert) {
+		assert.ok(this.stepInput._shouldDisableIncrementButton(1, 1), "Should disable increment button if max and value are equal");
+		assert.ok(this.stepInput._shouldDisableIncrementButton(1, -1), "Should disable increment button if max is less than value");
+		assert.notOk(this.stepInput._shouldDisableIncrementButton(1, undefined), "Should NOT disable increment button if max value is 'undefined'");
+	});
+
 
 	QUnit.module("Floating point", {
 		beforeEach: function () {
