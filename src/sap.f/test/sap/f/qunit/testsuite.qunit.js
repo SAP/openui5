@@ -39,6 +39,11 @@ sap.ui.define(function () {
 					only: ["sap/f/Card"]
 				}
 			},
+			"BindingResolver": {
+				coverage: {
+					only: ["sap/f/cards/BindingResolver"]
+				}
+			},
 			"DynamicPage": {
 				coverage: {
 					only: ["sap/f/DynamicPage"]

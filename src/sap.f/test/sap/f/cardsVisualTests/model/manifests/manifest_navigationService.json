@@ -47,7 +47,6 @@
 				"description": {
 					"value": "{Description}"
 				},
-				"interactionType": "Navigation",
 				"actions": [
 					{
 						"type": "Navigation",
