@@ -1,6 +1,6 @@
 sap.ui.define([
 	"sap/ui/model/base/ManagedObjectModel", "sap/ui/model/json/JSONModel", "sap/m/Text", "sap/m/Input", "sap/m/List", "sap/m/Select", "sap/m/ColumnListItem", "sap/m/DatePicker", "sap/ui/model/type/Date", "sap/ui/model/Context", "sap/m/VBox"
-], function(ManagedObjectModel, JSONModel, Text, Input, List, Select, ColumnListItem, DatePicker, DateType, Context, VBox) {
+], function (ManagedObjectModel, JSONModel, Text, Input, List, Select, ColumnListItem, DatePicker, DateType, Context, VBox) {
 	/*global QUnit, sinon */
 	/*eslint no-warning-comments: 0 */
 	"use strict";
@@ -58,12 +58,12 @@ sap.ui.define([
 					group: "Appearance",
 					defaultValue: []
 				},
-                objectArray: {
-                    type: "object[]",
-                    group: "Data",
-                    defaultValue: [],
-                    byValue: true
-                },
+				objectArray: {
+					type: "object[]",
+					group: "Data",
+					defaultValue: [],
+					byValue: true
+				},
 				objectValue: {
 					type: "object",
 					group: "Misc",
@@ -114,16 +114,16 @@ sap.ui.define([
 			}
 		},
 
-		init: function() {
+		init: function () {
 			mObjects[this.getId()] = this;
 		},
 
-		exit: function() {
+		exit: function () {
 			delete mObjects[this.getId()];
 		},
 
 		// needed for grouping test
-		addSubObjGroup: function(oGroup, oControl) {
+		addSubObjGroup: function (oGroup, oControl) {
 			if (!oControl) {
 				oControl = new sap.ui.test.TestElement({
 					value: oGroup.key,
@@ -134,33 +134,33 @@ sap.ui.define([
 		}
 	});
 
-    sap.ui.core.Element.extend("sap.ui.test.TestList", {
-        metadata: {
-            aggregations: {
-                selects: { type: "sap.ui.test.TestSelect", multiple: true }
-            }
-        }
-    });
+	sap.ui.core.Element.extend("sap.ui.test.TestList", {
+		metadata: {
+			aggregations: {
+				selects: {type: "sap.ui.test.TestSelect", multiple: true}
+			}
+		}
+	});
 
-    sap.ui.core.Element.extend("sap.ui.test.TestSelect", {
-        metadata: {
-            properties: {
-                selected: { type: "string" }
-                },
-            aggregations: {
-                items: { type: "sap.ui.test.TestItem", multiple: true }
-            }
-        }
-    });
+	sap.ui.core.Element.extend("sap.ui.test.TestSelect", {
+		metadata: {
+			properties: {
+				selected: {type: "string"}
+			},
+			aggregations: {
+				items: {type: "sap.ui.test.TestItem", multiple: true}
+			}
+		}
+	});
 
-    sap.ui.core.Element.extend("sap.ui.test.TestItem", {
-        metadata: {
-            properties: {
-                key: { type: "string" },
-                text: { type: "string" }
-            }
-        }
-    });
+	sap.ui.core.Element.extend("sap.ui.test.TestItem", {
+		metadata: {
+			properties: {
+				key: {type: "string"},
+				text: {type: "string"}
+			}
+		}
+	});
 
 	var oModel = new JSONModel({
 		value: "testvalue",
@@ -186,7 +186,7 @@ sap.ui.define([
 	});
 
 	QUnit.module("ManagedObject Model", {
-		beforeEach: function() {
+		beforeEach: function () {
 			this.obj = new sap.ui.test.TestElement("myObject");
 			this.subObj = new sap.ui.test.TestElement();
 			this.subObj2 = new sap.ui.test.TestElement();
@@ -201,14 +201,14 @@ sap.ui.define([
 			this.obj.setModel(oModel);
 			this.oManagedObjectModel = new ManagedObjectModel(this.obj);
 		},
-		afterEach: function() {
+		afterEach: function () {
 			this.obj.destroy();
 			this.obj = null;
 		}
 	});
 
 	//	check default settings
-	QUnit.test("Create a ManagedObject Model - Property Access", function(assert) {
+	QUnit.test("Create a ManagedObject Model - Property Access", function (assert) {
 
 		var oModel = this.oManagedObjectModel;
 
@@ -226,7 +226,7 @@ sap.ui.define([
 
 		// access existing with default values
 		var mProperties = this.obj.getMetadata().getAllProperties();
-		for ( var n in mProperties) {
+		for (var n in mProperties) {
 			var oProperty = mProperties[n], oValue = oModel.getProperty("/" + oProperty.name);
 			if (Array.isArray(oValue)) {
 				assert.equal(oValue.length, oProperty.defaultValue.length, "Property " + oProperty.name + " exists and has expected default value");
@@ -259,9 +259,9 @@ sap.ui.define([
 		assert.equal(oModel.getProperty("value", oContext), "hello1", "Property has correct value, because context is resolvable");
 	});
 
-	QUnit.test("ManagedObject Model  - Property Binding - Registration and Housekeeping", function(assert) {
+	QUnit.test("ManagedObject Model  - Property Binding - Registration and Housekeeping", function (assert) {
 		var oModel = this.oManagedObjectModel;
-		var fnPropertyChangeHandler = function() {
+		var fnPropertyChangeHandler = function () {
 			assert.equal(false, true, "Binding change fired unexpected");
 		};
 		// create a property binding with a relative path
@@ -329,9 +329,9 @@ sap.ui.define([
 		assert.equal(oModel._mObservedCount.properties["myObject/@value"], undefined, "No binding is stored for 'myObject/@value'");
 	});
 
-	QUnit.test("ManagedObject Model  - Single Aggregation Binding - Registration and Housekeeping", function(assert) {
+	QUnit.test("ManagedObject Model  - Single Aggregation Binding - Registration and Housekeeping", function (assert) {
 		var oModel = this.oManagedObjectModel;
-		var fnAggregationChangeHandler = function() {
+		var fnAggregationChangeHandler = function () {
 			assert.equal(true, false, "Binding change fired unexpected");
 		};
 		// create a aggregation binding
@@ -375,9 +375,9 @@ sap.ui.define([
 		assert.equal(oModel._mObservedCount.aggregations["myObject/@singleAggr"], undefined, "No bindings are stored for 'myObject/@singleAggr'");
 	});
 
-	QUnit.test("ManagedObject Model  - Multi Aggregation Binding - Registration and Housekeeping", function(assert) {
+	QUnit.test("ManagedObject Model  - Multi Aggregation Binding - Registration and Housekeeping", function (assert) {
 		var oModel = this.oManagedObjectModel;
-		var fnAggregationChangeHandler = function() {
+		var fnAggregationChangeHandler = function () {
 			assert.equal(true, false, "Binding change fired unexpected");
 		};
 		// create a aggregation binding
@@ -421,14 +421,14 @@ sap.ui.define([
 		assert.equal(oModel._mObservedCount.aggregations["myObject/@subObjects"], undefined, "No bindings are stored for 'myObject/@subObjects'");
 	});
 
-	QUnit.test("ManagedObject Model  - Property Binding - Value Checks", function(assert) {
+	QUnit.test("ManagedObject Model  - Property Binding - Value Checks", function (assert) {
 
 		var oModel = this.oManagedObjectModel;
 
 		assert.equal(oModel.getProperty("/value"), "", "Property exists and has default value");
 
 		var sExpectedValue = "hello";
-		var fnPropertyChangeHandler = function() {
+		var fnPropertyChangeHandler = function () {
 			assert.equal(oPropertyBinding.getValue(), sExpectedValue, "Binding change event fired for property value with " + sExpectedValue);
 		};
 		var oPropertyBinding = oModel.bindProperty("/value");
@@ -459,7 +459,7 @@ sap.ui.define([
 		assert.equal(oBindingInfo.binding.getPath(), oModel.getProperty("/stringValue/@binding/getPath"), "BindingInfo contains correct path");
 		assert.equal(oBindingInfo.binding.getPath(), oModel.getProperty("/stringValue/@bindingInfo/binding/getPath"), "BindingInfo contains correct path");
 		var oBindingInfoBinding = oModel.bindProperty("/stringValue/@bindingInfo");
-		oBindingInfoBinding.attachChange(function() {
+		oBindingInfoBinding.attachChange(function () {
 			iCount++;
 		});
 		var iCount = 0;
@@ -483,7 +483,7 @@ sap.ui.define([
 
 		// bind to a property that does not exist
 		var oPropertyBinding = oModel.bindProperty("/notExist");
-		oPropertyBinding.attachChange(function() {
+		oPropertyBinding.attachChange(function () {
 			assert.equal(false, true, "Error: This should never be called for a property that does not exist");
 		});
 		assert.equal(oModel.setProperty("/notExist", "hello"), false, "Property not set");
@@ -491,7 +491,7 @@ sap.ui.define([
 
 	});
 
-	QUnit.test("ManagedObject Model  - Aggregation Access", function(assert) {
+	QUnit.test("ManagedObject Model  - Aggregation Access", function (assert) {
 		var oModel = this.oManagedObjectModel;
 		assert.equal(oModel.getAggregation("/content"), null, "Access none existing aggregation is null");
 		assert.equal(oModel.getAggregation("/content/another/not/existing"), null, "Access none existing aggregation is null");
@@ -509,7 +509,7 @@ sap.ui.define([
 		assert.equal(jQuery.isArray(oResult), true, "Access a multi aggregation that is not set is empty array");
 	});
 
-	QUnit.test("ManagedObject Model  - Aggregations with altType", function(assert) {
+	QUnit.test("ManagedObject Model  - Aggregations with altType", function (assert) {
 		var oModel = this.oManagedObjectModel;
 		var oAltObject = new sap.ui.test.TestElement({
 			altType: "{obj>/altType}"
@@ -527,11 +527,11 @@ sap.ui.define([
 		assert.equal(oAltObject.getAggregation("altType"), true, "Setting the number altType on the control feeds this type to the model");
 	});
 
-	QUnit.test("ManagedObject Model  - Aggregation Binding", function(assert) {
+	QUnit.test("ManagedObject Model  - Aggregation Binding", function (assert) {
 		assert.equal(this.oManagedObjectModel.getAggregation("/singleAggr"), null, "Access a single aggregation that is not set");
 		var oBinding = this.oManagedObjectModel.bindAggregation("/singleAggr");
 		var that = this;
-		var fHandler = function() {
+		var fHandler = function () {
 			assert.equal(oBinding.getValue() === that.subObj, true, "Binding change event fired for single aggregation");
 			oBinding.detachChange(fHandler);
 		};
@@ -546,13 +546,15 @@ sap.ui.define([
 		assert.equal(oBinding.getPath(), "/notExist", "Binding path is correctly set for aggregation binding");
 	});
 
-	QUnit.test("ManagedObject Model  - List Binding", function(assert) {
+	QUnit.test("ManagedObject Model  - List Binding", function (assert) {
 		assert.equal(this.oManagedObjectModel.getAggregation("/subObjects").length === 0, true, "Access a multi aggregation that is not set");
-		var oBinding = this.oManagedObjectModel.bindList("/subObjects"), oLengthBinding = this.oManagedObjectModel.bindProperty("/subObjects/@length"), that = this, iCount = 1, iCalls = 0, iLength, fHandler = function() {
-			iCalls++;
-		}, fHandler2 = function() {
-			assert.equal(oLengthBinding.getValue(), iLength, "Length binding called correctly");
-		};
+		var oBinding = this.oManagedObjectModel.bindList("/subObjects"),
+			oLengthBinding = this.oManagedObjectModel.bindProperty("/subObjects/@length"), that = this, iCount = 1,
+			iCalls = 0, iLength, fHandler = function () {
+				iCalls++;
+			}, fHandler2 = function () {
+				assert.equal(oLengthBinding.getValue(), iLength, "Length binding called correctly");
+			};
 		oLengthBinding.attachChange(fHandler2);
 		oBinding.attachChange(fHandler);
 
@@ -605,7 +607,7 @@ sap.ui.define([
 		oLengthBinding.detachChange(fHandler2);
 	});
 
-	QUnit.test("ManagedObject Model - getManagedObject", function(assert) {
+	QUnit.test("ManagedObject Model - getManagedObject", function (assert) {
 		var oModel = this.oManagedObjectModel;
 
 		function createContext(sPath) {
@@ -641,7 +643,7 @@ sap.ui.define([
 		assert.ok(oModel.getManagedObject("subObjects/0", createContext("/singleAggr")) === this.subObj3, "CONTEXT + PATH: Path to single entry of multiple Aggregation");
 	});
 
-	QUnit.test("ManagedObjectModel - Custom Data", function(assert) {
+	QUnit.test("ManagedObjectModel - Custom Data", function (assert) {
 		var sCustomDataPath = "/@custom";
 
 		assert.equal(this.oManagedObjectModel.setProperty(sCustomDataPath + "/abc", "value abc"), true, "Property abc set as custom data");
@@ -663,7 +665,7 @@ sap.ui.define([
 		assert.equal(this.oManagedObjectModel.getJSON(), "{\"def\":\"value def\"}", "getJSON returns the stringified custom data");
 	});
 
-	QUnit.test("ManagedObjectModel - Generic Testing for sap.m Controls", function(assert) {
+	QUnit.test("ManagedObjectModel - Generic Testing for sap.m Controls", function (assert) {
 		sap.ui.getCore().loadLibrary("sap.m");
 		assert.equal(true, true, "Not activted");
 		return;
@@ -771,7 +773,7 @@ sap.ui.define([
 			"sap.m._overflowToolbarHelpers.OverflowToolbarAssociativePopover": true, // not processed at all
 			"sap.m.HeaderContainerItemContainer": true, // not processed at all
 			"sap.m.TimePickerSliders": true
-		// not processed at all
+			// not processed at all
 		};
 
 		// get the controls from sap.m
@@ -789,7 +791,7 @@ sap.ui.define([
 			var oModel = new ManagedObjectModel(oControl);
 			var iBindingCount = 0;
 			var mProperties = oControl.getMetadata().getProperties();
-			for ( var n in mProperties) {
+			for (var n in mProperties) {
 				var oProperty = mProperties[n], aTestValues = mTestProperties[oProperty.type];
 				if (sControlName in mBlackList) {
 					if (mBlackList[sControlName][n] === true) {
@@ -801,7 +803,7 @@ sap.ui.define([
 				var iCount = 0;
 				var oBinding = oModel.bindProperty("/" + n);
 				oModel.addBinding(oBinding);
-				oBinding.attachChange(function(oEvent) {
+				oBinding.attachChange(function (oEvent) {
 					iCount++;
 					assert.equal(oEvent.getSource().getValue() === oControl.getProperty(n), true, "Change Event fired for control " + sControlName + "-" + oEvent.getSource().getPath());
 				});
@@ -827,7 +829,7 @@ sap.ui.define([
 
 	});
 
-	QUnit.test("ManagedObjectModel - Marker interface sap.ui.core.IDScope handling", function(assert) {
+	QUnit.test("ManagedObjectModel - Marker interface sap.ui.core.IDScope handling", function (assert) {
 		var sView = jQuery('#view').html();
 
 		var oView = sap.ui.xmlview({
@@ -858,7 +860,7 @@ sap.ui.define([
 		//Check whether observer works on property bindings with ids
 		var oPropertyBinding = oManagedObjectModel.bindProperty("/#button2/text");
 		var iPropertyChangeCount = 0;
-		oPropertyBinding.attachChange(function() {
+		oPropertyBinding.attachChange(function () {
 			iPropertyChangeCount++;
 		});
 		oButton2.setText("Changed");
@@ -868,7 +870,7 @@ sap.ui.define([
 		//Check whether observer works on list bindings with ids
 		var oListBinding = oManagedObjectModel.bindList("/#panel/content");
 		var iListChangeCount = 0;
-		oListBinding.attachChange(function() {
+		oListBinding.attachChange(function () {
 			iListChangeCount++;
 		});
 		oPanel.removeContent(oButton2);
@@ -878,7 +880,7 @@ sap.ui.define([
 
 	});
 
-	QUnit.test("Check Update with binding test function", function(assert) {
+	QUnit.test("Check Update with binding test function", function (assert) {
 		var aTrueBindings = [];
 		var oModel = this.oManagedObjectModel;
 		var oBinding1 = oModel.bindProperty("/value");
@@ -890,7 +892,7 @@ sap.ui.define([
 
 		assert.equal(oModel.getBindings().length, 3, "There are three bindings");
 
-		var fnFilter = function(oBinding) {
+		var fnFilter = function (oBinding) {
 			if (oBinding == oBinding1) {
 				aTrueBindings.push(oBinding);
 				return true;
@@ -903,233 +905,240 @@ sap.ui.define([
 		assert.deepEqual(aTrueBindings[0], oBinding1, "And this is exactly the first binding");
 	});
 
-    QUnit.test("ManagedObject Model  - handle array properties", function(assert) {
-        var aData = [{operator: "EQ", values: [1, 2]}];
-        var oModel = new JSONModel({
-            data: aData
-        });
+	QUnit.test("ManagedObject Model  - handle array properties", function (assert) {
+		var aData = [{operator: "EQ", values: [1, 2]}];
+		var oModel = new JSONModel({
+			data: aData
+		});
 
-        var iPropertyChange = 0;
-        var sPropertyChangePath;
-        var fnHandlePropertyChange = function(oEvent) {
-            iPropertyChange++;
-            sPropertyChangePath = oEvent.getParameter("path");
-        };
-        oModel.attachPropertyChange(fnHandlePropertyChange);
+		var iPropertyChange = 0;
+		var sPropertyChangePath;
+		var fnHandlePropertyChange = function (oEvent) {
+			iPropertyChange++;
+			sPropertyChangePath = oEvent.getParameter("path");
+		};
+		oModel.attachPropertyChange(fnHandlePropertyChange);
 
-        this.obj.setModel(oModel);
-        this.obj.bindProperty("objectArray", "/data");
+		this.obj.setModel(oModel);
+		this.obj.bindProperty("objectArray", "/data");
 
-        var iChange = 0;
-        var fnHandleChange = function(oEvent) {
-            if (oEvent.getParameter("name") === "objectArray") {
-                iChange++;
-            }
-        };
-        this.obj.attachEvent("_change", fnHandleChange);
+		var iChange = 0;
+		var fnHandleChange = function (oEvent) {
+			if (oEvent.getParameter("name") === "objectArray") {
+				iChange++;
+			}
+		};
+		this.obj.attachEvent("_change", fnHandleChange);
 
-        var fnFormatter = function(aConditions) {
-            if (aConditions[0]) {
-                return aConditions[0].operator + ": " + aConditions[0].values[0] + ", " + aConditions[0].values[1];
-            }
-        };
-        var oText1 = new Text("T1", {
-            text: {path: "/data", formatter: fnFormatter}
-        });
-        oText1.setModel(oModel);
-        var oText2 = new Text("T2", {
-            text: {path: "$obj>/objectArray", formatter: fnFormatter}
-        });
-        oText2.setModel(this.oManagedObjectModel,"$obj");
+		var fnFormatter = function (aConditions) {
+			if (aConditions[0]) {
+				return aConditions[0].operator + ": " + aConditions[0].values[0] + ", " + aConditions[0].values[1];
+			}
+		};
+		var oText1 = new Text("T1", {
+			text: {path: "/data", formatter: fnFormatter}
+		});
+		oText1.setModel(oModel);
+		var oText2 = new Text("T2", {
+			text: {path: "$obj>/objectArray", formatter: fnFormatter}
+		});
+		oText2.setModel(this.oManagedObjectModel, "$obj");
 
-        var oInput = new Input({
-            value: "{$obj>/objectArray/0/values/0}"
-        });
-        oInput.setModel(this.oManagedObjectModel,"$obj");
+		var oInput = new Input({
+			value: "{$obj>/objectArray/0/values/0}"
+		});
+		oInput.setModel(this.oManagedObjectModel, "$obj");
 
-        assert.deepEqual(this.obj.getObjectArray(),aData, "The data is in the original element");
-        assert.equal(oText1.getText(), "EQ: 1, 2", "Text bound to model");
-        assert.equal(oText2.getText(), "EQ: 1, 2", "Text bound to ManagedObjectModel");
-        assert.equal(oInput.getValue(),"1", "The first value of data is in the input");
+		assert.deepEqual(this.obj.getObjectArray(), aData, "The data is in the original element");
+		assert.equal(oText1.getText(), "EQ: 1, 2", "Text bound to model");
+		assert.equal(oText2.getText(), "EQ: 1, 2", "Text bound to ManagedObjectModel");
+		assert.equal(oInput.getValue(), "1", "The first value of data is in the input");
 
-        //now change the input with the input value a part of the object array
-        oInput.setValue(3);//hier is no int
-        var fnDone = assert.async();
+		//now change the input with the input value a part of the object array
+		oInput.setValue(3);//hier is no int
+		var fnDone = assert.async();
 
-        setTimeout(function() {
-            var aNewData = [{operator: "EQ", values: ["3", 2]}];
-            assert.deepEqual(this.obj.getObjectArray(), aNewData, "The new data is in the original element");
-            assert.deepEqual(oModel.getProperty("/data"), aNewData, "The new data is also in the model");
-            assert.equal(oText1.getText(), "EQ: 3, 2", "Text bound to model");
-            assert.equal(oText2.getText(), "EQ: 3, 2", "Text bound to ManagedObjectModel");
-            assert.equal(iPropertyChange, 1, "propertyChange Event fired on outerModel");
-            assert.equal(sPropertyChangePath, "/data", "propertyChange Event path");
-            assert.equal(iChange, 1, " _Change Event fired on control");
+		setTimeout(function () {
+			var aNewData = [{operator: "EQ", values: ["3", 2]}];
+			assert.deepEqual(this.obj.getObjectArray(), aNewData, "The new data is in the original element");
+			assert.deepEqual(oModel.getProperty("/data"), aNewData, "The new data is also in the model");
+			assert.equal(oText1.getText(), "EQ: 3, 2", "Text bound to model");
+			assert.equal(oText2.getText(), "EQ: 3, 2", "Text bound to ManagedObjectModel");
+			assert.equal(iPropertyChange, 1, "propertyChange Event fired on outerModel");
+			assert.equal(sPropertyChangePath, "/data", "propertyChange Event path");
+			assert.equal(iChange, 1, " _Change Event fired on control");
 
-            iPropertyChange = 0;
-            iChange = 0;
-            aData = this.obj.getObjectArray();
-            aData[0].values[0] = 4;
-            this.obj.setObjectArray(aData); // not sure if this is still a real use case
-            setTimeout(function() {
-                assert.deepEqual(oModel.getProperty("/data"), [{operator: "EQ", values: [4, 2]}], "The new data is also in the model");
-                assert.equal(oInput.getValue(), "4", "The first value of data is in the input");
-                assert.equal(oText1.getText(), "EQ: 4, 2", "Text bound to model");
-                assert.equal(oText2.getText(), "EQ: 4, 2", "Text bound to ManagedObjectModel");
-                assert.equal(iPropertyChange, 1, "propertyChange Event fired on outerModel");
-                assert.equal(sPropertyChangePath, "/data", "propertyChange Event path");
-                assert.equal(iChange, 1, " _Change Event fired on control");
+			iPropertyChange = 0;
+			iChange = 0;
+			aData = this.obj.getObjectArray();
+			aData[0].values[0] = 4;
+			this.obj.setObjectArray(aData); // not sure if this is still a real use case
+			setTimeout(function () {
+				assert.deepEqual(oModel.getProperty("/data"), [{
+					operator: "EQ",
+					values: [4, 2]
+				}], "The new data is also in the model");
+				assert.equal(oInput.getValue(), "4", "The first value of data is in the input");
+				assert.equal(oText1.getText(), "EQ: 4, 2", "Text bound to model");
+				assert.equal(oText2.getText(), "EQ: 4, 2", "Text bound to ManagedObjectModel");
+				assert.equal(iPropertyChange, 1, "propertyChange Event fired on outerModel");
+				assert.equal(sPropertyChangePath, "/data", "propertyChange Event path");
+				assert.equal(iChange, 1, " _Change Event fired on control");
 
-                iPropertyChange = 0;
-                iChange = 0;
-                aData = [{operator: "EQ", values: [5, 6]}];
-                this.obj.setObjectArray(aData);
-                setTimeout(function() {
-                    assert.deepEqual(oModel.getProperty("/data"), [{operator: "EQ", values: [5, 6]}], "The new data is also in the model");
-                    assert.equal(oInput.getValue(), "5", "The first value of data is in the input");
-                    assert.equal(oText1.getText(), "EQ: 5, 6", "Text bound to model");
-                    assert.equal(oText2.getText(), "EQ: 5, 6", "Text bound to ManagedObjectModel");
-                    assert.equal(iPropertyChange, 1, "propertyChange Event fired on outerModel");
-                    assert.equal(sPropertyChangePath, "/data", "propertyChange Event path");
-                    assert.equal(iChange, 1, " _Change Event fired on control");
+				iPropertyChange = 0;
+				iChange = 0;
+				aData = [{operator: "EQ", values: [5, 6]}];
+				this.obj.setObjectArray(aData);
+				setTimeout(function () {
+					assert.deepEqual(oModel.getProperty("/data"), [{
+						operator: "EQ",
+						values: [5, 6]
+					}], "The new data is also in the model");
+					assert.equal(oInput.getValue(), "5", "The first value of data is in the input");
+					assert.equal(oText1.getText(), "EQ: 5, 6", "Text bound to model");
+					assert.equal(oText2.getText(), "EQ: 5, 6", "Text bound to ManagedObjectModel");
+					assert.equal(iPropertyChange, 1, "propertyChange Event fired on outerModel");
+					assert.equal(sPropertyChangePath, "/data", "propertyChange Event path");
+					assert.equal(iChange, 1, " _Change Event fired on control");
 
-                    oText1.destroy();
-                    oText2.destroy();
-                    oInput.destroy();
-                    fnDone();
-                }.bind(this), 0);
-            }.bind(this), 0);
-        }.bind(this), 0);
-    });
+					oText1.destroy();
+					oText2.destroy();
+					oInput.destroy();
+					fnDone();
+				}.bind(this), 0);
+			}.bind(this), 0);
+		}.bind(this), 0);
+	});
 
-    QUnit.module("Binding against ManagedObject Model of a bound control", {
-        beforeEach: function() {
-            this.aItems0 = [
-                {
-                    key: "one",
-                    text: "One"
-                },
-                {
-                    key: "two",
-                    text: "Two"
-                },
-                {
-                    key: "three",
-                    text: "Three"
-                }
-            ];
+	QUnit.module("Binding against ManagedObject Model of a bound control", {
+		beforeEach: function () {
+			this.aItems0 = [
+				{
+					key: "one",
+					text: "One"
+				},
+				{
+					key: "two",
+					text: "Two"
+				},
+				{
+					key: "three",
+					text: "Three"
+				}
+			];
 
-            this.aItems1 = [
-                {
-                    key: "three",
-                    text: "Three"
-                },
-                {
-                    key: "two",
-                    text: "Two"
-                },
-                {
-                    key: "one",
-                    text: "One"
-                }
-            ];
+			this.aItems1 = [
+				{
+					key: "three",
+					text: "Three"
+				},
+				{
+					key: "two",
+					text: "Two"
+				},
+				{
+					key: "one",
+					text: "One"
+				}
+			];
 
-            this.oJSONModel = new JSONModel({
-                list: [
-                    {
-                        selected: "one",
-                        items: this.aItems0
-                    },
-                    {
-                        selected: "three",
-                        items: this.aItems1
-                    }
-                ]
-            });
+			this.oJSONModel = new JSONModel({
+				list: [
+					{
+						selected: "one",
+						items: this.aItems0
+					},
+					{
+						selected: "three",
+						items: this.aItems1
+					}
+				]
+			});
 
-            this._oModelList = new sap.ui.test.TestList({
-                models: this.oJSONModel,
-                selects: {
-                    path: "/list",
-                    template: new sap.ui.test.TestSelect({
-                        selected: "{selected}",
-                        items: {
-                            path: "items",
-                            template: new sap.ui.test.TestItem({
-                                key: "{key}",
-                                text: "{text}"
-                            })
-                        }
-                    })
-                }
-            });
-            this.oMOModel = new sap.ui.model.base.ManagedObjectModel(this._oModelList);
+			this._oModelList = new sap.ui.test.TestList({
+				models: this.oJSONModel,
+				selects: {
+					path: "/list",
+					template: new sap.ui.test.TestSelect({
+						selected: "{selected}",
+						items: {
+							path: "items",
+							template: new sap.ui.test.TestItem({
+								key: "{key}",
+								text: "{text}"
+							})
+						}
+					})
+				}
+			});
+			this.oMOModel = new sap.ui.model.base.ManagedObjectModel(this._oModelList);
 
-            this._oBoundList = new sap.m.List({
-                models: this.oMOModel,
-                items: {
-                    path: "/selects",
-                    template: new sap.m.CustomListItem({
-                        content: [
-                            new sap.m.Select({
-                                selectedKey: "{selected}",
-                                items: {
-                                    path: "items",
-                                    template: new sap.ui.core.Item({
-                                        key: "{key}",
-                                        text: "{text}"
-                                    })
-                                }
-                            })
-                        ]
-                    })
-                }
-            });
-        },
-        afterEach: function() {
-            this._oBoundList.destroy();
-            this._oBoundList = null;
-            this._oModelList.destroy();
-            this._oModelList = null;
-        }
-    });
+			this._oBoundList = new sap.m.List({
+				models: this.oMOModel,
+				items: {
+					path: "/selects",
+					template: new sap.m.CustomListItem({
+						content: [
+							new sap.m.Select({
+								selectedKey: "{selected}",
+								items: {
+									path: "items",
+									template: new sap.ui.core.Item({
+										key: "{key}",
+										text: "{text}"
+									})
+								}
+							})
+						]
+					})
+				}
+			});
+		},
+		afterEach: function () {
+			this._oBoundList.destroy();
+			this._oBoundList = null;
+			this._oModelList.destroy();
+			this._oModelList = null;
+		}
+	});
 
-    QUnit.test("Swap aggregation", function(assert) {
-        var aSelect = this._oBoundList.getItems();
-        var oSelect0 = aSelect[0].getContent()[0];
-        var oSelect1 = aSelect[1].getContent()[0];
+	QUnit.test("Swap aggregation", function (assert) {
+		var aSelect = this._oBoundList.getItems();
+		var oSelect0 = aSelect[0].getContent()[0];
+		var oSelect1 = aSelect[1].getContent()[0];
 
-        function itemsToArray(oSelect) {
-            var aItems = oSelect.getItems(), aArray = [];
+		function itemsToArray(oSelect) {
+			var aItems = oSelect.getItems(), aArray = [];
 
-            for (var i= 0; i < aItems.length; i++) {
-              aArray.push( {
-                 key: aItems[i].getKey(),
-                  text: aItems[i].getText()
-              });
-            };
+			for (var i = 0; i < aItems.length; i++) {
+				aArray.push({
+					key: aItems[i].getKey(),
+					text: aItems[i].getText()
+				});
+			}
+			;
 
-            return aArray;
-        }
+			return aArray;
+		}
 
 
-        assert.equal(oSelect0.getSelectedKey(), "one", "The first entry is selected that is 'one'");
-        assert.deepEqual(itemsToArray(oSelect0), this.aItems0, "The items are the items of the first list entry");
+		assert.equal(oSelect0.getSelectedKey(), "one", "The first entry is selected that is 'one'");
+		assert.deepEqual(itemsToArray(oSelect0), this.aItems0, "The items are the items of the first list entry");
 
-        assert.equal(oSelect1.getSelectedKey(), "three", "The first entry is selected that is 'three'");
-        assert.deepEqual(itemsToArray(oSelect1), this.aItems1, "The items are the items of the second list entry");
+		assert.equal(oSelect1.getSelectedKey(), "three", "The first entry is selected that is 'three'");
+		assert.deepEqual(itemsToArray(oSelect1), this.aItems1, "The items are the items of the second list entry");
 
-        //now swap
-        var list = this.oJSONModel.getProperty("/list");
-        this.oJSONModel.setProperty("/list", [
-            list[1], list[0]
-        ]);
+		//now swap
+		var list = this.oJSONModel.getProperty("/list");
+		this.oJSONModel.setProperty("/list", [
+			list[1], list[0]
+		]);
 
-        assert.equal(oSelect0.getSelectedKey(), "three", "The first entry is selected that is 'one'");
-        assert.deepEqual(itemsToArray(oSelect0), this.aItems1, "The items are the items of the second list entry");
+		assert.equal(oSelect0.getSelectedKey(), "three", "The first entry is selected that is 'one'");
+		assert.deepEqual(itemsToArray(oSelect0), this.aItems1, "The items are the items of the second list entry");
 
-        assert.equal(oSelect1.getSelectedKey(), "one", "The first entry is selected that is 'three'");
-        assert.deepEqual(itemsToArray(oSelect1), this.aItems0, "The items are the items of the first list entry");
+		assert.equal(oSelect1.getSelectedKey(), "one", "The first entry is selected that is 'three'");
+		assert.deepEqual(itemsToArray(oSelect1), this.aItems0, "The items are the items of the first list entry");
 
-    });
+	});
 });
