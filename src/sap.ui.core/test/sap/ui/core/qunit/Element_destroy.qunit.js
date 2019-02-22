@@ -58,7 +58,7 @@ sap.ui.define([
 
 		this.oControl.destroy();
 
-		assert.ok(document.contains(oRootDomRef), "DOM is not removed synchronously after destroy");
+		assert.ok(document.body.contains(oRootDomRef), "DOM is not removed synchronously after destroy");
 		assert.ok(!this.oControl.getDomRef(), "But control DOM ref is not found");
 		assert.ok(oRootDomRef.id != this.oControl.getId(), "Because control DOM id is changed");
 		assert.equal(oRootDomRef.getAttribute("data-sap-ui"), this.oControl.getId(), "data-sap-ui attribute still points to the control id");
@@ -66,7 +66,7 @@ sap.ui.define([
 		assert.equal(oTextDomRef.id.indexOf("sap-ui-destroyed-"), 0, "destroy prefix is added to the sub elements as well");
 
 		this.clock.tick(0);
-		assert.ok(!document.contains(oRootDomRef), "DOM is removed asynchronously");
+		assert.ok(!document.body.contains(oRootDomRef), "DOM is removed asynchronously");
 	});
 
 	QUnit.test("Supressing the invalidation of destroy", function(assert) {
@@ -74,7 +74,7 @@ sap.ui.define([
 
 		this.oControl.destroy(true);
 
-		assert.ok(!document.contains(oRootDomRef), "Control DOM is removed synchronously after destroy");
+		assert.ok(!document.body.contains(oRootDomRef), "Control DOM is removed synchronously after destroy");
 		assert.ok(!this.oControl.getDomRef(), "Control DOM ref is not found");
 	});
 
