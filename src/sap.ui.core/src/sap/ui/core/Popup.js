@@ -649,7 +649,10 @@ sap.ui.define([
 
 		// if the Popup is modal, remove the focus from the current focused element to avoid
 		// the same action being triggered again before the focus is moved into the Popup
-		if (this._bModal && document.activeElement) {
+
+		// The existence of the blur method should be checked because svg elements don't
+		// have blur method in IE 11
+		if (this._bModal && document.activeElement && document.activeElement.blur) {
 			document.activeElement.blur();
 		}
 
