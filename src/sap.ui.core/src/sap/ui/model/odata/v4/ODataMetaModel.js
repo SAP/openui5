@@ -811,12 +811,17 @@ sap.ui.define([
 	 *   entity
 	 * @returns {sap.ui.base.SyncPromise}
 	 *   A promise which is resolved with the canonical path (for example "/EMPLOYEES('1')") in
-	 *   case of success, or rejected with an instance of <code>Error</code> in case of failure
-	 *
+	 *   case of success; it is rejected if the requested metadata cannot be loaded, if the context
+	 *   path does not point to an entity, if the entity is transient, or if required key properties
+	 *   are missing
+^	 *
 	 * @private
 	 */
 	ODataMetaModel.prototype.fetchCanonicalPath = function (oContext) {
 		return this.fetchUpdateData("", oContext).then(function (oResult) {
+			if (!oResult.editUrl) {
+				throw new Error(oContext.getPath() + ": No canonical path for transient entity");
+			}
 			if (oResult.propertyPath) {
 				throw new Error("Context " + oContext.getPath()
 					+ " does not point to an entity. It should be " + oResult.entityPath);
