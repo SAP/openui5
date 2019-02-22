@@ -2115,7 +2115,7 @@ function (
 		assert.ok(!oHeader.$().hasClass("sapFDynamicPageHeaderHidden"), "Header expanded and visible again");
 	});
 
-	QUnit.module("DynamicPage On Title Press when Header height bigger than page height", {
+	QUnit.module("DynamicPage when Header height bigger than page height", {
 		beforeEach: function () {
 			this.oDynamicPage = oFactory.getDynamicPageWithBigHeaderContent();
 		},
@@ -2200,6 +2200,31 @@ function (
 
 		// check position
 		assert.ok(Math.abs(iCollapseButtonBottom - iDynamicPageBottom) <= 1, "CollapseButton is at the bottom of the page, pos: " + iCollapseButtonBottom);
+	});
+
+	QUnit.test("Expand button of snapped header preserved on resize", function (assert) {
+		var oDynamicPage = this.oDynamicPage,
+			oStubCanScroll = this.stub(this.oDynamicPage, "_canSnapHeaderOnScroll", function () {
+				return false;
+			}),
+			oStubHeaderHeight = this.stub(this.oDynamicPage, "_headerBiggerThanAllowedToBeExpandedInTitleArea", function () {
+				return true;
+			}),
+			oMockResizeWidthEvent = {size:{width: 100}};
+
+		// Final setup step: snap header => the expand button should become visible after rendering
+		oDynamicPage.setHeaderExpanded(false);
+
+		oUtil.renderObject(oDynamicPage);
+
+		// Act
+		oDynamicPage._onResize(oMockResizeWidthEvent);
+
+		assert.ok(!oDynamicPage.getTitle()._getExpandButton().$().hasClass('sapUiHidden'), "expand button is visible");
+
+		//cleanup
+		oStubCanScroll.restore();
+		oStubHeaderHeight.restore();
 	});
 
 
