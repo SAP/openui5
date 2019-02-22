@@ -31,21 +31,21 @@ sap.ui.define([
 			sandbox.restore();
 			FakeLrepSessionStorage.deleteChanges();
 		}
-	});
+	}, function() {
+		QUnit.test("when in INITAL status", function(assert) {
+			var aInitalChanges = FakeLrepSessionStorage.getChanges();
 
-	QUnit.test("when in INITAL status", function(assert) {
-		var aInitalChanges = FakeLrepSessionStorage.getChanges();
+			assert.equal(aInitalChanges.length, 0, "there are no inital changes");
+		});
 
-		assert.equal(aInitalChanges.length, 0, "there are no inital changes");
-	});
+		QUnit.test("when I want to prefix change and variant IDs", function(assert) {
+			var sChangeId = "id_1445501120486_25",
+				sPrefixedChangeId = "sap.ui.fl.change.id_1445501120486_25",
+				sPrefixedVariantId = "sap.ui.fl.variant.id_1445501120486_25";
 
-	QUnit.test("when I want to prefix change and variant IDs", function(assert) {
-		var sChangeId = "id_1445501120486_25",
-			sPrefixedChangeId = "sap.ui.fl.change.id_1445501120486_25",
-			sPrefixedVariantId = "sap.ui.fl.variant.id_1445501120486_25";
-
-		assert.equal(FakeLrepSessionStorage.createChangeKey(sChangeId), sPrefixedChangeId, "the change ID was prefixed");
-		assert.equal(FakeLrepSessionStorage.createVariantKey(sChangeId), sPrefixedVariantId, "the variant ID was prefixed");
+			assert.equal(FakeLrepSessionStorage.createChangeKey(sChangeId), sPrefixedChangeId, "the change ID was prefixed");
+			assert.equal(FakeLrepSessionStorage.createVariantKey(sChangeId), sPrefixedVariantId, "the variant ID was prefixed");
+		});
 	});
 
 	QUnit.module("Given I have SAP Lrep local changes...", {
@@ -60,72 +60,94 @@ sap.ui.define([
 			sandbox.restore();
 			FakeLrepSessionStorage.deleteChanges();
 		}
+	}, function() {
+		QUnit.test("when I save and receive changes", function(assert) {
+			var oParsedChange1FromGetChange;
+			oParsedChange1FromGetChange = FakeLrepSessionStorage.getChange(oTestData.sChangeId1);
+
+			assert.equal(FakeLrepSessionStorage.getNumChanges(), 3, "then after saving there should be 3 changes");
+			assert.deepEqual(oTestData.oChange1, oParsedChange1FromGetChange, "then the first saved and retrieved change should be the same");
+			assert.equal(FakeLrepSessionStorage.getChanges().length, 3, "then the received change array has 3 entries");
+		});
+
+		QUnit.test("when I delete a specific change", function(assert) {
+			FakeLrepSessionStorage.deleteChange(oTestData.sChangeId1);
+
+			assert.equal(FakeLrepSessionStorage.getNumChanges(), 2, "then after deleting 1 change, there schould be 2 changes");
+			assert.equal(FakeLrepSessionStorage.getChange(oTestData.sChangeId1), undefined, "then if I try to get the deleted change it schould be undefined");
+		});
+
+		QUnit.test("when I delete a specific variant change", function(assert) {
+			FakeLrepSessionStorage.deleteChange(oTestData.sVariantId1);
+
+			assert.equal(FakeLrepSessionStorage.getNumChanges(), 2, "then after deleting 1 variant change, there schould be 2 changes");
+			assert.equal(FakeLrepSessionStorage.getChange(oTestData.sVariantId1), undefined, "then if I try to get the deleted change it schould be undefined");
+		});
+
+		QUnit.test("when I delete all changes", function(assert) {
+			FakeLrepSessionStorage.deleteChanges();
+
+			assert.equal(FakeLrepSessionStorage.getNumChanges(), 0, "then after deleting everything there schould be 0 changes");
+			assert.equal(FakeLrepSessionStorage.getChanges().length, 0, "then after deleting everything the changes array should contain 0 changes");
+		});
+
+		QUnit.test("when I attach modify callbacks", function(assert) {
+			assert.expect(3);
+
+			var fnDeleteCallback = function(){
+				assert.ok(true,"Callback called after delete");
+			};
+			var fnSaveCallback = function(){
+				assert.ok(true,"Callback called after save changes");
+			};
+
+			FakeLrepSessionStorage.attachModifyCallback(fnDeleteCallback);
+			FakeLrepSessionStorage.deleteChanges();
+			FakeLrepSessionStorage.deleteChange();
+
+			FakeLrepSessionStorage.attachModifyCallback(fnSaveCallback);
+			FakeLrepSessionStorage.detachModifyCallback(fnDeleteCallback);
+			FakeLrepSessionStorage.saveChange(oTestData.sChangeId1, oTestData.oChange1);
+
+			FakeLrepSessionStorage.detachModifyCallback(fnSaveCallback);
+		});
+
+		QUnit.test("when I call saveChange for a change", function(assert) {
+			sandbox.stub(FakeLrepSessionStorage, "_callModifyCallbacks");
+			var oCreateChangeKeySpy = sandbox.stub(FakeLrepSessionStorage, "createChangeKey");
+			FakeLrepSessionStorage.saveChange(oTestData.sChangeId1, oTestData.oChange1);
+			assert.ok(oCreateChangeKeySpy.calledOnce, "then createChangeKey called once");
+		});
+
+		QUnit.test("when I call saveChange for a variant", function(assert) {
+			sandbox.stub(FakeLrepSessionStorage, "_callModifyCallbacks");
+			var oCreateVariantKeySpy = sandbox.stub(FakeLrepSessionStorage, "createVariantKey");
+			FakeLrepSessionStorage.saveChange(oTestData.sVariantId1, oTestData.oVariant1);
+			assert.ok(oCreateVariantKeySpy.calledOnce, "then createVariantKey called once");
+		});
 	});
 
-	QUnit.test("when I save and receive changes", function(assert) {
-
-		var oParsedChange1FromGetChange;
-		oParsedChange1FromGetChange = FakeLrepSessionStorage.getChange(oTestData.sChangeId1);
-
-		assert.equal(FakeLrepSessionStorage.getNumChanges(), 3, "then after saving there should be 3 changes");
-		assert.deepEqual(oTestData.oChange1, oParsedChange1FromGetChange, "then the first saved and retrieved change should be the same");
-		assert.equal(FakeLrepSessionStorage.getChanges().length, 3, "then the received change array has 3 entries");
-	});
-
-	QUnit.test("when I delete a specific change", function(assert) {
-		FakeLrepSessionStorage.deleteChange(oTestData.sChangeId1);
-
-		assert.equal(FakeLrepSessionStorage.getNumChanges(), 2, "then after deleting 1 change, there schould be 2 changes");
-		assert.equal(FakeLrepSessionStorage.getChange(oTestData.sChangeId1), undefined, "then if I try to get the deleted change it schould be undefined");
-	});
-
-	QUnit.test("when I delete a specific variant change", function(assert) {
-		FakeLrepSessionStorage.deleteChange(oTestData.sVariantId1);
-
-		assert.equal(FakeLrepSessionStorage.getNumChanges(), 2, "then after deleting 1 variant change, there schould be 2 changes");
-		assert.equal(FakeLrepSessionStorage.getChange(oTestData.sVariantId1), undefined, "then if I try to get the deleted change it schould be undefined");
-	});
-
-	QUnit.test("when I delete all changes", function(assert) {
-		FakeLrepSessionStorage.deleteChanges();
-
-		assert.equal(FakeLrepSessionStorage.getNumChanges(), 0, "then after deleting everything there schould be 0 changes");
-		assert.equal(FakeLrepSessionStorage.getChanges().length, 0, "then after deleting everything the changes array should contain 0 changes");
-	});
-
-	QUnit.test("when I attach modify callbacks", function(assert) {
-		assert.expect(3);
-
-		var fnDeleteCallback = function(){
-			assert.ok(true,"Callback called after delete");
-		};
-		var fnSaveCallback = function(){
-			assert.ok(true,"Callback called after save changes");
-		};
-
-		FakeLrepSessionStorage.attachModifyCallback(fnDeleteCallback);
-		FakeLrepSessionStorage.deleteChanges();
-		FakeLrepSessionStorage.deleteChange();
-
-		FakeLrepSessionStorage.attachModifyCallback(fnSaveCallback);
-		FakeLrepSessionStorage.detachModifyCallback(fnDeleteCallback);
-		FakeLrepSessionStorage.saveChange(oTestData.sChangeId1, oTestData.oChange1);
-
-		FakeLrepSessionStorage.detachModifyCallback(fnSaveCallback);
-	});
-
-	QUnit.test("when I call saveChange for a change", function(assert) {
-		sandbox.stub(FakeLrepSessionStorage, "_callModifyCallbacks");
-		var oCreateChangeKeySpy = sandbox.stub(FakeLrepSessionStorage, "createChangeKey");
-		FakeLrepSessionStorage.saveChange(oTestData.sChangeId1, oTestData.oChange1);
-		assert.ok(oCreateChangeKeySpy.calledOnce, "then createChangeKey called once");
-	});
-
-	QUnit.test("when I call saveChange for a variant", function(assert) {
-		sandbox.stub(FakeLrepSessionStorage, "_callModifyCallbacks");
-		var oCreateVariantKeySpy = sandbox.stub(FakeLrepSessionStorage, "createVariantKey");
-		FakeLrepSessionStorage.saveChange(oTestData.sVariantId1, oTestData.oVariant1);
-		assert.ok(oCreateVariantKeySpy.calledOnce, "then createVariantKey called once");
+	QUnit.module("setStorage", {
+		beforeEach: function() {
+			FakeLrepSessionStorage.deleteChanges();
+		},
+		afterEach: function() {
+			FakeLrepSessionStorage.deleteChanges();
+			// reset to the normal sessionStorage
+			FakeLrepSessionStorage.setStorage(window.sessionStorage);
+		}
+	}, function() {
+		QUnit.test("when I call setStorage with a mock Storage", function(assert) {
+			assert.expect(1);
+			var oMockStorage = {
+				getItem: function() {
+					assert.ok(true, "the new storage is used");
+					return '{"change":"a"}';
+				}
+			};
+			FakeLrepSessionStorage.setStorage(oMockStorage);
+			FakeLrepSessionStorage.getChange("change");
+		});
 	});
 
 	QUnit.done(function () {

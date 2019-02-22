@@ -26,13 +26,21 @@ sap.ui.define(function () {
 		var FakeLrepStorage = {};
 
 		/**
+		 * Overwrites the Storage that is currently used.
+		 *
+		 * @param {Storage} oNewStorage The new storage to be used (e.g. window.sessionStorage)
+		 */
+		FakeLrepStorage.setStorage = function(oNewStorage) {
+			oStorage = oNewStorage;
+		};
+
+		/**
 		 * Creates the  Lrep change key
 		 * @public
 		 * @param  {String} sId - the Lrep change id
 		 * @returns {String} the prefixed id
 		 */
 		FakeLrepStorage.createChangeKey = function(sId) {
-
 			if (sId) {
 				return FL_LREP_CHANGE_KEY + "." + sId;
 			}
@@ -45,7 +53,6 @@ sap.ui.define(function () {
 		 * @returns {String} the prefixed id
 		 */
 		FakeLrepStorage.createVariantKey = function(sId) {
-
 			if (sId) {
 				return FL_LREP_VARIANT_KEY + "." + sId;
 			}
@@ -57,9 +64,7 @@ sap.ui.define(function () {
 		 * @param {function} fnPredicate - the function to apply for each  cahnge
 		 */
 		FakeLrepStorage.forEachLrepChangeInLocalStorage = function(fnPredicate) {
-
 			for (var sKey in oStorage) {
-
 				if (sKey.includes(FL_LREP_CHANGE_KEY) || sKey.includes(FL_LREP_VARIANT_KEY)) {
 					fnPredicate(sKey);
 				}
@@ -73,9 +78,7 @@ sap.ui.define(function () {
 		 * @returns {Object} the specific change
 		 */
 		FakeLrepStorage.getChange = function(sId) {
-
 			if (sId) {
-
 				var sChange = oStorage.getItem(this.createChangeKey(sId));
 				if (!sChange) {
 					sChange = oStorage.getItem(this.createVariantKey(sId));
@@ -89,12 +92,10 @@ sap.ui.define(function () {
 		 * @returns {Object[]} all local  changes
 		 */
 		FakeLrepStorage.getChanges = function() {
-
 			var aChanges = [],
 				oChange;
 
 			this.forEachLrepChangeInLocalStorage(function(sKey) {
-
 				oChange = JSON.parse(oStorage[sKey]);
 				aChanges.push(oChange);
 			});
@@ -107,7 +108,6 @@ sap.ui.define(function () {
 		 * @returns {Number} the amout of local  Lrep changes
 		 */
 		FakeLrepStorage.getNumChanges = function() {
-
 			var iChanges = 0;
 
 			this.forEachLrepChangeInLocalStorage(function(sKey) {
@@ -149,7 +149,6 @@ sap.ui.define(function () {
 		 * @param  {String} sId - the Lrep change id
 		 */
 		FakeLrepStorage.deleteChange = function(sId) {
-
 			if (sId) {
 				oStorage.removeItem(this.createChangeKey(sId));
 				oStorage.removeItem(this.createVariantKey(sId));
@@ -163,7 +162,6 @@ sap.ui.define(function () {
 		 * @public
 		 */
 		FakeLrepStorage.deleteChanges = function() {
-
 			this.forEachLrepChangeInLocalStorage(function(sKey) {
 				oStorage.removeItem(sKey);
 			});
@@ -180,14 +178,12 @@ sap.ui.define(function () {
 			var sChangeKey, sChange;
 
 			if (sId && oChange) {
-
 				if (oChange.fileType === "ctrl_variant" && oChange.variantManagementReference) {
 					sChangeKey = this.createVariantKey(sId);
 				} else {
 					sChangeKey = this.createChangeKey(sId);
 				}
 				sChange = JSON.stringify(oChange);
-
 				oStorage.setItem(sChangeKey, sChange);
 			}
 			this._callModifyCallbacks("save");
@@ -195,6 +191,5 @@ sap.ui.define(function () {
 
 		return FakeLrepStorage;
 	};
-
 
 }, /* bExport= */ true);
