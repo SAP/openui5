@@ -6,10 +6,13 @@
  * Initialization Code and shared classes of library sap.ui.dt.
  */
 sap.ui.define([
+	"sap/ui/base/ManagedObjectMetadata",
 	"sap/ui/dt/SelectionMode",
-	'sap/ui/core/library'
+	"sap/ui/core/library"
 ],
-function () {
+function (
+	ManagedObjectMetadata
+) {
 
 	"use strict";
 
@@ -35,6 +38,11 @@ function () {
 		interfaces: [],
 		controls: [],
 		elements: []
+	});
+
+	ManagedObjectMetadata.setDesignTimeDefaultMapping({
+		"not-adaptable": "sap/ui/dt/designtime/notAdaptable.designtime",
+		"not-removable": "sap/ui/dt/designtime/notRemovable.designtime"
 	});
 
 	return sap.ui.dt;

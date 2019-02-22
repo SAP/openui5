@@ -133,12 +133,8 @@ function(
 				}
 			};
 
-			this.oDTForNotAdaptable = {
-				metaProp1: "1-notAdaptable"
-			};
-
-			this.oDTForNotRemovable = {
-				metaProp2: "2-notRemovable"
+			this.oDTForPredefinedDefaultDT = {
+				metaProp2: "2-defaultDT"
 			};
 
 			// stub the DesignTime require calls (make sure the sap.ui.require callback is called asynchronously)
@@ -149,8 +145,7 @@ function(
 			this.oRequireStub.withArgs(["sap/test/DTManagedObjectChild4.designtime"]).callsArgWithAsync(1, this.oDTForManagedObjectModule);
 			this.oRequireStub.withArgs(["sap/test/instanceSpecific.designtime"]).callsArgWithAsync(1, this.oDTForInstance);
 			this.oRequireStub.withArgs(["sap/test/otherInstanceSpecific.designtime"]).callsArgWithAsync(1, this.oDTForOtherInstance);
-			this.oRequireStub.withArgs(["sap/ui/dt/defaultDesigntime/notAdaptable.designtime"]).callsArgWithAsync(1, this.oDTForNotAdaptable);
-			this.oRequireStub.withArgs(["sap/ui/dt/defaultDesigntime/notRemovable.designtime"]).callsArgWithAsync(1, this.oDTForNotRemovable);
+			this.oRequireStub.withArgs(["sap/ui/dt/defaultDesigntime/defaultDT.designtime"]).callsArgWithAsync(1, this.oDTForPredefinedDefaultDT);
 
 			this.oInstanceWithoutSpecificDTMetadata = new Element();
 			this.oInstanceWithSpecificDTMetadata = new Element({
@@ -173,22 +168,12 @@ function(
 					}
 				})]
 			});
-			this.oInstanceWithSpecificDTMetadataNotAdaptable = new Element({
+			this.oInstanceWithPredefinedDefaultDTMetadata = new Element({
 				customData : [new CustomData({
 					key : "sap-ui-custom-settings",
 					value : {
 						"sap.ui.dt" : {
-							designtime : "not-adaptable"
-						}
-					}
-				})]
-			});
-			this.oInstanceWithSpecificDTMetadataNotRemovable = new Element({
-				customData : [new CustomData({
-					key : "sap-ui-custom-settings",
-					value : {
-						"sap.ui.dt" : {
-							designtime : "not-removable"
+							designtime : "defaultDT"
 						}
 					}
 				})]
@@ -224,8 +209,7 @@ function(
 			this.oInstanceWithoutSpecificDTMetadata.destroy();
 			this.oInstanceWithSpecificDTMetadata.destroy();
 			this.oOtherInstanceWithSpecificDTMetadata.destroy();
-			this.oInstanceWithSpecificDTMetadataNotAdaptable.destroy();
-			this.oInstanceWithSpecificDTMetadataNotRemovable.destroy();
+			this.oInstanceWithPredefinedDefaultDTMetadata.destroy();
 
 			this.oRequireStub.restore();
 		}
@@ -375,26 +359,14 @@ function(
 			});
 		});
 
-		QUnit.test("loadDesignTime - with inheritance and instance that has specific metadata 'not-adaptable'", function(assert) {
-			return DTManagedObjectModule.getMetadata().loadDesignTime(this.oInstanceWithSpecificDTMetadataNotAdaptable).then(function(oDesignTime) {
-				assert.strictEqual(oDesignTime.module, "module", "DesignTime data was inherited");
-				assert.strictEqual(oDesignTime.metaProp1, "1-notAdaptable", "DesignTime data was overwritten");
-				assert.strictEqual(oDesignTime.metaProp2, "2-overwritten", "DesignTime data was inherited");
-				assert.strictEqual(oDesignTime.metaProp3, "3", "DesignTime data was inherited");
-				assert.strictEqual(oDesignTime.metaProp4, "4", "DesignTime data was inherited");
-				assert.strictEqual(oDesignTime.metaPropDeep.metaPropDeep1, "deep1", "DesignTime data was inherited");
-				assert.strictEqual(oDesignTime.metaPropDeep.metaPropDeep2, "deep2", "DesignTime data was inherited");
-				assert.strictEqual(oDesignTime.metaPropDeep.metaPropDeep3, "deep3", "DesignTime data was inherited");
-				assert.strictEqual(oDesignTime.templates.create, null, "create template is not inherited");
-				assert.strictEqual(oDesignTime.designtimeModule, "sap/test/DTManagedObjectChild4.designtime", "DesignTime module path defined");
+		QUnit.test("loadDesignTime - with inheritance and instance that has specific metadata defined by designtime default mapping", function(assert) {
+			ManagedObjectMetadata.setDesignTimeDefaultMapping({
+				"defaultDT": "sap/ui/dt/defaultDesigntime/defaultDT.designtime"
 			});
-		});
-
-		QUnit.test("loadDesignTime - with inheritance and instance that has specific metadata 'not-removable'", function(assert) {
-			return DTManagedObjectModule.getMetadata().loadDesignTime(this.oInstanceWithSpecificDTMetadataNotRemovable).then(function(oDesignTime) {
+			return DTManagedObjectModule.getMetadata().loadDesignTime(this.oInstanceWithPredefinedDefaultDTMetadata).then(function(oDesignTime) {
 				assert.strictEqual(oDesignTime.module, "module", "DesignTime data was inherited");
 				assert.strictEqual(oDesignTime.metaProp1, "1", "DesignTime data was inherited");
-				assert.strictEqual(oDesignTime.metaProp2, "2-notRemovable", "DesignTime data was overwritten");
+				assert.strictEqual(oDesignTime.metaProp2, "2-defaultDT", "DesignTime data was overwritten");
 				assert.strictEqual(oDesignTime.metaProp3, "3", "DesignTime data was inherited");
 				assert.strictEqual(oDesignTime.metaProp4, "4", "DesignTime data was inherited");
 				assert.strictEqual(oDesignTime.metaPropDeep.metaPropDeep1, "deep1", "DesignTime data was inherited");

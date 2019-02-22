@@ -5,9 +5,7 @@
 		   xmlns:smartLink="sap.ui.comp.navpopover"
 		   xmlns:html="http://www.w3.org/1999/xhtml"
 		   xmlns:sap.ui.layout="sap.ui.layout"
-		   xmlns:sap.ui.rta="sap.ui.rta"
 		   xmlns:sap.ui.dt="sap.ui.dt"
-		   xmlns:sap.ui.fl="sap.ui.fl"
 		   xmlns:app="http://schemas.sap.com/sapui5/extension/sap.ui.core.CustomData/1"
 		   controllerName="sap.ui.rta.test.ComplexTest">
 
@@ -135,6 +133,12 @@
 						</smartForm:GroupElement>
 					</smartForm:Group>
 					<smartForm:Group label="Dates" id="MainFormExpandable.Dates" expandable="true">
+						<smartForm:GroupElement label="Not Adaptable" id="Dates.NotAdaptable" sap.ui.dt:designtime="not-adaptable">
+							<Input value="My field can't be renamed or removed" id="NotAdaptable" />
+						</smartForm:GroupElement>
+						<smartForm:GroupElement label="Not Removable" id="Dates.NotRemovable" sap.ui.dt:designtime="not-removable">
+							<Input value="My field can't be removed" id="NotRemovable" />
+						</smartForm:GroupElement>
 						<smartForm:GroupElement label="Two-Bound-Fields" id="MainFormExpandable.GeneralLedgerDocument.BoundButton35" >
 							<Button text="{PostingDate}"></Button>
 							<TextArea value="{CreationDate}"></TextArea>
