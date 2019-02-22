@@ -45,7 +45,11 @@ function(
 		},
 		getModel: function () {}
 	};
-	sinon.stub(Utils, "_getAppComponentForComponent").returns(oMockedAppComponent);
+	var oGetAppComponentForControlStub = sinon.stub(Utils, "getAppComponentForControl").returns(oMockedAppComponent);
+
+	QUnit.done(function () {
+		oGetAppComponentForControlStub.restore();
+	});
 
 	QUnit.module("Given an AddODataProperty change with a valid entry in the change registry,", {
 		beforeEach : function () {

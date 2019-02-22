@@ -658,7 +658,7 @@ function(
 		beforeEach : function(assert) {
 			FakeLrepSessionStorage.deleteChanges();
 			assert.equal(FakeLrepSessionStorage.getNumChanges(), 0, "Local storage based LREP is empty");
-			sandbox.stub(Utils, "_getAppComponentForComponent").returns(oComp);
+			sandbox.stub(Utils, "getAppComponentForControl").returns(oComp);
 
 			// Create the controls
 			this.oGroupElement1 = new GroupElement({id : oComp.createId("element1")});

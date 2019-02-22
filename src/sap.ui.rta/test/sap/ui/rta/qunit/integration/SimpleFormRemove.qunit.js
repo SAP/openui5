@@ -41,7 +41,7 @@ function(
 			beforeEach : function(assert) {
 
 				oComponent = new UIComponent();
-				sandbox.stub(Utils, "_getAppComponentForComponent").returns(oComponent);
+				sandbox.stub(Utils, "getAppComponentForControl").returns(oComponent);
 
 				var done = assert.async();
 

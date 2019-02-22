@@ -64,7 +64,11 @@ function (
 		getModel: function () {}
 	};
 
-	sinon.stub(Utils, "_getAppComponentForComponent").returns(oMockedAppComponent);
+	var oGetAppComponentForControlStub = sinon.stub(Utils, "getAppComponentForControl").returns(oMockedAppComponent);
+
+	QUnit.done(function () {
+		oGetAppComponentForControlStub.restore();
+	});
 
 	var sandbox = sinon.sandbox.create();
 	var fnSetOverlayDesigntimeMetadata = function(oOverlay, oDesignTimeMetadata) {

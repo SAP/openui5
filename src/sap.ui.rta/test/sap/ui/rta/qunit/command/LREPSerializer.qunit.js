@@ -11,6 +11,7 @@ sap.ui.define([
 	"qunit/RtaQunitUtils",
 	"sap/ui/fl/FlexControllerFactory",
 	"sap/ui/fl/FlexController",
+	"sap/ui/fl/Utils",
 	"sap/ui/fl/variants/VariantModel",
 	"sap/ui/fl/variants/VariantManagement",
 	"sap/m/Input",
@@ -27,6 +28,7 @@ sap.ui.define([
 	RtaQunitUtils,
 	FlexControllerFactory,
 	FlexController,
+	Utils,
 	VariantModel,
 	VariantManagement,
 	Input,
@@ -68,7 +70,11 @@ sap.ui.define([
 		},
 		getModel: function () {return oModel;} // eslint-disable-line no-use-before-define
 	};
-	sinon.stub(sap.ui.fl.Utils, "_getAppComponentForComponent").returns(oMockedAppComponent);
+	var oGetAppComponentForControlStub = sinon.stub(Utils, "getAppComponentForControl").returns(oMockedAppComponent);
+
+	QUnit.done(function () {
+		oGetAppComponentForControlStub.restore();
+	});
 
 	FakeLrepConnectorSessionStorage.enableFakeConnector();
 
