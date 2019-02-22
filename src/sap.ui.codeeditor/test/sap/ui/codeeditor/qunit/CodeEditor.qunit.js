@@ -1,4 +1,4 @@
-/*global QUnit*/
+/* global QUnit, sinon */
 
 sap.ui.define([
 	'sap/ui/codeeditor/CodeEditor',
@@ -77,5 +77,22 @@ sap.ui.define([
 
 			// ASSERT
 			assert.strictEqual(this.oCodeEditor._oEditor.getReadOnly(), true, "When code editor is not editable the ACE editor is read-only");
+		});
+
+		QUnit.test("Readonly change event", function (assert) {
+
+			// Arrange
+			var oSpy = sinon.spy();
+			var oSpy2 = sinon.spy();
+			this.oCodeEditor.setEditable(false);
+			this.oCodeEditor.attachLiveChange(oSpy);
+			this.oCodeEditor.attachChange(oSpy2);
+
+			// Act
+			this.oCodeEditor.setValue("somevalue");
+
+			// Assert
+			assert.ok(oSpy.notCalled, "Should not fire liveChange event when readonly.");
+			assert.ok(oSpy2.notCalled, "Should not fire change event when readonly.");
 		});
 });
