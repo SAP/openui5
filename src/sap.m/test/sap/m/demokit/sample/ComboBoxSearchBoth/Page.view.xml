@@ -13,7 +13,6 @@
 					filterSecondaryValues= "true"
 					value="{/comboBoxValue}"
 					selectedKey="{/comboBoxKey}"
-					width="500px"
 					items="{
 						path: '/CountriesCollection',
 						sorter: { path: 'text' }
