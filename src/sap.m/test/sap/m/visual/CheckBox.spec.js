@@ -102,4 +102,9 @@ describe("sap.m.CheckBox", function() {
 		expect(takeScreenshot(element(by.id('cb_in_toolbar')))).toLookAs('disabled_in_toolbar');
 	});
 
+	// verify focused checkBox in a simple form has visible focus outline
+	it('should click on the checkbox in the simple form', function() {
+		element(by.id('cb_in_a_form')).click();
+		expect(takeScreenshot(element(by.id('sf_with_checkbox')))).toLookAs('focused_in_simple_form');
+	});
 });
