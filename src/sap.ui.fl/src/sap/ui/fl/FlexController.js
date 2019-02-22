@@ -151,7 +151,11 @@ sap.ui.define([
 		oChangeSpecificData.context = aCurrentDesignTimeContext.length === 1 ? aCurrentDesignTimeContext[0] : "";
 
 		// fallback in case no application descriptor is available (e.g. during unit testing)
-		oChangeSpecificData.validAppVersions = this._getValidAppVersions(oChangeSpecificData);
+		oChangeSpecificData.validAppVersions = Utils.getValidAppVersions({
+			appVersion: this.getAppVersion(),
+			developerMode: oChangeSpecificData.developerMode,
+			scenario: oChangeSpecificData.scenario
+		});
 
 		oChangeFileContent = Change.createInitialFileContent(oChangeSpecificData);
 		oChange = new Change(oChangeFileContent);
@@ -244,28 +248,13 @@ sap.ui.define([
 		oVariantSpecificData.content.packageName = "$TMP"; // first a flex change is always local, until all changes of a component are made transportable
 
 		// fallback in case no application descriptor is available (e.g. during unit testing)
-		oVariantSpecificData.content.validAppVersions = this._getValidAppVersions(oVariantSpecificData);
+		oVariantSpecificData.content.validAppVersions = Utils.getValidAppVersions(
+			this.getAppVersion(), oVariantSpecificData.developerMode, oVariantSpecificData.scenario);
 
 		oVariantFileContent = Variant.createInitialFileContent(oVariantSpecificData);
 		oVariant = new Variant(oVariantFileContent);
 
 		return oVariant;
-	};
-
-	FlexController.prototype._getValidAppVersions = function(oChangeSpecificData) {
-		var sAppVersion = this.getAppVersion();
-		var oValidAppVersions = {
-			creation: sAppVersion,
-			from: sAppVersion
-		};
-		if (sAppVersion &&
-			oChangeSpecificData.developerMode &&
-			oChangeSpecificData.scenario !== sap.ui.fl.Scenario.AdaptationProject &&
-			oChangeSpecificData.scenario !== sap.ui.fl.Scenario.AppVariant
-		) {
-			oValidAppVersions.to = sAppVersion;
-		}
-		return oValidAppVersions;
 	};
 
 	/**

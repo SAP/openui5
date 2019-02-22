@@ -998,21 +998,21 @@ function(
 			switch (sScenario) {
 				case sap.ui.fl.Scenario.VersionedAppVariant:
 					if (!sProjectId) {
-						oError.message += "in a versioned app variant scenario you additionaly need a project ID";
+						oError.message += "in a versioned app variant scenario you additionally need a project ID";
 						throw oError;
 					}
 					sRootNamespace += sBaseId + "/appVariants/" + sProjectId + "/";
 					break;
 				case sap.ui.fl.Scenario.AppVariant:
 					if (!sProjectId) {
-						oError.message += "in an app variant scenario you additionaly need a project ID";
+						oError.message += "in an app variant scenario you additionally need a project ID";
 						throw oError;
 					}
 					sRootNamespace += sBaseId + "/appVariants/" + sProjectId + "/";
 					break;
 				case sap.ui.fl.Scenario.AdaptationProject:
 					if (!sProjectId) {
-						oError.message += "in a adaptation project scenario you additionaly need a project ID";
+						oError.message += "in a adaptation project scenario you additionally need a project ID";
 						throw oError;
 					}
 					sRootNamespace += sBaseId + "/adapt/" + sProjectId + "/";
@@ -1024,6 +1024,44 @@ function(
 			}
 
 			return sRootNamespace;
+		},
+
+
+		/** Generates a ValidAppVersions object for changes and variants; Depending on the parameters passed a 'to' field is included.
+		 *
+		 * @param {map} mPropertyBag
+		 * @param {string} mPropertyBag.appVersion Version to be filled into the validAppVersions object fields
+		 * @param {boolean} mPropertyBag.developerMode Flag if the creation of the object takes place in the developer mode
+		 * @param {sap.ui.fl.Scenario} mPropertyBag.scenario Depending on the scenario a 'to' field must be filled
+		 * @returns {{creation: {string}, from: {string} [,to: {string}]}}
+		 */
+		getValidAppVersions: function (mPropertyBag) {
+			var sAppVersion = mPropertyBag.appVersion;
+			var bDeveloperMode = mPropertyBag.developerMode;
+			var sScenario = mPropertyBag.scenario;
+			var oValidAppVersions = {
+				creation: sAppVersion,
+				from: sAppVersion
+			};
+			if (this._isValidAppVersionToRequired(sAppVersion, bDeveloperMode, sScenario)) {
+				oValidAppVersions.to = sAppVersion;
+			}
+			return oValidAppVersions;
+		},
+
+		/** Determines if a 'to' field is required in a validAppVersions object.
+		 *
+		 * @param sAppVersion
+		 * @param bDeveloperMode
+		 * @param sScenario
+		 * @returns {boolean}
+		 * @private
+		 */
+		_isValidAppVersionToRequired: function (sAppVersion, bDeveloperMode, sScenario) {
+			return !!sAppVersion
+				&& !!bDeveloperMode
+				&& sScenario !== sap.ui.fl.Scenario.AdaptationProject
+				&& sScenario !== sap.ui.fl.Scenario.AppVariant;
 		},
 
 		isApplication: function (oManifest) {
