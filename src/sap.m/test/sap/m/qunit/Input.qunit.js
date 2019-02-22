@@ -8,6 +8,7 @@ sap.ui.define([
 	"sap/ui/events/jquery/EventExtension",
 	"sap/ui/core/Item",
 	"sap/ui/model/json/JSONModel",
+	"sap/ui/model/Sorter",
 	"jquery.sap.keycodes",
 	"sap/ui/core/ListItem",
 	"sap/ui/base/ObjectPool",
@@ -32,6 +33,7 @@ sap.ui.define([
 	EventExtension,
 	Item,
 	JSONModel,
+	Sorter,
 	jQuery,
 	ListItem,
 	ObjectPool,
@@ -3866,6 +3868,136 @@ sap.ui.define([
 
 		this.clock.tick(300);
 		assert.equal(fnFireChangeSpy.callCount , 1 , "Change event should be fired only once");
+	});
+
+	QUnit.module("Suggestions grouping", {
+		beforeEach : function() {
+			var oModel,
+				aData = [
+					{
+						name: "A Item 1", key: "a-item-1", group: "A"
+					}, {
+						name: "A Item 2", key: "a-item-2", group: "A"
+					},{
+						name: "B Item 1", key: "a-item-1", group: "B"
+					},{
+						name: "B Item 2", key: "a-item-2", group: "B"
+					},{
+						name: "Other Item", key: "ab-item-1", group: "A B"
+					}
+				];
+
+			this.oInput = new Input({
+				showSuggestion: true
+			}).placeAt("content");
+
+			oModel = new JSONModel();
+			oModel.setData(aData);
+			this.oInput.setModel(oModel);
+
+
+			this.oInput.bindAggregation("suggestionItems", {
+				path: "/",
+				sorter: [new Sorter('group', false, true)],
+				template: new Item({text: "{name}", key: "{key}"})
+			});
+			sap.ui.getCore().applyChanges();
+
+		},
+		afterEach : function() {
+			this.oInput.destroy();
+		}}
+	);
+
+	QUnit.test("Group results", function(assert){
+		var aVisibleItems;
+
+		this.oInput.onfocusin(); // for some reason this is not triggered when calling focus via API
+		this.oInput._$input.focus().val("A").trigger("input");
+		this.clock.tick(300);
+
+		aVisibleItems = this.oInput._oSuggPopover._oList.getItems().filter(function(oItem){
+			return oItem.getVisible();
+		});
+
+		// assert
+		assert.strictEqual(aVisibleItems.length, 3, "The correct number of items is displayed");
+		assert.ok(aVisibleItems[0].isA("sap.m.GroupHeaderListItem"), "A group header is added");
+		assert.strictEqual(aVisibleItems[1].getTitle(), "A Item 1", "The first list item has correct text");
+		assert.strictEqual(aVisibleItems[2].getTitle(), "A Item 2", "The second list item has correct text");
+
+	});
+
+	QUnit.test("addSuggestionItemGroup", function(assert){
+		var sTitle = "Test",
+			oSpy = this.spy(this.oInput, "addAggregation"),
+			oHeader = this.oInput.addSuggestionItemGroup({text: sTitle}, null, false);
+
+		// assert
+		assert.ok(oHeader.isA("sap.ui.core.SeparatorItem"), "A group header is created.");
+		assert.ok(oSpy.calledWith("suggestionItems", oHeader, false), "An item is added to suggestionItems");
+		assert.strictEqual(oHeader.getText(), sTitle, "The group header title is correct.");
+
+		oSpy.restore();
+	});
+
+	QUnit.test("addSuggestionRowGroup", function(assert){
+		var sTitle = "Test",
+			oSpy = this.spy(this.oInput, "addAggregation"),
+			oHeader = this.oInput.addSuggestionRowGroup({text: sTitle}, null, false);
+
+		// assert
+		assert.ok(oHeader.isA("sap.m.GroupHeaderListItem"), "A group header is created.");
+		assert.ok(oSpy.calledWith("suggestionRows", oHeader, false), "An item is added to suggestionItems.");
+		assert.strictEqual(oHeader.getTitle(), sTitle, "The group header title is correct.");
+
+		oSpy.restore();
+	});
+
+	QUnit.test("_configureListItem", function () {
+		var oListItem = new sap.m.GroupHeaderListItem({
+			enabled: true
+		}), oItem = new Item(),
+			oResultItem = this.oInput._configureListItem(oItem, oListItem);
+
+		assert.strictEqual(oListItem._oItem, oItem, "The core item is attached to the header group item.");
+		assert.strictEqual(oListItem.getType(), ListType.Inactive, "The header group item is inactive.");
+
+		// clean up
+		oListItem.destroy();
+		oItem.destroy();
+		oResultItem.destroy();
+	});
+
+	QUnit.test("Keyboard selection of group header", function () {
+		var aVisibleItems, oGroupHeader;
+
+		this.oInput.onfocusin(); // for some reason this is not triggered when calling focus via API
+		this.oInput._$input.focus().val("A").trigger("input");
+		this.clock.tick(300);
+
+		aVisibleItems = this.oInput._oSuggPopover._oList.getItems().filter(function(oItem){
+			return oItem.getVisible();
+		});
+		oGroupHeader = aVisibleItems[0];
+
+		// act
+		sap.ui.test.qunit.triggerKeydown(this.oInput.getDomRef("inner"), jQuery.sap.KeyCodes.ARROW_DOWN);
+		sap.ui.getCore().applyChanges();
+
+		// assert
+		// go to the header group item
+		assert.strictEqual(this.oInput.getValue(), "", "The value is cleared.");
+		assert.ok(oGroupHeader.hasStyleClass("sapMInputFocusedHeaderGroup"), "Styling is applied on the selected group header.");
+
+		// act
+		// go to the next list item
+		sap.ui.test.qunit.triggerKeydown(this.oInput.getDomRef("inner"), jQuery.sap.KeyCodes.ARROW_DOWN);
+		sap.ui.getCore().applyChanges();
+
+		// assert
+		assert.strictEqual(this.oInput.getValue(), aVisibleItems[1].getTitle(), "The value is populated again.");
+		assert.notOk(oGroupHeader.hasStyleClass("sapMInputFocusedHeaderGroup"), "Styling is removed from the unselected group header.");
 	});
 
 	return waitForThemeApplied();
