@@ -95,31 +95,31 @@ sap.ui.define([
 		});
 	});
 
-	QUnit.test("Event beforeItemDeleted is called at proper time and with correct parameters, prevent default applies.", function (assert) {
+	QUnit.test("Event beforeItemRemoved is called at proper time and with correct parameters, prevent default applies.", function (assert) {
 		assert.expect(4);
 		var oItem = this.oUploadSet.getItems()[0];
 
-		this.oUploadSet.attachEventOnce("beforeItemDeleted", function (oEvent) {
-			assert.ok(true, "beforeItemDeleted event should have been called.");
+		this.oUploadSet.attachEventOnce("beforeItemRemoved", function (oEvent) {
+			assert.ok(true, "beforeItemRemoved event should have been called.");
 		});
 		oItem._getDeleteButton().firePress();
 
 		// Close the dialog
 		var oDialog = sap.ui.getCore().byId(this.oUploadSet.getId() + "-deleteDialog");
-		assert.ok(oDialog, "Delete dialog should now be presented.");
+		assert.ok(oDialog, "Remove dialog should now be presented.");
 		oDialog.getButtons()[1].firePress();
 		oDialog.destroy();
 
 		// Now with the prevent default
-		this.oUploadSet.attachEventOnce("beforeItemDeleted", function (oEvent) {
-			assert.ok(true, "beforeItemDeleted event should have been called.");
+		this.oUploadSet.attachEventOnce("beforeItemRemoved", function (oEvent) {
+			assert.ok(true, "beforeItemRemoved event should have been called.");
 			oEvent.preventDefault();
 		});
 		oItem._getDeleteButton().firePress();
 
 		// There should be no dialog
 		oDialog = sap.ui.getCore().byId(this.oUploadSet.getId() + "-deleteDialog");
-		assert.notOk(oDialog, "Delete dialog should not exist at this time.");
+		assert.notOk(oDialog, "Remove dialog should not exist at this time.");
 	});
 
 	QUnit.test("Event beforeItemEdited is called at proper time and with correct parameters, prevent default applies.", function (assert) {

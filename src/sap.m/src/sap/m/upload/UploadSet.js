@@ -4,6 +4,8 @@
 
 sap.ui.define([
 	"sap/ui/core/Control",
+	"sap/ui/core/Icon",
+	"sap/ui/events/KeyCodes",
 	"sap/base/Log",
 	"sap/base/util/deepEqual",
 	"sap/m/library",
@@ -19,8 +21,8 @@ sap.ui.define([
 	"sap/m/upload/UploadSetItem",
 	"sap/m/upload/Uploader",
 	"sap/m/upload/UploadSetRenderer"
-], function (Control, Log, deepEqual, MobileLibrary, Button, Dialog, List, MessageBox, OverflowToolbar, StandardListItem, Text, ToolbarSpacer,
-			 FileUploader, UploadSetItem, Uploader, Renderer) {
+], function (Control, Icon, KeyCodes, Log, deepEqual, MobileLibrary, Button, Dialog, List, MessageBox, OverflowToolbar,
+			 StandardListItem, Text, ToolbarSpacer, FileUploader, UploadSetItem, Uploader, Renderer) {
 	"use strict";
 
 	/**
@@ -28,7 +30,10 @@ sap.ui.define([
 	 *
 	 * @param {string} [sId] id for the new control, generated automatically if no id is given.
 	 * @param {object} [mSettings] Initial settings for the new control.
-	 * @class This control allows you to upload single or multiple files from your devices (desktop, tablet or phone) and attach them to the application.
+	 * @class This control allows you to upload one or more files from your devices (desktop, tablet, or phone)
+	 * and attach them to your application.<br>
+	 * This control builds on the {@link sap.m.UploadCollection} control, providing better handling of headers
+	 * and requests, unified behavior of instant and deferred uploads, as well as improved progress indication.
 	 * @extends sap.ui.core.Control
 	 * @author SAP SE
 	 * @version ${version}
@@ -44,39 +49,48 @@ sap.ui.define([
 			properties: {
 				/**
 				 * Allowed file types for files to be uploaded.
-				 * If empty any file can go.
+				 * <br>If this property is not set, any file can be uploaded.
 				 */
 				fileTypes: {type: "string[]", defaultValue: null},
 				/**
 				 * Maximum length of names of files to be uploaded.
-				 * If <code>null</code> or <code>0</code> any file can go.
+				 * <br>If set to <code>null</code> or <code>0</code>, any files can be uploaded,
+				 * regardless of their names length.
 				 */
 				maxFileNameLength: {type: "int", defaultValue: null},
 				/**
-				 * File size limit in megabytes for files to be uploaded.
-				 * If <code>null</code> or <code>0</code> any file can go.
+				 * Size limit in megabytes for files to be uploaded.
+				 * <br>If set to <code>null</code> or <code>0</code>, files of any size can be uploaded.
 				 */
 				maxFileSize: {type: "float", defaultValue: null},
 				/**
 				 * Allowed media types for files to be uploaded.
-				 * If emtpy any file can go.
+				 * <br>If this property is not set, any file can be uploaded.
 				 */
 				mediaTypes: {type: "string[]", defaultValue: null},
 				/**
-				 * Specifies whether the upload process should be triggered as soon as a file is added.<br>
-				 * If <code>false</code> no upload is triggered when a file is added.
+				 * Defines custom text for the 'No data' text label.
+				 */
+				noDataText: {type: "string", defaultValue: null},
+				/**
+				 * Defines custom text for the 'No data' description label.
+				 */
+				noDataDescription: {type: "string", defaultValue: null},
+				/**
+				 * Defines whether the upload process should be triggered as soon as the file is added.<br>
+				 * If set to <code>false</code>, no upload is triggered when a file is added.
 				 */
 				instantUpload: {type: "boolean", defaultValue: true},
 				/**
-				 * Specifies whether file icons are to be displayed.
+				 * Defines whether file icons should be displayed.
 				 */
 				showIcons: {type: "boolean", defaultValue: true},
 				/**
-				 * Specifies whether termination of an upload process is allowed.
+				 * Defines whether it is allowed to terminate the upload process.
 				 */
 				terminationEnabled: {type: "boolean", defaultValue: true},
 				/**
-				 * Specifies whether any upload action is allowed at all.
+				 * Defines whether the upload action is allowed.
 				 */
 				uploadEnabled: {type: "boolean", defaultValue: true},
 				/**
@@ -87,166 +101,204 @@ sap.ui.define([
 			defaultAggregation: "items",
 			aggregations: {
 				/**
-				 * Items representing files with already completed upload.
+				 * Items representing files that have already been uploaded.
 				 */
 				items: {type: "sap.m.upload.UploadSetItem", multiple: true, singularName: "item"},
 				/**
-				 * Items reporesenting files yet to be uploaded.
+				 * Items representing files yet to be uploaded.
 				 */
 				incompleteItems: {type: "sap.m.upload.UploadSetItem", multiple: true, singularName: "incompleteItem"},
 				/**
-				 * Header fields to be included in header section of any XHR request.
+				 * Header fields to be included in the header section of an XHR request.
 				 */
 				headerFields: {type: "sap.ui.core.Item", multiple: true, singularName: "headerField"},
 				/**
-				 * Main toolbar of the set.
+				 * Main toolbar of the <code>UploadSet</code> control.
 				 */
 				toolbar: {type: "sap.m.OverflowToolbar", multiple: false},
 				/**
-				 * Specifies the uploader to be used. If not redefined, an implicit implementation is used.
+				 * Defines the uploader to be used. If not specified, the default implementation is used.
 				 */
 				uploader: {type: "sap.m.upload.Uploader", multiple: false}
 			},
 			events: {
 				/**
-				 * The event is fired just after new item was added to the set.
+				 * This event is fired when a new file is added to the set of items to be uploaded.
 				 */
 				afterItemAdded: {
 					parameters: {
 						/**
-						 * The item that has just been added.
+						 * The file that has just been added.
 						 */
 						item: {type: "sap.m.upload.UploadSetItem"}
 					}
 				},
 				/**
-				 * The event is fired just before new item is to be added to the set.
+				 * This event is fired just before a new file is added to the set of items to be uploaded.
 				 */
 				beforeItemAdded: {
 					parameters: {
 						/**
-						 * The item that is going to be added.
+						 * The file to be added to the set of items to be uploaded.
 						 */
 						item: {type: "sap.m.upload.UploadSetItem"}
 					},
 					allowPreventDefault: true
 				},
 				/**
-				 * The event is fired just before a confirmation dialog for 'Delete' action is displayed.
+				 * This event is fired just before the confirmation dialog for 'Remove' action is displayed.
 				 */
-				beforeItemDeleted: {
+				beforeItemRemoved: {
 					parameters: {
 						/**
-						 * The item that is going to be deleted.
+						 * The item to be removed from the set of items to be uploaded.
 						 */
 						item: {type: "sap.m.upload.UploadSetItem"}
 					},
 					allowPreventDefault: true
 				},
 				/**
-				 * The event is fired when edit button of an item is clicked and no other item is being edited without possible confirmation.
+				 * This event is fired when the edit button is clicked for an item and no other item is being edited
+				 * at the same time.
+				 * <br>If there is another item that has unsaved changes, the editing of the clicked item cannot be
+				 * started.
 				 */
 				beforeItemEdited: {
 					parameters: {
 						/**
-						 * The item that is going to be edited.
+						 * The item to be edited.
 						 */
 						item: {type: "sap.m.upload.UploadSetItem"}
 					},
 					allowPreventDefault: true
 				},
 				/**
-				 * The event is fired right before the item's upload process started.
+				 * This event is fired right before the upload process begins.
 				 */
 				beforeUploadStarts: {
 					parameters: {
 						/**
-						 * The item whose upload process is going to be started.
+						 * The file whose upload is just about to start.
 						 */
 						item: {type: "sap.m.upload.UploadSetItem"}
 					},
 					allowPreventDefault: true
 				},
 				/**
-				 * The event is fired right after the item's upload process completed.
+				 * This event is fired right after the upload process is finished.
 				 */
 				uploadCompleted: {
 					parameters: {
 						/**
-						 * The item whose upload process just completed.
+						 * The file whose upload has just been completed.
 						 */
 						item: {type: "sap.m.upload.UploadSetItem"}
 					}
 				},
 				/**
-				 * The event is fired before an item's upload is going to be terminated.
+				 * This event is fired right before the upload is terminated.
 				 */
 				beforeUploadTermination: {
 					parameters: {
 						/**
-						 * The item that is going to be terminated.
+						 * The file whose upload is about to be terminated.
 						 */
 						item: {type: "sap.m.upload.UploadSetItem"}
 					},
 					allowPreventDefault: true
 				},
 				/**
-				 * The event is fired after an item's upload process has been terminated.
+				 * This event is fired right after the upload is terminated.
 				 */
 				uploadTerminated: {
 					parameters: {
 						/**
-						 * The item whose download process has been terminated.
+						 * The file whose upload has just been terminated.
 						 */
 						item: {type: "sap.m.upload.UploadSetItem"}
 					}
 				},
 				/**
-				 * The event is fired either when an item is added and fails the file type restriction, or when an already
-				 * present item starts failing that restriction after the latter is changed.
+				 * This event is fired in either of the following cases:
+				 * <ul>
+				 * <li>When a file that is selected to be uploaded fails to meet the file type restriction
+				 * (<code>fileType</code> property).</li>
+				 * <li>When the file type restriction changes, and the file to be uploaded fails to meet the new
+				 * restriction.</li>
+				 * </ul>
 				 */
 				fileTypeMismatch: {
 					parameters: {
 						/**
-						 * The item failing the restriction.
+						 * The file that fails to meet the file type restriction specified in the
+						 * <code>fileType</code> property.
 						 */
 						item: {type: "sap.m.upload.UploadSetItem"}
 					}
 				},
 				/**
-				 * The event is fired either when an item is added and fails the file name length restriction, or when an already
-				 * present item starts failing that restriction after the latter is changed.
+				 * This event is fired in either of the following cases:
+				 * <ul>
+				 * <li>When a file that is selected to be uploaded fails to meet the file name length restriction specified in the
+				 * <code>maxFileNameLength</code> property.</li>
+				 * <li>When the file name length restriction changes, and the file to be uploaded fails to meet the new
+				 * restriction.</li>
+				 * </ul>
 				 */
 				fileNameLengthExceeded: {
 					parameters: {
 						/**
-						 * The item failing the restriction.
+						 * The file that fails to meet the file name length restriction specified in the
+						 * <code>maxFileNameLength</code> property.
 						 */
 						item: {type: "sap.m.upload.UploadSetItem"}
 					}
 				},
 				/**
-				 * The event is fired either when an item is added and fails the file size restriction, or when an already
-				 * present item starts failing that restriction after the latter is changed.
+				 * This event is fired in either of the following cases:
+				 * <ul>
+				 * <li>When a file that is selected to be uploaded fails to meet the file size restriction specified in the
+				 * <code>maxFileSize</code> property.</li>
+				 * <li>When the file size restriction changes, and the file to be uploaded fails to meet the new
+				 * restriction.</li>
+				 * </ul>
 				 */
 				fileSizeExceeded: {
 					parameters: {
 						/**
-						 * The item failing the restriction.
+						 * The file that fails to meet the file size restriction specified in the
+						 * <code>maxFileSize</code> property.
 						 */
 						item: {type: "sap.m.upload.UploadSetItem"}
 					}
 				},
 				/**
-				 * The event is fired either when an item is added and fails the media type restriction, or when an already
-				 * present item starts failing that restriction after the latter is changed.
+				 * This event is fired in either of the following cases:
+				 * <ul>
+				 * <li>When a file that is selected to be uploaded fails to meet the media type restriction specified in the
+				 * <code>mediaTypes</code> property.</li>
+				 * <li>When the media type restriction changes, and the file to be uploaded fails to meet the new
+				 * restriction.</li>
+				 * </ul>
 				 */
 				mediaTypeMismatch: {
 					parameters: {
 						/**
-						 * The item failing the restriction.
+						 * The file that fails to meet the media type restriction specified in the
+						 * <code>mediaTypes</code> property.
 						 */
 						item: {type: "sap.m.upload.UploadSetItem"}
+					}
+				},
+				/**
+				 * This event is fired simultaneously with the respective event in the inner {@link sap.m.List} control.
+				 */
+				selectionChanged: {
+					parameters: {
+						/**
+						 * Items whose selection status has just been changed.
+						 */
+						items: {type: "sap.m.upload.UploadSetItem[]"}
 					}
 				}
 			}
@@ -263,6 +315,11 @@ sap.ui.define([
 		this._oRb = sap.ui.getCore().getLibraryResourceBundle("sap.m");
 
 		this._oList = null;
+		this._oNoDataIcon = new Icon(this.getId() + "-no-data-icon", {
+			src: "sap-icon://document",
+			size: "6rem",
+			noTabStop: true
+		});
 		this._oEditedItem = null;
 		this._oItemToBeDeleted = null;
 		this._mListItemIdToItemMap = {};
@@ -275,6 +332,8 @@ sap.ui.define([
 
 	UploadSet.prototype.exit = function () {
 		this._unbindDragAndDrop();
+		this._oNoDataIcon.destroy();
+		this._oNoDataIcon = null;
 	};
 
 	/* ===================== */
@@ -286,7 +345,59 @@ sap.ui.define([
 	};
 
 	UploadSet.prototype.onAfterRendering = function () {
+		var oInput;
+		if (this._oEditedItem) {
+			oInput = this._oEditedItem._getFileNameEdit().$("inner");
+			if (oInput) {
+				oInput.focus(function () {
+					oInput.selectText(0, oInput.val().length);
+				});
+				oInput.focus();
+			}
+		}
+
 		this._bindDragAndDrop();
+	};
+
+	UploadSet.prototype.onkeydown = function(oEvent) {
+		var oListItem,
+			oItem;
+
+		if (oEvent.target) {
+			oListItem = sap.ui.getCore().byId(oEvent.target.id);
+		}
+		if (oListItem) {
+			oItem = this._mListItemIdToItemMap[oListItem.getId()];
+		}
+
+		switch (oEvent.keyCode) {
+			case KeyCodes.F2 :
+				if (oItem) {
+					if (this._bInEditMode) {
+						this._handleItemEditConfirmation(oEvent, oItem);
+					} else {
+						this._handleItemEdit(oEvent, oItem);
+					}
+				}
+				break;
+			case KeyCodes.ESCAPE :
+				if (oItem) {
+					this._handleItemEditCancelation(oEvent, oItem);
+				}
+				break;
+			case KeyCodes.DELETE :
+				if (oItem) {
+					this._handleItemDelete(oEvent, oItem);
+				}
+				break;
+			case KeyCodes.ENTER :
+				if (oItem) {
+					oItem._handleFileNamePressed();
+				}
+				break;
+			default :
+				return;
+		}
 	};
 
 	UploadSet.prototype.getToolbar = function () {
@@ -303,6 +414,18 @@ sap.ui.define([
 		}
 
 		return this._oToolbar;
+	};
+
+	UploadSet.prototype.getNoDataText = function() {
+		var sNoDataText = this.getProperty("noDataText");
+		sNoDataText = sNoDataText || this._oRb.getText("UPLOAD_SET_NO_DATA_TEXT");
+		return sNoDataText;
+	};
+
+	UploadSet.prototype.getNoDataDescription = function() {
+		var sNoDataDescription = this.getProperty("noDataDescription");
+		sNoDataDescription = sNoDataDescription || this._oRb.getText("UPLOAD_SET_NO_DATA_DESCRIPTION");
+		return sNoDataDescription;
 	};
 
 	UploadSet.prototype.setToolbar = function (oToolbar) {
@@ -365,10 +488,11 @@ sap.ui.define([
 	};
 
 	UploadSet.prototype.setFileTypes = function (aNewTypes) {
-		if (typeof aNewTypes === "string") {
-			aNewTypes = aNewTypes.split(",");
+		var aTypes = aNewTypes || null;
+		if (typeof aTypes === "string") {
+			aTypes = aTypes.split(",");
 		}
-		var aTypes = (aNewTypes || []).map(function (s) {
+		aTypes = (aTypes || []).map(function (s) {
 			return s ? s.toLowerCase() : "";
 		});
 		if (!deepEqual(this.getFileTypes(), aTypes)) {
@@ -395,10 +519,11 @@ sap.ui.define([
 	};
 
 	UploadSet.prototype.setMediaTypes = function (aNewTypes) {
-		if (typeof aNewTypes === "string") {
-			aNewTypes = aNewTypes.split(",");
+		var aTypes = aNewTypes || null;
+		if (typeof aTypes === "string") {
+			aTypes = aTypes.split(",");
 		}
-		var aTypes = (aNewTypes || []).map(function (s) {
+		aTypes = (aTypes || []).map(function (s) {
 			return s ? s.toLowerCase() : "";
 		});
 		if (!deepEqual(this.getMediaTypes(), aTypes)) {
@@ -421,7 +546,9 @@ sap.ui.define([
 	UploadSet.prototype.setTerminationEnabled = function (bEnable) {
 		if (bEnable !== this.getTerminationEnabled()) {
 			this._getAllItems().forEach(function (oItem) {
-				oItem._getTerminateButton().setVisible(bEnable);
+				if (oItem.getUploadState() === UploadState.Uploading) {
+					oItem._getTerminateButton().setVisible(bEnable);
+				}
 			});
 			this.setProperty("terminationEnabled", bEnable, false);
 		}
@@ -441,14 +568,14 @@ sap.ui.define([
 	/* ============== */
 
 	/**
-	 * Provides access to the instance of inner <code>sap.m.List</code> control, so that it can be customized.
-	 *
-	 * @return {List} The inner <code>sap.m.List</code> control.
+	 * Provides access to the instance of the inner {@link sap.m.List} control, so that it can be customized.
+	 * @return {List} The inner {@link sap.m.List} control.
+	 * @public
 	 */
 	UploadSet.prototype.getList = function () {
 		if (!this._oList) {
 			this._oList = new List(this.getId() + "-list", {
-				// selectionChange: [this._handleSelectionChange, this]
+				selectionChange: [this._handleSelectionChange, this],
 				headerToolbar: this.getToolbar()
 			});
 			this._oList.addStyleClass("sapMUCList");
@@ -459,7 +586,10 @@ sap.ui.define([
 	};
 
 	/**
-	 * In case the upload is enabled this starts uploading all files that match all necessary criteria like restrictions.
+	 * Starts uploading all files that comply with the restrictions defined in the <code>fileTypes</code>,
+	 * <code>maxFileNameLength</code>, <code>maxFileSize</code>, and <code>mediaTypes</code> properties.
+	 * <br>This method works only when the <code>uploadEnabled</code> property is set to <code>true</code>.
+	 * @public
 	 */
 	UploadSet.prototype.upload = function () {
 		if (!this.getUploadEnabled()) {
@@ -473,18 +603,22 @@ sap.ui.define([
 	};
 
 	/**
-	 * In case the upload is enabled and the specified item matches all necessary criteria like restrictions this starts uploading that item.
-	 * @param {object} oItem Item to upload.
+	 * Starts uploading the file if it complies with the restrictions defined in the <code>fileTypes</code>,
+	 * <code>maxFileNameLength</code>, <code>maxFileSize</code>, and <code>mediaTypes</code>
+	 * properties.
+	 * <br>This method works only when the <code>uploadEnabled</code> property is set to <code>true</code>.
+	 * @param {object} oItem File to upload.
+	 * @public
 	 */
 	UploadSet.prototype.uploadItem = function (oItem) {
 		this._uploadItemIfGoodToGo(oItem);
 	};
 
 	/**
-	 * Returns an instance of the default <code>sap.ui.unified.FileUploader</code> used for adding files via OS open file dialog,
-	 * so that it can be customized like made invisible or have a different icon.
-	 *
+	 * Returns an instance of the default <code>sap.ui.unified.FileUploader</code> used for adding files using
+	 * the operating system's open file dialog, so that it can be customized, for example made invisible or assigned a different icon.
 	 * @return {FileUploader} Instance of the default <code>sap.ui.unified.FileUploader</code>.
+	 * @public
 	 */
 	UploadSet.prototype.getDefaultFileUploader = function () {
 		var sTooltip;
@@ -514,9 +648,10 @@ sap.ui.define([
 	};
 
 	/**
-	 * Attaches all necessary handlers to the given uploader instance so that changes of upload progress and status are monitored out of the box.
-	 *
-	 * @param {Uploader} oUploader Instance of <code>sap.m.upload.Uploader</code> to which attach default request handlers.
+	 * Attaches all necessary handlers to the given uploader instance, so that the progress and status of the upload can be
+	 * displayed and monitored.
+	 * @param {Uploader} oUploader Instance of <code>sap.m.upload.Uploader</code> to which the default request handlers are attached.
+	 * @public
 	 */
 	UploadSet.prototype.registerUploaderEvents = function (oUploader) {
 		oUploader.attachUploadStarted(this._onUploadStarted.bind(this));
@@ -579,7 +714,7 @@ sap.ui.define([
 	/**
 	 * Edited item confirmation handling.
 	 * @param {object} oEvent Event instance.
-	 * @param {UploadSetItem} oItem Item which editing is to be confirmed.
+	 * @param {UploadSetItem} oItem Item whose editing is to be confirmed.
 	 * @private
 	 */
 	UploadSet.prototype._handleItemEditConfirmation = function (oEvent, oItem) {
@@ -607,7 +742,7 @@ sap.ui.define([
 	 * Edited item cancelation handling.
 	 *
 	 * @param {object} oEvent Event instance.
-	 * @param {UploadSetItem} oItem Item which editing is to be canceled.
+	 * @param {UploadSetItem} oItem Item whose editing is to be canceled.
 	 * @private
 	 */
 	UploadSet.prototype._handleItemEditCancelation = function (oEvent, oItem) {
@@ -620,18 +755,18 @@ sap.ui.define([
 		var sMessageText;
 
 		if (this._oEditedItem) {
-			this._handleConfirmEdit(oEvent, this._oEditedItem);
+			this._handleItemEditConfirmation(oEvent, this._oEditedItem);
 			// If editing could not be finished then delete action cannot continue
 			if (this._oEditedItem) {
 				return;
 			}
 		}
 
-		if (!oItem.fireDeletePressed({item: oItem})) {
+		if (!oItem.fireRemovePressed({item: oItem})) {
 			return;
 		}
 
-		if (!this.fireBeforeItemDeleted({item: oItem})) {
+		if (!this.fireBeforeItemRemoved({item: oItem})) {
 			return;
 		}
 
@@ -712,6 +847,15 @@ sap.ui.define([
 
 	UploadSet.prototype._handleUploadTermination = function (oItem) {
 		this._getActiveUploader().terminateItem(oItem);
+	};
+
+	UploadSet.prototype._handleSelectionChange = function (oEvent) {
+		var aListItems = oEvent.getParameter("listItems"),
+			aItems = [];
+		aListItems.forEach(function (oListItem) {
+			aItems.push(this._mListItemIdToItemMap[oListItem.getId()]);
+		}.bind(this));
+		this.fireSelectionChanged({items: aItems});
 	};
 
 	UploadSet.prototype._onDragEnterSet = function (oEvent) {

@@ -462,7 +462,7 @@
 		  ]
 		},
 		{
-			"id": "sap.m.UploadSet",
+			"id": "sap.m.upload.UploadSet",
 			"name": "Upload Set",
 			"category": "Action",
 			"since": "1.62",
@@ -2844,7 +2844,7 @@
 		{
 		  "id": "sap.m.sample.UploadSet",
 		  "name": "Upload Set",
-		  "description": "This sample demonstrates how to use an Upload Set."
+		  "description": "This sample shows an Upload Set control with a list of files to be uploaded and actions you can perform on them."
 		},
 		{
 		  "id": "sap.m.sample.StandardMarginsAll",

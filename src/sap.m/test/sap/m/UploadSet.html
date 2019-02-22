@@ -3,7 +3,7 @@
 <head>
 	<meta http-equiv="X-UA-Compatible" content="IE=edge">
 	<meta charset="utf-8">
-	<title>sap.m.UploadSet</title>
+	<title>sap.m.upload.UploadSet</title>
 	<script src="shared-config.js"></script>
 	<script src="../../../resources/sap-ui-core.js"
 			id="sap-ui-bootstrap"
@@ -269,11 +269,12 @@
 						})
 					]
 				});
+
 				var oListTypeSelect = new Select({});
 				["Active", "Detail", "DetailAndActive", "Inactive", "Navigation"].forEach(function (sType) {
 					oListTypeSelect.addItem(new Item({
 						key: sType, text: sType
-					}))
+					}));
 				});
 				oListTypeSelect.setSelectedKey("Inactive");
 				oListTypeSelect.attachChange(function (oEvent) {
@@ -283,6 +284,19 @@
 					});
 				});
 				oItemToolbar.addContent(oListTypeSelect);
+
+				var oListModeSelect = new Select({});
+				["Delete", "MultiSelect", "None", "SingleSelect", "SingleSelectLeft", "SingleSelectMaster"].forEach(function (sMode) {
+					oListModeSelect.addItem(new Item({
+						key: sMode, text: sMode
+					}));
+				});
+				oListModeSelect.setSelectedKey("None");
+				oListModeSelect.attachChange(function (oEvent) {
+					var sMode = oEvent.getParameter("selectedItem").getKey();
+					oUploadSet.getList().setMode(sMode);
+				});
+				oItemToolbar.addContent(oListModeSelect);
 
 				var oEventList = new List("eventList", {
 					headerToolbar: new Toolbar({
@@ -300,7 +314,7 @@
 				[
 					"afterItemAdded",
 					"beforeItemAdded",
-					"beforeItemDeleted",
+					"beforeItemRemoved",
 					"beforeItemEdited",
 					"beforeUploadStarts",
 					"uploadCompleted",
@@ -309,11 +323,25 @@
 					"fileTypeMismatch",
 					"fileNameLengthExceeded",
 					"fileSizeExceeded",
-					"mediaTypeMismatch"
+					"mediaTypeMismatch",
+					"selectionChanged"
 				].forEach(function (sEvent) {
 					oUploadSet.attachEvent(sEvent, function (oEvent) {
+						var oParam = oEvent.getParameter("item"),
+							sDescription = "";
+						if (oParam) {
+							sDescription = oParam.getFileName();
+						} else {
+							oParam = oEvent.getParameter("items");
+							if (oParam) {
+								oParam.forEach(function (oItem, iIndex) {
+									sDescription += iIndex > 0 ? ", " : "";
+									sDescription += oItem.getFileName();
+								});
+							}
+						}
 						oEventList.insertItem(new ListItem({
-							title: sEvent + ": " + oEvent.getParameter("item").getFileName()
+							title: sEvent + ": " + sDescription
 						}));
 					});
 				});
