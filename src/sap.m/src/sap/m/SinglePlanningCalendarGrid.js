@@ -21,8 +21,10 @@ sap.ui.define([
 	function (SinglePlanningCalendarUtilities, Control, LocaleData, Locale, InvisibleText, DateFormat, UniversalDate, unifiedLibrary, DatesRow, CalendarDate, CalendarUtils, KeyCodes, SinglePlanningCalendarGridRenderer) {
 		"use strict";
 
-		var ROW_HEIGHT = 48,
-			BLOCKER_ROW_HEIGHT = 25,
+		var ROW_HEIGHT_COZY = 69,
+			ROW_HEIGHT_COMPACT = 48,
+			BLOCKER_ROW_HEIGHT_COZY = 34,
+			BLOCKER_ROW_HEIGHT_COMPACT = 25,
 			HALF_HOUR_MS = 3600000 / 2,
 			ONE_MIN_MS = 60 * 1000;
 
@@ -159,6 +161,70 @@ sap.ui.define([
 			this._oAppointmentsToRender = this._calculateAppointmentsLevelsAndWidth(this._oVisibleAppointments);
 			this._aVisibleBlockers = this._calculateVisibleBlockers(oAppointmentsMap.blockers, oCalStartDate, iColumns);
 			this._oBlockersToRender = this._calculateBlockersLevelsAndWidth(this._aVisibleBlockers);
+		};
+
+		SinglePlanningCalendarGrid.prototype._adjustAppointmentsHeightforCompact = function (sDate, oColumnStartDateAndHour, oColumnEndDateAndHour) {
+			var oAppointment,
+				$appointment,
+				oAppStartDate,
+				oAppEndDate,
+				iAppTop,
+				iAppBottom,
+				bAppStartIsOutsideVisibleStartHour,
+				bAppEndIsOutsideVisibleEndHour,
+				iRowHeight = this._getRowHeight(),
+				that = this;
+
+			if (this._oAppointmentsToRender[sDate]) {
+				this._oAppointmentsToRender[sDate].oAppointmentsList.getIterator().forEach(function(oAppNode) {
+					oAppointment = oAppNode.getData();
+					$appointment = oAppointment.$();
+					oAppStartDate = oAppointment.getStartDate();
+					oAppEndDate = oAppointment.getEndDate();
+					bAppStartIsOutsideVisibleStartHour = oColumnStartDateAndHour.getTime() > oAppStartDate.getTime();
+					bAppEndIsOutsideVisibleEndHour = oColumnEndDateAndHour.getTime() < oAppEndDate.getTime();
+
+					iAppTop = bAppEndIsOutsideVisibleEndHour ? 0 : that._calculateTopPosition(oAppStartDate);
+					iAppBottom = bAppStartIsOutsideVisibleStartHour ? 0 : that._calculateBottomPosition(oAppEndDate);
+
+					$appointment.css("top", iAppTop);
+					$appointment.css("bottom", iAppBottom);
+					$appointment.find(".sapUiCalendarApp")
+								.css("min-height", iRowHeight / 2 - 1);
+				});
+			}
+		};
+
+		SinglePlanningCalendarGrid.prototype._adjustBlockersHeightforCompact = function () {
+			var iMaxLevel = this._getBlockersToRender().iMaxlevel,
+				iContainerHeight = (iMaxLevel + 1) * this._getBlockerRowHeight(),
+				iBlockerRowHeight = this._getBlockerRowHeight();
+
+			if (iMaxLevel > 0) { // hackie thing to calculate the container witdth. When we have more than 1 line of blockers - we must add 3 px in order to render the blockers visually in the container.
+				iContainerHeight = iContainerHeight + 3;
+			}
+			this.$().find(".sapMSinglePCBlockersColumns").css("height", iContainerHeight);
+
+			this._oBlockersToRender.oBlockersList.getIterator().forEach(function(oBlokcerNode) {
+				oBlokcerNode.getData().$().css("top", iBlockerRowHeight * oBlokcerNode.level + 1);
+			});
+		};
+
+		SinglePlanningCalendarGrid.prototype.onAfterRendering = function () {
+			var iColumns = this._getColumns(),
+				oStartDate = this.getStartDate(),
+				iRowHeight = this._getRowHeight();
+
+			if (iRowHeight === ROW_HEIGHT_COMPACT) {
+				for (var i = 0; i < iColumns; i++) {
+					var oColumnCalDate = new CalendarDate(oStartDate.getFullYear(), oStartDate.getMonth(), oStartDate.getDate() + i),
+						sDate = this._formatDayAsString(oColumnCalDate),
+						oColumnStartDateAndHour = new UniversalDate(oColumnCalDate.getYear(), oColumnCalDate.getMonth(), oColumnCalDate.getDate(), this._getVisibleStartHour()),
+						oColumnEndDateAndHour = new UniversalDate(oColumnCalDate.getYear(), oColumnCalDate.getMonth(), oColumnCalDate.getDate(), this._getVisibleEndHour(), 59, 59);
+					this._adjustAppointmentsHeightforCompact(sDate, oColumnStartDateAndHour, oColumnEndDateAndHour);
+				}
+				this._adjustBlockersHeightforCompact();
+			}
 		};
 
 		/**
@@ -843,7 +909,7 @@ sap.ui.define([
 		 * @private
 		 */
 		SinglePlanningCalendarGrid.prototype._getRowHeight = function () {
-			return ROW_HEIGHT;
+			return this._isCompact() ? ROW_HEIGHT_COMPACT : ROW_HEIGHT_COZY;
 		};
 
 		/**
@@ -853,7 +919,20 @@ sap.ui.define([
 		 * @private
 		 */
 		SinglePlanningCalendarGrid.prototype._getBlockerRowHeight = function () {
-			return BLOCKER_ROW_HEIGHT;
+			return this._isCompact() ? BLOCKER_ROW_HEIGHT_COMPACT : BLOCKER_ROW_HEIGHT_COZY;
+		};
+
+		SinglePlanningCalendarGrid.prototype._isCompact = function () {
+			var oDomRef = this.getDomRef();
+
+			while (oDomRef && oDomRef.classList) {
+				if (oDomRef.classList.contains("sapUiSizeCompact")) {
+					return true;
+				}
+				oDomRef = oDomRef.parentNode;
+			}
+
+			return false;
 		};
 
 		/**
