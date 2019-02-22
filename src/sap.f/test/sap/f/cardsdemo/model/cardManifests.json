@@ -2108,6 +2108,53 @@
 			}
 		  }
 		}
+	  },
+	  "cardStatic": {
+		"sap.card": {
+		  "type": "Timeline",
+		  "header": {
+			"title": "New Team Members",
+			"icon": {
+			  "src": "sap-icon://group"
+			}
+		  },
+		  "content": {
+			"items": [
+			  {
+				"owner": "Laurent Dubois",
+				"title": "Accounts Payable Manager",
+				"ownerImage": "../images/Laurent_Dubois.png",
+				"icon": "sap-icon://activity-individual",
+				"description": "I am Laurent. I put great attention to detail.",
+				"dateTime": "Date(1371020400000)"
+			  },
+			  {
+				"owner": "Sabine Mayer",
+				"title": "Configuration Expert",
+				"ownerImage": "../images/Sabine_Mayer.png",
+				"icon": "sap-icon://settings",
+				"description": "I am Sabine. And can't wait to get to know the team.",
+				"dateTime": "Date(1376290800000)"
+			  },
+			  {
+				"owner": "Alain Chevalier",
+				"title": "Credit Analyst",
+				"ownerImage": "../images/Alain_Chevalier.png",
+				"icon": "sap-icon://manager-insight",
+				"description": "I am Alain. I put great attention to detail.",
+				"dateTime": "Date(1332403200000)"
+			  },
+			  {
+				"owner": "Monique Legrand",
+				"title": "Accountant Manager",
+				"ownerImage": "../images/Monique_Legrand.png",
+				"description": "I am Monique. And i am the new head of Accounting.",
+				"icon": "sap-icon://account",
+				"dateTime": "Date(1422777600000)"
+			  }
+			]
+		  }
+		}
 	  }
 	}
 }

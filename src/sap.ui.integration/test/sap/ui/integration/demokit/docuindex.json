@@ -18,7 +18,8 @@
 					"sap.ui.integration.sample.Playground",
 					"sap.ui.integration.sample.ListCard",
 					"sap.ui.integration.sample.AnalyticalCard",
-					"sap.ui.integration.sample.ObjectCard"
+					"sap.ui.integration.sample.ObjectCard",
+					"sap.ui.integration.sample.TimelineCard"
 				]
 			}
 		],
@@ -37,6 +38,11 @@
 				"id": "sap.ui.integration.sample.ObjectCard",
 				"name": "Object Card",
 				"description": "The object card is used to display the basic details for an object, for example, a person or a sales order."
+			},
+			{
+				"id": "sap.ui.integration.sample.TimelineCard",
+				"name": "Timeline Card",
+				"description": "The timeline card is used to show time related content."
 			},
 			{
 				"id": "sap.ui.integration.sample.Playground",
