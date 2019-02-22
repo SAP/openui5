@@ -7,10 +7,12 @@ sap.ui.define([
 	'./library',
 	'sap/ui/core/Control',
 	'sap/ui/core/ValueStateSupport',
+	'sap/ui/core/IndicationColorSupport',
 	'sap/ui/core/library',
+	'sap/ui/base/DataType',
 	'./ObjectStatusRenderer'
 ],
-	function(library, Control, ValueStateSupport, coreLibrary, ObjectStatusRenderer) {
+	function(library, Control, ValueStateSupport, IndicationColorSupport, coreLibrary, DataType, ObjectStatusRenderer) {
 	"use strict";
 
 
@@ -21,9 +23,8 @@ sap.ui.define([
 	// shortcut for sap.ui.core.TextDirection
 	var TextDirection = coreLibrary.TextDirection;
 
-	// shortcut for sap.ui.core.ValueState
+	// shortcuts for sap.ui.core.ValueState
 	var ValueState = coreLibrary.ValueState;
-
 
 
 	/**
@@ -77,7 +78,12 @@ sap.ui.define([
 			/**
 			 * Defines the text value state.
 			 */
-			state : {type : "sap.ui.core.ValueState", group : "Misc", defaultValue : ValueState.None},
+			state : {type : "string", group : "Misc", defaultValue : ValueState.None},
+
+			/**
+			 * If set to true the background will be colored in the given <code>state</code> instead of the control text.
+			 */
+			inverted : {type : "boolean", group : "Misc", defaultValue : false},
 
 			/**
 			 * Icon URI. This may be either an icon font or image path.
@@ -187,6 +193,24 @@ sap.ui.define([
 	};
 
 	/**
+	 * Sets the state.
+	 * The default value is ValueState.None.
+	 * @public
+	 * @param {string} sValue New value for property state.
+	 * It should be valid value of enumeration <code>sap.ui.core.ValueState</code> or <code>sap.ui.core.IndicationColor</code>
+	 * @returns {sap.m.ObjectStatus} this to allow method chaining
+	 */
+	ObjectStatus.prototype.setState = function(sValue) {
+		if (sValue == null) {
+			sValue = ValueState.None;
+		} else if (!DataType.getType("sap.ui.core.ValueState").isValid(sValue) && !DataType.getType("sap.ui.core.IndicationColor").isValid(sValue)) {
+			throw new Error('"' + sValue + '" is not a value of the enums sap.ui.core.ValueState or sap.ui.core.IndicationColor for property "state" of ' + this);
+		}
+
+		return this.setProperty("state", sValue);
+	};
+
+	/**
 	 * @private
 	 * @param {object} oEvent The fired event
 	 */
@@ -256,10 +280,14 @@ sap.ui.define([
 	 * @protected
 	 */
 	ObjectStatus.prototype.getAccessibilityInfo = function() {
-		var sState = this.getState() != ValueState.None ? ValueStateSupport.getAdditionalText(this.getState()) : "";
+		var sState = ValueStateSupport.getAdditionalText(this.getState());
+
+		if (this.getState() != ValueState.None) {
+			sState = (sState !== null) ? sState : IndicationColorSupport.getAdditionalText(this.getState());
+		}
 
 		return {
-			description: ((this.getTitle() || "") + " " + (this.getText() || "") + " " + sState + " " + (this.getTooltip() || "")).trim()
+			description: ((this.getTitle() || "") + " " + (this.getText() || "") + " " + (sState !== null ? sState : "") + " " + (this.getTooltip() || "")).trim()
 		};
 	};
 
