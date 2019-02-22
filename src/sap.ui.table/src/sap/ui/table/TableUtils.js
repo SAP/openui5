@@ -720,11 +720,11 @@ sap.ui.define([
 			};
 
 			if ($Cell.hasClass("sapUiTableDataCell")) {
-				sColumnId = $Cell.data("sap-ui-colid");
+				sColumnId = $Cell.attr("data-sap-ui-colid");
 				oColumn = sap.ui.getCore().byId(sColumnId);
 
 				oCellInfo.type = TableUtils.CELLTYPE.DATACELL;
-				oCellInfo.rowIndex = parseInt($Cell.parent().data("sap-ui-rowindex"));
+				oCellInfo.rowIndex = parseInt($Cell.parent().attr("data-sap-ui-rowindex"));
 				oCellInfo.columnIndex = oColumn.getIndex();
 				oCellInfo.columnSpan = 1;
 
@@ -736,18 +736,18 @@ sap.ui.define([
 
 				oCellInfo.type = TableUtils.CELLTYPE.COLUMNHEADER;
 				oCellInfo.rowIndex = iRowIndex;
-				oCellInfo.columnIndex = parseInt($Cell.data("sap-ui-colindex"));
+				oCellInfo.columnIndex = parseInt($Cell.attr("data-sap-ui-colindex"));
 				oCellInfo.columnSpan = parseInt($Cell.attr("colspan") || 1);
 
 			} else if ($Cell.hasClass("sapUiTableRowSelectionCell")) {
 				oCellInfo.type = TableUtils.CELLTYPE.ROWHEADER;
-				oCellInfo.rowIndex = parseInt($Cell.data("sap-ui-rowindex"));
+				oCellInfo.rowIndex = parseInt($Cell.attr("data-sap-ui-rowindex"));
 				oCellInfo.columnIndex = -1;
 				oCellInfo.columnSpan = 1;
 
 			} else if ($Cell.hasClass("sapUiTableRowActionCell")) {
 				oCellInfo.type = TableUtils.CELLTYPE.ROWACTION;
-				oCellInfo.rowIndex = parseInt($Cell.data("sap-ui-rowindex"));
+				oCellInfo.rowIndex = parseInt($Cell.attr("data-sap-ui-rowindex"));
 				oCellInfo.columnIndex = -2;
 				oCellInfo.columnSpan = 1;
 
@@ -966,7 +966,7 @@ sap.ui.define([
 		isFirstScrollableRow : function(oTable, row) {
 			if (isNaN(row)) {
 				var $Ref = jQuery(row);
-				row = parseInt($Ref.add($Ref.parent()).filter("[data-sap-ui-rowindex]").data("sap-ui-rowindex"));
+				row = parseInt($Ref.add($Ref.parent()).filter("[data-sap-ui-rowindex]").attr("data-sap-ui-rowindex"));
 			}
 			var iFixed = oTable.getFixedRowCount() || 0;
 			return row == iFixed;
@@ -983,7 +983,7 @@ sap.ui.define([
 		isLastScrollableRow : function(oTable, row) {
 			if (isNaN(row)) {
 				var $Ref = jQuery(row);
-				row = parseInt($Ref.add($Ref.parent()).filter("[data-sap-ui-rowindex]").data("sap-ui-rowindex"));
+				row = parseInt($Ref.add($Ref.parent()).filter("[data-sap-ui-rowindex]").attr("data-sap-ui-rowindex"));
 			}
 			var iFixed = oTable.getFixedBottomRowCount() || 0;
 			return row == oTable.getVisibleRowCount() - iFixed - 1;
