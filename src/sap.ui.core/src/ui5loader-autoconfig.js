@@ -488,11 +488,15 @@
 				amd: true,
 				deps: ['sap/viz/libs/sap-viz', 'sap/viz/ui5/container/libs/common/libs/rgbcolor/rgbcolor_static']
 			},
-			'sap/viz/ui5/controls/libs/sap-viz-vizframe': {
+			'sap/viz/ui5/controls/libs/sap-viz-vizframe/sap-viz-vizframe': {
 				amd: true,
 				deps: ['sap/viz/libs/sap-viz-info-charts']
 			},
-			'sap/viz/ui5/controls/libs/sap-viz-vizservices': {
+			'sap/viz/ui5/controls/libs/sap-viz-vizservices/sap-viz-vizservices': {
+				amd: true,
+				deps: ['sap/viz/libs/sap-viz-info-charts']
+			},
+			'sap/viz/resources/chart/templates/standard_fiori/template': {
 				amd: true,
 				deps: ['sap/viz/libs/sap-viz-info-charts']
 			}
