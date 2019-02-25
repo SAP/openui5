@@ -3,17 +3,21 @@
 /* Fiori 3 theme                               */
 /* =========================================== */
 
-@_sap_uxap_ObjectPageSection_HeaderBorderColor: lighten(@sapUiListBorderColor, 5);
-@_sap_uxap_ObjectPageSection_TitleBorderColor: darken(@sapUiListBorderColor, 30);
 
+.sapUiSizeCompact .sapUxAPObjectPageSectionHeader,
 .sapUxAPObjectPageSectionHeader {
-	border-bottom: 0.125rem solid @_sap_uxap_ObjectPageSection_HeaderBorderColor;
+	border-bottom: 0.0625rem solid @sapUiGroupTitleBorderColor;
+	height: 2.75rem;
+	line-height: 2.25rem;
 }
 
+.sapUiSizeCompact .sapUxAPObjectPageSectionTitle,
 .sapUxAPObjectPageSectionTitle {
+	height: 2.75rem;
+	line-height: 2.25rem;
 	color: @sapUiGroupTitleTextColor;
-	font-size: @sapMFontHeader2Size;
-	border-bottom: 0.125rem solid @_sap_uxap_ObjectPageSection_TitleBorderColor;
+	font-size: @sapMFontHeader4Size;
+	border-bottom: 0.0625rem solid @sapUiActive;
 }
 
 .sapUxAPObjectPageSection:focus {
