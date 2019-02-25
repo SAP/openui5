@@ -549,10 +549,16 @@ sap.ui.define([
 	QUnit.test("ManagedObject Model  - List Binding", function (assert) {
 		assert.equal(this.oManagedObjectModel.getAggregation("/subObjects").length === 0, true, "Access a multi aggregation that is not set");
 		var oBinding = this.oManagedObjectModel.bindList("/subObjects"),
-			oLengthBinding = this.oManagedObjectModel.bindProperty("/subObjects/@length"), that = this, iCount = 1,
-			iCalls = 0, iLength, fHandler = function () {
+			oLengthBinding = this.oManagedObjectModel.bindProperty("/subObjects/@length"),
+			that = this,
+			iCount = 1,
+			iCalls = 0,
+			iLength,
+			aContexts,
+			fHandler = function() {
 				iCalls++;
-			}, fHandler2 = function () {
+			},
+			fHandler2 = function() {
 				assert.equal(oLengthBinding.getValue(), iLength, "Length binding called correctly");
 			};
 		oLengthBinding.attachChange(fHandler2);
@@ -561,21 +567,30 @@ sap.ui.define([
 		iLength = 1;
 		this.obj.addSubObj(this.subObj);
 		assert.equal(iCalls, iCount, "Binding change event fired for list aggregation");
-		assert.equal(that.oManagedObjectModel.getProperty("", oBinding.getContexts()[0]) === that.subObj, true, "Contexts are correctly applied");
+
+		aContexts = oBinding.getContexts();
+		assert.equal(that.oManagedObjectModel.getProperty("", aContexts[0]) === that.subObj, true, "Contexts are correctly applied");
 
 		iCount = 1;
 		iLength = 1;
 		this.obj.addSubObj(this.subObj);
 		assert.equal(iCalls, iCount, "Change event called " + iCount + " as expected, remove, add");
-		assert.equal(that.oManagedObjectModel.getProperty("", oBinding.getContexts()[0]) === that.subObj, true, "Contexts are correctly applied");
+
+		aContexts = oBinding.getContexts();
+		assert.ok(aContexts.diff, "The extended change detection is enabled");
+		assert.equal(that.oManagedObjectModel.getProperty("", aContexts[0]) === that.subObj, true, "Contexts are correctly applied");
 
 		iCount = 2;
 		iLength = 2;
 		this.subObj2 = new sap.ui.test.TestElement("subObject1");
 		this.obj.addSubObj(this.subObj2);
 		assert.equal(iCalls, iCount, "Change event called " + iCount + " as expected");
-		assert.equal(that.oManagedObjectModel.getProperty("", oBinding.getContexts()[0]) === that.subObj, true, "Contexts are correctly applied");
-		assert.equal(that.oManagedObjectModel.getProperty("", oBinding.getContexts()[1]) === that.subObj2, true, "Contexts are correctly applied");
+
+		aContexts = oBinding.getContexts();
+		assert.ok(aContexts.diff, "The extended change detection is enabled");
+		assert.ok(aContexts.diff.length > 0,  "The extended change is available");
+		assert.equal(that.oManagedObjectModel.getProperty("", aContexts[0]) === that.subObj, true, "Contexts are correctly applied");
+		assert.equal(that.oManagedObjectModel.getProperty("", aContexts[1]) === that.subObj2, true, "Contexts are correctly applied");
 
 		iCount = 4;
 		iLength = 1;

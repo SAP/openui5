@@ -6,11 +6,7 @@ sap.ui.define([
 ], function (JSONModel, JSONPropertyBinding, JSONListBinding, ManagedObject, ManagedObjectObserver, Context, ChangeReason, uid, Log, isPlainObject) {
 	"use strict";
 
-	var ManagedObjectModelAggregationBinding = JSONListBinding.extend("sap.ui.model.base.ManagedObjectModelAggregationBinding"),
-		ManagedObjectModelPropertyBinding = JSONPropertyBinding.extend("sap.ui.model.base.ManagedObjectModelPropertyBinding"),
-		CUSTOMDATAKEY = "@custom", ID_DELIMITER = "--";
-
-	/**
+	var CUSTOMDATAKEY = "@custom", ID_DELIMITER = "--";/**
 	 * Adapt the observation of child controls in order to be able to react when e.g. the value
 	 * of a select inside a list changed. Currently the MOM is not updated then
 	 *
@@ -64,6 +60,53 @@ sap.ui.define([
 		}
 	}
 
+	function retrieveValueAndMO(aNodeStack) {
+		//Determine last managed object via node stack of getProperty
+		var sMember, i = aNodeStack.length - 1, aParts = [];
+		while (!(aNodeStack[i].node instanceof ManagedObject)) {
+			if (sMember) {
+				aParts.splice(0, 0, sMember);
+			}
+			sMember = aNodeStack[i].path;
+			i--;
+		}
+
+		return [aNodeStack[i].node, aNodeStack[i + 1].node, aParts];
+	}
+
+	var ManagedObjectModelAggregationBinding = JSONListBinding.extend("sap.ui.model.base.ManagedObjectModelAggregationBinding", {
+		/**
+		 * Use the id of the ManagedObject instance as the unique key to identify
+		 * the entry in the extended change detection. The default implementation
+		 * in the parent class which uses JSON.stringify to serialize the instance
+		 * doesn't fit here because none of the ManagedObject instance can be
+		 * Serialized.
+		 *
+		 * @param {sap.ui.model.Context} oContext the binding context object
+		 * @return {string} The identifier used for diff comparison
+		 * @see sap.ui.model.ListBinding.prototype.getEntryData
+		 *
+		 */
+		getEntryData: function(oContext) {
+			// use the id of the ManagedObject instance as the identifier
+			// for the extended change detection
+
+			this._getParentManagedObject();
+			return this._oParentMO.getId();
+		},
+		_getParentManagedObject: function() {
+			if (!this._oParentMO) {
+				var oMOM = this.oModel, aNodeStack = [];
+				oMOM._getObject(this.sPath, this.oContext, aNodeStack);
+
+				var aValueAndMO = retrieveValueAndMO(aNodeStack);
+
+				this._oParentMO = aValueAndMO[0];
+			}
+		}
+	});
+
+	var ManagedObjectModelPropertyBinding = JSONPropertyBinding.extend("sap.ui.model.base.ManagedObjectModelPropertyBinding");
 	/**
 	 * The ManagedObjectModel class allows you to bind to properties and aggregations of managed objects.
 	 *
@@ -215,20 +258,12 @@ sap.ui.define([
 				// get get an update of a property that was bound on a target
 				// control but which is only a data structure
 
-				//Determine last managed object via node stack of getProperty
-				var sMember, i = aNodeStack.length - 1, aParts = [];
-				while (!(aNodeStack[i].node instanceof ManagedObject)) {
-					if (sMember) {
-						aParts.splice(0, 0, sMember);
-					}
-					sMember = aNodeStack[i].path;
-					i--;
-				}
+				var aValueAndMO = retrieveValueAndMO(aNodeStack);
 
 				//change the value of the property with structure
-				var oMOMValue = aNodeStack[i + 1].node;
+				var oMOMValue = aValueAndMO[1], aParts = aValueAndMO[2];
 				var oPointer = oMOMValue;
-				for (i = 0; i < aParts.length; i++) {
+				for (var i = 0; i < aParts.length; i++) {
 					oPointer = oPointer[aParts[i]];
 				}
 				oPointer[sProperty] = oValue;
