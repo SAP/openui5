@@ -198,11 +198,14 @@ sap.ui.define(['sap/ui/base/DataType', 'sap/base/util/ObjectPath',
 
 
 	/**
-	 * different styles for a ColorPicker.
+	 * Different styles for a ColorPicker.
+	 *
+	 * This enum is an alias for {@link sap.ui.unified.ColorPickerMode} and was only kept
+	 * for compatibility reasons. Please switch to the {@link sap.ui.unified.ColorPicker} API.
 	 *
 	 * @enum {string}
 	 * @public
-	 * @deprecated Since version 1.48.0. Moved to sap.ui.unified library. Please use this one.
+	 * @deprecated Since version 1.48.0. Moved to sap.ui.unified library. Please use that one.
 	 * @ui5-metamodel This enumeration also will be described in the UI5 (legacy) designtime metamodel
 	 */
 	sap.ui.commons.ColorPickerMode = sap.ui.unified.ColorPickerMode;
