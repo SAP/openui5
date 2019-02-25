@@ -16,8 +16,8 @@
 		<customHeader>
 			<Toolbar width="100%">
 				<SearchField id="searchField" placeholder="Filter" liveChange="onTreeFilter" class="sapUiDocumentationFilterField"/>
-				<Button id="expandAllButton" icon="sap-icon://expand-all" press="onTreeExpandAll"/>
-				<Button id="collapseAllButton" icon="sap-icon://collapse-all" press="onTreeCollapseAll"/>
+				<Button id="expandAllButton" icon="sap-icon://expand-all" press="onTreeExpandAll" tooltip="Expand All"/>
+				<Button id="collapseAllButton" icon="sap-icon://collapse-all" press="onTreeCollapseAll" tooltip="Collapse All"/>
 			</Toolbar>
 		</customHeader>
 		<subHeader>
