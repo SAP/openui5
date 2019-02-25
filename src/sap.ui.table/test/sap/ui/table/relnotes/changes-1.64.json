@@ -7,6 +7,18 @@
         "type": "FIX",
         "text": " GridTable: Selectors on empty rows hidden again",
         "references": []
+      },
+      {
+        "id": "f73e5bdb21fea219ec8202039d983f28db077c1e",
+        "type": "FIX",
+        "text": " GridTable: Set aria-selected correctly when row is rerendered",
+        "references": []
+      },
+      {
+        "id": "f7a01c9f14a5deb522e45e1893c9a553ad29c20f",
+        "type": "FIX",
+        "text": " Table: Apply input values when scrolling with mouse or touch",
+        "references": []
       }
     ]
   }

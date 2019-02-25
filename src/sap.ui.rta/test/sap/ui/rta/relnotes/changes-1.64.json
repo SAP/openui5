@@ -13,6 +13,18 @@
         "type": "FIX",
         "text": " sap.ui.rta - get rid of unnecessary paste in contextmenu",
         "references": []
+      },
+      {
+        "id": "cefb518c6f133f2dd75e489c5e951643babcb457",
+        "type": "FIX",
+        "text": " Stopping deletion of app variants functionality in S4 Cloud",
+        "references": []
+      },
+      {
+        "id": "d8b7c592c92c22f3bd61c28d638f3ff80cd99d86",
+        "type": "FIX",
+        "text": " sap.ui.rta - Check for movable without AggregationOverlays available",
+        "references": []
       }
     ]
   }

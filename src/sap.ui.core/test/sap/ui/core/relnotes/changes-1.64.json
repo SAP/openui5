@@ -31,6 +31,42 @@
         "type": "FIX",
         "text": " variable @sapContent_GridSize is undefined",
         "references": []
+      },
+      {
+        "id": "bd4e2fc76cf736e3b40fa821953a60ef2e71fb32",
+        "type": "FEATURE",
+        "text": " Adds public API for loadData promise",
+        "references": []
+      },
+      {
+        "id": "726759ebc8fa59c71eb0994e78bd5cd46b0e3908",
+        "type": "FIX",
+        "text": " DateInterval: Allow dash-like chars as delimiter for parsing",
+        "references": []
+      },
+      {
+        "id": "84fdb5182b58649e575c0f8e5608c5784c4a6fa2",
+        "type": "FIX",
+        "text": " Element_destroy.qunit.js: adapted incompatible document call",
+        "references": []
+      },
+      {
+        "id": "fb27097710cfbb779881a1b210814e33fd8785ba",
+        "type": "FIX",
+        "text": " Hyphenation: Improve HyphenationPlayground to not have errors",
+        "references": []
+      },
+      {
+        "id": "b5ca9ff70d06c28b6cdb7e9abd9d3b28a303ba20",
+        "type": "FIX",
+        "text": " ManagedObjectModel: Missing to observe/unobserve existing children",
+        "references": []
+      },
+      {
+        "id": "0b2c9958da29e4af2d6d62fc929f34b85b1e3d69",
+        "type": "FIX",
+        "text": " core.Popup: check the existence of blur method before call it",
+        "references": []
       }
     ]
   }

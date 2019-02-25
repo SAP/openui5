@@ -13,6 +13,24 @@
         "type": "FIX",
         "text": " sap.uxap.ObjectPageLayout: Filtering of lazy loaded sections fixed",
         "references": []
+      },
+      {
+        "id": "136e7ad0e801568c0df745ddc6d2e3961847c473",
+        "type": "FIX",
+        "text": " sap.uxap.ObjectPageHeader: Corrected search by id",
+        "references": []
+      },
+      {
+        "id": "19db549783e2ee6ccf9c2b19738f84ec2295c050",
+        "type": "FIX",
+        "text": " sap.uxap.ObjectPageLayout: Adjusted height of single fullscreen section",
+        "references": []
+      },
+      {
+        "id": "8f44e197250c61cc18742a6cc5201ab613c4c238",
+        "type": "FIX",
+        "text": " sap.uxap.ObjectPageSection: New title of section is shown on reveal",
+        "references": []
       }
     ]
   }

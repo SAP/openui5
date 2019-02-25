@@ -7,6 +7,12 @@
         "type": "FIX",
         "text": " variable @sapContent_GridSize is undefined",
         "references": []
+      },
+      {
+        "id": "3bf0af9829546f06b24e25666549fcd57009359e",
+        "type": "FIX",
+        "text": " sap.m.CheckBox: Focus outline in SimpleForm is fixed",
+        "references": []
       }
     ]
   }
