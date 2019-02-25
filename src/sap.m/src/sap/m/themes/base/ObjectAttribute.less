@@ -48,6 +48,13 @@
 
 .sapMListTblCell .sapMObjectAttributeActive {
 	white-space: normal;
+	word-break: break-word;
+}
+
+html[data-sap-ui-browser^='ie'], html[data-sap-ui-browser^='ed'] {
+	.sapMListTblCell .sapMObjectAttributeActive {
+		word-break: break-all;
+	}
 }
 
 .sapMObjectAttributeActive .sapMObjectAttributeTitle,
