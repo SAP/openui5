@@ -137,5 +137,129 @@
         "references": []
       }
     ]
+  },
+  "1.56.1": {
+    "date": "May 2018",
+    "notes": [
+      {
+        "id": "bac70a854e0250e1bd6268022706795f278b90f0",
+        "type": "FIX",
+        "text": " uxap.ObjectPage: showEditHeaderButton custom setter added",
+        "references": []
+      }
+    ]
+  },
+  "1.56.3": {
+    "date": "June 2018",
+    "notes": [
+      {
+        "id": "f61478f52f6142d28680c73aef5382437ed86f6a",
+        "type": "FIX",
+        "text": " LazyLoading: Ensure doLazyLoading work with fresh subSection sizes",
+        "references": []
+      },
+      {
+        "id": "e6fb0a3b1d9e8de5d7a427bc306854addd9abd2f",
+        "type": "FIX",
+        "text": " ObjectPageLayout: Infinity resizing loop fixed",
+        "references": []
+      },
+      {
+        "id": "5e48501ab9c16ca5a72568f626c1d84723b6854c",
+        "type": "FIX",
+        "text": " uxap.AnchorBar: F6 navigation handling corrected",
+        "references": []
+      },
+      {
+        "id": "04648136e025f7af80e16d32c533410a044df2d8",
+        "type": "FIX",
+        "text": " uxap.ObjectPageSubSection: See more button accessibility improved",
+        "references": []
+      }
+    ]
+  },
+  "1.56.4": {
+    "date": "July 2018",
+    "notes": [
+      {
+        "id": "996cf205fc470c1493942a5eb4357967b9fe1e12",
+        "type": "FIX",
+        "text": " sap.uxap.ObjectPageLayout: ScrollBar flickering fixed",
+        "references": []
+      }
+    ]
+  },
+  "1.56.5": {
+    "date": "July 2018",
+    "notes": [
+      {
+        "id": "67cef686b8ce695912684cf4ab3aa32f9a062360",
+        "type": "FIX",
+        "text": " ObjectPageLayout: test failures fixed",
+        "references": []
+      },
+      {
+        "id": "847d52f820fc46e17e8071518a2d5ef781f80028",
+        "type": "FIX",
+        "text": " sap.uxap.ObjectPageLayout: ScrollEnablement now has latest DOMref",
+        "references": []
+      }
+    ]
+  },
+  "1.56.8": {
+    "date": "September 2018",
+    "notes": [
+      {
+        "id": "0a2c78f5a62a43f0e55a26642efcbbe866ed09a6",
+        "type": "FIX",
+        "text": " sap.uxap.ObjectPageLayout: Non existing sub-section is now handled",
+        "references": []
+      }
+    ]
+  },
+  "1.56.11": {
+    "date": "October 2018",
+    "notes": [
+      {
+        "id": "085ff61a991d2d0c528e70c865036c79c152b388",
+        "type": "FIX",
+        "text": " ObjectPage: AnchorBar submenu buttons accessibility improvement",
+        "references": []
+      },
+      {
+        "id": "9dbb78a36d933df873ce911b78a8a4da0adc8af3",
+        "type": "FIX",
+        "text": " ObjectPageHeader: Long titles are now truncated",
+        "references": []
+      },
+      {
+        "id": "374e1e2909695b59f77439dfb2ee2b176c2c605f",
+        "type": "FIX",
+        "text": " ObjectPageSubSection: Aligned SimpleForm Toolbar",
+        "references": []
+      }
+    ]
+  },
+  "1.56.13": {
+    "date": "October 2018",
+    "notes": [
+      {
+        "id": "ce7b74f71f487c6becc8702d624050e5335e9413",
+        "type": "FIX",
+        "text": " sap.uxap.ObjectPageLayout: Corrected content height calculation",
+        "references": []
+      }
+    ]
+  },
+  "1.56.14": {
+    "date": "October 2018",
+    "notes": [
+      {
+        "id": "503246ca77aeb6b7c4c472bbed7a7c00621634a3",
+        "type": "FIX",
+        "text": " ObjectPageHeader - Fixed styles of navigationBar",
+        "references": []
+      }
+    ]
   }
 }

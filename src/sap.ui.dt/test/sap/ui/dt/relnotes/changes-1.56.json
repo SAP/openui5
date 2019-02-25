@@ -99,5 +99,79 @@
         "references": []
       }
     ]
+  },
+  "1.56.1": {
+    "date": "May 2018",
+    "notes": [
+      {
+        "id": "bcc3628f5997f37350c4722d34e2ff3bc7523498",
+        "type": "FIX",
+        "text": " sap.ui.dt - contextmenu overlaps rta-toolbar",
+        "references": []
+      },
+      {
+        "id": "d2603c50bc0fae06b162dd0037d43df34cfb5e66",
+        "type": "FIX",
+        "text": " sap.ui.dt - selection with contextMenu",
+        "references": []
+      },
+      {
+        "id": "fce992220639d297fc7837f4b39d28e4a37119fb",
+        "type": "FIX",
+        "text": " sap.ui.dt - wrong height calculation of exp. contextMenu",
+        "references": []
+      },
+      {
+        "id": "fa5f370dccf8c4643fc4a6742c0cacb12d661047",
+        "type": "FIX",
+        "text": "sap.ui.dt - Metadata propagation error",
+        "references": []
+      },
+      {
+        "id": "1e13d6c77bd20c7a6b6784748473fcc85f3dbd58",
+        "type": "FIX",
+        "text": "sap.ui.dt - Metadata propagation with multiple propagate functions",
+        "references": []
+      }
+    ]
+  },
+  "1.56.2": {
+    "date": "June 2018",
+    "notes": [
+      {
+        "id": "42acf8a12347d15ea425f7dce52d763879b5f3b9",
+        "type": "FIX",
+        "text": "sap.ui.dt - Removed overlays are still part of the selection",
+        "references": []
+      },
+      {
+        "id": "560f62e13d1a9deddb10262e51a7d7e874ef6ef9",
+        "type": "FIX",
+        "text": "sap.ui.dt - SelectionManager selection mode discrepancy with DT",
+        "references": []
+      }
+    ]
+  },
+  "1.56.3": {
+    "date": "June 2018",
+    "notes": [
+      {
+        "id": "d58cd7befe102305de446a3a68dd76844a177ba9",
+        "type": "FIX",
+        "text": " sap.ui.dt  fix element overlay destroyed on recreation",
+        "references": []
+      }
+    ]
+  },
+  "1.56.7": {
+    "date": "August 2018",
+    "notes": [
+      {
+        "id": "4c711ff403476a91695ddbdb0233b735fdfe6def",
+        "type": "FIX",
+        "text": " Smartlink not selectable after combine",
+        "references": []
+      }
+    ]
   }
 }

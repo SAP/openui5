@@ -39,5 +39,27 @@
         "references": []
       }
     ]
+  },
+  "1.54.1": {
+    "date": "February 2018",
+    "notes": [
+      {
+        "id": "93fcd7e925871d312a24cfb953bd7557b6bf4099",
+        "type": "FIX",
+        "text": " sap.m.Dialog: correct padding of the subheader when Toolbar is used",
+        "references": []
+      }
+    ]
+  },
+  "1.54.6": {
+    "date": "May 2018",
+    "notes": [
+      {
+        "id": "b0d94e33f3b7da317f201a31a97211188d9217fa",
+        "type": "FIX",
+        "text": " sap.m.SegmentedButton: right border of the last visible sub item is now displayed",
+        "references": []
+      }
+    ]
   }
 }

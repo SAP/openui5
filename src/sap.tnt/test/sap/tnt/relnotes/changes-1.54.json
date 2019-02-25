@@ -48,5 +48,32 @@
         "references": []
       }
     ]
+  },
+  "1.54.2": {
+    "date": "March 2018",
+    "notes": [
+      {
+        "id": "be570f02d7b6b973ec805db346dcfe64fae82010",
+        "type": "FIX",
+        "text": "sap.tnt.NavigationList: aria-expanded for the items works correctly now",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "1880204175"
+          }
+        ]
+      }
+    ]
+  },
+  "1.54.3": {
+    "date": "April 2018",
+    "notes": [
+      {
+        "id": "7532fbeac99f96cf735b4a672f3f3d8ee6bc2a28",
+        "type": "FIX",
+        "text": " sap.tnt, sap.ui.uinified.designtime: UUID added to the messagebundle files",
+        "references": []
+      }
+    ]
   }
 }

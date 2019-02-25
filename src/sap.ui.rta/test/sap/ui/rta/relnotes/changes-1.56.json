@@ -153,5 +153,151 @@
         "references": []
       }
     ]
+  },
+  "1.56.1": {
+    "date": "May 2018",
+    "notes": [
+      {
+        "id": "327f31e13cf6038d05b7cccbb2d0b194a418bb7a",
+        "type": "FIX",
+        "text": " sap.ui.rta Reload page for app descriptor changes",
+        "references": []
+      },
+      {
+        "id": "c7cced529cbd4ba22b0037d7590747df6dc2ce11",
+        "type": "FIX",
+        "text": "sap.ui.rta - Add elements dialog model contains circular references",
+        "references": []
+      }
+    ]
+  },
+  "1.56.2": {
+    "date": "June 2018",
+    "notes": [
+      {
+        "id": "ed17a4315845ce830561760793c3e01abc612d97",
+        "type": "FIX",
+        "text": " sap.ui.rta - additionalElementsDialog replaced deprecated label",
+        "references": []
+      },
+      {
+        "id": "92aeef0d55af4488dce439e6bfa7f3034e672490",
+        "type": "FIX",
+        "text": "sap.ui.rta - Automatic rename on groups created in empty forms",
+        "references": []
+      }
+    ]
+  },
+  "1.56.3": {
+    "date": "June 2018",
+    "notes": [
+      {
+        "id": "5381e1cce04da653cef9dfa231c3281847331dc4",
+        "type": "FIX",
+        "text": " Already persisted change should not be saved again",
+        "references": []
+      },
+      {
+        "id": "1724dae22c55e38f35fb371d032b000ba5216473",
+        "type": "FIX",
+        "text": " Command and Index mismatch in stack error response",
+        "references": []
+      },
+      {
+        "id": "b40d3c846c41031086afac8280df4fef917c0abf",
+        "type": "FIX",
+        "text": " sap.ui.rta: deselect overlays before removing them",
+        "references": []
+      },
+      {
+        "id": "38f64bb7eb8d9aa8a79bd6ebffcfb304f063db02",
+        "type": "FIX",
+        "text": "sap.ui.rta - Prevent overlay plugin evaluation during drag\u0026drop",
+        "references": []
+      }
+    ]
+  },
+  "1.56.4": {
+    "date": "July 2018",
+    "notes": [
+      {
+        "id": "f06c05b2efae9cf197a2e288d6d0540e18ca1533",
+        "type": "FIX",
+        "text": " Issues with displaying error messages in case of failed save",
+        "references": []
+      }
+    ]
+  },
+  "1.56.5": {
+    "date": "July 2018",
+    "notes": [
+      {
+        "id": "4bdac22a35f12434b51db38416c3cd6ed869f243",
+        "type": "FIX",
+        "text": " sap.ui.rta - AppVariantManager test bugfix",
+        "references": []
+      },
+      {
+        "id": "bb5e11bf10aef8bdb7943233ef8fd5a6bd799b4c",
+        "type": "FIX",
+        "text": " sap.ui.rta: Fixed the text for failing catalog assignment",
+        "references": []
+      }
+    ]
+  },
+  "1.56.6": {
+    "date": "August 2018",
+    "notes": [
+      {
+        "id": "846e928d74199c3f1f2adce812de211d5c8ec32e",
+        "type": "FIX",
+        "text": "sap.ui.rta: Disable actions in relevant container without stable id",
+        "references": []
+      }
+    ]
+  },
+  "1.56.7": {
+    "date": "August 2018",
+    "notes": [
+      {
+        "id": "eaff2b266a4b156153f8cad04bd846615268ce2c",
+        "type": "FIX",
+        "text": ": RTA rename jumping",
+        "references": []
+      }
+    ]
+  },
+  "1.56.8": {
+    "date": "September 2018",
+    "notes": [
+      {
+        "id": "abf962603879b2c2b17f432904e19c6eb4d09e4d",
+        "type": "FIX",
+        "text": " Setting the tooltip for every icon on App variant overview",
+        "references": []
+      }
+    ]
+  },
+  "1.56.12": {
+    "date": "October 2018",
+    "notes": [
+      {
+        "id": "71b0129c3aa1265590371dad8b3ad2edb642a8d2",
+        "type": "FIX",
+        "text": " Fixing CSP problem in sap.ui.rta",
+        "references": []
+      }
+    ]
+  },
+  "1.56.14": {
+    "date": "October 2018",
+    "notes": [
+      {
+        "id": "5290eccd8c073c951318d960edb883281ec89157",
+        "type": "FIX",
+        "text": " sap.ui.fl: Changes for VariantManagement are stored as instance",
+        "references": []
+      }
+    ]
   }
 }

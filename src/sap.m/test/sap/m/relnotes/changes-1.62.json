@@ -427,6 +427,42 @@
         "type": "FIX",
         "text": "sap.m.src.sap.m.themes.base.SelectionDetailsItem.less: Not enough space to render entire Label",
         "references": []
+      },
+      {
+        "id": "2816cf6f5511743b2b397962a54286517414f2fb",
+        "type": "FIX",
+        "text": " sap.m.CheckBox: Focus outline in a Form for IE11 fixed",
+        "references": []
+      },
+      {
+        "id": "c022e6e1ab2e56a86c0639e49b762cce9157df4b",
+        "type": "FIX",
+        "text": " sap.m.ComboBox: Selecting an unexisting item does not throw an error",
+        "references": []
+      },
+      {
+        "id": "db8b13433e85dfe862437b85b32794ba1d598741",
+        "type": "FIX",
+        "text": " sap.m.ComboBoxBase: `clearFilter` and `insertItem` corrected",
+        "references": []
+      },
+      {
+        "id": "1b27ab4a251ec3451141e25d3377b14441ce800f",
+        "type": "FIX",
+        "text": " sap.m.GenericTagDesign/GenericTagValueState: Missing documentation",
+        "references": []
+      },
+      {
+        "id": "0334e5c5f99e317d50207e75fe44bb06086f90a0",
+        "type": "FIX",
+        "text": " sap.m.InputBase: Removing aria-describedby node correctly",
+        "references": []
+      },
+      {
+        "id": "41514843678771bfeba88b910809c176ad02c951",
+        "type": "FIX",
+        "text": " sap.m.ValueStateMsg: Text is correctly displayed in a Dialog",
+        "references": []
       }
     ]
   }

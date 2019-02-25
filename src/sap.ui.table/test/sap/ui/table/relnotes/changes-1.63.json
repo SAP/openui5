@@ -19,6 +19,30 @@
         "type": "FIX",
         "text": " Table: Alignment of row actions if zoomed in Chrome corrected",
         "references": []
+      },
+      {
+        "id": "3ce1ae9600cd87dba9f525a8ff38f8e646bd9e09",
+        "type": "FIX",
+        "text": " GridTable: Selectors on empty rows hidden again",
+        "references": []
+      },
+      {
+        "id": "aec4f87ee719a55f9e4f5c5fe5d38ef807c70afa",
+        "type": "FIX",
+        "text": " Table: Alignment of row actions if zoomed in Chrome corrected",
+        "references": []
+      },
+      {
+        "id": "607485909726bb46cc5ae6c7bae9413f3c37d64b",
+        "type": "FIX",
+        "text": " Table: Avoid duplicate id issues for rows",
+        "references": []
+      },
+      {
+        "id": "19571b1707b466da422d47bfd8f72e937365abfd",
+        "type": "FIX",
+        "text": " Table: Fixed column layout corrected",
+        "references": []
       }
     ]
   }

@@ -19,6 +19,36 @@
         "type": "FIX",
         "text": ": Personalization Toolbar placement",
         "references": []
+      },
+      {
+        "id": "4392d0bec29b80885eb13e96c805a698fc8ac93e",
+        "type": "FEATURE",
+        "text": " Modify the RTA publish functionality in order to publish the",
+        "references": []
+      },
+      {
+        "id": "14004c9d8082d560ea4e17fa84e469c5f751e003",
+        "type": "FIX",
+        "text": " Correct namespace for manageApps",
+        "references": []
+      },
+      {
+        "id": "769146dd1f2bd97929422ecb14a0ebbdd4e66e53",
+        "type": "FIX",
+        "text": " Set the application variant version to 1.0.0 before saving into",
+        "references": []
+      },
+      {
+        "id": "df29498324c1ecf74ee624de94b619a5f1036f7d",
+        "type": "FIX",
+        "text": " Stopping deletion of app variants functionality in S4 Cloud",
+        "references": []
+      },
+      {
+        "id": "20e87871a1114bb4afa995bf46b6fd37902e1b14",
+        "type": "FIX",
+        "text": ": Personalization Toolbar placement",
+        "references": []
       }
     ]
   }

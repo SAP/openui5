@@ -1,29 +1,69 @@
 {
-	"1.42.0": {
-		"date": "August 2016",
-		"notes": [
-			{
-				"id": "6064be9a4770e39ce594d4a18311c5acf30a91a1",
-				"type": "FIX",
-				"text": "sap.tnt.NavigationList: The texts in the Popup are no longer cut off in IE",
-				"references": [
-					{
-						"type": "BCP",
-						"reference": "1680090969"
-					}
-				]
-			},
-			{
-				"id": "02fb8a9004fde53c9988fd204a273de2a41c10f0",
-				"type": "FIX",
-				"text": "sap.tnt.NavigationListItem: Icon tooltip corrected",
-				"references": [
-					{
-						"type": "BCP",
-						"reference": "1680108841"
-					}
-				]
-			}
-		]
-	}
+  "1.42.0": {
+    "date": "August 2016",
+    "notes": [
+      {
+        "id": "6064be9a4770e39ce594d4a18311c5acf30a91a1",
+        "type": "FIX",
+        "text": "sap.tnt.NavigationList: The texts in the Popup are no longer cut off in IE",
+        "references": []
+      },
+      {
+        "id": "02fb8a9004fde53c9988fd204a273de2a41c10f0",
+        "type": "FIX",
+        "text": "sap.tnt.NavigationListItem: Icon tooltip corrected",
+        "references": []
+      }
+    ]
+  },
+  "1.42.2": {
+    "date": "September 2016",
+    "notes": [
+      {
+        "id": "def196e7efb09dc5045137a9a7872f3355a2a7c0",
+        "type": "FIX",
+        "text": "changes-1.42.json: remove duplicates",
+        "references": []
+      }
+    ]
+  },
+  "1.42.3": {
+    "date": "October 2016",
+    "notes": [
+      {
+        "id": "5ff66fbedb82e7517a6664e7d2ceefc270740908",
+        "type": "FIX",
+        "text": "sap.tnt. ToolPage: SideNavigation is initially expanded  on laptop with touch",
+        "references": []
+      }
+    ]
+  },
+  "1.42.5": {
+    "date": "November 2016",
+    "notes": [
+      {
+        "id": "49f391732830321932dceb2b2f90051527ae0896",
+        "type": "FIX",
+        "text": "sap.tnt.NavigationList: Popover not closing in collapsed mode issue fixed",
+        "references": []
+      },
+      {
+        "id": "48cc110e7e1c69a7eeb40386cbef0d50cc8f4876",
+        "type": "FIX",
+        "text": "sap.tnt.ToolPage: Issue with resizing in combi devices now corrected",
+        "references": []
+      }
+    ]
+  },
+  "1.42.6": {
+    "date": "November 2016",
+    "notes": [
+      {
+        "id": "5fa802590c0d09da6159deddf3ab833a92c5ab87",
+        "type": "FIX",
+        "text": " sap.tnt.ToolPage: SideNavigation overlapping the content in combi devices now corrected",
+        "references": []
+      }
+    ]
+  }
 }

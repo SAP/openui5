@@ -7,6 +7,18 @@
         "type": "FEATURE",
         "text": " Introduction of Metric Less Parameters",
         "references": []
+      },
+      {
+        "id": "9e5d11154afb05c7c7566b1d874de27618f1d900",
+        "type": "FEATURE",
+        "text": " Introduction of Metric Less Parameters",
+        "references": []
+      },
+      {
+        "id": "a202628c0253c6e21568fb9ee3936333d82eaa70",
+        "type": "FIX",
+        "text": " variable @sapContent_GridSize is undefined",
+        "references": []
       }
     ]
   }

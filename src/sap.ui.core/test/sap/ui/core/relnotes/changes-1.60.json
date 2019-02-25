@@ -405,5 +405,181 @@
         "references": []
       }
     ]
+  },
+  "1.60.1": {
+    "date": "November 2018",
+    "notes": [
+      {
+        "id": "e723aa4d44246b07856a206dfc739db114bf6eea",
+        "type": "FIX",
+        "text": " sap.ui.model.analytics.odata4analytics#_renderPropertyFilterValue",
+        "references": []
+      },
+      {
+        "id": "68eab4ac33f4050d637e93fc02bc9793aefe8ff6",
+        "type": "FIX",
+        "text": " performance/trace/FESR: deal with unsupported window.Performance API",
+        "references": []
+      },
+      {
+        "id": "9b9631b727a7bf908e0ed2836d923c3f1ba3f345",
+        "type": "FIX",
+        "text": " routing.History: maintain the history state after hash replacement",
+        "references": []
+      },
+      {
+        "id": "bba33ddc1e9254c005802f8c66ffe66c50e3734b",
+        "type": "FIX",
+        "text": " sap/ui/core/Manifest: finalize resolveUri API",
+        "references": []
+      }
+    ]
+  },
+  "1.60.2": {
+    "date": "November 2018",
+    "notes": [
+      {
+        "id": "5702fb03b3f589473dc078b04685587e9e6cc07f",
+        "type": "FIX",
+        "text": " Component: register the module path for app variants",
+        "references": []
+      },
+      {
+        "id": "3d4656af568637dc8709b402fcb98370e6edbb5f",
+        "type": "FIX",
+        "text": " Model.removeBinding: performance",
+        "references": []
+      },
+      {
+        "id": "b80509a6e14dc6dbc1c9d903f82ff658cb63d980",
+        "type": "FIX",
+        "text": " Unit Type: Only parse and format valid values",
+        "references": []
+      },
+      {
+        "id": "e9bfcbc1ab6de6c9ac7fe9c6060081eb3fe9d174",
+        "type": "FIX",
+        "text": " core/Control: corrected visibility of blocked property",
+        "references": []
+      },
+      {
+        "id": "dd34c4702d6edb0e861c6eeee3a94014d8f6317c",
+        "type": "FIX",
+        "text": " core/Control: fixed wrong jsdoc tag",
+        "references": []
+      },
+      {
+        "id": "789f4d795465c40ecd2aa2c8b7d1811c47dfb5df",
+        "type": "FIX",
+        "text": " TreeBindingUtils: Fixes negative $skip values",
+        "references": []
+      }
+    ]
+  },
+  "1.60.3": {
+    "date": "December 2018",
+    "notes": [
+      {
+        "id": "6cacdbd6934fc39099a0f83110b689ec8c39cd9b",
+        "type": "FIX",
+        "text": " ComboBoxBase: Support for composition characters",
+        "references": []
+      },
+      {
+        "id": "a4d93f23fd231a8beb6bf1e996567f424cfe91eb",
+        "type": "FIX",
+        "text": " Device.js: use maxTouchPoints for touch support detection",
+        "references": []
+      },
+      {
+        "id": "f10fcbbe2e28d62916f6c40d6fc9442ac8ac3f22",
+        "type": "FIX",
+        "text": " NumberFormat: Fixed bug in short currency parsing",
+        "references": []
+      },
+      {
+        "id": "048a0b8635f96a24e854f4ff31fc56dd0864322e",
+        "type": "FIX",
+        "text": " NumberFormat: correctly handle option precision with CurrencyFormat",
+        "references": []
+      },
+      {
+        "id": "e64a8c6a46e92001ffd0f8b610b8283abb723720",
+        "type": "FIX",
+        "text": " ODataUtils: Enhance setAnnotationOrigin for HanaXS Use Case",
+        "references": []
+      },
+      {
+        "id": "0a64c4b2f0e0a5058e72d85d27f536f6dd86f0d7",
+        "type": "FIX",
+        "text": " TreeBindingCompatibilityAdapter: Safe Array indexOf",
+        "references": []
+      },
+      {
+        "id": "c18db8f635f05fd0b2d1fea62d9f43969d8981b0",
+        "type": "FIX",
+        "text": " UriParameters: Fixed parsing of query values with an equal sign",
+        "references": []
+      },
+      {
+        "id": "fc9b3d01094325ebb7e0e432afd471e00589563a",
+        "type": "FIX",
+        "text": " i18n.ResourceBundle: Norwegian language support for \"nb\"",
+        "references": []
+      },
+      {
+        "id": "098a4ae9bcbdfeda1486ec35f200827a98334679",
+        "type": "FIX",
+        "text": " sap.ui.model.odata.AnnotationsParser: nested annotation w/o qualifier",
+        "references": []
+      },
+      {
+        "id": "2381ca75c357adf1d27cfd77dec72a490b590410",
+        "type": "FIX",
+        "text": " v2.ODataModel: memory leak",
+        "references": []
+      },
+      {
+        "id": "3e026e935c3b172e78e852aef747e18e4d02ae66",
+        "type": "FIX",
+        "text": " sap.ui.core/Component: improved variant determination",
+        "references": []
+      }
+    ]
+  },
+  "1.60.6": {
+    "date": "February 2019",
+    "notes": [
+      {
+        "id": "72da2e919114457d94e6b62864bce0d73d31c320",
+        "type": "FIX",
+        "text": " ODataMessageParser: support \u0027transition\u0027 flag",
+        "references": []
+      },
+      {
+        "id": "74e9a598c6274aab7daf8d8895f4dd1119be7565",
+        "type": "FIX",
+        "text": " ODataModel: Don\u0027t send CSRF token for GET requests",
+        "references": []
+      },
+      {
+        "id": "e9ae2f59535a880ab82c025c43991d7f48589f95",
+        "type": "FIX",
+        "text": " ODataModel: memory leak",
+        "references": []
+      },
+      {
+        "id": "ecf2ec898549a9476811f29e18ff74253b579a04",
+        "type": "FIX",
+        "text": " core.DateFormat: fix am/pm parsing with pattern which contains \".\"",
+        "references": []
+      },
+      {
+        "id": "ff020bdb7089f2fa6ef461a0e0ad605ba9a54d66",
+        "type": "FIX",
+        "text": " util/Storage: fixed removeAll function",
+        "references": []
+      }
+    ]
   }
 }

@@ -7,6 +7,12 @@
         "type": "FIX",
         "text": " sap.tnt.ToolPage: Visualization on tablet improved",
         "references": []
+      },
+      {
+        "id": "095a4c6340a806790775a22c31a886742df97375",
+        "type": "FIX",
+        "text": " sap.tnt.ToolPage: Visualization on tablet improved",
+        "references": []
       }
     ]
   }
