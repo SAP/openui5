@@ -4369,6 +4369,8 @@ sap.ui.define([
 					url : "TEAMS('42')/TEAM_2_EMPLOYEES('2')/"
 						+ "com.sap.gateway.default.iwbep.tea_busi.v0001.AcChangeTeamOfEmployee",
 					payload : {"TeamID" : "TEAM_02"}
+				}, {
+					"ID" : "2"
 				});
 			oAction.setParameter("TeamID", "TEAM_02");
 
@@ -10337,6 +10339,8 @@ sap.ui.define([
 					url : "TEAMS('42')/TEAM_2_EMPLOYEES('7')/"
 						+ "com.sap.gateway.default.iwbep.tea_busi.v0001.AcChangeTeamOfEmployee",
 					payload : {"TeamID" : "TEAM_02"}
+				}, {
+					"ID" : "7"
 				});
 			oAction.setParameter("TeamID", "TEAM_02");
 
@@ -13395,5 +13399,71 @@ sap.ui.define([
 				assert.strictEqual(oValueHelpModel.toString(),
 					"sap.ui.model.odata.v4.ODataModel: /special/countryoforigin/");
 			});
+	});
+
+	//*********************************************************************************************
+	// Scenario: Execute a bound action on the target of a navigation property. That action returns
+	// its binding parameter which is thus updated ("cache synchronization") and is the target of
+	// messages.
+	// CPOUI5UISERVICESV3-1587
+	QUnit.test("bound action on navigation property updates binding parameter", function (assert) {
+		var oModel = createSpecialCasesModel({autoExpandSelect : true}),
+			sResourcePath = "Artists(ArtistID='42',IsActiveEntity=true)/BestPublication",
+			sView = '\
+<FlexBox binding="{\
+		path : \'/Artists(ArtistID=\\\'42\\\',IsActiveEntity=true)/BestPublication\',\
+		parameters : {$select : \'Messages\'}\
+	}" id="form">\
+	<Input id="price" value="{Price}" />\
+</FlexBox>',
+			that = this;
+
+		this.expectRequest(sResourcePath + "?$select=Messages,Price,PublicationID", {
+				"PublicationID" : "42-0",
+				"Price" : "9.99"
+			})
+			.expectChange("price", "9.99");
+
+		return this.createView(assert, sView, oModel).then(function () {
+			var oContext = that.oView.byId("form").getObjectBinding().getBoundContext(),
+				oOperation = that.oModel.bindContext("special.cases.PreparationAction(...)",
+					oContext, {$$inheritExpandSelect : true});
+
+			that.expectRequest({
+				method : "POST",
+				url : sResourcePath + "/special.cases.PreparationAction"
+					+ "?$select=Messages,Price,PublicationID",
+				payload : {}
+			}, {
+				"Messages" : [{
+					"code" : "23",
+					"message" : "Just A Message",
+					"numericSeverity" : 1,
+					"transition" : true,
+					"target" : "Price"
+				}],
+				"PublicationID" : "42-0",
+				"Price" : "3.33"
+			})
+			.expectChange("price", "3.33")
+			.expectMessages([{
+				code : "23",
+				message : "Just A Message",
+				// Note: We cannot know whether PreparationAction changed the target of
+				// BestPublication, but as long as the form still displays "42-0", we might as well
+				// keep it up-to-date and show messages there...
+				target : "/Artists(ArtistID='42',IsActiveEntity=true)/BestPublication/Price",
+				persistent : true,
+				type : "Success"
+			}]);
+
+			// code under test
+			return Promise.all([
+				oOperation.execute(),
+				that.waitForChanges(assert)
+			]);
+		}).then(function () {
+			return that.checkValueState(assert, "price", "Success", "Just A Message");
+		});
 	});
 });
