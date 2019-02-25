@@ -100,6 +100,11 @@ function(
 					};
 				}
 			});
+			sandbox.stub(FlexUtils, "buildLrepRootNamespace");
+			this.oRta.setFlexSettings({
+				developerMode: true,
+				scenario: "scenario"
+			});
 
 			return this.oControllerExtension.add("foo.js", this.oView.getId()).then(function (oDefinition) {
 				assert.deepEqual(oDefinition, {definition: "definition"}, "the function returns the definition of the change");
@@ -108,6 +113,8 @@ function(
 				assert.equal(this.oCreateBaseChangeParameter.changeType, "codeExt", "the changeType was set correctly");
 				assert.equal(this.oCreateBaseChangeParameter.selector.controllerName, "controllerName", "the controllerName was set correctly");
 				assert.equal(this.oCreateBaseChangeParameter.content.codeRef, "foo.js", "the codeRef was set correctly");
+				assert.equal(this.oCreateBaseChangeParameter.developerMode, true, "the developerMode was set correctly");
+				assert.equal(this.oCreateBaseChangeParameter.scenario, "scenario", "the scenario was set correctly");
 			}.bind(this));
 		});
 
