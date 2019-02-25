@@ -1928,7 +1928,7 @@ sap.ui.define([
 		assert(vUrl === undefined ||
 			typeof vUrl === 'boolean' ||
 			typeof vUrl === 'string' ||
-			typeof vUrl === 'object' && (vUrl.url == null || vUrl.url === 'string') && (vUrl.async == null || typeof vUrl.async === 'boolean'),
+			typeof vUrl === 'object' && (vUrl.url == null || typeof vUrl.url === 'string') && (vUrl.async == null || typeof vUrl.async === 'boolean'),
 			"vUrl must be empty or a string or an object with an optional property 'url' of type string and an optional boolean property 'async'");
 
 		if ( typeof vUrl === 'boolean' ) {
