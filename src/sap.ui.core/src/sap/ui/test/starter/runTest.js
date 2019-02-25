@@ -372,6 +372,18 @@
 					}).then(function() {
 						return ensureDOM();
 					}).then(function() {
+						// When using xx-waitForTheme=init the test starter also
+						// takes care of waiting for additional stylesheets e.g. caused by
+						// implicit loading of libs via test module dependencies.
+						// Note: config option is internally converted to lowercase
+						if (oConfig.ui5["xx-waitfortheme"] === "init") {
+							return new Promise(function(resolve, reject) {
+								sap.ui.require(["sap/ui/qunit/utils/waitForThemeApplied"], resolve, reject);
+							}).then(function(waitForThemeApplied) {
+								return waitForThemeApplied();
+							});
+						}
+					}).then(function() {
 						QUnit.start();
 					});
 			} else {
