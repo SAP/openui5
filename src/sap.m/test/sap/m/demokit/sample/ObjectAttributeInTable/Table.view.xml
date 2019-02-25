@@ -1,0 +1,34 @@
+<mvc:View
+	controllerName="sap.m.sample.ObjectAttributeInTable.Table"
+	xmlns:mvc="sap.ui.core.mvc"
+	xmlns="sap.m">
+		<Table id="idProductsTable"
+			items="{
+				path: '/modelData'
+			}">
+			<columns>
+				<Column>
+					<Text text="Products" />
+				</Column>
+				<Column>
+					<Text text="Supplier" />
+				</Column>
+				<Column>
+					<Text text="Supplier (active)" />
+				</Column>
+			</columns>
+			<items>
+				<ColumnListItem>
+					<cells>
+						<ObjectIdentifier
+							text="{product}"/>
+						<ObjectAttribute
+								text="{supplier}"/>
+						<ObjectAttribute
+								text="{supplier}"
+								active="true"/>
+					</cells>
+				</ColumnListItem>
+			</items>
+		</Table>
+</mvc:View>

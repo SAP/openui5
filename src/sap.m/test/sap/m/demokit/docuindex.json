@@ -700,6 +700,7 @@
 		  "since": "1.12",
 		  "samples": [
 			"sap.m.sample.ObjectAttributes",
+			"sap.m.sample.ObjectAttributeInTable",
 			"sap.m.sample.ObjectHeaderResponsiveI",
 			"sap.m.sample.ObjectHeaderActiveAttributes"
 		  ]
@@ -1762,6 +1763,11 @@
 		  "id": "sap.m.sample.ObjectAttributes",
 		  "name": "Object Attribute",
 		  "description": "This is an example of Object Attribute used standalone."
+		},
+		{
+		  "id": "sap.m.sample.ObjectAttributeInTable",
+		  "name": "Object Attribute inside Table",
+		  "description": "This is an example of Object Attribute used inside Table."
 		},
 		{
 		  "id": "sap.m.sample.ObjectHeader",

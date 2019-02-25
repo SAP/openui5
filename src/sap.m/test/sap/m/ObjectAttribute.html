@@ -226,7 +226,13 @@
 							new sap.m.MessageToast.show("you click me");
 						}
 					}), new sap.m.ObjectAttribute({
-						text : "John Doe Ñagçyfox",
+						title: "Custom content",
+						customContent: new sap.m.Link ({
+							text:"test link",
+							press: function() {alert("you press me")}
+						})
+					}), new sap.m.ObjectAttribute({
+						text : "JohnDoeÑagçyfox@JohnDoeÑagçyfox.com",
 						active : true,
 						press : function() {
 							new sap.m.MessageToast.show("you click me");
