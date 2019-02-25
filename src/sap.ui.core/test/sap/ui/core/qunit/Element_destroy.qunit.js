@@ -84,4 +84,15 @@ sap.ui.define([
 		this.oControl.destroy("KeepDom");
 		assert.strictEqual(this.oControl.getDomRef(), oRootDomRef, "Control DOM is not touched after destroy");
 	});
+
+	QUnit.test("Destroy control which does not have a parent", function(assert) {
+		var oRootDomRef = this.oControl.getDomRef();
+
+		this.oParent.removeAggregation("children", this.oControl, true);
+		assert.ok(!this.oControl.getParent(), "Control has no Parent");
+
+		this.oControl.destroy();
+		assert.ok(!document.body.contains(oRootDomRef), "Control DOM is removed synchronously after destroy because control had no parent");
+		assert.ok(!this.oControl.getDomRef(), "Control DOM ref is not found");
+	});
 });
