@@ -95,7 +95,11 @@ sap.ui.define([
 				fnResolve();
 			};
 			oBinding.attachAggregatedDataStateChange(fCompare);
-			fnFunc();
+			try {
+				fnFunc();
+			} catch (e) {
+				fnReject(e);
+			}
 		});
 
 	}
