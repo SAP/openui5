@@ -15,14 +15,17 @@ sap.ui.define(['sap/ui/test/matchers/Matcher'], function (Matcher) {
 	 */
 	return Matcher.extend("sap.ui.test.matchers.Visible", /** @lends sap.ui.test.matchers.Visible.prototype */ {
 		isMatching:  function(oControl) {
-			if (!oControl.getDomRef()) {
-				this._oLogger.debug("Control '" + oControl + "'' is not rendered");
-				return false;
-			}
+			var oDomRef = oControl.$();
+			var bVisible = false;
 
-			var bVisible = oControl.$().is(":visible");
-			if (!bVisible) {
-				this._oLogger.debug("Control '" + oControl + "' is not visible");
+			if (oDomRef.length) {
+				if (oDomRef.is(":hidden") || oDomRef.css("visibility") === "hidden") {
+					this._oLogger.debug("Control '" + oControl + "' is not visible");
+				} else {
+					bVisible = true;
+				}
+			} else {
+				this._oLogger.debug("Control '" + oControl + "'' is not rendered");
 			}
 
 			return bVisible;
