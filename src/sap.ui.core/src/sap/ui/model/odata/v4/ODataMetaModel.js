@@ -814,7 +814,7 @@ sap.ui.define([
 	 *   case of success; it is rejected if the requested metadata cannot be loaded, if the context
 	 *   path does not point to an entity, if the entity is transient, or if required key properties
 	 *   are missing
-^	 *
+	 *
 	 * @private
 	 */
 	ODataMetaModel.prototype.fetchCanonicalPath = function (oContext) {
