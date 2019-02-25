@@ -49,7 +49,6 @@ sap.ui.define([
 
 	"use strict";
 
-
 	if ( !jQuery ) {
 		throw new Error("Loading of jQuery failed");
 	}

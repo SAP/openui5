@@ -623,6 +623,14 @@ License: MIT License
 <year> = 2018
 <copyright holders> = Mathias Nater
 
+Component: es6-shim v0.35.4 - ECMAScript 6 compatibility shims for legacy JavaScript engines
+Licensor: Paul Miller (http://paulmillr.com) and contributors
+Website: https://github.com/paulmillr/es6-shim
+License: MIT License
+<year> = 2013-2016
+<copyright holders> = Paul Miller (http://paulmillr.com) and contributors
+
+
 
 --------------------------------------------------------------------------------------------------------------------------
 
