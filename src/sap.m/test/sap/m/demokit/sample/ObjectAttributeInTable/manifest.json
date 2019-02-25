@@ -1,0 +1,27 @@
+{
+	"sap.app": {
+		"id": "sap.m.sample.ObjectAttributeInTable",
+		"applicationVersion": {
+			"version": "1.0.0"
+		}
+	},
+	"sap.ui5": {
+	"rootView": {
+			"viewName": "sap.m.sample.ObjectAttributeInTable.Table",
+			"type": "XML",
+			"async": true
+		},
+		"libs": {
+			"sap.m": {}
+		},
+		"config": {
+			"sample": {
+				"files": [
+					"Table.view.xml",
+					"Table.controller.js",
+					"manifest.json"
+				]
+			}
+		}
+	}
+}
