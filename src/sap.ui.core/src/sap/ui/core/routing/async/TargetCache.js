@@ -32,7 +32,12 @@ sap.ui.define([
 					case "View":
 						oOptions.viewName = oOptions.name;
 						delete oOptions.name;
-						if (bNoPromise) {
+
+						if (bNoPromise || oOptions.async === false) {
+							// if a View instance must be returned instead of a promise
+							// or the View must be loaded synchronously, the legacy call
+							// is used.
+							//
 							// deprecated legacy branch via Router#getView - keep!
 							return sap.ui.view(oOptions);
 						} else {
@@ -115,11 +120,11 @@ sap.ui.define([
 			return vPromiseOrObject;
 		},
 
-		_getViewWithGlobalId : function (oOptions) {
+		_getViewWithGlobalId : function (oOptions, bUsePromise) {
 			if (oOptions && !oOptions.name) {
 				oOptions.name = oOptions.viewName;
 			}
-			return this._getObjectWithGlobalId(oOptions, "View", true /* no promise */);
+			return this._getObjectWithGlobalId(oOptions, "View", !bUsePromise /* no promise */);
 		},
 
 		_getComponentWithGlobalId : function(oOptions, oInfo) {
