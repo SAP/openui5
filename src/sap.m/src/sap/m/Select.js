@@ -1424,6 +1424,16 @@ function(
 		};
 
 		/**
+		 * Handles the keydown event for SPACE on which we have to prevent the browser scrolling.
+		 *
+		 * @param {jQuery.Event} oEvent The event object.
+		 * @private
+		 */
+		Select.prototype.onsapspace = function(oEvent) {
+			oEvent.preventDefault();
+		};
+
+		/**
 		 * Handles the keyup event for SPACE.
 		 *
 		 * @param {jQuery.Event} oEvent The event object.
