@@ -93,7 +93,9 @@ function (
 							controllerName: sControllerName
 						},
 						changeType: "codeExt",
-						namespace: oFlexSettings.namespace
+						namespace: oFlexSettings.namespace,
+						developerMode: oFlexSettings.developerMode,
+						scenario: oFlexSettings.scenario
 					};
 
 					var oPreparedChange = oFlexController.createBaseChange(oChangeSpecificData, oAppComponent);
