@@ -26,7 +26,7 @@ sap.ui.define(["sap/f/cards/BaseContent",
 		 * @param {object} [mSettings] Initial settings for the new control
 		 *
 		 * @class
-		 * Displays time related content.
+		 * Displays time-related content.
 		 *
 		 * @extends sap.f.cards.BaseContent
 		 *

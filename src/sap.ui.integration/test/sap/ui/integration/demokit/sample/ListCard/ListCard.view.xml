@@ -5,7 +5,7 @@
         class="sapUiContentPadding"
         xmlns:w="sap.ui.integration.widgets">
     <Panel>
-        <w:Card width="auto" manifest="{manifests>/listCard}">
+        <w:Card width="auto" manifest="./test-resources/sap/ui/integration/demokit/sample/ListCard/model/cardManifest.json">
         </w:Card>
     </Panel>
 </mvc:View>

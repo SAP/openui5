@@ -4,7 +4,8 @@ sap.ui.define([
 	'sap/ui/model/json/JSONModel'
 ], function (jQuery, Controller, JSONModel) {
 	"use strict";
-	var ListCardController = Controller.extend("sap.ui.integration.sample.Playground.Playground", {
+
+	var PlaygroundController = Controller.extend("sap.ui.integration.sample.Playground.Playground", {
 		onInit: function () {
 			//check whether there is a manifest json given with the URL
 			var sHash = document.location.hash;
@@ -34,9 +35,6 @@ sap.ui.define([
 			}
 			sampleModel.loadData(jQuery.sap.getModulePath("sap.ui.integration.sample.Playground") + "/samples.json");
 		},
-		onAfterRendering: function () {
-			this.byId("outersplitter").setHeight(this.getView().getDomRef().offsetHeight + "px");
-		},
 		onMenuAction: function (oEvent) {
 			var sUrl = oEvent.getParameter("item").getBinding("text").getContext().getProperty("url");
 			jQuery.ajax(jQuery.sap.getModulePath("sap.ui.integration.sample.Playground") + "/" + sUrl, {
@@ -65,6 +63,6 @@ sap.ui.define([
 		}
 	});
 
-	return ListCardController;
+	return PlaygroundController;
 
 });

@@ -1,5 +1,4 @@
 {
-  "listCard": {
 	"sap.card": {
 	  "type": "List",
 	  "header": {
@@ -54,5 +53,4 @@
 		}
 	  }
 	}
-  }
 }
