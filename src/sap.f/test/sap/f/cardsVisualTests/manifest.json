@@ -114,6 +114,11 @@
 		  "target": "tableContent"
 		},
 		{
+		  "pattern": "objectContent",
+		  "name": "objectContent",
+		  "target": "objectContent"
+		},
+		{
 		  "pattern": "flp",
 		  "name": "flp",
 		  "target": "flp"
@@ -192,6 +197,11 @@
 		"tableContent": {
 		  "viewId": "tableContent",
 		  "viewName": "TableContent",
+		  "viewLevel": 1
+		},
+		"objectContent": {
+		  "viewId": "objectContent",
+		  "viewName": "ObjectContent",
 		  "viewLevel": 1
 		},
 		"analyticalContent": {
