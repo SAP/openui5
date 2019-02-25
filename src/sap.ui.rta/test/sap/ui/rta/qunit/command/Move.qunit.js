@@ -89,7 +89,7 @@ sap.ui.define([
 			this.fnCompleteChangeContentSpy = sinon.spy();
 
 			var oChangeRegistry = ChangeRegistry.getInstance();
-			oChangeRegistry.registerControlsForChanges({
+			return oChangeRegistry.registerControlsForChanges({
 				"sap.m.Button": {
 					"moveStuff" : {
 						applyChange: this.fnApplyChangeSpy,
@@ -97,18 +97,18 @@ sap.ui.define([
 						completeChangeContent: this.fnCompleteChangeContentSpy
 					}
 				}
-			});
-
-			this.oButtonDesignTimeMetadata = new ElementDesignTimeMetadata({
-				data : {
-					actions : {
-						move : {
-							changeType : "moveStuff"
+			})
+			.then(function() {
+				this.oButtonDesignTimeMetadata = new ElementDesignTimeMetadata({
+					data : {
+						actions : {
+							move : {
+								changeType : "moveStuff"
+							}
 						}
 					}
-				}
-			});
-
+				});
+			}.bind(this));
 		},
 		afterEach: function () {
 			this.oButton.destroy();

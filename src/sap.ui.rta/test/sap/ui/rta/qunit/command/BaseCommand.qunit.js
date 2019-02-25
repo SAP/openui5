@@ -1057,36 +1057,38 @@ function (
 	QUnit.module("Given controls and designTimeMetadata", {
 		beforeEach : function () {
 			sandbox.stub(FlexUtils, "_getComponentForControl").returns(oMockedAppComponent);
-			ChangeRegistry.getInstance().registerControlsForChanges({
+			return ChangeRegistry.getInstance().registerControlsForChanges({
 				"sap.m.ObjectHeader": [SimpleChanges.moveControls]
-			});
-			this.oMovable = new ObjectAttribute(oMockedAppComponent.createId("attribute"));
-			this.oSourceParent = new ObjectHeader(oMockedAppComponent.createId("header"), {
-				attributes : [this.oMovable]
-			});
-			this.oTargetParent = new ObjectHeader(oMockedAppComponent.createId("targetHeader"));
+			})
+			.then(function() {
+				this.oMovable = new ObjectAttribute(oMockedAppComponent.createId("attribute"));
+				this.oSourceParent = new ObjectHeader(oMockedAppComponent.createId("header"), {
+					attributes : [this.oMovable]
+				});
+				this.oTargetParent = new ObjectHeader(oMockedAppComponent.createId("targetHeader"));
 
-			this.oRootElement = new VerticalLayout({
-				content : [this.oSourceParent, this.oTargetParent]
-			});
+				this.oRootElement = new VerticalLayout({
+					content : [this.oSourceParent, this.oTargetParent]
+				});
 
-			this.oSourceParentDesignTimeMetadata = new ElementDesignTimeMetadata({
-				data : {
-					actions : {
-						move : "moveControls"
-					},
-					fakeAggreagtionWithoutMove : {
+				this.oSourceParentDesignTimeMetadata = new ElementDesignTimeMetadata({
+					data : {
+						actions : {
+							move : "moveControls"
+						},
+						fakeAggreagtionWithoutMove : {
 
+						}
 					}
-				}
-			});
-			this.oOtherParentDesignTimeMetadata = new ElementDesignTimeMetadata({
-				data : {
-					actions : {
-						move : undefined
+				});
+				this.oOtherParentDesignTimeMetadata = new ElementDesignTimeMetadata({
+					data : {
+						actions : {
+							move : undefined
+						}
 					}
-				}
-			});
+				});
+			}.bind(this));
 		},
 		afterEach : function(){
 			sandbox.restore();
@@ -1296,7 +1298,7 @@ function (
 
 			var oChangeRegistry = ChangeRegistry.getInstance();
 			oChangeRegistry.removeRegistryItem({controlType : "sap.m.List"});
-			oChangeRegistry.registerControlsForChanges({
+			return oChangeRegistry.registerControlsForChanges({
 				"sap.m.VBox" : {
 					"moveControls": "default"
 				},
@@ -1428,7 +1430,7 @@ function (
 
 			var oChangeRegistry = ChangeRegistry.getInstance();
 			oChangeRegistry.removeRegistryItem({controlType : "sap.m.List"});
-			oChangeRegistry.registerControlsForChanges({
+			return oChangeRegistry.registerControlsForChanges({
 				"sap.m.VBox" : {
 					"moveControls": "default"
 				},
@@ -1439,17 +1441,17 @@ function (
 						translationTextType: "XTXT"
 					})
 				}
-			});
+			})
+			.then(function() {
+				this.oDesignTime = new DesignTime({
+					rootElements : [this.oList]
+				});
 
-			this.oDesignTime = new DesignTime({
-				rootElements : [this.oList]
-			});
-
-			this.oDesignTime.attachEventOnce("synced", function() {
-				this.oListOverlay = OverlayRegistry.getOverlay(this.oList);
-				done();
+				this.oDesignTime.attachEventOnce("synced", function() {
+					this.oListOverlay = OverlayRegistry.getOverlay(this.oList);
+					done();
+				}.bind(this));
 			}.bind(this));
-
 		},
 		afterEach : function(assert) {
 			sandbox.restore();

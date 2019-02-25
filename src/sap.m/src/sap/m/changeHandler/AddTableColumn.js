@@ -48,66 +48,65 @@ sap.ui.define([
 		var oAppComponent = mPropertyBag.appComponent;
 		var oChangeDefinition = oChange.getDefinition();
 		var mContent = oChange.getContent();
-		var mChangeHandlerSettings = ChangeHandlerMediator.getChangeHandlerSettings({
-			"scenario": "addODataField",
-			"oDataServiceVersion": mContent.oDataServiceVersion
-		});
-		var fnChangeHandlerCreateFunction = mChangeHandlerSettings
-			&& mChangeHandlerSettings.content
-			&& mChangeHandlerSettings.content.createFunction;
-
-		var fnCheckChangeDefinition = function(mContent) {
-			var bMandatoryContentPresent = false;
-
-			bMandatoryContentPresent = mContent.newFieldSelector
+		var getChangeHandlerCreateFunction = function(mChangeHandlerSettings) {
+			return mChangeHandlerSettings
+				&& mChangeHandlerSettings.content
+				&& mChangeHandlerSettings.content.createFunction;
+		};
+		var fnCheckChangeDefinition = function(mContent, mChangeHandlerSettings) {
+			return mContent.newFieldSelector
 				&& (mContent.newFieldIndex !== undefined)
 				&& mContent.bindingPath
 				&& mContent.oDataServiceVersion
-				&& fnChangeHandlerCreateFunction;
-
-			return  bMandatoryContentPresent;
+				&& !!getChangeHandlerCreateFunction(mChangeHandlerSettings);
 		};
 
+		return ChangeHandlerMediator.getChangeHandlerSettings({
+			"scenario": "addODataField",
+			"oDataServiceVersion": mContent.oDataServiceVersion
+		})
+		.then(function(mChangeHandlerSettings) {
+			if (mContent && fnCheckChangeDefinition(mContent, mChangeHandlerSettings)) {
+				var oTemplate = oModifier.getBindingTemplate(oTable, ITEMS_AGGREGATION_NAME, oView);
+				var oText = oModifier.createControl(
+					'sap.m.Text',
+					oAppComponent,
+					oView,
+					mContent.newFieldSelector.id + '--column',
+					{
+						text: "{/#" + mContent.entityType + "/" + mContent.bindingPath + "/@sap:label}"
+					}
+				);
 
-		if (mContent && fnCheckChangeDefinition(mContent)) {
-			var oTemplate = oModifier.getBindingTemplate(oTable, ITEMS_AGGREGATION_NAME, oView);
-			var oText = oModifier.createControl(
-				'sap.m.Text',
-				oAppComponent,
-				oView,
-				mContent.newFieldSelector.id + '--column',
-				{
-					text: "{/#" + mContent.entityType + "/" + mContent.bindingPath + "/@sap:label}"
+				if (oTemplate) {
+					var mCreateProperties = {
+						"appComponent" : mPropertyBag.appComponent,
+						"view" : mPropertyBag.view,
+						"fieldSelector" : mContent.newFieldSelector.id + '--field',
+						"bindingPath" : mContent.bindingPath
+					};
+
+					var fnChangeHandlerCreateFunction = getChangeHandlerCreateFunction(mChangeHandlerSettings);
+					var oSmartField = fnChangeHandlerCreateFunction(oModifier, mCreateProperties);
+
+					oModifier.insertAggregation(oTemplate, CELLS_AGGREGATION_NAME, oSmartField, mContent.newFieldIndex, oView);
+					oModifier.updateAggregation(oTable, ITEMS_AGGREGATION_NAME);//only needed in JS case
+					oChange.setRevertData(mContent.newFieldSelector.id + '--field');
 				}
-			);
 
-			if (oTemplate) {
-				var mCreateProperties = {
-					"appComponent" : mPropertyBag.appComponent,
-					"view" : mPropertyBag.view,
-					"fieldSelector" : mContent.newFieldSelector.id + '--field',
-					"bindingPath" : mContent.bindingPath
-				};
+				var oControl = oModifier.createControl('sap.m.Column', oAppComponent, oView, mContent.newFieldSelector);
+				oModifier.insertAggregation(oControl, 'header', oText, 0, oView);
+				oModifier.insertAggregation(oTable, COLUMNS_AGGREGATION_NAME, oControl, mContent.newFieldIndex, oView);
 
-				var oSmartField = fnChangeHandlerCreateFunction(oModifier, mCreateProperties);
-
-				oModifier.insertAggregation(oTemplate, CELLS_AGGREGATION_NAME, oSmartField, mContent.newFieldIndex, oView);
-				oModifier.updateAggregation(oTable, ITEMS_AGGREGATION_NAME);//only needed in JS case
-				oChange.setRevertData(mContent.newFieldSelector.id + '--field');
+				return true;
+			} else {
+				Log.error("Change does not contain sufficient information to be applied or ChangeHandlerMediator could not be retrieved: [" + oChangeDefinition.layer + "]"
+					+ oChangeDefinition.namespace + "/"
+					+ oChangeDefinition.fileName + "."
+					+ oChangeDefinition.fileType);
+				//however subsequent changes should be applied
 			}
-
-			var oControl = oModifier.createControl('sap.m.Column', oAppComponent, oView, mContent.newFieldSelector);
-			oModifier.insertAggregation(oControl, 'header', oText, 0, oView);
-			oModifier.insertAggregation(oTable, COLUMNS_AGGREGATION_NAME, oControl, mContent.newFieldIndex, oView);
-
-			return true;
-		} else {
-			Log.error("Change does not contain sufficient information to be applied or ChangeHandlerMediator could not be retrieved: [" + oChangeDefinition.layer + "]"
-				+ oChangeDefinition.namespace + "/"
-				+ oChangeDefinition.fileName + "."
-				+ oChangeDefinition.fileType);
-			//however subsequent changes should be applied
-		}
+		});
 	};
 
 	/**

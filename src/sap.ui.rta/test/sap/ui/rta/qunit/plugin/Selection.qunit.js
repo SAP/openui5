@@ -49,6 +49,9 @@ sap.ui.define([
 
 	QUnit.module("Given a Selection plugin and designtime in MultiSelection mode and controls with custom dt metadata to simulate different cases...", {
 		beforeEach : function(assert) {
+			var done = assert.async();
+
+			this.sandbox = sinon.sandbox.create();
 			this.oComponent = new UIComponent();
 			sandbox.stub(FlUtils, "getAppComponentForControl").returns(this.oComponent);
 			var oChangeRegistry = ChangeRegistry.getInstance();
@@ -71,125 +74,118 @@ sap.ui.define([
 				"sap.m.Text": [
 					SimpleChanges.hideControl
 				]
-			});
-
-			this.oCommandFactory = new CommandFactory(
-				{
-					flexSettings: {
-						layer:"CUSTOMER",
-						developerMode: false
-					}
-				}
-			);
-
-			this.oSelectionPlugin = new Selection({
-				commandFactory :this.oCommandFactory,
-				multiSelectionRequiredPlugins : [
-					Combine.getMetadata().getName(),
-					Remove.getMetadata().getName()
-				]
-			});
-
-			this.oVBox = new VBox({
-				id : this.oComponent.createId("root"),
-				items : [
-					new HBox({
-						id : this.oComponent.createId("container1"),
-						items : [
-							new Button(this.oComponent.createId("innerBtn11")),
-							new Button(this.oComponent.createId("innerBtn12")),
-							new Text(this.oComponent.createId("innerTxt13"))
-						]
-					}),
-					new Button(this.oComponent.createId("btnOutsideContainer")),
-					new HBox({
-						id : this.oComponent.createId("container2"),
-						items : [
-							new Button(this.oComponent.createId("innerBtn21"))
-						]
-					}),
-					new Bar(this.oComponent.createId("othercontainer3")),
-					new HBox({
-						id : this.oComponent.createId("container4"),
-						items : [
-							new VBox({
-								id : this.oComponent.createId("innerVBox1"),
-								items : [
-									new Text(this.oComponent.createId("innerVBox1Txt"))
-								]
-							}),
-							new VBox({
-								id : this.oComponent.createId("innerVBox2"),
-								items : [
-									new Text(this.oComponent.createId("innerVBox2Txt")),
-									new Button(this.oComponent.createId("innerVBox2Btn"))
-								]
-							})
-
-						]
-					})
-				]
-			});
-			this.oVBox.placeAt("qunit-fixture");
-			sap.ui.getCore().applyChanges();
-
-
-			var done = assert.async();
-			this.oDesignTime = new DesignTime({
-				plugins : [
-					this.oSelectionPlugin,
-					new Remove({commandFactory :this.oCommandFactory}),
-					new Combine({commandFactory :this.oCommandFactory})
-				],
-				rootElements : [this.oVBox],
-				designTimeMetadata : {
-					"sap.m.VBox" : {
-						actions : {
-							remove : {
-								changeType: "hideControl"
-							}
+			})
+			.then(function() {
+				this.oCommandFactory = new CommandFactory(
+					{
+						flexSettings: {
+							layer:"CUSTOMER",
+							developerMode: false
 						}
-					},
-					"sap.m.HBox" : {
-						aggregations : {
-							items : {
-								propagateRelevantContainer : true
+					}
+				);
+				this.oSelectionPlugin = new Selection({
+					commandFactory :this.oCommandFactory,
+					multiSelectionRequiredPlugins : [
+						Combine.getMetadata().getName(),
+						Remove.getMetadata().getName()
+					]
+				});
+				this.oVBox = new VBox({
+					id : this.oComponent.createId("root"),
+					items : [
+						new HBox({
+							id : this.oComponent.createId("container1"),
+							items : [
+								new Button(this.oComponent.createId("innerBtn11")),
+								new Button(this.oComponent.createId("innerBtn12")),
+								new Text(this.oComponent.createId("innerTxt13"))
+							]
+						}),
+						new Button(this.oComponent.createId("btnOutsideContainer")),
+						new HBox({
+							id : this.oComponent.createId("container2"),
+							items : [
+								new Button(this.oComponent.createId("innerBtn21"))
+							]
+						}),
+						new Bar(this.oComponent.createId("othercontainer3")),
+						new HBox({
+							id : this.oComponent.createId("container4"),
+							items : [
+								new VBox({
+									id : this.oComponent.createId("innerVBox1"),
+									items : [
+										new Text(this.oComponent.createId("innerVBox1Txt"))
+									]
+								}),
+								new VBox({
+									id : this.oComponent.createId("innerVBox2"),
+									items : [
+										new Text(this.oComponent.createId("innerVBox2Txt")),
+										new Button(this.oComponent.createId("innerVBox2Btn"))
+									]
+								})
+							]
+						})
+					]
+				});
+				this.oVBox.placeAt("qunit-fixture");
+				sap.ui.getCore().applyChanges();
+
+				this.oDesignTime = new DesignTime({
+					plugins : [
+						this.oSelectionPlugin,
+						new Remove({commandFactory :this.oCommandFactory}),
+						new Combine({commandFactory :this.oCommandFactory})
+					],
+					rootElements : [this.oVBox],
+					designTimeMetadata : {
+						"sap.m.VBox" : {
+							actions : {
+								remove : {
+									changeType: "hideControl"
+								}
 							}
 						},
-						actions : {
-							remove : {
-								changeType: "hideControl"
-							}
-						}
-					},
-					"sap.m.Button" : {
-						actions : {
-							combine : {
-								changeType: "combineChange",
-								changeOnRelevantContainer : true
+						"sap.m.HBox" : {
+							aggregations : {
+								items : {
+									propagateRelevantContainer : true
+								}
 							},
-							remove: null
-						}
-					},
-					"sap.m.Text" : {
-						actions : {
-							remove : {
-								changeType: "hideControl"
+							actions : {
+								remove : {
+									changeType: "hideControl"
+								}
+							}
+						},
+						"sap.m.Button" : {
+							actions : {
+								combine : {
+									changeType: "combineChange",
+									changeOnRelevantContainer : true
+								},
+								remove: null
+							}
+						},
+						"sap.m.Text" : {
+							actions : {
+								remove : {
+									changeType: "hideControl"
+								}
 							}
 						}
 					}
-				}
-			});
-
-			this.oDesignTime.attachEventOnce("synced", function() {
-				done();
-			});
-
-			this.oSelectionManager = this.oDesignTime.getSelectionManager();
-			this.oEvent = jQuery.Event('keydown');
-			this.oEvent.shiftKey = false;
-			this.oEvent.altKey = false;
-
+				});
+				this.oDesignTime.attachEventOnce("synced", function() {
+					done();
+				});
+				this.oSelectionManager = this.oDesignTime.getSelectionManager();
+				this.oEvent = jQuery.Event('keydown');
+				this.oEvent.shiftKey = false;
+				this.oEvent.altKey = false;
+			}.bind(this));
 		},
 		afterEach : function() {
 			sandbox.restore();

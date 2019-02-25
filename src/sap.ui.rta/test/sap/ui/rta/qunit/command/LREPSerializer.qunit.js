@@ -128,7 +128,7 @@ sap.ui.define([
 			assert.equal(FakeLrepSessionStorage.getNumChanges(), 0, "Local storage based LREP is empty");
 
 			var oChangeRegistry = ChangeRegistry.getInstance();
-			oChangeRegistry.registerControlsForChanges({
+			return oChangeRegistry.registerControlsForChanges({
 				"sap.m.Input": {
 					"hideControl" : {
 						completeChangeContent: function() {},
@@ -136,31 +136,32 @@ sap.ui.define([
 						revertChange: function(){}
 					}
 				}
-			});
+			})
+			.then(function() {
+				// Create command stack with some commands
+				this.oCommandStack = new CommandStack();
+				this.oInput1 = new Input("input1");
+				this.oInput2 = new Input("input2");
+				this.oPanel = new Panel({
+					id : "panel",
+					content : [this.oInput1, this.oInput2]});
 
-			// Create command stack with some commands
-			this.oCommandStack = new CommandStack();
-			this.oInput1 = new Input("input1");
-			this.oInput2 = new Input("input2");
-			this.oPanel = new Panel({
-				id : "panel",
-				content : [this.oInput1, this.oInput2]});
-
-			this.oInputDesignTimeMetadata = new DesignTimeMetadata({
-				data : {
-					actions : {
-						remove : {
-							changeType : "hideControl"
+				this.oInputDesignTimeMetadata = new DesignTimeMetadata({
+					data : {
+						actions : {
+							remove : {
+								changeType : "hideControl"
+							}
 						}
 					}
-				}
-			});
+				});
 
-			// Create serializer instance
-			this.oSerializer = new CommandSerializer({
-				commandStack: this.oCommandStack,
-				rootControl: this.oPanel
-			});
+				// Create serializer instance
+				this.oSerializer = new CommandSerializer({
+					commandStack: this.oCommandStack,
+					rootControl: this.oPanel
+				});
+			}.bind(this));
 		},
 		afterEach : function(assert) {
 			return this.oSerializer.saveCommands().then(function(){

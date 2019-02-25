@@ -1395,32 +1395,33 @@ function (
 
 			var oChangeRegistry = ChangeRegistry.getInstance();
 			oChangeRegistry.removeRegistryItem({controlType : "sap.m.List"});
-			oChangeRegistry.registerControlsForChanges({
+			return oChangeRegistry.registerControlsForChanges({
 				"sap.m.Text" : {
 					"hideControl" : "default"
 				}
-			});
-
-			var oChangeContent = {
-				fileName : "change4711",
-				selector : {
-					id : this.oList.getId(),
-					local : true
-				},
-				dependentSelector: {
-					originalSelector: {
-						id : this.oText.getId(),
+			})
+			.then(function() {
+				var oChangeContent = {
+					fileName : "change4711",
+					selector : {
+						id : this.oList.getId(),
 						local : true
+					},
+					dependentSelector: {
+						originalSelector: {
+							id : this.oText.getId(),
+							local : true
+						}
+					},
+					layer : "CUSTOMER",
+					changeType: "hideControl",
+					content : {
+						boundAggregation : "items",
+						removedElement : this.oText.getId() //original selector
 					}
-				},
-				layer : "CUSTOMER",
-				changeType: "hideControl",
-				content : {
-					boundAggregation : "items",
-					removedElement : this.oText.getId() //original selector
-				}
-			};
-			this.oChange = new Change(oChangeContent);
+				};
+				this.oChange = new Change(oChangeContent);
+			}.bind(this));
 		},
 		afterEach: function () {
 			sandbox.restore();

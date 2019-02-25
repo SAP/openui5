@@ -71,7 +71,7 @@ function (
 			this.fnApplyChangeSpy = sinon.spy();
 			this.fnCompleteChangeContentSpy = sinon.spy();
 
-			oChangeRegistry.registerControlsForChanges({
+			return oChangeRegistry.registerControlsForChanges({
 				"sap.m.Panel": {
 					"combineStuff" : {
 						completeChangeContent: this.fnCompleteChangeContentSpy,

@@ -49,114 +49,110 @@ sap.ui.define([
 	AddSimpleFormField.applyChange = function(oChange, oSimpleForm, mPropertyBag) {
 		var oChangeDefinition = oChange.getDefinition();
 		var oTargetContainerHeader = oChange.getDependentControl("targetContainerHeader", mPropertyBag);
-		var mChangeHandlerSettings = ChangeHandlerMediator.getChangeHandlerSettings({
-			"scenario" : "addODataFieldWithLabel",
-			"oDataServiceVersion" : oChangeDefinition.content && oChangeDefinition.content.oDataServiceVersion
-		});
-
-		var fnChangeHandlerCreateFunction = mChangeHandlerSettings
-			&& mChangeHandlerSettings.content
-			&& mChangeHandlerSettings.content.createFunction;
-
-		var fnCheckChangeDefinition = function(oChangeDefinition) {
-			var bContentPresent = oChangeDefinition.content;
-			var bMandatoryContentPresent = false;
-
-			if (bContentPresent) {
-				bMandatoryContentPresent = oChangeDefinition.content.newFieldSelector
-					&& (oChangeDefinition.content.newFieldIndex !== undefined)
-					&& oChangeDefinition.content.bindingPath
-					&& oChangeDefinition.content.oDataServiceVersion
-					&& fnChangeHandlerCreateFunction;
-			}
-
-			return  bContentPresent && bMandatoryContentPresent;
+		var oModifier = mPropertyBag.modifier;
+		var oAppComponent = mPropertyBag.appComponent;
+		var getChangeHandlerCreateFunction = function(mChangeHandlerSettings) {
+			return mChangeHandlerSettings
+				&& mChangeHandlerSettings.content
+				&& mChangeHandlerSettings.content.createFunction;
+		};
+		var fnCheckChangeDefinition = function(oChangeDefinition, mChangeHandlerSettings) {
+			return oChangeDefinition.content
+				&& oChangeDefinition.content.newFieldSelector
+				&& (oChangeDefinition.content.newFieldIndex !== undefined)
+				&& oChangeDefinition.content.bindingPath
+				&& oChangeDefinition.content.oDataServiceVersion
+				&& !!getChangeHandlerCreateFunction(mChangeHandlerSettings);
 		};
 
-		var oModifier = mPropertyBag.modifier,
-			oAppComponent = mPropertyBag.appComponent;
+		return ChangeHandlerMediator.getChangeHandlerSettings({
+			"scenario" : "addODataFieldWithLabel",
+			"oDataServiceVersion" : oChangeDefinition.content && oChangeDefinition.content.oDataServiceVersion
+		})
+		.then(function(mChangeHandlerSettings) {
+			if (fnCheckChangeDefinition(oChangeDefinition, mChangeHandlerSettings)) {
+				var oChangeContent = oChangeDefinition.content;
 
-		if (fnCheckChangeDefinition(oChangeDefinition)) {
-			var oChangeContent = oChangeDefinition.content;
+				var oFieldSelector = oChangeContent.newFieldSelector;
+				var sBindingPath = oChangeContent.bindingPath;
+				var insertIndex = oChangeContent.newFieldIndex;
 
-			var oFieldSelector = oChangeContent.newFieldSelector;
-			var sBindingPath = oChangeContent.bindingPath;
-			var insertIndex = oChangeContent.newFieldIndex;
+				var aContent = oModifier.getAggregation(oSimpleForm, "content");
+				var aContentClone = aContent.slice();
 
-			var aContent = oModifier.getAggregation(oSimpleForm, "content");
-			var aContentClone = aContent.slice();
+				var iIndexOfHeader = aContent.indexOf(oTargetContainerHeader);
+				var iNewIndex = 0;
+				var iFormElementIndex = 0;
+				var oCreatedControls, fnChangeHandlerCreateFunction;
 
-			var iIndexOfHeader = aContent.indexOf(oTargetContainerHeader);
-			var iNewIndex = 0;
-			var iFormElementIndex = 0;
-			var oCreatedControls;
-
-			// This logic is for insertIndex being a desired index of a form element inside a container
-			// However we cannot allow that new fields are added inside other FormElements, therefore
-			// we must find the end of the FormElement to add the new FormElement there
-			if (aContent.length === 1 || aContent.length === iIndexOfHeader + 1){
-				// Empty container (only header or toolbar)
-				iNewIndex = aContent.length;
-			} else {
-				var j = 0;
-				for (j = iIndexOfHeader + 1; j < aContent.length; j++){
-					var sControlType = oModifier.getControlType(aContent[j]);
-					// When the next control is a label (= end of FormElement)
-					if (sControlType === sTypeLabel || sControlType === sTypeSmartLabel ){
-						if (iFormElementIndex == insertIndex){
+				// This logic is for insertIndex being a desired index of a form element inside a container
+				// However we cannot allow that new fields are added inside other FormElements, therefore
+				// we must find the end of the FormElement to add the new FormElement there
+				if (aContent.length === 1 || aContent.length === iIndexOfHeader + 1){
+					// Empty container (only header or toolbar)
+					iNewIndex = aContent.length;
+				} else {
+					var j = 0;
+					for (j = iIndexOfHeader + 1; j < aContent.length; j++){
+						var sControlType = oModifier.getControlType(aContent[j]);
+						// When the next control is a label (= end of FormElement)
+						if (sControlType === sTypeLabel || sControlType === sTypeSmartLabel ){
+							if (iFormElementIndex == insertIndex){
+								iNewIndex = j;
+								break;
+							}
+							iFormElementIndex++;
+						}
+						// Next control is a title or toolbar (= end of container)
+						if (sControlType === sTypeTitle || sControlType === sTypeToolBar){
 							iNewIndex = j;
 							break;
 						}
-						iFormElementIndex++;
-					}
-					// Next control is a title or toolbar (= end of container)
-					if (sControlType === sTypeTitle || sControlType === sTypeToolBar){
-						iNewIndex = j;
-						break;
-					}
 
-					// If there are no more titles, toolbars or labels (= this is the last FormElement) -> insert at end
-					if (j === (aContent.length - 1)){
-						iNewIndex = aContent.length;
+						// If there are no more titles, toolbars or labels (= this is the last FormElement) -> insert at end
+						if (j === (aContent.length - 1)){
+							iNewIndex = aContent.length;
+						}
 					}
 				}
+
+				var mCreateProperties = {
+					"appComponent" : oAppComponent,
+					"view" : mPropertyBag.view,
+					"fieldSelector" : oFieldSelector,
+					"bindingPath" : sBindingPath
+				};
+
+				// Check if the change is applicable
+				if	(oModifier.bySelector(oFieldSelector, oAppComponent)) {
+					return Base.markAsNotApplicable("Control to be created already exists:" + oFieldSelector);
+				}
+				fnChangeHandlerCreateFunction = getChangeHandlerCreateFunction(mChangeHandlerSettings);
+				oCreatedControls = fnChangeHandlerCreateFunction(oModifier, mCreateProperties);
+
+				var mCreatedControlSelectors = {};
+				if (oCreatedControls.label && oCreatedControls.control) {
+					mCreatedControlSelectors.label = oModifier.getSelector(oCreatedControls.label, oAppComponent);
+				}
+				mCreatedControlSelectors.control = oModifier.getSelector(oCreatedControls.control, oAppComponent);
+				oChange.setRevertData(mCreatedControlSelectors);
+
+				aContentClone.splice(iNewIndex, 0, oCreatedControls.label, oCreatedControls.control);
+
+				oModifier.removeAllAggregation(oSimpleForm, "content");
+				for (var i = 0; i < aContentClone.length; ++i) {
+					oModifier.insertAggregation(oSimpleForm, "content", aContentClone[i], i, mPropertyBag.view);
+				}
+
+				return true;
+			} else {
+				Utils.log.error("Change does not contain sufficient information to be applied or ChangeHandlerMediator could not be retrieved: [" + oChangeDefinition.layer + "]"
+					+ oChangeDefinition.namespace + "/"
+					+ oChangeDefinition.fileName + "."
+					+ oChangeDefinition.fileType);
+				//however subsequent changes should be applied
 			}
-
-			var mCreateProperties = {
-				"appComponent" : oAppComponent,
-				"view" : mPropertyBag.view,
-				"fieldSelector" : oFieldSelector,
-				"bindingPath" : sBindingPath
-			};
-
-			// Check if the change is applicable
-			if	(oModifier.bySelector(oFieldSelector, oAppComponent)) {
-				return Base.markAsNotApplicable("Control to be created already exists:" + oFieldSelector);
-			}
-			oCreatedControls = fnChangeHandlerCreateFunction(oModifier, mCreateProperties);
-
-			var mCreatedControlSelectors = {};
-			if (oCreatedControls.label && oCreatedControls.control) {
-				mCreatedControlSelectors.label = oModifier.getSelector(oCreatedControls.label, oAppComponent);
-			}
-			mCreatedControlSelectors.control = oModifier.getSelector(oCreatedControls.control, oAppComponent);
-			oChange.setRevertData(mCreatedControlSelectors);
-
-			aContentClone.splice(iNewIndex, 0, oCreatedControls.label, oCreatedControls.control);
-
-			oModifier.removeAllAggregation(oSimpleForm, "content");
-			for (var i = 0; i < aContentClone.length; ++i) {
-				oModifier.insertAggregation(oSimpleForm, "content", aContentClone[i], i, mPropertyBag.view);
-			}
-
-			return true;
-		} else {
-			Utils.log.error("Change does not contain sufficient information to be applied or ChangeHandlerMediator could not be retrieved: [" + oChangeDefinition.layer + "]"
-				+ oChangeDefinition.namespace + "/"
-				+ oChangeDefinition.fileName + "."
-				+ oChangeDefinition.fileType);
-			//however subsequent changes should be applied
-		}
+		});
 	};
 
 	/**

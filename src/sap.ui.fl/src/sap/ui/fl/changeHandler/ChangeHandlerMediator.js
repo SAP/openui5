@@ -5,11 +5,13 @@
 sap.ui.define([
 	"sap/ui/thirdparty/jquery",
 	"sap/base/Log",
-	"sap/base/strings/capitalize"
+	"sap/base/strings/capitalize",
+	"sap/ui/fl/registry/ChangeHandlerRegistration"
 ], function(
 	jQuery,
 	Log,
-	capitalize
+	capitalize,
+	ChangeHandlerRegistration
 ) {
 	"use strict";
 
@@ -59,6 +61,7 @@ sap.ui.define([
 	 * @param {Object} mKey Collection of keys
 	 * @param {string} mKey.scenario The scenario name
 	 * @param {Object} mSettings The relevant settings for the change handler
+	 * @returns {Promise} Returns a promise.
 	 */
 	ChangeHandlerMediator.addChangeHandlerSettings = function(mKey, mSettings) {
 		var mNewChangeHandlerSettings;
@@ -73,32 +76,34 @@ sap.ui.define([
 			scenarioInitialized : false
 		};
 
-		var mExistingChangeHandlerSettings = this.getChangeHandlerSettings(mKey, true);
-		var iIndex = this._aChangeHandlerSettings.indexOf(mExistingChangeHandlerSettings);
+		return this.getChangeHandlerSettings(mKey, true)
+		.then(function(mExistingChangeHandlerSettings) {
+			var iIndex = this._aChangeHandlerSettings.indexOf(mExistingChangeHandlerSettings);
 
-		// If entry already exists, extend existing content and set initialized to false
-		if (iIndex > -1) {
-			Object.assign(this._aChangeHandlerSettings[iIndex].content,
-				mNewChangeHandlerSettings.content);
-			this._aChangeHandlerSettings[iIndex].scenarioInitialized = false;
-		} else {
-			this._aChangeHandlerSettings.push(mNewChangeHandlerSettings);
-			this._createChangeHandlerSettingsGetter(mNewChangeHandlerSettings);
-		}
+			// If entry already exists, extend existing content and set initialized to false
+			if (iIndex > -1) {
+				Object.assign(this._aChangeHandlerSettings[iIndex].content,
+					mNewChangeHandlerSettings.content);
+				this._aChangeHandlerSettings[iIndex].scenarioInitialized = false;
+			} else {
+				this._aChangeHandlerSettings.push(mNewChangeHandlerSettings);
+				return this._createChangeHandlerSettingsGetter(mNewChangeHandlerSettings);
+			}
+		}.bind(this));
 	};
 
 	/**
 	 * Retrieves change handler settings from the mediated list
 	 * @param  {Object} mKey Collection of keys
 	 * @param  {boolean} bSkipInitialization If true, the scenario should not be initialized
-	 * @return {Object}        The change handler settings
+	 * @return {promise.<Object>} Returns a Promise with ChangeHandlerSettings included.
 	 */
 	ChangeHandlerMediator.getChangeHandlerSettings = function(mKey, bSkipInitialization){
-		var aKeys = Object.keys(mKey);
-		var mFoundChangeHandlerSettings;
+		var aKeys = Object.keys(mKey),
+			mFoundChangeHandlerSettings;
 
 		if (aKeys.length > 0) {
-			mFoundChangeHandlerSettings = this._aChangeHandlerSettings.filter(function(oEntry, iIndex){
+			mFoundChangeHandlerSettings = this._aChangeHandlerSettings.filter(function(oEntry){
 				var aExistingKeys = Object.keys(oEntry.key);
 				if (aExistingKeys.length === aKeys.length) {
 					var aMatchingKeys = aKeys.filter(function(sKey){
@@ -114,44 +119,53 @@ sap.ui.define([
 			})[0];
 
 			// Try to initialize the corresponding scenario
-			if (!bSkipInitialization && mFoundChangeHandlerSettings
-					&& !mFoundChangeHandlerSettings.scenarioInitialized) {
-				mFoundChangeHandlerSettings.scenarioInitialized
-					= this._initializeScenario(mFoundChangeHandlerSettings);
+			if (
+				!bSkipInitialization &&
+				mFoundChangeHandlerSettings &&
+				!mFoundChangeHandlerSettings.scenarioInitialized
+			) {
+				return this._initializeScenario(mFoundChangeHandlerSettings)
+				.then(function(bInitialized) {
+					return mFoundChangeHandlerSettings;
+				})
+				.catch(function() {
+					return undefined; // promise should always resolve
+				});
 			}
 		}
-
-		if (bSkipInitialization ||
-			(mFoundChangeHandlerSettings && mFoundChangeHandlerSettings.scenarioInitialized)){
-			return mFoundChangeHandlerSettings;
-		}
+		return Promise.resolve(mFoundChangeHandlerSettings);
 	};
 
 	/**
 	 * Initializes a scenario that is required by the application
 	 * (e.g. for AddODataField -> load the required libraries)
 	 * @param  {Object} mFoundChangeHandlerSettings The Change Handler Settings for the scenario
-	 * @return {boolean} true if properly initialized
+	 * @return {promise} Returns a Promise that resolves after all szenario requested libraries could be loaded.
 	 */
 	ChangeHandlerMediator._initializeScenario = function(mFoundChangeHandlerSettings){
-		var sLibraryName;
+		var aLoadLibraryPromises = [];
 		if (mFoundChangeHandlerSettings.content.requiredLibraries){
-			try {
-				var aLibraries = Object.keys(mFoundChangeHandlerSettings.content.requiredLibraries);
-				aLibraries.forEach(function(sLibrary){
-					sLibraryName = sLibrary;
-					sap.ui.getCore().loadLibrary(sLibrary);
+			var aLibraries = Object.keys(mFoundChangeHandlerSettings.content.requiredLibraries);
+			aLibraries.forEach(function(sLibrary){
+				var sLibraryName = sLibrary;
+				var oLoadLibraryPromise = sap.ui.getCore().loadLibrary(sLibrary, { async: true })
+				.catch(function(oError) {
+					Log.warning("Required library not available: " + sLibraryName + " - "
+						+ mFoundChangeHandlerSettings.key.scenario + " could not be initialized");
+					return Promise.reject();
+				})
+				.then(function() {
+					return ChangeHandlerRegistration.waitForChangeHandlerRegistration(sLibraryName);
 				});
-				var iIndex = this._aChangeHandlerSettings.indexOf(mFoundChangeHandlerSettings);
-				// Update the entry on the array
-				this._aChangeHandlerSettings[iIndex].scenarioInitialized = true;
-				return true;
-			} catch (e){
-				Log.warning("Required library not available: " + sLibraryName + " - "
-					+ mFoundChangeHandlerSettings.key.scenario + " could not be initialized");
-				return false;
-			}
+				aLoadLibraryPromises.push(oLoadLibraryPromise);
+			});
+
+			return Promise.all(aLoadLibraryPromises)
+			.then(function() {
+				mFoundChangeHandlerSettings.scenarioInitialized = true;
+			});
 		}
+		return Promise.resolve();
 	};
 
 	ChangeHandlerMediator._createChangeHandlerSettingsGetter = function(mChangeHandlerSettings){
@@ -166,7 +180,6 @@ sap.ui.define([
 			 */
 			ChangeHandlerMediator[sGetterName] = function(oControl){
 				var sODataServiceVersion;
-				var mFoundChangeHandlerSettings;
 
 				try {
 					sODataServiceVersion = oControl.getModel().getMetaModel().getProperty("/dataServices/dataServiceVersion");
@@ -174,17 +187,20 @@ sap.ui.define([
 					Log.warning("Data service version could not be retrieved");
 				}
 
-				mFoundChangeHandlerSettings = this.getChangeHandlerSettings({
+				return this.getChangeHandlerSettings({
 					"scenario" : mChangeHandlerSettings.key.scenario,
 					"oDataServiceVersion" : sODataServiceVersion
+				})
+				.then(function(mFoundChangeHandlerSettings) {
+					// Without a create function, the settings should not be returned
+					if (
+						mFoundChangeHandlerSettings &&
+						mFoundChangeHandlerSettings.content &&
+						mFoundChangeHandlerSettings.content.createFunction
+					){
+						return mFoundChangeHandlerSettings;
+					}
 				});
-
-				// Without a create function, the settings should not be returned
-				if (mFoundChangeHandlerSettings &&
-					mFoundChangeHandlerSettings.content &&
-					mFoundChangeHandlerSettings.content.createFunction){
-					return mFoundChangeHandlerSettings;
-				}
 			};
 		}
 	};

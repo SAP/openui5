@@ -244,34 +244,35 @@ function(
 			var oSettings = this.oRta.getPlugins()["settings"];
 
 			var oChangeRegistry = ChangeRegistry.getInstance();
-			oChangeRegistry.registerControlsForChanges({
+			return oChangeRegistry.registerControlsForChanges({
 				"sap.ui.comp.smartform.Group" : {
 				"changeSettings" : "sap/ui/fl/changeHandler/PropertyChange"
 				}
-			});
+			})
+			.then(function() {
+				var oGroupDesigntime = {
+					settings : function() {
+						return {
+							changeType : "changeSettings",
+							isEnabled : true,
+							handler : function() {}
+						};
+					}
+				};
+				sandbox.stub(oSettings, "getAction").callsFake(function() {
+					return oGroupDesigntime.settings();
+				});
+				var oGroupOverlay = OverlayRegistry.getOverlay(this.oGroup);
+				oSettings.deregisterElementOverlay(oGroupOverlay);
+				oSettings.registerElementOverlay(oGroupOverlay);
 
-			var oGroupDesigntime = {
-				settings : function() {
-					return {
-						changeType : "changeSettings",
-						isEnabled : true,
-						handler : function() {}
-					};
-				}
-			};
-			sandbox.stub(oSettings, "getAction").callsFake(function() {
-				return oGroupDesigntime.settings();
-			});
-			var oGroupOverlay = OverlayRegistry.getOverlay(this.oGroup);
-			oSettings.deregisterElementOverlay(oGroupOverlay);
-			oSettings.registerElementOverlay(oGroupOverlay);
+				oGroupOverlay.focus();
+				fnTriggerKeydown(oGroupOverlay.getDomRef(), KeyCodes.F10, true, false, false);
 
-			oGroupOverlay.focus();
-			fnTriggerKeydown(oGroupOverlay.getDomRef(), KeyCodes.F10, true, false, false);
-
-			var oContextMenuControl = this.oRta.getPlugins()["contextMenu"].oContextMenuControl;
-			assert.ok(oContextMenuControl.bOpen, "when context menu (context menu) is opened on a Control with a defined settings action");
-			assert.equal(oContextMenuControl.getButtons()[oContextMenuControl.getButtons().length - 1].data("id"), "CTX_SETTINGS", "Settings is available");
+				var oContextMenuControl = this.oRta.getPlugins()["contextMenu"].oContextMenuControl;
+				assert.ok(oContextMenuControl.bOpen, "when context menu (context menu) is opened on a Control with a defined settings action");
+				assert.equal(oContextMenuControl.getButtons()[oContextMenuControl.getButtons().length - 1].data("id"), "CTX_SETTINGS", "Settings is available");
+			}.bind(this));
 		}
 
 		function fnKeyboardPageWithoutTitle(assert) {

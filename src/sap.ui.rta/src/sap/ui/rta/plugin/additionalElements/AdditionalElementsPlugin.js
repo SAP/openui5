@@ -491,21 +491,37 @@ sap.ui.define([
 			return Object.keys(mRevealActions).length > 0;
 		},
 
-		showAvailableElements: function(bOverlayIsSibling, aElementOverlays, iIndex, sControlName) {
-			var oElementOverlay = aElementOverlays[0];
-			var mParents = _getParents(bOverlayIsSibling, oElementOverlay);
-			var oSiblingElement = bOverlayIsSibling && oElementOverlay.getElement();
-			var aPromises = [];
+		_checkIfCreateFunctionIsAvailable: function(mChangeHandlerSettings) {
+			return !mChangeHandlerSettings ||
+				(
+					mChangeHandlerSettings &&
+					mChangeHandlerSettings.content &&
+					mChangeHandlerSettings.content.createFunction
+				);
+		},
 
-			var mActions = this._getActions(bOverlayIsSibling, oElementOverlay);
+		showAvailableElements: function(bOverlayIsSibling, aElementOverlays, iIndex, sControlName) {
+			var oElementOverlay = aElementOverlays[0],
+				mParents = _getParents(bOverlayIsSibling, oElementOverlay),
+				oSiblingElement = bOverlayIsSibling && oElementOverlay.getElement(),
+				mActions = this._getActions(bOverlayIsSibling, oElementOverlay),
+				aPromises = [],
+				oAddODataPropertyPromise = [];
 
 			if (mActions.addODataProperty) {
 				mActions.addODataProperty.relevantContainer = oElementOverlay.getRelevantContainer(!bOverlayIsSibling);
+
+				oAddODataPropertyPromise = this._waitForChangeHandlerSettings(mActions.addODataProperty.action)
+				.then(function(mChangeHandlerSettings) {
+					// No dialog elements for metadata with changeHandlerSettings and without createFunction
+					return this._checkIfCreateFunctionIsAvailable(mChangeHandlerSettings) ?
+						this.getAnalyzer().getUnboundODataProperties(mParents.parent, mActions.addODataProperty) : [];
+				}.bind(this));
 			}
 
 			aPromises.push(
 				mActions.reveal ? this.getAnalyzer().enhanceInvisibleElements(mParents.parent, mActions) : [],
-				mActions.addODataProperty ? this.getAnalyzer().getUnboundODataProperties(mParents.parent, mActions.addODataProperty) : [],
+				oAddODataPropertyPromise,
 				mActions.custom ? this.getAnalyzer().getCustomAddItems(mParents.parent, mActions.custom, mActions.aggregation) : []
 			);
 
@@ -676,18 +692,26 @@ sap.ui.define([
 			});
 		},
 
+		_waitForChangeHandlerSettings : function(mODataPropertyAction) {
+			if (mODataPropertyAction.changeHandlerSettings instanceof Promise) {
+				return mODataPropertyAction.changeHandlerSettings
+				.then(function(mSettings) {
+					mODataPropertyAction.changeHandlerSettings = mSettings;
+					return mODataPropertyAction.changeHandlerSettings;
+				});
+			}
+			return Promise.resolve(mODataPropertyAction.changeHandlerSettings);
+		},
+
 		_createCommandsForODataElement : function(oCompositeCommand, oSelectedElement, mParents, oSiblingElement, mActions, iIndex) {
 			var oParentAggregationOverlay = mParents.parentOverlay.getAggregationOverlay(mActions.aggregation);
 			var oParentAggregationDTMetadata = oParentAggregationOverlay.getDesignTimeMetadata();
-			var mODataPropertyActionDTMetadata = oParentAggregationDTMetadata.getAction("addODataProperty", mParents.parent);
-			var mChangeHandlerSettings = mODataPropertyActionDTMetadata.changeHandlerSettings;
-			var mRequiredLibraries;
-			if (mChangeHandlerSettings && mChangeHandlerSettings.content){
-				mRequiredLibraries = mChangeHandlerSettings.content.requiredLibraries;
-			}
-			return Promise.resolve()
+			return this._waitForChangeHandlerSettings(mActions.addODataProperty.action)
 
-			.then(function() {
+			.then(function(mChangeHandlerSettings) {
+				var mRequiredLibraries = mChangeHandlerSettings
+					&& mChangeHandlerSettings.content
+					&& mChangeHandlerSettings.content.requiredLibraries;
 				if (mRequiredLibraries){
 					return this._createCommandForAddLibrary(mParents, mActions, mRequiredLibraries, oParentAggregationDTMetadata)
 					.then(function(oCommandForAddLibrary) {
@@ -707,34 +731,36 @@ sap.ui.define([
 		_createCommandForOData: function(oSelectedElement, mActions, mParents, oSiblingElement, iIndex) {
 			var oParentAggregationOverlay = mParents.parentOverlay.getAggregationOverlay(mActions.aggregation);
 			var oParentAggregationDTMetadata = oParentAggregationOverlay.getDesignTimeMetadata();
-			var mODataPropertyActionDTMetadata = oParentAggregationDTMetadata.getAction("addODataProperty", mParents.parent);
-			var mChangeHandlerSettings = mODataPropertyActionDTMetadata.changeHandlerSettings;
-			var sODataServiceVersion;
-			if (mChangeHandlerSettings && mChangeHandlerSettings.key){
-				sODataServiceVersion = mChangeHandlerSettings.key.oDataServiceVersion;
-			}
-			var oRefControlForId = mParents.parent; //e.g. SmartForm
-			if (mODataPropertyActionDTMetadata.changeOnRelevantContainer) {
-				oRefControlForId = mParents.relevantContainer; //e.g. SimpleForm
-			}
-			var iAddTargetIndex = Utils.getIndex(mParents.parent, oSiblingElement, mActions.aggregation, oParentAggregationDTMetadata.getData().getIndex);
-			var oChangeHandler = this._getChangeHandler(mODataPropertyActionDTMetadata.changeType, oRefControlForId);
-			var sVariantManagementReference;
-			if (mParents.parentOverlay.getVariantManagement && oChangeHandler && oChangeHandler.revertChange) {
-				sVariantManagementReference = mParents.parentOverlay.getVariantManagement();
-			}
-			var oManifest = FlUtils.getAppComponentForControl(mParents.parent).getManifest();
-			var sServiceUri = FlUtils.getODataServiceUriFromManifest(oManifest);
-			return this.getCommandFactory().getCommandFor(mParents.parent, "addODataProperty", {
-				newControlId: Utils.createFieldLabelId(oRefControlForId, oSelectedElement.entityType, oSelectedElement.bindingPath),
-				index: iIndex !== undefined ? iIndex : iAddTargetIndex,
-				bindingString: oSelectedElement.bindingPath,
-				entityType: oSelectedElement.entityType,
-				parentId: mParents.parent.getId(),
-				oDataServiceVersion: sODataServiceVersion,
-				oDataServiceUri: sServiceUri,
-				propertyName: oSelectedElement.name
-			}, oParentAggregationDTMetadata, sVariantManagementReference);
+			var mODataPropertyAction = mActions.addODataProperty.action;
+			return this._waitForChangeHandlerSettings(mODataPropertyAction)
+
+			.then(function(mChangeHandlerSettings) {
+				var sVariantManagementReference,
+					sODataServiceVersion = mChangeHandlerSettings
+					&& mChangeHandlerSettings.key
+					&& mChangeHandlerSettings.key.oDataServiceVersion;
+				var oRefControlForId = mParents.parent; //e.g. SmartForm
+				if (mODataPropertyAction.changeOnRelevantContainer) {
+					oRefControlForId = mParents.relevantContainer; //e.g. SimpleForm
+				}
+				var iAddTargetIndex = Utils.getIndex(mParents.parent, oSiblingElement, mActions.aggregation, oParentAggregationDTMetadata.getData().getIndex);
+				var oChangeHandler = this._getChangeHandler(mODataPropertyAction.changeType, oRefControlForId);
+				if (mParents.parentOverlay.getVariantManagement && oChangeHandler && oChangeHandler.revertChange) {
+					sVariantManagementReference = mParents.parentOverlay.getVariantManagement();
+				}
+				var oManifest = FlUtils.getAppComponentForControl(mParents.parent).getManifest();
+				var sServiceUri = FlUtils.getODataServiceUriFromManifest(oManifest);
+				return this.getCommandFactory().getCommandFor(mParents.parent, "addODataProperty", {
+					newControlId: Utils.createFieldLabelId(oRefControlForId, oSelectedElement.entityType, oSelectedElement.bindingPath),
+					index: iIndex !== undefined ? iIndex : iAddTargetIndex,
+					bindingString: oSelectedElement.bindingPath,
+					entityType: oSelectedElement.entityType,
+					parentId: mParents.parent.getId(),
+					oDataServiceVersion: sODataServiceVersion,
+					oDataServiceUri: sServiceUri,
+					propertyName: oSelectedElement.name
+				}, oParentAggregationDTMetadata, sVariantManagementReference);
+			}.bind(this));
 		},
 
 		_createCommandForAddLibrary: function(mParents, mActions, mRequiredLibraries, oParentAggregationDTMetadata){

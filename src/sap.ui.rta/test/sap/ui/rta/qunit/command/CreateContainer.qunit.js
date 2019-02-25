@@ -98,39 +98,41 @@ function(
 			this.fnApplyChangeSpy = sinon.spy();
 			this.fnCompleteChangeContentSpy = sinon.spy();
 
-			oChangeRegistry.registerControlsForChanges({
+			return oChangeRegistry.registerControlsForChanges({
 				"sap.ui.layout.form.Form": {
 					"addGroup" : {
 						applyChange: this.fnApplyChangeSpy,
 						completeChangeContent: this.fnCompleteChangeContentSpy
 					}
 				}
-			});
+			})
 
-			this.oCreateContainerDesignTimeMetadata = new ElementDesignTimeMetadata({
-				data : {
-					aggregations : {
-						formContainers : {
-							actions : {
-								createContainer :  {
-									changeType : "addGroup",
-									isEnabled : true,
-									mapToRelevantControlID : function(sNewControlID) {
-										return sNewControlID;
+			.then(function() {
+				this.oCreateContainerDesignTimeMetadata = new ElementDesignTimeMetadata({
+					data : {
+						aggregations : {
+							formContainers : {
+								actions : {
+									createContainer :  {
+										changeType : "addGroup",
+										isEnabled : true,
+										mapToRelevantControlID : function(sNewControlID) {
+											return sNewControlID;
+										}
 									}
 								}
 							}
 						}
 					}
-				}
-			});
+				});
 
-			return CommandFactory.getCommandFor(this.oForm, "createContainer", {
-				index : 0,
-				newControlId : this.NEW_CONTROL_ID,
-				label : this.NEW_CONTROL_LABEL,
-				parentId : this.oForm.getId()
-			}, this.oCreateContainerDesignTimeMetadata)
+				return CommandFactory.getCommandFor(this.oForm, "createContainer", {
+					index : 0,
+					newControlId : this.NEW_CONTROL_ID,
+					label : this.NEW_CONTROL_LABEL,
+					parentId : this.oForm.getId()
+				}, this.oCreateContainerDesignTimeMetadata);
+			}.bind(this))
 
 			.then(function(oCreateContainerCommand) {
 				this.oCreateContainerCommand = oCreateContainerCommand;

@@ -111,42 +111,53 @@ sap.ui.define([
 		return aHandlersRegisteredForControl.indexOf(sChangeType) !== -1;
 	};
 
+	/**
+	 * Registration of multiple changeHandlers for controlls.
+	 *
+	 * @param {object} mControlChanges - Map of changeHandler configuration for controlls
+	 * @returns {Promise} Returns an empty promise when all changeHandlers are registered
+	 */
 	ChangeRegistry.prototype.registerControlsForChanges = function(mControlChanges) {
-		var that = this;
-		jQuery.each(mControlChanges, function (sControlType, changeHandlers) {
-			if (Array.isArray(changeHandlers)) {
-				var oChangeHandlers = {};
-				changeHandlers.forEach(function (oChangeHandler) {
-						oChangeHandlers[oChangeHandler.changeType] = oChangeHandler.changeHandler;
+		var aPromises = [];
+		jQuery.each(mControlChanges, function (sControlType, vChangeHandlers) {
+			var mChangeHandlers = {};
+			if (Array.isArray(vChangeHandlers)) {
+				vChangeHandlers.forEach(function (oChangeHandler) {
+					mChangeHandlers[oChangeHandler.changeType] = oChangeHandler.changeHandler;
 				});
-				that._registerChangeHandlersForControl(sControlType, oChangeHandlers);
 			} else {
-				that._registerChangeHandlersForControl(sControlType, changeHandlers);
+				mChangeHandlers = vChangeHandlers;
 			}
-		});
+			aPromises.push(this._registerChangeHandlersForControl(sControlType, mChangeHandlers));
+		}.bind(this));
+		return Promise.all(aPromises);
 	};
 
 	ChangeRegistry.prototype._registerChangeHandlersForControl = function (sControlType, oChangeHandlers) {
-		var that = this;
+		var oPromise = Promise.resolve(oChangeHandlers),
+			sSkipNext = "ChangeRegistry._registerChangeHandlersForControl.skip_next_then";
 
 		if (typeof oChangeHandlers === "string") {
-			try {
-				oChangeHandlers = sap.ui.requireSync(oChangeHandlers + ".flexibility");
-			} catch (error) {
-				Utils.log.error("Flexibility change handler registration failed.\nControlType: " + sControlType + "\n" + error.message);
-				return; // continue without a registration
-			}
+			oPromise = Utils.requireAsync(oChangeHandlers + ".flexibility")
+			.catch(function(oError) {
+				Utils.log.error("Flexibility change handler registration failed.\nControlType: " + sControlType + "\n" + oError.message);
+				return Promise.resolve(sSkipNext); // continue without a registration
+			});
 		}
 
-		jQuery.each(oChangeHandlers, function (sChangeType, sChangeHandler) {
-			var oChangeHandler = that._getChangeHandlerEntry(sChangeType, sChangeHandler);
-			var oSimpleChange = {
-				"changeType": sChangeType,
-				"changeHandler": oChangeHandler.changeHandler,
-				"layers":oChangeHandler.layers
-			};
-			that.registerControlForSimpleChange(sControlType, oSimpleChange);
-		});
+		return oPromise.then(function(vResult) {
+			if (vResult !== sSkipNext) {
+				jQuery.each(vResult, function(sChangeType, sChangeHandler) {
+					var oChangeHandler = this._getChangeHandlerEntry(sChangeType, sChangeHandler);
+					var oSimpleChange = {
+						"changeType": sChangeType,
+						"changeHandler": oChangeHandler.changeHandler,
+						"layers":oChangeHandler.layers
+					};
+					this.registerControlForSimpleChange(sControlType, oSimpleChange);
+				}.bind(this));
+			}
+		}.bind(this));
 	};
 
 	/**
