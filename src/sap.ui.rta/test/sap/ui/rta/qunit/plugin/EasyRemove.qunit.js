@@ -57,7 +57,11 @@ function (
 		},
 		getModel: function () {}
 	};
-	sinon.stub(FlUtils, "_getAppComponentForComponent").returns(oMockedAppComponent);
+	var oGetAppComponentForControlStub = sinon.stub(FlUtils, "getAppComponentForControl").returns(oMockedAppComponent);
+
+	QUnit.done(function () {
+		oGetAppComponentForControlStub.restore();
+	});
 
 	QUnit.module("Given a designTime and EasyRemove plugin are instantiated", {
 		beforeEach : function(assert) {

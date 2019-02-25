@@ -130,7 +130,7 @@ sap.ui.define([
 				}
 			};
 
-			sandbox.stub(Utils, "_getAppComponentForComponent").returns(oMockedAppComponent);
+			sandbox.stub(Utils, "getAppComponentForControl").returns(oMockedAppComponent);
 			sandbox.stub(Utils, "getComponentForControl").returns(oMockedAppComponent);
 			sandbox.stub(Utils, "getComponentClassName").returns("Dummy.Component");
 
@@ -579,7 +579,7 @@ sap.ui.define([
 
 			this.oModel = new VariantModel({}, oFlexController, oMockedAppComponent);
 
-			sandbox.stub(Utils, "_getAppComponentForComponent").returns(oMockedAppComponent);
+			sandbox.stub(Utils, "getAppComponentForControl").returns(oMockedAppComponent);
 
 			this.oVariantManagementControl = new VariantManagement("varMgtKey").placeAt("qunit-fixture");
 
@@ -1169,7 +1169,7 @@ sap.ui.define([
 				}
 			};
 
-			sandbox.stub(Utils, "_getAppComponentForComponent").returns(oMockedAppComponent);
+			sandbox.stub(Utils, "getAppComponentForControl").returns(oMockedAppComponent);
 			sandbox.stub(Utils, "getComponentForControl").returns(oMockedAppComponent);
 			sandbox.stub(Utils, "getComponentClassName").returns("Dummy.Component");
 
@@ -1308,7 +1308,7 @@ sap.ui.define([
 				}
 			};
 
-			sandbox.stub(Utils, "_getAppComponentForComponent").returns(oMockedAppComponent);
+			sandbox.stub(Utils, "getAppComponentForControl").returns(oMockedAppComponent);
 			sandbox.stub(Utils, "getComponentForControl").returns(oMockedAppComponent);
 			sandbox.stub(Utils, "getComponentClassName").returns("Dummy.Component");
 

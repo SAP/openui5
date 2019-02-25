@@ -16,7 +16,6 @@ sap.ui.define([
 	"sap/ui/rta/plugin/Settings",
 	"sap/ui/rta/command/Stack",
 	"sap/ui/fl/Utils",
-	"sap/ui/dt/Util",
 	'sap/ui/base/ManagedObject',
 	"sap/base/Log"
 ],
@@ -36,7 +35,6 @@ function (
 	SettingsPlugin,
 	Stack,
 	Utils,
-	DtUtil,
 	ManagedObject,
 	BaseLog
 ) {
@@ -69,8 +67,13 @@ function (
 		},
 		getModel: function () {}
 	};
-	sinon.stub(Utils, "_getAppComponentForComponent").returns(oMockedAppComponent);
-	sinon.stub(PropertyChange, "completeChangeContent");
+	var oGetAppComponentForControlStub = sinon.stub(Utils, "getAppComponentForControl").returns(oMockedAppComponent);
+	var oCompleteChangeContentStub = sinon.stub(PropertyChange, "completeChangeContent");
+
+	QUnit.done(function () {
+		oGetAppComponentForControlStub.restore();
+		oCompleteChangeContentStub.restore();
+	});
 
 	var sandbox = sinon.sandbox.create();
 

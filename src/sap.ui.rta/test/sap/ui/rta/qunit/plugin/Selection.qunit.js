@@ -45,12 +45,12 @@ sap.ui.define([
 ) {
 	"use strict";
 
+	var sandbox = sinon.sandbox.create();
+
 	QUnit.module("Given a Selection plugin and designtime in MultiSelection mode and controls with custom dt metadata to simulate different cases...", {
 		beforeEach : function(assert) {
-			this.sandbox = sinon.sandbox.create();
-
 			this.oComponent = new UIComponent();
-			this.sandbox.stub(FlUtils, "_getAppComponentForComponent").returns(this.oComponent);
+			sandbox.stub(FlUtils, "getAppComponentForControl").returns(this.oComponent);
 			var oChangeRegistry = ChangeRegistry.getInstance();
 			oChangeRegistry.registerControlsForChanges({
 				"sap.m.VBox": [
@@ -192,7 +192,7 @@ sap.ui.define([
 
 		},
 		afterEach : function() {
-			this.sandbox.restore();
+			sandbox.restore();
 			this.oComponent.destroy();
 			this.oVBox.destroy();
 			this.oDesignTime.destroy();
@@ -313,10 +313,10 @@ sap.ui.define([
 				element: oElement,
 				isRoot: false
 			});
-			this.sandbox.stub(oOverlay, "getDesignTimeMetadata").returns({
+			sandbox.stub(oOverlay, "getDesignTimeMetadata").returns({
 				markedAsNotAdaptable: function() { return false; }
 			});
-			var oAttachEditableChangeStub = this.sandbox.stub(oOverlay, "attachEditableChange");
+			var oAttachEditableChangeStub = sandbox.stub(oOverlay, "attachEditableChange");
 			this.oSelectionPlugin.registerElementOverlay(oOverlay);
 			this.oSelectionManager.add(oOverlay);
 			assert.notOk(oOverlay.isSelected(), "then this overlay is not selected");
@@ -331,10 +331,10 @@ sap.ui.define([
 				element: oElement,
 				isRoot: false
 			});
-			this.sandbox.stub(oOverlay, "getDesignTimeMetadata").returns({
+			sandbox.stub(oOverlay, "getDesignTimeMetadata").returns({
 				markedAsNotAdaptable: function() { return true; }
 			});
-			var oAttachEditableChangeStub = this.sandbox.stub(oOverlay, "attachEditableChange");
+			var oAttachEditableChangeStub = sandbox.stub(oOverlay, "attachEditableChange");
 			this.oSelectionPlugin.registerElementOverlay(oOverlay);
 			this.oSelectionManager.add(oOverlay);
 			assert.notOk(oOverlay.isSelected(), "then this overlay is not selected");
@@ -407,7 +407,7 @@ sap.ui.define([
 		});
 
 		QUnit.test("Invoking Mouse-Down on an Overlay which is selectable", function (assert) {
-			this.sandbox.stub(sap.ui.Device.browser, "name").value("ie");
+			sandbox.stub(sap.ui.Device.browser, "name").value("ie");
 			var oOverlay = OverlayRegistry.getOverlay(this.oComponent.createId("innerBtn11"));
 			assert.notOk(document.activeElement === oOverlay.getDomRef(), "when the Overlay is initially not focused");
 			var oMouseEvent = jQuery.Event('mousedown');
@@ -416,7 +416,7 @@ sap.ui.define([
 		});
 
 		QUnit.test("Invoking Mouse-Down on an Overlay which is not selectable", function (assert) {
-			this.sandbox.stub(sap.ui.Device.browser, "name").value("ie");
+			sandbox.stub(sap.ui.Device.browser, "name").value("ie");
 			var oOverlay = OverlayRegistry.getOverlay(this.oComponent.createId("innerBtn11"));
 			oOverlay.setSelectable(false);
 			oOverlay.setFocusable(true);

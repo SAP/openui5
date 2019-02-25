@@ -702,7 +702,7 @@ function (
 
 	QUnit.module("Given a command stack with multiple already executed commands", {
 		beforeEach : function(assert) {
-			sandbox.stub(FlexUtils, "_getAppComponentForComponent").returns(oMockedAppComponent);
+			sandbox.stub(FlexUtils, "getAppComponentForControl").returns(oMockedAppComponent);
 			this.renamedButton = new Button();
 			this.stack = new Stack();
 			this.command = new BaseCommand();

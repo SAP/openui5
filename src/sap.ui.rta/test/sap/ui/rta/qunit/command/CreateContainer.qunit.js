@@ -45,7 +45,7 @@ function(
 		},
 		getModel: function () {}
 	};
-	var oGetAppComponentForControlStub = sinon.stub(FlUtils, "_getAppComponentForComponent").returns(oMockedAppComponent);
+	var oGetAppComponentForControlStub = sinon.stub(FlUtils, "getAppComponentForControl").returns(oMockedAppComponent);
 
 	QUnit.done(function () {
 		oGetAppComponentForControlStub.restore();
