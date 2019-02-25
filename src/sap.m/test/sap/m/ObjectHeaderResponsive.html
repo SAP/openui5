@@ -46,6 +46,13 @@
 			var app = new sap.m.SplitApp("myApp");
 			app.placeAt("body");
 
+			var toDetailBtn = new sap.m.Button({
+				text: "Go to Detail page",
+				press: function(oEv) {
+					app.toDetail("detail");
+				}
+			});
+
 			var label1 = new sap.m.Label({
 				text: "ObjectHeader in fullScreenOptimized mode with states (2), no markers"
 			}).addStyleClass("label");
@@ -1376,12 +1383,17 @@
 			var page1 = new sap.m.Page("page1", {
 				title:"ObjectHeader (Responsive)",
 				content : [
-					oLongTitleOH2
-					]
+					oLongTitleOH2,
+					toDetailBtn
+				]
 			});
 			// create and add a page with icon tab bar
-			var page = new sap.m.Page("page", {
+			var detail = new sap.m.Page("detail", {
 				title:"ObjectHeader (Responsive)",
+				showNavButton: jQuery.device.is.phone,
+				navButtonPress: function() {
+					app.backMaster();
+				},
 				content : [
 					oLongTitleOH,
 					oLongTitleOH1,
@@ -1419,7 +1431,7 @@
 				]
 			});
 			app.addMasterPage(page1);
-			app.addDetailPage(page);
+			app.addDetailPage(detail);
 
 		</script>
 
