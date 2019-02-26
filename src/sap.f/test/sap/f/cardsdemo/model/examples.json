@@ -108,6 +108,12 @@
 		"group": "Other Card Examples"
 	},
 	{
+		"title": "Loading behavior",
+		"description": "Busy indicators and heights examples",
+		"route": "delayedLoading",
+		"group": "Other Card Examples"
+	},
+	{
 	  "title": "TimelineContent Card",
 	  "description": "Example  POC TimelineContent",
 	  "route": "timelineContent",

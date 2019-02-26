@@ -166,6 +166,11 @@
 		  "pattern": "objectContent",
 		  "name": "objectContent",
 		  "target": "objectContent"
+		},
+		{
+			"pattern": "delayedLoading",
+			"name": "delayedLoading",
+			"target": "delayedLoading"
 		}
 	  ],
 	  "targets": {
@@ -257,6 +262,11 @@
 		"dataService": {
 		  "viewId": "dataService",
 		  "viewName": "DataService",
+		  "viewLevel": 1
+		},
+		"delayedLoading": {
+		  "viewId": "delayedLoading",
+		  "viewName": "DelayedLoading",
 		  "viewLevel": 1
 		},
 		"timelineContent": {

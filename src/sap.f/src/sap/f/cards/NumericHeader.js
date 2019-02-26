@@ -340,6 +340,7 @@ sap.ui.define([
 			oControl = new NumericContent({
 				id: this.getId() + "-mainIndicator",
 				withMargin: false,
+				nullifyValue: false,
 				animateTextChange: false,
 				truncateValueTo: 5
 			});
@@ -415,8 +416,8 @@ sap.ui.define([
 			Data.fetch(oRequest).then(function (data) {
 				oModel.setData(data);
 				oModel.refresh();
-				this.fireEvent("_updated");
-			}.bind(this)).catch(function (oError) {
+				oHeader.fireEvent("_updated");
+			}).catch(function (oError) {
 				// TODO: Handle errors. Maybe add error message
 			});
 		}

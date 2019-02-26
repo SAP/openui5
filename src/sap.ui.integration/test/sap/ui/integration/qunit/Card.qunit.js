@@ -602,21 +602,25 @@ function (
 		Core.applyChanges();
 
 		// Assert
-		assert.notOk(oCard.getAggregation("_header"), "Card header should be empty.");
-		assert.notOk(oCard.getAggregation("_content"), "Card content should be empty.");
+		assert.ok(oCard.getAggregation("_header"), "Card header shouldn't be empty.");
+		assert.ok(oCard.getAggregation("_content"), "Card content shouldn't be empty.");
 		assert.ok(oCard.getDomRef(), "Card should be rendered.");
 		assert.equal(oCard.getDomRef().clientWidth, 400, "Card should have width set to 400px.");
 		assert.equal(oCard.getDomRef().clientHeight, 600, "Card should have height set to 600px.");
 
 		oCard.attachEvent("_contentUpdated", function () {
-			// Assert
-			assert.ok(oCard.getAggregation("_header").getDomRef(), "Card header should be rendered.");
-			assert.ok(oCard.getAggregation("_content").getDomRef(), "Card content should be rendered.");
+			oCard.getAggregation("_content").addEventDelegate({
+				onAfterRendering: function () {
 
-			// Cleanup
-			oCard.destroy();
+					// Assert
+					assert.ok(oCard.getAggregation("_header").getDomRef(), "Card header should be rendered.");
+					assert.ok(oCard.getAggregation("_content").getDomRef(), "Card content should be rendered.");
 
-			done();
+					// Cleanup
+					oCard.destroy();
+					done();
+				}
+			}, this);
 		});
 	}
 
@@ -673,7 +677,7 @@ function (
 		Core.applyChanges();
 
 		// Assert
-		assert.notOk(this.oCard.getAggregation("_header"), "Card header should be empty.");
+		assert.ok(this.oCard.getAggregation("_header"), "Card header shouldn't be empty.");
 		assert.notOk(this.oCard.getAggregation("_content"), "Card content should be empty.");
 	});
 

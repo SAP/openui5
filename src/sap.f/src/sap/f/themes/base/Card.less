@@ -101,14 +101,16 @@
       font-family: @sapUiFontHeaderFamily;
       font-size: @sapMFontHeader5Size;
       font-weight: @sapUiFontHeaderWeight;
-      color: @sapUiTileTitleTextColor;
+	  color: @sapUiTileTitleTextColor;
+	  min-height: 1rem;
 	}
 	.sapFCardSubtitle {
 	  margin: 0.5rem 0 0 0;
       font-family: @sapUiFontFamily;
       font-size: @sapMFontMediumSize;
       font-weight: normal;
-      color: @sapUiTileTextColor;
+	  color: @sapUiTileTextColor;
+		min-height: 1rem;
 	}
 
   }
@@ -126,7 +128,7 @@
 }
 
 .sapFCard .sapFCardHeader.sapFCardNumericHeader {
-  display: block;
+	display: block;
 
   .sapFCardSubtitle {
     display: flex;
@@ -200,17 +202,19 @@
 }
 
 .sapFCard .sapFCardContent {
-  flex: 1 0 auto;
-  overflow: hidden;
-  .sapFCardAnalyticalContent {
-    width: 100%;
-    height: 100%;
-  }
+	flex: 1 0 auto;
+	overflow: hidden;
+	.sapFCardAnalyticalContent {
+		width: 100%;
+	}
+	.sapFCardBaseContent {
+		height: 100%;
+	}
 }
 
 .sapFCard .sapFCardContent {
 	.sapVizFrame {
-		min-height: 7rem;
+		min-height: 14rem;
 
 		.ui5-viz-controls-app {
 			min-height: inherit;
