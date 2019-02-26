@@ -690,6 +690,7 @@ sap.ui.define([
 					assert.deepEqual(oActualRequest, oExpectedRequest, sMethod + " " + sUrl);
 				} else {
 					assert.ok(false, sMethod + " " + sUrl + " (unexpected)");
+					oResponse = {value : []}; // dummy response to avoid further errors
 					mResponseHeaders = {};
 				}
 
@@ -8444,6 +8445,16 @@ sap.ui.define([
 	// submitBatch. Check that the filter request is sent with this batch nevertheless.
 	// Two issues have to be solved: the lock for the filter must win over the one for refresh and
 	// the lock must not be removed again before the table becomes active.
+	//
+	//TODO enable this test again once the following issue is fixed: table calls ODLB#getContexts
+	// while binding is still suspended, which is currently forbidden
+	//ODataListBinding.getContexts (ODataListBinding.js?eval:1004)
+	//Table._getContexts (Table.js?eval:2154)
+	//Table._getRowContexts (Table.js?eval:2233)
+	//Table._updateRows (Table.js?eval:3511)
+	//Table._updateTableSizes (Table.js?eval:1503)
+	//Promise.then (async)
+	//Table.onAfterRendering (Table.js?eval:1402)
 	QUnit.skip("ODLB: resume/refresh/filter w/ submitBatch on a table.Table", function (assert) {
 		var oListBinding,
 			oModel = createTeaBusiModel({autoExpandSelect : true}),
@@ -9261,6 +9272,11 @@ sap.ui.define([
 	//*********************************************************************************************
 	// Scenario: Simulate a chart that requests minimum and maximum values for a measure via
 	// #updateAnalyticalInfo; initial $skip > 0!
+	//
+	//TODO this should work the same for an initially suspended binding where #updateAnalyticalInfo
+	// is called before #resume, see CPOUI5UISERVICESV3-1754 (PS2 of the change contains that test);
+	// currently sap.ui.table.Table interferes with suspend/resume, see skipped test
+	// "ODLB: resume/refresh/filter w/ submitBatch on a table.Table"
 	QUnit.test("ODLB#updateAnalyticalInfo with min/max", function (assert) {
 		var aAggregation = [{ // dimension
 				grouped : false,
@@ -9369,6 +9385,77 @@ sap.ui.define([
 			return that.waitForChanges(assert);
 		}).then(function () {
 			return oMeasureRangePromise; // no child left behind :-)
+		});
+	});
+
+	//*********************************************************************************************
+	// Scenario: Simulate a chart that requests minimum and maximum values for a measure via
+	// #updateAnalyticalInfo on a suspended binding
+	// JIRA: CPOUI5UISERVICESV3-1754
+	QUnit.test("ODLB#updateAnalyticalInfo with min/max while suspended", function (assert) {
+		var aAggregation = [{ // dimension
+				grouped : false,
+				inResult : true,
+				name : "Name"
+			}, { // measure
+				max : true,
+				min : true,
+				name : "AGE",
+				total : false
+			}],
+			sView = '\
+<Table id="table" items="{path : \'/EMPLOYEES\', suspended : true}">\
+	<columns><Column/><Column/></columns>\
+	<ColumnListItem>\
+		<Text id="text" text="{Name}" />\
+		<Text id="age" text="{AGE}" />\
+	</ColumnListItem>\
+</Table>',
+			that = this;
+
+		this.expectChange("text", false)
+			.expectChange("age", false);
+
+		return this.createView(assert, sView, createTeaBusiModel()).then(function () {
+			var oListBinding = that.oView.byId("table").getBinding("items"),
+				oMeasureRangePromise;
+
+			that.expectRequest("EMPLOYEES?$apply=groupby((Name),aggregate(AGE))"
+					+ "/concat(aggregate(AGE with min as UI5min__AGE,AGE with max as UI5max__AGE)"
+					+ ",top(100))", {
+					"value" : [{
+							// the server response may contain additional data for example
+							// @odata.id or type information "UI5min__AGE@odata.type" : "#Int16"
+							"@odata.id" : null,
+							"UI5min__AGE@odata.type" : "#Int16",
+							"UI5min__AGE" : 42,
+							"UI5max__AGE" : 77
+						},
+						{"ID" : "1", "Name" : "Jonathan Smith", "AGE" : 50},
+						{"ID" : "0", "Name" : "Frederic Fall", "AGE" : 70},
+						{"ID" : "2", "Name" : "Peter Burke", "AGE" : 77}
+					]
+				})
+				.expectChange("text", ["Jonathan Smith", "Frederic Fall", "Peter Burke"])
+				.expectChange("age", ["50", "70", "77"]);
+
+			// code under test
+			oMeasureRangePromise
+				= oListBinding.updateAnalyticalInfo(aAggregation).measureRangePromise;
+
+			// code under test
+			oListBinding.resume();
+
+			return Promise.all([oMeasureRangePromise, that.waitForChanges(assert)]);
+		}).then(function (aResults) {
+			var mMeasureRange = aResults[0];
+
+			assert.deepEqual(mMeasureRange, {
+				AGE : {
+					max : 77,
+					min : 42
+				}
+			});
 		});
 	});
 
