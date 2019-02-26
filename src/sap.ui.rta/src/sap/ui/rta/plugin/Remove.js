@@ -216,46 +216,51 @@ sap.ui.define([
 	Remove.prototype.handler = function (aElementOverlays) {
 		var aPromises = [];
 		var oCompositeCommand = new CompositeCommand();
-		var fnSetFocus = function (oOverlay) {
+		function fnSetFocus(oOverlay) {
 			oOverlay.setSelected(true);
 			setTimeout(function() {
 				oOverlay.focus();
 			}, 0);
-		};
+		}
 
 		var oNextOverlaySelection = Remove._getElementToFocus(aElementOverlays);
 
 		aElementOverlays.forEach(function(oOverlay) {
-			var oPromise;
 			var oRemovedElement = oOverlay.getElement();
 			var oDesignTimeMetadata = oOverlay.getDesignTimeMetadata();
 			var oRemoveAction = this.getAction(oOverlay);
 			var sVariantManagementReference = this.getVariantManagementReference(oOverlay, oRemoveAction);
 			var sConfirmationText = this._getConfirmationText(oOverlay);
 
-			oPromise = Promise.resolve()
+			aPromises.push(
+				Promise.resolve()
+				.then(function() {
+					if (sConfirmationText) {
+						return Utils.openRemoveConfirmationDialog(oRemovedElement, sConfirmationText);
+					}
+					return true;
+				})
+				.then(function(bConfirmed) {
+					if (!bConfirmed) {
+						throw Error("Cancelled");
+					}
 
-			.then(function() {
-				if (sConfirmationText) {
-					return Utils.openRemoveConfirmationDialog(oRemovedElement, sConfirmationText);
-				}
-				return true;
-			})
-
-			.then(function(bConfirmed) {
-				if (bConfirmed) {
 					return this._getRemoveCommand(oRemovedElement, oDesignTimeMetadata, sVariantManagementReference);
-				}
-				return undefined;
-			}.bind(this))
-
-			.then(function(oCommand) {
-				if (oCommand) {
+				}.bind(this))
+				.then(function(oCommand) {
 					oCompositeCommand.addCommand(oCommand);
-				}
-			});
-
-			aPromises.push(oPromise);
+				})
+				.catch(function(oError) {
+					if (oError && oError.message === "Cancelled") {
+						if (aElementOverlays.length === 1) {
+							oNextOverlaySelection = oOverlay;
+						}
+					} else {
+						// rethrow error if a real error happened
+						throw oError;
+					}
+				})
+			);
 
 			// deselect overlay before we remove to avoid unnecessary checks which could happen when multiple elements get removed at once
 			oOverlay.setSelected(false);
@@ -263,17 +268,14 @@ sap.ui.define([
 
 		// since Promise.all is always asynchronous, we want to call it only if at least one promise exists
 		if (aPromises.length) {
-			Promise.all(aPromises).then(function() {
-				this._fireElementModified(oCompositeCommand);
+			return Promise.all(aPromises).then(function() {
 				fnSetFocus(oNextOverlaySelection);
+				this._fireElementModified(oCompositeCommand);
 			}.bind(this))
 
 			.catch(function(oError) {
 				Log.error("Error during remove: ", oError);
 			});
-		} else {
-			this._fireElementModified(oCompositeCommand);
-			fnSetFocus(oNextOverlaySelection);
 		}
 	};
 

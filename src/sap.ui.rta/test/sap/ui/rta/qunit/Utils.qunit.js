@@ -1,20 +1,20 @@
 /* global QUnit */
 
 sap.ui.define([
-	'sap/ui/thirdparty/jquery',
-	'sap/ui/dt/DesignTime',
-	'sap/ui/dt/OverlayRegistry',
-	'sap/ui/dt/OverlayUtil',
-	'sap/ui/rta/Utils',
-	'qunit/RtaQunitUtils',
-	'sap/ui/fl/fieldExt/Access',
-	'sap/m/Label',
-	'sap/m/Button',
-	'sap/uxap/ObjectPageSection',
-	'sap/uxap/ObjectPageSubSection',
-	'sap/uxap/ObjectPageLayout',
-	'sap/uxap/ObjectPageSubSectionLayout',
-	'sap/ui/thirdparty/sinon-4'
+	"sap/ui/thirdparty/jquery",
+	"sap/ui/dt/DesignTime",
+	"sap/ui/dt/OverlayRegistry",
+	"sap/ui/dt/OverlayUtil",
+	"sap/ui/rta/Utils",
+	"qunit/RtaQunitUtils",
+	"sap/ui/fl/fieldExt/Access",
+	"sap/m/Label",
+	"sap/m/Button",
+	"sap/uxap/ObjectPageSection",
+	"sap/uxap/ObjectPageSubSection",
+	"sap/uxap/ObjectPageLayout",
+	"sap/uxap/ObjectPageSubSectionLayout",
+	"sap/ui/thirdparty/sinon-4"
 ],
 function(
 	jQuery,
@@ -34,11 +34,21 @@ function(
 ) {
 	'use strict';
 
-	var oCompCont = RtaQunitUtils.renderRuntimeAuthoringAppAt("qunit-fixture");
-	var oView = sap.ui.getCore().byId("Comp1---idMain1");
-	oView.getModel().refresh(true);
+	var sandbox = sinon.sandbox.create();
 
-	QUnit.module("Given that a SmartForm with OData Binding is given...", function () {
+	QUnit.module("Given a test app...",{
+		before: function() {
+			this.oCompCont = RtaQunitUtils.renderRuntimeAuthoringAppAt("qunit-fixture");
+			this.oView = sap.ui.getCore().byId("Comp1---idMain1");
+			this.oView.getModel().refresh(true);
+		},
+		after: function() {
+			this.oCompCont.destroy();
+		},
+		afterEach: function () {
+			sandbox.restore();
+		}
+	}, function () {
 		QUnit.test("when getBoundEntityType is called for ", function(assert) {
 			//ensure core init with its first rendering is done
 			var done = assert.async();
@@ -58,31 +68,15 @@ function(
 				done();
 			};
 
-			var oView = sap.ui.getCore().byId("Comp1---idMain1");
-			oView.getModel().getMetaModel().loaded().then(function () {
+			this.oView.getModel().getMetaModel().loaded().then(function () {
 				fnExecuteTests();
 			});
 		});
-	});
 
-	QUnit.module("Extensibility isServiceUpToDate", {
-		beforeEach: function () {
-			this.sandbox = sinon.sandbox.create();
-
-			this.STUB_EXTENSIBILITY_BUSINESS_CTXT = {
-				BusinessContexts : ["some context"],
-				ServiceName : "servive name",
-				ServiceVersion : "some dummy ServiceVersion"
-			};
-		},
-		afterEach: function () {
-			this.sandbox.restore();
-		}
-	}, function () {
 		QUnit.test("Given extensibility disabled in the system when isServiceUpToDate is called", function(assert) {
-			this.sandbox.stub(Utils, "isExtensibilityEnabledInSystem").resolves(false);
+			sandbox.stub(Utils, "isExtensibilityEnabledInSystem").resolves(false);
 
-			var isServiceOutdatedStub = this.sandbox.stub(Access, "isServiceOutdated");
+			var isServiceOutdatedStub = sandbox.stub(Access, "isServiceOutdated");
 			var oAnything = {};
 
 			return Utils.isServiceUpToDate(oAnything).then(function(){
@@ -92,8 +86,8 @@ function(
 		});
 
 		QUnit.test("Given extensibility enabled and an unbound control when isServiceUpToDate is called", function(assert) {
-			this.sandbox.stub(Utils, "isExtensibilityEnabledInSystem").resolves(true);
-			var isServiceOutdatedStub = this.sandbox.stub(Access, "isServiceOutdated");
+			sandbox.stub(Utils, "isExtensibilityEnabledInSystem").resolves(true);
+			var isServiceOutdatedStub = sandbox.stub(Access, "isServiceOutdated");
 			var oUnboundControl = new Button({text: "unbound"});
 
 			return Utils.isServiceUpToDate(oUnboundControl).then(function(){
@@ -102,9 +96,9 @@ function(
 		});
 
 		QUnit.test("Given extensibility enabled and a bound control and a not outdated service when isServiceUpToDate is called", function(assert) {
-			this.sandbox.stub(Utils, "isExtensibilityEnabledInSystem").resolves(true);
-			var isServiceOutdatedStub = this.sandbox.stub(Access, "isServiceOutdated").returns(false);
-			var setServiceValidStub = this.sandbox.stub(Access, "setServiceValid");
+			sandbox.stub(Utils, "isExtensibilityEnabledInSystem").resolves(true);
+			var isServiceOutdatedStub = sandbox.stub(Access, "isServiceOutdated").returns(false);
+			var setServiceValidStub = sandbox.stub(Access, "setServiceValid");
 
 			var oBoundControl = sap.ui.getCore().byId("Comp1---idMain1--MainFormExpandable.GeneralLedgerDocument.ExpirationDate");
 
@@ -117,9 +111,9 @@ function(
 		});
 
 		QUnit.test("Given extensibility enabled and a bound control and an outdated service when isServiceUpToDate is called", function(assert) {
-			this.sandbox.stub(Utils, "isExtensibilityEnabledInSystem").resolves(true);
-			this.sandbox.stub(Access, "isServiceOutdated").returns(true);
-			var setServiceValidStub = this.sandbox.stub(Access, "setServiceValid");
+			sandbox.stub(Utils, "isExtensibilityEnabledInSystem").resolves(true);
+			sandbox.stub(Access, "isServiceOutdated").returns(true);
+			var setServiceValidStub = sandbox.stub(Access, "setServiceValid");
 
 			var oBoundControl = sap.ui.getCore().byId("Comp1---idMain1--MainFormExpandable.GeneralLedgerDocument.ExpirationDate");
 
@@ -135,7 +129,7 @@ function(
 		});
 
 		QUnit.test("Given extensibility disabled when isCustomFieldAvailable is called", function(assert) {
-			this.sandbox.stub(Utils, "isExtensibilityEnabledInSystem").resolves(false);
+			sandbox.stub(Utils, "isExtensibilityEnabledInSystem").resolves(false);
 
 			var oBoundControl = sap.ui.getCore().byId("Comp1---idMain1--MainFormExpandable.GeneralLedgerDocument.ExpirationDate");
 
@@ -145,22 +139,27 @@ function(
 		});
 
 		QUnit.test("Given extensibility enabled and a custom field enabled bound control when isCustomFieldAvailable is called", function(assert) {
-			this.sandbox.stub(Utils, "isExtensibilityEnabledInSystem").resolves(true);
-			this.sandbox.stub(Access, "getBusinessContexts").returns(
-					Promise.resolve(JSON.parse(JSON.stringify(this.STUB_EXTENSIBILITY_BUSINESS_CTXT))));
+			var oExtensibilityBusinessContext = {
+				BusinessContexts : ["some context"],
+				ServiceName : "servive name",
+				ServiceVersion : "some dummy ServiceVersion"
+			};
+
+			sandbox.stub(Utils, "isExtensibilityEnabledInSystem").resolves(true);
+			sandbox.stub(Access, "getBusinessContexts").returns(
+					Promise.resolve(JSON.parse(JSON.stringify(oExtensibilityBusinessContext))));
 			var oBoundControl = sap.ui.getCore().byId("Comp1---idMain1--MainFormExpandable.GeneralLedgerDocument.ExpirationDate");
 
-			var that = this;
 			return Utils.isCustomFieldAvailable(oBoundControl).then(function(vResult){
-				var mExpectedResult = JSON.parse(JSON.stringify(that.STUB_EXTENSIBILITY_BUSINESS_CTXT));
+				var mExpectedResult = JSON.parse(JSON.stringify(oExtensibilityBusinessContext));
 				mExpectedResult.EntityType = "Header";
 				assert.deepEqual(vResult, mExpectedResult, "then extensibility business context is enriched with the bound entity type");
 			});
 		});
 
 		QUnit.test("Given extensibility enabled and a custom field enabled bound control with an empty business context array, when isCustomFieldAvailable is called", function(assert) {
-			this.sandbox.stub(Utils, "isExtensibilityEnabledInSystem").resolves(true);
-			this.sandbox.stub(Access, "getBusinessContexts").returns(
+			sandbox.stub(Utils, "isExtensibilityEnabledInSystem").resolves(true);
+			sandbox.stub(Access, "getBusinessContexts").returns(
 				Promise.resolve({ BusinessContexts: [] })
 			);
 			var oBoundControl = sap.ui.getCore().byId("Comp1---idMain1--MainFormExpandable.GeneralLedgerDocument.ExpirationDate");
@@ -170,8 +169,8 @@ function(
 		});
 
 		QUnit.test("Given extensibility enabled and a custom field enabled bound control, when isCustomFieldAvailable is called and 'sap.ui.fl.fieldExt.Access' cannot be loaded", function(assert) {
-			this.sandbox.stub(Utils, "isExtensibilityEnabledInSystem").resolves(true);
-			this.sandbox.stub(sap.ui, "require")
+			sandbox.stub(Utils, "isExtensibilityEnabledInSystem").resolves(true);
+			sandbox.stub(sap.ui, "require")
 				.callThrough()
 				.withArgs(["sap/ui/fl/fieldExt/Access"], sinon.match.any, sinon.match.any)
 				.callsFake(function(sModule, fnResolve, fnReject){
@@ -189,8 +188,8 @@ function(
 		});
 
 		QUnit.test("Given extensibility enabled and a custom field enabled bound control, when isCustomFieldAvailable is called", function(assert) {
-			this.sandbox.stub(Utils, "isExtensibilityEnabledInSystem").resolves(true);
-			this.sandbox.stub(Access, "getBusinessContexts").returns(
+			sandbox.stub(Utils, "isExtensibilityEnabledInSystem").resolves(true);
+			sandbox.stub(Access, "getBusinessContexts").returns(
 				Promise.resolve()
 			);
 			var oBoundControl = sap.ui.getCore().byId("Comp1---idMain1--MainFormExpandable.GeneralLedgerDocument.ExpirationDate");
@@ -200,7 +199,7 @@ function(
 		});
 
 		QUnit.test("Given extensibility enabled and unbound control when isCustomFieldAvailable is called", function(assert) {
-			this.sandbox.stub(Utils, "isExtensibilityEnabledInSystem").resolves(true);
+			sandbox.stub(Utils, "isExtensibilityEnabledInSystem").resolves(true);
 
 			return Utils.isCustomFieldAvailable(new Button()).then(function(vResult){
 				assert.strictEqual(vResult, false, "then custom fields is disabled");
@@ -208,8 +207,8 @@ function(
 		});
 
 		QUnit.test("Given extensibility enabled and non custom field enabled bound control when isCustomFieldAvailable is called", function(assert) {
-			this.sandbox.stub(Utils, "isExtensibilityEnabledInSystem").resolves(true);
-			this.sandbox.stub(Access, "getBusinessContexts").resolves();
+			sandbox.stub(Utils, "isExtensibilityEnabledInSystem").resolves(true);
+			sandbox.stub(Access, "getBusinessContexts").resolves();
 			var oBoundControl = sap.ui.getCore().byId("Comp1---idMain1--MainFormExpandable.GeneralLedgerDocument.ExpirationDate");
 
 			return Utils.isCustomFieldAvailable(oBoundControl).then(function(vResult){
@@ -218,8 +217,8 @@ function(
 		});
 
 		QUnit.test("Given extensibility enabled and custom field logic rejects call when isCustomFieldAvailable is called", function(assert) {
-			this.sandbox.stub(Utils, "isExtensibilityEnabledInSystem").resolves(true);
-			this.sandbox.stub(Access, "getBusinessContexts").returns(
+			sandbox.stub(Utils, "isExtensibilityEnabledInSystem").resolves(true);
+			sandbox.stub(Access, "getBusinessContexts").returns(
 					Promise.reject(new Error("some simulated error"))
 			);
 			var oBoundControl = sap.ui.getCore().byId("Comp1---idMain1--MainFormExpandable.GeneralLedgerDocument.ExpirationDate");
@@ -230,8 +229,8 @@ function(
 		});
 
 		QUnit.test("Given extensibility enabled and custom field logic throws error when isCustomFieldAvailable is called", function(assert) {
-			this.sandbox.stub(Utils, "isExtensibilityEnabledInSystem").resolves(true);
-			this.sandbox.stub(Access, "getBusinessContexts").throws(new Error("some simulated error"));
+			sandbox.stub(Utils, "isExtensibilityEnabledInSystem").resolves(true);
+			sandbox.stub(Access, "getBusinessContexts").throws(new Error("some simulated error"));
 			var oBoundControl = sap.ui.getCore().byId("Comp1---idMain1--MainFormExpandable.GeneralLedgerDocument.ExpirationDate");
 
 			return Utils.isCustomFieldAvailable(oBoundControl).then(function(vResult){
@@ -240,7 +239,7 @@ function(
 		});
 	});
 
-
+	// -------------------------- Tests that don't need the runtimeAuthoring page --------------------------
 	QUnit.module("Given that the ObjectPage with overlays is given...", {
 		beforeEach : function(assert) {
 
@@ -252,8 +251,6 @@ function(
 			//				Label2
 			//			ObjectPageSubSection3
 			//				Label3
-
-			this.sandbox = sinon.sandbox.create();
 
 			this.oLabel1 = new Label({text: "Label1" });
 			this.oLabel2 = new Label({text: "Label2" });
@@ -306,7 +303,7 @@ function(
 		afterEach : function () {
 			this.oObjectPageLayout.destroy();
 			this.oDesignTime.destroy();
-			this.sandbox.restore();
+			sandbox.restore();
 		}
 	}, function () {
 		QUnit.test("when DesignTime is created and getFocusableParentOverlay is called", function(assert) {
@@ -325,7 +322,7 @@ function(
 		});
 
 		QUnit.test("when DesignTime is created and getFirstFocusableDescendantOverlay is called", function(assert) {
-			var getFirstDescendantByCondition = this.sandbox.stub(OverlayUtil,
+			var getFirstDescendantByCondition = sandbox.stub(OverlayUtil,
 				"getFirstDescendantByCondition").returns(this.oLabel1Overlay);
 			var oOverlay = Utils.getFirstFocusableDescendantOverlay(this.oObjectPageSection1Overlay);
 			assert.equal(getFirstDescendantByCondition.callCount, 1,
@@ -335,7 +332,7 @@ function(
 		});
 
 		QUnit.test("when DesignTime is created and getLastFocusableDescendantOverlay is called", function(assert) {
-			var getLastDescendantByCondition = this.sandbox.stub(OverlayUtil,
+			var getLastDescendantByCondition = sandbox.stub(OverlayUtil,
 				"getLastDescendantByCondition").returns(this.oLabel3Overlay);
 			var oOverlay = Utils.getLastFocusableDescendantOverlay(this.oObjectPageSection1Overlay);
 			assert.equal(getLastDescendantByCondition.callCount, 1,
@@ -345,7 +342,7 @@ function(
 		});
 
 		QUnit.test("when DesignTime is created and getNextFocusableSiblingOverlay is called", function(assert) {
-			var getNextSiblingOverlay = this.sandbox.stub(OverlayUtil, "getNextSiblingOverlay")
+			var getNextSiblingOverlay = sandbox.stub(OverlayUtil, "getNextSiblingOverlay")
 				.onFirstCall().returns(this.oObjectPageSubSection2Overlay)
 				.onSecondCall().returns(this.oObjectPageSubSection3Overlay);
 			this.oObjectPageSubSection3Overlay.setSelectable(true);
@@ -357,7 +354,7 @@ function(
 		});
 
 		QUnit.test("when DesignTime is created and getPreviousFocusableSiblingOverlay is called", function(assert) {
-			var getPreviousSiblingOverlay = this.sandbox.stub(OverlayUtil, "getPreviousSiblingOverlay")
+			var getPreviousSiblingOverlay = sandbox.stub(OverlayUtil, "getPreviousSiblingOverlay")
 				.onFirstCall().returns(this.oObjectPageSubSection2Overlay)
 				.onSecondCall().returns(this.oObjectPageSubSection1Overlay);
 			this.oObjectPageSubSection1Overlay.setSelectable(true);
@@ -385,8 +382,6 @@ function(
 			//					Button2 -- different Aggregation
 			//				SubSection2
 			//					Button3
-
-			this.sandbox = sinon.sandbox.create();
 
 			this.oButton0 = new Button("button0", {text: "button0"});
 			this.oButton1 = new Button("button1", {text: "button1"});
@@ -449,7 +444,7 @@ function(
 		afterEach: function () {
 			this.oLayout0.destroy();
 			this.oDesignTime.destroy();
-			this.sandbox.restore();
+			sandbox.restore();
 		}
 	}, function () {
 		QUnit.test("when the function for the next or previous sibling overlay is called", function(assert) {
@@ -464,15 +459,8 @@ function(
 		});
 	});
 
-
-	// -------------------------- Tests that don't need the runtimeAuthoring page --------------------------
 	QUnit.module("Given some dom elements in and out of viewport...", {
 		beforeEach: function() {
-			if (oCompCont) {
-				oCompCont.destroy();
-				sap.ui.getCore().applyChanges();
-			}
-
 			this.$insideDom = jQuery('<input/>').appendTo('#qunit-fixture');
 			this.$outsideDom = jQuery('<button/>').appendTo('#qunit-fixture');
 
@@ -496,14 +484,7 @@ function(
 		});
 	});
 
-	QUnit.module("Given a sinon sandbox...", {
-		beforeEach : function() {
-			this.sandbox = sinon.sandbox.create();
-		},
-		afterEach : function() {
-			this.sandbox.restore();
-		}
-	}, function () {
+	QUnit.module("setRtaStyleClassName", function () {
 		QUnit.test("when setRtaStyleClassName is called", function(assert) {
 			var sExpectedStyleClass = "sapContrast sapContrastPlus";
 			Utils._sRtaStyleClassName = "";
@@ -519,6 +500,38 @@ function(
 
 			Utils.setRtaStyleClassName("VENDOR");
 			assert.equal(Utils.getRtaStyleClassName(), sExpectedStyleClass, "then the StyleClass is set");
+		});
+	});
+
+	QUnit.module("openRemoveConfirmationDialog", {
+		afterEach: function() {
+			sandbox.restore();
+		}
+	}, function() {
+		QUnit.test("when the dialog gets closed", function(assert) {
+			var done = assert.async();
+			Utils.openRemoveConfirmationDialog()
+			.then(function(bResult) {
+				assert.notOk(jQuery(".sapUiRtaConfirmationDialog").get(0), "the dialog was destroyed");
+				assert.equal(bResult, true, "the function resolves with 'true' as result");
+				done();
+			});
+
+			assert.ok(jQuery(".sapUiRtaConfirmationDialog").get(0), "the dialog is available");
+			sap.ui.getCore().byId(jQuery(".sapUiRtaConfirmationDialogRemoveButton")[0].id).firePress();
+		});
+
+		QUnit.test("when the dialog gets cancelled", function(assert) {
+			var done = assert.async();
+			Utils.openRemoveConfirmationDialog()
+			.then(function(bResult) {
+				assert.notOk(jQuery(".sapUiRtaConfirmationDialog").get(0), "the dialog was destroyed");
+				assert.equal(bResult, false, "the function resolves with 'false' as result");
+				done();
+			});
+
+			assert.ok(jQuery(".sapUiRtaConfirmationDialog").get(0), "the dialog is available");
+			sap.ui.getCore().byId(jQuery(".sapUiRtaConfirmationDialogCancelButton")[0].id).firePress();
 		});
 	});
 
@@ -600,5 +613,4 @@ function(
 	QUnit.done(function () {
 		jQuery("#qunit-fixture").hide();
 	});
-
 });
