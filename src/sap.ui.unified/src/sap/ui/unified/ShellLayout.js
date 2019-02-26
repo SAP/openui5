@@ -486,26 +486,26 @@ sap.ui.define([
 		return true;
 	};
 
-	ShellLayout.prototype._refreshCSSWorkaround = function() {
-		if (!Device.browser.webkit || !Device.support.touch) {
-			return;
-		}
-
-		if (this._cssWorkaroundTimer) {
-			clearTimeout(this._cssWorkaroundTimer);
-			this._cssWorkaroundTimer = null;
-		}
-		this.$("css").remove();
-
-		this._cssWorkaroundTimer = setTimeout(function(){
-			this._cssWorkaroundTimer = null;
-			Log.debug("sap.ui.unified.ShellLayout: CSS Workaround applied.");
-			jQuery("head").append("<link type='text/css' rel='stylesheet' id='" + this.getId() + "-css' href='data:text/css;base64,LnNhcFVpVWZkU2hlbGxDaHJvbWVSZXBhaW50e291dGxpbmUtY29sb3I6aW5pdGlhbDt9'/>");
-			this._cssWorkaroundTimer = setTimeout(function(){
-				this.$("css").remove();
-			}.bind(this), 100);
-		}.bind(this), 10);
-	};
+//	ShellLayout.prototype._refreshCSSWorkaround = function() {
+//		if (!Device.browser.webkit || !Device.support.touch) {
+//			return;
+//		}
+//
+//		if (this._cssWorkaroundTimer) {
+//			clearTimeout(this._cssWorkaroundTimer);
+//			this._cssWorkaroundTimer = null;
+//		}
+//		this.$("css").remove();
+//
+//		this._cssWorkaroundTimer = setTimeout(function(){
+//			this._cssWorkaroundTimer = null;
+//			Log.debug("sap.ui.unified.ShellLayout: CSS Workaround applied.");
+//			jQuery("head").append("<link type='text/css' rel='stylesheet' id='" + this.getId() + "-css' href='data:text/css;base64,LnNhcFVpVWZkU2hlbGxDaHJvbWVSZXBhaW50e291dGxpbmUtY29sb3I6aW5pdGlhbDt9'/>");
+//			this._cssWorkaroundTimer = setTimeout(function(){
+//				this.$("css").remove();
+//			}.bind(this), 100);
+//		}.bind(this), 10);
+//	};
 
 	ShellLayout.prototype._setSidePaneWidth = function(sRange){
 		if (!sRange) {
@@ -536,22 +536,22 @@ sap.ui.define([
 			return false;
 		}
 
-		this._repaint(oDom);
+		//this._repaint(oDom);
 		this._timedHideHeader();
 
 		return true;
 	};
 
-	ShellLayout.prototype._repaint = function(oDom){
-		if (Device.browser.webkit) {
-			var display = oDom.style.display;
-			oDom.style.display = "none";
-			oDom.offsetHeight;
-			oDom.style.display = display;
-
-			this._refreshCSSWorkaround();
-		}
-	};
+//	ShellLayout.prototype._repaint = function(oDom){
+//		if (Device.browser.webkit) {
+//			var display = oDom.style.display;
+//			oDom.style.display = "none";
+//			oDom.offsetHeight;
+//			oDom.style.display = display;
+//
+//			this._refreshCSSWorkaround();
+//		}
+//	};
 
 	//Needed by sap.ui.unified.ShellOverlay
 	ShellLayout.prototype._getSearchWidth = function(){
