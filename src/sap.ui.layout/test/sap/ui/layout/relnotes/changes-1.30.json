@@ -30,7 +30,12 @@
 				"id": "3bffba21fc70c54384dcbfb1b498e2c32ef037d9",
 				"type": "FIX",
 				"text": "Splitter: Enable autoresize on bar move end",
-				"references": []
+				"references": [
+					{
+						"type": "BCP",
+						"reference": "1570022300"
+					}
+				]
 			},
 			{
 				"id": "9d470d9ad55075783219f6fa7444370a964ef863",
@@ -48,19 +53,34 @@
 				"id": "d632d7a5649729bc7cd69d8fc0600c89d7597b14",
 				"type": "FIX",
 				"text": "sap.ui.layout.for.Form: Fixed changing order of FormContainer",
-				"references": []
+				"references": [
+					{
+						"type": "BCP",
+						"reference": "1570306723"
+					}
+				]
 			},
 			{
 				"id": "8ccdb3d0119cf91bff89b6cffbf61814cced86da",
 				"type": "FIX",
 				"text": "sap.ui.layout.Form: RadioButton in compact mode fixed",
-				"references": []
+				"references": [
+					{
+						"type": "BCP",
+						"reference": "1570150393"
+					}
+				]
 			},
 			{
 				"id": "95760e3c740f95a163e3dd9db5ffad3553d08302",
 				"type": "FIX",
 				"text": "VerticalLayout: Vertical alignment issue in Safari resolved",
-				"references": []
+				"references": [
+					{
+						"type": "BCP",
+						"reference": "1570153584"
+					}
+				]
 			},
 			{
 				"id": "3dc1ac652605c469e1f38ac67b12f838cf9bab52",

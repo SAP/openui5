@@ -36,13 +36,23 @@
 				"id": "6f008ac0637a7236e1752d84c6d9bde5b523dc7d",
 				"type": "FIX",
 				"text": "sap.ui.uinified.Calendar current day is wrong displayed",
-				"references": []
+				"references": [
+					{
+						"type": "BCP",
+						"reference": "1580153899"
+					}
+				]
 			},
 			{
 				"id": "4fc119ba089902450f04772953238eccb78126ac",
 				"type": "FIX",
 				"text": "sap.ui.unified.Calendar Focus changes while rendering",
-				"references": []
+				"references": [
+					{
+						"type": "BCP",
+						"reference": "002007974700006951722015"
+					}
+				]
 			},
 			{
 				"id": "f5d700ed271d5377f5899b4e44ec6226ae6d0df2",
@@ -72,7 +82,12 @@
 				"id": "3ea2f9972a9dc8ba27ca011c5ee43aeee011c892",
 				"type": "FIX",
 				"text": "sap.ui.unified.FileUploader: clear() function fixed.",
-				"references": []
+				"references": [
+					{
+						"type": "BCP",
+						"reference": "1580072467"
+					}
+				]
 			},
 			{
 				"id": "890c15bcd44d0f0c2ea684e7dfbfcc645c408906",
@@ -84,13 +99,23 @@
 				"id": "277b934e5ccbd618cdbc0ceacf0fc6ccf1bf4b2f",
 				"type": "FIX",
 				"text": "sap.ui.unified.Menu: Avoid additional labelling the items with the menu labels",
-				"references": []
+				"references": [
+					{
+						"type": "BCP",
+						"reference": "1580097573"
+					}
+				]
 			},
 			{
 				"id": "d9c71fe1b2a5553f46c0cb633effde4c257517c3",
 				"type": "FIX",
 				"text": "sap.ui.unified.Menu: Avoid focusing when Menu is not open",
-				"references": []
+				"references": [
+					{
+						"type": "BCP",
+						"reference": "1570802311"
+					}
+				]
 			},
 			{
 				"id": "dd0faffb912ef124a8aeaaa6119db5e70db0c378",
@@ -108,7 +133,12 @@
 				"id": "2e2afb716240b6acc0f5c80ba2f5ad79027bbea6",
 				"type": "FIX",
 				"text": "sap.ui.unified.Calendar: mousemove inside same day switch month",
-				"references": []
+				"references": [
+					{
+						"type": "BCP",
+						"reference": "1580163230"
+					}
+				]
 			},
 			{
 				"id": "e89086230bd6a49eb1bd3f66360dd20b30818ded",
