@@ -868,7 +868,52 @@
         if (second < 0xDC00 || second > 0xDFFF) { return first; }
         return ((first - 0xD800) * 1024) + (second - 0xDC00) + 0x10000;
       }
+    },
+
+    // ##### BEGIN: MODIFIED BY SAP
+    /** @license
+     * String.prototype.padStart <https://github.com/uxitten/polyfill>
+     * MIT License
+     * @author Behnam Mohammadi
+     * @version v1.0.1
+     */
+    padStart: function padStart(targetLength, padString) {
+        targetLength = targetLength >> 0; //floor if number or convert non-number to 0;
+        padString = String((typeof padString !== 'undefined' ? padString : ' '));
+        if (this.length > targetLength) {
+            return String(this);
+        }
+        else {
+            targetLength = targetLength - this.length;
+            if (targetLength > padString.length) {
+                padString += padString.repeat(targetLength / padString.length); //append to original to ensure we are longer than needed
+            }
+            return padString.slice(0, targetLength) + String(this);
+        }
+    },
+
+    /** @license
+     * String.prototype.padEnd <https://github.com/uxitten/polyfill>
+     * MIT License
+     * @author Behnam Mohammadi
+     * @version v1.0.1
+     */
+    padEnd: function padEnd(targetLength, padString) {
+        targetLength = targetLength >> 0; //floor if number or convert non-number to 0;
+        padString = String((typeof padString !== 'undefined' ? padString : ' '));
+        if (this.length > targetLength) {
+            return String(this);
+        }
+        else {
+            targetLength = targetLength - this.length;
+            if (targetLength > padString.length) {
+                padString += padString.repeat(targetLength / padString.length); //append to original to ensure we are longer than needed
+            }
+            return String(this) + padString.slice(0, targetLength);
+        }
     }
+    // ##### END: MODIFIED BY SAP
+
   };
   if (String.prototype.includes && 'a'.includes('a', Infinity) !== false) {
     overrideNative(String.prototype, 'includes', StringPrototypeShims.includes);
