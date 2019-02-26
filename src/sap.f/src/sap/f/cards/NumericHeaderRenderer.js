@@ -98,7 +98,7 @@ sap.ui.define([],
 		 * @param {sap.f.cards.NumericHeader} oControl An object representation of the control that should be rendered
 		 */
 		NumericHeaderRenderer.renderIndicators = function(oRm, oControl) {
-			var oMainIndicator = oControl.getAggregation("_mainIndicator"),
+			var oMainIndicator = oControl.getAggregation("mainIndicator"),
 				oSideIndicators = oControl.getAggregation("sideIndicators");
 
 			oRm.write("<div");

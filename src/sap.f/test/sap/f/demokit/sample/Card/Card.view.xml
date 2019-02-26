@@ -1,0 +1,84 @@
+<mvc:View
+		xmlns="sap.m"
+		xmlns:mvc="sap.ui.core.mvc"
+		xmlns:f="sap.f"
+		xmlns:m="sap.m"
+		xmlns:card="sap.f.cards"
+		xmlns:core="sap.ui.core"
+		xmlns:tnt="sap.tnt"
+		displayBlock="true"
+		height="100%"
+		controllerName="sap.f.sample.Card.Card">
+
+		<f:Card
+			class="sapUiMediumMargin"
+			width="300px">
+			<f:header>
+				<card:Header
+					title="Buy bus ticket on-line"
+					subtitle="Buy a single drive ticket for a date"
+					iconSrc="sap-icon://bus-public-transport"/>
+			</f:header>
+			<f:content>
+				<VBox
+					height="115px"
+					class="sapUiSmallMargin"
+					justifyContent="SpaceBetween">
+					<HBox justifyContent="SpaceBetween">
+						<ComboBox
+							width="120px"
+							placeholder="From City"
+							items="{
+								path: '/cities',
+								sorter: { path: 'text' }
+							}">
+							<core:Item key="{key}" text="{text}" />
+						</ComboBox>
+						<ComboBox
+							width="120px"
+							placeholder="To City"
+							items="{
+								path: '/cities',
+								sorter: { path: 'text' }
+							}">
+							<core:Item key="{key}" text="{text}" />
+						</ComboBox>
+					</HBox>
+					<HBox justifyContent="SpaceBetween">
+						<DatePicker width="186px" placeholder="Choose Date ..."/>
+						<Button text="Book" press="onBookPress" type="Emphasized" />
+					</HBox>
+				</VBox>
+			</f:content>
+		</f:Card>
+
+		<f:Card
+			class="sapUiMediumMargin"
+			width="300px">
+			<f:header>
+				<card:Header
+					title="Project Cloud Transformation"
+					subtitle="Revenue per Product | EUR"/>
+			</f:header>
+			<f:content>
+				<List
+					showSeparators="None"
+					items="{path: '/productItems'}" >
+					<CustomListItem>
+						<HBox
+							 alignItems="Center"
+							justifyContent="SpaceBetween">
+							<VBox class="sapUiSmallMarginBegin sapUiSmallMarginTopBottom" >
+								<Title level="H3" text="{title}" />
+								<Text text="{subtitle}"/>
+							</VBox>
+							<tnt:InfoLabel
+								class="sapUiTinyMargin"
+								text="{revenue}"
+								colorScheme= "{statusSchema}"/>
+						</HBox>
+					</CustomListItem>
+				</List>
+			</f:content>
+		</f:Card>
+</mvc:View>
