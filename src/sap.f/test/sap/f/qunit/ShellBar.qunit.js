@@ -166,7 +166,7 @@ function (
 				}},
 			{
 				name: "additionalContent",
-				type: "sap.ui.core.Control",
+				type: "sap.f.IShellBar",
 				multiple: true,
 				singularName: "additionalContent",
 				forwarding: undefined
