@@ -46,12 +46,6 @@ function(ManagedObjectObserver) {
 				"target" : {
 					"type" : "sap.ui.core.Control"
 				}
-			},
-			/**
-			 * Fired when the DOM of the observed control is changed
-			 */
-			events : {
-				"afterRendering" : {}
 			}
 		}
 	});
@@ -96,8 +90,9 @@ function(ManagedObjectObserver) {
 	 * @private
 	 */
 	ControlObserver.prototype._onAfterRendering = function() {
-		this.fireAfterRendering();
-
+		this.fireModified({
+			type: "afterRendering"
+		});
 	};
 
 	return ControlObserver;

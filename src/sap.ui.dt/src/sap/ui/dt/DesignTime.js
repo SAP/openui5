@@ -541,7 +541,7 @@ function (
 	 */
 	DesignTime.prototype._createOverlaysForRootElement = function (oRootElement) {
 		var iTaskId = this._oTaskManager.add({
-			type: 'createOverlay',
+			type: "createOverlay",
 			element: oRootElement,
 			root: true
 		});
@@ -970,7 +970,16 @@ function (
 		switch (oParams.type) {
 			case "addOrSetAggregation":
 			case "insertAggregation":
-				this._onAddAggregation(oParams.value, oParams.target, oParams.name);
+				if (this.getStatus() === DesignTimeStatus.SYNCING) {
+					this.attachEventOnce("synced", function (oParams) {
+						// DesignTime instance at this point might be destroyed by third-parties on synced event
+						if (!this.bIsDestroyed) {
+							this._onAddAggregation(oParams.value, oParams.target, oParams.name);
+						}
+					}.bind(this, oParams));
+				} else {
+					this._onAddAggregation(oParams.value, oParams.target, oParams.name);
+				}
 				break;
 			case "setParent":
 				// timeout is needed because UI5 controls & apps can temporary "detach" controls from control tree
@@ -987,7 +996,7 @@ function (
 				delete oParams.target;
 
 				if (this.getStatus() === DesignTimeStatus.SYNCING) {
-					this.attachEventOnce('synced', function (oParams) {
+					this.attachEventOnce("synced", function (oParams) {
 						this.fireElementPropertyChanged(oParams);
 					}.bind(this, oParams));
 				} else {
@@ -1005,7 +1014,7 @@ function (
 		var oParams = merge({}, oEvent.getParameters());
 		oParams.id = oEvent.getSource().getId();
 		if (this.getStatus() === DesignTimeStatus.SYNCING) {
-			this.attachEventOnce('synced', function () {
+			this.attachEventOnce("synced", function () {
 				this.fireElementOverlayEditableChanged(oParams);
 			}, this);
 		} else {

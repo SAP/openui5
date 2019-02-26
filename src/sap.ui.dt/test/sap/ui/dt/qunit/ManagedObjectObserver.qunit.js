@@ -275,6 +275,33 @@ sap.ui.define([
 		assert.ok(oSpy.calledOnce);
 	});
 
+	QUnit.module("Aggregations filtering", {
+		beforeEach: function (assert) {
+			this.oManagedObject1 = new TestObject();
+			this.oManagedObject2 = new TestObject();
+			this.oSpy = sinon.spy();
+			this.oManagedObjectObserver = new ManagedObjectObserver({
+				target: this.oManagedObject1,
+				modified: this.oSpy,
+				aggregations: ['myAggregation']
+			});
+		},
+		afterEach: function () {
+			this.oManagedObjectObserver.destroy();
+			this.oManagedObject1.destroy();
+			this.oManagedObject2.destroy();
+		}
+	}, function () {
+		QUnit.test("when adding an element into a relevant aggregation", function (assert) {
+			this.oManagedObject1.addAggregation('myAggregation', this.oManagedObject2);
+			assert.strictEqual(this.oSpy.callCount, 1);
+		});
+		QUnit.test("when adding an element into a non-relevant aggregation", function (assert) {
+			this.oManagedObject1.addAggregation('myInheritedAggregation', this.oManagedObject2);
+			assert.strictEqual(this.oSpy.callCount, 0);
+		});
+	});
+
 	QUnit.done(function() {
 		jQuery("#qunit-fixture").hide();
 	});
