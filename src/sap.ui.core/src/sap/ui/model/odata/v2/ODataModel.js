@@ -152,6 +152,8 @@ sap.ui.define([
 	 *            to share an <code>SID</code> between different browser windows
 	 * @param {string[]} [mParameters.bindableResponseHeaders=null]
 	 *            Set this array to make custom response headers bindable via the entity's "__metadata/headers" property
+	 * @param {boolean} [mParameters.canonicalRequests=false]
+	 *            When setting this flag to <code>true</code> the model tries to calculate a canonical url to the data.
 	 *
 	 * @class
 	 * Model implementation based on the OData protocol.
@@ -6381,6 +6383,18 @@ sap.ui.define([
 			}
 		}
 		return sCacheKey;
+	};
+
+	/**
+	 * Check whether the canonical requests calculation is switched on.
+	 * See 'canonicalRequests' parameter of the model constructor.
+	 *
+	 * @return {boolean} Canonical requests calculation switched on/off
+	 *
+	 * @public
+	 */
+	ODataModel.prototype.getCanonicalRequests = function() {
+		return this.bCanonicalRequests;
 	};
 
 	return ODataModel;
