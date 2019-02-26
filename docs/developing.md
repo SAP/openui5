@@ -7,7 +7,7 @@ This page explains the initial setup, development workflow, and test execution f
 
 Setting up the OpenUI5 Development Environment
 ------------------------------------------
-OpenUI5 content is developed in an environment based on Node.js. The [UI5 Build and Development Tooling](https://github.com/SAP/ui5-tooling) is used as development server and build tool.
+OpenUI5 content is developed in an environment based on Node.js. [UI5 Tooling](https://github.com/SAP/ui5-tooling) is used as development server and build tool.
 
 ### Basic Setup
 The basic setup allows you to start a server for the OpenUI5 project in an easy way:
@@ -53,7 +53,7 @@ The advanced setup allows you to use the [UI5 CLI](https://github.com/SAP/ui5-cl
 - Use any of the other **[UI5 CLI](https://github.com/SAP/ui5-cli) features** and parameters.
 
 #### Setup
-1. Install the UI5 build and development tooling CLI globally, see [UI5 Tooling: Installing the UI5 CLI](https://github.com/SAP/ui5-tooling#installing-the-ui5-cli).
+1. Install the UI5 CLI globally, see [UI5 Tooling: Installing the UI5 CLI](https://github.com/SAP/ui5-tooling#installing-the-ui5-cli).
 2. Install [Yarn](https://yarnpkg.com) from [here](https://yarnpkg.com/en/docs/install) (*also see [FAQ: What's the thing with Yarn?](https://github.com/SAP/ui5-tooling#whats-the-thing-with-yarn)*)
 3. In the OpenUI5 repository root directory, install all dependencies using Yarn. This also links all OpenUI5 libraries between each other.
 ```sh
@@ -106,7 +106,7 @@ A detailed step-by-step guide on how to achieve such a setup with the OpenUI5 sa
 
 ### Building UI5
 
-The [UI5 Build and Development Tooling](https://github.com/SAP/ui5-tooling) is used to build a production-ready version of OpenUI5. Every library needs to be built individually. 
+[UI5 Tooling](https://github.com/SAP/ui5-tooling) is used to build a production-ready version of OpenUI5. Every library needs to be built individually. 
 
 Usage:
 ```
@@ -141,5 +141,5 @@ npm run lint
 ```
 
 ### Running Tests
-Convenient, automated test execution is not yet possible with the UI5 Build and Development Tooling.  
+Automated test execution is not yet possible with UI5 Tooling.  
 Please refer to the [legacy Grunt development environment documentation](developing_legacy_grunt.md).
