@@ -486,6 +486,9 @@ sap.ui.define([
 			return;
 		}
 
+		// determine whether parent exists or not
+		var bHasParent = Boolean(this.getParent());
+
 		// update the focus information (potentionally) stored by the central UI5 focus handling
 		Element._updateFocusInfo(this);
 
@@ -494,7 +497,7 @@ sap.ui.define([
 		// determine whether to remove the control from the DOM or not
 		// controls that implement marker interface sap.ui.core.PopupInterface are by contract
 		// not rendered by their parent so we cannot keep the DOM of these controls
-		if (bSuppressInvalidate === true || this.isA("sap.ui.core.PopupInterface")) {
+		if (bSuppressInvalidate === true || !bHasParent || this.isA("sap.ui.core.PopupInterface")) {
 			this.$().remove();
 		} else if (bSuppressInvalidate !== "KeepDom") {
 			// On destroy we do not remove the control DOM synchronously and just let the invalidation happen.
