@@ -2231,6 +2231,11 @@ function(
 					.attachBeforeClose(this._updateSelectionFromList, this)
 					.attachBeforeOpen(function () {
 						this._sBeforeSuggest = this.getValue();
+						this._oSuggPopover._resizePopup();
+						this._oSuggPopover._registerResize();
+					}, this)
+					.attachAfterClose(function() {
+						this._oSuggPopover._deregisterResize();
 					}, this);
 			}
 

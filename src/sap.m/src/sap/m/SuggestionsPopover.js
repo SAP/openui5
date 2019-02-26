@@ -262,10 +262,6 @@ sap.ui.define([
 				} else {
 					this._oList.destroyItems();
 				}
-				this._deregisterResize();
-			}.bind(this)).attachBeforeOpen(function () {
-				this._resizePopup();
-				this._registerResize();
 			}.bind(this)))
 			:
 			(new Dialog(oInput.getId() + "-popup", {
@@ -450,6 +446,10 @@ sap.ui.define([
 	SuggestionsPopover.prototype._onsaparrowkey = function(oEvent, sDir, iItems) {
 		var oInput = this._oInput;
 
+		if (oEvent.isMarked()) {
+			return;
+		}
+
 		if (!oInput.getEnabled() || !oInput.getEditable()) {
 			return;
 		}
@@ -596,6 +596,10 @@ sap.ui.define([
 	 * @returns {boolean} Determines if the Input has tabular suggestions.
 	 */
 	SuggestionsPopover.prototype._hasTabularSuggestions = function() {
+		if (!this._oSuggestionTable) {
+			return;
+		}
+
 		return !!(this._oSuggestionTable.getColumns() && this._oSuggestionTable.getColumns().length);
 	};
 
