@@ -452,7 +452,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/support/Plugin'],
 			function createAppendFunction(sUrl) {
 				return function() {
 					// append URL and description to select box
-					var sHtml = "<option value='" + sUrl + "'>" + mUrls[sUrl] + "</option>";
+					var sHtml = "<option value='" + jQuery.sap.escapeHTML(sUrl) + "'>" + mUrls[sUrl] + "</option>";
 					$Other.before(sHtml);
 				};
 			}
