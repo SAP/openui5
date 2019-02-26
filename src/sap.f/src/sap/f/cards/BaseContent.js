@@ -156,7 +156,7 @@ sap.ui.define([
 							this._updateModel(data);
 						}.bind(this))
 						.catch(function () {
-							Log.error("Card content data service failed to get data");
+							this._handleError("Card content data service failed to get data");
 						})
 						.finally(function () {
 							this.setBusy(false);
@@ -167,7 +167,7 @@ sap.ui.define([
 					this._oDataService = oDataService;
 				}
 			}.bind(this)).catch(function () {
-				Log.error("Data service unavailable");
+				this._handleError("Data service unavailable");
 				this.setBusy(false);
 			});
 		} else if (oRequest) {
@@ -176,7 +176,7 @@ sap.ui.define([
 					this._updateModel(data, oData.path);
 				}.bind(this))
 				.catch(function (oError) {
-					Log.error("Card content data request failed");
+					this._handleError("Card content data request failed");
 				})
 				.finally(function () {
 					this.setBusy(false);
@@ -197,6 +197,10 @@ sap.ui.define([
 		setTimeout(function () {
 			this.fireEvent("_updated");
 		}.bind(this), 0);
+	};
+
+	BaseContent.prototype._handleError = function (sLogMessage) {
+		this.fireEvent("_error", { logMessage: sLogMessage });
 	};
 
 	BaseContent.getMinHeight = function (sType, oContent) {

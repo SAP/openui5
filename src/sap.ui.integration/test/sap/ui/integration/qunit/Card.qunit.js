@@ -1,4 +1,4 @@
-/* global QUnit */
+/* global QUnit, sinon */
 
 sap.ui.define([
 	"sap/ui/integration/widgets/Card",
@@ -7,7 +7,8 @@ sap.ui.define([
 	"sap/ui/core/Core",
 	"sap/f/cards/NumericHeader",
 	"sap/f/cards/NumericSideIndicator",
-	"sap/f/cards/Header"
+	"sap/f/cards/Header",
+	"sap/base/Log"
 ],
 function (
 	Card,
@@ -16,7 +17,8 @@ function (
 	Core,
 	NumericHeader,
 	NumericSideIndicator,
-	Header
+	Header,
+	Log
 ) {
 	"use strict";
 
@@ -1093,6 +1095,59 @@ function (
 
 		// Act
 		this.oNumericHeaderCard.setManifest(oManifest_NumericHeader);
+	});
+
+	QUnit.module("Error handling", {
+		beforeEach: function () {
+			this.oCard = new Card();
+		},
+		afterEach: function () {
+			this.oCard.destroy();
+			this.oCard = null;
+		}
+	});
+
+	QUnit.test("Handler call", function (assert) {
+
+		// Arrange
+		var oLogSpy = sinon.spy(Log, "error"),
+			sLogMessage = "Log this error in the console.";
+
+		// Act
+		this.oCard._handleError(sLogMessage);
+
+		// Assert
+		assert.ok(oLogSpy.calledOnceWith(sLogMessage), "Provided message should be logged to the console.");
+
+		// Clean up
+		oLogSpy.restore();
+	});
+
+	QUnit.test("Bad data url", function (assert) {
+
+		// Arrange
+		var oSpy = sinon.spy(Card.prototype, "_handleError"),
+			done = assert.async();
+
+		this.oCard.attachEvent("_error", function () {
+
+			// Assert
+			assert.ok(oSpy.calledOnce, "Should call error handler when manifest is 'null'");
+
+			// Clean up
+			oSpy.restore();
+			done();
+		});
+
+		// Act
+		this.oCard.setManifest({"sap.card": {
+			"type": "List",
+			"header": {},
+			"content": {},
+			"data": {
+				"request": "invalidurl"
+			}
+		}});
 	});
 
 });
