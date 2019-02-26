@@ -22,7 +22,9 @@ sap.ui.define(['sap/ui/core/UIComponent'],
 					files : [
 						"ObjectCard.view.xml",
 						"ObjectCard.controller.js",
-						"model/cardManifest.json"
+						"model/manifest.json",
+						"model/employee.json",
+						"model/i18n/i18n.properties"
 					]
 				}
 			}

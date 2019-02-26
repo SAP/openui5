@@ -1,5 +1,8 @@
 {
-  "sap.card": {
+	"sap.app": {
+		"type": "card"
+	},
+	"sap.card": {
 	"type": "Timeline",
 	"header": {
 	  "title": "Upcoming Activities",

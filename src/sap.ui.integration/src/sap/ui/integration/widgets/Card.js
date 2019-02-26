@@ -170,6 +170,7 @@ sap.ui.define([
 	Card.prototype._setData = function () {
 		var oData = this._oCardManifest.get(MANIFEST_PATHS.DATA);
 		if (!oData) {
+			this._oDataPromise = null;
 			return;
 		}
 
