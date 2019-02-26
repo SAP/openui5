@@ -1371,7 +1371,7 @@
 							"url": "./cardcontent/someitems.json"
 						}
 					},
-					"numberOfItems": 7,
+					"maxItems": 7,
 					"item": {
 						"icon": {
 							"src": "{icon}"
@@ -2301,7 +2301,7 @@
 							"url": "./cardcontent/someitems.json"
 						}
 					},
-					"numberOfItems": 7,
+					"maxItems": 7,
 					"item": {
 						"icon": {
 							"src": "{icon}"
@@ -2686,7 +2686,7 @@
 							"url": "./cardcontent/someitems.json"
 						}
 					},
-					"numberOfItems": 7,
+					"maxItems": 7,
 					"item": {
 						"icon": {
 							"src": "{icon}"

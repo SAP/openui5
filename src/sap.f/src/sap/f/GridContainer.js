@@ -45,7 +45,16 @@ sap.ui.define([
 	function getScrollHeight($item) {
 		var childrenScrollHeight = 0;
 
+		if ($item.hasClass("sapMGT")) { // if generic tile
+			// TODO fix a bug with wrong scrollHeight for tiles
+			return 174;
+		}
+
 		$item.children().each(function () {
+			if (jQuery(this).css("position") === "absolute") {
+				// if child is with absolute position, it does not add to the total heigh
+				return;
+			}
 			childrenScrollHeight += this.scrollHeight;
 		});
 
@@ -110,7 +119,13 @@ sap.ui.define([
 				/**
 				 * Should the items stretch to fill the rows which they occupy
 				 */
-				itemsStretch: {type: "boolean", group: "Appearance", defaultValue: false}
+				itemsStretch: {type: "boolean", group: "Appearance", defaultValue: false},
+
+				/**
+				 * Should the row span increase if item does not fit in the rows which it was given.
+				 * Applies only for items with specified rows span. For all other items it is always on.
+				 */
+				rowsAutoSpan: {type: "boolean", group: "Appearance", defaultValue: false}
 			},
 			defaultAggregation: "items",
 			aggregations: {
@@ -315,7 +330,8 @@ sap.ui.define([
 		if (isGridSupportedByBrowser()) {
 			var oContainer = this;
 			this.getItems().forEach(function (oItem) {
-				if (getItemRowsAutoSpan(oItem)) {
+				if (oContainer.getRowsAutoSpan() || getItemRowsAutoSpan(oItem)) {
+
 					var $item = oItem.$(),
 						height = getScrollHeight($item),
 						$container = oContainer.$(),
@@ -367,7 +383,7 @@ sap.ui.define([
 				position: 'absolute'
 			};
 
-		if (!getItemRowsAutoSpan(oItem)) {
+		if (!this.getRowsAutoSpan() && !getItemRowsAutoSpan(oItem)) {
 			var itemRowCount = getItemRowCount(oItem);
 			css.height = itemRowCount * itemHeight + (itemRowCount - 1) * gapSize;
 		}
@@ -383,7 +399,7 @@ sap.ui.define([
 			itemWidth = cssSizeToPx(oSettings.getColumnSize()),
 			itemHeight = cssSizeToPx(oSettings.getRowSize()),
 			gapSize = cssSizeToPx(oSettings.getGap()),
-			columnsCount = oSettings.getColumns() || (Math.floor((width - gapSize) / (itemWidth + gapSize))),
+			columnsCount = oSettings.getColumns() || Math.floor((width + gapSize) / (itemWidth + gapSize)),
 			topOffset = parseInt($that.css("padding-top").replace("px", "")),
 			leftOffset = parseInt($that.css("padding-left").replace("px", "")),
 			items = this.getItems(),
@@ -410,7 +426,7 @@ sap.ui.define([
 			var $child = jQuery($children.get(i));
 
 			var rows;
-			if (getItemRowsAutoSpan(item)) {
+			if (this.getRowsAutoSpan() || getItemRowsAutoSpan(item)) {
 				var height = getScrollHeight(jQuery($child.children().get(0)));
 				rows = Math.ceil((height + gapSize) / (itemHeight + gapSize));
 			} else {
