@@ -30,7 +30,7 @@
 		window.eval(code);
 	}
 
-	if (/(trident|msie)\/[\w.]+;.*rv:([\w.]+)/i.exec(window.navigator.userAgent)) {
+	if (/(trident|msie)\/[\w.]+;.*rv:([\w.]+)/i.test(window.navigator.userAgent)) {
 		loadAndExecSync("../../../../../../resources/sap/ui/thirdparty/baseuri.js");
 		loadAndExecSync("../../../../../../resources/sap/ui/thirdparty/es6-promise.js");
 		loadAndExecSync("../../../../../../resources/sap/ui/thirdparty/es6-shim-nopromise.js");
