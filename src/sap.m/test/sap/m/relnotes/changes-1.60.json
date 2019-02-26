@@ -1479,5 +1479,22 @@
         "references": []
       }
     ]
+  },
+  "1.60.8": {
+    "date": "February 2019",
+    "notes": [
+      {
+        "id": "f2fc9d3cc45d2a2a5175068b2e7fc1b9b801b81d",
+        "type": "FIX",
+        "text": " UploadCollection - jQuery selectors do not work with Fiori separators \"::\"",
+        "references": []
+      },
+      {
+        "id": "84aea975fd0038fc1c4ffa2ef9cd1c8848fd943c",
+        "type": "FIX",
+        "text": " sap.m.ProgressIndicator: Invalid percentValue handling corrected",
+        "references": []
+      }
+    ]
   }
 }

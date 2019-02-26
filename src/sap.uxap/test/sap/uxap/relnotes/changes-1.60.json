@@ -175,5 +175,16 @@
         "references": []
       }
     ]
+  },
+  "1.60.8": {
+    "date": "February 2019",
+    "notes": [
+      {
+        "id": "348f6a74fa4b16185e5c648cebc19721e12b2bc2",
+        "type": "FIX",
+        "text": " sap.uxap.ObjectPageLayout: Filtering of lazy loaded sections fixed",
+        "references": []
+      }
+    ]
   }
 }
