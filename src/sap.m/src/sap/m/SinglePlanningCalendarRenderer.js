@@ -32,7 +32,6 @@ function() {
 			}
 		});
 		oRm.addClass("sapMSinglePC");
-		oRm.addClass("sapUiSizeCompact"); // TODO: for now force Compact mode
 		oRm.writeClasses(oCalendar);
 		oRm.write(">");
 

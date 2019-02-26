@@ -1,5 +1,5 @@
 @_sap_m_SinglePlanningCalendarGrid_RowHeadersWidth: 4rem;
-@_sap_m_SinglePlanningCalendarGrid_RowHeight: 4rem;
+@_sap_m_SinglePlanningCalendarGrid_RowHeight: 4.3125rem;
 @_sap_m_SinglePlanningCalendarGrid_CompactRowHeight: 3rem;
 
 /*****************
@@ -207,8 +207,14 @@
 	}
 }
 
+.sapUiSizeCompact {
+	.sapMSinglePCBlockersColumns .sapMSinglePCAppointmentWrap.sapUiCalendarRowApps .sapUiCalendarApp {
+		height: 1.438rem;
+	}
+}
+
 .sapMSinglePCBlockersColumns .sapMSinglePCAppointmentWrap.sapUiCalendarRowApps .sapUiCalendarApp {
-	height: 1.438rem;
+	height: 2rem;
 
 	.sapUiCalendarAppTitle {
 		padding-top: 0;
