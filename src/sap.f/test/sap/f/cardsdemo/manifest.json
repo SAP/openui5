@@ -173,9 +173,19 @@
 		  "target": "objectContent"
 		},
 		{
-			"pattern": "delayedLoading",
-			"name": "delayedLoading",
-			"target": "delayedLoading"
+		  "pattern": "dnd",
+		  "name": "dnd",
+		  "target": "dnd"
+		},
+		{
+		  "pattern": "dnd2",
+		  "name": "dnd2",
+		  "target": "dnd2"
+		},
+		{
+		  "pattern": "delayedLoading",
+		  "name": "delayedLoading",
+		  "target": "delayedLoading"
 		}
 	  ],
 	  "targets": {
@@ -287,6 +297,16 @@
 		"objectContent": {
 		  "viewId": "object",
 		  "viewName": "ObjectContent",
+		  "viewLevel": 1
+		},
+		"dnd": {
+		  "viewId": "dnd",
+		  "viewName": "Dnd",
+		  "viewLevel": 1
+		},
+		"dnd2": {
+		  "viewId": "dnd2",
+		  "viewName": "Dnd2",
 		  "viewLevel": 1
 		}
 	  }

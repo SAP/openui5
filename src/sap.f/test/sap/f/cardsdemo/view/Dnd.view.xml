@@ -1,0 +1,144 @@
+<mvc:View
+    xmlns="sap.m"
+    xmlns:mvc="sap.ui.core.mvc"
+	xmlns:f="sap.f"
+	xmlns:w="sap.ui.integration.widgets"
+	xmlns:grid="sap.ui.layout.cssgrid"
+    displayBlock="true"
+	controllerName="sap.f.cardsdemo.controller.Dnd">
+
+	<Page title="{i18n>appTitle}">
+
+		<subHeader>
+			<Toolbar>
+				<ToolbarSpacer/>
+				<Title text="Using drag and drop with sap.ui.layout.cssgrid.CSSGrid"/>
+				<ToolbarSpacer/>
+			</Toolbar>
+		</subHeader>
+
+		<content>
+
+			<Panel>
+				<VBox>
+					<HBox alignItems="Center">
+						<Label class="sapUiSmallMargin" text="Dense auto fill:"/>
+						<Switch change="onDenseChange" state="false" />
+					</HBox>
+				</VBox>
+			</Panel>
+
+			<Panel headerText="Card Group 1">
+				<grid:CSSGrid
+					id="cssgrid"
+					width="60%"
+					gridTemplateColumns="repeat(8, 1fr)"
+					gridAutoRows="80px"
+					gridAutoFlow="Row"
+					gridRowGap="8px"
+					gridColumnGap="8px">
+
+					<grid:items>
+
+						<w:Card class="green" manifest="{manifests>/zflow/card1}">
+							<w:layoutData>
+								<grid:GridItemLayoutData gridRow="span 2" gridColumn="span 2" />
+							</w:layoutData>
+						</w:Card>
+
+						<w:Card class="green" manifest="{manifests>/zflow/card2}">
+							<w:layoutData>
+								<grid:GridItemLayoutData gridRow="span 2" gridColumn="span 3" />
+							</w:layoutData>
+						</w:Card>
+
+						<w:Card class="green" manifest="{manifests>/zflow/card3}"></w:Card>
+
+						<w:Card class="green" manifest="{manifests>/zflow/card4}">
+							<w:layoutData>
+								<grid:GridItemLayoutData gridColumn="span 2" />
+							</w:layoutData>
+						</w:Card>
+
+						<w:Card class="green" manifest="{manifests>/zflow/card5}"></w:Card>
+
+						<w:Card class="green" manifest="{manifests>/zflow/card6}">
+							<w:layoutData>
+								<grid:GridItemLayoutData gridColumn="span 3" />
+							</w:layoutData>
+						</w:Card>
+
+						<w:Card class="green" manifest="{manifests>/zflow/card7}">
+							<w:layoutData>
+								<grid:GridItemLayoutData gridRow="span 3" gridColumn="span 2" />
+							</w:layoutData>
+						</w:Card>
+
+						<w:Card class="green" manifest="{manifests>/zflow/card8}">
+							<w:layoutData>
+								<grid:GridItemLayoutData gridRow="span 3" gridColumn="span 2" />
+							</w:layoutData>
+						</w:Card>
+
+					</grid:items>
+				</grid:CSSGrid>
+			</Panel>
+
+			<Panel headerText="Card Group 2">
+				<grid:CSSGrid
+					id="cssgrid2"
+					width="60%"
+					gridTemplateColumns="repeat(8, 1fr)"
+					gridAutoRows="80px"
+					gridAutoFlow="Row"
+					gridRowGap="8px"
+					gridColumnGap="8px">
+
+					<grid:items>
+
+						<w:Card class="red" manifest="{manifests>/zflow/card1}">
+							<w:layoutData>
+								<grid:GridItemLayoutData gridRow="span 2" gridColumn="span 2" />
+							</w:layoutData>
+						</w:Card>
+
+						<w:Card class="red" manifest="{manifests>/zflow/card2}">
+							<w:layoutData>
+								<grid:GridItemLayoutData gridRow="span 2" gridColumn="span 3" />
+							</w:layoutData>
+						</w:Card>
+
+						<w:Card class="red" manifest="{manifests>/zflow/card3}"></w:Card>
+
+						<w:Card class="red" manifest="{manifests>/zflow/card4}">
+							<w:layoutData>
+								<grid:GridItemLayoutData gridColumn="span 2" />
+							</w:layoutData>
+						</w:Card>
+
+						<w:Card class="red" manifest="{manifests>/zflow/card5}"></w:Card>
+
+						<w:Card class="red" manifest="{manifests>/zflow/card6}">
+							<w:layoutData>
+								<grid:GridItemLayoutData gridColumn="span 3" />
+							</w:layoutData>
+						</w:Card>
+
+						<w:Card class="red" manifest="{manifests>/zflow/card7}">
+							<w:layoutData>
+								<grid:GridItemLayoutData gridRow="span 3" gridColumn="span 2" />
+							</w:layoutData>
+						</w:Card>
+
+						<w:Card class="red" manifest="{manifests>/zflow/card8}">
+							<w:layoutData>
+								<grid:GridItemLayoutData gridRow="span 3" gridColumn="span 2" />
+							</w:layoutData>
+						</w:Card>
+
+					</grid:items>
+				</grid:CSSGrid>
+			</Panel>
+		</content>
+	</Page>
+</mvc:View>

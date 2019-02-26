@@ -1,0 +1,189 @@
+<mvc:View
+    xmlns="sap.m"
+    xmlns:mvc="sap.ui.core.mvc"
+	xmlns:f="sap.f"
+	xmlns:w="sap.ui.integration.widgets"
+	xmlns:grid="sap.ui.layout.cssgrid"
+	xmlns:card="sap.f.cards"
+	xmlns:viz="sap.viz.ui5.controls"
+	xmlns:viz.data="sap.viz.ui5.data"
+	xmlns:viz.feeds="sap.viz.ui5.controls.common.feeds"
+    displayBlock="true"
+	controllerName="sap.f.cardsdemo.controller.Dnd">
+
+	<Page title="{i18n>appTitle}">
+
+		<subHeader>
+			<Toolbar>
+				<ToolbarSpacer/>
+				<Title text="Using drag and drop with sap.ui.layout.cssgrid.CSSGrid, Example 2"/>
+				<ToolbarSpacer/>
+			</Toolbar>
+		</subHeader>
+
+		<content>
+			<Panel>
+				<VBox>
+					<HBox alignItems="Center">
+						<Label class="sapUiSmallMargin" text="Dense auto fill:"/>
+						<Switch change="onDenseChange" state="false" />
+					</HBox>
+					<HBox alignItems="Center">
+						<Label class="sapUiSmallMargin" text="Rows fit to cards:"/>
+						<Switch change="onRowSpanChange" state="false" />
+					</HBox>
+				</VBox>
+			</Panel>
+
+			<Panel headerText="Card Group 1">
+				<grid:CSSGrid
+					id="cssgrid"
+					class="maxWidth1140"
+					gridTemplateColumns="repeat(auto-fill, 80px)"
+					gridAutoRows="80px"
+					gridAutoFlow="Row"
+					gridRowGap="16px"
+					gridColumnGap="16px">
+
+					<grid:items>
+						<GenericTile header="Sales Fulfillment Application Title" subheader="Subtitle">
+							<layoutData>
+								<grid:GridItemLayoutData gridRow="span 2" gridColumn="span 2" />
+							</layoutData>
+							<TileContent unit="EUR" footer="Current Quarter">
+								<ImageContent src="sap-icon://home-share" />
+							</TileContent>
+						</GenericTile>
+
+						<GenericTile header="Manage Activity Master Data Type" subheader="Subtitle">
+							<layoutData>
+								<grid:GridItemLayoutData gridRow="span 2" gridColumn="span 2" />
+							</layoutData>
+							<TileContent>
+								<ImageContent src="sap-icon://activities" />
+							</TileContent>
+						</GenericTile>
+
+						<w:Card manifest="{manifests>/listContent/smallList}">
+							<w:layoutData>
+								<grid:GridItemLayoutData gridRow="span 2" gridColumn="span 2" />
+							</w:layoutData>
+						</w:Card>
+
+						<w:Card manifest="{manifests>/analyticalContent/line}">
+							<w:layoutData>
+								<grid:GridItemLayoutData gridRow="span 4" gridColumn="span 4" />
+							</w:layoutData>
+						</w:Card>
+
+						<GenericTile header="Account" subheader="Your personal information">
+							<layoutData>
+								<grid:GridItemLayoutData gridRow="span 2" gridColumn="span 2" />
+							</layoutData>
+							<TileContent>
+								<ImageContent src="sap-icon://account" />
+							</TileContent>
+						</GenericTile>
+
+						<w:Card manifest="{manifests>/listContent/largeList}">
+							<w:layoutData>
+								<grid:GridItemLayoutData gridRow="span 6" gridColumn="span 4" />
+							</w:layoutData>
+						</w:Card>
+
+						<w:Card manifest="{manifests>/listContent/mediumList}">
+							<w:layoutData>
+								<grid:GridItemLayoutData gridRow="span 4" gridColumn="span 2" />
+							</w:layoutData>
+						</w:Card>
+
+						<GenericTile header="Appointments management">
+							<layoutData>
+								<grid:GridItemLayoutData gridRow="span 2" gridColumn="span 2" />
+							</layoutData>
+							<TileContent unit="EUR" footer="Current Quarter">
+								<ImageContent src="sap-icon://appointment" />
+							</TileContent>
+						</GenericTile>
+
+						<GenericTile header="Jessica D. Prince Senior Consultant" subheader="Department">
+							<layoutData>
+								<grid:GridItemLayoutData gridRow="span 2" gridColumn="span 2" />
+							</layoutData>
+							<TileContent unit="EUR" footer="Current Quarter">
+								<ImageContent src="sap-icon://activity-individual" />
+							</TileContent>
+						</GenericTile>
+
+						<w:Card manifest="{manifests>/analyticalContent/stackedBar}">
+							<w:layoutData>
+								<grid:GridItemLayoutData gridRow="span 4" gridColumn="span 4" />
+							</w:layoutData>
+						</w:Card>
+					</grid:items>
+				</grid:CSSGrid>
+			</Panel>
+
+			<Panel headerText="Card Group 2">
+				<grid:CSSGrid
+					id="cssgrid2"
+					class="maxWidth1140"
+					gridTemplateColumns="repeat(auto-fill, 80px)"
+					gridAutoRows="80px"
+					gridAutoFlow="Row"
+					gridRowGap="16px"
+					gridColumnGap="16px">
+
+					<grid:items>
+
+						<GenericTile header="Comulative Tools" subheader="Expenses">
+							<layoutData>
+								<grid:GridItemLayoutData gridRow="span 2" gridColumn="span 2" />
+							</layoutData>
+							<TileContent unit="Unit" footer="Footer Text">
+								<NumericContent value="1762" icon="sap-icon://line-charts" />
+							</TileContent>
+						</GenericTile>
+
+						<GenericTile header="Cumulative Totals" subheader="Subtitle">
+							<layoutData>
+								<grid:GridItemLayoutData gridRow="span 2" gridColumn="span 2" />
+							</layoutData>
+								<TileContent unit="Unit" footer="Footer Text">
+									<NumericContent value="12" />
+								</TileContent>
+						</GenericTile>
+
+						<GenericTile header="Travel and Expenses" subheader="Access Concur">
+							<layoutData>
+								<grid:GridItemLayoutData gridRow="span 2" gridColumn="span 2" />
+							</layoutData>
+							<TileContent>
+								<ImageContent src="sap-icon://travel-expense" />
+							</TileContent>
+						</GenericTile>
+
+						<GenericTile header="Success Map" subheader="Access Success Map">
+							<layoutData>
+								<grid:GridItemLayoutData gridRow="span 2" gridColumn="span 2" />
+							</layoutData>
+							<TileContent unit="EUR" footer="Current Quarter">
+								<ImageContent src="sap-icon://map-3" />
+							</TileContent>
+						</GenericTile>
+
+						<GenericTile header="My Team Calendar">
+							<layoutData>
+								<grid:GridItemLayoutData gridRow="span 2" gridColumn="span 2" />
+							</layoutData>
+							<TileContent unit="EUR" footer="Current Quarter">
+								<ImageContent src="sap-icon://check-availability" />
+							</TileContent>
+						</GenericTile>
+
+					</grid:items>
+				</grid:CSSGrid>
+			</Panel>
+		</content>
+	</Page>
+</mvc:View>
