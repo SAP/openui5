@@ -7,6 +7,49 @@ sap.ui.define([
     "use strict";
 
 
+    // Simulate data changed on server
+    var changeNavigationTargets = function (oMockServer, sProductId, sBusinessPartnerID) {
+        oMockServer.stop();
+
+
+        var aRequests = oMockServer.getRequests();
+        aRequests.forEach(function (oRequest) {
+            var sPath = String(oRequest.path);
+            if (sPath.indexOf("$") == -1) {
+
+                if (oRequest._fnOrginalResponse){
+                    oRequest.response = oRequest._fnOrginalResponse;
+                }
+
+                oRequest._fnOrginalResponse = oRequest.response;
+                oRequest.response = function (oXhr) {
+                    oXhr._fnOrignalXHRRespond = oXhr.respond;
+                    oXhr.respond = function (status, headers, content) {
+                        var oC = JSON.parse(content);
+                        if (oC.d.ToLineItems) {
+                            oC.d.ToLineItems.results[0].ProductID = sProductId;
+                            oC.d.ToLineItems.results[0].ToProduct.ProductID = sProductId;
+                            oC.d.ToLineItems.results[0].ToProduct.__metadata.uri = "/SalesOrderSrv/ProductSet('" + sProductId + "')";
+                            arguments[2] = JSON.stringify(oC);
+                        } else if (oC.d.ToProduct) {
+                            oC.d.ProductID = sProductId;
+                            oC.d.ToProduct.ProductID = sProductId;
+                            oC.d.ToProduct.__metadata.uri = "/SalesOrderSrv/ProductSet('" + sProductId + "')";
+                            oC.d.ToProduct.SupplierID = sBusinessPartnerID;
+                            oC.d.ToProduct.ToSupplier.BusinessPartnerID = sBusinessPartnerID;
+                            oC.d.ToProduct.ToSupplier.__metadata.uri = "/SalesOrderSrv/BusinessPartnerSet('" + sBusinessPartnerID + "')";
+                            arguments[2] = JSON.stringify(oC);
+                        }
+                        oXhr._fnOrignalXHRRespond.apply(this, arguments);
+                    };
+                    oRequest._fnOrginalResponse.apply(this, arguments);
+                };
+            }
+        });
+        oMockServer.start();
+    };
+
+
     QUnit.module("Canonical paths", {
         before: function(){
         },
@@ -259,20 +302,20 @@ sap.ui.define([
 
                 var oSalesOrderLineItemSetContext = that.oModel.createBindingContext("/SalesOrderLineItemSet(SalesOrderID='0500000000',ItemPosition='0000000010')");
                 assert.equal(that.oModel.resolve("/SalesOrderSet('0500000000')/ToLineItems(SalesOrderID='0500000000',ItemPosition='0000000010')/ToProduct/ToSupplier", undefined, true),
-                "/ProductSet('HT-1000')/ToSupplier", "Do some useful message");
+                "/ProductSet('HT-1000')/ToSupplier", "Path was resolved correctly.");
                 assert.equal(that.oModel.resolve("ToLineItems(SalesOrderID='0500000000',ItemPosition='0000000010')/ToProduct/ToSupplier", oSalesOrderSetContext, true),
-                "/ProductSet('HT-1000')/ToSupplier", "Do some useful message");
+                "/ProductSet('HT-1000')/ToSupplier", "Path was resolved correctly.");
                 assert.equal(that.oModel.resolve("ToProduct/ToSupplier", oSalesOrderLineItemSetContext, true),
-                "/ProductSet('HT-1000')/ToSupplier", "Do some useful message");
+                "/ProductSet('HT-1000')/ToSupplier", "Path was resolved correctly.");
 
                 that.oModel.read("/SalesOrderSet('0500000000')/ToLineItems(SalesOrderID='0500000000',ItemPosition='0000000010')/ToProduct/ToSupplier", {
                     success: function() {
                         assert.equal(that.oModel.resolve("/SalesOrderSet('0500000000')/ToLineItems(SalesOrderID='0500000000',ItemPosition='0000000010')/ToProduct/ToSupplier", undefined, true),
-                        "/BusinessPartnerSet('0100000000')", "Do some useful message");
+                        "/BusinessPartnerSet('0100000000')", "Path was resolved correctly.");
                         assert.equal(that.oModel.resolve("ToLineItems(SalesOrderID='0500000000',ItemPosition='0000000010')/ToProduct/ToSupplier", oSalesOrderSetContext, true),
-                        "/BusinessPartnerSet('0100000000')", "Do some useful message");
+                        "/BusinessPartnerSet('0100000000')", "Path was resolved correctly.");
                         assert.equal(that.oModel.resolve("ToProduct/ToSupplier", oSalesOrderLineItemSetContext, true),
-                        "/BusinessPartnerSet('0100000000')", "Do some useful message");
+                        "/BusinessPartnerSet('0100000000')", "Path was resolved correctly.");
                         assert.equal(that.oStubGetEntitySetByPath.callCount, 11, "Check number of cache misses.");
                         assert.equal(that.iInvalidationCounter, 0, "Check number of cache invalidations necessary.");
                         checkIfCacheEntriesAreValid(that.oModel, assert).then(done);
@@ -303,77 +346,55 @@ sap.ui.define([
 
                 var oSalesOrderLineItemSetContext = that.oModel.createBindingContext("/SalesOrderLineItemSet(SalesOrderID='0500000000',ItemPosition='0000000010')");
                 assert.equal(that.oModel.resolve("/SalesOrderSet('0500000000')/ToLineItems(SalesOrderID='0500000000',ItemPosition='0000000010')/ToProduct/ToSupplier", undefined, true),
-                "/ProductSet('HT-1000')/ToSupplier", "Do some useful message");
+                "/ProductSet('HT-1000')/ToSupplier", "Path was resolved correctly.");
                 assert.equal(that.oModel.resolve("ToLineItems(SalesOrderID='0500000000',ItemPosition='0000000010')/ToProduct/ToSupplier", oSalesOrderSetContext, true),
-                "/ProductSet('HT-1000')/ToSupplier", "Do some useful message");
+                "/ProductSet('HT-1000')/ToSupplier", "Path was resolved correctly.");
                 assert.equal(that.oModel.resolve("ToProduct/ToSupplier", oSalesOrderLineItemSetContext, true),
-                "/ProductSet('HT-1000')/ToSupplier", "Do some useful message");
+                "/ProductSet('HT-1000')/ToSupplier", "Path was resolved correctly.");
 
-
-                // Simulate data changed on server
-                that.oMockServer.stop();
-                var aRequests = that.oMockServer.getRequests();
-                aRequests.forEach(function (oRequest) {
-                    var sPath = String(oRequest.path);
-                    if (sPath.indexOf("$") == -1) {
-
-                        oRequest._fnOrginalResponse = oRequest.response;
-                        oRequest.response = function (oXhr) {
-                            oXhr._fnOrignalXHRRespond = oXhr.respond;
-                            oXhr.respond = function (status, headers, content) {
-                                var oC = JSON.parse(content);
-                                if (oC.d.ToLineItems){
-                                    oC.d.ToLineItems.results[0].ProductID = "HT-1004";
-                                    oC.d.ToLineItems.results[0].ToProduct.ProductID = "HT-1004";
-                                    oC.d.ToLineItems.results[0].ToProduct.__metadata.uri = "/SalesOrderSrv/ProductSet('HT-1004')";
-                                    arguments[2] = JSON.stringify(oC);
-                                } else if (oC.d.ToProduct){
-                                    oC.d.ProductID = "HT-1004";
-                                    oC.d.ToProduct.ProductID = "HT-1004";
-                                    oC.d.ToProduct.__metadata.uri = "/SalesOrderSrv/ProductSet('HT-1004')";
-                                    oC.d.ToProduct.SupplierID = "0100000099";
-                                    oC.d.ToProduct.ToSupplier.BusinessPartnerID = "0100000099";
-                                    oC.d.ToProduct.ToSupplier.__metadata.uri = "/SalesOrderSrv/BusinessPartnerSet('0100000099')";
-                                    arguments[2] = JSON.stringify(oC);
-                                }
-                                oXhr._fnOrignalXHRRespond.apply(this, arguments);
-                            };
-                            oRequest._fnOrginalResponse.apply(this, arguments);
-                        };
-                    }
-                });
-                that.oMockServer.start();
+                changeNavigationTargets(that.oMockServer, "HT-1004", "0100000099");
 
                 var fnBatchCompleted1 = function() {
                     that.oModel.detachBatchRequestCompleted(fnBatchCompleted1);
                     //paths still work
                     assert.equal(that.oModel.resolve("/SalesOrderSet('0500000000')", undefined, true),
-                    "/SalesOrderSet('0500000000')", "Do some useful message");
+                    "/SalesOrderSet('0500000000')", "Path was resolved correctly.");
                     assert.equal(that.oModel.resolve("/SalesOrderSet('0500000000')/ToLineItems(SalesOrderID='0500000000',ItemPosition='0000000010')", undefined, true),
-                    "/SalesOrderLineItemSet(SalesOrderID='0500000000',ItemPosition='0000000010')", "Do some useful message");
+                    "/SalesOrderLineItemSet(SalesOrderID='0500000000',ItemPosition='0000000010')", "Path was resolved correctly.");
 
                     //new paths used
                     assert.equal(that.oModel.resolve("/SalesOrderLineItemSet(SalesOrderID='0500000000',ItemPosition='0000000010')/ToProduct", undefined, true),
-                    "/ProductSet('HT-1004')", "Do some useful message");
+                    "/ProductSet('HT-1004')", "Path was resolved correctly.");
                     assert.equal(that.oModel.resolve("/SalesOrderSet('0500000000')/ToLineItems(SalesOrderID='0500000000',ItemPosition='0000000010')/ToProduct/ToSupplier", undefined, true),
-                    "/ProductSet('HT-1004')/ToSupplier", "Do some useful message");
+                    "/ProductSet('HT-1004')/ToSupplier", "Path was resolved correctly.");
                     assert.equal(that.oModel.resolve("ToLineItems(SalesOrderID='0500000000',ItemPosition='0000000010')/ToProduct/ToSupplier", oSalesOrderSetContext, true),
-                    "/ProductSet('HT-1004')/ToSupplier", "Do some useful message");
+                    "/ProductSet('HT-1004')/ToSupplier", "Path was resolved correctly.");
                     assert.equal(that.oModel.resolve("ToProduct/ToSupplier", oSalesOrderLineItemSetContext, true),
-                    "/ProductSet('HT-1004')/ToSupplier", "Do some useful message");
+                    "/ProductSet('HT-1004')/ToSupplier", "Path was resolved correctly.");
                     var fnBatchCompleted2 = function() {
                         that.oModel.detachBatchRequestCompleted(fnBatchCompleted2);
                         assert.equal(that.oModel.resolve( "/ProductSet('HT-1004')/ToSupplier", undefined, true),
-                        "/BusinessPartnerSet('0100000099')", "Do some useful message");
+                        "/BusinessPartnerSet('0100000099')", "Path was resolved correctly.");
                         assert.equal(that.oModel.resolve("/SalesOrderSet('0500000000')/ToLineItems(SalesOrderID='0500000000',ItemPosition='0000000010')/ToProduct/ToSupplier", undefined, true),
-                        "/BusinessPartnerSet('0100000099')", "Do some useful message");
+                        "/BusinessPartnerSet('0100000099')", "Path was resolved correctly.");
                         assert.equal(that.oModel.resolve("ToLineItems(SalesOrderID='0500000000',ItemPosition='0000000010')/ToProduct/ToSupplier", oSalesOrderSetContext, true),
-                        "/BusinessPartnerSet('0100000099')", "Do some useful message");
+                        "/BusinessPartnerSet('0100000099')", "Path was resolved correctly.");
                         assert.equal(that.oModel.resolve("ToProduct/ToSupplier", oSalesOrderLineItemSetContext, true),
-                        "/BusinessPartnerSet('0100000099')", "Do some useful message");
+                        "/BusinessPartnerSet('0100000099')", "Path was resolved correctly.");
                         assert.equal(that.oStubGetEntitySetByPath.callCount, 4, "Check number of cache misses.");
                         assert.equal(that.iInvalidationCounter, 1, "Check number of cache invalidations necessary.");
-                        checkIfCacheEntriesAreValid(that.oModel, assert).then(done);
+
+                        changeNavigationTargets(that.oMockServer, 'HT-1000', "0100000000");
+
+                        var fnBatchCompleted3 = function(){
+                            that.oModel.detachBatchRequestCompleted(fnBatchCompleted3);
+                            assert.strictEqual(that.oModel.resolveFromCache("/ProductSet('HT-1000')"), undefined, "Product path cache entry is never written.");
+                            assert.strictEqual(that.oModel.resolveFromCache("/ProductSet('HT-1004')"), "/ProductSet('HT-1004')", "Product path cache entry is correct.");
+                            checkIfCacheEntriesAreValid(that.oModel, assert).then(done);
+                        };
+
+                        that.oModel.attachBatchRequestCompleted(fnBatchCompleted3);
+                        that.oModel.read("/SalesOrderLineItemSet(SalesOrderID='0500000000',ItemPosition='0000000010')", {urlParameters: {"$expand": "ToProduct,ToProduct/ToSupplier"}});
                     };
                     that.oModel.read("/SalesOrderLineItemSet(SalesOrderID='0500000000',ItemPosition='0000000010')", {urlParameters: {"$expand": "ToProduct,ToProduct/ToSupplier"}});
                     that.oModel.attachBatchRequestCompleted(fnBatchCompleted2);

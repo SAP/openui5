@@ -1423,8 +1423,14 @@ sap.ui.define([
 			sPath = sPath || '/' + sKey;
 			sDeepPath = sDeepPath || sPath;
 
-			// try to resolve/cache paths containing mutiple nav properties likes "SalesOrderItem(123)/ToProduct/ToSupplier" => Product(123)/ToSupplier
-			this._writePathCache(this.resolveFromCache(sDeepPath), "/" + sKey);
+
+			var sCanonicalPath = this.resolveFromCache(sDeepPath);
+			// Prevents writing invalid entries into cache, like /Product(1) : /Product(2).
+			// This could occur, when a navigation target changes on the server and the old target was resolved from cache before invalidation.
+            if (sCanonicalPath === "/" + sKey || (sCanonicalPath && sCanonicalPath.split("/").length > 2)) {
+				// try to resolve/cache paths containing mutiple nav properties likes "SalesOrderItem(123)/ToProduct/ToSupplier" => Product(123)/ToSupplier
+                this._writePathCache(sCanonicalPath, "/" + sKey);
+            }
 
 			this._writePathCache(sPath, "/" + sKey);
 			this._writePathCache(sDeepPath, "/" + sKey);
