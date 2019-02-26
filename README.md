@@ -30,7 +30,7 @@ The UI5 distribution via Bower is stopped with 1.60+, as Bower itself is now [de
 
 ⚠️ **Note**: Contrary to the bower releases, the npm releases do not contain library preload files. The npm packages only contain the raw source files of the OpenUI5 libraries.
 
-Preload packages for components and libraries can be built using the [UI5 Build and Development Tooling](https://github.com/SAP/ui5-tooling).
+Preload packages for components and libraries can be built using the [UI5 Tooling](https://github.com/SAP/ui5-tooling).
 
 See also: [CLI guideline](https://github.com/SAP/ui5-cli#cli-usage)
 
