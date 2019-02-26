@@ -98,4 +98,13 @@ describe("sap.f.CardsVisualTests", function () {
 		var oCard = element(by.css("#container-cardsVisualTests---CardContainer--cContainer"));
 		expect(takeScreenshot(oCard)).toLookAs("4_CardContainer");
 	});
+
+	it('Object Card', function() {
+		browser.executeScript("window.history.back()");
+		browser.executeScript('document.getElementById("__item0-container-cardsVisualTests---main--useCases-2").scrollIntoView()');
+		element(by.id("__item0-container-cardsVisualTests---main--useCases-2")).click();
+
+		var oCard = element(by.css("#container-cardsVisualTests---objectContent--objectId"));
+		expect(takeScreenshot(oCard)).toLookAs("5_Object_Card_1");
+	});
 });

@@ -56,11 +56,11 @@
 							"value": "{company/name}"
 						},
 						{
-							"label": "{address}",
+							"label": "{{address}}",
 							"value": "{company/address}"
 						},
 						{
-							"label": "{website}",
+							"label": "{{website}}",
 							"link": "{company/website}"
 						}
 					]
