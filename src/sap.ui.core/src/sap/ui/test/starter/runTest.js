@@ -69,7 +69,7 @@
 
 	// define the necessary polyfills to be loaded
 	var aPolyfills = [];
-	if (/(trident)\/[\w.]+;.*rv:([\w.]+)/.exec(window.navigator.userAgent)) {
+	if (/(trident)\/[\w.]+;.*rv:([\w.]+)/i.test(window.navigator.userAgent)) {
 		aPolyfills.push("sap/ui/thirdparty/baseuri.js");
 		aPolyfills.push("sap/ui/thirdparty/es6-promise.js");
 		aPolyfills.push("sap/ui/thirdparty/es6-shim-nopromise.js");

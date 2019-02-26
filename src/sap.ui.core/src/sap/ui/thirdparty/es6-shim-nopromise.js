@@ -46,7 +46,7 @@
   };
 
   // do not execute for modern browsers
-  if (!/(trident)\/[\w.]+;.*rv:([\w.]+)/.exec(window.navigator.userAgent)) {
+  if (!/(trident)\/[\w.]+;.*rv:([\w.]+)/i.test(window.navigator.userAgent)) {
     return getGlobal();
   }
   // ##### END: MODIFIED BY SAP
