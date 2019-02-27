@@ -173,8 +173,8 @@ sap.ui.define([
 			}
 		};
 
-		GroupElement.prototype.setProperty = function () {
-			Element.prototype.setProperty.apply(this, arguments);
+		GroupElement.prototype.setProperty = function (sName, oValue) {
+			Element.prototype.setProperty.call(this, sName, oValue, true);
 
 			var oGroup = this.getParent();
 			if (!oGroup) {
