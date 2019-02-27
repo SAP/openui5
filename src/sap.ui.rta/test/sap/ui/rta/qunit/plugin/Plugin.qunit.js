@@ -2,52 +2,52 @@
 
 sap.ui.define([
 	"sap/ui/dt/DesignTime",
+	"sap/ui/dt/ElementDesignTimeMetadata",
+	"sap/ui/dt/ElementOverlay",
+	"sap/ui/dt/OverlayRegistry",
+	"sap/ui/dt/OverlayUtil",
 	"sap/ui/rta/plugin/Plugin",
 	"sap/ui/rta/plugin/Remove",
 	"sap/ui/rta/plugin/Rename",
 	"sap/ui/rta/plugin/ControlVariant",
 	"sap/ui/rta/command/CommandFactory",
+	"sap/ui/fl/changeHandler/MoveControls",
 	"sap/ui/fl/registry/ChangeRegistry",
+	"sap/ui/fl/Utils",
 	"sap/m/Button",
-	"sap/ui/layout/VerticalLayout",
-	"sap/ui/dt/ElementOverlay",
-	"sap/ui/dt/OverlayRegistry",
-	"sap/ui/dt/OverlayUtil",
 	"sap/m/Label",
-	"sap/ui/core/Title",
 	"sap/m/Input",
+	"sap/ui/layout/VerticalLayout",
 	"sap/ui/layout/form/Form",
 	"sap/ui/layout/form/FormContainer",
 	"sap/ui/layout/form/SimpleForm",
+	"sap/ui/core/Title",
 	"sap/uxap/ObjectPageSection",
-	"sap/ui/fl/Utils",
-	"sap/ui/dt/ElementDesignTimeMetadata",
-	"sap/ui/fl/changeHandler/MoveControls",
 	"sap/ui/thirdparty/sinon-4"
 ],
 function (
 	DesignTime,
+	ElementDesignTimeMetadata,
+	ElementOverlay,
+	OverlayRegistry,
+	OverlayUtil,
 	Plugin,
 	Remove,
 	Rename,
 	ControlVariant,
 	CommandFactory,
+	MoveControlsChangeHandler,
 	ChangeRegistry,
+	FlexUtils,
 	Button,
-	VerticalLayout,
-	ElementOverlay,
-	OverlayRegistry,
-	OverlayUtil,
 	Label,
-	Title,
 	Input,
+	VerticalLayout,
 	Form,
 	FormContainer,
 	SimpleForm,
+	Title,
 	ObjectPageSection,
-	FlexUtils,
-	ElementDesignTimeMetadata,
-	MoveControlsChangeHandler,
 	sinon
 ) {
 	"use strict";
@@ -59,7 +59,7 @@ function (
 			var done = assert.async();
 
 			var oChangeRegistry = ChangeRegistry.getInstance();
-			return oChangeRegistry.registerControlsForChanges({
+			oChangeRegistry.registerControlsForChanges({
 				"VerticalLayout" : {
 					"moveControls": "default"
 				}
@@ -78,7 +78,7 @@ function (
 					rootElements : [this.oLayout]
 				});
 
-				this.oPlugin = new sap.ui.rta.plugin.Plugin({
+				this.oPlugin = new Plugin({
 					commandFactory : new CommandFactory()
 				});
 				this.oRemovePlugin = new Remove();
@@ -118,7 +118,6 @@ function (
 		});
 
 		QUnit.test("when Overlays are registered/deregistered and _isEditableByPlugin method is called", function(assert) {
-
 			assert.notOk(this.oButtonOverlay.getEditable(), "then the Overlay is not editable");
 			assert.notOk(this.oPlugin._isEditableByPlugin(this.oButtonOverlay), "then the overlay is not editable by this plugin");
 			assert.notOk(this.oRemovePlugin._isEditableByPlugin(this.oButtonOverlay), "then the overlay is not editable by this plugin");
@@ -236,24 +235,24 @@ function (
 
 			this.oCheckControlIdSpy = sandbox.spy(FlexUtils,"checkControlId");
 
+			var oCommandFactory = new CommandFactory();
 			this.oRenamePlugin = new Rename({
-				commandFactory : new CommandFactory()
+				commandFactory : oCommandFactory
 			});
 			this.oRemovePlugin = new Remove({
-				commandFactory : new CommandFactory()
+				commandFactory : oCommandFactory
 			});
 			this.oDesignTime = new DesignTime({
 				rootElements : [this.oLayout],
 				plugins: [this.oRemovePlugin, this.oRenamePlugin]
 			});
 
-			this.oPlugin = new sap.ui.rta.plugin.Plugin();
+			this.oPlugin = new Plugin();
 
 			this.oDesignTime.attachEventOnce("synced", function() {
 				this.oButtonOverlay = OverlayRegistry.getOverlay(this.oButton);
 				done();
 			}.bind(this));
-
 		},
 		afterEach : function() {
 			this.oLayout.destroy();
@@ -279,14 +278,14 @@ function (
 					this.oButton
 				]
 			}).placeAt("qunit-fixture");
-
 			sap.ui.getCore().applyChanges();
 
+			var oCommandFactory = new CommandFactory();
 			this.oRenamePlugin = new Rename({
-				commandFactory : new CommandFactory()
+				commandFactory : oCommandFactory
 			});
 			this.oRemovePlugin = new Remove({
-				commandFactory : new CommandFactory()
+				commandFactory : oCommandFactory
 			});
 			sandbox.stub(this.oRenamePlugin, "_isEditable").returns(true);
 			sandbox.stub(this.oRemovePlugin, "_isEditable").returns(false);
@@ -296,14 +295,13 @@ function (
 				plugins: [this.oRemovePlugin, this.oRenamePlugin]
 			});
 
-			this.oPlugin = new sap.ui.rta.plugin.Plugin();
+			this.oPlugin = new Plugin();
 
 			this.oDesignTime.attachEventOnce("synced", function() {
 				this.oButtonOverlay = OverlayRegistry.getOverlay(this.oButton);
 				this.oLayoutOverlay = OverlayRegistry.getOverlay(this.oLayout);
 				done();
 			}.bind(this));
-
 		},
 		afterEach : function() {
 			this.oLayout.destroy();
@@ -333,6 +331,28 @@ function (
 			assert.equal(oSetRelevantSpy.callCount, 2, "then setRelevantOverlays is called twice");
 			assert.equal(oGetRelevantSpy.callCount, 2, "then getRelevantOverlays is called twice");
 			assert.equal(this.oButtonOverlay.getRelevantOverlays().length, 1, "then only one overlay is relevant");
+		});
+
+		QUnit.test("when the event elementModified is thrown with visibility changed to true and geometry becoming visible afterwards", function(assert) {
+			var oSetRelevantSpy = sandbox.spy(this.oButtonOverlay, "setRelevantOverlays");
+			var oGetRelevantSpy = sandbox.spy(this.oButtonOverlay, "getRelevantOverlays");
+			var oEvaluateSpy = sandbox.spy(this.oRenamePlugin, "evaluateEditable");
+			var oFindAllOverlaysInContainerStub = sandbox.stub(OverlayUtil, "findAllOverlaysInContainer").returns([this.oButtonOverlay]);
+			this.oButtonOverlay.getGeometry().visible = false;
+			this.oButtonOverlay.fireElementModified({
+				type: "propertyChanged",
+				name: "visible",
+				value: true
+			});
+			assert.equal(oFindAllOverlaysInContainerStub.callCount, 1, "then findAllOverlaysInContainer is only called once");
+			assert.equal(oSetRelevantSpy.callCount, 2, "then setRelevantOverlays is called twice");
+			assert.equal(oGetRelevantSpy.callCount, 2, "then getRelevantOverlays is called twice");
+			assert.equal(this.oButtonOverlay.getRelevantOverlays().length, 1, "then only one overlay is relevant");
+			assert.equal(oEvaluateSpy.callCount, 0, "the evaluate function was not yet called");
+
+			this.oButtonOverlay.getGeometry().visible = true;
+			this.oButtonOverlay.fireGeometryChanged();
+			assert.equal(oEvaluateSpy.callCount, 1, "the evaluate function was called");
 		});
 
 		QUnit.test("when the event elementModified is thrown with aggregation change", function(assert) {
@@ -395,7 +415,6 @@ function (
 
 	QUnit.module("Given the Plugin is initialized", {
 		beforeEach : function(assert) {
-
 			this.oGroup = new FormContainer("group");
 			this.oForm = new Form("Form", {
 				formContainers : [this.oGroup]
@@ -405,7 +424,7 @@ function (
 
 			sap.ui.getCore().applyChanges();
 
-			this.oPlugin = new sap.ui.rta.plugin.Plugin({
+			this.oPlugin = new Plugin({
 				commandFactory : new CommandFactory()
 			});
 			this.oDesignTime = new DesignTime({
@@ -467,8 +486,7 @@ function (
 	});
 
 	QUnit.module("Given the Plugin is initialized.", {
-		beforeEach : function(assert) {
-
+		beforeEach : function() {
 			this.oTitle0 = new Title({id : "Title0"});
 			this.oLabel0 = new Label({id : "Label0"});
 			this.oInput0 = new Input({id : "Input0"});
@@ -488,11 +506,11 @@ function (
 
 			this.oCheckControlIdSpy = sandbox.spy(FlexUtils,"checkControlId");
 
-			this.oPlugin = new sap.ui.rta.plugin.Plugin({
+			this.oPlugin = new Plugin({
 				commandFactory : new CommandFactory()
 			});
 		},
-		afterEach : function(assert) {
+		afterEach : function() {
 			this.oPlugin.destroy();
 			this.oVerticalLayout.destroy();
 			sandbox.restore();
@@ -595,7 +613,6 @@ function (
 
 	QUnit.module("Given this the Plugin is initialized.", {
 		beforeEach : function(assert) {
-
 			this.oTitle0 = new Title();
 			this.oLabel0 = new Label();
 			this.oInput0 = new Input();
@@ -614,7 +631,7 @@ function (
 
 			this.oCheckControlIdSpy = sandbox.spy(FlexUtils,"checkControlId");
 
-			this.oPlugin = new sap.ui.rta.plugin.Plugin();
+			this.oPlugin = new Plugin();
 			this.oDesignTime = new DesignTime({
 				rootElements: [
 					this.oVerticalLayout
@@ -630,7 +647,7 @@ function (
 				done();
 			}.bind(this));
 		},
-		afterEach : function(assert) {
+		afterEach : function() {
 			this.oVerticalLayout.destroy();
 			this.oDesignTime.destroy();
 			sandbox.restore();
@@ -693,7 +710,7 @@ function (
 			var done = assert.async();
 
 			var oChangeRegistry = ChangeRegistry.getInstance();
-			return oChangeRegistry.registerControlsForChanges({
+			oChangeRegistry.registerControlsForChanges({
 				"ObjectPageSection" : {
 					"rename": "sap/ui/fl/changeHandler/BaseRename"
 				},
@@ -713,14 +730,15 @@ function (
 
 				sap.ui.getCore().applyChanges();
 
+				var oCommandFactory = new CommandFactory();
 				this.oDesignTime = new DesignTime({
 					rootElements : [this.oLayout]
 				});
-				this.oPlugin = new sap.ui.rta.plugin.Plugin({
-					commandFactory : new CommandFactory()
+				this.oPlugin = new Plugin({
+					commandFactory : oCommandFactory
 				});
-				this.oControlVariantPlugin = new sap.ui.rta.plugin.ControlVariant({
-					commandFactory : new CommandFactory()
+				this.oControlVariantPlugin = new ControlVariant({
+					commandFactory : oCommandFactory
 				});
 
 				this.oDesignTime.attachEventOnce("synced", function() {
@@ -769,7 +787,6 @@ function (
 			mSettings.sParentId = this.oObjectPageSection.getId();
 			var oStashedControl = new sap.ui.core._StashedControl("stashedControl",mSettings);
 
-
 			var oDesignTimeMetadata = new ElementDesignTimeMetadata(
 				{
 					data: {
@@ -801,7 +818,7 @@ function (
 			var done = assert.async();
 
 			var oChangeRegistry = ChangeRegistry.getInstance();
-			return oChangeRegistry.registerControlsForChanges({
+			oChangeRegistry.registerControlsForChanges({
 				"VerticalLayout" : {
 					"moveControls": "default"
 				}
@@ -819,7 +836,7 @@ function (
 				this.oDesignTime = new DesignTime({
 					rootElements : [this.oLayout]
 				});
-				this.oPlugin = new sap.ui.rta.plugin.Plugin({
+				this.oPlugin = new Plugin({
 					commandFactory : new CommandFactory()
 				});
 				this.oRemovePlugin = new Remove();

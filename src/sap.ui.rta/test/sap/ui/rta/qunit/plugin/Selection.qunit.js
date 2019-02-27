@@ -51,7 +51,6 @@ sap.ui.define([
 		beforeEach : function(assert) {
 			var done = assert.async();
 
-			this.sandbox = sinon.sandbox.create();
 			this.oComponent = new UIComponent();
 			sandbox.stub(FlUtils, "getAppComponentForControl").returns(this.oComponent);
 			var oChangeRegistry = ChangeRegistry.getInstance();
@@ -97,16 +96,16 @@ sap.ui.define([
 						new HBox({
 							id : this.oComponent.createId("container1"),
 							items : [
-								new Button(this.oComponent.createId("innerBtn11")),
-								new Button(this.oComponent.createId("innerBtn12")),
-								new Text(this.oComponent.createId("innerTxt13"))
+								new Button(this.oComponent.createId("innerBtn11"), {text: "innerBtn11"}),
+								new Button(this.oComponent.createId("innerBtn12"), {text: "innerBtn12"}),
+								new Text(this.oComponent.createId("innerTxt13"), {text: "innerTxt13"})
 							]
 						}),
-						new Button(this.oComponent.createId("btnOutsideContainer")),
+						new Button(this.oComponent.createId("btnOutsideContainer"), {text: "btnOutsideContainer"}),
 						new HBox({
 							id : this.oComponent.createId("container2"),
 							items : [
-								new Button(this.oComponent.createId("innerBtn21"))
+								new Button(this.oComponent.createId("innerBtn21"), {text: "innerBtn21"})
 							]
 						}),
 						new Bar(this.oComponent.createId("othercontainer3")),
@@ -116,14 +115,14 @@ sap.ui.define([
 								new VBox({
 									id : this.oComponent.createId("innerVBox1"),
 									items : [
-										new Text(this.oComponent.createId("innerVBox1Txt"))
+										new Text(this.oComponent.createId("innerVBox1Txt"), {text: "innerVBox1Txt"})
 									]
 								}),
 								new VBox({
 									id : this.oComponent.createId("innerVBox2"),
 									items : [
-										new Text(this.oComponent.createId("innerVBox2Txt")),
-										new Button(this.oComponent.createId("innerVBox2Btn"))
+										new Text(this.oComponent.createId("innerVBox2Txt"), {text: "innerVBox2Txt"}),
+										new Button(this.oComponent.createId("innerVBox2Btn"), {text: "innerVBox2Btn"})
 									]
 								})
 							]
