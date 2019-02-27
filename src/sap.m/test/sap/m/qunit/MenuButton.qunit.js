@@ -15,7 +15,8 @@ sap.ui.define([
 	"sap/m/Popover",
 	"sap/m/Button",
 	"sap/base/Log",
-	"sap/ui/qunit/utils/waitForThemeApplied"
+	"sap/ui/qunit/utils/waitForThemeApplied",
+	"sap/ui/events/KeyCodes"
 ], function(
 	qutils,
 	createAndAppendDiv,
@@ -31,7 +32,8 @@ sap.ui.define([
 	Popover,
 	Button,
 	Log,
-	waitForThemeApplied
+	waitForThemeApplied,
+	KeyCodes
 ) {
 	// shortcut for sap.ui.core.TextDirection
 	var TextDirection = coreLibrary.TextDirection;
@@ -786,6 +788,18 @@ sap.ui.define([
 		afterEach: function() {
 			this.sut.destroy();
 			this.sut = null;
+		},
+		keydown: function(which) {
+			var oEvent = new jQuery.Event();
+			oEvent.which = which;
+
+			this.sut.onkeydown(oEvent);
+		},
+		keyup: function(which) {
+			var oEvent = new jQuery.Event();
+			oEvent.which = which;
+
+			this.sut.onkeyup(oEvent);
 		}
 	});
 
@@ -796,14 +810,25 @@ sap.ui.define([
 			oSpyArrowButtonPress = this.spy(oSplitButtonArrow, "firePress");
 
 		//Act
-		this.sut.onsapenter();
+		this.keydown(KeyCodes.ENTER);
 
 		//Assert
 		assert.strictEqual(oSpyTextButtonPress.callCount, 1, "Main button firePress called");
-		assert.ok(!oSpyArrowButtonPress.called, "Arrow button firePress not called");
 
 		//Act
-		this.sut.onsapspace();
+		this.keyup(KeyCodes.ENTER);
+
+		//Assert
+		assert.strictEqual(oSpyTextButtonPress.callCount, 1, "Main button firePress called");
+
+		//Act
+		this.keydown(KeyCodes.SPACE);
+
+		//Assert
+		assert.strictEqual(oSpyTextButtonPress.callCount, 1, "Main button firePress called");
+
+		//Act
+		this.keyup(KeyCodes.SPACE);
 
 		//Assert
 		assert.strictEqual(oSpyTextButtonPress.callCount, 2, "Main button firePress called");
