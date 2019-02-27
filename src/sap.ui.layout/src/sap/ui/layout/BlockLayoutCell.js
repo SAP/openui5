@@ -8,9 +8,10 @@ sap.ui.define([
 	'./library',
 	"./BlockLayoutCellRenderer",
 	"sap/base/Log",
+	"./BlockLayoutCellData",
 	"sap/ui/thirdparty/jquery"
 ],
-	function(Control, Device, library, BlockLayoutCellRenderer, Log, jQuery) {
+	function(Control, Device, library, BlockLayoutCellRenderer, Log, BlockLayoutCellData, jQuery) {
 		"use strict";
 
 		/**
@@ -113,6 +114,23 @@ sap.ui.define([
 			//Check if current cell has defined width
 			if (this.getWidth() != 0) {
 				this.getLayoutData().setSize(this.getWidth());
+			}
+
+			return this;
+		};
+
+		/**
+		 * Sets the Width.
+		 *
+		 * @public
+		 * @param {number} iWidth value.
+		 * @returns {sap.ui.layout.BlockLayoutCell} this BlockLayoutCell reference for chaining.
+		 */
+		BlockLayoutCell.prototype.setWidth = function (iWidth) {
+			this.setProperty("width", iWidth);
+
+			if (this.getLayoutData() && (this.getLayoutData().isA("sap.ui.layout.BlockLayoutCellData"))) {
+				this.getLayoutData().setSize(iWidth);
 			}
 
 			return this;
