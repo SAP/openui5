@@ -1013,6 +1013,7 @@ sap.ui.define([
 	});
 
 	QUnit.test("Popover should set the focus to itself only when needed", function (assert){
+		//Arrange
 		var oNavContainer = new NavContainer({
 				initialPage: "firstPage"
 			}),
@@ -1036,11 +1037,35 @@ sap.ui.define([
 			content: oNavContainer
 		});
 
+		//Act
 		oPopover.openBy(oButton);
 		oNavButton.firePress();
-		assert.ok(document.activeElement, oPage2._navBtn.getDomRef(), "The focus should be on the back button");
+		this.clock.tick(500);
 
+		//Assert
+		assert.equal(document.activeElement, oPage2._navBtn.getDomRef(), "The focus should be on the back button");
+
+		//Act
+		oPopover.close();
+		this.clock.tick(300);
+		oPopover.openBy(oButton);
+		this.clock.tick(300);
+
+		//Arrange
+		var oCloseSpy = this.spy(oPopover, "close");
+
+		//Act
+		oPage2.fireNavButtonPress();
+		this.clock.tick(500);
+
+		//Assert
+		assert.equal(document.activeElement, oNavButton.getDomRef(), "The focus should be on the navigation button");
+		assert.equal(oCloseSpy.callCount, 0, "The popover should not close after a navigation");
+		assert.ok(oPopover.isOpen(), "Popover should stay open");
+
+		//Cleanup
 		oPopover.destroy();
+		oCloseSpy.restore();
 	});
 
 	QUnit.test("Scrolling is properly disabled", function (assert){
