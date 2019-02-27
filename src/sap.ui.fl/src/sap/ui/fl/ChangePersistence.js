@@ -191,7 +191,7 @@ sap.ui.define([
 	 * @param {map} mPropertyBag Contains additional data needed for reading changes
 	 * @param {object} [mPropertyBag.appDescriptor] Manifest that belongs to the current running component
 	 * @param {string} [mPropertyBag.siteId] ID of the site belonging to the current running component
-	 * @param {string} [mPropertyBag.sCurrentLayer] Specifies a single layer for loading changes. If this parameter is set, the max layer filtering is not applied
+	 * @param {string} [mPropertyBag.currentLayer] Specifies a single layer for loading changes. If this parameter is set, the max layer filtering is not applied
 	 * @param {boolean} [mPropertyBag.ignoreMaxLayerParameter] Indicates that changes shall be loaded without layer filtering
 	 * @param {boolean} [mPropertyBag.includeVariants] Indicates that smart variants shall be included
 	 * @param {string} [mPropertyBag.cacheKey] Key to validate the cache entry stored on client side
@@ -213,11 +213,11 @@ sap.ui.define([
 				&& Array.isArray(oWrappedChangeFileContent.changes.changes)
 				&& oWrappedChangeFileContent.changes.changes.length !== 0;
 
-			var bVariantChangesExist = oWrappedChangeFileContent.changes
+			var bVariantSectionContainsContent = oWrappedChangeFileContent.changes
 				&& oWrappedChangeFileContent.changes.variantSection
 				&& !jQuery.isEmptyObject(oWrappedChangeFileContent.changes.variantSection);
 
-			if (!bFlexChangesExist && !bVariantChangesExist) {
+			if (!bFlexChangesExist && !bVariantSectionContainsContent) {
 				return [];
 			}
 
@@ -237,20 +237,20 @@ sap.ui.define([
 					}
 				}
 			}
-			var bIncludeControlVariants = mPropertyBag && mPropertyBag.includeCtrlVariants && bVariantChangesExist;
+			var bIncludeControlVariants = mPropertyBag && mPropertyBag.includeCtrlVariants && bVariantSectionContainsContent;
 
 			var sCurrentLayer = mPropertyBag && mPropertyBag.currentLayer;
 			var bFilterMaxLayer = !(mPropertyBag && mPropertyBag.ignoreMaxLayerParameter);
 			if (sCurrentLayer) {
 				aChanges = aChanges.filter(this._filterChangeForCurrentLayer.bind(this, sCurrentLayer));
-				if (!bIncludeControlVariants && bVariantChangesExist) {
+				if (!bIncludeControlVariants && bVariantSectionContainsContent) {
 					//although ctrl variant changes are not requested, still filtering on variant section data is necessary
 					this._getAllCtrlVariantChanges(oWrappedChangeFileContent.changes.variantSection, false, sCurrentLayer);
 				}
 			} else if (Utils.isLayerFilteringRequired() && bFilterMaxLayer) {
 				//If layer filtering required, excludes changes in higher layer than the max layer
 				aChanges = aChanges.filter(this._filterChangeForMaxLayer.bind(this));
-				if (!bIncludeControlVariants && bVariantChangesExist) {
+				if (!bIncludeControlVariants && bVariantSectionContainsContent) {
 					//although ctrl variant changes are not requested, still filtering on variant section data is necessary
 					this._getAllCtrlVariantChanges(oWrappedChangeFileContent.changes.variantSection, true);
 				}
@@ -320,7 +320,6 @@ sap.ui.define([
 
 		function getChange(oWrappedChangeFileContent, oChangeContent) {
 			var oChange;
-
 			if (!this._mChangesEntries[oChangeContent.fileName]) {
 				this._mChangesEntries[oChangeContent.fileName] = new Change(oChangeContent);
 			}
@@ -331,7 +330,6 @@ sap.ui.define([
 				var oVariant = findVariant(oWrappedChangeFileContent, oChange);
 				replaceChangeContentWithInstance(oVariant, oChange);
 			}
-
 			return oChange;
 		}
 	};
