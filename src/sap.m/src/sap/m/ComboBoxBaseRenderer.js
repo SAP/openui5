@@ -28,9 +28,27 @@ sap.ui.define(['./ComboBoxTextFieldRenderer', 'sap/ui/core/Renderer'],
 		 * @returns {object} The accessibility state of the control
 		 */
 		ComboBoxBaseRenderer.getAccessibilityState = function (oControl) {
-			var mAccessibilityState = ComboBoxTextFieldRenderer.getAccessibilityState.call(this, oControl);
-			mAccessibilityState.expanded = oControl.isOpen();
+			var mAccessibilityState = ComboBoxTextFieldRenderer.getAccessibilityState.call(this, oControl),
+				oList = oControl._getList();
+
+			if (oList) {
+				mAccessibilityState.controls = oList.getId();
+			}
 			return mAccessibilityState;
+		};
+
+		/**
+		 * Add role combobox to the outer div.
+		 *
+		 * @param {sap.ui.core.RenderManager} oRm The RenderManager that can be used for writing to the render output buffer.
+		 * @param {sap.ui.core.Control} oControl An object representation of the control that should be rendered.
+		 */
+		ComboBoxBaseRenderer.writeAccAttributes = function(oRm, oControl) {
+			ComboBoxTextFieldRenderer.writeAccAttributes.apply(this, arguments);
+
+			if (sap.ui.getCore().getConfiguration().getAccessibility()) {
+				oRm.writeAttribute("aria-expanded", oControl.isOpen());
+			}
 		};
 
 		/**

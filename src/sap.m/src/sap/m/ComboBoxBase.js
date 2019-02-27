@@ -1048,6 +1048,22 @@ sap.ui.define([
 		};
 
 		/**
+		 * Gets the dom reference of the html node,
+		 * needed for attaching aria attributes
+		 *
+		 * @protected
+		 */
+		ComboBoxBase.prototype.getRoleComboNodeDomRef = function() {
+			var oFocusDomRef = this.getFocusDomRef();
+
+			if (!oFocusDomRef) {
+				return null;
+			}
+
+			return oFocusDomRef.parentNode;
+		};
+
+		/**
 		 * Creates an instance of <code>sap.m.Dialog</code>.
 		 *
 		 * @returns {sap.m.Dialog} The created Dialog
