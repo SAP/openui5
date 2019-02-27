@@ -1044,9 +1044,10 @@ sap.ui.define([
 		 */
 		TimePickerSlider.prototype._offsetValue = function(iIndexOffset) {
 			var $Slider = this._getSliderContainerDomRef(),
-				iScrollTop = $Slider.scrollTop(),
+				iScrollTop,
 				iItemHeight = this._getItemHeightInPx(),
-				iSnapScrollTop = iScrollTop + iIndexOffset * iItemHeight,
+				iSnapScrollTop,
+				iSelIndex,
 				bCycle = this.getIsCyclic(),
 				oThat = this;
 
@@ -1066,7 +1067,9 @@ sap.ui.define([
 				}
 			}
 
-			var iSelIndex = this._iSelectedItemIndex + iIndexOffset;
+			iSelIndex = this._iSelectedItemIndex + iIndexOffset;
+			iScrollTop = $Slider.scrollTop();
+			iSnapScrollTop = iScrollTop + iIndexOffset * iItemHeight;
 
 			if (!bCycle) {
 				if (iSelIndex < 0 || iSelIndex >= this._getVisibleItems().length) {
