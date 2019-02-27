@@ -136,8 +136,14 @@ sap.ui.define([
 
 	sap.ui.core.Element.extend("sap.ui.test.TestList", {
 		metadata: {
+			properties: {
+				pageProp: {
+					type: "object"
+				}
+			},
 			aggregations: {
-				selects: {type: "sap.ui.test.TestSelect", multiple: true}
+				selects: {type: "sap.ui.test.TestSelect", multiple: true},
+				paging: {type: "sap.ui.test.TestItem", multiple: true}
 			}
 		}
 	});
@@ -145,7 +151,8 @@ sap.ui.define([
 	sap.ui.core.Element.extend("sap.ui.test.TestSelect", {
 		metadata: {
 			properties: {
-				selected: {type: "string"}
+				selected: {type: "string"},
+				pages: {type: "object[]"}
 			},
 			aggregations: {
 				items: {type: "sap.ui.test.TestItem", multiple: true}
@@ -1057,68 +1064,99 @@ sap.ui.define([
 				}
 			];
 
+			var aPageArray = [];
+
+			for (var i = 0; i < 4711; i++) {
+				aPageArray.push( {
+					key: i,
+					text: "Push for " + i
+				});
+			}
+
+
 			this.oJSONModel = new JSONModel({
 				list: [
 					{
 						selected: "one",
-						items: this.aItems0
+						items: this.aItems0,
+						pages: []
 					},
 					{
 						selected: "three",
-						items: this.aItems1
+						items: this.aItems1,
+						pages: []
+					}, {
+						selected: "paging",
+						items: [],
+						pages: aPageArray
 					}
-				]
+				],
+				pager: aPageArray,
+				pageMe: {
+					pages: [
+						{
+							page: aPageArray
+						}
+					]
+				}
 			});
 
 			this._oModelList = new sap.ui.test.TestList({
 				models: this.oJSONModel,
+				pageProp: "{/pageMe}",
 				selects: {
 					path: "/list",
 					template: new sap.ui.test.TestSelect({
 						selected: "{selected}",
+						pages: "{pages}",
 						items: {
 							path: "items",
 							template: new sap.ui.test.TestItem({
 								key: "{key}",
-								text: "{text}"
+								text: "{text}",
 							})
 						}
+					})
+				},
+				paging: {
+					path: "/pager",
+					template: new sap.ui.test.TestItem({
+						key: "{key}",
+						text: "{text}"
 					})
 				}
 			});
 			this.oMOModel = new sap.ui.model.base.ManagedObjectModel(this._oModelList);
-
-			this._oBoundList = new sap.m.List({
-				models: this.oMOModel,
-				items: {
-					path: "/selects",
-					template: new sap.m.CustomListItem({
-						content: [
-							new sap.m.Select({
-								selectedKey: "{selected}",
-								items: {
-									path: "items",
-									template: new sap.ui.core.Item({
-										key: "{key}",
-										text: "{text}"
-									})
-								}
-							})
-						]
-					})
-				}
-			});
 		},
 		afterEach: function () {
-			this._oBoundList.destroy();
-			this._oBoundList = null;
 			this._oModelList.destroy();
 			this._oModelList = null;
 		}
 	});
 
 	QUnit.test("Swap aggregation", function (assert) {
-		var aSelect = this._oBoundList.getItems();
+		var oBoundList = new List({
+			models: this.oMOModel,
+			items: {
+				path: "/selects",
+				template: new sap.m.CustomListItem({
+					content: [
+						new Select({
+							selectedKey: "{selected}",
+							items: {
+								path: "items",
+								template: new sap.ui.core.Item({
+									key: "{key}",
+									text: "{text}"
+								})
+							}
+						})
+					]
+				})
+			}
+		});
+
+		var aSelect = oBoundList.getItems();
 		var oSelect0 = aSelect[0].getContent()[0];
 		var oSelect1 = aSelect[1].getContent()[0];
 
@@ -1155,5 +1193,105 @@ sap.ui.define([
 		assert.equal(oSelect1.getSelectedKey(), "one", "The first entry is selected that is 'three'");
 		assert.deepEqual(itemsToArray(oSelect1), this.aItems0, "The items are the items of the first list entry");
 
+		oBoundList.destroy();
+	});
+
+	QUnit.test("Paging in an aggregation", function(assert) {
+		var oAggregationPageList = new List({
+			models: this.oMOModel,
+			growing: true,
+			growingThreshold: 10,
+			items: {
+				path: "/paging",
+				template: new sap.m.CustomListItem({
+					content: [
+						new Text( {text: "{text}" })
+					]
+				})
+			}
+		});
+
+		var iMaxItemCount = oAggregationPageList.getMaxItemsCount();
+
+		assert.equal(iMaxItemCount, 4711, "There are 4711 items");
+		assert.equal(10, oAggregationPageList.getItems(true).length, "Initially there are 20 items");
+
+		var oGrowingDelegate = oAggregationPageList._oGrowingDelegate;
+		assert.ok(oGrowingDelegate, 'There is a growing delegate');
+
+		// now grow
+		oGrowingDelegate.requestNewPage();
+		assert.equal(20, oAggregationPageList.getItems(true).length, "Initially there are 20 items");
+
+		oGrowingDelegate.requestNewPage();
+		assert.equal(30, oAggregationPageList.getItems(true).length, "Initially there are 20 items");
+
+		oAggregationPageList.destroy();
+	});
+
+	QUnit.test("Paging in parts of a property that comes from an aggregation", function(assert) {
+		var oAggregationPropertyPageList = new List({
+			models: this.oMOModel,
+			growing: true,
+			growingThreshold: 10,
+			items: {
+				path: "/selects/2/pages",
+				template: new sap.m.CustomListItem({
+					content: [
+						new Text( {text: "{text}" })
+					]
+				})
+			}
+		});
+
+		var iMaxItemCount = oAggregationPropertyPageList.getMaxItemsCount();
+
+		assert.equal(iMaxItemCount, 4711, "There are 4711 items");
+		assert.equal(10, oAggregationPropertyPageList.getItems(true).length, "Initially there are 20 items");
+
+		var oGrowingDelegate = oAggregationPropertyPageList._oGrowingDelegate;
+		assert.ok(oGrowingDelegate, 'There is a growing delegate');
+
+		// now grow
+		oGrowingDelegate.requestNewPage();
+		assert.equal(20, oAggregationPropertyPageList.getItems(true).length, "Initially there are 20 items");
+
+		oGrowingDelegate.requestNewPage();
+		assert.equal(30, oAggregationPropertyPageList.getItems(true).length, "Initially there are 20 items");
+
+		oAggregationPropertyPageList.destroy();
+	});
+
+	QUnit.test("Paging in parts of a property", function(assert) {
+		var oPropertyPageList = new List({
+			models: this.oMOModel,
+			growing: true,
+			growingThreshold: 10,
+			items: {
+				path: "/pageProp/pages/0/page",
+				template: new sap.m.CustomListItem({
+					content: [
+						new Text( {text: "{text}" })
+					]
+				})
+			}
+		});
+
+		var iMaxItemCount = oPropertyPageList.getMaxItemsCount();
+
+		assert.equal(iMaxItemCount, 4711, "There are 4711 items");
+		assert.equal(10, oPropertyPageList.getItems(true).length, "Initially there are 20 items");
+
+		var oGrowingDelegate = oPropertyPageList._oGrowingDelegate;
+		assert.ok(oGrowingDelegate, 'There is a growing delegate');
+
+		// now grow
+		oGrowingDelegate.requestNewPage();
+		assert.equal(20, oPropertyPageList.getItems(true).length, "Initially there are 20 items");
+
+		oGrowingDelegate.requestNewPage();
+		assert.equal(30, oPropertyPageList.getItems(true).length, "Initially there are 20 items");
+
+		oPropertyPageList.destroy();
 	});
 });

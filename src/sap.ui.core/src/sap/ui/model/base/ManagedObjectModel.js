@@ -60,7 +60,21 @@ sap.ui.define([
 		}
 	}
 
-	function retrieveValueAndMO(aNodeStack) {
+	/**
+	 * Traverse in the recorded node stack of an object retrievel to tha last used
+	 * managed object in oder to be able to get the value/binding to use this
+	 * for further retrietment
+	 * @param aNodeStack
+	 * @returns {array} an array containing:
+	 * <ul>
+	 *     <li>the last managed object</li>
+	 *     <li>a map with the value of the last direct child and its path</li>
+	 *     <li>an array of the remaining parts in the traversal</li>
+	 *     <li>a string that represents the reimaining path from the last managed object to the value</li>
+	 *  </ul>
+	 *
+	 */
+	function _traverseToLastManagedObject(aNodeStack) {
 		//Determine last managed object via node stack of getProperty
 		var sMember, i = aNodeStack.length - 1, aParts = [];
 		while (!(aNodeStack[i].node instanceof ManagedObject)) {
@@ -71,10 +85,46 @@ sap.ui.define([
 			i--;
 		}
 
-		return [aNodeStack[i].node, aNodeStack[i + 1].node, aParts];
+		return [aNodeStack[i].node, aNodeStack[i + 1], aParts, sMember];
+	}
+
+	/**
+	 * Serialize the object to a string to support change detection
+	 *
+	 * @param vObject
+	 * @returns {string} a serialization of the object to a string
+	 * @private
+	 */
+	function _stringify(vObject) {
+		var sData = "", sProp;
+		var type = typeof vObject;
+
+		if (vObject == null || (type != "object" && type != "function")) {
+			sData = vObject;
+		} else if (isPlainObject(vObject)) {
+			sData = JSON.stringify(vObject);
+		} else if (vObject instanceof ManagedObject) {
+			sData = vObject.getId();//add the id
+			for (sProp in vObject.mProperties) {
+				sData = sData + "$" + _stringify(vObject.mProperties[sProp]);
+			}
+		} else if (Array.isArray(vObject)) {
+			for (var i = 0; vObject.length; i++) {
+				sData = sData + "$" + _stringify(vObject);
+			}
+	    } else {
+			Log.warning("Could not stringify object " + vObject);
+			sData = "$";
+		}
+
+		return sData;
 	}
 
 	var ManagedObjectModelAggregationBinding = JSONListBinding.extend("sap.ui.model.base.ManagedObjectModelAggregationBinding", {
+		constructor: function() {
+			JSONListBinding.apply(this, arguments);
+			this._getOriginOfManagedObjectModelBinding();
+		},
 		/**
 		 * Use the id of the ManagedObject instance as the unique key to identify
 		 * the entry in the extended change detection. The default implementation
@@ -87,22 +137,75 @@ sap.ui.define([
 		 * @see sap.ui.model.ListBinding.prototype.getEntryData
 		 *
 		 */
+		getEntryKey: function(oContext) {
+			// use the id of the ManagedObject instance as the identifier
+			// for the extended change detection
+			var oObject = oContext.getObject();
+			if (oObject instanceof  ManagedObject) {
+				return oObject.getId();
+			}
+
+			return JSONListBinding.prototype.getEntryKey.apply(this, arguments);
+		},
 		getEntryData: function(oContext) {
 			// use the id of the ManagedObject instance as the identifier
 			// for the extended change detection
+			var oObject = oContext.getObject();
+			if (oObject instanceof  ManagedObject) {
+				return _stringify(oObject);
+			}
 
-			this._getParentManagedObject();
-			return this._oParentMO.getId();
+			return JSONListBinding.prototype.getEntryData.apply(this, arguments);
 		},
-		_getParentManagedObject: function() {
-			if (!this._oParentMO) {
+		/**
+		 * Determines the managed object that is responsible resp. triggering the list binding.
+		 * There are two different cases: A binding of the form
+		 * <ul>
+		 *     <li>{../table/items}, with the aggregation 'items' here the origin is the table</li>
+		 *     <li>{../field/conditions/0/value}, with the array property 'conditions' here the origin is the field</li>
+		 * </ul>
+		 *
+		 * For identifying this object we need to traverse through the complete binding using the record functionality
+		 * of the _getObject method.
+		 *
+		 * @private
+		 */
+		_getOriginOfManagedObjectModelBinding: function() {
+			if (!this._oOriginMO) {
 				var oMOM = this.oModel, aNodeStack = [];
 				oMOM._getObject(this.sPath, this.oContext, aNodeStack);
 
-				var aValueAndMO = retrieveValueAndMO(aNodeStack);
+				var aValueAndMO = _traverseToLastManagedObject(aNodeStack);
 
-				this._oParentMO = aValueAndMO[0];
+				this._oOriginMO = aValueAndMO[0];
+				this._aPartsInJSON = aValueAndMO[2];
+				this._sMember = aValueAndMO[3];
 			}
+		},
+		getLength: function() {
+			if (this._aPartsInJSON.length == 0) {
+				//this is only valid if the binding points directly to the member of the Managed Object
+				var oInnerListBinding = this._oOriginMO.getBinding(this._sMember);
+
+				//check if the binding is a list binding
+				if (oInnerListBinding && oInnerListBinding.isA("sap.ui.model.ListBinding")) {
+					return oInnerListBinding.getLength();
+				}
+			}
+
+			return JSONListBinding.prototype.getLength.apply(this, arguments);
+		},
+		isLengthFinal: function() {
+			if (this._aPartsInJSON.length == 0) {
+				//this is only valid if the binding points directly to the member of the Managed Object
+				var oInnerListBinding = this._oOriginMO.getBinding(this._sMember);
+
+				if (oInnerListBinding && oInnerListBinding.isA("sap.ui.model.ListBinding")) {
+					return oInnerListBinding.isLengthFinal();
+				}
+			}
+
+			return true;
 		}
 	});
 
@@ -258,10 +361,10 @@ sap.ui.define([
 				// get get an update of a property that was bound on a target
 				// control but which is only a data structure
 
-				var aValueAndMO = retrieveValueAndMO(aNodeStack);
+				var aValueAndMO = _traverseToLastManagedObject(aNodeStack);
 
 				//change the value of the property with structure
-				var oMOMValue = aValueAndMO[1], aParts = aValueAndMO[2];
+				var oMOMValue = aValueAndMO[1].node, aParts = aValueAndMO[2];
 				var oPointer = oMOMValue;
 				for (var i = 0; i < aParts.length; i++) {
 					oPointer = oPointer[aParts[i]];
@@ -768,7 +871,8 @@ sap.ui.define([
 					var oListBinding = this._oObject.getBinding(oChange.name);
 					var oAggregation = this._oObject.getAggregation(oChange.name);
 
-					if (oListBinding && oListBinding.getLength() != oAggregation.length) {
+					//in case of paging wait till the last length is available, else take the length
+					if (oListBinding && (oListBinding.iLastLength || oListBinding.iLength) != oAggregation.length) {
 						return;
 					}
 				}
