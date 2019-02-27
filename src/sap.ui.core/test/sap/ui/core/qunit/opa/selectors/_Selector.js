@@ -2,9 +2,12 @@
 sap.ui.define([
     "sap/ui/test/selectors/_Selector",
     "sap/ui/core/mvc/View",
-    "sap/ui/core/mvc/ViewType"
-], function (_Selector, View, ViewType) {
+    "sap/ui/core/library"
+], function (_Selector, View, library) {
     "use strict";
+
+    // shortcut for sap.ui.core.mvc.ViewType
+    var ViewType = library.mvc.ViewType;
 
     var singleStub = sinon.stub();
     var multiStub = sinon.stub();

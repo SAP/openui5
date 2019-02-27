@@ -5,17 +5,18 @@ sap.ui.define([
 	"sap/m/Button",
 	"sap/m/Column",
 	"sap/m/ColumnListItem",
+	"sap/m/library",
 	"sap/m/MessageBox",
-	"sap/m/PlacementType",
 	"sap/m/Popover",
 	"sap/m/Table",
 	"sap/m/Text",
 	"sap/ui/commons/ValueHelpField"
-], function (Button, Column, ColumnListItem, MessageBox, PlacementType, Popover, Table, Text,
+], function (Button, Column, ColumnListItem, library, MessageBox, Popover, Table, Text,
 		ValueHelpField) {
 	"use strict";
 
-	var ValueHelp = ValueHelpField.extend("sap.ui.core.sample.ViewTemplate.valuelist.ValueHelp", {
+	var PlacementType = library.PlacementType, // shortcut for sap.m.PlacementType
+		ValueHelp = ValueHelpField.extend("sap.ui.core.sample.ViewTemplate.valuelist.ValueHelp", {
 			metadata : {
 				properties : {
 					qualifier : {type : "string", defaultValue : ""}, //value list qualifier

@@ -4,11 +4,14 @@
 
 sap.ui.define([
 	"sap/m/MessageToast",
-	"sap/ui/core/ValueState",
+	"sap/ui/core/library",
 	"sap/ui/core/sample/common/Controller",
 	"sap/ui/util/XMLHelper"
-], function (MessageToast, ValueState, Controller, XMLHelper) {
+], function (MessageToast, library, Controller, XMLHelper) {
 	"use strict";
+
+	// shortcut for sap.ui.core.ValueState
+	var ValueState = library.ValueState;
 
 	function showSuccessMessage(sContext) {
 		MessageToast.show("Data successfully " + sContext);

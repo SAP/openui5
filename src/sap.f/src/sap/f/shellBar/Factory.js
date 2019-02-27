@@ -8,16 +8,14 @@ sap.ui.define([
 	"sap/tnt/InfoLabel",
 	"./ContentButton",
 	"sap/m/MenuButton",
-	"sap/m/ButtonType",
 	"sap/m/OverflowToolbar",
 	"sap/m/OverflowToolbarButton",
 	"./ControlSpacer",
 	"sap/m/ToolbarSpacer",
-	"sap/m/ToolbarDesign",
 	"sap/m/OverflowToolbarLayoutData",
-	"sap/m/OverflowToolbarPriority",
 	"./CoPilot",
-	"./Accessibility"
+	"./Accessibility",
+	"sap/m/library"
 ], function(
 	Element,
 	Label,
@@ -25,18 +23,25 @@ sap.ui.define([
 	InfoLabel,
 	ContentButton,
 	MenuButton,
-	ButtonType,
 	OverflowToolbar,
 	OverflowToolbarButton,
 	ControlSpacer,
 	ToolbarSpacer,
-	ToolbarDesign,
 	OverflowToolbarLayoutData,
-	OverflowToolbarPriority,
 	CoPilot,
-	Accessibility
+	Accessibility,
+	library
 ) {
 	"use strict";
+
+	// shortcut for sap.m.OverflowToolbarPriority
+	var OverflowToolbarPriority = library.OverflowToolbarPriority;
+
+	// shortcut for sap.m.ToolbarDesign
+	var ToolbarDesign = library.ToolbarDesign;
+
+	// shortcut for sap.m.ButtonType
+	var ButtonType = library.ButtonType;
 
 	/**
 	 * Factory class which is used to create internal controls used by the ShellBar control and care for their

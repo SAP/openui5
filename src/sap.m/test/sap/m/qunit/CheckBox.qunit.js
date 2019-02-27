@@ -4,7 +4,6 @@ sap.ui.define([
 	"sap/ui/qunit/QUnitUtils",
 	"sap/ui/qunit/utils/createAndAppendDiv",
 	"sap/m/CheckBox",
-	"sap/ui/core/ValueState",
 	"sap/ui/core/library",
 	"sap/m/Label",
 	"sap/ui/Device",
@@ -14,13 +13,15 @@ sap.ui.define([
 	QUtils,
 	createAndAppendDiv,
 	CheckBox,
-	ValueState,
 	coreLibrary,
 	Label,
 	Device,
 	KeyCodes,
 	Core
 ) {
+	// shortcut for sap.ui.core.ValueState
+	var ValueState = coreLibrary.ValueState;
+
 	// shortcut for sap.ui.core.ValueState
 	var ValueState = coreLibrary.ValueState;
 

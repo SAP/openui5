@@ -10,16 +10,19 @@
 sap.ui.define([
 	"jquery.sap.script", // jQuery.sap.getUriParameters()
 	"sap/base/Log",
+	"sap/ui/core/library",
 	"sap/ui/core/mvc/View",
-	"sap/ui/core/mvc/ViewType",
 	"sap/ui/core/sample/common/Component",
 	"sap/ui/core/util/MockServer",
 	"sap/ui/model/json/JSONModel",
 	"sap/ui/model/odata/v2/ODataModel"
-], function (jQuery, Log, View, ViewType, BaseComponent, MockServer, JSONModel, ODataModel) {
+], function (jQuery, Log, library, View, BaseComponent, MockServer, JSONModel, ODataModel) {
 	"use strict";
 
-	var Component = BaseComponent.extend("sap.ui.core.sample.ViewTemplate.valuelist.Component", {
+	// shortcut for sap.ui.core.mvc.ViewType
+	var ViewType = library.mvc.ViewType;
+
+	return BaseComponent.extend("sap.ui.core.sample.ViewTemplate.valuelist.Component", {
 		metadata : "json",
 
 		createContent : function () {
@@ -147,6 +150,4 @@ sap.ui.define([
 			});
 		}
 	});
-
-	return Component;
 });

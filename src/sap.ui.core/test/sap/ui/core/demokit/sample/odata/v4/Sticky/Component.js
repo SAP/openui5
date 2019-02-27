@@ -7,12 +7,15 @@
  * @version @version@
  */
 sap.ui.define([
-	"sap/ui/core/mvc/ViewType",
+	"sap/ui/core/library",
 	"sap/ui/core/sample/common/Component",
 	"sap/ui/model/json/JSONModel",
 	"sap/ui/test/TestUtils"
-], function (ViewType, BaseComponent, JSONModel, TestUtils) {
+], function (library, BaseComponent, JSONModel, TestUtils) {
 	"use strict";
+
+	// shortcut for sap.ui.core.mvc.ViewType
+	var ViewType = library.mvc.ViewType;
 
 	return BaseComponent.extend("sap.ui.core.sample.odata.v4.Sticky.Component", {
 		metadata : {

@@ -8,20 +8,21 @@ sap.ui.define([
 	"sap/m/ColumnListItem",
 	"sap/m/ComboBox",
 	"sap/m/Input",
-	"sap/m/PlacementType",
+	"sap/m/library",
 	"sap/m/ResponsivePopover",
 	"sap/m/Table",
 	"sap/m/Text",
 	"sap/ui/core/Control",
 	"sap/ui/core/Item",
 	"sap/ui/model/odata/v4/ValueListType"
-], function (Log, Button, Column, ColumnListItem, ComboBox, Input, PlacementType, ResponsivePopover,
+], function (Log, Button, Column, ColumnListItem, ComboBox, Input, library, ResponsivePopover,
 		Table, Text, Control, Item, ValueListType) {
 	"use strict";
 
-	var ValueHelp;
+	// shortcut for sap.m.PlacementType
+	var PlacementType = library.PlacementType;
 
-	ValueHelp = Control.extend("sap.ui.core.sample.common.ValueHelp", {
+	return Control.extend("sap.ui.core.sample.common.ValueHelp", {
 		metadata : {
 			interfaces : ["sap.ui.core.IFormContent"],
 			properties : {
@@ -253,6 +254,4 @@ sap.ui.define([
 			}
 		}
 	});
-
-	return ValueHelp;
 });

@@ -2,11 +2,15 @@
 sap.ui.define([
 	"jquery.sap.global",
 	"sap/m/NewsContent",
-	"sap/m/Size",
 	"sap/m/MessageToast",
-	"sap/ui/core/TooltipBase"
-], function(jQuery, NewsContent, Size, MessageToast, TooltipBase) {
+	"sap/ui/core/TooltipBase",
+	"sap/m/library"
+], function(jQuery, NewsContent, MessageToast, TooltipBase, library) {
 	"use strict";
+
+
+	// shortcut for sap.m.Size
+	var Size = library.Size;
 
 
 	QUnit.module("Basic rendering", {

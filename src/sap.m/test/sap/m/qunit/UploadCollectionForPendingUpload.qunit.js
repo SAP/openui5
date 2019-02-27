@@ -4,7 +4,6 @@ sap.ui.define("sap.m.qunit.UploadCollectionForPendingUpload", [
 	"jquery.sap.global",
 	"sap/m/UploadCollection",
 	"sap/ui/model/json/JSONModel",
-	"sap/m/ListMode",
 	"sap/m/UploadCollectionItem",
 	"sap/m/MessageBox",
 	"sap/ui/unified/FileUploader",
@@ -12,22 +11,27 @@ sap.ui.define("sap.m.qunit.UploadCollectionForPendingUpload", [
 	"sap/m/UploadCollectionParameter",
 	"sap/ui/Device",
 	"sap/base/Log",
+	"sap/m/library",
 	"sap/ui/qunit/QUnitUtils", // only used indirectly as it adds some methods to fake events
 	"sap/ui/events/jquery/EventExtension"
 ], function(
 	jQuery,
 	UploadCollection,
 	JSONModel,
-	ListMode,
 	UploadCollectionItem,
 	MessageBox,
 	FileUploader,
 	Event,
 	UploadCollectionParameter,
 	Device,
-	Log
+	Log,
+	library
 ) {
 	"use strict";
+
+
+	// shortcut for sap.m.ListMode
+	var ListMode = library.ListMode;
 
 
 	QUnit.module("PendingUpload: public and private methods", {

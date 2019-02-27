@@ -5,9 +5,12 @@ sap.ui.define([
     "sap/m/Button",
     'sap/m/App',
     'sap/ui/core/mvc/View',
-    'sap/ui/core/mvc/ViewType'
-], function (_ViewID, $, Button, App, View, ViewType) {
+    'sap/ui/core/library'
+], function (_ViewID, $, Button, App, View, library) {
     "use strict";
+
+    // shortcut for sap.ui.core.mvc.ViewType
+    var ViewType = library.mvc.ViewType;
 
     var sViewContent = '<mvc:View xmlns:core="sap.ui.core" xmlns:mvc="sap.ui.core.mvc" xmlns="sap.m" controllerName="myController" viewName="myView">' +
         '<App id="myApp">' +

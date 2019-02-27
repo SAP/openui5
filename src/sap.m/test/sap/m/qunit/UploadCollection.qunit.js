@@ -9,8 +9,6 @@ sap.ui.define([
 	"sap/m/ListItemBaseRenderer",
 	"sap/m/Dialog",
 	"sap/ui/Device",
-	"sap/m/ListSeparators",
-	"sap/m/ListMode",
 	"sap/ui/model/json/JSONModel",
 	"sap/ui/base/ManagedObject",
 	"sap/m/OverflowToolbar",
@@ -21,12 +19,20 @@ sap.ui.define([
 	"sap/m/UploadCollectionParameter",
 	"sap/ui/model/Sorter",
 	"sap/ui/core/Element",
+	"sap/m/library",
 	"sap/ui/events/jquery/EventExtension",
 	"jquery.sap.keycodes"
 ], function(jQuery, UploadCollection, UploadCollectionItem, Toolbar, Label, UploadCollectionRenderer,
-			ListItemBaseRenderer, Dialog, Device, ListSeparators, ListMode, JSONModel, ManagedObject, OverflowToolbar,
-			MessageBox, FileUploader, ObjectMarker, Event, UploadCollectionParameter, Sorter, Element) {
+			ListItemBaseRenderer, Dialog, Device, JSONModel, ManagedObject, OverflowToolbar,
+			MessageBox, FileUploader, ObjectMarker, Event, UploadCollectionParameter, Sorter, Element, library) {
 	"use strict";
+
+
+	// shortcut for sap.m.ListMode
+	var ListMode = library.ListMode;
+
+	// shortcut for sap.m.ListSeparators
+	var ListSeparators = library.ListSeparators;
 
 
 	var IMAGE_PATH = "test-resources/sap/m/images/";

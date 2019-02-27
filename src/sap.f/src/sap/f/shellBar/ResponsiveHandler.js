@@ -3,16 +3,19 @@
  */
 sap.ui.define([
 	"sap/m/OverflowToolbarLayoutData",
-	"sap/m/OverflowToolbarPriority",
 	"sap/ui/Device",
-	"sap/ui/core/theming/Parameters"
+	"sap/ui/core/theming/Parameters",
+	"sap/m/library"
 ], function (
 	OverflowToolbarLayoutData,
-	OverflowToolbarPriority,
 	Device,
-	Parameters
+	Parameters,
+	library
 ) {
 	"use strict";
+
+	// shortcut for sap.m.OverflowToolbarPriority
+	var OverflowToolbarPriority = library.OverflowToolbarPriority;
 
 	var oControl;
 
@@ -217,8 +220,8 @@ sap.ui.define([
 
 		// Force all controls in the overflow
 		oControl._aOverflowControls.forEach(function (oControl) {
-			oControl.setLayoutData(new sap.m.OverflowToolbarLayoutData({
-				priority: sap.m.OverflowToolbarPriority.AlwaysOverflow
+			oControl.setLayoutData(new OverflowToolbarLayoutData({
+				priority: OverflowToolbarPriority.AlwaysOverflow
 			}));
 		});
 

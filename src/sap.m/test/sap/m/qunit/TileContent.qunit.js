@@ -4,10 +4,14 @@ sap.ui.define([
 	"sap/m/TileContent",
 	"sap/ui/core/Control",
 	"sap/m/NewsContent",
-	"sap/m/ValueColor",
-	"sap/m/FeedContent"
-], function(jQuery, TileContent, Control, NewsContent, ValueColor, FeedContent) {
+	"sap/m/FeedContent",
+	"sap/m/library"
+], function(jQuery, TileContent, Control, NewsContent, FeedContent, library) {
 	"use strict";
+
+
+	// shortcut for sap.m.ValueColor
+	var ValueColor = library.ValueColor;
 
 
 	QUnit.module("Default Values", {

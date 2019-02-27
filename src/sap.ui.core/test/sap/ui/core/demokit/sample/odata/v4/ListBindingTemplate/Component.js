@@ -10,14 +10,17 @@
 sap.ui.define([
 	"jquery.sap.script", // jQuery.sap.getUriParameters()
 	"sap/m/HBox",
+	"sap/ui/core/library",
 	"sap/ui/core/mvc/View",
-	"sap/ui/core/mvc/ViewType",
 	"sap/ui/core/sample/common/Component",
 	"sap/ui/model/json/JSONModel",
 	"sap/ui/model/odata/v4/ODataModel",
 	"sap/ui/test/TestUtils"
-], function (jQuery, HBox, View, ViewType, BaseComponent, JSONModel, ODataModel, TestUtils) {
+], function (jQuery, HBox, library, View, BaseComponent, JSONModel, ODataModel, TestUtils) {
 	"use strict";
+
+	// shortcut for sap.ui.core.mvc.ViewType
+	var ViewType = library.mvc.ViewType;
 
 	return BaseComponent.extend("sap.ui.core.sample.odata.v4.ListBindingTemplate.Component", {
 		metadata : {

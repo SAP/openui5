@@ -3,10 +3,15 @@ sap.ui.define([
 	"sap/m/SelectionDetailsItem",
 	"sap/m/SelectionDetailsItemLine",
 	"sap/ui/core/Item",
-	"sap/m/ListType",
-	"sap/m/SelectionDetailsActionLevel"
-], function(SelectionDetailsItem, SelectionDetailsItemLine, Item, ListType, SelectionDetailsActionLevel) {
+	"sap/m/library"
+], function(SelectionDetailsItem, SelectionDetailsItemLine, Item, library) {
 	"use strict";
+
+	// shortcut for sap.m.SelectionDetailsActionLevel
+	var SelectionDetailsActionLevel = library.SelectionDetailsActionLevel;
+
+	// shortcut for sap.m.ListType
+	var ListType = library.ListType;
 
 	QUnit.module("Default values", {
 		beforeEach: function() {

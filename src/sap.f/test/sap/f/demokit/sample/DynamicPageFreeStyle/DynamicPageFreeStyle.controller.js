@@ -2,10 +2,12 @@ sap.ui.define([
 	"jquery.sap.global",
 	"sap/ui/core/mvc/Controller",
 	"sap/ui/model/json/JSONModel",
-	"sap/f/DynamicPageTitleArea"
-], function (jQuery, Controller, JSONModel, DynamicPageTitleArea) {
+	"sap/f/library"
+], function (jQuery, Controller, JSONModel, library) {
 	"use strict";
 
+	// shortcut for sap.f.DynamicPageTitleArea
+	var DynamicPageTitleArea = library.DynamicPageTitleArea;
 
 	return Controller.extend("sap.f.sample.DynamicPageFreeStyle.DynamicPageFreeStyle", {
 		onInit: function () {

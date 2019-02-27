@@ -3,11 +3,14 @@
  */
 sap.ui.define([
 	"sap/base/Log",
-	"sap/ui/core/MessageType",
+	"sap/ui/core/library",
 	"sap/ui/test/Opa5",
 	"sap/ui/test/TestUtils"
-], function (Log, MessageType, Opa5, TestUtils) {
+], function (Log, library, Opa5, TestUtils) {
 	"use strict";
+
+	// shortcut for sap.ui.core.MessageType
+	var MessageType = library.MessageType;
 
 	return {
 		checkMessages : function (Given, When, Then, sUIComponent) {

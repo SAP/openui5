@@ -3,17 +3,20 @@
  */
 
 sap.ui.define(['jquery.sap.global', 'sap/ui/core/IconPool', 'sap/ui/core/library',
-		'sap/ui/layout/HorizontalLayout', 'sap/ui/layout/VerticalLayout', 'sap/ui/layout/form/SimpleForm', 'sap/ui/layout/form/SimpleFormLayout',
+		'sap/ui/layout/HorizontalLayout', 'sap/ui/layout/VerticalLayout', 'sap/ui/layout/form/SimpleForm', 'sap/ui/layout/library',
 		'sap/ui/commons/Button', 'sap/ui/commons/CheckBox', 'sap/ui/commons/FormattedTextView', 'sap/ui/commons/Label', 'sap/ui/commons/Link',
 		'sap/ui/commons/SegmentedButton', 'sap/ui/commons/TextArea', 'sap/ui/commons/TextView',
 		'sap/ui/ux3/ToolPopup'],
 	function (jQuery, IconPool, coreLibrary,
-			HorizontalLayout, VerticalLayout, SimpleForm, SimpleFormLayout,
+			HorizontalLayout, VerticalLayout, SimpleForm, layoutLibrary,
 			Button, CheckBox, FormattedTextView, Label, Link,
 			SegmentedButton, TextArea, TextView,
 			ToolPopup) {
 
 		"use strict";
+
+		// shortcut for sap.ui.layout.form.SimpleFormLayout
+		var SimpleFormLayout = layoutLibrary.form.SimpleFormLayout;
 
 		var ValueState = coreLibrary.ValueState;
 
