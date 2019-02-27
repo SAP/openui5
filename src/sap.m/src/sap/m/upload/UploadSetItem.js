@@ -48,7 +48,7 @@ sap.ui.define([
 				/**
 				 * Enables or disables the remove button.
 				 */
-				enabledDelete: {type: "boolean", defaultValue: true},
+				enabledRemove: {type: "boolean", defaultValue: true},
 				/**
 				 * Enables or disables the edit button.
 				 */
@@ -78,7 +78,7 @@ sap.ui.define([
 				/**
 				 * Shows or hides the remove button.
 				 */
-				visibleDelete: {type: "boolean", defaultValue: true},
+				visibleRemove: {type: "boolean", defaultValue: true},
 				/**
 				 * Shows or hides the edit button.
 				 */
@@ -279,17 +279,17 @@ sap.ui.define([
 		return this;
 	};
 
-	UploadSetItem.prototype.setEnabledDelete = function (bEnable) {
-		if (this.getEnabledDelete() !== bEnable) {
-			this.setProperty("enabledDelete", bEnable, true);
+	UploadSetItem.prototype.setEnabledRemove = function (bEnable) {
+		if (this.getEnabledRemove() !== bEnable) {
+			this.setProperty("enabledRemove", bEnable, true);
 			this._getDeleteButton().setEnabled(bEnable);
 		}
 		return this;
 	};
 
-	UploadSetItem.prototype.setVisibleDelete = function (bVisible) {
-		if (this.getVisibleDelete() !== bVisible) {
-			this.setProperty("visibleDelete", bVisible, true);
+	UploadSetItem.prototype.setVisibleRemove = function (bVisible) {
+		if (this.getVisibleRemove() !== bVisible) {
+			this.setProperty("visibleRemove", bVisible, true);
 			this._getDeleteButton().setVisible(bVisible);
 		}
 		return this;
@@ -594,8 +594,8 @@ sap.ui.define([
 				id: this.getId() + "-deleteButton",
 				icon: "sap-icon://sys-cancel",
 				type: MobileLibrary.ButtonType.Standard,
-				enabled: this.getEnabledDelete(),
-				visible: this.getVisibleDelete(),
+				enabled: this.getEnabledRemove(),
+				visible: this.getVisibleRemove(),
 				tooltip: this._oRb.getText("UPLOAD_SET_DELETE_BUTTON_TEXT"),
 				press: [this, oParent._handleItemDelete, oParent]
 			});

@@ -1,6 +1,7 @@
-/*global QUnit*/
+/*global QUnit,sinon*/
 sap.ui.define([
 	"sap/ui/thirdparty/jquery",
+	"sap/ui/events/KeyCodes",
 	"sap/m/upload/UploadSet",
 	"sap/m/upload/UploadSetItem",
 	"sap/m/upload/UploadSetRenderer",
@@ -15,7 +16,7 @@ sap.ui.define([
 	"sap/m/MessageBox",
 	"sap/ui/model/json/JSONModel",
 	"test-resources/sap/m/qunit/upload/UploadSetTestUtils"
-], function (jQuery, UploadSet, UploadSetItem, UploadSetRenderer, UploadState, Toolbar, Label, ListItemBaseRenderer,
+], function (jQuery, KeyCodes, UploadSet, UploadSetItem, UploadSetRenderer, UploadState, Toolbar, Label, ListItemBaseRenderer,
 			 Dialog, Device, ListSeparators, ListMode, MessageBox, JSONModel, TestUtils) {
 	"use strict";
 
@@ -27,9 +28,9 @@ sap.ui.define([
 				},
 				{
 					fileName: "Brenda.mp4",
-					enabledDelete: false,
+					enabledRemove: false,
 					enabledEdit: false,
-					visibleDelete: false,
+					visibleRemove: false,
 					visibleEdit: false
 				}
 			]
@@ -58,7 +59,7 @@ sap.ui.define([
 	/* Flags  */
 	/* ====== */
 
-	QUnit.test("Flags enableDelete, enableEdit, visibleDelete, visibleEdit", function (assert) {
+	QUnit.test("Flags enableDelete, enableEdit, visibleRemove, visibleEdit", function (assert) {
 		var oItem0 = this.oUploadSet.getItems()[0],
 			oItem1 = this.oUploadSet.getItems()[1];
 
@@ -67,19 +68,19 @@ sap.ui.define([
 		assert.ok(oItem0._getEditButton().getEnabled(), "Edit button should be enabled by default.");
 		assert.ok(oItem0._getEditButton().getVisible(), "Edit button should be visible by default.");
 
-		assert.notOk(oItem1._getDeleteButton().getEnabled(), "Delete button should be disabled for 'enabledDelete' set to false.");
-		assert.notOk(oItem1._getDeleteButton().getVisible(), "Delete button should be invisible by for 'visibleDelete' set to false.");
+		assert.notOk(oItem1._getDeleteButton().getEnabled(), "Delete button should be disabled for 'enabledRemove' set to false.");
+		assert.notOk(oItem1._getDeleteButton().getVisible(), "Delete button should be invisible by for 'visibleRemove' set to false.");
 		assert.notOk(oItem1._getEditButton().getEnabled(), "Edit button should be disabled for 'enabledEdit' set to false.");
 		assert.notOk(oItem1._getEditButton().getVisible(), "Edit button should be invisible for 'visibleEdit' set to false.");
 
 		// Disable/hide ex-post
-		oItem0.setEnabledDelete(false);
-		oItem0.setVisibleDelete(false);
+		oItem0.setEnabledRemove(false);
+		oItem0.setVisibleRemove(false);
 		oItem0.setEnabledEdit(false);
 		oItem0.setVisibleEdit(false);
 
-		assert.notOk(oItem0._getDeleteButton().getEnabled(), "Delete button should be disabled for 'enabledDelete' set ex-post to false.");
-		assert.notOk(oItem0._getDeleteButton().getVisible(), "Delete button should be invisible by for 'visibleDelete' set ex-post to false.");
+		assert.notOk(oItem0._getDeleteButton().getEnabled(), "Delete button should be disabled for 'enabledRemove' set ex-post to false.");
+		assert.notOk(oItem0._getDeleteButton().getVisible(), "Delete button should be invisible by for 'visibleRemove' set ex-post to false.");
 		assert.notOk(oItem0._getEditButton().getEnabled(), "Edit button should be disabled for 'enabledEdit' set ex-post to false.");
 		assert.notOk(oItem0._getEditButton().getVisible(), "Edit button should be invisible for 'visibleEdit' set ex-post to false.");
 	});
@@ -110,6 +111,51 @@ sap.ui.define([
 		// Close the dialog
 		var oDialog = sap.ui.getCore().byId(this.oUploadSet.getId() + "-deleteDialog");
 		assert.ok(oDialog, "Remove dialog should now be presented.");
+		oDialog.getButtons()[1].firePress();
+		oDialog.destroy();
+	});
+
+	/* ======== */
+	/* Keyboard */
+	/* ======== */
+
+	QUnit.test("Keyboard actions [Enter, Delete, Escape, F2] are handled properly.", function (assert) {
+		assert.expect(6);
+		var oItem = this.oUploadSet.getItems()[0],
+			oTarget = {id: oItem.getListItem().getId()},
+			oPressedSpy = sinon.spy(UploadSetItem.prototype, "_handleFileNamePressed"),
+			oDeleteSpy = sinon.spy(UploadSet.prototype, "_handleItemDelete");
+
+		oItem.getListItem().focus();
+		this.oUploadSet.onkeydown({
+			target: oTarget,
+			keyCode: KeyCodes.ENTER
+		});
+		assert.equal(oPressedSpy.callCount, 1, "Upload set item handler for hitting a file name should be called.");
+		oPressedSpy.restore();
+
+		this.oUploadSet.onkeydown({
+			target: oTarget,
+			keyCode: KeyCodes.F2
+		});
+		assert.ok(this.oUploadSet._oEditedItem, "After hitting F2 upload set should see the item in edit mode.");
+		assert.ok(oItem._bInEditMode, "After hitting F2 item itself should be in edit mode.");
+		this.oUploadSet.onkeydown({
+			target: oItem._getFileNameEdit().$("inner")[0],
+			keyCode: KeyCodes.ESCAPE
+		});
+		assert.notOk(this.oUploadSet._oEditedItem, "After hitting F2 again upload set should not see the item in edit mode.");
+		assert.notOk(oItem._bInEditMode, "After hitting F2 again item should be out of edit mode.");
+
+		this.oUploadSet.onkeydown({
+			target: oTarget,
+			keyCode: KeyCodes.DELETE
+		});
+		assert.equal(oDeleteSpy.callCount, 1, "Upload set item handler for removing a file should be called.");
+		oDeleteSpy.restore();
+
+		// Close the dialog
+		var oDialog = sap.ui.getCore().byId(this.oUploadSet.getId() + "-deleteDialog");
 		oDialog.getButtons()[1].firePress();
 		oDialog.destroy();
 	});

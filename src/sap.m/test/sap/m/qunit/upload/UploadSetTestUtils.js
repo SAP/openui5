@@ -3,14 +3,14 @@ sap.ui.define([
 	"sap/m/ObjectMarker",
 	"sap/ui/thirdparty/sinon",
 	"sap/ui/thirdparty/sinon-qunit"
-], function (UploadCollectionItem, ObjectMarker) {
+], function (UploadSetItem, ObjectMarker) {
 	"use strict";
 
 	var UploadSetTestUtils = {};
 
 	UploadSetTestUtils.createItemTemplate = function () {
-		return new UploadCollectionItem({
-			enabledDelete: "{enabledDelete}",
+		return new UploadSetItem({
+			enabledRemove: "{enabledRemove}",
 			enabledEdit: "{enabledEdit}",
 			fileName: "{fileName}",
 			thumbnailUrl: "{thumbnailUrl}",
@@ -18,7 +18,7 @@ sap.ui.define([
 			uploadState: "{uploadState}",
 			url: "{url}",
 			visibleEdit: "{visibleEdit}",
-			visibleDelete: "{visibleDelete}",
+			visibleRemove: "{visibleRemove}",
 			markers: {
 				path: "markers",
 				template: UploadSetTestUtils.createMarkerTemplate(),
