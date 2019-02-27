@@ -818,10 +818,10 @@ sap.ui.define([
 		}
 	});
 
-	QUnit.test("Special characters in the sender property do not lead to an exception", function (assert) {
+/*	QUnit.test("Special characters in the sender property do not lead to an exception", function (assert) {
 		assert.ok(true, "No exception occurred");
 	});
-
+*/
 	QUnit.module("Actions aggregation and hidden aggregations", {
 		beforeEach: function () {
 			this.oFeedListItem = new FeedListItem({
