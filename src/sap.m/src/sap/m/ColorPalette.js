@@ -234,6 +234,10 @@ sap.ui.define([
 
 		ColorPalette.prototype.onsapenter = ColorPalette.prototype.ontap;
 
+		ColorPalette.prototype.onsapspace = function (oEvent) {
+			oEvent.preventDefault();
+		};
+
 		ColorPalette.prototype.onkeyup = function (oEvent) {
 			if (oEvent.which === KeyCodes.SPACE) {
 				oEvent.preventDefault();
