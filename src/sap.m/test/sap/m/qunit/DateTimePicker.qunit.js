@@ -477,14 +477,14 @@ sap.ui.define([
 		assert.ok(!!oInfo, "getAccessibilityInfo returns a info object");
 		assert.strictEqual(oInfo.role, oInput.getRenderer().getAriaRole(), "AriaRole");
 		assert.strictEqual(oInfo.type, sap.ui.getCore().getLibraryResourceBundle("sap.m").getText("ACC_CTR_TYPE_DATETIMEINPUT"), "Type");
-		assert.strictEqual(oInfo.description, "Value Placeholder Date and Time Tooltip", "Description");
+		assert.strictEqual(oInfo.description, "Value  Date and Time", "Description");
 		assert.strictEqual(oInfo.focusable, true, "Focusable");
 		assert.strictEqual(oInfo.enabled, true, "Enabled");
 		assert.strictEqual(oInfo.editable, true, "Editable");
 		oInput.setValue("");
 		oInput.setEnabled(false);
 		oInfo = oInput.getAccessibilityInfo();
-		assert.strictEqual(oInfo.description, "Placeholder Date and Time Tooltip", "Description");
+		assert.strictEqual(oInfo.description, "Date and Time", "Description");
 		assert.strictEqual(oInfo.focusable, false, "Focusable");
 		assert.strictEqual(oInfo.enabled, false, "Enabled");
 		assert.strictEqual(oInfo.editable, false, "Editable");
@@ -498,7 +498,7 @@ sap.ui.define([
 		oInput.setDisplayFormat("yyyy-MM-dd-HH-mm-ss");
 		oInput.setValue("2014.03.26.10.32.30");
 		oInfo = oInput.getAccessibilityInfo();
-		assert.strictEqual(oInfo.description, "2014-03-26-10-32-30 Placeholder Date and Time Tooltip", "Description");
+		assert.strictEqual(oInfo.description, "2014-03-26-10-32-30  Date and Time", "Description");
 		oInput.destroy();
 	});
 	QUnit.module("Calendar and TimePicker");

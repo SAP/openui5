@@ -257,7 +257,7 @@ function(
 	 * What is the difference between _getPlaceholder and getPlaceholder
 	 */
 	InputBase.prototype._getPlaceholder = function() {
-		return this.getPlaceholder();
+		return this.getPlaceholder() || "";
 	};
 
 	/**

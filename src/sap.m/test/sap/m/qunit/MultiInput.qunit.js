@@ -1092,7 +1092,7 @@ sap.ui.define([
 		assert.ok(!!oInfo, "getAccessibilityInfo returns a info object");
 		assert.strictEqual(oInfo.role, this.multiInput1.getRenderer().getAriaRole(), "AriaRole");
 		assert.strictEqual(oInfo.type, oResourceBundle.getText("ACC_CTR_TYPE_MULTIINPUT"), "Type");
-		assert.strictEqual(oInfo.description, "Value Placeholder Tooltip", "Description");
+		assert.strictEqual(oInfo.description, "Value", "Description");
 		assert.strictEqual(oInfo.focusable, true, "Focusable");
 		assert.strictEqual(oInfo.enabled, true, "Enabled");
 		assert.strictEqual(oInfo.editable, true, "Editable");
@@ -1103,7 +1103,7 @@ sap.ui.define([
 		oInfo = this.multiInput1.getAccessibilityInfo();
 
 		// assert
-		assert.strictEqual(oInfo.description, "Placeholder Tooltip", "Description");
+		assert.strictEqual(oInfo.description, "", "Description");
 		assert.strictEqual(oInfo.focusable, false, "Focusable");
 		assert.strictEqual(oInfo.enabled, false, "Enabled");
 		assert.strictEqual(oInfo.editable, false, "Editable");
@@ -1123,7 +1123,7 @@ sap.ui.define([
 		oInfo = this.multiInput1.getAccessibilityInfo();
 
 		// assert
-		assert.strictEqual(oInfo.description, "Placeholder Tooltip Description", "Description");
+		assert.strictEqual(oInfo.description, "Description", "Description");
 
 		// act
 		this.multiInput1.addToken(new Token({text: "Token1"}));
@@ -1132,7 +1132,7 @@ sap.ui.define([
 		oInfo = this.multiInput1.getAccessibilityInfo();
 
 		// assert
-		assert.strictEqual(oInfo.description, "Placeholder Tooltip Description Token1 Token2", "Description");
+		assert.strictEqual(oInfo.description, "Description Token1 Token2", "Description");
 	});
 
 	QUnit.test("Tokens information should be read out", function(assert) {

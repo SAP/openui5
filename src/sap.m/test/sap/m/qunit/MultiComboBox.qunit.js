@@ -5001,14 +5001,14 @@ sap.ui.define([
 		assert.ok(!!oInfo, "getAccessibilityInfo returns a info object");
 		assert.strictEqual(oInfo.role, oMultiComboBox.getRenderer().getAriaRole(), "AriaRole");
 		assert.strictEqual(oInfo.type, sap.ui.getCore().getLibraryResourceBundle("sap.m").getText("ACC_CTR_TYPE_MULTICOMBO"), "Type");
-		assert.strictEqual(oInfo.description, "Value Placeholder Tooltip", "Description");
+		assert.strictEqual(oInfo.description, "Value", "Description");
 		assert.strictEqual(oInfo.focusable, true, "Focusable");
 		assert.strictEqual(oInfo.enabled, true, "Enabled");
 		assert.strictEqual(oInfo.editable, true, "Editable");
 		oMultiComboBox.setValue("");
 		oMultiComboBox.setEnabled(false);
 		oInfo = oMultiComboBox.getAccessibilityInfo();
-		assert.strictEqual(oInfo.description, "Placeholder Tooltip", "Description");
+		assert.strictEqual(oInfo.description, "", "Description");
 		assert.strictEqual(oInfo.focusable, false, "Focusable");
 		assert.strictEqual(oInfo.enabled, false, "Enabled");
 		assert.strictEqual(oInfo.editable, false, "Editable");
@@ -5021,7 +5021,7 @@ sap.ui.define([
 		oMultiComboBox.setEditable(true);
 		oMultiComboBox.setSelectedKeys(["Item1", "Item2"]);
 		oInfo = oMultiComboBox.getAccessibilityInfo();
-		assert.strictEqual(oInfo.description, "Placeholder Tooltip Item1 Item2", "Description");
+		assert.strictEqual(oInfo.description, "Item1 Item2", "Description");
 		oMultiComboBox.destroy();
 	});
 

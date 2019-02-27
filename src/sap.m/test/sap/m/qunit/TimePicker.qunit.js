@@ -2250,21 +2250,9 @@ sap.ui.define([
 						fnAssert.strictEqual(oSut.$(sPlaceholderHiddenLblIdSuffix).text(), sDefaultPlaceholder, "placeholder invisible label text is as expected");
 					}
 				},
-				fnTestTooltipReference = function (bReferencedWithTooltip) {
-					if (bReferencedWithTooltip) {
-						//prepare
-						oSut.setTooltip("Tooltip");
-						sap.ui.getCore().applyChanges();
-						//assert
-						fnAssert.strictEqual(oSut.$(sTooltipHiddenLblIdSuffix).length, 1, "tooltip invisible label is rendered");
-						fnAssert.strictEqual(oSut.$(sTooltipHiddenLblIdSuffix).text(), oSut.getTooltip_AsString(), "tooltip invisible label text is as expected");
-						//clear
-						oSut.setTooltip(null);
-						sap.ui.getCore().applyChanges();
-					} else {
-						//assert
-						fnAssert.strictEqual(oSut.$(sTooltipHiddenLblIdSuffix).length, 0, "tooltip invisible label is not rendered");
-					}
+				fnTestTooltipReference = function () {
+					//assert
+					fnAssert.strictEqual(oSut.$(sTooltipHiddenLblIdSuffix).length, 0, "tooltip invisible label is not rendered");
 				};
 
 			//Test execution check
@@ -2286,7 +2274,7 @@ sap.ui.define([
 						break;
 					case 2:
 						fnTestCustomRole();
-						fnTestTooltipReference(bExpectation);
+						fnTestTooltipReference();
 						break;
 					default:
 						break;
@@ -2308,14 +2296,14 @@ sap.ui.define([
 		assert.ok(!!oInfo, "getAccessibilityInfo returns a info object");
 		assert.strictEqual(oInfo.role, "combobox", "AriaRole");
 		assert.strictEqual(oInfo.type, sap.ui.getCore().getLibraryResourceBundle("sap.m").getText("ACC_CTR_TYPE_TIMEINPUT"), "Type");
-		assert.strictEqual(oInfo.description, "Value Placeholder Tooltip", "Description");
+		assert.strictEqual(oInfo.description, "Value Placeholder", "Description");
 		assert.strictEqual(oInfo.focusable, true, "Focusable");
 		assert.strictEqual(oInfo.enabled, true, "Enabled");
 		assert.strictEqual(oInfo.editable, true, "Editable");
 		this.oTP.setValue("");
 		this.oTP.setEnabled(false);
 		oInfo = this.oTP.getAccessibilityInfo();
-		assert.strictEqual(oInfo.description, "Placeholder Tooltip", "Description");
+		assert.strictEqual(oInfo.description, "Placeholder", "Description");
 		assert.strictEqual(oInfo.focusable, false, "Focusable");
 		assert.strictEqual(oInfo.enabled, false, "Enabled");
 		assert.strictEqual(oInfo.editable, false, "Editable");
@@ -2329,7 +2317,7 @@ sap.ui.define([
 		this.oTP.setDisplayFormat("HH-mm-ss");
 		this.oTP.setValue("10.32.30");
 		oInfo = this.oTP.getAccessibilityInfo();
-		assert.strictEqual(oInfo.description, "10-32-30 Placeholder Tooltip", "Description");
+		assert.strictEqual(oInfo.description, "10-32-30 Placeholder", "Description");
 	});
 
 	QUnit.test("Dynamic selection change announcement", function (assert) {

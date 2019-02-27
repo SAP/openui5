@@ -174,9 +174,6 @@ sap.ui.define([
 		// assert
 		assert.ok(!!describedById, "Described by ID is set");
 		assert.ok(bLabelsExist, "All descriptions are rendered in DOM");
-		assert.strictEqual(labelledByIdSf3,"sf3-I-labelledby",  "LabelledBy ID is set correctly");
-		// when label is set the id of the label also should be present
-		assert.strictEqual(labelledByIdSf6,"lbl sf6-I-labelledby",  "LabelledBy ID is set correctly when there is label");
 
 		// clean up
 		lbl.destroy();
@@ -275,13 +272,6 @@ sap.ui.define([
 
 		// assert
 		assert.strictEqual(isF5TextSet, true, 'The "Press F5 to refresh" text should be set as aria-describedby');
-	});
-
-	QUnit.test("Invisible text for the placeholder should be rendered", function (assert) {
-		var sf5 = jQuery("#sf5-I-labelledby");
-		assert.ok(sf5, 'Invisible text for the placeholder is rendered');
-		assert.strictEqual(sf5.text(), sPlaceholder, 'Text of the invisible element is correct');
-		assert.strictEqual(sf5.hasClass("sapUiInvisibleText"), true, 'Invisible text has class sapUiInvisibleText');
 	});
 
 	QUnit.module("SearchField tooltip:", {

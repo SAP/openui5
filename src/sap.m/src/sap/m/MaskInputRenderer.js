@@ -21,7 +21,6 @@ sap.ui.define(['sap/ui/core/Renderer', './InputBaseRenderer'], function(Renderer
 	MaskInputRenderer.getLabelledByAnnouncement = function(oControl) {
 		var sMask = oControl.getMask(),
 			sPlaceholder = oControl.getPlaceholder() || "",
-			sToolTip = oControl.getTooltip_AsString() || "",
 			oResourceBundle,
 			sMaskScreenReaderTag,
 			sAnnouncement = "";
@@ -30,13 +29,10 @@ sap.ui.define(['sap/ui/core/Renderer', './InputBaseRenderer'], function(Renderer
 			oResourceBundle = sap.ui.getCore().getLibraryResourceBundle("sap.m");
 			sMaskScreenReaderTag = oResourceBundle.getText("MASKINPUT_SCREENREADER_TAG");
 
-			if (sToolTip) {
-				sToolTip = " " + sToolTip + " ";
-			}
 			if (sPlaceholder) {
 				sPlaceholder = " " + sPlaceholder + " ";
 			}
-			sAnnouncement = sMaskScreenReaderTag + sPlaceholder + sToolTip;
+			sAnnouncement = sMaskScreenReaderTag + sPlaceholder;
 			return sAnnouncement;
 		}
 

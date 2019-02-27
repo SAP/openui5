@@ -35,8 +35,7 @@ sap.ui.define(["sap/ui/Device", "sap/ui/core/InvisibleText"],
 			oAccAttributes = {}, // additional accessibility attributes
 			sToolTipValue,
 			sRefreshToolTip = oSF.getRefreshButtonTooltip(),
-			sResetToolTipValue,
-			bAccessibility = sap.ui.getCore().getConfiguration().getAccessibility();
+			sResetToolTipValue;
 
 		// container
 		rm.write("<div");
@@ -125,30 +124,9 @@ sap.ui.define(["sap/ui/Device", "sap/ui/core/InvisibleText"],
 				}
 			}
 
-			var sInvisibleTextId = oSF.getId() + "-I" + "-labelledby";
-			oAccAttributes.labelledby = {
-				value: sInvisibleTextId,
-				append: true
-			};
-
 			rm.writeAccessibilityState(oSF, oAccAttributes);
 
 			rm.write(">");
-
-			//Invisible text for ACC purpose - announcing placeholder when there is Label or Tooltip for the Input
-			if (bAccessibility) {
-				var sAnnouncement = oSF.getPlaceholder() || "";
-				if (sAnnouncement) {
-					rm.write("<span");
-					rm.writeAttribute("id", sInvisibleTextId);
-					rm.writeAttribute("aria-hidden", "true");
-					rm.addClass("sapUiInvisibleText");
-					rm.writeClasses();
-					rm.write(">");
-					rm.writeEscaped(sAnnouncement.trim());
-					rm.write("</span>");
-				}
-			}
 
 			if (oSF.getEnabled()) {
 				// 2. Reset button
