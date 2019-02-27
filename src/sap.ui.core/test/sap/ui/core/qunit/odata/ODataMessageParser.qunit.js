@@ -541,6 +541,9 @@ sap.ui.define([
 				fireMessageChange: function(oObj) {
 					aNewMessages = oObj.newMessages;
 					aOldMessages = oObj.oldMessages;
+				},
+				resolve: function(sPath){
+					return sPath;
 				}
 			});
 
@@ -646,6 +649,8 @@ sap.ui.define([
 			oParser.setProcessor({
 				fireMessageChange: function(oObj) {
 					aNewMessages = oObj.newMessages;
+				}, resolve: function(sPath){
+					return sPath;
 				}
 			});
 

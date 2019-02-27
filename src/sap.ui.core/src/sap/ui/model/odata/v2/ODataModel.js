@@ -99,7 +99,7 @@ sap.ui.define([
 	 * @param {boolean} [mParameters.withCredentials]
 	 *            Experimental - <code>true</code> when user credentials are to be included in a
 	 *            cross-origin reques; please note that this only works if all requests are asynchronous
-	 * @param [mParameters.maxDataServiceVersion='2.0']
+	 * @param {string}[mParameters.maxDataServiceVersion='2.0']
 	 *            Please use the following string format e.g. '2.0' or '3.0'.
 	 *            OData version supported by the ODataModel: '2.0'
 	 * @param {boolean} [mParameters.useBatch=true]
@@ -199,6 +199,7 @@ sap.ui.define([
 				aBindableResponseHeaders,
 				sWarmupUrl,
 				bCanonicalRequests,
+				bUseMessageScopeHeader,
 				that = this;
 
 			if (typeof (sServiceUrl) === "object") {
@@ -234,10 +235,12 @@ sap.ui.define([
 				aBindableResponseHeaders = mParameters.bindableResponseHeaders;
 				sWarmupUrl = mParameters.warmupUrl;
 				bCanonicalRequests = mParameters.canonicalRequests;
+				bUseMessageScopeHeader = mParameters.useMessageScopeHeader;
 			}
 			this.mPathCache = {};
 			this.mInvalidatedPaths = {};
 			this.bCanonicalRequests = !!bCanonicalRequests;
+			this.bUseMessageScopeHeader = !!bUseMessageScopeHeader;
 			this.sWarmupUrl = sWarmupUrl;
 			this.bWarmup = !!sWarmupUrl;
 			this.mSupportedBindingModes = {"OneWay": true, "OneTime": true, "TwoWay":true};
@@ -1849,6 +1852,7 @@ sap.ui.define([
 			sCanonicalPath,
 			oNewContext,
 			sGroupId,
+			sDeepPath,
 			that = this;
 
 		// optional parameter handling
@@ -1890,6 +1894,7 @@ sap.ui.define([
 		if (!sResolvedPath && this.bCanonicalRequests) {
 			sResolvedPath = this.resolve(sPath, oContext);
 		}
+		sDeepPath = this.resolveDeep(sPath, oContext);
 
 		if (!sResolvedPath) {
 			if (fnCallBack) {
@@ -1908,8 +1913,8 @@ sap.ui.define([
 		if (!bReload) {
 			sCanonicalPath = this.resolve(sPath, oContext, true);
 			if (sCanonicalPath) {
-				oNewContext = this.getContext(sCanonicalPath, oContext);
-				oNewContext.sDeepPath = this.resolveDeep(sPath, oContext, false);
+				oNewContext = this.getContext(sCanonicalPath);
+				oNewContext.sDeepPath = sDeepPath;
 			} else {
 				oNewContext = null;
 			}
@@ -1928,8 +1933,8 @@ sap.ui.define([
 			oNewContext = null;
 
 			if (sKey) {
-				oNewContext = that.getContext('/' + sKey, oContext);
-				oNewContext.sDeepPath = that.resolveDeep(sPath, oContext);
+				oNewContext = that.getContext('/' + sKey);
+				oNewContext.sDeepPath = sDeepPath;
 				oRef = {__ref: sKey};
 			}
 			/* in case of sPath == "" or a deep path (entity(1)/entities) we
@@ -1973,8 +1978,7 @@ sap.ui.define([
 				if (mParameters && (mParameters.batchGroupId || mParameters.groupId)) {
 					sGroupId = mParameters.groupId || mParameters.batchGroupId;
 				}
-
-				this.read(sResolvedPath, {groupId: sGroupId, urlParameters: aParams, success: handleSuccess, error: handleError});
+				this.read(sPath, {groupId: sGroupId, urlParameters: aParams, success: handleSuccess, error: handleError, context: oContext});
 			} else {
 				fnCallBack(null); // error - notify to recreate contexts
 			}
@@ -1983,7 +1987,7 @@ sap.ui.define([
 		if (mParameters && mParameters.createPreliminaryContext) {
 			sResolvedPath = this.resolve(sPath, oContext);
 			oNewContext = this.getContext(sResolvedPath);
-			oNewContext.sDeepPath = this.resolveDeep(sPath, oContext);
+			oNewContext.sDeepPath = sDeepPath;
 			return oNewContext;
 		}
 
@@ -2837,7 +2841,7 @@ sap.ui.define([
 
 		function requestToken(sRequestType, fnError) {
 			// trigger a read to the service url to fetch the token
-			var oRequest = that._createRequest(sUrl, sRequestType, that._getHeaders(undefined, true), null, null, !!bAsync);
+			var oRequest = that._createRequest(sUrl, "", sRequestType, that._getHeaders(undefined, true), null, null, !!bAsync);
 			oRequest.headers["x-csrf-token"] = "Fetch";
 			return that._request(oRequest, handleSuccess, fnError, undefined, undefined, that.getServiceMetadata());
 		}
@@ -3347,6 +3351,10 @@ sap.ui.define([
 		if (sRequestKey in oRequestGroup.map && (oRequest.key || oRequest.method === 'GET')) {
 			var oGroupEntry = oRequestGroup.map[sRequestKey];
 			var oStoredRequest = oGroupEntry.request;
+			oRequest.deepPath = oStoredRequest.deepPath;
+			if (this.bUseMessageScopeHeader){
+				oRequest.headers["sap-message-scope"] = oStoredRequest.headers["sap-message-scope"];
+			}
 
 			if (oGroupEntry.bRefreshAfterChange === undefined) { // If not already defined, overwrite with new flag
 				oGroupEntry.bRefreshAfterChange = bRefreshAfterChange;
@@ -3368,6 +3376,7 @@ sap.ui.define([
 				oStoredRequest.method = oRequest.method;
 				oStoredRequest.headers = oRequest.headers;
 				oStoredRequest.data = oRequest.data;
+
 				// for POST function imports we also need to replace the URI
 				oStoredRequest.requestUri = oRequest.requestUri;
 				if (oRequest.method === "PUT") {
@@ -3840,7 +3849,7 @@ sap.ui.define([
 	 * @returns {object} The request object
 	 * @private
 	 */
-	ODataModel.prototype._processChange = function(sKey, oData, sUpdateMethod) {
+	ODataModel.prototype._processChange = function(sKey, oData, sUpdateMethod, sDeepPath) {
 		var oPayload, oEntityType, mParams, sMethod, sETag, sUrl, bCreated, mHeaders, aUrlParams, oRequest, oUnModifiedEntry, that = this;
 
 		// delete expand properties = navigation properties
@@ -3927,8 +3936,8 @@ sap.ui.define([
 
 		sUrl = this._createRequestUrl('/' + sKey, null, aUrlParams, this.bUseBatch);
 
-		oRequest = this._createRequest(sUrl, sMethod, mHeaders, oPayload, sETag);
-		oRequest.deepPath = that.resolveDeep(sUrl);
+		oRequest = this._createRequest(sUrl, sDeepPath ,sMethod, mHeaders, oPayload, sETag);
+
 
 		//for createEntry requests we need to flag request again
 		if (bCreated) {
@@ -4133,7 +4142,7 @@ sap.ui.define([
 	 * @return {object} Request object
 	 * @private
 	 */
-	ODataModel.prototype._createRequest = function(sUrl, sMethod, mHeaders, oData, sETag, bAsync) {
+	ODataModel.prototype._createRequest = function(sUrl, sDeepPath, sMethod, mHeaders, oData, sETag, bAsync) {
 		bAsync = bAsync !== false;
 
 		if (sETag && sMethod !== "GET") {
@@ -4162,13 +4171,20 @@ sap.ui.define([
 			sMethod = "POST";
 		}
 
+		// deep path handling
+		if (sDeepPath && this.bUseMessageScopeHeader){
+			var aParts = sDeepPath.split("/");
+			mHeaders["sap-message-scope"] = "/" + aParts[0] + aParts[1]; // "/" + RootEntity(123)
+		}
+
 		var oRequest = {
 			headers : mHeaders,
 			requestUri : sUrl,
 			method : sMethod,
 			user: this.sUser,
 			password: this.sPassword,
-			async: bAsync
+			async: bAsync,
+			deepPath: sDeepPath
 		};
 
 		if (oData) {
@@ -4294,8 +4310,7 @@ sap.ui.define([
 
 		return this._processRequest(function(requestHandle) {
 			sUrl = that._createRequestUrl(sPath, oContext, aUrlParams, that.bUseBatch);
-			oRequest = that._createRequest(sUrl, sMethod, mHeaders, oData, sETag);
-			oRequest.deepPath = that.resolveDeep(sPath, oContext);
+			oRequest = that._createRequest(sUrl, that.resolveDeep(sPath, oContext), sMethod, mHeaders, oData, sETag);
 
 			mRequests = that.mRequests;
 			if (sGroupId in that.mDeferredGroups) {
@@ -4362,8 +4377,7 @@ sap.ui.define([
 
 		return this._processRequest(function(requestHandle) {
 			sUrl = that._createRequestUrl(sPath, oContext, aUrlParams, that.bUseBatch);
-			oRequest = that._createRequest(sUrl, sMethod, mHeaders, oData, sEtag);
-			oRequest.deepPath = that.resolveDeep(sPath, oContext);
+			oRequest = that._createRequest(sUrl, that.resolveDeep(sPath, oContext), sMethod, mHeaders, oData, sEtag);
 			oRequest.created = true;
 
 			sPath = that._normalizePath(sPath, oContext);
@@ -4446,8 +4460,7 @@ sap.ui.define([
 
 		return this._processRequest(function(requestHandle) {
 			sUrl = that._createRequestUrl(sPath, oContext, aUrlParams, that.bUseBatch);
-			oRequest = that._createRequest(sUrl, sMethod, mHeaders, undefined, sETag);
-			oRequest.deepPath = that.resolveDeep(sPath, oContext);
+			oRequest = that._createRequest(sUrl, that.resolveDeep(sPath, oContext), sMethod, mHeaders, undefined, sETag);
 
 			mRequests = that.mRequests;
 			if (sGroupId in that.mDeferredGroups) {
@@ -4590,8 +4603,7 @@ sap.ui.define([
 			aUrlParams = ODataUtils._createUrlParamsArray(mUrlParams);
 
 			sUrl = that._createRequestUrl(sFunctionName, null, aUrlParams, that.bUseBatch);
-			oRequest = that._createRequest(sUrl, sMethod, mHeaders, undefined, sETag);
-			oRequest.deepPath = that.resolveDeep(sFunctionName, null);
+			oRequest = that._createRequest(sUrl, that.resolveDeep(sFunctionName, oContext), sMethod, mHeaders, undefined, sETag);
 			oRequest.key = sKey;
 
 			mRequests = that.mRequests;
@@ -4721,8 +4733,7 @@ sap.ui.define([
 			}
 
 			sUrl = that._createRequestUrl(sPath, oContext, aUrlParams, that.bUseBatch);
-			oRequest = that._createRequest(sUrl, sMethod, mHeaders, null, sETag);
-			oRequest.deepPath = that.resolveDeep(sPath, oContext);
+			oRequest = that._createRequest(sUrl, that.resolveDeep(sPath, oContext), sMethod, mHeaders, null, sETag);
 
 			mRequests = that.mRequests;
 			if (sGroupId in that.mDeferredGroups) {
@@ -5232,11 +5243,12 @@ sap.ui.define([
 
 		mRequests = this.mRequests;
 
+		var sDeepPath = this.resolveDeep(sPath, oContext);
 		if (oGroupInfo.groupId in this.mDeferredGroups) {
 			mRequests = this.mDeferredRequests;
-			oRequest = this._processChange(sKey, {__metadata : oEntry.__metadata});
+			oRequest = this._processChange(sKey, {__metadata : oEntry.__metadata}, undefined, sDeepPath);
 		} else {
-			oRequest = this._processChange(sKey, this._getObject('/' + sKey));
+			oRequest = this._processChange(sKey, this._getObject('/' + sKey), undefined, sDeepPath);
 		}
 		oRequest.key = sKey;
 		//get params for created entries: could contain success/error handler
@@ -5572,8 +5584,7 @@ sap.ui.define([
 			that.mChangedEntities[sKey] = oEntity;
 
 			sUrl = that._createRequestUrl(sPath, oContext, aUrlParams, that.bUseBatch);
-			oRequest = that._createRequest(sUrl, sMethod, mHeaders, oEntity, sETag);
-			oRequest.deepPath = that.resolveDeep(sPath, oContext);
+			oRequest = that._createRequest(sUrl, that.resolveDeep(sPath, oContext), sMethod, mHeaders, oEntity, sETag);
 
 			oCreatedContext = that.getContext("/" + sKey); // context wants a path
 			oCreatedContext.bCreated = true;
@@ -6185,7 +6196,7 @@ sap.ui.define([
 
 	/**
 	 * Resolve the path relative to the given context. If the context contains a parent path
-	 * (deepPath) we resolve with this deepPath instead the canonical one.
+	 * (deepPath), we resolve with this deepPath instead the canonical one.
 	 *
 	 * @param {string} sPath Path to resolve
 	 * @param {sap.ui.core.Context} [oContext] Context to resolve a relative path against

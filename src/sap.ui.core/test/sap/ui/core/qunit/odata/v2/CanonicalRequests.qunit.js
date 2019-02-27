@@ -1,9 +1,8 @@
 /*global QUnit, sinon */
 sap.ui.define([
     "sap/ui/model/odata/v2/ODataModel",
-    'sap/ui/core/util/MockServer',
-    "sap/ui/model/odata/v2/ODataListBinding"
-], function (ODataModel, MockServer, ODataListBinding) {
+    'sap/ui/core/util/MockServer'
+], function (ODataModel, MockServer) {
     "use strict";
 
 
@@ -65,7 +64,7 @@ sap.ui.define([
 			});
             this.oMockServer.simulate(sDataRootPath + "metadata.xml", sDataRootPath);
             this.oMockServer.start();
-            this.oModel = new ODataModel(this.sServiceUri, { canonicalRequests: true });
+            this.oModel = new ODataModel(this.sServiceUri, { canonicalRequests: true, useMessageScopeHeader: true});
             this.oStubGetEntitySetByPath = sinon.spy(this.oModel.oMetadata, "_getEntitySetByPath");
 
             this.fnOriginalInvalidate = this.oModel._invalidatePathCache;
@@ -113,6 +112,15 @@ sap.ui.define([
             "DimUnit":"M"
     }, batchGroupId: "myId"};
 
+
+    var getLastRequest = function(test){
+        var oLastRequest = test.oRequestStub.args[test.oRequestStub.args.length - 1][0];
+        var oRelevantRequest = oLastRequest["data"]["__batchRequests"][0]["__changeRequests"]
+        && oLastRequest["data"]["__batchRequests"][0]["__changeRequests"][0]
+        || oLastRequest["data"]["__batchRequests"][0];
+        return oRelevantRequest;
+    };
+
     /**
      * @param {string} path API call path
      * @param {string} expectedURL expected send URL
@@ -127,11 +135,14 @@ sap.ui.define([
                 test.oModel[testedAPI](path, parameters);
                 var fnRequestCompleted = function(oEvent){
                     test.oModel.detachRequestCompleted(fnRequestCompleted);
-                    var sLastRequest = test.oRequestStub.args[test.oRequestStub.args.length - 1][0];
-                    var sDeepPath = sLastRequest["data"]["__batchRequests"][0].deepPath || sLastRequest["data"]["__batchRequests"][0].__changeRequests[0].deepPath;
+                    var oRelevantRequest = getLastRequest(test);
+                     var sMessageScopeHeader = oRelevantRequest["headers"]["sap-message-scope"];
 
-                    assert.equal(sDeepPath, path, "Deep path set correctly.");
-                    assert.equal(oEvent.getParameters().url, expectedURL, "ODatamodel." +  testedAPI + " - requestedPath:" + path);
+                    var aParts = oRelevantRequest.deepPath.split("/");
+                    assert.equal(sMessageScopeHeader, "/" + aParts[1]);
+                    assert.equal(oRelevantRequest.deepPath, path, "Deep path set correctly.");
+                    assert.equal(oEvent.getParameters().url.split("?")[0], expectedURL, "ODatamodel." +  testedAPI + " - requestedPath:" + path);
+
                     res();
                 };
 
@@ -280,6 +291,33 @@ sap.ui.define([
                 testODataAPI("/SalesOrderSet('0500000001')/ToLineItems(SalesOrderID='0500000001',ItemPosition='0000000010')/ToProduct",
                 "ProductSet('HT-1030')", assert, that, "createEntry", oCreateEntryProduct))
             .then(done);
+    });
+
+    QUnit.test("ODataModel.submitChanges", function (assert) {
+        var done = assert.async();
+        var that = this;
+        that.oModel.metadataLoaded().then(testODataAPI(
+            "/SalesOrderSet('0500000005')", "SalesOrderSet('0500000005')", assert, that, "read", {urlParameters: {"$expand":"ToLineItems"}}))
+            .then(function(){
+                that.oModel.setProperty("/SalesOrderSet('0500000005')/ToLineItems(SalesOrderID='0500000005',ItemPosition='0000000010')/Note", "First version.");
+                that.oModel.setProperty("/SalesOrderSet('0500000005')/ToLineItems(SalesOrderID='0500000005',ItemPosition='0000000010')/Note", "Second version.");
+                that.oModel.submitChanges({
+                    success: function(){
+                        assert.equal(that.iInvalidationCounter, 0, "Check number of cache invalidations necessary.");
+                        var sLastRequest = that.oRequestStub.args[that.oRequestStub.args.length - 1][0];
+
+                        var sDeepPath = sLastRequest["data"]["__batchRequests"][0].__changeRequests[0].deepPath;
+                        var sMessageScopeHeader = sLastRequest["data"]["__batchRequests"][0].__changeRequests[0].headers["sap-message-scope"];
+
+                        var aParts = sDeepPath.split("/");
+                        assert.equal(sMessageScopeHeader, "/" + aParts[1]);
+                        assert.equal(sDeepPath, "/SalesOrderSet('0500000005')/ToLineItems(SalesOrderID='0500000005',ItemPosition='0000000010')/Note", "Deep path set correctly.");
+                        return checkIfCacheEntriesAreValid(that.oModel, assert).then(done);
+                  }
+              });
+            });
+
+
     });
 
 
@@ -436,15 +474,12 @@ sap.ui.define([
                 success: function(){
                     var oSalesOrderLineItemSetCtx = that.oModel.createBindingContext("ToLineItems(SalesOrderID='0500000000',ItemPosition='0000000010')", oSalesOrderCtx);
                     assert.equal(oSalesOrderLineItemSetCtx && oSalesOrderLineItemSetCtx.sDeepPath, "/SalesOrderSet('0500000000')/ToLineItems(SalesOrderID='0500000000',ItemPosition='0000000010')","Deep path is set.");
-                    that.oModel.read("ToProduct", {
-                        context: oSalesOrderLineItemSetCtx,
-                        success: function(){
-                            var oProduct = that.oModel.createBindingContext("ToProduct", oSalesOrderLineItemSetCtx);
-                            assert.equal(oProduct && oProduct.sDeepPath, "/SalesOrderSet('0500000000')/ToLineItems(SalesOrderID='0500000000',ItemPosition='0000000010')/ToProduct", "Deep path is set.");
-                            assert.equal(that.oStubGetEntitySetByPath.callCount, 11, "Check number of cache misses.");
-                            assert.equal(that.iInvalidationCounter, 0, "Check number of cache invalidations necessary.");
-                            checkIfCacheEntriesAreValid(that.oModel, assert).then(done);
-                        }
+                    that.oModel.createBindingContext("ToProduct", oSalesOrderLineItemSetCtx, undefined, function(oProductCtx){
+                        assert.equal(oProductCtx.sDeepPath, "/SalesOrderSet('0500000000')/ToLineItems(SalesOrderID='0500000000',ItemPosition='0000000010')/ToProduct", "Deep path is set.");
+                        assert.equal(that.oStubGetEntitySetByPath.callCount, 12, "Check number of cache misses.");
+                        assert.equal(that.iInvalidationCounter, 0, "Check number of cache invalidations necessary.");
+                        assert.equal(getLastRequest(that).deepPath, "/SalesOrderSet('0500000000')/ToLineItems(SalesOrderID='0500000000',ItemPosition='0000000010')/ToProduct", "Deep path is set when request is triggered by createBindingContext.");
+                        checkIfCacheEntriesAreValid(that.oModel, assert).then(done);
                     });
                 }
             });

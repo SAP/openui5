@@ -28,6 +28,11 @@ sap.ui.define([
 	var oInput1, oInput2, oInput3, oInput4, oLabel1, oLabel2, oString, oInteger, oNrFormat, oStreet, oZip, oNr;
 	var oControlProcessor;
 
+	var oFakeMsgProcessor = {
+		_getFunctionImportMetadata: function(){},
+		resolve: function(){}
+	};
+
 	function createControls() {
 		// create some control for testing
 		oInput1 = new Input({value:"{path:'/form/firstname'}"});
@@ -442,7 +447,7 @@ sap.ui.define([
 
 	QUnit.test("Message parsing: Filter out duplicates with messages in response header", function(assert){
 
-		var oOdataMessageParser = new ODataMessageParser("fakeService", {_getFunctionImportMetadata: function(){}});
+		var oOdataMessageParser = new ODataMessageParser("fakeService", oFakeMsgProcessor);
 		var oResponse = {
 			headers: {
 				"sap-message" : '{' +
@@ -466,7 +471,7 @@ sap.ui.define([
 	});
 
 	QUnit.test("Message parsing: Filter out duplicates with messages in response body", function(assert){
-		var oOdataMessageParser = new ODataMessageParser("fakeService", {_getFunctionImportMetadata: function(){}});
+		var oOdataMessageParser = new ODataMessageParser("fakeService", oFakeMsgProcessor);
 		var oResponse = {
 			body: '\<?xml version="1.0" encoding="utf-8"?>\
 				<error xmlns="http://schemas.microsoft.com/ado/2007/08/dataservices/metadata">\
