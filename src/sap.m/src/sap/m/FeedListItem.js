@@ -427,7 +427,7 @@ function(
 		var sImgId = this.getId() + '-icon';
 		var mProperties = {
 			src: sIconSrc,
-			alt: encodeURI(this.getSender()),
+			alt: this.getSender(),
 			densityAware: this.getIconDensityAware(),
 			decorative: false,
 			useIconTooltip: false
