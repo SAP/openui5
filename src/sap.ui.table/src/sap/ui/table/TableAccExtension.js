@@ -411,7 +411,7 @@ sap.ui.define([
 
 			ExtensionHelper.performCellModifications(this, $Cell, aDefaultLabels, null, aLabels, aDescriptions, sText,
 				function(aLabels, aDescriptions, bRowChange, bColChange, bInitial) {
-					var bContainsTreeIcon = $Cell.find(".sapUiTableTreeIcon").length == 1;
+					var bContainsTreeIcon = $Cell.find(".sapUiTableTreeIcon").not(".sapUiTableTreeIconLeaf").length == 1;
 
 					if ((bContainsTreeIcon || TableUtils.Grouping.isInGroupingRow($Cell)) && (bRowChange || bColChange)){
 						aDescriptions.push(oTable.getId() + (!oTableInstances.row._bIsExpanded ? "-rowexpandtext" : "-rowcollapsetext"));

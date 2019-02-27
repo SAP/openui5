@@ -276,7 +276,7 @@ sap.ui.define([
 		if ((iIndex == 0 && !bGroup) || iIndex == 2 || iIndex == 4) {
 			aDescriptions.push(oTable.getId() + "-toggleedit");
 		}
-		if (oTable instanceof sap.ui.table.TreeTable && iIndex == 0 || bGroup){
+		if (oTable instanceof sap.ui.table.TreeTable && iIndex == 0 && $Cell.find(".sapUiTableTreeIcon").not(".sapUiTableTreeIconLeaf").length == 1 || bGroup){
 			aDescriptions.push(oTable.getId() + (bExpanded ? "-rowcollapsetext" : "-rowexpandtext"));
 		}
 
@@ -429,6 +429,8 @@ sap.ui.define([
 			setTimeout(function(){
 				$Cell = getCell(0, 0, true, assert, oTreeTable);
 				testAriaDescriptionsForFocusedDataCell($Cell, 0, 0, assert, {firstTime: true, colChange: true, table: oTreeTable}, true);
+				$Cell = getCell(1, 0, true, assert, oTreeTable);
+				testAriaDescriptionsForFocusedDataCell($Cell, 1, 0, assert, {firstTime: true, colChange: false, table: oTreeTable}, false);
 				$Cell = getCell(2, 0, true, assert, oTreeTable);
 				testAriaDescriptionsForFocusedDataCell($Cell, 2, 0, assert, {firstTime: true, colChange: true, table: oTreeTable}, true);
 
