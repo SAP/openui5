@@ -389,7 +389,12 @@ sap.ui.define([
 		this.bIgnoreOpenerDOMRef = false;
 
 		// Open the sap.ui.core.Popup
-		this.getPopup().open(0, my, at, of, offset || "0 0", collision || "_sapUiCommonsMenuFlip _sapUiCommonsMenuFlip", true);
+		this.getPopup().open(0, my, at, of, offset || "0 0", collision || "_sapUiCommonsMenuFlip _sapUiCommonsMenuFlip", function() {
+			var oOfDom = this.getPopup()._getOfDom(of);
+			if (!oOfDom || !jQuery(oOfDom).is(":visible")) {
+				this.close();
+			}
+		}.bind(this));
 		this.bOpen = true;
 
 		Device.resize.attachHandler(this._handleResizeChange, this);
