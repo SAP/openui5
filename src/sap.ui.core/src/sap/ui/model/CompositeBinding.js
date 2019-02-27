@@ -182,13 +182,7 @@ sap.ui.define([
 				return this.getInternalValue();
 			default:
 				oInternalType = this.sInternalType && DataType.getType(this.sInternalType);
-				if (this.bRawValues) {
-					aValues = this.getValue();
-				} else {
-					this.aBindings.forEach(function(oBinding) {
-						aValues.push(this.bInternalValues ? oBinding.getInternalValue() : oBinding.getExternalValue());
-					}.bind(this));
-				}
+				aValues = this.getCurrentValues();
 
 				if (this.fnFormatter) {
 					oValue = this.fnFormatter.apply(this, aValues);
@@ -242,18 +236,12 @@ sap.ui.define([
 			pValues = SyncPromise.resolve().then(function() {
 				var aCurrentValues;
 				if (that.oType.getParseWithValues()) {
-					aCurrentValues = [];
-					if (that.bRawValues) {
-						aCurrentValues = that.getValue();
-					} else {
-						aCurrentValues = that.aBindings.map(function(oBinding) {
-							return oBinding.getExternalValue();
-						});
-					}
+					aCurrentValues = that.getCurrentValues();
 				}
 				return that.oType.parseValue(oValue, that.sInternalType, aCurrentValues);
 			}).then(function(aValues) {
-				return SyncPromise.all([aValues, that.oType.validateValue(aValues)]);
+				var aValidateValues = that.getValidateValues(aValues);
+				return SyncPromise.all([aValues, that.oType.validateValue(aValidateValues)]);
 			}).then(function(aResult) {
 				return aResult[0];
 			}).catch(function(oException) {
@@ -412,6 +400,51 @@ sap.ui.define([
 			oDataState.setValue(that.getValue());
 			oDataState.setInvalidValue(undefined);
 		}).unwrap();
+	};
+
+	/**
+	 * Returns an array with the current values as available in the bindings.
+	 * Depending on the raw/internal value flags, this may return raw/internal values.
+	 *
+	 * @return {array} the values of all bindings
+	 *
+	 * @private
+	 */
+	CompositeBinding.prototype.getCurrentValues = function() {
+		if (this.bRawValues) {
+			return this.getRawValue();
+		} else if (this.bInternalValues) {
+			return this.getInternalValue();
+		} else {
+			return this.aBindings.map(function(oBinding) {
+				return oBinding.getExternalValue();
+			});
+		}
+	};
+
+	/**
+	 * Returns values to validate. In case the value array does contain undefined values
+	 * they will be filled with actual data of nested bindings. This ensures the validate
+	 * method always gets the full set of values to validate, even if partial updates are
+	 * used.
+	 *
+	 * @return {array} Array of values used for validation
+	 *
+	 * @private
+	 */
+	CompositeBinding.prototype.getValidateValues = function(aValues) {
+		var aCurrentValues, bPartialUpdate,
+			aValidateValues = aValues;
+		bPartialUpdate = this.aBindings.some(function(vPart, i) {
+			return aValues[i] === undefined;
+		});
+		if (bPartialUpdate) {
+			aCurrentValues = this.getCurrentValues();
+			aValidateValues = aCurrentValues.map(function(vValue, i) {
+				return aValues[i] === undefined ? vValue : aValues[i];
+			});
+		}
+		return aValidateValues;
 	};
 
 	/**
