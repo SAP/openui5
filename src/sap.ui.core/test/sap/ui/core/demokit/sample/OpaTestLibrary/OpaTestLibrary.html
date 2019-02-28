@@ -51,10 +51,13 @@
 						.iSetTheFilter("Sample1");
 
 					Then.onTheListPage
-						.theResultListIsVisible(2);
+						.theResultListIsVisible(2)
+						.and
+						.iTeardownMyApp();
 				});
 
 				opaTest("Should navigate to details", function (Given, When, Then) {
+					Given.iStartMyAppInAFrame("applicationUnderTest/index.html");
 					When.onTheListPage
 						.iNavigateFromListItem("name", "Sample12");
 
