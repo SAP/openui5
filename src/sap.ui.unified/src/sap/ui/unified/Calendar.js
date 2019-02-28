@@ -993,7 +993,9 @@ sap.ui.define([
 
 	Calendar.prototype.onmousedown = function(oEvent){
 
-		oEvent.preventDefault(); // to prevent focus set outside of DatePicker
+		if (oEvent.cancelable) {
+			oEvent.preventDefault(); // to prevent focus set outside of DatePicker
+		}
 		oEvent.setMark("cancelAutoClose");
 
 	};
