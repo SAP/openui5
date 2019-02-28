@@ -922,13 +922,13 @@ sap.ui.define([
 	 * @param {string} sLayer - Layer for which changes shall be deleted
 	 * @param {string} [sGenerator] - Generator of changes (optional)
 	 * @param {sap.ui.core.Component} [oComponent] - Component instance (optional)
-	 * @param {string} [sSelectorString] - Selector IDs as comma-separated list (optional)
-	 * @param {string} [sChangeTypeString] - Types of changes as comma-separated list (optional)
+	 * @param {string[]} [aSelectorIds] - Selector IDs in local format (optional)
+	 * @param {string[]} [aChangeTypes] - Types of changes (optional)
 	 *
-	 * @returns {Promise} Promise that resolves with a list of the deleted changes in the response
+	 * @returns {Promise} Promise that resolves after the deletion took place
 	 */
-	FlexController.prototype.resetChanges = function (sLayer, sGenerator, oComponent, sSelectorString, sChangeTypeString) {
-		return this._oChangePersistence.resetChanges(sLayer, sGenerator, sSelectorString, sChangeTypeString)
+	FlexController.prototype.resetChanges = function (sLayer, sGenerator, oComponent, aSelectorIds, aChangeTypes) {
+		return this._oChangePersistence.resetChanges(sLayer, sGenerator, aSelectorIds, aChangeTypes)
 			.then( function(oResponse) {
 				if (oComponent) {
 					var oModel = oComponent.getModel("$FlexVariants");
@@ -940,7 +940,6 @@ sap.ui.define([
 						});
 					}
 				}
-				return oResponse;
 		});
 	};
 
