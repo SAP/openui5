@@ -36,9 +36,10 @@ sap.ui.define([
 	 * @version ${version}
 	 *
 	 * @constructor
-	 * @private
+	 * @public
 	 * @since 1.62
 	 * @alias sap.f.cards.NumericHeader
+	 * @ui5-metamodel This control/element also will be described in the UI5 (legacy) designtime metamodel
 	 */
 	var NumericHeader = Control.extend("sap.f.cards.NumericHeader", {
 		metadata: {
@@ -117,7 +118,7 @@ sap.ui.define([
 				/**
 				 * Displays the main number indicator
 				 */
-				_mainIndicator: { type: "sap.m.NumericContent", multiple: false }
+				mainIndicator: { type: "sap.m.NumericContent", multiple: false }
 			},
 			events: {
 
@@ -334,7 +335,7 @@ sap.ui.define([
 	 * @return {sap.m.NumericContent} The main indicator aggregation
 	 */
 	NumericHeader.prototype._getMainIndicator = function () {
-		var oControl = this.getAggregation("_mainIndicator");
+		var oControl = this.getAggregation("mainIndicator");
 
 		if (!oControl) {
 			oControl = new NumericContent({
@@ -344,7 +345,7 @@ sap.ui.define([
 				animateTextChange: false,
 				truncateValueTo: 5
 			});
-			this.setAggregation("_mainIndicator", oControl);
+			this.setAggregation("mainIndicator", oControl);
 		}
 
 		return oControl;

@@ -17,7 +17,7 @@ sap.ui.define([
 	 * @param {object} [mSettings] Initial settings for the new control
 	 *
 	 * @class
-	 * A control that represents a small container with a header and content.
+	 * A control that represents a container with a predefined header and content.
 	 *
 	 * @extends sap.ui.core.Control
 	 *
@@ -25,8 +25,8 @@ sap.ui.define([
 	 * @version ${version}
 	 *
 	 * @constructor
-	 * @experimental
-	 * @since 1.60
+	 * @public
+	 * @since 1.64
 	 * @alias sap.f.Card
 	 * @ui5-metamodel This control/element also will be described in the UI5 (legacy) designtime metamodel
 	 */

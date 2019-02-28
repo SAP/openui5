@@ -32,6 +32,9 @@ sap.ui.define(["sap/ui/base/DataType",
 		],
 		controls: [
 			"sap.f.Avatar",
+			"sap.f.cards.Header",
+			"sap.f.cards.NumericHeader",
+			"sap.f.cards.NumericSideIndicator",
 			"sap.f.Card",
 			"sap.f.CardContainer",
 			"sap.f.DynamicPage",
@@ -441,6 +444,7 @@ sap.ui.define(["sap/ui/base/DataType",
 	 * @public
 	 * @interface
 	 * @name sap.f.cards.IHeader
+	 * @ui5-metamodel This interface also will be described in the UI5 (legacy) designtime metamodel
 	 */
 
 	/**
