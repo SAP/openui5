@@ -13,7 +13,8 @@ sap.ui.define([
 	'sap/ui/core/library',
 	'sap/ui/Device',
 	'sap/ui/core/InvisibleText',
-	'./SplitButtonRenderer'
+	'./SplitButtonRenderer',
+	"sap/ui/events/KeyCodes"
 ],
 function(
 	library,
@@ -25,7 +26,8 @@ function(
 	coreLibrary,
 	Device,
 	InvisibleText,
-	SplitButtonRenderer
+	SplitButtonRenderer,
+	KeyCodes
 	) {
 		"use strict";
 
@@ -274,12 +276,20 @@ function(
 			return sText.charAt(0).toUpperCase() + sText.slice(1);
 		}
 
-		SplitButton.prototype.onsapenter = function(oEvent) {
-			this._getTextButton().firePress();
+		SplitButton.prototype.onkeydown = function(oEvent) {
+			if (oEvent.which === KeyCodes.SPACE) {
+				oEvent.preventDefault();
+			}
+
+			if (oEvent.which === KeyCodes.ENTER) {
+				this._getTextButton().firePress({/* no parameters */ });
+			}
 		};
 
-		SplitButton.prototype.onsapspace = function(oEvent) {
-			this._getTextButton().firePress();
+		SplitButton.prototype.onkeyup = function(oEvent) {
+			if (oEvent.which === KeyCodes.SPACE) {
+				this._getTextButton().firePress({/* no parameters */ });
+			}
 		};
 
 		SplitButton.prototype.onsapup = function(oEvent) {
