@@ -186,5 +186,16 @@
         "references": []
       }
     ]
+  },
+  "1.60.9": {
+    "date": "February 2019",
+    "notes": [
+      {
+        "id": "715cad1342d793d08ff62ff117ed85dcb49ae281",
+        "type": "FIX",
+        "text": " sap.m.ObjectAttribute: wraps in Table correctly",
+        "references": []
+      }
+    ]
   }
 }

@@ -5177,5 +5177,16 @@
         "references": []
       }
     ]
+  },
+  "1.44.40": {
+    "date": "February 2019",
+    "notes": [
+      {
+        "id": "61b35f3a2c7bc4a59562c8606ea0cdab9ca7f05f",
+        "type": "FIX",
+        "text": " P13nDimMeasurePanel: downport of Opa tests from rel-1.58",
+        "references": []
+      }
+    ]
   }
 }

@@ -2289,5 +2289,16 @@
         "references": []
       }
     ]
+  },
+  "1.44.40": {
+    "date": "February 2019",
+    "notes": [
+      {
+        "id": "b4abb67ec28bfa6ad40fc10317ba1bdc3dcf9c0e",
+        "type": "FIX",
+        "text": " Model: Reduce message check calls",
+        "references": []
+      }
+    ]
   }
 }

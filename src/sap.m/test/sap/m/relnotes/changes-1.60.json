@@ -1496,5 +1496,40 @@
         "references": []
       }
     ]
+  },
+  "1.60.9": {
+    "date": "February 2019",
+    "notes": [
+      {
+        "id": "715cad1342d793d08ff62ff117ed85dcb49ae281",
+        "type": "FIX",
+        "text": " sap.m.ObjectAttribute: wraps in Table correctly",
+        "references": []
+      },
+      {
+        "id": "a483a6e8695d585e55bcd116740e9fb5647fd88a",
+        "type": "FIX",
+        "text": " sap.m.ObjectHeader: example fixed for mobile",
+        "references": []
+      },
+      {
+        "id": "1c2953ee63fc29775f0d2084b533ada09d4a5fd0",
+        "type": "FIX",
+        "text": " sap.m.ObjectIdentifier: wraps on Edge correctly",
+        "references": []
+      },
+      {
+        "id": "caec14fcb711c2bf42cbb454d389f6be3ad143ee",
+        "type": "FIX",
+        "text": " sap.m.Wizard: showNextButton\u003dfalse now works on initial rendering",
+        "references": []
+      },
+      {
+        "id": "6a2608e3e7984af03bab0b76c42d2b30e402e4a3",
+        "type": "FIX",
+        "text": "sap.m.src.sap.m.FeedListItem.js: Alt Text of Image has irrelevent information due to Encoding.",
+        "references": []
+      }
+    ]
   }
 }

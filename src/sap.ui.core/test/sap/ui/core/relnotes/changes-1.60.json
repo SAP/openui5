@@ -592,5 +592,34 @@
         "references": []
       }
     ]
+  },
+  "1.60.9": {
+    "date": "February 2019",
+    "notes": [
+      {
+        "id": "fe713d43c12c355a6db164618eabd5dca6c09668",
+        "type": "FIX",
+        "text": " Added missing RJS converter method to Core",
+        "references": []
+      },
+      {
+        "id": "f32f73dc6bcad94f673801be6a44009151338b40",
+        "type": "FIX",
+        "text": " check isInvalidateSuppressed",
+        "references": []
+      },
+      {
+        "id": "b8cfcccec353b9646eea8f10742c5571bb76fed9",
+        "type": "FIX",
+        "text": " core.Popup: blur focus element only when it\u0027s not in a Popup",
+        "references": []
+      },
+      {
+        "id": "7c77ab49f066b88c5d00f1657ff8436a34c46118",
+        "type": "FIX",
+        "text": " core.Popup: check the existence of blur method before call it",
+        "references": []
+      }
+    ]
   }
 }
