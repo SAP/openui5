@@ -59,13 +59,17 @@ function(oCore, Device, URI) {
 
 	QUnit.test("Focus does not have outline-offset", function (assert) {
 		// Arrange
-		var $oAvatar = this.oAvatar.$();
+		var $oAvatar = this.oAvatar.$(),
+			sOffset,
+			bOk;
 
 		// Act
 		$oAvatar.focus();
+		sOffset = $oAvatar.css("outline-offset");
+		bOk = sOffset === "0px" || sOffset === undefined; // IE does not support outline-offset
 
 		// Assert
-		assert.strictEqual($oAvatar.css("outline-offset"), "0px", "Outline-offset is 0px");
+		assert.ok(bOk, "Outline-offset is not set");
 	});
 
 	QUnit.module("Rendering different sizes", {
