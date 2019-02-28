@@ -7,9 +7,11 @@ sap.ui.define([
 	'sap/m/library',
 	'sap/ui/Device',
 	"sap/base/Log",
+	'sap/m/Link',
+	'sap/m/Text',
 	"sap/ui/thirdparty/jquery"
 ],
-	function(Control, coreLibrary, library, Device, Log, jQuery) {
+	function(Control, coreLibrary, library, Device, Log, Link, Text, jQuery) {
 	"use strict";
 
 
@@ -174,13 +176,13 @@ sap.ui.define([
 	 */
 	ObjectHeaderRenderer._renderIntro = function(oRM, oOH, sIntroClass, sIntroActiveClass) {
 		if (oOH.getIntroActive()) {
-			oOH._introText = new sap.m.Link(oOH.getId() + "-intro");
+			oOH._introText = new Link(oOH.getId() + "-intro");
 			oOH._introText.setText(oOH.getIntro());
 			oOH._introText.setHref(oOH.getIntroHref());
 			oOH._introText.setTarget(oOH.getIntroTarget());
 			oOH._introText.press = oOH.introPress;
 		} else {
-			oOH._introText = new sap.m.Text(oOH.getId() + "-intro");
+			oOH._introText = new Text(oOH.getId() + "-intro");
 			oOH._introText.setText(oOH.getIntro());
 			oOH._introText.setMaxLines(3);
 		}

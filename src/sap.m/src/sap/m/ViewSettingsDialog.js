@@ -19,7 +19,15 @@ sap.ui.define([
 	'./ViewSettingsDialogRenderer',
 	"sap/m/GroupHeaderListItem",
 	"sap/base/Log",
-	"sap/ui/thirdparty/jquery",
+	"./NavContainer",
+	"./Label",
+	"./Bar",
+	"./SegmentedButton",
+	"./Button",
+	"./Page",
+	"./Dialog",
+	"./ViewSettingsItem",
+  "sap/ui/thirdparty/jquery",
 	// jQuery Plugin "firstFocusableDomRef"
 	"sap/ui/dom/jquery/Focusable"
 ],
@@ -39,6 +47,14 @@ function(
 	ViewSettingsDialogRenderer,
 	GroupHeaderListItem,
 	Log,
+	NavContainer,
+	Label,
+	Bar,
+	SegmentedButton,
+	Button,
+	Page,
+	Dialog,
+	ViewSettingsItem,
 	jQuery
 ) {
 	"use strict";
@@ -1509,7 +1525,7 @@ function(
 
 		// create an internal instance of a dialog
 		if (this._dialog === undefined) {
-			this._dialog = new sap.m.Dialog(this.getId() + "-dialog", {
+			this._dialog = new Dialog(this.getId() + "-dialog", {
 				ariaLabelledBy      : this._sTitleLabelId,
 				showHeader          : false,
 				stretch             : Device.system.phone,
@@ -1518,11 +1534,11 @@ function(
 				contentWidth        : this._sDialogWidth,
 				contentHeight       : this._sDialogHeight,
 				content             : this._getNavContainer(),
-				beginButton         : new sap.m.Button(this.getId() + "-acceptbutton", {
+				beginButton         : new Button(this.getId() + "-acceptbutton", {
 					text : this._rb.getText("VIEWSETTINGS_ACCEPT"),
 					type: sap.m.ButtonType.Emphasized
 				}).attachPress(this._onConfirm, this),
-				endButton           : new sap.m.Button(this.getId() + "-cancelbutton", {
+				endButton           : new Button(this.getId() + "-cancelbutton", {
 					text : this._rb.getText("VIEWSETTINGS_CANCEL")
 				}).attachPress(this._onCancel, this)
 			}).addStyleClass("sapMVSD");
@@ -1561,7 +1577,7 @@ function(
 	ViewSettingsDialog.prototype._getNavContainer = function() {
 		// create an internal instance of a dialog
 		if (this._navContainer === undefined) {
-			this._navContainer = new sap.m.NavContainer(this.getId()
+			this._navContainer = new NavContainer(this.getId()
 			+ '-navcontainer', {
 				pages : []
 			});
@@ -1576,7 +1592,7 @@ function(
 	 */
 	ViewSettingsDialog.prototype._getTitleLabel = function() {
 		if (this._titleLabel === undefined) {
-			this._titleLabel = new sap.m.Label(this._sTitleLabelId, {
+			this._titleLabel = new Label(this._sTitleLabelId, {
 				text : this._rb.getText("VIEWSETTINGS_TITLE")
 			}).addStyleClass("sapMVSDTitle");
 		}
@@ -1592,7 +1608,7 @@ function(
 		var that = this;
 
 		if (this._resetButton === undefined) {
-			this._resetButton = new sap.m.Button(this.getId() + "-resetbutton", {
+			this._resetButton = new Button(this.getId() + "-resetbutton", {
 				press : function() {
 					that._onClearFilters();
 				},
@@ -1609,7 +1625,7 @@ function(
 	 */
 	ViewSettingsDialog.prototype._getDetailTitleLabel = function() {
 		if (this._detailTitleLabel === undefined) {
-			this._detailTitleLabel = new sap.m.Label(this.getId() + "-detailtitle",
+			this._detailTitleLabel = new Label(this.getId() + "-detailtitle",
 				{
 					text : this._rb.getText("VIEWSETTINGS_TITLE_FILTERBY")
 				}).addStyleClass("sapMVSDTitle");
@@ -1624,7 +1640,7 @@ function(
 	 */
 	ViewSettingsDialog.prototype._getHeader = function() {
 		if (this._header === undefined) {
-			this._header = new sap.m.Bar({
+			this._header = new Bar({
 				contentMiddle : [ this._getTitleLabel() ]
 			}).addStyleClass("sapMVSDBar");
 		}
@@ -1638,7 +1654,7 @@ function(
 	 */
 	ViewSettingsDialog.prototype._getSubHeader = function() {
 		if (this._subHeader === undefined) {
-			this._subHeader = new sap.m.Bar({
+			this._subHeader = new Bar({
 				contentLeft : [ this._getSegmentedButton() ]
 			}).addStyleClass("sapMVSDBar");
 		}
@@ -1657,7 +1673,7 @@ function(
 			i                   = 0;
 
 		if (this._segmentedButton === undefined) {
-			this._segmentedButton = new sap.m.SegmentedButton({
+			this._segmentedButton = new SegmentedButton({
 				select : function(oEvent) {
 					var selectedId = oEvent.getParameter('id');
 					if (selectedId === that.getId() + "-sortbutton") {
@@ -1695,7 +1711,7 @@ function(
 	 */
 	ViewSettingsDialog.prototype._getSortButton = function() {
 		if (this._sortButton === undefined) {
-			this._sortButton = new sap.m.Button(this.getId() + "-sortbutton", {
+			this._sortButton = new Button(this.getId() + "-sortbutton", {
 				icon : IconPool.getIconURI("sort"),
 				tooltip : this._rb.getText("VIEWSETTINGS_TITLE_SORT")
 			});
@@ -1710,7 +1726,7 @@ function(
 	 */
 	ViewSettingsDialog.prototype._getGroupButton = function() {
 		if (this._groupButton === undefined) {
-			this._groupButton = new sap.m.Button(this.getId() + "-groupbutton", {
+			this._groupButton = new Button(this.getId() + "-groupbutton", {
 				icon : IconPool.getIconURI("group-2"),
 				tooltip : this._rb.getText("VIEWSETTINGS_TITLE_GROUP")
 			});
@@ -1725,7 +1741,7 @@ function(
 	 */
 	ViewSettingsDialog.prototype._getFilterButton = function() {
 		if (this._filterButton === undefined) {
-			this._filterButton = new sap.m.Button(this.getId() + "-filterbutton", {
+			this._filterButton = new Button(this.getId() + "-filterbutton", {
 				icon : IconPool.getIconURI("filter"),
 				tooltip : this._rb.getText("VIEWSETTINGS_TITLE_FILTER")
 			});
@@ -1741,7 +1757,7 @@ function(
 	 */
 	ViewSettingsDialog.prototype._getPage1 = function(bSuppressCreation) {
 		if (this._page1 === undefined && !bSuppressCreation) {
-			this._page1 = new sap.m.Page(this.getId() + '-page1', {
+			this._page1 = new Page(this.getId() + '-page1', {
 				title           : this._rb.getText("VIEWSETTINGS_TITLE"),
 				customHeader    : this._getHeader()
 			});
@@ -1761,23 +1777,23 @@ function(
 
 		if (this._page2 === undefined) {
 			// init internal page content
-			oBackButton = new sap.m.Button(this.getId() + "-backbutton", {
+			oBackButton = new Button(this.getId() + "-backbutton", {
 				icon : IconPool.getIconURI("nav-back"),
 				press : [this._pressBackButton, this]
 			});
-			oDetailResetButton = new sap.m.Button(this.getId()
+			oDetailResetButton = new Button(this.getId()
 			+ "-detailresetbutton", {
 				press : function() {
 					that._onClearFilters();
 				},
 				text : this._rb.getText("VIEWSETTINGS_RESET")
 			});
-			oDetailHeader = new sap.m.Bar({
+			oDetailHeader = new Bar({
 				contentLeft     : [ oBackButton ],
 				contentMiddle   : [ this._getDetailTitleLabel() ],
 				contentRight    : [ oDetailResetButton ]
 			}).addStyleClass("sapMVSDBar");
-			this._page2 = new sap.m.Page(this.getId() + '-page2', {
+			this._page2 = new Page(this.getId() + '-page2', {
 				title           : this._rb.getText("VIEWSETTINGS_TITLE_FILTERBY"),
 				customHeader    : oDetailHeader
 			});
@@ -1954,7 +1970,7 @@ function(
 
 			if (!this._oGroupingNoneItem || this._oGroupingNoneItem.bIsDestroyed) {
 				bHasSelections = !!this.getSelectedGroupItem();
-				this._oGroupingNoneItem = new sap.m.ViewSettingsItem({
+				this._oGroupingNoneItem = new ViewSettingsItem({
 					text: this._rb.getText("VIEWSETTINGS_NONE_ITEM"),
 					selected: !bHasSelections,
 					/**
@@ -2185,7 +2201,7 @@ function(
 		if (oButton) {
 			return oButton;
 		} else {
-			return new sap.m.Button({
+			return new Button({
 				id      : sButtonId,
 				icon    : oCustomTab.getIcon(),
 				tooltip : oCustomTab.getTooltip()

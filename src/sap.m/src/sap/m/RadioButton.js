@@ -8,6 +8,7 @@ sap.ui.define([
 	'sap/ui/core/Control',
 	'sap/ui/core/EnabledPropagator',
 	'./RadioButtonGroup',
+	'./Label',
 	'sap/ui/core/library',
 	'sap/base/strings/capitalize',
 	'./RadioButtonRenderer'
@@ -17,6 +18,7 @@ function(
 	Control,
 	EnabledPropagator,
 	RadioButtonGroup,
+	Label,
 	coreLibrary,
 	capitalize,
 	RadioButtonRenderer
@@ -622,7 +624,7 @@ function(
 	 * @private
 	 */
 	RadioButton.prototype._createLabel = function(prop, value) {
-		this._oLabel = new sap.m.Label(this.getId() + "-label").addStyleClass("sapMRbBLabel").setParent(this, null, true);
+		this._oLabel = new Label(this.getId() + "-label").addStyleClass("sapMRbBLabel").setParent(this, null, true);
 		this._oLabel.setProperty(prop, value, false);
 	};
 

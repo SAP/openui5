@@ -3,8 +3,8 @@
  * ${copyright}
  */
 
-sap.ui.define(['./BarInPageEnabler', 'sap/ui/Device', "sap/base/Log"],
-	function(BarInPageEnabler, Device, Log) {
+sap.ui.define(['./BarInPageEnabler', 'sap/ui/Device', "sap/base/Log", 'sap/m/HBox'],
+	function(BarInPageEnabler, Device, Log, HBox) {
 	"use strict";
 
 
@@ -86,7 +86,7 @@ sap.ui.define(['./BarInPageEnabler', 'sap/ui/Device', "sap/base/Log"],
 		oRM.writeClasses();
 		oRM.write(">");
 		if (oControl.getEnableFlexBox()) {
-			oControl._oflexBox = oControl._oflexBox || new sap.m.HBox(oControl.getId() + "-BarPH", {alignItems: "Center"}).addStyleClass("sapMBarPH").setParent(oControl, null, true);
+			oControl._oflexBox = oControl._oflexBox || new HBox(oControl.getId() + "-BarPH", {alignItems: "Center"}).addStyleClass("sapMBarPH").setParent(oControl, null, true);
 			var bContentLeft = !!oControl.getContentLeft().length,
 				bContentMiddle = !!oControl.getContentMiddle().length,
 				bContentRight = !!oControl.getContentRight().length;

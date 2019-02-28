@@ -18,6 +18,7 @@ sap.ui.define([
 	'./Title',
 	'./Bar',
 	'./Toolbar',
+	'./StandardListItem',
 	'sap/ui/core/ResizeHandler',
 	'sap/ui/core/IconPool',
 	'./MultiInputRenderer',
@@ -44,6 +45,7 @@ function(
 	Title,
 	Bar,
 	Toolbar,
+	StandardListItem,
 	ResizeHandler,
 	IconPool,
 	MultiInputRenderer,
@@ -1640,7 +1642,7 @@ function(
 			return null;
 		}
 
-		var oListItem = new sap.m.StandardListItem({
+		var oListItem = new StandardListItem({
 			selected: true,
 			title: oToken.getText()
 		});

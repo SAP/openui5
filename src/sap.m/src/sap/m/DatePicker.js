@@ -19,6 +19,7 @@ sap.ui.define([
 	"sap/ui/core/IconPool",
 	"sap/ui/core/Popup",
 	"./InstanceManager",
+	"sap/ui/unified/DateRange",
 	// jQuery Plugin "cursorPos"
 	"sap/ui/dom/jquery/cursorPos"
 ],
@@ -37,7 +38,8 @@ sap.ui.define([
 		Log,
 		IconPool,
 		Popup,
-		InstanceManager
+		InstanceManager,
+		DateRange
 	) {
 	"use strict";
 
@@ -1030,7 +1032,7 @@ sap.ui.define([
 		var aVisibleDays = oCalendar._getVisibleDays();
 
 		// Convert to local JavaScript Date
-		return new sap.ui.unified.DateRange({
+		return new DateRange({
 			startDate: aVisibleDays[0].toLocalJSDate(), // First visible date
 			endDate: aVisibleDays[aVisibleDays.length - 1].toLocalJSDate() // Last visible date
 		});
@@ -1055,7 +1057,7 @@ sap.ui.define([
 						});
 					}.bind(this)
 				});
-			this._oDateRange = new sap.ui.unified.DateRange();
+			this._oDateRange = new DateRange();
 			this._oCalendar.addSelectedDate(this._oDateRange);
 			if (this.$().closest(".sapUiSizeCompact").length > 0) {
 				this._oCalendar.addStyleClass("sapUiSizeCompact");

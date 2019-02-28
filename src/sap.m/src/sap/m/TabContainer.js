@@ -7,9 +7,12 @@ sap.ui.define([
 	'./library',
 	'sap/ui/core/Control',
 	'sap/ui/core/IconPool',
-	'./TabContainerRenderer'
+	'./TabContainerRenderer',
+    './TabStrip',
+    './TabStripItem',
+    './Button'
 ],
-	function(library, Control, IconPool, TabContainerRenderer) {
+	function(library, Control, IconPool, TabContainerRenderer, TabStrip, TabStripItem, Button) {
 		"use strict";
 
 		// shortcut for sap.m.ButtonType
@@ -148,7 +151,7 @@ sap.ui.define([
 				}
 
 				Control.prototype.constructor.apply(this, arguments);
-				var oControl = new sap.m.TabStrip(this.getId() + "--tabstrip", {
+				var oControl = new TabStrip(this.getId() + "--tabstrip", {
 					hasSelect: true,
 					itemSelect: function(oEvent) {
 						var oItem = oEvent.getParameter("item"),
@@ -214,7 +217,7 @@ sap.ui.define([
 			var oRb = sap.ui.getCore().getLibraryResourceBundle("sap.m");
 
 			if (!oControl) {
-				oControl = new sap.m.Button({
+				oControl = new Button({
 					type: ButtonType.Transparent,
 					tooltip: oRb.getText("TABCONTAINER_ADD_NEW_TAB"),
 					icon: IconPool.getIconURI("add"),
@@ -427,7 +430,7 @@ sap.ui.define([
 			this.addAggregation("items", oItem, false);
 
 			this._getTabStrip().addItem(
-				new sap.m.TabStripItem({
+				new TabStripItem({
 					key: oItem.getId(),
 					text: oItem.getName(),
 					additionalText: oItem.getAdditionalText(),
@@ -464,7 +467,7 @@ sap.ui.define([
 		 */
 		TabContainer.prototype.insertItem = function(oItem, iIndex) {
 			this._getTabStrip().insertItem(
-				new sap.m.TabStripItem({
+				new TabStripItem({
 					key: oItem.getId(),
 					text: oItem.getName(),
 					additionalText: oItem.getAdditionalText(),

@@ -5,6 +5,8 @@
 // Provides control sap.m.SegmentedButton.
 sap.ui.define([
 	'./library',
+	'./Button',
+	'./Select',
 	'sap/ui/core/Control',
 	'sap/ui/core/EnabledPropagator',
 	'sap/ui/core/delegate/ItemNavigation',
@@ -15,6 +17,8 @@ sap.ui.define([
 ],
 function(
 	library,
+  Button,
+	Select,
 	Control,
 	EnabledPropagator,
 	ItemNavigation,
@@ -480,7 +484,7 @@ function(
 	 * @ui5-metamodel This method also will be described in the UI5 (legacy) designtime metamodel
 	 */
 	SegmentedButton.prototype.createButton = function (sText, sURI, bEnabled, sTextDirection) {
-		var oButton = new sap.m.Button();
+		var oButton = new Button();
 
 		if (sText !== null) {
 			oButton.setText(sText);
@@ -860,7 +864,7 @@ function(
 		var oSelect = this.getAggregation("_select");
 
 		if (!oSelect) {
-			oSelect = new sap.m.Select(this.getId() + "-select");
+			oSelect = new Select(this.getId() + "-select");
 			oSelect.attachChange(this._selectChangeHandler, this);
 			oSelect.addStyleClass("sapMSegBSelectWrapper");
 			this.setAggregation("_select", oSelect, true);

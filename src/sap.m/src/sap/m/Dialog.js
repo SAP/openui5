@@ -8,6 +8,7 @@ sap.ui.define([
 	'./InstanceManager',
 	'./AssociativeOverflowToolbar',
 	'./ToolbarSpacer',
+	'./Title',
 	'./library',
 	'sap/ui/core/Control',
 	'sap/ui/core/IconPool',
@@ -35,6 +36,7 @@ function(
 	InstanceManager,
 	AssociativeOverflowToolbar,
 	ToolbarSpacer,
+	Title,
 	library,
 	Control,
 	IconPool,
@@ -1587,7 +1589,7 @@ function(
 			if (this._headerTitle) {
 				this._headerTitle.setText(sTitle);
 			} else {
-				this._headerTitle = new sap.m.Title(this.getId() + "-title", {
+				this._headerTitle = new Title(this.getId() + "-title", {
 					text: sTitle,
 					level: "H2"
 				}).addStyleClass("sapMDialogTitle");

@@ -6,9 +6,10 @@ sap.ui.define([
 	'./FlexBoxStylingHelper',
 	'sap/m/library',
 	"sap/base/security/encodeXML",
-	"sap/base/Log"
+	"sap/base/Log",
+    "sap/m/FlexItemData"
 ],
-	function(FlexBoxStylingHelper, library, encodeXML, Log) {
+	function(FlexBoxStylingHelper, library, encodeXML, Log, FlexItemData) {
 	"use strict";
 
 	// shortcut for sap.m.FlexDirection
@@ -47,7 +48,7 @@ sap.ui.define([
 
 			// Set layout properties for flex item
 			var oLayoutData = oControl.getLayoutData();
-			if (oLayoutData instanceof sap.m.FlexItemData) {
+			if (oLayoutData instanceof FlexItemData) {
 				FlexBoxStylingHelper.setFlexItemStyles(oRm, oLayoutData);
 			}
 
@@ -150,11 +151,11 @@ sap.ui.define([
 
 		// If no layout data is set, create it so that an ID can be set on the wrapper
 		if (sWrapperTag && !oLayoutData) {
-			oItem.setAggregation("layoutData", new sap.m.FlexItemData(), true);
+			oItem.setAggregation("layoutData", new FlexItemData(), true);
 			oLayoutData = oItem.getLayoutData();
 		}
 
-		if (!(oLayoutData instanceof sap.m.FlexItemData)) {
+		if (!(oLayoutData instanceof FlexItemData)) {
 			if (oLayoutData) {
 				Log.warning(oLayoutData + " set on " + oItem + " is not of type sap.m.FlexItemData");
 			}

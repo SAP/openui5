@@ -16,6 +16,7 @@ sap.ui.define([
 	'sap/ui/core/InvisibleText',
 	'sap/ui/core/library',
 	'./LightBoxRenderer',
+	'sap/m/BusyIndicator',
 	"sap/ui/thirdparty/jquery"
 ],
 	function(
@@ -32,6 +33,7 @@ sap.ui.define([
 		InvisibleText,
 		coreLibrary,
 		LightBoxRenderer,
+		BusyIndicator,
 		jQuery
 	) {
 
@@ -393,7 +395,7 @@ sap.ui.define([
 			var busyIndicator = this.getAggregation("_busy");
 
 			if (!busyIndicator) {
-				busyIndicator = new sap.m.BusyIndicator();
+				busyIndicator = new BusyIndicator();
 				this.setAggregation("_busy", busyIndicator, true);
 			}
 

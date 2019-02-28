@@ -9,6 +9,7 @@ sap.ui.define([
 	'./Button',
 	'./InstanceManager',
 	'./library',
+	'./Title',
 	'sap/ui/core/Control',
 	'sap/ui/core/Popup',
 	'sap/ui/core/delegate/ScrollEnablement',
@@ -33,6 +34,7 @@ sap.ui.define([
 		Button,
 		InstanceManager,
 		library,
+    Title,
 		Control,
 		Popup,
 		ScrollEnablement,
@@ -2278,7 +2280,7 @@ sap.ui.define([
 			if (this._headerTitle) {
 				this._headerTitle.setText(sTitle);
 			} else {
-				this._headerTitle = new sap.m.Title(this.getId() + "-title", {
+				this._headerTitle = new Title(this.getId() + "-title", {
 					text: this.getTitle(),
 					level: "H2"
 				});

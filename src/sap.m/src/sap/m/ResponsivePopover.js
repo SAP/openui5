@@ -12,6 +12,9 @@ sap.ui.define([
 	'sap/ui/base/ManagedObject',
 	'sap/ui/Device',
 	'./ResponsivePopoverRenderer',
+	'./Toolbar',
+	'./ToolbarSpacer',
+	'./Button',
 	"sap/ui/thirdparty/jquery"
 ],
 	function(
@@ -23,6 +26,9 @@ sap.ui.define([
 		ManagedObject,
 		Device,
 		ResponsivePopoverRenderer,
+		Toolbar,
+		ToolbarSpacer,
+		Button,
 		jQuery
 	) {
 	"use strict";
@@ -438,7 +444,7 @@ sap.ui.define([
 	ResponsivePopover.prototype._getCloseButton = function(){
 		if (!this._oCloseButton) {
 			var that = this;
-			this._oCloseButton = new sap.m.Button(this.getId() + "-closeButton", {
+			this._oCloseButton = new Button(this.getId() + "-closeButton", {
 				icon: IconPool.getIconURI("decline"),
 				press: function() {
 					that._oControl._oCloseTrigger = this;
@@ -589,8 +595,8 @@ sap.ui.define([
 			return this._oFooter;
 		}
 
-		this._oFooter = new sap.m.Toolbar(this.getId() + "-footer", {
-			content: [new sap.m.ToolbarSpacer()]
+		this._oFooter = new Toolbar(this.getId() + "-footer", {
+			content: [new ToolbarSpacer()]
 		});
 
 		return this._oFooter;

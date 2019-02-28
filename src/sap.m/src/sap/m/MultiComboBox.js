@@ -13,6 +13,7 @@ sap.ui.define([
 	'./List',
 	'./Popover',
 	'./GroupHeaderListItem',
+	'./StandardListItem',
 	'./library',
 	'sap/ui/core/EnabledPropagator',
 	'sap/ui/core/IconPool',
@@ -44,6 +45,7 @@ function(
 	List,
 	Popover,
 	GroupHeaderListItem,
+  StandardListItem,
 	library,
 	EnabledPropagator,
 	IconPool,
@@ -1264,7 +1266,7 @@ function(
 		}
 
 		// Fill Tokenizer
-		var oToken = new sap.m.Token({
+		var oToken = new Token({
 			key: mOptions.key
 		});
 		oToken.setText(mOptions.item.getText());
@@ -1856,7 +1858,7 @@ function(
 	 * @private
 	 */
 	MultiComboBox.prototype._createTokenizer = function() {
-		var oTokenizer = new sap.m.Tokenizer({
+		var oTokenizer = new Tokenizer({
 			tokens: []
 		}).attachTokenChange(this._handleTokenChange, this);
 		oTokenizer._setAdjustable(true);
@@ -2702,7 +2704,7 @@ function(
 		sListItem = oRenderer.CSS_CLASS_MULTICOMBOBOX + "Item";
 		sListItemSelected = (this.isItemSelected(oItem)) ? sListItem + "Selected" : "";
 
-		oListItem = new sap.m.StandardListItem({
+		oListItem = new StandardListItem({
 			type: ListType.Active,
 			info: sAdditionalText,
 			visible: oItem.getEnabled()
@@ -2714,7 +2716,7 @@ function(
 		oListItem.setTitle(oItem.getText());
 
 		if (sListItemSelected) {
-			var oToken = new sap.m.Token({
+			var oToken = new Token({
 				key: oItem.getKey()
 			});
 			oToken.setText(oItem.getText());
