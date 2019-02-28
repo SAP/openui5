@@ -5,79 +5,129 @@
       {
         "id": "04a30baf94c43c1f7000a704a8ff6f450a5f64e1",
         "type": "FIX",
-        "text": " GridTable: Add additional aria label to column visibility items",
-        "references": []
+        "text": "GridTable: Add additional aria label to column visibility items",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "1880301090"
+          }
+        ]
       },
       {
         "id": "30c449c7d733816c065c219053776a902c566bd4",
         "type": "FIX",
-        "text": " Table: Avoid horizontal scrolling of cell content on focus in rtl",
-        "references": []
+        "text": "Table: Avoid horizontal scrolling of cell content on focus in rtl",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "1880453585"
+          }
+        ]
       },
       {
         "id": "ab9eeabf2bfc9f66aaf26246ef954fc27b1b3631",
         "type": "FIX",
-        "text": " Table: Scrolling to last row with mouse wheel",
-        "references": []
+        "text": "Table: Scrolling to last row with mouse wheel",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "1870303491"
+          }
+        ]
       },
       {
         "id": "a08675d8c87fb70c39f5e03e980b81aada06d737",
         "type": "FIX",
-        "text": " ODataTreeBindingAdapter.expandNodeToLevel: Only expand nodes above given level",
+        "text": "ODataTreeBindingAdapter.expandNodeToLevel: Only expand nodes above given level",
         "references": []
       },
       {
         "id": "06a22469851c073ac0e947d998696c05f38703e2",
         "type": "FIX",
-        "text": " Table: Clicking on the column resizer no longer causes scrolling",
-        "references": []
+        "text": "Table: Clicking on the column resizer no longer causes scrolling",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "1880305886"
+          }
+        ]
       },
       {
         "id": "c465549f731286019bcc890895c1b106a7484a11",
         "type": "FIX",
-        "text": " sap.m.CheckBox: Type conversion removed",
-        "references": []
+        "text": "sap.m.CheckBox: Type conversion removed",
+        "references": [
+          {
+            "type": "GitHub",
+            "reference": "2103"
+          }
+        ]
       },
       {
         "id": "d560b524ea504a222118820e3f7b960b287feba6",
         "type": "FIX",
-        "text": " Table: Accessibility texts for row selection corrected",
-        "references": []
+        "text": "Table: Accessibility texts for row selection corrected",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "1880542287"
+          }
+        ]
       },
       {
         "id": "d5853a6e79d40899d48c34a5c6c74b8e92e73dc8",
         "type": "FIX",
-        "text": " Table: Calculation of row count in \"Auto\" mode",
-        "references": []
+        "text": "Table: Calculation of row count in \"Auto\" mode",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "1880437786"
+          }
+        ]
       },
       {
         "id": "6ef708e55291ce5f49126c2cf35c049d2c551104",
         "type": "FIX",
-        "text": " TableUtils: Update OpenSource usage documentation",
+        "text": "TableUtils: Update OpenSource usage documentation",
         "references": []
       },
       {
         "id": "1fa170f567bfa3b29f3348b443d95156f11a19ff",
         "type": "FIX",
-        "text": " Table: Avoid infinite requests if no count is provided",
-        "references": []
+        "text": "Table: Avoid infinite requests if no count is provided",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "1880537465"
+          }
+        ]
       },
       {
         "id": "dc96123d8e22e86917f2861f8c89eac6fe8cd8e4",
         "type": "FIX",
-        "text": " Table: Always fully display the content in header rows",
-        "references": []
+        "text": "Table: Always fully display the content in header rows",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "1870405637"
+          }
+        ]
       },
       {
         "id": "f167d57792c4b26195eae6003270ad64acd5d474",
         "type": "FIX",
-        "text": " Table: Update the scroll position when setting firstVisibleRow",
-        "references": []
+        "text": "Table: Update the scroll position when setting firstVisibleRow",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "1880583236"
+          }
+        ]
       },
       {
         "id": "f1789479c853784231f49bff9e01102715f4a14f",
         "type": "FEATURE",
-        "text": " Table: paste event handling is added",
+        "text": "Table: paste event handling is added",
         "references": []
       }
     ]
@@ -88,26 +138,46 @@
       {
         "id": "ef0a3ac4b8b09e281666f82c7104ea1b5d00fc18",
         "type": "FIX",
-        "text": " Table: Apply input values when scrolling by edit mode navigation",
-        "references": []
+        "text": "Table: Apply input values when scrolling by edit mode navigation",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "002075129500005540862018"
+          }
+        ]
       },
       {
         "id": "e54270c71f2395286fc457891375bc530d669f65",
         "type": "FIX",
-        "text": " Table: Horizontal scroll position on focus in RTL with Unit Tests",
-        "references": []
+        "text": "Table: Horizontal scroll position on focus in RTL with Unit Tests",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "1880609454"
+          }
+        ]
       },
       {
         "id": "1d3b0357a660a7c831238e1ac71332512bae8733",
         "type": "FIX",
-        "text": " TreeTable: ACC - Avoid duplicate announcement on expand/collapse",
-        "references": []
+        "text": "TreeTable: ACC - Avoid duplicate announcement on expand/collapse",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "1870333721"
+          }
+        ]
       },
       {
         "id": "71af8cc83d1e5eb7c8ab00578d737f80a9d24ba3",
         "type": "FIX",
-        "text": " Table: Correctly create new rows after resize",
-        "references": []
+        "text": "Table: Correctly create new rows after resize",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "1880678505"
+          }
+        ]
       }
     ]
   },
@@ -117,20 +187,35 @@
       {
         "id": "14e05df55edf2442fbc9bfb8e33f434253cbb939",
         "type": "FIX",
-        "text": " Table: Accessibility announcement in tree table and grouping rows",
-        "references": []
+        "text": "Table: Accessibility announcement in tree table and grouping rows",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "1880566707"
+          }
+        ]
       },
       {
         "id": "42ee76276bd358519dd6478288dccf2722a3facc",
         "type": "FIX",
-        "text": " Table: SelectAll button won\u0027t deselect in \"Single\" selection mode",
-        "references": []
+        "text": "Table: SelectAll button won't deselect in \"Single\" selection mode",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "1880731924"
+          }
+        ]
       },
       {
         "id": "8b9adac6772e794eecaae83f7f2719619e939147",
         "type": "FIX",
-        "text": " Table: Show vertical scrollbar when adding entries in the model",
-        "references": []
+        "text": "Table: Show vertical scrollbar when adding entries in the model",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "1870485579"
+          }
+        ]
       }
     ]
   },
@@ -140,8 +225,17 @@
       {
         "id": "abdd9dd16289d5a79cac73296fc84e03068c1285",
         "type": "FIX",
-        "text": " Table: Avoid infinite rendering loop with fixed columns in Edge 44",
-        "references": []
+        "text": "Table: Avoid infinite rendering loop with fixed columns in Edge 44",
+        "references": [
+          {
+            "type": "GitHub",
+            "reference": "2334"
+          },
+          {
+            "type": "BCP",
+            "reference": "002075129400006440602018"
+          }
+        ]
       }
     ]
   },
@@ -151,14 +245,24 @@
       {
         "id": "b8895f00b36ec81efb1615ba176c4c64b381a8c6",
         "type": "FIX",
-        "text": " Table: Avoid duplicate id issues for rows",
-        "references": []
+        "text": "Table: Avoid duplicate id issues for rows",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "002075129400000245292019"
+          }
+        ]
       },
       {
         "id": "f4321753f0e6561af0081d99ff6dc6e7d7ede5a8",
         "type": "FIX",
-        "text": " Table: Fixed column layout corrected",
-        "references": []
+        "text": "Table: Fixed column layout corrected",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "1970042745"
+          }
+        ]
       }
     ]
   }
