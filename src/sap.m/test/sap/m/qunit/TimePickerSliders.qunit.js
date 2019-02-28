@@ -803,7 +803,7 @@ sap.ui.define([
 		}
 	});
 
-	QUnit.test("Given a Hours slider, when collapsed before animation is completed", function(assert) {
+	QUnit.test("Given an Hours slider, when collapsed before animation is completed", function(assert) {
 		// Prepare
 		var oSpyScrollerSnapped = this.spy(this.oTPS._getHoursSlider(), "_scrollerSnapped"),
 			currentIndex = this.oTPS._getHoursSlider()._iSelectedItemIndex;
@@ -821,7 +821,7 @@ sap.ui.define([
 		assert.ok(oSpyScrollerSnapped.calledWith(currentIndex + 1), "snapped to the next value");
 	});
 
-	QUnit.test("Given a Hours slider, when another animation is queued", function(assert) {
+	QUnit.test("Given an Hours slider, when another animation is queued", function(assert) {
 		// Prepare
 		var oSpyScrollerSnapped = this.spy(this.oTPS._getHoursSlider(), "_scrollerSnapped"),
 			currentIndex = this.oTPS._getHoursSlider()._iSelectedItemIndex;
