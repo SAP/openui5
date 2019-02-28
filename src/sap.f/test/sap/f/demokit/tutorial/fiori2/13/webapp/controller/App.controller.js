@@ -9,21 +9,6 @@ sap.ui.define([
 			this.oOwnerComponent = this.getOwnerComponent();
 			this.oRouter = this.oOwnerComponent.getRouter();
 			this.oRouter.attachRouteMatched(this.onRouteMatched, this);
-			this.oRouter.attachBeforeRouteMatched(this.onBeforeRouteMatched, this);
-		},
-
-		onBeforeRouteMatched: function(oEvent) {
-			var oModel = this.oOwnerComponent.getModel(),
-				sLayout = oEvent.getParameters().arguments.layout,
-				oNextUIState;
-
-			// If there is no layout parameter, query for the default level 0 layout (normally OneColumn)
-			if (!sLayout) {
-				oNextUIState = this.oOwnerComponent.getHelper().getNextUIState(0);
-				sLayout = oNextUIState.layout;
-			}
-
-			oModel.setProperty("/layout", sLayout);
 		},
 
 		onRouteMatched: function (oEvent) {
@@ -52,9 +37,12 @@ sap.ui.define([
 
 		// Update the close/fullscreen buttons visibility
 		_updateUIElements: function () {
-			var oModel = this.oOwnerComponent.getModel();
-			var oUIState = this.oOwnerComponent.getHelper().getCurrentUIState();
-			oModel.setData(oUIState);
+			var oModel = this.oOwnerComponent.getModel(),
+				oUIState;
+			this.oOwnerComponent.getHelper().then(function(oHelper) {
+				oUIState = oHelper.getCurrentUIState();
+				oModel.setData(oUIState);
+			});
 		},
 
 		onExit: function () {

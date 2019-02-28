@@ -8,7 +8,6 @@ sap.ui.define([
 	"sap/ui/rta/RuntimeAuthoring",
 	"sap/ui/rta/service/index",
 	"sap/ui/dt/Util",
-	"sap/ui/qunit/utils/waitForThemeApplied",
 	"sap/ui/base/ManagedObjectMetadata",
 	"sap/ui/thirdparty/sinon-4"
 ], function (
@@ -19,7 +18,6 @@ sap.ui.define([
 	RuntimeAuthoring,
 	mServicesDictionary,
 	DtUtil,
-	waitForThemeApplied,
 	ManagedObjectMetadata,
 	sinon
 ) {
@@ -684,5 +682,4 @@ sap.ui.define([
 		jQuery("#qunit-fixture").hide();
 	});
 
-	return waitForThemeApplied();
 });

@@ -143,7 +143,11 @@
 												</custom:Row>
 											</custom:LightTable>
 										</template:if>
-
+										<template:if test="{data>/isFunction}">
+											<template:repeat list="{data>/examples}" var="example">
+												<custom:JSDocText text="{path: 'example>data', formatter: 'sap.ui.base.ManagedObject.escapeSettingsValue'}"/>
+											</template:repeat>
+										</template:if>
 									</layout:VerticalLayout>
 								</custom:blocks>
 							</custom:ObjectPageSubSection>
@@ -220,7 +224,7 @@
 														class="sapUiDocumentationParamsTable">
 													<custom:Row>
 														<custom:ParamText text="{name}" phoneText="{phoneName}" depth="{depth}" optional="{optional}"/>
-														<layout:VerticalLayout content="{path: 'types', templateShareable: 'false'}" width="100%">
+														<layout:VerticalLayout content="{path: 'types', templateShareable: false}" width="100%">
 															<m:Link text="{name}"
 																	href="#/api/{name}"
 																	enabled="{= !!${linkEnabled} }"/>
@@ -232,7 +236,7 @@
 											</template:if>
 
 											<template:if test="{= ${data>/constructor/throws} !== undefined}">
-												<custom:LightTable rows="{path : '/constructor/throws', templateShareable: 'false'}"
+												<custom:LightTable rows="{path : '/constructor/throws', templateShareable: false}"
 														columnTitles="Throws,Desktop"
 														columnCount="2"
 														class="sapUiDocumentation2ColumnsEqualTable">
@@ -289,6 +293,9 @@
 														enableFormattedText="true"
 														class="sapUiTinyMarginBottom sapUiTinyMarginTop">
 													</m:MessageStrip>
+													<m:FormattedText visible="{=${borrowedFrom} !== undefined}"
+														htmlText="Borrowed from: &lt;a style='vertical-align:initial' target='_self' href='#/api/{borrowedFrom}' &gt;{borrowedFrom}&lt;/a&gt;">
+													</m:FormattedText>
 												</layout:VerticalLayout>
 											</custom:Row>
 										</custom:LightTable>
@@ -354,6 +361,9 @@
 														showCloseButton="false"
 														class="sapUiSmallMarginBottom sapUiSmallMarginTop">
 													</m:MessageStrip>
+													<m:FormattedText visible="{=${borrowedFrom} !== undefined}"
+														htmlText="Borrowed from: &lt;a style='vertical-align:initial' target='_self' href='#/api/{borrowedFrom}' &gt;{borrowedFrom}&lt;/a&gt;">
+													</m:FormattedText>
 												</layout:VerticalLayout>
 											</custom:Row>
 										</custom:LightTable>
@@ -400,6 +410,9 @@
 															enableFormattedText="true"
 															class="sapUiTinyMarginBottom sapUiTinyMarginTop">
 													</m:MessageStrip>
+													<m:FormattedText visible="{=${borrowedFrom} !== undefined}"
+														htmlText="Borrowed from: &lt;a style='vertical-align:initial' target='_self' href='#/api/{borrowedFrom}' &gt;{borrowedFrom}&lt;/a&gt;">
+													</m:FormattedText>
 												</layout:VerticalLayout>
 											</custom:Row>
 										</custom:LightTable>
@@ -432,7 +445,7 @@
 											</template:if>
 											<template:if test="{= ${data>/borrowed/events/}.length > 0 }">
 												<m:Title text="Borrowed from:" class="sapUiSmallMarginTop sapUiDocumentationBorrowedTitle"/>
-												<layout:VerticalLayout width="100%" content="{path: '/borrowed/events/', templateShareable: 'false'}">
+												<layout:VerticalLayout width="100%" content="{path: '/borrowed/events/', templateShareable: false}">
 														<m:Panel class="borrowedListPanel"
 																expandable="true"
 																expanded="true"

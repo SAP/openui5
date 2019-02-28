@@ -32,9 +32,10 @@
         <raw-module name="sap/ui/thirdparty/crossroads.js" depends="sap/ui/thirdparty/signals.js" />
         <raw-module name="sap/ui/thirdparty/d3.js" />
         <raw-module name="sap/ui/thirdparty/datajs.js" />
-        <raw-module name="sap/ui/thirdparty/es6-promise.js" />
-        <raw-module name="sap/ui/thirdparty/es6-string-methods.js" />
         <raw-module name="sap/ui/thirdparty/es6-object-assign.js" />
+        <raw-module name="sap/ui/thirdparty/es6-promise.js" />
+        <raw-module name="sap/ui/thirdparty/es6-shim-nopromise.js" />
+        <raw-module name="sap/ui/thirdparty/es6-string-methods.js" />
         <raw-module name="sap/ui/thirdparty/flexie.js" />
         <raw-module name="sap/ui/thirdparty/handlebars.js" />
         <raw-module name="sap/ui/thirdparty/hasher.js" depends="sap/ui/thirdparty/signals.js" />
@@ -84,7 +85,6 @@
         <raw-module name="sap/ui/thirdparty/jszip.js" />
         <raw-module name="sap/ui/thirdparty/klay.js" />
         <raw-module name="sap/ui/thirdparty/less.js" />
-        <raw-module name="sap/ui/thirdparty/es6-object-assign.js" />
         <raw-module name="sap/ui/thirdparty/mobify-carousel.js" />
         <raw-module name="sap/ui/thirdparty/mobiscroll/js/mobiscroll-core.js" depends="sap/ui/thirdparty/jquery.js" />
         <raw-module name="sap/ui/thirdparty/mobiscroll/js/mobiscroll-datetime.js" depends="sap/ui/thirdparty/jquery.js,sap/ui/thirdparty/mobiscroll/js/mobiscroll-core.js,sap/ui/thirdparty/mobiscroll/js/mobiscroll-scroller.js" />
@@ -112,7 +112,7 @@
         <raw-module name="sap/ui/thirdparty/zyngascroll.js" />
         <raw-module name="sap/ui/thirdparty/hyphenopoly/hyphenopoly.bundle.js" depends="sap/ui/thirdparty/hyphenopoly/hyphenEngine.asm.js" />
         <raw-module name="sap/ui/thirdparty/hyphenopoly/hyphenEngine.asm.js" />
-        <raw-module name="ui5loader.js" depends="sap/ui/thirdparty/baseuri.js,sap/ui/thirdparty/es6-promise.js,sap/ui/thirdparty/es6-string-methods.js,sap/ui/thirdparty/es6-object-assign.js" />
+        <raw-module name="ui5loader.js" depends="sap/ui/thirdparty/baseuri.js,sap/ui/thirdparty/es6-promise.js,sap/ui/thirdparty/es6-shim-nopromise.js" />
         <raw-module name="ui5loader-autoconfig.js" depends="ui5loader.js" />
         <module-cycle modules="sap/ui/core/Core.js,sap/ui/core/Component.js" />
       </module-infos>
@@ -141,6 +141,8 @@
         <!-- <exclude name="sap/ui/thirdparty/caja-htmlsanitizer.js" /> -->
         <exclude name="sap/ui/thirdparty/d3.js" />
         <exclude name="sap/ui/thirdparty/datajs.js" />
+        <exclude name="sap/ui/thirdparty/es6-object-assign.js" />
+        <exclude name="sap/ui/thirdparty/es6-string-methods.js" />
         <exclude name="sap/ui/thirdparty/flexie.js" />
         <exclude name="sap/ui/thirdparty/handlebars.js" />
         <!-- <exclude name="sap/ui/thirdparty/hasher.js" /> -->
@@ -322,6 +324,9 @@
         <lib name="array-polyfills" displayName="Array.prototype Polyfills" homepage="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Array/">
         	<license url="https://developer.mozilla.org/en-US/docs/MDN/About#Copyrights_and_licenses" type="CC0 1.0 Universal (CC0 1.0) Public Domain Dedication" file="../thirdparty/licenses/array-polyfills-LICENSE.txt" />
         </lib>
+        <lib name="Element-getAttributeNames-polyfill" displayName="Element.prototype.getAttributeNames Polyfill" homepage="https://developer.mozilla.org/en-US/docs/Web/API/Element/getAttributeNames#Polyfill">
+        	<license url="https://developer.mozilla.org/en-US/docs/MDN/About#Copyrights_and_licenses" type="CC0 1.0 Universal (CC0 1.0) Public Domain Dedication" file="../thirdparty/licenses/Element-getAttributeNames-LICENSE.txt" />
+        </lib>
         <lib name="object-assign-polyfill" displayName="Object.assign Polyfill" homepage="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Object/assign#Polyfill">
         	<license url="https://developer.mozilla.org/en-US/docs/MDN/About#Copyrights_and_licenses" type="CC0 1.0 Universal (CC0 1.0) Public Domain Dedication" file="../thirdparty/licenses/Object-assign-polyfill-LICENSE.txt" />
         </lib>
@@ -360,6 +365,9 @@
         </lib>
         <lib name="hyphenopoly" displayName="Hyphenopoly" homepage="https://github.com/mnater/Hyphenopoly">
             <license url="https://github.com/mnater/Hyphenopoly/blob/master/LICENSE" type="MIT License" file="../thirdparty/licenses/hyphenopoly-LICENSE.txt" />
+        </lib>
+        <lib name="es6-shim-nopromise" displayName="ECMAScript 6 compatibility shims for legacy JavaScript engines" homepage="https://github.com/paulmillr/es6-shim">
+            <license url="https://github.com/paulmillr/es6-shim/blob/master/LICENSE" type="MIT License" file="../thirdparty/licenses/es6-shim-nopromise-MIT-LICENSE.txt" />
         </lib>
     </thirdparty>
 
@@ -413,6 +421,13 @@
             <name>CA-WDE-MCK</name>
             <modules>
                 <module>sap/ui/core/util/MockServer</module>
+            </modules>
+        </component>
+
+        <component>
+            <name>CA-UI5-CTR-ROD</name>
+            <modules>
+                <module>sap/ui/core/hyphenation/*</module>
             </modules>
         </component>
     </ownership>

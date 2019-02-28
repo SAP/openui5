@@ -39,6 +39,11 @@ sap.ui.define(function () {
 					only: ["sap/f/Card"]
 				}
 			},
+			"BindingResolver": {
+				coverage: {
+					only: ["sap/f/cards/BindingResolver"]
+				}
+			},
 			"DynamicPage": {
 				coverage: {
 					only: ["sap/f/DynamicPage"]
@@ -102,6 +107,29 @@ sap.ui.define(function () {
 			"SemanticPage": {
 				coverage: {
 					only: ["sap/f/SemanticPage"]
+				}
+			},
+			"ShellBar": {
+				title: "QUnit Test Page for sap.f.ShellBar",
+				qunit: {
+					version: 2
+				},
+				sinon: {
+					version: 4
+				},
+				coverage: {
+					only: [
+						"sap/f/ShellBar",
+						"sap/f/shellBar/Factory",
+						"sap/f/shellBar/ResponsiveHandler",
+						"sap/f/shellBar/AdditionalContentSupport",
+						"sap/f/shellBar/ContentButton",
+						"sap/f/shellBar/ControlSpacer",
+						"sap/f/shellBar/ToolbarSpacer"
+					]
+				},
+				ui5: {
+					language: "en"
 				}
 			},
 

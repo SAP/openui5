@@ -1,0 +1,27 @@
+{
+	"sap.app": {
+		"id": "sap.m.sample.MenuButton",
+		"applicationVersion": {
+			"version": "1.0.0"
+		}
+	},
+	"sap.ui5": {
+		"rootView": {
+			"viewName": "sap.m.sample.MenuButton.MB",
+			"type": "XML",
+			"async": true
+		},
+		"libs": {
+			"sap.m": {}
+		},
+		"config": {
+			"sample": {
+				"files": [
+					"MB.view.xml",
+					"MB.controller.js",
+					"manifest.json"
+				]
+			}
+		}
+	}
+}

@@ -423,7 +423,11 @@ sap.ui.define([
 		// also wait for a potential variant switch to be done
 		aPromises.push(this.waitForVariantSwitch());
 
-		return Promise.all(aPromises);
+		return Promise.all(aPromises)
+		.then(function() {
+			// the return value is not important in this function, only that it resolves
+			return undefined;
+		});
 	};
 
 	/**
@@ -531,9 +535,18 @@ sap.ui.define([
 
 				oChange.setQueuedForApply();
 				aPromiseStack.push(function() {
-					// reset the Change.applyStatus if the change is actually not applied anymore
-					if (oChange.isApplyProcessFinished() && !this._isChangeCurrentlyApplied(oControl, oChange, mPropertyBag.modifier)) {
+					var bIsCurrentlyAppliedOnControl = this._isChangeCurrentlyApplied(oControl, oChange, mPropertyBag.modifier);
+					var bChangeStatusAppliedFinished = oChange.isApplyProcessFinished();
+					if (bChangeStatusAppliedFinished && !bIsCurrentlyAppliedOnControl) {
+						// if a change was already processed and is not applied anymore,
+						// then the control was destroyed and recreated. In this case we need to recreate/copy the dependencies.
 						oChange.setInitialApplyState();
+					} else if (!bChangeStatusAppliedFinished && bIsCurrentlyAppliedOnControl) {
+						// if a change is already applied on the control, but the status does not reflect that, the status has to be updated
+						// and the change does not need to be applied again
+						// e.g. viewCache scenario
+						oChange.markFinished();
+						return new Utils.FakePromise();
 					}
 
 					return this.checkTargetAndApplyChange(oChange, oControl, mPropertyBag)
@@ -906,10 +919,16 @@ sap.ui.define([
 	/**
 	 * Reset changes on the server.
 	 *
-	 * @returns {Promise} Promise that resolves without parameters
+	 * @param {string} sLayer - Layer for which changes shall be deleted
+	 * @param {string} [sGenerator] - Generator of changes (optional)
+	 * @param {sap.ui.core.Component} [oComponent] - Component instance (optional)
+	 * @param {string} [sSelectorString] - Selector IDs as comma-separated list (optional)
+	 * @param {string} [sChangeTypeString] - Types of changes as comma-separated list (optional)
+	 *
+	 * @returns {Promise} Promise that resolves with a list of the deleted changes in the response
 	 */
-	FlexController.prototype.resetChanges = function (sLayer, sGenerator, oComponent) {
-		return this._oChangePersistence.resetChanges(sLayer, sGenerator)
+	FlexController.prototype.resetChanges = function (sLayer, sGenerator, oComponent, sSelectorString, sChangeTypeString) {
+		return this._oChangePersistence.resetChanges(sLayer, sGenerator, sSelectorString, sChangeTypeString)
 			.then( function(oResponse) {
 				if (oComponent) {
 					var oModel = oComponent.getModel("$FlexVariants");
@@ -1022,14 +1041,21 @@ sap.ui.define([
 		};
 		aChangesForControl.forEach(function (oChange) {
 
-			// if a change was already processed and is not applied anymore,
-			// then the control was destroyed and recreated. In this case we need to recreate/copy the dependencies.
-			if (oChange.isApplyProcessFinished() && !this._isChangeCurrentlyApplied(oControl, oChange, mPropertyBag.modifier)) {
+			var bIsCurrentlyAppliedOnControl = this._isChangeCurrentlyApplied(oControl, oChange, mPropertyBag.modifier);
+			var bChangeStatusAppliedFinished = oChange.isApplyProcessFinished();
+			if (bChangeStatusAppliedFinished && !bIsCurrentlyAppliedOnControl) {
+				// if a change was already processed and is not applied anymore,
+				// then the control was destroyed and recreated. In this case we need to recreate/copy the dependencies.
 				mChangesMap = this._oChangePersistence.copyDependenciesFromInitialChangesMap(oChange, this._checkIfDependencyIsStillValid.bind(this, oAppComponent, mPropertyBag.modifier));
 
 				mDependencies = mChangesMap.mDependencies;
 				mDependentChangesOnMe = mChangesMap.mDependentChangesOnMe;
 				oChange.setInitialApplyState();
+			} else if (!bChangeStatusAppliedFinished && bIsCurrentlyAppliedOnControl) {
+				// if a change is already applied on the control, but the status does not reflect that, the status has to be updated
+				// the change still needs to go through the process so that the dependencies are correctly updated and the whole process is not harmed
+				// scenario: viewCache
+				oChange.markFinished();
 			}
 
 			oChange.setQueuedForApply();

@@ -14,21 +14,22 @@ sap.ui.define(function() {
 			}
 		},
 		tests: {
-			DataBindingMessages: {
-				title: "Test Page for DataBinding Messages"
+			messagesDataBinding: {
+				title: "Messaging: DataBinding Messages"
 			},
-			"Message": {
-				title: "QUnit tests: Messaging"
+			Message: {
+				title: "Messaging: sap.ui.core.message.Message"
 			},
-			"messagesGeneral": {
+			messagesGeneral: {
+				title: "Messaging: General",
 				ui5: {
 					libs: "sap.m,sap.ui.layout",
 					language: "en",
 					"xx-handleValidation": true
 				}
 			},
-			"messagesUsage": {
-				title: "QUnit tests: Messaging",
+			messagesUsage: {
+				title: "Messaging: Usage",
 				loader: {
 					paths: {
 						"components": "test-resources/sap/ui/core/qunit/messages/components"
@@ -38,6 +39,9 @@ sap.ui.define(function() {
 					// test checks for hard coded English texts
 					language: "en"
 				}
+			},
+			messagesEnd2End: {
+				title: "Messaging: End2End"
 			}
 		}
 	};

@@ -3,8 +3,7 @@ sap.ui.define(["sap/ui/thirdparty/URI"],
 	function (URI) {
 		"use strict";
 
-		var sCoreUrl = new URI(sap.ui.require.toUrl("sap-ui-core.js"), document.baseURI).href(),
-			sFrameURL = sap.ui.require.toUrl("sap/ui/documentation/sdk/util/liveEditorOutput.html"),
+		var sFrameURL = sap.ui.require.toUrl("sap/ui/documentation/sdk/util/liveEditorOutput.html"),
 
 		sXmlSrc = '<mvc:View\n' +
 			'        controllerName="HelloWorld.App"\n' +
@@ -27,30 +26,14 @@ sap.ui.define(["sap/ui/thirdparty/URI"],
 				'        ], function (Controller, MessageToast) {\n' +
 				'            "use strict";\n' +
 				'            return Controller.extend("HelloWorld.App", {\n' +
-				'                onBeforeRendering : function () {\n' +
+				'                onInit : function () {\n' +
 				'                    this.getView().byId("helloButton").setVisible(true);\n' +
 				'                }\n' +
 				'            });\n' +
 				'        });',
 
 			// uses latest api to create the view asynchronously
-			sHTMLSrc_v1 = '<!DOCTYPE html>\n' +
-				'<html>\n' +
-				'<head>\n' +
-				'    <title>OpenUI5 Hello World App</title>\n' +
-				'    <script\n' +
-				'            id="sap-ui-bootstrap"\n' +
-				'            src="' + sCoreUrl + '"\n' +
-				'            data-sap-ui-theme="sap_belize"\n' +
-				'            data-sap-ui-libs="sap.m"\n' +
-				'            data-sap-ui-resourceroots=\'{"HelloWorld": "./"}\'\n' +
-				'            displayBlock="true">\n' +
-				'    <&sol;script>\n' +
-				'\n' +
-				'    <script>\n' +
-				'    /* uncomment below line to test error display */\n' +
-				'     //alert(test.a.length);\n' +
-				'        sap.ui.getCore().attachInit(function () {\n' +
+			sIndexJs_v1 = 'sap.ui.getCore().attachInit(function () {\n' +
 				'            sap.ui.require(["sap/ui/core/mvc/XMLView"], function(XMLView) {\n' +
 				'                 XMLView.create(\n' +
 				'                     {' +
@@ -59,125 +42,93 @@ sap.ui.define(["sap/ui/thirdparty/URI"],
 				'                     myView.placeAt("content");\n' +
 				'                 });\n' +
 				'            });\n' +
-				'         });\n' +
-				'    <&sol;script>\n' +
-				'</head>\n' +
-				'<body class="sapUiBody" id="content">\n' +
-				'</body>\n' +
-				'</html>',
+				'         });\n',
 
 			// uses legacy api to create the view synchronously
-			sHTMLSrc_v2 = '<!DOCTYPE html>\n' +
-				'<html>\n' +
-				'<head>\n' +
-				'    <title>OpenUI5 Hello World App</title>\n' +
-				'    <script\n' +
-				'            id="sap-ui-bootstrap"\n' +
-				'            src="' + sCoreUrl + '"\n' +
-				'            data-sap-ui-theme="sap_belize"\n' +
-				'            data-sap-ui-libs="sap.m"\n' +
-				'            data-sap-ui-resourceroots=\'{"HelloWorld": "./"}\'\n' +
-				'            displayBlock="true">\n' +
-				'    <&sol;script>\n' +
-				'\n' +
-				'    <script>\n' +
-				'    sap.ui.getCore().attachInit(function () {\n' +
+			sIndexJs_v2 = 'sap.ui.getCore().attachInit(function () {\n' +
 				'       sap.ui.xmlview({\n' +
 				'          id: "myView2",' +
 				'          viewName: "HelloWorld.App"\n' +
 				'       }).placeAt("content");\n' +
-				'    });\n' +
-				'    <&sol;script>\n' +
-				'</head>\n' +
-				'<body class="sapUiBody" id="content">\n' +
-				'</body>\n' +
-				'</html>',
+				'    });\n',
 
 			// uses legacy api to create the view asynchronously
-			sHTMLSrc_v3 = '<!DOCTYPE html>\n' +
-				'<html>\n' +
-				'<head>\n' +
-				'    <title>OpenUI5 Hello World App</title>\n' +
-				'    <script\n' +
-				'            id="sap-ui-bootstrap"\n' +
-				'            src="' + sCoreUrl + '"\n' +
-				'            data-sap-ui-theme="sap_belize"\n' +
-				'            data-sap-ui-libs="sap.m"\n' +
-				'            data-sap-ui-resourceroots=\'{"HelloWorld": "./"}\'\n' +
-				'            displayBlock="true">\n' +
-				'    <&sol;script>\n' +
-				'\n' +
-				'    <script>\n' +
-				'    sap.ui.getCore().attachInit(function () {\n' +
+			sIndexJs_v3 = 'sap.ui.getCore().attachInit(function () {\n' +
 				'       sap.ui.xmlview({\n' +
 				'          id: "myView3",' +
 				'          async: true,' +
 				'          viewName: "HelloWorld.App"\n' +
 				'       }).placeAt("content");\n' +
-				'    });\n' +
-				'    <&sol;script>\n' +
-				'</head>\n' +
-				'<body class="sapUiBody" id="content">\n' +
-				'</body>\n' +
-				'</html>',
+				'    });\n',
 
 			// throws error to test error handling
-			sHTMLSrc_v4 = '<!DOCTYPE html>\n' +
-				'<html>\n' +
-				'<head>\n' +
-				'    <title>OpenUI5 Hello World App</title>\n' +
-				'    <script\n' +
-				'            id="sap-ui-bootstrap"\n' +
-				'            src="' + sCoreUrl + '"\n' +
-				'            data-sap-ui-theme="sap_belize"\n' +
-				'            data-sap-ui-libs="sap.m"\n' +
-				'            data-sap-ui-resourceroots=\'{"HelloWorld": "./"}\'\n' +
-				'            displayBlock="true">\n' +
-				'    <&sol;script>\n' +
-				'\n' +
-				'    <script>\n' +
-				'    sap.ui.getCore().attachInit(function () {\n' +
+			sIndexJs_v4 = '    sap.ui.getCore().attachInit(function () {\n' +
 				'    throw new Error("TestErrorMessage");' +
 				'       sap.ui.xmlview({\n' +
 				'          id: "myView3",' +
 				'          async: true,' +
 				'          viewName: "HelloWorld.App"\n' +
 				'       }).placeAt("content");\n' +
-				'    });\n' +
-				'    <&sol;script>\n' +
-				'</head>\n' +
-				'<body class="sapUiBody" id="content">\n' +
-				'</body>\n' +
-				'</html>',
+				'    });\n';
 
-			// throws error with code in message to test xss protection
-			sHTMLSrc_v5 = '<!DOCTYPE html>\n' +
-				'<html>\n' +
-				'<head>\n' +
-				'    <title>OpenUI5 Hello World App</title>\n' +
-				'    <script\n' +
-				'            id="sap-ui-bootstrap"\n' +
-				'            src="' + sCoreUrl + '"\n' +
-				'            data-sap-ui-theme="sap_belize"\n' +
-				'            data-sap-ui-libs="sap.m"\n' +
-				'            data-sap-ui-resourceroots=\'{"HelloWorld": "./"}\'\n' +
-				'            displayBlock="true">\n' +
-				'    <&sol;script>\n' +
-				'\n' +
-				'    <script>\n' +
-				'    sap.ui.getCore().attachInit(function () {\n' +
-				'    throw new Error("<tag>");' +
-				'       sap.ui.xmlview({\n' +
-				'          id: "myView3",' +
-				'          async: true,' +
-				'          viewName: "HelloWorld.App"\n' +
-				'       }).placeAt("content");\n' +
-				'    });\n' +
-				'    <&sol;script>\n' +
-				'</head>\n' +
-				'<body class="sapUiBody" id="content">\n' +
-				'</body>\n' +
-				'</html>';
+
+		/**
+		 * Waits for a UI5 object with the given id to be created in the frame window
+		 * @param sId
+		 * @returns {Promise<any>}
+		 */
+		function waitForUI5Object(oFrameWindow, sId) {
+			var iChecksCount = 0;
+			return new Promise(function(resolve, reject) {
+
+				function _checkObjectCreated() {
+					var oCore = oFrameWindow && oFrameWindow.sap && oFrameWindow.sap.ui.getCore && oFrameWindow.sap.ui.getCore(),
+						oObject = oCore && oCore.byId(sId);
+					if (oObject) {
+						resolve(oObject);
+						return;
+					}
+					if (iChecksCount++ > 300) {
+						reject();
+					}
+					setTimeout(_checkObjectCreated, 10);
+				}
+
+				_checkObjectCreated();
+			});
+		}
+
+
+		function checkViewContentCreated(assert, oView) {
+			assert.ok(oView.byId("myPage"), "the page is created");
+			assert.ok(oView.byId("helloButton"), "the button is created");
+		}
+
+
+		/**
+		 * Waits for condition
+		 * @param sId
+		 * @returns {Promise<any>}
+		 */
+		function waitForCondition(fnCondition) {
+			var iChecksCount = 0;
+			return new Promise(function(resolve, reject) {
+
+				function _checkCondition() {
+					var bResult = fnCondition();
+					if (bResult) {
+						resolve(bResult);
+						return;
+					}
+					if (iChecksCount++ > 300) {
+						reject();
+					}
+					setTimeout(_checkCondition, 10);
+				}
+
+				_checkCondition();
+			});
+		}
 
 		QUnit.module("Samples", {
 
@@ -197,37 +148,29 @@ sap.ui.define(["sap/ui/thirdparty/URI"],
 				oFrame = this.iframe,
 
 			oData = {
-				'index.html': sHTMLSrc_v1.replace(/&sol;/g, "/"),
-				'App.view.xml': sXmlSrc,
-				'App.controller.js': sControllerSrc
+				src: {
+					'HelloWorld/index.js': sIndexJs_v1,
+					'HelloWorld/App.view.xml': sXmlSrc,
+					'HelloWorld/App.controller.js': sControllerSrc
+				},
+				moduleNameToRequire: "HelloWorld/index"
 			};
+
+			assert.expect(3);
 
 			oFrame.onload = function() {
 				if (oFrame.contentWindow) {
 					oFrame.contentWindow.postMessage(oData, "*");
-				}
-				oFrame.onload = function() {
-					setTimeout(function() {
-						var oCore = oFrame.contentWindow.sap.ui.getCore(),
-							oView = oCore && oCore.byId("myView1");
 
+					waitForUI5Object(oFrame.contentWindow, "myView1").then(function(oView) {
 						assert.ok(oView, "the view is created");
 
-						function isViewContentCreated() {
-							assert.ok(oView.byId("myPage"), "the page is created");
-							assert.ok(oView.byId("helloButton"), "the button is created");
-
+						oView.loaded().then(function() {
+							checkViewContentCreated(assert, oView);
 							done();
-						}
-
-						if (!oView.getContent().length) {
-							oView.attachAfterInit(isViewContentCreated, this);
-						} else {
-							isViewContentCreated();
-						}
-					}, 1000);
-					oFrame.onload = null;
-				};
+						});
+					});
+				}
 			};
 
 			oFrame.src = sFrameURL;
@@ -237,23 +180,30 @@ sap.ui.define(["sap/ui/thirdparty/URI"],
 
 			var done = assert.async(),
 				oFrame = this.iframe,
-			oData = {
-				'index.html': sHTMLSrc_v2.replace(/&sol;/g, "/"),
-				'App.view.xml': sXmlSrc,
-				'App.controller.js': sControllerSrc
-			};
+				oData = {
+					src: {
+						'HelloWorld/index.js': sIndexJs_v2,
+						'HelloWorld/App.view.xml': sXmlSrc,
+						'HelloWorld/App.controller.js': sControllerSrc
+					},
+					moduleNameToRequire: "HelloWorld/index"
+				};
+
+			assert.expect(3);
 
 			oFrame.onload = function() {
 				if (oFrame.contentWindow) {
 					oFrame.contentWindow.postMessage(oData, "*");
+
+					waitForUI5Object(oFrame.contentWindow, "myView2").then(function(oView) {
+						assert.ok(oView, "the view is created");
+
+						oView.loaded().then(function() {
+							checkViewContentCreated(assert, oView);
+							done();
+						});
+					});
 				}
-				oFrame.onload = function() {
-					assert.ok(oFrame.contentWindow.sap.ui.getCore().byId("myView2"), "the view is created");
-					assert.ok(oFrame.contentWindow.sap.ui.getCore().byId("myView2--myPage"), "the page is created");
-					assert.ok(oFrame.contentWindow.sap.ui.getCore().byId("myView2--helloButton"), "the button is created");
-					oFrame.onload = null;
-					done();
-				};
 			};
 
 			oFrame.src = sFrameURL;
@@ -264,35 +214,29 @@ sap.ui.define(["sap/ui/thirdparty/URI"],
 			var done = assert.async(),
 				oFrame = this.iframe,
 				oData = {
-					'index.html': sHTMLSrc_v3.replace(/&sol;/g, "/"),
-					'App.view.xml': sXmlSrc,
-					'App.controller.js': sControllerSrc
+					src: {
+						'HelloWorld/index.js': sIndexJs_v3,
+						'HelloWorld/App.view.xml': sXmlSrc,
+						'HelloWorld/App.controller.js': sControllerSrc
+					},
+					moduleNameToRequire: "HelloWorld/index"
 				};
+
+			assert.expect(3);
 
 			oFrame.onload = function() {
 				if (oFrame.contentWindow) {
 					oFrame.contentWindow.postMessage(oData, "*");
+
+					waitForUI5Object(oFrame.contentWindow, "myView3").then(function(oView) {
+						assert.ok(oView, "the view is created");
+
+						oView.loaded().then(function() {
+							checkViewContentCreated(assert, oView);
+							done();
+						});
+					});
 				}
-				oFrame.onload = function() {
-					var oCore = oFrame.contentWindow.sap.ui.getCore(),
-						oView = oCore && oCore.byId("myView3");
-
-					assert.ok(oView, "the view is created");
-
-					function isViewContentCreated() {
-						assert.ok(oView.byId("myPage"), "the page is created");
-						assert.ok(oView.byId("helloButton"), "the button is created");
-
-						done();
-					}
-
-					if (!oView.getContent().length) {
-						oView.attachAfterInit(isViewContentCreated, this);
-					} else {
-						isViewContentCreated();
-					}
-					oFrame.onload = null;
-				};
 			};
 
 			oFrame.src = sFrameURL;
@@ -303,79 +247,76 @@ sap.ui.define(["sap/ui/thirdparty/URI"],
 			var done = assert.async(),
 				oFrame = this.iframe,
 				oData = {
-					'index.html': sHTMLSrc_v3.replace(/&sol;/g, "/"),
-					'App.view.xml': sXmlSrc,
-					'App.controller.js': sControllerSrc
+					src: {
+						'HelloWorld/index.js': sIndexJs_v3,
+						'HelloWorld/App.view.xml': sXmlSrc,
+						'HelloWorld/App.controller.js': sControllerSrc
+					},
+					moduleNameToRequire: "HelloWorld/index"
 				};
+
+			assert.expect(2);
 
 			oFrame.onload = function() {
 				if (oFrame.contentWindow) {
 					oFrame.contentWindow.postMessage(oData, "*");
 				}
-				oFrame.onload = function() {
-					setTimeout(function() {
-						assert.ok(oFrame.contentWindow.sap.ui.getCore().byId("myView3--helloButton").getVisible(), "the button is visible");
-						done();
-					}, 10);
-					oFrame.onload = null;
-				};
+
+				waitForUI5Object(oFrame.contentWindow, "myView3").then(function(oView) {
+					assert.ok(oView, "the view is created");
+
+					oView.loaded().then(function () {
+						// in the test data for this sample,
+						// the button is declared non-visible in the view,
+						// and the controller sets the button to be visible
+						// upon initialization
+						// => test if the controller code executed
+						function isButtonVisible() {
+							return oView.byId("helloButton").getVisible();
+						}
+
+						waitForCondition(isButtonVisible).then(function(bResult) {
+							assert.ok(bResult, "the controller code changed the button 'visible' property");
+							done();
+						});
+					});
+				});
 			};
 
 			oFrame.src = sFrameURL;
 		});
-
 
 		QUnit.test("displays uncauth errors in output window", function(assert) {
 
 			var done = assert.async(),
 				oFrame = this.iframe,
 				oData = {
-					'index.html': sHTMLSrc_v4.replace(/&sol;/g, "/"),
-					'App.view.xml': sXmlSrc,
-					'App.controller.js': sControllerSrc
+					src: {
+						'HelloWorld/index.js': sIndexJs_v4,
+						'HelloWorld/App.view.xml': sXmlSrc,
+						'HelloWorld/App.controller.js': sControllerSrc
+					},
+					moduleNameToRequire: "HelloWorld/index"
 				};
+
+			assert.expect(1);
 
 			oFrame.onload = function() {
 				if (oFrame.contentWindow) {
 					oFrame.contentWindow.postMessage(oData, "*");
 				}
-				oFrame.onload = function() {
-					setTimeout(function() {
-						assert.ok(oFrame.contentWindow.document.body.innerText.indexOf("TestErrorMessage") >= 0, "error is displayed");
-						done();
-					}, 1000);
-					oFrame.onload = null;
-				};
-			};
-
-			oFrame.src = sFrameURL;
-		});
-
-		QUnit.test("any code in the error message is output as text only", function(assert) {
-
-			var done = assert.async(),
-				oFrame = this.iframe,
-				oData = {
-					'index.html': sHTMLSrc_v5.replace(/&sol;/g, "/"),
-					'App.view.xml': sXmlSrc,
-					'App.controller.js': sControllerSrc
-				};
-
-			oFrame.onload = function() {
-				if (oFrame.contentWindow) {
-					oFrame.contentWindow.postMessage(oData, "*");
+				function isErrorMessageVisible() {
+					return oFrame.contentWindow.document.body.innerText.toLowerCase().indexOf("error") >= 0;
 				}
-				oFrame.onload = function() {
-					setTimeout(function() {
-						assert.ok(oFrame.contentWindow.document.body.innerText.indexOf("<tag>") >= 0, "code is displayed as text");
-						done();
-					}, 1000);
-					oFrame.onload = null;
-				};
+				waitForCondition(isErrorMessageVisible).then(function(bResult) {
+					assert.ok(bResult, "error message is displayed in DOM");
+					done();
+				});
 			};
 
 			oFrame.src = sFrameURL;
 		});
+
 
 
 	});

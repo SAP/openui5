@@ -3691,7 +3691,7 @@ sap.ui.define([
 			// assert
 			assert.ok(oSuccessSelect.$().attr("aria-labelledby").split(" ").indexOf(InvisibleText.getStaticId(sCoreLib, "VALUE_STATE_SUCCESS")) > -1, "success select is labelled by invisible text");
 			assert.ok(oWarningSelect.$().attr("aria-labelledby").split(" ").indexOf(InvisibleText.getStaticId(sCoreLib, "VALUE_STATE_WARNING")) > -1, "warning select is labelled by invisible text");
-			assert.ok(oErrorSelect.$().attr("aria-labelledby").split(" ").indexOf(InvisibleText.getStaticId(sCoreLib, "VALUE_STATE_ERROR")) > -1, "error select is labelled by invisible text");
+			assert.ok(oErrorSelect.$().attr("aria-labelledby").split(" ").indexOf(InvisibleText.getStaticId(sCoreLib, "VALUE_STATE_ERROR")) === -1, "error select should not be labelled by invisible text since it has aria-invalid set");
 			assert.ok(oInformationSelect.$().attr("aria-labelledby").split(" ").indexOf(InvisibleText.getStaticId(sCoreLib, "VALUE_STATE_INFORMATION")) > -1, "Information select is labelled by invisible text");
 
 			// act
@@ -3705,6 +3705,13 @@ sap.ui.define([
 
 			// assert
 			assert.ok(oErrorSelect.$().attr("aria-labelledby").split(" ").indexOf(InvisibleText.getStaticId(sCoreLib, "VALUE_STATE_SUCCESS")) > -1, "error select is now labelled by success invisible text");
+			assert.ok(oErrorSelect.$().attr("aria-labelledby").split(" ").indexOf(oErrorSelect.getId() + "-label") > -1, "error select is still labelled by its own label");
+
+			// act
+			oWarningSelect.setValueState("Error");
+
+			// assert
+			assert.ok(oWarningSelect.$().attr("aria-labelledby").split(" ").indexOf(InvisibleText.getStaticId(sCoreLib, "VALUE_STATE_ERROR")) === -1, "warning select is not labelled by the error invisible text");
 
 			// cleanup
 			oSuccessSelect.destroy();
@@ -6756,7 +6763,7 @@ sap.ui.define([
 			oSelect.focus();
 
 			// act
-			qutils.triggerKeydown(oSelect.getDomRef(), KeyCodes.SPACE);
+			qutils.triggerKeyup(oSelect.getDomRef(), KeyCodes.SPACE);
 			this.clock.tick(1000); // wait 1s after the open animation is completed
 			assert.strictEqual(oSelect.isOpen(), true);
 
@@ -7242,7 +7249,7 @@ sap.ui.define([
 			var fnFireChangeSpy = this.spy(oSelect, "fireChange");
 
 			// act
-			qutils.triggerKeydown(oSelect.getDomRef(), KeyCodes.SPACE);
+			qutils.triggerKeyup(oSelect.getDomRef(), KeyCodes.SPACE);
 			this.clock.tick(1000);	// wait 1s after the open animation is completed
 
 			// assert
@@ -7278,7 +7285,7 @@ sap.ui.define([
 			this.clock.tick(1000);
 
 			// act
-			qutils.triggerKeydown(oSelect.getDomRef(), KeyCodes.SPACE);
+			qutils.triggerKeyup(oSelect.getDomRef(), KeyCodes.SPACE);
 			this.clock.tick(1000);
 
 			// assert
@@ -7315,7 +7322,7 @@ sap.ui.define([
 			var fnFireChangeSpy = this.spy(oSelect, "fireChange");
 
 			// act
-			qutils.triggerKeydown(oSelect.getDomRef(), KeyCodes.SPACE);
+			qutils.triggerKeyup(oSelect.getDomRef(), KeyCodes.SPACE);
 
 			// assert
 			assert.strictEqual(fnFireChangeSpy.callCount, 1, "The change event is fired");

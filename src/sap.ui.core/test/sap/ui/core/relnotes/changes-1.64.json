@@ -1,0 +1,73 @@
+{
+  "1.64.0": {
+    "date": "February 2019",
+    "notes": [
+      {
+        "id": "fc06e2e51a9fef687cc588ad03a51df7df20571f",
+        "type": "FEATURE",
+        "text": " Databinding: Support asynchronous parsing and validation",
+        "references": []
+      },
+      {
+        "id": "27f6c52f8bdf9111bc75fd038c0bf446035ad5f5",
+        "type": "FEATURE",
+        "text": " PasteHelper: Test page extension for data validation.",
+        "references": []
+      },
+      {
+        "id": "f1c839c7695dc1566e35de41cee24a2ff900f377",
+        "type": "FEATURE",
+        "text": " v2.ODataModel: Update navigation properties in changed entity",
+        "references": []
+      },
+      {
+        "id": "b26b5cfc8ada2c0f5bcfe86a1f04f1d50b72cb8e",
+        "type": "FIX",
+        "text": " sap.ui.core: Remove circular dependency Component \u003c-\u003e Core",
+        "references": []
+      },
+      {
+        "id": "48fbef23b2fbce0bfc76f92e1492363a78b70d14",
+        "type": "FIX",
+        "text": " variable @sapContent_GridSize is undefined",
+        "references": []
+      },
+      {
+        "id": "bd4e2fc76cf736e3b40fa821953a60ef2e71fb32",
+        "type": "FEATURE",
+        "text": " Adds public API for loadData promise",
+        "references": []
+      },
+      {
+        "id": "726759ebc8fa59c71eb0994e78bd5cd46b0e3908",
+        "type": "FIX",
+        "text": " DateInterval: Allow dash-like chars as delimiter for parsing",
+        "references": []
+      },
+      {
+        "id": "84fdb5182b58649e575c0f8e5608c5784c4a6fa2",
+        "type": "FIX",
+        "text": " Element_destroy.qunit.js: adapted incompatible document call",
+        "references": []
+      },
+      {
+        "id": "fb27097710cfbb779881a1b210814e33fd8785ba",
+        "type": "FIX",
+        "text": " Hyphenation: Improve HyphenationPlayground to not have errors",
+        "references": []
+      },
+      {
+        "id": "b5ca9ff70d06c28b6cdb7e9abd9d3b28a303ba20",
+        "type": "FIX",
+        "text": " ManagedObjectModel: Missing to observe/unobserve existing children",
+        "references": []
+      },
+      {
+        "id": "0b2c9958da29e4af2d6d62fc929f34b85b1e3d69",
+        "type": "FIX",
+        "text": " core.Popup: check the existence of blur method before call it",
+        "references": []
+      }
+    ]
+  }
+}

@@ -1,0 +1,28 @@
+{
+	"sap.app": {
+		"id": "sap.uxap.sample.ObjectPageXML",
+		"applicationVersion": {
+			"version": "1.0.0"
+		}
+	},
+	"sap.ui5": {
+		"rootView": {
+			"viewName": "sap.uxap.sample.ObjectPageXML.ObjectPageXML",
+			"type": "XML",
+			"async": true
+		},
+		"libs": {
+			"sap.m": {}
+		},
+		"config": {
+			"sample": {
+				"stretch": true,
+				"files": [
+					"ObjectPageXML.view.xml",
+					"ObjectPageXML.controller.js",
+					"manifest.json"
+				]
+			}
+		}
+	}
+}

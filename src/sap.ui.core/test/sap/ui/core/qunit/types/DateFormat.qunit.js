@@ -1391,6 +1391,42 @@ sap.ui.define(["sap/ui/core/format/DateFormat", "sap/ui/core/Locale", "sap/ui/co
 			assert.deepEqual(aParsedInterval, [null, null], "[null, null] returned.");
 		});
 
+		QUnit.test("DateFormat with different delimiters", function (assert) {
+
+			var oIntervalFormat = DateFormat.getDateInstance({ interval: true, format: "yMMMd"});
+			var aParsedInterval = oIntervalFormat.parse("Jan 13 - 24, 2019");
+
+			assert.ok(Array.isArray(aParsedInterval), "Array is returned");
+			assert.ok(aParsedInterval[0] instanceof Date, "First date is parsed correctly.");
+			assert.ok(aParsedInterval[1] instanceof Date, "Second date is parsed correctly.");
+
+			aParsedInterval = oIntervalFormat.parse("Jan 13 -- 24, 2019");
+			assert.deepEqual(aParsedInterval, [null, null], "Unknown delimiter - [null, null] returned.");
+
+			// Locale ja_JA
+			oIntervalFormat = DateFormat.getDateInstance({ interval: true }, new Locale("ja_JA"));
+			aParsedInterval = oIntervalFormat.parse("2019/01/13～2019/01/24");
+
+			assert.ok(aParsedInterval[0] instanceof Date, "First date is parsed correctly.");
+			assert.ok(aParsedInterval[1] instanceof Date, "Second date is parsed correctly.");
+
+			// Locale ca
+			oIntervalFormat = DateFormat.getDateInstance({ interval: true }, new Locale("ca"));
+			aParsedInterval = oIntervalFormat.parse("13 de gen. 2019 - 24 de gen. 2019");
+
+			assert.ok(aParsedInterval[0] instanceof Date, "First date is parsed correctly.");
+			assert.ok(aParsedInterval[1] instanceof Date, "Second date is parsed correctly.");
+
+			// Locale fa_IR
+			oIntervalFormat = DateFormat.getDateInstance({ interval: true }, new Locale("fa_IR"));
+			aParsedInterval = oIntervalFormat.parse("19 فوریهٔ 2019 تا 21 فوریهٔ 2019");
+
+			assert.ok(aParsedInterval[0] instanceof Date, "First date is parsed correctly.");
+			assert.ok(aParsedInterval[1] instanceof Date, "Second date is parsed correctly.");
+
+
+		});
+
 		QUnit.test("DateFormat with invalid date", function (assert) {
 			this.oFormat.format();
 			assert.equal(this.oErrorSpy.callCount, 1, "Error is logged");

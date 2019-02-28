@@ -10,7 +10,6 @@ sap.ui.define([
 	"sap/ui/fl/registry/ChangeRegistry",
 	"sap/ui/fl/Utils",
 	"sap/ui/qunit/QUnitUtils",
-	"sap/ui/qunit/utils/waitForThemeApplied",
 	"sap/ui/thirdparty/sinon-4"
 ],
 function (
@@ -23,7 +22,6 @@ function (
 	ChangeRegistry,
 	FlUtils,
 	QUnitUtils,
-	waitForThemeApplied,
 	sinon
 ) {
 	"use strict";
@@ -53,7 +51,11 @@ function (
 		},
 		getModel: function () {}
 	};
-	sinon.stub(FlUtils, "_getAppComponentForComponent").returns(oMockedAppComponent);
+	var oGetAppComponentForControlStub = sinon.stub(FlUtils, "getAppComponentForControl").returns(oMockedAppComponent);
+
+	QUnit.done(function () {
+		oGetAppComponentForControlStub.restore();
+	});
 
 	var sandbox = sinon.sandbox.create();
 
@@ -62,39 +64,38 @@ function (
 			var done = assert.async();
 
 			var oChangeRegistry = ChangeRegistry.getInstance();
-			oChangeRegistry.registerControlsForChanges({
+			return oChangeRegistry.registerControlsForChanges({
 				"sap.m.Button" : {
 					"hideControl" : "default"
 				},
 				"sap.ui.layout.VerticalLayout" : {
 					"hideControl" : "default"
 				}
-			});
+			})
+			.then(function() {
+				this.oRemovePlugin = new RemovePlugin({
+					commandFactory : new CommandFactory()
+				});
+				this.oButton = new Button("button", {text : "Button"});
+				this.oButton1 = new Button("button1", {text : "Button1"});
+				this.oVerticalLayout = new VerticalLayout({
+					content : [this.oButton, this.oButton1]
+				}).placeAt("qunit-fixture");
+				sap.ui.getCore().applyChanges();
 
-			this.oRemovePlugin = new RemovePlugin({
-				commandFactory : new CommandFactory()
-			});
+				this.oDesignTime = new DesignTime({
+					rootElements : [this.oVerticalLayout],
+					plugins : [this.oRemovePlugin]
+				});
 
-			this.oButton = new Button("button", {text : "Button"});
-			this.oButton1 = new Button("button1", {text : "Button1"});
-			this.oVerticalLayout = new VerticalLayout({
-				content : [this.oButton, this.oButton1]
-			}).placeAt("qunit-fixture");
-			sap.ui.getCore().applyChanges();
+				this.oDesignTime.attachEventOnce("synced", function() {
+					this.oLayoutOverlay = OverlayRegistry.getOverlay(this.oVerticalLayout);
+					this.oButtonOverlay = OverlayRegistry.getOverlay(this.oButton);
+					this.oButtonOverlay1 = OverlayRegistry.getOverlay(this.oButton1);
 
-			this.oDesignTime = new DesignTime({
-				rootElements : [this.oVerticalLayout],
-				plugins : [this.oRemovePlugin]
-			});
-
-			this.oDesignTime.attachEventOnce("synced", function() {
-				this.oLayoutOverlay = OverlayRegistry.getOverlay(this.oVerticalLayout);
-				this.oButtonOverlay = OverlayRegistry.getOverlay(this.oButton);
-				this.oButtonOverlay1 = OverlayRegistry.getOverlay(this.oButton1);
-
-				done();
+					done();
+				}.bind(this));
 			}.bind(this));
-
 		},
 		afterEach: function() {
 			sandbox.restore();
@@ -344,38 +345,37 @@ function (
 	QUnit.module("Given a designTime and a Layout with 3 Buttons in it, when _getElementToFocus is called...", {
 		beforeEach : function(assert) {
 			var done = assert.async();
+
 			var oChangeRegistry = ChangeRegistry.getInstance();
-			oChangeRegistry.registerControlsForChanges({
+			return oChangeRegistry.registerControlsForChanges({
 				"sap.m.Button" : {
 					"hideControl" : "default"
 				},
 				"sap.ui.layout.VerticalLayout" : {
 					"hideControl" : "default"
 				}
-			});
+			})
+			.then(function() {
+				this.oButton1 = new Button("button1", {text : "Button1"});
+				this.oButton2 = new Button("button2", {text : "Button2"});
+				this.oButton3 = new Button("button3", {text : "Button3"});
+				this.oVerticalLayout = new VerticalLayout({
+					content : [this.oButton1, this.oButton2, this.oButton3]
+				}).placeAt("qunit-fixture");
+				sap.ui.getCore().applyChanges();
 
-			this.oButton1 = new Button("button1", {text : "Button1"});
-			this.oButton2 = new Button("button2", {text : "Button2"});
-			this.oButton3 = new Button("button3", {text : "Button3"});
-			this.oVerticalLayout = new VerticalLayout({
-				content : [this.oButton1, this.oButton2, this.oButton3]
-			}).placeAt("qunit-fixture");
-			sap.ui.getCore().applyChanges();
+				this.oDesignTime = new DesignTime({
+					rootElements : [this.oVerticalLayout]
+				});
 
-			this.oDesignTime = new DesignTime({
-				rootElements : [this.oVerticalLayout]
-			});
-
-
-			this.oDesignTime.attachEventOnce("synced", function() {
-				this.oLayoutOverlay = OverlayRegistry.getOverlay(this.oVerticalLayout);
-				this.oButtonOverlay1 = OverlayRegistry.getOverlay(this.oButton1);
-				this.oButtonOverlay2 = OverlayRegistry.getOverlay(this.oButton2);
-				this.oButtonOverlay3 = OverlayRegistry.getOverlay(this.oButton3);
-
-				done();
+				this.oDesignTime.attachEventOnce("synced", function() {
+					this.oLayoutOverlay = OverlayRegistry.getOverlay(this.oVerticalLayout);
+					this.oButtonOverlay1 = OverlayRegistry.getOverlay(this.oButton1);
+					this.oButtonOverlay2 = OverlayRegistry.getOverlay(this.oButton2);
+					this.oButtonOverlay3 = OverlayRegistry.getOverlay(this.oButton3);
+					done();
+				}.bind(this));
 			}.bind(this));
-
 		},
 		afterEach: function () {
 			this.oVerticalLayout.destroy();
@@ -408,5 +408,4 @@ function (
 		jQuery("#qunit-fixture").hide();
 	});
 
-	return waitForThemeApplied();
 });

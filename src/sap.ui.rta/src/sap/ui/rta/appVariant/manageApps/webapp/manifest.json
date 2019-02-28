@@ -1,7 +1,7 @@
 {
 	"_version": "1.12.0",
 	"sap.app": {
-		"id": "manageApps",
+		"id": "sap.ui.rta.appVariant.manageApps",
 		"type": "application",
 		"i18n": "i18n/i18n.properties",
 		"applicationVersion": {

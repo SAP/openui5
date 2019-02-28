@@ -938,8 +938,6 @@ function(
 	SegmentedButton.prototype._toNormalMode = function() {
 		delete this._bInOverflow;
 		this.removeStyleClass("sapMSegBSelectWrapper");
-		this.getAggregation("_select").removeAllItems();
-		this.destroyAggregation("_select");
 	};
 
 	/**

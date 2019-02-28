@@ -11,7 +11,7 @@
 		"rootView": {
 			"viewName": "sap.ui.demo.fiori2.view.App",
 			"type": "XML",
-			"async": false,
+			"async": true,
 			"id": "fcl"
 		},
 		"dependencies": {

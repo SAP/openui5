@@ -2465,5 +2465,20 @@
 			"function",
 			"hierarchy"
 		]
+	},
+	"icon-rfid": {
+		"tags": [
+			"device",
+			"location",
+			"indicator"
+			"alert"
+		]
+	},
+	"icon-input": {
+		"tags": [
+			"actions",
+			"arrow",
+			"status"
+		]
 	}
 }

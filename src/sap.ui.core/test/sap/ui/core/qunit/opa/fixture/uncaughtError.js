@@ -1,4 +1,8 @@
-(function () {
+sap.ui.define([
+	"sap/ui/core/library",
+	"sap/ui/core/mvc/Controller",
+	"sap/ui/core/mvc/View"
+], function (library, Controller, View) {
 	"use strict";
 
 	var VIEW_DEFINITION =
@@ -10,17 +14,18 @@
 		'	</App>' +
 		'</mvc:View>';
 
-	sap.ui.controller("myController", {
+	Controller.extend("myController", {
 		onPress: function () {
 			throw Error("TestUncaughtError");
 		}
 	});
 
-	var oView = sap.ui.view({
-		viewContent: VIEW_DEFINITION,
-		type: sap.ui.core.mvc.ViewType.XML
+	View.create({
+		definition: VIEW_DEFINITION,
+		type: library.mvc.ViewType.XML
+	}).then(function(oView) {
+		oView.setViewName("myView");
+		oView.placeAt("content");
 	});
 
-	oView.setViewName("myView");
-	oView.placeAt("content");
-}());
+});

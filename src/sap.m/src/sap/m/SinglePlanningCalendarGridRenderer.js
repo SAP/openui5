@@ -6,6 +6,10 @@ sap.ui.define(['sap/ui/unified/calendar/CalendarDate', 'sap/ui/unified/calendar/
 	function (CalendarDate, CalendarUtils,  UniversalDate, InvisibleText, unifiedLibrary) {
 		"use strict";
 
+		var iVerticalPaddingBetweenAppointments = 2;
+		var iAppointmentBottomPadding = 2;
+		var iAppointmentTopPadding = 1;
+
 		// shortcut for sap.ui.unified.CalendarDayType
 		var CalendarDayType = unifiedLibrary.CalendarDayType;
 
@@ -26,7 +30,6 @@ sap.ui.define(['sap/ui/unified/calendar/CalendarDate', 'sap/ui/unified/calendar/
 			oRm.write("<div");
 			oRm.writeControlData(oControl);
 			oRm.addClass("sapMSinglePCGrid");
-			oRm.addClass("sapUiSizeCompact"); // TODO: for now force Compact mode
 			oRm.writeClasses();
 			oRm.write(">");
 			oRm.renderControl(oControl.getAggregation("_columnHeaders"));
@@ -46,7 +49,8 @@ sap.ui.define(['sap/ui/unified/calendar/CalendarDate', 'sap/ui/unified/calendar/
 			var iColumns = oControl._getColumns(),
 				iMaxLevel = oControl._getBlockersToRender().iMaxlevel,
 				oStartDate = oControl.getStartDate(),
-				iContainerHeight = (iMaxLevel + 1) * oControl._getBlockerRowHeight();
+				// hackie thing to calculate the container witdth. When we have more than 1 line of blockers - we must add 3 px in order to render the blockers visually in the container.
+				iContainerHeight = (iMaxLevel + 1) * oControl._getBlockerRowHeight() + 3;
 
 			oRm.write("<div");
 			oRm.addClass("sapMSinglePCBlockersRow");
@@ -55,9 +59,7 @@ sap.ui.define(['sap/ui/unified/calendar/CalendarDate', 'sap/ui/unified/calendar/
 
 			oRm.write("<div");
 			oRm.addClass("sapMSinglePCBlockersColumns");
-			if (iMaxLevel > 0) { // hackie thing to calculate the container witdth. When we have more than 1 line of blockers - we must add 3 px in order to render the blockers visually in the container.
-				iContainerHeight = iContainerHeight + 3;
-			}
+
 			oRm.addStyle("height", iContainerHeight + "px");
 			oRm.writeClasses();
 			oRm.writeStyles();
@@ -452,7 +454,8 @@ sap.ui.define(['sap/ui/unified/calendar/CalendarDate', 'sap/ui/unified/calendar/
 
 			oRm.write("<div");
 			oRm.addClass("sapUiCalendarApp");
-			oRm.addStyle("min-height", (iRowHeight / 2 - 1) + "px");
+
+			oRm.addStyle("min-height", (iRowHeight - (iVerticalPaddingBetweenAppointments + iAppointmentBottomPadding + iAppointmentTopPadding)) / 2 + "px");
 
 			if (oAppointment.getSelected()) {
 				oRm.addClass("sapUiCalendarAppSel");

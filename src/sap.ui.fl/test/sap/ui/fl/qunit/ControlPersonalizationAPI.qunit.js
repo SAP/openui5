@@ -12,6 +12,7 @@ sap.ui.define([
 	"sap/ui/base/ManagedObject",
 	"sap/ui/core/ComponentContainer",
 	"sap/ui/core/Element",
+	"sap/ui/core/Control",
 	"sap/ui/core/util/reflection/JsControlTreeModifier",
 	"sap/ui/thirdparty/sinon-4"
 ], function(
@@ -26,6 +27,7 @@ sap.ui.define([
 	ManagedObject,
 	ComponentContainer,
 	Element,
+	Control,
 	JsControlTreeModifier,
 	sinon
 ) {
@@ -306,7 +308,7 @@ sap.ui.define([
 				selectorControl: this.oElement
 			};
 			var oChangeRegistry = ChangeRegistry.getInstance();
-			oChangeRegistry.registerControlsForChanges({
+			return oChangeRegistry.registerControlsForChanges({
 				"sap.ui.core.Element" : {
 					"foo" : function() {
 						return {
@@ -315,13 +317,15 @@ sap.ui.define([
 						};
 					}
 				}
-			});
-			var vCheckResult = ControlPersonalizationAPI._checkChangeSpecificData(oChange);
-			assert.equal(vCheckResult, "ChangeHandler has no revertChange function", "the function returns an error");
-			// remove registry item after test is complete
-			oChangeRegistry.removeRegistryItem({
-				changeTypeName: "foo",
-				controlType: "sap.ui.core.Element"
+			})
+			.then(function() {
+				var vCheckResult = ControlPersonalizationAPI._checkChangeSpecificData(oChange);
+				assert.equal(vCheckResult, "ChangeHandler has no revertChange function", "the function returns an error");
+				// remove registry item after test is complete
+				oChangeRegistry.removeRegistryItem({
+					changeTypeName: "foo",
+					controlType: "sap.ui.core.Element"
+				});
 			});
 		});
 	});
@@ -603,6 +607,76 @@ sap.ui.define([
 				assert.notOk(this.fnCreateAndApplyChangeSpy.getCall(2).args[0].variantReference, "third change is without VariantManagement1");
 				assert.notOk(this.fnCreateAndApplyChangeSpy.getCall(3).args[0].variantReference, "fourth change is without VariantManagement2");
 			}.bind(this));
+		});
+	});
+
+	QUnit.module("resetChanges", {
+		beforeEach : function() {
+			sandbox.stub(Utils.log, "error");
+		},
+		afterEach: function() {
+			sandbox.restore();
+		}
+	}, function() {
+		QUnit.test("When resetChanges() is called with an array of selectors", function(assert) {
+			var aSelector = ["selector1", "selector2"];
+			var oControl = new Control("selector1");
+			var oAppComponent = new Component("AppComponent1");
+			sandbox.stub(Utils, "getAppComponentForControl")
+			.callThrough()
+			.withArgs(oControl).returns(oAppComponent);
+			var fnResetChangesStub = sandbox.stub();
+			sandbox.stub(FlexControllerFactory, "createForControl")
+				.callThrough()
+				.withArgs(oControl)
+				.returns({
+					resetChanges: fnResetChangesStub.resolves()
+				});
+
+			return ControlPersonalizationAPI.resetChanges(aSelector)
+				.then(function () {
+					assert.ok(fnResetChangesStub.calledWith("USER", undefined, oAppComponent, "selector1,selector2"), "then FlexController.resetChanges is called with the passed selectors");
+					assert.strictEqual(Utils.log.error.callCount, 0, "then Utils.log.error() is not called");
+				});
+		});
+
+		QUnit.test("When resetChanges() is called with an array of selectors and change types", function(assert) {
+			var aSelector = ["selector2"];
+			var aChangeType = ["changeType1", "changeType2"];
+			var oControl = new Control("selector2");
+			var oAppComponent = new Component("AppComponent2");
+			sandbox.stub(Utils, "getAppComponentForControl")
+			.callThrough()
+			.withArgs(oControl).returns(oAppComponent);
+			var fnResetChangesStub = sandbox.stub();
+			sandbox.stub(FlexControllerFactory, "createForControl")
+				.callThrough()
+				.withArgs(oControl)
+				.returns({
+					resetChanges: fnResetChangesStub.resolves()
+				});
+
+			return ControlPersonalizationAPI.resetChanges(aSelector, aChangeType)
+				.then(function () {
+					assert.ok(fnResetChangesStub.calledWith("USER", undefined, oAppComponent, "selector2", "changeType1,changeType2"), "then FlexController.resetChanges is called with the passed selectors and change types");
+					assert.strictEqual(Utils.log.error.callCount, 0, "then Utils.log.error() is not called");
+				});
+		});
+
+		QUnit.test("When resetChanges() is called with an undefined selector array", function(assert) {
+			ControlPersonalizationAPI.resetChanges(undefined, undefined);
+			assert.ok(Utils.log.error.calledWith("At least one selector has to be provided as a parameter"), "then Utils.log.error() is called with an error");
+		});
+
+		QUnit.test("When resetChanges() is called with an empty selector array", function(assert) {
+			ControlPersonalizationAPI.resetChanges([], undefined);
+			assert.ok(Utils.log.error.calledWith("At least one selector has to be provided as a parameter"), "then Utils.log.error() is called with an error");
+		});
+
+		QUnit.test("When resetChanges() is called with an selector array and for no selector a control is instantiated", function(assert) {
+			var aSelector = ["selector3", "selector4"];
+			ControlPersonalizationAPI.resetChanges(aSelector, undefined);
+			assert.ok(Utils.log.error.calledWith("For none of the provided selectors an instantiated control exists"), "then Utils.log.error() is called with an error");
 		});
 	});
 

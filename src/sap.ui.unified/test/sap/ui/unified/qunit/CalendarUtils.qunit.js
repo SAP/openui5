@@ -4,9 +4,14 @@ sap.ui.define([
 	"sap/ui/qunit/QUnitUtils",
 	"sap/ui/unified/calendar/CalendarUtils",
 	"sap/ui/core/date/UniversalDate",
+	"sap/ui/core/date/Islamic",
+	"sap/ui/core/date/Persian",
+	"sap/ui/core/date/Japanese",
+	"sap/ui/core/date/Buddhist",
 	"sap/ui/unified/calendar/CalendarDate",
-	"sap/ui/core/Locale"
-], function(qutils, CalendarUtils, UniversalDate, CalendarDate, Locale) {
+	"sap/ui/core/Locale",
+	"sap/ui/core/CalendarType"
+], function(qutils, CalendarUtils, UniversalDate, Islamic, Persian, Japanese, Buddhist, CalendarDate, Locale, CalendarType) {
 	"use strict";
 
 	QUnit.module("getFirstDateOfWeek/Month for week Sunday-Saturday (en_US locale)", {
@@ -59,6 +64,17 @@ sap.ui.define([
 			"12 Jun 2016 -> 1 Jun 2016");
 	});
 
+	QUnit.test("getFirstDateOfWeek() with different calendar types", function (assert) {
+		assert.equal(CalendarUtils.getFirstDateOfWeek(new Islamic(Islamic.UTC(1438, 2, 1, 0))).toString(), new Islamic(Islamic.UTC(1438, 1, 26, 0)).toString(),
+			"1 Rab. I 1438->26 Saf. 1438");
+		assert.equal(CalendarUtils.getFirstDateOfWeek(new Persian(Persian.UTC(1395, 8, 11, 0))).toString(), new Persian(Persian.UTC(1395, 8, 7, 0)).toString(),
+			"11 Azar 1395->7 Azar 1395");
+		assert.equal(CalendarUtils.getFirstDateOfWeek(new Japanese(Japanese.UTC([235, 28], 11, 1, 0))).toString(), new Japanese(Japanese.UTC([235, 28], 10, 27, 0)).toString(),
+			"1 Dec 28 H->24 Nov 28 H");
+		assert.equal(CalendarUtils.getFirstDateOfWeek(new Buddhist(Buddhist.UTC(2559, 11, 1, 0))).toString(), new Buddhist(Buddhist.UTC(2559, 10, 27, 0)).toString(),
+			"1 Dec 2559->24 Nov 2559");
+	});
+
 	QUnit.module("getFirstDateOfWeek for week Monday-Sunday (en_GB locale)", {
 		beforeEach: function () {
 			this.oStub1 = sinon.stub(sap.ui.getCore().getConfiguration().getFormatSettings(), "getFormatLocale", function () {
@@ -97,6 +113,17 @@ sap.ui.define([
 	QUnit.test("getFirstDateOfWeek() when 1st date of the month is at the middle of the week", function (assert) {
 		assert.equal(CalendarUtils.getFirstDateOfWeek(new Date(Date.UTC(2016, 11, 1, 0))).toString(), new Date(Date.UTC(2016, 10, 28, 0)).toString(),
 			"1 Dec 2016->25 Nov 2016");
+	});
+
+	QUnit.test("getFirstDateOfWeek() with different calendar types", function (assert) {
+		assert.equal(CalendarUtils.getFirstDateOfWeek(new Islamic(Islamic.UTC(1438, 2, 1, 0))).toString(), new Islamic(Islamic.UTC(1438, 1, 27, 0)).toString(),
+			"1 Rab. I 1438->27 Saf. 1438");
+		assert.equal(CalendarUtils.getFirstDateOfWeek(new Persian(Persian.UTC(1395, 8, 11, 0))).toString(), new Persian(Persian.UTC(1395, 8, 8, 0)).toString(),
+			"11 Azar 1395->8 Azar 1395");
+		assert.equal(CalendarUtils.getFirstDateOfWeek(new Japanese(Japanese.UTC([235, 28], 11, 1, 0))).toString(), new Japanese(Japanese.UTC([235, 28], 10, 28, 0)).toString(),
+			"1 Dec 28 H->25 Nov 28 H");
+		assert.equal(CalendarUtils.getFirstDateOfWeek(new Buddhist(Buddhist.UTC(2559, 11, 1, 0))).toString(), new Buddhist(Buddhist.UTC(2559, 10, 28, 0)).toString(),
+			"1 Dec 2559->25 Nov 2559");
 	});
 
 	QUnit.module("getNumberOfWeeksForAYear()", {
@@ -482,6 +509,18 @@ sap.ui.define([
 		assert.equal(CalendarUtils._isSameMonthAndYear(new CalendarDate(2017, 0, 5), new CalendarDate(2017, 1, 5)), false, "the date is not in the same month and year");
 		assert.equal(CalendarUtils._isSameMonthAndYear(new CalendarDate(2016, 1, 5), new CalendarDate(2017, 1, 5)), false, "the date is not in the same month and year");
 
+	});
+
+	// BCP: 1970123874
+	QUnit.test("_isSameMonthAndYear Japanese", function(assert) {
+		var o11_Feb_31_Showa = CalendarDate.fromLocalJSDate(new Date(-438307200000), CalendarType.Japanese);
+		var o11_Feb_31_Heisei = CalendarDate.fromLocalJSDate(new Date(1549843200000), CalendarType.Japanese);
+
+		assert.equal(
+			CalendarUtils._isSameMonthAndYear(o11_Feb_31_Showa, o11_Feb_31_Heisei),
+			false,
+			"not the same month and year"
+		);
 	});
 
 	QUnit.test("_checkCalendarDate", function(assert) {

@@ -133,6 +133,10 @@ function(
 				}
 			};
 
+			this.oDTForPredefinedDefaultDT = {
+				metaProp2: "2-defaultDT"
+			};
+
 			// stub the DesignTime require calls (make sure the sap.ui.require callback is called asynchronously)
 			this.oRequireStub = sinon.stub(sap.ui, "require");
 			this.oRequireStub.withArgs(["DTManagedObject.designtime"]).callsArgWithAsync(1, this.oDTForManagedObject);
@@ -141,6 +145,7 @@ function(
 			this.oRequireStub.withArgs(["sap/test/DTManagedObjectChild4.designtime"]).callsArgWithAsync(1, this.oDTForManagedObjectModule);
 			this.oRequireStub.withArgs(["sap/test/instanceSpecific.designtime"]).callsArgWithAsync(1, this.oDTForInstance);
 			this.oRequireStub.withArgs(["sap/test/otherInstanceSpecific.designtime"]).callsArgWithAsync(1, this.oDTForOtherInstance);
+			this.oRequireStub.withArgs(["sap/ui/dt/defaultDesigntime/defaultDT.designtime"]).callsArgWithAsync(1, this.oDTForPredefinedDefaultDT);
 
 			this.oInstanceWithoutSpecificDTMetadata = new Element();
 			this.oInstanceWithSpecificDTMetadata = new Element({
@@ -163,7 +168,16 @@ function(
 					}
 				})]
 			});
-
+			this.oInstanceWithPredefinedDefaultDTMetadata = new Element({
+				customData : [new CustomData({
+					key : "sap-ui-custom-settings",
+					value : {
+						"sap.ui.dt" : {
+							designtime : "defaultDT"
+						}
+					}
+				})]
+			});
 		},
 		afterEach: function() {
 			// reset design time cache
@@ -195,6 +209,7 @@ function(
 			this.oInstanceWithoutSpecificDTMetadata.destroy();
 			this.oInstanceWithSpecificDTMetadata.destroy();
 			this.oOtherInstanceWithSpecificDTMetadata.destroy();
+			this.oInstanceWithPredefinedDefaultDTMetadata.destroy();
 
 			this.oRequireStub.restore();
 		}
@@ -341,7 +356,24 @@ function(
 				assert.strictEqual(oDesignTime.metaPropDeep.metaPropDeep3, "deep3", "DesignTime data was inherited");
 				assert.strictEqual(oDesignTime.templates.create, null, "create template is not inherited");
 				assert.strictEqual(oDesignTime.designtimeModule, "sap/test/DTManagedObjectChild4.designtime", "DesignTime module path defined");
+			});
+		});
 
+		QUnit.test("loadDesignTime - with inheritance and instance that has specific metadata defined by designtime default mapping", function(assert) {
+			ManagedObjectMetadata.setDesignTimeDefaultMapping({
+				"defaultDT": "sap/ui/dt/defaultDesigntime/defaultDT.designtime"
+			});
+			return DTManagedObjectModule.getMetadata().loadDesignTime(this.oInstanceWithPredefinedDefaultDTMetadata).then(function(oDesignTime) {
+				assert.strictEqual(oDesignTime.module, "module", "DesignTime data was inherited");
+				assert.strictEqual(oDesignTime.metaProp1, "1", "DesignTime data was inherited");
+				assert.strictEqual(oDesignTime.metaProp2, "2-defaultDT", "DesignTime data was overwritten");
+				assert.strictEqual(oDesignTime.metaProp3, "3", "DesignTime data was inherited");
+				assert.strictEqual(oDesignTime.metaProp4, "4", "DesignTime data was inherited");
+				assert.strictEqual(oDesignTime.metaPropDeep.metaPropDeep1, "deep1", "DesignTime data was inherited");
+				assert.strictEqual(oDesignTime.metaPropDeep.metaPropDeep2, "deep2", "DesignTime data was inherited");
+				assert.strictEqual(oDesignTime.metaPropDeep.metaPropDeep3, "deep3", "DesignTime data was inherited");
+				assert.strictEqual(oDesignTime.templates.create, null, "create template is not inherited");
+				assert.strictEqual(oDesignTime.designtimeModule, "sap/test/DTManagedObjectChild4.designtime", "DesignTime module path defined");
 			});
 		});
 

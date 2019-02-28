@@ -8,8 +8,7 @@ sap.ui.define([
 	"sap/ui/core/ComponentContainer",
 	"sap/ui/layout/VerticalLayout",
 	"sap/m/Button",
-	"sap/ui/dt/DOMUtil",
-	"sap/ui/qunit/utils/waitForThemeApplied"
+	"sap/ui/dt/DOMUtil"
 ], function (
 	DesignTime,
 	OverlayRegistry,
@@ -18,8 +17,7 @@ sap.ui.define([
 	ComponentContainer,
 	VerticalLayout,
 	Button,
-	DOMUtil,
-	waitForThemeApplied
+	DOMUtil
 ) {
 	'use strict';
 
@@ -205,5 +203,4 @@ sap.ui.define([
 		jQuery("#qunit-fixture").hide();
 	});
 
-	return waitForThemeApplied();
 });

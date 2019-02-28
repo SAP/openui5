@@ -10,7 +10,6 @@ sap.ui.define([
 	"sap/ui/rta/plugin/Split",
 	"sap/m/Button",
 	"sap/m/Panel",
-	"sap/ui/qunit/utils/waitForThemeApplied",
 	"sap/ui/thirdparty/sinon-4"
 ],
 function (
@@ -23,7 +22,6 @@ function (
 	SplitPlugin,
 	Button,
 	Panel,
-	waitForThemeApplied,
 	sinon
 ) {
 	'use strict';
@@ -66,7 +64,11 @@ function (
 		getModel: function () {}
 	};
 
-	sinon.stub(Utils, "_getAppComponentForComponent").returns(oMockedAppComponent);
+	var oGetAppComponentForControlStub = sinon.stub(Utils, "getAppComponentForControl").returns(oMockedAppComponent);
+
+	QUnit.done(function () {
+		oGetAppComponentForControlStub.restore();
+	});
 
 	var sandbox = sinon.sandbox.create();
 	var fnSetOverlayDesigntimeMetadata = function(oOverlay, oDesignTimeMetadata) {
@@ -75,44 +77,44 @@ function (
 
 	QUnit.module("Given a designTime and split plugin are instantiated", {
 
-			beforeEach : function(assert) {
+		beforeEach : function(assert) {
+			var done = assert.async();
 
 			var oChangeRegistry = ChangeRegistry.getInstance();
-			oChangeRegistry.registerControlsForChanges({
+			return oChangeRegistry.registerControlsForChanges({
 				"sap.m.Panel": {
 					"splitStuff" : { completeChangeContent: function() {} }
 				}
-			});
+			})
+			.then(function() {
+				this.oSplitPlugin = new SplitPlugin({
+					commandFactory : new CommandFactory()
+				});
+				this.oButton1 = new Button("button1");
+				this.oButton2 = new Button("button2");
+				this.oButton3 = new Button("button3");
+				this.oPanel = new Panel("panel", {
+					content : [
+						this.oButton1,
+						this.oButton2,
+						this.oButton3
+					]
+				}).placeAt("qunit-fixture");
 
-			this.oSplitPlugin = new SplitPlugin({
-				commandFactory : new CommandFactory()
-			});
+				sap.ui.getCore().applyChanges();
 
-			this.oButton1 = new Button("button1");
-			this.oButton2 = new Button("button2");
-			this.oButton3 = new Button("button3");
-			this.oPanel = new Panel("panel", {
-				content : [
-					this.oButton1,
-					this.oButton2,
-					this.oButton3
-				]
-			}).placeAt("qunit-fixture");
+				this.oDesignTime = new DesignTime({
+					rootElements : [this.oPanel],
+					plugins : [this.oSplitPlugin]
+				});
 
-			sap.ui.getCore().applyChanges();
-
-			this.oDesignTime = new DesignTime({
-				rootElements : [this.oPanel],
-				plugins : [this.oSplitPlugin]
-			});
-
-			var done = assert.async();
-			this.oDesignTime.attachEventOnce("synced", function() {
-				this.oButton1Overlay = OverlayRegistry.getOverlay(this.oButton1);
-				this.oButton2Overlay = OverlayRegistry.getOverlay(this.oButton2);
-				this.oButton3Overlay = OverlayRegistry.getOverlay(this.oButton3);
-				this.oPanelOverlay = OverlayRegistry.getOverlay(this.oPanel);
-				done();
+				this.oDesignTime.attachEventOnce("synced", function() {
+					this.oButton1Overlay = OverlayRegistry.getOverlay(this.oButton1);
+					this.oButton2Overlay = OverlayRegistry.getOverlay(this.oButton2);
+					this.oButton3Overlay = OverlayRegistry.getOverlay(this.oButton3);
+					this.oPanelOverlay = OverlayRegistry.getOverlay(this.oPanel);
+					done();
+				}.bind(this));
 			}.bind(this));
 		},
 
@@ -359,5 +361,4 @@ function (
 		jQuery("#qunit-fixture").hide();
 	});
 
-	return waitForThemeApplied();
 });

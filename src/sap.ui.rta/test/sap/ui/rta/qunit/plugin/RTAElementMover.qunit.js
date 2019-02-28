@@ -16,7 +16,6 @@ sap.ui.define([
 	"sap/m/Button",
 	"sap/m/Bar",
 	"sap/ui/core/ComponentContainer",
-	"sap/ui/qunit/utils/waitForThemeApplied",
 	"sap/ui/thirdparty/sinon-4"
 ], function(
 	CommandFactory,
@@ -34,7 +33,6 @@ sap.ui.define([
 	Button,
 	Bar,
 	ComponentContainer,
-	waitForThemeApplied,
 	sinon
 ) {
 	"use strict";
@@ -650,13 +648,103 @@ sap.ui.define([
 				}
 			}.bind(this));
 
-			assert.equal(this.oElementMover._isMoveAvailableOnRelevantContainer(this.oMovedButton1Overlay), false, "then the move is not available");
+			assert.equal(this.oElementMover.isMoveAvailableOnRelevantContainer(this.oMovedButton1Overlay), false, "then the move is not available");
 		});
+	});
+
+	QUnit.module("Given a Bar with Buttons scenario", {
+		beforeEach : function(assert) {
+			var done = assert.async();
+
+			// another scenario
+			// Bar
+			//    Aggregation1 (contentLeft)
+			//        MovedButton1
+			//        Button2
+
+			this.oButton1 = new Button("button1");
+			this.oButton2 = new Button("button2");
+			this.oBar = new Bar("bar1", {
+				contentRight: [
+					this.oButton1,
+					this.oButton2
+				]
+			});
+
+			var oCommandFactory = new CommandFactory();
+			this.oDragDropPlugin = new DragDropPlugin({
+				commandFactory : oCommandFactory
+			});
+
+			this.oBar.placeAt("qunit-fixture");
+			sap.ui.getCore().applyChanges();
+
+			// stub designtime metadata
+			var oBarMetadata = new ElementDesignTimeMetadata({
+				data: {
+					aggregations: {
+						contentLeft: {
+							actions: {
+								move: "moveControls"
+							}
+						},
+						contentMiddle: {
+						},
+						contentRight: {
+							actions: {
+								move: "moveControls"
+							}
+						}
+					}
+				}
+			});
+
+			// create designtime
+			this.oDesignTime = new DesignTime({
+				rootElements: [
+					this.oBar
+				],
+				plugins: [this.oDragDropPlugin],
+				designTimeMetadata : {
+					"sap.m.Bar" : oBarMetadata,
+					"sap.m.Button" : {}
+				}
+			});
+
+			this.oDesignTime.attachEventOnce("synced", function() {
+				this.oBarOverlay = OverlayRegistry.getOverlay(this.oBar);
+				this.oButton1Overlay = OverlayRegistry.getOverlay(this.oButton1);
+				this.oElementMover = this.oDragDropPlugin.getElementMover();
+				done();
+			}.bind(this));
+		},
+		afterEach : function() {
+			sandbox.restore();
+			this.oButton1Overlay.destroy();
+			this.oBarOverlay.destroy();
+			this.oDesignTime.destroy();
+			this.oBar.destroy();
+		}
+	}, function() {
+
+		QUnit.test("when isMoveAvailableForChildren is called with bar", function(assert) {
+			// should also work when AggregationOverlays are not defined
+			sandbox.stub(this.oBarOverlay, "getAggregationOverlay")
+				.callThrough()
+				.withArgs("contentLeft").returns(undefined);
+			assert.ok(this.oElementMover.isMoveAvailableForChildren(this.oBarOverlay),
+			"then the result is 'true'");
+		});
+
+		QUnit.test("when isMoveAvailableForChildren is called with button", function(assert) {
+			assert.notOk(this.oElementMover.isMoveAvailableForChildren(this.oButton1Overlay),
+			"then the result is 'false'");
+		});
+
 	});
 
 	QUnit.done(function () {
 		jQuery("#qunit-fixture").hide();
 	});
 
-	return waitForThemeApplied();
 });

@@ -554,6 +554,22 @@ sap.ui.define([
 			});
 		});
 
+		QUnit.test("ColorPalette.prototype.onsapspace should prevent default", function (assert) {
+			// Prepare
+			var oCP = new ColorPalette(),
+				oEvent = new jQuery.Event(),
+				oSpyEvtPreventDefault = this.spy(oEvent, "preventDefault");
+
+			// Act
+			oCP.onsapspace(oEvent);
+
+			// Assert
+			assert.equal(oSpyEvtPreventDefault.callCount, 1, "..should prevent default action");
+
+			// Cleanup - not needed
+		});
+
+
 		QUnit.module("_onSwatchContainerBorderReached", {
 				mockEhancedKeybEvent: function (sKeybEventType, sDirection) {
 					return {

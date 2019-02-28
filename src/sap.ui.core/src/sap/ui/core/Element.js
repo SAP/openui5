@@ -477,7 +477,7 @@ sap.ui.define([
 	 * Applications should call this method if they don't need the element any longer.
 	 *
 	 * @param {boolean}
-	 *            [bSuppressInvalidate] if true, the UI element is not marked for redraw
+	 *            [bSuppressInvalidate] if true, the UI element is removed from DOM synchronously and parent will not be invalidated.
 	 * @public
 	 */
 	Element.prototype.destroy = function(bSuppressInvalidate) {
@@ -485,6 +485,9 @@ sap.ui.define([
 		if (this.bIsDestroyed) {
 			return;
 		}
+
+		// determine whether parent exists or not
+		var bHasParent = Boolean(this.getParent());
 
 		// update the focus information (potentionally) stored by the central UI5 focus handling
 		Element._updateFocusInfo(this);
@@ -494,14 +497,32 @@ sap.ui.define([
 		// determine whether to remove the control from the DOM or not
 		// controls that implement marker interface sap.ui.core.PopupInterface are by contract
 		// not rendered by their parent so we cannot keep the DOM of these controls
-		if (bSuppressInvalidate !== "KeepDom" ||
-			this.getMetadata().isInstanceOf("sap.ui.core.PopupInterface")) {
+		if (bSuppressInvalidate === true || !bHasParent || this.isA("sap.ui.core.PopupInterface")) {
 			this.$().remove();
-		} else {
-			Log.debug("DOM is not removed on destroy of " + this);
+		} else if (bSuppressInvalidate !== "KeepDom") {
+			// On destroy we do not remove the control DOM synchronously and just let the invalidation happen.
+			// At the next tick of the RenderManager control DOM nodes will be removed anyway.
+			// To make this new behavior more compatible we are changing the id of
+			// the control's DOM and all child nodes that starts with the control id.
+			this.$().removeAttr("data-sap-ui-preserve").find('[id^="' + this.getId() + '-"]').andSelf().each(function(){
+				this.id = "sap-ui-destroyed-" + this.id;
+			});
 		}
+
+		// wrap custom data API to avoid creating new objects
+		this.data = noCustomDataAfterDestroy;
 	};
 
+	function noCustomDataAfterDestroy() {
+		// Report and ignore only write calls; read and remove calls are well-behaving
+		var argLength = arguments.length;
+		if ( argLength === 1 && arguments[0] !== null && typeof arguments[0] == "object"
+			 || argLength > 1 && argLength < 4 && arguments[1] !== null ) {
+			Log.error("Cannot create custom data on an already destroyed element '" + this + "'");
+			return this;
+		}
+		return Element.prototype.data.apply(this, arguments);
+	}
 
 	/*
 	 * Class <code>sap.ui.core.Element</code> intercepts fireEvent calls to enforce an 'id' property

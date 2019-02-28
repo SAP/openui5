@@ -1,0 +1,53 @@
+{
+	"_version": "1.8.0",
+	"sap.app": {
+		"type": "card"
+	},
+	"sap.card": {
+		"type": "List",
+		"header": {
+			"title": "Request list content Card",
+			"subTitle": "Card Subtitle",
+			"icon": {
+				"src": "sap-icon://accept"
+			},
+			"status": "100 of 200",
+			"actions": [
+				{
+					"type": "Navigation",
+					"parameters": {
+						"url": "https://www.sap.com"
+					}
+				}
+			]
+		},
+		"content": {
+			"data": {
+				"request": {
+					"url": "./cardcontent/someitems_services2.json"
+				},
+				"path": "/items"
+			},
+			"item": {
+				"icon": {
+					"src": "{icon}"
+				},
+				"title": {
+					"value": "{Name}"
+				},
+				"description": {
+					"value": "{Description}"
+				},
+				"actions": [
+					{
+						"type": "Navigation",
+						"enabled": "{= ${url}}",
+						"parameters": {
+							"url": "{url}"
+						}
+					}
+				]
+			}
+		}
+	}
+}

@@ -34,6 +34,13 @@ sap.ui.define(function () {
 						"sap/ui/integration/util/CardManifest"
 					]
 				}
+			},
+			"util/CustomElements": {
+				coverage: {
+					only: [
+						"sap/ui/integration/util/CustomElements"
+					]
+				}
 			}
 		}
 	};

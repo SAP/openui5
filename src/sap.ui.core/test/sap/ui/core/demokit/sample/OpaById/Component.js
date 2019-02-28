@@ -5,27 +5,7 @@ sap.ui.define(['sap/ui/core/UIComponent'],
 	var Component = UIComponent.extend("sap.ui.core.sample.OpaById.Component", {
 
 		metadata : {
-			dependencies : {
-				libs : [
-					"sap.m"
-				]
-			},
-			config : {
-				sample : {
-					iframe : "Opa.html?opaExecutionDelay=700",
-					stretch : true,
-					files : [
-						"Opa.html",
-						"Opa.js",
-						"applicationUnderTest/controller/Main.controller.js",
-						"applicationUnderTest/view/Main.view.xml",
-						"applicationUnderTest/view/Hello.fragment.xml",
-						"applicationUnderTest/index.html",
-						"applicationUnderTest/Component.js",
-						"applicationUnderTest/manifest.json"
-					]
-				}
-			}
+		    manifest: "json"
 		}
 
 	});

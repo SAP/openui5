@@ -2885,7 +2885,7 @@ sap.ui.define([
 		oSegmentedButton.destroy();
 	});
 
-	QUnit.test("When switched to select mode and back to normal mode, there are no leftovers", function(assert) {
+	QUnit.test("When switched to select mode and back to normal mode, the select is reused", function(assert) {
 
 		// Arrange
 		var oSegmentedButton = new SegmentedButton({
@@ -2911,18 +2911,16 @@ sap.ui.define([
 		this.clock.tick(1000);
 
 		// Assert
-		assert.strictEqual(oSegmentedButton.getAggregation("_select"),
-				null,
-				"The hidden select has not been instantiated");
+		assert.ok(oSegmentedButton.getAggregation("_select"),
+			"The hidden select has not been destroyed");
 
 		assert.strictEqual(oSegmentedButton._bInOverflow,
 				undefined,
 				"The property _bInOverflow does not exist at all");
 
 		assert.strictEqual(oSegmentedButton.$("select").length,
-				0,
-				"The select is not in the DOM");
-
+				1,
+				"The select is still in the DOM");
 
 		// Cleanup
 		oSegmentedButton.destroy();

@@ -1,0 +1,32 @@
+{
+	"sap.app": {
+		"id": "sap.uxap.sample.ObjectPageBlockBase",
+		"applicationVersion": {
+			"version": "1.0.0"
+		}
+	},
+	"sap.ui5": {
+		"rootView": {
+			"viewName": "sap.uxap.sample.ObjectPageBlockBase.ObjectPageBlockBase",
+			"type": "XML",
+			"async": true
+		},
+		"libs": {
+			"sap.m": {}
+		},
+		"config": {
+			"sample": {
+				"stretch": true,
+				"files": [
+					"ObjectPageBlockBase.view.xml",
+					"ObjectPageBlockBase.controller.js",
+					"../SharedBlocks/BlockBlue.js",
+					"../SharedBlocks/BlockBlue.view.xml",
+					"../SharedBlocks/BlockBlueWithInfo.js",
+					"../SharedBlocks/BlockBlueWithInfo.view.xml",
+					"manifest.json"
+				]
+			}
+		}
+	}
+}

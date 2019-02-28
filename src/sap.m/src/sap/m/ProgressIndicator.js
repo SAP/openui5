@@ -122,14 +122,20 @@ sap.ui.define([
 			fPercentDiff,
 			$progressIndicator = this.$(),
 			fAnimationDuration,
-			fNotValidValue;
+			fOriginalValue = fPercentValue;
 
-		fPercentValue = this.validateProperty("percentValue", fPercentValue);
+		fPercentValue = parseFloat(fPercentValue);
 
 		if (!isValidPercentValue(fPercentValue)) {
-			fNotValidValue = fPercentValue;
-			fPercentValue = fPercentValue > 100 ? 100 : 0;
-			Log.warning(this + ": percentValue (" + fNotValidValue + ") is not correct! Setting the percentValue to " + fPercentValue);
+			if (fPercentValue > 100) {
+				fPercentValue = 100;
+			} else if (fPercentValue < 0) {
+				fPercentValue = 0;
+			} else {
+				Log.warning(this + ": percentValue (" + fOriginalValue + ") is not a valid number! The provided value will not be set!");
+				return this;
+			}
+			Log.warning(this + ": percentValue (" + fOriginalValue + ") is not correct! Setting the percentValue to " + fPercentValue);
 		}
 
 		if (this.getPercentValue() !== fPercentValue) {
@@ -255,7 +261,7 @@ sap.ui.define([
 	};
 
 	function isValidPercentValue(value) {
-		return value >= 0 && value <= 100;
+		return !isNaN(value) && value >= 0 && value <= 100;
 	}
 
 	return ProgressIndicator;

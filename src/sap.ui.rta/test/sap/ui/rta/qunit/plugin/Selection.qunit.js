@@ -20,7 +20,6 @@ sap.ui.define([
 	"sap/ui/fl/registry/SimpleChanges",
 	"sap/ui/core/UIComponent",
 	"sap/ui/events/KeyCodes",
-	"sap/ui/qunit/utils/waitForThemeApplied",
 	"sap/ui/thirdparty/sinon-4"
 ], function (
 	jQuery,
@@ -42,17 +41,19 @@ sap.ui.define([
 	SimpleChanges,
 	UIComponent,
 	KeyCodes,
-	waitForThemeApplied,
 	sinon
 ) {
 	"use strict";
 
+	var sandbox = sinon.sandbox.create();
+
 	QUnit.module("Given a Selection plugin and designtime in MultiSelection mode and controls with custom dt metadata to simulate different cases...", {
 		beforeEach : function(assert) {
-			this.sandbox = sinon.sandbox.create();
+			var done = assert.async();
 
+			this.sandbox = sinon.sandbox.create();
 			this.oComponent = new UIComponent();
-			this.sandbox.stub(FlUtils, "_getAppComponentForComponent").returns(this.oComponent);
+			sandbox.stub(FlUtils, "getAppComponentForControl").returns(this.oComponent);
 			var oChangeRegistry = ChangeRegistry.getInstance();
 			oChangeRegistry.registerControlsForChanges({
 				"sap.m.VBox": [
@@ -73,128 +74,121 @@ sap.ui.define([
 				"sap.m.Text": [
 					SimpleChanges.hideControl
 				]
-			});
-
-			this.oCommandFactory = new CommandFactory(
-				{
-					flexSettings: {
-						layer:"CUSTOMER",
-						developerMode: false
-					}
-				}
-			);
-
-			this.oSelectionPlugin = new Selection({
-				commandFactory :this.oCommandFactory,
-				multiSelectionRequiredPlugins : [
-					Combine.getMetadata().getName(),
-					Remove.getMetadata().getName()
-				]
-			});
-
-			this.oVBox = new VBox({
-				id : this.oComponent.createId("root"),
-				items : [
-					new HBox({
-						id : this.oComponent.createId("container1"),
-						items : [
-							new Button(this.oComponent.createId("innerBtn11")),
-							new Button(this.oComponent.createId("innerBtn12")),
-							new Text(this.oComponent.createId("innerTxt13"))
-						]
-					}),
-					new Button(this.oComponent.createId("btnOutsideContainer")),
-					new HBox({
-						id : this.oComponent.createId("container2"),
-						items : [
-							new Button(this.oComponent.createId("innerBtn21"))
-						]
-					}),
-					new Bar(this.oComponent.createId("othercontainer3")),
-					new HBox({
-						id : this.oComponent.createId("container4"),
-						items : [
-							new VBox({
-								id : this.oComponent.createId("innerVBox1"),
-								items : [
-									new Text(this.oComponent.createId("innerVBox1Txt"))
-								]
-							}),
-							new VBox({
-								id : this.oComponent.createId("innerVBox2"),
-								items : [
-									new Text(this.oComponent.createId("innerVBox2Txt")),
-									new Button(this.oComponent.createId("innerVBox2Btn"))
-								]
-							})
-
-						]
-					})
-				]
-			});
-			this.oVBox.placeAt("qunit-fixture");
-			sap.ui.getCore().applyChanges();
-
-
-			var done = assert.async();
-			this.oDesignTime = new DesignTime({
-				plugins : [
-					this.oSelectionPlugin,
-					new Remove({commandFactory :this.oCommandFactory}),
-					new Combine({commandFactory :this.oCommandFactory})
-				],
-				rootElements : [this.oVBox],
-				designTimeMetadata : {
-					"sap.m.VBox" : {
-						actions : {
-							remove : {
-								changeType: "hideControl"
-							}
+			})
+			.then(function() {
+				this.oCommandFactory = new CommandFactory(
+					{
+						flexSettings: {
+							layer:"CUSTOMER",
+							developerMode: false
 						}
-					},
-					"sap.m.HBox" : {
-						aggregations : {
-							items : {
-								propagateRelevantContainer : true
+					}
+				);
+				this.oSelectionPlugin = new Selection({
+					commandFactory :this.oCommandFactory,
+					multiSelectionRequiredPlugins : [
+						Combine.getMetadata().getName(),
+						Remove.getMetadata().getName()
+					]
+				});
+				this.oVBox = new VBox({
+					id : this.oComponent.createId("root"),
+					items : [
+						new HBox({
+							id : this.oComponent.createId("container1"),
+							items : [
+								new Button(this.oComponent.createId("innerBtn11")),
+								new Button(this.oComponent.createId("innerBtn12")),
+								new Text(this.oComponent.createId("innerTxt13"))
+							]
+						}),
+						new Button(this.oComponent.createId("btnOutsideContainer")),
+						new HBox({
+							id : this.oComponent.createId("container2"),
+							items : [
+								new Button(this.oComponent.createId("innerBtn21"))
+							]
+						}),
+						new Bar(this.oComponent.createId("othercontainer3")),
+						new HBox({
+							id : this.oComponent.createId("container4"),
+							items : [
+								new VBox({
+									id : this.oComponent.createId("innerVBox1"),
+									items : [
+										new Text(this.oComponent.createId("innerVBox1Txt"))
+									]
+								}),
+								new VBox({
+									id : this.oComponent.createId("innerVBox2"),
+									items : [
+										new Text(this.oComponent.createId("innerVBox2Txt")),
+										new Button(this.oComponent.createId("innerVBox2Btn"))
+									]
+								})
+							]
+						})
+					]
+				});
+				this.oVBox.placeAt("qunit-fixture");
+				sap.ui.getCore().applyChanges();
+
+				this.oDesignTime = new DesignTime({
+					plugins : [
+						this.oSelectionPlugin,
+						new Remove({commandFactory :this.oCommandFactory}),
+						new Combine({commandFactory :this.oCommandFactory})
+					],
+					rootElements : [this.oVBox],
+					designTimeMetadata : {
+						"sap.m.VBox" : {
+							actions : {
+								remove : {
+									changeType: "hideControl"
+								}
 							}
 						},
-						actions : {
-							remove : {
-								changeType: "hideControl"
-							}
-						}
-					},
-					"sap.m.Button" : {
-						actions : {
-							combine : {
-								changeType: "combineChange",
-								changeOnRelevantContainer : true
+						"sap.m.HBox" : {
+							aggregations : {
+								items : {
+									propagateRelevantContainer : true
+								}
 							},
-							remove: null
-						}
-					},
-					"sap.m.Text" : {
-						actions : {
-							remove : {
-								changeType: "hideControl"
+							actions : {
+								remove : {
+									changeType: "hideControl"
+								}
+							}
+						},
+						"sap.m.Button" : {
+							actions : {
+								combine : {
+									changeType: "combineChange",
+									changeOnRelevantContainer : true
+								},
+								remove: null
+							}
+						},
+						"sap.m.Text" : {
+							actions : {
+								remove : {
+									changeType: "hideControl"
+								}
 							}
 						}
 					}
-				}
-			});
-
-			this.oDesignTime.attachEventOnce("synced", function() {
-				done();
-			});
-
-			this.oSelectionManager = this.oDesignTime.getSelectionManager();
-			this.oEvent = jQuery.Event('keydown');
-			this.oEvent.shiftKey = false;
-			this.oEvent.altKey = false;
-
+				});
+				this.oDesignTime.attachEventOnce("synced", function() {
+					done();
+				});
+				this.oSelectionManager = this.oDesignTime.getSelectionManager();
+				this.oEvent = jQuery.Event('keydown');
+				this.oEvent.shiftKey = false;
+				this.oEvent.altKey = false;
+			}.bind(this));
 		},
 		afterEach : function() {
-			this.sandbox.restore();
+			sandbox.restore();
 			this.oComponent.destroy();
 			this.oVBox.destroy();
 			this.oDesignTime.destroy();
@@ -315,10 +309,10 @@ sap.ui.define([
 				element: oElement,
 				isRoot: false
 			});
-			this.sandbox.stub(oOverlay, "getDesignTimeMetadata").returns({
+			sandbox.stub(oOverlay, "getDesignTimeMetadata").returns({
 				markedAsNotAdaptable: function() { return false; }
 			});
-			var oAttachEditableChangeStub = this.sandbox.stub(oOverlay, "attachEditableChange");
+			var oAttachEditableChangeStub = sandbox.stub(oOverlay, "attachEditableChange");
 			this.oSelectionPlugin.registerElementOverlay(oOverlay);
 			this.oSelectionManager.add(oOverlay);
 			assert.notOk(oOverlay.isSelected(), "then this overlay is not selected");
@@ -333,10 +327,10 @@ sap.ui.define([
 				element: oElement,
 				isRoot: false
 			});
-			this.sandbox.stub(oOverlay, "getDesignTimeMetadata").returns({
+			sandbox.stub(oOverlay, "getDesignTimeMetadata").returns({
 				markedAsNotAdaptable: function() { return true; }
 			});
-			var oAttachEditableChangeStub = this.sandbox.stub(oOverlay, "attachEditableChange");
+			var oAttachEditableChangeStub = sandbox.stub(oOverlay, "attachEditableChange");
 			this.oSelectionPlugin.registerElementOverlay(oOverlay);
 			this.oSelectionManager.add(oOverlay);
 			assert.notOk(oOverlay.isSelected(), "then this overlay is not selected");
@@ -409,7 +403,7 @@ sap.ui.define([
 		});
 
 		QUnit.test("Invoking Mouse-Down on an Overlay which is selectable", function (assert) {
-			this.sandbox.stub(sap.ui.Device.browser, "name").value("ie");
+			sandbox.stub(sap.ui.Device.browser, "name").value("ie");
 			var oOverlay = OverlayRegistry.getOverlay(this.oComponent.createId("innerBtn11"));
 			assert.notOk(document.activeElement === oOverlay.getDomRef(), "when the Overlay is initially not focused");
 			var oMouseEvent = jQuery.Event('mousedown');
@@ -418,7 +412,7 @@ sap.ui.define([
 		});
 
 		QUnit.test("Invoking Mouse-Down on an Overlay which is not selectable", function (assert) {
-			this.sandbox.stub(sap.ui.Device.browser, "name").value("ie");
+			sandbox.stub(sap.ui.Device.browser, "name").value("ie");
 			var oOverlay = OverlayRegistry.getOverlay(this.oComponent.createId("innerBtn11"));
 			oOverlay.setSelectable(false);
 			oOverlay.setFocusable(true);
@@ -487,5 +481,4 @@ sap.ui.define([
 		jQuery("#qunit-fixture").hide();
 	});
 
-	return waitForThemeApplied();
 });

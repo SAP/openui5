@@ -22,7 +22,8 @@ sap.ui.define(["sap/ui/base/DataType",
 		designtime: "sap/f/designtime/library.designtime",
 		interfaces: [
 			"sap.f.cards.IHeader",
-			"sap.f.ICard"
+			"sap.f.ICard",
+			"sap.f.IShellBar"
 		],
 		types: [
 			"sap.f.LayoutType",
@@ -38,7 +39,8 @@ sap.ui.define(["sap/ui/base/DataType",
 			"sap.f.DynamicPageTitle",
 			"sap.f.FlexibleColumnLayout",
 			"sap.f.semantic.SemanticPage",
-			"sap.f.GridList"
+			"sap.f.GridList",
+			"sap.f.ShellBar"
 		],
 		elements: [
 			"sap.f.CardItemLayoutData",
@@ -439,6 +441,17 @@ sap.ui.define(["sap/ui/base/DataType",
 	 * @public
 	 * @interface
 	 * @name sap.f.cards.IHeader
+	 */
+
+	/**
+	 * Interface for controls suitable for sap.f.ShellBar additionalContent aggregation
+	 *
+	 * @since 1.63
+	 * @name sap.f.IShellBar
+	 * @experimental Since 1.63. This Interface is experimental and provides only limited functionality. It can be removed in future versions.
+	 * @public
+	 * @interface
+	 * @ui5-metamodel This interface also will be described in the UI5 (legacy) designtime metamodel
 	 */
 
 	return thisLib;

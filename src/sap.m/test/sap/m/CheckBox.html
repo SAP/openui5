@@ -203,11 +203,11 @@
 					}),
 					oToolbar,
 					new sap.ui.layout.form.SimpleForm({
+						id: "sf_with_checkbox",
 						title: "Form containing a CheckBox",
 						editable : true,
 						content : [
-							new sap.m.Label({text:"CheckBox in a Form"}),
-							new sap.m.CheckBox({selected:true})
+							new sap.m.CheckBox({id: "cb_in_a_form", selected:true, text:"CheckBox in a Form"})
 						]
 					}),
 					// RTL sapmple - set page in rtl mode to explore (sap-ui-rtl='true')

@@ -1,0 +1,33 @@
+{
+	"sap.app": {
+		"id": "sap.m.sample.FlexBoxSizeAdjustments",
+		"applicationVersion": {
+			"version": "1.0.0"
+		}
+	},
+	"sap.ui5": {
+		"rootView": {
+			"viewName": "sap.m.sample.FlexBoxSizeAdjustments.V",
+			"type": "XML",
+			"async": true
+		},
+		"libs": {
+			"sap.ui.layout": {}
+		},
+		"resources": {
+			"css": [
+				{
+					"uri": "style.css"
+				}
+			]
+		},
+		"config": {
+			"sample": {
+				"files": [
+					"V.view.xml",
+					"manifest.json"
+				]
+			}
+		}
+	}
+}

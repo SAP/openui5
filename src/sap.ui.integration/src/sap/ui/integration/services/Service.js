@@ -36,16 +36,6 @@ sap.ui.define([], function () {
 	};
 
 	/**
-	 * Expected by a consumer of a Service to check whether a given <code>oDataContext</code> is valid.
-	 * @param {string|object} oDataContext an object that gives the service information about the target. It is either a url string or a dataStructure
-	 * @returns {Promise} A promise that resolves with true if the service is available.
-	 * @abstract
-	 */
-	Service.prototype.enabled = function (oDataContext) {
-		return Promise.resolve(false);
-	};
-
-	/**
 	 * @returns {sap.ui.integration.services.Service} The interface of the service.
 	 */
 	Service.prototype.getInterface = function () {

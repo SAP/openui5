@@ -43,6 +43,18 @@
         "type": "FIX",
         "text": " sap.f.FlexibleColumnLayout: Fixed back navigation in sample",
         "references": []
+      },
+      {
+        "id": "284ea572a930ff8f5fd7d2f6627c510011f7a1c6",
+        "type": "FEATURE",
+        "text": " sap.f.FlexibleColumnLayout: Conceal effect implemented",
+        "references": []
+      },
+      {
+        "id": "6b3bdfff8c608081467bd3c9f07daf8c120fa25b",
+        "type": "FEATURE",
+        "text": " sap.f.ShellBar - new experimental control added",
+        "references": []
       }
     ]
   }

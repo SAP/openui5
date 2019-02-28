@@ -1035,13 +1035,16 @@ sap.ui.define([
 	 * @private
 	 */
 	ObjectPageHeader.prototype._findById = function ($headerDomRef, sId) {
+		var sEscapedId;
+
 		if (!sId) {
 			return null;
 		}
 
 		if ($headerDomRef) {
 			sId = this.getId() + '-' + sId;
-			return jQuery(document.getElementById(sId));
+			sEscapedId = "#" + sId.replace(/(:|\.)/g,'\\$1');
+			return $headerDomRef.find(sEscapedId);
 		}
 
 		return this.$(sId); //if no dom reference then search within its own id-space (prepended with own id)

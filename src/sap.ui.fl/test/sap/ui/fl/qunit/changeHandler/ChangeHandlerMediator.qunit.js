@@ -1,15 +1,17 @@
 /* global QUnit*/
 
 sap.ui.define([
-	'sap/ui/fl/changeHandler/ChangeHandlerMediator',
-	'sap/base/Log',
+	"sap/ui/fl/changeHandler/ChangeHandlerMediator",
+	"sap/base/Log",
 	"sap/ui/thirdparty/jquery",
-	'sap/ui/thirdparty/sinon-4'
+	"sap/base/util/includes",
+	"sap/ui/thirdparty/sinon-4"
 ],
 function(
 	ChangeHandlerMediator,
 	Log,
 	jQuery,
+	fnBaseIncludes,
 	sinon
 ) {
 	"use strict";
@@ -69,80 +71,129 @@ function(
 		}
 	}, function() {
 		QUnit.test('when adding change handler settings to the mediator...', function(assert) {
-			assert.throws(function(){
-				ChangeHandlerMediator.addChangeHandlerSettings({ "scenario" : this.sAddFieldScenario, "model" : this.sModel});
-			}, /requires/, "then an incomplete change handler entry cannot be added");
-			ChangeHandlerMediator.addChangeHandlerSettings({ "scenario" : this.sAddFieldScenario, "model" : this.sModel }, this.mAddFieldSettings);
-			ChangeHandlerMediator.addChangeHandlerSettings({ "scenario" : this.sAddColumnScenario, "model" : this.sModel }, this.mAddColumnSettings);
+			return Promise.resolve()
+			.then(function() {
+				return ChangeHandlerMediator.addChangeHandlerSettings(
+					{ "scenario" : this.sAddFieldScenario, "model" : this.sModel});
+			}.bind(this))
 
-			var mAddFieldSettings = ChangeHandlerMediator.getChangeHandlerSettings({"scenario" : this.sAddFieldScenario, "model" : this.sModel});
+			.catch(function(oReturn) {
+				assert.ok(fnBaseIncludes(oReturn.message, "New entry in ChangeHandlerMediator requires a key and settings"),
+				"then an incomplete change handler entry cannot be added");
+			})
 
-			assert.equal(mAddFieldSettings.content.requiredLibraries["sap.ui.layout"].minVersion,
-				"1.48", "then the required library for addField is retrieved");
-			assert.equal(mAddFieldSettings.scenarioInitialized, true, "then the scenario was successfully initialized");
+			.then(function() {
+				return ChangeHandlerMediator.addChangeHandlerSettings(
+					{ "scenario" : this.sAddFieldScenario, "model" : this.sModel }, this.mAddFieldSettings);
+			}.bind(this))
 
-			var mAddColumnSettings = ChangeHandlerMediator.getChangeHandlerSettings(
-				{ "scenario" : this.sAddColumnScenario, "model" : this.sModel}, true);
+			.then(function() {
+				return ChangeHandlerMediator.addChangeHandlerSettings(
+					{ "scenario" : this.sAddColumnScenario, "model" : this.sModel }, this.mAddColumnSettings);
+			}.bind(this))
 
-			assert.equal(mAddColumnSettings.content.create().label,
-				"testLabel", "then the 'create' method in addColumn is retrieved and can be executed");
+			.then(function() {
+				return ChangeHandlerMediator.getChangeHandlerSettings({ "scenario" : this.sAddFieldScenario, "model" : this.sModel });
+			}.bind(this))
 
-			assert.equal(mAddColumnSettings.scenarioInitialized,
-				false, "then getting the settings with 'skipInitialization = true' does not initialize the scenario");
+			.then(function(mAddFieldSettings) {
+				assert.equal(mAddFieldSettings.content.requiredLibraries["sap.ui.layout"].minVersion,
+					"1.48", "then the required library for addField is retrieved");
+				assert.equal(mAddFieldSettings.scenarioInitialized, true, "then the scenario was successfully initialized");
 
-			ChangeHandlerMediator.addChangeHandlerSettings(
-				{ "scenario" : this.sAddFieldScenario, "model" : this.sModel, "dummyKey" : this.sDummyKey},
-				this.mSecondAddFieldSettings);
+				return ChangeHandlerMediator.getChangeHandlerSettings(
+					{ "scenario" : this.sAddColumnScenario, "model" : this.sModel}, true);
+			}.bind(this))
 
-			assert.equal(ChangeHandlerMediator.getChangeHandlerSettings(
-				{ "scenario" : this.sAddFieldScenario, "model" : this.sModel, "dummyKey" : this.sDummyKey}).content.appContext,
-				"SecondAddFieldContext", "then for entries with similar keys the entry with all matching keys is retrieved");
+			.then(function(mAddColumnSettings) {
+				assert.equal(mAddColumnSettings.content.create().label,
+					"testLabel", "then the 'create' method in addColumn is retrieved and can be executed");
+				assert.equal(mAddColumnSettings.scenarioInitialized,
+					false, "then getting the settings with 'skipInitialization = true' does not initialize the scenario");
 
-			assert.equal(ChangeHandlerMediator.getChangeHandlerSettings(
-				{ "scenario" : this.sAddFieldScenario, "model" : this.sModel, "wrongKey" : "nonexistent"}),
-				undefined, "then keys with partially existing entries are not found");
+				return ChangeHandlerMediator.addChangeHandlerSettings(
+					{ "scenario" : this.sAddFieldScenario, "model" : this.sModel, "dummyKey" : this.sDummyKey},
+					this.mSecondAddFieldSettings);
+			}.bind(this))
 
-			assert.equal(ChangeHandlerMediator.getChangeHandlerSettings(
-				{ "scenario" : this.sAddColumnScenario }),
-				undefined, "then incomplete keys do not return entries");
+			.then(function() {
+				return ChangeHandlerMediator.getChangeHandlerSettings(
+					{ "scenario" : this.sAddFieldScenario, "model" : this.sModel, "dummyKey" : this.sDummyKey});
+			}.bind(this))
 
-			assert.equal(ChangeHandlerMediator.getChangeHandlerSettings({}),
-				undefined, "then for an empty key no entries are found");
+			.then(function(mAddFieldSettings) {
+				assert.equal(mAddFieldSettings.content.appContext, "SecondAddFieldContext",
+					"then for entries with similar keys the entry with all matching keys is retrieved");
 
-			assert.equal(ChangeHandlerMediator.getChangeHandlerSettings(
-				{ "scenario" : this.sAddFieldScenario, "model" : this.sModel}).content.appContext,
-				"AddFieldContext", "then for entries with similar keys the entry with all matching keys is retrieved");
+				return ChangeHandlerMediator.getChangeHandlerSettings(
+					{ "scenario" : this.sAddFieldScenario, "model" : this.sModel, "wrongKey" : "nonexistent"});
+			}.bind(this))
 
-			assert.equal(ChangeHandlerMediator.getChangeHandlerSettings(
-				{"scenario" : "hugo"}),
-				undefined, "then non-existing entries return undefined");
+			.then(function(mAddFieldSettings) {
+				assert.equal(mAddFieldSettings,
+					undefined, "then keys with partially existing entries are not found");
 
+				return ChangeHandlerMediator.getChangeHandlerSettings(
+					{ "scenario" : this.sAddColumnScenario });
+			}.bind(this))
+
+			.then(function(mAddColumnSettings) {
+				assert.equal(mAddColumnSettings, undefined,
+					"then incomplete keys do not return entries");
+
+				return ChangeHandlerMediator.getChangeHandlerSettings({});
+			})
+
+			.then(function(mChangeHandlerSettings) {
+				assert.equal(mChangeHandlerSettings,
+					undefined, "then for an empty key no entries are found");
+
+				return ChangeHandlerMediator.getChangeHandlerSettings(
+					{ "scenario" : this.sAddFieldScenario, "model" : this.sModel});
+			}.bind(this))
+
+			.then(function(mAddFieldSettings) {
+				assert.equal(mAddFieldSettings.content.appContext,
+					"AddFieldContext", "then for entries with similar keys the entry with all matching keys is retrieved");
+
+				return ChangeHandlerMediator.getChangeHandlerSettings({"scenario" : "hugo"});
+			})
+
+			.then(function(mChangeHandlerSettings) {
+				assert.equal(mChangeHandlerSettings, undefined,
+					"then non-existing entries return undefined");
+			});
 		});
 
 		QUnit.test('when adding settings for an already existing entry...', function(assert) {
-			var mSettingsBeforeUpdate = ChangeHandlerMediator.getChangeHandlerSettings(
-				{ "scenario" : this.sAddColumnScenario, "model" : this.sModel });
+			return ChangeHandlerMediator.getChangeHandlerSettings(
+				{ "scenario" : this.sAddColumnScenario, "model" : this.sModel })
 
-			assert.equal(mSettingsBeforeUpdate.scenarioInitialized,
-				true, "before the update, the scenario is initialized");
+			.then(function(mSettingsBeforeUpdate) {
+				assert.equal(mSettingsBeforeUpdate.scenarioInitialized,
+					true, "before the update, the scenario is initialized");
 
-			ChangeHandlerMediator.addChangeHandlerSettings(
-				{ "scenario" : this.sAddColumnScenario, "model" : this.sModel }, { "newSetting" : "hugo" });
+				return ChangeHandlerMediator.addChangeHandlerSettings(
+					{ "scenario" : this.sAddColumnScenario, "model" : this.sModel }, { "newSetting" : "hugo" });
+			}.bind(this))
 
-			var mSettingsAfterUpdate = ChangeHandlerMediator.getChangeHandlerSettings(
-				{ "scenario" : this.sAddColumnScenario, "model" : this.sModel }, true);
+			.then(function() {
+				return ChangeHandlerMediator.getChangeHandlerSettings(
+					{ "scenario" : this.sAddColumnScenario, "model" : this.sModel }, true);
+			}.bind(this))
 
-			assert.equal(mSettingsAfterUpdate.content.newSetting,
-				"hugo", "then an existing entry can be extended with new content");
-
-			assert.ok(mSettingsAfterUpdate.content.create().label,
-				"then the existing entry also still has the old content");
-
-			assert.equal(mSettingsAfterUpdate.scenarioInitialized,
-				false, "then updating an entry resets the scenario initialization to false");
+			.then(function(mSettingsAfterUpdate) {
+				assert.equal(mSettingsAfterUpdate.content.newSetting,
+					"hugo", "then an existing entry can be extended with new content");
+				assert.ok(mSettingsAfterUpdate.content.create().label,
+					"then the existing entry also still has the old content");
+				assert.equal(mSettingsAfterUpdate.scenarioInitialized,
+					false, "then updating an entry resets the scenario initialization to false");
+			});
 		});
 
 		QUnit.test('when getting settings for a scenario with missing library...', function(assert) {
+			var spyLog;
 			this.sDummyLibraryScenario = "dummyLibraryScenario";
 			this.mDummyLibrarySettings = {
 				"requiredLibraries" : {
@@ -159,13 +210,17 @@ function(
 			var sSpyArg = "Required library not available: " + "dummy" + " - "
 							+ this.sDummyLibraryScenario + " could not be initialized";
 
-			ChangeHandlerMediator.addChangeHandlerSettings({ "scenario" : this.sDummyLibraryScenario }, this.mDummyLibrarySettings);
-			var spyLog = sinon.spy(Log, "warning");
+			return ChangeHandlerMediator.addChangeHandlerSettings({ "scenario" : this.sDummyLibraryScenario }, this.mDummyLibrarySettings)
+			.then(function() {
+				spyLog = sinon.spy(Log, "warning");
+				return ChangeHandlerMediator.getChangeHandlerSettings({ "scenario" : this.sDummyLibraryScenario });
+			}.bind(this))
 
-			assert.notOk(ChangeHandlerMediator.getChangeHandlerSettings({ "scenario" : this.sDummyLibraryScenario }), "then no settings are returned");
-			assert.equal(spyLog.withArgs(sSpyArg).callCount, 1, "then there is a warning in the log saying the library is not available");
-
-			spyLog.restore();
+			.then(function(mChangeHandlerSettings) {
+				assert.notOk(mChangeHandlerSettings, "then no settings are returned");
+				assert.equal(spyLog.withArgs(sSpyArg).callCount, 1, "then there is a warning in the log saying the library is not available");
+				spyLog.restore();
+			});
 		});
 	});
 
@@ -189,7 +244,7 @@ function(
 				}
 			};
 
-			ChangeHandlerMediator.addChangeHandlerSettings({ "scenario" : this.sAddFieldScenario, "oDataServiceVersion" : "2.0" }, this.mAddFieldSettings);
+			return ChangeHandlerMediator.addChangeHandlerSettings({ "scenario" : this.sAddFieldScenario, "oDataServiceVersion" : "2.0" }, this.mAddFieldSettings);
 		}
 	}, function() {
 		QUnit.test('when getting settings for testAddField in an ODataV2 control...', function(assert) {
@@ -211,9 +266,12 @@ function(
 
 			var sGetterName = 'get' + jQuery.sap.charToUpperCase(this.sAddFieldScenario) + 'Settings';
 
-			assert.equal(
-				ChangeHandlerMediator[sGetterName](oMockControl).content.requiredLibraries["sap.ui.layout"].minVersion,
-				"1.48", "then the settings for data service version 2.0 are found");
+			return ChangeHandlerMediator[sGetterName](oMockControl)
+			.then(function(mChangeHandlerSettings) {
+				assert.equal(
+					mChangeHandlerSettings.content.requiredLibraries["sap.ui.layout"].minVersion,
+					"1.48", "then the settings for data service version 2.0 are found");
+			});
 		});
 
 		QUnit.test('when getting settings for AddODataField for a control that did not register a createFunction...', function(assert) {
@@ -242,10 +300,16 @@ function(
 				}
 			};
 
-			ChangeHandlerMediator.addChangeHandlerSettings({ "scenario" : "addODataField" , "oDataServiceVersion" : "123.0" }, this.mDummySettings);
+			return ChangeHandlerMediator.addChangeHandlerSettings(
+				{"scenario" : "addODataField", "oDataServiceVersion" : "123.0"}, this.mDummySettings)
 
-			assert.notOk(ChangeHandlerMediator.getAddODataFieldSettings(oMockControl),
-				"then no settings are returned");
+			.then(function() {
+				return ChangeHandlerMediator.getAddODataFieldSettings(oMockControl);
+			})
+
+			.then(function(mAddODataFieldSettings) {
+				assert.notOk(mAddODataFieldSettings, "then no settings are returned");
+			});
 		});
 
 		QUnit.test('when getting settings for AddODataField in a control with inexistent data service version...', function(assert) {
@@ -265,19 +329,22 @@ function(
 				}
 			};
 
-			assert.notOk(ChangeHandlerMediator.getAddODataFieldSettings(oMockControl),
-				"then no settings for the inexistent data service version are found");
+			return ChangeHandlerMediator.getAddODataFieldSettings(oMockControl)
+			.then(function(mChangeHandlerSettings) {
+				assert.notOk(mChangeHandlerSettings, "then no settings for the inexistent data service version are found");
+			});
 		});
 
 		QUnit.test('when getting settings for AddODataField in a control where the data service version cannot be retrieved...', function(assert) {
 			var oMockControl = { };
 			var spyLog = sinon.spy(Log, "warning");
 
-			assert.notOk(ChangeHandlerMediator.getAddODataFieldSettings(oMockControl),
-				"then no settings are found");
-			assert.equal(spyLog.callCount, 1, "then there is a warning in the log saying the version could not be retrieved");
-
-			spyLog.restore();
+			return ChangeHandlerMediator.getAddODataFieldSettings(oMockControl)
+			.then(function(mChangeHandlerSettings) {
+				assert.notOk(mChangeHandlerSettings, "then no settings are found");
+				assert.equal(spyLog.callCount, 1, "then there is a warning in the log saying the version could not be retrieved");
+				spyLog.restore();
+			});
 		});
 	});
 

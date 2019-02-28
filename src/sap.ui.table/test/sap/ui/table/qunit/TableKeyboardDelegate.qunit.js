@@ -880,7 +880,9 @@ sap.ui.define([
 				assert.ok(true, "[INFO] Navigate right to the top right cell.");
 			}
 
-			for (i = bHasRowHeaders ? 0 : 1; i < oTable.columnCount; i++) {
+			var iColumnCount = oTable.getGroupBy() ? oTable._getVisibleColumns().length : oTable.columnCount;
+
+			for (i = bHasRowHeaders ? 0 : 1; i < iColumnCount; i++) {
 				qutils.triggerKeydown(oElem, Key.Arrow.RIGHT, false, false, false);
 
 				if (bHasColumnHeaders) {
@@ -914,7 +916,7 @@ sap.ui.define([
 				checkFocus(oElem, assert);
 
 				qutils.triggerKeydown(oElem, Key.Arrow.DOWN, false, false, false);
-				oElem = checkFocus(getCell(0, oTable.columnCount - 1), assert);
+				oElem = checkFocus(getCell(0, iColumnCount - 1), assert);
 				qutils.triggerKeydown(oElem, Key.Arrow.RIGHT, false, false, false);
 				oElem = checkFocus(getRowAction(0), assert);
 
@@ -931,6 +933,8 @@ sap.ui.define([
 			if (bShowInfo) {
 				assert.ok(true, "[INFO] Navigate down to the bottom right cell, taking scrolling into account.");
 			}
+
+			iNumberOfRows = oTable.getGroupBy() ? 2 * window.iNumberOfRows : window.iNumberOfRows;
 
 			for (i = (bHasColumnHeaders && !bHasRowActions) ? 0 : 1; i < iNumberOfRows; i++) {
 				qutils.triggerKeydown(oElem, Key.Arrow.DOWN, false, false, false);
@@ -965,7 +969,9 @@ sap.ui.define([
 				assert.ok(true, "[INFO] Navigate left to the bottom left cell.");
 			}
 
-			for (i = oTable.columnCount - (bHasRowActions ? 1 : 2); i >= 0; i--) {
+			var iStartIndex = iColumnCount - (bHasRowActions || oTable.getGroupBy() ? 1 : 2);
+			var iEndIndex = oTable.getGroupBy() ? 1 : 0;
+			for (i = iStartIndex; i >= iEndIndex; i--) {
 				qutils.triggerKeydown(oElem, Key.Arrow.LEFT, false, false, false);
 				oElem = checkFocus(getCell(iVisibleRowCount - 1, i), assert);
 			}
@@ -1016,6 +1022,16 @@ sap.ui.define([
 				}
 			}
 		}
+	});
+
+	QUnit.test("Grouping", function(assert) {
+		oTable.setFixedColumnCount(0);
+		oTable.setEnableGrouping(true);
+		oTable.setGroupBy(oTable._getVisibleColumns()[0]);
+
+		sap.ui.getCore().applyChanges();
+
+		this.testArrowKeys(assert);
 	});
 
 	QUnit.test("Default Test Table - Row Header, Column Header", function(assert) {
@@ -4333,12 +4349,12 @@ sap.ui.define([
 		var iOldColumnIndex, iNewColumnIndex;
 
 		// First column.
-		iOldColumnIndex = oFirstColumn.$().data("sap-ui-colindex");
+		iOldColumnIndex = +oFirstColumn.$().attr("data-sap-ui-colindex");
 		qutils.triggerKeydown(getColumnHeader(0), Key.Arrow.LEFT, false, false, true);
 
 		new Promise(function(resolve) {
 			window.setTimeout(function() {
-				iNewColumnIndex = oFirstColumn.$().data("sap-ui-colindex");
+				iNewColumnIndex = +oFirstColumn.$().attr("data-sap-ui-colindex");
 				assert.strictEqual(iNewColumnIndex, iOldColumnIndex, "First column was not moved to the left");
 
 				qutils.triggerKeydown(getColumnHeader(0), Key.Arrow.RIGHT, false, false, true);
@@ -4348,10 +4364,10 @@ sap.ui.define([
 		}).then(function() {
 			return new Promise(function(resolve) {
 				window.setTimeout(function() {
-					iNewColumnIndex = oFirstColumn.$().data("sap-ui-colindex");
+					iNewColumnIndex = +oFirstColumn.$().attr("data-sap-ui-colindex");
 					assert.strictEqual(iNewColumnIndex, iOldColumnIndex + 1, "First column was moved to the right");
 
-					iOldColumnIndex = oFirstColumn.$().data("sap-ui-colindex");
+					iOldColumnIndex = +oFirstColumn.$().attr("data-sap-ui-colindex");
 					qutils.triggerKeydown(getColumnHeader(1), Key.Arrow.LEFT, false, false, true);
 
 					resolve();
@@ -4360,11 +4376,11 @@ sap.ui.define([
 		}).then(function() {
 			return new Promise(function(resolve) {
 				window.setTimeout(function() {
-					iNewColumnIndex = oFirstColumn.$().data("sap-ui-colindex");
+					iNewColumnIndex = +oFirstColumn.$().attr("data-sap-ui-colindex");
 					assert.strictEqual(iNewColumnIndex, iOldColumnIndex - 1, "It was moved back to the left");
 
 					// Last column.
-					iOldColumnIndex = oLastColumn.$().data("sap-ui-colindex");
+					iOldColumnIndex = +oLastColumn.$().attr("data-sap-ui-colindex");
 					qutils.triggerKeydown(getColumnHeader(oTable.columnCount - 1), Key.Arrow.RIGHT, false, false, true);
 
 					resolve();
@@ -4373,7 +4389,7 @@ sap.ui.define([
 		}).then(function() {
 			return new Promise(function(resolve) {
 				window.setTimeout(function() {
-					iNewColumnIndex = oLastColumn.$().data("sap-ui-colindex");
+					iNewColumnIndex = +oLastColumn.$().attr("data-sap-ui-colindex");
 					assert.strictEqual(iNewColumnIndex, iOldColumnIndex, "Last column was not moved to the right");
 
 					qutils.triggerKeydown(getColumnHeader(oTable.columnCount - 1), Key.Arrow.LEFT, false, false, true);
@@ -4384,10 +4400,10 @@ sap.ui.define([
 		}).then(function() {
 			return new Promise(function(resolve) {
 				window.setTimeout(function() {
-					iNewColumnIndex = oLastColumn.$().data("sap-ui-colindex");
+					iNewColumnIndex = +oLastColumn.$().attr("data-sap-ui-colindex");
 					assert.strictEqual(iNewColumnIndex, iOldColumnIndex - 1, "Last column was moved to the left");
 
-					iOldColumnIndex = oLastColumn.$().data("sap-ui-colindex");
+					iOldColumnIndex = +oLastColumn.$().attr("data-sap-ui-colindex");
 					qutils.triggerKeydown(getColumnHeader(oTable.columnCount - 2), Key.Arrow.RIGHT, false, false, true);
 
 					resolve();
@@ -4396,7 +4412,7 @@ sap.ui.define([
 		}).then(function() {
 			return new Promise(function(resolve) {
 				window.setTimeout(function() {
-					iNewColumnIndex = oLastColumn.$().data("sap-ui-colindex");
+					iNewColumnIndex = +oLastColumn.$().attr("data-sap-ui-colindex");
 					assert.strictEqual(iNewColumnIndex, iOldColumnIndex + 1, "It was moved back to the right");
 
 					resolve();
@@ -4417,12 +4433,12 @@ sap.ui.define([
 		var iOldColumnIndex, iNewColumnIndex;
 
 		// First fixed column.
-		iOldColumnIndex = oFirstFixedColumn.$().data("sap-ui-colindex");
+		iOldColumnIndex = +oFirstFixedColumn.$().attr("data-sap-ui-colindex");
 		qutils.triggerKeydown(getColumnHeader(0), Key.Arrow.LEFT, false, false, true);
 
 		new Promise(function(resolve) {
 			window.setTimeout(function() {
-				iNewColumnIndex = oFirstFixedColumn.$().data("sap-ui-colindex");
+				iNewColumnIndex = +oFirstFixedColumn.$().attr("data-sap-ui-colindex");
 				assert.strictEqual(iNewColumnIndex, iOldColumnIndex, "First fixed column was not moved to the left");
 
 				qutils.triggerKeydown(getColumnHeader(0), Key.Arrow.RIGHT, false, false, true);
@@ -4432,11 +4448,11 @@ sap.ui.define([
 		}).then(function() {
 			return new Promise(function(resolve) {
 				window.setTimeout(function() {
-					iNewColumnIndex = oFirstFixedColumn.$().data("sap-ui-colindex");
+					iNewColumnIndex = +oFirstFixedColumn.$().attr("data-sap-ui-colindex");
 					assert.strictEqual(iNewColumnIndex, iOldColumnIndex, "First fixed column was not moved to the right");
 
 					// Last fixed column.
-					iOldColumnIndex = oLastFixedColumn.$().data("sap-ui-colindex");
+					iOldColumnIndex = +oLastFixedColumn.$().attr("data-sap-ui-colindex");
 					qutils.triggerKeydown(getColumnHeader(1), Key.Arrow.RIGHT, false, false, true);
 
 					resolve();
@@ -4445,11 +4461,11 @@ sap.ui.define([
 		}).then(function() {
 			return new Promise(function(resolve) {
 				window.setTimeout(function() {
-					iNewColumnIndex = oLastFixedColumn.$().data("sap-ui-colindex");
+					iNewColumnIndex = +oLastFixedColumn.$().attr("data-sap-ui-colindex");
 					assert.strictEqual(iNewColumnIndex, iOldColumnIndex, "Last fixed column was not moved to the right");
 
 					qutils.triggerKeydown(getColumnHeader(1), Key.Arrow.LEFT, false, false, true);
-					iNewColumnIndex = oLastFixedColumn.$().data("sap-ui-colindex");
+					iNewColumnIndex = +oLastFixedColumn.$().attr("data-sap-ui-colindex");
 
 					resolve();
 				}, 0);
@@ -4475,12 +4491,12 @@ sap.ui.define([
 		var iOldColumnIndex, iNewColumnIndex;
 
 		// First normal column.
-		iOldColumnIndex = oFirstColumn.$().data("sap-ui-colindex");
+		iOldColumnIndex = +oFirstColumn.$().attr("data-sap-ui-colindex");
 		qutils.triggerKeydown(getColumnHeader(2), Key.Arrow.LEFT, false, false, true);
 
 		new Promise(function(resolve) {
 			window.setTimeout(function() {
-				iNewColumnIndex = oFirstColumn.$().data("sap-ui-colindex");
+				iNewColumnIndex = +oFirstColumn.$().attr("data-sap-ui-colindex");
 				assert.strictEqual(iNewColumnIndex, iOldColumnIndex, "First movable column was not moved to the left");
 
 				qutils.triggerKeydown(getColumnHeader(2), Key.Arrow.RIGHT, false, false, true);
@@ -4490,10 +4506,10 @@ sap.ui.define([
 		}).then(function() {
 			return new Promise(function(resolve) {
 				window.setTimeout(function() {
-					iNewColumnIndex = oFirstColumn.$().data("sap-ui-colindex");
+					iNewColumnIndex = +oFirstColumn.$().attr("data-sap-ui-colindex");
 					assert.strictEqual(iNewColumnIndex, iOldColumnIndex + 1, "First movable column was moved to the right");
 
-					iOldColumnIndex = oFirstColumn.$().data("sap-ui-colindex");
+					iOldColumnIndex = +oFirstColumn.$().attr("data-sap-ui-colindex");
 					qutils.triggerKeydown(getColumnHeader(3), Key.Arrow.LEFT, false, false, true);
 
 					resolve();
@@ -4502,11 +4518,11 @@ sap.ui.define([
 		}).then(function() {
 			return new Promise(function(resolve) {
 				window.setTimeout(function() {
-					iNewColumnIndex = oFirstColumn.$().data("sap-ui-colindex");
+					iNewColumnIndex = +oFirstColumn.$().attr("data-sap-ui-colindex");
 					assert.strictEqual(iNewColumnIndex, iOldColumnIndex - 1, "It was moved back to the left");
 
 					// Last normal column.
-					iOldColumnIndex = oLastColumn.$().data("sap-ui-colindex");
+					iOldColumnIndex = +oLastColumn.$().attr("data-sap-ui-colindex");
 					qutils.triggerKeydown(getColumnHeader(oTable.columnCount - 1), Key.Arrow.RIGHT, false, false, true);
 
 					resolve();
@@ -4515,7 +4531,7 @@ sap.ui.define([
 		}).then(function() {
 			return new Promise(function(resolve) {
 				window.setTimeout(function() {
-					iNewColumnIndex = oLastColumn.$().data("sap-ui-colindex");
+					iNewColumnIndex = +oLastColumn.$().attr("data-sap-ui-colindex");
 					assert.strictEqual(iNewColumnIndex, iOldColumnIndex, "Last movable column was not moved to the right");
 
 					qutils.triggerKeydown(getColumnHeader(oTable.columnCount - 1), Key.Arrow.LEFT, false, false, true);
@@ -4526,10 +4542,10 @@ sap.ui.define([
 		}).then(function() {
 			return new Promise(function(resolve) {
 				window.setTimeout(function() {
-					iNewColumnIndex = oLastColumn.$().data("sap-ui-colindex");
+					iNewColumnIndex = +oLastColumn.$().attr("data-sap-ui-colindex");
 					assert.strictEqual(iNewColumnIndex, iOldColumnIndex - 1, "Last movable column was moved to the left");
 
-					iOldColumnIndex = oLastColumn.$().data("sap-ui-colindex");
+					iOldColumnIndex = +oLastColumn.$().attr("data-sap-ui-colindex");
 					qutils.triggerKeydown(getColumnHeader(oTable.columnCount - 2), Key.Arrow.RIGHT, false, false, true);
 
 					resolve();
@@ -4538,7 +4554,7 @@ sap.ui.define([
 		}).then(function() {
 			return new Promise(function(resolve) {
 				window.setTimeout(function() {
-					iNewColumnIndex = oLastColumn.$().data("sap-ui-colindex");
+					iNewColumnIndex = +oLastColumn.$().attr("data-sap-ui-colindex");
 					assert.strictEqual(iNewColumnIndex, iOldColumnIndex + 1, "It was moved back to the right");
 
 					resolve();

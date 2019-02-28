@@ -1,0 +1,26 @@
+{
+	"sap.app": {
+		"id": "sap.m.sample.IconTabBarInlineMode",
+		"applicationVersion": {
+			"version": "1.0.0"
+		}
+	},
+	"sap.ui5": {
+		"rootView": {
+			"viewName": "sap.m.sample.IconTabBarInlineMode.IconTabBar",
+			"type": "XML",
+			"async": true
+		},
+		"libs": {
+			"sap.m": {}
+		},
+		"config": {
+			"sample": {
+				"files": [
+					"IconTabBar.view.xml",
+					"manifest.json"
+				]
+			}
+		}
+	}
+}

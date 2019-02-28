@@ -12,7 +12,6 @@ sap.ui.define([
 	'sap/m/Button',
 	'sap/ui/events/KeyCodes',
 	'sap/ui/qunit/QUnitUtils',
-	"sap/ui/qunit/utils/waitForThemeApplied",
 	'sap/ui/thirdparty/sinon-4'
 ],
 function(
@@ -27,7 +26,6 @@ function(
 	Button,
 	KeyCodes,
 	QUnitUtils,
-	waitForThemeApplied,
 	sinon
 ) {
 	"use strict";
@@ -246,34 +244,35 @@ function(
 			var oSettings = this.oRta.getPlugins()["settings"];
 
 			var oChangeRegistry = ChangeRegistry.getInstance();
-			oChangeRegistry.registerControlsForChanges({
+			return oChangeRegistry.registerControlsForChanges({
 				"sap.ui.comp.smartform.Group" : {
 				"changeSettings" : "sap/ui/fl/changeHandler/PropertyChange"
 				}
-			});
+			})
+			.then(function() {
+				var oGroupDesigntime = {
+					settings : function() {
+						return {
+							changeType : "changeSettings",
+							isEnabled : true,
+							handler : function() {}
+						};
+					}
+				};
+				sandbox.stub(oSettings, "getAction").callsFake(function() {
+					return oGroupDesigntime.settings();
+				});
+				var oGroupOverlay = OverlayRegistry.getOverlay(this.oGroup);
+				oSettings.deregisterElementOverlay(oGroupOverlay);
+				oSettings.registerElementOverlay(oGroupOverlay);
 
-			var oGroupDesigntime = {
-				settings : function() {
-					return {
-						changeType : "changeSettings",
-						isEnabled : true,
-						handler : function() {}
-					};
-				}
-			};
-			sandbox.stub(oSettings, "getAction").callsFake(function() {
-				return oGroupDesigntime.settings();
-			});
-			var oGroupOverlay = OverlayRegistry.getOverlay(this.oGroup);
-			oSettings.deregisterElementOverlay(oGroupOverlay);
-			oSettings.registerElementOverlay(oGroupOverlay);
+				oGroupOverlay.focus();
+				fnTriggerKeydown(oGroupOverlay.getDomRef(), KeyCodes.F10, true, false, false);
 
-			oGroupOverlay.focus();
-			fnTriggerKeydown(oGroupOverlay.getDomRef(), KeyCodes.F10, true, false, false);
-
-			var oContextMenuControl = this.oRta.getPlugins()["contextMenu"].oContextMenuControl;
-			assert.ok(oContextMenuControl.bOpen, "when context menu (context menu) is opened on a Control with a defined settings action");
-			assert.equal(oContextMenuControl.getButtons()[oContextMenuControl.getButtons().length - 1].data("id"), "CTX_SETTINGS", "Settings is available");
+				var oContextMenuControl = this.oRta.getPlugins()["contextMenu"].oContextMenuControl;
+				assert.ok(oContextMenuControl.bOpen, "when context menu (context menu) is opened on a Control with a defined settings action");
+				assert.equal(oContextMenuControl.getButtons()[oContextMenuControl.getButtons().length - 1].data("id"), "CTX_SETTINGS", "Settings is available");
+			}.bind(this));
 		}
 
 		function fnKeyboardPageWithoutTitle(assert) {
@@ -546,12 +545,18 @@ function(
 				visible : false
 			});
 
+			this.oObjectPageSection2 = new ObjectPageSection({
+				title: "Section_2",
+				visible : false
+			});
+
 			var oEmbeddedPage = sap.ui.getCore().byId("Comp1---idMain1--mainPage");
 
 			this.oObjectPageLayout = new ObjectPageLayout({
 				id : oEmbeddedView.createId("ObjectPageLayout"),
 				sections : [
-					this.oObjectPageSection1
+					this.oObjectPageSection1,
+					this.oObjectPageSection2
 				]
 			});
 
@@ -579,9 +584,9 @@ function(
 			this.oRta.getPlugins()["contextMenu"].open({ pageX: 0, pageY: 0 }, oOverlay);
 
 			var oContextMenuControl = this.oRta.getPlugins()["contextMenu"].oContextMenuControl;
-			assert.ok(oContextMenuControl.bOpen, "then the context menu (context menu) opens");
-			assert.equal(oContextMenuControl.getButtons().length, 1, " and only one Menu Button is available");
-			assert.equal(oContextMenuControl.getButtons()[0].data("id"), "CTX_PASTE", "only paste menu Button is available, no possibility to add a section");
+			assert.notOk(oContextMenuControl.bOpen, "then the context menu (context menu) opens");
+			assert.notOk(oOverlay.isEditable(), "then the overlay is not editable");
+			// There is no paste action anymore available, when no children exists that are cut-able
 		});
 	});
 
@@ -590,5 +595,4 @@ function(
 		jQuery("#qunit-fixture").hide();
 	});
 
-	return waitForThemeApplied();
 });

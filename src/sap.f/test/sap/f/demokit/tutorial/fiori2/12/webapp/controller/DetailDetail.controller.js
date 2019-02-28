@@ -15,8 +15,11 @@ sap.ui.define([
 		},
 
 		handleAboutPress: function () {
-			var oNextUIState = this.oOwnerComponent.getHelper().getNextUIState(3);
-			this.oRouter.navTo("page2", {layout: oNextUIState.layout});
+			var oNextUIState;
+			this.oOwnerComponent.getHelper().then(function (oHelper) {
+				oNextUIState = oHelper.getNextUIState(3);
+				this.oRouter.navTo("page2", {layout: oNextUIState.layout});
+			}.bind(this));
 		},
 
 		_onPatternMatch: function (oEvent) {

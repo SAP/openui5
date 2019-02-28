@@ -108,7 +108,7 @@ sap.ui.define([
 			binding.attachChange(callBackOnChange);
 
 			// model stores the binding first when attach change was called
-			assert.equal(this.oModel.aBindings.length, 1, "number of model bindings: 1");
+			assert.equal(this.oModel.getBindings().length, 1, "number of model bindings: 1");
 
 			// fire change event
 			binding._fireChange();
@@ -125,7 +125,7 @@ sap.ui.define([
 			attach = false;
 			detach = true;
 
-			assert.equal(this.oModel.aBindings.length, 0, "number of model bindings after detach: 0");
+			assert.equal(this.oModel.getBindings().length, 0, "number of model bindings after detach: 0");
 
 		}, this);
 	});

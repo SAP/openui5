@@ -15,7 +15,6 @@ sap.ui.define([
 	"sap/m/Button",
 	"sap/ui/fl/Utils",
 	"sap/ui/qunit/QUnitUtils",
-	"sap/ui/qunit/utils/waitForThemeApplied",
 	"sap/ui/thirdparty/sinon-4"
 ],
 function(
@@ -33,7 +32,6 @@ function(
 	Button,
 	FlUtils,
 	QUnitUtils,
-	waitForThemeApplied,
 	sinon
 ) {
 	"use strict";
@@ -63,7 +61,11 @@ function(
 		},
 		getModel: function () {}
 	};
-	sinon.stub(FlUtils, "_getAppComponentForComponent").returns(oMockedAppComponent);
+	var oGetAppComponentForControlStub = sinon.stub(FlUtils, "getAppComponentForControl").returns(oMockedAppComponent);
+
+	QUnit.done(function () {
+		oGetAppComponentForControlStub.restore();
+	});
 	var sandbox = sinon.sandbox.create();
 
 	QUnit.module("Given a designTime and EasyAdd plugin are instantiated", {
@@ -291,5 +293,4 @@ function(
 		jQuery("#qunit-fixture").hide();
 	});
 
-	return waitForThemeApplied();
 });

@@ -23,7 +23,6 @@ sap.ui.define([
 	"sap/ui/fl/Utils",
 	"sap/ui/dt/ElementDesignTimeMetadata",
 	"sap/ui/fl/changeHandler/MoveControls",
-	"sap/ui/qunit/utils/waitForThemeApplied",
 	"sap/ui/thirdparty/sinon-4"
 ],
 function (
@@ -49,7 +48,6 @@ function (
 	FlexUtils,
 	ElementDesignTimeMetadata,
 	MoveControlsChangeHandler,
-	waitForThemeApplied,
 	sinon
 ) {
 	"use strict";
@@ -61,39 +59,39 @@ function (
 			var done = assert.async();
 
 			var oChangeRegistry = ChangeRegistry.getInstance();
-			oChangeRegistry.registerControlsForChanges({
+			return oChangeRegistry.registerControlsForChanges({
 				"VerticalLayout" : {
 					"moveControls": "default"
 				}
-			});
+			})
+			.then(function() {
+				this.oButton = new Button();
+				this.oLayout = new VerticalLayout({
+					content : [
+						this.oButton
+					]
+				}).placeAt("qunit-fixture");
 
-			this.oButton = new Button();
-			this.oLayout = new VerticalLayout({
-				content : [
-					this.oButton
-				]
-			}).placeAt("qunit-fixture");
+				sap.ui.getCore().applyChanges();
 
-			sap.ui.getCore().applyChanges();
+				this.oDesignTime = new DesignTime({
+					rootElements : [this.oLayout]
+				});
 
-			this.oDesignTime = new DesignTime({
-				rootElements : [this.oLayout]
-			});
+				this.oPlugin = new sap.ui.rta.plugin.Plugin({
+					commandFactory : new CommandFactory()
+				});
+				this.oRemovePlugin = new Remove();
 
-			this.oPlugin = new sap.ui.rta.plugin.Plugin({
-				commandFactory : new CommandFactory()
-			});
-			this.oRemovePlugin = new Remove();
+				sandbox.stub(this.oPlugin, "_isEditable").returns(true);
+				sandbox.stub(this.oRemovePlugin, "_isEditable").returns(true);
 
-			sandbox.stub(this.oPlugin, "_isEditable").returns(true);
-			sandbox.stub(this.oRemovePlugin, "_isEditable").returns(true);
-
-			this.oDesignTime.attachEventOnce("synced", function() {
-				this.oLayoutOverlay = OverlayRegistry.getOverlay(this.oLayout);
-				this.oButtonOverlay = OverlayRegistry.getOverlay(this.oButton);
-				done();
+				this.oDesignTime.attachEventOnce("synced", function() {
+					this.oLayoutOverlay = OverlayRegistry.getOverlay(this.oLayout);
+					this.oButtonOverlay = OverlayRegistry.getOverlay(this.oButton);
+					done();
+				}.bind(this));
 			}.bind(this));
-
 		},
 		afterEach : function() {
 			this.oLayout.destroy();
@@ -326,12 +324,13 @@ function (
 		QUnit.test("when the event elementModified is thrown with visibility change", function(assert) {
 			var oSetRelevantSpy = sandbox.spy(this.oButtonOverlay, "setRelevantOverlays");
 			var oGetRelevantSpy = sandbox.spy(this.oButtonOverlay, "getRelevantOverlays");
-			sandbox.stub(OverlayUtil, "findAllOverlaysInContainer").returns([this.oButtonOverlay]);
+			var oFindAllOverlaysInContainerStub = sandbox.stub(OverlayUtil, "findAllOverlaysInContainer").returns([this.oButtonOverlay]);
 			this.oButtonOverlay.fireElementModified({
 				type: "propertyChanged",
 				name: "visible"
 			});
-			assert.equal(oSetRelevantSpy.callCount, 1, "then findAllOverlaysInContainer is only called once");
+			assert.equal(oFindAllOverlaysInContainerStub.callCount, 1, "then findAllOverlaysInContainer is only called once");
+			assert.equal(oSetRelevantSpy.callCount, 2, "then setRelevantOverlays is called twice");
 			assert.equal(oGetRelevantSpy.callCount, 2, "then getRelevantOverlays is called twice");
 			assert.equal(this.oButtonOverlay.getRelevantOverlays().length, 1, "then only one overlay is relevant");
 		});
@@ -339,29 +338,30 @@ function (
 		QUnit.test("when the event elementModified is thrown with aggregation change", function(assert) {
 			var oSetRelevantSpy = sandbox.spy(this.oLayoutOverlay, "setRelevantOverlays");
 			var oGetRelevantSpy = sandbox.spy(this.oLayoutOverlay, "getRelevantOverlays");
-			sandbox.stub(OverlayUtil, "findAllOverlaysInContainer").returns([this.oLayoutOverlay]);
+			var oFindAllOverlaysInContainerStub = sandbox.stub(OverlayUtil, "findAllOverlaysInContainer").returns([this.oLayoutOverlay]);
 			this.oLayoutOverlay.fireElementModified({
 				type: "removeAggregation",
 				name: "content"
 			});
-			assert.equal(oSetRelevantSpy.callCount, 1, "then findAllOverlaysInContainer is only called once");
+			assert.equal(oFindAllOverlaysInContainerStub.callCount, 1, "then findAllOverlaysInContainer is only called once");
+			assert.equal(oSetRelevantSpy.callCount, 2, "then setRelevantOverlays is called twice");
 			assert.equal(oGetRelevantSpy.callCount, 2, "then getRelevantOverlays is called twice");
 			assert.equal(this.oLayoutOverlay.getRelevantOverlays().length, 2, "then two overlays are relevant");
 		});
 
-		QUnit.test("when the event elementModified is thrown with overlayRendered", function(assert) {
+		QUnit.test("when the event elementModified is thrown with afterRendering", function(assert) {
 			var oSetRelevantSpy = sandbox.spy(this.oLayoutOverlay, "setRelevantOverlays");
 			var oGetRelevantSpy = sandbox.spy(this.oLayoutOverlay, "getRelevantOverlays");
 			var oEvaluateSpy = sandbox.spy(this.oRenamePlugin, "evaluateEditable");
-			sandbox.stub(OverlayUtil, "findAllOverlaysInContainer").returns([this.oLayoutOverlay]);
+			var oFindAllOverlaysInContainerStub = sandbox.stub(OverlayUtil, "findAllOverlaysInContainer").returns([this.oLayoutOverlay]);
 			this.oLayoutOverlay.fireElementModified({
-				type: "overlayRendered",
-				id: this.oLayoutOverlay.getId()
+				type: "afterRendering"
 			});
-			assert.equal(oSetRelevantSpy.callCount, 0, "then findAllOverlaysInContainer is not called");
+			assert.equal(oFindAllOverlaysInContainerStub.callCount, 0, "then findAllOverlaysInContainer is not called");
+			assert.equal(oSetRelevantSpy.callCount, 0, "then setRelevantOverlays is not called");
 			assert.equal(oGetRelevantSpy.callCount, 0, "then getRelevantOverlays is not called");
 			assert.equal(oEvaluateSpy.callCount, 1, "then only evaluateEditable is called");
-			assert.deepEqual(oEvaluateSpy.args[0], [[this.oLayoutOverlay], {onRegistration: true}], "then evaluateEditable is called with the correct parameters");
+			assert.deepEqual(oEvaluateSpy.args[0], [[this.oLayoutOverlay], {onRegistration: false}], "then evaluateEditable is called with the correct parameters");
 		});
 
 		QUnit.test("when the event elementModified is thrown but the plugin is busy", function(assert) {
@@ -423,8 +423,8 @@ function (
 			}.bind(this));
 		},
 		afterEach : function(assert) {
-			this.oForm.destroy();
 			this.oDesignTime.destroy();
+			this.oForm.destroy();
 			sandbox.restore();
 		}
 	}, function() {
@@ -493,6 +493,7 @@ function (
 			});
 		},
 		afterEach : function(assert) {
+			this.oPlugin.destroy();
 			this.oVerticalLayout.destroy();
 			sandbox.restore();
 		}
@@ -692,7 +693,7 @@ function (
 			var done = assert.async();
 
 			var oChangeRegistry = ChangeRegistry.getInstance();
-			oChangeRegistry.registerControlsForChanges({
+			return oChangeRegistry.registerControlsForChanges({
 				"ObjectPageSection" : {
 					"rename": "sap/ui/fl/changeHandler/BaseRename"
 				},
@@ -702,33 +703,33 @@ function (
 				"sap.ui.core._StashedControl" : {
 					"unstashControl": "sap/ui/fl/changeHandler/UnstashControl"
 				}
-			});
-			this.oObjectPageSection = new ObjectPageSection();
-			this.oButton = new Button();
-			this.oLayout = new VerticalLayout({
-				content : [this.oObjectPageSection, this.oButton]
-			}).placeAt("qunit-fixture");
+			})
+			.then(function() {
+				this.oObjectPageSection = new ObjectPageSection();
+				this.oButton = new Button();
+				this.oLayout = new VerticalLayout({
+					content : [this.oObjectPageSection, this.oButton]
+				}).placeAt("qunit-fixture");
 
-			sap.ui.getCore().applyChanges();
+				sap.ui.getCore().applyChanges();
 
-			this.oDesignTime = new DesignTime({
-				rootElements : [this.oLayout]
-			});
+				this.oDesignTime = new DesignTime({
+					rootElements : [this.oLayout]
+				});
+				this.oPlugin = new sap.ui.rta.plugin.Plugin({
+					commandFactory : new CommandFactory()
+				});
+				this.oControlVariantPlugin = new sap.ui.rta.plugin.ControlVariant({
+					commandFactory : new CommandFactory()
+				});
 
-			this.oPlugin = new sap.ui.rta.plugin.Plugin({
-				commandFactory : new CommandFactory()
-			});
-			this.oControlVariantPlugin = new sap.ui.rta.plugin.ControlVariant({
-				commandFactory : new CommandFactory()
-			});
-
-			this.oDesignTime.attachEventOnce("synced", function() {
-				this.oLayoutOverlay = OverlayRegistry.getOverlay(this.oLayout);
-				this.oObjectPageSectionOverlay = OverlayRegistry.getOverlay(this.oObjectPageSection);
-				this.oButtonOverlay = OverlayRegistry.getOverlay(this.oButton);
-				done();
+				this.oDesignTime.attachEventOnce("synced", function() {
+					this.oLayoutOverlay = OverlayRegistry.getOverlay(this.oLayout);
+					this.oObjectPageSectionOverlay = OverlayRegistry.getOverlay(this.oObjectPageSection);
+					this.oButtonOverlay = OverlayRegistry.getOverlay(this.oButton);
+					done();
+				}.bind(this));
 			}.bind(this));
-
 		},
 		afterEach : function() {
 			this.oLayout.destroy();
@@ -800,39 +801,38 @@ function (
 			var done = assert.async();
 
 			var oChangeRegistry = ChangeRegistry.getInstance();
-			oChangeRegistry.registerControlsForChanges({
+			return oChangeRegistry.registerControlsForChanges({
 				"VerticalLayout" : {
 					"moveControls": "default"
 				}
-			});
+			})
+			.then(function() {
+				this.oButton = new Button();
+				this.oLayout = new VerticalLayout({
+					content : [
+						this.oButton
+					]
+				}).placeAt("qunit-fixture");
 
-			this.oButton = new Button();
-			this.oLayout = new VerticalLayout({
-				content : [
-					this.oButton
-				]
-			}).placeAt("qunit-fixture");
+				sap.ui.getCore().applyChanges();
 
-			sap.ui.getCore().applyChanges();
+				this.oDesignTime = new DesignTime({
+					rootElements : [this.oLayout]
+				});
+				this.oPlugin = new sap.ui.rta.plugin.Plugin({
+					commandFactory : new CommandFactory()
+				});
+				this.oRemovePlugin = new Remove();
 
-			this.oDesignTime = new DesignTime({
-				rootElements : [this.oLayout]
-			});
+				sandbox.stub(this.oPlugin, "_isEditable").returns(true);
+				sandbox.stub(this.oRemovePlugin, "_isEditable").returns(true);
 
-			this.oPlugin = new sap.ui.rta.plugin.Plugin({
-				commandFactory : new CommandFactory()
-			});
-			this.oRemovePlugin = new Remove();
-
-			sandbox.stub(this.oPlugin, "_isEditable").returns(true);
-			sandbox.stub(this.oRemovePlugin, "_isEditable").returns(true);
-
-			this.oDesignTime.attachEventOnce("synced", function() {
-				this.oLayoutOverlay = OverlayRegistry.getOverlay(this.oLayout);
-				this.oButtonOverlay = OverlayRegistry.getOverlay(this.oButton);
-				done();
+				this.oDesignTime.attachEventOnce("synced", function() {
+					this.oLayoutOverlay = OverlayRegistry.getOverlay(this.oLayout);
+					this.oButtonOverlay = OverlayRegistry.getOverlay(this.oButton);
+					done();
+				}.bind(this));
 			}.bind(this));
-
 		},
 		afterEach : function() {
 			this.oLayout.destroy();
@@ -849,5 +849,4 @@ function (
 		jQuery("#qunit-fixture").hide();
 	});
 
-	return waitForThemeApplied();
 });

@@ -6,7 +6,6 @@ sap.ui.define([
 	"sap/ui/fl/registry/ChangeRegistry",
 	"sap/ui/fl/changeHandler/PropertyChange",
 	"sap/ui/fl/Utils",
-	"sap/ui/qunit/utils/waitForThemeApplied",
 	"sap/ui/thirdparty/sinon-4"
 ],
 function(
@@ -15,7 +14,6 @@ function(
 	ChangeRegistry,
 	PropertyChange,
 	FlUtils,
-	waitForThemeApplied,
 	sinon
 ) {
 	"use strict";
@@ -48,7 +46,7 @@ function(
 				},
 				getModel: function () {}
 			};
-			this.oGetAppComponentForControlStub = sinon.stub(FlUtils, "_getAppComponentForComponent").returns(this.oMockedAppComponent);
+			this.oGetAppComponentForControlStub = sinon.stub(FlUtils, "getAppComponentForControl").returns(this.oMockedAppComponent);
 		},
 		after: function () {
 			this.oGetAppComponentForControlStub.restore();
@@ -56,25 +54,26 @@ function(
 		},
 		beforeEach: function () {
 			var oChangeRegistry = ChangeRegistry.getInstance();
-			oChangeRegistry.registerControlsForChanges({
+			return oChangeRegistry.registerControlsForChanges({
 				"sap.m.Button" : {
 					"changeSettings" : "sap/ui/fl/changeHandler/PropertyChange"
 				}
-			});
+			})
+			.then(function() {
+				sandbox.stub(PropertyChange, "completeChangeContent");
 
-			sandbox.stub(PropertyChange, "completeChangeContent");
-
-			this.oSettingsChange = {
-				selectorControl : {
-					id : "button",
-					controlType : "sap.m.Button",
-					appComponent : this.oMockedAppComponent
-				},
-				changeSpecificData : {
-					changeType : "changeSettings",
-					content : "testchange"
-				}
-			};
+				this.oSettingsChange = {
+					selectorControl : {
+						id : "button",
+						controlType : "sap.m.Button",
+						appComponent : this.oMockedAppComponent
+					},
+					changeSpecificData : {
+						changeType : "changeSettings",
+						content : "testchange"
+					}
+				};
+			}.bind(this));
 		},
 		afterEach: function () {
 			sandbox.restore();
@@ -95,5 +94,4 @@ function(
 		jQuery("#qunit-fixture").hide();
 	});
 
-	return waitForThemeApplied();
 });

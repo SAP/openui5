@@ -6,7 +6,6 @@ sap.ui.define([
 	"sap/ui/fl/Utils",
 	"sap/ui/fl/variants/VariantManagement",
 	"sap/ui/fl/variants/VariantModel",
-	"sap/ui/qunit/utils/waitForThemeApplied",
 	"sap/ui/thirdparty/sinon-4"
 ], function (
 	CommandFactory,
@@ -14,7 +13,6 @@ sap.ui.define([
 	Utils,
 	VariantManagement,
 	VariantModel,
-	waitForThemeApplied,
 	sinon
 ) {
 	"use strict";
@@ -58,7 +56,7 @@ sap.ui.define([
 			var oModel = new VariantModel({}, {});
 			this.oMockedAppComponent = this.fnGetMockedAppComponent(oModel);
 
-			sandbox.stub(Utils, "_getAppComponentForComponent").returns(this.oMockedAppComponent);
+			sandbox.stub(Utils, "getAppComponentForControl").returns(this.oMockedAppComponent);
 			this.fnUpdateCurrentVariantStub = sandbox.stub(oModel, "updateCurrentVariant");
 
 		},
@@ -129,5 +127,4 @@ sap.ui.define([
 		jQuery("#qunit-fixture").hide();
 	});
 
-	return waitForThemeApplied();
 });

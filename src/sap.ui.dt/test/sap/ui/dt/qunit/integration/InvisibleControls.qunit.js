@@ -5,15 +5,13 @@ sap.ui.define([
 	"sap/ui/dt/OverlayRegistry",
 	"sap/m/Button",
 	"sap/m/Page",
-	"sap/m/SplitContainer",
-	"sap/ui/qunit/utils/waitForThemeApplied"
+	"sap/m/SplitContainer"
 ], function (
 	DesignTime,
 	OverlayRegistry,
 	Button,
 	Page,
-	SplitContainer,
-	waitForThemeApplied
+	SplitContainer
 ) {
 	'use strict';
 
@@ -86,5 +84,4 @@ sap.ui.define([
 		jQuery("#qunit-fixture").hide();
 	});
 
-	return waitForThemeApplied();
 });

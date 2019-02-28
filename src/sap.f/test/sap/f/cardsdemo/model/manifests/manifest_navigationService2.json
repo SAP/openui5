@@ -13,12 +13,18 @@
 	"sap.card": {
 		"type": "List",
 		"header": {
-			"title": "Request list content Card",
+			"title": "Request list content Card 2",
 			"subTitle": "Card Subtitle",
 			"icon": {
 				"src": "sap-icon://accept"
 			},
-			"status": "100 of 200"
+			"status": "100 of 200",
+			"actions": [
+				{
+					"type": "Navigation",
+					"url": "https://www.sap.com"
+				}
+			]
 		},
 		"content": {
 			"data": {
@@ -36,14 +42,12 @@
 				"description": {
 					"value": "{Description}"
 				},
-				"interactionType": "{interactionType}",
 				"actions": [
 					{
 						"type": "Navigation",
-						"enabled": true,
 						"service": "Navigation2",
 						"parameters": {
-							"somekey": "somevalue"
+							"url": "{url}"
 						}
 					}
 				]

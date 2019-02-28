@@ -7,7 +7,6 @@ sap.ui.define([
 	"sap/ui/rta/command/CommandFactory",
 	"sap/m/Button",
 	"sap/ui/base/ManagedObject",
-	"sap/ui/qunit/utils/waitForThemeApplied",
 	"sap/ui/thirdparty/sinon-4"
 ],
 function (
@@ -17,7 +16,6 @@ function (
 	CommandFactory,
 	Button,
 	ManagedObject,
-	waitForThemeApplied,
 	sinon
 ) {
 	'use strict';
@@ -46,7 +44,7 @@ function (
 					};
 				}
 			};
-			this.oFlUtilsStub = sinon.stub(FlUtils, "_getAppComponentForComponent").returns(this.oMockedAppComponent);
+			this.oFlUtilsStub = sinon.stub(FlUtils, "getAppComponentForControl").returns(this.oMockedAppComponent);
 		},
 		after: function () {
 			this.oFlUtilsStub.restore();
@@ -149,5 +147,4 @@ function (
 		jQuery("#qunit-fixture").hide();
 	});
 
-	return waitForThemeApplied();
 });

@@ -30,6 +30,14 @@ sap.ui.define([
 		iStartDateChangeFired++;
 	};
 
+	var getExpectedSecondaryMonthARIAInfo = function (oCalendar, sPrimaryType, sSecondaryType) {
+		var oDisplayedSecondaryMonths = oCalendar._getDisplayedSecondaryMonths(sPrimaryType, sSecondaryType),
+			aSecondaryWideMonths = oLocaleDataUS.getMonthsStandAlone("wide", sSecondaryType),
+			sIntervalPattern = oLocaleDataUS.getIntervalPattern();
+
+		return sIntervalPattern.replace(/\{0\}/, aSecondaryWideMonths[oDisplayedSecondaryMonths.start]).replace(/\{1\}/, aSecondaryWideMonths[oDisplayedSecondaryMonths.end]);
+	};
+
 	var oCal1 = new Calendar("Cal1",{
 		select: function(oEvent){
 			bSelectFired = true;
@@ -1015,6 +1023,73 @@ QUnit.module("Misc");
 		oCalendar.destroy();
 	});
 
+	// BCP: 1870534995
+	QUnit.test("Secondary year info should be added in button's aria-label", function (assert) {
+		// prepare
+		var oCalendar = new Calendar({
+				primaryCalendarType: "Islamic",
+				secondaryCalendarType: "Gregorian"
+			}),
+			oCurrentDate = new Date(2017, 5, 2),
+			oNewFocusedDate = new Date(2018, 6, 3),
+			sHint = sap.ui.getCore().getLibraryResourceBundle("sap.ui.unified").getText("CALENDAR_YEAR_PICKER_OPEN_HINT"),
+			sExpectedAriaLabel;
+
+		oCalendar.displayDate(oCurrentDate);
+		oCalendar.placeAt("qunit-fixture");
+		sap.ui.getCore().applyChanges();
+
+		sExpectedAriaLabel = oCalendar.$("-Head-B2-Text").text() + ", " + oCalendar.$("-Head-B2-AddText").text() + ". " + sHint;
+		assert.equal(oCalendar.$("-Head-B2").attr("aria-label"), sExpectedAriaLabel,
+			"aria-label should contain info for both primary and secondary year");
+
+		// act
+		oCalendar.displayDate(oNewFocusedDate);
+
+		// assert
+		sExpectedAriaLabel = oCalendar.$("-Head-B2-Text").text() + ", " + oCalendar.$("-Head-B2-AddText").text() + ". " + sHint;
+		assert.equal(oCalendar.$("-Head-B2").attr("aria-label"), sExpectedAriaLabel,
+			"aria-label should contain info for the updated primary and secondary year");
+
+		// cleanup
+		oCalendar.destroy();
+	});
+
+	// BCP: 1870534995
+	QUnit.test("Secondary month info should be added in button's aria-label", function (assert) {
+		// prepare
+		var oCalendar = new Calendar({
+				primaryCalendarType: "Islamic",
+				secondaryCalendarType: "Gregorian"
+			}),
+			oCurrentDate = new Date(2017, 5, 2),
+			oNewFocusedDate = new Date(2018, 6, 3),
+			sHint = sap.ui.getCore().getLibraryResourceBundle("sap.ui.unified").getText("CALENDAR_MONTH_PICKER_OPEN_HINT"),
+			sExpectedSecondaryInfo,
+			sExpectedAriaLabel;
+
+		oCalendar.displayDate(oCurrentDate);
+		oCalendar.placeAt("qunit-fixture");
+		sap.ui.getCore().applyChanges();
+
+		sExpectedSecondaryInfo = getExpectedSecondaryMonthARIAInfo(oCalendar, "Islamic", "Gregorian");
+		sExpectedAriaLabel = oCalendar.$("-Head-B1-Text").text() + ", " +  sExpectedSecondaryInfo + ". " + sHint;
+		assert.equal(oCalendar.$("-Head-B1").attr("aria-label"), sExpectedAriaLabel,
+			"aria-label should contain info for both primary and secondary month");
+
+		// act
+		oCalendar.displayDate(oNewFocusedDate);
+
+		// assert
+		sExpectedSecondaryInfo = getExpectedSecondaryMonthARIAInfo(oCalendar, "Islamic", "Gregorian");
+		sExpectedAriaLabel = oCalendar.$("-Head-B1-Text").text() + ", " + sExpectedSecondaryInfo + ". " + sHint;
+		assert.equal(oCalendar.$("-Head-B1").attr("aria-label"), sExpectedAriaLabel,
+			"aria-label should contain info for the updated primary and secondary month");
+
+		// cleanup
+		oCalendar.destroy();
+	});
+
 	QUnit.test("_initializeSecondMonthHeader creates a header", function (assert) {
 		// arrange & act
 		var oCalendar = new Calendar(),
@@ -1407,8 +1482,15 @@ QUnit.module("Misc");
 	QUnit.test("_updateHeadersYearAdditionalText should call header and secondMonthHeader methods with proper value", function (assert) {
 		// arrange
 		var sExpectedValue = "2018",
-				oHeader = { setAdditionalTextButton2: this.spy(), _setAdditionalTextButton4: this.spy() },
-				oSecondMonthHeader = { setAdditionalTextButton2: this.spy() },
+				oHeader = {
+					setAdditionalTextButton2: this.spy(),
+					_setAdditionalTextButton4: this.spy(),
+					getAriaLabelButton2: this.spy(),
+					setAriaLabelButton2: this.spy()
+				},
+				oSecondMonthHeader = {
+					setAdditionalTextButton2: this.spy()
+				},
 				oCalendar = new Calendar(),
 				oGetAggregationStub = this.stub(oCalendar, "getAggregation");
 		oGetAggregationStub.withArgs("header").returns(oHeader);

@@ -10,7 +10,6 @@ sap.ui.define([
 	"sap/m/Page",
 	"sap/m/Button",
 	"sap/m/Panel",
-	"sap/ui/qunit/utils/waitForThemeApplied",
 	"sap/ui/thirdparty/jquery",
 	"sap/ui/thirdparty/sinon-4"
 ],
@@ -24,7 +23,6 @@ function(
 	Page,
 	Button,
 	Panel,
-	waitForThemeApplied,
 	jQuery,
 	sinon
 ) {
@@ -299,5 +297,4 @@ function(
 		jQuery("#qunit-fixture").hide();
 	});
 
-	return waitForThemeApplied();
 });

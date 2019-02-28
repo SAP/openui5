@@ -736,6 +736,17 @@ sap.ui.define([
 		assert.equal(oGeneratedJSDate.getMilliseconds(), oExpectedUTCJSDate.getMilliseconds(), "the returned milliseconds are the same");
 	});
 
+	QUnit.test("getEra returns the right era", function(assert) {
+		var o7_Jan_1989_Showa_End = CalendarDate.fromLocalJSDate(new Date(600134400000), "Japanese");
+		var o8_Jan_1989_Heisei_Begin = CalendarDate.fromLocalJSDate(new Date(600220800000), "Japanese");
+
+		var now = CalendarDate.fromLocalJSDate(new Date(), "Gregorian");
+
+		assert.equal(o7_Jan_1989_Showa_End.getEra(), 234, "era is right");
+		assert.equal(o8_Jan_1989_Heisei_Begin.getEra(), 235, "era is right");
+		assert.equal(now.getEra(), 1, "era is right");
+	});
+
 	QUnit.module("toString");
 	QUnit.test("returns a string", function (assert) {
 		//Act

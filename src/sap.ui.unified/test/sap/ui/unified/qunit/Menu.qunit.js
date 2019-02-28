@@ -282,6 +282,42 @@ sap.ui.define([
 		closeAllMenusAndCheck(assert);
 	});
 
+	QUnit.test("Shift + Arrow up / Arrow down", function(assert) {
+		openRootMenu(false, assert);
+		checkHoveredItem("item3", undefined, assert);
+		qutils.triggerKeyboardEvent("menu2", "ARROW_DOWN", true);
+		checkHoveredItem("item4", undefined, assert);
+
+		qutils.triggerKeyboardEvent("menu2", "ARROW_UP", true);
+		checkHoveredItem("item3", undefined, assert);
+		qutils.triggerKeyboardEvent("menu2", "ARROW_DOWN", true);
+		checkHoveredItem("item4", undefined, assert);
+
+		qutils.triggerKeyboardEvent("menu2", "ARROW_DOWN", true);
+		checkHoveredItem("item7", undefined, assert);
+		qutils.triggerKeyboardEvent("menu2", "ARROW_DOWN", true);
+		checkHoveredItem("item3", undefined, assert);
+		closeAllMenusAndCheck(assert);
+	});
+
+	QUnit.test("Ctrl + Arrow up / Arrow down", function(assert) {
+		openRootMenu(false, assert);
+		checkHoveredItem("item3", undefined, assert);
+		qutils.triggerKeyboardEvent("menu2", "ARROW_DOWN", false, false, true);
+		checkHoveredItem("item4", undefined, assert);
+
+		qutils.triggerKeyboardEvent("menu2", "ARROW_UP", false, false, true);
+		checkHoveredItem("item3", undefined, assert);
+		qutils.triggerKeyboardEvent("menu2", "ARROW_DOWN", false, false, true);
+		checkHoveredItem("item4", undefined, assert);
+
+		qutils.triggerKeyboardEvent("menu2", "ARROW_DOWN", false, false, true);
+		checkHoveredItem("item7", undefined, assert);
+		qutils.triggerKeyboardEvent("menu2", "ARROW_DOWN", false, false, true);
+		checkHoveredItem("item3", undefined, assert);
+		closeAllMenusAndCheck(assert);
+	});
+
 	/* RIGHT key should have no effect on a menu with no submenu */
 	QUnit.test("Check Hover State and ARROW_RIGHT", function(assert) {
 		openRootMenu(true, assert);

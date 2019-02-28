@@ -1,0 +1,34 @@
+{
+	"sap.app": {
+		"id": "sap.m.sample.TextMaxLines",
+		"applicationVersion": {
+			"version": "1.0.0"
+		}
+	},
+	"sap.ui5": {
+		"rootView": {
+			"viewName": "sap.m.sample.TextMaxLines.V",
+			"type": "XML",
+			"async": true
+		},
+		"resources": {
+			"css": [
+				{
+					"uri": "style.css"
+				}
+			]
+		},
+		"libs": {
+			"sap.m": {}
+		},
+		"config": {
+			"sample": {
+				"files": [
+					"V.view.xml",
+					"style.css",
+					"manifest.json"
+				]
+			}
+		}
+	}
+}

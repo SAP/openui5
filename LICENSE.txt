@@ -277,12 +277,25 @@ License: MIT License
 <year> = unspecified
 <copyright holders> = Microsoft
 
+Component: Element getAttributeNames Method
+Licensor: Mozilla Developer Network
+Website: https://developer.mozilla.org/en-US/docs/Web/API/Element/getAttributeNames#Polyfill
+License: CC0 1.0 Universal (CC0 1.0) Public Domain Dedication
+
 Component: es6-promise v4.2.4 - a tiny implementation of Promises/A+.
 Licensor: Stefan Penner
 Website: https://github.com/stefanpenner/es6-promise
 License: MIT License
 <year> = 2014
 <copyright holders> = Yehuda Katz, Tom Dale, Stefan Penner, Jake Archibald and contributors
+
+Component: Esprima
+Licensor: Ariya Hidayat
+Website: http://esprima.org/
+License: BSD 2-clause "Simplified" License
+<YEAR> = 2011-2013
+<OWNER> = Ariya Hidayat and other contributors
+<COPYRIGHT HOLDER> = Ariya Hidayat and other contributors
 
 Component: Flexie 1.0.3
 Licensor: Richard Herrera
@@ -295,14 +308,6 @@ Component: Function.prototype.bind
 Licensor: Mozilla Developer Network
 Website: https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Function/bind
 License: CC0 1.0 Universal (CC0 1.0) Public Domain Dedication
-
-Component: Esprima
-Licensor: Ariya Hidayat
-Website: http://esprima.org/
-License: BSD 2-clause "Simplified" License
-<YEAR> = 2011-2013
-<OWNER> = Ariya Hidayat and other contributors
-<COPYRIGHT HOLDER> = Ariya Hidayat and other contributors
 
 Component: google-caja Build 4884
 Licensor: Various
@@ -336,6 +341,13 @@ License: MIT License
 <copyright holders> = Matteo Spinelli
 
 Component: jQuery 2.2.3
+Licensor: jQuery Foundation and other contributors
+Website: http://jquery.com/
+License: MIT License
+<year> = 2016
+<copyright holders> = jQuery Foundation and other contributors
+
+Component: jQuery 3.1.1
 Licensor: jQuery Foundation and other contributors
 Website: http://jquery.com/
 License: MIT License
@@ -610,6 +622,14 @@ Website: https://github.com/mnater/Hyphenopoly/
 License: MIT License
 <year> = 2018
 <copyright holders> = Mathias Nater
+
+Component: es6-shim v0.35.4 - ECMAScript 6 compatibility shims for legacy JavaScript engines
+Licensor: Paul Miller (http://paulmillr.com) and contributors
+Website: https://github.com/paulmillr/es6-shim
+License: MIT License
+<year> = 2013-2016
+<copyright holders> = Paul Miller (http://paulmillr.com) and contributors
+
 
 
 --------------------------------------------------------------------------------------------------------------------------

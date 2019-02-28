@@ -29,7 +29,6 @@ sap.ui.define([
 	"sap/base/Log",
 	"sap/base/util/UriParameters",
 	"sap/ui/qunit/QUnitUtils",
-	"sap/ui/qunit/utils/waitForThemeApplied",
 	"sap/ui/thirdparty/sinon-4"
 ],
 function(
@@ -61,7 +60,6 @@ function(
 	Log,
 	UriParameters,
 	QUnitUtils,
-	waitForThemeApplied,
 	sinon
 ) {
 	"use strict";
@@ -462,31 +460,31 @@ function(
 			assert.equal(FakeLrepSessionStorage.getNumChanges(), 0, "Local storage based LREP is empty");
 			sandbox.stub(Utils, "getAppComponentForControl").returns(oComp);
 
-			var oChangeRegistry = ChangeRegistry.getInstance();
-			oChangeRegistry.registerControlsForChanges({
-				"sap.m.Button" : {
-					"hideControl" : "default"
-				}
-			});
-
 			// Prepare elements an designtime
 			var oElement1 = sap.ui.getCore().byId("Comp1---idMain1--GeneralLedgerDocument.Name");
 			var oElement2 = sap.ui.getCore().byId("Comp1---idMain1--GeneralLedgerDocument.CompanyCode");
-			this.oGroupElementDesignTimeMetadata = new DesignTimeMetadata({
-				data : {
-					actions : {
-						remove : {
-							changeType : "hideControl"
+			var oChangeRegistry = ChangeRegistry.getInstance();
+			return oChangeRegistry.registerControlsForChanges({
+				"sap.ui.comp.smartform.GroupElement" : {
+					"hideControl" : "default"
+				}
+			})
+			.then(function() {
+				this.oGroupElementDesignTimeMetadata = new DesignTimeMetadata({
+					data : {
+						actions : {
+							remove : {
+								changeType : "hideControl"
+							}
 						}
 					}
-				}
-			});
-
-			// Create commmands
-			var oCommandFactory = new CommandFactory();
-			return oCommandFactory.getCommandFor(oElement1, "Remove", {
-				removedElement : oElement1
-			}, this.oGroupElementDesignTimeMetadata)
+				});
+				// Create commmands
+				var oCommandFactory = new CommandFactory();
+				return oCommandFactory.getCommandFor(oElement1, "Remove", {
+					removedElement : oElement1
+				}, this.oGroupElementDesignTimeMetadata);
+			}.bind(this))
 
 			.then(function(oRemoveCommand) {
 				this.oRemoveCommand = oRemoveCommand;
@@ -660,7 +658,7 @@ function(
 		beforeEach : function(assert) {
 			FakeLrepSessionStorage.deleteChanges();
 			assert.equal(FakeLrepSessionStorage.getNumChanges(), 0, "Local storage based LREP is empty");
-			sandbox.stub(Utils, "_getAppComponentForComponent").returns(oComp);
+			sandbox.stub(Utils, "getAppComponentForControl").returns(oComp);
 
 			// Create the controls
 			this.oGroupElement1 = new GroupElement({id : oComp.createId("element1")});
@@ -1180,5 +1178,4 @@ function(
 		jQuery("#qunit-fixture").hide();
 	});
 
-	return waitForThemeApplied();
 });

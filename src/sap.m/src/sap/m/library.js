@@ -1795,16 +1795,19 @@ sap.ui.define([
 
 		/**
 		 * Inherit. In this mode the global configuration of the density mode will be applied.
+		 * @public
 		 */
 		Inherit : "Inherit",
 
 		/**
 		 * Compact. In this mode the tabs will be set explicitly to compact mode independent of what mode is applied globally.
+		 * @public
 		 */
 		Compact : "Compact",
 
 		/**
 		 * Cozy. In this mode the tabs will be set explicitly to compact mode independent of what mode is applied globally.
+		 * @public
 		 */
 		Cozy : "Cozy"
 	};
@@ -3052,19 +3055,19 @@ sap.ui.define([
 
 		/**
 		 * Action on SelectionDetailsItem level.
-		 * @private
+		 * @protected
 		 */
 		Item : "Item",
 
 		/**
 		 * Action on SelectionDetails list level.
-		 * @private
+		 * @protected
 		 */
 		List : "List",
 
 		/**
 		 * ActionGroup on SelectionDetails list level.
-		 * @private
+		 * @protected
 		 */
 		Group : "Group"
 	};

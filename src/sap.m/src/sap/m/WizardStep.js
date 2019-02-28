@@ -5,12 +5,13 @@
 sap.ui.define([
 	"./library",
 	"sap/ui/core/Control",
+	"sap/ui/core/InvisibleText",
 	"./WizardStepRenderer",
 	"./Button",
 	"./TitlePropagationSupport",
 	"sap/base/Log"
 ],
-	function(library, Control, WizardStepRenderer, Button, TitlePropagationSupport, Log) {
+	function(library, Control, InvisibleText, WizardStepRenderer, Button, TitlePropagationSupport, Log) {
 
 	"use strict";
 
@@ -119,7 +120,7 @@ sap.ui.define([
 
 	WizardStep.prototype.init = function () {
 		this._resourceBundle = sap.ui.getCore().getLibraryResourceBundle("sap.m");
-		this._fnNextButtonPress;
+		this._oNumberInvisibleText = new InvisibleText({id: this.getId() + "-NumberedTitle"}).toStatic();
 
 		this._oNextButton = new Button(this.getId() + "-nextButton", {
 			text: this._resourceBundle.getText("WIZARD_STEP") + 2,
@@ -149,6 +150,28 @@ sap.ui.define([
 		this.setAggregation("_nextButton", this._oNextButton);
 
 		this._initTitlePropagationSupport();
+	};
+
+	/**
+	 * Gets the invisible text, which describes the title and position of the step
+	 * @param {int} iNumber The position of the step inside the wizard
+	 * @returns {sap.ui.core.InvisibleText} The invisible text instance
+	 * @sap-restricted sap.m.Wizard
+	 * @private
+	 */
+	WizardStep.prototype._getNumberInvisibleText = function () {
+		return this._oNumberInvisibleText;
+	};
+
+	/**
+	 * Sets the text, which describes the title and position of the step
+	 * @param {int} iNumber The position of the step inside the wizard
+	 * @returns {sap.ui.core.InvisibleText} The invisible text instance
+	 * @sap-restricted sap.m.Wizard
+	 * @private
+	 */
+	WizardStep.prototype._setNumberInvisibleText = function (iNumber) {
+		return this._oNumberInvisibleText.setText(this._resourceBundle.getText("WIZARD_STEP") + iNumber + " "  + this.getTitle());
 	};
 
 	WizardStep.prototype.setValidated = function (validated) {
@@ -202,7 +225,6 @@ sap.ui.define([
 	WizardStep.prototype._isBranched = function () {
 		return this.getSubsequentSteps().length > 1;
 	};
-
 
 	WizardStep.prototype._getNextStepReference = function () {
 		if (this.getNextStep() !== null) {
@@ -284,6 +306,11 @@ sap.ui.define([
 	WizardStep.prototype._complete = function () {
 		this._unMarkAsLast();
 		this.fireComplete();
+	};
+
+	WizardStep.prototype.exit = function () {
+		this._oNumberInvisibleText.destroy();
+		this._oNumberInvisibleText = null;
 	};
 
 	return WizardStep;

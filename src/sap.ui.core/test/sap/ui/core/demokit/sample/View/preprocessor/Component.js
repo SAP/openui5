@@ -9,20 +9,7 @@ function(jQuery, UIComponent, sinon) {
 	return UIComponent.extend("sap.ui.core.sample.View.preprocessor.Component", {
 
 		metadata: {
-			dependencies: {
-				libs: [
-					"sap.ui.core",
-					"sap.m"
-				]
-			},
-			config: {
-				sample: {
-					files: [
-						"Sample.view.xml",
-						"Sample.view.js"
-					]
-				}
-			}
+		    manifest: "json"
 		},
 		createContent: function(oController) {
 			return sap.ui.jsview("sap.ui.core.sample.View.preprocessor.Sample", true);

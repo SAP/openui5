@@ -158,14 +158,17 @@ html[data-sap-ui-browser^="ed"].sap-desktop {
 		min-width: @sapMGenericTagTextMinWidth;
 	}
 
+	.sapMGenericTagErrorIcon,
 	.sapMGenericTagValue {
 		display: flex;
+		flex: 0 0.5 auto;
 		white-space: nowrap;
 		overflow: hidden;
 		text-overflow: ellipsis;
+	}
+	.sapMGenericTagValue {
 		box-sizing: border-box;
 		align-items: center;
-		flex: 0 0.5 auto;
 		padding-left: 0.5rem;
 
 		.sapMObjectNumberText {

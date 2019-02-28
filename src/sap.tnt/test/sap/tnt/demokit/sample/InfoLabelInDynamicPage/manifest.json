@@ -1,0 +1,25 @@
+{
+	"sap.app": {
+		"id": "sap.tnt.sample.InfoLabelInDynamicPage",
+		"applicationVersion": {
+			"version": "1.0.0"
+		}
+	},
+	"sap.ui5": {
+		"rootView": "sap.tnt.sample.InfoLabelInDynamicPage.V",
+		"libs": {
+			"sap.ui.layout": {},
+			"sap.f": {}
+		},
+		"config": {
+			"sample": {
+				"stretch": true,
+				"files": [
+					"V.view.xml",
+					"V.controller.js",
+					"manifest.json"
+				]
+			}
+		}
+	}
+}

@@ -5,7 +5,6 @@ sap.ui.define([
 	"./pages/Overview",
 	"./pages/Browser",
 	"./pages/NotFound",
-	"./pages/App",
 	"./pages/Preview"
 ], function (opaTest) {
 	"use strict";
@@ -25,7 +24,6 @@ sap.ui.define([
 
 	opaTest("Clicking the 'Show icons' link on the 'Resource not found' page should bring me back to the overview", function (Given, When, Then) {
 		//Actions
-		When.onTheAppPage.iWaitUntilTheAppBusyIndicatorIsGone();
 		When.onTheNotFoundPage.iPressTheNotFoundShowOverviewLink();
 
 		// Assertions

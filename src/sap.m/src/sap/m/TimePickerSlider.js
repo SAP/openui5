@@ -272,7 +272,10 @@ sap.ui.define([
 					//Be careful not to invoke this method twice (the first time is on animate finish callback).
 					//If this is the first animation, the _iSelectedIndex will remain its initial value, so no need
 					//to notify the scroller about any snap completion
-					if (this._iSelectedIndex !== -1) {
+					if (this._animatingTargetIndex !== null) {
+						this._scrollerSnapped(this._animatingTargetIndex);
+						this._animatingTargetIndex = null;
+					} else if (this._iSelectedIndex !== -1) {
 						this._scrollerSnapped(this._iSelectedIndex);
 					}
 				}
@@ -1041,12 +1044,32 @@ sap.ui.define([
 		 */
 		TimePickerSlider.prototype._offsetValue = function(iIndexOffset) {
 			var $Slider = this._getSliderContainerDomRef(),
-				iScrollTop = $Slider.scrollTop(),
+				iScrollTop,
 				iItemHeight = this._getItemHeightInPx(),
-				iSnapScrollTop = iScrollTop + iIndexOffset * iItemHeight,
+				iSnapScrollTop,
+				iSelIndex,
 				bCycle = this.getIsCyclic(),
-				oThat = this,
-				iSelIndex = this._iSelectedItemIndex + iIndexOffset;
+				oThat = this;
+
+			this._stopAnimation(); //stop any schedule(interval) for animation
+			//stop snap animation also
+			if (this._animatingSnap === true) {
+				this._animatingSnap = false;
+				this._getSliderContainerDomRef().stop(true);
+				//Be careful not to invoke this method twice (the first time is on animate finish callback).
+				//If this is the first animation, the _iSelectedIndex will remain its initial value, so no need
+				//to notify the scroller about any snap completion
+				if (this._animatingTargetIndex !== null) {
+					this._scrollerSnapped(this._animatingTargetIndex);
+					this._animatingTargetIndex = null;
+				} else if (this._iSelectedIndex !== -1) {
+					this._scrollerSnapped(this._iSelectedIndex);
+				}
+			}
+
+			iSelIndex = this._iSelectedItemIndex + iIndexOffset;
+			iScrollTop = $Slider.scrollTop();
+			iSnapScrollTop = iScrollTop + iIndexOffset * iItemHeight;
 
 			if (!bCycle) {
 				if (iSelIndex < 0 || iSelIndex >= this._getVisibleItems().length) {
@@ -1063,9 +1086,11 @@ sap.ui.define([
 			}
 
 			this._animatingSnap = true;
+			this._animatingTargetIndex = iSelIndex;
 			$Slider.animate({ scrollTop: iSnapScrollTop}, SCROLL_ANIMATION_DURATION, 'linear', function() {
 				$Slider.clearQueue();
 				oThat._animatingSnap = false;
+				oThat._animatingTargetIndex = null;
 				//make sure the DOM is still visible
 				if ($Slider.css("visibility") === "visible") {
 					oThat._scrollerSnapped(iSelIndex);
@@ -1303,7 +1328,9 @@ sap.ui.define([
 					} else if (aMatchingItems.length === 1) {
 						this.setSelectedValue(aMatchingItems[0].getKey());
 						sCurrentKeyPrefix = "";
-					} // else - 0: do nothing, user just waits 1 second and the sCurrentKeyPrefix gets a reset next call
+					} else {
+						sCurrentKeyPrefix = "";
+					}
 
 					iLastTimeStamp = iTimeStamp;
 				};

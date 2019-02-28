@@ -1,0 +1,171 @@
+@_sap_f_ShellBar_PaddingDesktop: 3;
+@_sap_f_ShellBar_PaddingTablet: 2;
+@_sap_f_ShellBar_PaddingPhone: 1;
+@_sap_f_ShellBar_ChildMargin: 4;
+@_sap_f_ShellBar_CoPilotWidth: 48;
+
+.sapFShellBar {
+	height: 3rem;
+	padding-left: ~"@{_sap_f_ShellBar_PaddingDesktop}rem";
+	padding-right: ~"@{_sap_f_ShellBar_PaddingDesktop}rem";
+	box-sizing: border-box;
+	overflow: hidden;
+
+	.sapFShellBarOTB {
+		height: 3rem;
+		padding-left: 0;
+		padding-right: 0;
+
+		:first-child {
+			margin-left: 0;
+		}
+
+		.sapUiHiddenPlaceholder:first-child + * {
+			margin-left: 0;
+		}
+
+		.sapFShellBarOverflowButton {
+			order: 1;
+		}
+
+		.sapFShellBarGridButton {
+			order: 3;
+			margin-right: 0;
+		}
+
+		.sapFShellBarProfile {
+			order: 2;
+		}
+		.sapFShellBarSecondTitle {
+			margin: 0;
+		}
+	}
+
+	.sapMBtn .sapFAvatar {
+		margin-top: 0.20rem;
+	}
+
+	.sapFSHMegaMenu {
+		max-width: none;
+		display: inline-block;
+		font-weight: bold;
+		overflow: hidden;
+		.sapMBtnInner > img {
+			margin-top: 0.05rem;
+			margin-left: 0.05rem;
+			width: auto !important;
+			height: 2rem;
+		}
+		.sapMBtnInner::after {
+			content: '';
+			font-size: 1rem;
+			line-height: 2.2rem;
+			font-weight: bold;
+		}
+	}
+
+	.sapFShellBarHomeIcon {
+		height: 2rem;
+	}
+
+	.sapMImg.CPImage {
+		width: ~"@{_sap_f_ShellBar_CoPilotWidth}px";
+		&:hover {
+			transition: transform 0.30s;
+			transform: scale(1.1);
+			outline: none;
+		}
+		&:active {
+			transition: transform 0.05s;
+			transform: scale(1.2);
+			outline: none;
+		}
+	}
+
+	.sapFSHMegaMenu .sapMBtnContent {
+		font-weight: bold;
+	}
+
+	&.sapFShellBarSizeTablet {
+		padding: 0 ~"@{_sap_f_ShellBar_PaddingTablet}rem";
+	}
+
+	&.sapFShellBarSizePhone {
+		padding: 0 ~"@{_sap_f_ShellBar_PaddingPhone}rem";
+		.sapFShellBarProfile {
+			margin-right: 0;
+		}
+	}
+
+	// Resets of sizes for "Compact" mode - controls should remain in cozy mode
+	.sapUiSizeCompact & {
+		// Button
+		.sapMBtn {
+			height: 3rem;
+			padding: 0.250rem 0;
+		}
+
+		.sapMBtnInner {
+			height: 2.500rem;
+			min-width: 2.500rem;
+		}
+
+		.sapMBtnInner.sapMBtnText {
+			padding-left: 0.75rem;
+			padding-right: 0.75rem;
+		}
+		.sapMBtnInner.sapMBtnText.sapMBtnIconFirst,
+		.sapMBtnInner.sapMBtnText.sapMBtnBack {
+			padding-left: 2.375rem;
+		}
+		.sapMBtnInner.sapMBtnText.sapMBtnBack.sapMBtnIconFirst {
+			padding-left: 4.750rem;
+		}
+		.sapMBtnInner.sapMBtnText.sapMBtnIconLast {
+			padding-right: 2.375rem;
+		}
+
+		.sapMBtnContent {
+			line-height: 2.375rem;
+		}
+
+		.sapMBtnIcon {
+			line-height: 2.375rem;
+			width: 2.375rem;
+			font-size: 1.375rem;
+			max-height: 2.375rem;
+			margin: 0;
+			padding: 0;
+		}
+		.sapMBtnIconLeft + .sapMBtnIconLeft {
+			left: 0;
+		}
+		.sapMBtnText {
+			.sapMBtnIconLeft + .sapMBtnIconLeft {
+				left: 2.375rem;
+			}
+		}
+		.sapMBtnInner > img {
+			width: 2.500rem;
+			margin-top: 0.2rem;
+			margin-left: 0.2rem;
+		}
+
+		// Menu Button
+		.sapMMenuBtn.sapMMenuBtnRegular .sapMBtnInner::after {
+			height: 38px; //ie does not accept rem for height in pseudo elements, but it works with px when you zoom
+			line-height: 38px;
+			padding-right: 0.75rem;
+			padding-left: 0.5625rem;
+		}
+		.sapMMenuBtn.sapMMenuBtnRegular .sapMBtnInner:not(.sapMBtnText) {
+			padding-right: 1.25rem;
+		}
+		.sapMMenuBtn.sapMMenuBtnRegular .sapMBtnInner {
+			padding-right: 1.625rem;
+		}
+		.sapMMenuBtn .sapMBtnIconFirst .sapMBtnIcon {
+			padding-right: 0.75rem;
+		}
+	}
+}

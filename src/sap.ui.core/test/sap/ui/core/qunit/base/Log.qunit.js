@@ -131,7 +131,7 @@ sap.ui.define(["sap/base/Log"], function(Log) {
 		var fnSupportInfo = sinon.spy(function() {return "support Info";});
 		console.error.callCount = 0;
 		console.warn.callCount = 0;
-		Log.setLevel(1);
+		Log.setLevel(Log.Level.ERROR);
 		Log.logSupportInfo(true);
 		Log.error("test", null, null, fnSupportInfo);
 		assert.equal(console.error.callCount, 1, "error logged!");
@@ -139,10 +139,32 @@ sap.ui.define(["sap/base/Log"], function(Log) {
 		Log.warning("test", fnSupportInfo);
 		assert.equal(console.warn.callCount, 0, "warning not logged!");
 		assert.equal(fnSupportInfo.callCount, 1, "no additional supportInfo added!");
-		Log.setLevel(2);
+		Log.setLevel(Log.Level.WARNING);
 		Log.warning("test", "details", fnSupportInfo);
 		assert.equal(console.warn.callCount, 1, "warning logged!");
 		assert.equal(fnSupportInfo.callCount, 2, "supportInfo added!");
+
+		var onLogEntry = sinon.spy();
+		var oListener = {onLogEntry: onLogEntry};
+		Log.addLogListener(oListener);
+		Log.logSupportInfo(false);
+
+		onLogEntry.resetHistory();
+		Log.error("message", fnSupportInfo);
+		assert.ok(onLogEntry.calledWith(sinon.match({message:"message", details:"", component:""})),
+			"when support info is suppressed, fnsupport info must not be logged as 'details'");
+
+		onLogEntry.resetHistory();
+		Log.error("message", "details", fnSupportInfo);
+		assert.ok(onLogEntry.calledWith(sinon.match({message:"message", details:"details", component:""})),
+			"when support info is suppressed, fnsupport info must not be logged as 'component'");
+
+		onLogEntry.resetHistory();
+		Log.error("message", "details", "component", fnSupportInfo);
+		assert.ok(onLogEntry.calledWith(sinon.match({message:"message", details:"details", component:"component"})),
+			"when support info is suppressed, fnsupport info must not be logged");
+
+		Log.removeLogListener(oListener);
 	});
 
 	QUnit.test("Log: Listener", function(assert) {

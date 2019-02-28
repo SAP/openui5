@@ -2502,6 +2502,12 @@ function (
 			});
 		});
 
+		QUnit.test("when calling resetChanges without generator, selector string and change type string specified", function (assert) {
+			sandbox.stub(Utils.log, "error");
+			this.oChangePersistence.resetChanges("VENDOR");
+			assert.ok(Utils.log.error.calledWith("Of the generator, selector string and change type string parameters at least one has to filled"), "then Utils.log.error() is called with an error");
+		});
+
 		QUnit.test("when calling resetChanges in VENDOR layer with mix content of $TMP and transported changes", function (assert) {
 			var done = assert.async();
 			var oMockTransportInfo = {
@@ -2557,19 +2563,85 @@ function (
 			sandbox.stub(sap.ui.fl.registry.Settings, "getInstance").returns(Promise.resolve(oSetting));
 
 			// LREP Connector
-			var sExpectedUri = "/sap/bc/lrep/changes/" +
-				"?reference=MyComponent" +
-				"&appVersion=1.2.3" +
-				"&layer=VENDOR" +
-				"&generator=Change.createInitialFileContent" +
-				"&changelist=transportId";
+			var mExpectedOptions = {"reference":"MyComponent","appVersion":"1.2.3","layer":"VENDOR","generator":"Change.createInitialFileContent","changelist":"transportId"};
 			var oLrepStub = sandbox.stub(this.oChangePersistence._oConnector, "send").returns(Promise.resolve());
 			var fnOpenTransportSelectionStub = sandbox.stub(this.oChangePersistence._oTransportSelection, "openTransportSelection").returns(Promise.resolve(oMockTransportInfo));
 
 			this.oChangePersistence.resetChanges("VENDOR", "Change.createInitialFileContent").then(function() {
 				assert.ok(fnOpenTransportSelectionStub.calledOnce, "then openTransportSelection called once");
 				assert.ok(oLrepStub.calledOnce, "the LrepConnector is called once");
-				assert.equal(oLrepStub.args[0][0], sExpectedUri, "and with the correct URI");
+				assert.equal(oLrepStub.args[0][0], "/changes/", "and with the correct URI");
+				assert.equal(oLrepStub.args[0][1], "DELETE", "and with the correct method");
+				assert.deepEqual(oLrepStub.args[0][2], mExpectedOptions, "and with the correct URL parameters");
+				done();
+			});
+		});
+
+		QUnit.test("when calling resetChanges in VENDOR layer for transported changes with selector and change type", function (assert) {
+			var done = assert.async();
+			var oMockTransportInfo = {
+				packageName : "PackageName",
+				transport : "transportId"
+			};
+			// changes for the component
+			var oVENDORChange1 = new Change({
+				"fileType": "change",
+				"layer": "VENDOR",
+				"fileName": "a",
+				"namespace": "b",
+				"packageName": "$TMP",
+				"changeType": "labelChange",
+				"creation": "",
+				"reference": "",
+				"selector": {
+					"id": "abc123"
+				},
+				"content": {
+					"something": "createNewVariant"
+				}
+			});
+
+			var oVENDORChange2 = new Change({
+				"fileType": "change",
+				"layer": "VENDOR",
+				"fileName": "a",
+				"namespace": "b",
+				"packageName": "c",
+				"changeType": "labelChange",
+				"creation": "",
+				"reference": "",
+				"selector": {
+					"id": "abc123"
+				},
+				"content": {
+					"something": "createNewVariant"
+				}
+			});
+
+			var aChanges = [oVENDORChange1, oVENDORChange2];
+			sandbox.stub(this.oChangePersistence, "getChangesForComponent").returns(Promise.resolve(aChanges));
+
+			// Settings in registry
+			var oSetting = {
+				isKeyUser: true,
+				isAtoAvailable: false,
+				isProductiveSystem: function() {return false;},
+				hasMergeErrorOccured: function() {return false;},
+				isAtoEnabled: function() {return false;}
+			};
+			sandbox.stub(sap.ui.fl.registry.Settings, "getInstance").returns(Promise.resolve(oSetting));
+
+			// LREP Connector
+			var mExpectedOptions = {"reference":"MyComponent","appVersion":"1.2.3","layer":"USER","selector":"abc123","changeType":"labelChange","changelist":"transportId"};
+			var oLrepStub = sandbox.stub(this.oChangePersistence._oConnector, "send").returns(Promise.resolve());
+			var fnOpenTransportSelectionStub = sandbox.stub(this.oChangePersistence._oTransportSelection, "openTransportSelection").returns(Promise.resolve(oMockTransportInfo));
+
+			this.oChangePersistence.resetChanges("USER", "", "abc123", "labelChange").then(function() {
+				assert.ok(fnOpenTransportSelectionStub.calledOnce, "then openTransportSelection called once");
+				assert.ok(oLrepStub.calledOnce, "the LrepConnector is called once");
+				assert.equal(oLrepStub.args[0][0], "/changes/", "and with the correct URI");
+				assert.equal(oLrepStub.args[0][1], "DELETE", "and with the correct method");
+				assert.deepEqual(oLrepStub.args[0][2], mExpectedOptions, "and with the correct URL parameters");
 				done();
 			});
 		});
@@ -2643,17 +2715,14 @@ function (
 			sandbox.stub(sap.ui.fl.registry.Settings, "getInstance").returns(Promise.resolve(oSetting));
 
 			// LREP Connector
-			var sExpectedUri = "/sap/bc/lrep/changes/" +
-				"?reference=MyComponent" +
-				"&appVersion=1.2.3" +
-				"&layer=CUSTOMER" +
-				"&generator=Change.createInitialFileContent" +
-				"&changelist=ATO_NOTIFICATION";
+			var mExpectedOptions = {"reference":"MyComponent","appVersion":"1.2.3","layer":"CUSTOMER","generator":"Change.createInitialFileContent","changelist":"ATO_NOTIFICATION"};
 			var oLrepStub = sandbox.stub(this.oChangePersistence._oConnector, "send").returns(Promise.resolve());
 
 			this.oChangePersistence.resetChanges("CUSTOMER", "Change.createInitialFileContent").then(function() {
 				assert.ok(oLrepStub.calledOnce, "the LrepConnector is called once");
-				assert.equal(oLrepStub.args[0][0], sExpectedUri, "and with the correct URI");
+				assert.equal(oLrepStub.args[0][0], "/changes/", "and with the correct URI");
+				assert.equal(oLrepStub.args[0][1], "DELETE", "and with the correct method");
+				assert.deepEqual(oLrepStub.args[0][2], mExpectedOptions, "and with the correct URL parameters");
 				done();
 			});
 		});

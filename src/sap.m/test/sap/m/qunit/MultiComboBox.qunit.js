@@ -805,7 +805,7 @@ sap.ui.define([
 
 		// arrange
 		var fnAddAggregationSpy = this.spy(oMultiComboBox, "addAggregation");
-		var fnListAddAggregationSpy = this.spy(oMultiComboBox.getList(), "addAggregation");
+		var fnListAddAggregationSpy = this.spy(oMultiComboBox._getList(), "addAggregation");
 		var fnAddItemSpy = this.spy(oMultiComboBox, "addItem");
 		var oItem = new Item({
 			key : "0",
@@ -839,7 +839,7 @@ sap.ui.define([
 
 		// arrange
 		var fnAddAggregationSpy = this.spy(oMultiComboBox, "addAggregation");
-		var fnListAddAggregationSpy = this.spy(oMultiComboBox.getList(), "addAggregation");
+		var fnListAddAggregationSpy = this.spy(oMultiComboBox._getList(), "addAggregation");
 		var fnAddItemSpy = this.spy(oMultiComboBox, "addItem");
 		var oItem = new Item({
 			text : "item 0"
@@ -872,7 +872,7 @@ sap.ui.define([
 
 		// arrange
 		var fnAddAggregationSpy = this.spy(oMultiComboBox, "addAggregation");
-		var fnListAddAggregationSpy = this.spy(oMultiComboBox.getList(), "addAggregation");
+		var fnListAddAggregationSpy = this.spy(oMultiComboBox._getList(), "addAggregation");
 		var fnAddItemSpy = this.spy(oMultiComboBox, "addItem");
 		var oItem = new Item();
 
@@ -903,7 +903,7 @@ sap.ui.define([
 
 		// arrange
 		var fnAddAggregationSpy = this.spy(oMultiComboBox, "addAggregation");
-		var fnListAddAggregationSpy = this.spy(oMultiComboBox.getList(), "addAggregation");
+		var fnListAddAggregationSpy = this.spy(oMultiComboBox._getList(), "addAggregation");
 		var fnAddItemSpy = this.spy(oMultiComboBox, "addItem");
 		var oItem = new Item({
 			key : "0",
@@ -936,7 +936,7 @@ sap.ui.define([
 
 		// arrange
 		var fnAddAggregationSpy = this.spy(oMultiComboBox, "addAggregation");
-		var fnListAddAggregationSpy = this.spy(oMultiComboBox.getList(), "addAggregation");
+		var fnListAddAggregationSpy = this.spy(oMultiComboBox._getList(), "addAggregation");
 		var fnAddItemSpy = this.spy(oMultiComboBox, "addItem");
 
 		// act
@@ -1273,7 +1273,7 @@ sap.ui.define([
 
 		// arrange
 		var fnInsertAggregation = this.spy(oMultiComboBox, "insertAggregation");
-		var fnListInsertAggregation = this.spy(oMultiComboBox.getList(), "insertAggregation");
+		var fnListInsertAggregation = this.spy(oMultiComboBox._getList(), "insertAggregation");
 		var fnInsertItem = this.spy(oMultiComboBox, "insertItem");
 		var oItem = new Item({
 			key : "0",
@@ -2122,13 +2122,13 @@ sap.ui.define([
 				this.clock.tick(500);
 
 				// assertions
-				assert.equal(oMultiComboBox.getList().$().find("#" + oMultiComboBox.getListItem(oItem1).getId()).length, 0,
+				assert.equal(oMultiComboBox._getList().$().find("#" + oMultiComboBox.getListItem(oItem1).getId()).length, 0,
 						'The first Listitem should not be shown');
-				assert.equal(oMultiComboBox.getList().$().find("#" + oMultiComboBox.getListItem(oItem2).getId()).length, 1,
+				assert.equal(oMultiComboBox._getList().$().find("#" + oMultiComboBox.getListItem(oItem2).getId()).length, 1,
 						'The second Listitem should be shown');
-				assert.equal(oMultiComboBox.getList().$().find("#" + oMultiComboBox.getListItem(oItem3).getId()).length, 1,
+				assert.equal(oMultiComboBox._getList().$().find("#" + oMultiComboBox.getListItem(oItem3).getId()).length, 1,
 						'The third Listitem should be shown');
-				assert.ok(!oMultiComboBox.getList().$().find("#" + oMultiComboBox.getListItem(oItem3).getId()).hasClass(
+				assert.ok(!oMultiComboBox._getList().$().find("#" + oMultiComboBox.getListItem(oItem3).getId()).hasClass(
 						"sapMComboBoxBaseItemDisabled"),
 						'The third Listitem must not have the css class sapMComboBoxBaseItemDisabled');
 
@@ -2166,11 +2166,11 @@ sap.ui.define([
 
 		// assertions
 		assert.ok(oMultiComboBox._isListInSuggestMode(), 'Suggest list is open');
-		assert.equal(oMultiComboBox.getList().$().find("#" + oMultiComboBox.getListItem(oItem1).getId()).length, 0,
+		assert.equal(oMultiComboBox._getList().$().find("#" + oMultiComboBox.getListItem(oItem1).getId()).length, 0,
 				'The first Listitem should not be shown');
-		assert.equal(oMultiComboBox.getList().$().find("#" + oMultiComboBox.getListItem(oItem2).getId()).length, 1,
+		assert.equal(oMultiComboBox._getList().$().find("#" + oMultiComboBox.getListItem(oItem2).getId()).length, 1,
 				'The second Listitem should be shown');
-		assert.equal(oMultiComboBox.getList().$().find("#" + oMultiComboBox.getListItem(oItem3).getId()).length, 0,
+		assert.equal(oMultiComboBox._getList().$().find("#" + oMultiComboBox.getListItem(oItem3).getId()).length, 0,
 				'The third Listitem should not be shown');
 
 		// cleanup
@@ -2211,11 +2211,11 @@ sap.ui.define([
 		this.clock.tick(500);
 
 		// assertions
-		assert.equal(oMultiComboBox.getList().$().find("#" + oMultiComboBox.getListItem(oItem1).getId()).length, 0,
+		assert.equal(oMultiComboBox._getList().$().find("#" + oMultiComboBox.getListItem(oItem1).getId()).length, 0,
 				'The first Listitem should not be shown');
-		assert.equal(oMultiComboBox.getList().$().find("#" + oMultiComboBox.getListItem(oItem2).getId()).length, 1,
+		assert.equal(oMultiComboBox._getList().$().find("#" + oMultiComboBox.getListItem(oItem2).getId()).length, 1,
 				'The second Listitem should be shown');
-		assert.equal(oMultiComboBox.getList().$().find("#" + oMultiComboBox.getListItem(oItem3).getId()).length, 1,
+		assert.equal(oMultiComboBox._getList().$().find("#" + oMultiComboBox.getListItem(oItem3).getId()).length, 1,
 				'The third Listitem should be shown');
 
 		// cleanup
@@ -2250,11 +2250,11 @@ sap.ui.define([
 		this.clock.tick(500);
 
 		// assertions
-		assert.equal(oMultiComboBox.getList().$().find("#" + oMultiComboBox.getListItem(oItem1).getId()).length, 1,
+		assert.equal(oMultiComboBox._getList().$().find("#" + oMultiComboBox.getListItem(oItem1).getId()).length, 1,
 				'The first Listitem should be shown');
-		assert.equal(oMultiComboBox.getList().$().find("#" + oMultiComboBox.getListItem(oItem2).getId()).length, 1,
+		assert.equal(oMultiComboBox._getList().$().find("#" + oMultiComboBox.getListItem(oItem2).getId()).length, 1,
 				'The second Listitem should be shown');
-		assert.equal(oMultiComboBox.getList().$().find("#" + oMultiComboBox.getListItem(oItem3).getId()).length, 0,
+		assert.equal(oMultiComboBox._getList().$().find("#" + oMultiComboBox.getListItem(oItem3).getId()).length, 0,
 				'The third Listitem should not be shown');
 
 		// cleanup
@@ -2288,11 +2288,11 @@ sap.ui.define([
 		this.clock.tick(500);
 
 		// assertions
-		assert.equal(oMultiComboBox.getList().$().find("#" + oMultiComboBox.getListItem(oItem1).getId()).length, 1,
+		assert.equal(oMultiComboBox._getList().$().find("#" + oMultiComboBox.getListItem(oItem1).getId()).length, 1,
 				'The first Listitem should be shown');
-		assert.equal(oMultiComboBox.getList().$().find("#" + oMultiComboBox.getListItem(oItem2).getId()).length, 1,
+		assert.equal(oMultiComboBox._getList().$().find("#" + oMultiComboBox.getListItem(oItem2).getId()).length, 1,
 				'The second Listitem should be shown');
-		assert.equal(oMultiComboBox.getList().$().find("#" + oMultiComboBox.getListItem(oItem3).getId()).length, 1,
+		assert.equal(oMultiComboBox._getList().$().find("#" + oMultiComboBox.getListItem(oItem3).getId()).length, 1,
 				'The third Listitem should be shown');
 
 		// cleanup
@@ -2325,11 +2325,11 @@ sap.ui.define([
 		this.clock.tick(500);
 
 		// assertions
-		assert.equal(oMultiComboBox.getList().$().find("#" + oMultiComboBox.getListItem(oItem1).getId()).length, 1,
+		assert.equal(oMultiComboBox._getList().$().find("#" + oMultiComboBox.getListItem(oItem1).getId()).length, 1,
 				'The first Listitem should be shown');
-		assert.equal(oMultiComboBox.getList().$().find("#" + oMultiComboBox.getListItem(oItem2).getId()).length, 1,
+		assert.equal(oMultiComboBox._getList().$().find("#" + oMultiComboBox.getListItem(oItem2).getId()).length, 1,
 				'The second Listitem should be shown');
-		assert.equal(oMultiComboBox.getList().$().find("#" + oMultiComboBox.getListItem(oItem3).getId()).length, 1,
+		assert.equal(oMultiComboBox._getList().$().find("#" + oMultiComboBox.getListItem(oItem3).getId()).length, 1,
 				'The third Listitem should be shown');
 
 		// cleanup
@@ -2363,11 +2363,11 @@ sap.ui.define([
 		this.clock.tick(500);
 
 		// assertions
-		assert.equal(oMultiComboBox.getList().$().find("#" + oMultiComboBox.getListItem(oItem1).getId()).length, 1,
+		assert.equal(oMultiComboBox._getList().$().find("#" + oMultiComboBox.getListItem(oItem1).getId()).length, 1,
 				'The first Listitem should be shown');
-		assert.equal(oMultiComboBox.getList().$().find("#" + oMultiComboBox.getListItem(oItem2).getId()).length, 1,
+		assert.equal(oMultiComboBox._getList().$().find("#" + oMultiComboBox.getListItem(oItem2).getId()).length, 1,
 				'The second Listitem should be shown');
-		assert.equal(oMultiComboBox.getList().$().find("#" + oMultiComboBox.getListItem(oItem3).getId()).length, 1,
+		assert.equal(oMultiComboBox._getList().$().find("#" + oMultiComboBox.getListItem(oItem3).getId()).length, 1,
 				'The third Listitem should be shown');
 
 		// cleanup
@@ -2402,11 +2402,11 @@ sap.ui.define([
 		this.clock.tick(500);
 
 		// assertions
-		assert.equal(oMultiComboBox.getList().$().find("#" + oMultiComboBox.getListItem(oItem1).getId()).length, 1,
+		assert.equal(oMultiComboBox._getList().$().find("#" + oMultiComboBox.getListItem(oItem1).getId()).length, 1,
 				'The first Listitem should be shown');
-		assert.equal(oMultiComboBox.getList().$().find("#" + oMultiComboBox.getListItem(oItem2).getId()).length, 1,
+		assert.equal(oMultiComboBox._getList().$().find("#" + oMultiComboBox.getListItem(oItem2).getId()).length, 1,
 				'The second Listitem should be shown');
-		assert.equal(oMultiComboBox.getList().$().find("#" + oMultiComboBox.getListItem(oItem3).getId()).length, 1,
+		assert.equal(oMultiComboBox._getList().$().find("#" + oMultiComboBox.getListItem(oItem3).getId()).length, 1,
 				'The third Listitem should be shown');
 
 		// cleanup
@@ -2439,11 +2439,11 @@ sap.ui.define([
 		this.clock.tick(500);
 
 		// assertions
-		assert.equal(oMultiComboBox.getList().$().find("#" + oMultiComboBox.getListItem(oItem1).getId()).length, 1,
+		assert.equal(oMultiComboBox._getList().$().find("#" + oMultiComboBox.getListItem(oItem1).getId()).length, 1,
 				'The first Listitem should be shown');
-		assert.equal(oMultiComboBox.getList().$().find("#" + oMultiComboBox.getListItem(oItem2).getId()).length, 1,
+		assert.equal(oMultiComboBox._getList().$().find("#" + oMultiComboBox.getListItem(oItem2).getId()).length, 1,
 				'The second Listitem should be shown');
-		assert.equal(oMultiComboBox.getList().$().find("#" + oMultiComboBox.getListItem(oItem3).getId()).length, 1,
+		assert.equal(oMultiComboBox._getList().$().find("#" + oMultiComboBox.getListItem(oItem3).getId()).length, 1,
 				'The third Listitem should be shown');
 
 		// cleanup
@@ -2476,11 +2476,11 @@ sap.ui.define([
 		this.clock.tick(500);
 
 		// assertions
-		assert.equal(oMultiComboBox.getList().$().find("#" + oMultiComboBox.getListItem(oItem1).getId()).length, 0,
+		assert.equal(oMultiComboBox._getList().$().find("#" + oMultiComboBox.getListItem(oItem1).getId()).length, 0,
 				'The first Listitem should not be shown');
-		assert.equal(oMultiComboBox.getList().$().find("#" + oMultiComboBox.getListItem(oItem2).getId()).length, 1,
+		assert.equal(oMultiComboBox._getList().$().find("#" + oMultiComboBox.getListItem(oItem2).getId()).length, 1,
 				'The second Listitem should be shown');
-		assert.equal(oMultiComboBox.getList().$().find("#" + oMultiComboBox.getListItem(oItem3).getId()).length, 1,
+		assert.equal(oMultiComboBox._getList().$().find("#" + oMultiComboBox.getListItem(oItem3).getId()).length, 1,
 				'The third Listitem should be shown');
 
 		// cleanup
@@ -2514,11 +2514,11 @@ sap.ui.define([
 		this.clock.tick(500);
 
 		// assertions
-		assert.equal(oMultiComboBox.getList().$().find("#" + oMultiComboBox.getListItem(oItem1).getId()).length, 0,
+		assert.equal(oMultiComboBox._getList().$().find("#" + oMultiComboBox.getListItem(oItem1).getId()).length, 0,
 				'The first Listitem should not be shown');
-		assert.equal(oMultiComboBox.getList().$().find("#" + oMultiComboBox.getListItem(oItem2).getId()).length, 1,
+		assert.equal(oMultiComboBox._getList().$().find("#" + oMultiComboBox.getListItem(oItem2).getId()).length, 1,
 				'The second Listitem should be shown');
-		assert.equal(oMultiComboBox.getList().$().find("#" + oMultiComboBox.getListItem(oItem3).getId()).length, 1,
+		assert.equal(oMultiComboBox._getList().$().find("#" + oMultiComboBox.getListItem(oItem3).getId()).length, 1,
 				'The third Listitem should be shown');
 
 		// cleanup
@@ -2554,11 +2554,11 @@ sap.ui.define([
 		this.clock.tick(500);
 
 		// assertions
-		assert.equal(oMultiComboBox.getList().$().find("#" + oMultiComboBox.getListItem(oItem1).getId()).length, 1,
+		assert.equal(oMultiComboBox._getList().$().find("#" + oMultiComboBox.getListItem(oItem1).getId()).length, 1,
 				'The first Listitem should be shown');
-		assert.equal(oMultiComboBox.getList().$().find("#" + oMultiComboBox.getListItem(oItem2).getId()).length, 1,
+		assert.equal(oMultiComboBox._getList().$().find("#" + oMultiComboBox.getListItem(oItem2).getId()).length, 1,
 				'The second Listitem should be shown');
-		assert.equal(oMultiComboBox.getList().$().find("#" + oMultiComboBox.getListItem(oItem3).getId()).length, 1,
+		assert.equal(oMultiComboBox._getList().$().find("#" + oMultiComboBox.getListItem(oItem3).getId()).length, 1,
 				'The third Listitem should be shown');
 
 		// cleanup
@@ -3573,7 +3573,7 @@ sap.ui.define([
 		assert.ok(oMultiComboBox.isOpen(), "oMultiComboBox is open");
 		assert.ok(oMultiComboBox.$().hasClass(InputBase.ICON_PRESSED_CSS_CLASS),
 				'The MultiComboBox must have the css class “' + oMultiComboBox.ICON_PRESSED_CSS_CLAS);
-		assert.strictEqual(oMultiComboBox.getFocusDomRef().getAttribute("aria-expanded"), "true", "aria-expanded should be true");
+		assert.strictEqual(oMultiComboBox.getFocusDomRef().parentNode.getAttribute("aria-expanded"), "true", "aria-expanded should be true");
 		assert.ok(!oMultiComboBox._isListInSuggestMode(), 'Complete list is open');
 
 		// cleanup
@@ -3617,7 +3617,7 @@ sap.ui.define([
 		assert.ok(oMultiComboBox.isOpen(), "oMultiComboBox is open");
 		assert.ok(oMultiComboBox.$().hasClass(InputBase.ICON_PRESSED_CSS_CLASS),
 				'The MultiComboBox must have the css class “' + oMultiComboBox.ICON_PRESSED_CSS_CLAS);
-		assert.strictEqual(oMultiComboBox.getFocusDomRef().getAttribute("aria-expanded"), "true", "aria-expanded should be true");
+		assert.strictEqual(oMultiComboBox.getFocusDomRef().parentNode.getAttribute("aria-expanded"), "true", "aria-expanded should be true");
 		assert.ok(!oMultiComboBox._isListInSuggestMode(), 'Complete list is open');
 
 		// cleanup
@@ -3661,7 +3661,7 @@ sap.ui.define([
 		assert.ok(oMultiComboBox.isOpen(), "oMultiComboBox is open");
 		assert.ok(oMultiComboBox.$().hasClass(InputBase.ICON_PRESSED_CSS_CLASS),
 				'The MultiComboBox must have the css class “' + oMultiComboBox.ICON_PRESSED_CSS_CLA);
-		assert.strictEqual(oMultiComboBox.getFocusDomRef().getAttribute("aria-expanded"), "true", "aria-expanded should be true");
+		assert.strictEqual(oMultiComboBox.getFocusDomRef().parentNode.getAttribute("aria-expanded"), "true", "aria-expanded should be true");
 		assert.ok(!oMultiComboBox._isListInSuggestMode(), 'Complete list is open');
 
 		// cleanup
@@ -3706,7 +3706,7 @@ sap.ui.define([
 		assert.ok(oMultiComboBox.isOpen(), "oMultiComboBox is open");
 		assert.ok(oMultiComboBox.$().hasClass(InputBase.ICON_PRESSED_CSS_CLASS),
 				'The MultiComboBox must have the css class “' + oMultiComboBox.ICON_PRESSED_CSS_CLAS);
-		assert.strictEqual(oMultiComboBox.getFocusDomRef().getAttribute("aria-expanded"), "true", "aria-expanded should be true");
+		assert.strictEqual(oMultiComboBox.getFocusDomRef().parentNode.getAttribute("aria-expanded"), "true", "aria-expanded should be true");
 		assert.ok(!oMultiComboBox._isListInSuggestMode(), 'Complete list is open');
 
 		// cleanup
@@ -3751,7 +3751,7 @@ sap.ui.define([
 		assert.ok(oMultiComboBox.isOpen(), "oMultiComboBox is open");
 		assert.ok(oMultiComboBox.$().hasClass(InputBase.ICON_PRESSED_CSS_CLASS),
 				'The MultiComboBox must have the css class “' + oMultiComboBox.ICON_PRESSED_CSS_CLAS);
-		assert.strictEqual(oMultiComboBox.getFocusDomRef().getAttribute("aria-expanded"), "true", "aria-expanded should be true");
+		assert.strictEqual(oMultiComboBox.getFocusDomRef().parentNode.getAttribute("aria-expanded"), "true", "aria-expanded should be true");
 		assert.ok(oMultiComboBox._isListInSuggestMode(), 'Suggest list is open');
 
 		// cleanup
@@ -3986,7 +3986,7 @@ sap.ui.define([
 
 		// assertions
 		assert.ok(!oMultiComboBox.isOpen(), "oMultiComboBox is closed");
-		assert.strictEqual(oMultiComboBox.getFocusDomRef().getAttribute("aria-expanded"), "false", "aria-expanded should be false");
+		assert.strictEqual(oMultiComboBox.getFocusDomRef().parentNode.getAttribute("aria-expanded"), "false", "aria-expanded should be false");
 		assert.equal(oMultiComboBox.getFocusDomRef().id, document.activeElement.id, "Input field has focus");
 
 		// cleanup
@@ -4062,7 +4062,7 @@ sap.ui.define([
 		assert.ok(oMultiComboBox.isOpen(), "oMultiComboBox is open");
 		assert.ok(oMultiComboBox.$().hasClass(InputBase.ICON_PRESSED_CSS_CLASS),
 				'The MultiComboBox must have the css class “' + oMultiComboBox.ICON_PRESSED_CSS_CLAS);
-		assert.strictEqual(oMultiComboBox.getFocusDomRef().getAttribute("aria-expanded"), "false", "aria-expanded should be false");
+		assert.strictEqual(oMultiComboBox.getFocusDomRef().parentNode.getAttribute("aria-expanded"), "false", "aria-expanded should be false");
 
 		// cleanup
 		oMultiComboBox.destroy();
@@ -4093,7 +4093,7 @@ sap.ui.define([
 		assert.ok(!oMultiComboBox.isOpen(), "oMultiComboBox is closed");
 		assert.ok(!oMultiComboBox.$().hasClass(InputBase.ICON_PRESSED_CSS_CLASS),
 				'The MultiComboBox must not have the css class “' + oMultiComboBox.ICON_PRESSED_CSS_CLAS);
-		assert.strictEqual(oMultiComboBox.getFocusDomRef().getAttribute("aria-expanded"), "false", "aria-expanded should be false");
+		assert.strictEqual(oMultiComboBox.getFocusDomRef().parentNode.getAttribute("aria-expanded"), "false", "aria-expanded should be false");
 
 		// cleanup
 		oMultiComboBox.destroy();
@@ -4394,7 +4394,7 @@ sap.ui.define([
 		oMultiComboBox.open();
 
 		this.clock.tick(500);
-		oMultiComboBox.getList().getItems()[0].focus();
+		oMultiComboBox._getList().getItems()[0].focus();
 
 		// act
 		oMultiComboBox.rerender();
@@ -4403,7 +4403,7 @@ sap.ui.define([
 
 		// assertions
 		assert.ok(oMultiComboBox.isOpen(), "oMultiComboBox is open");
-		assert.ok(oMultiComboBox.getList().getItems()[0].getDomRef() === document.activeElement, "First Item of list is focused");
+		assert.ok(oMultiComboBox._getList().getItems()[0].getDomRef() === document.activeElement, "First Item of list is focused");
 
 		// cleanup
 		oMultiComboBox.destroy();
@@ -4888,7 +4888,7 @@ sap.ui.define([
 		this.clock.tick(500);
 
 		// assert
-		assert.strictEqual(oMultiComboBox.getList().getItemNavigation().iSelectedIndex, 0, "Initial index should be 0");
+		assert.strictEqual(oMultiComboBox._getList().getItemNavigation().iSelectedIndex, 0, "Initial index should be 0");
 
 		//delete
 		oMultiComboBox.destroy();
@@ -4913,7 +4913,7 @@ sap.ui.define([
 		this.clock.tick(500);
 
 		// assert
-		assert.strictEqual(oMultiComboBox.getList().getItemNavigation().iSelectedIndex, 1, "Initial index should be 1");
+		assert.strictEqual(oMultiComboBox._getList().getItemNavigation().iSelectedIndex, 1, "Initial index should be 1");
 
 		// cleanup
 		oMultiComboBox.destroy();
@@ -4942,7 +4942,7 @@ sap.ui.define([
 		this.clock.tick(500);
 
 		// assert
-		assert.strictEqual(oMultiComboBox.getList().getItemNavigation().iSelectedIndex, 2, "Initial index should be 2");
+		assert.strictEqual(oMultiComboBox._getList().getItemNavigation().iSelectedIndex, 2, "Initial index should be 2");
 
 		// cleanup
 		oMultiComboBox.destroy();
@@ -5980,7 +5980,7 @@ sap.ui.define([
 		assert.strictEqual(oInputDomRef.value, "A", "Autocompleted text is removed after navigation into options list.");
 
 		// act
-		sap.ui.test.qunit.triggerKeyboardEvent(oMultiComboBox.getList().getItems()[0].getDomRef(), KeyCodes.ARROW_UP, false, false);
+		sap.ui.test.qunit.triggerKeyboardEvent(oMultiComboBox._getList().getItems()[0].getDomRef(), KeyCodes.ARROW_UP, false, false);
 		this.clock.tick(500);
 		// assert
 		assert.strictEqual(oInputDomRef.value, "Algeria", "Correct value autocompleted when navigating with arrow from list item to input field.");
@@ -6007,7 +6007,7 @@ sap.ui.define([
 				text : "Australia"
 			})]
 		}), oInputDomRef, aListItems,
-			oList = oMultiComboBox.getList(),
+			oList = oMultiComboBox._getList(),
 			oInputEvent = {
 				target: {
 					value: "A"
@@ -6081,7 +6081,7 @@ sap.ui.define([
 					text : "Australia"
 				})]
 			}),
-			oList = oMultiComboBox.getList(), aListItems,
+			oList = oMultiComboBox._getList(), aListItems,
 			oInputEvent = {
 				target: {
 					value: "A"
@@ -6178,7 +6178,7 @@ sap.ui.define([
 		this.oMultiComboBox.oninput(oFakeEvent);
 		this.clock.tick(2000);
 
-		oListItemRef = this.oMultiComboBox.getList().getItems()[0].$();
+		oListItemRef = this.oMultiComboBox._getList().getItems()[0].$();
 		assert.strictEqual(oListItemRef.find(".sapMSLITitleOnly")[0].innerHTML,
 			"<b>A</b>lgeria", "The main text is correctly highlighted.");
 
@@ -6199,7 +6199,7 @@ sap.ui.define([
 		this.oMultiComboBox.open();
 		this.clock.tick(2000);
 
-		aListItems = this.oMultiComboBox.getList().getItems();
+		aListItems = this.oMultiComboBox._getList().getItems();
 
 		for (var i = 0; i < 3; i++) {
 			assert.strictEqual(aListItems[i].getTitle(), aSuggestions[i].getText(), "Item " + i + " text is correctly mapped.");
@@ -6247,7 +6247,7 @@ sap.ui.define([
 	});
 
 	QUnit.test("_mapItemToList()", function(assert) {
-		var groupHeader = this.oMultiComboBox.getList().getItems()[0];
+		var groupHeader = this.oMultiComboBox._getList().getItems()[0];
 		assert.ok(groupHeader instanceof sap.m.GroupHeaderListItem, "The control used for the group name is instance of sap.m.GroupHeaderListItem");
 	});
 

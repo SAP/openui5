@@ -1,0 +1,31 @@
+{
+  "1.64.0": {
+    "date": "February 2019",
+    "notes": [
+      {
+        "id": "14004c9d8082d560ea4e17fa84e469c5f751e003",
+        "type": "FIX",
+        "text": " Correct namespace for manageApps",
+        "references": []
+      },
+      {
+        "id": "8c220c4cf04d019e022b1bf2b0b0fbe06062e948",
+        "type": "FIX",
+        "text": " sap.ui.rta - get rid of unnecessary paste in contextmenu",
+        "references": []
+      },
+      {
+        "id": "cefb518c6f133f2dd75e489c5e951643babcb457",
+        "type": "FIX",
+        "text": " Stopping deletion of app variants functionality in S4 Cloud",
+        "references": []
+      },
+      {
+        "id": "d8b7c592c92c22f3bd61c28d638f3ff80cd99d86",
+        "type": "FIX",
+        "text": " sap.ui.rta - Check for movable without AggregationOverlays available",
+        "references": []
+      }
+    ]
+  }
+}

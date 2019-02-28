@@ -8,8 +8,7 @@ sap.ui.define([
 	"sap/uxap/ObjectPageSubSection",
 	"sap/uxap/ObjectPageHeader",
 	"sap/m/Button",
-	"sap/m/VBox",
-	"sap/ui/qunit/utils/waitForThemeApplied"
+	"sap/m/VBox"
 ],
 function (
 	DesignTime,
@@ -19,8 +18,7 @@ function (
 	ObjectPageSubSection,
 	ObjectPageHeader,
 	Button,
-	VBox,
-	waitForThemeApplied
+	VBox
 ) {
 	'use strict';
 
@@ -90,5 +88,4 @@ function (
 		jQuery("#qunit-fixture").hide();
 	});
 
-	return waitForThemeApplied();
 });

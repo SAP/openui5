@@ -4,8 +4,8 @@
 
 // Provides control sap.ui.fl.variants.VariantManagement.
 sap.ui.define([
-	'sap/ui/model/Context', 'sap/ui/model/PropertyBinding', 'sap/ui/model/json/JSONModel', 'sap/ui/model/Filter', 'sap/ui/Device', 'sap/ui/core/InvisibleText', 'sap/ui/core/Control', 'sap/ui/core/Icon', 'sap/ui/layout/HorizontalLayout', 'sap/ui/layout/Grid', 'sap/m/SearchField', 'sap/m/RadioButton', 'sap/m/ColumnListItem', 'sap/m/Column', 'sap/m/Text', 'sap/m/Bar', 'sap/m/Table', 'sap/m/Page', 'sap/m/Toolbar', 'sap/m/ToolbarSpacer', 'sap/m/Button', 'sap/m/CheckBox', 'sap/m/Dialog', 'sap/m/Input', 'sap/m/Label', 'sap/m/Title', 'sap/m/ResponsivePopover', 'sap/m/SelectList', 'sap/m/ObjectIdentifier', 'sap/m/OverflowToolbar', 'sap/m/OverflowToolbarLayoutData', 'sap/m/VBox', 'sap/ui/fl/Utils', 'sap/ui/core/util/reflection/JsControlTreeModifier', "sap/ui/events/KeyCodes", "sap/ui/core/library", "sap/m/library"
-], function(Context, PropertyBinding, JSONModel, Filter, Device, InvisibleText, Control, Icon, HorizontalLayout, Grid, SearchField, RadioButton, ColumnListItem, Column, Text, Bar, Table, Page, Toolbar, ToolbarSpacer, Button, CheckBox, Dialog, Input, Label, Title, ResponsivePopover, SelectList, ObjectIdentifier, OverflowToolbar, OverflowToolbarLayoutData, VBox, flUtils, JsControlTreeModifier, KeyCodes, coreLibrary, mobileLibrary) {
+	'sap/ui/model/Context', 'sap/ui/model/PropertyBinding', 'sap/ui/model/json/JSONModel', 'sap/ui/model/Filter', 'sap/ui/model/FilterOperator', 'sap/ui/Device', 'sap/ui/core/InvisibleText', 'sap/ui/core/Control', 'sap/ui/core/Icon', 'sap/ui/layout/HorizontalLayout', 'sap/ui/layout/Grid', 'sap/m/SearchField', 'sap/m/RadioButton', 'sap/m/ColumnListItem', 'sap/m/Column', 'sap/m/Text', 'sap/m/Bar', 'sap/m/Table', 'sap/m/Page', 'sap/m/Toolbar', 'sap/m/ToolbarSpacer', 'sap/m/Button', 'sap/m/CheckBox', 'sap/m/Dialog', 'sap/m/Input', 'sap/m/Label', 'sap/m/Title', 'sap/m/ResponsivePopover', 'sap/m/SelectList', 'sap/m/ObjectIdentifier', 'sap/m/OverflowToolbar', 'sap/m/OverflowToolbarLayoutData', 'sap/m/VBox', 'sap/ui/events/KeyCodes', 'sap/ui/core/library', 'sap/m/library'
+], function(Context, PropertyBinding, JSONModel, Filter, FilterOperator, Device, InvisibleText, Control, Icon, HorizontalLayout, Grid, SearchField, RadioButton, ColumnListItem, Column, Text, Bar, Table, Page, Toolbar, ToolbarSpacer, Button, CheckBox, Dialog, Input, Label, Title, ResponsivePopover, SelectList, ObjectIdentifier, OverflowToolbar, OverflowToolbarLayoutData, VBox, KeyCodes, coreLibrary, mobileLibrary) {
 	"use strict";
 
 	// shortcut for sap.m.OverflowToolbarPriority
@@ -944,7 +944,7 @@ sap.ui.define([
 
 		var oFilter = new Filter({
 			path: "title",
-			operator: sap.ui.model.FilterOperator.Contains,
+			operator: FilterOperator.Contains,
 			value1: sValue
 		});
 
@@ -1000,7 +1000,7 @@ sap.ui.define([
 			this.oLabelKey.setLabelFor(this.oInputManualKey);
 
 			this.oSaveSave = new Button(this.getId() + "-variantsave", {
-				text: this._oRb.getText("VARIANT_MANAGEMENT_OK"),
+				text: this._oRb.getText("VARIANT_MANAGEMENT_SAVE"),
 				press: function() {
 					this._bSaveCanceled = false;
 					this._handleVariantSaveAs(this.oInputName.getValue());
@@ -1170,11 +1170,11 @@ sap.ui.define([
 				filters: [
 					new Filter({
 						path: "title",
-						operator: sap.ui.model.FilterOperator.Contains,
+						operator: FilterOperator.Contains,
 						value1: sValue
 					}), new Filter({
 						path: "author",
-						operator: sap.ui.model.FilterOperator.Contains,
+						operator: FilterOperator.Contains,
 						value1: sValue
 					})
 				],
@@ -1250,6 +1250,7 @@ sap.ui.define([
 			this.oManagementSave = new Button(this.getId() + "-managementsave", {
 				text: this._oRb.getText("VARIANT_MANAGEMENT_OK"),
 				enabled: true,
+				type: sap.m.ButtonType.Emphasized,
 				press: function() {
 					this._handleManageSavePressed();
 				}.bind(this)
@@ -1648,7 +1649,7 @@ sap.ui.define([
 	VariantManagement.prototype._getVisibleFilter = function() {
 		return new Filter({
 			path: "visible",
-			operator: sap.ui.model.FilterOperator.EQ,
+			operator: FilterOperator.EQ,
 			value1: true
 		});
 	};
@@ -1656,7 +1657,7 @@ sap.ui.define([
 	VariantManagement.prototype._getFilterFavorites = function() {
 		return new Filter({
 			path: "favorite",
-			operator: sap.ui.model.FilterOperator.EQ,
+			operator: FilterOperator.EQ,
 			value1: true
 		});
 	};

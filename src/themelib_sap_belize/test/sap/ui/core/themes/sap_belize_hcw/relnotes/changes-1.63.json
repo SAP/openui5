@@ -61,6 +61,12 @@
         "type": "FIX",
         "text": " sap.m.ComboBox: Focus outline in IE corrected",
         "references": []
+      },
+      {
+        "id": "9f69408332fb352f20d4164d162a154570f342a8",
+        "type": "FIX",
+        "text": " sap.f.DynamicPage: Fixed hover effect in Shell",
+        "references": []
       }
     ]
   }

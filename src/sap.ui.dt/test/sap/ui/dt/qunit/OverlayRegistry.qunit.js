@@ -4,13 +4,11 @@ sap.ui.define([
 	'sap/ui/dt/OverlayRegistry',
 	'sap/ui/dt/ElementOverlay',
 	'sap/ui/dt/AggregationOverlay',
-	"sap/ui/qunit/utils/waitForThemeApplied",
 	'sap/m/Button'
 ], function (
 	OverlayRegistry,
 	ElementOverlay,
 	AggregationOverlay,
-	waitForThemeApplied,
 	Button
 ) {
 	'use strict';
@@ -85,5 +83,4 @@ sap.ui.define([
 		jQuery("#qunit-fixture").hide();
 	});
 
-	return waitForThemeApplied();
 });

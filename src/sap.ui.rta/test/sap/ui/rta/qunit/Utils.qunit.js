@@ -14,7 +14,6 @@ sap.ui.define([
 	'sap/uxap/ObjectPageSubSection',
 	'sap/uxap/ObjectPageLayout',
 	'sap/uxap/ObjectPageSubSectionLayout',
-	"sap/ui/qunit/utils/waitForThemeApplied",
 	'sap/ui/thirdparty/sinon-4'
 ],
 function(
@@ -31,7 +30,6 @@ function(
 	ObjectPageSubSection,
 	ObjectPageLayout,
 	ObjectPageSubSectionLayout,
-	waitForThemeApplied,
 	sinon
 ) {
 	'use strict';
@@ -472,6 +470,7 @@ function(
 		beforeEach: function() {
 			if (oCompCont) {
 				oCompCont.destroy();
+				sap.ui.getCore().applyChanges();
 			}
 
 			this.$insideDom = jQuery('<input/>').appendTo('#qunit-fixture');
@@ -574,17 +573,22 @@ function(
 			assert.equal(this.oObject1.function11(), "mergedProperty", "then the merged function returns 'mergedProperty'");
 		});
 
-		QUnit.test("when omit is called with an object and some properties", function(assert){
+		QUnit.test("when omit is called with an object and some properties", function (assert) {
 			var oSourceObject = {'a' : 1, 'b' : 2, 'c' : 3, 'd' : 4};
 			assert.deepEqual(Utils.omit(oSourceObject, ['b', 'd']), {'a' : 1, 'c' : 3}, "then a new object is returned without the properties");
 		});
 
-		QUnit.test("when omit is called with an object containing a property with undefined value and the other properties are removed", function(assert){
+		QUnit.test("when omit is called with a single property as a string", function (assert) {
+			var oSourceObject = {'a' : 1, 'b' : 2, 'c' : 3};
+			assert.deepEqual(Utils.omit(oSourceObject, 'b'), {'a' : 1, 'c' : 3}, "then a new object is returned without the property 'b'");
+		});
+
+		QUnit.test("when omit is called with an object containing a property with undefined value and the other properties are removed", function (assert) {
 			var oSourceObject = {'a' : 1, 'b' : undefined, 'c' : 3};
 			assert.deepEqual(Utils.omit(oSourceObject, ['a', 'c']), {'b' : undefined}, "then the new object returned has only the property that has undefined value");
 		});
 
-		QUnit.test("when omit is called with a deep object and some properties", function(assert){
+		QUnit.test("when omit is called with a deep object and some properties", function (assert) {
 			var oSourceObject = {'a' : 1, 'b' : { 'd': 4, 'e': 5 }, 'c' : 3};
 			var oNewObject = Utils.omit(oSourceObject, ['a', 'c', 'd']);
 			assert.deepEqual(oNewObject, {'b' : { 'd': 4, 'e': 5 }},  "then a new object is returned without the properties");
@@ -597,5 +601,4 @@ function(
 		jQuery("#qunit-fixture").hide();
 	});
 
-	return waitForThemeApplied();
 });

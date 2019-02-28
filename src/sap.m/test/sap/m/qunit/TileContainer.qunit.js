@@ -648,6 +648,23 @@ sap.ui.define([
 		}.bind(this), delay);
 	});
 
+	QUnit.test("Deletion of a tile keeps the focus", function(assert) {
+		var done = assert.async(),
+			oTile2 = this.sut.getTiles()[2],
+			oTile3 = this.sut.getTiles()[3],
+			oJQueryFocusSpy = sinon.spy(jQuery.fn, "focus");
+
+		this.sut.setEditable(true);
+		this.sut._iCurrentFocusIndex = 2;
+
+		setTimeout(function() {
+			this.sut.onsapdelete({ stopPropagation: function() { } });
+			assert.equal(oJQueryFocusSpy.getCall(0).thisValue.attr("id"), oTile3.getId(), "focus is called on the next item");
+			oTile2.destroy();
+			done();
+		}.bind(this), delay);
+	});
+
 	QUnit.test("Insert of tile updates the aria-posinset and aria-setsize attributes", function(assert) {
 		var oNewTile = new StandardTile();
 		this.sut.insertTile(oNewTile, 4);

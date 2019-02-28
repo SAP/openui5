@@ -37,6 +37,7 @@ sap.ui.define([
 	 * @version ${version}
 	 * @since 1.9.2
 	 * @alias sap.ui.core.ComponentMetadata
+	 * @extends sap.ui.base.ManagedObjectMetadata
 	 */
 	var ComponentMetadata = function(sClassName, oClassInfo) {
 

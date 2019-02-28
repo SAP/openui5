@@ -24,10 +24,6 @@
 		line-height: 1.5rem;
 	}
 
-	.sapMObjectAttributeDiv .sapMText {
-		line-height: normal;
-	}
-
 	.sapUxAPObjectPageHeaderContentItem.sapUiRespGrid {
 		display: inherit;
 	}
@@ -102,6 +98,15 @@
 		/* ObjectAttribute will not truncate inside ObjectPage but rather will go on more lines */
 		.sapUxAPObjectPageHeaderContentItem.sapMObjectAttributeActive {
 			line-height:1rem;
+		}
+
+		.sapUxAPObjectPageHeaderContentItem {
+			.sapMObjectAttributeDiv .sapMText,
+			.sapMObjectAttributeDiv .sapMObjectAttributeTitle,
+			.sapMObjectAttributeDiv .sapMObjectAttributeColon,
+			.sapMObjectAttributeDiv .sapMObjectAttributeText {
+				vertical-align: middle;
+			}
 		}
 
 		.sapUiVltCell > .sapMObjectAttributeDiv, .sapUiVltCell > .sapMObjStatus {

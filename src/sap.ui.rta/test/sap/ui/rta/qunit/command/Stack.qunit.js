@@ -13,7 +13,6 @@ sap.ui.define([
 	"sap/m/Input",
 	"sap/m/Panel",
 	"sap/ui/core/UIComponent",
-	"sap/ui/qunit/utils/waitForThemeApplied",
 	"sap/ui/thirdparty/sinon-4"
 ], function(
 	CommandFactory,
@@ -28,7 +27,6 @@ sap.ui.define([
 	Input,
 	Panel,
 	UIComponent,
-	waitForThemeApplied,
 	sinon
 ){
 	"use strict";
@@ -38,10 +36,10 @@ sap.ui.define([
 	QUnit.module("Given a Selection plugin and designtime in MultiSelection mode and controls with custom dt metadata to simulate different cases...", {
 		beforeEach: function () {
 			this.oComponent = new UIComponent();
-			sandbox.stub(FlUtils, "_getAppComponentForComponent").returns(this.oComponent);
+			sandbox.stub(FlUtils, "getAppComponentForControl").returns(this.oComponent);
 
 			var oChangeRegistry = ChangeRegistry.getInstance();
-			oChangeRegistry.registerControlsForChanges({
+			return oChangeRegistry.registerControlsForChanges({
 				"sap.m.Input": {
 					"hideControl" : {
 						completeChangeContent: function() {},
@@ -49,31 +47,32 @@ sap.ui.define([
 						revertChange: function(){}
 					}
 				}
-			});
+			})
+			.then(function() {
+				// Create command stack with some commands
+				this.oCommandStack = new CommandStack();
+				this.oInput1 = new Input({id : "input1"});
+				this.oInput2 = new Input({id : "input2"});
+				this.oPanel = new Panel({
+					id : "panel",
+					content : [this.oInput1, this.oInput2]});
 
-			// Create command stack with some commands
-			this.oCommandStack = new CommandStack();
-			this.oInput1 = new Input({id : "input1"});
-			this.oInput2 = new Input({id : "input2"});
-			this.oPanel = new Panel({
-				id : "panel",
-				content : [this.oInput1, this.oInput2]});
-
-			this.oInputDesignTimeMetadata = new DesignTimeMetadata({
-				data : {
-					actions : {
-						remove : {
-							changeType : "hideControl"
+				this.oInputDesignTimeMetadata = new DesignTimeMetadata({
+					data : {
+						actions : {
+							remove : {
+								changeType : "hideControl"
+							}
 						}
 					}
-				}
-			});
+				});
 
-			// Create serializer instance
-			this.oSerializer = new CommandSerializer({
-				commandStack: this.oCommandStack,
-				rootControl: this.oPanel
-			});
+				// Create serializer instance
+				this.oSerializer = new CommandSerializer({
+					commandStack: this.oCommandStack,
+					rootControl: this.oPanel
+				});
+			}.bind(this));
 		},
 		afterEach: function () {
 			this.oCommandStack.destroy();
@@ -233,5 +232,4 @@ sap.ui.define([
 		jQuery("#qunit-fixture").hide();
 	});
 
-	return waitForThemeApplied();
 });

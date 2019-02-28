@@ -14,7 +14,6 @@ sap.ui.define([
 	"sap/m/Text",
 	"sap/m/List",
 	"sap/m/CustomListItem",
-	"sap/ui/qunit/utils/waitForThemeApplied",
 	"sap/ui/thirdparty/sinon-4"
 ],
 function (
@@ -31,7 +30,6 @@ function (
 	Text,
 	List,
 	CustomListItem,
-	waitForThemeApplied,
 	sinon
 ) {
 	"use strict";
@@ -63,7 +61,11 @@ function (
 		}
 	};
 	var sandbox = sinon.sandbox.create();
-	sinon.stub(Utils, "_getAppComponentForComponent").returns(oMockedAppComponent);
+	var oGetAppComponentForControlStub = sinon.stub(Utils, "getAppComponentForControl").returns(oMockedAppComponent);
+
+	QUnit.done(function () {
+		oGetAppComponentForControlStub.restore();
+	});
 
 	QUnit.module("Given an AddXML command with a valid entry in the change registry,", {
 		beforeEach : function() {
@@ -228,19 +230,20 @@ function (
 
 			var oChangeRegistry = ChangeRegistry.getInstance();
 			oChangeRegistry.removeRegistryItem({controlType : "sap.m.List"});
-			oChangeRegistry.registerControlsForChanges({
+			return oChangeRegistry.registerControlsForChanges({
 				"sap.m.List" : {
 					"addXML": "default"
 				}
-			});
+			})
+			.then(function() {
+				this.oDesignTime = new DesignTime({
+					rootElements : [this.oList]
+				});
 
-			this.oDesignTime = new DesignTime({
-				rootElements : [this.oList]
-			});
-
-			this.oDesignTime.attachEventOnce("synced", function() {
-				this.oListOverlay = OverlayRegistry.getOverlay(this.oList);
-				done();
+				this.oDesignTime.attachEventOnce("synced", function() {
+					this.oListOverlay = OverlayRegistry.getOverlay(this.oList);
+					done();
+				}.bind(this));
 			}.bind(this));
 		},
 		afterEach : function() {
@@ -292,5 +295,4 @@ function (
 		jQuery("#qunit-fixture").hide();
 	});
 
-	return waitForThemeApplied();
 });

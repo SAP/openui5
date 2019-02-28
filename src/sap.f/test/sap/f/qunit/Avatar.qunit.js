@@ -57,6 +57,17 @@ function(oCore, Device, URI) {
 		assert.strictEqual($oAvatar.attr("role"), "button", "Aria role should be 'button'");
 	});
 
+	QUnit.test("Focus does not have outline-offset", function (assert) {
+		// Arrange
+		var $oAvatar = this.oAvatar.$();
+
+		// Act
+		$oAvatar.focus();
+
+		// Assert
+		assert.strictEqual($oAvatar.css("outline-offset"), "0px", "Outline-offset is 0px");
+	});
+
 	QUnit.module("Rendering different sizes", {
 		beforeEach: setupFunction,
 		afterEach: teardownFunction
@@ -154,7 +165,7 @@ function(oCore, Device, URI) {
 
 	QUnit.test("Avatar with src leading to an image has correct css style", function (assert) {
 		var sExpectedOutputImage = Device.browser.safari ? // safari returns the absolute url
-			'url(' + sAbsoluteImageUrl + ')' :
+			'url("' + sAbsoluteImageUrl + '")' :
 			'url("' + sImagePath + '")';
 		this.oAvatar.setSrc(sImagePath);
 		oCore.applyChanges();
@@ -241,6 +252,34 @@ function(oCore, Device, URI) {
 		//Cleanup
 		oStub.restore();
 	});
+
+	QUnit.test("Add initials class when source is invalid and initials are set", function (assert) {
+		// Arrange
+		var $oAvatar,
+			done = assert.async(),
+			that = this,
+			oStub = sinon.stub(this.oAvatar, "_onImageError", function() {
+				oStub.restore();
+				that.oAvatar._onImageError();
+				$oAvatar = that.oAvatar.$();
+
+				//Assert
+				assert.notOk($oAvatar.hasClass("sapFAvatarImage"),
+					"When image src is not correct, image class is removed");
+				assert.ok($oAvatar.hasClass("sapFAvatarInitials"),
+					"When image src is not correct, initials class is added");
+
+				done();
+			});
+
+		assert.expect(2);
+
+		//Act
+		this.oAvatar.setInitials("PB");
+		this.oAvatar.setSrc("_");
+		oCore.applyChanges();
+	});
+
 	QUnit.test("Show fallback default Icon when image source is invalid and initials are not set", function (assert) {
 		//Act
 		this.oAvatar.setSrc("_");
@@ -251,6 +290,32 @@ function(oCore, Device, URI) {
 		assert.ok($oAvatar.find(".sapUiIcon") !== undefined, "When type of sap.f.Avatar is 'Image'" +
 		"we load fallback icon container");
 
+	});
+
+	QUnit.test("Add icon class when source is invalid and initials are not set", function (assert) {
+		// Arrange
+		var $oAvatar,
+			done = assert.async(),
+			that = this,
+			oStub = sinon.stub(this.oAvatar, "_onImageError", function() {
+				oStub.restore();
+				that.oAvatar._onImageError();
+				$oAvatar = that.oAvatar.$();
+
+				//Assert
+				assert.notOk($oAvatar.hasClass("sapFAvatarImage"),
+					"When image src is not correct, image class is removed");
+				assert.ok($oAvatar.hasClass("sapFAvatarIcon"),
+					"When image src is not correct and initials are not set, icon class is added");
+
+				done();
+			});
+
+		assert.expect(2);
+
+		//Act
+		this.oAvatar.setSrc("_");
+		oCore.applyChanges();
 	});
 
 	QUnit.test("Fallback content is loaded, but hidden when sap.f.Avatar type Image has valid image source", function (assert) {

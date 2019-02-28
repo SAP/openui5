@@ -98,7 +98,7 @@ sap.ui.define([
 			 * @private
 			 */
 			_deregisterOrientationChange: function () {
-				Device.media.detachHandler(this._onOrientationChange, this);
+				Device.orientation.detachHandler(this._onOrientationChange, this);
 			},
 
 			/**
@@ -114,7 +114,7 @@ sap.ui.define([
 			 * @private
 			 */
 			_deregisterResize: function () {
-				Device.orientation.detachHandler(this._onResize, this);
+				Device.media.detachHandler(this._onResize, this);
 			},
 
 			/**

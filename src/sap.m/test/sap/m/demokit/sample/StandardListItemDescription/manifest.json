@@ -1,0 +1,27 @@
+{
+	"sap.app": {
+		"id": "sap.m.sample.StandardListItemDescription",
+		"applicationVersion": {
+			"version": "1.0.0"
+		}
+	},
+	"sap.ui5": {
+		"rootView": {
+			"viewName": "sap.m.sample.StandardListItemDescription.List",
+			"type": "XML",
+			"async": true
+		},
+		"libs": {
+			"sap.m": {}
+		},
+		"config": {
+			"sample": {
+				"files": [
+					"List.view.xml",
+					"List.controller.js",
+					"manifest.json"
+				]
+			}
+		}
+	}
+}

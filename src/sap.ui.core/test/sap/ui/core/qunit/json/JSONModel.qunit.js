@@ -471,7 +471,19 @@ sap.ui.define([
 		});
 	});
 
-	QUnit.test("test JSONModel loadData: multiple requests - merge",function(assert){
+	QUnit.test("test JSONModel loadData: dataLoaded() [async, Promise(chained)]",function(assert){
+		var done = assert.async();
+		var testModel = new JSONModel();
+		testModel.loadData("test-resources/sap/ui/core/qunit/json/data/testdata.json");
+		testModel.dataLoaded().then(function() {
+			assert.equal(testModel.getProperty("/foo"), "The quick brown fox jumps over the lazy dog.");
+			assert.equal(testModel.getProperty("/bar"), "ABCDEFG");
+			assert.equal(testModel.getProperty("/baz")[1], 97);
+			done();          // resume normal testing
+		});
+	});
+
+	QUnit.test("test JSONModel loadData [async, event]: multiple requests - merge",function(assert){
 		var done = assert.async();
 		var testModel = new JSONModel();
 		var loadCount = 0;
@@ -494,7 +506,75 @@ sap.ui.define([
 		});
 	});
 
-	QUnit.test("test JSONModel loadData: multiple requests",function(assert){
+	QUnit.test("test JSONModel loadData [async, Promise(chained)]: multiple requests - merge",function(assert){
+		var done = assert.async();
+		var testModel = new JSONModel();
+		testModel.loadData("test-resources/sap/ui/core/qunit/json/data/testdata.json");
+		testModel.loadData("test-resources/sap/ui/core/qunit/json/data/testdata2.json",null,true,null,true);
+		// once the Promise resolves, everything is already merged
+		testModel.dataLoaded().then(function() {
+			assert.equal(testModel.getProperty("/foo"), "The quick brown fox jumps over the lazy dog.");
+			assert.equal(testModel.getProperty("/bar"), "ABCDEFGHIJ");
+			assert.equal(testModel.getProperty("/baz")[1], 97);
+			assert.equal(testModel.getProperty("/merged"), true);
+			done();
+		});
+	});
+
+	QUnit.test("test JSONModel loadData [async, event & Promise]: multiple requests - merge",function(assert){
+		var done = assert.async();
+		var testModel = new JSONModel();
+		var loadCount = 0;
+		testModel.loadData("test-resources/sap/ui/core/qunit/json/data/testdata.json");
+		testModel.loadData("test-resources/sap/ui/core/qunit/json/data/testdata2.json",null,true,null,true);
+		// one event handler call for each loadData call
+		testModel.attachRequestCompleted(function() {
+			loadCount++;
+			if (loadCount == 1) {
+				assert.equal(testModel.getProperty("/foo"), "The quick brown fox jumps over the lazy dog.");
+				assert.equal(testModel.getProperty("/bar"), "ABCDEFG");
+				assert.equal(testModel.getProperty("/baz")[1], 97);
+			} else {
+				assert.equal(testModel.getProperty("/foo"), "The quick brown fox jumps over the lazy dog.");
+				assert.equal(testModel.getProperty("/bar"), "ABCDEFGHIJ");
+				assert.equal(testModel.getProperty("/baz")[1], 97);
+				assert.equal(testModel.getProperty("/merged"), true);
+			}
+		});
+		// Only one promise for ALL loadData calls;
+		// resolve: everything is already merged, the intermediate states are no seen anymore
+		testModel.dataLoaded().then(function() {
+			assert.equal(testModel.getProperty("/foo"), "The quick brown fox jumps over the lazy dog.");
+			assert.equal(testModel.getProperty("/bar"), "ABCDEFGHIJ");
+			assert.equal(testModel.getProperty("/baz")[1], 97);
+			assert.equal(testModel.getProperty("/merged"), true);
+			done();
+		});
+	});
+
+	QUnit.test("test JSONModel loadData [async, Promise(single)]: multiple requests - merge",function(assert){
+		var done = assert.async();
+		var testModel = new JSONModel();
+
+		var pLoad1 = testModel.loadData("test-resources/sap/ui/core/qunit/json/data/testdata.json").then(function() {
+			assert.equal(testModel.getProperty("/foo"), "The quick brown fox jumps over the lazy dog.");
+			assert.equal(testModel.getProperty("/bar"), "ABCDEFG");
+			assert.equal(testModel.getProperty("/baz")[1], 97);
+		});
+
+		var pLoad2 = testModel.loadData("test-resources/sap/ui/core/qunit/json/data/testdata2.json",null,true,null,true).then(function() {
+			assert.equal(testModel.getProperty("/foo"), "The quick brown fox jumps over the lazy dog.");
+			assert.equal(testModel.getProperty("/bar"), "ABCDEFGHIJ");
+			assert.equal(testModel.getProperty("/baz")[1], 97);
+			assert.equal(testModel.getProperty("/merged"), true);
+		});
+
+		Promise.all([pLoad1, pLoad2]).then(function() {
+			done();
+		});
+	});
+
+	QUnit.test("test JSONModel loadData [async, event]: multiple requests - no merge",function(assert){
 		var done = assert.async();
 		var testModel = new JSONModel();
 		var loadCount = 0;
@@ -514,6 +594,122 @@ sap.ui.define([
 				assert.equal(testModel.getProperty("/merged"), true);
 				done();
 			}
+		});
+	});
+
+	QUnit.test("test JSONModel loadData [async, Promise]: multiple requests - no merge",function(assert){
+		var done = assert.async();
+		var testModel = new JSONModel();
+		testModel.loadData("test-resources/sap/ui/core/qunit/json/data/testdata.json");
+		testModel.loadData("test-resources/sap/ui/core/qunit/json/data/testdata2.json");
+		testModel.dataLoaded().then(function() {
+			assert.ok(!testModel.getProperty("/foo"), "deleted as no merge");
+			assert.equal(testModel.getProperty("/bar"), "ABCDEFGHIJ");
+			assert.ok(!testModel.getProperty("/baz"), "deleted as no merge");
+			assert.equal(testModel.getProperty("/merged"), true);
+			done();
+		});
+	});
+
+	QUnit.test("test JSONModel loadData [async, event & Promise]: multiple requests - no merge",function(assert){
+		var done = assert.async();
+		var testModel = new JSONModel();
+		var loadCount = 0;
+		testModel.loadData("test-resources/sap/ui/core/qunit/json/data/testdata.json");
+		testModel.loadData("test-resources/sap/ui/core/qunit/json/data/testdata2.json");
+
+		// one event handler call for each loadData call
+		testModel.attachRequestCompleted(function() {
+			loadCount++;
+			if (loadCount == 1) {
+				assert.equal(testModel.getProperty("/foo"), "The quick brown fox jumps over the lazy dog.");
+				assert.equal(testModel.getProperty("/bar"), "ABCDEFG");
+				assert.equal(testModel.getProperty("/baz")[1], 97);
+			} else {
+				assert.ok(!testModel.getProperty("/foo"), "deleted as no merge");
+				assert.equal(testModel.getProperty("/bar"), "ABCDEFGHIJ");
+				assert.ok(!testModel.getProperty("/baz"), "deleted as no merge");
+				assert.equal(testModel.getProperty("/merged"), true);
+			}
+		});
+
+		// Only one promise for ALL loadData calls;
+		// resolve: everything is already merged, the intermediate states are no seen anymore
+		testModel.dataLoaded().then(function() {
+			assert.ok(!testModel.getProperty("/foo"), "deleted as no merge");
+			assert.equal(testModel.getProperty("/bar"), "ABCDEFGHIJ");
+			assert.ok(!testModel.getProperty("/baz"), "deleted as no merge");
+			assert.equal(testModel.getProperty("/merged"), true);
+			done();
+		});
+	});
+
+	QUnit.test("test JSONModel loadData [async, Promise(single)]: multiple requests - no merge",function(assert){
+		var done = assert.async();
+		var testModel = new JSONModel();
+
+		var p1 = testModel.loadData("test-resources/sap/ui/core/qunit/json/data/testdata.json").then(function() {
+			assert.equal(testModel.getProperty("/foo"), "The quick brown fox jumps over the lazy dog.");
+			assert.equal(testModel.getProperty("/bar"), "ABCDEFG");
+			assert.equal(testModel.getProperty("/baz")[1], 97);
+		});
+
+		var p2 = testModel.loadData("test-resources/sap/ui/core/qunit/json/data/testdata2.json").then(function() {
+			assert.ok(!testModel.getProperty("/foo"), "deleted as no merge");
+			assert.equal(testModel.getProperty("/bar"), "ABCDEFGHIJ");
+			assert.ok(!testModel.getProperty("/baz"), "deleted as no merge");
+			assert.equal(testModel.getProperty("/merged"), true);
+		});
+
+		// Only one promise for ALL loadData calls;
+		// resolve: everything is already merged, the intermediate states are no seen anymore
+		Promise.all([p1, p2]).then(function() {
+			assert.ok(!testModel.getProperty("/foo"), "deleted as no merge");
+			assert.equal(testModel.getProperty("/bar"), "ABCDEFGHIJ");
+			assert.ok(!testModel.getProperty("/baz"), "deleted as no merge");
+			assert.equal(testModel.getProperty("/merged"), true);
+			done();
+		});
+	});
+
+	QUnit.test("test JSONModel loadData [async, Promise(chained)]: multiple requests with merge: 1. request slow",function(assert){
+		var done = assert.async();
+		var testModel = new JSONModel();
+
+		testModel.loadData("/fake/testdata3.json");
+		testModel.loadData("/fake/testdata4.json");
+		testModel.dataLoaded().then(function(oInfo) {
+			assert.equal(testModel.getProperty("/foo"), "The quick brown fox jumps over the lazy dog.");
+			assert.equal(testModel.getProperty("/bar"), "ABCDEFGHIJ");
+			assert.equal(testModel.getProperty("/baz")[1], 97);
+			assert.equal(testModel.getProperty("/merged"), true);
+			done();
+		});
+	});
+
+	QUnit.test("test JSONModel loadData [async, Promise]: error during parse",function(assert){
+		assert.expect(7);
+		var done = assert.async();
+		var testModel = new JSONModel();
+
+		var p1 = testModel.loadData("/fake").catch(function(oError) {
+			assert.equal(oError.message, "parsererror", "parse error leads to rejection - 1");
+			assert.equal(oError.responseText, "ERROR!", "parse error leads to rejection - 1");
+		});
+
+		var p2 = testModel.loadData("/fake/broken.json").catch(function(oError) {
+			assert.equal(oError.message, "parsererror", "parse error leads to rejection - 2");
+			assert.equal(oError.responseText, '{"foo": "The quick brown fox jumps over the lazy dog.","bar": "ABCDEFGHIJ""baz": [52, 97]}', "parse error leads to rejection - 2");
+		});
+
+		var p3 = testModel.loadData("/fake/testdata4.json").then(function() {
+			assert.equal(testModel.getProperty("/foo"), "The quick brown fox jumps over the lazy dog.");
+			assert.equal(testModel.getProperty("/bar"), "ABCDEFGHIJ");
+			assert.equal(testModel.getProperty("/baz")[1], 97);
+		});
+
+		Promise.all([p1, p2, p3]).then(function() {
+			done();
 		});
 	});
 

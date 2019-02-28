@@ -412,7 +412,6 @@ function (jQuery, ManagedObject, Log, Locale, LocaleData) {
 	function fireError(sErrorMessage) {
 		oHyphenationInstance.fireError(sErrorMessage);
 		Log.error("[UI5 Hyphenation] " + sErrorMessage, "sap.ui.core.hyphenation.Hyphenation");
-		oHyphenationInstance.bLoading = false;
 	}
 
 	/**

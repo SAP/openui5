@@ -69,7 +69,7 @@
 				}
 			});
 
-			var oButtonStateW =new sap.m.Button("change_stateI", {
+			var oButtonStateI =new sap.m.Button("change_stateI", {
 				text:"Information state",
 				press: function(){
 					on1.setState(sap.ui.core.ValueState.Information);
@@ -89,7 +89,8 @@
 					oButtonUnit,
 					oButtonStateS,
 					oButtonStateE,
-					oButtonStateW
+					oButtonStateW,
+					oButtonStateI
 				]
 			});
 			app.setInitialPage(page.getId());

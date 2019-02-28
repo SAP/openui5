@@ -468,6 +468,19 @@ sap.ui.define([
 	// set the maximum level for OPA logs
 	_OpaLogger.setLevel(Opa.config.logLevel);
 
+	/**
+	 * A map of QUnit-style assertions to be used in an opaTest.
+	 * Contains all methods available on QUnit.assert for the running QUnit version.
+	 * Available assertions are: ok, equal, propEqual, deepEqual, strictEqual and their negative counterparts.
+	 *
+	 * For more information, see  {@link sap.ui.test.opaQunit}.
+	 *
+	 * @name sap.ui.test.Opa.assert
+	 * @public
+	 * @static
+	 * @type map
+	*/
+
 	Opa.prototype = {
 
 		/**

@@ -1,0 +1,28 @@
+{
+	"sap.app": {
+		"id": "sap.m.sample.MessageViewInsideDialog",
+		"applicationVersion": {
+			"version": "1.0.0"
+		}
+	},
+	"sap.ui5": {
+		"rootView": {
+			"viewName": "sap.m.sample.MessageViewInsideDialog.MessageView",
+			"type": "XML",
+			"async": true
+		},
+		"libs": {
+			"sap.m": {}
+		},
+		"config": {
+			"sample": {
+				"stretch": true,
+				"files": [
+					"MessageView.view.xml",
+					"MessageView.controller.js",
+					"manifest.json"
+				]
+			}
+		}
+	}
+}

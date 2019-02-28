@@ -1277,6 +1277,7 @@ sap.ui.define([
 		this.stub(Device, "system", oSystem);
 
 		var oInput = new Input({
+				type: mobileLibrary.InputType.Tel,
 				showSuggestion: true
 			}),
 			oPopup, // is lazy loaded
@@ -1303,6 +1304,8 @@ sap.ui.define([
 		oPopup = oInput._oSuggPopover._oPopover;
 		assert.ok(oPopup instanceof Dialog, "Suggestion Popup is created and is a Dialog instance");
 		assert.ok(oPopup.isOpen(), "Suggestion Popup is open now");
+
+		assert.equal(oInput._oSuggPopover._oPopupInput.getType(), mobileLibrary.InputType.Tel, "The type of the Input inside the Suggestion Popup is the same as the type of the original Input"); // BCP 1970125027
 
 		oInput._oSuggPopover._oPopupInput._$input.focus().val("abc").trigger("input");
 		this.clock.tick(400);
@@ -1345,6 +1348,7 @@ sap.ui.define([
 
 		var oInput = new Input({
 				showSuggestion: true,
+				type: mobileLibrary.InputType.Tel,
 				suggestionItemSelected: function(){
 					oInput.setValue("newValue");
 				}
@@ -1371,6 +1375,8 @@ sap.ui.define([
 		this.clock.tick(500);
 
 		oPopup = oInput._oSuggPopover._oPopover;
+
+		assert.equal(oInput._oSuggPopover._oPopupInput.getType(), mobileLibrary.InputType.Tel, "The type of the Input inside the Suggestion Popup is the same as the type of the original Input"); // BCP 1970125027
 
 		oInput._oSuggPopover._oPopupInput._$input.focus().val("abc").trigger("input");
 		this.clock.tick(400);
@@ -1420,6 +1426,8 @@ sap.ui.define([
 		oInput._$input.focus().trigger("click");
 		this.clock.tick(500);
 		oPopup = oInput._oSuggPopover._oPopover;
+
+		assert.equal(oInput._oSuggPopover._oPopupInput.getType(), mobileLibrary.InputType.Text, "The type of the Input inside the Suggestion Popup is the same as the type of the original Input - the default one ('Text')"); // BCP 1970125027
 
 		assert.ok(oPopup instanceof Dialog, "Two value Suggestion Popup is created and is a Dialog instance");
 		assert.ok(oPopup.isOpen(), "Suggestion Popup is open now");
@@ -3483,6 +3491,41 @@ sap.ui.define([
 		oInput = null;
 	});
 
+	QUnit.test("Autocomplete should keep cursor on place when there are no suggestions", function (assert) {
+		// Arrange
+		var oInput = new Input({
+			showSuggestion: true,
+			filterSuggests: false,
+			suggestionItems: [
+				new Item({text: "Germany"}),
+				new Item({text: "Bulgaria"}),
+				new Item({text: "United Kingdom"}),
+				new Item({text: "Italy"})
+			]
+		}).placeAt("content");
+		sap.ui.getCore().applyChanges();
+
+		// Arrange - open the suggestions
+		oInput._$input.focus().val("Germ").trigger("input");
+
+		// Act - move the cursor
+		var iCursorPosition = 2;
+		oInput.selectText(iCursorPosition, iCursorPosition);
+		this.clock.tick(100);
+
+		// Act - remove all suggestions
+		oInput.removeAllSuggestionItems(); // simulate no suggestions found
+		// oModel.setProperty('/suggestions', []);
+		this.clock.tick(100);
+
+		// Assert that the cursor is on its original place
+		assert.ok(oInput._$input[0].selectionStart === iCursorPosition, "The cursor should be on its original position");
+
+		// clean up
+		oInput.destroy();
+		oInput = null;
+	});
+
 	QUnit.test("Autocomplete on phone", function (assert) {
 		if (Device.browser.internet_explorer && Device.browser.version < 11) { // TODO remove after 1.62 version
 			assert.ok(true, "Do not test phone functionality in unsupported versions of Internet Explorer");
@@ -3785,7 +3828,6 @@ sap.ui.define([
 			sap.ui.getCore().applyChanges();
 		},
 		afterEach: function () {
-
 			this.oInput.destroy();
 			this.oInput = null;
 		}
@@ -3807,6 +3849,23 @@ sap.ui.define([
 		sap.ui.test.qunit.triggerKeydown(this.oInput.getFocusDomRef(), "ENTER");
 		this.clock.tick(300);
 		assert.equal(fnFireChangeSpy.callCount , 1 , "Change event should be fired");
+	});
+
+	QUnit.test("Change event should be fired only once when there is a proposed item", function(assert) {
+
+		var fnFireChangeSpy = this.spy(this.oInput, "fireChange");
+		this.oInput.onfocusin();
+		this.oInput._$input.focus().val("u").trigger("input");
+		this.clock.tick(300);
+
+		this.oInput._oSuggPopover._bDoTypeAhead = true;
+		this.oInput._oSuggPopover._handleTypeAhead();
+
+		this.oInput.onsapfocusleave({relatedControlId: null});
+		document.getElementById('i2-inner').focus();
+
+		this.clock.tick(300);
+		assert.equal(fnFireChangeSpy.callCount , 1 , "Change event should be fired only once");
 	});
 
 	return waitForThemeApplied();

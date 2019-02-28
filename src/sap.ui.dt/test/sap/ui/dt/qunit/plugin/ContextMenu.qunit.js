@@ -16,7 +16,6 @@ sap.ui.define([
 	"sap/m/FlexBox",
 	"sap/ui/layout/VerticalLayout",
 	"sap/ui/events/KeyCodes",
-	"sap/ui/qunit/utils/waitForThemeApplied",
 	"sap/ui/thirdparty/sinon-4"
 ], function (
 	ContextMenuPlugin,
@@ -34,7 +33,6 @@ sap.ui.define([
 	FlexBox,
 	VerticalLayout,
 	KeyCodes,
-	waitForThemeApplied,
 	sinon
 ) {
 	"use strict";
@@ -1833,5 +1831,4 @@ sap.ui.define([
 		jQuery("#qunit-fixture").hide();
 	});
 
-	return waitForThemeApplied();
 });

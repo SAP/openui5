@@ -30,6 +30,11 @@
 	background-repeat: no-repeat;
 }
 
+// prevent placing the slider over a busy indicator overlay
+.sapUiLocalBusy .sapMSliderInner {
+	z-index: 0;
+}
+
 .sapMSliderInner,
 .sapMSliderProgress {
 	height: 0.188rem;

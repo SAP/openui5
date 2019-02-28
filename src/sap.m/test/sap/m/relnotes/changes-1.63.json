@@ -367,6 +367,66 @@
         "type": "FIX",
         "text": " sap.m.MultiInput: Fire tokenUpdate on interaction with N-more popup",
         "references": []
+      },
+      {
+        "id": "25ef16cb37fff33420cd40812d572adf671be7e3",
+        "type": "FIX",
+        "text": " ViewSettingsDialog: OK when custom item is used for filtering",
+        "references": []
+      },
+      {
+        "id": "8c0ff19ff8ff8c9f0aada4f3b88845196da4e912",
+        "type": "FIX",
+        "text": " m.Link: Failing test in IE fixed",
+        "references": []
+      },
+      {
+        "id": "03d3aa4720f39c3972a245a7be1a16f9433de77d",
+        "type": "FIX",
+        "text": " m.StepInput: Labels are redirected to the inner input now",
+        "references": []
+      },
+      {
+        "id": "37c73d625ae0a67ba1a19c92c16f6c25139fac6b",
+        "type": "FIX",
+        "text": " sap.m.Dialog: Adjust width on Safari",
+        "references": []
+      },
+      {
+        "id": "c96087b3d07a2c93b3eb242502b111c84ca7f5b5",
+        "type": "FIX",
+        "text": " sap.m.Input: Change event is now fired only once when type-ahead",
+        "references": []
+      },
+      {
+        "id": "0f661b4184b1d3cae6f93fd5fd6b12afa044c081",
+        "type": "FIX",
+        "text": " sap.m.Input: Input type inside Popup is now correct",
+        "references": []
+      },
+      {
+        "id": "a484978cb3a1739e33b2cc35272c9159768954ff",
+        "type": "FIX",
+        "text": " sap.m.Input: ValueStateMessage text wraps correctly now",
+        "references": []
+      },
+      {
+        "id": "162c72dfcedcf810e43bdd63db3ba82aa667b2d5",
+        "type": "FIX",
+        "text": " sap.m.MaskInput:pressing key in selected value for Android is fixed.",
+        "references": []
+      },
+      {
+        "id": "2fa8a284536606950a102a0f59bd9fbf297f9796",
+        "type": "FIX",
+        "text": " sap.m.MessageStrip: QUnit fix",
+        "references": []
+      },
+      {
+        "id": "0d32665d19d631c1bca8ac1d458ef28e2330f796",
+        "type": "FIX",
+        "text": " sap.m.MultiComboBox: Custom filtering sample fixed",
+        "references": []
       }
     ]
   }

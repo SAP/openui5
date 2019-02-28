@@ -223,7 +223,7 @@ sap.ui.define([
 
 			var oBinding = oTable.getBinding("rows");
 			if ($GroupRef.length > 0 && oBinding) {
-				var iGroupHeaderRowIndex = $GroupRef.data("sap-ui-rowindex");
+				var iGroupHeaderRowIndex = +$GroupRef.attr("data-sap-ui-rowindex");
 				var oRow = oTable.getRows()[iGroupHeaderRowIndex];
 
 				if (oRow) {

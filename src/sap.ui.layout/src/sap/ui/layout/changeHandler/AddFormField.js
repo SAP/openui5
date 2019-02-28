@@ -51,66 +51,66 @@ sap.ui.define([
 		var oParentFormContainer = oChange.getDependentControl("parentFormContainer", mPropertyBag);
 		var oCreatedControls, oCreatedFormElement;
 		var oAppComponent = mPropertyBag.appComponent;
-		var mChangeHandlerSettings = ChangeHandlerMediator.getChangeHandlerSettings({
-			"scenario" : "addODataFieldWithLabel",
-			"oDataServiceVersion" : oChangeDefinition.content && oChangeDefinition.content.oDataServiceVersion
-		});
-
-		var fnChangeHandlerCreateFunction = mChangeHandlerSettings
-			&& mChangeHandlerSettings.content
-			&& mChangeHandlerSettings.content.createFunction;
-
-		var fnCheckChangeDefinition = function(oChangeDefinition) {
+		var getChangeHandlerCreateFunction = function(mChangeHandlerSettings) {
+			return mChangeHandlerSettings
+				&& mChangeHandlerSettings.content
+				&& mChangeHandlerSettings.content.createFunction;
+		};
+		var fnCheckChangeDefinition = function(oChangeDefinition, mChangeHandlerSettings) {
 			var bContentPresent = oChangeDefinition.content;
-			var bMandatoryContentPresent = false;
-
 			if (bContentPresent) {
-				bMandatoryContentPresent = oChangeDefinition.content.newFieldSelector
-					&& (oChangeDefinition.content.newFieldIndex !== undefined)
-					&& oChangeDefinition.content.bindingPath
-					&& oChangeDefinition.content.oDataServiceVersion
-					&& fnChangeHandlerCreateFunction;
+				return oChangeDefinition.content.newFieldSelector
+				&& (oChangeDefinition.content.newFieldIndex !== undefined)
+				&& oChangeDefinition.content.bindingPath
+				&& oChangeDefinition.content.oDataServiceVersion
+				&& !!getChangeHandlerCreateFunction(mChangeHandlerSettings);
 			}
-
-			return  bContentPresent && bMandatoryContentPresent;
+			return false;
 		};
 
-		if (fnCheckChangeDefinition(oChangeDefinition)) {
-			var oChangeContent = oChangeDefinition.content;
+		return ChangeHandlerMediator.getChangeHandlerSettings({
+			"scenario" : "addODataFieldWithLabel",
+			"oDataServiceVersion" : oChangeDefinition.content && oChangeDefinition.content.oDataServiceVersion
+		})
+		.then(function(mChangeHandlerSettings) {
+			if (fnCheckChangeDefinition(oChangeDefinition, mChangeHandlerSettings)) {
+				var oChangeContent = oChangeDefinition.content;
 
-			var mFieldSelector = oChangeContent.newFieldSelector;
-			var mSmartFieldSelector = jQuery.extend({}, oChangeContent.newFieldSelector);
-			mSmartFieldSelector.id = mSmartFieldSelector.id + "-field";
-			var sBindingPath = oChangeContent.bindingPath;
-			oChange.setRevertData({newFieldSelector: mFieldSelector});
+				var mFieldSelector = oChangeContent.newFieldSelector;
+				var mSmartFieldSelector = jQuery.extend({}, oChangeContent.newFieldSelector);
+				mSmartFieldSelector.id = mSmartFieldSelector.id + "-field";
+				var sBindingPath = oChangeContent.bindingPath;
+				oChange.setRevertData({newFieldSelector: mFieldSelector});
 
-			var mCreateProperties = {
-				"appComponent" : mPropertyBag.appComponent,
-				"view" : mPropertyBag.view,
-				"fieldSelector" : mSmartFieldSelector,
-				"bindingPath" : sBindingPath
-			};
+				var mCreateProperties = {
+					"appComponent" : mPropertyBag.appComponent,
+					"view" : mPropertyBag.view,
+					"fieldSelector" : mSmartFieldSelector,
+					"bindingPath" : sBindingPath
+				};
 
-			// Check if the change is applicable
-			if	(oModifier.bySelector(mFieldSelector, oAppComponent)) {
-				return Base.markAsNotApplicable("Control to be created already exists:" + mFieldSelector);
+				// Check if the change is applicable
+				if (oModifier.bySelector(mFieldSelector, oAppComponent)) {
+					return Base.markAsNotApplicable("Control to be created already exists:" + mFieldSelector);
+				}
+				var fnChangeHandlerCreateFunction = getChangeHandlerCreateFunction(mChangeHandlerSettings);
+				oCreatedControls = fnChangeHandlerCreateFunction(oModifier, mCreateProperties);
+				oCreatedFormElement = oModifier.createControl("sap.ui.layout.form.FormElement", oAppComponent, oView, mFieldSelector);
+
+				oModifier.insertAggregation(oCreatedFormElement, "label", oCreatedControls.label, 0, oView);
+				oModifier.insertAggregation(oCreatedFormElement, "fields", oCreatedControls.control, 0, oView);
+
+				oModifier.insertAggregation(oParentFormContainer, "formElements", oCreatedFormElement, iIndex, oView);
+
+				return true;
+			} else {
+				Utils.log.error("Change does not contain sufficient information to be applied or ChangeHandlerMediator could not be retrieved: [" + oChangeDefinition.layer + "]"
+					+ oChangeDefinition.namespace + "/"
+					+ oChangeDefinition.fileName + "."
+					+ oChangeDefinition.fileType);
+				//however subsequent changes should be applied
 			}
-			oCreatedControls = fnChangeHandlerCreateFunction(oModifier, mCreateProperties);
-			oCreatedFormElement = oModifier.createControl("sap.ui.layout.form.FormElement", oAppComponent, oView, mFieldSelector);
-
-			oModifier.insertAggregation(oCreatedFormElement, "label", oCreatedControls.label, 0, oView);
-			oModifier.insertAggregation(oCreatedFormElement, "fields", oCreatedControls.control, 0, oView);
-
-			oModifier.insertAggregation(oParentFormContainer, "formElements", oCreatedFormElement, iIndex, oView);
-
-			return true;
-		} else {
-			Utils.log.error("Change does not contain sufficient information to be applied or ChangeHandlerMediator could not be retrieved: [" + oChangeDefinition.layer + "]"
-				+ oChangeDefinition.namespace + "/"
-				+ oChangeDefinition.fileName + "."
-				+ oChangeDefinition.fileType);
-			//however subsequent changes should be applied
-		}
+		});
 	};
 
 	/**

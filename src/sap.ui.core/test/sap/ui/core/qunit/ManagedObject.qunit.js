@@ -2047,7 +2047,7 @@ sap.ui.define([
 	});
 
 	QUnit.test("Cleanup on destroy", function(assert) {
-		var iExistingBindings = oModel.aBindings.length;
+		var iExistingBindings = oModel.getBindings().length;
 
 		this.obj.bindObject({
 			path: "/list/0"
@@ -2081,7 +2081,7 @@ sap.ui.define([
 		this.obj.destroy();
 		assert.ok(this.obj.mBindingInfos == null || Object.keys(this.obj.mBindingInfos).length === 0, "there should be no more binding infos");
 		assert.ok(this.obj.mObjectBindingInfos == null || Object.keys(this.obj.mObjectBindingInfos).length === 0, "there should be no more bound objects");
-		assert.equal(oModel.aBindings.length, iExistingBindings, "there should be the same number of bindings in the model as before starting the test");
+		assert.equal(oModel.getBindings().length, iExistingBindings, "there should be the same number of bindings in the model as before starting the test");
 	});
 
 	QUnit.test("Bind object/pass event handler", function(assert) {

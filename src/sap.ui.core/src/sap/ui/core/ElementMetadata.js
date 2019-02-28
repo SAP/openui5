@@ -27,6 +27,7 @@ sap.ui.define([
 	 * @version ${version}
 	 * @since 0.8.6
 	 * @alias sap.ui.core.ElementMetadata
+	 * @extends sap.ui.base.ManagedObjectMetadata
 	 */
 	var ElementMetadata = function(sClassName, oClassInfo) {
 

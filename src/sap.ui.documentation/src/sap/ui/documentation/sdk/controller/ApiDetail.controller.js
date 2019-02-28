@@ -251,7 +251,15 @@ sap.ui.define([
 			_bindData: function (sTopicId) {
 				var oControlData = this._oControlData,
 					oModel,
-					oUi5Metadata;
+					oUi5Metadata,
+					fnSort = function (a, b) {
+						if (a.name > b.name) {
+							return 1;
+						} else if (a.name < b.name) {
+							return -1;
+						}
+						return 0;
+					};
 
 				oUi5Metadata = oControlData['ui5-metadata'];
 
@@ -281,6 +289,18 @@ sap.ui.define([
 
 					return oElement;
 				};
+
+				if (oControlData.borrowed.properties.length) {
+					oUi5Metadata.properties =  (oUi5Metadata.properties || []).concat(oControlData.borrowed.properties).sort(fnSort);
+				}
+
+				if (oControlData.borrowed.aggregations.length) {
+					oUi5Metadata.aggregations =  (oUi5Metadata.aggregations || []).concat(oControlData.borrowed.aggregations).sort(fnSort);
+				}
+
+				if (oControlData.borrowed.associations.length) {
+					oUi5Metadata.associations =  (oUi5Metadata.associations || []).concat(oControlData.borrowed.associations).sort(fnSort);
+				}
 
 				// Filter and leave only visible elements
 				if (oControlData.properties) {
@@ -345,6 +365,7 @@ sap.ui.define([
 					oControlData.hasImplementsData = false;
 				}
 
+				oControlData.isFunction = oControlData.kind === "function";
 				oControlData.isClass = oControlData.kind === "class";
 				oControlData.isNamespace = oControlData.kind === "namespace";
 				oControlData.isDerived = !!oControlData.extends;
@@ -363,21 +384,39 @@ sap.ui.define([
 			buildBorrowedModel: function (oControlData) {
 				var aBaseClassMethods,
 					aBaseClassEvents,
+					aBaseClassProperties,
+					aBaseClassAggregations,
+					aBaseClassAssociations,
 					sBaseClass,
 					aBorrowChain,
 					aMethods,
 					aMethodNames,
+					aProperties,
+					aPropertyNames,
+					aAggregations,
+					aAggregationNames,
+					aAssociations,
+					aAssociationNames,
 					aInheritanceChain,
 					aRequiredLibs = [],
 					oSymbol;
 
 				if (!oControlData) {
-					return Promise.resolve({events: [], methods: []});
+					return Promise.resolve({
+						events: [],
+						methods: [],
+						properties: [],
+						aggregations: [],
+						associations: []
+					});
 				}
 
 				aBorrowChain = {
 					methods: [],
-					events: []
+					events: [],
+					properties: [],
+					aggregations: [],
+					associations: []
 				};
 				sBaseClass = oControlData.extends;
 
@@ -391,10 +430,40 @@ sap.ui.define([
 					return oMethod.name;
 				});
 
+				// Get all properties names
+				aProperties = oControlData["ui5-metadata"] && oControlData["ui5-metadata"].properties || [];
+				aPropertyNames = aProperties.map(function (oProperty) {
+					return oProperty.name;
+				});
+
+				// Get all aggregations names
+				aAggregations = oControlData["ui5-metadata"] && oControlData["ui5-metadata"].aggregations || [];
+				aAggregationNames = aAggregations.map(function (oAggregation) {
+					return oAggregation.name;
+				});
+
+				// Get all associations names
+				aAssociations = oControlData["ui5-metadata"] && oControlData["ui5-metadata"].associations || [];
+				aAssociationNames = aAssociations.map(function (oAssociation) {
+					return oAssociation.name;
+				});
+
 				// Filter all borrowed methods and if some of them are overridden by the class
 				// we should exclude them from the borrowed methods list. BCP: 1780319087
 				var fnOverrideMethodFilter = function (item) {
 					return aMethodNames.indexOf(item.name) === -1;
+				};
+
+				var fnOverridePropertyFilter = function (item) {
+					return aPropertyNames.indexOf(item.name) === -1 && !item.borrowedFrom;
+				};
+
+				var fnOverrideAggregationFilter = function (item) {
+					return aAggregationNames.indexOf(item.name) === -1 && !item.borrowedFrom;
+				};
+
+				var fnOverrideAssociationFilter = function (item) {
+					return aAssociationNames.indexOf(item.name) === -1 && !item.borrowedFrom;
 				};
 
 				// Find all libs needed to resolve the inheritance chain
@@ -471,6 +540,12 @@ sap.ui.define([
 							};
 						};
 
+						var fnPropAggrAssocMapper = function (item) {
+							return Object.assign({}, item, {
+							      borrowedFrom: sBaseClass
+							});
+						};
+
 						if (oBaseClass) {
 
 							aBaseClassMethods = (oBaseClass.methods || []).filter(fnVisibilityFilter)
@@ -489,6 +564,24 @@ sap.ui.define([
 									name: sBaseClass,
 									events: aBaseClassEvents
 								});
+							}
+
+							aBaseClassProperties = (oBaseClass["ui5-metadata"].properties || []).filter(fnVisibilityFilter)
+								.filter(fnOverridePropertyFilter).map(fnPropAggrAssocMapper);
+							if (aBaseClassProperties.length) {
+								aBorrowChain.properties = aBorrowChain.properties.concat(aBaseClassProperties);
+							}
+
+							aBaseClassAggregations = (oBaseClass["ui5-metadata"].aggregations || []).filter(fnVisibilityFilter)
+								.filter(fnOverrideAggregationFilter).map(fnPropAggrAssocMapper);
+							if (aBaseClassAggregations.length) {
+								aBorrowChain.aggregations = aBorrowChain.aggregations.concat(aBaseClassAggregations);
+							}
+
+							aBaseClassAssociations = (oBaseClass["ui5-metadata"].associations || []).filter(fnVisibilityFilter)
+								.filter(fnOverrideAssociationFilter).map(fnPropAggrAssocMapper);
+							if (aBaseClassAssociations.length) {
+								aBorrowChain.associations = aBorrowChain.associations.concat(aBaseClassAssociations);
 							}
 						}
 					});

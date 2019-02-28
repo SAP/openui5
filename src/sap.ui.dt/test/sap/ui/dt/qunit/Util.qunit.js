@@ -3,13 +3,11 @@
 sap.ui.define([
 	"sap/ui/dt/Util",
 	"sap/ui/thirdparty/jquery",
-	"sap/ui/qunit/utils/waitForThemeApplied",
 	"sap/ui/thirdparty/sinon-4"
 ],
 function(
 	Util,
 	jQuery,
-	waitForThemeApplied,
 	sinon
 ) {
 	'use strict';
@@ -431,5 +429,4 @@ function(
 		jQuery("#qunit-fixture").hide();
 	});
 
-	return waitForThemeApplied();
 });

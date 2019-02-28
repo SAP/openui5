@@ -1,0 +1,157 @@
+{
+  "1.64.0": {
+    "date": "February 2019",
+    "notes": [
+      {
+        "id": "10eaf123c7ed68f1d2a6f69aca601d297f2c3cb9",
+        "type": "FIX",
+        "text": " P13nFilterPanel : removes empty operations when maxLength\u003d\u003d1",
+        "references": []
+      },
+      {
+        "id": "14a15e8afc0bb481e6c7118cccf3663f1674c069",
+        "type": "FIX",
+        "text": " m.TimePickerSliders: Reset typing when no chance to match value",
+        "references": []
+      },
+      {
+        "id": "f96281c8ac9c87d32b9494de72675f4ae974022a",
+        "type": "FIX",
+        "text": " sap.m.Button: Returns to active on enter with pressed left button",
+        "references": []
+      },
+      {
+        "id": "59dd449a6106608fc77daf46a381475d4eba8ff7",
+        "type": "FIX",
+        "text": " sap.m.IconTabHeader: sapUiResponsiveContentPadding corrected",
+        "references": []
+      },
+      {
+        "id": "8563cf8d857fc06ce7e964bdfd500eb4669105c2",
+        "type": "FIX",
+        "text": " sap.m.LightBox: Keep the focus inside the lightbox",
+        "references": []
+      },
+      {
+        "id": "e8c4d71a04a9720dd810688ae0b1f0a3cdcba5ad",
+        "type": "FIX",
+        "text": " sap.m.MultiInput, sap.m.Slider: Busy form integration fixed",
+        "references": []
+      },
+      {
+        "id": "2b1f1e67071f476c30810efdba70191c8e5ceea5",
+        "type": "FIX",
+        "text": " sap.m.ProgressIndicator: Invalid percentValue handling corrected",
+        "references": []
+      },
+      {
+        "id": "37ec85220d11939d3a114030e142ea9b891f2480",
+        "type": "FIX",
+        "text": " sap.m.SegmentedButton: Works in an oveflow toolbar",
+        "references": []
+      },
+      {
+        "id": "ef49f4e422f929c22d12df46fbc310de890167e6",
+        "type": "FIX",
+        "text": " sap.m.Select: First item in list can now be selected on mobile",
+        "references": []
+      },
+      {
+        "id": "68676f2b7b022487349593a2461a220c2437738a",
+        "type": "FIX",
+        "text": " sap.m.Switch: Allow to set state without animation",
+        "references": []
+      },
+      {
+        "id": "6740f83ba423a6e55acd706b6adb64947506ffe2",
+        "type": "FIX",
+        "text": " sap.m.TileContainer: Deleting a tile keeps the focus",
+        "references": []
+      },
+      {
+        "id": "9898ab423c0e5ab19bb1a109471d94cda4d031fb",
+        "type": "FIX",
+        "text": " sap.m.TimePickerSlider: Apply animation snap when more are queued",
+        "references": []
+      },
+      {
+        "id": "19ce2d9049324a13f83de7653a7c8926f21a4185",
+        "type": "FIX",
+        "text": " sap.m.TimePickerSliders: apply animation snap when stopped",
+        "references": []
+      },
+      {
+        "id": "558b73bee756a268d399d7e2a36d797550309401",
+        "type": "FIX",
+        "text": " sap.m.WizardStep: Position is read out now",
+        "references": []
+      },
+      {
+        "id": "549f08ff1df8a4b10ccfb29d72b1b12e283af0d0",
+        "type": "FEATURE",
+        "text": " sap.m.ComboBox: Grouping of items enabled",
+        "references": []
+      },
+      {
+        "id": "95cfd821b288a046df126fdaf20616df27f8f005",
+        "type": "FIX",
+        "text": " UploadCollection - jQuery selectors do not work with Fiori separators \"::\"",
+        "references": []
+      },
+      {
+        "id": "3bf0af9829546f06b24e25666549fcd57009359e",
+        "type": "FIX",
+        "text": " sap.m.CheckBox: Focus outline in SimpleForm is fixed",
+        "references": []
+      },
+      {
+        "id": "11d4b6b7204608c02ce9a92f5cba42f0b011373a",
+        "type": "FIX",
+        "text": " sap.m.ComboBox: Sample adjustment",
+        "references": []
+      },
+      {
+        "id": "ab183c2e328dd6b06ff9aa3920c99433fafb2d7f",
+        "type": "FIX",
+        "text": " sap.m.GenericTag: Fixed overflowing error icon",
+        "references": []
+      },
+      {
+        "id": "dafabfd3c0c2a0e0a901bf4ec11b1a3d8d59d687",
+        "type": "FIX",
+        "text": " sap.m.ObjectAttribute: align attribute to the baseline",
+        "references": []
+      },
+      {
+        "id": "a227a24e66f8ab31475644bce6498c6c06fd21e9",
+        "type": "FIX",
+        "text": " sap.m.Select: Error state screen reader behavior improved",
+        "references": []
+      },
+      {
+        "id": "1f13f00b7f73b37a7202b7c997bac53606675cb9",
+        "type": "FIX",
+        "text": " sap.m.Select: Keyboard SPACE action is now triggered on keyup",
+        "references": []
+      },
+      {
+        "id": "f1c8b1e161a4f710d88de82dcadd6d412cb5dfcd",
+        "type": "FIX",
+        "text": " sap.m.SelectList: Fixed browser navigation with alt + arrow keys",
+        "references": []
+      },
+      {
+        "id": "5da974a43618ae117dcdeddafff4e3ca80a252f3",
+        "type": "FIX",
+        "text": " sap.m.StepInput: correct check for buttons if no min/max is set",
+        "references": []
+      },
+      {
+        "id": "fd8475d1dbdd323d4a58a07ba6fd654c4001f416",
+        "type": "FIX",
+        "text": " sap.m.SuggestionsPopover: Cursor now stays on its correct place",
+        "references": []
+      }
+    ]
+  }
+}

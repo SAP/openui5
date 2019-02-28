@@ -19,6 +19,12 @@
 		"group": "Card Type Examples"
 	},
 	{
+	  "title": "Object Card",
+	  "description": "Example page for Card of type Object",
+	  "route": "objectContent",
+	  "group": "Card Type Examples"
+	},
+	{
 		"title": "Numeric Header",
 		"description": "Example page for Card with Numeric Header",
 		"route": "numericHeader",

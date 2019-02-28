@@ -1,0 +1,85 @@
+{
+	"sap.app": {
+		"type": "card",
+		"i18n": "i18n/i18n.properties"
+	},
+	"sap.card": {
+		"type": "Object",
+		"data": {
+			"request": {
+				"url": "./test-resources/sap/ui/integration/demokit/sample/ObjectCard/model/employee.json"
+			}
+		},
+		"header": {
+			"icon": {
+				"src": "{photo}"
+			},
+			"title": "{firstName} {lastName}",
+			"subTitle": "{position}"
+		},
+		"content": {
+			"groups": [
+				{
+					"title": "{{contactDetails}}",
+					"items": [
+						{
+							"label": "{{firstName}}",
+							"value": "{firstName}"
+						},
+						{
+							"label": "{{lastName}}",
+							"value": "{lastName}"
+						},
+						{
+							"label": "{{phone}}",
+							"value": "{phone}",
+							"type": "phone"
+						},
+						{
+							"label": "{{email}}",
+							"value": "{email}",
+							"type": "email"
+						}
+					]
+				},
+				{
+					"title": "{{organizationalDetails}}",
+					"items": [
+						{
+							"label": "{{directManager}}",
+							"value": "{manager/firstName} {manager/lastName}",
+							"icon": {
+								"src": "{manager/photo}"
+							}
+						}
+					]
+				},
+				{
+					"title": "{{companyDetails}}",
+					"items": [
+						{
+							"label": "{{companyName}}",
+							"value": "{company/name}"
+						},
+						{
+							"label": "{{address}}",
+							"value": "{company/address}"
+						},
+						{
+							"label": "{{email}}",
+							"value": "{company/email}",
+							"emailSubject": "{company/emailSubject}",
+							"type": "email"
+						},
+						{
+							"label": "{{website}}",
+							"value": "{company/website}",
+						  	"url": "{company/url}",
+							"type": "link"
+						}
+					]
+				}
+			]
+		}
+	}
+}

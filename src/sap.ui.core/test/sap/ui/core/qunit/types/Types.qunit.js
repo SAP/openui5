@@ -508,6 +508,57 @@ sap.ui.define(["sap/ui/model/ValidateException",
 
 		});
 
+		QUnit.test("Parse/Format emptyString values", function (assert) {
+			// default: "" --> NaN
+			var oCurrencyType = new CurrencyType(/* emptyString is NaN by default */);
+			assert.throws(function () {
+				oCurrencyType.parseValue("", "string");
+			}, new ParseException("Enter a valid currency amount"));
+
+			// "" --> NaN
+			var oCurrencyType2 = new CurrencyType({emptyString: NaN});
+			assert.throws(function () {
+				oCurrencyType2.parseValue("", "string");
+			}, new ParseException("Enter a valid currency amount"));
+
+			// "" --> ""
+			var oCurrencyType3 = new CurrencyType({emptyString: ""});
+			assert.deepEqual(oCurrencyType3.parseValue("", "string"), ["", undefined], "Empty string is returned");
+
+			// "" --> null
+			var oCurrencyType4 = new CurrencyType({emptyString: null});
+			assert.deepEqual(oCurrencyType4.parseValue("", "string"), [null, undefined], "null is returned");
+
+			// "" --> 0
+			var oCurrencyType5 = new CurrencyType({emptyString: 0});
+			assert.deepEqual(oCurrencyType5.parseValue("", "string"), [0, undefined], "0 is returned");
+		});
+
+		QUnit.test("Parse/Format emptyString values (parseAsString)", function (assert) {
+			// default: "" --> "NaN"
+			var oCurrencyType = new CurrencyType({parseAsString: true /* emptyString is NaN by default */});
+			assert.throws(function () {
+				oCurrencyType.parseValue("", "string");
+			}, new ParseException("Enter a valid currency amount"));
+
+			// "" --> "NaN"
+			var oCurrencyType2 = new CurrencyType({emptyString: NaN, parseAsString: true});
+			assert.throws(function () {
+				oCurrencyType2.parseValue("", "string");
+			}, new ParseException("Enter a valid currency amount"));
+
+			// "" --> ""
+			var oCurrencyType3 = new CurrencyType({emptyString: "", parseAsString: true});
+			assert.deepEqual(oCurrencyType3.parseValue("", "string"), ["", undefined], "Empty string is returned");
+
+			// "" --> null
+			var oCurrencyType4 = new CurrencyType({emptyString: null, parseAsString: true});
+			assert.deepEqual(oCurrencyType4.parseValue("", "string"), [null, undefined], "null is returned");
+
+			// "" --> 0
+			var oCurrencyType5 = new CurrencyType({emptyString: 0, parseAsString: true});
+			assert.deepEqual(oCurrencyType5.parseValue("", "string"), ["0", undefined], "0 is returned");
+		});
 
 		// Unit type tests
 		QUnit.module("unit type");
@@ -686,7 +737,7 @@ sap.ui.define(["sap/ui/model/ValidateException",
 			assert.equal(unitType.formatValue([1.0, "electric-ohm"], "string"), "1", "format test");
 			assert.equal(unitType.formatValue([1.0000, "speed-mile-per-hour"], "string"), "1", "format test");
 			assert.equal(unitType.formatValue([1.009, "duration-hour"], "string"), "1.009", "format test");
-			assert.equal(unitType.formatValue([1.00001, "electric-ohm"], "string"), "1", "format test");
+			assert.equal(unitType.formatValue([1.00001, "electric-ohm"], "string"), "1.00001", "format test");
 
 		});
 
@@ -949,6 +1000,95 @@ sap.ui.define(["sap/ui/model/ValidateException",
 			assert.deepEqual(oMeterType.parseValue("123.100000000001 m", "string"), [123.100000000001, "length-meter"], " number with too many digits parse 5 digits meters expected");
 			assert.equal(oMeterTypeInstanceSpy.callCount, 10, "10 instances because 10 different precision options are provided");
 
+		});
+
+		QUnit.test("Multiple Unit-Instances with bound custom units and other distinct format options", function (assert) {
+
+			// new Meter type
+			var CustomUnitType = UnitType.extend("sap.ui.core.test.CustomUnitType", {
+				constructor: function (oFormatOptions, oConstraints) {
+					UnitType.apply(this, [oFormatOptions, oConstraints, ["customUnits"]]);
+				}
+			});
+
+			var oCustomUnitConfig = {
+				"length-meter": {
+					"unitPattern-count-one": "{0} m",
+					"unitPattern-count-many": "{0} m",
+					"unitPattern-count-other": "{0} m",
+					"decimals": 4
+				}
+			};
+
+			var oCustomUnitTypeInstanceSpy = this.spy(NumberFormat, "getUnitInstance");
+
+			var oCustomUnitType = new CustomUnitType(/* showMeasure is true by default*/);
+			var oCustomUnitType2 = new CustomUnitType({showMeasure: false});
+			var oCustomUnitType3 = new CustomUnitType({showMeasure: false});
+
+			// straight forward case
+			assert.equal(oCustomUnitType.formatValue([123.456789, "length-meter", oCustomUnitConfig], "string").toString(), "123.4568 m");
+			assert.equal(oCustomUnitTypeInstanceSpy.callCount, 1, "1st instance created");
+
+			// additional format options
+			assert.equal(oCustomUnitType2.formatValue([123.456789, "length-meter", oCustomUnitConfig], "string").toString(), "123.4568", "formatted value respects the 'decimals' of custom unit");
+			assert.equal(oCustomUnitTypeInstanceSpy.callCount, 2, "2nd instance created, because of different format options");
+
+			assert.equal(oCustomUnitType3.formatValue([123.456789, "length-meter", oCustomUnitConfig], "string").toString(), "123.4568", "formatted value respects the 'decimals' of custom unit");
+			assert.equal(oCustomUnitTypeInstanceSpy.callCount, 2, "No additional instance is created, 2nd instance is taken from cache");
+
+		});
+
+		QUnit.test("Parse/Format emptyString values", function (assert) {
+			// default: "" --> NaN
+			var oUnitType = new UnitType(/* emptyString is NaN by default */);
+			assert.throws(function () {
+				oUnitType.parseValue("", "string");
+			}, new ParseException("Enter a valid unit amount"));
+
+			// "" --> NaN
+			var oUnitType2 = new UnitType({emptyString: NaN});
+			assert.throws(function () {
+				oUnitType2.parseValue("", "string");
+			}, new ParseException("Enter a valid unit amount"));
+
+			// "" --> ""
+			var oUnitType3 = new UnitType({emptyString: ""});
+			assert.deepEqual(oUnitType3.parseValue("", "string"), ["", undefined], "Empty string is returned");
+
+			// "" --> null
+			var oUnitType4 = new UnitType({emptyString: null});
+			assert.deepEqual(oUnitType4.parseValue("", "string"), [null, undefined], "null is returned");
+
+			// "" --> 0
+			var oUnitType5 = new UnitType({emptyString: 0});
+			assert.deepEqual(oUnitType5.parseValue("", "string"), [0, undefined], "0 is returned");
+		});
+
+		QUnit.test("Parse/Format emptyString values (parseAsString)", function (assert) {
+			// default: "" --> "NaN"
+			var oUnitType = new UnitType({parseAsString: true /* emptyString is NaN by default */});
+			assert.throws(function () {
+				oUnitType.parseValue("", "string");
+			}, new ParseException("Enter a valid unit amount"));
+
+			// "" --> "NaN"
+			var oUnitType2 = new UnitType({emptyString: NaN, parseAsString: true});
+			assert.throws(function () {
+				oUnitType2.parseValue("", "string");
+			}, new ParseException("Enter a valid unit amount"));
+
+			// "" --> ""
+			var oUnitType3 = new UnitType({emptyString: "", parseAsString: true});
+			assert.deepEqual(oUnitType3.parseValue("", "string"), ["", undefined], "Empty string is returned");
+
+			// "" --> null
+			var oUnitType4 = new UnitType({emptyString: null, parseAsString: true});
+			assert.deepEqual(oUnitType4.parseValue("", "string"), [null, undefined], "null is returned");
+
+			// "" --> 0
+			var oUnitType5 = new UnitType({emptyString: 0, parseAsString: true});
+			assert.deepEqual(oUnitType5.parseValue("", "string"), ["0", undefined], "0 is returned");
 		});
 
 		QUnit.test("Multiple Unit-Instances with bound custom units and other distinct format options", function (assert) {
@@ -1340,6 +1480,16 @@ sap.ui.define(["sap/ui/model/ValidateException",
 			assert.deepEqual(oDateIntervalType.parseValue("Nov 6 – Dec 6, 2003", "string"), ["2003-11-06", "2003-12-06"], "Interval string can be parsed into an array of defined dates");
 		});
 
+		QUnit.test("DateInterval parseValue - singleIntervalValue", function (assert) {
+			var oDateIntervalType = new DateIntervalType({
+				singleIntervalValue: true
+			});
+			var oDate1 = new Date(2003, 10, 6);
+
+			assert.deepEqual(oDateIntervalType.parseValue("Nov 6, 2003", "string"), [oDate1, null], "Interval string can be parsed into an array of dates");
+			assert.throws(function () { oDateIntervalType.parseValue("Nov 6", "string"); }, checkParseException, "parse test");
+		});
+
 		QUnit.test("DateInterval validateValue", function (assert) {
 			var oDate1 = new Date(2003, 10, 6);
 			var oDate2 = new Date(2003, 11, 6);
@@ -1392,6 +1542,48 @@ sap.ui.define(["sap/ui/model/ValidateException",
 			} catch (e) {
 				assert.ok(false, "validate test fails");
 			}
+		});
+
+		QUnit.test("DateInterval validateValue - singleIntervalValue", function (assert) {
+			var oDate1 = new Date(2003, 10, 6);
+			var oDate2 = new Date(2003, 11, 6);
+			var oPreDate = new Date(2003, 10, 5);
+			var oSufDate = new Date(2003, 11, 7);
+
+			var oDateIntervalType = new DateIntervalType({
+				format: "yMMMd",
+				singleIntervalValue: true
+			}, {
+				minimum: oDate1.getTime(),
+				maximum: oDate2.getTime()
+			});
+
+			assert.equal(oDateIntervalType.validateValue([oDate1.getTime(), null]), undefined, "Interval string can be parsed into an array of dates");
+			assert.equal(oDateIntervalType.validateValue([oDate1.getTime()]), undefined, "Interval string can be parsed into an array of dates");
+
+			assert.throws(function () {
+				oDateIntervalType.validateValue([oDate1.getTime(), oSufDate.getTime()]);
+			}, checkValidateException, "validate test");
+
+			assert.throws(function () {
+				oDateIntervalType.validateValue([oPreDate.getTime(), oDate2.getTime()]);
+			}, checkValidateException, "validate test");
+
+			assert.throws(function () {
+				oDateIntervalType.validateValue([oPreDate.getTime(), null]);
+			}, checkValidateException, "validate test");
+
+			assert.throws(function () {
+				oDateIntervalType.validateValue([oSufDate.getTime(), null]);
+			}, checkValidateException, "validate test");
+
+			assert.throws(function () {
+				oDateIntervalType.validateValue([null, oDate1.getTime()]);
+			}, checkValidateException, "validate test");
+
+			assert.throws(function () {
+				oDateIntervalType.validateValue([null, null]);
+			}, checkValidateException, "validate test");
 		});
 
 		QUnit.module("DateTimeInterval type");

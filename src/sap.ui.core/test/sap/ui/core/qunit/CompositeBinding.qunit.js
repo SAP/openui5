@@ -42,6 +42,38 @@ sap.ui.define([
 		}
 	});
 
+	var MyAsyncCompositeType = CompositeType.extend("MyCompositeType", {
+		constructor: function() {
+			CompositeType.apply(this);
+			this.sName = "MyAsyncCompositeType";
+		},
+		formatValue: function(aValues) {
+			return new Promise(function(resolve, reject) {
+				setTimeout(function() {
+					resolve(aValues.join(","));
+				}, 0);
+			});
+		},
+		parseValue: function(sValue) {
+			return new Promise(function(resolve, reject) {
+				setTimeout(function() {
+					resolve(sValue.split(","));
+				}, 0);
+			});
+		},
+		validateValue: function(aValues) {
+			return new Promise(function(resolve, reject) {
+				setTimeout(function() {
+					if (aValues[0] == 0) {
+						reject(new ValidateException("Value must not be zero"));
+					} else {
+						resolve();
+					}
+				}, 0);
+			});
+		}
+	});
+
 	var MyRawValueType = MyCompositeType.extend("MyRawValueType", {
 		constructor: function() {
 			MyCompositeType.apply(this);
@@ -61,6 +93,19 @@ sap.ui.define([
 				return oValue;
 			}
 			return oValue.split(" ");
+		}
+	});
+
+	var MyPartialUpdateType = MyCompositeType.extend("MyPartialUpdateType", {
+		constructor: function() {
+			MyCompositeType.apply(this);
+			this.sName = "MyPartialUpdateType";
+		},
+		formatValue: function(aValues) {
+			return aValues[1];
+		},
+		parseValue: function(oValue) {
+			return [undefined, oValue, undefined];
 		}
 	});
 
@@ -138,6 +183,35 @@ sap.ui.define([
 		assert.equal(this.model.getProperty("/a"), 3, "setExternalValue() does change model value for contained bindings");
 		assert.throws(function(){this.composite.setExternalValue("0,0,0");}.bind(this),
 			ValidateException, "validation throws ValidateExpception for invalid values");
+	});
+
+	QUnit.test("async composite type", function(assert) {
+		var that = this;
+		this.composite.setType(new MyAsyncCompositeType());
+		var p1 = this.composite.getExternalValue().then(function(oValue) {
+			assert.equal(oValue, "1,2,3");
+		});
+		var p2 = this.composite.setExternalValue("3,2,1").then(function(oValue) {
+			assert.equal(that.model.getProperty("/a"), 3, "setExternalValue() does change model value for contained bindings");
+		});
+		var p3 = this.composite.setExternalValue("0,0,0").catch(function(oException) {
+			assert.ok(oException instanceof ValidateException, "Rejects with ValidateException for invalid values");
+		});
+		return Promise.all([p1, p2, p3]);
+	});
+
+	QUnit.test("with partial update", function(assert) {
+		var oType = new MyPartialUpdateType();
+		oType.validateValue = function(aValues) {
+			assert.equal(aValues[0], 1, "validateValue is called with all values");
+			assert.equal(aValues[1], 4, "validateValue is called with all values");
+			assert.equal(aValues[2], 3, "validateValue is called with all values");
+		};
+		this.composite.setType(oType);
+		this.composite.setExternalValue(4); // MyPartialUpdateType returns given value as second part
+		assert.equal(this.model.getProperty("/a"), 1, "first value is unchanged");
+		assert.equal(this.model.getProperty("/b"), 4, "second value is changed with partial update");
+		assert.equal(this.model.getProperty("/c"), 3, "third value is unchanged");
 	});
 
 	QUnit.test("array type", function(assert) {

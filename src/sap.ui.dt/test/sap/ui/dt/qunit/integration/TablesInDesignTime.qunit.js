@@ -8,8 +8,7 @@ sap.ui.define([
 	"sap/ui/table/AnalyticalTable",
 	"sap/ui/table/AnalyticalColumn",
 	"sap/m/Label",
-	"sap/ui/Device",
-	"sap/ui/qunit/utils/waitForThemeApplied"
+	"sap/ui/Device"
 ],
 function (
 	DesignTime,
@@ -19,8 +18,7 @@ function (
 	AnalyticalTable,
 	AnalyticalColumn,
 	Label,
-	Device,
-	waitForThemeApplied
+	Device
 ) {
 	"use strict";
 
@@ -193,5 +191,4 @@ function (
 		jQuery("#qunit-fixture").hide();
 	});
 
-	return waitForThemeApplied();
 });

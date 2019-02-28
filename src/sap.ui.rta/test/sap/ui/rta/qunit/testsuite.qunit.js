@@ -18,7 +18,7 @@ sap.ui.define([
 			ui5: {
 				language: "en",
 				libs: ["sap.ui.rta"],
-				"xx-waitForTheme": true
+				"xx-waitForTheme": "init"
 			},
 			coverage: {
 				only: ["sap/ui/rta"],

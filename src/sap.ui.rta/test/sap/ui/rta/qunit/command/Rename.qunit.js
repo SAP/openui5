@@ -7,7 +7,6 @@ sap.ui.define([
 	"sap/ui/fl/Utils",
 	"sap/m/Button",
 	"sap/ui/fl/registry/ChangeRegistry",
-	"sap/ui/qunit/utils/waitForThemeApplied",
 	"sap/ui/thirdparty/sinon-4"
 ], function (
 	CommandFactory,
@@ -16,7 +15,6 @@ sap.ui.define([
 	FlUtils,
 	Button,
 	ChangeRegistry,
-	waitForThemeApplied,
 	sinon
 ) {
 	"use strict";
@@ -46,7 +44,7 @@ sap.ui.define([
 				},
 				getModel: function () {}
 			};
-			this.oGetAppComponentForControlStub = sinon.stub(FlUtils, "_getAppComponentForComponent").returns(oMockedAppComponent);
+			this.oGetAppComponentForControlStub = sinon.stub(FlUtils, "getAppComponentForControl").returns(oMockedAppComponent);
 		},
 		after: function () {
 			this.oGetAppComponentForControlStub.restore();
@@ -61,25 +59,25 @@ sap.ui.define([
 			this.fnApplyChangeSpy = sinon.spy();
 			this.fnCompleteChangeContentSpy = sinon.spy();
 
-			oChangeRegistry.registerControlsForChanges({
+			return oChangeRegistry.registerControlsForChanges({
 				"sap.m.Button": {
 					"rename" : {
 						applyChange: this.fnApplyChangeSpy,
 						completeChangeContent: this.fnCompleteChangeContentSpy
 					}
 				}
-			});
-
-			this.oButtonDesignTimeMetadata = new DesignTimeMetadata({
-				data : {
-					actions : {
-						rename : {
-							changeType : "rename"
+			})
+			.then(function() {
+				this.oButtonDesignTimeMetadata = new DesignTimeMetadata({
+					data : {
+						actions : {
+							rename : {
+								changeType : "rename"
+							}
 						}
 					}
-				}
-			});
-
+				});
+			}.bind(this));
 		},
 		afterEach: function () {
 			this.oButton.destroy();
@@ -113,5 +111,4 @@ sap.ui.define([
 		jQuery("#qunit-fixture").hide();
 	});
 
-	return waitForThemeApplied();
 });

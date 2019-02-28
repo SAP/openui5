@@ -8,8 +8,11 @@
 		<script id="sap-ui-bootstrap"
 				src="../../../../../../../resources/sap-ui-core.js"
 				data-sap-ui-libs='sap.m'
-				data-sap-ui-xx-bindingSyntax='complex'></script>
-		<script src="busyAfterStart.js"></script>
+				data-sap-ui-bindingSyntax='complex'
+				data-sap-ui-resourceRoots='{"local":"./"}'
+				data-sap-ui-async='true'
+				data-sap-ui-onInit='module:local/busyAfterStart'
+				></script>
 	</head>
 	<body id='content' class='sapUiBody'>
 	</body>

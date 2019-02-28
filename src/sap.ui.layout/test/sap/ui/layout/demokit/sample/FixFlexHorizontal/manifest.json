@@ -1,0 +1,36 @@
+{
+	"sap.app": {
+		"id": "sap.ui.layout.sample.FixFlexHorizontal",
+		"applicationVersion": {
+			"version": "1.0.0"
+		}
+	},
+	"sap.ui5": {
+		"rootView": {
+			"viewName": "sap.ui.layout.sample.FixFlexHorizontal.V",
+			"type": "XML",
+			"async": true
+		},
+		"libs": {
+			"sap.m": {}
+		},
+		"resources": {
+			"css": [
+				{
+					"uri": "FixFlexHorizontal/style.css"
+				}
+			]
+		},
+		"config": {
+			"sample": {
+				"stretch": true,
+				"files": [
+					"V.view.xml",
+					"C.controller.js",
+					"style.css",
+					"manifest.json"
+				]
+			}
+		}
+	}
+}

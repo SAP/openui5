@@ -12,13 +12,13 @@
 }
 
 .sapMObjectAttributeDiv .sapMText {
-	vertical-align: middle;
+	vertical-align: top;
 }
 
 .sapMObjectAttributeActive {
 	pointer-events: none;
 	.sapMObjectAttributeColon {
-		vertical-align: middle;
+		vertical-align: top;
 	}
 }
 
@@ -52,6 +52,13 @@
 
 .sapMListTblCell .sapMObjectAttributeActive {
 	white-space: normal;
+	word-break: break-word;
+}
+
+html[data-sap-ui-browser^='ie'], html[data-sap-ui-browser^='ed'] {
+	.sapMListTblCell .sapMObjectAttributeActive {
+		word-break: break-all;
+	}
 }
 
 .sapMObjectAttributeActive .sapMObjectAttributeTitle,
@@ -60,7 +67,7 @@
 	overflow: hidden;
 	text-overflow: ellipsis;
 	max-width: 50%;
-	vertical-align: middle;
+	vertical-align: top;
 	/* we need this otherwise the focus get broken when the link is on more lines */
 	display: inline-block;
 }
@@ -79,11 +86,12 @@
 }
 
 .sapMOH .sapMObjectAttributeText > .sapMText {
-	vertical-align: bottom;
+	vertical-align: top;
 }
 
 .sapMObjectAttributeDiv{
 	outline: none;
+	font-size: @sapMFontMediumSize;
 }
 
 .sapMLIBActive .sapMObjectAttributeText,
@@ -124,7 +132,7 @@ html[data-sap-ui-browser^='ie'], html[data-sap-ui-browser^='ed'] {
 	overflow: hidden;
 	text-overflow: ellipsis;
 	max-width: 50%;
-	vertical-align: middle;
+	vertical-align: top;
 }
 
 .sapMOHR .sapMOHRAttr .sapMObjectAttributeTitle {
@@ -147,7 +155,7 @@ html[data-sap-ui-browser^='ie'], html[data-sap-ui-browser^='ed'] {
 	max-width: 0.5rem;
 	margin-left: -0.5rem;
 	overflow: auto;
-	vertical-align: middle;
+	vertical-align: top;
 }
 
 .sapMOHR .sapMObjectAttributeActive .sapMObjectAttributeText {

@@ -147,6 +147,36 @@ sap.ui.define([
 		}.bind(this), sinonClockTickValue);
 	});
 
+	QUnit.test("offsetLeft and clientWidth of _oMobifyCarousel are calculated correctly after all animations", function (assert) {
+		// Arrange
+		var done = assert.async(),
+			iOffset;
+
+		assert.expect(2);
+
+		// Act
+		this.oCarousel.next();
+		iOffset = this.oCarousel._oMobifyCarousel._offset;
+
+		setTimeout(function () {
+			//Assert
+			assert.notEqual(iOffset, this.oCarousel._oMobifyCarousel._offset,
+				"After next(), _offset of _oMobifyCarousel is changed in _update function in the next JS tick");
+
+			// Act
+			this.oCarousel.setWidth("400px");
+			iOffset = this.oCarousel._oMobifyCarousel._offset;
+
+			setTimeout(function () {
+				// Assert
+				assert.notEqual(iOffset, this.oCarousel._oMobifyCarousel._offset,
+					"After resize, _offset of _oMobifyCarousel is changed in _update function in the next JS tick");
+
+				done();
+			}.bind(this), sinonClockTickValue);
+		}.bind(this), sinonClockTickValue);
+	});
+
 	QUnit.test("#previous()", function (assert) {
 		// Arrange
 		var done = assert.async();
@@ -603,6 +633,20 @@ sap.ui.define([
 
 		// Assert
 		assert.strictEqual(this.oCarousel.getBusyIndicatorSize(), "Medium", "Default busy indicator size should be 'Medium'");
+	});
+
+	QUnit.test("Destroying _oMobifyCarousel will set its _needsUpdate property to false;", function (assert) {
+		// Arrange
+		var oMobifyCarousel = this.oCarousel._oMobifyCarousel;
+
+		// Assert
+		assert.strictEqual(oMobifyCarousel._needsUpdate, true, "_needsUpdate property is initially true");
+
+		// Act
+		this.oCarousel.destroy();
+
+		// Assert
+		assert.strictEqual(oMobifyCarousel._needsUpdate, false, "_needsUpdate property is false after destroy");
 	});
 
 	//================================================================================

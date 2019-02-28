@@ -111,23 +111,17 @@ sap.ui.define([
 			"source": "test-resources/sap/m/qunit/pdfviewer/sample-file.pdf",
 			"popupHeaderTitle": "Custom header title",
 			"loaded": function () {
-				assert.ok(true, "'Load' event fired but should not.");
-			},
-			"error": function () {
-				assert.ok(false, "'Error' event fired");
+				assert.ok(true, "'Load' event fired.");
+
+				var oTitleNode = $('.sapMDialogTitle.sapMTitle');
+				assert.ok(oTitleNode.length === 1, 'Header has to be shown');
+				assert.ok(oTitleNode.find("*:contains('Custom header title')").length === 1, "Header contains correct title");
+				done();
 			}
 		};
 		oPdfViewer = TestUtils.createPdfViewer(oOptions);
 
 		oPdfViewer.open();
-
-		TestUtils.wait(2000)()
-			.then(function () {
-				var oTitleNode = $('.sapMDialogTitle.sapMTitle');
-				assert.ok(oTitleNode.length === 1, 'Header has to be shown');
-				assert.ok(oTitleNode.find("*:contains('Custom header title')").length === 1, "Header contains correct title");
-				done();
-			});
 	});
 
 	QUnit.test('Header is shown when the title is not filled', function (assert) {
@@ -137,26 +131,22 @@ sap.ui.define([
 		var oOptions = {
 			"source": "test-resources/sap/m/qunit/pdfviewer/sample-file.pdf",
 			"loaded": function () {
-				assert.ok(true, "'Load' event fired but should not.");
+				assert.ok(true, "'Load' event fired.");
+
+				var oHeaderNode = oPdfViewer.$('popup-header');
+				assert.ok(oHeaderNode.length === 1, 'Header has to be shown');
+				done();
 			},
-			"error": function () {
+			"error": function (err) {
 				assert.ok(false, "'Error' event fired");
+
+				assert.ok(false, err);
+				done();
 			}
 		};
 		oPdfViewer = TestUtils.createPdfViewer(oOptions);
 
 		oPdfViewer.open();
-
-		TestUtils.wait(2000)()
-			.then(function () {
-				var oHeaderNode = oPdfViewer.$('popup-header');
-				assert.ok(oHeaderNode.length === 1, 'Header has to be shown');
-				done();
-			})
-			.catch(function (err) {
-				assert.ok(false, err);
-				done();
-			});
 	});
 
 	QUnit.test('Header is shown when the title is empty string', function (assert) {
@@ -167,7 +157,11 @@ sap.ui.define([
 			"source": "test-resources/sap/m/qunit/pdfviewer/sample-file.pdf",
 			"popupHeaderTitle": "",
 			"loaded": function () {
-				assert.ok(true, "'Load' event fired but should not.");
+				assert.ok(true, "'Load' event fired.");
+
+				var oHeaderNode = oPdfViewer.$('popup-header');
+				assert.ok(oHeaderNode.length === 1, 'Header has to be shown');
+				done();
 			},
 			"error": function () {
 				assert.ok(false, "'Error' event fired");
@@ -176,13 +170,6 @@ sap.ui.define([
 		oPdfViewer = TestUtils.createPdfViewer(oOptions);
 
 		oPdfViewer.open();
-
-		TestUtils.wait(2000)()
-			.then(function () {
-				var oHeaderNode = oPdfViewer.$('popup-header');
-				assert.ok(oHeaderNode.length === 1, 'Header has to be shown');
-				done();
-			});
 	});
 
 	QUnit.test("Download button is of type 'Emphasized'", function (assert) {
@@ -193,6 +180,10 @@ sap.ui.define([
 			"source": "test-resources/sap/m/qunit/pdfviewer/sample-file.pdf",
 			"loaded": function () {
 				assert.ok(true, "'Load' event fired but should not.");
+
+				var oDownloadButton = sap.ui.getCore().byId(oPdfViewer.getId() + "-popupDownloadButton");
+				assert.ok(oDownloadButton.getType() === ButtonType.Emphasized, "Button is of type 'Emphasized'");
+				done();
 			},
 			"error": function () {
 				assert.ok(false, "'Error' event fired");
@@ -201,12 +192,6 @@ sap.ui.define([
 		oPdfViewer = TestUtils.createPdfViewer(oOptions);
 
 		oPdfViewer.open();
-		TestUtils.wait(2000)()
-			.then(function () {
-				var oDownloadButton = sap.ui.getCore().byId(oPdfViewer.getId() + "-popupDownloadButton");
-				assert.ok(oDownloadButton.getType() === ButtonType.Emphasized, "Button is of type 'Emphasized'");
-				done();
-			});
 	});
 
 	QUnit.test('Download button is shown', function (assert) {
@@ -217,6 +202,10 @@ sap.ui.define([
 			"source": "test-resources/sap/m/qunit/pdfviewer/sample-file.pdf",
 			"loaded": function () {
 				assert.ok(true, "'Load' event fired but should not.");
+
+				var oButtonNode = oPdfViewer.$('popupDownloadButton');
+				assert.ok(oButtonNode.length === 1, 'Button should be shown');
+				done();
 			},
 			"error": function () {
 				assert.ok(false, "'Error' event fired");
@@ -225,12 +214,6 @@ sap.ui.define([
 		oPdfViewer = TestUtils.createPdfViewer(oOptions);
 
 		oPdfViewer.open();
-		TestUtils.wait(2000)()
-			.then(function () {
-				var oButtonNode = oPdfViewer.$('popupDownloadButton');
-				assert.ok(oButtonNode.length === 1, 'Button should be shown');
-				done();
-			});
 	});
 
 	QUnit.test('Download button is hidden', function (assert) {
@@ -242,6 +225,10 @@ sap.ui.define([
 			"showDownloadButton": false,
 			"loaded": function () {
 				assert.ok(true, "'Load' event fired but should not.");
+
+				var oButtonNode = oPdfViewer.$('popupDownloadButton');
+				assert.ok(oButtonNode.length === 0, 'Button should be hidden');
+				done();
 			},
 			"error": function () {
 				assert.ok(false, "'Error' event fired");
@@ -250,12 +237,6 @@ sap.ui.define([
 		oPdfViewer = TestUtils.createPdfViewer(oOptions);
 
 		oPdfViewer.open();
-		TestUtils.wait(2000)()
-			.then(function () {
-				var oButtonNode = oPdfViewer.$('popupDownloadButton');
-				assert.ok(oButtonNode.length === 0, 'Button should be hidden');
-				done();
-			});
 	});
 
 });

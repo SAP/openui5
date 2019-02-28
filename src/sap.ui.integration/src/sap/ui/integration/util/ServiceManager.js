@@ -17,11 +17,11 @@ sap.ui.define([
 	 * @param {object} [mSettings] Initial settings for the new control
 	 *
 	 * @class
-	 * Parses the manifest for a certain card and decides which services needs to be instantiated
+	 * Parses an object and decides which services needs to be instantiated
 	 * and handles their lifecycle.
 	 * It also provides instances of the services by getService method.
 	 *
-	 * _mServiceFactoryReferences object format:
+	 * mServiceFactoryReferences object format:
 	 *
 	 *	"services": {
 	 *		"Navigation": {
@@ -38,7 +38,8 @@ sap.ui.define([
 	 * @version ${version}
 	 *
 	 * @constructor
-	 * @param {Object} _mServiceFactoryReferences A map with service descriptions.
+	 * @param {Object} mServiceFactoryReferences A map with service descriptions.
+	 * @param {Object} oServiceContext A context to be used for newly created service instances.
 	 * @private
 	 * @alias sap.ui.integration.util.ServiceManager
 	 */
@@ -46,17 +47,21 @@ sap.ui.define([
 		metadata: {
 			library: "sap.ui.integration"
 		},
-		constructor: function (_mServiceFactoryReferences) {
-			if (!_mServiceFactoryReferences) {
+		constructor: function (mServiceFactoryReferences, oServiceContext) {
+			if (!mServiceFactoryReferences) {
 				throw new Error("Missing manifest services reference!");
 			}
-			this._mServiceFactoryReferences = _mServiceFactoryReferences;
+			if (!oServiceContext) {
+				throw new Error("Missing context object");
+			}
+			this._mServiceFactoryReferences = mServiceFactoryReferences;
 			this._mServices = {};
+			this._oServiceContext = oServiceContext;
 		}
 	});
 
 	/**
-	 * Registers a card service which can then be available by getService(sServiceName).
+	 * Registers a service which can then be available by getService(sServiceName).
 	 * @param {string|Object} vService The name of the service or a service configuration object.
 	 * @param {Object} sInterface The interface of the service.
 	 * @returns {Promise} A promise resolved when the service instance is ready.
@@ -73,12 +78,9 @@ sap.ui.define([
 
 		if (!oServiceRef) {
 			oServiceRef = {};
-			oServiceRef.promise = ServiceManager._getService(this, sName, this._mServiceFactoryReferences)
+			oServiceRef.promise = ServiceManager._getService(this._oServiceContext, sName, this._mServiceFactoryReferences)
 				.then(function (oServiceInstance) {
 					oServiceRef.instance = oServiceInstance;
-					return oServiceRef.instance.enabled(/* Pass parameters */).then(function (bEnabled) {
-						oServiceRef.on = bEnabled;
-					});
 				}).catch(function (oError) {
 					Log.error(oError.message);
 				});
@@ -112,11 +114,7 @@ sap.ui.define([
 			}
 
 			this._mServices[sServiceInterface][sServiceName].promise.then(function () {
-				if (this._mServices[sServiceInterface][sServiceName].on) {
-					fnResolve(this._mServices[sServiceInterface][sServiceName].instance);
-				} else {
-					fnResolve(false);
-				}
+				fnResolve(this._mServices[sServiceInterface][sServiceName].instance);
 			}.bind(this)).catch(fnReject);
 		}.bind(this));
 	};

@@ -3,6 +3,7 @@
  */
 sap.ui.define([
 	'sap/ui/core/Control',
+	"sap/f/cards/ActionEnablement",
 	'sap/m/NumericContent',
 	'sap/m/Text',
 	'sap/f/cards/Data',
@@ -11,6 +12,7 @@ sap.ui.define([
 	"sap/f/cards/NumericHeaderRenderer"
 ], function (
 		Control,
+		ActionEnablement,
 		NumericContent,
 		Text,
 		Data,
@@ -124,6 +126,18 @@ sap.ui.define([
 				 */
 				press: {}
 			}
+		},
+		constructor: function (vId, mSettings) {
+			if (typeof vId !== "string") {
+				mSettings = vId;
+			}
+
+			if (mSettings && mSettings.serviceManager) {
+				this._oServiceManager = mSettings.serviceManager;
+				delete mSettings.serviceManager;
+			}
+
+			Control.apply(this, arguments);
 		}
 	});
 
@@ -326,6 +340,7 @@ sap.ui.define([
 			oControl = new NumericContent({
 				id: this.getId() + "-mainIndicator",
 				withMargin: false,
+				nullifyValue: false,
 				animateTextChange: false,
 				truncateValueTo: 5
 			});
@@ -333,6 +348,10 @@ sap.ui.define([
 		}
 
 		return oControl;
+	};
+
+	NumericHeader.prototype.ontap = function () {
+		this.firePress();
 	};
 
 	/**
@@ -343,7 +362,7 @@ sap.ui.define([
 	 * @param {map} mConfiguration A map containing the header configuration options.
 	 * @return {sap.f.cards.NumericHeader} The created NumericHeader
 	 */
-	NumericHeader.create = function(mConfiguration) {
+	NumericHeader.create = function(mConfiguration, oServiceManager) {
 		var mSettings = {
 			title: mConfiguration.title,
 			subtitle: mConfiguration.subTitle,
@@ -362,6 +381,10 @@ sap.ui.define([
 			mSettings.sideIndicators = mConfiguration.sideIndicators.map(function (mIndicator) { // TODO validate that it is an array and with no more than 2 elements
 				return new NumericSideIndicator(mIndicator);
 			});
+		}
+
+		if (oServiceManager) {
+			mSettings.serviceManager = oServiceManager;
 		}
 
 		var oHeader = new NumericHeader(mSettings);
@@ -393,8 +416,8 @@ sap.ui.define([
 			Data.fetch(oRequest).then(function (data) {
 				oModel.setData(data);
 				oModel.refresh();
-				this.fireEvent("_updated");
-			}.bind(this)).catch(function (oError) {
+				oHeader.fireEvent("_updated");
+			}).catch(function (oError) {
 				// TODO: Handle errors. Maybe add error message
 			});
 		}
@@ -438,6 +461,8 @@ sap.ui.define([
 
 		return sSideIndicatorIds;
 	};
+
+	ActionEnablement.enrich(NumericHeader);
 
 	return NumericHeader;
 });

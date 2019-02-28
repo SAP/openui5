@@ -332,11 +332,11 @@ sap.ui.define(['sap/ui/core/Core', 'sap/ui/model/TreeAutoExpandMode',
 	/**
 	 * Different modes for setting the auto expand mode on tree or analytical bindings.
 	 *
+	 * This is an alias for {@link sap.ui.model.TreeAutoExpandMode} and kept for compatibility reasons.
+	 *
 	 * @version ${version}
 	 * @enum {string}
 	 * @public
-	 * @borrows sap.ui.model.TreeAutoExpandMode.Sequential as Sequential
-	 * @borrows sap.ui.model.TreeAutoExpandMode.Bundled as Bundled
 	 */
 	thisLib.TreeAutoExpandMode = TreeAutoExpandMode;
 

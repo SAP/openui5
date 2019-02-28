@@ -7,8 +7,7 @@ sap.ui.define([
 	"sap/ui/core/Item",
 	"sap/m/Select",
 	"sap/m/Input",
-	"sap/ui/rta/dttool/controls/DTToolListItem",
-	"sap/ui/qunit/utils/waitForThemeApplied"
+	"sap/ui/rta/dttool/controls/DTToolListItem"
 ], function (
 	Table,
 	Column,
@@ -16,8 +15,7 @@ sap.ui.define([
 	Item,
 	Select,
 	Input,
-	DTToolListItem,
-	waitForThemeApplied
+	DTToolListItem
 ) {
 	"use strict";
 
@@ -168,5 +166,4 @@ sap.ui.define([
 		jQuery("#qunit-fixture").hide();
 	});
 
-	return waitForThemeApplied();
 });

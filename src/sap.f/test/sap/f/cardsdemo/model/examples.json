@@ -96,9 +96,21 @@
 		"group": "Other Card Examples"
 	},
 	{
-		"title": "Services",
-		"description": "Navigation & Data services",
-		"route": "services",
+		"title": "Navigation Action",
+		"description": "Navigation action examples",
+		"route": "navigationService",
+		"group": "Other Card Examples"
+	},
+	{
+		"title": "Data Service",
+		"description": "Examples for FLP data scenarios",
+		"route": "dataService",
+		"group": "Other Card Examples"
+	},
+	{
+		"title": "Loading behavior",
+		"description": "Busy indicators and heights examples",
+		"route": "delayedLoading",
 		"group": "Other Card Examples"
 	},
 	{

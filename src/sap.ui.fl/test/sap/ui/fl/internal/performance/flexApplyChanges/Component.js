@@ -1,23 +1,11 @@
 sap.ui.define([
 	"sap/ui/core/UIComponent",
-	"sap/ui/fl/FakeLrepConnectorLocalStorage",
-	"sap/ui/rta/util/UrlParser",
-	"sap/ui/fl/FakeLrepConnector",
-	"sap/ui/core/util/MockServer",
-	"sap/ui/model/resource/ResourceModel",
-	"sap/ui/model/odata/v2/ODataModel",
-	"sap/ui/model/json/JSONModel",
-	"sap/ui/rta/Utils"
+	"sap/ui/fl/FakeLrepConnectorSessionStorage",
+	"sap/ui/fl/FakeLrepConnector"
 ], function(
 	UIComponent,
-	FakeLrepConnectorLocalStorage,
-	UrlParser,
-	FakeLrepConnector,
-	MockServer,
-	ResourceModel,
-	ODataModel,
-	JSONModel,
-	Utils
+	FakeLrepConnectorSessionStorage,
+	FakeLrepConnector
 ) {
 
 	"use strict";
@@ -44,7 +32,7 @@ sap.ui.define([
 			var mAppManifest = this.getManifestEntry("sap.app");
 			var mSettings = {};
 			mSettings.sInitialComponentJsonPath = jQuery.sap.getModulePath("sap.ui.fl.internal.performance.flexData").replace('resources', 'test-resources') + "/FakeLrepMassiveChanges.json";
-			FakeLrepConnectorLocalStorage.enableFakeConnector(
+			FakeLrepConnectorSessionStorage.enableFakeConnector(
 				mSettings,
 				mAppManifest.id + '.Component',
 				mAppManifest.applicationVersion.version);

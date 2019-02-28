@@ -10,10 +10,10 @@ sap.ui.define([
 	'./PropertyBinding',
 	'./CompositeType',
 	'./CompositeDataState',
+	"sap/ui/base/SyncPromise",
 	"sap/base/util/deepEqual",
 	"sap/base/assert",
-	"sap/base/Log",
-	"sap/ui/thirdparty/jquery"
+	"sap/base/Log"
 ],
 	function(
 		DataType,
@@ -22,10 +22,10 @@ sap.ui.define([
 		PropertyBinding,
 		CompositeType,
 		CompositeDataState,
+		SyncPromise,
 		deepEqual,
 		assert,
-		Log,
-		jQuery
+		Log
 	) {
 	"use strict";
 
@@ -77,14 +77,9 @@ sap.ui.define([
 	};
 
 	CompositeBinding.prototype.isResolved = function() {
-		var bResolved = false;
-		jQuery.each(this.aBindings, function(i, oBinding) {
-			bResolved = oBinding.isResolved();
-			if (!bResolved) {
-				return false;
-			}
+		return this.aBindings.every(function(oBinding) {
+			return oBinding.isResolved();
 		});
-		return bResolved;
 	};
 
 	/**
@@ -118,7 +113,7 @@ sap.ui.define([
 	 * @param {object} oContext the new context for the bindings
 	 */
 	CompositeBinding.prototype.setContext = function(oContext) {
-		jQuery.each(this.aBindings, function(i, oBinding){
+		this.aBindings.forEach(function(oBinding) {
 			// null context could also be set
 			if (!oContext || oBinding.updateRequired(oContext.getModel())) {
 				oBinding.setContext(oContext);
@@ -135,17 +130,15 @@ sap.ui.define([
 	 * @public
 	 */
 	CompositeBinding.prototype.setValue = function(aValues) {
-		var oValue;
 		if (this.bSuspended) {
 			return;
 		}
-		jQuery.each(this.aBindings, function(i, oBinding) {
-			oValue = aValues[i];
+		this.aBindings.forEach(function(oBinding, i) {
+			var oValue = aValues[i];
 			if (oValue !== undefined) {
 				oBinding.setValue(oValue);
 			}
 		});
-
 		this.getDataState().setValue(this.getValue());
 	};
 
@@ -157,27 +150,15 @@ sap.ui.define([
 	 * @public
 	 */
 	CompositeBinding.prototype.getValue = function() {
-		var aValues = [],
-		oValue;
-
-		jQuery.each(this.aBindings, function(i, oBinding) {
-			oValue = oBinding.getValue();
-			aValues.push(oValue);
+		return this.aBindings.map(function(oBinding) {
+			return oBinding.getValue();
 		});
-
-		return aValues;
 	};
 
 	CompositeBinding.prototype.getOriginalValue = function() {
-		var aValues = [],
-		oValue;
-
-		jQuery.each(this.aBindings, function(i, oBinding) {
-			oValue = oBinding.getDataState().getOriginalValue();
-			aValues.push(oValue);
+		return this.aBindings.map(function(oBinding) {
+			return oBinding.getDataState().getOriginalValue();
 		});
-
-		return aValues;
 	};
 
 	/**
@@ -201,13 +182,7 @@ sap.ui.define([
 				return this.getInternalValue();
 			default:
 				oInternalType = this.sInternalType && DataType.getType(this.sInternalType);
-				if (this.bRawValues) {
-					aValues = this.getValue();
-				} else {
-					this.aBindings.forEach(function(oBinding) {
-						aValues.push(this.bInternalValues ? oBinding.getInternalValue() : oBinding.getExternalValue());
-					}.bind(this));
-				}
+				aValues = this.getCurrentValues();
 
 				if (this.fnFormatter) {
 					oValue = this.fnFormatter.apply(this, aValues);
@@ -236,8 +211,8 @@ sap.ui.define([
 	 * @public
 	 */
 	CompositeBinding.prototype.setExternalValue = function(oValue) {
-		var aValues, aCurrentValues,
-			oInternalType, oDataState;
+		var oInternalType, oDataState, pValues,
+			that = this;
 
 		if (this.sInternalType === "raw") {
 			this.setRawValue(oValue);
@@ -258,49 +233,48 @@ sap.ui.define([
 		oDataState = this.getDataState();
 
 		if (this.oType) {
-			try {
-				if (this.oType.getParseWithValues()) {
-					aCurrentValues = [];
-					if (this.bRawValues) {
-						aCurrentValues = this.getValue();
-					} else {
-						jQuery.each(this.aBindings, function(i, oBinding) {
-							aCurrentValues.push(oBinding.getExternalValue());
-						});
-					}
+			pValues = SyncPromise.resolve().then(function() {
+				var aCurrentValues;
+				if (that.oType.getParseWithValues()) {
+					aCurrentValues = that.getCurrentValues();
 				}
-				aValues = this.oType.parseValue(oValue, this.sInternalType, aCurrentValues);
-				this.oType.validateValue(aValues);
-			} catch (oException) {
+				return that.oType.parseValue(oValue, that.sInternalType, aCurrentValues);
+			}).then(function(aValues) {
+				var aValidateValues = that.getValidateValues(aValues);
+				return SyncPromise.all([aValues, that.oType.validateValue(aValidateValues)]);
+			}).then(function(aResult) {
+				return aResult[0];
+			}).catch(function(oException) {
 				oDataState.setInvalidValue(oValue);
-				this.checkDataState(); //data ui state is dirty inform the control
+				that.checkDataState(); //data ui state is dirty inform the control
 				throw oException;
-			}
+			});
 		} else if (Array.isArray(oValue) && oInternalType instanceof DataType && oInternalType.isArrayType()) {
-			aValues = oValue;
+			pValues = SyncPromise.resolve(oValue);
 		} else if (typeof oValue == "string") {
 			// default: multiple values are split by space character together if no formatter or type specified
-			aValues = oValue.split(" ");
+			pValues = SyncPromise.resolve(oValue.split(" "));
 		} else {
-			aValues = [oValue];
+			pValues = SyncPromise.resolve([oValue]);
 		}
 
-		this.aBindings.forEach(function(oBinding, iIndex) {
-			oValue = aValues[iIndex];
-			// if a value is undefined skip the update of the nestend binding - this allows partial updates
-			if (oValue !== undefined) {
-				if (this.bRawValues) {
-					oBinding.setRawValue(oValue);
-				} else if (this.bInternalValues) {
-					oBinding.setInternalValue(oValue);
-				} else {
-					oBinding.setExternalValue(oValue);
+		return pValues.then(function(aValues) {
+			that.aBindings.forEach(function(oBinding, iIndex) {
+				oValue = aValues[iIndex];
+				// if a value is undefined skip the update of the nestend binding - this allows partial updates
+				if (oValue !== undefined) {
+					if (that.bRawValues) {
+						oBinding.setRawValue(oValue);
+					} else if (that.bInternalValues) {
+						oBinding.setInternalValue(oValue);
+					} else {
+						oBinding.setExternalValue(oValue);
+					}
 				}
-			}
-		}.bind(this));
-
-		oDataState.setValue(this.getValue());
-		oDataState.setInvalidValue(undefined);
+			});
+			oDataState.setValue(that.getValue());
+			oDataState.setInvalidValue(undefined);
+		}).unwrap();
 	};
 
 	/**
@@ -326,34 +300,43 @@ sap.ui.define([
 	 * @public
 	 */
 	CompositeBinding.prototype.setInternalValue = function(aValues) {
-		var oDataState = this.getDataState(), aValidateValues = aValues;
+		var oDataState = this.getDataState(), pValues,
+			that = this;
+
 		if (this.oType) {
-			try {
-				if (!this.bInternalValues) {
-					aValidateValues = this.aBindings.map(function(oBinding, i) {
+			pValues = SyncPromise.resolve(aValues).then(function(aValidateValues){
+				if (!that.bInternalValues) {
+					aValidateValues = that.aBindings.map(function(oBinding, i) {
 						return oBinding._internalToRaw(aValidateValues[i]);
 					});
-					if (!this.bRawValues) {
-						aValidateValues = this.aBindings.map(function(oBinding, i) {
+					if (!that.bRawValues) {
+						aValidateValues = that.aBindings.map(function(oBinding, i) {
 							return oBinding._rawToExternal(aValidateValues[i]);
 						});
 					}
 				}
-				this.oType.validateValue(aValidateValues);
-			} catch (oException) {
+				return that.oType.validateValue(aValidateValues);
+			}).then(function() {
+				return aValues;
+			}).catch(function(oException) {
 				oDataState.setInvalidValue(aValues);
-				this.checkDataState(); //data ui state is dirty inform the control
+				that.checkDataState(); //data ui state is dirty inform the control
 				throw oException;
-			}
+			});
+		} else {
+			pValues = SyncPromise.resolve(aValues);
 		}
-		this.aBindings.forEach(function(oBinding, iIndex) {
-			var vValue = aValues[iIndex];
-			if (vValue !== undefined) {
-				oBinding.setInternalValue(vValue);
-			}
-		});
-		oDataState.setValue(this.getValue());
-		oDataState.setInvalidValue(undefined);
+
+		return pValues.then(function() {
+			that.aBindings.forEach(function(oBinding, iIndex) {
+				var vValue = aValues[iIndex];
+				if (vValue !== undefined) {
+					oBinding.setInternalValue(vValue);
+				}
+			});
+			oDataState.setValue(that.getValue());
+			oDataState.setInvalidValue(undefined);
+		}).unwrap();
 	};
 
 	/**
@@ -379,35 +362,89 @@ sap.ui.define([
 	 * @public
 	 */
 	CompositeBinding.prototype.setRawValue = function(aValues) {
-		var oDataState = this.getDataState(), aValidateValues = aValues;
+		var oDataState = this.getDataState(), pValues,
+			that = this;
+
 		if (this.oType) {
-			try {
-				if (!this.bRawValues) {
-					if (this.bInternalValues) {
-						aValidateValues = this.aBindings.map(function(oBinding, i) {
+			pValues = SyncPromise.resolve(aValues).then(function(aValidateValues){
+				if (!that.bRawValues) {
+					if (that.bInternalValues) {
+						aValidateValues = that.aBindings.map(function(oBinding, i) {
 							return oBinding._rawToInternal(aValidateValues[i]);
 						});
 					} else {
-						aValidateValues = this.aBindings.map(function(oBinding, i) {
+						aValidateValues = that.aBindings.map(function(oBinding, i) {
 							return oBinding._rawToExternal(aValidateValues[i]);
 						});
 					}
 				}
-				this.oType.validateValue(aValidateValues);
-			} catch (oException) {
+				return that.oType.validateValue(aValidateValues);
+			}).then(function() {
+				return aValues;
+			}).catch(function(oException) {
 				oDataState.setInvalidValue(aValues);
-				this.checkDataState(); //data ui state is dirty inform the control
+				that.checkDataState(); //data ui state is dirty inform the control
 				throw oException;
-			}
+			});
+		} else {
+			pValues = SyncPromise.resolve(aValues);
 		}
-		this.aBindings.forEach(function(oBinding, iIndex) {
-			var vValue = aValues[iIndex];
-			if (vValue !== undefined) {
-				oBinding.setRawValue(vValue);
-			}
+
+		return pValues.then(function() {
+			that.aBindings.forEach(function(oBinding, iIndex) {
+				var vValue = aValues[iIndex];
+				if (vValue !== undefined) {
+					oBinding.setRawValue(vValue);
+				}
+			});
+			oDataState.setValue(that.getValue());
+			oDataState.setInvalidValue(undefined);
+		}).unwrap();
+	};
+
+	/**
+	 * Returns an array with the current values as available in the bindings.
+	 * Depending on the raw/internal value flags, this may return raw/internal values.
+	 *
+	 * @return {array} the values of all bindings
+	 *
+	 * @private
+	 */
+	CompositeBinding.prototype.getCurrentValues = function() {
+		if (this.bRawValues) {
+			return this.getRawValue();
+		} else if (this.bInternalValues) {
+			return this.getInternalValue();
+		} else {
+			return this.aBindings.map(function(oBinding) {
+				return oBinding.getExternalValue();
+			});
+		}
+	};
+
+	/**
+	 * Returns values to validate. In case the value array does contain undefined values
+	 * they will be filled with actual data of nested bindings. This ensures the validate
+	 * method always gets the full set of values to validate, even if partial updates are
+	 * used.
+	 *
+	 * @return {array} Array of values used for validation
+	 *
+	 * @private
+	 */
+	CompositeBinding.prototype.getValidateValues = function(aValues) {
+		var aCurrentValues, bPartialUpdate,
+			aValidateValues = aValues;
+		bPartialUpdate = this.aBindings.some(function(vPart, i) {
+			return aValues[i] === undefined;
 		});
-		oDataState.setValue(this.getValue());
-		oDataState.setInvalidValue(undefined);
+		if (bPartialUpdate) {
+			aCurrentValues = this.getCurrentValues();
+			aValidateValues = aCurrentValues.map(function(vValue, i) {
+				return aValues[i] === undefined ? vValue : aValues[i];
+			});
+		}
+		return aValidateValues;
 	};
 
 	/**
@@ -470,7 +507,7 @@ sap.ui.define([
 		};
 		this.attachEvent("change", fnFunction, oListener);
 		if (this.aBindings) {
-			jQuery.each(this.aBindings, function(i,oBinding) {
+			this.aBindings.forEach(function(oBinding) {
 				oBinding.attachChange(that.fChangeHandler);
 			});
 		}
@@ -486,7 +523,7 @@ sap.ui.define([
 		var that = this;
 		this.detachEvent("change", fnFunction, oListener);
 		if (this.aBindings) {
-			jQuery.each(this.aBindings, function(i,oBinding) {
+			this.aBindings.forEach(function(oBinding) {
 				oBinding.detachChange(that.fChangeHandler);
 			});
 		}
@@ -510,7 +547,7 @@ sap.ui.define([
 		};
 		this.attachEvent("DataStateChange", fnFunction, oListener);
 		if (this.aBindings) {
-			jQuery.each(this.aBindings, function(i,oBinding) {
+			this.aBindings.forEach(function(oBinding) {
 				oBinding.attachEvent("DataStateChange", that.fDataStateChangeHandler);
 			});
 		}
@@ -526,7 +563,7 @@ sap.ui.define([
 		var that = this;
 		this.detachEvent("DataStateChange", fnFunction, oListener);
 		if (this.aBindings) {
-			jQuery.each(this.aBindings, function(i,oBinding) {
+			this.aBindings.forEach(function(oBinding) {
 				oBinding.detachEvent("DataStateChange", that.fDataStateChangeHandler);
 			});
 		}
@@ -558,7 +595,7 @@ sap.ui.define([
 
 		this.attachEvent("AggregatedDataStateChange", fnFunction, oListener);
 		if (this.aBindings) {
-			jQuery.each(this.aBindings, function(i,oBinding) {
+			this.aBindings.forEach(function(oBinding) {
 				oBinding.attachEvent("DataStateChange", that.fDataStateChangeHandler);
 			});
 		}
@@ -574,7 +611,7 @@ sap.ui.define([
 		var that = this;
 		this.detachEvent("AggregatedDataStateChange", fnFunction, oListener);
 		if (this.aBindings) {
-			jQuery.each(this.aBindings, function(i,oBinding) {
+			this.aBindings.forEach(function(oBinding) {
 				oBinding.detachEvent("DataStateChange", that.fDataStateChangeHandler);
 			});
 		}
@@ -589,7 +626,7 @@ sap.ui.define([
 	 */
 	CompositeBinding.prototype.updateRequired = function(oModel) {
 		var bUpdateRequired = false;
-		jQuery.each(this.aBindings, function(i, oBinding){
+		this.aBindings.forEach(function(oBinding) {
 			bUpdateRequired = bUpdateRequired || oBinding.updateRequired(oModel);
 		});
 		return bUpdateRequired;
@@ -606,7 +643,7 @@ sap.ui.define([
 	CompositeBinding.prototype.initialize = function() {
 		this.bPreventUpdate = true;
 		if (this.aBindings) {
-			jQuery.each(this.aBindings, function(i,oBinding) {
+			this.aBindings.forEach(function(oBinding) {
 				oBinding.initialize();
 			});
 		}
@@ -641,7 +678,7 @@ sap.ui.define([
 	 */
 	CompositeBinding.prototype.suspend = function() {
 		this.bSuspended = true;
-		jQuery.each(this.aBindings, function(i, oBinding) {
+		this.aBindings.forEach(function(oBinding) {
 			oBinding.suspend();
 		});
 	};
@@ -655,7 +692,7 @@ sap.ui.define([
 	 * @public
 	 */
 	CompositeBinding.prototype.resume = function() {
-		jQuery.each(this.aBindings, function(i, oBinding) {
+		this.aBindings.forEach(function(oBinding) {
 			oBinding.resume();
 		});
 		this.bSuspended = false;

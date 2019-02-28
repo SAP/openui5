@@ -389,7 +389,12 @@ sap.ui.define([
 		this.bIgnoreOpenerDOMRef = false;
 
 		// Open the sap.ui.core.Popup
-		this.getPopup().open(0, my, at, of, offset || "0 0", collision || "_sapUiCommonsMenuFlip _sapUiCommonsMenuFlip", true);
+		this.getPopup().open(0, my, at, of, offset || "0 0", collision || "_sapUiCommonsMenuFlip _sapUiCommonsMenuFlip", function() {
+			var oOfDom = this.getPopup()._getOfDom(of);
+			if (!oOfDom || !jQuery(oOfDom).is(":visible")) {
+				this.close();
+			}
+		}.bind(this));
 		this.bOpen = true;
 
 		Device.resize.attachHandler(this._handleResizeChange, this);
@@ -594,6 +599,8 @@ sap.ui.define([
 		oEvent.stopPropagation();
 	};
 
+	Menu.prototype.onsapnextmodifiers = Menu.prototype.onsapnext;
+
 	Menu.prototype.onsapprevious = function(oEvent){
 		//left or up (RTL: right or up)
 		if (oEvent.keyCode != KeyCodes.ARROW_UP) {
@@ -613,6 +620,8 @@ sap.ui.define([
 		oEvent.preventDefault();
 		oEvent.stopPropagation();
 	};
+
+	Menu.prototype.onsappreviousmodifiers = Menu.prototype.onsapprevious;
 
 	Menu.prototype.onsaphome = function(oEvent){
 		//Go to the first selectable item

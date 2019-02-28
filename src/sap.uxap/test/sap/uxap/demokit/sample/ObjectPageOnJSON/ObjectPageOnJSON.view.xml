@@ -24,8 +24,8 @@
 							  isObjectSubtitleAlwaysVisible="false">
 				<actions>
 					<ObjectPageHeaderActionButton icon="sap-icon://pull-down" text="show section" type="Emphasized" tooltip="pull-down"/>
-					<ObjectPageHeaderActionButton icon="sap-icon://show" text="show state" type="Emphasized" tooltip="show"/>
-					<ObjectPageHeaderActionButton text="Toggle Footer" hideIcon="true" hideText="false" type="Emphasized" press="toggleFooter"/>
+					<ObjectPageHeaderActionButton icon="sap-icon://show" text="show state" tooltip="show"/>
+					<ObjectPageHeaderActionButton text="Toggle Footer" hideIcon="true" hideText="false" press="toggleFooter"/>
 				</actions>
 				<breadcrumbs>
 					<m:Breadcrumbs id="breadcrumbsId" currentLocationText="Object Page Example" >

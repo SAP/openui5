@@ -124,6 +124,7 @@ sap.ui.define([
 				this._oRouter.getRoute("entity").attachPatternMatched(this._onEntityMatched, this);
 				this._oRouter.getRoute("sample").attachPatternMatched(this._onSampleMatched, this);
 				this._oRouter.getRoute("code").attachPatternMatched(this._onSampleMatched, this);
+				this._oRouter.getRoute("codeFile").attachPatternMatched(this._onSampleMatched, this);
 				this._oRouter.getRoute("controls").attachPatternMatched(this._onControlsMatched, this);
 				this._oRouter.getRoute("controlsMaster").attachPatternMatched(this._onControlsMasterMatched, this);
 
@@ -299,7 +300,7 @@ sap.ui.define([
 
 			_onMatched: function(sName, oEvent) {
 				var oEntityModel = this._getList().getModel(),
-					sEntityId = oEvent.getParameter("arguments").id;
+					sEntityId = oEvent.getParameter("arguments").entityId;
 
 				this.showMasterSide();
 				this._topicId = sName + sEntityId;

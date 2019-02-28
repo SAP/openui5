@@ -488,11 +488,15 @@
 				amd: true,
 				deps: ['sap/viz/libs/sap-viz', 'sap/viz/ui5/container/libs/common/libs/rgbcolor/rgbcolor_static']
 			},
-			'sap/viz/ui5/controls/libs/sap-viz-vizframe': {
+			'sap/viz/ui5/controls/libs/sap-viz-vizframe/sap-viz-vizframe': {
 				amd: true,
 				deps: ['sap/viz/libs/sap-viz-info-charts']
 			},
-			'sap/viz/ui5/controls/libs/sap-viz-vizservices': {
+			'sap/viz/ui5/controls/libs/sap-viz-vizservices/sap-viz-vizservices': {
+				amd: true,
+				deps: ['sap/viz/libs/sap-viz-info-charts']
+			},
+			'sap/viz/resources/chart/templates/standard_fiori/template': {
 				amd: true,
 				deps: ['sap/viz/libs/sap-viz-info-charts']
 			}
@@ -504,8 +508,7 @@
 	if ( typeof ES6Promise !== 'undefined' ) {
 		defineModuleSync('sap/ui/thirdparty/es6-promise.js', ES6Promise);
 	}
-	defineModuleSync('sap/ui/thirdparty/es6-object-assign.js', null);
-	defineModuleSync('sap/ui/thirdparty/es6-string-methods.js', null);
+	defineModuleSync('sap/ui/thirdparty/es6-shim-nopromise.js', null);
 
 	defineModuleSync('ui5loader.js', null);
 	defineModuleSync('ui5loader-autoconfig.js', null);

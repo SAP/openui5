@@ -1,0 +1,25 @@
+{
+	"sap.app": {
+		"id": "sap.uxap.sample.ObjectPageHeaderActionButtons",
+		"applicationVersion": {
+			"version": "1.0.0"
+		}
+	},
+	"sap.ui5": {
+		"rootView": "sap.uxap.sample.ObjectPageHeaderActionButtons.ObjectPageHeaderActionButtons",
+		"libs": {
+			"sap.m": {}
+		},
+		"config": {
+			"sample": {
+				"stretch": true,
+				"files": [
+					"ObjectPageHeaderActionButtons.view.xml",
+					"../AnchorBar/mySimpleBlock.js",
+					"../AnchorBar/mySimpleBlock.view.xml",
+					"manifest.json"
+				]
+			}
+		}
+	}
+}

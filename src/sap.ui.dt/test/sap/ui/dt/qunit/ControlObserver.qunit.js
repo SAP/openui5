@@ -2,13 +2,11 @@
 
 sap.ui.define([
 	"sap/ui/dt/ControlObserver",
-	"sap/m/Button",
-	"sap/ui/qunit/utils/waitForThemeApplied"
+	"sap/m/Button"
 ],
 function (
 	ControlObserver,
-	Button,
-	waitForThemeApplied
+	Button
 ) {
 	'use strict';
 
@@ -26,28 +24,26 @@ function (
 			this.oButton.destroy();
 		}
 	}, function () {
-		QUnit.test("when the property of the Button is changed", function(assert) {
+		QUnit.test("when the property of the Button is modified", function (assert) {
 			var done = assert.async();
 
-			this.oControlObserver.attachAfterRendering(function(oEvent) {
-				assert.ok(oEvent, 'DomChanged event is fired');
-				done();
-			});
-
-			this.oButton.rerender();
-			sap.ui.getCore().applyChanges();
-		});
-
-		QUnit.test("when the property of the Button is modified", function(assert) {
-			var done = assert.async();
-
-			this.oControlObserver.attachEventOnce("modified", function(oEvent) {
+			this.oControlObserver.attachEventOnce("modified", function (oEvent) {
 				assert.ok(oEvent, 'then a "Changed" event is fired because of the property change');
 				done();
 			});
 
 			this.oButton.setText("test");
-			sap.ui.getCore().applyChanges();
+		});
+
+		QUnit.test("when the Button is re-rendered", function (assert) {
+			var done = assert.async();
+
+			this.oControlObserver.attachEventOnce("modified", function (oEvent) {
+				assert.ok(oEvent.getParameter("type") === "afterRendering", 'DomChanged event is fired');
+				done();
+			});
+
+			this.oButton.rerender();
 		});
 	});
 
@@ -55,5 +51,4 @@ function (
 		jQuery("#qunit-fixture").hide();
 	});
 
-	return waitForThemeApplied();
 });

@@ -44,8 +44,10 @@ sap.ui.define([
 		 * @param {sap.ui.core.RenderManager} oRm The RenderManager that can be used for writing to the render output buffer.
 		 * @param {sap.ui.core.Control} oControl An object representation of the control that should be rendered.
 		 */
-		ComboBoxTextFieldRenderer.writeOuterAttributes = function(oRm, oControl) {
+		ComboBoxTextFieldRenderer.writeAccAttributes = function(oRm, oControl) {
 			if (sap.ui.getCore().getConfiguration().getAccessibility()) {
+				oRm.writeAttribute("aria-haspopup", "listbox");
+				oRm.writeAttribute("aria-autocomplete", "inline");
 				oRm.writeAttribute("role", "combobox");
 			}
 		};
@@ -57,18 +59,7 @@ sap.ui.define([
 		 */
 		ComboBoxTextFieldRenderer.getAriaRole = function() {};
 
-		/**
-		 * Retrieves the accessibility state of the control.
-		 * To be overwritten by subclasses.
-		 *
-		 * @param {sap.ui.core.Control} oControl An object representation of the control that should be rendered.
-		 * @returns {object} The accessibility state of the control
-		 */
-		ComboBoxTextFieldRenderer.getAccessibilityState = function(oControl) {
-			var mAccessibilityState = InputBaseRenderer.getAccessibilityState.call(this, oControl);
-			mAccessibilityState.autocomplete = "both";
-			return mAccessibilityState;
-		};
+
 		/**
 		 * Returns the inner aria describedby ids for the accessibility.
 		 *

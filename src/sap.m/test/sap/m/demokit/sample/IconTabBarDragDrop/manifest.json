@@ -1,0 +1,27 @@
+{
+	"sap.app": {
+		"id": "sap.m.sample.IconTabBarDragDrop",
+		"applicationVersion": {
+			"version": "1.0.0"
+		}
+	},
+	"sap.ui5": {
+		"rootView": {
+			"viewName": "sap.m.sample.IconTabBarDragDrop.IconTabBarDragDrop",
+			"type": "XML",
+			"async": true
+		},
+		"libs": {
+			"sap.m": {}
+		},
+		"config": {
+			"sample": {
+				"files": [
+					"IconTabBarDragDrop.view.xml",
+					"IconTabBarDragDrop.controller.js",
+					"manifest.json"
+				]
+			}
+		}
+	}
+}

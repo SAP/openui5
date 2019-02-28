@@ -83,12 +83,18 @@ function(
 	var _onElementModified = function(oEvent) {
 		var oParams = oEvent.getParameters();
 		var aRelevantOverlays;
-		var oOverlay = sap.ui.getCore().byId(oParams.id);
-		if ((oParams.type === "propertyChanged" && oParams.name === "visible")) {
+		var oOverlay = oEvent.getSource();
+		if (oParams.type === "propertyChanged" && oParams.name === "visible") {
 			aRelevantOverlays = this._getRelevantOverlays(oOverlay);
 			this.evaluateEditable(aRelevantOverlays, {onRegistration: false});
-		} else if (oParams.type === "overlayRendered") {
-			this.evaluateEditable([oOverlay], {onRegistration: true});
+		} else if (oParams.type === "afterRendering") {
+			if (this.getDesignTime().getStatus() === 'synced') {
+				this.evaluateEditable([oOverlay], {onRegistration: false});
+			} else {
+				this.getDesignTime().attachEventOnce("synced", function () {
+					this.evaluateEditable([oOverlay], {onRegistration: false});
+				}, this);
+			}
 		} else if (oParams.type === "insertAggregation" || oParams.type === "removeAggregation") {
 			aRelevantOverlays = this._getRelevantOverlays(oOverlay, oParams.name);
 			this.evaluateEditable(aRelevantOverlays, {onRegistration: false});

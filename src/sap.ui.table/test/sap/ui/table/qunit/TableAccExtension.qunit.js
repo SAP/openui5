@@ -530,6 +530,9 @@ sap.ui.define([
 	QUnit.test("Other ARIA Attributes of Data Cell", function(assert) {
 		var $Elem = oTable.$("rows-row0-col0");
 		assert.strictEqual($Elem.attr("role"), "gridcell", "role");
+		checkAriaSelected($Elem.attr("aria-selected"), true, assert);
+		$Elem = oTable.$("rows-row1-col0");
+		checkAriaSelected($Elem.attr("aria-selected"), false, assert);
 		$Elem = oTreeTable.$("rows-row0-col0");
 		assert.strictEqual($Elem.attr("role"), "gridcell", "role");
 		assert.strictEqual($Elem.attr("aria-level"), "1", "aria-level");
@@ -538,6 +541,11 @@ sap.ui.define([
 		assert.strictEqual($Elem.attr("role"), "gridcell", "role");
 		assert.strictEqual($Elem.attr("aria-level"), "1", "aria-level");
 		assert.strictEqual($Elem.attr("aria-expanded"), "false", "aria-expanded");
+		oTable.rerender();
+		$Elem = oTable.$("rows-row0-col0");
+		checkAriaSelected($Elem.attr("aria-selected"), true, assert);
+		$Elem = oTable.$("rows-row1-col0");
+		checkAriaSelected($Elem.attr("aria-selected"), false, assert);
 	});
 
 	QUnit.module("Column Header", {
@@ -816,6 +824,11 @@ sap.ui.define([
 	QUnit.test("Other ARIA Attributes of Row Header", function(assert) {
 		var $Elem = oTable.$("rowsel0");
 		assert.strictEqual($Elem.attr("role"), "rowheader", "role");
+		checkAriaSelected($Elem.attr("aria-selected"), true, assert);
+		$Elem = oTable.$("rowsel1");
+		checkAriaSelected($Elem.attr("aria-selected"), false, assert);
+		oTable.rerender();
+		$Elem = oTable.$("rowsel0");
 		checkAriaSelected($Elem.attr("aria-selected"), true, assert);
 		$Elem = oTable.$("rowsel1");
 		checkAriaSelected($Elem.attr("aria-selected"), false, assert);

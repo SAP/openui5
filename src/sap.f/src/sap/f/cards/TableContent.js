@@ -75,15 +75,15 @@ sap.ui.define([
 			return oTable;
 		};
 
-		TableContent.prototype.setConfiguration = function (oContent) {
+		TableContent.prototype.setConfiguration = function (oConfiguration) {
 			BaseContent.prototype.setConfiguration.apply(this, arguments);
 
-			if (!oContent) {
+			if (!oConfiguration) {
 				return;
 			}
 
-			if (oContent.columns) {
-				this._setColumns(oContent.columns);
+			if (oConfiguration.columns) {
+				this._setColumns(oConfiguration.columns);
 			}
 		};
 

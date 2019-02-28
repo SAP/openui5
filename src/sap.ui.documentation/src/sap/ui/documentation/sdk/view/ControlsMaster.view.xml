@@ -14,7 +14,7 @@
 		<customHeader>
 			<Toolbar width="100%">
 				<SearchField id="searchField" placeholder="Filter" liveChange="handleListFilter" class="sapUiDocumentationFilterField" />
-				<Button id="listFilterSettings" icon="sap-icon://drop-down-list" press="handleListSettings" />
+				<Button id="listFilterSettings" icon="sap-icon://drop-down-list" press="handleListSettings" tooltip="Group / Filter"/>
 				<Button id="sampleSettings" icon="sap-icon://action-settings" press="handleSettings" />
 			</Toolbar>
 		</customHeader>

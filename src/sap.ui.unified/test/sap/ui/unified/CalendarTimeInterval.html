@@ -263,7 +263,7 @@
 			var oStartDate = new Date();
 			oStartDate.setHours(oStartDate.getHours() - 1);
 			oCal = new sap.ui.unified.CalendarTimeInterval("Cal2",{
-				width: "304px",
+				width: "500px",
 				startDate: oStartDate,
 				items: 6,
 				intervalMinutes: 30,
@@ -307,6 +307,7 @@
 			}).placeAt("event2");
 
 			oCal = new sap.ui.unified.CalendarTimeInterval("Cal3",{
+				width: "1000px",
 				items: 24,
 				intervalMinutes: 120,
 				intervalSelection: false,

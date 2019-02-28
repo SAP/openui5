@@ -9,7 +9,6 @@ sap.ui.define([
 	"sap/ui/fl/variants/VariantManagement",
 	"sap/ui/fl/variants/VariantModel",
 	"sap/ui/fl/FlexControllerFactory",
-	"sap/ui/qunit/utils/waitForThemeApplied",
 	"sap/ui/thirdparty/sinon-4"
 ], function (
 	FlUtils,
@@ -20,7 +19,6 @@ sap.ui.define([
 	VariantManagement,
 	VariantModel,
 	FlexControllerFactory,
-	waitForThemeApplied,
 	sinon
 ) {
 	'use strict';
@@ -53,7 +51,7 @@ sap.ui.define([
 				}.bind(this)
 			};
 
-			this.oGetAppComponentForControlStub = sinon.stub(FlUtils, "_getAppComponentForComponent").returns(oMockedAppComponent);
+			this.oGetAppComponentForControlStub = sinon.stub(FlUtils, "getAppComponentForControl").returns(oMockedAppComponent);
 			this.oGetComponentClassNameStub = sinon.stub(FlUtils, "getComponentClassName").returns("Dummy.Component");
 
 			var oFlexController = FlexControllerFactory.createForControl(oMockedAppComponent, this.oManifest);
@@ -177,5 +175,4 @@ sap.ui.define([
 		jQuery("#qunit-fixture").hide();
 	});
 
-	return waitForThemeApplied();
 });

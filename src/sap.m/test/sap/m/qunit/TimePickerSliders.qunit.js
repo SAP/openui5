@@ -805,7 +805,8 @@ sap.ui.define([
 
 	QUnit.test("Given a Hours slider, when collapsed before animation is completed", function(assert) {
 		// Prepare
-		var oSpyScrollerSnapped = this.spy(this.oTPS._getHoursSlider(), "_scrollerSnapped");
+		var oSpyScrollerSnapped = this.spy(this.oTPS._getHoursSlider(), "_scrollerSnapped"),
+			currentIndex = this.oTPS._getHoursSlider()._iSelectedItemIndex;
 
 		// Act
 		this.oTPS._getHoursSlider()._offsetValue(1); // moves (offsets) the value by one (vertically). Animation is stared.
@@ -816,6 +817,21 @@ sap.ui.define([
 		}
 
 		// Assert
-		assert.equal(oSpyScrollerSnapped.callCount, 0, "then no _scrollerSnapped should be called");
+		assert.equal(oSpyScrollerSnapped.callCount, 1, "_scrollerSnapped should be called");
+		assert.ok(oSpyScrollerSnapped.calledWith(currentIndex + 1), "snapped to the next value");
+	});
+
+	QUnit.test("Given a Hours slider, when another animation is queued", function(assert) {
+		// Prepare
+		var oSpyScrollerSnapped = this.spy(this.oTPS._getHoursSlider(), "_scrollerSnapped"),
+			currentIndex = this.oTPS._getHoursSlider()._iSelectedItemIndex;
+
+		// Act
+		this.oTPS._getHoursSlider()._offsetValue(1); // moves (offsets) the value by one (vertically). Animation is stared.
+		this.oTPS._getHoursSlider()._offsetValue(1); // another animation is started
+
+		// Assert - before the second animation finished
+		assert.equal(oSpyScrollerSnapped.callCount, 1, "_scrollerSnapped should be called");
+		assert.ok(oSpyScrollerSnapped.calledWith(currentIndex + 1), "snapped to the next value");
 	});
 });

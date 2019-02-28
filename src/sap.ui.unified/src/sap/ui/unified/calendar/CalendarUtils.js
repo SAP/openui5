@@ -240,14 +240,14 @@ sap.ui.define([
 				oUniversalDate.getUTCMonth(), oUniversalDate.getUTCDate());
 
 			oFirstDateOfWeek = UniversalDate.getFirstDateOfWeek(oUniversalDate.getCalendarType(), oWeek.year, oWeek.week);
-			oFirstUniversalDateOfWeek = new UniversalDate(Date.UTC(oFirstDateOfWeek.year, oFirstDateOfWeek.month, oFirstDateOfWeek.day));
+			oFirstUniversalDateOfWeek = new UniversalDate(UniversalDate.UTC(oFirstDateOfWeek.year, oFirstDateOfWeek.month, oFirstDateOfWeek.day));
 
 			//In case the day of the computed weekFirstDate is not as in CLDR(e.g. en_US locales), make sure we align it
 			while (oFirstUniversalDateOfWeek.getUTCDay() !== iCLDRFirstWeekDay) {
 				oFirstUniversalDateOfWeek.setUTCDate(oFirstUniversalDateOfWeek.getUTCDate() - 1);
 			}
 
-			return new UniversalDate(Date.UTC(oFirstUniversalDateOfWeek.getUTCFullYear(), oFirstUniversalDateOfWeek.getUTCMonth(),
+			return new UniversalDate(UniversalDate.UTC(oFirstUniversalDateOfWeek.getUTCFullYear(), oFirstUniversalDateOfWeek.getUTCMonth(),
 				oFirstUniversalDateOfWeek.getUTCDate(), oDate.getUTCHours(), oDate.getUTCMinutes(), oDate.getUTCSeconds())).getJSDate();
 		};
 
@@ -534,18 +534,20 @@ sap.ui.define([
 		};
 
 		/**
-		 * Checks if given first date has the same month and year as the given second date.
+		 * Checks if given first date has the same month, year and era as the given second date.
 		 * @param {sap.ui.unified.calendar.CalendarDate} oCalendarDate1 the first date
 		 * @param {sap.ui.unified.calendar.CalendarDate} oCalendarDate2 the second date
-		 * @return {boolean} true if month and year matches for both given dates, false otherwise
+		 * @return {boolean} true if month, year and era matches for both given dates, false otherwise
 		 * @throws Will throw an error if the arguments are null or are not of the correct type.
 		 * @private
 		 */
-		CalendarUtils._isSameMonthAndYear = function (oCalendarDate1, oCalendarDate2) {
+		CalendarUtils._isSameMonthAndYear = function(oCalendarDate1, oCalendarDate2) {
 			this._checkCalendarDate(oCalendarDate1);
 			this._checkCalendarDate(oCalendarDate2);
 
-			return oCalendarDate1.getYear() === oCalendarDate2.getYear() && oCalendarDate1.getMonth() === oCalendarDate2.getMonth();
+			return oCalendarDate1.getEra() === oCalendarDate2.getEra()
+				&& oCalendarDate1.getYear() === oCalendarDate2.getYear()
+				&& oCalendarDate1.getMonth() === oCalendarDate2.getMonth();
 		};
 
 		/**

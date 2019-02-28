@@ -1293,6 +1293,67 @@
 					}
 				}
 			}
+		},
+		"card14": {
+			"sap.card": {
+				"type": "List",
+				"header": {
+					"title": "List Card",
+					"subTitle": "With static list items",
+					"icon": {
+						"src": "sap-icon://business-objects-experience"
+					},
+					"status": "100 of 200"
+				},
+				"content": {
+					"items":[
+						{
+							"title":"Laurent Dubois",
+							"icon":"../images/Elena_Petrova.png",
+							"description":"I am Laurent. I put great attention to detail.",
+							"infoState":"Error",
+							"info":"Manager",
+							"highlight":"Success",
+							"action":{
+								"url":"https://www.w3schools.com"
+							}
+						},
+						{
+							"title":"Alain Chevalier",
+							"icon":"../images/Alain_Chevalier.png",
+							"description":"I am Alain. I put great attention to detail.",
+							"infoState":"Success",
+							"info":"Credit Analyst",
+							"highlight":"Error"
+						},
+						{
+							"title":"Alain Chevalier",
+							"icon":"../images/Monique_Legrand.png",
+							"description":"I am Alain. I put great attention to detail.",
+							"infoState":"Information",
+							"info":"Configuration Expert",
+							"highlight":"Information"
+						},
+						{
+							"title":"Alain Chevalier",
+							"icon":"../images/Alain_Chevalier.png",
+							"description":"I am Alain. I put great attention to detail.",
+							"highlight":"Warning"
+						},
+						{
+							"title":"Laurent Dubois",
+							"icon":"../images/Elena_Petrova.png",
+							"description":"I am Laurent. I put great attention to detail.",
+							"infoState":"Error",
+							"info":"Manager",
+							"highlight":"Success",
+							"action":{
+								"url":"https://www.w3schools.com"
+							}
+						}
+					]
+				}
+			}
 		}
 	},
 	"tableManifests": {
@@ -1411,6 +1472,12 @@
 				"type": "List",
 				"header": {
 					"type": "Numeric",
+					"actions": [
+						{
+							"type": "Navigation",
+							"url": "https://www.sap.com"
+						}
+					],
 					"data": {
 						"request": {
 							"url": "./cardcontent/kpi.json"
@@ -2039,6 +2106,53 @@
 				"src": "{Icon}"
 			  }
 			}
+		  }
+		}
+	  },
+	  "cardStatic": {
+		"sap.card": {
+		  "type": "Timeline",
+		  "header": {
+			"title": "New Team Members",
+			"icon": {
+			  "src": "sap-icon://group"
+			}
+		  },
+		  "content": {
+			"items": [
+			  {
+				"owner": "Laurent Dubois",
+				"title": "Accounts Payable Manager",
+				"ownerImage": "../images/Laurent_Dubois.png",
+				"icon": "sap-icon://activity-individual",
+				"description": "I am Laurent. I put great attention to detail.",
+				"dateTime": "Date(1371020400000)"
+			  },
+			  {
+				"owner": "Sabine Mayer",
+				"title": "Configuration Expert",
+				"ownerImage": "../images/Sabine_Mayer.png",
+				"icon": "sap-icon://settings",
+				"description": "I am Sabine. And can't wait to get to know the team.",
+				"dateTime": "Date(1376290800000)"
+			  },
+			  {
+				"owner": "Alain Chevalier",
+				"title": "Credit Analyst",
+				"ownerImage": "../images/Alain_Chevalier.png",
+				"icon": "sap-icon://manager-insight",
+				"description": "I am Alain. I put great attention to detail.",
+				"dateTime": "Date(1332403200000)"
+			  },
+			  {
+				"owner": "Monique Legrand",
+				"title": "Accountant Manager",
+				"ownerImage": "../images/Monique_Legrand.png",
+				"description": "I am Monique. And i am the new head of Accounting.",
+				"icon": "sap-icon://account",
+				"dateTime": "Date(1422777600000)"
+			  }
+			]
 		  }
 		}
 	  }

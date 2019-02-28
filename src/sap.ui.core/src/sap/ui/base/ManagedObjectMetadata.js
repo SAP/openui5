@@ -76,6 +76,7 @@ function(
 	 * @version ${version}
 	 * @since 0.8.6
 	 * @alias sap.ui.base.ManagedObjectMetadata
+	 * @extends sap.ui.base.Metadata
 	 * @public
 	 */
 	var ManagedObjectMetadata = function(sClassName, oClassInfo) {
@@ -1806,6 +1807,18 @@ function(
 		});
 	}
 
+	var mPredefinedDesignTimeModules = {};
+
+	/**
+	 * Sets the map with the module names to predefined DesignTime objects which will be available in {@link sap.ui.base.ManagedObjectMetadata.prototype.loadDesignTime}
+	 * @param {Object<string,string>} mPredefinedDesignTime map containing the module names
+	 * @private
+	 * @ui5-restricted sap.ui.dt
+	 */
+	ManagedObjectMetadata.setDesignTimeDefaultMapping = function(mPredefinedDesignTime) {
+		mPredefinedDesignTimeModules = mPredefinedDesignTime;
+	};
+
 	/**
 	 * Returns a promise that resolves with the instance specific, unmerged designtime data.
 	 * If no instance is provided, the promise will resolve with {}.
@@ -1820,7 +1833,9 @@ function(
 			&& oInstance.data("sap-ui-custom-settings")["sap.ui.dt"]
 			&& oInstance.data("sap-ui-custom-settings")["sap.ui.dt"].designtime;
 
-		if (typeof sInstanceSpecificModule === "string"){
+		if (typeof sInstanceSpecificModule === "string") {
+			sInstanceSpecificModule = mPredefinedDesignTimeModules[sInstanceSpecificModule] || sInstanceSpecificModule;
+
 			return new Promise(function(fnResolve) {
 				sap.ui.require([sInstanceSpecificModule], function(oDesignTime) {
 					fnResolve(oDesignTime);
@@ -1883,7 +1898,7 @@ function(
 	 * @param {string} [sScopeKey] scope name for which metadata will be resolved, see sap.ui.base.ManagedObjectMetadataScope
 	 * @return {Promise} A promise which will return the loaded design time metadata
 	 * @private
-	 * @sap-restricted sap.ui.fl com.sap.webide
+	 * @sap-restricted sap.ui.dt com.sap.webide
 	 * @since 1.48.0
 	 */
 	ManagedObjectMetadata.prototype.loadDesignTime = function(oManagedObject, sScopeKey) {

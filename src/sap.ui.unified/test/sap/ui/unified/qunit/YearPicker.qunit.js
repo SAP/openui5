@@ -7,6 +7,30 @@ sap.ui.define([
 
 	(function () {
 
+		QUnit.module("API ", {
+			beforeEach: function () {
+				this.oYP = new YearPicker();
+				this.oYP.placeAt("qunit-fixture");
+				sap.ui.getCore().applyChanges();
+			},
+			afterEach: function () {
+				this.oYP.destroy();
+				this.oYP = null;
+			}
+		});
+
+		QUnit.test("getFirstRenderedDate returns date in local timezone", function (assert) {
+			// The test works for all environments whose timezone is different than GMT
+			// Act
+			var oFirstRenderedDate = this.oYP.getFirstRenderedDate();
+
+			// Assert
+			assert.equal(oFirstRenderedDate.getFullYear(), 1990 /*2000 (default date value) - 20 (years per page) / 2 */, "year is correct");
+			assert.equal(oFirstRenderedDate.getMonth(), 0, "month is correct");
+			assert.equal(oFirstRenderedDate.getDate(), 1, "date is correct");
+			assert.equal(oFirstRenderedDate.getHours(), 0, "hours are correct");
+		});
+
 		QUnit.module("Corner cases", {
 			beforeEach: function () {
 				this.oYP = new YearPicker();

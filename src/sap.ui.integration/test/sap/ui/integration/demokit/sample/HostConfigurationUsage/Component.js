@@ -6,29 +6,7 @@ sap.ui.define([
 
 	var Component = UIComponent.extend("sap.ui.integration.sample.HostConfigurationUsage.Component", {
 		metadata: {
-			rootView: {
-				"viewName": "sap.ui.integration.sample.HostConfigurationUsage.Main",
-				"type": "XML",
-				"async": true
-			},
-			dependencies: {
-				libs: [
-					"sap.m",
-					"sap.f",
-					"sap.ui.integration"
-				]
-			},
-			config: {
-				sample: {
-					stretch: true,
-					files: [
-						"Main.view.xml",
-						"host/dark.json",
-						"host/color.json",
-						"host/white.json"
-					]
-				}
-			}
+		    manifest: "json"
 		}
 	});
 	return Component;

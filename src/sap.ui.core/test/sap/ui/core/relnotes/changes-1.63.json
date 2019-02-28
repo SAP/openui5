@@ -181,6 +181,30 @@
         "type": "FIX",
         "text": " v2.ODataModel: Missing instance check",
         "references": []
+      },
+      {
+        "id": "ad728851cf3ec3d26f865c2df1bb11108a2ecff4",
+        "type": "FEATURE",
+        "text": " Enhance custom currencies for individual instances",
+        "references": []
+      },
+      {
+        "id": "675e20ecb3df3ed9c33862dc8f26dd8000b1b13a",
+        "type": "FIX",
+        "text": " DateInterval: Check if start date is before end date",
+        "references": []
+      },
+      {
+        "id": "7ed00156f77fb22bfae0830c56c9d39e91a9318a",
+        "type": "FIX",
+        "text": " ManagedObject: Detect value property in binding info",
+        "references": []
+      },
+      {
+        "id": "0887e7432c8afe2a8e60b6943bea6ba27536bbe8",
+        "type": "FIX",
+        "text": " ODataUtils: Check for empty Filter",
+        "references": []
       }
     ]
   }

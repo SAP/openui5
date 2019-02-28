@@ -1,0 +1,35 @@
+{
+	"sap.app": {
+		"id": "sap.tnt.sample.SideNavigation",
+		"applicationVersion": {
+			"version": "1.0.0"
+		}
+	},
+	"sap.ui5": {
+		"rootView": "sap.tnt.sample.SideNavigation.V",
+		"libs": {
+			"sap.m": {}
+		},
+		"resources": {
+			"css": [
+				{
+					"uri": "style.css"
+				}
+			]
+		},
+		"config": {
+			"sample": {
+				"stretch": true,
+				"files": [
+					"V.view.xml",
+					"V.controller.js",
+					"style.css",
+					"manifest.json"
+				]
+			},
+			"additionalDownloadFiles": [
+				"./style.css"
+			]
+		}
+	}
+}

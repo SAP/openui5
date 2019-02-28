@@ -1,0 +1,64 @@
+<mvc:View
+	xmlns="sap.m"
+	xmlns:mvc="sap.ui.core.mvc"
+	xmlns:f="sap.f"
+	xmlns:w="sap.ui.integration.widgets"
+	controllerName="sap.f.cardsdemo.controller.DelayedLoading"
+	displayBlock="true">
+
+	<Page title="{i18n>appTitle}">
+
+		<headerContent>
+			<Button text="Set preloaded manifests" type="Emphasized" press="onSetPreloadedManifestsPress"/>
+			<Button text="Load and set manifests" type="Emphasized" press="onSetManifestsPress"/>
+		</headerContent>
+
+		<subHeader>
+			<Toolbar>
+				<ToolbarSpacer/>
+				<Title text="Loading behavior with Card Container"/>
+				<ToolbarSpacer/>
+			</Toolbar>
+		</subHeader>
+
+		<content>
+			<f:CardContainer>
+				<w:Card id="listCard1">
+					<w:layoutData>
+						<f:CardItemLayoutData columns="6"/>
+					</w:layoutData>
+				</w:Card>
+				<w:Card id="listCard2">
+					<w:layoutData>
+							<f:CardItemLayoutData columns="5"/>
+					</w:layoutData>
+				</w:Card>
+				<w:Card id="tableCard1">
+					<w:layoutData>
+						<f:CardItemLayoutData columns="6"/>
+					</w:layoutData>
+				</w:Card>
+				<w:Card id="tableCard2">
+					<w:layoutData>
+						<f:CardItemLayoutData columns="6"/>
+					</w:layoutData>
+				</w:Card>
+				<w:Card id="donutCard">
+					<w:layoutData>
+						<f:CardItemLayoutData columns="5"/>
+					</w:layoutData>
+				</w:Card>
+				<w:Card id="objectCard1">
+					<w:layoutData>
+						<f:CardItemLayoutData columns="5"/>
+					</w:layoutData>
+				</w:Card>
+				<w:Card id="timelineCard">
+					<w:layoutData>
+						<f:CardItemLayoutData columns="5"/>
+					</w:layoutData>
+				</w:Card>
+			</f:CardContainer>
+		</content>
+	</Page>
+</mvc:View>

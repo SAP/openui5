@@ -32,6 +32,7 @@ sap.ui.define([
 	});
 
 	QUnit.test("Binding changeEvent", function(assert) {
+		var done = assert.async();
 		setup();
 		oBinding = oModel.bindProperty("TEST_TEXT");
 
@@ -39,7 +40,7 @@ sap.ui.define([
 	    oBinding.attachChange(callBackOnChange);
 
 		// model stores the binding first when attach change was called
-		assert.equal(oModel.aBindings.length, 1, "model bindings");
+		assert.equal(oModel.getBindings().length, 1, "model bindings");
 
 		// fire change event
 		oBinding._fireChange();
@@ -56,7 +57,10 @@ sap.ui.define([
 		attach = false;
 		detach = true;
 
-		assert.equal(oModel.aBindings.length, 0, "model bindings");
+		setTimeout(function() {
+			assert.equal(oModel.getBindings().length, 0, "model bindings");
+			done();
+		}, 0);
 	});
 
 	var attach = false;

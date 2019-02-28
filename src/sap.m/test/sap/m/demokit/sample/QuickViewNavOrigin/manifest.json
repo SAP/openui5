@@ -1,0 +1,29 @@
+{
+	"sap.app": {
+		"id": "sap.m.sample.QuickViewNavOrigin",
+		"applicationVersion": {
+			"version": "1.0.0"
+		}
+	},
+	"sap.ui5": {
+		"rootView": {
+			"viewName": "sap.m.sample.QuickViewNavOrigin.QuickView",
+			"type": "XML",
+			"async": true
+		},
+		"libs": {
+			"sap.ui.layout": {}
+		},
+		"config": {
+			"sample": {
+				"stretch": true,
+				"files": [
+					"QuickView.view.xml",
+					"QuickView.controller.js",
+					"QuickView.fragment.xml",
+					"manifest.json"
+				]
+			}
+		}
+	}
+}

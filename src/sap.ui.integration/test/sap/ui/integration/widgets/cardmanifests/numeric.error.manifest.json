@@ -5,7 +5,7 @@
 	"sap.card": {
 		"type": "List",
 		"header": {
-			"type": "numeric",
+			"type": "Numeric",
 			"data": {
 				"json": {
 					"kpiInfos": {

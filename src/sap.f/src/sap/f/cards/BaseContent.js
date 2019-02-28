@@ -66,14 +66,21 @@ sap.ui.define([
 			var sClass = "sapFCard";
 			var sLibrary = oCardContent.getMetadata().getLibraryName();
 			var sName = oCardContent.getMetadata().getName();
-			sClass += sName.slice(sLibrary.length + 1, sName.length);
+			var sType = sName.slice(sLibrary.length + 1, sName.length);
+			var sHeight = BaseContent.getMinHeight(sType, oCardContent.getConfiguration());
+			sClass += sType;
 
 			oRm.write("<div");
 			oRm.writeElementData(oCardContent);
 			oRm.addClass(sClass);
+			oRm.addClass("sapFCardBaseContent");
 			oRm.writeClasses();
+			oRm.addStyle("min-height", sHeight);
+			oRm.writeStyles();
 			oRm.write(">");
+
 			oRm.renderControl(oCardContent.getAggregation("_content"));
+
 			oRm.write("</div>");
 		}
 	});
@@ -108,6 +115,10 @@ sap.ui.define([
 			this._setData(oConfiguration.data);
 		}
 
+		if (oConfiguration.numberOfItems) {
+			this.getModel().setSizeLimit(oConfiguration.numberOfItems);
+		}
+
 		return this;
 	};
 
@@ -119,6 +130,8 @@ sap.ui.define([
 	 */
 	BaseContent.prototype._setData = function (oData) {
 
+		this.setBusy(true);
+
 		var oRequest = oData.request;
 		var oService = oData.service;
 
@@ -128,6 +141,7 @@ sap.ui.define([
 
 		if (oData.json && !oRequest) {
 			this._updateModel(oData.json);
+			this.setBusy(false);
 		}
 
 		if (oService) {
@@ -137,11 +151,16 @@ sap.ui.define([
 						this._updateModel(oEvent.data);
 					}.bind(this);
 
-					oDataService.getData().then(function (data) {
-						this._updateModel(data);
-					}.bind(this)).catch(function () {
-						Log.error("Card content data service failed to get data");
-					});
+					oDataService.getData()
+						.then(function (data) {
+							this._updateModel(data);
+						}.bind(this))
+						.catch(function () {
+							Log.error("Card content data service failed to get data");
+						})
+						.finally(function () {
+							this.setBusy(false);
+						}.bind(this));
 
 					oDataService.attachDataChanged(this._dataChangeHandler, oData.service.parameters);
 
@@ -149,13 +168,19 @@ sap.ui.define([
 				}
 			}.bind(this)).catch(function () {
 				Log.error("Data service unavailable");
+				this.setBusy(false);
 			});
 		} else if (oRequest) {
-			Data.fetch(oRequest).then(function (data) {
-				this._updateModel(data, oData.path);
-			}.bind(this)).catch(function (oError) {
-				Log.error("Card content data request failed");
-			});
+			Data.fetch(oRequest)
+				.then(function (data) {
+					this._updateModel(data, oData.path);
+				}.bind(this))
+				.catch(function (oError) {
+					Log.error("Card content data request failed");
+				})
+				.finally(function () {
+					this.setBusy(false);
+				}.bind(this));
 		}
 	};
 
@@ -167,10 +192,69 @@ sap.ui.define([
 	 */
 	BaseContent.prototype._updateModel = function (oData) {
 		this.getModel().setData(oData);
+
 		// Have to trigger _updated on the first onAfterRendering after _updateModel is called.
 		setTimeout(function () {
 			this.fireEvent("_updated");
 		}.bind(this), 0);
+	};
+
+	BaseContent.getMinHeight = function (sType, oContent) {
+
+		var MIN_HEIGHT = 5,
+			iHeight;
+
+		if (jQuery.isEmptyObject(oContent)) {
+			return "0rem";
+		}
+
+		switch (sType) {
+			case "ListContent":
+				iHeight = BaseContent._getMinListHeight(oContent); break;
+			case "TableContent":
+				iHeight = BaseContent._getMinTableHeight(oContent); break;
+			case "TimelineContent":
+				iHeight = BaseContent._getMinTimelineHeight(oContent); break;
+			case "AnalyticalContent":
+				iHeight = 14; break;
+			case "ObjectContent":
+				iHeight = 0; break;
+			default:
+				iHeight = 0;
+		}
+
+		return  (iHeight !== 0 ? iHeight : MIN_HEIGHT) + "rem";
+	};
+
+	BaseContent._getMinListHeight = function (oContent) {
+		var iCount = oContent.numberOfItems || 0,
+			oTemplate = oContent.item,
+			iItemHeight = 3;
+
+		if (!oTemplate) {
+			return 0;
+		}
+
+		if (oTemplate.icon || oTemplate.description) {
+			iItemHeight = 4;
+		}
+
+		return iCount * iItemHeight;
+	};
+
+	BaseContent._getMinTableHeight = function (oContent) {
+		var iCount = oContent.numberOfItems || 0,
+			iRowHeight = 3,
+			iTableHeaderHeight = 3;
+
+		return iCount * iRowHeight + iTableHeaderHeight;
+	};
+
+	BaseContent._getMinTimelineHeight = function (oContent) {
+		var iCount = oContent.numberOfItems || 0,
+			iItemHeight = 6;
+
+		return iCount * iItemHeight;
 	};
 
 	return BaseContent;

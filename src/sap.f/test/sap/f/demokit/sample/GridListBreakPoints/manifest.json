@@ -1,0 +1,35 @@
+{
+	"sap.app": {
+		"id": "sap.f.sample.GridListBreakPoints",
+		"applicationVersion": {
+			"version": "1.0.0"
+		}
+	},
+	"sap.ui5": {
+		"rootView": {
+			"viewName": "sap.f.sample.GridListBreakPoints.V",
+			"type": "XML",
+			"async": true
+		},
+		"libs": {
+			"sap.m": {}
+		},
+		"resources": {
+			"css": [
+				{
+					"uri": "main.css"
+				}
+			]
+		},
+		"config": {
+			"sample": {
+				"files": [
+					"V.view.xml",
+					"C.controller.js",
+					"main.css",
+					"manifest.json"
+				]
+			}
+		}
+	}
+}

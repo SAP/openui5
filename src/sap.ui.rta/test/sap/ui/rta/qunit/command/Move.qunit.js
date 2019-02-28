@@ -14,7 +14,6 @@ sap.ui.define([
 	"sap/ui/fl/FlexControllerFactory",
 	"sap/ui/rta/ControlTreeModifier",
 	"sap/base/Log",
-	"sap/ui/qunit/utils/waitForThemeApplied",
 	"sap/ui/thirdparty/sinon-4"
 ], function (
 	CommandFactory,
@@ -30,7 +29,6 @@ sap.ui.define([
 	FlexControllerFactory,
 	ControlTreeModifier,
 	Log,
-	waitForThemeApplied,
 	sinon
 ) {
 	"use strict";
@@ -76,7 +74,7 @@ sap.ui.define([
 		getModel: function () {}
 	};
 
-	var oGetAppComponentForControlStub = sinon.stub(FlUtils, "_getAppComponentForComponent").returns(oMockedAppComponent);
+	var oGetAppComponentForControlStub = sinon.stub(FlUtils, "getAppComponentForControl").returns(oMockedAppComponent);
 
 	QUnit.done(function () {
 		oGetAppComponentForControlStub.restore();
@@ -91,7 +89,7 @@ sap.ui.define([
 			this.fnCompleteChangeContentSpy = sinon.spy();
 
 			var oChangeRegistry = ChangeRegistry.getInstance();
-			oChangeRegistry.registerControlsForChanges({
+			return oChangeRegistry.registerControlsForChanges({
 				"sap.m.Button": {
 					"moveStuff" : {
 						applyChange: this.fnApplyChangeSpy,
@@ -99,18 +97,18 @@ sap.ui.define([
 						completeChangeContent: this.fnCompleteChangeContentSpy
 					}
 				}
-			});
-
-			this.oButtonDesignTimeMetadata = new ElementDesignTimeMetadata({
-				data : {
-					actions : {
-						move : {
-							changeType : "moveStuff"
+			})
+			.then(function() {
+				this.oButtonDesignTimeMetadata = new ElementDesignTimeMetadata({
+					data : {
+						actions : {
+							move : {
+								changeType : "moveStuff"
+							}
 						}
 					}
-				}
-			});
-
+				});
+			}.bind(this));
 		},
 		afterEach: function () {
 			this.oButton.destroy();
@@ -263,5 +261,4 @@ sap.ui.define([
 		jQuery("#qunit-fixture").hide();
 	});
 
-	return waitForThemeApplied();
 });

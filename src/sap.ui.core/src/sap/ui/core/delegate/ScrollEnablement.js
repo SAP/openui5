@@ -211,8 +211,12 @@ sap.ui.define([
 			/**
 			 * Scrolls to an element within a container.
 			 * @param {HTMLElement} oElement A DOM element.
-			 * @param {int} [iTime=0] The duration of animated scrolling in milliseconds. To scroll immediately without animation, give 0 as value.
-			 * @param {Array} Specifies the offset left and top for the DOM Element.
+			 * @param {int} [iTime=0]
+			 *           The duration of animated scrolling in milliseconds. To scroll immediately without animation,
+			 *           give 0 as value.
+			 * @param {int[]} [aOffset=[0,0]]
+			 *           Specifies an additional left and top offset of the target scroll position, relative to
+			 *           the upper left corner of the DOM element
 			 * @returns {sap.ui.core.delegate.ScrollEnablement}
 			 * @protected
 			 */

@@ -40,9 +40,11 @@ sap.ui.define([
 	 * Registers change handlers
 	 *
 	 * @public
+	 * @returns {Promise} Returns promise after all changeHandlers are registered.
 	 */
 	RegistrationDelegator.registerChangeHandlers = function() {
-		ChangeHandlerRegistration.getChangeHandlersOfLoadedLibsAndRegisterOnNewLoadedLibs();
+		// method returns promise but is not considered in this module (return for maintainablity reasons)
+		return ChangeHandlerRegistration.getChangeHandlersOfLoadedLibsAndRegisterOnNewLoadedLibs();
 	};
 
 	/**

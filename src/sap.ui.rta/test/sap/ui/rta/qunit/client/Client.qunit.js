@@ -3,13 +3,11 @@
 sap.ui.define([
 	"sap/ui/rta/Client",
 	"sap/ui/core/postmessage/Bus",
-	"sap/ui/qunit/utils/waitForThemeApplied",
 	"sap/ui/thirdparty/sinon-4"
 ],
 function (
 	RTAClient,
 	PostMessageBus,
-	waitForThemeApplied,
 	sinon
 ) {
 	"use strict";
@@ -1419,5 +1417,4 @@ function (
 		jQuery("#qunit-fixture").hide();
 	});
 
-	return waitForThemeApplied();
 });

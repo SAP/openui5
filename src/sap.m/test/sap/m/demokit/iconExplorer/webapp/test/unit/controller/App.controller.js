@@ -40,7 +40,7 @@ sap.ui.define([
 		}
 	});
 
-	QUnit.test("Should set the control busy without delay", function (assert) {
+	QUnit.test("Should set the app view busy without delay", function (assert) {
 		// Arrange
 		var oModelData,
 			oAppController;
@@ -55,7 +55,7 @@ sap.ui.define([
 		assert.strictEqual(oModelData.busy, true, "The root view is busy.");
 	});
 
-	QUnit.test("Should set the control not busy and reset the delay", function (assert) {
+	QUnit.test("Should set the app view not busy and reset the delay", function (assert) {
 		var oModelData,
 			oAppController;
 

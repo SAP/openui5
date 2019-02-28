@@ -1,0 +1,27 @@
+{
+	"sap.app": {
+		"id": "sap.f.sample.GridListBoxContainerGrouping",
+		"applicationVersion": {
+			"version": "1.0.0"
+		}
+	},
+	"sap.ui5": {
+		"rootView": {
+			"viewName": "sap.f.sample.GridListBoxContainerGrouping.GridListBoxContainerGroupingHeadersGrowing",
+			"type": "XML",
+			"async": true
+		},
+		"libs": {
+			"sap.m": {}
+		},
+		"config": {
+			"sample": {
+				"files": [
+					"GridListBoxContainerGroupingHeadersGrowing.view.xml",
+					"GridListBoxContainerGroupingHeadersGrowing.controller.js",
+					"manifest.json"
+				]
+			}
+		}
+	}
+}

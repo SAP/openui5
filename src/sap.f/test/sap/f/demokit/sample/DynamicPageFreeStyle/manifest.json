@@ -1,0 +1,28 @@
+{
+	"sap.app": {
+		"id": "sap.f.sample.DynamicPageFreeStyle",
+		"applicationVersion": {
+			"version": "1.0.0"
+		}
+	},
+	"sap.ui5": {
+		"rootView": {
+			"viewName": "sap.f.sample.DynamicPageFreeStyle.DynamicPageFreeStyle",
+			"type": "XML",
+			"async": true
+		},
+		"libs": {
+			"sap.ui.unified": {}
+		},
+		"config": {
+			"sample": {
+				"stretch": true,
+				"files": [
+					"DynamicPageFreeStyle.controller.js",
+					"DynamicPageFreeStyle.view.xml",
+					"manifest.json"
+				]
+			}
+		}
+	}
+}

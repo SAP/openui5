@@ -8,9 +8,9 @@
 
 	<title>OData V2 Messages</title>
 
-	<script id="sap-ui-bootstrap" 
-			type="text/javascript" 
-			src="../../../../resources/sap-ui-core.js" 
+	<script id="sap-ui-bootstrap"
+			type="text/javascript"
+			src="../../../../resources/sap-ui-core.js"
 			data-sap-ui-theme="sap_belize"
 			data-sap-ui-libs="sap.m, sap.ui.codeeditor, sap.ui.layout"
 			data-sap-ui-xx-bindingSyntax="complex">
@@ -24,14 +24,19 @@
 			'sap/ui/layout/PaneContainer',
 			'sap/ui/layout/VerticalLayout',
 			'sap/ui/layout/HorizontalLayout',
+			'sap/ui/core/Item',
 			'sap/m/Column',
 			'sap/m/ColumnListItem',
 			'sap/m/Text',
+			'sap/m/Input',
+			'sap/m/Label',
+			'sap/m/Select',
 			'sap/m/Button',
 			'sap/m/Table',
+			'sap/m/Panel',
 			'sap/ui/model/json/JSONModel',
 			'sap/ui/codeeditor/CodeEditor'
-		], function (MockServer, ODataModel, ResponsiveSplitter, SplitPane, PaneContainer, VerticalLayout, HorizontalLayout, Column, ColumnListItem, Text, Button, Table, JSONModel, CodeEditor) {
+		], function (MockServer, ODataModel, ResponsiveSplitter, SplitPane, PaneContainer, VerticalLayout, HorizontalLayout, Item, Column, ColumnListItem, Text, Input, Label, Select, Button, Table, Panel, JSONModel, CodeEditor) {
 
 			// 1. Mocking
 			var sServiceUri = "/SalesOrderSrv/";
@@ -43,41 +48,48 @@
 			oMockServer.simulate("qunit/testdata/SalesOrder/metadata.xml", sDataRootPath);
 
 			var aRequests = oMockServer.getRequests();
-			
+
 			var oMessages = {
 				code: "MYCODE/111",
-				message: "Fatal error!",
-				severity: "error",
-				target: "/#TRANSIENT#",
+				message: "Bad SalesOrder description!",
+				severity: "info",
+				target: "/SalesOrderSet('0500000000')/Description",
 				details: [
 					{
 						code: "MYCODE/222",
-						message: "Invalid product.",
-						target: "/ProductSet('AD-1000')",
-						severity: "warning"
+						message: "Gross amount too high!",
+						target: "/SalesOrderSet('0500000000')/GrossAmount",
+						severity: "error"
 					},
 					{
 						code: "MYCODE/333",
-						message: "Name duplicate.",
-						target: "/ProductSet('HT-1000')",
-						severity: "info"
+						message: "Gross amount too high!",
+						target: "ToLineItems(SalesOrderID='0500000000',ItemPosition='0000000010')/GrossAmount",
+						severity: "error"
 					}
 				]
 			};
-			var oBackendMessageModel = new JSONModel(oMessages);
-			sap.ui.getCore().setModel(oBackendMessageModel, "bMessages");
-			
+			var oMessageContainerModel = new JSONModel(oMessages);
+			sap.ui.getCore().setModel(oMessageContainerModel, "bMessages");
+
 			aRequests.forEach(function (oRequest) {
 				var fnOrginalResponse;
-				if (String(oRequest.path).startsWith("/(ProductSet)")) {
+				if (String(oRequest.path).indexOf("Set") > 0) {
 					fnOrginalResponse = oRequest.response;
 					oRequest.response = function (oXhr) {
 						var fnOrignalXHRRespond = oXhr.respond;
 						oXhr.respond = function (status, headers, content) {
 
-							//header messages only
 							var oObject = sap.ui.getCore().getModel("bMessages").getObject("/");
-							headers["sap-message"] = JSON.stringify(oObject);
+							if(oObject){
+								headers["sap-message"] = JSON.stringify(oObject);
+							}
+
+							var aHistoryModel = sap.ui.getCore().getModel("history");
+							var aHistory = aHistoryModel.getObject("/");
+							aHistory.push({url: oXhr.url.replace("/SalesOrderSrv", "")});
+							aHistoryModel.setData(aHistory);
+
 							fnOrignalXHRRespond.apply(this, arguments);
 						};
 						fnOrginalResponse.apply(this, arguments);
@@ -87,7 +99,8 @@
 			oMockServer.start();
 
 			// 2. Show back-end message container
-			var oEditorBE = new CodeEditor({
+
+			var oResponseEditor = new CodeEditor({
 				editable: true,
 				type: "json",
 				width: "500px",
@@ -95,43 +108,68 @@
 				value: {
 					path: "bMessages>/",
 					formatter: function(oValue){
-						return JSON.stringify(oValue, null, 2);
+						return JSON.stringify(oValue, undefined, 2);
 					}
 				}
 			});
 
-			var oEditorOData = new CodeEditor({
-				editable: true,
-				type: "javascript",
-				width: "500px",
-				height: "200px",
-				value:  "oModel.read(\"/ProductSet('HT-1000')\");\noModel.read(\"/ProductSet('AD-1000')\");"
+			var oResponsePanel = new Panel({
+				headerText: "Response Message Container",
+				content: [oResponseEditor]
+			});
+
+			var oEntityLabel = new Label({
+				text: "ODataModel.read('<Path>'):"
+			});
+
+			var oEntitySelect = new Select({
+				items: [
+					new Item({text: "/SalesOrderSet('0500000000')"}),
+					new Item({text: "/SalesOrderSet('0500000000')/ToLineItems"}),
+					new Item({text: "/SalesOrderLineItemSet(SalesOrderID='0500000000',ItemPosition='0000000010')"}),
+					new Item({text: "/SalesOrderLineItemSet(SalesOrderID='0500000000',ItemPosition='0000000010')/ToProduct"}),
+					new Item({text: "/ProductSet('HT-1000')"})
+			]
+			});
+
+			var oRequestPanel = new Panel({
+				headerText: "Trigger Request",
+				content: [oEntityLabel, oEntitySelect]
 			});
 
 			// 3. OData V2 Model + Requests
-			var oModel = new ODataModel(sServiceUri, {});
+			var oODataModel = new ODataModel(sServiceUri, {});
 
 			var oButtonSend = new Button({
-				icon:"sap-icon://paper-plane",
+				text: "Call ODataModel.read",
+				icon: "sap-icon://paper-plane",
 				press: function(){
-					sap.ui.getCore().getModel("bMessages").setData(JSON.parse(oEditorBE.getValue()));
-					eval(oEditorOData.getValue());
+					if (oResponseEditor.getValue()){
+						sap.ui.getCore().getModel("bMessages").setData(JSON.parse(oResponseEditor.getValue()));
+					} else {
+						sap.ui.getCore().getModel("bMessages").setData(undefined);
+					}
+					oODataModel.read(oEntitySelect.getSelectedItem().getText());
 				}
 			});
 
 			var oButtonRemoveAll = new Button({
+				text: "Clear history",
 				icon: "sap-icon://delete",
 				press: function(){
 					sap.ui.getCore().getMessageManager().removeAllMessages();
-				} 
+					var aHistoryModel = sap.ui.getCore().getModel("history");
+					aHistoryModel.setData([]);
+				}
 			});
 
 
 			// 4. Show front-end messages
 			sap.ui.getCore().setModel(sap.ui.getCore().getMessageManager().getMessageModel(), "message");
+
 			var oTableMM = new Table({
 				items: {
-					path: 'message>/', 
+					path: 'message>/',
 					sorter: {path: 'id'},
 					template: new ColumnListItem({
 						cells: [
@@ -140,7 +178,8 @@
 							new Text({text:"{message>message}"}),
 							new Text({text:"{message>code}"}),
 							new Text({text:"{message>persistent}"}),
-							new Text({text:"{message>type}"})
+							new Text({text:"{message>type}"}),
+							new Text({text:"{message>fullTarget}"})
 						]
 					})
 				},
@@ -150,21 +189,57 @@
 					new Column({header: new Text({text: "message"})}),
 					new Column({header: new Text({text: "status code"})}),
 					new Column({header: new Text({text: "persistent"})}),
-					new Column({header: new Text({text: "type"})})
+					new Column({header: new Text({text: "type"})}),
+					new Column({header: new Text({text: "full target"})})
 				]
 			});
-			
 
-			// 5. Add content 
+			var oMessageModelPanel = new Panel({
+				headerText: "UI Message Model",
+				content: [oTableMM]
+			});
+
+
+			// 5. Show call history
+
+			var oHistoryModel = new JSONModel([]);
+			sap.ui.getCore().setModel(oHistoryModel, "history");
+
+			var oHistoryTable = new Table({
+				items: {
+					path: 'history>/',
+					template: new ColumnListItem({
+						cells: [
+							new Text({text:"{history>url}"})
+						]
+					})
+				},
+				columns: [
+					new Column({header: new Text({text: "Request URL"})})
+				]
+			});
+
+			var oHistoryPanel = new Panel({
+				headerText: "Request history",
+				content: oHistoryTable
+			});
+
+
+			// 6. Add content
 			var oSplitter = new ResponsiveSplitter({
 				rootPaneContainer: new PaneContainer({
 					panes: [
-						new SplitPane({content: 
+						new SplitPane({content:
 							new VerticalLayout({content: [
-								oEditorOData, oEditorBE, new HorizontalLayout({content: [oButtonSend, oButtonRemoveAll]})
+								oRequestPanel, oResponsePanel, oButtonSend
 							]})
 						}),
-						new SplitPane({content: oTableMM})
+						new SplitPane({content:
+							new VerticalLayout({content: [
+								oHistoryPanel, oButtonRemoveAll
+							]})
+						}),
+						new SplitPane({content: oMessageModelPanel})
 					]
 				})
 			});

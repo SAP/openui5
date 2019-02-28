@@ -61,6 +61,12 @@
         "type": "FIX",
         "text": " sap.m.Tokenizer: Fiori 3 theme adjustment",
         "references": []
+      },
+      {
+        "id": "6b3bdfff8c608081467bd3c9f07daf8c120fa25b",
+        "type": "FEATURE",
+        "text": " sap.f.ShellBar - new experimental control added",
+        "references": []
       }
     ]
   }

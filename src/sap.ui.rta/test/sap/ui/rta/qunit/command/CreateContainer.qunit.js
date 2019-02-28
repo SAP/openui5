@@ -8,7 +8,6 @@ sap.ui.define([
 	"sap/ui/layout/form/FormContainer",
 	"sap/ui/fl/registry/ChangeRegistry",
 	"sap/ui/fl/Utils",
-	"sap/ui/qunit/utils/waitForThemeApplied",
 	"sap/ui/thirdparty/sinon-4"
 ],
 function(
@@ -19,7 +18,6 @@ function(
 	FormContainer,
 	ChangeRegistry,
 	FlUtils,
-	waitForThemeApplied,
 	sinon
 ) {
 	"use strict";
@@ -47,7 +45,7 @@ function(
 		},
 		getModel: function () {}
 	};
-	var oGetAppComponentForControlStub = sinon.stub(FlUtils, "_getAppComponentForComponent").returns(oMockedAppComponent);
+	var oGetAppComponentForControlStub = sinon.stub(FlUtils, "getAppComponentForControl").returns(oMockedAppComponent);
 
 	QUnit.done(function () {
 		oGetAppComponentForControlStub.restore();
@@ -100,39 +98,41 @@ function(
 			this.fnApplyChangeSpy = sinon.spy();
 			this.fnCompleteChangeContentSpy = sinon.spy();
 
-			oChangeRegistry.registerControlsForChanges({
+			return oChangeRegistry.registerControlsForChanges({
 				"sap.ui.layout.form.Form": {
 					"addGroup" : {
 						applyChange: this.fnApplyChangeSpy,
 						completeChangeContent: this.fnCompleteChangeContentSpy
 					}
 				}
-			});
+			})
 
-			this.oCreateContainerDesignTimeMetadata = new ElementDesignTimeMetadata({
-				data : {
-					aggregations : {
-						formContainers : {
-							actions : {
-								createContainer :  {
-									changeType : "addGroup",
-									isEnabled : true,
-									mapToRelevantControlID : function(sNewControlID) {
-										return sNewControlID;
+			.then(function() {
+				this.oCreateContainerDesignTimeMetadata = new ElementDesignTimeMetadata({
+					data : {
+						aggregations : {
+							formContainers : {
+								actions : {
+									createContainer :  {
+										changeType : "addGroup",
+										isEnabled : true,
+										mapToRelevantControlID : function(sNewControlID) {
+											return sNewControlID;
+										}
 									}
 								}
 							}
 						}
 					}
-				}
-			});
+				});
 
-			return CommandFactory.getCommandFor(this.oForm, "createContainer", {
-				index : 0,
-				newControlId : this.NEW_CONTROL_ID,
-				label : this.NEW_CONTROL_LABEL,
-				parentId : this.oForm.getId()
-			}, this.oCreateContainerDesignTimeMetadata)
+				return CommandFactory.getCommandFor(this.oForm, "createContainer", {
+					index : 0,
+					newControlId : this.NEW_CONTROL_ID,
+					label : this.NEW_CONTROL_LABEL,
+					parentId : this.oForm.getId()
+				}, this.oCreateContainerDesignTimeMetadata);
+			}.bind(this))
 
 			.then(function(oCreateContainerCommand) {
 				this.oCreateContainerCommand = oCreateContainerCommand;
@@ -165,5 +165,4 @@ function(
 		jQuery("#qunit-fixture").hide();
 	});
 
-	return waitForThemeApplied();
 });

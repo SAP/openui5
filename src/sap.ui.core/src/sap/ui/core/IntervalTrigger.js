@@ -122,9 +122,8 @@ sap.ui.define(['../base/Object', './EventBus', "sap/base/assert"],
 			this._oEventBus.unsubscribe(_EVENT_ID, fnFunction, oListener);
 		};
 
-		/**
+		/*
 		 * @see sap.ui.base.Object#getInterface
-		 * @public
 		 */
 		IntervalTrigger.prototype.getInterface = function() {
 			return this;

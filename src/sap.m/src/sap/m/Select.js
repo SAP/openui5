@@ -1424,12 +1424,22 @@ function(
 		};
 
 		/**
-		 * Handle when the spacebar key is pressed.
+		 * Handles the keydown event for SPACE on which we have to prevent the browser scrolling.
 		 *
 		 * @param {jQuery.Event} oEvent The event object.
 		 * @private
 		 */
 		Select.prototype.onsapspace = function(oEvent) {
+			oEvent.preventDefault();
+		};
+
+		/**
+		 * Handles the keyup event for SPACE.
+		 *
+		 * @param {jQuery.Event} oEvent The event object.
+		 * @private
+		 */
+		Select.prototype.onkeyup = function(oEvent) {
 
 			// prevents actions from occurring when the control is disabled,
 			// IE11 browser focus non-focusable elements
@@ -1437,17 +1447,19 @@ function(
 				return;
 			}
 
-			// mark the event for components that needs to know if the event was handled
-			oEvent.setMarked();
+			if (oEvent.which === KeyCodes.SPACE) {
+				// mark the event for components that needs to know if the event was handled
+				oEvent.setMarked();
 
-			// note: prevent document scrolling when the spacebar key is pressed
-			oEvent.preventDefault();
+				// note: prevent document scrolling when the spacebar key is pressed
+				oEvent.preventDefault();
 
-			if (this.isOpen()) {
-				this._checkSelectionChange();
+				if (this.isOpen()) {
+					this._checkSelectionChange();
+				}
+
+				this.toggleOpenState();
 			}
-
-			this.toggleOpenState();
 		};
 
 		/**
@@ -2158,15 +2170,15 @@ function(
 
 		Select.prototype.updateAriaLabelledBy = function(sValueState, sOldValueState) {
 			var $this = this.$(),
-                            sAttr = $this.attr("aria-labelledby"),
+				sAttr = $this.attr("aria-labelledby"),
 				aIDs = sAttr ? sAttr.split(" ") : [],
 				sNewIDs;
 
-			if (sOldValueState !== ValueState.None) {
+			if (sOldValueState !== ValueState.None && sOldValueState !== ValueState.Error) {
 				aIDs.pop();
 			}
 
-			if (sValueState !== ValueState.None) {
+			if (sValueState !== ValueState.None && sValueState !== ValueState.Error) {
 				aIDs.push(InvisibleText.getStaticId("sap.ui.core", "VALUE_STATE_" + sValueState.toUpperCase()));
 			}
 

@@ -2,12 +2,10 @@
 
 sap.ui.define([
 	"sap/ui/dt/DOMUtil",
-	"sap/m/Button",
-	"sap/ui/qunit/utils/waitForThemeApplied"
+	"sap/m/Button"
 ], function (
 	DOMUtil,
-	Button,
-	waitForThemeApplied
+	Button
 ){
 	"use strict";
 
@@ -582,6 +580,8 @@ sap.ui.define([
 
 			oNode1.scrollTop = 100;
 			oNode1.scrollLeft = 100;
+			oNode2.scrollTop = 0;
+			oNode2.scrollLeft = 0;
 
 			assert.strictEqual(oNode1.scrollTop, 100);
 			assert.strictEqual(oNode1.scrollLeft, 100);
@@ -603,5 +603,4 @@ sap.ui.define([
 		jQuery("#qunit-fixture").hide();
 	});
 
-	return waitForThemeApplied();
 });

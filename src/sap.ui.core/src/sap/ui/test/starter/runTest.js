@@ -34,6 +34,11 @@
 		var pending = urls.length,
 			errors = 0;
 
+		if (pending === 0) {
+			callback();
+			return;
+		}
+
 		function listener(e) {
 			pending--;
 			if ( e.type === 'error' ) {
@@ -62,13 +67,19 @@
 	// prevent a reboot in full debug mode as this would invalidate our listeners
 	window["sap-ui-debug-no-reboot"] = true;
 
+	// define the necessary polyfills to be loaded
+	var aPolyfills = [];
+	if (/(trident)\/[\w.]+;.*rv:([\w.]+)/i.test(window.navigator.userAgent)) {
+		aPolyfills.push("sap/ui/thirdparty/baseuri.js");
+		aPolyfills.push("sap/ui/thirdparty/es6-promise.js");
+		aPolyfills.push("sap/ui/thirdparty/es6-shim-nopromise.js");
+	} else if (/(Version\/(11\.0)|PhantomJS).*Safari/.test(window.navigator.userAgent)) {
+		// for Safari 11.0 the Promise polyfill is still needed
+		aPolyfills.push("sap/ui/thirdparty/es6-promise.js");
+	}
+
 	// cascade 1: polyfills, can all be loaded in parallel
-	loadScripts([
-		"sap/ui/thirdparty/baseuri.js",
-		"sap/ui/thirdparty/es6-promise.js",
-		"sap/ui/thirdparty/es6-string-methods.js",
-		"sap/ui/thirdparty/es6-object-assign.js"
-	], function() {
+	loadScripts(aPolyfills, function() {
 		// cascade 2: the loader
 		loadScripts([
 			"ui5loader.js"
@@ -371,6 +382,18 @@
 						return Promise.all(aTestModules);
 					}).then(function() {
 						return ensureDOM();
+					}).then(function() {
+						// When using xx-waitForTheme=init the test starter also
+						// takes care of waiting for additional stylesheets e.g. caused by
+						// implicit loading of libs via test module dependencies.
+						// Note: config option is internally converted to lowercase
+						if (oConfig.ui5["xx-waitfortheme"] === "init") {
+							return new Promise(function(resolve, reject) {
+								sap.ui.require(["sap/ui/qunit/utils/waitForThemeApplied"], resolve, reject);
+							}).then(function(waitForThemeApplied) {
+								return waitForThemeApplied();
+							});
+						}
 					}).then(function() {
 						QUnit.start();
 					});

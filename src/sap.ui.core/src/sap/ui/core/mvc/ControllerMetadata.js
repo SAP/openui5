@@ -12,6 +12,11 @@ sap.ui.define([
 	function(Metadata, merge, OverrideExecution, Log) {
 	"use strict";
 
+	/**
+	 * @alias sap.ui.core.mvc.ControllerMetadata
+	 * @extends sap.ui.base.Metadata
+	 * @private
+	 */
 	var ControllerMetadata = function(sClassName, oClassInfo) {
 		// call super constructor
 		Metadata.apply(this, arguments);

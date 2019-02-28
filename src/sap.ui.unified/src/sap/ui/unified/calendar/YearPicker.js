@@ -48,7 +48,9 @@ sap.ui.define([
 	 *
 	 * @class
 	 * renders a YearPicker with ItemNavigation
-	 * This is used inside the calendar. Not for stand alone usage
+	 * This is used inside the calendar. Not for stand alone usage.
+	 * As in all date-time controls, all pubic JS Date objects that are given (e.g. <code>setDate()</code>) or read
+	 * (e.g. <code>getFirstRenderedDate</code>) with values which are considered as date objects in browser(local) timezone.
 	 * @extends sap.ui.core.Control
 	 * @version ${version}
 	 *
@@ -307,7 +309,7 @@ sap.ui.define([
 
 		if (this.getDomRef()) {
 			var aDomRefs = this._oItemNavigation.getItemDomRefs();
-			oFirstDate =  this._oFormatYyyymmdd.parse(jQuery(aDomRefs[0]).attr("data-sap-year-start"), true);
+			oFirstDate =  this._oFormatYyyymmdd.parse(jQuery(aDomRefs[0]).attr("data-sap-year-start"));
 		}
 
 		return oFirstDate;

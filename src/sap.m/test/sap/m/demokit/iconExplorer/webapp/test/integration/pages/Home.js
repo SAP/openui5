@@ -89,6 +89,7 @@ sap.ui.define([
 				iShouldNotSeeTheClearIcon : function () {
 					return this.waitFor({
 						id : "search-__clearIcon",
+						visible: false,
 						viewName: sViewName,
 						success : function (oIcon) {
 							Opa5.assert.ok(oIcon.$().hasClass("sapMSFR"), "Search icon is invisible"

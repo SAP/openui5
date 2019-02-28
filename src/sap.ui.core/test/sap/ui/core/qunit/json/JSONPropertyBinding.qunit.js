@@ -3,6 +3,10 @@ sap.ui.define([
 	"sap/ui/model/json/JSONModel",
 	"sap/ui/model/ChangeReason",
 	"sap/ui/model/BindingMode",
+	"sap/ui/model/SimpleType",
+	"sap/ui/model/FormatException",
+	"sap/ui/model/ParseException",
+	"sap/ui/model/ValidateException",
 	"sap/ui/model/type/Float",
 	"sap/ui/model/type/Date",
 	"sap/m/Label",
@@ -11,6 +15,10 @@ sap.ui.define([
 	JSONModel,
 	ChangeReason,
 	BindingMode,
+	SimpleType,
+	FormatException,
+	ParseException,
+	ValidateException,
 	FloatType,
 	DateType,
 	Label,
@@ -49,7 +57,54 @@ sap.ui.define([
 		return JSON.parse(JSON.stringify(constTestData));
 	}
 
-	QUnit.module("PropertyBinding", {
+	var AsyncFloat = SimpleType.extend("AsyncFloat", {
+		constructor: function(oFormatOptions, oConstraints) {
+			SimpleType.apply(this, arguments);
+			this.oFloat = new FloatType(oFormatOptions, oConstraints);
+		},
+		formatValue: function(oValue, sInternalType) {
+			var that = this;
+			return new Promise(function(resolve, reject) {
+				setTimeout(function() {
+					try {
+						resolve(that.oFloat.formatValue(oValue, sInternalType));
+					} catch (oException) {
+						reject(oException);
+					}
+				}, 0);
+			});
+		},
+		parseValue: function(oValue, sInternalType) {
+			var that = this;
+			return new Promise(function(resolve, reject) {
+				setTimeout(function() {
+					try {
+						resolve(that.oFloat.parseValue(oValue, sInternalType));
+					} catch (oException) {
+						reject(oException);
+					}
+				}, 0);
+			});
+		},
+		validateValue: function(oValue) {
+			var that = this;
+			return new Promise(function(resolve, reject) {
+				setTimeout(function() {
+					try {
+						that.oFloat.validateValue(oValue);
+						resolve(oValue);
+					} catch (oException) {
+						reject(oException);
+					}
+				}, 0);
+			});
+		},
+		getModelFormat: function() {
+			return this.oFloat.getModelFormat();
+		}
+	});
+
+	QUnit.module("Basic functionality", {
 		beforeEach: function() {
 			// Note: some tests modify the model data, therefore we clone it
 			this.currentTestData = clone(constTestData);
@@ -71,7 +126,7 @@ sap.ui.define([
 		}
 	});
 
-	QUnit.test("PropertyBinding getValue", function(assert) {
+	QUnit.test("getValue", function(assert) {
 		var bindings = this.createPropertyBindings("/teamMembers", "lastName");
 
 		bindings.forEach(function(binding, i) {
@@ -79,7 +134,7 @@ sap.ui.define([
 		}, this);
 	});
 
-	QUnit.test("PropertyBinding refresh", function(assert) {
+	QUnit.test("refresh", function(assert) {
 		assert.expect(3);
 		var oBinding = this.oModel.bindProperty("/name");
 		assert.equal(oBinding.getValue(), "Peter", "Property Binding returns value");
@@ -91,7 +146,7 @@ sap.ui.define([
 		assert.equal(oBinding.getValue(), "Jonas", "Property Binding returns changed value");
 	});
 
-	QUnit.test("PropertyBinding async update", function(assert) {
+	QUnit.test("async update", function(assert) {
 		assert.expect(4);
 		var oBinding1 = this.oModel.bindProperty("/name"),
 			oBinding2 = this.oModel.bindProperty("/name");
@@ -107,7 +162,7 @@ sap.ui.define([
 		assert.equal(oBinding2.getValue(), "Jonas", "Property Binding 2 returns updated value after refresh");
 	});
 
-	QUnit.test("PropertyBinding getExternalValue", function(assert) {
+	QUnit.test("getExternalValue", function(assert) {
 		var bindings = this.createPropertyBindings("/values", "value");
 
 		bindings.forEach(function(binding, i) {
@@ -121,7 +176,7 @@ sap.ui.define([
 
 	});
 
-	QUnit.test("PropertyBinding setExternalValue", function(assert) {
+	QUnit.test("setExternalValue", function(assert) {
 		var bindings = this.createPropertyBindings("/values", "value");
 
 		this.attach = false;
@@ -148,7 +203,7 @@ sap.ui.define([
 
 	});
 
-	QUnit.test("PropertyBinding getRawValue", function(assert) {
+	QUnit.test("getRawValue", function(assert) {
 		var oDateBinding = this.oModel.bindProperty("/rawdate"),
 			oFloatBinding = this.oModel.bindProperty("/rawnumber");
 		oDateBinding.setType(new DateType({pattern:"yyyy-MM-dd"}), "string");
@@ -157,7 +212,7 @@ sap.ui.define([
 		assert.strictEqual(oFloatBinding.getRawValue(), 3, "getRawValues returns raw values");
 	});
 
-	QUnit.test("PropertyBinding setRawValue", function(assert) {
+	QUnit.test("setRawValue", function(assert) {
 		var oDateBinding = this.oModel.bindProperty("/rawdate"),
 			oFloatBinding = this.oModel.bindProperty("/rawnumber");
 		oDateBinding.setType(new DateType({pattern:"yyyy-MM-dd"}), "string");
@@ -166,9 +221,9 @@ sap.ui.define([
 		assert.equal(oDateBinding.getExternalValue(), "2018-08-30", "setRawValue changes binding value");
 		oFloatBinding.setRawValue(5);
 		assert.equal(oFloatBinding.getExternalValue(), "5.000", "setRawValue changes binding value");
-		});
+	});
 
-	QUnit.test("PropertyBinding getInternalValue", function(assert) {
+	QUnit.test("getInternalValue", function(assert) {
 		var oDateBinding = this.oModel.bindProperty("/internaldate"),
 			oFloatBinding = this.oModel.bindProperty("/internalnumber");
 		oDateBinding.setType(new DateType({source:{pattern:"yyyy-MM-dd"}}), "string");
@@ -177,7 +232,7 @@ sap.ui.define([
 		assert.strictEqual(oFloatBinding.getInternalValue(), 3, "getInternvalValues returns internal values");
 	});
 
-	QUnit.test("PropertyBinding setInternalValue", function(assert) {
+	QUnit.test("setInternalValue", function(assert) {
 		var oDateBinding = this.oModel.bindProperty("/internaldate"),
 			oFloatBinding = this.oModel.bindProperty("/inernalnumber");
 		oDateBinding.setType(new DateType({source:{pattern:"yyyy-MM-dd"}}), "string");
@@ -188,7 +243,7 @@ sap.ui.define([
 		assert.equal(oFloatBinding.getRawValue(), "5.000", "setInternalValue changes binding value");
 	});
 
-	QUnit.test("PropertyBinding with internal type raw/internal", function(assert) {
+	QUnit.test("with internal type raw/internal", function(assert) {
 		var oDateBinding = this.oModel.bindProperty("/internaldate"),
 			oFloatBinding = this.oModel.bindProperty("/internalnumber");
 		oDateBinding.setType(new DateType({source:{pattern:"yyyy-MM-dd"}}), "raw");
@@ -201,7 +256,7 @@ sap.ui.define([
 		assert.strictEqual(oFloatBinding.getExternalValue(), 3, "getExternalValue returns internal values");
 	});
 
-	QUnit.test("PropertyBinding binding mode", function(assert) {
+	QUnit.test("binding mode", function(assert) {
 		var oLabel = new Label("myLabel");
 		oLabel.setModel(this.oModel);
 		oLabel.bindProperty("text", "/teamMembers/1/firstName");
@@ -225,7 +280,135 @@ sap.ui.define([
 		oLabel.destroy();
 	});
 
-	QUnit.test("PropertyBinding suspend/resume with control value change", function(assert) {
+	QUnit.module("Async Type", {
+		beforeEach: function() {
+			// Note: some tests modify the model data, therefore we clone it
+			this.currentTestData = clone(constTestData);
+			this.currentTestData.rawdate = new Date(2018,3,30); //JSON cloning breaks Date objects
+			this.oModel = new JSONModel();
+			this.oModel.setData(this.currentTestData);
+			sap.ui.getCore().setModel(this.oModel);
+		},
+		afterEach: function() {
+			sap.ui.getCore().setModel(null);
+			this.oModel.destroy();
+		},
+		createPropertyBindings: function(path, property, context) {
+			// create bindings
+			return this.currentTestData[path.substr(1)].map(function(entry, i) {
+				return this.oModel.bindProperty(path + "/" + i + "/" + property, context);
+				//this.oModel.bindProperty(".teamMembers.lastName", entry.lastName);
+			}, this);
+		}
+	});
+
+	QUnit.test("getExternalValue", function(assert) {
+		var oFloatBinding = this.oModel.bindProperty("/rawnumber");
+		oFloatBinding.setType(new AsyncFloat({decimals: 3}, {maximum: 10}), "string");
+		return oFloatBinding.getExternalValue().then(function(fValue) {
+			assert.strictEqual(fValue, "3.000", "getExternalValue returns formatted value asynchronously");
+		});
+	});
+
+	QUnit.test("getExternalValue failed format", function(assert) {
+		var oFloatBinding = this.oModel.bindProperty("/rawnumber");
+		oFloatBinding.setType(new AsyncFloat({decimals: 3}, {maximum: 10}), "boolean");
+		return oFloatBinding.getExternalValue().catch(function(oException) {
+			assert.ok(oException instanceof FormatException, "Invalid target type rejects with FormatException");
+		});
+	});
+
+	QUnit.test("setExternalValue", function(assert) {
+		var oFloatBinding = this.oModel.bindProperty("/rawnumber");
+		oFloatBinding.setType(new AsyncFloat({decimals: 3}, {maximum: 10}), "string");
+		return oFloatBinding.setExternalValue("5.000").then(function() {
+			assert.strictEqual(this.oModel.getProperty("/rawnumber"), 5, "setExternalValue updates model value async");
+		}.bind(this));
+	});
+
+	QUnit.test("setExternalValue failed parse", function(assert) {
+		var oFloatBinding = this.oModel.bindProperty("/rawnumber");
+		oFloatBinding.setType(new AsyncFloat({decimals: 3}, {maximum: 10}), "string");
+		return oFloatBinding.setExternalValue("xyz").catch(function(oException) {
+			assert.ok(oException instanceof ParseException, "Unparsable value rejects with ParseException");
+		});
+	});
+
+	QUnit.test("setExternalValue failed validation", function(assert) {
+		var oFloatBinding = this.oModel.bindProperty("/rawnumber");
+		oFloatBinding.setType(new AsyncFloat({decimals: 3}, {maximum: 10}), "string");
+		return oFloatBinding.setExternalValue("11.000").catch(function(oException) {
+			assert.ok(oException instanceof ValidateException, "Invalid value rejects with ValidateException");
+		});
+	});
+
+	QUnit.test("getRawValue", function(assert) {
+		var oFloatBinding = this.oModel.bindProperty("/rawnumber");
+		oFloatBinding.setType(new AsyncFloat({decimals: 3}, {maximum: 10}), "string");
+		assert.strictEqual(oFloatBinding.getRawValue(), 3, "getRawValues returns raw values synchronously");
+	});
+
+	QUnit.test("setRawValue", function(assert) {
+		var oFloatBinding = this.oModel.bindProperty("/rawnumber");
+		oFloatBinding.setType(new AsyncFloat({decimals: 3}, {maximum: 10}), "string");
+		return oFloatBinding.setRawValue(5).then(function() {
+			assert.strictEqual(this.oModel.getProperty("/rawnumber"), 5, "setRawValue updates model value async");
+		}.bind(this));
+	});
+
+	QUnit.test("setRawValue failed validation", function(assert) {
+		var oFloatBinding = this.oModel.bindProperty("/rawnumber");
+		oFloatBinding.setType(new AsyncFloat({decimals: 3}, {maximum: 10}), "string");
+		return oFloatBinding.setRawValue(11).catch(function(oException) {
+			assert.ok(oException instanceof ValidateException, "Invalid value rejects with ValidateException");
+		});
+	});
+
+	QUnit.test("getInternalValue", function(assert) {
+		var oFloatBinding = this.oModel.bindProperty("/internalnumber");
+		oFloatBinding.setType(new AsyncFloat({source:{decimals: 3}}, {maximum: 10}), "string");
+		assert.strictEqual(oFloatBinding.getInternalValue(), 3, "getInternalValue returns internal values synchronously");
+	});
+
+	QUnit.test("setInternalValue", function(assert) {
+		var oFloatBinding = this.oModel.bindProperty("/internalnumber");
+		oFloatBinding.setType(new AsyncFloat({source:{decimals: 3}}, {maximum: 10}), "string");
+		return oFloatBinding.setInternalValue(5).then(function() {
+			assert.strictEqual(this.oModel.getProperty("/internalnumber"), "5.000", "setInternalValue updates model value async");
+		}.bind(this));
+	});
+
+	QUnit.test("setInternalValue failed validation", function(assert) {
+		var oFloatBinding = this.oModel.bindProperty("/internalnumber");
+		oFloatBinding.setType(new AsyncFloat({source:{decimals: 3}}, {maximum: 10}), "string");
+		return oFloatBinding.setInternalValue(11).catch(function(oException) {
+			assert.ok(oException instanceof ValidateException, "Invalid value rejects with ValidateException");
+		});
+	});
+
+	QUnit.module("Suspend/Resume", {
+		beforeEach: function() {
+			// Note: some tests modify the model data, therefore we clone it
+			this.currentTestData = clone(constTestData);
+			this.currentTestData.rawdate = new Date(2018,3,30); //JSON cloning breaks Date objects
+			this.oModel = new JSONModel();
+			this.oModel.setData(this.currentTestData);
+			sap.ui.getCore().setModel(this.oModel);
+		},
+		afterEach: function() {
+			sap.ui.getCore().setModel(null);
+			this.oModel.destroy();
+		},
+		createPropertyBindings: function(path, property, context) {
+			// create bindings
+			return this.currentTestData[path.substr(1)].map(function(entry, i) {
+				return this.oModel.bindProperty(path + "/" + i + "/" + property, context);
+				//this.oModel.bindProperty(".teamMembers.lastName", entry.lastName);
+			}, this);
+		}
+	});
+
+	QUnit.test("suspend/resume with control value change", function(assert) {
 		var done = assert.async();
 		var oInput = new Input({
 			value: "{/name}"
@@ -255,7 +438,7 @@ sap.ui.define([
 		oBinding.resume();
 	});
 
-	QUnit.test("PropertyBinding suspend/resume with model value change", function(assert) {
+	QUnit.test("suspend/resume with model value change", function(assert) {
 		var done = assert.async();
 		var oInput = new Input({
 			value: "{/name}"
@@ -286,7 +469,7 @@ sap.ui.define([
 		oBinding.resume();
 	});
 
-	QUnit.test("PropertyBinding suspend/resume with control and model value change", function(assert) {
+	QUnit.test("suspend/resume with control and model value change", function(assert) {
 		var done = assert.async();
 		var oInput = new Input({
 			value: "{/name}"
@@ -325,7 +508,7 @@ sap.ui.define([
 		oBinding.resume();
 	});
 
-	QUnit.test("PropertyBinding suspend/resume with model and control value change", function(assert) {
+	QUnit.test("suspend/resume with model and control value change", function(assert) {
 		var done = assert.async();
 		var oInput = new Input({
 			value: "{/name}"
@@ -358,6 +541,28 @@ sap.ui.define([
 		assert.equal(oBinding.oValue, "Peter", "Property Binding internal value");
 		assert.equal(this.oModel.getProperty("/name"), "Petre", "model value");
 		oBinding.resume();
+	});
+
+	QUnit.module("PropertyChange event", {
+		beforeEach: function() {
+			// Note: some tests modify the model data, therefore we clone it
+			this.currentTestData = clone(constTestData);
+			this.currentTestData.rawdate = new Date(2018,3,30); //JSON cloning breaks Date objects
+			this.oModel = new JSONModel();
+			this.oModel.setData(this.currentTestData);
+			sap.ui.getCore().setModel(this.oModel);
+		},
+		afterEach: function() {
+			sap.ui.getCore().setModel(null);
+			this.oModel.destroy();
+		},
+		createPropertyBindings: function(path, property, context) {
+			// create bindings
+			return this.currentTestData[path.substr(1)].map(function(entry, i) {
+				return this.oModel.bindProperty(path + "/" + i + "/" + property, context);
+				//this.oModel.bindProperty(".teamMembers.lastName", entry.lastName);
+			}, this);
+		}
 	});
 
 	QUnit.test("propertyChange event", function(assert) {

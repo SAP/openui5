@@ -13,7 +13,6 @@ sap.ui.define([
 	"sap/ui/layout/form/SimpleForm",
 	"sap/ui/rta/plugin/CreateContainer",
 	"sap/ui/core/Title",
-	"sap/ui/qunit/utils/waitForThemeApplied",
 	"sap/ui/thirdparty/sinon-4"
 ],
 function (
@@ -29,7 +28,6 @@ function (
 	SimpleForm,
 	CreateContainerPlugin,
 	Title,
-	waitForThemeApplied,
 	sinon
 ) {
 	"use strict";
@@ -71,59 +69,56 @@ function (
 
 	QUnit.module("Given a designTime and createContainer plugin are instantiated for a Form", {
 		beforeEach : function(assert) {
-			sandbox.stub(Utils, "_getAppComponentForComponent").returns(oMockedComponent);
+			sandbox.stub(Utils, "getAppComponentForControl").returns(oMockedComponent);
 			sandbox.stub(Utils, "getViewForControl").returns(oMockedViewWithStableId);
 
 			var oChangeRegistry = ChangeRegistry.getInstance();
-			oChangeRegistry.registerControlsForChanges({
+			return oChangeRegistry.registerControlsForChanges({
 				"sap.ui.layout.form.Form" : {
 					"addGroup": { completeChangeContent: function () {} }
 				}
-			});
+			})
+			.then(function() {
+				this.oCreateContainer = new CreateContainerPlugin({
+					commandFactory : new CommandFactory()
+				});
+				this.oFormContainer = new FormContainer(oMockedViewWithStableId.createId("formContainer"), {
+					title: new Title({
+						text: "title"
+					})
+				});
+				this.oForm = new Form(oMockedViewWithStableId.createId("form"), {
+					formContainers: [this.oFormContainer],
+					layout: new FormLayout({
+					})
+				});
+				this.oVerticalLayout = new VerticalLayout(oMockedViewWithStableId.createId("verticalLayout"), {
+					content : [this.oForm]
+				}).placeAt("qunit-fixture");
 
-			this.oCreateContainer = new CreateContainerPlugin({
-				commandFactory : new CommandFactory()
-			});
+				sap.ui.getCore().applyChanges();
 
-			this.oFormContainer = new FormContainer(oMockedViewWithStableId.createId("formContainer"), {
-				title: new Title({
-					text: "title"
-				})
-			});
+				this.sNewControlID = oMockedViewWithStableId.createId(jQuery.sap.uid());
+				this.oNewFormContainerStub = new FormContainer(this.sNewControlID);
+				this.oForm.addFormContainer(this.oNewFormContainerStub);
 
-			this.oForm = new Form(oMockedViewWithStableId.createId("form"), {
-				formContainers: [this.oFormContainer],
-				layout: new FormLayout({
-				})
-			});
+				this.oDesignTime = new DesignTime({
+					rootElements : [this.oVerticalLayout],
+					plugins : [this.oCreateContainer]
+				});
 
-			this.oVerticalLayout = new VerticalLayout(oMockedViewWithStableId.createId("verticalLayout"), {
-				content : [this.oForm]
-			}).placeAt("qunit-fixture");
+				var done = assert.async();
 
-			sap.ui.getCore().applyChanges();
+				this.oDesignTime.attachEventOnce("synced", function() {
 
-			this.sNewControlID = oMockedViewWithStableId.createId(jQuery.sap.uid());
-			this.oNewFormContainerStub = new FormContainer(this.sNewControlID);
-			this.oForm.addFormContainer(this.oNewFormContainerStub);
+					this.oLayoutOverlay = OverlayRegistry.getOverlay(this.oVerticalLayout);
+					this.oFormOverlay = OverlayRegistry.getOverlay(this.oForm);
+					this.oFormContainerOverlay = OverlayRegistry.getOverlay(this.oFormContainer);
+					this.oNewFormContainerOverlay = OverlayRegistry.getOverlay(this.oNewFormContainerStub);
 
-			this.oDesignTime = new DesignTime({
-				rootElements : [this.oVerticalLayout],
-				plugins : [this.oCreateContainer]
-			});
-
-			var done = assert.async();
-
-			this.oDesignTime.attachEventOnce("synced", function() {
-
-				this.oLayoutOverlay = OverlayRegistry.getOverlay(this.oVerticalLayout);
-				this.oFormOverlay = OverlayRegistry.getOverlay(this.oForm);
-				this.oFormContainerOverlay = OverlayRegistry.getOverlay(this.oFormContainer);
-				this.oNewFormContainerOverlay = OverlayRegistry.getOverlay(this.oNewFormContainerStub);
-
-				done();
+					done();
+				}.bind(this));
 			}.bind(this));
-
 		},
 		afterEach: function () {
 			sandbox.restore();
@@ -447,46 +442,41 @@ function (
 
 	QUnit.module("Given a designTime and createContainer plugin are instantiated for a SimpleForm", {
 		beforeEach : function(assert) {
-			sandbox.stub(Utils, "_getAppComponentForComponent").returns(oMockedComponent);
+			var done = assert.async();
+			sandbox.stub(Utils, "getAppComponentForControl").returns(oMockedComponent);
 			sandbox.stub(Utils, "getViewForControl").returns(oMockedViewWithStableId);
 
 			var oChangeRegistry = ChangeRegistry.getInstance();
-			oChangeRegistry.registerControlsForChanges({
+			return oChangeRegistry.registerControlsForChanges({
 				"sap.ui.layout.form.SimpleForm": {
 					"addSimpleFormGroup": { completeChangeContent: function () {} }
 				}
-			});
+			})
+			.then(function() {
+				this.oCreateContainer = new CreateContainerPlugin({
+					commandFactory : new CommandFactory()
+				});
+				this.oTitle = new Title(oMockedViewWithStableId.createId("title"), { text: "title" });
+				this.oSimpleForm = new SimpleForm(oMockedViewWithStableId.createId("form"), {
+					content: [this.oTitle]
+				});
+				this.oVerticalLayout = new VerticalLayout(oMockedViewWithStableId.createId("verticalLayout"), {
+					content : [this.oSimpleForm]
+				}).placeAt("qunit-fixture");
 
-			this.oCreateContainer = new CreateContainerPlugin({
-				commandFactory : new CommandFactory()
-			});
+				sap.ui.getCore().applyChanges();
 
-			this.oTitle = new Title(oMockedViewWithStableId.createId("title"), { text: "title" });
+				this.oDesignTime = new DesignTime({
+					rootElements : [this.oVerticalLayout],
+					plugins : [this.oCreateContainer]
+				});
 
-			this.oSimpleForm = new SimpleForm(oMockedViewWithStableId.createId("form"), {
-				content: [this.oTitle]
-			});
-
-			this.oVerticalLayout = new VerticalLayout(oMockedViewWithStableId.createId("verticalLayout"), {
-				content : [this.oSimpleForm]
-			}).placeAt("qunit-fixture");
-
-			sap.ui.getCore().applyChanges();
-
-
-			this.oDesignTime = new DesignTime({
-				rootElements : [this.oVerticalLayout],
-				plugins : [this.oCreateContainer]
-			});
-
-			var done = assert.async();
-
-			this.oDesignTime.attachEventOnce("synced", function() {
-				this.oFormOverlay = OverlayRegistry.getOverlay(this.oSimpleForm.getAggregation("form"));
-				this.oGroupOverlay = OverlayRegistry.getOverlay(this.oSimpleForm.getAggregation("form").getFormContainers()[0]);
-				done();
+				this.oDesignTime.attachEventOnce("synced", function() {
+					this.oFormOverlay = OverlayRegistry.getOverlay(this.oSimpleForm.getAggregation("form"));
+					this.oGroupOverlay = OverlayRegistry.getOverlay(this.oSimpleForm.getAggregation("form").getFormContainers()[0]);
+					done();
+				}.bind(this));
 			}.bind(this));
-
 		},
 		afterEach: function () {
 			sandbox.restore();
@@ -543,5 +533,4 @@ function (
 		jQuery("#qunit-fixture").hide();
 	});
 
-	return waitForThemeApplied();
 });
