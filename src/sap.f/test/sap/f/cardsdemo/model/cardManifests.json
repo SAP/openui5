@@ -406,18 +406,7 @@
 						"number": "{number}",
 						"unit": "{unit}",
 						"trend": "{trend}",
-						"state": "{state}",
-						"range": {
-							"WE CAN OFFER THE USE OF RANGE OR STATE": "WE CAN OFFER THE USE OF RANGE OR STATE",
-							"Critical": [
-								0,
-								100
-							],
-							"Good": [
-								100,
-								1000
-							]
-						}
+						"state": "{state}"
 					},
 					"details": "{details}",
 					"sideIndicators": [
@@ -1491,18 +1480,7 @@
 						"number": "{number}",
 						"unit": "{unit}",
 						"trend": "{trend}",
-						"state": "{state}",
-						"range": {
-							"WE CAN OFFER THE USE OF RANGE OR STATE": "WE CAN OFFER THE USE OF RANGE OR STATE",
-							"Critical": [
-								0,
-								100
-							],
-							"Good": [
-								100,
-								1000
-							]
-						}
+						"state": "{state}"
 					},
 					"details": "{details}",
 					"sideIndicators": [
@@ -1635,18 +1613,7 @@
 						"number": "{number}",
 						"unit": "{unit}",
 						"trend": "{trend}",
-						"state": "{state}",
-						"range": {
-							"WE CAN OFFER THE USE OF RANGE OR STATE": "WE CAN OFFER THE USE OF RANGE OR STATE",
-							"Critical": [
-								0,
-								100
-							],
-							"Good": [
-								100,
-								1000
-							]
-						}
+						"state": "{state}"
 					},
 					"details": "{details}",
 					"sideIndicators": [
@@ -1703,18 +1670,7 @@
 						"number": "{number}",
 						"unit": "{unit}",
 						"trend": "{trend}",
-						"state": "{state}",
-						"range": {
-							"WE CAN OFFER THE USE OF RANGE OR STATE": "WE CAN OFFER THE USE OF RANGE OR STATE",
-							"Critical": [
-								0,
-								100
-							],
-							"Good": [
-								100,
-								1000
-							]
-						}
+						"state": "{state}"
 					},
 					"details": "{details}",
 					"sideIndicators": [
