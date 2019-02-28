@@ -41,10 +41,13 @@ sap.ui.require([
 			.theResultListIsVisible(2);
 
 		// assertion defined in testLibrary.pageObjects.Common2
-		Then.iLeaveMyApp();
+		Then.iResetMyApp()
+			.and
+			.iTeardownMyApp();
 	});
 
 	opaTest("Should navigate to details", function (Given, When, Then) {
+		Given.iStartMyApp();
 		When.onTheListPage
 			.iNavigateFromListItem("name", "Sample12");
 
