@@ -4,6 +4,7 @@ sap.ui.define([
 	"sap/m/upload/UploadSet",
 	"sap/m/upload/UploadSetItem",
 	"sap/m/upload/UploadSetRenderer",
+	"sap/m/upload/Uploader",
 	"sap/m/UploadState",
 	"sap/m/Toolbar",
 	"sap/m/Label",
@@ -15,7 +16,7 @@ sap.ui.define([
 	"sap/m/MessageBox",
 	"sap/ui/model/json/JSONModel",
 	"test-resources/sap/m/qunit/upload/UploadSetTestUtils"
-], function (jQuery, UploadSet, UploadSetItem, UploadSetRenderer, UploadState, Toolbar, Label, ListItemBaseRenderer,
+], function (jQuery, UploadSet, UploadSetItem, UploadSetRenderer, Uploader, UploadState, Toolbar, Label, ListItemBaseRenderer,
 			 Dialog, Device, ListSeparators, ListMode, MessageBox, JSONModel, TestUtils) {
 	"use strict";
 
@@ -58,8 +59,17 @@ sap.ui.define([
 	/* Events */
 	/* ====== */
 
+	var NoopUploader = Uploader.extend("sap.m.qunit.upload.NoopUploader", {});
+	NoopUploader.prototype.uploadItem = function (oItem, aHeaders) {};
+	NoopUploader.prototype.downloadItem = function (oItem, aHeaders, bAskForLocation) {};
+
 	QUnit.test("Events beforeItemAdded and afterItemAdded are called at proper time and with correct parameters, prevent default applies.", function (assert) {
 		assert.expect(5);
+		var oOrigUploader,
+			oNoopUploader = new NoopUploader();
+
+		oOrigUploader = this.oUploadSet.getUploader();
+		this.oUploadSet.setUploader(oNoopUploader);
 
 		this.oUploadSet.attachEventOnce("beforeItemAdded", function (oEvent) {
 			assert.ok(true, "beforeItemAdded event should have been called.");
@@ -93,6 +103,8 @@ sap.ui.define([
 				};
 			}
 		});
+
+		this.oUploadSet.setUploader(oOrigUploader);
 	});
 
 	QUnit.test("Event beforeItemRemoved is called at proper time and with correct parameters, prevent default applies.", function (assert) {
