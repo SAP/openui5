@@ -7,7 +7,7 @@ sap.ui.define([
 	// All methods defined here can be accessed directly on the Given, When or Then clauses (eg: Then.iLeaveMyApp())
 	var Common2 = Opa5.extend("testLibrary.pageObjects.Common2", {
 
-		iLeaveMyApp: function () {
+		iResetMyApp: function () {
 			return this.waitFor({
 				success: function () {
 					Opa5.assert.ok(true, "Custom application teardown logic executed");
