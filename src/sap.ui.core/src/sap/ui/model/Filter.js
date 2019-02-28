@@ -26,7 +26,8 @@ sap.ui.define([
 	 * </ul>
 	 * An error will be logged to the console if an invalid combination of parameters is provided.
 	 * Please note that a model implementation may not support a custom filter function, e.g. if the model does not perform client side filtering.
-	 * It also depends on the model implementation if the filtering is case sensitive or not.
+	 * It also depends on the model implementation if the filtering is case sensitive or not. Client models filter case insensitive compared to the
+	 * OData models which filter case sensitive by default.
 	 * See particular model documentation for details
 	 * The filter operators <code>Any</code> and <code>All</code> are only supported in V4 OData models.
 	 * When creating a filter instance with these filter operators, the argument <code>variable</code> only accepts a string identifier and <code>condition</code> needs to be another filter instance.
@@ -115,7 +116,7 @@ sap.ui.define([
 	 * @param {sap.ui.model.Filter} [vFilterInfo.condition] A <code>Filter</code> instance which will be used as the condition for the lambda operator
 	 * @param {sap.ui.model.Filter[]} vFilterInfo.filters Array of filters on which logical conjunction is applied
 	 * @param {boolean} [vFilterInfo.and=false] Indicates whether an "AND" logical conjunction is applied on the filters. If it's not set or set to <code>false</code>, an "OR" conjunction is applied
-	 * @param {boolean} [vFilterInfo.caseSensitive=false] Indicates whether a string value should be compared case sensitive or not.
+	 * @param {boolean} [vFilterInfo.caseSensitive] Indicates whether a string value should be compared case sensitive or not.
 	 * @param {sap.ui.model.FilterOperator|function|boolean} [vOperator] Either a filter operator or a custom filter function or a Boolean flag that defines how to combine multiple filters
 	 * @param {any} [vValue1] First value to use with the given filter operator
 	 * @param {any} [vValue2] Second value to use with the given filter operator (only for some operators)
