@@ -36,7 +36,7 @@ sap.ui.require([
 			// and declared in testLibrary.pageObjects.List
 			Given.iStartMyApp();
 
-			// Action defined in tstLibrary.pageObjects.List.
+			// Action defined in testLibrary.pageObjects.List.
 			// We can use it directly without further configuration because
 			// the page object is already registered in the imported library module
 			When.onTheListPage
@@ -46,10 +46,13 @@ sap.ui.require([
 				.theResultListIsVisible(2);
 
 			// assertion defined in testLibrary.pageObjects.Common2
-			Then.iLeaveMyApp();
+			Then.iResetMyApp()
+				.and
+				.iTeardownMyApp();
 		});
 
 		opaTest("Should navigate to details", function (Given, When, Then) {
+			Given.iStartMyApp();
 			When.onTheListPage
 				.iNavigateFromListItem("name", "Sample12");
 
