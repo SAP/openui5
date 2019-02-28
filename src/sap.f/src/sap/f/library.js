@@ -448,11 +448,11 @@ sap.ui.define(["sap/ui/base/DataType",
 	 */
 
 	/**
-	 * Interface for controls suitable for sap.f.ShellBar additionalContent aggregation
+	 * Interface for controls suitable for the <code>additionalContent</code> aggregation of <code>{@link sap.f.ShellBar}</code>.
 	 *
 	 * @since 1.63
 	 * @name sap.f.IShellBar
-	 * @experimental Since 1.63. This Interface is experimental and provides only limited functionality. It can be removed in future versions.
+	 * @experimental Since 1.63, that provides only limited functionality. Also, it can be removed in future versions.
 	 * @public
 	 * @interface
 	 * @ui5-metamodel This interface also will be described in the UI5 (legacy) designtime metamodel

@@ -5,7 +5,7 @@
 		xmlns:m="sap.m"
 		height="100%">
 	<ShellBar
-            title="Application title"
+            title="Application Title"
             secondTitle="Short description"
             homeIcon="./resources/sap/ui/documentation/sdk/images/logo_ui5.png"
             showCopilot="true"
