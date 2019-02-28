@@ -444,43 +444,8 @@ sap.ui.define([
 
 	QUnit.test("_getAssociationSetByAssociation", function(assert) {
 		return this.oMetadata.loaded().then(function() {
-			var oBusinessPartnerProductsSet = {
-			  "association": "GWSAMPLE_BASIC.Assoc_BusinessPartner_Products",
-			  "end": [
-				{
-				  "entitySet": "BusinessPartnerSet",
-				  "role": "FromRole_Assoc_BusinessPartner_Products"
-				},
-				{
-				  "entitySet": "ProductSet",
-				  "role": "ToRole_Assoc_BusinessPartner_Products"
-				}
-			  ],
-			  "extensions": [
-				{
-				  "name": "creatable",
-				  "namespace": "http://www.sap.com/Protocols/SAPData",
-				  "value": "false"
-				},
-				{
-				  "name": "updatable",
-				  "namespace": "http://www.sap.com/Protocols/SAPData",
-				  "value": "false"
-				},
-				{
-				  "name": "deletable",
-				  "namespace": "http://www.sap.com/Protocols/SAPData",
-				  "value": "false"
-				},
-				{
-				  "name": "content-version",
-				  "namespace": "http://www.sap.com/Protocols/SAPData",
-				  "value": "1"
-				}
-			  ],
-			  "name": "Assoc_BusinessPartner_Products_AssocSet"
-			};
-			assert.deepEqual(this.oMetadata._getAssociationSetByAssociation("GWSAMPLE_BASIC.Assoc_BusinessPartner_Products"), oBusinessPartnerProductsSet, "Returns AssocationSet for association");
+			var oBusinessPartnerProductsSet = this.oMetadata._getAssociationSetByAssociation("GWSAMPLE_BASIC.Assoc_BusinessPartner_Products");
+			assert.deepEqual(oBusinessPartnerProductsSet.name, "Assoc_BusinessPartner_Products_AssocSet", "Returns AssocationSet for association");
 			assert.equal(this.oMetadata._getAssociationSetByAssociation("GWSAMPLE_BASIC.Unknown"), null, "Returns null for unknown association");
 			assert.equal(this.oMetadata._getAssociationSetByAssociation("Unknown"), null, "Returns null for unknown association");
 		}.bind(this));
