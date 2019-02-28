@@ -880,7 +880,6 @@ sap.ui.define([
 	FlexibleColumnLayout.prototype._resizeColumns = function () {
 		var iPercentWidth,
 			iNewWidth,
-			sNewWidth,
 			iTotalMargin,
 			iAvailableWidth,
 			bNeedsMargin = false,
@@ -931,6 +930,7 @@ sap.ui.define([
 		// Resize the columns according to the current layout
 		aColumns.forEach(function (sColumn) {
 			var oColumn = this._$columns[sColumn],
+				sNewWidth,
 				bShouldConcealColumn;
 
 			iPercentWidth = this._getColumnSize(sColumn);
