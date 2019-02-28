@@ -14,6 +14,7 @@ sap.ui.define([
 	'sap/ui/base/ManagedObject',
 	'sap/m/NavContainer',
 	'sap/m/Popover',
+	'sap/m/Button',
 	'./SplitContainerRenderer',
 	"sap/ui/dom/containsOrEquals",
 	"sap/base/Log",
@@ -30,6 +31,7 @@ function(
 	ManagedObject,
 	NavContainer,
 	Popover,
+	Button,
 	SplitContainerRenderer,
 	containsOrEquals,
 	Log,
@@ -1879,7 +1881,7 @@ function(
 			return;
 		}
 
-		this._oShowMasterBtn = new sap.m.Button(this.getId() + "-MasterBtn", {
+		this._oShowMasterBtn = new Button(this.getId() + "-MasterBtn", {
 			icon: IconPool.getIconURI("menu2"),
 			tooltip: this.getMasterButtonTooltip(),
 			type: ButtonType.Default,

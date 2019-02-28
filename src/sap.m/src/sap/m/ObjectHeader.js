@@ -12,6 +12,8 @@ sap.ui.define([
 	'sap/m/Text',
 	'sap/ui/events/KeyCodes',
 	'./ObjectHeaderRenderer',
+	'./ObjectMarker',
+	'./ObjectNumber',
 	"sap/ui/thirdparty/jquery"
 ],
 	function(
@@ -23,6 +25,8 @@ sap.ui.define([
 		Text,
 		KeyCodes,
 		ObjectHeaderRenderer,
+    ObjectMarker,
+    ObjectNumber,
 		jQuery
 	) {
 	"use strict";
@@ -703,7 +707,7 @@ sap.ui.define([
 		}
 
 		if (!bHasMarker) {
-			this.insertAggregation("markers", new sap.m.ObjectMarker({
+			this.insertAggregation("markers", new ObjectMarker({
 				id: this.getId() + oIds[markerType],
 				type: markerType,
 				visible: bMarked
@@ -741,7 +745,7 @@ sap.ui.define([
 		var oControl = this.getAggregation("_objectNumber");
 
 		if (!oControl) {
-			oControl = new sap.m.ObjectNumber(this.getId() + "-number", {
+			oControl = new ObjectNumber(this.getId() + "-number", {
 				emphasized: false
 			});
 

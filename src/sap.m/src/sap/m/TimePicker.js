@@ -21,6 +21,7 @@ sap.ui.define([
 	"sap/ui/events/KeyCodes",
 	"sap/base/Log",
 	"sap/ui/core/InvisibleText",
+	'./Button',
 	"sap/ui/thirdparty/jquery"
 ],
 function(
@@ -41,6 +42,7 @@ function(
 	KeyCodes,
 	Log,
 	InvisibleText,
+	Button,
 	jQuery
 ) {
 		"use strict";
@@ -1077,8 +1079,8 @@ function(
 				horizontalScrolling: false,
 				verticalScrolling: false,
 				placement: PlacementType.VerticalPreferedBottom,
-				beginButton: new sap.m.Button({ text: sOKButtonText, press: jQuery.proxy(this._handleOkPress, this) }),
-				endButton: new sap.m.Button({ text: sCancelButtonText, press: jQuery.proxy(this._handleCancelPress, this) }),
+				beginButton: new Button({ text: sOKButtonText, press: jQuery.proxy(this._handleOkPress, this) }),
+				endButton: new Button({ text: sCancelButtonText, press: jQuery.proxy(this._handleCancelPress, this) }),
 				content: [
 					new TimePickerSliders(this.getId() + "-sliders", {
 						support2400: this.getSupport2400(),

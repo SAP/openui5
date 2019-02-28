@@ -5,6 +5,8 @@
 // Provides control sap.m.ObjectIdentifier.
 sap.ui.define([
 	'./library',
+	'./Link',
+	'./Text',
 	'sap/ui/core/Control',
 	'sap/ui/core/IconPool',
 	'sap/ui/core/InvisibleText',
@@ -15,6 +17,8 @@ sap.ui.define([
 ],
 function(
 	library,
+	Link,
+	Text,
 	Control,
 	IconPool,
 	InvisibleText,
@@ -265,7 +269,7 @@ function(
 		if (!oTitleControl) {
 			// Lazy initialization
 			if (this.getProperty("titleActive")) {
-				oTitleControl = new sap.m.Link({
+				oTitleControl = new Link({
 					id : sId + "-link",
 					text: ManagedObject.escapeSettingsValue(this.getProperty("title")),
 					//Add a custom hidden role "ObjectIdentifier" with hidden text
@@ -273,7 +277,7 @@ function(
 				});
 				oTitleControl.addAssociation("ariaLabelledBy", sId + "-text", true);
 			} else {
-				oTitleControl = new sap.m.Text({
+				oTitleControl = new Text({
 					id : sId + "-txt",
 					text: ManagedObject.escapeSettingsValue(this.getProperty("title"))
 				});
@@ -299,7 +303,7 @@ function(
 
 		if (bIsTitleActive && oTitleControl instanceof sap.m.Text) {
 			this.destroyAggregation("_titleControl", true);
-			oTitleControl = new sap.m.Link({
+			oTitleControl = new Link({
 				id : sId + "-link",
 				text: ManagedObject.escapeSettingsValue(this.getProperty("title")),
 				//Add a custom hidden role "ObjectIdentifier" with hidden text
@@ -309,7 +313,7 @@ function(
 			this.setAggregation("_titleControl", oTitleControl, true);
 		} else if (!bIsTitleActive && oTitleControl instanceof sap.m.Link) {
 			this.destroyAggregation("_titleControl", true);
-			oTitleControl = new sap.m.Text({
+			oTitleControl = new Text({
 				id : sId + "-txt",
 				text: ManagedObject.escapeSettingsValue(this.getProperty("title"))
 			});
@@ -339,7 +343,7 @@ function(
 		var oTextControl = this.getAggregation("_textControl");
 
 		if (!oTextControl) {
-			oTextControl = new sap.m.Text({
+			oTextControl = new Text({
 				text: ManagedObject.escapeSettingsValue(this.getProperty("text"))
 			});
 			this.setAggregation("_textControl", oTextControl, true);

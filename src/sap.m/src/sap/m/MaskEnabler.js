@@ -10,9 +10,10 @@ sap.ui.define([
 	"sap/ui/events/KeyCodes",
 	"sap/base/Log",
 	"sap/ui/thirdparty/jquery",
+	"sap/m/MaskInputRule",
 	// jQuery Plugin "cursorPos"
 	"sap/ui/dom/jquery/cursorPos"
-], function(Control, InputBase, Device, coreLibrary, KeyCodes, Log, jQuery) {
+], function(Control, InputBase, Device, coreLibrary, KeyCodes, Log, jQuery, MaskInputRule) {
 	"use strict";
 
 	// shortcut for sap.ui.core.TextDirection
@@ -513,11 +514,11 @@ sap.ui.define([
 		 */
 		this._setDefaultRules = function () {
 			this._bSkipSetupMaskVariables = true;
-			this.addRule(new sap.m.MaskInputRule({
+			this.addRule(new MaskInputRule({
 				maskFormatSymbol: "a",
 				regex: "[A-Za-z]"
 			}), true);
-			this.addRule(new sap.m.MaskInputRule({
+			this.addRule(new MaskInputRule({
 				maskFormatSymbol: "9",
 				regex: "[0-9]"
 			}), true);
