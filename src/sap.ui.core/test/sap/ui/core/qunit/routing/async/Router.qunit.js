@@ -410,7 +410,7 @@ sap.ui.define([
 			}
 		});
 
-		var oViewCreateStub = sinon.stub(View, "create").callsFake(function() {
+		var oViewCreateStub = sinon.stub(sap.ui, "view").callsFake(function() {
 			var oView = {
 				loaded: function() {
 					return Promise.resolve(oView);
@@ -980,7 +980,7 @@ sap.ui.define([
 			}
 		]);
 
-		var oSpy = sinon.spy(View, "create");
+		var oSpy = sinon.spy(sap.ui, "view");
 		var oRouteMatchedSpy = sinon.spy(router.getRoute("name"), "_routeMatched");
 
 		router.initialize();
@@ -1466,7 +1466,7 @@ sap.ui.define([
 			this.sTitle = "myTitle";
 
 			var oView = createXmlView();
-			this.fnStub = sinon.stub(View, "create").callsFake(function () {
+			this.fnStub = sinon.stub(sap.ui, "view").callsFake(function () {
 				return oView;
 			});
 
@@ -1683,7 +1683,7 @@ sap.ui.define([
 			this.oApp = new App();
 
 			var oView = createXmlView();
-			this.fnStub = sinon.stub(View, "create").callsFake(function () {
+			this.fnStub = sinon.stub(sap.ui, "view").callsFake(function () {
 				return oView;
 			});
 
@@ -2427,8 +2427,8 @@ sap.ui.define([
 			fnOwnerSpy = this.spy(oUIComponent, "runAsOwner"),
 			oView = createXmlView(),
 			oRouter = fnCreateRouter({}, {}, oUIComponent),
-			fnViewStub = this.stub(sap.ui, "view").callsFake(function () {
-				return oView;
+				fnViewStub = this.stub(sap.ui, "view").callsFake(function () {
+					return oView;
 			});
 
 		// Act
