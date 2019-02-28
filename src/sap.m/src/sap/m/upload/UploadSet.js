@@ -160,8 +160,7 @@ sap.ui.define([
 				/**
 				 * This event is fired when the edit button is clicked for an item and no other item is being edited
 				 * at the same time.
-				 * <br>If there is another item that has unsaved changes, the editing of the clicked item cannot be
-				 * started.
+				 * <br>If there is another item that has unsaved changes, the editing of the clicked item cannot be started.
 				 */
 				beforeItemEdited: {
 					parameters: {
@@ -359,43 +358,47 @@ sap.ui.define([
 		this._bindDragAndDrop();
 	};
 
-	UploadSet.prototype.onkeydown = function(oEvent) {
+	UploadSet.prototype.onkeydown = function (oEvent) {
 		var oListItem,
 			oItem;
 
-		if (oEvent.target) {
+		// Check the case when focus is inside an edited item
+		if (this._oEditedItem && this._oEditedItem._getFileNameEdit().$("inner")[0] === oEvent.target) {
+			oItem = this._oEditedItem;
+		} else if (oEvent.target) {
 			oListItem = sap.ui.getCore().byId(oEvent.target.id);
+			if (oListItem) {
+				oItem = this._mListItemIdToItemMap[oListItem.getId()];
+			}
 		}
-		if (oListItem) {
-			oItem = this._mListItemIdToItemMap[oListItem.getId()];
+
+		// No item no fun
+		if (!oItem) {
+			return;
 		}
 
 		switch (oEvent.keyCode) {
-			case KeyCodes.F2 :
-				if (oItem) {
-					if (this._bInEditMode) {
-						this._handleItemEditConfirmation(oEvent, oItem);
-					} else {
-						this._handleItemEdit(oEvent, oItem);
-					}
+			case KeyCodes.F2:
+				if (oItem._bInEditMode) {
+					this._handleItemEditConfirmation(oEvent, oItem);
+				} else {
+					this._handleItemEdit(oEvent, oItem);
 				}
 				break;
-			case KeyCodes.ESCAPE :
-				if (oItem) {
-					this._handleItemEditCancelation(oEvent, oItem);
-				}
+			case KeyCodes.ESCAPE:
+				this._handleItemEditCancelation(oEvent, oItem);
 				break;
-			case KeyCodes.DELETE :
-				if (oItem) {
-					this._handleItemDelete(oEvent, oItem);
-				}
+			case KeyCodes.DELETE:
+				this._handleItemDelete(oEvent, oItem);
 				break;
-			case KeyCodes.ENTER :
-				if (oItem) {
+			case KeyCodes.ENTER:
+				if (oItem === this._oEditedItem) {
+					this._handleItemEditConfirmation(oEvent, oItem);
+				} else {
 					oItem._handleFileNamePressed();
 				}
 				break;
-			default :
+			default:
 				return;
 		}
 	};
@@ -416,13 +419,13 @@ sap.ui.define([
 		return this._oToolbar;
 	};
 
-	UploadSet.prototype.getNoDataText = function() {
+	UploadSet.prototype.getNoDataText = function () {
 		var sNoDataText = this.getProperty("noDataText");
 		sNoDataText = sNoDataText || this._oRb.getText("UPLOAD_SET_NO_DATA_TEXT");
 		return sNoDataText;
 	};
 
-	UploadSet.prototype.getNoDataDescription = function() {
+	UploadSet.prototype.getNoDataDescription = function () {
 		var sNoDataDescription = this.getProperty("noDataDescription");
 		sNoDataDescription = sNoDataDescription || this._oRb.getText("UPLOAD_SET_NO_DATA_DESCRIPTION");
 		return sNoDataDescription;
@@ -669,25 +672,25 @@ sap.ui.define([
 		this._processNewFileObjects(oFiles);
 	};
 
-	UploadSet.prototype._onUploadStarted = function(oEvent) {
+	UploadSet.prototype._onUploadStarted = function (oEvent) {
 		var oItem = oEvent.getParameter("item");
 		oItem.setUploadState(UploadState.Uploading);
 	};
 
-	UploadSet.prototype._onUploadProgressed = function(oEvent) {
+	UploadSet.prototype._onUploadProgressed = function (oEvent) {
 		var oItem = oEvent.getParameter("item"),
 			iPercentUploaded = Math.round(oEvent.getParameter("loaded") / oEvent.getParameter("total") * 100);
 		oItem.setProgress(iPercentUploaded);
 	};
 
-	UploadSet.prototype._onUploadCompleted = function(oEvent) {
+	UploadSet.prototype._onUploadCompleted = function (oEvent) {
 		var oItem = oEvent.getParameter("item");
 		oItem.setProgress(100);
 		oItem.setUploadState(UploadState.Complete);
 		this.fireUploadCompleted({item: oItem});
 	};
 
-	UploadSet.prototype._onUploadAborted = function(oEvent) {
+	UploadSet.prototype._onUploadAborted = function (oEvent) {
 		var oItem = oEvent.getParameter("item");
 		oItem.setUploadState(UploadState.Error);
 		this.fireUploadTerminated({item: oItem});

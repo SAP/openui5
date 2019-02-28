@@ -27,9 +27,9 @@ sap.ui.define([
 				},
 				{
 					fileName: "Brenda.mp4",
-					enabledDelete: false,
+					enabledRemove: false,
 					enabledEdit: false,
-					visibleDelete: false,
+					visibleRemove: false,
 					visibleEdit: false
 				}
 			]
