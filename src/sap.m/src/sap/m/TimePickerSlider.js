@@ -117,6 +117,19 @@ sap.ui.define([
 			this._initArrows();
 		};
 
+		TimePickerSlider.prototype.exit = function() {
+			var $Slider = this._getSliderContainerDomRef();
+
+			if ($Slider) {
+				$Slider.stop();
+			}
+
+			if (this._intervalId) {
+				clearInterval(this._intervalId);
+				this._intervalId = null;
+			}
+		};
+
 		/**
 		 * Called after the control is rendered.
 		 */
@@ -379,6 +392,7 @@ sap.ui.define([
 				this._intervalId = setInterval(function () {
 					if (!that._aWheelDeltas.length) {
 						clearInterval(that._intervalId);
+						that._intervalId = null;
 						that._bWheelScrolling = false;
 					} else {
 						iResultOffset = that._aWheelDeltas[0]; //simplification, we could still use the array in some cases
@@ -702,6 +716,7 @@ sap.ui.define([
 					var iSnapScrollTop = Math.round((iPreviousScrollTop  + iOffset) / iItemHeight) * iItemHeight - iOffset;
 
 					clearInterval(that._intervalId);
+					that._intervalId = null;
 					that._animating = null; //not animating
 					that._iSelectedIndex = Math.round((iPreviousScrollTop  + that._selectionOffset) / iItemHeight);
 
@@ -726,6 +741,7 @@ sap.ui.define([
 		TimePickerSlider.prototype._stopAnimation = function() {
 			if (this._animating) {
 				clearInterval(this._intervalId);
+				this._intervalId = null;
 				this._animating = null;
 			}
 		};
