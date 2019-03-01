@@ -1661,7 +1661,8 @@ sap.ui.define([
 	};
 
 	/**
-	 * Resumes this binding and all dependent bindings and fires a change event afterwards.
+	 * Resumes this binding and all dependent bindings and fires a change or refresh event
+	 * afterwards.
 	 *
 	 * @param {boolean} bCheckUpdate
 	 *   Parameter is ignored; dependent property bindings of a list binding never call checkUpdate
@@ -1682,7 +1683,14 @@ sap.ui.define([
 			// binding is reset and the binding has not yet fired a change event
 			oDependentBinding.resumeInternal(false);
 		});
-		this._fireChange({reason : sChangeReason});
+		if (this.sChangeReason === "AddVirtualContext") {
+			// In a refresh event the table would ignore the result -> no virtual context -> no
+			// auto-$expand/$select. The refresh event is sent later after the change event with
+			// reason "RemoveVirtualContext".
+			this._fireChange({reason : sChangeReason});
+		} else {
+			this._fireRefresh({reason : sChangeReason});
+		}
 
 		// Update after the change event, otherwise $count is fetched before the request
 		this.oModel.getDependentBindings(this.oHeaderContext).forEach(function (oBinding) {
