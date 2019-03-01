@@ -150,8 +150,9 @@ sap.ui.define([
 	 *   "4 Resource Path" in specification "OData Version 4.0 Part 2: URL Conventions" is
 	 *   a valid data binding path within this model if a leading slash is added; for example
 	 *   "/" + "SalesOrderList('A%2FB%26C')" to access an entity instance with key "A/B&C". Note
-	 *   that appropriate URI encoding is necessary. "4.5.1 Addressing Actions" needs an operation
-	 *   binding, see {@link sap.ui.model.odata.v4.ODataContextBinding}.
+	 *   that appropriate URI encoding is necessary, see the example of
+	 *   {@link sap.ui.model.odata.v4.ODataUtils.formatLiteral}. "4.5.1 Addressing Actions" needs an
+	 *   operation binding, see {@link sap.ui.model.odata.v4.ODataContextBinding}.
 	 *
 	 *   Note that the OData V4 model has its own {@link sap.ui.model.odata.v4.Context} class.
 	 *   Bindings which are relative to such a V4 context depend on their corresponding parent

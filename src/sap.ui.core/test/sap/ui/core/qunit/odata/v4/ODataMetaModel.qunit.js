@@ -2911,6 +2911,26 @@ sap.ui.define([
 	});
 
 	//*********************************************************************************************
+	QUnit.test("fetchCanonicalPath: transient entity", function (assert) {
+		var oContext = Context.create(this.oModel, undefined, "/T€AMS/-1/EMPLOYEES", -1);
+
+		this.oMetaModelMock.expects("fetchUpdateData")
+			.returns(SyncPromise.resolve({
+				editUrl : undefined,
+				entityPath : "/T€AMS/-1/EMPLOYEES",
+				propertyPath : ""
+			}));
+
+		// code under test
+		return this.oMetaModel.fetchCanonicalPath(oContext).then(function () {
+			assert.ok(false);
+		}, function (oError) {
+			assert.strictEqual(oError.message,
+				"/T€AMS/-1/EMPLOYEES: No canonical path for transient entity");
+		});
+	});
+
+	//*********************************************************************************************
 	QUnit.test("getProperty = getObject", function (assert) {
 		assert.strictEqual(this.oMetaModel.getProperty, this.oMetaModel.getObject);
 	});

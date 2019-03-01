@@ -123,8 +123,8 @@ sap.ui.define([
 				models : {
 					undefined : oModelV2,
 					ui : new JSONModel({
-						code : "",
-						codeVisible : false,
+						sCode : "",
+						bCodeVisible : false,
 						iMessages : 0,
 						realOData : bRealOData,
 						v2 : true,

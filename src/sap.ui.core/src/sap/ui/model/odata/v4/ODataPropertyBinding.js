@@ -382,6 +382,12 @@ sap.ui.define([
 	};
 
 	/**
+	 * @override
+	 * @see sap.ui.model.odata.v4.ODataBinding#getResumePromise
+	 */
+	ODataPropertyBinding.prototype.getResumePromise = function () {};
+
+	/**
 	 * Returns the path for the unit or currency of the given property path.
 	 *
 	 * @returns {string}

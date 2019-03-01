@@ -1091,6 +1091,43 @@ sap.ui.define(["sap/ui/model/ValidateException",
 			assert.deepEqual(oUnitType5.parseValue("", "string"), ["0", undefined], "0 is returned");
 		});
 
+		QUnit.test("Multiple Unit-Instances with bound custom units and other distinct format options", function (assert) {
+
+			// new Meter type
+			var CustomUnitType = UnitType.extend("sap.ui.core.test.CustomUnitType", {
+				constructor: function (oFormatOptions, oConstraints) {
+					UnitType.apply(this, [oFormatOptions, oConstraints, ["customUnits"]]);
+				}
+			});
+
+			var oCustomUnitConfig = {
+				"length-meter": {
+					"unitPattern-count-one": "{0} m",
+					"unitPattern-count-many": "{0} m",
+					"unitPattern-count-other": "{0} m",
+					"decimals": 4
+				}
+			};
+
+			var oCustomUnitTypeInstanceSpy = this.spy(NumberFormat, "getUnitInstance");
+
+			var oCustomUnitType = new CustomUnitType(/* showMeasure is true by default*/);
+			var oCustomUnitType2 = new CustomUnitType({showMeasure: false});
+			var oCustomUnitType3 = new CustomUnitType({showMeasure: false});
+
+			// straight forward case
+			assert.equal(oCustomUnitType.formatValue([123.456789, "length-meter", oCustomUnitConfig], "string").toString(), "123.4568 m");
+			assert.equal(oCustomUnitTypeInstanceSpy.callCount, 1, "1st instance created");
+
+			// additional format options
+			assert.equal(oCustomUnitType2.formatValue([123.456789, "length-meter", oCustomUnitConfig], "string").toString(), "123.4568", "formatted value respects the 'decimals' of custom unit");
+			assert.equal(oCustomUnitTypeInstanceSpy.callCount, 2, "2nd instance created, because of different format options");
+
+			assert.equal(oCustomUnitType3.formatValue([123.456789, "length-meter", oCustomUnitConfig], "string").toString(), "123.4568", "formatted value respects the 'decimals' of custom unit");
+			assert.equal(oCustomUnitTypeInstanceSpy.callCount, 2, "No additional instance is created, 2nd instance is taken from cache");
+
+		});
+
 		// date type tests
 		QUnit.module("date type");
 

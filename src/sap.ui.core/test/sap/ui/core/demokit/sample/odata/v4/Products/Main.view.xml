@@ -28,9 +28,9 @@
 					<Title level="H1" text="Products"/>
 					<ToolbarSpacer/>
 	 				<Link text="Unit Codes" target="unitCodes"
-						href="proxy/sap/opu/odata4/sap/zui5_testv4/default/iwbep/common/0001/UnitsOfMeasure?$select=ExternalCode,DecimalPlaces,Text,ISOCode"/>
+						href="{:= ${ui>/bRealOData} ? 'proxy/sap/opu/odata4/sap/zui5_testv4/default/iwbep/common/0001/UnitsOfMeasure?$select=ExternalCode,DecimalPlaces,Text,ISOCode' : 'test-resources/sap/ui/core/demokit/sample/odata/v4/Products/data/UnitsOfMeasure.json'}"/>
 					<Link text="Currency Codes" target="currencyCodes"
-						href="proxy/sap/opu/odata4/sap/zui5_testv4/default/iwbep/common/0001/Currencies?$select=CurrencyCode,DecimalPlaces,Text,ISOCode"/>
+						href="{:= ${ui>/bRealOData} ? 'proxy/sap/opu/odata4/sap/zui5_testv4/default/iwbep/common/0001/Currencies?$select=CurrencyCode,DecimalPlaces,Text,ISOCode' : 'test-resources/sap/ui/core/demokit/sample/odata/v4/Products/data/Currencies.json'}"/>
 					<Button icon="sap-icon://message-popup" id="messagesButton"
 						press="onToggleMessagePopover" text="{ui>/iMessages}"
 						tooltip="Show messages"

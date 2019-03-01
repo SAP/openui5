@@ -2078,6 +2078,14 @@ sap.ui.define([
 	});
 
 	//*********************************************************************************************
+	QUnit.test("getResumePromise", function (assert) {
+		var oBinding = this.oModel.bindProperty("/EMPLOYEES('1')/AGE");
+
+		// code under test
+		assert.strictEqual(oBinding.getResumePromise(), undefined);
+	});
+
+	//*********************************************************************************************
 	if (TestUtils.isRealOData()) {
 		//*****************************************************************************************
 		QUnit.test("PATCH an entity", function (assert) {

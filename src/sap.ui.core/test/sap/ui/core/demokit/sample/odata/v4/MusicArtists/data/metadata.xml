@@ -389,8 +389,7 @@
 				</Annotation>
 				<Annotation Term="SAP__common.ValueListReferences">
 					<Collection>
-						<String>../../../../srvd_f4/sap/i_aivs_countrycode/0001;ps='srvd-sadl_gw_appmusicdr_definition-0001';va='com.sap.gateway.srvd.sadl_gw_appmusicdr_definition.v0001.et-c_mdbu_v4_artisttp.countryoforigin'/$metadata
-						</String>
+						<String>../../../../srvd_f4/sap/i_aivs_countrycode/0001;ps='srvd-sadl_gw_appmusicdr_definition-0001';va='com.sap.gateway.srvd.sadl_gw_appmusicdr_definition.v0001.et-c_mdbu_v4_artisttp.countryoforigin'/$metadata</String>
 					</Collection>
 				</Annotation>
 				<Annotation Term="SAP__common.Heading" String="Country Code" />
@@ -407,8 +406,7 @@
 				</Annotation>
 				<Annotation Term="SAP__common.ValueListReferences">
 					<Collection>
-						<String>../../../../srvd_f4/sap/i_aivs_region/0001;ps='srvd-sadl_gw_appmusicdr_definition-0001';va='com.sap.gateway.srvd.sadl_gw_appmusicdr_definition.v0001.et-c_mdbu_v4_artisttp.regionoforigin'/$metadata
-						</String>
+						<String>../../../../srvd_f4/sap/i_aivs_region/0001;ps='srvd-sadl_gw_appmusicdr_definition-0001';va='com.sap.gateway.srvd.sadl_gw_appmusicdr_definition.v0001.et-c_mdbu_v4_artisttp.regionoforigin'/$metadata</String>
 					</Collection>
 				</Annotation>
 				<Annotation Term="SAP__common.Label" String="Region Code" />

@@ -217,12 +217,9 @@ sap.ui.define([
 			iLinesOfContext = Infinity;
 		}
 		return aSourceLines.reduce(function (sHtml, sSourceLine, iLine) {
-			var iNextHighlightedLine = aPositions.length && aPositions[0].line || Infinity,
-				iNextHitsLine = bShowHits
-					? aHits.findIndex(function (iHits, i) {
-						return iHits !== undefined && i >= iLine;
-					})
-					: aHits.indexOf(0, iLine);
+			var i,
+				iNextHighlightedLine = aPositions.length && aPositions[0].line || Infinity,
+				iNextHitsLine;
 
 			function show() {
 				sHtml += "<div";
@@ -240,6 +237,17 @@ sap.ui.define([
 				}
 				sHtml += highlightLine(iLine, sSourceLine)
 					+ "</div>";
+			}
+
+			if (bShowHits) {
+				for (i = iLine; i < aHits.length; i += 1) {
+					if (aHits[i] !== undefined) {
+						iNextHitsLine = i;
+						break;
+					}
+				}
+			} else {
+				iNextHitsLine = aHits.indexOf(0, iLine);
 			}
 
 			if (iNextHitsLine >= 0 && iNextHitsLine < iNextHighlightedLine) {

@@ -565,6 +565,19 @@ sap.ui.define([
 	};
 
 	/**
+	 * Gets the <code>Promise</code> which resolves with a map of minimum and maximum values.
+	 *
+	 * @returns {Promise}
+	 *   <code>undefined</code> because no minimum or maximum can be requested here
+	 *
+	 * @private
+	 * @see sap.ui.model.odata.v4.lib._AggregationCache#getMeasureRangePromise
+	 */
+	Cache.prototype.getMeasureRangePromise = function () {
+		return undefined;
+	};
+
+	/**
 	 * Returns <code>true</code> if there are pending changes below the given path.
 	 *
 	 * @param {string} sPath

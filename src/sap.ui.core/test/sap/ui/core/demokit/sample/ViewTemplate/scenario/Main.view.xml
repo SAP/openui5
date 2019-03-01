@@ -23,13 +23,13 @@
 			<Button enabled="false" icon="{ui>/icon}" tooltip="{ui>/iconTooltip}"
 				type="Transparent"/>
 			<ToggleButton id="toggleSourceCode" icon="sap-icon://syntax" press="onSourceCode"
-				text="Design-Time Source Code"/>
+				text="Source Code after Templating"/>
 			<CheckBox selected="{ui>/bindTexts}" select="onChangeType" text="bindTexts"/>
 			<!-- triggers XML templating! -->
 		</HBox>
-		<Panel expandable="false" visible="{ui>/codeVisible}" headerText="Design-Time Source Code"
-			width="inherit" class="sapUiResponsiveMargin">
-			<ce:CodeEditor editable="false" height="500px" type="xml" value="{ui>/code}"/>
+		<Panel class="sapUiResponsiveMargin" expandable="false"
+			headerText="Source Code after Templating" visible="{ui>/bCodeVisible}" width="inherit">
+			<ce:CodeEditor editable="false" height="500px" type="xml" value="{ui>/sCode}"/>
 		</Panel>
 		<layout:HorizontalLayout id="detailBox"/>
 	</layout:VerticalLayout>
