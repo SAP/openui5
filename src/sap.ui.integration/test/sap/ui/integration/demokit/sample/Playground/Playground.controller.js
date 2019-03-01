@@ -60,6 +60,21 @@ sap.ui.define([
 				this.byId("cardSample").setManifest(null);
 				this.getView().getModel("jsonData").setData(null);
 			}
+		},
+		onBeforeRendering: function () {
+			var sHash = document.location.hash,
+				oHostConfiguration = this.byId("hostColor");
+			if (sHash.indexOf("hostConfiguration") > -1) {
+				var sConfig = "";
+				if (sHash.indexOf("hostConfiguration=color") > -1) {
+					sConfig = "../HostConfigurationUsage/host/color.json";
+				} else if (sHash.indexOf("hostConfiguration=dark") > -1) {
+					sConfig = "../HostConfigurationUsage/host/dark.json";
+				} else if (sHash.indexOf("hostConfiguration=light") > -1) {
+					sConfig = "../HostConfigurationUsage/host/light.json";
+				}
+				oHostConfiguration.setConfig(sConfig);
+			}
 		}
 	});
 

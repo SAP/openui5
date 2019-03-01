@@ -4,10 +4,14 @@
 sap.ui.define([
 	'sap/ui/core/Control',
 	"sap/ui/integration/host/HostConfigurationCompiler",
+	"sap/f/cards/AnalyticalContent",
+	"sap/ui/core/Core",
 	"sap/base/Log"
 ], function (
 	Control,
 	HCCompiler,
+	AnalyticalContent,
+	Core,
 	Log
 ) {
 	"use strict";
@@ -136,5 +140,23 @@ sap.ui.define([
 		return this._sCssText;
 	};
 
+	HostConfiguration.prototype.generateJSONSettings = function (sType) {
+		return HCCompiler.generateJSONSettings(this._oConfig, sType);
+	};
+
+	//add host configuration handler for analytical content
+	AnalyticalContent.prototype._handleHostConfiguration = function () {
+		var oParent = this.getParent(),
+			oContent = this.getAggregation("_content");
+		if (oParent && oParent.getHostConfigurationId && oContent) {
+			var oHostConfiguration = Core.byId(oParent.getHostConfigurationId());
+			if (oHostConfiguration) {
+				var oSettings = oHostConfiguration.generateJSONSettings("vizProperties"),
+					oVizProperties = oContent.getVizProperties();
+				oVizProperties = jQuery.extend(true, oVizProperties, oSettings);
+				oContent.setVizProperties(oVizProperties);
+			}
+		}
+	};
 	return HostConfiguration;
 });

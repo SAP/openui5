@@ -2,7 +2,8 @@
  * ${copyright}
  */
 sap.ui.define(["sap/f/cards/BaseContent", "sap/viz/ui5/controls/VizFrame", "sap/viz/ui5/controls/common/feeds/FeedItem",
-		"sap/viz/ui5/data/FlattenedDataset", "sap/base/Log"],
+		"sap/viz/ui5/data/FlattenedDataset", "sap/base/Log"
+	],
 	function (BaseContent, VizFrame, FeedItem, FlattenedDataset, Log) {
 		"use strict";
 
@@ -21,7 +22,7 @@ sap.ui.define(["sap/f/cards/BaseContent", "sap/viz/ui5/controls/VizFrame", "sap/
 		 */
 		var LegendAlignment = {
 			"TopLeft": "topLeft",
-			"Center" : "center"
+			"Center": "center"
 		};
 
 		/**
@@ -85,7 +86,7 @@ sap.ui.define(["sap/f/cards/BaseContent", "sap/viz/ui5/controls/VizFrame", "sap/
 
 			var oVizPropertiesObject = {
 				"title": {
-					"style" : {
+					"style": {
 						"fontWeight": "normal"
 					},
 					"layout": {
@@ -210,8 +211,16 @@ sap.ui.define(["sap/f/cards/BaseContent", "sap/viz/ui5/controls/VizFrame", "sap/
 				dataset: oFlattendedDataset,
 				legendVisible: oChartObject.legend,
 				feeds: [
-					new FeedItem({ uid: oChartObject.measureAxis, type: 'Measure', values: aMeasureNames }),
-					new FeedItem({ uid: oChartObject.dimensionAxis, type: 'Dimension', values: aDimensionNames })
+					new FeedItem({
+						uid: oChartObject.measureAxis,
+						type: 'Measure',
+						values: aMeasureNames
+					}),
+					new FeedItem({
+						uid: oChartObject.dimensionAxis,
+						type: 'Dimension',
+						values: aDimensionNames
+					})
 				]
 			});
 
@@ -219,6 +228,13 @@ sap.ui.define(["sap/f/cards/BaseContent", "sap/viz/ui5/controls/VizFrame", "sap/
 			oChart.setVizProperties(oVizProperties);
 
 			this.setAggregation("_content", oChart);
+		};
+
+		AnalyticalContent.prototype.onBeforeRendering = function () {
+			if (this._handleHostConfiguration) {
+				//implementation is added with sap.ui.integration.host.HostConfiguration
+				this._handleHostConfiguration();
+			}
 		};
 
 		return AnalyticalContent;

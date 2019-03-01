@@ -12,7 +12,7 @@ sap.ui.define([
 	"use strict";
 	//Parameter definitions
 	//TODO: How to do this async?
-	var lessParameters = jQuery.sap.loadResource("sap/ui/integration/host/HostConfigurationMap.json", {
+	var parameterMaps = jQuery.sap.loadResource("sap/ui/integration/host/HostConfigurationMap.json", {
 			dataType: "json"
 		}),
 		lessFile = jQuery.sap.loadResource("sap/ui/integration/host/HostConfiguration.less", {
@@ -61,11 +61,12 @@ sap.ui.define([
 	}
 
 	function generateCSSText(oConfig, sClassName) {
-		var oMap = lessParameters,
+		var oMap = parameterMaps.less,
 			aParameters = [];
 		for (var n in oMap) {
-			var vValue = _getObject(oConfig, oMap[n].path),
-				sUnit = oMap[n].unit;
+			var oMapItem = oMap[n],
+				vValue = _getObject(oConfig, oMapItem.path),
+				sUnit = oMapItem.unit;
 			if (vValue) {
 				aParameters.push(n + ":" + vValue + (sUnit ? sUnit : ""));
 			} else {
@@ -90,6 +91,44 @@ sap.ui.define([
 		return sStyle;
 	}
 
+	function generateJSONSettings(oConfig, sName) {
+		function getValue(oConfig, vValue) {
+			var oResult = null;
+			if (vValue.path) {
+				oResult = _getObject(oConfig, vValue.path);
+				if (vValue.unit) {
+					vValue.unit = oResult + vValue.unit;
+				}
+			} else if (vValue.value) {
+				oResult = vValue.value;
+			} else if (Array.isArray(vValue)) {
+				oResult = [];
+				for (var i = 0; i < vValue.length; i++) {
+					oResult.push(getValue(oConfig, vValue[i]));
+				}
+			}
+			return oResult;
+		}
+		var oMap = parameterMaps[sName],
+			oSettings = {};
+		for (var n in oMap) {
+			var oMapItem = oMap[n],
+				aOutputPath = n.split("/"),
+				oCurrent = oSettings;
+
+			if (oMapItem) {
+				for (var i = 0; i < aOutputPath.length - 1; i++) {
+					if (oCurrent[aOutputPath[i]] === undefined) {
+						oCurrent[aOutputPath[i]] = {};
+					}
+					oCurrent = oCurrent[aOutputPath[i]];
+				}
+				oCurrent[aOutputPath[aOutputPath.length - 1]] = getValue(oConfig, oMapItem);
+			}
+		}
+		return oSettings;
+	}
+
 	function generateCSSTextAsync(sConfigUrl, oConfigJson) {
 		return loadResource(sConfigUrl, "json").then(function (oConfigJson) {
 			return generateCSSText(oConfigJson, oConfigJson);
@@ -99,6 +138,7 @@ sap.ui.define([
 	return {
 		loadResource: loadResource,
 		generateCssText: generateCSSText,
-		generateCssTextAsync: generateCSSTextAsync
+		generateCssTextAsync: generateCSSTextAsync,
+		generateJSONSettings: generateJSONSettings
 	};
 });
