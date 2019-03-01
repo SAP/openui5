@@ -333,7 +333,7 @@ function(oCore, Device, URI) {
 				that.oAvatar._onImageLoad();
 				//Assert
 				assert.ok(true, "When image inside sap.f.Avatar is loaded, success callback launches");
-				assert.equal(that.oAvatar.$().find(".sapUiIcon").hasClass('sapUiHidden'), true, "Hiding fallback content valid");
+				assert.equal(that.oAvatar.$().find(".sapUiIcon").css('display'), 'none', "Hiding fallback content valid");
 				done();
 			});
 		//Act
