@@ -37,6 +37,7 @@ sap.ui.define([
 		 * and properties (see {@link sap.ui.controller}) or  as a base class for typed controllers.
 		 *
 		 * @param {string|object[]} sName The name of the controller to instantiate. If a controller is defined as real sub-class,
+		 *                                    the "arguments" of the sub-class constructor should be given instead.
 		 *
 		 * @public
 		 * @alias sap.ui.core.mvc.Controller
