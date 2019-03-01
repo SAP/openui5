@@ -432,8 +432,6 @@ sap.ui.define([
 	 */
 	Avatar.prototype._onImageLoad = function() {
 		//we need to remove fallback content
-		this.$().find(this._sImageFallbackType === AvatarType.Initials ?
-			 ".sapFAvatarInitialsHolder" : ".sapUiIcon").addClass('sapUiHidden');
 		delete this.preloadedImage;
 	};
 
