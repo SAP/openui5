@@ -9390,8 +9390,19 @@ jQuery.ajaxPrefilter( "json jsonp", function( s, originalSettings, jqXHR ) {
 	}
 } );
 
-
-
+// ##### BEGIN: MODIFIED BY SAP
+// Code taken from jQuery v3.1.1
+// Support: Safari 8 only
+// In Safari 8 documents created via document.implementation.createHTMLDocument
+// collapse sibling forms: the second one becomes a child of the first one.
+// Because of that, this security measure has to be disabled in Safari 8.
+// Webkit bug: https://bugs.webkit.org/show_bug.cgi?id=137337
+support.createHTMLDocument = (function() {
+	var body = document.implementation.createHTMLDocument( "" ).body;
+	body.innerHTML = "<form></form><form></form>";
+	return body.childNodes.length === 2;
+})();
+// ##### END: MODIFIED BY SAP
 
 // Argument "data" should be string of html
 // context (optional): If specified, the fragment will be created in this context,
@@ -9405,10 +9416,34 @@ jQuery.parseHTML = function( data, context, keepScripts ) {
 		keepScripts = context;
 		context = false;
 	}
-	context = context || document;
 
-	var parsed = rsingleTag.exec( data ),
-		scripts = !keepScripts && [];
+	// ##### BEGIN: MODIFIED BY SAP
+	// Stop scripts or inline event handlers from being executed immediately
+	// by using document.implementation.
+	// Code taken from jQuery v3.1.1
+	var base, parsed, scripts;
+
+	if ( !context ) {
+
+		// Stop scripts or inline event handlers from being executed immediately
+		// by using document.implementation
+		if ( support.createHTMLDocument ) {
+			context = document.implementation.createHTMLDocument( "" );
+
+			// Set the base href for the created document
+			// so any parsed elements with URLs
+			// are based on the document's URL (gh-2965)
+			base = context.createElement( "base" );
+			base.href = document.baseURI;
+			context.head.appendChild( base );
+		} else {
+			context = document;
+		}
+	}
+	// ##### END: MODIFIED BY SAP
+
+	parsed = rsingleTag.exec( data );
+	scripts = !keepScripts && [];
 
 	// Single tag
 	if ( parsed ) {
