@@ -1238,13 +1238,20 @@ sap.ui.define([
 			});
 		}
 
-		oTable.getColumns()[1].setWidth("800px");
-		oTable.getColumns()[2].setWidth("100px");
-		oTable.getColumns()[3].setWidth("800px");
-		oTable.getColumns()[4].setWidth("100px");
-		sap.ui.getCore().applyChanges();
-
 		Promise.resolve().then(function() {
+			oTable.getColumns()[1].setWidth("800px");
+			oTable.getColumns()[2].setWidth("100px");
+			oTable.getColumns()[3].setWidth("800px");
+			oTable.getColumns()[4].setWidth("100px");
+			sap.ui.getCore().applyChanges();
+
+			if (Device.browser.safari) {
+				return new Promise(function(resolve) {
+					window.setTimeout(resolve, 0);
+				});
+			}
+			return Promise.resolve();
+		}).then(function() {
 			return test("Focus header cell in column 3 (scrollable column)", getHeaderCellDomRef(2), 0, false, false);
 		}).then(function() {
 			return test("Focus header cell in column 1 (fixed column)", getHeaderCellDomRef(0), 70, true, false);
@@ -1274,9 +1281,13 @@ sap.ui.define([
 			if (Device.browser.msie) {
 				// The following tests do not make sense in IE. IE scrolls when a cell that is wider than the row container is focused.
 				return Promise.reject();
-			} else {
-				return Promise.resolve();
 			}
+			if (Device.browser.safari) {
+				return new Promise(function(resolve) {
+					window.setTimeout(resolve, 0);
+				});
+			}
+			return Promise.resolve();
 		}).then(function() {
 			return test("Focus header cell in column 2 (scrollable column)", getHeaderCellDomRef(1), 50, true, false);
 		}).then(function() {
@@ -1299,6 +1310,13 @@ sap.ui.define([
 			oTable.getColumns()[3].setWidth("800px");
 			oTable.getColumns()[4].setWidth("100px");
 			sap.ui.getCore().applyChanges();
+
+			if (Device.browser.safari) {
+				return new Promise(function(resolve) {
+					window.setTimeout(resolve, 0);
+				});
+			}
+			return Promise.resolve();
 		}).then(function() {
 			return test("RTL: Focus header cell in column 3 (scrollable column)", getHeaderCellDomRef(2), 950, false, true);
 		}).then(function() {
@@ -1329,9 +1347,13 @@ sap.ui.define([
 			if (Device.browser.msie) {
 				// The following tests do not make sense in IE. IE scrolls when a cell that is wider than the row container is focused.
 				return Promise.reject();
-			} else {
-				return Promise.resolve();
 			}
+			if (Device.browser.safari) {
+				return new Promise(function(resolve) {
+					window.setTimeout(resolve, 0);
+				});
+			}
+			return Promise.resolve();
 		}).then(function() {
 			return test("RTL: Focus header cell in column 2 (scrollable column)", getHeaderCellDomRef(1), 1250, true, true);
 		}).then(function() {
