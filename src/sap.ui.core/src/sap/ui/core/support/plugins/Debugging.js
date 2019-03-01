@@ -448,7 +448,7 @@ sap.ui.define([
 			function createAppendFunction(sUrl) {
 				return function() {
 					// append URL and description to select box
-					var sHtml = "<option value='" + sUrl + "'>" + mUrls[sUrl] + "</option>";
+					var sHtml = "<option value='" + encodeXML(sUrl) + "'>" + mUrls[sUrl] + "</option>";
 					$Other.before(sHtml);
 				};
 			}
