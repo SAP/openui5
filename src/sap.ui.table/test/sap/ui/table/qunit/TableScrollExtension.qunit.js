@@ -61,9 +61,20 @@ sap.ui.define([
 
 			if (Device.browser.msie) {
 				var fnOriginalPreventDefault = oWheelEvent.preventDefault;
+				var bDefaultPrevented = false;
+
+				Object.defineProperty(oWheelEvent, "defaultPrevented", {
+					get: function() {
+						return bDefaultPrevented;
+					},
+					set: function(value) {
+						bDefaultPrevented = value;
+					}
+				});
+
 				oWheelEvent.preventDefault = function() {
 					fnOriginalPreventDefault.apply(this, arguments);
-					Object.defineProperty(this, "defaultPrevented", {get: function() {return true;}});
+					oWheelEvent.defaultPrevented = true;
 				};
 			}
 		}
@@ -140,9 +151,20 @@ sap.ui.define([
 
 			if (Device.browser.msie) {
 				var fnOriginalPreventDefault = oTouchEvent.preventDefault;
+				var bDefaultPrevented = false;
+
+				Object.defineProperty(oTouchEvent, "defaultPrevented", {
+					get: function() {
+						return bDefaultPrevented;
+					},
+					set: function(value) {
+						bDefaultPrevented = value;
+					}
+				});
+
 				oTouchEvent.preventDefault = function() {
 					fnOriginalPreventDefault.apply(this, arguments);
-					Object.defineProperty(this, "defaultPrevented", {get: function() {return true;}});
+					oTouchEvent.defaultPrevented = true;
 				};
 			}
 		}
@@ -3553,10 +3575,18 @@ sap.ui.define([
 			var iExpectedFirstVisibleRow = mConfig.firstVisibleRow == null ? 0 : mConfig.firstVisibleRow;
 			var iExpectedScrollTop = mConfig.scrollTop == null ? 0 : mConfig.scrollTop;
 
+			// Touch move is also a swipe on touch devices. See the moveHandler method in jquery-mobile-custom.js, to know why
+			// preventDefault is always called on touch devices (except in chrome on desktop).
+
 			return new Promise(function(resolve) {
 				setTimeout(function() {
 					that.assertPosition(assert, iExpectedFirstVisibleRow, iExpectedScrollTop, 0, "Touch - " + mConfig.name + ": Not scrolled");
-					assert.ok(!oTouchMoveEvent.defaultPrevented, "Touch - " + mConfig.name + ": Default action was not prevented");
+					if (!bOriginalTouchSupport || bOriginalTouchSupport && Device.system.desktop && Device.browser.chrome) {
+						assert.ok(!oTouchMoveEvent.defaultPrevented, "Touch - " + mConfig.name + ": Default action was not prevented");
+					} else {
+						assert.ok(oTouchMoveEvent.defaultPrevented,
+							"Touch - " + mConfig.name + ": Default action was still prevented on a touch device (swipe action)");
+					}
 					assert.ok(oStopPropagationSpy.notCalled, "Touch - " + mConfig.name + ": Propagation was not stopped");
 					resolve();
 				}, 100);
