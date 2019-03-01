@@ -294,7 +294,6 @@ sap.ui.define([
 			"sap.m.WizardStep"
 		],
 		elements: [
-			"sap.m.CalendarAppointment",
 			"sap.m.CarouselLayout",
 			"sap.m.Column",
 			"sap.m.ColumnPopoverActionItem",
