@@ -1523,7 +1523,7 @@ sap.ui.define([
 				this._togglePinButtonVisibility(true);
 			}
 
-			if (this._bHeaderInTitleArea && this._headerBiggerThanAllowedToBeExpandedInTitleArea()) {
+			if (this.getHeaderExpanded() && this._bHeaderInTitleArea && this._headerBiggerThanAllowedToBeExpandedInTitleArea()) {
 				this._expandHeader(false /* remove header from title area */);
 				this._setScrollPosition(0);
 			}
