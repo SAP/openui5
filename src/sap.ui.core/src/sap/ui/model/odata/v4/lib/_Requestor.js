@@ -18,7 +18,8 @@ sap.ui.define([
 			"Accept" : "multipart/mixed"
 		},
 		sClassName = "sap.ui.model.odata.v4.lib._Requestor",
-		_Requestor;
+		_Requestor,
+		rTimeout = /^\d+$/;
 
 	/**
 	 * The getResponseHeader() method imitates the jqXHR.getResponseHeader() method for a $batch
@@ -1184,7 +1185,7 @@ sap.ui.define([
 					that.mHeaders["X-CSRF-Token"]
 						= jqXHR.getResponseHeader("X-CSRF-Token") || that.mHeaders["X-CSRF-Token"];
 					that.setSessionContext(jqXHR.getResponseHeader("SAP-ContextId"),
-						jqXHR.getResponseHeader("Keep-Alive"));
+						jqXHR.getResponseHeader("SAP-Http-Session-Timeout"));
 
 					fnResolve({
 						body : oResponse,
@@ -1209,7 +1210,7 @@ sap.ui.define([
 							// an error response within the session (e.g. a failed save) refreshes
 							// the session
 							that.setSessionContext(sContextId,
-								jqXHR.getResponseHeader("Keep-Alive"));
+								jqXHR.getResponseHeader("SAP-Http-Session-Timeout"));
 						} else if (jqXHR.getResponseHeader("SAP-Err-Id") === "ICMENOSESSION") {
 							// The server could not find the context ID ("ICM Error NO SESSION")
 							sMessage = "Session not found on server";
@@ -1231,19 +1232,18 @@ sap.ui.define([
 
 	/**
 	 * Sets the session context. Starts a keep-alive timer in case there is a session context and
-	 * a keep-alive timeout of 60 seconds or more is indicated. This timer runs for at most 15
-	 * minutes.
+	 * a timeout of 60 seconds or more is indicated. This timer runs for at most 15 minutes.
 	 *
 	 * @param {string} [sContextId] The value of the header 'SAP-ContextId'
-	 * @param {string} [sKeepAlive] The value of the header 'Keep-Alive', a comma-separated list of
-	 *   parameters, each consisting of an identifier and a value separated by the equal sign ('=');
-	 *   only the parameter "timeout" is used
+	 * @param {string} [sSAPHttpSessionTimeout] The value of the header 'SAP-Http-Session-Timeout',
+	 *   containing the timeout in seconds as integer value
 	 *
 	 * @private
 	 */
-	Requestor.prototype.setSessionContext = function (sContextId, sKeepAlive) {
-		var aMatches = /\btimeout=(\d+)/.exec(sKeepAlive),
-			iKeepAliveSeconds = aMatches && parseInt(aMatches[1]),
+	Requestor.prototype.setSessionContext = function (sContextId, sSAPHttpSessionTimeout) {
+		var iTimeoutSeconds = rTimeout.test(sSAPHttpSessionTimeout)
+				? parseInt(sSAPHttpSessionTimeout)
+				: 0,
 			iSessionTimeout = Date.now() + 15 * 60 * 1000, // 15 min
 			that = this;
 
@@ -1252,7 +1252,7 @@ sap.ui.define([
 			// start a new session and a new timer with the current header values (should be the
 			// same as before)
 			that.mHeaders["SAP-ContextId"] = sContextId;
-			if (iKeepAliveSeconds >= 60) {
+			if (iTimeoutSeconds >= 60) {
 				this.iSessionTimer = setInterval(function () {
 					if (Date.now() >= iSessionTimeout) { // 15 min have passed
 						that.clearSessionContext(); // give up
@@ -1270,9 +1270,10 @@ sap.ui.define([
 							} // else keep the timer running
 						});
 					}
-				}, (iKeepAliveSeconds - 5) * 1000);
-			} else if (sKeepAlive) {
-				Log.warning("Unsupported Keep-Alive header", sKeepAlive, sClassName);
+				}, (iTimeoutSeconds - 5) * 1000);
+			} else if (sSAPHttpSessionTimeout !== null) {
+				Log.warning("Unsupported SAP-Http-Session-Timeout header", sSAPHttpSessionTimeout,
+					sClassName);
 			}
 		}
 	};

@@ -155,6 +155,7 @@ sap.ui.define([
 	 *
 	 * @public
 	 */
+	// @override sap.ui.model.odata.v4.lib._Cache#getMeasureRangePromise
 	_AggregationCache.prototype.getMeasureRangePromise = function () {
 		return this.oMeasureRangePromise;
 	};

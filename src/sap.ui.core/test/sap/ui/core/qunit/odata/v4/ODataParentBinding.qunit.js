@@ -80,6 +80,8 @@ sap.ui.define([
 		assert.deepEqual(oBinding.aChildCanUseCachePromises, []);
 		assert.strictEqual(oBinding.iPatchCounter, 0);
 		assert.strictEqual(oBinding.bPatchSuccess, true);
+		assert.ok("oResumePromise" in oBinding);
+		assert.strictEqual(oBinding.oResumePromise, undefined);
 
 		// members introduced by ODataBinding; check inheritance
 		assert.ok(oBinding.hasOwnProperty("mCacheByResourcePath"));
@@ -1871,7 +1873,8 @@ sap.ui.define([
 				sPath : "/Employees",
 				oReadGroupLock : new _GroupLock(),
 				toString : function () { return "~"; }
-			});
+			}),
+			oResult = {};
 
 		this.mock(oBinding).expects("hasPendingChanges").withExactArgs().returns(false);
 		this.mock(oBinding.oReadGroupLock).expects("unlock").withExactArgs(true);
@@ -1881,6 +1884,10 @@ sap.ui.define([
 
 		assert.strictEqual(oBinding.bSuspended, true);
 		assert.strictEqual(oBinding.oReadGroupLock, undefined);
+		assert.strictEqual(oBinding.oResumePromise.isPending(), true);
+		oBinding.oResumePromise.$resolve(oResult);
+		assert.strictEqual(oBinding.oResumePromise.isPending(), false);
+		assert.strictEqual(oBinding.oResumePromise.getResult(), oResult);
 
 		assert.throws(function () {
 			// code under test
@@ -1894,7 +1901,8 @@ sap.ui.define([
 				oContext : {/* sap.ui.model.Context */},
 				sPath : "SO_2_SCHEDULE",
 				bRelative : true
-			});
+			}),
+			oResult = {};
 
 		this.mock(oBinding).expects("hasPendingChanges").withExactArgs().returns(false);
 
@@ -1902,6 +1910,10 @@ sap.ui.define([
 		oBinding.suspend();
 
 		assert.strictEqual(oBinding.bSuspended, true);
+		assert.strictEqual(oBinding.oResumePromise.isPending(), true);
+		oBinding.oResumePromise.$resolve(oResult);
+		assert.strictEqual(oBinding.oResumePromise.isPending(), false);
+		assert.strictEqual(oBinding.oResumePromise.getResult(), oResult);
 	});
 
 	//*********************************************************************************************
@@ -1967,10 +1979,13 @@ sap.ui.define([
 					resumeInternal : function () {},
 					toString : function () { return "~"; }
 				}, oFixture)),
-				oBindingMock = this.mock(oBinding);
+				oBindingMock = this.mock(oBinding),
+				oPromise;
 
+			assert.strictEqual(oBinding.getResumePromise(), undefined, "initially");
 			oBindingMock.expects("hasPendingChanges").withExactArgs().returns(false);
 
+			// code under test
 			oBinding.suspend();
 
 			oBindingMock.expects("_fireChange").never();
@@ -1980,19 +1995,39 @@ sap.ui.define([
 			this.mock(sap.ui.getCore()).expects("addPrerenderingTask")
 				.withExactArgs(sinon.match.func)
 				.callsFake(function (fnCallback) {
-					oBindingMock.expects("resumeInternal").withExactArgs(true);
-					fnCallback();
+					// simulate async nature of prerendering task
+					oPromise = Promise.resolve().then(function () {
+						var oResumePromise = oBinding.getResumePromise();
+
+						assert.strictEqual(oBinding.bSuspended, true, "not yet!");
+						assert.strictEqual(oResumePromise.isPending(), true);
+
+						oBindingMock.expects("resumeInternal").withExactArgs(true)
+							.callsFake(function () {
+								// before we fire events to the world, suspend is over
+								assert.strictEqual(oBinding.bSuspended, false, "now!");
+								// must not resolve until resumeInternal() is over
+								assert.strictEqual(oResumePromise.isPending(), true);
+							});
+
+						// code under test
+						fnCallback();
+
+						assert.strictEqual(oResumePromise.isPending(), false);
+						assert.strictEqual(oResumePromise.getResult(), undefined);
+						assert.strictEqual(oBinding.getResumePromise(), undefined, "cleaned up");
+					});
 				});
 
 			// code under test
 			oBinding.resume();
 
-			assert.strictEqual(oBinding.bSuspended, false);
-
-			assert.throws(function () {
-				// code under test
-				oBinding.resume();
-			}, new Error("Cannot resume a not suspended binding: ~"));
+			return oPromise.then(function () {
+				assert.throws(function () {
+					// code under test
+					oBinding.resume();
+				}, new Error("Cannot resume a not suspended binding: ~"));
+			});
 		});
 	});
 
@@ -2678,6 +2713,17 @@ sap.ui.define([
 			oBinding.refreshSuspended("otherGroup");
 		}, new Error(oBinding + ": Cannot refresh a suspended binding with group ID 'otherGroup' "
 			+ "(own group ID is 'myGroup')"));
+	});
+
+	//*********************************************************************************************
+	QUnit.test("getResumePromise", function (assert) {
+		var oBinding = new ODataParentBinding(),
+			oResumePromise = {};
+
+		oBinding.oResumePromise = oResumePromise;
+
+		// code under test
+		assert.strictEqual(oBinding.getResumePromise(), oResumePromise);
 	});
 });
 //TODO Fix issue with ODataModel.integration.qunit

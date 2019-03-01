@@ -13,7 +13,7 @@ sap.ui.define([
 	var mCustomizing2CustomCurrencies = new Map();
 
 	/**
-	 * Constructor for a Currency composite type.
+	 * Constructor for a <code>Currency</code> composite type.
 	 *
 	 * @param {object} [oFormatOptions]
 	 *   See parameter <code>oFormatOptions</code> of
@@ -31,9 +31,9 @@ sap.ui.define([
 	 *
 	 * @alias sap.ui.model.odata.type.Currency
 	 * @author SAP SE
-	 * @class This class represents the Currency composite type with the parts amount, currency, and
-	 * currency customizing. The amount part is formatted according to the customizing for the
-	 * currency. Use the result of the promise returned by
+	 * @class This class represents the <code>Currency</code> composite type with the parts amount,
+	 * currency, and currency customizing. The amount part is formatted according to the customizing
+	 * for the currency. Use the result of the promise returned by
 	 * {@link sap.ui.model.odata.v4.ODataMetaModel#requestCurrencyCodes} as currency customizing
 	 * part. If no currency customizing is available, UI5's default formatting applies. The type may
 	 * only be used for amount and currency parts from a {@link sap.ui.model.odata.v4.ODataModel}.
@@ -73,15 +73,16 @@ sap.ui.define([
 	});
 
 	/**
-	 * Formats the given values of the parts of the Currency composite type to the given target
-	 * type.
+	 * Formats the given values of the parts of the <code>Currency</code> composite type to the
+	 * given target type.
 	 *
 	 * @param {any[]} aValues
 	 *   Array of part values to be formatted; contains amount, currency, currency customizing in
 	 *   this order. The first call to this method where all parts are set determines the currency
 	 *   customizing; subsequent calls use this customizing, so that the corresponding part may be
 	 *   omitted. Changes to the currency customizing part after this first method call are not
-	 *   considered: The currency customizing for this Currency instance remains unchanged.
+	 *   considered: The currency customizing for this <code>Currency</code> instance remains
+	 *   unchanged.
 	 * @param {string} sTargetType
 	 *   The target type; must be "string" or a type with "string" as its
 	 *   {@link sap.ui.base.DataType#getPrimitiveType primitive type}.
@@ -188,7 +189,7 @@ sap.ui.define([
 	};
 
 	/**
-	 * Does nothing as the Currency type does not support constraints.
+	 * Does nothing as the <code>Currency</code> type does not support constraints.
 	 *
 	 * @param {string} vValue
 	 *   The value to be validated

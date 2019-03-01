@@ -36,7 +36,8 @@ sap.ui.define([
 					ui : new JSONModel({
 						sCode : "",
 						bCodeVisible : false,
-						iMessages : 0
+						iMessages : 0,
+						bRealOData : TestUtils.isRealOData()
 					})
 				},
 				preprocessors : {

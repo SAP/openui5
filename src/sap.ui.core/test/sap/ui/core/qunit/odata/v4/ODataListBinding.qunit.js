@@ -4747,32 +4747,49 @@ sap.ui.define([
 			group : {}
 		}
 	}].forEach(function (oFixture, i) {
-		QUnit.test("updateAnalyticalInfo: min/max: " + i, function (assert) {
-			var sAggregation = JSON.stringify(oFixture.aAggregation),
-				sApply = "A.P.P.L.E.",
-				oBinding = this.bindList("/EMPLOYEES"),
-				oMeasureRangePromise = {/*Promise*/},
-				oNewCache = {getMeasureRangePromise : function () {}},
-				oResult;
+		[false, true].forEach(function (bHasMeasureRangePromiseAfterResume) {
+			var sTitle = "updateAnalyticalInfo: min/max: " + i
+					+ ", has measure range promise after resume: "
+					+ bHasMeasureRangePromiseAfterResume;
 
-			this.mock(_AggregationHelper).expects("buildApply")
-				.withExactArgs(oFixture.oTransformedAggregation)
-				.returns({$apply : sApply});
-			this.mock(oBinding).expects("changeParameters").callsFake(function () {
-					oBinding.oCachePromise = SyncPromise.resolve(oNewCache);
-				}).withExactArgs({$apply : sApply});
-			this.mock(oNewCache).expects("getMeasureRangePromise").withExactArgs()
-				.returns(oMeasureRangePromise);
+			QUnit.test(sTitle, function (assert) {
+				var sAggregation = JSON.stringify(oFixture.aAggregation),
+					sApply = "A.P.P.L.E.",
+					oBinding = this.bindList("/EMPLOYEES"),
+					oChangeParametersExpectation,
+					mMeasureRange = {},
+					oNewCache = {getMeasureRangePromise : function () {}},
+					oResult;
 
-			// code under test
-			oResult = oBinding.updateAnalyticalInfo(oFixture.aAggregation);
+				this.mock(_AggregationHelper).expects("buildApply")
+					.withExactArgs(oFixture.oTransformedAggregation)
+					.returns({$apply : sApply});
+				oChangeParametersExpectation = this.mock(oBinding).expects("changeParameters")
+					.withExactArgs({$apply : sApply});
+				this.mock(oBinding).expects("getRootBindingResumePromise").withExactArgs()
+					.callsFake(function () {
+						assert.ok(oChangeParametersExpectation.called,
+							"changeParameters called before");
+						oBinding.oCachePromise = SyncPromise.resolve(oNewCache);
+						return SyncPromise.resolve();
+					});
+				this.mock(oNewCache).expects("getMeasureRangePromise").withExactArgs()
+					.returns(bHasMeasureRangePromiseAfterResume
+						? Promise.resolve(mMeasureRange)
+						: undefined);
 
-			assert.strictEqual(JSON.stringify(oFixture.aAggregation), sAggregation, "unchanged");
-			assert.deepEqual(oBinding.oAggregation, oFixture.oTransformedAggregation);
-			assert.ok(oResult.measureRangePromise instanceof Promise);
+				// code under test
+				oResult = oBinding.updateAnalyticalInfo(oFixture.aAggregation);
 
-			return oResult.measureRangePromise.then(function (oMeasureRangePromise0) {
-				assert.strictEqual(oMeasureRangePromise0, oMeasureRangePromise);
+				assert.strictEqual(JSON.stringify(oFixture.aAggregation), sAggregation,
+					"unchanged");
+				assert.deepEqual(oBinding.oAggregation, oFixture.oTransformedAggregation);
+				assert.ok(oResult.measureRangePromise instanceof Promise);
+
+				return oResult.measureRangePromise.then(function (mMeasureRange0) {
+					assert.strictEqual(mMeasureRange0,
+						bHasMeasureRangePromiseAfterResume ? mMeasureRange : undefined);
+				});
 			});
 		});
 	});

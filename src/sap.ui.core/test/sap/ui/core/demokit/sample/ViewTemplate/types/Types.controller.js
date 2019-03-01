@@ -15,6 +15,24 @@ sap.ui.define([
 	}
 
 	return Controller.extend("sap.ui.core.sample.ViewTemplate.types.Types", {
+		/**
+		 * Function is called by <code>onSourceCode</code> before the source code is pretty printed.
+		 * It replaces <code>identificationBox</code> control by the corresponding XML.
+		 *
+		 * @param {string} sSourceCode The source code
+		 * @returns {string} The modified source code
+		 */
+		beforePrettyPrinting : function (sSourceCode) {
+			var oView = this.getView(),
+				bV4 = oView.getModel("ui").getProperty("/v4"),
+				sIdentification = XMLHelper.serialize(oView.getViewData()[bV4]._xContent);
+
+			// adjust indentation
+			sIdentification = sIdentification.replace(/\n/g, "\n\t\t");
+
+			return sSourceCode.replace("<HBox id=\"identificationBox\"/>", sIdentification);
+		},
+
 		onInit : function () {
 			this.initMessagePopover("messagesButton");
 			this.getView().bindObject("/EdmTypesCollection(ID='1')");
@@ -74,29 +92,6 @@ sap.ui.define([
 				oModel.submitBatch("EDMTypes").then(function () {
 					showSuccessMessage("saved");
 				});
-			}
-		},
-
-		onSourceCode : function (oEvent) {
-			var oView = this.getView(),
-				bVisible = this.byId("toggleSourceCodeButton").getPressed(),
-				sSource;
-
-			oView.getModel("ui").setProperty("/codeVisible", bVisible);
-			if (bVisible) {
-				sSource = XMLHelper.serialize(oView._xContent)
-					.replace(/<!--.*-->/g, "") // remove comments
-					.replace(/\t/g, "  ") // indent by just 2 spaces
-					.replace(/\n\s*\n/g, "\n") // remove empty lines
-					.replace("<HBox id=\"identificationBox\"/>",
-						XMLHelper.serialize(
-							oView.getViewData()[oView.getModel("ui").getProperty("/v4")]._xContent)
-						)
-					.replace("</mvc:View>", "      </mvc:View>") // indent by just 6 spaces
-					.replace(/\t/g, "    ") // indent by just 4 spaces
-					.replace(/\n\s*\n/g, "\n");
-
-				oView.getModel("ui").setProperty("/code", sSource);
 			}
 		},
 
