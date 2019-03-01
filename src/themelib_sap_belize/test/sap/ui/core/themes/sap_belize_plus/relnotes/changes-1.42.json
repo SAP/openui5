@@ -60,7 +60,12 @@
 				"id": "62615d692d44ff365b6ac5fd88d8a11164a82c16",
 				"type": "FIX",
 				"text": "Contrast on sap.m.IconTabBar counter fixed",
-				"references": []
+				"references": [
+					{
+						"type": "BCP",
+						"reference": "1680092722"
+					}
+				]
 			},
 			{
 				"id": "ce29e4b9b6a04d8adc184dbde4a97ba7b475579e",
@@ -72,43 +77,78 @@
 				"id": "999b4119d5bd7b51bfb3526428c570e16ceb101f",
 				"type": "FIX",
 				"text": "sap.m.Button: Emphasized button has sufficient contrast ratio",
-				"references": []
+				"references": [
+					{
+						"type": "BCP",
+						"reference": "1680021221"
+					}
+				]
 			},
 			{
 				"id": "27666887b63ae8b0dd99779e589f44ebdceb5b8b",
 				"type": "FIX",
 				"text": "sap.m.CheckBox: focus outline was cut when put in a Grid",
-				"references": []
+				"references": [
+					{
+						"type": "BCP",
+						"reference": "1680020740"
+					}
+				]
 			},
 			{
 				"id": "39f23e8f9441b9af7e295fb7e6a41ea95dc91780",
 				"type": "FIX",
 				"text": "sap.m.GenericTile: Add solid border to GenericTile",
-				"references": []
+				"references": [
+					{
+						"type": "BCP",
+						"reference": "1680093789"
+					}
+				]
 			},
 			{
 				"id": "aac19ec7b79d583de8ad690b4af8c8aa2e3fbea1",
 				"type": "FIX",
 				"text": "sap.m.Input: The input field in an InputListItem is more recognizable now",
-				"references": []
+				"references": [
+					{
+						"type": "BCP",
+						"reference": "1670295059"
+					}
+				]
 			},
 			{
 				"id": "951f10bfd69aef6902571092378d7570f81906f4",
 				"type": "FIX",
 				"text": "sap.m.InputBase: Fix error state visualization in table cell",
-				"references": []
+				"references": [
+					{
+						"type": "BCP",
+						"reference": "1680167105"
+					}
+				]
 			},
 			{
 				"id": "db70485c8148ab534339505073fe80e57dfeed90",
 				"type": "FIX",
 				"text": "sap.m.Link: Focus visualization within table cell",
-				"references": []
+				"references": [
+					{
+						"type": "BCP",
+						"reference": "1680084755"
+					}
+				]
 			},
 			{
 				"id": "f9bea4083562ac9abd57a8c7eba073a6ec50d427",
 				"type": "FIX",
 				"text": "sap.m.ListItemBase contrast issue fixed",
-				"references": []
+				"references": [
+					{
+						"type": "BCP",
+						"reference": "1680077023"
+					}
+				]
 			},
 			{
 				"id": "c21dffea85fd93539819fa687d01823eafac22f7",
@@ -120,7 +160,12 @@
 				"id": "83b7af2571cc4bb4d731ca2459770abf4760e664",
 				"type": "FIX",
 				"text": "sap.m.MessagePopover: Styles for markup description improved",
-				"references": []
+				"references": [
+					{
+						"type": "BCP",
+						"reference": "1680154117"
+					}
+				]
 			},
 			{
 				"id": "ab2077c796c2ade3152ed990d3e855737c55ae7d",
@@ -132,31 +177,60 @@
 				"id": "774e62b0348c6fe6ff1a5e853b391cb760f52dde",
 				"type": "FIX",
 				"text": "sap.m.ObjectHeader: ObjectAttribute is verticaly aligned correctly",
-				"references": []
+				"references": [
+					{
+						"type": "BCP",
+						"reference": "1680058747"
+					}
+				]
 			},
 			{
 				"id": "1cec2b907d21268de71f2e5e89b25340b44fa69b",
 				"type": "FIX",
 				"text": "sap.m.ObjectHeader: Transparent background works in Belize",
-				"references": []
+				"references": [
+					{
+						"type": "BCP",
+						"reference": "1680132141"
+					},
+					{
+						"type": "BCP",
+						"reference": "1680131801"
+					}
+				]
 			},
 			{
 				"id": "9ba25bdeb85ec40523425a40278b180f492602d8",
 				"type": "FIX",
 				"text": "sap.m.Page Fix position of footer in Belize",
-				"references": []
+				"references": [
+					{
+						"type": "BCP",
+						"reference": "1680215070"
+					}
+				]
 			},
 			{
 				"id": "e3eabfecca97614dd7d7c69cba50857258b4d309",
 				"type": "FIX",
 				"text": "sap.m.QuickView: Page sub title now can have 2 lines in Belize",
-				"references": []
+				"references": [
+					{
+						"type": "BCP",
+						"reference": "1680120902"
+					}
+				]
 			},
 			{
 				"id": "c87db425e8b3f297fd45b96519c7f25b8b9c9420",
 				"type": "FIX",
 				"text": "sap.m.RadioButton: Overflowing label text now has proper ellipsis at the end",
-				"references": []
+				"references": [
+					{
+						"type": "BCP",
+						"reference": "1680215373"
+					}
+				]
 			},
 			{
 				"id": "ef941c9de201d2d618462f162562de90ffd00853",
@@ -168,19 +242,34 @@
 				"id": "31143985440c0f8820add8b9b89fe1f8cc37a0cd",
 				"type": "FIX",
 				"text": "sap.m.Table - focus outline in IE",
-				"references": []
+				"references": [
+					{
+						"type": "BCP",
+						"reference": "1680158762"
+					}
+				]
 			},
 			{
 				"id": "9be9dd2232de301cdbbd5776a8ba28843458f7cb",
 				"type": "FIX",
 				"text": "sap.m.Table: insufficient contrast of focus outline",
-				"references": []
+				"references": [
+					{
+						"type": "BCP",
+						"reference": "1680089765"
+					}
+				]
 			},
 			{
 				"id": "fa32019f794c4d078552e82dd7cd1b1c33d696f6",
 				"type": "FIX",
 				"text": "sap.m.TextArea: State outline now has proper offsets/paddings",
-				"references": []
+				"references": [
+					{
+						"type": "BCP",
+						"reference": "1680081585"
+					}
+				]
 			},
 			{
 				"id": "03088bba2f294d0eea6950c387e25c51fb67a7e2",
@@ -192,19 +281,34 @@
 				"id": "08c5c55ad341017a16e58967f4d690973506396a",
 				"type": "FIX",
 				"text": "sap.ui.table.AnalyticalTable: Fix focus visualization on group headers",
-				"references": []
+				"references": [
+					{
+						"type": "BCP",
+						"reference": "1670335892"
+					}
+				]
 			},
 			{
 				"id": "593f12b139766a8d647340dbf7deb96f9cb3bbad",
 				"type": "FIX",
 				"text": "sap.ui.table.AnalyticalTable: fix group header background for Belize",
-				"references": []
+				"references": [
+					{
+						"type": "BCP",
+						"reference": "1680039579"
+					}
+				]
 			},
 			{
 				"id": "3d550cb3749c17fb384a82a3b16f8117f7a176bd",
 				"type": "FIX",
 				"text": "sap.ui.table.Table: Problem with Check Box in Tree Table",
-				"references": []
+				"references": [
+					{
+						"type": "BCP",
+						"reference": "1680168886"
+					}
+				]
 			}
 		]
 	}

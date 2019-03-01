@@ -5,14 +5,24 @@
       {
         "id": "48fbef23b2fbce0bfc76f92e1492363a78b70d14",
         "type": "FIX",
-        "text": " variable @sapContent_GridSize is undefined",
-        "references": []
+        "text": "variable @sapContent_GridSize is undefined",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "1970141244"
+          }
+        ]
       },
       {
         "id": "3bf0af9829546f06b24e25666549fcd57009359e",
         "type": "FIX",
-        "text": " sap.m.CheckBox: Focus outline in SimpleForm is fixed",
-        "references": []
+        "text": "sap.m.CheckBox: Focus outline in SimpleForm is fixed",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "1970110538"
+          }
+        ]
       }
     ]
   }

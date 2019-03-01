@@ -36,25 +36,45 @@
 				"id": "4cf9fd7b5f649d677b92b2b8671c488f0cf0e9a0",
 				"type": "FIX",
 				"text": "sap.ui.unified.Currency: Render string tooltip fixed",
-				"references": []
+				"references": [
+					{
+						"type": "BCP",
+						"reference": "1580017880"
+					}
+				]
 			},
 			{
 				"id": "ae6fd1f40fc5bbc32bbe6abaea81e4735ab588a4",
 				"type": "FIX",
 				"text": "sap.ui.unified.FileUploader: IE change event handling fixed",
-				"references": []
+				"references": [
+					{
+						"type": "BCP",
+						"reference": "1580025384"
+					}
+				]
 			},
 			{
 				"id": "9da2b976f7b0d197580689a95b40664bf21ac4cb",
 				"type": "FIX",
 				"text": "sap.ui.unified.FileUploader: Internet Explorer change event handling fixed",
-				"references": []
+				"references": [
+					{
+						"type": "BCP",
+						"reference": "1580025384"
+					}
+				]
 			},
 			{
 				"id": "62f817cc7253215405dafca7c62b331bbc7b98d0",
 				"type": "FIX",
 				"text": "sap.ui.unified.FileUploader: Setting content-type for Internet Explorer 9 repaired",
-				"references": []
+				"references": [
+					{
+						"type": "BCP",
+						"reference": "1570027253"
+					}
+				]
 			},
 			{
 				"id": "6e849c88ff32e31d71f0ac5abcab7188da9ce63e",
@@ -66,19 +86,34 @@
 				"id": "0cb65025d10143a53e553e4343b20d81f71c2418",
 				"type": "FIX",
 				"text": "sap.ui.unified.FileUploader: File-type check fixed",
-				"references": []
+				"references": [
+					{
+						"type": "BCP",
+						"reference": "1580023849"
+					}
+				]
 			},
 			{
 				"id": "de457d70e5f4c37ac6a2b53ae01522f637c4afa6",
 				"type": "FIX",
 				"text": "sap.ui.unified.FileUploader: Bug with invisible + % width  fixed",
-				"references": []
+				"references": [
+					{
+						"type": "BCP",
+						"reference": "1580005408"
+					}
+				]
 			},
 			{
 				"id": "0b9c898155992da1954cb86aa147586fc8454367",
 				"type": "FIX",
 				"text": "sap.ui.unified.FileUploader: Bug with invisible + % width  fixed",
-				"references": []
+				"references": [
+					{
+						"type": "BCP",
+						"reference": "1580005408"
+					}
+				]
 			},
 			{
 				"id": "694022645a63f4414070347184bfc345ad038706",
@@ -102,7 +137,12 @@
 				"id": "4f8a97ff3e2232d87c251ca2e1160d76815670ed",
 				"type": "FIX",
 				"text": "sap.ui.unified.FileUploader: Width for buttonOnly mode fixed",
-				"references": []
+				"references": [
+					{
+						"type": "BCP",
+						"reference": "1580005364"
+					}
+				]
 			},
 			{
 				"id": "119415e1724fa3aa01f0701f1841c07c0a7abff6",
@@ -132,13 +172,23 @@
 				"id": "2c2d2f5709c15279300439938decb48d46c4a4bf",
 				"type": "FIX",
 				"text": "sap.ui.unified.FileUploader: setTooltip() fixed",
-				"references": []
+				"references": [
+					{
+						"type": "BCP",
+						"reference": "1570042401"
+					}
+				]
 			},
 			{
 				"id": "cc9464eaf90ef2f5e703d8584ffd4a95b96e542f",
 				"type": "FEATURE",
 				"text": "Calendar: New properties added to set weekend and first weekday",
-				"references": []
+				"references": [
+					{
+						"type": "BCP",
+						"reference": "1570308988"
+					}
+				]
 			},
 			{
 				"id": "444f05a9ac6e31e6c939940b742ca91371927346",
@@ -168,19 +218,34 @@
 				"id": "d65defdb36c4bb57a191b30ea96c10554aebd6eb",
 				"type": "FIX",
 				"text": "FileUploader: m styling corrected",
-				"references": []
+				"references": [
+					{
+						"type": "BCP",
+						"reference": "1570014271"
+					}
+				]
 			},
 			{
 				"id": "ca1e4e142c1456990a3b35379600db80d5f5ebbc",
 				"type": "FIX",
 				"text": "FileUploader: sameFilenameAllowed fixed for multiple",
-				"references": []
+				"references": [
+					{
+						"type": "BCP",
+						"reference": "1570295116"
+					}
+				]
 			},
 			{
 				"id": "0675e0411b02b55cb7ee3877d7cccd50de0b2610",
 				"type": "FIX",
 				"text": "Menu: Open Popup before Menu state is set to opened",
-				"references": []
+				"references": [
+					{
+						"type": "BCP",
+						"reference": "1570449292"
+					}
+				]
 			},
 			{
 				"id": "5ec685b71babb6323d04b30d04e82187aa69a19c",
@@ -237,25 +302,49 @@
 				"id": "7f9c8ea076324bf8a686d905c4975a6f85a7cd59",
 				"type": "FIX",
 				"text": "sap.ui.unified.Calendar: wrong date selected if daylight saving",
-				"references": []
+				"references": [
+					{
+						"type": "GitHub",
+						"reference": "533"
+					},
+					{
+						"type": "BCP",
+						"reference": "1570756375"
+					}
+				]
 			},
 			{
 				"id": "cc7bab8b71a5500bd0321a8f55681020cb077472",
 				"type": "FIX",
 				"text": "sap.ui.unified.FileUploader: file is lost when pressing key fixed",
-				"references": []
+				"references": [
+					{
+						"type": "BCP",
+						"reference": "1570763916"
+					}
+				]
 			},
 			{
 				"id": "219b0c20c5bc0745ca2b938adf13a2b921bf8b52",
 				"type": "FIX",
 				"text": "sap.ui.unified.FileUploader: keyboard navigation in toolbar fixed",
-				"references": []
+				"references": [
+					{
+						"type": "BCP",
+						"reference": "1570675342"
+					}
+				]
 			},
 			{
 				"id": "1688e37f38d1556e0e9fe4ac6cc8eaeb777732bc",
 				"type": "FIX",
 				"text": "sap.ui.unified.FileUploader: GoldReflection styling repaired",
-				"references": []
+				"references": [
+					{
+						"type": "BCP",
+						"reference": "1570445096"
+					}
+				]
 			},
 			{
 				"id": "2857b71530b954059ee4b2bb2cd3f5350915214e",

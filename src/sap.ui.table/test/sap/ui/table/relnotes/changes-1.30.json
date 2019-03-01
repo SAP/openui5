@@ -90,43 +90,82 @@
 				"id": "3aa09e75a316facdf3811808ae8602b6c602252a",
 				"type": "FIX",
 				"text": "sap.ui.Table: Fixed positioning of GroupHeader label",
-				"references": []
+				"references": [
+					{
+						"type": "BCP",
+						"reference": "1580015691"
+					}
+				]
 			},
 			{
 				"id": "bb87da262b02ae7a6d60aa95b75eab0191605f13",
 				"type": "FIX",
 				"text": "sap.ui.Table: Row count calculation is now limited to \"this\"",
-				"references": []
+				"references": [
+					{
+						"type": "GitHub",
+						"reference": "343"
+					},
+					{
+						"type": "BCP",
+						"reference": "1580023850"
+					}
+				]
 			},
 			{
 				"id": "57de72c2ca6e7d96494bde5b7f2a60588c5ca7f1",
 				"type": "FIX",
 				"text": "sap.ui.table.*: Fixed SHIFT+TAB key combination w/o column header",
-				"references": []
+				"references": [
+					{
+						"type": "BCP",
+						"reference": "1580016702"
+					}
+				]
 			},
 			{
 				"id": "c03fc01b1d40a693d0549bca2933b682525b0fc9",
 				"type": "FIX",
 				"text": "sap.ui.table.*: Fixed SHIFT+TAB key combination w/o column header",
-				"references": []
+				"references": [
+					{
+						"type": "BCP",
+						"reference": "1580016702"
+					}
+				]
 			},
 			{
 				"id": "09ff79154627ff1b409cffd7feb577ebd645808b",
 				"type": "FIX",
 				"text": "sap.ui.table.*: Tabbing issue in non-accessibility fixed",
-				"references": []
+				"references": [
+					{
+						"type": "BCP",
+						"reference": "1580016701"
+					}
+				]
 			},
 			{
 				"id": "7f131a9d37781c1e135b93d64ea5e5d99a090105",
 				"type": "FIX",
 				"text": "sap.ui.table.*: Row header tooltip for rows without binding context fixed",
-				"references": []
+				"references": [
+					{
+						"type": "BCP",
+						"reference": "1580028493"
+					}
+				]
 			},
 			{
 				"id": "28948b39f021c31431244cc4f087c2e3e7c9f173",
 				"type": "FIX",
 				"text": "sap.ui.table.AnalyticalTable: Fixed row selection when grouped columns are invisible",
-				"references": []
+				"references": [
+					{
+						"type": "BCP",
+						"reference": "1580021350"
+					}
+				]
 			},
 			{
 				"id": "9536c69210a80e4c73777cdc6d0fce93c5747b6e",
@@ -138,13 +177,31 @@
 				"id": "4a0750005caa4f45455ba0c82f5ea1b20430b57c",
 				"type": "FIX",
 				"text": "sap.ui.table.AnalyticalTable: Corrected calculation of group header",
-				"references": []
+				"references": [
+					{
+						"type": "BCP",
+						"reference": "1580026944"
+					},
+					{
+						"type": "BCP",
+						"reference": "1580017579"
+					}
+				]
 			},
 			{
 				"id": "1834b295e742ff843f500a6c0cf520f36e8e4c7d",
 				"type": "FIX",
 				"text": "sap.ui.table.Table:  Focus indicator for table parts fixed",
-				"references": []
+				"references": [
+					{
+						"type": "BCP",
+						"reference": "1580022759"
+					},
+					{
+						"type": "BCP",
+						"reference": "1570023277"
+					}
+				]
 			},
 			{
 				"id": "de8533f0bd08d8f27a3d9e307555d409dbbf4ec9",
@@ -174,13 +231,23 @@
 				"id": "fa470f8617529a507c6fd431df3a0fb9f2e6558a",
 				"type": "FIX",
 				"text": "sap.ui.table.AnalyticalTable: GroupHeader no longer truncated",
-				"references": []
+				"references": [
+					{
+						"type": "BCP",
+						"reference": "1570444355"
+					}
+				]
 			},
 			{
 				"id": "45fc94bfe0162f7d83b50dab19bccbd1cbd8a32c",
 				"type": "FIX",
 				"text": "sap.ui.table.AnalyticalTable: Selection model issues when no binding is present fixed",
-				"references": []
+				"references": [
+					{
+						"type": "BCP",
+						"reference": "1570034106"
+					}
+				]
 			},
 			{
 				"id": "97e08053500d9af285fb756b5d9392454ed51180",
@@ -192,13 +259,23 @@
 				"id": "9e93c89e6cee6414e3137f76df59669b49053f9c",
 				"type": "FIX",
 				"text": "sap.ui.table.Table: Last line toggles visibility",
-				"references": []
+				"references": [
+					{
+						"type": "BCP",
+						"reference": "1570014745"
+					}
+				]
 			},
 			{
 				"id": "4a3b934adfbfdeefa93b06bb8ae904ffc74d4928",
 				"type": "FIX",
 				"text": "sap.ui.table.Table: MultiHeader Column Menu Opening DomRef",
-				"references": []
+				"references": [
+					{
+						"type": "BCP",
+						"reference": "1570155474"
+					}
+				]
 			},
 			{
 				"id": "02daf76cb744293416d3b9c4bb7b2973d162e169",
@@ -210,25 +287,49 @@
 				"id": "095890fc5ab5130479e4ae39204c7c6c89c9f438",
 				"type": "FIX",
 				"text": "sap.ui.table.Table: Problem with non-resizable columns fixed",
-				"references": []
+				"references": [
+					{
+						"type": "BCP",
+						"reference": "1570152830"
+					}
+				]
 			},
 			{
 				"id": "a4c2ec2c4a3c639f5b1fd3d514d81fb4abd8dda6",
 				"type": "FIX",
 				"text": "sap.ui.table.Table: text view creation in sap.m context",
-				"references": []
+				"references": [
+					{
+						"type": "BCP",
+						"reference": "1570136773"
+					}
+				]
 			},
 			{
 				"id": "fcc8b402aa7d664ba54e17ca143e12e93e18ee7b",
 				"type": "FIX",
 				"text": "sap.ui.table.TreeTable: attachSelectionChanged for client tree bindings implemented",
-				"references": []
+				"references": [
+					{
+						"type": "BCP",
+						"reference": "1570155474"
+					}
+				]
 			},
 			{
 				"id": "c4369f794e92d2e77d17234f7542f58e28c36f38",
 				"type": "FIX",
 				"text": "sap.ui.table.TreeTable: Apply call when second parameter must be an argument",
-				"references": []
+				"references": [
+					{
+						"type": "GitHub",
+						"reference": "424"
+					},
+					{
+						"type": "BCP",
+						"reference": "1570262366"
+					}
+				]
 			},
 			{
 				"id": "8c2e01b63f73573f163d649be879ae7ce326f879",
@@ -252,7 +353,12 @@
 				"id": "02e35c41a2ba7b3db9b4e72ccf8b6209dbc093fc",
 				"type": "FIX",
 				"text": "TreeTable.js - collapseAll for ClientTreeBindings corrected",
-				"references": []
+				"references": [
+					{
+						"type": "BCP",
+						"reference": "1570444241"
+					}
+				]
 			},
 			{
 				"id": "1344183420940c575cf4b10bea3d5f1eb332439b",
@@ -299,7 +405,12 @@
 				"id": "9a228fec5f404b5f6bb122616ca7675e7d44486c",
 				"type": "FIX",
 				"text": "sap.ui.table.DataTable: Fix oRowContext in toggleOpenState event",
-				"references": []
+				"references": [
+					{
+						"type": "BCP",
+						"reference": "1570474470"
+					}
+				]
 			},
 			{
 				"id": "296d4b2434a7621d870699fe1a453e00d1edc555",

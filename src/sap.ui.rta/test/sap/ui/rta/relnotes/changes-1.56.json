@@ -5,31 +5,31 @@
       {
         "id": "450cad221c6fb2bb23af7c834ef1d949d2751d78",
         "type": "FIX",
-        "text": " Fix maven coldwater plugin errors",
+        "text": "Fix maven coldwater plugin errors",
         "references": []
       },
       {
         "id": "012b33628fe2749a95df15befd5163769fbb71aa",
         "type": "FIX",
-        "text": " sap.ui.dt.MiniMenu - various bugfixes \u0026 cleaning (split1)",
+        "text": "sap.ui.dt.MiniMenu - various bugfixes & cleaning (split1)",
         "references": []
       },
       {
         "id": "4d385e4122a066b70b8ce1699073406b77c8af82",
         "type": "FIX",
-        "text": " sap.ui.rta - Fix and refactor SimpleFormMove tests",
+        "text": "sap.ui.rta - Fix and refactor SimpleFormMove tests",
         "references": []
       },
       {
         "id": "eae3461b28a5303637147cc679a7e7427de08ddb",
         "type": "FIX",
-        "text": " sap.ui.rta: Adjust overlay container in PopupManager._applyPopupPatch to new dt implementation",
+        "text": "sap.ui.rta: Adjust overlay container in PopupManager._applyPopupPatch to new dt implementation",
         "references": []
       },
       {
         "id": "b97c0b31fcb0a0780dc10e105521d76c99fd795f",
         "type": "FEATURE",
-        "text": " sap.ui.rta: Support the layer switch for app variants from",
+        "text": "sap.ui.rta: Support the layer switch for app variants from",
         "references": []
       },
       {
@@ -47,43 +47,58 @@
       {
         "id": "c941314f3d3bde2b8a43a8e699c107555a30f537",
         "type": "FIX",
-        "text": " Fix several issues in variant management control",
+        "text": "Fix several issues in variant management control",
         "references": []
       },
       {
         "id": "81365b124839a91ceb909835c5c5a9f864573159",
         "type": "FIX",
-        "text": " sap.ui.rta: Getting rid of the feature toggle parameter.",
+        "text": "sap.ui.rta: Getting rid of the feature toggle parameter.",
         "references": []
       },
       {
         "id": "37e85c891ed99e12402ab626974119243dfed3aa",
         "type": "FIX",
-        "text": " sap.ui.rta: RuntimeAuthoring test fix for IE11",
-        "references": []
+        "text": "sap.ui.rta: RuntimeAuthoring test fix for IE11",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "1880187429"
+          }
+        ]
       },
       {
         "id": "0fc252d4cb24580ec97f06f02d3fbf6293cde8b5",
         "type": "FIX",
-        "text": " sap.ui.rta: fixed tests running out of stack space in IE11",
-        "references": []
+        "text": "sap.ui.rta: fixed tests running out of stack space in IE11",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "1880187429"
+          }
+        ]
       },
       {
         "id": "4276d565086f20cd232dc9360c5ac3cd73fbb1ce",
         "type": "FIX",
-        "text": " sap.ui.rta: check geometry of overlay instead of original element",
-        "references": []
+        "text": "sap.ui.rta: check geometry of overlay instead of original element",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "1880213415"
+          }
+        ]
       },
       {
         "id": "ff97aeb09fc61c7bb7b283f30bd5b2b2070a6553",
         "type": "FIX",
-        "text": " Add getPreparedChange to ctrl variant commands",
+        "text": "Add getPreparedChange to ctrl variant commands",
         "references": []
       },
       {
         "id": "28d2646b2dd79a23912750f70b2c82c5b2bc504b",
         "type": "FIX",
-        "text": " sap.ui.rta: Delete the app variant from the layered repository if",
+        "text": "sap.ui.rta: Delete the app variant from the layered repository if",
         "references": []
       },
       {
@@ -95,13 +110,13 @@
       {
         "id": "ca42d07d2c68bad5da762509454514fcfa9cd215",
         "type": "FIX",
-        "text": " sap.ui.layout - domRef function fixed",
+        "text": "sap.ui.layout - domRef function fixed",
         "references": []
       },
       {
         "id": "935af7067b354fbb3af766d55c2b1b9a25ca4bd6",
         "type": "FIX",
-        "text": " sap.ui.rta - demo app objectpage removed \u0026\u0026 fix sfin app",
+        "text": "sap.ui.rta - demo app objectpage removed && fix sfin app",
         "references": []
       },
       {
@@ -113,19 +128,19 @@
       {
         "id": "ad202bd33f5d9feb39e2a4fa2f320bd34fe5fb47",
         "type": "FEATURE",
-        "text": " sap.m.Button: enable hide/unhide actions for RTA",
+        "text": "sap.m.Button: enable hide/unhide actions for RTA",
         "references": []
       },
       {
         "id": "8ef21d711585b70db32226db4038e5f5598708a4",
         "type": "FIX",
-        "text": " sap.ui.rta - Performance test fix",
+        "text": "sap.ui.rta - Performance test fix",
         "references": []
       },
       {
         "id": "eb6e8a23450b47097826583f48825986efabe5d5",
         "type": "FIX",
-        "text": " Rename and move API for Control Personalization",
+        "text": "Rename and move API for Control Personalization",
         "references": []
       },
       {
@@ -137,19 +152,19 @@
       {
         "id": "c20766a5e5ac0120e17215242e3d95f6a8575731",
         "type": "FIX",
-        "text": " Update controlEnablingCheck for model",
+        "text": "Update controlEnablingCheck for model",
         "references": []
       },
       {
         "id": "88999a4e9260faad5a87743352bffde737c9a17e",
         "type": "FIX",
-        "text": " change getPreparedChange of Ctrl Variant Commands",
+        "text": "change getPreparedChange of Ctrl Variant Commands",
         "references": []
       },
       {
         "id": "2633a14b0f2095464ac04258fe8158bac650dcf4",
         "type": "FIX",
-        "text": " sap.ui.dt - contextMenu menuButton handling and icons",
+        "text": "sap.ui.dt - contextMenu menuButton handling and icons",
         "references": []
       }
     ]

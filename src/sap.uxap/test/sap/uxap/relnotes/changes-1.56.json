@@ -49,92 +49,152 @@
       {
         "id": "f93eb97269f54ac5fff0be5ad97e2ce3c2ed2a49",
         "type": "FIX",
-        "text": " sap.uxap.ObjectPageHeader: Fixed action button disappearing",
-        "references": []
+        "text": "sap.uxap.ObjectPageHeader: Fixed action button disappearing",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "1880201374"
+          }
+        ]
       },
       {
         "id": "7d6a0dd4c77cd62d2b40ebd2f04293a2a0a9f4c2",
         "type": "FIX",
-        "text": " uxap.HierarchicalSelect: Alignment in FlexibleColumnLayout fixed",
-        "references": []
+        "text": "uxap.HierarchicalSelect: Alignment in FlexibleColumnLayout fixed",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "1870032527"
+          }
+        ]
       },
       {
         "id": "fd1a98eaa2742459701a4aafc60ed04cfd5e38f9",
         "type": "FIX",
-        "text": " sap.uxap.ObjectPageHeader: Memory leak fix",
-        "references": []
+        "text": "sap.uxap.ObjectPageHeader: Memory leak fix",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "1870085555"
+          }
+        ]
       },
       {
         "id": "4a08c4f6eaa6c67f422875b983cb9161fa6ed6be",
         "type": "FIX",
-        "text": " uxap.ObjectPage: _headerContent aggregation cloning fixed",
-        "references": []
+        "text": "uxap.ObjectPage: _headerContent aggregation cloning fixed",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "002075129500001260892018"
+          }
+        ]
       },
       {
         "id": "d97151a9307e23c00802b99b2ef092adc57c6154",
         "type": "FIX",
-        "text": " ObjectPageLayout: Demokit samples updated",
-        "references": []
+        "text": "ObjectPageLayout: Demokit samples updated",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "1870097988"
+          }
+        ]
       },
       {
         "id": "f31c352733941b95fda5449cc64f8fce9808bdca",
         "type": "FIX",
-        "text": " uxap.ObjectPageLayout: footer content alingment fixed",
-        "references": []
+        "text": "uxap.ObjectPageLayout: footer content alingment fixed",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "1870106645"
+          }
+        ]
       },
       {
         "id": "16259472a464954db82e00075f95413a318feec2",
         "type": "FIX",
-        "text": " sap.uxap.ObjectPageLayout: Additional reading removed",
-        "references": []
+        "text": "sap.uxap.ObjectPageLayout: Additional reading removed",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "1870031991"
+          }
+        ]
       },
       {
         "id": "60f66696eb416ec2e3dbae3aaf544de1f3ba2dde",
         "type": "FEATURE",
-        "text": " uxap.ObjectPageHeader: titleSelectorTooltip aggregation added",
+        "text": "uxap.ObjectPageHeader: titleSelectorTooltip aggregation added",
         "references": []
       },
       {
         "id": "2c0e974ab9770ea0465fb008ad13f1da3318e48b",
         "type": "FIX",
-        "text": " sap.uxap.ObjectPageHeader: _updateRootARIALabel call condition added",
-        "references": []
+        "text": "sap.uxap.ObjectPageHeader: _updateRootARIALabel call condition added",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "1870169382"
+          }
+        ]
       },
       {
         "id": "9656793fc72549dd07b3144ed27012ae2e1a79be",
         "type": "FEATURE",
-        "text": " f.DynamicPage, uxap.ObjectPageLayout: Collapse/Pin changed",
+        "text": "f.DynamicPage, uxap.ObjectPageLayout: Collapse/Pin changed",
         "references": []
       },
       {
         "id": "b040653482a7db075b220074c38aa3e3412ecdc4",
         "type": "FIX",
-        "text": " sap.uxap.ObjectPage: showAnchorBarPopover property behavior fixed",
-        "references": []
+        "text": "sap.uxap.ObjectPage: showAnchorBarPopover property behavior fixed",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "1870185787"
+          }
+        ]
       },
       {
         "id": "2c1685ffe48bd2fe81f61ed5785a503e480bf8d9",
         "type": "FIX",
-        "text": " sap.uxap.ObjectPageHeader: Overflow button visibility fixed",
-        "references": []
+        "text": "sap.uxap.ObjectPageHeader: Overflow button visibility fixed",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "1870135883"
+          }
+        ]
       },
       {
         "id": "8cb59d78ef198f02504c45888b4adb951e2143f4",
         "type": "FIX",
-        "text": " uxap.ObjectPageHeaderContent: belize_deep appearance corrected",
-        "references": []
+        "text": "uxap.ObjectPageHeaderContent: belize_deep appearance corrected",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "1870212791"
+          }
+        ]
       },
       {
         "id": "87689aab72a406b73e07fa0500f174e68889eab5",
         "type": "FEATURE",
-        "text": " sap.uxap.ObjectPageLayout: Preserve expanded header in content on small screens",
+        "text": "sap.uxap.ObjectPageLayout: Preserve expanded header in content on small screens",
         "references": []
       },
       {
         "id": "658158ad145a97a4b67fa6e4762f9018d8ef3589",
         "type": "FIX",
-        "text": " sap.uxap.ObjectPageLayout: Demo Kit samples updated",
-        "references": []
+        "text": "sap.uxap.ObjectPageLayout: Demo Kit samples updated",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "1870097988"
+          }
+        ]
       }
     ]
   }

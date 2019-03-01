@@ -5,8 +5,13 @@
       {
         "id": "8c220c4cf04d019e022b1bf2b0b0fbe06062e948",
         "type": "FIX",
-        "text": " sap.ui.rta - get rid of unnecessary paste in contextmenu",
-        "references": []
+        "text": "sap.ui.rta - get rid of unnecessary paste in contextmenu",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "1970094099"
+          }
+        ]
       }
     ]
   }

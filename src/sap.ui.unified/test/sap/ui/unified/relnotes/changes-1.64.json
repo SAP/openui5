@@ -5,8 +5,13 @@
       {
         "id": "446fef22bd12fa22f52f6578c763eb41c24883a2",
         "type": "FIX",
-        "text": " ui.unified.Calendar: Information for secondary type provided",
-        "references": []
+        "text": "ui.unified.Calendar: Information for secondary type provided",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "1870534995"
+          }
+        ]
       }
     ]
   }

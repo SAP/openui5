@@ -30,25 +30,45 @@
         "id": "b3979eec7393d08e0de3bc7c6c8d2b14f15561cc",
         "type": "FIX",
         "text": "sap.m.PlanningCalendar: Days are read",
-        "references": []
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "1680241673"
+          }
+        ]
       },
       {
         "id": "e5b287f1272a3392e6cd78daf9a74f1555bf7e7e",
         "type": "FIX",
         "text": "sap.m.PlanningCalendar: Interval header has default cursor",
-        "references": []
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "1680241680"
+          }
+        ]
       },
       {
         "id": "bd37536d5f37ea4aeda0ae56ba6d11e3b70b0b9f",
         "type": "FIX",
         "text": "sap.ui.unified.CalendarRow shows group appointment with 0",
-        "references": []
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "002075129500003005872016"
+          }
+        ]
       },
       {
         "id": "404370b547d687a8f31577cb99c106d3e7ec5253",
         "type": "FIX",
         "text": "sap.ui.unified.Currency: Correct alignment in RTL",
-        "references": []
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "1670466693"
+          }
+        ]
       }
     ]
   }

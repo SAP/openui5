@@ -11,7 +11,7 @@
       {
         "id": "012b33628fe2749a95df15befd5163769fbb71aa",
         "type": "FIX",
-        "text": "sap.ui.dt.MiniMenu - various bugfixes \u0026 cleaning (split1)",
+        "text": "sap.ui.dt.MiniMenu - various bugfixes & cleaning (split1)",
         "references": []
       },
       {
@@ -35,7 +35,7 @@
       {
         "id": "fa7705ba0d15be021cd22a7d7d7e5b9ce4f497f9",
         "type": "FIX",
-        "text": " ManagedObject: fix \u0027off by 1\u0027 bug in generated association methods",
+        "text": "ManagedObject: fix 'off by 1' bug in generated association methods",
         "references": []
       },
       {
@@ -47,49 +47,73 @@
       {
         "id": "eb2beffb9ab2f1302ef5a3219ca338479a1748cb",
         "type": "FIX",
-        "text": " add contextmenu styleclass to minimenu.less",
+        "text": "add contextmenu styleclass to minimenu.less",
         "references": []
       },
       {
         "id": "f87055853bdbbd0725d6648c2c4ec773f6515ed6",
         "type": "FIX",
-        "text": " sap.ui.dt: include sap.f.DynamicPage title handling in ElementUtil.getLabelForElement()",
+        "text": "sap.ui.dt: include sap.f.DynamicPage title handling in ElementUtil.getLabelForElement()",
         "references": []
       },
       {
         "id": "e3574de9dc79658e425b785107151d8f6e434482",
         "type": "FIX",
-        "text": " sap.ui.dt - compact contextMenu positioning",
-        "references": []
+        "text": "sap.ui.dt - compact contextMenu positioning",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "1870189292"
+          }
+        ]
       },
       {
         "id": "4976dcf99d3036d21471ee13103000365a11eb09",
         "type": "FIX",
-        "text": " sap.ui.dt - contextMenu issue with overlapped overlay",
-        "references": []
+        "text": "sap.ui.dt - contextMenu issue with overlapped overlay",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "1870189292"
+          }
+        ]
       },
       {
         "id": "2633a14b0f2095464ac04258fe8158bac650dcf4",
         "type": "FIX",
-        "text": " sap.ui.dt - contextMenu menuButton handling and icons",
+        "text": "sap.ui.dt - contextMenu menuButton handling and icons",
         "references": []
       },
       {
         "id": "d9c6d51ed6c6889316d2c9d18ba2ec554992eca6",
         "type": "FIX",
-        "text": " sap.ui.dt - contextMenu override popover animationDuration",
-        "references": []
+        "text": "sap.ui.dt - contextMenu override popover animationDuration",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "1870189384"
+          },
+          {
+            "type": "BCP",
+            "reference": "1870189085"
+          }
+        ]
       },
       {
         "id": "bfd445520bfafaf14153ad968a07a867596bb371",
         "type": "FIX",
-        "text": " sap.ui.dt - open submenu on contextMenu",
-        "references": []
+        "text": "sap.ui.dt - open submenu on contextMenu",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "1870201721"
+          }
+        ]
       },
       {
         "id": "2974c1fb6c7275bc2d5543745921705e62ff52a6",
         "type": "FIX",
-        "text": " sap.ui.dt - removed unused workaround",
+        "text": "sap.ui.dt - removed unused workaround",
         "references": []
       },
       {
