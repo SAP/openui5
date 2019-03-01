@@ -12,14 +12,17 @@
 	}'></script>
 
 	<script>
-		sap.ui.require(["sap/ui/core/Core", "sap/ui/core/ComponentContainer"], function (Core, ComponentContainer) {
-			var oContainer = new ComponentContainer({
-				async: true,
-				name: "sap.ui.integration.sample.Playground",
-				height: "100%"
+		sap.ui.require(["sap/ui/core/Core", "sap/ui/core/ComponentContainer"],
+			function (Core, ComponentContainer) {
+				//initialize component
+				var oContainer = new ComponentContainer({
+					async: true,
+					name: "sap.ui.integration.sample.Playground",
+					height: "100%"
+				});
+				oContainer.placeAt("content");
+
 			});
-			oContainer.placeAt("content");
-		});
 	</script>
 </head>
 

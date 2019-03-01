@@ -1,7 +1,6 @@
-/* ================================== */
-/* CSS for generation of a host config css */
-/* Base theme          */
-/* ================================== */
+/* ======================================== */
+/* CSS for generation of a host config css  */
+/* ======================================== */
 
 /* HOSTCONFIG PARAMETERS */
 
@@ -104,6 +103,10 @@
 
 #hostConfigName.sapFCard .sapMLIB {
 	background-color: @sapUiCardBackgroundColor;
+}
+
+#hostConfigName.sapFCard .sapMLIB .sapMSLIImgIcon {
+	color: @sapUiCardFontColorDefaultSubtle  !important
 }
 
 #hostConfigName.sapFCard .sapMLIBFocusable:focus {
@@ -219,4 +222,42 @@
 	& .sapMLabel {
 		color: @sapUiCardFontColorDefaultDefault
 	}
+}
+
+#hostConfigName.sapFCard .sapFCardTimelineContent .sapSuiteUiCommonsTimelineBarIcon {
+	color: @sapUiCardFontColorDefaultSubtle  !important
+}
+
+#hostConfigName.sapFCard .sapFCardTimelineContent .sapSuiteUiCommonsTimelineItemArrow {
+	background: contrast(@sapUiCardBackgroundColor, lighten(@sapUiCardBackgroundColor, 10), darken(@sapUiCardBackgroundColor, 10));
+	border-color: contrast(@sapUiCardBackgroundColor, lighten(@sapUiCardBackgroundColor, 20%), darken(@sapUiCardBackgroundColor, 20%));
+}
+
+#hostConfigName.sapFCard .sapFCardTimelineContent .sapSuiteUiCommonsTimelineItemBox {
+	background: contrast(@sapUiCardBackgroundColor, lighten(@sapUiCardBackgroundColor, 10), darken(@sapUiCardBackgroundColor, 10));
+	border-color: contrast(@sapUiCardBackgroundColor, lighten(@sapUiCardBackgroundColor, 20%), darken(@sapUiCardBackgroundColor, 20%));
+}
+
+#hostConfigName.sapFCard .sapFCardTimelineContent .sapSuiteUiCommonsTimelineItemShellHdr,
+#hostConfigName.sapFCard .sapFCardTimelineContent .sapSuiteUiCommonsTimelineItemShellUser {
+	color: @sapUiCardFontColorDefaultDefault;
+	font-family: @sapUiCardFSDefaultFontFamily;
+	font-size: @sapUiCardFSDefaultSizeMedium;
+}
+
+#hostConfigName.sapFCard .sapFCardTimelineContent .sapSuiteUiCommonsTimelineItemShellDateTime {
+	color: @sapUiCardFontColorDefaultSubtle;
+	font-family: @sapUiCardFSDefaultFontFamily;
+	font-size: @sapUiCardFSDefaultSizeSmall;
+}
+
+#hostConfigName.sapFCard .sapFCardTimelineContent .sapSuiteUiCommonsTimelineItemTextWrapper {
+	color: @sapUiCardFontColorDefaultDefault;
+	font-family: @sapUiCardFSDefaultFontFamily;
+	font-size: @sapUiCardFSDefaultSizeMedium;
+}
+
+#hostConfigName.sapFCard .sapFCardTimelineContent .sapSuiteUiCommonsTimelineItemBarV,
+.sapSuiteUiCommonsTimelineItemBarH {
+	background-color: contrast(@sapUiCardBackgroundColor, lighten(@sapUiCardBackgroundColor, 20%), darken(@sapUiCardBackgroundColor, 20%));
 }
