@@ -5206,7 +5206,8 @@ sap.ui.define([
 		// navigation property
 		var oEntityType = this.oMetadata._getEntityTypeByPath(oEntityInfo.key);
 		var oNavPropRefInfo = this.oMetadata._getNavPropertyRefInfo(oEntityType, sPropertyPath);
-		if (oNavPropRefInfo && oNavPropRefInfo.keys.length === 1) {
+		var bIsNavPropExpanded = oNavPropRefInfo && oOriginalEntry[oNavPropRefInfo.name] && oOriginalEntry[oNavPropRefInfo.name].__ref;
+		if (bIsNavPropExpanded && oNavPropRefInfo.keys.length === 1) {
 			var mKeys = {};
 			oNavPropRefInfo.keys.forEach(function(sName) {
 				mKeys[sName] = oEntry[sName] !== undefined ? oEntry[sName] : oOriginalEntry[sName];
