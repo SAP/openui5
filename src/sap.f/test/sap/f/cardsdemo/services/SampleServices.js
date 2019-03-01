@@ -29,8 +29,21 @@ sap.ui.define([
 	var oUserRecentFactory = new UserRecentFactory();
 	ServiceFactoryRegistry.register("cardsdemo.service.UserRecentFactory", oUserRecentFactory);
 
+	var RandomSalesOrdersFactory = ServiceFactory.extend("cardsdemo.service.RandomSalesOrdersFactory", {
+		createInstance: function (oServiceContext) {
+			return new Promise(function (resolve) {
+				sap.ui.require(["sap/f/cardsdemo/services/RandomSalesOrdersService"], function (RandomSalesOrdersService) {
+					resolve(new RandomSalesOrdersService(oServiceContext));
+				});
+			});
+		}
+	});
+	var oRandomSalesOrdersFactory = new RandomSalesOrdersFactory();
+	ServiceFactoryRegistry.register("cardsdemo.service.RandomSalesOrdersFactory", oRandomSalesOrdersFactory);
+
 	return {
 		"navigation": oNavigationFactory,
-		"data": oUserRecentFactory
+		"data": oUserRecentFactory,
+		"randomSalesOrders": oRandomSalesOrdersFactory
 	};
 }, true);
