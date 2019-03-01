@@ -884,13 +884,13 @@ sap.ui.define([
 				}
 			},
 			QuickViewCard: {
-				title: "QUnit page for sap.m.QuickView",
+				title: "QUnit page for sap.m.QuickViewCard",
 				sinon: {
 					useFakeTimers: true
 				}
 			},
 			QuickViewPage: {
-				title: "QUnit page for sap.m.QuickView Page",
+				title: "QUnit page for sap.m.QuickViewPage",
 				sinon: {
 					useFakeTimers: true
 				}
