@@ -2753,6 +2753,39 @@ function (
 			});
 		});
 
+		QUnit.test("when calling resetChanges in USER layer with selector IDs", function (assert) {
+
+			sandbox.stub(this.oChangePersistence, "getChangesForComponent").returns(Promise.resolve([]));
+			var oTransportStub = sandbox.stub(this.oChangePersistence._oTransportSelection, "setTransports");
+
+			// Settings in registry
+			var oSetting = {
+				isKeyUser: true,
+				isAtoAvailable: true,
+				isProductiveSystem: function() {return false;},
+				hasMergeErrorOccured: function() {return false;},
+				isAtoEnabled: function() {return true;}
+			};
+			sandbox.stub(sap.ui.fl.registry.Settings, "getInstance").returns(Promise.resolve(oSetting));
+			var oLrepStub = sandbox.stub(this.oChangePersistence._oConnector, "send").returns(Promise.resolve());
+
+			var aControlIds = [
+				"view--control1",
+				"view--controlWithNoChanges",
+				"feview--control2",
+				"feview--controlWithNoChanges"
+			];
+			return this.oChangePersistence.resetChanges("USER", "Change.createInitialFileContent", aControlIds).then(function() {
+				assert.equal(oTransportStub.callCount, 0, "no transport data was requested");
+				assert.equal(oLrepStub.callCount, 1, "the LrepConnector is called once");
+				assert.equal(oLrepStub.args[0][0],
+					"/sap/bc/lrep/changes/?reference=MyComponent&appVersion=1.2.3&layer=USER&generator=Change.createInitialFileContent&" +
+					"selector=view--control1,view--controlWithNoChanges,feview--control2,feview--controlWithNoChanges",
+					"and with the correct URI");
+				assert.equal(oLrepStub.args[0][1], "DELETE", "and with the correct method");
+			});
+		});
+
 		QUnit.test("checkForOpenDependenciesForControl", function(assert) {
 			var oModifier = {
 				getControlIdBySelector: function(oSelector) {
