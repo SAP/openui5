@@ -6,31 +6,60 @@
         "id": "a44cab29e9a2db93774d05b9e5ab8880e530ee22",
         "type": "FIX",
         "text": "sap.ui.commons.InPlaceEdit: Theme image URLs",
-        "references": []
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "1670427408"
+          }
+        ]
       },
       {
         "id": "2329a7fe67a3f9a9d342b05020b0d2487ad08b6b",
         "type": "FIX",
         "text": "sap.ui.commons.RatingIndicator: Theme image URLs",
-        "references": []
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "1670427766"
+          }
+        ]
       },
       {
         "id": "a346b047602d9cbc5191faea62dd417ad4210fb9",
         "type": "FIX",
         "text": "sap.ui.layout.form.FormContainer: Theme image URLs",
-        "references": []
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "1670427408"
+          }
+        ]
       },
       {
         "id": "31021f51f9de7037a29e0a4cbee05aba437eccdc",
         "type": "FIX",
         "text": "sap.ui.table.*: Fix inner controls after CSS cleanup",
-        "references": []
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "1670483619"
+          },
+          {
+            "type": "BCP",
+            "reference": "1670483618"
+          }
+        ]
       },
       {
         "id": "499eb1f8b6e87810fc9f35ceefcf421cb4dd32be",
         "type": "FIX",
         "text": "sap.ui.ux3.Feed: Theme image URLs",
-        "references": []
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "1670427408"
+          }
+        ]
       },
       {
         "id": "05b98815168b55394d4c135896a23fc4b3edba88",
@@ -47,7 +76,12 @@
         "id": "1a3f719e840acfff5e56dcfc4aa322a8f650dc93",
         "type": "FIX",
         "text": "sap.ui.commons semantic colors for TextField and ProgressIndicator",
-        "references": []
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "1670517437"
+          }
+        ]
       }
     ]
   },
@@ -57,8 +91,13 @@
       {
         "id": "0b487c57d684084a2a902b9178aece249fdb0dfd",
         "type": "FIX",
-        "text": " BusyIndicator (Global): Fix missing wait cursor",
-        "references": []
+        "text": "BusyIndicator (Global): Fix missing wait cursor",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "1680262310"
+          }
+        ]
       }
     ]
   }
