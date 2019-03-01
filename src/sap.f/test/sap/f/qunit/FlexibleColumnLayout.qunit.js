@@ -925,6 +925,29 @@ function (
 		this.clock.restore();
 	});
 
+	//BCP: 1970178100
+	QUnit.test(
+		"Conceal effect layout changes - simulate navigation from detailDetail to about page with two initial columns setup",
+		function(assert) {
+
+		// arrange
+		var fnDone = assert.async(),
+			iAnimationDelay = COLUMN_RESIZING_ANIMATION_DURATION + 100;
+
+		this.oFCL = oFactory.createFCL({
+			layout: LT.TwoColumnsBeginExpanded
+		});
+
+		// act
+		this.oFCL.setLayout(LT.EndColumnFullScreen);
+
+		setTimeout(function() {
+			// assert
+			assertColumnsVisibility(assert, this.oFCL, 0, 0, 1);
+			fnDone();
+		}.bind(this), iAnimationDelay);
+	});
+
 	QUnit.module("ScreenReader supprot", {
 		beforeEach: function () {
 			this.oFCL = oFactory.createFCL();
