@@ -38,11 +38,10 @@ function (
 		}
 	}, function () {
 		QUnit.test("when the test is started", function(assert) {
-			var done = assert.async();
-			this.oElementEnablementTest.run().then(function(oResult) {
+			return this.oElementEnablementTest.run()
+			.then(function(oResult) {
 				assert.ok(oResult, "A result is returned");
 				fnTestInterface(assert, oResult);
-				done();
 			});
 		});
 	});
@@ -65,14 +64,12 @@ function (
 		}
 	}, function () {
 		QUnit.test("when the test is started", function(assert) {
-			var done = assert.async();
-			var that = this;
-			this.oElementEnablementTest.run().then(function(oResult) {
+			return this.oElementEnablementTest.run()
+			.then(function(oResult) {
 				assert.ok(oResult, "A result is returned");
-				assert.equal(that.fnSpyCreate.callCount, 1, "and the create function was called once");
+				assert.equal(this.fnSpyCreate.callCount, 1, "and the create function was called once");
 				fnTestInterface(assert, oResult);
-				done();
-			});
+			}.bind(this));
 		});
 	});
 
