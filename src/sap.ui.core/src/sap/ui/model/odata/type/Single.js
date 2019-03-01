@@ -14,17 +14,6 @@ sap.ui.define([
 		jQuery) {
 	"use strict";
 
-	// Math.fround polyfill
-	if (!Math.fround) { // sap-ui-cover-browser msie
-		// IE 10+
-		var aArray = new window.Float32Array(1);
-
-		Math.fround = function (fValue) {
-			aArray[0] = fValue;
-			return aArray[0];
-		};
-	}
-
 	/**
 	 * Returns the locale-dependent error message for the type.
 	 *
