@@ -23,6 +23,9 @@ sap.ui.define(['sap/ui/core/mvc/Controller','sap/ui/model/json/JSONModel'],
 				type: sap.ui.unified.CalendarDayType.NonWorking
 			}));
 
+			this.byId("DP9").setMinDate(new Date(2016, 0, 1));
+			this.byId("DP9").setMaxDate(new Date(2019, 11, 31));
+
 			this._iEvent = 0;
 
 			// for the data binding example do not use the change event for check but the data binding parsing events
@@ -58,6 +61,12 @@ sap.ui.define(['sap/ui/core/mvc/Controller','sap/ui/model/json/JSONModel'],
 			} else {
 				oDP.setValueState(sap.ui.core.ValueState.Error);
 			}
+		},
+
+		handleBtnPress: function (oEvent) {
+			var oText = this.byId("textResult2");
+			var oDP = this.byId("DP9");
+			oText.setText("Value is: " + ((oDP.isValidValue()) ? "valid" : "not valid"));
 		}
 	});
 
