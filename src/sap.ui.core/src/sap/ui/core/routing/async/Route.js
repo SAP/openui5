@@ -102,8 +102,14 @@ sap.ui.define(['sap/ui/Device', "sap/base/Log", "sap/ui/thirdparty/jquery"], fun
 					// the view is loaded.
 					oSequencePromise = new Promise(function(resolve, reject) {
 						setTimeout(function() {
-							var oDisplayPromise = oRouter._oTargets._display(that._oConfig.target, oTargetData, that._oConfig.titleTarget, oCurrentPromise, that._oConfig.afterCreateHook);
-							oDisplayPromise.then(resolve, reject);
+							// check whether the _oTargets still exists after the 0 timeout.
+							// It could be already cleared once the router is destroyed before the timeout.
+							if (oRouter._oTargets) {
+								var oDisplayPromise = oRouter._oTargets._display(that._oConfig.target, oTargetData, that._oConfig.titleTarget, oCurrentPromise, that._oConfig.afterCreateHook);
+								oDisplayPromise.then(resolve, reject);
+							} else {
+								resolve();
+							}
 						}, 0);
 					});
 				} else {
