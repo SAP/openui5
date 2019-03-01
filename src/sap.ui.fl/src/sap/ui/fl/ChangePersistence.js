@@ -1269,7 +1269,7 @@ sap.ui.define([
 	 */
 	ChangePersistence.prototype.resetChanges = function (sLayer, sGenerator, aSelectorIds, aChangeTypes) {
 
-		var aChanges;
+		var aChanges = [];
 		var oTransportSelectionPromise;
 		var bSelectorIdsProvided = aSelectorIds && aSelectorIds.length > 0;
 		var bChangeTypesProvided = aChangeTypes && aChangeTypes.length > 0;
