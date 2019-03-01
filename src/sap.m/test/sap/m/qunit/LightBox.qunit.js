@@ -239,13 +239,18 @@ sap.ui.define(
 			beforeEach: function() {
 				this.LightBox = new LightBox({
 					imageContent : [
-						new LightBoxItem()
+						new LightBoxItem({
+							title: "Title",
+							subtitle: "Subtitle"
+						})
 					]
 				});
+				this._oRB = sap.ui.getCore().getLibraryResourceBundle("sap.m");
 			},
 			afterEach: function() {
 				this.LightBox.close();
 				this.LightBox.destroy();
+				this._oRB = null;
 			}
 		});
 
@@ -287,6 +292,24 @@ sap.ui.define(
 				assert.strictEqual(this.LightBox.isOpen(), false, 'Dialog should be closed.');
 				done();
 			}.bind(this), 1000);
+		});
+
+		QUnit.test('InvisibleText of LightBox', function(assert) {
+			var oImageContent = this.LightBox.getImageContent()[0],
+				sImageSource = IMAGE_PATH + 'demo/nature/elephant.jpg';
+
+			oImageContent.setImageSrc(sImageSource);
+
+			sap.ui.getCore().applyChanges();
+
+			this.LightBox.open();
+
+			var oInvisibleText = this.LightBox.getAggregation("_invisiblePopupText"),
+				sInvisibleText = oInvisibleText.getText();
+
+
+			assert.ok(sInvisibleText.indexOf(oImageContent.getTitle()) > -1, 'The invisible text should contain the title of the LightBox');
+			assert.ok(sInvisibleText.indexOf(oImageContent.getSubtitle()) > -1, 'The invisible text should contain the subtitle of the LightBox');
 		});
 
 
