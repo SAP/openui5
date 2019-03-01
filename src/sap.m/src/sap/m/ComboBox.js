@@ -201,22 +201,22 @@ sap.ui.define([
 			}
 
 			var oDomRef = oControl.getFocusDomRef(),
-				iSelectionStart = oDomRef.selectionStart,
+				iSelectionStart = oControl._getSelectionRange().start,
 				sTypedValue = oDomRef.value.substring(0, oDomRef.selectionStart),
-				bShouldResetSelectionStart = this.shouldResetSelectionStart(oControl, oItem),
-				oSelectedItem = this.getSelectedItem(),
+				bShouldResetSelectionStart = oControl._shouldResetSelectionStart(oItem),
+				oSelectedItem = oControl.getSelectedItem(),
 				bGroupHeaderItem = oItem.isA("sap.ui.core.SeparatorItem"),
 				oListItem;
 
-			this.setSelection(oItem);
+			oControl.setSelection(oItem);
 
 			if (oItem !== oSelectedItem && !bGroupHeaderItem) {
 				oControl.updateDomValue(oItem.getText());
 
-				this.fireSelectionChange({ selectedItem: oItem });
+				oControl.fireSelectionChange({ selectedItem: oItem });
 
 				// update the selected item after the change event is fired (the selection may change)
-				oItem = this.getSelectedItem();
+				oItem = oControl.getSelectedItem();
 
 				if (bShouldResetSelectionStart) {
 					iSelectionStart = 0;
@@ -224,30 +224,30 @@ sap.ui.define([
 
 				oControl.selectText(iSelectionStart, oDomRef.value.length);
 
-				this._bIsLastFocusedItemHeader = false;
+				oControl._bIsLastFocusedItemHeader = false;
 			}
 
 			if (bGroupHeaderItem) {
 				// when visual focus moves to the group header item
 				// we should deselect and leave only the input typed in by the user
 				oControl.setSelectedItem(null);
-				this.fireSelectionChange({ selectedItem: null });
+				oControl.fireSelectionChange({ selectedItem: null });
 
 				oControl.updateDomValue(sTypedValue);
-				this._bIsLastFocusedItemHeader = true;
+				oControl._bIsLastFocusedItemHeader = true;
 			}
 
 			oListItem = this.getListItem(oItem);
-			this.handleListItemsVisualFocus(oListItem);
+			oControl.handleListItemsVisualFocus(oListItem);
 
-			if (this.isOpen()) {
-				this.$().removeClass("sapMFocus");
-				this._getList().addStyleClass("sapMListFocus");
+			if (oControl.isOpen()) {
+				oControl.$().removeClass("sapMFocus");
+				oControl._getList().addStyleClass("sapMListFocus");
 			} else {
-				this.$().addClass("sapMFocus");
+				oControl.$().addClass("sapMFocus");
 			}
 
-			this.scrollToItem(oItem);
+			oControl.scrollToItem(oItem);
 		}
 
 		/**
@@ -638,15 +638,41 @@ sap.ui.define([
 		 * @returns {boolean} Whether the selection should be reset
 		 * @private
 		 */
-		ComboBox.prototype.shouldResetSelectionStart = function (oControl, oItem) {
-			var oDomRef = oControl.getFocusDomRef(),
+		ComboBox.prototype._shouldResetSelectionStart = function (oItem) {
+			var oDomRef = this.getFocusDomRef(),
+				oSelectionRange = this._getSelectionRange(),
+				bIsTextSelected = oSelectionRange.start !== oSelectionRange.end,
+				sTypedValue = oDomRef.value.substring(0, oSelectionRange.start),
+				bItemsTextStartsWithTypedValue = this._itemsTextStartsWithTypedValue(oItem, sTypedValue);
+
+			return !(bItemsTextStartsWithTypedValue && (bIsTextSelected || this._bIsLastFocusedItemHeader));
+		};
+
+		/**
+		 * Returns object containing the 0-based indexes of the first and last selected characters of the ComboBox
+		 *
+		 * @param {bool} bStart Should return the index of the first selected character.
+		 * @returns {int} The selection start index
+		 * @private
+		 */
+		ComboBox.prototype._getSelectionRange = function () {
+			var oDomRef = this.getFocusDomRef(),
+				sValue = this.getValue(),
 				iSelectionStart = oDomRef.selectionStart,
 				iSelectionEnd = oDomRef.selectionEnd,
-				bIsTextSelected = iSelectionStart !== iSelectionEnd,
-				sTypedValue = oDomRef.value.substring(0, oDomRef.selectionStart),
-				bItemsTextStartsWithTypedValue = oControl._itemsTextStartsWithTypedValue(oItem, sTypedValue);
+				oRange = {start: iSelectionStart, end: iSelectionEnd};
 
-			return !(bItemsTextStartsWithTypedValue && (bIsTextSelected || oControl._bIsLastFocusedItemHeader));
+			if (!(Device.browser.msie || Device.browser.edge)) {
+				return oRange;
+			}
+
+			// IE and Edge
+			if (this._bIsLastFocusedItemHeader) {
+				oRange.start = sValue.length;
+				oRange.end = sValue.length;
+			}
+
+			return oRange;
 		};
 
 		/**
