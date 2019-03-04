@@ -3,11 +3,12 @@ sap.ui.define([
 	"sap/ui/base/ManagedObject",
 	"sap/ui/core/Element",
 	"sap/ui/model/json/JSONModel",
+	"sap/ui/model/base/ManagedObjectModel",
 	"sap/ui/model/type/String",
 	"sap/ui/core/Control",
 	"sap/ui/model/Sorter",
 	"sap/ui/base/ManagedObjectMetadata"
-], function(ManagedObject, Element, JSONModel, StringType, Control, Sorter, ManagedObjectMetadata) {
+], function(ManagedObject, Element, JSONModel, ManagedObjectModel, StringType, Control, Sorter, ManagedObjectMetadata) {
 	"use strict";
 	var mObjects = {};
 
@@ -2213,4 +2214,50 @@ sap.ui.define([
 		assert.ok(mSpecial["metadataContexts"].appData === null, "Metadata context has no appdata applied");
 	});
 
+	QUnit.module("Invalidation", {
+		beforeEach: function() {
+			this.obj1 = new TestManagedObject();
+			this.obj2 = new TestManagedObject();
+		},
+		afterEach: function() {
+			this.obj1.destroy();
+			this.obj2.destroy();
+		}
+	});
+
+	QUnit.test("suppressInvalidate on parent setProperty", function(assert) {
+		//override setValue to suppress invalidation
+		this.obj1.setValue = function(sValue) {
+			ManagedObject.prototype.setProperty.call(this, "value", sValue, true);
+		};
+
+		this.obj1.setModel(oModel);
+		var oMoMo = new ManagedObjectModel(this.obj1);
+		this.obj2.setModel(oMoMo);
+		this.obj1.addAggregation("subObjects", this.obj2);
+		this.obj1.bindProperty("value", "/value");
+		this.obj2.bindProperty("value", "/value");
+
+		var oSpy = sinon.spy(this.obj2, "invalidate");
+		var oldValue = this.obj1.getValue();
+		this.obj1.setValue("a new value");
+		assert.equal(oSpy.callCount, 1, 'invalidation on obj2 must be called');
+		this.obj1.setValue(oldValue);
+	});
+
+	QUnit.test("suppressInvalidate on parent addAggregation", function(assert) {
+		//override addAggregation to suppress invalidation
+		this.obj1.addAggregation = function(sName, oObj) {
+			ManagedObject.prototype.addAggregation.call(this, sName, oObj, true);
+		};
+
+		this.obj1.setModel(oModel);
+		this.obj1.bindProperty("value", "/value");
+		this.obj2.bindProperty("value", "/value");
+
+		var oSpy = sinon.spy(this.obj2, "invalidate");
+		this.obj1.addAggregation("subObjects", this.obj2);
+
+		assert.equal(oSpy.callCount, 0, 'invalidation on obj2 must not be called');
+	});
 });
