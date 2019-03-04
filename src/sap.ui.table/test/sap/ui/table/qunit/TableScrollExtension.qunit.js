@@ -50,9 +50,20 @@ sap.ui.define([
 
 			if (Device.browser.msie) {
 				var fnOriginalPreventDefault = oWheelEvent.preventDefault;
+				var bDefaultPrevented = false;
+
+				Object.defineProperty(oWheelEvent, "defaultPrevented", {
+					get: function() {
+						return bDefaultPrevented;
+					},
+					set: function(value) {
+						bDefaultPrevented = value;
+					}
+				});
+
 				oWheelEvent.preventDefault = function() {
 					fnOriginalPreventDefault.apply(this, arguments);
-					Object.defineProperty(this, "defaultPrevented", {get: function() {return true;}});
+					oWheelEvent.defaultPrevented = true;
 				};
 			}
 		}
@@ -128,9 +139,20 @@ sap.ui.define([
 
 			if (Device.browser.msie) {
 				var fnOriginalPreventDefault = oTouchEvent.preventDefault;
+				var bDefaultPrevented = false;
+
+				Object.defineProperty(oTouchEvent, "defaultPrevented", {
+					get: function() {
+						return bDefaultPrevented;
+					},
+					set: function(value) {
+						bDefaultPrevented = value;
+					}
+				});
+
 				oTouchEvent.preventDefault = function() {
 					fnOriginalPreventDefault.apply(this, arguments);
-					Object.defineProperty(this, "defaultPrevented", {get: function() {return true;}});
+					oTouchEvent.defaultPrevented = true;
 				};
 			}
 		}
