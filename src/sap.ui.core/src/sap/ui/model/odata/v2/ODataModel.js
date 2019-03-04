@@ -21,6 +21,7 @@ sap.ui.define([
 	'sap/ui/model/odata/CountMode',
 	'sap/ui/model/odata/UpdateMethod',
 	'sap/ui/model/odata/OperationMode',
+	'sap/ui/model/odata/MessageScope',
 	'./ODataContextBinding',
 	'./ODataListBinding',
 	'sap/ui/model/odata/ODataMetadata',
@@ -51,6 +52,7 @@ sap.ui.define([
 	CountMode,
 	UpdateMethod,
 	OperationMode,
+	MessageScope,
 	ODataContextBinding,
 	ODataListBinding,
 	ODataMetadata,
@@ -154,6 +156,8 @@ sap.ui.define([
 	 *            Set this array to make custom response headers bindable via the entity's "__metadata/headers" property
 	 * @param {boolean} [mParameters.canonicalRequests=false]
 	 *            When setting this flag to <code>true</code> the model tries to calculate a canonical url to the data.
+	 * @param {sap.ui.model.odata.MessageScope} [mParameters.messageScope=MessageScope.RequestedObjects]
+	 *            Sets the message scope.
 	 *
 	 * @class
 	 * Model implementation based on the OData protocol.
@@ -199,7 +203,7 @@ sap.ui.define([
 				aBindableResponseHeaders,
 				sWarmupUrl,
 				bCanonicalRequests,
-				bUseMessageScopeHeader,
+				sMessageScope,
 				that = this;
 
 			if (typeof (sServiceUrl) === "object") {
@@ -235,17 +239,19 @@ sap.ui.define([
 				aBindableResponseHeaders = mParameters.bindableResponseHeaders;
 				sWarmupUrl = mParameters.warmupUrl;
 				bCanonicalRequests = mParameters.canonicalRequests;
-				bUseMessageScopeHeader = mParameters.useMessageScopeHeader;
+				sMessageScope = mParameters.messageScope || MessageScope.RequestedObjects;
 			}
+
 			this.mPathCache = {};
 			this.mInvalidatedPaths = {};
 			this.bCanonicalRequests = !!bCanonicalRequests;
-			this.bUseMessageScopeHeader = !!bUseMessageScopeHeader;
+			this.sMessageScope = sMessageScope;
 			this.sWarmupUrl = sWarmupUrl;
 			this.bWarmup = !!sWarmupUrl;
 			this.mSupportedBindingModes = {"OneWay": true, "OneTime": true, "TwoWay":true};
 			this.mUnsupportedFilterOperators = {"Any": true, "All": true};
 			this.sDefaultBindingMode = sDefaultBindingMode || BindingMode.OneWay;
+			this.bIsMessageScopeSupported = false;
 
 			this.bJSON = bJSON !== false;
 			this.aPendingRequestHandles = [];
@@ -874,6 +880,9 @@ sap.ui.define([
 			// Don't fire any events for resolving promises on Models that have already been destroyed
 			return;
 		}
+
+		//check message scope
+		this.bIsMessageScopeSupported = this.oMetadata._isMessageScopeSupported();
 
 		var fnFire = function() {
 			this.fireMetadataLoaded({
@@ -3352,7 +3361,7 @@ sap.ui.define([
 			var oGroupEntry = oRequestGroup.map[sRequestKey];
 			var oStoredRequest = oGroupEntry.request;
 			oRequest.deepPath = oStoredRequest.deepPath;
-			if (this.bUseMessageScopeHeader){
+			if (this.bIsMessageScopeSupported && this.sMessageScope === MessageScope.BusinessObject) {
 				oRequest.headers["sap-message-scope"] = oStoredRequest.headers["sap-message-scope"];
 			}
 
@@ -4172,7 +4181,7 @@ sap.ui.define([
 		}
 
 		// deep path handling
-		if (sDeepPath && this.bUseMessageScopeHeader){
+		if (sDeepPath && this.bIsMessageScopeSupported && this.sMessageScope === MessageScope.BusinessObject) {
 			var aParts = sDeepPath.split("/");
 			mHeaders["sap-message-scope"] = "/" + aParts[0] + aParts[1]; // "/" + RootEntity(123)
 		}
