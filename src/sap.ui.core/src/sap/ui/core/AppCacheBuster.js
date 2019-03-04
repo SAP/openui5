@@ -322,8 +322,8 @@ sap.ui.define([
 			 * The intercepted functions are:
 			 * <ul>
 			 * <li><code>XMLHttpRequest.prototype.open</code></li>
-			 * <li><code>jQuery.sap.includeScript</code></li>
-			 * <li><code>jQuery.sap.includeStyleSheet</code></li>
+			 * <li><code>HTMLScriptElement.prototype.src</code></li>
+			 * <li><code>HTMLLinkElement.prototype.href</code></li>
 			 * <li><code>sap.ui.base.ManagedObject.prototype.validateProperty</code></li>
 			 * </ul>
 			 *
@@ -507,19 +507,19 @@ sap.ui.define([
 						// scan for a matching base URL (by default we use the default index)
 						// we lookup the base url in the index list and if found we split the
 						// url into the base and path where the timestamp is added in between
-						jQuery.each(mIndex, function(sBaseUrl, mBaseUrlIndex) {
-							var sUrlPath;
+						for (var sBaseUrl in mIndex) {
+							var mBaseUrlIndex = mIndex[sBaseUrl], sUrlToAppend, sUrlPath;
 							if (sBaseUrl && sNormalizedUrl.length >= sBaseUrl.length && sNormalizedUrl.slice(0, sBaseUrl.length) === sBaseUrl ) {
-								sUrlPath = sNormalizedUrl.slice(sBaseUrl.length);
-								sUrlPath = sUrlPath.match(/([^?#]*)/)[1];
+								sUrlToAppend = sNormalizedUrl.slice(sBaseUrl.length);
+								sUrlPath = sUrlToAppend.match(/([^?#]*)/)[1];
 								if (mBaseUrlIndex[sUrlPath]) {
 									// return the normalized URL only if found in the index
-									sUrl = sBaseUrl + "~" + mBaseUrlIndex[sUrlPath] + "~/" + sUrlPath;
+									sUrl = sBaseUrl + "~" + mBaseUrlIndex[sUrlPath] + "~/" + sUrlToAppend;
 									Log.debug("  ==> rewritten to \"" + sUrl + "\";");
-									return false;
+									break;
 								}
 							}
-						});
+						}
 
 					}
 
