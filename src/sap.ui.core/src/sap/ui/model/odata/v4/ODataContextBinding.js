@@ -265,7 +265,7 @@ sap.ui.define([
 				var sContextPredicate, sResponsePredicate;
 
 				return fireChangeAndRefreshDependentBindings().then(function () {
-					if (that.hasReturnValueContext(oOperationMetadata)) {
+					if (that.isReturnValueLikeBindingParameter(oOperationMetadata)) {
 						sContextPredicate = _Helper.getPrivateAnnotation(
 							that.oContext.fetchValue().getResult(), "predicate");
 						sResponsePredicate = _Helper.getPrivateAnnotation(
@@ -275,7 +275,9 @@ sap.ui.define([
 							// the context (we already read its predicate)
 							that.oContext.patch(oResponseEntity);
 						}
+					}
 
+					if (that.hasReturnValueContext(oOperationMetadata)) {
 						if (that.oReturnValueContext) {
 							that.oReturnValueContext.destroy();
 						}
@@ -554,6 +556,12 @@ sap.ui.define([
 				return getReturnValueContextPath(sOriginalResourcePath,
 					_Helper.getPrivateAnnotation(oResponseEntity, "predicate"));
 			}
+			if (that.isReturnValueLikeBindingParameter(oOperationMetadata)
+				&& _Helper.getPrivateAnnotation(vEntity, "predicate")
+					=== _Helper.getPrivateAnnotation(oResponseEntity, "predicate")) {
+				// return value is *same* as binding parameter: attach messages to the latter
+				return sOriginalResourcePath.slice(0, sOriginalResourcePath.lastIndexOf("/"));
+			}
 
 			return sOriginalResourcePath;
 		}
@@ -562,9 +570,9 @@ sap.ui.define([
 			throw new Error("Not an operation: " + sPath);
 		}
 
-		if (this.bInheritExpandSelect && !this.hasReturnValueContext(oOperationMetadata)) {
-			throw new Error("Must not set parameter $$inheritExpandSelect on binding which has "
-				+ "no return value context");
+		if (this.bInheritExpandSelect
+			&& !this.isReturnValueLikeBindingParameter(oOperationMetadata)) {
+			throw new Error("Must not set parameter $$inheritExpandSelect on this binding");
 		}
 
 		this.oOperation.bAction = bAction;
@@ -843,12 +851,12 @@ sap.ui.define([
 	/**
 	 * Determines whether an operation binding creates a return value context on {@link #execute}.
 	 * The following conditions must hold for a return value context to be created:
-	 * 1. operation is bound.
-	 * 2. operation has single entity return value. Note: existence of EntitySetPath
+	 * 1. Operation is bound.
+	 * 2. Operation has single entity return value. Note: existence of EntitySetPath
 	 *    implies the return value is an entity or a collection thereof;
 	 *    see OData V4 spec part 3, 12.1.3. It thus ensures the "entity" in this condition.
 	 * 3. EntitySetPath of operation is the binding parameter.
-	 * 4. operation binding has
+	 * 4. Operation binding has
 	 *    (a) a V4 parent context which
 	 *    (b) points to an entity from an entity set w/o navigation properties.
 	 *
@@ -861,19 +869,42 @@ sap.ui.define([
 		var oMetaModel = this.oModel.getMetaModel(),
 			aMetaSegments;
 
-		if (!(this.bRelative && this.oContext && this.oContext.getBinding)) { // case 4a
+		if (!this.isReturnValueLikeBindingParameter(oMetadata)) {
 			return false;
 		}
 
 		aMetaSegments = oMetaModel.getMetaPath(this.oModel.resolve(this.sPath, this.oContext))
 			.split("/");
 
+		return aMetaSegments.length === 3
+			&& oMetaModel.getObject("/" + aMetaSegments[1]).$kind === "EntitySet"; // case 4b
+	};
+
+	/**
+	 * Determines whether an operation's return value is like its binding parameter in the following
+	 * sense:
+	 * 1. Operation is bound.
+	 * 2. Operation has single entity return value. Note: existence of EntitySetPath
+	 *    implies the return value is an entity or a collection thereof;
+	 *    see OData V4 spec part 3, 12.1.3. It thus ensures the "entity" in this condition.
+	 * 3. EntitySetPath of operation is the binding parameter.
+	 * 4. Operation binding has
+	 *    (a) a V4 parent context.
+	 *
+	 * @param {object} oMetadata The operation metadata
+	 * @returns {boolean} Whether operation's return value is like its binding parameter
+	 *
+	 * @private
+	 */
+	ODataContextBinding.prototype.isReturnValueLikeBindingParameter = function (oMetadata) {
+		if (!(this.bRelative && this.oContext && this.oContext.getBinding)) { // case 4a
+			return false;
+		}
+
 		return oMetadata.$IsBound // case 1
 			&& oMetadata.$ReturnType && !oMetadata.$ReturnType.$isCollection
 				&& oMetadata.$EntitySetPath // case 2
-			&& oMetadata.$EntitySetPath.indexOf("/") < 0 // case 3
-			&& aMetaSegments.length === 3
-				&& oMetaModel.getObject("/" + aMetaSegments[1]).$kind === "EntitySet"; // case 4b
+			&& oMetadata.$EntitySetPath.indexOf("/") < 0; // case 3
 	};
 
 	/**
