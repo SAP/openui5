@@ -2,8 +2,9 @@
 sap.ui.define([
 	'sap/ui/core/util/MockServer',
 	'sap/ui/model/odata/v2/ODataModel',
+	'sap/m/Input',
 	'sap/ui/qunit/utils/createAndAppendDiv'
-], function (MockServer, ODataModel, createAndAppendDiv) {
+], function (MockServer, ODataModel, Input, createAndAppendDiv) {
 	"use strict";
 
 	// create content div
@@ -203,6 +204,32 @@ sap.ui.define([
 				that.oModelCanonical.detachBatchRequestCompleted(fnRequestCompleted);
 			};
 			that.oModelCanonical.attachBatchRequestCompleted(fnRequestCompleted);
+		});
+	});
+
+
+	QUnit.test("ODataPropertyBinding: Propagation with deep paths", function(assert) {
+		var done = assert.async();
+		var oModel = new ODataModel(this.sServiceUri);
+
+		oModel.createBindingContext("/SalesOrderLineItemSet(SalesOrderID='0500000001',ItemPosition='0000000010')", function(oContext) {
+			var oInput = new Input({ value: "{ToProduct/ID}" });
+			oInput.setBindingContext(oContext);
+			sap.ui.getCore().getMessageManager().registerObject(oInput);
+			oInput.setModel(oModel);
+
+			oModel.read("/SalesOrderLineItemSet(SalesOrderID='0500000001',ItemPosition='0000000010')/ToProduct");
+
+			var fnChangeHandler = function (oEvent) {
+				oInput.getBinding("value").detachEvent("AggregatedDataStateChange", fnChangeHandler);
+				assert.ok(true, "AggregatedDataStateChange event fired correctly.");
+				var aModelMessages = oEvent.getParameter("dataState").getModelMessages();
+				assert.equal(aModelMessages.length, 1, "Message propagated correctly.");
+				assert.equal(aModelMessages[0].controlIds[0], oInput.getId(), "Control ID set");
+				done();
+			};
+
+			oInput.getBinding("value").attachEvent("AggregatedDataStateChange", fnChangeHandler);
 		});
 	});
 
