@@ -5,7 +5,7 @@
       {
         "id": "10eaf123c7ed68f1d2a6f69aca601d297f2c3cb9",
         "type": "FIX",
-        "text": "P13nFilterPanel : removes empty operations when maxLength==1",
+        "text": "P13nFilterPanel : removes empty operations when maxLength\u003d\u003d1",
         "references": [
           {
             "type": "BCP",
@@ -288,6 +288,78 @@
             "reference": "1970127503"
           }
         ]
+      },
+      {
+        "id": "b8dcbf89044a4212d4f67347076b96fad7535054",
+        "type": "FEATURE",
+        "text": " sap.m.SinglePlanningCalendar: Appointment all-day is reworked",
+        "references": []
+      },
+      {
+        "id": "5a91ebc76da14b9f2ae2ec782e6abfe44081cd7a",
+        "type": "FIX",
+        "text": " Enums: fix visibility of enum values where inconsistent",
+        "references": []
+      },
+      {
+        "id": "e5b2d31a2acacbf84913b17a0d844bd55c776180",
+        "type": "FIX",
+        "text": " TimePickerSlider: Animation does not skip on arrow navigation",
+        "references": []
+      },
+      {
+        "id": "349af5e9ea2c2f5319ec631a3009015040aa43bb",
+        "type": "FIX",
+        "text": " sap.m.ColorPalette: doesn\u0027t scroll on usage of the space key",
+        "references": []
+      },
+      {
+        "id": "894c2c82464f9181c0f53add7fe46717c2831ffe",
+        "type": "FIX",
+        "text": " sap.m.MultiIput: Sample adjustment",
+        "references": []
+      },
+      {
+        "id": "f45b9088fe930b065c8b105c64fd658d9ee96919",
+        "type": "FIX",
+        "text": " sap.m.ObjectAttribute: wraps in Table correctly",
+        "references": []
+      },
+      {
+        "id": "a189c09af84be9925f27ee4b2c03366f82032dc0",
+        "type": "FIX",
+        "text": " sap.m.ObjectHeader: example fixed for mobile",
+        "references": []
+      },
+      {
+        "id": "ab7d1df5426b3ff6d4f3d3c5c6c4207c26db7179",
+        "type": "FIX",
+        "text": " sap.m.ObjectIdentifier: wraps on Edge correctly",
+        "references": []
+      },
+      {
+        "id": "47b8b6e902b4afae681bb172eebdc8be4f27da0a",
+        "type": "FIX",
+        "text": " sap.m.Popover: Popover does not close on navigation",
+        "references": []
+      },
+      {
+        "id": "55934afafb7633cafd2012e65db32e54fc478454",
+        "type": "FIX",
+        "text": " sap.m.Select: Arrow font size aligned with visual specification",
+        "references": []
+      },
+      {
+        "id": "72da42f78e9ec3dd915aeb2a9429f56ef08bd323",
+        "type": "FIX",
+        "text": " sap.m.Select: Prevented scrolling on SPACE key pressed",
+        "references": []
+      },
+      {
+        "id": "f637a343af35784dee2c2e1facfdf5a804ba7488",
+        "type": "FIX",
+        "text": " sap.m.SplitButton: Space fires press onkeyup and prevents scroll",
+        "references": []
       }
     ]
   }

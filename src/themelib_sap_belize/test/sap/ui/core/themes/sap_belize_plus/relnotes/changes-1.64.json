@@ -23,6 +23,12 @@
             "reference": "1970110538"
           }
         ]
+      },
+      {
+        "id": "16bbab7451d4b2ecf98ed94f4b8cf1cd1eb2e6c8",
+        "type": "FIX",
+        "text": " sap.f.Avatar: Displaying transparent image is now correct",
+        "references": []
       }
     ]
   }

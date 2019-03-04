@@ -56,6 +56,12 @@
             "reference": "1970093334"
           }
         ]
+      },
+      {
+        "id": "f45b9088fe930b065c8b105c64fd658d9ee96919",
+        "type": "FIX",
+        "text": " sap.m.ObjectAttribute: wraps in Table correctly",
+        "references": []
       }
     ]
   }

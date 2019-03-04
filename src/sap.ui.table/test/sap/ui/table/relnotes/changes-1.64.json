@@ -34,6 +34,12 @@
             "reference": "1970149245"
           }
         ]
+      },
+      {
+        "id": "5a91ebc76da14b9f2ae2ec782e6abfe44081cd7a",
+        "type": "FIX",
+        "text": " Enums: fix visibility of enum values where inconsistent",
+        "references": []
       }
     ]
   }

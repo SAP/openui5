@@ -23,7 +23,7 @@
       {
         "id": "b26b5cfc8ada2c0f5bcfe86a1f04f1d50b72cb8e",
         "type": "FIX",
-        "text": "sap.ui.core: Remove circular dependency Component <-> Core",
+        "text": "sap.ui.core: Remove circular dependency Component \u003c-\u003e Core",
         "references": []
       },
       {
@@ -110,6 +110,84 @@
             "reference": "1970044373"
           }
         ]
+      },
+      {
+        "id": "49528d10ffd8f146146675035f611feb43d26621",
+        "type": "FEATURE",
+        "text": " sap.ui.core: integrated es6-shim to allow restricted ES6 API",
+        "references": []
+      },
+      {
+        "id": "8f9ae9b655d1135fa4717c28389b347f38a7a6b4",
+        "type": "FEATURE",
+        "text": " v2.ODataModel: getCanonicalRequests",
+        "references": []
+      },
+      {
+        "id": "27ca61f2682e1f60b1cec8aa697b094c94f62a17",
+        "type": "FIX",
+        "text": " Assert the type of url is string instead of checking the value",
+        "references": []
+      },
+      {
+        "id": "232456c5b88de60ad6e3771e194c066c4596c20a",
+        "type": "FIX",
+        "text": " CompositeBinding: Always call validateValue with all values",
+        "references": []
+      },
+      {
+        "id": "f872ee25dd66a5cc91aebcc8488cf3a4c253bbe3",
+        "type": "FIX",
+        "text": " ManagedObject: Static binding for altType \"string\"",
+        "references": []
+      },
+      {
+        "id": "be5a03ebfb174c92ea495d12685442d6f1259fa5",
+        "type": "FIX",
+        "text": " ManagedObjectModel: fix extended change detection",
+        "references": []
+      },
+      {
+        "id": "45da2d63cb02e00b1bbeb919e71e6523cc42c930",
+        "type": "FIX",
+        "text": " core.routing: check existence of targets before display a target",
+        "references": []
+      },
+      {
+        "id": "cf0f0070a847c9d74c8d66b22ab41517b8de5389",
+        "type": "FIX",
+        "text": " es6-shim: apply the polyfills sync when required with amd",
+        "references": []
+      },
+      {
+        "id": "026315cdf5ccb8c957c3e1f617c7163dd2637589",
+        "type": "FIX",
+        "text": " es6-shim: include ES2017 String.prototype.pad(Start|End) functions",
+        "references": []
+      },
+      {
+        "id": "3960720ed62b23049ad5b6344033ba7c6492a939",
+        "type": "FIX",
+        "text": " es6-shim: include es6-promise polyfill for Edge (17)",
+        "references": []
+      },
+      {
+        "id": "e4984718ce135043c8a526320eb1e83936ac6cc7",
+        "type": "FIX",
+        "text": " sap.ui.core: include es6-shim-nopromise into bundles",
+        "references": []
+      },
+      {
+        "id": "e86034631fccad9c329213f81431958b45a6d9c0",
+        "type": "FIX",
+        "text": " v2.ODataModel: Only update already expanded nav properties",
+        "references": []
+      },
+      {
+        "id": "a7a165a1b0a4cc384a954c766abaa3329850d0ff",
+        "type": "FIX",
+        "text": " v2/ODataModel: Prevent invalid cache entries",
+        "references": []
       }
     ]
   }
