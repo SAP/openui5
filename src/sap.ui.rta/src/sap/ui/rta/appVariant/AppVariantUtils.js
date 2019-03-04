@@ -54,7 +54,33 @@ sap.ui.define([
 		};
 
 		AppVariantUtils.trimIdIfRequired = function(sId) {
-			return sId.substr(0, HANA_CLOUD_ID_LENGTH);
+			if (sId.length > HANA_CLOUD_ID_LENGTH) {
+				var aIdStrings = sId.split('.');
+				var sTrimmedId;
+				var sGuidLength = aIdStrings[aIdStrings.length - 1].length;
+				var sGuidString = aIdStrings.pop();
+				sTrimmedId = aIdStrings.join(".");
+
+				if (sTrimmedId.length > sGuidLength) {
+					// If the length of GUID is smaller than the length of rest of the id(without GUID), then trim the rest of id with the length of GUID starting from right to left
+					sTrimmedId = sTrimmedId.substring(0, sTrimmedId.length - sGuidLength);
+				} else {
+					// If the length of GUID is longer than the length of rest of the id(without GUID), then just trim the GUID so that the whole id length remains 56 characters
+					return sId.substr(0, HANA_CLOUD_ID_LENGTH);
+				}
+
+				// After adjusting the id, if the last character of string has period '.', just append the guid string otherwise append period '.' in between
+				if (sTrimmedId[sTrimmedId.length - 1] === '.') {
+					sTrimmedId = sTrimmedId + sGuidString;
+				} else {
+					sTrimmedId = sTrimmedId + "." + sGuidString;
+				}
+
+				return this.trimIdIfRequired(sTrimmedId);
+			}
+
+			// No need of trimming -> less than 56 characters
+			return sId;
 		};
 
 		AppVariantUtils.getId = function(sBaseAppID) {
