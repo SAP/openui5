@@ -14,8 +14,9 @@ sap.ui.define([
 	"sap/m/NavContainer",
 	"sap/m/Panel",
 	"sap/m/SplitContainer",
-	"./AsyncViewModuleHook"
-], function(Log, UIComponent, Controller, JSView, View, HashChanger, Router, Views, JSONModel, App, Button, NavContainer, Panel, SplitContainer, ModuleHook) {
+	"./AsyncViewModuleHook",
+	"sap/ui/Device"
+], function(Log, UIComponent, Controller, JSView, View, HashChanger, Router, Views, JSONModel, App, Button, NavContainer, Panel, SplitContainer, ModuleHook, Device) {
 	"use strict";
 
 	// This global namespace is used for creating custom component classes.
@@ -188,6 +189,38 @@ sap.ui.define([
 		assert.strictEqual(oRouter._oTargets, null, "did free the UI5 targets");
 		assert.strictEqual(oRouter._oConfig, null, "did free the config");
 
+	});
+
+	QUnit.test("Shouldn't cause error when router is destroyed before the triggered target is displayed", function(assert) {
+		this.stub(Device, "browser", {
+			edge: true
+		});
+
+		var oRouter = fnCreateRouter([{
+			name: "myRoute",
+			pattern : "foo",
+			target: "home"
+		}], {}, null, {
+			myTarget : {
+				home: {
+				}
+			}
+		});
+
+		var oTargets = oRouter.getTargets();
+		var oRoute = oRouter.getRoute("myRoute");
+		var oDisplayStub = this.stub(oTargets, "_display", function() {});
+
+		var oRouteMatchedSpy = this.spy(oRoute, "_routeMatched");
+		oRouter.parse("foo");
+		// destroy the router immediately after trigger the route matched logic
+		oRouter.destroy();
+
+		assert.equal(oRouteMatchedSpy.callCount, 1, "The route is matched");
+
+		return oRouteMatchedSpy.returnValues[0].then(function() {
+			assert.equal(oDisplayStub.callCount, 0, "The target isn't displayed because the router is already destroyed");
+		});
 	});
 
 	QUnit.test("Should log a warning if a router gets destroyed while the hash changes", function (assert) {
