@@ -10246,7 +10246,7 @@ sap.ui.define([
 
 	//*********************************************************************************************
 	// Scenario: Create entity for an absolute ListBinding, save the new entity and call a bound
-	// action for the new non-transient entity (still having -1 in the path)
+	// action for the new non-transient entity
 	QUnit.test("Create absolute, save and call action", function (assert) {
 		var oCreatedContext,
 			oModel = createTeaBusiModel({autoExpandSelect : true}),
@@ -10308,7 +10308,7 @@ sap.ui.define([
 
 	//*********************************************************************************************
 	// Scenario: Create entity for a relative ListBinding, save the new entity and call action
-	// import for the new non-transient entity (still having -1 in the path)
+	// import for the new non-transient entity
 	QUnit.test("Create relative, save and call action", function (assert) {
 		var oCreatedContext,
 			oModel = createTeaBusiModel(),
@@ -10372,10 +10372,9 @@ sap.ui.define([
 
 	//*********************************************************************************************
 	// Scenario: Create a new entity on an absolute ListBinding, save the new entity and call bound
-	// action for the new non-transient entity (still having -1 in the path)
+	// action for the new non-transient entity
 	// Afterwards create a new entity on a containment relative to the just saved absolute entity,
 	// save the containment and call a bound function on the new non-transient contained entity
-	// (also having still -1 in its path)
 	QUnit.test("Create absolute and contained entity, save and call bound action/function",
 			function (assert) {
 		var oCreatedItemContext,
@@ -10456,7 +10455,7 @@ sap.ui.define([
 
 			return Promise.all([oCreatedItemContext.created(), that.waitForChanges(assert)]);
 		}).then(function () {
-			// confirm created sales order (call action on -1 context)
+			// confirm created sales order (call action on created context)
 			var oAction = oModel.bindContext("com.sap.gateway.default.zui5_epm_sample"
 					+ ".v0002.SalesOrder_Confirm(...)", oCreatedSOContext);
 
@@ -10475,7 +10474,7 @@ sap.ui.define([
 				that.waitForChanges(assert)
 			]);
 		}).then(function () {
-			// check availability (call function on -1 containment)
+			// check availability (call function on created containment)
 			var oFunction = oModel.bindContext("com.sap.gateway.default.zui5_epm_"
 					+ "sample.v0002.SalesOrderLineItem_CheckAvailability(...)",
 					oCreatedItemContext);

@@ -145,7 +145,7 @@ sap.ui.define([
 	});
 
 	//*********************************************************************************************
-	QUnit.test("getIndex() adds 1 when there is a created context", function (assert) {
+	QUnit.test("getIndex() adds number of created contexts", function (assert) {
 		var oBinding = {},
 			oContext;
 
@@ -153,11 +153,10 @@ sap.ui.define([
 
 		assert.strictEqual(oContext.getIndex(), 42);
 
-		// simulate ODataListBinding#create
-		oBinding.aContexts = [];
-		oBinding.aContexts[-1] = {};
+		// simulate ODataListBinding#create (7x)
+		oBinding.iCreatedContexts = 7;
 
-		assert.strictEqual(oContext.getIndex(), 43);
+		assert.strictEqual(oContext.getIndex(), 49);
 	});
 
 	//*********************************************************************************************
@@ -1054,14 +1053,6 @@ sap.ui.define([
 	});
 
 	//*********************************************************************************************
-	QUnit.test("setIndex", function (assert) {
-		var oContext = Context.create({/*oModel*/}, {/*oBinding*/}, "/EMPLOYEES('42')", 42);
-
-		oContext.setIndex(23);
-		assert.strictEqual(oContext.getIndex(), 23);
-	});
-
-	//*********************************************************************************************
 	QUnit.test("refresh, list binding", function (assert) {
 		var bAllowRemoval = {/*false, true, undefined*/},
 			oBinding = {
@@ -1412,3 +1403,4 @@ sap.ui.define([
 		}, new Error("Unsupported context: " + oContext));
 	});
 });
+//TODO do not allow refresh if isTransient(); see CPOUI5UISERVICESV3-1777

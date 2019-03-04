@@ -1909,7 +1909,6 @@ sap.ui.define([
 		// code under test
 		oBinding.destroy();
 
-//		assert.strictEqual(oBinding.mAggregatedQueryOptions, undefined); // TODO
 		assert.strictEqual(oBinding.oCachePromise.getResult(), undefined);
 		assert.strictEqual(oBinding.oCachePromise.isFulfilled(), true);
 		assert.strictEqual(oBinding.mCacheQueryOptions, undefined);

@@ -142,7 +142,11 @@ sap.ui.define([
 		delete oMixin.resetInvalidDataState; // because it is overridden
 
 		Object.keys(oMixin).forEach(function (sKey) {
-			assert.strictEqual(oBinding[sKey], oMixin[sKey]);
+			if (sKey === "oFetchCacheCallToken") {
+				assert.strictEqual(typeof oBinding[sKey], "object", "fetchCache already called");
+			} else {
+				assert.strictEqual(oBinding[sKey], oMixin[sKey], sKey);
+			}
 		});
 
 		// Check that the mixin members are initialized

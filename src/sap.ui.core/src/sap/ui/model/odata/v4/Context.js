@@ -349,8 +349,8 @@ sap.ui.define([
 	 * @since 1.39.0
 	 */
 	Context.prototype.getIndex = function () {
-		if (this.oBinding.aContexts && this.oBinding.aContexts[-1]) {
-			return this.iIndex + 1;
+		if (this.oBinding.iCreatedContexts) {
+			return this.iIndex + this.oBinding.iCreatedContexts;
 		}
 		return this.iIndex;
 	};
@@ -761,18 +761,6 @@ sap.ui.define([
 			).then(function () {
 				// return undefined;
 			});
-	};
-
-	/**
-	 * Sets the context's index.
-	 *
-	 * @param {number} iIndex
-	 *   The new index
-	 *
-	 * @private
-	 */
-	Context.prototype.setIndex = function (iIndex) {
-		this.iIndex = iIndex;
 	};
 
 	/**

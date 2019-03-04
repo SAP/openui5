@@ -62,11 +62,14 @@ sap.ui.define([
 	QUnit.test("initialize members for mixin", function (assert) {
 		var oBinding = new ODataBinding();
 
-		//TODO add missing properties introduced by oDataBinding
+		//TODO add missing properties introduced by ODataBinding
+		assert.ok(oBinding.hasOwnProperty("oFetchCacheCallToken"));
+		assert.strictEqual(oBinding.oFetchCacheCallToken, undefined);
 		assert.ok(oBinding.hasOwnProperty("mCacheByResourcePath"));
 		assert.strictEqual(oBinding.mCacheByResourcePath, undefined);
 		assert.strictEqual(oBinding.sResumeChangeReason, ChangeReason.Change);
 	});
+	//TODO #destroy
 
 	//*********************************************************************************************
 	QUnit.test("getGroupId: own group", function (assert) {
