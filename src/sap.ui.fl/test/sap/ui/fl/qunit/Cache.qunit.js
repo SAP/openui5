@@ -47,6 +47,15 @@ sap.ui.define([
 		};
 	}
 
+	function _createEntriesMap(aChanges, oVariantSection) {
+		return {
+			changes: {
+				changes: aChanges,
+				variantSection: oVariantSection
+			}
+		};
+	}
+
 	QUnit.module("sap.ui.fl.Cache", function (hooks) {
 		hooks.beforeEach(function() {
 			Cache._entries = {};
@@ -773,6 +782,66 @@ sap.ui.define([
 				return Cache.getChangesFillingCache(this.oLrepConnector, oComponent);
 			}.bind(this)).then(function(changes) {
 				assert.strictEqual(changes.changes.changes.length, 0);
+				sinon.assert.calledOnce(this.oLrepConnector.loadChanges);
+				assert.strictEqual(Cache._entries[sTestComponentName][Utils.DEFAULT_APP_VERSION], oDefaultEntry, "cache of default version was not changed");
+				assert.strictEqual(Cache._entries[sTestComponentName]["oldVersion"], oOldEntry, "cache of old version was not changed");
+			}.bind(this));
+		});
+
+		QUnit.test('deleteChanges by names', function(assert) {
+			var sTestComponentName = "testComponent";
+			var oComponent = {
+				name : sTestComponentName,
+				appVersion : "newVersion"
+			};
+			var aChanges = [{something: "1", fileName: "A"}, {something: "2", fileName: "B"}, {something: "3", fileName: "C"}];
+			var oVariantSection = {
+				variantManagement1 : {
+					variants : [
+						{
+							controlChanges : [
+								{ getFileName: function() {return "controlChange1";}},
+								{ getFileName: function() {return "controlChange2";}}
+							]
+						}
+					]
+				},
+				variantManagement2 : {
+					variants : [
+						{
+							controlChanges : [
+								{ getFileName: function() {return "controlChange3";}},
+								{ getFileName: function() {return "controlChange4";}}
+							]
+						},
+						{
+							controlChanges : [
+								{ getFileName: function() {return "controlChange5";}},
+								{ getFileName: function() {return "controlChange6";}}
+							]
+						}
+					]
+				}
+			};
+			var oEntry = _createEntriesMap(aChanges, oVariantSection);
+			var oDefaultEntry = Cache._entries[sTestComponentName][Utils.DEFAULT_APP_VERSION];
+			var oOldEntry = Cache._entries[sTestComponentName]["oldVersion"];
+			var aNamesToDeleted = ["A" ,"C", "controlChange1", "controlChange2", "controlChange3", "controlChange5"];
+
+			sandbox.stub(this.oLrepConnector, 'loadChanges').returns(Promise.resolve(oEntry));
+
+			return Cache.getChangesFillingCache(this.oLrepConnector, oComponent).then(function() {
+				Cache.removeChanges(oComponent, aNamesToDeleted);
+			}).then(function() {
+				return Cache.getChangesFillingCache(this.oLrepConnector, oComponent);
+			}.bind(this)).then(function(changes) {
+				assert.strictEqual(changes.changes.changes.length, 1);
+				assert.equal(changes.changes.changes[0].fileName, "B");
+				assert.strictEqual(changes.changes.variantSection["variantManagement1"]["variants"][0].controlChanges.length, 0);
+				assert.strictEqual(changes.changes.variantSection["variantManagement2"]["variants"][0].controlChanges.length, 1);
+				assert.equal(changes.changes.variantSection["variantManagement2"]["variants"][0].controlChanges[0].getFileName(), "controlChange4");
+				assert.strictEqual(changes.changes.variantSection["variantManagement2"]["variants"][1].controlChanges.length, 1);
+				assert.equal(changes.changes.variantSection["variantManagement2"]["variants"][1].controlChanges[0].getFileName(), "controlChange6");
 				sinon.assert.calledOnce(this.oLrepConnector.loadChanges);
 				assert.strictEqual(Cache._entries[sTestComponentName][Utils.DEFAULT_APP_VERSION], oDefaultEntry, "cache of default version was not changed");
 				assert.strictEqual(Cache._entries[sTestComponentName]["oldVersion"], oOldEntry, "cache of old version was not changed");

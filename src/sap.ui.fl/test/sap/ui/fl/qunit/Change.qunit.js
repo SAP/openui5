@@ -210,6 +210,11 @@ function(
 			assert.equal(oInstance.getFileType(), "variant");
 		});
 
+		QUnit.test("Change.getFileName", function(assert) {
+			var oInstance = new Change(this.oChangeDef);
+			assert.equal(oInstance.getFileName(), "0815_1");
+		});
+
 		QUnit.test("Change.getPackage", function(assert) {
 			var oInstance = new Change(this.oChangeDef);
 			assert.equal(oInstance.getPackage(), "$TMP");

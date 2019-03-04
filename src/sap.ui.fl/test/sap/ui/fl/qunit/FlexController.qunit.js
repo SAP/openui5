@@ -710,7 +710,7 @@ function (
 			assert.ok(oRemoveChangeStub.calledOnce, "then model's _removeChange is called as VariantManagement Change is detected and deleted");
 		});
 
-		QUnit.test("resetChanges shall call ChangePersistance.resetChanges() and reset control variant URL parameters", function(assert) {
+		QUnit.test("resetChanges for control shall call ChangePersistance.resetChanges(), reset control variant URL parameters, and revert changes", function(assert) {
 			var fnUpdateHasherStub = sandbox.stub();
 			var oComp = {
 				name: "testComp",
@@ -724,16 +724,50 @@ function (
 			var sGenerator = "test.Generator";
 			var sSelectorString = "abc123";
 			var sChangeTypeString = "labelChange";
+			var aDeletedChanges = [{fileName : "change1"}, {fileName : "change2"}];
 			sandbox.stub(Utils, "setTechnicalURLParameterValues");
 			sandbox.stub(this.oFlexController._oChangePersistence, "resetChanges").callsFake(function() {
 				assert.strictEqual(arguments[0], sLayer, "then correct layer passed");
 				assert.strictEqual(arguments[1], sGenerator, "then correct generator passed");
 				assert.strictEqual(arguments[2], sSelectorString, "then correct selector string passed");
 				assert.strictEqual(arguments[3], sChangeTypeString, "then correct change type string passed");
-				return Promise.resolve();
+				return Promise.resolve(aDeletedChanges);
 			});
+			var oRevertChangesOnControlStub = sandbox.stub(this.oFlexController, "revertChangesOnControl").returns(Promise.resolve());
 			return this.oFlexController.resetChanges(sLayer, sGenerator, oComp, sSelectorString, sChangeTypeString)
 				.then( function(){
+					assert.ok(oRevertChangesOnControlStub.calledOnce, "the revertChangesOnControl is called once");
+					assert.deepEqual(oRevertChangesOnControlStub.args[0][0], aDeletedChanges, "with the correct changes");
+					assert.deepEqual(fnUpdateHasherStub.getCall(0).args[0], {
+						parameters: [],
+						updateURL: true,
+						component: oComp
+					}, "then Utils.setTechnicalURLParameterValues with the correct parameters");
+				});
+		});
+
+		QUnit.test("resetChanges for whole component shall call ChangePersistance.resetChanges(), reset control variant URL parameters but do not revert changes", function(assert) {
+			var fnUpdateHasherStub = sandbox.stub();
+			var oComp = {
+				name: "testComp",
+				getModel: function() {
+					return {
+						updateHasherEntry: fnUpdateHasherStub
+					};
+				}
+			};
+			var sLayer = "testLayer";
+			var sGenerator = "test.Generator";
+			sandbox.stub(Utils, "setTechnicalURLParameterValues");
+			sandbox.stub(this.oFlexController._oChangePersistence, "resetChanges").callsFake(function() {
+				assert.strictEqual(arguments[0], sLayer, "then correct layer passed");
+				assert.strictEqual(arguments[1], sGenerator, "then correct generator passed");
+				return Promise.resolve([]);
+			});
+			var oRevertChangesOnControlStub = sandbox.stub(this.oFlexController, "revertChangesOnControl").returns(Promise.resolve());
+			return this.oFlexController.resetChanges(sLayer, sGenerator, oComp)
+				.then( function(){
+					assert.equal(oRevertChangesOnControlStub.callCount, 0 ,  "the revertChangesOnControl is not called");
 					assert.deepEqual(fnUpdateHasherStub.getCall(0).args[0], {
 						parameters: [],
 						updateURL: true,
