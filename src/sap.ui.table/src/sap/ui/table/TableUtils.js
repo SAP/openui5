@@ -128,6 +128,11 @@ sap.ui.define([
 		undefined: mBaseSize.undefined + iRowHorizontalFrameSize
 	};
 
+	var mThemeParameters = {
+		sapUiTableActionNavigationIcon: 'navigation-right-arrow',
+		sapUiTableActionDeleteIcon: 'sys-cancel'
+	};
+
 	/**
 	 * Reason for updates of the rows. Inherits from {@link sap.ui.model.ChangeReason}.
 	 *
@@ -199,6 +204,7 @@ sap.ui.define([
 		DefaultRowHeight: mDefaultRowHeight,
 		RowsUpdateReason: ROWS_UPDATE_REASON,
 		INTERACTIVE_ELEMENT_SELECTORS: INTERACTIVE_ELEMENT_SELECTORS,
+		ThemeParameters: mThemeParameters,
 
 		/**
 		 * Returns whether the table has a row header or not
@@ -1490,6 +1496,9 @@ sap.ui.define([
 			mDefaultRowHeight.sapUiSizeCozy = mBaseSize.sapUiSizeCozy + iRowHorizontalFrameSize;
 			mDefaultRowHeight.sapUiSizeCompact = mBaseSize.sapUiSizeCompact + iRowHorizontalFrameSize;
 			mDefaultRowHeight.sapUiSizeCondensed = mBaseSize.sapUiSizeCondensed + iRowHorizontalFrameSize;
+
+			mThemeParameters.sapUiTableActionNavigationIcon = ThemeParameters.get("_sap_ui_table_RowActionNavigationIcon");
+			mThemeParameters.sapUiTableActionDeleteIcon = ThemeParameters.get("_sap_ui_table_RowActionDeleteIcon");
 		}
 	};
 
