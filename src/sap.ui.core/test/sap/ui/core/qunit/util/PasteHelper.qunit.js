@@ -1,8 +1,8 @@
 /*global QUnit*/
 
 sap.ui.define([
-	"sap/ui/core/util/PasteHelper"
-], function(PasteHelper) {
+	"sap/ui/core/util/PasteHelper", "sap/ui/model/odata/type/String"
+], function(PasteHelper, ODataStringType) {
 	"use strict";
 
 	var sDefaultLanguage = sap.ui.getCore().getConfiguration().getLanguage();
@@ -166,7 +166,7 @@ sap.ui.define([
 		},
 		{
 			property: "Lastname",
-			type: "sap.ui.model.odata.type.String"
+			type: new ODataStringType()
 		},
 		{
 			property: "Member",

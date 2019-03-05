@@ -188,13 +188,18 @@ sap.ui.define([ "sap/base/util/ObjectPath"],
 				if (oColumnInfo.property) {
 					// Check with Andreas async functionality instead of parseValue, after this create oType only once pro data type
 					if (oColumnInfo.type) {
-						// change to async code in the future
-						var oType = ObjectPath.get(oColumnInfo.type);
-						if (oType) {
-							oColumnInfo.typeInstance = new oType();
+						var oType =  oColumnInfo.type;
+						if (oType.isA && oType.isA("sap.ui.model.SimpleType")) {
+							oColumnInfo.typeInstance = oType;
 						} else {
-							// Exception for the application developers - type not foung in UI5 core and odata types
-							throw new Error("Data type " + oColumnInfo.type + " is not available");
+							// change to async code in the future
+							oType = ObjectPath.get(oColumnInfo.type);
+							if (oType) {
+								oColumnInfo.typeInstance = new oType();
+							} else {
+								// Exception for the application developers - type not foung in UI5 core and odata types
+								throw new Error("Data type " + oColumnInfo.type + " is not available");
+							}
 						}
 					} else {
 						// Exception for the application developers - the definition of the type is missing
