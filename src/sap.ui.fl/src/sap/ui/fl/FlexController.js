@@ -53,7 +53,6 @@ sap.ui.define([
 	};
 
 	FlexController.PENDING = "sap.ui.fl:PendingChange";
-	FlexController.PROCESSING = "sap.ui.fl:ProcessingChange";
 	FlexController.variantTechnicalParameterName = "sap-ui-fl-control-variant-id";
 
 	/**
@@ -611,18 +610,29 @@ sap.ui.define([
 		var sControlType = oModifier.getControlType(oControl);
 		var mControl = this._getControlIfTemplateAffected(oChange, oControl, sControlType, mPropertyBag);
 		var oChangeHandler = this._getChangeHandler(oChange, mControl.controlType, mControl.control, oModifier);
-		var oSettings, oRtaControlTreeModifier;
+		var oSettings, oRtaControlTreeModifier, oResult;
 
 		if (!oChangeHandler) {
 			var sErrorMessage = "Change handler implementation for change not found or change type not enabled for current layer - Change ignored";
 			Utils.log.warning(sErrorMessage);
-			return new Utils.FakePromise({success: false, error: new Error(sErrorMessage)});
+			oResult = {success: false, error: new Error(sErrorMessage)};
+			oChange.markFinished(oResult);
+			return new Utils.FakePromise(oResult);
 		}
 		if (bXmlModifier && oChange.getDefinition().jsOnly) {
 			//change is not capable of xml modifier
-			return new Utils.FakePromise({success: false, error: new Error("Change cannot be applied in XML. Retrying in JS.")});
+			oResult = {success: false, error: new Error("Change cannot be applied in XML. Retrying in JS.")};
+			oChange.markFinished(oResult);
+			return new Utils.FakePromise(oResult);
 		}
-		if (!oChange.isApplyProcessFinished()) {
+		if (oChange.hasApplyProcessStarted()) {
+			// wait for the change to be finished and then clean up the status and queue
+			return oChange.addPromiseForApplyProcessing()
+			.then(function(oResult) {
+				oChange.markFinished();
+				return oResult;
+			});
+		} else if (!oChange.isApplyProcessFinished()) {
 			var bRevertible = this.isChangeHandlerRevertible(oChange, mControl.control, oChangeHandler);
 			return new Utils.FakePromise()
 			.then(function() {
@@ -668,19 +678,22 @@ sap.ui.define([
 				// as it's only relevant for viewCache at the moment
 				FlexCustomData.addAppliedCustomData(oControl, oChange, mPropertyBag, bRevertible && bXmlModifier);
 				// if a change was reverted previously remove the flag as it is not reverted anymore
-				oChange.markFinished();
-				return {success: true};
+				oResult = {success: true};
+				oChange.markFinished(oResult);
+				return oResult;
 			})
 			.catch(function(oRejectionReason) {
 				this._logErrorAndWriteCustomData(oRejectionReason, oChange, mPropertyBag, oControl, bXmlModifier);
-				oChange.markFinished(oRejectionReason.message);
-				return {success: false, error: oRejectionReason};
+				oResult = {success: false, error: oRejectionReason};
+				oChange.markFinished(oResult);
+				return oResult;
 			}.bind(this));
 		} else {
 			// make sure that everything that goes with finishing the apply process is done, even though the change was already applied
-			oChange.markFinished();
+			oResult = {success: true};
+			oChange.markFinished(oResult);
+			return new Utils.FakePromise(oResult);
 		}
-		return new Utils.FakePromise({success: true});
 	};
 
 	FlexController.prototype._removeFromAppliedChangesAndMaybeRevert = function(oChange, oControl, mPropertyBag, bRevert) {
@@ -711,9 +724,9 @@ sap.ui.define([
 		if (!bIsCurrentlyApplied && oChange.hasApplyProcessStarted()) {
 			// wait for the change to be applied
 			vResult = oChange.addPromiseForApplyProcessing()
-			.then(function(bResult) {
-				if (bResult && bResult.error) {
-					throw Error(bResult.error);
+			.then(function(oResult) {
+				if (oResult && oResult.error) {
+					throw Error(oResult.error);
 				}
 				return true;
 			});
@@ -1238,14 +1251,12 @@ sap.ui.define([
 		Object.keys(mDependencies).forEach(function(sDependencyKey) {
 			var oDependency = mDependencies[sDependencyKey];
 			if (oDependency[FlexController.PENDING] && oDependency.dependencies.length === 0  &&
-				!(oDependency.controlsDependencies && oDependency.controlsDependencies.length > 0) &&
-				!oDependency[FlexController.PROCESSING]) {
-				oDependency[FlexController.PROCESSING] = true;
+				!(oDependency.controlsDependencies && oDependency.controlsDependencies.length > 0)
+			) {
 				aPromises.push(
 					function() {
 						return oDependency[FlexController.PENDING]()
-
-						.then(function (oReturn) {
+						.then(function () {
 							aDependenciesToBeDeleted.push(sDependencyKey);
 							aCoveredChanges.push(oDependency.changeObject.getId());
 						});
