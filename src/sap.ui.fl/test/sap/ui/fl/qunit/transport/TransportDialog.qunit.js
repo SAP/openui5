@@ -26,6 +26,11 @@ sap.ui.define([
 			assert.ok(this.oDialog);
 		});
 
+		QUnit.test("Escape handler is set", function (assert) {
+			assert.ok(this.oDialog.getEscapeHandler());
+			assert.equal(typeof this.oDialog.getEscapeHandler(), "function");
+		});
+
 		QUnit.test("setPackage", function (assert) {
 			this.oDialog.setPkg("$TMP");
 			assert.equal(this.oDialog.getProperty("pkg"), "$TMP");
