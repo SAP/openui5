@@ -504,17 +504,17 @@ sap.ui.define([
 	 * @param {boolean} bTabbable If set to <code>true</code>, the column template will be tabbable.
 	 * @param {string} sInputType The type of the input element. Only relevant, if <code>bInputElement</code> is set to true.
 	 * @param {boolean} [bBindText=true] If set to <code>true</code>, the text property will be bound to the value of <code>sText</code>.
+	 * @param {boolean} [bInteractiveLabel=false] If set to <code>true</code>, the column label will be focusable and tabbable.
 	 * @returns {sap.ui.table.Column} The added column.
 	 */
-	TableQUnitUtils.addColumn = function(oTable, sTitle, sText, bInputElement, bFocusable, bTabbable, sInputType, bBindText) {
-		if (bBindText == null) {
-			bBindText = true;
-		}
+	TableQUnitUtils.addColumn = function(oTable, sTitle, sText, bInputElement, bFocusable, bTabbable, sInputType, bBindText, bInteractiveLabel) {
+		bBindText = bBindText !== false;
+		bInteractiveLabel = bInteractiveLabel === true;
 
-		var oControlTemplate;
+		var oTemplate;
 
 		if (bInputElement) {
-			oControlTemplate = new TestInputControl({
+			oTemplate = new TestInputControl({
 				text: bBindText ? "{" + sText + "}" : sText,
 				index: oTable.getColumns().length,
 				visible: true,
@@ -522,7 +522,7 @@ sap.ui.define([
 				type: sInputType
 			});
 		} else {
-			oControlTemplate = new TestControl({
+			oTemplate = new TestControl({
 				text: bBindText ? "{" + sText + "}" : sText,
 				index: oTable.getColumns().length,
 				visible: true,
@@ -532,9 +532,13 @@ sap.ui.define([
 		}
 
 		var oColumn = new Column({
-			label: sTitle,
+			label: new TestControl({
+				text: sTitle,
+				focusable: bInteractiveLabel,
+				tabbable: bInteractiveLabel
+			}),
 			width: "100px",
-			template: oControlTemplate
+			template: oTemplate
 		});
 		oTable.addColumn(oColumn);
 
