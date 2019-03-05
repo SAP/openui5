@@ -810,6 +810,9 @@ sap.ui.define([
 		 *                                 // the control is a template within a table.
 		 * this.expectChange("foo", ["a", "b"]); // expect values for two rows of the control with
 		 *                                       // ID "foo"; may be combined with an offset vRow
+		 * this.expectChange("foo", ["a",,"b"]); // expect values for the rows 0 and 2 of the
+		 *                                       // control with the ID "foo", because this is a
+		 *                                       // sparse array in which index 1 is unset
 		 * this.expectChange("foo", "c", 2); // expect value "c" for control with ID "foo" in row 2
 		 * this.expectChange("foo", "d", "/MyEntitySet/ID");
 		 *                                 // expect value "d" for control with ID "foo" in a
@@ -2444,11 +2447,11 @@ sap.ui.define([
 				})
 				.expectChange("count", "3")
 				.expectChange("note", "refreshed")
-				.expectChange("item", ["0000000010", "0000000020", "0000000030"]);
+				.expectChange("item", "0000000030", 2);
 
 			// expect event only for ODLB because ODCB doesn't fire a change event
 			that.oView.byId("table").getBinding("items")
-				.attachEventOnce("change", function (oEvent) {
+				.attachEventOnce("refresh", function (oEvent) {
 					bTableEvent = true;
 					assert.strictEqual(oEvent.getParameter("reason"), ChangeReason.Refresh,
 						"Table change event");
@@ -7517,7 +7520,7 @@ sap.ui.define([
 
 	//*********************************************************************************************
 	// Scenario: Outer form with context binding is suspended after initialization; outer form
-	// contains inner table. The inner table is sorted.
+	// contains inner table. The inner table is sorted resulting in a different order.
 	QUnit.test("suspend/resume: sort nested list binding", function (assert) {
 		var oModel = createTeaBusiModel({autoExpandSelect : true}),
 			sView = '\
@@ -7543,15 +7546,15 @@ sap.ui.define([
 				"value" : [{
 					"ID" : "1",
 					"Name" : "Frederic Fall",
-					"AGE" : 52
+					"AGE" : 56
 				}, {
 					"ID" : "3",
 					"Name" : "Jonathan Smith",
-					"AGE" : 56
+					"AGE" : 52
 				}]
 			})
 			.expectChange("idMemberCount", "2")
-			.expectChange("idAge", ["52", "56"])
+			.expectChange("idAge", ["56", "52"])
 			.expectChange("idName", ["Frederic Fall", "Jonathan Smith"]);
 
 		return this.createView(assert, sView, oModel).then(function () {
@@ -7564,17 +7567,17 @@ sap.ui.define([
 				.expectRequest("TEAMS('TEAM_01')/TEAM_2_EMPLOYEES?$select=AGE,ID,Name&$orderby=AGE"
 					+ "&$skip=0&$top=100", {
 					"value" : [{
-						"ID" : "1",
-						"Name" : "Frederic Fall",
-						"AGE" : 52
-					}, {
 						"ID" : "3",
 						"Name" : "Jonathan Smith",
+						"AGE" : 52
+					}, {
+						"ID" : "1",
+						"Name" : "Frederic Fall",
 						"AGE" : 56
 					}]
 				})
 				.expectChange("idAge", ["52", "56"])
-				.expectChange("idName", ["Frederic Fall", "Jonathan Smith"]);
+				.expectChange("idName", ["Jonathan Smith", "Frederic Fall"]);
 
 			oFormBinding.suspend();
 			that.oView.byId("table").getBinding("items").sort(new Sorter("AGE"));
@@ -7631,8 +7634,7 @@ sap.ui.define([
 						"ID" : 2,
 						"Name" : "Tablet X"
 					}]
-				})
-				.expectChange("idEquipmentName", ["Office PC", "Tablet X"]);
+				});
 
 			oListBinding.resume();
 
@@ -7793,7 +7795,6 @@ sap.ui.define([
 						"Name" : "Frederic Fall",
 						"MANAGER_ID" : "1"
 					})
-					.expectChange("idEquipmentName", ["Office PC", "Tablet X"])
 					.expectChange(sIdManagerId, "1");
 
 				oForm.getObjectBinding().getRootBinding().resume();
@@ -7966,8 +7967,7 @@ sap.ui.define([
 				+ "&$expand=SO_2_SOITEM($select=ItemPosition,SalesOrderID)", {
 					"SalesOrderID" : "42",
 					"SO_2_SOITEM" : [{"SalesOrderID" : "42", "ItemPosition" : "10"}]
-				})
-				.expectChange("pos", ["10"]);
+				});
 
 			// code under test
 			oBinding.resume();
