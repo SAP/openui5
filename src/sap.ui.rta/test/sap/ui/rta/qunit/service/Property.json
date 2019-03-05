@@ -51,7 +51,7 @@
 			]
 		},
 		"virtualProperty3": {
-			"value": "Virtual property value 3",
+			"value": null,
 			"virtual": true,
 			"type": "Virtual property type",
 			"name": "Virtual Property Name 3",
