@@ -694,10 +694,8 @@ sap.ui.define([
 	 * @override
 	 * @see sap.ui.model.odata.v4.ODataBinding#hasPendingChangesInDependents
 	 */
-	ODataParentBinding.prototype.hasPendingChangesInDependents = function (oContext) {
-		var aDependents = oContext
-				? this.oModel.getDependentBindings(oContext)
-				: this.getDependentBindings();
+	ODataParentBinding.prototype.hasPendingChangesInDependents = function () {
+		var aDependents = this.getDependentBindings();
 
 		return aDependents.some(function (oDependent) {
 			var oCache, bHasPendingChanges;

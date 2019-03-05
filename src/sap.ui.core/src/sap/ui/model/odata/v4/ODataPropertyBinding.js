@@ -445,7 +445,7 @@ sap.ui.define([
 	 * @override
 	 * @see sap.ui.model.odata.v4.ODataBinding#hasPendingChangesInDependents
 	 */
-	ODataPropertyBinding.prototype.hasPendingChangesInDependents = function (oContext) {
+	ODataPropertyBinding.prototype.hasPendingChangesInDependents = function () {
 		return false;
 	};
 
