@@ -4,8 +4,9 @@ sap.ui.define([
 	"sap/ui/qunit/QUnitUtils",
 	"sap/ui/qunit/utils/createAndAppendDiv",
 	"sap/m/ToggleButton",
-	"sap/m/Toolbar"
-], function(QUnitUtils, createAndAppendDiv, ToggleButton, Toolbar) {
+	"sap/m/Toolbar",
+	"sap/ui/events/KeyCodes"
+], function(QUnitUtils, createAndAppendDiv, ToggleButton, Toolbar, KeyCodes) {
 
 	var styleElement = document.createElement("style");
 	styleElement.textContent =
@@ -166,6 +167,36 @@ sap.ui.define([
 		assert.strictEqual(oToggleButton.getPressed(), true, "the pressed state is still true");
 		assert.ok(oToggleButton.$("inner").hasClass("sapMToggleBtnPressed"), "still has the pressed class");
 		assert.strictEqual(oTapSpy.callCount, 1, "tap was fired");
+	});
+
+	QUnit.test("'Enter' should fire 'press' event on keydown", function (assert) {
+		// Prepare
+		var oToggleButton = new ToggleButton(),
+			oFirePressSpy = this.spy(oToggleButton, "firePress");
+
+		// Act
+		qutils.triggerKeydown(oToggleButton, KeyCodes.ENTER);
+
+		// Assert
+		assert.equal(oFirePressSpy.callCount, 1, "press event should be called once");
+
+		// Cleanup
+		oToggleButton.destroy();
+	});
+
+	QUnit.test("'Space' should fire 'press' event on keyup", function (assert) {
+		// Prepare
+		var oToggleButton = new ToggleButton(),
+			oFirePressSpy = this.spy(oToggleButton, "firePress");
+
+		// Act
+		qutils.triggerKeyup(oToggleButton, KeyCodes.SPACE);
+
+		// Assert
+		assert.equal(oFirePressSpy.callCount, 1, "press event should be called once");
+
+		// Cleanup
+		oToggleButton.destroy();
 	});
 
 	QUnit.module("Accessibility");

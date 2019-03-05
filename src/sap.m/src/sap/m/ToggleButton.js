@@ -85,7 +85,7 @@ sap.ui.define([
 	 */
 	ToggleButton.prototype.onkeydown = function(oEvent) {
 
-		if (oEvent.which === KeyCodes.SPACE || oEvent.which === KeyCodes.ENTER) {
+		if (oEvent.which === KeyCodes.ENTER) {
 			this.ontap(oEvent);
 		}
 	};
@@ -97,6 +97,10 @@ sap.ui.define([
 	ToggleButton.prototype.onkeyup = function(oEvent) {
 		if (oEvent.which === KeyCodes.SPACE || oEvent.which === KeyCodes.ENTER) {
 			oEvent.setMarked();
+		}
+
+		if (oEvent.which === KeyCodes.SPACE) {
+			this.ontap(oEvent);
 		}
 	};
 
