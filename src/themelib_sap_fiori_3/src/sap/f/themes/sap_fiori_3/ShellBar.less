@@ -7,10 +7,22 @@
 		.color2 {
 			stop-color: #FFFFFF;
 		}
+		&:focus {
+			outline-color: @sapUiContentContrastFocusColor;
+		}
+		html[data-sap-ui-browser^="ie"] &:focus:before {
+			border-color: @sapUiContentContrastFocusColor;
+		}
+	}
+	.sapFShellBarHomeIcon:focus {
+		outline-color: @sapUiContentContrastFocusColor;
 	}
 	.sapMTB-Transparent-CTX .sapMBtn {
 		&:focus .sapMBtnInner {
 			outline-color: contrast(@sapShellColor, @sapUiContentFocusColor, @sapUiContentContrastFocusColor, @sapContent_ContrastTextThreshold);
+		}
+		&:focus .sapMBtnFocusDiv {
+			border-color: contrast(@sapShellColor, @sapUiContentFocusColor, @sapUiContentContrastFocusColor, @sapContent_ContrastTextThreshold);
 		}
 		.sapMBtnContent,
 		.sapMBtnInner::after,

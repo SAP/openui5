@@ -427,4 +427,125 @@ function (
 		assert.ok(this.oSB._aOverflowControls[4] === this.oSB._oProductSwitcher, "Control at index 4 is ProductSwitcher");
 	});
 
+	// Accessibility related tests
+	QUnit.module("Accessibility", {
+		beforeEach: function () {
+			this.oSB = new ShellBar({
+				title: "Application title",
+				secondTitle: "Short description",
+				homeIcon: "./resources/sap/ui/documentation/sdk/images/logo_ui5.png",
+				showNavButton: true,
+				showCopilot: true,
+				showSearch: true,
+				showNotifications: true,
+				showProductSwitcher: true,
+				showMenuButton: true
+			});
+			this.oSB.setAggregation("profile", new Avatar({initials: "UI"}));
+			this.oRb = Core.getLibraryResourceBundle("sap.f");
+			this.oSB.placeAt(DOM_RENDER_LOCATION);
+			Core.applyChanges();
+		},
+		afterEach: function () {
+			this.oSB.destroy();
+			this.oRb = null;
+		}
+	});
+
+	QUnit.test("Mega menu attributes", function (assert) {
+		var $oMegaMenu = this.oSB._oMegaMenu._getButtonControl().$();
+
+		// Assert
+		assert.strictEqual($oMegaMenu.attr("role"), "heading", "Mega menu role is correct");
+		assert.strictEqual($oMegaMenu.attr("aria-level"), "1", "Mega menu aria-level is correct");
+	});
+
+	QUnit.test("Second title attributes", function (assert) {
+		var $oSecondTitle = this.oSB._oSecondTitle.$();
+
+		// Assert
+		assert.strictEqual($oSecondTitle.attr("role"), "heading", "Second title role is correct");
+		assert.strictEqual($oSecondTitle.attr("aria-level"), "2", "Second title aria-level is correct");
+	});
+
+	QUnit.test("Home icon tooltip", function (assert) {
+		var oHomeIcon = this.oSB._oHomeIcon,
+			sTooltip = this.oRb.getText("SHELLBAR_LOGO_TOOLTIP");
+
+		// Assert
+		assert.strictEqual(oHomeIcon.getTooltip(), sTooltip, "Home icon tooltip is correct");
+	});
+
+	QUnit.test("CoPilot attributes", function (assert) {
+		var oCopilot = this.oSB._oCopilot,
+			sTooltip = this.oRb.getText("SHELLBAR_COPILOT_TOOLTIP");
+
+		// Assert
+		assert.strictEqual(oCopilot.$().attr("role"), "button", "CoPilot role is correct");
+		assert.strictEqual(oCopilot.$().attr("aria-label"), sTooltip, "CoPilot aria-label is correct");
+		assert.strictEqual(oCopilot.getTooltip(), sTooltip, "CoPilot tooltip is correct");
+	});
+
+	QUnit.test("Search attributes", function (assert) {
+		var oSearch = this.oSB._oSearch,
+			sTooltip = this.oRb.getText("SHELLBAR_SEARCH_TOOLTIP");
+
+		// Assert
+		assert.strictEqual(oSearch.$().attr("aria-label"), sTooltip, "Search aria-label is correct");
+		assert.strictEqual(oSearch.getTooltip(), sTooltip, "Search tooltip is correct");
+	});
+
+	QUnit.test("Nav button attributes", function (assert) {
+		var oNavButton = this.oSB._oNavButton,
+			sTooltip = this.oRb.getText("SHELLBAR_BACK_TOOLTIP");
+
+		// Assert
+		assert.strictEqual(oNavButton.$().attr("aria-label"), sTooltip, "Nav button aria-label is correct");
+		assert.strictEqual(oNavButton.getTooltip(), sTooltip, "Nav button tooltip is correct");
+	});
+
+	QUnit.test("Menu button attributes", function (assert) {
+		var oMenuButton = this.oSB._oMenuButton,
+			$oMenuButton = oMenuButton.$(),
+			sTooltip = this.oRb.getText("SHELLBAR_MENU_TOOLTIP");
+
+		// Assert
+		assert.strictEqual($oMenuButton.attr("aria-haspopup"), "menu", "Menu button aria-haspopup is correct");
+		assert.strictEqual($oMenuButton.attr("aria-label"), sTooltip, "Menu button aria-label is correct");
+		assert.strictEqual(oMenuButton.getTooltip(), sTooltip, "Menu button tooltip is correct");
+	});
+
+	QUnit.test("Notifications attributes", function (assert) {
+		var oNotifications = this.oSB._oNotifications,
+			$oNotifications = oNotifications.$(),
+			sTooltip = this.oRb.getText("SHELLBAR_NOTIFICATIONS_TOOLTIP");
+
+		// Assert
+		assert.strictEqual($oNotifications.attr("aria-haspopup"), "dialog", "Notifications aria-haspopup is correct");
+		assert.strictEqual($oNotifications.attr("aria-label"), sTooltip, "Notifications aria-label is correct");
+		assert.strictEqual(oNotifications.getTooltip(), sTooltip, "Notifications tooltip is correct");
+	});
+
+	QUnit.test("Products attributes", function (assert) {
+		var oProducts = this.oSB._oProductSwitcher,
+			$oProducts = oProducts.$(),
+			sTooltip = this.oRb.getText("SHELLBAR_PRODUCTS_TOOLTIP");
+
+		// Assert
+		assert.strictEqual($oProducts.attr("aria-haspopup"), "menu", "Products aria-haspopup is correct");
+		assert.strictEqual($oProducts.attr("aria-label"), sTooltip, "Products aria-label is correct");
+		assert.strictEqual(oProducts.getTooltip(), sTooltip, "Products tooltip is correct");
+	});
+
+	QUnit.test("Avatar attributes", function (assert) {
+		var oAvatar = this.oSB._oAvatarButton,
+			$oAvatar = oAvatar.$(),
+			sTooltip = this.oRb.getText("SHELLBAR_PROFILE_TOOLTIP");
+
+		// Assert
+		assert.strictEqual($oAvatar.attr("aria-haspopup"), "menu", "Avatar aria-haspopup is correct");
+		assert.strictEqual($oAvatar.attr("aria-label"), sTooltip, "Avatar aria-label is correct");
+		assert.strictEqual(oAvatar.getTooltip(), sTooltip, "Avatar tooltip is correct");
+	});
+
 });

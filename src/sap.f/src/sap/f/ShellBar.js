@@ -8,13 +8,15 @@ sap.ui.define([
 	"./shellBar/Factory",
 	"./shellBar/AdditionalContentSupport",
 	"./shellBar/ResponsiveHandler",
+	"./shellBar/Accessibility",
 	"./ShellBarRenderer"
 ],
 function(
 	Control,
 	Factory,
 	AdditionalContentSupport,
-	ResponsiveHandler
+	ResponsiveHandler,
+	Accessibility
 	/*, ShellBarRenderer */
 ) {
 	"use strict";
@@ -232,6 +234,8 @@ function(
 
 		// List of controls that can go forcibly in the overflow
 		this._aOverflowControls = [];
+
+		this._oAcc = new Accessibility(this);
 	};
 
 	ShellBar.prototype.onBeforeRendering = function () {
@@ -241,6 +245,7 @@ function(
 	ShellBar.prototype.exit = function () {
 		this._oResponsiveHandler.exit();
 		this._oFactory.destroy();
+		this._oAcc.exit();
 	};
 
 	// Setters

@@ -16,7 +16,8 @@ sap.ui.define([
 	"sap/m/ToolbarDesign",
 	"sap/m/OverflowToolbarLayoutData",
 	"sap/m/OverflowToolbarPriority",
-	"./CoPilot"
+	"./CoPilot",
+	"./Accessibility"
 ], function(
 	Element,
 	Label,
@@ -32,7 +33,8 @@ sap.ui.define([
 	ToolbarDesign,
 	OverflowToolbarLayoutData,
 	OverflowToolbarPriority,
-	CoPilot
+	CoPilot,
+	Accessibility
 ) {
 	"use strict";
 
@@ -47,6 +49,7 @@ sap.ui.define([
 	var Factory = function (oContext) {
 		this._oContext = oContext;
 		this._oControls = {};
+		this._oAcc = new Accessibility();
 	};
 
 	Factory.prototype.getOverflowToolbar = function () {
@@ -93,6 +96,7 @@ sap.ui.define([
 			this._oControls.oAvatarButton = new ContentButton({
 				icon: "none",
 				type: ButtonType.Transparent,
+				tooltip: this._oAcc.getEntityTooltip("PROFILE"),
 				iconDensityAware: false,
 				press: function () {
 					this._oContext.fireEvent("avatarPressed", {avatar: this._oControls.oAvatarButton.getAvatar()});
@@ -110,6 +114,7 @@ sap.ui.define([
 		if (!this._oControls.oHomeIcon) {
 			this._oControls.oHomeIcon = new Image({
 				densityAware: false,
+				tooltip: this._oAcc.getEntityTooltip("LOGO"),
 				press: function () {
 					this._oContext.fireEvent("homeIconPressed", {icon: this._oControls.oHomeIcon});
 				}.bind(this)
@@ -139,6 +144,7 @@ sap.ui.define([
 	Factory.prototype.getCopilot = function () {
 		if (!this._oControls.oCopilot) {
 			this._oControls.oCopilot = new CoPilot({
+				tooltip: this._oAcc.getEntityTooltip("COPILOT"),
 				press: function () {
 					this._oContext.fireEvent("copilotPressed", {image: this._oControls.oCopilot});
 				}.bind(this)
@@ -156,6 +162,7 @@ sap.ui.define([
 				text: "Search",
 				icon: "sap-icon://search",
 				type: ButtonType.Transparent,
+				tooltip: this._oAcc.getEntityTooltip("SEARCH"),
 				press: function () {
 					this._oContext.fireEvent("searchButtonPressed", {button: this._oControls.oSearch});
 				}.bind(this)
@@ -171,6 +178,7 @@ sap.ui.define([
 			this._oControls.oNavButton = new OverflowToolbarButton({
 				icon: "sap-icon://nav-back",
 				type: ButtonType.Transparent,
+				tooltip: this._oAcc.getEntityTooltip("BACK"),
 				press: function () {
 					this._oContext.fireEvent("navButtonPressed", {button: this._oControls.oNavButton});
 				}.bind(this)
@@ -185,7 +193,8 @@ sap.ui.define([
 		if (!this._oControls.oMenuButton) {
 			this._oControls.oMenuButton = new OverflowToolbarButton({
 				icon: "sap-icon://menu2",
-				type: ButtonType.Transparent
+				type: ButtonType.Transparent,
+				tooltip: this._oAcc.getEntityTooltip("MENU")
 			}).setLayoutData(new OverflowToolbarLayoutData({
 				priority: OverflowToolbarPriority.NeverOverflow
 			}));
@@ -199,6 +208,7 @@ sap.ui.define([
 				text: "Notifications",
 				icon: "sap-icon://bell",
 				type: ButtonType.Transparent,
+				tooltip: this._oAcc.getEntityTooltip("NOTIFICATIONS"),
 				press: function () {
 					this._oContext.fireEvent("notificationsPressed", {button: this._oControls.oNotifications});
 				}.bind(this)
@@ -215,6 +225,7 @@ sap.ui.define([
 				text: "My products",
 				icon: "sap-icon://grid",
 				type: ButtonType.Transparent,
+				tooltip: this._oAcc.getEntityTooltip("PRODUCTS"),
 				press: function () {
 					this._oContext.fireEvent("productSwitcherPressed", {button: this._oControls.oProductSwitcher});
 				}.bind(this)
