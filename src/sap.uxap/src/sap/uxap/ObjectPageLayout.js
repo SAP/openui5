@@ -1264,6 +1264,8 @@ sap.ui.define([
 
 		// note that <code>this._$headerTitle</code> is the placeholder [of the sticky area] where both the header title and header content are placed
 		this._$headerTitle.toggleClass("sapUxAPObjectPageHeaderStickied", !bExpand);
+		this._$headerTitle.toggleClass("sapUxAPObjectPageHeaderSnappedTitleOnMobile",
+				this._hasDynamicTitleWithSnappedTitleOnMobile() && !bExpand);
 
 		if (bExpand) {
 			oHeaderTitle && oHeaderTitle.unSnap(bUserInteraction);
@@ -3847,6 +3849,16 @@ sap.ui.define([
 	};
 
 	/**
+	 * Returns <code>true</code> if ObjectPageLayout has Dynamic <code>headerTitle</code> and a valid <code>snappedTitleOnMobile</code> aggregation set in it.
+	 * @private
+	 */
+	ObjectPageLayout.prototype._hasDynamicTitleWithSnappedTitleOnMobile = function () {
+		var oTitle = this.getHeaderTitle();
+
+		return exists(oTitle) && oTitle.isDynamic() && !!oTitle.getSnappedTitleOnMobile() && Device.system.phone;
+	};
+
+	/**
 	 * Updates the visibility of the <code>expandButton</code> and <code>collapseButton</code>.
 	 * @private
 	 */
@@ -3862,7 +3874,9 @@ sap.ui.define([
 		} else {
 			bHeaderExpanded = this._bHeaderExpanded;
 			bCollapseVisualIndicatorVisible = bHeaderExpanded;
-			bExpandVisualIndicatorVisible = !bHeaderExpanded;
+
+			// by UX design, there shouldn't be an expand button in the case of snappedTitleOnMobile with DynamicTitle
+			bExpandVisualIndicatorVisible = !bHeaderExpanded && !this._hasDynamicTitleWithSnappedTitleOnMobile();
 		}
 
 		this._toggleCollapseVisualIndicator(bCollapseVisualIndicatorVisible);
@@ -3875,7 +3889,8 @@ sap.ui.define([
 	 */
 	ObjectPageLayout.prototype._updateTitleVisualState = function () {
 		var oTitle = this.getHeaderTitle(),
-			bTitleActive = this._hasVisibleDynamicTitleAndHeader() && this.getToggleHeaderOnTitleClick();
+			bTitleActive = this._hasVisibleDynamicTitleAndHeader() &&
+				this.getToggleHeaderOnTitleClick() && !this._hasDynamicTitleWithSnappedTitleOnMobile();
 
 		this.$().toggleClass("sapUxAPObjectPageLayoutTitleClickEnabled", bTitleActive);
 		if (exists(oTitle)) {

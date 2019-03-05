@@ -427,3 +427,25 @@ html[dir=rtl] .sapUxAPObjectPageHeaderMarks .sapMObjStatusMarker .sapUiIcon:firs
   background: transparent;
   box-shadow: none;
 }
+
+/* Phone Size */
+.sapUxAPObjectPageLayout-Std-Phone {
+
+	.sapUxAPObjectPageHeaderTitle.sapUxAPObjectPageHeaderSnappedTitleOnMobile > .sapFDynamicPageTitle {
+		padding: 0 0.25rem 0 1rem;
+		min-height: 2rem;
+		height: 2rem;
+	}
+}
+
+/* Tablet Size */
+.sapUxAPObjectPageLayout-Std-Tablet {
+
+	// Needed because on some high-end phones in landscape mode,
+	// the width of the viewport is bigger than 600 (Tablet breakpoint).
+	.sapUxAPObjectPageHeaderTitle.sapUxAPObjectPageHeaderSnappedTitleOnMobile > .sapFDynamicPageTitle {
+		padding: 0 0.25rem 0 2rem;
+		min-height: 2rem;
+		height: 2rem;
+	}
+}
