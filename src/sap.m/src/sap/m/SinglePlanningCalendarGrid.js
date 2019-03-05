@@ -180,14 +180,14 @@ sap.ui.define([
 			if (this._oAppointmentsToRender[sDate]) {
 				this._oAppointmentsToRender[sDate].oAppointmentsList.getIterator().forEach(function(oAppNode) {
 					oAppointment = oAppNode.getData();
-					$appointment = oAppointment.$();
+					$appointment = jQuery("div[data-sap-day='" + sDate + "'].sapMSinglePCColumn #" + oAppointment.getId());
 					oAppStartDate = oAppointment.getStartDate();
 					oAppEndDate = oAppointment.getEndDate();
 					bAppStartIsOutsideVisibleStartHour = oColumnStartDateAndHour.getTime() > oAppStartDate.getTime();
 					bAppEndIsOutsideVisibleEndHour = oColumnEndDateAndHour.getTime() < oAppEndDate.getTime();
 
-					iAppTop = bAppEndIsOutsideVisibleEndHour ? 0 : that._calculateTopPosition(oAppStartDate);
-					iAppBottom = bAppStartIsOutsideVisibleStartHour ? 0 : that._calculateBottomPosition(oAppEndDate);
+					iAppTop = bAppStartIsOutsideVisibleStartHour ? 0 : that._calculateTopPosition(oAppStartDate);
+					iAppBottom = bAppEndIsOutsideVisibleEndHour ? 0 : that._calculateBottomPosition(oAppEndDate);
 
 					$appointment.css("top", iAppTop);
 					$appointment.css("bottom", iAppBottom);
