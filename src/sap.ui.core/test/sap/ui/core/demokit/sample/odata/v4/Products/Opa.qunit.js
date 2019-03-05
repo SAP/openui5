@@ -41,35 +41,51 @@ sap.ui.getCore().attachInit(function () {
 				});
 
 				// Test Units
-				When.onTheMainPage.changeMeasure("123 KG");
-				Then.onTheMainPage.checkMeasure("123 KG"); // "KG": 0 decimals
+				When.onTheMainPage.changeMeasure("12.3 NO");
+				Then.onTheMainPage.checkMeasure("12.30 NO"); // "NO": 2 decimals
 				Then.onTheMainPage.checkMeasureValueState("None");
-				When.onTheMainPage.changeMeasure("654.3 NO");
-				Then.onTheMainPage.checkMeasure("654.30 NO"); //"NO": 2 decimals
-				When.onTheMainPage.changeMeasure("654 M/M");
-				Then.onTheMainPage.checkMeasure("654.000 M/M"); // "M/M": 3 decimals
+
+				When.onTheMainPage.changeMeasure("21");
+				Then.onTheMainPage.checkMeasure("21.00 NO");
+				Then.onTheMainPage.checkMeasureValueState("None");
+
+				When.onTheMainPage.changeMeasure("12.345 NO");
+				Then.onTheMainPage.checkMeasureValueState("Error");
+
 				When.onTheMainPage.changeMeasure("123.456 XYZ");
 				Then.onTheMainPage.checkMeasureValueState("Error");
+
+				When.onTheMainPage.changeMeasure("32");
+				Then.onTheMainPage.checkMeasure("32.00 NO"); // use last valid unit
+				Then.onTheMainPage.checkMeasureValueState("None");
 
 				When.onTheMainPage.changeMeasure("123.456789 µG");
 				Then.onTheMainPage.checkMeasureValueState("Error");
 
-				When.onTheMainPage.changeMeasure("123.456 KG");
-				//TODO Should be ParseException due to entering more decimals than allowed for "KG"
-				Then.onTheMainPage.checkMeasure("123 KG");
-				//Then.onTheMainPage.checkMeasureValueState("Error"); // check value state text?
+				When.onTheMainPage.changeMeasure("42", 1);
+				Then.onTheMainPage.checkMeasure("42", 1); // no unit yet for new entry and no error
+				Then.onTheMainPage.checkMeasureValueState("None", 1);
+
+				When.onTheMainPage.changeMeasure("KG", 1);
+				Then.onTheMainPage.checkMeasureValueState("Error", 1); // cannot parse <only unit>
 
 				// Test Currencies
-				When.onTheMainPage.changePrice("12.3 EUR3"); // "EUR3" does not exist in CLDR
-				Then.onTheMainPage.checkPrice("EUR3\u00a012.300"); // "EUR3": 3 decimals
+				When.onTheMainPage.changePrice("12.3 USD");
+				Then.onTheMainPage.checkPrice("USD\u00a012.30"); // "USD": 2 decimals
 				Then.onTheMainPage.checkPriceValueState("None");
 
-				When.onTheMainPage.changePrice("JPY77");
-				Then.onTheMainPage.checkPrice("JPY\u00a077"); // "JPY": 0 decimals
+				When.onTheMainPage.changePrice("21");
+				Then.onTheMainPage.checkPrice("USD\u00a021.00");
 				Then.onTheMainPage.checkPriceValueState("None");
 
-				When.onTheMainPage.changePrice("98.12BHD");
-				Then.onTheMainPage.checkPrice("BHD\u00a098.120"); // "BHD": 3 decimals
+				When.onTheMainPage.changePrice("12.345 USD");
+				Then.onTheMainPage.checkPriceValueState("Error");
+
+				When.onTheMainPage.changePrice("123.456 XYZ");
+				Then.onTheMainPage.checkPriceValueState("Error");
+
+				When.onTheMainPage.changePrice("32");
+				Then.onTheMainPage.checkPrice("USD\u00a032.00"); // use last valid currency
 				Then.onTheMainPage.checkPriceValueState("None");
 
 				When.onTheMainPage.changePrice("42 $");
@@ -79,8 +95,14 @@ sap.ui.getCore().attachInit(function () {
 				When.onTheMainPage.changePrice("43 €"); // UI5 maps € to ISO-Code EUR
 				Then.onTheMainPage.checkPriceValueState("Error"); // ISO-Code EUR does not exist
 
-				When.onTheMainPage.changePrice("12.3 XYZ");
-				Then.onTheMainPage.checkPriceValueState("Error");
+				When.onTheMainPage.changePrice("42", 1);
+				//TODO the value should be kept as is, "42"; sap.ui.model.type.Currency#formatValue
+				// however returns "42.00"; adapt as soon as this is fixed.
+				Then.onTheMainPage.checkPrice("42.00", 1); // no currency yet for entry, no error
+				Then.onTheMainPage.checkPriceValueState("None", 1);
+
+				When.onTheMainPage.changePrice("EUR", 1);
+				Then.onTheMainPage.checkPriceValueState("Error", 1); // cannot parse <only currency>
 
 				Then.onAnyPage.checkLog();
 				Then.onAnyPage.analyzeSupportAssistant();

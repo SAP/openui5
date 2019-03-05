@@ -18,7 +18,7 @@
 		<h3>Testing with mock data</h3>
 		Start the Products application with the following URL (adjust host and port if necessary):
 		<ul>
-			<li> local: <a href="http://localhost:8080/testsuite/test-resources/sap/ui/core/demokit/sample/common/index.html?component=odata.v4.Products">http://localhost:8080/testsuite/test-resources/sap/ui/core/demokit/sample/common/index.html?component=odata.v4.Products</a></li>
+			<li> local: <a href="http://localhost:8080/testsuite/test-resources/sap/ui/core/demokit/sample/common/index.html?component=odata.v4.Products&sap-ui-language=EN">http://localhost:8080/testsuite/test-resources/sap/ui/core/demokit/sample/common/index.html?component=odata.v4.Products&sap-ui-language=EN</a></li>
 		</ul>
 
 		<h3>Testing with backend</h3>
@@ -26,7 +26,7 @@
 		backend system.<br>
 		Start the Products application with the URL (adjust host and port if necessary):
 		<ul>
-			<li> local: <a href="http://localhost:8080/testsuite/test-resources/sap/ui/core/demokit/sample/common/index.html?component=odata.v4.Products&amp;realOData=true">http://localhost:8080/testsuite/test-resources/sap/ui/core/demokit/sample/common/index.html?component=odata.v4.Products&amp;realOData=true</a></li>
+			<li> local: <a href="http://localhost:8080/testsuite/test-resources/sap/ui/core/demokit/sample/common/index.html?component=odata.v4.Products&amp;realOData=true&amp;sap-ui-language=EN">http://localhost:8080/testsuite/test-resources/sap/ui/core/demokit/sample/common/index.html?component=odata.v4.Products&amp;realOData=true&sap-ui-language=EN</a></li>
 		</ul>
 
 		<h2>REALIZE and CHECK</h2>
@@ -43,32 +43,47 @@
 			<li> &mu;G (6 decimal places)</li>
 		</ul>
 		For a complete list of valid unit codes, see the &quot;ExternalCode&quot; property of the
-		objects in
-		<a href="http://localhost:8080/testsuite/test-resources/sap/ui/core/demokit/sample/odata/v4/Products/data/UnitsOfMeasure.json">http://localhost:8080/testsuite/test-resources/sap/ui/core/demokit/sample/odata/v4/Products/data/UnitsOfMeasure.json</a>
+		objects linked in "Unit Codes" in the test application.
 		<h4>Testing with backend</h4>
-		For testing, you may use the unit codes listed in &quot;Testing with mock data&quot;.
+		For testing, you may try and use the unit codes listed in
+		&quot;Testing with mock data&quot;; depending on the backend they may however not be
+		available in the backend customizing.
 		Note: Although %, DEG, NO and M/L are valid, the backend does not accept them
 		as they are no weight units; you see a corresponding error message
 		"Invalid weight unit..." when saving a weight with one of these units upon leaving the
 		weight input field.
 		For a complete list of valid unit codes, see the &quot;ExternalCode&quot; property of the
-		objects in
-		<a href="http://localhost:8080/testsuite/proxy/sap/opu/odata4/sap/zui5_testv4/default/iwbep/common/0001/UnitsOfMeasure?$select=ExternalCode,DecimalPlaces,Text">http://localhost:8080/testsuite/proxy/sap/opu/odata4/sap/zui5_testv4/default/iwbep/common/0001/UnitsOfMeasure?$select=ExternalCode,DecimalPlaces,Text</a>
+		objects linked in "Unit Codes" in the test application.
 		<h4>Test measures</h4>
 		<ul>
 			<li><b>Check:</b> Weights in the table are displayed with the number of decimal places
-				associated with the corresponding unit.
-			<li>Change the weight for a product in the table using a valid unit code
-				having 3 or less decimal places such as 'DEG' and leave the input field.</li>
-			<li><b>Check:</b> The weight measure is formatted with the decimal places associated with
-				the entered unit code.</li>
+				associated with the corresponding unit.</li>
+			<li>Change the weight for a product in the table to "12.3 NO" and leave the input
+				field.</li>
+			<li><b>Check:</b> The weight is formatted with the decimal places associated with
+				the entered unit code to "12.30 NO".</li>
+			<li>Change the weight to "21".</li>
+			<li><b>Check:</b> The weight is formatted with the decimal places associated with
+				the previous unit code to "21.00 NO".</li>
+			<li>Change the weight to "12.345 NO".</li>
+			<li><b>Check:</b> You see a validation error message "Enter a number with a maximum of 2
+				decimal places" and the weight field shows an invalid data state.</li>
 			<li>Change the weight unit to an invalid code such as 'XYZ'.</li>
-			<li><b>Check:</b> You see an error message and the input field shows an invalid data
+			<li><b>Check:</b> You see an error message and the weight field shows an invalid data
 				state.</li>
-			<li>Change the weight measure to a number with more than three decimal places.
+			<li>Change the weight to "32".</li>
+			<li><b>Check:</b> The weight is formatted with the decimal places associated with
+				the <b>last valid</b> unit code 'NO' to "32.00 NO".</li>
+		</ul>
+		Test the following with mock data only
+		<ul>
+			<li>Change the weight of the product 'Notebook New' which has no weight yet to "42".
 			</li>
-			<li><b>Check:</b> You see a validation error message and the measure field shows an
-				invalid data state.</li>
+			<li><b>Check:</b> The weight is formatted to "42" and the field has no invalid data
+			state.</li>
+			<li>Change the weight of the product 'Notebook New' to "KG".</li>
+			<li><b>Check:</b> You see an error message and the weight field shows an invalid data
+				state.</li>
 		</ul>
 		<h3>Check whether currencies are handled properly regarding decimal places defined for the
 			corresponding currency code</h3>
@@ -81,20 +96,42 @@
 			<li> BHD (3 decimal places)</li>
 		</ul>
 		For a complete list of valid currency codes, see the &quot;CurrencyCode&quot; property of
-		the objects in
-		<a href="http://localhost:8080/testsuite/test-resources/sap/ui/core/demokit/sample/odata/v4/Products/data/Currencies.json">http://localhost:8080/testsuite/test-resources/sap/ui/core/demokit/sample/odata/v4/Products/data/Currencies.json</a>
+		the objects linked in "Currency Codes" in the test application.
 		<h4>Testing with backend</h4>
-		For testing, you may use the currency codes listed in &quot;Testing with mock data&quot;.
-		<a href="http://localhost:8080/testsuite/proxy/sap/opu/odata4/sap/zui5_testv4/default/iwbep/common/0001/Currencies">http://localhost:8080/testsuite/proxy/sap/opu/odata4/sap/zui5_testv4/default/iwbep/common/0001/Currencies</a>
+		For testing, you may use the currency codes listed in &quot;Testing with mock data&quot;;
+		depending on the backend they may however not be available in the backend customizing.
+		For a complete list of valid currency codes, see the &quot;CurrencyCode&quot; property of
+		the objects linked in "Currency Codes" in the test application.
 		<h4>Test currencies</h4>
 		<ul>
 			<li><b>Check:</b> Prices in the table are displayed with the number of decimal places
-				associated with the corresponding currency.
-			<li>Change the price for a product in the table using a valid currency code and leave
-				the input field.</li>
+				associated with the corresponding currency.</li>
+			<li>Change the price for a product in the table to "12.3 USD" and leave the input
+				field.</li>
 			<li><b>Check:</b> The price is formatted with the decimal places associated with
-				the entered unit code.</li>
-			<li>Change the currency unit to an invalid code such as 'XYZ'.</li>
+				the entered currency code to "USD 12.30".</li>
+			<li>Change the price to "21".</li>
+			<li><b>Check:</b> The price is formatted with the decimal places associated with
+				the previous currency code to "USD 21.00".</li>
+			<li>Change the price to "12.345 USD".</li>
+			<li><b>Check:</b> You see a validation error message "Enter a number with a maximum of 2
+				decimal places" and the price field shows an invalid data state.</li>
+			<li>Change the currency to an invalid code such as 'XYZ'.</li>
+			<li><b>Check:</b> You see an error message and the price field shows an invalid data
+				state.</li>
+			<li>Change the price to "32".</li>
+			<li><b>Check:</b> The price is formatted with the decimal places associated with
+				the <b>last valid</b> currency code 'USD' to "USD 32.00".</li>
+			<li>Change the price to "42 $".</li>
+			<li><b>Check:</b> The price is formatted with the decimal places associated with
+				the entered currency code to "USD 42.00".</li>
+		</ul>
+		Test the following with mock data only
+		<ul>
+			<li>Change the price of the product 'Notebook New' which has no price yet to "42".</li>
+			<li><b>Check:</b> The price is formatted to "42.00" and the field has no invalid data
+			state.</li>
+			<li>Change the price of the product 'Notebook New' to "EUR".</li>
 			<li><b>Check:</b> You see an error message and the price field shows an invalid data
 				state.</li>
 		</ul>

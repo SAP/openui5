@@ -779,6 +779,8 @@ sap.ui.define([
 				});
 
 				oView.setModel(that.oModel);
+				// enable parse error messages in the message manager
+				sap.ui.getCore().getMessageManager().registerObject(oView, true);
 				// Place the view in the page so that it is actually rendered. In some situations,
 				// esp. for the table.Table this is essential.
 				oView.placeAt("qunit-fixture");
@@ -13377,6 +13379,29 @@ sap.ui.define([
 			that.oView.byId("weight").getBinding("value").setRawValue(["23.4", "KG"]);
 
 			return that.waitForChanges(assert);
+		}).then(function () {
+			var oControl = that.oView.byId("weight");
+
+			that.expectMessages([{
+				"code": undefined,
+				"descriptionUrl": undefined,
+				"message": "Enter a number with a maximum of 5 decimal places",
+				"persistent": false,
+				"target": oControl.getId() + "/value",
+				"technical": false,
+				"type": "Error"
+			}]);
+
+			// remove the formatter so that we can call setValue at the control
+			oControl.getBinding("value").setFormatter(null);
+
+			// code under test
+			oControl.setValue("12.123456 KG");
+
+			return that.waitForChanges(assert).then(function () {
+				return that.checkValueState(assert, oControl, "Error",
+					"Enter a number with a maximum of 5 decimal places");
+			});
 		});
 	});
 
@@ -13438,6 +13463,29 @@ sap.ui.define([
 			that.oView.byId("price").getBinding("value").setRawValue(["42", "JPY"]);
 
 			return that.waitForChanges(assert);
+		}).then(function () {
+			var oControl = that.oView.byId("price");
+
+			that.expectMessages([{
+				"code": undefined,
+				"descriptionUrl": undefined,
+				"message": "Enter a number with no decimal places",
+				"persistent": false,
+				"target": oControl.getId() + "/value",
+				"technical": false,
+				"type": "Error"
+			}]);
+
+			// remove the formatter so that we can call setValue at the control
+			oControl.getBinding("value").setFormatter(null);
+
+			// code under test
+			oControl.setValue("12.1");
+
+			return that.waitForChanges(assert).then(function () {
+				return that.checkValueState(assert, oControl, "Error",
+					"Enter a number with no decimal places");
+			});
 		});
 	});
 	//TODO With updateGroupId $direct, changing *both* parts of a composite binding (amount and
