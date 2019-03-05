@@ -20,7 +20,7 @@ sap.ui.define([
 	"sap/ui/core/UIArea",
 	"sap/base/util/merge",
 	"sap/ui/fl/FakeLrepConnectorSessionStorage",
-	"sap/ui/rta/util/PopupManager",
+	"sap/ui/dt/util/ZIndexManager",
 	"sap/ui/thirdparty/sinon-4"
 ],
 function(
@@ -43,7 +43,7 @@ function(
 	UIArea,
 	merge,
 	FakeLrepConnectorSessionStorage,
-	PopupManager,
+	ZIndexManager,
 	sinon
 ) {
 	"use strict";
@@ -88,6 +88,27 @@ function(
 		//setRTA instance for PopupManager
 		oRta.getPopupManager().setRta(oRta);
 	};
+
+	QUnit.module("Given PopupManager exists", {
+		beforeEach : function(assert) {
+			this.fnAddPopupFilterStub =  sandbox.stub(ZIndexManager, "addPopupFilter");
+		},
+		afterEach : function() {
+			sandbox.restore();
+		}
+	}, function () {
+		QUnit.test("when RTA is initialized", function(assert) {
+			assert.expect(3);
+			this.oRta = new RuntimeAuthoring({
+				rootControl : oComp.getAggregation("rootControl")
+			});
+			assert.ok(this.fnAddPopupFilterStub.calledTwice, "then 2 popup filters were added to the ZIndexManager");
+			this.oRta.getPopupManager()._aPopupFilters.forEach(function(fnFilter) {
+				assert.ok(this.fnAddPopupFilterStub.calledWith(fnFilter), "then ZIndexManager was called with the correct filter function");
+			}.bind(this));
+		});
+	});
+
 	QUnit.module("Given RTA instance is created without starting", {
 		beforeEach : function() {
 			this.oRta = new RuntimeAuthoring({
@@ -115,7 +136,6 @@ function(
 
 	QUnit.module("Given RTA instance is initialized", {
 		beforeEach : function(assert) {
-			var fnDone = assert.async();
 			//mock RTA instance
 			this.oRta = new RuntimeAuthoring({
 				rootControl : oComp.getAggregation("rootControl")
@@ -123,12 +143,16 @@ function(
 			this.oRta._$document = jQuery(document);
 			sap.ui.getCore().applyChanges();
 			this.oRta._createToolsMenu(true);
-			this.oRta.getToolbar().show();
+			var oToolbarPromise = this.oRta.getToolbar().show();
 			//mock DesignTime
 			this.oRta._oDesignTime = new DesignTime({
 				rootElements : [oComp.getAggregation("rootControl")]
 			});
-			this.oRta._oDesignTime.attachEventOnce("synced", fnDone);
+			var oDesignTimePromise = new Promise(function(fnResolve) {
+				this.oRta._oDesignTime.attachEventOnce("synced", function () {
+					fnResolve();
+				});
+			}.bind(this));
 			this.oOriginalInstanceManager = merge({}, InstanceManager);
 			//spy functions
 			this.fnOverrideFunctionsSpy = sandbox.spy(this.oRta.getPopupManager(), "_overrideInstanceFunctions");
@@ -165,6 +189,7 @@ function(
 				oView.addContent(this.oPopover);
 			}.bind(this));
 			this.oNonRtaDialog = new Dialog("nonRtaDialog");
+			return Promise.all([oDesignTimePromise, oToolbarPromise]);
 		},
 		afterEach : function() {
 			if (this.oRta) {
@@ -523,73 +548,6 @@ function(
 		});
 	});
 
-	QUnit.module("Given popups are already open", {
-		beforeEach : function(assert) {
-			var done = assert.async();
-			oComp.runAsOwner(function() {
-				this.oDialogAdaptable = new Dialog({
-					id: oComp.createId("Dialog1"),
-					showHeader: false,
-					contentHeight: "800px",
-					contentWidth: "1000px"
-				});
-				this.oPopoverAdaptable = new Popover({
-					id: oComp.createId("Popover"),
-					showHeader: false,
-					contentMinWidth: "250px",
-					contentWidth: "20%",
-					modal: false
-				});
-				this.oPopoverAdaptable.oPopup.setAutoClose(false); /*when focus is taken away popover might close - resulting in failing tests*/
-				this.oDialogAdaptable.removeStyleClass("sapUiPopupWithPadding");
-				oView.addContent(this.oDialogAdaptable);
-				oView.addContent(this.oPopoverAdaptable);
-			}.bind(this));
-
-			this.oDialogNonAdaptable = new Dialog({
-				id: oComp.createId("Dialog2"),
-				showHeader: false,
-				contentHeight: "800px",
-				contentWidth: "1000px"
-			});
-			oView.addContent(this.oDialogNonAdaptable);
-
-			this.oDialogAdaptable.attachAfterOpen(function() {
-				this.oPopoverAdaptable.attachAfterOpen(function() {
-					this.oDialogNonAdaptable.attachAfterOpen(function() {
-						// all popups are open at this point
-						done();
-					});
-					this.oDialogNonAdaptable.open();
-				}.bind(this));
-				this.oPopoverAdaptable.openBy(oComp.byId("mockview"));
-			}.bind(this));
-			this.oDialogAdaptable.open();
-
-			this.fn_calculateMaxAllowedZIndexSpy =  sandbox.spy(PopupManager.prototype, "_calculateMaxAllowedZIndex");
-			this.fnSetMaxAllowedZIndexSpy =  sandbox.spy(ElementUtil, "setMaxAllowedZIndex");
-		},
-		afterEach : function() {
-			this.oDialogAdaptable.destroy();
-			this.oPopoverAdaptable.destroy();
-			this.oDialogNonAdaptable.destroy();
-			sandbox.restore();
-		}
-	}, function () {
-		QUnit.test("when PopupManager is initialized", function(assert) {
-			this.oRta = new RuntimeAuthoring({
-				rootControl : oComp.getAggregation("rootControl")
-			});
-			assert.strictEqual(this.fn_calculateMaxAllowedZIndexSpy.callCount, 1, "then PopupManager._calculateMaxAllowedZIndex is called once");
-			var iMaxAllowedZIndex = 9999;
-			[this.oDialogAdaptable, this.oPopoverAdaptable, this.oDialogNonAdaptable].forEach(function(oPopupElement) {
-				var iPopupElementZIndex = parseInt(jQuery(oPopupElement.getDomRef()).css("z-index"));
-				iMaxAllowedZIndex = iMaxAllowedZIndex > iPopupElementZIndex ? iPopupElementZIndex : iMaxAllowedZIndex;
-			});
-			assert.ok(this.fnSetMaxAllowedZIndexSpy.calledWith(iMaxAllowedZIndex - 5), "then ElementUtil.setMaxAllowedZIndex is called with a value lower than the lowest popup z-index");
-		});
-	});
-
 	//integration tests
 	//when RTA is started and then dialogs are opened
 	QUnit.module("Given RTA is started with an app containing dialog(s)", {
@@ -706,7 +664,6 @@ function(
 		}
 	}, function () {
 		QUnit.test("when dialog with same app component is already open", function(assert) {
-			var fnDone = assert.async();
 			var oRta = new RuntimeAuthoring({
 				rootControl : oComp.getAggregation("rootControl")
 			});
@@ -714,12 +671,9 @@ function(
 				assert.notEqual(oRta._oDesignTime.getRootElements().map(function(oRootElement){
 					return oRootElement.getId();
 				}).indexOf(this.oDialog.getId()), -1, "then the opened dialog was added as a root element");
-				oRta._oDesignTime.attachEventOnce("synced", function () {
-					assert.ok(fnFindOverlay(this.oDialog, oRta._oDesignTime), "then overlay exists for root dialog element");
-					oRta.getDependent('toolbar').destroy();
-					oRta.destroy();
-					fnDone();
-				}, this);
+				assert.ok(fnFindOverlay(this.oDialog, oRta._oDesignTime), "then overlay exists for root dialog element");
+				oRta.getDependent('toolbar').destroy();
+				oRta.destroy();
 			}.bind(this);
 
 			return oRta.start().then(fnAfterRTA.bind(this));

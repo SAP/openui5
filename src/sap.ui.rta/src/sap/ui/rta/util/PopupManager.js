@@ -13,7 +13,9 @@ sap.ui.define([
 	'sap/ui/core/Component',
 	'sap/ui/core/ComponentContainer',
 	'sap/ui/core/Element',
-	'sap/ui/dt/ElementUtil'
+	'sap/ui/dt/util/ZIndexManager',
+	'sap/m/Dialog',
+	'sap/m/Popover'
 ],
 function (
 	jQuery,
@@ -25,7 +27,9 @@ function (
 	Component,
 	ComponentContainer,
 	Element,
-	ElementUtil
+	ZIndexManager,
+	Dialog,
+	Popover
 ) {
 	"use strict";
 
@@ -53,7 +57,7 @@ function (
 			},
 			associations : {
 				/**
-				 * To set the associated controls as an autoCloseArea for all sap.m.Popover/sap.m.Dialog open in RTA mode.
+				 * To set the associated controls as an autoCloseArea for all Popover/Dialog open in RTA mode.
 				 * Needs to be filled before the popup is open.
 				 */
 				autoCloseAreas : {type : "sap.ui.core.Control", multiple : true, singularName : "autoCloseArea"}
@@ -82,27 +86,10 @@ function (
 	PopupManager.prototype.init = function() {
 		// create map for modal states
 		this._oModalState = new Map();
-		this._calculateMaxAllowedZIndex();
-	};
-
-	/**
-	 * Calculates max allowed z-index below open popups and sets the value in {@link sap.ui.dt.ElementUtil}
-	 *
-	 * @private
-	 */
-	PopupManager.prototype._calculateMaxAllowedZIndex = function() {
-		var aOpenPopups = InstanceManager.getOpenDialogs().concat(InstanceManager.getOpenPopovers());
-		var iMaxAllowedZIndex;
-		if (aOpenPopups.length < 1) {
-			return;
-		}
-		aOpenPopups.forEach(function(oPopupElement) {
-			var iPopupZIndex = parseInt(jQuery(oPopupElement.getDomRef()).css("z-index"));
-			iMaxAllowedZIndex = (iMaxAllowedZIndex && iMaxAllowedZIndex < iPopupZIndex)
-				? iMaxAllowedZIndex
-				: iPopupZIndex - 5;
+		this._aPopupFilters = [this._isSupportedPopup.bind(this), this._isPopupAdaptable.bind(this)];
+		this._aPopupFilters.forEach(function (fnFilter) {
+			ZIndexManager.addPopupFilter(fnFilter);
 		});
-		ElementUtil.setMaxAllowedZIndex(iMaxAllowedZIndex);
 	};
 
 	/**
@@ -169,7 +156,8 @@ function (
 				if (this._isPopupAdaptable(oPopupElement)) {
 					aAllSupportedPopups.push(oPopupElement);
 					return true;
-				} else if (this._isSupportedPopup(oPopupElement) && (!(oPopupElement instanceof sap.m.Popover) )) {
+				} else if (oPopupElement instanceof Dialog) {
+					// all modal type popups are supported for which modal property is later turned true, when in Adaptation mode
 					aAllSupportedPopups.push(oPopupElement);
 				}
 			}.bind(this));
@@ -207,7 +195,7 @@ function (
 	 * @private
 	 */
 	PopupManager.prototype._isSupportedPopup = function(oPopup) {
-		return (oPopup instanceof sap.m.Dialog || oPopup instanceof sap.m.Popover);
+		return (oPopup instanceof Dialog || oPopup instanceof Popover);
 	};
 
 	/**
@@ -221,10 +209,10 @@ function (
 			this.setProperty("rta", oRta);
 			var oRootControl = oRta.getRootControlInstance();
 			this.oRtaRootAppComponent = this._getAppComponentForControl(oRootControl);
-			this._overrideInstanceFunctions();
 			//listener for RTA mode change
 			var fnModeChange = this._onModeChange.bind(this);
 			oRta.attachModeChanged(fnModeChange);
+			this._overrideInstanceFunctions();
 		}
 	};
 
@@ -323,7 +311,7 @@ function (
 					this._setModal(true, oPopupElement);
 					//PopupManager internal method
 					this.fireOpen(oPopupElement);
-				} else if (!(oPopupElement instanceof sap.m.Popover)) {
+				} else if (!(oPopupElement instanceof Popover)) {
 					// for all popups which are non-adaptable and non-popovers
 					this._setModal(true, oPopupElement);
 				}
@@ -400,7 +388,16 @@ function (
 		);
 
 		if (this.getRta().getShowToolbars()) {
-			aAutoCloseAreas.push(this.getRta().getToolbar().getDomRef());
+			var oRtaToolbar = this.getRta().getToolbar();
+			var bVisible = !!oRtaToolbar.getVisible();
+			// Check if  RTA is not started -> toolbar is not visible
+			if (!bVisible) {
+				this.getRta().attachEventOnce("start", function() {
+					aAutoCloseAreas.push(oRtaToolbar.getDomRef());
+				});
+			} else {
+				aAutoCloseAreas.push(oRtaToolbar.getDomRef());
+			}
 		}
 		//If clicked from toolbar or popup - autoClose is disabled
 		oPopup.setAutoCloseAreas(aAutoCloseAreas);
@@ -596,6 +593,9 @@ function (
 	PopupManager.prototype.exit = function() {
 		this._restoreInstanceFunctions();
 		delete this._oModalState;
+		this._aPopupFilters.forEach(function (fnFilter) {
+			ZIndexManager.removePopupFilter(fnFilter);
+		});
 	};
 
 	return PopupManager;

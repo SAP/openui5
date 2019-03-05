@@ -13,7 +13,7 @@ sap.ui.define([
 	'sap/ui/dt/ScrollbarSynchronizer',
 	'sap/ui/dt/Util',
 	'sap/base/Log',
-	'sap/ui/dt/util/getNextZIndex'
+	'sap/ui/dt/util/ZIndexManager'
 ],
 function (
 	jQuery,
@@ -25,7 +25,7 @@ function (
 	ScrollbarSynchronizer,
 	Util,
 	Log,
-	getNextZIndex
+	ZIndexManager
 ) {
 	"use strict";
 
@@ -617,9 +617,10 @@ function (
 	};
 
 	/**
-	 * Sets z-index to specified DOM element
-	 * For the root element we use the Popup to retrieve a "high enough" index
-	 * ensuring that the overlays will always be over the controls in the page
+	 * Sets z-index to specified DOM element.
+	 * If no pre-existing z-index value exists for a root element,
+	 * then ZIndexManager is used to calculate a z-index value lower than open popups and higher than other controls.
+	 * @see sap.ui.core.util.ZIndexManager
 	 * @param {object} oGeometry - Geometry object to get reference z-index from
 	 * @param {jQuery} $overlayDomRef - DOM Element to receive the z-index
 	 */
@@ -629,7 +630,7 @@ function (
 		if (Util.isInteger(iZIndex)) {
 			$overlayDomRef.css("z-index", iZIndex);
 		} else if (this.isRoot()) {
-			this._iZIndex = ElementUtil.getZIndexBelowOpenPopups(this._iZIndex) || getNextZIndex();
+			this._iZIndex = this._iZIndex || ZIndexManager.getZIndexBelowPopups();
 			$overlayDomRef.css("z-index", this._iZIndex);
 		}
 	};

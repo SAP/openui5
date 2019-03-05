@@ -148,9 +148,9 @@ sap.ui.define(function () {
 					only: ["sap/ui/dt/Util"]
 				}
 			},
-			"util/getNextZIndex": {
+			"util/ZIndexManager": {
 				coverage: {
-					only: ["sap/ui/dt/util/getNextZIndex"]
+					only: ["sap/ui/dt/util/ZIndexManager"]
 				}
 			},
 
