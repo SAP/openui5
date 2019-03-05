@@ -28,7 +28,7 @@
 
                     // Test Data if not using Excel spreadsheet for copying.
                     //var aData3_OK = [["Luis", "10", "yes", "2018-12-03", "5 USD"],["Leo", "8", "no","2018-12-18", "15.53 EUR"]];
-                    const testA = "Luis\t10\ttrue\t2018-12-03\t5 USD\nLeo\t8\tfalse\t2018-12-18\t10 EUR";
+                    const testA = "Luis\t10\ttrue\t2018-12-03\t5 USD\tLuis White\nLeo\t8\tfalse\t2018-12-18\t10 EUR\tLeo Bond";
 
                     const testB = "\"$$ $$Cell 1 Test Multiline\nApple\nHP\nDELL SE\nIBM\nSAP\"\t\"Cell 2 Test Multiline\nSun\nApple\"\t15\t15,36\t15\t15,36\t15\t15,360 kg\t15,36 JPY\t05.12.14\t5 December 2014\tH26.12.5\t05.12.14 00:00\t00:00:00\t05-12-2014 12:00:00 AM\t15     JPY\tFALSE\tOUT OF STOCK";
 
@@ -95,9 +95,13 @@
                             {
                                 property: "AboPrice",
                                 type: "sap.ui.model.type.Currency"
+                            },
+                            {
+                                property: "FullName",
+                                customParseFunction: function(data) { return ( data.toUpperCase()) }
                             }
                         ];
-                        PasteHelper.validate(aData, aColumnsInfo).then(function(oResult) {
+                        PasteHelper.parse(aData, aColumnsInfo).then(function(oResult) {
                             if (oResult.parsedData)
                             {
                                 showDataInTable(aData);
