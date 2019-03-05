@@ -12,6 +12,14 @@
 		"Price" : "1966.20"
 	}, {
 		"@odata.etag" : "W/\"20190205102113.4535820 \"",
+		"ProductID" : "H-NEW",
+		"Name" : "Notebook New",
+		"WeightMeasure" : null,
+		"WeightUnit" : null,
+		"CurrencyCode" : null,
+		"Price" : null
+	}, {
+		"@odata.etag" : "W/\"20190205102113.4535820 \"",
 		"ProductID" : "H-1000",
 		"Name" : "Notebook Basic 15",
 		"WeightMeasure" : "43.000",

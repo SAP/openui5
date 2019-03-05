@@ -3,11 +3,15 @@
  */
 sap.ui.define([
 	"sap/base/Log",
+	"sap/ui/model/ParseException",
+	"sap/ui/model/ValidateException",
 	"sap/ui/model/odata/type/Currency",
-	"sap/ui/model/type/Currency"
-], function (Log, Currency, BaseCurrency) {
+	"sap/ui/model/type/Currency",
+	"sap/ui/test/TestUtils"
+], function (Log, ParseException, ValidateException, Currency, BaseCurrency, TestUtils) {
 	/*global QUnit, sinon */
 	"use strict";
+	/*eslint max-nested-callbacks: 0 */
 
 	var sDefaultLanguage = sap.ui.getCore().getConfiguration().getLanguage();
 
@@ -30,36 +34,35 @@ sap.ui.define([
 			oType;
 
 		// code under test
-		oType = new Currency(oFormatOptions);
+		oType = new Currency();
 
 		assert.ok(oType instanceof Currency, "is a Currency");
 		assert.ok(oType instanceof BaseCurrency, "is a sap.ui.model.type.Currency");
 		assert.strictEqual(oType.getName(), "sap.ui.model.odata.type.Currency", "type name");
 		assert.deepEqual(oType.oConstraints, {});
-		assert.notStrictEqual(oType.oFormatOptions, oFormatOptions);
-		assert.deepEqual(oType.oFormatOptions, {groupingEnabled : false, parseAsString : true});
-		assert.strictEqual(oType.getInterface(), oType, "returns no interface facade");
-		assert.ok(oType.hasOwnProperty("mCustomCurrencies"));
-		assert.strictEqual(oType.mCustomCurrencys, undefined);
-
-		oFormatOptions.parseAsString = false;
-
-		// code under test
-		oType = new Currency(oFormatOptions);
-
-		assert.strictEqual(oType.oFormatOptions.parseAsString, false);
-		assert.deepEqual(oType.oFormatOptions, oFormatOptions);
+		assert.strictEqual(oType.bParseWithValues, true);
 		assert.notStrictEqual(oType.oFormatOptions, oFormatOptions,
 			"format options are immutable: clone");
-
-		oFormatOptions.parseAsString = undefined;
+		assert.strictEqual(oType.getInterface(), oType, "returns no interface facade");
+		assert.ok(oType.hasOwnProperty("mCustomCurrencies"));
+		assert.strictEqual(oType.mCustomCurrencies, undefined);
+		assert.deepEqual(oType.oFormatOptions, {parseAsString : true});
 
 		// code under test
 		oType = new Currency(oFormatOptions);
 
-		assert.strictEqual(oType.oFormatOptions.parseAsString, undefined);
-		assert.deepEqual(oType.oFormatOptions, oFormatOptions);
-		assert.notStrictEqual(oType.oFormatOptions, oFormatOptions);
+		assert.deepEqual(oType.oFormatOptions, {groupingEnabled : false, parseAsString : true});
+
+		[false, undefined, ""].forEach(function (bParseAsString) {
+			oFormatOptions.parseAsString = bParseAsString;
+
+			// code under test
+			oType = new Currency(oFormatOptions);
+
+			assert.deepEqual(oType.oFormatOptions, {groupingEnabled : false, parseAsString : true});
+			assert.notStrictEqual(oType.oFormatOptions, oFormatOptions,
+				"format options are immutable: clone");
+		});
 
 		assert.throws(function () {
 			oType = new Currency({}, {"minimum" : 42});
@@ -86,12 +89,9 @@ sap.ui.define([
 		[42, "EUR", undefined],
 		[42, undefined, {}],
 		[undefined, "EUR", {}],
-		[42, null, {}],
-		[null, "EUR", {}],
 		[undefined, undefined, {}],
 		[null, undefined, {}],
-		[undefined, null, {}],
-		[null, null, {}]
+		[undefined, null, {}]
 	].forEach(function (aValues, i) {
 		QUnit.test("formatValue returns null, " + i, function (assert) {
 			var oType = new Currency();
@@ -124,7 +124,6 @@ sap.ui.define([
 		oExpectation = oBaseCurrencyMock.expects("formatValue").on(oType)
 			.withExactArgs([77, "USD"], "foo")
 			.returns("77 USD");
-		oBaseCurrencyMock.expects("setFormatOptions").never();
 
 		// code under test: change to aValues[2] does not change existing customizing null
 		assert.strictEqual(oType.formatValue(aValues, "foo"), "77 USD");
@@ -136,10 +135,31 @@ sap.ui.define([
 		oExpectation = oBaseCurrencyMock.expects("formatValue").on(oType)
 			.withExactArgs([78, "USD"], "foo")
 			.returns("78 USD");
-		oBaseCurrencyMock.expects("setFormatOptions").never();
 
 		// code under test: change to aValues[2] does not change existing customizing null
 		assert.strictEqual(oType.formatValue(aValues, "foo"), "78 USD");
+
+		assert.strictEqual(oType.mCustomCurrencies, null, "remains null");
+		assert.notStrictEqual(oExpectation.firstCall.args[0], aValues);
+
+		aValues = [42, null, undefined];
+		oExpectation = oBaseCurrencyMock.expects("formatValue").on(oType)
+			.withExactArgs([42, null], "foo")
+			.returns("42");
+
+		// code under test: delegate to base class formatValue if currency is initial (null)
+		assert.strictEqual(oType.formatValue(aValues, "foo"), "42");
+
+		assert.strictEqual(oType.mCustomCurrencies, null, "remains null");
+		assert.notStrictEqual(oExpectation.firstCall.args[0], aValues);
+
+		aValues = [null, "EUR", undefined];
+		oExpectation = oBaseCurrencyMock.expects("formatValue").on(oType)
+			.withExactArgs([null, "EUR"], "foo")
+			.returns("EUR");
+
+		// code under test: delegate to base class formatValue if amount is initial (null)
+		assert.strictEqual(oType.formatValue(aValues, "foo"), "EUR");
 
 		assert.strictEqual(oType.mCustomCurrencies, null, "remains null");
 		assert.notStrictEqual(oExpectation.firstCall.args[0], aValues);
@@ -147,7 +167,8 @@ sap.ui.define([
 
 	//*********************************************************************************************
 	QUnit.test("formatValue with customizing", function (assert) {
-		var oBaseCurrencyMock = this.mock(BaseCurrency.prototype),
+		var oBaseFormatValueCall,
+			oBaseCurrencyMock = this.mock(BaseCurrency.prototype),
 			mCustomizing = {
 				"BHD" : {StandardCode : "BHD", UnitSpecificScale : 3},
 				"EUR" : {StandardCode : "EUR", UnitSpecificScale : 2}
@@ -158,10 +179,11 @@ sap.ui.define([
 				"EUR" : {isoCode : "EUR", decimals : 2}
 			},
 			oSetFormatOptionsCall,
-			oBaseFormatValueCall,
 			oType = new Currency(),
 			oType2 = new Currency(),
-			oTypeCustomCurrencies;
+			oType3 = new Currency(),
+			oTypeCustomCurrencies,
+			aValues = ["42", "EUR", mCustomizing];
 
 		oSetFormatOptionsCall = oBaseCurrencyMock.expects("setFormatOptions").on(oType)
 			.withExactArgs({customCurrencies : mCustomCurrencies, parseAsString : true});
@@ -170,8 +192,9 @@ sap.ui.define([
 			.returns("EUR 42.00");
 
 		// code under test
-		assert.strictEqual(oType.formatValue(["42", "EUR", mCustomizing], "foo"), "EUR 42.00");
+		assert.strictEqual(oType.formatValue(aValues, "foo"), "EUR 42.00");
 
+		assert.deepEqual(aValues, ["42", "EUR", mCustomizing], "aValues unmodified");
 		assert.deepEqual(oType.mCustomCurrencies, mCustomCurrencies);
 		assert.ok(oSetFormatOptionsCall.calledBefore(oBaseFormatValueCall),
 			"setFormatOptions only called on first call to formatValue");
@@ -219,52 +242,242 @@ sap.ui.define([
 		assert.deepEqual(oType.mCustomCurrencies, mCustomCurrencies);
 		assert.strictEqual(oType.mCustomCurrencies, oTypeCustomCurrencies);
 
+		oBaseCurrencyMock.expects("formatValue").on(oType)
+			.withExactArgs(["78", null], "foo")
+			.returns("78");
+
+		// code under test: delegate to base class formatValue if currency is initial (null)
+		assert.strictEqual(oType.formatValue(["78", null, null], "foo"), "78");
+
+		assert.deepEqual(oType.mCustomCurrencies, mCustomCurrencies);
+		assert.strictEqual(oType.mCustomCurrencies, oTypeCustomCurrencies);
+
+		oBaseCurrencyMock.expects("formatValue").on(oType)
+			.withExactArgs([null, "KG"], "foo")
+			.returns("KG");
+
+		// code under test: delegate to base class formatValue if amount is initial (null)
+		assert.strictEqual(oType.formatValue([null, "KG", null], "foo"), "KG");
+
+		assert.deepEqual(oType.mCustomCurrencies, mCustomCurrencies);
+		assert.strictEqual(oType.mCustomCurrencies, oTypeCustomCurrencies);
+
 		oBaseCurrencyMock.expects("setFormatOptions").on(oType2)
 			.withExactArgs({
 				customCurrencies : sinon.match.same(oType.mCustomCurrencies),
 				parseAsString : true
 			});
 		oBaseCurrencyMock.expects("formatValue").on(oType2)
-			.withExactArgs(["79", "EUR"], "foo")
-			.returns("79.00 EUR");
+			.withExactArgs([null, null], "foo")
+			.returns(null);
 
-		// code under test: new type instance reuses customizing
-		assert.strictEqual(oType2.formatValue(["79", "EUR", mCustomizing], "foo"), "79.00 EUR");
+		// code under test: new type instance reuses customizing, even w/o amount and currency
+		assert.strictEqual(oType2.formatValue([null, null, mCustomizing], "foo"), null);
 
 		assert.deepEqual(oType2.mCustomCurrencies, mCustomCurrencies);
 		assert.strictEqual(oType2.mCustomCurrencies, oTypeCustomCurrencies);
+
+		oBaseCurrencyMock.expects("setFormatOptions").on(oType3)
+			.withExactArgs({
+				customCurrencies : sinon.match.same(oType.mCustomCurrencies),
+				parseAsString : true
+			});
+		oBaseCurrencyMock.expects("formatValue").on(oType3)
+			.withExactArgs([null, "EUR"], "foo")
+			.returns("EUR");
+
+		// code under test: new type instance reuses customizing, even w/o amount
+		assert.strictEqual(oType3.formatValue([null, "EUR", mCustomizing], "foo"), "EUR");
+
+		assert.deepEqual(oType3.mCustomCurrencies, mCustomCurrencies);
+		assert.strictEqual(oType3.mCustomCurrencies, oTypeCustomCurrencies);
 	});
 
 	//*********************************************************************************************
-	[false, true, undefined].forEach(function (bParseAsString) {
-		QUnit.test("parseValue, parseAsString=" + bParseAsString, function (assert) {
-			var mCustomizing = {
-				"BHD" : {StandardCode : "BHD", UnitSpecificScale : 3},
-				"EUR" : {StandardCode : "EUR", UnitSpecificScale : 2}
+	[
+		undefined,
+		{parseAsString : false},
+		{parseAsString : true},
+		{parseAsString : undefined},
+		{parseAsString : ""}
+	].forEach(function (oFormatOptions) {
+		var sTitle = "parseValue, format options=" + JSON.stringify(oFormatOptions);
+
+		QUnit.test(sTitle, function (assert) {
+			var oBaseCurrencyMock = this.mock(BaseCurrency.prototype),
+				aCurrentValues = [{/*unused*/}, "EUR", {/*unused*/}],
+				mCustomizing = {
+					"BHD" : {StandardCode : "BHD", UnitSpecificScale : 3},
+					"EUR" : {StandardCode : "EUR", UnitSpecificScale : 2}
 				},
-				oType = new Currency(bParseAsString !== undefined
-					? {parseAsString : bParseAsString} : undefined);
+				oType = new Currency(oFormatOptions);
 
 			// make customizing available on type instance so that it can be used in parseValue
 			assert.strictEqual(oType.formatValue([42, "EUR", mCustomizing], "string"),
 				"EUR\u00a042.00");
 
-			this.mock(BaseCurrency.prototype).expects("parseValue")
-				.withExactArgs("42 EUR", "string")
+			oBaseCurrencyMock.expects("parseValue")
+				.withExactArgs("42 EUR", "string", sinon.match.same(aCurrentValues))
 				.on(oType)
 				.callThrough();
 
 			// code under test
-			assert.deepEqual(oType.parseValue("42 EUR", "string"),
-				[bParseAsString === false ? 42 : "42", "EUR"]);
+			assert.deepEqual(oType.parseValue("42 EUR", "string", aCurrentValues),
+				[!oFormatOptions || oFormatOptions.parseAsString ? "42" : 42, "EUR"]);
 		});
+	});
+
+	//*********************************************************************************************
+	[false, true].forEach(function (bParseAsString) {
+		var sTitle = "parseValue: remove trailing zeroes, parseAsString=" + bParseAsString;
+
+		QUnit.test(sTitle, function (assert) {
+			var oBaseCurrencyMock = this.mock(BaseCurrency.prototype),
+				aCurrentValues = [{/*unused*/}, null, {/*unused*/}],
+				mCustomizing = {
+					"EUR" : {StandardCode : "EUR", UnitSpecificScale : 2}
+				},
+				oType = new Currency({parseAsString : bParseAsString});
+
+			// make customizing available on type instance so that it can be used in parseValue
+			assert.strictEqual(oType.formatValue([42, "EUR", mCustomizing], "string"),
+				"EUR\u00a042.00");
+
+			oBaseCurrencyMock.expects("parseValue")
+				.withExactArgs("12.100", "string", sinon.match.same(aCurrentValues))
+				.on(oType)
+				.callThrough();
+
+			// code under test: remove trailing zeroes before decimals check, part 1
+			assert.deepEqual(oType.parseValue("12.100", "string", aCurrentValues),
+				[bParseAsString ? "12.1" : 12.1, undefined]);
+
+			oBaseCurrencyMock.expects("parseValue")
+				.withExactArgs("12.000", "string", sinon.match.same(aCurrentValues))
+				.on(oType)
+				.callThrough();
+
+			// code under test: remove trailing zeroes before decimals check, part 2
+			assert.deepEqual(oType.parseValue("12.000", "string", aCurrentValues),
+				[bParseAsString ? "12" : 12, undefined]);
+		});
+	});
+
+	//*********************************************************************************************
+	[false, true].forEach(function (bParseAsString) {
+		var sTitle = "parseValue: check decimals, parseAsString=" + bParseAsString;
+
+		QUnit.test(sTitle, function (assert) {
+			var oBaseCurrencyMock = this.mock(BaseCurrency.prototype),
+				aCurrentValues = [{/*unused*/}, "EUR", {/*unused*/}],
+				mCustomizing = {
+					"EUR" : {StandardCode : "EUR", UnitSpecificScale : 2},
+					"JPY" : {StandardCode : "JPY", UnitSpecificScale : 0}
+				},
+				oType = new Currency({parseAsString : bParseAsString});
+
+			// make customizing available on type instance so that it can be used in parseValue
+			assert.strictEqual(oType.formatValue([42, "EUR", mCustomizing], "string"),
+				"EUR\u00a042.00");
+
+			oBaseCurrencyMock.expects("parseValue")
+				.withExactArgs("12.12 EUR", "string", sinon.match.same(aCurrentValues))
+				.on(oType)
+				.callThrough();
+
+			// code under test: amount with currency
+			assert.deepEqual(oType.parseValue("12.12 EUR", "string", aCurrentValues),
+				[bParseAsString ? "12.12" : 12.12, "EUR"]);
+
+			oBaseCurrencyMock.expects("parseValue")
+				.withExactArgs("12.12", "string", sinon.match.same(aCurrentValues))
+				.on(oType)
+				.callThrough();
+
+			// code under test: amount w/o currency
+			assert.deepEqual(oType.parseValue("12.12", "string", aCurrentValues),
+				[bParseAsString ? "12.12" : 12.12, undefined]);
+		});
+	});
+
+	//*********************************************************************************************
+	QUnit.test("parseValue: check decimals, error cases", function (assert) {
+		var oBaseCurrencyMock = this.mock(BaseCurrency.prototype),
+			aCurrentValues = [{/*unused*/}, "EUR", {/*unused*/}],
+			mCustomizing = {
+				"EUR" : {StandardCode : "EUR", UnitSpecificScale : 2},
+				"JPY" : {StandardCode : "JPY", UnitSpecificScale : 0}
+			},
+			oType = new Currency();
+
+		// make customizing available on type instance so that it can be used in parseValue
+		assert.strictEqual(oType.formatValue([42, "EUR", mCustomizing], "string"),
+			"EUR\u00a042.00");
+
+		oBaseCurrencyMock.expects("parseValue")
+			.withExactArgs("123456789012345678901234567890.123 EUR", "string",
+				sinon.match.same(aCurrentValues))
+			.on(oType)
+			.callThrough();
+
+		// code under test: parse exception with number of decimals
+		TestUtils.withNormalizedMessages(function () {
+			assert.throws(function () {
+				oType.parseValue("123456789012345678901234567890.123 EUR", "string",
+					aCurrentValues);
+			}, new ParseException("EnterNumberFraction 2"));
+		});
+
+		aCurrentValues[1] = "JPY";
+		oBaseCurrencyMock.expects("parseValue")
+			.withExactArgs("12.1", "string", sinon.match.same(aCurrentValues))
+			.on(oType)
+			.callThrough();
+
+		// code under test: parse exception w/o decimals
+		TestUtils.withNormalizedMessages(function () {
+			assert.throws(function () {
+				oType.parseValue("12.1", "string", aCurrentValues);
+			}, new ParseException("EnterInt"));
+		});
+	});
+
+	//*********************************************************************************************
+	QUnit.test("parseValue: empty field", function (assert) {
+		var aCurrentValues = [null, null, {/*unused*/}],
+			mCustomizing = {
+				"EUR" : {StandardCode : "EUR", UnitSpecificScale : 2}
+			},
+			oType = new Currency();
+
+		// make customizing available on type instance so that it can be used in parseValue
+		// there is no "previous unit" -> null
+		assert.strictEqual(oType.formatValue([null, null, mCustomizing], "string"), null);
+
+		this.mock(BaseCurrency.prototype).expects("parseValue")
+			.withExactArgs("42", "string", sinon.match.same(aCurrentValues))
+			.on(oType)
+			.callThrough();
+
+		// code under test
+		assert.deepEqual(oType.parseValue("42", "string", aCurrentValues), ["42", undefined]);
+	});
+
+	//*********************************************************************************************
+	QUnit.test("parseValue: no customizing", function (assert) {
+		var oType = new Currency();
+
+		assert.strictEqual(oType.formatValue([null, null, null], "string"), null);
+
+		// code under test
+		assert.deepEqual(oType.parseValue("42.123 EUR", "string"), ["42.123", "EUR"]);
 	});
 
 	//*********************************************************************************************
 	QUnit.test("parseValue, error if customizing is unset", function (assert) {
 		assert.throws(function () {
 			new Currency().parseValue("42 EUR", "string");
-		}, new Error("Cannot parse value without currency customizing"));
+		}, new ParseException("Cannot parse value without currency customizing"));
 	});
 
 	//*********************************************************************************************
@@ -274,7 +487,7 @@ sap.ui.define([
 		assert.throws(function () {
 			// code under test
 			oType.validateValue(["77", "EUR"]);
-		}, new Error("Cannot validate value without currency customizing"));
+		}, new ValidateException("Cannot validate value without currency customizing"));
 
 		oType.formatValue(["42", "EUR", {"EUR" : {StandardCode : "EUR", UnitSpecificScale : 2}}],
 			"string");
