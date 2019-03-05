@@ -57,6 +57,11 @@ QUnit.test("setTransports", function(assert) {
 	assert.equal(this.oDialog._oTransport.getEnabled(), true);
 });
 
+QUnit.test("Escape handler is set", function (assert) {
+	assert.ok(this.oDialog.getEscapeHandler());
+	assert.equal(typeof this.oDialog.getEscapeHandler(), "function");
+});
+
 QUnit.test("_onPackageChangeError", function(assert) {
 	this.oDialog._onPackageChangeError({});
 	assert.equal(this.oDialog.getProperty("transports").length, 0);
