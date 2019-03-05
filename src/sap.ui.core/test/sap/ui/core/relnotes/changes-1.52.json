@@ -46,7 +46,7 @@
       {
         "id": "61e3b44693289556eb26f0a9b6d8a11cd170b7cd",
         "type": "FEATURE",
-        "text": "jQuery.sap.events: Map \u0027taphold\u0027 to \u0027contextmenu\u0027 for iOS",
+        "text": "jQuery.sap.events: Map 'taphold' to 'contextmenu' for iOS",
         "references": []
       },
       {
@@ -287,7 +287,7 @@
       {
         "id": "d2930b4a579c3aa769e8b8071f8020d199df0a10",
         "type": "FIX",
-        "text": "core.ODataTreeBindingFlat: correctly fire \u0027dataReceived\u0027 for loading nodes",
+        "text": "core.ODataTreeBindingFlat: correctly fire 'dataReceived' for loading nodes",
         "references": [
           {
             "type": "BCP",
@@ -331,7 +331,7 @@
       {
         "id": "c7e3fc822fdd1887881de0a6b0d8f70775036b80",
         "type": "FIX",
-        "text": "core.Popup: use the \u0027deactivate\u0027 event on autoclose area in IE",
+        "text": "core.Popup: use the 'deactivate' event on autoclose area in IE",
         "references": [
           {
             "type": "BCP",
@@ -368,7 +368,7 @@
       {
         "id": "1f00b0c5d5fc92ccdac2133e06a7c248e51b61b2",
         "type": "FIX",
-        "text": "core.samples: fix list of files for \u0027RoutingMasterDetail\u0027 sample",
+        "text": "core.samples: fix list of files for 'RoutingMasterDetail' sample",
         "references": [
           {
             "type": "GitHub",
@@ -449,7 +449,7 @@
       {
         "id": "9ca5af13fb0a1147c7bec174b6d9066659ff171d",
         "type": "FIX",
-        "text": "sap.ui.model.analytics.AnalyticalBinding: getGroupName: avoid cannot read property \u0027formatter\u0027 of undefined",
+        "text": "sap.ui.model.analytics.AnalyticalBinding: getGroupName: avoid cannot read property 'formatter' of undefined",
         "references": [
           {
             "type": "BCP",
@@ -506,7 +506,7 @@
       {
         "id": "672f3fec07a5b177f48b325d349da468bd5efe77",
         "type": "FIX",
-        "text": "sap.ui.models.analytics.AnalyticalBinding: no warning if analytical info does not contain a measure\u0027s currency",
+        "text": "sap.ui.models.analytics.AnalyticalBinding: no warning if analytical info does not contain a measure's currency",
         "references": []
       },
       {
@@ -559,7 +559,7 @@
       {
         "id": "fa2ef1d9b7f832311bbf14501cb85dc4adb81078",
         "type": "FIX",
-        "text": "sap.ui.test.actions.Action: remove unused setting of element\u0027s position for MouseEvent",
+        "text": "sap.ui.test.actions.Action: remove unused setting of element's position for MouseEvent",
         "references": []
       },
       {
@@ -639,7 +639,7 @@
       {
         "id": "be305778d80c67d9de680ab7e170e346c7aa26e6",
         "type": "FIX",
-        "text": "v4.ODataModel: auto-$expand/$select with sap.ui.table.Table and visibleRowCountMode\u003d\"Auto\" sends single requests for table cells",
+        "text": "v4.ODataModel: auto-$expand/$select with sap.ui.table.Table and visibleRowCountMode=\"Auto\" sends single requests for table cells",
         "references": [
           {
             "type": "BCP",
@@ -1010,7 +1010,7 @@
       {
         "id": "10d45dcaf5b274361ea9d9818544b8e121a0bb54",
         "type": "FIX",
-        "text": "core.routing: wait for the root view in case it\u0027s loaded async",
+        "text": "core.routing: wait for the root view in case it's loaded async",
         "references": [
           {
             "type": "BCP",
@@ -1104,7 +1104,7 @@
       {
         "id": "9da163839f938bab1f38fe74aaf72193bbb3af60",
         "type": "FIX",
-        "text": "jquery-mobile-custom: avoid duplicate \u0027tap\u0027 event (continued)",
+        "text": "jquery-mobile-custom: avoid duplicate 'tap' event (continued)",
         "references": [
           {
             "type": "BCP",
@@ -1137,7 +1137,7 @@
       {
         "id": "cdf8ad18874687327ef9134c0d24167d060ba63d",
         "type": "FIX",
-        "text": "sap.ui.model: fix documentation, visibility of Client- \u0026 JSONModel",
+        "text": "sap.ui.model: fix documentation, visibility of Client- & JSONModel",
         "references": [
           {
             "type": "BCP",
@@ -1153,7 +1153,7 @@
       {
         "id": "d33bcc6c7f2914317c1a320f048f35357157df2e",
         "type": "FIX",
-        "text": "AppCacheBuster: take \u003cbase\u003e tag into account when resolving URLs",
+        "text": "AppCacheBuster: take <base> tag into account when resolving URLs",
         "references": []
       },
       {
@@ -1287,44 +1287,85 @@
       {
         "id": "bc87c45d6dbde8d5e673fb2d31edf0953a9275c3",
         "type": "FIX",
-        "text": " CalendarType: user date format \u0027C\u0027 implies use of Persian calendar",
+        "text": "CalendarType: user date format 'C' implies use of Persian calendar",
         "references": []
       },
       {
         "id": "74498f7c9f6080db3e4953aa76351c1c2bf1a713",
         "type": "FIX",
-        "text": " Core#notifyContentDensityChanged: Missing \"theme\" event parameter",
+        "text": "Core#notifyContentDensityChanged: Missing \"theme\" event parameter",
         "references": []
       },
       {
         "id": "de94bc1ffafed6c09aefa251ee5d4ba0c31a9b06",
         "type": "FIX",
-        "text": " ThemeCheck: Fix Cross-Origin issues (MS Edge)",
-        "references": []
+        "text": "ThemeCheck: Fix Cross-Origin issues (MS Edge)",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "002075129500001269922018"
+          }
+        ]
       },
       {
         "id": "09a67f2763032b32677b478434d37f89dc60536e",
         "type": "FIX",
-        "text": " crossroads.js: correctly handle the parse of skipped optional param",
-        "references": []
+        "text": "crossroads.js: correctly handle the parse of skipped optional param",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "002075129400006225322017"
+          },
+          {
+            "type": "BCP",
+            "reference": "002075129400000588072018"
+          }
+        ]
       },
       {
         "id": "b4c3856c5238aed4f09e1dea32685ff801698a84",
         "type": "FIX",
-        "text": " jquery-mobile-custom: Edge button events",
-        "references": []
+        "text": "jquery-mobile-custom: Edge button events",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "002075129500005680192017"
+          },
+          {
+            "type": "BCP",
+            "reference": "002075129500001076112018"
+          },
+          {
+            "type": "BCP",
+            "reference": "1880219029"
+          },
+          {
+            "type": "BCP",
+            "reference": "002075129400004318102017"
+          }
+        ]
       },
       {
         "id": "fff9c06c758621a15b6d4edfe244d8059ac18396",
         "type": "FIX",
-        "text": " sap.ui.core.format.DateFormat: Parsing name of day",
-        "references": []
+        "text": "sap.ui.core.format.DateFormat: Parsing name of day",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "002075129500001179492018"
+          }
+        ]
       },
       {
         "id": "e15ac0d5cb1b9edb1f7a96d99bd1cbcea3b90420",
         "type": "FIX",
-        "text": " v2.ODataModel: metadata url params missing",
-        "references": []
+        "text": "v2.ODataModel: metadata url params missing",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "1780434200"
+          }
+        ]
       }
     ]
   },
@@ -1334,20 +1375,30 @@
       {
         "id": "a9ed04aac3b758a9ebca738de580ffe642817bc9",
         "type": "FIX",
-        "text": " MessageManager: Memory leak",
-        "references": []
+        "text": "MessageManager: Memory leak",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "1880233821"
+          }
+        ]
       },
       {
         "id": "a1f1b6a5cb3b77b7a43e558cf94bc02eb16adbaa",
         "type": "FIX",
-        "text": " jQuery.sap.includeStylesheet: Correct comparison with existing href",
+        "text": "jQuery.sap.includeStylesheet: Correct comparison with existing href",
         "references": []
       },
       {
         "id": "40a25d66311b6408d8c3fe4e30e5625bfe091b6f",
         "type": "FIX",
-        "text": " sap.m.StepInput: do not create global NumericInput",
-        "references": []
+        "text": "sap.m.StepInput: do not create global NumericInput",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "1870117517"
+          }
+        ]
       }
     ]
   },
@@ -1357,26 +1408,50 @@
       {
         "id": "214fe6c93fee973edca0f9562d6daa2313cc2ed1",
         "type": "FIX",
-        "text": " Fix synchronous document.activeElement access in iframes",
-        "references": []
+        "text": "Fix synchronous document.activeElement access in iframes",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "002075129500001736752018"
+          }
+        ]
       },
       {
         "id": "149821e16aef9ad4f46bea3162f362bb399c527a",
         "type": "FIX",
-        "text": " TreeBindingAdapter: Correct selected row index calculation for collapse operations",
-        "references": []
+        "text": "TreeBindingAdapter: Correct selected row index calculation for collapse operations",
+        "references": [
+          {
+            "type": "GitHub",
+            "reference": "1998"
+          },
+          {
+            "type": "BCP",
+            "reference": "1870194953"
+          }
+        ]
       },
       {
         "id": "f0acaab5f2fb65d20d0ee96bf09eb8b81c728882",
         "type": "FIX",
-        "text": " v2.ODataListBinding: Implicit casting for filter values",
-        "references": []
+        "text": "v2.ODataListBinding: Implicit casting for filter values",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "1870002694"
+          }
+        ]
       },
       {
         "id": "5ed4f1e69a12b9c1ebbdd4a8aacce7067016b3af",
         "type": "FIX",
-        "text": " v2.ODataModel: normalizeKey",
-        "references": []
+        "text": "v2.ODataModel: normalizeKey",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "1870173562"
+          }
+        ]
       }
     ]
   },
@@ -1386,20 +1461,35 @@
       {
         "id": "4ad6af4a1df7913c809f60b3f20ed0d7eb54cab0",
         "type": "FIX",
-        "text": " model.Filter: Add new option \"caseSensitive\"",
-        "references": []
+        "text": "model.Filter: Add new option \"caseSensitive\"",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "002075129400002662642018"
+          }
+        ]
       },
       {
         "id": "59a09d124365e3c2b0bb517cec5d427c433a04ec",
         "type": "FIX",
-        "text": " sap.ui.model.analytics.AnalyticalBinding#getDownloadUrl: ensure all spaces are encoded",
-        "references": []
+        "text": "sap.ui.model.analytics.AnalyticalBinding#getDownloadUrl: ensure all spaces are encoded",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "1880277616"
+          }
+        ]
       },
       {
         "id": "9e31be99e3c24ee46034287bd028a975def7ab9d",
         "type": "FIX",
-        "text": " v2.ODataModel: filter \u0027toupper\u0027",
-        "references": []
+        "text": "v2.ODataModel: filter 'toupper'",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "002075129400002662642018"
+          }
+        ]
       }
     ]
   },
@@ -1409,32 +1499,52 @@
       {
         "id": "95679b79ab653c883b13160a2d11cb1ddea81ac2",
         "type": "FIX",
-        "text": " Component.getService(): Promise not rejecting",
+        "text": "Component.getService(): Promise not rejecting",
         "references": []
       },
       {
         "id": "4a70bab583d41ae576e680fce8b0f4c4b7289b66",
         "type": "FIX",
-        "text": " NumberFormat: Fix currency short format for RTL languages",
-        "references": []
+        "text": "NumberFormat: Fix currency short format for RTL languages",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "1880305750"
+          }
+        ]
       },
       {
         "id": "93b7509742e5656c167ac4fb439d1dcc3e0d4a58",
         "type": "FIX",
-        "text": " Theming Parameters: Improve inline parameters decoding",
-        "references": []
+        "text": "Theming Parameters: Improve inline parameters decoding",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "1880276569"
+          }
+        ]
       },
       {
         "id": "2781614ea2f1cff10e134a88c9990577c4f42d81",
         "type": "FIX",
-        "text": " model.ODataUtils: Complement toupper on all filter operators",
-        "references": []
+        "text": "model.ODataUtils: Complement toupper on all filter operators",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "1880379389"
+          }
+        ]
       },
       {
         "id": "da500e59febed1e2be1ccb01a345e8303eaa82d1",
         "type": "FIX",
-        "text": " sap/ui/dom/computedStylePolyfill: document.body is not there yet",
-        "references": []
+        "text": "sap/ui/dom/computedStylePolyfill: document.body is not there yet",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "002028376500003153742018"
+          }
+        ]
       }
     ]
   },
@@ -1444,14 +1554,28 @@
       {
         "id": "c8bb46458e402a4a5d0eb116c4e7168e5597da61",
         "type": "FIX",
-        "text": " AppCacheBuster: ignore query parameter for index lookup",
-        "references": []
+        "text": "AppCacheBuster: ignore query parameter for index lookup",
+        "references": [
+          {
+            "type": "GitHub",
+            "reference": "2116"
+          },
+          {
+            "type": "BCP",
+            "reference": "1880439767"
+          }
+        ]
       },
       {
         "id": "3c52d0505b1155a7ab590cbbc424d9a1f47944e4",
         "type": "FIX",
-        "text": " FilterProcessor: Consider bCaseSensitive even if fnCompare is set",
-        "references": []
+        "text": "FilterProcessor: Consider bCaseSensitive even if fnCompare is set",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "002075129400002662642018"
+          }
+        ]
       }
     ]
   },
@@ -1461,8 +1585,13 @@
       {
         "id": "e0fa7b0bac4235cf6ea5a4f58728da9a54c71131",
         "type": "FIX",
-        "text": " performance/trace/Interaction: accept valid setRequestHeader parameters",
-        "references": []
+        "text": "performance/trace/Interaction: accept valid setRequestHeader parameters",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "002075129500003553622018"
+          }
+        ]
       }
     ]
   },
@@ -1472,14 +1601,24 @@
       {
         "id": "1c850278bb2c34e9e9411366991db78ef227ee8a",
         "type": "FIX",
-        "text": " types/NumberFormat: Currency with RTL locale format/parse",
-        "references": []
+        "text": "types/NumberFormat: Currency with RTL locale format/parse",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "1870355235"
+          }
+        ]
       },
       {
         "id": "a28e40b85c9130e046bb492a19a62c34aec411e2",
         "type": "FIX",
-        "text": " v2.ODataListBinding: 0 count in result now correctly processed",
-        "references": []
+        "text": "v2.ODataListBinding: 0 count in result now correctly processed",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "1870370604"
+          }
+        ]
       }
     ]
   },
@@ -1489,32 +1628,77 @@
       {
         "id": "7cceda650d8f1413f702a6a33575b5ef84346784",
         "type": "FIX",
-        "text": " ODataMetadata: Namespace handling",
-        "references": []
+        "text": "ODataMetadata: Namespace handling",
+        "references": [
+          {
+            "type": "GitHub",
+            "reference": "1952"
+          },
+          {
+            "type": "BCP",
+            "reference": "1870102301"
+          },
+          {
+            "type": "BCP",
+            "reference": "002075129500003912012018"
+          }
+        ]
       },
       {
         "id": "04388ede67eda3e7664eb1676d78bcff42005903",
         "type": "FIX",
-        "text": " Theming Parameters: Prevent timing issues in Safari/Edge",
-        "references": []
+        "text": "Theming Parameters: Prevent timing issues in Safari/Edge",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "002075129400004798362018"
+          },
+          {
+            "type": "BCP",
+            "reference": "002075129500004413932018"
+          }
+        ]
       },
       {
         "id": "9f7d6977b11f497bd4970a0e2d9b06e5eb8c1d5d",
         "type": "FIX",
-        "text": " core.Popup: autoclose is done by using focus event on combi device",
-        "references": []
+        "text": "core.Popup: autoclose is done by using focus event on combi device",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "1870406886"
+          },
+          {
+            "type": "BCP",
+            "reference": "1770586122"
+          }
+        ]
       },
       {
         "id": "bc3cbd6307b15546453c8f4ac64421f49b7979e1",
         "type": "FIX",
-        "text": " format/DateFormat: Multiple instances shouldn\u0027t share fallback formats",
-        "references": []
+        "text": "format/DateFormat: Multiple instances shouldn't share fallback formats",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "1870290668"
+          }
+        ]
       },
       {
         "id": "8ba5033b7a1e6641b036fa65db2d8bdbd75b468f",
         "type": "FIX",
-        "text": " format/DateFormat: Remove unsupported API calls",
-        "references": []
+        "text": "format/DateFormat: Remove unsupported API calls",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "1840498332"
+          },
+          {
+            "type": "BCP",
+            "reference": "1840496311"
+          }
+        ]
       }
     ]
   },
@@ -1524,8 +1708,13 @@
       {
         "id": "05672de0d5b2a16d00b56b88d7afd14e52142847",
         "type": "FIX",
-        "text": " sap.ui.model.analytics.odata4analytics#_renderPropertyFilterValue",
-        "references": []
+        "text": "sap.ui.model.analytics.odata4analytics#_renderPropertyFilterValue",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "1880577456"
+          }
+        ]
       }
     ]
   },
@@ -1535,14 +1724,24 @@
       {
         "id": "db49ccb4964067d5a791dfd362cd6a087b30e604",
         "type": "FIX",
-        "text": " Model.removeBinding: performance",
-        "references": []
+        "text": "Model.removeBinding: performance",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "002075129400005859532018"
+          }
+        ]
       },
       {
         "id": "cc8bdc7029aae7f54f3e3b4ce6ecb4104205b3c4",
         "type": "FIX",
-        "text": " v2.ODataModel: memory leak",
-        "references": []
+        "text": "v2.ODataModel: memory leak",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "1870521429"
+          }
+        ]
       }
     ]
   },
@@ -1552,32 +1751,61 @@
       {
         "id": "a0a4a2785cbf3fe9e40993a9f6416d2b572ecbb4",
         "type": "FIX",
-        "text": " ComboBoxBase: Support for composition characters",
-        "references": []
+        "text": "ComboBoxBase: Support for composition characters",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "1880653816"
+          },
+          {
+            "type": "BCP",
+            "reference": "1880483051"
+          }
+        ]
       },
       {
         "id": "47cb34ec4f0bcebab95d65934be368c3001981cd",
         "type": "FIX",
-        "text": " Device.js: use maxTouchPoints for touch support detection",
-        "references": []
+        "text": "Device.js: use maxTouchPoints for touch support detection",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "1880727749"
+          }
+        ]
       },
       {
         "id": "fec120cec3d65d005e679868f4754f87f4e39358",
         "type": "FIX",
-        "text": " ODataUtils: Enhance setAnnotationOrigin for HanaXS Use Case",
-        "references": []
+        "text": "ODataUtils: Enhance setAnnotationOrigin for HanaXS Use Case",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "002075129400006014532018"
+          }
+        ]
       },
       {
         "id": "9c7e30c2ffb67cf17e92dcf708fa4f22058618f5",
         "type": "FIX",
-        "text": " core.Popup: modal popup should blur the previous DOM after open",
-        "references": []
+        "text": "core.Popup: modal popup should blur the previous DOM after open",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "002075129400005206292018"
+          }
+        ]
       },
       {
         "id": "607ee0a786047e577608d88e7fe4675017b5b703",
         "type": "FIX",
-        "text": " sap/ui/dom/ActiveElementFix: empty object document.activeElement",
-        "references": []
+        "text": "sap/ui/dom/ActiveElementFix: empty object document.activeElement",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "1880306217"
+          }
+        ]
       }
     ]
   },
@@ -1587,20 +1815,35 @@
       {
         "id": "bb2e8487f64cc366fe67f5bf18a2c6db999edccf",
         "type": "FIX",
-        "text": " ODataMessageParser: support \u0027transition\u0027 flag",
-        "references": []
+        "text": "ODataMessageParser: support 'transition' flag",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "1970053675"
+          }
+        ]
       },
       {
         "id": "381daccc69cc1adbdcc317bbb586e010b0197258",
         "type": "FIX",
-        "text": " ODataModel: memory leak",
-        "references": []
+        "text": "ODataModel: memory leak",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "1970044943"
+          }
+        ]
       },
       {
         "id": "d0d50cd27db3713417c49c623fa24e62b3d4a337",
         "type": "FIX",
-        "text": " core.DateFormat: fix am/pm parsing with pattern which contains \".\"",
-        "references": []
+        "text": "core.DateFormat: fix am/pm parsing with pattern which contains \".\"",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "002075129500006279892018"
+          }
+        ]
       }
     ]
   }

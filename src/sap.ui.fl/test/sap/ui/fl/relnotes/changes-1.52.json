@@ -5,13 +5,13 @@
       {
         "id": "e27f8f6254d62ee43d8cc308708d39c82432e39b",
         "type": "FEATURE",
-        "text": " VariantManagement: design enhancements",
+        "text": "VariantManagement: design enhancements",
         "references": []
       },
       {
         "id": "099816fdf40b1711ad51ce0e5fb72448d6c7b6fc",
         "type": "FEATURE",
-        "text": " VariantManagement: show/hide variant list footer",
+        "text": "VariantManagement: show/hide variant list footer",
         "references": []
       },
       {
@@ -29,43 +29,52 @@
       {
         "id": "fe3486a46717bb329fd48e1e007a15f42390c74c",
         "type": "FIX",
-        "text": " Fix minor issues for Control Variant Plugin support",
+        "text": "Fix minor issues for Control Variant Plugin support",
         "references": []
       },
       {
         "id": "37e87eb29b27ef652822f7e5064388064b511cd5",
         "type": "FIX",
-        "text": " Support old variant management control in FakeLrepLocalStorage",
+        "text": "Support old variant management control in FakeLrepLocalStorage",
         "references": []
       },
       {
         "id": "8cae2c3dd738de143d4b96b6110e433a62b285ba",
         "type": "FIX",
-        "text": " VariantManagement- focus indicator with IE",
-        "references": []
+        "text": "VariantManagement- focus indicator with IE",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "1770406233"
+          },
+          {
+            "type": "BCP",
+            "reference": "1770389481"
+          }
+        ]
       },
       {
         "id": "504569d21ec96f625a54f8725380573f1ae6b2fb",
         "type": "FIX",
-        "text": " changes are applied on recreation in initial app startup",
+        "text": "changes are applied on recreation in initial app startup",
         "references": []
       },
       {
         "id": "1b00121331cbd2ed79e0c4ca78fb89bd84942370",
         "type": "FIX",
-        "text": " sap.ui.fl - performance improvement",
+        "text": "sap.ui.fl - performance improvement",
         "references": []
       },
       {
         "id": "94935713437c6960c6c8da30b67bd2937d6e4a3a",
         "type": "FIX",
-        "text": " sap.ui.fl Correctly mark change as being applied changeHandler for xml views",
+        "text": "sap.ui.fl Correctly mark change as being applied changeHandler for xml views",
         "references": []
       },
       {
         "id": "fd4479c2edffeaebe3de8c0dc1b7f98003622d4c",
         "type": "FIX",
-        "text": " sap.ui.fl: Support previously implemented VariantManagement functionality in FakeLrepConnectorStorage",
+        "text": "sap.ui.fl: Support previously implemented VariantManagement functionality in FakeLrepConnectorStorage",
         "references": []
       },
       {
@@ -82,7 +91,7 @@
       {
         "id": "dcbb25d6ea2517f9f5c592d2cad9b7e5814c4abe",
         "type": "FIX",
-        "text": " sap.ui.fl: checkTargetAndApplyChange small fix on applied changes",
+        "text": "sap.ui.fl: checkTargetAndApplyChange small fix on applied changes",
         "references": []
       }
     ]
@@ -93,7 +102,7 @@
       {
         "id": "4daa771f5108c563b5439dea4cc875ed59f9045d",
         "type": "FIX",
-        "text": " Opening file in LREP browser lasts long",
+        "text": "Opening file in LREP browser lasts long",
         "references": []
       }
     ]
@@ -104,8 +113,13 @@
       {
         "id": "807e0f5c570cc60554ee27d9a5b2cfba8c605bf4",
         "type": "FIX",
-        "text": " sap.ui.fl - controlDependencies check bugfix",
-        "references": []
+        "text": "sap.ui.fl - controlDependencies check bugfix",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "1780532198"
+          }
+        ]
       }
     ]
   },
@@ -115,8 +129,13 @@
       {
         "id": "94e889244e28b194afef6d8a689940f30d3bea52",
         "type": "FIX",
-        "text": " sap.ui.fl: Stores flex setting from Persistence class",
-        "references": []
+        "text": "sap.ui.fl: Stores flex setting from Persistence class",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "002075129500000830522018"
+          }
+        ]
       }
     ]
   },
@@ -126,8 +145,13 @@
       {
         "id": "257278128c98ef48d1e5a1fe133d6d516177cb7a",
         "type": "FIX",
-        "text": " sap.ui.fl.FlexController: On control re-creation, initial dependencies from change persistence map are not copied for failing changes",
-        "references": []
+        "text": "sap.ui.fl.FlexController: On control re-creation, initial dependencies from change persistence map are not copied for failing changes",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "002075129400005198692018"
+          }
+        ]
       }
     ]
   }
