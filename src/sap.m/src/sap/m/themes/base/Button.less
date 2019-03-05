@@ -145,6 +145,12 @@ html[data-sap-ui-browser*='ie'] .sapMBtnContentWithIcon {
 	left: auto;
 }
 
+.sapMBtnInner .sapMBtnIcon.sapMImg {
+	height: 2.375rem;
+	max-width: 2.375rem;
+	width: auto;
+}
+
 /* ------------------------------------------------ */
 /* Buttons in a Bar                                 */
 /* (add separators, remove top/bottom border)       */
@@ -211,10 +217,11 @@ html[data-sap-ui-browser*='ie'] .sapMBtnContentWithIcon {
 	  }
 	}
 	.sapMBtnInner > img {
-		height:           1.500rem;
-		width:            1.500rem;
-		margin-left:      0.250rem;
-		margin-right:     0.250rem;
+		height:           1.250rem;
+		width:            auto;
+		max-width:        1.250rem;
+		margin-left:      0rem;
+		margin-right:     0rem;
 	}
 }
 
@@ -246,7 +253,8 @@ html[data-sap-ui-browser*='ie'] .sapMBtnContentWithIcon {
 	}
 	.sapMBtnInner > img {
 		height:           1.250rem;
-		width:            1.250rem;
+		width:            auto;
+		max-width:        1.250rem;
 		margin-left:      0.250rem;
 		margin-right:     0.250rem;
 	}
