@@ -109,6 +109,8 @@ sap.ui.define([
 		this.fnGetOriginalResourcePath = fnGetOriginalResourcePath;
 		this.sMetaPath = _Helper.getMetaPath("/" + sResourcePath);
 		this.mPatchRequests = {}; // map from path to an array of (PATCH) promises
+		// a promise with attached properties $count, $resolve existing while deletes are pending
+		this.oPendingDeletePromise = null;
 		this.mPostRequests = {}; // map from path to an array of entity data (POST bodies)
 		this.oRequestor = oRequestor;
 		this.sResourcePath = sResourcePath;
@@ -140,8 +142,17 @@ sap.ui.define([
 		var aSegments = sPath.split("/"),
 			vDeleteProperty = aSegments.pop(),
 			sParentPath = aSegments.join("/"),
+			fnResolve,
 			that = this;
 
+		if (!this.oPendingDeletePromise) {
+			this.oPendingDeletePromise = new Promise(function (resolve) {
+				fnResolve = resolve;
+			});
+			this.oPendingDeletePromise.$count = 0;
+			this.oPendingDeletePromise.$resolve = fnResolve;
+		}
+		this.oPendingDeletePromise.$count += 1;
 		return this.fetchValue(_GroupLock.$cached, sParentPath).then(function (vCacheData) {
 			var oEntity = vDeleteProperty
 					? vCacheData[Cache.from$skip(vDeleteProperty, vCacheData)]
@@ -158,7 +169,7 @@ sap.ui.define([
 			if (sTransientGroup) {
 				oGroupLock.unlock();
 				that.oRequestor.removePost(sTransientGroup, oEntity);
-				return Promise.resolve();
+				return undefined;
 			}
 			if (oEntity["$ui5.deleting"]) {
 				throw new Error("Must not delete twice: " + sEditUrl);
@@ -196,6 +207,12 @@ sap.ui.define([
 					that.oRequestor.getModelInterface().reportBoundMessages(that.sResourcePath, [],
 						[sEntityPath]);
 				});
+		}).finally(function () {
+			that.oPendingDeletePromise.$count -= 1;
+			if (!that.oPendingDeletePromise.$count) {
+				that.oPendingDeletePromise.$resolve();
+				that.oPendingDeletePromise = null;
+			}
 		});
 	};
 
@@ -1408,6 +1425,7 @@ sap.ui.define([
 			aElementsRange,
 			iEnd,
 			iGapStart = -1,
+			oPromise = this.oPendingDeletePromise || this.aElements.$tail,
 			oRange,
 			that = this;
 
@@ -1418,8 +1436,8 @@ sap.ui.define([
 			throw new Error("Illegal length " + iLength + ", must be >= 0");
 		}
 
-		if (this.aElements.$tail) {
-			return this.aElements.$tail.then(function () {
+		if (oPromise) {
+			return oPromise.then(function () {
 				return that.read(iIndex, iLength, iPrefetchLength, oGroupLock, fnDataRequested);
 			});
 		}

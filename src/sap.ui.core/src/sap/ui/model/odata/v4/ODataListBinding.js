@@ -173,7 +173,8 @@ sap.ui.define([
 	 * @private
 	 */
 	ODataListBinding.prototype._delete = function (oGroupLock, sEditUrl, oContext) {
-		var that = this;
+		var bFireChange = false,
+			that = this;
 
 		if (!oContext.isTransient() && this.hasPendingChanges()) {
 			throw new Error("Cannot delete due to pending changes");
@@ -220,8 +221,15 @@ sap.ui.define([
 					}
 				}
 				that.iMaxLength -= 1; // this doesn't change Infinity
+				bFireChange = true;
+			}
+		).then(function () {
+			// Fire the change asynchronously so that Cache#delete is finished and #getContexts can
+			// read the data synchronously. This is important for extended change detection.
+			if (bFireChange) {
 				that._fireChange({reason : ChangeReason.Remove});
-			});
+			}
+		});
 	};
 
 	/**
@@ -461,7 +469,10 @@ sap.ui.define([
 				that.iCreatedContexts -= 1;
 				that.aContexts.shift();
 				oContext.destroy();
-				that._fireChange({reason : ChangeReason.Remove});
+				return Promise.resolve().then(function () {
+					// fire asynchronously so that _delete is finished before
+					that._fireChange({reason : ChangeReason.Remove});
+				});
 			}
 		).then(function (oCreatedEntity) {
 			var sGroupId, sPredicate;

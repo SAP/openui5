@@ -2973,7 +2973,6 @@ sap.ui.define([
 				},
 				aData = createData(6, 0, true, undefined, bKeyPredicates),
 				aPreviousContexts,
-				oPromise = {},
 				that = this;
 
 			// [-1, 0, 1, 2, undefined, 4, 5]
@@ -2992,7 +2991,7 @@ sap.ui.define([
 			this.mock(oBinding).expects("deleteFromCache")
 				.withExactArgs("myGroup", "EMPLOYEES('2')", "2", sinon.match.func)
 				.callsArgWith(3, 2, aData)
-				.returns(oPromise);
+				.resolves();
 			oBinding.aContexts.forEach(function (oContext) {
 				// #destroy would only be called for created context
 				that.mock(oContext).expects("destroy").never();
@@ -3005,34 +3004,36 @@ sap.ui.define([
 				.withExactArgs({reason : ChangeReason.Remove});
 
 			// code under test
-			assert.strictEqual(
-				oBinding._delete("myGroup", "EMPLOYEES('2')", oBinding.aContexts[3]),
-				oPromise);
-
-			assert.strictEqual(oBinding.iCreatedContexts, 1);
-			assert.strictEqual(oBinding.getLength(), 6);
-			assert.strictEqual(oBinding.aContexts.length, 6);
-			assert.strictEqual(oBinding.aContexts[0], aPreviousContexts[0]);
-			assert.strictEqual(oBinding.aContexts[1], aPreviousContexts[1]);
-			assert.notOk(3 in oBinding.aContexts);
-			oBinding.aContexts.forEach(function (oContext, i) {
-				assert.strictEqual(oContext.getIndex(), i);
-			});
-			if (bKeyPredicates) {
-				assert.strictEqual(oBinding.mPreviousContextsByPath[aPreviousContexts[2].getPath()],
-					aPreviousContexts[2]);
-				assert.strictEqual(oBinding.aContexts[2], aPreviousContexts[3]);
-				assert.strictEqual(oBinding.aContexts[4], aPreviousContexts[5]);
-				assert.strictEqual(oBinding.aContexts[5], aPreviousContexts[6]);
-			} else {
-				assert.strictEqual(oBinding.aContexts[2], aPreviousContexts[2]);
-				assert.strictEqual(oBinding.mPreviousContextsByPath[aPreviousContexts[3].getPath()],
-					aPreviousContexts[3]);
-				assert.strictEqual(oBinding.aContexts[4].getPath(), "/EMPLOYEES/3");
-				assert.strictEqual(oBinding.aContexts[5], aPreviousContexts[5]);
-				assert.strictEqual(oBinding.mPreviousContextsByPath[aPreviousContexts[6].getPath()],
-					aPreviousContexts[6]);
-			}
+			return oBinding._delete("myGroup", "EMPLOYEES('2')", oBinding.aContexts[3])
+				.then(function () {
+					assert.strictEqual(oBinding.iCreatedContexts, 1);
+					assert.strictEqual(oBinding.getLength(), 6);
+					assert.strictEqual(oBinding.aContexts.length, 6);
+					assert.strictEqual(oBinding.aContexts[0], aPreviousContexts[0]);
+					assert.strictEqual(oBinding.aContexts[1], aPreviousContexts[1]);
+					assert.notOk(3 in oBinding.aContexts);
+					oBinding.aContexts.forEach(function (oContext, i) {
+						assert.strictEqual(oContext.getIndex(), i);
+					});
+					if (bKeyPredicates) {
+						assert.strictEqual(
+							oBinding.mPreviousContextsByPath[aPreviousContexts[2].getPath()],
+							aPreviousContexts[2]);
+						assert.strictEqual(oBinding.aContexts[2], aPreviousContexts[3]);
+						assert.strictEqual(oBinding.aContexts[4], aPreviousContexts[5]);
+						assert.strictEqual(oBinding.aContexts[5], aPreviousContexts[6]);
+					} else {
+						assert.strictEqual(oBinding.aContexts[2], aPreviousContexts[2]);
+						assert.strictEqual(
+							oBinding.mPreviousContextsByPath[aPreviousContexts[3].getPath()],
+							aPreviousContexts[3]);
+						assert.strictEqual(oBinding.aContexts[4].getPath(), "/EMPLOYEES/3");
+						assert.strictEqual(oBinding.aContexts[5], aPreviousContexts[5]);
+						assert.strictEqual(
+							oBinding.mPreviousContextsByPath[aPreviousContexts[6].getPath()],
+							aPreviousContexts[6]);
+					}
+				});
 		});
 	});
 	//TODO check the row of a pending update with higher index
@@ -3057,8 +3058,7 @@ sap.ui.define([
 			oBindingMock = this.mock(oBinding),
 			oContext = Context.create(this.oModel, oBinding, "/EMPLOYEES($uid=id-1-23)", -1,
 				Promise.resolve()),
-			oContextMock = this.mock(oContext),
-			oExpectation;
+			oContextMock = this.mock(oContext);
 
 		// simulate created entity which is already persisted
 		oBinding.aContexts.unshift(oContext);
@@ -3067,25 +3067,20 @@ sap.ui.define([
 		oContextMock.expects("isTransient").returns(false);
 		oBindingMock.expects("hasPendingChanges").returns(false);
 
-		oExpectation = oBindingMock.expects("deleteFromCache")
+		oBindingMock.expects("deleteFromCache")
 			.withExactArgs("myGroup", "EMPLOYEES('1')", "-1"/*TODO transientPredicate*/,
-				sinon.match.func);
-
-		// code under test
-		oBinding._delete("myGroup", "EMPLOYEES('1')", oContext);
-
-		assert.strictEqual(oBinding.aContexts[0], oContext, "Created element still available");
-
-		// test callback of deleteFromCache
+				sinon.match.func)
+			.callsArgWith(3, -1)
+			.resolves();
 		oContextMock.expects("destroy").withExactArgs();
 		oBindingMock.expects("_fireChange").withExactArgs({reason : ChangeReason.Remove});
 
 		// code under test
-		oExpectation.args[0][3](0); // call fnCallback
-
-		assert.strictEqual(oBinding.iCreatedContexts, 0);
-		assert.strictEqual(oBinding.aContexts.length, 0);
-		assert.strictEqual(oBinding.iMaxLength, 41, "iMaxLength has been reduced");
+		return oBinding._delete("myGroup", "EMPLOYEES('1')", oContext).then(function () {
+			assert.strictEqual(oBinding.iCreatedContexts, 0);
+			assert.strictEqual(oBinding.aContexts.length, 0);
+			assert.strictEqual(oBinding.iMaxLength, 41, "iMaxLength has been reduced");
+		});
 	});
 
 	//*********************************************************************************************
@@ -3094,7 +3089,8 @@ sap.ui.define([
 			oContext,
 			oExpectation,
 			oInitialData = {},
-			oGroupLock;
+			oGroupLock,
+			oPromise;
 
 		this.mock(this.oModel).expects("lockGroup")
 			.withExactArgs("update", true, sinon.match.object)
@@ -3114,13 +3110,16 @@ sap.ui.define([
 		assert.strictEqual(oBinding.aContexts[0], oContext, "Transient context");
 
 		this.mock(oContext).expects("destroy").withExactArgs();
-		this.mock(oBinding).expects("_fireChange").withExactArgs({reason : ChangeReason.Remove});
 
 		// code under test
-		oExpectation.args[0][5](); // call fnCancelCallback to simulate cancellation
+		oPromise = oExpectation.args[0][5](); // call fnCancelCallback to simulate cancellation
+
+		// expect the event to be fired asynchronously
+		this.mock(oBinding).expects("_fireChange").withExactArgs({reason : ChangeReason.Remove});
 
 		assert.strictEqual(oBinding.iCreatedContexts, 0);
 		assert.strictEqual(oBinding.aContexts.length, 0);
+		return oPromise;
 	});
 
 	//*********************************************************************************************
@@ -3572,6 +3571,8 @@ sap.ui.define([
 	//*********************************************************************************************
 	QUnit.test("delete transient entity", function (assert) {
 		var oBinding = this.bindList("/EMPLOYEES"),
+			oBindingMock = this.mock(oBinding),
+			fnDeleteFromCache = oBinding.deleteFromCache,
 			oContext;
 
 		// initialize with 3 contexts and bLengthFinal===true
@@ -3580,17 +3581,9 @@ sap.ui.define([
 		// remove request mock, all operations on client
 		oBinding.oCachePromise.getResult().oRequestor.request.restore();
 
-		oBinding.attachEventOnce("change", function (oEvent) { // change after create
-			assert.strictEqual(oEvent.getParameter("reason"), ChangeReason.Add, "ADD event");
-
-			oBinding.attachEventOnce("change", function (oEvent) { // change after delete
-				assert.strictEqual(oEvent.getParameter("reason"), ChangeReason.Remove,
-					"REMOVE event");
-				assert.strictEqual(oBinding.iCreatedContexts, 0);
-				assert.strictEqual(oBinding.getLength(), 3);
-			});
-		});
-		this.mock(oBinding).expects("getUpdateGroupId").twice().returns("update");
+		oBindingMock.expects("_fireChange")
+			.withExactArgs({reason : ChangeReason.Add});
+		oBindingMock.expects("getUpdateGroupId").twice().returns("update");
 
 		oContext = oBinding.create();
 		assert.strictEqual(oBinding.iCreatedContexts, 1);
@@ -3601,6 +3594,18 @@ sap.ui.define([
 			assert.ok(oError.canceled, "create promise rejected with 'canceled'");
 		});
 		this.mock(oContext).expects("destroy").withExactArgs();
+		oBindingMock.expects("deleteFromCache").callsFake(function () {
+			return fnDeleteFromCache.apply(this, arguments).then(function () {
+				// the change must only be fired when deleteFromCache is finished
+				// otherwise we run into trouble with extended change detection
+				oBindingMock.expects("_fireChange")
+					.withExactArgs({reason : ChangeReason.Remove})
+					.callsFake(function () {
+						assert.strictEqual(oBinding.iCreatedContexts, 0, "No transient context");
+						assert.strictEqual(oBinding.getLength(), 3);
+					});
+			});
+		});
 
 		// code under test
 		return oContext.delete("$direct").then(function () {

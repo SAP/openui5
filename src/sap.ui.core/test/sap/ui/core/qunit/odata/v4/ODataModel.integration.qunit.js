@@ -900,7 +900,8 @@ sap.ui.define([
 		 * @param {string|object} vRequest The request with the properties "method", "url" and
 		 *   "headers". A string is interpreted as URL with method "GET". Spaces inside the URL are
 		 *   percent encoded automatically.
-		 * @param {object} [oResponse] The response message to be returned from the requestor.
+		 * @param {object|Promise} [oResponse] The response message to be returned from the
+		 *   requestor or a promise on it.
 		 * @param {object} [mResponseHeaders] The response headers to be returned from the
 		 *   requestor.
 		 * @returns {object} The test instance for chaining
@@ -2316,6 +2317,122 @@ sap.ui.define([
 				.changeParameters({$filter : "SalesOrderID gt '0500000001'"});
 
 			return that.waitForChanges(assert);
+		});
+	});
+
+	//*********************************************************************************************
+	// Scenario: Delete multiple entities in a table. Ensure that the request to fill the gap uses
+	// the correct index.
+	// JIRA: CPOUI5UISERVICESV3-1769
+	// BCP:  1980007571
+	QUnit.test("multiple delete: index for gap-filling read requests", function (assert) {
+		var oModel = createSalesOrdersModel({autoExpandSelect : true}),
+			sView = '\
+<Table id="table" growing="true" growingThreshold="3" items="{/SalesOrderList}">\
+	<columns><Column/></columns>\
+	<ColumnListItem>\
+		<Text id="id" text="{SalesOrderID}" />\
+	</ColumnListItem>\
+</Table>',
+			that = this;
+
+		that.expectRequest("SalesOrderList?$select=SalesOrderID&$skip=0&$top=3", {
+				"value" : [
+					{"SalesOrderID" : "0500000001"},
+					{"SalesOrderID" : "0500000002"},
+					{"SalesOrderID" : "0500000003"}
+				]
+			})
+			.expectChange("id", ["0500000001", "0500000002", "0500000003"]);
+
+		return this.createView(assert, sView, oModel).then(function () {
+			var aItems = that.oView.byId("table").getItems();
+
+			that.expectRequest({
+					method : "DELETE",
+					url : "SalesOrderList('0500000002')"
+				})
+				.expectRequest({
+					method : "DELETE",
+					url : "SalesOrderList('0500000003')"
+				})
+				.expectRequest("SalesOrderList?$select=SalesOrderID&$skip=1&$top=2", {
+					"value" : [
+						{"SalesOrderID" : "0500000004"}
+					]
+				})
+				.expectChange("id", "0500000004", 1);
+
+			// code under test
+			return Promise.all([
+				aItems[1].getBindingContext().delete(),
+				aItems[2].getBindingContext().delete(),
+				that.waitForChanges(assert)
+			]);
+		});
+	});
+
+	//*********************************************************************************************
+	// Scenario: Delete in a growing table and then let it grow. Ensure that the gap caused by the
+	// delete is filled.
+	// JIRA: CPOUI5UISERVICESV3-1769
+	// BCP:  1980007571
+	QUnit.test("growing while deleting: index for gap-filling read request", function (assert) {
+		var oModel = createSalesOrdersModel({autoExpandSelect : true}),
+			oTable,
+			sView = '\
+<Table id="table" growing="true" growingThreshold="3" items="{/SalesOrderList}">\
+	<columns><Column/></columns>\
+	<ColumnListItem>\
+		<Text id="id" text="{SalesOrderID}" />\
+	</ColumnListItem>\
+</Table>',
+			that = this;
+
+		that.expectRequest("SalesOrderList?$select=SalesOrderID&$skip=0&$top=3", {
+				"value" : [
+					{"SalesOrderID" : "0500000001"},
+					{"SalesOrderID" : "0500000002"},
+					{"SalesOrderID" : "0500000003"}
+				]
+			})
+			.expectChange("id", ["0500000001", "0500000002", "0500000003"]);
+
+		return this.createView(assert, sView, oModel).then(function () {
+			var oDeletePromise;
+
+			that.expectRequest({
+					method : "DELETE",
+					url : "SalesOrderList('0500000002')"
+				})
+				.expectRequest("SalesOrderList?$select=SalesOrderID&$skip=2&$top=4", {
+					"value" : [
+						{"SalesOrderID" : "0500000004"}
+					]
+				})
+				.expectChange("id", "0500000004", 2);
+
+			oTable = that.oView.byId("table");
+
+			// code under test
+			oDeletePromise = oTable.getItems()[1].getBindingContext().delete();
+			that.oView.byId("table-trigger").firePress();
+
+			return Promise.all([
+				oDeletePromise,
+				that.waitForChanges(assert)
+			]);
+		}).then(function () {
+			assert.deepEqual(
+				oTable.getBinding("items").getCurrentContexts().map(function (oContext) {
+					return oContext.getPath();
+				}),
+				[
+					"/SalesOrderList('0500000001')",
+					"/SalesOrderList('0500000003')",
+					"/SalesOrderList('0500000004')"
+				]
+			);
 		});
 	});
 
@@ -5922,6 +6039,8 @@ sap.ui.define([
 
 			that.oView.byId("vbox").getObjectBinding()
 				.changeParameters({$expand : "TEAM_2_EMPLOYEES($filter=ID eq '2')"});
+
+			return that.waitForChanges(assert);
 		});
 	});
 
