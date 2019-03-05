@@ -886,7 +886,8 @@ sap.ui.define([
 												 || mOptions.scrollDirection === ScrollDirection.BOTH)) {
 				var oVSb = oScrollExtension.getVerticalScrollbar();
 				var iMaxFirstRenderedRowIndex = this._getMaxFirstRenderedRowIndex();
-				var bIsScrollPositionInBuffer = this._getFirstRenderedRowIndex() === iMaxFirstRenderedRowIndex;
+				var bIsScrollPositionInBuffer = TableUtils.isVariableRowHeightEnabled(this)
+												&& this._getFirstRenderedRowIndex() === iMaxFirstRenderedRowIndex;
 				var nScrollRangeRowFraction = VerticalScrollingHelper.getScrollRangeRowFraction(this);
 				var nScrollDeltaFactor = bIsScrollPositionInBuffer ? this._getDefaultRowHeight() : nScrollRangeRowFraction;
 
