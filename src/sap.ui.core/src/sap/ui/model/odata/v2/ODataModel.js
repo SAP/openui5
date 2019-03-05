@@ -3845,7 +3845,7 @@ sap.ui.define([
 	 *
 	 * @param {string} sKey Key of the entity to change
 	 * @param {object} oData The entry data
-	 * @param {boolean} [sUpdateMethod] Sets <code>MERGE/PUT</code> method
+	 * @param {boolean} [sUpdateMethod] Sets <code>MERGE/PUT</code> method, defaults to <code>MERGE</code> if not provided
 	 * @returns {object} The request object
 	 * @private
 	 */
@@ -5247,9 +5247,9 @@ sap.ui.define([
 		var sDeepPath = this.resolveDeep(sPath, oContext);
 		if (oGroupInfo.groupId in this.mDeferredGroups) {
 			mRequests = this.mDeferredRequests;
-			oRequest = this._processChange(sKey, {__metadata : oEntry.__metadata}, undefined, sDeepPath);
+			oRequest = this._processChange(sKey, {__metadata : oEntry.__metadata}, this.sDefaultUpdateMethod, sDeepPath);
 		} else {
-			oRequest = this._processChange(sKey, this._getObject('/' + sKey), undefined, sDeepPath);
+			oRequest = this._processChange(sKey, this._getObject('/' + sKey), this.sDefaultUpdateMethod, sDeepPath);
 		}
 		oRequest.key = sKey;
 		//get params for created entries: could contain success/error handler

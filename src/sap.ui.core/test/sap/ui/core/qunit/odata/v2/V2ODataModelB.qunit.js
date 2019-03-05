@@ -2273,8 +2273,8 @@ sap.ui.define([
 							spy.restore();
 						},
 						error : function(oError) {
-							spy.restore();
 							assert.ok(false, "should not be called if batch off");
+							spy.restore();
 						},
 						merge : false
 					});
@@ -2305,6 +2305,39 @@ sap.ui.define([
 				spy.restore();
 				done();
 			}
+		});
+
+		oModel.attachMetadataLoaded(this, function() {
+			fnTest();
+		});
+	});
+
+	QUnit.test("test oDataModel setProperty defaultUpdateMethod = PUT option", function(assert) {
+		var done = assert.async();
+		oModel = initModel(true, UpdateMethod.Put);
+		oModel.setUseBatch(false);
+		spy = sinon.spy(oModel, "_processChange");
+
+		var fnTest = function(){
+			oModel.read("/ProductSet('HT-1000')", {
+				success : function(oData, oResponse) {
+					oModel.setProperty("/ProductSet('HT-1000')/Price", "4445.8");
+				}
+			});
+		};
+
+		oModel.attachRequestCompleted(this, function(test) {
+			assert.equal(spy.getCall(0).args[2], UpdateMethod.Put);
+			assert.equal(spy.callCount, 1, "processChange call count");
+			var oRequest = spy.returnValues[0];
+			assert.equal(oRequest.method, "PUT", "request method");
+			assert.ok(oRequest.headers['x-http-method'] === undefined, "request method header should not be present");
+			assert.equal(oRequest.requestUri,"/SalesOrderSrv/ProductSet('HT-1000')", "request URI");
+			assert.equal(oRequest.data.Name, "Notebook Basic 15", "request payload name");
+			assert.equal(oRequest.data.Price, "4445.8", "request payload price");
+			assert.equal(oRequest.data.CurrencyCode, "EUR", "request payload currency code should be there and not changed!!!");
+			spy.restore();
+			done();
 		});
 
 		oModel.attachMetadataLoaded(this, function() {
