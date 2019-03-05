@@ -1681,17 +1681,20 @@ sap.ui.define([
 				oCreatePromise = SyncPromise.resolve(
 					bCancel ? Promise.reject(oCreateError) : oCreateResult),
 				fnCancel = function () {},
-				oInitialData = {};
+				oInitialData = {},
+				sTransientPredicate = "($uid=id-1-23)";
 
 			oBinding.mCacheByResourcePath[sCanonicalPath] = oCache;
 
 			this.mock(oCache).expects("create")
-				.withExactArgs("updateGroupId", "EMPLOYEES", "", sinon.match.same(oInitialData),
-					sinon.match.same(fnCancel), /*fnErrorCallback*/sinon.match.func)
+				.withExactArgs("updateGroupId", "EMPLOYEES", "", sTransientPredicate,
+					sinon.match.same(oInitialData), sinon.match.same(fnCancel),
+					/*fnErrorCallback*/sinon.match.func)
 				.returns(oCreatePromise);
 
 			// code under test
-			return oBinding.createInCache("updateGroupId", "EMPLOYEES", "", oInitialData, fnCancel)
+			return oBinding.createInCache("updateGroupId", "EMPLOYEES", "", sTransientPredicate,
+				oInitialData, fnCancel)
 				.then(function (oResult) {
 					assert.strictEqual(bCancel, false);
 					assert.strictEqual(oResult, oCreateResult);
@@ -1717,17 +1720,19 @@ sap.ui.define([
 			oCreatePromise = SyncPromise.resolve(oCreateResult),
 			oGroupLock = new _GroupLock("updateGroupId"),
 			fnCancel = function () {},
-			oInitialData = {};
+			oInitialData = {},
+			sTransientPredicate = "($uid=id-1-23)";
 
 		this.mock(oCache).expects("create")
-			.withExactArgs(sinon.match.same(oGroupLock), "EMPLOYEES", "",
+			.withExactArgs(sinon.match.same(oGroupLock), "EMPLOYEES", "", sTransientPredicate,
 				sinon.match.same(oInitialData), sinon.match.same(fnCancel),
 				/*fnErrorCallback*/sinon.match.func)
 			.returns(oCreatePromise);
 
 		// code under test
-		return oBinding.createInCache(oGroupLock, "EMPLOYEES", "", oInitialData, fnCancel)
-			.then(function (oResult) {
+		return oBinding.createInCache(
+				oGroupLock, "EMPLOYEES", "", sTransientPredicate, oInitialData, fnCancel
+			).then(function (oResult) {
 				assert.strictEqual(oResult, oCreateResult);
 			});
 	});
@@ -1753,18 +1758,20 @@ sap.ui.define([
 			oGroupLock = new _GroupLock("updateGroupId"),
 			oResult = {},
 			oCreatePromise = SyncPromise.resolve(oResult),
-			oInitialData = {};
+			oInitialData = {},
+			sTransientPredicate = "($uid=id-1-23)";
 
 		this.mock(_Helper).expects("buildPath")
 			.withExactArgs(42, "SO_2_SCHEDULE", "")
 			.returns("~");
 		this.mock(oParentBinding).expects("createInCache")
 			.withExactArgs(sinon.match.same(oGroupLock), "SalesOrderList('4711')/SO_2_SCHEDULE",
-				"~", oInitialData, sinon.match.same(fnCancel))
+				"~", sTransientPredicate, oInitialData, sinon.match.same(fnCancel))
 			.returns(oCreatePromise);
 
-		assert.strictEqual(oBinding.createInCache(oGroupLock,
-			"SalesOrderList('4711')/SO_2_SCHEDULE", "", oInitialData, fnCancel).getResult(),
+		assert.strictEqual(
+			oBinding.createInCache(oGroupLock, "SalesOrderList('4711')/SO_2_SCHEDULE", "",
+				sTransientPredicate, oInitialData, fnCancel).getResult(),
 			oResult);
 	});
 
@@ -1787,24 +1794,26 @@ sap.ui.define([
 				oError = new Error(),
 				oExpectation,
 				oGroupLock = new _GroupLock("updateGroupId"),
-				oInitialData = {};
+				oInitialData = {},
+				sTransientPredicate = "($uid=id-1-23)";
 
 			oExpectation = this.mock(oCache).expects("create")
-				.withExactArgs(sinon.match.same(oGroupLock), vPostPath, "",
+				.withExactArgs(sinon.match.same(oGroupLock), vPostPath, "", sTransientPredicate,
 					sinon.match.same(oInitialData), sinon.match.same(fnCancel),
 					/*fnErrorCallback*/sinon.match.func)
 				// we only want to observe fnErrorCallback, hence we neither resolve, nor reject
 				.returns(new SyncPromise(function () {}));
 
 			// code under test
-			oBinding.createInCache(oGroupLock, vPostPath, "", oInitialData, fnCancel);
+			oBinding.createInCache(oGroupLock, vPostPath, "", sTransientPredicate, oInitialData,
+				fnCancel);
 
 			this.mock(oBinding.oModel).expects("reportError")
 				.withExactArgs("POST on 'EMPLOYEES' failed; will be repeated automatically",
 					sClassName, sinon.match.same(oError));
 
 			// code under test
-			oExpectation.args[0][5](oError); // call fnErrorCallback to simulate error
+			oExpectation.args[0][6](oError); // call fnErrorCallback to simulate error
 		});
 	});
 

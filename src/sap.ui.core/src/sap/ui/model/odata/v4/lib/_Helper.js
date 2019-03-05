@@ -20,7 +20,6 @@ sap.ui.define([
 		_Helper,
 		// matches the rest of a segment after '(' and any segment that consists only of a number
 		rNotMetaContext = /\([^/]*|\/-?\d+/g,
-		rNumber = /^-?\d+$/,
 		rPlus = /\+/g,
 		rSingleQuote = /'/g;
 
@@ -649,12 +648,14 @@ sap.ui.define([
 		 *   The properties that have been selected for the given path or undefined otherwise
 		 */
 		getSelectForPath : function (mQueryOptions, sPath) {
+			sPath = sPath[0] === "("
+				? _Helper.getMetaPath(sPath).slice(1) // avoid leading "/"
+				: _Helper.getMetaPath(sPath);
 			if (sPath) {
 				sPath.split("/").some(function (sSegment) {
-					if (!rNumber.test(sSegment)) {
-						mQueryOptions = mQueryOptions && mQueryOptions.$expand
-							&& mQueryOptions.$expand[sSegment];
-					}
+					mQueryOptions = mQueryOptions && mQueryOptions.$expand
+						&& mQueryOptions.$expand[sSegment];
+					return !mQueryOptions;
 				});
 			}
 			return mQueryOptions && mQueryOptions.$select;
@@ -1190,6 +1191,7 @@ sap.ui.define([
 		 *   The properties to be updated in oOldValue; default is all properties from oNewValue
 		 */
 		updateSelected : function (mChangeListeners, sPath, oOldValue, oNewValue, aSelect) {
+			var sPredicate;
 
 			/*
 			 * Take over the property value from source to target and fires an event if the property
@@ -1236,6 +1238,10 @@ sap.ui.define([
 					var sPropertyPath = _Helper.buildPath(sObjectName, sProperty),
 						vPropertyValue = oObject[sProperty];
 
+					if (sProperty === "@$ui5._") {
+						return; // ignore private namespace
+					}
+
 					if (vPropertyValue !== null && typeof vPropertyValue === "object") {
 						buildPropertyPaths(vPropertyValue, sPropertyPath);
 					} else {
@@ -1249,7 +1255,7 @@ sap.ui.define([
 				aSelect = [];
 				buildPropertyPaths(oNewValue);
 			} else {
-				// fetch the selected properties plus the ETag and the key predicate;
+				// fetch the selected properties plus the ETag;
 				// _Cache#visitResponse is called with the response data before updateSelected
 				// copies the selected values to the cache. visitResponse computes
 				// - $count values for collections, which are not relevant for POST (deep create is
@@ -1257,34 +1263,42 @@ sap.ui.define([
 				// - key predicates, which are relevant only for the top level element as no deep
 				//   create is supported
 				// and reports bound messages. Messages need to be copied only if they are selected.
-				aSelect = aSelect.concat("@odata.etag", "@$ui5._/predicate");
+				aSelect = aSelect.concat("@odata.etag");
 			}
 
 			// take over properties from the new value and fire change events
 			aSelect.forEach(function (sProperty) {
 				copyPathValue(sPath, sProperty, oOldValue, oNewValue);
 			});
+			// copy key predicate, but do not fire change event
+			sPredicate = _Helper.getPrivateAnnotation(oNewValue, "predicate");
+			if (sPredicate) {
+				_Helper.setPrivateAnnotation(oOldValue, "predicate", sPredicate);
+			}
 		},
 
 		/**
-		 * Updates certain transient paths from the given map, replacing the "-1" segment with the
-		 * given key predicate.
+		 * Updates certain transient paths from the given map, replacing the given transient
+		 * predicate with the given key predicate.
 		 *
 		 * @param {object} mMap
 		 *   A map from path to anything
-		 * @param {string} sPathInCache
-		 *   A path inside the cache where the "-1" segment should be replaced
+		 * @param {string} sTransientPredicate
+		 *   A (temporary) key predicate for the transient entity: "($uid=...)"
 		 * @param {string} sPredicate
 		 *   The key predicate
 		 */
-		updateTransientPaths : function (mMap, sPathInCache, sPredicate) {
-			var sPath,
-				sPathToMinus1 = _Helper.buildPath(sPathInCache, "-1");
+		updateTransientPaths : function (mMap, sTransientPredicate, sPredicate) {
+			var sPath;
 
 			for (sPath in mMap) {
-				if (sPath.startsWith(sPathToMinus1)) {
-					mMap[sPathInCache + sPredicate + sPath.slice(sPathToMinus1.length)]
-						= mMap[sPath];
+				if (sPath.includes(sTransientPredicate)) {
+					// A path may contain multiple different transient predicates ($uid=...) but a
+					// certain transient predicate can only be once in the path and cannot collide
+					// with an identifier (keys must not start with $) and with a value of a key
+					// predicate (they are encoded by encodeURIComponent which encodes $ with %24
+					// and = with %3D)
+					mMap[sPath.replace(sTransientPredicate, sPredicate)] = mMap[sPath];
 					delete mMap[sPath];
 				}
 			}

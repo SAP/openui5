@@ -1015,11 +1015,11 @@ sap.ui.define([
 		var oMetaContext;
 
 		this.oMetaModelMock.expects("getMetaPath")
-			.withExactArgs("/Foo/-1/bar")
+			.withExactArgs("/Foo($uid=id-1-23)/bar")
 			.returns("/Foo/bar");
 
 		// code under test
-		oMetaContext = this.oMetaModel.getMetaContext("/Foo/-1/bar");
+		oMetaContext = this.oMetaModel.getMetaContext("/Foo($uid=id-1-23)/bar");
 
 		assert.strictEqual(oMetaContext.getModel(), this.oMetaModel);
 		assert.strictEqual(oMetaContext.getPath(), "/Foo/bar");
@@ -2479,7 +2479,7 @@ sap.ui.define([
 			predicate : "(~1)"
 		}]
 	}, { // simple entity in transient context
-		dataPath : "/TEAMS/-1",
+		dataPath : "/TEAMS($uid=id-1-23)",
 		canonicalUrl : "/TEAMS(~1)",
 		requests : [{
 			entityType : "tea_busi.TEAM",
@@ -2712,6 +2712,40 @@ sap.ui.define([
 	}, { // entity set w/o navigation property bindings
 		path : "/ServiceGroups('42')/DefaultSystem|SystemAlias",
 		editUrl : "ServiceGroups('42')/DefaultSystem"
+	}, { // transient predicate
+		path : "/TEAMS($uid=id-1-23)|",
+		fetchPredicates : {
+			"/TEAMS($uid=id-1-23)" : "tea_busi.TEAM"
+		},
+		editUrl : "TEAMS(~0)"
+	}, { // navigation to contained entity within a collection via transient predicate
+		path : "/TEAMS($uid=id-1-23)/TEAM_2_CONTAINED_C($uid=id-1-24)|",
+		fetchPredicates : {
+			"/TEAMS($uid=id-1-23)" : "tea_busi.TEAM",
+			"/TEAMS($uid=id-1-23)/TEAM_2_CONTAINED_C($uid=id-1-24)"
+				: "tea_busi.ContainedC"
+		},
+		editUrl : "TEAMS(~0)/TEAM_2_CONTAINED_C(~1)"
+	}, { // navigation from contained to root entity, resolved via navigation property binding path
+		 // via transient predicate
+		path : "/TEAMS($uid=id-1-23)/TEAM_2_CONTAINED_S/S_2_EMPLOYEE|ID",
+		fetchPredicates : {
+			"/TEAMS($uid=id-1-23)/TEAM_2_CONTAINED_S/S_2_EMPLOYEE" : "tea_busi.Worker"
+		},
+		editUrl : "EMPLOYEES(~0)"
+	}, { // decode entity set initially, with transient predicate
+		path : "/T%E2%82%ACAMS($uid=id-1)|Name",
+		fetchPredicates : {
+			"/T%E2%82%ACAMS($uid=id-1)" : "tea_busi.TEAM"
+		},
+		editUrl : "T%E2%82%ACAMS(~0)"
+	}, { // multiple navigation to root entity via transient predicates
+		path : "/T%E2%82%ACAMS($uid=id-1)/TEAM_2_EMPLOYEES($uid=id-2)/EMPLOYEE_2_TEAM|Name",
+		fetchPredicates : {
+			"/T%E2%82%ACAMS($uid=id-1)/TEAM_2_EMPLOYEES($uid=id-2)/EMPLOYEE_2_TEAM"
+				: "tea_busi.TEAM"
+		},
+		editUrl : "T%E2%82%ACAMS(~0)"
 	}].forEach(function (oFixture) {
 		QUnit.test("fetchUpdateData: " + oFixture.path, function (assert) {
 			var i = oFixture.path.indexOf("|"),
@@ -2719,11 +2753,15 @@ sap.ui.define([
 				sPropertyPath = oFixture.path.slice(i + 1),
 				oContext = Context.create(this.oModel, undefined, sContextPath),
 				oContextMock = this.mock(oContext),
+				sMetaPath = oFixture.path.replace("|", "/"),
 				oPromise,
 				that = this;
 
+			if (sMetaPath.endsWith("/")) {
+				sMetaPath = sMetaPath.slice(0, -1);
+			}
 			this.oMetaModelMock.expects("getMetaPath")
-				.withExactArgs(oFixture.path.replace("|", "/")).returns("~");
+				.withExactArgs(sMetaPath).returns("~");
 			this.oMetaModelMock.expects("fetchObject").withExactArgs("~")
 				.returns(SyncPromise.resolve(Promise.resolve()).then(function () {
 					that.oMetaModelMock.expects("fetchEntityContainer")
@@ -2756,18 +2794,18 @@ sap.ui.define([
 
 	//*********************************************************************************************
 	QUnit.test("fetchUpdateData: transient entity", function (assert) {
-		var oContext = Context.create(this.oModel, undefined, "/TEAMS/-1"),
+		var oContext = Context.create(this.oModel, undefined, "/TEAMS($uid=id-1-23)"),
 			sPropertyPath = "Name";
 
 		this.oMetaModelMock.expects("fetchEntityContainer").twice()
 			.returns(SyncPromise.resolve(mScope));
-		this.mock(oContext).expects("fetchValue").withExactArgs("/TEAMS/-1")
+		this.mock(oContext).expects("fetchValue").withExactArgs("/TEAMS($uid=id-1-23)")
 			.returns(SyncPromise.resolve({"@$ui5._" : {"transient" : "update"}}));
 
 		// code under test
 		return this.oMetaModel.fetchUpdateData(sPropertyPath, oContext).then(function (oResult) {
 			assert.deepEqual(oResult, {
-				entityPath : "/TEAMS/-1",
+				entityPath : "/TEAMS($uid=id-1-23)",
 				editUrl : undefined,
 				propertyPath : "Name"
 			});

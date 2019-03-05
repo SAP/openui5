@@ -15,7 +15,8 @@ sap.ui.define([
 	var aChangeReasonPrecedence = [ChangeReason.Change, ChangeReason.Refresh, ChangeReason.Sort,
 			ChangeReason.Filter],
 		sClassName = "sap.ui.model.odata.v4.ODataBinding",
-		rIndexInPath = /\/-?\d/;
+		// Whether a path segment is an index or contains a transient predicate
+		rIndexOrTransientPredicate = /\/\d|\(\$uid=/;
 
 	/**
 	 * A mixin for all OData V4 bindings.
@@ -314,7 +315,7 @@ sap.ui.define([
 		sContextPath = oContext.getPath();
 		bCanonicalPath = oContext.fetchCanonicalPath
 			&& (this.mParameters && this.mParameters["$$canonicalPath"]
-				|| rIndexInPath.test(sContextPath));
+				|| rIndexOrTransientPredicate.test(sContextPath));
 		oContextPathPromise = bCanonicalPath
 			? oContext.fetchCanonicalPath()
 			: SyncPromise.resolve(sContextPath);
