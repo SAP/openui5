@@ -6,7 +6,11 @@
 		}
 	},
 	"sap.ui5": {
-		"rootView": "sap.ui.table.sample.TreeTable.HierarchyMaintenanceJSONTreeBinding.View",
+		"rootView": {
+			"viewName": "sap.ui.table.sample.TreeTable.HierarchyMaintenanceJSONTreeBinding.View",
+			"type": "XML",
+			"async": true
+		},
 		"libs": {
 			"sap.m": {}
 		},
