@@ -1689,7 +1689,7 @@ sap.ui.define([
 	* @private
 	*/
 	function _informPlanningCalendar(sFuncName){
-		var oPC = _getPlannigCalendar.call(this);
+		var oPC = this._getPlanningCalendar();
 
 		if (oPC) { //it may be a PC object or undefined
 			oPC["_onRow" + sFuncName]();
@@ -1701,7 +1701,7 @@ sap.ui.define([
 	* returns {sap.m.PlanningCalendar}
 	* @private
 	*/
-	function _getPlannigCalendar() {
+	CalendarRow.prototype._getPlanningCalendar = function () {
 		var oParent = this;
 
 		while (oParent.getParent() !== null) {
@@ -1710,7 +1710,7 @@ sap.ui.define([
 			}
 			oParent = oParent.getParent();
 		}
-	}
+	};
 
 	/**
 	* Handles the situation when more than one appointment are selected and they must be deselected
