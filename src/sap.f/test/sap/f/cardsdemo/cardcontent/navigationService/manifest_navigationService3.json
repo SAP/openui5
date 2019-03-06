@@ -18,21 +18,7 @@
 			"icon": {
 				"src": "sap-icon://sales-order"
 			},
-			"status": "100 of 200",
-			"actions": [
-				{
-					"type": "Navigation",
-					"service": "IntentBasedNavigation",
-					"parameters": {
-						"intentSemanticObject": "SalesOrder",
-						"intentAction": "display",
-						"intentParameters": {
-							"a": 1000,
-							"b": "foo"
-						}
-					}
-				}
-			]
+			"status": "100 of 200"
 		},
 		"content": {
 			"data": {

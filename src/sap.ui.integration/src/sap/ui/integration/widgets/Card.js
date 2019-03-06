@@ -241,18 +241,29 @@ sap.ui.define([
 
 		var oHeader = this._oCardManifest.get(MANIFEST_PATHS.HEADER);
 		var oContent = this._oCardManifest.get(MANIFEST_PATHS.CONTENT);
+		var sType = this._oCardManifest.get(MANIFEST_PATHS.TYPE).toLowerCase();
 
 		var bHeaderWithServiceNavigation = oHeader
 			&& oHeader.actions
 			&& oHeader.actions[0].service
 			&& oHeader.actions[0].type === "Navigation";
 
+		var bContentWithServiceNavigation;
+
 		// TODO: Improve... Need to decide if card or content will be responsible for the actions and their parsing.
-		var bContentWithServiceNavigation = oContent
-			&& oContent.item
-			&& oContent.item.actions
-			&& oContent.item.actions[0].service
-			&& oContent.item.actions[0].type === "Navigation";
+		if (sType === "list") {
+			bContentWithServiceNavigation = oContent
+				&& oContent.item
+				&& oContent.item.actions
+				&& oContent.item.actions[0].service
+				&& oContent.item.actions[0].type === "Navigation";
+		} else if (sType === "table") {
+			bContentWithServiceNavigation = oContent
+				&& oContent.row
+				&& oContent.row.actions
+				&& oContent.row.actions[0].service
+				&& oContent.row.actions[0].type === "Navigation";
+		}
 
 		var bContentWithDataService = oContent
 			&& oContent.data
@@ -263,7 +274,8 @@ sap.ui.define([
 		}
 
 		if (bContentWithServiceNavigation) {
-			this._oServiceManager.registerService(oContent.item.actions[0].service, "sap.ui.integration.services.Navigation");
+			var vService = sType === "list" ? oContent.item.actions[0].service : oContent.row.actions[0].service;
+			this._oServiceManager.registerService(vService, "sap.ui.integration.services.Navigation");
 		}
 
 		if (bContentWithDataService) {

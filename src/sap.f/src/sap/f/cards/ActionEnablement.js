@@ -111,7 +111,7 @@ sap.ui.define(["sap/ui/base/ManagedObject", "sap/base/Log", "sap/f/cards/Binding
 			}.bind(this));
 		}
 
-		// List card specific
+		// List and Table card specific
 		function _setActionEnabledState(oAction) {
 
 			var oBindingInfo;
@@ -245,7 +245,7 @@ sap.ui.define(["sap/ui/base/ManagedObject", "sap/base/Log", "sap/f/cards/Binding
 			Control.prototype._attachNavigationAction = _attachNavigationAction;
 
 			// For simplicity do type checking for now.
-			if (Control.prototype.isA("sap.f.cards.ListContent")) {
+			if (Control.prototype.isA("sap.f.cards.ListContent") || Control.prototype.isA("sap.f.cards.TableContent")) {
 				Control.prototype._setItemTypeFormatter = _setItemTypeFormatter;
 				Control.prototype._setActionEnabledState = _setActionEnabledState;
 			}

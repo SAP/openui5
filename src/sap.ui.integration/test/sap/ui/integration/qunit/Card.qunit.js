@@ -459,41 +459,43 @@ function (
 						}
 					]
 				},
-				"columns": [
-					{
-						"label": "Sales Order",
-						"value": "{salesOrder}",
-						"identifier": true
-					},
-					{
-						"label": "Customer",
-						"value": "{customer}"
-					},
-					{
-						"label": "Status",
-						"value": "{status}",
-						"state": "{statusState}"
-					},
-					{
-						"label": "Order ID",
-						"value": "{orderUrl}",
-						"url": "{orderUrl}"
-					},
-					{
-						"label": "Progress",
-						"progressIndicator": {
-							"percent": "{percent}",
-							"text": "{percentValue}",
-							"state": "{progressState}"
+				"row": {
+					"columns": [
+						{
+							"label": "Sales Order",
+							"value": "{salesOrder}",
+							"identifier": true
+						},
+						{
+							"label": "Customer",
+							"value": "{customer}"
+						},
+						{
+							"label": "Status",
+							"value": "{status}",
+							"state": "{statusState}"
+						},
+						{
+							"label": "Order ID",
+							"value": "{orderUrl}",
+							"url": "{orderUrl}"
+						},
+						{
+							"label": "Progress",
+							"progressIndicator": {
+								"percent": "{percent}",
+								"text": "{percentValue}",
+								"state": "{progressState}"
+							}
+						},
+						{
+							"label": "Avatar",
+							"icon": {
+								"src": "{iconSrc}"
+							}
 						}
-					},
-					{
-						"label": "Avatar",
-						"icon": {
-							"src": "{iconSrc}"
-						}
-					}
-				]
+					]
+				}
 			}
 		}
 	};
@@ -972,12 +974,12 @@ function (
 			assert.equal(aColumns.length, 6, "Should have 6 columns.");
 
 			// Columns titles
-			assert.equal(aColumns[0].getHeader().getText(), oManifestContent.columns[0].label, "Should have correct column title");
-			assert.equal(aColumns[1].getHeader().getText(), oManifestContent.columns[1].label, "Should have correct column title");
-			assert.equal(aColumns[2].getHeader().getText(), oManifestContent.columns[2].label, "Should have correct column title");
-			assert.equal(aColumns[3].getHeader().getText(), oManifestContent.columns[3].label, "Should have correct column title");
-			assert.equal(aColumns[4].getHeader().getText(), oManifestContent.columns[4].label, "Should have correct column title");
-			assert.equal(aColumns[5].getHeader().getText(), oManifestContent.columns[5].label, "Should have correct column title");
+			assert.equal(aColumns[0].getHeader().getText(), oManifestContent.row.columns[0].label, "Should have correct column title");
+			assert.equal(aColumns[1].getHeader().getText(), oManifestContent.row.columns[1].label, "Should have correct column title");
+			assert.equal(aColumns[2].getHeader().getText(), oManifestContent.row.columns[2].label, "Should have correct column title");
+			assert.equal(aColumns[3].getHeader().getText(), oManifestContent.row.columns[3].label, "Should have correct column title");
+			assert.equal(aColumns[4].getHeader().getText(), oManifestContent.row.columns[4].label, "Should have correct column title");
+			assert.equal(aColumns[5].getHeader().getText(), oManifestContent.row.columns[5].label, "Should have correct column title");
 
 			// Column cells types
 			assert.ok(aCells[0].isA("sap.m.ObjectIdentifier"), "Column with provided 'identifier' should be of type 'ObjectIdentifier'");
