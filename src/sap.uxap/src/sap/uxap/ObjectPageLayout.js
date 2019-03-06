@@ -908,6 +908,10 @@ sap.ui.define([
 
 		this._cacheDomElements();
 
+		if (this._hasDynamicTitle()) {
+			this.addStyleClass("sapUxAPObjectPageHasDynamicTitle");
+		}
+
 		if (iWidth > 0) {
 			this._updateMedia(iWidth, ObjectPageLayout.MEDIA);
 		}
