@@ -180,9 +180,7 @@ sap.ui.define([
 
 				if (oContext.created()) {
 					// happens only for a created context that is not transient anymore
-					that.iCreatedContexts -= 1;
-					that.aContexts.shift();
-					oContext.destroy();
+					that.destroyCreated(oContext);
 				} else {
 					// prepare all contexts for deletion
 					for (i = iIndex; i < that.aContexts.length; i += 1) {
@@ -389,11 +387,7 @@ sap.ui.define([
 	};
 
 	/**
-	 * Creates a new entity and inserts it at the beginning of the list. As long as the binding
-	 * contains an entity created via this function, you cannot create another entity. This is only
-	 * possible after the creation of the entity has been successfully sent to the server and you
-	 * have called {@link #refresh} at the (parent) binding, which is absolute or not relative to a
-	 * {@link sap.ui.model.odata.v4.Context}, or the new entity is deleted in between.
+	 * Creates a new entity and inserts it at the beginning of the list.
 	 *
 	 * For creating the new entity, the binding's update group ID is used, see binding parameter
 	 * $$updateGroupId of {@link sap.ui.model.odata.v4.ODataModel#bindList}.
@@ -433,8 +427,7 @@ sap.ui.define([
 	 *   {@link sap.ui.model.odata.v4.Context#created} returns a promise that is resolved when the
 	 *   creation is finished
 	 * @throws {Error}
-	 *   If the binding's root binding is suspended, a relative binding is not yet resolved or if
-	 *   the binding already contains an entity created via this function
+	 *   If the binding's root binding is suspended or a relative binding is not yet resolved
 	 *
 	 * @public
 	 * @since 1.43.0
@@ -444,26 +437,22 @@ sap.ui.define([
 			oCreatePromise,
 			oGroupLock,
 			sResolvedPath = this.oModel.resolve(this.sPath, this.oContext),
-			sTransientPredicate,
+			sTransientPredicate = "($uid=" + uid() + ")",
+			sTransientPath = sResolvedPath + sTransientPredicate,
 			that = this;
 
 		if (!sResolvedPath) {
 			throw new Error("Binding is not yet resolved: " + this);
 		}
-		if (this.aContexts[0] && this.aContexts[0].created()) {
-			throw new Error("Must not create twice");
-		}
+
 		this.checkSuspended();
 
-		sTransientPredicate = "($uid=" + uid() + ")";
 		oGroupLock = this.lockGroup(this.getUpdateGroupId(), true); // only for createInCache
 		oCreatePromise = this.createInCache(oGroupLock, this.fetchResourcePath(), "",
 			sTransientPredicate, oInitialData,
 			function () {
 				// cancel callback
-				that.iCreatedContexts -= 1;
-				that.aContexts.shift();
-				oContext.destroy();
+				that.destroyCreated(oContext);
 				return Promise.resolve().then(function () {
 					// fire asynchronously so that _delete is finished before
 					that._fireChange({reason : ChangeReason.Remove});
@@ -493,11 +482,11 @@ sap.ui.define([
 			oGroupLock.unlock(true); // createInCache failed, so the lock might still be blocking
 			throw oError;
 		});
-		oContext = Context.create(this.oModel, this, sResolvedPath + sTransientPredicate, -1,
-			oCreatePromise);
 
-		this.aContexts.unshift(oContext);
 		this.iCreatedContexts += 1;
+		oContext = Context.create(this.oModel, this, sTransientPath, -this.iCreatedContexts,
+			oCreatePromise);
+		this.aContexts.unshift(oContext);
 		this._fireChange({reason : ChangeReason.Add});
 
 		return oContext;
@@ -642,6 +631,30 @@ sap.ui.define([
 
 		asODataParentBinding.prototype.destroy.apply(this);
 		ListBinding.prototype.destroy.apply(this);
+	};
+
+	/**
+	 * Removes the given context for a created entity from the list of contexts and destroys it.
+	 *
+	 * @param {sap.ui.model.Context} oContext
+	 *   The context instance for the created entity to be destroyed
+	 *
+	 * @private
+	 */
+	ODataListBinding.prototype.destroyCreated = function (oContext) {
+		var i,
+			iIndex = oContext.getIndex();
+
+		this.iCreatedContexts -= 1;
+		for (i = 0; i < iIndex; i += 1) {
+			this.aContexts[i].iIndex += 1;
+		}
+		this.aContexts.splice(iIndex, 1);
+		// No need to use mPreviousContextsByPath like in #_delete. Contexts for created elements
+		// cannot be reused because of different $uid. The path of all contexts in aContexts
+		// after the destroyed one is untouched, still points to the same data, hence no checkUpdate
+		// is needed.
+		oContext.destroy();
 	};
 
 	/**
@@ -1096,7 +1109,7 @@ sap.ui.define([
 						};
 					}
 					if (bFireChange) {
-						if (bChanged) {
+						if (bChanged || (that.oDiff && that.oDiff.aDiff.length)) {
 							that._fireChange({reason : sChangeReason});
 						} else { // we cannot keep a diff if we do not tell the control to fetch it!
 							that.oDiff = undefined;
@@ -1482,21 +1495,21 @@ sap.ui.define([
 				that.fireDataRequested();
 			}
 
-			function onRemove(iIndex) {
-				var oContextOfDeletedRow = that.aContexts[iIndex],
-					i;
+			function onRemove() {
+				var i, iIndex;
 
-				that.aContexts.splice(iIndex, 1);
-				if (oContextOfDeletedRow.created()) {
-					that.iCreatedContexts -= 1;
+				if (oContext.created()) {
+					that.destroyCreated(oContext);
 				} else {
+					iIndex = oContext.getIndex();
+					that.aContexts.splice(iIndex, 1);
 					for (i = iIndex; i < that.aContexts.length; i += 1) {
 						if (that.aContexts[i]) {
 							that.aContexts[i].iIndex -= 1;
 						}
 					}
+					oContext.destroy();
 				}
-				oContextOfDeletedRow.destroy();
 				that.iMaxLength -= 1; // this doesn't change Infinity
 				that._fireChange({reason : ChangeReason.Remove});
 			}
@@ -1765,19 +1778,24 @@ sap.ui.define([
 	 */
 	// @override
 	ODataListBinding.prototype.setContext = function (oContext) {
-		var sResolvedPath;
+		var i,
+			sResolvedPath,
+			that = this;
 
 		if (this.oContext !== oContext) {
 			if (this.bRelative) {
 				// Keep the header context even if we lose the parent context, so that the header
 				// context remains unchanged if the parent context is temporarily dropped during a
 				// refresh.
-				if (this.aContexts[0] && this.aContexts[0].isTransient()) {
-					// to allow switching the context for new created entities (transient or not),
-					// we first have to implement a store/restore mechanism for them
-					throw new Error("setContext on relative binding is forbidden if a transient " +
-						"entity exists: " + this);
+				for (i = 0; i < that.iCreatedContexts; i += 1) {
+					if (that.aContexts[i].isTransient()) {
+						// to allow switching the context for new created entities (transient or
+						// not), we first have to implement a store/restore mechanism for them
+						throw new Error("setContext on relative binding is forbidden if a "
+							+ "transient entity exists: " + that);
+					}
 				}
+
 				this.reset();
 				this.fetchCache(oContext);
 				if (oContext) {

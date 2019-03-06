@@ -306,6 +306,22 @@ sap.ui.define([
 		},
 
 		/**
+		 * Checks that the given promise is rejected and the passed result is a cancellation error
+		 * and nothing else.
+		 *
+		 * @param {object} assert The QUnit assert object
+		 * @param {Promise} oPromise The promise to be checked
+		 * @returns {Promise} A promise that resolves after the check is done
+		 */
+		checkCanceled : function (assert, oPromise) {
+			return oPromise.then(function () {
+				assert.ok(false, "unexpected success, 'canceled error' expected");
+			}, function (oError) {
+				assert.strictEqual(oError.canceled, true);
+			});
+		},
+
+		/**
 		 * Checks the messages and finishes the test if no pending changes are left, all
 		 * expected requests have been received and the expected number of messages have been
 		 * reported.
@@ -323,10 +339,12 @@ sap.ui.define([
 				return; // expected messages still missing
 			}
 			for (sControlId in this.mChanges) {
-				if (this.mChanges[sControlId].length) {
-					return;
+				if (!this.hasOnlyOptionalChanges(sControlId)) {
+					if (this.mChanges[sControlId].length) {
+						return;
+					}
+					delete this.mChanges[sControlId];
 				}
-				delete this.mChanges[sControlId];
 			}
 			for (sControlId in this.mListChanges) {
 				// Note: This may be a sparse array
@@ -551,6 +569,123 @@ sap.ui.define([
 			mModelParameters = jQuery.extend({}, {odataVersion : "2.0"}, mModelParameters);
 
 			return createModel("/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/", mModelParameters);
+		},
+
+		/**
+		 * Helper to create a third sales order in a table. Performs checks on change events and
+		 * requests.
+		 *
+		 * @returns {sap.ui.model.odata.v4.Context} Context of the created sales order
+		 */
+		createThird : function () {
+			//TODO: CPOUI5UISERVICESV3-1798: avoid reading duplicates
+			this.expectRequest("SalesOrderList?$select=Note,SalesOrderID&$skip=2&$top=1", {
+					"value" : [{
+						"Note" : "New 2a",
+						"SalesOrderID" : "44a"
+					}]
+				})
+				.expectChange("id", ["", "44", "43", "42", "43a", "44a"])
+				.expectChange("note",
+					["New 3", "New 2", "New 1", "First SalesOrder", "New 1a", "New 2a"]);
+
+			return this.oView.byId("table").getBinding("items").create({Note : "New 3"}, true);
+		},
+
+		/**
+		 * Helper to create two sales orders in a table, saved after each create. Performs checks on
+		 * change events and requests.
+		 *
+		 * @param {object} assert The QUnit assert object
+		 * @returns {Promise} Promise resolving when the test is through
+		 */
+		createTwiceSaveInBetween : function (assert) {
+			var oCreatedContext,
+				oModel = createSalesOrdersModel({
+					autoExpandSelect : true,
+					updateGroupId : "update"
+				}),
+				oTable,
+				sView = '\
+<Table id="table" items="{/SalesOrderList}">\
+	<columns><Column/></columns>\
+	<ColumnListItem>\
+		<Text id="id" text="{SalesOrderID}" />\
+		<Text id="note" text="{Note}" />\
+	</ColumnListItem>\
+</Table>',
+				that = this;
+
+			this.expectRequest("SalesOrderList?$select=Note,SalesOrderID&$skip=0&$top=100", {
+					"value" : [{
+						"Note" : "First SalesOrder",
+						"SalesOrderID" : "42"
+					}]
+				})
+				.expectChange("id", ["42"])
+				.expectChange("note", ["First SalesOrder"]);
+
+			return this.createView(assert, sView, oModel).then(function () {
+				oTable = that.oView.byId("table");
+
+				that.expectChange("id", ["", "42"])
+					.expectChange("note", ["New 1", "First SalesOrder"]);
+
+				oCreatedContext = oTable.getBinding("items").create({Note : "New 1"}, true);
+
+				return that.waitForChanges(assert);
+			}).then(function () {
+				that.expectRequest({
+						method : "POST",
+						url : "SalesOrderList",
+						payload : {"Note" : "New 1"}
+					}, {
+						"Note" : "New 1",
+						"SalesOrderID" : "43"
+					})
+					.expectChange("id", "43", 0);
+
+				return Promise.all([
+					oCreatedContext.created(),
+					that.oModel.submitBatch("update"),
+					that.waitForChanges(assert)
+				]);
+			}).then(function () {
+				//TODO: CPOUI5UISERVICESV3-1798: avoid reading duplicates
+				// when an entity is persisted we increase the counter of server side entries as the
+				// persisted entity might be read from server with a next paging request.
+				// When creating a new entity the client recognizes that there are entries on the
+				// server that have not yet been read and triggers a read request for getting the
+				// missing entities.
+				that.expectRequest("SalesOrderList?$select=Note,SalesOrderID&$skip=1&$top=1", {
+						"value" : [{
+							"Note" : "New 1a",
+							"SalesOrderID" : "43a"
+						}]
+					})
+					.expectChange("id", ["", "43", "42", "43a"])
+					.expectChange("note", ["New 2", "New 1", "First SalesOrder", "New 1a"]);
+
+				oCreatedContext = oTable.getBinding("items").create({Note : "New 2"}, true);
+
+				return that.waitForChanges(assert);
+			}).then(function () {
+				that.expectRequest({
+						method : "POST",
+						url : "SalesOrderList",
+						payload : {"Note" : "New 2"}
+					}, {
+						"Note" : "New 2",
+						"SalesOrderID" : "44"
+					})
+					.expectChange("id", "44", 0);
+
+				return Promise.all([
+					oCreatedContext.created(),
+					that.oModel.submitBatch("update"),
+					that.waitForChanges(assert)
+				]);
+			});
 		},
 
 		/**
@@ -822,6 +957,10 @@ sap.ui.define([
 		 *                                 // expect value "d" for control with ID "foo" in a
 		 *                                 // metamodel table on "/MyEntitySet/ID"
 		 * this.expectChange("foo", "bar").expectChange("foo", "baz"); // expect 2 changes for "foo"
+		 * this.expectChange("foo", null, null); // table.Table sets the binding context on an
+		 *                                       // existing row to null when scrolling
+		 * this.expectChange("foo", null); // row is deleted in table.Table so that its context is
+		 *                                 // destroyed
 		 *
 		 * @param {string} sControlId The control ID
 		 * @param {string|string[]|boolean} [vValue] The expected value, a list of expected values
@@ -925,6 +1064,19 @@ sap.ui.define([
 		},
 
 		/**
+		 * Returns whether expected changes for the control are only optional null values.
+		 *
+		 * @param {string} sControlId The control ID
+		 * @returns {boolean} Whether expected changes for the control are only optional null values
+		 */
+		hasOnlyOptionalChanges : function (sControlId) {
+			return this.bNullOptional &&
+				this.mChanges[sControlId].every(function (vValue) {
+					return vValue === null;
+				});
+		},
+
+		/**
 		 * Allows that the property "text" of the control with the given ID is set to undefined or
 		 * null. This may happen when the property is part of a list, this list is reset and the
 		 * request to deliver the new value is slowed down due to a group lock. (Then the row
@@ -1014,14 +1166,16 @@ sap.ui.define([
 		 * Waits for the expected requests and changes.
 		 *
 		 * @param {object} assert The QUnit assert object
+		 * @param {boolean} [bNullOptional] Whether a non-list change to a null value is optional
 		 * @returns {Promise} A promise that is resolved when all requests have been responded and
 		 *   all expected values for controls have been set
 		 */
-		waitForChanges : function (assert) {
+		waitForChanges : function (assert, bNullOptional) {
 			var that = this;
 
 			return new Promise(function (resolve) {
 				that.resolve = resolve;
+				that.bNullOptional = bNullOptional;
 				// After three seconds everything should have run through
 				// Resolve to have the missing requests and changes reported
 				setTimeout(resolve, 3000);
@@ -1035,6 +1189,10 @@ sap.ui.define([
 				});
 				// Report missing changes
 				for (sControlId in that.mChanges) {
+					if (that.hasOnlyOptionalChanges(sControlId)) {
+						delete that.mChanges[sControlId];
+						continue;
+					}
 					for (i in that.mChanges[sControlId]) {
 						assert.ok(false, sControlId + ": " + that.mChanges[sControlId][i]
 							+ " (not set)");
@@ -2587,8 +2745,8 @@ sap.ui.define([
 
 		this.expectRequest("SalesOrderList('0500000001')?$select=Note,SalesOrderID",
 				{"SalesOrderID" : "0500000001", "Note" : "initial"})
-			.expectRequest("SalesOrderList('0500000001')/SO_2_SOITEM?$select=ItemPosition," +
-				"SalesOrderID&$skip=0&$top=100", {
+			.expectRequest("SalesOrderList('0500000001')/SO_2_SOITEM?$select=ItemPosition,"
+				+ "SalesOrderID&$skip=0&$top=100", {
 					"value" : [
 						{"ItemPosition" : "0000000010"},
 						{"ItemPosition" : "0000000020"}
@@ -2621,8 +2779,8 @@ sap.ui.define([
 		}).then(function () {
 			that.expectRequest("SalesOrderList('0500000001')?$select=Note,SalesOrderID",
 					{"SalesOrderID" : "0500000001", "Note" : "refreshed"})
-				.expectRequest("SalesOrderList('0500000001')/SO_2_SOITEM?$select=ItemPosition," +
-					"SalesOrderID&$skip=0&$top=100", {
+				.expectRequest("SalesOrderList('0500000001')/SO_2_SOITEM?$select=ItemPosition,"
+					+ "SalesOrderID&$skip=0&$top=100", {
 						"value" : [
 							{"ItemPosition" : "0000000010"},
 							{"ItemPosition" : "0000000020"},
@@ -2776,7 +2934,12 @@ sap.ui.define([
 	// Scenario: Create a sales order w/o key properties, enter a note, then submit the batch
 	[false, true].forEach(function (bSkipRefresh) {
 		QUnit.test("Create with user input - bSkipRefresh: " + bSkipRefresh, function (assert) {
-			var sView = '\
+			var oCreatedContext,
+				oModel = createSalesOrdersModel({
+					autoExpandSelect : true,
+					updateGroupId : "update"
+				}),
+				sView = '\
 <Table id="table" items="{/SalesOrderList}">\
 	<columns><Column/><Column/></columns>\
 	<ColumnListItem>\
@@ -2784,10 +2947,6 @@ sap.ui.define([
 		<Text id="companyName" binding="{SO_2_BP}" text="{CompanyName}"/>\
 	</ColumnListItem>\
 </Table>',
-				oModel = createSalesOrdersModel({
-					autoExpandSelect : true,
-					updateGroupId : "update"
-				}),
 				that = this;
 
 			this.expectRequest("SalesOrderList?$select=Note,SalesOrderID"
@@ -2814,7 +2973,7 @@ sap.ui.define([
 					.expectChange("companyName", null)
 					.expectChange("companyName", "SAP");
 
-				oTable.getBinding("items").create({Note : "bar"}, bSkipRefresh);
+				oCreatedContext = oTable.getBinding("items").create({Note : "bar"}, bSkipRefresh);
 				oTable.getItems()[0].getCells()[0].getBinding("value").setValue("baz");
 
 				return that.waitForChanges(assert);
@@ -2843,6 +3002,7 @@ sap.ui.define([
 				}
 
 				return Promise.all([
+					oCreatedContext.created(),
 					that.oModel.submitBatch("update"),
 					that.waitForChanges(assert)
 				]);
@@ -2851,10 +3011,2050 @@ sap.ui.define([
 	});
 
 	//*********************************************************************************************
+	// Scenario: Create multiple w/o refresh: (2) Create two new entities without save in between,
+	// save (CPOUI5UISERVICESV3-1759)
+	QUnit.test("Create multiple w/o refresh: (2)", function (assert) {
+		var oBinding,
+			oCreatedContext0,
+			oCreatedContext1,
+			oModel = createSalesOrdersModel({
+				autoExpandSelect : true,
+				updateGroupId : "update"
+			}),
+			sView = '\
+<Table id="table" items="{/SalesOrderList}">\
+	<columns><Column/></columns>\
+	<ColumnListItem>\
+		<Text id="id" text="{SalesOrderID}" />\
+		<Text id="note" text="{Note}" />\
+	</ColumnListItem>\
+</Table>',
+			that = this;
+
+		this.expectRequest("SalesOrderList?$select=Note,SalesOrderID&$skip=0&$top=100", {
+				"value" : [{
+					"Note" : "First SalesOrder",
+					"SalesOrderID" : "42"
+				}]
+			})
+			.expectChange("id", ["42"])
+			.expectChange("note", ["First SalesOrder"]);
+
+		return this.createView(assert, sView, oModel).then(function () {
+			oBinding = that.oView.byId("table").getBinding("items");
+
+			that.expectChange("id", ["", "42"])
+				.expectChange("note", ["New 1", "First SalesOrder"]);
+
+			oCreatedContext0 = oBinding.create({Note : "New 1"}, true);
+
+			return that.waitForChanges(assert);
+		}).then(function () {
+			that.expectChange("id", "", 1)
+				.expectChange("id", "42", 2)
+				.expectChange("note", ["New 2", "New 1", "First SalesOrder"]);
+
+			oCreatedContext1 = oBinding.create({Note : "New 2"}, true);
+
+			return that.waitForChanges(assert);
+		}).then(function () {
+			that.expectRequest({
+					method : "POST",
+					url : "SalesOrderList",
+					payload : {"Note" : "New 1"}
+				}, {
+					"Note" : "New 1",
+					"SalesOrderID" : "43"
+				})
+				.expectRequest({
+					method : "POST",
+					url : "SalesOrderList",
+					payload : {"Note" : "New 2"}
+				}, {
+					"Note" : "New 2",
+					"SalesOrderID" : "44"
+				})
+				.expectChange("id", ["44", "43"]);
+
+			return Promise.all([
+				oCreatedContext0.created(),
+				oCreatedContext1.created(),
+				that.oModel.submitBatch("update"),
+				that.waitForChanges(assert)
+			]);
+		});
+	});
+
+	//*********************************************************************************************
+	// Scenario: Create multiple w/o refresh: (3) Start with (2), Create third entity, save, delete
+	// third created entity, save (CPOUI5UISERVICESV3-1759)
+	QUnit.test("Create multiple w/o refresh: (3)", function (assert) {
+		var oCreatedContext,
+			that = this;
+
+		return this.createTwiceSaveInBetween(assert).then(function () {
+			oCreatedContext = that.createThird();
+
+			return that.waitForChanges(assert);
+		}).then(function () {
+			that.expectRequest({
+					method : "POST",
+					url : "SalesOrderList",
+					payload : {"Note" : "New 3"}
+				}, {
+					"Note" : "New 3",
+					"SalesOrderID" : "45"
+				})
+				.expectChange("id", "45", 0);
+
+			return Promise.all([
+				oCreatedContext.created(),
+				that.oModel.submitBatch("update"),
+				that.waitForChanges(assert)
+			]);
+		}).then(function () {
+			that.expectRequest({
+					method : "DELETE",
+					url : "SalesOrderList('45')"
+				})
+				.expectChange("id", null) // events for unresolved ODPB after deletion
+				.expectChange("note", null)
+				.expectChange("id", ["44", "43", "42", "43a", "44a"])
+				.expectChange("note", ["New 2", "New 1", "First SalesOrder", "New 1a", "New 2a"]);
+
+			return Promise.all([
+				oCreatedContext.delete("$auto"),
+				that.waitForChanges(assert)
+			]);
+		});
+	});
+
+	//*********************************************************************************************
+	// Scenario: Create multiple w/o refresh: create thrice, then delete last
+	// (4a) Start with (2), Create third entity, no save, reset changes via binding, save
+	// (4b) Start with (2), Create third entity, no save, reset changes via model, save
+	// (5) Start with (2), Create third entity, no save, delete third created entity
+	// CPOUI5UISERVICESV3-1759
+[
+	"Create multiple w/o refresh: (4a)",
+	"Create multiple w/o refresh: (4b)",
+	"Create multiple w/o refresh: (5)"
+].forEach(function (sTitle, i) {
+	QUnit.test(sTitle, function (assert) {
+		var oCreatedContext,
+			that = this;
+
+		function deleteSalesOrder() {
+			if (i === 0) {
+				that.oView.byId("table").getBinding("items").resetChanges();
+			} else if (i === 1) {
+				that.oModel.resetChanges();
+			} else if (i === 2) {
+				return oCreatedContext.delete("$auto");
+			}
+		}
+
+		return this.createTwiceSaveInBetween(assert).then(function () {
+			oCreatedContext = that.createThird();
+
+			return that.waitForChanges(assert);
+		}).then(function () {
+			// no request
+			that.expectChange("id", ["44", "43", "42", "43a", "44a"])
+				.expectChange("note", ["New 2", "New 1", "First SalesOrder", "New 1a", "New 2a"]);
+
+			return Promise.all([
+				oCreatedContext.created().catch(function () {/* avoid uncaught (in promise) */}),
+				deleteSalesOrder(),
+				that.waitForChanges(assert)
+			]);
+		});
+	});
+});
+
+	//*********************************************************************************************
+	// Scenario: Create multiple w/o refresh: (6) Start with (2), create third entity, save, delete
+	// second entity (CPOUI5UISERVICESV3-1759)
+	QUnit.test("Create multiple w/o refresh: (6)", function (assert) {
+		var oCreatedContext,
+			that = this;
+
+		return this.createTwiceSaveInBetween(assert).then(function () {
+			oCreatedContext = that.createThird();
+
+			that.expectRequest({
+					method : "POST",
+					url : "SalesOrderList",
+					payload : {"Note" : "New 3"}
+				}, {
+					"Note" : "New 3",
+					"SalesOrderID" : "45"
+				})
+				.expectChange("id", "45", 0);
+
+			return Promise.all([
+				oCreatedContext.created(),
+				that.oModel.submitBatch("update"),
+				that.waitForChanges(assert)
+			]);
+		}).then(function () {
+			that.expectRequest({
+					method : "DELETE",
+					url : "SalesOrderList('44')"
+				})
+				.expectChange("id", null) // events for unresolved ODPB after deletion
+				.expectChange("note", null)
+				.expectChange("id", [, "43", "42", "43a", "44a"])
+				.expectChange("note", [, "New 1", "First SalesOrder", "New 1a", "New 2a"]);
+
+			return Promise.all([
+				that.oView.byId("table").getItems()[1].getBindingContext().delete("$auto"),
+				that.waitForChanges(assert)
+			]);
+		});
+	});
+
+	//*********************************************************************************************
+	// Scenario: Create multiple w/o refresh: (7) Create thrice without save, delete second entity,
+	// check remaining contexts are still transient and reference the expected data. Read next
+	// elements from server.
+	// CPOUI5UISERVICESV3-1759, CPOUI5UISERVICESV3-1784
+	QUnit.test("Create multiple w/o refresh: (7)", function (assert) {
+		var oBinding,
+			oCreatedContext0,
+			oCreatedContext1,
+			oCreatedContext2,
+			oModel = createSalesOrdersModel({
+				autoExpandSelect : true,
+				updateGroupId : "update"
+			}),
+			sView = '\
+<Table id="table" growing="true" growingThreshold="2" items="{/SalesOrderList}">\
+	<columns><Column/></columns>\
+	<ColumnListItem>\
+		<Text id="id" text="{SalesOrderID}" />\
+		<Text id="note" text="{Note}" />\
+	</ColumnListItem>\
+</Table>',
+			that = this;
+
+		this.expectRequest("SalesOrderList?$select=Note,SalesOrderID&$skip=0&$top=2", {
+				"value" : [{
+					"Note" : "First SalesOrder",
+					"SalesOrderID" : "42"
+				}, {
+					"Note" : "Second SalesOrder",
+					"SalesOrderID" : "43"
+				}]
+			})
+			.expectChange("id", ["42", "43"])
+			.expectChange("note", ["First SalesOrder", "Second SalesOrder"]);
+
+		return this.createView(assert, sView, oModel).then(function () {
+			oBinding = that.oView.byId("table").getBinding("items");
+
+			that.expectChange("id", "", 0)
+				.expectChange("note", "New 1", 0);
+
+			// never persisted or deleted
+			oCreatedContext0 = oBinding.create({Note : "New 1"}, true);
+
+			return that.waitForChanges(assert);
+		}).then(function () {
+			that.expectChange("id", "", 0)
+				.expectChange("note", "New 2", 0);
+
+			oCreatedContext1 = oBinding.create({Note : "New 2"}, true);
+
+			return that.waitForChanges(assert);
+		}).then(function () {
+			that.expectChange("id", "", 0)
+				.expectChange("note", "New 3", 0);
+
+			// never persisted or deleted
+			oCreatedContext2 = oBinding.create({Note : "New 3"}, true);
+
+			return that.waitForChanges(assert);
+		}).then(function () {
+			that.expectChange("id", "", 1)
+				.expectChange("note", "New 1", 1);
+
+			return Promise.all([
+				oCreatedContext1.created().catch(function () {/* avoid uncaught (in promise) */}),
+				oCreatedContext1.delete("$auto"),
+				that.waitForChanges(assert)
+			]);
+		}).then(function () {
+			assert.strictEqual(oCreatedContext2.isTransient(), true);
+			assert.strictEqual(oCreatedContext2.getProperty("Note"), "New 3");
+			// ensure consistency of cached data;
+			// when using key predicate, it does not matter, if the object is contained in the array
+			// of the collection or not, as long as it is contained in $byPredicate map, that object
+			// is used. Only with index path it is possible to see a potential mismatch between
+			// the array of contexts in the ODataListBinding and the collection in the cache.
+			assert.strictEqual(oCreatedContext2.getProperty("/SalesOrderList/-2/Note"), "New 3");
+
+			assert.strictEqual(oCreatedContext0.isTransient(), true);
+			assert.strictEqual(oCreatedContext0.getProperty("Note"), "New 1");
+			assert.strictEqual(oCreatedContext0.getProperty("/SalesOrderList/-1/Note"), "New 1");
+
+			that.expectChange("id", "42", 2)
+				.expectChange("note", "First SalesOrder", 2)
+				.expectChange("id", "43", 3)
+				.expectChange("note", "Second SalesOrder", 3);
+
+			// show more items
+			that.oView.byId("table-trigger").firePress();
+
+			return that.waitForChanges(assert);
+		}).then(function () {
+			that.expectRequest("SalesOrderList?$select=Note,SalesOrderID&$skip=2&$top=2", {
+					"value" : [{
+						"Note" : "Third SalesOrder",
+						"SalesOrderID" : "44"
+					}]
+				})
+				.expectChange("id", "44", 4)
+				.expectChange("note", "Third SalesOrder", 4);
+
+			// show more items - ensure correct server side index for reading more elements
+			that.oView.byId("table-trigger").firePress();
+
+			return that.waitForChanges(assert);
+		});
+	});
+
+	//*********************************************************************************************
+	// Scenario: All pairs test for multi create (1)
+	//  List binding: relative without cache
+	//  Number of transient: 0
+	//  Delete: Context.delete as Context.refresh(bAllowRemoval=true) is not possible
+	//  Table control: sap.m.Table
+	// CPOUI5UISERVICESV3-1792
+	QUnit.test("All pairs test for multi create (1)", function (assert) {
+		var oCreatedContext0,
+			oCreatedContext1,
+			oCreatedContext2,
+			oModel = createSalesOrdersModel({
+				autoExpandSelect : true,
+				updateGroupId : "update"
+			}),
+			oTable,
+			sView = '\
+<FlexBox binding="{/BusinessPartnerList(\'4711\')}">\
+	<Table id="table" growing="true" items="{BP_2_SO}">\
+	<columns><Column/></columns>\
+	<ColumnListItem>\
+		<Text id="id" text="{SalesOrderID}" />\
+		<Text id="note" text="{Note}" />\
+	</ColumnListItem>\
+	</Table>\
+</FlexBox>',
+			that = this;
+
+		this.expectRequest("BusinessPartnerList('4711')?$select=BusinessPartnerID"
+				+ "&$expand=BP_2_SO($select=Note,SalesOrderID)", {
+				"BusinessPartnerID" : "4711",
+				"BP_2_SO" : [{
+					"Note" : "First SalesOrder",
+					"SalesOrderID" : "42"
+				}]
+			})
+			.expectChange("id", ["42"])
+			.expectChange("note", ["First SalesOrder"]);
+
+		return this.createView(assert, sView, oModel).then(function () {
+			var oBinding;
+
+			oTable = that.oView.byId("table");
+			oBinding = oTable.getBinding("items");
+
+			that.expectChange("id", ["", "", ""])
+				.expectChange("note", ["New 3", "New 2", "New 1"]);
+
+			oCreatedContext0 = oBinding.create({Note : "New 1"}, true);
+			oCreatedContext1 = oBinding.create({Note : "New 2"}, true);
+			oCreatedContext2 = oBinding.create({Note : "New 3"}, true);
+
+			return that.waitForChanges(assert);
+		}).then(function () {
+			that.expectRequest({
+					batchNo : 1,
+					method : "POST",
+					url : "BusinessPartnerList('4711')/BP_2_SO",
+					payload : {"Note" : "New 1"}
+				}, {
+					"Note" : "New 1",
+					"SalesOrderID" : "43"
+				})
+				.expectRequest({
+					batchNo : 1,
+					method : "POST",
+					url : "BusinessPartnerList('4711')/BP_2_SO",
+					payload : {"Note" : "New 2"}
+				}, {
+					"Note" : "New 2",
+					"SalesOrderID" : "44"
+				})
+				.expectRequest({
+					batchNo : 1,
+					method : "POST",
+					url : "BusinessPartnerList('4711')/BP_2_SO",
+					payload : {"Note" : "New 3"}
+				}, {
+					"Note" : "New 3",
+					"SalesOrderID" : "45"
+				})
+				.expectChange("id", ["45", "44", "43"]);
+
+			return Promise.all([
+				oCreatedContext0.created(),
+				oCreatedContext1.created(),
+				oCreatedContext2.created(),
+				that.oModel.submitBatch("update"),
+				that.waitForChanges(assert)
+			]);
+		}).then(function () {
+			that.expectRequest({
+					method : "DELETE",
+					url : "SalesOrderList('44')"
+				})
+				.expectChange("id", null) // events for unresolved ODPB after deletion
+				.expectChange("note", null)
+				//TODO: Unexpected change events for unchanged rows 0,1 -> CPOUI5UISERVICESV3-1810
+				.expectChange("id", ["45", "43"])
+				.expectChange("note", ["New 3", "New 1"]);
+
+			return Promise.all([
+				oTable.getItems()[1].getBindingContext().delete("$auto"),
+				that.waitForChanges(assert)
+			]);
+		});
+	});
+
+	//*********************************************************************************************
+	// Scenario: All pairs test for multi create (2)
+	//  List binding: absolute
+	//  Number of transient: 2
+	//  Delete: Context.delete
+	//  Table control: sap.ui.table.Table
+	//  Additional tests: update last, transient: update of POST payload expected
+	// CPOUI5UISERVICESV3-1792
+	QUnit.test("All pairs test for multi create (2)", function (assert) {
+		var oBinding,
+			oCreatedContext0,
+			oCreatedContext1,
+			oCreatedContext2,
+			oModel = createSalesOrdersModel({
+				autoExpandSelect : true,
+				updateGroupId : "update"
+			}),
+			oTable,
+			sView = '\
+<t:Table id="table" rows="{/SalesOrderList}" visibleRowCount="2">\
+	<t:Column>\
+		<t:template>\
+			<Text id="id" text="{SalesOrderID}" />\
+		</t:template>\
+	</t:Column>\
+	<t:Column>\
+		<t:template>\
+			<Input id="note" value="{Note}" />\
+		</t:template>\
+	</t:Column>\
+</t:Table>',
+			that = this;
+
+		this.expectRequest("SalesOrderList?$select=Note,SalesOrderID&$skip=0&$top=102", {
+				"value" : [{
+					"Note" : "First SalesOrder",
+					"SalesOrderID" : "42"
+				}]
+			})
+			.expectChange("id", ["42"])
+			.expectChange("note", ["First SalesOrder"]);
+
+		return this.createView(assert, sView, oModel).then(function () {
+			oTable = that.oView.byId("table");
+			oBinding = oTable.getBinding("rows");
+
+			that.expectChange("id", ["", "42"])
+				.expectChange("note", ["New 1", "First SalesOrder"]);
+
+			oCreatedContext0 = oBinding.create({Note : "New 1"}, true);
+
+			return that.waitForChanges(assert);
+		}).then(function () {
+			that.expectRequest({
+					method : "POST",
+					url : "SalesOrderList",
+					payload : {"Note" : "New 1"}
+				}, {
+					"Note" : "New 1",
+					"SalesOrderID" : "43"
+				})
+				.expectChange("id", "43", 0);
+
+			return Promise.all([
+				oCreatedContext0.created(),
+				that.oModel.submitBatch("update"),
+				that.waitForChanges(assert)
+			]);
+		}).then(function () {
+			//TODO: CPOUI5UISERVICESV3-1798: avoid reading duplicates
+			that.expectRequest("SalesOrderList?$select=Note,SalesOrderID&$skip=1&$top=1", {
+					"value" : [{
+						"Note" : "New 1a",
+						"SalesOrderID" : "43a"
+					}]
+				})
+				.expectChange("id", ["", ""])
+				.expectChange("note", ["New 3", "New 2"]);
+
+			oCreatedContext1 = oBinding.create({Note : "New 2"}, true);
+			oCreatedContext2 = oBinding.create({Note : "New 3"}, true);
+
+			return that.waitForChanges(assert);
+		}).then(function () {
+			var aRows = oTable.getRows();
+
+			// check row here because table calls getContexts for event ChangeReason.Add async.
+			assert.strictEqual(aRows[0].getBindingContext(), oCreatedContext2);
+			assert.strictEqual(aRows[1].getBindingContext(), oCreatedContext1);
+
+			that.expectChange("id", null)
+				.expectChange("note", null)
+				.expectChange("id", "43", 1)
+				.expectChange("note", "New 1", 1);
+
+			return Promise.all([
+				oCreatedContext1.created().catch(function () {/* avoid uncaught (in promise) */}),
+				oCreatedContext1.delete("$auto"),
+				that.waitForChanges(assert, true)
+			]);
+		}).then(function () {
+			that.expectChange("id", "42", 2)
+				.expectChange("note", "First SalesOrder", 2)
+				.expectChange("id", "43a", 3)
+				.expectChange("note", "New 1a", 3);
+
+			oTable.setFirstVisibleRow(2);
+
+			return that.waitForChanges(assert);
+		}).then(function () {
+			that.expectChange("id", ["", "43"])
+				.expectChange("note", ["New 3", "New 1"]);
+
+			oTable.setFirstVisibleRow(0);
+
+			return that.waitForChanges(assert);
+		}).then(function () {
+			var aRows = oTable.getRows();
+
+			// table calls getContexts after setFirstVisibleRow asynchronously
+			assert.strictEqual(aRows[0].getBindingContext(), oCreatedContext2, "1");
+			assert.strictEqual(oCreatedContext2.isTransient(), true);
+			assert.strictEqual(aRows[1].getBindingContext(), oCreatedContext0, "2");
+			assert.strictEqual(oCreatedContext0.isTransient(), false);
+
+			that.expectRequest({
+					method : "POST",
+					url : "SalesOrderList",
+					payload : {"Note" : "New 3 - Changed"}
+				}, {
+					"Note" : "New 3 - Changed",
+					"SalesOrderID" : "44"
+				})
+				.expectChange("id", "44", 0)
+				.expectChange("note", "New 3 - Changed", 0);
+
+			aRows[0].getCells()[1].getBinding("value").setValue("New 3 - Changed");
+
+			return Promise.all([
+				oCreatedContext2.created(),
+				that.oModel.submitBatch("update"),
+				that.waitForChanges(assert)
+			]);
+		}).then(function () {
+			assert.strictEqual(oCreatedContext2.isTransient(), false);
+		});
+	});
+
+	//*********************************************************************************************
+	// Scenario: All pairs test for multi create (3)
+	//  List binding: relative with cache
+	//  Number of transient: 0
+	//  Delete: Context.delete
+	//  Table control: sap.ui.table.Table
+	// CPOUI5UISERVICESV3-1792
+	QUnit.test("All pairs test for multi create (3)", function (assert) {
+		var oCreatedContext0,
+			oCreatedContext1,
+			oCreatedContext2,
+			oModel = createSalesOrdersModel({
+				autoExpandSelect : true,
+				updateGroupId : "update"
+			}),
+			oTable,
+			sView = '\
+<FlexBox binding="{/BusinessPartnerList(\'4711\')}">\
+	<t:Table id="table" rows="{path : \'BP_2_SO\', parameters : {$$ownRequest : true}}"\
+			threshold="0" visibleRowCount="2">\
+		<t:Column>\
+			<t:template>\
+				<Text id="id" text="{SalesOrderID}" />\
+			</t:template>\
+		</t:Column>\
+		<t:Column>\
+			<t:template>\
+				<Text id="note" text="{Note}" />\
+			</t:template>\
+		</t:Column>\
+	</t:Table>\
+</FlexBox>',
+			that = this;
+
+		this.expectRequest("BusinessPartnerList('4711')/BP_2_SO?$select=Note,SalesOrderID"
+				+ "&$skip=0&$top=2", {
+				"value" : [{
+					"Note" : "First SalesOrder",
+					"SalesOrderID" : "42"
+				}]
+			})
+			.expectChange("id", ["42"])
+			.expectChange("note", ["First SalesOrder"]);
+
+		return this.createView(assert, sView, oModel).then(function () {
+			var oBinding;
+
+			oTable = that.oView.byId("table");
+			oBinding = oTable.getBinding("rows");
+
+			that.expectChange("id", ["", ""])
+				.expectChange("note", ["New 3", "New 2"]);
+
+			oCreatedContext0 = oBinding.create({Note : "New 1"}, true);
+			oCreatedContext1 = oBinding.create({Note : "New 2"}, true);
+			oCreatedContext2 = oBinding.create({Note : "New 3"}, true);
+
+			return that.waitForChanges(assert);
+		}).then(function () {
+			that.expectRequest({
+					method : "POST",
+					url : "BusinessPartnerList('4711')/BP_2_SO",
+					payload : {"Note" : "New 1"}
+				}, {
+					"Note" : "New 1",
+					"SalesOrderID" : "43"
+				})
+				.expectRequest({
+					method : "POST",
+					url : "BusinessPartnerList('4711')/BP_2_SO",
+					payload : {"Note" : "New 2"}
+				}, {
+					"Note" : "New 2",
+					"SalesOrderID" : "44"
+				})
+				.expectRequest({
+					method : "POST",
+					url : "BusinessPartnerList('4711')/BP_2_SO",
+					payload : {"Note" : "New 3"}
+				}, {
+					"Note" : "New 3",
+					"SalesOrderID" : "45"
+				})
+				.expectChange("id", ["45", "44"]);
+
+			return Promise.all([
+				oCreatedContext0.created(),
+				oCreatedContext1.created(),
+				oCreatedContext2.created(),
+				that.oModel.submitBatch("update"),
+				that.waitForChanges(assert)
+			]);
+		}).then(function () {
+			assert.strictEqual(oTable.getRows()[1].getBindingContext(), oCreatedContext1);
+
+			that.expectRequest({
+					method : "DELETE",
+					url : "SalesOrderList('44')"
+				})
+				.expectChange("id", null)
+				.expectChange("note", null)
+				.expectChange("id", "43", 1)
+				.expectChange("note", "New 1", 1);
+
+			return Promise.all([
+				oCreatedContext1.delete("$auto"),
+				that.waitForChanges(assert, true)
+			]);
+		}).then(function () {
+			var aRows = oTable.getRows();
+
+			assert.strictEqual(aRows[0].getBindingContext(), oCreatedContext2);
+			assert.strictEqual(oCreatedContext2.isTransient(), false);
+			assert.strictEqual(aRows[1].getBindingContext(), oCreatedContext0);
+			assert.strictEqual(oCreatedContext0.isTransient(), false);
+
+			//TODO: CPOUI5UISERVICESV3-1798: avoid reading duplicates
+			that.expectRequest("BusinessPartnerList('4711')/BP_2_SO?$select=Note,SalesOrderID"
+					+ "&$skip=1&$top=1", {
+					"value" : [{
+						"Note" : "New 1a",
+						"SalesOrderID" : "43a"
+					}]
+				})
+				// "id" and "note" for row with sales order "42" temporarily lose their binding
+				// context and thus fire a change event
+				.expectChange("id", null, null)
+				.expectChange("note", null, null)
+				.expectChange("id", "42", 2)
+				.expectChange("id", "43a", 3)
+				.expectChange("note", "First SalesOrder", 2)
+				.expectChange("note", "New 1a", 3);
+
+			oTable.setFirstVisibleRow(2);
+
+			return that.waitForChanges(assert);
+		}).then(function () {
+			var aRows = oTable.getRows();
+
+			assert.strictEqual(aRows[0].getBindingContext().isTransient(), undefined);
+			assert.strictEqual(aRows[1].getBindingContext().isTransient(), undefined);
+		}).then(function () {
+			that.expectChange("id", ["45", "43"])
+				.expectChange("note", ["New 3", "New 1"]);
+
+			oTable.setFirstVisibleRow(0);
+
+			return that.waitForChanges(assert);
+		}).then(function () {
+			var aRows = oTable.getRows();
+
+			assert.strictEqual(aRows[0].getBindingContext(), oCreatedContext2);
+			assert.strictEqual(aRows[1].getBindingContext(), oCreatedContext0);
+		});
+	});
+
+	//*********************************************************************************************
+	// Scenario: All pairs test for multi create (4)
+	//  List binding: relative with cache
+	//  Number of transient: 1
+	//  Delete: Context.delete
+	//  Table control: sap.m.Table
+	// CPOUI5UISERVICESV3-1792
+	QUnit.test("All pairs test for multi create (4)", function (assert) {
+		var oBinding,
+			oCreatedContext0,
+			oCreatedContext1,
+			oCreatedContext2,
+			oModel = createSalesOrdersModel({
+				autoExpandSelect: true,
+				updateGroupId: "update"
+			}),
+			oTable,
+			sView = '\
+<FlexBox binding="{/BusinessPartnerList(\'4711\')}">\
+	<Table id="table" growing="true"\
+		items="{path : \'BP_2_SO\', parameters : {$$ownRequest : true}}">\
+	<columns><Column/></columns>\
+	<ColumnListItem>\
+		<Text id="id" text="{SalesOrderID}" />\
+		<Text id="note" text="{Note}" />\
+	</ColumnListItem>\
+	</Table>\
+</FlexBox>',
+			that = this;
+
+		this.expectRequest("BusinessPartnerList('4711')/BP_2_SO?$select=Note,SalesOrderID"
+				+ "&$skip=0&$top=20", {
+				"value" : [{
+					"Note" : "First SalesOrder",
+					"SalesOrderID" : "42"
+				}]
+			})
+			.expectChange("id", ["42"])
+			.expectChange("note", ["First SalesOrder"]);
+
+		return this.createView(assert, sView, oModel).then(function () {
+			oTable = that.oView.byId("table");
+			oBinding = oTable.getBinding("items");
+
+			that.expectChange("id", ["", ""])
+				.expectChange("note", ["New 2", "New 1"]);
+
+			oCreatedContext0 = oBinding.create({Note : "New 1"}, true);
+			oCreatedContext1 = oBinding.create({Note : "New 2"}, true);
+
+			return that.waitForChanges(assert);
+		}).then(function () {
+			that.expectRequest({
+					method : "POST",
+					url : "BusinessPartnerList('4711')/BP_2_SO",
+					payload : {"Note" : "New 1"}
+				}, {
+					"Note" : "New 1",
+					"SalesOrderID" : "43"
+				})
+				.expectRequest({
+					method : "POST",
+					url : "BusinessPartnerList('4711')/BP_2_SO",
+					payload : {"Note" : "New 2"}
+				}, {
+					"Note" : "New 2",
+					"SalesOrderID" : "44"
+				})
+				.expectChange("id", ["44", "43"]);
+
+			return Promise.all([
+				oCreatedContext0.created(),
+				oCreatedContext1.created(),
+				that.oModel.submitBatch("update"),
+				that.waitForChanges(assert)
+			]);
+		}).then(function () {
+			//TODO: CPOUI5UISERVICESV3-1798: avoid reading duplicates
+			that.expectRequest("BusinessPartnerList('4711')/BP_2_SO?$select=Note,SalesOrderID"
+					+ "&$skip=1&$top=2", {
+					"value" : [{
+						"Note" : "New 1a",
+						"SalesOrderID" : "43a"
+					}, {
+						"Note" : "New 3a",
+						"SalesOrderID" : "45a"
+					}]
+				})
+				//TODO: Unexpected change events for unchanged rows 1,2 -> CPOUI5UISERVICESV3-1810
+				.expectChange("id", ["", "44", "43",, "43a", "45a"])
+				.expectChange("note", ["New 3", "New 2", "New 1",, "New 1a", "New 3a"]);
+
+			// never persisted or deleted
+			oCreatedContext2 = oBinding.create({Note : "New 3"}, true);
+
+			return that.waitForChanges(assert);
+		}).then(function () {
+			that.expectRequest({
+					method : "DELETE",
+					url : "SalesOrderList('44')"
+				})
+				.expectChange("id", null) // events for unresolved ODPB after deletion
+				.expectChange("note", null);
+			// no change event: getContexts with E.C.D. returns a diff containing one delete only
+
+			oCreatedContext1.delete("$auto");
+
+			return that.waitForChanges(assert);
+		}).then(function () {
+			var aItems = oTable.getItems();
+
+			assert.strictEqual(aItems[0].getBindingContext(), oCreatedContext2);
+			assert.strictEqual(oCreatedContext2.isTransient(), true);
+			assert.strictEqual(aItems[1].getBindingContext(), oCreatedContext0);
+			assert.strictEqual(oCreatedContext0.isTransient(), false);
+			assert.strictEqual(aItems[2].getBindingContext().isTransient(), undefined);
+			assert.strictEqual(aItems[3].getBindingContext().isTransient(), undefined);
+		});
+	});
+
+	//*********************************************************************************************
+	// Scenario: All pairs test for multi create (5)
+	//  List binding: absolute
+	//  Number of transient: 0
+	//  Delete: Context.delete
+	//  Table control: sap.m.Table
+	//  Additional tests: update last, persisted: PATCH expected
+	// CPOUI5UISERVICESV3-1792
+	QUnit.test("All pairs test for multi create (5)", function (assert) {
+		var oCreatedContext0,
+			oCreatedContext1,
+			oCreatedContext2,
+			oModel = createSalesOrdersModel({
+				autoExpandSelect : true,
+				updateGroupId : "update"
+			}),
+			oTable,
+			sView = '\
+<Table id="table" growing="true" items="{/SalesOrderList}">\
+	<columns><Column/></columns>\
+	<ColumnListItem>\
+		<Text id="id" text="{SalesOrderID}" />\
+		<Input id="note" value="{Note}" />\
+	</ColumnListItem>\
+</Table>',
+			that = this;
+
+		this.expectRequest("SalesOrderList?$select=Note,SalesOrderID&$skip=0&$top=20", {
+				"value" : [{
+					"Note" : "First SalesOrder",
+					"SalesOrderID" : "42"
+				}]
+			})
+			.expectChange("id", ["42"])
+			.expectChange("note", ["First SalesOrder"]);
+
+		return this.createView(assert, sView, oModel).then(function () {
+			var oBinding;
+
+			oTable = that.oView.byId("table");
+			oBinding = oTable.getBinding("items");
+
+			that.expectChange("id", ["", "", ""])
+				.expectChange("note", ["New 3", "New 2", "New 1"]);
+
+			oCreatedContext0 = oBinding.create({Note : "New 1"}, true);
+			oCreatedContext1 = oBinding.create({Note : "New 2"}, true);
+			oCreatedContext2 = oBinding.create({Note : "New 3"}, true);
+
+			return that.waitForChanges(assert);
+		}).then(function () {
+			that.expectRequest({
+					batchNo : 1,
+					method : "POST",
+					url : "SalesOrderList",
+					payload : {"Note" : "New 1"}
+				}, {
+					"Note" : "New 1",
+					"SalesOrderID" : "43"
+				})
+				.expectRequest({
+					batchNo : 1,
+					method : "POST",
+					url : "SalesOrderList",
+					payload : {"Note" : "New 2"}
+				}, {
+					"Note" : "New 2",
+					"SalesOrderID" : "44"
+				})
+				.expectRequest({
+					batchNo : 1,
+					method : "POST",
+					url : "SalesOrderList",
+					payload : {"Note" : "New 3"}
+				}, {
+					"Note" : "New 3",
+					"SalesOrderID" : "45"
+				})
+				.expectChange("id", ["45", "44", "43"]);
+
+			return Promise.all([
+				oCreatedContext0.created(),
+				oCreatedContext1.created(),
+				oCreatedContext2.created(),
+				that.oModel.submitBatch("update"),
+				that.waitForChanges(assert)
+			]);
+		}).then(function () {
+			that.expectRequest({
+					method : "DELETE",
+					url : "SalesOrderList('44')"
+				})
+				//TODO: CPOUI5UISERVICESV3-1798: avoid reading duplicates
+				.expectRequest("SalesOrderList?$select=Note,SalesOrderID&$skip=1&$top=2", {
+					"value" : [{
+						"Note" : "New 1a",
+						"SalesOrderID" : "43a"
+					}, {
+						"Note" : "New 3a",
+						"SalesOrderID" : "45a"
+					}]
+				})
+				// change event for children of the destroyed context; parent context is already
+				// destroyed when formatter is called
+				.expectChange("id", null)
+				.expectChange("note", null)
+				//TODO: Unexpected change events for unchanged rows 0,1 -> CPOUI5UISERVICESV3-1810
+				.expectChange("id", ["45", "43",, "43a", "45a"])
+				.expectChange("note", ["New 3", "New 1",, "New 1a", "New 3a"]);
+
+			return Promise.all([
+				oCreatedContext1.delete("$auto"),
+				that.waitForChanges(assert)
+			]);
+		}).then(function () {
+			that.expectRequest({
+					method : "PATCH",
+					url : "SalesOrderList('45')",
+					payload : {"Note" : "New 3 - Changed"}
+				}, {
+					"Note" : "New 3 - Changed",
+					"SalesOrderID" : "45"
+				})
+				.expectChange("note", "New 3 - Changed", 0);
+
+			oTable.getItems()[0].getCells()[1].getBinding("value").setValue("New 3 - Changed");
+
+			return Promise.all([
+				that.oModel.submitBatch("update"),
+				that.waitForChanges(assert)
+			]);
+		}).then(function () {
+			var aItems = oTable.getItems();
+
+			assert.strictEqual(aItems[0].getBindingContext(), oCreatedContext2);
+			assert.strictEqual(oCreatedContext2.isTransient(), false);
+			assert.strictEqual(aItems[1].getBindingContext(), oCreatedContext0);
+			assert.strictEqual(oCreatedContext0.isTransient(), false);
+			// following entries are read from server -> isTransient() returns undefined
+			assert.strictEqual(aItems[2].getBindingContext().isTransient(), undefined);
+			assert.strictEqual(aItems[3].getBindingContext().isTransient(), undefined);
+			assert.strictEqual(aItems[4].getBindingContext().isTransient(), undefined);
+		});
+	});
+
+	//*********************************************************************************************
+	// Scenario: All pairs test for multi create (6)
+	//  List binding: absolute
+	//  Number of transient: 1
+	//  Delete: Context.refresh(bAllowRemoval=true)
+	//  Table control: sap.ui.table.Table
+	// CPOUI5UISERVICESV3-1792
+	QUnit.test("All pairs test for multi create (6)", function (assert) {
+		var oBinding,
+			oCreatedContext0,
+			oCreatedContext1,
+			oCreatedContext2,
+			oModel = createSalesOrdersModel({
+				autoExpandSelect : true,
+				updateGroupId : "update"
+			}),
+			oTable,
+			sView = '\
+<t:Table id="table" rows="{/SalesOrderList}" visibleRowCount="2">\
+	<t:Column>\
+		<t:template>\
+			<Text id="id" text="{SalesOrderID}" />\
+		</t:template>\
+	</t:Column>\
+	<t:Column>\
+		<t:template>\
+			<Text id="note" text="{Note}" />\
+		</t:template>\
+	</t:Column>\
+</t:Table>',
+			that = this;
+
+		this.expectRequest("SalesOrderList?$select=Note,SalesOrderID&$skip=0&$top=102", {
+				"value" : [{
+					"Note" : "First SalesOrder",
+					"SalesOrderID" : "42"
+				}]
+			})
+			.expectChange("id", ["42"])
+			.expectChange("note", ["First SalesOrder"]);
+
+		return this.createView(assert, sView, oModel).then(function () {
+			oTable = that.oView.byId("table");
+			oBinding = oTable.getBinding("rows");
+
+			that.expectChange("note", ["New 2", "New 1"])
+				.expectChange("id", ["", ""]);
+
+			oCreatedContext0 = oBinding.create({Note : "New 1"}, true);
+			oCreatedContext1 = oBinding.create({Note : "New 2"}, true);
+
+			return that.waitForChanges(assert);
+		}).then(function () {
+			that.expectRequest({
+					batchNo : 1,
+					method : "POST",
+					url : "SalesOrderList",
+					payload : {"Note" : "New 1"}
+				}, {
+					"Note" : "New 1",
+					"SalesOrderID" : "43"
+				})
+				.expectRequest({
+					batchNo : 1,
+					method : "POST",
+					url : "SalesOrderList",
+					payload : {"Note" : "New 2"}
+				}, {
+					"Note" : "New 2",
+					"SalesOrderID" : "44"
+				})
+				.expectChange("id", ["44", "43"]);
+
+			return Promise.all([
+				oCreatedContext0.created(),
+				oCreatedContext1.created(),
+				that.oModel.submitBatch("update"),
+				that.waitForChanges(assert)
+			]);
+		}).then(function () {
+			//TODO: CPOUI5UISERVICESV3-1798: avoid reading duplicates
+			that.expectRequest("SalesOrderList?$select=Note,SalesOrderID&$skip=1&$top=2", {
+					"value" : [{
+						"Note" : "New 1a",
+						"SalesOrderID" : "43a"
+					}, {
+						"Note" : "New 2a",
+						"SalesOrderID" : "44a"
+					}]
+				})
+				.expectChange("id", ["", "44"])
+				.expectChange("note", ["New 3", "New 2"]);
+
+			// never persisted or deleted
+			oCreatedContext2 = oBinding.create({Note : "New 3"}, true);
+
+			return that.waitForChanges(assert);
+		}).then(function () {
+			assert.strictEqual(oTable.getRows()[1].getBindingContext(), oCreatedContext1);
+
+			that.expectRequest("SalesOrderList?$select=Note,SalesOrderID&"
+						+ "$filter=SalesOrderID%20eq%20'44'", {
+					"value" : []
+				})
+				.expectChange("id", null) // for the deleted row
+				.expectChange("note", null)
+				.expectChange("id", "43", 1)
+				.expectChange("note", "New 1", 1);
+
+			return Promise.all([
+				oCreatedContext1.refresh("$auto", true/*bAllowRemoval*/),
+				that.waitForChanges(assert, true)
+			]);
+		}).then(function () {
+			that.expectChange("id", "42", 2)
+				.expectChange("note", "First SalesOrder", 2)
+				.expectChange("id", "43a", 3)
+				.expectChange("note", "New 1a", 3);
+
+			oTable.setFirstVisibleRow(2);
+
+			return that.waitForChanges(assert);
+		}).then(function () {
+			that.expectChange("id", ["", "43"])
+				.expectChange("note", ["New 3", "New 1"]);
+
+			oTable.setFirstVisibleRow(0);
+
+			return that.waitForChanges(assert);
+		}).then(function () {
+			var aRows = oTable.getRows();
+
+			assert.strictEqual(aRows[0].getBindingContext(), oCreatedContext2);
+			assert.strictEqual(oCreatedContext2.isTransient(), true);
+			assert.strictEqual(aRows[1].getBindingContext(), oCreatedContext0);
+			assert.strictEqual(oCreatedContext0.isTransient(), false);
+		});
+	});
+
+	//*********************************************************************************************
+	// Scenario: All pairs test for multi create (7)
+	//  List binding: relative without cache
+	//  Number of transient: 3
+	//  Delete: ODataModel.resetChanges
+	//  Table control: sap.ui.table.Table
+	// CPOUI5UISERVICESV3-1792
+	QUnit.test("All pairs test for multi create (7)", function (assert) {
+		var oCreatedContext0,
+			oCreatedContext1,
+			oCreatedContext2,
+			oModel = createSalesOrdersModel({
+				autoExpandSelect: true,
+				updateGroupId: "update"
+			}),
+			oTable,
+			sView = '\
+<FlexBox binding="{/BusinessPartnerList(\'4711\')}">\
+	<t:Table id="table" rows="{BP_2_SO}" visibleRowCount="2">\
+		<t:Column>\
+			<t:template>\
+				<Text id="id" text="{SalesOrderID}" />\
+			</t:template>\
+		</t:Column>\
+		<t:Column>\
+			<t:template>\
+				<Text id="note" text="{Note}" />\
+			</t:template>\
+		</t:Column>\
+	</t:Table>\
+</FlexBox>',
+			that = this;
+
+		this.expectRequest("BusinessPartnerList('4711')?$select=BusinessPartnerID"
+				+ "&$expand=BP_2_SO($select=Note,SalesOrderID)", {
+				"BusinessPartnerID" : "4711",
+				"BP_2_SO" : [{
+					"Note" : "First SalesOrder",
+					"SalesOrderID" : "42"
+				}, { // Second sales order to avoid an empty row in table after resetChanges();
+					 // an empty row results in not deterministic change event, e.g. id[null] = null
+					"Note" : "Second SalesOrder",
+					"SalesOrderID" : "43"
+				}]
+			})
+			.expectChange("id", ["42", "43"])
+			.expectChange("note", ["First SalesOrder", "Second SalesOrder"]);
+
+		return this.createView(assert, sView, oModel).then(function () {
+			var oBinding;
+
+			oTable = that.oView.byId("table");
+			oBinding = oTable.getBinding("rows");
+
+			that.expectChange("id", ["", ""])
+				.expectChange("note", ["New 3", "New 2"]);
+
+			oCreatedContext0 = oBinding.create({Note : "New 1"}, true);
+			oCreatedContext1 = oBinding.create({Note : "New 2"}, true);
+			oCreatedContext2 = oBinding.create({Note : "New 3"}, true);
+
+			return that.waitForChanges(assert);
+		}).then(function () {
+			that.expectChange("id", null)
+				.expectChange("note", null)
+				.expectChange("id", null)
+				.expectChange("note", null)
+				.expectChange("id", ["42", "43"])
+				.expectChange("note", ["First SalesOrder", "Second SalesOrder"]);
+
+			oModel.resetChanges();
+
+			return Promise.all([
+				oCreatedContext0.created().catch(function () {/* avoid uncaught (in promise) */}),
+				oCreatedContext1.created().catch(function () {/* avoid uncaught (in promise) */}),
+				oCreatedContext2.created().catch(function () {/* avoid uncaught (in promise) */}),
+				that.waitForChanges(assert, true)
+			]);
+			// scrolling not possible: only one entry
+		});
+	});
+
+
+	//*********************************************************************************************
+	// Scenario: All pairs test for multi create (8)
+	//  List binding: relative with cache
+	//  Number of transient: 2
+	//  Delete: ODataListBinding.resetChanges
+	//  Table control: sap.m.Table
+	// CPOUI5UISERVICESV3-1792
+	QUnit.test("All pairs test for multi create (8)", function (assert) {
+		var oBinding,
+			oCreatedContext0,
+			oCreatedContext1,
+			oCreatedContext2,
+			oModel = createSalesOrdersModel({
+				autoExpandSelect : true,
+				updateGroupId : "update"
+			}),
+			oTable,
+			sView = '\
+<FlexBox binding="{/BusinessPartnerList(\'4711\')}">\
+	<Table id="table" growing="true"\
+		items="{path : \'BP_2_SO\', parameters : {$$ownRequest : true}}">\
+	<columns><Column/></columns>\
+	<ColumnListItem>\
+		<Text id="id" text="{SalesOrderID}" />\
+		<Text id="note" text="{Note}" />\
+	</ColumnListItem>\
+	</Table>\
+</FlexBox>',
+			that = this;
+
+		this.expectRequest("BusinessPartnerList('4711')/BP_2_SO?$select=Note,SalesOrderID"
+				+ "&$skip=0&$top=20", {
+				"value" : [{
+					"Note" : "First SalesOrder",
+					"SalesOrderID" : "42"
+				}]
+			})
+			.expectChange("id", ["42"])
+			.expectChange("note", ["First SalesOrder"]);
+
+		return this.createView(assert, sView, oModel).then(function () {
+			oTable = that.oView.byId("table");
+			oBinding = oTable.getBinding("items");
+
+			that.expectChange("id", "", 0)
+				.expectChange("note", "New 1", 0);
+
+			oCreatedContext0 = oBinding.create({Note : "New 1"}, true);
+
+			return that.waitForChanges(assert);
+		}).then(function () {
+			that.expectRequest({
+					method : "POST",
+					url : "BusinessPartnerList('4711')/BP_2_SO",
+					payload : {"Note" : "New 1"}
+				}, {
+					"Note" : "New 1",
+					"SalesOrderID" : "43"
+				})
+				.expectChange("id", "43", 0);
+
+			return Promise.all([
+				oCreatedContext0.created(),
+				that.oModel.submitBatch("update"),
+				that.waitForChanges(assert)
+			]);
+		}).then(function () {
+			//TODO: CPOUI5UISERVICESV3-1798: avoid reading duplicates
+			that.expectRequest("BusinessPartnerList('4711')/BP_2_SO?$select=Note,SalesOrderID"
+					+ "&$skip=1&$top=1", {
+					"value" : [{
+						"Note" : "New 1a",
+						"SalesOrderID" : "43a"
+					}]
+				})
+				//TODO: Unexpected change events for unchanged row 2 -> CPOUI5UISERVICESV3-1810
+				.expectChange("id", ["", "", "43",, "43a"])
+				.expectChange("note", ["New 3", "New 2", "New 1",, "New 1a"]);
+
+			oCreatedContext1 = oBinding.create({Note : "New 2"}, true);
+			oCreatedContext2 = oBinding.create({Note : "New 3"}, true);
+
+			return that.waitForChanges(assert);
+		}).then(function () {
+			var aItems = oTable.getItems();
+
+			assert.strictEqual(aItems.length, 5);
+			assert.strictEqual(aItems[0].getBindingContext(), oCreatedContext2);
+			assert.strictEqual(oCreatedContext2.isTransient(), true);
+			assert.strictEqual(aItems[1].getBindingContext(), oCreatedContext1);
+			assert.strictEqual(oCreatedContext1.isTransient(), true);
+			assert.strictEqual(aItems[2].getBindingContext(), oCreatedContext0);
+			assert.strictEqual(oCreatedContext0.isTransient(), false);
+			assert.strictEqual(aItems[3].getBindingContext().isTransient(), undefined);
+			assert.strictEqual(aItems[4].getBindingContext().isTransient(), undefined);
+
+			// no change event: getContexts with E.C.D. returns a diff containing one delete only
+
+			oBinding.resetChanges();
+
+			return Promise.all([
+				that.checkCanceled(assert, oCreatedContext1.created()),
+				that.checkCanceled(assert, oCreatedContext2.created())
+			]);
+		}).then(function () {
+			var aItems = oTable.getItems();
+
+			assert.strictEqual(aItems.length, 3);
+			assert.strictEqual(aItems[0].getBindingContext(), oCreatedContext0);
+			assert.strictEqual(aItems[1].getBindingContext().isTransient(), undefined);
+			assert.strictEqual(aItems[2].getBindingContext().isTransient(), undefined);
+		});
+	});
+
+	//*********************************************************************************************
+	// Scenario: All pairs test for multi create (9)
+	//  List binding: relative without cache
+	//  Number of transient: 3
+	//  Delete: Context.delete
+	//  Table control: sap.m.Table
+	// CPOUI5UISERVICESV3-1792
+	QUnit.test("All pairs test for multi create (9)", function (assert) {
+		var oCreatedContext0,
+			oCreatedContext1,
+			oCreatedContext2,
+			oModel = createSalesOrdersModel({
+				autoExpandSelect : true,
+				updateGroupId : "update"
+			}),
+			oTable,
+			sView = '\
+<FlexBox binding="{/BusinessPartnerList(\'4711\')}">\
+	<Table id="table" growing="true" items="{BP_2_SO}">\
+		<columns><Column/></columns>\
+		<ColumnListItem>\
+			<Text id="id" text="{SalesOrderID}" />\
+			<Text id="note" text="{Note}" />\
+		</ColumnListItem>\
+	</Table>\
+</FlexBox>',
+			that = this;
+
+		this.expectRequest("BusinessPartnerList('4711')?$select=BusinessPartnerID"
+				+ "&$expand=BP_2_SO($select=Note,SalesOrderID)", {
+				"BusinessPartnerID" : "4711",
+				"BP_2_SO" : [{
+					"Note" : "First SalesOrder",
+					"SalesOrderID" : "42"
+				}]
+			})
+			.expectChange("id", ["42"])
+			.expectChange("note", ["First SalesOrder"]);
+
+		return this.createView(assert, sView, oModel).then(function () {
+			var oBinding;
+
+			oTable = that.oView.byId("table");
+			oBinding = oTable.getBinding("items");
+
+			that.expectChange("id", ["", "", ""])
+				.expectChange("note", ["New 3", "New 2", "New 1"]);
+
+			oCreatedContext0 = oBinding.create({Note : "New 1"}, true);
+			oCreatedContext1 = oBinding.create({Note : "New 2"}, true);
+			oCreatedContext2 = oBinding.create({Note : "New 3"}, true);
+
+			return that.waitForChanges(assert);
+		}).then(function () {
+			// no change event: getContexts with E.C.D. returns a diff containing one delete only
+
+			return Promise.all([
+				oCreatedContext1.created().catch(function () {/* avoid uncaught (in promise) */}),
+				oCreatedContext1.delete("$auto"),
+				that.waitForChanges(assert)
+			]);
+		}).then(function () {
+			var aItems = oTable.getItems();
+
+			assert.strictEqual(aItems[0].getBindingContext(), oCreatedContext2);
+			assert.strictEqual(oCreatedContext2.isTransient(), true);
+			assert.strictEqual(aItems[1].getBindingContext(), oCreatedContext0);
+			assert.strictEqual(oCreatedContext0.isTransient(), true);
+			assert.strictEqual(aItems[2].getBindingContext().isTransient(), undefined);
+		});
+	});
+
+	//*********************************************************************************************
+	// Scenario: All pairs test for multi create (10)
+	//  List binding: absolute
+	//  Number of transient: 3
+	//  Delete: ODataListBinding.resetChanges
+	//  Table control: sap.ui.table.Table
+	// CPOUI5UISERVICESV3-1792
+	QUnit.test("All pairs test for multi create (10)", function (assert) {
+		var oBinding,
+			oCreatedContext0,
+			oCreatedContext1,
+			oCreatedContext2,
+			oModel = createSalesOrdersModel({
+				autoExpandSelect : true,
+				updateGroupId : "update"
+			}),
+			oTable,
+			sView = '\
+<t:Table id="table" rows="{/SalesOrderList}" visibleRowCount="2">\
+	<t:Column>\
+		<t:template>\
+			<Text id="id" text="{SalesOrderID}" />\
+		</t:template>\
+	</t:Column>\
+	<t:Column>\
+		<t:template>\
+			<Text id="note" text="{Note}" />\
+		</t:template>\
+	</t:Column>\
+</t:Table>',
+			that = this;
+
+		this.expectRequest("SalesOrderList?$select=Note,SalesOrderID&$skip=0&$top=102", {
+				"value" : [{
+					"Note" : "First SalesOrder",
+					"SalesOrderID" : "42"
+				}, { // Second sales order to avoid an empty row in table after resetChanges();
+					// an empty row results in not deterministic change event, e.g. id[null] = null
+					"Note" : "Second SalesOrder",
+					"SalesOrderID" : "41"
+				}]
+			})
+			.expectChange("id", ["42", "41"])
+			.expectChange("note", ["First SalesOrder", "Second SalesOrder"]);
+
+		return this.createView(assert, sView, oModel).then(function () {
+			oTable = that.oView.byId("table");
+			oBinding = oTable.getBinding("rows");
+
+			that.expectChange("note", ["New 3", "New 2"])
+				.expectChange("id", ["", ""]);
+
+			oCreatedContext0 = oBinding.create({Note : "New 1"}, true);
+			oCreatedContext1 = oBinding.create({Note : "New 2"}, true);
+			oCreatedContext2 = oBinding.create({Note : "New 3"}, true);
+
+			return that.waitForChanges(assert);
+		}).then(function () {
+			that.expectChange("id", null)
+				.expectChange("note", null)
+				.expectChange("id", null)
+				.expectChange("note", null)
+				.expectChange("id", ["42", "41"])
+				.expectChange("note", ["First SalesOrder", "Second SalesOrder"]);
+
+			oBinding.resetChanges();
+
+			return Promise.all([
+				oCreatedContext0.created().catch(function () {/* avoid uncaught (in promise) */}),
+				oCreatedContext1.created().catch(function () {/* avoid uncaught (in promise) */}),
+				oCreatedContext2.created().catch(function () {/* avoid uncaught (in promise) */}),
+				that.waitForChanges(assert, true)
+			]);
+		// scrolling not possible, as table has only one row
+		// setFirstVisibleRow(2) leads to console warning "The index of the first visible row ..."
+		}).then(function () {
+			assert.strictEqual(oTable.getRows()[0].getBindingContext().isTransient(), undefined);
+		});
+	});
+
+	//*********************************************************************************************
+	// Scenario: All pairs test for multi create (11)
+	//  List binding: relative without cache
+	//  Number of transient: 2
+	//  Delete: ODataListBinding.resetChanges
+	//  Table control: sap.m.Table
+	// CPOUI5UISERVICESV3-1792
+	QUnit.test("All pairs test for multi create (11)", function (assert) {
+		var oBinding,
+			oCreatedContext0,
+			oCreatedContext1,
+			oCreatedContext2,
+			oModel = createSalesOrdersModel({
+				autoExpandSelect : true,
+				updateGroupId : "update"
+			}),
+			oTable,
+			sView = '\
+<FlexBox binding="{/BusinessPartnerList(\'4711\')}">\
+	<Table id="table" growing="true" items="{BP_2_SO}">\
+	<columns><Column/></columns>\
+	<ColumnListItem>\
+		<Text id="id" text="{SalesOrderID}" />\
+		<Text id="note" text="{Note}" />\
+	</ColumnListItem>\
+	</Table>\
+</FlexBox>',
+			that = this;
+
+		this.expectRequest("BusinessPartnerList('4711')?$select=BusinessPartnerID"
+				+ "&$expand=BP_2_SO($select=Note,SalesOrderID)", {
+				"BusinessPartnerID" : "4711",
+				"BP_2_SO" : [{
+					"Note" : "First SalesOrder",
+					"SalesOrderID" : "42"
+				}]
+			})
+			.expectChange("id", ["42"])
+			.expectChange("note", ["First SalesOrder"]);
+
+		return this.createView(assert, sView, oModel).then(function () {
+			oTable = that.oView.byId("table");
+			oBinding = oTable.getBinding("items");
+
+			that.expectChange("id", "", 0)
+				.expectChange("note", "New 1", 0);
+
+			oCreatedContext0 = oTable.getBinding("items").create({Note : "New 1"}, true);
+
+			return that.waitForChanges(assert);
+		}).then(function () {
+			that.expectRequest({
+					method : "POST",
+					url : "BusinessPartnerList('4711')/BP_2_SO",
+					payload : {"Note" : "New 1"}
+				}, {
+					"Note" : "New 1",
+					"SalesOrderID" : "43"
+				})
+				.expectChange("id", "43", 0);
+
+			return Promise.all([
+				oCreatedContext0.created(),
+				that.oModel.submitBatch("update"),
+				that.waitForChanges(assert)
+			]);
+		}).then(function () {
+			//TODO: Unexpected change events for unchanged row 2 -> CPOUI5UISERVICESV3-1810
+			that.expectChange("id", ["", "", "43"])
+				.expectChange("note", ["New 3", "New 2", "New 1"]);
+
+			oCreatedContext1 = oBinding.create({Note : "New 2"}, true);
+			oCreatedContext2 = oBinding.create({Note : "New 3"}, true);
+
+			return that.waitForChanges(assert);
+		}).then(function () {
+			// no change event: getContexts with E.C.D. returns a diff containing two deletes only
+			oBinding.resetChanges();
+
+			return Promise.all([
+				that.checkCanceled(assert, oCreatedContext1.created()),
+				that.checkCanceled(assert, oCreatedContext2.created()),
+				that.waitForChanges(assert)
+			]);
+		}).then(function () {
+			var aItems = oTable.getItems();
+
+			assert.strictEqual(aItems[0].getBindingContext(), oCreatedContext0);
+			assert.strictEqual(oCreatedContext0.isTransient(), false);
+			assert.strictEqual(aItems[1].getBindingContext().isTransient(), undefined);
+		});
+	});
+
+	//*********************************************************************************************
+	// Scenario: All pairs test for multi create (12)
+	//  List binding: relative with cache
+	//  Number of transient: 3
+	//  Delete: ODataModel.resetChanges
+	//  Table control: sap.m.Table
+	// CPOUI5UISERVICESV3-1792
+	QUnit.test("All pairs test for multi create (12)", function (assert) {
+		var oCreatedContext0,
+			oCreatedContext1,
+			oCreatedContext2,
+			oModel = createSalesOrdersModel({
+				autoExpandSelect : true,
+				updateGroupId : "update"
+			}),
+			oTable,
+			sView = '\
+<FlexBox binding="{/BusinessPartnerList(\'4711\')}">\
+	<Table id="table" growing="true"\
+		items="{path : \'BP_2_SO\', parameters : {$$ownRequest : true}}">\
+	<columns><Column/></columns>\
+	<ColumnListItem>\
+		<Text id="id" text="{SalesOrderID}" />\
+		<Text id="note" text="{Note}" />\
+	</ColumnListItem>\
+	</Table>\
+</FlexBox>',
+			that = this;
+
+		this.expectRequest("BusinessPartnerList('4711')/BP_2_SO?$select=Note,SalesOrderID"
+				+ "&$skip=0&$top=20", {
+				"value" : [{
+					"Note" : "First SalesOrder",
+					"SalesOrderID" : "42"
+				}]
+			})
+			.expectChange("id", ["42"])
+			.expectChange("note", ["First SalesOrder"]);
+
+		return this.createView(assert, sView, oModel).then(function () {
+			var oBinding;
+
+			oTable = that.oView.byId("table");
+			oBinding = oTable.getBinding("items");
+
+			that.expectChange("id", ["", "", ""])
+				.expectChange("note", ["New 3", "New 2", "New 1"]);
+
+			oCreatedContext0 = oBinding.create({Note : "New 1"}, true);
+			oCreatedContext1 = oBinding.create({Note : "New 2"}, true);
+			oCreatedContext2 = oBinding.create({Note : "New 3"}, true);
+
+			return that.waitForChanges(assert);
+		}).then(function () {
+			var aItems = oTable.getItems();
+
+			assert.strictEqual(aItems.length, 4);
+			assert.strictEqual(aItems[0].getBindingContext(), oCreatedContext2);
+			assert.strictEqual(oCreatedContext2.isTransient(), true);
+			assert.strictEqual(aItems[1].getBindingContext(), oCreatedContext1);
+			assert.strictEqual(oCreatedContext1.isTransient(), true);
+			assert.strictEqual(aItems[2].getBindingContext(), oCreatedContext0);
+			assert.strictEqual(oCreatedContext0.isTransient(), true);
+			assert.strictEqual(aItems[3].getBindingContext().isTransient(), undefined);
+
+			// no change event: getContexts with E.C.D. returns a diff containing three deletes only
+			oModel.resetChanges();
+
+			return Promise.all([
+				that.checkCanceled(assert, oCreatedContext0.created()),
+				that.checkCanceled(assert, oCreatedContext1.created()),
+				that.checkCanceled(assert, oCreatedContext2.created())
+			]);
+		}).then(function () {
+			assert.strictEqual(oTable.getItems()[0].getBindingContext().isTransient(), undefined);
+		});
+	});
+
+	//*********************************************************************************************
+	// Scenario: All pairs test for multi create (13)
+	//  List binding: absolute
+	//  Number of transient: 2
+	//  Delete: ODataModel.resetChanges
+	//  Table control: sap.ui.table.Table
+	// CPOUI5UISERVICESV3-1792
+	QUnit.test("All pairs test for multi create (13)", function (assert) {
+		var oBinding,
+			oCreatedContext0,
+			oCreatedContext1,
+			oCreatedContext2,
+			oModel = createSalesOrdersModel({
+				autoExpandSelect : true,
+				updateGroupId : "update"
+			}),
+			oTable,
+			sView = '\
+<t:Table id="table" rows="{/SalesOrderList}" visibleRowCount="2">\
+	<t:Column>\
+		<t:template>\
+			<Text id="id" text="{SalesOrderID}" />\
+		</t:template>\
+	</t:Column>\
+	<t:Column>\
+		<t:template>\
+			<Text id="note" text="{Note}" />\
+		</t:template>\
+	</t:Column>\
+</t:Table>',
+			that = this;
+
+		this.expectRequest("SalesOrderList?$select=Note,SalesOrderID&$skip=0&$top=102", {
+				"value" : [{
+					"Note" : "First SalesOrder",
+					"SalesOrderID" : "42"
+				}]
+			})
+			.expectChange("id", ["42"])
+			.expectChange("note", ["First SalesOrder"]);
+
+		return this.createView(assert, sView, oModel).then(function () {
+			oTable = that.oView.byId("table");
+			oBinding = oTable.getBinding("rows");
+
+			that.expectChange("note", ["New 1", "First SalesOrder"])
+				.expectChange("id", ["", "42"]);
+
+			oCreatedContext0 = oBinding.create({Note : "New 1"}, true);
+
+			return that.waitForChanges(assert);
+		}).then(function () {
+			that.expectRequest({
+					method : "POST",
+					url : "SalesOrderList",
+					payload : {"Note" : "New 1"}
+				}, {
+					"Note" : "New 1",
+					"SalesOrderID" : "43"
+				})
+				.expectChange("id", "43", 0);
+
+			return Promise.all([
+				oCreatedContext0.created(),
+				that.oModel.submitBatch("update"),
+				that.waitForChanges(assert)
+			]);
+		}).then(function () {
+			//TODO: CPOUI5UISERVICESV3-1798: avoid reading duplicates
+			that.expectRequest("SalesOrderList?$select=Note,SalesOrderID&$skip=1&$top=1", {
+					"value" : [{
+						"Note" : "New 1a",
+						"SalesOrderID" : "43a"
+					}]
+				})
+				.expectChange("id", ["", ""])
+				.expectChange("note", ["New 3", "New 2"]);
+
+			oCreatedContext1 = oBinding.create({Note : "New 2"}, true);
+			oCreatedContext2 = oBinding.create({Note : "New 3"}, true);
+
+			return that.waitForChanges(assert);
+		}).then(function () {
+			that.expectChange("id", null)
+				.expectChange("note", null)
+				.expectChange("id", null)
+				.expectChange("note", null)
+				.expectChange("note", ["New 1", "First SalesOrder"])
+				.expectChange("id", ["43", "42"]);
+
+			oModel.resetChanges();
+
+			return Promise.all([
+				oCreatedContext1.created().catch(function () {/* avoid uncaught (in promise) */}),
+				oCreatedContext2.created().catch(function () {/* avoid uncaught (in promise) */}),
+				that.waitForChanges(assert, true)
+			]);
+		}).then(function () {
+			var aRows = oTable.getRows();
+
+			assert.strictEqual(aRows[0].getBindingContext(), oCreatedContext0);
+			assert.strictEqual(oCreatedContext0.isTransient(), false);
+			assert.strictEqual(aRows[1].getBindingContext().isTransient(), undefined);
+
+			that.expectChange("id", "42", 1)
+				.expectChange("note", "First SalesOrder", 1)
+				.expectChange("id", "43a", 2)
+				.expectChange("note", "New 1a", 2);
+
+			oTable.setFirstVisibleRow(1);
+
+			return that.waitForChanges(assert);
+		}).then(function () {
+			that.expectChange("note", ["New 1", "First SalesOrder"])
+				.expectChange("id", ["43", "42"]);
+
+			oTable.setFirstVisibleRow(0);
+
+			return that.waitForChanges(assert);
+		});
+	});
+
+	//*********************************************************************************************
+	// Scenario: All pairs test for multi create (14)
+	//  List binding: relative without cache
+	//  Number of transient: 1
+	//  Delete: Context.delete
+	//  Table control: sap.ui.table.Table
+	// CPOUI5UISERVICESV3-1792
+	QUnit.test("All pairs test for multi create (14)", function (assert) {
+		var oBinding,
+			oCreatedContext0,
+			oCreatedContext1,
+			oCreatedContext2,
+			oModel = createSalesOrdersModel({
+				autoExpandSelect : true,
+				updateGroupId : "update"
+			}),
+			oTable,
+			sView = '\
+<FlexBox binding="{/BusinessPartnerList(\'4711\')}">\
+	<t:Table id="table" rows="{BP_2_SO}" visibleRowCount="2">\
+		<t:Column>\
+			<t:template>\
+				<Text id="id" text="{SalesOrderID}" />\
+			</t:template>\
+		</t:Column>\
+		<t:Column>\
+			<t:template>\
+				<Text id="note" text="{Note}" />\
+			</t:template>\
+		</t:Column>\
+	</t:Table>\
+</FlexBox>',
+			that = this;
+
+		this.expectRequest("BusinessPartnerList('4711')?$select=BusinessPartnerID"
+					+ "&$expand=BP_2_SO($select=Note,SalesOrderID)", {
+				"BusinessPartnerID" : "4711",
+				"BP_2_SO" : [{
+					"Note" : "First SalesOrder",
+					"SalesOrderID" : "42"
+				}]
+			})
+			.expectChange("id", ["42"])
+			.expectChange("note", ["First SalesOrder"]);
+
+		return this.createView(assert, sView, oModel).then(function () {
+			oTable = that.oView.byId("table");
+			oBinding = oTable.getBinding("rows");
+
+			that.expectChange("id", ["", ""])
+				.expectChange("note", ["New 2", "New 1"]);
+
+			oCreatedContext0 = oBinding.create({Note : "New 1"}, true);
+			oCreatedContext1 = oBinding.create({Note : "New 2"}, true);
+
+			return that.waitForChanges(assert);
+		}).then(function () {
+			that.expectRequest({
+					method : "POST",
+					url : "BusinessPartnerList('4711')/BP_2_SO",
+					payload : {"Note" : "New 1"}
+				}, {
+					"Note" : "New 1",
+					"SalesOrderID" : "43"
+				})
+				.expectRequest({
+					method : "POST",
+					url : "BusinessPartnerList('4711')/BP_2_SO",
+					payload : {"Note" : "New 2"}
+				}, {
+					"Note" : "New 2",
+					"SalesOrderID" : "44"
+				})
+				.expectChange("id", "44", 0)
+				.expectChange("id", "43", 1);
+
+			return Promise.all([
+				oCreatedContext0.created(),
+				oCreatedContext1.created(),
+				that.oModel.submitBatch("update"),
+				that.waitForChanges(assert)
+			]);
+		}).then(function () {
+			that.expectChange("id", ["", "44"])
+				.expectChange("note", ["New 3", "New 2"]);
+
+			oCreatedContext2 = oBinding.create({Note : "New 3"}, true);
+
+			return that.waitForChanges(assert);
+		}).then(function () {
+			that.expectRequest({
+					method : "DELETE",
+					url : "SalesOrderList('44')"
+				})
+				.expectChange("id", null)
+				.expectChange("note", null)
+				.expectChange("id", "43", 1)
+				.expectChange("note", "New 1", 1);
+
+			return Promise.all([
+				oCreatedContext1.delete("$auto"),
+				that.waitForChanges(assert, true)
+			]);
+		}).then(function () {
+			var aRows = oTable.getRows();
+
+			assert.strictEqual(aRows[0].getBindingContext(), oCreatedContext2);
+			assert.strictEqual(oCreatedContext2.isTransient(), true);
+			assert.strictEqual(aRows[1].getBindingContext(), oCreatedContext0);
+			assert.strictEqual(oCreatedContext0.isTransient(), false);
+		}).then(function () {
+			that.expectChange("id", [, "43", "42"])
+				.expectChange("note", [, "New 1", "First SalesOrder"]);
+
+			oTable.setFirstVisibleRow(1);
+
+			return that.waitForChanges(assert);
+		}).then(function () {
+			var aRows = oTable.getRows();
+
+			assert.strictEqual(aRows[0].getBindingContext(), oCreatedContext0);
+			assert.strictEqual(aRows[1].getBindingContext().isTransient(), undefined);
+		}).then(function () {
+			that.expectChange("id", ["", "43"])
+				.expectChange("note", ["New 3", "New 1"]);
+
+			oTable.setFirstVisibleRow(0);
+
+			return that.waitForChanges(assert);
+		}).then(function () {
+			var aRows = oTable.getRows();
+
+			assert.strictEqual(aRows[0].getBindingContext(), oCreatedContext2);
+			assert.strictEqual(aRows[1].getBindingContext(), oCreatedContext0);
+		});
+	});
+
+	//*********************************************************************************************
+	// Scenario: All pairs test for multi create (15)
+	//  List binding: absolute
+	//  Number of transient: 0
+	//  Delete: Context.refresh(bAllowRemoval=true)
+	//  Table control: sap.m.Table
+	// CPOUI5UISERVICESV3-1792
+	QUnit.test("All pairs test for multi create (15)", function (assert) {
+		var oCreatedContext0,
+			oCreatedContext1,
+			oCreatedContext2,
+			oModel = createSalesOrdersModel({
+				autoExpandSelect : true,
+				updateGroupId : "update"
+			}),
+			oTable,
+			sView = '\
+<Table id="table" growing="true" items="{/SalesOrderList}">\
+	<columns><Column/></columns>\
+	<ColumnListItem>\
+		<Text id="id" text="{SalesOrderID}" />\
+		<Text id="note" text="{Note}" />\
+	</ColumnListItem>\
+</Table>',
+			that = this;
+
+		this.expectRequest("SalesOrderList?$select=Note,SalesOrderID&$skip=0&$top=20", {
+				"value" : [{
+					"Note" : "First SalesOrder",
+					"SalesOrderID" : "42"
+				}]
+			})
+			.expectChange("id", ["42"])
+			.expectChange("note", ["First SalesOrder"]);
+
+		return this.createView(assert, sView, oModel).then(function () {
+			var oBinding;
+
+			oTable = that.oView.byId("table");
+			oBinding = oTable.getBinding("items");
+
+			that.expectChange("id", ["", "", ""])
+				.expectChange("note", ["New 3", "New 2", "New 1"]);
+
+			oCreatedContext0 = oBinding.create({Note : "New 1"}, true);
+			oCreatedContext1 = oBinding.create({Note : "New 2"}, true);
+			oCreatedContext2 = oBinding.create({Note : "New 3"}, true);
+
+			return that.waitForChanges(assert);
+		}).then(function () {
+			that.expectRequest({
+					batchNo : 1,
+					method : "POST",
+					url : "SalesOrderList",
+					payload : {"Note" : "New 1"}
+				}, {
+					"Note" : "New 1",
+					"SalesOrderID" : "43"
+				})
+				.expectRequest({
+					batchNo : 1,
+					method : "POST",
+					url : "SalesOrderList",
+					payload : {"Note" : "New 2"}
+				}, {
+					"Note" : "New 2",
+					"SalesOrderID" : "44"
+				})
+				.expectRequest({
+					batchNo : 1,
+					method : "POST",
+					url : "SalesOrderList",
+					payload : {"Note" : "New 3"}
+				}, {
+					"Note" : "New 3",
+					"SalesOrderID" : "45"
+				})
+				.expectChange("id", ["45", "44", "43"]);
+
+			return Promise.all([
+				oCreatedContext0.created(),
+				oCreatedContext1.created(),
+				oCreatedContext2.created(),
+				that.oModel.submitBatch("update"),
+				that.waitForChanges(assert)
+			]);
+		}).then(function () {
+			that.expectRequest("SalesOrderList?$select=Note,SalesOrderID&"
+					+ "$filter=SalesOrderID%20eq%20'44'", {
+					"value" : []
+				})
+				//TODO: CPOUI5UISERVICESV3-1798: avoid reading duplicates
+				.expectRequest("SalesOrderList?$select=Note,SalesOrderID&$skip=1&$top=2", {
+					"value" : [{
+						"Note" : "New 1a",
+						"SalesOrderID" : "43a"
+					}, {
+						"Note" : "New 3a",
+						"SalesOrderID" : "45a"
+					}]
+				})
+				.expectChange("id", null)
+				.expectChange("note", null)
+				//TODO: Unexpected change events for unchanged rows 0,1 -> CPOUI5UISERVICESV3-1810
+				.expectChange("id", ["45", "43",, "43a", "45a"])
+				.expectChange("note", ["New 3", "New 1",,"New 1a", "New 3a"]);
+
+			return Promise.all([
+				oCreatedContext1.refresh("$auto", true/*bAllowRemoval*/),
+				that.waitForChanges(assert)
+			]);
+		}).then(function () {
+			var aItems = oTable.getItems();
+
+			assert.strictEqual(aItems.length, 5);
+			assert.strictEqual(aItems[0].getBindingContext(), oCreatedContext2);
+			assert.strictEqual(oCreatedContext2.isTransient(), false);
+			assert.strictEqual(aItems[1].getBindingContext(), oCreatedContext0);
+			assert.strictEqual(oCreatedContext0.isTransient(), false);
+			// following entries are read from server -> isTransient() returns undefined
+			assert.strictEqual(aItems[2].getBindingContext().isTransient(), undefined);
+			assert.strictEqual(aItems[3].getBindingContext().isTransient(), undefined);
+			assert.strictEqual(aItems[4].getBindingContext().isTransient(), undefined);
+		});
+	});
+
+	//*********************************************************************************************
 	// Scenario: Create a business partner w/o key properties, enter an address (complex property),
 	// then submit the batch
 	QUnit.test("Create with default value in a complex property", function (assert) {
-		var sView = '\
+		var oModel = createSalesOrdersModel({
+				autoExpandSelect : true,
+				updateGroupId : "update"
+			}),
+			oTable,
+			sView = '\
 <Table id="table" items="{/BusinessPartnerList}">\
 	<columns><Column/></columns>\
 	<ColumnListItem>\
@@ -2862,11 +5062,7 @@ sap.ui.define([
 		<Input id="longitude" value="{Address/GeoLocation/Longitude}" />\
 	</ColumnListItem>\
 </Table>',
-			oModel = createSalesOrdersModel({
-				autoExpandSelect : true,
-				updateGroupId : "update"
-			}),
-			oTable,
+
 			that = this;
 
 		this.expectRequest("BusinessPartnerList?$select=Address/City,Address/GeoLocation/Longitude,"

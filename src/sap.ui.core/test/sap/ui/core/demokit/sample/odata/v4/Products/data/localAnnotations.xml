@@ -33,6 +33,12 @@
 				<Annotation Term="Org.OData.Validation.V1.Minimum" Decimal="0.00">
 					<Annotation Term="Org.OData.Validation.V1.Exclusive"/>
 				</Annotation>
+				<Annotation Term="com.sap.vocabularies.UI.v1.Visualization"
+					EnumMember="com.sap.vocabularies.UI.v1.VisualizationType/Number" />
+			</Annotations>
+			<Annotations Target="com.sap.gateway.default.zui5_epm_sample.v0002.Product/Price">
+				<Annotation Term="com.sap.vocabularies.UI.v1.Visualization"
+					EnumMember="com.sap.vocabularies.UI.v1.VisualizationType/Number" />
 			</Annotations>
 		</Schema>
 	</edmx:DataServices>

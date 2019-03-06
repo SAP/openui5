@@ -116,8 +116,7 @@
 							<ToolbarLayoutData shrinkable="false" />
 						</layoutData>
 					</Title>
-					<Button enabled="{= !${ui>/bCreateSalesOrderPending}
-							&amp;&amp; !${ui>/bCreateItemPending} }"
+					<Button enabled="{!${ui>/bCreateItemPending}"
 						icon="sap-icon://add" id="createSalesOrder" press="onCreateSalesOrder"
 						tooltip="Create sales order"/>
 					<Button
@@ -334,8 +333,7 @@
 						<Title id="lineItemsTitle"
 							text="{headerContext>$count} Sales Order Line Items"
 							level="H2"/>
-						<Button enabled="{= !${ui>/bCreateItemPending} }"
-							icon="sap-icon://add" id="createSalesOrderLineItem"
+						<Button icon="sap-icon://add" id="createSalesOrderLineItem"
 							press="onCreateSalesOrderLineItem"
 							tooltip="Create sales order line item"/>
 						<Button

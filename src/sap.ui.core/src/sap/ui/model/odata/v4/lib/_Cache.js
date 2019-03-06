@@ -297,7 +297,7 @@ sap.ui.define([
 		// Clean-up when the create has been canceled.
 		function cleanUp() {
 			_Helper.removeByPath(that.mPostRequests, sPath, oEntityData);
-			aCollection.shift();
+			aCollection.splice(aCollection.indexOf(oEntityData), 1);
 			aCollection.$created -= 1;
 			delete aCollection.$byPredicate[sTransientPredicate];
 			if (!sPath) {
@@ -332,6 +332,7 @@ sap.ui.define([
 
 				// now the server has one more element
 				addToCount(that.mChangeListeners, sPath, aCollection, 1);
+				that.iLimit += 1;
 				_Helper.removeByPath(that.mPostRequests, sPath, oEntityData);
 				that.visitResponse(oCreatedEntity, aResult[1],
 					_Helper.getMetaPath(_Helper.buildPath(that.sMetaPath, sPath)),
@@ -1369,17 +1370,16 @@ sap.ui.define([
 	 * @private
 	 */
 	CollectionCache.prototype.getResourcePath = function (iStart, iEnd) {
-		var sDelimiter = this.sQueryString ? "&" : "?",
+		var iCreated = this.aElements.$created,
+			sDelimiter = this.sQueryString ? "&" : "?",
 			iExpectedLength = iEnd - iStart,
 			sResourcePath = this.sResourcePath + this.sQueryString;
 
-		if (this.aElements.$created) {
-			if (iStart) {
-				iStart -= 1;
-			} else {
-				throw new Error("Must not request created element");
-			}
+		if (iStart < iCreated) {
+			throw new Error("Must not request created element");
 		}
+
+		iStart -= iCreated;
 		if (iStart > 0 || iExpectedLength < Infinity) {
 			sResourcePath += sDelimiter + "$skip=" + iStart;
 		}
@@ -1653,8 +1653,7 @@ sap.ui.define([
 	 *   The function is called just before the back-end request is sent.
 	 *   If no back-end request is needed, the function is not called.
 	 * @param {function} [fnOnRemove]
-	 *   A function which is called with the array index of the element after an entity does not
-	 *   match the binding's filter anymore,
+	 *   A function which is called after the entity does not match the binding's filter anymore,
 	 *   see {@link sap.ui.model.odata.v4.ODataListBinding#filter}
 	 * @returns {sap.ui.base.SyncPromise}
 	 *   A promise which resolves with <code>undefined</code> when the entity is updated in
@@ -1694,7 +1693,7 @@ sap.ui.define([
 							"Unexpected server response, more than one entity returned.");
 					} else if (oResult.value.length === 0) {
 						that.removeElement(that.aElements, iIndex, sPredicate, "");
-						fnOnRemove(iIndex);
+						fnOnRemove();
 					} else {
 						that.replaceElement(iIndex, sPredicate, oResult.value[0], mTypeForMetaPath);
 					}

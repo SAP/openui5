@@ -14,20 +14,16 @@ sap.ui.define([
 		 * yet used).
 		 */
 		enableAddButton : function () {
-			var oView = this.getView();
+			var that = this;
 
 			function isOK(oContent) {
 				return !oContent.getValueState || oContent.getValueState() === "None";
 			}
 
-			if (this.bCreated) {
-				return;
-			}
-
 			setTimeout(function () {
-				var aContents = oView.byId("newEntry").getContent();
+				var aContents = that.byId("newEntry").getContent();
 
-				oView.byId("addButton").setEnabled(aContents.every(isOK));
+				that.byId("addButton").setEnabled(aContents.every(isOK));
 			}, 0);
 		},
 
@@ -35,23 +31,18 @@ sap.ui.define([
 		 * "Add" button's event handler: add new row to table.
 		 */
 		onAdd : function () {
-			var oView = this.getView(),
-				oContext = oView.byId("newEntry").getBindingContext(),
+			var oContext = this.byId("newEntry").getBindingContext(),
 				oNewEntry = oContext.getObject();
 
 			oNewEntry["@odata.etag"] = null; // avoid "Failed to drill-down"
 
 			// add new row to table
-			oView.byId("ProductList").getBinding("items").create(oNewEntry).created()
+			this.byId("ProductList").getBinding("items").create(oNewEntry).created()
 				.catch(function (oError) {
 					if (!oError.canceled) {
 						MessageBox.alert(oError.message);
 					}
 				});
-
-			// there can only be one created row
-			this.bCreated = true;
-			oView.byId("addButton").setEnabled(false);
 
 			// clear creation row
 			this.onClearRow();
@@ -61,11 +52,10 @@ sap.ui.define([
 		 * "Clear row" button's event handler: clear creation row.
 		 */
 		onClearRow : function () {
-			var oView = this.getView(),
-				aContents = oView.byId("newEntry").getContent();
+			var aContents = this.byId("newEntry").getContent();
 
 			// destroy old "creation row"
-			oView.byId("newEntry").getBindingContext().delete("$direct");
+			this.byId("newEntry").getBindingContext().delete("$direct");
 
 			// remove invalid user input, including the corresponding messages
 			aContents.forEach(function (oContent) {
@@ -97,6 +87,15 @@ sap.ui.define([
 		},
 
 		/*
+		 * Event handler for resetting changes in the products table. Can be used to remove all
+		 * created products that could not be saved successfully (for example if product ID is not
+		 * unique).
+		 */
+		onResetChanges : function () {
+			this.byId("ProductList").getBinding("items").resetChanges();
+		},
+
+		/*
 		 * Helper function to create a new "creation row": creates a new transient row in the
 		 * hidden list binding and shows it in the creation row.
 		 */
@@ -119,7 +118,7 @@ sap.ui.define([
 				}
 			});
 
-			this.getView().byId("newEntry").setBindingContext(oContext);
+			this.byId("newEntry").setBindingContext(oContext);
 		}
 	});
 });

@@ -3024,41 +3024,44 @@ sap.ui.define([
 	[{
 		iEnd : Infinity,
 		sQueryString : "",
-		iStart : 42,
+		iStart : 43,
 		sResourcePath : "Employees?$skip=41"
 	}, {
 		iEnd : Infinity,
 		sQueryString : "?foo",
-		iStart : 42,
+		iStart : 43,
 		sResourcePath : "Employees?foo&$skip=41"
 	}, {
-		iEnd : 55,
+		iEnd : 56,
 		sQueryString : "?foo",
-		iStart : 42,
+		iStart : 43,
 		sResourcePath : "Employees?foo&$skip=41&$top=13"
 	}, {
-		iEnd : 10,
+		iEnd : 11,
 		sQueryString : "?foo",
-		iStart : 1,
+		iStart : 2,
 		sResourcePath : "Employees?foo&$skip=0&$top=9"
 	}, {
 		iEnd : Infinity,
 		sQueryString : "?foo",
-		iStart : 1,
+		iStart : 2,
 		sResourcePath : "Employees?foo"
 	}, {
 		iEnd : undefined, // undefined is treated as Infinity
 		sQueryString : "",
-		iStart : 42,
+		iStart : 43,
 		sResourcePath : "Employees?$skip=41"
 	}].forEach(function (oFixture, i) {
 		QUnit.test("CollectionCache#getResourcePath: with create, " + i , function (assert) {
 			var oCache = this.createCache("Employees");
 
 			oCache.sQueryString = oFixture.sQueryString;
-			this.oRequestorMock.expects("request").withArgs("POST", "Employees").resolves({});
+			this.oRequestorMock.expects("request").withArgs("POST", "Employees").twice()
+				.resolves({});
 			oCache.create(new _GroupLock("create"), SyncPromise.resolve("Employees"), "",
 				"($uid=id-1-23)", {});
+			oCache.create(new _GroupLock("create"), SyncPromise.resolve("Employees"), "",
+				"($uid=id-1-24)", {});
 
 			// code under test
 			assert.strictEqual(oCache.getResourcePath(oFixture.iStart, oFixture.iEnd),
@@ -3070,14 +3073,21 @@ sap.ui.define([
 	QUnit.test("CollectionCache#getResourcePath: not for created!" , function (assert) {
 		var oCache = this.createCache("Employees");
 
-		this.oRequestorMock.expects("request").withArgs("POST", "Employees").resolves({});
+		this.oRequestorMock.expects("request").withArgs("POST", "Employees").twice().resolves({});
 		oCache.create(new _GroupLock("create"), SyncPromise.resolve("Employees"), "",
 			"($uid=id-1-23)", {});
+		oCache.create(new _GroupLock("create"), SyncPromise.resolve("Employees"), "",
+			"($uid=id-1-24)", {});
+
+		// Note: we forbid ranges which contain created entities
+		assert.throws(function () {
+			// code under test
+			oCache.getResourcePath(0, 2);
+		}, new Error("Must not request created element"));
 
 		assert.throws(function () {
 			// code under test
-			// Note: getResourcePath(0, 1) would not need a request: we forbid 0 altogether
-			oCache.getResourcePath(0, 2);
+			oCache.getResourcePath(1, 2);
 		}, new Error("Must not request created element"));
 	});
 
@@ -3259,7 +3269,7 @@ sap.ui.define([
 						oCache.aElements.$tail = oPromise;
 					}
 					return oPromise instanceof SyncPromise;
-				}),iStart, iEnd);
+				}), iStart, iEnd);
 
 			// code under test
 			oCache.requestElements(iStart, iEnd, oGroupLock, fnDataRequested);
@@ -3729,6 +3739,7 @@ sap.ui.define([
 		return oCache.read(0, 10, 0, new _GroupLock("group")).then(function (oResult) {
 			assert.strictEqual(oCache.aElements.$count, 26);
 			assert.strictEqual(oResult.value.$count, 26);
+			assert.strictEqual(oCache.iLimit, 26);
 
 			that.oRequestorMock.expects("request")
 				.withExactArgs("POST", "Employees", sinon.match.same(oGroupLock), null,
@@ -3741,6 +3752,7 @@ sap.ui.define([
 					assert.strictEqual(
 						oCache.read(0, 10, 0, new _GroupLock("group")).getResult().value.$count, 27,
 						"now including the created element");
+					assert.strictEqual(oCache.iLimit, 27);
 				});
 		});
 	});
@@ -3975,10 +3987,12 @@ sap.ui.define([
 			oRequestor = _Requestor.create("/~/", {getGroupProperty : defaultGetGroupProperty}),
 			oCache = new _Cache(oRequestor, "TEAMS"),
 			oCacheMock = this.mock(oCache),
-			aCollection = [],
 			fnCancelCallback = this.spy(),
+			aCollection = [],
 			oCreatePromise,
 			fnDeleteCallback = this.spy(),
+			oEntity0 = {},
+			oEntity1 = {},
 			oGroupLock = new _GroupLock("updateGroup"),
 			sPathInCache = "('0')/TEAM_2_EMPLOYEES",
 			oPostPathPromise = SyncPromise.resolve("TEAMS('0')/TEAM_2_EMPLOYEES"),
@@ -3994,7 +4008,7 @@ sap.ui.define([
 
 		// code under test
 		oCreatePromise = oCache.create(oGroupLock, oPostPathPromise, sPathInCache,
-			sTransientPredicate, {ID : "", Name : "John Doe"}, fnCancelCallback);
+			sTransientPredicate, oEntity0, fnCancelCallback);
 
 		assert.strictEqual(aCollection.$created, 1);
 		sinon.assert.calledWithExactly(oRequestor.request, "POST", "TEAMS('0')/TEAM_2_EMPLOYEES",
@@ -4005,6 +4019,10 @@ sap.ui.define([
 		// request is added to mPostRequests
 		sinon.assert.calledWithExactly(_Helper.addByPath, sinon.match.same(oCache.mPostRequests),
 			sPathInCache, sinon.match.same(oBody));
+
+		// simulate a second create
+		aCollection.unshift(oEntity1);
+		aCollection.$created += 1;
 
 		this.spy(_Helper, "removeByPath");
 		oCacheMock.expects("fetchValue")
@@ -4017,7 +4035,8 @@ sap.ui.define([
 			sPathInCache + "/-1", //TODO sPathInCache + sTransientPredicate
 			fnDeleteCallback);
 
-		assert.strictEqual(aCollection.$created, 0);
+		assert.strictEqual(aCollection.$created, 1);
+		assert.strictEqual(aCollection[0], oEntity1);
 		sinon.assert.calledWithExactly(_Helper.removeByPath, sinon.match.same(oCache.mPostRequests),
 			sPathInCache, sinon.match.same(oBody));
 		return oCreatePromise.then(function () {
@@ -6383,7 +6402,7 @@ sap.ui.define([
 			return oCache.refreshSingleWithRemove(oGroupLock, 3, undefined, fnOnRemove)
 				.then(function () {
 					if (bRemoved) {
-						sinon.assert.calledWithExactly(fnOnRemove, 2);
+						sinon.assert.calledWithExactly(fnOnRemove);
 					} else {
 						assert.strictEqual(oCache.aElements[2], oResult);
 					}
