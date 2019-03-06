@@ -16,7 +16,11 @@
 		var oMCInformation = new sap.m.MessageStrip("mcontainer1" , {
 			type: "Information",
 			text: "You have configured Windows Internet Explorer to block unsigned ActiveX controls.",
-			link: new sap.m.Link({text: "Learn more"})
+			link: new sap.m.Link({
+				text: "Learn more",
+				href: "http://www.sap.com/",
+				target: "_blank"
+			})
 		});
 
 		var oMCSuccess = new sap.m.MessageStrip("mcontainer2",{
@@ -24,14 +28,22 @@
 			showIcon : true,
 			text: "We have received your enquiry and will respond to you within 24 hours." +
 				"For urgent enquiries please call us on one of the telephone numbers below.",
-			link: new sap.m.Link({text: "Learn more"})
+			link: new sap.m.Link({
+				text: "Learn more",
+				href: "http://www.sap.com/",
+				target: "_blank"
+			})
 		});
 
 		var oMCError = new sap.m.MessageStrip("mcontainer4",{
 			type: "Error",
 			showIcon : true,
 			text: "This page cannot load an unsigned ActiveX control.",
-			link: new sap.m.Link({text: "Learn more"})
+			link: new sap.m.Link({
+				text: "Learn more",
+				href: "http://www.sap.com/",
+				target: "_blank"
+			})
 		});
 
 		var oMCInformationIC = new sap.m.MessageStrip("mcontainer5",{
@@ -80,7 +92,11 @@
 			text: "This page might not behave as expected because Windows Internet Explorer " +
 				"isn't configured to load unsigned ActiveX controls.Allow this page to install an unsigned " +
 				"ActiveX Control? Doing so from untrusted sources may harm your computer.",
-			link: new sap.m.Link({text: "Learn more"})
+			link: new sap.m.Link({
+				text: "Learn more",
+				href: "http://www.sap.com/",
+				target: "_blank"
+			})
 		});
 
 		var oPageNoLayout = new sap.m.Page("no-layout", {
