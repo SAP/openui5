@@ -386,13 +386,13 @@
 			path: "money",
 			formatter: function(fSalary) {
 				if (fSalary < 5) {
-					return "Get a new job!";
+					return "Custom Highlight Message: Your salary is less than 5.";
 				}
 				if (fSalary >= 1000 && fSalary <= 10000) {
-					return "Indication of your salary";
+					return "Custom Highlight Message: Your salary is between 1000 and 10000.";
 				}
 				if (fSalary > 10000 && fSalary < 50000) {
-					return "Richie Rich!";
+					return "Custom Highlight Message: Your salary is between 10000 and 50000.";
 				}
 				return "";
 			}
@@ -441,6 +441,7 @@
 	});
 
 	var oTable = new sap.m.Table({
+		ariaLabelledBy: [oTableHeader.getContent()[0]],
 		growing: true,
 		growingThreshold: 5,
 		growingScrollToLoad : true,

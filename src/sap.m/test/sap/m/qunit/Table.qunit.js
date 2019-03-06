@@ -8,6 +8,7 @@ sap.ui.define([
 	"sap/ui/model/Filter",
 	"sap/ui/model/Sorter",
 	"sap/ui/core/util/PasteHelper",
+	"sap/ui/core/InvisibleText",
 	"sap/m/Table",
 	"sap/m/Column",
 	"sap/m/Label",
@@ -20,7 +21,7 @@ sap.ui.define([
 	"sap/m/Title",
 	"sap/m/ScrollContainer",
 	"sap/m/library"
-], function(qutils, TablePersoDialog, KeyCodes, JSONModel, Device, Filter, Sorter, PasteHelper, Table, Column, Label, Toolbar, ToolbarSpacer, Button, Input, ColumnListItem, Text, Title, ScrollContainer, library) {
+], function(qutils, TablePersoDialog, KeyCodes, JSONModel, Device, Filter, Sorter, PasteHelper, InvisibleText, Table, Column, Label, Toolbar, ToolbarSpacer, Button, Input, ColumnListItem, Text, Title, ScrollContainer, library) {
 	"use strict";
 
 
@@ -443,6 +444,43 @@ sap.ui.define([
 		sut.$("nodata").focus();
 		assert.equal(oInvisibleText.innerHTML, oResourceBundle.getText("LIST_NO_DATA"), "Text correctly assinged for screen reader announcement");
 
+		sut.destroy();
+	});
+
+	QUnit.test("ARIA Roles, Attributes, ...", function(assert) {
+		var sut = createSUT("idTableAcc", true, false, "MultiSelect");
+		sut.addAriaLabelledBy("idTitle");
+		sut.getItems()[0].setType("Navigation");
+		sut.getItems()[0].setHighlight("Error");
+		sut.placeAt("qunit-fixture");
+		sap.ui.getCore().applyChanges();
+
+		assert.ok(sut.$().length > 0, "Table in DOM tree");
+
+		assert.equal(sut.$().attr("aria-labelledby"), InvisibleText.getStaticId("sap.m", "TABLE_CONTAINER_ROLE_DESCRIPTION"), "aria-labelledby - Container");
+		assert.equal(sut.$().attr("role"), "application", "Container has correct ARIA role");
+
+		assert.equal(sut.$("listUl").attr("aria-labelledby"), "idTitle " + InvisibleText.getStaticId("sap.m", "TABLE_ROLE_DESCRIPTION"), "aria-labelledby - Table");
+		assert.ok(!sut.$("listUl").attr("role"), "Table has correct ARIA role");
+
+		function checkCells(sCellType) {
+			var $Scope = sCellType === "th" ? sut.$() : sut.getItems()[0].$();
+			$Scope.find(sCellType).each(function(idx, cell) {
+				var bHidden = idx < 2 || idx >= 2 + sut.getColumns().length;
+				if (bHidden) {
+					assert.equal(jQuery(cell).attr("role"), "presentation", sCellType + " has correct ARIA role: " + idx);
+					assert.equal(jQuery(cell).attr("aria-hidden"), "true", "Hidden " + sCellType + " has aria-hidden: " + idx);
+				} else {
+					assert.equal(jQuery(cell).attr("role") || "", sCellType === "th" ? "columnheader" : "", sCellType + " has correct ARIA role: " + idx);
+					assert.ok(!jQuery(cell).attr("aria-hidden"), "Non-Hidden " + sCellType + " has no aria-hidden: " + idx);
+				}
+			});
+		}
+
+		checkCells("th");
+		checkCells("td");
+
+		//clean up
 		sut.destroy();
 	});
 

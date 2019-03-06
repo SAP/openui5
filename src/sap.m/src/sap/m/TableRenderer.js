@@ -7,7 +7,7 @@ sap.ui.define([
 	'./ListBaseRenderer',
 	'./ColumnListItemRenderer',
 	'sap/m/library',
-	"sap/base/security/encodeXML"
+	'sap/base/security/encodeXML'
 ],
 	function(
 		Renderer,
@@ -78,6 +78,9 @@ sap.ui.define([
 				rm.write(cellTag);
 				if (cellTag === "th") {
 					rm.addClass("sapMTableTH");
+					rm.writeAttribute("role", bAriaHidden ? "presentation" : "columnheader");
+				} else if (bAriaHidden) { // hidden td
+					rm.writeAttribute("role", "presentation");
 				}
 				bAriaHidden && rm.writeAttribute("aria-hidden", "true");
 				id && rm.writeAttribute("id", idPrefix + id);
@@ -105,7 +108,7 @@ sap.ui.define([
 		rm.writeClasses();
 		rm.write(">");
 
-		createBlankCell("HighlightCol", type + "Highlight", !oTable._iItemNeedsHighlight);
+		createBlankCell("HighlightCol", type + "Highlight", true);
 
 		if (iModeOrder == -1) {
 			if (mode == "MultiSelect" && type == "Head" && !isHeaderHidden) {
@@ -113,6 +116,7 @@ sap.ui.define([
 				rm.addClass("sapMTableTH");
 				rm.writeAttribute("aria-hidden", "true");
 				rm.addClass(clsPrefix + "SelCol");
+				rm.writeAttribute("role", "presentation");
 				rm.writeClasses();
 				rm.write(">");
 				rm.renderControl(oTable._getSelectAllCheckbox());
@@ -227,6 +231,15 @@ sap.ui.define([
 	 * add table container class name
 	 */
 	TableRenderer.renderContainerAttributes = function(rm, oControl) {
+
+		rm.writeAttribute("role", "application");
+		rm.writeAttribute("aria-labelledby", this.getAriaAnnouncement("TABLE_CONTAINER_ROLE_DESCRIPTION"));
+
+		// TBD: According to ACC experts aria-roledescription should be used. Unfortunately this does not yet work in a satisfying manner
+		//      Labelling is used instead, see above
+		//var oBundle = sap.ui.getCore().getLibraryResourceBundle("sap.m");
+		//rm.writeAttribute("aria-roledescription", oBundle.getText("TABLE_CONTAINER_ROLE_DESCRIPTION"));
+
 		rm.addClass("sapMListTblCnt");
 		ListBaseRenderer.renderContainerAttributes.apply(this, arguments);
 	};
@@ -245,6 +258,11 @@ sap.ui.define([
 		if (oControl._iItemNeedsColumn) {
 			rm.addClass("sapMListTblHasNav");
 		}
+
+		// TBD: According to ACC experts aria-roledescription should be used. Unfortunately this does not yet work in a satisfying manner
+		//      Labelling is used instead, see TableRenderer.getAriaLabelledBy
+		//var oBundle = sap.ui.getCore().getLibraryResourceBundle("sap.m");
+		//rm.writeAttribute("aria-roledescription", oBundle.getText("TABLE_ROLE_DESCRIPTION"));
 	};
 
 	/**
@@ -252,6 +270,18 @@ sap.ui.define([
 	 */
 	TableRenderer.getAriaRole = function(oControl) {
 		return "";
+	};
+
+	/**
+	 * returns additional labels for accessibility
+	 */
+	TableRenderer.getAriaLabelledBy = function(oControl) {
+		var sParentLabel = ListBaseRenderer.getAriaLabelledBy.call(this, oControl);
+		var sLabel = this.getAriaAnnouncement("TABLE_ROLE_DESCRIPTION");
+		if (sParentLabel && sLabel) {
+			return sParentLabel + " " + sLabel;
+		}
+		return sLabel || sParentLabel;
 	};
 
 	/**
