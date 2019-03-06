@@ -1313,7 +1313,7 @@ sap.ui.define([
 		// change the property (and invalidate if the rendering should be updated)
 		this.mProperties[sPropertyName] = oValue;
 
-		if (!bSuppressInvalidate) {
+		if (!bSuppressInvalidate && !this.isInvalidateSuppressed()) {
 			this.invalidate();
 		}
 
