@@ -2391,11 +2391,13 @@ function (
 		});
 
 		QUnit.test("does not call the revert change handler if the change wasn't applied", function(assert) {
+			var oDeleteChangeInMapSpy = sandbox.spy(this.oFlexController._oChangePersistence, "_deleteChangeInMap");
 			sandbox.stub(this.oFlexController, "_isChangeCurrentlyApplied").returns(false);
 
 			return this.oFlexController.revertChangesOnControl([this.oChange], this.oControl)
 			.then(function() {
 				assert.equal(this.oChangeHandlerRevertChangeStub.callCount, 0, "the changeHandler was not called");
+				assert.equal(oDeleteChangeInMapSpy.callCount, 0, "the change was not deleted in the change persistence");
 			}.bind(this));
 		});
 
