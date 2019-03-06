@@ -207,7 +207,7 @@ sap.ui.define([
 
 		var done = assert.async();
 
-		var oPromise = PasteHelper.validate(pastedData, columnsInfo);
+		var oPromise = PasteHelper.parse(pastedData, columnsInfo);
 
 		oPromise.then(function(aResult) {
 
@@ -217,7 +217,7 @@ sap.ui.define([
 				}
 
 			}
-			assert.deepEqual(aResult, expectedResult, "The result has to contain array of validated data or errors. In this test the validation has to be " + sMsg + ".");
+			assert.deepEqual(aResult, expectedResult, "The result has to contain array of parsed data or errors. In this test the validation has to be " + sMsg + ".");
 			done();
 		});
 	}

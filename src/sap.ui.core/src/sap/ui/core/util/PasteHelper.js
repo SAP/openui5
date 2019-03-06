@@ -116,31 +116,41 @@ sap.ui.define([ "sap/base/util/ObjectPath"],
 	};
 
 	/**
-	 * Validates the data of a two-dimensional array against SAPUI5 standard and EDM types based on the <code>ColumnInfo</code> object
+	 * Validates and parses the data of a two-dimensional array against SAPUI5 standard and EDM types based on the <code>ColumnInfo</code> object
 	 * and returns result with parsed data (if the validation is successful) or error information (if the validation fails).
 	 *
 	 * @param {array} aData Two-dimensional array containing the pasted data
-	 * @param {array} aColumnInfo Provides information for each column, such as a property name and the corresponding data type,
-	 *	as required in the target SAPUI5 table. Use <code>ignore: true</code> for read-only columns or for all other columns
-	 *	that must not be pasted into a SAPUI5 table
+	 * @param {array} aColumnInfo Provides information for each column, such as a property name and the corresponding data type or validation function for custom data type,
+	 *	as required in the target SAPUI5 table. Use <code>ignore: true</code> for read-only columns or for all other columns that must not be pasted into a SAPUI5 table.
+	 *	Use either <code>customParseFunction</code> or <code>type</code> parameter for the same column. Function <code>customParseFunction</code> must return parsed value,
+	 *	if the validation for this custom type was successful, or throw an exception if the validation failed.
+	 *  Parameter <code>type</code> must be an instance of the type object or the type name as a string
 	 *
 	 *	Example:
 	 *					<pre>
 	 *						var aColumnsInfo = [
 	 *							{
 	 *								property: "name",
-	 *								type: "sap.ui.model.type.String"
+	 *								type: "sap.ui.model.odata.type.String"
+	 *							},
+	 *							{
+	 *								property: "lastname",
+	 *								type: new sap.ui.model.odata.type.String({maxLength: 30}
 	 *							},
 	 *							{
 	 *								property: "age",
 	 *								type: "sap.ui.model.odata.type.Byte"
 	 *							},
 	 *							{
+	 *								property: "fullname",
+	 *								customParseFunction: function(sCellData) { return ( doValidationAndModification(sCellData)) ...}
+	 *							},
+	 *							{
 	 *								ignore: true
 	 *							}
 	 *						];
 	 * 					</pre>
-	 * @returns {Promise} a Promise that gets resolved as soon as the validation is done with the result object. The result object contains parsed data if the validation was successful (in this case,
+	 * @returns {Promise} a Promise that gets resolved as soon as the parsing is done with the result object. The result object contains parsed data if the validation was successful (in this case,
 	 * 	the error array has the value <code>null</code>), or it contains all collected errors if the validation failed (in this case,
 	 * 	the data array has the value <code>null</code>).
 	 *
@@ -166,7 +176,7 @@ sap.ui.define([ "sap/base/util/ObjectPath"],
 	 *						});
 	 *					</pre>
 	 */
-	PasteHelper.validate = function(aData, aColumnInfo) {
+	PasteHelper.parse = function(aData, aColumnInfo) {
 		var oResult = {parsedData: null,
 						errors: null};
 
@@ -201,13 +211,13 @@ sap.ui.define([ "sap/base/util/ObjectPath"],
 								throw new Error("Data type " + oColumnInfo.type + " is not available");
 							}
 						}
-					} else {
+					} else if (oColumnInfo.customParseFunction == undefined) {
 						// Exception for the application developers - the definition of the type is missing
-						throw new Error("Missing ColumnInfo.type for column " + (i + 1) + ". Check the application calling PasteHelper.validate(aData, aColumnInfo) and specify the missing type in the parameter aColumnInfo.");
+						throw new Error("Missing ColumnInfo.type or custom type parse function for column " + (i + 1) + ". Check the application calling PasteHelper.parse(aData, aColumnInfo) and specify the missing type in the parameter aColumnInfo.");
 					}
 				} else {
 					// Exception for the application developers - the name of property is missing
-					throw new Error("Missing ColumnInfo.property for column " + (i + 1) + ". Check the application calling PasteHelper.validate(aData, aColumnInfo) and specify the missing property in the parameter aColumnInfo.");
+					throw new Error("Missing ColumnInfo.property for column " + (i + 1) + ". Check the application calling PasteHelper.parse(aData, aColumnInfo) and specify the missing property in the parameter aColumnInfo.");
 				}
 			}
 		} else {
@@ -217,7 +227,7 @@ sap.ui.define([ "sap/base/util/ObjectPath"],
 		var aErrors = [], aParsedData = [];
 		for (var i = 0; i < aData.length; i++) {
 			var aRowData = aData[i];
-			var oParsedRow = PasteHelper._validateRow(aRowData, aColumnInfo, i, aErrors);
+			var oParsedRow = PasteHelper._parseRow(aRowData, aColumnInfo, i, aErrors);
 			aParsedData.push(oParsedRow);
 		}
 		if (aErrors.length > 0) {
@@ -233,7 +243,7 @@ sap.ui.define([ "sap/base/util/ObjectPath"],
 	};
 
 	/**
-	 * Returns the validation result object for one row that contains an array of validated values. This function also
+	 * Returns the result object for one row that contains an array of parsed values if the validation was successful. This function also
 	 * adds errors to the given error array if any validation errors occur.
 	 *
 	 * @param {array} aRowData Contains data for one row
@@ -243,7 +253,7 @@ sap.ui.define([ "sap/base/util/ObjectPath"],
 	 * @returns {object} Returns result object for one row with an array of values that have passed the type validation successfully
 	 * @private
 	 */
-	PasteHelper._validateRow = function(aRowData, aColumnInfo, iRowIndex, aErrors) {
+	PasteHelper._parseRow = function(aRowData, aColumnInfo, iRowIndex, aErrors) {
 
 		var oBundle = sap.ui.getCore().getLibraryResourceBundle(),
 			oObject = {};
@@ -259,23 +269,25 @@ sap.ui.define([ "sap/base/util/ObjectPath"],
 			var sCellData = aRowData[i];
 			try {
 				if (oColumnInfo.typeInstance) {
-						// Check parseValue if it gets to be async
-						sCellData = (oColumnInfo.typeInstance).parseValue(sCellData, "string");
-					}
-				} catch (e) {
-					// Build error object for single cell
-					var oError = {
-						row : iRowIndex + 1,
-						column : i + 1,
-						property : oColumnInfo.property,
-						value : sCellData,
-						type : oColumnInfo.type,
-						message : oBundle.getText("PasteHelper.ErrorMessage", [sCellData, iRowIndex + 1, i + 1,oColumnInfo.type]) //"Value '" + sCellData + "' in row " + (iRowIndex + 1) + " and column " + (i + 1) + " could not be parsed as " + oColumnInfo.type
-					};
-
-					aErrors.push(oError);
-					sCellData = null;
+					// Check parseValue if it gets to be async
+					sCellData = (oColumnInfo.typeInstance).parseValue(sCellData, "string");
+				} else if (oColumnInfo.customParseFunction) {
+					sCellData = oColumnInfo.customParseFunction(sCellData);
 				}
+			} catch (e) {
+				// Build error object for single cell
+				var oError = {
+					row : iRowIndex + 1,
+					column : i + 1,
+					property : oColumnInfo.property,
+					value : sCellData,
+					type : oColumnInfo.type,
+					message : oBundle.getText("PasteHelper.ErrorMessage", [sCellData, iRowIndex + 1, i + 1,oColumnInfo.type]) + " " + e.message//"Value '" + sCellData + "' in row " + (iRowIndex + 1) + " and column " + (i + 1) + " could not be parsed as " + oColumnInfo.type
+				};
+
+				aErrors.push(oError);
+				sCellData = null;
+			}
 			// Set the current data property - this enforces an empty value when parsing failed
 			oObject[oColumnInfo.property] = sCellData;
 		}
