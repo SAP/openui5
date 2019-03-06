@@ -292,9 +292,13 @@ sap.ui.define([
 			var oDate = new Date(1420529121547); // Tue Jan 06 2015 09:25:21 GMT+0200 (FLE Standard Time)
 
 			assert.equal(view.byId("picker1")._$input.val(), DateFormat.getDateTimeInstance().format(oDate), "picker1 has correct value!");
+			assert.equal(view.byId("picker1").isValidValue(), true, "picker1 has valid value!");
 			assert.equal(view.byId("picker2")._$input.val(), DateFormat.getDateTimeInstance().format(oDate), "picker2 has correct value!");
+			assert.equal(view.byId("picker2").isValidValue(), true, "picker2 has valid value!");
 			assert.equal(view.byId("picker3")._$input.val(), DateFormat.getDateTimeInstance({style: "short"}).format(oDate), "picker3 has correct value!");
+			assert.equal(view.byId("picker3").isValidValue(), true, "picker3 has valid value!");
 			assert.equal(view.byId("picker4")._$input.val(), DateFormat.getDateTimeInstance({pattern: "dd+MM+yyyy"}).format(oDate), "picker4 has correct value!");
+			assert.equal(view.byId("picker4").isValidValue(), true, "picker4 has valid value!");
 			done();
 		});
 	});
@@ -1830,4 +1834,207 @@ sap.ui.define([
 		assert.ok(oDP2.getValue() !== "11/190/2016",
 			"The value has successfully changed after a selection from the calendar");
 	}
+
+
+	QUnit.module("isValidValue");
+
+	QUnit.test("Date picker with no settings, no value entered", function (assert) {
+		// Arrange
+		var oDP = new DatePicker();
+		// Act
+		oDP.placeAt("qunit-fixture");
+		sap.ui.getCore().applyChanges();
+
+		// Assert
+		assert.equal(oDP.isValidValue(), true, "empty string is valid value");
+
+		// Cleanup
+		oDP.destroy();
+	});
+
+	QUnit.test("Date picker with display format no value entered", function (assert) {
+		// Arrange
+		var oDP = new DatePicker({
+			displayFormat: "short"
+		});
+		// Act
+		oDP.placeAt("qunit-fixture");
+		sap.ui.getCore().applyChanges();
+
+		// Assert
+		assert.equal(oDP.isValidValue(), true, "the value is valid");
+
+		// Cleanup
+		oDP.destroy();
+	});
+
+	QUnit.test("Date picker with set valid value on init", function (assert) {
+		// Arrange
+		var oDP = new DatePicker({
+			value: "2014-03-26"
+		});
+		// Act
+		oDP.placeAt("qunit-fixture");
+		sap.ui.getCore().applyChanges();
+
+		// Assert
+		assert.equal(oDP.isValidValue(), true, "the value is valid");
+
+		// Cleanup
+		oDP.destroy();
+	});
+
+	QUnit.test("Date picker with set not valid value on init", function (assert) {
+		// Arrange
+		var oDP = new DatePicker({
+			value: "99999-63-26"
+		});
+		// Act
+		oDP.placeAt("qunit-fixture");
+		sap.ui.getCore().applyChanges();
+
+		// Assert
+		assert.equal(oDP.isValidValue(), false, "the value is not valid");
+
+		// Cleanup
+		oDP.destroy();
+	});
+
+	QUnit.test("Date picker values set via setter", function (assert) {
+		// Arrange
+		var oDP = new DatePicker();
+		oDP.placeAt("qunit-fixture");
+		sap.ui.getCore().applyChanges();
+
+		// Act
+		oDP.setValue("2014-03-26");
+
+		// Assert
+		assert.equal(oDP.isValidValue(), true, "the value is valid");
+
+		// Act
+		oDP.setValue("2014-08-26");
+
+		// Assert
+		assert.equal(oDP.isValidValue(), true, "the value is valid");
+
+		// Act
+		oDP.setValue("2014-45-44");
+
+		// Assert
+		assert.equal(oDP.isValidValue(), false, "the value is not valid");
+
+		// Cleanup
+		oDP.destroy();
+	});
+
+	QUnit.test("value is valid when we change the century", function(assert) {
+		// Arrange
+		var oDP = new DatePicker({
+				value: "05-05-16",
+				valueFormat: "MM-dd-yy",
+				displayFormat: "dd+MM+yyyy"
+			});
+		oDP.placeAt("qunit-fixture");
+		sap.ui.getCore().applyChanges();
+
+		// Act
+		oDP.focus();
+		oDP.$().find("input").val("05+05+1916");
+		oDP.onChange();
+
+		// Assert
+		assert.equal(oDP.isValidValue(), true, "the value is valid");
+
+		// Cleanup
+		oDP.destroy();
+	});
+
+	QUnit.test("typing invalid value", function(assert) {
+		// Arrange
+		var oDP = new DatePicker();
+		oDP.placeAt("qunit-fixture");
+		sap.ui.getCore().applyChanges();
+
+		// Act
+		oDP.$().find("input").val("96876876786868678");
+		oDP.onChange();
+
+		// Assert
+		assert.equal(oDP.isValidValue(), false, "the value is not valid");
+
+		// Cleanup
+		oDP.destroy();
+	});
+
+	QUnit.test("function return correct value when we change maxDate", function(assert) {
+		// Arrange
+		var oDP = new DatePicker({
+				value: "2019-05-05"
+			});
+		oDP.placeAt("qunit-fixture");
+		sap.ui.getCore().applyChanges();
+
+		// Act
+		oDP.setMaxDate(new Date("2019", "04", "04"));
+
+		// Assert
+		assert.equal(oDP.isValidValue(), false, "current value is not valid anymore");
+
+		// Cleanup
+		oDP.destroy();
+	});
+
+	QUnit.test("function return correct value when we change minDate", function(assert) {
+		// Arrange
+		var oDP = new DatePicker({
+				value: "2019-05-05"
+			});
+		oDP.placeAt("qunit-fixture");
+		sap.ui.getCore().applyChanges();
+
+		// Act
+		oDP.setMinDate(new Date("2019", "06", "06"));
+
+		// Assert
+		assert.equal(oDP.isValidValue(), false, "current value is not valid anymore");
+
+		// Cleanup
+		oDP.destroy();
+	});
+
+	QUnit.test("function return correct value when having minDate and set lower date", function(assert) {
+		// Arrange
+		var oDP = new DatePicker({
+				minDate: new Date("2019", "05", "05")
+			});
+		oDP.placeAt("qunit-fixture");
+		sap.ui.getCore().applyChanges();
+
+		// Act
+		oDP.setValue("2014-08-26");
+
+		// Assert
+		assert.equal(oDP.isValidValue(), false, "current value is not valid");
+
+		// Cleanup
+		oDP.destroy();
+	});
+
+	QUnit.test("function return correct value when we change minDate", function(assert) {
+		// Arrange
+		var oDP = new DatePicker({
+				value: "2019-04-04",
+				minDate: new Date("2019", "05", "05")
+			});
+
+		// Act
+		oDP._checkMinMaxDate();
+
+		// Assert
+		assert.equal(oDP.isValidValue(), false, "current value is not valid anymore");
+
+		// Cleanup
+		oDP.destroy();
+	});
 });
