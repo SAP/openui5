@@ -90,7 +90,7 @@
 		},
 		{
 		  "id": "sap.f.ShellBar",
-		  "name": "ShellBar (experimental)",
+		  "name": "Shell Bar (Experimental)",
 		  "category": "Display",
 		  "since": "1.63",
 		  "samples": ["sap.f.sample.ShellBar"]
@@ -176,8 +176,8 @@
 		},
 		{
 		  "id": "sap.f.sample.ShellBar",
-		  "name": "ShellBar (experimental)",
-		  "description": "This sample demonstrates sap.f.ShellBar."
+		  "name": "Shell Bar (Experimental)",
+		  "description": "The ShellBar is used as the uppermost section (shell) of the app."
 		},
 		{
 		  "id": "sap.f.sample.Card",
