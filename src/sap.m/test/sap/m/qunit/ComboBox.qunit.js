@@ -11296,11 +11296,20 @@ sap.ui.define([
 				_itemsTextStartsWithTypedValue: function () {
 					return true;
 				},
-				_bIsLastFocusedItemHeader: false
+				_bIsLastFocusedItemHeader: false,
+				getValue: function () {return "";},
+				_getSelectionRange: function (oComboBox) {
+					return oComboBox._getSelectionRange.call(this);
+				},
+				_shouldResetSelectionStart: function (oComboBox) {
+					return oComboBox._shouldResetSelectionStart.call(this);
+				}
 			};
 		},
 		afterEach: function () {
 			this.oComboBox.destroy();
+			this.oFakeFocusDomRef = null;
+			this.oFakeControl = null;
 		}
 	});
 
@@ -11339,18 +11348,121 @@ sap.ui.define([
 		assert.strictEqual(fnErrorSpy.callCount, 0, "No error was logged in the console.");
 	});
 
+	QUnit.test("_getSelectionRange - should return correct values scenario 1", function (assert) {
+		// assert
+		assert.strictEqual(this.oFakeControl._getSelectionRange(this.oComboBox).start, 0, "Correct start value returned");
+		assert.strictEqual(this.oFakeControl._getSelectionRange(this.oComboBox).end, 0, "Correct end value returned");
+	});
+
+	QUnit.test("_getSelectionRange - should return correct values scenario 2", function (assert) {
+		// arrange
+		this.oFakeFocusDomRef.selectionStart = 2;
+		this.oFakeFocusDomRef.selectionEnd = 2;
+
+		// assert
+		assert.strictEqual(this.oFakeControl._getSelectionRange(this.oComboBox).start, 2, "Correct value returned");
+		assert.strictEqual(this.oFakeControl._getSelectionRange(this.oComboBox).end, 2, "Correct value returned");
+
+		// arrange
+		this.oFakeFocusDomRef.selectionStart = 1;
+		this.oFakeFocusDomRef.selectionEnd = 5;
+
+		// assert
+		assert.strictEqual(this.oFakeControl._getSelectionRange(this.oComboBox).start, 1, "Correct value returned");
+		assert.strictEqual(this.oFakeControl._getSelectionRange(this.oComboBox).end, 5, "Correct value returned");
+	});
+
+	QUnit.test("_getSelectionRange (IE & Edge) - should return correct values scenario 1", function (assert) {
+		this.stub(Device, "browser", {
+			msie: true
+		});
+
+		// assert
+		assert.strictEqual(this.oFakeControl._getSelectionRange(this.oComboBox).start, 0, "Correct value returned");
+		assert.strictEqual(this.oFakeControl._getSelectionRange(this.oComboBox).end, 0, "Correct value returned");
+
+	});
+
+	QUnit.test("_getSelectionRange (IE & Edge) - should return correct values scenario 2", function (assert) {
+		this.stub(Device, "browser", {
+			msie: true
+		});
+		this.oFakeFocusDomRef.selectionStart = 2;
+		this.oFakeFocusDomRef.selectionEnd = 2;
+
+		// assert
+		assert.strictEqual(this.oFakeControl._getSelectionRange(this.oComboBox).start, 2, "Correct value returned");
+		assert.strictEqual(this.oFakeControl._getSelectionRange(this.oComboBox).end, 2, "Correct value returned");
+
+		// arrange
+		this.oFakeFocusDomRef.selectionStart = 1;
+		this.oFakeFocusDomRef.selectionEnd = 5;
+
+		// assert
+		assert.strictEqual(this.oFakeControl._getSelectionRange(this.oComboBox).start, 1, "Correct value returned");
+		assert.strictEqual(this.oFakeControl._getSelectionRange(this.oComboBox).end, 5, "Correct value returned");
+	});
+
+	QUnit.test("_getSelectionRange (IE & Edge) - should return correct values scenario 3 (last focused item is header; value = 'some')", function (assert) {
+		this.stub(Device, "browser", {
+			msie: true
+		});
+		this.oFakeControl._bIsLastFocusedItemHeader = true;
+		this.oFakeControl.getValue = function () {return 'some';};
+
+		// assert
+		assert.strictEqual(this.oFakeControl._getSelectionRange(this.oComboBox).start, 4, "Correct value returned");
+		assert.strictEqual(this.oFakeControl._getSelectionRange(this.oComboBox).end, 4, "Correct value returned");
+	});
+
+	QUnit.module("Reset selection", {
+		beforeEach: function () {
+			this.oComboBox = new ComboBox();
+
+			// Mocked control data
+			this.oFakeFocusDomRef = {
+				selectionStart: 0,
+				selectionEnd: 0,
+				value: {
+					substring: function () {}
+				}
+			};
+			this.oFakeControl = {
+				getFocusDomRef: function () {
+					return this.oFakeFocusDomRef;
+				}.bind(this),
+				_itemsTextStartsWithTypedValue: function () {
+					return true;
+				},
+				_bIsLastFocusedItemHeader: false,
+				getValue: function () {return "";},
+				_getSelectionRange: function () {
+					return {
+						start: this.getFocusDomRef().selectionStart,
+						end: this.getFocusDomRef().selectionEnd
+					};
+				}
+			};
+		},
+		afterEach: function () {
+			this.oComboBox.destroy();
+			this.oFakeFocusDomRef = null;
+			this.oFakeControl = null;
+		}
+	});
+
 	QUnit.test("shouldResetSelectionStart - scenario 1: Typed value with selected text and item starting with the typed value.", function (assert) {
 		// system under test
 		this.oFakeFocusDomRef.selectionStart = 2;
 		this.oFakeFocusDomRef.selectionEnd = 6;
 
 		// assert
-		assert.ok(!this.oComboBox.shouldResetSelectionStart(this.oFakeControl), "Selection should not be reset");
+		assert.ok(!this.oComboBox._shouldResetSelectionStart.call(this.oFakeControl), "Selection should not be reset");
 	});
 
 	QUnit.test("shouldResetSelectionStart - scenario 2: Typed value without selected text and item starting with the typed value.", function (assert) {
 		// assert
-		assert.ok(this.oComboBox.shouldResetSelectionStart(this.oFakeControl), "Selection should be reset");
+		assert.ok(this.oComboBox._shouldResetSelectionStart.call(this.oFakeControl), "Selection should be reset");
 	});
 
 	QUnit.test("shouldResetSelectionStart - scenario 3: Typed value without selected text, matching item and previous item was a group header item.", function (assert) {
@@ -11360,7 +11472,7 @@ sap.ui.define([
 		this.oFakeControl._bIsLastFocusedItemHeader = true;
 
 		// assert
-		assert.ok(!this.oComboBox.shouldResetSelectionStart(this.oFakeControl), "Selection should not be reset");
+		assert.ok(!this.oComboBox._shouldResetSelectionStart.call(this.oFakeControl), "Selection should not be reset");
 	});
 
 	QUnit.test("shouldResetSelectionStart - scenario 4: No item that starts with the typed value.", function (assert) {
@@ -11368,7 +11480,7 @@ sap.ui.define([
 		this.oFakeControl._itemsTextStartsWithTypedValue = function () { return false; };
 
 		// assert
-		assert.ok(this.oComboBox.shouldResetSelectionStart(this.oFakeControl), "Selection should be reset");
+		assert.ok(this.oComboBox._shouldResetSelectionStart.call(this.oFakeControl), "Selection should be reset");
 	});
 
 	QUnit.module("addItemGroup", {

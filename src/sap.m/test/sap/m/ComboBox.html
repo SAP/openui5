@@ -766,6 +766,17 @@
 
 		oSpecialCharsComboBox.setModel(oSpecialCharsModel);
 
+		var oComboBoxGrouping = new sap.m.ComboBox({
+			items: [
+				new sap.ui.core.SeparatorItem({text: "Group1"}),
+				new sap.ui.core.Item({text: "item11", key:"key11"}),
+				new sap.ui.core.Item({text: "item12", key:"key12"}),
+				new sap.ui.core.SeparatorItem({text: "Group2"}),
+				new sap.ui.core.Item({text: "item21", key:"key21"}),
+				new sap.ui.core.Item({text: "item22", key:"key22"})
+			]
+		});
+
 		new sap.m.App().addPage(new sap.m.Page("page",{
 			title: "sap.m.ComboBox",
 			content: [
@@ -860,6 +871,10 @@
 				new sap.ui.core.HTML({ content: "<h3>ComboBox with Accented characters</h3>" }),
 				oSpecialCharsComboBox,
 				new sap.ui.core.HTML({ content: "<hr>" }),
+
+				new sap.ui.core.HTML({ content: "<h3>ComboBox with Grouping</h3>" }),
+				oComboBoxGrouping,
+				new sap.ui.core.HTML({ content: "<hr>" })
 			]
 		}).addStyleClass("sapUiContentPadding")).placeAt("body");
 		</script>
