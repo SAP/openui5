@@ -1,10 +1,19 @@
 /*global QUnit, sinon */
 sap.ui.define([
     "sap/ui/model/odata/v2/ODataModel",
+    "sap/ui/model/odata/MessageScope",
     'sap/ui/core/util/MockServer'
-], function (ODataModel, MockServer) {
+], function (ODataModel, MessageScope, MockServer) {
     "use strict";
 
+
+    var resetSharedData = function() {
+        sap.ui.model.odata.v2.ODataModel.mSharedData = {
+            server: {},
+            service: {},
+            meta: {}
+        };
+    };
 
     // Simulate data changed on server
     var changeNavigationTargets = function (oMockServer, sProductId, sBusinessPartnerID) {
@@ -64,7 +73,7 @@ sap.ui.define([
 			});
             this.oMockServer.simulate(sDataRootPath + "metadata.xml", sDataRootPath);
             this.oMockServer.start();
-            this.oModel = new ODataModel(this.sServiceUri, { canonicalRequests: true, useMessageScopeHeader: true});
+            this.oModel = new ODataModel(this.sServiceUri, { canonicalRequests: true, messageScope: MessageScope.BusinessObject});
             this.oStubGetEntitySetByPath = sinon.spy(this.oModel.oMetadata, "_getEntitySetByPath");
 
             this.fnOriginalInvalidate = this.oModel._invalidatePathCache;
@@ -85,6 +94,7 @@ sap.ui.define([
             this.oModel._invalidatePathCache = this.fnOriginalInvalidate;
             this.oModel.destroy();
             delete this.oModel;
+            resetSharedData();
         }
     });
 
@@ -534,6 +544,123 @@ sap.ui.define([
             };
 
             that.oModel.attachBatchRequestCompleted(fnRequestCompleted);
+        });
+    });
+
+    QUnit.module("Message Scope supported", {
+        beforeEach: function () {
+            this.sServiceUri = "/SalesOrderSrv/";
+            var sDataRootPath = "test-resources/sap/ui/core/qunit/testdata/SalesOrder/";
+
+            this.oMockServer = new MockServer({
+                rootUri: this.sServiceUri
+            });
+            this.oMockServer.simulate(sDataRootPath + "metadata.xml", sDataRootPath);
+            this.oMockServer.start();
+
+
+        },
+        afterEach: function () {
+            this.oMockServer.stop();
+            delete this.oModel;
+            resetSharedData();
+        }
+    });
+
+    QUnit.test("Message Scope supported by service - scope: RequestedObjects", function(assert){
+        var that = this;
+        var done = assert.async();
+
+        this.oModel = new ODataModel(this.sServiceUri, { canonicalRequests: true, messageScope: MessageScope.RequestedObjects});
+        this.oModel.metadataLoaded().then(function(){
+            that.oModel.read("/SalesOrderSet('0500000000')");
+
+            var fnRequestCompleted = function(oEvent){
+                that.oModel.detachRequestCompleted(fnRequestCompleted);
+                var mHeaders = oEvent.getParameter("headers");
+                assert.ok(!mHeaders["sap-message-scope"], "Message scope set to 'RequestedObjects': no scope header set");
+                done();
+            };
+
+            that.oModel.attachRequestCompleted(fnRequestCompleted);
+        });
+    });
+
+    QUnit.test("Message Scope supported by service - scope: BusinessObject", function(assert){
+        var that = this;
+        var done = assert.async();
+
+        this.oModel = new ODataModel(this.sServiceUri, { canonicalRequests: true, messageScope: MessageScope.BusinessObject});
+        this.oModel.metadataLoaded().then(function(){
+            that.oModel.read("/SalesOrderSet('0500000000')");
+
+            var fnRequestCompleted = function(oEvent){
+                that.oModel.detachRequestCompleted(fnRequestCompleted);
+                var mHeaders = oEvent.getParameter("headers");
+                assert.ok(mHeaders["sap-message-scope"], "Message scope set to 'RequestedObjects': scope header set");
+                assert.equal(mHeaders["sap-message-scope"], "/SalesOrderSet('0500000000')", "Message scope set to 'BusinessObject': scope header set");
+                done();
+            };
+
+            that.oModel.attachRequestCompleted(fnRequestCompleted);
+        });
+    });
+
+    QUnit.module("Message Scope not supported", {
+        beforeEach: function () {
+            this.sServiceUri = "/SalesOrderSrv/";
+            var sDataRootPath = "test-resources/sap/ui/core/qunit/testdata/SalesOrder/";
+
+            this.oMockServer = new MockServer({
+                rootUri: this.sServiceUri
+            });
+            this.oMockServer.simulate(sDataRootPath + "metadataMessageScope.xml", sDataRootPath);
+            this.oMockServer.start();
+
+
+        },
+        afterEach: function () {
+            this.oMockServer.stop();
+            delete this.oModel;
+            resetSharedData();
+        }
+    });
+
+    QUnit.test("Message Scope supported by service - scope: BusinessObject", function(assert){
+        var that = this;
+        var done = assert.async();
+
+        this.oModel = new ODataModel(this.sServiceUri, { canonicalRequests: true, messageScope: MessageScope.BusinessObject});
+        this.oModel.metadataLoaded().then(function(){
+            that.oModel.read("/SalesOrderSet('0500000000')");
+
+            var fnRequestCompleted = function(oEvent){
+                that.oModel.detachRequestCompleted(fnRequestCompleted);
+                var mHeaders = oEvent.getParameter("headers");
+                assert.ok(!mHeaders["sap-message-scope"], "Message scope set to 'BusinessObject': no scope header set");
+                done();
+            };
+
+            that.oModel.attachRequestCompleted(fnRequestCompleted);
+        });
+    });
+
+    QUnit.test("Message Scope supported by service - scope: RequestedObjects", function(assert){
+        var that = this;
+        var done = assert.async();
+
+        this.oModel = new ODataModel(this.sServiceUri, { canonicalRequests: true, messageScope: MessageScope.RequestedObjects});
+        this.oModel.metadataLoaded().then(function(){
+            that.oModel.read("/SalesOrderSet('0500000000')");
+
+            var fnRequestCompleted = function(oEvent){
+                that.oModel.detachRequestCompleted(fnRequestCompleted);
+                var mHeaders = oEvent.getParameter("headers");
+                assert.ok(!mHeaders["sap-message-scope"], "Message scope set to 'RequestedObjects': no scope header set");
+                done();
+            };
+
+            that.oModel.attachRequestCompleted(fnRequestCompleted);
         });
     });
 
