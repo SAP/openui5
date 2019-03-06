@@ -111,5 +111,16 @@
         "references": []
       }
     ]
+  },
+  "1.63.1": {
+    "date": "March 2019",
+    "notes": [
+      {
+        "id": "c7d638355dc726fdcca046c27b4989785726f3b1",
+        "type": "FIX",
+        "text": " sap.f.FlexibleColumnLayout: Fixed column resizing on layout change",
+        "references": []
+      }
+    ]
   }
 }

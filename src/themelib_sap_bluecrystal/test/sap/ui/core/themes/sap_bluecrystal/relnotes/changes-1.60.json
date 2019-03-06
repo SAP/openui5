@@ -5,14 +5,24 @@
       {
         "id": "341f097a5fa58597c26c6c3f22b6664c192c66cc",
         "type": "FIX",
-        "text": " sap.m.ComboBox: Items\u0027 loading indicator returned back",
-        "references": []
+        "text": "sap.m.ComboBox: Items' loading indicator returned back",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "1880494891"
+          }
+        ]
       },
       {
         "id": "fdb8e9bf8d5e0bbd8355b5263b12d61f9304ef38",
         "type": "FIX",
-        "text": " sap.m.PlanningCalendar: visual fix of the DatesRow on hover",
-        "references": []
+        "text": "sap.m.PlanningCalendar: visual fix of the DatesRow on hover",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "1880484945"
+          }
+        ]
       }
     ]
   },
@@ -22,8 +32,13 @@
       {
         "id": "724e59466302abb51b3c20797edfeba7b9d80ac1",
         "type": "FIX",
-        "text": " sap.ui.unified.Calendar: hover on selected non-working date is correct now",
-        "references": []
+        "text": "sap.ui.unified.Calendar: hover on selected non-working date is correct now",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "1880630530"
+          }
+        ]
       }
     ]
   },
@@ -33,7 +48,7 @@
       {
         "id": "b820fbb6427109ad7f4dcd16b60a11963c3510be",
         "type": "FIX",
-        "text": " sap.m.GenericTile: fix border CSS for BC, HCB and HCW themes",
+        "text": "sap.m.GenericTile: fix border CSS for BC, HCB and HCW themes",
         "references": []
       }
     ]
@@ -44,8 +59,13 @@
       {
         "id": "d6cff3038530a6c64308982eef91942d45c848a1",
         "type": "FIX",
-        "text": " sap.m.ComboBox: duplicated focus outline, spec implemented",
-        "references": []
+        "text": "sap.m.ComboBox: duplicated focus outline, spec implemented",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "1880494664"
+          }
+        ]
       }
     ]
   }

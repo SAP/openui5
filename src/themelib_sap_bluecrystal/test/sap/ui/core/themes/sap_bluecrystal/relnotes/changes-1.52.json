@@ -5,32 +5,61 @@
       {
         "id": "a5022f7d99b978d2a9dc9be4e3a4724195f04a1c",
         "type": "FIX",
-        "text": " sap.m.BarInPageEnabler: Bars no longer care about the context they\u0027re used in (i.e. header, footer, etc.)",
-        "references": []
+        "text": "sap.m.BarInPageEnabler: Bars no longer care about the context they're used in (i.e. header, footer, etc.)",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "1770116282"
+          }
+        ]
       },
       {
         "id": "265aa8f4a0ec76bd2656934425e316a4771a2427",
         "type": "FIX",
-        "text": " sap.m.ObjectAttribute: correct different height of the ObjectAttributeDiv between IE and Chrome",
-        "references": []
+        "text": "sap.m.ObjectAttribute: correct different height of the ObjectAttributeDiv between IE and Chrome",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "002075129400004077882017"
+          },
+          {
+            "type": "BCP",
+            "reference": "1770230851"
+          }
+        ]
       },
       {
         "id": "e7c4f05faf84b4f0644e44364aaf515b443c560d",
         "type": "FIX",
-        "text": " sap.m.SegmentedButton - when used inside sap.m.Bar spacing is preserved.",
-        "references": []
+        "text": "sap.m.SegmentedButton - when used inside sap.m.Bar spacing is preserved.",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "1770363888"
+          }
+        ]
       },
       {
         "id": "92b3c6ed83cd76526f71174a32bb172247355402",
         "type": "FIX",
-        "text": " sap.m.TileContainer: Moving of tiles fixed",
-        "references": []
+        "text": "sap.m.TileContainer: Moving of tiles fixed",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "1780253208"
+          }
+        ]
       },
       {
         "id": "bade948550820800db627620e0ef20ba840d58f7",
         "type": "FIX",
-        "text": " sap.ui.unified.Calendar: minor visual fix in the header",
-        "references": []
+        "text": "sap.ui.unified.Calendar: minor visual fix in the header",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "002075129400004969412017"
+          }
+        ]
       }
     ]
   },
@@ -40,7 +69,7 @@
       {
         "id": "bcdf069024b3a349a6fe1a9de5a00a5e2c44cfb3",
         "type": "FIX",
-        "text": " sap.m.PlanningCalendar: Now the week number in 1 Month view is not missing in IE when 1st week day is selected",
+        "text": "sap.m.PlanningCalendar: Now the week number in 1 Month view is not missing in IE when 1st week day is selected",
         "references": []
       }
     ]
@@ -51,8 +80,17 @@
       {
         "id": "043be754b7dd77fcd97a81434e1ae80cb326c082",
         "type": "FIX",
-        "text": " sap.m.SegmentedButton: Vertically aligned correctly alongside other controls",
-        "references": []
+        "text": "sap.m.SegmentedButton: Vertically aligned correctly alongside other controls",
+        "references": [
+          {
+            "type": "GitHub",
+            "reference": "1804"
+          },
+          {
+            "type": "BCP",
+            "reference": "1780488929"
+          }
+        ]
       }
     ]
   },
@@ -62,19 +100,33 @@
       {
         "id": "7ee98473da416ba687395addf61237861014462a",
         "type": "FIX",
-        "text": " sap.m.Dialog: correct header, subheader and footer DOM structure",
-        "references": []
+        "text": "sap.m.Dialog: correct header, subheader and footer DOM structure",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "1770617033"
+          },
+          {
+            "type": "BCP",
+            "reference": "002075129400000248662018"
+          }
+        ]
       },
       {
         "id": "c0df344767c21d7361a3df8acc8b3fb7ca3b81f5",
         "type": "FIX",
-        "text": " sap.m.Dialog: correct padding of the subheader when Toolbar is used",
-        "references": []
+        "text": "sap.m.Dialog: correct padding of the subheader when Toolbar is used",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "1880134146"
+          }
+        ]
       },
       {
         "id": "7f64971307f16355aff56df9631e9acef5f60f66",
         "type": "FIX",
-        "text": " sap.m.Popover: correct header, subheader and footer DOM structure",
+        "text": "sap.m.Popover: correct header, subheader and footer DOM structure",
         "references": []
       }
     ]
@@ -85,8 +137,13 @@
       {
         "id": "dd7456cd18ebe851f7df97613b9f81d38875a79c",
         "type": "FIX",
-        "text": " sap.m.ComboBox: Items\u0027 loading indicator returned back",
-        "references": []
+        "text": "sap.m.ComboBox: Items' loading indicator returned back",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "1880494891"
+          }
+        ]
       }
     ]
   }

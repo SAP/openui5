@@ -5,13 +5,18 @@
       {
         "id": "11c596df09e94695f28bb5e7d98e17be55370f4e",
         "type": "FIX",
-        "text": " sap.m.SegmentedButton: right border of the last visible sub item is now displayed",
-        "references": []
+        "text": "sap.m.SegmentedButton: right border of the last visible sub item is now displayed",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "1870233788"
+          }
+        ]
       },
       {
         "id": "44e9000fa60d010148f02fefdf71f34ef7b6007b",
         "type": "FEATURE",
-        "text": " adding sap.ui.core.IconColor.Contrast",
+        "text": "adding sap.ui.core.IconColor.Contrast",
         "references": []
       }
     ]
@@ -22,8 +27,13 @@
       {
         "id": "4b75fb325b71ddf080be67d673cf83cfe9d1dd73",
         "type": "FIX",
-        "text": " sap.m.ComboBox: Items\u0027 loading indicator returned back",
-        "references": []
+        "text": "sap.m.ComboBox: Items' loading indicator returned back",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "1880494891"
+          }
+        ]
       }
     ]
   },
@@ -33,8 +43,13 @@
       {
         "id": "8df161e39f2358bc23e983ebd063b841b4faea10",
         "type": "FIX",
-        "text": " sap.m.PlanningCalendar: visual fix of the DatesRow on hover",
-        "references": []
+        "text": "sap.m.PlanningCalendar: visual fix of the DatesRow on hover",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "1880484945"
+          }
+        ]
       }
     ]
   },
@@ -44,8 +59,13 @@
       {
         "id": "b1c5bbefe0f1e83a1e020a105aa9403b56fc56f7",
         "type": "FIX",
-        "text": " sap.ui.unified.Calendar: hover on selected non-working date is correct now",
-        "references": []
+        "text": "sap.ui.unified.Calendar: hover on selected non-working date is correct now",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "1880630530"
+          }
+        ]
       }
     ]
   }

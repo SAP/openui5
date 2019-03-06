@@ -5,92 +5,157 @@
       {
         "id": "3bdeb179a7e8a8ea2ce057e9b180146d20e94f4d",
         "type": "FIX",
-        "text": " sap.m.PlanningCalendar: Dates from previous/next month in the calendar picker are now interactive",
-        "references": []
+        "text": "sap.m.PlanningCalendar: Dates from previous/next month in the calendar picker are now interactive",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "1870150194"
+          }
+        ]
       },
       {
         "id": "20c515e87921b50870fb379138f5afa22f9e59a2",
         "type": "FEATURE",
-        "text": " sap.ui.unified.Calendar: Event \"weekNumberSelect\" introduced",
+        "text": "sap.ui.unified.Calendar: Event \"weekNumberSelect\" introduced",
         "references": []
       },
       {
         "id": "cb893912fdfeb5e266192e629bc5e1b3d94cd341",
         "type": "FIX",
-        "text": " sap.ui.commons.Menu: MenuTextFieldItem can now be focused on hover opened from IE",
-        "references": []
+        "text": "sap.ui.commons.Menu: MenuTextFieldItem can now be focused on hover opened from IE",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "1870234443"
+          }
+        ]
       },
       {
         "id": "2d7f09d180b3b67e7d708886547268b17f216caf",
         "type": "FIX",
-        "text": " sap.ui.unified.Calendar: weekNumberSelect event now works correctly in IE and Edge",
+        "text": "sap.ui.unified.Calendar: weekNumberSelect event now works correctly in IE and Edge",
         "references": []
       },
       {
         "id": "5ff60eea7a832d149157e54c065009b54694d9b3",
         "type": "FIX",
-        "text": " sap.ui.unified.Month: Now select event is fired correctly",
-        "references": []
+        "text": "sap.ui.unified.Month: Now select event is fired correctly",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "1880273600"
+          }
+        ]
       },
       {
         "id": "ac46d9e99cf5649b56c19b7b3caa5e331af91368",
         "type": "FIX",
-        "text": " FileUploader: Accessing upload iframe adjusted",
-        "references": []
+        "text": "FileUploader: Accessing upload iframe adjusted",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "002075129500001676212018"
+          }
+        ]
       },
       {
         "id": "141fdd92280e5f769479a612441d4455441993e0",
         "type": "FIX",
-        "text": " sap.m.Menu: F4 closes the menu",
-        "references": []
+        "text": "sap.m.Menu: F4 closes the menu",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "1880270570"
+          }
+        ]
       },
       {
         "id": "d38674d657c87400566b6e88524f5c6b464eb9ac",
         "type": "FIX",
-        "text": " sap.ui.unified.FileUploader: pressing of ESCAPE is now propagated to the parent",
-        "references": []
+        "text": "sap.ui.unified.FileUploader: pressing of ESCAPE is now propagated to the parent",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "1880332317"
+          }
+        ]
       },
       {
         "id": "0677dc024bdfb8d25bdb35ee258a34586a2c0928",
         "type": "FIX",
-        "text": " sap.ui.unified.Calendar: CW selection behavior corrected",
-        "references": []
+        "text": "sap.ui.unified.Calendar: CW selection behavior corrected",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "1880419589"
+          }
+        ]
       },
       {
         "id": "9ea8dbf284294e88adbfb50853c4c04aec233273",
         "type": "FIX",
-        "text": " sap.ui.unified.CalendarDateInterval: Sample now displays correctly on mobile",
-        "references": []
+        "text": "sap.ui.unified.CalendarDateInterval: Sample now displays correctly on mobile",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "1880363674"
+          }
+        ]
       },
       {
         "id": "581bc354b0f9ccc436f86cf21f9caef654f0407b",
         "type": "FIX",
-        "text": " sap.ui.unified.CalendarRow: Minimal width of appointments now corrected",
-        "references": []
+        "text": "sap.ui.unified.CalendarRow: Minimal width of appointments now corrected",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "1880307332"
+          }
+        ]
       },
       {
         "id": "1405add78ffbb6602cd42de8f058ee9c05973895",
         "type": "FIX",
-        "text": " sap.ui.unified.FileUploader: now has correct active state of semantic buttons",
-        "references": []
+        "text": "sap.ui.unified.FileUploader: now has correct active state of semantic buttons",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "1880391291"
+          }
+        ]
       },
       {
         "id": "37a1676bc27144768461f4e46357535117fbd557",
         "type": "FIX",
-        "text": " m.PlanningCalendar: Picker button shows both years when needed",
-        "references": []
+        "text": "m.PlanningCalendar: Picker button shows both years when needed",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "1880290073"
+          }
+        ]
       },
       {
         "id": "1f25202fad3488d9ba801bb4da599337b95ec80f",
         "type": "FIX",
-        "text": " ui.unified.FileUploader: Documentation improved",
-        "references": []
+        "text": "ui.unified.FileUploader: Documentation improved",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "002075129500003320162018"
+          }
+        ]
       },
       {
         "id": "8fb3786b00353b0ef6ac8170fb68c397bde5e3fc",
         "type": "FIX",
-        "text": " sap.ui.unified.Calendar: visual tests adapted for running on iOS",
-        "references": []
+        "text": "sap.ui.unified.Calendar: visual tests adapted for running on iOS",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "1880469306"
+          }
+        ]
       }
     ]
   },
@@ -100,14 +165,24 @@
       {
         "id": "1636cc363d88fa762cf1641f4c7a97710b684a4a",
         "type": "FIX",
-        "text": " sap.ui.unified.FileUploader: returns empty string now when file has no extension",
-        "references": []
+        "text": "sap.ui.unified.FileUploader: returns empty string now when file has no extension",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "1880468008"
+          }
+        ]
       },
       {
         "id": "5b949cddb0f47691289555d76bc2cca0a982b3fd",
         "type": "FIX",
-        "text": " unified.ColorPicker: Hue value of 360 is the same as 0",
-        "references": []
+        "text": "unified.ColorPicker: Hue value of 360 is the same as 0",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "1880490034"
+          }
+        ]
       }
     ]
   },
@@ -117,20 +192,35 @@
       {
         "id": "a1014eaffc2820c10b3256282bbf1182472fe5d5",
         "type": "FIX",
-        "text": " sap.m.PlanningCalendar: button is not cut when displaying two months and years in Bulgarian",
-        "references": []
+        "text": "sap.m.PlanningCalendar: button is not cut when displaying two months and years in Bulgarian",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "1880434903"
+          }
+        ]
       },
       {
         "id": "8df161e39f2358bc23e983ebd063b841b4faea10",
         "type": "FIX",
-        "text": " sap.m.PlanningCalendar: visual fix of the DatesRow on hover",
-        "references": []
+        "text": "sap.m.PlanningCalendar: visual fix of the DatesRow on hover",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "1880484945"
+          }
+        ]
       },
       {
         "id": "57008d240c667899928c7783b1b4852148b47a89",
         "type": "FIX",
-        "text": " sap.ui.unified.ColorPicker: Now the dialog\u0027s style is not broken",
-        "references": []
+        "text": "sap.ui.unified.ColorPicker: Now the dialog's style is not broken",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "1870330317"
+          }
+        ]
       }
     ]
   },
@@ -140,14 +230,24 @@
       {
         "id": "0185262652f208d2faa47ea0117804f5a83fa9f0",
         "type": "FIX",
-        "text": " PlanningCalendar: Spaces in internal aria-label are removed",
-        "references": []
+        "text": "PlanningCalendar: Spaces in internal aria-label are removed",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "1870391389"
+          }
+        ]
       },
       {
         "id": "94347d186859480390989f2748d44efad15d9b37",
         "type": "FIX",
-        "text": " sap.ui.unified.FileUploader: correct width of the input when invalidated",
-        "references": []
+        "text": "sap.ui.unified.FileUploader: correct width of the input when invalidated",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "1870362150"
+          }
+        ]
       }
     ]
   },
@@ -157,8 +257,13 @@
       {
         "id": "27293da9f3ad3ea8e2e451d84e271c590cd82de8",
         "type": "FIX",
-        "text": " sap.ui.unified.CalendarTimeInterval: navigates to the correct date",
-        "references": []
+        "text": "sap.ui.unified.CalendarTimeInterval: navigates to the correct date",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "002075129400005182132018"
+          }
+        ]
       }
     ]
   },
@@ -168,20 +273,39 @@
       {
         "id": "76c5c5135c79baf2b1136ed811aa0abffc5c1dea",
         "type": "FIX",
-        "text": " sap.m.ColorPalette: Now the Dialog responds to the new size of the Color Picker",
-        "references": []
+        "text": "sap.m.ColorPalette: Now the Dialog responds to the new size of the Color Picker",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "1880570125"
+          }
+        ]
       },
       {
         "id": "37704a0276c736e61b8f570ce969cb86d339d705",
         "type": "FIX",
-        "text": " sap.ui.unified.Calendar: aria-label is not encoded twice now",
-        "references": []
+        "text": "sap.ui.unified.Calendar: aria-label is not encoded twice now",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "1870391389"
+          }
+        ]
       },
       {
         "id": "fc701c67e4b72ef3b7ccd027d6fc6f7062b836d8",
         "type": "FIX",
-        "text": " sap.ui.unified.Menu: Menu works correctly on combi devices",
-        "references": []
+        "text": "sap.ui.unified.Menu: Menu works correctly on combi devices",
+        "references": [
+          {
+            "type": "GitHub",
+            "reference": "2289"
+          },
+          {
+            "type": "BCP",
+            "reference": "1880727749"
+          }
+        ]
       }
     ]
   }

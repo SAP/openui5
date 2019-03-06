@@ -113,7 +113,7 @@
       {
         "id": "8512215ae4f6d68ff1e8c7e8d776de368786bd99",
         "type": "FEATURE",
-        "text": "sap.ui.test.Opa - slow OPA added a URL parameter \u0027opaExecutionDelay\u0027 to slow down OPA",
+        "text": "sap.ui.test.Opa - slow OPA added a URL parameter 'opaExecutionDelay' to slow down OPA",
         "references": []
       },
       {
@@ -225,7 +225,7 @@
       {
         "id": "1ba92a56bad16790976a3a3d97a2f270cd3c421a",
         "type": "FIX",
-        "text": "ManagedObject: the type \u0027string[]\u0027 should cast anything to string",
+        "text": "ManagedObject: the type 'string[]' should cast anything to string",
         "references": []
       },
       {
@@ -317,7 +317,7 @@
       {
         "id": "4ba0fb4ae1d1dfca58fdf5cd6cfcf2b6f3198d38",
         "type": "FIX",
-        "text": "base.ManagedObject: don\u0027t ignore wrong context",
+        "text": "base.ManagedObject: don't ignore wrong context",
         "references": [
           {
             "type": "BCP",
@@ -364,7 +364,7 @@
       {
         "id": "b9b8c09dbbd71db9354b85c45f5b585533aad3fd",
         "type": "FIX",
-        "text": "core.Popup: new position isn\u0027t applied in RTL after popup is opened",
+        "text": "core.Popup: new position isn't applied in RTL after popup is opened",
         "references": [
           {
             "type": "BCP",
@@ -592,13 +592,13 @@
       {
         "id": "31b35fe9da3bffe47295d4d6744212897ba0eeac",
         "type": "FIX",
-        "text": "sap.ui.test.actions.Press - m.Input\u0027s value help is triggered",
+        "text": "sap.ui.test.actions.Press - m.Input's value help is triggered",
         "references": []
       },
       {
         "id": "202fdd1c0419986375c586fd95d9bde3a6edfc3b",
         "type": "FIX",
-        "text": "sap.ui.test.gherkin - don\u0027t load QUnit if it is already loaded via script",
+        "text": "sap.ui.test.gherkin - don't load QUnit if it is already loaded via script",
         "references": []
       },
       {
@@ -681,7 +681,7 @@
       {
         "id": "f4a5f3d18dbd08f5e68de8ffb01020ff5b76bb52",
         "type": "FIX",
-        "text": "sap.ui.core.Popup: keep blocklayer when there\u0027s still modal popup open",
+        "text": "sap.ui.core.Popup: keep blocklayer when there's still modal popup open",
         "references": [
           {
             "type": "BCP",
@@ -829,7 +829,7 @@
       {
         "id": "b7df6b12bdd4dab49f040a7de00d7c0386e8cf4c",
         "type": "FIX",
-        "text": "v2.ODataModel: Don\u0027t try to reload created entities",
+        "text": "v2.ODataModel: Don't try to reload created entities",
         "references": [
           {
             "type": "BCP",
@@ -923,7 +923,7 @@
       {
         "id": "eed898933e2e702bb40000253840e00abc9e0101",
         "type": "FIX",
-        "text": "sap.ui.core.util.ExportTypeCSV: Don\u0027t escape number only formulas",
+        "text": "sap.ui.core.util.ExportTypeCSV: Don't escape number only formulas",
         "references": [
           {
             "type": "BCP",
@@ -1246,7 +1246,7 @@
       {
         "id": "d8ffee171ff1ee356e5edead5f19176e8bd1d14c",
         "type": "FIX",
-        "text": "core.NumberFormat: adapt decimals when number of integer isn\u0027t sufficient",
+        "text": "core.NumberFormat: adapt decimals when number of integer isn't sufficient",
         "references": [
           {
             "type": "BCP",
@@ -1299,7 +1299,7 @@
       {
         "id": "3ced108b162f07f1a37df1f8f5c9cafa5a2cef32",
         "type": "FIX",
-        "text": "MessageMixin - Ignore Message with type \u0027Information\u0027",
+        "text": "MessageMixin - Ignore Message with type 'Information'",
         "references": [
           {
             "type": "BCP",
@@ -1321,7 +1321,7 @@
       {
         "id": "24401d9208e626db8c1ee87ecf5e755e4509496b",
         "type": "FIX",
-        "text": "core.NumberFormat: consider \u0027decimals\u0027 for style \u0027short\u0027 format",
+        "text": "core.NumberFormat: consider 'decimals' for style 'short' format",
         "references": [
           {
             "type": "BCP",
@@ -1332,7 +1332,7 @@
       {
         "id": "3fc11e807e8babfc48eb42c73675a2a1fe512fbe",
         "type": "FIX",
-        "text": "v2.ODataModel: Don\u0027t cache failed metadata object",
+        "text": "v2.ODataModel: Don't cache failed metadata object",
         "references": [
           {
             "type": "BCP",
@@ -1760,7 +1760,7 @@
       {
         "id": "954ca8753d621f739fda4f4033d97085e43ffff8",
         "type": "FIX",
-        "text": "core.Popup: use the \u0027deactivate\u0027 event on autoclose area in IE",
+        "text": "core.Popup: use the 'deactivate' event on autoclose area in IE",
         "references": [
           {
             "type": "BCP",
@@ -1951,7 +1951,7 @@
       {
         "id": "e79bb23ee1c8644dfeef9477ada15c091ea4d67e",
         "type": "FIX",
-        "text": "jquery-mobile-custom: avoid the possible duplicate \u0027tap\u0027 event",
+        "text": "jquery-mobile-custom: avoid the possible duplicate 'tap' event",
         "references": [
           {
             "type": "GitHub",
@@ -2008,7 +2008,7 @@
       {
         "id": "2cc57bc550b70cbe36f62f375708601dfadec857",
         "type": "FIX",
-        "text": "jQuery.sap.global: open the TechnicalInfo only when left \u0027alt\u0027 is pressed",
+        "text": "jQuery.sap.global: open the TechnicalInfo only when left 'alt' is pressed",
         "references": [
           {
             "type": "GitHub",
@@ -2083,7 +2083,7 @@
       {
         "id": "f97860429881bc58600a173e33d64e02edc47819",
         "type": "FIX",
-        "text": "jquery-mobile-custom: avoid duplicate \u0027tap\u0027 event (continued)",
+        "text": "jquery-mobile-custom: avoid duplicate 'tap' event (continued)",
         "references": [
           {
             "type": "BCP",
@@ -2148,14 +2148,40 @@
       {
         "id": "bceb1bed6e6ace5075a67c4f34a9d978221e406f",
         "type": "FIX",
-        "text": " crossroads.js: correctly handle the parse of skipped optional param",
-        "references": []
+        "text": "crossroads.js: correctly handle the parse of skipped optional param",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "002075129400006225322017"
+          },
+          {
+            "type": "BCP",
+            "reference": "002075129400000588072018"
+          }
+        ]
       },
       {
         "id": "196e626a878763a11183983b3c904ebb1254a225",
         "type": "FIX",
-        "text": " jquery-mobile-custom: Edge button events",
-        "references": []
+        "text": "jquery-mobile-custom: Edge button events",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "002075129500005680192017"
+          },
+          {
+            "type": "BCP",
+            "reference": "002075129500001076112018"
+          },
+          {
+            "type": "BCP",
+            "reference": "1880219029"
+          },
+          {
+            "type": "BCP",
+            "reference": "002075129400004318102017"
+          }
+        ]
       }
     ]
   },
@@ -2165,26 +2191,41 @@
       {
         "id": "b6420fef666e34a5e2c00e03dcf907cf09e0e927",
         "type": "FIX",
-        "text": " CalendarType: user date format \u0027C\u0027 implies use of Persian calendar",
+        "text": "CalendarType: user date format 'C' implies use of Persian calendar",
         "references": []
       },
       {
         "id": "b6cf0b80ba507932e0b27efdce0ce64432569393",
         "type": "FIX",
-        "text": " ThemeCheck: Fix Cross-Origin issues (MS Edge)",
-        "references": []
+        "text": "ThemeCheck: Fix Cross-Origin issues (MS Edge)",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "002075129500001269922018"
+          }
+        ]
       },
       {
         "id": "b838001d6ee09259e39ec7f6902e323c19df0df7",
         "type": "FIX",
-        "text": " sap.m.StepInput: do not create global NumericInput",
-        "references": []
+        "text": "sap.m.StepInput: do not create global NumericInput",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "1870117517"
+          }
+        ]
       },
       {
         "id": "b2d9853f36a4e3e05cf83ea9471313d345afc1e2",
         "type": "FIX",
-        "text": " v2.ODataModel: metadata url params missing",
-        "references": []
+        "text": "v2.ODataModel: metadata url params missing",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "1780434200"
+          }
+        ]
       }
     ]
   },
@@ -2194,14 +2235,24 @@
       {
         "id": "06df3c97de262e49771f534fbcda914948c8c12d",
         "type": "FIX",
-        "text": " Fix synchronous document.activeElement access in iframes",
-        "references": []
+        "text": "Fix synchronous document.activeElement access in iframes",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "002075129500001736752018"
+          }
+        ]
       },
       {
         "id": "bdecafb143344c1537331d53aa591834fd23ecdf",
         "type": "FIX",
-        "text": " v2.ODataListBinding: Implicit casting for filter values",
-        "references": []
+        "text": "v2.ODataListBinding: Implicit casting for filter values",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "1870002694"
+          }
+        ]
       }
     ]
   },
@@ -2211,20 +2262,47 @@
       {
         "id": "cb51da1e4ea22eacab0cd3c746ffb26d15b409b1",
         "type": "FIX",
-        "text": " Theming Parameters: Improve inline parameters decoding",
-        "references": []
+        "text": "Theming Parameters: Improve inline parameters decoding",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "1880276569"
+          }
+        ]
       },
       {
         "id": "1a9c84097d91a3f31985d2cb61a917526032d8bd",
         "type": "FIX",
-        "text": " sap.ui.polyfill.computedStyle: polyfill for firefox bug",
-        "references": []
+        "text": "sap.ui.polyfill.computedStyle: polyfill for firefox bug",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "002075129500003524332017"
+          },
+          {
+            "type": "BCP",
+            "reference": "002075129400003590552017"
+          },
+          {
+            "type": "BCP",
+            "reference": "002075129400003704252017"
+          },
+          {
+            "type": "BCP",
+            "reference": "002075129400002683542018"
+          }
+        ]
       },
       {
         "id": "4025959fd38009ede1e8a080af72518e6e71aaca",
         "type": "FIX",
-        "text": " sap/ui/dom/computedStylePolyfill: document.body is not there yet",
-        "references": []
+        "text": "sap/ui/dom/computedStylePolyfill: document.body is not there yet",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "002028376500003153742018"
+          }
+        ]
       }
     ]
   },
@@ -2234,8 +2312,17 @@
       {
         "id": "b7352b7bdca62ca24be88c7453f9ad5934e1d4df",
         "type": "FIX",
-        "text": " AppCacheBuster: ignore query parameter for index lookup",
-        "references": []
+        "text": "AppCacheBuster: ignore query parameter for index lookup",
+        "references": [
+          {
+            "type": "GitHub",
+            "reference": "2116"
+          },
+          {
+            "type": "BCP",
+            "reference": "1880439767"
+          }
+        ]
       }
     ]
   },
@@ -2245,8 +2332,13 @@
       {
         "id": "0b027ff292d46ae6174b0fae390d2d49139d54e0",
         "type": "FIX",
-        "text": " performance/trace/Interaction: accept valid setRequestHeader parameters",
-        "references": []
+        "text": "performance/trace/Interaction: accept valid setRequestHeader parameters",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "002075129500003553622018"
+          }
+        ]
       }
     ]
   },
@@ -2256,8 +2348,13 @@
       {
         "id": "d99c9b82a9f3a687e03ac17e3acae66b855a34c2",
         "type": "FIX",
-        "text": " Model.removeBinding: performance",
-        "references": []
+        "text": "Model.removeBinding: performance",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "002075129400005859532018"
+          }
+        ]
       }
     ]
   },
@@ -2267,26 +2364,70 @@
       {
         "id": "b7af3d850445aaf9596d2e4fc90825df20e2c76b",
         "type": "FIX",
-        "text": " Device.js: use maxTouchPoints for touch support detection",
-        "references": []
+        "text": "Device.js: use maxTouchPoints for touch support detection",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "1880727749"
+          }
+        ]
       },
       {
         "id": "0690c50e2b9cc6ad0dbd98aa05806bfd493bca75",
         "type": "FIX",
-        "text": " ODataMessageParser: support \u0027transition\u0027 flag",
-        "references": []
+        "text": "ODataMessageParser: support 'transition' flag",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "1970053675"
+          }
+        ]
       },
       {
         "id": "19dc8d5c408b7ab29ab9a8ac4e24c75be9c5044b",
         "type": "FIX",
-        "text": " ODataModel: memory leak",
-        "references": []
+        "text": "ODataModel: memory leak",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "1970044943"
+          }
+        ]
       },
       {
         "id": "48c068c689d1d3410e24025635d70822238d4dee",
         "type": "FIX",
-        "text": " v2.ODataModel: memory leak",
-        "references": []
+        "text": "v2.ODataModel: memory leak",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "1870521429"
+          }
+        ]
+      }
+    ]
+  },
+  "1.44.40": {
+    "date": "February 2019",
+    "notes": [
+      {
+        "id": "b4abb67ec28bfa6ad40fc10317ba1bdc3dcf9c0e",
+        "type": "FIX",
+        "text": "Model: Reduce message check calls",
+        "references": [
+          {
+            "type": "GitHub",
+            "reference": "1109"
+          },
+          {
+            "type": "BCP",
+            "reference": "002075129500000422622019"
+          },
+          {
+            "type": "BCP",
+            "reference": "1680231732"
+          }
+        ]
       }
     ]
   }

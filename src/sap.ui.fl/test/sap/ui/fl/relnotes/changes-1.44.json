@@ -40,14 +40,14 @@
       },
       {
         "id": "8500ca102726bd7b237170da7e0f04b51b3a1adc",
-        "type": "TEST",
-        "text": "sap.ui.fl tests use simpleForm controls",
+        "type": "FIX",
+        "text": "[TEST] sap.ui.fl tests use simpleForm controls",
         "references": []
       },
       {
         "id": "30c5e80bf162632432b27f3369e8d1114c17d008",
-        "type": "TEST",
-        "text": "sap.ui.fl tests use simpleForm controls",
+        "type": "FIX",
+        "text": "[TEST] sap.ui.fl tests use simpleForm controls",
         "references": []
       }
     ]
@@ -58,7 +58,7 @@
       {
         "id": "9afe492517b95f935181a949790fade574639ef9",
         "type": "FIX",
-        "text": " Add function buildStableChangeInfo to MoveControls Changehandler",
+        "text": "Add function buildStableChangeInfo to MoveControls Changehandler",
         "references": []
       }
     ]
@@ -69,8 +69,13 @@
       {
         "id": "d5e678763d5c4888008842cdfb8f19b4880a7469",
         "type": "FIX",
-        "text": " Variant loading fails if server sends correct content type",
-        "references": []
+        "text": "Variant loading fails if server sends correct content type",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "1770061095"
+          }
+        ]
       }
     ]
   },
@@ -80,8 +85,13 @@
       {
         "id": "344151c6943eaf1d94e7666ac6e584177267fe5f",
         "type": "FIX",
-        "text": " sap.ui.fl changeHandler needs to store dependencies",
-        "references": []
+        "text": "sap.ui.fl changeHandler needs to store dependencies",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "002075129400002419772017"
+          }
+        ]
       }
     ]
   },
@@ -91,8 +101,13 @@
       {
         "id": "8ed9f5ddd1f76d6073d178c4e1a54eb3fc52fd4d",
         "type": "FIX",
-        "text": " sap.ui.fl: enable propertyChange for CUSTOMER_BASE layer",
-        "references": []
+        "text": "sap.ui.fl: enable propertyChange for CUSTOMER_BASE layer",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "002028376500000439172018"
+          }
+        ]
       }
     ]
   },
@@ -102,8 +117,13 @@
       {
         "id": "82db22733fd0940dc17cd2209235603ca96b4730",
         "type": "FIX",
-        "text": " sap.ui.fl: Stores flex setting from Persistence class",
-        "references": []
+        "text": "sap.ui.fl: Stores flex setting from Persistence class",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "002075129500000830522018"
+          }
+        ]
       }
     ]
   }

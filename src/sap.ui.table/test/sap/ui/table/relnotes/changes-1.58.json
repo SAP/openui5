@@ -5,68 +5,113 @@
       {
         "id": "23070a32725bbecf970d0b638059c8ac88830dbd",
         "type": "FIX",
-        "text": " Table: Avoid invalidation if NoData text string wasn\u0027t changed",
-        "references": []
+        "text": "Table: Avoid invalidation if NoData text string wasn't changed",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "1870292056"
+          }
+        ]
       },
       {
         "id": "af6892e564b36ebc5b9f59aba66a2f1408e886f9",
         "type": "FIX",
-        "text": " Table: Correct positioning of the action column",
-        "references": []
+        "text": "Table: Correct positioning of the action column",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "1870279506"
+          }
+        ]
       },
       {
         "id": "2da9921a6f815d6e681d1b2e8b6e9d33b635ca0a",
         "type": "FIX",
-        "text": " GridTable: NoData handling for $expand(ed) lists corrected",
-        "references": []
+        "text": "GridTable: NoData handling for $expand(ed) lists corrected",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "1870263895"
+          }
+        ]
       },
       {
         "id": "fc45bf132f9b902734beb23f8f0a8f2aedecff5a",
         "type": "FIX",
-        "text": " TreeTable: Hide tree icon on leafs for screenreaders",
-        "references": []
+        "text": "TreeTable: Hide tree icon on leafs for screenreaders",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "1880282754"
+          }
+        ]
       },
       {
         "id": "4ba21ffdeb4b7b68971f4305f7be4089e03eaf66",
         "type": "FEATURE",
-        "text": " MultiInput condensed mode support",
+        "text": "MultiInput condensed mode support",
         "references": []
       },
       {
         "id": "0547bae800622b2ee055f66bca146a1381c7095e",
         "type": "FIX",
-        "text": " Table: Avoid infinite re-rendering if fixed columns are available",
-        "references": []
+        "text": "Table: Avoid infinite re-rendering if fixed columns are available",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "1880301265"
+          }
+        ]
       },
       {
         "id": "ce9551a589d3d93ad30dcf0b7bbfd6ea44851cc5",
         "type": "FIX",
-        "text": " Table: Avoid layout and row updates if the table is invisible",
-        "references": []
+        "text": "Table: Avoid layout and row updates if the table is invisible",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "1870063832"
+          }
+        ]
       },
       {
         "id": "fc00b48dd3ba60877d73d4aaff86408d13391802",
         "type": "FIX",
-        "text": " Table: Edit mode navigation with sap.m.Select repaired",
-        "references": []
+        "text": "Table: Edit mode navigation with sap.m.Select repaired",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "1880282825"
+          }
+        ]
       },
       {
         "id": "40a943f14426982cfcc5f9bf89d33cdea7bd8fd1",
         "type": "FEATURE",
-        "text": " ODataTreeBinding: Add expand node to level API",
+        "text": "ODataTreeBinding: Add expand node to level API",
         "references": []
       },
       {
         "id": "2bbb20c42fc05c44bad3f723f891048a1a86dac0",
         "type": "FEATURE",
-        "text": " thirdparty: update es6-promise polyfill to version 4.2.4",
-        "references": []
+        "text": "thirdparty: update es6-promise polyfill to version 4.2.4",
+        "references": [
+          {
+            "type": "GitHub",
+            "reference": "2095"
+          }
+        ]
       },
       {
         "id": "e6fea4d1017fc5b3e6c127cd9d35afd7c7cdad84",
         "type": "FIX",
-        "text": " table.TableDragAndDropExtension: fix DropPosition dependency",
-        "references": []
+        "text": "table.TableDragAndDropExtension: fix DropPosition dependency",
+        "references": [
+          {
+            "type": "GitHub",
+            "reference": "2147"
+          }
+        ]
       }
     ]
   },
@@ -76,20 +121,35 @@
       {
         "id": "0f2cbd2ba396904b8f0d362b5cc3911eea5d098e",
         "type": "FIX",
-        "text": " Table: Avoid horizontal scrolling of cell content on focus in rtl",
-        "references": []
+        "text": "Table: Avoid horizontal scrolling of cell content on focus in rtl",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "1880453585"
+          }
+        ]
       },
       {
         "id": "74ec77e6133c2e6e1cc894763b76c43986457ca1",
         "type": "FIX",
-        "text": " Table: Clicking on the column resizer no longer causes scrolling",
-        "references": []
+        "text": "Table: Clicking on the column resizer no longer causes scrolling",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "1880305886"
+          }
+        ]
       },
       {
         "id": "2fa6d09a2476a684f076f36bacd948c0a3141143",
         "type": "FIX",
-        "text": " Table: Scrolling to last row with mouse wheel",
-        "references": []
+        "text": "Table: Scrolling to last row with mouse wheel",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "1870303491"
+          }
+        ]
       }
     ]
   },
@@ -99,7 +159,7 @@
       {
         "id": "564e76cddde746bc2ac8fd11bc1153cbf95ecd44",
         "type": "FIX",
-        "text": " TableUtils: Update OpenSource usage documentation",
+        "text": "TableUtils: Update OpenSource usage documentation",
         "references": []
       }
     ]
@@ -110,8 +170,13 @@
       {
         "id": "785555b937a30d91c6d94a64cf25da97e287c18d",
         "type": "FIX",
-        "text": " Table: Avoid infinite requests if no count is provided",
-        "references": []
+        "text": "Table: Avoid infinite requests if no count is provided",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "1880537465"
+          }
+        ]
       }
     ]
   },
@@ -121,8 +186,13 @@
       {
         "id": "ea94193c38dda40c9ea9e985159a56cc8be3fe3e",
         "type": "FIX",
-        "text": " Table: Update the scroll position when setting firstVisibleRow",
-        "references": []
+        "text": "Table: Update the scroll position when setting firstVisibleRow",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "1880583236"
+          }
+        ]
       }
     ]
   },
@@ -132,8 +202,13 @@
       {
         "id": "2a1844fc6b63b117da67eca72487a97e4aeed909",
         "type": "FIX",
-        "text": " Table: Horizontal scroll position on focus in RTL with Unit Tests",
-        "references": []
+        "text": "Table: Horizontal scroll position on focus in RTL with Unit Tests",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "1880609454"
+          }
+        ]
       }
     ]
   }

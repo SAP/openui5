@@ -417,5 +417,16 @@
         "references": []
       }
     ]
+  },
+  "1.63.1": {
+    "date": "March 2019",
+    "notes": [
+      {
+        "id": "ae9a055f2174b9aaff4205a3f5624b8041e4dee9",
+        "type": "FIX",
+        "text": " v2/ODataModel: Prevent invalid cache entries",
+        "references": []
+      }
+    ]
   }
 }
