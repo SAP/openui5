@@ -22,15 +22,26 @@ sap.ui.define([
 			 * @public
 			 */
 			onInit : function () {
-				this.oJSONContent = this._fetchDocuIndex();
-				var oModel = new JSONModel(this.oJSONContent);
+				var oModel = new JSONModel();
 				oModel.setSizeLimit(10000);
 				this.getView().setModel(oModel);
 
-				this._initTreeUtil("key", "links");
-
 				this.getRouter().getRoute("topic").attachPatternMatched(this._onMatched, this);
 				this.getRouter().getRoute("topicId").attachPatternMatched(this._onTopicMatched, this);
+
+				// Async data load
+				this._oIndexPromise = this._getDocuIndexPromise()
+					.then(function (oData) {
+						// Add search metadata
+						oData = this._addSearchMetadata(oData, "");
+
+						// Add data to model and initialize tree
+						oModel.setData(oData);
+						this._initTreeUtil("key", "links");
+					}.bind(this))
+					.catch(function () {
+						this.getRouter().myNavToWithoutHash("sap.ui.documentation.sdk.view.NotFound", "XML", false);
+					}.bind(this));
 			},
 
 			_onTopicMatched: function (event) {
@@ -43,13 +54,13 @@ sap.ui.define([
 				}
 
 				this._topicId = event.getParameter("arguments").id;
-
-				this._expandTreeToNode(this._preProcessTopicID(this._topicId), this.getModel());
+				this._oIndexPromise.then(function () {
+					this._expandTreeToNode(this._preProcessTopicID(this._topicId), this.getModel());
+				}.bind(this));
 			},
 
 			_onMatched: function () {
-				var splitApp = this.getView().getParent().getParent();
-				splitApp.setMode(SplitAppMode.ShowHideMode);
+				this.getView().getParent().getParent().setMode(SplitAppMode.ShowHideMode);
 
 				// When no particular topic is selected, collapse all nodes
 				this._collapseAllNodes();
@@ -62,47 +73,20 @@ sap.ui.define([
 				}
 			},
 
-			_fetchDocuIndex : function () {
-				//TODO: global jquery call found
-				var oResponse = jQuery.sap.syncGetJSON(this.getConfig().docuPath + "index.json");
-				if (oResponse.data === undefined) {
-					return [];
-				}
-
-				var oData = oResponse.data.links;
-				oData = this._reorderDocuIndex(oData);
-				oData = this._addSearchMetadata(oData, "");
-				return oData;
-			},
-
-			_reorderDocuIndex: function (oData) {
-
-				var sMainSectionId = "95d113be50ae40d5b0b562b84d715227",
-					sTestPagesSectionId = "1b4124400a764ec0a8623d0d5c585321",
-					oProcessedData = [],
-					oTestPagesSection,
-					oMainSection;
-
-				// Search for the sections that we're interested in (main and test pages)
-				for (var i = 0; i < oData.length; i++) {
-					if (oData[i].key === sMainSectionId) {
-						oMainSection = oData[i];
-					} else if (oData[i].key === sTestPagesSectionId) {
-						oTestPagesSection = oData[i];
-					}
-				}
-
-				// If the main section is found, move its content as top-level content of the resulting array
-				if (oMainSection) {
-					oProcessedData = oMainSection.links;
-
-					// If there is a "Test Pages" section, move it as the last element of the resulting array
-					if (oTestPagesSection) {
-						oProcessedData.push(oTestPagesSection);
-					}
-				}
-
-				return oProcessedData;
+			_getDocuIndexPromise: function () {
+				return new Promise(function (resolve, reject) {
+					jQuery.ajax({
+						async: true,
+						url : this.getConfig().docuPath + "index.json",
+						dataType : 'json',
+						success : function(oData) {
+							resolve(oData);
+						},
+						error : function (oError) {
+							reject(oError);
+						}
+					});
+				}.bind(this));
 			},
 
 			_addSearchMetadata: function (oData, sParentText) {
@@ -116,24 +100,7 @@ sap.ui.define([
 			},
 
 			onNodeSelect : function (oEvent) {
-				var oNode = oEvent.getParameter("listItem"),
-					sTopicId = oNode.getTarget(),
-					oRouter;
-
-				if (!sTopicId) {
-					Log.warning("Missing key for entity: " + oNode.getId() + " - cannot navigate to topic");
-					return;
-				}
-
-				oRouter = this.getRouter();
-
-				// Special case for release notes - we need to navigate to a different route
-				if (sTopicId === "a6a78b7e104348b4bb94fb8bcf003480") {
-					oRouter.navTo("releaseNotes");
-					return;
-				}
-
-				oRouter.navTo("topicId", {id : sTopicId}, false);
+				this.getRouter().navTo("topicId", {id : oEvent.getParameter("listItem").getTarget()}, false);
 			},
 
 			/**
