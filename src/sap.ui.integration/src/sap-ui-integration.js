@@ -22,6 +22,12 @@
 (function (window) {
 	"use strict";
 
+	//enforce complex binding syntax if using sap-ui-integration.js for local development
+	window["sap-ui-config"] = {
+		"bindingSyntax": "complex",
+		"compatVersion": "edge",
+		"async": true
+	};
 	//extract base URL from script tag
 	var oScriptTag, mMatch, sBaseUrl;
 	var coreInstance,
