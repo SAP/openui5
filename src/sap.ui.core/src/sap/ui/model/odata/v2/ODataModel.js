@@ -5160,7 +5160,8 @@ sap.ui.define([
 		var oOriginalValue, sPropertyPath, mRequests, oRequest, oOriginalEntry, oEntry,
 			sResolvedPath, aParts,	sKey, oGroupInfo, oRequestHandle, oEntityMetadata,
 			mChangedEntities = {}, oEntityInfo = {}, mParams, oChangeObject, bRefreshAfterChange,
-			bFunction = false, that = this, bCreated;
+			bFunction = false, that = this, bCreated,
+			oEntityType, oNavPropRefInfo, bIsNavPropExpanded, mKeys;
 
 		function updateChangedEntities(oOriginalObject, oChangedObject) {
 			each(oChangedObject,function(sKey) {
@@ -5213,11 +5214,11 @@ sap.ui.define([
 
 		// If property is key property of ReferentialConstraint, also update the corresponding
 		// navigation property
-		var oEntityType = this.oMetadata._getEntityTypeByPath(oEntityInfo.key);
-		var oNavPropRefInfo = this.oMetadata._getNavPropertyRefInfo(oEntityType, sPropertyPath);
-		var bIsNavPropExpanded = oNavPropRefInfo && oOriginalEntry[oNavPropRefInfo.name] && oOriginalEntry[oNavPropRefInfo.name].__ref;
+		oEntityType = this.oMetadata._getEntityTypeByPath(oEntityInfo.key);
+		oNavPropRefInfo = oEntityType && this.oMetadata._getNavPropertyRefInfo(oEntityType, sPropertyPath);
+		bIsNavPropExpanded = oNavPropRefInfo && oOriginalEntry[oNavPropRefInfo.name] && oOriginalEntry[oNavPropRefInfo.name].__ref;
 		if (bIsNavPropExpanded && oNavPropRefInfo.keys.length === 1) {
-			var mKeys = {};
+			mKeys = {};
 			oNavPropRefInfo.keys.forEach(function(sName) {
 				mKeys[sName] = oEntry[sName] !== undefined ? oEntry[sName] : oOriginalEntry[sName];
 			});
