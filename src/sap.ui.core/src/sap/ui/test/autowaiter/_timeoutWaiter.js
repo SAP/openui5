@@ -110,7 +110,7 @@ sap.ui.define([
 
 			oCurrentTimeout.status = timeoutStatus.CLEARED;
 			oLogger.trace("Timeout with ID " + iID + " cleared");
-			fnOriginalClear.apply(this, arguments);
+			fnOriginalClear(iID);
 		};
 	}
 
