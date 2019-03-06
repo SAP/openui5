@@ -6414,7 +6414,7 @@ sap.ui.define([
 	 *
 	 * @public
 	 */
-	ODataModel.prototype.getCanonicalRequests = function() {
+	ODataModel.prototype.canoncialRequestsEnabled = function() {
 		return this.bCanonicalRequests;
 	};
 
