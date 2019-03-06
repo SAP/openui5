@@ -1065,21 +1065,9 @@ sap.ui.define([
 			this.$mainArea.toggleClass("sapUiHidden", !bExpanded);
 			this.$().toggleClass("sapContrast", !bExpanded);
 		} else {
-			// Snapped content
-			if (exists(this.getSnappedContent())) {
-				this.$snappedWrapper.toggleClass("sapUiHidden", bExpanded);
-				this.$snappedWrapper.parent().toggleClass("sapFDynamicPageTitleMainSnapContentVisible", !bExpanded);
-			}
-
 			// Snapped heading
 			if (exists(this.getSnappedHeading())) {
 				this.$snappedHeadingWrapper.toggleClass("sapUiHidden", bExpanded);
-			}
-
-			// Expanded content
-			if (exists(this.getExpandedContent())) {
-				this.$expandWrapper.toggleClass("sapUiHidden", !bExpanded);
-				this.$expandWrapper.parent().toggleClass("sapFDynamicPageTitleMainExpandContentVisible", bExpanded);
 			}
 
 			// Expanded heading
@@ -1090,6 +1078,19 @@ sap.ui.define([
 			if (bUserInteraction && oldExpandedState !== bExpanded) {
 				this.fireEvent("stateChange", {isExpanded: bExpanded});
 			}
+		}
+
+
+		// Snapped content
+		if (exists(this.getSnappedContent())) {
+			this.$snappedWrapper.toggleClass("sapUiHidden", bExpanded);
+			this.$snappedWrapper.parent().toggleClass("sapFDynamicPageTitleMainSnapContentVisible", !bExpanded);
+		}
+
+		// Expanded content
+		if (exists(this.getExpandedContent())) {
+			this.$expandWrapper.toggleClass("sapUiHidden", !bExpanded);
+			this.$expandWrapper.parent().toggleClass("sapFDynamicPageTitleMainExpandContentVisible", bExpanded);
 		}
 	};
 
