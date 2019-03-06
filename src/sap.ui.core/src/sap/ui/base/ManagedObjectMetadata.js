@@ -252,7 +252,7 @@ function(
 		info = typeof info !== 'object' ? { type: info } : info;
 		this.name = name;
 		this.type = info.type || 'sap.ui.core.Control';
-		this.altTypes = info.altTypes || undefined;
+		this.altTypes = Array.isArray(info.altTypes) ? info.altTypes : undefined;
 		this.multiple = typeof info.multiple === 'boolean' ? info.multiple : true;
 		this.singularName = this.multiple ? info.singularName || guessSingularName(name) : undefined;
 		this.bindable = !!info.bindable;
