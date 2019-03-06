@@ -229,7 +229,7 @@ sap.ui.define([
 			var oInvisiblePopupText = this.getAggregation('_invisiblePopupText');
 
 			if (oImageContent && oInvisiblePopupText) {
-				oInvisiblePopupText.setText(this._rb.getText("LIGHTBOX_ARIA_ENLARGED", oImageContent.getTitle()));
+				oInvisiblePopupText.setText(this._rb.getText("LIGHTBOX_ARIA_ENLARGED", [oImageContent.getTitle(), oImageContent.getSubtitle()]));
 			}
 
 			this._isRendering = true;
