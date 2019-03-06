@@ -70,8 +70,25 @@ sap.ui.define([
 
 	QUnit.module("Launchers and app params", {
 		beforeEach: function () {
-			this.mOriginalSearch = new URI().search(true);
-			delete this.mOriginalSearch.testId;
+			var fnOrig = URI.prototype.search;
+			this.oStub = sinon.stub(URI.prototype, "search", function (query) {
+				var mParams = fnOrig.apply(this, arguments);
+				if (query === true) {
+					mParams.opaSpecific = "value";
+				}
+				return mParams;
+			});
+			this.reloadWithUri = function (cb) {
+				$.sap.unloadResources("sap/ui/test/Opa5.js", false, true, true);
+				sap.ui.require(["sap/ui/test/Opa5"], function (Opa5) {
+					Opa5.extendConfig({
+						appParams: {
+							key: "value"
+						}
+					});
+					cb(Opa5);
+				});
+			};
 
 			Opa5.extendConfig({
 				appParams: {
@@ -80,40 +97,47 @@ sap.ui.define([
 			});
 		},
 		afterEach: function () {
+			this.oStub.restore();
 			Opa5.resetConfig();
 		}
 	});
 
 	QUnit.test("Should start a component with app params", function(assert) {
 		var fnDone = assert.async();
-		var oOpa5 = new Opa5();
+		var mOriginalSearch = new URI().search(true);
+		delete mOriginalSearch.testId;
+		this.reloadWithUri(function (Opa5) {
+			var oOpa5 = new Opa5();
 
-		oOpa5.iStartMyUIComponent({
-			componentConfig: {
-				name: "samples.components.button"
-			}
-		});
-
-		oOpa5.waitFor({
-			success: function () {
-				var oUriParams = new URI().search(true);
-				assert.strictEqual(oUriParams.key, "value", "Should include params from OPA config");
-				for (var sKey in this.mOriginalSearch) {
-					assert.strictEqual(oUriParams[sKey], this.mOriginalSearch[sKey], "Should include initial param " + sKey);
+			oOpa5.iStartMyUIComponent({
+				componentConfig: {
+					name: "samples.components.button"
 				}
-			}.bind(this)
+			});
+
+			oOpa5.waitFor({
+				success: function () {
+					var oUriParams = new URI().search(true);
+					assert.strictEqual(oUriParams.key, "value", "Should include params from OPA config");
+					assert.strictEqual(oUriParams.opaSpecific, "value", "Should include OPA blacklisted param");
+					for (var sKey in mOriginalSearch) {
+						assert.strictEqual(oUriParams[sKey], mOriginalSearch[sKey], "Should include initial param " + sKey);
+					}
+				}
+			});
+
+			oOpa5.iTeardownMyApp();
+
+			Opa5.emptyQueue().done(function () {
+				var oUriParams = new URI().search(true);
+				assert.ok(!oUriParams.key, "Should remove params from OPA config");
+				assert.strictEqual(oUriParams.opaSpecific, "value", "Should not remove OPA blacklisted param");
+				for (var sKey in mOriginalSearch) {
+					assert.strictEqual(oUriParams[sKey], mOriginalSearch[sKey], "Should not remove initial params");
+				}
+				fnDone();
+			});
 		});
-
-		oOpa5.iTeardownMyApp();
-
-		Opa5.emptyQueue().done(function () {
-			var oUriParams = new URI().search(true);
-			assert.ok(!oUriParams.key, "Should remove params from OPA config");
-			for (var sKey in this.mOriginalSearch) {
-				assert.strictEqual(oUriParams[sKey], this.mOriginalSearch[sKey], "Should not remove initial params");
-			}
-			fnDone();
-		}.bind(this));
 	});
 
 	[EMPTY_SITE_URL, [EMPTY_SITE_URL]].forEach(function (vUrl) {

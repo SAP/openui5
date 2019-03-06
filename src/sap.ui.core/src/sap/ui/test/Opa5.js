@@ -68,6 +68,7 @@ sap.ui.define([
 			aEventProvider = new EventProvider();
 
 		var appUriParams = _OpaUriParameterParser._getAppParams();
+		var allUriParams = new URI().search(true);
 
 		/**
 		 * @class
@@ -247,7 +248,7 @@ sap.ui.define([
 			var oParamsWaitForOptions = createWaitForObjectWithoutDefaults();
 			oParamsWaitForOptions.success = function() {
 				var uri = new URI();
-				uri.search(appUriParams);
+				uri.search(allUriParams);
 				window.history.replaceState({}, "", uri.toString());
 			};
 
