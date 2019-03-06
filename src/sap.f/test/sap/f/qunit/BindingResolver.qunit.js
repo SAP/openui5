@@ -151,6 +151,7 @@ function (JSONModel, BindingResolver) {
 		var vResolved = BindingResolver.resolveValue(oObjectToResolve, oModel);
 
 		// Assert
+		assert.notDeepEqual(vResolved, oObjectToResolve, "Should NOT change the passed object.");
 		assert.equal(vResolved.header.title, "The title of the header some title", "Should have correctly resolved complex binding syntax.");
 		assert.ok(vResolved.header.visible, "Should have correctly resolved expression binding syntax.");
 		assert.equal(vResolved.content.items[0].id, "item1", "Should have correct id.");
@@ -161,15 +162,13 @@ function (JSONModel, BindingResolver) {
 	});
 
 	QUnit.test("Incorrect values - without model", function (assert) {
-		var obj = {};
-		var arr = [];
 		assert.equal(BindingResolver.resolveValue(""), "", "Should have correctly resolved empty string.");
 		assert.equal(BindingResolver.resolveValue(undefined), undefined, "Should have correctly resolved undefined.");
 		assert.equal(BindingResolver.resolveValue(null), null, "Should have correctly resolved null.");
 		assert.equal(BindingResolver.resolveValue(true), true, "Should have correctly resolved true.");
 		assert.equal(BindingResolver.resolveValue(false), false, "Should have correctly resolved false.");
-		assert.equal(BindingResolver.resolveValue(obj), obj, "Should have correctly resolved empty object.");
-		assert.equal(BindingResolver.resolveValue(arr), arr, "Should have correctly resolved empty array.");
+		assert.deepEqual(BindingResolver.resolveValue({}), {}, "Should have correctly resolved empty object.");
+		assert.deepEqual(BindingResolver.resolveValue([]), [], "Should have correctly resolved empty array.");
 	});
 
 	QUnit.test("Incorrect values - with model", function (assert) {
@@ -180,14 +179,12 @@ function (JSONModel, BindingResolver) {
 			id: "someid"
 		});
 
-		var obj = {};
-		var arr = [];
 		assert.equal(BindingResolver.resolveValue("", oModel), "", "Should have correctly resolved empty string.");
 		assert.equal(BindingResolver.resolveValue(undefined, oModel), undefined, "Should have correctly resolved undefined.");
 		assert.equal(BindingResolver.resolveValue(null, oModel), null, "Should have correctly resolved null.");
 		assert.equal(BindingResolver.resolveValue(true, oModel), true, "Should have correctly resolved true.");
 		assert.equal(BindingResolver.resolveValue(false, oModel), false, "Should have correctly resolved false.");
-		assert.equal(BindingResolver.resolveValue(obj, oModel), obj, "Should have correctly resolved empty object.");
-		assert.equal(BindingResolver.resolveValue(arr, oModel), arr, "Should have correctly resolved empty array.");
+		assert.deepEqual(BindingResolver.resolveValue({}, oModel), {}, "Should have correctly resolved empty object.");
+		assert.deepEqual(BindingResolver.resolveValue([], oModel), [], "Should have correctly resolved empty array.");
 	});
 });
