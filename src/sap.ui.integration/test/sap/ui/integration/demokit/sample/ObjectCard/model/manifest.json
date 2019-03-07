@@ -43,18 +43,6 @@
 					]
 				},
 				{
-					"title": "{{organizationalDetails}}",
-					"items": [
-						{
-							"label": "{{directManager}}",
-							"value": "{manager/firstName} {manager/lastName}",
-							"icon": {
-								"src": "{manager/photo}"
-							}
-						}
-					]
-				},
-				{
 					"title": "{{companyDetails}}",
 					"items": [
 						{
@@ -78,6 +66,18 @@
 							"type": "link"
 						}
 					]
+				},
+				{
+				  "title": "{{organizationalDetails}}",
+				  "items": [
+					{
+						"label": "{{directManager}}",
+						"value": "{manager/firstName} {manager/lastName}",
+						"icon": {
+						  "src": "{manager/photo}"
+						}
+					}
+				  ]
 				}
 			]
 		}
