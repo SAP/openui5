@@ -486,6 +486,7 @@ function(Device, UIArea, jQuery) {
 
 		// the text inside input fields should still be selectable
 		if (/^(input|textarea)$/i.test(document.activeElement.tagName)) {
+			oEvent.target.getAttribute("data-sap-ui-draggable") && oEvent.preventDefault();
 			return;
 		}
 
