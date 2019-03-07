@@ -56,8 +56,7 @@ sap.ui.define(["sap/ui/base/Object", "sap/ui/core/Manifest"], function (BaseObje
 	 * @returns {Object} A copy of the Manifest JSON.
 	 */
 	CardManifest.prototype.getJson = function () {
-		// Use stringify/parse to clone and unfreeze the internal JSON.
-		return JSON.parse(JSON.stringify(this.oJson));
+		return this._unfreeze(this.oJson);
 	};
 
 	/**
@@ -67,7 +66,20 @@ sap.ui.define(["sap/ui/base/Object", "sap/ui/core/Manifest"], function (BaseObje
 	 * @returns {*} The value at the specified path.
 	 */
 	CardManifest.prototype.get = function (sPath) {
-		return getObject(this.oJson, sPath);
+		return this._unfreeze(getObject(this.oJson, sPath));
+	};
+
+	/**
+	 * Use stringify/parse to clone and unfreeze object/array values.
+	 *
+	 * @param {*} vValue The value to unfreeze.
+	 * @returns {*} The unfrozen value.
+	 */
+	CardManifest.prototype._unfreeze = function (vValue) {
+		if (typeof vValue === "object") {
+			return JSON.parse(JSON.stringify(vValue));
+		}
+		return vValue;
 	};
 
 	/**

@@ -4,9 +4,10 @@
 sap.ui.define([
 	"sap/ui/core/Control",
 	"sap/ui/model/json/JSONModel",
-	"sap/f/cards/Data",
-	"sap/base/Log"
-], function (Control, JSONModel, Data, Log) {
+	"sap/f/cards/DataProviderFactory",
+	"sap/base/Log",
+	"sap/ui/core/Core"
+], function (Control, JSONModel, DataProviderFactory, Log, Core) {
 	"use strict";
 
 	/**
@@ -30,13 +31,6 @@ sap.ui.define([
 	 */
 	var BaseContent = Control.extend("sap.f.cards.BaseContent", {
 		metadata: {
-			properties: {
-
-				/**
-				 * The object configuration used to create a list content.
-				 */
-				configuration: { type: "object" }
-			},
 			aggregations: {
 
 				/**
@@ -47,18 +41,6 @@ sap.ui.define([
 					visibility: "hidden"
 				}
 			}
-		},
-		constructor: function (vId, mSettings) {
-			if (typeof vId !== "string") {
-				mSettings = vId;
-			}
-
-			if (mSettings && mSettings.serviceManager) {
-				this._oServiceManager = mSettings.serviceManager;
-				delete mSettings.serviceManager;
-			}
-
-			Control.apply(this, arguments);
 		},
 		renderer: function (oRm, oCardContent) {
 
@@ -85,35 +67,25 @@ sap.ui.define([
 		}
 	});
 
-	BaseContent.prototype.init = function () {
-		var oModel = new JSONModel();
-		this.setModel(oModel);
-	};
-
 	BaseContent.prototype.destroy = function () {
 		this.setAggregation("_content", null);
 		this.setModel(null);
-
-		if (this._dataChangeHandler && this._oDataService) {
-			this._oDataService.detachDataChanged(this._dataChangeHandler);
-			this._dataChangeHandler = null;
-			this._oDataService = null;
+		if (this._oDataProvider) {
+			this._oDataProvider.destroy();
+			this._oDataProvider = null;
 		}
-
 		return Control.prototype.destroy.apply(this, arguments);
 	};
 
 	BaseContent.prototype.setConfiguration = function (oConfiguration) {
 
-		this.setProperty("configuration", oConfiguration);
+		this._oConfiguration = oConfiguration;
 
 		if (!oConfiguration) {
 			return this;
 		}
 
-		if (oConfiguration.data) {
-			this._setData(oConfiguration.data);
-		}
+		this._setData(oConfiguration.data);
 
 		if (oConfiguration.maxItems) {
 			this.getModel().setSizeLimit(oConfiguration.maxItems);
@@ -122,73 +94,54 @@ sap.ui.define([
 		return this;
 	};
 
+	BaseContent.prototype.getConfiguration = function () {
+		return this._oConfiguration;
+	};
+
 	/**
 	 * Requests data and bind it to the item template.
 	 *
 	 * @private
-	 * @param {Object} oData The data part of the configuration object
+	 * @param {Object} oDataSettings The data part of the configuration object
 	 */
-	BaseContent.prototype._setData = function (oData) {
-
-		this.setBusy(true);
-
-		var oRequest = oData.request;
-		var oService = oData.service;
-
-		this.bindElement({
-			path: oData.path || "/"
-		});
-
-		if (oData.json && !oRequest) {
-			this._updateModel(oData.json);
-			this.setBusy(false);
+	BaseContent.prototype._setData = function (oDataSettings) {
+		var sPath = "/";
+		if (oDataSettings && oDataSettings.path) {
+			sPath = oDataSettings.path;
 		}
 
-		if (oService) {
-			this._oServiceManager.getService("sap.ui.integration.services.Data").then(function (oDataService) {
-				if (oDataService) {
-					this._dataChangeHandler = function (oEvent) {
-						this._updateModel(oEvent.data);
-					}.bind(this);
+		if (this._oDataProvider) {
+			this._oDataProvider.destroy();
+		}
 
-					oDataService.getData()
-						.then(function (data) {
-							this._updateModel(data);
-						}.bind(this))
-						.catch(function () {
-							this._handleError("Card content data service failed to get data");
-						})
-						.finally(function () {
-							this.setBusy(false);
-						}.bind(this));
+		this._oDataProvider = DataProviderFactory.create(oDataSettings, this._oServiceManager);
 
-					oDataService.attachDataChanged(this._dataChangeHandler, oData.service.parameters);
+		if (this._oDataProvider) {
+			this.setBusy(true);
 
-					this._oDataService = oDataService;
-				}
-			}.bind(this)).catch(function () {
-				this._handleError("Data service unavailable");
+			// If a data provider is created use an own model. Otherwise bind to the one propagated from the card.
+			this.setModel(new JSONModel());
+
+			this._oDataProvider.attachDataChanged(function (oEvent) {
+				this._updateModel(oEvent.getParameter("data"));
 				this.setBusy(false);
-			});
-		} else if (oRequest) {
-			Data.fetch(oRequest)
-				.then(function (data) {
-					this._updateModel(data, oData.path);
-				}.bind(this))
-				.catch(function (oError) {
-					this._handleError("Card content data request failed");
-				})
-				.finally(function () {
-					this.setBusy(false);
-				}.bind(this));
+			}.bind(this));
+			this._oDataProvider.attachError(function (oEvent) {
+				this._handleError(oEvent.getParameter("message"));
+				this.setBusy(false);
+			}.bind(this));
+
+			this._oDataProvider.triggerDataUpdate();
 		}
+
+		this.bindObject(sPath);
 	};
 
 	/**
 	 * Updates the model and binds the data to the list.
 	 *
 	 * @private
-	 * @param {Object} oData the data to set
+	 * @param {Object} oData The data to set.
 	 */
 	BaseContent.prototype._updateModel = function (oData) {
 		this.getModel().setData(oData);
@@ -201,6 +154,65 @@ sap.ui.define([
 
 	BaseContent.prototype._handleError = function (sLogMessage) {
 		this.fireEvent("_error", { logMessage: sLogMessage });
+	};
+
+	BaseContent.prototype.setServiceManager = function (oServiceManager) {
+		this._oServiceManager = oServiceManager;
+		return this;
+	};
+
+	BaseContent.create = function (sType, oConfiguration, oServiceManager) {
+		return new Promise(function (resolve, reject) {
+			var fnCreateContentInstance = function (Content) {
+				var oContent = new Content();
+				oContent.setServiceManager(oServiceManager);
+				oContent.setConfiguration(oConfiguration);
+				resolve(oContent);
+			};
+
+			try {
+				switch (sType.toLowerCase()) {
+					case "list":
+						sap.ui.require(["sap/f/cards/ListContent"], fnCreateContentInstance);
+						break;
+					case "table":
+						sap.ui.require(["sap/f/cards/TableContent"], fnCreateContentInstance);
+						break;
+					case "object":
+						sap.ui.require(["sap/f/cards/ObjectContent"], fnCreateContentInstance);
+						break;
+					case "analytical":
+						Core.loadLibrary("sap.viz", {
+								async: true
+							})
+							.then(function () {
+								sap.ui.require(["sap/f/cards/AnalyticalContent"], fnCreateContentInstance);
+							})
+							.catch(function () {
+								reject("Analytical content type is not available with this distribution.");
+							});
+						break;
+					case "timeline":
+						Core.loadLibrary("sap.suite.ui.commons", {
+								async: true
+							})
+							.then(function() {
+								sap.ui.require(["sap/f/cards/TimelineContent"], fnCreateContentInstance);
+							})
+							.catch(function () {
+								reject("Timeline content type is not available with this distribution.");
+							});
+						break;
+					case "component":
+						sap.ui.require(["sap/f/cards/ComponentContent"], fnCreateContentInstance);
+						break;
+					default:
+						Log.error(sType.toUpperCase() + " content type is not supported.");
+				}
+			} catch (sError) {
+				reject(sError);
+			}
+		});
 	};
 
 	BaseContent.getMinHeight = function (sType, oContent) {

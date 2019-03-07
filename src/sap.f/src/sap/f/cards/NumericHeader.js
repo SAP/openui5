@@ -6,7 +6,7 @@ sap.ui.define([
 	"sap/f/cards/ActionEnablement",
 	'sap/m/NumericContent',
 	'sap/m/Text',
-	'sap/f/cards/Data',
+	'sap/f/cards/DataProviderFactory',
 	'sap/ui/model/json/JSONModel',
 	"sap/f/cards/NumericSideIndicator",
 	"sap/f/cards/NumericHeaderRenderer"
@@ -15,7 +15,7 @@ sap.ui.define([
 		ActionEnablement,
 		NumericContent,
 		Text,
-		Data,
+		DataProviderFactory,
 		JSONModel,
 		NumericSideIndicator
 	) {
@@ -140,18 +140,6 @@ sap.ui.define([
 				 */
 				press: {}
 			}
-		},
-		constructor: function (vId, mSettings) {
-			if (typeof vId !== "string") {
-				mSettings = vId;
-			}
-
-			if (mSettings && mSettings.serviceManager) {
-				this._oServiceManager = mSettings.serviceManager;
-				delete mSettings.serviceManager;
-			}
-
-			Control.apply(this, arguments);
 		}
 	});
 
@@ -376,7 +364,7 @@ sap.ui.define([
 	 * @param {map} mConfiguration A map containing the header configuration options.
 	 * @return {sap.f.cards.NumericHeader} The created NumericHeader
 	 */
-	NumericHeader.create = function(mConfiguration, oServiceManager) {
+	NumericHeader.create = function (mConfiguration, oServiceManager) {
 		var mSettings = {
 			title: mConfiguration.title,
 			subtitle: mConfiguration.subTitle,
@@ -397,51 +385,68 @@ sap.ui.define([
 			});
 		}
 
-		if (oServiceManager) {
-			mSettings.serviceManager = oServiceManager;
-		}
-
 		var oHeader = new NumericHeader(mSettings);
-
-		if (mConfiguration.data) {
-			this._handleData(oHeader, mConfiguration.data);
-		}
+		oHeader.setServiceManager(oServiceManager);
+		oHeader._setData(mConfiguration.data);
 
 		return oHeader;
 	};
 
+	NumericHeader.prototype.setServiceManager = function (oServiceManager) {
+		this._oServiceManager = oServiceManager;
+		return this;
+	};
+
 	/**
-	 * Creates an instance of NumericHeader with the given options
+	 * Sets a data provider to the header.
 	 *
 	 * @private
-	 * @static
-	 * @param {sap.f.cards.NumericHeader} oHeader The header for which the data is
-	 * @param {object} oData Data configuration
+	 * @param {object} oDataSettings The data settings
 	 */
-	NumericHeader._handleData = function (oHeader, oData) {
-		var oModel = new JSONModel();
-
-		var oRequest = oData.request;
-		if (oData.json && !oRequest) {
-			oModel.setData(oData.json);
+	NumericHeader.prototype._setData = function (oDataSettings) {
+		var sPath = "/";
+		if (oDataSettings && oDataSettings.path) {
+			sPath = oDataSettings.path;
 		}
 
-		if (oRequest) {
-			Data.fetch(oRequest).then(function (data) {
-				oModel.setData(data);
-				oModel.refresh();
-				oHeader.fireEvent("_updated");
-			}).catch(function (oError) {
-				// TODO: Handle errors. Maybe add error message
-			});
+		if (this._oDataProvider) {
+			this._oDataProvider.destroy();
 		}
 
-		oHeader.setModel(oModel)
-			.bindElement({
-				path: oData.path || "/"
-			});
+		this._oDataProvider = DataProviderFactory.create(oDataSettings, this._oServiceManager);
 
-		// TODO Check if model is destroyed when header is destroyed
+		if (this._oDataProvider) {
+			this.setBusy(true);
+
+			// If a data provider is created use an own model. Otherwise bind to the one propagated from the card.
+			this.setModel(new JSONModel());
+
+			this._oDataProvider.attachDataChanged(function (oEvent) {
+				this._updateModel(oEvent.getParameter("data"));
+				this.setBusy(false);
+			}.bind(this));
+			this._oDataProvider.attachError(function (oEvent) {
+				this._handleError(oEvent.getParameter("message"));
+				this.setBusy(false);
+			}.bind(this));
+
+			this._oDataProvider.triggerDataUpdate();
+		}
+
+		this.bindObject(sPath);
+	};
+
+	NumericHeader.prototype._updateModel = function (oData) {
+		this.getModel().setData(oData);
+
+		// Have to trigger _updated on the first onAfterRendering after _updateModel is called.
+		setTimeout(function () {
+			this.fireEvent("_updated");
+		}.bind(this), 0);
+	};
+
+	NumericHeader.prototype._handleError = function (sLogMessage) {
+		this.fireEvent("_error", { logMessage: sLogMessage });
 	};
 
 	/**

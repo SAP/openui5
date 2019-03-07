@@ -1247,6 +1247,11 @@
 	"listContent": {
 		"card13": {
 			"sap.card": {
+				"data": {
+					"request": {
+						"url": "./cardcontent/someitems.json"
+					}
+				},
 				"type": "List",
 				"header": {
 					"title": "Request list content Card",
@@ -1259,11 +1264,6 @@
 					}
 				},
 				"content": {
-					"data": {
-						"request": {
-							"url": "./cardcontent/someitems.json"
-						}
-					},
 					"item": {
 						"icon": {
 							"src": "{icon}"

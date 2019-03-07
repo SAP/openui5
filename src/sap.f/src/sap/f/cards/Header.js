@@ -7,7 +7,7 @@ sap.ui.define([
 	"sap/m/Text",
 	"sap/f/Avatar",
 	"sap/ui/Device",
-	'sap/f/cards/Data',
+	'sap/f/cards/DataProviderFactory',
 	'sap/ui/model/json/JSONModel',
 	"sap/f/cards/HeaderRenderer",
 	"sap/f/cards/ActionEnablement"
@@ -17,7 +17,7 @@ sap.ui.define([
 	Text,
 	Avatar,
 	Device,
-	Data,
+	DataProviderFactory,
 	JSONModel,
 	HeaderRenderer,
 	ActionEnablement
@@ -114,18 +114,6 @@ sap.ui.define([
 				 */
 				press: {}
 			}
-		},
-		constructor: function (vId, mSettings) {
-			if (typeof vId !== "string") {
-				mSettings = vId;
-			}
-
-			if (mSettings && mSettings.serviceManager) {
-				this._oServiceManager = mSettings.serviceManager;
-				delete mSettings.serviceManager;
-			}
-
-			Control.apply(this, arguments);
 		}
 	});
 
@@ -248,39 +236,68 @@ sap.ui.define([
 			mSettings.statusText = mConfiguration.status.text;
 		}
 
-		if (oServiceManager) {
-			mSettings.serviceManager = oServiceManager;
-		}
-
 		var oHeader = new Header(mSettings);
+		oHeader.setServiceManager(oServiceManager);
+		oHeader._setData(mConfiguration.data);
 
 		return oHeader;
 	};
 
-	Header._handleData = function (oHeader, oData) {
-		var oModel = new JSONModel();
+	Header.prototype.setServiceManager = function (oServiceManager) {
+		this._oServiceManager = oServiceManager;
+		return this;
+	};
 
-		var oRequest = oData.request;
-		if (oData.json && !oRequest) {
-			oModel.setData(oData.json);
+	/**
+	 * Sets a data provider to the header.
+	 *
+	 * @private
+	 * @param {object} oDataSettings The data settings
+	 */
+	Header.prototype._setData = function (oDataSettings) {
+		var sPath = "/";
+		if (oDataSettings && oDataSettings.path) {
+			sPath = oDataSettings.path;
 		}
 
-		if (oRequest) {
-			Data.fetch(oRequest).then(function (data) {
-				oModel.setData(data);
-				oModel.refresh();
-				oHeader.fireEvent("_updated");
-			}).catch(function (oError) {
-				// TODO: Handle errors. Maybe add error message
-			});
+		if (this._oDataProvider) {
+			this._oDataProvider.destroy();
 		}
 
-		oHeader.setModel(oModel)
-			.bindElement({
-				path: oData.path || "/"
-			});
+		this._oDataProvider = DataProviderFactory.create(oDataSettings, this._oServiceManager);
 
-		// TODO Check if model is destroyed when header is destroyed
+		if (this._oDataProvider) {
+			this.setBusy(true);
+
+			// If a data provider is created use an own model. Otherwise bind to the one propagated from the card.
+			this.setModel(new JSONModel());
+
+			this._oDataProvider.attachDataChanged(function (oEvent) {
+				this._updateModel(oEvent.getParameter("data"));
+				this.setBusy(false);
+			}.bind(this));
+			this._oDataProvider.attachError(function (oEvent) {
+				this._handleError(oEvent.getParameter("message"));
+				this.setBusy(false);
+			}.bind(this));
+
+			this._oDataProvider.triggerDataUpdate();
+		}
+
+		this.bindObject(sPath);
+	};
+
+	Header.prototype._updateModel = function (oData) {
+		this.getModel().setData(oData);
+
+		// Have to trigger _updated on the first onAfterRendering after _updateModel is called.
+		setTimeout(function () {
+			this.fireEvent("_updated");
+		}.bind(this), 0);
+	};
+
+	Header.prototype._handleError = function (sLogMessage) {
+		this.fireEvent("_error", { logMessage: sLogMessage });
 	};
 
 	ActionEnablement.enrich(Header);

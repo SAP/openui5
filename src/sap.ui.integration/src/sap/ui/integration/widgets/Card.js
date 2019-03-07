@@ -7,7 +7,7 @@ sap.ui.define([
 	"sap/ui/integration/util/CardManifest",
 	"sap/ui/integration/util/ServiceManager",
 	"sap/base/Log",
-	"sap/f/cards/Data",
+	"sap/f/cards/DataProviderFactory",
 	"sap/f/cards/NumericHeader",
 	"sap/f/cards/Header",
 	"sap/f/cards/BaseContent",
@@ -15,6 +15,7 @@ sap.ui.define([
 	"sap/m/VBox",
 	"sap/ui/core/Icon",
 	"sap/m/Text",
+	'sap/ui/model/json/JSONModel',
 	"sap/f/CardRenderer"
 ], function (
 	jQuery,
@@ -22,7 +23,7 @@ sap.ui.define([
 	CardManifest,
 	ServiceManager,
 	Log,
-	Data,
+	DataProviderFactory,
 	NumericHeader,
 	Header,
 	BaseContent,
@@ -30,6 +31,7 @@ sap.ui.define([
 	VBox,
 	Icon,
 	Text,
+	JSONModel,
 	CardRenderer
 ) {
 	"use strict";
@@ -680,6 +682,10 @@ sap.ui.define([
 			this._oServiceManager.destroy();
 			this._oServiceManager = null;
 		}
+		if (this._oDataProvider) {
+			this._oDataProvider.destroy();
+			this._oDataProvider = null;
+		}
 	};
 
 	/**
@@ -724,38 +730,29 @@ sap.ui.define([
 	};
 
 	Card.prototype._setData = function () {
-		var oData = this._oCardManifest.get(MANIFEST_PATHS.DATA);
-		if (!oData) {
-			this._oDataPromise = null;
+		var oDataSettings = this._oCardManifest.get(MANIFEST_PATHS.DATA);
+		if (!oDataSettings) {
 			return;
 		}
 
-		// Do request and set to the model
-		this._oDataPromise = new Promise(function (resolve, reject) {
+		if (this._oDataProvider) {
+			this._oDataProvider.destroy();
+		}
 
-			var oRequest = oData.request;
+		this._oDataProvider = DataProviderFactory.create(oDataSettings, this._oServiceManager);
 
-			if (oData.json) {
-				resolve({
-					json: oData.json,
-					path: oData.path
-				});
-				return;
-			}
+		if (this._oDataProvider) {
+			this.setModel(new JSONModel());
 
-			if (oRequest) {
-				Data.fetch(oRequest).then(function (data) {
-					resolve({
-						json: data,
-						path: oData.path
-					});
-				}).catch(function (oError) {
-					reject(oError);
-				});
-			}
+			this._oDataProvider.attachDataChanged(function (oEvent) {
+				this.getModel().setData(oEvent.getParameter("data"));
+			}.bind(this));
+			this._oDataProvider.attachError(function (oEvent) {
+				this._handleError("Data service unavailable. " + oEvent.getParameter("message"));
+			}.bind(this));
 
-			// TODO: Service implementation on Card level
-		});
+			this._oDataProvider.triggerDataUpdate();
+		}
 	};
 
 	/**
@@ -866,52 +863,52 @@ sap.ui.define([
 	 */
 	Card.prototype._setContentFromManifest = function () {
 		var sCardType = this._oCardManifest.get(MANIFEST_PATHS.TYPE),
-			bHasContent = !!this._oCardManifest.get(MANIFEST_PATHS.CONTENT);
+			bIsComponent = sCardType.toLowerCase() === "component",
+			oManifestContent = this._oCardManifest.get(MANIFEST_PATHS.CONTENT),
+			bHasContent = !!oManifestContent;
 
 		if (!sCardType) {
 			Log.error("Card type property is mandatory!");
 			return;
 		}
 
-		if (!bHasContent && sCardType.toLowerCase() !== "component") {
+		if (!bHasContent && !bIsComponent) {
 			this.setBusy(false);
 			return;
 		}
 
+		if (!oManifestContent && bIsComponent) {
+			oManifestContent = this._oCardManifest.getJson();
+		}
+
 		this._setTemporaryContent();
 
-		switch (sCardType.toLowerCase()) {
-			case "list":
-				sap.ui.require(["sap/f/cards/ListContent"], this._setCardContentFromManifest.bind(this));
-				break;
-			case "table":
-				sap.ui.require(["sap/f/cards/TableContent"], this._setCardContentFromManifest.bind(this));
-				break;
-			case "object":
-				sap.ui.require(["sap/f/cards/ObjectContent"], this._setCardContentFromManifest.bind(this));
-				break;
-			case "analytical":
-				sap.ui.getCore().loadLibrary("sap.viz", {
-					async: true
-				}).then(function () {
-					sap.ui.require(["sap/f/cards/AnalyticalContent"], this._setCardContentFromManifest.bind(this));
-				}.bind(this)).catch(function () {
-					this._handleError("Analytical type card is not available with this distribution");
-				}.bind(this));
-				break;
-			case "timeline":
-				sap.ui.getCore().loadLibrary("sap.suite.ui.commons", { async: true }).then(function() {
-					sap.ui.require(["sap/f/cards/TimelineContent"], this._setCardContentFromManifest.bind(this));
-				}.bind(this)).catch(function () {
-					this._handleError("Timeline type card is not available with this distribution");
-				}.bind(this));
-				break;
-			case "component":
-				sap.ui.require(["sap/f/cards/ComponentContent"], this._setCardContentFromManifest.bind(this));
-				break;
-			default:
-				Log.error(sCardType.toUpperCase() + " Card type is not supported");
-		}
+		BaseContent
+			.create(sCardType, oManifestContent, this._oServiceManager)
+			.then(function (oContent) {
+				this._configureCardContent(oContent);
+
+				if (!oManifestContent.data) {
+					var oDelegate = {
+						onAfterRendering: function () {
+							this.fireEvent("_contentUpdated");
+							oContent.removeEventDelegate(oDelegate);
+						}
+					};
+					oContent.addEventDelegate(oDelegate, this);
+				}
+
+				// TO DO: decide if we want to set the content only on _updated event.
+				// This will help to avoid appearance of empty table before its data comes,
+				// but prevent ObjectContent to render its template, which might be useful
+				this.setAggregation("_content", oContent);
+			}.bind(this))
+			.catch(function (sError) {
+				this._handleError(sError);
+			}.bind(this))
+			.finally(function () {
+				this.setBusy(false);
+			}.bind(this));
 	};
 
 	/**
@@ -921,12 +918,11 @@ sap.ui.define([
 	 * @param {sap.f.cards.IHeader} CardHeader The header to be created
 	 */
 	Card.prototype._setCardHeaderFromManifest = function (CardHeader) {
-		var oClonedSettings = jQuery.extend(true, {}, this._oCardManifest.get(MANIFEST_PATHS.HEADER));
-		var oHeader = CardHeader.create(oClonedSettings, this._oServiceManager);
+		var oSettings = this._oCardManifest.get(MANIFEST_PATHS.HEADER);
+		var oHeader = CardHeader.create(oSettings, this._oServiceManager);
 
 		oHeader.attachEvent("_updated", function () {
 			this.fireEvent("_headerUpdated");
-			this.setBusy(false);
 		}.bind(this));
 		oHeader.attachEvent("action", function (oEvent) {
 			this.fireEvent("action", {
@@ -936,36 +932,22 @@ sap.ui.define([
 			});
 		}.bind(this));
 
-		if (!oClonedSettings.data || (oClonedSettings.data && oClonedSettings.data.json)) {
+		if (!oSettings.data) {
 			var oDelegate = {
 				onAfterRendering: function () {
 					this.fireEvent("_headerUpdated");
 					oHeader.removeEventDelegate(oDelegate);
-					this.setBusy(false);
 				}
 			};
 			oHeader.addEventDelegate(oDelegate, this);
 		}
 
-		if (Array.isArray(oClonedSettings.actions) && oClonedSettings.actions.length > 0) {
-			//this._setCardHeaderActions(oHeader, oClonedSettings.actions);
-			oHeader._attachActions(oClonedSettings);
+		if (Array.isArray(oSettings.actions) && oSettings.actions.length > 0) {
+			//this._setCardHeaderActions(oHeader, oSettings.actions);
+			oHeader._attachActions(oSettings);
 		}
 
 		this.setAggregation("_header", oHeader);
-
-		// TODO: Refactor. All headers should have a _setData function. Move to a BaseHeader class. Remove type checking.
-		if (this._oDataPromise) {
-			this._oDataPromise.then(function (oData) {
-				if (oHeader.isA("sap.f.cards.NumericHeader")) {
-					sap.f.cards.NumericHeader._handleData(oHeader, oData);
-				} else {
-					sap.f.cards.Header._handleData(oHeader, oData);
-				}
-			}).catch(function (oError) {
-				// TODO: Handle error
-			});
-		}
 	};
 
 	/**
@@ -980,26 +962,12 @@ sap.ui.define([
 	};
 
 	/**
-	 * Instantiate a specific type of card content and set it as aggregation.
+	 * Configures a card content.
 	 *
 	 * @private
-	 * @param {sap.ui.core.Control} CardContent The content to be created
+	 * @param {sap.f.cards.BaseContent} oContent The card content instance to be configured.
 	 */
-	Card.prototype._setCardContentFromManifest = function (CardContent) {
-		var mSettings = this._oCardManifest.get(MANIFEST_PATHS.CONTENT),
-			sType = this._oCardManifest.get(MANIFEST_PATHS.TYPE).toLowerCase();
-
-		if (!mSettings && sType === "component") {
-			mSettings = this._oCardManifest.getJson();
-		}
-
-		var oClonedSettings = { configuration: jQuery.extend(true, {}, mSettings) };
-
-		if (this._oServiceManager) {
-			oClonedSettings.serviceManager = this._oServiceManager;
-		}
-
-		var oContent = new CardContent(oClonedSettings);
+	Card.prototype._configureCardContent = function (oContent) {
 		oContent.attachEvent("_updated", function () {
 			this.fireEvent("_contentUpdated");
 			this.setBusy(false);
@@ -1018,19 +986,6 @@ sap.ui.define([
 		}.bind(this));
 
 		oContent.setBusyIndicatorDelay(0);
-		// TO DO: decide if we want to set the content only on _updated event.
-		// This will help to avoid appearance of empty table before its data comes,
-		// but prevent ObjectContent to render its template, which might be useful
-		this.setAggregation("_content", oContent);
-
-		if (this._oDataPromise) {
-			this._oDataPromise.then(function (oData) {
-				this.setBusy(false);
-				oContent._setData(oData);
-			}.bind(this)).catch(function (oError) {
-				this._handleError(oError);
-			}.bind(this));
-		}
 	};
 
 	/**
