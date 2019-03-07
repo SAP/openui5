@@ -3517,8 +3517,6 @@ sap.ui.define([
 
 		// Act - remove all suggestions
 		oInput.removeAllSuggestionItems(); // simulate no suggestions found
-		// oModel.setProperty('/suggestions', []);
-		this.clock.tick(100);
 
 		// Assert that the cursor is on its original place
 		assert.ok(oInput._$input[0].selectionStart === iCursorPosition, "The cursor should be on its original position");
