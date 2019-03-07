@@ -6496,4 +6496,98 @@ sap.ui.define([
 		assert.notOk(oHandleTypeAheadSpy.called, "Type ahed should not be called while composing");
 		assert.notOk(oHandleFieldValueStateSpy.called, "Field Validation should not be called while composing");
 	});
+
+	QUnit.module("showItems functionality", {
+		beforeEach: function () {
+			var aData = [
+					{
+						name: "A Item 1", key: "a-item-1", group: "A"
+					}, {
+						name: "A Item 2", key: "a-item-2", group: "A"
+					}, {
+						name: "B Item 1", key: "a-item-1", group: "B"
+					}, {
+						name: "B Item 2", key: "a-item-2", group: "B"
+					}, {
+						name: "Other Item", key: "ab-item-1", group: "A B"
+					}
+				],
+				oModel = new JSONModel(aData);
+
+			this.oMultiComboBox = new MultiComboBox({
+				items: {
+					path: "/",
+					template: new Item({text: "{name}", key: "{key}"})
+				}
+			}).setModel(oModel).placeAt("MultiComboBox-content");
+
+			sap.ui.getCore().applyChanges();
+
+		},
+		afterEach: function () {
+			this.oMultiComboBox.destroy();
+			this.oMultiComboBox = null;
+		}
+	});
+
+	QUnit.test("Should restore default filtering function", function (assert) {
+		// Setup
+		var fnFilter = this.oMultiComboBox.fnFilter;
+
+		// Act
+		this.oMultiComboBox.showItems(function () {
+			return true;
+		});
+
+		// Assert
+		assert.strictEqual(this.oMultiComboBox.fnFilter, fnFilter, "Default function has been restored");
+
+		// Act
+		fnFilter = function (sValue, oItem) {
+			return oItem.getText() === "A Item 1";
+		};
+		this.oMultiComboBox.setFilterFunction(fnFilter);
+		this.oMultiComboBox.showItems(function () {
+			return false;
+		});
+
+		// Assert
+		assert.strictEqual(this.oMultiComboBox.fnFilter, fnFilter, "Custom filter function has been restored");
+	});
+
+	QUnit.test("Should show all the items", function (assert) {
+		// Setup
+		var fnGetVisisbleItems = function (aItems) {
+			return aItems.filter(function (oItem) {
+				return oItem.getVisible();
+			});
+		};
+
+		// Act
+		this.oMultiComboBox.showItems();
+		sap.ui.getCore().applyChanges();
+
+		// Assert
+		assert.strictEqual(this.oMultiComboBox._oList.getItems().length, 5, "All the items are available");
+		assert.strictEqual(fnGetVisisbleItems(this.oMultiComboBox._oList.getItems()).length, 5, "Shows all items");
+	});
+
+	QUnit.test("Should filter the items", function (assert) {
+		// Setup
+		var fnGetVisisbleItems = function (aItems) {
+			return aItems.filter(function (oItem) {
+				return oItem.getVisible();
+			});
+		};
+
+		// Act
+		this.oMultiComboBox.showItems(function (sValue, oItem) {
+			return oItem.getText() === "A Item 1";
+		});
+		sap.ui.getCore().applyChanges();
+
+		// Assert
+		assert.strictEqual(this.oMultiComboBox._oList.getItems().length, 5, "All the items are available");
+		assert.strictEqual(fnGetVisisbleItems(this.oMultiComboBox._oList.getItems()).length, 1, "Only the matching items are visible");
+	});
 });

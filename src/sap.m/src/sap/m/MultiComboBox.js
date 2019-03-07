@@ -3249,6 +3249,19 @@ function(
 		return oInfo;
 	};
 
+	/**
+	 * Applies <code>MultiComboBox</code> specific filtering over the list items.
+	 * Called within showItems method.
+	 *
+	 * @since 1.64
+	 * @experimental Since 1.64
+	 * @protected
+	 * @sap-restricted
+	 */
+	MultiComboBox.prototype.applyShowItemsFilters = function () {
+		this.filterItems({value: this.getValue() || "_", items: this.getItems()});
+	};
+
 	return MultiComboBox;
 
 	});

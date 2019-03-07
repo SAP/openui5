@@ -2244,6 +2244,32 @@ sap.ui.define([
 			return vItem;
 		};
 
+		/**
+		 * Applies Combobox specific filtering over the list items.
+		 * Called within showItems method.
+		 *
+		 * @since 1.64
+		 * @experimental Since 1.64
+		 * @protected
+		 * @sap-restricted
+		 */
+		ComboBox.prototype.applyShowItemsFilters = function () {
+			var oPicker = this.getPicker(),
+				fnPickerOpenListener = function () {
+					oPicker.detachBeforeOpen(fnPickerOpenListener, this);
+					oPicker = null;
+
+					this.filterItems({value: this.getValue() || "_", properties: this._getFilters()});
+				};
+
+			// Combobox uses onBeforeOpen of the picker in order to sync the items
+			// with the SuggestionsPopover. This leads to flickering of the Popover if filtering
+			// is applied directly to the list.
+			// Attaching to that event here, ensures that showItems filtering would happen
+			// after SuggestionsPopover's reset, but before the picker is opened.
+			oPicker.attachBeforeOpen(fnPickerOpenListener, this);
+		};
+
 		return ComboBox;
 
 	});
