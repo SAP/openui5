@@ -467,6 +467,10 @@ sap.ui.define([
 			return;
 		}
 
+		if (oEvent.isMarked()) {
+			return;
+		}
+
 		if (!oInput.getEnabled() || !oInput.getEditable()) {
 			return;
 		}
