@@ -152,6 +152,24 @@ function (
 			assert.ok(isStretched(this.oVBoxOverlay2), "the style class was set");
 		});
 
+		QUnit.test("when the controls get rerendered", function(assert) {
+			var done = assert.async();
+
+			var oObserver = new MutationObserver(function(mutations) {
+				assert.ok(isStretched(this.oLayoutOverlay), "the style class was set");
+				assert.ok(isStretched(this.oVBoxOverlay1), "the style class was set");
+				assert.ok(isStretched(this.oVBoxOverlay2), "the style class was set");
+
+				oObserver.disconnect();
+				done();
+			}.bind(this));
+			var oConfig = { attributes: true, childList: false, characterData: false, subtree : true};
+			oObserver.observe(document.getElementById('qunit-fixture'), oConfig);
+
+			this.oLayout.rerender();
+			sap.ui.getCore().applyChanges();
+		});
+
 		QUnit.test("when the plugin gets deregistered", function(assert) {
 			this.oStretchPlugin.deregisterElementOverlay(this.oLayoutOverlay);
 			this.oStretchPlugin.deregisterElementOverlay(this.oVBoxOverlay1);
@@ -538,15 +556,16 @@ function (
 
 		QUnit.test("When the invisible hbox becomes visible", function(assert) {
 			var done = assert.async();
-			this.oHBox2.setVisible(true);
 			// wait for the dom to update
 			var fnDebounced = DtUtil.debounce(function() {
 				assert.ok(isStretched(this.oLayoutOverlay), "the style class was added");
 				this.oLayoutOverlay.detachEvent("geometryChanged", fnDebounced);
 				done();
 			}.bind(this));
-
 			this.oLayoutOverlay.attachEvent("geometryChanged", fnDebounced);
+
+			this.oHBox2.setVisible(true);
+			sap.ui.getCore().applyChanges();
 		});
 
 		QUnit.test("When the invisible hbox becomes visible while the plugin is busy", function(assert) {

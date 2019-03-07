@@ -171,23 +171,25 @@ function(
 			assert.ok(oButton2.getEnabled(), "then the Button is enabled");
 
 			var oVisibleStub = sandbox.stub(this.oSectionOverlay2, "isVisible").returns(true);
+			this.oSectionOverlay2.attachEventOnce("geometryChanged", function() {
+				assert.ok(oButton.getVisible(), "then the Add-Button on the layout is still there");
+				assert.notOk(oButton.getEnabled(), "then the Button is disabled");
+				assert.ok(oButton2.getVisible(), "then the Add-Button is displayed");
+				assert.notOk(oButton2.getEnabled(), "then the Button is disabled");
+
+				this.oSectionOverlay2.attachEventOnce("geometryChanged", function() {
+					assert.ok(oButton.getVisible(), "then the Add-Button on the layout is still there");
+					assert.ok(oButton.getEnabled(), "then the Button is enabled");
+					assert.ok(oButton2.getVisible(), "then the Add-Button is displayed");
+					assert.ok(oButton2.getEnabled(), "then the Button is enabled");
+				});
+				oVisibleStub.restore();
+				sandbox.stub(this.oSectionOverlay2, "isVisible").returns(false);
+				this.oSection2.setVisible(false);
+				sap.ui.getCore().applyChanges();
+			}.bind(this));
 			this.oSection2.setVisible(true);
 			sap.ui.getCore().applyChanges();
-
-			assert.ok(oButton.getVisible(), "then the Add-Button on the layout is still there");
-			assert.notOk(oButton.getEnabled(), "then the Button is disabled");
-			assert.ok(oButton2.getVisible(), "then the Add-Button is displayed");
-			assert.notOk(oButton2.getEnabled(), "then the Button is disabled");
-
-			oVisibleStub.restore();
-			sandbox.stub(this.oSectionOverlay2, "isVisible").returns(false);
-			this.oSection2.setVisible(false);
-			sap.ui.getCore().applyChanges();
-
-			assert.ok(oButton.getVisible(), "then the Add-Button on the layout is still there");
-			assert.ok(oButton.getEnabled(), "then the Button is enabled");
-			assert.ok(oButton2.getVisible(), "then the Add-Button is displayed");
-			assert.ok(oButton2.getEnabled(), "then the Button is enabled");
 		});
 
 		QUnit.test("when the overlay for the section and layout get deregistered", function(assert) {
