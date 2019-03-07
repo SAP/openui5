@@ -1,6 +1,8 @@
 /**
 	This class is being assigned to the original Fiori Header Toolbar when RTA Toolbar shows
  */
+@_sap_ui_rta_Toolbar_Fiori_TextColor: @sapUiWhite;
+
 .sapUiRtaFioriHeaderInvisible {
 	visibility: hidden;
 }
@@ -22,7 +24,7 @@
 		.sapMBtn .sapMBtnContent,
 		.sapMBtn .sapMBtnIcon {
 			text-shadow: none; /* Override shadow of `.sapMBtnInner` in sap.m */
-			color: #fff;
+			color: @_sap_ui_rta_Toolbar_Fiori_TextColor;
 		}
 
 		.sapMBtn.sapMBtnDisabled {
