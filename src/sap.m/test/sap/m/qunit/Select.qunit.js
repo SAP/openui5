@@ -2166,39 +2166,6 @@ sap.ui.define([
 			oSelect.destroy();
 		});
 
-		// BCP 1870551736
-		QUnit.test("it should synchronize the selected key in case of item property changes", function (assert) {
-
-			// system under test
-			var oItem1,
-				oItem2,
-				oSelect = new Select({
-				items: [
-					oItem1 = new Item({
-						key: "one",
-						text: "One"
-					}),
-					oItem2 = new Item({
-						key: "two",
-						text: "Two"
-					})
-				],
-				selectedKey: "one"
-			});
-			assert.strictEqual(oSelect.getAssociation("selectedItem"), oItem1.getId(), "The selected item is Item1 initially");
-
-			// act
-			oSelect.setSelectedKey("two");
-			oItem1.setKey("two").setText("Two");
-			oItem2.setKey("one").setText("One");
-
-			// assert
-			assert.strictEqual(oSelect.getAssociation("selectedItem"), oItem1.getId(), "The selected item is still Item1");
-
-			// cleanup
-			oSelect.destroy();
-		});
-
 		// BCP 1670351685
 		QUnit.test("it should select the selected item after the dropdown is open", function (assert) {
 
@@ -2294,6 +2261,348 @@ sap.ui.define([
 			// cleanup
 			oSelect.destroy();
 			oModel.destroy();
+		});
+
+		QUnit.module("Update selection on item changes BCP: 1870551736", {
+			assertCurrentItemIsSelected: function (oSelect, oItem, assert) {
+				var sItemId = oItem.getId();
+
+				assert.strictEqual(oSelect.getAssociation("selectedItem"), sItemId,
+					"Expected item is assigned to the 'selectedItem' association");
+				assert.strictEqual(oSelect.getSelectedItemId(), sItemId,
+					"Expected item is assigned to the 'selectedItemId' property");
+				assert.strictEqual(oSelect.getSelectedKey(), oItem.getKey(),
+					"'key' of the selected item is equal to the select 'selectedKey' property");
+			}
+		});
+
+		QUnit.test("We update the select properly when it`s item change", function (assert) {
+
+			// Arrange
+			var oItem1,
+				oItem2,
+				oItem3,
+				oSelect = new Select({
+					items: [
+						oItem1 = new Item({
+							key: "one"
+						}),
+						oItem2 = new Item({
+							key: "two"
+						}),
+						oItem3 = new Item({
+							key: "three"
+						})
+					],
+					selectedKey: "one"
+				});
+
+			// Assert
+
+			// Current items list status should be
+			// oItem1.key = one [selected]
+			// oItem2.key = two
+			// oItem3.key = three
+			this.assertCurrentItemIsSelected(oSelect, oItem1, assert);
+
+			// Act - we change the selected key
+			oSelect.setSelectedKey("two");
+
+			// Assert
+
+			// Current items list status should be
+			// oItem1.key = one
+			// oItem2.key = two [selected]
+			// oItem3.key = three
+			this.assertCurrentItemIsSelected(oSelect, oItem2, assert);
+
+			// Act - we change the "key" of the first item in the list
+			oItem1.setKey("two");
+
+			// Assert
+
+			// Current items list status should be
+			// oItem1.key = two [selected]
+			// oItem2.key = two
+			// oItem3.key = three
+			this.assertCurrentItemIsSelected(oSelect, oItem1, assert);
+
+			// Act - we change the "key" of the second item in the list
+			oItem2.setKey("one");
+
+			// Assert
+
+			// Current items list status should be
+			// oItem1.key = two [selected]
+			// oItem2.key = one
+			// oItem3.key = three
+			this.assertCurrentItemIsSelected(oSelect, oItem1, assert);
+
+			// Act - we change the "key" of the third item in the list
+			oItem3.setKey("two");
+
+			// Assert
+
+			// Current items list status should be
+			// oItem1.key = two [selected]
+			// oItem2.key = one
+			// oItem3.key = two
+			this.assertCurrentItemIsSelected(oSelect, oItem1, assert);
+
+			// Act - we change the "key" of the first item in the list
+			oItem1.setKey("new");
+
+			// Assert
+
+			// Current items list status should be
+			// oItem1.key = new
+			// oItem2.key = one
+			// oItem3.key = two [selected]
+			this.assertCurrentItemIsSelected(oSelect, oItem3, assert);
+
+			// Cleanup
+			oSelect.destroy();
+		});
+
+		QUnit.test("insertItem at index 0 with the same 'key' as current 'selectedKey' and current list contains item with " +
+			"the same 'key'", function (assert) {
+
+			// Arrange
+			var oItem3 = new Item({
+					key: "two"
+				}),
+				oSelect = new Select({
+					items: [
+						new Item({
+							key: "one"
+						}),
+						new Item({
+							key: "two"
+						})
+					],
+					selectedKey: "two"
+				}).placeAt("content");
+
+			// Act - insert oItem3 at index 0 of the aggregation
+			oSelect.insertItem(oItem3, 0);
+
+			sap.ui.getCore().applyChanges();
+
+			// Current items list status should be
+			// oItem3.key = two [selected]
+			// oItem1.key = one
+			// oItem2.key = two
+			this.assertCurrentItemIsSelected(oSelect, oItem3, assert);
+
+			// Cleanup
+			oSelect.destroy();
+		});
+
+		QUnit.test("insertItem at last index should update the selected item when current list does not contain item " +
+			"with the same 'key'", function (assert) {
+
+			// Arrange
+			var oItem3 = new Item({
+					key: "three"
+				}),
+				oSelect = new Select({
+					items: [
+						new Item({
+							key: "one"
+						}),
+						new Item({
+							key: "two"
+						})
+					],
+					selectedKey: "three"
+				}).placeAt("content");
+
+			// Act - insert oItem3 as last item in the aggregation
+			oSelect.insertItem(oItem3, 2);
+
+			sap.ui.getCore().applyChanges();
+
+			// Current items list status should be
+			// oItem1.key = one
+			// oItem2.key = two
+			// oItem3.key = three [selected]
+			this.assertCurrentItemIsSelected(oSelect, oItem3, assert);
+
+			// Cleanup
+			oSelect.destroy();
+		});
+
+		QUnit.test("insertItem at last index and current list contains item with the same 'key'", function (assert) {
+			// Arrange
+			var oItem2,
+				oSelect = new Select({
+					items: [
+						new Item({
+							key: "one"
+						}),
+						oItem2 = new Item({
+							key: "two"
+						})
+					],
+					selectedKey: "two"
+				}).placeAt("content");
+
+			// Act - insert oItem3 as last item in the aggregation
+			oSelect.insertItem(new Item({
+				key: "two"
+			}), 2);
+
+			sap.ui.getCore().applyChanges();
+
+			// Current items list status should be
+			// oItem1.key = one
+			// oItem2.key = two [selected]
+			// oItem3.key = two
+			this.assertCurrentItemIsSelected(oSelect, oItem2, assert);
+
+			// Cleanup
+			oSelect.destroy();
+		});
+
+		QUnit.test("addItem at with the same 'key' as current 'selectedKey' and current list does not contain item with the " +
+			"same 'key'", function (assert) {
+			// Arrange
+			var oItem3 = new Item({
+					key: "three"
+				}),
+				oSelect = new Select({
+					items: [
+						new Item({
+							key: "one"
+						}),
+						new Item({
+							key: "two"
+						})
+					],
+					selectedKey: "three"
+				}).placeAt("content");
+
+			// Act - insert oItem3 at index 0 of the aggregation
+			oSelect.addItem(oItem3);
+
+			sap.ui.getCore().applyChanges();
+
+			// Current items list status should be
+			// oItem1.key = one
+			// oItem2.key = two
+			// oItem3.key = three [selected]
+			this.assertCurrentItemIsSelected(oSelect, oItem3, assert);
+
+			// Cleanup
+			oSelect.destroy();
+		});
+
+		QUnit.test("addItem at last index and current list contains item with the same 'key'", function (assert) {
+			// Arrange
+			var oItem2,
+				oSelect = new Select({
+					items: [
+						new Item({
+							key: "one"
+						}),
+						oItem2 = new Item({
+							key: "two"
+						})
+					],
+					selectedKey: "two"
+				}).placeAt("content");
+
+			// Act - insert oItem3 at index 0 of the aggregation
+			oSelect.addItem(new Item({
+				key: "two"
+			}));
+
+			sap.ui.getCore().applyChanges();
+
+			// Current items list status should be
+			// oItem1.key = one
+			// oItem2.key = two [selected]
+			// oItem3.key = two
+			this.assertCurrentItemIsSelected(oSelect, oItem2, assert);
+
+			// Cleanup
+			oSelect.destroy();
+		});
+
+		QUnit.test("remove the current selected item should update the selected item and list contains item with the same key",
+			function (assert) {
+
+			// Arrange
+			var oItem1,
+				oItem2,
+				oSelect = new Select({
+					items: [
+						oItem1 = new Item({
+							key: "two"
+						}),
+						oItem2 = new Item({
+							key: "two"
+						}),
+						new Item({
+							key: "three"
+						})
+					],
+					selectedKey: "two"
+				}).placeAt("content");
+
+			this.assertCurrentItemIsSelected(oSelect, oItem1, assert);
+
+			// Act - remove oItem1 from the aggregation
+			oSelect.removeItem(oItem1);
+
+			sap.ui.getCore().applyChanges();
+
+			// Current items list status should be
+			// oItem2.key = two [selected]
+			// oItem3.key = three
+			this.assertCurrentItemIsSelected(oSelect, oItem2, assert);
+
+			// Cleanup
+			oSelect.destroy();
+			oItem1.destroy(); // oItem1 removed from the select aggregation
+		});
+
+		QUnit.test("remove the current selected item should update the selected item and list does not contain item " +
+			"with the same 'key'", function (assert) {
+
+			// Arrange
+			var oItem1,
+				oItem2,
+				oSelect = new Select({
+					items: [
+						oItem1 = new Item({
+							key: "one"
+						}),
+						oItem2 = new Item({
+							key: "two"
+						}),
+						new Item({
+							key: "three"
+						})
+					],
+					selectedKey: "one"
+				}).placeAt("content");
+
+			this.assertCurrentItemIsSelected(oSelect, oItem1, assert);
+
+			// Act - insert oItem3 at index 0 of the aggregation
+			oSelect.removeItem(oItem1);
+
+			sap.ui.getCore().applyChanges();
+
+			// Current items list status should be
+			// oItem2.key = two [selected]
+			// oItem3.key = three
+			this.assertCurrentItemIsSelected(oSelect, oItem2, assert);
+
+			// Cleanup
+			oSelect.destroy();
+			oItem1.destroy(); // oItem1 removed from the select aggregation
 		});
 
 		QUnit.module("setName()");
