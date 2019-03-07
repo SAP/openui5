@@ -11,7 +11,9 @@ sap.ui.define([
 	"sap/ui/core/UIComponent",
 	"sap/m/OverflowToolbarButton",
 	"sap/f/DynamicPageAccessibleLandmarkInfo",
-	"sap/ui/core/mvc/XMLView"
+	"sap/ui/core/mvc/XMLView",
+	"sap/ui/qunit/QUnitUtils",
+	"sap/ui/events/KeyCodes"
 ],
 function (
 	$,
@@ -25,7 +27,9 @@ function (
 	UIComponent,
 	OverflowToolbarButton,
 	DynamicPageAccessibleLandmarkInfo,
-	XMLView
+	XMLView,
+	QUnitUtils,
+	KeyCodes
 ) {
 	"use strict";
 
@@ -522,6 +526,48 @@ function (
 		oTitle.fireEvent("_titlePress");
 
 		assert.ok(oTitlePressSpy.calledOnce, "Title Pin Press Handler is called");
+	});
+
+	QUnit.test("DynamicPage On Title Press: onsapenter event", function (assert) {
+		var oTitlePressListenerSpy = sinon.spy(),
+			oTitle = this.oDynamicPage.getTitle();
+
+		// Arrange
+		oUtil.renderObject(this.oDynamicPage);
+		oTitle._focus();
+		this.oDynamicPage.getTitle().attachEvent("_titlePress", oTitlePressListenerSpy);
+
+		QUnitUtils.triggerKeydown(oTitle.getDomRef(), KeyCodes.ENTER);
+
+		assert.ok(oTitlePressListenerSpy.calledOnce, "Event was fired when ENTER key is pressed");
+	});
+
+	QUnit.test("DynamicPage On Title Press: onsapspace event", function (assert) {
+		var oTitlePressListenerSpy = sinon.spy(),
+			oTitle = this.oDynamicPage.getTitle();
+
+		// Arrange
+		oUtil.renderObject(this.oDynamicPage);
+		oTitle._focus();
+		this.oDynamicPage.getTitle().attachEvent("_titlePress", oTitlePressListenerSpy);
+
+		QUnitUtils.triggerKeyup(oTitle.getDomRef(), KeyCodes.SPACE);
+
+		assert.ok(oTitlePressListenerSpy.calledOnce, "Event was fired when SPACE key is pressed");
+	});
+
+	QUnit.test("DynamicPage On Title Press: onsapspace event with shift", function (assert) {
+		var oTitlePressListenerSpy = sinon.spy(),
+			oTitle = this.oDynamicPage.getTitle();
+
+		// Arrange
+		oUtil.renderObject(this.oDynamicPage);
+		oTitle._focus();
+		this.oDynamicPage.getTitle().attachEvent("_titlePress", oTitlePressListenerSpy);
+
+		QUnitUtils.triggerKeyup(oTitle.getDomRef(), KeyCodes.SPACE, true /*Shift*/);
+
+		assert.strictEqual(oTitlePressListenerSpy.callCount, 0, "Event was not fired when ENTER key is pressed");
 	});
 
 	QUnit.test("DynamicPage On Title Press: stateChange event is fired", function (assert) {
