@@ -1447,7 +1447,7 @@ function(
 				return;
 			}
 
-			if (oEvent.which === KeyCodes.SPACE) {
+			if (oEvent.which === KeyCodes.SPACE && !oEvent.shiftKey) {
 				// mark the event for components that needs to know if the event was handled
 				oEvent.setMarked();
 
