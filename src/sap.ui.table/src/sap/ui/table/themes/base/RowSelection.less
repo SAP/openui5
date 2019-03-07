@@ -112,3 +112,20 @@
 		border-color: @sapUiFieldHoverBorderColor;
 	}
 }
+
+.sapUiTableSelectClear {
+    width: 100%;
+    height: 100%;
+
+    &::before {
+        display: block;
+		position: absolute;
+		width: 100%;
+		vertical-align: baseline;
+        bottom: calc(~"(" @_sap_ui_table_ColumnHeaderHeight ~"-" @_sap_ui_table_RowSelector_CheckBoxSize ~") / 2");
+
+        .sapUiSizeCozy & {
+            bottom: calc(~"(" @_sap_ui_table_ColumnHeaderHeightCozy ~"-" @_sap_ui_table_RowSelector_CheckBoxSizeCozy ~") / 2");
+        }
+    }
+}

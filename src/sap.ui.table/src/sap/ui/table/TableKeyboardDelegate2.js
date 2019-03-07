@@ -182,8 +182,9 @@ sap.ui.define([
 
 		// Select/Deselect all.
 		if (oCellInfo.isOfType(CellType.COLUMNROWHEADER)) {
-			oTable._toggleSelectAll();
-
+			if (!oTable._oSelectionPlugin.onHeaderSelectorPress || this._oSelectionPlugin.onHeaderSelectorPress()) {
+				oTable._toggleSelectAll();
+			}
 			// Expand/Collapse group.
 		} else if (TableKeyboardDelegate._isElementGroupToggler(oTable, oEvent.target)) {
 			TableUtils.Grouping.toggleGroupHeaderByRef(oTable, oEvent.target);
@@ -936,7 +937,9 @@ sap.ui.define([
 			oEvent.preventDefault(); // Prevent full page text selection.
 
 			if (oCellInfo.isOfType(CellType.ANYCONTENTCELL | CellType.COLUMNROWHEADER) && sSelectionMode === SelectionMode.MultiToggle) {
-				this._toggleSelectAll();
+				if (!this._oSelectionPlugin.onKeyboardShortcut || this._oSelectionPlugin.onKeyboardShortcut("toggle")) {
+					this._toggleSelectAll();
+				}
 			}
 
 		// Ctrl+Shift+A: Deselect all.

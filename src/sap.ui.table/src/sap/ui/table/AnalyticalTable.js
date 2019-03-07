@@ -16,7 +16,7 @@ sap.ui.define([
 	'sap/ui/unified/Menu',
 	'sap/ui/unified/MenuItem',
 	'./TableUtils',
-	"./BindingSelectionAdapter",
+	"./plugins/BindingSelectionPlugin",
 	"sap/base/Log",
 	"sap/base/assert",
 	"sap/ui/thirdparty/jquery"
@@ -34,7 +34,7 @@ sap.ui.define([
 		Menu,
 		MenuItem,
 		TableUtils,
-		BindingSelectionAdapter,
+		BindingSelectionPlugin,
 		Log,
 		assert,
 		jQuery
@@ -174,6 +174,7 @@ sap.ui.define([
 	 * @private
 	 */
 	AnalyticalTable.prototype.init = function() {
+		this._SelectionAdapterClass = BindingSelectionPlugin;
 		Table.prototype.init.apply(this, arguments);
 
 		this.addStyleClass("sapUiAnalyticalTable");
@@ -188,8 +189,6 @@ sap.ui.define([
 		this._bSuspendUpdateAnalyticalInfo = false;
 		TableUtils.Grouping.setGroupMode(this);
 	};
-
-	AnalyticalTable.prototype._initSelectionAdapter = TreeTable.prototype._initSelectionAdapter;
 
 	AnalyticalTable.prototype.exit = function() {
 		this._cleanupGroupHeaderMenu();
@@ -302,10 +301,6 @@ sap.ui.define([
 			this._applyAnalyticalBindingInfo(oBindingInfo);
 			this._updateTotalRow(true);
 			this._applyODataModelAnalyticalAdapter(oBindingInfo.model);
-
-			// The selectionChanged event is also a special AnalyticalTreeBindingAdapter event.
-			// The event interface is the same as in sap.ui.model.SelectionModel, due to compatibility with the sap.ui.table.Table.
-			Table._addBindingListener(oBindingInfo, "selectionChanged", this._onSelectionChanged.bind(this));
 		}
 
 		// Create the binding.

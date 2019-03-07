@@ -2,10 +2,10 @@
  * ${copyright}
  */
 sap.ui.define([
-	'./SelectionAdapter',
-	'./library'
+	'./SelectionPlugin',
+	'../library'
 ], function(
-	SelectionAdapter,
+	SelectionPlugin,
 	library
 ) {
 
@@ -14,42 +14,61 @@ sap.ui.define([
 	var SelectionMode = library.SelectionMode;
 
 	/**
-	 * Constructs an instance of sap.ui.table.BindingSelectionAdapter
+	 * Constructs an instance of sap.ui.table.plugins.BindingSelectionPlugin
 	 *
 	 * @class Implements the selection methods for TreeTable and AnalyticalTable
-	 * @extends sap.ui.table.SelectionAdapter
+	 * @extends sap.ui.table.plugins.SelectionPlugin
 	 * @version ${version}
 	 * @constructor
 	 * @private
-	 * @alias sap.ui.table.BindingSelectionAdapter
+	 * @alias sap.ui.table.plugins.BindingSelectionPlugin
 	 */
-	var BindingSelectionAdapter = SelectionAdapter.extend("sap.ui.table.BindingSelectionAdapter");
+	var BindingSelectionPlugin = SelectionPlugin.extend("sap.ui.table.plugins.BindingSelectionPlugin", {metadata: {
+		events: {
+			/**
+			 * This event is fired when the selection is changed.
+			 */
+			selectionChange: {
+				parameters: {
+					/**
+					 * Array of indices whose selection has been changed (either selected or deselected)
+					 */
+					indices: {type: "int[]"},
+
+					/**
+					 * Indicates whether the Select All function is used to select rows.
+					 */
+					selectAll: {type: "boolean"}
+				}
+			}
+		}
+	}});
 
 	/**
 	 * @override
 	 * @inheritDoc
 	 */
-	BindingSelectionAdapter.prototype.exit = function() {
+	BindingSelectionPlugin.prototype.exit = function() {
 		var oBinding = this._getBinding();
 		if (oBinding) {
 			oBinding.detachEvent("change", this._onBindingChange);
 		}
-		SelectionAdapter.prototype.exit.call(this);
+		SelectionPlugin.prototype.exit.call(this);
 	};
 
 	/**
 	 * @override
 	 * @inheritDoc
 	 */
-	BindingSelectionAdapter.prototype.addSelectionInterval = function(iIndexFrom, iIndexTo) {
-		if (this.getSelectionMode() === SelectionMode.None) {
+	BindingSelectionPlugin.prototype.addSelectionInterval = function(iIndexFrom, iIndexTo) {
+		if (this._getSelectionMode() === SelectionMode.None) {
 			return;
 		}
 
 		var oBinding = this._getBinding();
 
 		if (oBinding && oBinding.addSelectionInterval) {
-			if (this.getSelectionMode() === SelectionMode.Single) {
+			if (this._getSelectionMode() === SelectionMode.Single) {
 				iIndexFrom = iIndexTo;
 				oBinding.setSelectionInterval(iIndexFrom, iIndexTo);
 			}
@@ -61,7 +80,7 @@ sap.ui.define([
 	 * @override
 	 * @inheritDoc
 	 */
-	BindingSelectionAdapter.prototype.clearSelection = function() {
+	BindingSelectionPlugin.prototype.clearSelection = function() {
 		var oBinding = this._getBinding();
 
 		if (oBinding && oBinding.clearSelection) {
@@ -73,7 +92,7 @@ sap.ui.define([
 	 * @override
 	 * @inheritDoc
 	 */
-	BindingSelectionAdapter.prototype.getSelectedIndex = function() {
+	BindingSelectionPlugin.prototype.getSelectedIndex = function() {
 		var oBinding = this._getBinding();
 
 		if (oBinding && oBinding.findNode) {
@@ -87,7 +106,7 @@ sap.ui.define([
 	 * @override
 	 * @inheritDoc
 	 */
-	BindingSelectionAdapter.prototype.getSelectedIndices = function() {
+	BindingSelectionPlugin.prototype.getSelectedIndices = function() {
 		var oBinding = this._getBinding();
 
 		if (oBinding && oBinding.findNode && oBinding.getSelectedIndices) {
@@ -101,7 +120,7 @@ sap.ui.define([
 	 * @override
 	 * @inheritDoc
 	 */
-	BindingSelectionAdapter.prototype.getSelectableCount = function() {
+	BindingSelectionPlugin.prototype.getSelectableCount = function() {
 		var oBinding = this._getBinding();
 
 		if (!oBinding) {
@@ -118,7 +137,7 @@ sap.ui.define([
 	 * @override
 	 * @inheritDoc
 	 */
-	BindingSelectionAdapter.prototype.getSelectedCount = function() {
+	BindingSelectionPlugin.prototype.getSelectedCount = function() {
 		var oBinding = this._getBinding();
 
 		if (oBinding && oBinding.getSelectedNodesCount) {
@@ -132,7 +151,7 @@ sap.ui.define([
 	 * @override
 	 * @inheritDoc
 	 */
-	BindingSelectionAdapter.prototype.isIndexSelectable = function(iIndex) {
+	BindingSelectionPlugin.prototype.isIndexSelectable = function(iIndex) {
 		var oBinding = this._getBinding();
 		if (oBinding) {
 			return oBinding.isIndexSelectable(iIndex);
@@ -146,7 +165,7 @@ sap.ui.define([
 	 * @override
 	 * @inheritDoc
 	 */
-	BindingSelectionAdapter.prototype.isIndexSelected = function(iIndex) {
+	BindingSelectionPlugin.prototype.isIndexSelected = function(iIndex) {
 		var oBinding = this._getBinding();
 
 		if (oBinding && oBinding.isIndexSelected) {
@@ -160,7 +179,7 @@ sap.ui.define([
 	 * @override
 	 * @inheritDoc
 	 */
-	BindingSelectionAdapter.prototype.removeSelectionInterval = function(iIndexFrom, iIndexTo) {
+	BindingSelectionPlugin.prototype.removeSelectionInterval = function(iIndexFrom, iIndexTo) {
 		var oBinding = this._getBinding();
 
 		if (oBinding && oBinding.findNode && oBinding.removeSelectionInterval) {
@@ -172,8 +191,8 @@ sap.ui.define([
 	 * @override
 	 * @inheritDoc
 	 */
-	BindingSelectionAdapter.prototype.selectAll = function() {
-		if (this.getSelectionMode() === SelectionMode.None) {
+	BindingSelectionPlugin.prototype.selectAll = function() {
+		if (this._getSelectionMode() === SelectionMode.None) {
 			return;
 		}
 
@@ -188,8 +207,8 @@ sap.ui.define([
 	 * @override
 	 * @inheritDoc
 	 */
-	BindingSelectionAdapter.prototype.setSelectedIndex = function(iIndex) {
-		if (this.getSelectionMode() === SelectionMode.None) {
+	BindingSelectionPlugin.prototype.setSelectedIndex = function(iIndex) {
+		if (this._getSelectionMode() === SelectionMode.None) {
 			return;
 		}
 
@@ -209,15 +228,15 @@ sap.ui.define([
 	 * @override
 	 * @inheritDoc
 	 */
-	BindingSelectionAdapter.prototype.setSelectionInterval = function(iIndexFrom, iIndexTo) {
-		if (this.getSelectionMode() === SelectionMode.None) {
+	BindingSelectionPlugin.prototype.setSelectionInterval = function(iIndexFrom, iIndexTo) {
+		if (this._getSelectionMode() === SelectionMode.None) {
 			return;
 		}
 
 		var oBinding = this._getBinding();
 
 		if (oBinding && oBinding.setSelectionInterval) {
-			if (this.getSelectionMode() === SelectionMode.Single) {
+			if (this._getSelectionMode() === SelectionMode.Single) {
 				iIndexFrom = iIndexTo;
 			}
 			oBinding.setSelectionInterval(iIndexFrom, iIndexTo);
@@ -228,15 +247,15 @@ sap.ui.define([
 	 * Sets the selection mode. The current selection is lost
 	 *
 	 * @param {string} sSelectionMode The new selection mode.
-	 * @returns {sap.ui.table.BindingSelectionAdapter} Reference to <code>this</code> in order to allow method chaining
+	 * @returns {sap.ui.table.plugins.BindingSelectionPlugin} Reference to <code>this</code> in order to allow method chaining
 	 * @public
 	 */
-	BindingSelectionAdapter.prototype.setSelectionMode = function(sSelectionMode) {
-		var sOldSelectionMode = this.getSelectionMode();
+	BindingSelectionPlugin.prototype.setSelectionMode = function(sSelectionMode) {
+		var sOldSelectionMode = this._getSelectionMode();
 
-		SelectionAdapter.prototype.setSelectionMode.apply(this, arguments);
+		SelectionPlugin.prototype._setSelectionMode.apply(this, arguments);
 
-		if (this.getSelectionMode() !== sOldSelectionMode) {
+		if (this._getSelectionMode() !== sOldSelectionMode) {
 			this.clearSelection();
 		}
 
@@ -247,16 +266,18 @@ sap.ui.define([
 	 * @override
 	 * @inheritDoc
 	 */
-	BindingSelectionAdapter.prototype._setBinding = function(oBinding) {
+	BindingSelectionPlugin.prototype._setBinding = function(oBinding) {
 		var oCurrentBinding = this._getBinding();
-		SelectionAdapter.prototype._setBinding.call(this, oBinding);
+		SelectionPlugin.prototype._setBinding.call(this, oBinding);
 
 		if (oCurrentBinding !== oBinding) {
 			if (oBinding) {
 				oBinding.attachEvent("change", this._onBindingChange, this);
+				oBinding.attachEvent("selectionChanged", this._onSelectionChange, this);
 			}
 			if (oCurrentBinding) {
 				oCurrentBinding.detachEvent("change", this._onBindingChange);
+				oCurrentBinding.detachEvent("selectionChanged", this._onSelectionChange);
 			}
 		}
 	};
@@ -266,7 +287,7 @@ sap.ui.define([
 	 * @param {sap.ui.base.Event} oEvent
 	 * @private
 	 */
-	BindingSelectionAdapter.prototype._onBindingChange = function(oEvent) {
+	BindingSelectionPlugin.prototype._onBindingChange = function(oEvent) {
 		var sReason = typeof (oEvent) === "object" ? oEvent.getParameter("reason") : oEvent;
 
 		if (sReason === "sort" || sReason === "filter") {
@@ -274,5 +295,15 @@ sap.ui.define([
 		}
 	};
 
-	return BindingSelectionAdapter;
+	BindingSelectionPlugin.prototype._onSelectionChange = function(oEvent) {
+		var aRowIndices = oEvent.getParameter("rowIndices");
+		var bSelectAll = oEvent.getParameter("selectAll");
+
+		this.fireSelectionChange({
+			rowIndices: aRowIndices,
+			selectAll: bSelectAll
+		});
+	};
+
+	return BindingSelectionPlugin;
 });

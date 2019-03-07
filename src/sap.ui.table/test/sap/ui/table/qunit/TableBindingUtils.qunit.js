@@ -33,7 +33,7 @@ sap.ui.define([
 		});
 
 		var sURLPrefix = sap.ui.require.toUrl("sap/ui/table/qunit");
-		oMockServer.simulate(sURLPrefix + "/mockdata/metadata.xml", "mockdata");
+		oMockServer.simulate(sURLPrefix + "/mockdata/metadata.xml", sURLPrefix + "/mockdata/");
 		oMockServer.start();
 		return oMockServer;
 	}

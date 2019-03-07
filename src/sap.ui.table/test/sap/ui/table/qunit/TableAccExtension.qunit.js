@@ -1018,22 +1018,19 @@ sap.ui.define([
 	});
 
 	QUnit.test("aria-labelledby with Focus (Single Selection)", function(assert) {
-		var done = assert.async();
 		oTable.setSelectionMode("Single");
 		sap.ui.getCore().applyChanges();
+
 		var sId = oTable.getId();
 		var $Cell = getSelectAll(true, assert);
 		assert.strictEqual(($Cell.attr("aria-labelledby") || "").trim(),
-			"ARIALABELLEDBY " + sId + "-ariadesc " + sId + "-ariacount " + sId + "-ariaselection " + sId + "-ariacolrowheaderlabel " + sId
-			+ "-ariaselectall", "aria-labelledby of select all");
-		getRowHeader(0, true, assert); //set row header somewhere else on the table
+			"ARIALABELLEDBY " + sId + "-ariadesc " + sId + "-ariacount " + sId + "-ariaselection " + sId + "-ariacolrowheaderlabel",
+			"aria-labelledby of select all");
+		getRowHeader(0, true, assert); //set focus somewhere else on the table
 		$Cell = getSelectAll(true, assert);
 		assert.strictEqual(($Cell.attr("aria-labelledby") || "").trim(),
-			sId + "-ariacolrowheaderlabel " + sId + "-ariaselectall", "aria-labelledby of select all");
+			sId + "-ariacolrowheaderlabel", "aria-labelledby of select all");
 		setFocusOutsideOfTable(assert);
-		setTimeout(function() {
-			done();
-		}, 100);
 	});
 
 	QUnit.test("aria-labelledby without Focus", function(assert) {
@@ -1050,7 +1047,7 @@ sap.ui.define([
 		setFocusOutsideOfTable(assert);
 		var $Cell = getSelectAll(false, assert);
 		assert.strictEqual(($Cell.attr("aria-labelledby") || "").trim(),
-			oTable.getId() + "-ariacolrowheaderlabel " + oTable.getId() + "-ariaselectall", "aria-labelledby of select all");
+			oTable.getId() + "-ariacolrowheaderlabel", "aria-labelledby of select all");
 		setFocusOutsideOfTable(assert);
 	});
 

@@ -311,8 +311,8 @@ sap.ui.define([
 		assert.equal(oTable.getBinding("rows").iLength, 200, "RowCount after removing filter");
 	});
 
-	QUnit.test("Selection Adapter", function(assert) {
-		assert.ok(oTable._oSelectionAdapter.isA("sap.ui.table.SelectionModelAdapter"), "SelectionModelAdapter is initialized");
+	QUnit.test("Selection Plugin", function(assert) {
+		assert.ok(oTable._oSelectionPlugin.isA("sap.ui.table.plugins.SelectionModelPlugin"), "SelectionModelPlugin is initialized");
 	});
 
 	QUnit.test("SelectionMode", function(assert) {

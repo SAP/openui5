@@ -365,6 +365,7 @@ sap.ui.define(['sap/ui/core/Control', 'sap/ui/core/theming/Parameters', 'sap/ui/
 	TableRenderer.renderColRowHdr = function(rm, oTable) {
 		var bEnabled = false;
 		var bSelAll = false;
+		var mRenderConfig = oTable._oSelectionPlugin.getRenderConfig();
 
 		rm.write("<div");
 		rm.writeAttribute("id", oTable.getId() + "-selall");
@@ -377,8 +378,17 @@ sap.ui.define(['sap/ui/core/Control', 'sap/ui/core/theming/Parameters', 'sap/ui/
 			var bAllRowsSelected = TableUtils.areAllRowsSelected(oTable);
 
 			if (oTable._getShowStandardTooltips()) {
-				var sSelectAllResourceTextID = bAllRowsSelected ? "TBL_DESELECT_ALL" : "TBL_SELECT_ALL";
-				rm.writeAttributeEscaped("title", TableUtils.getResourceText(sSelectAllResourceTextID));
+				var sSelectAllResourceTextID;
+
+				if (mRenderConfig.headerSelector.type === "toggle") {
+					sSelectAllResourceTextID = bAllRowsSelected ? "TBL_DESELECT_ALL" : "TBL_SELECT_ALL";
+				} else if (mRenderConfig.headerSelector.type === "clear") {
+					sSelectAllResourceTextID = "TBL_DESELECT_ALL";
+				}
+
+				if (sSelectAllResourceTextID) {
+					rm.writeAttributeEscaped("title", TableUtils.getResourceText(sSelectAllResourceTextID));
+				}
 			}
 			if (!bAllRowsSelected) {
 				rm.addClass("sapUiTableSelAll");
@@ -400,10 +410,15 @@ sap.ui.define(['sap/ui/core/Control', 'sap/ui/core/theming/Parameters', 'sap/ui/
 		rm.write(">");
 
 		if (oTable.getSelectionMode() !== SelectionMode.Single) {
-			rm.write("<div");
-			rm.addClass("sapUiTableSelectAllCheckBox");
-			rm.writeClasses();
-			rm.write("></div>");
+			if (mRenderConfig.headerSelector.icon) {
+				var sIcon = mRenderConfig.headerSelector.icon;
+				rm.writeIcon(sIcon, "sapUiTableSelectClear");
+			} else {
+				rm.write("<div");
+				rm.addClass("sapUiTableSelectAllCheckBox");
+				rm.writeClasses();
+				rm.write("></div>");
+			}
 		}
 
 		rm.write("</div>");

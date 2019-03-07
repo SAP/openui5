@@ -193,6 +193,10 @@ sap.ui.define([
 			"Designtime-Library": {
 				group: "Designtime",
 				module: "./designtime/Library.qunit"
+			},
+
+			"MultiSelectionPlugin": {
+				group: "Plugins"
 			}
 		}
 	};
