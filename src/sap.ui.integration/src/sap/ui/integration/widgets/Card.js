@@ -327,7 +327,7 @@ sap.ui.define([
 			return;
 		}
 
-		if (!bHasContent) {
+		if (!bHasContent && sCardType.toLowerCase() !== "component") {
 			this.setBusy(false);
 			return;
 		}
@@ -359,6 +359,9 @@ sap.ui.define([
 				}.bind(this)).catch(function () {
 					this._handleError("Timeline type card is not available with this distribution");
 				}.bind(this));
+				break;
+			case "component":
+				sap.ui.require(["sap/f/cards/ComponentContent"], this._setCardContentFromManifest.bind(this));
 				break;
 			default:
 				Log.error(sCardType.toUpperCase() + " Card type is not supported");
@@ -437,8 +440,13 @@ sap.ui.define([
 	 * @param {sap.ui.core.Control} CardContent The content to be created
 	 */
 	Card.prototype._setCardContentFromManifest = function (CardContent) {
+		var mSettings = this._oCardManifest.get(MANIFEST_PATHS.CONTENT),
+			sType = this._oCardManifest.get(MANIFEST_PATHS.TYPE).toLowerCase();
 
-		var mSettings = this._oCardManifest.get(MANIFEST_PATHS.CONTENT);
+		if (!mSettings && sType === "component") {
+			mSettings = this._oCardManifest.getJson();
+		}
+
 		var oClonedSettings = { configuration: jQuery.extend(true, {}, mSettings) };
 
 		if (this._oServiceManager) {
