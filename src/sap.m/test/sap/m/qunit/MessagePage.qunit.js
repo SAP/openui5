@@ -4,6 +4,7 @@ sap.ui.define([
 	"sap/ui/qunit/QUnitUtils",
 	"sap/ui/qunit/utils/createAndAppendDiv",
 	"sap/ui/core/IconPool",
+	"sap/ui/model/json/JSONModel",
 	"sap/m/MessagePage",
 	"sap/m/Link",
 	"sap/m/Button",
@@ -12,6 +13,7 @@ sap.ui.define([
 	qutils,
 	createAndAppendDiv,
 	IconPool,
+	JSONModel,
 	MessagePage,
 	Link,
 	Button,
@@ -252,6 +254,38 @@ sap.ui.define([
 
 		// Assert
 		assert.ok(this.oMessagePage.getDomRef("formattedText"), "FormattedText is rendered");
+	});
+
+	QUnit.module("Binding properties", {
+		beforeEach: function() {
+			var oModel = new JSONModel(
+				{
+					title: "Title",
+					text: "text with braces {{}}"
+				});
+			sap.ui.getCore().setModel(oModel);
+
+			this.oMessagePage = new MessagePage(messagePageId, {
+				title: "{/title}",
+				text: "{/text}",
+				description: "{/text}"
+			});
+
+			this.oMessagePage.placeAt('content');
+			sap.ui.getCore().applyChanges();
+		},
+		afterEach: function() {
+			this.oMessagePage.destroy();
+			this.oMessagePage = null;
+		}
+	});
+
+	QUnit.test("Braces in binded description and text properties are rendered", function(assert) {
+		// Assert
+		assert.strictEqual(this.oMessagePage._getText().getText(), "text with braces {{}}",
+			"Braces are rendered in text");
+		assert.strictEqual(this.oMessagePage._getDescription().getText(), "text with braces {{}}",
+			"Braces are rendered in description");
 	});
 
 	QUnit.module("Destroying", {
