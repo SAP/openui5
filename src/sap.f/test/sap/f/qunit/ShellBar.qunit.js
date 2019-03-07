@@ -36,18 +36,13 @@ function (
 
 	QUnit.test("Proper initialization", function (assert) {
 		// Arrange
-		var fnOriginalGetMethod = Parameters.get,
-			oFactoryCPImageSetterSpy = sinon.spy(Factory.prototype, "setCPImage"),
-			oSB;
-
-		Parameters.get = function () {return "dark";}; // Method always returns dark;
+		var oSB;
 
 		// Act
 		oSB = new ShellBar();
 
 		// Factory
 		assert.ok(oSB._oFactory instanceof Factory, "Factory is instance of correct class");
-		assert.strictEqual(oFactoryCPImageSetterSpy.callCount, 1, "Factory setter called for dark theme");
 
 		// Overflow Toolbar
 		assert.ok(oSB._oOverflowToolbar.isA("sap.m.OverflowToolbar"), "Overflow Toolbar initialized");
@@ -62,8 +57,6 @@ function (
 		assert.ok(Array.isArray(oSB._aOverflowControls), "Overflow controls collection initialized");
 
 		// Cleanup
-		Parameters.get = fnOriginalGetMethod;
-		oFactoryCPImageSetterSpy.restore();
 		oSB.destroy();
 	});
 
@@ -291,48 +284,6 @@ function (
 		// Cleanup
 		oResponsiveHandlerSpy.restore();
 		oFactorySpy.restore();
-	});
-
-	QUnit.test("onThemeChanged", function (assert) {
-		// Arrange
-		var fnOriginalGetMethod = Parameters.get,
-			bDark = true,
-			oParametersGetSpy,
-			oFactorySetterSpy = sinon.spy(this.oSB._oFactory, "setCPImage");
-
-		// Override getter method
-		Parameters.get = function () {
-			return bDark ? "dark" : "";
-		};
-		oParametersGetSpy = sinon.spy(Parameters, "get");
-
-		// Act
-		this.oSB.onThemeChanged();
-
-		// Assert
-		assert.strictEqual(oParametersGetSpy.callCount, 1, "Get method called once");
-		assert.ok(oParametersGetSpy.calledWithExactly("_sap_f_Shell_Bar_Copilot_Design") , "Correct parameter returned");
-		assert.strictEqual(oFactorySetterSpy.callCount, 1, "Factory setter called once");
-		assert.ok(oFactorySetterSpy.calledWithExactly("CoPilot_dark.svg") ,
-			"Factory setter called with 'CoPilot_dark.svg'.");
-
-		// Arrange
-		bDark = false;
-		oFactorySetterSpy.reset();
-
-		// Act
-		this.oSB.onThemeChanged();
-
-		// Assert
-		assert.ok(oFactorySetterSpy.calledWithExactly("CoPilot_white.svg") ,
-			"Factory setter called with 'CoPilot_white.svg'.");
-
-		// Cleanup
-		oParametersGetSpy.restore();
-		oFactorySetterSpy.restore();
-
-		// Restore original get method
-		Parameters.get = fnOriginalGetMethod;
 	});
 
 	QUnit.module("Utility methods", {
