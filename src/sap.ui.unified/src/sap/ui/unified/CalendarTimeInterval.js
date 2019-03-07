@@ -1866,8 +1866,10 @@ sap.ui.define([
 		var oDate = CalendarUtils._createUniversalUTCDate(oSelectedDate);
 
 		oFocusedDate.setUTCFullYear(oDate.getUTCFullYear());
-		oFocusedDate.setUTCMonth(oDate.getUTCMonth());
-		oFocusedDate.setUTCDate(oDate.getUTCDate());
+
+		//setting separately month and date afterwards could lead to not needed shifting of the month
+		oFocusedDate.setUTCMonth(oDate.getUTCMonth(), oDate.getUTCDate());
+
 		_focusDate.call(this, oFocusedDate, true);
 		_closeCalendarPicker.call(this);
 	}
