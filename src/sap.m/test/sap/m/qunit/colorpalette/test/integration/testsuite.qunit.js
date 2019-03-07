@@ -29,7 +29,7 @@ sap.ui.define(function() {
 						"cp.opa.test.env": "test-resources/sap/m/qunit/colorpalette/test/",
 						"cp.opa.test": "resources/sap/ui/"
 					},
-					frameOptions: "deny"
+					frameOptions: "trusted"
 				},
 				coverage: {
 					only: [
