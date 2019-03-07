@@ -27,7 +27,7 @@
       {
         "id": "ef8e0ea9e16e228140713498960fc922e64708c3",
         "type": "FIX",
-        "text": "Sections didn\u0027t get focus after selection with anchorBar with the keyboard",
+        "text": "Sections didn't get focus after selection with anchorBar with the keyboard",
         "references": [
           {
             "type": "BCP",
@@ -44,7 +44,7 @@
       {
         "id": "16ddd3e3fb098c4feb405d44f9afb6d60c0f1608",
         "type": "FIX",
-        "text": "setting a customAnchorButton didn\u0027t update the AnchorBar",
+        "text": "setting a customAnchorButton didn't update the AnchorBar",
         "references": []
       },
       {
@@ -61,7 +61,7 @@
       {
         "id": "9af9f6804422732f2aa712befaa18bd1d092609a",
         "type": "FIX",
-        "text": "onBefore rendering logic was causing an error when the objectPage isn\u0027t visible",
+        "text": "onBefore rendering logic was causing an error when the objectPage isn't visible",
         "references": [
           {
             "type": "BCP",
@@ -76,7 +76,7 @@
       {
         "id": "9d94a5d1f99fdb6b2f52901dccf3232ab4d50075",
         "type": "FIX",
-        "text": "promoted subsection where the parent section has no title wasn\u0027t working",
+        "text": "promoted subsection where the parent section has no title wasn't working",
         "references": [
           {
             "type": "BCP",
@@ -91,7 +91,7 @@
       {
         "id": "30fb1ac330f9505f86e3d71925673a51680b9083",
         "type": "FIX",
-        "text": "ObjectPage section/subsection titles weren\u0027t with the appropriate aria-level",
+        "text": "ObjectPage section/subsection titles weren't with the appropriate aria-level",
         "references": [
           {
             "type": "BCP",
@@ -106,7 +106,7 @@
       {
         "id": "af6c3d5b3bc5b137b0408e37786375792458d854",
         "type": "FIX",
-        "text": "objectPageLayout\u0027s transform css would clash with the one in the Shell",
+        "text": "objectPageLayout's transform css would clash with the one in the Shell",
         "references": []
       },
       {
@@ -159,7 +159,7 @@
       {
         "id": "62ae65a60e438b6b828a85f890abbd608e843492",
         "type": "FIX",
-        "text": "sap.uxap.ObjectPageHeader: couldn\u0027t rerender the favIcon since it has moved",
+        "text": "sap.uxap.ObjectPageHeader: couldn't rerender the favIcon since it has moved",
         "references": [
           {
             "type": "BCP",
@@ -228,7 +228,7 @@
       {
         "id": "26ba7cbdac8b1b6761dae18d21c7b7b810fd4fcd",
         "type": "FIX",
-        "text": "sap.uxap.ObjectPage: didn\u0027t access map members safely",
+        "text": "sap.uxap.ObjectPage: didn't access map members safely",
         "references": [
           {
             "type": "BCP",
@@ -347,8 +347,17 @@
       {
         "id": "483c0ce60ab5276f8ca081cb9cf1a6bec97e33f5",
         "type": "FIX",
-        "text": " sap.uxap.ObjectPageLayout: fix forms spacing",
-        "references": []
+        "text": "sap.uxap.ObjectPageLayout: fix forms spacing",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "1670314800"
+          },
+          {
+            "type": "BCP",
+            "reference": "1870391994"
+          }
+        ]
       }
     ]
   }
