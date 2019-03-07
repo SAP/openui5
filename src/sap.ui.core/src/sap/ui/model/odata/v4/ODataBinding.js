@@ -525,13 +525,10 @@ sap.ui.define([
 	};
 
 	/**
-	 * Returns whether any dependent binding of the given context has pending changes; checks all
-	 * dependent bindings of this binding if no context is given.
+	 * Returns whether any dependent binding of this binding has pending changes
 	 *
-	 * @param {sap.ui.model.odata.v4.Context} [oContext]
-	 *   A context
 	 * @returns {boolean}
-	 *   <code>true</code> if the binding has pending changes
+	 *   <code>true</code> if this binding has pending changes
 	 *
 	 * @abstract
 	 * @function

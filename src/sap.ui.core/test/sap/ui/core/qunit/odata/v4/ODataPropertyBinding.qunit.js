@@ -2060,13 +2060,11 @@ sap.ui.define([
 	});
 
 	//*********************************************************************************************
-	[undefined, {}].forEach(function (oContext) {
-		QUnit.test("hasPendingChangesInDependents, w/ context=" + !!oContext, function (assert) {
-			var oBinding = this.oModel.bindProperty("/EMPLOYEES('1')/AGE");
+	QUnit.test("hasPendingChangesInDependents", function (assert) {
+		var oBinding = this.oModel.bindProperty("/EMPLOYEES('1')/AGE");
 
-			// code under test
-			assert.strictEqual(oBinding.hasPendingChangesInDependents(oContext), false);
-		});
+		// code under test
+		assert.strictEqual(oBinding.hasPendingChangesInDependents(), false);
 	});
 
 	//*********************************************************************************************
