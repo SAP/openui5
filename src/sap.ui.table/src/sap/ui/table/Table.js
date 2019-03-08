@@ -1919,6 +1919,7 @@ sap.ui.define([
 		}
 		this._iPendingRequests = 0;
 		this._bPendingRequest = false;
+		this._iBindingLength = null;
 		return Control.prototype.bindAggregation.call(this, "rows", Table._getSanitizedBindingInfo(arguments));
 	};
 
@@ -2317,6 +2318,7 @@ sap.ui.define([
 			this._updateFixedBottomRows();
 			oScrollExtension.updateVerticalScrollbarVisibility();
 			oScrollExtension.updateVerticalScrollHeight();
+			oScrollExtension.updateVerticalScrollPosition();
 
 			if (!oBinding || !TableUtils.hasPendingRequests(this)) {
 				// A client binding -or- an $expand filled list binding does not fire dataReceived events. Therefore we need to update the no data area here.
