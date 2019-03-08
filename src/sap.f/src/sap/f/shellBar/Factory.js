@@ -15,7 +15,8 @@ sap.ui.define([
 	"sap/m/ToolbarSpacer",
 	"sap/m/ToolbarDesign",
 	"sap/m/OverflowToolbarLayoutData",
-	"sap/m/OverflowToolbarPriority"
+	"sap/m/OverflowToolbarPriority",
+	"./CoPilot"
 ], function(
 	Element,
 	Label,
@@ -30,7 +31,8 @@ sap.ui.define([
 	ToolbarSpacer,
 	ToolbarDesign,
 	OverflowToolbarLayoutData,
-	OverflowToolbarPriority
+	OverflowToolbarPriority,
+	CoPilot
 ) {
 	"use strict";
 
@@ -45,7 +47,6 @@ sap.ui.define([
 	var Factory = function (oContext) {
 		this._oContext = oContext;
 		this._oControls = {};
-		this._sCPImage = "CoPilot_white.svg";
 	};
 
 	Factory.prototype.getOverflowToolbar = function () {
@@ -137,13 +138,11 @@ sap.ui.define([
 
 	Factory.prototype.getCopilot = function () {
 		if (!this._oControls.oCopilot) {
-			this._oControls.oCopilot = new Image({
-				src: this._getCopilotImagePath(),
+			this._oControls.oCopilot = new CoPilot({
 				press: function () {
 					this._oContext.fireEvent("copilotPressed", {image: this._oControls.oCopilot});
 				}.bind(this)
 			})
-			.addStyleClass("CPImage")
 			.setLayoutData(new OverflowToolbarLayoutData({
 				priority: OverflowToolbarPriority.NeverOverflow
 			}));
@@ -238,17 +237,6 @@ sap.ui.define([
 				oControl.destroy();
 			}
 		}.bind(this));
-	};
-
-	Factory.prototype._getCopilotImagePath = function () {
-		return sap.ui.require.toUrl("sap/f/shellBar/" + this._sCPImage);
-	};
-
-	Factory.prototype.setCPImage = function (sImage) {
-		this._sCPImage = sImage;
-		if (this._oControls.oCopilot) {
-			this._oControls.oCopilot.setSrc(this._getCopilotImagePath());
-		}
 	};
 
 	return Factory;

@@ -6,7 +6,6 @@
 sap.ui.define([
 	"sap/ui/core/Control",
 	"./shellBar/Factory",
-	"sap/ui/core/theming/Parameters",
 	"./shellBar/AdditionalContentSupport",
 	"./shellBar/ResponsiveHandler",
 	"./ShellBarRenderer"
@@ -14,7 +13,6 @@ sap.ui.define([
 function(
 	Control,
 	Factory,
-	Parameters,
 	AdditionalContentSupport,
 	ResponsiveHandler
 	/*, ShellBarRenderer */
@@ -221,11 +219,6 @@ function(
 	ShellBar.prototype.init = function () {
 		this._oFactory = new Factory(this);
 
-		// Handle "Dark" CoPilot image
-		if (Parameters.get("_sap_f_Shell_Bar_Copilot_Design") === "dark") {
-			this._oFactory.setCPImage("CoPilot_dark.svg");
-		}
-
 		this._bOTBUpdateNeeded = true;
 
 		this._oOverflowToolbar = this._oFactory.getOverflowToolbar();
@@ -248,15 +241,6 @@ function(
 	ShellBar.prototype.exit = function () {
 		this._oResponsiveHandler.exit();
 		this._oFactory.destroy();
-	};
-
-	ShellBar.prototype.onThemeChanged = function () {
-		// Update Copilot on possible dark theme
-		if (Parameters.get("_sap_f_Shell_Bar_Copilot_Design") === "dark") {
-			this._oFactory.setCPImage("CoPilot_dark.svg");
-		} else {
-			this._oFactory.setCPImage("CoPilot_white.svg");
-		}
 	};
 
 	// Setters
