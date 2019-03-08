@@ -5040,17 +5040,30 @@ sap.ui.define([
 	 * @param {map} mChangedEntities Map of changedEntities
 	 */
 	ODataModel.prototype._updateChangedEntities = function(mChangedEntities) {
-		var that = this, sRootPath;
-		function updateChangedEntities(oOriginalObject, oChangedObject) {
+		var that = this, sRootPath, oEntityType, oNavPropRefInfo;
+
+		function updateChangedEntities(oOriginalObject, oChangedObject, sCurPath) {
 			each(oChangedObject,function(sKey) {
-				var sActPath = sRootPath + '/' + sKey;
+				var sActPath = sCurPath + '/' + sKey;
 				if (isPlainObject(oChangedObject[sKey]) && isPlainObject(oOriginalObject[sKey])) {
-					updateChangedEntities(oOriginalObject[sKey], oChangedObject[sKey]);
+					updateChangedEntities(oOriginalObject[sKey], oChangedObject[sKey], sActPath);
 					if (jQuery.isEmptyObject(oChangedObject[sKey])) {
 						delete oChangedObject[sKey];
 					}
 				} else if (deepEqual(oChangedObject[sKey], oOriginalObject[sKey]) && !that.isLaundering(sActPath)) {
 					delete oChangedObject[sKey];
+					// When current object is the entity itself check for matching navigation property in changed
+					// entity data and take care of it as well
+					if (sCurPath === sRootPath) {
+						oEntityType = that.oMetadata._getEntityTypeByPath(sRootPath);
+						oNavPropRefInfo = oEntityType && that.oMetadata._getNavPropertyRefInfo(oEntityType, sKey);
+						if (oNavPropRefInfo && oChangedObject[oNavPropRefInfo.name]) {
+							// if the nav prop related to the matching property is also set, set it on original
+							// entry and remove from changed entity
+							oOriginalObject[oNavPropRefInfo.name] = oChangedObject[oNavPropRefInfo.name];
+							delete oChangedObject[oNavPropRefInfo.name];
+						}
+					}
 				}
 			});
 		}
@@ -5063,7 +5076,7 @@ sap.ui.define([
 				merge(oEntry, oData);
 
 				sRootPath = '/' + sKey;
-				updateChangedEntities(oEntry, oChangedEntry);
+				updateChangedEntities(oEntry, oChangedEntry, sRootPath);
 
 				if (jQuery.isEmptyObject(oChangedEntry)) {
 					delete that.mChangedEntities[sKey];
@@ -5157,7 +5170,7 @@ sap.ui.define([
 			sResolvedPath, aParts,	sKey, oGroupInfo, oRequestHandle, oEntityMetadata,
 			mChangedEntities = {}, oEntityInfo = {}, mParams, oChangeObject, bRefreshAfterChange,
 			bFunction = false, that = this, bCreated,
-			oEntityType, oNavPropRefInfo, bIsNavPropExpanded, mKeys;
+			oEntityType, oNavPropRefInfo, bIsNavPropExpanded, mKeys, oRef;
 
 		function updateChangedEntities(oOriginalObject, oChangedObject) {
 			each(oChangedObject,function(sKey) {
@@ -5214,12 +5227,17 @@ sap.ui.define([
 		oNavPropRefInfo = oEntityType && this.oMetadata._getNavPropertyRefInfo(oEntityType, sPropertyPath);
 		bIsNavPropExpanded = oNavPropRefInfo && oOriginalEntry[oNavPropRefInfo.name] && oOriginalEntry[oNavPropRefInfo.name].__ref;
 		if (bIsNavPropExpanded && oNavPropRefInfo.keys.length === 1) {
-			mKeys = {};
-			oNavPropRefInfo.keys.forEach(function(sName) {
-				mKeys[sName] = oEntry[sName] !== undefined ? oEntry[sName] : oOriginalEntry[sName];
-			});
-			mKeys[oNavPropRefInfo.keys[0]] = oValue;
-			oChangeObject[oNavPropRefInfo.name] = { __ref: this.createKey(oNavPropRefInfo.entitySet, mKeys) };
+			if (oValue === null) {
+				oRef = null;
+			} else {
+				mKeys = {};
+				oNavPropRefInfo.keys.forEach(function(sName) {
+					mKeys[sName] = oEntry[sName] !== undefined ? oEntry[sName] : oOriginalEntry[sName];
+				});
+				mKeys[oNavPropRefInfo.keys[0]] = oValue;
+				oRef = this.createKey(oNavPropRefInfo.entitySet, mKeys);
+			}
+			oChangeObject[oNavPropRefInfo.name] = { __ref: oRef };
 		}
 
 		//reset clone if oValue equals the original value
