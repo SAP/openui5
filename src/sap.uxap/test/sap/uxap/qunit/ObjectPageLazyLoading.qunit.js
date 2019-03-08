@@ -330,4 +330,84 @@ function (jQuery, Core, JSONModel, ObjectPageLayout, XMLView) {
 		Core.applyChanges();
 	});
 
+	QUnit.module("Lifecycle");
+
+	QUnit.test("lazyLoading created on beforeRendering", function (assert) {
+		// Setup
+		var oObjectPageLayout = new ObjectPageLayout({enableLazyLoading: true});
+
+		// Act: mock framework call on before rendering
+		oObjectPageLayout.onBeforeRendering();
+
+		// Check
+		assert.ok(oObjectPageLayout._oLazyLoading , "lazy loading created");
+	});
+
+	QUnit.test("lazyLoading interval task", function (assert) {
+		var oObjectPageLayout = new ObjectPageLayout({enableLazyLoading: true}),
+			oLazyLoading,
+			oLazyLoadingSpy,
+			done = assert.async();
+
+		assert.expect(1);
+
+		// Setup: mock function result onBeforeRendering
+		sinon.stub(oObjectPageLayout, "_getHeightRelatedParameters", function() {
+			// return value is not important for this test
+			return {};
+		});
+
+		// Setup: mock framework call on before rendering
+		oObjectPageLayout.onBeforeRendering();
+
+		// Setup: spy for repeated calls of <code>doLazyLoading</code>
+		oLazyLoading = oObjectPageLayout._oLazyLoading;
+		oLazyLoadingSpy = sinon.spy(oLazyLoading, "doLazyLoading");
+
+		// Act: trigger lazyLoading
+		oLazyLoading.doLazyLoading(); // mock initial trigger from objectPage
+		oLazyLoadingSpy.reset(); // ensure we monitor only calls from this point on
+
+		// Check
+		setTimeout(function() {
+			assert.strictEqual(oLazyLoadingSpy.callCount, 1 , "lazy loading called");
+			done();
+			oObjectPageLayout.destroy();
+		}, oLazyLoading.LAZY_LOADING_EXTRA_SUBSECTION);
+	});
+
+	QUnit.test("lazyLoading interval task cancelled when not needed", function (assert) {
+		var oObjectPageLayout = new ObjectPageLayout({enableLazyLoading: true}),
+			oLazyLoading,
+			oLazyLoadingSpy,
+			done = assert.async();
+
+		assert.expect(1);
+
+		// Setup: mock function result onBeforeRendering
+		sinon.stub(oObjectPageLayout, "_getHeightRelatedParameters", function() {
+			// return value is not important for this test
+			return {};
+		});
+
+		// Setup: mock framework call on before rendering
+		oObjectPageLayout.onBeforeRendering();
+
+		// Setup: spy for repeated calls of <code>doLazyLoading</code>
+		oLazyLoading = oObjectPageLayout._oLazyLoading;
+		oLazyLoadingSpy = sinon.spy(oLazyLoading, "doLazyLoading");
+		oLazyLoading.doLazyLoading(); // mock initial call from objectPage
+		oLazyLoadingSpy.reset(); // ensure we monitor only calls from this point on
+
+		// Act
+		oLazyLoading.destroy();
+
+		// Check
+		setTimeout(function() {
+			assert.strictEqual(oLazyLoadingSpy.callCount, 0 , "lazy loading called no mpore");
+			done();
+			oObjectPageLayout.destroy();
+		}, oLazyLoading.LAZY_LOADING_EXTRA_SUBSECTION);
+	});
+
 });

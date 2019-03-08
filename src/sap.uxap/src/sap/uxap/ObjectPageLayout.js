@@ -554,6 +554,9 @@ sap.ui.define([
 		var oHeaderContent,
 			bPinnable;
 
+		if (this._oLazyLoading) {
+			this._oLazyLoading.destroy();
+		}
 		// The lazy loading helper needs media information, hence instantiated on onBeforeRendering, where contextual width is available
 		this._oLazyLoading = new LazyLoading(this);
 
