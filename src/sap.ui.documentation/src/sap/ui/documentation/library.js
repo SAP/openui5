@@ -8,9 +8,9 @@
 sap.ui.define([
     "sap/ui/thirdparty/jquery",
     'sap/ui/core/util/LibraryInfo',
-    "sap/base/Log",
+	"sap/base/Log",
     'sap/ui/core/library',
-    'sap/m/library'
+	'sap/m/library'
 ], // library dependency
 	function(jQuery, LibraryInfo, Log) {
 
@@ -146,9 +146,6 @@ sap.ui.define([
 					// fetch the release notes if defined - in case of no version
 					// is specified we fallback to the current library version
 					if (bFetchReleaseNotes) {
-						if (!sReqVersion) {
-							sReqVersion = oLibVersions[oExtensionData.library];
-						}
 						libInfo._getReleaseNotes(oExtensionData.library, sReqVersion, function(oReleaseNotes) {
 							oLibInfos[oExtensionData.library].relnotes = oReleaseNotes;
 							fnDone();
