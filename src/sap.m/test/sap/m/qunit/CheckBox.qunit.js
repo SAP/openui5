@@ -897,10 +897,14 @@ sap.ui.define([
 
 			oCheckBox.$().focus(); // set focus on checkbox
 
-			QUtils.triggerKeydown(oCheckBox.$(), KeyCodes.SPACE); // trigger Space on checkbox
+			QUtils.triggerKeyup(oCheckBox.$(), KeyCodes.SPACE); // trigger Space up on checkbox
 			assert.strictEqual(oSpy.callCount, 1, "SPACE is pressed, select event was fired");
 			assert.equal(oCheckBox.getSelected(), oOptions.expectedSelection, oOptions.expectedMessage);
 			assert.strictEqual(oCheckBox.$().attr("aria-checked"), "" + oOptions.expectedSelection, oOptions.expectedMessageAria);
+
+			oSpy.reset();
+			QUtils.triggerKeyup(oCheckBox.$(), KeyCodes.SPACE, true); // trigger Space up on checkbox with SHIFT key pressed
+			assert.strictEqual(oSpy.callCount, 0, "SPACE is released when holding SHIFT key, select event was not fired");
 
 			// Clean up
 			oCheckBox.destroy();

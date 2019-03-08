@@ -12,7 +12,8 @@ sap.ui.define([
 	'sap/ui/core/EnabledPropagator',
 	'sap/ui/core/library',
 	'./CheckBoxRenderer',
-	"sap/ui/thirdparty/jquery"
+	"sap/ui/thirdparty/jquery",
+	"sap/ui/events/KeyCodes"
 ],
 	function(
 		Label,
@@ -23,7 +24,8 @@ sap.ui.define([
 		EnabledPropagator,
 		coreLibrary,
 		CheckBoxRenderer,
-		jQuery
+		jQuery,
+		KeyCodes
 	) {
 	"use strict";
 
@@ -385,17 +387,27 @@ sap.ui.define([
 	};
 
 	/**
-	 * Event handler called when the space key is pressed onto the Checkbox.
+	 * Handles the keyup event for SPACE.
 	 *
-	 * @param {jQuery.Event} oEvent The SPACE keyboard key event object
+	 * @param {jQuery.Event} oEvent The event object
 	 */
-	CheckBox.prototype.onsapspace = function(oEvent) {
-		this.ontap(oEvent);
-		// stop browsers default behavior
-		if (oEvent) {
+	CheckBox.prototype.onkeyup = function(oEvent) {
+		if (oEvent && oEvent.which === KeyCodes.SPACE && !oEvent.shiftKey) {
+			this.ontap(oEvent);
+			// stop browsers default behavior
 			oEvent.preventDefault();
 			oEvent.stopPropagation();
 		}
+	};
+
+	/**
+	 * Handles the keydown event for SPACE on which we have to prevent the browser scrolling.
+	 *
+	 * @param {jQuery.Event} oEvent The event object.
+	 * @private
+	 */
+	CheckBox.prototype.onsapspace = function(oEvent) {
+		oEvent.preventDefault();
 	};
 
 	/**
