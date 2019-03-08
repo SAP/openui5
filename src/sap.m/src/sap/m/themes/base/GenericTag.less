@@ -10,10 +10,6 @@
 	display: inline-block;
 	max-width: 100%;
 
-	&:not(:last-child)
-	{
-		margin-right: 0.5rem;
-	}
 	&:focus {
 		outline: none;
 	}
@@ -38,7 +34,7 @@
 	}
 }
 
-.sapMGenericTag:focus {
+html.sap-desktop .sapMGenericTag:focus {
 	position: relative;
 	&:before {
 		position: absolute;
@@ -78,9 +74,9 @@ html[data-sap-ui-browser^="ed"].sap-desktop {
 	box-shadow: @sapUiShadowLevel0;
 	box-sizing: border-box;
 	border-radius: 0.125rem;
-	border-left-width: 0.25rem;
+	border-left-width: @sapMGenericTagBorderWidth;
 	border-left-style: solid;
-	padding: 0 0.5rem 0 0.25rem;
+	padding: 0 0.5rem 0  @sapMGenericTagPaddingLeft;
 	display: inline-flex;
 	max-width: 100%;
 	flex-flow: row nowrap;
@@ -90,6 +86,7 @@ html[data-sap-ui-browser^="ed"].sap-desktop {
 	min-width: @sapMGenericTagBorderWidth + @sapMGenericTagPaddingLeft + @sapMGenericTagStatusIconWidth + @sapMGenericTagIconPaddingRight+ @sapMGenericTagTextMinWidth;
 
 	.sapMGenericTagIcon {
+		width: 1rem;
 		padding-right: @sapMGenericTagIconPaddingRight;
 	}
 
@@ -117,7 +114,15 @@ html[data-sap-ui-browser^="ed"].sap-desktop {
 		}
 	}
 
-	.sapMGenericTagNone &, .sapMGenericTagHighlight & {
+	.sapMGenericTagInformation & {
+		border-color: @sapUiInformationBorder;
+
+		.sapMGenericTagIcon {
+			color: @sapUiInformativeText;
+		}
+	}
+
+	.sapMGenericTagNone & {
 		border-color: @sapUiNeutralBorder;
 
 		.sapMGenericTagIcon {
@@ -135,7 +140,8 @@ html[data-sap-ui-browser^="ed"].sap-desktop {
 
 		.sapMGenericTagIcon,
 		.sapMGenericTagText,
-		.sapMGenericTagValue {
+		.sapMGenericTagValue,
+		.sapMGenericTagErrorIcon {
 			color: @sapUiListActiveTextColor;
 		}
 	}
@@ -185,6 +191,15 @@ html[data-sap-ui-browser^="ed"].sap-desktop {
 			min-width: 0.75rem;
 		}
 	}
+}
 
+.sapUiSizeCozy {
+	.sapMGenericTag {
+		margin: 0.25rem 0;
+
+		.sapMGenericTagWrap {
+			height:  2.5rem;
+		}
+	}
 }
 

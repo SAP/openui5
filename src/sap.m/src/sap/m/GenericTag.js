@@ -27,7 +27,7 @@ sap.ui.define([
 			Error: "sap-icon://message-error",
 			Warning: "sap-icon://message-warning",
 			Success: "sap-icon://message-success",
-			Information: "sap-icon://message-information"
+			Information: "sap-icon://hint"
 		};
 
 	/**
