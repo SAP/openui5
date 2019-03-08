@@ -28,7 +28,17 @@ sap.ui.define([
 	 * @param {object} [mSettings] Initial settings for the new control
 	 *
 	 * @class
-	 * A control used to group a set of card numeric attributes in a header.
+	 * A control used to group a set of card attributes in a header.
+	 *
+	 * <h3>Overview</h3>
+	 * The <code>NumericHeader</code> shows general information about the card and allows the configuration of a numeric value visualization.
+	 * You can configure the title, subtitle, status text and icon, using properties.
+	 *
+	 * <h3>Usage</h3>
+	 * To show only basic information, use {@link sap.f.cards.Header Header} instead.
+	 * It is possible to add more side number indicators, using the <code>sideIndicators</code> aggregation.
+	 * You should always set a title.
+	 * You should always have a maximum of two side indicators.
 	 *
 	 * @extends sap.ui.core.Control
 	 *
@@ -92,10 +102,11 @@ sap.ui.define([
 				details: { "type": "string", group: "Appearance" }
 			},
 			aggregations: {
+
 				/**
 				 * Additional side number indicators. For example "Deviation" and "Target". Not more than two side indicators should be used.
 				 */
-				sideIndicators: { type: "sap.f.cards.NumericSideIndicator", multiple: true }, // TODO limit to 2, or describe in doc
+				sideIndicators: { type: "sap.f.cards.NumericSideIndicator", multiple: true },
 
 				/**
 				 * Used to display title text

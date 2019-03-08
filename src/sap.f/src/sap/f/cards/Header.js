@@ -35,6 +35,14 @@ sap.ui.define([
 	 * @class
 	 * A control used to group a set of card attributes in a header.
 	 *
+	 * <h3>Overview</h3>
+	 * The <code>Header</code> displays general information about the card.
+	 * You can configure the title, subtitle, status text and icon, using properties.
+	 *
+	 * <h3>Usage</h3>
+	 * You should always set a title.
+	 * To show a KPI or any numeric information, use {@link sap.f.cards.NumericHeader NumericHeader} instead.
+	 *
 	 * @extends sap.ui.core.Control
 	 * @implements sap.f.cards.IHeader
 	 *
