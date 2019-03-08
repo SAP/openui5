@@ -12,6 +12,7 @@ sap.ui.define([
 	'./DisplayListItem',
 	'./StandardListItem',
 	'sap/ui/core/SeparatorItem',
+	'./List',
 	'./Table',
 	'./library',
 	'sap/ui/core/IconPool',
@@ -38,6 +39,7 @@ function(
 	DisplayListItem,
 	StandardListItem,
 	SeparatorItem,
+	List,
 	Table,
 	library,
 	IconPool,
@@ -62,8 +64,6 @@ function(
 
 	// shortcut for sap.m.InputType
 	var InputType = library.InputType;
-
-
 
 	/**
 	 * Constructor for a new <code>Input</code>.
@@ -2363,6 +2363,15 @@ function(
 						}
 
 					}, this)
+					.attachAfterClose(function() {
+						var oList = this._oSuggPopover._oList;
+
+						if (Table && !(oList instanceof Table)) {
+							oList.destroyItems();
+						} else {
+							oList.removeSelections(true);
+						}
+					}.bind(this))
 					.attachAfterOpen(function () {
 						var sValue = this.getValue();
 
@@ -2383,6 +2392,16 @@ function(
 			} else {
 				this._oSuggPopover._oPopover
 					.attachBeforeClose(this._updateSelectionFromList, this)
+					.attachAfterClose(function() {
+						var oList = this._oSuggPopover._oList;
+
+						// only destroy items in simple suggestion mode
+						if (oList instanceof Table) {
+							oList.removeSelections(true);
+						} else {
+							oList.destroyItems();
+						}
+					}.bind(this))
 					.attachBeforeOpen(function () {
 						this._sBeforeSuggest = this.getValue();
 						this._oSuggPopover._resizePopup();
