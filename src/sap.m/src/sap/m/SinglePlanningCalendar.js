@@ -122,8 +122,17 @@ function(
 			 *
 			 * @since 1.62
 			 */
-			stickyMode: {type: "sap.m.PlanningCalendarStickyMode", group: "Behavior", defaultValue: PlanningCalendarStickyMode.None}
+			stickyMode: {type: "sap.m.PlanningCalendarStickyMode", group: "Behavior", defaultValue: PlanningCalendarStickyMode.None},
 
+			/**
+			 * Determines whether the appointments in the grid are draggable.
+			 *
+			 * The drag and drop interaction is visualized by a placeholder highlighting the area where the
+			 * appointment can be dropped by the user.
+			 *
+			 * @since 1.64
+			 */
+			enableAppointmentsDragAndDrop : {type : "boolean", group : "Misc", defaultValue : false}
 		},
 
 		aggregations : {
@@ -203,6 +212,34 @@ function(
 					 */
 					appointment: {type: "sap.ui.unified.CalendarAppointment"}
 
+				}
+			},
+
+			/**
+			 * Fired if an appointment is dropped.
+			 * @since 1.64
+			 */
+			appointmentDrop : {
+				parameters : {
+					/**
+					 * The dropped appointment.
+					 */
+					appointment : {type : "sap.ui.unified.CalendarAppointment"},
+
+					/**
+					 * Start date of the dropped appointment, as a JavaScript date object.
+					 */
+					startDate : {type : "object"},
+
+					/**
+					 * Dropped appointment end date as a JavaScript date object.
+					 */
+					endDate : {type : "object"},
+
+					/**
+					 * The drop type. If true - it's "Copy", if false - it's "Move".
+					 */
+					copy : {type : "boolean"}
 				}
 			},
 
@@ -331,6 +368,12 @@ function(
 		this._alignColumns();
 
 		return this;
+	};
+
+	SinglePlanningCalendar.prototype.setEnableAppointmentsDragAndDrop = function (bEnabled) {
+		this._getGrid().setEnableAppointmentsDragAndDrop(bEnabled);
+
+		return this.setProperty("enableAppointmentsDragAndDrop", bEnabled, true);
 	};
 
 	/**
@@ -622,6 +665,15 @@ function(
 		oGrid.attachEvent("appointmentSelect", function (oEvent) {
 			this.fireAppointmentSelect({
 				appointment: oEvent.getParameter("appointment")
+			});
+		}, this);
+
+		oGrid.attachEvent("appointmentDrop", function (oEvent) {
+			this.fireAppointmentDrop({
+				appointment: oEvent.getParameter("appointment"),
+				startDate: oEvent.getParameter("startDate"),
+				endDate: oEvent.getParameter("endDate"),
+				copy: oEvent.getParameter("copy")
 			});
 		}, this);
 

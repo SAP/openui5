@@ -295,3 +295,32 @@
 	position: absolute;
 	top: 0.2rem;
 }
+
+.sapMSinglePCOverlay {
+	position: absolute;
+	height: 100%;
+	width: 100%;
+	visibility: hidden;
+}
+
+.sapMSinglePCOverlayDragging {
+	z-index: 3;
+	visibility: visible;
+}
+
+.sapMSinglePCPlaceholder {
+	height: 2.15625rem;
+}
+
+.sapUiSizeCompact .sapMSinglePCPlaceholder {
+	height: 1.5rem;
+}
+
+.sapMSinglePCBlockersColumns .sapMSinglePCOverlay {
+	display: flex;
+}
+
+.sapMSinglePCBlockersColumns .sapMSinglePCPlaceholder {
+	flex: 1;
+	height: auto;
+}
