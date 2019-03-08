@@ -20,7 +20,7 @@ sap.ui.define([
 
 		},
 
-		onDataExport : sap.m.Table.prototype.exportData || function(oEvent) {
+		onDataExport : function(oEvent) {
 
 			var oExport = new Export({
 
