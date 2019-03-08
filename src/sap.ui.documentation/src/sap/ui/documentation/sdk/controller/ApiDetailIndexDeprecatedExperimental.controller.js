@@ -55,7 +55,7 @@ sap.ui.define([
 				oPage = this.getView().byId("objectPage");
 
 				fnDataGetterRef().then(function (oData) {
-					this._filterVisibleElements(oData);
+					oData = this._filterVisibleElements(oData);
 					this._oModel.setData(oData);
 
 					oPage.addEventDelegate({"onAfterRendering": this._prettify.bind(this)});
@@ -92,14 +92,27 @@ sap.ui.define([
 			 * Filter all items to be listed depending on their visibility.
 			 * Note: This method modifies the passed oData reference object.
 			 * @param {object} oData the data object to be filtered
+			 * @return {object} filtered data object
 			 * @private
 			 */
 			_filterVisibleElements: function (oData) {
+				var oFilteredData = {};
+
 				Object.keys(oData).forEach(function(sVersion) {
-					oData[sVersion].apis = oData[sVersion].apis.filter(function (oElement) {
-						return this._aAllowedMembers.indexOf(oElement.visibility) >= 0;
+					var oVersion = oData[sVersion];
+
+					// Is API allowed to be shown based on it's visibility
+					oVersion.apis = oVersion.apis.filter(function (oElement) {
+						return this._aAllowedMembers.indexOf(oElement.visibility) > -1;
 					}.bind(this));
+
+					// If we have remaining API's after the filter we add them to the new filtered object.
+					if (oVersion.apis.length > 0) {
+						oFilteredData[sVersion] = oVersion;
+					}
 				}.bind(this));
+
+				return oFilteredData;
 			},
 
 			_prettify: function () {
