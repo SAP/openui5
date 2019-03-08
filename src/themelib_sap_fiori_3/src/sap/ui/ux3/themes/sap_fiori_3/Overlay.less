@@ -1,0 +1,31 @@
+/* =================================== */
+/* CSS for control sap.ui.ux3/Overlay  */
+/* Fiori 3 theme                       */
+/* =================================== */
+
+.sapUiUx3OverlayOverlay {
+	font-family: @sapUiDesktopFontFamily;
+	font-size: @sapUiDesktopFontSize;
+	background-color: @sapUiContentFocusColor; // @sapUiDarkestBG = #000000
+}
+
+.sapUiUx3OverlayCloseButton:hover,
+.sapUiUx3OverlayCloseButton:focus {
+	background: url("img/close_hover.png");
+}
+
+.sapUiUx3OverlayOpenButton {
+	background: url("img/open_in_new_window.png");
+	background-repeat: no-repeat;
+	background-position: right center;
+}
+
+.sapUiUx3OverlayOpenButton:focus {
+	background-color: transparent;
+	outline: 1px dotted @sapUiContentContrastFocusColor; // @sapUiTextInverted = #ffffff
+	outline-offset: -1px;
+}
+
+.sapUiUx3OverlayOpenButton:focus:hover {
+	background-color: @sapUiHighlight;
+}
