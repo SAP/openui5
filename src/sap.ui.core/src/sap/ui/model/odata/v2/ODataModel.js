@@ -156,8 +156,6 @@ sap.ui.define([
 	 *            Set this array to make custom response headers bindable via the entity's "__metadata/headers" property
 	 * @param {boolean} [mParameters.canonicalRequests=false]
 	 *            When setting this flag to <code>true</code> the model tries to calculate a canonical url to the data.
-	 * @param {sap.ui.model.odata.MessageScope} [mParameters.messageScope=MessageScope.RequestedObjects]
-	 *            Sets the message scope.
 	 *
 	 * @class
 	 * Model implementation based on the OData protocol.
@@ -203,7 +201,6 @@ sap.ui.define([
 				aBindableResponseHeaders,
 				sWarmupUrl,
 				bCanonicalRequests,
-				sMessageScope,
 				that = this;
 
 			if (typeof (sServiceUrl) === "object") {
@@ -239,13 +236,12 @@ sap.ui.define([
 				aBindableResponseHeaders = mParameters.bindableResponseHeaders;
 				sWarmupUrl = mParameters.warmupUrl;
 				bCanonicalRequests = mParameters.canonicalRequests;
-				sMessageScope = mParameters.messageScope || MessageScope.RequestedObjects;
 			}
 
 			this.mPathCache = {};
 			this.mInvalidatedPaths = {};
 			this.bCanonicalRequests = !!bCanonicalRequests;
-			this.sMessageScope = sMessageScope;
+			this.sMessageScope = MessageScope.RequestedObjects;
 			this.sWarmupUrl = sWarmupUrl;
 			this.bWarmup = !!sWarmupUrl;
 			this.mSupportedBindingModes = {"OneWay": true, "OneTime": true, "TwoWay":true};
