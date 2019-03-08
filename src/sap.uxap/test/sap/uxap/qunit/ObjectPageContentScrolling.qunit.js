@@ -205,6 +205,37 @@ function(jQuery, Core, ObjectPageSubSection, ObjectPageSection, ObjectPageLayout
 		clock.restore();
 	});
 
+	QUnit.test("Slow CPU case", function (assert) {
+
+		var oObjectPage = this.oObjectPageContentScrollingView.byId("ObjectPageLayout"),
+			sTargetSectionId = "UxAP-objectPageContentScrolling--secondSection",
+			iTargetPosition,
+			done = assert.async();
+
+		assert.expect(2);
+
+		// intercept
+		oObjectPage._moveAnchorBarToTitleArea = function () {
+			sap.uxap.ObjectPageLayout.prototype._moveAnchorBarToTitleArea.apply(oObjectPage, arguments);
+			assert.ok(oObjectPage._$opWrapper.scrollTop() < iTargetPosition, "header is snapped before reaching the target position");
+		};
+
+		oObjectPage.attachEventOnce("onAfterRenderingDOMReady", function() {
+			oObjectPage._requestAdjustLayout(true);
+			iTargetPosition =  oObjectPage._oSectionInfo["UxAP-objectPageContentScrolling--subsection2-1"].positionTop;
+
+			oObjectPage.scrollToSection(sTargetSectionId);
+
+			oObjectPage._$opWrapper.scrollTop(iTargetPosition);
+			oObjectPage._onScroll({target: {scrollTop: iTargetPosition}});
+
+			assert.ok(oObjectPage._bStickyAnchorBar, "header is snapped");
+
+			done();
+		});
+
+	});
+
 	QUnit.test("Rerendering the page preserves the scroll position", function (assert) {
 		var oObjectPage = this.oObjectPageContentScrollingView.byId("ObjectPageLayout"),
 			oSecondSection = this.oObjectPageContentScrollingView.byId("secondSection"),
