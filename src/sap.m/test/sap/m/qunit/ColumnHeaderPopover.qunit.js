@@ -48,23 +48,11 @@ sap.ui.define([
 				icon: "sap-icon://add-photo"
 			},
 			{
-				type: "action",
-				visible : true,
-				text: "action",
-				icon: "sap-icon://meeting-room"
-			},
-			{
 				type: "custom",
 				visible : true,
 				text: "custom",
 				icon: "sap-icon://money-bills",
 				content: new sap.m.Input()
-			},
-			{
-				type: "action",
-				visible : true,
-				text: "sort",
-				icon: "sap-icon://meeting-room"
 			}
 
 			];
@@ -127,7 +115,7 @@ QUnit.test("Overview rendered", function(assert){
 
 	var sId = oRBPopover.getId();
 	assert.ok(jQuery.sap.byId(sId), "columnHeaderPopover is rendered");
-	assert.equal(oPopover.getItems().length, 6, "ColumnHeaderPopover has 5 items as aggregations");
+	assert.equal(oPopover.getItems().length, 4, "ColumnHeaderPopover has four items as aggregations");
 
 	oButton.destroy();
 	oPopover.destroy();
@@ -155,11 +143,51 @@ QUnit.test("Item render", function(assert){
 	assert.ok($spacer, "toolbar has a spacer");
 
 	var $buttons = $popover.find("button");
-	assert.equal($buttons.length, 6, "columnHeaderPopover has six items");
-	assert.equal($buttons[5].title, "Close", "last one item is close item");
+	assert.equal($buttons.length, 4, "Popover has four buttons");
+	assert.equal($buttons[3].title, "Close", "last one item is close item");
 	oButton.destroy();
 	oPopover.destroy();
 });
+
+
+
+
+QUnit.module("Aggregation");
+
+QUnit.test("update item", function(assert){
+	var oPopover = createCHP("test3");
+	var oItem1 = oPopover.getItems()[3];
+	var oItem2 = new sap.m.ColumnPopoverActionItem({text: "Hello"});
+
+	var oButton = new Button({
+		text : "open columnHeaderPopover",
+		press: function(){
+			oPopover.openBy(this);
+		}
+	});
+
+	oButton.placeAt("content");
+	sap.ui.getCore().applyChanges();
+
+	oPopover.openBy(oButton);
+	this.clock.tick(2000);
+
+	oPopover.removeItem(oItem1);
+	oPopover.addItem(oItem2);
+	this.clock.tick(2000);
+
+	assert.equal(oPopover.getItems().length, 4, "ColumnHeaderPopover has 4 items as aggregations");
+
+	var oRBPopover = oPopover.getAggregation("_popover");
+
+	var $popover = oRBPopover.$();
+	var $buttons = $popover.find("button");
+	assert.equal($buttons.length, 4, "Popover has four buttons");
+
+	oButton.destroy();
+	oPopover.destroy();
+});
+
 
 
 QUnit.module("ColumnPopoverItem");
@@ -181,8 +209,8 @@ QUnit.test("ColumnPopoverActionItem", function(assert){
 	this.clock.tick(500);
 
 	var oRBPopover = oPopover.getAggregation("_popover");
-	var $oActionButton = oRBPopover.$().find("button")[2];
-	assert.equal($oActionButton.title, "action", "property setting of text is correct");
+	var oActionButtonDom = oRBPopover.$().find("button")[1];
+	assert.equal(oActionButtonDom.title, "action", "property setting of text is correct");
 
 	oButton.destroy();
 	oPopover.destroy();
@@ -205,25 +233,36 @@ QUnit.test("ColumnPopoverCustomItem", function(assert){
 	this.clock.tick(500);
 
 	var oRBPopover = oPopover.getAggregation("_popover");
-	var $oCustomButton1 = oRBPopover.$().find("button")[0];
-	var oCustomButton1 = sap.ui.getCore().byId($oCustomButton1.id);
+	var oCustomButton1Dom = oRBPopover.$().find("button")[0];
+	var oCustomButton1 = sap.ui.getCore().byId(oCustomButton1Dom.id);
 
-	assert.equal($oCustomButton1.title, "custom", "property setting of text is correct");
+	assert.equal(oCustomButton1Dom.title, "custom", "property setting of text is correct");
 	assert.equal(oRBPopover.getContent()[1].getVisible(), false, "content of the first custom is not visible");
 
 	qutils.triggerEvent("tap", oCustomButton1.getId());
 
 	this.clock.tick(500);
 
-	assert.equal(oRBPopover.getContent()[1].getVisible(), true, "content of the first custom is visible");
+	assert.equal(oRBPopover.getContent()[1].getVisible(), true, "content of the first custom is visible after the first custom item is pressed");
 
-	var $oCustomButton2 = oRBPopover.$().find("button")[3];
-	var oCustomButton2 = sap.ui.getCore().byId($oCustomButton2.id);
+	var oCustomButton2Dom = oRBPopover.$().find("button")[2];
+	var oCustomButton2 = sap.ui.getCore().byId(oCustomButton2Dom.id);
 	qutils.triggerEvent("tap", oCustomButton2.getId());
 	this.clock.tick(500);
 
-	assert.equal(oRBPopover.getContent()[1].getVisible(), false, "content of the first custom is not visible");
-	assert.equal(oRBPopover.getContent()[2].getVisible(), true, "content of the second custom is visible");
+	assert.equal(oRBPopover.getContent()[1].getVisible(), false, "content of the first custom is not visible after the second custom item is pressed");
+	assert.equal(oRBPopover.getContent()[2].getVisible(), true, "content of the second custom is visible after the second custom item is pressed");
+
+	oCustomButton2.destroy();
+	sap.ui.getCore().applyChanges();
+	this.clock.tick(5000);
+
+	assert.ok(oRBPopover.$().find("input"), "content of the second custom item is removed");
+
+	qutils.triggerEvent("tap", oCustomButton1.getId());
+	this.clock.tick(500);
+
+	assert.equal(oRBPopover.getContent()[1].getVisible(), true, "content of the first custom is still visible after the second custom item is deleted");
 
 	oButton.destroy();
 	oPopover.destroy();
