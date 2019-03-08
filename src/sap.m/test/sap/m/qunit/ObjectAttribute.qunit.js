@@ -10,6 +10,7 @@ sap.ui.define([
 	"jquery.sap.global",
 	"sap/m/ObjectHeader",
 	"sap/m/ObjectListItem",
+	"sap/ui/events/KeyCodes",
 	"sap/ui/Device",
 	"sap/m/Link",
 	"sap/ui/core/library",
@@ -24,6 +25,7 @@ sap.ui.define([
 	jQuery,
 	ObjectHeader,
 	ObjectListItem,
+	KeyCodes,
 	Device,
 	Link,
 	coreLibrary
@@ -385,7 +387,7 @@ sap.ui.define([
 		sap.ui.getCore().applyChanges();
 
 		var oPressSpy = sinon.spy(ObjectAttribute.prototype, "firePress");
-		sap.ui.test.qunit.triggerKeydown(oObjectAttribute.getFocusDomRef(), jQuery.sap.KeyCodes.ENTER);
+		sap.ui.test.qunit.triggerKeydown(oObjectAttribute.getFocusDomRef(), KeyCodes.ENTER);
 
 		assert.strictEqual(oPressSpy.callCount, 1, "Enter is pressed, press event was fired");
 
@@ -408,12 +410,27 @@ sap.ui.define([
 		sap.ui.getCore().applyChanges();
 
 		var oPressSpy = sinon.spy(ObjectAttribute.prototype, "firePress");
-		sap.ui.test.qunit.triggerKeydown(oObjectAttribute.getFocusDomRef(), jQuery.sap.KeyCodes.SPACE);
+		sap.ui.test.qunit.triggerKeyup(oObjectAttribute.getFocusDomRef(), KeyCodes.SPACE);
 
 		assert.strictEqual(oPressSpy.callCount, 1, "Space is pressed, press event was fired");
 
 		// Clean up
 		ObjectAttribute.prototype.firePress.restore();
+		oObjectAttribute.destroy();
+	});
+
+	QUnit.test("Space prevent scrolling", function (assert) {
+		// Arrange
+		var oObjectAttribute = new ObjectAttribute({title: "Test"}),
+			oEvent = { preventDefault: this.spy() };
+
+		// Act
+		oObjectAttribute.onsapspace(oEvent);
+
+		// Assert
+		assert.equal(oEvent.preventDefault.callCount, 1, "preventDefault is called to prevent scrolling");
+
+		// Cleanup
 		oObjectAttribute.destroy();
 	});
 
