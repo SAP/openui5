@@ -33,6 +33,10 @@ sap.ui.define([
 			this.getRoute("sampleLegacyRoute").attachPatternMatched({routeName: "sample"}, this._onOldSampleRouteMatched, this);
 			this.getRoute("codeLegacyRoute").attachPatternMatched({routeName: "code"}, this._onOldSampleRouteMatched, this);
 			this.getRoute("codeFileLegacyRoute").attachPatternMatched({routeName: "codeFile"}, this._onOldSampleRouteMatched, this);
+
+			this.getRoute("ReleaseNotesLegacyRoute").attachPatternMatched(function () {
+				this.navTo("releaseNotes");
+			}, this);
 		},
 
 		_onEntityOldRouteMatched: function(oEvent) {

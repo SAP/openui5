@@ -2,7 +2,6 @@
 		controllerName="sap.ui.documentation.sdk.controller.TopicMaster"
 		xmlns:mvc="sap.ui.core.mvc"
 		xmlns="sap.m"
-		xmlns:core="sap.ui.core"
         xmlns:custom="sap.ui.documentation.sdk.controls"
 		class="sapContrast sapContrastPlus">
 
