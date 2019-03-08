@@ -7640,6 +7640,39 @@ sap.ui.define([
 			oSelect.destroy();
 		});
 
+		QUnit.test("onsapspace the spacebar key is released while holding the shift key", function (assert) {
+
+			// system under test
+			var oSelect = new Select({
+				items: [
+					new Item({
+						key: "GER",
+						text: "Germany"
+					}),
+
+					new Item({
+						key: "CU",
+						text: "Cuba"
+					})
+				]
+			});
+
+			// arrange
+			oSelect.placeAt("content");
+			sap.ui.getCore().applyChanges();
+			oSelect.focus();
+
+			// act
+			qutils.triggerKeyup(oSelect.getDomRef(), KeyCodes.SPACE, true); // trigger SPACE up while holding the SHIFT key
+			this.clock.tick(1000);	// wait 1s after the open animation is completed
+
+			// assert
+			assert.notOk(oSelect.isOpen(), "Control's picker popup is not open - action has been aborted by user");
+
+			// cleanup
+			oSelect.destroy();
+		});
+
 		QUnit.module("onsapescape");
 
 		QUnit.test("onsapescape - close the picker popup if it is open", function (assert) {
