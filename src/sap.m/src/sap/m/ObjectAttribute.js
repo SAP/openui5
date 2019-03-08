@@ -8,10 +8,11 @@ sap.ui.define([
 	'sap/ui/core/Control',
 	'sap/ui/core/library',
 	'sap/m/Text',
+	'sap/ui/events/KeyCodes',
 	'./ObjectAttributeRenderer',
 	"sap/base/Log"
 ],
-function(library, Control, coreLibrary, Text, ObjectAttributeRenderer, Log) {
+function(library, Control, coreLibrary, Text, KeyCodes, ObjectAttributeRenderer, Log) {
 	"use strict";
 
 	// shortcut for sap.ui.core.TextDirection
@@ -196,7 +197,13 @@ function(library, Control, coreLibrary, Text, ObjectAttributeRenderer, Log) {
 	 * @param {object} oEvent The fired event
 	 */
 	ObjectAttribute.prototype.onsapspace = function(oEvent) {
-		this.onsapenter(oEvent);
+		oEvent.preventDefault();
+	};
+
+	ObjectAttribute.prototype.onkeyup = function (oEvent) {
+		if (oEvent.which === KeyCodes.SPACE) {
+			this.onsapenter(oEvent);
+		}
 	};
 
 	/**
