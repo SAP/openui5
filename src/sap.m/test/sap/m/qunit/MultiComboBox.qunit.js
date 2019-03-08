@@ -5139,6 +5139,62 @@ sap.ui.define([
 		assert.ok(oPreviousItem.getText() !== 'Item3', "Should not return the last item anymore as it's selected already");
 	});
 
+	QUnit.test("_getNextTraversalItem should return the group header item when not opened", function (assert) {
+		// Arrange
+		var oGroupHeaderItem = new SeparatorItem({text: "Group Header"}),
+			oNextItem, oPreviousItem, aItems;
+
+		this.oMultiComboBox.insertItem(oGroupHeaderItem, 0);
+		sap.ui.getCore().applyChanges();
+
+		oNextItem = this.oMultiComboBox._getNextTraversalItem();
+		oPreviousItem = this.oMultiComboBox._getPreviousTraversalItem();
+		aItems = this.oMultiComboBox.getItems();
+
+		// Assert
+		assert.strictEqual(oNextItem.getText(), 'Item1', "Should return the first item");
+		assert.strictEqual(oPreviousItem.getText(), 'Item3', "Should return the last item");
+
+		// Act
+		this.oMultiComboBox.setSelectedItems([aItems[1], aItems[3]]); // The first and last item
+		sap.ui.getCore().applyChanges();
+
+		// Assert
+		oNextItem = this.oMultiComboBox._getNextTraversalItem();
+		oPreviousItem = this.oMultiComboBox._getPreviousTraversalItem();
+		assert.ok(oNextItem.getText() !== 'Item1', "Should not return the first item anymore as it's selected already");
+		assert.ok(oPreviousItem.getText() !== 'Item3', "Should not return the last item anymore as it's selected already");
+	});
+
+	QUnit.test("_getNextTraversalItem should return the first non group item when opened", function (assert) {
+		// Arrange
+		var oGroupHeaderItem = new SeparatorItem({text: "Group Header"}),
+			oNextItem, oPreviousItem, aItems;
+
+		this.oMultiComboBox.insertItem(oGroupHeaderItem, 0);
+		this.oMultiComboBox.open();
+		sap.ui.getCore().applyChanges();
+
+		oNextItem = this.oMultiComboBox._getNextTraversalItem();
+		oPreviousItem = this.oMultiComboBox._getPreviousTraversalItem();
+		aItems = this.oMultiComboBox.getItems();
+
+		// Assert
+		assert.strictEqual(oNextItem.getText(), 'Group Header', "Should return the first item");
+		assert.strictEqual(oPreviousItem.getText(), 'Item3', "Should return the last item");
+
+		// Act
+		this.oMultiComboBox.setSelectedItems([aItems[1], aItems[3]]); // The first and last item
+		sap.ui.getCore().applyChanges();
+
+		// Assert
+		oNextItem = this.oMultiComboBox._getNextTraversalItem();
+		oPreviousItem = this.oMultiComboBox._getPreviousTraversalItem();
+		assert.ok(oNextItem.getText() !== 'Item1', "Should not return the first item anymore as it's selected already");
+		assert.ok(oNextItem.getText() === 'Group Header', "Should return the group header item's text");
+		assert.ok(oPreviousItem.getText() !== 'Item3', "Should not return the last item anymore as it's selected already");
+	});
+
 	QUnit.test("onsapend should trigger Tokenizer's onsapend", function (assert) {
 		var oSapEndSpy = sinon.spy(Tokenizer.prototype, "onsapend");
 

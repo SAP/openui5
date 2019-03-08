@@ -2743,7 +2743,17 @@ function(
 	 * @since 1.26.0
 	 */
 	MultiComboBox.prototype._getUnselectedItems = function() {
-		return jQuery(this.getSelectableItems()).not(this.getSelectedItems()).get();
+		var aItems =  jQuery(this.getSelectableItems()).not(this.getSelectedItems()).get();
+
+		// If the MultiComboBox is not opened, we want to skip any items that
+		// represent group headers or separators.
+		if (!this.isOpen()) {
+			return aItems.filter(function (oItem) {
+				return !oItem.isA("sap.ui.core.SeparatorItem");
+			});
+		}
+
+		return aItems;
 	};
 
 	/**
