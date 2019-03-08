@@ -5,6 +5,7 @@
 		"webapp/controller/App.controller.js",
 		"webapp/controller/BaseController.js",
 		"webapp/controller/Detail.controller.js",
+		"webapp/controller/DetailObjectNotFound.controller.js",
 		"webapp/controller/ErrorHandler.js",
 		"webapp/controller/ListSelector.js",
 		"webapp/controller/Master.controller.js",
