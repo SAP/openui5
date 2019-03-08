@@ -446,6 +446,28 @@
 				oCalendarTimeInt.destroy();
 			});
 
+			QUnit.test("Selecting a date from next month", function(assert) {
+				//Prepare
+				var oCalendarTimeInt = new sap.ui.unified.CalendarTimeInterval("CTI", {
+					startDate: new Date("2018", "00", "31"),
+					pickerPopup: true
+				}).placeAt("qunit-fixture"),
+				oCalendar = oCalendarTimeInt._getCalendarPicker(),
+				oFirstDateOfFeb = new Date("2018", "01", "01");
+
+				sap.ui.getCore().applyChanges();
+
+				// Act
+				oCalendar.addSelectedDate(new sap.ui.unified.DateRange({startDate: oFirstDateOfFeb}));
+				oCalendar.fireSelect();
+
+				// Assert
+				assert.strictEqual(oCalendarTimeInt.getStartDate().getTime(), oFirstDateOfFeb.getTime(), "startDate correct");
+
+				// Clean
+				oCalendarTimeInt.destroy();
+			});
+
 			QUnit.module("Month Picker");
 			QUnit.test("displayed months", function(assert) {
 				assert.ok(!jQuery("#Cal1--MP").get(0), "Calendar1: Month picker not initial rendered");
