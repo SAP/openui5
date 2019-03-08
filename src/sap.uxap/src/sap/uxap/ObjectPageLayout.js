@@ -204,8 +204,10 @@ sap.ui.define([
 				sectionTitleLevel : {type : "sap.ui.core.TitleLevel", group : "Appearance", defaultValue : TitleLevel.Auto},
 
 				/**
-				 * Use tab navigation mode instead of the default Anchor bar mode.
-				 * <br><b>Note: </b>Keep in mind that the <code>sap.m.IconTabBar</code> control is no longer used for the tab navigation mode.
+				 * Determines whether the navigation mode is tab-based instead of the default anchor bar. If enabled,
+				 * the sections are displayed separately on each tab rather than having all of them visible at the same time.
+				 *
+				 * <b>Note:</b> Keep in mind that the <code>sap.m.IconTabBar</code> control is no longer used for the tab navigation mode.
 				 */
 				useIconTabBar: {type: "boolean", group: "Misc", defaultValue: false},
 
