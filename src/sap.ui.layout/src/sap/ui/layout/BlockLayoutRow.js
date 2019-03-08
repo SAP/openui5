@@ -88,6 +88,17 @@ sap.ui.define([
 		BlockLayoutRow.prototype.init = function () {
 			this._applyLayoutData = {};
 		};
+
+		BlockLayoutRow.prototype.addContent = function (oContent) {
+			this._ensureLayoutData(oContent);
+			return this.addAggregation("content", oContent);
+		};
+
+		BlockLayoutRow.prototype.insertContent = function(oContent, index) {
+			this._ensureLayoutData(oContent);
+			return this.insertAggregation("content", oContent, index);
+		};
+
 		/**
 		 * Performs guidelines check
 		 */
