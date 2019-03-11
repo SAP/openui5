@@ -9,6 +9,11 @@ sap.ui.define([
 			if (oCard) {
 				oCard.attachEvent("onAction", this.onAction);
 			}
+
+			oCard = this.getView().byId("TableCardNavigationActionEvent");
+			if (oCard) {
+				oCard.attachEvent("onAction", this.onAction);
+			}
 		},
 		onAction: function (oEvent) {
 			var oSemanticObject = oEvent.getParameter("semanticObject");

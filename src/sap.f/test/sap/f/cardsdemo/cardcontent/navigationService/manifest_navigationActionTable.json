@@ -18,15 +18,18 @@
 			"data": {
 				"json": [{
 						"Name": "Comfort Easy",
-						"Category": "PDA & Organizers"
+						"Category": "PDA & Organizers",
+						"url": "https://www.sap.com"
 					},
 					{
 						"Name": "ITelO Vault",
-						"Category": "PDA & Organizers"
+						"Category": "PDA & Organizers",
+						"url": "https://www.sap.com"
 					},
 					{
 						"Name": "Notebook Professional 15",
-						"Category": "Notebooks"
+						"Category": "Notebooks",
+						"url": "https://www.sap.com"
 					},
 					{
 						"Name": "Ergo Screen E-I",
@@ -39,13 +42,23 @@
 				]
 			},
 			"row": {
-				"columns": [{
+				"columns": [
+					{
 						"label": "Name",
 						"value": "{Name}"
 					},
 					{
 						"label": "Category",
 						"value": "{Category}"
+					}
+				],
+				"actions": [
+					{
+						"type": "Navigation",
+						"enabled": "{= ${url}}",
+						"parameters": {
+							"url": "{url}"
+						}
 					}
 				]
 			}

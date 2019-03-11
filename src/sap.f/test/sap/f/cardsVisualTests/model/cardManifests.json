@@ -1389,16 +1389,18 @@
 						},
 						"path": "/names"
 					},
-					"columns": [
-						{
-							"label": "First Name",
-							"value": "{firstName}"
-						},
-						{
-							"label": "Last Name",
-							"value": "{lastName}"
-						}
-					]
+					"row": {
+						"columns": [
+							{
+								"label": "First Name",
+								"value": "{firstName}"
+							},
+							{
+								"label": "Last Name",
+								"value": "{lastName}"
+							}
+						]
+					}
 				}
 			}
 		}
@@ -1579,16 +1581,18 @@
 						},
 						"path": "/names"
 					},
-					"columns": [
-						{
-							"label": "First Name",
-							"value": "{firstName}"
-						},
-						{
-							"label": "Last Name",
-							"value": "{lastName}"
-						}
-					]
+					"row": {
+						"columns": [
+							{
+								"label": "First Name",
+								"value": "{firstName}"
+							},
+							{
+								"label": "Last Name",
+								"value": "{lastName}"
+							}
+						]
+					}
 				}
 			}
 		}
