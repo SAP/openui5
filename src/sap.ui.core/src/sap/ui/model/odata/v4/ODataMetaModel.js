@@ -2216,9 +2216,17 @@ sap.ui.define([
 							"/" + oCodeList.CollectionPath, null, null, null,
 							{$select : aSelect});
 						oCodeListBinding.attachChange(function () {
+							var aContexts;
+
 							try {
-								resolve(oCodeListBinding.getContexts(0, Infinity)
-									.reduce(addCustomizing, {}));
+								aContexts = oCodeListBinding.getContexts(0, Infinity);
+
+								if (!aContexts.length) {
+									Log.error("Customizing empty for ",
+										oCodeListModel.sServiceUrl + oCodeList.CollectionPath,
+										sODataMetaModel);
+								}
+								resolve(aContexts.reduce(addCustomizing, {}));
 							} catch (e) {
 								reject(e);
 							}
