@@ -847,8 +847,9 @@ function(
 		this._oItemNavigation.onsaphome(oEvent);
 	};
 
-
-
+	SegmentedButton.prototype.onsapspace = function (oEvent) {
+		oEvent.preventDefault();
+	};
 
 	/** Select form function **/
 

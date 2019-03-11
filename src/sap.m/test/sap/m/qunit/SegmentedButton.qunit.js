@@ -2613,6 +2613,26 @@ sap.ui.define([
 		});
 	}
 
+	QUnit.test("Press 'SPACE' should not scroll the page", function (assert) {
+		// Arrange
+		var oSB = new SegmentedButton(),
+			oSpy = this.spy(),
+			oEvent = {
+				preventDefault: function () {
+					oSpy();
+				}
+			};
+
+		// Act
+		oSB.onsapspace(oEvent);
+
+		// Assert
+		assert.equal(oSpy.callCount, 1, "preventDefault should be called on 'SPACE' to prevent scrolling");
+
+		// Cleanup
+		oSB.destroy();
+	});
+
 	/* Module ARIA*/
 
 	QUnit.module('ARIA');
