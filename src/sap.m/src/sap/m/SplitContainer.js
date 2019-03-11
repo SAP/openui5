@@ -1124,11 +1124,13 @@ function(
 	};
 
 	SplitContainer.prototype.getMasterPages = function() {
-		return this._aMasterPages;
+		// Return a shallow copy of the array instead of the array itself as reference
+		return this._aMasterPages.slice();
 	};
 
 	SplitContainer.prototype.getDetailPages = function() {
-		return this._aDetailPages;
+		// Return a shallow copy of the array instead of the array itself as reference
+		return this._aDetailPages.slice();
 	};
 
 	SplitContainer.prototype.indexOfMasterPage = function(oPage) {
