@@ -948,6 +948,26 @@ function (
 		}.bind(this), iAnimationDelay);
 	});
 
+	//BCP: 1980006195
+	QUnit.test("Columns with width 0 should have the sapFFCLColumnHidden class applied", function(assert){
+		var fnDone = assert.async(),
+			iAnimationDelay = COLUMN_RESIZING_ANIMATION_DURATION + 100;
+
+		this.oFCL = oFactory.createFCL({
+			layout: LT.MidColumnFullScreen
+		});
+
+
+		setTimeout(function() {
+			// assert
+			assertColumnsVisibility(assert, this.oFCL, 0, 1, 0);
+			assert.ok(this.oFCL._$columns["begin"].hasClass('sapFFCLColumnHidden'));
+			assert.notOk(this.oFCL._$columns["mid"].hasClass('sapFFCLColumnHidden'));
+			assert.ok(this.oFCL._$columns["end"].hasClass('sapFFCLColumnHidden'));
+			fnDone();
+		}.bind(this), iAnimationDelay);
+	});
+
 	QUnit.module("ScreenReader supprot", {
 		beforeEach: function () {
 			this.oFCL = oFactory.createFCL();
