@@ -991,6 +991,41 @@ function (
 		this.oCard.setManifest(oManifest_ObjectCard);
 	});
 
+	QUnit.test("Object Card - Spacing between groups are correctly calculated", function (assert) {
+		// Arrange
+		var done = assert.async();
+
+		this.oCard.attachEvent("_contentUpdated", function () {
+			var oObjectContent = this.getAggregation("_content");
+			var oContent = oObjectContent.getAggregation("_content");
+			var oEvent = {size:{width:400},oldSize:{width:0}, control:oContent};
+
+			//This is the case when 2 groups are in one column and the last group is on another row
+			oObjectContent.onAlignedFlowLayoutResize(oEvent);
+			assert.ok(oContent.getContent()[0].$().hasClass("sapFCardObjectSpaceBetweenGroup"), "The first group should have the separation class");
+			assert.ok(!oContent.getContent()[1].$().hasClass("sapFCardObjectSpaceBetweenGroup"), "The second group should not have the separation class");
+			assert.ok(oContent.getContent()[2].$().hasClass("sapFCardObjectSpaceBetweenGroup"), "The last group should have the separation class");
+
+			//This is the case when all groups are in one column
+			oEvent.size.width = 200;
+			oObjectContent.onAlignedFlowLayoutResize(oEvent);
+			assert.ok(!oContent.getContent()[0].$().hasClass("sapFCardObjectSpaceBetweenGroup"), "The group should not have the separation class");
+			assert.ok(!oContent.getContent()[1].$().hasClass("sapFCardObjectSpaceBetweenGroup"), "The group should not have the separation class");
+			assert.ok(!oContent.getContent()[2].$().hasClass("sapFCardObjectSpaceBetweenGroup"), "The group should not have the separation class");
+
+			//This is the case when all groups are in one row
+			oEvent.size.width = 800;
+			oObjectContent.onAlignedFlowLayoutResize(oEvent);
+			assert.ok(oContent.getContent()[0].$().hasClass("sapFCardObjectSpaceBetweenGroup"), "The group should have the separation class");
+			assert.ok(oContent.getContent()[1].$().hasClass("sapFCardObjectSpaceBetweenGroup"), "The group should have the separation class");
+			assert.ok(!oContent.getContent()[2].$().hasClass("sapFCardObjectSpaceBetweenGroup"), "The group should not have the separation class");
+
+			done();
+		});
+
+		// Act
+		this.oCard.setManifest(oManifest_ObjectCard);
+	});
 	QUnit.module("Table Card", {
 		beforeEach: function () {
 			this.oCard = new Card({
