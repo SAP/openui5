@@ -46,7 +46,7 @@ sap.ui.define([
 				bIEFocusOutlineWorkaroundApplied = true;
 			}
 			var oCellInfo = TableUtils.getCellInfo(oElement) || {};
-			if (oCellInfo.cell) {
+			if (oCellInfo.isOfType(TableUtils.CELLTYPE.ANY)) {
 				oCellInfo.cell.attr("data-sap-ui-table-focus", Date.now());
 			}
 		}
@@ -488,7 +488,7 @@ sap.ui.define([
 		var oTable = this.getTable();
 		var oCellInfo = TableUtils.getCellInfo(oElement);
 
-		if (oCellInfo.cell && oTable) {
+		if (oCellInfo.isOfType(TableUtils.CELLTYPE.ANY) && oTable) {
 			var $Elem = jQuery(oElement);
 
 			if ($Elem.attr("tabindex") != "0") {

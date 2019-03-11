@@ -46,7 +46,7 @@ sap.ui.define([
 		test(false, false, true, null);
 	});
 
-	QUnit.module("Aggregations", {
+	QUnit.module("Lazy Aggregations", {
 		beforeEach: function() {
 			this._oColumn = new Column();
 		},
@@ -70,7 +70,7 @@ sap.ui.define([
 		assert.strictEqual(oNewLabel.getText(), "labelinstance", "The text of the label is correct");
 	});
 
-	QUnit.test("setTemplate", function(assert) {
+	QUnit.test("Template", function(assert) {
 		assert.equal(this._oColumn.getTemplate(), null, "The column has no template defined");
 
 		this._oColumn.setTemplate("bindingpath");
@@ -83,6 +83,18 @@ sap.ui.define([
 		assert.notEqual(oNewTemplate, null, "Added template by passing a sap.m.Text instance");
 		assert.notEqual(oTemplate, oNewTemplate, "The column has a new template");
 		assert.strictEqual(oNewTemplate.getBindingPath("text"), "anotherbindingpath", "The binding path of the template is correct");
+	});
+
+	QUnit.test("CreationTemplate", function(assert) {
+		var bErrorThrown = false;
+
+		try {
+			this._oColumn.setCreationTemplate("bindingpath");
+		} catch (e) {
+			bErrorThrown = true;
+		}
+
+		assert.ok(bErrorThrown, "The creationTemplate is not a lazy aggregation. Passing a string in the setter should throw an error.");
 	});
 
 	QUnit.module("Column Menu Items", {
@@ -275,221 +287,408 @@ sap.ui.define([
 	QUnit.module("Template Clones", {
 		beforeEach: function() {
 			this.oColumn = new Column();
-			this.oCloneWithParent = {
-				getParent: function() {
-					return "i have a parent";
-				},
-				destroy: function() {}
-			};
-			this.oCloneWithoutParentA = {
-				getParent: function() {
-					return undefined;
-				},
-				destroy: function() {}
-			};
-			this.oCloneWithoutParentB = {
-				getParent: function() {
-					return undefined;
-				},
-				destroy: function() {}
-			};
-			this.oDestroyedClone = {
-				bIsDestroyed: true
-			};
+			this.aTemplateTypes = Object.keys(this.oColumn._mTemplateClones);
+			this.mTemplateGetterSpies = this.aTemplateTypes.reduce(function(mSpies, sTemplateType) {
+				mSpies[sTemplateType] = sinon.spy(this.oColumn, "get" + (sTemplateType === "Standard" ? "" : sTemplateType) + "Template");
+				return mSpies;
+			}.bind(this), {});
+			this.oCloneWithParent = this.createTemplateCloneDummy(true);
+			this.oCloneWithoutParentA = this.createTemplateCloneDummy();
+			this.oCloneWithoutParentB = this.createTemplateCloneDummy();
+			this.oDestroyedClone = this.createTemplateCloneDummy(true, true);
 		},
 		afterEach: function() {
+			this.oColumn._initTemplateClonePool(); // Some clones are just objects or stubbed controls. Destroying them would fail.
+			this.oColumn.destroy();
+		},
+		getTemplateCloneCount: function() {
+			return this.aTemplateTypes.reduce(function(iCount, sTemplateType) {
+				return iCount + this.oColumn._mTemplateClones[sTemplateType].length;
+			}.bind(this), 0);
+		},
+		getTemplateSpiesCallCount: function() {
+			return Object.keys(this.mTemplateGetterSpies).reduce(function(iCount, sTemplateType) {
+				return iCount + this.mTemplateGetterSpies[sTemplateType].callCount;
+			}.bind(this), 0);
+		},
+		resetGetTemplateSpies: function() {
+			for (var sTemplateType in this.mTemplateGetterSpies) {
+				this.mTemplateGetterSpies[sTemplateType].reset();
+			}
+		},
+		setTemplate: function(sTemplateType, oTemplate) {
+			this.oColumn["set" + (sTemplateType === "Standard" ? "" : sTemplateType) + "Template"].bind(this.oColumn)(oTemplate);
+		},
+		createTemplateCloneDummy: function(bHasParent, bDestroyed) {
+			return {
+				getParent: function() { return bHasParent ? "i have a parent" : undefined; },
+				destroy: function() {},
+				bIsDestroyed: bDestroyed
+			};
 		}
 	});
 
-	QUnit.test("_getFreeTemplateClone: No free template clone available", function(assert) {
-		this.oColumn._aTemplateClones = [
-			null,
-			this.oCloneWithParent,
-			this.oDestroyedClone
-		];
+	QUnit.test("_getFreeTemplateClone: No free standard template clone available", function(assert) {
+		for (var sTemplateType in this.oColumn._mTemplateClones) {
+			this.oColumn._mTemplateClones[sTemplateType] = [
+				null,
+				this.oCloneWithParent,
+				this.oDestroyedClone
+			];
 
-		var oFreeTemplateClone = this.oColumn._getFreeTemplateClone();
+			var oFreeTemplateClone = this.oColumn._getFreeTemplateClone(sTemplateType);
 
-		assert.strictEqual(oFreeTemplateClone, null, "Returned null");
-		assert.deepEqual(this.oColumn._aTemplateClones, [this.oCloneWithParent], "The clone stack has been cleaned up");
+			assert.strictEqual(oFreeTemplateClone, null, sTemplateType + " type: Returned null");
+			assert.deepEqual(this.oColumn._mTemplateClones[sTemplateType], [this.oCloneWithParent],
+				sTemplateType + " type: The clone pool has been cleaned up");
+		}
+
+		assert.strictEqual(this.oColumn._getFreeTemplateClone(), null, "undefined type: Returned null");
 	});
 
 	QUnit.test("_getFreeTemplateClone: Free template clones available", function(assert) {
-		this.oColumn._aTemplateClones = [
-			null,
-			this.oCloneWithParent,
-			this.oCloneWithoutParentA,
-			this.oDestroyedClone,
-			this.oCloneWithoutParentB
-		];
+		for (var sTemplateType in this.oColumn._mTemplateClones) {
+			this.oColumn._mTemplateClones[sTemplateType] = [
+				null,
+				this.oCloneWithParent,
+				this.oCloneWithoutParentA,
+				this.oDestroyedClone,
+				this.oCloneWithoutParentB
+			];
 
-		var oFreeTemplateClone = this.oColumn._getFreeTemplateClone();
+			var oFreeTemplateClone = this.oColumn._getFreeTemplateClone(sTemplateType);
 
-		assert.strictEqual(oFreeTemplateClone, this.oCloneWithoutParentA, "Returned the first free template clone");
-		assert.deepEqual(this.oColumn._aTemplateClones, [
-			this.oCloneWithParent,
-			this.oCloneWithoutParentA,
-			this.oCloneWithoutParentB
-		], "The clone stack has been cleaned up");
+			assert.strictEqual(oFreeTemplateClone, this.oCloneWithoutParentA,  sTemplateType + " type: Returned the first free template clone");
+			assert.deepEqual(this.oColumn._mTemplateClones[sTemplateType], [
+				this.oCloneWithParent,
+				this.oCloneWithoutParentA,
+				this.oCloneWithoutParentB
+			],  sTemplateType + " type: The clone pool has been cleaned up");
+		}
+	});
+
+	QUnit.test("getTemplateClone: No parameters passed", function(assert) {
+		this.oColumn.setTemplate(new Text());
+		this.resetGetTemplateSpies();
+
+		var oGetFreeTemplateCloneSpy = sinon.spy(this.oColumn, "_getFreeTemplateClone");
+		var oTemplateClone = this.oColumn.getTemplateClone();
+
+		assert.ok(oGetFreeTemplateCloneSpy.notCalled, "Column#_getFreeTemplateClone was not called");
+		assert.strictEqual(this.getTemplateCloneCount(), 0, "No template clones exist");
+		assert.strictEqual(oTemplateClone, null, "Returned null");
+		assert.ok(this.mTemplateGetterSpies.Standard.notCalled, "Column#getTemplate was not called");
+	});
+
+	QUnit.test("getTemplateClone: No type information passed", function(assert) {
+		this.oColumn.setTemplate(new Text());
+		this.resetGetTemplateSpies();
+
+		var oGetFreeTemplateCloneSpy = sinon.spy(this.oColumn, "_getFreeTemplateClone");
+		var oTemplateClone = this.oColumn.getTemplateClone(0);
+
+		assert.ok(oGetFreeTemplateCloneSpy.calledWithExactly("Standard"), "Column#_getFreeTemplateClone was called with templateType=Standard");
+
+		assert.strictEqual(this.getTemplateCloneCount(), 1, "1 template clone exists");
+		assert.strictEqual(this.oColumn._mTemplateClones.Standard.length, 1, "1 standard template clone exists");
+
+		assert.strictEqual(oTemplateClone, this.oColumn._mTemplateClones.Standard[0], "Returned the created standard template clone");
+
+		assert.strictEqual(this.getTemplateSpiesCallCount(), 1, "1 template getter was called");
+		assert.ok(this.mTemplateGetterSpies.Standard.calledOnce, "Column#getTemplate was called once");
+	});
+
+	QUnit.test("getTemplateClone: Wrong type information passed", function(assert) {
+		this.oColumn.setTemplate(new Text());
+		var oTemplateClone = this.oColumn.getTemplateClone(0, "not a template type");
+		assert.strictEqual(oTemplateClone, null, "Returned null");
 	});
 
 	QUnit.test("getTemplateClone: No index passed", function(assert) {
+		for (var j = 0; j < this.aTemplateTypes.length; j++) {
+			this.setTemplate(this.aTemplateTypes[j], new Text());
+		}
+		this.resetGetTemplateSpies();
+
 		var oGetFreeTemplateCloneSpy = sinon.spy(this.oColumn, "_getFreeTemplateClone");
-		var oGetTemplateSpy = sinon.spy(this.oColumn, "getTemplate");
 
-		var oTemplateClone = this.oColumn.getTemplateClone();
+		for (var i = 0; i < this.aTemplateTypes.length; i++) {
+			var sTemplateType = this.aTemplateTypes[i];
+			var oTemplateClone = this.oColumn.getTemplateClone(null, sTemplateType);
 
-		assert.strictEqual(oTemplateClone, null, "Returned null");
-		assert.deepEqual(this.oColumn._aTemplateClones, [], "No template clones exist");
-		assert.ok(oGetFreeTemplateCloneSpy.notCalled, "Column#_getFreeTemplateClone has not been called");
-		assert.ok(oGetTemplateSpy.notCalled, "Column#getTemplate has not been called");
+			assert.strictEqual(oTemplateClone, null, sTemplateType + " type: Returned null");
+		}
+
+		assert.strictEqual(this.getTemplateCloneCount(), 0, "No template clones exist");
+		assert.ok(oGetFreeTemplateCloneSpy.notCalled, "Column#_getFreeTemplateClone was not called");
+		assert.strictEqual(this.getTemplateSpiesCallCount(), 0, "No template getter was called");
 	});
 
-	QUnit.test("getTemplateClone: No column template is defined", function(assert) {
+	QUnit.test("getTemplateClone: No template is defined", function(assert) {
 		var oGetFreeTemplateCloneSpy = sinon.spy(this.oColumn, "_getFreeTemplateClone");
-		var oGetTemplateSpy = sinon.spy(this.oColumn, "getTemplate");
 
-		var oTemplateClone = this.oColumn.getTemplateClone(0);
+		for (var i = 0; i < this.aTemplateTypes.length; i++) {
+			var sTemplateType = this.aTemplateTypes[i];
+			var oTemplateClone = this.oColumn.getTemplateClone(0, sTemplateType);
 
-		assert.strictEqual(oTemplateClone, null, "Returned null");
-		assert.deepEqual(this.oColumn._aTemplateClones, [], "No template clones exist");
-		assert.ok(oGetFreeTemplateCloneSpy.calledOnce, "Column#_getFreeTemplateClone has been called once");
-		assert.ok(oGetTemplateSpy.calledOnce, "Column#getTemplate has been called once");
+			assert.strictEqual(oTemplateClone, null, sTemplateType + " type: Returned null");
+
+			assert.ok(oGetFreeTemplateCloneSpy.calledOnce, sTemplateType + " type: Column#_getFreeTemplateClone was called once");
+			assert.ok(oGetFreeTemplateCloneSpy.calledWithExactly(sTemplateType),
+				"Column#_getFreeTemplateClone was called with templateType=" + sTemplateType);
+
+			assert.strictEqual(this.getTemplateSpiesCallCount(), 1, "1 template getter was called");
+			assert.ok(this.mTemplateGetterSpies[sTemplateType].calledOnce, sTemplateType + " type: Template getter was called once");
+
+			oGetFreeTemplateCloneSpy.reset();
+			this.resetGetTemplateSpies();
+		}
+
+		assert.deepEqual(this.getTemplateCloneCount(), 0, "No template clones exist");
 	});
 
 	QUnit.test("getTemplateClone: No template clones exist -> Create a new template clone", function(assert) {
-		var oTemplate = new Text();
-		this.oColumn.setTemplate(oTemplate);
+		var mTemplateCloneFunctionSpies = {};
+		var sTemplateType;
+
+		for (var j = 0; j < this.aTemplateTypes.length; j++) {
+			var oTemplate = new Text();
+
+			sTemplateType = this.aTemplateTypes[j];
+			this.setTemplate(sTemplateType, oTemplate);
+			mTemplateCloneFunctionSpies[sTemplateType] = sinon.spy(oTemplate, "clone");
+		}
+		this.resetGetTemplateSpies();
 
 		var oGetFreeTemplateCloneSpy = sinon.spy(this.oColumn, "_getFreeTemplateClone");
-		var oGetTemplateSpy = sinon.spy(this.oColumn, "getTemplate");
-		var oControlCloneSpy = sinon.spy(oTemplate, "clone");
 
-		var oTemplateClone = this.oColumn.getTemplateClone(5);
+		for (var i = 0; i < this.aTemplateTypes.length; i++) {
+			sTemplateType = this.aTemplateTypes[i];
 
-		assert.notEqual(oTemplateClone, null, "Returned the created template clone");
-		assert.strictEqual(this.oColumn._aTemplateClones.length, 1, "1 template clone exists");
-		assert.strictEqual(this.oColumn._aTemplateClones[0], oTemplateClone, "A reference to the template clone is stored");
-		assert.strictEqual(oTemplateClone.data("sap-ui-colindex"), 5, "The template has the correct \"colindex\" data");
-		assert.strictEqual(oTemplateClone.data("sap-ui-colid"), this.oColumn.getId(), "The template has the correct \"colid\" data");
-		assert.ok(oGetFreeTemplateCloneSpy.calledOnce, "Column#_getFreeTemplateClone has been called once");
-		assert.ok(oGetTemplateSpy.calledOnce, "Column#getTemplate has been called once");
-		assert.ok(oControlCloneSpy.calledOnce, "Template#clone has been called once");
+			var oTemplateClone = this.oColumn.getTemplateClone(5, sTemplateType);
+
+			assert.notEqual(oTemplateClone, null, sTemplateType + " type: Returned the created template clone");
+
+			assert.strictEqual(this.getTemplateCloneCount(), i + 1, (i + 1) + " template clone(s) exist(s)");
+			assert.strictEqual(this.oColumn._mTemplateClones[sTemplateType].length, 1, sTemplateType + " type: 1 template clone exists");
+			assert.ok(this.oColumn._mTemplateClones[sTemplateType][0] === oTemplateClone,
+				sTemplateType + " type: A reference to the template clone is stored");
+
+			assert.strictEqual(oTemplateClone.data("sap-ui-colindex"), 5,
+				sTemplateType + " type: The template has the correct \"colindex\" data");
+			assert.strictEqual(oTemplateClone.data("sap-ui-colid"), this.oColumn.getId(),
+				sTemplateType + " type: The template has the correct \"colid\" data");
+
+			assert.ok(oGetFreeTemplateCloneSpy.calledOnce, sTemplateType + " type: Column#_getFreeTemplateClone was called once");
+			assert.ok(oGetFreeTemplateCloneSpy.calledWithExactly(sTemplateType),
+				"Column#_getFreeTemplateClone was called with templateType=" + sTemplateType);
+
+			assert.strictEqual(this.getTemplateSpiesCallCount(), 1, "1 template getter was called");
+			assert.ok(this.mTemplateGetterSpies[sTemplateType].calledOnce, sTemplateType + " type: Template getter was called once");
+
+			assert.ok(mTemplateCloneFunctionSpies[sTemplateType].calledOnce, sTemplateType + " type: Template#clone was called once");
+
+			oGetFreeTemplateCloneSpy.reset();
+			this.resetGetTemplateSpies();
+		}
 	});
 
 	QUnit.test("getTemplateClone: Only used template clones exist -> Create a new template clone", function(assert) {
-		var oTemplate = new Text();
-		this.oColumn.setTemplate(oTemplate);
-		sinon.stub(this.oColumn.getTemplateClone(0), "getParent").returns("i have a parent");
+		var mTemplateCloneFunctionSpies = {};
+		var sTemplateType;
+
+		for (var j = 0; j < this.aTemplateTypes.length; j++) {
+			var oTemplate = new Text();
+
+			sTemplateType = this.aTemplateTypes[j];
+			this.setTemplate(sTemplateType, oTemplate);
+			sinon.stub(this.oColumn.getTemplateClone(0, sTemplateType), "getParent").returns("i have a parent");
+			mTemplateCloneFunctionSpies[sTemplateType] = sinon.spy(oTemplate, "clone");
+		}
+		this.resetGetTemplateSpies();
 
 		var oGetFreeTemplateCloneSpy = sinon.spy(this.oColumn, "_getFreeTemplateClone");
-		var oGetTemplateSpy = sinon.spy(this.oColumn, "getTemplate");
-		var oControlCloneSpy = sinon.spy(oTemplate, "clone");
 
-		var oTemplateClone = this.oColumn.getTemplateClone(5);
+		for (var i = 0; i < this.aTemplateTypes.length; i++) {
+			sTemplateType = this.aTemplateTypes[i];
 
-		assert.notEqual(oTemplateClone, null, "Returned the created template clone");
-		assert.strictEqual(this.oColumn._aTemplateClones.length, 2, "2 template clones exist");
-		assert.strictEqual(this.oColumn._aTemplateClones[1], oTemplateClone, "A reference to the template clone is stored");
-		assert.strictEqual(oTemplateClone.data("sap-ui-colindex"), 5, "The template has the correct \"colindex\" data");
-		assert.strictEqual(oTemplateClone.data("sap-ui-colid"), this.oColumn.getId(), "The template has the correct \"colid\" data");
-		assert.ok(oGetFreeTemplateCloneSpy.calledOnce, "Column#_getFreeTemplateClone has been called once");
-		assert.ok(oGetTemplateSpy.calledOnce, "Column#getTemplate has been called once");
-		assert.ok(oControlCloneSpy.calledOnce, "Template#clone has been called once");
+			var oTemplateClone = this.oColumn.getTemplateClone(5, sTemplateType);
+
+			assert.notEqual(oTemplateClone, null, sTemplateType + " type: Returned the created template clone");
+
+			assert.strictEqual(this.getTemplateCloneCount(), this.aTemplateTypes.length + i + 1,
+				this.aTemplateTypes.length + i + 1 + " template clones exist");
+			assert.strictEqual(this.oColumn._mTemplateClones[sTemplateType].length, 2, sTemplateType + " type: 2 template clones exist");
+			assert.ok(this.oColumn._mTemplateClones[sTemplateType][1] === oTemplateClone,
+				sTemplateType + " type: A reference to the template clone is stored");
+
+			assert.strictEqual(oTemplateClone.data("sap-ui-colindex"), 5,
+				sTemplateType + " type: The template has the correct \"colindex\" data");
+			assert.strictEqual(oTemplateClone.data("sap-ui-colid"), this.oColumn.getId(),
+				sTemplateType + " type: The template has the correct \"colid\" data");
+
+			assert.ok(oGetFreeTemplateCloneSpy.calledOnce, sTemplateType + " type: Column#_getFreeTemplateClone was called once");
+			assert.ok(oGetFreeTemplateCloneSpy.calledWithExactly(sTemplateType),
+				"Column#_getFreeTemplateClone was called with templateType=" + sTemplateType);
+
+			assert.strictEqual(this.getTemplateSpiesCallCount(), 1, "1 template getter was called");
+			assert.ok(this.mTemplateGetterSpies[sTemplateType].calledOnce, sTemplateType + " type: Template getter was called once");
+
+			assert.ok(mTemplateCloneFunctionSpies[sTemplateType].calledOnce, "Template#clone has been called once");
+
+			oGetFreeTemplateCloneSpy.reset();
+			this.resetGetTemplateSpies();
+		}
 	});
 
 	QUnit.test("getTemplateClone: Reuse a free template clone", function(assert) {
-		var oTemplate = new Text();
-		this.oColumn.setTemplate(oTemplate);
-		sinon.stub(this.oColumn.getTemplateClone(0), "getParent").returns("i have a parent");
-		var oFreeTemplateClone = this.oColumn.getTemplateClone(1);
-		sinon.stub(oFreeTemplateClone, "getParent").returns("i have a parent");
-		sinon.stub(this.oColumn.getTemplateClone(2), "getParent").returns("i have a parent");
-		sinon.restore(oFreeTemplateClone);
+		var mTemplateCloneFunctionSpies = {};
+		var sTemplateType;
+		var oTemplateClone;
+		var mFreeTemplateClones = {};
+
+		for (var j = 0; j < this.aTemplateTypes.length; j++) {
+			var oTemplate = new Text();
+
+			sTemplateType = this.aTemplateTypes[j];
+			this.setTemplate(sTemplateType, oTemplate);
+			sinon.stub(this.oColumn.getTemplateClone(0, sTemplateType), "getParent").returns("i have a parent");
+			oTemplateClone = this.oColumn.getTemplateClone(1, sTemplateType);
+			sinon.stub(oTemplateClone, "getParent").returns("i have a parent");
+			sinon.stub(this.oColumn.getTemplateClone(2, sTemplateType), "getParent").returns("i have a parent");
+			sinon.restore(oTemplateClone); // Now the clone is free.
+			mTemplateCloneFunctionSpies[sTemplateType] = sinon.spy(oTemplate, "clone");
+			mFreeTemplateClones[sTemplateType] = oTemplateClone;
+		}
+		this.resetGetTemplateSpies();
 
 		var oGetFreeTemplateCloneSpy = sinon.spy(this.oColumn, "_getFreeTemplateClone");
-		var oGetTemplateSpy = sinon.spy(this.oColumn, "getTemplate");
-		var oControlCloneSpy = sinon.spy(oTemplate, "clone");
 
-		var oTemplateClone = this.oColumn.getTemplateClone(5);
+		for (var i = 0; i < this.aTemplateTypes.length; i++) {
+			sTemplateType = this.aTemplateTypes[i];
 
-		assert.strictEqual(oTemplateClone, oFreeTemplateClone, "Returned the free template clone");
-		assert.strictEqual(this.oColumn._aTemplateClones.length, 3, "3 template clones exist");
-		assert.strictEqual(this.oColumn._aTemplateClones[1], oTemplateClone, "A reference to the template clone is stored");
-		assert.strictEqual(oTemplateClone.data("sap-ui-colindex"), 5, "The template has the correct \"colindex\" data");
-		assert.strictEqual(oTemplateClone.data("sap-ui-colid"), this.oColumn.getId(), "The template has the correct \"colid\" data");
-		assert.ok(oGetFreeTemplateCloneSpy.calledOnce, "Column#_getFreeTemplateClone has been called once");
-		assert.ok(oGetTemplateSpy.notCalled, "Column#getTemplate has not been called");
-		assert.ok(oControlCloneSpy.notCalled, "Template#clone has not been called");
+			oTemplateClone = this.oColumn.getTemplateClone(5, sTemplateType);
+
+			assert.ok(oTemplateClone === mFreeTemplateClones[sTemplateType], sTemplateType + " type: Returned the free template clone");
+
+			assert.strictEqual(this.getTemplateCloneCount(), this.aTemplateTypes.length * 3,
+				(this.aTemplateTypes.length * 3) + " template clones exist");
+			assert.strictEqual(this.oColumn._mTemplateClones[sTemplateType].length, 3, sTemplateType + " type: 3 template clones exist");
+			assert.ok(oTemplateClone === this.oColumn._mTemplateClones[sTemplateType][1], "A reference to the template clone is stored");
+
+			assert.strictEqual(oTemplateClone.data("sap-ui-colindex"), 5,
+				sTemplateType + " type: The template has the correct \"colindex\" data");
+			assert.strictEqual(oTemplateClone.data("sap-ui-colid"), this.oColumn.getId(),
+				sTemplateType + " type: The template has the correct \"colid\" data");
+
+			assert.ok(oGetFreeTemplateCloneSpy.calledOnce, sTemplateType + " type: Column#_getFreeTemplateClone was called once");
+			assert.ok(oGetFreeTemplateCloneSpy.calledWithExactly(sTemplateType),
+				"Column#_getFreeTemplateClone was called with templateType=" + sTemplateType);
+
+			assert.strictEqual(this.getTemplateSpiesCallCount(), 0, "No template getter was called");
+
+			assert.ok(mTemplateCloneFunctionSpies[sTemplateType].notCalled, "Template#clone was not called");
+
+			oGetFreeTemplateCloneSpy.reset();
+			this.resetGetTemplateSpies();
+		}
 	});
 
 	QUnit.test("_destroyTemplateClones", function(assert) {
-		this.oColumn._aTemplateClones = [
-			null,
-			this.oCloneWithParent,
-			this.oCloneWithoutParentA,
-			this.oDestroyedClone,
-			this.oCloneWithoutParentB
-		];
+		var mCloneSpies = {};
+		var sTemplateType;
+		var that = this;
 
-		var oCloneWithParentDestroySpy = sinon.spy(this.oCloneWithParent, "destroy");
-		var oCloneWithoutParentADestroySpy = sinon.spy(this.oCloneWithoutParentA, "destroy");
+		function createCloneAndDestroySpy(sTemplateType, bHasParent, bDestroyed) {
+			var oClone = that.createTemplateCloneDummy(bHasParent, bDestroyed);
 
+			if (mCloneSpies[sTemplateType] == null) {
+				mCloneSpies[sTemplateType] = [];
+			}
+
+			mCloneSpies[sTemplateType].push(sinon.spy(oClone, "destroy"));
+
+			return oClone;
+		}
+
+		function createTemplateClones() {
+			for (var j = 0; j < that.aTemplateTypes.length; j++) {
+				sTemplateType = that.aTemplateTypes[j];
+
+				that.oColumn._mTemplateClones[sTemplateType] = [
+					null,
+					createCloneAndDestroySpy(sTemplateType, true),
+					createCloneAndDestroySpy(sTemplateType),
+					createCloneAndDestroySpy(sTemplateType, true, true),
+					createCloneAndDestroySpy(sTemplateType)
+				];
+			}
+		}
+
+		// Destroy all clones
+		createTemplateClones();
 		this.oColumn._destroyTemplateClones();
 
-		assert.ok(
-			oCloneWithParentDestroySpy.calledOnce
-			&& oCloneWithoutParentADestroySpy.calledOnce
-			&& oCloneWithoutParentADestroySpy.calledOnce,
-			"Template clones have been destroyed"
-		);
-		assert.deepEqual(this.oColumn._aTemplateClones, [], "The clone stack has been cleared");
+		for (var i = 0; i < this.aTemplateTypes.length; i++) {
+			sTemplateType = this.aTemplateTypes[i];
+
+			assert.ok(
+				mCloneSpies[sTemplateType][0].calledOnce
+				&& mCloneSpies[sTemplateType][1].calledOnce
+				&& mCloneSpies[sTemplateType][3].calledOnce,
+				sTemplateType + " type: Template clones have been destroyed"
+			);
+			assert.ok(mCloneSpies[sTemplateType][2].notCalled, sTemplateType + " type: The already destroyed clone was not destroyed again");
+		}
+
+		assert.strictEqual(this.getTemplateCloneCount(), 0, "The clone pool has been cleared");
+
+		// Destroy clones of a certain type
+		mCloneSpies = {};
+		createTemplateClones();
+
+		for (var j = 0; j < this.aTemplateTypes.length; j++) {
+			sTemplateType = this.aTemplateTypes[j];
+
+			this.oColumn._destroyTemplateClones(sTemplateType);
+
+			assert.ok(
+				mCloneSpies[sTemplateType][0].calledOnce
+				&& mCloneSpies[sTemplateType][1].calledOnce
+				&& mCloneSpies[sTemplateType][3].calledOnce,
+				sTemplateType + " type: Template clones have been destroyed"
+			);
+			assert.ok(mCloneSpies[sTemplateType][2].notCalled, sTemplateType + " type: The already destroyed clone was not destroyed again");
+			assert.deepEqual(this.oColumn._mTemplateClones[sTemplateType], [],
+				sTemplateType + " type: The clones of this type have been removed from the pool");
+		}
+
+		assert.strictEqual(this.getTemplateCloneCount(), 0, "The clone pool has been cleared");
 	});
 
 	QUnit.test("Setting a column template", function(assert) {
-		this.oColumn._aTemplateClones = [
-			null,
-			this.oCloneWithParent,
-			this.oCloneWithoutParentA,
-			this.oDestroyedClone,
-			this.oCloneWithoutParentB
-		];
+		var oDestroyTemplateClonesSpy = sinon.spy(this.oColumn, "_destroyTemplateClones");
 
-		var oCloneWithParentDestroySpy = sinon.spy(this.oCloneWithParent, "destroy");
-		var oCloneWithoutParentADestroySpy = sinon.spy(this.oCloneWithoutParentA, "destroy");
+		for (var i = 0; i < this.aTemplateTypes.length; i++) {
+			var sTemplateType = this.aTemplateTypes[i];
 
-		this.oColumn.setTemplate(new Text());
+			this.setTemplate(sTemplateType, new Text());
+			assert.ok(oDestroyTemplateClonesSpy.calledOnce,
+				sTemplateType + " type: Column#_destroyTemplateClones was called once when setting a template");
+			assert.ok(oDestroyTemplateClonesSpy.calledWithExactly(sTemplateType),
+				sTemplateType + " type: Column#_destroyTemplateClones was called with the correct type information");
 
-		assert.ok(
-			oCloneWithParentDestroySpy.calledOnce
-			&& oCloneWithoutParentADestroySpy.calledOnce
-			&& oCloneWithoutParentADestroySpy.calledOnce,
-			"Template clones have been destroyed"
-		);
-		assert.deepEqual(this.oColumn._aTemplateClones, [], "The clone stack has been cleared");
+			oDestroyTemplateClonesSpy.reset();
+		}
 	});
 
 	QUnit.test("Destruction of the column", function(assert) {
-		this.oColumn._aTemplateClones = [
-			null,
-			this.oCloneWithParent,
-			this.oCloneWithoutParentA,
-			this.oDestroyedClone,
-			this.oCloneWithoutParentB
-		];
-
-		var oCloneWithParentDestroySpy = sinon.spy(this.oCloneWithParent, "destroy");
-		var oCloneWithoutParentADestroySpy = sinon.spy(this.oCloneWithoutParentA, "destroy");
+		var oDestroyTemplateClonesSpy = sinon.spy(this.oColumn, "_destroyTemplateClones");
 
 		this.oColumn.destroy();
 
-		assert.ok(
-			oCloneWithParentDestroySpy.calledOnce
-			&& oCloneWithoutParentADestroySpy.calledOnce
-			&& oCloneWithoutParentADestroySpy.calledOnce,
-			"Template clones have been destroyed"
-		);
-		assert.deepEqual(this.oColumn._aTemplateClones, [], "The clone stack has been cleared");
+		assert.ok(oDestroyTemplateClonesSpy.calledOnce, "Column#_destroyTemplateClones was called once when destroying the column");
+		assert.ok(oDestroyTemplateClonesSpy.calledWithExactly(), "Column#_destroyTemplateClones was called with the correct type information");
 	});
 
 	QUnit.module("Column Visibility Submenu", {

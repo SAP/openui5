@@ -268,11 +268,16 @@ sap.ui.define([
 		 * @private
 		 */
 		getScrollAreas: function(oTable) {
+			var oDomRef = oTable.getDomRef();
+			var aScrollableColumnAreas;
+
+			if (oDomRef) {
+				aScrollableColumnAreas = Array.prototype.slice.call(oTable.getDomRef().querySelectorAll(".sapUiTableCtrlScr"));
+			}
+
 			var aScrollAreas = [
-				oTable._getScrollExtension().getHorizontalScrollbar(),
-				oTable.getDomRef("sapUiTableColHdrScr"), // Column header scroll area.
-				oTable.getDomRef("sapUiTableCtrlScr") // Content scroll area.
-			];
+				oTable._getScrollExtension().getHorizontalScrollbar()
+			].concat(aScrollableColumnAreas);
 
 			return aScrollAreas.filter(function(oScrollArea) {
 				return oScrollArea != null;

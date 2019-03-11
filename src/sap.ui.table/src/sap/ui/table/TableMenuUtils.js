@@ -216,8 +216,8 @@ sap.ui.define([
 			},
 
 			/**
-			 * Opens the context menu of a data cell.
-			 * If a context menu of another data cell is open, it will be closed.
+			 * Opens the context menu of a content cell.
+			 * If a context menu of another cell is open, it will be closed.
 			 *
 			 * @param {sap.ui.table.Table} oTable Instance of the table.
 			 * @param {sap.ui.table.TableUtils.CellInfo} oCellInfo An object containing information about the cell.
@@ -230,7 +230,8 @@ sap.ui.define([
 			openDataCellContextMenu: function(oTable, oCellInfo, bHoverFirstMenuItem, oEvent) {
 				if (!oTable ||
 					!oCellInfo ||
-					!oCellInfo.cell || oCellInfo.rowIndex >= MenuUtils.TableUtils.getNonEmptyVisibleRowCount(oTable)) {
+					!oCellInfo.isOfType(MenuUtils.TableUtils.CELLTYPE.ANYCONTENTCELL) ||
+					oCellInfo.rowIndex >= MenuUtils.TableUtils.getNonEmptyVisibleRowCount(oTable)) {
 					return;
 				}
 

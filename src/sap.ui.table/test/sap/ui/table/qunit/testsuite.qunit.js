@@ -100,6 +100,8 @@ sap.ui.define([
 			},
 			"RowSettings": {
 			},
+			"CreationRow": {
+			},
 			"TablePersoController": {
 				ui5: {
 					libs: ["sap.ui.table", "sap.m"]
