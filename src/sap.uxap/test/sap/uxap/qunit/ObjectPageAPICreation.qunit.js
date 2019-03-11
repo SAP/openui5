@@ -2021,6 +2021,13 @@ function (
 		}
 	});
 
+	QUnit.test("Object Page has the correct CSS class", function (assert) {
+		// Assert
+		assert.ok(this.oObjectPage.hasStyleClass("sapUxAPObjectPageHasDynamicTitle"),
+				"Object Page page has the sapUxAPObjectPageHasDynamicTitle CSS class" +
+				" when Dynamic Header Title is being used.");
+	});
+
 	QUnit.test("ObjectPageDynamicHeaderTitle with snappedTitleOnMobile on desktop", function (assert) {
 		// Arrange
 		var oObjectPage = this.oObjectPage,
@@ -2351,6 +2358,13 @@ function (
 		afterEach: function () {
 			this.oObjectPage.destroy();
 		}
+	});
+
+	QUnit.test("Object Page has the correct CSS class", function (assert) {
+		// Assert
+		assert.notOk(this.oObjectPage.hasStyleClass("sapUxAPObjectPageHasDynamicTitle"),
+				"Object Page page hasn't the sapUxAPObjectPageHasDynamicTitle CSS class" +
+				" when Dynamic Header Title is not being used.");
 	});
 
 	QUnit.test("Should change selectedSection", function (assert) {
