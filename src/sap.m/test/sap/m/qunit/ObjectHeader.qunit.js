@@ -860,7 +860,7 @@ sap.ui.define([
 		//Act
 		var oImg = jQuery("#" + ohResponsiveIcon.getId() + "-titleIcon");
 		oImg.focus();
-		sap.ui.test.qunit.triggerKeydown(oImg, jQuery.sap.KeyCodes.SPACE);
+		sap.ui.test.qunit.triggerKeyup(oImg, jQuery.sap.KeyCodes.SPACE);
 
 		//Assert
 		assert.ok(domRef, "Icon should fire 'iconPress' event when object header is responsive");
@@ -897,7 +897,7 @@ sap.ui.define([
 		oArrow.focus(); // set focus on the arrow
 
 		// Assert
-		sap.ui.test.qunit.triggerKeydown(oArrow, jQuery.sap.KeyCodes.SPACE);
+		sap.ui.test.qunit.triggerKeyup(oArrow, jQuery.sap.KeyCodes.SPACE);
 		assert.strictEqual(oSpy.callCount, 1, "SPACE is pressed, titleSelectorPress event was fired");
 
 		// clean up
@@ -928,7 +928,20 @@ sap.ui.define([
 		oArrowOH.destroy();
 	});
 
+	QUnit.test("Space prevent scrolling", function (assert) {
+		// Arrange
+		var oObjectHeader = new ObjectHeader({title: "Test"}),
+			oEvent = { preventDefault: this.spy() };
 
+		// Act
+		oObjectHeader.onsapspace(oEvent);
+
+		// Assert
+		assert.equal(oEvent.preventDefault.callCount, 1, "preventDefault is called to prevent scrolling");
+
+		// Cleanup
+		oObjectHeader.destroy();
+	});
 	//***************************************************************************
 	var oTitleArrowOH = new ObjectHeader("titleArrowOH", {
 		title : "Title Arrow reset to false and should not be displayed.",

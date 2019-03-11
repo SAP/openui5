@@ -10,6 +10,7 @@ sap.ui.define([
 	'sap/ui/core/library',
 	'sap/ui/Device',
 	'sap/m/Text',
+	'sap/ui/events/KeyCodes',
 	'./ObjectHeaderRenderer',
 	"sap/ui/thirdparty/jquery"
 ],
@@ -20,6 +21,7 @@ sap.ui.define([
 		coreLibrary,
 		Device,
 		Text,
+		KeyCodes,
 		ObjectHeaderRenderer,
 		jQuery
 	) {
@@ -820,9 +822,6 @@ sap.ui.define([
 		if (!this.getResponsive() && this.getTitleActive() && ( sSourceId === this.getId() + "-title" ||
 				jQuery(oEvent.target).parent().attr('id') === this.getId() + "-title" || // check if the parent of the "h" tag is the "title"
 				sSourceId === this.getId() + "-titleText-inner" )) {
-			if (oEvent.type === "sapspace") {
-				oEvent.preventDefault();
-			}
 			sSourceId = this.getId() + "-title";
 
 			if (!this.getTitleHref()) {
@@ -836,9 +835,6 @@ sap.ui.define([
 				}
 			}
 		} else if (this.getResponsive() && this.getTitleActive() && ( sSourceId === this.getId() + "-txt" || jQuery(oEvent.target).parent().attr('id') === this.getId() + "-txt" )) {
-			if (oEvent.type === "sapspace") {
-				oEvent.preventDefault();
-			}
 			// The sourceId should be always the id of the "a", even if we click on the inside span element
 			sSourceId = this.getId() + "-txt";
 
@@ -853,18 +849,12 @@ sap.ui.define([
 				}
 			}
 		} else if (this.getIntroActive() && sSourceId === this.getId() + "-intro") {
-			if (oEvent.type === "sapspace") {
-				oEvent.preventDefault();
-			}
 			if (!this.getIntroHref()) {
 				this.fireIntroPress({
 					domRef : (sSourceId ? window.document.getElementById(sSourceId) : null)
 				});
 			}
 		} else if (this.getIconActive() && jQuery(oEvent.target).is('.sapMOHIcon,.sapMOHRIcon')){
-			if (oEvent.type === "sapspace") {
-				oEvent.preventDefault();
-			}
 
 			var iconOrImg = (this.getId() + "-icon" ? window.document.getElementById(this.getId() + "-icon") : null);
 			if (!iconOrImg) {
@@ -875,21 +865,32 @@ sap.ui.define([
 				domRef : iconOrImg
 			});
 		} else if (sSourceId === this.getId() + "-titleArrow") {
-			if (oEvent.type === "sapspace") {
-				oEvent.preventDefault();
-			}
 			this.fireTitleSelectorPress({
 				domRef : (sSourceId ? window.document.getElementById(sSourceId) : null)
 			});
 		}
 	};
 
+
 	/**
-	 * Handles space key
+	 * @private
+	 * @param {object} oEvent The fired event
+	 */
+	ObjectHeader.prototype.onsapspace = function(oEvent) {
+		// prevent scrolling on SAPCE
+		oEvent.preventDefault();
+	};
+
+	/**
+	 * Handles space key on kye up
 	 *
 	 * @private
 	*/
-	ObjectHeader.prototype.onsapspace = ObjectHeader.prototype._handleSpaceOrEnter;
+	ObjectHeader.prototype.onkeyup = function (oEvent) {
+		if (oEvent.which === KeyCodes.SPACE) {
+			this._handleSpaceOrEnter(oEvent);
+		}
+	};
 
 	/**
 	 * Handles enter key
