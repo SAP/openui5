@@ -188,6 +188,60 @@
         "type": "FIX",
         "text": " v2/ODataModel: Prevent invalid cache entries",
         "references": []
+      },
+      {
+        "id": "5d2d08705af4c1a62fba87c8aa4c98747b24dda1",
+        "type": "FEATURE",
+        "text": " Messaging: Introduce MessageScope",
+        "references": []
+      },
+      {
+        "id": "ef87ca82251c990928d6feb79a0befe78e7c0742",
+        "type": "FEATURE",
+        "text": " sap_fiori_3: commons + ux3 libraries",
+        "references": []
+      },
+      {
+        "id": "058bdda6c8b4608ad48c7e5dba514671680d5583",
+        "type": "FIX",
+        "text": " AppCacheBuster: ensure to keep URL parameters and hash",
+        "references": []
+      },
+      {
+        "id": "192145d8dafb6c1a74c770eeec19ef3d30e5d549",
+        "type": "FIX",
+        "text": " Drag-and-Drop: Text in input fields should be selectable",
+        "references": []
+      },
+      {
+        "id": "17ceca68d6baeaa5e7984977715dc46c03271214",
+        "type": "FIX",
+        "text": " ManagedObject: supressInvalidate",
+        "references": []
+      },
+      {
+        "id": "0da223ca6f7cd15a83b9ed45131696ab1a7fe99a",
+        "type": "FIX",
+        "text": " ManagedObjectModel: Paging",
+        "references": []
+      },
+      {
+        "id": "ee87a1b96dbe641664902869305922cc98adc2b5",
+        "type": "FIX",
+        "text": " ODataPropertyBinding: Correct data state check",
+        "references": []
+      },
+      {
+        "id": "e42c871c8cd95fdbdc62552890409c5ca447e4b8",
+        "type": "FIX",
+        "text": " core/Fragment: Adding object as possible option for controller",
+        "references": []
+      },
+      {
+        "id": "1bfc2bc92ebb3fff52b098a84598a11d3d631f3f",
+        "type": "FIX",
+        "text": " mvc/Controller: restored missing JSDoc line",
+        "references": []
       }
     ]
   }

@@ -36,6 +36,18 @@
         "type": "FIX",
         "text": " ui.unified.FileUploader: mimeType is not supported in Edge and IE",
         "references": []
+      },
+      {
+        "id": "4787552d0b22cb755581a39d89489854caffe23e",
+        "type": "FIX",
+        "text": " sap.m.PlanningCalendar: stop showing appointments on OneMonth view if no date is selected on small screen",
+        "references": []
+      },
+      {
+        "id": "fbf7dbd003d714da7fd8340cc72f76c2864ad051",
+        "type": "FIX",
+        "text": " sap.ui.unified.CalendarTimeInterval: Navigates to the correct date",
+        "references": []
       }
     ]
   }

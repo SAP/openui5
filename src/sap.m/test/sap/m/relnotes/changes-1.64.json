@@ -360,6 +360,72 @@
         "type": "FIX",
         "text": " sap.m.SplitButton: Space fires press onkeyup and prevents scroll",
         "references": []
+      },
+      {
+        "id": "56fc44c42fd31f68f254ff129f888fe7fbfa71e5",
+        "type": "FEATURE",
+        "text": " sap.m.DatePicker: provides information on the validity of the last date entry",
+        "references": []
+      },
+      {
+        "id": "f085cc2559cde8bd5fa5771883d8283baff1f2b9",
+        "type": "FEATURE",
+        "text": " sap.m.Input, sap.m.MultiInput: Grouping in suggestions introduced",
+        "references": []
+      },
+      {
+        "id": "445bbeb27a4b8d74482852dd4b55e5209d67cbc4",
+        "type": "FIX",
+        "text": " ResponsiveTable: Improve ARIA roles",
+        "references": []
+      },
+      {
+        "id": "d2d20bec8ece470885e4a398680b4cb2314d6f42",
+        "type": "FIX",
+        "text": " sap.m.CheckBox: Propose and Commit actions enabled on SPACE key",
+        "references": []
+      },
+      {
+        "id": "779537d72fc25c87f38d0506264ce2014281820f",
+        "type": "FIX",
+        "text": " sap.m.ComboBox: Behaviour with grouping in IE and Edge",
+        "references": []
+      },
+      {
+        "id": "8185e60e74bac40700cfbd09857e4a26271f73fd",
+        "type": "FIX",
+        "text": " sap.m.LightBox: Title and subtile of LightBox are now read out",
+        "references": []
+      },
+      {
+        "id": "a74b647c5a9ea6b2f2a5b29c1dbab55056c13d28",
+        "type": "FIX",
+        "text": " sap.m.MessagePage: Curly braces in binded properties are shown now",
+        "references": []
+      },
+      {
+        "id": "2d6dba4db930f52d38ca5c0dd085f53f21ff08e7",
+        "type": "FIX",
+        "text": " sap.m.ObjectAttribute: prevent scrolling on space",
+        "references": []
+      },
+      {
+        "id": "4787552d0b22cb755581a39d89489854caffe23e",
+        "type": "FIX",
+        "text": " sap.m.PlanningCalendar: stop showing appointments on OneMonth view if no date is selected on small screen",
+        "references": []
+      },
+      {
+        "id": "9fe3c74d8fdb99f8078d6833a8530e9111d054ed",
+        "type": "FIX",
+        "text": " sap.m.Select: Correct update on child item \u0027key\u0027 changes",
+        "references": []
+      },
+      {
+        "id": "5fe868fa5adb5ee2f38c0a0c595831bc4eef1b43",
+        "type": "FIX",
+        "text": " sap.m.ToggleButton: fire press event on space keyup",
+        "references": []
       }
     ]
   }

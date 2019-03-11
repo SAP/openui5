@@ -29,6 +29,18 @@
         "type": "FIX",
         "text": " sap.f.Avatar: Displaying transparent image is now correct",
         "references": []
+      },
+      {
+        "id": "5e84afc81a451c0390c84b28324a75a6052fbdff",
+        "type": "FEATURE",
+        "text": " sap.uxap.ObjectPageDynamicHeaderTitle: Single-line title on phone",
+        "references": []
+      },
+      {
+        "id": "ef87ca82251c990928d6feb79a0befe78e7c0742",
+        "type": "FEATURE",
+        "text": " sap_fiori_3: commons + ux3 libraries",
+        "references": []
       }
     ]
   }

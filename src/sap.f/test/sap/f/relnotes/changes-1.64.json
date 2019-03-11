@@ -25,6 +25,12 @@
         "type": "FIX",
         "text": " sap.f.FlexibleColumnLayout: Fixed column resizing on layout change",
         "references": []
+      },
+      {
+        "id": "5e84afc81a451c0390c84b28324a75a6052fbdff",
+        "type": "FEATURE",
+        "text": " sap.uxap.ObjectPageDynamicHeaderTitle: Single-line title on phone",
+        "references": []
       }
     ]
   }
