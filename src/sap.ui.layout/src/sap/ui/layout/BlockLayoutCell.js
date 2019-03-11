@@ -151,6 +151,24 @@ sap.ui.define([
 			this._parentRowScrollable = scrollable;
 		};
 
+		BlockLayoutCell.prototype.onAfterRendering = function (oEvent) {
+
+			// fixes the issue in IE when the block layout size is auto
+			// like BlockLayout in a Dialog
+			if (Device.browser.internet_explorer) {
+				var bHasParentsThatHaveAutoHeight = false;
+				this.$().parents().toArray().forEach(function (element) {
+					if (element.style.height === "auto" || (element.className.indexOf("sapMDialogScroll") != -1)) {
+						bHasParentsThatHaveAutoHeight = true;
+					}
+				});
+
+				if (bHasParentsThatHaveAutoHeight){
+					this.$()[0].style.flex = this._flexWidth + ' 1 auto';
+				}
+			}
+		};
+
 		BlockLayoutCell.prototype._getParentRowScrollable = function () {
 			return this._parentRowScrollable;
 		};
@@ -160,13 +178,6 @@ sap.ui.define([
 		};
 
 		BlockLayoutCell.prototype._getFlexWidth = function () {
-
-			// fixes the issue in IE when the block layout size is auto
-			// like BlockLayout in a Dialog
-			if (Device.browser.internet_explorer) {
-				return this._flexWidth + ' 1 auto';
-			}
-
 			return this._flexWidth;
 		};
 
