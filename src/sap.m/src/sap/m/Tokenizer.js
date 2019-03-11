@@ -109,9 +109,7 @@ sap.ui.define([
 		events : {
 
 			/**
-			 * Fired when the tokens aggregation changed (add / remove token)
-			 * @deprecated Since version 1.64.
-			 * Please use the new event tokenUpdate.
+			 * fired when the tokens aggregation changed (add / remove token)
 			 */
 			tokenChange : {
 				parameters : {
@@ -156,7 +154,7 @@ sap.ui.define([
 				allowPreventDefault : true,
 				parameters: {
 					/**
-					 * Type of tokenUpdate event.
+					 * Type of tokenChange event.
 					 * There are two TokenUpdate types: "added", "removed"
 					 * Use Tokenizer.TokenUpdateType.Added for "added" and Tokenizer.TokenUpdateType.Removed for "removed".
 					 */
