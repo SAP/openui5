@@ -154,14 +154,28 @@ function (
 
 		QUnit.test("when the controls get rerendered", function(assert) {
 			var done = assert.async();
+			var bLayout, bVBox1, bVBox2;
 
-			var oObserver = new MutationObserver(function(mutations) {
-				assert.ok(isStretched(this.oLayoutOverlay), "the style class was set");
-				assert.ok(isStretched(this.oVBoxOverlay1), "the style class was set");
-				assert.ok(isStretched(this.oVBoxOverlay2), "the style class was set");
+			var oObserver = new MutationObserver(function(aMutations) {
+				aMutations.forEach(function(oMutation) {
+					if (oMutation.target === this.oLayout.getDomRef() && oMutation.attributeName === "class") {
+						assert.ok(isStretched(this.oLayoutOverlay), "the style class was set");
+						bLayout = true;
+					}
+					if (oMutation.target === this.oVBox1.getDomRef() && oMutation.attributeName === "class") {
+						assert.ok(isStretched(this.oVBoxOverlay1), "the style class was set");
+						bVBox1 = true;
+					}
+					if (oMutation.target === this.oVBox2.getDomRef() && oMutation.attributeName === "class") {
+						assert.ok(isStretched(this.oVBoxOverlay2), "the style class was set");
+						bVBox2 = true;
+					}
+				}.bind(this));
 
-				oObserver.disconnect();
-				done();
+				if (bLayout && bVBox1 && bVBox2) {
+					oObserver.disconnect();
+					done();
+				}
 			}.bind(this));
 			var oConfig = { attributes: true, childList: false, characterData: false, subtree : true};
 			oObserver.observe(document.getElementById('qunit-fixture'), oConfig);
@@ -247,6 +261,7 @@ function (
 			this.oDesignTime.attachEventOnce("synced", function() {
 				this.oLayoutOverlay = OverlayRegistry.getOverlay(this.oLayout);
 				this.oVBoxOverlay1 = OverlayRegistry.getOverlay(this.oVBox1);
+				this.oVBoxOverlay2 = OverlayRegistry.getOverlay(this.oVBox2);
 				done();
 			}.bind(this));
 		},
@@ -307,8 +322,13 @@ function (
 		});
 
 		QUnit.test("When the inner vbox gets destroyed", function(assert) {
+			var done = assert.async();
+			setTimeout(function() {
+				assert.notOk(isStretched(this.oVBoxOverlay1), "the style class was removed");
+				done();
+			}.bind(this), 0);
 			this.oVBox2.destroy();
-			assert.notOk(isStretched(this.oVBoxOverlay1), "the style class was removed");
+			sap.ui.getCore().applyChanges();
 		});
 
 		QUnit.test("When the inner vbox gets destroyed while a plugin is busy", function(assert) {
@@ -437,15 +457,21 @@ function (
 		});
 
 		QUnit.test("When the editable child changes editable", function(assert) {
-			this.oVBoxOverlay.setEditable(false);
-			assert.notOk(isStretched(this.oLayoutOverlay), "the style class was removed");
-			assert.notOk(isStretched(this.oHBoxOverlay), "the style class is not there");
-			assert.notOk(isStretched(this.oVBoxOverlay), "the style class is not there");
+			var done = assert.async();
+			this.oLayoutOverlay.attachEventOnce("geometryChanged", function() {
+				assert.notOk(isStretched(this.oLayoutOverlay), "the style class was removed");
+				assert.notOk(isStretched(this.oHBoxOverlay), "the style class is not there");
+				assert.notOk(isStretched(this.oVBoxOverlay), "the style class is not there");
 
-			this.oVBoxOverlay.setEditable(true);
-			assert.ok(isStretched(this.oLayoutOverlay), "the style class was added again");
-			assert.notOk(isStretched(this.oHBoxOverlay), "the style class is not there");
-			assert.notOk(isStretched(this.oVBoxOverlay), "the style class is not there");
+				this.oLayoutOverlay.attachEventOnce("geometryChanged", function() {
+					assert.ok(isStretched(this.oLayoutOverlay), "the style class was added again");
+					assert.notOk(isStretched(this.oHBoxOverlay), "the style class is not there");
+					assert.notOk(isStretched(this.oVBoxOverlay), "the style class is not there");
+					done();
+				}, this);
+				this.oVBoxOverlay.setEditable(true);
+			}, this);
+			this.oVBoxOverlay.setEditable(false);
 		});
 
 		QUnit.test("When the layout becomes not editable", function(assert) {
