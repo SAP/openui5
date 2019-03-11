@@ -10,7 +10,7 @@
 		"entities": [
 			{
 				"id": "sap.ui.integration.widgets.Card",
-				"name": "Card",
+				"name": "Integration Card",
 				"category": "Display",
 				"since": "1.62",
 				"formFactors": "-",
