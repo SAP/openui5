@@ -42,6 +42,20 @@
 		"group": "Layout Examples"
 	},
 	{
+		"title": "CSSGrid Drag and Drop 1",
+		"description": "",
+		"route": "dnd",
+		"usage": "",
+		"group": "Layout Examples"
+	},
+	{
+		"title": "CSSGrid Drag and Drop 2",
+		"description": "",
+		"route": "dnd2",
+		"usage": "",
+		"group": "Layout Examples"
+	},
+	{
 		"title": "List Card",
 		"description": "Example page for Card of type List",
 		"route": "listContent",
