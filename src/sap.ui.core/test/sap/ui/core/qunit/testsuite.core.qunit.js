@@ -490,6 +490,9 @@ sap.ui.define(function() {
 			},
 			"sap.ui.Global": {
 				title: "sap.ui.Global"
+			},
+			"support/usage/EventBroadcaster": {
+				title: "Event Broadcaster"
 			}
 		}
 	};
