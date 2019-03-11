@@ -5818,7 +5818,7 @@ sap.ui.define([
 	});
 	QUnit.test("submit:check success - no pending changes", function(assert) {
 		var done = assert.async();
-		assert.expect( 9 );
+		assert.expect(9);
 		var that = this;
 		this.oModel.setUseBatch(true);
 		this.oModel.metadataLoaded().then(function() {
