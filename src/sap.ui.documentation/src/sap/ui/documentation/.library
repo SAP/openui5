@@ -22,8 +22,7 @@
 
   <appData>
     <jsdoc xmlns="http://www.sap.com/ui5/buildext/jsdoc" >
-      <exclude name="sap.ui.documentation.sdk.thirdparty.google-code-prettify." />
-      <exclude name="sap.ui.documentation.sdk.thirdparty.jsanalyzer." />
+      <exclude name="sap.ui.documentation.sdk.thirdparty." />
     </jsdoc>
     <!-- excludes for the JSCoverage -->
     <jscoverage xmlns="http://www.sap.com/ui5/buildext/jscoverage" >
