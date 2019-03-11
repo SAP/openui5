@@ -411,8 +411,7 @@ sap.ui.define(['sap/ui/core/Control', 'sap/ui/core/theming/Parameters', 'sap/ui/
 
 		if (oTable.getSelectionMode() !== SelectionMode.Single) {
 			if (mRenderConfig.headerSelector.icon) {
-				var sIcon = mRenderConfig.headerSelector.icon;
-				rm.writeIcon(sIcon, "sapUiTableSelectClear");
+				rm.renderControl(mRenderConfig.headerSelector.icon);
 			} else {
 				rm.write("<div");
 				rm.addClass("sapUiTableSelectAllCheckBox");

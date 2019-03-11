@@ -3032,7 +3032,13 @@ sap.ui.define([
 			$SelectAll.toggleClass("sapUiTableSelAll", !bAllRowsSelected);
 			this._getAccExtension().setSelectAllState(bAllRowsSelected);
 
-			var sSelectAllResourceTextID = bAllRowsSelected ? "TBL_DESELECT_ALL" : "TBL_SELECT_ALL";
+			var mRenderConfig = this._oSelectionPlugin.getRenderConfig();
+			var sSelectAllResourceTextID;
+			if (mRenderConfig.headerSelector.type === "toggle") {
+				sSelectAllResourceTextID = bAllRowsSelected ? "TBL_DESELECT_ALL" : "TBL_SELECT_ALL";
+			} else if (mRenderConfig.headerSelector.type === "clear") {
+				sSelectAllResourceTextID = "TBL_DESELECT_ALL";
+			}
 			var sSelectAllText = TableUtils.getResourceText(sSelectAllResourceTextID);
 
 			if (this._getShowStandardTooltips()) {
@@ -3060,6 +3066,10 @@ sap.ui.define([
 		var aRowIndices = oEvent.getParameter("rowIndices");
 		var bSelectAll = oEvent.getParameter("selectAll");
 		var iRowIndex = this._iSourceRowIndex !== undefined ? this._iSourceRowIndex : this.getSelectedIndex();
+		var bLimitReached = oEvent.getParameter("limitReached");
+		if (bLimitReached) {
+			this.setFirstVisibleRow(Math.max(0, aRowIndices[aRowIndices.length - 1] - this.getVisibleRowCount() + 2));
+		}
 		this._updateSelection();
 
 		this.fireRowSelectionChange({

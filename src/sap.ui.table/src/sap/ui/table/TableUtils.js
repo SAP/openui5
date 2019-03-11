@@ -1498,7 +1498,7 @@ sap.ui.define([
 			mDefaultRowHeight.sapUiSizeCondensed = mBaseSize.sapUiSizeCondensed + iRowHorizontalFrameSize;
 
 			mThemeParameters.sapUiTableActionNavigationIcon = ThemeParameters.get("_sap_ui_table_RowActionNavigationIcon");
-			mThemeParameters.sapUiTableActionDeleteIcon = ThemeParameters.get("_sap_ui_table_RowActionDeleteIcon");
+			mThemeParameters.sapUiTableActionDeleteIcon = ThemeParameters.get("_sap_ui_table_DeleteIcon");
 		}
 	};
 

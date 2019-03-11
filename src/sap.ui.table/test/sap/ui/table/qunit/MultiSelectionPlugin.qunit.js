@@ -120,14 +120,14 @@ sap.ui.define([
 			assert.deepEqual(aSelectedIndices, [0], "First row is selected");
 
 			oTable._oSelectionPlugin.attachEvent("selectionChange", function(oEvent){
-				assert.deepEqual(oEvent.mParameters.rowIndices, [1, 2, 3, 4, 5], "rowIndices parameter is correct");
+				assert.deepEqual(oEvent.mParameters.rowIndices, [1, 2, 3, 4, 5, 6], "rowIndices parameter is correct");
 				assert.ok(oEvent.mParameters.limitReached, "limitReached parameter is correct");
 			});
 
 			oTable.addSelectionInterval(1,10);
 			setTimeout(function() {
 				aSelectedIndices = oTable.getSelectedIndices();
-				assert.deepEqual(aSelectedIndices, [0, 1, 2, 3, 4, 5], "Selection is cut down to the possible limit");
+				assert.deepEqual(aSelectedIndices, [0, 1, 2, 3, 4, 5, 6], "Selection is cut down to the possible limit");
 				assert.equal(Math.max(0, 5 - oTable.getVisibleRowCount() + 2), oTable.getFirstVisibleRow(), "table scrolls back to the last selected item");
 				done();
 			}, 10);

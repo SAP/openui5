@@ -5,12 +5,18 @@ sap.ui.define([
 	'./SelectionPlugin',
 	'./SelectionModelPlugin',
 	'./BindingSelectionPlugin',
-	'../library'
+	'../library',
+	'sap/ui/core/Icon',
+	'sap/ui/core/IconPool',
+	'sap/ui/core/theming/Parameters'
 ], function(
 	SelectionPlugin,
 	SelectionModelPlugin,
 	BindingSelectionPlugin,
-	library
+	library,
+	Icon,
+	IconPool,
+	ThemeParameters
 ) {
 
 	"use strict";
@@ -74,6 +80,10 @@ sap.ui.define([
 	MultiSelectionPlugin.prototype.init = function() {
 		SelectionPlugin.prototype.init.call(this);
 		this._bLimitReached = false;
+		var sapUiTableActionDeleteIcon = ThemeParameters.get("_sap_ui_table_DeleteIcon");
+		var oIcon = new Icon({src: IconPool.getIconURI(sapUiTableActionDeleteIcon), useIconTooltip: false});
+		oIcon.addStyleClass("sapUiTableSelectClear");
+		this.oDeselectAllIcon = oIcon;
 	};
 
 	/**
@@ -85,7 +95,7 @@ sap.ui.define([
 		return {
 			headerSelector: {
 				type: "clear",
-				icon: "sap-icon://sys-cancel"
+				icon: this.oDeselectAllIcon
 			}
 		};
 	};
@@ -123,18 +133,18 @@ sap.ui.define([
 		}
 
 		var iLimit = this.getLimit();
-		var iLength = iIndexTo - iIndexFrom + 1;
+		var iLength = iIndexTo - iIndexFrom;
 		var that = this;
 		var oBinding = this._getBinding();
 
 		this.setLimitReached(false);
 		if (iLength > iLimit) {
-			iIndexTo = iIndexFrom + iLimit - 1;
+			iIndexTo = iIndexFrom + iLimit;
 			iLength = iLimit;
 			this.setLimitReached(true);
 		}
 
-		if (oBinding && iIndexFrom >= 0 && iLength > 0) {
+		if (oBinding && iIndexFrom >= 0 && iLength >= 0) {
 			loadMultipleContexts(oBinding, iIndexFrom, iLength).then(function () {
 				that.oSelectionPlugin.addSelectionInterval(iIndexFrom, iIndexTo);
 			});
@@ -405,6 +415,15 @@ sap.ui.define([
 		if (this.oSelectionPlugin) {
 			return this.oSelectionPlugin._onBindingChange(oEvent);
 		}
+	};
+
+	MultiSelectionPlugin.prototype.onThemeChanged = function() {
+		this.oDeselectAllIcon.setSrc(ThemeParameters.get("_sap_ui_table_DeleteIcon"));
+	};
+
+	MultiSelectionPlugin.prototype.exit = function() {
+		this.oDeselectAllIcon.destroy();
+		this.oDeselectAllIcon = null;
 	};
 
 	return MultiSelectionPlugin;

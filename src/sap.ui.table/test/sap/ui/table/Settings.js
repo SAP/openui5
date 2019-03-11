@@ -339,6 +339,7 @@
 							action: function(oTable) {
 								var MultiSelectionPlugin = sap.ui.requireSync("sap/ui/table/plugins/MultiSelectionPlugin");
 								oTable.addPlugin(new MultiSelectionPlugin({
+									limit: 20,
 									selectionChange: function(oEvent) {
 										var oPlugin = oEvent.getSource();
 										var bLimitReached = oEvent.getParameters().limitReached;

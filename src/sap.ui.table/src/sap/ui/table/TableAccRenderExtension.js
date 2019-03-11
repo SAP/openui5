@@ -77,7 +77,15 @@ sap.ui.define(["./TableExtension", "./TableUtils", "./library"], function(TableE
 			// aria description for toggling the edit mode
 			_writeAccText(oRm, sTableId, "toggleedit", TableUtils.getResourceText("TBL_TOGGLE_EDIT_KEY"));
 			// aria description for select all button
-			_writeAccText(oRm, sTableId, "ariaselectall", TableUtils.getResourceText("TBL_SELECT_ALL"));
+			var bAllRowsSelected = TableUtils.areAllRowsSelected(oTable);
+			var mRenderConfig = oTable._oSelectionPlugin.getRenderConfig();
+			var sSelectAllResourceTextID;
+			if (mRenderConfig.headerSelector.type === "toggle") {
+				sSelectAllResourceTextID = bAllRowsSelected ? "TBL_DESELECT_ALL" : "TBL_SELECT_ALL";
+			} else if (mRenderConfig.headerSelector.type === "clear") {
+				sSelectAllResourceTextID = "TBL_DESELECT_ALL";
+			}
+			_writeAccText(oRm, sTableId, "ariaselectall", TableUtils.getResourceText(sSelectAllResourceTextID));
 			// aria label for row headers
 			_writeAccText(oRm, sTableId, "ariarowheaderlabel", TableUtils.getResourceText("TBL_ROW_HEADER_LABEL"));
 			// aria label for group rows
