@@ -880,8 +880,6 @@ sap.ui.define([
 	 */
 	FlexibleColumnLayout.prototype._resizeColumns = function () {
 		var iPercentWidth,
-			iNewWidth,
-			sNewWidth,
 			iTotalMargin,
 			iAvailableWidth,
 			bNeedsMargin = false,
@@ -916,7 +914,9 @@ sap.ui.define([
 		iAvailableWidth = this._getControlWidth() - iTotalMargin;
 
 		aColumns.forEach(function (sColumn) {
-			var oColumn = this._$columns[sColumn];
+			var oColumn = this._$columns[sColumn],
+				iNewWidth,
+				sNewWidth;
 
 			iPercentWidth = this._getColumnSize(sColumn);
 
@@ -927,6 +927,7 @@ sap.ui.define([
 			oColumn.toggleClass("sapFFCLColumnActive", iPercentWidth > 0);
 
 			// Remove all the classes that are used for HCB theme borders, they will be set again later
+			oColumn.removeClass("sapFFCLColumnHidden");
 			oColumn.removeClass("sapFFCLColumnOnlyActive");
 			oColumn.removeClass("sapFFCLColumnLastActive");
 			oColumn.removeClass("sapFFCLColumnFirstActive");
@@ -964,7 +965,11 @@ sap.ui.define([
 
 					// Clear pinning after transitions are finished
 					oColumn.toggleClass(FlexibleColumnLayout.PINNED_COLUMN_CLASS_NAME, false);
-				}, FlexibleColumnLayout.COLUMN_RESIZING_ANIMATION_DURATION);
+
+					this._adjustColumnDisplay(oColumn, iNewWidth);
+				}.bind(this), FlexibleColumnLayout.COLUMN_RESIZING_ANIMATION_DURATION);
+			} else {
+				this._adjustColumnDisplay(oColumn, iNewWidth);
 			}
 
 			oColumn.width(sNewWidth);
@@ -1001,6 +1006,21 @@ sap.ui.define([
 
 		this._storePreviousResizingInfo(iDefaultVisibleColumnsCount);
 	};
+
+	/**
+	 * Sets the value of the column's display property to none if the new width of the column is zero.
+	 *
+	 * @param oColumn
+	 * @param iNewWidth
+	 * @private
+	*/
+	FlexibleColumnLayout.prototype._adjustColumnDisplay = function(oColumn, iNewWidth) {
+		//BCP: 1980006195
+		if (iNewWidth === 0) {
+			oColumn.addClass("sapFFCLColumnHidden");
+		}
+	};
+
 
 	/**
 	 * Stores information from the last columns' resizing.

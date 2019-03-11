@@ -22,7 +22,8 @@ function (
 		DESKTOP_SIZE = "1300px",
 		TABLET_SIZE = "1200px",
 		PHONE_SIZE = "900px",
-		ANIMATION_WAIT_TIME = 500;
+		ANIMATION_WAIT_TIME = 500,
+		COLUMN_RESIZING_ANIMATION_DURATION = 560;
 
 	var fnCreatePage = function (sId) {
 		return new Page(sId, {
@@ -869,6 +870,26 @@ function (
 		// Set a fullscreen layout
 		this.oFCL.setLayout(LT.MidColumnFullScreen);
 		assert.strictEqual(this.oFCL._shouldPinColumn(2, true), false, "No pinning should be done when closing a fullscreen layout");
+	});
+
+	//BCP: 1980006195
+	QUnit.test("Columns with width 0 should have the sapFFCLColumnHidden class applied", function(assert){
+		var fnDone = assert.async(),
+			iAnimationDelay = COLUMN_RESIZING_ANIMATION_DURATION + 100;
+
+		this.oFCL = oFactory.createFCL({
+			layout: LT.MidColumnFullScreen
+		});
+
+
+		setTimeout(function() {
+			// assert
+			assertColumnsVisibility(assert, this.oFCL, 0, 1, 0);
+			assert.ok(this.oFCL._$columns["begin"].hasClass('sapFFCLColumnHidden'));
+			assert.notOk(this.oFCL._$columns["mid"].hasClass('sapFFCLColumnHidden'));
+			assert.ok(this.oFCL._$columns["end"].hasClass('sapFFCLColumnHidden'));
+			fnDone();
+		}.bind(this), iAnimationDelay);
 	});
 
 	QUnit.module("ScreenReader supprot", {
