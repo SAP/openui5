@@ -13,7 +13,8 @@ sap.ui.define([
 	'sap/ui/core/library',
 	'./CheckBoxRenderer',
 	"sap/ui/thirdparty/jquery",
-	"sap/ui/events/KeyCodes"
+	"sap/ui/events/KeyCodes",
+	'sap/ui/core/LabelEnablement'
 ],
 	function(
 		Label,
@@ -25,7 +26,8 @@ sap.ui.define([
 		coreLibrary,
 		CheckBoxRenderer,
 		jQuery,
-		KeyCodes
+		KeyCodes,
+		LabelEnablement
 	) {
 	"use strict";
 
@@ -247,6 +249,7 @@ sap.ui.define([
 	CheckBox.prototype.init = function() {
 		this.addActiveState(this);
 		IconPool.insertFontFaceStyle();
+		this._handleReferencingLabels();
 	};
 
 	CheckBox.prototype.exit = function() {
@@ -510,6 +513,32 @@ sap.ui.define([
 		return bSelected;
 	};
 
+	/**
+	 * Called when a referencing label is tapped.
+	 * @private
+	 */
+	CheckBox.prototype._fnLabelTapHandler = function () {
+		this.$().focus();
+	};
+
+	/**
+	 * Ensures clicking on external referencing labels will put the focus on the CheckBox container.
+	 * @private
+	 */
+	CheckBox.prototype._handleReferencingLabels = function () {
+		var aLabelIds = LabelEnablement.getReferencingLabels(this),
+			that = this;
+
+		if (aLabelIds.length > 0) {
+			aLabelIds.forEach(function (sLabelId) {
+				sap.ui.getCore().byId(sLabelId).addEventDelegate({
+					ontap: function () {
+						that._fnLabelTapHandler();
+					}
+				});
+			});
+		}
+	};
 
 	/**
 	 * @see sap.ui.core.Control#getAccessibilityInfo

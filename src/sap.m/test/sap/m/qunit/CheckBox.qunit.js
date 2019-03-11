@@ -1044,6 +1044,36 @@ sap.ui.define([
 
 	QUnit.module("Accessibility");
 
+	QUnit.test("Referencing labels enhancing", function(assert) {
+		// system under test
+		var oSpy = sinon.spy(CheckBox.prototype, "_handleReferencingLabels"),
+			oSpyHandler = sinon.spy(CheckBox.prototype, "_fnLabelTapHandler"),
+			oLabel = new Label({
+				text: "referencing label",
+				labelFor: 'cbTest1'
+			}),
+			oCheckBox = new CheckBox({
+				id: 'cbTest1'
+			});
+
+		// assert
+		assert.ok(oSpy.calledOnce, "Enhancing function is called on init");
+
+		// act
+		oLabel.placeAt("content");
+		oCheckBox.placeAt("content");
+		Core.applyChanges();
+
+		QUtils.triggerEvent("tap", oLabel.getId());
+
+		// assert
+		assert.ok(oSpyHandler.calledOnce, "Handler function is called");
+
+		// cleanup
+		oLabel.destroy();
+		oCheckBox.destroy();
+	});
+
 	QUnit.test("getAccessibilityInfo", function(assert) {
 		var oControl = new CheckBox({text: "Text"});
 		assert.ok(!!oControl.getAccessibilityInfo, "CheckBox has a getAccessibilityInfo function");
