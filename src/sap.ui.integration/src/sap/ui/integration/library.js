@@ -19,7 +19,9 @@ sap.ui.define(["sap/ui/base/DataType",
 			name: "sap.ui.integration",
 			version: "${version}",
 			dependencies: ["sap.ui.core", "sap.f"],
-			types: [],
+			types: [
+				"sap.ui.integration.CardActionType"
+			],
 			controls: [
 				"sap.ui.integration.widgets.Card",
 				"sap.ui.integration.host.HostConfiguration"
@@ -45,6 +47,22 @@ sap.ui.define(["sap/ui/base/DataType",
 		 * @public
 		 */
 		var thisLib = sap.ui.integration;
+
+		/**
+		 * Enumeration of possible card action types.
+		 *
+		 * @enum {string}
+		 * @experimental since 1.64
+		 * Disclaimer: this property is in a beta state - incompatible API changes may be done before its official public release. Use at your own discretion.
+		 */
+		thisLib.CardActionType = {
+
+			/**
+			 * Used for navigation actions
+			 * @public
+			 */
+			Navigation : "Navigation"
+		};
 
 		return thisLib;
 

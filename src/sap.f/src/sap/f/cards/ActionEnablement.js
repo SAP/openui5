@@ -139,6 +139,14 @@ sap.ui.define(["sap/ui/base/ManagedObject", "sap/base/Log", "sap/f/cards/Binding
 			this.addStyleClass("sapFCardHeaderClickable");
 		}
 
+		function _fireAction(oSource, oActionParams, oModel, sPath) {
+			this.fireEvent("action", {
+				type: "Navigation",
+				actionSource: oSource,
+				manifestParameters: BindingResolver.resolveValue(oActionParams, oModel, sPath)
+			});
+		}
+
 		function _attachNavigationAction(mItem, oControl) {
 			var oAction = mItem.actions[0];
 			var fnHandler;
@@ -176,6 +184,8 @@ sap.ui.define(["sap/ui/base/ManagedObject", "sap/base/Log", "sap/f/cards/Binding
 						.catch(function (e) {
 							Log.error("Navigation service unavailable", e);
 						});
+
+					_fireAction.call(this, oEvent.getSource(), oAction.parameters, oModel, sPath);
 				};
 
 				// When there is a service let it handle the "enabled" state.
@@ -202,21 +212,21 @@ sap.ui.define(["sap/ui/base/ManagedObject", "sap/base/Log", "sap/f/cards/Binding
 						sUrl = BindingResolver.resolveValue(oAction.url, oModel, sPath);
 
 						window.open(sUrl, oAction.target || "_blank");
+
+						_fireAction.call(this, oEvent.getSource(), oAction.parameters, oModel, sPath);
 					};
 				} else {
 					fnHandler = function (oEvent) {
-						var oSource = oEvent.getSource();
-						var oBindingContext = oSource.getBindingContext();
-						var oModel = oSource.getModel();
-						var sPath;
+						var oSource = oEvent.getSource(),
+							oBindingContext = oSource.getBindingContext(),
+							oModel = oSource.getModel(),
+							sPath;
+
 						if (oBindingContext) {
 							sPath = oBindingContext.getPath();
 						}
 
-						this.fireEvent("onAction", {
-							type: "Navigation",
-							manifestParameters: BindingResolver.resolveValue(oAction.parameters, oModel, sPath)
-						});
+						_fireAction.call(this, oEvent.getSource(), oAction.parameters, oModel, sPath);
 					};
 				}
 			}

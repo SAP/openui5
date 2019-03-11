@@ -1,4 +1,7 @@
 {
+	"sap.app": {
+		"type": "card"
+	},
 	"sap.card": {
 	  "type": "List",
 	  "header": {
