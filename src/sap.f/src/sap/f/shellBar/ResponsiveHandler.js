@@ -413,7 +413,10 @@ sap.ui.define([
 	 */
 	ResponsiveHandler.prototype._restoreControlsLayoutData = function () {
 		oControl._aOverflowControls.forEach(function (oCtr) {
-			oCtr.setLayoutData(this._oCachedLayoutData[oCtr.getId()]);
+			var oLayoutData = this._oCachedLayoutData[oCtr.getId()];
+			if (oLayoutData) {
+				oCtr.setLayoutData(oLayoutData);
+			}
 		}.bind(this));
 	};
 
