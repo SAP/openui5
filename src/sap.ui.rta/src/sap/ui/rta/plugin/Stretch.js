@@ -140,11 +140,12 @@ function (
 
 		if (oParams.type === "afterRendering") {
 			if (!this.fnDebounced) {
+				// the timeout should be changed to 0 as soon as DT refactoring is done
 				this.fnDebounced = DtUtil.debounce(function() {
 					this._setStyleClassForAllStretchCandidates(this._getNewStretchCandidates(this._aOverlaysCollected));
 					this._aOverlaysCollected = [];
 					this.fnDebounced = undefined;
-				}.bind(this));
+				}.bind(this), 16);
 			}
 
 			if (!this._aOverlaysCollected) {
@@ -334,7 +335,7 @@ function (
 		// remove padding if it is already stretched
 		var iHeight = oParentGeometry.size.height;
 		if (bIsAlreadyStretched) {
-			iHeight -= oReferenceOverlay.getElement().$().css("padding-top");
+			iHeight -= parseInt(oReferenceOverlay.getElement().$().css("padding-top"));
 		}
 		var iParentSize = Math.round(oParentGeometry.size.width) * Math.round(iHeight);
 		aChildOverlays = aChildOverlays || OverlayUtil.getAllChildOverlays(oReferenceOverlay);
