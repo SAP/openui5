@@ -462,7 +462,12 @@ sap.ui.define(function () {
 					only: ["sap/ui/fl/fieldExt/Access"]
 				}
 			},
-
+			"designtime/appVariant/ChangeModifier": {
+				group: "designTime"
+			},
+			"designtime/appVariant/AppVariantUtils": {
+				group: "designTime"
+			},
 			"integration/async/ComponentWithView": {
 				group: "integration/async",
 				ui5: {

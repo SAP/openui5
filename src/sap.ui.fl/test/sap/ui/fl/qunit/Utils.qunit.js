@@ -1883,6 +1883,91 @@ function(
 		});
 	});
 
+	QUnit.module("Utils.getValidAppVersions & isValidAppVersionToRequired", {}, function() {
+		QUnit.test("filling app version in case of a non-developer mode", function (assert) {
+			var sCreationVersion = "1.0.0";
+			var oAppVersions = Utils.getValidAppVersions({
+				appVersion: sCreationVersion
+			});
+			assert.equal(oAppVersions.creation, sCreationVersion, "the 'creation' is filled correctly");
+			assert.equal(oAppVersions.from, sCreationVersion, "the 'from' is filled correctly");
+			assert.equal(oAppVersions.to, undefined, "the 'to' is not filled");
+		});
+
+		QUnit.test("filling app version in case of a developer mode without a scenario mentioned", function (assert) {
+			var sCreationVersion = "1.0.0";
+			var oAppVersions = Utils.getValidAppVersions({appVersion: sCreationVersion, developerMode: true});
+			assert.equal(oAppVersions.creation, sCreationVersion, "the 'creation' is filled correctly");
+			assert.equal(oAppVersions.from, sCreationVersion, "the 'from' is filled correctly");
+			assert.equal(oAppVersions.to, sCreationVersion, "the 'to' is  filled correctly");
+		});
+
+		QUnit.test("filling app version in case of a developer mode and a versioned app variant scenario", function (assert) {
+			var sCreationVersion = "1.0.0";
+			var oAppVersions = Utils.getValidAppVersions({
+				appVersion: sCreationVersion,
+				developerMode: true,
+				scenario: sap.ui.fl.Scenario.VersionedAppVariant
+			});
+			assert.equal(oAppVersions.creation, sCreationVersion, "the 'creation' is filled correctly");
+			assert.equal(oAppVersions.from, sCreationVersion, "the 'from' is filled correctly");
+			assert.equal(oAppVersions.to, sCreationVersion, "the 'to' is  filled correctly");
+		});
+
+		QUnit.test("filling app version in case of a developer mode and a app variant scenario", function (assert) {
+			var sCreationVersion = "1.0.0";
+			var oAppVersions = Utils.getValidAppVersions({
+				appVersion: sCreationVersion,
+				developerMode: true,
+				scenario: sap.ui.fl.Scenario.AppVariant
+			});
+			assert.equal(oAppVersions.creation, sCreationVersion, "the 'creation' is filled correctly");
+			assert.equal(oAppVersions.from, sCreationVersion, "the 'from' is filled correctly");
+			assert.equal(oAppVersions.to, undefined, "the 'to' is not filled");
+		});
+
+		QUnit.test("filling app version in case of a developer mode and a adaptation project scenario", function (assert) {
+			var sCreationVersion = "1.0.0";
+			var oAppVersions = Utils.getValidAppVersions({
+				appVersion: sCreationVersion,
+				developerMode: true,
+				scenario: sap.ui.fl.Scenario.AdaptationProject
+			});
+			assert.equal(oAppVersions.creation, sCreationVersion, "the 'creation' is filled correctly");
+			assert.equal(oAppVersions.from, sCreationVersion, "the 'from' is filled correctly");
+			assert.equal(oAppVersions.to, undefined, "the 'to' is not filled");
+		});
+		QUnit.test("determination of the necessity of the validAppVersion.to parameter in case of a non-developer mode", function (assert) {
+			var sCreationVersion = "1.0.0";
+			var bIsValidAppVersionToRequired = Utils._isValidAppVersionToRequired(sCreationVersion);
+			assert.equal(bIsValidAppVersionToRequired, false, "the necessity of 'to' correct defined");
+		});
+
+		QUnit.test("determination of the necessity of the validAppVersion.to parameter in case of a developer mode without a scenario mentioned", function (assert) {
+			var sCreationVersion = "1.0.0";
+			var bIsValidAppVersionToRequired = Utils._isValidAppVersionToRequired(sCreationVersion, true);
+			assert.equal(bIsValidAppVersionToRequired, true, "the necessity of 'to' correct defined");
+		});
+
+		QUnit.test("determination of the necessity of the validAppVersion.to parameter in case of a developer mode and a versioned app variant scenario", function (assert) {
+			var sCreationVersion = "1.0.0";
+			var bIsValidAppVersionToRequired = Utils._isValidAppVersionToRequired(sCreationVersion, true, sap.ui.fl.Scenario.VersionedAppVariant);
+			assert.equal(bIsValidAppVersionToRequired, true, "the necessity of 'to' correct defined");
+		});
+
+		QUnit.test("determination of the necessity of the validAppVersion.to parameter in case of a developer mode and a app variant scenario", function (assert) {
+			var sCreationVersion = "1.0.0";
+			var bIsValidAppVersionToRequired = Utils._isValidAppVersionToRequired(sCreationVersion, true, sap.ui.fl.Scenario.AppVariant);
+			assert.equal(bIsValidAppVersionToRequired, false, "the necessity of 'to' correct defined");
+		});
+
+		QUnit.test("determination of the necessity of the validAppVersion.to parameter in case of a developer mode and a adaptation project scenario", function (assert) {
+			var sCreationVersion = "1.0.0";
+			var bIsValidAppVersionToRequired = Utils._isValidAppVersionToRequired(sCreationVersion, true, sap.ui.fl.Scenario.AdaptationProject);
+			assert.equal(bIsValidAppVersionToRequired, false, "the necessity of 'to' correct defined");
+		});
+	});
+
 	QUnit.module("Utils.buildLrepRootNamespace", {
 		beforeEach: function() {
 			this.sErrorText = "Error in sap.ui.fl.Utils#buildLrepRootNamespace: ";
@@ -1891,7 +1976,7 @@ function(
 		afterEach: function() {}
 	}, function() {
 		QUnit.test("scenario " + sap.ui.fl.Scenario.VersionedAppVariant + ": New VersionedAppVariant", function(assert) {
-			this.sErrorText += "in a versioned app variant scenario you additionaly need a project ID";
+			this.sErrorText += "in a versioned app variant scenario you additionally need a project ID";
 			var sLrepRootNamespace = "apps/baseId/appVariants/projectId/";
 			assert.equal(Utils.buildLrepRootNamespace("baseId", sap.ui.fl.Scenario.VersionedAppVariant, "projectId"), sLrepRootNamespace, "then the root namespace got build correctly");
 			assert.throws(
@@ -1907,7 +1992,7 @@ function(
 		});
 
 		QUnit.test("scenario " + sap.ui.fl.Scenario.AppVariant + ": New AppVariant", function(assert) {
-			this.sErrorText += "in an app variant scenario you additionaly need a project ID";
+			this.sErrorText += "in an app variant scenario you additionally need a project ID";
 			var sLrepRootNamespace = "apps/baseId/appVariants/projectId/";
 			assert.equal(Utils.buildLrepRootNamespace("baseId", sap.ui.fl.Scenario.AppVariant, "projectId"), sLrepRootNamespace, "then the root namespace got build correctly");
 			assert.throws(
@@ -1923,7 +2008,7 @@ function(
 		});
 
 		QUnit.test("scenario " + sap.ui.fl.Scenario.AdaptationProject + ": Customer adapts existing app", function(assert) {
-			this.sErrorText += "in a adaptation project scenario you additionaly need a project ID";
+			this.sErrorText += "in a adaptation project scenario you additionally need a project ID";
 			var sLrepRootNamespace = "apps/baseId/adapt/projectId/";
 			assert.equal(Utils.buildLrepRootNamespace("baseId", sap.ui.fl.Scenario.AdaptationProject, "projectId"), sLrepRootNamespace, "then the root namespace got build correctly");
 			assert.throws(
