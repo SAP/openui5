@@ -9,6 +9,7 @@ sap.ui.define([
 	"./shellBar/AdditionalContentSupport",
 	"./shellBar/ResponsiveHandler",
 	"./shellBar/Accessibility",
+	'/sap/m/BarInPageEnabler',
 	"./ShellBarRenderer"
 ],
 function(
@@ -16,7 +17,8 @@ function(
 	Factory,
 	AdditionalContentSupport,
 	ResponsiveHandler,
-	Accessibility
+	Accessibility,
+	BarInPageEnabler
 	/*, ShellBarRenderer */
 ) {
 	"use strict";
@@ -47,7 +49,6 @@ function(
 	 *
 	 * @constructor
 	 * @public
-	 * @experimental Since 1.63, that provides only limited functionality. Also, the API might be changed in future.
 	 * @alias sap.f.ShellBar
 	 * @since 1.63
 	 * @ui5-metamodel This control/element also will be described in the UI5 (legacy) designtime metamodel
@@ -56,7 +57,8 @@ function(
 		metadata: {
 			library: "sap.f",
 			interfaces: [
-				"sap.f.IShellBar"
+				"sap.f.IShellBar",
+				"sap.m.IBar"
 			],
 			properties: {
 				/**
@@ -483,6 +485,101 @@ function(
 	ShellBar.prototype._getOverflowToolbar = function () {
 		return this._oOverflowToolbar;
 	};
+
+	///////////////////////////
+	// Bar in page delegation
+	///////////////////////////
+
+	/**
+	 * Gets the available Bar contexts.
+	 *
+	 * @returns {Object} with all available contexts
+	 * @protected
+	 * @since 1.65
+	 */
+	ShellBar.prototype.getContext = BarInPageEnabler.prototype.getContext;
+
+	/**
+	 * Returns if the bar is sensitive to the container context. Implementation of the IBar interface
+	 * @returns {boolean} isContextSensitive
+	 * @protected
+	 * @function
+	 * @since 1.65
+	 */
+	ShellBar.prototype.isContextSensitive = BarInPageEnabler.prototype.isContextSensitive;
+
+	/**
+	 * Sets the HTML tag of the root DOM Reference.
+	 * @param {string} sTag
+	 * @returns {sap.m.IBar} this for chaining
+	 * @protected
+	 * @function
+	 * @since 1.65
+	 */
+	ShellBar.prototype.setHTMLTag = BarInPageEnabler.prototype.setHTMLTag;
+
+	/**
+	 * Gets the HTML tag of the root DOM Reference.
+	 * @returns {string} the HTML-tag
+	 * @protected
+	 * @function
+	 * @since 1.65
+	 */
+	ShellBar.prototype.getHTMLTag = BarInPageEnabler.prototype.getHTMLTag;
+
+	/**
+	 * Sets classes and HTML tag according to the context of the page. Possible contexts are header, footer, and subheader
+	 * @returns {sap.m.IBar} <code>this</code> for chaining
+	 * @protected
+	 * @function
+	 * @since 1.65
+	 */
+	ShellBar.prototype.applyTagAndContextClassFor = BarInPageEnabler.prototype.applyTagAndContextClassFor;
+
+	/**
+	 * Sets classes according to the context of the page. Possible contexts are header, footer, and subheader.
+	 * @returns {sap.m.IBar} <code>this</code> for chaining
+	 * @protected
+	 * @function
+	 * @since 1.65
+	 */
+	ShellBar.prototype._applyContextClassFor  = BarInPageEnabler.prototype._applyContextClassFor;
+
+	/**
+	 * Sets the HTML tag according to the context of the page. Possible contexts are header, footer, and subheader.
+	 * @returns {sap.m.IBar} <code>this</code> for chaining
+	 * @protected
+	 * @function
+	* @since 1.65
+	 */
+	ShellBar.prototype._applyTag  = BarInPageEnabler.prototype._applyTag;
+
+	/**
+	 * Gets context options of the Page.
+	 *
+	 * Possible contexts are header, footer, and subheader.
+	 * @param {string} sContext allowed values are header, footer, subheader.
+	 * @returns {object|null}
+	 * @private
+	 */
+	ShellBar.prototype._getContextOptions  = BarInPageEnabler.prototype._getContextOptions;
+
+	/**
+	 * Sets the accessibility role of the Root HTML element.
+	 *
+	 * @param {string} sRole AccessibilityRole of the root Element
+	 * @returns {sap.m.IBar} <code>this</code> to allow method chaining
+	 * @private
+	 */
+	ShellBar.prototype._setRootAccessibilityRole = BarInPageEnabler.prototype._setRootAccessibilityRole;
+
+	/**
+	 * Gets the accessibility role of the Root HTML element.
+	 *
+	 * @returns {string} Accessibility role
+	 * @private
+	 */
+	ShellBar.prototype._getRootAccessibilityRole = BarInPageEnabler.prototype._getRootAccessibilityRole;
 
 	return ShellBar;
 

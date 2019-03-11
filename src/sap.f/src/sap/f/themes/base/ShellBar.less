@@ -22,7 +22,7 @@
 		padding-left: 0;
 		padding-right: 0;
 
-		:first-child {
+		>:first-child {
 			margin-left: 0;
 		}
 
@@ -51,8 +51,16 @@
 		}
 	}
 
-	.sapMBtn .sapFAvatar {
-		margin-top: 0.20rem;
+	.sapMBtn .sapMBtnInner {
+		.sapFAvatar {
+			vertical-align: middle;
+		}
+		&:after {
+			content: "";
+			display: inline-block;
+			vertical-align: middle;
+			height: 100%;
+		}
 	}
 
 	.sapFSHMegaMenu {
@@ -147,76 +155,16 @@
 			margin-right: 0;
 		}
 	}
-
-	// Resets of sizes for "Compact" mode - controls should remain in cozy mode
 	.sapUiSizeCompact & {
-		// Button
-		.sapMBtn {
-			height: 3rem;
-			padding: 0.250rem 0;
-		}
-
-		.sapMBtnInner {
-			height: 2.500rem;
-			min-width: 2.500rem;
-		}
-
-		.sapMBtnInner.sapMBtnText {
-			padding-left: 0.75rem;
-			padding-right: 0.75rem;
-		}
-		.sapMBtnInner.sapMBtnText.sapMBtnIconFirst,
-		.sapMBtnInner.sapMBtnText.sapMBtnBack {
-			padding-left: 2.375rem;
-		}
-		.sapMBtnInner.sapMBtnText.sapMBtnBack.sapMBtnIconFirst {
-			padding-left: 4.750rem;
-		}
-		.sapMBtnInner.sapMBtnText.sapMBtnIconLast {
-			padding-right: 2.375rem;
-		}
-
-		.sapMBtnContent {
-			line-height: 2.375rem;
-		}
-
-		.sapMBtnIcon {
-			line-height: 2.375rem;
-			width: 2.375rem;
-			font-size: 1.375rem;
-			max-height: 2.375rem;
-			margin: 0;
-			padding: 0;
-		}
-		.sapMBtnIconLeft + .sapMBtnIconLeft {
-			left: 0;
-		}
-		.sapMBtnText {
-			.sapMBtnIconLeft + .sapMBtnIconLeft {
-				left: 2.375rem;
+		.sapFShellBarProfile {
+			padding-top: 0;
+			height: 2.125rem;
+			.sapFAvatar {
+				margin-top: 0;
 			}
-		}
-		.sapMBtnInner > img {
-			width: 2.500rem;
-			margin-top: 0.2rem;
-			margin-left: 0.2rem;
-		}
-
-		// Menu Button
-		.sapMMenuBtn.sapMMenuBtnRegular .sapMBtnInner::after {
-			height: 38px; //ie does not accept rem for height in pseudo elements, but it works with px when you zoom
-			line-height: 38px;
-			padding-right: 0.75rem;
-			padding-left: 0.5625rem;
-		}
-		.sapMMenuBtn.sapMMenuBtnRegular .sapMBtnInner:not(.sapMBtnText) {
-			padding-right: 1.25rem;
-		}
-		.sapMMenuBtn.sapMMenuBtnRegular .sapMBtnInner {
-			padding-right: 1.625rem;
-		}
-		.sapMMenuBtn .sapMBtnIconFirst .sapMBtnIcon {
-			padding-right: 0.75rem;
+			.sapMBtnInner {
+				height: 2.125rem;
+			}
 		}
 	}
 }

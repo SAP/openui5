@@ -92,7 +92,8 @@ function(
 			metadata: {
 				interfaces: [
 					"sap.ui.core.IFormContent",
-					"sap.m.IOverflowToolbarContent"
+					"sap.m.IOverflowToolbarContent",
+					"sap.f.IShellBar"
 				],
 				library: "sap.m",
 				properties: {

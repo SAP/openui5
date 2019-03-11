@@ -22,7 +22,6 @@ sap.ui.define([
 	/**
 	 * Class taking care of the control responsive behaviour.
 	 * @alias sap/f/shellBar/ResponsiveHandler
-	 * @experimental Since 1.63. This class is experimental and provides only limited functionality. Also the API might be changed in future.
 	 * @since 1.63
 	 * @private
 	 * @property {object} oContext the context of the ShellBar control instance
