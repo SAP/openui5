@@ -5,8 +5,9 @@ describe("sap.m.DateTimePicker", function() {
 
 	// verify DateTimePicker is opened and the right date is initially selected and focused
 	it("should open second DateTimePicker and 13th of June 2017 should be selected and focused", function() {
+		var oCalendar = element(by.id("DTP1_v0-cal"));
 		element(by.id("DTP1_v0-icon")).click();
-		expect(takeScreenshot(element(by.id("DTP1_v0-cal")))).toLookAs("initial_focused_and_selected");
+		expect(takeScreenshot(oCalendar)).toLookAs("initial_focused_and_selected");
 	});
 
 	// verify action change month selects the current day in the different month
