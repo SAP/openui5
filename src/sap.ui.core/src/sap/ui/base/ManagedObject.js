@@ -3536,7 +3536,6 @@ sap.ui.define([
 			that[oPropertyInfo._sMutator](oValue);
 			oBindingInfo.skipModelUpdate--;
 		}).catch(function(oException) {
-			oBindingInfo.skipModelUpdate--;
 			handleException(oException);
 		}).unwrap();
 	};
