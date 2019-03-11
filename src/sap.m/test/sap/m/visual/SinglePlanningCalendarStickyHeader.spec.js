@@ -123,6 +123,7 @@ describe("sap.m.SinglePlanningCalendarStickyHeader", function () {
 
 
 	function _overrideTime() {
+		_checkForOverflowButton();
 		element(by.id("overrideTime")).click();
 	}
 
@@ -135,25 +136,48 @@ describe("sap.m.SinglePlanningCalendarStickyHeader", function () {
 	}
 
 	function _selectNoneStickyMode() {
+		_checkForOverflowButton();
 		element(by.id("sticky-mode-select")).click();
 		element(by.id("__item0")).click();
 	}
 
 	function _selectAllStickyMode() {
+		_checkForOverflowButton();
 		element(by.id("sticky-mode-select")).click();
 		element(by.id("__item1")).click();
 	}
 
 	function _selectNavBarAndColHeadersStickyMode() {
+		_checkForOverflowButton();
 		element(by.id("sticky-mode-select")).click();
 		element(by.id("__item2")).click();
 	}
 
 	function _selectWorkWeekView() {
-		element(by.id("__item4-button")).click();
+		_checkForOverflowButton();
+		if (browser.testrunner.runtime.platformName != "android" && browser.testrunner.runtime.platformName != "ios") {
+			element(by.id("__item4-button")).click();
+		} else {
+			element(by.id("SinglePlanningCalendar-Header-ViewSwitch")).click();
+			element(by.css("#__list1 li:nth-of-type(2)")).click();
+		}
 	}
 
 	function _selectWeekView() {
-		element(by.id("__item5-button")).click();
+		_checkForOverflowButton();
+		if (browser.testrunner.runtime.platformName != "android" && browser.testrunner.runtime.platformName != "ios") {
+			element(by.id("__item5-button")).click();
+		} else {
+			element(by.id("SinglePlanningCalendar-Header-ViewSwitch")).click();
+			element(by.css("#__list1 li:nth-of-type(3)")).click();
+		}
+	}
+
+	function _checkForOverflowButton() {
+		element(by.id("SinglePlanningCalendar-Header-ActionsToolbar-overflowButton")).isPresent().then(function(presented){
+			if (presented){
+				element(by.id("SinglePlanningCalendar-Header-ActionsToolbar-overflowButton")).click();
+			}
+		});
 	}
 });
