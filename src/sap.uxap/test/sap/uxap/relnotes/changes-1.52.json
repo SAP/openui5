@@ -150,8 +150,13 @@
       {
         "id": "ab7cdb841187b9242c424294e14a2e5e06e75a65",
         "type": "FIX",
-        "text": " uxap.ObjectPage: _headerContent aggregation cloning fixed",
-        "references": []
+        "text": "uxap.ObjectPage: _headerContent aggregation cloning fixed",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "002075129500001260892018"
+          }
+        ]
       }
     ]
   },
@@ -161,8 +166,13 @@
       {
         "id": "5a7bf6aff541d0ad8c47a25c90794a905e62fbf2",
         "type": "FIX",
-        "text": " ObjectPageLayout: Infinity resizing loop fixed",
-        "references": []
+        "text": "ObjectPageLayout: Infinity resizing loop fixed",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "1870298358"
+          }
+        ]
       }
     ]
   },
@@ -172,8 +182,13 @@
       {
         "id": "1e2a084f2609c91a7aa9bec1b724374e66c89f12",
         "type": "FIX",
-        "text": " ObjectPageHeader: Action Buttons behavior with resizing is fixed",
-        "references": []
+        "text": "ObjectPageHeader: Action Buttons behavior with resizing is fixed",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "1880369225"
+          }
+        ]
       }
     ]
   },
@@ -183,14 +198,24 @@
       {
         "id": "4fcdefe860f6bd29b7223ff3e8bb26cc59fdf538",
         "type": "FIX",
-        "text": " sap.uxap.ObjectPageLayout: ScrollEnablement now has latest DOMref",
-        "references": []
+        "text": "sap.uxap.ObjectPageLayout: ScrollEnablement now has latest DOMref",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "1870201875"
+          }
+        ]
       },
       {
         "id": "b82f3d3961a4a989e0658a9faee467c4cb378e6b",
         "type": "FIX",
-        "text": " sap.uxap.ObjectPageLayout: SelectedSection can now be unset",
-        "references": []
+        "text": "sap.uxap.ObjectPageLayout: SelectedSection can now be unset",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "1880274042"
+          }
+        ]
       }
     ]
   },
@@ -200,8 +225,13 @@
       {
         "id": "5758dda8e71833bf105a457b1b11894a4efdd665",
         "type": "FIX",
-        "text": " uxap.ObjectPageLayout: APICreation qUnit fix",
-        "references": []
+        "text": "uxap.ObjectPageLayout: APICreation qUnit fix",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "1880453353"
+          }
+        ]
       }
     ]
   },
@@ -211,20 +241,35 @@
       {
         "id": "3cdf3ad33161418a3235eebffe915ed5258936c2",
         "type": "FIX",
-        "text": " ObjectPage: AnchorBar submenu buttons accessibility improvement",
-        "references": []
+        "text": "ObjectPage: AnchorBar submenu buttons accessibility improvement",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "1880418471"
+          }
+        ]
       },
       {
         "id": "696f96be17d0826f0ea84af0c69edb2089bb8d16",
         "type": "FIX",
-        "text": " ObjectPageHeader: Long titles are now truncated",
-        "references": []
+        "text": "ObjectPageHeader: Long titles are now truncated",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "1880423844"
+          }
+        ]
       },
       {
         "id": "26cc82438913eb116144d6ab9e07c4067ec03004",
         "type": "FIX",
-        "text": " ObjectPageSubSection: Aligned SimpleForm Toolbar",
-        "references": []
+        "text": "ObjectPageSubSection: Aligned SimpleForm Toolbar",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "1870425815"
+          }
+        ]
       }
     ]
   },
@@ -234,8 +279,13 @@
       {
         "id": "d82a9c2f127a00f82e2ed3584781355d13e98396",
         "type": "FIX",
-        "text": " sap.uxap.ObjectPageLayout: Additional reading removed",
-        "references": []
+        "text": "sap.uxap.ObjectPageLayout: Additional reading removed",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "1870031991"
+          }
+        ]
       }
     ]
   },
@@ -245,8 +295,13 @@
       {
         "id": "dfddb78c4eefc1008c41435c44a03416bfc89b36",
         "type": "FIX",
-        "text": " sap.uxap.ObjectPageHeader: updateRootAriaLabel parent call fixed",
-        "references": []
+        "text": "sap.uxap.ObjectPageHeader: updateRootAriaLabel parent call fixed",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "1870565896"
+          }
+        ]
       }
     ]
   },
@@ -256,8 +311,13 @@
       {
         "id": "26755e85fc79c20dd38eddb9ef81cfab067d2fff",
         "type": "FIX",
-        "text": " sap.uxap.ObjectPageLayout: Non existing sub-section is now handled",
-        "references": []
+        "text": "sap.uxap.ObjectPageLayout: Non existing sub-section is now handled",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "1970039639"
+          }
+        ]
       }
     ]
   }

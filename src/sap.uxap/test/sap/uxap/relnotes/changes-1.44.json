@@ -39,7 +39,7 @@
       {
         "id": "0035bc634e14f59bcdc798d9b260c5af5c18377d",
         "type": "FIX",
-        "text": "sap.uxap.ObjectPage: didn\u0027t access map members safely",
+        "text": "sap.uxap.ObjectPage: didn't access map members safely",
         "references": [
           {
             "type": "BCP",
@@ -80,7 +80,7 @@
       {
         "id": "c01d37b0d32ccbe365a5be346779b9cb2aec8da7",
         "type": "FIX",
-        "text": "sap.uxap.AnchorBar: anchors didn\u0027t have correct tab-index",
+        "text": "sap.uxap.AnchorBar: anchors didn't have correct tab-index",
         "references": [
           {
             "type": "BCP",
@@ -226,8 +226,13 @@
       {
         "id": "d6475fa2fc7b29f20306023c6161c028450c25db",
         "type": "FIX",
-        "text": " sap.uxap.ObjectPageLayout: ScrollEnablement now has latest DOMref",
-        "references": []
+        "text": "sap.uxap.ObjectPageLayout: ScrollEnablement now has latest DOMref",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "1870201875"
+          }
+        ]
       }
     ]
   },
@@ -237,8 +242,13 @@
       {
         "id": "ef4ae68087a822bf20a644005599c658946b700f",
         "type": "FIX",
-        "text": " ObjectPageSubSection: Aligned SimpleForm Toolbar",
-        "references": []
+        "text": "ObjectPageSubSection: Aligned SimpleForm Toolbar",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "1870425815"
+          }
+        ]
       }
     ]
   },
@@ -248,8 +258,13 @@
       {
         "id": "cf73037fef27d6629bbfde13f488043ca9929f8e",
         "type": "FIX",
-        "text": " sap.uxap.ObjectPageLayout: Additional reading removed",
-        "references": []
+        "text": "sap.uxap.ObjectPageLayout: Additional reading removed",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "1830583199"
+          }
+        ]
       }
     ]
   }

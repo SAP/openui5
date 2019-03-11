@@ -27,7 +27,7 @@
       {
         "id": "341f097a5fa58597c26c6c3f22b6664c192c66cc",
         "type": "FIX",
-        "text": "sap.m.ComboBox: Items' loading indicator returned back",
+        "text": "sap.m.ComboBox: Items\u0027 loading indicator returned back",
         "references": [
           {
             "type": "BCP",
@@ -291,7 +291,7 @@
       {
         "id": "d0b25af570ff741395194cd17d6e93842e0675ee",
         "type": "FIX",
-        "text": "sap.m.Dialog: ESC key sets 'origin' event parameter correctly",
+        "text": "sap.m.Dialog: ESC key sets \u0027origin\u0027 event parameter correctly",
         "references": [
           {
             "type": "BCP",
@@ -328,7 +328,7 @@
       {
         "id": "154fb0e7cfd113088bcf88bb28489767d50c9bdd",
         "type": "FIX",
-        "text": "sap.m.ObjectAttribute: doesn't wrap in ObjectPageHeaderContent in IE",
+        "text": "sap.m.ObjectAttribute: doesn\u0027t wrap in ObjectPageHeaderContent in IE",
         "references": [
           {
             "type": "BCP",
@@ -742,7 +742,7 @@
       {
         "id": "8cd128b810f3963c409a0893e37d7e3f341083cf",
         "type": "FIX",
-        "text": "OverflowToolbar: CheckBox's label is aligned according guidelines",
+        "text": "OverflowToolbar: CheckBox\u0027s label is aligned according guidelines",
         "references": [
           {
             "type": "BCP",
@@ -1067,7 +1067,7 @@
       {
         "id": "3f7dc24a3c538730a06f5e585169936a319a9104",
         "type": "FIX",
-        "text": "ObjectMarker: New properties ariaLabelledBy & ariaDescribedBy",
+        "text": "ObjectMarker: New properties ariaLabelledBy \u0026 ariaDescribedBy",
         "references": [
           {
             "type": "BCP",
@@ -1227,7 +1227,7 @@
       {
         "id": "c7e39e4f5793b4ce6a44bf38354bd3980761ed95",
         "type": "FIX",
-        "text": "sap.m.PDFViewerDisplayTypes: change the enum according to the OpenUI5's code style",
+        "text": "sap.m.PDFViewerDisplayTypes: change the enum according to the OpenUI5\u0027s code style",
         "references": [
           {
             "type": "GitHub",
@@ -1328,7 +1328,7 @@
       {
         "id": "79a244a1f9b4d5eb1f630c11adafa9f6e80707d6",
         "type": "FIX",
-        "text": "sap.m.ObjectAttribute: doesn't throw error when given customContent is null",
+        "text": "sap.m.ObjectAttribute: doesn\u0027t throw error when given customContent is null",
         "references": [
           {
             "type": "BCP",
@@ -2058,7 +2058,7 @@
       {
         "id": "497bcc5cab988615b0f0c84eb3a3b375645c5548",
         "type": "FIX",
-        "text": "sap.m.UploadCollection: Item's file name can be bound to null",
+        "text": "sap.m.UploadCollection: Item\u0027s file name can be bound to null",
         "references": [
           {
             "type": "BCP",
@@ -2192,7 +2192,7 @@
       {
         "id": "94571600d45453b50a54ebaae175b04c00ce3bf3",
         "type": "FIX",
-        "text": "sap.m.MessagePopover: MessageView's auto binding fix",
+        "text": "sap.m.MessagePopover: MessageView\u0027s auto binding fix",
         "references": [
           {
             "type": "BCP",
@@ -2306,7 +2306,7 @@
       {
         "id": "3b73481b7b163cd5a7939afb40b31ff9d21acd88",
         "type": "FIX",
-        "text": "sap.m.DateRangeSelection: now doesn't throw error when the range is undefined",
+        "text": "sap.m.DateRangeSelection: now doesn\u0027t throw error when the range is undefined",
         "references": [
           {
             "type": "BCP",
@@ -2410,7 +2410,7 @@
       {
         "id": "d00dd9a4f5fc3003dc9d0a54e5df0b1ee9367d8c",
         "type": "FIX",
-        "text": "m.PlanningCalendar: Unnecessary row's role attribute removed",
+        "text": "m.PlanningCalendar: Unnecessary row\u0027s role attribute removed",
         "references": [
           {
             "type": "BCP",
@@ -2663,7 +2663,7 @@
       {
         "id": "caec14fcb711c2bf42cbb454d389f6be3ad143ee",
         "type": "FIX",
-        "text": "sap.m.Wizard: showNextButton=false now works on initial rendering",
+        "text": "sap.m.Wizard: showNextButton\u003dfalse now works on initial rendering",
         "references": [
           {
             "type": "GitHub",
@@ -2685,6 +2685,23 @@
             "reference": "002075129500005799822018"
           }
         ]
+      }
+    ]
+  },
+  "1.60.10": {
+    "date": "March 2019",
+    "notes": [
+      {
+        "id": "d9f1d4696804e8472a230afddf1e003b1f6dfb59",
+        "type": "FIX",
+        "text": " sap.m.MultiInput: Fire tokenUpdate on interaction with N-more popup",
+        "references": []
+      },
+      {
+        "id": "94d8e9808d8edf5bf889c24566d7ded3d83b51de",
+        "type": "FIX",
+        "text": " sap.m.MultiInput: Pressing left arrow no longer deletes a token",
+        "references": []
       }
     ]
   }

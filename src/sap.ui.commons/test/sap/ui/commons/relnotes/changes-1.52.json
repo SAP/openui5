@@ -37,8 +37,13 @@
       {
         "id": "112d3d66d9d99a324638cce4f8e7848042c956ef",
         "type": "FIX",
-        "text": " sap.ui.commons.DatePicker: fix failing unit tests",
-        "references": []
+        "text": "sap.ui.commons.DatePicker: fix failing unit tests",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "1870142578"
+          }
+        ]
       }
     ]
   }

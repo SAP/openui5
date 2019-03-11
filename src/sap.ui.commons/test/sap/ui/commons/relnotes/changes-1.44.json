@@ -178,7 +178,7 @@
       {
         "id": "f4a5f3d18dbd08f5e68de8ffb01020ff5b76bb52",
         "type": "FIX",
-        "text": "sap.ui.core.Popup: keep blocklayer when there\u0027s still modal popup open",
+        "text": "sap.ui.core.Popup: keep blocklayer when there's still modal popup open",
         "references": [
           {
             "type": "BCP",
@@ -242,8 +242,13 @@
       {
         "id": "e811b4d3805b6136a4507078c9144904220bb858",
         "type": "FIX",
-        "text": " sap.ui.commons.DatePicker: fix failing unit tests",
-        "references": []
+        "text": "sap.ui.commons.DatePicker: fix failing unit tests",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "1870142578"
+          }
+        ]
       }
     ]
   }

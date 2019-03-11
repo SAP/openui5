@@ -27,7 +27,7 @@
       {
         "id": "a7a0009e1e5305ea4ad084746dd289a3acd5180b",
         "type": "FIX",
-        "text": "v2.ODataAnnotations: don't cache invalid annotations",
+        "text": "v2.ODataAnnotations: don\u0027t cache invalid annotations",
         "references": [
           {
             "type": "BCP",
@@ -172,7 +172,7 @@
       {
         "id": "cd553e45a0c0e08fd2a5a8d346ec399cca8c794e",
         "type": "FIX",
-        "text": "format/DateFormat: Multiple instances shouldn't share fallback formats",
+        "text": "format/DateFormat: Multiple instances shouldn\u0027t share fallback formats",
         "references": [
           {
             "type": "BCP",
@@ -881,7 +881,7 @@
       {
         "id": "72da2e919114457d94e6b62864bce0d73d31c320",
         "type": "FIX",
-        "text": "ODataMessageParser: support 'transition' flag",
+        "text": "ODataMessageParser: support \u0027transition\u0027 flag",
         "references": [
           {
             "type": "BCP",
@@ -892,7 +892,7 @@
       {
         "id": "74e9a598c6274aab7daf8d8895f4dd1119be7565",
         "type": "FIX",
-        "text": "ODataModel: Don't send CSRF token for GET requests",
+        "text": "ODataModel: Don\u0027t send CSRF token for GET requests",
         "references": [
           {
             "type": "BCP",
@@ -941,7 +941,7 @@
       {
         "id": "9f0e1cc7cdef7da02354052091993652ddfc6af9",
         "type": "FIX",
-        "text": "sap.ui.core: Remove circular dependency Component <-> Core",
+        "text": "sap.ui.core: Remove circular dependency Component \u003c-\u003e Core",
         "references": []
       }
     ]
@@ -969,7 +969,7 @@
       {
         "id": "b8cfcccec353b9646eea8f10742c5571bb76fed9",
         "type": "FIX",
-        "text": "core.Popup: blur focus element only when it's not in a Popup",
+        "text": "core.Popup: blur focus element only when it\u0027s not in a Popup",
         "references": [
           {
             "type": "BCP",
@@ -987,6 +987,35 @@
             "reference": "1970044373"
           }
         ]
+      }
+    ]
+  },
+  "1.60.10": {
+    "date": "March 2019",
+    "notes": [
+      {
+        "id": "a416a95049a733232c42470f299d754b44d92ec1",
+        "type": "FIX",
+        "text": " AppCacheBuster: ensure to keep URL parameters and hash",
+        "references": []
+      },
+      {
+        "id": "fba30edc0cf53aa35f8baec20f6d8b4c98085bf4",
+        "type": "FIX",
+        "text": " Drag-and-Drop: Text in input fields should be selectable",
+        "references": []
+      },
+      {
+        "id": "0bf60dff691f7620845a36e1b02ec63519996cf8",
+        "type": "FIX",
+        "text": " ManagedObject: suppressInvalidate",
+        "references": []
+      },
+      {
+        "id": "74a35d2c0b457e4e62a5c075e5dfb6ba664741a4",
+        "type": "FIX",
+        "text": " core.routing: check existence of targets before display a target",
+        "references": []
       }
     ]
   }

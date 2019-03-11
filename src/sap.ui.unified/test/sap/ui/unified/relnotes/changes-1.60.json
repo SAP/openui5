@@ -60,7 +60,7 @@
       {
         "id": "3a20f688956e350dfd83b74a00856d724a8842ab",
         "type": "FIX",
-        "text": "sap.ui.unified.ColorPicker: Now the dialog's style is not broken",
+        "text": "sap.ui.unified.ColorPicker: Now the dialog\u0027s style is not broken",
         "references": [
           {
             "type": "BCP",
@@ -225,6 +225,17 @@
             "reference": "002075129500000617722019"
           }
         ]
+      }
+    ]
+  },
+  "1.60.10": {
+    "date": "March 2019",
+    "notes": [
+      {
+        "id": "f374c61fe19b877d8f4341ae2ae744791ef2f882",
+        "type": "FIX",
+        "text": " sap.ui.unified.CalendarTimeInterval: Navigates to the correct date",
+        "references": []
       }
     ]
   }
