@@ -159,7 +159,11 @@ html[dir=rtl] {
 
 // Override row background and cell borders in group header rows.
 .sapUiTableGroupHeader {
-	background-color: @_sap_ui_table_Grouping_GroupHeaderBackground;
+	&.sapUiTableTr,
+	&.sapUiTableRowSelectionCell,
+	&.sapUiTableRowActionCell {
+		background-color: @_sap_ui_table_Grouping_GroupHeaderBackground;
+	}
 
 	&.sapUiTableCell.sapUiTableRowSelectionCell,
 	.sapUiTableCell.sapUiTableDataCell {

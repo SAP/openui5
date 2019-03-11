@@ -159,6 +159,15 @@
 			background-color: @sapUiListActiveBackground;
 			color: @sapUiListActiveTextColor;
 		}
+
+		& > .sapUiTableCellInner {
+			span,
+			label,
+			&.sapUiTableColSorted::after,
+			&.sapUiTableColFiltered::after {
+				color: @sapUiListActiveTextColor;
+			}
+		}
 	}
 
 	> .sapUiTableCellInner {
