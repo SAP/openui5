@@ -1,3 +1,6 @@
+/* global QUnit */
+QUnit.config.autostart = false;
+
 (function () {
 	"use strict";
 
@@ -188,6 +191,8 @@
 				afterUndo: fnConfirmElement1IsOn1stPosition,
 				afterRedo: fnConfirmElement1IsOn2rdPosition
 			});
+
+			QUnit.start();
 		});
 	});
 })();
