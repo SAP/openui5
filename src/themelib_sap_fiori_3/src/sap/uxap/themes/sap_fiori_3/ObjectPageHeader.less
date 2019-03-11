@@ -31,18 +31,25 @@
 	vertical-align: baseline;
 }
 
+.sapUiSizeCompact .sapUxAPObjectPageHeaderIdentifier,
 .sapUxAPObjectPageHeaderIdentifier {
+	padding-top: 0.5rem;
+	padding-bottom: 0.5rem;
+
+	.sapUxAPObjectChildPage {
+		margin-top: -0.5rem;
+	}
 
 	.sapUxAPObjectPageHeaderIdentifierActions {
 		&.sapUxAPObjectPageHeaderIdentifierActionsForce, .sapUxAPObjectPageHeaderStickied & {
 			right: 1.25rem;
 		}
 	}
-}
 
-.sapUiSizeCompact .sapUxAPObjectPageHeaderIdentifierContainer /* desktop-specific padding */{
-	padding-top: 1rem;
-	padding-bottom: 1rem;
+	.sapUxAPObjectPageHeaderIdentifierContainer {
+		padding-top: 1rem;
+		padding-bottom: 1rem;
+	}
 }
 
 .sapUxAPObjectPageHeaderIdentifierContainer .sapMBreadcrumbs {
