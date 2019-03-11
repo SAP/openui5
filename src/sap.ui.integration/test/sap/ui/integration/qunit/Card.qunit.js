@@ -1,4 +1,4 @@
-/* global QUnit */
+/* global QUnit, sinon */
 
 sap.ui.define([
 	"sap/ui/integration/widgets/Card",
@@ -7,7 +7,9 @@ sap.ui.define([
 	"sap/ui/core/Core",
 	"sap/f/cards/NumericHeader",
 	"sap/f/cards/NumericSideIndicator",
-	"sap/f/cards/Header"
+	"sap/f/cards/Header",
+	"sap/base/Log",
+	"sap/ui/core/ComponentContainer"
 ],
 function (
 	Card,
@@ -16,7 +18,9 @@ function (
 	Core,
 	NumericHeader,
 	NumericSideIndicator,
-	Header
+	Header,
+	Log,
+	ComponentContainer
 ) {
 	"use strict";
 
@@ -586,6 +590,29 @@ function (
 		}
 	};
 
+	var oManifest_ComponentCard = {
+		"sap.card": {
+			"type": "Component",
+			"content": {
+				"manifest": "dummy-url-to-manifest"
+			}
+		}
+	};
+
+	var oManifest_ComponentCardAllInOne = {
+		"_version": "1.12.0",
+		"sap.app": {
+		  "id": "sap.f.cardsdemo.cardcontent.componentContent.allInOne",
+		  "type": "card",
+		  "applicationVersion": {
+			"version": "1.0.0"
+		  }
+		},
+		"sap.card": {
+		  "type": "Component"
+		}
+	  };
+
 	function testContentInitialization(oManifest, assert) {
 
 		// Arrange
@@ -622,6 +649,30 @@ function (
 				}
 			}, this);
 		});
+	}
+
+	function testComponentContentCreation(oCardManifest, oExpectedComponentManifest, assert) {
+		// Arrange
+		var done = assert.async(),
+			oStub = sinon.stub(ComponentContainer.prototype, "applySettings"),
+			oCard = new Card();
+
+		// Assert
+		assert.expect(1);
+		oStub.callsFake(function (mSettings) {
+			assert.deepEqual(
+				mSettings.manifest,
+				oExpectedComponentManifest,
+				"A ComponentContainer is created with expected settings"
+			);
+
+			oStub.restore();
+			oCard.destroy();
+			done();
+		});
+
+		// Act
+		oCard.setManifest(oCardManifest);
 	}
 
 	QUnit.module("Init");
@@ -734,7 +785,7 @@ function (
 		this.oCard.attachEvent("_headerUpdated", function () {
 			var oHeader = this.oCard.getAggregation("_header");
 
-			// Assert aggregation _mainIndicator
+			// Assert aggregation mainIndicator
 			assert.ok(oHeader.getAggregation("_mainIndicator").getDomRef(), "Card header main indicator aggregation should be set and rendered");
 			assert.equal(oHeader.getAggregation("_mainIndicator").getValue(), oManifest_NumericHeader["sap.card"].header.data.json["n"], "Card header main indicator value should be correct.");
 			assert.equal(oHeader.getAggregation("_mainIndicator").getScale(), oManifest_NumericHeader["sap.card"].header.data.json["u"], "Card header main indicator scale should be correct.");
@@ -1095,4 +1146,74 @@ function (
 		this.oNumericHeaderCard.setManifest(oManifest_NumericHeader);
 	});
 
+	QUnit.module("Error handling", {
+		beforeEach: function () {
+			this.oCard = new Card();
+		},
+		afterEach: function () {
+			this.oCard.destroy();
+			this.oCard = null;
+		}
+	});
+
+	QUnit.test("Handler call", function (assert) {
+
+		// Arrange
+		var oLogSpy = sinon.spy(Log, "error"),
+			sLogMessage = "Log this error in the console.";
+
+		// Act
+		this.oCard._handleError(sLogMessage);
+
+		// Assert
+		assert.ok(oLogSpy.calledOnceWith(sLogMessage), "Provided message should be logged to the console.");
+
+		// Clean up
+		oLogSpy.restore();
+	});
+
+	QUnit.test("Bad data url", function (assert) {
+
+		// Arrange
+		var oSpy = sinon.spy(Card.prototype, "_handleError"),
+			done = assert.async();
+
+		this.oCard.attachEvent("_error", function () {
+
+			// Assert
+			assert.ok(oSpy.calledOnce, "Should call error handler when manifest is 'null'");
+
+			// Clean up
+			oSpy.restore();
+			done();
+		});
+
+		// Act
+		this.oCard.setManifest({"sap.card": {
+			"type": "List",
+			"header": {},
+			"content": {},
+			"data": {
+				"request": "invalidurl"
+			}
+		}});
+	});
+
+	QUnit.module("Component Card");
+
+	QUnit.test("Component Card - card and component manifests are separate", function (assert) {
+		testComponentContentCreation(
+			oManifest_ComponentCard,
+			oManifest_ComponentCard["sap.card"].content.manifest,
+			assert
+		);
+	});
+
+	QUnit.test("Component Card - card and component manifests are in the same file", function (assert) {
+		testComponentContentCreation(
+			oManifest_ComponentCardAllInOne,
+			oManifest_ComponentCardAllInOne,
+			assert
+		);
+	});
 });

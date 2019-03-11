@@ -77,9 +77,8 @@ function(
 	 *     controls, passed to the <code>actions</code> aggregation and the navigation, assisting the user in
 	 *     choosing the desired time period. The views can be configured and passed through the <code>views</code>
 	 *     aggregation.</li>
-	 *     <li>A <code>SinglePlanningCalendarGrid</code>, which displays the blockers and the appointments, set to the
-	 *     visual time range. To display blockers, see {@link #property:fullDay} of the
-	 *     <code>sap.ui.unified.CalendarAppointment</code>.</li>
+	 *     <li>A <code>SinglePlanningCalendarGrid</code>, which displays the appointments, set to the visual time range.
+	 *     An all-day appointment is an appointment which starts at 00:00 and ends in 00:00 on any day in the future.
 	 * </ul>
 	 *
 	 * @extends sap.ui.core.Control
@@ -145,10 +144,10 @@ function(
 			/**
 			 * The appointments to be displayed in the grid. Appointments outside the visible time frame are not rendered.
 			 * Appointments, longer than a day, will be displayed in all of the affected days.
-			 * To display blockers, see {@link #property:fullDay} of the <code>sap.m.CalendarAppointment</code>.
+			 * To display an all-day appointment, the appointment must start at 00:00 and end on any day in the future in 00:00h.
 			 */
 			appointments : {
-				type: "sap.m.CalendarAppointment",
+				type: "sap.ui.unified.CalendarAppointment",
 				multiple: true,
 				singularName: "appointment",
 				forwarding: {
@@ -202,7 +201,7 @@ function(
 					/**
 					 * The selected appointment.
 					 */
-					appointment: {type: "sap.m.CalendarAppointment"}
+					appointment: {type: "sap.ui.unified.CalendarAppointment"}
 
 				}
 			},

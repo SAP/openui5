@@ -171,28 +171,24 @@ function(Button, Dialog, Fragment, Controller, JSONModel, unifiedLibrary, Messag
 						endDate: new Date("2018", "6", "13", "14", "0")
 					}, {
 						title: "Reminder",
-						fullDay: true,
 						type: CalendarDayType.Type09,
-						startDate: new Date("2018", "6", "12", "12", "30"),
-						endDate: new Date("2018", "6", "13", "13", "30")
+						startDate: new Date("2018", "6", "12", "00", "00"),
+						endDate: new Date("2018", "6", "13", "00", "00")
 					}, {
 						title: "Team collaboration",
-						fullDay: true,
 						type: CalendarDayType.Type01,
-						startDate: new Date("2018", "6", "6", "12", "30"),
-						endDate:  new Date("2018", "6", "16", "13", "30")
+						startDate: new Date("2018", "6", "6", "00", "00"),
+						endDate:  new Date("2018", "6", "16", "00", "00")
 					}, {
 						title: "Workshop out of the country",
-						fullDay: true,
 						type: CalendarDayType.Type05,
-						startDate: new Date("2018", "6", "14", "12", "30"),
-						endDate: new Date("2018", "6", "20", "13", "30")
+						startDate: new Date("2018", "6", "14", "00", "00"),
+						endDate: new Date("2018", "6", "20", "00", "00")
 					}, {
 						title: "Payment reminder",
-						fullDay: true,
 						type: CalendarDayType.Type09,
-						startDate: new Date("2018", "6", "7", "12", "30"),
-						endDate: new Date("2018", "6", "8", "13", "30")
+						startDate: new Date("2018", "6", "7", "00", "00"),
+						endDate: new Date("2018", "6", "8", "00", "00")
 					}, {
 						title:"Meeting with the manager",
 						type: CalendarDayType.Type03,
@@ -242,6 +238,10 @@ function(Button, Dialog, Fragment, Controller, JSONModel, unifiedLibrary, Messag
 				]
 			});
 			this.getView().setModel(oModel);
+
+			this.oModel = new sap.ui.model.json.JSONModel();
+			this.oModel.setData({allDay: false});
+			this.getView().setModel(this.oModel, "allDay");
 		},
 
 		handleStickyModeChange: function (oEvent) {
@@ -345,7 +345,10 @@ function(Button, Dialog, Fragment, Controller, JSONModel, unifiedLibrary, Messag
 				oInputInfo,
 				oNewAppointment,
 				oModel,
-				aAppointments;
+				aAppointments,
+				bAllDayAppointment,
+				sStartDate,
+				sEndDate;
 
 			this._oNewAppointmentDialog = new Dialog({
 				title: 'Add appointment',
@@ -356,14 +359,19 @@ function(Button, Dialog, Fragment, Controller, JSONModel, unifiedLibrary, Messag
 					text: 'Create',
 					enabled: false,
 					press: function () {
+						bAllDayAppointment = (Fragment.byId("myDialogFrag", "allDay")).getSelected();
 						oDateTimePickerStart = Fragment.byId("myDialogFrag", "startDate").getDateValue();
 						oDateTimePickerEnd = Fragment.byId("myDialogFrag", "endDate").getDateValue();
 						oInputTitle = Fragment.byId("myDialogFrag", "appTitle");
 						sInputType = Fragment.byId("myDialogFrag", "appType").getSelectedItem().getText();
 						oInputInfo = Fragment.byId("myDialogFrag", "moreInfo");
+						sStartDate = bAllDayAppointment ? "dpStartDate" : "startDate";
+						sEndDate = bAllDayAppointment ? "dpStartDate" : "startDate";
 
-						if (Fragment.byId("myDialogFrag", "startDate").getValueState() !== "Error"
-							&& Fragment.byId("myDialogFrag", "endDate").getValueState() !== "Error") {
+						this._checkAllDay(oDateTimePickerStart, oDateTimePickerEnd, bAllDayAppointment);
+
+						if (Fragment.byId("myDialogFrag", sStartDate).getValueState() !== "Error"
+							&& Fragment.byId("myDialogFrag", sEndDate).getValueState() !== "Error") {
 
 							oNewAppointment = {
 								title: oInputTitle.getValue(),
@@ -405,7 +413,7 @@ function(Button, Dialog, Fragment, Controller, JSONModel, unifiedLibrary, Messag
 				oBeginButton = this._oNewAppointmentDialog.getBeginButton(),
 				oEndDate = new Date(oAppStartDate);
 
-			oInputTitle.setValue("");
+			oInputTitle.setValue("New appointment");
 			oDateTimePickerStart.setDateValue(oAppStartDate);
 			// Default end hour is an hour later than the start hour
 			oEndDate.setHours(oEndDate.getHours() + 1);
@@ -420,14 +428,22 @@ function(Button, Dialog, Fragment, Controller, JSONModel, unifiedLibrary, Messag
 		},
 
 		handleDetailsDateChange: function (oEvent) {
-			this._dateChange(oEvent, "myPopoverFrag", this._oDetailsPopover.getBeginButton());
+			this._dateTimePickerChange(oEvent, "myPopoverFrag", this._oDetailsPopover.getBeginButton());
 		},
 
 		handleCreateDateChange: function (oEvent) {
-			this._dateChange(oEvent, "myDialogFrag", this._oNewAppointmentDialog.getBeginButton());
+			this._dateTimePickerChange(oEvent, "myDialogFrag", this._oNewAppointmentDialog.getBeginButton());
 		},
 
-		_dateChange: function(oEvent, sFragmentId, oSubmitButton) {
+		handleCreateDatePickerChange: function (oEvent) {
+			this._datePickerChange(oEvent, "myDialogFrag");
+		},
+
+		handleDetailsDatePickerChange: function (oEvent) {
+			this._datePickerChange(oEvent, "myPopoverFrag");
+		},
+
+		_dateTimePickerChange: function(oEvent, sFragmentId, oSubmitButton) {
 			var oDateTimePickerStart = Fragment.byId(sFragmentId, "startDate"),
 				oDateTimePickerEnd = Fragment.byId(sFragmentId, "endDate");
 
@@ -438,23 +454,52 @@ function(Button, Dialog, Fragment, Controller, JSONModel, unifiedLibrary, Messag
 				oEndDate.setHours(oEndDate.getHours() + 1);
 				oDateTimePickerEnd.setDateValue(oEndDate);
 			}
-			this._validateDateTimePicker(oDateTimePickerStart, oDateTimePickerEnd);
+			this._validateDTPDate(oDateTimePickerStart, oDateTimePickerEnd);
 			this.updateButtonEnabledState(oDateTimePickerStart, oDateTimePickerEnd, oSubmitButton);
 		},
 
-		_validateDateTimePicker: function (oDateTimePickerStart, oDateTimePickerEnd) {
-			var oStartDate = oDateTimePickerStart.getDateValue(),
-				oEndDate = oDateTimePickerEnd.getDateValue(),
-				sValueStateText = "Start date should be before End date";
+		_datePickerChange: function (oEvent, sFragmentId) {
+			var oDatePickerStart = Fragment.byId(sFragmentId, "dpStartDate"),
+				oDatePickerEnd = Fragment.byId(sFragmentId, "dpEndDate");
 
-			if (oStartDate && oEndDate && oEndDate.getTime() <= oStartDate.getTime()) {
-				oDateTimePickerStart.setValueState("Error");
-				oDateTimePickerEnd.setValueState("Error");
-				oDateTimePickerStart.setValueStateText(sValueStateText);
-				oDateTimePickerEnd.setValueStateText(sValueStateText);
+			// Whenever the DatePicker's start date is changed,
+			// apply one day increment for the DatePicker's end date.
+			if (sap.ui.getCore().byId(oEvent.getParameter("id")) === oDatePickerStart) {
+				var oEndDate = new Date(oDatePickerStart.getDateValue().getTime());
+				oDatePickerEnd.setDateValue(oEndDate);
+			}
+			this._validateDPDate(oDatePickerStart, oDatePickerEnd);
+		},
+
+		_validateDTPDate: function (oDateStart, oDateEnd) {
+			var oStartDate = oDateStart.getDateValue(),
+				oEndDate = oDateEnd.getDateValue(),
+				bEndDateBiggerThanStartDate = oEndDate.getTime() <= oStartDate.getTime(),
+				bErrorState = oStartDate && oEndDate && bEndDateBiggerThanStartDate;
+
+			this._validateDate(oDateStart, oDateEnd, bErrorState);
+		},
+
+		_validateDPDate: function (oDateStart, oDateEnd) {
+			var oStartDate = oDateStart.getDateValue(),
+				oEndDate = oDateEnd.getDateValue(),
+				bEndDateBiggerThanStartDate = oEndDate.getTime() < oStartDate.getTime(),
+				bErrorState = oStartDate && oEndDate && bEndDateBiggerThanStartDate;
+
+			this._validateDate(oDateStart, oDateEnd, bErrorState);
+		},
+
+		_validateDate: function(oDateStart, oDateEnd, bErrorState) {
+			var sValueStateText = "Start date should be before End date";
+
+			if (bErrorState) {
+				oDateStart.setValueState("Error");
+				oDateEnd.setValueState("Error");
+				oDateStart.setValueStateText(sValueStateText);
+				oDateEnd.setValueStateText(sValueStateText);
 			} else {
-				oDateTimePickerStart.setValueState("None");
-				oDateTimePickerEnd.setValueState("None");
+				oDateStart.setValueState("None");
+				oDateEnd.setValueState("None");
 			}
 		},
 
@@ -474,13 +519,18 @@ function(Button, Dialog, Fragment, Controller, JSONModel, unifiedLibrary, Messag
 				oEndValue = Fragment.byId("myPopoverFrag", "endDate").getDateValue(),
 				sInfoValue = Fragment.byId("myPopoverFrag", "moreInfo").getValue(),
 				sAppointmentPath = this._oDetailsPopover.getBindingContext().sPath,
-				oModel = this.getView().getModel();
+				oModel = this.getView().getModel(),
+				bAllDayAppointment = (Fragment.byId("myPopoverFrag", "allDay")).getSelected(),
+				oSPC = this.byId("SPC1");
+
+			this._checkAllDay(oStartValue, oEndValue, bAllDayAppointment);
 
 			oModel.setProperty(sAppointmentPath + "/title", sTitleValue);
 			oModel.setProperty(sAppointmentPath + "/type", sTypeValue);
 			oModel.setProperty(sAppointmentPath + "/startDate", oStartValue);
 			oModel.setProperty(sAppointmentPath + "/endDate", oEndValue);
 			oModel.setProperty(sAppointmentPath + "/text", sInfoValue);
+			oSPC.invalidate();
 			this._oDetailsPopover.close();
 		},
 
@@ -491,6 +541,45 @@ function(Button, Dialog, Fragment, Controller, JSONModel, unifiedLibrary, Messag
 		handleStartDateChange: function (oEvent) {
 			var oStartDate = oEvent.getParameter("date");
 			MessageToast.show("'startDateChange' event fired.\n\nNew start date is "  + oStartDate.toString());
+		},
+
+		handleCheckBoxSelectCreate: function (oEvent) {
+			var oButton = this._oNewAppointmentDialog.getBeginButton(),
+				bSelected = oEvent.getSource().getSelected();
+
+			this._handleCheckBoxSelect("myDialogFrag", oButton, bSelected);
+		},
+
+		handleCheckBoxSelectDetails: function (oEvent) {
+			var oButton = this._oDetailsPopover.getBeginButton(),
+				bSelected = oEvent.getSource().getSelected();
+
+			this._handleCheckBoxSelect("myPopoverFrag", oButton, bSelected);
+		},
+
+		_handleCheckBoxSelect: function (sFrag, oButton, bSelected) {
+			var oStartDate,
+				oEndDate;
+
+			if (bSelected) {
+				oStartDate = Fragment.byId(sFrag, "dpStartDate");
+				oEndDate = Fragment.byId(sFrag, "dpEndDate");
+				this._validateDPDate(oStartDate, oEndDate, bSelected);
+			} else {
+				oStartDate = Fragment.byId(sFrag, "startDate");
+				oEndDate = Fragment.byId(sFrag, "endDate");
+				this._validateDTPDate(oStartDate, oEndDate, bSelected);
+			}
+			this.updateButtonEnabledState(oStartDate, oEndDate, oButton);
+		},
+
+		_checkAllDay: function(oStartValue, oEndValue, bAllDayAppointment) {
+			if (bAllDayAppointment) {
+				oStartValue.setHours("00");
+				oStartValue.setMinutes("00");
+				oEndValue.setHours("00");
+				oEndValue.setMinutes("00");
+			}
 		}
 	});
 

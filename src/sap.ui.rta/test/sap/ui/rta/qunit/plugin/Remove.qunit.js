@@ -2,26 +2,30 @@
 
 sap.ui.define([
 	"sap/ui/rta/plugin/Remove",
+	"sap/ui/rta/Utils",
+	"sap/ui/rta/command/CommandFactory",
 	"sap/m/Button",
 	"sap/ui/layout/VerticalLayout",
 	"sap/ui/dt/DesignTime",
-	"sap/ui/rta/command/CommandFactory",
 	"sap/ui/dt/OverlayRegistry",
 	"sap/ui/fl/registry/ChangeRegistry",
 	"sap/ui/fl/Utils",
 	"sap/ui/qunit/QUnitUtils",
+	"sap/base/Log",
 	"sap/ui/thirdparty/sinon-4"
 ],
 function (
 	RemovePlugin,
+	Utils,
+	CommandFactory,
 	Button,
 	VerticalLayout,
 	DesignTime,
-	CommandFactory,
 	OverlayRegistry,
 	ChangeRegistry,
 	FlUtils,
 	QUnitUtils,
+	Log,
 	sinon
 ) {
 	"use strict";
@@ -239,6 +243,8 @@ function (
 			this.oButtonOverlay.setSelectable(true);
 			this.oButtonOverlay.setSelected(true);
 
+			sandbox.stub(Utils, "openRemoveConfirmationDialog").resolves(true);
+
 			this.oRemovePlugin.attachEventOnce("elementModified", function(oEvent) {
 				assert.notOk(this.oButtonOverlay.getSelected(), "the overlay was deselected");
 				var oCompositeCommand = oEvent.getParameter("command");
@@ -246,15 +252,39 @@ function (
 				assert.strictEqual(oCompositeCommand.getCommands()[0].getMetadata().getName(), "sap.ui.rta.command.Remove", "and command is of the correct type");
 				done();
 			}, this);
+
 			QUnitUtils.triggerKeydown(this.oButtonOverlay.getDomRef(), jQuery.sap.KeyCodes.DELETE);
 			assert.ok(true, "... when plugin removeElement is called ...");
+		});
 
-			// there is no chance to get notificated when the confirmation dialog is opened after switching to async processing (CommandFactory)
-			setTimeout(function() {
-				sap.ui.getCore().applyChanges();
-				assert.strictEqual(jQuery(".sapUiRtaConfirmationDialogText").text(), "Button", "Confirmation dialog is shown with a correct text");
-				sap.ui.getCore().byId(jQuery(".sapUiRtaConfirmationDialogRemoveButton")[0].id).firePress();
-			}, 0);
+		QUnit.test("when an overlay has remove action designTime metadata with a confirmation text defined and is selected and cancel is pressed", function (assert) {
+			var done = assert.async();
+			this.oButtonOverlay.setDesignTimeMetadata({
+				actions : {
+					remove : {
+						changeType : "hideControl",
+						getConfirmationText : function (oElementInstance) {
+							return oElementInstance.getText();
+						}
+					}
+				}
+			});
+			this.oRemovePlugin.deregisterElementOverlay(this.oButtonOverlay);
+			this.oRemovePlugin.registerElementOverlay(this.oButtonOverlay);
+
+			this.oLayoutOverlay.setSelectable(true);
+			this.oButtonOverlay.setSelectable(true);
+			this.oButtonOverlay.setSelected(true);
+
+			sandbox.stub(this.oRemovePlugin, "_fireElementModified").callsFake(function(oCompositeCommand) {
+				assert.equal(oCompositeCommand.getCommands(), 0, "there is no command added");
+				assert.ok(this.oButtonOverlay.getSelected(), "the button is selected again");
+				done();
+			}.bind(this));
+			sandbox.stub(Utils, "openRemoveConfirmationDialog").resolves(false);
+
+			QUnitUtils.triggerKeydown(this.oButtonOverlay.getDomRef(), jQuery.sap.KeyCodes.DELETE);
+			assert.ok(true, "... when plugin removeElement is called ...");
 		});
 
 		QUnit.test("when an overlay has remove action designTime metadata, and isEnabled property is boolean", function(assert) {
@@ -339,6 +369,27 @@ function (
 			this.oRemovePlugin.removeElement();
 
 			assert.ok(this.oRemovePlugin._handleRemove.notCalled, "then element was filtered and internal '_handleRemove()' is not called");
+		});
+
+		QUnit.test("when the handler is called but '_getRemoveCommand' throws an error", function(assert) {
+			this.oButtonOverlay.setDesignTimeMetadata({
+				actions : {
+					remove : {
+						changeType : "hideControl"
+					}
+				}
+			});
+			this.oButtonOverlay.setSelectable(true);
+			this.oButtonOverlay.setSelected(true);
+			sandbox.stub(this.oRemovePlugin, "_getRemoveCommand").rejects();
+			var oErrorLogStub = sandbox.stub(Log, "error");
+			var oFireElementModifiedStub = sandbox.stub(this.oRemovePlugin, "_fireElementModified");
+
+			return this.oRemovePlugin.handler([this.oButtonOverlay]).then(function() {
+				assert.equal(oErrorLogStub.callCount, 1, "an error was logged");
+				assert.equal(oFireElementModifiedStub.callCount, 0, "no event was fired");
+				assert.notOk(this.oButtonOverlay.getSelected(), "the overlay was not selected again");
+			}.bind(this));
 		});
 	});
 

@@ -36,9 +36,10 @@ sap.ui.define([
 	 * @version ${version}
 	 *
 	 * @constructor
-	 * @private
-	 * @since 1.62
+	 * @public
+	 * @since 1.64
 	 * @alias sap.f.cards.NumericHeader
+	 * @ui5-metamodel This control/element also will be described in the UI5 (legacy) designtime metamodel
 	 */
 	var NumericHeader = Control.extend("sap.f.cards.NumericHeader", {
 		metadata: {
@@ -71,7 +72,7 @@ sap.ui.define([
 				 * Financial characters can be used for currencies and counters. The International System of Units (SI) prefixes can be used.
 				 * If the unit contains more than three characters, only the first three characters are displayed.
 				 */
-				unit: { "type": "string", group : "Data" },
+				scale: { "type": "string", group : "Data" },
 
 				/**
 				 * The direction of the trend arrow. Shows deviation for the value of the main number indicator.
@@ -79,7 +80,9 @@ sap.ui.define([
 				trend: { "type": "sap.m.DeviationIndicator", group: "Appearance", defaultValue : "None" },
 
 				/**
-				 * The semantic color which represents the state of the main number indicator
+				 * The semantic color which represents the state of the main number indicator.
+				 * @experimental since 1.64
+				 * Disclaimer: this property is in a beta state - incompatible API changes may be done before its official public release. Use at your own discretion.
 				 */
 				state: { "type": "sap.m.ValueColor", group: "Appearance", defaultValue : "Neutral" },
 
@@ -117,7 +120,7 @@ sap.ui.define([
 				/**
 				 * Displays the main number indicator
 				 */
-				_mainIndicator: { type: "sap.m.NumericContent", multiple: false }
+				_mainIndicator: { type: "sap.m.NumericContent", multiple: false, visibility: "hidden" }
 			},
 			events: {
 
@@ -213,8 +216,8 @@ sap.ui.define([
 	 * @param {string} sValue The text of the title
 	 * @return {sap.f.cards.NumericHeader} <code>this</code> pointer for chaining
 	 */
-	NumericHeader.prototype.setUnit = function(sValue) {
-		this.setProperty("unit", sValue, true);
+	NumericHeader.prototype.setScale = function(sValue) {
+		this.setProperty("scale", sValue, true);
 		this._getMainIndicator().setScale(sValue);
 		return this;
 	};
@@ -372,7 +375,7 @@ sap.ui.define([
 
 		if (mConfiguration.mainIndicator) {
 			mSettings.number = mConfiguration.mainIndicator.number;
-			mSettings.unit = mConfiguration.mainIndicator.unit;
+			mSettings.scale = mConfiguration.mainIndicator.unit;
 			mSettings.trend = mConfiguration.mainIndicator.trend;
 			mSettings.state = mConfiguration.mainIndicator.state; // TODO convert ValueState to ValueColor
 		}

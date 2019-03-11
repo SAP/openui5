@@ -66,7 +66,12 @@
 				"id": "9ee6082188ff07fdf01b23e05c257f49969eb03f",
 				"type": "FIX",
 				"text": "ClientTreeBindingAdapter - Fixed Issue with groupID calculation",
-				"references": []
+				"references": [
+					{
+						"type": "BCP",
+						"reference": "1670228690"
+					}
+				]
 			},
 			{
 				"id": "8e6cb02156c5deb9aaa3a612280a7895e94d8267",
@@ -84,49 +89,93 @@
 				"id": "fcb06e533961ba6b61efeb7df4f9254f9d8077b7",
 				"type": "FIX",
 				"text": "sap.ui.model.TreeBindingAdapter: fix 'toggleIndex' with fixed rows in table",
-				"references": []
+				"references": [
+					{
+						"type": "BCP",
+						"reference": "1670003998"
+					}
+				]
 			},
 			{
 				"id": "481fba1f9edfe2cdcc5add7dd5edf0d7c2fb0dcc",
 				"type": "FIX",
 				"text": "sap.ui.table.Column: HTML entities should be encoded in JSDoc.",
-				"references": []
+				"references": [
+					{
+						"type": "GitHub",
+						"reference": "875"
+					}
+				]
 			},
 			{
 				"id": "0d87e4dcf656ae8e6a3f4873d2ca18bd762b6b63",
 				"type": "FIX",
 				"text": "sap.ui.table.Column: fixes _setFilterValue is not a function",
-				"references": []
+				"references": [
+					{
+						"type": "BCP",
+						"reference": "1670010098"
+					}
+				]
 			},
 			{
 				"id": "2063912d29499e1389a2f6fdf61e399db340dbcb",
 				"type": "FIX",
 				"text": "sap.ui.table.Column: sort order indicator for multi column sorting",
-				"references": []
+				"references": [
+					{
+						"type": "BCP",
+						"reference": "1580225649"
+					}
+				]
 			},
 			{
 				"id": "bbdbaa74b753586281a033a7fac012d8e0201da3",
 				"type": "FIX",
 				"text": "sap.ui.table.Table: BusyIndicator gets not removed when fixed rows are requested",
-				"references": []
+				"references": [
+					{
+						"type": "BCP",
+						"reference": "1670052993"
+					},
+					{
+						"type": "BCP",
+						"reference": "1670006635"
+					}
+				]
 			},
 			{
 				"id": "6163f3948dd666c6f335cb21021982be6e9499b3",
 				"type": "FIX",
 				"text": "sap.ui.table.Table: Column Header was not aligned to column",
-				"references": []
+				"references": [
+					{
+						"type": "BCP",
+						"reference": "1670057325"
+					}
+				]
 			},
 			{
 				"id": "9396382f0769789b6294cde6e5eb6b752125d30f",
 				"type": "FIX",
 				"text": "sap.ui.table.Table: Fix HCB Scrollbar Border",
-				"references": []
+				"references": [
+					{
+						"type": "BCP",
+						"reference": "1670174065"
+					}
+				]
 			},
 			{
 				"id": "9c595ef29d0faafacb4df21230724842b398f04e",
 				"type": "FIX",
 				"text": "sap.ui.table.Table: Fix HCB Scrollbar Border",
-				"references": []
+				"references": [
+					{
+						"type": "BCP",
+						"reference": "1670174065"
+					}
+				]
 			},
 			{
 				"id": "b373392399d38e74e31e1dbdb97f97770d25ac8f",
@@ -144,13 +193,23 @@
 				"id": "1b1eedd5e5a5246d192cb9560eda33fb981b950d",
 				"type": "FIX",
 				"text": "sap.ui.table.Table: IE should work with subpixel row height",
-				"references": []
+				"references": [
+					{
+						"type": "BCP",
+						"reference": "1670057325"
+					}
+				]
 			},
 			{
 				"id": "3f8f23de66fcf34a9b76ccac61700c0c362a2baf",
 				"type": "FIX",
 				"text": "sap.ui.table.Table: IE9 did not set correct row height",
-				"references": []
+				"references": [
+					{
+						"type": "BCP",
+						"reference": "1670053097"
+					}
+				]
 			},
 			{
 				"id": "a31393aa226ef116bc19742e815b8cab5772ca6f",
@@ -168,7 +227,12 @@
 				"id": "200eff0eb1441fa7927d4a0e11caa0fa45054101",
 				"type": "FIX",
 				"text": "sap.ui.table.Table: Improve ACC implementation - Part 11",
-				"references": []
+				"references": [
+					{
+						"type": "BCP",
+						"reference": "1670181751"
+					}
+				]
 			},
 			{
 				"id": "b7b6f85a39cc04eae6578c862a9293e7076f2cce",
@@ -222,13 +286,23 @@
 				"id": "46579f0fa9f6b3ec10f4de5a60f0f01a2d02d377",
 				"type": "FIX",
 				"text": "sap.ui.table.Table: Missing border-right on group header in HCB",
-				"references": []
+				"references": [
+					{
+						"type": "BCP",
+						"reference": "1670174507"
+					}
+				]
 			},
 			{
 				"id": "a6d1b10d4f9f898a09216bb475b1eb67f9ae5ae6",
 				"type": "FIX",
 				"text": "sap.ui.table.Table: Prevent wrapping of fixed area",
-				"references": []
+				"references": [
+					{
+						"type": "BCP",
+						"reference": "1670107665"
+					}
+				]
 			},
 			{
 				"id": "a47672b70e237343cbd047627c5bdcaa75c8d004",
@@ -238,15 +312,29 @@
 			},
 			{
 				"id": "10f89b1d627d6c09f855e8c9be6b4251bd34df7f",
-				"type": "ONLY",
-				"text": "when clicking on dummy td",
-				"references": []
+				"type": "FIX",
+				"text": "sap.ui.table.Table: SelectionBehavior Row[Only] when clicking on dummy td",
+				"references": [
+					{
+						"type": "BCP",
+						"reference": "1670020759"
+					}
+				]
 			},
 			{
 				"id": "1d0f1fa2f1890c93cf4e6cec335f25360a795dad",
 				"type": "FIX",
 				"text": "sap.ui.table.Table: SuppressReset for rows aggregation if bound",
-				"references": []
+				"references": [
+					{
+						"type": "GitHub",
+						"reference": "660"
+					},
+					{
+						"type": "BCP",
+						"reference": "1580183453"
+					}
+				]
 			},
 			{
 				"id": "2347c50585a435b0b01db99fd48b76fe02cb682c",
@@ -258,31 +346,56 @@
 				"id": "276b1e6d709467f3bd2ad079691aa0d3af7ad6bd",
 				"type": "FIX",
 				"text": "sap.ui.table.Table: border styles in hcb and bluecrystal",
-				"references": []
+				"references": [
+					{
+						"type": "BCP",
+						"reference": "1670104421"
+					}
+				]
 			},
 			{
 				"id": "bcc8c59cc6c0da13fdafca18d3859ee1d376bb7d",
 				"type": "FIX",
 				"text": "sap.ui.table.Table: call _updateTableCell",
-				"references": []
+				"references": [
+					{
+						"type": "BCP",
+						"reference": "1670128609"
+					}
+				]
 			},
 			{
 				"id": "710e2bd06386c12de5a48af290dc18ea8d60390d",
 				"type": "FIX",
 				"text": "sap.ui.table.Table: call rendering event delegates for DOM patching step",
-				"references": []
+				"references": [
+					{
+						"type": "BCP",
+						"reference": "1670238632"
+					}
+				]
 			},
 			{
 				"id": "1d73712804efb26ff4e1ae12a4681a1f532506fa",
 				"type": "FIX",
 				"text": "sap.ui.table.Table: column freeze for columns outside visible area",
-				"references": []
+				"references": [
+					{
+						"type": "BCP",
+						"reference": "1670148999"
+					}
+				]
 			},
 			{
 				"id": "24c763df6e7813699755a23c6e495548f77cb18a",
 				"type": "FIX",
 				"text": "sap.ui.table.Table: corrects rowHeights when transitions used to display table",
-				"references": []
+				"references": [
+					{
+						"type": "BCP",
+						"reference": "1670104421"
+					}
+				]
 			},
 			{
 				"id": "9e571814ccc5a094154970795ac517ec81ef9356",
@@ -294,7 +407,12 @@
 				"id": "fcaa4a24791d297c0600f57dd1f8ee010830a95b",
 				"type": "FIX",
 				"text": "sap.ui.table.Table: fix for Visual Tests",
-				"references": []
+				"references": [
+					{
+						"type": "BCP",
+						"reference": "1670104421"
+					}
+				]
 			},
 			{
 				"id": "fb084c51c8e48f4f2eae4f34c27bdfd6f3200674",
@@ -312,49 +430,113 @@
 				"id": "8e2fc72fec7793db5046d98881e507daced0812e",
 				"type": "FIX",
 				"text": "sap.ui.table.Table: fixes events for columnResize on dependant columns",
-				"references": []
+				"references": [
+					{
+						"type": "BCP",
+						"reference": "1570829430"
+					}
+				]
 			},
 			{
 				"id": "482899c2b57806f5af36140b93e1845b56598e06",
 				"type": "FIX",
 				"text": "sap.ui.table.Table: fixes null-ref issue with rowSelector of rows which do not have a parent",
-				"references": []
+				"references": [
+					{
+						"type": "BCP",
+						"reference": "1570854299"
+					}
+				]
 			},
 			{
 				"id": "0d92eb42c7043efb773a20f3f2a6d2620190e9c4",
 				"type": "FIX",
 				"text": "sap.ui.table.Table: fixes regressions related to table rendering - async DOM/ControlTree for updateTableSizes",
-				"references": []
+				"references": [
+					{
+						"type": "BCP",
+						"reference": "1670012888"
+					},
+					{
+						"type": "BCP",
+						"reference": "1670012889"
+					},
+					{
+						"type": "BCP",
+						"reference": "1670012890"
+					},
+					{
+						"type": "BCP",
+						"reference": "1670012886"
+					},
+					{
+						"type": "BCP",
+						"reference": "1670018867"
+					},
+					{
+						"type": "BCP",
+						"reference": "1670009930"
+					},
+					{
+						"type": "BCP",
+						"reference": "1670021422"
+					}
+				]
 			},
 			{
 				"id": "75425532569b2899bf9d705460d6c3db4bc74af6",
 				"type": "FIX",
 				"text": "sap.ui.table.Table: fixes requestCounter for changing bindings while request is still pending",
-				"references": []
+				"references": [
+					{
+						"type": "BCP",
+						"reference": "1570873362"
+					}
+				]
 			},
 			{
 				"id": "882e87c7f70f4bc8e57955c26bf2cddd5380959c",
 				"type": "FIX",
 				"text": "sap.ui.table.Table: fixes showOverlay for visibleRowCountMode Auto",
-				"references": []
+				"references": [
+					{
+						"type": "BCP",
+						"reference": "1670213646"
+					}
+				]
 			},
 			{
 				"id": "58c1dc8451dcbdb209636a8c4555427a7be5a7d7",
 				"type": "FIX",
 				"text": "sap.ui.table.Table: fixes the scroll position after sort or filter",
-				"references": []
+				"references": [
+					{
+						"type": "BCP",
+						"reference": "1670243389"
+					}
+				]
 			},
 			{
 				"id": "f89facbaace7559657566ce2b75fb7e385be93f4",
 				"type": "FIX",
 				"text": "sap.ui.table.Table: fixes updateTableSizes",
-				"references": []
+				"references": [
+					{
+						"type": "BCP",
+						"reference": "1670221353"
+					}
+				]
 			},
 			{
 				"id": "3ffac6e2a73c1f58c6ff18fb66917039cd2e6a82",
 				"type": "FIX",
 				"text": "sap.ui.table.Table: getFocusDomRef to return focused DOM ref from ItemNavigation",
-				"references": []
+				"references": [
+					{
+						"type": "BCP",
+						"reference": "1670183504"
+					}
+				]
 			},
 			{
 				"id": "6ccbfc264bcc719639ee3e2eaa3894c001524ea3",
@@ -366,31 +548,56 @@
 				"id": "4f194eb97197edc7ad8c872c593e38f3815a4a7f",
 				"type": "FIX",
 				"text": "sap.ui.table.Table: mark rowSelectionChange event when fired by user interaction",
-				"references": []
+				"references": [
+					{
+						"type": "BCP",
+						"reference": "1670126006"
+					}
+				]
 			},
 			{
 				"id": "fbc403a9f4afa987aea894ca324f2afea15ba0ce",
 				"type": "FIX",
 				"text": "sap.ui.table.Table: prevent rowSelectionChange event on implicit row selection change",
-				"references": []
+				"references": [
+					{
+						"type": "BCP",
+						"reference": "1670126006"
+					}
+				]
 			},
 			{
 				"id": "3c74c17fe77e2de15e8d9444b3ec2289889ebff1",
 				"type": "FIX",
 				"text": "sap.ui.table.Table: resizing of columns which should not be resizable",
-				"references": []
+				"references": [
+					{
+						"type": "BCP",
+						"reference": "1670052092"
+					}
+				]
 			},
 			{
 				"id": "1d5bfbf6ea45058c81beb24f4af4baecd8762b1d",
 				"type": "FIX",
 				"text": "sap.ui.table.Table: setVisibleRowCount to a lower value than before",
-				"references": []
+				"references": [
+					{
+						"type": "BCP",
+						"reference": "1670154371"
+					}
+				]
 			},
 			{
 				"id": "7000d938de09a59bf10df55aa139d275952d1456",
 				"type": "FIX",
 				"text": "sap.ui.table.TreeTable: fixes useGroupMode for TreeTable",
-				"references": []
+				"references": [
+					{
+						"type": "BCP",
+						"reference": "1670173538"
+					}
+				]
 			},
 			{
 				"id": "d8755875d002021a4770884d9c2d48de86fb98ca",
@@ -407,7 +614,12 @@
 				"id": "52d6e72edb9d573c8ca6eeaa7b97b81b5b2fe145",
 				"type": "FEATURE",
 				"text": "sap.ui.table.Table: column header menu on touch devices",
-				"references": []
+				"references": [
+					{
+						"type": "BCP",
+						"reference": "1570898590"
+					}
+				]
 			},
 			{
 				"id": "45f61f1aed44ea6d8d7db44249c858aa883f85a1",
@@ -431,37 +643,83 @@
 				"id": "32c27f994f66fd8619f759b6f69bc8ac78af0d0c",
 				"type": "FIX",
 				"text": "sap.ui.table.Table: calculation of scrollbar length changed to consider fixed rows",
-				"references": []
+				"references": [
+					{
+						"type": "BCP",
+						"reference": "1670242634"
+					}
+				]
 			},
 			{
 				"id": "667bba3039e5793e4492e4da43c9c9ef6624bdce",
 				"type": "FIX",
 				"text": "sap.ui.table.Table: execute updateBindingContexts before rendering",
-				"references": []
+				"references": [
+					{
+						"type": "BCP",
+						"reference": "1670242634"
+					}
+				]
 			},
 			{
 				"id": "c0785c269a474e891a1174548b09abf0f5cf8f16",
 				"type": "FIX",
 				"text": "sap.ui.table.Table: prevent column wrapping",
-				"references": []
+				"references": [
+					{
+						"type": "BCP",
+						"reference": "1670271695"
+					},
+					{
+						"type": "BCP",
+						"reference": "1670268376"
+					},
+					{
+						"type": "BCP",
+						"reference": "1670110979"
+					},
+					{
+						"type": "BCP",
+						"reference": "1670249938"
+					},
+					{
+						"type": "BCP",
+						"reference": "1670261445"
+					}
+				]
 			},
 			{
 				"id": "51c8623b571e231a6a537da52ccd7585caba2850",
 				"type": "FIX",
 				"text": "sap.ui.table.Table: recreate rows before rendering when row template changed",
-				"references": []
+				"references": [
+					{
+						"type": "BCP",
+						"reference": "1670279961"
+					}
+				]
 			},
 			{
 				"id": "361d73804b26e8ea9ab50e3d3e0c8ece0100f956",
 				"type": "FIX",
 				"text": "sap.ui.table.Table: register resizeHandler synchronously if table has no size after rendering",
-				"references": []
+				"references": [
+					{
+						"type": "BCP",
+						"reference": "1670264580"
+					}
+				]
 			},
 			{
 				"id": "35614961de0bb57d673b540cf7680972ce2a6be1",
 				"type": "FIX",
 				"text": "sap.ui.table.Table: row selection rendering",
-				"references": []
+				"references": [
+					{
+						"type": "BCP",
+						"reference": "1670266969"
+					}
+				]
 			}
 		]
 	},
@@ -472,13 +730,23 @@
 				"id": "75dd2680f5a896dc0f104df1fb822fe692f893cb",
 				"type": "FIX",
 				"text": "sap.ui.table.Table: AutoBusyIndicator",
-				"references": []
+				"references": [
+					{
+						"type": "BCP",
+						"reference": "1670257631"
+					}
+				]
 			},
 			{
 				"id": "6f64199b23caf6903df0cf247fe55a56d4ac5e43",
 				"type": "FIX",
 				"text": "sap.ui.table.Table: Table width expanded by Scroll Bar width",
-				"references": []
+				"references": [
+					{
+						"type": "BCP",
+						"reference": "1670235792"
+					}
+				]
 			},
 			{
 				"id": "9b0cf79ff4681a2ec1ba11156a29704ac2defbee",
@@ -490,7 +758,12 @@
 				"id": "2a0746975f39be8b5312c3833efe301fbd3b7697",
 				"type": "FIX",
 				"text": "sap.ui.table.Table: fixes scrollbar width/height for MS Edge",
-				"references": []
+				"references": [
+					{
+						"type": "BCP",
+						"reference": "1670250543"
+					}
+				]
 			}
 		]
 	},
@@ -501,19 +774,34 @@
 				"id": "033995ba48e30b34dfca24bc033d31c7a33c424e",
 				"type": "FIX",
 				"text": "AnalyticalTable - Total Row & Metadata Timing",
-				"references": []
+				"references": [
+					{
+						"type": "BCP",
+						"reference": "1670314278"
+					}
+				]
 			},
 			{
 				"id": "e64e48c996d31a843d5bd931036b77bbf842b527",
 				"type": "FIX",
 				"text": "ClientTreeBindingAdapter - Expand was broken",
-				"references": []
+				"references": [
+					{
+						"type": "BCP",
+						"reference": "1680024759"
+					}
+				]
 			},
 			{
 				"id": "587bdcd8a1e75d346537e8db62963d858c4f68b7",
 				"type": "FIX",
 				"text": "sap.ui.model.odata.v2.ODataTreeBinding: fixes timing issue with navigation properties",
-				"references": []
+				"references": [
+					{
+						"type": "BCP",
+						"reference": "1670342368"
+					}
+				]
 			},
 			{
 				"id": "82f22c9e2ad5bb9862ddc0ed70f65efe0098054c",
@@ -525,43 +813,78 @@
 				"id": "2cd7fac508391d93d079f6c62ab928756476e80b",
 				"type": "FIX",
 				"text": "sap.ui.table.AnalyticalTable: fixes issue with busy indicator after updateAnalyticalInfo",
-				"references": []
+				"references": [
+					{
+						"type": "BCP",
+						"reference": "1670348538"
+					}
+				]
 			},
 			{
 				"id": "a90e8098424436f97bcccd731594d9847b1d1578",
 				"type": "FIX",
 				"text": "sap.ui.table.AnalyticalTable: forces binding to fire change after updateAnalyticalInfo",
-				"references": []
+				"references": [
+					{
+						"type": "BCP",
+						"reference": "1670295084"
+					}
+				]
 			},
 			{
 				"id": "04ef1d1128e188dc971d83ef1681e50bc02c214d",
 				"type": "FIX",
 				"text": "sap.ui.table.Table: Fix screenreader announcement of column header tooltips",
-				"references": []
+				"references": [
+					{
+						"type": "BCP",
+						"reference": "1670335891"
+					}
+				]
 			},
 			{
 				"id": "296e84c490b6713d9012f43fb2ec327ba74d66dd",
 				"type": "FIX",
 				"text": "sap.ui.table.Table: Fix tabbing out from row header",
-				"references": []
+				"references": [
+					{
+						"type": "BCP",
+						"reference": "1670315698"
+					}
+				]
 			},
 			{
 				"id": "da1a235ca08aee0dae2ac71abb28794d47c1a311",
 				"type": "FIX",
 				"text": "sap.ui.table.Table: hAlign Right in RTL mode",
-				"references": []
+				"references": [
+					{
+						"type": "BCP",
+						"reference": "1670325032"
+					}
+				]
 			},
 			{
 				"id": "97ee4cd3c22b2b9dcbdd0d469c8351e6e9c87239",
 				"type": "FIX",
 				"text": "sap.ui.table.Table: refreshRows getting called without binding",
-				"references": []
+				"references": [
+					{
+						"type": "BCP",
+						"reference": "1670313066"
+					}
+				]
 			},
 			{
 				"id": "60736a02b3c4b2bea6e549ed847633e46cc714cc",
 				"type": "FIX",
 				"text": "sap.ui.table.TableKeyboardExtension: fixes null ref issue in destroy",
-				"references": []
+				"references": [
+					{
+						"type": "BCP",
+						"reference": "1670343631"
+					}
+				]
 			}
 		]
 	}

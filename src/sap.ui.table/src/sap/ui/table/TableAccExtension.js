@@ -411,7 +411,7 @@ sap.ui.define([
 
 			ExtensionHelper.performCellModifications(this, $Cell, aDefaultLabels, null, aLabels, aDescriptions, sText,
 				function(aLabels, aDescriptions, bRowChange, bColChange, bInitial) {
-					var bContainsTreeIcon = $Cell.find(".sapUiTableTreeIcon").length == 1;
+					var bContainsTreeIcon = $Cell.find(".sapUiTableTreeIcon").not(".sapUiTableTreeIconLeaf").length == 1;
 
 					if ((bContainsTreeIcon || TableUtils.Grouping.isInGroupingRow($Cell)) && (bRowChange || bColChange)){
 						aDescriptions.push(oTable.getId() + (!oTableInstances.row._bIsExpanded ? "-rowexpandtext" : "-rowcollapsetext"));
@@ -619,16 +619,14 @@ sap.ui.define([
 				case TableAccExtension.ELEMENTTYPES.COLUMNROWHEADER:
 					mAttributes["aria-labelledby"] = [sTableId + "-ariacolrowheaderlabel"];
 
-					var bAddSelectAllLabel = false;
 					mAttributes["role"] = ["button"];
 					if (mParams && mParams.enabled) {
 						mAttributes["aria-pressed"] = mParams.checked ? "true" : "false";
 					} else {
-						bAddSelectAllLabel = true;
 						mAttributes["aria-disabled"] = "true";
 						mAttributes["aria-pressed"] = "false";
 					}
-					if (bAddSelectAllLabel || !oTable._getShowStandardTooltips()) {
+					if (!oTable._getShowStandardTooltips() && oTable._oSelectionPlugin.getRenderConfig().headerSelector.type === "toggle") {
 						mAttributes["aria-labelledby"].push(sTableId + "-ariaselectall");
 					}
 					break;

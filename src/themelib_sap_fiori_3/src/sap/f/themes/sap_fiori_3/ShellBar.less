@@ -1,7 +1,13 @@
-@_sap_f_Shell_Bar_Copilot_Design: dark; // Possible designs are "dark" and "light"
-
 .sapFShellBar {
 	background: @sapUiShellColor;
+	.CPImage {
+		.color1 {
+			stop-color: #C0D9F2;
+		}
+		.color2 {
+			stop-color: #FFFFFF;
+		}
+	}
 	.sapMTB-Transparent-CTX .sapMBtn {
 		&:focus .sapMBtnInner {
 			outline-color: contrast(@sapShellColor, @sapUiContentFocusColor, @sapUiContentContrastFocusColor, @sapContent_ContrastTextThreshold);

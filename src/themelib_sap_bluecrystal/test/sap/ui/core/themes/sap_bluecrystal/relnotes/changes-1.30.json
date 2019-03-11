@@ -66,37 +66,71 @@
 				"id": "9d44f1f8dc72fc90a0b04c19f3675721f0f850e9",
 				"type": "FIX",
 				"text": "sap.m.Button: Fixed hover state when transparent",
-				"references": []
+				"references": [
+					{
+						"type": "BCP",
+						"reference": "1580013077"
+					}
+				]
 			},
 			{
 				"id": "f6d3494bcae0e7e8f2456c79732522364b245a51",
 				"type": "FIX",
 				"text": "sap.m.IconTabBar: Left padding is now correct",
-				"references": []
+				"references": [
+					{
+						"type": "BCP",
+						"reference": "1570023260"
+					}
+				]
 			},
 			{
 				"id": "41b6c26bddd9631685efaed780f9eceee622eeb1",
 				"type": "FIX",
 				"text": "sap.m.IconTabBar: The first text is no longer clipped on mobile devices when the first filter is \"showAll:true\"",
-				"references": []
+				"references": [
+					{
+						"type": "BCP",
+						"reference": "1570009305"
+					},
+					{
+						"type": "BCP",
+						"reference": "1580008364"
+					}
+				]
 			},
 			{
 				"id": "f269e31d9328726645fce5a3751e338c8672fa28",
 				"type": "FIX",
 				"text": "sap.m.Input:  Changed ValueHelp icon size in compact mode",
-				"references": []
+				"references": [
+					{
+						"type": "BCP",
+						"reference": "1570145998"
+					}
+				]
 			},
 			{
 				"id": "5cb5f3813e88b7f5b59bf96e128601bc2bb8d448",
 				"type": "FIX",
 				"text": "sap.m.Input: Fixed position of ValueHelp icon if description is used",
-				"references": []
+				"references": [
+					{
+						"type": "BCP",
+						"reference": "1580012098"
+					}
+				]
 			},
 			{
 				"id": "694add47e99281deb119fe0cf4f8b308d16357ab",
 				"type": "FIX",
 				"text": "sap.m.Input: Adjusted width of F4 button in compact mode",
-				"references": []
+				"references": [
+					{
+						"type": "BCP",
+						"reference": "1570027193"
+					}
+				]
 			},
 			{
 				"id": "d5710b39043140a0fbe0aa7a5313d3ee9fc414dc",
@@ -108,7 +142,12 @@
 				"id": "d2a3fc72eb63c58aff1c8101faabbdf922d79baa",
 				"type": "FIX",
 				"text": "sap.m.MultiComboBox: Popup no longer closed on first chosen token",
-				"references": []
+				"references": [
+					{
+						"type": "BCP",
+						"reference": "1580008350"
+					}
+				]
 			},
 			{
 				"id": "7131b90ec383f70eec78426e69db0016c29ad075",
@@ -120,7 +159,12 @@
 				"id": "eaa668c9273d765bc09ce939e2719ddd334cdb47",
 				"type": "FIX",
 				"text": "sap.m.MultiInput: Adjusted token style in High Contrast Black theme to align with BlueCrystal theme",
-				"references": []
+				"references": [
+					{
+						"type": "BCP",
+						"reference": "1472018886"
+					}
+				]
 			},
 			{
 				"id": "dc0d639048dd7f9e563f118b325c75daf7b86bc1",
@@ -132,7 +176,12 @@
 				"id": "c6e04e2549f4719ab6c9832d65263461d69a5e6a",
 				"type": "FIX",
 				"text": "sap.m.MultiInput: Fixed placeholder covering ValueHelp button in Internet Explorer",
-				"references": []
+				"references": [
+					{
+						"type": "BCP",
+						"reference": "1580007145"
+					}
+				]
 			},
 			{
 				"id": "c85f57ce4955e30115efbd11cd92b7c20ef10295",
@@ -144,25 +193,45 @@
 				"id": "e0c134ef2ee2946c644e2de0aa2978ac266d6ab2",
 				"type": "FIX",
 				"text": "sap.m.Text: When text in editable form is empty, min-height is added",
-				"references": []
+				"references": [
+					{
+						"type": "BCP",
+						"reference": "1580019297"
+					}
+				]
 			},
 			{
 				"id": "5f3e4c5a6e2e6089d41a2205e85a8db37b282d6a",
 				"type": "FIX",
 				"text": "sap.m.Title/Label: Margin in transparent toolbar context for Bluecrystal and HCB theme fixed",
-				"references": []
+				"references": [
+					{
+						"type": "BCP",
+						"reference": "1570022275"
+					}
+				]
 			},
 			{
 				"id": "9a57a5cbd63df5fd92a7391bb0775595c0b1a4bb",
 				"type": "FIX",
 				"text": "sap.m.ToggleButton: Fixed the custom button's outline - CSS issue (Internet Explorer)",
-				"references": []
+				"references": [
+					{
+						"type": "BCP",
+						"reference": "1570028549"
+					}
+				]
 			},
 			{
 				"id": "9ddd02abfc8b543f2e9e953f2679a6f4126daff4",
 				"type": "FIX",
 				"text": "sap.ui.commons.ComboBox: Fixed text alignment in Internet Explorer 10",
-				"references": []
+				"references": [
+					{
+						"type": "BCP",
+						"reference": "1570022050"
+					}
+				]
 			},
 			{
 				"id": "dabd85392c82f5383109f40d8045bf3b69fd9422",
@@ -174,13 +243,31 @@
 				"id": "4a0750005caa4f45455ba0c82f5ea1b20430b57c",
 				"type": "FIX",
 				"text": "sap.ui.table.AnalyticalTable: Calculation of Group Header fixed",
-				"references": []
+				"references": [
+					{
+						"type": "BCP",
+						"reference": "1580026944"
+					},
+					{
+						"type": "BCP",
+						"reference": "1580017579"
+					}
+				]
 			},
 			{
 				"id": "4f167e140cbde2c3aaadc9680383d9060a75fc87",
 				"type": "FIX",
 				"text": "sap.ui.table.AnalyticalTable: Calculation of Group Header fixed",
-				"references": []
+				"references": [
+					{
+						"type": "BCP",
+						"reference": "1580026944"
+					},
+					{
+						"type": "BCP",
+						"reference": "1580017579"
+					}
+				]
 			},
 			{
 				"id": "1afa6a0862b0f34fdf99553b4c37c1f618d5f376",
@@ -204,31 +291,56 @@
 				"id": "c6b392760505cc3bb94b3b71260746c414f34cca",
 				"type": "FIX",
 				"text": "Theming: Background customizing fixed for UShell control (Lauchpad)",
-				"references": []
+				"references": [
+					{
+						"type": "BCP",
+						"reference": "012002523100003941962015"
+					}
+				]
 			},
 			{
 				"id": "4d8c6a6806f1fde33ea176dfa6ec6b8995f82a05",
 				"type": "FIX",
 				"text": "Tree: Scrollbars in 100% height containers avoided",
-				"references": []
+				"references": [
+					{
+						"type": "BCP",
+						"reference": "1570040764"
+					}
+				]
 			},
 			{
 				"id": "f045bd4968a9b061f4dd5c74cee111b4285148cb",
 				"type": "FIX",
 				"text": "sap.m.ActionSheet: Fixed the height of ActionSheet on phones",
-				"references": []
+				"references": [
+					{
+						"type": "BCP",
+						"reference": "1570146612"
+					}
+				]
 			},
 			{
 				"id": "39569d341dfae15af03565c41c73e4dcb826bd68",
 				"type": "FIX",
 				"text": "sap.m.Bar: Fixed search field value in sub header bar",
-				"references": []
+				"references": [
+					{
+						"type": "BCP",
+						"reference": "1570030862"
+					}
+				]
 			},
 			{
 				"id": "f7d2503e9d66b2f0588f4e7f70158c5d8883e7fe",
 				"type": "FIX",
 				"text": "sap.m.Button: Focus outline drawn on mobile devices fixed",
-				"references": []
+				"references": [
+					{
+						"type": "BCP",
+						"reference": "1570443396"
+					}
+				]
 			},
 			{
 				"id": "ec0561e7a5c6b3a771c39574afa53ffa249f7564",
@@ -240,13 +352,23 @@
 				"id": "889d2abf966217701d0576e4df193e7644e704ae",
 				"type": "FIX",
 				"text": "sap.m.ComboBox: Input field text no longer overflows in arrow button in Internet Explorer 10",
-				"references": []
+				"references": [
+					{
+						"type": "BCP",
+						"reference": "1570148595"
+					}
+				]
 			},
 			{
 				"id": "4d9ae607aa6338527679ee176f8cc7825d72b26b",
 				"type": "FIX",
 				"text": "sap.m.DatePicker: Long text no longer covers picker icon in Internet Explorer 9/10",
-				"references": []
+				"references": [
+					{
+						"type": "BCP",
+						"reference": "1570148595"
+					}
+				]
 			},
 			{
 				"id": "e10fbe9daecb4df7a33fa422408fc722680f2958",
@@ -258,13 +380,23 @@
 				"id": "4cefa44f8c01c5bdbce28de8bf7868a15546ee83",
 				"type": "FIX",
 				"text": "sap.m.ObjectStatus: Font size in tables aligned with design spec",
-				"references": []
+				"references": [
+					{
+						"type": "BCP",
+						"reference": "1570136795"
+					}
+				]
 			},
 			{
 				"id": "1505951ec6a8d8b5aca05f7768b501432aa8bc10",
 				"type": "FIX",
 				"text": "sap.m.Panel: Focused icon now has proper border placement",
-				"references": []
+				"references": [
+					{
+						"type": "BCP",
+						"reference": "1570034007"
+					}
+				]
 			},
 			{
 				"id": "ffb87b5a66ceeb7899080ebf3ec867e0c8b2f3bb",
@@ -282,7 +414,12 @@
 				"id": "8ccdb3d0119cf91bff89b6cffbf61814cced86da",
 				"type": "FIX",
 				"text": "sap.ui.layout.Form: RadioButton in compact mode fixed",
-				"references": []
+				"references": [
+					{
+						"type": "BCP",
+						"reference": "1570150393"
+					}
+				]
 			},
 			{
 				"id": "123b4c58adb96a399cbac685c12816c9f8bd1e1a",
@@ -318,19 +455,34 @@
 				"id": "8b2180193d56a43aab4991eca28b1bbaeb88f622",
 				"type": "FIX",
 				"text": "sap.m.IconTabBar: Text tabs drop shadow is changed from 50% opacity to 70% opacity",
-				"references": []
+				"references": [
+					{
+						"type": "BCP",
+						"reference": "1472021648"
+					}
+				]
 			},
 			{
 				"id": "e83df6183f1ff1fe7a565ec49a26a6636b9da082",
 				"type": "FIX",
 				"text": "sap.m.MultiComboBox: Improved rendering",
-				"references": []
+				"references": [
+					{
+						"type": "BCP",
+						"reference": "1570443199"
+					}
+				]
 			},
 			{
 				"id": "4f71e5986ff818941160f0b71b480166069b9ed3",
 				"type": "FIX",
 				"text": "sap.m.ObjectAttribute: Text is now displayed on 100% if no title is set",
-				"references": []
+				"references": [
+					{
+						"type": "BCP",
+						"reference": "1570459519"
+					}
+				]
 			},
 			{
 				"id": "d083c75b53db7d62cad7bb564c0644b58f93f59c",
@@ -342,25 +494,45 @@
 				"id": "5e7cac06956f889ce549765205343c60387a82cd",
 				"type": "FIX",
 				"text": "sap.m.SplitContainer: Removed the thin blue line between master and detail when it's rendered in Launchpad shell",
-				"references": []
+				"references": [
+					{
+						"type": "BCP",
+						"reference": "1570466880"
+					}
+				]
 			},
 			{
 				"id": "8b5644e2d5c7dfd0ce26376e1639dce4c8a7c28c",
 				"type": "FIX",
 				"text": "sap.ui.commons.Button: Emphasized button with hover and focus color fixed",
-				"references": []
+				"references": [
+					{
+						"type": "BCP",
+						"reference": "1570466990"
+					}
+				]
 			},
 			{
 				"id": "6ccabe3dc0c283e52a6ce91e1c29462acef4fae1",
 				"type": "FIX",
 				"text": "sap.ui.core.Icon: Icon no longer gets a different color only when it's directly under sap.m.Toolbar",
-				"references": []
+				"references": [
+					{
+						"type": "BCP",
+						"reference": "1570448376"
+					}
+				]
 			},
 			{
 				"id": "d65defdb36c4bb57a191b30ea96c10554aebd6eb",
 				"type": "FIX",
 				"text": "sap.ui.unified.FileUploader: Improved m styling",
-				"references": []
+				"references": [
+					{
+						"type": "BCP",
+						"reference": "1570014271"
+					}
+				]
 			}
 		]
 	},

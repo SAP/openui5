@@ -675,9 +675,19 @@ sap.ui.define([
 				});
 
 			QuickViewPage.prototype.setProperty = function (sName, oValue) {
-				Control.prototype.setProperty.call(this, sName, oValue, true);
+
+				var mNavContext = this.getNavContext(),
+					bSupressInvalidate = true;
+
+				if (mNavContext && mNavContext.quickView && mNavContext.quickView.isA('sap.m.QuickViewCard')) {
+					bSupressInvalidate = false;
+				}
+
+				Control.prototype.setProperty.call(this, sName, oValue, bSupressInvalidate);
 
 				this._updatePage();
+
+				return this;
 			};
 
 			return QuickViewPage;

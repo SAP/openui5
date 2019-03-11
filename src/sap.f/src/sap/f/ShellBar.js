@@ -6,7 +6,6 @@
 sap.ui.define([
 	"sap/ui/core/Control",
 	"./shellBar/Factory",
-	"sap/ui/core/theming/Parameters",
 	"./shellBar/AdditionalContentSupport",
 	"./shellBar/ResponsiveHandler",
 	"./ShellBarRenderer"
@@ -14,7 +13,6 @@ sap.ui.define([
 function(
 	Control,
 	Factory,
-	Parameters,
 	AdditionalContentSupport,
 	ResponsiveHandler
 	/*, ShellBarRenderer */
@@ -32,7 +30,13 @@ function(
 	 *
 	 * <h3>Overview</h3>
 	 *
-	 * The <code>ShellHeader</code> shows multiple child controls used as application shell header.
+	 * The <code>ShellBar</code> is used as the uppermost section (shell) of the app. It is fully
+	 * responsive and adaptive, and corresponds to the SAP Fiori Design Guidelines.
+	 *
+	 * <h3>Usage</h3>
+	 *
+	 * Content specified in the <code>ShellBar</code> properties and aggregations is automatically
+	 * positioned in dedicated places of the control.
 	 *
 	 * @extends sap.ui.core.Control
 	 *
@@ -41,7 +45,7 @@ function(
 	 *
 	 * @constructor
 	 * @public
-	 * @experimental Since 1.63. This class is experimental and provides only limited functionality. Also the API might be changed in future.
+	 * @experimental Since 1.63, that provides only limited functionality. Also, the API might be changed in future.
 	 * @alias sap.f.ShellBar
 	 * @since 1.63
 	 * @ui5-metamodel This control/element also will be described in the UI5 (legacy) designtime metamodel
@@ -52,152 +56,154 @@ function(
 			interfaces: ["sap.f.IShellBar"],
 			properties: {
 				/**
-				 * Main title of the control
+				 * Defines the main title of the control.
 				 */
 				title: {type: "string", group: "Appearance", defaultValue: ""},
 				/**
-				 * Secondary title
+				 * Defines the secondary title of the control.
 				 */
 				secondTitle: {type: "string", group: "Appearance", defaultValue: ""},
 				/**
-				 * Used to display company/product logo or icon
+				 * Defines the URI to the home icon, such as company or product logo.
 				 */
 				homeIcon: {type: "sap.ui.core.URI", group: "Appearance", defaultValue: ""},
 				/**
-				 * Alternative menu button if <code>menu</code> aggregation is not used
+				 * Determines whether a hamburger menu button is displayed (as an alternative
+				 * if the <code>menu</code> aggregation is not used).
 				 */
 				showMenuButton: {type: "boolean", group: "Appearance", defaultValue: false},
 				/**
-				 * Back navigation button
+				 * Determines whether a back navigation button is displayed.
 				 */
 				showNavButton: {type: "boolean", group: "Appearance", defaultValue: false},
 				/**
-				 * CoPilot
+				 * Determines whether the SAP CoPilot icon is displayed.
 				 */
 				showCopilot: {type: "boolean", group: "Appearance", defaultValue: false},
 				/**
-				 * Search button
+				 * Determines whether the search button is displayed.
 				 */
 				showSearch: {type: "boolean", group: "Appearance", defaultValue: false},
 				/**
-				 * Notifications button
+				 * Determines whether the notifications button is displayed.
 				 */
 				showNotifications: {type: "boolean", group: "Appearance", defaultValue: false},
 				/**
-				 * Product Switcher button
+				 * Determines whether the product switcher button is displayed.
 				 */
 				showProductSwitcher: {type: "boolean", group: "Appearance", defaultValue: false}
 			},
 			aggregations: {
 				/**
-				 * Menu which will be attached to the main title
+				 * The menu attached to the main title.
 				 */
 				menu: {type: "sap.m.Menu", multiple: false, forwarding: {
 					getter: "_getMenu",
 					aggregation: "menu"
 				}},
 				/**
-				 * Profile Avatar
+				 * The profile avatar.
 				 */
 				profile: {type: "sap.f.Avatar", multiple: false, forwarding: {
 					getter: "_getProfile",
 					aggregation: "avatar"
 				}},
 				/**
-				 * Additional content to be displayed in the control. Currently only a subset of controls are supported.
-				 * Only controls implementing sap.f.IShellBar interface will be allowed here.
+				 * Additional content to be displayed in the control.
+				 *
+				 * <b>Note:</b> Only controls implementing the <code>{@link sap.f.IShellBar}</code> interface are allowed.
 				 */
 				additionalContent: {type: "sap.f.IShellBar", multiple: true, singularName : "additionalContent"},
 				/**
-				 * Holds the internally created OverflowToolbar
+				 * Holds the internally created OverflowToolbar.
 				 */
 				_overflowToolbar: {type: "sap.m.OverflowToolbar", multiple: false, visibility: "hidden"}
 			},
 			events: {
 				/**
-				 * Fired when the home Icon/Logo is pressed
+				 * Fired when the <code>homeIcon</code> is pressed.
 				 */
 				homeIconPressed: {
 					parameters: {
 						/**
-						 * Reference to the image, that has been pressed.
+						 * Reference to the image that has been pressed
 						 */
 						icon: {type: "sap.m.Image"}
 					}
 				},
 				/**
-				 * Fired when the alternative menu button is pressed
+				 * Fired when the alternative menu button is pressed.
 				 */
 				menuButtonPressed: {
 					parameters: {
 						/**
-						 * Reference to the button, that has been pressed.
+						 * Reference to the button that has been pressed
 						 */
 						button : {type: "sap.m.Button"}
 					}
 				},
 				/**
-				 * Fired when the navigation/back button is pressed
+				 * Fired when the navigation/back button is pressed.
 				 */
 				navButtonPressed: {
 					parameters: {
 						/**
-						 * Reference to the button, that has been pressed.
+						 * Reference to the button that has been pressed
 						 */
 						button : {type: "sap.m.Button"}
 					}
 				},
 				/**
-				 * Fired when the home CoPilot is pressed
+				 * Fired when the SAP CoPilot icon is pressed.
 				 */
 				copilotPressed: {
 					parameters: {
 						/**
-						 * Reference to the button, that has been pressed.
+						 * Reference to the button that has been pressed
 						 */
 						image : {type: "sap.m.Image"}
 					}
 				},
 				/**
-				 * Fired when the search button is pressed
+				 * Fired when the search button is pressed.
 				 */
 				searchButtonPressed: {
 					parameters: {
 						/**
-						 * Reference to the button, that has been pressed.
+						 * Reference to the button that has been pressed
 						 */
 						button: {type: "sap.m.Button"}
 					}
 				},
 				/**
-				 * Fired when the home notifications button is pressed
+				 * Fired when the notifications button is pressed.
 				 */
 				notificationsPressed: {
 					parameters: {
 						/**
-						 * Reference to the button, that has been pressed.
+						 * Reference to the button that has been pressed
 						 */
 						button: {type: "sap.m.Button"}
 					}
 				},
 				/**
-				 * Fired when the home Product Switcher button is pressed
+				 * Fired when the product switcher button is pressed.
 				 */
 				productSwitcherPressed: {
 					parameters: {
 						/**
-						 * Reference to the button, that has been pressed.
+						 * Reference to the button that has been pressed
 						 */
 						button: {type: "sap.m.Button"}
 					}
 				},
 				/**
-				 * Fired when the Profile Avatar is pressed
+				 * Fired when the profile avatar is pressed.
 				 */
 				avatarPressed: {
 					parameters: {
 						/**
-						 * Reference to the button, that has been pressed.
+						 * Reference to the button that has been pressed
 						 */
 						avatar: {type: "sap.f.Avatar"}
 					}
@@ -212,11 +218,6 @@ function(
 	// Lifecycle
 	ShellBar.prototype.init = function () {
 		this._oFactory = new Factory(this);
-
-		// Handle "Dark" CoPilot image
-		if (Parameters.get("_sap_f_Shell_Bar_Copilot_Design") === "dark") {
-			this._oFactory.setCPImage("CoPilot_dark.svg");
-		}
 
 		this._bOTBUpdateNeeded = true;
 
@@ -240,15 +241,6 @@ function(
 	ShellBar.prototype.exit = function () {
 		this._oResponsiveHandler.exit();
 		this._oFactory.destroy();
-	};
-
-	ShellBar.prototype.onThemeChanged = function () {
-		// Update Copilot on possible dark theme
-		if (Parameters.get("_sap_f_Shell_Bar_Copilot_Design") === "dark") {
-			this._oFactory.setCPImage("CoPilot_dark.svg");
-		} else {
-			this._oFactory.setCPImage("CoPilot_white.svg");
-		}
 	};
 
 	// Setters

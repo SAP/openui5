@@ -2225,10 +2225,10 @@ sap.ui.define([
 		// arrange
 		oComboBox.placeAt("content");
 		sap.ui.getCore().applyChanges();
-		var sExpectedActiveDescendantId = oComboBox.getListItem(oExpectedItem).getId();
 
 		oComboBox.open();
 		this.clock.tick(1000); // wait 1s after the open animation is completed
+		var sExpectedActiveDescendantId = oComboBox.getListItem(oExpectedItem).getId();
 
 		// assert
 		assert.strictEqual(jQuery(oComboBox.getFocusDomRef()).attr("aria-activedescendant"), sExpectedActiveDescendantId, 'The "aria-activedescendant" attribute is set when the active descendant is rendered and visible');
@@ -4852,8 +4852,8 @@ sap.ui.define([
 			assert.strictEqual(oComboBox.getFocusDomRef().getAttribute("autocomplete"), "off");
 			assert.strictEqual(oComboBox.getFocusDomRef().getAttribute("autocorrect"), "off");
 			assert.strictEqual(oComboBox.getFocusDomRef().getAttribute("autocapitalize"), "off");
-			assert.strictEqual(oComboBox.getFocusDomRef().parentNode.getAttribute("aria-expanded"), "false");
-			assert.strictEqual(oComboBox.getFocusDomRef().parentNode.getAttribute("aria-autocomplete"), "inline");
+			assert.strictEqual(oComboBox.getRoleComboNodeDomRef().getAttribute("aria-expanded"), "false");
+			assert.strictEqual(oComboBox.getRoleComboNodeDomRef().getAttribute("aria-autocomplete"), "inline");
 			assert.strictEqual(jQuery(oComboBox.getFocusDomRef()).attr("aria-required"), undefined);
 			assert.ok(oComboBox.$().hasClass(oComboBox.getRenderer().CSS_CLASS_COMBOBOXBASE), 'The combo box element has the CSS class "' + oComboBox.getRenderer().CSS_CLASS_COMBOBOXBASE + '"');
 			assert.ok(oComboBox.getAggregation("_endIcon").length, "The HTML span element for the arrow exists");
@@ -5039,6 +5039,7 @@ sap.ui.define([
 		});
 
 		oComboBox.setModel(oModel);
+		oComboBox._fillList(); // Simulate before open of the popover
 		sap.ui.getCore().applyChanges();
 
 		// assert
@@ -5078,10 +5079,6 @@ sap.ui.define([
 
 		// assert
 		assert.strictEqual(fnShowSpy.callCount, 1, "onsapshow() method was called exactly once");
-
-		if (jQuery.support.cssAnimations) {
-			assert.strictEqual(oComboBox.getPicker().oPopup.getOpenState(), OpenState.OPENING, "Control's picker pop-up is opening");
-		}
 
 		this.clock.tick(1000);
 		assert.strictEqual(oComboBox.getPicker().oPopup.getOpenState(), OpenState.OPEN, "Control's picker pop-up is open");
@@ -5154,10 +5151,6 @@ sap.ui.define([
 
 		// assert
 		assert.strictEqual(fnShowSpy.callCount, 1, "onsapshow() method was called exactly once");
-
-		if (jQuery.support.cssAnimations) {
-			assert.strictEqual(oComboBox.getPicker().oPopup.getOpenState(), OpenState.OPENING, "Control's picker pop-up is opening");
-		}
 
 		this.clock.tick(1000);
 		assert.strictEqual(oComboBox.getPicker().oPopup.getOpenState(), OpenState.OPEN, "Control picker pop-up is open");
@@ -5476,10 +5469,6 @@ sap.ui.define([
 
 		// assert
 		assert.strictEqual(fnHideSpy.callCount, 1, "onsaphide() method was called exactly once");
-
-		if (jQuery.support.cssAnimations) {
-			assert.strictEqual(oComboBox.getPicker().oPopup.getOpenState(), OpenState.OPENING, "Control's picker pop-up is opening");
-		}
 
 		this.clock.tick(1000);
 		assert.strictEqual(oComboBox.getPicker().oPopup.getOpenState(), OpenState.OPEN, "Control's picker pop-up is open");
@@ -7995,12 +7984,12 @@ sap.ui.define([
 		oComboBox.focus();
 		var fnOpenSpy = this.spy(oComboBox, "open");
 		var fnFireSelectionChangeSpy = this.spy(oComboBox, "fireSelectionChange");
-		var sExpectedActiveDescendantId = oComboBox.getListItem(oExpectedItem).getId();
 
 		// act
 		oComboBox.getFocusDomRef().value = "G";
 		sap.ui.qunit.QUnitUtils.triggerEvent("input", oComboBox.getFocusDomRef());
 		this.clock.tick(1000);	// wait 1s after the open animation is completed
+		var sExpectedActiveDescendantId = oComboBox.getListItem(oExpectedItem).getId();
 
 		// assert
 		assert.strictEqual(fnOpenSpy.callCount, 1, "open() method was called exactly once");
@@ -8033,7 +8022,7 @@ sap.ui.define([
 		var fnFireSelectionChangeSpy = this.spy(oComboBox, "fireSelectionChange");
 		var fnOpenSpy = this.spy(oComboBox, "open");
 		var fnCloseSpy = this.spy(oComboBox, "close");
-		var sOpenState = !jQuery.support.cssAnimations ? OpenState.CLOSED : OpenState.CLOSING;	// no animation on ie9
+		var sOpenState = OpenState.CLOSED;
 
 		// act
 		oComboBox.getFocusDomRef().value = "v";
@@ -8797,7 +8786,7 @@ sap.ui.define([
 
 		// assert
 		assert.strictEqual(fnOnAfterOpenSpy.callCount, 1, "onAfterOpen() called exactly once");
-		assert.strictEqual(oComboBox.getFocusDomRef().parentNode.getAttribute("aria-expanded"), "true");
+		assert.strictEqual(oComboBox.getRoleComboNodeDomRef().getAttribute("aria-expanded"), "true");
 		assert.strictEqual(oComboBox.$("inner").attr("aria-activedescendant"), undefined, 'The "aria-activedescendant" attribute is set when the active descendant is rendered and visible');
 
 		// cleanup
@@ -8822,11 +8811,11 @@ sap.ui.define([
 		oComboBox.placeAt("content");
 		sap.ui.getCore().applyChanges();
 		oComboBox.focus();
-		var sExpectedActiveDescendantId = oComboBox.getListItem(oExpectedItem).getId();
 
 		// act
 		oComboBox.open();
 		this.clock.tick(1000);
+		var sExpectedActiveDescendantId = oComboBox.getListItem(oExpectedItem).getId();
 
 		// assert
 		assert.strictEqual(oComboBox.$("inner").attr("aria-activedescendant"), sExpectedActiveDescendantId);
@@ -9030,7 +9019,7 @@ sap.ui.define([
 
 		// assert
 		assert.strictEqual(fnOnAfterCloseSpy.callCount, 1, "onAfterClose() called exactly once");
-		assert.strictEqual(oComboBox.getFocusDomRef().parentNode.getAttribute("aria-expanded"), "false");
+		assert.strictEqual(oComboBox.getRoleComboNodeDomRef().getAttribute("aria-expanded"), "false");
 		assert.strictEqual(oComboBox.$("inner").attr("aria-activedescendant"), undefined, 'The "aria-activedescendant" attribute is set when the active descendant is rendered and visible');
 
 		// cleanup
@@ -10250,7 +10239,7 @@ sap.ui.define([
 		oComboBox.placeAt("content");
 		sap.ui.getCore().applyChanges();
 
-		assert.strictEqual(oComboBox.getFocusDomRef().parentNode.getAttribute("role"), "combobox", "should be combobox");
+		assert.strictEqual(oComboBox.getRoleComboNodeDomRef().getAttribute("role"), "combobox", "should be combobox");
 		assert.strictEqual(oComboBox.getFocusDomRef().getAttribute("type"), "text", "should be text");
 		oComboBox.destroy();
 	});
@@ -11296,11 +11285,20 @@ sap.ui.define([
 				_itemsTextStartsWithTypedValue: function () {
 					return true;
 				},
-				_bIsLastFocusedItemHeader: false
+				_bIsLastFocusedItemHeader: false,
+				getValue: function () {return "";},
+				_getSelectionRange: function (oComboBox) {
+					return oComboBox._getSelectionRange.call(this);
+				},
+				_shouldResetSelectionStart: function (oComboBox) {
+					return oComboBox._shouldResetSelectionStart.call(this);
+				}
 			};
 		},
 		afterEach: function () {
 			this.oComboBox.destroy();
+			this.oFakeFocusDomRef = null;
+			this.oFakeControl = null;
 		}
 	});
 
@@ -11339,18 +11337,121 @@ sap.ui.define([
 		assert.strictEqual(fnErrorSpy.callCount, 0, "No error was logged in the console.");
 	});
 
+	QUnit.test("_getSelectionRange - should return correct values scenario 1", function (assert) {
+		// assert
+		assert.strictEqual(this.oFakeControl._getSelectionRange(this.oComboBox).start, 0, "Correct start value returned");
+		assert.strictEqual(this.oFakeControl._getSelectionRange(this.oComboBox).end, 0, "Correct end value returned");
+	});
+
+	QUnit.test("_getSelectionRange - should return correct values scenario 2", function (assert) {
+		// arrange
+		this.oFakeFocusDomRef.selectionStart = 2;
+		this.oFakeFocusDomRef.selectionEnd = 2;
+
+		// assert
+		assert.strictEqual(this.oFakeControl._getSelectionRange(this.oComboBox).start, 2, "Correct value returned");
+		assert.strictEqual(this.oFakeControl._getSelectionRange(this.oComboBox).end, 2, "Correct value returned");
+
+		// arrange
+		this.oFakeFocusDomRef.selectionStart = 1;
+		this.oFakeFocusDomRef.selectionEnd = 5;
+
+		// assert
+		assert.strictEqual(this.oFakeControl._getSelectionRange(this.oComboBox).start, 1, "Correct value returned");
+		assert.strictEqual(this.oFakeControl._getSelectionRange(this.oComboBox).end, 5, "Correct value returned");
+	});
+
+	QUnit.test("_getSelectionRange (IE & Edge) - should return correct values scenario 1", function (assert) {
+		this.stub(Device, "browser", {
+			msie: true
+		});
+
+		// assert
+		assert.strictEqual(this.oFakeControl._getSelectionRange(this.oComboBox).start, 0, "Correct value returned");
+		assert.strictEqual(this.oFakeControl._getSelectionRange(this.oComboBox).end, 0, "Correct value returned");
+
+	});
+
+	QUnit.test("_getSelectionRange (IE & Edge) - should return correct values scenario 2", function (assert) {
+		this.stub(Device, "browser", {
+			msie: true
+		});
+		this.oFakeFocusDomRef.selectionStart = 2;
+		this.oFakeFocusDomRef.selectionEnd = 2;
+
+		// assert
+		assert.strictEqual(this.oFakeControl._getSelectionRange(this.oComboBox).start, 2, "Correct value returned");
+		assert.strictEqual(this.oFakeControl._getSelectionRange(this.oComboBox).end, 2, "Correct value returned");
+
+		// arrange
+		this.oFakeFocusDomRef.selectionStart = 1;
+		this.oFakeFocusDomRef.selectionEnd = 5;
+
+		// assert
+		assert.strictEqual(this.oFakeControl._getSelectionRange(this.oComboBox).start, 1, "Correct value returned");
+		assert.strictEqual(this.oFakeControl._getSelectionRange(this.oComboBox).end, 5, "Correct value returned");
+	});
+
+	QUnit.test("_getSelectionRange (IE & Edge) - should return correct values scenario 3 (last focused item is header; value = 'some')", function (assert) {
+		this.stub(Device, "browser", {
+			msie: true
+		});
+		this.oFakeControl._bIsLastFocusedItemHeader = true;
+		this.oFakeControl.getValue = function () {return 'some';};
+
+		// assert
+		assert.strictEqual(this.oFakeControl._getSelectionRange(this.oComboBox).start, 4, "Correct value returned");
+		assert.strictEqual(this.oFakeControl._getSelectionRange(this.oComboBox).end, 4, "Correct value returned");
+	});
+
+	QUnit.module("Reset selection", {
+		beforeEach: function () {
+			this.oComboBox = new ComboBox();
+
+			// Mocked control data
+			this.oFakeFocusDomRef = {
+				selectionStart: 0,
+				selectionEnd: 0,
+				value: {
+					substring: function () {}
+				}
+			};
+			this.oFakeControl = {
+				getFocusDomRef: function () {
+					return this.oFakeFocusDomRef;
+				}.bind(this),
+				_itemsTextStartsWithTypedValue: function () {
+					return true;
+				},
+				_bIsLastFocusedItemHeader: false,
+				getValue: function () {return "";},
+				_getSelectionRange: function () {
+					return {
+						start: this.getFocusDomRef().selectionStart,
+						end: this.getFocusDomRef().selectionEnd
+					};
+				}
+			};
+		},
+		afterEach: function () {
+			this.oComboBox.destroy();
+			this.oFakeFocusDomRef = null;
+			this.oFakeControl = null;
+		}
+	});
+
 	QUnit.test("shouldResetSelectionStart - scenario 1: Typed value with selected text and item starting with the typed value.", function (assert) {
 		// system under test
 		this.oFakeFocusDomRef.selectionStart = 2;
 		this.oFakeFocusDomRef.selectionEnd = 6;
 
 		// assert
-		assert.ok(!this.oComboBox.shouldResetSelectionStart(this.oFakeControl), "Selection should not be reset");
+		assert.ok(!this.oComboBox._shouldResetSelectionStart.call(this.oFakeControl), "Selection should not be reset");
 	});
 
 	QUnit.test("shouldResetSelectionStart - scenario 2: Typed value without selected text and item starting with the typed value.", function (assert) {
 		// assert
-		assert.ok(this.oComboBox.shouldResetSelectionStart(this.oFakeControl), "Selection should be reset");
+		assert.ok(this.oComboBox._shouldResetSelectionStart.call(this.oFakeControl), "Selection should be reset");
 	});
 
 	QUnit.test("shouldResetSelectionStart - scenario 3: Typed value without selected text, matching item and previous item was a group header item.", function (assert) {
@@ -11360,7 +11461,7 @@ sap.ui.define([
 		this.oFakeControl._bIsLastFocusedItemHeader = true;
 
 		// assert
-		assert.ok(!this.oComboBox.shouldResetSelectionStart(this.oFakeControl), "Selection should not be reset");
+		assert.ok(!this.oComboBox._shouldResetSelectionStart.call(this.oFakeControl), "Selection should not be reset");
 	});
 
 	QUnit.test("shouldResetSelectionStart - scenario 4: No item that starts with the typed value.", function (assert) {
@@ -11368,7 +11469,7 @@ sap.ui.define([
 		this.oFakeControl._itemsTextStartsWithTypedValue = function () { return false; };
 
 		// assert
-		assert.ok(this.oComboBox.shouldResetSelectionStart(this.oFakeControl), "Selection should be reset");
+		assert.ok(this.oComboBox._shouldResetSelectionStart.call(this.oFakeControl), "Selection should be reset");
 	});
 
 	QUnit.module("addItemGroup", {
@@ -11515,7 +11616,7 @@ sap.ui.define([
 
 	QUnit.test("onsapdown when picker opened should move visual focus to the first item (group header in this case)", function (assert) {
 		assert.expect(5);
-		var oGroupHeaderItem = this.oComboBox._oList.getItems()[0];
+		var oGroupHeaderItem;
 
 		// arrange
 		this.oComboBox.focus();
@@ -11526,6 +11627,7 @@ sap.ui.define([
 		this.clock.tick(500);
 
 		assert.ok(this.oComboBox.isOpen(), "The combo box's picker is opened.");
+		oGroupHeaderItem = this.oComboBox._oList.getItems()[0];
 
 		sap.ui.test.qunit.triggerKeydown(this.oComboBox.getFocusDomRef(), KeyCodes.ARROW_DOWN);
 
@@ -11537,9 +11639,8 @@ sap.ui.define([
 
 	QUnit.test("onsapdown twice when picker opened should move visual focus to the first item", function (assert) {
 		var oExpectedItem = this.oComboBox.getItems()[1],
-			oExpectedListItem = this.oComboBox.getListItem(oExpectedItem),
-			oGroupHeaderListItem = this.oComboBox._oList.getItems()[0],
-			sExpectedValue = "item11";
+			sExpectedValue = "item11",
+			oExpectedListItem, oGroupHeaderListItem;
 
 		// arrange
 		this.oComboBox.focus();
@@ -11550,6 +11651,8 @@ sap.ui.define([
 		this.clock.tick(500);
 
 		assert.ok(this.oComboBox.isOpen(), "The combo box's picker is opened.");
+		oExpectedListItem = this.oComboBox.getListItem(oExpectedItem);
+		oGroupHeaderListItem = this.oComboBox._oList.getItems()[0];
 
 		sap.ui.test.qunit.triggerKeydown(this.oComboBox.getFocusDomRef(), KeyCodes.ARROW_DOWN);
 		sap.ui.test.qunit.triggerKeydown(this.oComboBox.getFocusDomRef(), KeyCodes.ARROW_DOWN);
@@ -11563,8 +11666,8 @@ sap.ui.define([
 		assert.expect(8);
 		var oExpectedItem = this.oComboBox.getItems()[5],
 			oInitiallySelectedItem = this.oComboBox.getItems()[4],
-			oExpectedListItem = this.oComboBox.getListItem(oExpectedItem),
-			oInitiallySelectedListItem = this.oComboBox.getListItem(oInitiallySelectedItem),
+			oExpectedListItem,
+			oInitiallySelectedListItem,
 			sExpectedValue = "item22";
 
 		// arrange
@@ -11583,6 +11686,8 @@ sap.ui.define([
 
 		// act
 		sap.ui.test.qunit.triggerKeydown(this.oComboBox.getFocusDomRef(), KeyCodes.ARROW_DOWN);
+		oInitiallySelectedListItem = this.oComboBox.getListItem(oInitiallySelectedItem);
+		oExpectedListItem = this.oComboBox.getListItem(oExpectedItem);
 
 		// assert
 		this.fnCheckSelectedItemAndValue(assert, oExpectedItem, sExpectedValue);
@@ -11593,8 +11698,8 @@ sap.ui.define([
 		assert.expect(8);
 		var oExpectedItem = this.oComboBox.getItems()[4],
 			oInitiallySelectedItem = this.oComboBox.getItems()[5],
-			oExpectedListItem = this.oComboBox.getListItem(oExpectedItem),
-			oInitiallySelectedListItem = this.oComboBox.getListItem(oInitiallySelectedItem),
+			oExpectedListItem,
+			oInitiallySelectedListItem,
 			sExpectedValue = "item21";
 
 		// arrange
@@ -11613,6 +11718,8 @@ sap.ui.define([
 
 		// act
 		sap.ui.test.qunit.triggerKeydown(this.oComboBox.getFocusDomRef(), KeyCodes.ARROW_UP);
+		oExpectedListItem = this.oComboBox.getListItem(oExpectedItem);
+		oInitiallySelectedListItem = this.oComboBox.getListItem(oInitiallySelectedItem);
 
 		// assert
 		this.fnCheckSelectedItemAndValue(assert, oExpectedItem, sExpectedValue);
@@ -11623,8 +11730,8 @@ sap.ui.define([
 		assert.expect(6);
 		var oExpectedItem = this.oComboBox.getItems()[2],
 			oInitiallySelectedItem = this.oComboBox.getItems()[4],
-			oExpectedListItem = this.oComboBox.getListItem(oExpectedItem),
-			oInitiallySelectedListItem = this.oComboBox.getListItem(oInitiallySelectedItem),
+			oExpectedListItem,
+			oInitiallySelectedListItem,
 			sExpectedValue = "item12";
 
 		// arrange
@@ -11637,6 +11744,8 @@ sap.ui.define([
 
 		// act
 		sap.ui.test.qunit.triggerKeydown(this.oComboBox.getFocusDomRef(), KeyCodes.ARROW_UP);
+		oExpectedListItem = this.oComboBox.getListItem(oExpectedItem);
+		oInitiallySelectedListItem = this.oComboBox.getListItem(oInitiallySelectedItem);
 
 		// assert
 		this.fnCheckSelectedItemAndValue(assert, oExpectedItem, sExpectedValue);
@@ -11672,7 +11781,7 @@ sap.ui.define([
 
 	QUnit.test("when moving through group header, the user input should stay and be autocompleted", function (assert) {
 		var oExpectedItem = this.oComboBox.getItems()[1],
-			oExpectedListItem = this.oComboBox.getListItem(oExpectedItem),
+			oExpectedListItem,
 			oFakeEvent = {
 				target: {
 					value: "it"
@@ -11684,6 +11793,11 @@ sap.ui.define([
 
 		// arrange
 		this.oComboBox.focus();
+		this.oComboBox.open();
+		this.clock.tick(500);
+
+		oExpectedListItem = this.oComboBox.getListItem(oExpectedItem);
+
 		this.oComboBox.oninput(oFakeEvent);
 		this.clock.tick(0);
 

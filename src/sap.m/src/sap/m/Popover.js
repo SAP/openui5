@@ -598,8 +598,9 @@ sap.ui.define([
 					//gain the focus back to popover in order to prevent the autoclose of the popover
 					oNavContent.attachEvent("afterNavigate", function (oEvent) {
 						var oDomRef = this.getDomRef();
-						if (oDomRef && !oDomRef.contains(document.activeElement)) {
-							oDomRef.focus();
+						if (oDomRef) {
+							var oFocusableElement = this.$().firstFocusableDomRef() || oDomRef;
+							oFocusableElement.focus();
 						}
 					}, this);
 				}

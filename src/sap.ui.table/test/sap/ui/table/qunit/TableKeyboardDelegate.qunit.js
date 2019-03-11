@@ -5638,10 +5638,12 @@ sap.ui.define([
 		beforeEach: function() {
 			setupTest();
 
-			TableQUnitUtils.addColumn(oTable, "Focusable & Not Tabbable", "Focus&NoTabSpan", false, true, false);
-			TableQUnitUtils.addColumn(oTable, "Not Focusable & Not Tabbable", "NoFocus&NoTabSpan", false, false, false);
+			oTable.removeAllColumns();
 			TableQUnitUtils.addColumn(oTable, "Focusable & Tabbable", "Focus&TabInput", true, null, true);
-			TableQUnitUtils.addColumn(oTable, "Focusable & Not Tabbable", "Focus&NoTabInput", true, null, false);
+			TableQUnitUtils.addColumn(oTable, "Focusable & Not Tabbable", "Focus&NoTabSpan", false, true, false, null, null, true);
+			TableQUnitUtils.addColumn(oTable, "Not Focusable & Not Tabbable", "NoFocus&NoTabSpan", false, false, false, null, null, true);
+			TableQUnitUtils.addColumn(oTable, "Focusable & Tabbable", "Focus&TabInput", true, null, true, null, null, true);
+			TableQUnitUtils.addColumn(oTable, "Focusable & Not Tabbable", "Focus&NoTabInput", true, null, null, null, null, true);
 
 			sap.ui.getCore().applyChanges();
 		},
@@ -5661,16 +5663,33 @@ sap.ui.define([
 		 * @param {boolean} bCtrl Whether to simulate a pressed Ctrl key.
 		 * @param {boolean} bTestLeaveActionMode Whether leaving the action mode should be tested.
 		 * @param {Function} fEventTriggerer The function which triggers the event.
+		 * @param {boolean} [bAllowsFocusCellContent=false] Whether the keyboard shortcut allows to focus interactive elements in column header cells.
 		 */
-		testOnHeaderCells: function(assert, key, sKeyName, bShift, bAlt, bCtrl, bTestLeaveActionMode, fEventTriggerer) {
+		testOnHeaderCells: function(assert, key, sKeyName, bShift, bAlt, bCtrl, bTestLeaveActionMode, fEventTriggerer, bAllowsFocusCellContent) {
+			bAllowsFocusCellContent = bAllowsFocusCellContent === true;
+
 			var sKeyCombination = (bShift ? "Shift+" : "") + (bAlt ? "Alt+" : "") + (bCtrl ? "Ctrl+" : "") + sKeyName;
 			var oElem;
 
-			// Column header cell
+			// Column header cell without interactive elements
 			oElem = checkFocus(getColumnHeader(0, true), assert);
 			assert.ok(!oTable._getKeyboardExtension().isInActionMode(), "Table is in Navigation Mode");
 			fEventTriggerer(oElem, key, bShift, bAlt, bCtrl);
 			checkFocus(getColumnHeader(0), assert);
+			assert.ok(!oTable._getKeyboardExtension().isInActionMode(), "Table is in Navigation Mode");
+
+			// Column header cell with interactive elements
+			oElem = checkFocus(getColumnHeader(1, true), assert);
+			assert.ok(!oTable._getKeyboardExtension().isInActionMode(), "Table is in Navigation Mode");
+			fEventTriggerer(oElem, key, bShift, bAlt, bCtrl);
+
+			if (bAllowsFocusCellContent) {
+				oElem = TableUtils.getInteractiveElements(oElem)[0];
+				assert.strictEqual(document.activeElement, oElem, sKeyCombination + ": First interactive element in the cell is focused");
+			} else {
+				checkFocus(getColumnHeader(1), assert);
+			}
+
 			assert.ok(!oTable._getKeyboardExtension().isInActionMode(), "Table is in Navigation Mode");
 
 			// Row header cell
@@ -5870,10 +5889,21 @@ sap.ui.define([
 		getRowHeader(2, true);
 		assert.ok(!oTable._getKeyboardExtension().isInActionMode(),
 			"Focus row header cell which is no group header icon cell or row selector cell: Table is in Navigation Mode");
+
+		// Enter Action Mode: Focus tabbable input control inside a data cell.
+		oElement = TableUtils.getInteractiveElements(getCell(2, oTable.columnCount - 2))[0];
+		oElement.focus();
+		assert.strictEqual(document.activeElement, oElement, "Tabbable input element in the cell is focused");
+		assert.ok(oTable._getKeyboardExtension().isInActionMode(), "Table is in Action Mode");
+
+		// Enter Navigation Mode: Focus an interactive element inside a column header cell.
+		getColumnHeader(oTable.columnCount - 2, true);
+		assert.ok(!oTable._getKeyboardExtension().isInActionMode(),
+			"Interactive element in the column header cell is focused: Table is in Navigation Mode");
 	});
 
 	QUnit.test("F2 - On Column/Row/GroupIcon/SelectAll Header Cells", function(assert) {
-		this.testOnHeaderCells(assert, Key.F2, "F2", false, false, false, true, qutils.triggerKeydown);
+		this.testOnHeaderCells(assert, Key.F2, "F2", false, false, false, true, qutils.triggerKeydown, true);
 	});
 
 	QUnit.test("F2 - On a Data Cell", function(assert) {
@@ -6092,7 +6122,7 @@ sap.ui.define([
 			TableQUnitUtils.addColumn(oTable, "Focusable & Not Tabbable", "Focus&NoTabSpan", false, true, false);
 			TableQUnitUtils.addColumn(oTable, "Not Focusable & Not Tabbable", "NoFocus&NoTabSpan", false, false, false);
 			TableQUnitUtils.addColumn(oTable, "Focusable & Tabbable", "Focus&TabInput", true, null, true);
-			TableQUnitUtils.addColumn(oTable, "Focusable & Not Tabbable", "Focus&NoTabInput", true, null, false);
+			TableQUnitUtils.addColumn(oTable, "Focusable & Not Tabbable", "Focus&NoTabInput", true, null, false, null, null, true);
 
 			sap.ui.getCore().applyChanges();
 		},
@@ -7032,5 +7062,22 @@ sap.ui.define([
 				simulateTabEvent(document.activeElement, true);
 			});
 		}).then(done);
+	});
+
+	QUnit.test("TAB & Shift+TAB - Column Headers", function(assert) {
+		var $ColumnHeaderCell = getColumnHeader(oTable.columnCount - 1, true, assert);
+		var $InteractiveElements = TableUtils.getInteractiveElements($ColumnHeaderCell);
+
+		$InteractiveElements[0].focus();
+		assert.strictEqual(document.activeElement, $InteractiveElements[0], "First interactive element in the column header cell is focused");
+
+		simulateTabEvent(document.activeElement);
+		checkFocus($ColumnHeaderCell, assert);
+
+		$InteractiveElements[0].focus();
+		assert.strictEqual(document.activeElement, $InteractiveElements[0], "First interactive element in the column header cell is focused");
+
+		simulateTabEvent(document.activeElement, false);
+		checkFocus($ColumnHeaderCell, assert);
 	});
 });

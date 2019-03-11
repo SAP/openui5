@@ -68,17 +68,35 @@
 		height: 2rem;
 	}
 
-	.sapMImg.CPImage {
+	.CPImage {
 		width: ~"@{_sap_f_ShellBar_CoPilotWidth}px";
-		&:hover {
-			transition: transform 0.30s;
-			transform: scale(1.1);
-			outline: none;
+		height: ~"@{_sap_f_ShellBar_CoPilotWidth}px";
+		overflow: hidden;
+		cursor: pointer;
+		outline: none;
+		html[data-sap-ui-animation='on'] & {
+			&:hover {
+				transition: transform 0.30s;
+				transform: scale(1.1);
+			}
+			&:active {
+				transition: transform 0.05s;
+				transform: scale(1.2);
+			}
 		}
-		&:active {
-			transition: transform 0.05s;
-			transform: scale(1.2);
-			outline: none;
+		html[data-sap-ui-animation='off'] & {
+			&:hover {
+				transform: scale(1.1);
+			}
+			&:active {
+				transform: scale(1.2);
+			}
+		}
+		.color1 {
+			stop-color: #00B8F3;
+		}
+		.color2 {
+			stop-color: #1C61BA;
 		}
 	}
 

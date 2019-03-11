@@ -11,7 +11,10 @@ sap.ui.define([
 	'./Token',
 	'./ToggleButton',
 	'./List',
+	'./StandardListItem',
 	'./Popover',
+	'./SuggestionsPopover',
+	'./Toolbar',
 	'./GroupHeaderListItem',
 	'./library',
 	'sap/ui/core/EnabledPropagator',
@@ -27,6 +30,7 @@ sap.ui.define([
 	"sap/base/util/deepEqual",
 	"sap/base/assert",
 	"sap/base/Log",
+	"sap/ui/core/Core",
 	"sap/ui/thirdparty/jquery",
 	// jQuery Plugin "cursorPos"
 	"sap/ui/dom/jquery/cursorPos",
@@ -42,7 +46,10 @@ function(
 	Token,
 	ToggleButton,
 	List,
+	StandardListItem,
 	Popover,
+	SuggestionsPopover,
+	Toolbar,
 	GroupHeaderListItem,
 	library,
 	EnabledPropagator,
@@ -58,6 +65,7 @@ function(
 	deepEqual,
 	assert,
 	Log,
+	core,
 	jQuery
 ) {
 	"use strict";
@@ -460,7 +468,7 @@ function(
 	MultiComboBox.prototype.onsapfocusleave = function(oEvent) {
 		var oPicker = this.getAggregation("picker"),
 			bTablet = this.isPlatformTablet(),
-			oControl = sap.ui.getCore().byId(oEvent.relatedControlId),
+			oControl = core.byId(oEvent.relatedControlId),
 			oFocusDomRef = oControl && oControl.getFocusDomRef(),
 			sOldValue = this.getValue();
 
@@ -504,7 +512,8 @@ function(
 		var oPicker = this.getPicker();
 		var bPreviousFocusInDropdown = false;
 		var oPickerDomRef  = oPicker.getFocusDomRef();
-		var bPickerClosing = oPicker.oPopup.getOpenState() === OpenState.CLOSING;
+		var sCurrentState = oPicker.oPopup.getOpenState();
+		var bPickerClosedOrClosing = sCurrentState === OpenState.CLOSING || sCurrentState === OpenState.CLOSED;
 		var bDropdownPickerType = this.getPickerType() === "Dropdown";
 
 		if (bDropdownPickerType) {
@@ -521,7 +530,7 @@ function(
 			// enable type ahead when switching focus from the dropdown to the input field
 			// we need to check whether the focus has been triggered by the popover's closing or just a manual focusin
 			// isOpen is still true as the closing has not finished yet.
-			!bPickerClosing && bPreviousFocusInDropdown && this.handleInputValidation(oEvent, false);
+			!bPickerClosedOrClosing && bPreviousFocusInDropdown && this.handleInputValidation(oEvent, false);
 		}
 
 		if (oEvent.target === this.getOpenArea() && bDropdownPickerType && !this.isPlatformTablet()) {
@@ -549,9 +558,6 @@ function(
 
 		if (!oTappedControl.isA("sap.m.CheckBox") && !oTappedControl.isA("sap.m.GroupHeaderListItem")) {
 			this._bCheckBoxClicked = false;
-			if (this.isOpen() && !this._isListInSuggestMode()) {
-				this.close();
-			}
 		}
 	};
 
@@ -864,19 +870,20 @@ function(
 	 * @function
 	 */
 	MultiComboBox.prototype.createPicker = function(sPickerType) {
-		var oPicker = this.getAggregation("picker");
+		var oPicker = this.getAggregation("picker"),
+			oRenderer = this.getRenderer(),
+			CSS_CLASS_MULTICOMBOBOX = oRenderer.CSS_CLASS_MULTICOMBOBOX;
 
 		if (oPicker) {
 			return oPicker;
 		}
 
-		oPicker = this["create" + sPickerType]();
-
+		this._oSuggestionPopover = this._createSuggestionsPopover();
+		oPicker = this._oSuggestionPopover._oPopover;
 		// define a parent-child relationship between the control's and the picker pop-up (Popover or Dialog)
 		this.setAggregation("picker", oPicker, true);
 
-		var oRenderer = this.getRenderer(),
-			CSS_CLASS_MULTICOMBOBOX = oRenderer.CSS_CLASS_MULTICOMBOBOX;
+		this["configure" + sPickerType](oPicker);
 
 		// configuration
 		oPicker.setHorizontalScrolling(false)
@@ -890,13 +897,85 @@ function(
 				.addEventDelegate({
 					onBeforeRendering : this.onBeforeRenderingPicker,
 					onAfterRendering : this.onAfterRenderingPicker
-				}, this)
-				.addContent(this._getList());
+				}, this);
 
 		return oPicker;
 	};
 
-	MultiComboBox.prototype.createPickerTextField = function () {
+	/**
+	 * Creates a SuggestionsPopover and assigns it as aggregation to the MultiComboBox.
+	 * This method also:
+	 * 	- configures the SuggestionsPopover and its internal controls.
+	 * 	- assigns the control (Popover or Dialog) to the MultiComboBox's "picker" aggregation
+	 *
+	 * @private
+	 * @function
+	 */
+	MultiComboBox.prototype._createSuggestionsPopover = function () {
+		var bUseDialog = this.isPickerDialog(),
+			oSuggPopover;
+
+		oSuggPopover = new SuggestionsPopover(this);
+
+		if (bUseDialog) {
+			oSuggPopover._oPopupInput = this._createPickerTextField();
+		}
+
+		// Create the SuggestionsPopover's internal controls
+		oSuggPopover._createSuggestionPopup();
+		oSuggPopover._createSuggestionPopupContent(false, false, false);
+
+		// Ammend the suggestions popovers list
+		// this._oList is used by the ComboBoxBase
+		this._oList = oSuggPopover._oList;
+		this._configureList(this._oList);
+
+		return oSuggPopover;
+	};
+
+	/**
+	 * Configures the SuggestionsPopover internal list and attaches it's event handlers/delegates.
+	 *
+	 * @param {sap.m.List} oList The list control
+	 * @private
+	 * @function
+	 */
+	MultiComboBox.prototype._configureList = function (oList) {
+		var oRenderer = this.getRenderer();
+
+		if (!oList) {
+			return;
+		}
+
+		// configure the list
+		oList
+			.setMode(ListMode.MultiSelect)
+			.setIncludeItemInSelection(true)
+			.setRememberSelections(false)
+			.addStyleClass(oRenderer.CSS_CLASS_COMBOBOXBASE + "List")
+			.addStyleClass(oRenderer.CSS_CLASS_MULTICOMBOBOX + "List");
+
+		// attach event handlers
+		oList
+			.attachBrowserEvent("tap", this._handleItemTap, this)
+			.attachSelectionChange(this._handleSelectionLiveChange, this)
+			.attachItemPress(this._handleItemPress, this);
+
+		// attach event delegates
+		oList.addEventDelegate({
+			onAfterRendering: this.onAfterRenderingList,
+			onfocusin: this.onFocusinList
+		}, this);
+	};
+
+	/**
+	 * Creates a new sap.m.Input control for the SuggestionsPopover dialog.
+
+	 * @returns {sap.m.Input} The newly created input control
+	 * @protected
+	 * @function
+	 */
+	MultiComboBox.prototype._createPickerTextField = function () {
 		var that = this;
 
 		return new Input({
@@ -917,9 +996,9 @@ function(
 
 	MultiComboBox.prototype.onBeforeRendering = function() {
 		ComboBoxBase.prototype.onBeforeRendering.apply(this, arguments);
-		var aItems = this.getItems();
+		var aItems = this.getItems(),
+			oList = this._getList();
 
-		var oList = this._getList();
 		if (oList) {
 			this._synchronizeSelectedItemAndKey(aItems);
 
@@ -1010,6 +1089,8 @@ function(
 		this._resetCurrentItem();
 		this.addContent();
 		this._aInitiallySelectedItems = this.getSelectedItems();
+
+		this._synchronizeSelectedItemAndKey(this._aInitiallySelectedItems);
 
 		if (fnPickerTypeBeforeOpen) {
 			fnPickerTypeBeforeOpen.call(this);
@@ -1112,38 +1193,88 @@ function(
 	};
 
 	/**
-	 * Decorate a Popover instance by adding some private methods.
+	 * Configures the dropdown of type <code>sap.m.Popover</code>.
 	 *
-	 * @param {sap.m.Popover} oPopover The popover to be decorated
+	 * @param {sap.m.Popover} oDropdown The popover control to be configured
 	 * @private
 	 */
-	MultiComboBox.prototype._decoratePopover = function(oPopover) {
-		var that = this;
+	MultiComboBox.prototype.configureDropdown = function(oDropdown) {
+		oDropdown.setInitialFocus(this);
+	};
 
-		oPopover.open = function() {
-			return this.openBy(that);
-		};
+	MultiComboBox.prototype.getFilterSelectedButton = function () {
+		if (this._oToggleButton) {
+			return this._oToggleButton;
+		}
+		this._oToggleButton = this._createFilterSelectedButton();
+		return this._oToggleButton;
+	};
+
+	MultiComboBox.prototype.getPickerCustomHeader = function () {
+		if (this._oPickerCustomHeader) {
+			return this._oPickerCustomHeader;
+		}
+		this._oPickerCustomHeader = this.createPickerHeader();
+		return this._oPickerCustomHeader;
+	};
+
+	MultiComboBox.prototype.getCustomHeaderToolbar = function () {
+		if (this._oCustomHeaderToolbar) {
+			return this._oCustomHeaderToolbar;
+		}
+		this._oCustomHeaderToolbar = new Toolbar();
+		return this._oCustomHeaderToolbar;
+	};
+
+	MultiComboBox.prototype.getPickerCloseButton = function () {
+		if (this._oPickerCloseButton) {
+			return this._oPickerCloseButton;
+		}
+		this._oPickerCloseButton = this.createPickerCloseButton();
+		return this._oPickerCloseButton;
 	};
 
 	/**
-	 * Creates an instance type of <code>sap.m.Popover</code>.
+	 * Configures the dropdown of type <code>sap.m.Dialog</code>.
 	 *
-	 * @returns {sap.m.Popover} The Popover instance
+	 * @param {sap.m.Popover} oDropdown The dialog control to be configured
 	 * @private
 	 */
-	MultiComboBox.prototype.createDropdown = function() {
-		var oDropdown = new Popover(this.getDropdownSettings());
-		oDropdown.setInitialFocus(this);
-		this._decoratePopover(oDropdown);
-		return oDropdown;
-	};
+	MultiComboBox.prototype.configureDialog = function (oDialog) {
+		var that = this,
+			oSelectAllButton = this.getFilterSelectedButton(),
+			oTextField = this._oSuggestionPopover._oPopupInput,
+			oTextFieldHandleEvent = oTextField._handleEvent,
+			oCustomHeaderToolbar = this.getCustomHeaderToolbar(),
+			oPickerInvisibleText = this.getPickerInvisibleTextId();
 
-	MultiComboBox.prototype.createDialog = function () {
-		var oDialog = ComboBoxBase.prototype.createDialog.apply(this, arguments),
-			oSelectAllButton = this._createFilterSelectedButton();
+		oCustomHeaderToolbar.addContent(oTextField);
 
+		// This code was taken from the ComboBoxBase
+		//TODO: To be refactored when the ComboBox control addopts the SuggestionsPopover
+		oTextField._handleEvent = function(oEvent) {
+			oTextFieldHandleEvent.apply(this, arguments);
+
+			if (/keydown|sapdown|sapup|saphome|sapend|sappagedown|sappageup|input/.test(oEvent.type)) {
+				that._handleEvent(oEvent);
+			}
+		};
+
+		oDialog.setStretch(true);
+		oDialog.setCustomHeader(this.getPickerCustomHeader());
+		oDialog.setSubHeader(oCustomHeaderToolbar);
+		oDialog.addButton(this.createPickerCloseButton());
 		oDialog.getSubHeader().addContent(oSelectAllButton);
-		return oDialog;
+		oDialog.attachBeforeOpen(function () {
+			that.updatePickerHeaderTitle();
+		});
+		oDialog.attachAfterClose(function () {
+			that.focus();
+			library.closeKeyboard();
+		});
+		if (oPickerInvisibleText) {
+			oDialog.addAriaLabelledBy(oPickerInvisibleText);
+		}
 	};
 
 	/**
@@ -1153,13 +1284,20 @@ function(
 	 * @private
 	 */
 	MultiComboBox.prototype._createFilterSelectedButton = function () {
+		if (this._oToggleButton) {
+			return this._oToggleButton;
+		}
+
 		var sIconURI = IconPool.getIconURI("multiselect-all"),
 			oRenderer = this.getRenderer(),
 			that = this;
-		return new ToggleButton({
+
+		this._oToggleButton = new ToggleButton({
 			icon: sIconURI,
 			press: that._filterSelectedItems.bind(this)
 		}).addStyleClass(oRenderer.CSS_CLASS_MULTICOMBOBOX + "ToggleButton");
+
+		return this._oToggleButton;
 	};
 
 	MultiComboBox.prototype._getFilterSelectedButton = function () {
@@ -1208,32 +1346,6 @@ function(
 
 	MultiComboBox.prototype.revertSelection = function () {
 		this.setSelectedItems(this._aInitiallySelectedItems);
-	};
-
-	/**
-	 * Create an instance type of <code>sap.m.List</code>.
-	 *
-	 * @protected
-	 */
-	MultiComboBox.prototype.createList = function() {
-		var oRenderer = this.getRenderer();
-
-		// list to use inside the picker
-		this._oList = new List({
-			width: "100%",
-			mode: ListMode.MultiSelect,
-			includeItemInSelection: true,
-			rememberSelections: false
-		}).addStyleClass(oRenderer.CSS_CLASS_COMBOBOXBASE + "List")
-		.addStyleClass(oRenderer.CSS_CLASS_MULTICOMBOBOX + "List")
-		.attachBrowserEvent("tap", this._handleItemTap, this)
-		.attachSelectionChange(this._handleSelectionLiveChange, this)
-		.attachItemPress(this._handleItemPress, this);
-
-		this._oList.addEventDelegate({
-			onAfterRendering: this.onAfterRenderingList,
-			onfocusin: this.onFocusinList
-		}, this);
 	};
 
 	/**
@@ -1327,7 +1439,8 @@ function(
 
 		if (!mOptions.listItemUpdated && this.getListItem(mOptions.item)) {
 			// set the selected item in the List
-			this._getList().setSelectedItem(this.getListItem(mOptions.item), false);
+			var oListItem = this.getListItem(mOptions.item);
+			this._getList().setSelectedItem(oListItem, false);
 		}
 
 		// Synch the Tokenizer
@@ -1512,7 +1625,7 @@ function(
 			return null;
 		}
 
-		var oFocusedElement = sap.ui.getCore().byId(document.activeElement.id);
+		var oFocusedElement = core.byId(document.activeElement.id);
 
 		if (this._getList()
 			&& containsOrEquals(this._getList().getFocusDomRef(), oFocusedElement.getFocusDomRef())) {
@@ -1791,7 +1904,7 @@ function(
 
 			onsapfocusleave: function(oEvent) {
 				var oPopup = this.getAggregation("picker");
-				var oControl = sap.ui.getCore().byId(oEvent.relatedControlId);
+				var oControl = core.byId(oEvent.relatedControlId);
 
 				if (oPopup && oControl && deepEqual(oPopup.getFocusDomRef(), oControl.getFocusDomRef())) {
 
@@ -1944,7 +2057,7 @@ function(
 			aListItemAdditionalText = [],
 			oItemAdditionalTextRef, oItemDomRef;
 
-		this._oList.getItems().forEach(function(oItem) {
+		this._getList().getItems().forEach(function(oItem) {
 			oItemDomRef = oItem.getDomRef();
 
 			if (oItemDomRef) {
@@ -2460,7 +2573,7 @@ function(
 			}
 
 			if (typeof oItem === "string") {
-				oItem = sap.ui.getCore().byId(oItem);
+				oItem = core.byId(oItem);
 			}
 
 			// Update and synchronize "selectedItems" association,
@@ -2489,7 +2602,7 @@ function(
 		}
 
 		if (typeof oItem === "string") {
-			oItem = sap.ui.getCore().byId(oItem);
+			oItem = core.byId(oItem);
 		}
 
 		this.setSelection({
@@ -2510,7 +2623,7 @@ function(
 		}
 
 		if (typeof oItem === "string") {
-			oItem = sap.ui.getCore().byId(oItem);
+			oItem = core.byId(oItem);
 		}
 
 		if (!this.isItemSelected(oItem)) {
@@ -2643,7 +2756,7 @@ function(
 		var aItems = [], aItemIds = this.getAssociation("selectedItems") || [];
 
 		aItemIds.forEach(function(sItemId) {
-			var oItem = sap.ui.getCore().byId(sItemId);
+			var oItem = core.byId(sItemId);
 
 			if (oItem) {
 				aItems.push(oItem);
@@ -2702,7 +2815,7 @@ function(
 		sListItem = oRenderer.CSS_CLASS_MULTICOMBOBOX + "Item";
 		sListItemSelected = (this.isItemSelected(oItem)) ? sListItem + "Selected" : "";
 
-		oListItem = new sap.m.StandardListItem({
+		oListItem = new StandardListItem({
 			type: ListType.Active,
 			info: sAdditionalText,
 			visible: oItem.getEnabled()
@@ -2714,9 +2827,10 @@ function(
 		oListItem.setTitle(oItem.getText());
 
 		if (sListItemSelected) {
-			var oToken = new sap.m.Token({
+			var oToken = new Token({
 				key: oItem.getKey()
 			});
+
 			oToken.setText(oItem.getText());
 			oToken.setTooltip(oItem.getText());
 
@@ -2939,8 +3053,7 @@ function(
 	};
 
 	MultiComboBox.prototype.init = function() {
-		// initialize list
-		this.createList();
+		this._oRb = core.getLibraryResourceBundle("sap.m");
 
 		ComboBoxBase.prototype.init.apply(this, arguments);
 
@@ -2962,8 +3075,10 @@ function(
 		this._aCustomerKeys = [];
 		this._aInitiallySelectedItems = [];
 
-		this._oRbM = sap.ui.getCore().getLibraryResourceBundle("sap.m");
-		this._oRbC = sap.ui.getCore().getLibraryResourceBundle("sap.ui.core");
+		this._oRbM = core.getLibraryResourceBundle("sap.m");
+		this._oRbC = core.getLibraryResourceBundle("sap.ui.core");
+
+		this._fillList();
 	};
 
 	/**
@@ -3044,18 +3159,25 @@ function(
 	};
 
 	MultiComboBox.prototype.exit = function() {
+		var sInternalControls = [
+				"_oTokenizer",
+				"_oSuggestionPopover",
+				"_oToggleButton",
+				"_oPickerCustomHeader",
+				"_oCustomHeaderToolbar",
+				"_oPickerCloseButton"
+			],
+			that = this;
+
 		ComboBoxBase.prototype.exit.apply(this, arguments);
 		this._deregisterResizeHandler();
 
-		if (this._getList()) {
-			this._getList().destroy();
-			this._oList = null;
-		}
-
-		if (this._oTokenizer) {
-			this._oTokenizer.destroy();
-			this._oTokenizer = null;
-		}
+		sInternalControls.forEach(function (sControlName) {
+			if (that[sControlName]) {
+				that[sControlName].destroy();
+				that[sControlName] = null;
+			}
+		});
 	};
 
 	/**
@@ -3112,7 +3234,7 @@ function(
 		}).join(" ");
 
 		var oInfo = ComboBoxBase.prototype.getAccessibilityInfo.apply(this, arguments);
-		oInfo.type = sap.ui.getCore().getLibraryResourceBundle("sap.m").getText("ACC_CTR_TYPE_MULTICOMBO");
+		oInfo.type = core.getLibraryResourceBundle("sap.m").getText("ACC_CTR_TYPE_MULTICOMBO");
 		oInfo.description = ((oInfo.description || "") + " " + sText).trim();
 		return oInfo;
 	};

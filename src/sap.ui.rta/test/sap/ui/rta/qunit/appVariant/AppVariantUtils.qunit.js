@@ -84,6 +84,15 @@ sap.ui.define([
 
 		QUnit.test("When getId() method is called with an id which has a 'customer' prefix and has a jquery UID as a suffix", function (assert) {
 			assert.notEqual(AppVariantUtils.getId("customer.testId.id_1234567"), "customer.testId.id_1234567", "then the id is replaced with suffix generated jquery UID");
+			assert.notEqual(AppVariantUtils.getId("customer.testId.id_1234567890123456789012345678901234567890"), "customer.testId.id_1234567890123456789012345678901234567890", "then the guid has been changed");
+		});
+
+		QUnit.test("When getId() method is called with an id which had problems with trimming", function (assert) {
+			var sTrimmedId = AppVariantUtils.getId("cus.sd.schedulingagreements.manage");
+			assert.ok(sTrimmedId.length < 56, "then the id has been trimmed properly and will never complain of already exisiting id");
+
+			sTrimmedId = AppVariantUtils.getId("cus.sd.schedulingagreements.factsheets1");
+			assert.ok(sTrimmedId.length < 56, "then the id has been trimmed properly and will never complain of already exisiting id");
 		});
 
 		QUnit.test("When getNewAppVariantId() method is called with an id which has a 'customer' prefix and has a jquery UID as a suffix", function (assert) {

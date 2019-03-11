@@ -48,7 +48,7 @@ sap.ui.define([
 		window[sSetName] = function wrappedSetTimeout(fnCallback, iDelay, tracking) {
 			// some timeouts do not need to be tracked, like the timeout for long-running promises
 			if (tracking && tracking === 'TIMEOUT_WAITER_IGNORE') {
-				iID = fnOriginal.call(this, fnCallback, iDelay);
+				iID = fnOriginal(fnCallback, iDelay);
 				oLogger.trace("Timeout with ID " + iID + " should not be tracked. " +
 					" Delay: " + iDelay +
 					" Initiator: " + iInitiatorId);
@@ -87,7 +87,7 @@ sap.ui.define([
 				status: timeoutStatus.TRACKED
 			};
 
-			iID = fnOriginal.call(this, fnWrappedCallback, iDelay);
+			iID = fnOriginal(fnWrappedCallback, iDelay);
 			oLogger.trace("Timeout with ID " + iID + " is tracked. " +
 				" Delay: " + iDelay +
 				" Initiator: " + iInitiatorId);
@@ -110,7 +110,7 @@ sap.ui.define([
 
 			oCurrentTimeout.status = timeoutStatus.CLEARED;
 			oLogger.trace("Timeout with ID " + iID + " cleared");
-			fnOriginalClear.apply(this, arguments);
+			fnOriginalClear(iID);
 		};
 	}
 

@@ -42,7 +42,8 @@ sap.ui.define(['sap/ui/core/Core', 'sap/ui/model/TreeAutoExpandMode',
 			"sap.ui.table.Column",
 			"sap.ui.table.Row",
 			"sap.ui.table.RowActionItem",
-			"sap.ui.table.RowSettings"
+			"sap.ui.table.RowSettings",
+			"sap.ui.table.plugins.SelectionPlugin"
 		],
 		extensions: {
 			flChangeHandlers: {

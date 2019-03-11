@@ -2926,6 +2926,14 @@ sap.ui.define([
 		return getRow(this).getCustomData();
 	};
 	// ************************************* PRIVATE CLASSES END *******************************************************
+	PlanningCalendar.prototype._getSelectedDates = function () {
+		var sViewKey = this.getViewKey(),
+			oCurrentView = this._getView(sViewKey),
+			sCurrentViewIntervalType = oCurrentView.getIntervalType(),
+			oIntervalMetadata = INTERVAL_METADATA[sCurrentViewIntervalType];
+
+		return this[oIntervalMetadata.sInstanceName].getSelectedDates();
+	};
 
 	PlanningCalendar.prototype._enableAppointmentsDragAndDrop = function (oRow) {
 		var oTimeline = getRowTimeline(oRow),

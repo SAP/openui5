@@ -36,14 +36,16 @@ sap.ui.define([
 	 * A control used to group a set of card attributes in a header.
 	 *
 	 * @extends sap.ui.core.Control
+	 * @implements sap.f.cards.IHeader
 	 *
 	 * @author SAP SE
 	 * @version ${version}
 	 *
 	 * @constructor
-	 * @private
-	 * @since 1.62
+	 * @public
+	 * @since 1.64
 	 * @alias sap.f.cards.Header
+	 * @ui5-metamodel This control/element also will be described in the UI5 (legacy) designtime metamodel
 	 */
 	var Header = Control.extend("sap.f.cards.Header", {
 		metadata: {

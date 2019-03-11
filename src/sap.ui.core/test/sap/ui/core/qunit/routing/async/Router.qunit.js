@@ -15,8 +15,9 @@ sap.ui.define([
 	"sap/m/Panel",
 	"sap/m/SplitContainer",
 	"./AsyncViewModuleHook",
-	"sap/ui/base/EventProvider"
-], function(Log, UIComponent, Controller, JSView, View, HashChanger, Router, Views, JSONModel, App, Button, NavContainer, Panel, SplitContainer, ModuleHook, EventProvider) {
+	"sap/ui/base/EventProvider",
+	"sap/ui/Device"
+], function(Log, UIComponent, Controller, JSView, View, HashChanger, Router, Views, JSONModel, App, Button, NavContainer, Panel, SplitContainer, ModuleHook, EventProvider, Device) {
 	"use strict";
 
 	// This global namespace is used for creating custom component classes.
@@ -302,6 +303,41 @@ sap.ui.define([
 
 	});
 
+	QUnit.test("Shouldn't cause error when router is destroyed before the triggered target is displayed", function(assert) {
+		var oSandbox = sinon.createSandbox();
+
+		oSandbox.stub(Device, "browser").value({
+			edge: true
+		});
+
+		var oRouter = fnCreateRouter([{
+			name: "myRoute",
+			pattern : "foo",
+			target: "home"
+		}], {}, null, {
+			myTarget : {
+				home: {
+				}
+			}
+		});
+
+		var oTargets = oRouter.getTargets();
+		var oRoute = oRouter.getRoute("myRoute");
+		var oDisplayStub = oSandbox.stub(oTargets, "_display").callsFake(function() {});
+
+		var oRouteMatchedSpy = oSandbox.spy(oRoute, "_routeMatched");
+		oRouter.parse("foo");
+		// destroy the router immediately after trigger the route matched logic
+		oRouter.destroy();
+
+		assert.equal(oRouteMatchedSpy.callCount, 1, "The route is matched");
+
+		return oRouteMatchedSpy.returnValues[0].then(function() {
+			assert.equal(oDisplayStub.callCount, 0, "The target isn't displayed because the router is already destroyed");
+			oSandbox.restore();
+		});
+	});
+
 	QUnit.test("Should log a warning if a router gets destroyed while the hash changes", function (assert) {
 
 		// Arrange
@@ -410,7 +446,7 @@ sap.ui.define([
 			}
 		});
 
-		var oViewCreateStub = sinon.stub(View, "create").callsFake(function() {
+		var oViewCreateStub = sinon.stub(sap.ui, "view").callsFake(function() {
 			var oView = {
 				loaded: function() {
 					return Promise.resolve(oView);
@@ -980,7 +1016,7 @@ sap.ui.define([
 			}
 		]);
 
-		var oSpy = sinon.spy(View, "create");
+		var oSpy = sinon.spy(sap.ui, "view");
 		var oRouteMatchedSpy = sinon.spy(router.getRoute("name"), "_routeMatched");
 
 		router.initialize();
@@ -1466,7 +1502,7 @@ sap.ui.define([
 			this.sTitle = "myTitle";
 
 			var oView = createXmlView();
-			this.fnStub = sinon.stub(View, "create").callsFake(function () {
+			this.fnStub = sinon.stub(sap.ui, "view").callsFake(function () {
 				return oView;
 			});
 
@@ -1683,7 +1719,7 @@ sap.ui.define([
 			this.oApp = new App();
 
 			var oView = createXmlView();
-			this.fnStub = sinon.stub(View, "create").callsFake(function () {
+			this.fnStub = sinon.stub(sap.ui, "view").callsFake(function () {
 				return oView;
 			});
 
@@ -2427,8 +2463,8 @@ sap.ui.define([
 			fnOwnerSpy = this.spy(oUIComponent, "runAsOwner"),
 			oView = createXmlView(),
 			oRouter = fnCreateRouter({}, {}, oUIComponent),
-			fnViewStub = this.stub(sap.ui, "view").callsFake(function () {
-				return oView;
+				fnViewStub = this.stub(sap.ui, "view").callsFake(function () {
+					return oView;
 			});
 
 		// Act

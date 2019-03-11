@@ -45,7 +45,7 @@ sap.ui.define([
 
 	// render type highlight always within a cell
 	ColumnListItemRenderer.renderHighlight = function(rm, oLI) {
-		rm.write('<td class="sapMListTblHighlightCell" aria-hidden="true">');
+		rm.write('<td class="sapMListTblHighlightCell" aria-hidden="true" role="presentation">');
 
 		// let the list item base render the highlight
 		ListItemBaseRenderer.renderHighlight.apply(this, arguments);
@@ -55,7 +55,7 @@ sap.ui.define([
 
 	// render type content always within a cell
 	ColumnListItemRenderer.renderType = function(rm, oLI) {
-		rm.write('<td class="sapMListTblNavCol" aria-hidden="true">');
+		rm.write('<td class="sapMListTblNavCol" aria-hidden="true" role="presentation">');
 
 		// let the list item base render the type
 		ListItemBaseRenderer.renderType.apply(this, arguments);
@@ -65,7 +65,7 @@ sap.ui.define([
 
 	// wrap mode content with a cell
 	ColumnListItemRenderer.renderModeContent = function(rm, oLI) {
-		rm.write('<td class="sapMListTblSelCol" aria-hidden="true">');
+		rm.write('<td class="sapMListTblSelCol" aria-hidden="true" role="presentation">');
 
 		// let the list item base render the mode control
 		ListItemBaseRenderer.renderModeContent.apply(this, arguments);
@@ -260,6 +260,9 @@ sap.ui.define([
 		if (Device.browser.msie || (Device.browser.edge && Device.browser.version < 16)) {
 			sPopinLayout = PopinLayout.Block;
 		}
+
+		rm.writeAttribute("aria-labelledby", this.getAriaAnnouncement(null, "TABLE_POPIN_ROLE_DESCRIPTION"));
+
 		rm.write("><div");
 		rm.addClass("sapMListTblSubCnt");
 		rm.addClass("sapMListTblSubCnt" + sPopinLayout);

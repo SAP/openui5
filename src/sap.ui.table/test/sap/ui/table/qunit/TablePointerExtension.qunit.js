@@ -250,7 +250,7 @@ sap.ui.define([
 
 		// resizer should be way out of screen when the table gets rendered
 		var nLeft = oTable.$("rsz").position().left;
-		if (Device.browser.msie) {
+		if (Device.browser.msie || Device.browser.edge) {
 			nLeft = Math.round(nLeft);
 		}
 		assert.equal(nLeft, "-5", "Resizer is at the correct initial position");
@@ -271,7 +271,7 @@ sap.ui.define([
 		moveResizer(oColumn, assert, true, 1);
 
 		// drag resizer to resize column
-		var $Resizer = oTable.$("rsz");
+		$Resizer = oTable.$("rsz");
 		var iResizeHandlerTop = Math.floor(oColumn.getDomRef().getBoundingClientRect().top + 100);
 		var iResizeHandlerLeft = $Resizer.position().left;
 		qutils.triggerMouseEvent($Resizer, "mousedown", 1, 1, iResizeHandlerLeft, iResizeHandlerTop, 0);

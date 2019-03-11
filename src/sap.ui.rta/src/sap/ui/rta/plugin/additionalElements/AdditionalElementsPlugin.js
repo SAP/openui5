@@ -409,7 +409,7 @@ sap.ui.define([
 							// check if all custom items are valid
 							var bValidItems = aItems.every(function(oItem) {
 								// adjust relevant container
-								if (oItem.changeSpecificData.relevantContainer) {
+								if (oItem.changeSpecificData.changeOnRelevantContainer) {
 									oCheckElement = mParents.relevantContainer;
 								}
 								return oItem.changeSpecificData.changeType && this.hasChangeHandler(oItem.changeSpecificData.changeType, oCheckElement);

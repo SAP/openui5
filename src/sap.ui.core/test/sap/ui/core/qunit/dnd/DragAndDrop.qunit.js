@@ -172,6 +172,7 @@ sap.ui.define([
 		oEvent.target.focus();
 		DragAndDrop.preprocessEvent(oEvent);
 		assert.equal(oEvent.dragSession, null, "No drag session was created for an input element");
+		assert.ok(oEvent.isDefaultPrevented(), "Drag is not started for the input element");
 
 		oEvent = createjQueryDragEventDummy("dragstart", this.oControl.getTopItems()[1]);
 		oEvent.target.focus();

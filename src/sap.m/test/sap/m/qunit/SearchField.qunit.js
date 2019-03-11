@@ -381,29 +381,34 @@ sap.ui.define([
 
 	QUnit.module("Input", {
 		beforeEach: function () {
-			this.SearchField = new SearchField("sf7", {
+			this.oSearchField = new SearchField("sf7", {
 				placeholder: sPlaceholder,
 				enabled: true,
 				showRefreshButton: true,
 				visible: true
 			}).placeAt("content");
+
+			this.oMockEvent = {type: "focus"};
+
 			sap.ui.getCore().applyChanges();
 		},
 		afterEach: function() {
-			this.SearchField.destroy();
+			this.oSearchField.destroy();
+			this.oMockEvent = null;
 		}
 	});
 
 	QUnit.test("Test input in SearchField", function(assert) {
 		// arrange
 		var fnLiveChange = this.spy();
-		this.SearchField.attachEvent("liveChange",fnLiveChange );
+		this.oSearchField.attachEvent("liveChange", fnLiveChange);
 
 		// act
-		this.SearchField.$("I").focus().val("abc").trigger("input");
+		this.oSearchField.onFocus(this.oMockEvent);
+		this.oSearchField.$("I").val("abc").trigger("input");
 
 		//assert
 		assert.strictEqual(fnLiveChange.callCount, 1, "LiveChange event is fired once");
-		assert.strictEqual(this.SearchField.getValue(), "abc", "Value is correct");
+		assert.strictEqual(this.oSearchField.getValue(), "abc", "Value is correct");
 	});
 });

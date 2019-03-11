@@ -32,7 +32,6 @@ sap.ui.define([
 				this._oView.setModel(this._oModel);
 				this._oView.setModel(this._oVersionModel, "select");
 
-				library._loadAllLibInfo("", "_getLibraryInfoAndReleaseNotes", "", this._processLibInfo.bind(this));
 				library._getAppInfo(this._processAppInfo.bind(this));
 
 			},
@@ -58,6 +57,9 @@ sap.ui.define([
 				}
 
 				sVersion = iMajor + "." + iMinor;
+
+				this._updateVersionInformation(sVersion);
+
 				oVersions = {
 					items : []
 				};
@@ -68,7 +70,7 @@ sap.ui.define([
 						key : sVersion,
 						value : sVersion
 					});
-					iMinor = iMinor - 2;
+					iMinor = iMinor - (iMinor <= 60 ? 2 : 1);
 				}
 				this._oVersionModel.setData(oVersions);
 			},
@@ -163,8 +165,12 @@ sap.ui.define([
 			},
 			handleVersionChange: function (oEvent) {
 				var oItem = oEvent.getParameter("selectedItem"),
-					sSelectedVersion = oItem.getKey(),
-					sVersion;
+					sSelectedVersion = oItem.getKey();
+				this._updateVersionInformation(sSelectedVersion);
+			},
+
+			_updateVersionInformation: function(sSelectedVersion) {
+				var sVersion;
 
 				this._sLastReleasedVersion = this._getLastVersionFromNeoAppJson(sSelectedVersion);
 				this._updateLastReleasedVersion(sSelectedVersion);
@@ -176,6 +182,7 @@ sap.ui.define([
 				library._loadAllLibInfo("", "_getLibraryInfoAndReleaseNotes", sVersion,
 					this._processLibInfo.bind(this));
 			},
+
 			_showBusyIndicator: function () {
 				this.byId("releaseNotesObjectPage").setBusy(true);
 			},

@@ -12,6 +12,8 @@ sap.ui.define([
 	'sap/m/Bar',
 	'sap/m/Button',
 	'sap/m/ColumnListItem',
+	'sap/m/GroupHeaderListItem',
+	'sap/ui/core/SeparatorItem',
 	'sap/m/Dialog',
 	'sap/m/DisplayListItem',
 	'sap/m/List',
@@ -30,6 +32,8 @@ sap.ui.define([
 	Bar,
 	Button,
 	ColumnListItem,
+	GroupHeaderListItem,
+	SeparatorItem,
 	Dialog,
 	DisplayListItem,
 	List,
@@ -245,8 +249,14 @@ sap.ui.define([
 	 * Helper function that creates suggestion popup.
 	 */
 	SuggestionsPopover.prototype._createSuggestionPopup = function () {
-		var oInput = this._oInput;
-		var oMessageBundle = oInput._oRb; // TODO create own message bundle
+		var oInput = this._oInput,
+			oMessageBundle = oInput._oRb, // TODO create own message bundle
+			bShouldNotDestroyItems = function (oList) {
+				// In case the list is in MultSelect mode, the popover might be opened by MultiComboBox.
+				// The MultiComboBox stores references to the list items in its items, so it can manage
+				// the synchronization of their selection state and the tokens created in the tokenizer.
+				return !(oList && oList instanceof List && oList.getMode() !== ListMode.MultiSelect);
+			};
 
 		this._oPopover = !this._bUseDialog ?
 			(new Popover(oInput.getId() + "-popup", {
@@ -256,16 +266,16 @@ sap.ui.define([
 				initialFocus: oInput,
 				horizontalScrolling: true
 			}).attachAfterClose(function() {
+				if (bShouldNotDestroyItems(this._oList)) {
+					return;
+				}
+
 				// only destroy items in simple suggestion mode
 				if (this._oList instanceof Table) {
 					this._oList.removeSelections(true);
 				} else {
 					this._oList.destroyItems();
 				}
-				this._deregisterResize();
-			}.bind(this)).attachBeforeOpen(function () {
-				this._resizePopup();
-				this._registerResize();
 			}.bind(this)))
 			:
 			(new Dialog(oInput.getId() + "-popup", {
@@ -281,13 +291,14 @@ sap.ui.define([
 				horizontalScrolling : false,
 				initialFocus : this._oPopupInput
 			}).attachAfterClose(function() {
-				// only destroy items in simple suggestion mode
-				if (this._oList) {
-					if (Table && !(this._oList instanceof Table)) {
-						this._oList.destroyItems();
-					} else {
-						this._oList.removeSelections(true);
-					}
+				if (bShouldNotDestroyItems(this._oList)) {
+					return;
+				}
+
+				if (Table && !(this._oList instanceof Table)) {
+					this._oList.destroyItems();
+				} else {
+					this._oList.removeSelections(true);
 				}
 			}.bind(this)));
 
@@ -448,7 +459,17 @@ sap.ui.define([
 	 * @param {int} iItems Items to be changed.
 	 */
 	SuggestionsPopover.prototype._onsaparrowkey = function(oEvent, sDir, iItems) {
-		var oInput = this._oInput;
+		var oInput = this._oInput,
+			oListItem,
+			oInnerRef = oInput.$("inner");
+
+		if (oEvent.isMarked()) {
+			return;
+		}
+
+		if (oEvent.isMarked()) {
+			return;
+		}
 
 		if (!oInput.getEnabled() || !oInput.getEditable()) {
 			return;
@@ -542,12 +563,18 @@ sap.ui.define([
 			// if no further visible item can be found -> do nothing (e.g. set the old item as selected again)
 			if (iOldIndex >= 0) {
 				aListItems[iOldIndex].setSelected(true).updateAccessibilityState();
-				oInput.$("inner").attr("aria-activedescendant", aListItems[iOldIndex].getId());
+				oInnerRef.attr("aria-activedescendant", aListItems[iOldIndex].getId());
 			}
 			return;
 		} else {
-			aListItems[iSelectedIndex].setSelected(true).updateAccessibilityState();
-			oInput.$("inner").attr("aria-activedescendant", aListItems[iSelectedIndex].getId());
+			oListItem = aListItems[iSelectedIndex];
+			oListItem.setSelected(true).updateAccessibilityState();
+
+			if (oListItem.isA("sap.m.GroupHeaderListItem")) {
+				oInnerRef.removeAttr("aria-activedescendant");
+			} else {
+				oInnerRef.attr("aria-activedescendant", aListItems[iSelectedIndex].getId());
+			}
 		}
 
 		if (Device.system.desktop) {
@@ -555,11 +582,16 @@ sap.ui.define([
 		}
 
 		// make sure the value doesn't exceed the maxLength
+		this._oLastSelectedHeader && this._oLastSelectedHeader.removeStyleClass("sapMInputFocusedHeaderGroup");
 		if (ColumnListItem && aListItems[iSelectedIndex] instanceof ColumnListItem) {
 			// for tabular suggestions we call a result filter function
 			sNewValue = oInput._getInputValue(oInput._fnRowResultFilter(aListItems[iSelectedIndex]));
 		} else {
-			if (aListItems[0] instanceof DisplayListItem) {
+			if (aListItems[iSelectedIndex].isA("sap.m.GroupHeaderListItem")) {
+				sNewValue = "";
+				aListItems[iSelectedIndex].addStyleClass("sapMInputFocusedHeaderGroup");
+				this._oLastSelectedHeader = aListItems[iSelectedIndex];
+			} else if (aListItems[iSelectedIndex] instanceof DisplayListItem) {
 				// for two value suggestions we use the item label
 				sNewValue = oInput._getInputValue(aListItems[iSelectedIndex].getLabel());
 			} else {
@@ -586,7 +618,11 @@ sap.ui.define([
 		// CSN# 1390866/2014: The default for ListItemBase type is "Inactive", therefore disabled entries are only supported for single and two-value suggestions
 		// for tabular suggestions: only check visible
 		// for two-value and single suggestions: check also if item is not inactive
-		return oItem.getVisible() && (this._hasTabularSuggestions() || oItem.getType() !== ListType.Inactive);
+		var bSelectionAllowed = this._hasTabularSuggestions()
+			|| oItem.getType() !== ListType.Inactive
+			|| oItem.isA("sap.m.GroupHeaderListItem");
+
+		return oItem.getVisible() && bSelectionAllowed;
 	};
 
 	/**
@@ -596,6 +632,10 @@ sap.ui.define([
 	 * @returns {boolean} Determines if the Input has tabular suggestions.
 	 */
 	SuggestionsPopover.prototype._hasTabularSuggestions = function() {
+		if (!this._oSuggestionTable) {
+			return;
+		}
+
 		return !!(this._oSuggestionTable.getColumns() && this._oSuggestionTable.getColumns().length);
 	};
 
@@ -839,10 +879,16 @@ sap.ui.define([
 		var sValueLowerCase = sValue.toLowerCase(),
 			bSearchSuggestionRows = this._hasTabularSuggestions(),
 			aItems = bSearchSuggestionRows ? this._oInput.getSuggestionRows() : this._oInput.getSuggestionItems(),
-			iLength = aItems.length,
+			iLength,
 			sNewValue,
 			sItemText,
 			i;
+
+		aItems = aItems.filter(function(oItem){
+			return !(oItem.isA("sap.ui.core.SeparatorItem") || oItem.isA("sap.m.GroupHeaderListItem"));
+		});
+
+		iLength = aItems.length;
 
 		for (i = 0; i < iLength; i++) {
 			sItemText =  bSearchSuggestionRows ? this._oInput._fnRowResultFilter(aItems[i]) : aItems[i].getText();

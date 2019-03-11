@@ -1174,7 +1174,9 @@ function(
 				this._handleFocusout();
 			}
 
-			this.synchronizeSelection();
+			this.synchronizeSelection({
+				forceSelection: this.getForceSelection()
+			});
 
 			this._updatePickerSubHeaderText();
 			this._updatePickerSubHeaderStyles();
@@ -1447,7 +1449,7 @@ function(
 				return;
 			}
 
-			if (oEvent.which === KeyCodes.SPACE) {
+			if (oEvent.which === KeyCodes.SPACE && !oEvent.shiftKey) {
 				// mark the event for components that needs to know if the event was handled
 				oEvent.setMarked();
 
@@ -1767,8 +1769,7 @@ function(
 		 * @returns {boolean}
 		 */
 		Select.prototype.isSelectionSynchronized = function() {
-			var vItem = this.getSelectedItem();
-			return this.getSelectedKey() === (vItem && vItem.getKey());
+			return SelectList.prototype.isSelectionSynchronized.apply(this, arguments);
 		};
 
 		/**
@@ -2045,29 +2046,68 @@ function(
 		 */
 		Select.prototype.onItemChange = function(oControlEvent) {
 			var sSelectedItemId = this.getAssociation("selectedItem"),
+				sEventItemId = oControlEvent.getParameter("id"),
+				sProperty = oControlEvent.getParameter("name"),
 				sNewValue = oControlEvent.getParameter("newValue"),
-				sProperty = oControlEvent.getParameter("name");
+				sOldValue,
+				sCurrentSelectedKey,
+				oFirstListItemWithNewKey,
+				oFirstListItemWithCurrentKey;
 
-			// if the selected item has changed, synchronization is needed
-			if (sSelectedItemId === oControlEvent.getParameter("id") || this.getSelectedKey() === oControlEvent.oSource.getKey()) {
-				switch (sProperty) {
-					case "text":
-						// Notify interested controls that an item's text was changed
-						this.fireEvent("_itemTextChange");
-						this.setValue(sNewValue);
-						break;
+			// Handle "key" changes BCP: 1870551736
+			if (sProperty === "key" && !this.isBound("selectedKey")) {
 
-					case "key":
+				sCurrentSelectedKey = this.getSelectedKey();
+				oFirstListItemWithNewKey = this.getItemByKey(sNewValue);
 
-						if (!this.isBound("selectedKey")) {
-							this.setSelectedKey(sNewValue);
-						}
-
-						break;
-
-					// no default
+				// First scenario: is when the new "key" value is the same as the current "selectedKey" and the item
+				// from the event is preceding the currently selected one in the list. In this case we should update the
+				// current selected item to the one from the event.
+				if (
+					sNewValue === sCurrentSelectedKey && // New item "key" is equal to the current "selectedKey"
+					sSelectedItemId !== sEventItemId && // The event is not fired for the current selected item
+					oFirstListItemWithNewKey && // There is at least one item with the new "key" in the list
+					// The item from the event is the first item from the list having "key" equal to the current "selectedKey"
+					sEventItemId === oFirstListItemWithNewKey.getId()
+				) {
+					this.setSelection(oFirstListItemWithNewKey); // The item from the event should be the new selectedItem
+					return;
 				}
+
+				// Second scenario: is when the "key" update is on the current selected item.
+				// Note: Keep in mind that if in the list there is another entry with the same "key" we should not update
+				// the "selectedKey" (this is handled in third scenario bellow).
+				sOldValue = oControlEvent.getParameter("oldValue");
+				if (
+					sSelectedItemId === sEventItemId && // Currently selected item is the item for which the event is fired
+					sCurrentSelectedKey === sOldValue && // Current "selectedKey" is equal to the old value
+					!this.getItemByKey(sOldValue) // There is no other item in the list with the old "key"
+				) {
+					this.setSelectedKey(sNewValue);
+					return;
+				}
+
+				// Third scenario: "key" of the currently selected item changes but we have another item in the list
+				// having the same "key" as the current "selectedKey". In this case we should update the selected item.
+				oFirstListItemWithCurrentKey = this.getItemByKey(sCurrentSelectedKey);
+				if (
+					sSelectedItemId === sEventItemId && // We change the key of the current selected item
+					sNewValue !== sCurrentSelectedKey && // New "key" of the current item is different
+					oFirstListItemWithCurrentKey // We have another item in the list with the current "selectedKey"
+				) {
+					this.setSelection(oFirstListItemWithCurrentKey);
+					return;
+				}
+
 			}
+
+			// Handle current item "text" change
+			if (sProperty === "text" && sSelectedItemId === sEventItemId) {
+				// Notify interested controls that an item's text was changed
+				this.fireEvent("_itemTextChange");
+				this.setValue(sNewValue);
+			}
+
 		};
 
 		Select.prototype.fireChange = function(mParameters) {

@@ -345,6 +345,20 @@ sap.ui.define(["sap/m/library", "sap/ui/Device", "./ListItemBaseRenderer"],
 		oGrowingDelegate.render(rm);
 	};
 
+	/**
+	 * Creates an invisible ARIA node for the given message bundle text
+	 * in the static UIArea and returns its id for ARIA announcements.
+	 *
+	 * This method should be used when text is used frequently.
+	 *
+	 * @param {String} sBundleText bundle key of the announcement
+	 * @returns {String} id of the generated invisible ARIA node
+	 * @protected
+	 */
+	ListBaseRenderer.getAriaAnnouncement = function(sBundleText) {
+		return ListItemBaseRenderer.getAriaAnnouncement(null, sBundleText);
+	};
+
 	return ListBaseRenderer;
 
 }, /* bExport= */ true);

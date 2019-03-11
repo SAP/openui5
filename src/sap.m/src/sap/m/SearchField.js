@@ -301,13 +301,7 @@ sap.ui.define([
 	};
 
 	SearchField.prototype.onBeforeRendering = function() {
-		var inputElement = this.getInputElement();
-
-		if (inputElement) {
-			this.$().find(".sapMSFB").off();
-			this.$().off();
-			jQuery(inputElement).off();
-		}
+		this._unregisterEventListeners();
 	};
 
 	SearchField.prototype.onAfterRendering = function() {
@@ -381,6 +375,8 @@ sap.ui.define([
 	 *  Destroys suggestion object if exists
 	 */
 	SearchField.prototype.exit = function () {
+		this._unregisterEventListeners();
+
 		if (this._oSuggest) {
 			this._oSuggest.destroy(true);
 			this._oSuggest = null;
@@ -724,6 +720,16 @@ sap.ui.define([
 		this.setProperty("value", value, true);
 		this._setToolTips();
 		return this;
+	};
+
+	SearchField.prototype._unregisterEventListeners = function () {
+		var inputElement = this.getInputElement();
+
+		if (inputElement) {
+			this.$().find(".sapMSFB").off();
+			this.$().off();
+			jQuery(inputElement).off();
+		}
 	};
 
 	/* =========================================================== */

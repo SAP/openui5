@@ -13,6 +13,7 @@ sap.ui.define([
 	"sap/ui/core/UIComponent",
 	"sap/ui/core/ComponentContainer",
 	"sap/ui/fl/FakeLrepConnectorSessionStorage",
+	"sap/ui/rta/Utils",
 	"sap/ui/thirdparty/sinon-4"
 ],
 	function(
@@ -27,6 +28,7 @@ sap.ui.define([
 	UIComponent,
 	ComponentContainer,
 	FakeLrepConnectorSessionStorage,
+	RtaUtils,
 	sinon
 ) {
 	"use strict";
@@ -178,7 +180,7 @@ sap.ui.define([
 						group: "Virtual Property Group 3",
 						nullable: false,
 						get: function (oControl) {
-							return oControl.getId() === "mockControl" ? "Virtual property value 3" : "";
+							return null;
 						},
 						possibleValues: function (oControl) {
 							return oControl.getId() === "mockControl"
@@ -369,6 +371,24 @@ sap.ui.define([
 
 			return this.oProperty.get(this.oControl.getId()).then(function(oPropertyData) {
 				assert.deepEqual(this.oExpectedPropertyData, oPropertyData, "then the correct result object received from the service");
+				assert.ok(oDtObjProperties.properties.calledWith(this.oControl), "then the control was passed to the designTimeMetadata's properties function");
+				fnElementDesignTimeMetadataStub.restore();
+			}.bind(this));
+		});
+
+		QUnit.test("when property service get() is called for a control with designTime properties wrapped in a function returning an undefined value", function (assert) {
+			// wrap properties in a function
+			var oDtObjProperties = Object.assign({}, this.oMockDesignTime);
+			oDtObjProperties.properties = sandbox.stub();
+
+			var fnElementDesignTimeMetadataStub = sandbox.stub(ElementDesignTimeMetadata.prototype, "getData").returns(oDtObjProperties);
+			// removing DT Properties from response
+			var oExpectedResultWithoutDtProperties = RtaUtils.omit(this.oExpectedPropertyData.properties, ["dtMetadataProperty1", "dtMetadataProperty2", "virtualProperty1", "virtualProperty2", "virtualProperty3"]);
+			// this property was changed within DT properties; restoring to default
+			oExpectedResultWithoutDtProperties["metadataProperty2"].ignore = false;
+
+			return this.oProperty.get(this.oControl.getId()).then(function(oPropertyData) {
+				assert.deepEqual(oExpectedResultWithoutDtProperties, oPropertyData.properties, "then the correct properties received from the service");
 				assert.ok(oDtObjProperties.properties.calledWith(this.oControl), "then the control was passed to the designTimeMetadata's properties function");
 				fnElementDesignTimeMetadataStub.restore();
 			}.bind(this));

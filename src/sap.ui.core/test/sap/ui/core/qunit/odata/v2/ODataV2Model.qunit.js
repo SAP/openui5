@@ -2398,8 +2398,12 @@ sap.ui.define([
 				"Products(0)" : {
 					Name :"Beef",
 					SupplierID: 0,
+					CategoryID: 0,
 					Supplier : {
 						__ref: "Suppliers(0)"
+					},
+					Category : {
+						__deferred: "http://test:8080/services.odata.org/V3/OData/OData.svc/Products(0)/Category"
 					},
 					"__metadata":{
 						uri : "http://test:8080/services.odata.org/V3/OData/OData.svc/Products(0)",
@@ -2412,6 +2416,15 @@ sap.ui.define([
 			oModel.setProperty("/Products(0)/SupplierID", 1);
 			assert.equal(oModel.getProperty("/Products(0)").Supplier.__ref, "Suppliers(1)", "Nav property is updated after changing SupplierID");
 			assert.equal(oModel.getProperty("/Products(0)/Supplier/Name"), "Supplier Two", "Supplier Name is resolved after changing SupplierID");
+			assert.equal(oModel.hasPendingChanges(), true, "Has pending changes is true");
+
+			oModel.setProperty("/Products(0)/SupplierID", 0);
+			assert.equal(oModel.getProperty("/Products(0)/Supplier/Name"), "Supplier One", "Supplier Name is returned correctly");
+			assert.equal(oModel.hasPendingChanges(), false, "Has pending changes is false, after setting property to old value");
+
+			oModel.setProperty("/Products(0)/CategoryID", 1);
+			assert.equal(oModel.getProperty("/Products(0)").Category.__ref, undefined, "Nav property is not updated if deferred");
+
 
 			done();
 		});

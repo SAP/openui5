@@ -505,6 +505,30 @@ sap.ui.define([
 		assert.deepEqual(oBlockLayoutRow._getCellArangementForCurrentSize(), [[1, 1, 1]], "Arrangement should be [1, 1, 1] for cells with equal height on size M");
 	});
 
+	QUnit.module("BlockLayoutCell configuration");
+
+	QUnit.test("Width of the cell is applied correctly ", function (assert) {
+		var oBlockLayout = new BlockLayout(),
+			oBlockLayoutCell = new BlockLayoutCell(),
+			oBlockLayoutRow = new BlockLayoutRow();
+
+		assert.ok(!oBlockLayoutCell.getLayoutData(), "Initial layout data is not set");
+
+		oBlockLayout.addContent(oBlockLayoutRow);
+		oBlockLayout.placeAt("qunit-fixture");
+		oBlockLayoutRow.insertContent(oBlockLayoutCell);
+		oBlockLayoutCell.setWidth(4);
+
+		sap.ui.getCore().applyChanges();
+
+		assert.strictEqual(oBlockLayoutCell.getWidth(), 4, "The width of the cell is applied correctly");
+		assert.strictEqual(oBlockLayoutCell.getLayoutData().getSSize(), 1, "The width of the cell in S size is set");
+		assert.strictEqual(oBlockLayoutCell.getLayoutData().getMSize(), 4, "The width of the cell in M size is set");
+		assert.strictEqual(oBlockLayoutCell.getLayoutData().getLSize(), 4, "The width of the cell in L size is set");
+		assert.strictEqual(oBlockLayoutCell.getLayoutData().getXlSize(), 4, "The width of the cell in XL size is set");
+
+	});
+
 	QUnit.module("BlockLayout in a Dialog", {
 		beforeEach: function () {
 			this.oBlockLayout = new BlockLayout({

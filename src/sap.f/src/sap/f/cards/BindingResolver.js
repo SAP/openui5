@@ -123,14 +123,21 @@ sap.ui.define(["sap/ui/base/ManagedObject", "sap/base/Log"],
 		 * @returns {*} The resolved value.
 		 */
 		BindingResolver.resolveValue = function (vValue, oModel, sPath) {
-			var iCurrentLevel = 0,
+			var oClonedValue,
+				vProcessed,
+				iCurrentLevel = 0,
 				iMaxLevel = 30;
 
-			if (!oModel) {
-				return vValue;
+			// Clone Arrays and Objects
+			if (vValue && typeof vValue === "object") {
+				oClonedValue = jQuery.extend(true, Array.isArray(vValue) ? [] : {}, vValue);
 			}
 
-			var vProcessed = process(vValue, oModel, sPath, iCurrentLevel, iMaxLevel);
+			vProcessed = oClonedValue || vValue;
+
+			if (oModel) {
+				vProcessed = process(vProcessed, oModel, sPath, iCurrentLevel, iMaxLevel);
+			}
 
 			return vProcessed;
 		};

@@ -3,6 +3,7 @@
 sap.ui.define([
 	"sap/ui/qunit/QUnitUtils",
 	"sap/ui/qunit/utils/createAndAppendDiv",
+	'sap/ui/Device',
 	"sap/m/InputBase",
 	"sap/m/library",
 	"sap/m/Select",
@@ -11,6 +12,7 @@ sap.ui.define([
 ], function(
 	qutils,
 	createAndAppendDiv,
+	Device,
 	InputBase,
 	mobileLibrary,
 	Select,
@@ -187,8 +189,8 @@ sap.ui.define([
 		assert.strictEqual(oDomRef.className, "sapMValueStateMessage sapMValueStateMessageWarning");
 		assert.strictEqual(oDomRef.getAttribute("role"), "tooltip");
 		assert.strictEqual(oDomRef.getAttribute("aria-live"), "assertive");
-		assert.strictEqual(oDomRef.firstElementChild.className, "sapUiHidden");
-		assert.strictEqual(oDomRef.firstElementChild.getAttribute("aria-hidden"), "true");
+		assert.strictEqual(oDomRef.firstElementChild.className, Device.browser.msie ? "sapUiHidden" : "sapUiPseudoInvisibleText");
+		assert.strictEqual(oDomRef.firstElementChild.getAttribute("aria-hidden"), Device.browser.msie ? "true" : null);
 		assert.strictEqual(oDomRef.firstElementChild.textContent, sap.ui.getCore().getLibraryResourceBundle("sap.m").getText("INPUTBASE_VALUE_STATE_" + oInputBase.getValueState().toUpperCase()));
 
 		// cleanup

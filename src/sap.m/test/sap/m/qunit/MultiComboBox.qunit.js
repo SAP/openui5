@@ -3573,7 +3573,7 @@ sap.ui.define([
 		assert.ok(oMultiComboBox.isOpen(), "oMultiComboBox is open");
 		assert.ok(oMultiComboBox.$().hasClass(InputBase.ICON_PRESSED_CSS_CLASS),
 				'The MultiComboBox must have the css class “' + oMultiComboBox.ICON_PRESSED_CSS_CLAS);
-		assert.strictEqual(oMultiComboBox.getFocusDomRef().parentNode.getAttribute("aria-expanded"), "true", "aria-expanded should be true");
+		assert.strictEqual(oMultiComboBox.getRoleComboNodeDomRef().getAttribute("aria-expanded"), "true", "aria-expanded should be true");
 		assert.ok(!oMultiComboBox._isListInSuggestMode(), 'Complete list is open');
 
 		// cleanup
@@ -3617,7 +3617,7 @@ sap.ui.define([
 		assert.ok(oMultiComboBox.isOpen(), "oMultiComboBox is open");
 		assert.ok(oMultiComboBox.$().hasClass(InputBase.ICON_PRESSED_CSS_CLASS),
 				'The MultiComboBox must have the css class “' + oMultiComboBox.ICON_PRESSED_CSS_CLAS);
-		assert.strictEqual(oMultiComboBox.getFocusDomRef().parentNode.getAttribute("aria-expanded"), "true", "aria-expanded should be true");
+		assert.strictEqual(oMultiComboBox.getRoleComboNodeDomRef().getAttribute("aria-expanded"), "true", "aria-expanded should be true");
 		assert.ok(!oMultiComboBox._isListInSuggestMode(), 'Complete list is open');
 
 		// cleanup
@@ -3661,7 +3661,7 @@ sap.ui.define([
 		assert.ok(oMultiComboBox.isOpen(), "oMultiComboBox is open");
 		assert.ok(oMultiComboBox.$().hasClass(InputBase.ICON_PRESSED_CSS_CLASS),
 				'The MultiComboBox must have the css class “' + oMultiComboBox.ICON_PRESSED_CSS_CLA);
-		assert.strictEqual(oMultiComboBox.getFocusDomRef().parentNode.getAttribute("aria-expanded"), "true", "aria-expanded should be true");
+		assert.strictEqual(oMultiComboBox.getRoleComboNodeDomRef().getAttribute("aria-expanded"), "true", "aria-expanded should be true");
 		assert.ok(!oMultiComboBox._isListInSuggestMode(), 'Complete list is open');
 
 		// cleanup
@@ -3706,7 +3706,7 @@ sap.ui.define([
 		assert.ok(oMultiComboBox.isOpen(), "oMultiComboBox is open");
 		assert.ok(oMultiComboBox.$().hasClass(InputBase.ICON_PRESSED_CSS_CLASS),
 				'The MultiComboBox must have the css class “' + oMultiComboBox.ICON_PRESSED_CSS_CLAS);
-		assert.strictEqual(oMultiComboBox.getFocusDomRef().parentNode.getAttribute("aria-expanded"), "true", "aria-expanded should be true");
+		assert.strictEqual(oMultiComboBox.getRoleComboNodeDomRef().getAttribute("aria-expanded"), "true", "aria-expanded should be true");
 		assert.ok(!oMultiComboBox._isListInSuggestMode(), 'Complete list is open');
 
 		// cleanup
@@ -3751,7 +3751,7 @@ sap.ui.define([
 		assert.ok(oMultiComboBox.isOpen(), "oMultiComboBox is open");
 		assert.ok(oMultiComboBox.$().hasClass(InputBase.ICON_PRESSED_CSS_CLASS),
 				'The MultiComboBox must have the css class “' + oMultiComboBox.ICON_PRESSED_CSS_CLAS);
-		assert.strictEqual(oMultiComboBox.getFocusDomRef().parentNode.getAttribute("aria-expanded"), "true", "aria-expanded should be true");
+		assert.strictEqual(oMultiComboBox.getRoleComboNodeDomRef().getAttribute("aria-expanded"), "true", "aria-expanded should be true");
 		assert.ok(oMultiComboBox._isListInSuggestMode(), 'Suggest list is open');
 
 		// cleanup
@@ -3986,7 +3986,7 @@ sap.ui.define([
 
 		// assertions
 		assert.ok(!oMultiComboBox.isOpen(), "oMultiComboBox is closed");
-		assert.strictEqual(oMultiComboBox.getFocusDomRef().parentNode.getAttribute("aria-expanded"), "false", "aria-expanded should be false");
+		assert.strictEqual(oMultiComboBox.getRoleComboNodeDomRef().getAttribute("aria-expanded"), "false", "aria-expanded should be false");
 		assert.equal(oMultiComboBox.getFocusDomRef().id, document.activeElement.id, "Input field has focus");
 
 		// cleanup
@@ -4061,8 +4061,8 @@ sap.ui.define([
 		// assertions
 		assert.ok(oMultiComboBox.isOpen(), "oMultiComboBox is open");
 		assert.ok(oMultiComboBox.$().hasClass(InputBase.ICON_PRESSED_CSS_CLASS),
-				'The MultiComboBox must have the css class “' + oMultiComboBox.ICON_PRESSED_CSS_CLAS);
-		assert.strictEqual(oMultiComboBox.getFocusDomRef().parentNode.getAttribute("aria-expanded"), "false", "aria-expanded should be false");
+				'The MultiComboBox must have the css class "' + InputBase.ICON_PRESSED_CSS_CLASS + '"');
+		assert.strictEqual(oMultiComboBox.getRoleComboNodeDomRef().getAttribute("aria-expanded"), "true", "aria-expanded should be true");
 
 		// cleanup
 		oMultiComboBox.destroy();
@@ -4092,8 +4092,8 @@ sap.ui.define([
 		// assertions
 		assert.ok(!oMultiComboBox.isOpen(), "oMultiComboBox is closed");
 		assert.ok(!oMultiComboBox.$().hasClass(InputBase.ICON_PRESSED_CSS_CLASS),
-				'The MultiComboBox must not have the css class “' + oMultiComboBox.ICON_PRESSED_CSS_CLAS);
-		assert.strictEqual(oMultiComboBox.getFocusDomRef().parentNode.getAttribute("aria-expanded"), "false", "aria-expanded should be false");
+				'The MultiComboBox must not have the css class "' + InputBase.ICON_PRESSED_CSS_CLASS + '"');
+		assert.strictEqual(oMultiComboBox.getRoleComboNodeDomRef().getAttribute("aria-expanded"), "false", "aria-expanded should be false");
 
 		// cleanup
 		oMultiComboBox.destroy();
@@ -4137,10 +4137,10 @@ sap.ui.define([
 		this.clock.tick(500);
 
 		// assertions
-		assert.ok(oMultiComboBox.isOpen(), "oMultiComboBox is closed");
+		assert.ok(oMultiComboBox.isOpen(), "oMultiComboBox is open");
 		assert.ok(!oMultiComboBox._isListInSuggestMode(), 'Complete list is open');
 		assert.ok(oMultiComboBox.$().hasClass(InputBase.ICON_PRESSED_CSS_CLASS),
-				'The MultiComboBox must have the css class “' + oMultiComboBox.ICON_PRESSED_CSS_CLAS);
+				'The MultiComboBox must have the css class "' + InputBase.ICON_PRESSED_CSS_CLASS + '"');
 
 		// cleanup
 		oMultiComboBox.destroy();
@@ -4492,6 +4492,7 @@ sap.ui.define([
 
 		var oSpyFireSelectionFinish = this.spy(oMCB, "fireSelectionFinish");
 		var oSpySetSelection = this.spy(oMCB, "setSelection");
+		var oList = oMCB.getList();
 
 		sap.ui.getCore().applyChanges();
 
@@ -4499,22 +4500,26 @@ sap.ui.define([
 		sap.ui.getCore().applyChanges();
 		this.clock.tick(500);
 
-		//Act
-		oMCB.close();
-		oMCB.setSelection({
-			fireChangeEvent: true,
-			id: oItem.getId(),
-			item: oItem,
-			key: "",
-			listItemUpdated: true,
-			suppressInvalidate: true
-		});
+		var oFakeEvent = {
+			id: oList.getId(),
+			listItem: oList.getItems()[0],
+			getParameter: function (sParam) {
+				if (sParam == "listItem") {
+					return oList.getItems()[0];
+				}
+				return true;
+			}
+		};
+
+		oMCB._handleSelectionLiveChange(oFakeEvent);
 
 		//Assert
 		assert.strictEqual(oSpySetSelection.callCount, 1, "setSelection executed");
 		assert.strictEqual(oSpyFireSelectionFinish.callCount, 0, "fireSelectionFinish not called yet");
 
 		//Act. Close the popover
+		oMCB.close();
+		oMCB._handleItemPress(oFakeEvent);
 		this.clock.tick(500);
 
 		//Assert

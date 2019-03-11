@@ -872,7 +872,11 @@ sap.ui.define([
 				// forward the event
 				if (!this._findAndfireCellEvent(this.fireCellClick, oEvent)) {
 					if (oCellInfo.isOfType(TableUtils.CELLTYPE.COLUMNROWHEADER)) {
-						this._toggleSelectAll();
+						if (this._oSelectionPlugin.onHeaderSelectorPress) {
+							this._oSelectionPlugin.onHeaderSelectorPress();
+						} else {
+							this._toggleSelectAll();
+						}
 					} else {
 						ExtensionHelper._handleClickSelection(oEvent, $Cell, this);
 					}

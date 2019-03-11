@@ -128,6 +128,11 @@ sap.ui.define([
 		undefined: mBaseSize.undefined + iRowHorizontalFrameSize
 	};
 
+	var mThemeParameters = {
+		sapUiTableActionNavigationIcon: 'navigation-right-arrow',
+		sapUiTableActionDeleteIcon: 'sys-cancel'
+	};
+
 	/**
 	 * Reason for updates of the rows. Inherits from {@link sap.ui.model.ChangeReason}.
 	 *
@@ -199,6 +204,7 @@ sap.ui.define([
 		DefaultRowHeight: mDefaultRowHeight,
 		RowsUpdateReason: ROWS_UPDATE_REASON,
 		INTERACTIVE_ELEMENT_SELECTORS: INTERACTIVE_ELEMENT_SELECTORS,
+		ThemeParameters: mThemeParameters,
 
 		/**
 		 * Returns whether the table has a row header or not
@@ -1398,9 +1404,9 @@ sap.ui.define([
 		},
 
 		/**
-		 * Returns all interactive elements in a data cell.
+		 * Returns all interactive elements in a cell.
 		 *
-		 * @param {jQuery|HTMLElement} oCell The data cell from which to get the interactive elements.
+		 * @param {jQuery|HTMLElement} oCell The cell from which to get the interactive elements.
 		 * @returns {jQuery|null} Returns <code>null</code>, if the passed cell is not a cell or does not contain any interactive elements.
 		 */
 		getInteractiveElements: function(oCell) {
@@ -1411,7 +1417,7 @@ sap.ui.define([
 			var $Cell = jQuery(oCell);
 			var oCellInfo = TableUtils.getCellInfo($Cell);
 
-			if (oCellInfo.isOfType(CELLTYPE.DATACELL | CELLTYPE.ROWACTION)) {
+			if (oCellInfo.isOfType(CELLTYPE.ANY)) {
 				var $InteractiveElements = $Cell.find(INTERACTIVE_ELEMENT_SELECTORS);
 				if ($InteractiveElements.length > 0) {
 					return $InteractiveElements;
@@ -1490,6 +1496,9 @@ sap.ui.define([
 			mDefaultRowHeight.sapUiSizeCozy = mBaseSize.sapUiSizeCozy + iRowHorizontalFrameSize;
 			mDefaultRowHeight.sapUiSizeCompact = mBaseSize.sapUiSizeCompact + iRowHorizontalFrameSize;
 			mDefaultRowHeight.sapUiSizeCondensed = mBaseSize.sapUiSizeCondensed + iRowHorizontalFrameSize;
+
+			mThemeParameters.sapUiTableActionNavigationIcon = ThemeParameters.get("_sap_ui_table_RowActionNavigationIcon");
+			mThemeParameters.sapUiTableActionDeleteIcon = ThemeParameters.get("_sap_ui_table_RowActionDeleteIcon");
 		}
 	};
 

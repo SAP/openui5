@@ -182,8 +182,9 @@ sap.ui.define([
 
 		// Select/Deselect all.
 		if (oCellInfo.isOfType(CellType.COLUMNROWHEADER)) {
-			oTable._toggleSelectAll();
-
+			if (!oTable._oSelectionPlugin.onHeaderSelectorPress || this._oSelectionPlugin.onHeaderSelectorPress()) {
+				oTable._toggleSelectAll();
+			}
 			// Expand/Collapse group.
 		} else if (TableKeyboardDelegate._isElementGroupToggler(oTable, oEvent.target)) {
 			TableUtils.Grouping.toggleGroupHeaderByRef(oTable, oEvent.target);
@@ -760,6 +761,12 @@ sap.ui.define([
 		var oActiveElement = document.activeElement;
 		var $InteractiveElements = TableUtils.getInteractiveElements(oActiveElement);
 		var $Cell = TableUtils.getParentCell(this, oActiveElement);
+		var oCellInfo = TableUtils.getCellInfo($Cell);
+
+		if (oCellInfo.isOfType(CellType.ANYCOLUMNHEADER)) {
+			// The column header is not included into the action mode navigation.
+			return false;
+		}
 
 		if ($InteractiveElements) {
 			// Target is a data cell with interactive elements inside. Focus the first interactive element in the data cell.
@@ -828,33 +835,26 @@ sap.ui.define([
 			this.$("noDataCnt").focus();
 		}*/
 
-		var $Cell = TableUtils.getParentCell(this, $Target);
-		var bElementIsInCell = $Cell !== null;
-		var bIsInteractiveElement = bElementIsInCell && TableKeyboardDelegate._isElementInteractive($Target);
+		var oCellInfo = TableUtils.getCellInfo(oEvent.target);
+		var bIsRowHeaderCellInGroupHeaderRow = oCellInfo.isOfType(CellType.ROWHEADER)
+											   && TableUtils.Grouping.isInGroupingRow(oEvent.target);
+		var bIsRowSelectorCell = oCellInfo.isOfType(CellType.ROWHEADER)
+								 && !bIsRowHeaderCellInGroupHeaderRow
+								 && TableUtils.isRowSelectorSelectionAllowed(this);
+		var bParentIsAContentCell = TableUtils.getCellInfo(TableUtils.getParentCell(this, oEvent.target)).isOfType(CellType.ANYCONTENTCELL);
+		var bIsInteractiveElement = TableKeyboardDelegate._isElementInteractive(oEvent.target);
+		var bIsInActionMode = this._getKeyboardExtension().isInActionMode();
 
-		if (this._getKeyboardExtension().isInActionMode()) {
-			// Leave the action mode when focusing an element in the table which is not supported by the action mode.
-			// Supported elements:
-			// - Group row header cell; If the table is in action mode.
-			// - Row selector cell; If the table is in action mode and row selection with row headers is possible.
-			// - Interactive element inside a data cell.
+		// Leave the action mode when focusing an element in the table which is not supported by the action mode.
+		// Supported elements:
+		// - Group row header cell; If the table is in action mode.
+		// - Row selector cell; If the table is in action mode and row selection with row headers is possible.
+		// - Interactive element inside a content cell.
+		var bShouldBeInActionMode = (bIsInActionMode && (bIsRowHeaderCellInGroupHeaderRow || bIsRowSelectorCell)
+									 || (bIsInteractiveElement && bParentIsAContentCell));
 
-			var oCellInfo = TableUtils.getCellInfo(oEvent.target);
-			var bElementIsACell = oCellInfo.cell != null;
-			var bIsRowHeaderCellInGroupHeaderRow = oCellInfo.isOfType(CellType.ROWHEADER)
-												   && TableUtils.Grouping.isInGroupingRow(oEvent.target);
-			var bIsRowSelectorCell = oCellInfo.isOfType(CellType.ROWHEADER)
-									 && !bIsRowHeaderCellInGroupHeaderRow
-									 && TableUtils.isRowSelectorSelectionAllowed(this);
-
-			if (bElementIsACell && !bIsRowHeaderCellInGroupHeaderRow && !bIsRowSelectorCell) {
-				this._getKeyboardExtension().setActionMode(false);
-			} else if (bElementIsInCell && !bIsInteractiveElement) {
-				this._getKeyboardExtension().setActionMode(false, false); // Leave the action mode silently (focus will not change).
-			}
-		} else if (bIsInteractiveElement) {
-			this._getKeyboardExtension().setActionMode(true);
-		}
+		// Enter or leave the action mode silently (onfocusin will be skipped).
+		this._getKeyboardExtension().setActionMode(bShouldBeInActionMode, false);
 	};
 
 	/*
@@ -863,15 +863,32 @@ sap.ui.define([
 	 */
 	TableKeyboardDelegate.prototype.onkeydown = function(oEvent) {
 		var oKeyboardExtension = this._getKeyboardExtension();
+		var oCellInfo = TableUtils.getCellInfo(oEvent.target);
+		var sSelectionMode = this.getSelectionMode();
 
 		// Toggle the action mode by changing the focus between a data cell and its interactive controls.
 		if (TableKeyboardDelegate._isKeyCombination(oEvent, KeyCodes.F2)) {
 			var bIsInActionMode = oKeyboardExtension.isInActionMode();
-			var $ParentCell = TableUtils.getParentCell(this, oEvent.target);
+			var $Cell = TableUtils.getCell(this, oEvent.target);
+			var bIsInCell = TableUtils.getParentCell(this, oEvent.target) != null;
 
-			if (!bIsInActionMode && $ParentCell) {
-				$ParentCell.focus(); // A non-interactive element inside a cell is focused, focus the cell this element is inside.
+			oCellInfo = TableUtils.getCellInfo($Cell);
+
+			if (!bIsInActionMode && bIsInCell) {
+				// A non-interactive element inside a cell, or any kind of element inside a column header cell is focused.
+				// Focus the cell this element is inside.
+				$Cell.focus();
+
+			} else if (oCellInfo.isOfType(CellType.ANYCOLUMNHEADER)) {
+				// Focus the interactive element inside a column header cell.
+				var $InteractiveElements = TableUtils.getInteractiveElements($Cell);
+				if ($InteractiveElements) {
+					$InteractiveElements[0].focus();
+				}
+
 			} else {
+				// The focus is on a content cell or an interactive element inside a content cell.
+				// Toggle the action mode.
 				oKeyboardExtension.setActionMode(!bIsInActionMode);
 			}
 
@@ -892,10 +909,6 @@ sap.ui.define([
 			TableUtils.getCellInfo(oEvent.target).type) {
 			oEvent.preventDefault(); // Prevent scrolling the page.
 		}
-
-		var $Target = jQuery(oEvent.target);
-		var oCellInfo = TableUtils.getCellInfo($Target);
-		var sSelectionMode = this.getSelectionMode();
 
 		// Shift: Start the range selection mode.
 		if (TableKeyboardDelegate._isKeyCombination(oEvent, KeyCodes.SHIFT) &&
@@ -924,7 +937,9 @@ sap.ui.define([
 			oEvent.preventDefault(); // Prevent full page text selection.
 
 			if (oCellInfo.isOfType(CellType.ANYCONTENTCELL | CellType.COLUMNROWHEADER) && sSelectionMode === SelectionMode.MultiToggle) {
-				this._toggleSelectAll();
+				if (!this._oSelectionPlugin.onKeyboardShortcut || this._oSelectionPlugin.onKeyboardShortcut("toggle")) {
+					this._toggleSelectAll();
+				}
 			}
 
 		// Ctrl+Shift+A: Deselect all.

@@ -8,8 +8,10 @@ sap.ui.define([
 	'./Popover',
 	'sap/ui/core/Item',
 	'./ColumnListItem',
+	'./GroupHeaderListItem',
 	'./DisplayListItem',
 	'./StandardListItem',
+	'sap/ui/core/SeparatorItem',
 	'./Table',
 	'./library',
 	'sap/ui/core/IconPool',
@@ -32,8 +34,10 @@ function(
 	Popover,
 	Item,
 	ColumnListItem,
+	GroupHeaderListItem,
 	DisplayListItem,
 	StandardListItem,
+	SeparatorItem,
 	Table,
 	library,
 	IconPool,
@@ -270,7 +274,7 @@ function(
 			 * Note: If this aggregation is filled, the aggregation suggestionItems will be ignored.
 			 * @since 1.21.1
 			 */
-			suggestionRows : {type : "sap.m.ColumnListItem", multiple : true, singularName : "suggestionRow", bindable : "bindable", forwarding: {getter: "_getSuggestionsTable", aggregation: "items"}},
+			suggestionRows : {type : "sap.m.ColumnListItem", altTypes: ["sap.m.GroupHeaderListItem"], multiple : true, singularName : "suggestionRow", bindable : "bindable", forwarding: {getter: "_getSuggestionsTable", aggregation: "items"}},
 
 			/**
 			 * The suggestion popup (can be a Dialog or Popover); aggregation needed to also propagate the model and bindings to the content of the popover
@@ -380,10 +384,12 @@ function(
 			/**
 			 * This event is fired when user presses the <code>Enter</code> key on the input.
 			 *
-			 * <b>Note:</b>
-			 * The event is fired independent of whether there was a change before or not. If a change was performed the event is fired after the change event.
-			 * The event is also fired when an item of the select list is selected via <code>Enter</code>.
-			 * The event is only fired on an input which allows text input (<code>editable</code>, <code>enabled</code> and not <code>valueHelpOnly</code>).
+			 * <b>Notes:</b>
+			 * <ul>
+			 * <li>The event is fired independent of whether there was a change before or not. If a change was performed, the event is fired after the change event.</li>
+			 * <li>The event is also fired when an item of the select list is selected via <code>Enter</code>.</li>
+			 * <li>The event is only fired on an input which allows text input (<code>editable</code>, <code>enabled</code> and not <code>valueHelpOnly</code>).</li>
+			 * </ul>
 			 *
 			 * @since 1.33.0
 			 */
@@ -676,6 +682,44 @@ function(
 		}
 
 		this._bSelectingItem = false;
+	};
+
+
+	/**
+	 * Adds a sap.m.GroupHeaderListItem item to the aggregation named <code>suggestionRows</code>.
+	 *
+	 * @param {sap.ui.core.Item} oGroup Item of that group
+	 * @param {sap.ui.core.SeparatorItem} oHeader The item to be added
+	 * @param {boolean} bSuppressInvalidate Flag indicating whether invalidation should be suppressed
+	 * @returns {sap.m.GroupHeaderListItem} The group header
+	 * @private
+	 */
+	Input.prototype.addSuggestionRowGroup = function(oGroup, oHeader, bSuppressInvalidate) {
+		oHeader = oHeader || new GroupHeaderListItem({
+			title: oGroup.text || oGroup.key
+		});
+
+		this.addAggregation("suggestionRows", oHeader, bSuppressInvalidate);
+		return oHeader;
+	};
+
+
+	/**
+	 * Adds a sap.ui.core.SeparatorItem item to the aggregation named <code>suggestions</code>.
+	 *
+	 * @param {sap.ui.core.Item} oGroup Item of that group
+	 * @param {sap.ui.core.SeparatorItem} oHeader The item to be added
+	 * @param {boolean} bSuppressInvalidate Flag indicating whether invalidation should be suppressed
+	 * @returns {sap.m.GroupHeaderListItem} The group header
+	 * @private
+	 */
+	Input.prototype.addSuggestionItemGroup = function(oGroup, oHeader, bSuppressInvalidate) {
+		oHeader = oHeader || new SeparatorItem({
+			text: oGroup.text || oGroup.key
+		});
+
+		this.addAggregation("suggestionItems", oHeader, bSuppressInvalidate);
+		return oHeader;
 	};
 
 	/**
@@ -1376,6 +1420,111 @@ function(
 		};
 
 		/**
+		 * Filters list suggestions.
+		 *
+		 * @private
+		 * @param {Array} aItems Array of items
+		 * @param {string} sTypedChars The search term
+		 * @return {object} Object containing the matched items and groups information
+		 */
+		Input.prototype._filterListItems = function (aItems, sTypedChars) {
+			var i, oListItem, oItem,
+				aGroups = [],
+				aHitItems = [],
+				bFilter = this.getFilterSuggests();
+
+			for (i = 0; i < aItems.length; i++) {
+				oItem = aItems[i];
+
+				if (aItems[i].isA("sap.ui.core.SeparatorItem")) {
+					oListItem = new GroupHeaderListItem({
+						id: oItem.getId() + "-ghli",
+						title: aItems[i].getText()
+					});
+
+					aGroups.push({
+						header:oListItem,
+						visible: false
+					});
+
+					this._configureListItem(oItem, oListItem);
+					aHitItems.push(oListItem);
+				} else if (!bFilter || this._fnFilter(sTypedChars, oItem)) {
+					if (aItems[i].isA("sap.ui.core.ListItem")) {
+						oListItem = new DisplayListItem(oItem.getId() + "-dli");
+						oListItem.setLabel(oItem.getText());
+						oListItem.setValue(oItem.getAdditionalText());
+					} else {
+						oListItem = new StandardListItem(oItem.getId() + "-sli");
+						oListItem.setTitle(oItem.getText());
+					}
+
+					if (aGroups.length) {
+						aGroups[aGroups.length - 1].visible = true;
+					}
+
+					this._configureListItem(oItem, oListItem);
+					aHitItems.push(oListItem);
+				}
+			}
+
+			aGroups.forEach(function(oGroup){
+				oGroup.header.setVisible(oGroup.visible);
+			});
+
+			return {
+				hitItems: aHitItems,
+				groups: aGroups
+			};
+		};
+
+		/**
+		 * Filters tabular suggestions.
+		 *
+		 * @private
+		 * @param {Array} aTabularRows Array of table rows
+		 * @param {string} sTypedChars The search term
+		 * @return {object} Object containing the matched rows and groups information
+		 */
+		Input.prototype._filterTabularItems = function (aTabularRows, sTypedChars) {
+			var i,
+				bShowItem,
+				bFilter = this.getFilterSuggests(),
+				aHitItems = [],
+				aGroups = [];
+
+			// filter tabular items
+			for (i = 0; i < aTabularRows.length; i++) {
+				if (aTabularRows[i].isA("sap.m.GroupHeaderListItem")) {
+					aGroups.push({
+						header: aTabularRows[i],
+						visible: false
+					});
+				} else {
+					bShowItem = !bFilter || this._fnFilter(sTypedChars, aTabularRows[i]);
+
+					aTabularRows[i].setVisible(bShowItem);
+					bShowItem && aHitItems.push(aTabularRows[i]);
+
+					if (aGroups.length && bShowItem) {
+						aGroups[aGroups.length - 1].visible = true;
+					}
+				}
+			}
+
+			aGroups.forEach(function(oGroup){
+				oGroup.header.setVisible(oGroup.visible);
+			});
+
+			this._getSuggestionsTable().invalidate();
+
+			return {
+				hitItems: aHitItems,
+				groups: aGroups
+			};
+		};
+
+		/**
 		 * Helper function that refreshes list all items.
 		 */
 		Input.prototype._refreshListItems = function () {
@@ -1392,20 +1541,15 @@ function(
 				return;
 			}
 
-			var oItem,
-				aItems = this.getSuggestionItems(),
+			var aItems = this.getSuggestionItems(),
 				aTabularRows = this.getSuggestionRows(),
 				sTypedChars = this._oSuggPopover._sTypedInValue || this.getDOMValue() || "",
-				bFilter = this.getFilterSuggests(),
 				aHitItems = [],
-				iItemsLength = 0,
+				aGroups = [],
+				oFilterResults,
+				iItemsLength,
+				iSuggestionsLength,
 				oPopup = this._oSuggPopover._oPopover,
-				oListItemDelegate = {
-					ontouchstart : function(oEvent) {
-						(oEvent.originalEvent || oEvent)._sapui_cancelAutoClose = true;
-					}
-				},
-				oListItem,
 				i;
 
 			// only destroy items in simple suggestion mode
@@ -1444,54 +1588,38 @@ function(
 					this._oSuggPopover._oList.removeStyleClass("sapMInputSuggestionTableHidden");
 				}
 
-				// filter tabular items
-				for (i = 0; i < aTabularRows.length; i++) {
-					if (!bFilter || this._fnFilter(sTypedChars, aTabularRows[i])) {
-						aTabularRows[i].setVisible(true);
-						aHitItems.push(aTabularRows[i]);
-					} else {
-						aTabularRows[i].setVisible(false);
-					}
-				}
-				this._getSuggestionsTable().invalidate();
+				oFilterResults = this._filterTabularItems(aTabularRows, sTypedChars);
 			} else {
-				// filter standard items
-				for (i = 0; i < aItems.length; i++) {
-					oItem = aItems[i];
-					if (!bFilter || this._fnFilter(sTypedChars, oItem)) {
-						if (aItems[i].isA("sap.ui.core.ListItem")) {
-							oListItem = new DisplayListItem(oItem.getId() + "-dli");
-							oListItem.setLabel(oItem.getText());
-							oListItem.setValue(oItem.getAdditionalText());
-						} else {
-							oListItem = new StandardListItem(oItem.getId() + "-sli");
-							oListItem.setTitle(oItem.getText());
-						}
-
-						oListItem.setType(oItem.getEnabled() ? ListType.Active : ListType.Inactive);
-						oListItem._oItem = oItem;
-						oListItem.addEventDelegate(oListItemDelegate);
-						aHitItems.push(oListItem);
-					}
-				}
+				oFilterResults = this._filterListItems(aItems, sTypedChars);
 			}
 
+			aHitItems = oFilterResults.hitItems;
+			aGroups = oFilterResults.groups;
+
+			// The number of all items, including group headers
 			iItemsLength = aHitItems.length;
+			iSuggestionsLength = iItemsLength;
+
 			var sAriaText = "";
-			if (iItemsLength > 0) {
+
+			if (!this._hasTabularSuggestions()) {
+				for (i = 0; i < iItemsLength; i++) {
+					this._oSuggPopover._oList.addItem(aHitItems[i]);
+				}
+
+				// if list suggestions are used, the group header items are included in the matched items
+				// however the suggestions count should exclude them
+				iSuggestionsLength = iItemsLength - aGroups.length;
+			}
+
+			if (iSuggestionsLength > 0) {
 				// add items to list
-				if (iItemsLength == 1) {
+				if (iSuggestionsLength == 1) {
 					sAriaText = oRb.getText("INPUT_SUGGESTIONS_ONE_HIT");
 				} else {
-					sAriaText = oRb.getText("INPUT_SUGGESTIONS_MORE_HITS", iItemsLength);
+					sAriaText = oRb.getText("INPUT_SUGGESTIONS_MORE_HITS", iSuggestionsLength);
 				}
 				this.$("inner").attr("aria-haspopup", "true");
-
-				if (!this._hasTabularSuggestions()) {
-					for (i = 0; i < iItemsLength; i++) {
-						this._oSuggPopover._oList.addItem(aHitItems[i]);
-					}
-				}
 
 				if (!this._bUseDialog) {
 					if (this._sCloseTimer) {
@@ -1534,6 +1662,31 @@ function(
 			this.$("SuggDescr").text(sAriaText);
 		};
 
+		/**
+		 * Applies common configuration to a list item.
+		 *
+		 * @private
+		 * @param {sap.ui.core.Item} oItem The associated suggestion item
+		 * @param {sap.m.ListItemBase} oListItem The list item
+		 * @return {sap.m.ListItemBase} The modified list item
+		 */
+		Input.prototype._configureListItem = function (oItem, oListItem) {
+			var sType = ListType.Active;
+
+			if (!oItem.getEnabled() || oListItem.isA("sap.m.GroupHeaderListItem")) {
+				sType = ListType.Inactive;
+			}
+
+			oListItem.setType(sType);
+			oListItem._oItem = oItem;
+			oListItem.addEventDelegate({
+				ontouchstart : function(oEvent) {
+					(oEvent.originalEvent || oEvent)._sapui_cancelAutoClose = true;
+				}
+			});
+
+			return oListItem;
+		};
 		/**
 		 * Adds suggestion item.
 		 *
@@ -2089,9 +2242,12 @@ function(
 				if (Device.system.desktop) {
 					this.focus();
 				}
-				this._oSuggPopover._bSuggestionItemTapped = true;
 				var oListItem = oEvent.getParameter("listItem");
-				this.setSelectionItem(oListItem._oItem, true);
+
+				if (!oListItem.isA("sap.m.GroupHeaderListItem")) {
+					this._oSuggPopover._bSuggestionItemTapped = true;
+					this.setSelectionItem(oListItem._oItem, true);
+				}
 			}, this);
 		} else {
 			// tabular suggestions
@@ -2231,6 +2387,11 @@ function(
 					.attachBeforeClose(this._updateSelectionFromList, this)
 					.attachBeforeOpen(function () {
 						this._sBeforeSuggest = this.getValue();
+						this._oSuggPopover._resizePopup();
+						this._oSuggPopover._registerResize();
+					}, this)
+					.attachAfterClose(function() {
+						this._oSuggPopover._deregisterResize();
 					}, this);
 			}
 

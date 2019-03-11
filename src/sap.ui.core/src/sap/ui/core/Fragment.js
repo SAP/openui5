@@ -289,7 +289,7 @@ function(
 	 *
 	 * @param {string} sName the Fragment name
 	 * @param {string} sType the Fragment type, e.g. "XML", "JS", or "HTML"
-	 * @param {sap.ui.core.mvc.Controller} [oController] the Controller which should be used by the controls in the Fragment.
+	 * @param {sap.ui.core.mvc.Controller|Object} [oController] the Controller or Object which should be used by the controls in the Fragment.
 	 *     Note that some Fragments may not need a Controller and other may need one - and even rely on certain methods implemented in the Controller.
 	 * @public
 	 * @static
@@ -392,7 +392,7 @@ function(
 	 * @param {string} [mOptions.definition] definition of the Fragment content. When this property is supplied, the "name" parameter must not be used.
 	 * Please see the above example on how to use the 'definition' parameter.
 	 * @param {string} [mOptions.id] the ID of the Fragment
-	 * @param {sap.ui.core.mvc.Controller} [mOptions.controller] the Controller which should be used by the controls in the Fragment.
+	 * @param {sap.ui.core.mvc.Controller|Object} [mOptions.controller] the Controller or Object which should be used by the controls in the Fragment.
 	 *    Note that some Fragments may not need a Controller while others may need one and certain methods to be implemented by it.
 	 * @public
 	 * @static

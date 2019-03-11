@@ -59,6 +59,7 @@ sap.ui.define([
 			this.oLoadEvent = null;
 			this.oFailedEvent = null;
 			this.oMetadata = null;
+			this.bMessageScopeSupported = false;
 			this.mNamespaces = mParams.namespaces || {
 				sap:"http://www.sap.com/Protocols/SAPData",
 				m:"http://schemas.microsoft.com/ado/2007/08/dataservices/metadata",
@@ -78,8 +79,11 @@ sap.ui.define([
 				}));
 			}
 
-			function logError() {
+			function logError(oError) {
 				Log.error("[ODataMetadata] initial loading of metadata failed");
+				if (oError && oError.message) {
+					Log.error("Error: " + oError.message);
+				}
 			}
 
 			//check cache
@@ -1357,6 +1361,40 @@ sap.ui.define([
 			}
 		}
 		return null;
+	};
+
+	/**
+	 * Whether MessageScope is supported by service or not.
+	 *
+	 * @return {boolean} Whether MessageScope is supported
+	 * @private
+	 */
+	ODataMetadata.prototype._isMessageScopeSupported = function() {
+		var aSchema = this.oMetadata.dataServices.schema,
+			oContainer, aContainers;
+
+		if (!this.bMessageScopeSupported) {
+			for (var i = 0; i < aSchema.length; ++i) {
+				aContainers = aSchema[i].entityContainer;
+				if (aContainers) {
+					for (var n = 0; n < aContainers.length; ++n) {
+						oContainer = aContainers[n];
+						if (oContainer.extensions && Array.isArray(oContainer.extensions)) {
+							for (var m = 0; m < oContainer.extensions.length; ++m) {
+								if (oContainer.extensions[m].name === "message-scope-supported" &&
+									oContainer.extensions[m].namespace === this.mNamespaces.sap) {
+									if (oContainer.extensions[m].value === "true") {
+										this.bMessageScopeSupported = true;
+										break;
+									}
+								}
+							}
+						}
+					}
+				}
+			}
+		}
+		return this.bMessageScopeSupported;
 	};
 
 	return ODataMetadata;

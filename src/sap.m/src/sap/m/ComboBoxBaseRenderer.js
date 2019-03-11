@@ -1,8 +1,8 @@
 /*!
  * ${copyright}
  */
-sap.ui.define(['./ComboBoxTextFieldRenderer', 'sap/ui/core/Renderer'],
-	function (ComboBoxTextFieldRenderer, Renderer) {
+sap.ui.define(['./ComboBoxTextFieldRenderer', 'sap/ui/core/Renderer', 'sap/ui/core/Core'],
+	function (ComboBoxTextFieldRenderer, Renderer, Core) {
 		"use strict";
 
 		/**
@@ -46,7 +46,7 @@ sap.ui.define(['./ComboBoxTextFieldRenderer', 'sap/ui/core/Renderer'],
 		ComboBoxBaseRenderer.writeAccAttributes = function(oRm, oControl) {
 			ComboBoxTextFieldRenderer.writeAccAttributes.apply(this, arguments);
 
-			if (sap.ui.getCore().getConfiguration().getAccessibility()) {
+			if (Core.getConfiguration().getAccessibility()) {
 				oRm.writeAttribute("aria-expanded", oControl.isOpen());
 			}
 		};

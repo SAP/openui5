@@ -886,7 +886,8 @@ sap.ui.define([
 												 || mOptions.scrollDirection === ScrollDirection.BOTH)) {
 				var oVSb = oScrollExtension.getVerticalScrollbar();
 				var iMaxFirstRenderedRowIndex = this._getMaxFirstRenderedRowIndex();
-				var bIsScrollPositionInBuffer = this._getFirstRenderedRowIndex() === iMaxFirstRenderedRowIndex;
+				var bIsScrollPositionInBuffer = TableUtils.isVariableRowHeightEnabled(this)
+												&& this._getFirstRenderedRowIndex() === iMaxFirstRenderedRowIndex;
 				var nScrollRangeRowFraction = VerticalScrollingHelper.getScrollRangeRowFraction(this);
 				var nScrollDeltaFactor = bIsScrollPositionInBuffer ? this._getDefaultRowHeight() : nScrollRangeRowFraction;
 
@@ -1241,18 +1242,27 @@ sap.ui.define([
 			var $ParentCell = TableUtils.getParentCell(this, oEvent.target);
 
 			if ($ParentCell) {
-				Promise.resolve().then(function() {
+				var that = this;
+				var fnScrollBack = function() {
 					var $InnerCellElement = $ParentCell.find(".sapUiTableCellInner");
 
 					if ($InnerCellElement.length > 0) {
-						if (this._bRtlMode) {
+						if (that._bRtlMode) {
 							$InnerCellElement.scrollLeftRTL($InnerCellElement[0].scrollWidth - $InnerCellElement[0].clientWidth);
 						} else {
 							$InnerCellElement[0].scrollLeft = 0;
 						}
 						$InnerCellElement[0].scrollTop = 0;
 					}
-				}.bind(this));
+				};
+
+				Promise.resolve().then(function() {
+					if (Device.browser.safari) {
+						window.setTimeout(fnScrollBack, 0);
+					} else {
+						fnScrollBack();
+					}
+				});
 			}
 		}
 	};

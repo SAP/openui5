@@ -1,0 +1,15 @@
+{
+    "sap.app": {
+        "type": "card"
+    },
+    "sap.card": {
+        "type": "Component",
+        "header": {
+            "title": "Buy bus ticket on-line",
+            "subTitle": "Buy a single drive ticket for a date"
+        },
+        "content": {
+            "manifest": "./cardcontent/componentContent/booking/manifest.json"
+        }
+     }
+}

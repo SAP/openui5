@@ -24,7 +24,7 @@ sap.ui.define([
 	'./TableScrollExtension',
 	'./TableDragAndDropExtension',
 	"./TableRenderer",
-	"./SelectionModelAdapter",
+	"./plugins/SelectionModelPlugin",
 	"sap/ui/thirdparty/jquery",
 	"sap/base/Log"
 ],
@@ -49,7 +49,7 @@ sap.ui.define([
 		TableScrollExtension,
 		TableDragAndDropExtension,
 		TableRenderer,
-		SelectionModelAdapter,
+		SelectionModelPlugin,
 		jQuery,
 		Log
 	) {
@@ -158,6 +158,7 @@ sap.ui.define([
 			 * When the selection mode is changed, the current selection is removed.
 			 * <b>Note:</b> Since the group header visualization relies on the row selectors, the row selectors are always shown if the grouping
 			 * functionality (depends on table type) is enabled, even if <code>sap.ui.table.SelectionMode.None</code> is set.
+			 * <b>Note:</b> When the MultiSelectionPlugin is applied to the table, the selection mode is controlled by the plugin and cannot be changed manually.
 			 */
 			selectionMode : {type : "sap.ui.table.SelectionMode", group : "Behavior", defaultValue : SelectionMode.MultiToggle},
 
@@ -410,7 +411,20 @@ sap.ui.define([
 			 *
 			 * @since 1.54
 			 */
-			contextMenu : {type : "sap.ui.core.IContextMenu", multiple : false}
+			contextMenu : {type : "sap.ui.core.IContextMenu", multiple : false},
+
+			/**
+			 * Plugin section of the table. Multiple plugins are possible, but always only <b>one</b> of a certain type.
+			 *
+			 * The following restrictions apply:
+			 * <ul>
+			 *  <li>Only one MultiSelectionPlugin can be applied. No other plugins can be applied.</li>
+			 * </ul>
+			 *
+			 * @since 1.64
+			 * @experimental As of version 1.64
+			 */
+			plugins : {type : "sap.ui.table.plugins.SelectionPlugin", multiple : true, singularName : "plugin"}
 		},
 		associations : {
 
@@ -807,6 +821,11 @@ sap.ui.define([
 	 * @private
 	 */
 	Table.prototype.init = function() {
+		// Todo: the base class shouldn't know that subclasses might set a variable before its own init
+		if (!this._SelectionAdapterClass) {
+			this._SelectionAdapterClass = SelectionModelPlugin;
+		}
+
 		// create an information object which contains always required infos
 		this._bRtlMode = sap.ui.getCore().getConfiguration().getRTL();
 
@@ -814,7 +833,7 @@ sap.ui.define([
 		this._bIsFlexItem = false;
 
 		this._attachExtensions();
-		this._initSelectionAdapter();
+		this._initSelectionPlugin();
 
 		this._bRowsBeingBound = false;
 		this._bContextsRequested = false;
@@ -881,9 +900,21 @@ sap.ui.define([
 		this._bInvalid = true;
 	};
 
-	Table.prototype._initSelectionAdapter = function() {
-		this._oSelectionAdapter = new SelectionModelAdapter();
-		this._oSelectionAdapter.attachEvent("selectionChange", this._onSelectionChanged, this);
+	Table.prototype._initSelectionPlugin = function() {
+		var oSelectionPlugin = this.getPlugin("sap.ui.table.plugins.SelectionPlugin");
+
+		if (oSelectionPlugin) {
+			if (this._oSelectionPlugin instanceof this._SelectionAdapterClass) {
+				this._oSelectionPlugin.destroy();
+			}
+			this._oSelectionPlugin = oSelectionPlugin;
+			this._oSelectionPlugin.attachSelectionChange(this._onSelectionChanged, this);
+			this._oSelectionPlugin._setBinding(this.getBinding("rows"));
+		} else if (!(this._oSelectionPlugin instanceof this._SelectionAdapterClass)) {
+			this._oSelectionPlugin = new this._SelectionAdapterClass();
+			this._oSelectionPlugin.attachSelectionChange(this._onSelectionChanged, this);
+			this._oSelectionPlugin._setBinding(this.getBinding("rows"));
+		}
 	};
 
 	/**
@@ -922,9 +953,9 @@ sap.ui.define([
 		this._detachEvents();
 
 		// selection model
-		if (this._oSelectionAdapter) {
-			this._oSelectionAdapter.destroy(); // deregisters all the handler(s)
-			//Note: _oSelectionAdapter is not nulled to avoid checks everywhere (in case table functions are called after the table destroy, see 1670448195)
+		if (this._oSelectionPlugin) {
+			this._oSelectionPlugin.destroy();
+			//Note: _oSelectionPlugin is not nulled to avoid checks everywhere (in case table functions are called after the table destroy, see 1670448195)
 		}
 		delete this._aTableHeaders;
 	};
@@ -1798,8 +1829,15 @@ sap.ui.define([
 			Log.warning("The selection mode 'Multi' is deprecated and must not be used anymore."
 						+ " Your setting was defaulted to selection mode 'MultiToggle'");
 		}
-		this.setProperty("selectionMode", sSelectionMode);
-		this._oSelectionAdapter.setSelectionMode(sSelectionMode);
+
+		if (this._oSelectionPlugin.isA("sap.ui.table.plugins.SelectionModelPlugin")
+			|| this._oSelectionPlugin.isA("sap.ui.table.plugins.BindingSelectionPlugin")) {
+			this.setProperty("selectionMode", sSelectionMode);
+			this._oSelectionPlugin.setSelectionMode(sSelectionMode);
+		} else {
+			Log.warning("When the MultiSelectionPlugin is applied to the table, the selection mode is controlled by the plugin and cannot be changed manually.");
+		}
+
 		return this;
 	};
 
@@ -1908,7 +1946,7 @@ sap.ui.define([
 			var oBinding = this.getBinding("rows");
 			var oModel = oBinding ? oBinding.getModel() : null;
 
-			this._oSelectionAdapter._setBinding(oBinding);
+			this._oSelectionPlugin._setBinding(oBinding);
 
 			if (oModel && oModel.getDefaultBindingMode() === BindingMode.OneTime) {
 				Log.error("The binding mode of the model is set to \"OneTime\"."
@@ -2024,7 +2062,7 @@ sap.ui.define([
 
 			if (!this._bRowsBeingBound) {
 				// Real unbind of rows.
-				this._oSelectionAdapter._setBinding(null);
+				this._oSelectionPlugin._setBinding(null);
 				this._adjustToTotalRowCount();
 				this._updateRows(this.getVisibleRowCount(), TableUtils.RowsUpdateReason.Unbind);
 				this.updateRows(TableUtils.RowsUpdateReason.Unbind);
@@ -2614,7 +2652,7 @@ sap.ui.define([
 	 * @private
 	 */
 	Table.prototype._getSelectableRowCount = function() {
-		return this._oSelectionAdapter.getSelectableCount();
+		return this._oSelectionPlugin.getSelectableCount();
 	};
 
 	/**
@@ -2871,7 +2909,7 @@ sap.ui.define([
 	 * @private
 	 */
 	Table.prototype._isRowSelectable = function(iRowIndex) {
-		return this._oSelectionAdapter.isIndexSelectable(iRowIndex);
+		return this._oSelectionPlugin.isIndexSelectable(iRowIndex);
 	};
 
 	// =============================================================================
@@ -2992,8 +3030,13 @@ sap.ui.define([
 			$SelectAll.toggleClass("sapUiTableSelAll", !bAllRowsSelected);
 			this._getAccExtension().setSelectAllState(bAllRowsSelected);
 
+			var sSelectAllResourceTextID = bAllRowsSelected ? "TBL_DESELECT_ALL" : "TBL_SELECT_ALL";
+			var sSelectAllText = TableUtils.getResourceText(sSelectAllResourceTextID);
+
 			if (this._getShowStandardTooltips()) {
-				$SelectAll.attr('title', TableUtils.getResourceText(bAllRowsSelected ? "TBL_DESELECT_ALL" : "TBL_SELECT_ALL"));
+				$SelectAll.attr('title', sSelectAllText);
+			} else if (this._oSelectionPlugin.getRenderConfig().headerSelector.type === "toggle") {
+				this.getDomRef("ariaselectall").innerText = sSelectAllText;
 			}
 		}
 	};
@@ -3051,14 +3094,14 @@ sap.ui.define([
 	 * @see JSDoc generated by SAPUI5 control API generator
 	 */
 	Table.prototype.getSelectedIndex = function() {
-		return this._oSelectionAdapter.getSelectedIndex();
+		return this._oSelectionPlugin.getSelectedIndex();
 	};
 
 	/*
 	 * @see JSDoc generated by SAPUI5 control API generator
 	 */
 	Table.prototype.setSelectedIndex = function(iIndex) {
-		this._oSelectionAdapter.setSelectedIndex(iIndex);
+		this._oSelectionPlugin.setSelectedIndex(iIndex);
 		return this;
 	};
 
@@ -3070,12 +3113,12 @@ sap.ui.define([
 	 * @ui5-metamodel This method also will be described in the UI5 (legacy) designtime metamodel
 	 */
 	Table.prototype.clearSelection = function() {
-		this._oSelectionAdapter.clearSelection();
+		this._oSelectionPlugin.clearSelection();
 		return this;
 	};
 
 	/**
-	 * Add all rows to the selection.
+	 * Adds all rows to the selection.
 	 * Please note that for server based models like OData the indices which are considered to be selected might not
 	 * be available at the client yet. Calling getContextByIndex might not return a result but trigger a roundtrip
 	 * to request this single entity.
@@ -3086,7 +3129,7 @@ sap.ui.define([
 	 */
 	Table.prototype.selectAll = function() {
 		if (TableUtils.hasSelectAll(this)) {
-			this._oSelectionAdapter.selectAll();
+			this._oSelectionPlugin.selectAll();
 		}
 		return this;
 	};
@@ -3099,34 +3142,34 @@ sap.ui.define([
 	 * @ui5-metamodel This method also will be described in the UI5 (legacy) designtime metamodel
 	 */
 	Table.prototype.getSelectedIndices = function() {
-		return this._oSelectionAdapter.getSelectedIndices();
+		return this._oSelectionPlugin.getSelectedIndices();
 	};
 
 	/**
-	 * Adds the given selection interval to the selection. In case of single selection, only <code>iIndexTo</code> is added to the selection.
+	 * Adds the given selection interval to the selection. In case of a single selection, only <code>iIndexTo</code> is added to the selection.
 	 *
-	 * @param {int} iIndexFrom Index from which the selection should start
+	 * @param {int} iIndexFrom Index from which the selection starts
 	 * @param {int} iIndexTo Index up to which to select
 	 * @returns {sap.ui.table.Table} Reference to <code>this</code> in order to allow method chaining
 	 * @public
 	 * @ui5-metamodel This method also will be described in the UI5 (legacy) designtime metamodel
 	 */
 	Table.prototype.addSelectionInterval = function(iIndexFrom, iIndexTo) {
-		this._oSelectionAdapter.addSelectionInterval(iIndexFrom, iIndexTo);
+		this._oSelectionPlugin.addSelectionInterval(iIndexFrom, iIndexTo);
 		return this;
 	};
 
 	/**
-	 * Sets the given selection interval as selection. In case of single selection, only <code>iIndexTo</code> is selected.
+	 * Sets the given selection interval as selection. In case of a single selection, only <code>iIndexTo</code> is selected.
 	 *
-	 * @param {int} iIndexFrom Index from which the selection should start
+	 * @param {int} iIndexFrom Index from which the selection starts
 	 * @param {int} iIndexTo Index up to which to select
 	 * @returns {sap.ui.table.Table} Reference to <code>this</code> in order to allow method chaining
 	 * @public
 	 * @ui5-metamodel This method also will be described in the UI5 (legacy) designtime metamodel
 	 */
 	Table.prototype.setSelectionInterval = function(iIndexFrom, iIndexTo) {
-		this._oSelectionAdapter.setSelectionInterval(iIndexFrom, iIndexTo);
+		this._oSelectionPlugin.setSelectionInterval(iIndexFrom, iIndexTo);
 		return this;
 	};
 
@@ -3140,7 +3183,7 @@ sap.ui.define([
 	 * @ui5-metamodel This method also will be described in the UI5 (legacy) designtime metamodel
 	 */
 	Table.prototype.removeSelectionInterval = function(iIndexFrom, iIndexTo) {
-		this._oSelectionAdapter.removeSelectionInterval(iIndexFrom, iIndexTo);
+		this._oSelectionPlugin.removeSelectionInterval(iIndexFrom, iIndexTo);
 		return this;
 	};
 
@@ -3153,7 +3196,7 @@ sap.ui.define([
 	 * @ui5-metamodel This method also will be described in the UI5 (legacy) designtime metamodel
 	 */
 	Table.prototype.isIndexSelected = function(iIndex) {
-		return this._oSelectionAdapter.isIndexSelected(iIndex);
+		return this._oSelectionPlugin.isIndexSelected(iIndex);
 	};
 
 	// =============================================================================
@@ -3964,7 +4007,7 @@ sap.ui.define([
 	 * @private
 	 */
 	Table.prototype._getSelectedIndicesCount = function() {
-		return this._oSelectionAdapter.getSelectedCount();
+		return this._oSelectionPlugin.getSelectedCount();
 	};
 
 	Table.prototype._updateTableContent = function() {
@@ -4013,6 +4056,41 @@ sap.ui.define([
 		this.setAggregation("rowSettingsTemplate", oTemplate);
 		this.invalidateRowsAggregation();
 		return this;
+	};
+
+	Table.prototype.addPlugin = function(oPlugin) {
+		this.addAggregation("plugins", oPlugin);
+		this._initSelectionPlugin();
+	};
+
+	Table.prototype.insertPlugin = function(oPlugin, iIndex) {
+		this.insertAggregation("plugins", oPlugin, iIndex);
+		this._initSelectionPlugin();
+	};
+
+	Table.prototype.removePlugin = function(oPlugin) {
+		this.removeAggregation("plugins", oPlugin);
+		this._initSelectionPlugin();
+	};
+
+	Table.prototype.removeAllPlugins = function() {
+		this.removeAllAggregation("plugins");
+		this._initSelectionPlugin();
+	};
+
+	Table.prototype.getPlugin = function(sType) {
+		if (typeof sType !== "string") {
+			return null;
+		}
+
+		var aPlugins = this.getPlugins();
+		for (var i = 0; i < aPlugins.length; i++) {
+			if (aPlugins[i].isA(sType)) {
+				return aPlugins[i];
+			}
+		}
+
+		return null;
 	};
 
 	Table.prototype._validateRow = function(oRow) {

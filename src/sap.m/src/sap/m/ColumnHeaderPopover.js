@@ -4,23 +4,27 @@
 sap.ui.define([
 	'sap/ui/core/Control',
 	'sap/ui/model/base/ManagedObjectModel',
-	'sap/m/OverflowToolbar',
+	'sap/m/Toolbar',
 	'sap/m/ResponsivePopover',
-	'sap/m/OverflowToolbarButton',
-	'sap/m/OverflowToolbarToggleButton',
+	'sap/m/Button',
+	'sap/m/ToggleButton',
 	'sap/m/ToolbarSpacer',
 	'sap/ui/model/Filter',
-	'sap/ui/model/FilterOperator'
+	'sap/ui/model/FilterOperator',
+	'sap/ui/dom/containsOrEquals',
+	'sap/m/ColumnPopoverItem'
 ], function(
 	Control,
 	ManagedObjectModel,
-	OverflowToolbar,
+	Toolbar,
 	ResponsivePopover,
-	OverflowToolbarButton,
-	OverflowToolbarToggleButton,
+	Button,
+	ToggleButton,
 	ToolbarSpacer,
 	Filter,
-	FilterOperator
+	FilterOperator,
+	containsOrEquals,
+	ColumnPopoverItem
 ) {
 	"use strict";
 
@@ -52,25 +56,45 @@ sap.ui.define([
 			aggregations: {
 				items: {type : "sap.m.ColumnPopoverItem",  multiple : true, singularName : "item", bindable: true},
 				_popover: {type : "sap.m.ResponsivePopover", multiple : false, visibility : "hidden"}
-			}
+			},
+			defaultAggregation: "items"
 		}
 	});
 
 	ColumnHeaderPopover.prototype.init = function() {
-		var oModel = new ManagedObjectModel(this);
+		this._bPopoverCreated = false;
+		this._oShownCustomContent = null;
+	};
+
+	ColumnHeaderPopover.prototype._createPopover = function() {
 		var that = this;
 		this._oShownCustomContent = null;
+		var oBundle = sap.ui.getCore().getLibraryResourceBundle("sap.m"),
+			sCloseText = oBundle.getText("COLUMNHEADERPOPOVER_CLOSE_BUTTON");
 
 		var oPopover = new ResponsivePopover({
 			showArrow: false,
 			showHeader: false,
 			placement: "Bottom",
 			verticalScrolling: true,
-			horizontalScrolling: false
+			horizontalScrolling: false,
+			beforeClose: function(oEvent) {
+				if (that._oShownCustomContent) {
+					that._oShownCustomContent.setVisible(false);
+					that._oShownCustomContent = null;
+				}
+				that._cleanSelection(this);
+			}
 		});
 
 		this.setAggregation("_popover", oPopover);
 
+		var oToolbar = new Toolbar();
+		// enable the diff calculation on the toolbar control
+		// this flag is required by the ManagedObject.prototype.updateAggregation
+		// the diff calculation is needed to avoid destroying all buttons, which causes auto close of popover
+		oToolbar.bUseExtendedChangeDetection = true;
+		oPopover.addContent(oToolbar);
 
 		var oFilter = new Filter({
 			path: "visible",
@@ -80,59 +104,82 @@ sap.ui.define([
 
 		var fnFactory = function(id, oContext) {
 			var oItem = oContext.getObject();
+			var oButton;
 			if (oItem.isA("sap.m.ColumnPopoverActionItem")) {
-				return that._createActionItem(id, oItem);
+				oButton = that._createActionItem(id, oItem);
 			} else if (oItem.isA("sap.m.ColumnPopoverCustomItem")) {
-				return that._createCustomItem(id, oItem);
+				oButton = that._createCustomItem(id, oItem);
 			}
+
+			oItem._sRelatedId = oButton.sId;
+			oButton._sContentId = oItem._sContentId;
+
+			oButton.destroy = function() {
+				var oDomRef = this.getDomRef();
+				if (oDomRef && containsOrEquals(oDomRef, document.activeElement)) {
+					oPopover.focus();
+					oPopover.removeContent(that._oShownCustomContent);
+
+				}
+
+				this.constructor.prototype.destroy.apply(this, arguments);
+			};
+
+			return oButton;
 		};
 
-		var oToolbar = new OverflowToolbar({
-			content: {
-				path: '/items',
-				filters: [oFilter],
-				length: 5,
-				factory: fnFactory
-			}
+		oToolbar.bindAggregation("content",{
+			path: '/items',
+			filters: [oFilter],
+			length: 5,
+			factory: fnFactory
 		});
 
-		oToolbar.updateAggregation = function() {
-			// clear _oShownCustomContent
-			if (this._oShownCustomContent) {
-				this._oShownCustomContent = null;
-			}
+		oToolbar.updateAggregation = function(sAggregationName) {
+				// clear _oShownCustomContent
+				if (this._oShownCustomContent) {
+					this._oShownCustomContent = null;
+				}
 
-			OverflowToolbar.prototype.updateAggregation.apply(this, arguments);
-			oToolbar.addContent(new ToolbarSpacer());
-			oToolbar.addContent(new OverflowToolbarButton({
-				type: "Transparent",
-				icon: "sap-icon://decline",
-				tooltip: "Close",
-				press: [
-					oPopover.close, oPopover
-				]
-			}));
+				Toolbar.prototype.updateAggregation.apply(this, arguments);
+
+				var aContent = this.getContent();
+				if (aContent.length <= 2 || !(aContent[aContent.length - 2] instanceof ToolbarSpacer)) {
+					this.addContent(new ToolbarSpacer());
+					this.addContent(new Button({
+						type: "Transparent",
+						icon: "sap-icon://decline",
+						tooltip: sCloseText,
+						press: [
+							oPopover.close, oPopover
+						]
+					}));
+				}
+
 		};
 
-		oPopover.addContent(oToolbar);
-		oPopover.setModel(oModel);
+		var oModel = new ManagedObjectModel(this);
+
+		oToolbar.setModel(oModel);
+
 	};
 
 	ColumnHeaderPopover.prototype._createActionItem = function(id, oItem) {
 		var that = this;
-		var oPopover = this.getAggregation("_popover");
 
-		return new OverflowToolbarButton(id, {
+		return new Button(id, {
 			icon: "{icon}",
 			tooltip: "{text}",
 			type: "Transparent",
 			press: function() {
+				var oPopover = that.getAggregation("_popover");
+
 				if (that._oShownCustomContent) {
 					that._oShownCustomContent.setVisible(false);
 					that._oShownCustomContent = null;
 
 					// set other buttons unpressed
-					that._cleanSelection(oPopover);
+					that._cleanSelection(oPopover, this);
 				}
 				oItem.firePress();
 			}
@@ -145,10 +192,11 @@ sap.ui.define([
 		var oContent = oItem.getContent();
 		if (oContent) {
 			oContent.setVisible(false);
+			oItem._sContentId = oContent.sId;
 		}
 		oPopover.addContent(oContent);
 
-		return new OverflowToolbarToggleButton(id, {
+		return new ToggleButton(id, {
 			icon: "{icon}",
 			type: "Transparent",
 			tooltip: "{text}",
@@ -159,15 +207,19 @@ sap.ui.define([
 				}
 				if (this.getPressed()) {
 					// set other buttons unpressed
-					that._cleanSelection(oPopover);
+					that._cleanSelection(oPopover, this);
 
 					oItem.fireBeforeShowContent();
-					oContent.setVisible(true);
-					that._oShownCustomContent = oContent;
-					oItem._sRelatedId = oContent.sId;
+					if (oContent) {
+						oContent.setVisible(true);
+						that._oShownCustomContent = oContent;
+					}
+
 				} else {
-					oContent.setVisible(false);
-					that._oShownCustomContent = null;
+					if (oContent) {
+						oContent.setVisible(false);
+						that._oShownCustomContent = null;
+					}
 				}
 
 			}
@@ -175,45 +227,33 @@ sap.ui.define([
 
 	};
 
-	ColumnHeaderPopover.prototype._cleanSelection = function(oPopover) {
+	ColumnHeaderPopover.prototype._cleanSelection = function(oPopover, oButton) {
 		var oContent = oPopover.getContent()[0],
 			aButtons;
-
-		if (oContent && oContent.isA("sap.m.OverflowToolbar") && oContent.getContent()) {
-			aButtons = oContent.getContent();
-		}
+		aButtons = oContent.getContent();
 
 		if (aButtons) {
-			for (var i = 0; i < aButtons.length; i++) {
-				if (aButtons[i] !== this
-					&& aButtons[i].getPressed
-						&& aButtons[i].getPressed()) {
-							aButtons[i].setPressed(false);
-						}
-			}
-		}
 
-	};
+			aButtons.forEach(function(oBtn) {
+				if ((!oButton || oBtn !== oButton)
+						&& oBtn.getPressed
+							&& oBtn.getPressed()) {
+					oBtn.setPressed(false);
+					}
 
-	ColumnHeaderPopover.prototype.updateAggregation = function() {
-		var oPopover = this.getAggregation("_popover"),
-			aContents;
-		if (oPopover) {
-			aContents = oPopover.getAggregation("content");
-		}
-		if (aContents) {
-			for ( var i = 0; i < aContents.length; i++ ) {
-				if (!aContents[i].isA("sap.m.OverflowToolbar")) {
-					oPopover.removeAggregation("content", aContents[i]);
-				}
-			}
-		}
+			});
 
-		Control.prototype.updateAggregation.apply(this, arguments);
+		}
 
 	};
 
 	ColumnHeaderPopover.prototype.openBy = function(oControl) {
+
+		if (!this._bPopoverCreated) {
+			this._createPopover();
+			this._bPopoverCreated = true;
+		}
+
 		var oPopover = this.getAggregation("_popover");
 		if (!this._bAppendedToUIArea && !this.getParent()) {
 			var oStatic = sap.ui.getCore().getStaticAreaRef();
@@ -229,14 +269,19 @@ sap.ui.define([
 		oPopover.openBy(oControl);
 	};
 
-	ColumnHeaderPopover.prototype.exit = function() {
-		this._oShownCustomContent = null;
+	ColumnHeaderPopover.prototype.invalidate = function(oOrigin) {
 		var oPopover = this.getAggregation("_popover");
-		if (oPopover.getContent()) {
-			oPopover.destroyContent();
-		}
-	};
 
+		// Pop the invalidate call up to the control tree only when the call
+		// comes from the internal popover
+		// If the call is triggered by this control itself, it does nothing to
+		// prevent the renderer of this control to be called.
+		if (oOrigin === oPopover) {
+			Control.prototype.invalidate.apply(this, arguments);
+		}
+
+		return this;
+	};
 
 	return ColumnHeaderPopover;
 });

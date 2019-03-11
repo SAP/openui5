@@ -31,18 +31,11 @@
 }
 
 .sapFAvatarImage {
-	background-color: @sapUiContentImagePlaceholderBackground;
-	color: @sapUiContentIconColor;
 	text-align: center;
 
-	.sapUiIcon {
-		position: absolute;
-		top: 50%;
-		left: 50%;
-		transform: translate(-50%, -50%);
-		-webkit-transform: translate(-50%, -50%);
+	.sapUiIcon, .sapFAvatarInitialsHolder {
+		display: none;
 	}
-
 }
 
 .sapFAvatarImageHolder {
@@ -53,6 +46,10 @@
 	top: 0;
 	right: 0;
 	bottom: 0;
+	.sapFAvatar:not(.sapFAvatarImage) &
+	{
+		display: none;
+	}
 }
 
 .sapFAvatarImageCover {
@@ -61,6 +58,7 @@
 
 .sapFAvatarImageContain {
 	background-size: contain;
+	background-color: @sapUiContentImagePlaceholderBackground;
 }
 
 .sapFAvatarCircle {
@@ -71,13 +69,6 @@
 	.sapFAvatarImageHolder {
 		border-radius: 50%;
 		-webkit-border-radius: 50%;
-	}
-
-	.sapFAvatarImageHolder {
-		left: -1px;
-		top: -1px;
-		right: -1px;
-		bottom: -1px;
 	}
 }
 

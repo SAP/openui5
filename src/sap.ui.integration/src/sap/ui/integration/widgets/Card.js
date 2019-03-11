@@ -12,6 +12,9 @@ sap.ui.define([
 	"sap/f/cards/Header",
 	"sap/f/cards/BaseContent",
 	"sap/m/HBox",
+	"sap/m/VBox",
+	"sap/ui/core/Icon",
+	"sap/m/Text",
 	"sap/f/CardRenderer"
 ], function (
 	jQuery,
@@ -24,6 +27,9 @@ sap.ui.define([
 	Header,
 	BaseContent,
 	HBox,
+	VBox,
+	Icon,
+	Text,
 	CardRenderer
 ) {
 	"use strict";
@@ -321,7 +327,7 @@ sap.ui.define([
 			return;
 		}
 
-		if (!bHasContent) {
+		if (!bHasContent && sCardType.toLowerCase() !== "component") {
 			this.setBusy(false);
 			return;
 		}
@@ -344,15 +350,18 @@ sap.ui.define([
 				}).then(function () {
 					sap.ui.require(["sap/f/cards/AnalyticalContent"], this._setCardContentFromManifest.bind(this));
 				}.bind(this)).catch(function () {
-					Log.error("Analytical type card is not available with this distribution");
-				});
+					this._handleError("Analytical type card is not available with this distribution");
+				}.bind(this));
 				break;
 			case "timeline":
 				sap.ui.getCore().loadLibrary("sap.suite.ui.commons", { async: true }).then(function() {
 					sap.ui.require(["sap/f/cards/TimelineContent"], this._setCardContentFromManifest.bind(this));
 				}.bind(this)).catch(function () {
-					Log.error("Timeline type card is not available with this distribution");
-				});
+					this._handleError("Timeline type card is not available with this distribution");
+				}.bind(this));
+				break;
+			case "component":
+				sap.ui.require(["sap/f/cards/ComponentContent"], this._setCardContentFromManifest.bind(this));
 				break;
 			default:
 				Log.error(sCardType.toUpperCase() + " Card type is not supported");
@@ -431,8 +440,13 @@ sap.ui.define([
 	 * @param {sap.ui.core.Control} CardContent The content to be created
 	 */
 	Card.prototype._setCardContentFromManifest = function (CardContent) {
+		var mSettings = this._oCardManifest.get(MANIFEST_PATHS.CONTENT),
+			sType = this._oCardManifest.get(MANIFEST_PATHS.TYPE).toLowerCase();
 
-		var mSettings = this._oCardManifest.get(MANIFEST_PATHS.CONTENT);
+		if (!mSettings && sType === "component") {
+			mSettings = this._oCardManifest.getJson();
+		}
+
 		var oClonedSettings = { configuration: jQuery.extend(true, {}, mSettings) };
 
 		if (this._oServiceManager) {
@@ -453,6 +467,10 @@ sap.ui.define([
 			});
 		}.bind(this));
 
+		oContent.attachEvent("_error", function (oEvent) {
+			this._handleError(oEvent.getParameter("logMessage"), oEvent.getParameter("displayMessage"));
+		}.bind(this));
+
 		oContent.setBusyIndicatorDelay(0);
 		// TO DO: decide if we want to set the content only on _updated event.
 		// This will help to avoid appearance of empty table before its data comes,
@@ -461,10 +479,11 @@ sap.ui.define([
 
 		if (this._oDataPromise) {
 			this._oDataPromise.then(function (oData) {
+				this.setBusy(false);
 				oContent._setData(oData);
-			}).catch(function (oError) {
-				// TODO: Handle error
-			});
+			}.bind(this)).catch(function (oError) {
+				this._handleError(oError);
+			}.bind(this));
 		}
 	};
 
@@ -490,6 +509,54 @@ sap.ui.define([
 		}, this);
 
 		this.setAggregation("_content", oHBox);
+	};
+
+	/**
+	 * Handler for error states
+	 *
+	 * @param {string} sLogMessage Message that will be logged.
+	 * @param {string} [sDisplayMessage] Message that will be displayed in the card's content. If not provided, a default message is displayed.
+	 * @private
+	 */
+	Card.prototype._handleError = function (sLogMessage, sDisplayMessage) {
+		Log.error(sLogMessage);
+		this.setBusy(false);
+
+		this.fireEvent("_error");
+
+		var sDefaultDisplayMessage = "Unable to load the data.",
+			sErrorMessage = sDisplayMessage || sDefaultDisplayMessage;
+
+		var oError = new HBox({
+			height: "100%",
+			justifyContent: "Center",
+			items: [
+				new VBox({
+					justifyContent: "Center",
+					alignItems: "Center",
+					items: [
+						new Icon({ src: "sap-icon://message-error", size: "1rem" }).addStyleClass("sapUiTinyMargin"),
+						new Text({ text: sErrorMessage })
+					]
+				})
+			]
+		});
+
+		oError.addEventDelegate({
+			onAfterRendering: function () {
+				if (!this._oCardManifest) {
+					return;
+				}
+
+				var sType = this._oCardManifest.get(MANIFEST_PATHS.TYPE) + "Content",
+					oContent = this._oCardManifest.get(MANIFEST_PATHS.CONTENT),
+					sHeight = BaseContent.getMinHeight(sType, oContent);
+
+					oError.$().css({ "min-height": sHeight });
+			}
+		}, this);
+
+		this.setAggregation("_content", oError);
 	};
 
 	return Card;

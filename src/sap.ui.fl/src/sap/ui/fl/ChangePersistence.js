@@ -1262,29 +1262,44 @@ sap.ui.define([
 	 *
 	 * @param {string} sLayer - Layer for which changes shall be deleted
 	 * @param {string} [sGenerator] - Generator of changes (optional)
-	 * @param {string} [sSelectorString] - Selector IDs as comma-separated list (optional)
-	 * @param {string} [sChangeTypeString] - Types of changes as comma-separated list (optional)
+	 * @param {string[]} [aSelectorIds] - Selector IDs in local format (optional)
+	 * @param {string[]} [aChangeTypes] - Types of changes (optional)
 	 *
-	 * @returns {Promise} promise that resolves with list of content IDs of deleted changes in response
+	 * @returns {Promise} promise that resolves with an array of content IDs of deleted changes in the response
 	 */
-	ChangePersistence.prototype.resetChanges = function (sLayer, sGenerator, sSelectorString, sChangeTypeString) {
-		if (!sGenerator && !sSelectorString && !sChangeTypeString) {
-			Utils.log.error("Of the generator, selector string and change type string parameters at least one has to filled");
-			return Promise.reject("Of the generator, selector string or change type string parameters at least one has to filled");
+	ChangePersistence.prototype.resetChanges = function (sLayer, sGenerator, aSelectorIds, aChangeTypes) {
+
+		var aChanges = [];
+		var oTransportSelectionPromise;
+		var bSelectorIdsProvided = aSelectorIds && aSelectorIds.length > 0;
+		var bChangeTypesProvided = aChangeTypes && aChangeTypes.length > 0;
+
+		if (!sGenerator && !bSelectorIdsProvided && !bChangeTypesProvided) {
+			Utils.log.error("Of the generator, selector IDs and change types parameters at least one has to filled");
+			return Promise.reject("Of the generator, selector IDs and change types parameters at least one has to filled");
+
 		}
 
-		var aChanges;
-		return this.getChangesForComponent({currentLayer: sLayer, includeCtrlVariants: true})
-		.then(function(aChangesForComponent) {
-			aChanges = aChangesForComponent;
-			return Settings.getInstance(this.getComponentName());
-		}.bind(this))
-		.then(function(oSettings) {
-			if (!oSettings.isProductiveSystem() && !oSettings.hasMergeErrorOccured()) {
-				return this._oTransportSelection.setTransports(aChanges, Component.get(this.getComponentName()));
-			}
-		}.bind(this))
-		.then(function() {
+		if (sLayer === "USER") {
+			// personalization is target of transport selections thus the determination of transports can be skipped
+			oTransportSelectionPromise = Promise.resolve();
+		} else {
+			oTransportSelectionPromise = this.getChangesForComponent({
+				currentLayer : sLayer,
+				includeCtrlVariants : true
+			})
+				.then(function (aChangesForComponent) {
+					aChanges = aChangesForComponent;
+					return Settings.getInstance(this.getComponentName());
+				}.bind(this))
+				.then(function (oSettings) {
+					if (!oSettings.isProductiveSystem() && !oSettings.hasMergeErrorOccured()) {
+						return this._oTransportSelection.setTransports(aChanges, Component.get(this.getComponentName()));
+					}
+				}.bind(this));
+		}
+
+		return oTransportSelectionPromise.then(function() {
 			//Make sure we include one request in case of mixed changes (local and transported)
 			var sChangeList = "";
 			aChanges.some(function(oChange) {
@@ -1296,16 +1311,22 @@ sap.ui.define([
 			});
 
 			var mParams = {
-				reference : this.getComponentName(),
-				appVersion : this._mComponent.appVersion,
-				layer : sLayer,
-				changelist : sChangeList
+				sReference : this.getComponentName(),
+				sAppVersion : this._mComponent.appVersion,
+				sLayer : sLayer,
+				sChangelist : sChangeList
 			};
-			if (sGenerator) {mParams.generator = sGenerator;}
-			if (sSelectorString) {mParams.selector = sSelectorString;}
-			if (sChangeTypeString) {mParams.changeType = sChangeTypeString;}
+			if (sGenerator) {
+				mParams.sGenerator = sGenerator;
+			}
+			if (bSelectorIdsProvided) {
+				mParams.aSelectorIds = aSelectorIds;
+			}
+			if (bChangeTypesProvided) {
+				mParams.aChangeTypes = aChangeTypes;
+			}
 
-			return this._oConnector.send("/changes/", "DELETE", mParams);
+			return this._oConnector.resetChanges(mParams);
 		}.bind(this));
 	};
 	return ChangePersistence;

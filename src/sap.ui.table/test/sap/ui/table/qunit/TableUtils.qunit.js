@@ -1027,9 +1027,11 @@ sap.ui.define([
 	QUnit.test("getInteractiveElements", function(assert) {
 		TableQUnitUtils.addColumn(oTable, "Focusable & Not Tabbable", "Focus&NoTabSpan", false, true, false);
 		TableQUnitUtils.addColumn(oTable, "Not Focusable & Not Tabbable", "NoFocus&NoTabSpan", false, false, false);
-		TableQUnitUtils.addColumn(oTable, "Focusable & Tabbable", "Focus&TabInput", true, null, true);
+		TableQUnitUtils.addColumn(oTable, "Focusable & Tabbable", "Focus&TabInput", true, null, true, null, null, true);
 		TableQUnitUtils.addColumn(oTable, "Focusable & Not Tabbable", "Focus&NoTabInput", true, null, false);
 		initRowActions(oTable, 2, 2);
+
+		/* Data cells */
 
 		var $InteractiveElements = TableUtils.getInteractiveElements(getCell(0, oTable.columnCount - 1));
 		assert.strictEqual($InteractiveElements.length, 1, "(JQuery) Data cell with focusable element: One element was returned");
@@ -1054,6 +1056,8 @@ sap.ui.define([
 		$InteractiveElements = TableUtils.getInteractiveElements(getCell(0, oTable.columnCount - 3));
 		assert.strictEqual($InteractiveElements, null, "Data cell without interactive element: Null was returned");
 
+		/* Row action cells */
+
 		var $RowActionCell = getRowAction(0);
 		var $RowActionIcons = $RowActionCell.find(".sapUiTableActionIcon:visible");
 		$InteractiveElements = TableUtils.getInteractiveElements($RowActionCell);
@@ -1077,18 +1081,29 @@ sap.ui.define([
 		assert.strictEqual($InteractiveElements.length, 1, "(HTMLElement) Row Action cell with 1 action item: One elements was returned");
 		assert.strictEqual($InteractiveElements[0], $RowActionIcons[0], "(HTMLElement) The first returned element is the correct row action icon");
 
+		/* Header cells */
+
+		$InteractiveElements = TableUtils.getInteractiveElements(getColumnHeader(oTable.columnCount - 2));
+		assert.strictEqual($InteractiveElements.length, 1, "(JQuery) Column header cell with focusable element: One element was returned");
+		assert.strictEqual($InteractiveElements[0].innerText, "Focusable & Tabbable",
+			"(JQuery) Column header cell with focusable element: The correct element was returned");
+
+		$InteractiveElements = TableUtils.getInteractiveElements(getColumnHeader(oTable.columnCount - 2)[0]);
+		assert.strictEqual($InteractiveElements.length, 1, "(HTMLElement) Column header cell with focusable element: One element was returned");
+		assert.strictEqual($InteractiveElements[0].innerText, "Focusable & Tabbable",
+			"(HTMLElement)  Column header cell with focusable element: The correct element was returned");
+
+		/* Cells without interactive elements */
+
 		initRowActions(oTable, 1, 0);
 		$InteractiveElements = TableUtils.getInteractiveElements(getRowAction(0));
 		assert.strictEqual($InteractiveElements, null, "Row action cell without interactive element: Null was returned");
 
 		$InteractiveElements = TableUtils.getInteractiveElements(getColumnHeader(0));
-		assert.strictEqual($InteractiveElements, null, "Column header: Null was returned");
+		assert.strictEqual($InteractiveElements, null, "Column header cell without interactive element: Null was returned");
 
 		$InteractiveElements = TableUtils.getInteractiveElements(getRowHeader(0));
 		assert.strictEqual($InteractiveElements, null, "Row header: Null was returned");
-
-		$InteractiveElements = TableUtils.getInteractiveElements(getRowAction(0));
-		assert.strictEqual($InteractiveElements, null, "Row action: Null was returned");
 
 		$InteractiveElements = TableUtils.getInteractiveElements(getSelectAll(0));
 		assert.strictEqual($InteractiveElements, null, "SelectAll: Null was returned");

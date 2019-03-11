@@ -271,7 +271,7 @@ sap.ui.define([
 					oOptions = this._createId(oOptions);
 				}
 
-				return this._getViewWithGlobalId(oOptions, true /* try to use promise */);
+				return this._getViewWithGlobalId(oOptions);
 			},
 
 			_getComponent : function (oOptions, bGlobalId, oInfo) {

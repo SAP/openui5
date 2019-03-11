@@ -6,7 +6,7 @@ sap.ui.define([
 	"sap/m/SinglePlanningCalendar",
 	"sap/m/SinglePlanningCalendarDayView",
 	"sap/m/SinglePlanningCalendarWeekView",
-	"sap/m/CalendarAppointment",
+	"sap/ui/unified/CalendarAppointment",
 	"sap/ui/core/InvisibleText",
 	"sap/base/Log",
 	"sap/ui/core/library"
@@ -49,7 +49,7 @@ sap.ui.define([
 		oSPC.destroy();
 	});
 
-	QUnit.test("setSatartDate", function (assert) {
+	QUnit.test("setStartDate", function (assert) {
 		var oDate = new Date(2018, 10, 23),
 			oSPC = new SinglePlanningCalendar({
 				startDate: oDate,
@@ -78,7 +78,6 @@ sap.ui.define([
 				type: "Type01",
 				icon: "../ui/unified/images/m_01.png",
 				color: "#FF0000",
-				fullDay: false,
 				startDate: new Date(2018, 11, 24, 15, 30, 0),
 				endDate: new Date(2018, 11, 24, 16, 30, 0)
 			}),
@@ -536,15 +535,13 @@ sap.ui.define([
 		var oCalendarStartDate = new Date(2018, 11, 24),
 			oAppointment = new CalendarAppointment({
 				title: "Appointment",
-				fullDay: false,
 				startDate: new Date(2018, 11, 24, 15, 30, 0),
 				endDate: new Date(2018, 11, 24, 16, 30, 0)
 			}),
 			oBlocker = new CalendarAppointment({
 				title: "Blocker",
-				fullDay: true,
-				startDate: new Date(2018, 11, 24, 16, 30, 0),
-				endDate: new Date(2018, 11, 24, 17, 30, 0)
+				startDate: new Date(2018, 11, 24, 0, 0, 0),
+				endDate: new Date(2018, 11, 24, 0, 0, 0)
 			}),
 			oSPC = new SinglePlanningCalendar({
 				startDate: oCalendarStartDate,
@@ -572,20 +569,12 @@ sap.ui.define([
 			oEndDate = new Date(2018, 11, 24, 16, 30, 0),
 			oAppointment = new CalendarAppointment("test-appointment", {
 				title: "Appointment",
-				fullDay: false,
-				startDate: oStartDate,
-				endDate: oEndDate
-			}),
-			oBlocker = new CalendarAppointment("test-blocker", {
-				title: "Blocker",
-				fullDay: true,
 				startDate: oStartDate,
 				endDate: oEndDate
 			}),
 			oSPC = new SinglePlanningCalendar({
 				startDate: oCalendarStartDate,
 				appointments: [
-					oBlocker,
 					oAppointment
 				]
 			}),
@@ -603,10 +592,6 @@ sap.ui.define([
 		assert.strictEqual(jQuery("#test-appointment-Descr").html(), sExpectedInfo,
 			"Information for appointment's start/end date is present in the DOM");
 		assert.ok(oAppointment.$().attr("aria-labelledby") !== -1, "The appointment has reference to that information");
-
-		assert.strictEqual(jQuery("#test-blocker-Descr").html(), sExpectedInfo,
-			"Information for blocker's start/end date is present in the DOM");
-		assert.ok(oBlocker.$().attr("aria-labelledby") !== -1, "The blocker  has reference to that information");
 
 		// Clean up
 		oSPC.destroy();
@@ -755,7 +740,6 @@ sap.ui.define([
 		var oCalendarStartDate = new Date(2018, 11, 24),
 			oAppointment = new CalendarAppointment({
 				title: "Appointment",
-				fullDay: false,
 				startDate: new Date(2018, 11, 24, 15, 30, 0),
 				endDate: new Date(2018, 11, 24, 16, 30, 0)
 			}),
@@ -785,9 +769,8 @@ sap.ui.define([
 		var oCalendarStartDate = new Date(2018, 11, 24),
 			oBlocker = new CalendarAppointment({
 				title: "Blocker",
-				fullDay: true,
-				startDate: new Date(2018, 11, 24, 16, 30, 0),
-				endDate: new Date(2018, 11, 24, 17, 30, 0)
+				startDate: new Date(2018, 11, 24, 0, 0, 0),
+				endDate: new Date(2018, 11, 25, 0, 0, 0)
 			}),
 			oSPC = new SinglePlanningCalendar({
 				startDate: oCalendarStartDate,
@@ -805,6 +788,25 @@ sap.ui.define([
 		assert.strictEqual($oBlockerRef.attr("role"), "gridcell", "Blockers have correct ARIA role");
 		assert.ok($oBlockerRef.attr("aria-labelledby").indexOf(sBlockerLabelId) > -1,
 			"Blockers have an appropriate hidden label");
+
+		// Clean up
+		oSPC.destroy();
+	});
+
+	QUnit.module("Misc");
+
+	QUnit.test("isAllDayAppointment", function (assert) {
+		// Prepare
+		var oSPC = new SinglePlanningCalendar(),
+			oGrid = oSPC._getGrid(),
+			oStartDate = new Date(2017, 1, 1, 1, 1),
+			oStartDateFullDay = new Date(2017, 1, 1, 0, 0),
+			oEndDate = new Date(2017, 1, 2, 2, 2),
+			oEndDateFullDay = new Date(2017, 1, 2, 0, 0);
+
+		// Assert
+		assert.equal(oGrid.isAllDayAppointment(oStartDate, oEndDate), false, "The appointment is not full day");
+		assert.equal(oGrid.isAllDayAppointment(oStartDateFullDay, oEndDateFullDay), true, "The appointment is full day");
 
 		// Clean up
 		oSPC.destroy();

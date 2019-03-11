@@ -150,14 +150,10 @@ sap.ui.define([
 	 */
 	ODataPropertyBinding.prototype.checkDataState = function(mPaths) {
 		var sCanonicalPath = this.oModel.resolve(this.sPath, this.oContext, true)
-								|| this.oModel.resolve(this.sPath, this.oContext);
+			|| this.oModel.resolve(this.sPath, this.oContext);
 
-		if (!mPaths || sCanonicalPath && sCanonicalPath in mPaths) {
-			var oDataState = this.getDataState();
-			oDataState.setLaundering(!!mPaths && !!(sCanonicalPath in mPaths));
-			PropertyBinding.prototype.checkDataState.apply(this, arguments);
-			oDataState.setModelMessages(this.oModel.getMessagesByPath(sCanonicalPath));
-		}
+		this.getDataState().setLaundering(!!mPaths && !!(sCanonicalPath in mPaths));
+		PropertyBinding.prototype._checkDataState.call(this, sCanonicalPath, mPaths);
 	};
 
 	return ODataPropertyBinding;

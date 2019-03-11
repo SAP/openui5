@@ -102,6 +102,8 @@ function (
 	Stretch.prototype.registerElementOverlay = function (oOverlay) {
 		this._checkParentAndAddToStretchCandidates(oOverlay);
 
+		oOverlay.attachElementModified(this._onElementModified, this);
+
 		Plugin.prototype.registerElementOverlay.apply(this, arguments);
 	};
 
@@ -130,6 +132,30 @@ function (
 		this.getDesignTime().attachEvent("elementPropertyChanged", this._onElementPropertyChanged, this);
 		this.getDesignTime().attachEvent("elementOverlayEditableChanged", this._onElementOverlayEditableChanged, this);
 		this.getDesignTime().attachEvent("elementOverlayDestroyed", this._onElementOverlayDestroyed, this);
+	};
+
+	Stretch.prototype._onElementModified = function(oEvent) {
+		var oParams = oEvent.getParameters();
+		var oOverlay = oEvent.getSource();
+
+		if (oParams.type === "afterRendering") {
+			if (!this.fnDebounced) {
+				this.fnDebounced = DtUtil.debounce(function() {
+					this._setStyleClassForAllStretchCandidates(this._getNewStretchCandidates(this._aOverlaysCollected));
+					this._aOverlaysCollected = [];
+					this.fnDebounced = undefined;
+				}.bind(this));
+			}
+
+			if (!this._aOverlaysCollected) {
+				this._aOverlaysCollected = [];
+			}
+
+			if (!includes(this._aOverlaysCollected, oOverlay)) {
+				this._aOverlaysCollected.push(oOverlay);
+				this.fnDebounced();
+			}
+		}
 	};
 
 	Stretch.prototype._onElementOverlayDestroyed = function (oEvent) {

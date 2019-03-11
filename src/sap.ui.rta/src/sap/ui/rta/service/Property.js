@@ -370,7 +370,7 @@ sap.ui.define([
 		oProperty._getResolvedFunction = function (vProperty, oElement) {
 			return DtUtil.wrapIntoPromise(function () {
 				return typeof vProperty === "function"
-					? vProperty(oElement) // could return a promise
+					? (vProperty(oElement) || false) // could return a promise
 					: (vProperty || false);
 			})(vProperty, oElement);
 		};

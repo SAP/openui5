@@ -1073,6 +1073,13 @@ sap.ui.define([
 			}
 		}
 
+		// checks whether given type name has an object/any primitive type
+		function isObjectType(sType) {
+			var oType = DataType.getType(sType),
+				oPrimitiveTypeName = oType && oType.getPrimitiveType().getName();
+			return oPrimitiveTypeName === "object" || oPrimitiveTypeName === "any";
+		}
+
 		// call the preprocessor if it has been defined
 		preprocessor && preprocessor.call(this, mSettings); // TODO: decide whether to call for empty settings as well?
 
@@ -1129,12 +1136,10 @@ sap.ui.define([
 			oValue = mSettings[sKey];
 			// get info object for the key
 			if ( (oKeyInfo = mValidKeys[sKey]) !== undefined ) {
-				var oBindingInfo, oType, oPrimitiveTypeName;
+				var oBindingInfo;
 				switch (oKeyInfo._iKind) {
 				case 0: // PROPERTY
-					oType = DataType.getType(oKeyInfo.type);
-					oPrimitiveTypeName = oType && oType.getPrimitiveType().getName();
-					oBindingInfo = this.extractBindingInfo(oValue, oScope, oPrimitiveTypeName !== "object" && oPrimitiveTypeName !== "any");
+					oBindingInfo = this.extractBindingInfo(oValue, oScope, !isObjectType(oKeyInfo.type));
 					if (oBindingInfo && typeof oBindingInfo === "object") {
 						this.bindProperty(sKey, oBindingInfo);
 					} else {
@@ -1142,7 +1147,7 @@ sap.ui.define([
 					}
 					break;
 				case 1: // SINGLE_AGGREGATION
-					oBindingInfo = oKeyInfo.altTypes && this.extractBindingInfo(oValue, oScope);
+					oBindingInfo = oKeyInfo.altTypes && this.extractBindingInfo(oValue, oScope, !oKeyInfo.altTypes.some(isObjectType));
 					if ( oBindingInfo && typeof oBindingInfo === "object" ) {
 						this.bindProperty(sKey, oBindingInfo);
 					} else {
@@ -1308,7 +1313,7 @@ sap.ui.define([
 		// change the property (and invalidate if the rendering should be updated)
 		this.mProperties[sPropertyName] = oValue;
 
-		if (!bSuppressInvalidate) {
+		if (!bSuppressInvalidate && !this.isInvalidateSuppressed()) {
 			this.invalidate();
 		}
 

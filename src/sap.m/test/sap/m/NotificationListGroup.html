@@ -4,12 +4,6 @@
 	<meta http-equiv="X-UA-Compatible" content="IE=edge">
 	<title>Notification List Group - sap.m</title>
 
-	<style>
-		#content {
-			padding: 30px 0 0 30px;
-		}
-	</style>
-
 	<script src="shared-config.js"></script>
 	<script src="../../../resources/sap-ui-core.js"
 			id="sap-ui-bootstrap"
@@ -81,7 +75,7 @@
 
 		var listGroup = new sap.m.NotificationListGroup({
 			id: 'notificationGroup',
-			title: 'Notification List Item Group',
+			title: 'Notification List Item Group 2 rows - Lorem ipsum dolor sit amet, consectetur adipiscing elit. Praesent feugiat, turpis vel',
 			datetime: 'More than 5 minutes',
 			authorPicture: 'images/SAPLogo.jpg',
 			authorName: 'Lorem Ipsum',
@@ -207,11 +201,33 @@
 			]
 		});
 
+		var noItemsNoDetailsGroup = new sap.m.NotificationListGroup({
+			id: 'notificationGroup4',
+			title: 'Notification List With 0 Items and no Details section',
+			showEmptyGroup: true,
+			buttons: [
+				new sap.m.Button({
+					text: 'Accept All',
+					type: sap.m.ButtonType.Accept,
+					tap: function () {
+						sap.m.MessageToast.show('Accept all button pressed');
+					}
+				}),
+				new sap.m.Button({
+					text: 'Cancel All',
+					type: sap.m.ButtonType.Reject
+				})
+			],
+			items: [
+			]
+		});
+
 		var list = new sap.m.List({
 			items: [
 				listGroup,
 				singleItemGroup,
-				noItemsGroup
+				noItemsGroup,
+				noItemsNoDetailsGroup
 			]
 		});
 
@@ -220,9 +236,15 @@
 			press : function() {
 				jQuery('body').toggleClass('sapUiSizeCompact');
 			}
-		}).placeAt('content');
+		});
 
-		list.setWidth('700px').placeAt('content');
+		var page = new sap.m.Page("page", {
+			title: "NotificationGroup Test Page",
+        		content: [compactSizeButton, list]
+		});
+
+		var oApp = new sap.m.App("myApp", { initialPage: "page" });
+		oApp.addPage(page).placeAt("content");
 	</script>
 </head>
 

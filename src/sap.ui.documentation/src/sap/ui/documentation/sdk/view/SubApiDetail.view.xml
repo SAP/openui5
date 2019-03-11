@@ -138,7 +138,7 @@
 												 columnCount="2"
 												 class="sapUiSmallMarginTop">
 												<custom:Row>
-													<m:Link href="{ref}" text="{name}"/>
+													<m:Link href="{href}" text="{name}"/>
 													<custom:JSDocText text="{description}"/>
 												</custom:Row>
 											</custom:LightTable>

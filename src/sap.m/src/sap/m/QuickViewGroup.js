@@ -88,12 +88,25 @@ sap.ui.define([
 			});
 
 		Group.prototype.setProperty = function (sName, oValue) {
-			Element.prototype.setProperty.call(this, sName, oValue, true);
+			var mNavContext,
+			bSupressInvalidate = true;
+
+			if (this.getParent() && this.getParent().getNavContext()) {
+				mNavContext = this.getParent().getNavContext();
+
+				if (mNavContext && mNavContext.quickView && mNavContext.quickView.isA('sap.m.QuickViewCard')) {
+					bSupressInvalidate = false;
+				}
+			}
+
+			Element.prototype.setProperty.call(this, sName, oValue, bSupressInvalidate);
 
 			var oPage = this.getParent();
 			if (oPage) {
 				oPage._updatePage();
 			}
+
+			return this;
 		};
 
 		return Group;

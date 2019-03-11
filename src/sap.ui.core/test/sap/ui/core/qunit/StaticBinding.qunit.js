@@ -20,6 +20,11 @@ sap.ui.define([
 				value: {type: "string"},
 				objectValue: {type: "object"},
 				anyValue: {type: "any"}
+			},
+			aggregations: {
+				altString: {type: "sap.ui.core.Control", altTypes: ["string"], multiple: false},
+				altObject: {type: "sap.ui.core.Control", altTypes: ["object"], multiple: false},
+				altMulti: {type: "sap.ui.core.Control", altTypes: ["string", "object"], multiple: false}
 			}
 		}
 	});
@@ -127,6 +132,36 @@ sap.ui.define([
 		});
 		assert.notOk(object.getBindingInfo("value"), "binding info is not created");
 		assert.deepEqual(object.getAnyValue(), { value: "test" }, "object getter returns object for object properties");
+	});
+
+	QUnit.test("Binding info as JS object, aggregation with altType string", function(assert) {
+		var object = new MyObject({
+			altString: {
+				value: "test"
+			}
+		});
+		assert.ok(object.getBindingInfo("altString"), "binding info is created");
+		assert.equal(object.getAltString(), "test", "object getter returns static value");
+	});
+
+	QUnit.test("Binding info as JS object, aggregation with altType object", function(assert) {
+		var object = new MyObject({
+			altObject: {
+				value: "test"
+			}
+		});
+		assert.notOk(object.getBindingInfo("altObject"), "binding info is not created");
+		assert.equal(typeof object.getAltObject(), "object", "object getter returns object for aggregation with altType object");
+	});
+
+	QUnit.test("Binding info as JS object, aggregation with altType string,object", function(assert) {
+		var object = new MyObject({
+			altMulti: {
+				value: "test"
+			}
+		});
+		assert.notOk(object.getBindingInfo("altMulti"), "binding info is not created");
+		assert.equal(typeof object.getAltMulti(), "object", "object getter returns object for aggregation with altType string,object");
 	});
 
 	QUnit.test("Binding info as string", function(assert) {

@@ -299,39 +299,41 @@ sap.ui.define([
 		},
 
 		/**
-		 * Deletes changes recorded for control. Changes to be deleted can be filtered by specification of change type(s).
+		 * Deletes changes for controls which were passed as an input; Alternative a list of control equivalent entities can be passed;
+		 * Changes to be deleted can be filtered by specify change types.
 		 *
-		 * @param {array} aSelector - Selectors IDs for which changes shall be deleted. At least for one selector ID an instantiated control has to exist
-		 * @param {array} [aChangeType] - Types of changes that shall be deleted
+		 * @param {sap.ui.core.Element[] | map[]} aControls - an array of instances of controls, a map with control IDs including a app component or a mixture for which the reset shall take place
+		 * @param {sap.ui.core.Component} aControls.appComponent - Application component of the controls at runtime in case a map has been used
+		 * @param {string} aControls.id - ID of the control in case a map has been used to specify the control
+		 * @param {String[]} [aChangeTypes] - Types of changes that shall be deleted
 		 *
-		 * @returns {Promise} Promise that resolves with a list of the deleted changes in the response
+		 * @returns {Promise} Promise that resolves after the deletion took place and changes are reverted
 		 *
 		 * @method sap.ui.fl.ControlPersonalizationAPI.resetChanges
 		 * @public
 		 */
-		resetChanges: function(aSelector, aChangeType) {
+		resetChanges: function(aControls, aChangeTypes) {
 			function reject(sMessage) {
 				Utils.log.error(sMessage);
 				return Promise.reject(sMessage);
 			}
-			if (!aSelector || (aSelector && aSelector.length === 0)) {
-				return reject("At least one selector has to be provided as a parameter");
+			if (!aControls || aControls.length === 0) {
+				return reject("At least one control ID has to be provided as a parameter");
 			}
-			// for at least one selector an instantiated control has to exist
-			var oControl;
-			aSelector.some(function(selector){
-				oControl = sap.ui.getCore().byId(selector);
-				return oControl ? true : false;
+
+			var oAppComponent = aControls[0].appComponent || Utils.getAppComponentForControl(aControls[0]);
+
+			if (!oAppComponent) {
+				return reject("App Component could not be determined");
+			}
+
+			var aSelectorIds = aControls.map(function (vControl) {
+				var sControlId = vControl.id || vControl.getId();
+				var sLocalId = oAppComponent.getLocalId(sControlId);
+				return sLocalId || sControlId;
 			});
-			if (!oControl) {
-				return reject("For none of the provided selectors an instantiated control exists");
-			}
-			var oAppComponent = Utils.getAppComponentForControl(oControl);
-			var sSelectorString = sSelectorString = aSelector.join(",");
-			var sChangeTypeString;
-			if (aChangeType) { sChangeTypeString = aChangeType.join(",");}
-			var oFlexController = FlexControllerFactory.createForControl(oControl);
-			return oFlexController.resetChanges("USER", undefined, oAppComponent, sSelectorString, sChangeTypeString);
+			var oFlexController = FlexControllerFactory.createForControl(oAppComponent);
+			return oFlexController.resetChanges("USER", undefined, oAppComponent, aSelectorIds, aChangeTypes);
 		},
 
 		/**
@@ -347,8 +349,9 @@ sap.ui.define([
 		 */
 		saveChanges: function(aChanges, oManagedObject) {
 			if (!(oManagedObject instanceof ManagedObject)) {
-				Utils.log.error("A valid sap.ui.base.ManagedObject instance is required as a parameter");
-				return;
+				var sErrorMessage = "A valid sap.ui.base.ManagedObject instance is required as a parameter";
+				Utils.log.error(sErrorMessage);
+				return Promise.reject(sErrorMessage);
 			}
 			return FlexControllerFactory.createForControl(oManagedObject)._oChangePersistence.saveSequenceOfDirtyChanges(aChanges);
 		},
@@ -356,7 +359,7 @@ sap.ui.define([
 		/**
 		 * Determines the availability of an encompassing variant management control.
 		 *
-		 * @param {sap.ui.base.ManagedObject} oControl - The control which should be tested for an encompassing variant management control
+		 * @param {sap.ui.core.Element} oControl - The control which should be tested for an encompassing variant management control
 		 *
 		 * @returns {boolean} Returns true if a variant management control is encompassing the given control, else false
 		 *

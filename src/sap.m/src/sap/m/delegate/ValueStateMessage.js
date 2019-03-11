@@ -235,8 +235,15 @@ sap.ui.define([
 
 			var oAccDomRef = document.createElement("span");
 			oAccDomRef.id = sID + "hidden";
-			oAccDomRef.className = "sapUiHidden";
-			oAccDomRef.setAttribute("aria-hidden", "true");
+
+			var bIsIE = Device.browser.msie;
+
+			if (bIsIE) {
+				oAccDomRef.className = "sapUiHidden";
+				oAccDomRef.setAttribute("aria-hidden", "true");
+			} else {
+				oAccDomRef.className = "sapUiPseudoInvisibleText";
+			}
 
 			if (sState !== ValueState.None) {
 				oAccDomRef.appendChild(document.createTextNode(oRB.getText("INPUTBASE_VALUE_STATE_" + sState.toUpperCase())));
@@ -245,7 +252,7 @@ sap.ui.define([
 			var oTextDomRef = document.createElement("span");
 			oTextDomRef.id = sID + "-text";
 
-			if (!oControl.isA('sap.m.Select')) {
+			if (!oControl.isA('sap.m.Select') && bIsIE) {
 				oTextDomRef.setAttribute("aria-hidden", "true");
 			}
 

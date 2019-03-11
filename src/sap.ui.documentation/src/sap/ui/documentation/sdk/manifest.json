@@ -151,6 +151,10 @@
 					"name": "entityMethodsLegacyRoute"
 				},
 				{
+					"pattern": "topic/a6a78b7e104348b4bb94fb8bcf003480",
+					"name": "ReleaseNotesLegacyRoute"
+				},
+				{
 					"pattern": "entity/{id}/:sectionTab:",
 					"name": "entity",
 					"target": [

@@ -9,6 +9,7 @@
 @_sap_m_NotificationListBase_CloseButtonCompactSize: 1.625rem;
 @_sap_m_NotificationListBase_CloseButtonCozyPosition: 0.25rem;
 @_sap_m_NotificationListBase_CloseButtonCompactPosition: 0.5rem;
+@_sap_m_NotificationListBase_SubHeaderAndFooterPadding: 0.25rem 0 0 1rem;
 
 @_sap_m_NotificationListBase_ItemBackground: @sapUiListBackground;
 @_sap_m_NotificationListBase_ItemGroupedBackground: @sapUiListBackground;
@@ -77,8 +78,7 @@
 	box-sizing: border-box;
 	cursor: pointer;
 	height: auto;
-	margin-top: -@_sap_m_NotificationListBase_ContainerPadding;
-	padding: @_sap_m_NotificationListBase_ContainerPadding 0 0;
+	padding: 0;
 	position: absolute;
 	right: @_sap_m_NotificationListBase_CloseButtonCozyPosition;
 	top: @_sap_m_NotificationListBase_CloseButtonCozyPosition;
@@ -140,7 +140,7 @@
 
 .sapMNLB-Footer, .sapMNLB-SubHeader {
 	line-height: 3rem;
-	padding: 0.25rem 0 0 1rem;
+	padding: @_sap_m_NotificationListBase_SubHeaderAndFooterPadding;
 
 	.sapMTB {
 		border: none;
@@ -171,7 +171,7 @@
 	height: @_sap_m_NotificationListBase_CloseButtonCompactSize;
 	padding: 0;
 	right: @_sap_m_NotificationListBase_CloseButtonCompactPosition;
-	top: @_sap_m_NotificationListBase_CloseButtonCompactPosition + @_sap_m_NotificationListBase_ContainerPadding;
+	top: @_sap_m_NotificationListBase_CloseButtonCompactPosition;
 	width: @_sap_m_NotificationListBase_CloseButtonCompactSize;
 
 	.sapMBtnInner {

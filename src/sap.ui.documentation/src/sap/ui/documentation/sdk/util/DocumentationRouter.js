@@ -33,6 +33,10 @@ sap.ui.define([
 			this.getRoute("sampleLegacyRoute").attachPatternMatched({routeName: "sample"}, this._onOldSampleRouteMatched, this);
 			this.getRoute("codeLegacyRoute").attachPatternMatched({routeName: "code"}, this._onOldSampleRouteMatched, this);
 			this.getRoute("codeFileLegacyRoute").attachPatternMatched({routeName: "codeFile"}, this._onOldSampleRouteMatched, this);
+
+			this.getRoute("ReleaseNotesLegacyRoute").attachPatternMatched(function () {
+				this.navTo("releaseNotes");
+			}, this);
 		},
 
 		_onEntityOldRouteMatched: function(oEvent) {
@@ -53,10 +57,16 @@ sap.ui.define([
 
 			ControlsInfo.loadData().then(function (oData) {
 				var oSample = oData.samples[sSampleId],
-					oNavigationObject = {
-						entityId: Object.keys(oSample.contexts)[0], // We always have first context
-						sampleId: sSampleId
-					};
+					oNavigationObject;
+
+				if (!oSample) {
+					this.myNavToWithoutHash("sap.ui.documentation.sdk.view.NotFound", "XML", false);
+				}
+
+				oNavigationObject = {
+					entityId: oSample.contexts ? Object.keys(oSample.contexts)[0] : oSample.entityId,
+					sampleId: sSampleId
+				};
 
 				if (oEventData.routeName === "codeFile") {
 					oNavigationObject['fileName'] = decodeURIComponent(oArguments.fileName);
@@ -129,12 +139,15 @@ sap.ui.define([
 		 */
 		myNavToWithoutHash: function (viewName, viewType, master, data) {
 			var oComponent = this._getOwnerComponent(),
-				oRootView = oComponent.byId(oComponent.getManifestEntry("/sap.ui5/rootView").id),
-				oApp = oRootView.byId("splitApp"),
-				oView = this.getView(viewName, viewType);
+				oRootView = oComponent.byId(oComponent.getManifestEntry("/sap.ui5/rootView").id);
 
-			oApp.addPage(oView, master);
-			oApp.toDetail(oView.getId(), "show", data);
+			oRootView.loaded().then(function (oRootView) {
+				var	oApp = oRootView.byId("splitApp"),
+					oView = this.getView(viewName, viewType);
+
+				oApp.addPage(oView, master);
+				oApp.toDetail(oView.getId(), "show", data);
+			}.bind(this));
 		},
 
 		/**

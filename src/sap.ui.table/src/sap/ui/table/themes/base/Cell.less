@@ -154,18 +154,10 @@
 	padding-bottom: 7px;
 
 	&:active {
-		// The active state background color should not be applied if column reordering is in progress.
+		// The active state background color and text color should not be applied if column reordering is in progress.
 		.sapUiTable:not(.sapUiTableDragDrop) & {
 			background-color: @sapUiListActiveBackground;
-		}
-
-		& > .sapUiTableCellInner {
-			span,
-			label,
-			&.sapUiTableColSorted::after,
-			&.sapUiTableColFiltered::after {
-				color: @sapUiListActiveTextColor;
-			}
+			color: @sapUiListActiveTextColor;
 		}
 	}
 

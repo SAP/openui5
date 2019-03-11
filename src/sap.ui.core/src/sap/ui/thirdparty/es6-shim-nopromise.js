@@ -18,7 +18,8 @@
     // AMD. Register as an anonymous module.
     //define(factory);
     // Modified lines:
-    define('sap/ui/thirdparty/es6-shim-nopromise', factory);
+    var exports = factory(); // immediately execute to configure global
+    define('sap/ui/thirdparty/es6-shim-nopromise', exports);
     // ##### END: MODIFIED BY SAP
   } else if (typeof exports === 'object') {
     // Node. Does not work with strict CommonJS, but

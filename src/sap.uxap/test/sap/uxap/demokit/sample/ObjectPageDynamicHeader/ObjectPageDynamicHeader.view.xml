@@ -63,6 +63,10 @@
 					<m:Text text="Senior Developer"/>
 				</snappedContent>
 
+				<snappedTitleOnMobile>
+					<m:Title text="Header Title On Phone"/>
+				</snappedTitleOnMobile>
+
 				<actions>
 					<m:OverflowToolbarButton type="Transparent" icon="sap-icon://copy" tooltip="copy"/>
 					<m:OverflowToolbarButton type="Transparent" icon="sap-icon://delete" tooltip="delete"/>

@@ -1,0 +1,31 @@
+{
+  "1.64.0": {
+    "date": "March 2019",
+    "notes": [
+      {
+        "id": "16bbab7451d4b2ecf98ed94f4b8cf1cd1eb2e6c8",
+        "type": "FIX",
+        "text": " sap.f.Avatar: Displaying transparent image is now correct",
+        "references": []
+      },
+      {
+        "id": "f318f01c37b47ce83d9eab2cd86325f86ca58331",
+        "type": "FIX",
+        "text": " sap.f.Avatar: Failing QUnit on IE is fixed",
+        "references": []
+      },
+      {
+        "id": "edc86fd5eea34e1be28730610ed1015a358f9be8",
+        "type": "FIX",
+        "text": " sap.f.DynamicPage: Corrected expand visibility on resize",
+        "references": []
+      },
+      {
+        "id": "7af07ad3a50d3c158143dec948756d9ad57371f5",
+        "type": "FIX",
+        "text": " sap.f.FlexibleColumnLayout: Fixed column resizing on layout change",
+        "references": []
+      }
+    ]
+  }
+}

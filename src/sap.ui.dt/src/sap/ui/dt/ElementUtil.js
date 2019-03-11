@@ -93,7 +93,7 @@ function(
 	 */
 	ElementUtil.getClosestElementForNode = function(oNode) {
 		var $ClosestElement = jQuery(oNode).closest("[data-sap-ui]");
-		return $ClosestElement.length ? sap.ui.getCore().byId($ClosestElement.data("sap-ui")) : undefined;
+		return $ClosestElement.length ? sap.ui.getCore().byId($ClosestElement.attr("data-sap-ui")) : undefined;
 	};
 
 	/**

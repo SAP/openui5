@@ -3995,6 +3995,34 @@ sap.ui.define([
 		assert.equal(this._oPC.getAggregation("table").getSticky().length, 0, "sticky property shouldn't be set on the info bar and on the toolbar inside Table");
 	});
 
+	QUnit.test("Appointments for currently selected date should be rendered in One Month view on small screen", function (assert) {
+		// arrange
+		this._createCalendar(new Date(2015, 0, 1));
+
+		// assert
+		assert.equal(this._oPC.$().find(".sapUiCalendarNoApps").length, 0, "'No Entries' div should not be rendered");
+		assert.equal(this._oPC.$().find(".sapUiCalendarApp:not(.sapUiCalendarAppDummy)").length, 3, "Appointments should be rendered");
+	});
+
+	QUnit.test("'No entries' text should be shown when no date is selected in One Month view on small screen and no appointments should be rendered", function (assert) {
+		// arrange
+		this._createCalendar(new Date(2015, 0, 1));
+
+		var oGetSelectedDatesStub = this.stub(this._oPC._oOneMonthInterval, "getSelectedDates", function () {
+			return [];
+		});
+
+		// act
+		this._oPC.rerender();
+
+		// assert
+		assert.ok(this._oPC.$().find(".sapUiCalendarNoApps").get(0), "'No Entries' div should be rendered");
+		assert.equal(this._oPC.$().find(".sapUiCalendarApp:not(.sapUiCalendarAppDummy)").length, 0, "Appointments should not be rendered");
+
+		// cleanup
+		oGetSelectedDatesStub.restore();
+	});
+
 	QUnit.module("ARIA", {
 		beforeEach: function() {
 

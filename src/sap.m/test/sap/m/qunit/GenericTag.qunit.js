@@ -72,8 +72,12 @@ sap.ui.define([
 	});
 
 	QUnit.test("GenericTag - setStatus should set the correct status icon src", function(assert) {
-		var sStatusIconNamePrefix = "sap-icon://message-";
+		var sStatusIconNamePrefix = "sap-icon://message-",
+			sInformationIconSrc = "sap-icon://hint";
+
 		for (var sValueState in ValueState) {
+			var sActualIconSrc;
+
 			if (sValueState === ValueState.None) {
 				continue;
 			}
@@ -82,10 +86,12 @@ sap.ui.define([
 
 			//act
 			oCore.applyChanges();
-
+			sActualIconSrc = sValueState !== ValueState.Information ?
+								sStatusIconNamePrefix + sValueState.toLowerCase() :
+								sInformationIconSrc;
 			//assert
 			assert.strictEqual(this.oGenericTag.getAggregation("_statusIcon").getSrc(),
-								sStatusIconNamePrefix + sValueState.toLowerCase(),
+								sActualIconSrc,
 								"Status icon should have the correct src set.");
 		}
 	});

@@ -229,7 +229,7 @@
 							select: function (oEvent) {
 								var o = oUploadSet._getAllItems()[0],
 									b = oEvent.getParameter("selected");
-								o.setEnabledDelete(b);
+								o.setEnabledRemove(b);
 							}
 						}),
 						new CheckBox({
@@ -247,7 +247,7 @@
 							select: function (oEvent) {
 								var o = oUploadSet._getAllItems()[0],
 									b = oEvent.getParameter("selected");
-								o.setVisibleDelete(b);
+								o.setVisibleRemove(b);
 							}
 						}),
 						new CheckBox({
@@ -401,6 +401,17 @@
 					]
 				});
 				oPage.setModel(oModel);
+
+				[
+					"openPressed",
+					"removePressed"
+				].forEach(function (sEvent) {
+					oUploadSet.getItems()[0].attachEvent(sEvent, function () {
+						oEventList.insertItem(new ListItem({
+							title: sEvent
+						}));
+					});
+				});
 
 				new App("UploadSetTestApp", {pages: [oPage]}).placeAt("content");
 			});
