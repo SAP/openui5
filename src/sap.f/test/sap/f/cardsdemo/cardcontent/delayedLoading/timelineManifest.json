@@ -17,7 +17,7 @@
 				},
 				"path": "/Employees"
 			},
-			"numberOfItems": 4,
+			"maxItems": 4,
 			"item": {
 				"dateTime": {
 					"label": "{{hireDate_label}}",

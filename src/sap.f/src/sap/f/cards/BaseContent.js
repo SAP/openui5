@@ -115,8 +115,8 @@ sap.ui.define([
 			this._setData(oConfiguration.data);
 		}
 
-		if (oConfiguration.numberOfItems) {
-			this.getModel().setSizeLimit(oConfiguration.numberOfItems);
+		if (oConfiguration.maxItems) {
+			this.getModel().setSizeLimit(oConfiguration.maxItems);
 		}
 
 		return this;
@@ -231,7 +231,7 @@ sap.ui.define([
 	};
 
 	BaseContent._getMinListHeight = function (oContent) {
-		var iCount = oContent.numberOfItems || 0,
+		var iCount = oContent.maxItems || 0,
 			oTemplate = oContent.item,
 			iItemHeight = 3;
 
@@ -247,7 +247,7 @@ sap.ui.define([
 	};
 
 	BaseContent._getMinTableHeight = function (oContent) {
-		var iCount = oContent.numberOfItems || 0,
+		var iCount = oContent.maxItems || 0,
 			iRowHeight = 3,
 			iTableHeaderHeight = 3;
 
@@ -255,7 +255,7 @@ sap.ui.define([
 	};
 
 	BaseContent._getMinTimelineHeight = function (oContent) {
-		var iCount = oContent.numberOfItems || 0,
+		var iCount = oContent.maxItems || 0,
 			iItemHeight = 6;
 
 		return iCount * iItemHeight;

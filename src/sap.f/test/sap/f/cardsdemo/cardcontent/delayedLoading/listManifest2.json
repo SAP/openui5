@@ -19,12 +19,12 @@
 			}
 		},
 		"content": {
+			"maxItems": 8,
 			"data": {
 				"request": {
 					"url": "./cardcontent/someitems.json"
 				}
 			},
-			"numberOfItems": 8,
 			"item": {
 				"title": {
 					"label": "{{title_label}}",
