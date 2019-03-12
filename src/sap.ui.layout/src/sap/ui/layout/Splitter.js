@@ -763,7 +763,10 @@ sap.ui.define([
 		}
 		iAutosizedAreas += bHasAutoSizedContent ? 1 : 0;
 
-		iFullSize -= iAutosizedAreas;
+		// don't subtract from the full size when orientation is Vertical to prevent endless resizing
+		if (this.getOrientation() === Orientation.Horizontal) {
+			iFullSize -= iAutosizedAreas;
+		}
 
 		// Due to zoom rounding erros, we cannot assume that all SplitBars have the same sizes, even
 		// though they have the same CSS size set.
