@@ -67,6 +67,10 @@ sap.ui.define(['sap/ui/core/Renderer', 'sap/m/library', 'sap/ui/core/library', '
 			rm.class("sapMLabelTBHeader");
 		}
 
+		rm.writeAccessibilityState({
+			label: oLabel.getText()
+		});
+
 		// text direction
 		if (sTextDir !== TextDirection.Inherit){
 			rm.attr("dir", sTextDir.toLowerCase());

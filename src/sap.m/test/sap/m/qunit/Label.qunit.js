@@ -355,6 +355,10 @@ sap.ui.define([
 		assert.strictEqual(this.label.getDomRef() instanceof HTMLSpanElement, true, "Should be rendered as a span element");
 	});
 
+	QUnit.test("aria-label is set", function (assert) {
+		assert.strictEqual(this.label.$().attr('aria-label'), this.label.getText(), "aria-label is correct");
+	});
+
 	QUnit.test("Label rendering when labelFor association is set", function (assert) {
 		var oInput = new Input().placeAt("qunit-fixture");
 		sap.ui.getCore().applyChanges();
