@@ -21,7 +21,6 @@ sap.ui.define([
 	'./BatchResponseCollector',
 	'./AnalyticalVersionInfo',
 	"sap/base/util/uid",
-	"sap/base/util/deepEqual",
 	"sap/ui/thirdparty/jquery",
 	"sap/base/Log"
 ], function(
@@ -38,7 +37,6 @@ sap.ui.define([
 	BatchResponseCollector,
 	AnalyticalVersionInfo,
 	uid,
-	deepEqual,
 	jQuery,
 	Log
 ) {
@@ -1132,7 +1130,8 @@ sap.ui.define([
 	 * @protected
 	 */
 	AnalyticalBinding.prototype.updateAnalyticalInfo = function(aColumns, bForceChange) {
-		var oDimensionDetails,
+		var iDiff,
+			oDimensionDetails,
 			oEntityType,
 			aHierarchyProperties,
 			that = this;
@@ -1222,21 +1221,25 @@ sap.ui.define([
 		}
 
 		// check if something has changed --> deep equal on the column info objects, only 1 level "deep"
-		if (deepEqual(this._aLastChangedAnalyticalInfo, aColumns)) {
-			if (bForceChange) {
+		iDiff = odata4analytics.helper.deepEqual(this._aLastChangedAnalyticalInfo, aColumns,
+			function (oColumn) { // only formatter changed
+				that.mAnalyticalInfoByProperty[oColumn.name].formatter = oColumn.formatter;
+			});
+		if (iDiff) {
+			// make a deep copy of the column definition, so we can ignore duplicate calls the next time, see above
+			// copy is necessary because the original analytical info will be changed and used internally, through out the binding "coding"
+			this._aLastChangedAnalyticalInfo = [];
+			for (var j = 0; j < aColumns.length; j++) {
+				this._aLastChangedAnalyticalInfo[j] = jQuery.extend({}, aColumns[j]);
+			}
+		}
+		if (iDiff < 2) {
+			if (bForceChange || iDiff) {
 				setTimeout(function () {
 					this._fireChange({reason: ChangeReason.Change});
 				}.bind(this), 0);
 			}
 			return;
-		}
-
-		oEntityType = this.oAnalyticalQueryResult.getEntityType();
-		// make a deep copy of the column definition, so we can ignore duplicate calls the next time, see above
-		// copy is necessary because the original analytical info will be changed and used internally, through out the binding "coding"
-		this._aLastChangedAnalyticalInfo = [];
-		for (var j = 0; j < aColumns.length; j++) {
-			this._aLastChangedAnalyticalInfo[j] = jQuery.extend({}, aColumns[j]);
 		}
 
 		// parameter is an array with elements whose structure is defined by sap.ui.analytics.model.AnalyticalTable.prototype._getColumnInformation()
@@ -1262,6 +1265,7 @@ sap.ui.define([
 		// nodeExternalKeyName, nodeIDName, nodeLevelName, nodeTextName}
 		this.mHierarchyDetailsByName = {}; //
 
+		oEntityType = this.oAnalyticalQueryResult.getEntityType();
 		// process column settings for dimensions and measures part of the result or visible
 		for (var i = 0; i < aColumns.length; i++) {
 			// determine requested aggregation level from columns representing dimension-related properties
