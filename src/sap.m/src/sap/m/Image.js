@@ -730,6 +730,14 @@ sap.ui.define([
 		};
 	};
 
+	/**
+	 * @see sap.ui.core.Element.prototype.getFocusDomRef
+	 * @private
+	 */
+	Image.prototype.getFocusDomRef = function() {
+		return this.getDomRef("inner") || this.getDomRef();
+	};
+
 	/*
 	 * Image must not be stretched in Form because should have its original size.
 	 */

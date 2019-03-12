@@ -160,6 +160,24 @@ sap.ui.define([
 		oImage.destroy();
 	});
 
+	QUnit.test("Image is rendered with detailBox", function(assert) {
+		// Arrange
+		var oImage = createImage();
+
+		oImage.setDetailBox(new LightBox());
+
+		// System under test
+		oImage.placeAt("qunit-fixture");
+		Core.applyChanges();
+
+		// Assert
+		var oInnerImg = oImage.$("inner")[0];
+		assert.ok(oInnerImg.id, "Internal image has an id.");
+		assert.equal(oImage.getFocusDomRef(), oInnerImg, "FocusDomRef is correct");
+
+		// Clean up
+		oImage.destroy();
+	});
 
 	QUnit.module("Rendering decorative image");
 
