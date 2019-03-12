@@ -39,7 +39,7 @@
       {
         "id": "8ace94b6a65792706859e2c9eebaa3ba7fb46788",
         "type": "FIX",
-        "text": " Fixing the trimming of application variant ID",
+        "text": "Fixing the trimming of application variant ID",
         "references": []
       },
       {

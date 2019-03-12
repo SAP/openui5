@@ -5,13 +5,18 @@
       {
         "id": "a7a43f7d759f6ce2f904d563757ccf2c2a87cd6e",
         "type": "FIX",
-        "text": " sap.ui.layout.BlockLayout: BlockLayoutRow is now correct",
-        "references": []
+        "text": "sap.ui.layout.BlockLayout: BlockLayoutRow is now correct",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "1980043434"
+          }
+        ]
       },
       {
         "id": "ad7a3505579a24b51a30adf3ebcf78d5d066b4a2",
         "type": "FIX",
-        "text": " sap.ui.layout.BlockLayoutCell: Width of the cell is now correct",
+        "text": "sap.ui.layout.BlockLayoutCell: Width of the cell is now correct",
         "references": []
       }
     ]
