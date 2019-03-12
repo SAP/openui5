@@ -5,31 +5,51 @@
       {
         "id": "16bbab7451d4b2ecf98ed94f4b8cf1cd1eb2e6c8",
         "type": "FIX",
-        "text": " sap.f.Avatar: Displaying transparent image is now correct",
-        "references": []
+        "text": "sap.f.Avatar: Displaying transparent image is now correct",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "1970178419"
+          }
+        ]
       },
       {
         "id": "f318f01c37b47ce83d9eab2cd86325f86ca58331",
         "type": "FIX",
-        "text": " sap.f.Avatar: Failing QUnit on IE is fixed",
-        "references": []
+        "text": "sap.f.Avatar: Failing QUnit on IE is fixed",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "1980015035"
+          }
+        ]
       },
       {
         "id": "edc86fd5eea34e1be28730610ed1015a358f9be8",
         "type": "FIX",
-        "text": " sap.f.DynamicPage: Corrected expand visibility on resize",
-        "references": []
+        "text": "sap.f.DynamicPage: Corrected expand visibility on resize",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "1970175646"
+          }
+        ]
       },
       {
         "id": "7af07ad3a50d3c158143dec948756d9ad57371f5",
         "type": "FIX",
-        "text": " sap.f.FlexibleColumnLayout: Fixed column resizing on layout change",
-        "references": []
+        "text": "sap.f.FlexibleColumnLayout: Fixed column resizing on layout change",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "1970178100"
+          }
+        ]
       },
       {
         "id": "5e84afc81a451c0390c84b28324a75a6052fbdff",
         "type": "FEATURE",
-        "text": " sap.uxap.ObjectPageDynamicHeaderTitle: Single-line title on phone",
+        "text": "sap.uxap.ObjectPageDynamicHeaderTitle: Single-line title on phone",
         "references": []
       }
     ]
