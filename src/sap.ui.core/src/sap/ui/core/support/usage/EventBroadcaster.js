@@ -99,10 +99,31 @@ sap.ui.define(['sap/base/Log', '../../Component', '../../Element', '../../routin
 		 * @protected
 		 */
 		EventBroadcaster.broadcastEvent = function (sEventId, oElement, mParameters) {
-			var oNow = new Date();
+			var oTimeFired = new Date();
 
 			setTimeout(function() {
-				EventBroadcaster._broadcastEvent(sEventId, oNow, oElement, mParameters);
+				var oData = {}, oComponentInfo;
+
+				if (EventBroadcaster._shouldExpose(sEventId, oElement)) {
+					oComponentInfo = EventBroadcaster._createOwnerComponentInfo(oElement);
+
+					oData = {
+						componentId: oComponentInfo.id,
+						componentVersion: oComponentInfo.version,
+						eventName: sEventId,
+						targetId: oElement.getId(),
+						targetType: oElement.getMetadata().getName(),
+						timestamp: oTimeFired.getTime()
+					};
+
+					if (Log.isLoggable()) {
+						Log.debug("EventBroadcaster: Broadcast Event: ", JSON.stringify(oData));
+					}
+
+					oData.additionalAttributes = mParameters; //parameters could include object/function, so we don't log them
+
+					EventBroadcaster._dispatchCustomEvent(oData);
+				}
 			});
 		};
 
@@ -116,62 +137,32 @@ sap.ui.define(['sap/base/Log', '../../Component', '../../Element', '../../routin
 		 * @protected
 		 */
 		EventBroadcaster.broadcastRouteMatched = function (sEventId, sElementId, oRouter) {
-			var oNow = new Date();
+			var oTimeFired = new Date();
 
 			setTimeout(function() {
-				EventBroadcaster._broadcastRouteMatched(sEventId, oNow, sElementId, oRouter);
-			});
-		};
-
-		EventBroadcaster._broadcastEvent = function (sEventId, oTimeFired, oElement, mParameters) {
-			var oData = {}, oComponentInfo;
-
-			if (EventBroadcaster._shouldExpose(sEventId, oElement)) {
-				oComponentInfo = EventBroadcaster._createOwnerComponentInfo(oElement);
-
-				oData = {
-					componentId: oComponentInfo.id,
-					componentVersion: oComponentInfo.version,
-					eventName: sEventId,
-					targetId: oElement.getId(),
-					targetType: oElement.getMetadata().getName(),
-					timestamp: oTimeFired.getTime()
-				};
+				var oComponentInfo = EventBroadcaster._createOwnerComponentInfo(sap.ui.getCore().byId(sElementId)),
+					oData = {
+						componentId: oComponentInfo.id,
+						componentVersion: oComponentInfo.version,
+						eventName: sEventId,
+						targetId: sElementId,
+						targetType: "sap.ui.core.routing.Router",
+						timestamp: oTimeFired.getTime(),
+						additionalAttributes: {
+							fullURL: document && document.baseURI,
+							hash: oRouter.getHashChanger().getHash(),
+							previousHash: EventBroadcaster._previousHash
+						}
+					};
+				EventBroadcaster._previousHash = oData.additionalAttributes.hash;
 
 				if (Log.isLoggable()) {
-					Log.debug("EventBroadcaster: Broadcast Event: ", JSON.stringify(oData));
+					Log.debug("EventBroadcaster: Broadcast Route Matched: ", JSON.stringify(oData));
 				}
 
-				oData.additionalAttributes = mParameters; //parameters could include object/function, so we don't log them
-
 				EventBroadcaster._dispatchCustomEvent(oData);
-			}
+			});
 		};
-
-		EventBroadcaster._broadcastRouteMatched = function (sEventId, oTimeFired, sElementId, oRouter) {
-			var oComponentInfo = EventBroadcaster._createOwnerComponentInfo(sap.ui.getCore().byId(sElementId)),
-				oData = {
-					componentId: oComponentInfo.id,
-					componentVersion: oComponentInfo.version,
-					eventName: sEventId,
-					targetId: sElementId,
-					targetType: "sap.ui.core.routing.Router",
-					timestamp: oTimeFired.getTime(),
-					additionalAttributes: {
-						fullURL: document && document.baseURI,
-						hash: oRouter.getHashChanger().getHash(),
-						previousHash: EventBroadcaster._previousHash
-					}
-				};
-			EventBroadcaster._previousHash = oData.additionalAttributes.hash;
-
-			if (Log.isLoggable()) {
-				Log.debug("EventBroadcaster: Broadcast Route Matched: ", JSON.stringify(oData));
-			}
-
-			EventBroadcaster._dispatchCustomEvent(oData);
-		};
-
 
 		/**
 		 * Dispatches UI5 event via generic browser custom event.
