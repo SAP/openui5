@@ -42,6 +42,7 @@ sap.ui.define([
 
 		this._renderTopArea(oRm, oDynamicPageTitleState);
 		this._renderMainArea(oRm, oDynamicPageTitleState);
+		this._renderSnappedExpandedContentArea(oRm, oDynamicPageTitleState);
 
 		if (oDynamicPageTitleState.hasSnappedTitleOnMobile) {
 			this._renderSnappedTitleOnMobile(oRm, oDynamicPageTitleState);
@@ -149,20 +150,6 @@ sap.ui.define([
 		}
 		oRm.write("</div>");
 
-		// Heading Area -> snappedContent/expandContent aggregation
-		if (oDynamicPageTitleState.hasAdditionalContent) {
-			oRm.write("<div");
-			oRm.addClass("sapFDynamicPageTitleMainHeadingSnappedExpandContent");
-			oRm.writeClasses();
-			oRm.write(">");
-			if (oDynamicPageTitleState.hasSnappedContent && !oDynamicPageTitleState.hasSnappedTitleOnMobile) {
-				DynamicPageTitleRenderer._renderSnappedContent(oRm, oDynamicPageTitleState);
-			}
-			if (oDynamicPageTitleState.hasExpandedContent) {
-				DynamicPageTitleRenderer._renderExpandContent(oRm, oDynamicPageTitleState);
-			}
-			oRm.write("</div>");
-		}
 		oRm.write("</div>");
 	};
 
@@ -216,6 +203,23 @@ sap.ui.define([
 			oRm.writeClasses();
 			oRm.write(">");
 			oRm.write("</div>");
+			oRm.write("</div>");
+		}
+	};
+
+	DynamicPageTitleRenderer._renderSnappedExpandedContentArea = function (oRm, oDynamicPageTitleState) {
+		// Heading Area -> snappedContent/expandContent aggregation
+		if (oDynamicPageTitleState.hasAdditionalContent) {
+			oRm.write("<div");
+			oRm.addClass("sapFDynamicPageTitleMainHeadingSnappedExpandContent");
+			oRm.writeClasses();
+			oRm.write(">");
+			if (oDynamicPageTitleState.hasSnappedContent && !oDynamicPageTitleState.hasSnappedTitleOnMobile) {
+				DynamicPageTitleRenderer._renderSnappedContent(oRm, oDynamicPageTitleState);
+			}
+			if (oDynamicPageTitleState.hasExpandedContent) {
+				DynamicPageTitleRenderer._renderExpandContent(oRm, oDynamicPageTitleState);
+			}
 			oRm.write("</div>");
 		}
 	};

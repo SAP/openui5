@@ -27,8 +27,51 @@
 				<f:title>
 					<f:DynamicPageTitle id="dynamicPageTitleId">
 						<f:heading>
-							<Title text="My Products"/>
+							<Title text="Header Title"/>
 						</f:heading>
+						<f:breadcrumbs>
+							<Breadcrumbs>
+								<Link text="Home" />
+								<Link text="Page 1" />
+								<Link text="Page 2" />
+								<Link text="Page 3" />
+								<Link text="Page 4" />
+								<Link text="Page 5" />
+							</Breadcrumbs>
+						</f:breadcrumbs>
+						<f:expandedContent>
+							<Label text="This is an expanded subheading, which is long enough to show how now it occupies all available space
+								and is not limited to the width of the heading aggregation, which previously led to visual degradations"/>
+						</f:expandedContent>
+						<f:snappedContent>
+							<Label text="This is a snapped subheading, which is long enough to show how now it occupies all available space
+								and is not limited to the width of the heading aggregation, which previously led to visual degradations"
+								class="sapUiSmallMarginBottom"/>
+						</f:snappedContent>
+						<f:content>
+							<GenericTag text="Shortage expected" status="Warning">
+								<ObjectNumber number="100" unit="EUR" emphasized="false" state="Warning"/>
+							</GenericTag>
+						</f:content>
+						<f:actions>
+							<Button
+									text="Edit"
+									type="Emphasized"
+									press="toggleAreaPriority"/>
+							<Button
+									text="Delete"
+									type="Transparent"/>
+							<Button
+									text="Copy"
+									type="Transparent"/>
+							<Button
+									text="Toggle Footer"
+									type="Transparent"
+									press="onToggleFooter"/>
+							<Button
+									icon="sap-icon://action"
+									type="Transparent"/>
+						</f:actions>
 					</f:DynamicPageTitle>
 				</f:title>
 
