@@ -10,7 +10,7 @@ sap.ui.define([
 	// create content div
 	createAndAppendDiv('content');
 
-	QUnit.module("Canoncial Paths", {
+	QUnit.module("Canonical Paths", {
 		before: function () {
 			var that = this;
 

@@ -1453,7 +1453,7 @@ sap.ui.define([
 	 * Writes a new entry into the canonical path cache.
 	 *
 	 * @param {string} sPath The path is used as cache key.
-	 * @param {string} sCanonicalPath The canoncial path addressing the same resource.
+	 * @param {string} sCanonicalPath The canonical path addressing the same resource.
 	 * @private
 	 */
 	ODataModel.prototype._writePathCache = function(sPath, sCanonicalPath){
@@ -3219,7 +3219,7 @@ sap.ui.define([
 
 
 	/**
-	 * If canoncial path changes were detected, all canonical path cache entries are checked for up-to-dateness.
+	 * If canonical path changes were detected, all canonical path cache entries are checked for up-to-dateness.
 	 * @private
 	 */
 
@@ -6429,7 +6429,7 @@ sap.ui.define([
 	 *
 	 * @public
 	 */
-	ODataModel.prototype.canoncialRequestsEnabled = function() {
+	ODataModel.prototype.canonicalRequestsEnabled = function() {
 		return this.bCanonicalRequests;
 	};
 
