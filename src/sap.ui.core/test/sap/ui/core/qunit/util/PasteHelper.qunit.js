@@ -1,11 +1,20 @@
 /*global QUnit*/
 
 sap.ui.define([
-	"sap/ui/core/util/PasteHelper", "sap/ui/model/odata/type/String"
-], function(PasteHelper, ODataStringType) {
+	"sap/ui/core/util/PasteHelper",
+	"sap/ui/core/Core",
+	"sap/ui/model/odata/type/String",
+	"sap/ui/model/type/String",
+	"sap/ui/model/odata/type/Byte",
+	"sap/ui/model/odata/type/Int32",
+	"sap/ui/model/odata/type/Date",
+	"sap/ui/model/odata/type/Boolean",
+	"sap/ui/model/type/Boolean",
+	"sap/ui/model/type/Currency"
+], function(PasteHelper, Core, ODataStringType, StringType, ODataByteType, ODataInt32Type, ODataDateType, ODataBooleanType, BooleanType, CurrencyType) {
 	"use strict";
 
-	var sDefaultLanguage = sap.ui.getCore().getConfiguration().getLanguage();
+	var sDefaultLanguage = Core.getConfiguration().getLanguage();
 
 	// TEST DATA AS IN CLIPBOARD BY COPYING FROM SPREADSHEED and Expected results
 	// Simple case with two rows and two cells in each row
@@ -76,11 +85,11 @@ sap.ui.define([
 	QUnit.module("Validation of the parsed data", {
 		beforeEach: function() {
 			// Set language to english to test locale dependent values, for example Date and EDM Boolean
-			sap.ui.getCore().getConfiguration().setLanguage("en-US");
+			Core.getConfiguration().setLanguage("en-US");
 		},
 		afterEach: function() {
 			// Set language back to system lang
-			sap.ui.getCore().getConfiguration().setLanguage(sDefaultLanguage);
+			Core.getConfiguration().setLanguage(sDefaultLanguage);
 		}
 	});
 
@@ -91,11 +100,11 @@ sap.ui.define([
 	var aColumnsInfo1 = [
 		{
 			property: "name",
-			type: "sap.ui.model.type.String" //not EDM, but UI5 data type
+			type: new StringType() //not EDM, but UI5 data type
 		},
 		{
 			property: "age",
-			type: "sap.ui.model.odata.type.Byte" // OData type Edm.Byte
+			type: new ODataByteType() // OData type Edm.Byte
 		}
 	];
 
@@ -123,19 +132,19 @@ sap.ui.define([
 	var aColumnsInfo2 = [
 		{
 			property: "UserName",
-			type: "sap.ui.model.odata.type.String" // OData type Edm.String
+			type: new ODataStringType() // OData type Edm.String
 		},
 		{
 			property: "ValidAbo",
-			type: "sap.ui.model.type.Boolean" // not EDM type, can be "true" or "false"
+			type: new BooleanType() // not EDM type, can be "true" or "false"
 		},
 		{
 			property: "LoginAttempts",
-			type: "sap.ui.model.odata.type.Int32" // OData type  EDM.Int32
+			type: new ODataInt32Type() // OData type  EDM.Int32
 		},
 		{
 			property: "LastLoginDate",
-			type: "sap.ui.model.odata.type.Date" // OData EDM type
+			type: new ODataDateType() // OData EDM type
 		}
 	];
 
@@ -143,7 +152,7 @@ sap.ui.define([
 	var aData2_OK = [["Luis", "true","100", "2018-05-10"],["Leon", "false", "5555","2018-12-18"]];
 	var oResult2_OK = {
 		parsedData: [{UserName: "Luis", ValidAbo: true, LoginAttempts: 100, LastLoginDate: "2018-05-10" },
-			         {UserName: "Leon", ValidAbo: false, LoginAttempts: 5555, LastLoginDate: "2018-12-18"}],
+			{UserName: "Leon", ValidAbo: false, LoginAttempts: 5555, LastLoginDate: "2018-12-18"}],
 		errors: null
 	};
 
@@ -162,7 +171,7 @@ sap.ui.define([
 	var aColumnsInfo3 = [
 		{
 			property: "Firstname",
-			type: "sap.ui.model.odata.type.String"
+			type: new ODataStringType()
 		},
 		{
 			property: "Lastname",
@@ -170,23 +179,23 @@ sap.ui.define([
 		},
 		{
 			property: "Member",
-			type: "sap.ui.model.odata.type.Boolean" // "Yes" and "No" in en
+			type: new ODataBooleanType() // "Yes" and "No" in en
 		},
 		{
 			property: "LastLogin",
-			type: "sap.ui.model.odata.type.Date"
+			type: new ODataDateType()
 		},
 		{
 			property: "AboPrice",
-			type: "sap.ui.model.type.Currency"
+			type: new CurrencyType()
 		}
 	];
 
-	var aData3_OK = [["Luis", "Bond", "yes", "2018-12-03", "5 USD"],["Leo", "Prince", "no","2018-12-18", "15.53 EUR"]];
+	var aData3_OK = [["Luis", "Bond", "yes", "2018-12-03", "5 USD"],["Leo", "Prince", "no","2018-12-18", "1553 EUR"]];
 	var oResult3_OK = {
 		parsedData: [
 			{Firstname: "Luis", Lastname: "Bond", Member: true, LastLogin: "2018-12-03", AboPrice: [ 5, "USD"]},
-			{Firstname: "Leo", Lastname: "Prince", Member: false, LastLogin: "2018-12-18", AboPrice: [ 15.53, "EUR"]}],
+			{Firstname: "Leo", Lastname: "Prince", Member: false, LastLogin: "2018-12-18", AboPrice: [ 1553, "EUR"]}],
 		errors: null
 	};
 
@@ -214,8 +223,8 @@ sap.ui.define([
 			if (aResult.errors) {
 				for (var i = 0; i < aResult.errors.length; i++) {
 					aResult.errors[i].message = "";
+					aResult.errors[i].type = aResult.errors[i].type.getMetadata().getName();
 				}
-
 			}
 			assert.deepEqual(aResult, expectedResult, "The result has to contain array of parsed data or errors. In this test the validation has to be " + sMsg + ".");
 			done();
@@ -252,6 +261,6 @@ sap.ui.define([
 	//	]
 	//};
 	//QUnit.test("Validation NOT ok as there are data missing for the last column.", function(assert) {
-		//validate(assert, aData1_OK, aColumnsInfo2, oResult4);
+	//validate(assert, aData1_OK, aColumnsInfo2, oResult4);
 	//});
 });

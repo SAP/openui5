@@ -2,9 +2,8 @@
  * ${copyright}
  */
 //Provides class sap.ui.core.util.PasteHelper - a utility for converting and validating data pasted from clipboard.
-sap.ui.define([ "sap/base/util/ObjectPath"],
-	function(ObjectPath) {
-		"use strict";
+sap.ui.define([ "sap/base/util/ObjectPath"], function(ObjectPath) {
+	"use strict";
 
 	/**
 	 * A utility for converting and validating data pasted from the clipboard. This utility is used for importing data
@@ -54,7 +53,7 @@ sap.ui.define([ "sap/base/util/ObjectPath"],
 			var bMultiLineCellFound = false;
 			// Index of the " that shows at multi-lines inside of one cell
 			var index1 = sData.indexOf("\""),
-			index2 = -1;
+				index2 = -1;
 			var cNextChar, cPrevChar;
 
 			while (index1 > -1) {
@@ -116,30 +115,34 @@ sap.ui.define([ "sap/base/util/ObjectPath"],
 	};
 
 	/**
-	 * Validates and parses the data of a two-dimensional array against SAPUI5 standard and EDM types based on the <code>ColumnInfo</code> object
-	 * and returns result with parsed data (if the validation is successful) or error information (if the validation fails).
+	 * Validates and parses the data of a two-dimensional array against SAPUI5 standard and EDM types based
+	 * on the <code>ColumnInfo</code> object and returns result with parsed data (if the validation is successful)
+	 * or error information (if the validation fails).
 	 *
 	 * @param {array} aData Two-dimensional array containing the pasted data
-	 * @param {array} aColumnInfo Provides information for each column, such as a property name and the corresponding data type or validation function for custom data type,
-	 *	as required in the target SAPUI5 table. Use <code>ignore: true</code> for read-only columns or for all other columns that must not be pasted into a SAPUI5 table.
-	 *	Use either <code>customParseFunction</code> or <code>type</code> parameter for the same column. Function <code>customParseFunction</code> must return parsed value,
-	 *	if the validation for this custom type was successful, or throw an exception if the validation failed.
-	 *  Parameter <code>type</code> must be an instance of the type object or the type name as a string
+	 * @param {array} aColumnInfo Provides information for each column, such as a property name and the corresponding data
+	 * type instance or validation function for custom data type,
+	 *	as required in the target SAPUI5 table.
+	 *	Use <code>ignore: true</code> for read-only columns or for all other columns that must not be pasted into a SAPUI5 table.
+	 *	Use either <code>customParseFunction</code> or <code>type</code> parameter for the same column.
+	 *	Function <code>customParseFunction</code> must return parsed value, if the validation for this custom type was successful,
+	 *	or throw an exception if the validation failed.
+	 *  Parameter <code>type</code> is an instance of the data type object and can include the original constraints and format options
 	 *
 	 *	Example:
 	 *					<pre>
 	 *						var aColumnsInfo = [
 	 *							{
 	 *								property: "name",
-	 *								type: "sap.ui.model.odata.type.String"
+	 *								type: new sap.ui.model.odata.type.String()
 	 *							},
 	 *							{
 	 *								property: "lastname",
-	 *								type: new sap.ui.model.odata.type.String({maxLength: 30}
+	 *								type: new sap.ui.model.odata.type.String({maxLength: 30})
 	 *							},
 	 *							{
 	 *								property: "age",
-	 *								type: "sap.ui.model.odata.type.Byte"
+	 *								type: new sap.ui.model.odata.type.Byte()
 	 *							},
 	 *							{
 	 *								property: "fullname",
@@ -178,7 +181,7 @@ sap.ui.define([ "sap/base/util/ObjectPath"],
 	 */
 	PasteHelper.parse = function(aData, aColumnInfo) {
 		var oResult = {parsedData: null,
-						errors: null};
+			errors: null};
 
 		// Validate input Data
 		if (!aData) {
@@ -271,6 +274,8 @@ sap.ui.define([ "sap/base/util/ObjectPath"],
 				if (oColumnInfo.typeInstance) {
 					// Check parseValue if it gets to be async
 					sCellData = (oColumnInfo.typeInstance).parseValue(sCellData, "string");
+					// Validate the parsed data
+					oColumnInfo.typeInstance.validateValue(sCellData);
 				} else if (oColumnInfo.customParseFunction) {
 					sCellData = oColumnInfo.customParseFunction(sCellData);
 				}
@@ -282,7 +287,7 @@ sap.ui.define([ "sap/base/util/ObjectPath"],
 					property : oColumnInfo.property,
 					value : sCellData,
 					type : oColumnInfo.type,
-					message : oBundle.getText("PasteHelper.ErrorMessage", [sCellData, iRowIndex + 1, i + 1,oColumnInfo.type]) + " " + e.message//"Value '" + sCellData + "' in row " + (iRowIndex + 1) + " and column " + (i + 1) + " could not be parsed as " + oColumnInfo.type
+					message : oBundle.getText("PasteHelper.ErrorMessage", [sCellData, iRowIndex + 1, i + 1, oColumnInfo.type]) + " " + e.message + "\n"//"Value '" + sCellData + "' in row " + (iRowIndex + 1) + " and column " + (i + 1) + " could not be parsed as " + oColumnInfo.type
 				};
 
 				aErrors.push(oError);
