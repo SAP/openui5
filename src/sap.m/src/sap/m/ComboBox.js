@@ -534,6 +534,7 @@ sap.ui.define([
 					// Separator items were not part of the filtering before. So in order to keep
 					// the behaviour the same, those items are not shown in the filtered list
 					if (!oItem.getText()) {
+						this.getListItem(oItem).setVisible(false);
 						return;
 					}
 
@@ -552,19 +553,24 @@ sap.ui.define([
 				var bMatchedByText = fnFilter.call(this, mOptions.value, oItem, "getText");
 				var bMatchedByAdditionalText = fnFilter.call(this, mOptions.value, oItem, "getAdditionalText");
 
+				if ((bMatchedByText || bMatchedByAdditionalText) && bGrouped) {
+					aGroups[aGroups.length - 1].show = true;
+					bGrouped = false;
+				}
+
 				if (bMatchedByText) {
 					aFilteredItemsByText.push(oItem);
 					aFilteredItems.push(oItem);
 				} else if (bMatchedByAdditionalText && bFilterAdditionalText) {
 					aFilteredItems.push(oItem);
 				}
-
-				if ((bMatchedByText || bMatchedByAdditionalText) && bGrouped) {
-					aGroups[aGroups.length - 1].show = true;
-				}
 			}.bind(this));
 
 			aItems.forEach(function (oItem) {
+				if (oItem.isA("sap.ui.core.SeparatorItem")) {
+					return;
+				}
+
 				var bItemMached = aFilteredItems.indexOf(oItem) > -1;
 				var bItemTextMached = aFilteredItemsByText.indexOf(oItem) > -1;
 
@@ -760,6 +766,7 @@ sap.ui.define([
 
 		ComboBox.prototype.onBeforeRendering = function() {
 			ComboBoxBase.prototype.onBeforeRendering.apply(this, arguments);
+			this._fillList();
 			this.synchronizeSelection();
 		};
 
@@ -1105,11 +1112,6 @@ sap.ui.define([
 		ComboBox.prototype.onBeforeOpen = function() {
 			var fnPickerTypeBeforeOpen = this["onBeforeOpen" + this.getPickerType()],
 				oDomRef = this.getFocusDomRef();
-
-			// As the SuggestionsPopover destroys the items in the list,
-			// we need to add and sync them again
-			this._fillList();
-			this.synchronizeSelection();
 
 			// the dropdown list can be opened by calling the .open() method (without
 			// any end user interaction), in this case if items are not already loaded
