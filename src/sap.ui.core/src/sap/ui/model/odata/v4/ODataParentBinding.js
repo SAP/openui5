@@ -455,16 +455,6 @@ sap.ui.define([
 	};
 
 	/**
-	 * Destroys the object. The object must not be used anymore after this function was called.
-	 *
-	 * @public
-	 * @since 1.61
-	 */
-	ODataParentBinding.prototype.destroy = function () {
-		this.aChildCanUseCachePromises = [];
-	};
-
-	/**
 	 * Deletes the entity in the cache. If the binding doesn't have a cache, it forwards to the
 	 * parent binding adjusting the path.
 	 *
@@ -506,6 +496,17 @@ sap.ui.define([
 		}
 		return this.oContext.getBinding().deleteFromCache(oGroupLock, sEditUrl,
 			_Helper.buildPath(this.oContext.iIndex, this.sPath, sPath), fnCallback);
+	};
+
+	/**
+	 * Destroys the object. The object must not be used anymore after this function was called.
+	 *
+	 * @public
+	 * @since 1.61
+	 */
+	ODataParentBinding.prototype.destroy = function () {
+//		this.mAggregatedQueryOptions = undefined;
+		this.aChildCanUseCachePromises = [];
 	};
 
 	/**

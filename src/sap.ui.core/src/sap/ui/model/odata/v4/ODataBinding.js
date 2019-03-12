@@ -28,6 +28,8 @@ sap.ui.define([
 		// maps a canonical path of a quasi-absolute or relative binding to a cache object that may
 		// be reused
 		this.mCacheByResourcePath = undefined;
+		// used to create cache only for the latest call to #fetchCache
+		this.oFetchCacheCallToken = undefined;
 		// change reason to be used when the binding is resumed
 		this.sResumeChangeReason = ChangeReason.Change;
 	}

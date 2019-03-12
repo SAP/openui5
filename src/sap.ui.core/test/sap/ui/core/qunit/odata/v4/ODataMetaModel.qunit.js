@@ -2734,15 +2734,15 @@ sap.ui.define([
 		},
 		editUrl : "EMPLOYEES(~0)"
 	}, { // decode entity set initially, with transient predicate
-		path : "/T%E2%82%ACAMS($uid=id-1)|Name",
+		path : "/T%E2%82%ACAMS($uid=id-1-23)|Name",
 		fetchPredicates : {
-			"/T%E2%82%ACAMS($uid=id-1)" : "tea_busi.TEAM"
+			"/T%E2%82%ACAMS($uid=id-1-23)" : "tea_busi.TEAM"
 		},
 		editUrl : "T%E2%82%ACAMS(~0)"
 	}, { // multiple navigation to root entity via transient predicates
-		path : "/T%E2%82%ACAMS($uid=id-1)/TEAM_2_EMPLOYEES($uid=id-2)/EMPLOYEE_2_TEAM|Name",
+		path : "/T%E2%82%ACAMS($uid=id-1-23)/TEAM_2_EMPLOYEES($uid=id-2)/EMPLOYEE_2_TEAM|Name",
 		fetchPredicates : {
-			"/T%E2%82%ACAMS($uid=id-1)/TEAM_2_EMPLOYEES($uid=id-2)/EMPLOYEE_2_TEAM"
+			"/T%E2%82%ACAMS($uid=id-1-23)/TEAM_2_EMPLOYEES($uid=id-2)/EMPLOYEE_2_TEAM"
 				: "tea_busi.TEAM"
 		},
 		editUrl : "T%E2%82%ACAMS(~0)"

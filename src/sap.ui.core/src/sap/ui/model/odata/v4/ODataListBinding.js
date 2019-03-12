@@ -112,7 +112,7 @@ sap.ui.define([
 				this.oReadGroupLock = undefined;
 				this.aSorters = _Helper.toArray(vSorters);
 
-				this.applyParameters(jQuery.extend(true, {}, mParameters));
+				this.applyParameters(jQuery.extend(true, {}, mParameters)); // calls #reset
 				this.oHeaderContext = this.bRelative
 					? null
 					: Context.create(this.oModel, this, sPath);
@@ -180,12 +180,13 @@ sap.ui.define([
 		}
 		return this.deleteFromCache(oGroupLock, sEditUrl, String(oContext.iIndex),
 			function (iIndex, aEntities) {
-				var sContextPath, i, sPredicate, sResolvedPath;
+				var sContextPath, i, sPredicate, sResolvedPath, i$skipIndex;
 
-				if (iIndex === -1) {
+				if (oContext.created()) {
 					// happens only for a created context that is not transient anymore
+					that.iCreatedContexts -= 1;
+					that.aContexts.shift();
 					oContext.destroy();
-					delete that.aContexts[-1];
 				} else {
 					// prepare all contexts for deletion
 					for (i = iIndex; i < that.aContexts.length; i += 1) {
@@ -198,19 +199,21 @@ sap.ui.define([
 					that.aContexts.splice(iIndex, 1); // adjust the contexts array
 					for (i = iIndex; i < that.aContexts.length; i += 1) {
 						if (that.aContexts[i]) {
+							i$skipIndex = i - that.iCreatedContexts;
 							// calculate the context path and try to re-use the context for it
 							sPredicate = _Helper.getPrivateAnnotation(aEntities[i], "predicate");
-							sContextPath = sResolvedPath + (sPredicate || "/" + i);
+							sContextPath = sResolvedPath + (sPredicate || "/" + i$skipIndex);
 							oContext = that.mPreviousContextsByPath[sContextPath];
 							if (oContext) {
 								delete that.mPreviousContextsByPath[sContextPath];
-								if (oContext.getIndex() === i) {
+								if (oContext.iIndex === i$skipIndex) {
 									oContext.checkUpdate(); // same row, but different data
 								} else {
-									oContext.setIndex(i); // same data, but different row
+									oContext.iIndex = i$skipIndex; // same data, but different row
 								}
 							} else {
-								oContext = Context.create(that.oModel, that, sContextPath, i);
+								oContext
+									= Context.create(that.oModel, that, sContextPath, i$skipIndex);
 							}
 							that.aContexts[i] = oContext;
 						}
@@ -444,7 +447,7 @@ sap.ui.define([
 		if (!sResolvedPath) {
 			throw new Error("Binding is not yet resolved: " + this);
 		}
-		if (this.aContexts[-1]) {
+		if (this.aContexts[0] && this.aContexts[0].created()) {
 			throw new Error("Must not create twice");
 		}
 		this.checkSuspended();
@@ -455,8 +458,9 @@ sap.ui.define([
 			sTransientPredicate, oInitialData,
 			function () {
 				// cancel callback
+				that.iCreatedContexts -= 1;
+				that.aContexts.shift();
 				oContext.destroy();
-				delete that.aContexts[-1];
 				that._fireChange({reason : ChangeReason.Remove});
 			}
 		).then(function (oCreatedEntity) {
@@ -485,7 +489,8 @@ sap.ui.define([
 		oContext = Context.create(this.oModel, this, sResolvedPath + sTransientPredicate, -1,
 			oCreatePromise);
 
-		this.aContexts[-1] = oContext;
+		this.aContexts.unshift(oContext);
+		this.iCreatedContexts += 1;
 		this._fireChange({reason : ChangeReason.Add});
 
 		return oContext;
@@ -510,22 +515,27 @@ sap.ui.define([
 	 */
 	ODataListBinding.prototype.createContexts = function (iStart, iLength, aResults) {
 		var bChanged = false,
-			oContext = this.oContext,
 			sContextPath,
 			i,
 			iCount = aResults.$count,
-			iInitialLength = this.aContexts.length,
+			i$skipIndex,
 			bLengthFinal = this.bLengthFinal,
 			oModel = this.oModel,
-			sPath = oModel.resolve(this.sPath, oContext),
+			sPath = oModel.resolve(this.sPath, this.oContext),
 			sPredicate,
+			bStartBeyondRange = iStart > this.aContexts.length,
 			that = this;
 
 		/*
 		 * Shrinks contexts to the new length, destroys unneeded contexts
 		 */
-		function shrinkContexts(iNewLength) {
-			var i;
+		function shrinkContexts() {
+			var i,
+				iNewLength = that.iMaxLength + that.iCreatedContexts;
+
+			if (iNewLength >= that.aContexts.length) {
+				return;
+			}
 
 			for (i = iNewLength; i < that.aContexts.length; i += 1) {
 				if (that.aContexts[i]) {
@@ -542,15 +552,16 @@ sap.ui.define([
 		for (i = iStart; i < iStart + aResults.length; i += 1) {
 			if (this.aContexts[i] === undefined) {
 				bChanged = true;
+				i$skipIndex = i - this.iCreatedContexts; // index on server ($skip)
 				sPredicate = _Helper.getPrivateAnnotation(aResults[i - iStart], "predicate");
-				sContextPath = sPath + (sPredicate || "/" + i);
+				sContextPath = sPath + (sPredicate || "/" + i$skipIndex);
 				if (sContextPath in this.mPreviousContextsByPath) {
 					this.aContexts[i] = this.mPreviousContextsByPath[sContextPath];
 					delete this.mPreviousContextsByPath[sContextPath];
-					this.aContexts[i].setIndex(i);
+					this.aContexts[i].iIndex = i$skipIndex;
 					this.aContexts[i].checkUpdate();
 				} else {
-					this.aContexts[i] = Context.create(oModel, this, sContextPath, i);
+					this.aContexts[i] = Context.create(oModel, this, sContextPath, i$skipIndex);
 				}
 			}
 		}
@@ -564,25 +575,22 @@ sap.ui.define([
 			});
 		}
 		if (iCount !== undefined) {
-			if (this.aContexts.length > iCount) {
-				shrinkContexts(iCount);
-			}
-			this.iMaxLength = iCount;
 			this.bLengthFinal = true;
+			this.iMaxLength = iCount;
+			shrinkContexts();
 		} else {
-			if (this.aContexts.length > this.iMaxLength) { // upper boundary obsolete: reset it
+			if (aResults.length < iLength) { // "short read"
+				this.iMaxLength = iStart - this.iCreatedContexts + aResults.length;
+				shrinkContexts();
+			} else if (this.aContexts.length > this.iMaxLength + this.iCreatedContexts) {
+				// upper boundary obsolete: reset it
 				this.iMaxLength = Infinity;
-			}
-			if (aResults.length < iLength) {
-				this.iMaxLength = iStart + aResults.length;
-				if (this.aContexts.length > this.iMaxLength) {
-					shrinkContexts(this.iMaxLength);
-				}
 			}
 			// If we started to read beyond the range that we read before and the result is
 			// empty, we cannot say anything about the length
-			if (!(iStart > iInitialLength && aResults.length === 0)) {
-				this.bLengthFinal = this.aContexts.length === this.iMaxLength;
+			if (!(bStartBeyondRange && aResults.length === 0)) {
+				this.bLengthFinal
+					= this.aContexts.length === this.iMaxLength + this.iCreatedContexts;
 			}
 		}
 		if (this.bLengthFinal !== bLengthFinal) {
@@ -609,21 +617,20 @@ sap.ui.define([
 		if (this.oHeaderContext) {
 			this.oHeaderContext.destroy();
 		}
-		if (this.aContexts[-1]) {
-			this.aContexts[-1].destroy();
-		}
 		this.oModel.bindingDestroyed(this);
 		this.removeReadGroupLock();
-		this.mAggregatedQueryOptions = undefined;
 		this.oAggregation = undefined;
 		this.aApplicationFilters = undefined;
 		this.oCachePromise = SyncPromise.resolve(); // be nice to #withCache;
 		this.oContext = undefined;
 		this.aContexts = undefined;
+		this.oDiff = undefined;
 		this.aFilters = undefined;
 		this.oHeaderContext = undefined;
+//		this.mParameters = undefined;
 		this.mPreviousContextsByPath = undefined;
 		this.aPreviousData = undefined;
+		this.mQueryOptions = undefined;
 		this.aSorters = undefined;
 
 		asODataParentBinding.prototype.destroy.apply(this);
@@ -983,7 +990,6 @@ sap.ui.define([
 	 * @since 1.37.0
 	 */
 	ODataListBinding.prototype.getContexts = function (iStart, iLength, iMaximumPrefetchSize) {
-		// iStart: in view coordinates (always starting with 0)
 		var sChangeReason,
 			oContext = this.oContext,
 			aContexts,
@@ -992,7 +998,6 @@ sap.ui.define([
 			oGroupLock,
 			oPromise,
 			bRefreshEvent = !!this.sChangeReason,
-			iStartInModel, // in model coordinates
 			oVirtualContext,
 			that = this;
 
@@ -1044,7 +1049,6 @@ sap.ui.define([
 		if (!iMaximumPrefetchSize || iMaximumPrefetchSize < 0) {
 			iMaximumPrefetchSize = 0;
 		}
-		iStartInModel = this.aContexts[-1] ? iStart - 1 : iStart;
 
 		oGroupLock = this.oReadGroupLock;
 		this.oReadGroupLock = undefined;
@@ -1053,7 +1057,7 @@ sap.ui.define([
 				if (oCache) {
 					// getContexts needs no lock, only the group ID (or re-use the refresh lock)
 					oGroupLock = that.lockGroup(that.getGroupId(), oGroupLock);
-					return oCache.read(iStartInModel, iLength, iMaximumPrefetchSize, oGroupLock,
+					return oCache.read(iStart, iLength, iMaximumPrefetchSize, oGroupLock,
 						function () {
 							bDataRequested = true;
 							that.fireDataRequested();
@@ -1069,11 +1073,7 @@ sap.ui.define([
 						// parent binding
 						aResult = aResult || [];
 						iCount = aResult.$count;
-						if (iStartInModel < 0) {
-							aResult = [aResult[-1]].concat(aResult.slice(0, iLength - 1));
-						} else {
-							aResult = aResult.slice(iStartInModel, iStartInModel + iLength);
-						}
+						aResult = aResult.slice(iStart, iStart + iLength);
 						aResult.$count = iCount;
 						return {
 							value : aResult
@@ -1090,11 +1090,11 @@ sap.ui.define([
 
 				// ensure that the result is still relevant
 				if (!that.bRelative || that.oContext === oContext) {
-					bChanged = that.createContexts(iStartInModel, iLength, oResult.value);
+					bChanged = that.createContexts(iStart, iLength, oResult.value);
 					if (that.bUseExtendedChangeDetection) {
 						that.oDiff = {
-							// aResult[0] corresponds to oRange.start = iStartInModel for E.C.D.
-							aDiff : that.getDiff(oResult.value, iStartInModel),
+							// oResult.value[0] corresponds to iStart for E.C.D.
+							aDiff : that.getDiff(oResult.value, iStart),
 							iLength : iLength
 						};
 					}
@@ -1128,14 +1128,9 @@ sap.ui.define([
 			// in case of asynchronous processing ensure to fire a change event
 			bFireChange = true;
 		}
-		this.iCurrentBegin = iStartInModel;
-		this.iCurrentEnd = iStartInModel + iLength;
-		if (iStartInModel === -1) {
-			aContexts = this.aContexts.slice(0, iStartInModel + iLength);
-			aContexts.unshift(this.aContexts[-1]);
-		} else {
-			aContexts = this.aContexts.slice(iStartInModel, iStartInModel + iLength);
-		}
+		this.iCurrentBegin = iStart;
+		this.iCurrentEnd = iStart + iLength;
+		aContexts = this.aContexts.slice(iStart, iStart + iLength);
 		if (this.bUseExtendedChangeDetection) {
 			if (this.oDiff && iLength !== this.oDiff.iLength) {
 				throw new Error("Extended change detection protocol violation: Expected "
@@ -1164,19 +1159,14 @@ sap.ui.define([
 	 */
 	// @override
 	ODataListBinding.prototype.getCurrentContexts = function () {
-		var aContexts,
-			iLength = Math.min(this.iCurrentEnd, this.iMaxLength) - this.iCurrentBegin;
-
-		if (this.iCurrentBegin === -1) {
-			aContexts = this.aContexts.slice(0, this.iCurrentBegin + iLength);
-			aContexts.unshift(this.aContexts[-1]);
-		} else {
+		var iLength = Math.min(this.iCurrentEnd, this.iMaxLength + this.iCreatedContexts)
+				- this.iCurrentBegin,
 			aContexts = this.aContexts.slice(this.iCurrentBegin, this.iCurrentBegin + iLength);
-		}
 
 		while (aContexts.length < iLength) {
 			aContexts.push(undefined);
 		}
+
 		return aContexts;
 	};
 
@@ -1197,9 +1187,8 @@ sap.ui.define([
 	 *
 	 * @param {object[]} aResult
 	 *   The array of OData entities read in the last request
-	 * @param {number} iStartInModel
-	 *   The start index in model coordinates of the range for which the OData entities have been
-	 *   read
+	 * @param {number} iStart
+	 *   The start index of the range for which the OData entities have been read
 	 * @returns {object}
 	 *   The array of differences which is
 	 *   <ul>
@@ -1211,7 +1200,7 @@ sap.ui.define([
 	 *
 	 * @private
 	 */
-	ODataListBinding.prototype.getDiff = function (aResult, iStartInModel) {
+	ODataListBinding.prototype.getDiff = function (aResult, iStart) {
 		var aDiff,
 			aNewData,
 			that = this;
@@ -1219,7 +1208,7 @@ sap.ui.define([
 		aNewData = aResult.map(function (oEntity, i) {
 			return that.bDetectUpdates
 				? JSON.stringify(oEntity)
-				: that.aContexts[iStartInModel + i].getPath();
+				: that.aContexts[iStart + i].getPath();
 		});
 		aDiff = jQuery.sap.arraySymbolDiff(this.aPreviousData, aNewData);
 		this.aPreviousData = aNewData;
@@ -1321,7 +1310,7 @@ sap.ui.define([
 
 	/**
 	 * Returns the number of entries in the list. As long as the client does not know the size on
-	 * the server an estimated length is returned.
+	 * the server, an estimated length is returned.
 	 *
 	 * @returns {number}
 	 *   The number of entries in the list
@@ -1332,17 +1321,11 @@ sap.ui.define([
 	 */
 	 // @override
 	ODataListBinding.prototype.getLength = function () {
-		var iLength;
-
 		if (this.bLengthFinal) {
-			iLength = this.iMaxLength;
-		} else {
-			iLength = this.aContexts.length ? this.aContexts.length + 10 : 0;
+			// Note: non-transient created entities exist twice
+			return this.iMaxLength + this.iCreatedContexts;
 		}
-		if (this.aContexts[-1]) {
-			iLength += 1; // Note: non-transient created entities exist twice
-		}
-		return iLength;
+		return this.aContexts.length ? this.aContexts.length + 10 : 0;
 	};
 
 	/**
@@ -1433,22 +1416,16 @@ sap.ui.define([
 	 */
 	ODataListBinding.prototype.refreshInternal = function (sResourcePathPrefix, sGroupId,
 			bCheckUpdate) {
-		var aContexts = this.aContexts, // keep it, because reset sets a new, empty array
-			that = this;
+		var that = this;
 
 		function refreshDependentBindings() {
-			// Do not use this.getDependentBindings() because this still contains the children of
-			// the -1 context which will not survive.
-			// The array may be sparse, but forEach skips the gaps and the -1
-			aContexts.forEach(function (oContext) {
-				that.oModel.getDependentBindings(oContext).forEach(function (oDependentBinding) {
-					// Call refreshInternal with bCheckUpdate = false because property bindings
-					// should not check for updates yet, otherwise they will cause a "Failed to
-					// drill down..." when the row is no longer part of the collection. They get
-					// another update request in createContexts, when the context for the row is
-					// reused.
-					oDependentBinding.refreshInternal(sResourcePathPrefix, sGroupId, false);
-				});
+			that.oModel.getDependentBindings(that).forEach(function (oDependentBinding) {
+				// Call refreshInternal with bCheckUpdate = false because property bindings
+				// should not check for updates yet, otherwise they will cause a "Failed to
+				// drill down..." when the row is no longer part of the collection. They get
+				// another update request in createContexts, when the context for the row is
+				// reused.
+				oDependentBinding.refreshInternal(sResourcePathPrefix, sGroupId, false);
 			});
 		}
 
@@ -1512,13 +1489,13 @@ sap.ui.define([
 				var oContextOfDeletedRow = that.aContexts[iIndex],
 					i;
 
-				if (iIndex === -1) {
-					delete that.aContexts[-1];
+				that.aContexts.splice(iIndex, 1);
+				if (oContextOfDeletedRow.created()) {
+					that.iCreatedContexts -= 1;
 				} else {
-					that.aContexts.splice(iIndex, 1);
 					for (i = iIndex; i < that.aContexts.length; i += 1) {
 						if (that.aContexts[i]) {
-							that.aContexts[i].setIndex(i);
+							that.aContexts[i].iIndex -= 1;
 						}
 					}
 				}
@@ -1530,9 +1507,9 @@ sap.ui.define([
 			oGroupLock.setGroupId(that.getGroupId());
 			aPromises.push(
 				(bAllowRemoval
-					? oCache.refreshSingleWithRemove(oGroupLock, oContext.iIndex, fireDataRequested,
-						onRemove)
-					: oCache.refreshSingle(oGroupLock, oContext.iIndex, fireDataRequested))
+					? oCache.refreshSingleWithRemove(oGroupLock, oContext.getIndex(),
+						fireDataRequested, onRemove)
+					: oCache.refreshSingle(oGroupLock, oContext.getIndex(), fireDataRequested))
 				.then(function (oEntity) {
 					var aUpdatePromises = [];
 
@@ -1633,20 +1610,22 @@ sap.ui.define([
 
 		if (this.aContexts) {
 			this.aContexts.forEach(function (oContext) {
-				that.mPreviousContextsByPath[oContext.getPath()] = oContext;
+				if (oContext.created()) {
+					oContext.destroy();
+				} else {
+					that.mPreviousContextsByPath[oContext.getPath()] = oContext;
+				}
 			});
-			if (this.aContexts[-1]) {
-				this.aContexts[-1].destroy();
-			}
 		}
 		this.aContexts = [];
-		// the range for getCurrentContexts
+		this.iCreatedContexts = 0; // number of (client-side) created contexts in aContexts
+		// the range of array indices for getCurrentContexts
 		this.iCurrentBegin = this.iCurrentEnd = 0;
 		// upper boundary for server-side list length (based on observations so far)
-		// Note: Non-transient created entities are included and exist twice: with index -1 and
-		// with some unknown (server-side) index i >= 0!
-		// Thus it is OK to compare this.aContexts.length and this.iMaxLength!
-		// BUT: the binding's length can be one greater than this.iMaxLength due to index -1!
+		// Note: Non-transient created entities are included and exist twice: with index 0 and
+		// with some unknown (server-side) index i > 0!
+		// Compare only this.aContexts.length and this.iMaxLength + this.iCreatedContexts!
+		// Note: the binding's length can be greater than this.iMaxLength due to iCreatedContexts!
 		this.iMaxLength = Infinity;
 		this.bLengthFinal = false;
 		if (sChangeReason && !(bEmpty && sChangeReason === ChangeReason.Change)) {
@@ -1796,9 +1775,9 @@ sap.ui.define([
 				// Keep the header context even if we lose the parent context, so that the header
 				// context remains unchanged if the parent context is temporarily dropped during a
 				// refresh.
-				if (this.aContexts[-1] && this.aContexts[-1].isTransient()) {
-					// to allow switching the context for new created entities (transient or not)
-					// we first have to implement a store/restore mechanism for the -1 entry
+				if (this.aContexts[0] && this.aContexts[0].isTransient()) {
+					// to allow switching the context for new created entities (transient or not),
+					// we first have to implement a store/restore mechanism for them
 					throw new Error("setContext on relative binding is forbidden if a transient " +
 						"entity exists: " + this);
 				}

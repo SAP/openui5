@@ -164,7 +164,7 @@ sap.ui.define([
 	 * Returns a promise to be resolved with an OData object for a range of the requested data.
 	 *
 	 * @param {number} iIndex
-	 *   The start index of the range in model coordinates; the first row has index -1 or 0!
+	 *   The start index of the range
 	 * @param {number} iLength
 	 *   The length of the range; <code>Infinity</code> is supported
 	 * @param {number} iPrefetchLength
@@ -395,9 +395,9 @@ sap.ui.define([
 	 * @param {object} mQueryOptions
 	 *   A map of key-value pairs representing the aggregation cache's original query string
 	 * @param {number} iStart
-	 *   The index of the first element to request ($skip)
+	 *   The start index of the range
 	 * @param {number} iEnd
-	 *   The index after the last element to request ($skip + $top)
+	 *   The index after the last element
 	 * @returns {string} The resource path including the query string
 	 *
 	 * @private
