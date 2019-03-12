@@ -400,6 +400,24 @@ sap.ui.define([
 		unbindProperty: function (vControl, sPropertyName) {},
 
 		/**
+		 * See {@link sap.ui.base.ManagedObject#bindAggregation} method
+		 *
+		 * @param {sap.ui.base.ManagedObject | Element} vControl Control representation
+		 * @param {string} sAggregationName Aggregation name
+		 * @param {object} vBindingInfos Binding info
+		 * @public
+		 */
+		bindAggregation: function (vControl, sAggregationName, vBindingInfos) {},
+
+		/**
+		 * See {@link sap.ui.base.ManagedObject#unbindAggregation} method
+		 *
+		 * @param {sap.ui.base.ManagedObject | Element} vControl Control representation
+		 * @param {string} sAggregationName The aggregation to be unbound
+		 */
+		unbindAggregation: function (vControl, sAggregationName) {},
+
+		/**
 		 * See {@link sap.ui.base.ManagedObject#setProperty} method
 		 *
 		 * @param {sap.ui.base.ManagedObject | Element} vControl Control representation
@@ -657,7 +675,28 @@ sap.ui.define([
 		 * @returns {string} module path
 		 * @public
 		 */
-		getChangeHandlerModulePath: function(vControl) {}
+		getChangeHandlerModulePath: function(vControl) {},
 
+		/**
+		 * Attaches event on the specified ManagedObject
+		 *
+		 * @param {sap.ui.base.ManagedObject | Element} vControl control representation
+		 * @param {string} sEventName - Event name
+		 * @param {string} sFunctionPath - Absolute path to a function
+		 * @param {vData} vData - Predefined values for event handler function
+		 * @param
+		 * @public
+		 */
+		attachEvent: function(oObject, sEventName, sFunctionPath, vData) {},
+
+		/**
+		 * Detaches event from the specified ManagedObject
+		 *
+		 * @param {sap.ui.base.ManagedObject | Element} vControl control representation
+		 * @param {string} sEventName - Event name
+		 * @param {string} sFunctionPath - Absolute path to a function
+		 * @public
+		 */
+		detachEvent: function(oObject, sEventName, sFunctionPath) {}
 	};
 });

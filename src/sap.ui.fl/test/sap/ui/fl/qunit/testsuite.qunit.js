@@ -111,6 +111,11 @@ sap.ui.define(function () {
 					}
 				}
 			},
+			"util/ManagedObjectModel": {
+				coverage: {
+					only: ["sap/ui/fl/util/ManagedObjectModel"]
+				}
+			},
 
 			// ChangeHandler tests:
 			"changeHandler/AddXML": {
