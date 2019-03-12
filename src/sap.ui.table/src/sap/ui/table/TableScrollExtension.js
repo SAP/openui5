@@ -524,7 +524,7 @@ sap.ui.define([
 					var nScrollRangeRowFraction = oScrollExtension.getVerticalScrollRangeRowFraction();
 
 					if (!oScrollExtension.isVerticalScrollPositionInBuffer()) {
-						var nRowsToScroll = iScrollDelta / this._getDefaultRowHeight();
+						var nRowsToScroll = iScrollDelta / (oEvent.deltaMode === 0 ? this._getDefaultRowHeight() : nScrollRangeRowFraction);
 
 						// If at least one row is scrolled, floor to full rows. Below one row, we scroll pixels.
 						if (nRowsToScroll > 1) {
