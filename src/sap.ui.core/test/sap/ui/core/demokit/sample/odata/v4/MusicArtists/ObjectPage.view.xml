@@ -90,7 +90,7 @@
 							<ToolbarSpacer/>
 							<Button enabled="{ui-op>/bEditMode}" press="onCreate" text="Create" />
 							<ToolbarSeparator/>
-							<Button press="onRefresh" text="Refresh" />
+							<!--Button press="onRefresh" text="Refresh" /-->
 						</Toolbar>
 					</headerToolbar>
 					<items>
@@ -114,7 +114,7 @@
 					<DraftIndicator id="draftIndicator"/>
 				</contentLeft>
 				<contentRight>
-					<Button press="onRefresh" text="Refresh" />
+					<!--Button press="onRefresh" text="Refresh"/-->
 					<Button enabled="{= !${ui-op>/bEditMode}}" press="onEdit" text="Edit" />
 					<Button enabled="{ui-op>/bEditMode}" press="onDiscard" text="Discard" />
 					<Button enabled="{ui-op>/bEditMode}" press="onSave" text="Save" />

@@ -84,9 +84,9 @@ sap.ui.define([
 						viewName : sViewName,
 						matchers : [
 							// Find the input fields for the new entry
-							new BindingPath({
-								path : "/People/-1"
-							}),
+							function (oControl) {
+								return oControl.getBindingContext().getIndex() === 0;
+							},
 							// Keep only empty input fields
 							function (oItem) {
 								return !oItem.getValue();

@@ -369,6 +369,8 @@ sap.ui.define([
 	 *   The path for the POST request or a SyncPromise that resolves with that path
 	 * @param {string} sPathInCache
 	 *   The path within the cache where to create the entity
+	 * @param {string} sTransientPredicate
+	 *   A (temporary) key predicate for the transient entity: "($uid=...)"
 	 * @param {object} oInitialData
 	 *   The initial data for the created entity
 	 * @param {function} fnCancelCallback
@@ -380,13 +382,14 @@ sap.ui.define([
 	 * @private
 	 */
 	ODataParentBinding.prototype.createInCache = function (oUpdateGroupLock, vCreatePath,
-			sPathInCache, oInitialData, fnCancelCallback) {
+			sPathInCache, sTransientPredicate, oInitialData, fnCancelCallback) {
 		var that = this;
 
 		return this.oCachePromise.then(function (oCache) {
 			if (oCache) {
-				return oCache.create(oUpdateGroupLock, vCreatePath, sPathInCache, oInitialData,
-					fnCancelCallback, function (oError) {
+				return oCache.create(oUpdateGroupLock, vCreatePath, sPathInCache,
+					sTransientPredicate, oInitialData, fnCancelCallback,
+					function (oError) {
 						// error callback
 						that.oModel.reportError("POST on '" + vCreatePath
 							+ "' failed; will be repeated automatically", sClassName, oError);
@@ -400,8 +403,8 @@ sap.ui.define([
 				});
 			}
 			return that.oContext.getBinding().createInCache(oUpdateGroupLock, vCreatePath,
-				_Helper.buildPath(that.oContext.iIndex, that.sPath, sPathInCache), oInitialData,
-				fnCancelCallback);
+				_Helper.buildPath(that.oContext.iIndex, that.sPath, sPathInCache),
+				sTransientPredicate, oInitialData, fnCancelCallback);
 		});
 	};
 
@@ -452,16 +455,6 @@ sap.ui.define([
 	};
 
 	/**
-	 * Destroys the object. The object must not be used anymore after this function was called.
-	 *
-	 * @public
-	 * @since 1.61
-	 */
-	ODataParentBinding.prototype.destroy = function () {
-		this.aChildCanUseCachePromises = [];
-	};
-
-	/**
 	 * Deletes the entity in the cache. If the binding doesn't have a cache, it forwards to the
 	 * parent binding adjusting the path.
 	 *
@@ -503,6 +496,17 @@ sap.ui.define([
 		}
 		return this.oContext.getBinding().deleteFromCache(oGroupLock, sEditUrl,
 			_Helper.buildPath(this.oContext.iIndex, this.sPath, sPath), fnCallback);
+	};
+
+	/**
+	 * Destroys the object. The object must not be used anymore after this function was called.
+	 *
+	 * @public
+	 * @since 1.61
+	 */
+	ODataParentBinding.prototype.destroy = function () {
+//		this.mAggregatedQueryOptions = undefined;
+		this.aChildCanUseCachePromises = [];
 	};
 
 	/**
@@ -694,10 +698,8 @@ sap.ui.define([
 	 * @override
 	 * @see sap.ui.model.odata.v4.ODataBinding#hasPendingChangesInDependents
 	 */
-	ODataParentBinding.prototype.hasPendingChangesInDependents = function (oContext) {
-		var aDependents = oContext
-				? this.oModel.getDependentBindings(oContext)
-				: this.getDependentBindings();
+	ODataParentBinding.prototype.hasPendingChangesInDependents = function () {
+		var aDependents = this.getDependentBindings();
 
 		return aDependents.some(function (oDependent) {
 			var oCache, bHasPendingChanges;

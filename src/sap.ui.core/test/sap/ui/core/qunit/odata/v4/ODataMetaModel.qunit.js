@@ -1015,11 +1015,11 @@ sap.ui.define([
 		var oMetaContext;
 
 		this.oMetaModelMock.expects("getMetaPath")
-			.withExactArgs("/Foo/-1/bar")
+			.withExactArgs("/Foo($uid=id-1-23)/bar")
 			.returns("/Foo/bar");
 
 		// code under test
-		oMetaContext = this.oMetaModel.getMetaContext("/Foo/-1/bar");
+		oMetaContext = this.oMetaModel.getMetaContext("/Foo($uid=id-1-23)/bar");
 
 		assert.strictEqual(oMetaContext.getModel(), this.oMetaModel);
 		assert.strictEqual(oMetaContext.getPath(), "/Foo/bar");
@@ -2479,7 +2479,7 @@ sap.ui.define([
 			predicate : "(~1)"
 		}]
 	}, { // simple entity in transient context
-		dataPath : "/TEAMS/-1",
+		dataPath : "/TEAMS($uid=id-1-23)",
 		canonicalUrl : "/TEAMS(~1)",
 		requests : [{
 			entityType : "tea_busi.TEAM",
@@ -2712,6 +2712,40 @@ sap.ui.define([
 	}, { // entity set w/o navigation property bindings
 		path : "/ServiceGroups('42')/DefaultSystem|SystemAlias",
 		editUrl : "ServiceGroups('42')/DefaultSystem"
+	}, { // transient predicate
+		path : "/TEAMS($uid=id-1-23)|",
+		fetchPredicates : {
+			"/TEAMS($uid=id-1-23)" : "tea_busi.TEAM"
+		},
+		editUrl : "TEAMS(~0)"
+	}, { // navigation to contained entity within a collection via transient predicate
+		path : "/TEAMS($uid=id-1-23)/TEAM_2_CONTAINED_C($uid=id-1-24)|",
+		fetchPredicates : {
+			"/TEAMS($uid=id-1-23)" : "tea_busi.TEAM",
+			"/TEAMS($uid=id-1-23)/TEAM_2_CONTAINED_C($uid=id-1-24)"
+				: "tea_busi.ContainedC"
+		},
+		editUrl : "TEAMS(~0)/TEAM_2_CONTAINED_C(~1)"
+	}, { // navigation from contained to root entity, resolved via navigation property binding path
+		 // via transient predicate
+		path : "/TEAMS($uid=id-1-23)/TEAM_2_CONTAINED_S/S_2_EMPLOYEE|ID",
+		fetchPredicates : {
+			"/TEAMS($uid=id-1-23)/TEAM_2_CONTAINED_S/S_2_EMPLOYEE" : "tea_busi.Worker"
+		},
+		editUrl : "EMPLOYEES(~0)"
+	}, { // decode entity set initially, with transient predicate
+		path : "/T%E2%82%ACAMS($uid=id-1-23)|Name",
+		fetchPredicates : {
+			"/T%E2%82%ACAMS($uid=id-1-23)" : "tea_busi.TEAM"
+		},
+		editUrl : "T%E2%82%ACAMS(~0)"
+	}, { // multiple navigation to root entity via transient predicates
+		path : "/T%E2%82%ACAMS($uid=id-1-23)/TEAM_2_EMPLOYEES($uid=id-2)/EMPLOYEE_2_TEAM|Name",
+		fetchPredicates : {
+			"/T%E2%82%ACAMS($uid=id-1-23)/TEAM_2_EMPLOYEES($uid=id-2)/EMPLOYEE_2_TEAM"
+				: "tea_busi.TEAM"
+		},
+		editUrl : "T%E2%82%ACAMS(~0)"
 	}].forEach(function (oFixture) {
 		QUnit.test("fetchUpdateData: " + oFixture.path, function (assert) {
 			var i = oFixture.path.indexOf("|"),
@@ -2719,11 +2753,15 @@ sap.ui.define([
 				sPropertyPath = oFixture.path.slice(i + 1),
 				oContext = Context.create(this.oModel, undefined, sContextPath),
 				oContextMock = this.mock(oContext),
+				sMetaPath = oFixture.path.replace("|", "/"),
 				oPromise,
 				that = this;
 
+			if (sMetaPath.endsWith("/")) {
+				sMetaPath = sMetaPath.slice(0, -1);
+			}
 			this.oMetaModelMock.expects("getMetaPath")
-				.withExactArgs(oFixture.path.replace("|", "/")).returns("~");
+				.withExactArgs(sMetaPath).returns("~");
 			this.oMetaModelMock.expects("fetchObject").withExactArgs("~")
 				.returns(SyncPromise.resolve(Promise.resolve()).then(function () {
 					that.oMetaModelMock.expects("fetchEntityContainer")
@@ -2756,18 +2794,18 @@ sap.ui.define([
 
 	//*********************************************************************************************
 	QUnit.test("fetchUpdateData: transient entity", function (assert) {
-		var oContext = Context.create(this.oModel, undefined, "/TEAMS/-1"),
+		var oContext = Context.create(this.oModel, undefined, "/TEAMS($uid=id-1-23)"),
 			sPropertyPath = "Name";
 
 		this.oMetaModelMock.expects("fetchEntityContainer").twice()
 			.returns(SyncPromise.resolve(mScope));
-		this.mock(oContext).expects("fetchValue").withExactArgs("/TEAMS/-1")
+		this.mock(oContext).expects("fetchValue").withExactArgs("/TEAMS($uid=id-1-23)")
 			.returns(SyncPromise.resolve({"@$ui5._" : {"transient" : "update"}}));
 
 		// code under test
 		return this.oMetaModel.fetchUpdateData(sPropertyPath, oContext).then(function (oResult) {
 			assert.deepEqual(oResult, {
-				entityPath : "/TEAMS/-1",
+				entityPath : "/TEAMS($uid=id-1-23)",
 				editUrl : undefined,
 				propertyPath : "Name"
 			});
@@ -5432,183 +5470,220 @@ sap.ui.define([
 	});
 
 	//*********************************************************************************************
-	[false, true].forEach(function (bHasStandardCode) {
-		[0, false, true].forEach(function (bHasAlternateKey) {
-			var sTitle = "requestCodeList, with alternate key: " + bHasAlternateKey
-				+ ", with standard code: " + bHasStandardCode;
+	[false, true].forEach(function (bEmptyResponse) {
+		[false, true].forEach(function (bHasStandardCode) {
+			[0, false, true].forEach(function (bHasAlternateKey) {
+				var sTitle = "requestCodeList, empty response: " + bEmptyResponse
+					+ ", with alternate key: " + bHasAlternateKey
+					+ ", with standard code: " + bHasStandardCode;
 
-			QUnit.test(sTitle, function (assert) {
-				var sAbsoluteServiceUrl = "/" + uid() + "/", // circumvent caching
-					oAttachChangeExpectation,
-					oAttachDataReceivedExpectation,
-					oCodeListBinding = {
-						attachChange : function () {},
-						attachDataReceived : function () {},
-						getContexts : function () {}
-					},
-					oCodeListBindingMock = this.mock(oCodeListBinding),
-					oCodeListMetaModel = {
-						getObject : function () {},
-						requestObject : function () {}
-					},
-					oCodeListMetaModelMock = this.mock(oCodeListMetaModel),
-					oCodeListModel = {
-						bindList : function () {},
-						getMetaModel : function () {}
-					},
-					oGetContextsExpectation,
-					oMapGetExpectation,
-					oMapSetExpectation,
-					aSelect = [
-						bHasAlternateKey ? "ExternalCode" : "UnitCode", "DecimalPlaces", "MyText"
-					],
-					sUrl = "../../../../default/iwbep/common/0001/$metadata",
-					that = this;
+				QUnit.test(sTitle, function (assert) {
+					var sAbsoluteServiceUrl = "/" + uid() + "/", // circumvent caching
+						oAttachChangeExpectation,
+						oAttachDataReceivedExpectation,
+						oCodeListBinding = {
+							attachChange : function () {},
+							attachDataReceived : function () {},
+							getContexts : function () {}
+						},
+						oCodeListBindingMock = this.mock(oCodeListBinding),
+						oCodeListMetaModel = {
+							getObject : function () {},
+							requestObject : function () {}
+						},
+						oCodeListMetaModelMock = this.mock(oCodeListMetaModel),
+						oCodeListModel = {
+							bindList : function () {},
+							getMetaModel : function () {},
+							sServiceUrl : "/foo/bar/default/iwbep/common/0001/"
+						},
+						oGetContextsExpectation,
+						oMapGetExpectation,
+						oMapSetExpectation,
+						aSelect = [
+							bHasAlternateKey
+								? "ExternalCode"
+								: "UnitCode", "DecimalPlaces", "MyText"
+						],
+						sUrl = "../../../../default/iwbep/common/0001/$metadata",
+						that = this;
 
-				/*
-				 * Returns mock context instances for the given data rows, properly set up with
-				 * expectations.
-				 *
-				 * @param {object[]} aData - some data rows
-				 * @returns {object[]} mock context instances
-				 */
-				function mock(aData) {
-					return aData.map(function (oData) {
-						var oContext = {getProperty : function () {}},
-							oContextMock = that.mock(oContext);
+					/*
+					 * Returns mock context instances for the given data rows, properly set up with
+					 * expectations.
+					 *
+					 * @param {object[]} aData - some data rows
+					 * @returns {object[]} mock context instances
+					 */
+					function mock(aData) {
+						return aData.map(function (oData) {
+							var oContext = {getProperty : function () {}},
+								oContextMock = that.mock(oContext);
 
-						Object.keys(oData).forEach(function (sKey) {
-							oContextMock.expects("getProperty").withExactArgs(sKey)
-								.returns(oData[sKey]);
+							Object.keys(oData).forEach(function (sKey) {
+								oContextMock.expects("getProperty").withExactArgs(sKey)
+									.returns(oData[sKey]);
+							});
+
+							return oContext;
 						});
+					}
 
-						return oContext;
-					});
-				}
-
-				if (bHasStandardCode) {
-					aSelect.push("ISOCode");
-				}
-				this.oMetaModelMock.expects("fetchEntityContainer").twice()
-					.returns(SyncPromise.resolve(mScope));
-				this.mock(this.oMetaModel).expects("requestObject").twice()
-					.withExactArgs("/@com.sap.vocabularies.CodeList.v1.T€RM")
-					.resolves({
-						CollectionPath: "UnitsOfMeasure",
-						Url: sUrl
-					});
-				this.mock(this.oMetaModel).expects("getAbsoluteServiceUrl").twice()
-					.withExactArgs(sUrl).returns(sAbsoluteServiceUrl);
-				oMapGetExpectation = this.mock(Map.prototype).expects("get").twice()
-					.withExactArgs(sAbsoluteServiceUrl + "#UnitsOfMeasure").callThrough();
-				oMapSetExpectation = this.mock(Map.prototype).expects("set")
-					.withArgs(sAbsoluteServiceUrl + "#UnitsOfMeasure").callThrough();
-				this.mock(this.oMetaModel).expects("getOrCreateSharedModel")
-					.withExactArgs(sUrl, "$direct")
-					.returns(oCodeListModel);
-				this.mock(oCodeListModel).expects("getMetaModel").withExactArgs()
-					.returns(oCodeListMetaModel);
-				oCodeListMetaModelMock.expects("requestObject")
-					.withExactArgs("/UnitsOfMeasure/")
-					.resolves({
-//						$kind : "EntityType",
-						$Key : bHasAlternateKey === 0
-							? [{"MyAlias" : "UnitCode"}] // special case: alias is given
-							: ["UnitCode"]
-					});
-				oCodeListMetaModelMock.expects("getObject")
-					.withExactArgs("/UnitsOfMeasure/@Org.OData.Core.V1.AlternateKeys")
-					.returns(bHasAlternateKey ? [{
-						Key : [{
-//							Alias : "ExternalCode",
-							Name : {$PropertyPath : "ExternalCode"}
-						}]
-					}] : undefined);
-				oCodeListMetaModelMock.expects("getObject")
-					.withExactArgs("/UnitsOfMeasure/UnitCode"
-						+ "@com.sap.vocabularies.Common.v1.UnitSpecificScale/$Path")
-					.returns("DecimalPlaces");
-				oCodeListMetaModelMock.expects("getObject")
-					.withExactArgs("/UnitsOfMeasure/UnitCode"
-						+ "@com.sap.vocabularies.Common.v1.Text/$Path")
-					.returns("MyText");
-				oCodeListMetaModelMock.expects("getObject").withExactArgs("/UnitsOfMeasure/UnitCode"
-						+ "@com.sap.vocabularies.CodeList.v1.StandardCode/$Path")
-					.returns(bHasStandardCode ? "ISOCode" : undefined);
-				this.mock(oCodeListModel).expects("bindList")
-					.withExactArgs("/UnitsOfMeasure", null, null, null, {$select : aSelect})
-					.returns(oCodeListBinding);
-				oAttachChangeExpectation = oCodeListBindingMock.expects("attachChange");
-				oAttachChangeExpectation.withExactArgs(sinon.match.func)
-					.callsFake(function (fnChangeListener) {
-						Promise.resolve().then(function () { // later, call back that listener
-							var aData = bHasAlternateKey ? [
-									{DecimalPlaces : 0, ExternalCode : "ONE", MyText : "One"},
-									{DecimalPlaces : 2, ExternalCode : "%", MyText : "Percentage"},
-									{DecimalPlaces : 3, ExternalCode : "%O", MyText : "Per mille"},
-									{DecimalPlaces : null, ExternalCode : "*", MyText : "ignore!"}
-								] : [
-									{DecimalPlaces : 0, UnitCode : "ONE", MyText : "One"},
-									{DecimalPlaces : 2, UnitCode : "%", MyText : "Percentage"},
-									{DecimalPlaces : 3, UnitCode : "%O", MyText : "Per mille"},
-									{DecimalPlaces : null, UnitCode : "*", MyText : "ignore!"}
-								];
-
-							assert.ok(oGetContextsExpectation.calledAfter(oAttachChangeExpectation),
-								"getContexts will trigger 'change' after listener is attached");
-
-							if (bHasStandardCode) { // not realistic!
-								aData[0].ISOCode = "ENO";
-								aData[1].ISOCode = "P/C";
-								aData[2].ISOCode = "P/M";
-								aData[3].ISOCode = "n/a";
-							}
-							oCodeListBindingMock.expects("getContexts").withExactArgs(0, Infinity)
-								.returns(mock(aData));
-							that.oLogMock.expects("error").withExactArgs("Ignoring customizing w/o"
-									+ " unit-specific scale for code * from UnitsOfMeasure",
-								sUrl, sODataMetaModel);
-
-							// simulate "change" event to call code under test
-							fnChangeListener();
+					if (bHasStandardCode) {
+						aSelect.push("ISOCode");
+					}
+					this.oMetaModelMock.expects("fetchEntityContainer").twice()
+						.returns(SyncPromise.resolve(mScope));
+					this.mock(this.oMetaModel).expects("requestObject").twice()
+						.withExactArgs("/@com.sap.vocabularies.CodeList.v1.T€RM")
+						.resolves({
+							CollectionPath: "UnitsOfMeasure",
+							Url: sUrl
 						});
-					});
-				oAttachDataReceivedExpectation = oCodeListBindingMock.expects("attachDataReceived");
-				oAttachDataReceivedExpectation.withExactArgs(sinon.match.func)
-					.callsFake(function (fnDataReceivedListener) {
-						Promise.resolve().then(function () { // later, call back that listener
-							var oEvent = {getParameter : function () {}};
-
-							assert.ok(
-								oGetContextsExpectation.calledAfter(oAttachDataReceivedExpectation),
-								"getContexts will trigger event after listener is attached");
-							that.mock(oEvent).expects("getParameter").withExactArgs("error")
-								.returns();
-
-							// simulate "dataReceived" event to call code under test
-							fnDataReceivedListener(oEvent);
+					this.mock(this.oMetaModel).expects("getAbsoluteServiceUrl").twice()
+						.withExactArgs(sUrl).returns(sAbsoluteServiceUrl);
+					oMapGetExpectation = this.mock(Map.prototype).expects("get").twice()
+						.withExactArgs(sAbsoluteServiceUrl + "#UnitsOfMeasure").callThrough();
+					oMapSetExpectation = this.mock(Map.prototype).expects("set")
+						.withArgs(sAbsoluteServiceUrl + "#UnitsOfMeasure").callThrough();
+					this.mock(this.oMetaModel).expects("getOrCreateSharedModel")
+						.withExactArgs(sUrl, "$direct")
+						.returns(oCodeListModel);
+					this.mock(oCodeListModel).expects("getMetaModel").withExactArgs()
+						.returns(oCodeListMetaModel);
+					oCodeListMetaModelMock.expects("requestObject")
+						.withExactArgs("/UnitsOfMeasure/")
+						.resolves({
+//							$kind : "EntityType",
+							$Key : bHasAlternateKey === 0
+								? [{"MyAlias" : "UnitCode"}] // special case: alias is given
+								: ["UnitCode"]
 						});
-					});
-				oGetContextsExpectation = oCodeListBindingMock.expects("getContexts")
-					.withExactArgs(0, Infinity);
+					oCodeListMetaModelMock.expects("getObject")
+						.withExactArgs("/UnitsOfMeasure/@Org.OData.Core.V1.AlternateKeys")
+						.returns(bHasAlternateKey ? [{
+							Key : [{
+//								Alias : "ExternalCode",
+								Name : {$PropertyPath : "ExternalCode"}
+							}]
+						}] : undefined);
+					oCodeListMetaModelMock.expects("getObject")
+						.withExactArgs("/UnitsOfMeasure/UnitCode"
+							+ "@com.sap.vocabularies.Common.v1.UnitSpecificScale/$Path")
+						.returns("DecimalPlaces");
+					oCodeListMetaModelMock.expects("getObject")
+						.withExactArgs("/UnitsOfMeasure/UnitCode"
+							+ "@com.sap.vocabularies.Common.v1.Text/$Path")
+						.returns("MyText");
+					oCodeListMetaModelMock.expects("getObject")
+						.withExactArgs("/UnitsOfMeasure/UnitCode"
+							+ "@com.sap.vocabularies.CodeList.v1.StandardCode/$Path")
+						.returns(bHasStandardCode ? "ISOCode" : undefined);
+					this.mock(oCodeListModel).expects("bindList")
+						.withExactArgs("/UnitsOfMeasure", null, null, null, {$select : aSelect})
+						.returns(oCodeListBinding);
+					oAttachChangeExpectation = oCodeListBindingMock.expects("attachChange");
+					oAttachChangeExpectation.withExactArgs(sinon.match.func)
+						.callsFake(function (fnChangeListener) {
+							Promise.resolve().then(function () { // later, call back that listener
+								var aData = [];
 
-				return Promise.all([
-					// code under test
-					this.oMetaModel.requestCodeList("T€RM", mScope[mScope.$EntityContainer]),
-					// code under test - must not request customizing again
-					this.oMetaModel.requestCodeList("T€RM")
-				]).then(function (aResults) {
-					assert.deepEqual(aResults[0], bHasStandardCode ? {
-						"ONE" : {StandardCode : "ENO", Text : "One", UnitSpecificScale : 0},
-						"%" : {StandardCode : "P/C", Text : "Percentage", UnitSpecificScale : 2},
-						"%O" : {StandardCode : "P/M", Text : "Per mille", UnitSpecificScale : 3}
-					} : {
-						"ONE" : {Text : "One", UnitSpecificScale : 0},
-						"%" : {Text : "Percentage", UnitSpecificScale : 2},
-						"%O" : {Text : "Per mille", UnitSpecificScale : 3}
+								if (!bEmptyResponse) {
+									aData = bHasAlternateKey ? [{
+										DecimalPlaces : 0, ExternalCode : "ONE", MyText : "One"
+									}, {
+										DecimalPlaces : 2, ExternalCode : "%", MyText : "Percentage"
+									}, {
+										DecimalPlaces : 3, ExternalCode : "%O", MyText : "Per mille"
+									}, {
+										DecimalPlaces : null, ExternalCode : "*", MyText : "ignore!"
+									}] : [{
+										DecimalPlaces : 0, UnitCode : "ONE", MyText : "One"
+									}, {
+										DecimalPlaces : 2, UnitCode : "%", MyText : "Percentage"
+									}, {
+										DecimalPlaces : 3, UnitCode : "%O", MyText : "Per mille"
+									}, {
+										DecimalPlaces : null, UnitCode : "*", MyText : "ignore!"
+									}];
+								}
+
+								assert.ok(oGetContextsExpectation
+										.calledAfter(oAttachChangeExpectation),
+									"getContexts will trigger 'change' after listener is attached");
+
+								if (!bEmptyResponse && bHasStandardCode) { // not realistic!
+									aData[0].ISOCode = "ENO";
+									aData[1].ISOCode = "P/C";
+									aData[2].ISOCode = "P/M";
+									aData[3].ISOCode = "n/a";
+								}
+								oCodeListBindingMock.expects("getContexts")
+									.withExactArgs(0, Infinity)
+									.returns(mock(aData));
+								that.oLogMock.expects("error")
+									.exactly(bEmptyResponse ? 1 : 0)
+									.withExactArgs("Customizing empty for ",
+										"/foo/bar/default/iwbep/common/0001/UnitsOfMeasure",
+										sODataMetaModel);
+
+								that.oLogMock.expects("error")
+									.exactly(bEmptyResponse ? 0 : 1)
+									.withExactArgs("Ignoring customizing w/o"
+											+ " unit-specific scale for code * from UnitsOfMeasure",
+										sUrl, sODataMetaModel);
+
+								// simulate "change" event to call code under test
+								fnChangeListener();
+							});
+						});
+					oAttachDataReceivedExpectation = oCodeListBindingMock
+						.expects("attachDataReceived");
+					oAttachDataReceivedExpectation.withExactArgs(sinon.match.func)
+						.callsFake(function (fnDataReceivedListener) {
+							Promise.resolve().then(function () { // later, call back that listener
+								var oEvent = {getParameter : function () {}};
+
+								assert.ok(
+									oGetContextsExpectation
+										.calledAfter(oAttachDataReceivedExpectation),
+									"getContexts will trigger event after listener is attached");
+								that.mock(oEvent).expects("getParameter").withExactArgs("error")
+									.returns();
+
+								// simulate "dataReceived" event to call code under test
+								fnDataReceivedListener(oEvent);
+							});
+						});
+					oGetContextsExpectation = oCodeListBindingMock.expects("getContexts")
+						.withExactArgs(0, Infinity);
+
+					return Promise.all([
+						// code under test
+						this.oMetaModel.requestCodeList("T€RM", mScope[mScope.$EntityContainer]),
+						// code under test - must not request customizing again
+						this.oMetaModel.requestCodeList("T€RM")
+					]).then(function (aResults) {
+						var oExpectedCodeList = {};
+
+						if (!bEmptyResponse) {
+							oExpectedCodeList = bHasStandardCode ? {
+								"ONE" : {StandardCode : "ENO", Text : "One", UnitSpecificScale : 0},
+								"%" : {StandardCode : "P/C", Text : "Percentage",
+									UnitSpecificScale : 2},
+								"%O" : {StandardCode : "P/M", Text : "Per mille",
+									UnitSpecificScale : 3}
+							} : {
+								"ONE" : {Text : "One", UnitSpecificScale : 0},
+								"%" : {Text : "Percentage", UnitSpecificScale : 2},
+								"%O" : {Text : "Per mille", UnitSpecificScale : 3}
+							};
+						}
+						assert.deepEqual(aResults[0], oExpectedCodeList);
+						assert.strictEqual(aResults[1], aResults[0]);
+						assert.ok(oMapGetExpectation
+							.alwaysCalledOn(oMapSetExpectation.thisValues[0]));
 					});
-					assert.strictEqual(aResults[1], aResults[0]);
-					assert.ok(oMapGetExpectation.alwaysCalledOn(oMapSetExpectation.thisValues[0]));
 				});
 			});
 		});

@@ -145,7 +145,7 @@ sap.ui.define([
 	});
 
 	//*********************************************************************************************
-	QUnit.test("getIndex() adds 1 when there is a created context", function (assert) {
+	QUnit.test("getIndex() adds number of created contexts", function (assert) {
 		var oBinding = {},
 			oContext;
 
@@ -153,11 +153,10 @@ sap.ui.define([
 
 		assert.strictEqual(oContext.getIndex(), 42);
 
-		// simulate ODataListBinding#create
-		oBinding.aContexts = [];
-		oBinding.aContexts[-1] = {};
+		// simulate ODataListBinding#create (7x)
+		oBinding.iCreatedContexts = 7;
 
-		assert.strictEqual(oContext.getIndex(), 43);
+		assert.strictEqual(oContext.getIndex(), 49);
 	});
 
 	//*********************************************************************************************
@@ -914,7 +913,7 @@ sap.ui.define([
 			},
 			oGroupLock = {},
 			oModel = {},
-			oContext = Context.create(oModel, oBinding, "/EMPLOYEES/-1", -1,
+			oContext = Context.create(oModel, oBinding, "/EMPLOYEES($uid=id-1-23)", -1,
 				new Promise(function () {}));
 
 		this.mock(oBinding).expects("_delete")
@@ -1051,14 +1050,6 @@ sap.ui.define([
 			assert.strictEqual(bBinding1Updated, true);
 			assert.strictEqual(bBinding2Updated, true);
 		});
-	});
-
-	//*********************************************************************************************
-	QUnit.test("setIndex", function (assert) {
-		var oContext = Context.create({/*oModel*/}, {/*oBinding*/}, "/EMPLOYEES('42')", 42);
-
-		oContext.setIndex(23);
-		assert.strictEqual(oContext.getIndex(), 23);
 	});
 
 	//*********************************************************************************************
@@ -1412,3 +1403,4 @@ sap.ui.define([
 		}, new Error("Unsupported context: " + oContext));
 	});
 });
+//TODO do not allow refresh if isTransient(); see CPOUI5UISERVICESV3-1777

@@ -15,7 +15,8 @@ sap.ui.define([
 	var aChangeReasonPrecedence = [ChangeReason.Change, ChangeReason.Refresh, ChangeReason.Sort,
 			ChangeReason.Filter],
 		sClassName = "sap.ui.model.odata.v4.ODataBinding",
-		rIndexInPath = /\/-?\d/;
+		// Whether a path segment is an index or contains a transient predicate
+		rIndexOrTransientPredicate = /\/\d|\(\$uid=/;
 
 	/**
 	 * A mixin for all OData V4 bindings.
@@ -27,6 +28,8 @@ sap.ui.define([
 		// maps a canonical path of a quasi-absolute or relative binding to a cache object that may
 		// be reused
 		this.mCacheByResourcePath = undefined;
+		// used to create cache only for the latest call to #fetchCache
+		this.oFetchCacheCallToken = undefined;
 		// change reason to be used when the binding is resumed
 		this.sResumeChangeReason = ChangeReason.Change;
 	}
@@ -314,7 +317,7 @@ sap.ui.define([
 		sContextPath = oContext.getPath();
 		bCanonicalPath = oContext.fetchCanonicalPath
 			&& (this.mParameters && this.mParameters["$$canonicalPath"]
-				|| rIndexInPath.test(sContextPath));
+				|| rIndexOrTransientPredicate.test(sContextPath));
 		oContextPathPromise = bCanonicalPath
 			? oContext.fetchCanonicalPath()
 			: SyncPromise.resolve(sContextPath);
@@ -524,13 +527,10 @@ sap.ui.define([
 	};
 
 	/**
-	 * Returns whether any dependent binding of the given context has pending changes; checks all
-	 * dependent bindings of this binding if no context is given.
+	 * Returns whether any dependent binding of this binding has pending changes
 	 *
-	 * @param {sap.ui.model.odata.v4.Context} [oContext]
-	 *   A context
 	 * @returns {boolean}
-	 *   <code>true</code> if the binding has pending changes
+	 *   <code>true</code> if this binding has pending changes
 	 *
 	 * @abstract
 	 * @function
