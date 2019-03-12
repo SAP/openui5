@@ -486,6 +486,7 @@ function(
 
 		QUnit.test("when calling 'updateCurrentVariant' with root app component", function(assert) {
 			var fnUpdateCurrentVariantInMapStub = sandbox.stub(this.oModel.oVariantController, "updateCurrentVariantInMap");
+			var oSetVariantSwitchPromiseStub = sandbox.stub(this.oFlexController, "setVariantSwitchPromise");
 
 			assert.equal(this.oModel.oData["variantMgmtId1"].currentVariant, "variant1", "then initially current variant is variant1");
 			assert.equal(this.oModel.oData["variantMgmtId1"].originalCurrentVariant, "variant1", "then initially original current variant is variant1");
@@ -498,6 +499,7 @@ function(
 					currentVariantReference: "variant1",
 					newVariantReference: "variant0"
 				}), "then ChangePersistence.loadSwitchChangesMapForComponent() called with correct parameters");
+				assert.ok(oSetVariantSwitchPromiseStub.calledBefore(this.fnRevertChangesStub), "the promise was first set");
 				assert.ok(this.fnLoadSwitchChangesStub.calledOnce, "then loadSwitchChangesMapForComponent called once from ChangePersitence");
 				assert.ok(this.fnRevertChangesStub.calledOnce, "then revertChangesOnControl called once in FlexController");
 				assert.ok(this.fnApplyChangesStub.calledOnce, "then applyVariantChanges called once in FlexController");
