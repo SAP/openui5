@@ -23,17 +23,17 @@
 						<Text text="Cards using navigation service."/>
 					</VBox>
 					<HBox>
-						<w:Card class="sapUiMediumMargin" manifest="./cardcontent/navigationService/manifest_navigationService.json" width="400px" height="auto"/>
-						<w:Card class="sapUiMediumMargin" manifest="./cardcontent/navigationService/manifest_navigationService2.json" width="400px" height="auto"/>
-						<w:Card class="sapUiMediumMargin" manifest="./cardcontent/navigationService/manifest_navigationService3.json" width="400px" height="auto"/>
-						<w:Card class="sapUiMediumMargin" manifest="./cardcontent/navigationService/manifest_navigationService4.json" width="400px" height="auto"/>
+						<w:Card class="sapUiMediumMargin" action="onActionLog" manifest="./cardcontent/navigationService/manifest_navigationService.json" width="400px" height="auto"/>
+						<w:Card class="sapUiMediumMargin" action="onActionLog" manifest="./cardcontent/navigationService/manifest_navigationService2.json" width="400px" height="auto"/>
+						<w:Card class="sapUiMediumMargin" action="onActionLog" manifest="./cardcontent/navigationService/manifest_navigationService3.json" width="400px" height="auto"/>
+						<w:Card class="sapUiMediumMargin" action="onActionLog" manifest="./cardcontent/navigationService/manifest_navigationService4.json" width="400px" height="auto"/>
 					</HBox>
 					<VBox class="sapUiMediumMarginLeft">
 						<Text text="Cards using navigation action event."/>
 					</VBox>
 					<HBox>
-						<w:Card id="CardNavigationActionEvent" class="sapUiMediumMargin" manifest="./cardcontent/navigationService/manifest_navigationAction.json" width="400px" height="auto"/>
-						<w:Card id="TableCardNavigationActionEvent" class="sapUiMediumMargin" manifest="./cardcontent/navigationService/manifest_navigationActionTable.json" width="400px" height="auto"/>
+						<w:Card action="onAction" class="sapUiMediumMargin" manifest="./cardcontent/navigationService/manifest_navigationAction.json" width="400px" height="auto"/>
+						<w:Card action="onAction" class="sapUiMediumMargin" manifest="./cardcontent/navigationService/manifest_navigationActionTable.json" width="400px" height="auto"/>
 					</HBox>
 				</VBox>
 			</Panel>

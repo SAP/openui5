@@ -1,5 +1,8 @@
 {
 	"line": {
+		"sap.app": {
+			"type": "card"
+		},
 		"sap.card": {
 			"type": "Analytical",
 			"header": {
@@ -175,6 +178,9 @@
 		}
 	},
 	"stackedColumn": {
+		"sap.app": {
+			"type": "card"
+		},
 		"sap.card": {
 			"type": "Analytical",
 			"header": {
@@ -333,6 +339,9 @@
 		}
 	},
 	"stackedBar": {
+		"sap.app": {
+			"type": "card"
+		},
 		"sap.card": {
 			"type": "Analytical",
 			"header": {
@@ -479,6 +488,9 @@
 		}
 	},
 	"donut": {
+		"sap.app": {
+			"type": "card"
+		},
 		"sap.card": {
 			"type": "Analytical",
 			"header": {
@@ -579,6 +591,9 @@
 		}
 	},
 	"donut1": {
+		"sap.app": {
+			"type": "card"
+		},
 		"sap.card": {
 			"type": "Analytical",
 			"header": {
@@ -657,6 +672,9 @@
 		}
 	},
 	"donut2": {
+		"sap.app": {
+			"type": "card"
+		},
 		"sap.card": {
 			"type": "Analytical",
 			"header": {
@@ -735,6 +753,9 @@
 		}
 	},
 	"donut3": {
+		"sap.app": {
+			"type": "card"
+		},
 		"sap.card": {
 			"type": "Analytical",
 			"header": {
@@ -813,6 +834,9 @@
 		}
 	},
 	"donut4": {
+		"sap.app": {
+			"type": "card"
+		},
 		"sap.card": {
 			"type": "Analytical",
 			"header": {
@@ -891,6 +915,9 @@
 		}
 	},
 	"donut5": {
+		"sap.app": {
+			"type": "card"
+		},
 		"sap.card": {
 			"type": "Analytical",
 			"header": {
@@ -969,6 +996,9 @@
 		}
 	},
 	"donut6": {
+		"sap.app": {
+			"type": "card"
+		},
 		"sap.card": {
 			"type": "Analytical",
 			"header": {

@@ -114,6 +114,39 @@ sap.ui.define([
 					visibility : "hidden"
 				}
 			},
+			events: {
+
+				/**
+				 * Fired when an action is triggered on the card.
+				 * @experimental since 1.64
+				 * Disclaimer: this property is in a beta state - incompatible API changes may be done before its official public release. Use at your own discretion.
+				 */
+				action: {
+					parameters: {
+
+						/**
+						 * The action source.
+						 */
+						actionSource: {
+							type: "sap.ui.core.Control"
+						},
+
+						/**
+						 * The manifest parameters related to the triggered action.
+						*/
+						manifestParameters: {
+							type: "object"
+						},
+
+						/**
+						 * The type of the action.
+						 */
+						type: {
+							type: "sap.ui.integration.CardActionType"
+						}
+					}
+				}
+			},
 			associations: {
 
 				/**
@@ -394,10 +427,10 @@ sap.ui.define([
 			this.fireEvent("_headerUpdated");
 			this.setBusy(false);
 		}.bind(this));
-		oHeader.attachEvent("onAction", function (oEvent) {
-			this.fireEvent("onAction", {
+		oHeader.attachEvent("action", function (oEvent) {
+			this.fireEvent("action", {
 				manifestParameters: oEvent.getParameter("manifestParameters"),
-				semanticObject: oEvent.getParameter("semanticObject"),
+				actionSource: oEvent.getParameter("actionSource"),
 				type: oEvent.getParameter("type")
 			});
 		}.bind(this));
@@ -471,10 +504,10 @@ sap.ui.define([
 			this.setBusy(false);
 		}.bind(this));
 
-		oContent.attachEvent("onAction", function (oEvent) {
-			this.fireEvent("onAction", {
+		oContent.attachEvent("action", function (oEvent) {
+			this.fireEvent("action", {
+				actionSource: oEvent.getParameter("actionSource"),
 				manifestParameters: oEvent.getParameter("manifestParameters"),
-				semanticObject: oEvent.getParameter("semanticObject"),
 				type: oEvent.getParameter("type")
 			});
 		}.bind(this));
