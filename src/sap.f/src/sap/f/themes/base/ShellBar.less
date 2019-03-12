@@ -20,6 +20,10 @@
 			margin-left: 0;
 		}
 
+		:first-child.sapFShellBarHomeIcon {
+			margin-left: 1px;
+		}
+
 		.sapUiHiddenPlaceholder:first-child + * {
 			margin-left: 0;
 		}
@@ -98,6 +102,28 @@
 		}
 		.color2 {
 			stop-color: #1C61BA;
+		}
+		&:focus {
+			outline: 1px dotted @sapUiContentFocusColor;
+			outline-offset: -3px;
+		}
+		html[data-sap-ui-browser^="ed"] &:focus {
+			outline-style: dashed;
+		}
+		html[data-sap-ui-browser^="ie"] &:focus {
+			outline: none;
+			position: relative;
+		}
+		html[data-sap-ui-browser^="ie"] &:focus:before {
+			content: " ";
+			box-sizing: border-box;
+			width: 100%;
+			height: 100%;
+			position: absolute;
+			left: 0;
+			top: 0;
+			border: 1px dashed @sapUiContentFocusColor;
+			pointer-events: none;
 		}
 	}
 
