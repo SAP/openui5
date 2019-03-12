@@ -25,7 +25,7 @@
 				},
 				"path": "/content"
 			},
-			"numberOfItems": 3,
+			"maxItems": 3,
 			"item": {
 				"title": {
 					"label": "{{title_label}}",

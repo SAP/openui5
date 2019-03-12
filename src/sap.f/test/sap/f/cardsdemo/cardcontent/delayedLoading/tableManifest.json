@@ -24,7 +24,7 @@
 				},
 				"path": "/content"
 			},
-			"numberOfItems": 9,
+			"maxItems": 9,
 			"row": {
 				"columns": [
 					{
