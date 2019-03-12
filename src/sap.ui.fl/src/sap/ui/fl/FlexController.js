@@ -648,31 +648,30 @@ sap.ui.define([
 			})
 			.then(function() {
 				oChange.startApplying();
-				var oInitializedControl = oChangeHandler.applyChange(oChange, mControl.control, mPropertyBag);
-				if (mControl.bTemplateAffected) {
-					oModifier.updateAggregation(oControl, oChange.getContent().boundAggregation);
-				}
-				return oInitializedControl;
+				return oChangeHandler.applyChange(oChange, mControl.control, mPropertyBag);
 			})
 			.then(function(oInitializedControl) {
 				// changeHandler can return a different control, e.g. case where a visible UI control replaces the stashed control
 				if (oInitializedControl instanceof Element) {
 					// the newly rendered control could have custom data set from the XML modifier
-					oControl = oInitializedControl;
+					mControl.control = oInitializedControl;
+				}
+				if (mControl.control) {
+					oModifier.updateAggregation(oControl, oChange.getContent().boundAggregation);
 				}
 				if (!bRevertible && oSettings && oSettings._oSettings.recordUndo && oRtaControlTreeModifier) {
 					oChange.setUndoOperations(oRtaControlTreeModifier.stopRecordingUndo());
 				}
 				// only save the revert data in the custom data when the change is revertible and being processed in XML,
 				// as it's only relevant for viewCache at the moment
-				FlexCustomData.addAppliedCustomData(oControl, oChange, mPropertyBag, bRevertible && bXmlModifier);
+				FlexCustomData.addAppliedCustomData(mControl.control, oChange, mPropertyBag, bRevertible && bXmlModifier);
 				// if a change was reverted previously remove the flag as it is not reverted anymore
 				oResult = {success: true};
 				oChange.markFinished(oResult);
 				return oResult;
 			})
 			.catch(function(oRejectionReason) {
-				this._logErrorAndWriteCustomData(oRejectionReason, oChange, mPropertyBag, oControl, bXmlModifier);
+				this._logErrorAndWriteCustomData(oRejectionReason, oChange, mPropertyBag, mControl.control, bXmlModifier);
 				oResult = {success: false, error: oRejectionReason};
 				oChange.markFinished(oResult);
 				return oResult;
@@ -685,6 +684,9 @@ sap.ui.define([
 		}
 	};
 
+	/**
+	 * If the function is called with bRevert=true then the flex custom data is only removed if the revert is successful.
+	 */
 	FlexController.prototype._removeFromAppliedChangesAndMaybeRevert = function(oChange, oControl, mPropertyBag, bRevert) {
 		var oModifier = mPropertyBag.modifier;
 		var sControlType = oModifier.getControlType(oControl);
@@ -694,8 +696,10 @@ sap.ui.define([
 		var bStashed;
 
 		if (bRevert && !oChangeHandler) {
-			Utils.log.warning("Change handler implementation for change not found or change type not enabled for current layer - Change ignored");
-			return new Utils.FakePromise();
+			var sMessage = "Change handler implementation for change not found or change type not enabled for current layer - Change ignored";
+			Utils.log.warning(sMessage);
+			oChange.markRevertFinished(new Error(sMessage));
+			return new Utils.FakePromise(false);
 		}
 
 		// The stashed control does not have custom data in Runtime,
@@ -715,6 +719,7 @@ sap.ui.define([
 			vResult = oChange.addPromiseForApplyProcessing()
 			.then(function(oResult) {
 				if (oResult && oResult.error) {
+					oChange.markRevertFinished(oResult.error);
 					throw Error(oResult.error);
 				}
 				return true;
@@ -724,8 +729,7 @@ sap.ui.define([
 		}
 
 		return vResult.then(function(bPending) {
-			if (
-				bRevert && (bPending || (!bPending && bIsCurrentlyApplied)) ||
+			if (bRevert && (bPending || (!bPending && bIsCurrentlyApplied)) ||
 				bRevert && bStashed
 			) {
 				// if the change has no revertData attached to it they may be saved in the custom data
@@ -734,26 +738,30 @@ sap.ui.define([
 				}
 
 				oChange.startReverting();
-				var oResponse = oChangeHandler.revertChange(oChange, mControl.control, mPropertyBag);
-				if (mControl.bTemplateAffected) {
-					oModifier.updateAggregation(oControl, oChange.getContent().boundAggregation);
-				}
-				return oResponse;
+				return oChangeHandler.revertChange(oChange, mControl.control, mPropertyBag);
+			} else if (bRevert) {
+				throw Error("Change was never applied");
 			}
 		})
 
 		.then(function() {
 			// After being unstashed the relevant control for the change is no longer sap.ui.core._StashedControl,
 			// therefore it must be retrieved again
-			oControl = mPropertyBag.modifier.bySelector(oChange.getSelector(), mPropertyBag.appComponent, mPropertyBag.view);
+			mControl.control = mPropertyBag.modifier.bySelector(oChange.getSelector(), mPropertyBag.appComponent, mPropertyBag.view);
+			if (mControl.bTemplateAffected) {
+				oModifier.updateAggregation(mControl.control, oChange.getContent().boundAggregation);
+			}
+
 			FlexCustomData.destroyAppliedCustomData(oControl, oChange, mPropertyBag.modifier);
 			oChange.markRevertFinished();
+			return true;
 		})
 
 		.catch(function(oError) {
-			var sErrorMessage = "Change could not be reverted: ";
-			Utils.log.error(sErrorMessage, oError);
-			oChange.markRevertFinished(sErrorMessage + oError.message);
+			var sErrorMessage = "Change could not be reverted: " + oError.message;
+			Utils.log.error(sErrorMessage);
+			oChange.markRevertFinished(sErrorMessage);
+			return false;
 		});
 	};
 
@@ -1119,8 +1127,10 @@ sap.ui.define([
 					view: Utils.getViewForControl(oControl)
 				};
 				return this._removeFromAppliedChangesAndMaybeRevert(oChange, oControl, mPropertyBag, true)
-				.then(function() {
-					this._oChangePersistence._deleteChangeInMap(oChange);
+				.then(function(bSuccess) {
+					if (bSuccess) {
+						this._oChangePersistence._deleteChangeInMap(oChange);
+					}
 				}.bind(this));
 			}.bind(this));
 		}.bind(this));
