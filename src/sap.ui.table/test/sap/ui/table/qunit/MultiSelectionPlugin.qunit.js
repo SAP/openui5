@@ -1,4 +1,4 @@
-/*global QUnit */
+/*global QUnit, sinon */
 
 sap.ui.define([
 	"sap/ui/core/util/MockServer",
@@ -36,6 +36,48 @@ sap.ui.define([
 		oMockServer.start();
 		return oMockServer;
 	}
+
+	QUnit.module("Basics", {
+		beforeEach: function() {
+			this.oTable = new Table();
+		},
+		afterEach: function() {
+			this.oTable.destroy();
+		}
+	});
+
+	QUnit.test("Initialization", function(assert) {
+		var oMultiSelectionPlugin = new MultiSelectionPlugin();
+		assert.strictEqual(oMultiSelectionPlugin.oSelectionPlugin, null, "The MultiSelectionPlugin has no internal default selection plugin");
+		assert.notEqual(oMultiSelectionPlugin.oDeselectAllIcon, null, "The MultiSelectionPlugin has an delete icon");
+	});
+
+	QUnit.test("Add to and remove from table", function(assert) {
+		var oMultiSelectionPlugin = new MultiSelectionPlugin();
+
+		this.oTable.addPlugin(oMultiSelectionPlugin);
+		assert.notEqual(oMultiSelectionPlugin.oSelectionPlugin, null, "The MultiSelectionPlugin has an internal default selection plugin");
+		assert.notEqual(oMultiSelectionPlugin.oDeselectAllIcon, null, "The MultiSelectionPlugin has an delete icon");
+
+		this.oTable.removePlugin(oMultiSelectionPlugin);
+		assert.strictEqual(oMultiSelectionPlugin.oSelectionPlugin, null, "The MultiSelectionPlugin has no internal default selection plugin");
+		assert.notEqual(oMultiSelectionPlugin.oDeselectAllIcon, null, "The MultiSelectionPlugin has an delete icon");
+	});
+
+	QUnit.test("Destruction", function(assert) {
+		var oMultiSelectionPlugin = new MultiSelectionPlugin();
+
+		this.oTable.addPlugin(oMultiSelectionPlugin);
+
+		var oInternalPluginDestroySpy = sinon.spy(oMultiSelectionPlugin.oSelectionPlugin, "destroy");
+		var oDeselectAllIconDestroySpy = sinon.spy(oMultiSelectionPlugin.oDeselectAllIcon, "destroy");
+
+		oMultiSelectionPlugin.destroy();
+		assert.ok(oInternalPluginDestroySpy.calledOnce, "The internal default selection plugin was destroyed");
+		assert.strictEqual(oMultiSelectionPlugin.oSelectionPlugin, null, "The reference to the internal default selection plugin was cleared");
+		assert.ok(oDeselectAllIconDestroySpy.calledOnce, "The delete icon was destroyed");
+		assert.strictEqual(oMultiSelectionPlugin.oDeselectAllIcon, null, "The reference to the delete icon was cleared");
+	});
 
 	QUnit.module("Special multi selection behavior", {
 		beforeEach: function() {
@@ -166,10 +208,5 @@ sap.ui.define([
 				done();
 			}, 10);
 		}, 10);
-	});
-
-	QUnit.test("All plugins are removed", function(assert) {
-		oTable.removeAllPlugins();
-		assert.ok(oTable._oSelectionPlugin.isA("sap.ui.table.plugins.SelectionModelPlugin"), "When MultiSelectionPlugin is removed, SelectionModelPlugin is used");
 	});
 });

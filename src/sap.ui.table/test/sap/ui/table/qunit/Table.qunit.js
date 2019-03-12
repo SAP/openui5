@@ -13,15 +13,16 @@ sap.ui.define([
 	"sap/ui/table/RowActionItem",
 	"sap/ui/table/RowSettings",
 	"sap/ui/table/TableUtils",
-	'sap/ui/table/library',
-	'sap/ui/core/library',
+	"sap/ui/table/library",
+	"sap/ui/table/plugins/SelectionPlugin",
+	"sap/ui/core/library",
 	"sap/ui/core/Control",
 	"sap/ui/core/util/PasteHelper",
 	"sap/ui/Device", "sap/ui/model/json/JSONModel", "sap/ui/model/Sorter", "sap/ui/model/Filter", "sap/ui/model/type/Float",
 	"sap/m/Text", "sap/m/Input", "sap/m/Label", "sap/m/CheckBox", "sap/m/Button", "sap/m/Link", "sap/m/RatingIndicator", "sap/m/Image",
 	"sap/m/Toolbar", "sap/m/ToolbarDesign", "sap/ui/unified/Menu", "sap/ui/unified/MenuItem", "sap/m/Menu", "sap/m/MenuItem", "sap/base/Log"
 ], function(qutils, TableQUnitUtils, Table, Column, ColumnMenu, ColumnMenuRenderer, AnalyticalColumnMenuRenderer, TablePersoController, RowAction,
-			RowActionItem, RowSettings, TableUtils, TableLibrary, CoreLibrary, Control, PasteHelper,
+			RowActionItem, RowSettings, TableUtils, TableLibrary, SelectionPlugin, CoreLibrary, Control, PasteHelper,
 			Device, JSONModel, Sorter, Filter, FloatType,
 			Text, Input, Label, CheckBox, Button, Link, RatingIndicator, Image, Toolbar, ToolbarDesign, Menu, MenuItem, MenuM, MenuItemM, Log) {
 	"use strict";
@@ -309,10 +310,6 @@ sap.ui.define([
 		oTable.filter(oColMoney, "");
 		assert.equal(oColFirstName.getFiltered() && oColMoney.getFiltered(), false, "Column FirstName and Money are not filtered anymore");
 		assert.equal(oTable.getBinding("rows").iLength, 200, "RowCount after removing filter");
-	});
-
-	QUnit.test("Selection Plugin", function(assert) {
-		assert.ok(oTable._oSelectionPlugin.isA("sap.ui.table.plugins.SelectionModelPlugin"), "SelectionModelPlugin is initialized");
 	});
 
 	QUnit.test("SelectionMode", function(assert) {
@@ -4472,5 +4469,31 @@ sap.ui.define([
 		oRM.flush(Div);
 
 		assert.strictEqual(Div.childElementCount, 0, "Nothing should be rendered without synchronization enabled");
+	});
+
+	QUnit.module("Plugins", {
+		beforeEach: function() {
+			this.oTable = new Table();
+		},
+		afterEach: function() {
+			this.oTable.destroy();
+		}
+	});
+
+	QUnit.test("Selection plugin", function(assert) {
+		var TestSelectionPlugin = SelectionPlugin.extend("sap.ui.table.test.SelectionPlugin");
+
+		assert.ok(this.oTable._oSelectionPlugin.isA("sap.ui.table.plugins.SelectionModelPlugin"), "The default selection plugin is used");
+
+		this.oTable.setSelectionMode(SelectionMode.Single);
+		assert.strictEqual(this.oTable.getSelectionMode(), SelectionMode.Single,
+			"If the default selection plugin is used, the selection mode can be set");
+
+		this.oTable.addPlugin(new TestSelectionPlugin());
+		assert.ok(this.oTable._oSelectionPlugin.isA("sap.ui.table.test.SelectionPlugin"), "The selection plugin set to the table is used");
+
+		this.oTable.setSelectionMode(SelectionMode.MultiToggle);
+		assert.strictEqual(this.oTable.getSelectionMode(), SelectionMode.Single,
+			"If a selection plugin is set, the selection mode cannot be set");
 	});
 });

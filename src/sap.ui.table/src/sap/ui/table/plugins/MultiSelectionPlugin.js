@@ -79,11 +79,26 @@ sap.ui.define([
 	 */
 	MultiSelectionPlugin.prototype.init = function() {
 		SelectionPlugin.prototype.init.call(this);
-		this._bLimitReached = false;
+
 		var sapUiTableActionDeleteIcon = ThemeParameters.get("_sap_ui_table_DeleteIcon");
 		var oIcon = new Icon({src: IconPool.getIconURI(sapUiTableActionDeleteIcon), useIconTooltip: false});
 		oIcon.addStyleClass("sapUiTableSelectClear");
+
+		this._bLimitReached = false;
+		this.oSelectionPlugin = null;
 		this.oDeselectAllIcon = oIcon;
+	};
+
+	MultiSelectionPlugin.prototype.exit = function() {
+		if (this.oSelectionPlugin) {
+			this.oSelectionPlugin.destroy();
+			this.oSelectionPlugin = null;
+		}
+
+		if (this.oDeselectAllIcon) {
+			this.oDeselectAllIcon.destroy();
+			this.oDeselectAllIcon = null;
+		}
 	};
 
 	/**
@@ -339,7 +354,6 @@ sap.ui.define([
 
 		if (this.oSelectionPlugin) {
 			this.oSelectionPlugin.destroy();
-			this.oSelectionPlugin.detachEvent("selectionChange", this._onSelectionChange);
 			this.oSelectionPlugin = null;
 		}
 		if (oParent) {
@@ -419,11 +433,6 @@ sap.ui.define([
 
 	MultiSelectionPlugin.prototype.onThemeChanged = function() {
 		this.oDeselectAllIcon.setSrc(ThemeParameters.get("_sap_ui_table_DeleteIcon"));
-	};
-
-	MultiSelectionPlugin.prototype.exit = function() {
-		this.oDeselectAllIcon.destroy();
-		this.oDeselectAllIcon = null;
 	};
 
 	return MultiSelectionPlugin;
