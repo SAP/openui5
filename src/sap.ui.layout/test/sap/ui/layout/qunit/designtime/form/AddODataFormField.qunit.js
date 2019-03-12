@@ -21,8 +21,6 @@ sap.ui.require([
 	) {
 		'use strict';
 
-		QUnit.start();
-
 		QUnit.module("AddField for Form", {
 			beforeEach: function () {
 				this.oMockedAppComponent = {
@@ -196,4 +194,5 @@ sap.ui.require([
 			assert.equal(oXmlFormContainer.getElementsByTagNameNS("sap.ui.comp.smartfield","SmartField")[0].getAttribute("id"), sAddedFieldId + "-field", "the field was added in the right position");
 		});
 
+		QUnit.start();
 	});

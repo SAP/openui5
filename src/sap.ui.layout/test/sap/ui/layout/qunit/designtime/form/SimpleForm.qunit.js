@@ -1,3 +1,6 @@
+/* global QUnit */
+QUnit.config.autostart = false;
+
 sap.ui.require([
 	"sap/ui/dt/test/report/QUnit",
 	"sap/ui/dt/test/ElementEnablementTest",
@@ -7,7 +10,7 @@ sap.ui.require([
 	"sap/m/Toolbar",
 	"sap/m/Button"
 ], function(
-	QUnit,
+	QUnitReport,
 	ElementEnablementTest,
 	rtaControlEnablingCheck,
 	SimpleForm,
@@ -35,7 +38,7 @@ sap.ui.require([
 	return oElementEnablementTest.run()
 
 	.then(function(oData) {
-		var oReport = new QUnit({
+		var oReport = new QUnitReport({
 			data: oData
 		});
 		oReport.destroy();
@@ -286,6 +289,8 @@ sap.ui.require([
 
 		fnParameterizedTest(SimpleFormLayout.GridLayout);
 		fnParameterizedTest(SimpleFormLayout.ResponsiveGridLayout);
+
+		QUnit.start();
 	});
 
 });

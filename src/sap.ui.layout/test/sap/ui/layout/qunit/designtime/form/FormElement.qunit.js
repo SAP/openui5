@@ -1,5 +1,7 @@
 /*global QUnit*/
 
+QUnit.config.autostart = false;
+
 (function () {
 	"use strict";
 
@@ -176,6 +178,8 @@
 				afterUndo: fnConfirmFormElementIsInvisible,
 				afterRedo: fnConfirmFormElementIsVisible
 			});
+
+			QUnit.start();
 		});
 	});
 })();
