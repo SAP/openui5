@@ -60,6 +60,7 @@ sap.ui.define([
 	 * @public
 	 * @since 1.16
 	 * @alias sap.m.Table
+	 * @see {@link fiori:/responsive-table/ Responsive Table}
 	 * @ui5-metamodel This control/element also will be described in the UI5 (legacy) designtime metamodel
 	 */
 	var Table = ListBase.extend("sap.m.Table", /** @lends sap.m.Table.prototype */ { metadata : {
