@@ -353,6 +353,21 @@
 
 							MessageToast.show("Appointment with title \n'" + sAppointmentTitle + "'\n has been " + sAppointmentSelected);
 						},
+						enableAppointmentsDragAndDrop: true,
+						appointmentDrop: function (oEvent) {
+							var oAppointment = oEvent.getParameter("appointment"),
+									oStartDate = oEvent.getParameter("startDate"),
+									oEndDate = oEvent.getParameter("endDate"),
+									sAppointmentTitle = oAppointment.getTitle();
+
+							oAppointment.setStartDate(oStartDate);
+							oAppointment.setEndDate(oEndDate);
+
+							sap.m.MessageToast.show("Appointment with title \n'"
+									+ sAppointmentTitle
+									+ "'\n has been dropped"
+							);
+						},
 						headerDateSelect: function (oEvent) {
 							var oDate = oEvent.getParameter("date");
 
@@ -367,7 +382,8 @@
 					new App({
 						pages: new Page({
 							title: "SinglePlanningCalendar test page",
-							content: oSPC
+							content: oSPC,
+							footer: new sap.m.Bar()
 						})
 					}).placeAt("body");
 				});
