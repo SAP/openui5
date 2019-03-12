@@ -583,21 +583,14 @@ sap.ui.define([
 		this.obj.addSubObj(this.subObj);
 		assert.equal(iCalls, iCount, "Change event called " + iCount + " as expected, remove, add");
 
-		aContexts = oBinding.getContexts();
-		assert.ok(aContexts.diff, "The extended change detection is enabled");
-		assert.equal(that.oManagedObjectModel.getProperty("", aContexts[0]) === that.subObj, true, "Contexts are correctly applied");
-
 		iCount = 2;
 		iLength = 2;
 		this.subObj2 = new sap.ui.test.TestElement("subObject1");
 		this.obj.addSubObj(this.subObj2);
 		assert.equal(iCalls, iCount, "Change event called " + iCount + " as expected");
 
-		aContexts = oBinding.getContexts();
-		assert.ok(aContexts.diff, "The extended change detection is enabled");
-		assert.ok(aContexts.diff.length > 0,  "The extended change is available");
-		assert.equal(that.oManagedObjectModel.getProperty("", aContexts[0]) === that.subObj, true, "Contexts are correctly applied");
-		assert.equal(that.oManagedObjectModel.getProperty("", aContexts[1]) === that.subObj2, true, "Contexts are correctly applied");
+		assert.equal(that.oManagedObjectModel.getProperty("", oBinding.getContexts()[0]) === that.subObj, true, "Contexts are correctly applied");
+		assert.equal(that.oManagedObjectModel.getProperty("", oBinding.getContexts()[1]) === that.subObj2, true, "Contexts are correctly applied");
 
 		iCount = 4;
 		iLength = 1;

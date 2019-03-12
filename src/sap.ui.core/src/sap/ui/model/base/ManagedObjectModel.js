@@ -30,12 +30,12 @@ sap.ui.define([
 			if (bObserve) {
 				caller._oObserver.observe(oChild, {
 					properties: true,
-					aggegations: true
+					aggregations: true
 				});
 			} else {
 				caller._oObserver.unobserve(oChild, {
 					properties: true,
-					aggegations: true
+					aggregations: true
 				});
 			}
 
@@ -438,7 +438,6 @@ sap.ui.define([
 	 */
 	ManagedObjectModel.prototype.bindList = function (sPath, oContext, aSorters, aFilters, mParameters) {
 		var oBinding = new ManagedObjectModelAggregationBinding(this, sPath, oContext, aSorters, aFilters, mParameters);
-		oBinding.enableExtendedChangeDetection();
 		return oBinding;
 	};
 
@@ -859,7 +858,7 @@ sap.ui.define([
 				if (oChange.child instanceof ManagedObject) {
 					this._oObserver.observe(oChange.child, {
 						properties: true,
-						aggegations: true
+						aggregations: true
 					});
 				}
 
@@ -872,7 +871,7 @@ sap.ui.define([
 					var oAggregation = this._oObject.getAggregation(oChange.name);
 
 					//in case of paging wait till the last length is available, else take the length
-					if (oListBinding && (oListBinding.iLastLength || oListBinding.iLength) != oAggregation.length) {
+					if (oListBinding && oListBinding.getCurrentContexts().length != oAggregation.length) {
 						return;
 					}
 				}
@@ -881,7 +880,7 @@ sap.ui.define([
 				if (oChange.child instanceof ManagedObject) {
 					this._oObserver.unobserve(oChange.child, {
 						properties: true,
-						aggegations: true
+						aggregations: true
 					});
 				}
 
