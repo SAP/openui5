@@ -1088,18 +1088,20 @@ sap.ui.define([
 	}, {
 		options : {
 			$expand : {
-				FooSet : {
-					$expand : {
-						BarSet : {
-							$select : ["Param1", "Param2"]
-						}
-					},
-					$select : ["Param3", "Param4"]
+				BarSet : {
+					$select : ["Param1", "Param2"]
 				}
-			}
+			},
+			$select : ["Param3", "Param4"]
 		},
-		sPath : "FooSet/42/BarSet",
+		sPath : "('42')/BarSet",
 		result : ["Param1", "Param2"]
+	}, {
+		options : {
+			$select : ["Param3", "Param4"]
+		},
+		sPath : "('42')",
+		result : ["Param3", "Param4"]
 	}, {
 		options : {
 			$expand : {
@@ -1113,12 +1115,13 @@ sap.ui.define([
 				}
 			}
 		},
-		sPath : "FooSet/-1/BarSet",
+		sPath : "FooSet($uid=id-1-23)/BarSet",
 		result : ["Param1", "Param2"]
 	}].forEach(function (o) {
 		QUnit.test("getSelectForPath: " + o.sPath, function (assert) {
 			assert.deepEqual(_Helper.getSelectForPath(o.options, o.sPath), o.result);
 		});
+		//TODO sPath : "42/BarSet" currently does not work, but should not happen(?)
 	});
 
 	//*********************************************************************************************
@@ -1184,7 +1187,7 @@ sap.ui.define([
 			oHelperMock.expects("fireChange")
 				.withExactArgs(oChangeListener, "SO_2_BP/PartnerId", "4711");
 			oHelperMock.expects("fireChange")
-				.withExactArgs(oChangeListener, "SO_2_BP/@$ui5._/predicate", "('4711')");
+				.withExactArgs(oChangeListener, "SO_2_BP/@$ui5._/predicate", "('4711')").never();
 			oHelperMock.expects("fireChange")
 				.withExactArgs(oChangeListener, "SO_2_BP/@odata.etag", "New ETag");
 
@@ -1225,6 +1228,20 @@ sap.ui.define([
 			);
 
 			assert.deepEqual(oCacheBefore, oCacheAfter);
+
+			oHelperMock.expects("fireChange")
+				.withExactArgs(oChangeListener, "SO_2_BP/CompanyName", "SAP");
+			oHelperMock.expects("fireChange")
+				.withExactArgs(oChangeListener, "SO_2_BP/@$ui5._/predicate", "('4711')").never();
+			oCacheBefore = {};
+			oCacheAfter = {CompanyName : "SAP"};
+
+			// code under test (without predicate)
+			_Helper.updateSelected(oChangeListener, "SO_2_BP", oCacheBefore, {CompanyName : "SAP" },
+				bUseProperties ? ["CompanyName"] : undefined);
+
+			assert.deepEqual(oCacheBefore, oCacheAfter);
+
 		});
 	});
 
@@ -1275,7 +1292,7 @@ sap.ui.define([
 		dataPath : "/Foo(key='value')/" + Date.now() + "/bar(key='value')/"  + Date.now(),
 		metaPath : "/Foo/bar"
 	}, { // transient entity
-		dataPath : "/Foo/-1/bar",
+		dataPath : "/Foo($uid=id-1-23)/bar",
 		metaPath : "/Foo/bar"
 	}].forEach(function (oFixture) {
 		QUnit.test("getMetaPath: " + oFixture.dataPath, function (assert) {
@@ -1450,49 +1467,53 @@ sap.ui.define([
 
 	//*********************************************************************************************
 	[{
-		sPathInCache : "",
+		sTransientPredicate : "($uid=1)",
 		mExpectedMap : {
 			"('23')/Team_Id" : ["listener0"],
 			"('23')/Name" : ["listener1"],
-			"('23')/TEAM_2_EMPLOYEES/-1/EMPLOYEE_2_EQUIPMENTS/-1/ID" : ["listener2"],
-			"('23')/TEAM_2_EMPLOYEES/-1/EMPLOYEE_2_EQUIPMENTS/-1/Category" : ["listener3"],
-			"('23')/TEAM_2_EMPLOYEES/-1/ID" : ["listener4"],
+			"('23')/TEAM_2_EMPLOYEES($uid=2)/EMPLOYEE_2_EQUIPMENTS($uid=4)/ID" : ["listener2"],
+			"('23')/TEAM_2_EMPLOYEES($uid=2)/EMPLOYEE_2_EQUIPMENTS($uid=4)/Category"
+				: ["listener3"],
+			"('23')/TEAM_2_EMPLOYEES($uid=2)/ID" : ["listener4"],
 			"('23')/TEAM_2_EMPLOYEES('47')/ID" : ["listener5"],
 			"('42')/Team_Id" : ["listener6"],
 			"('42')/Name" : ["listener7"],
-			"('42')/TEAM_2_EMPLOYEES/-1/ID" : ["listener8"]
+			"('42')/TEAM_2_EMPLOYEES($uid=3)/ID" : ["listener8"]
 		}
 	}, {
-		sPathInCache : "-1/TEAM_2_EMPLOYEES",
+		sTransientPredicate : "($uid=2)",
 		mExpectedMap : {
-			"-1/Team_Id" : ["listener0"],
-			"-1/Name" : ["listener1"],
-			"-1/TEAM_2_EMPLOYEES('23')/EMPLOYEE_2_EQUIPMENTS/-1/ID" : ["listener2"],
-			"-1/TEAM_2_EMPLOYEES('23')/EMPLOYEE_2_EQUIPMENTS/-1/Category" : ["listener3"],
-			"-1/TEAM_2_EMPLOYEES('23')/ID" : ["listener4"],
-			"-1/TEAM_2_EMPLOYEES('47')/ID" : ["listener5"],
+			"($uid=1)/Team_Id" : ["listener0"],
+			"($uid=1)/Name" : ["listener1"],
+			"($uid=1)/TEAM_2_EMPLOYEES('23')/EMPLOYEE_2_EQUIPMENTS($uid=4)/ID" : ["listener2"],
+			"($uid=1)/TEAM_2_EMPLOYEES('23')/EMPLOYEE_2_EQUIPMENTS($uid=4)/Category"
+				: ["listener3"],
+			"($uid=1)/TEAM_2_EMPLOYEES('23')/ID" : ["listener4"],
+			"($uid=1)/TEAM_2_EMPLOYEES('47')/ID" : ["listener5"],
 			"('42')/Team_Id" : ["listener6"],
 			"('42')/Name" : ["listener7"],
-			"('42')/TEAM_2_EMPLOYEES/-1/ID" : ["listener8"]
+			"('42')/TEAM_2_EMPLOYEES($uid=3)/ID" : ["listener8"]
 		}
 	}].forEach(function (oFixture) {
-		var sTitle = "update transient path, path in cache: " + oFixture.sPathInCache;
+		var sTitle = "update transient path, transient predicate: " + oFixture.sTransientPredicate;
 
 		QUnit.test(sTitle, function (assert) {
 			var mMap = {
-					"-1/Team_Id" : ["listener0"],
-					"-1/Name" : ["listener1"],
-					"-1/TEAM_2_EMPLOYEES/-1/EMPLOYEE_2_EQUIPMENTS/-1/ID" : ["listener2"],
-					"-1/TEAM_2_EMPLOYEES/-1/EMPLOYEE_2_EQUIPMENTS/-1/Category" : ["listener3"],
-					"-1/TEAM_2_EMPLOYEES/-1/ID" : ["listener4"],
-					"-1/TEAM_2_EMPLOYEES('47')/ID" : ["listener5"],
+					"($uid=1)/Team_Id" : ["listener0"],
+					"($uid=1)/Name" : ["listener1"],
+					"($uid=1)/TEAM_2_EMPLOYEES($uid=2)/EMPLOYEE_2_EQUIPMENTS($uid=4)/ID"
+						: ["listener2"],
+					"($uid=1)/TEAM_2_EMPLOYEES($uid=2)/EMPLOYEE_2_EQUIPMENTS($uid=4)/Category"
+						: ["listener3"],
+					"($uid=1)/TEAM_2_EMPLOYEES($uid=2)/ID" : ["listener4"],
+					"($uid=1)/TEAM_2_EMPLOYEES('47')/ID" : ["listener5"],
 					"('42')/Team_Id" : ["listener6"],
 					"('42')/Name" : ["listener7"],
-					"('42')/TEAM_2_EMPLOYEES/-1/ID" : ["listener8"]
+					"('42')/TEAM_2_EMPLOYEES($uid=3)/ID" : ["listener8"]
 				};
 
 			// code under test
-			_Helper.updateTransientPaths(mMap, oFixture.sPathInCache, "('23')");
+			_Helper.updateTransientPaths(mMap, oFixture.sTransientPredicate, "('23')");
 
 			assert.deepEqual(mMap, oFixture.mExpectedMap);
 		});

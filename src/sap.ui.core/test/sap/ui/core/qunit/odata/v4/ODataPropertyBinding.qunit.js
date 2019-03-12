@@ -142,7 +142,11 @@ sap.ui.define([
 		delete oMixin.resetInvalidDataState; // because it is overridden
 
 		Object.keys(oMixin).forEach(function (sKey) {
-			assert.strictEqual(oBinding[sKey], oMixin[sKey]);
+			if (sKey === "oFetchCacheCallToken") {
+				assert.strictEqual(typeof oBinding[sKey], "object", "fetchCache already called");
+			} else {
+				assert.strictEqual(oBinding[sKey], oMixin[sKey], sKey);
+			}
 		});
 
 		// Check that the mixin members are initialized
@@ -2060,13 +2064,11 @@ sap.ui.define([
 	});
 
 	//*********************************************************************************************
-	[undefined, {}].forEach(function (oContext) {
-		QUnit.test("hasPendingChangesInDependents, w/ context=" + !!oContext, function (assert) {
-			var oBinding = this.oModel.bindProperty("/EMPLOYEES('1')/AGE");
+	QUnit.test("hasPendingChangesInDependents", function (assert) {
+		var oBinding = this.oModel.bindProperty("/EMPLOYEES('1')/AGE");
 
-			// code under test
-			assert.strictEqual(oBinding.hasPendingChangesInDependents(oContext), false);
-		});
+		// code under test
+		assert.strictEqual(oBinding.hasPendingChangesInDependents(), false);
 	});
 
 	//*********************************************************************************************

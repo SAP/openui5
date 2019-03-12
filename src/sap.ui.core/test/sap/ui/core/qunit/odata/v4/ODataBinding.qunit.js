@@ -62,11 +62,14 @@ sap.ui.define([
 	QUnit.test("initialize members for mixin", function (assert) {
 		var oBinding = new ODataBinding();
 
-		//TODO add missing properties introduced by oDataBinding
+		//TODO add missing properties introduced by ODataBinding
+		assert.ok(oBinding.hasOwnProperty("oFetchCacheCallToken"));
+		assert.strictEqual(oBinding.oFetchCacheCallToken, undefined);
 		assert.ok(oBinding.hasOwnProperty("mCacheByResourcePath"));
 		assert.strictEqual(oBinding.mCacheByResourcePath, undefined);
 		assert.strictEqual(oBinding.sResumeChangeReason, ChangeReason.Change);
 	});
+	//TODO #destroy
 
 	//*********************************************************************************************
 	QUnit.test("getGroupId: own group", function (assert) {
@@ -1981,27 +1984,36 @@ sap.ui.define([
 
 	//*********************************************************************************************
 	[undefined, true].forEach(function (bCanonicalPath) {
-		["/SalesOrderList/1", "/SalesOrderList/-1"].forEach(function (sContextPath) {
+		[
+			"/A/1",
+			"/A/1/SO_2_BP(id=42)",
+			"/A($uid=id-1-23)",
+			"/A($uid=id-1-23)/A_2_B(id=42)"
+		].forEach(function (sContextPath) {
 			var sTitle = "fetchResourcePath, V4 context, $$canonicalPath " + bCanonicalPath
-					+ ", path with index: " + sContextPath;
+					+ ", path: " + sContextPath;
 
 			QUnit.test(sTitle, function (assert) {
 				var mTemplate = bCanonicalPath
-						? {bRelative : true, mParameters : {$$canonicalPath : true}}
-						: {bRelative : true},
+						? {mParameters : {$$canonicalPath : true}, sPath : "c", bRelative : true}
+						: {sPath : "c", bRelative : true},
 					oBinding = new ODataBinding(mTemplate),
 					oContext = {
 						fetchCanonicalPath : function () {},
 						getPath : function () {}
-					};
+					},
+					sFetchCanonicalPath = "/canonicalPath";
 
 				this.mock(oContext).expects("getPath").withExactArgs().returns(sContextPath);
 				this.mock(oContext).expects("fetchCanonicalPath").withExactArgs()
-					.returns(SyncPromise.resolve("/SalesOrderList('42')"));
+					.returns(SyncPromise.resolve(sFetchCanonicalPath));
+				this.mock(_Helper).expects("buildPath")
+					.withExactArgs(sFetchCanonicalPath, "c")
+					.returns("/canonicalPath/c");
 
 				// code under test
 				return oBinding.fetchResourcePath(oContext).then(function (sResourcePath) {
-					assert.strictEqual(sResourcePath, "SalesOrderList('42')");
+					assert.strictEqual(sResourcePath, "canonicalPath/c");
 				});
 			});
 		});

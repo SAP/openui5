@@ -12,9 +12,10 @@
 				<Property Name="IsActiveEntity" Type="Edm.Boolean" Nullable="false"/>
 				<Property Name="Name" Type="Edm.String" MaxLength="255"/>
 				<Property Name="Messages" Type="Collection(special.cases.Message)" />
-				<NavigationProperty Name="DraftAdministrativeData" Type="special.cases.DraftAdministrativeDataType"/>
-				<NavigationProperty Name="_Publication" Type="Collection(special.cases.PublicationsType)" />
 				<Annotation Term="com.sap.vocabularies.Common.v1.Messages" Path="Messages" />
+				<NavigationProperty Name="DraftAdministrativeData" Type="special.cases.DraftAdministrativeDataType"/>
+				<NavigationProperty Name="BestPublication" Type="special.cases.PublicationsType" />
+				<NavigationProperty Name="_Publication" Type="Collection(special.cases.PublicationsType)" />
 				<NavigationProperty Name="BestFriend" Type="special.cases.ArtistsType" />
 				<NavigationProperty Name="_Friend" Type="Collection(special.cases.ArtistsType)" />
 			</EntityType>
@@ -67,6 +68,10 @@
 			<Action Name="EditAction" EntitySetPath="_it" IsBound="true">
 				<Parameter Name="_it" Type="special.cases.ArtistsType" Nullable="false"/>
 				<ReturnType Type="special.cases.ArtistsType" Nullable="false"/>
+			</Action>
+			<Action Name="PreparationAction" EntitySetPath="_it" IsBound="true">
+				<Parameter Name="_it" Type="special.cases.PublicationsType" Nullable="false"/>
+				<ReturnType Type="special.cases.PublicationsType" Nullable="false"/>
 			</Action>
 			<Action Name="Create" EntitySetPath="_it" IsBound="true">
 				<Parameter Name="_it" Type="Collection(special.cases.ArtistsType)" Nullable="false"/>

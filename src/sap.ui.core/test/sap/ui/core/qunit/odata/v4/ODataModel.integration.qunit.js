@@ -32,7 +32,8 @@ sap.ui.define([
 		sDefaultLanguage = sap.ui.getCore().getConfiguration().getLanguage(),
 		sInvalidModel = "/invalid/model/",
 		sSalesOrderService = "/sap/opu/odata4/sap/zui5_testv4/default/sap/zui5_epm_sample/0002/",
-		sTeaBusi = "/sap/opu/odata4/IWBEP/TEA/default/IWBEP/TEA_BUSI/0001/";
+		sTeaBusi = "/sap/opu/odata4/IWBEP/TEA/default/IWBEP/TEA_BUSI/0001/",
+		rTransientPredicate = /\(\$uid=.+\)/;
 
 	/**
 	 * Creates a V4 OData model for <code>serviceroot.svc</code>
@@ -358,12 +359,15 @@ sap.ui.define([
 		checkMessages : function (assert) {
 			var aCurrentMessages = sap.ui.getCore().getMessageManager().getMessageModel()
 					.getObject("/").map(function (oMessage) {
+						var sTarget = oMessage.getTarget()
+								.replace(rTransientPredicate, "($uid=...)");
+
 						return {
 							code : oMessage.getCode(),
 							descriptionUrl : oMessage.getDescriptionUrl(),
 							message : oMessage.getMessage(),
 							persistent : oMessage.getPersistent(),
-							target : oMessage.getTarget(),
+							target : sTarget,
 							technical : oMessage.getTechnical(),
 							type : oMessage.getType()
 						};
@@ -371,7 +375,7 @@ sap.ui.define([
 				aExpectedMessages = this.aMessages.slice().sort(compareMessages);
 
 			function compareMessages(oMessage1, oMessage2) {
-					return oMessage1.message.localeCompare(oMessage2.message);
+				return oMessage1.message.localeCompare(oMessage2.message);
 			}
 
 			assert.deepEqual(aCurrentMessages, aExpectedMessages,
@@ -2594,9 +2598,10 @@ sap.ui.define([
 		QUnit.test("Create with user input - bSkipRefresh: " + bSkipRefresh, function (assert) {
 			var sView = '\
 <Table id="table" items="{/SalesOrderList}">\
-	<columns><Column/></columns>\
+	<columns><Column/><Column/></columns>\
 	<ColumnListItem>\
 		<Text id="note" text="{Note}" />\
+		<Text id="companyName" binding="{SO_2_BP}" text="{CompanyName}"/>\
 	</ColumnListItem>\
 </Table>',
 				oModel = createSalesOrdersModel({
@@ -2605,18 +2610,29 @@ sap.ui.define([
 				}),
 				that = this;
 
-			this.expectRequest("SalesOrderList?$select=Note,SalesOrderID&$skip=0&$top=100", {
+			this.expectRequest("SalesOrderList?$select=Note,SalesOrderID"
+					+ "&$expand=SO_2_BP($select=BusinessPartnerID,CompanyName)&$skip=0&$top=100", {
 					"value" : [{
 						"Note" : "foo",
-						"SalesOrderID" : "42"
+						"SalesOrderID" : "42",
+						"SO_2_BP" : {
+							"BusinessPartnerID" : "123",
+							"CompanyName" : "SAP"
+						}
 					}]
 				})
-				.expectChange("note", ["foo"]);
+				.expectChange("note", ["foo"])
+				// companyName is embedded in a context binding; index not considered in test
+				// framework
+				.expectChange("companyName", "SAP");
 
 			return this.createView(assert, sView, oModel).then(function () {
 				var oTable = that.oView.byId("table");
 
-				that.expectChange("note", ["baz", "foo"]);
+				that.expectChange("note", ["bar", "foo"])
+					.expectChange("note", "baz", 0)
+					.expectChange("companyName", null)
+					.expectChange("companyName", "SAP");
 
 				oTable.getBinding("items").create({Note : "bar"}, bSkipRefresh);
 				oTable.getItems()[0].getCells()[0].getBinding("text").setValue("baz");
@@ -2628,17 +2644,22 @@ sap.ui.define([
 						url : "SalesOrderList",
 						payload : {"Note" : "baz"}
 					}, {
-						"CompanyName" : "Bar",
 						"Note" : "from server",
 						"SalesOrderID" : "43"
 					})
 					.expectChange("note", "from server", 0);
 				if (!bSkipRefresh){
-					that.expectRequest("SalesOrderList('43')?$select=Note,SalesOrderID", {
+					that.expectRequest("SalesOrderList('43')?$select=Note,SalesOrderID"
+							+ "&$expand=SO_2_BP($select=BusinessPartnerID,CompanyName)", {
 							"Note" : "fresh from server",
-							"SalesOrderID" : "43"
+							"SalesOrderID" : "43",
+							"SO_2_BP" : {
+								"BusinessPartnerID" : "456",
+								"CompanyName" : "ACM"
+							}
 						})
-						.expectChange("note", "fresh from server", 0);
+						.expectChange("note", "fresh from server", 0)
+						.expectChange("companyName", "ACM");
 				}
 
 				return Promise.all([
@@ -2850,7 +2871,7 @@ sap.ui.define([
 					code : "CODE",
 					message : "Enter a product ID",
 					persistent : true,
-					target : "/SalesOrderList('42')/SO_2_SOITEM/-1/ProductID",
+					target : "/SalesOrderList('42')/SO_2_SOITEM($uid=...)/ProductID",
 					technical : true,
 					type : "Error"
 				}]);
@@ -4375,6 +4396,8 @@ sap.ui.define([
 					url : "TEAMS('42')/TEAM_2_EMPLOYEES('2')/"
 						+ "com.sap.gateway.default.iwbep.tea_busi.v0001.AcChangeTeamOfEmployee",
 					payload : {"TeamID" : "TEAM_02"}
+				}, {
+					"ID" : "2"
 				});
 			oAction.setParameter("TeamID", "TEAM_02");
 
@@ -9094,6 +9117,8 @@ sap.ui.define([
 		</ColumnListItem>\
 	</items>\
 </Table>',
+			rMessage = new RegExp("^Failed to drill-down into \\(\\$uid=.+\\)\\/@\\$ui5\\.foo,"
+				+ " invalid segment: @\\$ui5\\.foo$"),
 			that = this;
 
 		this.expectRequest("Equipments?$skip=0&$top=100", {
@@ -9118,8 +9143,7 @@ sap.ui.define([
 			// code under test
 			oContext = oListBinding.create(oInitialData);
 
-			that.oLogMock.expects("error").withExactArgs(
-				"Failed to drill-down into -1/@$ui5.foo, invalid segment: @$ui5.foo",
+			that.oLogMock.expects("error").withExactArgs(sinon.match(rMessage),
 				"/sap/opu/odata4/IWBEP/TEA/default/IWBEP/TEA_BUSI/0001/Equipments",
 				"sap.ui.model.odata.v4.lib._Cache");
 
@@ -9713,6 +9737,228 @@ sap.ui.define([
 
 				return that.waitForChanges(assert);
 			});
+		});
+	});
+
+	//*********************************************************************************************
+	// Scenario: Object page bound to active entity: Call the "Edit" bound action on an active
+	// entity which responds with the inactive entity. The execute for the "Edit" operation binding
+	// resolves with the context for the inactive entity. Data for the inactive entity is displayed
+	// when setting this context on the object page. Then call the "Activate" bound action to switch
+	// back to the active entity. The actions are part of the form.
+	// CPOUI5UISERVICESV3-1712
+	QUnit.test("bound operation: switching between active and inactive entity", function (assert) {
+		var oHiddenBinding, // to be kept in the controller
+			oModel = createSpecialCasesModel({autoExpandSelect : true}),
+			mNames = {
+				"23" : "The Rolling Stones",
+				"42" : "The Beatles"
+			},
+			mPrices = {
+				"23" : "12.99",
+				"42" : "9.99"
+			},
+			oObjectPage,
+			sView = '\
+<Table id="table" items="{path : \'/Artists\', parameters : {$filter : \'IsActiveEntity\'}}">\
+	<columns><Column/></columns>\
+	<items>\
+		<ColumnListItem>\
+			<Text id="listId" text="{ArtistID}"/>\
+		</ColumnListItem>\
+	</items>\
+</Table>\
+<FlexBox id="objectPage" binding="{}">\
+	<Text id="id" text="{ArtistID}" />\
+	<Text id="isActive" text="{IsActiveEntity}" />\
+	<Text id="name" text="{Name}" />\
+	<Table items="{path : \'_Publication\', parameters : {$$ownRequest : true}}">\
+		<columns><Column/></columns>\
+		<ColumnListItem>\
+			<Input id="price" value="{Price}" />\
+		</ColumnListItem>\
+	</Table>\
+</FlexBox>',
+			that = this;
+
+		function expectArtistRequest(sId, bIsActive) {
+			that.expectRequest("Artists(ArtistID='" + sId + "',IsActiveEntity=" + bIsActive
+				+ ")?$select=ArtistID,IsActiveEntity,Name", {
+					"ArtistID" : sId,
+					"IsActiveEntity" : bIsActive,
+					"Name" : mNames[sId]
+				})
+				.expectChange("id", sId)
+				.expectChange("isActive", bIsActive ? "Yes" : "No")
+				.expectChange("name", mNames[sId]);
+		}
+
+		function expectPublicationRequest(sId, bIsActive) {
+			that.expectRequest("Artists(ArtistID='" + sId + "',IsActiveEntity=" + bIsActive
+				+ ")/_Publication?$select=Price,PublicationID&$skip=0&$top=100", {
+					value : [{
+						"Price" : mPrices[sId],
+						"PublicationID" : "42-0"
+					}]
+				})
+				.expectChange("price", [mPrices[sId]]);
+		}
+
+		/*
+		 * Fires the given action on the given entity, set the object page to its return value
+		 * context and wait for the expected changes.
+		 *
+		 * @param {string} sAction - The name of the action
+		 * @param {string} sId - The artist ID
+		 * @param {string} [sName] - The resulting artist's name if it differs from the default
+		 * @returns {Promise} - A promise that waits for the expected changes
+ 		 */
+		function action(sAction, sId, sName) {
+			var bIsActive = sAction === "ActivationAction", // The resulting artist's bIsActive
+				// TODO The object page's parent context may be the return value context of the
+				//   previous operation. By using it as parent for the new operation we build a long
+				//   chain of bindings that we never release as long as we switch between draft and
+				//   active entity. -> CPOUI5UISERVICESV3-1746
+				oEntityContext = oObjectPage.getObjectBinding().getContext(),
+				oAction = that.oModel.bindContext("special.cases." + sAction + "(...)",
+					oEntityContext, {
+						$$inheritExpandSelect : true
+					});
+
+			that.expectRequest({
+					method : "POST",
+					url : "Artists(ArtistID='" + sId + "',IsActiveEntity=" + !bIsActive
+						+ ")/special.cases." + sAction + "?$select=ArtistID,IsActiveEntity,Name",
+					payload : {}
+				}, {
+					"ArtistID" : sId,
+					"IsActiveEntity" : bIsActive,
+					"Name" : sName || mNames[sId]
+				});
+
+			// code under test
+			return Promise.all([
+				oAction.execute(),
+				that.waitForChanges(assert)
+			]).then(function (aPromiseResults) {
+				var oReturnValueContext = aPromiseResults[0];
+
+				that.expectChange("isActive", bIsActive ? "Yes" : "No");
+				expectPublicationRequest(sId, bIsActive);
+
+				return bindObjectPage(oReturnValueContext, true);
+			});
+		}
+
+		/*
+		 * Binds the object page. A return value context directly becomes the binding context of the
+		 * object page. Everything else becomes the parent context of the hidden binding, which
+		 * itself becomes the parent binding of the object page.
+		 *
+		 * @param {string|sap.ui.model.odata.v4.Context} vSource
+		 *   The source, either a path or a list context or a return value context
+		 * @param {boolean} bIsReturnValueContext
+		 *   Whether vSource is a return value context
+		 * @returns {Promise}
+		 *   A promise that waits for the expected changes
+		 */
+		function bindObjectPage(vSource, bIsReturnValueContext) {
+			var oInnerContext,
+				oOuterContext;
+
+			if (bIsReturnValueContext) {
+				oInnerContext = vSource;
+			} else {
+				oOuterContext = typeof vSource === "string"
+					? that.oModel.createBindingContext(vSource)
+					: vSource;
+				oHiddenBinding.setContext(oOuterContext);
+				oInnerContext = oHiddenBinding.getBoundContext();
+			}
+			oObjectPage.setBindingContext(oInnerContext);
+
+			if (vSource) {
+				assert.ok(oObjectPage.getObjectBinding().isPatchWithoutSideEffects(),
+					oObjectPage.getObjectBinding() + " has $$patchWithoutSideEffects");
+			}
+			return that.waitForChanges(assert);
+		}
+
+		// start here :-)
+		this.expectRequest("Artists?$filter=IsActiveEntity&$select=ArtistID,IsActiveEntity"
+			+ "&$skip=0&$top=100", {
+				"value" : [{"ArtistID" : "42", "IsActiveEntity" : true}]
+			})
+			.expectChange("listId", ["42"])
+			.expectChange("id")
+			.expectChange("isActive")
+			.expectChange("name")
+			.expectChange("price", false);
+
+		return this.createView(assert, sView, oModel).then(function () {
+			var oRowContext;
+
+			// create the hidden binding when creating the controller
+			oHiddenBinding = that.oModel.bindContext("", undefined,
+				{$$patchWithoutSideEffects : true});
+			oObjectPage = that.oView.byId("objectPage"); // just to keep the test shorter
+
+			expectArtistRequest("42", true);
+			expectPublicationRequest("42", true);
+
+			// first start with the list
+			oRowContext = that.oView.byId("table").getItems()[0].getBindingContext();
+			return bindObjectPage(oRowContext, false);
+		}).then(function () {
+			return action("EditAction", "42");
+		}).then(function () {
+			that.expectRequest({
+					method : "PATCH",
+					url : "Artists(ArtistID='42',IsActiveEntity=false)",
+					payload : {"Name" : "The Beatles (modified)"}
+				}, {})
+				.expectChange("name", "The Beatles (modified)");
+
+			that.oView.byId("name").getBinding("text").setValue("The Beatles (modified)");
+			return that.waitForChanges(assert);
+		}).then(function () {
+			return action("ActivationAction", "42", "The Beatles (modified)");
+		}).then(function () {
+			expectArtistRequest("23", false);
+			expectPublicationRequest("23", false);
+
+			// now start directly with the entity
+			return bindObjectPage("/Artists(ArtistID='23',IsActiveEntity=false)");
+		}).then(function () {
+			return action("ActivationAction", "23");
+		}).then(function () {
+			return action("EditAction", "23");
+		}).then(function () {
+			var oRowContext;
+
+			that.expectChange("id", "42")
+				.expectChange("isActive", "Yes")
+				.expectChange("name", "The Beatles");
+			expectPublicationRequest("42", true);
+
+			// Now return to the artist from the list.
+			// There is no request for the artist; its cache is reused.
+			// The publication is requested again, it was relative to a return value context before
+			// and the return value context ID changed.
+			// The list must be updated manually.
+			oRowContext = that.oView.byId("table").getItems()[0].getBindingContext();
+			bindObjectPage(oRowContext, false);
+
+			return that.waitForChanges(assert);
+		}).then(function () {
+			// clear the object page
+			that.expectChange("id", null)
+				.expectChange("isActive", null)
+				.expectChange("name", null);
+
+			bindObjectPage(null, false);
+
+			return that.waitForChanges(assert);
 		});
 	});
 
@@ -10313,7 +10559,7 @@ sap.ui.define([
 
 	//*********************************************************************************************
 	// Scenario: Create entity for an absolute ListBinding, save the new entity and call a bound
-	// action for the new non-transient entity (still having -1 in the path)
+	// action for the new non-transient entity
 	QUnit.test("Create absolute, save and call action", function (assert) {
 		var oCreatedContext,
 			oModel = createTeaBusiModel({autoExpandSelect : true}),
@@ -10375,7 +10621,7 @@ sap.ui.define([
 
 	//*********************************************************************************************
 	// Scenario: Create entity for a relative ListBinding, save the new entity and call action
-	// import for the new non-transient entity (still having -1 in the path)
+	// import for the new non-transient entity
 	QUnit.test("Create relative, save and call action", function (assert) {
 		var oCreatedContext,
 			oModel = createTeaBusiModel(),
@@ -10426,6 +10672,8 @@ sap.ui.define([
 					url : "TEAMS('42')/TEAM_2_EMPLOYEES('7')/"
 						+ "com.sap.gateway.default.iwbep.tea_busi.v0001.AcChangeTeamOfEmployee",
 					payload : {"TeamID" : "TEAM_02"}
+				}, {
+					"ID" : "7"
 				});
 			oAction.setParameter("TeamID", "TEAM_02");
 
@@ -10439,10 +10687,9 @@ sap.ui.define([
 
 	//*********************************************************************************************
 	// Scenario: Create a new entity on an absolute ListBinding, save the new entity and call bound
-	// action for the new non-transient entity (still having -1 in the path)
+	// action for the new non-transient entity
 	// Afterwards create a new entity on a containment relative to the just saved absolute entity,
 	// save the containment and call a bound function on the new non-transient contained entity
-	// (also having still -1 in its path)
 	QUnit.test("Create absolute and contained entity, save and call bound action/function",
 			function (assert) {
 		var oCreatedItemContext,
@@ -10523,7 +10770,7 @@ sap.ui.define([
 
 			return Promise.all([oCreatedItemContext.created(), that.waitForChanges(assert)]);
 		}).then(function () {
-			// confirm created sales order (call action on -1 context)
+			// confirm created sales order (call action on created context)
 			var oAction = oModel.bindContext("com.sap.gateway.default.zui5_epm_sample"
 					+ ".v0002.SalesOrder_Confirm(...)", oCreatedSOContext);
 
@@ -10542,7 +10789,7 @@ sap.ui.define([
 				that.waitForChanges(assert)
 			]);
 		}).then(function () {
-			// check availability (call function on -1 containment)
+			// check availability (call function on created containment)
 			var oFunction = oModel.bindContext("com.sap.gateway.default.zui5_epm_"
 					+ "sample.v0002.SalesOrderLineItem_CheckAvailability(...)",
 					oCreatedItemContext);
@@ -13003,7 +13250,9 @@ sap.ui.define([
 		QUnit.test(sTitle, function (assert) {
 			var oEmployeeCreatedContext,
 				oModel = createTeaBusiModel(),
+				sNestedTransientPath,
 				oTeamCreatedContext,
+				sTransientPath,
 				sView = '\
 <FlexBox binding="{path : \'\',\
 		parameters : {\
@@ -13038,6 +13287,7 @@ sap.ui.define([
 						// private annotation, not to be used unless explicitly adviced to do so
 						"@$ui5.keepTransientPath" : bKeepTransientPath
 					}, true);
+				sTransientPath = oTeamCreatedContext.getPath();
 
 				return Promise.all([
 					oTeamCreatedContext.created(),
@@ -13045,7 +13295,7 @@ sap.ui.define([
 				]);
 			}).then(function () {
 				assert.strictEqual(oTeamCreatedContext.getPath(),
-					bKeepTransientPath ? "/TEAMS/-1" : "/TEAMS('23')");
+					bKeepTransientPath ? sTransientPath : "/TEAMS('23')");
 
 				that.expectRequest("TEAMS('23')?$expand=TEAM_2_EMPLOYEES("
 						+ "$select=__CT__FAKE__Message/__FAKE__Messages,ID)", {
@@ -13088,7 +13338,7 @@ sap.ui.define([
 						"target" : bKeepTransientPath
 						//TODO why does ODataBinding.fetchCache compute a canonical path and how
 						// does this fit to message targets?
-							? "/TEAMS('23')/TEAM_2_EMPLOYEES/-1/Name"
+							? "/TEAMS('23')/TEAM_2_EMPLOYEES($uid=...)/Name"
 							: "/TEAMS('23')/TEAM_2_EMPLOYEES('7')/Name",
 						"type" : "Warning"
 					}]);
@@ -13098,6 +13348,7 @@ sap.ui.define([
 						"@$ui5.keepTransientPath" : bKeepTransientPath,
 						"ID" : null
 					}, true);
+				sNestedTransientPath = oEmployeeCreatedContext.getPath();
 
 				return Promise.all([
 					oEmployeeCreatedContext.created(),
@@ -13106,7 +13357,7 @@ sap.ui.define([
 			}).then(function () {
 				assert.strictEqual(oEmployeeCreatedContext.getPath(),
 					bKeepTransientPath
-					? "/TEAMS/-1/TEAM_2_EMPLOYEES/-1"
+					? sNestedTransientPath
 					: "/TEAMS('23')/TEAM_2_EMPLOYEES('7')");
 			});
 		});
@@ -13530,5 +13781,71 @@ sap.ui.define([
 				assert.strictEqual(oValueHelpModel.toString(),
 					"sap.ui.model.odata.v4.ODataModel: /special/countryoforigin/");
 			});
+	});
+
+	//*********************************************************************************************
+	// Scenario: Execute a bound action on the target of a navigation property. That action returns
+	// its binding parameter which is thus updated ("cache synchronization") and is the target of
+	// messages.
+	// CPOUI5UISERVICESV3-1587
+	QUnit.test("bound action on navigation property updates binding parameter", function (assert) {
+		var oModel = createSpecialCasesModel({autoExpandSelect : true}),
+			sResourcePath = "Artists(ArtistID='42',IsActiveEntity=true)/BestPublication",
+			sView = '\
+<FlexBox binding="{\
+		path : \'/Artists(ArtistID=\\\'42\\\',IsActiveEntity=true)/BestPublication\',\
+		parameters : {$select : \'Messages\'}\
+	}" id="form">\
+	<Input id="price" value="{Price}" />\
+</FlexBox>',
+			that = this;
+
+		this.expectRequest(sResourcePath + "?$select=Messages,Price,PublicationID", {
+				"PublicationID" : "42-0",
+				"Price" : "9.99"
+			})
+			.expectChange("price", "9.99");
+
+		return this.createView(assert, sView, oModel).then(function () {
+			var oContext = that.oView.byId("form").getObjectBinding().getBoundContext(),
+				oOperation = that.oModel.bindContext("special.cases.PreparationAction(...)",
+					oContext, {$$inheritExpandSelect : true});
+
+			that.expectRequest({
+				method : "POST",
+				url : sResourcePath + "/special.cases.PreparationAction"
+					+ "?$select=Messages,Price,PublicationID",
+				payload : {}
+			}, {
+				"Messages" : [{
+					"code" : "23",
+					"message" : "Just A Message",
+					"numericSeverity" : 1,
+					"transition" : true,
+					"target" : "Price"
+				}],
+				"PublicationID" : "42-0",
+				"Price" : "3.33"
+			})
+			.expectChange("price", "3.33")
+			.expectMessages([{
+				code : "23",
+				message : "Just A Message",
+				// Note: We cannot know whether PreparationAction changed the target of
+				// BestPublication, but as long as the form still displays "42-0", we might as well
+				// keep it up-to-date and show messages there...
+				target : "/Artists(ArtistID='42',IsActiveEntity=true)/BestPublication/Price",
+				persistent : true,
+				type : "Success"
+			}]);
+
+			// code under test
+			return Promise.all([
+				oOperation.execute(),
+				that.waitForChanges(assert)
+			]);
+		}).then(function () {
+			return that.checkValueState(assert, "price", "Success", "Just A Message");
+		});
 	});
 });
