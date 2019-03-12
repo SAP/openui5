@@ -113,7 +113,7 @@ function(
 				 *
 				 * <b>Note:</b> Only controls implementing the <code>{@link sap.f.IShellBar}</code> interface are allowed.
 				 */
-				additionalContent: {type: "sap.f.IShellBar", multiple: true, singularName : "additionalContent"},
+				additionalContent: {type: "sap.f.IShellBar", multiple: true, singularName: "additionalContent"},
 				/**
 				 * Holds the internally created OverflowToolbar.
 				 */
@@ -374,7 +374,7 @@ function(
 
 		this._aOverflowControls = [];
 
-		this._oOverflowToolbar.removeAllAggregation("content");
+		this._oOverflowToolbar.removeAllContent();
 
 		if (this._oNavButton) {
 			this._oOverflowToolbar.addContent(this._oNavButton);
