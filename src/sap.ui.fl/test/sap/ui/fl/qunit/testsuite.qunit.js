@@ -473,6 +473,9 @@ sap.ui.define(function () {
 			"designtime/appVariant/AppVariantUtils": {
 				group: "designTime"
 			},
+			"designtime/appVariant/AppVariantModifier": {
+				group: "designTime"
+			},
 			"integration/async/ComponentWithView": {
 				group: "integration/async",
 				ui5: {
