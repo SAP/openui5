@@ -9,6 +9,7 @@ sap.ui.define([
 	'sap/ui/core/EnabledPropagator',
 	'sap/ui/core/IconPool',
 	'sap/ui/core/theming/Parameters',
+	'sap/ui/events/KeyCodes',
 	'./SwitchRenderer',
 	"sap/base/assert"
 ],
@@ -18,6 +19,7 @@ function(
 	EnabledPropagator,
 	IconPool,
 	Parameters,
+	KeyCodes,
 	SwitchRenderer,
 	assert
 	) {
@@ -429,14 +431,11 @@ function(
 		 * @param {jQuery.Event} oEvent The event object.
 		 * @private
 		 */
-		Switch.prototype.onsapselect = function(oEvent) {
+		Switch.prototype._handleSpaceOrEnter = function(oEvent) {
 			if (this.getEnabled()) {
 
 				// mark the event for components that needs to know if the event was handled by the Switch
 				oEvent.setMarked();
-
-				// note: prevent document scrolling when space keys is pressed
-				oEvent.preventDefault();
 
 				if (this._updateStateTimeout) {
 					clearTimeout(this._updateStateTimeout);
@@ -448,6 +447,34 @@ function(
 				this._updateStateTimeout = setTimeout(this._updateStateAndNotify.bind(this), Switch._TRANSITIONTIME);
 			}
 		};
+
+		/**
+		 * @private
+		 * @param {object} oEvent The fired event
+		 */
+		Switch.prototype.onsapspace = function(oEvent) {
+			// prevent scrolling on SAPCE
+			oEvent.preventDefault();
+		};
+
+		/**
+		 * Handles space key on kye up
+		 *
+		 * @private
+		*/
+		Switch.prototype.onkeyup = function (oEvent) {
+			if (oEvent.which === KeyCodes.SPACE) {
+				this._handleSpaceOrEnter(oEvent);
+			}
+		};
+
+		/**
+		 * Handles enter key
+		 *
+		 * @private
+		 */
+		Switch.prototype.onsapenter = Switch.prototype._handleSpaceOrEnter;
+
 
 		Switch.prototype._updateStateAndNotify = function() {
 			var bState = this.getState();
