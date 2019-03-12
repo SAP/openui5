@@ -13,7 +13,8 @@ sap.ui.define([
 	"sap/ui/core/theming/Parameters",
 	"sap/f/Avatar",
 	"sap/m/Menu",
-	"sap/ui/core/Core"
+	"sap/ui/core/Core",
+	"sap/ui/thirdparty/jquery"
 ],
 function (
 	ShellBar,
@@ -28,7 +29,8 @@ function (
 	Parameters,
 	Avatar,
 	Menu,
-	Core
+	Core,
+	jQuery
 ) {
 	"use strict";
 
@@ -455,12 +457,25 @@ function (
 		}
 	});
 
-	QUnit.test("Mega menu attributes", function (assert) {
-		var $oMegaMenu = this.oSB._oMegaMenu._getButtonControl().$();
+	QUnit.test("Hidden title is rendered", function (assert) {
+		var sHiddenTitleId = '#' + this.oSB.getId() + '-titleHidden',
+			$oHiddenTitle = jQuery(sHiddenTitleId),
+			sTitle = this.oSB.getTitle(),
+			sNewTitle = "Test title";
 
 		// Assert
-		assert.strictEqual($oMegaMenu.attr("role"), "heading", "Mega menu role is correct");
-		assert.strictEqual($oMegaMenu.attr("aria-level"), "1", "Mega menu aria-level is correct");
+		assert.ok($oHiddenTitle.hasClass("sapFShellBarTitleHidden"), "Hidden title class is correct");
+		assert.strictEqual($oHiddenTitle.text(), sTitle, "Hidden title text is correct");
+		assert.strictEqual($oHiddenTitle.attr("role"), "heading", "Hidden title role is correct");
+		assert.strictEqual($oHiddenTitle.attr("aria-level"), "1", "Hidden title aria-level is correct");
+
+		// Act
+		this.oSB.setTitle(sNewTitle);
+		Core.applyChanges();
+		$oHiddenTitle = jQuery(sHiddenTitleId);
+
+		//Assert
+		assert.strictEqual($oHiddenTitle.text(), sNewTitle, "Hidden title new text is set correctly");
 	});
 
 	QUnit.test("Second title attributes", function (assert) {
@@ -527,6 +542,21 @@ function (
 		assert.strictEqual($oNotifications.attr("aria-haspopup"), "dialog", "Notifications aria-haspopup is correct");
 		assert.strictEqual($oNotifications.attr("aria-label"), sTooltip, "Notifications aria-label is correct");
 		assert.strictEqual(oNotifications.getTooltip(), sTooltip, "Notifications tooltip is correct");
+
+		// Act
+		this.oSB.setNotificationsNumber("2");
+
+		// Assert
+		assert.strictEqual($oNotifications.attr("aria-label"), "2 " + sTooltip, "Notifications aria-label is updated");
+		assert.strictEqual(oNotifications.getTooltip(), "2 " + sTooltip, "Notifications tooltip is updated");
+
+		// Act
+		this.oSB.setNotificationsNumber(null);
+
+		// Assert
+		assert.strictEqual($oNotifications.attr("aria-label"), sTooltip, "Notifications aria-label is restored to default");
+		assert.strictEqual(oNotifications.getTooltip(), sTooltip, "Notifications tooltip is restored to default");
+
 	});
 
 	QUnit.test("Products attributes", function (assert) {

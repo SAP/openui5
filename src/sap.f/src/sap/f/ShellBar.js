@@ -388,9 +388,9 @@ function(
 	 * @override
 	 */
 	ShellBar.prototype.setNotificationsNumber = function (sNotificationsNumber) {
-
 		if (this.getShowNotifications() && sNotificationsNumber !== undefined) {
 			this._updateNotificationsIndicators(sNotificationsNumber);
+			this._oAcc.updateNotificationsNumber(sNotificationsNumber);
 		}
 
 		return this.setProperty("notificationsNumber", sNotificationsNumber, true);

@@ -77,12 +77,6 @@ sap.ui.define([
 		if (oControl._oMenuButton) {
 			oControl._oMenuButton.addDelegate(this._oDelegateMenuButton, false, this);
 		}
-		if (oControl._oMegaMenu) {
-			oControl._oMegaMenu.enhanceAccessibilityState = function (oElement, mAriaProps) {
-				mAriaProps.role = "heading";
-				mAriaProps.level = "1";
-			};
-		}
 	};
 
 	Accessibility.prototype.getRootAttributes = function () {
@@ -103,6 +97,14 @@ sap.ui.define([
 		return this.oRb.getText("SHELLBAR_" + sEntity + "_TOOLTIP") || "";
 	};
 
+	Accessibility.prototype.updateNotificationsNumber = function (sNotificationsNumber) {
+		var sTooltip = this.getEntityTooltip("NOTIFICATIONS"),
+			sAriaLabel = sNotificationsNumber ? sNotificationsNumber + " " + sTooltip : sTooltip;
+
+		oControl._oNotifications.setTooltip(sAriaLabel);
+		oControl._oNotifications.$().attr("aria-label", sAriaLabel);
+	};
+
 	Accessibility.prototype.onAfterRenderingSecondTitle = function () {
 		var $oSecondTitle = oControl._oSecondTitle.$();
 
@@ -115,9 +117,12 @@ sap.ui.define([
 	};
 
 	Accessibility.prototype.onAfterRenderingNotifications = function () {
-		var $oNotifications = oControl._oNotifications.$();
+		var $oNotifications = oControl._oNotifications.$(),
+			sTooltip = this.getEntityTooltip("NOTIFICATIONS"),
+			sNotificationsNubmer = oControl._oNotifications.data("notifications"),
+			sAriaLabel = sNotificationsNubmer ? sNotificationsNubmer + " " + sTooltip : sTooltip;
 
-		$oNotifications.attr("aria-label", this.getEntityTooltip("NOTIFICATIONS"));
+		$oNotifications.attr("aria-label", sAriaLabel);
 		$oNotifications.attr("aria-haspopup", "dialog");
 	};
 
