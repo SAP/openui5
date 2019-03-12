@@ -7,6 +7,7 @@ sap.ui.require([
 	"sap/ui/model/analytics/AnalyticalBinding",
 	"sap/ui/model/analytics/AnalyticalTreeBindingAdapter",
 	"sap/ui/model/analytics/ODataModelAdapter",
+	'sap/ui/model/ChangeReason',
 	'sap/ui/model/Filter',
 	'sap/ui/model/FilterOperator',
 	'sap/ui/model/Sorter',
@@ -20,7 +21,7 @@ sap.ui.require([
 	"sap/ui/core/qunit/analytics/TBA_Batch_Filter",
 	"sap/ui/core/qunit/analytics/TBA_Batch_Sort"
 ], function (jQuery, odata4analytics, AnalyticalBinding, AnalyticalTreeBindingAdapter,
-		ODataModelAdapter, Filter, FilterOperator, Sorter, ODataModelV1, ODataModelV2,
+		ODataModelAdapter, ChangeReason, Filter, FilterOperator, Sorter, ODataModelV1, ODataModelV2,
 		o4aFakeService) {
 	/*global QUnit, sinon */
 	/*eslint max-nested-callbacks: 0 */
@@ -142,6 +143,10 @@ sap.ui.require([
 		sPath = "/ActualPlannedCosts(P_ControllingArea='US01',P_CostCenter='100-1000',"
 			+ "P_CostCenterTo='999-9999')/Results";
 
+	/*
+	 * If <code>iVersion !== 1 && !fnODataV2Callback</code>, a <code>Promise</code> is returned that
+	 * resolves with the new binding as soon as metadata has been loaded.
+	 */
 	function setupAnalyticalBinding(iVersion, mParameters, fnODataV2Callback, aAnalyticalInfo,
 			sBindingPath, bSkipInitialize, aSorters, aFilters) {
 		var oBinding,
@@ -184,10 +189,17 @@ sap.ui.require([
 			return {
 				binding : oBinding,
 				model : oModel};
-		} else {
+		} else if (fnODataV2Callback) {
 			oModel.attachMetadataLoaded(function () {
 				oBinding.initialize();
 				fnODataV2Callback(oBinding, oModel);
+			});
+		} else {
+			return oModel.metadataLoaded().then(function () {
+				if (!bSkipInitialize) {
+					oBinding.initialize();
+				}
+				return oBinding;
 			});
 		}
 	}
@@ -197,11 +209,15 @@ sap.ui.require([
 		afterEach : function (assert) {
 			// this would ruin AnalyticalTable.qunit.js in testsuite4analytics
 //			XMLHttpRequest.restore();
-			this.oLogMock.verify();
+			this._oSandbox.verifyAndRestore();
 		},
 
 		beforeEach : function () {
-			this.oLogMock = sinon.mock(jQuery.sap.log);
+			this._oSandbox = sinon.sandbox.create({
+				injectInto : this,
+				properties : ["mock", "spy", "stub"]
+			});
+			this.oLogMock = this.mock(jQuery.sap.log);
 			this.oLogMock.expects("warning").atMost(1)
 				.withExactArgs("default count mode is ignored; OData requests will include"
 					+ " $inlinecout options");
@@ -1068,6 +1084,96 @@ sap.ui.require([
 				[sExpectedSelect]);
 
 			done();
+		});
+	});
+
+	//*********************************************************************************************
+	QUnit.test("updateAnalyticalInfo: only formatters changed", function (assert) {
+		var aInitialColumns = [{
+				formatter : "formatter0",
+				grouped : "grouped0",
+				inResult : "inResult0",
+				level : "level0",
+				name : "name0",
+				// Note: these appear in test code and real life, but are ignored by our code
+//				sorted : "sorted0",
+//				sortOrder : "sortOrder0",
+				total : "total0",
+				visible : "visible0"
+			}, {
+				formatter : "formatter1",
+				grouped : "grouped1",
+				inResult : "inResult1",
+				level : "level1",
+				name : "name1",
+//				sorted : "sorted1",
+//				sortOrder : "sortOrder1",
+				total : "total1",
+				visible : "visible1"
+			}],
+			that = this;
+
+		return setupAnalyticalBinding(2, {}, /*fnODataV2Callback*/null, aInitialColumns)
+		.then(function (oBinding) {
+			var mAnalyticalInfoByProperty
+					= jQuery.extend(true, {}, oBinding.mAnalyticalInfoByProperty),
+				iAnalyticalInfoVersionNumber = oBinding.iAnalyticalInfoVersionNumber,
+				fnDeepEqualExpectation,
+				aInitialColumnsAfterUpdate = [{
+					formatter : null,
+					grouped : "grouped0",
+					inResult : "inResult0",
+					level : "level0",
+					name : "name0",
+					total : "total0",
+					visible : "visible0"
+				}, {
+					formatter : "formatter1 - CHANGED",
+					grouped : "grouped1",
+					inResult : "inResult1",
+					level : "level1",
+					name : "name1",
+					total : "total1",
+					visible : "visible1"
+				}],
+				fnResolve;
+
+			assert.strictEqual(oBinding.isInitial(), false);
+			assert.deepEqual(oBinding._aLastChangedAnalyticalInfo, aInitialColumns);
+			oBinding.attachChange(function (oEvent) {
+				assert.strictEqual(oEvent.getParameter("reason"), ChangeReason.Change);
+				fnResolve();
+			});
+			fnDeepEqualExpectation = that.mock(odata4analytics.helper).expects("deepEqual")
+				// Note: aInitialColumns has been remembered as a clone!
+				.withExactArgs(aInitialColumns, sinon.match.same(aInitialColumnsAfterUpdate),
+					sinon.match.func)
+				.returns(1);
+
+			// code under test
+			oBinding.updateAnalyticalInfo(aInitialColumnsAfterUpdate);
+
+			assert.strictEqual(oBinding.iAnalyticalInfoVersionNumber, iAnalyticalInfoVersionNumber,
+				"version number unchanged");
+			assert.deepEqual(oBinding._aLastChangedAnalyticalInfo, aInitialColumnsAfterUpdate,
+				"columns remembered");
+			assert.deepEqual(oBinding.mAnalyticalInfoByProperty, mAnalyticalInfoByProperty,
+				"formatters still unchanged");
+
+			// code under test: call back fnFormatterChanged
+			fnDeepEqualExpectation.args[0][2](aInitialColumnsAfterUpdate[0]);
+
+			assert.strictEqual(oBinding.mAnalyticalInfoByProperty.name0.formatter, null);
+
+			// code under test: call back fnFormatterChanged
+			fnDeepEqualExpectation.args[0][2](aInitialColumnsAfterUpdate[1]);
+
+			assert.strictEqual(oBinding.mAnalyticalInfoByProperty.name1.formatter,
+				"formatter1 - CHANGED");
+
+			return new Promise(function (resolve) {
+				fnResolve = resolve;
+			});
 		});
 	});
 });

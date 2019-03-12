@@ -36,6 +36,47 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/model/Filter', 'sap/ui/model/FilterO
 
 	odata4analytics.helper = {
 			/*
+			 * @param {object[]} [aOldColumns]
+			 * @param {object[]} aNewColumns
+			 * @param {function} [fnFormatterChanged]
+			 *   called for each column where only a formatter has changed
+			 * @returns {number} 0: same, 1: only formatters changed, 2: important changes
+			 */
+			deepEqual : function (aOldColumns, aNewColumns, fnFormatterChanged) {
+				var oNewColumn,
+					oOldColumn,
+					iResult = 0,
+					i,
+					n;
+
+				if (!aOldColumns || aOldColumns.length !== aNewColumns.length) {
+					return 2;
+				}
+				if (aOldColumns !== aNewColumns) {
+					for (i = 0, n = aOldColumns.length; i < n; i += 1) {
+						oOldColumn = aOldColumns[i];
+						oNewColumn = aNewColumns[i];
+						if (oOldColumn.grouped !== oNewColumn.grouped
+							|| oOldColumn.inResult !== oNewColumn.inResult
+							|| oOldColumn.level !== oNewColumn.level
+							|| oOldColumn.name !== oNewColumn.name
+							|| oOldColumn.total !== oNewColumn.total
+							|| oOldColumn.visible !== oNewColumn.visible) {
+							return 2;
+						}
+						if (oOldColumn.formatter !== oNewColumn.formatter) {
+							iResult = 1;
+							if (fnFormatterChanged) {
+								fnFormatterChanged(oNewColumn);
+							}
+						}
+					}
+				}
+
+				return iResult;
+			},
+
+			/*
 			 * Old helpers that got replaced by robust functions provided by the UI5 ODataModel
 			 */
 /*

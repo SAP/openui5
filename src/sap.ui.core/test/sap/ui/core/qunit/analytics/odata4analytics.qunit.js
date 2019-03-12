@@ -1062,5 +1062,84 @@ sap.ui.require([
 		// this.oODataModel.getServiceMetadata()...
 		// this.oODataModel.getMetaModel().getODataProperty(oEntityType, sPath);
 	});
+
+	//*********************************************************************************************
+	QUnit.test("deepEqual", function (assert) {
+		var aColumns = [];
+
+		function test(iExpectedResult, sProperty) {
+			var oNewColumn = {},
+				aNewColumns = [{}, oNewColumn],
+				oOldColumn = {},
+				aOldColumns = [{}, oOldColumn];
+
+			oNewColumn[sProperty] = "new";
+			oOldColumn[sProperty] = "old";
+			if (iExpectedResult === 2) { // important changes win
+				aNewColumns.unshift({formatter : "new"});
+				aOldColumns.unshift({formatter : "old"});
+			}
+
+			// code under test
+			assert.strictEqual(
+				odata4analytics.helper.deepEqual(aOldColumns, aNewColumns),
+				iExpectedResult);
+		}
+
+		// code under test
+		assert.strictEqual(odata4analytics.helper.deepEqual(undefined, []), 2,
+			"_aLastChangedAnalyticalInfo is initially undefined");
+
+		// code under test
+		assert.strictEqual(odata4analytics.helper.deepEqual(aColumns, aColumns), 0);
+
+		// code under test
+		assert.strictEqual(odata4analytics.helper.deepEqual([], [{}]), 2);
+
+		["grouped", "inResult", "level", "name", "total", "visible"].forEach(test.bind(null, 2));
+		// changes to formatter do not affect GET requests, but only AnalyticalBinding#getGroupName
+		["formatter"].forEach(test.bind(null, 1));
+		// Note: these appear in test code and real life, but are ignored by our code
+		["sorted", "sortOrder"].forEach(test.bind(null, 0));
+
+		// code under test
+		assert.strictEqual(odata4analytics.helper.deepEqual([], []), 0);
+	});
+
+	//*********************************************************************************************
+	QUnit.test("deepEqual: fnFormatterChanged", function (assert) {
+		var o = {
+				formatterChanged : function () {}
+			},
+			oMock = this.mock(o),
+			aNewColumns = [{
+				name : "a",
+				formatter : 0
+			}, {
+				name : "b",
+				formatter : 0
+			}, {
+				name : "c",
+				formatter : 0
+			}],
+			aOldColumns = [{
+				name : "a",
+				formatter : 1
+			}, {
+				name : "b",
+				formatter : 0
+			}, {
+				name : "c",
+				formatter : 1
+			}];
+
+		oMock.expects("formatterChanged").withExactArgs(sinon.match.same(aNewColumns[0]));
+		oMock.expects("formatterChanged").withExactArgs(sinon.match.same(aNewColumns[2]));
+
+		// code under test
+		assert.strictEqual(
+			odata4analytics.helper.deepEqual(aOldColumns, aNewColumns, o.formatterChanged),
+			1);
+	});
 });
 //TODO odata4analytics.QueryResult
