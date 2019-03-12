@@ -1454,6 +1454,9 @@ sap.ui.define([
 						dt: "test-resources/sap/m/qunit/designtime/"
 					}
 				},
+				qunit: {
+					version: 2
+				},
 				group: "Designtime",
 				module: [
 					"./designtime/Button.qunit",
