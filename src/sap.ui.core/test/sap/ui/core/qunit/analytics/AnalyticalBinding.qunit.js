@@ -44,13 +44,13 @@ sap.ui.define([
 			visible: true
 		},
 		oControllingArea = {
-				name: "ControllingArea",
-				grouped: false,
-				inResult: false,
-				sortOrder: "Ascending",
-				sorted: false,
-				total: false,
-				visible: true
+			name: "ControllingArea",
+			grouped: false,
+			inResult: false,
+			sortOrder: "Ascending",
+			sorted: false,
+			total: false,
+			visible: true
 		},
 		oCostCenterUngrouped = {
 			name: "CostCenter",
@@ -98,40 +98,40 @@ sap.ui.define([
 			visible: true
 		},
 		oControllingAreaNoTextGrouped = {
-				name: "ControllingAreaNoText",
-				grouped: true,
-				inResult: false,
-				sortOrder: "Ascending",
-				sorted: false,
-				total: false,
-				visible: true
+			name: "ControllingAreaNoText",
+			grouped: true,
+			inResult: false,
+			sortOrder: "Ascending",
+			sorted: false,
+			total: false,
+			visible: true
 		},
 		oControllingAreaNoTextNoLabelGrouped = {
-				name: "ControllingAreaNoTextNoLabel",
-				grouped: true,
-				inResult: false,
-				sortOrder: "Ascending",
-				sorted: false,
-				total: false,
-				visible: true
+			name: "ControllingAreaNoTextNoLabel",
+			grouped: true,
+			inResult: false,
+			sortOrder: "Ascending",
+			sorted: false,
+			total: false,
+			visible: true
 		},
 		oControllingAreaNoTextEmptyLabelGrouped = {
-				name: "ControllingAreaNoTextEmptyLabel",
-				grouped: true,
-				inResult: false,
-				sortOrder: "Ascending",
-				sorted: false,
-				total: false,
-				visible: true
+			name: "ControllingAreaNoTextEmptyLabel",
+			grouped: true,
+			inResult: false,
+			sortOrder: "Ascending",
+			sorted: false,
+			total: false,
+			visible: true
 		},
 		oControllingAreaWithTextEmptyLabelGrouped = {
-				name: "ControllingAreaWithTextEmptyLabel",
-				grouped: true,
-				inResult: false,
-				sortOrder: "Ascending",
-				sorted: false,
-				total: false,
-				visible: true
+			name: "ControllingAreaWithTextEmptyLabel",
+			grouped: true,
+			inResult: false,
+			sortOrder: "Ascending",
+			sorted: false,
+			total: false,
+			visible: true
 		},
 		// Analytical info for measures
 		oActualCostsTotal = {
@@ -328,11 +328,15 @@ sap.ui.define([
 		afterEach : function (assert) {
 			// this would ruin AnalyticalTable.qunit.js in testsuite4analytics
 //			XMLHttpRequest.restore();
-			this.oLogMock.verify();
+			this._oSandbox.verifyAndRestore();
 		},
 
 		beforeEach : function () {
-			this.oLogMock = sinon.mock(AnalyticalBinding.Logger);
+			this._oSandbox = sinon.sandbox.create({
+				injectInto : this,
+				properties : ["mock", "spy", "stub"]
+			});
+			this.oLogMock = this.mock(AnalyticalBinding.Logger);
 			this.oLogMock.expects("warning").atMost(1)
 				.withExactArgs("default count mode is ignored; OData requests will include"
 					+ " $inlinecout options");
@@ -1985,6 +1989,89 @@ sap.ui.define([
 
 			done();
 		}, aInitialColumns, undefined, true);
+	});
+
+	//*********************************************************************************************
+	QUnit.test("updateAnalyticalInfo: only formatters changed", function (assert) {
+		var done = assert.async(),
+			aInitialColumns = [{
+				formatter : "formatter0",
+				grouped : "grouped0",
+				inResult : "inResult0",
+				level : "level0",
+				name : "name0",
+				// Note: these appear in test code and real life, but are ignored by our code
+//				sorted : "sorted0",
+//				sortOrder : "sortOrder0",
+				total : "total0",
+				visible : "visible0"
+			}, {
+				formatter : "formatter1",
+				grouped : "grouped1",
+				inResult : "inResult1",
+				level : "level1",
+				name : "name1",
+//				sorted : "sorted1",
+//				sortOrder : "sortOrder1",
+				total : "total1",
+				visible : "visible1"
+			}],
+			that = this;
+
+		setupAnalyticalBinding(2, {}, function (oBinding) {
+			var mAnalyticalInfoByProperty
+					= jQuery.extend(true, {}, oBinding.mAnalyticalInfoByProperty),
+				iAnalyticalInfoVersionNumber = oBinding.iAnalyticalInfoVersionNumber,
+				aInitialColumnsAfterUpdate = [{
+					formatter : null,
+					grouped : "grouped0",
+					inResult : "inResult0",
+					level : "level0",
+					name : "name0",
+					total : "total0",
+					visible : "visible0"
+				}, {
+					formatter : "formatter1 - CHANGED",
+					grouped : "grouped1",
+					inResult : "inResult1",
+					level : "level1",
+					name : "name1",
+					total : "total1",
+					visible : "visible1"
+				}];
+
+			assert.strictEqual(oBinding.isInitial(), false);
+			assert.deepEqual(oBinding._aLastChangedAnalyticalInfo, aInitialColumns);
+			oBinding.attachChange(function (oEvent) {
+				assert.strictEqual(oEvent.getParameter("reason"), ChangeReason.Change);
+				done();
+			});
+			that.mock(odata4analytics.helper).expects("deepEqual")
+				// Note: aInitialColumns has been remembered as a clone!
+				.withExactArgs(aInitialColumns, sinon.match.same(aInitialColumnsAfterUpdate),
+					sinon.match.func)
+				.returns(1);
+
+			// code under test
+			oBinding.updateAnalyticalInfo(aInitialColumnsAfterUpdate);
+
+			assert.strictEqual(oBinding.iAnalyticalInfoVersionNumber, iAnalyticalInfoVersionNumber,
+				"version number unchanged");
+			assert.deepEqual(oBinding._aLastChangedAnalyticalInfo, aInitialColumnsAfterUpdate,
+				"columns remembered");
+			assert.deepEqual(oBinding.mAnalyticalInfoByProperty, mAnalyticalInfoByProperty,
+				"formatters updated");
+
+			// code under test: call back fnFormatterChanged
+			odata4analytics.helper.deepEqual.args[0][2](aInitialColumnsAfterUpdate[0]);
+
+			assert.strictEqual(mAnalyticalInfoByProperty.name0.formatter, null);
+
+			// code under test: call back fnFormatterChanged
+			odata4analytics.helper.deepEqual.args[0][2](aInitialColumnsAfterUpdate[1]);
+
+			assert.strictEqual(mAnalyticalInfoByProperty.name1.formatter, "formatter1 - CHANGED");
+		}, aInitialColumns);
 	});
 
 	//*********************************************************************************************
