@@ -212,7 +212,9 @@ sap.ui.define([
 				press: function () {
 					this._oContext.fireEvent("notificationsPressed", {button: this._oControls.oNotifications});
 				}.bind(this)
-			}).setLayoutData(new OverflowToolbarLayoutData({
+			})
+			.addStyleClass("sapFButtonNotifications")
+			.setLayoutData(new OverflowToolbarLayoutData({
 				priority: OverflowToolbarPriority.Low
 			}));
 		}

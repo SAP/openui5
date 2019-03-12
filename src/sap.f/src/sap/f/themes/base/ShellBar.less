@@ -214,3 +214,47 @@
 		}
 	}
 }
+
+.sapFButtonNotifications[data-notifications],
+.sapFShellBarOverflowButton[data-notifications] {
+	overflow: visible;
+	&:after
+	{
+		content: attr(data-notifications);
+		position: absolute;
+		top: 0.125rem;
+		right: -0.125rem;
+
+		box-sizing: border-box;
+		padding: 0 0.3125rem;
+		border-radius: 1.125rem;
+		height: 1.125rem;
+		max-width: 3.75rem;
+
+		line-height: 1.125rem;
+		font-size: 0.6875rem;
+		font-family: @sapUiFontFamily;
+
+		background-color: @sapUiContentBadgeBackground;
+		border-color: @sapUiContentBadgeBackground;
+		color: @sapUiShellTextColor;
+
+		text-overflow: ellipsis;
+		overflow: hidden;
+
+	}
+}
+
+.sapFButtonNotifications ~ .sapFShellBarOverflowButton,
+.sapFButtonNotifications[data-notifications=""],
+.sapFShellBarOverflowButton[data-notifications=""] {
+	&:after {
+		display: none;
+	}
+}
+
+.sapFShellBar:not(.sapFShellBarNotifications) {
+	.sapFShellBarOverflowButton[data-notifications]:after {
+		display: none;
+	}
+}

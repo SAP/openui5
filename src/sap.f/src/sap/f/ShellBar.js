@@ -55,7 +55,9 @@ function(
 	var ShellBar = Control.extend("sap.f.ShellBar", /** @lends sap.f.ShellBar.prototype */ {
 		metadata: {
 			library: "sap.f",
-			interfaces: ["sap.f.IShellBar"],
+			interfaces: [
+				"sap.f.IShellBar"
+			],
 			properties: {
 				/**
 				 * Defines the main title of the control.
@@ -93,7 +95,12 @@ function(
 				/**
 				 * Determines whether the product switcher button is displayed.
 				 */
-				showProductSwitcher: {type: "boolean", group: "Appearance", defaultValue: false}
+				showProductSwitcher: {type: "boolean", group: "Appearance", defaultValue: false},
+				/**
+				 * Defines the displayed number of upcoming notifications.
+				 * @since 1.64
+				 */
+				notificationsNumber: {type: "string", group: "Appearance", defaultValue: ""}
 			},
 			aggregations: {
 				/**
@@ -239,7 +246,12 @@ function(
 	};
 
 	ShellBar.prototype.onBeforeRendering = function () {
+		var sNotificationsNumber = this.getNotificationsNumber();
+
 		this._assignControlsToOverflowToolbar();
+		if (this.getShowNotifications() && sNotificationsNumber !== undefined) {
+			this._updateNotificationsIndicators(sNotificationsNumber);
+		}
 	};
 
 	ShellBar.prototype.exit = function () {
@@ -370,6 +382,21 @@ function(
 		return this.setProperty("showMenuButton", bShow);
 	};
 
+	/**
+	 * Sets the number of upcoming notifications.
+	 *
+	 * @override
+	 */
+	ShellBar.prototype.setNotificationsNumber = function (sNotificationsNumber) {
+
+		if (this.getShowNotifications() && sNotificationsNumber !== undefined) {
+			this._updateNotificationsIndicators(sNotificationsNumber);
+		}
+
+		return this.setProperty("notificationsNumber", sNotificationsNumber, true);
+	};
+
+
 	// Utility
 	ShellBar.prototype._assignControlsToOverflowToolbar = function () {
 		var aAdditionalContent;
@@ -434,6 +461,11 @@ function(
 		}
 
 		this._bOTBUpdateNeeded = false;
+	};
+
+	ShellBar.prototype._updateNotificationsIndicators = function(sNotificationsNumber) {
+		this._oOverflowToolbar._getOverflowButton().data("notifications", sNotificationsNumber, true);
+		this._oNotifications.data("notifications", sNotificationsNumber, true);
 	};
 
 	ShellBar.prototype._getProfile = function () {

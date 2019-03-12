@@ -3,6 +3,7 @@
 sap.ui.define([
 	"sap/f/ShellBar",
 	"sap/f/shellBar/Factory",
+	"sap/f/ShellBarRenderer",
 	"sap/f/shellBar/ResponsiveHandler",
 	"sap/f/shellBar/AdditionalContentSupport",
 	"sap/f/shellBar/ContentButton",
@@ -17,6 +18,7 @@ sap.ui.define([
 function (
 	ShellBar,
 	Factory,
+	ShellBarRenderer,
 	ResponsiveHandler,
 	AdditionalContentSupport,
 	ContentButton,
@@ -132,7 +134,8 @@ function (
 			{name: "showCopilot", type: "boolean", defaultValue: false},
 			{name: "showSearch", type: "boolean", defaultValue: false},
 			{name: "showNotifications", type: "boolean", defaultValue: false},
-			{name: "showProductSwitcher", type: "boolean", defaultValue: false}];
+			{name: "showProductSwitcher", type: "boolean", defaultValue: false},
+			{name: "notificationsNumber", type: "string", defaultValue: ""}];
 
 		assert.deepEqual(this.getPropertiesObject(), oExpectedObject, "All properties setup as expected");
 	});
@@ -548,4 +551,31 @@ function (
 		assert.strictEqual(oAvatar.getTooltip(), sTooltip, "Avatar tooltip is correct");
 	});
 
+	QUnit.test("Notifications Badge basic functionality", function (assert) {
+		// Arrange
+		var sNotificationsButtonNumber,
+			sOverflowToolbarButtonNumber,
+			oRendererSpy = sinon.spy(ShellBarRenderer, "render");
+
+		// Act
+
+		this.oSB.setShowNotifications(true);
+		this.oSB.setNotificationsNumber("40");
+
+		// Arrange
+		sNotificationsButtonNumber = this.oSB._oNotifications.data("notifications");
+		sOverflowToolbarButtonNumber = this.oSB._oOverflowToolbar._getOverflowButton().data("notifications");
+
+		// Assert
+		assert.strictEqual(sNotificationsButtonNumber, "40", "Badge data rendered correctly inside notifications button");
+		assert.strictEqual(sOverflowToolbarButtonNumber, "40", "Badge data rendered correctly inside overflow button");
+
+		// Act
+		this.oSB.setNotificationsNumber("50");
+		// Assert
+		assert.strictEqual(oRendererSpy.callCount, 0, "Control didn`t rerender on property change");
+
+		sNotificationsButtonNumber = null;
+		sOverflowToolbarButtonNumber = null;
+	});
 });
