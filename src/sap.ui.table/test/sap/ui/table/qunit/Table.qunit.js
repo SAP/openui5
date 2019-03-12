@@ -20,12 +20,15 @@ sap.ui.define([
 	"sap/ui/core/util/PasteHelper",
 	"sap/ui/Device", "sap/ui/model/json/JSONModel", "sap/ui/model/Sorter", "sap/ui/model/Filter", "sap/ui/model/type/Float",
 	"sap/m/Text", "sap/m/Input", "sap/m/Label", "sap/m/CheckBox", "sap/m/Button", "sap/m/Link", "sap/m/RatingIndicator", "sap/m/Image",
-	"sap/m/Toolbar", "sap/m/ToolbarDesign", "sap/ui/unified/Menu", "sap/ui/unified/MenuItem", "sap/m/Menu", "sap/m/MenuItem", "sap/base/Log"
+	"sap/m/Toolbar", "sap/ui/unified/Menu", "sap/ui/unified/MenuItem", "sap/m/Menu", "sap/m/MenuItem", "sap/base/Log", "sap/m/library"
 ], function(qutils, TableQUnitUtils, Table, Column, ColumnMenu, ColumnMenuRenderer, AnalyticalColumnMenuRenderer, TablePersoController, RowAction,
 			RowActionItem, RowSettings, TableUtils, TableLibrary, SelectionPlugin, CoreLibrary, Control, PasteHelper,
 			Device, JSONModel, Sorter, Filter, FloatType,
-			Text, Input, Label, CheckBox, Button, Link, RatingIndicator, Image, Toolbar, ToolbarDesign, Menu, MenuItem, MenuM, MenuItemM, Log) {
+			Text, Input, Label, CheckBox, Button, Link, RatingIndicator, Image, Toolbar, Menu, MenuItem, MenuM, MenuItemM, Log, library) {
 	"use strict";
+
+	// shortcut for sap.m.ToolbarDesign
+	var ToolbarDesign = library.ToolbarDesign;
 
 	// Shortcuts
 	var SortOrder = TableLibrary.SortOrder;

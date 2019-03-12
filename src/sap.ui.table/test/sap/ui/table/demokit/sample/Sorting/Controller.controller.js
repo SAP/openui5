@@ -1,12 +1,15 @@
 sap.ui.define([
 	"sap/ui/core/mvc/Controller",
-	"sap/ui/table/SortOrder",
 	"sap/ui/model/Sorter",
 	"sap/ui/model/json/JSONModel",
 	"sap/ui/core/format/DateFormat",
-	"sap/ui/table/sample/TableExampleUtils"
-], function(Controller, SortOrder, Sorter, JSONModel, DateFormat, TableExampleUtils) {
+	"sap/ui/table/sample/TableExampleUtils",
+	"sap/ui/table/library"
+], function(Controller, Sorter, JSONModel, DateFormat, TableExampleUtils, library) {
 	"use strict";
+
+	// shortcut for sap.ui.table.SortOrder
+	var SortOrder = library.SortOrder;
 
 	return Controller.extend("sap.ui.table.sample.Sorting.Controller", {
 

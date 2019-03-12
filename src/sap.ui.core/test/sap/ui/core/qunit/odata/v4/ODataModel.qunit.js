@@ -4,7 +4,6 @@
 sap.ui.define([
 	"jquery.sap.global",
 	"sap/base/Log",
-	"sap/ui/core/MessageType",
 	"sap/ui/core/message/Message",
 	"sap/ui/model/Binding",
 	"sap/ui/model/BindingMode",
@@ -25,14 +24,18 @@ sap.ui.define([
 	"sap/ui/model/odata/v4/lib/_MetadataRequestor",
 	"sap/ui/model/odata/v4/lib/_Parser",
 	"sap/ui/model/odata/v4/lib/_Requestor",
-	"sap/ui/test/TestUtils"
-], function (jQuery, Log, MessageType, Message, Binding, BindingMode, BaseContext, Model,
+	"sap/ui/test/TestUtils",
+	"sap/ui/core/library"
+], function (jQuery, Log, Message, Binding, BindingMode, BaseContext, Model,
 		ODataUtils, OperationMode, TypeString, Context, ODataContextBinding, ODataListBinding,
 		ODataMetaModel, ODataModel, ODataPropertyBinding, SubmitMode, _GroupLock, _Helper,
-		_MetadataRequestor, _Parser, _Requestor, TestUtils) {
+		_MetadataRequestor, _Parser, _Requestor, TestUtils, library) {
 	/*global QUnit, sinon */
 	/*eslint max-nested-callbacks: 0, no-warning-comments: 0 */
 	"use strict";
+
+	// shortcut for sap.ui.core.MessageType
+	var MessageType = library.MessageType;
 
 	/*
 	 * You can run various tests in this module against a real OData V4 service using the request

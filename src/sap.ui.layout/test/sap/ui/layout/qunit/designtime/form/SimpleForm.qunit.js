@@ -3,19 +3,22 @@ sap.ui.define([
 	"sap/ui/dt/test/ElementEnablementTest",
 	"sap/ui/rta/test/controlEnablingCheck",
 	"sap/ui/layout/form/SimpleForm",
-	"sap/ui/layout/form/SimpleFormLayout",
 	"sap/m/Toolbar",
-	"sap/m/Button"
+	"sap/m/Button",
+	"sap/ui/layout/library"
 ], function(
 	QUnit,
 	ElementEnablementTest,
 	rtaControlEnablingCheck,
 	SimpleForm,
-	SimpleFormLayout,
 	Toolbar,
-	Button
+	Button,
+	library
 ) {
 	"use strict";
+
+	// shortcut for sap.ui.layout.form.SimpleFormLayout
+	var SimpleFormLayout = library.form.SimpleFormLayout;
 
 	var oElementEnablementTest = new ElementEnablementTest({
 		type: "sap.ui.layout.form.SimpleForm",

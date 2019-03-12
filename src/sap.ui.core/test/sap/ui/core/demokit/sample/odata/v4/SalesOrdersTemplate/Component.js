@@ -9,15 +9,18 @@
  */
 sap.ui.define([
 	"sap/m/HBox",
+	"sap/ui/core/library",
 	"sap/ui/core/mvc/View", // sap.ui.view()
-	"sap/ui/core/mvc/ViewType",
 	"sap/ui/core/sample/common/Component",
 	"sap/ui/model/json/JSONModel",
 	"sap/ui/model/odata/v4/ODataModel",
 	"sap/ui/test/TestUtils",
 	"sap/ui/thirdparty/sinon"
-], function (HBox, View, ViewType, BaseComponent, JSONModel, ODataModel, TestUtils, sinon) {
+], function (HBox, library, View, BaseComponent, JSONModel, ODataModel, TestUtils, sinon) {
 	"use strict";
+
+	// shortcut for sap.ui.core.mvc.ViewType
+	var ViewType = library.mvc.ViewType;
 
 	return BaseComponent.extend("sap.ui.core.sample.odata.v4.SalesOrdersTemplate.Component", {
 		metadata : {

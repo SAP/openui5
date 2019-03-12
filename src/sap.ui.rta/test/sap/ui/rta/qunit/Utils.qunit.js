@@ -13,8 +13,8 @@ sap.ui.define([
 	"sap/uxap/ObjectPageSection",
 	"sap/uxap/ObjectPageSubSection",
 	"sap/uxap/ObjectPageLayout",
-	"sap/uxap/ObjectPageSubSectionLayout",
-	"sap/ui/thirdparty/sinon-4"
+	"sap/ui/thirdparty/sinon-4",
+	"sap/uxap/library"
 ],
 function(
 	jQuery,
@@ -29,10 +29,13 @@ function(
 	ObjectPageSection,
 	ObjectPageSubSection,
 	ObjectPageLayout,
-	ObjectPageSubSectionLayout,
-	sinon
+	sinon,
+	uxapLibrary
 ) {
 	'use strict';
+
+	// shortcut for sap.uxap.ObjectPageSubSectionLayout
+	var ObjectPageSubSectionLayout = uxapLibrary.ObjectPageSubSectionLayout;
 
 	var sandbox = sinon.sandbox.create();
 

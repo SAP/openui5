@@ -1,12 +1,17 @@
 /*global QUnit */
 sap.ui.define([
 	"jquery.sap.global",
-	"sap/m/Size",
 	"sap/m/FeedContent",
-	"sap/m/ValueColor",
-	"sap/ui/core/TooltipBase"
-], function(jQuery, Size, FeedContent, ValueColor, TooltipBase) {
+	"sap/ui/core/TooltipBase",
+	"sap/m/library"
+], function(jQuery, FeedContent, TooltipBase, library) {
 	"use strict";
+
+	// shortcut for sap.m.ValueColor
+	var ValueColor = library.ValueColor;
+
+	// shortcut for sap.m.Size
+	var Size = library.Size;
 
 	QUnit.module("Rendering test - sap.m.FeedContent", {
 		beforeEach : function() {

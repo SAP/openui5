@@ -2,13 +2,23 @@
 sap.ui.define([
 	"jquery.sap.global",
 	"sap/m/NumericContent",
-	"sap/m/Size",
-	"sap/m/LoadState",
-	"sap/m/DeviationIndicator",
-	"sap/m/ValueColor",
-	"sap/ui/core/TooltipBase"
-], function(jQuery, NumericContent, Size, LoadState, DeviationIndicator, ValueColor, TooltipBase) {
+	"sap/ui/core/TooltipBase",
+	"sap/m/library"
+], function(jQuery, NumericContent, TooltipBase, library) {
 	"use strict";
+
+
+	// shortcut for sap.m.ValueColor
+	var ValueColor = library.ValueColor;
+
+	// shortcut for sap.m.DeviationIndicator
+	var DeviationIndicator = library.DeviationIndicator;
+
+	// shortcut for sap.m.LoadState
+	var LoadState = library.LoadState;
+
+	// shortcut for sap.m.Size
+	var Size = library.Size;
 
 
 	jQuery.sap.initMobile();

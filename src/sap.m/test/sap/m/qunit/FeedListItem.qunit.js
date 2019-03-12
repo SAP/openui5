@@ -11,19 +11,28 @@ sap.ui.define([
 	"sap/m/Popover",
 	"sap/m/Bar",
 	"sap/m/ActionSheet",
-	"sap/m/ButtonType",
 	"sap/m/App",
 	"sap/m/Page",
-	"sap/m/ListType",
-	"sap/m/LinkConversion",
-	"sap/m/PlacementType",
 	"sap/ui/Device",
 	"sap/m/FormattedText",
 	"sap/ui/core/IconPool",
+	"sap/m/library",
 	"jquery.sap.keycodes"
 ], function(qutils, jQuery, FeedListItem, FeedListItemAction, List, StandardListItem, JSONModel, Button, Popover, Bar,
-			ActionSheet, ButtonType, App, Page, ListType, LinkConversion, PlacementType, Device, FormattedText, IconPool) {
+			ActionSheet, App, Page, Device, FormattedText, IconPool, library) {
 	"use strict";
+
+	// shortcut for sap.m.PlacementType
+	var PlacementType = library.PlacementType;
+
+	// shortcut for sap.m.LinkConversion
+	var LinkConversion = library.LinkConversion;
+
+	// shortcut for sap.m.ListType
+	var ListType = library.ListType;
+
+	// shortcut for sap.m.ButtonType
+	var ButtonType = library.ButtonType;
 
 	var IMAGE_PATH = "test-resources/sap/m/images/";
 

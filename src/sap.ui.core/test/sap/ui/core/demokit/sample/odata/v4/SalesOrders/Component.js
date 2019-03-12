@@ -12,16 +12,19 @@ sap.ui.define([
 	"jquery.sap.global",
 	"sap/base/Log",
 	"sap/m/HBox",
+	"sap/ui/core/library",
 	"sap/ui/core/UIComponent",
 	"sap/ui/core/mvc/View",
-	"sap/ui/core/mvc/ViewType",
 	"sap/ui/model/json/JSONModel",
 	"sap/ui/model/odata/OperationMode",
 	"sap/ui/model/odata/v4/ODataModel",
 	"sap/ui/test/TestUtils"
-], function (SalesOrdersSandbox, jQuery, Log, HBox, UIComponent, View, ViewType, JSONModel,
+], function (SalesOrdersSandbox, jQuery, Log, HBox, library, UIComponent, View, JSONModel,
 		OperationMode, ODataModel, TestUtils) {
 	"use strict";
+
+	// shortcut for sap.ui.core.mvc.ViewType
+	var ViewType = library.mvc.ViewType;
 
 	return UIComponent.extend("sap.ui.core.sample.odata.v4.SalesOrders.Component", {
 		metadata : {

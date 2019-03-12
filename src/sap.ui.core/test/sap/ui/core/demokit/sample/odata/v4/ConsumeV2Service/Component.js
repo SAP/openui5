@@ -9,14 +9,17 @@
  */
 sap.ui.define([
 	"jquery.sap.script", // jQuery.sap.getUriParameters()
+	"sap/ui/core/library",
 	"sap/ui/core/mvc/View", // sap.ui.view()
-	"sap/ui/core/mvc/ViewType",
 	"sap/ui/core/sample/common/Component",
 	"sap/ui/model/odata/OperationMode",
 	"sap/ui/model/odata/v4/ODataModel",
 	"sap/ui/test/TestUtils"
-], function (jQuery, View, ViewType, BaseComponent, OperationMode, ODataModel, TestUtils) {
+], function (jQuery, library, View, BaseComponent, OperationMode, ODataModel, TestUtils) {
 	"use strict";
+
+	// shortcut for sap.ui.core.mvc.ViewType
+	var ViewType = library.mvc.ViewType;
 
 	return BaseComponent.extend("sap.ui.core.sample.odata.v4.ConsumeV2Service.Component", {
 		metadata : {

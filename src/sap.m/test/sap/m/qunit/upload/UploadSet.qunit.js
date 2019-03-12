@@ -5,19 +5,16 @@ sap.ui.define([
 	"sap/m/upload/UploadSetItem",
 	"sap/m/upload/UploadSetRenderer",
 	"sap/m/upload/Uploader",
-	"sap/m/UploadState",
 	"sap/m/Toolbar",
 	"sap/m/Label",
 	"sap/m/ListItemBaseRenderer",
 	"sap/m/Dialog",
 	"sap/ui/Device",
-	"sap/m/ListSeparators",
-	"sap/m/ListMode",
 	"sap/m/MessageBox",
 	"sap/ui/model/json/JSONModel",
 	"test-resources/sap/m/qunit/upload/UploadSetTestUtils"
-], function (jQuery, UploadSet, UploadSetItem, UploadSetRenderer, Uploader, UploadState, Toolbar, Label, ListItemBaseRenderer,
-			 Dialog, Device, ListSeparators, ListMode, MessageBox, JSONModel, TestUtils) {
+], function (jQuery, UploadSet, UploadSetItem, UploadSetRenderer, Uploader, Toolbar, Label, ListItemBaseRenderer,
+			 Dialog, Device, MessageBox, JSONModel, TestUtils) {
 	"use strict";
 
 	function getData() {

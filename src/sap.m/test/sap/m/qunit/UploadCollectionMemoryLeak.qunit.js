@@ -8,14 +8,18 @@ sap.ui.define([
 	"sap/m/ObjectMarker",
 	"sap/m/Label",
 	"sap/ui/model/json/JSONModel",
-	"sap/ui/core/ValueState",
 	"sap/m/library",
 	"sap/ui/model/Sorter",
 	"sap/m/MessageBox",
-	"sap/ui/base/Event"
+	"sap/ui/base/Event",
+	"sap/ui/core/library"
 ], function (ManagedObject, UploadCollectionItem, UploadCollection, ObjectAttribute, ObjectStatus, ObjectMarker, Label,
-			 JSONModel, ValueState, mlibrary, Sorter, MessageBox, Event) {
+			 JSONModel, mlibrary, Sorter, MessageBox, Event, library) {
 	"use strict";
+
+	// shortcut for sap.ui.core.ValueState
+	var ValueState = library.ValueState;
+
 	var ObjectMarkerType = mlibrary.ObjectMarkerType;
 	var ObjectMarkerVisibility = mlibrary.ObjectMarkerVisibility;
 

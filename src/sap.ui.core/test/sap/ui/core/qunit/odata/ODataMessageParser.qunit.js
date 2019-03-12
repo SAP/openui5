@@ -10,11 +10,11 @@ sap.ui.define([
 	"sap/ui/model/BindingMode",
 	"sap/ui/model/type/String",
 	"sap/ui/core/message/MessageManager",
-	"sap/ui/core/MessageType",
 	"sap/m/Input",
 	"sap/m/Button",
 	"sap/ui/layout/VerticalLayout",
-	"sap/ui/layout/HorizontalLayout"
+	"sap/ui/layout/HorizontalLayout",
+	"sap/ui/core/library"
 ], function(
 	fakeService,
 	Log,
@@ -24,13 +24,16 @@ sap.ui.define([
 	BindingMode,
 	String,
 	MessageManager,
-	MessageType,
 	Input,
 	Button,
 	VerticalLayout,
-	HorizontalLayout
+	HorizontalLayout,
+	library
 ) {
 	"use strict";
+
+	// shortcut for sap.ui.core.MessageType
+	var MessageType = library.MessageType;
 
 	//add divs for control tests
 	var oContent = document.createElement("div");

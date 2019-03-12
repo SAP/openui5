@@ -8,7 +8,6 @@ sap.ui.define([
 	"sap/ui/model/ChangeReason",
 	"sap/ui/model/type/DateTime",
 	"sap/ui/core/message/Message",
-	"sap/ui/core/MessageType",
 	"sap/m/DateTimeInput",
 	"sap/m/Label",
 	"sap/m/Input",
@@ -16,7 +15,8 @@ sap.ui.define([
 	"sap/m/StandardListItem",
 	"sap/ui/table/Table",
 	"sap/ui/table/Column",
-	"sap/base/util/isEmptyObject"
+	"sap/base/util/isEmptyObject",
+	"sap/ui/core/library"
 ], function(
 		MockServer,
 		ODataModel,
@@ -26,7 +26,6 @@ sap.ui.define([
 		ChangeReason,
 		DateTime,
 		Message,
-		MessageType,
 		DateTimeInput,
 		Label,
 		Input,
@@ -34,10 +33,14 @@ sap.ui.define([
 		ListItem,
 		Table,
 		Column,
-		isEmptyObject
+		isEmptyObject,
+		library
 	) {
 
 	"use strict";
+
+	// shortcut for sap.ui.core.MessageType
+	var MessageType = library.MessageType;
 
 	//add divs for control tests
 	var oContent = document.createElement("div");

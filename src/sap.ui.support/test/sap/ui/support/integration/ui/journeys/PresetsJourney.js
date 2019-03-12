@@ -2,10 +2,13 @@
 
 sap.ui.define([
 	"sap/ui/test/opaQunit",
-	"sap/ui/core/ValueState",
-	"sap/ui/thirdparty/sinon"
-], function(opaTest, ValueState, sinon) {
+	"sap/ui/thirdparty/sinon",
+	"sap/ui/core/library"
+], function(opaTest, sinon, library) {
 	"use strict";
+
+	// shortcut for sap.ui.core.ValueState
+	var ValueState = library.ValueState;
 
 	QUnit.module("Support Assistant Rule Presets");
 
