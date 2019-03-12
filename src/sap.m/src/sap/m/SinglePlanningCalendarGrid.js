@@ -1050,7 +1050,7 @@ sap.ui.define([
 						oBlockerStart = CalendarDate.fromLocalJSDate(oBlocker.getStartDate()),
 						oBlockerEnd = CalendarDate.fromLocalJSDate(oBlocker.getEndDate());
 
-					if (oCurrentBlockerStart.isSameOrAfter(oBlockerStart) && oCurrentBlockerStart.isBefore(oBlockerEnd)) {
+					if (oCurrentBlockerStart.isSameOrAfter(oBlockerStart) && oCurrentBlockerStart.isSameOrBefore(oBlockerEnd)) {
 						oCurrentBlockerNode.level++;
 						iMaxLevel = Math.max(iMaxLevel, oCurrentBlockerNode.level);
 					}
