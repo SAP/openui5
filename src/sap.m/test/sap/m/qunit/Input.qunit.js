@@ -3998,5 +3998,169 @@ sap.ui.define([
 		assert.notOk(oGroupHeader.hasStyleClass("sapMInputFocusedHeaderGroup"), "Styling is removed from the unselected group header.");
 	});
 
-	return waitForThemeApplied();
+	QUnit.module("showItems functionality: List", {
+			beforeEach: function () {
+				var aData = [
+						{
+							name: "A Item 1", key: "a-item-1", group: "A"
+						}, {
+							name: "A Item 2", key: "a-item-2", group: "A"
+						}, {
+							name: "B Item 1", key: "a-item-1", group: "B"
+						}, {
+							name: "B Item 2", key: "a-item-2", group: "B"
+						}, {
+							name: "Other Item", key: "ab-item-1", group: "A B"
+						}
+					],
+					oModel = new JSONModel(aData);
+
+				this.oInput = new Input({
+					showSuggestion: true,
+					suggestionItems: {
+						path: "/",
+						template: new Item({text: "{name}", key: "{group}"})
+					}
+				}).setModel(oModel).placeAt("content");
+
+				sap.ui.getCore().applyChanges();
+
+			},
+			afterEach: function () {
+				this.oInput.destroy();
+				this.oInput = null;
+			}
+		});
+
+	QUnit.test("Should restore default filtering function", function (assert) {
+		// Setup
+		var fnFilter = this.oInput._fnFilter;
+
+		// Act
+		this.oInput.showItems(function () {
+			return true;
+		});
+
+		// Assert
+		assert.strictEqual(this.oInput._fnFilter, fnFilter, "Default function has been restored");
+
+		// Act
+		fnFilter = function (sValue, oItem) {
+			return oItem.getText() === "A Item 1";
+		};
+		this.oInput.setFilterFunction(fnFilter);
+		this.oInput.showItems(function () {
+			return false;
+		});
+
+		// Assert
+		assert.strictEqual(this.oInput._fnFilter, fnFilter, "Custom filter function has been restored");
+	});
+
+	QUnit.test("Should show all the items", function (assert) {
+		// Act
+		this.oInput.showItems();
+		sap.ui.getCore().applyChanges();
+
+		// Assert
+		assert.strictEqual(this.oInput._oSuggPopover._oList.getItems().length, 5, "Shows all items");
+	});
+
+	QUnit.test("Should filter the items", function (assert) {
+		// Act
+		this.oInput.showItems(function (sValue, oItem) {
+			return oItem.getText() === "A Item 1";
+		});
+		sap.ui.getCore().applyChanges();
+
+		// Assert
+		assert.strictEqual(this.oInput._oSuggPopover._oList.getItems().length, 1, "Show only the matching items");
+	});
+
+	QUnit.module("showItems functionality: Table", {
+		beforeEach: function () {
+			var aData = [
+					{
+						name: "A Item 1", key: "a-item-1", group: "A"
+					}, {
+						name: "A Item 2", key: "a-item-2", group: "A"
+					}, {
+						name: "B Item 1", key: "a-item-1", group: "B"
+					}, {
+						name: "B Item 2", key: "a-item-2", group: "B"
+					}, {
+						name: "Other Item", key: "ab-item-1", group: "A B"
+					}
+				],
+				oModel = new JSONModel(aData);
+
+			this.oInput = new Input({
+				showSuggestion: true,
+				suggestionColumns: [
+					new Column({
+						header: new Label({text: "Name"})
+					}),
+					new Column({
+						header: new Label({text: "Key"})
+					})
+				],
+				suggestionRows: {
+					path: "/",
+					template: new ColumnListItem({
+						type: "Active",
+						vAlign: "Middle",
+						cells: [
+							new Label({text: "{name}"}),
+							new Label({text: "{key}"})
+						]
+					})
+				}
+			}).setModel(oModel).placeAt("content");
+
+			sap.ui.getCore().applyChanges();
+
+		},
+		afterEach: function () {
+			this.oInput.destroy();
+			this.oInput = null;
+		}
+	});
+
+	QUnit.test("Should show all the items", function (assert) {
+		// Setup
+		var fnGetVisisbleItems = function (aItems) {
+			return aItems.filter(function (oItem) {
+				return oItem.getVisible();
+			});
+		};
+
+		// Act
+		this.oInput.showItems();
+		sap.ui.getCore().applyChanges();
+
+		// Assert
+		assert.strictEqual(this.oInput._oSuggPopover._oSuggestionTable.getItems().length, 5, "All the items are available");
+		assert.strictEqual(fnGetVisisbleItems(this.oInput._oSuggPopover._oSuggestionTable.getItems()).length, 5, "Shows all items");
+	});
+
+	QUnit.test("Should filter the items", function (assert) {
+		// Setup
+		var fnGetVisisbleItems = function (aItems) {
+			return aItems.filter(function (oItem) {
+				return oItem.getVisible();
+			});
+		};
+
+		// Act
+		this.oInput.showItems(function (sValue, oItem) {
+			return oItem.getCells()[0].getText() === "A Item 1";
+		});
+		sap.ui.getCore().applyChanges();
+
+		// Assert
+		assert.strictEqual(this.oInput._oSuggPopover._oSuggestionTable.getItems().length, 5, "All the items are available");
+		assert.strictEqual(fnGetVisisbleItems(this.oInput._oSuggPopover._oSuggestionTable.getItems()).length, 1, "Only the matching items are visible");
+	});
+
+	return waitForThemeApplied(this.oInput);
 });

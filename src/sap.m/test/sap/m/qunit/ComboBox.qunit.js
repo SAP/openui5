@@ -11905,4 +11905,98 @@ sap.ui.define([
 		// clean up
 		oComboBox.destroy();
 	});
+
+	QUnit.module("showItems functionality", {
+		beforeEach: function () {
+			var aData = [
+					{
+						name: "A Item 1", key: "a-item-1", group: "A"
+					}, {
+						name: "A Item 2", key: "a-item-2", group: "A"
+					}, {
+						name: "B Item 1", key: "a-item-1", group: "B"
+					}, {
+						name: "B Item 2", key: "a-item-2", group: "B"
+					}, {
+						name: "Other Item", key: "ab-item-1", group: "A B"
+					}
+				],
+				oModel = new JSONModel(aData);
+
+			this.oCombobox = new ComboBox({
+				items: {
+					path: "/",
+					template: new Item({text: "{name}", key: "{key}"})
+				}
+			}).setModel(oModel).placeAt("content");
+
+			sap.ui.getCore().applyChanges();
+
+		},
+		afterEach: function () {
+			this.oCombobox.destroy();
+			this.oCombobox = null;
+		}
+	});
+
+	QUnit.test("Should restore default filtering function", function (assert) {
+		// Setup
+		var fnFilter = this.oCombobox.fnFilter;
+
+		// Act
+		this.oCombobox.showItems(function () {
+			return true;
+		});
+
+		// Assert
+		assert.strictEqual(this.oCombobox.fnFilter, fnFilter, "Default function has been restored");
+
+		// Act
+		fnFilter = function (sValue, oItem) {
+			return oItem.getText() === "A Item 1";
+		};
+		this.oCombobox.setFilterFunction(fnFilter);
+		this.oCombobox.showItems(function () {
+			return false;
+		});
+
+		// Assert
+		assert.strictEqual(this.oCombobox.fnFilter, fnFilter, "Custom filter function has been restored");
+	});
+
+	QUnit.test("Should show all the items", function (assert) {
+		// Setup
+		var fnGetVisisbleItems = function (aItems) {
+			return aItems.filter(function (oItem) {
+				return oItem.getVisible();
+			});
+		};
+
+		// Act
+		this.oCombobox.showItems();
+		sap.ui.getCore().applyChanges();
+
+		// Assert
+		assert.strictEqual(this.oCombobox._oList.getItems().length, 5, "All the items are available");
+		assert.strictEqual(fnGetVisisbleItems(this.oCombobox._oList.getItems()).length, 5, "Shows all items");
+	});
+
+	QUnit.test("Should filter the items", function (assert) {
+		// Setup
+		var fnGetVisisbleItems = function (aItems) {
+			return aItems.filter(function (oItem) {
+				return oItem.getVisible();
+			});
+		};
+
+		// Act
+		this.oCombobox.showItems(function (sValue, oItem) {
+			return oItem.getText() === "A Item 1";
+		});
+		sap.ui.getCore().applyChanges();
+
+		// Assert
+		assert.strictEqual(this.oCombobox._oList.getItems().length, 5, "All the items are available");
+		assert.strictEqual(fnGetVisisbleItems(this.oCombobox._oList.getItems()).length, 1, "Only the matching items are visible");
+	});
 });

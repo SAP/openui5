@@ -555,36 +555,38 @@ sap.ui.define([
 				}
 			}, this);
 
-			this.getIcon().attachPress(function (oEvent) {
-				var oPicker;
-
-				// in case of a non-editable or disabled combo box, the picker popup cannot be opened
-				if (!this.getEnabled() || !this.getEditable()) {
-					return;
-				}
-
-				if (this._bShouldClosePicker) {
-					this._bShouldClosePicker = false;
-					this.close();
-					return;
-				}
-
-				this.loadItems();
-				this.bOpenedByKeyboardOrButton = true;
-
-				if (this.isPlatformTablet()) {
-					oPicker = this.getPicker();
-					oPicker.setInitialFocus(oPicker);
-				}
-
-				this.open();
-			}, this);
+			this.getIcon().attachPress(this._handlePopupOpenAndItemsLoad.bind(this, true));
 
 			// handle composition events & validation of composition symbols
 			this._sComposition = "";
 
 			// a method to define whether an item should be filtered in the picker
 			this.fnFilter = null;
+		};
+
+		ComboBoxBase.prototype._handlePopupOpenAndItemsLoad = function (bOpenOnInteraction) {
+			var oPicker;
+
+			// in case of a non-editable or disabled combo box, the picker popup cannot be opened
+			if (!this.getEnabled() || !this.getEditable()) {
+				return;
+			}
+
+			if (this._bShouldClosePicker) {
+				this._bShouldClosePicker = false;
+				this.close();
+				return;
+			}
+
+			this.loadItems();
+			this.bOpenedByKeyboardOrButton = bOpenOnInteraction;
+
+			if (this.isPlatformTablet()) {
+				oPicker = this.getPicker();
+				oPicker.setInitialFocus(oPicker);
+			}
+
+			this.open();
 		};
 
 		ComboBoxBase.prototype.onBeforeRendering = function() {
@@ -1627,6 +1629,54 @@ sap.ui.define([
 				}).indexOf(oItem.getId()) !== -1;
 			});
 		};
+
+		/**
+		 * Opens the <code>SuggestionsPopover</code> with the available items.
+		 *
+		 * @param {function} fnFilter Function to filter the items shown in the SuggestionsPopover
+		 * @returns {void}
+		 *
+		 * @since 1.64
+		 * @experimental Since 1.64
+		 * @public
+		 */
+		ComboBoxBase.prototype.showItems = function (fnFilter) {
+			var fnFilterStore = this.fnFilter,
+				fnLoadItemsListener = function () {
+					if (!this.getItems().length) {
+						return;
+					}
+
+					this.detachLoadItems(fnLoadItemsListener);
+
+					// Replace the filter with provided one or show all the items
+					this.setFilterFunction(fnFilter || function () {
+						return true;
+					});
+
+					this.applyShowItemsFilters(); // Apply control specific filtering
+					this._handlePopupOpenAndItemsLoad(false);
+					this.setFilterFunction(fnFilterStore); // Restore filtering function
+				}.bind(this);
+
+			// in case of a non-editable or disabled, the popup cannot be opened
+			if (!this.getEnabled() || !this.getEditable()) {
+				return;
+			}
+
+			this.attachLoadItems(fnLoadItemsListener);
+			this.loadItems(fnLoadItemsListener);
+		};
+
+		/**
+		 * Should be overwritten in children classes to apply control specific filtering over the items.
+		 *
+		 * @since 1.64
+		 * @experimental Since 1.64
+		 * @protected
+		 * @sap-restricted
+		 */
+		ComboBoxBase.prototype.applyShowItemsFilters = function () {};
 
 		return ComboBoxBase;
 	});
