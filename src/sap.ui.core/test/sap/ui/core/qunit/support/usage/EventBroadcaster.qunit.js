@@ -8,8 +8,9 @@ sap.ui.define([
 	"sap/ui/core/Element",
 	"sap/ui/core/routing/Router",
 	"sap/ui/core/routing/HashChanger",
-	"sap/m/Button"
-], function (EventBroadcaster, Element, Router, HashChanger, Button) {
+	"sap/m/Button",
+	"sap/m/Image"
+], function (EventBroadcaster, Element, Router, HashChanger, Button, Image) {
 	"use strict";
 
 
@@ -149,5 +150,12 @@ sap.ui.define([
 			window.removeEventListener("UI5Event", fnAssertR2);
 			done();
 		}
+	});
+
+	QUnit.module("Private functions");
+
+	QUnit.test("_shouldExpose function filters out blacklisted events ", function (assert) {
+		assert.notOk(EventBroadcaster._shouldExpose("load", new Image()), "event 'load' should not be exposed");
+		assert.notOk(EventBroadcaster._shouldExpose("load", new Image()), "event 'load' should not be exposed");
 	});
 });

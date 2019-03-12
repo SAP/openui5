@@ -13,21 +13,22 @@ sap.ui.define(['sap/base/Log', '../../Component', '../../Element', '../../routin
 	function (Log, Component, Element, Router) {
 		"use strict";
 
-		var EVENTS_BLACKLIST = {
-			"modelContextChange": "",
-			"beforeRendering": "",
-			"afterRendering": "",
-			"propertyChanged": "",
-			"aggregationChanged": "",
-			"componentCreated": "",
-			"afterInit": "",
-			"updateStarted": "",
-			"updateFinished": "",
-			"load": "",
-			"scroll": "",
-			"beforeGeometryChanged": "",
-			"geometryChanged": ""
-		};
+		var oEmpty = {},
+			EVENTS_BLACKLIST = {
+				"modelContextChange": oEmpty,
+				"beforeRendering": oEmpty,
+				"afterRendering": oEmpty,
+				"propertyChanged": oEmpty,
+				"aggregationChanged": oEmpty,
+				"componentCreated": oEmpty,
+				"afterInit": oEmpty,
+				"updateStarted": oEmpty,
+				"updateFinished": oEmpty,
+				"load": oEmpty,
+				"scroll": oEmpty,
+				"beforeGeometryChanged": oEmpty,
+				"geometryChanged": oEmpty
+			};
 
 		/**
 		 * Event broadcaster. This class is meant for private usages. Apps are not supposed to used it.
