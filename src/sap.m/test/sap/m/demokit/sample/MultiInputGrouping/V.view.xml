@@ -24,7 +24,7 @@
 				}
 				}">
 				<suggestionItems>
-					<core:Item text="{Name}" />
+					<core:Item text="{Name}" key="{ProductId}"/>
 				</suggestionItems>
 			</MultiInput>
 			<Label text="Multi Input with grouped tabular suggestions" labelFor="productMIWithTable"/>
