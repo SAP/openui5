@@ -91,6 +91,7 @@ sap.ui.define([
 		var oItem = this.oUploadSet.getItems()[0];
 
 		oItem.attachOpenPressed(function (oEvent) {
+			oEvent.preventDefault();
 			assert.ok(true, "openPressed event should have been called.");
 		});
 		oItem._getFileNameLink().firePress();
@@ -124,6 +125,9 @@ sap.ui.define([
 			oDeleteSpy = sinon.spy(UploadSet.prototype, "_handleItemDelete");
 
 		oItem.getListItem().focus();
+		oItem.attachOpenPressed(function (oEvent) {
+			oEvent.preventDefault();
+		});
 		this.oUploadSet.onkeydown({
 			target: oTarget,
 			keyCode: KeyCodes.ENTER
