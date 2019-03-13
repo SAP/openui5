@@ -141,6 +141,8 @@ sap.ui.define([
 	 *     true if all events should be observed or list of the event names to observe
 	 * @param {boolean} [oConfiguration.destroy]
 	 *     true if destroy should be observed
+	 * @param {boolean} [oConfiguration.parent]
+	 *     true if an API parent change should be observed
 	 * @throws {TypeError} if the given object is not a ManagedObject and not <code>null</code> or <code>undefined</code>
 	 *
 	 * @private
@@ -179,6 +181,8 @@ sap.ui.define([
 	 *     true if all events should be stopped observing or list of the event names to stop observing
 	 * @param {boolean} [oConfiguration.destroy]
 	 *     true if destroy should be stopped observing
+	 * @param {boolean} [oConfiguration.parent]
+	 *     true if a parent change should be stopped observing
 	 * @throws {TypeError} if the given object is not a ManagedObject and not <code>null</code> or <code>undefined</code>
 	 *
 	 * @private
@@ -301,6 +305,32 @@ sap.ui.define([
 	};
 
 	/**
+	 * Called from sap.ui.base.ManagedObject if a parent is changed.
+	 *
+	 * @param {sap.ui.base.ManagedObject} oManagedObject Object that reports a change
+	 * @param {string} sName the name of the triggering parent aggregation
+	 * @param {string} sMutation "set" or "unset"
+	 * @param {sap.ui.base.ManagedObject} oParent the changed parent
+	 * @private
+	 * @sap-restricted sap.ui.base.ManagedObject
+	 */
+	Observer.parentChange = function(oManagedObject, sName, sMutation, oParent) {
+		//managed object does a parent change handle this
+		handleChange("parent", oManagedObject, sName, function () {
+			return {
+				type: "parent",
+				mutation: sMutation,
+				parent: oParent
+			};
+		});
+
+		//As the change of a parent is only possible when an aggregation change is applied
+		//handle this change
+		var sParentMutation = sMutation === "unset" ? "remove" : "insert";
+		Observer.aggregationChange(oParent, sName, sParentMutation, oManagedObject);
+	};
+
+	/**
 	 * Called from sap.ui.base.ManagedObject if an association is changed.
 	 *
 	 * @param {sap.ui.base.ManagedObject} oManagedObject Object that reports a change
@@ -416,7 +446,7 @@ sap.ui.define([
 			return false;
 		}
 
-		if (sType != "destroy" && !sName) {
+		if (sType != "destroy" && sType != "parent" && !sName) {
 			return false;
 		}
 
@@ -473,8 +503,8 @@ sap.ui.define([
 				isSubArray(oTargetConfig.configurations[iIndex].associations, oConfiguration.associations) &&
 				isSubArray(oTargetConfig.configurations[iIndex].bindings, oConfiguration.bindings) &&
 				isSubArray(oTargetConfig.configurations[iIndex].events, oConfiguration.events) &&
-				isBooleanEqual(oTargetConfig.configurations[iIndex].destroy, oConfiguration.destroy);
-
+				isBooleanEqual(oTargetConfig.configurations[iIndex].destroy, oConfiguration.destroy) &&
+				isBooleanEqual(oTargetConfig.configurations[iIndex].parent, oConfiguration.parent);
 		}
 	}
 
@@ -553,6 +583,14 @@ sap.ui.define([
 					oCurrentConfig.destroy = oConfiguration.destroy;
 				}
 			}
+
+			if (oConfiguration.parent != null) {
+				if (bRemove) {
+					delete oCurrentConfig.parent;
+				} else {
+					oCurrentConfig.parent = oConfiguration.parent;
+				}
+			}
 		}
 		var bEventsObserved = hasObserverFor(oTarget, "events");
 
@@ -566,6 +604,7 @@ sap.ui.define([
 					!hasObserverFor(oTarget, "aggregations") &&
 					!hasObserverFor(oTarget, "associations") &&
 					!hasObserverFor(oTarget, "destroy") &&
+					!hasObserverFor(oTarget, "parent") &&
 					!hasObserverFor(oTarget, "bindings")) {
 				delete oTarget._observer;
 				delete mTargets[sId];
@@ -665,6 +704,7 @@ sap.ui.define([
 		oConfiguration.bindings = oConfiguration.bindings === true ? aBindings : oConfiguration.bindings;
 		oConfiguration.events = oConfiguration.events === true ? aEvents : oConfiguration.events;
 		oConfiguration.destroy = (oConfiguration.destroy == null) ? false : oConfiguration.destroy;
+		oConfiguration.parent = (oConfiguration.parent == null) ? false : oConfiguration.parent;
 	}
 
 	return ManagedObjectObserver;
