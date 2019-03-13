@@ -868,7 +868,8 @@ sap.ui.define([
 		};
 
 		ComboBox.prototype.onAfterRenderingList = function() {
-			var oSelectedItem = this.getSelectedItem();
+			var oSelectedItem = this.getSelectedItem(),
+				oSelectedListItem = this.getListItem(oSelectedItem);
 
 			if (this.bProcessingLoadItemsEvent && (this.getItems().length === 0)) {
 				return;
@@ -880,7 +881,8 @@ sap.ui.define([
 			this._highlightList(this._sInputValueBeforeOpen);
 
 			if (oSelectedItem) {
-				oList.setSelectedItem(this.getListItem(oSelectedItem));
+				oList.setSelectedItem(oSelectedListItem);
+				this.handleListItemsVisualFocus(oSelectedListItem);
 			}
 
 			if (oList) {
