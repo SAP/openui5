@@ -113,27 +113,30 @@ sap.ui.define([
 		mChangesToBeSwitched = this.oFlexController._oChangePersistence.loadSwitchChangesMapForComponent(mPropertyBag);
 
 		var fnSwitchVariantCallback = function() {
-			var oPromise = new Promise(function(resolve) {
-				return this.oFlexController.revertChangesOnControl(mChangesToBeSwitched.changesToBeReverted, oAppComponent || this.oAppComponent)
-				.then(this.oFlexController.applyVariantChanges.bind(this.oFlexController, mChangesToBeSwitched.changesToBeApplied, oAppComponent || this.oAppComponent))
-				.then(function() {
-					this.oData[sVariantManagementReference].originalCurrentVariant = sNewVariantReference;
-					this.oData[sVariantManagementReference].currentVariant = sNewVariantReference;
-					if (this.oData[sVariantManagementReference].updateVariantInURL) {
-						this._updateVariantInURL(sVariantManagementReference, sNewVariantReference);
-						this.oVariantController.updateCurrentVariantInMap(sVariantManagementReference, sNewVariantReference);
-					}
-					this.checkUpdate();
-					resolve();
-				}.bind(this))
-				// potential errors are not handled here, so we rethrow. But the switch is still finished, so we have to call resolve()
-				.catch(function(oError) {
-					resolve();
-					throw oError;
-				});
-			}.bind(this));
-			this.oFlexController.setVariantSwitchPromise(oPromise);
-			return oPromise;
+			var oPromiseMap = {};
+			// create a pending promise to set it in the FlexController
+			oPromiseMap.promise = new Promise(function(resolve) {
+				oPromiseMap.resolveFunction = resolve;
+			});
+			this.oFlexController.setVariantSwitchPromise(oPromiseMap.promise);
+			this.oFlexController.revertChangesOnControl(mChangesToBeSwitched.changesToBeReverted, oAppComponent || this.oAppComponent)
+			.then(this.oFlexController.applyVariantChanges.bind(this.oFlexController, mChangesToBeSwitched.changesToBeApplied, oAppComponent || this.oAppComponent))
+			.then(function() {
+				this.oData[sVariantManagementReference].originalCurrentVariant = sNewVariantReference;
+				this.oData[sVariantManagementReference].currentVariant = sNewVariantReference;
+				if (this.oData[sVariantManagementReference].updateVariantInURL) {
+					this._updateVariantInURL(sVariantManagementReference, sNewVariantReference);
+					this.oVariantController.updateCurrentVariantInMap(sVariantManagementReference, sNewVariantReference);
+				}
+				this.checkUpdate();
+				oPromiseMap.resolveFunction();
+			}.bind(this))
+			// potential errors are not handled here, so we rethrow. But the switch is still finished, so we have to call resolve()
+			.catch(function(oError) {
+				oPromiseMap.resolveFunction();
+				throw oError;
+			});
+			return oPromiseMap.promise;
 		}.bind(this);
 
 		// if there are multiple switches triggered very quickly this makes sure that they are being executed one after another
