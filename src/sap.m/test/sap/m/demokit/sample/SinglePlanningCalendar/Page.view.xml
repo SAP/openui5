@@ -21,7 +21,7 @@
 			<VBox>
 				<Label text="Enable Drag and Drop" labelFor="enableAppointmentsDragAndDrop" />
 
-				<Checkbox id="enableAppointmentsDragAndDrop" selected="{settings>/enableAppointmentsDragAndDrop}"></Checkbox>
+				<CheckBox id="enableAppointmentsDragAndDrop" selected="{settings>/enableAppointmentsDragAndDrop}"></CheckBox>
 			</VBox>
 		</HBox>
 		<SinglePlanningCalendar
