@@ -8,13 +8,13 @@
 		color: @sapUiAccent1;
 	}
 	.sapMRIIconReadOnly{
-		color: lighten(@sapUiContentForegroundColor, 10);
+		color: @sapUiFieldPlaceholderTextColor;
 	}
 }
 
 .sapMRI.sapMRIDisplayOnly {
 	.sapMRIIconUnsel {
-		color: lighten(@sapUiContentForegroundColor, 10);
+		color: @sapUiFieldPlaceholderTextColor;
 	}
 }
 
@@ -29,7 +29,7 @@ html.sap-desktop .sapMRI:focus:not(.sapMRIDisabled):not(.sapMRIDisplayOnly){
 }
 
 .sapMRIUnsel {
-	color: @sapUiContentForegroundColor;
+	color:@sapUiContentLabelColor;
 }
 
 /* TODO remove after 1.62 version */
@@ -49,4 +49,8 @@ html[data-sap-ui-browser^="ie"].sap-desktop {
 		top: 0;
 		border: 1px dotted @sapUiContentFocusColor;
 	}
+}
+
+.sapMRIIconSel, .sapMRIIconUnsel, .sapMRIIconHov, .sapMRIIconReadOnly {
+	font-size: 1.5rem;
 }
