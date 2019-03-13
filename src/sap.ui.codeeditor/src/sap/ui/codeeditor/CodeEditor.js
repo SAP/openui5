@@ -526,11 +526,12 @@ sap.ui.define([
 	 * @private
 	 */
 	CodeEditor.prototype._registerResizeListener = function() {
-		// listen once for resize of the _oEditorDomRef, in some ui5 containers (sap.m.App for example) this can happen very late and ace editor does not handle it
-		this._iResizeListenerId = ResizeHandler.register(this._oEditorDomRef, function() {
-			this._oEditor.resize(); // force the ace editor to recalculate height
-			ResizeHandler.deregister(this._iResizeListenerId);
-		}.bind(this));
+		if (!this._iResizeListenerId) {
+			// listen once for resize of the _oEditorDomRef, in some ui5 containers (sap.m.App for example) this can happen very late and ace editor does not handle it
+			this._iResizeListenerId = ResizeHandler.register(this._oEditorDomRef, function() {
+				this._oEditor.resize(); // force the ace editor to recalculate height
+			}.bind(this));
+		}
 	};
 
 	/**
@@ -540,6 +541,7 @@ sap.ui.define([
 		// Unregister the resize listener used for fixing initial resize, to prevent double registering.
 		if (this._iResizeListenerId) {
 			ResizeHandler.deregister(this._iResizeListenerId);
+			this._iResizeListenerId = null;
 		}
 	};
 
