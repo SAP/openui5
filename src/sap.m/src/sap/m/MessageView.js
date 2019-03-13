@@ -747,7 +747,9 @@ sap.ui.define([
 		if (listItemType !== ListType.Navigation) {
 			oListItem.addEventDelegate({
 				onAfterRendering: function () {
-					var oItemDomRef = oListItem.getDomRef().querySelector(".sapMSLITitleDiv > div");
+					var sSelector = oListItem.getActiveTitle() ? ".sapMSLITitleDiv a" : ".sapMSLITitleDiv > div",
+						oItemDomRef = oListItem.getDomRef().querySelector(sSelector);
+
 					if (oItemDomRef.offsetWidth < oItemDomRef.scrollWidth) {
 						oListItem.setType(ListType.Navigation);
 						if (this.getItems().length === 1) {

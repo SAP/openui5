@@ -653,7 +653,8 @@ sap.ui.define([
 	});
 
 	QUnit.test("MessageItem's with truncated title", function (assert) {
-		var sLongTitle = "Lorem ipsum dolor sit amet, consectetur adipisicing elit, sed do eiusmod" +
+		var oItems,
+			sLongTitle = "Lorem ipsum dolor sit amet, consectetur adipisicing elit, sed do eiusmod" +
 				"tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam," +
 				"quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo" +
 				"consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse" +
@@ -665,6 +666,11 @@ sap.ui.define([
 		}));
 
 		this.oMessageView.addItem(new MessageItem({
+			title: sLongTitle,
+			activeTitle: true
+		}));
+
+		this.oMessageView.addItem(new MessageItem({
 			title: "dummy item"
 		}));
 
@@ -673,7 +679,11 @@ sap.ui.define([
 		this.oDialog.open();
 		this.clock.tick(500);
 
-		assert.strictEqual(this.oMessageView._oLists.all.getItems()[0].getType(), "Navigation", "The first item should be navigation type");
+		oItems = this.oMessageView._oLists.all.getItems();
+
+		assert.strictEqual(oItems[0].getType(), "Navigation", "The first item should be navigation type");
+		assert.strictEqual(oItems[1].getType(), "Navigation", "The second item should be navigation type");
+		assert.strictEqual(oItems[2].getType(), "Inactive", "The third item should be inactive type");
 	});
 
 	QUnit.test("MessageItem with active title - propagation to MessageListItems", function (assert) {
