@@ -4,11 +4,12 @@ QUnit.config.autostart = false;
 sap.ui.test.qunit.delayTestStart();
 
 sap.ui.require([
+	"sap/ui/core/Core",
 	"sap/ui/core/Control",
 	"sap/ui/Device",
 	"sap/ui/layout/AlignedFlowLayout",
 	"sap/ui/dom/units/Rem"
-], function(Control, Device, AlignedFlowLayout, Rem) {
+], function(Core, Control, Device, AlignedFlowLayout, Rem) {
 	"use strict";
 
 	var CONTENT_ID = "content";
@@ -108,7 +109,7 @@ sap.ui.require([
 
 			// arrange
 			this.oAlignedFlowLayout.placeAt(CONTENT_ID);
-			sap.ui.getCore().applyChanges();
+			Core.applyChanges();
 		},
 		afterEach: function(assert) {
 
@@ -148,7 +149,7 @@ sap.ui.require([
 		this.oAlignedFlowLayout.addContent(oInput);
 
 		// arrange
-		sap.ui.getCore().applyChanges();
+		Core.applyChanges();
 		var CSS_CLASS = this.oAlignedFlowLayout.getRenderer().CSS_CLASS + "Item",
 			oItemDomRef = this.oAlignedFlowLayout.getDomRef().firstElementChild,
 			oStyles = getComputedStyle(oItemDomRef);
@@ -163,6 +164,9 @@ sap.ui.require([
 		}
 
 		assert.strictEqual(oStyles.maxWidth, "480px", 'it should set the "max-width" CSS property to "480px"');
+
+		// cleanup
+		oInput.destroy();
 	});
 
 	QUnit.test("the end item should not overflow its container", function(assert) {
@@ -175,7 +179,7 @@ sap.ui.require([
 
 		// arrange
 		this.oAlignedFlowLayout.addStyleClass("sapUiLargeMargin"); // add margin to detect overflow
-		sap.ui.getCore().applyChanges();
+		Core.applyChanges();
 		var oDomRef = this.oAlignedFlowLayout.getDomRef(),
 			oItemDomRef = oButton.getDomRef().parentElement,
 			oItemStyles = getComputedStyle(oItemDomRef);
@@ -189,6 +193,9 @@ sap.ui.require([
 		if (!Device.browser.phantomJS) {
 			assert.strictEqual(oItemStyles.flexBasis, "auto", 'it should set the "flex-basis" CSS property to "auto"');
 		}
+
+		// cleanup
+		oButton.destroy();
 	});
 
 	if (!Device.browser.phantomJS) {
@@ -215,11 +222,18 @@ sap.ui.require([
 			this.oAlignedFlowLayout.addStyleClass("sapUiLargeMargin"); // add margin to detect overflow
 			this.oAlignedFlowLayout.setMinItemWidth("200px");
 			this.oAlignedFlowLayout.placeAt(CONTENT_ID);
-			sap.ui.getCore().applyChanges();
+			Core.applyChanges();
 			var oItemDomRef = oTextArea.getDomRef().parentElement;
 
 			// assert
 			assert.strictEqual(oItemDomRef.offsetTop, 0, "the end item should not overflow its container");
+
+			// cleanup
+			oInput1.destroy();
+			oInput2.destroy();
+			oInput3.destroy();
+			oInput4.destroy();
+			oTextArea.destroy();
 		});
 	}
 
@@ -238,11 +252,15 @@ sap.ui.require([
 
 		// act
 		this.oAlignedFlowLayout.setMaxItemWidth(iExpectedWidth + "px");
-		sap.ui.getCore().applyChanges();
+		Core.applyChanges();
 
 		// assert
 		assert.strictEqual(oInput1.getDomRef().parentElement.offsetWidth, iExpectedWidth);
 		assert.strictEqual(oInput2.getDomRef().parentElement.offsetWidth, iExpectedWidth);
+
+		// cleanup
+		oInput1.destroy();
+		oInput2.destroy();
 	});
 
 	QUnit.test("the maximum width win over the minimum width", function(assert) {
@@ -261,11 +279,15 @@ sap.ui.require([
 		// act
 		this.oAlignedFlowLayout.setMaxItemWidth(iExpectedWidth + "px");
 		this.oAlignedFlowLayout.setMinItemWidth((iExpectedWidth + 10) + "px");
-		sap.ui.getCore().applyChanges();
+		Core.applyChanges();
 
 		// assert
 		assert.strictEqual(oInput1.getDomRef().parentElement.offsetWidth, iExpectedWidth);
 		assert.strictEqual(oInput2.getDomRef().parentElement.offsetWidth, iExpectedWidth);
+
+		// cleanup
+		oInput1.destroy();
+		oInput2.destroy();
 	});
 
 	QUnit.test("getLastItemDomRef should return the last item DOM reference", function(assert) {
@@ -277,10 +299,13 @@ sap.ui.require([
 		this.oAlignedFlowLayout.addContent(oInput);
 
 		// arrange
-		sap.ui.getCore().applyChanges();
+		Core.applyChanges();
 
 		// assert
 		assert.ok(this.oAlignedFlowLayout.getLastItemDomRef() === this.oAlignedFlowLayout.getContent()[0].getDomRef().parentElement);
+
+		// cleanup
+		oInput.destroy();
 	});
 
 	QUnit.test("getLastItemDomRef should not return the null empty object reference", function(assert) {
@@ -298,10 +323,13 @@ sap.ui.require([
 		this.oAlignedFlowLayout.addContent(oInput);
 
 		// arrange
-		sap.ui.getCore().applyChanges();
+		Core.applyChanges();
 
 		// assert
 		assert.ok(this.oAlignedFlowLayout.getLastVisibleDomRef() === this.oAlignedFlowLayout.getLastItemDomRef());
+
+		// cleanup
+		oInput.destroy();
 	});
 
 	QUnit.test("getLastVisibleDomRef should return the last visible DOM reference", function(assert) {
@@ -315,10 +343,14 @@ sap.ui.require([
 		this.oAlignedFlowLayout.addEndContent(oButton);
 
 		// arrange
-		sap.ui.getCore().applyChanges();
+		Core.applyChanges();
 
 		// assert
 		assert.ok(this.oAlignedFlowLayout.getLastVisibleDomRef() === this.oAlignedFlowLayout.getDomRef("endItem"));
+
+		// cleanup
+		oInput.destroy();
+		oButton.destroy();
 	});
 
 	QUnit.test("getLastVisibleDomRef should return the null empty object reference", function(assert) {
@@ -337,10 +369,13 @@ sap.ui.require([
 
 		// act
 		this.oAlignedFlowLayout.destroyContent();
-		sap.ui.getCore().applyChanges();
+		Core.applyChanges();
 
 		// assert
 		assert.strictEqual(this.oAlignedFlowLayout.getContent().length, 0);
+
+		// cleanup
+		oButton.destroy();
 	});
 
 	QUnit.test("it should set maximum width to the end item", function(assert) {
@@ -354,13 +389,16 @@ sap.ui.require([
 		this.oAlignedFlowLayout.addEndContent(oButton);
 
 		// arrange
-		sap.ui.getCore().applyChanges();
+		Core.applyChanges();
 		var oEndItem = oButton.getDomRef().parentElement;
 		var sMaxItemWidth = "30rem"; // this value is specified in the QUnit module above
 
 		// assert
 		assert.strictEqual(oEndItem.style.maxWidth, sMaxItemWidth);
 		assert.strictEqual(Rem.fromPx(oEndItem.offsetWidth) + "rem", sMaxItemWidth);
+
+		// cleanup
+		oButton.destroy();
 	});
 
 	// BCP: 1880394379
@@ -377,7 +415,7 @@ sap.ui.require([
 
 		// act
 		this.oAlignedFlowLayout.placeAt(CONTENT_ID);
-		sap.ui.getCore().applyChanges();
+		Core.applyChanges();
 
 		// assert
 		assert.ok(true);
@@ -413,7 +451,7 @@ sap.ui.require([
 
 		// arrange
 		this.oAlignedFlowLayout.placeAt(CONTENT_ID);
-		sap.ui.getCore().applyChanges();
+		Core.applyChanges();
 
 		// assert
 		assert.strictEqual(this.oAlignedFlowLayout.checkItemsWrapping(), false);
@@ -435,10 +473,13 @@ sap.ui.require([
 
 		// arrange
 		this.oAlignedFlowLayout.placeAt(CONTENT_ID);
-		sap.ui.getCore().applyChanges();
+		Core.applyChanges();
 
 		// assert
 		assert.strictEqual(this.oAlignedFlowLayout.checkItemsWrapping(), false);
+
+		// cleanup
+		oInput.destroy();
 	});
 
 	if (!Device.browser.phantomJS) {
@@ -465,11 +506,18 @@ sap.ui.require([
 			this.oContentDomRef.style.width = "1024px";
 			this.oAlignedFlowLayout.setMinItemWidth("200px");
 			this.oAlignedFlowLayout.placeAt(CONTENT_ID);
-			sap.ui.getCore().applyChanges();
+			Core.applyChanges();
 
 			// assert
 			assert.strictEqual(this.oAlignedFlowLayout.checkItemsWrapping(), false);
 			assert.ok(this.oAlignedFlowLayout.getDomRef().classList.contains(this.CSS_CLASS_ONE_LINE));
+
+			// cleanup
+			oInput1.destroy();
+			oInput2.destroy();
+			oInput3.destroy();
+			oInput4.destroy();
+			oButton.destroy();
 		});
 
 		QUnit.test("it should not wrap the items onto multiple lines", function(assert) {
@@ -495,11 +543,18 @@ sap.ui.require([
 			this.oContentDomRef.style.width = "1024px";
 			this.oAlignedFlowLayout.setMinItemWidth("200px");
 			this.oAlignedFlowLayout.placeAt(CONTENT_ID);
-			sap.ui.getCore().applyChanges();
+			Core.applyChanges();
 
 			// assert
 			assert.strictEqual(this.oAlignedFlowLayout.checkItemsWrapping(), false);
 			assert.ok(this.oAlignedFlowLayout.getDomRef().classList.contains(this.CSS_CLASS_ONE_LINE));
+
+			// cleanup
+			oInput1.destroy();
+			oInput2.destroy();
+			oInput3.destroy();
+			oInput4.destroy();
+			oButton.destroy();
 		});
 
 		QUnit.test("it should not wrap the items onto multiple lines", function(assert) {
@@ -516,10 +571,14 @@ sap.ui.require([
 			this.oContentDomRef.style.width = "200px";
 			this.oAlignedFlowLayout.setMinItemWidth("100px");
 			this.oAlignedFlowLayout.placeAt(CONTENT_ID);
-			sap.ui.getCore().applyChanges();
+			Core.applyChanges();
 
 			// assert
 			assert.strictEqual(this.oAlignedFlowLayout.checkItemsWrapping(), false);
+
+			// cleanup
+			oInput1.destroy();
+			oInput2.destroy();
 		});
 
 		QUnit.test("it should not wrap the items onto multiple lines and arrange the items evenly across the available horizontal space", function(assert) {
@@ -543,9 +602,9 @@ sap.ui.require([
 			this.oAlignedFlowLayout.addContent(oInput4);
 			this.oAlignedFlowLayout.addEndContent(oButton);
 			this.oAlignedFlowLayout.placeAt(CONTENT_ID);
-			sap.ui.getCore().applyChanges();
+			Core.applyChanges();
 			this.oContentDomRef.style.width = "1024px";
-			sap.ui.getCore().attachIntervalTimer(fnAfterResize, this);
+			Core.attachIntervalTimer(fnAfterResize, this);
 
 			function fnAfterResize() {
 
@@ -560,7 +619,12 @@ sap.ui.require([
 				done();
 
 				// cleanup
-				sap.ui.getCore().detachIntervalTimer(fnAfterResize, this);
+				Core.detachIntervalTimer(fnAfterResize, this);
+				oInput1.destroy();
+				oInput2.destroy();
+				oInput3.destroy();
+				oInput4.destroy();
+				oButton.destroy();
 			}
 		});
 
@@ -594,10 +658,87 @@ sap.ui.require([
 			this.oContentDomRef.style.width = "600px";
 			this.oAlignedFlowLayout.setMinItemWidth("200px");
 			this.oAlignedFlowLayout.placeAt(CONTENT_ID);
-			sap.ui.getCore().applyChanges();
+			Core.applyChanges();
 			var oItemDomRef = oTextArea.getDomRef().parentElement;
 
+			// assert
 			assert.strictEqual(oItemDomRef.offsetTop, 20, "the end item should not overlap the items on the first line");
+
+			// cleanup
+			oInput1.destroy();
+			oInput2.destroy();
+			oInput3.destroy();
+			oInput4.destroy();
+			oTextArea.destroy();
+		});
+
+		// BCP: 1980003456
+		QUnit.test("the end item should not overlap other items (first line mode)", function(assert) {
+			var done = assert.async();
+
+			// system under test
+			var oInput1 = new Input();
+			var oInput2 = new Input();
+			var oInput3 = new Input();
+			var oInput4 = new Input();
+			var oButton = new Button({
+				text: "Adapt Filters",
+				width: "200px"
+			});
+
+			// arrange
+			this.oAlignedFlowLayout.addContent(oInput1);
+			this.oAlignedFlowLayout.addContent(oInput2);
+			this.oAlignedFlowLayout.addContent(oInput3);
+			this.oAlignedFlowLayout.addContent(oInput4);
+			this.oAlignedFlowLayout.addEndContent(oButton);
+			this.oAlignedFlowLayout.setMinItemWidth("200px");
+			this.oAlignedFlowLayout.setMaxItemWidth("400rem");
+			this.oContentDomRef.style.width = "1000px";
+
+			// make the AlignedFlowLayout control's parent DOM element hidden before the control
+			// is initially rendered
+			this.oContentDomRef.style.display = "none";
+
+			// puts the AlignFlowLayout control into the specified parent DOM element (container)
+			this.oAlignedFlowLayout.placeAt(CONTENT_ID);
+
+			// enforces a sync rendering of the AlignedFlowLayout control
+			Core.applyChanges();
+
+			// After the AlignedFlowLayout control is initially rendered, make it visible,
+			// by making its parent DOM element visible.
+			// This should change the size of the AlignedFlowLayout control and subsequently
+			// triggers a resize event.
+			this.oContentDomRef.style.display = "";
+
+			// Attach an event listener to the central core interval timeout timer to wait
+			// for the first resize event after the layout is made visible.
+			Core.attachIntervalTimer(fnAfterResize, this);
+
+			function fnAfterResize() {
+				var oEndItemDomRef = oButton.getDomRef().parentElement,
+					oPreviousItemDomRef = oInput4.getDomRef().parentElement,
+					bOverlapX;
+
+				if (Core.getConfiguration().getRTL()) {
+					bOverlapX = oPreviousItemDomRef.offsetLeft < (oEndItemDomRef.offsetLeft + oEndItemDomRef.offsetWidth);
+				} else {
+					bOverlapX = oEndItemDomRef.offsetLeft < (oPreviousItemDomRef.offsetLeft + oPreviousItemDomRef.offsetWidth);
+				}
+
+				// assert
+				assert.strictEqual(bOverlapX, false);
+
+				// cleanup
+				Core.detachIntervalTimer(fnAfterResize, this);
+				oInput1.destroy();
+				oInput2.destroy();
+				oInput3.destroy();
+				oInput4.destroy();
+				oButton.destroy();
+				done();
+			}
 		});
 	}
 
@@ -616,16 +757,20 @@ sap.ui.require([
 		this.oAlignedFlowLayout.addEndContent(oButton);
 		this.oAlignedFlowLayout.addStyleClass("sapUiAFLayoutWithPadding"); // add a padding of 30px
 		this.oAlignedFlowLayout.placeAt(CONTENT_ID);
-		sap.ui.getCore().applyChanges();
+		Core.applyChanges();
 		var oEndItemComputedStyle = window.getComputedStyle(oButton.getDomRef().parentElement, null);
 
 		// assert
-		if (sap.ui.getCore().getConfiguration().getRTL()) {
+		if (Core.getConfiguration().getRTL()) {
 			assert.strictEqual(oEndItemComputedStyle.getPropertyValue("left"), "30px");
 		} else {
 			assert.strictEqual(oEndItemComputedStyle.getPropertyValue("right"), "30px");
 		}
 		assert.strictEqual(oEndItemComputedStyle.getPropertyValue("bottom"), "30px");
+
+		// cleanup
+		oInput.destroy();
+		oButton.destroy();
 	});
 
 	QUnit.test("it should wrap the items onto multiple lines", function(assert) {
@@ -642,10 +787,14 @@ sap.ui.require([
 		this.oContentDomRef.style.width = "199px";
 		this.oAlignedFlowLayout.setMinItemWidth("100px");
 		this.oAlignedFlowLayout.placeAt(CONTENT_ID);
-		sap.ui.getCore().applyChanges();
+		Core.applyChanges();
 
 		// assert
 		assert.strictEqual(this.oAlignedFlowLayout.checkItemsWrapping(), true);
+
+		// cleanup
+		oInput1.destroy();
+		oInput2.destroy();
 	});
 
 	QUnit.test('it should not set the "sapUiAFLayoutOneLine" CSS class', function(assert) {
@@ -670,10 +819,17 @@ sap.ui.require([
 		this.oContentDomRef.style.width = "800px";
 		this.oAlignedFlowLayout.setMinItemWidth("200px");
 		this.oAlignedFlowLayout.placeAt(CONTENT_ID);
-		sap.ui.getCore().applyChanges();
+		Core.applyChanges();
 
 		// assert
 		assert.notOk(this.oAlignedFlowLayout.getDomRef().classList.contains(this.CSS_CLASS_ONE_LINE));
+
+		// cleanup
+		oInput1.destroy();
+		oInput2.destroy();
+		oInput3.destroy();
+		oInput4.destroy();
+		oButton.destroy();
 	});
 
 	QUnit.test("it should wrap the items onto multiple lines and the end item should not overlap other items", function(assert) {
@@ -698,10 +854,10 @@ sap.ui.require([
 		this.oAlignedFlowLayout.addContent(oInput4);
 		this.oAlignedFlowLayout.addEndContent(oButton);
 		this.oAlignedFlowLayout.placeAt(CONTENT_ID);
-		sap.ui.getCore().applyChanges();
+		Core.applyChanges();
 		var iLayoutWidth = 300;
 		this.oContentDomRef.style.width = iLayoutWidth + "px";
-		sap.ui.getCore().attachIntervalTimer(fnAfterResize, this);
+		Core.attachIntervalTimer(fnAfterResize, this);
 
 		function fnAfterResize() {
 
@@ -716,7 +872,12 @@ sap.ui.require([
 			done();
 
 			// cleanup
-			sap.ui.getCore().detachIntervalTimer(fnAfterResize, this);
+			Core.detachIntervalTimer(fnAfterResize, this);
+			oInput1.destroy();
+			oInput2.destroy();
+			oInput3.destroy();
+			oInput4.destroy();
+			oButton.destroy();
 		}
 	});
 
@@ -731,10 +892,13 @@ sap.ui.require([
 		// arrange
 		this.oContentDomRef.style.width = "1024px";
 		this.oAlignedFlowLayout.placeAt(CONTENT_ID);
-		sap.ui.getCore().applyChanges();
+		Core.applyChanges();
 
 		// assert
 		assert.strictEqual(oInput.getDomRef().parentElement.offsetWidth, 480);
+
+		// cleanup
+		oInput.destroy();
 	});
 
 	QUnit.test("it should arrange child controls evenly across the available horizontal space without exceeding its maximum width", function(assert) {
@@ -750,11 +914,15 @@ sap.ui.require([
 		// arrange
 		this.oContentDomRef.style.width = "1024px";
 		this.oAlignedFlowLayout.placeAt(CONTENT_ID);
-		sap.ui.getCore().applyChanges();
+		Core.applyChanges();
 
 		// assert
 		assert.strictEqual(oInput1.getDomRef().parentElement.offsetWidth, 480);
 		assert.strictEqual(oInput2.getDomRef().parentElement.offsetWidth, 480);
+
+		// cleanup
+		oInput1.destroy();
+		oInput2.destroy();
 	});
 
 	QUnit.test("getLastItemDomRef should return the null empty object reference", function(assert) {
@@ -767,5 +935,8 @@ sap.ui.require([
 
 		// assert
 		assert.ok(this.oAlignedFlowLayout.getLastItemDomRef() === null);
+
+		// cleanup
+		oInput.destroy();
 	});
 });
