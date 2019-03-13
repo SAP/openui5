@@ -9641,11 +9641,15 @@ sap.ui.define([
 			},
 			afterEach: function () {
 				this.oSelect.destroy();
+			},
+			getPickerValueStateContent: function(oPicker) {
+				return oPicker.getContent()[0].getFixContent();
 			}
 		});
 
 		QUnit.test(
-			"it should show the value state text in the subheader when the dropdown list is opened", function (assert) {
+			"it should show the value state text in the value state content when the dropdown list is opened",
+			function (assert) {
 
 			// arrange
 			this.stub(Device, "system", {
@@ -9663,12 +9667,13 @@ sap.ui.define([
 
 			// assert
 			oPicker = oWarningSelect.getPicker();
-			assert.strictEqual(oPicker.getSubHeader().getContentLeft()[0].getText(), sWarningText,
+			assert.strictEqual(this.getPickerValueStateContent(oPicker).getText(), sWarningText,
 					"The value state text should be present.");
 		});
 
 		QUnit.test(
-			"it should change the CSS class of the value state text in the subheader when the value state is changed", function (assert) {
+			"it should change the CSS class of the value state text in the value state content when the value state is changed",
+			function (assert) {
 			// arrange
 			this.stub(Device, "system", {
 				desktop: true,
@@ -9679,7 +9684,7 @@ sap.ui.define([
 				mValueState = ValueState,
 				sNoneState = mValueState.None,
 				oPicker,
-				oSubHeader;
+				oValueStateContent;
 
 			Object.keys(mValueState).forEach(function(key) {
 				//arrange
@@ -9693,13 +9698,13 @@ sap.ui.define([
 				oPicker = oWarningSelect.getPicker();
 				assert.ok(oPicker, "The picker should be present.");
 
-				oSubHeader = oPicker.getSubHeader().$();
+				oValueStateContent = this.getPickerValueStateContent(oPicker).$();
 				if (key === sNoneState) {
-					assert.notOk(oPicker.$().hasClass("sapMSltPickerWithSubHeader"),
-							"The picker does not have a subHeader.");
+					assert.ok(oValueStateContent.css("display"), "none",
+							"The picker does not have a value state content.");
 				} else {
-					assert.ok(oSubHeader.hasClass("sapMSltPicker" + key + "State"),
-							"The subHeader has the correct CSS class.");
+					assert.ok(oValueStateContent.hasClass("sapMSltPicker" + key + "State"),
+							"The value state content has the correct CSS class.");
 				}
 
 				oWarningSelect.close();
@@ -9708,7 +9713,7 @@ sap.ui.define([
 		});
 
 		QUnit.test(
-			"it should change the value state text in the subheader when the value state text is changed", function (assert) {
+			"it should change the value state text in the value state content when the value state text is changed", function (assert) {
 			// arrange
 			this.stub(Device, "system", {
 				desktop: true,
@@ -9728,7 +9733,7 @@ sap.ui.define([
 			// assert
 			oPicker = oWarningSelect.getPicker();
 			assert.ok(oPicker, "The picker should be present.");
-			assert.strictEqual(oPicker.getSubHeader().getContentLeft()[0].getText(), sWarningText,
+			assert.strictEqual(this.getPickerValueStateContent(oPicker).getText(), sWarningText,
 					"The correct value state text should be shown.");
 
 			// act
@@ -9741,7 +9746,7 @@ sap.ui.define([
 			oWarningSelect.open();
 			this.clock.tick(1000);
 
-			assert.strictEqual(oPicker.getSubHeader().getContentLeft()[0].getText(), sChangedWarningText,
+			assert.strictEqual(this.getPickerValueStateContent(oPicker).getText(), sChangedWarningText,
 			"The correct value state text should be shown.");
 		});
 	});
