@@ -1,10 +1,12 @@
 sap.ui.define([
 	"jquery.sap.global",
+	"sap/ui/core/Component",
+	"sap/ui/base/ManagedObject",
 	"sap/ui/core/ComponentContainer",
 	"sap/ui/core/UIComponent",
 	"sap/ui/core/UIComponentMetadata",
 	"sap/base/Log"
-], function(jQuery, ComponentContainer, UIComponent, UIComponentMetadata, Log) {
+], function(jQuery, Component, ManagedObject, ComponentContainer, UIComponent, UIComponentMetadata, Log) {
 
 	"use strict";
 	/*global sinon, QUnit*/
@@ -254,6 +256,16 @@ sap.ui.define([
 				}
 			};
 
+			var oManifestJSView = {
+				"sap.ui5" : {
+					"rootView" : {
+						"async": true,
+						"viewName" : "error.test.JSView",
+						"type" : "JS"
+					}
+				}
+			};
+
 			// define the XMLView
 			var sXMLView = '\
 				<mvc:View xmlns:core="sap.ui.core" xmlns:mvc="sap.ui.core.mvc" xmlns="sap.m" \
@@ -272,6 +284,7 @@ sap.ui.define([
 						!/^\/anylocation\/prefixid\/manifest\.json/.test(url) &&
 						!/^\/anylocation\/mf1st\/autoid\/manifest\.json/.test(url) &&
 						!/^\/anylocation\/mf1st\/prefixid\/manifest\.json/.test(url) &&
+						!/^\/test-resources\/sap\/ui\/core\/qunit\/component\/testdata\/view\/manifest\.json/.test(url) &&
 						url !== "/anylocation/View.view.xml");
 			});
 			oServer.autoRespond = true;
@@ -319,8 +332,21 @@ sap.ui.define([
 				sXMLView
 			]);
 
+			oServer.respondWith("GET", /^\/test-resources\/sap\/ui\/core\/qunit\/component\/testdata\/view\/manifest\.json/, [
+				200,
+				{
+					"Content-Type": "application/json"
+				},
+				JSON.stringify(oManifestJSView)
+			]);
+
 			// define the Components
-			sap.ui.loader.config({paths:{"my/own":"/anylocation"}});
+			sap.ui.loader.config({
+				paths:{
+					"my/own":"/anylocation",
+					"error/test": "/test-resources/sap/ui/core/qunit/component/testdata/view/"
+				}
+			});
 			sap.ui.predefine("my/own/Component", ["sap/ui/core/UIComponent"], function(UIComponent) {
 
 				return UIComponent.extend("my.own.Component", {});
@@ -345,6 +371,16 @@ sap.ui.define([
 
 			});
 
+			sap.ui.predefine("error/test/Component", ["sap/ui/core/UIComponent"], function(UIComponent) {
+
+				return UIComponent.extend("error.test.Component", {
+					metadata: {
+						manifest: "json"
+					}
+				});
+
+			});
+
 			// defined the controller
 			sap.ui.predefine("my/own/Controller.controller", ["sap/ui/core/mvc/Controller"], function(Controller) {
 
@@ -362,6 +398,30 @@ sap.ui.define([
 
 		}
 
+	});
+
+	QUnit.test("UIComponent that no error is logged for View-Types other than XML when processingMode is set", function(assert) {
+		var oSpy = sinon.spy(ManagedObject.prototype, "applySettings");
+
+		var oComponent = sap.ui.component({
+			name: "error.test"
+		});
+
+		var oComponentContainer = new ComponentContainer({
+			component: oComponent
+		}).placeAt("content");
+
+		sap.ui.getCore().applyChanges();
+
+		assert.ok(oSpy.calledWith({
+			async: true,
+			viewName: "error.test.JSView",
+			type: "JS"
+		}));
+
+		oComponentContainer.destroy();
+		oComponent.destroy();
+		oSpy.restore();
 	});
 
 	QUnit.test("UIComponent check for not prefixing the views' auto id", function(assert) {
