@@ -374,7 +374,7 @@
 							class="sapUiMediumMarginBottom sapUiMediumMarginTop">
 					</m:Text>
 					<l:Grid
-						defaultSpan="XL4 L4 M4 S4">
+						defaultSpan="XL3 L4 M6 S6">
 						<l:content>
 							<m:VBox
 								alignItems="Center">
@@ -394,6 +394,18 @@
 								</f:Avatar>
 								<m:Text
 										text="With person icon"
+										class="sapUiSmallMarginTop">
+								</m:Text>
+							</m:VBox>
+							<m:VBox
+									alignItems="Center">
+								<f:Avatar
+										displaySize="XL"
+										displayShape="Square"
+										fallbackIcon="sap-icon://accelerated">
+								</f:Avatar>
+								<m:Text
+										text="With custom fallback icon"
 										class="sapUiSmallMarginTop">
 								</m:Text>
 							</m:VBox>
