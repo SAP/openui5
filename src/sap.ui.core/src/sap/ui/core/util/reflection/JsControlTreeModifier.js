@@ -218,7 +218,7 @@ sap.ui.define([
 		},
 
 		getParent: function (oControl) {
-			return oControl.getParent();
+			return oControl.getParent && oControl.getParent();
 		},
 
 		getControlType: function (oControl) {
@@ -417,6 +417,49 @@ sap.ui.define([
 			} else {
 				return undefined;
 			}
+		},
+
+		/**
+		 * @inheritDoc
+		 */
+		attachEvent: function (oObject, sEventName, sFunctionPath, vData) {
+			var fnCallback = ObjectPath.get(sFunctionPath);
+
+			if (typeof fnCallback !== "function") {
+				throw new Error("Can't attach event because the event handler function is not found or not a function.");
+			}
+
+			oObject.attachEvent(sEventName, vData, fnCallback);
+		},
+
+		/**
+		 * @inheritDoc
+		 */
+		detachEvent: function (oObject, sEventName, sFunctionPath) {
+			var fnCallback = ObjectPath.get(sFunctionPath);
+
+			if (typeof fnCallback !== "function") {
+				throw new Error("Can't attach event because the event handler function is not found or not a function.");
+			}
+
+			// EventProvider.detachEvent doesn't accept vData parameter, therefore it might lead
+			// to a situation when an incorrect event listener is detached.
+			oObject.detachEvent(sEventName, fnCallback);
+		},
+
+		/**
+		 * @inheritDoc
+		 */
+		bindAggregation: function (oControl, sAggregationName, oBindingInfo) {
+			oControl.bindAggregation(sAggregationName, oBindingInfo);
+		},
+
+		/**
+		 * @inheritDoc
+		 */
+		unbindAggregation: function (oControl, sAggregationName) {
+			// bSuppressReset is not supported
+			oControl.unbindAggregation(sAggregationName);
 		}
 	};
 
