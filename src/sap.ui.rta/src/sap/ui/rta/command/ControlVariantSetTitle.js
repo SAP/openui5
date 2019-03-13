@@ -79,7 +79,7 @@ sap.ui.define([
 			layer : this.sLayer
 		};
 
-		return Promise.resolve(this.oModel._setVariantProperties(this.sVariantManagementReference, mPropertyBag, true))
+		return Promise.resolve(this.oModel.setVariantProperties(this.sVariantManagementReference, mPropertyBag, true))
 						.then(function(oChange) {
 								this._oVariantChange = oChange;
 								oVariantManagementControlBinding.checkUpdate(true); /*Force Update as binding key stays same*/
@@ -100,7 +100,7 @@ sap.ui.define([
 			change: this._oVariantChange
 		};
 
-		return Promise.resolve(this.oModel._setVariantProperties(this.sVariantManagementReference, mPropertyBag, false))
+		return Promise.resolve(this.oModel.setVariantProperties(this.sVariantManagementReference, mPropertyBag, false))
 						.then(function(oChange) {
 								this._oVariantChange = oChange;
 								oVariantManagementControlBinding.checkUpdate(true); /*Force Update as binding key stays same*/
