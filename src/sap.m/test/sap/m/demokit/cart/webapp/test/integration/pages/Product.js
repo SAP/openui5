@@ -15,6 +15,14 @@ sap.ui.define([
 			viewName: "Product",
 
 			actions: {
+				iPressTheBackButtonInProduct: function () {
+					return this.waitFor({
+						controlType : "sap.m.Button",
+						matchers: new PropertyStrictEquals({name: "type", value: "Back"}),
+						actions: new Press(),
+						errorMessage: "The nav back button was not displayed"
+					});
+				},
 				iAddTheDisplayedProductToTheCart: function () {
 					return this.waitFor({
 						controlType: "sap.m.Button",
