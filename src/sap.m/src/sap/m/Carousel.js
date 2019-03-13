@@ -461,6 +461,7 @@ function(
 		var sActivePage = this.getActivePage();
 
 		if (sActivePage) {
+			this._updateActivePages(sActivePage);
 			var iIndex = this._getPageNumber(sActivePage);
 			if (isNaN(iIndex) || iIndex == 0) {
 				if (this.getPages().length > 0) {
