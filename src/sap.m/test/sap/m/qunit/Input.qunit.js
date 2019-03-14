@@ -2811,6 +2811,27 @@ sap.ui.define([
 		oInput.destroy();
 	});
 
+	QUnit.test("Set selection should stop if input is destroyed after firing change event", function (assert) {
+		// Arrange
+		var oInput = createInputWithSuggestions(),
+			fnChangeHandler = function () {
+				oInput.destroy();
+			},
+			oSpy = sinon.spy(fnChangeHandler);
+
+		oInput.attachChange(oSpy);
+
+		// Act
+		oInput.setSelectedItem(oInput.getSuggestionItems()[1]);
+
+		// Assert
+		assert.ok(oSpy.calledOnce, "Should call handler. It is possible that this handler destroys the input.");
+		assert.strictEqual(oInput._oSuggPopover, null, "Suggestions popover is destroyed");
+
+		// Clean up
+		oInput = null;
+	});
+
 	QUnit.test("Set selection before suggestionItems", function(assert) {
 
 		var aSuggestionItems = [
