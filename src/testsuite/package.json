@@ -14,6 +14,10 @@
     "type": "git",
     "url": "https://github.com/SAP/openui5.git"
   },
+  "scripts": {
+    "build-sdk": "ui5 build jsdoc --all",
+    "update-jsdoc": "ui5 build jsdoc --all --exclude-task=buildThemes"
+  },
   "dependencies": {
     "@openui5/sap.f": "1.65.0-SNAPSHOT",
     "@openui5/sap.m": "1.65.0-SNAPSHOT",
