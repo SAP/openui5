@@ -402,6 +402,8 @@ sap.ui.define([
 
 			this.oDataState = null;
 			this.bApplySortersToGroups = true;
+			this.iTotalSize = -1; // invalidate last row counter
+			this._abortAllPendingRequests();
 			// resolving the path makes sure that we can safely analyze the metadata,
 			// as we have a resourcepath for the QueryResult
 			sResolvedPath = this.oModel.resolve(this.sPath, this.oContext);
@@ -4744,6 +4746,7 @@ sap.ui.define([
 			}
 		}
 		if (bForceUpdate || bChangeDetected) {
+			this.iTotalSize = -1; // invalidate last row counter
 			this._abortAllPendingRequests();
 			this.resetData();
 			this.bNeedsUpdate = false;

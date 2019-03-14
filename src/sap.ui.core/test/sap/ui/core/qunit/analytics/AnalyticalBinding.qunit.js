@@ -2687,8 +2687,11 @@ sap.ui.define([
 
 				oBinding.bApplySortersToGroups = bApplySortersToGroups;
 				oBinding.oDataState = oDataState;
+				oBinding.iTotalSize = 42;
 				oBinding.bInitial = bInitial;
 				oBindingMock.expects("isRelative").withExactArgs().returns(oFixture.bRelative);
+				oBindingMock.expects("_abortAllPendingRequests").exactly(oFixture.bRelative ? 1 : 0)
+					.withExactArgs();
 				oModelMock.expects("resolve")
 					.withExactArgs("~", sinon.match.same(oFixture.oContext))
 					.exactly(oFixture.bRelative ? 1 : 0)
@@ -2709,6 +2712,7 @@ sap.ui.define([
 				assert.strictEqual(oBinding.oDataState, oFixture.bRelative ? null : oDataState);
 				assert.strictEqual(oBinding.bApplySortersToGroups,
 					oFixture.bRelative ? true : bApplySortersToGroups);
+				assert.strictEqual(oBinding.iTotalSize, oFixture.bRelative ? -1 : 42);
 				assert.strictEqual(oBinding.bInitial,
 					oFixture.bRelative && !oFixture.bResolved ? true : bInitial);
 
