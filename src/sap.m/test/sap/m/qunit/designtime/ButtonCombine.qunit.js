@@ -65,7 +65,7 @@ sap.ui.define([
 
 			var mSpecificChangeInfo = {
 				"parentId": "idFormContainer",
-				"combineFieldIds" : ["btn1", "btn2"]
+				"combineElementIds" : ["btn1", "btn2"]
 			};
 
 			var oChange = new Change({"changeType" : "combineButtons", "content" : {}});
@@ -112,7 +112,7 @@ sap.ui.define([
 
 			var mSpecificChangeInfo = {
 				"parentId": "idFormContainer",
-				"combineFieldIds" : ["btn1", "btn2"]
+				"combineElementIds" : ["btn1", "btn2"]
 			};
 
 			var oChange = new Change({"changeType" : "combineButtons", "content" : {}});
@@ -167,7 +167,7 @@ sap.ui.define([
 
 			var mSpecificChangeInfo = {
 					"parentId": "idFormContainer",
-					"combineFieldIds" : ["btn1", "btn2"]
+					"combineElementIds" : ["btn1", "btn2"]
 				};
 
 			var oChange = new Change({"changeType" : "combineButtons", "content" : {}});
@@ -219,7 +219,7 @@ sap.ui.define([
 
 			var mSpecificChangeInfo = {
 				"parentId": "idFormContainer",
-				"combineFieldIds" : ["btn1", "btn2"]
+				"combineElementIds" : ["btn1", "btn2"]
 			};
 
 			var oChange = new Change({"changeType" : "combineButtons", "content" : {}});
@@ -271,7 +271,7 @@ sap.ui.define([
 
 			var mSpecificChangeInfo = {
 				"parentId": "idFormContainer",
-				"combineFieldIds" : ["btn1", "btn2"]
+				"combineElementIds" : ["btn1", "btn2"]
 			};
 
 			var oChange = new Change({"changeType" : "combineButtons", "content" : {}});

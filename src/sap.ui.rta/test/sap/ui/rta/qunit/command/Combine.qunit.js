@@ -108,7 +108,7 @@ function (
 
 			return CommandFactory.getCommandFor(this.oButton1, "combine", {
 				source : this.oButton1,
-				combineFields : [
+				combineElements : [
 					this.oButton1,
 					this.oButton2
 				]

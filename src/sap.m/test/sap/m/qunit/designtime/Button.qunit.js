@@ -68,7 +68,7 @@ sap.ui.define([
 				parameter : function(oView){
 					return {
 						source : oView.byId("btn0"),
-						combineFields : [
+						combineElements : [
 							oView.byId("btn0"),
 							oView.byId("btn1"),
 							oView.byId("btn2")
@@ -229,7 +229,7 @@ sap.ui.define([
 				};
 
 			oChangeHandler.completeChangeContent(oChange, {
-				combineFieldIds: ["comp---view--btn1", "comp---view--btn2"]
+				combineElementIds: ["comp---view--btn1", "comp---view--btn2"]
 			}, oPropertyBag);
 
 			oChangeHandler.applyChange(oChange, oToolbar, oPropertyBag);

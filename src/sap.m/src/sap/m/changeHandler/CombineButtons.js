@@ -173,7 +173,7 @@ sap.ui.define(["sap/ui/fl/Utils", "sap/base/util/uid", 'sap/ui/base/ManagedObjec
 		 *
 		 * @param {sap.ui.fl.Change} oChange Change wrapper object to be completed
 		 * @param {object} oSpecificChangeInfo Specific info object
-		 * @param {object} oSpecificChangeInfo.combineFieldIds Ids of selected buttons
+		 * @param {object} oSpecificChangeInfo.combineElementIds Ids of selected buttons
 		 *                                                     to be combined
 		 * @param {object} mPropertyBag Map of properties
 		 * @param {object} mPropertyBag.modifier Modifier for the controls
@@ -185,7 +185,7 @@ sap.ui.define(["sap/ui/fl/Utils", "sap/base/util/uid", 'sap/ui/base/ManagedObjec
 			var oModifier = mPropertyBag.modifier,
 				oAppComponent = mPropertyBag.appComponent,
 				oChangeDefinition = oChange.getDefinition(),
-				aCombineButtonIds = oSpecificChangeInfo.combineFieldIds;
+				aCombineButtonIds = oSpecificChangeInfo.combineElementIds;
 
 			if (aCombineButtonIds && aCombineButtonIds.length >= 2) {
 				oChange.addDependentControl(aCombineButtonIds, "combinedButtons", mPropertyBag);
@@ -202,7 +202,7 @@ sap.ui.define(["sap/ui/fl/Utils", "sap/base/util/uid", 'sap/ui/base/ManagedObjec
 					return oModifier.getSelector(oAppComponent.createId(uid()), oAppComponent);
 				});
 			} else {
-				throw new Error("Combine buttons action cannot be completed: oSpecificChangeInfo.combineFieldIds attribute required");
+				throw new Error("Combine buttons action cannot be completed: oSpecificChangeInfo.combineElementIds attribute required");
 			}
 		};
 

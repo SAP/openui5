@@ -179,7 +179,7 @@ sap.ui.define([
 			"combine",
 			{
 				source : oCombineElement,
-				combineFields : aElements
+				combineElements : aElements
 			},
 			oDesignTimeMetadata,
 			sVariantManagementReference

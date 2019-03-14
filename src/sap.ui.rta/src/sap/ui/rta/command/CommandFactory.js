@@ -179,7 +179,7 @@ function(
 		evaluateResult(mSettings.element);
 		mSettings.source = sap.ui.getCore().byId(getTemplateElementId(mSettings.source));
 		evaluateResult(mSettings.source);
-		mSettings.combineFields.forEach(function(oCombineField){
+		mSettings.combineElements.forEach(function(oCombineField){
 			oCombineField = sap.ui.getCore().byId(getTemplateElementId(oCombineField));
 			evaluateResult(oCombineField);
 		});
