@@ -262,12 +262,13 @@ sap.ui.define([
 				return that.createCacheAndRequest(oGroupLock, sResolvedPath, oOperationMetadata,
 					fnGetEntity);
 			}).then(function (oResponseEntity) {
-				var sContextPredicate, sResponsePredicate;
+				var sContextPredicate, oOldValue, sResponsePredicate;
 
 				return fireChangeAndRefreshDependentBindings().then(function () {
 					if (that.isReturnValueLikeBindingParameter(oOperationMetadata)) {
-						sContextPredicate = _Helper.getPrivateAnnotation(
-							that.oContext.fetchValue().getResult(), "predicate");
+						oOldValue = that.oContext.getValue();
+						sContextPredicate = oOldValue &&
+							_Helper.getPrivateAnnotation(oOldValue, "predicate");
 						sResponsePredicate = _Helper.getPrivateAnnotation(
 							oResponseEntity, "predicate");
 						if (sContextPredicate === sResponsePredicate) {
