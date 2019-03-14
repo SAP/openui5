@@ -11557,7 +11557,7 @@ sap.ui.define([
 		assert.strictEqual(aItems.length, 4, "Items of type sap.ui.core.Separator items are filtered out.");
 	});
 
-	QUnit.test(" Group header shown when filtering", function (assert) {
+	QUnit.test("Group header shown when filtering", function (assert) {
 		assert.expect(4);
 		var aItems;
 
@@ -11810,6 +11810,42 @@ sap.ui.define([
 		assert.strictEqual(jQuery(this.oComboBox.getFocusDomRef()).getSelectedText(), "em11", "Correct text was selected in the combo box.");
 		assert.ok(this.oComboBox.getSelectedItem() === oExpectedItem, "The expected item was selected.");
 		assert.ok(oExpectedListItem.hasStyleClass("sapMLIBFocused"), "The item has visual focus");
+	});
+
+	QUnit.test("No double focus when last item before close was group header", function (assert) {
+		var oExpectedItem = this.oComboBox.getItems()[1],
+			oExpectedSeparatorItem = this.oComboBox.getItems()[0],
+			oFocusDomRef = this.oComboBox.getFocusDomRef(),
+			oExpectedListItem, oExpectedListGroupHeader;
+
+		// arrange
+		this.oComboBox.focus();
+
+		// act
+		// Open it
+		sap.ui.test.qunit.triggerKeydown(oFocusDomRef, KeyCodes.F4);
+		this.clock.tick(500);
+		// Select group header
+		sap.ui.test.qunit.triggerKeydown(oFocusDomRef, KeyCodes.ARROW_UP);
+		// Close it again
+		sap.ui.test.qunit.triggerKeydown(oFocusDomRef, KeyCodes.F4);
+		this.clock.tick(500);
+
+		oExpectedListItem = this.oComboBox.getListItem(oExpectedItem);
+		oExpectedListGroupHeader = this.oComboBox.getListItem(oExpectedSeparatorItem);
+
+		// assert
+		assert.strictEqual(jQuery(oFocusDomRef).getSelectedText(), "item11", "Correct text was selected in the combo box.");
+		assert.ok(this.oComboBox.getSelectedItem() === oExpectedItem, "The expected item was selected.");
+
+		// act
+		// When the last item was header and we reopen it, there should not be double focus
+		sap.ui.test.qunit.triggerKeydown(oFocusDomRef, KeyCodes.F4);
+		this.clock.tick(500);
+
+		// assert
+		assert.ok(oExpectedListItem.hasStyleClass("sapMLIBFocused"), "The item has visual focus");
+		assert.ok(!oExpectedListGroupHeader.hasStyleClass("sapMLIBFocused"), "The group header does not have visual focus");
 	});
 
 	QUnit.module("Group header press");
