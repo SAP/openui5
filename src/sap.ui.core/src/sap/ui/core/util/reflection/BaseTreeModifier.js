@@ -396,6 +396,7 @@ sap.ui.define([
 		 *
 		 * @param {sap.ui.base.ManagedObject | Element} vControl Control representation
 		 * @param  {string} sPropertyName  The property to be unbound
+		 * @public
 		 */
 		unbindProperty: function (vControl, sPropertyName) {},
 
@@ -414,6 +415,7 @@ sap.ui.define([
 		 *
 		 * @param {sap.ui.base.ManagedObject | Element} vControl Control representation
 		 * @param {string} sAggregationName The aggregation to be unbound
+		 * @public
 		 */
 		unbindAggregation: function (vControl, sAggregationName) {},
 
@@ -684,7 +686,6 @@ sap.ui.define([
 		 * @param {string} sEventName - Event name
 		 * @param {string} sFunctionPath - Absolute path to a function
 		 * @param {vData} vData - Predefined values for event handler function
-		 * @param
 		 * @public
 		 */
 		attachEvent: function(oObject, sEventName, sFunctionPath, vData) {},
