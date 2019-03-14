@@ -6,14 +6,17 @@ sap.ui.define([
 	'sap/ui/layout/PaneContainer',
 	'sap/ui/layout/Splitter',
 	'sap/ui/layout/SplitterLayoutData',
-	'sap/ui/commons/Button'
+	'sap/ui/commons/Button',
+	'sap/m/Panel'
 ], function(
 	jQuery,
 	SplitPane,
 	PaneContainer,
 	Splitter,
 	SplitterLayoutData,
-	Button) {
+	Button,
+	Panel
+	) {
 	'use strict';
 
 
@@ -328,6 +331,8 @@ sap.ui.define([
 
 		assert.strictEqual(oSplitter.getContentAreas().length, oSplitter._getContentAreas().length, "Should return same value as getContent()");
 		assert.strictEqual(oSplitter._getContentAreas().length, 1, "Should have 1 content Area");
+
+		oSplitter.destroy();
 	});
 
 	QUnit.test("triggerResize", function (assert) {
@@ -344,6 +349,8 @@ sap.ui.define([
 
 		oSplitter.triggerResize(true);
 		assert.ok(oResizeSpy.calledOnce, "Direct resize called");
+
+		oSplitter.destroy();
 	});
 
 	QUnit.test("Live resize enabling", function (assert) {
@@ -359,6 +366,7 @@ sap.ui.define([
 		oSplitter.enableLiveResize();
 		assert.strictEqual(oSplitter._liveResize, true, "Enable Live resize");
 
+		oSplitter.destroy();
 	});
 
 	QUnit.test("Keyboard support enabling", function (assert) {
@@ -381,6 +389,8 @@ sap.ui.define([
 		oSplitter.disableKeyboardSupport();
 		assert.ok(oDisableKeyboardSupportSpy.calledOnce, "Disable keyboard support");
 		assert.strictEqual(oSplitter.$().find(".sapUiLoSplitterBar").attr("tabindex"), "-1", "Set a proper tabindex");
+
+		oSplitter.destroy();
 	});
 
 	QUnit.test("_onKeyboardResize", function (assert) {
@@ -405,6 +415,8 @@ sap.ui.define([
 		sap.ui.getCore().applyChanges();
 
 		assert.ok(oKeyboardResizeSpy.withArgs(0, 5, true).calledOnce);
+
+		oSplitter.destroy();
 	});
 
 	QUnit.module("Content areas");
@@ -427,6 +439,8 @@ sap.ui.define([
 		assert.ok(oSplitter.getContentAreas());
 		assert.strictEqual(oSplitter.getContentAreas().length, 3, "Has 3 content areas");
 		assert.strictEqual(oSplitter.getContentAreas()[2], addedItem, "Added an item at the end");
+
+		oSplitter.destroy();
 	});
 
 	QUnit.test("insertContentArea", function (assert) {
@@ -447,6 +461,8 @@ sap.ui.define([
 		assert.ok(oSplitter.getContentAreas());
 		assert.strictEqual(oSplitter.getContentAreas().length, 3, "Has 3 content areas");
 		assert.strictEqual(oSplitter.getContentAreas()[1], addedItem, "Added an item at the proper index");
+
+		oSplitter.destroy();
 	});
 
 	QUnit.test("removeContentArea", function (assert) {
@@ -468,6 +484,8 @@ sap.ui.define([
 
 		assert.ok(oSplitter.getContentAreas());
 		assert.strictEqual(oSplitter.getContentAreas().length, 0, "Has 3 content areas");
+
+		oSplitter.destroy();
 	});
 
 	QUnit.test("removeAllContentArea", function (assert) {
@@ -492,6 +510,8 @@ sap.ui.define([
 
 		assert.ok(oSplitter.getContentAreas());
 		assert.strictEqual(oSplitter.getContentAreas().length, 0, "Has 0 content areas");
+
+		oSplitter.destroy();
 	});
 
 	QUnit.test("destroyContentArea", function (assert) {
@@ -514,6 +534,8 @@ sap.ui.define([
 		assert.ok(oSplitter.getContentAreas());
 		assert.strictEqual(oSplitter.getContentAreas().length, 0, "Has 0 content areas");
 		assert.ok(oBtn.bIsDestroyed, "Content inside has been destroyed");
+
+		oSplitter.destroy();
 	});
 
 	QUnit.module("Events", {
@@ -587,10 +609,46 @@ sap.ui.define([
 				assert.ok(RenderManager.isPreservedContent(oXMLView.getDomRef()), "Splitter control is preserved as part of XMLView.");
 				oResizeSplitter.triggerResize(true);
 				assert.strictEqual(oSpy.called, false, "Splitter has not calculated its sizes again.");
+
+				oXMLView.destroy();
 				done();
 			};
 
 			oXMLView.rerender();
 		});
+	});
+
+	QUnit.test("Splitter with Vertical orientation with parent with height 'auto'", function (assert) {
+		// Arrange
+		var oBtn1 = new Button({layoutData: new SplitterLayoutData({size: "300px"})}),
+			oBtn2 = new Button({layoutData: new SplitterLayoutData({size: "auto"})}),
+			oBtn3 = new Button({layoutData: new SplitterLayoutData({size: "auto"})});
+
+		var oSplitter = new Splitter({
+			orientation: "Vertical",
+			contentAreas: [oBtn1, oBtn2, oBtn3]
+		});
+
+		var oPanel = new Panel({
+			height: "auto",
+			content: [oSplitter]
+		});
+
+		// var done = assert.async();
+		var oResizeSpy = sinon.spy(oSplitter, "_resize");
+		var done = assert.async();
+
+		// Act
+		oPanel.placeAt("qunit-fixture");
+		sap.ui.getCore().applyChanges();
+
+		setTimeout(function () {
+			// Assert
+			assert.strictEqual(oResizeSpy.callCount, 2, "Should not call resize infinite times.");
+
+			// Clean up
+			// oPanel.destroy();
+			done();
+		}, 1000);
 	});
 });
