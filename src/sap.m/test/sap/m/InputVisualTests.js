@@ -33,57 +33,54 @@ sap.ui.require([
 
 		"use strict";
 
-		function handleContentChange(oEvent) {
-			var choice = oEvent.getSource().getText();
-			switch (choice) {
-				case "Empty":
-					sap.ui.getCore().byId("inp").setValue("");
-					sap.ui.getCore().byId("inp").setPlaceholder("");
-					break;
-				case "Text":
-					sap.ui.getCore().byId("inp").setValue("Some text");
-					break;
-				case "Placeholder":
-					sap.ui.getCore().byId("inp").setValue("");
-					sap.ui.getCore().byId("inp").setPlaceholder("Placeholder");
-					break;
-			}
-		}
+		var aInputIds = ["inpText", "inpPlaceholder", "inpEmpty"];
 
 		function handleStateChange(oEvent) {
 			var choice = oEvent.getSource().getText();
 			switch (choice) {
 				case "Standard":
-					sap.ui.getCore().byId("inp").setEnabled(true);
-					sap.ui.getCore().byId("inp").setEditable(true);
+				aInputIds.forEach(function(inp) {
+					sap.ui.getCore().byId(inp).setEnabled(true);
+					sap.ui.getCore().byId(inp).setEditable(true);
+				});
 					break;
 				case "Not enabled":
-					sap.ui.getCore().byId("inp").setEnabled(false);
-					sap.ui.getCore().byId("inp").setEditable(true);
+				aInputIds.forEach(function(inp) {
+					sap.ui.getCore().byId(inp).setEnabled(false);
+					sap.ui.getCore().byId(inp).setEditable(true);
+				});
 					break;
 				case "Not editable":
-					sap.ui.getCore().byId("inp").setEnabled(true);
-					sap.ui.getCore().byId("inp").setEditable(false);
+				aInputIds.forEach(function(inp) {
+					sap.ui.getCore().byId(inp).setEnabled(true);
+					sap.ui.getCore().byId(inp).setEditable(false);
+				});
 					break;
 			}
 		}
 
 		function handleValueStateChange(oEvent) {
 			var choice = oEvent.getSource().getText();
-			sap.ui.getCore().byId("inp").setValueState(choice);
-			if ( choice === "Error") {
-				sap.ui.getCore().byId("inp").setValueStateText("123 123 123 123 123 123 123 11111111111111111111111111111");
-			}
+				aInputIds.forEach(function(inp) {
+				sap.ui.getCore().byId(inp).setValueState(choice);
+				if ( choice === "Error") {
+					sap.ui.getCore().byId(inp).setValueStateText("123 123 123 123 123 123 123 11111111111111111111111111111");
+				}
+			});
 		}
 
 		function handleDescriptionChange(oEvent) {
 			var choice = oEvent.getSource().getText();
 			switch (choice) {
 				case "None":
-					sap.ui.getCore().byId("inp").setDescription("");
+					aInputIds.forEach(function(inp) {
+						sap.ui.getCore().byId(inp).setDescription("");
+					});
 					break;
 				case "Visible":
-					sap.ui.getCore().byId("inp").setDescription("EUR");
+					aInputIds.forEach(function(inp) {
+						sap.ui.getCore().byId(inp).setDescription("EUR");
+					});
 					break;
 			}
 		}
@@ -92,11 +89,15 @@ sap.ui.require([
 			var choice = oEvent.getSource().getText();
 			switch (choice) {
 				case "None":
-					sap.ui.getCore().byId("inp").setShowValueHelp(false);
-					break;
+				aInputIds.forEach(function(inp) {
+					sap.ui.getCore().byId(inp).setShowValueHelp(false);
+				});
+				break;
 				case "Visible":
-					sap.ui.getCore().byId("inp").setShowValueHelp(true);
-					break;
+				aInputIds.forEach(function(inp) {
+					sap.ui.getCore().byId(inp).setShowValueHelp(true);
+				});
+				break;
 			}
 		}
 
@@ -111,26 +112,13 @@ sap.ui.require([
 					items: [
 						new VBox({
 							items: [
-								new Title({text: "Input Content:"}).addStyleClass("sapUiSmallMargin"),
-								new RadioButtonGroup({
-									selectedIndex: 2,
-									buttons: [
-										new RadioButton("rb1", {text: "Text", select: handleContentChange}),
-										new RadioButton("rb2", {text: "Placeholder", select: handleContentChange}),
-										new RadioButton("rb3", {text: "Empty", select: handleContentChange})
-									]
-								})
-							]
-						}),
-						new VBox({
-							items: [
 								new Title({text: "Input States:"}).addStyleClass("sapUiSmallMargin"),
 								new RadioButtonGroup({
 									selectedIndex: 2,
 									buttons: [
-										new RadioButton("rb4", {text: "Not enabled", select: handleStateChange}),
-										new RadioButton("rb5", {text: "Not editable", select: handleStateChange}),
-										new RadioButton("rb6", {text: "Standard", select: handleStateChange})
+										new RadioButton("rb1", {text: "Not enabled", select: handleStateChange}),
+										new RadioButton("rb2", {text: "Not editable", select: handleStateChange}),
+										new RadioButton("rb3", {text: "Standard", select: handleStateChange})
 									]
 								})
 							]
@@ -141,11 +129,11 @@ sap.ui.require([
 								new RadioButtonGroup({
 									selectedIndex: 4,
 									buttons: [
-										new RadioButton("rb7", {text: "Success", select: handleValueStateChange}),
-										new RadioButton("rb8", {text: "Warning", select: handleValueStateChange}),
-										new RadioButton("rb9", {text: "Error", select: handleValueStateChange}),
-										new RadioButton("rb10", {text: "Information", select: handleValueStateChange}),
-										new RadioButton("rb11", {text: "None", select: handleValueStateChange})
+										new RadioButton("rb4", {text: "Success", select: handleValueStateChange}),
+										new RadioButton("rb5", {text: "Warning", select: handleValueStateChange}),
+										new RadioButton("rb6", {text: "Error", select: handleValueStateChange}),
+										new RadioButton("rb7", {text: "Information", select: handleValueStateChange}),
+										new RadioButton("rb8", {text: "None", select: handleValueStateChange})
 									]
 								})
 							]
@@ -156,23 +144,30 @@ sap.ui.require([
 								new RadioButtonGroup({
 									selectedIndex: 1,
 									buttons: [
-										new RadioButton("rb12", {text: "Visible", select: handleDescriptionChange}),
-										new RadioButton("rb13", {text: "None", select: handleDescriptionChange})
+										new RadioButton("rb9", {text: "Visible", select: handleDescriptionChange}),
+										new RadioButton("rb10", {text: "None", select: handleDescriptionChange})
 									]
 								}),
 								new Title({text: "Input Value Help:"}).addStyleClass("sapUiSmallMargin"),
 								new RadioButtonGroup({
 									selectedIndex: 1,
 									buttons: [
-										new RadioButton("rb14", {text: "Visible", select: handleValueHelpChange}),
-										new RadioButton("rb15", {text: "None", select: handleValueHelpChange})
+										new RadioButton("rb11", {text: "Visible", select: handleValueHelpChange}),
+										new RadioButton("rb12", {text: "None", select: handleValueHelpChange})
 									]
 								})
 							]
 						})
 					]
 				}),
-				new Input("inp", { width: "10rem"}),
+				new VBox("inpHolder", {
+					width: "10rem",
+					items: [
+						new Input(aInputIds[0], {value: "some text"}),
+						new Input(aInputIds[1], {placeholder: "placeholder"}),
+						new Input(aInputIds[2], {})
+					]
+				}),
 				new SimpleForm("sf", {
 					width: "100%",
 					maxContainerCols: 2,
