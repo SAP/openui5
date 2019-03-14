@@ -62,13 +62,15 @@ sap.ui.define([
 	 * @property {int} ANYCOLUMNHEADER - Any cell of a row in the table header area (table head).
 	 * @property {int} ANYROWHEADER - Any row header cell (including the SelectAll cell).
 	 * @property {int} ANY - Any table cell.
+	 * @property {int} PSEUDO - Any element that imitates a table cell.
 	 */
 	var CELLTYPE = {
-		DATACELL: 1, // Standard data cell (standard, group or sum)
-		COLUMNHEADER: 2, // Column header
-		ROWHEADER: 4, // Row header (standard, group or sum)
-		ROWACTION: 8, // Row action (standard, group or sum)
-		COLUMNROWHEADER: 16 // Select all row selector (top left cell)
+		DATACELL: 1 << 1,
+		COLUMNHEADER: 1 << 2,
+		ROWHEADER: 1 << 3,
+		ROWACTION: 1 << 4,
+		COLUMNROWHEADER: 1 << 5,
+		PSEUDO: 1 << 6
 	};
 	CELLTYPE.ANYCONTENTCELL = CELLTYPE.ROWHEADER | CELLTYPE.DATACELL | CELLTYPE.ROWACTION;
 	CELLTYPE.ANYCOLUMNHEADER = CELLTYPE.COLUMNHEADER | CELLTYPE.COLUMNROWHEADER;
@@ -180,6 +182,12 @@ sap.ui.define([
 	 * @constant
 	 */
 	var INTERACTIVE_ELEMENT_SELECTORS = ":sapTabbable, .sapUiTableTreeIcon:not(.sapUiTableTreeIconLeaf)";
+
+	function hasSelectableText(oElement) {
+		// Text selection is only supported for <input type="text|password|search|tel|url">
+		// In Chrome text selection could also be supported for other input types, but to have a consistent behavior we don't do that.
+		return oElement != null && oElement instanceof window.HTMLInputElement && /^(text|password|search|tel|url)$/.test(oElement.type);
+	}
 
 	/**
 	 * Static collection of utility functions related to the sap.ui.table.Table, ...
@@ -363,7 +371,7 @@ sap.ui.define([
 				return false;
 			}
 
-			return oTable.getDomRef().querySelector(".sapUiTableCnt > .sapUiLocalBusyIndicator") != null;
+			return oTable.getDomRef().querySelector("#" + oTable.getId() + "-sapUiTableGridCnt > .sapUiLocalBusyIndicator") != null;
 		},
 
 		/**
@@ -761,6 +769,15 @@ sap.ui.define([
 				oCellInfo.type = TableUtils.CELLTYPE.COLUMNROWHEADER;
 				oCellInfo.columnIndex = -1;
 				oCellInfo.columnSpan = 1;
+
+			} else if ($Cell.hasClass("sapUiTablePseudoCell")) {
+				sColumnId = $Cell.data("sap-ui-colid");
+				oColumn = sap.ui.getCore().byId(sColumnId);
+
+				oCellInfo.type = TableUtils.CELLTYPE.PSEUDO;
+				oCellInfo.rowIndex = -1;
+				oCellInfo.columnIndex = oColumn ? oColumn.getIndex() : -1;
+				oCellInfo.columnSpan = 1;
 			}
 
 			// Set the cell object for easier access to the cell for the caller.
@@ -773,7 +790,7 @@ sap.ui.define([
 			 * Returns true if the cell is of one of the specified types, otherwise false. Also returns false if no or an invalid bitmask
 			 * is specified.
 			 *
-			 * @name sap.ui.table.TableUtils.CellInfo#isOfType
+			 * @alias sap.ui.table.TableUtils.CellInfo#isOfType
 			 * @param {int} cellTypeMask Bitmask of cell types to check.
 			 * @returns {boolean} Whether the specified cell type mask matches the type of the cell.
 			 * @see CELLTYPE
@@ -844,17 +861,26 @@ sap.ui.define([
 		 *
 		 * @param {sap.ui.table.Table} oTable Instance of the table used as the context within which to search for the cell.
 		 * @param {jQuery|HTMLElement} oElement A table cell or an element inside a table cell.
+		 * @param {jQuery|HTMLElement} [bIncludePseudoCells=false] Whether to include pseudo cells.
 		 * @returns {jQuery|null} Returns <code>null</code>, if the element is neither a table cell nor inside a table cell.
 		 * @private
 		 */
-		getCell: function(oTable, oElement) {
+		getCell: function(oTable, oElement, bIncludePseudoCells) {
+			bIncludePseudoCells = bIncludePseudoCells === true;
+
 			if (!oTable || !oElement) {
 				return null;
 			}
 
 			var $Element = jQuery(oElement);
 			var oTableElement = oTable.getDomRef();
-			var $Cell = $Element.closest(".sapUiTableCell", oTableElement);
+			var sSelector = ".sapUiTableCell";
+
+			if (!bIncludePseudoCells) {
+				sSelector += ":not(.sapUiTablePseudoCell)";
+			}
+
+			var $Cell = $Element.closest(sSelector, oTableElement);
 
 			if ($Cell.length > 0) {
 				return $Cell;
@@ -868,12 +894,15 @@ sap.ui.define([
 		 *
 		 * @param {sap.ui.table.Table} oTable Instance of the table used as the context within which to search for the parent cell.
 		 * @param {jQuery|HTMLElement} oElement An element inside a table cell.
+		 * @param {jQuery|HTMLElement} [bIncludePseudoCells=false] Whether to include pseudo cells.
 		 * @returns {jQuery|null} Returns <code>null</code>, if the element is not inside a table cell.
 		 * @private
 		 */
-		getParentCell: function(oTable, oElement) {
+		getParentCell: function(oTable, oElement, bIncludePseudoCells) {
+			bIncludePseudoCells = bIncludePseudoCells === true;
+
 			var $Element = jQuery(oElement);
-			var $Cell = TableUtils.getCell(oTable, oElement);
+			var $Cell = TableUtils.getCell(oTable, oElement, bIncludePseudoCells);
 
 			if (!$Cell || $Cell[0] === $Element[0]) {
 				return null; // The element is not inside a table cell.
@@ -1417,7 +1446,7 @@ sap.ui.define([
 			var $Cell = jQuery(oCell);
 			var oCellInfo = TableUtils.getCellInfo($Cell);
 
-			if (oCellInfo.isOfType(CELLTYPE.ANY)) {
+			if (oCellInfo.isOfType(CELLTYPE.ANY | CELLTYPE.PSEUDO)) {
 				var $InteractiveElements = $Cell.find(INTERACTIVE_ELEMENT_SELECTORS);
 				if ($InteractiveElements.length > 0) {
 					return $InteractiveElements;
@@ -1499,6 +1528,18 @@ sap.ui.define([
 
 			mThemeParameters.sapUiTableActionNavigationIcon = ThemeParameters.get("_sap_ui_table_RowActionNavigationIcon");
 			mThemeParameters.sapUiTableActionDeleteIcon = ThemeParameters.get("_sap_ui_table_DeleteIcon");
+		},
+
+		selectElementText: function(oElement) {
+			if (hasSelectableText(oElement)) {
+				oElement.select();
+			}
+		},
+
+		deselectElementText: function(oElement) {
+			if (hasSelectableText(oElement)) {
+				oElement.setSelectionRange(0, 0);
+			}
 		}
 	};
 

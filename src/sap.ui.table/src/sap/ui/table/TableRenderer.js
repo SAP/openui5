@@ -134,6 +134,15 @@ sap.ui.define(['sap/ui/core/Control', 'sap/ui/core/theming/Parameters', 'sap/ui/
 
 		rm.write("</div>");
 
+		var oCreationRow = oTable.getCreationRow();
+		if (oCreationRow) {
+			rm.renderControl(oCreationRow);
+
+			// If the table has a creation row, the horizontal scrollbar needs to be rendered outside the element covered by the busy indicator.
+			this.renderHSbBackground(rm, oTable);
+			this.renderHSb(rm, oTable);
+		}
+
 		oTable._getAccRenderExtension().writeHiddenAccTexts(rm, oTable);
 
 		rm.write("<div");
@@ -232,8 +241,12 @@ sap.ui.define(['sap/ui/core/Control', 'sap/ui/core/theming/Parameters', 'sap/ui/
 			this.renderVSbBackground(rm, oTable);
 			this.renderVSb(rm, oTable);
 		}
-		this.renderHSbBackground(rm, oTable);
-		this.renderHSb(rm, oTable);
+
+		var oCreationRow = oTable.getCreationRow();
+		if (!oCreationRow) {
+			this.renderHSbBackground(rm, oTable);
+			this.renderHSb(rm, oTable);
+		}
 	};
 
 	TableRenderer.renderTableCCnt = function(rm, oTable) {

@@ -158,7 +158,8 @@ sap.ui.define([
 			 * When the selection mode is changed, the current selection is removed.
 			 * <b>Note:</b> Since the group header visualization relies on the row selectors, the row selectors are always shown if the grouping
 			 * functionality (depends on table type) is enabled, even if <code>sap.ui.table.SelectionMode.None</code> is set.
-			 * <b>Note:</b> When the MultiSelectionPlugin is applied to the table, the selection mode is controlled by the plugin and cannot be changed manually.
+			 * <b>Note:</b> When the MultiSelectionPlugin is applied to the table, the selection mode is controlled by the plugin and cannot be
+			 * changed manually.
 			 */
 			selectionMode : {type : "sap.ui.table.SelectionMode", group : "Behavior", defaultValue : SelectionMode.MultiToggle},
 
@@ -378,6 +379,17 @@ sap.ui.define([
 			 * Rows of the Table
 			 */
 			rows : {type : "sap.ui.table.Row", multiple : true, singularName : "row", bindable : "bindable", selector : "#{id}-tableCCnt", dnd : true},
+
+			/**
+			 * This row can be used for user input to create new data.
+			 * Like in any other row, the cells of this row are also managed by the table and must not be modified. The cell content is defined
+			 * via the <code>creationTemplate</code> aggregation of the {@link sap.ui.table.Column}.
+			 * If the creation row is set, the busy indicator will no longer cover the horizontal scrollbar, even if the creation row is invisible.
+			 *
+			 * @private
+			 * @ui5-restricted sap.ui.mdc
+			 */
+			creationRow : {type : "sap.ui.core.Control", multiple : false, visibility : "hidden"},
 
 			/**
 			 * The value for the noData aggregation can be either a string value or a control instance.
@@ -2449,6 +2461,44 @@ sap.ui.define([
 	};
 
 	/**
+	 * Sets the creation row.
+	 *
+	 * @param {sap.ui.table.CreationRow} oCreationRow Instance of the creation row
+	 * @returns {sap.ui.table.Table} Reference to <code>this</code> in order to allow method chaining
+	 * @private
+	 * @ui5-restricted sap.ui.mdc
+	 */
+	Table.prototype.setCreationRow = function(oCreationRow) {
+		if (!TableUtils.isA(oCreationRow, "sap.ui.table.CreationRow")) {
+			oCreationRow = null;
+		}
+
+		return this.setAggregation("creationRow", oCreationRow);
+	};
+
+	/**
+	 * Gets the creation row.
+	 *
+	 * @returns {sap.ui.table.CreationRow} oCreationRow Instance of the creation row
+	 * @private
+	 * @ui5-restricted sap.ui.mdc
+	 */
+	Table.prototype.getCreationRow = function() {
+		return this.getAggregation("creationRow");
+	};
+
+	/**
+	 * Destroys the creation row.
+	 *
+	 * @returns {sap.ui.table.Table} Reference to <code>this</code> in order to allow method chaining
+	 * @private
+	 * @ui5-restricted sap.ui.mdc
+	 */
+	Table.prototype.destroyCreationRow = function() {
+		return this.destroyAggregation("creationRow");
+	};
+
+	/**
 	 * Triggers automatic resizing of a column to the widest content.
 	 *
 	 * @experimental Experimental! Presently implemented to only work with a very limited set of controls (e.g. sap.m.Text).
@@ -3920,7 +3970,7 @@ sap.ui.define([
 	Table.prototype.setBusy = function(bBusy, sBusySection) {
 		var bBusyChanged = this.getBusy() != bBusy;
 
-		sBusySection = "sapUiTableCnt";
+		sBusySection = "sapUiTableGridCnt";
 		var vReturn = Control.prototype.setBusy.call(this, bBusy, sBusySection);
 		if (bBusyChanged) {
 			this.fireBusyStateChanged({busy: bBusy});

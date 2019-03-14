@@ -264,17 +264,31 @@ function(
 			multiLabels : {type : "sap.ui.core.Control", multiple : true, singularName : "multiLabel"},
 
 			/**
-			 * Template (cell renderer) of this column. A template is decoupled from the column. Each time
-			 * the template's properties or aggregations have been changed, the template has to be applied again via
-			 * <code>setTemplate</code> for the changes to take effect.
+			 * Template (cell renderer) of this column.
+			 * A template is decoupled from the column. Each time the template's properties or aggregations have been changed, the template has to be
+			 * applied again via <code>setTemplate</code> for the changes to take effect.
 			 * If a string is defined, a default text control will be created with its text property bound to the value of the string. The default
 			 * template depends on the libraries loaded.
 			 * If there is no template, the column will not be rendered in the table.
-			 * The set of supported controls is limited. See section "{@link topic:148892ff9aea4a18b912829791e38f3e Tables: Which One Should I Choose?}"
-			 * in the documentation for more details. While it is technically possible to also use other controls, doing so might lead to issues with regards
-			 * to scrolling, alignment, condensed mode, screen reader support, and keyboard support.
+			 * The set of supported controls is limited. See section "{@link topic:148892ff9aea4a18b912829791e38f3e Tables: Which One Should I
+			 * Choose?}" in the documentation for more details. While it is technically possible to also use other controls, doing so might lead to
+			 * issues with regards to scrolling, alignment, condensed mode, screen reader support, and keyboard support.
 			 */
 			template : {type : "sap.ui.core.Control", altTypes : ["string"], multiple : false},
+
+			/*
+			 * Creation template (cell renderer) of this column. This template is used only to create the cells
+			 * of the {@link sap.ui.table.CreationRow} that is added to the table.
+			 * A template is decoupled from the column. Each time the template's properties or aggregations have been changed, the template has to
+			 * be applied again via <code>setCreationTemplate</code> for the changes to take effect.
+			 * The set of supported controls is limited. See section "{@link topic:148892ff9aea4a18b912829791e38f3e Tables: Which One Should I
+			 * Choose?}" in the documentation for more details. While it is technically possible to also use other controls, doing so might lead to
+			 * issues with regards to scrolling, alignment, condensed mode, screen reader support, and keyboard support.
+			 *
+			 * @private
+			 * @ui5-restricted sap.ui.mdc
+			 */
+			creationTemplate : {type : "sap.ui.core.Control", multiple : false, visibility : "hidden"},
 
 			/**
 			 * The menu used by the column. By default the {@link sap.ui.table.ColumnMenu} is used.
@@ -316,8 +330,21 @@ function(
 
 		// Skip proppagation of databinding properties to the template
 		this.mSkipPropagation = {template: true};
+
 		// for performance reasons, the cloned column templates shall be stored for later reuse
-		this._aTemplateClones = [];
+		this._initTemplateClonePool();
+	};
+
+	/**
+	 * Initializes the template clone pool where clones of every template type are stored for reuse.
+	 *
+	 * @private
+	 */
+	Column.prototype._initTemplateClonePool = function() {
+		this._mTemplateClones = {
+			Standard: [],
+			Creation: []
+		};
 	};
 
 	/**
@@ -370,8 +397,11 @@ function(
 		 * rerendered. This is a popup and we use the instance check because of the
 		 * menu behind the getMenu function is lazy created when first accessed.
 		 */
-		if (oOrigin !== this.getTemplate() && !TableUtils.isA(oOrigin, "sap.ui.table.ColumnMenu")) {
-			// changes on the template require to call invalidate on the column or table
+		if (oOrigin !== this.getTemplate()
+			&& oOrigin !== this.getCreationTemplate()
+			&& !TableUtils.isA(oOrigin, "sap.ui.table.ColumnMenu")) {
+
+			// changes on the templates require to call invalidate on the column or table
 			Element.prototype.invalidate.apply(this, arguments);
 		}
 	};
@@ -400,11 +430,36 @@ function(
 		// manually invalidate the Column (because of the invalidate decoupling to
 		// prevent invalidations from the databinding part)
 		this.invalidate();
-		this._destroyTemplateClones();
+		this._destroyTemplateClones("Standard");
 		var oTable = this.getParent();
 		if (oTable && oTable.invalidateRowsAggregation && this.getVisible() == true) {
 			oTable.invalidateRowsAggregation();
 		}
+		return this;
+	};
+
+	/**
+	 * Sets the creation template.
+	 *
+	 * @param {sap.ui.core.Control} oCreationTemplate Instance of the creation template control
+	 * @returns {sap.ui.table.Table} Reference to <code>this</code> in order to allow method chaining
+	 * @private
+	 * @ui5-restricted sap.ui.mdc
+	 */
+	Column.prototype.setCreationTemplate = function(oCreationTemplate) {
+		var oParent = this.getParent();
+
+		this.setAggregation("creationTemplate", oCreationTemplate);
+		this._destroyTemplateClones("Creation");
+
+		if (TableUtils.isA(oParent, "sap.ui.table.Table")) {
+			var oCreationRow = oParent.getCreationRow();
+
+			if (oCreationRow) {
+				oCreationRow._update();
+			}
+		}
+
 		return this;
 	};
 
@@ -955,18 +1010,24 @@ function(
 	/**
 	 * Returns an unused column template clone. Unused means, it does not have a parent.
 	 *
-	 * @returns {sap.ui.core.Control|null} Column template clone, or <code>null</code> if all clones have parents
+	 * @param {string} sTemplateType The template type for which a free clone should be retrieved from the clone pool.
+	 * @returns {sap.ui.core.Control|null} Column template clone, or <code>null</code> if all clones have parents.
 	 * @private
 	 */
-	Column.prototype._getFreeTemplateClone = function() {
+	Column.prototype._getFreeTemplateClone = function(sTemplateType) {
+		var aTemplateClones = this._mTemplateClones[sTemplateType];
 		var oFreeTemplateClone = null;
 
-		for (var i = 0; i < this._aTemplateClones.length; i++) {
-			if (!this._aTemplateClones[i] || this._aTemplateClones[i].bIsDestroyed) {
-				this._aTemplateClones.splice(i, 1); // Remove the reference to a destroyed clone.
+		if (!aTemplateClones) {
+			return null;
+		}
+
+		for (var i = 0; i < aTemplateClones.length; i++) {
+			if (!aTemplateClones[i] || aTemplateClones[i].bIsDestroyed) {
+				aTemplateClones.splice(i, 1); // Remove the reference to a destroyed clone.
 				i--;
-			} else if (!oFreeTemplateClone && !this._aTemplateClones[i].getParent()) {
-				oFreeTemplateClone = this._aTemplateClones[i];
+			} else if (!oFreeTemplateClone && !aTemplateClones[i].getParent()) {
+				oFreeTemplateClone = aTemplateClones[i];
 			}
 		}
 
@@ -980,21 +1041,24 @@ function(
 	 * @returns {sap.ui.core.Control|null} Clone of the column template, or <code>null</code> if no column template is defined
 	 * @protected
 	 */
-	Column.prototype.getTemplateClone = function(iIndex) {
+	Column.prototype.getTemplateClone = function(iIndex, sPreferredTemplateType) {
 		// For performance reasons, the index of the column in the column aggregation must be provided by the caller.
 		// Otherwise the columns aggregation would be looped over and over again to figure out the index.
 		if (iIndex == null) {
 			return null;
 		}
 
-		var oClone = this._getFreeTemplateClone();
+		var sTemplateType = sPreferredTemplateType == null ? "Standard" : sPreferredTemplateType;
+		var oClone = this._getFreeTemplateClone(sTemplateType);
+		var fnGetTemplate = this["get" + (sTemplateType === "Standard" ? "" : sTemplateType) + "Template"];
 
-		if (!oClone) {
+		if (!oClone && (fnGetTemplate instanceof Function)) {
 			// No free template clone available, create one.
-			var oTemplate = this.getTemplate();
+			var oTemplate = fnGetTemplate.call(this);
+
 			if (oTemplate) {
 				oClone = oTemplate.clone();
-				this._aTemplateClones.push(oClone);
+				this._mTemplateClones[sTemplateType].push(oClone);
 			}
 		}
 
@@ -1012,18 +1076,52 @@ function(
 		return oClone;
 	};
 
+	function destroyClones(aClones) {
+		for (var i = 0; i < aClones.length; i++) {
+			if (aClones[i] != null && !aClones[i].bIsDestroyed) {
+				aClones[i].destroy();
+			}
+		}
+	}
+
 	/**
 	 * Destroys all column template clones and clears the clone stack.
 	 *
+	 * @param {string} [sTemplateType] The template type of clones to destroy. If not defined, all clones are destroyed.
 	 * @private
 	 */
-	Column.prototype._destroyTemplateClones = function() {
-		for (var i = 0; i < this._aTemplateClones.length; i++) {
-			if (this._aTemplateClones[i] != null && !this._aTemplateClones[i].bIsDestroyed) {
-				this._aTemplateClones[i].destroy();
+	Column.prototype._destroyTemplateClones = function(sTemplateType) {
+		if (sTemplateType == null) {
+			for (var sType in this._mTemplateClones) {
+				destroyClones(this._mTemplateClones[sType]);
 			}
+			this._initTemplateClonePool();
+		} else {
+			destroyClones(this._mTemplateClones[sTemplateType]);
+			this._mTemplateClones[sTemplateType] = [];
 		}
-		this._aTemplateClones = [];
+	};
+
+	/**
+	 * Gets the creation template.
+	 *
+	 * @returns {sap.ui.core.Control} Instance of the creation template control
+	 * @private
+	 * @ui5-restricted sap.ui.mdc
+	 */
+	Column.prototype.getCreationTemplate = function() {
+		return this.getAggregation("creationTemplate");
+	};
+
+	/**
+	 * Destroys the creation template.
+	 *
+	 * @returns {sap.ui.table.Table} Reference to <code>this</code> in order to allow method chaining
+	 * @private
+	 * @ui5-restricted sap.ui.mdc
+	 */
+	Column.prototype.destroyCreationTemplate = function() {
+		return this.destroyAggregation("creationTemplate");
 	};
 
 	Column.prototype._closeMenu = function() {

@@ -5206,7 +5206,7 @@ sap.ui.define([
 		assert.ok(oContextMenuEventArgument.isDefaultPrevented(), "Opening of the default context menu was prevented");
 	});
 
-	QUnit.test("On a Data Cell", function(assert) {
+	QUnit.test("On a Data Cell - Cell filter context menu", function(assert) {
 		var oElem = checkFocus(getCell(0, 0, true), assert);
 		var oColumn = oTable.getColumns()[0];
 		var oKeydownEvent = this.spy(oTable._getKeyboardExtension()._delegate, "onkeydown");
@@ -5248,7 +5248,7 @@ sap.ui.define([
 		assert.ok(oContextMenuEventArgument.isDefaultPrevented(), "Opening of the default context menu was prevented");
 	});
 
-	QUnit.test("On a Data cell - Custom context menu", function(assert) {
+	QUnit.test("On a Content Cell - Custom context menu", function(assert) {
 		oTable.setContextMenu(new MenuM({
 			items: [
 				new MenuItemM({text: "ContextMenuItem"})

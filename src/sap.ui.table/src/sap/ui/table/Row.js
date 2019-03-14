@@ -25,13 +25,12 @@ sap.ui.define(['sap/ui/core/Element', 'sap/ui/model/Context', './TableUtils', "s
 	 * @ui5-metamodel This control/element also will be described in the UI5 (legacy) designtime metamodel
 	 */
 	var Row = Element.extend("sap.ui.table.Row", /** @lends sap.ui.table.Row.prototype */ { metadata : {
-
 		library : "sap.ui.table",
 		defaultAggregation : "cells",
 		aggregations : {
-
 			/**
-			 * The controls for the cells.
+			 * The actual cells are a table-internal construct. The controls in this aggregation are the content of the cells.
+			 * This aggregation is managed by the table and must not be manipulated. Only read access is allowed.
 			 */
 			cells : {type : "sap.ui.core.Control", multiple : true, singularName : "cell"},
 

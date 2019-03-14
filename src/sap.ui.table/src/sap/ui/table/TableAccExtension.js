@@ -751,6 +751,11 @@ sap.ui.define([
 					addAriaForOverlayOrNoData(oTable, mAttributes, true, false);
 					break;
 
+				case TableAccExtension.ELEMENTTYPES.CREATIONROW_TBL: // Table of the creation row
+					mAttributes["role"] = "presentation";
+					addAriaForOverlayOrNoData(oTable, mAttributes, true, false);
+					break;
+
 				case TableAccExtension.ELEMENTTYPES.ROWHEADER_COL: //The area which contains the row headers
 					addAriaForOverlayOrNoData(oTable, mAttributes, true, true);
 					break;
@@ -974,8 +979,8 @@ sap.ui.define([
 	 *
 	 * @type {{DATACELL: string, COLUMNHEADER: string, ROWHEADER: string, ROWACTION: string, COLUMNROWHEADER: string, ROOT: string, CONTENT: string,
 	 *     TABLE: string, TABLEHEADER: string, TABLEFOOTER: string, TABLESUBHEADER: string, COLUMNHEADER_TBL: string, COLUMNHEADER_ROW: string,
-	 *     ROWHEADER_COL: string, TH: string, ROWHEADER_TD: string, TR: string, TREEICON: string, ROWACTIONHEADER: string, NODATA: string, OVERLAY:
-	 *     string}|*}
+	 *     CREATIONROW_TBL: string, ROWHEADER_COL: string, TH: string, ROWHEADER_TD: string, TR: string, TREEICON: string, ROWACTIONHEADER: string,
+	 *     NODATA: string, OVERLAY: string}|*}
 	 * @see TableAccRenderExtension.writeAriaAttributesFor
 	 * @public
 	 */
@@ -993,6 +998,7 @@ sap.ui.define([
 		TABLESUBHEADER: "TABLESUBHEADER", 		// The table toolbar and extension areas
 		COLUMNHEADER_TBL: "COLUMNHEADER_TABLE", // The table with the column headers
 		COLUMNHEADER_ROW: "COLUMNHEADER_ROW", 	// The table row with the column headers
+		CREATIONROW_TBL: "CREATIONROW_TABLE",	// The table with the creation row
 		ROWHEADER_COL: "ROWHEADER_COL", 		// The area which contains the row headers
 		TH: "TH", 								// The "technical" column headers
 		ROWHEADER_TD: "ROWHEADER_TD", 			// The "technical" row headers
@@ -1033,7 +1039,7 @@ sap.ui.define([
 		var oInfo = ExtensionHelper.getInfoOfFocusedCell(this);
 		var sCellType;
 
-		if (!oInfo || !oInfo.cell) {
+		if (!oInfo || !oInfo.isOfType(CellType.ANY)) {
 			return;
 		}
 
