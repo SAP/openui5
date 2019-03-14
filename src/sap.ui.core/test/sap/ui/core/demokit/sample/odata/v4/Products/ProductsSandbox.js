@@ -28,7 +28,10 @@ sap.ui.define([
 				"/sap/opu/odata4/sap/zui5_testv4/default/iwbep/common/0001/$metadata" : {
 					source : "common_metadata.xml"
 				},
-				"ProductList?custom-option=value&$count=true&$select=CurrencyCode,Name,Price,ProductID,WeightMeasure,WeightUnit&$skip=0&$top=20" : {
+				"ProductList('H-1001')?custom-option=value&$select=CurrencyCode,Name,Price,ProductID,WeightMeasure,WeightUnit" : {
+					source : "ProductList(H-1001).json"
+				},
+				"ProductList?custom-option=value&$count=true&$select=CurrencyCode,Name,Price,ProductID,WeightMeasure,WeightUnit&$skip=0&$top=5" : {
 					source : "ProductList.json"
 				},
 				"/sap/opu/odata4/sap/zui5_testv4/default/iwbep/common/0001/Currencies?$select=CurrencyCode,DecimalPlaces,Text,ISOCode" : {
@@ -36,7 +39,15 @@ sap.ui.define([
 				},
 				"/sap/opu/odata4/sap/zui5_testv4/default/iwbep/common/0001/UnitsOfMeasure?$select=ExternalCode,DecimalPlaces,Text,ISOCode" : {
 					source : "UnitsOfMeasure.json"
-				}
+				},
+				"POST ProductList?custom-option=value" : [{
+					code: 400,
+					ifMatch : /,"ProductID":"H-100",/g,
+					source : "POST-ProductList('H-100').Error.json"
+				}, {
+					code: 200,
+					source : "POST-ProductList('H-1001').json"
+				}]
 			}, "sap/ui/core/sample/odata/v4/Products/data",
 			"/sap/opu/odata4/sap/zui5_testv4/default/sap/zui5_epm_sample/0002/");
 	}
