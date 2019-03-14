@@ -26,7 +26,7 @@ sap.ui.define([
 	* Checks if value is included in collection
 	*
 	* @example
-	* sap.ui.require([sap/base/util/includes], function(includes){
+	* sap.ui.require(["sap/base/util/includes"], function(includes){
 	*   // arrays
 	*   includes(["1", "8", "7"], "8");         // true
 	*   includes(["1", "8", "7"], "8", 0);      // true
