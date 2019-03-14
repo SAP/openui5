@@ -409,7 +409,7 @@ function (
                 parameter : function(oView){
                     return {
                         source : oView.byId("action1"),
-                        combineFields : [
+                        combineElements : [
                             oView.byId("action1"),
                             oView.byId("action2"),
                             oView.byId("action3")

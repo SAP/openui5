@@ -215,7 +215,7 @@ sap.ui.define([
 				parameter : function(oView){
 					return {
 						source : oView.byId("btn0"),
-						combineFields : [
+						combineElements : [
 							oView.byId("btn0"),
 							oView.byId("btn1")
 						]

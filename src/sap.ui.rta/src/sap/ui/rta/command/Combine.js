@@ -3,7 +3,9 @@
  */
 sap.ui.define([
 	'sap/ui/rta/command/FlexCommand'
-], function(FlexCommand) {
+], function(
+	FlexCommand
+) {
 	"use strict";
 
 	/**
@@ -27,7 +29,7 @@ sap.ui.define([
 				source : {
 					type : "any"
 				},
-				combineFields : {
+				combineElements : {
 					type : "any[]"
 				}
 			},
@@ -41,13 +43,13 @@ sap.ui.define([
 	 */
 	Combine.prototype._getChangeSpecificData = function() {
 		var aFieldIds = [];
-		this.getCombineFields().forEach(function(oField) {
+		this.getCombineElements().forEach(function(oField) {
 			aFieldIds.push(oField.getId());
 		});
 		var mSpecificInfo = {
 				changeType : this.getChangeType(),
 				sourceControlId : this.getSource().getId(),
-				combineFieldIds : aFieldIds
+				combineElementIds : aFieldIds
 		};
 		return mSpecificInfo;
 	};
