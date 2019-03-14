@@ -3388,29 +3388,52 @@ sap.ui.define([
 
 	QUnit.module("API", {
 		beforeEach: function () {
-			this.input = new Input().placeAt("qunit-fixture");
+			this.oInput = new Input().placeAt("qunit-fixture");
 		},
 		afterEach: function () {
-			this.input.destroy();
-			this.input = null;
+			this.oInput.destroy();
+			this.oInput = null;
 		}
 	});
 
 	QUnit.test('Calling insertSuggestionRow', function (assert) {
 		// arrange
-		var fnInsertAggregation = sinon.spy(this.input, "insertAggregation");
-		this.input._synchronizeSuggestions = function() {};
+		var fnInsertAggregation = sinon.spy(this.oInput, "insertAggregation");
+		this.oInput._synchronizeSuggestions = function() {};
 		var oColumnListItem = new ColumnListItem();
 
 		// act
-		this.input.insertSuggestionRow(oColumnListItem, 1);
+		this.oInput.insertSuggestionRow(oColumnListItem, 1);
 
 		// assert
 		assert.strictEqual(fnInsertAggregation.called, true, 'should call insertAggregation');
 		assert.strictEqual(fnInsertAggregation.calledWithExactly("suggestionRows", oColumnListItem, 1), true, 'should call insertAggregation with correct parameters');
 
 		// clean
-		this.input.insertAggregation.restore();
+		this.oInput.insertAggregation.restore();
+	});
+
+	QUnit.test("Methods that should reflect on the Suggestions Popover", function (assert) {
+		// arrange
+		this.oInput.setShowSuggestion(true);
+		var bSuppressInvalidate = true;
+
+		// assert
+		assert.strictEqual(this.oInput.getMaxSuggestionWidth(), "", "Input initial suggestion width should be ''");
+		assert.strictEqual(this.oInput._oSuggPopover._sPopoverContentWidth, null, "Suggestions popover should be 'null' if the Input didn't set it");
+		assert.strictEqual(this.oInput.getEnableSuggestionsHighlighting(), this.oInput._oSuggPopover._bEnableHighlighting, "Input and Popover highlighting should be the same.");
+		assert.strictEqual(this.oInput.getAutocomplete(), this.oInput._oSuggPopover._bAutocompleteEnabled, "Input and Popover autocomplete should be the same.");
+
+		// act
+		this.oInput.setMaxSuggestionWidth("50rem", bSuppressInvalidate);
+		this.oInput.setEnableSuggestionsHighlighting(false, bSuppressInvalidate);
+		this.oInput.setAutocomplete(false, bSuppressInvalidate);
+		this.oInput._oSuggPopover._oPopover.open();
+
+		// assert
+		assert.strictEqual(this.oInput.getMaxSuggestionWidth(), this.oInput._oSuggPopover._sPopoverContentWidth, "Input and Popover widths should be the same.");
+		assert.strictEqual(this.oInput.getEnableSuggestionsHighlighting(), this.oInput._oSuggPopover._bEnableHighlighting, "Input and Popover highlighting should be the same.");
+		assert.strictEqual(this.oInput.getAutocomplete(), this.oInput._oSuggPopover._bAutocompleteEnabled, "Input and Popover autocomplete should be the same.");
 	});
 
 	QUnit.module("Input in a Dialog", {
