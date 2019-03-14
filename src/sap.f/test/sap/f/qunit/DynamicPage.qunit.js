@@ -135,6 +135,26 @@ function (
 		assert.ok($oPinButton.hasClass("sapUiHidden"), "Pin header button should be hidden again");
 	});
 
+	QUnit.test("DynamicPage headerExpanded=false expand via header should reset the property value", function (assert) {
+		// act
+		this.oDynamicPage.setHeaderExpanded(null);
+
+		// asert
+		assert.ok(this.oDynamicPage.getHeaderExpanded(), "DynamicPage headerExpanded value is default");
+
+		// act
+		this.oDynamicPage.setHeaderExpanded(false);
+
+		// asert
+		assert.notOk(this.oDynamicPage.getHeaderExpanded(), "DynamicPage header is snapped");
+
+		// act
+		this.oDynamicPage.setHeaderExpanded(undefined);
+
+		// asert
+		assert.ok(this.oDynamicPage.getHeaderExpanded(), "DynamicPage headerExpanded value is default");
+	});
+
 	QUnit.module("DynamicPage - API - header initially snapped without content", {
 		beforeEach: function () {
 			this.oDynamicPage = oFactory.getDynamicPageHeaderSnappedNoContent();
