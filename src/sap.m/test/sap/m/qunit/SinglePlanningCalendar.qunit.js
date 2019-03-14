@@ -11,6 +11,7 @@ sap.ui.define([
 	"sap/ui/unified/CalendarAppointment",
 	"sap/ui/unified/CalendarLegendItem",
 	"sap/ui/core/InvisibleText",
+	'sap/ui/events/KeyCodes',
 	"sap/base/Log",
 	"sap/ui/core/library"
 ], function(
@@ -25,6 +26,7 @@ sap.ui.define([
 	CalendarAppointment,
 	CalendarLegendItem,
 	InvisibleText,
+	KeyCodes,
 	Log,
 	coreLibrary
 ) {
@@ -213,7 +215,16 @@ sap.ui.define([
 				]
 			}),
 			oFakeEvent = {
-				target: {parentElement: {id: oAppointment.getId()}}
+				target: {
+					parentElement: {
+						id: oAppointment.getId()
+					},
+					classList: {
+						contains: function() {
+							return false;
+						}
+					}
+				}
 			},
 			fnFireAppointmentSelectSpy = this.spy(oSPC, "fireAppointmentSelect");
 
@@ -383,6 +394,189 @@ sap.ui.define([
 
 		// cleanup
 		oFireAppointmentCreateSpy.restore();
+		oSPC.destroy();
+	});
+
+	QUnit.test("cellPress", function (assert) {
+		// prepare
+		var oSPC = new SinglePlanningCalendar({
+				startDate: new Date(2018, 6, 8)
+			}),
+			oFakeEvent = {
+				target: jQuery("<div></div>").attr({
+					"data-sap-start-date": "20180708-0300",
+					"data-sap-end-date": "20180708-0400",
+					"class": "sapMSinglePCRow"
+				}).get(0),
+				which: KeyCodes.ENTER,
+				preventDefault: function() {}
+			},
+			fnFireGridCellFocusSpy = this.spy(oSPC, "fireEvent");
+
+		// act
+		oSPC._getGrid().onkeydown(oFakeEvent);
+		// assert
+
+		assert.ok(fnFireGridCellFocusSpy.calledOnce, "The cellPress event was fired");
+		assert.ok(fnFireGridCellFocusSpy.calledWithExactly("cellPress", {
+			startDate: new Date(2018, 6 , 8, 3),
+			endDate: new Date(2018, 6, 8, 4),
+			id: oSPC.getId()
+		}), "Event was fired with the correct parameters");
+
+		// cleanup
+		oSPC.destroy();
+	});
+
+	QUnit.test("borderReached: when focus is on appointment and we are navigating in backward direction on week view", function(assert) {
+		// prepare
+		var oAppointment = new CalendarAppointment({
+				startDate: new Date(2018, 6, 8, 5),
+				endDate: new Date(2018, 6, 8, 6)
+			}),
+			oSPC = new SinglePlanningCalendar({
+				startDate: new Date(2018, 6, 8),
+				appointments: [oAppointment]
+			}),
+			oFakeEvent = {
+				target: {
+					id: oAppointment.getId(),
+					classList: {
+						contains: function() {
+							return false;
+						}
+					},
+					which: KeyCodes.ARROW_LEFT
+				},
+				preventDefault: function() {}
+			},
+			fnBorderReachedCallbackSpy = this.spy();
+
+		oSPC._getGrid().attachEvent("borderReached", fnBorderReachedCallbackSpy);
+
+		// act
+		oSPC._getGrid().onsapleft(oFakeEvent);
+
+		// assert
+		assert.ok(fnBorderReachedCallbackSpy.calledOnce, "borderReached callback is called");
+		assert.deepEqual(oSPC.getStartDate(), new Date(2018, 6, 1), "Start date is changed correctly");
+		assert.equal(
+			oSPC._sGridCellFocusSelector,
+			"[data-sap-start-date='20180707-0500'].sapMSinglePCRow",
+			"Start date is changed correctly"
+		);
+
+		// cleanup
+		oSPC.destroy();
+	});
+
+	QUnit.test("borderReached: when focus is on appointment and we are navigating in forward direction on week view", function(assert) {
+		// prepare
+		var oAppointment = new CalendarAppointment({
+				startDate: new Date(2018, 6, 14, 5),
+				endDate: new Date(2018, 6, 14, 6)
+			}),
+			oSPC = new SinglePlanningCalendar({
+				startDate: new Date(2018, 6, 8),
+				appointments: [oAppointment]
+			}),
+			oFakeEvent = {
+				target: {
+					id: oAppointment.getId(),
+					classList: {
+						contains: function() {
+							return false;
+						}
+					},
+					which: KeyCodes.ARROW_RIGHT
+				},
+				preventDefault: function() {}
+			},
+			fnBorderReachedCallbackSpy = this.spy();
+
+		oSPC._getGrid().attachEvent("borderReached", fnBorderReachedCallbackSpy);
+
+		// act
+		oSPC._getGrid().onsapright(oFakeEvent);
+
+		// assert
+		assert.ok(fnBorderReachedCallbackSpy.calledOnce, "borderReached callback is called");
+		assert.deepEqual(oSPC.getStartDate(), new Date(2018, 6, 15), "Start date is changed correctly");
+		assert.equal(
+			oSPC._sGridCellFocusSelector,
+			"[data-sap-start-date='20180715-0500'].sapMSinglePCRow",
+			"Start date is changed correctly"
+		);
+
+		// cleanup
+		oSPC.destroy();
+	});
+
+	QUnit.test("borderReached: when focus is on grid cell and we are navigation in backward direction on week view", function(assert) {
+		// prepare
+		var oSPC = new SinglePlanningCalendar({
+				startDate: new Date(2018, 6, 8)
+			}),
+			oFakeEvent = {
+				target: jQuery("<div></div>").attr({
+					"data-sap-start-date": "20180708-0300",
+					"data-sap-end-date": "20180708-0400",
+					"class": "sapMSinglePCRow"
+				}).get(0),
+				which: KeyCodes.ARROW_LEFT,
+				preventDefault: function() {}
+			},
+			fnBorderReachedCallbackSpy = this.spy();
+
+		oSPC._getGrid().attachEvent("borderReached", fnBorderReachedCallbackSpy);
+
+		// act
+		oSPC._getGrid().onsapleft(oFakeEvent);
+
+		// assert
+		assert.ok(fnBorderReachedCallbackSpy.calledOnce, "borderReached callback is called");
+		assert.deepEqual(oSPC.getStartDate(), new Date(2018, 6, 1), "Start date is changed correctly");
+		assert.equal(
+			oSPC._sGridCellFocusSelector,
+			"[data-sap-start-date='20180707-0300'].sapMSinglePCRow",
+			"Start date is changed correctly"
+		);
+
+		// cleanup
+		oSPC.destroy();
+	});
+
+	QUnit.test("borderReached: when focus is on grid cell and we are navigation in forward direction on week view", function(assert) {
+		// prepare
+		var oSPC = new SinglePlanningCalendar({
+				startDate: new Date(2018, 6, 8)
+			}),
+			oFakeEvent = {
+				target: jQuery("<div></div>").attr({
+					"data-sap-start-date": "20180714-0300",
+					"data-sap-end-date": "20180714-0400",
+					"class": "sapMSinglePCRow"
+				}).get(0),
+				which: KeyCodes.ARROW_RIGHT,
+				preventDefault: function() {}
+			},
+			fnBorderReachedCallbackSpy = this.spy();
+
+		oSPC._getGrid().attachEvent("borderReached", fnBorderReachedCallbackSpy);
+
+		// act
+		oSPC._getGrid().onsapright(oFakeEvent);
+
+		// assert
+		assert.ok(fnBorderReachedCallbackSpy.calledOnce, "borderReached callback is called");
+		assert.deepEqual(oSPC.getStartDate(), new Date(2018, 6, 15), "Start date is changed correctly");
+		assert.equal(
+			oSPC._sGridCellFocusSelector,
+			"[data-sap-start-date='20180715-0300'].sapMSinglePCRow",
+			"Start date is changed correctly"
+		);
+
+		// cleanup
 		oSPC.destroy();
 	});
 
@@ -719,9 +913,9 @@ sap.ui.define([
 			oSPCGrid = oSPC._getGrid(),
 			// Expecting start/end information to look like this: "Start Time: *date here*; End Time: *date here*"
 			sExpectedInfo = oSPCGrid._oUnifiedRB.getText("CALENDAR_START_TIME") + ": " +
-							oSPCGrid._oFormatAria.format(oStartDate) + "; " +
+							oSPCGrid._oFormatAriaApp.format(oStartDate) + "; " +
 							oSPCGrid._oUnifiedRB.getText("CALENDAR_END_TIME") + ": " +
-							oSPCGrid._oFormatAria.format(oEndDate) + "; ";
+							oSPCGrid._oFormatAriaApp.format(oEndDate) + "; ";
 
 		oSPC.placeAt("qunit-fixture");
 		sap.ui.getCore().applyChanges();

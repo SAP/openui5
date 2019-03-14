@@ -106,6 +106,65 @@ describe("sap.m.SinglePlanningCalendar", function() {
 		}
 	});
 
+	it("should focus a grid cell with Click", function() {
+		var oSPC = element(by.id("SinglePlanningCalendar"));
+
+		element(by.css("[data-sap-start-date='20180711-0200']")).click();
+		expect(takeScreenshot(oSPC)).toLookAs("focused_cell_with_mouse");
+	});
+
+	it("should focus another cell in the right with ARROW RIGHT keyboard key", function () {
+		_focusFromCellToCell("[data-sap-start-date='20180711-0200']", "focused_cell_with_arrow_right_kb", protractor.Key.ARROW_RIGHT);
+	});
+
+	it("should focus another cell in the left with ARROW LEFT keyboard key", function () {
+		_focusFromCellToCell("[data-sap-start-date='20180711-0200']", "focused_cell_with_arrow_left_kb", protractor.Key.ARROW_LEFT);
+	});
+
+	it("should focus another cell up with ARROW UP keyboard key", function () {
+		_focusFromCellToCell("[data-sap-start-date='20180711-0200']", "focused_cell_with_arrow_up_kb", protractor.Key.ARROW_UP);
+	});
+
+	it("should focus another cell down with ARROW DOWN keyboard key", function () {
+		_focusFromCellToCell("[data-sap-start-date='20180711-0200']", "focused_cell_with_arrow_down_kb", protractor.Key.ARROW_DOWN);
+	});
+
+	it("should focus a cell in the right with ARROW RIGHT keyboard key", function () {
+		_focusFromAppToCell("__appointment0-SinglePlanningCalendar-25", "focused_cell_with_arrow_right_kb_from_app", protractor.Key.ARROW_RIGHT);
+	});
+
+	it("should focus a cell in the left with ARROW LEFT keyboard key", function () {
+		_focusFromAppToCell("__appointment0-SinglePlanningCalendar-25", "focused_cell_with_arrow_left_kb_from_app", protractor.Key.ARROW_LEFT);
+	});
+
+	it("should focus a cell up with ARROW UP keyboard key", function () {
+		_focusFromAppToCell("__appointment0-SinglePlanningCalendar-25", "focused_cell_with_arrow_up_kb_from_app", protractor.Key.ARROW_UP);
+	});
+
+	it("should focus a cell down with ARROW DOWN keyboard key", function () {
+		_focusFromAppToCell("__appointment0-SinglePlanningCalendar-25", "focused_cell_with_arrow_down_kb_from_app", protractor.Key.ARROW_DOWN);
+	});
+
+	function _focusFromCellToCell(sSelector, sRefImage, iControl) {
+		var oSPC = element(by.id("SinglePlanningCalendar"));
+
+		//there is no keyboard on mobile
+		if (browser.testrunner.runtime.platformName != "android" && browser.testrunner.runtime.platformName != "ios") {
+			element(by.css(sSelector)).sendKeys(protractor.Key[iControl]);
+			expect(takeScreenshot(oSPC)).toLookAs(sRefImage);
+		}
+	}
+
+	function _focusFromAppToCell(sSelector, sRefImage, iControl) {
+		var oSPC = element(by.id("SinglePlanningCalendar"));
+
+		//there is no keyboard on mobile
+		if (browser.testrunner.runtime.platformName != "android" && browser.testrunner.runtime.platformName != "ios") {
+			element(by.id(sSelector)).sendKeys(protractor.Key[iControl]);
+			expect(takeScreenshot(oSPC)).toLookAs(sRefImage);
+		}
+	}
+
 	// click on overflow button if available
 	function _checkForOverflowButton() {
 		element(by.id("SinglePlanningCalendar-Header-ActionsToolbar-overflowButton")).isPresent().then(function(presented){

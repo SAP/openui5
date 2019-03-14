@@ -342,6 +342,23 @@ function(
 					date: {type: "object"}
 
 				}
+			},
+
+			/**
+			 * Fired when a grid cell is focused.
+			 * @since 1.65
+			 */
+			cellPress: {
+				parameters: {
+					/**
+					 * The start date as a JavaScript date object of the focused grid cell.
+					 */
+					startDate: {type: "object"},
+					/**
+					 * The end date as a JavaScript date object of the focused grid cell.
+					 */
+					endDate: {type: "object"}
+				}
 			}
 		}
 
@@ -362,6 +379,7 @@ function(
 
 		this._attachHeaderEvents();
 		this._attachGridEvents();
+		this._attachDelegates();
 		this.setStartDate(new Date());
 	};
 
@@ -406,6 +424,11 @@ function(
 		if (this._oDefaultView) {
 			this._oDefaultView.destroy();
 			this._oDefaultView = null;
+		}
+
+		if (this._afterRenderFocusCell) {
+			this.removeDelegate(this._afterRenderFocusCell);
+			this._afterRenderFocusCell = null;
 		}
 
 		this._deRegisterResizeHandler(HEADER_RESIZE_HANDLER_ID);
@@ -765,6 +788,24 @@ function(
 	};
 
 	/**
+	 * Attaches delegates to the events in the _grid aggregation.
+	 *
+	 * @private
+	 */
+	SinglePlanningCalendar.prototype._attachDelegates = function() {
+			// After the grid renders apply the focus on the cell
+			this._afterRenderFocusCell = {
+				onAfterRendering: function() {
+					if (this._sGridCellFocusSelector) {
+						jQuery(this._sGridCellFocusSelector).focus();
+						this._sGridCellFocusSelector = null;
+					}
+				}.bind(this)
+			};
+			this._getGrid().addDelegate(this._afterRenderFocusCell);
+	};
+
+	/**
 	 * Attaches handlers to the events in the _grid aggregation.
 	 *
 	 * @returns {object} this for method chaining
@@ -807,6 +848,36 @@ function(
 				startDate: oEvent.getParameter("startDate"),
 				endDate: oEvent.getParameter("endDate")
 			});
+		}, this);
+
+		oGrid.attachEvent("cellPress", function(oEvent) {
+			this.fireEvent("cellPress", {
+				startDate: oEvent.getParameter("startDate"),
+				endDate: oEvent.getParameter("endDate")
+			});
+		}, this);
+
+		oGrid.attachEvent("borderReached", function (oEvent) {
+			var oGrid = this._getGrid(),
+				oFormat = oGrid._getDateFormatter(),
+				iNavDelta = this._getSelectedView().getScrollEntityCount() - oGrid._getColumns() + 1,
+				oCellStartDate = new Date(oEvent.getParameter("startDate")),
+				bFullDay = oEvent.getParameter("fullDay"),
+				oNavDate = this.getStartDate();
+
+			if (oEvent.getParameter("next")) {
+				oCellStartDate.setDate(oCellStartDate.getDate() + iNavDelta);
+				oNavDate = new Date(oNavDate.setDate(oNavDate.getDate() + this._getSelectedView().getScrollEntityCount()));
+				this.setStartDate(oNavDate);
+			} else {
+				oCellStartDate.setDate(oCellStartDate.getDate() - iNavDelta);
+				oNavDate = new Date(oNavDate.setDate(oNavDate.getDate() - this._getSelectedView().getScrollEntityCount()));
+				this.setStartDate(oNavDate);
+			}
+
+			this._sGridCellFocusSelector = bFullDay ?
+				"[data-sap-start-date='" + oFormat.format(oCellStartDate) + "'].sapMSinglePCBlockersColumn" :
+				"[data-sap-start-date='" + oFormat.format(oCellStartDate) + "'].sapMSinglePCRow";
 		}, this);
 
 		return this;

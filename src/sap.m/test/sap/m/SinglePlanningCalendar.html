@@ -493,6 +493,25 @@
 							var oDate = oEvent.getParameter("date");
 
 							MessageToast.show("Start date changed to '" + oDate + "'.");
+						},
+						cellPress: function (oEvent) {
+							var oAppStartDate = oEvent.getParameter("startDate"),
+								oAppEndDate = oEvent.getParameter("endDate"),
+								oNewAppointment,
+								aAppointments;
+
+							oNewAppointment = {
+								title: "New appointment",
+								startDate: oAppStartDate,
+								endDate: oAppEndDate
+							};
+
+							aAppointments = this.getModel().getData().modelData;
+							aAppointments.push(oNewAppointment);
+							oModel.updateBindings(true);
+							sap.ui.getCore().applyChanges();
+
+							this.getAppointments()[aAppointments.length - 1].focus();
 						}
 					}).addStyleClass("sapUiSizeCompact");
 					new App({
