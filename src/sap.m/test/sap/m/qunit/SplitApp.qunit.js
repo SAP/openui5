@@ -605,15 +605,22 @@ sap.ui.define([
 		oSplitApp.removeMasterPage(oNewMasterPage);
 		oSplitApp.removeDetailPage(oNewDetailPage);
 
+		aMaster = oSplitApp.getMasterPages();
+		aDetail = oSplitApp.getDetailPages();
 		assert.equal(aMaster.length, 2, "Master page aggregation contains the right number of pages");
 		assert.equal(aDetail.length, 2, "Detail page aggregation contains the right number of pages");
 
 		oSplitApp.addMasterPage(oNewMasterPage);
 		oSplitApp.addDetailPage(oNewDetailPage);
+		aMaster = oSplitApp.getMasterPages();
+		aDetail = oSplitApp.getDetailPages();
 		assert.equal(aMaster.length, 3, "Master page aggregation contains the right number of pages");
 		assert.equal(aDetail.length, 3, "Detail page aggregation contains the right number of pages");
+
 		oNewDetailPage.destroy();
 		oNewMasterPage.destroy();
+		aMaster = oSplitApp.getMasterPages();
+		aDetail = oSplitApp.getDetailPages();
 		assert.equal(aMaster.length, 2, "Master page aggregation contains the right number of pages");
 		assert.equal(aDetail.length, 2, "Detail page aggregation contains the right number of pages");
 
@@ -646,20 +653,28 @@ sap.ui.define([
 		oSplitApp.placeAt("content");
 		sap.ui.getCore().applyChanges();
 
-		var aMaster = oSplitApp.getMasterPages();
-		var aDetail = oSplitApp.getDetailPages();
-
 		var oMovePage = new Page("movePagePage1",{
 			title : "Detail 1"
 		});
 
+		var aMaster;
+		var aDetail;
+
 		oSplitApp.addMasterPage(oMovePage);
+		aMaster = oSplitApp.getMasterPages();
+		aDetail = oSplitApp.getDetailPages();
 		assert.equal(aMaster.length, 3, "Master page aggregation contains the right number of pages");
 		assert.equal(aDetail.length, 2, "Detail page aggregation contains the right number of pages");
+
 		oSplitApp.addDetailPage(oMovePage);
+		aMaster = oSplitApp.getMasterPages();
+		aDetail = oSplitApp.getDetailPages();
 		assert.equal(aMaster.length, 2, "Master page aggregation contains the right number of pages");
 		assert.equal(aDetail.length, 3, "Detail page aggregation contains the right number of pages");
+
 		oSplitApp.removeDetailPage(oMovePage);
+		aMaster = oSplitApp.getMasterPages();
+		aDetail = oSplitApp.getDetailPages();
 		assert.equal(aMaster.length, 2, "Master page aggregation contains the right number of pages");
 		assert.equal(aDetail.length, 2, "Detail page aggregation contains the right number of pages");
 
@@ -690,8 +705,7 @@ sap.ui.define([
 		oSplitApp.placeAt("content");
 		sap.ui.getCore().applyChanges();
 
-		var aMaster = oSplitApp.getMasterPages();
-		var aDetail = oSplitApp.getDetailPages();
+		var aMaster;
 
 		var oSpyInsertPage = this.spy(oSplitApp._oMasterNav, "insertPage");
 
@@ -700,6 +714,7 @@ sap.ui.define([
 		});
 
 		oSplitApp.insertMasterPage(oInsertPage, 1);
+		aMaster = oSplitApp.getMasterPages();
 		assert.equal(aMaster.length, 3, "Master page aggregation contains the right number of pages");
 		assert.equal(oSplitApp.indexOfMasterPage(oInsertPage), 1, "Master page is in the right position");
 		oInsertPage.destroy();
