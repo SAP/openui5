@@ -2123,6 +2123,11 @@ sap.ui.define(["sap/ui/core/format/NumberFormat", "sap/ui/core/Locale", "sap/bas
 
 	QUnit.module("Currency Format");
 
+	QUnit.test("Currency Format with fraction as decimals", function (assert) {
+		var oFormat = NumberFormat.getCurrencyInstance({minFractionDigits:6, maxFractionDigits: 6});
+		assert.equal(oFormat.format(2, "EUR"), "EUR" + "\xa0" + "2.000000", "fractions should set the decimals if not specified");
+	});
+
 	QUnit.test("Currency format with sMeasure and showMeasure as symbol", function (assert) {
 		var oFormat = NumberFormat.getCurrencyInstance({
 			currencyCode: false
