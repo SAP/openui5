@@ -486,10 +486,6 @@ function(
 		}
 
 		if (this.getShowSuggestion()) {
-			this._oSuggPopover._sPopoverContentWidth = this.getMaxSuggestionWidth();
-			this._oSuggPopover._bEnableHighlighting = this.getEnableSuggestionsHighlighting();
-			this._oSuggPopover._bAutocompleteEnabled = this.getAutocomplete();
-			this._oSuggPopover._bIsInputIncrementalType = this._isIncrementalType();
 
 			if (this.getShowTableSuggestionValueHelp()) {
 				this._addShowMoreButton();
@@ -2459,6 +2455,10 @@ function(
 						}
 					}.bind(this))
 					.attachBeforeOpen(function () {
+						this._oSuggPopover._sPopoverContentWidth = this.getMaxSuggestionWidth();
+						this._oSuggPopover._bEnableHighlighting = this.getEnableSuggestionsHighlighting();
+						this._oSuggPopover._bAutocompleteEnabled = this.getAutocomplete();
+						this._oSuggPopover._bIsInputIncrementalType = this._isIncrementalType();
 						this._sBeforeSuggest = this.getValue();
 						this._oSuggPopover._resizePopup();
 						this._oSuggPopover._registerResize();
