@@ -892,6 +892,17 @@ function(
 			});
 		});
 
+		QUnit.test("When transport function is called and transportAllUIChanges returns Promise.resolve() when the running application is an application variant by navigation parameters", function(assert) {
+			sandbox.stub(this.oChangePersistence, "transportAllUIChanges").returns(Promise.resolve());
+			sandbox.stub(this.oRta, "_showMessageToast");
+			sandbox.stub(Utils, "isApplicationVariant").returns(true);
+			sandbox.stub(Utils, "isVariantByStartupParameter").returns(true);
+			var oRtaAppVariantFeatureStub = sandbox.stub(RtaAppVariantFeature, "getAppVariantDescriptor");
+			return this.oRta.transport().then(function() {
+				assert.equal(oRtaAppVariantFeatureStub.callCount, 0, "the RtaAppVariantFeature.getAppVariantDescriptor was not called");
+			});
+		});
+
 		QUnit.test("When transport function is called and transportAllUIChanges returns Promise.resolve() when the running application is an application variant", function(assert) {
 			var oChangePersistenceStub = sandbox.stub(this.oChangePersistence, "transportAllUIChanges").returns(Promise.resolve());
 			var oMessageToastStub = sandbox.stub(this.oRta, "_showMessageToast");
