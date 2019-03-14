@@ -450,7 +450,14 @@ sap.ui.define([
 		oStaticArea.appendChild(oDiv);
 
 		// Record width
-		iWidth = oDiv.scrollWidth;
+		if (oDiv.getBoundingClientRect) {
+			iWidth = oDiv.getBoundingClientRect().width;
+		} else {
+			iWidth = oDiv.scrollWidth;
+		}
+
+		// We add 1px to compensate for rounding related to zoom levels
+		iWidth += 1;
 
 		// Remove child from static area
 		oStaticArea.removeChild(oDiv);
