@@ -49,6 +49,8 @@ sap.ui.define(['sap/m/library', "sap/base/security/encodeCSS"],
 
 		if (!oLightBox) {
 			oRm.writeControlData(oImage);
+		} else {
+			oRm.writeAttribute("id", oImage.getId() + "-inner");
 		}
 
 		// aria-labelledby references
