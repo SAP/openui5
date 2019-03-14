@@ -10541,9 +10541,7 @@ sap.ui.define([
 				}, {
 					"ArtistID" : "42",
 					"IsActiveEntity" : false
-				})
-				.expectRequest("Artists(ArtistID='42',IsActiveEntity=true)",
-					{"ArtistID" : "42", "IsActiveEntity" : true});
+				});
 
 			return Promise.all([
 				// code under test

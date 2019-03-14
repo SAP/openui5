@@ -1290,8 +1290,8 @@ sap.ui.define([
 			oBindingMock.expects("hasReturnValueContext")
 				.withExactArgs(sinon.match.same(oOperationMetadata))
 				.returns(true);
-			oParentContextMock.expects("fetchValue")
-				.returns(SyncPromise.resolve(oParentEntity));
+			oParentContextMock.expects("getValue")
+				.returns(oParentEntity);
 			oContextMock.expects("createReturnValueContext")
 				.withExactArgs(sinon.match.same(this.oModel), sinon.match.same(oBinding),
 					"/TEAMS('77')")
@@ -1321,8 +1321,8 @@ sap.ui.define([
 				oBindingMock.expects("hasReturnValueContext")
 					.withExactArgs(sinon.match.same(oOperationMetadata))
 					.returns(true);
-				oParentContextMock.expects("fetchValue")
-					.returns(SyncPromise.resolve(oParentEntity));
+				oParentContextMock.expects("getValue")
+					.returns(oParentEntity);
 				that.mock(oReturnValueContextFirstExecute).expects("destroy").withExactArgs();
 				oContextMock.expects("createReturnValueContext")
 					.withExactArgs(sinon.match.same(that.oModel), sinon.match.same(oBinding),
@@ -1362,8 +1362,18 @@ sap.ui.define([
 	});
 
 	//*********************************************************************************************
-	["42", "77"].forEach(function (sId) {
-		QUnit.test("_execute: bound operation returning the same entity type with key " + sId,
+	[{
+		sId : "42",
+		bRead : true
+	}, {
+		sId : "42",
+		bRead : false
+	}, {
+		sId : "77",
+		bRead : true
+	}].forEach(function (oFixture) {
+		QUnit.test("_execute: bound operation " + oFixture.bRead ? "" : "on context w/o read " +
+				"returning the same entity type with key " + oFixture.sId,
 				function (assert) {
 			var oParentContext = Context.create(this.oModel, {/*binding*/}, "/TEAMS('42')"),
 				oBinding = this.bindContext("name.space.Operation(...)", oParentContext,
@@ -1379,7 +1389,8 @@ sap.ui.define([
 				.withExactArgs("/TEAMS/name.space.Operation/@$ui5.overload")
 				.returns(SyncPromise.resolve([oOperationMetadata]));
 			_Helper.setPrivateAnnotation(oParentEntity, "predicate", "('42')");
-			_Helper.setPrivateAnnotation(oResponseEntity, "predicate", "('" + sId + "')");
+			_Helper.setPrivateAnnotation(oResponseEntity, "predicate",
+					"('" + oFixture.sId + "')");
 			oBindingMock.expects("createCacheAndRequest")
 				.withExactArgs(sinon.match.same(oGroupLock),
 					"/TEAMS('42')/name.space.Operation(...)",
@@ -1392,15 +1403,17 @@ sap.ui.define([
 			oBindingMock.expects("hasReturnValueContext")
 				.withExactArgs(sinon.match.same(oOperationMetadata))
 				.returns(true);
-			this.mock(oParentContext).expects("fetchValue")
-				.returns(SyncPromise.resolve(oParentEntity));
-			this.mock(oParentContext).expects("patch").exactly(sId === "42" ? 1 : 0)
+			this.mock(oParentContext).expects("getValue")
+				.returns(oFixture.bRead ? oParentEntity : undefined);
+			this.mock(oParentContext).expects("patch")
+				.exactly(oFixture.bRead && oFixture.sId === "42" ? 1 : 0)
 				.withExactArgs(sinon.match.same(oResponseEntity));
 
 			// code under test
 			return oBinding._execute(oGroupLock).then(function (oReturnValueContext) {
 				// expect the return value context in any case, even when synchronized
-				assert.strictEqual(oReturnValueContext.getPath(), "/TEAMS('" + sId + "')");
+				assert.strictEqual(oReturnValueContext.getPath(),
+						"/TEAMS('" + oFixture.sId + "')");
 			});
 		});
 	});
@@ -1439,8 +1452,8 @@ sap.ui.define([
 			oBindingMock.expects("hasReturnValueContext")
 				.withExactArgs(sinon.match.same(oOperationMetadata))
 				.returns(false);
-			this.mock(oParentContext).expects("fetchValue")
-				.returns(SyncPromise.resolve(oParentEntity));
+			this.mock(oParentContext).expects("getValue")
+				.returns(oParentEntity);
 			this.mock(oParentContext).expects("patch").exactly(bSameId ? 1 : 0)
 				.withExactArgs(sinon.match.same(oResponseEntity));
 
