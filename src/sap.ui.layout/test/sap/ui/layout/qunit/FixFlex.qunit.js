@@ -233,7 +233,8 @@ sap.ui.define([
 		sap.ui.getCore().applyChanges();
 
 		// Assert
-		assert.equal($flexible.css('overflow'), 'auto', 'Overflow is auto.');
+		assert.equal($flexible.css('overflow-x'), 'auto', 'Overflow x is auto.');
+		assert.equal($flexible.css('overflow-y'), 'auto', 'Overflow y is auto.');
 
 		// Cleanup
 		oFixFlex.destroy();
