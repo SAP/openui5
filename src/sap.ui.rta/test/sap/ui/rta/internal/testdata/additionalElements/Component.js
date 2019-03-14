@@ -92,7 +92,7 @@ sap.ui.define([
 		_enableExtensibility: function () {
 			Access.getBusinessContexts = function(sServiceUri, sEntityTypeName, sEntitySetName){
 				return Promise.resolve({
-					BusinessContexts: [sEntityTypeName + " EntityTypeContext", sEntitySetName + " EntitySetContext"],
+					BusinessContexts: [{ BusinessContext: sEntityTypeName + " EntityTypeContext", BusinessContextDescription: "Other BusinessContext description" }, { BusinessContext: sEntitySetName + " EntitySetContext" , BusinessContextDescription: "Some BusinessContext description"} ],
 					ServiceName: sServiceUri,
 					ServiceVersion: "some dummy ServiceVersion 0.0.1",
 					EntityType : sEntityTypeName
