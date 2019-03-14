@@ -5,20 +5,24 @@ describe("sap.m.InputVisualTests", function() {
 
 	browser.testrunner.currentSuite.meta.controlName = 'sap.m.Input';
 
-	var aStartPosition = [4, 4, 4, 7, 7, 7 ,12, 12, 12, 12, 12, 14, 14]; // dependant to the number of RadioButtonGroups and their content in the test page
+	var aStartPosition = [4, 4, 4, 9, 9, 9, 9, 9, 11, 11]; // dependant to the number of RadioButtonGroups and their content in the test page
 
 	 var takePictures = function(n, max) {
-		var input = element(by.id("inp"));
+		var inpHolder = element(by.id("inpHolder"));
 
-		var runTests = function(radioButtonId, numberOfImage){
+		var runTests = function(radioButtonId, numberOfImage, index){
 			it(numberOfImage, function () {
 				var numberOfImageFocusedInput = numberOfImage + "-focus";
 
 				element(by.id(radioButtonId)).click();
-				expect(takeScreenshot(input)).toLookAs(numberOfImage);
+				expect(takeScreenshot(inpHolder)).toLookAs(numberOfImage);
 
-				input.click();
-				expect(takeScreenshot(input)).toLookAs(numberOfImageFocusedInput);
+				if ((index == 11 && n != 0) || (index == 12 && n != 0)) { // focus shouldn't be tested on disabled inputs and not for all combinations
+					// Here class is added (instead of "click" action) to not see the cursor on some images
+					browser.executeScript('document.getElementById("inpHolder").classList.add("sapMFocus")');
+					expect(takeScreenshot(inpHolder)).toLookAs(numberOfImageFocusedInput);
+					browser.executeScript('document.getElementById("inpHolder").classList.remove("sapMFocus")');
+				}
 			});
 		};
 
@@ -31,15 +35,15 @@ describe("sap.m.InputVisualTests", function() {
 		for (var index = aStartPosition[n]; index < (max + 1); index++) {
 			var radioButtonId = "rb" + (index);
 			var numberOfImage = n + 1  + "-" + index;
-			runTests(radioButtonId, numberOfImage);
+			runTests(radioButtonId, numberOfImage, index);
 		}
-	 };
+	};
 
 	it("should load test page", function () {
 		expect(takeScreenshot()).toLookAs("0_initial");
 	});
 
-	var aRadioButtonsOnPage = 15; // dependant of the test page
+	var aRadioButtonsOnPage = 12; // dependant of the test page
 
 	for (var index = 0; index < aRadioButtonsOnPage; index++) {
 		takePictures(index, aRadioButtonsOnPage);
