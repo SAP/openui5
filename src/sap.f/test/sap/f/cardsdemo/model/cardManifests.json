@@ -1254,7 +1254,9 @@
 					"icon": {
 						"src": "sap-icon://accept"
 					},
-					"status": "100 of 200"
+					"status": {
+						"text": "8 of 17"
+					}
 				},
 				"content": {
 					"data": {
@@ -1292,7 +1294,9 @@
 					"icon": {
 						"src": "sap-icon://business-objects-experience"
 					},
-					"status": "100 of 200"
+					"status": {
+						"text": "5 of 17"
+					}
 				},
 				"content": {
 					"items":[
@@ -1524,7 +1528,7 @@
 							}
 						]
 					}
-					
+
 				}
 			}
 		},
