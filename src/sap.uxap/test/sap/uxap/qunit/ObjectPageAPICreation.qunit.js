@@ -704,7 +704,7 @@ function (
 		helpers.renderObject(oObjectPage);
 	});
 
-	QUnit.module("Content resize", {
+	QUnit.module("Resizing", {
 		beforeEach: function () {
 			this.NUMBER_OF_SECTIONS = 3;
 			this.oObjectPage = helpers.generateObjectPageWithContent(oFactory, this.NUMBER_OF_SECTIONS, false);
@@ -742,6 +742,27 @@ function (
 
 		}.bind(this));
 
+		helpers.renderObject(oObjectPage);
+	});
+
+	QUnit.test("ObjectPage resize handler is regestered in onAfterRendering", function (assert) {
+		// arrange
+		var oObjectPage = this.oObjectPage,
+			done = assert.async(),
+			oDelegate = { onAfterRendering: function() {
+					oObjectPage.removeEventDelegate(oDelegate);
+					// assert
+					assert.ok(oObjectPage._iResizeId !== null, "Resize handler is registered in onAfterRendering function");
+					done();
+				}};
+
+		assert.expect(2);
+
+		// assert
+		assert.strictEqual(oObjectPage._iResizeId, null, "Resize handler is not registered before onAfterRendering function");
+
+		// act
+		oObjectPage.addEventDelegate(oDelegate);
 		helpers.renderObject(oObjectPage);
 	});
 

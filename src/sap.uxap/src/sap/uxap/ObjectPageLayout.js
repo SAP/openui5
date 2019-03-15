@@ -539,7 +539,7 @@ sap.ui.define([
 		this._iREMSize = parseInt(jQuery("body").css("font-size"));
 		this._iOffset = parseInt(0.25 * this._iREMSize);
 
-		this._iResizeId = ResizeHandler.register(this, this._onUpdateScreenSize.bind(this));
+		this._iResizeId = null;
 		this._iAfterRenderingDomReadyTimeout = null;
 
 		this._oABHelper = new ABHelper(this);
@@ -555,6 +555,8 @@ sap.ui.define([
 
 		var oHeaderContent,
 			bPinnable;
+
+		this._deregisterScreenSizeListener();
 
 		// The lazy loading helper needs media information, hence instantiated on onBeforeRendering, where contextual width is available
 		this._oLazyLoading = new LazyLoading(this);
@@ -906,6 +908,8 @@ sap.ui.define([
 			sFooterAriaLabel,
 			iWidth = this._getWidth(this);
 
+		this._iResizeId = ResizeHandler.register(this, this._onUpdateScreenSize.bind(this));
+
 		this._ensureCorrectParentHeight();
 
 		this._cacheDomElements();
@@ -1055,9 +1059,7 @@ sap.ui.define([
 			this._oScroller = null;
 		}
 
-		if (this._iResizeId) {
-			ResizeHandler.deregister(this._iResizeId);
-		}
+		this._deregisterScreenSizeListener();
 
 		if (this._iContentResizeId) {
 			ResizeHandler.deregister(this._iContentResizeId);
@@ -2644,6 +2646,17 @@ sap.ui.define([
 	ObjectPageLayout.prototype._deregisterCustomEvents = function () {
 		if (this._$opWrapper.length) {
 			this._$opWrapper.off(".OPL");
+		}
+	};
+
+	/**
+	 * removes listener for screen resize
+	 * @private
+	 */
+	ObjectPageLayout.prototype._deregisterScreenSizeListener = function () {
+		if (this._iResizeId) {
+			ResizeHandler.deregister(this._iResizeId);
+			this._iResizeId = null;
 		}
 	};
 
