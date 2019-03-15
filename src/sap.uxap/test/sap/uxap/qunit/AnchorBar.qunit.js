@@ -106,6 +106,21 @@ sap.ui.define([
 		checkButtonAriaAttribute(assert, oMenuButton, "aria-checked", "true", "ARIA checked state should be true for the selected split button");
 	});
 
+	QUnit.test("Selected button always set correctly", function (assert) {
+		var oAnchorBar = this.oObjectPage.getAggregation("_anchorBar"),
+			aAnchorBarContent = oAnchorBar.getContent(),
+			oFirstSectionButtonId = aAnchorBarContent[0].getId(),
+			sInvalidButtonId = "InvalidId";
+
+		oAnchorBar.setSelectedButton(oFirstSectionButtonId);
+
+		assert.strictEqual(oAnchorBar.getSelectedButton(), oFirstSectionButtonId, "Selected button id is correct");
+
+		oAnchorBar.setSelectedButton(sInvalidButtonId);
+
+		assert.strictEqual(oAnchorBar.getSelectedButton(), oFirstSectionButtonId, "Selected button id is still the valid one");
+	});
+
 	QUnit.test("Custom button", function (assert) {
 		//select button programatically
 		var oAnchorBar = this.oObjectPage.getAggregation("_anchorBar"),

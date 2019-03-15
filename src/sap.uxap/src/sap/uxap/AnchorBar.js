@@ -191,9 +191,11 @@ sap.ui.define([
 
 				this._setAnchorButtonsTabFocusValues(oButton);
 			}
+
+			this.setAssociation("selectedButton", oButton, true /* don't rerender */);
 		}
 
-		return this.setAssociation("selectedButton", oButton, true /* don't rerender */);
+		return this;
 	};
 
 	AnchorBar.prototype.setShowPopover = function (bValue, bSuppressInvalidate) {
