@@ -1,9 +1,10 @@
 /*global QUnit, sinon*/
 sap.ui.define(["sap/ui/thirdparty/jquery",
                "sap/ui/core/Core",
+               "sap/ui/core/Configuration",
                "sap/ui/core/mvc/XMLView",
                "sap/uxap/ObjectPageLayout"],
-function (jQuery, Core, XMLView, ObjectPageLayout) {
+function (jQuery, Core, Configuration, XMLView, ObjectPageLayout) {
 	"use strict";
 
 	QUnit.module("ObjectPage - Rendering - Footer Visibility", {
@@ -85,6 +86,28 @@ function (jQuery, Core, XMLView, ObjectPageLayout) {
 
 		this.clock.tick(iSomeMsBeforeAnimationEnd + 1);
 		assert.ok(!$footer.hasClass("sapUxAPObjectPageFloatingFooterShow"), "Animation CSS class is removed");
+	});
+
+	QUnit.test("Footer is toggled when animations disabled", function (assert) {
+
+		var $footerWrapper = this.oObjectPage.$("footerWrapper"),
+			sOriginalMode = Core.getConfiguration().getAnimationMode();
+
+		//setup
+		Core.getConfiguration().setAnimationMode(Configuration.AnimationMode.none);
+
+		// Act: toggle to 'true'
+		this.oObjectPage.setShowFooter(true);
+		// Check
+		assert.ok(!$footerWrapper.hasClass("sapUiHidden"), "footer is shown");
+
+		// Act: toggle to 'false'
+		this.oObjectPage.setShowFooter(false);
+		// Check
+		assert.ok($footerWrapper.hasClass("sapUiHidden"), "footer is hidden");
+
+		// Clean up
+		Core.getConfiguration().setAnimationMode(sOriginalMode);
 	});
 
 });
