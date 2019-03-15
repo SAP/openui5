@@ -54,20 +54,20 @@ sap.ui.define([
 	 *
 	 * <h3>Overview</h3>
 	 * Cards are small user interface elements which provide the most important information from an
-	 * application related to a specific role or task in a compact manner allowing for actions to be executed.
+	 * application, related to a specific role or task in a compact manner, allowing for actions to be executed.
 	 * Cards can be described as small representations of an application which can be integrated in different systems.
 	 *
-	 * The integration card is defined in a declarative way by using a manifest.json allowing it to:
+	 * The integration card is defined in a declarative way, using a manifest.json to:
 	 * <ul>
-	 * <li>Be easily integrated in an applications</li>
-	 * <li>Be easily reused across different applications.</li>
-	 * <li>Be easily understandable by other technologies.</li>
-	 * <li>Be self-contained. No need for external configuration.</li>
-	 * <li>Be easily reconfigured in different application layers (including backend).</li>
+	 * <li>Be easily integrated in applications</li>
+	 * <li>Be easily reused across various applications.</li>
+	 * <li>Be understandable by other technologies.</li>
+	 * <li>Be self-contained (without external configuration).</li>
+	 * <li>Be easily reconfigured in application layers (including backend).</li>
 	 * <li>Separate the roles of the card developer and the application developer.</li>
 	 * </ul>
 	 *
-	 * Card developer role - Describe the card in a manifest.json defining:
+	 * The role of the card developer is to describe the card in a manifest.json and define:
 	 * <ul>
 	 * <li>Header</li>
 	 * <li>Content</li>
@@ -75,19 +75,19 @@ sap.ui.define([
 	 * <li>Possible actions</li>
 	 * </ul>
 	 *
-	 * Application developer role - Integrate the card into an application defining:
+	 * The role of the application developer is to integrate the card into an application and define:
 	 * <ul>
-	 * <li>Dimensions of the card inside a layout of choice, using the width and height properties.</li>
-	 * <li>Behavior for the described actions in the manifest.json, using the action event.</li>
+	 * <li>The dimensions of the card inside a layout of choice, using the width and height properties.</li>
+	 * <li>The behavior for the actions described in the manifest.json, using the action event.</li>
 	 * </ul>
 	 *
 	 * <h3>Usage</h3>
 	 *
-	 * The "sap.app" type property of the manifest have to be set to "card".
+	 * The "sap.app" type property of the manifest must be set to "card".
 	 * The namespace used to define a card is "sap.card".
-	 * Every card have a type. Which can be one of: List, Analytical, Timeline, Object.
+	 * Every card has a type which can be one of the following: List, Analytical, Timeline, Object.
 	 *
-	 * Example manifest.json:
+	 * An example of a manifest.json:
 	 *
 	 * <pre>
 	 * <code>
@@ -110,7 +110,7 @@ sap.ui.define([
 	 *
 	 * Examples of header sections:
 	 *
-	 * The default header type can contain title, subtitle, icon and status.
+	 * The default header type can contain a title, a subtitle, an icon and status.
 	 *  <pre>
 	 *  <code>
 	 * {
@@ -132,7 +132,7 @@ sap.ui.define([
 	 *  </code>
 	 *  </pre>
 	 *
-	 * The numeric header type can contain title, subtitle, unitOfMeasurement, details, main indicator and side indicators.
+	 * The numeric header type can contain a title, a subtitle, unitOfMeasurement, details, main indicator and side indicators.
 	 *  <pre>
 	 *  <code>
 	 * {
@@ -169,7 +169,7 @@ sap.ui.define([
 	 *  </code>
 	 *  </pre>
 	 *
-	 * The content of the card is created based on the card type. Possible card types:
+	 * The content of the card is created, based on the card type. Possible card types:
 	 * <ul>
 	 * <li>List</li>
 	 * <li>Object</li>
@@ -177,7 +177,7 @@ sap.ui.define([
 	 * <li>Analytical</li>
 	 * </ul>
 	 *
-	 * List card contains a set of items. "item" property defines the template for all the items of the list.
+	 * List card contains a set of items. The "item" property defines the template for all the items of the list.
 	 * "data" property provides the data.
 	 * Example:
 	 * <pre>
@@ -194,12 +194,12 @@ sap.ui.define([
      *       "data": {
      *         "json": [{
      *             "Name": "Comfort Easy",
-     *             "Description": "32 GB Digital Assistant with high-resolution color screen",
+     *             "Description": "A 32 GB Digital Assistant with a high-resolution color screen",
      *             "Highlight": "Error"
      *           },
      *           {
      *             "Name": "ITelO Vault",
-     *             "Description": "Digital Organizer with State-of-the-Art Storage Encryption",
+     *             "Description": "A Digital Organizer with state-of-the-art Storage Encryption",
      *             "Highlight": "Warning"
      *           },
      *           {
@@ -364,7 +364,7 @@ sap.ui.define([
 	 * </code>
 	 * </pre>
 	 *
-	 * Timeline card contains a set of timeline items. "item" property defines the template for all the items of the timeline.
+	 * Timeline card contains a set of timeline items. The "item" property defines the template for all the items of the timeline.
 	 * Example:
 	 * <pre>
 	 * <code>
@@ -418,11 +418,11 @@ sap.ui.define([
 	 * </code>
 	 * </pre>
 	 *
-	 * Item based cards (Timeline and List) have an additional content property "maxItems" which defines the maximum number of items the card can have.
+	 * Item-based cards (Timeline and List) have an additional content property "maxItems" which defines the maximum number of items the card can have.
 	 *
 	 * <h3>Data handling</h3>
-	 * In order to add data to the card you can add a data section to the card, header or content. The card will automatically create an unnamed model
-	 * which then can be used to resolve binding syntaxes inside the card manifest.
+	 * To add data to the card, you can add a data section to the card, header or content. The card will automatically create an unnamed model
+	 * which can be used to resolve binding syntaxes inside the card manifest.
 	 *
 	 * Static data:
 	 * <pre>
@@ -473,7 +473,7 @@ sap.ui.define([
 	 * </pre>
 	 *
 	 * <h3>Actions</h3>
-	 * Actions adds behavior to the card. To add a navigation action to the header and to the items you can configure it inside the manifest.
+	 * Actions add behavior to the card. To add a navigation action to the header and to the items, you can configure it inside the manifest.
 	 * Actions have:
 	 * <ul>
 	 * <li>Type</li>
@@ -481,7 +481,7 @@ sap.ui.define([
 	 * <li>Enabled flag (true by default)</li>
 	 * </ul>
 	 *
-	 * In the example below navigation action is added both to the header and the list items:
+	 * In the example below, navigation action is added both to the header and the list items:
 	 * <pre>
 	 * <code>
 	 * {
@@ -541,16 +541,16 @@ sap.ui.define([
 	 *
 	 * <i>When to use</i>
 	 * <ul>
-	 * <li>When the card have to be reused across applications.</li>
-	 * <li>When easy integration and configuration is needed.</li>
+	 * <li>When you want to reuse the card across applications.</li>
+	 * <li>When you need easy integration and configuration.</li>
 	 * </ul>
 	 *
 	 * <i>When not to use</i>
 	 * <ul>
-	 * <li>When more header and content flexibility is needed.</li>
+	 * <li>When you need more header and content flexibility.</li>
 	 * <li>When you have to achieve simple card visualization. For such cases, use: {@link sap.f.Card Card}.</li>
-	 * <li>When an application model have to be used. For such cases, use: {@link sap.f.Card Card}.</li>
-	 * <li>When complex behavior is needed. For such cases, use: {@link sap.f.Card Card}.</li>
+	 * <li>When you have to use an application model.. For such cases, use: {@link sap.f.Card Card}.</li>
+	 * <li>When you need complex behavior. For such cases, use: {@link sap.f.Card Card}.</li>
 	 * </ul>
 	 *
 	 * @extends sap.ui.core.Control
