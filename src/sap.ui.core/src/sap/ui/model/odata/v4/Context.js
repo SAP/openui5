@@ -342,9 +342,9 @@ sap.ui.define([
 	};
 
 	/**
-	 * Returns the context's index within the binding's collection. The return value changes if a
-	 * new entity is added via {@link sap.ui.model.odata.v4.ODataListBinding#create} or deleted
-	 * again.
+	 * Returns the context's index within the binding's collection. The return value changes when a
+	 * new entity is added via {@link sap.ui.model.odata.v4.ODataListBinding#create} without
+	 * <code>bAtEnd</code>, and when a context representing a created entity is deleted again.
 	 *
 	 * @returns {number}
 	 *   The context's index within the binding's collection or <code>undefined</code> if the
@@ -354,6 +354,28 @@ sap.ui.define([
 	 * @since 1.39.0
 	 */
 	Context.prototype.getIndex = function () {
+		if (this.oBinding.bCreatedAtEnd) {
+			return this.iIndex < 0
+				? this.oBinding.iMaxLength - this.iIndex - 1
+				: this.iIndex;
+		}
+		return this.getModelIndex();
+	};
+
+	/**
+	 * Returns the model index, which is the context's index in the binding's collection. This
+	 * differs from the view index if entities have been created at the end. Internally such
+	 * contexts still are kept at the start of the collection. For this reason the return value
+	 * changes if a new entity is added via {@link sap.ui.model.odata.v4.ODataListBinding#create}
+	 * or deleted again.
+	 *
+	 * @returns {number}
+	 *   The context's model index within the binding's collection or <code>undefined</code> if the
+	 *   context does not belong to a list binding.
+	 *
+	 * @private
+	 */
+	Context.prototype.getModelIndex = function () {
 		if (this.oBinding.iCreatedContexts) {
 			return this.iIndex + this.oBinding.iCreatedContexts;
 		}

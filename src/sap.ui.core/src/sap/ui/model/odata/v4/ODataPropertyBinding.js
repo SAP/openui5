@@ -246,8 +246,7 @@ sap.ui.define([
 					// binding is unresolved or context was reset by another call to checkUpdate
 					return undefined;
 				}
-				if (that.bRelative && that.oContext.getIndex
-						&& that.oContext.getIndex() === Context.VIRTUAL) {
+				if (that.bRelative && that.oContext.iIndex === Context.VIRTUAL) {
 					// virtual parent context: no change event
 					oCallToken.forceUpdate = false;
 				}

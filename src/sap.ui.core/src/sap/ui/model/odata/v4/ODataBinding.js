@@ -183,8 +183,7 @@ sap.ui.define([
 			var mQueryOptions = aResult[0];
 
 			// Note: do not create a cache for a virtual context
-			if (mQueryOptions && !(oContext && oContext.getIndex
-					&& oContext.getIndex() === Context.VIRTUAL)) {
+			if (mQueryOptions && !(oContext && oContext.iIndex === Context.VIRTUAL)) {
 				return that.fetchResourcePath(oContext).then(function (sResourcePath) {
 					var oCache, sDeepResourcePath, oError, iReturnValueContextId;
 

@@ -61,11 +61,11 @@ sap.ui.define([
 			if (sGroupId.includes("auto")) {
 				When.onTheMainPage.pressCreateSalesOrderItemButton();
 				When.onTheSuccessInfo.confirm();
-				When.onTheMainPage.changeQuantityInFirstLineItem(0);
+				When.onTheMainPage.changeQuantityInLineItem(0, 0);
 				When.onTheMessagePopover.close(); // error because invalid quantity
-				When.onTheMainPage.changeNoteInFirstLineItem("patched line item Note");
+				When.onTheMainPage.changeNoteInLineItem(0, "patched line item Note");
 				When.onTheMessagePopover.close(); // still got error because invalid quantity
-				When.onTheMainPage.changeQuantityInFirstLineItem(1);
+				When.onTheMainPage.changeQuantityInLineItem(0, 1);
 				Then.onTheMainPage.checkSalesOrderLineItemNote(0, "patched line item Note");
 				aExpectedLogs.push(oExpectedPatchLog1);
 				aExpectedLogs.push(oExpectedPatchLog1);

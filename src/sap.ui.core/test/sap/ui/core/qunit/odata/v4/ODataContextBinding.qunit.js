@@ -2107,7 +2107,7 @@ sap.ui.define([
 
 					assert.strictEqual(oEvent.getParameter("reason"), ChangeReason.Refresh);
 					assert.strictEqual(oElementContext.getBinding(), oBinding);
-					assert.strictEqual(oElementContext.getIndex(), undefined);
+					assert.strictEqual(oElementContext.getModelIndex(), undefined);
 					assert.strictEqual(oElementContext.getModel(), this.oModel);
 					assert.strictEqual(oElementContext.getPath(), "/EMPLOYEES('42')");
 				}),
@@ -2324,7 +2324,7 @@ sap.ui.define([
 
 				assert.strictEqual(oEvent.getParameter("reason"), ChangeReason.Refresh);
 				assert.strictEqual(oElementContext.getBinding(), oBinding);
-				assert.strictEqual(oElementContext.getIndex(), undefined);
+				assert.strictEqual(oElementContext.getModelIndex(), undefined);
 				assert.strictEqual(oElementContext.getModel(), this.oModel);
 				assert.strictEqual(oElementContext.getPath(), "/foo/relative");
 			});
