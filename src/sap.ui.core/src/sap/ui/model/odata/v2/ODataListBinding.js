@@ -1019,11 +1019,6 @@ sap.ui.define([
 		}
 		this.bIgnoreSuspend = false;
 
-		// Don't update while request is pending
-		if (this.bPendingRequest) {
-			return;
-		}
-
 		if (!bForceUpdate && !this.bNeedsUpdate) {
 
 			// check if expanded data has been changed
