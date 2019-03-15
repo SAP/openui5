@@ -661,7 +661,7 @@ function(
 				oDomRef = this.getDomRef();
 				oFocusDomRef = this.getFocusDomRef();
 			}
-			oMenu.open(!!bWithKeyboard, oFocusDomRef, eDock.BeginTop, eDock.BeginBottom, oDomRef, "none none");
+			oMenu.open(!!bWithKeyboard, oFocusDomRef, eDock.BeginTop, eDock.BeginBottom, oDomRef);
 		}
 	};
 

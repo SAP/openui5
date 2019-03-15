@@ -313,7 +313,7 @@ sap.ui.define([
 							MenuUtils.closeColumnContextMenu(oTable, i);
 						}
 
-						oTable._oCellContextMenu.open(bHoverFirstMenuItem, oCell, Popup.Dock.BeginTop, Popup.Dock.BeginBottom, oCell, "none none");
+						oTable._oCellContextMenu.open(bHoverFirstMenuItem, oCell, Popup.Dock.BeginTop, Popup.Dock.BeginBottom, oCell);
 					}
 				}
 			},
