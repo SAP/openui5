@@ -183,8 +183,10 @@ sap.ui.define([
 								oCache = that.doCreateCache(sResourcePath, that.mCacheQueryOptions,
 									oContext);
 								that.mCacheByResourcePath[sResourcePath] = oCache;
-								oCache.$returnValueContextId = iReturnValueContextId;
+								oCache.$deepResourcePath
+									= _Helper.buildPath(oContext.getPath(), that.sPath).slice(1);
 								oCache.$resourcePath = sResourcePath;
+								oCache.$returnValueContextId = iReturnValueContextId;
 							}
 						} else { // absolute binding
 							oCache = that.doCreateCache(sResourcePath, that.mCacheQueryOptions,
@@ -521,8 +523,10 @@ sap.ui.define([
 			return false;
 		}
 		return Object.keys(this.mCacheByResourcePath).some(function (sResourcePath) {
-			return sResourcePath.startsWith(sResourcePathPrefix)
-				&& that.mCacheByResourcePath[sResourcePath].hasPendingChangesForPath("");
+			var oCache = that.mCacheByResourcePath[sResourcePath];
+
+			return oCache.$deepResourcePath.startsWith(sResourcePathPrefix)
+				&& oCache.hasPendingChangesForPath("");
 		});
 	};
 
@@ -704,7 +708,9 @@ sap.ui.define([
 		}
 		if (this.mCacheByResourcePath) {
 			Object.keys(this.mCacheByResourcePath).forEach(function (sResourcePath) {
-				if (sResourcePath.startsWith(sResourcePathPrefix)) {
+				var oCache = that.mCacheByResourcePath[sResourcePath];
+
+				if (oCache.$deepResourcePath.startsWith(sResourcePathPrefix)) {
 					oModel.reportBoundMessages(sResourcePath, {});
 					delete that.mCacheByResourcePath[sResourcePath];
 				}

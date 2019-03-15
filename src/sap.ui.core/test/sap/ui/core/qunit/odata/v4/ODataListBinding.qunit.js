@@ -410,6 +410,7 @@ sap.ui.define([
 		var oAggregation = {},
 			oAggregationCloned = {},
 			sApply = "A.P.P.L.E.",
+			oExpectation,
 			sGroupId = "foo",
 			oModelMock = this.mock(this.oModel),
 			oBinding = this.bindList("/EMPLOYEES"),
@@ -436,9 +437,10 @@ sap.ui.define([
 		oBinding.mCacheByResourcePath = {
 			"/Products" : {}
 		};
+		oExpectation = oBindingMock.expects("removeCachesAndMessages").withExactArgs("");
 		oBindingMock.expects("fetchCache").callsFake(function () {
-			// test if mCacheByResourcePath is set to {} before fetchCache is called
-			assert.deepEqual(oBinding.mCacheByResourcePath, {}, "mCacheByResourcePath");
+			// test if #removeCachesAndMessages is called before #fetchCache
+			assert.ok(oExpectation.called);
 		});
 		oBindingMock.expects("reset").withExactArgs(undefined);
 

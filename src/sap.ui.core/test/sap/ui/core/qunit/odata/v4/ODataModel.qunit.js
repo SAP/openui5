@@ -2066,6 +2066,82 @@ sap.ui.define([
 		// code under test
 		assert.deepEqual(oModel.getAllBindings(), [oBinding1, oBinding2]);
 	});
+
+	//*********************************************************************************************
+	QUnit.test("withUnresolvedBindings", function (assert) {
+		var oAbsoluteBinding = {
+				getContext : function () {},
+				isRelative : function () {}
+			},
+			oModel = createModel(),
+			oContext1 = {/*any context*/},
+			oModelMock = this.mock(oModel),
+			vParameter = {},
+			oResolvedBinding = {
+				getContext : function () {},
+				isRelative : function () {}
+			},
+			oUnresolvedBinding0 = {
+				anyCallback : function () {},
+				getContext : function () {},
+				isRelative : function () {}
+			},
+			oUnresolvedBinding0Mock = this.mock(oUnresolvedBinding0),
+			oUnresolvedBinding1 = {
+				anyCallback : function () {},
+				getContext : function () {},
+				isRelative : function () {}
+			},
+			oUnresolvedBinding2 = {
+				anyCallback : function () {},
+				getContext : function () {},
+				isRelative : function () {}
+			},
+			oUnresolvedBinding2Mock = this.mock(oUnresolvedBinding2);
+
+		oModelMock.expects("getAllBindings").withExactArgs().returns([]);
+
+		// code under test
+		assert.strictEqual(oModel.withUnresolvedBindings(), false);
+
+		oModelMock.expects("getAllBindings").withExactArgs().returns([oResolvedBinding,
+			oUnresolvedBinding0, oAbsoluteBinding, oUnresolvedBinding1, oUnresolvedBinding2]);
+
+		this.mock(oResolvedBinding).expects("isRelative").withExactArgs().returns(true);
+		this.mock(oResolvedBinding).expects("getContext").withExactArgs().returns(oContext1);
+		oUnresolvedBinding0Mock.expects("isRelative").withExactArgs().returns(true);
+		oUnresolvedBinding0Mock.expects("getContext").withExactArgs().returns(undefined);
+		oUnresolvedBinding0Mock.expects("anyCallback").withExactArgs(sinon.match.same(vParameter))
+			.returns(false);
+		this.mock(oAbsoluteBinding).expects("isRelative").withExactArgs().returns(false);
+		this.mock(oAbsoluteBinding).expects("getContext").never();
+		this.mock(oUnresolvedBinding1).expects("isRelative").withExactArgs().returns(true);
+		this.mock(oUnresolvedBinding1).expects("getContext").withExactArgs().returns(null);
+		this.mock(oUnresolvedBinding1).expects("anyCallback")
+			.withExactArgs(sinon.match.same(vParameter))
+			.returns(true);
+		oUnresolvedBinding2Mock.expects("isRelative").withExactArgs().returns(true);
+		oUnresolvedBinding2Mock.expects("getContext").withExactArgs().returns(null);
+		oUnresolvedBinding2Mock.expects("anyCallback").never();
+
+		// code under test
+		assert.strictEqual(oModel.withUnresolvedBindings("anyCallback", vParameter), true);
+
+		oModelMock.expects("getAllBindings").withExactArgs()
+			.returns([oUnresolvedBinding0, oUnresolvedBinding2]);
+
+		oUnresolvedBinding0Mock.expects("isRelative").withExactArgs().returns(true);
+		oUnresolvedBinding0Mock.expects("getContext").withExactArgs().returns(undefined);
+		oUnresolvedBinding0Mock.expects("anyCallback").withExactArgs(sinon.match.same(vParameter))
+			.returns(false);
+		oUnresolvedBinding2Mock.expects("isRelative").withExactArgs().returns(true);
+		oUnresolvedBinding2Mock.expects("getContext").withExactArgs().returns(null);
+		oUnresolvedBinding2Mock.expects("anyCallback").withExactArgs(sinon.match.same(vParameter))
+			.returns();
+
+		// code under test
+		assert.strictEqual(oModel.withUnresolvedBindings("anyCallback", vParameter), false);
+	});
 });
 
 //TODO constructor: test that the service root URL is absolute?

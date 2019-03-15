@@ -1643,5 +1643,28 @@ sap.ui.define([
 		return sClassName + ": " + this.sServiceUrl;
 	};
 
+	/**
+	 * Iterates over this model's unresolved bindings and calls the function with the given name on
+	 * each unresolved binding, passing the given parameter. Iteration stops if a function call on
+	 * some unresolved binding returns a truthy value.
+	 *
+	 * @param {string} sCallbackName
+	 *   The name of the function to be called on unresolved bindings; the function is called with
+	 *   the given parameter
+	 * @param {any} vParameter
+	 *   Any parameter to be used as the only argument for the callback function
+	 * @returns {boolean}
+	 *   <code>true</code> if for one unresolved binding the function call returned a truthy value
+	 *
+	 * @private
+	 */
+	ODataModel.prototype.withUnresolvedBindings = function (sCallbackName, vParameter) {
+		return this.getAllBindings().filter(function (oBinding) {
+			return oBinding.isRelative() && !oBinding.getContext();
+		}).some(function (oBinding) {
+			return oBinding[sCallbackName](vParameter);
+		});
+	};
+
 	return ODataModel;
 });
