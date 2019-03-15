@@ -71,18 +71,18 @@ sap.ui.define([
 			if (bRealOData) {
 				Then.onTheMainPage.checkNewSalesOrderItemProductName("Notebook Basic 15");
 				// update note of new sales order item
-				When.onTheMainPage.changeNoteInFirstLineItem("Line Item Note Changed - 1");
+				When.onTheMainPage.changeNoteInLineItem(0, "Line Item Note Changed - 1");
 				When.onTheMainPage.pressSaveSalesOrderButton();
 				Then.onTheMainPage.checkSalesOrderLineItemNote(0, "Line Item Note Changed - 1");
 
 				// check correct error handling of multiple changes in one $batch
 				aExpectedErrors.push(oExpectedError);
-				When.onTheMainPage.changeNoteInFirstLineItem("Line Item Note Changed - 2");
+				When.onTheMainPage.changeNoteInLineItem(0, "Line Item Note Changed - 2");
 				aExpectedErrors.push(oExpectedError);
-				When.onTheMainPage.changeQuantityInFirstLineItem("0.0");
+				When.onTheMainPage.changeQuantityInLineItem(0, "0.0");
 				When.onTheMainPage.pressSaveSalesOrderButton();
 				When.onTheMessagePopover.close();
-				When.onTheMainPage.changeQuantityInFirstLineItem("2.0");
+				When.onTheMainPage.changeQuantityInLineItem(0, "2.0");
 				When.onTheMainPage.pressSaveSalesOrderButton();
 				Then.onTheMainPage.checkSalesOrderLineItemNote(0, "Line Item Note Changed - 2");
 
