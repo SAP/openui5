@@ -645,12 +645,12 @@ sap.ui.define([
 		validateType: function(vControl, mAggregationMetadata, vParent, sFragment, iIndex) {},
 
 		/**
-		 * Loads a fragment and turns the result into an array of nodes. Also prefixes all the controls with a given namespace
-		 * Throws an Error if there is at least one control in the fragment without stable ID
+		 * Loads a fragment and turns the result into an array of nodes; also prefixes all the controls with a given namespace;
+		 * throws an error if there is at least one control in the fragment without a stable ID or has a duplicate ID in the given view
 		 *
-		 * @param {string} sFragment xml fragment as string
-		 * @param {string} sNamespace namespace of the app
-		 * @param {sap.ui.core.mvc.View} [oView] view for the fragment, only needed in JS case
+		 * @param {string} sFragment XML fragment as string
+		 * @param {string} sNamespace Namespace of the app
+		 * @param {sap.ui.core.mvc.View} oView View for the fragment
 		 * @returns {Element[]} Returns an array with the nodes of the controls of the fragment
 		 * @public
 		 */

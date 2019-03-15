@@ -460,22 +460,27 @@ sap.ui.define([
 		},
 
 		/**
-		 * Loads a fragment and turns the result into an array of nodes. Also prefixes all the controls with a given namespace
-		 * Throws an Error if there is at least one control in the fragment without stable ID
-		 *
-		 * @param {string} sFragment xml fragment as string
-		 * @param {string} sNamespace namespace of the app
-		 * @returns {Node[]} Returns an array with the nodes of the controls of the fragment
+		 * @inheritDoc
 		 */
-		instantiateFragment: function(sFragment, sNamespace) {
+		instantiateFragment: function(sFragment, sNamespace, oView) {
+			var aControls;
 			var oFragment = XMLHelper.parse(sFragment);
 			oFragment = this._checkAndPrefixIdsInFragment(oFragment, sNamespace);
 
 			if (oFragment.localName === "FragmentDefinition") {
-				return this._getElementNodeChildren(oFragment);
+				aControls = this._getElementNodeChildren(oFragment);
 			} else {
-				return [oFragment];
+				aControls = [oFragment];
 			}
+
+			// check if there is already a field with the same ID and throw error if so
+			aControls.forEach(function(oNode) {
+				if (this._byId(oNode.getAttribute("id"), oView)) {
+					throw Error("The following ID is already in the view: " + oNode.getAttribute("id"));
+				}
+			}.bind(this));
+
+			return aControls;
 		},
 
 		/**

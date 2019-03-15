@@ -13,7 +13,6 @@ function(
 
 	QUnit.module("Using the XmlTreeModifier...", {
 		beforeEach: function () {
-
 			this.HBOX_ID = "hboxId";
 			this.TEXT_ID = "textId";
 			this.CHANGE_HANDLER_PATH = "path/to/changehandler/definition";
@@ -45,7 +44,7 @@ function(
 					'</HBox>' +
 					'<Bar tooltip="barTooltip">' + //control without default aggregation, tooltip aggregation filled with altType
 					'</Bar>\n' +
-					'<VBox id="vbox1">' +
+					'<VBox id="foo.' + this.HBOX_ID + '">' +
 						'<Button text="Button1"></Button>' +
 						'<Button text="Button2"></Button>\n' +
 						'<Button text="Button3"></Button>' +
@@ -81,9 +80,7 @@ function(
 					'</VBox>' +
 				'</mvc:View>';
 			this.oXmlView = jQuery.sap.parseXML(this.oXmlString, "application/xml").documentElement;
-
 		},
-
 		afterEach: function () {
 			sandbox.restore();
 			this.oComponent.destroy();
@@ -434,6 +431,39 @@ function(
 			var iChildNodesBeforeDestroy = oHBox.childNodes[1].childNodes.length;
 			XmlTreeModifier.destroy(oText);
 			assert.equal(oHBox.childNodes[1].childNodes.length, iChildNodesBeforeDestroy - 1, "then the parent node has one child node less");
+		});
+
+		QUnit.test("when instantiateFragment is called with a duplicate ID", function(assert) {
+			var sFragment =
+				'<core:FragmentDefinition xmlns="sap.m" xmlns:core="sap.ui.core">' +
+					'<Button id="' + this.HBOX_ID + '" text="Button1"></Button>' +
+				'</core:FragmentDefinition>';
+			assert.throws(function() {
+				XmlTreeModifier.instantiateFragment(sFragment, "foo", this.oXmlView);
+			}, Error("The following ID is already in the view: foo." + this.HBOX_ID),
+			"then the right exception is thrown");
+		});
+
+		QUnit.test("when instantiateFragment is called with a FragmentDefinition", function(assert) {
+			var sFragment =
+			'<core:FragmentDefinition xmlns="sap.m" xmlns:core="sap.ui.core">' +
+				'<Button id="button123" text="Button1"></Button>' +
+				'<Button id="button1234" text="Button2"></Button>' +
+			'</core:FragmentDefinition>';
+
+			var aControls = XmlTreeModifier.instantiateFragment(sFragment, "foo", this.oXmlView);
+			assert.equal(aControls.length, 2, "there are 2 controls returned");
+			assert.equal(aControls[0].getAttribute("id"), "foo.button123", "the ID got prefixed");
+			assert.equal(aControls[1].getAttribute("id"), "foo.button1234", "the ID got prefixed");
+		});
+
+		QUnit.test("when instantiateFragment is called with a Control", function(assert) {
+			var sFragment =
+				'<sap.m.Button id="button123" text="Button1" />';
+
+			var aControls = XmlTreeModifier.instantiateFragment(sFragment, "foo", this.oXmlView);
+			assert.equal(aControls.length, 1, "there is 1 control returned");
+			assert.equal(aControls[0].getAttribute("id"), "foo.button123", "the ID got prefixed");
 		});
 	});
 });
