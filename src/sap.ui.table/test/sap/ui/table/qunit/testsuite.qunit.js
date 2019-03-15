@@ -198,7 +198,8 @@ sap.ui.define([
 			},
 
 			"MultiSelectionPlugin": {
-				group: "Plugins"
+				group: "Plugins",
+				module: "./plugins/{name}.qunit"
 			}
 		}
 	};
