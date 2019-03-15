@@ -55,6 +55,33 @@ sap.ui.define([
 			|| iActualSize === iExpectedSize + 1;
 	}
 
+	function createCarouselWithContent(sIdModification) {
+		return new Carousel({
+			height: "100%",
+			width: "100%",
+			pages: [
+				new Image("keyTestPage_1" + sIdModification, {
+					src: "../images/demo/nature/desert.jpg"
+				}),
+				new Image("keyTestPage_2" + sIdModification, {
+					src: "../images/demo/nature/elephant.jpg"
+				}),
+				new Image("keyTestPage_3" + sIdModification, {
+					src: "../images/demo/nature/fish.jpg"
+				}),
+				new Image("keyTestPage_4" + sIdModification, {
+					src: "../images/demo/nature/forest.jpg"
+				}),
+				new Image("keyTestPage_5" + sIdModification, {
+					src: "../images/demo/nature/huntingLeopard.jpg"
+				}),
+				new Image("keyTestPage_6" + sIdModification, {
+					src: "../images/demo/nature/prairie.jpg"
+				})
+			]
+		});
+	}
+
 	//================================================================================
 	// Carousel Properties
 	//================================================================================
@@ -86,30 +113,7 @@ sap.ui.define([
 	QUnit.module("Methods", {
 		beforeEach: function () {
 			sinon.config.useFakeTimers = false;
-			this.oCarousel = new Carousel({
-				height: "100%",
-				width: "100%",
-				pages: [
-					new Image("keyTestPage_1", {
-						src: "../images/demo/nature/desert.jpg"
-					}),
-					new Image("keyTestPage_2", {
-						src: "../images/demo/nature/elephant.jpg"
-					}),
-					new Image("keyTestPage_3", {
-						src: "../images/demo/nature/fish.jpg"
-					}),
-					new Image("keyTestPage_4", {
-						src: "../images/demo/nature/forest.jpg"
-					}),
-					new Image("keyTestPage_5", {
-						src: "../images/demo/nature/huntingLeopard.jpg"
-					}),
-					new Image("keyTestPage_6", {
-						src: "../images/demo/nature/prairie.jpg"
-					})
-				]
-			});
+			this.oCarousel = createCarouselWithContent("");
 			this.oCarousel.placeAt(DOM_RENDER_LOCATION);
 			sap.ui.getCore().applyChanges();
 		},
@@ -521,6 +525,29 @@ sap.ui.define([
 
 			// Assert
 			assert.ok(true, "Error is not thrown when the index of the set active page exceeds total pages count minus pages to be shown");
+	});
+
+	QUnit.test("#setActivePage() called before Carousel is rendered - allActive pages are updated correctly after rendering",
+		function (assert) {
+			// Set up
+			var oCarousel = createCarouselWithContent("new");
+			oCarousel.setCustomLayout(new CarouselLayout({
+				visiblePagesCount: 2
+			}));
+
+			// Act
+			oCarousel.setActivePage(oCarousel.getPages()[3]);
+			oCarousel.placeAt(DOM_RENDER_LOCATION);
+			sap.ui.getCore().applyChanges();
+
+			// Assert
+			assert.ok(oCarousel._aAllActivePages[0] === "keyTestPage_4new" && oCarousel._aAllActivePages[1] === "keyTestPage_5new",
+				"'keyTestPage_4' and 'keyTestPage_5' are the active pages' ids after Carousel is rendered");
+			assert.ok(oCarousel._aAllActivePagesIndexes[0] === 3 && oCarousel._aAllActivePagesIndexes[1] === 4,
+				"3 and 4 are the active pages' indexes after Carousel is rendered");
+
+			// Clean up
+			oCarousel.destroy();
 	});
 
 	QUnit.test("#_getLastFocusedActivePage() when the last focused page is still active ", function (assert) {
