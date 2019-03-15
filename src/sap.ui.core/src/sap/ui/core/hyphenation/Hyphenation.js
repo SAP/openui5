@@ -194,6 +194,8 @@ function (jQuery, ManagedObject, Log, Locale, LocaleData) {
 		var oConfigurationForLanguage = {
 			"require": [sLanguage],
 			"hyphen": "\u00AD",
+			"leftmin": 3, // The minimum of chars to remain on the old line.
+			"rightmin": 3,// The minimum of chars to go on the new line
 			"compound": "all", // factory-made -> fac-tory-[ZWSP]made
 			"path": jQuery.sap.getResourcePath("sap/ui/thirdparty/hyphenopoly")
 		};
