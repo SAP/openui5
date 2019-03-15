@@ -272,12 +272,12 @@ sap.ui.define([
 
 		if (oCurrentBinding !== oBinding) {
 			if (oBinding) {
-				oBinding.attachEvent("change", this._onBindingChange, this);
-				oBinding.attachEvent("selectionChanged", this._onSelectionChange, this);
+				oBinding.attachChange(this._onBindingChange, this);
+				oBinding.attachSelectionChanged(this._onSelectionChange, this);
 			}
 			if (oCurrentBinding) {
-				oCurrentBinding.detachEvent("change", this._onBindingChange);
-				oCurrentBinding.detachEvent("selectionChanged", this._onSelectionChange);
+				oCurrentBinding.detachChange(this._onBindingChange, this);
+				oCurrentBinding.detachSelectionChanged(this._onSelectionChange, this);
 			}
 		}
 	};

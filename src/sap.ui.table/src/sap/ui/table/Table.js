@@ -4126,21 +4126,25 @@ sap.ui.define([
 	Table.prototype.addPlugin = function(oPlugin) {
 		this.addAggregation("plugins", oPlugin);
 		this._initSelectionPlugin();
+		return this;
 	};
 
 	Table.prototype.insertPlugin = function(oPlugin, iIndex) {
 		this.insertAggregation("plugins", oPlugin, iIndex);
 		this._initSelectionPlugin();
+		return this;
 	};
 
 	Table.prototype.removePlugin = function(oPlugin) {
-		this.removeAggregation("plugins", oPlugin);
+		var vReturn = this.removeAggregation("plugins", oPlugin);
 		this._initSelectionPlugin();
+		return vReturn;
 	};
 
 	Table.prototype.removeAllPlugins = function() {
-		this.removeAllAggregation("plugins");
+		var vReturn = this.removeAllAggregation("plugins");
 		this._initSelectionPlugin();
+		return vReturn;
 	};
 
 	Table.prototype.getPlugin = function(sType) {
