@@ -237,26 +237,16 @@ sap.ui.define([
 
 		assert.strictEqual( aActions.length, 2,
 			"then the DynamicPageTitle contains 2 buttons");
-		assert.strictEqual( aActions[1].getText(), "The right button",
+		assert.strictEqual( aActions[1].getText(), "item 2",
 			"then the second button has the correct text");
-		assert.strictEqual( aActions[1].getId(), "comp---view--combinedButtonId",
+		assert.strictEqual( aActions[1].getId(), "btn2",
 			"then the second button has the correct id");
 
 		sap.ui.getCore().byId("comp---view--menubtn").destroy();
 	};
 
 	var fnConfirmSplitActionElementsAreCombined = function (oUiComponent, oViewAfterAction, assert) {
-		var oMenuButton = oViewAfterAction.byId("title").getActions()[0],
-			oSecondItem = oMenuButton.getMenu().getItems()[1];
-
-		assert.strictEqual( oViewAfterAction.byId("title").getActions().length, 1,
-			"then the Toolbar contains 1 menuButton");
-		assert.strictEqual( oSecondItem.getCustomData().length, 1,
-			"then the second menu item has 1 customData object");
-		assert.strictEqual( oSecondItem.getDependents().length, 2,
-			"then the second menu item has 2 dependents");
-		assert.strictEqual( oSecondItem.getDependents()[0].getText(), "The right button",
-			"then the second menu item's first dependent has the correct text");
+		assert.strictEqual(oViewAfterAction.byId("title").getActions().length, 1, "then the Toolbar contains 1 menuButton");
 	};
 
 	elementActionTest("Checking the split action for group elements", {
@@ -270,15 +260,7 @@ sap.ui.define([
 								'<Menu>' +
 									'<items>' +
 										'<MenuItem text="item 1" id="item1"/>' +
-										'<MenuItem text="item 2" id="item2">' +
-											'<customData>' +
-												'<core:CustomData id="item2-originalButtonId" key="originalButtonId" value="comp---view--combinedButtonId" />' +
-											'</customData>' +
-											'<dependents>' +
-												'<Button text="The right button" id="combinedButtonId"/>' +
-												'<Button text="Not the right button" id="notCombinedButtonId"/>' +
-											'</dependents>' +
-										'</MenuItem>' +
+										'<MenuItem text="item 2" id="item2"/>' +
 									'</items>' +
 								'</Menu>' +
 							'</menu>' +
@@ -292,7 +274,7 @@ sap.ui.define([
 			controlId : "menubtn",
 			parameter : function(oView){
 				return {
-					newElementIds : ["combinedButtonId"],
+					newElementIds : ["btn1", "btn2"],
 					source : oView.byId("menubtn"),
 					parentElement : oView.byId("title")
 				};

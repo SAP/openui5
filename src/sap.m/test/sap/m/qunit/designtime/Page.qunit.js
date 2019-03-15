@@ -248,8 +248,8 @@ sap.ui.define([
 						'<menu>' +
 						'<Menu>' +
 						'<items>' +
-						'<MenuItem text="item1"/>' +
-						'<MenuItem text="item2"/>' +
+						'<MenuItem id="menuItem1" text="item1"/>' +
+						'<MenuItem id="menuItem2" text="item2"/>' +
 						'</items>' +
 						'</Menu>' +
 						'</menu>' +

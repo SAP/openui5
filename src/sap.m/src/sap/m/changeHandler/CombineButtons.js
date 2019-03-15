@@ -3,13 +3,11 @@
  */
 
 sap.ui.define([
-	"sap/ui/fl/Utils",
 	"sap/base/util/uid",
 	"sap/ui/core/util/reflection/JsControlTreeModifier",
 	"sap/ui/core/Component",
 	"sap/ui/fl/util/ManagedObjectModel" // used implicitly by oModifier.createControl() function
 ], function (
-	FlexUtils,
 	uid,
 	JsControlTreeModifier,
 	Component
@@ -125,7 +123,8 @@ sap.ui.define([
 						key: "{ path: '" + sModelName + ">key' }",
 						value: "{ path: '" + sModelName + ">value' }"
 					}
-				)
+				),
+				templateShareable: false
 			}, oView);
 
 			// FIXME: will not work in XML in case original button has a binding on `text` property
@@ -135,7 +134,7 @@ sap.ui.define([
 
 			// Add suffix to the id, so we can get the original ids of the combined buttons
 			// when we want to split the menu. The suffix is used in SplitMenuButton change handler.
-			oSelector.id = oSelector.id + "-originalButtonId";
+			oSelector.id = oSelector.id + "-originalButtonId"; // FIXME: do not mutate original object!
 
 			// Create CustomData, holding the original ids of the combined buttons
 			oIdToSave = oModifier.createControl("sap.ui.core.CustomData", oAppComponent, oView, oSelector);
