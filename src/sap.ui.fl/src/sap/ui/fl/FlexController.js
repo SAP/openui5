@@ -1142,15 +1142,15 @@ sap.ui.define([
 	 * If no change handler is given it will get the change handler from the change and control
 	 *
 	 * @param {object} oChange Change object
-	 * @param {object} oControl Control instance object
-	 * @param {object} [oChangeHandler] change handler of the control and change
-	 * @returns {boolean} Returns true if change handler has revertChange()
+	 * @param {object} vControl Control instance or selector object with id, appComponent and controlType
+	 * @param {object} [oChangeHandler] Change handler of the control and change
+	 * @returns {boolean} Returns true if change handler has revertChange function
 	 * @public
 	 */
-	FlexController.prototype.isChangeHandlerRevertible = function(oChange, oControl, oChangeHandler) {
+	FlexController.prototype.isChangeHandlerRevertible = function(oChange, vControl, oChangeHandler) {
 		if (!oChangeHandler) {
-			var sControlType = JsControlTreeModifier.getControlType(oControl);
-			oChangeHandler = this._getChangeHandler(oChange, sControlType, oControl, JsControlTreeModifier);
+			var sControlType = vControl.controlType ? vControl.controlType : JsControlTreeModifier.getControlType(vControl);
+			oChangeHandler = this._getChangeHandler(oChange, sControlType, vControl, JsControlTreeModifier);
 		}
 		return !!(oChangeHandler && typeof oChangeHandler.revertChange === "function");
 	};

@@ -291,19 +291,22 @@ function (
 				getChangeType: function() {},
 				getLayer: function() {}
 			};
-			sandbox.stub(JsControlTreeModifier, "getControlType").returns(sControlType);
-			sandbox.stub(this.oFlexController, "_getChangeRegistry").returns({
-				getChangeHandler: sandbox.stub().returns(oChangeHandler)
-			});
-			sandbox.stub(this.oFlexController, "_getControlIfTemplateAffected").returns(undefined);
+			var oGetControlTypeStub = sandbox.stub(JsControlTreeModifier, "getControlType").returns(sControlType);
+			var oGetChangeHandlerStub = sandbox.stub(this.oFlexController, "_getChangeHandler").returns(oChangeHandler);
 
-			assert.ok(this.oFlexController.isChangeHandlerRevertible(oChange), "then true is returned when change handler has revertChange()");
+			assert.ok(this.oFlexController.isChangeHandlerRevertible(oChange, {controlType: "foo"}), "the function returns true");
+			assert.equal(oGetControlTypeStub.callCount, 0, "the getControlType function was not called");
+			assert.equal(oGetChangeHandlerStub.callCount, 1, "the getChangeHandler function was called");
+
+			assert.ok(this.oFlexController.isChangeHandlerRevertible(oChange, {}, oChangeHandler), "the function returns true");
+			assert.equal(oGetControlTypeStub.callCount, 0, "the getControlType function was not called");
+			assert.equal(oGetChangeHandlerStub.callCount, 1, "the getChangeHandler function was not called");
 
 			oChangeHandler.revertChange = "testValue";
-			assert.notOk(this.oFlexController.isChangeHandlerRevertible(oChange), "then false is returned when change handler's revertChange() is not a function");
+			assert.notOk(this.oFlexController.isChangeHandlerRevertible(oChange, {}), "then false is returned when change handler's revertChange() is not a function");
 
 			delete oChangeHandler.revertChange;
-			assert.notOk(this.oFlexController.isChangeHandlerRevertible(oChange), "then false is returned when change handler's revertChange() is undefined");
+			assert.notOk(this.oFlexController.isChangeHandlerRevertible(oChange, {}), "then false is returned when change handler's revertChange() is undefined");
 		});
 
 		QUnit.test("_resolveGetChangesForView shall not log if change can be applied", function(assert) {
