@@ -11,6 +11,7 @@ sap.ui.define([
 	"sap/ui/model/FilterOperator",
 	"sap/ui/Device",
 	"sap/ui/core/library",
+	"sap/ui/core/theming/Parameters",
 	"sap/m/library",
 	"sap/m/StandardListItem",
 	"sap/m/App",
@@ -33,7 +34,7 @@ sap.ui.define([
 	"sap/m/ScrollContainer",
 	"sap/m/Title"
 ], function(createAndAppendDiv, jQuery,
-			qutils, ListBaseRenderer, KeyCodes, JSONModel, Sorter, Filter, FilterOperator, Device, coreLibrary, library, StandardListItem, App, Page, ListBase, List, Toolbar,
+			qutils, ListBaseRenderer, KeyCodes, JSONModel, Sorter, Filter, FilterOperator, Device, coreLibrary, ThemeParameters, library, StandardListItem, App, Page, ListBase, List, Toolbar,
 			ToolbarSpacer, GrowingEnablement, Input, CustomListItem, InputListItem, GroupHeaderListItem, Button, VBox, Text, Menu, MenuItem, MessageToast, ScrollContainer, Title) {
 		"use strict";
 		createAndAppendDiv("content").setAttribute("data-sap-ui-fastnavgroup", "true");
@@ -1755,6 +1756,39 @@ sap.ui.define([
 			assert.ok(!oList.getDomRef("listUl").classList.contains("sapMListHighlight"), "Highlight class is removed");
 
 			oList.destroy();
+		});
+
+		QUnit.test("List theme parameters", function(assert){
+			var oListItem1 = new StandardListItem({
+					title: "oListItem1"
+				}),
+				oList = new List({
+					items: [oListItem1]
+				});
+
+			oList.placeAt("content");
+			sap.ui.getCore().applyChanges();
+
+			oListItem1.getDeleteControl(true);
+			var sDeleteIcon = oListItem1._oDeleteControl.getIcon();
+			assert.equal(sDeleteIcon, "sap-icon://sys-cancel", "Delete icon is correct");
+
+			var oThemeStub = this.stub(ThemeParameters, "get");
+			oThemeStub.withArgs("_sap_m_ListItemBase_DeleteIcon").returns("decline");
+			oListItem1.onThemeChanged();
+			sDeleteIcon = oListItem1._oDeleteControl.getIcon();
+			assert.equal(sDeleteIcon, "sap-icon://decline", "Delete icon has been changed");
+
+			var oListItem2 = new StandardListItem({
+				title: "oListItem2"
+			});
+			oListItem2.getDeleteControl(true);
+			sDeleteIcon = oListItem2._oDeleteControl.getIcon();
+			assert.equal(sDeleteIcon, "sap-icon://decline", "Delete icon is correct for newly created items");
+
+			oList.destroy();
+			// reset stub
+			oThemeStub.restore();
 		});
 
 		QUnit.module("Accessibility");

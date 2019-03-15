@@ -12,6 +12,7 @@ sap.ui.define([
 	"sap/ui/core/Control",
 	"sap/ui/core/IconPool",
 	"sap/ui/core/Icon",
+	"sap/ui/core/theming/Parameters",
 	"./library",
 	"./Button",
 	"./CheckBox",
@@ -31,6 +32,7 @@ function(
 	Control,
 	IconPool,
 	Icon,
+	ThemeParameters,
 	library,
 	Button,
 	CheckBox,
@@ -258,7 +260,7 @@ function(
 
 	// icon URI configuration
 	ListItemBase.prototype.DetailIconURI = IconPool.getIconURI("edit");
-	ListItemBase.prototype.DeleteIconURI = IconPool.getIconURI("sys-cancel");
+	ListItemBase.prototype.DeleteIconURI = IconPool.getIconURI(ThemeParameters.get("_sap_m_ListItemBase_DeleteIcon"));
 	ListItemBase.prototype.NavigationIconURI = IconPool.getIconURI("slim-arrow-right");
 
 	// defines the root tag name for rendering purposes
@@ -506,6 +508,13 @@ function(
 		this._oDeleteControl._bExcludeFromTabChain = true;
 
 		return this._oDeleteControl;
+	};
+
+	ListItemBase.prototype.onThemeChanged = function() {
+		ListItemBase.prototype.DeleteIconURI = IconPool.getIconURI(ThemeParameters.get("_sap_m_ListItemBase_DeleteIcon"));
+		if (this._oDeleteControl) {
+			this._oDeleteControl.setIcon(this.DeleteIconURI);
+		}
 	};
 
 	/**

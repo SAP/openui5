@@ -3,6 +3,9 @@
 /* Base theme                          */
 /* =================================== */
 
+@_sap_m_ListItemBase_DeleteIcon: sys-cancel;
+@_sap_m_ListItemBase_ButtonMarginTop: auto;
+
 .sapMLIB,
 .sapMLIBImgNav {
 	box-sizing: border-box;
@@ -22,7 +25,7 @@
 .sapMLIBIconDet,
 .sapMLIBIconDel {
 	margin-left: 0.125rem;
-	margin-top: auto;
+	margin-top: @_sap_m_ListItemBase_ButtonMarginTop;
 }
 
 .sapMLIBContent {
@@ -265,7 +268,7 @@
 }
 
 .sapMLIBImgNav {
-	width: 3rem;
+	width: @sapUiElementLineHeight;
 	font-size: 0.75rem;
 	color: @sapUiContentNonInteractiveIconColor;
 }
@@ -311,9 +314,9 @@
 	width: 2rem;
 }
 
-.sapUiSizeCompact .sapMLIB .sapMLIBIconDet,
-.sapUiSizeCompact .sapMLIB .sapMLIBIconDel {
-	margin-top: auto;
+.sapUiSizeCompact .sapMLIB > .sapMLIBIconDet,
+.sapUiSizeCompact .sapMLIB > .sapMLIBIconDel {
+	margin-top: @_sap_m_ListItemBase_ButtonMarginTop;
 }
 
 .sapUiSizeCompact .sapMLIB > .sapMLIBSelectS:first-child,
