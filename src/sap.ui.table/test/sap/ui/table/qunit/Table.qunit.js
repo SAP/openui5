@@ -15,6 +15,7 @@ sap.ui.define([
 	"sap/ui/table/TableUtils",
 	"sap/ui/table/library",
 	"sap/ui/table/plugins/SelectionPlugin",
+	"sap/ui/table/plugins/MultiSelectionPlugin",
 	"sap/ui/core/library",
 	"sap/ui/core/Control",
 	"sap/ui/core/util/PasteHelper",
@@ -22,7 +23,7 @@ sap.ui.define([
 	"sap/m/Text", "sap/m/Input", "sap/m/Label", "sap/m/CheckBox", "sap/m/Button", "sap/m/Link", "sap/m/RatingIndicator", "sap/m/Image",
 	"sap/m/Toolbar", "sap/ui/unified/Menu", "sap/ui/unified/MenuItem", "sap/m/Menu", "sap/m/MenuItem", "sap/base/Log", "sap/m/library"
 ], function(qutils, TableQUnitUtils, Table, Column, ColumnMenu, ColumnMenuRenderer, AnalyticalColumnMenuRenderer, TablePersoController, RowAction,
-			RowActionItem, RowSettings, TableUtils, TableLibrary, SelectionPlugin, CoreLibrary, Control, PasteHelper,
+			RowActionItem, RowSettings, TableUtils, TableLibrary, SelectionPlugin, MultiSelectionPlugin, CoreLibrary, Control, PasteHelper,
 			Device, JSONModel, Sorter, Filter, FloatType,
 			Text, Input, Label, CheckBox, Button, Link, RatingIndicator, Image, Toolbar, Menu, MenuItem, MenuM, MenuItemM, Log, library) {
 	"use strict";
@@ -388,6 +389,19 @@ sap.ui.define([
 		oTable.addSelectionInterval(0, 0);
 		assert.ok(!$SelectAll.hasClass("sapUiTableSelAll"), "Selected the first row again: The SelectAll checkbox is checked");
 		assert.strictEqual($SelectAll.attr("title"), sDeselectAllTitleText, "Selected the first row again: The SelectAll title text is correct");
+	});
+
+	QUnit.test("Selection with MultiSelectionPlugin", function(assert){
+		var done = assert.async();
+		oTable.addPlugin(new MultiSelectionPlugin({limit: 5}));
+		assert.ok(oTable._oSelectionPlugin.isA("sap.ui.table.plugins.MultiSelectionPlugin"), "MultiSelectionPlugin is initialized");
+		oTable.setVisibleRowCount(3);
+		oTable._oSelectionPlugin.attachEvent("selectionChange", function(oEvent){
+			assert.ok(oEvent.mParameters.limitReached, "The selection limit was reached");
+			assert.strictEqual(oTable.getFirstVisibleRow(), 2, "The first visible row is properly set");
+			done();
+		});
+		oTable._oSelectionPlugin.addSelectionInterval(0,10);
 	});
 
 	QUnit.test("VisibleRowCount", function(assert) {

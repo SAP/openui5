@@ -148,13 +148,17 @@ sap.ui.define([
 		}
 
 		var iLimit = this.getLimit();
-		var iLength = iIndexTo - iIndexFrom;
+		// in case iIndexFrom is already selected the range starts from the next index
+		if (this.isIndexSelected(iIndexFrom)) {
+			iIndexFrom++;
+		}
+		var iLength = iIndexTo - iIndexFrom + 1;
 		var that = this;
 		var oBinding = this._getBinding();
 
 		this.setLimitReached(false);
 		if (iLength > iLimit) {
-			iIndexTo = iIndexFrom + iLimit;
+			iIndexTo = iIndexFrom + iLimit - 1;
 			iLength = iLimit;
 			this.setLimitReached(true);
 		}
@@ -221,6 +225,7 @@ sap.ui.define([
 	 */
 	MultiSelectionPlugin.prototype.clearSelection = function() {
 		if (this.oSelectionPlugin) {
+			this.setLimitReached(false);
 			this.oSelectionPlugin.clearSelection();
 		}
 	};
@@ -297,6 +302,7 @@ sap.ui.define([
 	 */
 	MultiSelectionPlugin.prototype.removeSelectionInterval = function(iIndexFrom, iIndexTo) {
 		if (this.oSelectionPlugin) {
+			this.setLimitReached(false);
 			this.oSelectionPlugin.removeSelectionInterval(iIndexFrom, iIndexTo);
 		}
 	};
@@ -308,6 +314,7 @@ sap.ui.define([
 	MultiSelectionPlugin.prototype.setSelectedIndex = function(iIndex) {
 		if (this.oSelectionPlugin) {
 			var that = this;
+			this.setLimitReached(false);
 			var oBinding = this._getBinding();
 			if (oBinding && iIndex >= 0) {
 				loadMultipleContexts(oBinding, iIndex, 1).then(function () {
