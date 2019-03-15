@@ -924,12 +924,15 @@ function(
 			bNewFocusIsInTokenizer = false,
 			bNewFocusIsInMultiInput = this._checkFocus(),
 			oRelatedControlDomRef,
-			bFocusIsInSelectedItemPopup;
+			bFocusIsInSelectedItemPopup,
+			bNewFocusIsInReadOnlyPopover;
+
 		if (oPopup instanceof sap.m.Popover) {
 			if (oEvent.relatedControlId) {
 				oRelatedControlDomRef = sap.ui.getCore().byId(oEvent.relatedControlId).getFocusDomRef();
 				bNewFocusIsInSuggestionPopup = containsOrEquals(oPopup.getFocusDomRef(), oRelatedControlDomRef);
 				bNewFocusIsInTokenizer = containsOrEquals(this._tokenizer.getFocusDomRef(), oRelatedControlDomRef);
+				bNewFocusIsInReadOnlyPopover = containsOrEquals(this._oReadOnlyPopover && this._oReadOnlyPopover.getFocusDomRef(), oRelatedControlDomRef);
 
 				if (oSelectedItemsPopup) {
 					bFocusIsInSelectedItemPopup = containsOrEquals(oSelectedItemsPopup.getFocusDomRef(), oRelatedControlDomRef);
@@ -970,7 +973,7 @@ function(
 			this._tokenizer._useCollapsedMode(true);
 		}
 
-		if (this._oReadOnlyPopover && this._oReadOnlyPopover.isOpen() && !bNewFocusIsInTokenizer) {
+		if (this._oReadOnlyPopover && this._oReadOnlyPopover.isOpen() && !bNewFocusIsInTokenizer && !bNewFocusIsInReadOnlyPopover) {
 			this._oReadOnlyPopover.close();
 		}
 
