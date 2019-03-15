@@ -1568,6 +1568,41 @@ sap.ui.define([
 		oMultiInput.destroy();
 	});
 
+	QUnit.test("Read-only popover should not be closed when the scrolbar inside is clicked", function (assert) {
+		// arrange
+		var oMultiInput = new sap.m.MultiInput({
+			editable: false,
+			width: "200px",
+			tokens: [
+				new sap.m.Token({ text: "XXXX" }),
+				new sap.m.Token({ text: "XXXX" }),
+				new sap.m.Token({ text: "XXXX" }),
+				new sap.m.Token({ text: "XXXX" })
+			]
+		}), oListItemRef;
+
+		// act
+		oMultiInput.placeAt("content");
+		sap.ui.getCore().applyChanges();
+
+		// assert
+		assert.ok(oMultiInput._oReadOnlyPopover, "Readonly Popover should be created");
+
+		// act
+		oMultiInput._handleIndicatorPress();
+		this.clock.tick(300);
+
+		oMultiInput.onsapfocusleave({
+			relatedControlId: oMultiInput._oReadOnlyPopover.getId()
+		});
+		this.clock.tick(300);
+
+		assert.ok(oMultiInput._oReadOnlyPopover.isOpen(), "Readonly Popover should remain open");
+
+		// delete
+		oMultiInput.destroy();
+	});
+
 	QUnit.test("Read-only popover should be closed on after selection of an item from its list", function (assert) {
 		// arrange
 		var oMultiInput = new MultiInput({
