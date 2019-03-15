@@ -1,7 +1,6 @@
 /*global QUnit*/
 
 sap.ui.define([
-	"sap/ui/qunit/QUnitUtils",
 	"sap/ui/qunit/utils/createAndAppendDiv",
 	"sap/ui/rta/test/controlEnablingCheck",
 	"sap/ui/dt/test/report/QUnit",
@@ -11,9 +10,17 @@ sap.ui.define([
 	"sap/ui/fl/Change",
 	"sap/ui/core/UIComponent",
 	"sap/ui/core/ComponentContainer"
-], function(QUnitUtils, createAndAppendDiv,
-			rtaControlEnablingCheck, QUnitReport, ElementEnablementTest, CombineButtons,
-			JsControlTreeModifier, Change, UIComponent, ComponentContainer) {
+], function(
+	createAndAppendDiv,
+	rtaControlEnablingCheck,
+	QUnitReport,
+	ElementEnablementTest,
+	CombineButtons,
+	JsControlTreeModifier,
+	Change,
+	UIComponent,
+	ComponentContainer
+) {
 
 	'use strict';
 	createAndAppendDiv("content");
@@ -237,6 +244,10 @@ sap.ui.define([
 
 			oChangeHandler.revertChange(oChange, oToolbar, oPropertyBag);
 			assert.strictEqual(oToolbar.getContent().length, 2, "The change was successfully reverted.");
+		});
+
+		QUnit.done(function() {
+			jQuery("#content").hide();
 		});
 	});
 
