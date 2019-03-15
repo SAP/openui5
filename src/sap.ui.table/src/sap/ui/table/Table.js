@@ -1839,7 +1839,7 @@ sap.ui.define([
 		if (sSelectionMode === SelectionMode.Multi) {
 			sSelectionMode = SelectionMode.MultiToggle;
 			Log.warning("The selection mode 'Multi' is deprecated and must not be used anymore."
-						+ " Your setting was defaulted to selection mode 'MultiToggle'");
+						+ " Your setting was defaulted to selection mode 'MultiToggle'", this);
 		}
 
 		if (this._oSelectionPlugin.isA("sap.ui.table.plugins.SelectionModelPlugin")
@@ -1847,7 +1847,8 @@ sap.ui.define([
 			this.setProperty("selectionMode", sSelectionMode);
 			this._oSelectionPlugin.setSelectionMode(sSelectionMode);
 		} else {
-			Log.warning("When the MultiSelectionPlugin is applied to the table, the selection mode is controlled by the plugin and cannot be changed manually.");
+			Log.warning("When the MultiSelectionPlugin is applied to the table, the selection mode is controlled by the plugin and cannot be"
+						+ " changed manually.", this);
 		}
 
 		return this;
@@ -1858,8 +1859,7 @@ sap.ui.define([
 	 */
 	Table.prototype.setFirstVisibleRow = function(iRowIndex, bOnScroll, bSuppressEvent) {
 		if (parseInt(iRowIndex) < 0) {
-			Log.error("The index of the first visible row must be greater than or equal to 0." +
-								 " The value has been set to 0.", this);
+			Log.error("The index of the first visible row must be greater than or equal to 0. The value has been set to 0.", this);
 			iRowIndex = 0;
 		}
 		if (this._getTotalRowCount() > 0) {
@@ -1867,7 +1867,7 @@ sap.ui.define([
 
 			if (iMaxRowIndex < iRowIndex) {
 				Log.warning("The index of the first visible row must be lesser or equal than the scrollable row count minus the visible row count." +
-									   " The value has been set to " + iMaxRowIndex + ".", this);
+							" The value has been set to " + iMaxRowIndex + ".", this);
 				iRowIndex = iMaxRowIndex;
 			}
 		}
@@ -2101,7 +2101,8 @@ sap.ui.define([
 
 		var iFixedRowsCount = this.getFixedRowCount() + this.getFixedBottomRowCount();
 		if (iVisibleRowCount <= iFixedRowsCount && iFixedRowsCount > 0) {
-			Log.error("Table: " + this.getId() + " visibleRowCount('" + iVisibleRowCount + "') must be bigger than number of fixed rows('" + (this.getFixedRowCount() + this.getFixedBottomRowCount()) + "')", this);
+			Log.error("Table: " + this.getId() + " visibleRowCount('" + iVisibleRowCount + "') must be bigger than number of"
+					  + " fixed rows('" + (this.getFixedRowCount() + this.getFixedBottomRowCount()) + "')", this);
 			return this;
 		}
 
@@ -2150,7 +2151,7 @@ sap.ui.define([
 	 * @override
 	 */
 	Table.prototype.setTooltip = function(vTooltip) {
-		Log.warning("The aggregation tooltip is not supported for sap.ui.table.Table");
+		Log.warning("The aggregation tooltip is not supported for sap.ui.table.Table", this);
 		return this.setAggregation("tooltip", vTooltip, true);
 	};
 
@@ -3440,7 +3441,8 @@ sap.ui.define([
 			this.setProperty("fixedRowCount", iFixedRowCount);
 			this._updateBindingContexts();
 		} else {
-			Log.error("Table '" + this.getId() + "' fixed rows('" + (iFixedRowCount + this.getFixedBottomRowCount()) + "') must be smaller than numberOfVisibleRows('" + this.getVisibleRowCount() + "')", this);
+			Log.error("Table '" + this.getId() + "' fixed rows('" + (iFixedRowCount + this.getFixedBottomRowCount()) + "') must be smaller than"
+					  + " numberOfVisibleRows('" + this.getVisibleRowCount() + "')", this);
 		}
 		return this;
 	};
@@ -3458,7 +3460,8 @@ sap.ui.define([
 			this.setProperty("fixedBottomRowCount", iFixedRowCount);
 			this._updateBindingContexts();
 		} else {
-			Log.error("Table '" + this.getId() + "' fixed rows('" + (iFixedRowCount + this.getFixedRowCount()) + "') must be smaller than numberOfVisibleRows('" + this.getVisibleRowCount() + "')", this);
+			Log.error("Table '" + this.getId() + "' fixed rows('" + (iFixedRowCount + this.getFixedRowCount()) + "') must be smaller than"
+					  + " numberOfVisibleRows('" + this.getVisibleRowCount() + "')", this);
 		}
 		return this;
 	};
