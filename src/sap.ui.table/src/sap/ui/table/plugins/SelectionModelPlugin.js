@@ -52,7 +52,7 @@ sap.ui.define([
 	 */
 	SelectionModelPlugin.prototype.init = function() {
 		this.oSelectionModel = new SelectionModel(this._getSelectionMode);
-		this.oSelectionModel.attachEvent("selectionChanged", this._onSelectionChange, this);
+		this.oSelectionModel.attachSelectionChanged(this._onSelectionChange, this);
 
 		SelectionPlugin.prototype.init.call(this);
 	};
@@ -267,10 +267,10 @@ sap.ui.define([
 			this.clearSelection();
 			this._resume();
 			if (oBinding) {
-				oBinding.attachEvent("change", this._onBindingChange, this);
+				oBinding.attachChange(this._onBindingChange, this);
 			}
 			if (oCurrentBinding) {
-				oCurrentBinding.detachEvent("change", this._onBindingChange);
+				oCurrentBinding.detachChange(this._onBindingChange, this);
 			}
 		}
 	};

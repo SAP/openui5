@@ -358,7 +358,7 @@ sap.ui.define([
 		}
 		if (oParent) {
 			this.oSelectionPlugin = new oParent._SelectionAdapterClass();
-			this.oSelectionPlugin.attachEvent("selectionChange", this._onSelectionChange, this);
+			this.oSelectionPlugin.attachSelectionChange(this._onSelectionChange, this);
 			oParent.setSelectionMode(SelectionMode.MultiToggle);
 		}
 
