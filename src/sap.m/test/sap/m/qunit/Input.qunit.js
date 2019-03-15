@@ -2652,6 +2652,23 @@ sap.ui.define([
 		oInput.destroy();
 	});
 
+	QUnit.test("Create Suggestions Popover after suggestion items are added", function(assert) {
+		// arrange
+		var oInput = new Input({
+			suggestionItems: [new Item({text: "test"})]
+		});
+
+		// act
+		oInput.setShowSuggestion(true); // set show suggestion after items are added
+
+		// assert
+		assert.ok(oInput._getSuggestionsPopover()._oList, "List should be created when enabling suggestions");
+
+		// clean up
+		oInput.destroy();
+		oInput = null;
+	});
+
 	QUnit.module("Key and Value");
 
 	function createInputWithSuggestions () {

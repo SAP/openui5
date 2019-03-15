@@ -1752,10 +1752,12 @@ function(
 		Input.prototype.addSuggestionItem = function(oItem) {
 			this.addAggregation("suggestionItems", oItem, true);
 
-			if (this._oSuggPopover) {
-				this._synchronizeSuggestions();
-				this._createSuggestionPopupContent();
+			if (!this._oSuggPopover) {
+				this._getSuggestionsPopover();
 			}
+
+			this._synchronizeSuggestions();
+			this._createSuggestionPopupContent();
 
 			return this;
 		};
@@ -1771,10 +1773,12 @@ function(
 		Input.prototype.insertSuggestionItem = function(oItem, iIndex) {
 			this.insertAggregation("suggestionItems", iIndex, oItem, true);
 
-			if (this._oSuggPopover) {
-				this._synchronizeSuggestions();
-				this._createSuggestionPopupContent();
+			if (!this._oSuggPopover) {
+				this._getSuggestionsPopover();
 			}
+
+			this._synchronizeSuggestions();
+			this._createSuggestionPopupContent();
 
 			return this;
 		};
