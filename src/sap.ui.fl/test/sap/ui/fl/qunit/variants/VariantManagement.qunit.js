@@ -153,11 +153,11 @@ sap.ui.define([
 			assert.ok(this.oVariantManagement.handleOpenCloseVariantPopover.called);
 		});
 
-		QUnit.test("Check onkeydown", function(assert) {
+		QUnit.test("Check onkeyup", function(assert) {
 
 			sinon.stub(this.oVariantManagement, "_openVariantList");
 
-			this.oVariantManagement.onkeydown({
+			this.oVariantManagement.onkeyup({
 				which: 32
 			});
 
