@@ -196,4 +196,25 @@ sap.ui.define([
 		assert.equal(object.getValue(), "binding", "Binding updates control property value");
 	});
 
+	QUnit.test("Model independence", function(assert) {
+		var iFormatterCount = 0,
+			oBinding,
+			object = new MyObject({
+				value: {
+					value: "test",
+					formatter: function(value) {
+						iFormatterCount++;
+						return value;
+					}
+				}
+			});
+
+		oBinding = object.getBinding("value");
+		assert.equal(iFormatterCount, 1, "Formatter called once after creating the static binding");
+
+		object.setModel(new sap.ui.model.json.JSONModel({}));
+		assert.ok(object.getBinding("value") === oBinding, "Binding instance is still the same");
+		assert.equal(iFormatterCount, 1, "Formatter not called again after setting a model");
+	});
+
 });
