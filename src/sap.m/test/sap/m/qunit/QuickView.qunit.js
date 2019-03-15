@@ -343,6 +343,40 @@ sap.ui.define([
 		});
 	});
 
+	QUnit.test("getQuickViewBase with QuickView parent", function (assert) {
+		// Arrange
+		var oQuickViewGroupElement = this.oQuickView.getPages()[0].getGroups()[0].getElements()[0];
+
+		// Act
+		var oQuickView = oQuickViewGroupElement.getQuickViewBase();
+
+		// Assert
+		assert.ok(oQuickView && oQuickView.isA("sap.m.QuickViewBase"), "Should return an instance of sap.m.QuickViewBase");
+	});
+
+	QUnit.test("getQuickViewBase without QuickView parent", function (assert) {
+		// Arrange
+		var oQuickViewGroupElement = new QuickViewGroupElement();
+		var oQuickViewPage = new QuickViewPage({
+			groups: [
+				new QuickViewGroup({
+					elements: [
+						oQuickViewGroupElement
+					]
+				})
+			]
+		});
+
+		// Act
+		var oQuickView = oQuickViewGroupElement.getQuickViewBase();
+
+		// Assert
+		assert.notOk(oQuickView, "Should return null.");
+
+		// Cleanup
+		oQuickViewPage.destroy();
+	});
+
 	QUnit.module("Render", {
 		beforeEach: function () {
 			this.oQuickView = getQuickView();
@@ -783,5 +817,54 @@ sap.ui.define([
 
 		assert.strictEqual(fnQuickViewInvalidate.callCount, 0, "QuickView.invalidate should not be called");
 		assert.strictEqual(fnQuickViewPopoverInvalidate.callCount, 0, "QuickView.Popover.invalidate should not be called");
+	});
+
+	QUnit.module("Standalone QuickView elements", {
+		beforeEach: function () {
+			this.oQuickViewGroupElement = new QuickViewGroupElement();
+			this.oQuickViewGroup = new QuickViewGroup();
+			this.oQuickViewPage = new QuickViewPage();
+		},
+		afterEach: function () {
+			this.oQuickViewGroupElement.destroy();
+			this.oQuickViewGroupElement = null;
+			this.oQuickViewGroup.destroy();
+			this.oQuickViewGroup = null;
+			this.oQuickViewPage.destroy();
+			this.oQuickViewPage = null;
+		}
+	});
+
+	QUnit.test("QuickViewGroupElement property change", function (assert) {
+		// Arrange
+		var fnInvalidate = sinon.spy(this.oQuickViewGroupElement, "invalidate");
+
+		// Act
+		this.oQuickViewGroupElement.setValue("test");
+
+		// Assert
+		assert.ok(fnInvalidate.calledOnce, "Property change should trigger invalidation for QuickViewGroupElement.");
+	});
+
+	QUnit.test("QuickViewGroup property change", function (assert) {
+		// Arrange
+		var fnInvalidate = sinon.spy(this.oQuickViewGroup, "invalidate");
+
+		// Act
+		this.oQuickViewGroup.setHeading("test");
+
+		// Assert
+		assert.ok(fnInvalidate.calledOnce, "Property change should trigger invalidation for QuickViewGroup.");
+	});
+
+	QUnit.test("QuickViewPage property change", function (assert) {
+		// Arrange
+		var fnInvalidate = sinon.spy(this.oQuickViewPage, "invalidate");
+
+		// Act
+		this.oQuickViewPage.setHeader("test");
+
+		// Assert
+		assert.ok(fnInvalidate.calledOnce, "Property change should trigger invalidation for QuickViewPage.");
 	});
 });
