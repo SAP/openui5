@@ -28,10 +28,8 @@ function(SupportLib) {
 				oTokenizers.forEach(function (oTokenizer) {
 					oParent = oTokenizer.getParent();
 					bParent = oParent && oParent instanceof sap.m.MultiInput || oParent instanceof sap.m.MultiComboBox ||
-								// Value Help Dialog uses the tokenizer in a vertical layout
-								(oParent instanceof sap.ui.layout.VerticalLayout &&
-								oParent.hasStyleClass("compVHTokenizerHLayout"));
-
+								// Value Help Dialog uses the tokenizer in a horizontal layout with special style class
+								oParent.hasStyleClass("compVHTokenizerHLayout");
 					if (!bParent) {
 						oIssueManager.addIssue({
 							severity: Severity.High,
