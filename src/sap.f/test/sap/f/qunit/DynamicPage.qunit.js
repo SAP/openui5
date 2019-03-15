@@ -783,7 +783,7 @@ function (
 		oUtil.renderObject(this.oDynamicPage);
 
 		// Act
-		oTitle.$().trigger("mouseover");
+		oTitle.onmouseover();
 		$oDynamicPage = this.oDynamicPage.$();
 
 		// Assert
@@ -802,7 +802,7 @@ function (
 		oUtil.renderObject(this.oDynamicPage);
 
 		// Act
-		oTitle.$().trigger("mouseout");
+		oTitle.onmouseout();
 		$oDynamicPage = this.oDynamicPage.$();
 
 		// Assert
