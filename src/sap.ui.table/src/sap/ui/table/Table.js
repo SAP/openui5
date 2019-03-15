@@ -2644,6 +2644,12 @@ sap.ui.define([
 			this._aSortedColumns.splice(iIndex, 1);
 		}
 		this.invalidateRowsAggregation();
+
+		var oCreationRow = this.getCreationRow();
+		if (oCreationRow) {
+			oCreationRow._update();
+		}
+
 		return oResult;
 	};
 
@@ -2654,6 +2660,12 @@ sap.ui.define([
 		var oResult = this.removeAllAggregation('columns');
 		this._aSortedColumns = [];
 		this.invalidateRowsAggregation();
+
+		var oCreationRow = this.getCreationRow();
+		if (oCreationRow) {
+			oCreationRow._update();
+		}
+
 		return oResult;
 	};
 
@@ -2664,6 +2676,12 @@ sap.ui.define([
 		var oResult = this.destroyAggregation('columns');
 		this._aSortedColumns = [];
 		this.invalidateRowsAggregation();
+
+		var oCreationRow = this.getCreationRow();
+		if (oCreationRow) {
+			oCreationRow._update();
+		}
+
 		return oResult;
 	};
 
@@ -2674,6 +2692,12 @@ sap.ui.define([
 	Table.prototype.addColumn = function(oColumn, bSuppressInvalidate) {
 		this.addAggregation('columns', oColumn, bSuppressInvalidate);
 		this.invalidateRowsAggregation();
+
+		var oCreationRow = this.getCreationRow();
+		if (oCreationRow) {
+			oCreationRow._update();
+		}
+
 		return this;
 	};
 
@@ -2683,6 +2707,12 @@ sap.ui.define([
 	Table.prototype.insertColumn = function(oColumn, iIndex, bSuppressInvalidate) {
 		this.insertAggregation('columns', oColumn, iIndex, bSuppressInvalidate);
 		this.invalidateRowsAggregation();
+
+		var oCreationRow = this.getCreationRow();
+		if (oCreationRow) {
+			oCreationRow._update();
+		}
+
 		return this;
 	};
 

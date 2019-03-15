@@ -3,14 +3,13 @@
 sap.ui.define([
 	"sap/ui/table/Table",
 	"sap/ui/table/Column",
+	"sap/ui/table/CreationRow",
 	"sap/ui/model/json/JSONModel",
 	"sap/ui/unified/Menu",
 	"sap/m/Label",
 	"sap/m/Text"
-], function(Table, Column, JSONModel, Menu, Label, Text) {
+], function(Table, Column, CreationRow, JSONModel, Menu, Label, Text) {
 	"use strict";
-
-	sinon.config.useFakeTimers = true;
 
 	QUnit.module("API", {
 		beforeEach: function() {
@@ -284,14 +283,144 @@ sap.ui.define([
 		assert.ok(!oColumnMenu._bInvalidated, "ColumnMenu not invalidated");
 	});
 
+	QUnit.module("Changes that affect rows", {
+		beforeEach: function() {
+			this.oColumn = new Column();
+			this.oTable = new Table({
+				columns: [this.oColumn]
+			});
+			this.oCreationRow = new CreationRow();
+			this.oTable.setCreationRow(this.oCreationRow);
+
+			this.oTable.placeAt("content");
+			sap.ui.getCore().applyChanges();
+		},
+		afterEach: function() {
+			this.oColumn.destroy();
+		}
+	});
+
+	QUnit.test("Property changes", function(assert) {
+		var oInvalidateRowsAggregationSpy = sinon.spy(this.oTable, "invalidateRowsAggregation");
+		var oCreationRowUpdateSpy = sinon.spy(this.oCreationRow, "_update");
+
+		this.oColumn.setVisible(false);
+		assert.strictEqual(oInvalidateRowsAggregationSpy.callCount, 1,
+			"Table#invalidateRowsAggregation called after changing the 'visible' property");
+		assert.strictEqual(oCreationRowUpdateSpy.callCount, 1,
+			"CreationRow#_update called after changing the 'visible' property");
+
+		this.oColumn.setVisible(true);
+		assert.strictEqual(oInvalidateRowsAggregationSpy.callCount, 2,
+			"Table#invalidateRowsAggregation called after changing the 'visible' property");
+		assert.strictEqual(oCreationRowUpdateSpy.callCount, 2,
+			"CreationRow#_update called after changing the 'visible' property");
+
+		this.oColumn.setVisible(true);
+		assert.strictEqual(oInvalidateRowsAggregationSpy.callCount, 2,
+			"Table#invalidateRowsAggregation NOT called if only calling Column#setVisible without changing the value");
+		assert.strictEqual(oCreationRowUpdateSpy.callCount, 2,
+			"CreationRow#_update NOT called if only calling Column#setVisible without changing the value");
+	});
+
+	QUnit.test("Template changes", function(assert) {
+		var oInvalidateRowsAggregationSpy = sinon.spy(this.oTable, "invalidateRowsAggregation");
+		var oTableInvalidateSpy = sinon.spy(this.oTable, "invalidate");
+
+		this.oColumn.setTemplate(new Text());
+		assert.strictEqual(oInvalidateRowsAggregationSpy.callCount, 1,
+			"Table#invalidateRowsAggregation called after setting the template");
+		assert.strictEqual(oTableInvalidateSpy.callCount, 1,
+			"Table#invalidate called after setting the template");
+
+		this.oColumn.setTemplate(this.oColumn.getTemplate());
+		assert.strictEqual(oInvalidateRowsAggregationSpy.callCount, 2,
+			"Table#invalidateRowsAggregation called after setting the same template");
+		assert.strictEqual(oTableInvalidateSpy.callCount, 2,
+			"Table#invalidate called after setting the same template");
+
+		this.oColumn.getTemplate().invalidate();
+		assert.strictEqual(oInvalidateRowsAggregationSpy.callCount, 2,
+			"Table#invalidateRowsAggregation NOT called when invalidating the template");
+		assert.strictEqual(oTableInvalidateSpy.callCount, 2,
+			"Table#invalidate NOT called when invalidating the template");
+
+		this.oColumn.setTemplate(null);
+		assert.strictEqual(oInvalidateRowsAggregationSpy.callCount, 2,
+			"Table#invalidateRowsAggregation NOT called after setting the template to 'null'");
+		assert.strictEqual(oTableInvalidateSpy.callCount, 3,
+			"Table#invalidate called after setting the template to 'null'");
+
+		this.oColumn.setVisible(false);
+		oInvalidateRowsAggregationSpy.reset();
+		oTableInvalidateSpy.reset();
+		this.oColumn.setTemplate(new Text());
+		assert.strictEqual(oInvalidateRowsAggregationSpy.callCount, 0,
+			"Table#invalidateRowsAggregation NOT called after setting the template for invisible column");
+		assert.strictEqual(oTableInvalidateSpy.callCount, 0,
+			"Table#invalidate NOT called after setting the template for invisible column");
+
+		this.oColumn.setVisible(true);
+		oInvalidateRowsAggregationSpy.reset();
+		oTableInvalidateSpy.reset();
+		this.oColumn.destroyTemplate();
+		assert.strictEqual(oInvalidateRowsAggregationSpy.callCount, 0,
+			"Table#invalidateRowsAggregation NOT called after destroying the template");
+		assert.strictEqual(oTableInvalidateSpy.callCount, 1,
+			"Table#invalidate called after destroying the template");
+	});
+
+	QUnit.test("CreationTemplate changes", function(assert) {
+		var oCreationRowUpdateSpy = sinon.spy(this.oCreationRow, "_update");
+		var oTableInvalidateSpy = sinon.spy(this.oTable, "invalidate");
+
+		this.oColumn.setCreationTemplate(new Text());
+		assert.strictEqual(oCreationRowUpdateSpy.callCount, 1,
+			"CreationRow#_update called after setting the template");
+		assert.strictEqual(oTableInvalidateSpy.callCount, 0,
+			"Table#invalidate NOT called after setting the template");
+
+		this.oColumn.setCreationTemplate(this.oColumn.getCreationTemplate());
+		assert.strictEqual(oCreationRowUpdateSpy.callCount, 2,
+			"CreationRow#_update called after setting the same template");
+		assert.strictEqual(oTableInvalidateSpy.callCount, 0,
+			"Table#invalidate NOT called after setting the same template");
+
+		this.oColumn.getCreationTemplate().invalidate();
+		assert.strictEqual(oCreationRowUpdateSpy.callCount, 2,
+			"CreationRow#_update NOT called when invalidating the template");
+		assert.strictEqual(oTableInvalidateSpy.callCount, 0,
+			"Table#invalidate NOT called when invalidating the template");
+
+		this.oColumn.setCreationTemplate(null);
+		assert.strictEqual(oCreationRowUpdateSpy.callCount, 2,
+			"CreationRow#_update NOT called after setting the template to 'null'");
+		assert.strictEqual(oTableInvalidateSpy.callCount, 0,
+			"Table#invalidate NOT called after setting the template to 'null'");
+
+		this.oColumn.setVisible(false);
+		oCreationRowUpdateSpy.reset();
+		oTableInvalidateSpy.reset();
+		this.oColumn.setCreationTemplate(new Text());
+		assert.strictEqual(oCreationRowUpdateSpy.callCount, 0,
+			"CreationRow#_update NOT called after setting the template for invisible column");
+		assert.strictEqual(oTableInvalidateSpy.callCount, 0,
+			"Table#invalidate NOT called after setting the template for invisible column");
+
+		this.oColumn.setVisible(true);
+		oCreationRowUpdateSpy.reset();
+		oTableInvalidateSpy.reset();
+		this.oColumn.destroyCreationTemplate();
+		assert.strictEqual(oCreationRowUpdateSpy.callCount, 0,
+			"CreationRow#_update NOT called after destroying the template");
+		assert.strictEqual(oTableInvalidateSpy.callCount, 0,
+			"Table#invalidate NOT called after destroying the template");
+	});
+
 	QUnit.module("Template Clones", {
 		beforeEach: function() {
 			this.oColumn = new Column();
 			this.aTemplateTypes = Object.keys(this.oColumn._mTemplateClones);
-			this.mTemplateGetterSpies = this.aTemplateTypes.reduce(function(mSpies, sTemplateType) {
-				mSpies[sTemplateType] = sinon.spy(this.oColumn, "get" + (sTemplateType === "Standard" ? "" : sTemplateType) + "Template");
-				return mSpies;
-			}.bind(this), {});
 			this.oCloneWithParent = this.createTemplateCloneDummy(true);
 			this.oCloneWithoutParentA = this.createTemplateCloneDummy();
 			this.oCloneWithoutParentB = this.createTemplateCloneDummy();
@@ -306,18 +435,14 @@ sap.ui.define([
 				return iCount + this.oColumn._mTemplateClones[sTemplateType].length;
 			}.bind(this), 0);
 		},
-		getTemplateSpiesCallCount: function() {
-			return Object.keys(this.mTemplateGetterSpies).reduce(function(iCount, sTemplateType) {
-				return iCount + this.mTemplateGetterSpies[sTemplateType].callCount;
-			}.bind(this), 0);
-		},
-		resetGetTemplateSpies: function() {
-			for (var sTemplateType in this.mTemplateGetterSpies) {
-				this.mTemplateGetterSpies[sTemplateType].reset();
-			}
-		},
 		setTemplate: function(sTemplateType, oTemplate) {
-			this.oColumn["set" + (sTemplateType === "Standard" ? "" : sTemplateType) + "Template"].bind(this.oColumn)(oTemplate);
+			this.oColumn["set" + (sTemplateType === "Standard" ? "" : sTemplateType) + "Template"].call(this.oColumn, oTemplate);
+		},
+		getTemplate: function(sTemplateType) {
+			return this.oColumn["get" + (sTemplateType === "Standard" ? "" : sTemplateType) + "Template"].call(this.oColumn);
+		},
+		destroyTemplate: function(sTemplateType) {
+			this.oColumn["destroy" + (sTemplateType === "Standard" ? "" : sTemplateType) + "Template"].call(this.oColumn);
 		},
 		createTemplateCloneDummy: function(bHasParent, bDestroyed) {
 			return {
@@ -369,7 +494,6 @@ sap.ui.define([
 
 	QUnit.test("getTemplateClone: No parameters passed", function(assert) {
 		this.oColumn.setTemplate(new Text());
-		this.resetGetTemplateSpies();
 
 		var oGetFreeTemplateCloneSpy = sinon.spy(this.oColumn, "_getFreeTemplateClone");
 		var oTemplateClone = this.oColumn.getTemplateClone();
@@ -377,30 +501,25 @@ sap.ui.define([
 		assert.ok(oGetFreeTemplateCloneSpy.notCalled, "Column#_getFreeTemplateClone was not called");
 		assert.strictEqual(this.getTemplateCloneCount(), 0, "No template clones exist");
 		assert.strictEqual(oTemplateClone, null, "Returned null");
-		assert.ok(this.mTemplateGetterSpies.Standard.notCalled, "Column#getTemplate was not called");
 	});
 
 	QUnit.test("getTemplateClone: No type information passed", function(assert) {
-		this.oColumn.setTemplate(new Text());
-		this.resetGetTemplateSpies();
+		this.oColumn.setTemplate(new Text({text: "Standard"}));
 
 		var oGetFreeTemplateCloneSpy = sinon.spy(this.oColumn, "_getFreeTemplateClone");
 		var oTemplateClone = this.oColumn.getTemplateClone(0);
 
 		assert.ok(oGetFreeTemplateCloneSpy.calledWithExactly("Standard"), "Column#_getFreeTemplateClone was called with templateType=Standard");
-
 		assert.strictEqual(this.getTemplateCloneCount(), 1, "1 template clone exists");
 		assert.strictEqual(this.oColumn._mTemplateClones.Standard.length, 1, "1 standard template clone exists");
-
 		assert.strictEqual(oTemplateClone, this.oColumn._mTemplateClones.Standard[0], "Returned the created standard template clone");
-
-		assert.strictEqual(this.getTemplateSpiesCallCount(), 1, "1 template getter was called");
-		assert.ok(this.mTemplateGetterSpies.Standard.calledOnce, "Column#getTemplate was called once");
+		assert.strictEqual(oTemplateClone.getText(), "Standard", "The correct template was cloned");
 	});
 
 	QUnit.test("getTemplateClone: Wrong type information passed", function(assert) {
 		this.oColumn.setTemplate(new Text());
 		var oTemplateClone = this.oColumn.getTemplateClone(0, "not a template type");
+		assert.strictEqual(this.getTemplateCloneCount(), 0, "No template clone exists");
 		assert.strictEqual(oTemplateClone, null, "Returned null");
 	});
 
@@ -408,7 +527,6 @@ sap.ui.define([
 		for (var j = 0; j < this.aTemplateTypes.length; j++) {
 			this.setTemplate(this.aTemplateTypes[j], new Text());
 		}
-		this.resetGetTemplateSpies();
 
 		var oGetFreeTemplateCloneSpy = sinon.spy(this.oColumn, "_getFreeTemplateClone");
 
@@ -421,7 +539,6 @@ sap.ui.define([
 
 		assert.strictEqual(this.getTemplateCloneCount(), 0, "No template clones exist");
 		assert.ok(oGetFreeTemplateCloneSpy.notCalled, "Column#_getFreeTemplateClone was not called");
-		assert.strictEqual(this.getTemplateSpiesCallCount(), 0, "No template getter was called");
 	});
 
 	QUnit.test("getTemplateClone: No template is defined", function(assert) {
@@ -432,16 +549,9 @@ sap.ui.define([
 			var oTemplateClone = this.oColumn.getTemplateClone(0, sTemplateType);
 
 			assert.strictEqual(oTemplateClone, null, sTemplateType + " type: Returned null");
-
-			assert.ok(oGetFreeTemplateCloneSpy.calledOnce, sTemplateType + " type: Column#_getFreeTemplateClone was called once");
-			assert.ok(oGetFreeTemplateCloneSpy.calledWithExactly(sTemplateType),
-				"Column#_getFreeTemplateClone was called with templateType=" + sTemplateType);
-
-			assert.strictEqual(this.getTemplateSpiesCallCount(), 1, "1 template getter was called");
-			assert.ok(this.mTemplateGetterSpies[sTemplateType].calledOnce, sTemplateType + " type: Template getter was called once");
+			assert.ok(oGetFreeTemplateCloneSpy.notCalled, sTemplateType + " type: Column#_getFreeTemplateClone was not called");
 
 			oGetFreeTemplateCloneSpy.reset();
-			this.resetGetTemplateSpies();
 		}
 
 		assert.deepEqual(this.getTemplateCloneCount(), 0, "No template clones exist");
@@ -452,13 +562,13 @@ sap.ui.define([
 		var sTemplateType;
 
 		for (var j = 0; j < this.aTemplateTypes.length; j++) {
-			var oTemplate = new Text();
-
 			sTemplateType = this.aTemplateTypes[j];
+
+			var oTemplate = new Text({text: sTemplateType});
+
 			this.setTemplate(sTemplateType, oTemplate);
 			mTemplateCloneFunctionSpies[sTemplateType] = sinon.spy(oTemplate, "clone");
 		}
-		this.resetGetTemplateSpies();
 
 		var oGetFreeTemplateCloneSpy = sinon.spy(this.oColumn, "_getFreeTemplateClone");
 
@@ -467,12 +577,12 @@ sap.ui.define([
 
 			var oTemplateClone = this.oColumn.getTemplateClone(5, sTemplateType);
 
-			assert.notEqual(oTemplateClone, null, sTemplateType + " type: Returned the created template clone");
+			assert.ok(oTemplateClone === this.oColumn._mTemplateClones[sTemplateType][0],
+				sTemplateType + " type: Returned the created template clone");
+			assert.strictEqual(oTemplateClone.getText(), sTemplateType, sTemplateType + " type: The correct template was cloned");
 
 			assert.strictEqual(this.getTemplateCloneCount(), i + 1, (i + 1) + " template clone(s) exist(s)");
 			assert.strictEqual(this.oColumn._mTemplateClones[sTemplateType].length, 1, sTemplateType + " type: 1 template clone exists");
-			assert.ok(this.oColumn._mTemplateClones[sTemplateType][0] === oTemplateClone,
-				sTemplateType + " type: A reference to the template clone is stored");
 
 			assert.strictEqual(oTemplateClone.data("sap-ui-colindex"), 5,
 				sTemplateType + " type: The template has the correct \"colindex\" data");
@@ -483,13 +593,9 @@ sap.ui.define([
 			assert.ok(oGetFreeTemplateCloneSpy.calledWithExactly(sTemplateType),
 				"Column#_getFreeTemplateClone was called with templateType=" + sTemplateType);
 
-			assert.strictEqual(this.getTemplateSpiesCallCount(), 1, "1 template getter was called");
-			assert.ok(this.mTemplateGetterSpies[sTemplateType].calledOnce, sTemplateType + " type: Template getter was called once");
-
 			assert.ok(mTemplateCloneFunctionSpies[sTemplateType].calledOnce, sTemplateType + " type: Template#clone was called once");
 
 			oGetFreeTemplateCloneSpy.reset();
-			this.resetGetTemplateSpies();
 		}
 	});
 
@@ -498,14 +604,14 @@ sap.ui.define([
 		var sTemplateType;
 
 		for (var j = 0; j < this.aTemplateTypes.length; j++) {
-			var oTemplate = new Text();
-
 			sTemplateType = this.aTemplateTypes[j];
+
+			var oTemplate = new Text({text: sTemplateType});
+
 			this.setTemplate(sTemplateType, oTemplate);
 			sinon.stub(this.oColumn.getTemplateClone(0, sTemplateType), "getParent").returns("i have a parent");
 			mTemplateCloneFunctionSpies[sTemplateType] = sinon.spy(oTemplate, "clone");
 		}
-		this.resetGetTemplateSpies();
 
 		var oGetFreeTemplateCloneSpy = sinon.spy(this.oColumn, "_getFreeTemplateClone");
 
@@ -514,13 +620,13 @@ sap.ui.define([
 
 			var oTemplateClone = this.oColumn.getTemplateClone(5, sTemplateType);
 
-			assert.notEqual(oTemplateClone, null, sTemplateType + " type: Returned the created template clone");
+			assert.ok(oTemplateClone === this.oColumn._mTemplateClones[sTemplateType][1],
+				sTemplateType + " type: Returned the created template clone");
+			assert.strictEqual(oTemplateClone.getText(), sTemplateType, sTemplateType + " type: The correct template was cloned");
 
 			assert.strictEqual(this.getTemplateCloneCount(), this.aTemplateTypes.length + i + 1,
 				this.aTemplateTypes.length + i + 1 + " template clones exist");
 			assert.strictEqual(this.oColumn._mTemplateClones[sTemplateType].length, 2, sTemplateType + " type: 2 template clones exist");
-			assert.ok(this.oColumn._mTemplateClones[sTemplateType][1] === oTemplateClone,
-				sTemplateType + " type: A reference to the template clone is stored");
 
 			assert.strictEqual(oTemplateClone.data("sap-ui-colindex"), 5,
 				sTemplateType + " type: The template has the correct \"colindex\" data");
@@ -531,13 +637,9 @@ sap.ui.define([
 			assert.ok(oGetFreeTemplateCloneSpy.calledWithExactly(sTemplateType),
 				"Column#_getFreeTemplateClone was called with templateType=" + sTemplateType);
 
-			assert.strictEqual(this.getTemplateSpiesCallCount(), 1, "1 template getter was called");
-			assert.ok(this.mTemplateGetterSpies[sTemplateType].calledOnce, sTemplateType + " type: Template getter was called once");
-
-			assert.ok(mTemplateCloneFunctionSpies[sTemplateType].calledOnce, "Template#clone has been called once");
+			assert.ok(mTemplateCloneFunctionSpies[sTemplateType].calledOnce, "Template#clone was called once");
 
 			oGetFreeTemplateCloneSpy.reset();
-			this.resetGetTemplateSpies();
 		}
 	});
 
@@ -560,7 +662,6 @@ sap.ui.define([
 			mTemplateCloneFunctionSpies[sTemplateType] = sinon.spy(oTemplate, "clone");
 			mFreeTemplateClones[sTemplateType] = oTemplateClone;
 		}
-		this.resetGetTemplateSpies();
 
 		var oGetFreeTemplateCloneSpy = sinon.spy(this.oColumn, "_getFreeTemplateClone");
 
@@ -574,7 +675,6 @@ sap.ui.define([
 			assert.strictEqual(this.getTemplateCloneCount(), this.aTemplateTypes.length * 3,
 				(this.aTemplateTypes.length * 3) + " template clones exist");
 			assert.strictEqual(this.oColumn._mTemplateClones[sTemplateType].length, 3, sTemplateType + " type: 3 template clones exist");
-			assert.ok(oTemplateClone === this.oColumn._mTemplateClones[sTemplateType][1], "A reference to the template clone is stored");
 
 			assert.strictEqual(oTemplateClone.data("sap-ui-colindex"), 5,
 				sTemplateType + " type: The template has the correct \"colindex\" data");
@@ -585,12 +685,9 @@ sap.ui.define([
 			assert.ok(oGetFreeTemplateCloneSpy.calledWithExactly(sTemplateType),
 				"Column#_getFreeTemplateClone was called with templateType=" + sTemplateType);
 
-			assert.strictEqual(this.getTemplateSpiesCallCount(), 0, "No template getter was called");
-
 			assert.ok(mTemplateCloneFunctionSpies[sTemplateType].notCalled, "Template#clone was not called");
 
 			oGetFreeTemplateCloneSpy.reset();
-			this.resetGetTemplateSpies();
 		}
 	});
 
@@ -666,7 +763,7 @@ sap.ui.define([
 		assert.strictEqual(this.getTemplateCloneCount(), 0, "The clone pool has been cleared");
 	});
 
-	QUnit.test("Setting a column template", function(assert) {
+	QUnit.test("Setting a template", function(assert) {
 		var oDestroyTemplateClonesSpy = sinon.spy(this.oColumn, "_destroyTemplateClones");
 
 		for (var i = 0; i < this.aTemplateTypes.length; i++) {
@@ -675,6 +772,59 @@ sap.ui.define([
 			this.setTemplate(sTemplateType, new Text());
 			assert.ok(oDestroyTemplateClonesSpy.calledOnce,
 				sTemplateType + " type: Column#_destroyTemplateClones was called once when setting a template");
+			assert.ok(oDestroyTemplateClonesSpy.calledWithExactly(sTemplateType),
+				sTemplateType + " type: Column#_destroyTemplateClones was called with the correct type information");
+
+			oDestroyTemplateClonesSpy.reset();
+		}
+	});
+
+	QUnit.test("Destruction of a template", function(assert) {
+		var sTemplateType;
+		var i;
+
+		// Column#destroy*Template
+
+		for (i = 0; i < this.aTemplateTypes.length; i++) {
+			this.setTemplate(this.aTemplateTypes[i], new Text());
+		}
+
+		var oDestroyTemplateClonesSpy = sinon.spy(this.oColumn, "_destroyTemplateClones");
+
+		for (i = 0; i < this.aTemplateTypes.length; i++) {
+			sTemplateType = this.aTemplateTypes[i];
+
+			this.destroyTemplate(sTemplateType);
+			assert.ok(oDestroyTemplateClonesSpy.calledOnce,
+				sTemplateType + " type: Column#_destroyTemplateClones was called once when destroying a template");
+			assert.ok(oDestroyTemplateClonesSpy.calledWithExactly(sTemplateType),
+				sTemplateType + " type: Column#_destroyTemplateClones was called with the correct type information");
+
+			oDestroyTemplateClonesSpy.reset();
+		}
+
+		// Control#destroy
+
+		for (i = 0; i < this.aTemplateTypes.length; i++) {
+			this.setTemplate(this.aTemplateTypes[i], new Text());
+		}
+
+		oDestroyTemplateClonesSpy.reset();
+
+		for (i = 0; i < this.aTemplateTypes.length; i++) {
+			sTemplateType = this.aTemplateTypes[i];
+
+			if (sTemplateType === "Creation") {
+				if (this.oColumn.getMetadata().getAllPrivateAggregations().creationTemplate) {
+					return;
+				} else {
+					assert.ok(false, "The 'creationTemplate' is not hidden anymore. Enable this test for this template type.");
+				}
+			}
+
+			this.getTemplate(sTemplateType).destroy();
+			assert.ok(oDestroyTemplateClonesSpy.calledOnce,
+				sTemplateType + " type: Column#_destroyTemplateClones was called once when destroying a template");
 			assert.ok(oDestroyTemplateClonesSpy.calledWithExactly(sTemplateType),
 				sTemplateType + " type: Column#_destroyTemplateClones was called with the correct type information");
 

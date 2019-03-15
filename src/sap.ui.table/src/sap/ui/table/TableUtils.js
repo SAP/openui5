@@ -1206,7 +1206,7 @@ sap.ui.define([
 		 * @template T, U
 		 */
 		dynamicCall: function(vObject, vCall, oThis) {
-			var oObject = vObject instanceof Function ? vObject() : vObject;
+			var oObject = typeof vObject === "function" ? vObject() : vObject;
 
 			if (!oObject || !vCall) {
 				return undefined;
@@ -1214,14 +1214,14 @@ sap.ui.define([
 
 			oThis = oThis || oObject;
 
-			if (vCall instanceof Function) {
+			if (typeof vCall === "function") {
 				vCall.call(oThis, oObject);
 				return undefined;
 			} else {
 				var aParameters;
 				var aReturnValues = [];
 				for (var sFunctionName in vCall) {
-					if (oObject[sFunctionName] instanceof Function) {
+					if (typeof oObject[sFunctionName] === "function") {
 						aParameters = vCall[sFunctionName];
 						aReturnValues.push(oObject[sFunctionName].apply(oThis, aParameters));
 					} else {

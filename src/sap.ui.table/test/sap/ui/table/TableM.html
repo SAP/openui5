@@ -45,6 +45,7 @@ function pressHandler(oEvent) {
 	}
 }
 
+sap.ui.requireSync("sap/ui/table/CreationRow");
 var oTable = new sap.ui.table.Table({
 	title: "Title of the Table",
 	footer: "Footer of the Table",
@@ -209,6 +210,17 @@ oControl = new sap.m.HBox({width: "100%", items: [
 oColumn = new sap.ui.table.Column({visible: "{flex>/flex}", label: new sap.m.Label({text: "m.HBox with 2 Inputs"}), template: oControl, width: "200px"});
 oTable.addColumn(oColumn);
 
+
+oTable.getColumns().forEach(function(col) {
+	if (col.getIndex() === 0 || col.getIndex() % 2) {
+		col.setCreationTemplate(new sap.m.Input({value: "hsdifbal shbdfajhsbd ajsdhfajks"}));
+	}
+});
+oTable.setCreationRow(new sap.ui.table.CreationRow({
+	apply: function() {
+		sap.m.MessageToast.show("apply event fired");
+	}
+}));
 
 
 // set Model and bind Table
