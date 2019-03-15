@@ -4140,34 +4140,6 @@ sap.ui.define([
 		assert.ok(oLastRow !== oLastRowAfterRowsUpdate, "Old row was replaced after row invalidation");
 		assert.ok(oLastRowFirstCell === oLastRowFirstCellAfterRowsUpdate, "Old cells recycled");
 		assert.ok(oLastRowFirstCell.getParent() === oLastRowAfterRowsUpdate, "Recycled cells have the last row as parent");
-
-		var fnInvalidateRowsAggregation = sinon.spy(oTable, "invalidateRowsAggregation");
-		oTable.getColumns()[0].setFlexible(false);
-		assert.equal(fnInvalidateRowsAggregation.callCount, 1, "invalidateRowsAggregation() called after changing the 'flexible' property");
-
-		oTable.getColumns()[0].setHeaderSpan(2);
-		assert.equal(fnInvalidateRowsAggregation.callCount, 2, "invalidateRowsAggregation() called after changing the 'headerSpan' property");
-
-		oTable.getColumns()[0].setVisible(false);
-		assert.equal(fnInvalidateRowsAggregation.callCount, 3, "invalidateRowsAggregation() called after changing the 'visible' property");
-
-		oTable.getColumns()[0].setHeaderSpan(1);
-		assert.equal(fnInvalidateRowsAggregation.callCount, 3,
-			"invalidateRowsAggregation() NOT called after changing the 'headerSpan' property for invisible column");
-
-		oTable.getColumns()[0].setFlexible(true);
-		assert.equal(fnInvalidateRowsAggregation.callCount, 3,
-			"invalidateRowsAggregation() NOT called after changing the 'flexible' property for invisible column");
-
-		oTable.getColumns()[0].setTemplate(new Control());
-		assert.equal(fnInvalidateRowsAggregation.callCount, 3,
-			"invalidateRowsAggregation() NOT called after changing the column template for invisible column");
-
-		oTable.getColumns()[0].setVisible(true);
-		assert.equal(fnInvalidateRowsAggregation.callCount, 4, "invalidateRowsAggregation() called after changing the 'visible' property");
-
-		oTable.getColumns()[0].setTemplate(new Control());
-		assert.equal(fnInvalidateRowsAggregation.callCount, 5, "invalidateRowsAggregation() called after changing the column template");
 	});
 
 	QUnit.test("Destruction of the table if showNoData = true", function(assert) {

@@ -461,7 +461,7 @@ sap.ui.define([
 			fnBeforePlaceAt = mOptions;
 			mOptions = TableClass;
 			TableClass = Table;
-		} else if (TableClass instanceof Function && TableClass !== Table && TableClass !== TreeTable && TableClass !== AnalyticalTable) {
+		} else if (typeof TableClass === "function" && TableClass !== Table && TableClass !== TreeTable && TableClass !== AnalyticalTable) {
 			fnBeforePlaceAt = TableClass;
 			TableClass = Table;
 		}
@@ -473,7 +473,7 @@ sap.ui.define([
 		addAsyncHelpers(oTable);
 		addHelpers(oTable);
 
-		if (fnBeforePlaceAt instanceof Function) {
+		if (typeof fnBeforePlaceAt === "function") {
 			fnBeforePlaceAt(oTable, mOptions);
 		}
 
