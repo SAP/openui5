@@ -307,6 +307,26 @@ sap.ui.define([
 	});
 
 	//*********************************************************************************************
+	[false, true].forEach(function (bTransient) {
+		QUnit.test("hasPendingChanges: transient context = " + bTransient, function (assert) {
+			var oModel = {
+					getDependentBindings : function () {}
+				},
+				oContext = Context.create(oModel, {/*oBinding*/}, "/TEAMS", 0);
+
+			this.stub(oContext, "toString"); // called by SinonJS, would call #isTransient :-(
+			this.mock(oContext).expects("isTransient").withExactArgs().returns(bTransient);
+			this.mock(oModel).expects("getDependentBindings").exactly(bTransient ? 0 : 1)
+				.withExactArgs(sinon.match.same(oContext)).returns([]);
+			this.mock(oContext).expects("withUnresolvedBindings").exactly(bTransient ? 0 : 1)
+				.withExactArgs("hasPendingChangesInCaches").returns(false);
+
+			// code under test
+			assert.strictEqual(oContext.hasPendingChanges(), bTransient);
+		});
+	});
+
+	//*********************************************************************************************
 	QUnit.test("withUnresolvedBindings", function (assert) {
 		var oAbsoluteBinding = {
 				getContext : function () {},
@@ -1133,9 +1153,7 @@ sap.ui.define([
 
 	//*********************************************************************************************
 	QUnit.test("refresh, error handling: invalid group", function (assert) {
-		var oBinding = {
-				refreshSingle : function () {}
-			},
+		var oBinding = {},
 			oError = new Error(),
 			sGroupId = "$foo",
 			oModel = {
@@ -1403,4 +1421,3 @@ sap.ui.define([
 		}, new Error("Unsupported context: " + oContext));
 	});
 });
-//TODO do not allow refresh if isTransient(); see CPOUI5UISERVICESV3-1777

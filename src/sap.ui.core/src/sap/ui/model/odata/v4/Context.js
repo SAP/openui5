@@ -514,7 +514,7 @@ sap.ui.define([
 	/**
 	 * Returns whether there are pending changes for bindings dependent on this context, or for
 	 * unresolved bindings which were dependent on this context at the time the pending change
-	 * was created.
+	 * was created. This includes the context itself being transient (see {@link #isTransient}).
 	 *
 	 * @returns {boolean}
 	 *   Whether there are pending changes
@@ -523,9 +523,11 @@ sap.ui.define([
 	 * @since 1.53.0
 	 */
 	Context.prototype.hasPendingChanges = function () {
-		return this.oModel.getDependentBindings(this).some(function (oDependentBinding) {
+		return this.isTransient()
+			|| this.oModel.getDependentBindings(this).some(function (oDependentBinding) {
 				return oDependentBinding.hasPendingChanges();
-			}) || this.withUnresolvedBindings("hasPendingChangesInCaches");
+			})
+			|| this.withUnresolvedBindings("hasPendingChangesInCaches");
 	};
 
 	/**
@@ -573,9 +575,9 @@ sap.ui.define([
 	 *   binding, the parameter must not be used.
 	 *   Supported since 1.55.0
 	 * @throws {Error}
-	 *   If the group ID is not valid, if the binding is not refreshable or has pending changes, or
-	 *   if its root binding is suspended or if the parameter <code>bAllowRemoval/code> is set for
-	 *   a context belonging to a context binding.
+	 *   If the group ID is not valid, if this context has pending changes, if the binding is not
+	 *   refreshable, if its root binding is suspended, or if the parameter
+	 *   <code>bAllowRemoval/code> is set for a context belonging to a context binding.
 	 *
 	 * @public
 	 * @since 1.53.0
