@@ -1005,7 +1005,9 @@ sap.ui.define([
 					oContent = this._oCardManifest.get(MANIFEST_PATHS.CONTENT),
 					sHeight = BaseContent.getMinHeight(sType, oContent);
 
-					oHBox.$().css({ "min-height": sHeight });
+					if (this.getHeight() === "auto") { // if there is no height specified the default value is "auto"
+						oHBox.$().css({ "min-height": sHeight });
+					}
 			}
 		}, this);
 
@@ -1052,8 +1054,9 @@ sap.ui.define([
 				var sType = this._oCardManifest.get(MANIFEST_PATHS.TYPE) + "Content",
 					oContent = this._oCardManifest.get(MANIFEST_PATHS.CONTENT),
 					sHeight = BaseContent.getMinHeight(sType, oContent);
-
-					oError.$().css({ "min-height": sHeight });
+					if (this.getHeight() === "auto") { // if there is no height specified the default value is "auto"
+						oError.$().css({ "min-height": sHeight });
+					}
 			}
 		}, this);
 

@@ -26,6 +26,9 @@ sap.ui.define([], function () {
 		oRm.write("<div");
 		oRm.writeElementData(oCard);
 		oRm.addClass("sapFCard");
+		if (!oCard.getCardContent()) {
+			oRm.addClass("sapFCardNoContent");
+		}
 		oRm.writeClasses();
 		oRm.addStyle("width", oCard.getWidth());
 		oRm.addStyle("height", oCard.getHeight());

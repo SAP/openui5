@@ -134,6 +134,18 @@
 		"group": "Other Card Examples"
 	},
 	{
+		"title": "No header / No content",
+		"description": "Examples of cards with no header or no content provided",
+		"route": "noHeaderNoContent",
+		"group": "Other Card Examples"
+	},
+	{
+		"title": "Min height of the card content",
+		"description": "Examples of cards with no height provided (default value) or with specified height",
+		"route": "minHeight",
+		"group": "Other Card Examples"
+	},
+	{
 	  "title": "TimelineContent Card",
 	  "description": "Example  POC TimelineContent",
 	  "route": "timelineContent",

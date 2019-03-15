@@ -186,6 +186,16 @@
 		  "pattern": "delayedLoading",
 		  "name": "delayedLoading",
 		  "target": "delayedLoading"
+		},
+		{
+		  "pattern": "noHeaderNoContent",
+		  "name": "noHeaderNoContent",
+		  "target": "noHeaderNoContent"
+		},
+		{
+		  "pattern": "minHeight",
+		  "name": "minHeight",
+		  "target": "minHeight"
 		}
 	  ],
 	  "targets": {
@@ -308,8 +318,18 @@
 		  "viewId": "dnd2",
 		  "viewName": "Dnd2",
 		  "viewLevel": 1
+		},
+		"noHeaderNoContent": {
+		  "viewId": "noHeaderNoContent",
+		  "viewName": "noHeaderNoContent",
+		  "viewLevel": 1
+		},
+		"minHeight": {
+		  "viewId": "minHeight",
+		  "viewName": "minHeight",
+		  "viewLevel": 1
 		}
-	  }
+		}
 	}
   }
 }
