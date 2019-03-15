@@ -11,7 +11,7 @@ sap.ui.define([
 	createAndAppendDiv('content');
 
 	QUnit.module("Canonical Paths", {
-		before: function () {
+		before: function (assert) {
 			var that = this;
 
 			this.sServiceUri = "/SalesOrderSrv/";
@@ -99,11 +99,22 @@ sap.ui.define([
 										Object.assign({ target: "('0500000001')/ToLineItems(SalesOrderID='0500000001',ItemPosition='0000000010')/ToProduct/Adress/ZIP" }, oMsgTemplate)
 									]
 								};
+							} else if (oXhr.url.indexOf("ContactSet") >= 0) {
+								if (!assert.test.testEnvironment.successfulCreate){
+									status = 400;
+									content = JSON.stringify({
+										error:{
+											code: "MESSAGE/CODE",
+											message: "Operation failed",
+											severity: "error"
+											}
+									});
+								}
 							}
 							if (oMessages) {
 								headers["sap-message"] = JSON.stringify(oMessages);
 							}
-							oXhr._fnOrignalXHRRespond.apply(this, arguments);
+							oXhr._fnOrignalXHRRespond.apply(this, [status, headers, content]);
 						};
 					};
 				}
@@ -232,5 +243,42 @@ sap.ui.define([
 			oInput.getBinding("value").attachEvent("AggregatedDataStateChange", fnChangeHandler);
 		});
 	});
+
+	QUnit.test("ODataMessageParser._getAffectedTargets - Correct cleanup of newly created entries", function(assert){
+		var done = assert.async();
+		var oTest = this;
+		var oModel = new ODataModel(this.sServiceUri);
+
+		var oCreateEntryProduct = {
+			properties: {
+				"FirstName":"My Name"
+			}
+		};
+
+        oModel.metadataLoaded().then(function(){
+
+			var oMessageModel = sap.ui.getCore().getMessageManager().getMessageModel();
+
+            var fnRequestCompleted = function(){
+				oModel.detachRequestCompleted(fnRequestCompleted);
+
+				assert.equal(oMessageModel.oData.length, 1, "One message with UID has been created.");
+				assert.equal(oMessageModel.oData[0].target.indexOf("/ContactSet('id"), 0, "Message contains UID.");
+
+				var fnRequestCompleted2 = function(){
+					oModel.detachRequestCompleted(fnRequestCompleted2);
+					assert.equal(oMessageModel.oData.length, 0, "Message with UID has been deleted.");
+					done();
+				};
+
+				oModel.attachRequestCompleted(fnRequestCompleted2);
+				oTest.successfulCreate = true;
+				oModel.submitChanges();
+            };
+			oModel.attachRequestCompleted(fnRequestCompleted);
+			oModel.createEntry("/ContactSet", oCreateEntryProduct);
+			oModel.submitChanges();
+        });
+    });
 
 });

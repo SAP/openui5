@@ -201,13 +201,17 @@ ODataMessageParser.prototype._isNavigationProperty = function(sParentEntity, sPr
  * @param {map} mChangeEntities - A map containing the entities changed on the back-end as keys
  * @returns {map} A map of affected targets where every affected target
  */
-ODataMessageParser.prototype._getAffectedTargets = function(aMessages, sRequestUri, mGetEntities, mChangeEntities) {
+ODataMessageParser.prototype._getAffectedTargets = function(aMessages, mRequestInfo, mGetEntities, mChangeEntities) {
 	var mAffectedTargets = jQuery.extend({
 		"": true // Allow global messages by default
 	}, mGetEntities, mChangeEntities);
 
+	if (mRequestInfo.request && mRequestInfo.request.key && mRequestInfo.request.created){
+		mAffectedTargets[mRequestInfo.request.key] = true;
+	}
+
 	// Get EntitySet for Requested resource
-	var sRequestTarget = this._parseUrl(sRequestUri).url;
+	var sRequestTarget = this._parseUrl(mRequestInfo.url).url;
 	if (sRequestTarget.indexOf(this._serviceUrl) === 0) {
 		// This is an absolute URL, remove the service part at the front
 		sRequestTarget = sRequestTarget.substr(this._serviceUrl.length + 1);
@@ -270,7 +274,7 @@ ODataMessageParser.prototype._getAffectedTargets = function(aMessages, sRequestU
 ODataMessageParser.prototype._propagateMessages = function(aMessages, mRequestInfo, mGetEntities, mChangeEntities) {
 	var i, sTarget;
 
-	var mAffectedTargets = this._getAffectedTargets(aMessages, mRequestInfo.url, mGetEntities, mChangeEntities);
+	var mAffectedTargets = this._getAffectedTargets(aMessages, mRequestInfo, mGetEntities, mChangeEntities);
 
 	var aRemovedMessages = [];
 	var aKeptMessages = [];
