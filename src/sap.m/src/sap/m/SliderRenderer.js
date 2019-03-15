@@ -2,8 +2,8 @@
  * ${copyright}
  */
 
-sap.ui.define(['./SliderUtilities'],
-	function(SliderUtilities) {
+sap.ui.define(['./SliderUtilities', "sap/ui/core/InvisibleText"],
+	function(SliderUtilities, InvisibleText) {
 		"use strict";
 
 		/**
@@ -121,6 +121,7 @@ sap.ui.define(['./SliderUtilities'],
 
 			if (oSlider.getInputsAsTooltips() && oFirstTooltip) {
 				oRm.writeAttribute("aria-controls", oFirstTooltip.getId());
+				oRm.writeAttribute("aria-describedby", InvisibleText.getStaticId("sap.m", "SLIDER_INPUT_TOOLTIP"));
 			}
 
 			this.addHandleClass(oRm, oSlider);

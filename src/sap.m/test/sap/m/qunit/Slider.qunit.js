@@ -13,7 +13,8 @@ sap.ui.define([
 	"sap/ui/core/Element",
 	"sap/m/SliderTooltipBase",
 	"sap/m/SliderTooltipBaseRenderer",
-	"sap/ui/events/KeyCodes"
+	"sap/ui/events/KeyCodes",
+	"sap/ui/core/InvisibleText"
 ], function(
 	qutils,
 	createAndAppendDiv,
@@ -27,7 +28,8 @@ sap.ui.define([
 	Element,
 	SliderTooltipBase,
 	SliderTooltipBaseRenderer,
-	KeyCodes
+	KeyCodes,
+	InvisibleText
 ) {
 	createAndAppendDiv("content");
 	var styleElement = document.createElement("style");
@@ -2197,6 +2199,29 @@ sap.ui.define([
 	});
 
 	QUnit.module("Accessibility");
+
+	QUnit.test("Slider with inputs as tooltip should add an aria-describedby", function(assert) {
+		var sInvisibleTextId,
+			oSlider = new Slider({
+				step: 1,
+				min: 0,
+				max: 2,
+				showAdvancedTooltip: true,
+				inputsAsTooltips: true
+			});
+
+		// arrange
+		oSlider.placeAt("content");
+		sap.ui.getCore().applyChanges();
+
+		sInvisibleTextId = oSlider.getDomRef("handle").getAttribute("aria-describedby");
+
+		// assert
+		assert.strictEqual(sap.ui.getCore().byId(sInvisibleTextId).getText(), sap.ui.getCore().getLibraryResourceBundle("sap.m").getText("SLIDER_INPUT_TOOLTIP"));
+
+		// cleanup
+		oSlider.destroy();
+	});
 
 	QUnit.test("Slider with custom scale should change handle title html attribute accordingly", function(assert) {
 		var oSlider,

@@ -1246,6 +1246,31 @@ sap.ui.define([
 
 	QUnit.module("Accessibility");
 
+	QUnit.test("RangeSlider with inputs as tooltip should add an aria-describedby", function(assert) {
+		var sFirstHandleAriaId,
+			sSecondHandleAriaId,
+			sResourceBundleText = sap.ui.getCore().getLibraryResourceBundle("sap.m").getText("SLIDER_INPUT_TOOLTIP"),
+			oSlider = new RangeSlider({
+				showAdvancedTooltip: true,
+				inputsAsTooltips: true
+			});
+
+		// arrange
+		oSlider.placeAt(DOM_RENDER_LOCATION);
+		sap.ui.getCore().applyChanges();
+
+		sFirstHandleAriaId = oSlider.getDomRef("handle1").getAttribute("aria-describedby");
+		sSecondHandleAriaId = oSlider.getDomRef("handle2").getAttribute("aria-describedby");
+
+		// assert
+		assert.strictEqual(sFirstHandleAriaId, sSecondHandleAriaId, "aria-describedby attributes should point to the same element");
+		assert.strictEqual(sap.ui.getCore().byId(sFirstHandleAriaId).getText(), sResourceBundleText);
+		assert.strictEqual(sap.ui.getCore().byId(sSecondHandleAriaId).getText(), sResourceBundleText);
+
+		// cleanup
+		oSlider.destroy();
+	});
+
 	QUnit.test("RangeSlider with custom scale should change handle title html attribute accordingly", function(assert) {
 		var clock = sinon.useFakeTimers(),
 			oSlider,

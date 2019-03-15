@@ -2,7 +2,7 @@
  * ${copyright}
  */
 
-sap.ui.define(["sap/ui/core/Renderer", "./SliderRenderer"], function (Renderer, SliderRenderer) {
+sap.ui.define(["sap/ui/core/Renderer", "./SliderRenderer", "sap/ui/core/InvisibleText"], function (Renderer, SliderRenderer, InvisibleText) {
     "use strict";
 
     /**
@@ -56,6 +56,7 @@ sap.ui.define(["sap/ui/core/Renderer", "./SliderRenderer"], function (Renderer, 
 
             if (oControl.getInputsAsTooltips() && oHandleTooltip) {
                 oRM.writeAttribute("aria-controls", oHandleTooltip.getId());
+                oRM.writeAttribute("aria-describedby", InvisibleText.getStaticId("sap.m", "SLIDER_INPUT_TOOLTIP"));
             }
         }
         if (oControl.getShowHandleTooltip() && !oControl.getShowAdvancedTooltip()) {
