@@ -405,7 +405,9 @@ sap.ui.define([
 	QUnit.test("Header is rendered", function (assert) {
 		this.oButton.firePress();
 		this.clock.tick(500);
+
 		assert.strictEqual(jQuery(".sapMQuickViewPageWithoutHeader").length, 0, "QuickView has Header");
+		assert.strictEqual(this.oQuickView._oPopover.$().attr("aria-describedby"), this.oQuickView._oNavContainer.getCurrentPage().getCustomHeader().getId(), "aria-describedby is correctly set");
 	});
 
 	QUnit.test("Clicking on a button to open a QuickView", function (assert) {

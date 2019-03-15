@@ -260,6 +260,14 @@ sap.ui.define([
 			this._clearContainerHeight();
 			this._initPages();
 
+			var oPage = this._oNavContainer.getCurrentPage();
+			if (oPage) {
+				var oHeader = oPage.getCustomHeader();
+				if (oHeader) {
+					this._oPopover.addAriaDescribedBy(oHeader.getId());
+				}
+			}
+
 			// add a close button on phone devices when there are no pages
 			var aPages = this.getAggregation("pages");
 			if (!aPages && Device.system.phone) {
