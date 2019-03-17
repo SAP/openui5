@@ -83,7 +83,7 @@ sap.ui.define([
 		}
 	});
 
-	sap.ui.table.TableHelper = {
+	var oTableHelper = sap.ui.table.TableHelper = {
 		createLabel: function(mConfig) {
 			return new TestControl(mConfig);
 		},
@@ -438,6 +438,10 @@ sap.ui.define([
 			return oTable.getDomRef("selall");
 		};
 	}
+
+	TableQUnitUtils.setDummyTableHelper = function() {
+		sap.ui.table.TableHelper = oTableHelper;
+	};
 
 	TableQUnitUtils.getTestControl = function() {
 		return TestControl;
