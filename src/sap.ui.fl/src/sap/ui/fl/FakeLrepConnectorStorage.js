@@ -41,6 +41,7 @@ sap.ui.define([
 				"isAtoAvailable": false,
 				"isProductiveSystem": false
 			}, mSettings);
+			this._iChangeCounter = 0;
 		}
 
 		Object.assign(FakeLrepConnectorStorage.prototype, FakeLrepConnector.prototype);
@@ -67,8 +68,13 @@ sap.ui.define([
 		};
 
 		FakeLrepConnectorStorage.prototype._saveChange = function(mChangeDefinition) {
+			var nCreationTimestamp;
 			if (!mChangeDefinition.creation){
-				mChangeDefinition.creation = new Date().toISOString();
+				// safari browser uses only 1 ms intervals to create a timestamp. This
+				// generates creation timestamp duplicates. But creation timestamp is
+				// used to define the order of the changes and needs to be unique
+				nCreationTimestamp =  Date.now() + this._iChangeCounter++;
+				mChangeDefinition.creation = new Date(nCreationTimestamp).toISOString();
 			}
 			oFakeLrepStorage.saveChange(mChangeDefinition.fileName, mChangeDefinition);
 			return mChangeDefinition;
