@@ -323,6 +323,8 @@ sap.ui.define([
 					sPredicate;
 
 				_Helper.deletePrivateAnnotation(oEntityData, "transient");
+				oEntityData["@$ui5.context.isTransient"] = false;
+
 				// now the server has one more element
 				addToCount(that.mChangeListeners, sPath, aCollection, 1);
 				_Helper.removeByPath(that.mPostRequests, sPath, oEntityData);
@@ -362,6 +364,7 @@ sap.ui.define([
 		// remove any property starting with "@$ui5."
 		oEntityData = _Requestor.cleanPayload(oEntityData);
 		_Helper.setPrivateAnnotation(oEntityData, "transientPredicate", sTransientPredicate);
+		oEntityData["@$ui5.context.isTransient"] = true;
 
 		aCollection = this.fetchValue(_GroupLock.$cached, sPath).getResult();
 		if (!Array.isArray(aCollection)) {
@@ -495,8 +498,8 @@ sap.ui.define([
 				} else {
 					vValue = vValue[Cache.from$skip(sSegment, vValue)];
 				}
-				// missing advertisement is not an error
-				return vValue === undefined && sSegment[0] !== "#"
+				// missing advertisement or annotation is not an error
+				return vValue === undefined && sSegment[0] !== "#" &&  sSegment[0] !== "@"
 					? missingValue(oParentValue, sSegment, i + 1)
 					: vValue;
 			});
@@ -1654,6 +1657,7 @@ sap.ui.define([
 		this.aElements[iIndex] = this.aElements.$byPredicate[sPredicate] = oElement;
 		sTransientPredicate = _Helper.getPrivateAnnotation(oOldElement, "transientPredicate");
 		if (sTransientPredicate) {
+			oElement["@$ui5.context.isTransient"] = false;
 			that.aElements.$byPredicate[sTransientPredicate] = oElement;
 			_Helper.setPrivateAnnotation(oElement, "transientPredicate", sTransientPredicate);
 		}
