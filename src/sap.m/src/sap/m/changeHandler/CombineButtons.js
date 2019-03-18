@@ -27,10 +27,10 @@ sap.ui.define([
 	/**
 	 * Combines sap.m.Button(s) into a sap.m.MenuButton
 	 *
-	 * @param {sap.ui.fl.Change} oChange Change wrapper object with instructions to be applied on the control map
-	 * @param {sap.m.Bar} oControl Containing the buttons
-	 * @param {object} mPropertyBag Map of properties
-	 * @param {object} mPropertyBag.modifier Modifier for the controls
+	 * @param {sap.ui.fl.Change} oChange - Change wrapper object with instructions to be applied on the control map
+	 * @param {sap.m.Bar} oControl - Control containing the buttons
+	 * @param {object} mPropertyBag - Map of properties
+	 * @param {object} mPropertyBag.modifier - Modifier for the controls
 	 * @return {boolean} true if change could be applied
 	 *
 	 * @public
@@ -54,7 +54,6 @@ sap.ui.define([
 		var oMenuButton;
 		var aMenuButtonName = [];
 		var oRevertData = {
-			menuButtonId: "",
 			parentAggregation: "",
 			insertIndex: 0
 		};
@@ -150,7 +149,6 @@ sap.ui.define([
 		});
 
 		oMenuButton = oModifier.createControl("sap.m.MenuButton", oAppComponent, oView, oChangeDefinition.content.menuButtonIdSelector);
-		oRevertData.menuButtonId = oModifier.getId(oMenuButton);
 
 		oModifier.setProperty(oMenuButton, "text", aMenuButtonName.join("/"));
 		oModifier.insertAggregation(oMenuButton, "menu", oMenu, 0);
@@ -163,21 +161,22 @@ sap.ui.define([
 	/**
 	 * Reverts applied change
 	 *
-	 * @param {sap.ui.fl.Change} oChange change wrapper object with instructions to be applied on the control map
-	 * @param {sap.m.IBar} oControl Bar - Bar that matches the change selector for applying the change
+	 * @param {sap.ui.fl.Change} oChange - Change wrapper object with instructions to be applied on the control map
+	 * @param {sap.m.IBar} oControl - Bar that matches the change selector for applying the change
 	 * @param {object} mPropertyBag - Property bag containing the modifier and the view
-	 * @param {object} mPropertyBag.modifier - modifier for the controls
-	 * @param {object} mPropertyBag.view - application view
-	 * @return {boolean} True if successful
+	 * @param {object} mPropertyBag.modifier - Modifier for the controls
+	 * @param {object} mPropertyBag.view - Application view
+	 * @return {boolean} true if successful
 	 * @public
 	 */
 	CombineButtons.revertChange = function(oChange, oControl, mPropertyBag) {
 		var oModifier = mPropertyBag.modifier;
+		var oView = FlexUtils.getViewForControl(oControl);
 		var oRevertData = oChange.getRevertData();
 		var oChangeDefinition = oChange.getDefinition();
 		var sParentAggregation = oRevertData.parentAggregation;
 		var iAggregationIndex = oRevertData.insertIndex;
-		var oMenuButton = oModifier.bySelector(oRevertData.menuButtonId, mPropertyBag.appComponent);
+		var oMenuButton = oModifier.bySelector(oChangeDefinition.content.menuButtonIdSelector, mPropertyBag.appComponent, oView);
 		var oParent = oModifier.getParent(oMenuButton);
 		var aButtonsIds = oChangeDefinition.content.combineButtonSelectors;
 		var oButton;
@@ -218,12 +217,11 @@ sap.ui.define([
 	/**
 	 * Completes the change by adding change handler specific content
 	 *
-	 * @param {sap.ui.fl.Change} oChange Change wrapper object to be completed
-	 * @param {object} oSpecificChangeInfo Specific info object
-	 * @param {object} oSpecificChangeInfo.combineElementIds Ids of selected buttons
-	 *                                                     to be combined
-	 * @param {object} mPropertyBag Map of properties
-	 * @param {object} mPropertyBag.modifier Modifier for the controls
+	 * @param {sap.ui.fl.Change} oChange - Change wrapper object to be completed
+	 * @param {object} oSpecificChangeInfo - Specific info object
+	 * @param {object} oSpecificChangeInfo.combineElementIds - IDs of selected buttons to be combined
+	 * @param {object} mPropertyBag - Map of properties
+	 * @param {object} mPropertyBag.modifier - Modifier for the controls
 	 *
 	 * @public
 	 */
@@ -264,10 +262,10 @@ sap.ui.define([
 	/**
 	 * Callback function which is attached via modifier in applyChange
 	 *
-	 * @param {sap.ui.base.Event} oEvent Event object
-	 * @param {object} mSelector Selector object
-	 * @param {string} mSelector.id ID used for determination of the flexibility target
-	 * @param {boolean} mSelector.idIsLocal flag if the selector.id has to be concatenated with the application component ID
+	 * @param {sap.ui.base.Event} oEvent - Event object
+	 * @param {object} mSelector - Selector object
+	 * @param {string} mSelector.id - ID used for determination of the flexibility target
+	 * @param {boolean} mSelector.idIsLocal - Flag if the selector.id has to be concatenated with the application component ID
 	 * while applying the change.
 	 */
 	CombineButtons.pressHandler = function (oEvent, mSelector) {
