@@ -282,7 +282,9 @@ sap.ui.define([
 	UploadSetItem.prototype.setEnabledRemove = function (bEnable) {
 		if (this.getEnabledRemove() !== bEnable) {
 			this.setProperty("enabledRemove", bEnable, true);
-			this._getDeleteButton().setEnabled(bEnable);
+			if (this.getParent()) {
+				this._getDeleteButton().setEnabled(bEnable);
+			}
 		}
 		return this;
 	};
@@ -290,7 +292,9 @@ sap.ui.define([
 	UploadSetItem.prototype.setVisibleRemove = function (bVisible) {
 		if (this.getVisibleRemove() !== bVisible) {
 			this.setProperty("visibleRemove", bVisible, true);
-			this._getDeleteButton().setVisible(bVisible);
+			if (this.getParent()) {
+				this._getDeleteButton().setVisible(bVisible);
+			}
 		}
 		return this;
 	};
@@ -298,7 +302,9 @@ sap.ui.define([
 	UploadSetItem.prototype.setEnabledEdit = function (bEnable) {
 		if (this.getEnabledEdit() !== bEnable) {
 			this.setProperty("enabledEdit", bEnable, true);
-			this._getEditButton().setEnabled(bEnable);
+			if (this.getParent()) {
+				this._getEditButton().setEnabled(bEnable);
+			}
 		}
 		return this;
 	};
@@ -306,7 +312,9 @@ sap.ui.define([
 	UploadSetItem.prototype.setVisibleEdit = function (bVisible) {
 		if (this.getVisibleEdit() !== bVisible) {
 			this.setProperty("visibleEdit", bVisible, true);
-			this._getEditButton().setVisible(bVisible);
+			if (this.getParent()) {
+				this._getEditButton().setVisible(bVisible);
+			}
 		}
 		return this;
 	};

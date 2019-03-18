@@ -5,16 +5,19 @@ sap.ui.define([
 	"sap/m/upload/UploadSet",
 	"sap/m/upload/UploadSetItem",
 	"sap/m/upload/UploadSetRenderer",
+	"sap/m/UploadState",
 	"sap/m/Toolbar",
 	"sap/m/Label",
 	"sap/m/ListItemBaseRenderer",
 	"sap/m/Dialog",
 	"sap/ui/Device",
+	"sap/m/ListSeparators",
+	"sap/m/ListMode",
 	"sap/m/MessageBox",
 	"sap/ui/model/json/JSONModel",
 	"test-resources/sap/m/qunit/upload/UploadSetTestUtils"
-], function (jQuery, KeyCodes, UploadSet, UploadSetItem, UploadSetRenderer, Toolbar, Label, ListItemBaseRenderer,
-			 Dialog, Device, MessageBox, JSONModel, TestUtils) {
+], function (jQuery, KeyCodes, UploadSet, UploadSetItem, UploadSetRenderer, UploadState, Toolbar, Label, ListItemBaseRenderer,
+			 Dialog, Device, ListSeparators, ListMode, MessageBox, JSONModel, TestUtils) {
 	"use strict";
 
 	function getData() {
@@ -210,5 +213,24 @@ sap.ui.define([
 		fnAssertLazy(oItem._getProgressIndicator(), "progress indicator");
 		fnAssertLazy(oItem._getStateLabel(), "state label");
 		fnAssertLazy(oItem._getProgressLabel(), "progress label");
+	});
+
+	QUnit.test("Pre-parent manipulation of Edit/Remove button flags doesn't crash the control.", function (assert) {
+		assert.expect(5);
+
+		var oItem = new UploadSetItem({
+			fileName: "fileName.txt",
+			enabledRemove: false,
+			visibleRemove: false,
+			enabledEdit: false,
+			visibleEdit: false
+		});
+		assert.ok(true, "Control manipulation shouldn't have crashed so far.");
+
+		this.oUploadSet.insertItem(oItem);
+		assert.notOk(oItem._getDeleteButton().getVisible(), "Delete button should be invisible after parent is set.");
+		assert.notOk(oItem._getDeleteButton().getEnabled(), "Delete button should be disabled after parent is set.");
+		assert.notOk(oItem._getEditButton().getVisible(), "Edit button should be invisible after parent is set.");
+		assert.notOk(oItem._getEditButton().getEnabled(), "Edit button should be disabled after parent is set.");
 	});
 });
