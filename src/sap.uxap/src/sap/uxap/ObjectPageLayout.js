@@ -3000,6 +3000,14 @@ sap.ui.define([
 			this._$stickyAnchorBar.attr("aria-hidden", !bStuck);
 		}
 		this.fireToggleAnchorBar({fixed: bStuck});
+		if (!bStuck && !this.iAnchorBarHeight) {
+			// We expand => ensure we recalculate heights to remove any extra spacer height
+			// that was needed in the snapped mode only
+			// (Note: we need this call only if no <code>this.iAnchorBarHeight</code>
+			// because if <code>this.iAnchorBarHeight</code> then <code>_requestAdjustLayout</code>
+			// will be called anyway from the resize content listener)
+			this._requestAdjustLayout();
+		}
 	};
 
 	// use type 'object' because Metamodel doesn't know ScrollEnablement

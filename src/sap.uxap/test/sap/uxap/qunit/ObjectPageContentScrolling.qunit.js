@@ -506,6 +506,45 @@ function(jQuery, Core, ObjectPageSubSection, ObjectPageSection, ObjectPageLayout
 		Core.applyChanges();
 	});
 
+	QUnit.test("no scrollbar on unsnap if not needed", function (assert) {
+		var oObjectPageLayout = helpers.generateObjectPageWithContent(oFactory, 1 /* single section */),
+			oRequestAdjustLayoutSpy = sinon.spy(oObjectPageLayout, "_requestAdjustLayout"),
+			done = assert.async();
+
+		oObjectPageLayout.setHeaderTitle(oFactory.getDynamicPageTitle());
+		oObjectPageLayout.addHeaderContent(new sap.m.Panel({height: "100px"}));
+
+		function hasScrollbar() {
+			var oScrollContainer = oObjectPageLayout._$opWrapper.get(0);
+			return oScrollContainer.scrollHeight > oScrollContainer.offsetHeight;
+		}
+
+		oObjectPageLayout.attachEventOnce("onAfterRenderingDOMReady", function() {
+
+			// Setup: snap the header to cause scrollbar to appear
+			// (as ObjectPage snaps by scrolling the header out of view)
+			oObjectPageLayout._snapHeader(true);
+			assert.strictEqual(hasScrollbar(), true, "has scrollbar");
+			oRequestAdjustLayoutSpy.reset();
+
+			// Act: unsnap the snapped header
+			oObjectPageLayout._expandHeader(false);
+
+			// Check
+			assert.strictEqual(oRequestAdjustLayoutSpy.called, true, "layout recalculation called");
+			// call explicitly *with no delay* to save timeout in this test
+			oObjectPageLayout._requestAdjustLayout(true);
+			assert.strictEqual(hasScrollbar(), false, "no more scrollbar");
+
+			oObjectPageLayout.destroy();
+			done();
+		});
+
+		// arrange
+		oObjectPageLayout.placeAt('qunit-fixture');
+		Core.applyChanges();
+	});
+
 	QUnit.module("ObjectPage On Title Press when Header height bigger than page height", {
 		beforeEach: function () {
 			this.oObjectPage = helpers.generateObjectPageWithDynamicBigHeaderContent();
