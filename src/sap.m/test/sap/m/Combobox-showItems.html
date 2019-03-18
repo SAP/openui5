@@ -53,7 +53,7 @@
 											<Input
 													id="input1"
 													showSuggestion="true"
-													suggestionItems="{/ProductCollection}">
+													suggestionItems="{/}">
 												<suggestionItems>
 													<core:Item text="{Name}" key="{ProductId}"/>
 												</suggestionItems>
@@ -69,7 +69,7 @@
 											<Input
 													id="input2"
 													showSuggestion="true"
-													suggestionRows="{/ProductCollection}">
+													suggestionRows="{/}">
 												<suggestionColumns>
 													<Column>
 														<header>
@@ -100,7 +100,7 @@
 											<Button id="btnComboBox1Filter" text="showItems(fnFilter)" press="handleOpen"/>
 											<ComboBox
 													id="combo1"
-													items="{/ProductCollection}">
+													items="{/}">
 												<items>
 													<core:Item text="{Name}" key="{ProductId}"/>
 												</items>
@@ -115,7 +115,7 @@
 											<ComboBox
 													id="combo2"
 													items="{
-																path: '/ProductCollection',
+																path: '/',
 																suspended: true
 															}">
 												<items>
@@ -132,7 +132,7 @@
 											<ComboBox
 													id="combo3"
 													items="{
-																path: '/ProductCollection',
+																path: '/',
 																sorter: {
 																	path: 'SupplierName',
 																	descending: true,
@@ -153,7 +153,7 @@
 													press="handleOpen"/>
 											<MultiComboBox
 													id="multiComboBox1"
-													items="{/ProductCollection}">
+													items="{/}">
 												<items>
 													<core:Item text="{Name}" key="{ProductId}"/>
 												</items>
@@ -169,7 +169,7 @@
 											<MultiComboBox
 													id="multiComboBox2"
 													items="{
-																path: '/ProductCollection',
+																path: '/',
 																sorter: {
 																	path: 'SupplierName',
 																	descending: true,
@@ -189,7 +189,7 @@
 											<ComboBox
 													id="combo4"
 													items="{
-																path: '/ProductCollection',
+																path: '/',
 																sorter: {
 																	path: 'SupplierName',
 																	descending: true,
@@ -209,7 +209,7 @@
 											<MultiComboBox
 													id="multiComboBox3"
 													items="{
-																path: '/ProductCollection',
+																path: '/',
 																sorter: {
 																	path: 'SupplierName',
 																	descending: true,
@@ -261,7 +261,7 @@
 					},
 
 					onInit: function () {
-						var oModel = new JSONModel("../ui/demokit/explored/products.json");
+						var oModel = new JSONModel("../ui/documentation/sdk/mockserver/ProductCollection.json");
 
 						this.getView().setModel(oModel);
 					},
@@ -318,7 +318,7 @@
 						}
 					},
 					_filterItemsByGroup: function (sValue, oItem) {
-						var aData = this.getView().getModel().getProperty('/ProductCollection'),
+						var aData = this.getView().getModel().getData(),
 								sItemText = oItem.getText();
 
 						return aData && !!aData.filter(function (oData) {
