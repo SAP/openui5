@@ -2,17 +2,11 @@
  * ${copyright}
  */
 sap.ui.define(["sap/f/cards/BaseContent",
-		'sap/ui/model/json/JSONModel',
-		'sap/f/cards/Data',
-		"sap/base/Log",
 		"sap/suite/ui/commons/Timeline",
 		"sap/suite/ui/commons/library",
 		"sap/suite/ui/commons/TimelineItem",
 		'sap/ui/base/ManagedObject'],
 	function (BaseContent,
-			  JSONModel,
-			  Data,
-			  Log,
 			  Timeline,
 			  suiteLibrary,
 			  TimelineItem,

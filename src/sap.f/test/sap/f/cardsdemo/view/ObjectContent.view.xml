@@ -17,6 +17,7 @@
         <content>
 
             <Panel>
+                <w:Card manifest="./cardcontent/objectcontent/datahandling_manifest.json" width="auto" height="auto" class="sapUiTinyMargin"/>
                 <w:Card manifest="./cardcontent/objectcontent/manifest.json" width="auto" height="auto" class="sapUiTinyMargin"/>
                 <w:Card manifest="./cardcontent/objectcontent/manifest.json" width="400px" height="auto" class="sapUiTinyMargin"/>
                 <w:Card manifest="./cardcontent/objectcontent/manifest.json" width="400px" height="275px" class="sapUiTinyMargin"/>
