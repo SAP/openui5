@@ -1,0 +1,13 @@
+{
+  "1.65.0": {
+    "date": "March 2019",
+    "notes": [
+      {
+        "id": "9ca98a79f812f7e4a0bbd02d18321aa48977f1a0",
+        "type": "FIX",
+        "text": " sap.uxap.AnchorBar: setSelectedButton behavior corrected",
+        "references": []
+      }
+    ]
+  }
+}

@@ -1,0 +1,61 @@
+{
+  "1.65.0": {
+    "date": "March 2019",
+    "notes": [
+      {
+        "id": "83c432da50bddbebd6c3623590eb4692a4a73507",
+        "type": "FIX",
+        "text": " sap.m.ComboBox: Double focus with grouping",
+        "references": []
+      },
+      {
+        "id": "d02bc76dbb9e0a10666813cd22128794603d8e74",
+        "type": "FIX",
+        "text": " sap.m.Input: Adding items before allowing suggestions no longer fails",
+        "references": []
+      },
+      {
+        "id": "6e0e4c2e4f4e98b3bf3afe7a40d2a57dfcc374f6",
+        "type": "FIX",
+        "text": " sap.m.Input: Changing selection now stops if input is destroyed",
+        "references": []
+      },
+      {
+        "id": "0dc8c55286734d270b1cd158738f805e7650a207",
+        "type": "FIX",
+        "text": " sap.m.Input: maxSuggestionWidth now works properly",
+        "references": []
+      },
+      {
+        "id": "84f71668ba8df3a4d614a2523b4c6baff193b151",
+        "type": "FIX",
+        "text": " sap.m.MultiInput: Read-only popover remains open, when focus is inside",
+        "references": []
+      },
+      {
+        "id": "42ca2dea40ba3a654217ab94ad446f4784add859",
+        "type": "FIX",
+        "text": " sap.m.NotificationListGroup: Show more button is now read out correctly",
+        "references": []
+      },
+      {
+        "id": "03b19eda8b3afca70dc658f2d5a1e1c5536439ae",
+        "type": "FIX",
+        "text": " sap.m.SinglePlanningCalendar: overlaping of the all day appointments",
+        "references": []
+      },
+      {
+        "id": "6c54af607ae5879ac6009f61a7b36f7dd14b88a9",
+        "type": "FIX",
+        "text": " sap.m.Slider, sap.m.RangeSlider: Information about input tooltips added",
+        "references": []
+      },
+      {
+        "id": "dfc19b8292bf42b92ceb3f6f85a94fabc6d18ebd",
+        "type": "FIX",
+        "text": " sap.m.SplitContainer: Aggregation methods now return copy of the data",
+        "references": []
+      }
+    ]
+  }
+}

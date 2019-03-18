@@ -1,0 +1,25 @@
+{
+  "1.65.0": {
+    "date": "March 2019",
+    "notes": [
+      {
+        "id": "8730536b234cd87755030c45d8d1cd28a34a7b9d",
+        "type": "FIX",
+        "text": " ODataMessageParser: Affected message target calculation",
+        "references": []
+      },
+      {
+        "id": "d9049256fc824a376639a1aff30f088ed2d933a5",
+        "type": "FIX",
+        "text": " StaticBinding: Do not recreate static binding when models change",
+        "references": []
+      },
+      {
+        "id": "fede4d3e3e4f31599763d12ce8dda678931114fe",
+        "type": "FIX",
+        "text": " UIComponent: Only activate processing mode for XMLViews",
+        "references": []
+      }
+    ]
+  }
+}
