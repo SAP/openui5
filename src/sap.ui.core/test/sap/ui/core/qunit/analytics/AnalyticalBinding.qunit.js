@@ -264,6 +264,10 @@ sap.ui.require([
 			+ "P_CostCenterTo='999-9999')/Results",
 		sPathHierarchy = "/TypeWithHierarchiesResults";
 
+	/*
+	 * If <code>iVersion !== 1 && !fnODataV2Callback</code>, a <code>Promise</code> is returned that
+	 * resolves with the new binding as soon as metadata has been loaded.
+	 */
 	function setupAnalyticalBinding(iVersion, mParameters, fnODataV2Callback, aAnalyticalInfo,
 			sBindingPath, bSkipInitialize, aSorters, aFilters) {
 		var oBinding,
@@ -311,12 +315,19 @@ sap.ui.require([
 			return {
 				binding : oBinding,
 				model : oModel};
-		} else {
+		} else if (fnODataV2Callback) {
 			oModel.attachMetadataLoaded(function () {
 				if (!bSkipInitialize) {
 					oBinding.initialize();
 				}
 				fnODataV2Callback(oBinding, oModel);
+			});
+		} else {
+			return oModel.metadataLoaded().then(function () {
+				if (!bSkipInitialize) {
+					oBinding.initialize();
+				}
+				return oBinding;
 			});
 		}
 	}
@@ -1971,8 +1982,7 @@ sap.ui.require([
 
 	//*********************************************************************************************
 	QUnit.test("updateAnalyticalInfo: only formatters changed", function (assert) {
-		var done = assert.async(),
-			aInitialColumns = [{
+		var aInitialColumns = [{
 				formatter : "formatter0",
 				grouped : "grouped0",
 				inResult : "inResult0",
@@ -1996,10 +2006,12 @@ sap.ui.require([
 			}],
 			that = this;
 
-		setupAnalyticalBinding(2, {}, function (oBinding) {
+		return setupAnalyticalBinding(2, {}, /*fnODataV2Callback*/null, aInitialColumns)
+		.then(function (oBinding) {
 			var mAnalyticalInfoByProperty
 					= jQuery.extend(true, {}, oBinding.mAnalyticalInfoByProperty),
 				iAnalyticalInfoVersionNumber = oBinding.iAnalyticalInfoVersionNumber,
+				fnDeepEqualExpectation,
 				aInitialColumnsAfterUpdate = [{
 					formatter : null,
 					grouped : "grouped0",
@@ -2016,15 +2028,16 @@ sap.ui.require([
 					name : "name1",
 					total : "total1",
 					visible : "visible1"
-				}];
+				}],
+				fnResolve;
 
 			assert.strictEqual(oBinding.isInitial(), false);
 			assert.deepEqual(oBinding._aLastChangedAnalyticalInfo, aInitialColumns);
 			oBinding.attachChange(function (oEvent) {
 				assert.strictEqual(oEvent.getParameter("reason"), ChangeReason.Change);
-				done();
+				fnResolve();
 			});
-			that.mock(odata4analytics.helper).expects("deepEqual")
+			fnDeepEqualExpectation = that.mock(odata4analytics.helper).expects("deepEqual")
 				// Note: aInitialColumns has been remembered as a clone!
 				.withExactArgs(aInitialColumns, sinon.match.same(aInitialColumnsAfterUpdate),
 					sinon.match.func)
@@ -2038,18 +2051,23 @@ sap.ui.require([
 			assert.deepEqual(oBinding._aLastChangedAnalyticalInfo, aInitialColumnsAfterUpdate,
 				"columns remembered");
 			assert.deepEqual(oBinding.mAnalyticalInfoByProperty, mAnalyticalInfoByProperty,
-				"formatters updated");
+				"formatters still unchanged");
 
 			// code under test: call back fnFormatterChanged
-			odata4analytics.helper.deepEqual.args[0][2](aInitialColumnsAfterUpdate[0]);
+			fnDeepEqualExpectation.args[0][2](aInitialColumnsAfterUpdate[0]);
 
-			assert.strictEqual(mAnalyticalInfoByProperty.name0.formatter, null);
+			assert.strictEqual(oBinding.mAnalyticalInfoByProperty.name0.formatter, null);
 
 			// code under test: call back fnFormatterChanged
-			odata4analytics.helper.deepEqual.args[0][2](aInitialColumnsAfterUpdate[1]);
+			fnDeepEqualExpectation.args[0][2](aInitialColumnsAfterUpdate[1]);
 
-			assert.strictEqual(mAnalyticalInfoByProperty.name1.formatter, "formatter1 - CHANGED");
-		}, aInitialColumns);
+			assert.strictEqual(oBinding.mAnalyticalInfoByProperty.name1.formatter,
+				"formatter1 - CHANGED");
+
+			return new Promise(function (resolve) {
+				fnResolve = resolve;
+			});
+		});
 	});
 
 	//*********************************************************************************************
