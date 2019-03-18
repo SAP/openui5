@@ -10,11 +10,11 @@ describe("sap.m.FacetFilter", function() {
 	// verify facet list opens and contains the correct items
 	it("should open listUpdateModelAsync FacetFilter", function() {
 		element(by.id("listUpdateModelAsync")).click();
-		expect(takeScreenshot()).toLookAs("listUpdateModelAsync_FacetFilter");
+		_takeScreenshot("listUpdateModelAsync_FacetFilter");
 	});
 
 	it("should navigate to listUpdateModelAsync FacetFilter second page", function () {
-		element(by.css(".sapMLIB")).click();
+		element(by.css("ul > li")).click();
 		_takeScreenshot("listUpdateModelAsync_SecondPage");
 	});
 
