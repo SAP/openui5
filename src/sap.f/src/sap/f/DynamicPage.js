@@ -11,6 +11,7 @@ sap.ui.define([
 	"sap/ui/core/delegate/ScrollEnablement",
 	"sap/ui/Device",
 	"sap/f/DynamicPageTitle",
+	"sap/f/DynamicPageHeader",
 	"./DynamicPageRenderer",
 	"sap/base/Log",
 	"sap/ui/dom/getScrollbarSize",
@@ -23,6 +24,7 @@ sap.ui.define([
 	ScrollEnablement,
 	Device,
 	DynamicPageTitle,
+	DynamicPageHeader,
 	DynamicPageRenderer,
 	Log,
 	getScrollbarSize,
@@ -299,6 +301,7 @@ sap.ui.define([
 	DynamicPage.RESIZE_HANDLER_ID = {
 		PAGE: "_sResizeHandlerId",
 		TITLE: "_sTitleResizeHandlerId",
+		HEADER: "_sHeaderResizeHandlerId",
 		CONTENT: "_sContentResizeHandlerId"
 	};
 
@@ -1412,6 +1415,7 @@ sap.ui.define([
 		this.$titleArea = this.$("header");
 
 		this._cacheTitleDom();
+		this._cacheHeaderDom();
 	};
 
 	/**
@@ -1428,6 +1432,14 @@ sap.ui.define([
 		}
 	};
 
+	DynamicPage.prototype._cacheHeaderDom = function () {
+		var oHeader = this.getHeader();
+
+		if (exists(oHeader)) {
+			this.$header = oHeader.$();
+		}
+	};
+
 	/**
 	 * Toggles between the two possible snapping modes:
 	 * (1) snapping with scrolling-out the header - when enough content is available to allow snap header on scroll
@@ -1439,6 +1451,8 @@ sap.ui.define([
 			bIsSnapped,
 			bCanSnapWithScroll,
 			bIsSnappedWithoutScroll,
+			iScrollPosition,
+			iSnappingHeight,
 			$oDPage = this.$();
 
 		if (!exists($oDPage)) {
@@ -1465,13 +1479,27 @@ sap.ui.define([
 			// switch to snapping *with* scroll
 			this._toggleHeaderVisibility(true);
 			this._moveHeaderToContentArea(true);
+			return;
+		}
 
-		} else if (!bCanSnapWithScroll
+		if (!bCanSnapWithScroll
 			&& !bIsSnappedWithoutScroll) {
 
 			// switch to snapping *without* scroll
 			this._moveHeaderToTitleArea(true);
 			this._toggleHeaderVisibility(false);
+			return;
+		}
+
+		if (bCanSnapWithScroll) {
+			iScrollPosition = this._getScrollPosition();
+			iSnappingHeight = this._getSnappingHeight();
+			// if the latest resize caused *change in the snap breakpoint value*
+			// => make sure the current scroll position is still valid
+			if (iScrollPosition < iSnappingHeight) {
+				// the snapped header should remain scrolled-out of view
+				this._setScrollPosition(iSnappingHeight);
+			}
 		}
 	};
 
@@ -1491,16 +1519,22 @@ sap.ui.define([
 	/**
 	 * Reacts to the <code>DynamicPage</code> child controls re-rendering, updating the <code>ScrollBar</code> size.
 	 *
-	 * <b>Note:</b> In case <code>DynamicPageTitle</code> is re-rendered,
-	 * the <code>DynamicPageTitle</code> DOM reference and resize handlers should be also updated.
+	 * <b>Note:</b> In case <code>DynamicPageTitle</code> or <code>DynamicPageHeader</code> is re-rendered,
+	 * their DOM references and resize handlers should be also updated.
 	 * @param {jQuery.Event} oEvent
 	 * @private
 	 */
 	DynamicPage.prototype._onChildControlAfterRendering = function (oEvent) {
-		if (oEvent.srcControl instanceof DynamicPageTitle ) {
+		var oSourceControl = oEvent.srcControl;
+
+		if (oSourceControl instanceof DynamicPageTitle) {
 			this._cacheTitleDom();
 			this._deRegisterResizeHandler(DynamicPage.RESIZE_HANDLER_ID.TITLE);
 			this._registerResizeHandler(DynamicPage.RESIZE_HANDLER_ID.TITLE, this.$title[0], this._onChildControlsHeightChange.bind(this));
+		} else if (oSourceControl instanceof DynamicPageHeader) {
+			this._cacheHeaderDom();
+			this._deRegisterResizeHandler(DynamicPage.RESIZE_HANDLER_ID.HEADER);
+			this._registerResizeHandler(DynamicPage.RESIZE_HANDLER_ID.HEADER, this.$header[0], this._onChildControlsHeightChange.bind(this));
 		}
 
 		setTimeout(this._updateScrollBar.bind(this), 0);
@@ -1750,6 +1784,10 @@ sap.ui.define([
 
 		if (exists(this.$title)) {
 			this._registerResizeHandler(DynamicPage.RESIZE_HANDLER_ID.TITLE, this.$title[0], fnChildControlSizeChangeHandler);
+		}
+
+		if (exists(this.$header)) {
+			this._registerResizeHandler(DynamicPage.RESIZE_HANDLER_ID.HEADER, this.$header[0], fnChildControlSizeChangeHandler);
 		}
 
 		if (exists(this.$contentFitContainer)) {

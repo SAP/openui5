@@ -766,6 +766,32 @@ function (
 		assert.ok(!$oDynamicPage.hasClass("sapFDynamicPageTitleForceHovered"), "DPageTitle hover state removed");
 	});
 
+	QUnit.test("DynamicPage header resize", function (assert) {
+		var oHeader = this.oDynamicPage.getHeader(),
+			$oDynamicPage,
+			isHeaderSnappedWithScroll = function () {
+				return this.oDynamicPage._getScrollPosition() >= this.oDynamicPage._getSnappingHeight();
+			}.bind(this);
+
+		oHeader.addContent(new sap.m.Panel({height: "100px"}));
+
+		// setup
+		oUtil.renderObject(this.oDynamicPage);
+		this.oDynamicPage.setHeaderExpanded(false);
+
+		// assert init state
+		assert.ok(isHeaderSnappedWithScroll(), "header is snapped with scroll");
+
+		//Act
+		$oDynamicPage = this.oDynamicPage.$();
+		$oDynamicPage.find('.sapMPanel').get(0).style.height = "300px";
+		// explicitly call to avoid waiting for resize handler to detect change
+		this.oDynamicPage._onChildControlsHeightChange();
+
+		// Check
+		assert.ok(isHeaderSnappedWithScroll(), "header is still snapped with scroll");
+	});
+
 	/* --------------------------- DynamicPage Private functions ---------------------------------- */
 	QUnit.module("DynamicPage On Title Press when Header State Preserved On Scroll", {
 		beforeEach: function () {
