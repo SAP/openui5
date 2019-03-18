@@ -149,7 +149,7 @@ sap.ui.define([
 				 *         "text": "Remove",
 				 *         "enabled": true,
 				 *         "rank": 60,
-				 *         "icon": "sap-icon://hide"
+				 *         "icon": "sap-icon://decline"
 				 *     },
 				 *     {
 				 *         "id": "CTX_CUT",
