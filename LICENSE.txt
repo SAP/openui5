@@ -630,6 +630,13 @@ License: MIT License
 <year> = 2013-2016
 <copyright holders> = Paul Miller (http://paulmillr.com) and contributors
 
+Component: elasticlunr 0.9.5
+Licensor: Wei Song
+Website: http://elasticlunr.com/
+License: MIT License
+<year> = 2013-2015
+<copyright holders> = Wei Song and Oliver Nightingale
+
 
 
 --------------------------------------------------------------------------------------------------------------------------

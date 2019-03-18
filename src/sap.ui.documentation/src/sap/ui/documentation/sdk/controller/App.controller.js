@@ -5,6 +5,7 @@
 sap.ui.define([
     "sap/ui/thirdparty/jquery",
     "sap/ui/documentation/sdk/controller/BaseController",
+    "sap/ui/documentation/sdk/controller/util/SearchUtil",
     "sap/ui/model/json/JSONModel",
     "sap/ui/core/ResizeHandler",
     "sap/ui/Device",
@@ -19,6 +20,7 @@ sap.ui.define([
 ], function(
     jQuery,
 	BaseController,
+	SearchUtil,
 	JSONModel,
 	ResizeHandler,
 	Device,
@@ -671,6 +673,11 @@ sap.ui.define([
 				oViewModel.setProperty("/bSearchMode", bSearchMode);
 
 				if (bSearchMode) {
+					// Init is called *before* the user entered a search term
+					// in order to start the download of the search index
+					// in the *earliest* point in time
+					SearchUtil.init();
+
 					setTimeout(function () {
 						this._oView.byId("searchControl").getAggregation("_searchField").getFocusDomRef().focus();
 					}.bind(this), 0);
