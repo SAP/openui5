@@ -123,7 +123,6 @@ sap.ui.define(['sap/ui/base/DataType', './Type', './FormatException', './ParseEx
 	 * value, to ensure it meets certain criteria, e.g. maximum length, minimal amount
 	 *
 	 * @param {object} oConstraints the constraints to set for this type
-	 * @public
 	 */
 	SimpleType.prototype.setConstraints = function(oConstraints) {
 		this.oConstraints = oConstraints;
@@ -134,7 +133,6 @@ sap.ui.define(['sap/ui/base/DataType', './Type', './FormatException', './ParseEx
 	 * parsing values, such as patterns for number and date formatting or maximum length
 	 *
 	 * @param {object} oFormatOptions the options to set for this type
-	 * @public
 	 */
 	SimpleType.prototype.setFormatOptions = function(oFormatOptions) {
 		this.oFormatOptions = oFormatOptions;
