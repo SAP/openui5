@@ -48,6 +48,9 @@ sap.ui.define([
 			//no more than LAZY_LOADING_EXTRA_PAGE_SIZE * page height from the bottom of the page.
 			this.LAZY_LOADING_EXTRA_PAGE_SIZE = 0.5;
 
+			// delayed lazy loading call to check if there's another extra subsection to load
+			this.LAZY_LOADING_EXTRA_SUBSECTION = this.LAZY_LOADING_DELAY * 5;
+
 			//number of subsections which should be preloaded :
 			//   - FirstRendering : for first loading
 			//   - ScrollToSection : default value when scrolling to a subsection
@@ -243,7 +246,7 @@ sap.ui.define([
 					//An extra subsection has been found
 					//relaunch a delayed lazy loading call to check if there's another extra subsection to load
 					//We use a long delay (5* LAZY_LOADING_DELAY) to wait for current loading completion.
-					this._sLazyLoadingTimer = setTimeout(this.doLazyLoading.bind(this), 5 * this.LAZY_LOADING_DELAY);
+					this._sLazyLoadingTimer = setTimeout(this.doLazyLoading.bind(this), this.LAZY_LOADING_EXTRA_SUBSECTION);
 				} else {
 					//reset the lazy loading timer
 					this._sLazyLoadingTimer = null;
@@ -289,6 +292,12 @@ sap.ui.define([
 			});
 
 			return aSectionsToPreload;
+		};
+
+		LazyLoading.prototype.destroy = function() {
+			if (this._sLazyLoadingTimer) {
+				clearTimeout(this._sLazyLoadingTimer);
+			}
 		};
 
 
