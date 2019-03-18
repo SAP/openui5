@@ -51,12 +51,16 @@
 			]
 		});
 
+		var oQuickViewCard = new sap.m.QuickViewCard({
+			pages: [oQuickViewPage ]
+		});
+
 		var oPanel = new sap.m.Panel('quickViewPagePanel', {
 			width : '320px',
 			height : '292px',
 			headerText : 'Store',
 			content : [
-				oQuickViewPage
+				oQuickViewCard
 			]
 		});
 
