@@ -16,8 +16,7 @@
 		</subHeader>
 
 		<content>
-
-			<f:GridContainer>
+			<f:GridContainer class="sapUiSmallMargin">
 				<w:Card id="tablecard1" manifest="{manifests>/tableManifests/tablecard1}" height="auto" class="sapUiMediumMarginEnd">
 					<w:layoutData>
 						<f:GridContainerItemLayoutData columns="6" />

@@ -949,6 +949,21 @@ sap.ui.define([
 	};
 
 	/**
+	 * Called on after rendering of the control.
+	 * @private
+	 */
+	Card.prototype.onAfterRendering = function () {
+		var sCardType;
+		if (this._oCardManifest && this._oCardManifest.get(MANIFEST_PATHS.TYPE)) {
+			sCardType = this._oCardManifest.get(MANIFEST_PATHS.TYPE).toLowerCase();
+		}
+
+		if (sCardType === "analytical") {
+			this.$().addClass("sapFCardStretchableContent");
+		}
+	};
+
+	/**
 	 * Sets a card content.
 	 *
 	 * @private

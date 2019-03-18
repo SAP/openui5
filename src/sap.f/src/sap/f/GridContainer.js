@@ -28,6 +28,26 @@ sap.ui.define([
 		return layoutData ? layoutData.getColumns() : 1;
 	}
 
+	function getItemRowCount(item) {
+		var layoutData = item.getLayoutData();
+		return layoutData ? layoutData.getRows() : 1;
+	}
+
+	function getItemRowsAutoSpan(item) {
+		var layoutData = item.getLayoutData();
+		return layoutData ? layoutData.getRowsAutoSpan() : true;
+	}
+
+	function getScrollHeight($item) {
+		var childrenScrollHeight = 0;
+
+		$item.children().each(function () {
+			childrenScrollHeight += this.scrollHeight;
+		});
+
+		return Math.max(childrenScrollHeight, $item[0].scrollHeight);
+	}
+
 	/**
 	 * @public
 	 * @returns {boolean} If native grid is supported by the browser
@@ -43,15 +63,17 @@ sap.ui.define([
 	 * @param {object} [mSettings] Initial settings for the new control
 	 *
 	 * @class
-	 * A control that represents ...
+	 * A container control which uses css display grid to show items in a grid.
+	 * Main usage is to position cards and tiles on a home page.
 	 *
 	 * <h3>Overview</h3>
-	 *
-	 * ...
+	 * TODO
 	 *
 	 * <h3>Usage</h3>
+	 * TODO
 	 *
 	 * <h3>Responsive Behavior</h3>
+	 * TODO
 	 *
 	 * @extends sap.ui.core.Control
 	 *
@@ -60,7 +82,7 @@ sap.ui.define([
 	 *
 	 * @constructor
 	 * @experimental
-	 * @since 1.62
+	 * @since 1.65
 	 * @see {@link TODO Card}
 	 * @alias sap.f.GridContainer
 	 * @ui5-metamodel This control/element also will be described in the UI5 (legacy) designtime metamodel
@@ -79,7 +101,12 @@ sap.ui.define([
 				/**
 				 * Defines the height of the control
 				 */
-				height: {type: "sap.ui.core.CSSSize", group: "Appearance", defaultValue: ""}
+				height: {type: "sap.ui.core.CSSSize", group: "Appearance", defaultValue: ""},
+
+				/**
+				 * Should the items stretch to fill the rows which they occupy
+				 */
+				itemsStretch: {type: "boolean", group: "Appearance", defaultValue: false}
 			},
 			defaultAggregation: "items",
 			aggregations: {
@@ -104,21 +131,29 @@ sap.ui.define([
 
 	GridContainer.prototype._onAfterItemRendering = function () {
 		var container = this.getParent(),
-			itemColumnCount = getItemColumnCount(this);
+			itemColumnCount = getItemColumnCount(this),
+			$item = this.$();
 
+		if ($item[0].style.height === "auto"
+			&& (container.getItemsStretch() || $item.hasClass("sapFCardStretchableContent"))) {
+			$item.height("100%");
+		}
 
-		if (isGridSupportedByBrowser()) {
-			this.$().parent().css({
-				'grid-column': 'span ' + itemColumnCount
-			});
-		} else {
-			var width = itemColumnCount * itemWidth + (itemColumnCount - 1) * gapSize;
-			this.$().css({
-				top: 0,
-				left: 0,
-				width: width,
-				position: 'absolute'
-			});
+		if (!isGridSupportedByBrowser()) {
+			var width = itemColumnCount * itemWidth + (itemColumnCount - 1) * gapSize,
+				css = {
+					top: 0,
+					left: 0,
+					width: width,
+					position: 'absolute'
+				};
+
+			if (!getItemRowsAutoSpan(this)) {
+				var itemRowCount = getItemRowCount(this);
+				css.height = itemRowCount * itemWidth + (itemRowCount - 1) * gapSize;
+			}
+
+			this.$().parent().css(css);
 		}
 
 		container._resizeListeners[this.getId()] = ResizeHandler.register(this.getDomRef(), container._resizeHandler);
@@ -226,12 +261,14 @@ sap.ui.define([
 		}
 
 		if (isGridSupportedByBrowser()) {
-			this.$().children().each(function () {
-				var $this = jQuery(this);
-				var height = jQuery($this.children()[0]).outerHeight();
-				$this.css({
-					'grid-row': 'span ' + (Math.floor(height / (itemWidth + gapSize)) + 1)
-				});
+			this.getItems().forEach(function (oItem) {
+				if (getItemRowsAutoSpan(oItem)) {
+					var $item = oItem.$();
+					var height = getScrollHeight($item);
+					$item.parent().css({
+						'grid-row': 'span ' + (Math.floor(height / (itemWidth + gapSize)) + 1)
+					});
+				}
 			});
 		} else {
 			this._applyIEPolyfillLayout();
@@ -269,8 +306,14 @@ sap.ui.define([
 			var item = items[i];
 			var columns = getItemColumnCount(item);
 			var $child = jQuery($children.get(i));
-			var height = jQuery($child.children().get(0)).outerHeight();
-			var rows = (Math.floor(height / (itemWidth + gapSize)) + 1);
+
+			var rows;
+			if (getItemRowsAutoSpan(item)) {
+				var height = getScrollHeight(jQuery($child.children().get(0)));
+				rows = (Math.floor(height / (itemWidth + gapSize)) + 1);
+			} else {
+				rows = getItemRowCount(item);
+			}
 
 			virtualGrid.fitElement(i + '', columns, rows);
 		}

@@ -13,7 +13,7 @@
 			</Toolbar>
 		</subHeader>
 		<content>
-			<f:GridContainer>
+			<f:GridContainer class="sapUiSmallMargin">
 				<w:Card manifest="{manifests>/listContent/card13}">
 					<w:layoutData>
 						<f:GridContainerItemLayoutData columns="3" />
@@ -26,12 +26,12 @@
 				</w:Card>
 				<w:Card manifest="{manifests>/listContent/card13}">
 					<w:layoutData>
-						<f:GridContainerItemLayoutData columns="4" />
+						<f:GridContainerItemLayoutData rows="7" columns="4" />
 					</w:layoutData>
 				</w:Card>
 				<w:Card manifest="{manifests>/analyticalContent/stackedBar}">
 					<w:layoutData>
-						<f:GridContainerItemLayoutData columns="4" />
+						<f:GridContainerItemLayoutData rows="5" columns="4" />
 					</w:layoutData>
 				</w:Card>
 				<w:Card manifest="{manifests>/analyticalContent/stackedColumn}">

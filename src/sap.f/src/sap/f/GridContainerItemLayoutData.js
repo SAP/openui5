@@ -32,10 +32,24 @@ sap.ui.define(['sap/ui/core/LayoutData'],
 					/**
 					 * Specifies the number of columns, which the item should take.
 					 */
-					columns: {type: "int", group: "Misc", defaultValue: 1}
+					columns: {type: "int", group: "Misc", defaultValue: 1},
+					/**
+					 * Specifies the number of rows, which the item should take.
+					 */
+					rows: {type: "int", group: "Misc"}
 				}
 			}
 		});
+
+		/**
+		 * Returns true if rows span should grow automatically for that item.
+		 *
+		 * @returns {bool} True if they should grow, false if the item should be limited to the initial rows span
+		 */
+		GridContainerItemLayoutData.prototype.getRowsAutoSpan = function () {
+			// TODO we can make this a property
+			return !this.getRows();
+		};
 
 		return GridContainerItemLayoutData;
 	});
