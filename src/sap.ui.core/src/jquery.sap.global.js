@@ -1781,7 +1781,7 @@ sap.ui.define([
 		 * @param {string[]|string} [mShims.any-module-name.exports=undefined]
 		 *              Global name (or names) that are exported by the module. If one ore multiple names are defined,
 		 *              the first one will be read from the global object and will be used as value of the module.
-		 *              Each name can be a dot separated hierarchial name (will be resolved with <code>jQuery.sap.getObject</code>)
+		 *              Each name can be a dot separated hierarchical name (will be resolved with <code>jQuery.sap.getObject</code>)
 		 * @param {string[]} [mShims.any-module-name.deps=undefined]
 		 *              List of modules that the module depends on (requireJS syntax, no '.js').
 		 *              The modules will be loaded first before loading the module itself.
