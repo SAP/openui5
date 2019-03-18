@@ -581,12 +581,21 @@ sap.ui.define([
 		// wait 500ms
 		this.clock.tick(500);
 
+
+		var oList = this.navigationList._popover.getContent(),
+			oInnerListItem = oList[0].getItems()[0].getItems()[0],
+			$InnerListItem = oInnerListItem.$()[0],
+			$list = oList[0].$();
+
 		assert.strictEqual(jQuery('.sapTntNavLIPopup').length, 1, "popup list is shown");
 		assert.ok(this.navigationList._popover, "should save popover reference");
 
 		var $groupItem = jQuery('.sapTntNavLI .sapTntNavLIGroupItem').first();
 		var popover = $groupItem.closest('.sapMPopover').control()[0];
 
+
+		assert.strictEqual($list[0].getAttribute("role"), "menubar", "Role of the popup ul should be menubar");
+		assert.strictEqual($InnerListItem.getAttribute("role"), "menuitem", "Role of the popup li should be menuitem");
 		assert.ok(popover.oPopup.getOpenState() === sap.ui.core.OpenState.OPEN, "should change popover status to OPEN");
 
 		$groupItem.trigger('tap');

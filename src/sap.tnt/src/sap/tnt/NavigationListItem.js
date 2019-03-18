@@ -445,15 +445,17 @@ sap.ui.define(["./library", "sap/ui/core/Item", 'sap/ui/core/Icon',
 				rm.write(' tabindex="-1"');
 			}
 
-			if (!isListExpanded) {
+			if (!isListExpanded || control.hasStyleClass("sapTntNavLIPopup")) {
 				tooltip = this.getTooltip_AsString() || text;
 				if (tooltip) {
 					rm.writeAttributeEscaped("title", tooltip);
 				}
 
 				ariaProps.label = text;
-				ariaProps.role = 'button';
-				ariaProps.haspopup = true;
+				ariaProps.role = 'menuitem';
+				if (!control.hasStyleClass("sapTntNavLIPopup")) {
+					ariaProps.haspopup = true;
+				}
 			} else {
 				ariaProps.role = 'treeitem';
 			}
@@ -566,7 +568,7 @@ sap.ui.define(["./library", "sap/ui/core/Item", 'sap/ui/core/Icon',
 
 			// ARIA
 			rm.writeAccessibilityState({
-				role: 'treeitem',
+				role: control.hasStyleClass("sapTntNavLIPopup") ? 'menuitem' : 'treeitem',
 				level: '2',
 				posinset: index + 1,
 				setsize: length
