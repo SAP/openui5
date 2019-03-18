@@ -723,13 +723,13 @@ sap.ui.define([
 			Log.error("sap.app/type entry in manifest is not 'card'");
 		}
 
-		this._registerServices();
-		this._setData();
-		this._setHeaderFromManifest();
-		this._setContentFromManifest();
+		this._applyServiceManifestSettings();
+		this._applyDataManifestSettings();
+		this._applyHeaderManifestSettings();
+		this._applyContentManifestSettings();
 	};
 
-	Card.prototype._setData = function () {
+	Card.prototype._applyDataManifestSettings = function () {
 		var oDataSettings = this._oCardManifest.get(MANIFEST_PATHS.DATA);
 		if (!oDataSettings) {
 			return;
@@ -760,7 +760,7 @@ sap.ui.define([
 	 *
 	 * @private
 	 */
-	Card.prototype._registerServices = function () {
+	Card.prototype._applyServiceManifestSettings = function () {
 		var oServiceFactoryReferences = this._oCardManifest.get(MANIFEST_PATHS.SERVICES);
 		if (!oServiceFactoryReferences) {
 			return;
@@ -768,49 +768,6 @@ sap.ui.define([
 
 		if (!this._oServiceManager) {
 			this._oServiceManager = new ServiceManager(oServiceFactoryReferences, this);
-		}
-
-		var oHeader = this._oCardManifest.get(MANIFEST_PATHS.HEADER);
-		var oContent = this._oCardManifest.get(MANIFEST_PATHS.CONTENT);
-		var sType = this._oCardManifest.get(MANIFEST_PATHS.TYPE).toLowerCase();
-
-		var bHeaderWithServiceNavigation = oHeader
-			&& oHeader.actions
-			&& oHeader.actions[0].service
-			&& oHeader.actions[0].type === "Navigation";
-
-		var bContentWithServiceNavigation;
-
-		// TODO: Improve... Need to decide if card or content will be responsible for the actions and their parsing.
-		if (sType === "list") {
-			bContentWithServiceNavigation = oContent
-				&& oContent.item
-				&& oContent.item.actions
-				&& oContent.item.actions[0].service
-				&& oContent.item.actions[0].type === "Navigation";
-		} else if (sType === "table") {
-			bContentWithServiceNavigation = oContent
-				&& oContent.row
-				&& oContent.row.actions
-				&& oContent.row.actions[0].service
-				&& oContent.row.actions[0].type === "Navigation";
-		}
-
-		var bContentWithDataService = oContent
-			&& oContent.data
-			&& oContent.data.service;
-
-		if (bHeaderWithServiceNavigation) {
-			this._oServiceManager.registerService(oHeader.actions[0].service, "sap.ui.integration.services.Navigation");
-		}
-
-		if (bContentWithServiceNavigation) {
-			var vService = sType === "list" ? oContent.item.actions[0].service : oContent.row.actions[0].service;
-			this._oServiceManager.registerService(vService, "sap.ui.integration.services.Navigation");
-		}
-
-		if (bContentWithDataService) {
-			this._oServiceManager.registerService(oContent.data.service, "sap.ui.integration.services.Data");
 		}
 	};
 
@@ -839,7 +796,7 @@ sap.ui.define([
 	 *
 	 * @private
 	 */
-	Card.prototype._setHeaderFromManifest = function () {
+	Card.prototype._applyHeaderManifestSettings = function () {
 		var oManifestHeader = this._oCardManifest.get(MANIFEST_PATHS.HEADER);
 
 		if (!oManifestHeader) {
@@ -861,7 +818,7 @@ sap.ui.define([
 	 *
 	 * @private
 	 */
-	Card.prototype._setContentFromManifest = function () {
+	Card.prototype._applyContentManifestSettings = function () {
 		var sCardType = this._oCardManifest.get(MANIFEST_PATHS.TYPE),
 			bIsComponent = sCardType.toLowerCase() === "component",
 			oManifestContent = this._oCardManifest.get(MANIFEST_PATHS.CONTENT),

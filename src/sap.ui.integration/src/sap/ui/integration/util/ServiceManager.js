@@ -3,10 +3,12 @@
  */
 sap.ui.define([
 	"sap/ui/base/EventProvider",
-	"sap/base/Log"
+	"sap/base/Log",
+	"sap/ui/integration/services/Service"
 ], function (
 	EventProvider,
-	Log
+	Log,
+	Service
 ) {
 	"use strict";
 
@@ -57,64 +59,64 @@ sap.ui.define([
 			this._mServiceFactoryReferences = mServiceFactoryReferences;
 			this._mServices = {};
 			this._oServiceContext = oServiceContext;
+			this._initAllServices();
 		}
 	});
 
 	/**
-	 * Registers a service which can then be available by getService(sServiceName).
-	 * @param {string|Object} vService The name of the service or a service configuration object.
-	 * @param {Object} sInterface The interface of the service.
+	 * Initializes all services based on _mServiceFactoryReferences.
+	 * @private
+	 */
+	ServiceManager.prototype._initAllServices = function () {
+		for (var sServiceName in this._mServiceFactoryReferences) {
+			this._initService(sServiceName);
+		}
+	};
+
+	/**
+	 * Initializes a service which can then be available by getService(sServiceName).
+	 *
+	 * @private
+	 * @param {string} sName The name of the service or a service configuration object.
 	 * @returns {Promise} A promise resolved when the service instance is ready.
 	 */
-	ServiceManager.prototype.registerService = function (vService, sInterface) {
-		var sName = vService.name || vService,
-			oServiceRef;
+	ServiceManager.prototype._initService = function (sName) {
+		var oServiceRef = this._mServices[sName] || {};
 
-		if (!this._mServices[sInterface]) {
-			this._mServices[sInterface] = {};
-		}
+		oServiceRef.promise = ServiceManager._getService(this._oServiceContext, sName, this._mServiceFactoryReferences)
+			.then(function (oServiceInstance) {
+				oServiceRef.instance = oServiceInstance;
+			}).catch(function (oError) {
+				Log.error(oError.message);
+			});
 
-		oServiceRef = this._mServices[sInterface][sName];
-
-		if (!oServiceRef) {
-			oServiceRef = {};
-			oServiceRef.promise = ServiceManager._getService(this._oServiceContext, sName, this._mServiceFactoryReferences)
-				.then(function (oServiceInstance) {
-					oServiceRef.instance = oServiceInstance;
-				}).catch(function (oError) {
-					Log.error(oError.message);
-				});
-
-			this._mServices[sInterface][sName] = oServiceRef;
-
-			return oServiceRef.promise;
-		}
+		this._mServices[sName] = oServiceRef;
 
 		return oServiceRef.promise;
 	};
 
 	/**
-	 * Returns an instance of a service based on interface.
-	 * If multiple services with the same interface are registered the first one will be used.
-	 * @param {string} sServiceInterface The interface of the service to return an instance for.
-	 * @param {string} [sServiceName] The name of the service inside sap.ui5/services. If not passed the first registered service will be returned.
+	 * Returns an instance of a service based on its name.
+	 *
+	 * @param {string} sServiceName The name of the service inside sap.ui5/services. If not passed the first registered service will be returned.
 	 * @returns {Promise} A promise resolved when the service instance is ready.
 	 */
-	ServiceManager.prototype.getService = function (sServiceInterface, sServiceName) {
+	ServiceManager.prototype.getService = function (sServiceName) {
+		var sErrorMessage = "Invalid service";
 		return new Promise(function (fnResolve, fnReject) {
 
-			if (!sServiceInterface
-				|| !this._mServices[sServiceInterface]
-				|| !Object.keys(this._mServices[sServiceInterface])) {
-				return Promise.reject(new Error("Invalid service"));
+			if (!sServiceName
+				|| !this._mServices[sServiceName]
+				|| !Object.keys(this._mServices[sServiceName])) {
+				return Promise.reject(sErrorMessage);
 			}
 
-			if (!sServiceName) {
-				sServiceName = Object.keys(this._mServices[sServiceInterface])[0];
-			}
-
-			this._mServices[sServiceInterface][sServiceName].promise.then(function () {
-				fnResolve(this._mServices[sServiceInterface][sServiceName].instance);
+			this._mServices[sServiceName].promise.then(function () {
+				if (this._mServices[sServiceName].instance instanceof Service) {
+					fnResolve(this._mServices[sServiceName].instance);
+				} else {
+					fnReject(sErrorMessage);
+				}
 			}.bind(this)).catch(fnReject);
 		}.bind(this));
 	};
