@@ -258,7 +258,7 @@ sap.ui.define([
 		if (sAppComponentName && sAppVersion) {
 			var oChangePersistence = ChangePersistenceFactory.getChangePersistenceForComponent(sAppComponentName, sAppVersion);
 			if (!(oChangePersistence._oConnector instanceof FakeLrepConnector)){
-				Cache.clearEntry(sAppComponentName, sAppVersion);
+				FakeLrepConnector.clearCacheAndResetVariants(sAppComponentName, sAppVersion, oChangePersistence);
 				if (!FakeLrepConnector._oBackendInstances[sAppComponentName]){
 					FakeLrepConnector._oBackendInstances[sAppComponentName] = {};
 				}
@@ -297,7 +297,7 @@ sap.ui.define([
 		if (sAppComponentName && sAppVersion) {
 			var oChangePersistence = ChangePersistenceFactory.getChangePersistenceForComponent(sAppComponentName, sAppVersion);
 			if (!(oChangePersistence._oConnector instanceof LrepConnector)) {
-				Cache.clearEntry(sAppComponentName, sAppVersion);
+				FakeLrepConnector.clearCacheAndResetVariants(sAppComponentName, sAppVersion, oChangePersistence);
 				if (FakeLrepConnector._oBackendInstances[sAppComponentName] && FakeLrepConnector._oBackendInstances[sAppComponentName][sAppVersion]) {
 					oChangePersistence._oConnector = FakeLrepConnector._oBackendInstances[sAppComponentName][sAppVersion];
 					FakeLrepConnector._oBackendInstances[sAppComponentName][sAppVersion] = undefined;
@@ -309,6 +309,11 @@ sap.ui.define([
 
 		Cache.clearEntries();
 		restoreConnectorFactory();
+	};
+
+	FakeLrepConnector.clearCacheAndResetVariants = function (sComponentName, sAppVersion, oChangePersistence) {
+		Cache.clearEntry(sComponentName, sAppVersion);
+		oChangePersistence.resetVariantMap(/*bResetAtRuntime*/true);
 	};
 
 	return FakeLrepConnector;

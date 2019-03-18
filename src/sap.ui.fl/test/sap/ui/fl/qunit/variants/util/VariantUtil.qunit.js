@@ -6,6 +6,8 @@ sap.ui.define([
 	"sap/ui/core/routing/HashChanger",
 	"sap/ui/core/routing/History",
 	"sap/ui/thirdparty/jquery",
+	"sap/ui/base/ManagedObjectObserver",
+	"sap/ui/base/ManagedObject",
 	"sap/ui/thirdparty/sinon-4"
 ],
 function(
@@ -14,6 +16,8 @@ function(
 	HashChanger,
 	History,
 	jQuery,
+	ManagedObjectObserver,
+	ManagedObject,
 	sinon
 ) {
 	"use strict";
@@ -21,13 +25,18 @@ function(
 	var sandbox = sinon.sandbox.create();
 	var sVariantParameterName = "sap-ui-fl-control-variant-id";
 	QUnit.module("Given an instance of VariantModel", {
+		before: function() {
+			this.oAppComponent = new ManagedObject("appComponent");
+		},
 		beforeEach: function () {
 			this._oHashRegister = {
 				currentIndex: undefined,
 				hashParams : [],
 				variantControlIds : []
 			};
-			this.oAppComponent = { };
+			this.fnConstructorObserverSpy = sandbox.spy(sap.ui.base, "ManagedObjectObserver");
+			this.fnDestroyObserverSpy = sandbox.spy(ManagedObjectObserver.prototype, "observe");
+			this.fnDestroyUnobserverSpy = sandbox.spy(ManagedObjectObserver.prototype, "unobserve");
 		},
 		afterEach: function () {
 			sandbox.restore();
@@ -80,7 +89,7 @@ function(
 		});
 
 		QUnit.test("when calling 'attachHashHandlers' with _oHashRegister.currentIndex set to null", function (assert) {
-			assert.expect(5);
+			assert.expect(7);
 			var done = assert.async();
 			var iIndex = 0;
 			var aHashEvents = [{
@@ -94,27 +103,29 @@ function(
 			this._oHashRegister.currentIndex = null;
 			VariantUtil.initializeHashRegister.call(this);
 			sandbox.stub(VariantUtil, "_navigationHandler").callsFake(function() {
-				assert.ok(true, "then VariantUtil._navigationHandler() was called intitally on attaching hash handler functions");
+				assert.ok(true, "then VariantUtil._navigationHandler() was called initially on attaching hash handler functions");
 			});
 
-			sandbox.stub(HashChanger, "getInstance").callsFake(function() {
-				return {
-					attachEvent: function(sEvtName, fnEventHandler) {
-						assert.strictEqual(sEvtName, aHashEvents[iIndex].name, "then '" + aHashEvents[iIndex].name + "' attachEvent is called for HashChanger.getInstance()");
-						assert.strictEqual(fnEventHandler.toString(), VariantUtil[aHashEvents[iIndex].handler].toString(), "then VariantUtil." + aHashEvents[iIndex].handler + " attached to '" + aHashEvents[iIndex].name + "'  event");
-						if (iIndex === 1) {
-							done();
-						}
-						iIndex++;
+			sandbox.stub(HashChanger, "getInstance").returns({
+				attachEvent: function (sEvtName, fnEventHandler) {
+					assert.strictEqual(sEvtName, aHashEvents[iIndex].name, "then '" + aHashEvents[iIndex].name + "' attachEvent is called for HashChanger.getInstance()");
+					assert.strictEqual(fnEventHandler.toString(), VariantUtil[aHashEvents[iIndex].handler].toString(), "then VariantUtil." + aHashEvents[iIndex].handler + " attached to '" + aHashEvents[iIndex].name + "'  event");
+					if (iIndex === 1) {
+						done();
 					}
-				};
+					iIndex++;
+				}
 			});
 
 			VariantUtil.attachHashHandlers.call(this);
+			var aCallArgs = this.fnDestroyObserverSpy.getCall(0).args;
+			assert.deepEqual(aCallArgs[0], this.oAppComponent, "then ManagedObjectObserver observers the AppComponent");
+			assert.strictEqual(aCallArgs[1].destroy, true, "then ManagedObjectObserver observers the destroy() method");
+			this.oComponentDestroyObserver.unobserve(this.oAppComponent, {destroy:true}); // remove component observer
 		});
 
 		QUnit.test("when Component is destroyed after 'attachHashHandlers' was already called", function (assert) {
-			assert.expect(8);
+			assert.expect(10);
 			var iIndex = 0;
 			this._oHashRegister.currentIndex = null;
 			var aHashEvents = [{
@@ -127,25 +138,22 @@ function(
 
 			VariantUtil.initializeHashRegister.call(this);
 			sandbox.stub(VariantUtil, "_navigationHandler");
-			sandbox.stub(HashChanger, "getInstance").callsFake(function() {
-				return {
-					attachEvent: function () { },
-					detachEvent: function(sEvtName, fnEventHandler) {
-						assert.strictEqual(sEvtName, aHashEvents[iIndex].name, "then '" + aHashEvents[iIndex].name + "' detachEvent is called for HashChanger.getInstance()");
-						assert.strictEqual(fnEventHandler.toString(), VariantUtil[aHashEvents[iIndex].handler].toString(), "then VariantUtil." + aHashEvents[iIndex].handler + " detached for '" + aHashEvents[iIndex].name + "' event");
-						iIndex++;
-					}
-				};
+			sandbox.stub(HashChanger, "getInstance").returns({
+				attachEvent: function () {
+				},
+				detachEvent: function (sEvtName, fnEventHandler) {
+					assert.strictEqual(sEvtName, aHashEvents[iIndex].name, "then '" + aHashEvents[iIndex].name + "' detachEvent is called for HashChanger.getInstance()");
+					assert.strictEqual(fnEventHandler.toString(), VariantUtil[aHashEvents[iIndex].handler].toString(), "then VariantUtil." + aHashEvents[iIndex].handler + " detached for '" + aHashEvents[iIndex].name + "' event");
+					iIndex++;
+				}
 			});
 
 			this.destroy = function() {
 				assert.ok(true, "then the VariantModel passed as context is destroyed");
 			};
-			this.oAppComponent.destroy = function() {
-				assert.ok(true, "then the original Component.destroy() is also called");
-			};
-			this.oVariantController = {
-				resetMap: function() {
+
+			this.oChangePersistence = {
+				resetVariantMap: function() {
 					assert.ok(true, "then resetMap() of the variant controller was called");
 				}
 			};
@@ -154,7 +162,21 @@ function(
 			sandbox.stub(VariantUtil, "_setOrUnsetCustomNavigationForParameter").callsFake(function(bSet) {
 				assert.strictEqual(bSet, false, "then _setOrUnsetCustomNavigationForParameter called with a false value");
 			});
+			var fnVariantSwitchPromiseStub = sandbox.stub();
+			this._oVariantSwitchPromise = new Promise(function (resolve) {
+				setTimeout(function () {
+					resolve();
+				}, 0);
+			}).then(fnVariantSwitchPromiseStub);
+
 			this.oAppComponent.destroy();
+
+			return this._oVariantSwitchPromise.then(function() {
+				var aCallArgs = this.fnDestroyUnobserverSpy.getCall(0).args;
+				assert.deepEqual(aCallArgs[0], this.oAppComponent, "then ManagedObjectObserver unobserve() was called for the AppComponent");
+				assert.strictEqual(aCallArgs[1].destroy, true, "then ManagedObjectObserver unobserve() was called for the destroy() method");
+				assert.ok(fnVariantSwitchPromiseStub.calledBefore(this.fnDestroyUnobserverSpy), "then first variant switch was resolved and then component's destroy callback was called");
+			}.bind(this));
 		});
 
 		QUnit.test("when calling 'attachHashHandlers' with _oHashRegister.currentIndex not set to null", function (assert) {
@@ -261,12 +283,10 @@ function(
 		QUnit.test("when calling '_navigationHandler' with _oHashRegister.currentIndex set to null and 'Unknown' navigation direction", function (assert) {
 			var sExistingParameters = "newEntry1::'123'/'456',  newEntry2::'abc'/'xyz'";
 			this._oHashRegister.currentIndex = null;
-			sandbox.stub(History, "getInstance").callsFake(function () {
-				return {
-					getDirection: function () {
-						return "Unknown";
-					}
-				};
+			sandbox.stub(History, "getInstance").returns({
+				getDirection: function () {
+					return "Unknown";
+				}
 			});
 
 			this.updateHasherEntry = sandbox.stub();
@@ -304,12 +324,10 @@ function(
 			};
 			this.updateHasherEntry = sandbox.stub();
 			this.switchToDefaultForVariant = sandbox.stub();
-			sandbox.stub(History, "getInstance").callsFake(function () {
-				return {
-					getDirection: function () {
-						return "Unknown";
-					}
-				};
+			sandbox.stub(History, "getInstance").returns({
+				getDirection: function () {
+					return "Unknown";
+				}
 			});
 
 			var oMockParsedURL = {
@@ -340,12 +358,10 @@ function(
 				variantControlIds: [["variantManagement0"], ["variantManagement1", "variantManagement2"]]
 			};
 			this.updateHasherEntry = sandbox.stub();
-			sandbox.stub(History, "getInstance").callsFake(function () {
-				return {
-					getDirection: function () {
-						return "Backwards";
-					}
-				};
+			sandbox.stub(History, "getInstance").returns({
+				getDirection: function () {
+					return "Backwards";
+				}
 			});
 
 			VariantUtil._navigationHandler.call(this);
@@ -362,12 +378,10 @@ function(
 				currentIndex: 0
 			};
 			this.updateHasherEntry = sandbox.stub();
-			sandbox.stub(History, "getInstance").callsFake(function () {
-				return {
-					getDirection: function () {
-						return "Backwards";
-					}
-				};
+			sandbox.stub(History, "getInstance").returns({
+				getDirection: function () {
+					return "Backwards";
+				}
 			});
 
 			VariantUtil._navigationHandler.call(this);
@@ -389,12 +403,10 @@ function(
 				variantControlIds: [["variantManagement0", "variantManagement1"], ["variantManagement2"]]
 			};
 			this.updateHasherEntry = sandbox.stub();
-			sandbox.stub(History, "getInstance").callsFake(function () {
-				return {
-					getDirection: function () {
-						return "Forwards";
-					}
-				};
+			sandbox.stub(History, "getInstance").returns({
+				getDirection: function () {
+					return "Forwards";
+				}
 			});
 
 			VariantUtil._navigationHandler.call(this);
@@ -422,12 +434,10 @@ function(
 
 			sandbox.stub(Utils, "getParsedURLHash").returns(oMockParsedURL);
 
-			sandbox.stub(History, "getInstance").callsFake(function () {
-				return {
-					getDirection: function () {
-						return "NewEntry";
-					}
-				};
+			sandbox.stub(History, "getInstance").returns({
+				getDirection: function () {
+					return "NewEntry";
+				}
 			});
 
 			VariantUtil._navigationHandler.call(this);
@@ -458,12 +468,10 @@ function(
 
 			sandbox.stub(Utils, "getParsedURLHash").returns(oMockParsedURL);
 
-			sandbox.stub(History, "getInstance").callsFake(function () {
-				return {
-					getDirection: function () {
-						return "NewEntry";
-					}
-				};
+			sandbox.stub(History, "getInstance").returns({
+				getDirection: function () {
+					return "NewEntry";
+				}
 			});
 
 			VariantUtil._navigationHandler.call(this);
@@ -511,10 +519,6 @@ function(
 				currentIndex: null,
 				hashParams: [],
 				variantControlIds: []
-			};
-			this.oAppComponent = {
-				destroy: function () {
-				}
 			};
 			sandbox.stub(VariantUtil, "_navigationHandler");
 			VariantUtil.attachHashHandlers.call(this);

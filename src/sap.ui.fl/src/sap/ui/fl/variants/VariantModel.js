@@ -12,7 +12,8 @@ sap.ui.define([
 	"sap/ui/core/BusyIndicator",
 	"sap/ui/fl/variants/util/VariantUtil",
 	"sap/base/util/merge",
-	"sap/base/util/includes"
+	"sap/base/util/includes",
+	"sap/base/util/ObjectPath"
 ], function(
 	jQuery,
 	JSONModel,
@@ -23,9 +24,41 @@ sap.ui.define([
 	BusyIndicator,
 	VariantUtil,
 	fnBaseMerge,
-	fnIncludes
+	fnIncludes,
+	ObjectPath
 ) {
 	"use strict";
+
+
+	/**
+	 * When VariantController map is reset at runtime, this listener is called.
+	 * It reverts all applied changes and resets all variant management controls to default state.
+	 * @returns {Promise} Promise which resolves when all applied changes have been reverted
+	 */
+	var fnResetMapListener = function() {
+		var aVariantManagementReferences = Object.keys(this.oData);
+		aVariantManagementReferences.forEach(function(sVariantManagementReference) {
+			var mPropertyBag = {
+				variantManagementReference: sVariantManagementReference,
+				currentVariantReference: this.oData[sVariantManagementReference].currentVariant || this.oData[sVariantManagementReference].defaultVariant ,
+				newVariantReference: true // since new variant is not known - true will lead to no new changes for variant switch
+			};
+			var mChangesToBeSwitched = this.oChangePersistence.loadSwitchChangesMapForComponent(mPropertyBag);
+			this._oVariantSwitchPromise = this._oVariantSwitchPromise
+				.then(this.oFlexController.revertChangesOnControl.bind(this.oFlexController, mChangesToBeSwitched.changesToBeReverted, this.oAppComponent))
+				.then(function() {
+					delete this.oData[sVariantManagementReference];
+					delete this.oVariantController.getChangeFileContent()[sVariantManagementReference];
+					this._ensureStandardVariantExists(sVariantManagementReference);
+				}.bind(this));
+		}.bind(this));
+		//re-initialize hash register and remove existing parameters
+		VariantUtil.initializeHashRegister.call(this);
+		this.updateHasherEntry({
+			parameters: []
+		});
+		return this._oVariantSwitchPromise;
+	};
 
 	/**
 	 * Constructor for a new sap.ui.fl.variants.VariantModel model.
@@ -65,6 +98,7 @@ sap.ui.define([
 			this.oAppComponent = oAppComponent;
 			this._oResourceBundle = sap.ui.getCore().getLibraryResourceBundle("sap.ui.fl");
 			this._oVariantSwitchPromise = Promise.resolve();
+			this.oVariantController.assignResetMapListener(fnResetMapListener.bind(this));
 
 			//initialize hash register
 			VariantUtil.initializeHashRegister.call(this);
@@ -397,7 +431,11 @@ sap.ui.define([
 		}.bind(this));
 
 		//Variant Controller
-		var iIndex = this.oVariantController.addVariantToVariantManagement(oVariant.getDefinitionWithChanges(), mPropertyBag.variantManagementReference);
+		var iIndex = this.oVariantController.addVariantToVariantManagement(
+			// ensure "visible" and "favorite" properties are available inside oVariant.content.content
+			fnBaseMerge({}, oVariant.getDefinitionWithChanges(), {content: {content: {visible: oVariantModelData.visible, favorite: oVariantModelData.favorite}}}),
+			mPropertyBag.variantManagementReference
+		);
 
 		//Variant Model
 		this.oData[mPropertyBag.variantManagementReference].variants.splice(iIndex, 0, oVariantModelData);
@@ -677,7 +715,7 @@ sap.ui.define([
 				};
 				// Set Standard Data to VariantController
 				oVariantControllerData.changes.variantSection[sVariantManagementReference] = oDefaultObj;
-				this.oVariantController._setChangeFileContent(oVariantControllerData, {});
+				this.oVariantController.setChangeFileContent(oVariantControllerData, {});
 			}
 		}
 	};
@@ -785,7 +823,10 @@ sap.ui.define([
 		var oPropertyBinding = oEvent.getSource();
 		var sVariantManagementReference = oPropertyBinding.getContext().getPath().replace(/^\//, '');
 
-		if (this.oData[sVariantManagementReference].currentVariant !== this.oData[sVariantManagementReference].originalCurrentVariant) {
+		if ( // for default set standard variants e.g. via _ensureStandardvariantExists() , 'currentVariant' property is not set
+			ObjectPath.get([sVariantManagementReference, "currentVariant"], this.oData)
+			&& this.oData[sVariantManagementReference].currentVariant !== this.oData[sVariantManagementReference].originalCurrentVariant
+		) {
 			this.updateCurrentVariant(sVariantManagementReference, oPropertyBinding.getValue(), Utils.getAppComponentForControl(mControl.control));
 		}
 	};

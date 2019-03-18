@@ -98,8 +98,9 @@ function(
 			this.fnApplyChangesStub = sandbox.stub(this.oFlexController, "applyVariantChanges").resolves();
 			this.fnDeleteChangeStub = sandbox.stub(this.oFlexController, "deleteChange");
 			sandbox.spy(VariantUtil, "initializeHashRegister");
+			sandbox.spy(this.oFlexController._oChangePersistence._oVariantController, "assignResetMapListener");
 			this.oModel = new VariantModel(this.oData, this.oFlexController, this.oComponent);
-			this.fnLoadSwitchChangesStub = sandbox.stub(this.oModel.oChangePersistence, "loadSwitchChangesMapForComponent").returns({aRevert:[], aNew:[]});
+			this.fnLoadSwitchChangesStub = sandbox.stub(this.oModel.oChangePersistence, "loadSwitchChangesMapForComponent").returns({changesToBeReverted:[], changesToBeApplied:[]});
 		},
 		afterEach: function() {
 			sandbox.restore();
@@ -110,6 +111,26 @@ function(
 		QUnit.test("when initializing a variant model instance", function(assert) {
 			assert.ok(VariantUtil.initializeHashRegister.calledOnce, "then VariantUtil.initializeHashRegister() called once");
 			assert.ok(VariantUtil.initializeHashRegister.calledOn(this.oModel), "then VariantUtil.initializeHashRegister() called with VariantModel as context");
+		});
+
+		QUnit.test("when listener for variant controller map reset is called", function(assert) {
+			var aRevertChanges = ["revertMockChange"];
+			var sVariantManagementReference = "variantMgmtId1";
+			sandbox.stub(VariantUtil, "updateHasherEntry");
+			this.fnLoadSwitchChangesStub.returns({
+				changesToBeReverted: aRevertChanges
+			});
+
+			var fnResetListener = this.oModel.oVariantController.assignResetMapListener.getCall(0).args[0];
+			assert.ok(typeof fnResetListener === "function", "then a listener function was assigned to variant controller map reset");
+			return fnResetListener().then(function() {
+				assert.ok(this.fnRevertChangesStub.calledWith(aRevertChanges, this.oComponent), "then current variant changes were reverted");
+				assert.ok(VariantUtil.updateHasherEntry.calledWith({
+					parameters: []
+				}), "then hash register was reset");
+				assert.strictEqual(this.oData[sVariantManagementReference].variants.length, 1, "then only one variant exists after reset");
+				assert.strictEqual(this.oData[sVariantManagementReference].variants[0].key, sVariantManagementReference, "then the only variant existing is standard variant");
+			}.bind(this));
 		});
 
 		QUnit.test("when calling 'getData'", function(assert) {
@@ -1184,14 +1205,21 @@ function(
 				appComponent: this.oComponent
 			};
 			return this.oModel.copyVariant(mPropertyBag).then( function (aChanges) {
+				var oVariantDefinition = aChanges[0].getDefinitionWithChanges();
+
 				assert.ok(fnAddVariantToControllerStub.calledOnce, "then function to add variant to VariantController called");
 
 				//Mocking properties set inside Variant.createInitialFileContent
 				oVariantData.content.support.sapui5Version = sap.ui.version;
 				oVariantData.content.self = oVariantData.content.namespace + oVariantData.content.fileName + "." + "ctrl_variant";
 
-				assert.deepEqual(aChanges[0].getDefinitionWithChanges(), oVariantData, "then ctrl_variant change prepared with the correct content");
-				assert.ok(fnAddVariantToControllerStub.calledWith(aChanges[0].getDefinitionWithChanges()), "then function to add variant to VariantController called with the correct parameters");
+				assert.deepEqual(oVariantDefinition, oVariantData, "then ctrl_variant change prepared with the correct content");
+
+				// mocking "visible" and "favorite" property only required in VariantController map
+				oVariantDefinition.content.content.visible = true;
+				oVariantDefinition.content.content.favorite = true;
+
+				assert.ok(fnAddVariantToControllerStub.calledWith(oVariantDefinition), "then function to add variant to VariantController called with the correct parameters");
 				assert.equal(this.oModel.oData["variantMgmtId1"].variants[3].key, oVariantData.content.fileName, "then variant added to VariantModel");
 				assert.equal(aChanges[0].getId(), oVariantData.content.fileName, "then the returned variant is the duplicate variant");
 			}.bind(this));

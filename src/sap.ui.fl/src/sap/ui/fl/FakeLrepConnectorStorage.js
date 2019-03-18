@@ -350,7 +350,7 @@ sap.ui.define([
 			var aReferencedChanges = [];
 			withVariant(mResult, oCurrentVariant.content.variantManagementReference, oCurrentVariant.content.variantReference, function (oVariant) {
 				aReferencedChanges = oVariant.controlChanges.filter( function (oReferencedChange) {
-					return Utils.compareAgainstCurrentLayer(oReferencedChange.layer) === -1;
+					return Utils.compareAgainstCurrentLayer(oReferencedChange.layer, oCurrentVariant.layer) === -1;
 				});
 				if (oVariant.content.variantReference) {
 					aReferencedChanges = aReferencedChanges.concat(this._getReferencedChanges(mResult, oVariant));
@@ -475,7 +475,7 @@ sap.ui.define([
 				var oChangePersistence = ChangePersistenceFactory.getChangePersistenceForComponent(sAppComponentName, sAppVersion);
 				if (!(oChangePersistence._oConnector instanceof FakeLrepConnectorStorage)) {
 					if (!bSuppressCacheInvalidation) {
-						Cache.clearEntry(sAppComponentName, sAppVersion);
+						FakeLrepConnectorStorage.clearCacheAndResetVariants(sAppComponentName, sAppVersion, oChangePersistence);
 					}
 					if (!FakeLrepConnectorStorage._oBackendInstances[sAppComponentName]){
 						FakeLrepConnectorStorage._oBackendInstances[sAppComponentName] = {};
@@ -519,7 +519,7 @@ sap.ui.define([
 			if (sAppComponentName && sAppVersion) {
 				var oChangePersistence = ChangePersistenceFactory.getChangePersistenceForComponent(sAppComponentName, sAppVersion);
 				if (!(oChangePersistence._oConnector instanceof LrepConnector)){
-					Cache.clearEntry(sAppComponentName, sAppVersion);
+					FakeLrepConnectorStorage.clearCacheAndResetVariants(sAppComponentName, sAppVersion, oChangePersistence);
 					if (FakeLrepConnectorStorage._oBackendInstances[sAppComponentName] && FakeLrepConnectorStorage._oBackendInstances[sAppComponentName][sAppVersion]) {
 						oChangePersistence._oConnector = FakeLrepConnectorStorage._oBackendInstances[sAppComponentName][sAppVersion];
 						FakeLrepConnectorStorage._oBackendInstances[sAppComponentName][sAppVersion] = undefined;
@@ -531,6 +531,11 @@ sap.ui.define([
 
 			Cache.clearEntries();
 			restoreConnectorFactory();
+		};
+
+		FakeLrepConnectorStorage.clearCacheAndResetVariants = function (sComponentName, sAppVersion, oChangePersistence) {
+			Cache.clearEntry(sComponentName, sAppVersion);
+			oChangePersistence.resetVariantMap(/*bResetAtRuntime*/true);
 		};
 
 		return FakeLrepConnectorStorage;

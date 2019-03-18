@@ -16,6 +16,7 @@ sap.ui.define([
 		onInit: function () {
 			this.iCounter = 0;
 			var oView = this.getView();
+			oView.addStyleClass("sapUiSizeCompact");
 			this._data.push(
 				new Promise(function (resolve, reject) {
 					oView.bindElement({

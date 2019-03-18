@@ -319,13 +319,21 @@ sap.ui.define([
 		});
 
 		QUnit.test("when enable then disable fake connector with app component data", function (assert) {
+			assert.expect(15);
 			FakeLrepConnectorSessionStorage.disableFakeConnector();
 			var sAppComponentName = "testComponent";
 			var sAppVersion = "1.2.3";
+			var oChangePersistence = ChangePersistenceFactory.getChangePersistenceForComponent(sAppComponentName, sAppVersion);
+			var fnResetMapStub = sinon.stub(oChangePersistence._oVariantController, "resetMap");
+			fnResetMapStub.callsFake(function(bResetAtRuntime) {
+				assert.strictEqual(bResetAtRuntime, true, "then the correct parameter was passed to reset variant controller map");
+				if (fnResetMapStub.callCount === 2) { // once for enable and then for disable
+					assert.ok(true, "then map was reset twice both when fake connector was enabled and disabled");
+				}
+			});
 			//enable
 			FakeLrepConnectorSessionStorage.enableFakeConnector("dummy path", sAppComponentName, sAppVersion);
 			var oConnector = LrepConnector.createConnector();
-			var oChangePersistence = ChangePersistenceFactory.getChangePersistenceForComponent(sAppComponentName, sAppVersion);
 			assert.deepEqual(Cache.getEntry(sAppComponentName, sAppVersion), {}, "when enable fake connector, the flex cache entry is empty");
 			assert.ok(FakeLrepConnectorSessionStorage._oBackendInstances[sAppComponentName][sAppVersion] instanceof LrepConnector, "then real connector instance of correspond change persistence is stored");
 			assert.ok(oChangePersistence._oConnector instanceof FakeLrepConnectorSessionStorage, "then the fake connector instance is used for correspond change persistence ");
@@ -342,6 +350,8 @@ sap.ui.define([
 			assert.equal(FakeLrepConnectorSessionStorage.enableFakeConnector.original, undefined, "then original connector is erased");
 			assert.ok(oConnector instanceof LrepConnector, "new connector will be created with real instance");
 			assert.equal(FakeLrepConnectorSessionStorage._oFakeInstance, undefined, "and a stored fake instance is erased");
+
+			fnResetMapStub.restore();
 		});
 
 		QUnit.test("when _createChangesMap is called with a variant and variantSection is not available", function (assert) {

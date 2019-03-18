@@ -2,6 +2,8 @@
 
 sap.ui.define([
 	'sap/ui/fl/Utils',
+	'sap/ui/fl/Change',
+	'sap/ui/fl/Variant',
 	'sap/ui/layout/VerticalLayout',
 	'sap/ui/layout/HorizontalLayout',
 	'sap/m/Button',
@@ -13,6 +15,8 @@ sap.ui.define([
 ],
 function(
 	Utils,
+	Change,
+	Variant,
 	VerticalLayout,
 	HorizontalLayout,
 	Button,
@@ -1082,6 +1086,31 @@ function(
 			};
 			var sNamespace = "apps/sap.account.appname.id_1471874653135_11/changes/";
 			assert.equal(Utils.createNamespace(oPropertyBag, "changes"), sNamespace);
+		});
+
+		QUnit.test("when isChangeRelatedToVariants is called with a control variant change", function(assert) {
+			[
+				new Variant({
+					content: {
+						fileType: "ctrl_variant",
+						fileName: "variant0",
+						content: {}
+					}
+				}), new Change({
+					fileType: "ctrl_variant_change",
+					fileName: "change0"
+				}), new Change({
+					fileType: "ctrl_variant_management_change",
+					fileName: "change1"
+				}), new Change({
+					fileType: "change",
+					fileName: "change2",
+					variantReference: "variant0"
+				})
+			].forEach(function(oChange) {
+				assert.ok(Utils.isChangeRelatedToVariants(oChange), "then for change type " + oChange.getFileType() + " true was returned");
+			});
+
 		});
 	});
 

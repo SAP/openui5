@@ -9,6 +9,7 @@ sap.ui.define([
 	"sap/ui/core/util/reflection/JsControlTreeModifier",
 	"sap/ui/core/Element",
 	"sap/ui/base/ManagedObject",
+	"sap/base/util/includes",
 	"sap/ui/fl/variants/VariantManagement",
 	"sap/ui/core/Component",
 	"sap/ui/thirdparty/jquery"
@@ -19,6 +20,7 @@ sap.ui.define([
 	JsControlTreeModifier,
 	Element,
 	ManagedObject,
+	includes,
 	VariantManagement,
 	Component,
 	jQuery
@@ -306,7 +308,7 @@ sap.ui.define([
 		 * @param {sap.ui.core.Component} aControls.appComponent - Application component of the controls at runtime in case a map has been used
 		 * @param {string} aControls.id - ID of the control in case a map has been used to specify the control
 		 *
-		 * @returns {Promise} Promie resolving with true if personalization changes exists, otherwise false.
+		 * @returns {Promise} Promise resolving with true if personalization changes exists, otherwise false.
 		 *
 		 * @method sap.ui.fl.ControlPersonalizationAPI.isPersonalized
 		 * @public
@@ -327,11 +329,13 @@ sap.ui.define([
 			});
 
 			var oFlexController = FlexControllerFactory.createForControl(oAppComponent);
-			return oFlexController.getComponentChanges({currentLayer:"USER", includeCtrlVariants: true})
-			.then(this._filterBySelectors.bind(this, oAppComponent, aIdsOfPassedControls))
-			.then(this._filterByChangeType.bind(this, aChangeTypes))
-			.then(this._filterByFileType)
-			.then(this._checkForExistingChanges);
+			return oFlexController.getComponentChanges({currentLayer: "USER", includeCtrlVariants: true})
+			.then(function (aChanges) {
+				return aChanges
+					.filter(this._filterBySelectors.bind(this, oAppComponent, aIdsOfPassedControls))
+					.filter(this._filterByChangeType.bind(this, aChangeTypes))
+					.some(this._ifValidFileType);
+			}.bind(this));
 		},
 
 		_reject: function (sMessage) {
@@ -339,33 +343,20 @@ sap.ui.define([
 			return Promise.reject(sMessage);
 		},
 
-		_filterBySelectors: function(oAppComponent, aIdsOfPassedControls, aChanges) {
-			return aChanges.filter(function(oChange){
-				var oSelector = oChange.getSelector();
-				var sControlId = JsControlTreeModifier.getControlIdBySelector(oSelector, oAppComponent);
-				return aIdsOfPassedControls.indexOf(sControlId) != -1;
-			});
+		_filterBySelectors: function (oAppComponent, aIdsOfPassedControls, oChange) {
+			var oSelector = oChange.getSelector();
+			var sControlId = JsControlTreeModifier.getControlIdBySelector(oSelector, oAppComponent);
+			return includes(aIdsOfPassedControls, sControlId);
 		},
 
-		_filterByChangeType: function(aChangeTypes, aChanges) {
-			if (!aChangeTypes || aChangeTypes.length === 0) {
-				return aChanges;
-			}
-			return aChanges.filter(function(oChange){
-				var sChangeType = oChange.getChangeType();
-				return aChangeTypes.indexOf(sChangeType) != -1;
-			});
+		_filterByChangeType: function (aChangeTypes, oChange) {
+			return Array.isArray(aChangeTypes)
+				&& aChangeTypes.length > 0
+				&& includes(aChangeTypes, oChange.getChangeType());
 		},
 
-		_filterByFileType: function(aChanges) {
-			return aChanges.filter(function(oChange){
-				var sChangeType = oChange.getFileType();
-				return sChangeType === "change";
-			});
-		},
-
-		_checkForExistingChanges: function(aChanges) {
-			return aChanges.length > 0;
+		_ifValidFileType: function (oChange) {
+			return oChange.getFileType() === "change";
 		},
 
 		/**

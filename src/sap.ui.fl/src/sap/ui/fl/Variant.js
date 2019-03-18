@@ -603,9 +603,7 @@ sap.ui.define([
 				variantReference: oPropertyBag.content.variantReference || "",
 				reference: oPropertyBag.content.reference || "",
 				packageName: oPropertyBag.content.packageName || "",
-				content: {
-					title: oPropertyBag.content.content.title || ""
-				},
+				content: {title: oPropertyBag.content.content.title || ""},
 				self: sNamespace + sFileName + "." + "ctrl_variant",
 				layer: oPropertyBag.content.layer || Utils.getCurrentLayer(oPropertyBag.isUserDependent),
 				texts: oPropertyBag.content.texts || {},
