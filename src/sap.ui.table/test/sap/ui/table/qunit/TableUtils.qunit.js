@@ -33,6 +33,9 @@ sap.ui.define([
 	var TestControl = TableQUnitUtils.getTestControl();
 	var TestInputControl = TableQUnitUtils.getTestInputControl();
 
+	// loading CreationRow indirectly installed the sap.m variant of the TableHelper
+	TableQUnitUtils.setDummyTableHelper();
+
 	QUnit.module("TableUtils", {
 		beforeEach: function() {
 			createTables();
