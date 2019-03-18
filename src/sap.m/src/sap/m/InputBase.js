@@ -866,7 +866,16 @@ function(
 	 */
 	InputBase.prototype.openValueStateMessage = function() {
 		if (this._oValueStateMessage && this.shouldValueStateMessageBeOpened()) {
-			this._oValueStateMessage.open();
+
+			// if the input receive the focus and the parent div scrolls,
+			// in IE we should wait until the scroll ends
+			if (Device.browser.msie) {
+				setTimeout(function () {
+					this._oValueStateMessage.open();
+				}.bind(this), 0);
+			} else {
+				this._oValueStateMessage.open();
+			}
 		}
 	};
 
