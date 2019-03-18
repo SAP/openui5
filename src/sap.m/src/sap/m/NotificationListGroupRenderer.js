@@ -296,7 +296,13 @@ sap.ui.define(["sap/ui/core/library"], function(coreLibrary) {
 	 * @param {sap.ui.core.Control} oControl An object representation of the control that should be rendered
 	 */
 	NotificationListGroupRenderer.renderBody = function (oRm, oControl) {
-		oRm.write('<ul class=' + classNameBody + '>');
+		oRm.write('<ul');
+		oRm.addClass(classNameBody);
+
+		//Needed so show more button will be read by JAWS
+		oRm.writeAttribute("aria-hidden", "true");
+		oRm.writeClasses();
+		oRm.write('>');
 
 		this.renderNotifications(oRm, oControl);
 		if (oControl._maxNumberReached) {
