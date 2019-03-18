@@ -4,6 +4,7 @@ sap.ui.define([
 	"sap/ui/qunit/QUnitUtils",
 	"sap/ui/qunit/utils/createAndAppendDiv",
 	"sap/ui/model/type/Date",
+	"sap/ui/model/json/JSONModel",
 	"sap/ui/unified/calendar/CalendarDate",
 	"sap/ui/unified/DateTypeRange",
 	"sap/ui/unified/CalendarLegend",
@@ -36,6 +37,7 @@ sap.ui.define([
 	qutils,
 	createAndAppendDiv,
 	TypeDate,
+	JSONModel,
 	CalendarDate,
 	DateTypeRange,
 	CalendarLegend,
@@ -769,6 +771,59 @@ sap.ui.define([
 		assert.deepEqual(_getListItem(oPCRow).getCustomData(), oPCRow.getCustomData(),
 			"getCustomData of PlanningCalendarRow is used by internal ColumnListItem");
 
+	});
+
+	QUnit.test("PlanningCalendarRow - propagate properties/aggregations updates", function(assert) {
+		// Arrange
+		var fnDone = assert.async(),
+			oModel = new JSONModel(),
+			oPC = new PlanningCalendar({
+				rows: {
+					path: '/',
+					template: new PlanningCalendarRow({
+						title: "{title}",
+						text: "{text}",
+						tooltip: "{tooltip}"
+					})
+				}
+			}),
+			oRowHeader;
+
+		assert.expect(6);
+
+		// Act
+		oModel.setData([{
+			title: "title",
+			text: "text",
+			tooltip: "tooltip"
+		}]);
+		oPC.setModel(oModel);
+
+		oRowHeader = _getRowHeader(oPC.getRows()[0]);
+
+		setTimeout(function () {
+			// Act
+			oModel.setData([{
+				title: "title UPDATED",
+				text: "text UPDATED",
+				tooltip: "tooltip UPDATED"
+			}]);
+
+			// Assert
+			assert.equal(oRowHeader.getTitle(), "title UPDATED", "title is set correctly");
+			assert.equal(oRowHeader.getDescription(), "text UPDATED", "text is set correctly");
+			assert.equal(oRowHeader.getTooltip(), "tooltip UPDATED", "tooltip is set correctly");
+
+			// Clean up
+			oPC.destroy();
+
+			fnDone();
+		});
+
+		// Assert
+		assert.equal(oRowHeader.getTitle(), "title", "title is set correctly");
+		assert.equal(oRowHeader.getDescription(), "text", "text is set correctly");
+		assert.equal(oRowHeader.getTooltip(), "tooltip", "tooltip is set correctly");
 	});
 
 	QUnit.test("Table", function(assert) {

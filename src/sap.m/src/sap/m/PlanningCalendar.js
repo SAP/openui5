@@ -2571,6 +2571,13 @@ sap.ui.define([
 
 					oListItem.setProperty(oChanges.name, oChanges.current);
 				}.bind(this),
+				tooltip: function (oChanges) {
+					if (oChanges.mutation === "insert") {
+						oRowHeader.setTooltip(oChanges.child);
+					} else if (oChanges.mutation === "remove") {
+						oRowHeader.setTooltip();
+					}
+				},
 				intervalHeaders: function (oChanges) {
 					oRowTimeline.invalidate();
 				},
@@ -2588,7 +2595,7 @@ sap.ui.define([
 			}
 		}).observe(oRow, {
 			properties: ["icon", "text", "title", "nonWorkingDays", "nonWorkingHours", "selected", "enableAppointmentsDragAndDrop", "enableAppointmentsResize", "enableAppointmentsCreate"],
-			aggregations: ["appointments", "intervalHeaders"],
+			aggregations: ["tooltip", "appointments", "intervalHeaders"],
 			destroy: true
 		});
 
