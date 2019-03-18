@@ -262,6 +262,7 @@
 							<subSections>
 								<custom:ObjectPageSubSection>
 									<custom:blocks>
+										<m:CheckBox text="Show borrowed properties" visible="{/bHasBorrowedProps}" displayOnly="{=!${/bHasSelfProps}}" selected="{=${/bShowBorrowedProps}}" select="onBorrowedPropCheckboxClick"/>
 										<custom:LightTable rows="{path : '/ui5-metadata/properties'}"
 											columnTitles="Name,Type,Default Value,Description"
 											columnCount="4"
@@ -312,6 +313,7 @@
 							<subSections>
 								<custom:ObjectPageSubSection>
 									<custom:blocks>
+										<m:CheckBox text="Show borrowed aggregations" visible="{/bHasBorrowedAggr}" displayOnly="{=!${/bHasSelfAggr}}" selected="{/bShowBorrowedAggr}" select="onBorrowedAggrCheckboxClick"/>
 										<custom:LightTable rows="{path : '/ui5-metadata/aggregations'}"
 											columnTitles="{= ${data>/hasAggregationAltTypes} ? 'Name,Cardinality,Type,Alt types,Description' : 'Name,Cardinality,Type,Description'}"
 											columnCount="{= ${data>/hasAggregationAltTypes} ? 5 : 4}"
@@ -380,6 +382,7 @@
 							<subSections>
 								<custom:ObjectPageSubSection>
 									<custom:blocks>
+										<m:CheckBox text="Show borrowed associations" visible="{/bHasBorrowedAssoc}" displayOnly="{=!${/bHasSelfAssoc}}" selected="{/bShowBorrowedAssoc}" select="onBorrowedAssocCheckboxClick"/>
 										<custom:LightTable rows="{path : '/ui5-metadata/associations'}"
 											columnCount="4"
 											columnTitles="Name,Cardinality,Type,Description"

@@ -44,6 +44,12 @@ sap.ui.define([
 			/* =========================================================== */
 
 			initiate: function (oReferences) {
+				var bHasSelfProps,
+					bHasSelfAggr,
+					bHasSelfAssoc,
+					fnOverrideBorrowedFilter = function (item) {
+						return !item.borrowedFrom;
+					};
 
 				// Setup
 				this._sTopicId = oReferences.sTopicId;
@@ -64,6 +70,37 @@ sap.ui.define([
 
 				// Cache router instance
 				this._oRouter = this.getRouter();
+
+				this._allProperties = this._oModel.getProperty("/ui5-metadata/properties");
+				this._allAggregations = this._oModel.getProperty("/ui5-metadata/aggregations");
+				this._allAssociations = this._oModel.getProperty("/ui5-metadata/associations");
+
+				if (this._allProperties) {
+					this._selfProperties = this._allProperties.filter(fnOverrideBorrowedFilter);
+					bHasSelfProps = this._selfProperties.length > 0;
+					this._oModel.setProperty("/bShowBorrowedProps", !bHasSelfProps);
+					this._oModel.setProperty("/bHasSelfProps", bHasSelfProps);
+					this._oModel.setProperty("/bHasBorrowedProps", this._allProperties.length > this._selfProperties.length);
+					this._oModel.setProperty("/ui5-metadata/properties", bHasSelfProps ? this._selfProperties : this._allProperties);
+				}
+
+				if (this._allAggregations) {
+					this._selfAggregations = this._allAggregations.filter(fnOverrideBorrowedFilter);
+					bHasSelfAggr = this._selfAggregations.length > 0;
+					this._oModel.setProperty("/bShowBorrowedAggr", !bHasSelfAggr);
+					this._oModel.setProperty("/bHasSelfAggr", bHasSelfAggr);
+					this._oModel.setProperty("/bHasBorrowedAggr", this._allAggregations.length > this._selfAggregations.length);
+					this._oModel.setProperty("/ui5-metadata/aggregations", bHasSelfAggr ? this._selfAggregations : this._allAggregations);
+				}
+
+				if (this._allAssociations) {
+					this._selfAssociations = this._allAssociations.filter(fnOverrideBorrowedFilter);
+					bHasSelfAssoc = this._selfAssociations.length > 0;
+					this._oModel.setProperty("/bShowBorrowedAssoc", !bHasSelfAssoc);
+					this._oModel.setProperty("/bHasSelfAssoc", bHasSelfAssoc);
+					this._oModel.setProperty("/bHasBorrowedAssoc", this._allAssociations.length > this._selfAssociations.length);
+					this._oModel.setProperty("/ui5-metadata/associations", bHasSelfAssoc ? this._selfAssociations : this._allAssociations);
+				}
 
 				// Attach the model to the view
 				this.setModel(this._oModel);
@@ -147,6 +184,30 @@ sap.ui.define([
 				// As this is a nested sub-view we pass the container view and controller context so fullscreen will
 				// work as expected.
 				ToggleFullScreenHandler.updateMode(oEvent, this._oContainerView, this._oContainerController);
+			},
+
+			onBorrowedPropCheckboxClick: function (oEvent) {
+				var bChecked = oEvent.getParameter("selected");
+
+				this._oModel.setProperty("/bShowBorrowedProps", bChecked);
+
+				this._oModel.setProperty("/ui5-metadata/properties", bChecked ? this._allProperties : this._selfProperties);
+			},
+
+			onBorrowedAggrCheckboxClick: function (oEvent) {
+				var bChecked = oEvent.getParameter("selected");
+
+				this._oModel.setProperty("/bShowBorrowedAggr", bChecked);
+
+				this._oModel.setProperty("/ui5-metadata/aggregations", bChecked ? this._allAggregations : this._selfAggregations);
+			},
+
+			onBorrowedAssocCheckboxClick: function (oEvent) {
+				var bChecked = oEvent.getParameter("selected");
+
+				this._oModel.setProperty("/bShowBorrowedAssoc", bChecked);
+
+				this._oModel.setProperty("/ui5-metadata/associations", bChecked ? this._allAssociations : this._selfAssociations);
 			},
 
 			onJSDocLinkClick: function (oEvent) {
