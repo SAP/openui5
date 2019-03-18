@@ -4,6 +4,7 @@ sap.ui.define([
 	"jquery.sap.global",
 	"sap/m/library",
 	"sap/m/SinglePlanningCalendar",
+	"sap/m/SinglePlanningCalendarGrid",
 	"sap/m/SinglePlanningCalendarDayView",
 	"sap/m/SinglePlanningCalendarWeekView",
 	"sap/ui/unified/CalendarAppointment",
@@ -15,6 +16,7 @@ sap.ui.define([
 	jQuery,
 	mobileLibrary,
 	SinglePlanningCalendar,
+	SinglePlanningCalendarGrid,
 	SinglePlanningCalendarDayView,
 	SinglePlanningCalendarWeekView,
 	CalendarAppointment,
@@ -810,5 +812,61 @@ sap.ui.define([
 
 		// Clean up
 		oSPC.destroy();
+	});
+
+	QUnit.module("Resize Appointments", {
+		beforeEach: function() {
+			this.oSPCGrid = new SinglePlanningCalendarGrid({
+				startDate: new Date(2017, 10, 13, 0, 0, 0)
+			});
+		},
+		afterEach: function() {
+			this.oSPCGrid.destroy();
+			this.oSPCGrid = null;
+		}
+	});
+
+	QUnit.test("resize config is always added", function(assert) {
+		var oDragConfig = this.oSPCGrid.getDragDropConfig();
+
+		//assert
+		assert.equal(oDragConfig[2].getSourceAggregation(), "appointments", "Source aggregation is correct");
+		assert.equal(oDragConfig[2].getTargetAggregation(), "_intervalPlaceholders", "Source aggregation is correct");
+		assert.equal(oDragConfig[2].getGroupName(), "ResizeConfig", "Group name is correct");
+	});
+
+	QUnit.test("_calcResizeNewHoursAppPos: Calculate new size of the appointment", function(assert) {
+		// arrange
+		var	oAppStartDate = new Date(2017, 10, 13, 1, 0, 0),
+			oAppEndDate = new Date(2017, 10, 13, 2, 0, 0),
+			newAppPos;
+
+		// act - resize appointment's end to 5 o'clock (10 x 30 mins)
+		newAppPos = this.oSPCGrid._calcResizeNewHoursAppPos(oAppStartDate, oAppEndDate, 9, true);
+
+		// assert
+		assert.deepEqual(newAppPos.startDate, oAppStartDate, "Start date should not be changed");
+		assert.deepEqual(newAppPos.endDate, new Date(2017, 10, 13, 5, 0, 0), "End date hour is correct");
+
+		// act - resize appointment's end to preceed the appointment's start
+		newAppPos = this.oSPCGrid._calcResizeNewHoursAppPos(oAppStartDate, oAppEndDate, 0, true);
+
+		// assert
+		assert.deepEqual(newAppPos.startDate, new Date(2017, 10, 13, 0, 0, 0), "Start date hout is correct");
+		assert.deepEqual(newAppPos.endDate, oAppStartDate, "End date hour is correct");
+
+		// act - resize appointment's start to 0:30
+		newAppPos = this.oSPCGrid._calcResizeNewHoursAppPos(oAppStartDate, oAppEndDate, 1, false);
+
+		// assert
+		assert.deepEqual(newAppPos.startDate, new Date(2017, 10, 13, 0, 30, 0), "Start date hour is correct");
+		assert.deepEqual(newAppPos.endDate, oAppEndDate, "End date should not be changed");
+
+		// act - resize appointment's start to go after the appointment's end
+		newAppPos = this.oSPCGrid._calcResizeNewHoursAppPos(oAppStartDate, oAppEndDate, 4, false);
+
+		// assert
+		assert.deepEqual(newAppPos.startDate, oAppEndDate, "Start date hout is correct");
+		assert.deepEqual(newAppPos.endDate, new Date(2017, 10, 13, 2, 30, 0), "End date hour is correct");
 	});
 });
