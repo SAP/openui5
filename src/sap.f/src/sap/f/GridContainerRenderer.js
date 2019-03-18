@@ -7,10 +7,10 @@ sap.ui.define([],
 		"use strict";
 
 		/**
-		 * CardContainer renderer
+		 * GridContainer renderer
 		 * @namespace
 		 */
-		var CardContainerRenderer = {};
+		var GridContainerRenderer = {};
 
 		/**
 		 * Renders the HTML for the given control, using the provided {@link sap.ui.core.RenderManager}.
@@ -18,12 +18,12 @@ sap.ui.define([],
 		 * @param {sap.ui.core.RenderManager} rm the RenderManager that can be used for writing to the render output buffer
 		 * @param {sap.ui.core.Control} control an object representation of the control that should be rendered
 		 */
-		CardContainerRenderer.render = function(rm, control) {
+		GridContainerRenderer.render = function(rm, control) {
 
 			rm.write('<div');
 			rm.writeControlData(control);
 
-			rm.addClass("sapFCardContainer");
+			rm.addClass("sapFGridContainer");
 			rm.writeClasses();
 
 			// Add inline styles
@@ -54,6 +54,6 @@ sap.ui.define([],
 			rm.write("</div>");
 		};
 
-		return CardContainerRenderer;
+		return GridContainerRenderer;
 
 	}, /* bExport= */ true);

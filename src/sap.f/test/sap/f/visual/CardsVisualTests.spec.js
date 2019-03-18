@@ -90,13 +90,13 @@ describe("sap.f.CardsVisualTests", function () {
 		});
 	});
 
-	it('Card Container', function() {
+	it('Grid Container', function() {
 		browser.executeScript("window.history.back()");
 		browser.executeScript('document.getElementById("__item0-container-cardsVisualTests---main--useCases-4").scrollIntoView()');
 		element(by.id("__item0-container-cardsVisualTests---main--useCases-4")).click();
 
-		var oCard = element(by.css("#container-cardsVisualTests---CardContainer--cContainer"));
-		expect(takeScreenshot(oCard)).toLookAs("4_CardContainer");
+		var oCard = element(by.css("#container-cardsVisualTests---GridContainer--cContainer"));
+		expect(takeScreenshot(oCard)).toLookAs("4_GridContainer");
 	});
 
 	it('Object Card', function() {

@@ -6,7 +6,7 @@ sap.ui.define([
 	"sap/ui/base/ManagedObjectObserver",
 	'sap/ui/core/ResizeHandler',
 	"sap/ui/core/delegate/ItemNavigation",
-	"sap/f/CardContainerRenderer",
+	"sap/f/GridContainerRenderer",
 	"sap/ui/Device",
 	"sap/ui/layout/cssgrid/VirtualGrid"
 
@@ -14,7 +14,7 @@ sap.ui.define([
              ManagedObjectObserver,
              ResizeHandler,
              ItemNavigation,
-             CardContainerRenderer,
+             GridContainerRenderer,
              Device,
              VirtualGrid) {
 	"use strict";
@@ -37,7 +37,7 @@ sap.ui.define([
 	}
 
 	/**
-	 * Constructor for a new <code>CardContainer</code>.
+	 * Constructor for a new <code>GridContainer</code>.
 	 *
 	 * @param {string} [sId] ID for the new control, generated automatically if no ID is given
 	 * @param {object} [mSettings] Initial settings for the new control
@@ -62,10 +62,10 @@ sap.ui.define([
 	 * @experimental
 	 * @since 1.62
 	 * @see {@link TODO Card}
-	 * @alias sap.f.CardContainer
+	 * @alias sap.f.GridContainer
 	 * @ui5-metamodel This control/element also will be described in the UI5 (legacy) designtime metamodel
 	 */
-	var CardContainer = Control.extend("sap.f.CardContainer", /** @lends sap.f.CardContainer.prototype */ {
+	var GridContainer = Control.extend("sap.f.GridContainer", /** @lends sap.f.GridContainer.prototype */ {
 		metadata: {
 			library: "sap.f",
 			properties: {
@@ -91,7 +91,7 @@ sap.ui.define([
 		}
 	});
 
-	CardContainer.prototype._onBeforeItemRendering = function () {
+	GridContainer.prototype._onBeforeItemRendering = function () {
 		var container = this.getParent(),
 			resizeListenerId = container._resizeListeners[this.getId()];
 
@@ -102,7 +102,7 @@ sap.ui.define([
 		delete container._resizeListeners[this.getId()];
 	};
 
-	CardContainer.prototype._onAfterItemRendering = function () {
+	GridContainer.prototype._onAfterItemRendering = function () {
 		var container = this.getParent(),
 			itemColumnCount = getItemColumnCount(this);
 
@@ -126,7 +126,7 @@ sap.ui.define([
 		container._applyLayout();
 	};
 
-	CardContainer.prototype._onItemChange = function (changes) {
+	GridContainer.prototype._onItemChange = function (changes) {
 		if (changes.name !== "items" || !changes.child) {
 			return;
 		}
@@ -138,7 +138,7 @@ sap.ui.define([
 		}
 	};
 
-	CardContainer.prototype._deregisterResizeListeners = function () {
+	GridContainer.prototype._deregisterResizeListeners = function () {
 		var key,
 			id;
 
@@ -150,7 +150,7 @@ sap.ui.define([
 		delete this._resizeListeners;
 	};
 
-	CardContainer.prototype._setItemNavigationItems = function () {
+	GridContainer.prototype._setItemNavigationItems = function () {
 		if (!this._isRenderingFinished) {
 			return;
 		}
@@ -161,7 +161,7 @@ sap.ui.define([
 		// }));
 	};
 
-	CardContainer.prototype.init = function () {
+	GridContainer.prototype.init = function () {
 
 		this._resizeListeners = {};
 
@@ -183,7 +183,7 @@ sap.ui.define([
 		this.addDelegate(this._itemNavigation);
 	};
 
-	CardContainer.prototype.onBeforeRendering = function () {
+	GridContainer.prototype.onBeforeRendering = function () {
 		var resizeListenerId = this._resizeListeners[this.getId()];
 		if (resizeListenerId) {
 			ResizeHandler.deregister(resizeListenerId);
@@ -192,7 +192,7 @@ sap.ui.define([
 		this._isRenderingFinished = false;
 	};
 
-	CardContainer.prototype.onAfterRendering = function () {
+	GridContainer.prototype.onAfterRendering = function () {
 		this._resizeListeners[this.getId()] = ResizeHandler.register(this.getDomRef(), this._resizeHandler);
 
 		this._isRenderingFinished = true;
@@ -201,7 +201,7 @@ sap.ui.define([
 		this._applyLayout();
 	};
 
-	CardContainer.prototype.exit = function () {
+	GridContainer.prototype.exit = function () {
 		this._deregisterResizeListeners();
 
 		if (this._itemsObserver) {
@@ -216,11 +216,11 @@ sap.ui.define([
 		}
 	};
 
-	CardContainer.prototype._resize = function () {
+	GridContainer.prototype._resize = function () {
 		this._applyLayout();
 	};
 
-	CardContainer.prototype._applyLayout = function () {
+	GridContainer.prototype._applyLayout = function () {
 		if (!this._isRenderingFinished) {
 			return;
 		}
@@ -240,7 +240,7 @@ sap.ui.define([
 
 	};
 
-	CardContainer.prototype._applyIEPolyfillLayout = function () {
+	GridContainer.prototype._applyIEPolyfillLayout = function () {
 
 		var $that = this.$(),
 			width = $that.innerWidth(),
@@ -291,5 +291,5 @@ sap.ui.define([
 		$that.css("height", virtualGrid.getHeight() + "px");
 	};
 
-	return CardContainer;
+	return GridContainer;
 });
