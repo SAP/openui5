@@ -2762,6 +2762,19 @@
 			assert.ok(!!oClone.getCustomControl(), "Custom control is cloned");
 		});
 
+		QUnit.test("_initFilterDetailItems does not throw exception with custom item", function(assert) {
+			var oViewSettingsCustomItem = new sap.m.ViewSettingsCustomItem({
+				text: "SomeText",
+				key: "SomeKey",
+				customControl: new sap.m.Input()
+			});
+
+			new sap.m.ViewSettingsDialog()._initFilterDetailItems(oViewSettingsCustomItem);
+			assert.ok(true, "does not throw exception");
+
+			oViewSettingsCustomItem.destroy();
+		});
+
 		QUnit.test("model is propagated to the dialog", function(assert){
 			var oVSD = new sap.m.ViewSettingsDialog(),
 					sData = "this is the model",
