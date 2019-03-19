@@ -3766,6 +3766,34 @@ sap.ui.define([
 			oSelect.destroy();
 		});
 
+		QUnit.test("icon should be destroyed", function (assert) {
+
+			// system under test
+			var oSelect = new Select({
+				forceSelection: false,
+				items: [
+					new Item({
+						key: "1",
+						text: "First item"
+					}),
+					new ListItem({
+						key: "2",
+						text: "Second item",
+						icon: "sap-icon//competitor"
+					})
+				]
+			});
+
+			oSelect.placeAt("content");
+			sap.ui.getCore().applyChanges();
+
+			// act
+			oSelect.destroy();
+
+			// assert
+			assert.strictEqual(oSelect._getValueIcon(), null, "icon is destroyed");
+		});
+
 		// BCP 1580101530
 		QUnit.test("it should correctly synchronize the selection after the properties (models and bindingContext) are propagated", function (assert) {
 

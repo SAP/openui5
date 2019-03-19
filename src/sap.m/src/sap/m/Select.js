@@ -617,6 +617,10 @@ function(
 
 
 		Select.prototype._getValueIcon = function() {
+			if (this.bIsDestroyed) {
+				return null;
+			}
+
 			var oValueIcon = this.getAggregation("_valueIcon"),
 				oSelectedItem = this.getSelectedItem(),
 				bHaveIcon = !!(oSelectedItem && oSelectedItem.getIcon && oSelectedItem.getIcon()),
@@ -1189,12 +1193,17 @@ function(
 		};
 
 		Select.prototype.exit = function() {
-			var oValueStateMessage = this.getValueStateMessage();
+			var oValueStateMessage = this.getValueStateMessage(),
+				oValueIcon = this._getValueIcon();
 			this._oSelectionOnFocus = null;
 
 			if (oValueStateMessage) {
 				this.closeValueStateMessage();
 				oValueStateMessage.destroy();
+			}
+
+			if (oValueIcon) {
+				oValueIcon.destroy();
 			}
 
 			this._oValueStateMessage = null;
