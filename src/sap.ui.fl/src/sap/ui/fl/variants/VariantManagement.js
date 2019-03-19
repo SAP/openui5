@@ -650,7 +650,7 @@ sap.ui.define([
 		this.handleOpenCloseVariantPopover();
 	};
 
-	VariantManagement.prototype.onkeydown = function(oEvent) {
+	VariantManagement.prototype.onkeyup = function(oEvent) {
 		if (oEvent.which === KeyCodes.F4 || oEvent.which === KeyCodes.SPACE || oEvent.altKey === true && oEvent.which === KeyCodes.ARROW_UP || oEvent.altKey === true && oEvent.which === KeyCodes.ARROW_DOWN) {
 			this._openVariantList();
 		}
