@@ -7,16 +7,33 @@ sap.ui.define([
 	"sap/ui/base/Object",
 	"sap/ui/test/matchers/Interactable",
 	"sap/ui/test/matchers/Visible",
+	"sap/ui/test/matchers/_Enabled",
 	"sap/base/strings/capitalize",
 	"sap/ui/thirdparty/jquery",
 	"sap/ui/test/matchers/matchers"
-], function (UI5Object, Interactable, Visible, capitalize, jQueryDOM) {
+], function (UI5Object, Interactable, Visible, _Enabled, capitalize, jQueryDOM) {
 	"use strict";
 
 	var MatcherFactory = UI5Object.extend("sap.ui.test.matchers.MatcherFactory", {
 
-		getInteractabilityMatchers: function (bInteractable) {
-		  return [bInteractable ?  new Interactable() : new Visible()];
+		getStateMatchers: function (oOptions) {
+			oOptions = oOptions || {};
+			var aMatchers = [];
+
+			// visible and enabled have priority over interactable
+			if (oOptions.enabled) {
+				aMatchers.push(new _Enabled());
+			}
+			if (oOptions.visible !== false) { // any other value is the same as visible: true
+				// Interactable uses Visible
+				if (oOptions.interactable) {
+					aMatchers.push(new Interactable());
+				} else {
+					aMatchers.push(new Visible());
+				}
+			}
+
+			return aMatchers;
 		},
 
 		getFilteringMatchers: function (oOptions) {

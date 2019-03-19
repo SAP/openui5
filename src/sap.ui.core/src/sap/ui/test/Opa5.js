@@ -55,6 +55,7 @@ sap.ui.define([
 			}),
 			aConfigValuesForWaitFor = [
 				"visible",
+				"enabled",
 				"viewNamespace",
 				"viewName",
 				"viewId",
@@ -493,6 +494,7 @@ sap.ui.define([
 		 * </code>
 		 * @param {boolean} [options.searchOpenDialogs=false] If set to true, Opa5 will only look in open dialogs. All the other values except control type will be ignored
 		 * @param {boolean} [options.visible=true] If set to false, Opa5 will also look for unrendered and invisible controls.
+		 * @param {boolean} [options.enabled=false] @since 1.66 If set to false, Opa5 will also look for disabled controls.
 		 * @param {int} [options.timeout=15] (seconds) Specifies how long the waitFor function polls before it fails.O means it will wait forever.
 		 * @param {int} [options.debugTimeout=0] @since 1.47 (seconds) Specifies how long the waitFor function polls before it fails in debug mode.O means it will wait forever.
 		 * @param {int} [options.pollingInterval=400] (milliseconds) Specifies how often the waitFor function polls.
@@ -938,6 +940,7 @@ sap.ui.define([
 		 * 	<li>actions: instance of OPA5</li>
 		 * 	<li>assertions: instance of OPA5</li>
 		 * 	<li>visible: true</li>
+		 * 	<li>enabled: false</li>
 		 * 	<li>timeout : 15 seconds, 0 for infinite timeout</li>
 		 * 	<li>pollingInterval: 400 milliseconds</li>
 		 * 	<li>debugTimeout: 0 seconds, infinite timeout by default. This will be used instead of timeout if running in debug mode.</li>
@@ -955,6 +958,7 @@ sap.ui.define([
 				actions : new Opa5(),
 				assertions : new Opa5(),
 				visible : true,
+				enabled: false,
 				autoWait : false,
 				_stackDropCount : 1
 			});
@@ -1189,6 +1193,7 @@ sap.ui.define([
 			viewId: "string",
 			fragmentId: "string",
 			visible: "bool",
+			enabled: "bool",
 			matchers: "any",
 			actions: "any",
 			id: "any",

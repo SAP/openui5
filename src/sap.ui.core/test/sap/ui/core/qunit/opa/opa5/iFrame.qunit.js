@@ -867,7 +867,7 @@ sap.ui.define([
 			success: function (aMessages) {
 				var sOpaMessage = aMessages.eq(0).text();
 				QUnit.assert.contains(sOpaMessage, "Opa timeout after 2 seconds");
-				QUnit.assert.contains(sOpaMessage, "Control 'Element sap.m.Button#__xmlview0--myButton' is busy -  sap.ui.test.matchers.Interactable");
+				QUnit.assert.contains(sOpaMessage, "Control 'Element sap.m.Button#__xmlview0--myButton' is busy -  sap.ui.test.matchers._Busy");
 				QUnit.assert.contains(sOpaMessage, "0 out of 1 controls met the matchers pipeline requirements -  sap.ui.test.pipelines.MatcherPipeline");
 				QUnit.assert.contains(sOpaMessage, "Matchers found no controls so check function will be skipped -  sap.ui.test.Opa5");
 				QUnit.assert.doesNotContain(sOpaMessage, "Should not happen");

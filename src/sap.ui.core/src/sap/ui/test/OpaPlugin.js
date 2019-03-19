@@ -294,6 +294,7 @@ sap.ui.define([
 			 * @param {string|string[]} [oOptions.id] The ID of one or multiple controls. This can be a global ID or an ID used together with viewName. See the documentation of this parameter.
 			 * @param {boolean} [oOptions.visible=true] should the control have a visible DOM reference
 			 * @param {boolean} [oOptions.interactable=false] @since 1.34 should the control match the interactable matcher {@link sap.ui.test.matchers.Interactable}.
+			 * @param {boolean} [oOptions.enabled=false] @since 1.66 should the control be enabled.
 			 * @param {boolean} [oOptions.searchOpenDialogs] Only controls in the static UI area of UI5 are searched.
 			 * @param {string|function} [oOptions.controlType] @since 1.40 match all controls of a certain type
 			 * It is usually combined with viewName or searchOpenDialogs. If no control matches the type, an empty array will be returned. Examples:
@@ -348,14 +349,18 @@ sap.ui.define([
 					vResult = this.getAllControls();
 				}
 
-				if (!vResult || oOptions.visible === false) {
+				if (!vResult) {
 					return vResult;
 				}
 
-				var oInteractabilityMatchers = oMatcherFactory.getInteractabilityMatchers(oOptions.interactable);
+				var oStateMatchers = oMatcherFactory.getStateMatchers({
+					visible: oOptions.visible, // true by default
+					interactable: oOptions.interactable, // false by default
+					enabled: typeof oOptions.enabled === "undefined" ? oOptions.interactable : oOptions.enabled // false by default
+				});
 				var vPipelineResult = oMatcherPipeline.process({
 					control: vResult,
-					matchers: oInteractabilityMatchers
+					matchers: oStateMatchers
 				});
 
 				// all controls are filtered out

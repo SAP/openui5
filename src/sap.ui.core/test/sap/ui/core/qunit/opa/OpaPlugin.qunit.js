@@ -4,6 +4,7 @@ sap.ui.define([
 	"sap/ui/test/matchers/Interactable",
 	"sap/ui/test/matchers/Visible",
 	'sap/ui/test/autowaiter/_autoWaiter',
+	'sap/ui/test/matchers/_Enabled',
 	"sap/m/CheckBox",
 	"sap/m/Button",
 	"sap/m/Dialog",
@@ -15,6 +16,7 @@ sap.ui.define([
 			 Interactable,
 			 Visible,
 			 _autoWaiter,
+			 _Enabled,
 			 CheckBox,
 			 Button,
 			 Dialog,
@@ -812,7 +814,7 @@ sap.ui.define([
 		oDialog.open();
 	});
 
-	QUnit.module("OpaPlugin - Actions", {
+	QUnit.module("OpaPlugin - matchers", {
 		beforeEach: function () {
 			this.oPlugin =  new OpaPlugin();
 			this.oButton = new Button("foo").placeAt("qunit-fixture");
@@ -854,6 +856,17 @@ sap.ui.define([
 		sinon.assert.notCalled(fnWaitSpy);
 		sinon.assert.notCalled(fnInteractableSpy);
 		assert.strictEqual(oResult.getId() ,this.oButton.getId());
+	});
+
+	QUnit.test("Should invoke the enabled matcher if interactable is false", function(assert) {
+		var fnEnabledSpy = this.spy(_Enabled.prototype, "isMatching");
+
+		this.oPlugin.getMatchingControls({
+			id: "foo",
+			interactable: false
+		});
+
+		sinon.assert.notCalled(fnEnabledSpy);
 	});
 
 	QUnit.module("OpaPlugin - Should know if it is looking for a Control", {

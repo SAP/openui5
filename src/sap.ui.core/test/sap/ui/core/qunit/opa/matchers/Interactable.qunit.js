@@ -12,6 +12,7 @@ sap.ui.define([
 	'sap/ui/test/Opa5',
 	'sap/ui/test/_LogCollector',
 	'../utils/phantomJS',
+	"../utils/loggerInterceptor",
 	'../utils/customQUnitAssertions'
 ], function (Interactable,
 			 $,
@@ -24,7 +25,8 @@ sap.ui.define([
 			 opaTest,
 			 Opa5,
 			 _LogCollector,
-			phantomJSUtils) {
+			phantomJSUtils,
+			loggerInterceptor) {
 	"use strict";
 
 	phantomJSUtils.introduceSinonXHR();
@@ -52,6 +54,7 @@ sap.ui.define([
 			},
 
 			afterEach: function () {
+				this.oSpy.restore();
 				this.oNavContainer.destroy();
 			}
 		});
@@ -82,7 +85,6 @@ sap.ui.define([
 
 			// Assert
 			assert.ok(!bResult, "Control isn't matching");
-			sinon.assert.calledWith(this.oSpy,  sinon.match(/Control 'Element sap.m.Button#__button[0-9]*' is busy/));
 		});
 
 		QUnit.test("Should not match a Button while one of its parents is busy", function (assert) {
@@ -94,7 +96,6 @@ sap.ui.define([
 
 			// Assert
 			assert.ok(!bResult, "Control isn't matching");
-			sinon.assert.calledWith(this.oSpy, sinon.match(/has a parent 'Element sap.m.*' that is busy/));
 		});
 	});
 
@@ -240,62 +241,6 @@ sap.ui.define([
 				}.bind(this), 0);
 			}.bind(this)
 		});
-	});
-
-	QUnit.module("Enabled", {
-		beforeEach: function () {
-			this.oButton = new Button("myButton");
-			this.oPage = new Page("myPage");
-			this.oToolbar = new Toolbar("myToolbar", {
-				content: [this.oButton, this.oPage]
-			});
-			this.oToolbar.placeAt("qunit-fixture");
-			this.oInteractable = new Interactable();
-			this.oSpy = sinon.spy(this.oInteractable._oLogger, "debug");
-			sap.ui.getCore().applyChanges();
-		},
-		afterEach: function () {
-			this.oSpy.restore();
-			this.oToolbar.destroy();
-			sap.ui.getCore().applyChanges();
-		}
-	});
-
-	QUnit.test("Should not match a disabled button", function (assert) {
-		// Arrange
-		this.oButton.setEnabled(false);
-		sap.ui.getCore().applyChanges();
-
-		// Act
-		var bResult = this.oInteractable.isMatching(this.oButton);
-
-		// Assert
-		assert.ok(!bResult, "Does not match because the button is disabled");
-		sinon.assert.calledWith(this.oSpy, "Control 'Element sap.m.Button#myButton' is not enabled");
-	});
-
-	QUnit.test("Should not match a button when the Toolbar is disabled", function (assert) {
-		this.oToolbar.setEnabled(false);
-		sap.ui.getCore().applyChanges();
-
-		// Act
-		var bResult = this.oInteractable.isMatching(this.oButton);
-
-		// Assert
-		assert.ok(!bResult, "Does not match because the toolbar is disabled");
-		sinon.assert.calledWith(this.oSpy, "Control 'Element sap.m.Button#myButton' is not enabled");
-	});
-
-	QUnit.test("Should not match a control when a parent is disabled and it has no enabled propagator", function (assert) {
-		this.oToolbar.setEnabled(false);
-		sap.ui.getCore().applyChanges();
-
-		// Act
-		var bResult = this.oInteractable.isMatching(this.oPage);
-
-		// Assert
-		assert.ok(!bResult, "Does not match because the page because the toolbar is disabled");
-		sinon.assert.calledWith(this.oSpy, "Control 'Element sap.m.Page#myPage' has a parent 'Element sap.m.Toolbar#myToolbar' that is not enabled");
 	});
 
 	jQuery(function () {

@@ -3,24 +3,50 @@ sap.ui.define([
 	"sap/ui/test/matchers/MatcherFactory",
 	"sap/ui/test/matchers/Interactable",
 	"sap/ui/test/matchers/Visible",
+	"sap/ui/test/matchers/_Enabled",
 	"sap/ui/test/matchers/PropertyStrictEquals",
 	"sap/ui/test/matchers/AggregationLengthEquals",
 	"sap/ui/test/matchers/Ancestor"
-], function (MatcherFactory, Interactable, Visible, PropertyStrictEquals, AggregationLengthEquals, Ancestor) {
+], function (MatcherFactory, Interactable, Visible, _Enabled, PropertyStrictEquals, AggregationLengthEquals, Ancestor) {
 	"use strict";
 
 	QUnit.module("MatcherFactory");
 
-	QUnit.test("Should create interactability sequence", function (assert) {
+	QUnit.test("Should create state sequence", function (assert) {
 		var oMatcherFactory = new MatcherFactory();
 
-		var aInteractableMatchers =  oMatcherFactory.getInteractabilityMatchers(true);
+		var aInteractableMatchers =  oMatcherFactory.getStateMatchers({interactable: true});
 		assert.strictEqual(aInteractableMatchers.length, 1, "Only one matcher should be created");
-		assert.ok(aInteractableMatchers[0] instanceof Interactable, "The Interactable matcher should be created");
+		assert.ok(aInteractableMatchers[0] instanceof Interactable, "The Interactable matcher should be added");
 
-		var aVisibleMatchers =  oMatcherFactory.getInteractabilityMatchers(false);
+		var aEnabledMatchers =  oMatcherFactory.getStateMatchers({enabled: true});
+		assert.ok(aEnabledMatchers[0] instanceof _Enabled, "The Enabled matcher should be added");
+
+		var aVisibleMatchers =  oMatcherFactory.getStateMatchers({visible: true});
 		assert.strictEqual(aVisibleMatchers.length, 1, "Only one matcher should be created");
-		assert.ok(aVisibleMatchers[0] instanceof Visible, "The Visible matcher should be created");
+		assert.ok(aVisibleMatchers[0] instanceof Visible, "The Visible matcher should be added");
+
+		var aNoMatchers =  oMatcherFactory.getStateMatchers({visible: false});
+		assert.ok(!aNoMatchers.length, "No matchers should be created");
+
+		var aDefaultMatchers = oMatcherFactory.getStateMatchers();
+		assert.strictEqual(aDefaultMatchers.length, 1, "Only one matcher should be created");
+		assert.ok(aDefaultMatchers[0] instanceof Visible, "The Visible matcher should be added");
+	});
+
+	QUnit.test("Should create common state sequences", function (assert) {
+		var oMatcherFactory = new MatcherFactory();
+
+		// eg: autowait enabled
+		var aInteractableMatchers =  oMatcherFactory.getStateMatchers({visible: true, interactable: true, enabled: true});
+		assert.strictEqual(aInteractableMatchers.length, 2, "Two matchers should be created");
+		assert.ok(aInteractableMatchers[0] instanceof _Enabled, "The Enabled matcher should be added");
+		assert.ok(aInteractableMatchers[1] instanceof Interactable, "The Interactable matcher should be added");
+
+		// eg: autowait disabled
+		var aVisibleMatchers =  oMatcherFactory.getStateMatchers({visible: true, interactable: false, enabled: false});
+		assert.strictEqual(aVisibleMatchers.length, 1, "Two matchers should be created");
+		assert.ok(aVisibleMatchers[0] instanceof Visible, "The Visible matcher should be added");
 	});
 
 	QUnit.test("Should create filter sequence from array declaration", function (assert) {
