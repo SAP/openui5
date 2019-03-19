@@ -42,10 +42,10 @@ var sSingleLangTest = "de",
     ],
     mWords = {
         // lang: [not hyphenated, hyphenated]
-        "bg": ["непротивоконституционствувателствувайте", "неп-ро-ти-во-кон-с-ти-ту-ци-он-с-т-ву-ва-тел-с-т-ву-вай-те"],
+        "bg": ["непротивоконституционствувателствувайте", "неп-ро-ти-во-кон-с-ти-ту-ци-он-с-т-ву-ва-тел-с-т-ву-вайте"],
         "ca": ["Psiconeuroimmunoendocrinologia", "Psi-co-neu-roim-mu-no-en-do-cri-no-lo-gia"],
-        "hr": ["prijestolonasljednikovičičinima", "pri-jes-to-lo-na-s-ljed-ni-ko-vi-či-či-ni-ma"],
-        "da": ["Gedebukkebensoverogundergeneralkrigskommander", "Ge-de-buk-ke-ben-soverogun-der-ge-ne-ral-krigskom-man-der"], // original word was Gedebukkebensoverogundergeneralkrigskommandersergenten
+        "hr": ["prijestolonasljednikovičičinima", "pri-jes-to-lo-na-s-ljed-ni-ko-vi-či-či-nima"],
+        "da": ["Gedebukkebensoverogundergeneralkrigskommander", "Gede-buk-ke-ben-soverogun-der-ge-ne-ral-krigskom-man-der"], // original word was Gedebukkebensoverogundergeneralkrigskommandersergenten
         "nl": ["meervoudigepersoonlijkheidsstoornissen", "meer-vou-di-ge-per-soon-lijk-heids-stoor-nis-sen"],
         "en": ["pneumonoultramicroscopicsilicovolcanoconiosis", "pneu-mo-noul-tra-mi-cro-scop-ic-sil-i-co-vol-canoco-nio-sis"],
         "en-gb": ["pneumonoultramicroscopicsilicovolcanoconiosis", "pneu-mo-noul-tra-mi-cro-scop-ic-sil-i-co-vol-canoco-nio-sis"],
@@ -55,38 +55,38 @@ var sSingleLangTest = "de",
         "fr": ["hippopotomonstrosesquippedaliophobie", "hip-po-po-to-mons-tro-ses-quip-pe-da-lio-pho-bie"],
         "de": ["Kindercarnavalsoptochtvoorbereidingswerkzaamheden", "Kin-der-car-na-vals-op-tocht-vo-or-berei-dings-werk-zaam-he-den"], // original word was Kindercarnavalsoptochtvoorbereidingswerkzaamhedenplan
         "de-at": ["Kindercarnavalsoptochtvoorbereidingswerkzaamheden", "Kin-der-car-na-vals-op-tocht-vo-or-berei-dings-werk-zaam-he-den"],
-        "el": ["ηλεκτροεγκεφαλογράφημα", "ηλε-κτρο-ε-γκε-φα-λο-γρά-φη-μα"],
+        "el": ["ηλεκτροεγκεφαλογράφημα", "ηλε-κτρο-ε-γκε-φα-λο-γρά-φημα"],
         "hi": ["किंकर्तव्यविमूढ़", "किं-क-र्-त-व्-य-वि-मूढ़"],
         "hu": ["Megszentségteleníthetetlenségeskedéseitekért", "Meg-szent-ség-te-le-nít-he-tet-len-sé-ges-ke-dé-se-i-te-kért"],
         "it": ["hippopotomonstrosesquippedaliofobia", "hip-po-po-to-mon-stro-se-squip-pe-da-lio-fo-bia"],
-        "lt": ["nebeprisikiškiakopūstlapiaujančiuosiuose", "ne-be-pri-si-kiš-kia-ko-pūst-la-piau-jan-čiuo-siuo-se"],
-        "no": ["Omtrentlig", "Om-trent-lig"],
+        "lt": ["nebeprisikiškiakopūstlapiaujančiuosiuose", "nebe-pri-si-kiš-kia-ko-pūst-la-piau-jan-čiuo-siuose"],
+        "no": ["Omtrentlig", "Omtrent-lig"],
         "pt": ["pneumoultramicroscopicossilicovulcanoconiose", "pneu-moul-tra-mi-cros-co-pi-cos-si-li-co-vul-ca-no-co-ni-ose"],
         "ru": ["превысокомногорассмотрительствующий", "пре-вы-со-ком-но-го-рас-смот-ри-тель-ству-ю-щий"],
-        "sl": ["Dialektičnomaterialističen", "Di-a-lek-tič-no-ma-te-ri-a-li-sti-čen"],
+        "sl": ["Dialektičnomaterialističen", "Dia-lek-tič-no-ma-te-ri-a-li-sti-čen"],
         "es": ["Electroencefalografistas", "Elec-tro-en-ce-fa-lo-gra-fis-tas"],
-        "sv": ["Realisationsvinstbeskattning", "Re-a-li-sa-tions-vinst-be-skatt-ning"],
+        "sv": ["Realisationsvinstbeskattning", "Rea-li-sa-tions-vinst-be-skatt-ning"],
         "th": ["ตัวอย่างข้อความที่จะใช้ใน", "ตัวอย่างข้อค-วามที่จะใช้ใน"],
         "tr": ["Muvaffakiyetsizleştiricileştiriveremeyebileceklerimizdenmişsinizcesine", "Muvaffakiyetsizleştiricileştiriveremeyebileceklerimizdenmişsinizcesine"],
-        "uk": ["Нікотинамідаденіндинуклеотидфосфат", "Ні-ко-ти-на-мі-да-де-нін-ди-ну-кле-о-тид-фо-сфат"]
+        "uk": ["Нікотинамідаденіндинуклеотидфосфат", "Ніко-ти-на-мі-да-де-нін-ди-ну-кле-о-тид-фо-сфат"]
     },
     mCompoundWords = {
-        "en": ["factory-made", "fac-to-ry-​made"],
-        "de": ["Geheimzahl-Aufschreiber", "Ge-heim-zahl-​Auf-schrei-ber"]
+        "en": ["factory-made", "fac-tory-​made"],
+        "de": ["Geheimzahl-Aufschreiber", "Geheim-zahl-​Auf-schrei-ber"]
     },
     mTexts = {
         // lang: [not hyphenated, hyphenated]
         "en": [
             "A hyphenation algorithm is a set of rules that decides at which points a word can be broken over two lines with a hyphen.",
-            "A hy-phen-ation al-go-rithm is a set of rules that de-cides at which points a word can be bro-ken over two lines with a hy-phen."
+            "A hyphen-ation algo-rithm is a set of rules that decides at which points a word can be bro-ken over two lines with a hyphen."
         ],
         "de": [
             "Die Worttrennung, auch Silbentrennung genannt, bezeichnet in der Orthographie die Art und Weise, wie die Wörter insbesondere am Zeilenende getrennt werden können.",
-            "Die Wort-tren-nung, auch Sil-ben-tren-nung ge-nannt, be-zeich-net in der Or-tho-gra-phie die Art und Weise, wie die Wör-ter ins-be-son-de-re am Zei-len-en-de ge-trennt wer-den kön-nen."
+            "Die Wort-tren-nung, auch Sil-ben-tren-nung genannt, bezeich-net in der Ortho-gra-phie die Art und Weise, wie die Wör-ter ins-be-son-dere am Zei-len-ende getrennt wer-den kön-nen."
         ],
         "ru": [
             "Пример текста, который будет служить для проверки перевода.",
-            "При-мер тек-ста, ко-то-рый будет слу-жить для про-вер-ки пе-ре-во-да."
+            "При-мер тек-ста, кото-рый будет слу-жить для про-верки пере-вода."
         ]
     },
     mExceptionsEn = {
@@ -232,8 +232,8 @@ var sSingleLangTest = "de",
 
         this.oHyphenation.initialize("en", {"hyphen": "-"}).then(function() {
             assert.strictEqual(
-                that.oHyphenation.hyphenate("hyphen", "en"),
-                "hy-phen",
+                that.oHyphenation.hyphenate("hyphenation", "en"),
+                "hyphen-ation",
                 "hyphenation symbol is changed to '-'"
             );
             done();
