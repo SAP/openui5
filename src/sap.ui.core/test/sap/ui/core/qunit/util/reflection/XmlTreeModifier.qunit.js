@@ -15,6 +15,7 @@ function(
 		beforeEach: function () {
 			this.HBOX_ID = "hboxId";
 			this.TEXT_ID = "textId";
+			this.ID_OF_CONTROL_WITH_PROP_TYPE_OBJECT = "controlWithPropertyTypeObject";
 			this.CHANGE_HANDLER_PATH = "path/to/changehandler/definition";
 
 			this.oComponent = sap.ui.getCore().createComponent({
@@ -78,6 +79,7 @@ function(
 						'<Label text="visibleLabel" stashed="false"></Label>' +
 						'<Label text="stashedInvisibleLabel" visible="false" stashed="true"></Label>' +
 					'</VBox>' +
+					'<QuickViewPage id="' + this.ID_OF_CONTROL_WITH_PROP_TYPE_OBJECT + '" crossAppNavCallback="\\{&quot;key&quot;:&quot;value&quot;\\}" />' +
 				'</mvc:View>';
 			this.oXmlView = jQuery.sap.parseXML(this.oXmlString, "application/xml").documentElement;
 		},
@@ -306,6 +308,19 @@ function(
 			assert.strictEqual(XmlTreeModifier.getProperty(oInvisibleLabel, "design"), "Bold", "property from xml");
 		});
 
+		QUnit.test("getProperty for properties of type object", function (assert) {
+			var oControl = XmlTreeModifier._byId(this.ID_OF_CONTROL_WITH_PROP_TYPE_OBJECT, this.oXmlView);
+			var mData = XmlTreeModifier.getProperty(oControl, "crossAppNavCallback");
+			assert.deepEqual(mData, { key : "value"}, "returns json value");
+		});
+
+		QUnit.test("setProperty for properties of type object", function (assert) {
+			var oControl = XmlTreeModifier._byId(this.ID_OF_CONTROL_WITH_PROP_TYPE_OBJECT, this.oXmlView);
+			XmlTreeModifier.setProperty(oControl, "crossAppNavCallback", { key2 : 2});
+
+			var sStringifiedData = oControl.getAttribute("crossAppNavCallback");
+			assert.strictEqual(sStringifiedData, '\\{"key2":2\\}', "returns json value stringified and escaped");
+		});
 		QUnit.test("applySettings", function (assert) {
 			var oVBox = XmlTreeModifier._children(this.oXmlView)[0];
 			var aChildNodes = XmlTreeModifier._children(oVBox);
