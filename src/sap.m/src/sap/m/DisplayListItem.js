@@ -33,6 +33,7 @@ sap.ui.define([
 	 * @constructor
 	 * @public
 	 * @alias sap.m.DisplayListItem
+	 * @see {@link fiori:/display-list-item/ Display List Item}
 	 * @ui5-metamodel This control/element also will be described in the UI5 (legacy) designtime metamodel
 	 */
 	var DisplayListItem = ListItemBase.extend("sap.m.DisplayListItem", /** @lends sap.m.DisplayListItem.prototype */ { metadata : {
