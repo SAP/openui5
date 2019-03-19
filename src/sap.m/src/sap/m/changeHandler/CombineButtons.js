@@ -55,7 +55,7 @@ sap.ui.define([
 		var aMenuButtonName = [];
 		var oRevertData = {
 			parentAggregation: "",
-			insertIndex: 0
+			insertIndexes: []
 		};
 
 		aButtons = oChangeDefinition.content.combineButtonSelectors.map(function (oCombineButtonSelector) {
@@ -69,18 +69,15 @@ sap.ui.define([
 
 		oMenu = oModifier.createControl("sap.m.Menu", oAppComponent, oView, oChangeDefinition.content.menuIdSelector);
 
-		oRevertData.insertIndex = iAggregationIndex;
-		oRevertData.insertIndexes = [];
-
 		aButtons.forEach(function (oButton, iIndex) {
 			var oIdToSave;
 			var oMenuItem;
 			var oSelector = oChangeDefinition.content.buttonsIdForSave[iIndex];
 			var sButtonText = oModifier.getProperty(oButton, "text");
 
-			// Save indexes of all buttons in revert data, so then revertChange can place them into correct positions.
-			var iAggregationItemIndex = oChangeDefinition.content.aggregationItemsIndex[iIndex];
-			oRevertData.insertIndexes[iIndex] = iAggregationItemIndex;
+
+			// Save the original position of the button
+			oRevertData.insertIndexes[iIndex] = oModifier.findIndexInParentAggregation(oButton);
 
 			oMenuItem = oModifier.createControl("sap.m.MenuItem", oAppComponent, oView, oSelector);
 
@@ -103,6 +100,7 @@ sap.ui.define([
 			oModifier.insertAggregation(oMenuItem, "dependents", oManagedObjectModel);
 
 			oModifier.bindProperty(oMenuItem, "text", sModelName + ">/text");
+			oModifier.bindProperty(oMenuItem, "icon", sModelName + ">/icon");
 			oModifier.bindProperty(oMenuItem, "enabled", sModelName + ">/enabled");
 			oModifier.bindProperty(oMenuItem, "visible", sModelName + ">/visible");
 			oModifier.bindAggregation(oMenuItem, "customData", {
@@ -175,7 +173,6 @@ sap.ui.define([
 		var oRevertData = oChange.getRevertData();
 		var oChangeDefinition = oChange.getDefinition();
 		var sParentAggregation = oRevertData.parentAggregation;
-		var iAggregationIndex = oRevertData.insertIndex;
 		var oMenuButton = oModifier.bySelector(oChangeDefinition.content.menuButtonIdSelector, mPropertyBag.appComponent, oView);
 		var oParent = oModifier.getParent(oMenuButton);
 		var aButtonsIds = oChangeDefinition.content.combineButtonSelectors;
@@ -183,7 +180,7 @@ sap.ui.define([
 
 		for (var i = 0; i < aButtonsIds.length; i++) {
 			oButton = oModifier.bySelector(aButtonsIds[i], mPropertyBag.appComponent);
-			oModifier.insertAggregation(oParent, sParentAggregation, oButton, iAggregationIndex);
+			oModifier.insertAggregation(oParent, sParentAggregation, oButton, oRevertData.insertIndexes[i]);
 		}
 
 		// FIXME: fix implementation of ObjectPageDynamicHeaderTitle and remove next line
@@ -245,15 +242,6 @@ sap.ui.define([
 			oChangeDefinition.content.buttonsIdForSave = aCombineButtonIds.map(function() {
 				return oModifier.getSelector(oAppComponent.createId(uid()), oAppComponent);
 			});
-
-			oChangeDefinition.content.aggregationItemsIndex = aCombineButtonIds.map(function (sCombineButtonId) {
-				var oSourceBtn = oModifier.bySelector(sCombineButtonId, oAppComponent);
-
-				// Save indexes of all buttons in revert data, so then revertChange can place them into correct positions.
-				return oModifier.findIndexInParentAggregation(oSourceBtn);
-			});
-
-
 		} else {
 			throw new Error("Combine buttons action cannot be completed: oSpecificChangeInfo.combineElementIds attribute required");
 		}
