@@ -108,7 +108,19 @@ sap.ui.define([
 				/**
 				 * Specifies how an image would fit in the <code>Avatar</code>.
 				 */
-				imageFitType: {type: "sap.f.AvatarImageFitType", group: "Appearance", defaultValue: AvatarImageFitType.Cover}
+				imageFitType: {type: "sap.f.AvatarImageFitType", group: "Appearance", defaultValue: AvatarImageFitType.Cover},
+				/**
+				 * Defines the fallback icon displayed in case of wrong image src and no initials set.
+				 *
+				 * <b>Notes:</b>
+				 * <ul>
+				 * <li>If not set, a default fallback icon is displayed depending on the set <code>displayShape</code> property.</li>
+				 * <li>Accepted values are only icons from the SAP icon font.</li>
+				 * </ul>
+				 *
+				 * @since 1.65
+				 */
+				fallbackIcon: {type: "string", group: "Data", defaultValue: null}
 			},
 			aggregations : {
 				/**
@@ -370,9 +382,12 @@ sap.ui.define([
 	 * @private
 	 */
 	Avatar.prototype._getDefaultIconPath = function (sDisplayShape) {
-		var sDefaultIconPath = null;
+		var sDefaultIconPath = null,
+			sFallbackIcon = this.getFallbackIcon();
 
-		if (sDisplayShape === AvatarShape.Circle) {
+		if (sFallbackIcon && IconPool.isIconURI(sFallbackIcon)) {
+			sDefaultIconPath = sFallbackIcon;
+		} else if (sDisplayShape === AvatarShape.Circle) {
 			sDefaultIconPath = Avatar.DEFAULT_CIRCLE_PLACEHOLDER;
 		} else if (sDisplayShape === AvatarShape.Square) {
 			sDefaultIconPath = Avatar.DEFAULT_SQUARE_PLACEHOLDER;

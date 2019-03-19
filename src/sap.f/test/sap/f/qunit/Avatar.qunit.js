@@ -1,6 +1,6 @@
 /*global QUnit, sinon*/
-sap.ui.define(["sap/ui/core/Core", "sap/ui/Device", "sap/ui/thirdparty/URI"],
-function(oCore, Device, URI) {
+sap.ui.define(["sap/ui/core/Core", "sap/ui/Device", "sap/ui/thirdparty/URI", "sap/f/Avatar", "sap/m/LightBox"],
+function(oCore, Device, URI, Avatar, LightBox) {
 	"use strict";
 
 	var sControlId = "AvatarId",
@@ -21,7 +21,7 @@ function(oCore, Device, URI) {
 			jQuery.extend(oAvatarProps, oProps);
 		}
 
-		return new sap.f.Avatar(sId, oAvatarProps);
+		return new Avatar(sId, oAvatarProps);
 	}
 
 	function setupFunction() {
@@ -296,6 +296,25 @@ function(oCore, Device, URI) {
 
 	});
 
+	QUnit.test("Show user set fallback Icon when image source is invalid and initials are not set", function (assert) {
+		var sFallbackIcon = "sap-icon://accelerated";
+
+		//Act
+		this.oAvatar.setSrc("_");
+		this.oAvatar.setFallbackIcon(sFallbackIcon);
+
+		//Assert
+		assert.strictEqual(this.oAvatar._getDefaultIconPath("Circle"), sFallbackIcon, "Fallback icon path is correct");
+		assert.strictEqual(this.oAvatar._getDefaultIconPath("Square"), sFallbackIcon, "Fallback icon path is correct");
+
+		//Act
+		this.oAvatar.setFallbackIcon("wrongIcon");
+
+		//Assert
+		assert.strictEqual(this.oAvatar._getDefaultIconPath("Circle"), Avatar.DEFAULT_CIRCLE_PLACEHOLDER, "Fallback icon is set to person default");
+		assert.strictEqual(this.oAvatar._getDefaultIconPath("Square"), Avatar.DEFAULT_SQUARE_PLACEHOLDER, "Fallback icon is set to product default");
+	});
+
 	QUnit.test("Add icon class when source is invalid and initials are not set", function (assert) {
 		// Arrange
 		var $oAvatar,
@@ -343,7 +362,7 @@ function(oCore, Device, URI) {
 
 	QUnit.module("Aggregations", {
 		beforeEach: function () {
-			this.oAvatar = new sap.f.Avatar();
+			this.oAvatar = new Avatar();
 		},
 		afterEach: function () {
 			this.oAvatar.destroy();
@@ -355,7 +374,7 @@ function(oCore, Device, URI) {
 		oAssert.expect(7);
 
 		// Arrange
-		var oLightBox = new sap.m.LightBox(),
+		var oLightBox = new LightBox(),
 			fnDone = oAssert.async();
 
 		// Act
@@ -391,8 +410,8 @@ function(oCore, Device, URI) {
 
 	QUnit.test("detailBox lifecycle and events", function (oAssert) {
 		// Arrange
-		var oLightBoxA = new sap.m.LightBox(),
-			oLightBoxB = new sap.m.LightBox(),
+		var oLightBoxA = new LightBox(),
+			oLightBoxB = new LightBox(),
 			oAttachPressSpy = sinon.spy(this.oAvatar, "attachPress"),
 			oDetachPressSpy = sinon.spy(this.oAvatar, "detachPress");
 
@@ -438,7 +457,7 @@ function(oCore, Device, URI) {
 
 	QUnit.test("cloning of press event handler", function (assert) {
 		// Arrange
-		var oLightBox = new sap.m.LightBox(),
+		var oLightBox = new LightBox(),
 			oAvatarClone;
 
 		this.oAvatar.setDetailBox(oLightBox);
