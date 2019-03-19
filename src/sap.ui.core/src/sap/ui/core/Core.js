@@ -2268,7 +2268,7 @@ sap.ui.define([
 				this.includeLibraryTheme(sLibName, undefined, sQuery);
 
 				if (this.oThemeCheck && this.isInitialized()) {
-					this.oThemeCheck.fireThemeChangedEvent(true);
+					this.oThemeCheck.fireThemeChangedEvent(false);
 				}
 			}
 		}
