@@ -202,6 +202,7 @@ sap.ui.define([
 		assert.strictEqual(oCache.sMetaPath, "/TEAMS");
 		assert.deepEqual(oCache.mPatchRequests, {});
 		assert.deepEqual(oCache.mPostRequests, {});
+		assert.strictEqual(oCache.oPendingDeletePromise, null);
 		assert.strictEqual(oCache.oRequestor, this.oRequestor);
 		assert.strictEqual(oCache.sResourcePath, sResourcePath);
 		assert.strictEqual(oCache.bSentReadRequest, false);
@@ -2517,6 +2518,40 @@ sap.ui.define([
 			"@odata.context" : undefined,
 			"value" : aElements
 		});
+	});
+
+	//*********************************************************************************************
+	QUnit.test("CollectionCache#read: pending deletes", function (assert) {
+		var oCache = this.createCache("Employees"),
+			oGroupLock = new _GroupLock("$direct");
+
+		oCache.aElements = createResult(0, 6).value; // prefill the cache
+		oCache.aElements.$created = 0;
+
+		this.oRequestorMock.expects("request")
+			.withArgs("DELETE", "Employees('b')")
+			.resolves();
+		this.oRequestorMock.expects("request")
+			.withArgs("DELETE", "Employees('c')")
+			.callsFake(function () { // a simple .resolves() resolves too early
+				return new Promise(function (resolve) {
+					setTimeout(resolve);
+				});
+			});
+		this.oRequestorMock.expects("request")
+			.withArgs("DELETE", "Employees('d')")
+			.rejects(new Error());
+		this.oRequestorMock.expects("request")
+			.withArgs("GET", "Employees?$skip=4&$top=5")
+			.resolves(createResult(4, 5));
+
+		// code under test
+		return Promise.all([
+			oCache._delete(oGroupLock, "Employees('b')", "1", function () {}),
+			oCache._delete(oGroupLock, "Employees('c')", "2", function () {}),
+			oCache._delete(oGroupLock, "Employees('d')", "3", function () {}).catch(function () {}),
+			oCache.read(3, 6, 0, oGroupLock)
+		]);
 	});
 
 	//*********************************************************************************************
