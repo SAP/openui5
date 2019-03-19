@@ -8894,7 +8894,7 @@ sap.ui.define([
 
 			// assert
 			assert.strictEqual(oSelect.getFocusDomRef().getAttribute("aria-expanded"), "true");
-			assert.strictEqual(oSelect.getDomRef().getAttribute("aria-owns"), oSelect.getList().getId(), 'the attribute "aria-owns" is set after the list is rendered');
+			assert.strictEqual(oSelect.getDomRef().getAttribute("aria-controls"), oSelect.getList().getId(), 'the attribute "aria-controls" is set after the list is rendered');
 			assert.strictEqual(jQuery(oSelect.getFocusDomRef()).attr("aria-activedescendant"), oExpectedItem.getId(), 'The "aria-activedescendant" attribute is set when the active descendant is rendered and visible');
 
 			// cleanup
