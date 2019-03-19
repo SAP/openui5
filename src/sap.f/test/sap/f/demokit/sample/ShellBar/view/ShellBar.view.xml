@@ -1,5 +1,5 @@
 <mvc:View
-		controllerName="sap.f.sample.ShellBar.ShellBar"
+		controllerName="sap.f.sample.ShellBar.controller.ShellBar"
 		xmlns:mvc="sap.ui.mvc"
 		xmlns="sap.f"
 		xmlns:m="sap.m"

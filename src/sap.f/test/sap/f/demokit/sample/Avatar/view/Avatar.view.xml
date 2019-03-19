@@ -1,5 +1,5 @@
 <mvc:View
-		controllerName="sap.f.sample.Avatar.Avatar"
+		controllerName="sap.f.sample.Avatar.controller.Avatar"
 		xmlns:mvc="sap.ui.mvc"
 		xmlns:f="sap.f"
 		xmlns:m="sap.m"

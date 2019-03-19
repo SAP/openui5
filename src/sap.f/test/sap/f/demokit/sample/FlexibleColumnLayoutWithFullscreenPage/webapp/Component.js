@@ -6,7 +6,7 @@ sap.ui.define([
 ], function (jQuery, UIComponent, JSONModel, FlexibleColumnLayoutSemanticHelper) {
 	"use strict";
 
-	var Component = UIComponent.extend("sap.f.FlexibleColumnLayoutWithFullscreenPage.Component", {
+	return UIComponent.extend("sap.f.FlexibleColumnLayoutWithFullscreenPage.Component", {
 		metadata: {
 			manifest: "json"
 		},
@@ -18,7 +18,7 @@ sap.ui.define([
 			this.setModel(oModel);
 
 			// set products demo model on this sample
-			var oProductsModel = new JSONModel(jQuery.sap.getModulePath("sap.ui.demo.mock", "/products.json"));
+			var oProductsModel = new JSONModel(sap.ui.require.toUrl("sap/ui/demo/mock") + "/products.json");
 			oProductsModel.setSizeLimit(1000);
 			this.setModel(oProductsModel, "products");
 
@@ -50,5 +50,4 @@ sap.ui.define([
 			return FlexibleColumnLayoutSemanticHelper.getInstanceFor(oFCL, oSettings);
 		}
 	});
-	return Component;
 }, true);

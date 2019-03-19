@@ -1,6 +1,6 @@
 <mvc:View
 		xmlns:c="sap.ui.core"
-		controllerName="sap.f.sample.DynamicPageAnalyticalTable.DynamicPageAnalyticalTable"
+		controllerName="sap.f.sample.DynamicPageAnalyticalTable.controller.DynamicPageAnalyticalTable"
 		xmlns:mvc="sap.ui.core.mvc"
 		xmlns:u="sap.ui.unified"
 		xmlns="sap.m"

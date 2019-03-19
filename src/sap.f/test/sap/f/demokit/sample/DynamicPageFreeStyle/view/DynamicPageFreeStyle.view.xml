@@ -1,5 +1,5 @@
 <mvc:View
-		controllerName="sap.f.sample.DynamicPageFreeStyle.DynamicPageFreeStyle"
+		controllerName="sap.f.sample.DynamicPageFreeStyle.controller.DynamicPageFreeStyle"
 		xmlns:mvc="sap.ui.core.mvc"
 		xmlns="sap.m"
 		xmlns:f="sap.f"

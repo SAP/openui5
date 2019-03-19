@@ -1,4 +1,4 @@
-<View xmlns="sap.m" displayBlock="true" controllerName="sap.f.sample.FlexibleColumnLayoutSimple.Detail" height="100%">
+<View xmlns="sap.m" displayBlock="true" controllerName="sap.f.sample.FlexibleColumnLayoutSimple.controller.Detail" height="100%">
 	<Page id="detailPage" title="Detail page">
 		<Table>
 			<columns>

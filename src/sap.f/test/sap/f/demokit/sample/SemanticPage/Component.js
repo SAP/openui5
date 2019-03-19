@@ -1,11 +1,11 @@
 sap.ui.define(['sap/ui/core/UIComponent'],
-	function (UIComponent) {
-		"use strict";
+function (UIComponent) {
+	"use strict";
 
-		return UIComponent.extend("sap.f.sample.SemanticPage.Component", {
+	return UIComponent.extend("sap.f.sample.SemanticPage.Component", {
 
-			metadata: {
-			    manifest: "json"
-			}
-		});
+		metadata: {
+		    manifest: "json"
+		}
 	});
+});

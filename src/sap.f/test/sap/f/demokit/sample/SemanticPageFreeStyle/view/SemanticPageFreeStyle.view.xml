@@ -5,7 +5,7 @@
 	xmlns="sap.m"
 	xmlns:layout="sap.ui.layout"
 	xmlns:semantic="sap.f.semantic"
-	controllerName="sap.f.sample.SemanticPageFreeStyle.C">
+	controllerName="sap.f.sample.SemanticPageFreeStyle.controller.SemanticPageFreeStyle">
 
 	<semantic:SemanticPage
 		id="mySemanticPage"

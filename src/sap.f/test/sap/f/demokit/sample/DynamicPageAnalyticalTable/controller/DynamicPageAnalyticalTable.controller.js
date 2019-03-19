@@ -4,11 +4,12 @@ sap.ui.define([
 	"sap/ui/model/Filter",
 	"sap/ui/model/json/JSONModel",
 	"sap/m/MessageToast",
-	"sap/ui/core/format/DateFormat"
-], function (jQuery, Controller, Filter, JSONModel, MessageToast, DateFormat) {
+	"sap/ui/core/format/DateFormat",
+	"sap/base/Log"
+], function (jQuery, Controller, Filter, JSONModel, MessageToast, DateFormat, Log) {
 	"use strict";
 
-	return Controller.extend("sap.f.sample.DynamicPageAnalyticalTable.DynamicPageAnalyticalTable", {
+	return Controller.extend("sap.f.sample.DynamicPageAnalyticalTable.controller.DynamicPageAnalyticalTable", {
 		onInit: function () {
 			var oJSONModel = this.initSampleDataModel();
 			this.getView().setModel(oJSONModel);
@@ -18,7 +19,7 @@ sap.ui.define([
 
 			var oDateFormat = DateFormat.getDateInstance({source: {pattern: "timestamp"}, pattern: "dd/MM/yyyy"});
 
-			jQuery.ajax(jQuery.sap.getModulePath("sap.ui.demo.mock", "/products.json"), {
+			jQuery.ajax(sap.ui.require.toUrl("sap/ui/demo/mock") + "/products.json", {
 				dataType: "json",
 				success: function (oData) {
 					var aTemp1 = [];
@@ -38,7 +39,7 @@ sap.ui.define([
 						oProduct.DeliveryDate = (new Date()).getTime() - (i % 10 * 4 * 24 * 60 * 60 * 1000);
 						oProduct.DeliveryDateStr = oDateFormat.format(new Date(oProduct.DeliveryDate));
 						oProduct.Heavy = oProduct.WeightMeasure > 1000 ? "true" : "false";
-						oProduct.Available = oProduct.Status == "Available" ? true : false;
+						oProduct.Available = oProduct.Status === "Available";
 					}
 
 					oData.Suppliers = aSuppliersData;
@@ -47,7 +48,7 @@ sap.ui.define([
 					oModel.setData(oData);
 				},
 				error: function () {
-					jQuery.sap.log.error("failed to load json");
+					Log.error("failed to load json");
 				}
 			});
 

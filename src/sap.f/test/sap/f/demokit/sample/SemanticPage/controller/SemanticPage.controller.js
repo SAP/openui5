@@ -1,21 +1,22 @@
 sap.ui.define([
 	'jquery.sap.global',
+	'sap/ui/core/Core',
 	'sap/ui/core/mvc/Controller',
 	'sap/ui/model/Filter',
 	'sap/ui/model/json/JSONModel',
 	'sap/m/MessagePopover',
 	'sap/m/MessagePopoverItem',
 	'sap/m/MessageBox'
-], function(jQuery, Controller, Filter, JSONModel, MessagePopover, MessagePopoverItem, MessageBox) {
+], function(jQuery, Core, Controller, Filter, JSONModel, MessagePopover, MessagePopoverItem, MessageBox) {
 	"use strict";
 
-	return Controller.extend("sap.f.sample.SemanticPage.C", {
+	return Controller.extend("sap.f.sample.SemanticPage.controller.SemanticPage", {
 		onInit: function () {
 			var oMessageProcessor = new sap.ui.core.message.ControlMessageProcessor(),
-				oMessageManager = sap.ui.getCore().getMessageManager();
+				oMessageManager = Core.getMessageManager();
 
 			this.oModel = new JSONModel();
-			this.oModel.loadData(jQuery.sap.getModulePath("sap.f.sample.SemanticPage", "/model.json"), null, false);
+			this.oModel.loadData(sap.ui.require.toUrl("sap/f/sample/SemanticPage/model") + "/model.json", null, false);
 			this.oSemanticPage = this.byId("mySemanticPage");
 			this.oEditAction = this.byId("editAction");
 			this.oSemanticPage.setModel(this.oModel);
