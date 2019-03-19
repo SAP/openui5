@@ -171,7 +171,7 @@ sap.ui.define([
 				assert.equal(oModel.getProperty("/ProductSet('AD-1000')/Name"), "Flyer", "absolute path without context");
 				oModel.createBindingContext("/ProductSet('AD-1000')", null, function(newContext) {
 					assert.equal(newContext.getProperty("Name"), "Flyer", "relative path with context");
-					assert.ok(oSpy.args[0][0].headers["Accept"] === "multipart/mixed", "Accept header set to 'multipart/mixed'");
+					assert.strictEqual(oSpy.args[0][0].headers["Accept"], "multipart/mixed", "Accept header set to 'multipart/mixed'");
 					oSpy.restore();
 					done(); // resume normal testing
 				});
@@ -193,11 +193,11 @@ sap.ui.define([
 				"myCustomHeader" : "xyz"
 			},
 			success : function(oData, oResponse) {
-				assert.ok(oData.results.length === 1, "length check");
+				assert.strictEqual(oData.results.length, 1, "length check");
 				var oP = oModel
 						.getProperty("/ProductSet('HT-1000')");
 				assert.ok(oP, "one entry loaded");
-				assert.ok(oP.Name === "Notebook Basic 15",
+				assert.strictEqual(oP.Name, "Notebook Basic 15",
 						"one entry loaded");
 				done();
 			},
@@ -418,10 +418,10 @@ sap.ui.define([
 			filters : [ new Filter("ProductID", "EQ",
 					"HT-1000") ],
 			success : function(oData, oResponse) {
-				assert.ok(oData.results.length === 1, "length check");
+				assert.strictEqual(oData.results.length, 1, "length check");
 				var oP = oModel.getProperty("/ProductSet('HT-1000')");
 				assert.ok(oP, "one entry loaded");
-				assert.ok(oP.Name === "Notebook Basic 15", "one entry loaded");
+				assert.strictEqual(oP.Name, "Notebook Basic 15", "one entry loaded");
 				done();
 			},
 			error : function(oError) {
@@ -436,7 +436,7 @@ sap.ui.define([
 			filters : [ new Filter("ProductID", "EQ",
 					"HT-1000") ],
 			success : function(oData, oResponse) {
-				assert.ok(oData === "1", "length check");
+				assert.strictEqual(oData, "1", "length check");
 				done();
 			},
 			error : function(oError) {
@@ -453,10 +453,10 @@ sap.ui.define([
 					new Filter("ProductID", "EQ", "AD-1000"),
 					new Filter("ProductID", "EQ", "HT-1041") ],
 			success : function(oData, oResponse) {
-				assert.ok(oData.results.length === 3, "length check");
-				assert.ok(oData.results[0].ProductID === "HT-1041", "sort check");
-				assert.ok(oData.results[1].ProductID === "HT-1000", "sort check");
-				assert.ok(oData.results[2].ProductID === "AD-1000", "sort check");
+				assert.strictEqual(oData.results.length, 3, "length check");
+				assert.strictEqual(oData.results[0].ProductID, "HT-1041", "sort check");
+				assert.strictEqual(oData.results[1].ProductID, "HT-1000", "sort check");
+				assert.strictEqual(oData.results[2].ProductID, "AD-1000", "sort check");
 
 				done();
 			},
@@ -474,7 +474,7 @@ sap.ui.define([
 				assert.ok(false, "request succeeded...error expected");
 			},
 			error : function(oError) {
-				assert.ok(oError.statusCode === "404", "error code");
+				assert.strictEqual(oError.statusCode, "404", "error code");
 				assert.ok(true, "request failed");
 				done();
 			}
@@ -789,7 +789,7 @@ sap.ui.define([
 
 		var fnCheck = function() {
 			iCount++;
-			assert.ok(iCount === 1, "request performed");
+			assert.strictEqual(iCount, 1, "request performed");
 			assert.equal(oModel.getProperty("/VH_CategorySet('Headsets')/Category"), "Headsets", "Category loaded check");
 			oTxt.destroy();
 			oModel.detachBatchRequestCompleted(fnCheck, this);
@@ -871,7 +871,7 @@ sap.ui.define([
 
 		var fnCheck = function() {
 			iCount++;
-			assert.ok(iCount === 1, "request performed");
+			assert.strictEqual(iCount, 1, "request performed");
 			assert.equal(
 					oModel
 							.getProperty("/VH_CategorySet('Beamers')/Category"),
@@ -1256,7 +1256,7 @@ sap.ui.define([
 				done();
 			},
 			error: function() {
-				assert.ok(false, "reqauest failed");
+				assert.ok(false, "request failed");
 			}
 		});
 	});
@@ -1277,9 +1277,9 @@ sap.ui.define([
 			oModel.attachBatchRequestCompleted(function(oInfo) {
 				iCount++;
 				if (iCount == 2) {
-					assert.ok(oInfo.mParameters.requests[0].response.statusCode == 204, "MERGE response ok");
-					assert.ok(oInfo.mParameters.requests[1].response.statusCode == 200, "GET response ok");
-					assert.ok(oInfo.mParameters.requests.length == 2, "MERGE and GET request sent");
+					assert.strictEqual(oInfo.mParameters.requests.length, 2, "MERGE and GET request sent");
+					assert.strictEqual(oInfo.mParameters.requests[0].response.statusCode, "204", "MERGE response ok");
+					assert.strictEqual(oInfo.mParameters.requests[1].response.statusCode, "200", "GET response ok");
 					done();
 				}
 			});
@@ -1658,10 +1658,10 @@ sap.ui.define([
 									oModel.submitChanges({
 										success : function(oData, oResponse) {
 											// no request should go out
-											assert.ok(oSpy.callCount == 0, "No request sent");
+											assert.strictEqual(oSpy.callCount, 0, "No request sent");
 											assert.ok(true, "success handler called even no changes were submitted");
 											assert.ok(!oResponse, "no response passed");
-											assert.ok(typeof oData == 'object', "data is object");
+											assert.strictEqual(typeof oData, 'object', "data is object");
 											assert.ok(isEmptyObject(oData), "data is empty object");
 										},
 										error : function(oError) {
@@ -1669,7 +1669,7 @@ sap.ui.define([
 										}
 									});
 									jQuery.sap.delayedCall(0,this, function() {
-										assert.ok(oSpy.callCount == 0, "No request sent");
+										assert.strictEqual(oSpy.callCount, 0, "No request sent");
 										oSpy.restore();
 										done();
 									});
@@ -1705,7 +1705,7 @@ sap.ui.define([
 				done();
 			},
 			error: function() {
-				assert.ok(false, "reqauest failed");
+				assert.ok(false, "request failed");
 				done();
 			}
 		});
@@ -1717,43 +1717,43 @@ sap.ui.define([
 			success: function() {
 				oModel.setProperty("/ProductSet('AD-1000')/Name", undefined);
 				assert.ok(oModel.hasPendingChanges(), "model has pending changes");
-				assert.ok(oModel.getProperty("/ProductSet('AD-1000')/Name") === undefined, "property ok");
+				assert.strictEqual(oModel.getProperty("/ProductSet('AD-1000')/Name"), undefined, "property ok");
 				oModel.setProperty("/ProductSet('AD-1000')/Name", "test");
 				assert.ok(oModel.hasPendingChanges(), "model should have pending changes");
-				assert.ok(oModel.getProperty("/ProductSet('AD-1000')/Name") == "test", "property ok");
+				assert.strictEqual(oModel.getProperty("/ProductSet('AD-1000')/Name"), "test", "property ok");
 
 				oModel.setProperty("/ProductSet('AD-1000')/Name", null);
 				assert.ok(oModel.hasPendingChanges(), "model has pending changes");
-				assert.ok(oModel.getProperty("/ProductSet('AD-1000')/Name") === null, "property ok");
+				assert.strictEqual(oModel.getProperty("/ProductSet('AD-1000')/Name"), null, "property ok");
 				oModel.setProperty("/ProductSet('AD-1000')/Name", "test");
 				assert.ok(oModel.hasPendingChanges(), "model should have pending changes");
-				assert.ok(oModel.getProperty("/ProductSet('AD-1000')/Name") == "test", "property ok");
+				assert.strictEqual(oModel.getProperty("/ProductSet('AD-1000')/Name"), "test", "property ok");
 
 				oModel.setProperty("/ProductSet('AD-1000')/Name", "");
 				assert.ok(oModel.hasPendingChanges(), "model has pending changes");
-				assert.ok(oModel.getProperty("/ProductSet('AD-1000')/Name") === "", "property ok");
+				assert.strictEqual(oModel.getProperty("/ProductSet('AD-1000')/Name"), "", "property ok");
 				oModel.setProperty("/ProductSet('AD-1000')/Name", "test");
 				assert.ok(oModel.hasPendingChanges(), "model should have pending changes");
-				assert.ok(oModel.getProperty("/ProductSet('AD-1000')/Name") == "test", "property ok");
+				assert.strictEqual(oModel.getProperty("/ProductSet('AD-1000')/Name"), "test", "property ok");
 
 				oModel.setProperty("/ProductSet('AD-1000')/Name", 0);
 				assert.ok(oModel.hasPendingChanges(), "model has pending changes");
-				assert.ok(oModel.getProperty("/ProductSet('AD-1000')/Name") === 0, "property ok");
+				assert.strictEqual(oModel.getProperty("/ProductSet('AD-1000')/Name"), 0, "property ok");
 				oModel.setProperty("/ProductSet('AD-1000')/Name", "test");
 				assert.ok(oModel.hasPendingChanges(), "model should have pending changes");
-				assert.ok(oModel.getProperty("/ProductSet('AD-1000')/Name") == "test", "property ok");
+				assert.strictEqual(oModel.getProperty("/ProductSet('AD-1000')/Name"), "test", "property ok");
 
 				oModel.setProperty("/ProductSet('AD-1000')/Name", false);
 				assert.ok(oModel.hasPendingChanges(), "model has pending changes");
-				assert.ok(oModel.getProperty("/ProductSet('AD-1000')/Name") === false, "property ok");
+				assert.strictEqual(oModel.getProperty("/ProductSet('AD-1000')/Name"), false, "property ok");
 				oModel.setProperty("/ProductSet('AD-1000')/Name", "test");
 				assert.ok(oModel.hasPendingChanges(), "model should have pending changes");
-				assert.ok(oModel.getProperty("/ProductSet('AD-1000')/Name") == "test", "property ok");
+				assert.strictEqual(oModel.getProperty("/ProductSet('AD-1000')/Name"), "test", "property ok");
 
 				done();
 			},
 			error: function() {
-				assert.ok(false, "reqauest failed");
+				assert.ok(false, "request failed");
 				done();
 			}
 		});
@@ -1774,7 +1774,7 @@ sap.ui.define([
 				done();
 			},
 			error: function() {
-				assert.ok(false, "reqauest failed");
+				assert.ok(false, "request failed");
 				done();
 			}
 		});
@@ -1793,13 +1793,13 @@ sap.ui.define([
 				oSpy = sinon.spy(oModel, "_submitBatchRequest");
 				oModel.submitChanges();
 				jQuery.sap.delayedCall(0,this, function() {
-					assert.ok(oSpy.callCount == 0, "No request sent");
+					assert.strictEqual(oSpy.callCount, 0, "No request sent");
 					oSpy.restore();
 					done();
 				});
 			},
 			error: function() {
-				assert.ok(false, "reqauest failed");
+				assert.ok(false, "request failed");
 				done();
 			}
 		});
@@ -1830,13 +1830,13 @@ sap.ui.define([
 				oSpy = sinon.spy(oModel, "_submitBatchRequest");
 				oModel.submitChanges();
 				jQuery.sap.delayedCall(0,this, function() {
-					assert.ok(oSpy.callCount == 0, "No request sent");
+					assert.strictEqual(oSpy.callCount, 0, "No request sent");
 					oSpy.restore();
 					done();
 				});
 			},
 			error: function() {
-				assert.ok(false, "reqauest failed");
+				assert.ok(false, "request failed");
 				done();
 			}
 		});
@@ -1856,13 +1856,13 @@ sap.ui.define([
 				oSpy = sinon.spy(oModel, "_submitBatchRequest");
 				oModel.submitChanges();
 				jQuery.sap.delayedCall(0,this, function() {
-					assert.ok(oSpy.callCount == 0, "No request sent");
+					assert.strictEqual(oSpy.callCount, 0, "No request sent");
 					oSpy.restore();
 					done();
 				});
 			},
 			error: function() {
-				assert.ok(false, "reqauest failed");
+				assert.ok(false, "request failed");
 				done();
 			}
 		});
@@ -1889,18 +1889,18 @@ sap.ui.define([
 					oModel.resetChanges();
 					oModel.metadataLoaded().then(function(){
 						assert.ok(!oModel.hasPendingChanges(), "model has pending changes");
-						assert.ok(oModel.mDeferredRequests["myId"].map["ProductSet('AD-1000')"].parts.length == 1, "one request");
+						assert.strictEqual(oModel.mDeferredRequests["myId"].map["ProductSet('AD-1000')"].parts.length, 1, "one request");
 						assert.ok(oModel.mDeferredRequests["myId"].map["ProductSet('AD-1000')"].parts[0].request._aborted, "check request should be marked as aborted");
 						oModel.setProperty("/ProductSet('AD-1000')/Name", "NewName2");
 						oModel.metadataLoaded().then(function(){
 							assert.ok(oModel.hasPendingChanges(), "model has pending changes");
 							assert.equal(oModel.mDeferredRequests["myId"].map["ProductSet('AD-1000')"].request.data.Name, "NewName2", "check internal data map");
-							assert.ok(oModel.mDeferredRequests["myId"].map["ProductSet('AD-1000')"].parts.length == 1, "one request");
+							assert.strictEqual(oModel.mDeferredRequests["myId"].map["ProductSet('AD-1000')"].parts.length, 1, "one request");
 							assert.ok(!oModel.mDeferredRequests["myId"].map["ProductSet('AD-1000')"].parts[0].request._aborted, "check request should not be marked as aborted");
 							oModel.resetChanges();
 							oModel.metadataLoaded().then(function(){
 								assert.ok(!oModel.hasPendingChanges(), "model has pending changes");
-								assert.ok(oModel.mDeferredRequests["myId"].map["ProductSet('AD-1000')"].parts.length == 1, "one request");
+								assert.strictEqual(oModel.mDeferredRequests["myId"].map["ProductSet('AD-1000')"].parts.length, 1, "one request");
 								assert.ok(oModel.mDeferredRequests["myId"].map["ProductSet('AD-1000')"].parts[0].request._aborted, "check request should be marked as aborted");
 								done();
 							});
@@ -1947,23 +1947,23 @@ sap.ui.define([
 				oModel.setProperty("/ProductSet('HT-1000')/Name", "NewName");
 				assert.ok(oModel.hasPendingChanges(), "model has pending changes");
 				assert.ok(oModel.getMessagesByEntity("/ProductSet('AD-1000')"), "Messages for 'AD-1000' set");
-				assert.ok(oModel.getMessagesByEntity("/ProductSet('AD-1000')").length === 2, "2 Messages for 'AD-1000' set");
+				assert.strictEqual(oModel.getMessagesByEntity("/ProductSet('AD-1000')").length, 2, "2 Messages for 'AD-1000' set");
 				assert.ok(oModel.getMessagesByEntity("/ProductSet('HT-1000')"), "Messages 'HT-1000' set");
-				assert.ok(oModel.getMessagesByEntity("/ProductSet('HT-1000')").length === 1, "1 Message for 'HT-1000' set");
+				assert.strictEqual(oModel.getMessagesByEntity("/ProductSet('HT-1000')").length, 1, "1 Message for 'HT-1000' set");
 				oModel.resetChanges(["/ProductSet('AD-1000')","/ProductSet('HT-1000')"]);
-				assert.ok(oModel.getMessagesByEntity("/ProductSet('HT-1000')").length === 0, "Messages for 'HT-1000' deleted");
-				assert.ok(oModel.getMessagesByEntity("/ProductSet('AD-1000')").length === 0, "Messages for 'AD-1000' deleted");
+				assert.strictEqual(oModel.getMessagesByEntity("/ProductSet('HT-1000')").length, 0, "Messages for 'HT-1000' deleted");
+				assert.strictEqual(oModel.getMessagesByEntity("/ProductSet('AD-1000')").length, 0, "Messages for 'AD-1000' deleted");
 				assert.ok(!oModel.hasPendingChanges(), "model should not have pending changes");
 				oSpy = sinon.spy(oModel, "_submitBatchRequest");
 				oModel.submitChanges();
 				jQuery.sap.delayedCall(0,this, function() {
-					assert.ok(oSpy.callCount == 0, "No request sent");
+					assert.strictEqual(oSpy.callCount, 0, "No request sent");
 					oSpy.restore();
 					done();
 				});
 			},
 			error: function() {
-				assert.ok(false, "reqauest failed");
+				assert.ok(false, "request failed");
 				done();
 			}
 		});
@@ -1992,9 +1992,9 @@ sap.ui.define([
 			sap.ui.getCore().getMessageManager().addMessages([oMessage, oMessage2]);
 			assert.ok(oModel.hasPendingChanges(), "model has pending changes");
 			assert.ok(oModel.getMessagesByEntity(oContextPath), "Messages set");
-			assert.ok(oModel.getMessagesByEntity(oContextPath).length === 2, "2 Messages set");
+			assert.strictEqual(oModel.getMessagesByEntity(oContextPath).length, 2, "2 Messages set");
 			oModel.deleteCreatedEntry(oContext);
-			assert.ok(oModel.getMessagesByEntity(oContextPath).length === 0, "Messages deleted");
+			assert.strictEqual(oModel.getMessagesByEntity(oContextPath).length, 0, "Messages deleted");
 			done();
 		});
 	});
@@ -2031,22 +2031,22 @@ sap.ui.define([
 				oModel.setProperty("/ProductSet('HT-1000')/Name", "NewName");
 				assert.ok(oModel.hasPendingChanges(), "model has pending changes");
 				assert.ok(oModel.getMessagesByEntity("/ProductSet('AD-1000')"), "Messages for 'AD-1000' set");
-				assert.ok(oModel.getMessagesByEntity("/ProductSet('AD-1000')").length === 2, "2 Messages for 'AD-1000' set");
+				assert.strictEqual(oModel.getMessagesByEntity("/ProductSet('AD-1000')").length, 2, "2 Messages for 'AD-1000' set");
 				assert.ok(oModel.getMessagesByEntity("/ProductSet('HT-1000')"), "Messages 'HT-1000' set");
-				assert.ok(oModel.getMessagesByEntity("/ProductSet('HT-1000')").length === 1, "1 Message for 'HT-1000' set");
+				assert.strictEqual(oModel.getMessagesByEntity("/ProductSet('HT-1000')").length, 1, "1 Message for 'HT-1000' set");
 				oModel.resetChanges(["/ProductSet('AD-1000')"]);
-				assert.ok(oModel.getMessagesByEntity("/ProductSet('AD-1000')").length === 0, "Messages deleted for 'AD-1000'");
-				assert.ok(oModel.getMessagesByEntity("/ProductSet('HT-1000')").length === 1, "1 Message for 'HT-1000' still exist");
+				assert.strictEqual(oModel.getMessagesByEntity("/ProductSet('AD-1000')").length, 0, "Messages deleted for 'AD-1000'");
+				assert.strictEqual(oModel.getMessagesByEntity("/ProductSet('HT-1000')").length, 1, "1 Message for 'HT-1000' still exist");
 				oSpy = sinon.spy(oModel, "_submitBatchRequest");
 				oModel.submitChanges();
 				jQuery.sap.delayedCall(0,this, function() {
-					assert.ok(oSpy.callCount == 1, "Change request sent");
+					assert.strictEqual(oSpy.callCount, 1, "Change request sent");
 					oSpy.restore();
 					done();
 				});
 			},
 			error: function() {
-				assert.ok(false, "reqauest failed");
+				assert.ok(false, "request failed");
 				done();
 			}
 		});
@@ -2084,23 +2084,23 @@ sap.ui.define([
 				oModel.setProperty("/ProductSet('HT-1000')/Name", "NewName");
 				assert.ok(oModel.hasPendingChanges(), "model has pending changes");
 				assert.ok(oModel.getMessagesByEntity("/ProductSet('AD-1000')"), "Messages for 'AD-1000' set");
-				assert.ok(oModel.getMessagesByEntity("/ProductSet('AD-1000')").length === 2, "2 Messages for 'AD-1000' set");
+				assert.strictEqual(oModel.getMessagesByEntity("/ProductSet('AD-1000')").length, 2, "2 Messages for 'AD-1000' set");
 				assert.ok(oModel.getMessagesByEntity("/ProductSet('HT-1000')"), "Messages 'HT-1000' set");
-				assert.ok(oModel.getMessagesByEntity("/ProductSet('HT-1000')").length === 1, "1 Message for 'HT-1000' set");
+				assert.strictEqual(oModel.getMessagesByEntity("/ProductSet('HT-1000')").length, 1, "1 Message for 'HT-1000' set");
 				oModel.resetChanges();
-				assert.ok(oModel.getMessagesByEntity("/ProductSet('HT-1000')").length === 0, "Messages for 'HT-1000' deleted");
-				assert.ok(oModel.getMessagesByEntity("/ProductSet('AD-1000')").length === 0, "Messages for 'AD-1000' deleted");
+				assert.strictEqual(oModel.getMessagesByEntity("/ProductSet('HT-1000')").length, 0, "Messages for 'HT-1000' deleted");
+				assert.strictEqual(oModel.getMessagesByEntity("/ProductSet('AD-1000')").length, 0, "Messages for 'AD-1000' deleted");
 				assert.ok(!oModel.hasPendingChanges(), "model should not have pending changes");
 				oSpy = sinon.spy(oModel, "_submitBatchRequest");
 				oModel.submitChanges();
 				jQuery.sap.delayedCall(0,this, function() {
-					assert.ok(oSpy.callCount == 0, "No request sent");
+					assert.strictEqual(oSpy.callCount, 0, "No request sent");
 					oSpy.restore();
 					done();
 				});
 			},
 			error: function() {
-				assert.ok(false, "reqauest failed");
+				assert.ok(false, "request failed");
 				done();
 			}
 		});
@@ -2569,7 +2569,7 @@ sap.ui.define([
 						assert.equal(spy.callCount, 1, "processChange call count");
 						var oRequest = spy.returnValues[0];
 						assert.equal(oRequest.method, "PUT", "request method");
-						assert.ok(oRequest.headers['x-http-method'] === undefined, "request method header should not be present");
+						assert.strictEqual(oRequest.headers['x-http-method'], undefined, "request method header should not be present");
 						assert.equal(oRequest.requestUri, "ProductSet('HT-1000')", "request URI");
 						assert.equal(oRequest.data.Name, "xy", "request payload name");
 						assert.equal(oRequest.data.Price, "4445.6", "request payload price");
@@ -2651,7 +2651,7 @@ sap.ui.define([
 						assert.equal(spy.callCount, 1, "processChange call count");
 						var oRequest = spy.returnValues[0];
 						assert.equal(oRequest.method, "PUT", "request method");
-						assert.ok(oRequest.headers['x-http-method'] === undefined, "request method header should not be present");
+						assert.strictEqual(oRequest.headers['x-http-method'], undefined, "request method header should not be present");
 						assert.equal(oRequest.requestUri, "ProductSet('HT-1000')", "request URI");
 						assert.equal(oRequest.data.Name, "xy", "request payload name");
 						assert.equal(oRequest.data.Price, "4445.6", "request payload price");
@@ -2731,7 +2731,7 @@ sap.ui.define([
 				assert.equal(spy.callCount, 1, "processChange call count");
 				var oRequest = spy.returnValues[0];
 				assert.equal(oRequest.method, "PUT", "request method");
-				assert.ok(oRequest.headers['x-http-method'] === undefined, "request method header should not be present");
+				assert.strictEqual(oRequest.headers['x-http-method'], undefined, "request method header should not be present");
 				assert.equal(oRequest.requestUri,"/SalesOrderSrv/ProductSet('HT-1000')", "request URI");
 				assert.equal(oRequest.data.Name, "xy", "request payload name");
 				assert.equal(oRequest.data.Price, "4445.8", "request payload price");
@@ -2790,7 +2790,7 @@ sap.ui.define([
 				assert.equal(spy.callCount, 1, "processChange call count");
 				var oRequest = spy.returnValues[0];
 				assert.equal(oRequest.method, "PUT", "request method");
-				assert.ok(oRequest.headers['x-http-method'] === undefined, "request method header should not be present");
+				assert.strictEqual(oRequest.headers['x-http-method'], undefined, "request method header should not be present");
 				assert.equal(oRequest.requestUri,"/SalesOrderSrv/ProductSet('HT-1000')", "request URI");
 				assert.equal(oRequest.data.Name, "xy", "request payload name");
 				assert.equal(oRequest.data.Price, "4445.8", "request payload price");
@@ -2859,7 +2859,7 @@ sap.ui.define([
 						assert.equal(spy.callCount, 1, "processChange call count");
 						var oRequest = spy.args[0][1][0][0].request;
 						assert.equal(oRequest.method, "MERGE", "request method");
-						assert.ok(oRequest.headers['x-http-method'] === undefined, "request method header should not be present");
+						assert.strictEqual(oRequest.headers['x-http-method'], undefined, "request method header should not be present");
 						assert.equal(oRequest.requestUri, "ProductSet('HT-1000')", "request URI");
 						assert.equal(oRequest.data.Name, "Test", "request payload name");
 						var iCount = 0;
@@ -2945,7 +2945,7 @@ sap.ui.define([
 						assert.equal(spy.callCount, 1, "processChange call count");
 						var oRequest = spy.args[0][1][0][0].request;
 						assert.equal(oRequest.method, "PUT", "request method");
-						assert.ok(oRequest.headers['x-http-method'] === undefined, "request method header should not be present");
+						assert.strictEqual(oRequest.headers['x-http-method'], undefined, "request method header should not be present");
 						assert.equal(oRequest.requestUri, "ProductSet('HT-1000')", "request URI");
 						assert.equal(oRequest.data.Name, "Test", "request payload name");
 						var iCount = 0;
@@ -3021,7 +3021,7 @@ sap.ui.define([
 				assert.equal(spy.callCount, 1, "call count");
 				var oRequest = spy.args[0][0].request;
 				assert.equal(oRequest.method, "POST", "request method");
-				assert.ok(oRequest.headers['x-http-method'] === "MERGE", "request method header should not be present");
+				assert.strictEqual(oRequest.headers['x-http-method'], "MERGE", "request method header should not be present");
 				assert.equal(oRequest.requestUri,"/SalesOrderSrv/ProductSet('HT-1000')", "request URI");
 				assert.equal(oRequest.data.Name, "Test3", "request payload name");
 				var iCount2 = 0;
@@ -3078,7 +3078,7 @@ sap.ui.define([
 				assert.equal(spy.callCount, 1, "call count");
 				var oRequest = spy.args[0][0].request;
 				assert.equal(oRequest.method, "PUT", "request method");
-				assert.ok(oRequest.headers['x-http-method'] === undefined, "request method header should not be present");
+				assert.strictEqual(oRequest.headers['x-http-method'], undefined, "request method header should not be present");
 				assert.equal(oRequest.requestUri,"/SalesOrderSrv/ProductSet('HT-1000')", "request URI");
 				assert.equal(oRequest.data.Name, "Test2", "request payload name");
 				var iCount2 = 0;
@@ -3254,10 +3254,10 @@ sap.ui.define([
 			var oSpy = sinon.spy(oModel, "_submitBatchRequest");
 			oModel.submitChanges({
 				success : function(oData, oResponse) {
-					assert.ok(oSpy.callCount == 0, "No request sent");
+					assert.strictEqual(oSpy.callCount, 0, "No request sent");
 					assert.ok(true, "success handler called even no changes were submitted");
 					assert.ok(!oResponse, "no response passed");
-					assert.ok(typeof oData == 'object', "data is object");
+					assert.strictEqual(typeof oData, 'object', "data is object");
 					assert.ok(isEmptyObject(oData), "data is empty object");
 				},
 				error : function(oError) {
@@ -4044,7 +4044,7 @@ sap.ui.define([
 			assert.equal(oEvent.getParameter('headers').Accept, "multipart/mixed", "Param check: headers");
 			assert.ok(oEvent.getParameter('headers')['x-csrf-token'], "Param check: token");
 			var aRequests = oEvent.getParameter('requests');
-			assert.ok(aRequests.length == 1, "should contain one request");
+			assert.strictEqual(aRequests.length, 1, "should contain one request");
 			assert.equal(aRequests[0].method, "GET", "internal request, Param Check: method");
 			assert.equal(aRequests[0].url, "ProductSet", "internal request, Param Check: url");
 			assert.equal(aRequests[0].headers.Accept, "application/json", "internal request Param check: headers");
@@ -4068,7 +4068,7 @@ sap.ui.define([
 				assert.equal(oEvent.getParameter('headers').Accept, "multipart/mixed", true , "Param check: headers");
 				assert.ok(oEvent.getParameter('headers')['x-csrf-token'], "Param check: token");
 				var aRequests = oEvent.getParameter('requests');
-				assert.ok(aRequests.length == 1, "should contain one request");
+				assert.strictEqual(aRequests.length, 1, "should contain one request");
 				assert.equal(aRequests[0].method, "GET", "internal request, Param Check: method");
 				assert.equal(aRequests[0].url, "ProductSet", "internal request, Param Check: url");
 				assert.equal(aRequests[0].headers.Accept, "application/json", "internal request Param check: headers");
@@ -4123,7 +4123,7 @@ sap.ui.define([
 			assert.equal(oEvent.getParameter('headers').Accept, "multipart/mixed", "Param check: headers");
 			assert.ok(oEvent.getParameter('headers')['x-csrf-token'], "Param check: token");
 			var aRequests = oEvent.getParameter('requests');
-			assert.ok(aRequests.length == 1, "should contain only one request");
+			assert.strictEqual(aRequests.length, 1, "should contain only one request");
 			assert.equal(aRequests[0].method, "GET", "internal request, Param Check: method");
 			assert.equal(aRequests[0].url, "ProductSet", "internal request, Param Check: url");
 			assert.equal(aRequests[0].headers.Accept, "application/json", "internal request Param check: headers");
@@ -4145,7 +4145,7 @@ sap.ui.define([
 				assert.equal(oEvent.getParameter('headers').Accept, "multipart/mixed", true , "Param check: headers");
 				assert.ok(oEvent.getParameter('headers')['x-csrf-token'], "Param check: token");
 				var aRequests = oEvent.getParameter('requests');
-				assert.ok(aRequests.length == 1, "should contain one request");
+				assert.strictEqual(aRequests.length, 1, "should contain one request");
 				assert.equal(aRequests[0].method, "GET", "internal request, Param Check: method");
 				assert.equal(aRequests[0].url, "ProductSet", "internal request, Param Check: url");
 				assert.equal(aRequests[0].headers.Accept, "application/json", "internal request Param check: headers");
@@ -4178,7 +4178,7 @@ sap.ui.define([
 				assert.ok(false, "request succeeded...error expected");
 			},
 			error : function(oError) {
-				assert.ok(oError.statusCode === "404", "error code");
+				assert.strictEqual(oError.statusCode, "404", "error code");
 				assert.ok(true, "request failed");
 			}
 		});
@@ -4199,7 +4199,7 @@ sap.ui.define([
 			assert.equal(oEvent.getParameter('headers').Accept, "multipart/mixed", "Param check: headers");
 			assert.ok(oEvent.getParameter('headers')['x-csrf-token'], "Param check: token");
 			var aRequests = oEvent.getParameter('requests');
-			assert.ok(aRequests.length == 1, "should contain one request");
+			assert.strictEqual(aRequests.length, 1, "should contain one request");
 			assert.equal(aRequests[0].method, "GET", "internal request, Param Check: method");
 			assert.equal(aRequests[0].url, "ProductSet('4711')", "internal request, Param Check: url");
 			assert.equal(aRequests[0].headers.Accept, "application/json", "internal request Param check: headers");
@@ -4221,7 +4221,7 @@ sap.ui.define([
 
 				// check internal response
 				var aRequests = oEvent.getParameter('requests');
-				assert.ok(aRequests.length == 1, "should contain one request");
+				assert.strictEqual(aRequests.length, 1, "should contain one request");
 				assert.equal(aRequests[0].method, "GET", "internal request, Param Check: method");
 				assert.equal(aRequests[0].url, "ProductSet('4711')", "internal request, Param Check: url");
 				assert.equal(aRequests[0].headers.Accept, "application/json", "internal request Param check: headers");
@@ -4246,7 +4246,7 @@ sap.ui.define([
 				assert.ok(false, "request succeeded...error expected");
 			},
 			error : function(oError) {
-				assert.ok(oError.statusCode === "404", "error code");
+				assert.strictEqual(oError.statusCode, "404", "error code");
 				assert.ok(true, "request failed");
 				iError++;
 			}
@@ -4256,7 +4256,7 @@ sap.ui.define([
 				assert.ok(false, "request succeeded...error expected");
 			},
 			error : function(oError) {
-				assert.ok(oError.statusCode === "404", "error code");
+				assert.strictEqual(oError.statusCode, "404", "error code");
 				assert.ok(true, "request failed");
 				iError++;
 			}
@@ -4277,7 +4277,7 @@ sap.ui.define([
 			assert.equal(oEvent.getParameter('headers').Accept, "multipart/mixed", "Param check: headers");
 			assert.ok(oEvent.getParameter('headers')['x-csrf-token'], "Param check: token");
 			var aRequests = oEvent.getParameter('requests');
-			assert.ok(aRequests.length == 1, "should contain one request");
+			assert.strictEqual(aRequests.length, 1, "should contain one request");
 			assert.equal(aRequests[0].method, "GET", "internal request, Param Check: method");
 			assert.equal(aRequests[0].url, "ProductSet('4711')", "internal request, Param Check: url");
 			assert.equal(aRequests[0].headers.Accept, "application/json", "internal request Param check: headers");
@@ -4298,7 +4298,7 @@ sap.ui.define([
 
 				// check internal response
 				var aRequests = oEvent.getParameter('requests');
-				assert.ok(aRequests.length == 1, "should contain one request");
+				assert.strictEqual(aRequests.length, 1, "should contain one request");
 				assert.equal(aRequests[0].method, "GET", "internal request, Param Check: method");
 				assert.equal(aRequests[0].url, "ProductSet('4711')", "internal request, Param Check: url");
 				assert.equal(aRequests[0].headers.Accept, "application/json", "internal request Param check: headers");
@@ -4343,7 +4343,7 @@ sap.ui.define([
 
 				// check internal response
 				var aRequests = oEvent.getParameter('requests');
-				assert.ok(aRequests.length == 1, "should contain one request");
+				assert.strictEqual(aRequests.length, 1, "should contain one request");
 				assert.equal(aRequests[0].method, "GET", "internal request, Param Check: method");
 				assert.equal(aRequests[0].url, "ProductSet", "internal request, Param Check: url");
 				assert.equal(aRequests[0].response, undefined, "internal response not there");
@@ -4362,7 +4362,7 @@ sap.ui.define([
 			assert.equal(oEvent.getParameter('async'), true , "Param check: async");
 			assert.equal(oEvent.getParameter('headers').Accept, "multipart/mixed", "Param check: headers");
 			var aRequests = oEvent.getParameter('requests');
-			assert.ok(aRequests.length == 1, "should contain one request");
+			assert.strictEqual(aRequests.length, 1, "should contain one request");
 			assert.equal(aRequests[0].method, "GET", "internal request, Param Check: method");
 			assert.equal(aRequests[0].url, "ProductSet", "internal request, Param Check: url");
 			assert.equal(aRequests[0].headers.Accept, "application/json", "internal request Param check: headers");
@@ -4383,7 +4383,7 @@ sap.ui.define([
 
 				// check internal response
 				var aRequests = oEvent.getParameter('requests');
-				assert.ok(aRequests.length == 1, "should contain one request");
+				assert.strictEqual(aRequests.length, 1, "should contain one request");
 				assert.equal(aRequests[0].method, "GET", "internal request, Param Check: method");
 				assert.equal(aRequests[0].url, "ProductSet", "internal request, Param Check: url");
 				assert.equal(aRequests[0].response, undefined, "internal response not there");
@@ -4437,7 +4437,7 @@ sap.ui.define([
 
 				// check internal response
 				var aRequests = oEvent.getParameter('requests');
-				assert.ok(aRequests.length == 1, "should contain one request");
+				assert.strictEqual(aRequests.length, 1, "should contain one request");
 				assert.equal(aRequests[0].method, "GET", "internal request, Param Check: method");
 				assert.equal(aRequests[0].url, "ProductSet", "internal request, Param Check: url");
 				assert.equal(aRequests[0].response, undefined, "internal response not there");
@@ -4455,7 +4455,7 @@ sap.ui.define([
 			assert.equal(oEvent.getParameter('async'), true , "Param check: async");
 			assert.equal(oEvent.getParameter('headers').Accept, "multipart/mixed", "Param check: headers");
 			var aRequests = oEvent.getParameter('requests');
-			assert.ok(aRequests.length == 1, "should contain one request");
+			assert.strictEqual(aRequests.length, 1, "should contain one request");
 			assert.equal(aRequests[0].method, "GET", "internal request, Param Check: method");
 			assert.equal(aRequests[0].url, "ProductSet", "internal request, Param Check: url");
 			assert.equal(aRequests[0].headers.Accept, "application/json", "internal request Param check: headers");
@@ -4476,7 +4476,7 @@ sap.ui.define([
 
 				// check internal response
 				var aRequests = oEvent.getParameter('requests');
-				assert.ok(aRequests.length == 1, "should contain one request");
+				assert.strictEqual(aRequests.length, 1, "should contain one request");
 				assert.equal(aRequests[0].method, "GET", "internal request, Param Check: method");
 				assert.equal(aRequests[0].url, "ProductSet", "internal request, Param Check: url");
 				assert.equal(aRequests[0].response, undefined, "internal response not there");
@@ -4613,7 +4613,7 @@ sap.ui.define([
 				assert.ok(false, "request succeeded...error expected");
 			},
 			error : function(oError) {
-				assert.ok(oError.statusCode === 404, "error code");
+				assert.strictEqual(oError.statusCode, 404, "error code");
 				assert.ok(true, "request failed");
 				iError++;
 			}
@@ -4623,7 +4623,7 @@ sap.ui.define([
 				assert.ok(false, "request succeeded...error expected");
 			},
 			error : function(oError) {
-				assert.ok(oError.statusCode === 404, "error code");
+				assert.strictEqual(oError.statusCode, 404, "error code");
 				assert.ok(true, "request failed");
 				iError++;
 			}
@@ -4726,7 +4726,7 @@ sap.ui.define([
 			assert.equal(oEvent.getParameter('async'), true , "Param check: async");
 
 			var aRequests = oEvent.getParameter('requests');
-			assert.ok(aRequests.length == 3, "should contain 3 requests");
+			assert.strictEqual(aRequests.length, 3, "should contain 3 requests");
 			assert.equal(aRequests[0].method, "MERGE", "internal request, Param Check: method");
 			assert.equal(aRequests[0].url, "ProductSet('HT-1000')", "internal request, Param Check: url");
 			assert.equal(aRequests[0].headers.Accept, "application/json", "internal request Param check: headers");
@@ -4760,7 +4760,7 @@ sap.ui.define([
 				assert.ok(oEvent.getParameter('headers')['x-csrf-token'], "Param check: token");
 				var aRequests = oEvent.getParameter('requests');
 
-				assert.ok(aRequests.length == 3, "should contain 3 requests");
+				assert.strictEqual(aRequests.length, 3, "should contain 3 requests");
 
 				assert.equal(aRequests[0].method, "MERGE", "internal request, Param Check: method");
 				assert.equal(aRequests[0].url, "ProductSet('HT-1000')", "internal request, Param Check: url");
@@ -4867,7 +4867,7 @@ sap.ui.define([
 			assert.equal(oEvent.getParameter('async'), true , "Param check: async");
 
 			var aRequests = oEvent.getParameter('requests');
-			assert.ok(aRequests.length == 4, "should contain 4 requests");
+			assert.strictEqual(aRequests.length, 4, "should contain 4 requests");
 			assert.equal(aRequests[0].method, "MERGE", "internal request, Param Check: method");
 			assert.equal(aRequests[0].url, "ProductSet('HT-1000')", "internal request, Param Check: url");
 			assert.equal(aRequests[0].headers.Accept, "application/json", "internal request Param check: headers");
@@ -4905,7 +4905,7 @@ sap.ui.define([
 				assert.ok(oEvent.getParameter('headers')['x-csrf-token'], "Param check: token");
 				var aRequests = oEvent.getParameter('requests');
 
-				assert.ok(aRequests.length == 4, "should contain 4 requests");
+				assert.strictEqual(aRequests.length, 4, "should contain 4 requests");
 
 				assert.equal(aRequests[0].method, "MERGE", "internal request, Param Check: method");
 				assert.equal(aRequests[0].url, "ProductSet('HT-1000')", "internal request, Param Check: url");
@@ -5255,8 +5255,8 @@ sap.ui.define([
 			},
 			error : function(oError) {
 				assert.ok(true, "error callback of aborted request is called");
-				assert.ok(oError.statusCode === 0, "status code 0");
-				assert.ok(oError.statusText === 'abort', "status text 'abort'"); // Note: statusText 'abort' is set by the model itself
+				assert.strictEqual(oError.statusCode, 0, "status code 0");
+				assert.strictEqual(oError.statusText, 'abort', "status text 'abort'"); // Note: statusText 'abort' is set by the model itself
 			},
 			batchGroupId: "changes"
 		});
@@ -5266,8 +5266,8 @@ sap.ui.define([
 			},
 			error : function(oError) {
 				assert.ok(true, "error callback of aborted request is called");
-				assert.ok(oError.statusCode === 0, "status code 0");
-				assert.ok(oError.statusText === 'abort', "status text 'abort'"); // Note: statusText 'abort' is set by the model itself
+				assert.strictEqual(oError.statusCode, 0, "status code 0");
+				assert.strictEqual(oError.statusText, 'abort', "status text 'abort'"); // Note: statusText 'abort' is set by the model itself
 			},
 			batchGroupId: "changes"
 		});
@@ -5275,8 +5275,8 @@ sap.ui.define([
 		oAbort.abort();
 
 		oModel.attachBatchRequestCompleted(this, function(oEvent) {
-			assert.ok(oEvent.getParameter('response').statusCode === 0, "status code 0");
-			assert.ok(oEvent.getParameter('response').statusText === 'abort', "status text 'abort'"); // Note: statusText 'abort' is set by the model itself
+			assert.strictEqual(oEvent.getParameter('response').statusCode, 0, "status code 0");
+			assert.strictEqual(oEvent.getParameter('response').statusText, 'abort', "status text 'abort'"); // Note: statusText 'abort' is set by the model itself
 			assert.ok(!bSuccess, "Success handler should not be called");
 			done();
 		});
@@ -5292,8 +5292,8 @@ sap.ui.define([
 			},
 			error : function(oError) {
 				assert.ok(true, "error callback of aborted request is called");
-				assert.ok(oError.statusCode === 0, "status code 0");
-				assert.ok(oError.statusText === 'abort', "status text 'abort'"); // Note: statusText 'abort' is set by the model itself
+				assert.strictEqual(oError.statusCode, 0, "status code 0");
+				assert.strictEqual(oError.statusText, 'abort', "status text 'abort'"); // Note: statusText 'abort' is set by the model itself
 			},
 			batchGroupId: "changes"
 		});
@@ -5303,8 +5303,8 @@ sap.ui.define([
 			},
 			error : function(oError) {
 				assert.ok(true, "error callback of aborted request is called");
-				assert.ok(oError.statusCode === 0, "status code 0");
-				assert.ok(oError.statusText === 'abort', "status text 'abort'"); // Note: statusText 'abort' is set by the model itself
+				assert.strictEqual(oError.statusCode, 0, "status code 0");
+				assert.strictEqual(oError.statusText, 'abort', "status text 'abort'"); // Note: statusText 'abort' is set by the model itself
 			},
 			batchGroupId: "changes"
 		});
@@ -5313,8 +5313,8 @@ sap.ui.define([
 			oAbort.abort();
 		});
 		oModel.attachBatchRequestCompleted(this, function(oEvent) {
-			assert.ok(oEvent.getParameter('response').statusCode === 0, "status code 0");
-			assert.ok(oEvent.getParameter('response').statusText === 'abort', "status text 'abort'"); // Note: statusText 'abort' is set by the model itself
+			assert.strictEqual(oEvent.getParameter('response').statusCode, 0, "status code 0");
+			assert.strictEqual(oEvent.getParameter('response').statusText, 'abort', "status text 'abort'"); // Note: statusText 'abort' is set by the model itself
 			assert.ok(!bSuccess, "Success handler should not be called");
 			done();
 		});
@@ -5331,8 +5331,8 @@ sap.ui.define([
 			},
 			error : function(oError) {
 				assert.ok(true, "error callback of aborted request is called");
-				assert.ok(oError.statusCode === 0, "status code 0");
-				assert.ok(oError.statusText === 'abort', "status text 'abort'"); // Note: statusText 'abort' is set by the model itself
+				assert.strictEqual(oError.statusCode, 0, "status code 0");
+				assert.strictEqual(oError.statusText, 'abort', "status text 'abort'"); // Note: statusText 'abort' is set by the model itself
 				iAbort++;
 			},
 			batchGroupId: "changes"
@@ -5343,8 +5343,8 @@ sap.ui.define([
 			},
 			error : function(oError) {
 				assert.ok(true, "error callback of aborted request is called");
-				assert.ok(oError.statusCode === 0, "status code 0");
-				assert.ok(oError.statusText === 'abort', "status text 'abort'"); // Note: statusText 'abort' is set by the model itself
+				assert.strictEqual(oError.statusCode, 0, "status code 0");
+				assert.strictEqual(oError.statusText, 'abort', "status text 'abort'"); // Note: statusText 'abort' is set by the model itself
 				iAbort++;
 			},
 			batchGroupId: "changes"
@@ -5355,8 +5355,8 @@ sap.ui.define([
 			},
 			error : function(oError) {
 				assert.ok(true, "error callback of aborted request is called");
-				assert.ok(oError.statusCode === 0, "status code 0");
-				assert.ok(oError.statusText === 'abort', "status text 'abort'"); // Note: statusText 'abort' is set by the model itself
+				assert.strictEqual(oError.statusCode, 0, "status code 0");
+				assert.strictEqual(oError.statusText, 'abort', "status text 'abort'"); // Note: statusText 'abort' is set by the model itself
 				iAbort++;
 			},
 			batchGroupId: "changes"
@@ -5365,8 +5365,8 @@ sap.ui.define([
 		oAbort.abort();
 
 		oModel.attachBatchRequestCompleted(this, function(oEvent) {
-			assert.ok(oEvent.getParameter('response').statusCode === 0, "status code 0");
-			assert.ok(oEvent.getParameter('response').statusText === 'abort', "status text 'abort'"); // Note: statusText 'abort' is set by the model itself
+			assert.strictEqual(oEvent.getParameter('response').statusCode, 0, "status code 0");
+			assert.strictEqual(oEvent.getParameter('response').statusText, 'abort', "status text 'abort'"); // Note: statusText 'abort' is set by the model itself
 			assert.ok(!bSuccess, "Success handler should not be called");
 			assert.equal(iAbort, 3, "3 aborted inner requests");
 			done();
@@ -5405,8 +5405,8 @@ sap.ui.define([
 		var done = assert.async();
 		assert.expect(4);
 		oModel.attachBatchRequestCompleted(this, function(oEvent) {
-			assert.ok(oEvent.getParameter('response').statusCode === 0, "status code 0");
-			assert.ok(oEvent.getParameter('response').statusText === 'abort', "status text 'abort'"); // Note: statusText 'abort' is set by the model itself
+			assert.strictEqual(oEvent.getParameter('response').statusCode, 0, "status code 0");
+			assert.strictEqual(oEvent.getParameter('response').statusText, 'abort', "status text 'abort'"); // Note: statusText 'abort' is set by the model itself
 			done();
 		});
 
@@ -5445,8 +5445,8 @@ sap.ui.define([
 		oModel.attachBatchRequestCompleted(this, function(oEvent) {
 			iCounterBatch++;
 			if (iCounterBatch === 1){
-				assert.ok(oEvent.getParameter('response').statusCode === 0, "status code 0");
-				assert.ok(oEvent.getParameter('response').statusText === 'abort', "status text 'abort'"); // Note: statusText 'abort' is set by the model itself
+				assert.strictEqual(oEvent.getParameter('response').statusCode, 0, "status code 0");
+				assert.strictEqual(oEvent.getParameter('response').statusText, 'abort', "status text 'abort'"); // Note: statusText 'abort' is set by the model itself
 			} else {
 				assert.ok(oEvent.getParameter('response').statusCode !== 0, "status code not 0");
 				assert.ok(oEvent.getParameter('response').statusText !== 'abort', "status text not 'abort'"); // Note: statusText 'abort' is set by the model itself
@@ -5511,8 +5511,8 @@ sap.ui.define([
 		var iCounterBatch = 0;
 		oModel.attachBatchRequestCompleted(this, function(oEvent) {
 			iCounterBatch++;
-			assert.ok(oEvent.getParameter('response').statusCode === 0, "status code 0");
-			assert.ok(oEvent.getParameter('response').statusText === 'abort', "status text 'abort'"); // Note: statusText 'abort' is set by the model itself
+			assert.strictEqual(oEvent.getParameter('response').statusCode, 0, "status code 0");
+			assert.strictEqual(oEvent.getParameter('response').statusText, 'abort', "status text 'abort'"); // Note: statusText 'abort' is set by the model itself
 			if (iCounterBatch === 3){
 				done();
 			}
@@ -5579,8 +5579,8 @@ sap.ui.define([
 		oModel.attachBatchRequestCompleted(this, function(oEvent) {
 			iBatchCompletedCount++;
 			if (iBatchCompletedCount === 1) {
-				assert.ok(oEvent.getParameter('response').statusCode === 0, "status code 0");
-				assert.ok(oEvent.getParameter('response').statusText === 'abort', "status text 'abort'"); // Note: statusText 'abort' is set by the model itself
+				assert.strictEqual(oEvent.getParameter('response').statusCode, 0, "status code 0");
+				assert.strictEqual(oEvent.getParameter('response').statusText, 'abort', "status text 'abort'"); // Note: statusText 'abort' is set by the model itself
 			} else if (iBatchCompletedCount === 2) {
 				assert.ok(oEvent.getParameter('response').statusCode !== 0, "status code not 0");
 				assert.ok(oEvent.getParameter('response').statusText !== 'abort', "status text not 'abort'"); // Note: statusText 'abort' is set by the model itself
@@ -5889,7 +5889,7 @@ sap.ui.define([
 				assert.ok(!bSuccess1, "RequestHandle 1 was flagged aborted in the ODataModel");
 				assert.ok(!bSuccess2, "RequestHandle 2 was flagged aborted in the ODataModel");
 				assert.ok(!bSuccess3, "RequestHandle 3 was flagged aborted in the ODataModel");
-		//		assert.ok(that.aRequests[2].status === 0, "XHR was aborted");
+		//		assert.strictEqual(that.aRequests[2].status, 0, "XHR was aborted");
 				done();
 			}
 		});
@@ -5945,7 +5945,7 @@ sap.ui.define([
 			iChange++;
 		};
 		var fnDataReceived = function(oEvent) {
-			assert.ok(iChange == 2, "checkupdate done");
+			assert.strictEqual(iChange, 2, "checkupdate done");
 			iReceived++;
 			if (iReceived == 2) {
 				assert.ok(true, "dataReceived after checkUpdate");
@@ -5984,7 +5984,7 @@ sap.ui.define([
 			iChange++;
 		};
 		var fnDataReceived = function(oEvent) {
-			assert.ok(iChange == 3, "checkupdate done");
+			assert.strictEqual(iChange, 3, "checkupdate done");
 			iReceived++;
 			if (iReceived == 3) {
 				assert.ok(true, "dataReceived after checkUpdate");
@@ -6082,7 +6082,7 @@ sap.ui.define([
 					path: "/ProductSet('HT-1000')",
 					events: {
 						dataReceived: function() {
-							assert.ok(iCount == 0, "dataReceived called once");
+							assert.strictEqual(iCount, 0, "dataReceived called once");
 							iCount++;
 							oInput1.destroy();
 							done();
@@ -6115,7 +6115,7 @@ sap.ui.define([
 			iChange++;
 		};
 		var fnDataReceived = function(oEvent) {
-			assert.ok(iChange == 1, "checkupdate done");
+			assert.strictEqual(iChange, 1, "checkupdate done");
 			iReceived++;
 			if (iReceived == 1) {
 				assert.ok(true, "dataReceived after checkUpdate");
@@ -6153,7 +6153,7 @@ sap.ui.define([
 			iChange++;
 		};
 		var fnDataReceived = function(oEvent) {
-			assert.ok(iChange == 1, "checkupdate done");
+			assert.strictEqual(iChange, 1, "checkupdate done");
 			iReceived++;
 			if (iReceived == 1) {
 				assert.ok(true, "dataReceived after checkUpdate");
@@ -6209,7 +6209,7 @@ sap.ui.define([
 			oModel.submitChanges({
 				success : function(oData, oResponse) {
 					assert.ok(true, "$batch successful");
-					assert.ok(oData.__batchResponses.length === 1, "One response found");
+					assert.strictEqual(oData.__batchResponses.length, 1, "One response found");
 					if (!oData.__batchResponses[0].message) {
 						assert.ok(true, "creation successful");
 						done();
@@ -6229,7 +6229,7 @@ sap.ui.define([
 			oModel.submitChanges({
 				success : function(oData, oResponse) {
 					assert.ok(true, "$batch successful");
-					assert.ok(oData.__batchResponses.length === 1, "One response found");
+					assert.strictEqual(oData.__batchResponses.length, 1, "One response found");
 					//MockServer does not really fail so we create a message
 					oData.__batchResponses[0].message = "error";
 					if (oData.__batchResponses[0].message) {
@@ -6254,7 +6254,7 @@ sap.ui.define([
 		});
 
 		oModel.attachRequestSent(this, function(oEventInfo) {
-			assert.ok(oEventInfo.getParameter("url") === "SalesOrder_InvoiceCreated?SalesOrderID='test'", "Valid parameter is added to URL");
+			assert.strictEqual(oEventInfo.getParameter("url"), "SalesOrder_InvoiceCreated?SalesOrderID='test'", "Valid parameter is added to URL");
 			done();
 		});
 	});
@@ -6267,7 +6267,7 @@ sap.ui.define([
 		});
 
 		oModel.attachRequestSent(this, function(oEventInfo) {
-			assert.ok(oEventInfo.getParameter("url") === "SalesOrder_Confirm?SalesOrderID='test'", "Valid parameter is added to URL");
+			assert.strictEqual(oEventInfo.getParameter("url"), "SalesOrder_Confirm?SalesOrderID='test'", "Valid parameter is added to URL");
 			done();
 		});
 	});
@@ -6280,7 +6280,7 @@ sap.ui.define([
 		});
 
 		oModel.attachRequestSent(this, function(oEventInfo) {
-			assert.ok(oEventInfo.getParameter("url") === "SalesOrder_Confirm?SalesOrderID=''", "Valid parameter is added to URL");
+			assert.strictEqual(oEventInfo.getParameter("url"), "SalesOrder_Confirm?SalesOrderID=''", "Valid parameter is added to URL");
 			done();
 		});
 	});
@@ -6293,7 +6293,7 @@ sap.ui.define([
 		});
 
 		oModel.attachRequestSent(this, function(oEventInfo) {
-			assert.ok(oEventInfo.getParameter("url") === "SalesOrder_Confirm?SalesOrderID='null'", "Valid parameter is added to URL");
+			assert.strictEqual(oEventInfo.getParameter("url"), "SalesOrder_Confirm?SalesOrderID='null'", "Valid parameter is added to URL");
 			done();
 		});
 	});
@@ -6310,7 +6310,7 @@ sap.ui.define([
 		});
 
 		oModel.attachRequestSent(this, function(oEventInfo) {
-			assert.ok(oEventInfo.getParameter("url") === "SalesOrder_Confirm?SalesOrderID='test'", "Valid parameter is added to URL");
+			assert.strictEqual(oEventInfo.getParameter("url"), "SalesOrder_Confirm?SalesOrderID='test'", "Valid parameter is added to URL");
 			assert.equal(mUrlParams["SalesOrderID"], "test", "Parameter still exists after sending function import");
 			done();
 		});
@@ -6330,7 +6330,7 @@ sap.ui.define([
 		});
 
 		oModel.attachRequestSent(this, function(oEventInfo) {
-			assert.ok(oEventInfo.getParameter("url") === "SalesOrder_Confirm?SalesOrderID='test'&$expand=ToBusinessPartner&sap-some=sapTest", "Valid parameter is added to URL");
+			assert.strictEqual(oEventInfo.getParameter("url"), "SalesOrder_Confirm?SalesOrderID='test'&$expand=ToBusinessPartner&sap-some=sapTest", "Valid parameter is added to URL");
 			done();
 		});
 	});
@@ -6941,14 +6941,14 @@ sap.ui.define([
 
 		assert.equal(oTxt.getBinding('value').getBindingMode(), "OneTime", "Binding mode check!");
 		assert.ok(!oTxt.getBinding('value').isResolved(), "Binding should not be resolved!");
-		assert.ok(oTxt.getValue() === "", "text value should be null");
+		assert.strictEqual(oTxt.getValue(), "", "text value should be null");
 
 		var fnCheck = function() {
 			iCount++;
-			assert.ok(iCount === 1, "request performed");
+			assert.strictEqual(iCount, 1, "request performed");
 			assert.equal(oTxt.getBinding('value').getBindingMode(), "OneTime", "Binding mode check!");
 			assert.ok(oTxt.getBinding('value').isResolved(), "Binding should be resolved!");
-			assert.ok(oTxt.getValue() === "Headsets", "text value should be set");
+			assert.strictEqual(oTxt.getValue(), "Headsets", "text value should be set");
 
 			assert.equal(oModel.getProperty("/VH_CategorySet('Headsets')/Category"), "Headsets", "Category loaded check");
 			oTxt.destroy();
@@ -6969,20 +6969,20 @@ sap.ui.define([
 			requestCount++;
 			if (requestCount == 1) {
 				assert.ok(oInfo.getParameter('success'), "request success");
-				assert.ok(oInfo.getParameter('method') == 'GET', "GET");
+				assert.strictEqual(oInfo.getParameter('method'), 'GET', "GET");
 			} else if (requestCount == 2) {
 				assert.ok(oInfo.getParameter('success'), "request success");
-				assert.ok(oInfo.getParameter('method') == 'GET', "GET");
+				assert.strictEqual(oInfo.getParameter('method'), 'GET', "GET");
 			} else if (requestCount == 3) {
 				assert.ok(oInfo.getParameter('success'), "request success");
-				assert.ok(oInfo.getParameter('method') == 'MERGE', "MERGE");
+				assert.strictEqual(oInfo.getParameter('method'), 'MERGE', "MERGE");
 				oRequest = spy.returnValues[0];
-				assert.ok(oRequest.data.Name == "emil", "data ok");
+				assert.strictEqual(oRequest.data.Name, "emil", "data ok");
 			} else if (requestCount == 4) {
 				assert.ok(oInfo.getParameter('success'), "request success");
-				assert.ok(oInfo.getParameter('method') == 'MERGE', "MERGE");
+				assert.strictEqual(oInfo.getParameter('method'), 'MERGE', "MERGE");
 				oRequest = spy.returnValues[1];
-				assert.ok(oRequest.data.Name == "hugo", "data ok");
+				assert.strictEqual(oRequest.data.Name, "hugo", "data ok");
 			}
 		});
 
@@ -6996,7 +6996,7 @@ sap.ui.define([
 				oModel.setProperty("/ProductSet('AD-1000')/Name", "hugo");
 				setTimeout(function() {
 					oModel.submitChanges({success: function() {
-						assert.ok(requestCount == 4, '4 requests sent');
+						assert.strictEqual(requestCount, 4, '4 requests sent');
 						done();
 					}});
 				},300);
@@ -7015,15 +7015,15 @@ sap.ui.define([
 			requestCount++;
 			if (requestCount == 1) {
 				assert.ok(oInfo.getParameter('success'), "request success");
-				assert.ok(oInfo.getParameter('method') == 'GET', "GET");
+				assert.strictEqual(oInfo.getParameter('method'), 'GET', "GET");
 			} else if (requestCount == 2) {
 				assert.ok(oInfo.getParameter('success'), "request success");
-				assert.ok(oInfo.getParameter('method') == 'GET', "GET");
+				assert.strictEqual(oInfo.getParameter('method'), 'GET', "GET");
 			} else if (requestCount == 3) {
 				assert.ok(oInfo.getParameter('success'), "request success");
-				assert.ok(oInfo.getParameter('method') == 'MERGE', "MERGE");
+				assert.strictEqual(oInfo.getParameter('method'), 'MERGE', "MERGE");
 				oRequest = spy.returnValues[1];
-				assert.ok(oRequest.data.Name == "hugo", "data ok");
+				assert.strictEqual(oRequest.data.Name, "hugo", "data ok");
 			}
 		});
 		var fnSuc = function() {
@@ -7037,7 +7037,7 @@ sap.ui.define([
 				oModel.setProperty("/ProductSet('AD-1000')/Name", "hugo");
 				setTimeout(function() {
 					oModel.submitChanges({success: function() {
-						assert.ok(requestCount == 3, '3 requests sent');
+						assert.strictEqual(requestCount, 3, '3 requests sent');
 						done();
 					}});
 				},300);
