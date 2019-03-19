@@ -1251,14 +1251,24 @@ sap.ui.define([
 						oDataSource.type = 'OData';
 					}
 
+					var sODataVersion;
+
 					// read out type and translate to model class
 					// (only if no model type was set to allow overriding)
 					if (!oModelConfig.type) {
 						switch (oDataSource.type) {
 							case 'OData':
-								if (oDataSource.settings && oDataSource.settings.odataVersion === "4.0") {
+								sODataVersion = oDataSource.settings && oDataSource.settings.odataVersion;
+								if (sODataVersion === "4.0") {
 									oModelConfig.type = 'sap.ui.model.odata.v4.ODataModel';
+								} else if (!sODataVersion || sODataVersion === "2.0") {
+									// 2.0 is the default in case no version is provided
+									oModelConfig.type = 'sap.ui.model.odata.v2.ODataModel';
 								} else {
+									Log.error('Component Manifest: Provided OData version "' + sODataVersion + '" in ' +
+									'dataSource "' + oModelConfig.dataSource + '" for model "' + sModelName + '" is unknown. ' +
+									'Falling back to default model type "sap.ui.model.odata.v2.ODataModel".',
+									'["sap.app"]["dataSources"]["' + oModelConfig.dataSource + '"]', sLogComponentName);
 									oModelConfig.type = 'sap.ui.model.odata.v2.ODataModel';
 								}
 								break;

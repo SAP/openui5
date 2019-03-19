@@ -56,6 +56,13 @@ sap.ui.define(["sap/ui/core/UIComponent"], function(UIComponent) {
 							}
 						},
 
+						"unknown-odataVersion": {
+							"uri": "/path/to/unknown/odataVersion",
+							"settings": {
+								"odataVersion": "3.0"
+							}
+						},
+
 						"AnotherOData": {
 							"uri": "/path/to/odata/service/with/trailing/slash/",
 							"type": "OData",
@@ -248,6 +255,10 @@ sap.ui.define(["sap/ui/core/UIComponent"], function(UIComponent) {
 						"v2-ODataModel-SAPClient": {
 							"type": "sap.ui.model.odata.v2.ODataModel",
 							"dataSource": "ODataWithSAPClient"
+						},
+
+						"v2-ODataModel-unknown-odataVersion": {
+							"dataSource": "unknown-odataVersion"
 						},
 
 						"json": "json",
