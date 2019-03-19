@@ -939,4 +939,74 @@ sap.ui.define([
 		oAppDom = getBgDomElement(oApp);
 		assert.strictEqual(oAppDom.onmouseover, oHandlerBeforeTest, "preserved handler value");
 	});
+
+	QUnit.module("Show Hide module", {
+		beforeEach: function () {
+			var oMasterPage = new sap.m.Page("master11", {
+				title: "Master"
+			});
+			var oDetailPage = new sap.m.Page("detail11", {
+				title: "Detail 1",
+				content: [],
+				showNavButton: jQuery.device.is.phone,
+				navButtonText: "Back",
+				navButtonPress: function() {
+					this.oSplitApp.backDetail();
+				},
+				subHeader: new sap.m.Bar({
+					contentMiddle: [
+						this.oStrechButton = new sap.m.Button({
+							text: "stretch/compress",
+							press: function() {
+								this.oSplitApp.setMode(sap.m.SplitAppMode.StretchCompressMode);
+							}.bind(this)
+						}),
+						this.oHideButton =  new sap.m.Button("saHideMasterMode", {
+							text: "hide",
+							press: function() {
+								this.oSplitApp.setMode(sap.m.SplitAppMode.HideMode);
+							}.bind(this)
+						})
+					]
+				})
+			}).addStyleClass("sapUiStdPage");
+			this.oSplitApp = new sap.m.SplitApp({
+				detailPages: [oDetailPage],
+				masterPages: [oMasterPage],
+				initialDetail: "detail11",
+				initialMaster: "master11"
+			});
+
+			this.oSplitApp.placeAt("content");
+			sap.ui.getCore().applyChanges();
+		},
+		afterEach: function () {
+			this.oSplitApp.destroy();
+			this.oSplitApp = null;
+
+			this.oStrechButton.destroy();
+			this.oStrechButton = null;
+
+			this.oHideButton.destroy();
+			this.oHideButton = null;
+		}
+	});
+
+	QUnit.test("encodes html-specific chars in backgroundImage style", function(assert) {
+		// Act
+		this.oHideButton.firePress();
+		sap.ui.getCore().applyChanges();
+
+		// Check
+		assert.strictEqual(this.oSplitApp._oShowMasterBtn.getTooltip(), "Show Master", 'Tooltip is should be "Show Master"');
+
+		// Act
+		this.oStrechButton.firePress();
+		sap.ui.getCore().applyChanges();
+		this.oHideButton.firePress();
+		sap.ui.getCore().applyChanges();
+
+		// Check
+		assert.strictEqual(this.oSplitApp._oShowMasterBtn.getTooltip(), "Show Master", 'Tooltip is should be "Show Master"');
+	});
 });

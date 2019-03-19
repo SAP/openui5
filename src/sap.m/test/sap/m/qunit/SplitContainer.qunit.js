@@ -990,7 +990,6 @@ sap.ui.define([
 
 		this.sut.to('master2', 'show');
 		sap.ui.getCore().applyChanges();
-
 		assert.equal(this.sut._oShowMasterBtn.getTooltip(), 'Show Master 2 Page ', 'Initial tooltip is correct');
 	});
 

@@ -1929,6 +1929,8 @@ function(
 			// showMasterBtn could have already be destroyed by destroying the customHeader of the previous page
 			// When this is the case, showMasterBtn will be instantiated again
 			this._createShowMasterButton();
+			//Tooltip should be update again also
+			this._updateMasterButtonTooltip();
 
 			this._oShowMasterBtn.removeStyleClass("sapMSplitContainerMasterBtnHidden");
 
