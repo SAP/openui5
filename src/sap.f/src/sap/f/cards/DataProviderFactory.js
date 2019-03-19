@@ -49,7 +49,7 @@ function (ServiceDataProvider, RequestDataProvider, DataProvider) {
 		oDataProvider.setSettings(oDataSettings);
 
 		if (oDataProvider.isA("sap.f.cards.IServiceDataProvider")) {
-			oDataProvider.setServiceManager(oServiceManager);
+			oDataProvider.createServiceInstances(oServiceManager);
 		}
 
 		return oDataProvider;

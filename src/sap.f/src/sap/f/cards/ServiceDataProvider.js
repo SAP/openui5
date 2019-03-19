@@ -45,19 +45,26 @@ sap.ui.define(["sap/f/cards/DataProvider"], function (DataProvider) {
 	 *
 	 * @param {sap.ui.integration.util.ServiceManager} oServiceManager A reference to a pre-configured service manager instance.
 	 */
-	ServiceDataProvider.prototype.setServiceManager = function (oServiceManager) {
+	ServiceDataProvider.prototype.createServiceInstances = function (oServiceManager) {
 		this._oServiceManager = oServiceManager;
-		this._setServiceInstance();
+
+		var vService = this._oSettings.service;
+		if (vService && typeof vService === "object") {
+			vService = vService.name;
+		}
+		this._createServiceInstance(vService);
 	};
 
 	/**
 	 * Creates an instance of the required data service.
+	 *
+	 * @param {string} sServiceName The name of the service to create an instance of.
 	 */
-	ServiceDataProvider.prototype._setServiceInstance = function () {
+	ServiceDataProvider.prototype._createServiceInstance = function (sServiceName) {
 		var oDataSettings = this._oSettings;
 
 		this._oDataServicePromise = this._oServiceManager
-			.getService("sap.ui.integration.services.Data")
+			.getService(sServiceName)
 			.then(function (oDataService) {
 				oDataService.attachDataChanged(function (oEvent) {
 					this.fireDataChanged({ data: oEvent.data });

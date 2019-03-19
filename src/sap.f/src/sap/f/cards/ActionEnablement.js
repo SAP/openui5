@@ -7,6 +7,13 @@ sap.ui.define(["sap/ui/base/ManagedObject", "sap/base/Log", "sap/f/cards/Binding
 
 		var ActionEnablement = {};
 
+		function _getServiceName(vService) {
+			if (vService && typeof vService === "object") {
+				return vService.name;
+			}
+			return vService;
+		}
+
 		function _attachActions(mItem, oControl) {
 			if (!mItem.actions) {
 				return;
@@ -47,7 +54,7 @@ sap.ui.define(["sap/ui/base/ManagedObject", "sap/base/Log", "sap/f/cards/Binding
 
 				if (!vValue.__promise) {
 					vValue.__promise = true;
-					that._oServiceManager.getService("sap.ui.integration.services.Navigation").then(function (oNavigationService) {
+					that._oServiceManager.getService(_getServiceName(oAction.service)).then(function (oNavigationService) {
 						if (oNavigationService) {
 							oNavigationService
 								.enabled({
@@ -88,7 +95,7 @@ sap.ui.define(["sap/ui/base/ManagedObject", "sap/base/Log", "sap/f/cards/Binding
 			mParameters = BindingResolver.resolveValue(oAction.parameters, oModel, sPath);
 
 			return new Promise(function (resolve) {
-				this._oServiceManager.getService("sap.ui.integration.services.Navigation")
+				this._oServiceManager.getService(_getServiceName(oAction.service))
 					.then(function (oNavigationService) {
 						if (oNavigationService) {
 							oNavigationService
@@ -173,7 +180,7 @@ sap.ui.define(["sap/ui/base/ManagedObject", "sap/base/Log", "sap/f/cards/Binding
 						sPath = oBindingContext.getPath();
 					}
 
-					this._oServiceManager.getService("sap.ui.integration.services.Navigation")
+					this._oServiceManager.getService(_getServiceName(oAction.service))
 						.then(function (oNavigationService) {
 							if (oNavigationService) {
 								oNavigationService.navigate({
