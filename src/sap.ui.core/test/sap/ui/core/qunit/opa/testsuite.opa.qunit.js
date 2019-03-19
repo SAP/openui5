@@ -81,6 +81,13 @@ sap.ui.define([
 				libs: "sap.m"
 			}
 		},
+		"demokit/sample/matcher/Descendant/Opa": {
+			page: "test-resources/sap/ui/core/demokit/sample/matcher/Descendant/Opa.html?noglobals=true&sap-ui-animation=false",
+			title: "Opa Sample for Descendant Matcher",
+			ui5: {
+				libs: "sap.m"
+			}
+		},
 		"demokit/sample/OpaAutoWaitParams/OpaAutoWaitParams": {
 			page: "test-resources/sap/ui/core/demokit/sample/OpaAutoWaitParams/OpaAutoWaitParams.html?noglobals=true&sap-ui-animation=false",
 			title: "OPA5 AutoWait Parameters"
@@ -201,6 +208,10 @@ sap.ui.define([
 		"matchers/Ancestor": {
 			title: "QUnit Page for sap.ui.test.matchers.Ancestor",
 			module: "./matchers/Ancestor.qunit"
+		},
+		"matchers/Descendant": {
+			title: "QUnit Page for sap.ui.test.matchers.Descendant",
+			module: "./matchers/Descendant.qunit"
 		},
 		"matchers/BindingPath": {
 			title: "QUnit Page for sap.ui.test.matchers.BindingPath",
