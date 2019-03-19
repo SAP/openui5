@@ -23,11 +23,12 @@ sap.ui.define([
 	 * @class
 	 * Allows to enter data in a row shaped form, if placed inside a {@link sap.ui.table.Table}.
 	 * The form elements (<code>cells</code> aggregation) are aligned with the columns of the table, and are created automatically based on the
-	 * "{@link sap.ui.table.Column#getCreationTemplate creationTemplate}" aggregation of the {@link sap.ui.table.Column}.
+	 * {@link sap.ui.table.Column#getCreationTemplate creationTemplate} aggregation of the {@link sap.ui.table.Column}.
 	 *
 	 * <b>Note:</b> This control is compatible only with the <code>sap.m</code> library. Do not use it together with the
 	 * <code>sap.ui.commons</code> library.
-	 * @extends sap.ui.table.Row
+	 * @extends sap.ui.core.Control
+	 * @author SAP SE
 	 * @version ${version}
 	 *
 	 * @constructor
