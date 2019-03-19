@@ -922,6 +922,156 @@ sap.ui.require([
 
 	});
 
+	/*
+	 * Scenario13:
+	 *
+	 *   lib1 (js)
+	 *     -> lib3 (js), lib4 (js, json), lib5 (json)
+	 *   lib2 (json)
+	 *     -> lib4 (js, json), lib1 (js), lib6 (js, lazy), lib7 (none)
+	 */
+	QUnit.test("multiple libraries (async, preloads are active) with transitive dependency closure", function(assert) {
+
+		return LoaderExtensions.loadResource({
+			dataType: "json",
+			url: sap.ui.require.toUrl("testlibs/scenario13/sap-ui-version.json"),
+			async: true
+		}).then(function(versioninfo) {
+			sap.ui.versioninfo = versioninfo;
+
+			oRealCore.oConfiguration.preload = 'sync'; // sync or async both activate the preload
+
+			this.spy(sap.ui.loader._, 'loadJSResourceAsync');
+			this.spy(sap.ui, 'require');
+			this.spy(sap.ui, 'requireSync');
+
+			// make lib3 already loaded
+			sap.ui.predefine('testlibs/scenario13/lib3/library', [], function() {
+				sap.ui.getCore().initLibrary({
+					name: 'testlibs.scenario13.lib3',
+					noLibraryCSS: true
+				});
+				return testlibs.scenario13.lib3;
+			});
+
+			var vResult = sap.ui.getCore().loadLibraries(['testlibs.scenario13.lib2']);
+			sinon.assert.calledWith(sap.ui.loader._.loadJSResourceAsync, sinon.match(/scenario13\/lib1\/library-preload\.js$/));
+			sinon.assert.calledWith(sap.ui.loader._.loadJSResourceAsync, sinon.match(/scenario13\/lib2\/library-preload\.js$/));
+			sinon.assert.neverCalledWith(sap.ui.loader._.loadJSResourceAsync, sinon.match(/scenario13\/lib3\/library-preload\.js$/));
+			sinon.assert.calledWith(sap.ui.loader._.loadJSResourceAsync, sinon.match(/scenario13\/lib4\/library-preload\.js$/));
+			sinon.assert.calledWith(sap.ui.loader._.loadJSResourceAsync, sinon.match(/scenario13\/lib5\/library-preload\.js$/));
+			sinon.assert.neverCalledWith(sap.ui.loader._.loadJSResourceAsync, sinon.match(/scenario13\/lib6\/library-preload\.js$/));
+			sinon.assert.calledWith(sap.ui.loader._.loadJSResourceAsync, sinon.match(/scenario13\/lib7\/library-preload\.js$/));
+
+			assert.ok(vResult instanceof Promise, "async call to loadLibraries should return a promise");
+
+			return vResult.then(function(vResult) {
+				assert.strictEqual(vResult, undefined, "Promise should have no fulfillment value");
+				assert.isLibLoaded('testlibs.scenario13.lib1');
+				sinon.assert.calledWith(sap.ui.loader._.loadJSResourceAsync, sinon.match(/scenario13\/lib1\/library-preload\.js$/));
+				assert.isLibLoaded('testlibs.scenario13.lib2');
+				sinon.assert.calledWith(sap.ui.loader._.loadJSResourceAsync, sinon.match(/scenario13\/lib2\/library-preload\.js$/));
+				sinon.assert.neverCalledWith(sap.ui.requireSync, 'testlibs/scenario13/lib2/library');
+
+				// all libs in lib2's transitive dependency closure have been required
+				sinon.assert.calledWith(sap.ui.require, ["testlibs/scenario13/lib2/library", "testlibs/scenario13/lib4/library", "testlibs/scenario13/lib1/library", "testlibs/scenario13/lib3/library", "testlibs/scenario13/lib5/library", "testlibs/scenario13/lib7/library"]);
+
+				// lib3 should not be preloaded as its library.js has been (pre)loaded before
+				assert.isLibLoaded('testlibs.scenario13.lib3');
+				sinon.assert.neverCalledWith(sap.ui.loader._.loadJSResourceAsync, sinon.match(/scenario13\/lib3\/library-preload\.js$/));
+
+				// lib4 and lib5 should have been preloaded
+				assert.isLibLoaded('testlibs.scenario13.lib4');
+				sinon.assert.calledWith(sap.ui.loader._.loadJSResourceAsync, sinon.match(/scenario13\/lib4\/library-preload\.js$/));
+
+				assert.isLibLoaded('testlibs.scenario13.lib5');
+				sinon.assert.calledWith(sap.ui.loader._.loadJSResourceAsync, sinon.match(/scenario13\/lib5\/library-preload\.js$/));
+
+				// lib6 shouldn't have been loaded (only lazy dependency)
+				assert.ok(!jQuery.sap.getObject('testlibs.scenario13.lib6'), "lib6 should not have been loaded");
+				assert.ok(!sap.ui.getCore().getLoadedLibraries()['testlibs.scenario13.lib6'], "Core should not know or report lib6 as 'loaded'");
+				sinon.assert.neverCalledWith(sap.ui.loader._.loadJSResourceAsync, sinon.match(/scenario13\/lib6\/library-preload\.js$/));
+
+				// lib7 should have been loaded as individual file
+				assert.isLibLoaded('testlibs.scenario13.lib7');
+				sinon.assert.calledWith(sap.ui.loader._.loadJSResourceAsync, sinon.match(/scenario13\/lib7\/library-preload\.js$/));
+
+			});
+		}.bind(this));
+	});
+
+	/*
+	 * Scenario14:
+	 *
+	 *   lib1 (js)
+	 *     -> lib2 (js), lib5 (js)
+	 *   lib2 (js)
+	 *     -> lib3 (js), lib5 (js, lazy: true), lib6 (js)
+	 */
+	QUnit.test("multiple libs (async, preloads) with transitive dependency closure, one lib is not in the sap.ui.versioninfo", function(assert) {
+
+		// make lib4 already loaded
+		sap.ui.predefine('testlibs/scenario14/lib4/library', [], function() {
+			sap.ui.getCore().initLibrary({
+				name: 'testlibs.scenario14.lib4'
+			});
+			return testlibs.scenario14.lib4;
+		});
+
+		return LoaderExtensions.loadResource({
+			dataType: "json",
+			url: sap.ui.require.toUrl("testlibs/scenario14/sap-ui-version.json"),
+			async: true
+		}).then(function(versioninfo) {
+			sap.ui.versioninfo = versioninfo;
+
+			oRealCore.oConfiguration.preload = 'sync'; // sync or async both activate the preload
+
+			this.spy(sap.ui.loader._, 'loadJSResourceAsync');
+			this.spy(sap.ui, 'require');
+			this.spy(sap.ui, 'requireSync');
+
+			var vResult = sap.ui.getCore().loadLibraries(['testlibs.scenario14.lib8']);
+			// initial request for lib 8 preload
+			sinon.assert.calledWith(sap.ui.loader._.loadJSResourceAsync, sinon.match(/scenario14\/lib8\/library-preload\.js$/));
+
+			// loading of other libs should not be triggered yet
+			sinon.assert.neverCalledWith(sap.ui.loader._.loadJSResourceAsync, sinon.match(/scenario14\/lib1\/library-preload\.js$/));
+			sinon.assert.neverCalledWith(sap.ui.loader._.loadJSResourceAsync, sinon.match(/scenario14\/lib2\/library-preload\.js$/));
+			sinon.assert.neverCalledWith(sap.ui.loader._.loadJSResourceAsync, sinon.match(/scenario14\/lib3\/library-preload\.js$/));
+			sinon.assert.neverCalledWith(sap.ui.loader._.loadJSResourceAsync, sinon.match(/scenario14\/lib4\/library-preload\.js$/));
+			sinon.assert.neverCalledWith(sap.ui.loader._.loadJSResourceAsync, sinon.match(/scenario14\/lib5\/library-preload\.js$/));
+			sinon.assert.neverCalledWith(sap.ui.loader._.loadJSResourceAsync, sinon.match(/scenario14\/lib6\/library-preload\.js$/));
+			sinon.assert.neverCalledWith(sap.ui.loader._.loadJSResourceAsync, sinon.match(/scenario14\/lib7\/library-preload\.js$/));
+
+			assert.ok(vResult instanceof Promise, "async call to loadLibraries should return a promise");
+
+			return vResult.then(function(vResult) {
+				assert.strictEqual(vResult, undefined, "Promise should have no fulfillment value");
+
+				// 1-3
+				assert.isLibLoaded('testlibs.scenario14.lib1');
+				sinon.assert.calledWith(sap.ui.loader._.loadJSResourceAsync, sinon.match(/scenario14\/lib1\/library-preload\.js$/));
+				assert.isLibLoaded('testlibs.scenario14.lib2');
+				sinon.assert.calledWith(sap.ui.loader._.loadJSResourceAsync, sinon.match(/scenario14\/lib2\/library-preload\.js$/));
+				assert.isLibLoaded('testlibs.scenario14.lib3');
+				sinon.assert.calledWith(sap.ui.loader._.loadJSResourceAsync, sinon.match(/scenario14\/lib3\/library-preload\.js$/));
+
+				// lib 4 is already loaded
+				assert.isLibLoaded('testlibs.scenario14.lib4');
+				sinon.assert.neverCalledWith(sap.ui.loader._.loadJSResourceAsync, sinon.match(/scenario14\/lib4\/library-preload\.js$/));
+
+				// 5-7
+				assert.isLibLoaded('testlibs.scenario14.lib5');
+				sinon.assert.calledWith(sap.ui.loader._.loadJSResourceAsync, sinon.match(/scenario14\/lib5\/library-preload\.js$/));
+				assert.isLibLoaded('testlibs.scenario14.lib6');
+				sinon.assert.calledWith(sap.ui.loader._.loadJSResourceAsync, sinon.match(/scenario14\/lib6\/library-preload\.js$/));
+				assert.isLibLoaded('testlibs.scenario14.lib7');
+				sinon.assert.calledWith(sap.ui.loader._.loadJSResourceAsync, sinon.match(/scenario14\/lib7\/library-preload\.js$/));
+			});
+		}.bind(this));
+	});
+
 	// ---------------------------------------------------------------------------
 	// loadLibraries (mock server)
 	// ---------------------------------------------------------------------------
