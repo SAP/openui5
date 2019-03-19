@@ -50,6 +50,7 @@ sap.ui.define([
 			var sName = oCardContent.getMetadata().getName();
 			var sType = sName.slice(sLibrary.length + 1, sName.length);
 			var sHeight = BaseContent.getMinHeight(sType, oCardContent.getConfiguration());
+			var oCard = oCardContent.getParent();
 			sClass += sType;
 
 			oRm.write("<div");
@@ -57,7 +58,11 @@ sap.ui.define([
 			oRm.addClass(sClass);
 			oRm.addClass("sapFCardBaseContent");
 			oRm.writeClasses();
-			oRm.addStyle("min-height", sHeight);
+
+			if (oCard && oCard.isA("sap.f.ICard") && oCard.getHeight() === "auto") { // if there is no height specified the default value is "auto"
+				oRm.addStyle("min-height", sHeight);
+			}
+
 			oRm.writeStyles();
 			oRm.write(">");
 

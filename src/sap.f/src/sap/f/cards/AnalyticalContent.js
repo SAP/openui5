@@ -108,6 +108,9 @@ sap.ui.define(["sap/f/cards/BaseContent", "sap/viz/ui5/controls/VizFrame", "sap/
 				},
 				"valueAxis": {
 					"title": {}
+				},
+				"interaction": {
+					"noninteractiveMode": true
 				}
 			};
 
@@ -223,10 +226,8 @@ sap.ui.define(["sap/f/cards/BaseContent", "sap/viz/ui5/controls/VizFrame", "sap/
 					})
 				]
 			});
-
 			var oVizProperties = this._getVizPropertiesObject(oChartObject);
 			oChart.setVizProperties(oVizProperties);
-
 			this.setAggregation("_content", oChart);
 		};
 
