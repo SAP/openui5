@@ -21,6 +21,7 @@ sap.ui.define([
 	"sap/base/util/merge",
 	"sap/ui/fl/FakeLrepConnectorSessionStorage",
 	"sap/ui/dt/util/ZIndexManager",
+	"sap/ui/core/mvc/XMLView",
 	"sap/ui/thirdparty/sinon-4"
 ],
 function(
@@ -44,12 +45,13 @@ function(
 	merge,
 	FakeLrepConnectorSessionStorage,
 	ZIndexManager,
+	XMLView,
 	sinon
 ) {
 	"use strict";
 
 	var sandbox = sinon.sandbox.create();
-	var oView, oApp;
+	var oView;
 	FakeLrepConnectorSessionStorage.enableFakeConnector();
 	var MockComponent = UIComponent.extend("MockController", {
 		metadata: {
@@ -62,20 +64,19 @@ function(
 			}
 		},
 		createContent : function() {
-			oApp = new App(this.createId("mockapp"));
 			var viewContent = '<mvc:View xmlns:mvc="sap.ui.core.mvc">' + '</mvc:View>';
-			oView = sap.ui.xmlview({
-				id: this.createId("mockview"),
+			oView = new XMLView(this.createId("mockview"), {
 				viewContent: viewContent
 			});
-			oApp.addPage(oView);
-			return oApp;
+			return oView;
 		}
 	});
 	var oComp = new MockComponent("testComponent");
-	new ComponentContainer("sap-ui-static", {
+	var oComponentContainer = new ComponentContainer("sap-ui-static", {
 		component: oComp
-	}).placeAt("qunit-fixture");
+	});
+	oComponentContainer.placeAt("qunit-fixture");
+	sap.ui.getCore().applyChanges();
 
 	var fnFindOverlay = function(oElement, oDesignTime) {
 		var aOverlays = oDesignTime.getElementOverlays();
@@ -179,9 +180,11 @@ function(
 				this.oPopover = new Popover({
 					id: oComp.createId("SmartFormPopover"),
 					showHeader: false,
+					modal: false,
+					horizontalScrolling: false,
+					verticalScrolling: false,
 					contentMinWidth: "250px",
-					contentWidth: "20%",
-					modal: false
+					contentWidth: "20%"
 				});
 				this.oPopover.oPopup.setAutoClose(false); /*when focus is taken away popover might close - resulting in failing tests*/
 				this.oDialog.removeStyleClass("sapUiPopupWithPadding");
@@ -386,7 +389,7 @@ function(
 					vPopupElement.blur();
 				});
 			}.bind(this));
-			this.oPopover.openBy(oComp.byId("mockview"));
+			this.oPopover.openBy(oComponentContainer);
 		});
 		//getCategorizedOpenPopups
 		QUnit.test("when getCategorizedOpenPopups is called", function(assert) {
@@ -409,7 +412,7 @@ function(
 						}.bind(this));
 						this.oDialog.close();
 					}.bind(this));
-					this.oPopover.openBy(oComp.byId("mockview"));
+					this.oPopover.openBy(oComponentContainer);
 				}.bind(this));
 				this.oNonRtaDialog.open();
 			}.bind(this));
@@ -443,7 +446,7 @@ function(
 				assert.notEqual(oPopup.onAfterRendering, fnDefaultOnAfterRendering, "then onAfterRendering was overwritten");
 				done();
 			}.bind(this));
-			this.oPopover.openBy(oComp.byId("mockview"));
+			this.oPopover.openBy(oComponentContainer);
 		});
 		//_getAppComponentForControl - runAsOwner
 		QUnit.test("when _getAppComponentForControl is called with a dialog created inside Component.runAsOwner", function(assert) {
@@ -519,7 +522,7 @@ function(
 				this.fnApplyPopupAttributes = sandbox.spy(this.oRta.getPopupManager(), "_applyPopupAttributes");
 				done();
 			}.bind(this));
-			this.oPopover.openBy(oComp.byId("mockview"));
+			this.oPopover.openBy(oComponentContainer);
 		});
 		//set PopOver to Modal (initial state = true)
 		QUnit.test("when _onModeChange is called on a modal popover", function(assert) {
@@ -544,7 +547,7 @@ function(
 				this.fnApplyPopupAttributes = sandbox.spy(this.oRta.getPopupManager(), "_applyPopupAttributes");
 				done();
 			}.bind(this));
-			this.oPopover.openBy(oComp.byId("mockview"));
+			this.oPopover.openBy(oComponentContainer);
 		});
 	});
 
