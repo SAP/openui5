@@ -11,7 +11,8 @@
             showCopilot="true"
             showSearch="true"
             showNotifications="true"
-            showProductSwitcher="true">
+            showProductSwitcher="true"
+            notificationsNumber="2">
             <menu>
                 <m:Menu>
                     <m:MenuItem text="Flight booking" icon="sap-icon://flight" />
