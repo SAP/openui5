@@ -72,6 +72,39 @@ sap.ui.define([
 		}
 	});
 
+	/**
+	 * Initialization hook.
+	 * @private
+	 */
+	BaseContent.prototype.init = function () {
+		this._aReadyPromises = [];
+		this._bReady = false;
+
+		// So far the ready event will be fired when the data is ready. But this can change in the future.
+		this._awaitEvent("_dataReady");
+
+		Promise.all(this._aReadyPromises).then(function () {
+			this._bReady = true;
+			this.fireEvent("_ready");
+		}.bind(this));
+
+		this.setBusyIndicatorDelay(0);
+	};
+
+	/**
+	 * Await for an event which controls the overall "ready" state of the content.
+	 *
+	 * @private
+	 * @param {string} sEvent The name of the event
+	 */
+	BaseContent.prototype._awaitEvent = function (sEvent) {
+		this._aReadyPromises.push(new Promise(function (resolve) {
+			this.attachEventOnce(sEvent, function () {
+				resolve();
+			});
+		}.bind(this)));
+	};
+
 	BaseContent.prototype.destroy = function () {
 		this.setAggregation("_content", null);
 		this.setModel(null);
@@ -79,6 +112,7 @@ sap.ui.define([
 			this._oDataProvider.destroy();
 			this._oDataProvider = null;
 		}
+		this._aReadyPromises = null;
 		return Control.prototype.destroy.apply(this, arguments);
 	};
 
@@ -115,6 +149,8 @@ sap.ui.define([
 			sPath = oDataSettings.path;
 		}
 
+		this.bindObject(sPath);
+
 		if (this._oDataProvider) {
 			this._oDataProvider.destroy();
 		}
@@ -136,10 +172,19 @@ sap.ui.define([
 				this.setBusy(false);
 			}.bind(this));
 
-			this._oDataProvider.triggerDataUpdate();
+			this._oDataProvider.triggerDataUpdate().then(function () {
+				this.fireEvent("_dataReady");
+			}.bind(this));
+		} else {
+			this.fireEvent("_dataReady");
 		}
+	};
 
-		this.bindObject(sPath);
+	/**
+	 * @returns {boolean} If the content is ready or not.
+	 */
+	BaseContent.prototype.isReady = function () {
+		return this._bReady;
 	};
 
 	/**
@@ -150,11 +195,6 @@ sap.ui.define([
 	 */
 	BaseContent.prototype._updateModel = function (oData) {
 		this.getModel().setData(oData);
-
-		// Have to trigger _updated on the first onAfterRendering after _updateModel is called.
-		setTimeout(function () {
-			this.fireEvent("_updated");
-		}.bind(this), 0);
 	};
 
 	BaseContent.prototype._handleError = function (sLogMessage) {

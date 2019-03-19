@@ -666,7 +666,40 @@ sap.ui.define([
 	 * @private
 	 */
 	Card.prototype.init = function () {
+		this._aReadyPromises = [];
+
+		this._awaitEvent("_headerReady");
+		this._awaitEvent("_contentReady");
+		this._awaitEvent("_cardReady");
+
+		Promise.all(this._aReadyPromises).then(function () {
+			this._bReady = true;
+			this.fireEvent("_ready");
+		}.bind(this));
+
 		this.setBusyIndicatorDelay(0);
+	};
+
+	/**
+	 * Await for an event which controls the overall "ready" state of the card.
+	 *
+	 * @private
+	 * @param {string} sEvent The name of the event
+	 */
+	Card.prototype._awaitEvent = function (sEvent) {
+		this._aReadyPromises.push(new Promise(function (resolve) {
+			this.attachEventOnce(sEvent, function () {
+				resolve();
+			});
+		}.bind(this)));
+	};
+
+	/**
+	 * @public
+	 * @returns {boolean} If the card is ready or not.
+	 */
+	Card.prototype.isReady = function () {
+		return this._bReady;
 	};
 
 	/**
@@ -686,6 +719,7 @@ sap.ui.define([
 			this._oDataProvider.destroy();
 			this._oDataProvider = null;
 		}
+		this._aReadyPromises = null;
 	};
 
 	/**
@@ -732,6 +766,7 @@ sap.ui.define([
 	Card.prototype._applyDataManifestSettings = function () {
 		var oDataSettings = this._oCardManifest.get(MANIFEST_PATHS.DATA);
 		if (!oDataSettings) {
+			this.fireEvent("_cardReady");
 			return;
 		}
 
@@ -751,7 +786,9 @@ sap.ui.define([
 				this._handleError("Data service unavailable. " + oEvent.getParameter("message"));
 			}.bind(this));
 
-			this._oDataProvider.triggerDataUpdate();
+			this._oDataProvider.triggerDataUpdate().then(function () {
+				this.fireEvent("_cardReady");
+			}.bind(this));
 		}
 	};
 
@@ -800,7 +837,7 @@ sap.ui.define([
 		var oManifestHeader = this._oCardManifest.get(MANIFEST_PATHS.HEADER);
 
 		if (!oManifestHeader) {
-			Log.error("Card header is mandatory!");
+			this.fireEvent("_headerReady");
 			return;
 		}
 
@@ -810,7 +847,7 @@ sap.ui.define([
 			oHeader = NumericHeader;
 		}
 
-		this._setCardHeaderFromManifest(oHeader);
+		this._setCardHeader(oHeader);
 	};
 
 	/**
@@ -826,11 +863,13 @@ sap.ui.define([
 
 		if (!sCardType) {
 			Log.error("Card type property is mandatory!");
+			this.fireEvent("_contentReady");
 			return;
 		}
 
 		if (!bHasContent && !bIsComponent) {
 			this.setBusy(false);
+			this.fireEvent("_contentReady");
 			return;
 		}
 
@@ -843,22 +882,7 @@ sap.ui.define([
 		BaseContent
 			.create(sCardType, oManifestContent, this._oServiceManager)
 			.then(function (oContent) {
-				this._configureCardContent(oContent);
-
-				if (!oManifestContent.data) {
-					var oDelegate = {
-						onAfterRendering: function () {
-							this.fireEvent("_contentUpdated");
-							oContent.removeEventDelegate(oDelegate);
-						}
-					};
-					oContent.addEventDelegate(oDelegate, this);
-				}
-
-				// TO DO: decide if we want to set the content only on _updated event.
-				// This will help to avoid appearance of empty table before its data comes,
-				// but prevent ObjectContent to render its template, which might be useful
-				this.setAggregation("_content", oContent);
+				this._setCardContent(oContent);
 			}.bind(this))
 			.catch(function (sError) {
 				this._handleError(sError);
@@ -874,13 +898,10 @@ sap.ui.define([
 	 * @private
 	 * @param {sap.f.cards.IHeader} CardHeader The header to be created
 	 */
-	Card.prototype._setCardHeaderFromManifest = function (CardHeader) {
+	Card.prototype._setCardHeader = function (CardHeader) {
 		var oSettings = this._oCardManifest.get(MANIFEST_PATHS.HEADER);
 		var oHeader = CardHeader.create(oSettings, this._oServiceManager);
 
-		oHeader.attachEvent("_updated", function () {
-			this.fireEvent("_headerUpdated");
-		}.bind(this));
 		oHeader.attachEvent("action", function (oEvent) {
 			this.fireEvent("action", {
 				manifestParameters: oEvent.getParameter("manifestParameters"),
@@ -889,22 +910,31 @@ sap.ui.define([
 			});
 		}.bind(this));
 
-		if (!oSettings.data) {
-			var oDelegate = {
-				onAfterRendering: function () {
-					this.fireEvent("_headerUpdated");
-					oHeader.removeEventDelegate(oDelegate);
-				}
-			};
-			oHeader.addEventDelegate(oDelegate, this);
-		}
-
 		if (Array.isArray(oSettings.actions) && oSettings.actions.length > 0) {
 			//this._setCardHeaderActions(oHeader, oSettings.actions);
 			oHeader._attachActions(oSettings);
 		}
 
 		this.setAggregation("_header", oHeader);
+		this._fireReady(oHeader, "_headerReady");
+	};
+
+	/**
+	 * Fires a ready event for the card when header or content are ready.
+	 *
+	 * @private
+	 * @param {sap.ui.core.Control} oControl The header or content of the card.
+	 * @param {string} sReadyEventName The name of the event to fire when the control is ready.
+	 */
+	Card.prototype._fireReady = function (oControl, sReadyEventName) {
+		if (oControl.isReady()) {
+			this.fireEvent(sReadyEventName);
+		} else {
+			oControl.attachEvent("_ready", function () {
+				this.fireEvent(sReadyEventName);
+				this.setBusy(false);
+			}.bind(this));
+		}
 	};
 
 	/**
@@ -919,17 +949,12 @@ sap.ui.define([
 	};
 
 	/**
-	 * Configures a card content.
+	 * Sets a card content.
 	 *
 	 * @private
 	 * @param {sap.f.cards.BaseContent} oContent The card content instance to be configured.
 	 */
-	Card.prototype._configureCardContent = function (oContent) {
-		oContent.attachEvent("_updated", function () {
-			this.fireEvent("_contentUpdated");
-			this.setBusy(false);
-		}.bind(this));
-
+	Card.prototype._setCardContent = function (oContent) {
 		oContent.attachEvent("action", function (oEvent) {
 			this.fireEvent("action", {
 				actionSource: oEvent.getParameter("actionSource"),
@@ -943,6 +968,12 @@ sap.ui.define([
 		}.bind(this));
 
 		oContent.setBusyIndicatorDelay(0);
+
+		// TO DO: decide if we want to set the content only on _updated event.
+		// This will help to avoid appearance of empty table before its data comes,
+		// but prevent ObjectContent to render its template, which might be useful
+		this.setAggregation("_content", oContent);
+		this._fireReady(oContent, "_contentReady");
 	};
 
 	/**

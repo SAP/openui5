@@ -637,19 +637,16 @@ function (
 		assert.equal(oCard.getDomRef().clientWidth, 400, "Card should have width set to 400px.");
 		assert.equal(oCard.getDomRef().clientHeight, 600, "Card should have height set to 600px.");
 
-		oCard.attachEvent("_contentUpdated", function () {
-			oCard.getAggregation("_content").addEventDelegate({
-				onAfterRendering: function () {
+		oCard.attachEvent("_ready", function () {
+			Core.applyChanges();
 
-					// Assert
-					assert.ok(oCard.getAggregation("_header").getDomRef(), "Card header should be rendered.");
-					assert.ok(oCard.getAggregation("_content").getDomRef(), "Card content should be rendered.");
+			// Assert
+			assert.ok(oCard.getAggregation("_header").getDomRef(), "Card header should be rendered.");
+			assert.ok(oCard.getAggregation("_content").getDomRef(), "Card content should be rendered.");
 
-					// Cleanup
-					oCard.destroy();
-					done();
-				}
-			}, this);
+			// Cleanup
+			oCard.destroy();
+			done();
 		});
 	}
 
@@ -709,7 +706,9 @@ function (
 		var done = assert.async();
 
 		// Act
-		this.oCard.attachEvent("_headerUpdated", function () {
+		this.oCard.attachEvent("_ready", function () {
+
+			Core.applyChanges();
 
 			// Assert
 			var oHeader = this.oCard.getAggregation("_header");
@@ -740,7 +739,9 @@ function (
 		var done = assert.async();
 
 		// Act
-		this.oCard.attachEvent("_headerUpdated", function () {
+		this.oCard.attachEvent("_ready", function () {
+
+			Core.applyChanges();
 
 			// Assert
 			var oHeader = this.oCard.getAggregation("_header");
@@ -760,7 +761,9 @@ function (
 		var done = assert.async();
 
 		// Act
-		this.oCard.attachEvent("_headerUpdated", function () {
+		this.oCard.attachEvent("_ready", function () {
+
+			Core.applyChanges();
 
 			// Assert
 			var oHeader = this.oCard.getAggregation("_header");
@@ -784,8 +787,10 @@ function (
 		var done = assert.async();
 
 		// Act
-		this.oCard.attachEvent("_headerUpdated", function () {
+		this.oCard.attachEvent("_ready", function () {
 			var oHeader = this.oCard.getAggregation("_header");
+
+			Core.applyChanges();
 
 			// Assert aggregation mainIndicator
 			assert.ok(oHeader.getAggregation("_mainIndicator").getDomRef(), "Card header main indicator aggregation should be set and rendered");
@@ -806,8 +811,10 @@ function (
 		var done = assert.async();
 
 		// Act
-		this.oCard.attachEvent("_headerUpdated", function () {
+		this.oCard.attachEvent("_ready", function () {
 			var oHeader = this.oCard.getAggregation("_header");
+
+			Core.applyChanges();
 
 			// Assert aggregation _mainIndicator
 			assert.ok(oHeader.getAggregation("_mainIndicator").getDomRef(), "Card header main indicator aggregation should be set and rendered");
@@ -828,8 +835,10 @@ function (
 		var done = assert.async();
 
 		// Act
-		this.oCard.attachEvent("_headerUpdated", function () {
+		this.oCard.attachEvent("_ready", function () {
 			var oHeader = this.oCard.getAggregation("_header");
+
+			Core.applyChanges();
 
 			// Assert aggregation sideIndicators
 			assert.ok(oHeader.getAggregation("sideIndicators"), "Card header side indicators should be set.");
@@ -874,10 +883,12 @@ function (
 				"end": "lastDataPoint"
 			};
 
-		this.oCard.attachEvent("_contentUpdated", function () {
+		this.oCard.attachEvent("_ready", function () {
 			var oContent = this.oCard.getAggregation("_content"),
 				oChart = oContent.getAggregation("_content"),
 				oVizProperites = oChart.getVizProperties();
+
+			Core.applyChanges();
 
 			// Assert aggregation sideIndicators
 			assert.ok(oContent, "Analytical Card content form manifest should be set");
@@ -927,24 +938,16 @@ function (
 
 		// Arrange
 		var done = assert.async();
-		var oHeaderPromise = new Promise(function (resolve) {
-			this.oCard.attachEvent("_headerUpdated", function () {
-				resolve();
-			});
-		}.bind(this));
-		var oContentPromise = new Promise(function (resolve) {
-			this.oCard.attachEvent("_contentUpdated", function () {
-				resolve();
-			});
-		}.bind(this));
 
-		Promise.all([oHeaderPromise, oContentPromise]).then(function () {
+		this.oCard.attachEvent("_ready", function () {
 			var oObjectContent = this.oCard.getAggregation("_content");
 			var oContent = oObjectContent.getAggregation("_content");
 			var oHeader = this.oCard.getAggregation("_header");
 			var aGroups = oContent.getContent();
 			var oData = oManifest_ObjectCard["sap.card"].data.json;
 			var oManifestContent = oManifest_ObjectCard["sap.card"].content;
+
+			Core.applyChanges();
 
 			assert.equal(aGroups.length, 3, "Should have 3 groups.");
 
@@ -995,10 +998,12 @@ function (
 		// Arrange
 		var done = assert.async();
 
-		this.oCard.attachEvent("_contentUpdated", function () {
+		this.oCard.attachEvent("_ready", function () {
 			var oObjectContent = this.getAggregation("_content");
 			var oContent = oObjectContent.getAggregation("_content");
 			var oEvent = {size:{width:400},oldSize:{width:0}, control:oContent};
+
+			Core.applyChanges();
 
 			//This is the case when 2 groups are in one column and the last group is on another row
 			oObjectContent.onAlignedFlowLayoutResize(oEvent);
@@ -1046,13 +1051,15 @@ function (
 		// Arrange
 		var done = assert.async();
 
-		this.oCard.attachEvent("_contentUpdated", function () {
+		this.oCard.attachEvent("_ready", function () {
 			var oManifestData = oManifest_TableCard["sap.card"].content.data.json;
 			var oManifestContent = oManifest_TableCard["sap.card"].content;
 			var oCardContent = this.oCard.getAggregation("_content");
 			var oTable = oCardContent.getAggregation("_content");
 			var aColumns = oTable.getColumns();
 			var aCells = oTable.getItems()[0].getCells();
+
+			Core.applyChanges();
 
 			// Assert
 			assert.equal(aColumns.length, 6, "Should have 6 columns.");
@@ -1121,18 +1128,10 @@ function (
 
 		// Arrange
 		var done = assert.async();
-		var oHeaderPromise = new Promise(function (resolve) {
-			this.oCard.attachEvent("_headerUpdated", function () {
-				resolve();
-			});
-		}.bind(this));
-		var oContentPromise = new Promise(function (resolve) {
-			this.oCard.attachEvent("_contentUpdated", function () {
-				resolve();
-			});
-		}.bind(this));
 
-		Promise.all([oHeaderPromise, oContentPromise]).then(function () {
+		this.oCard.attachEvent("_ready", function () {
+
+			Core.applyChanges();
 
 			// Assert
 			var oCardDomRef = this.oCard.getDomRef(),
@@ -1167,7 +1166,9 @@ function (
 		// Arrange
 		var done = assert.async();
 
-		this.oNumericHeaderCard.attachEvent("_headerUpdated", function () {
+		this.oNumericHeaderCard.attachEvent("_ready", function () {
+			Core.applyChanges();
+
 			var oHeader = this.oNumericHeaderCard.getAggregation("_header"),
 				oHeaderDomRef = oHeader.getDomRef(),
 				sAriaLabelledByIds = oHeader._getTitle().getId() + " " + oHeader._getSubtitle().getId() + " " + oHeader._getUnitOfMeasurement().getId() + " " + oHeader._getMainIndicator().getId() +  oHeader._getSideIndicatorIds() + " " + oHeader._getDetails().getId();
