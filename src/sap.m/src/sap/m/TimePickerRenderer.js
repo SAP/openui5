@@ -92,6 +92,7 @@ sap.ui.define(['sap/ui/core/Renderer', './InputBaseRenderer', 'sap/ui/core/libra
 		/**
 		 * Returns the inner aria labelledby announcement texts for the accessibility.
 		 *
+		 * @overrides sap.m.InputBaseRenderer.getLabelledByAnnouncement
 		 * @param {sap.ui.core.Control} oControl an object representation of the control.
 		 * @returns {String}
 		 */
