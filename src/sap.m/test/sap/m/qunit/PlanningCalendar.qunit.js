@@ -3996,6 +3996,27 @@ sap.ui.define([
 		oTimelineRendererSpy.restore();
 	});
 
+	QUnit.test("Adding a row adds a row timeline with the correct startDate", function(assert) {
+		//arrange
+		var oRow = new PlanningCalendarRow(),
+			oRowTimeline;
+
+		this._createCalendar();
+
+		this._oPC._oOneMonthInterval.removeAllSelectedDates();
+		this._oPC._oOneMonthInterval.addSelectedDate(new sap.ui.unified.DateRange({ startDate: new Date(2019, 1, 18) }));
+
+		//act
+		this._oPC.addRow(oRow);
+
+		oRowTimeline = _getRowTimeline(oRow);
+
+		//assert
+		assert.strictEqual(oRowTimeline.getStartDate().getFullYear(), 2019, "row's start date is correct");
+		assert.strictEqual(oRowTimeline.getStartDate().getDate(), 18, "row's start date is correct");
+		assert.strictEqual(oRowTimeline.getStartDate().getMonth(), 1, "row's start date is correct");
+	});
+
 	QUnit.test("Appointment select is fired", function (assert) {
 		//arrange
 		this._createCalendar();

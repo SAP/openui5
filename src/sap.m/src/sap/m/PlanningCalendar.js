@@ -2507,12 +2507,23 @@ sap.ui.define([
 	 */
 	PlanningCalendar.prototype._updateRowTimeline = function (oRow) {
 		var oRowTimeline = getRowTimeline(oRow),
-			sKey, oView, sIntervalType, iIntervals;
+			sKey, oView, sIntervalType, iIntervals,
+			bMobile1MonthView = this.getViewKey() === PlanningCalendarBuiltInView.OneMonth && this._iSize < 2,
+			oStartDate = this.getStartDate();
 
 		oRowTimeline.setNonWorkingDays(oRow.getNonWorkingDays());
 		oRowTimeline.setNonWorkingHours(oRow.getNonWorkingHours());
 
-		oRowTimeline.setStartDate(this.getStartDate());
+		//in onemonthview in mobile
+		//set the start dates of the newly created rows
+		//to match the currently selected day
+		if (bMobile1MonthView
+			&& this._oOneMonthInterval
+			&& this._oOneMonthInterval.getSelectedDates().length) {
+			oStartDate = this._oOneMonthInterval.getSelectedDates()[0].getStartDate();
+		}
+
+		oRowTimeline.setStartDate(oStartDate);
 		oRowTimeline.setShowIntervalHeaders(this.getShowIntervalHeaders());
 		oRowTimeline.setShowEmptyIntervalHeaders(this.getShowEmptyIntervalHeaders());
 		oRowTimeline.setGroupAppointmentsMode(this.getGroupAppointmentsMode());
