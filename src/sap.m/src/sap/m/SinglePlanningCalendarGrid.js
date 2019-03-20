@@ -644,7 +644,7 @@ sap.ui.define([
 					$appointment.css("top", iAppTop);
 					$appointment.css("bottom", iAppBottom);
 					$appointment.find(".sapUiCalendarApp")
-								.css("min-height", iRowHeight / 2 - 1);
+								.css("min-height", iRowHeight / 2 - 3);
 				});
 			}
 		};
@@ -911,7 +911,7 @@ sap.ui.define([
 				iMinutes = oDate.getMinutes(),
 				iRowHeight = this._getRowHeight();
 
-			return (iRowHeight * iHour) + (iRowHeight / 60) * iMinutes;
+			return Math.floor((iRowHeight * iHour) + (iRowHeight / 60) * iMinutes);
 		};
 
 		/**
@@ -926,7 +926,7 @@ sap.ui.define([
 				iMinutes = oDate.getMinutes(),
 				iRowHeight = this._getRowHeight();
 
-			return (iRowHeight * iHour) - (iRowHeight / 60) * iMinutes;
+			return Math.floor((iRowHeight * iHour) - (iRowHeight / 60) * iMinutes);
 		};
 
 		/**
