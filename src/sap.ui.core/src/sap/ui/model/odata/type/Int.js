@@ -197,7 +197,6 @@ sap.ui.define([
 	 * defined constraints.
 	 * @param {number} iValue
 	 *   the value to be validated
-	 * @returns {void}
 	 * @throws {sap.ui.model.ValidateException}
 	 *   if the value is not in the allowed range of Int or if it is of invalid type.
 	 * @public

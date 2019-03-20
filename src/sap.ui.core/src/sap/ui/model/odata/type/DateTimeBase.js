@@ -235,7 +235,6 @@ sap.ui.define([
 	 *
 	 * @param {Date} oValue
 	 *   The value to be validated
-	 * @returns {void}
 	 * @throws {sap.ui.model.ValidateException}
 	 *   If the value is not valid
 	 *

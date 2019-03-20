@@ -239,7 +239,6 @@ sap.ui.define([
 	 *
 	 * @param {string} vValue
 	 *   The value to be validated
-	 * @returns {void}
 	 * @throws {sap.ui.model.ValidateException}
 	 *   If {@link #formatValue} has not yet been called with a unit customizing part
 	 *

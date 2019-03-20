@@ -273,7 +273,6 @@ sap.ui.define([
 	 *
 	 * @param {object} oValue
 	 *   the value to be validated
-	 * @returns {void}
 	 * @throws {sap.ui.model.ValidateException} if the value is not valid
 	 * @public
 	 */

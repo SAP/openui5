@@ -271,7 +271,6 @@ sap.ui.define([
 	 *
 	 * @param {string} sValue
 	 *   The value to be validated
-	 * @returns {void}
 	 * @throws {sap.ui.model.ValidateException}
 	 *   If the value is not valid
 	 *
