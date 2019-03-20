@@ -1092,6 +1092,7 @@ sap.ui.define([
 		// Act
 		// Try to expand the IconTabBar by pressing SPACE key
 		sap.ui.test.qunit.triggerKeydown(oIconTabBar.getItems()[0].$(), jQuery.sap.KeyCodes.SPACE);
+		sap.ui.test.qunit.triggerKeyup(oIconTabBar.getItems()[0].$(), jQuery.sap.KeyCodes.SPACE);
 		this.clock.tick(1000);
 
 		// Assert
@@ -1125,6 +1126,7 @@ sap.ui.define([
 		// Act
 		// Try to expand the IconTabBar by pressing SPACE key
 		sap.ui.test.qunit.triggerKeydown(oIconTabBar.getItems()[0].$(), jQuery.sap.KeyCodes.SPACE);
+		sap.ui.test.qunit.triggerKeyup(oIconTabBar.getItems()[0].$(), jQuery.sap.KeyCodes.SPACE);
 		this.clock.tick(1000);
 
 		// Assert
@@ -1158,6 +1160,7 @@ sap.ui.define([
 		// Act
 		// Collapse the IconTabBar by pressing SPACE key
 		sap.ui.test.qunit.triggerKeydown(oIconTabBar.getItems()[0].$(), jQuery.sap.KeyCodes.SPACE);
+		sap.ui.test.qunit.triggerKeyup(oIconTabBar.getItems()[0].$(), jQuery.sap.KeyCodes.SPACE);
 		this.clock.tick(1000);
 
 		// Assert
@@ -1190,6 +1193,7 @@ sap.ui.define([
 		// Act
 		// Expand the IconTabBar by pressing SPACE key
 		sap.ui.test.qunit.triggerKeydown(oIconTabBar.getItems()[0].$(), jQuery.sap.KeyCodes.SPACE);
+		sap.ui.test.qunit.triggerKeyup(oIconTabBar.getItems()[0].$(), jQuery.sap.KeyCodes.SPACE);
 		this.clock.tick(500);
 
 		// Assert
@@ -1773,6 +1777,7 @@ sap.ui.define([
 
 		// Press SPACE key on second IconTabFilter to expand
 		sap.ui.test.qunit.triggerKeydown(oIconTabBar.getItems()[1].$(), jQuery.sap.KeyCodes.SPACE);
+		sap.ui.test.qunit.triggerKeyup(oIconTabBar.getItems()[1].$(), jQuery.sap.KeyCodes.SPACE);
 		this.clock.tick(500);
 
 		// Assert
@@ -1811,6 +1816,7 @@ sap.ui.define([
 
 		// Press SPACE key on second IconTabFilter to expand
 		sap.ui.test.qunit.triggerKeydown(oIconTabBar.getItems()[1].$(), jQuery.sap.KeyCodes.SPACE);
+		sap.ui.test.qunit.triggerKeyup(oIconTabBar.getItems()[1].$(), jQuery.sap.KeyCodes.SPACE);
 		this.clock.tick(500);
 
 		// Assert
@@ -1848,6 +1854,7 @@ sap.ui.define([
 
 		// Press SPACE key on first IconTabFilter to expand
 		sap.ui.test.qunit.triggerKeydown(oIconTabBar.getItems()[0].$(), jQuery.sap.KeyCodes.SPACE);
+		sap.ui.test.qunit.triggerKeyup(oIconTabBar.getItems()[0].$(), jQuery.sap.KeyCodes.SPACE);
 		this.clock.tick(500);
 
 		// Assert
@@ -1987,7 +1994,23 @@ sap.ui.define([
 		$tab2.focus(); // set focus on second filter
 
 		sap.ui.test.qunit.triggerKeydown($tab2, jQuery.sap.KeyCodes.SPACE); // trigger Space on second filter
+		sap.ui.test.qunit.triggerKeyup($tab2, jQuery.sap.KeyCodes.SPACE); // trigger Space on second filter
 		assert.strictEqual(oSelectSpy.callCount, 1, "SPACE is pressed, select event was fired");
+
+		// Clean up
+		IconTabBar.prototype.fireSelect.restore();
+	});
+
+	QUnit.test("ENTER", function(assert) {
+		var oSelectSpy = sinon.spy(IconTabBar.prototype, "fireSelect");
+		var $tab1 = this.oIconTabBar.getItems()[0].$();
+		var $tab2 = this.oIconTabBar.getItems()[1].$();
+
+		$tab2.focus(); // set focus on second filter
+
+		sap.ui.test.qunit.triggerKeydown($tab2, jQuery.sap.KeyCodes.ENTER); // trigger Enter on second filter
+
+		assert.strictEqual(oSelectSpy.callCount, 1, "Enter is pressed, select event was fired");
 
 		// Clean up
 		IconTabBar.prototype.fireSelect.restore();
