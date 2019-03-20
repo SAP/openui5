@@ -81,9 +81,11 @@ sap.ui.define(["sap/ui/base/ManagedObject"], function (ManagedObject) {
 
 	/**
 	 * Triggers a data update which results in either "dataChanged" event or an "error" event.
+	 *
+	 * @returns {Promise} A promise resolved when the update has finished.
 	 */
 	DataProvider.prototype.triggerDataUpdate = function () {
-		this.getData()
+		return this.getData()
 			.then(function (oData) {
 				this.fireDataChanged({ data: oData });
 			}.bind(this))
