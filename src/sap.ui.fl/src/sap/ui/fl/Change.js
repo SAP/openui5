@@ -46,7 +46,6 @@ sap.ui.define([
 			this.setModuleName(oFile.moduleName);
 			this.setInitialApplyState();
 			this._oChangeProcessingPromises = {};
-			this._aQueuedProcesses = [];
 		},
 		metadata : {
 			properties : {
@@ -112,6 +111,7 @@ sap.ui.define([
 	};
 
 	Change.prototype.setInitialApplyState = function() {
+		this._aQueuedProcesses = [];
 		this.setApplyState(Change.applyState.INITIAL);
 	};
 

@@ -527,7 +527,7 @@ sap.ui.define([
 					var bChangeStatusAppliedFinished = oChange.isApplyProcessFinished();
 					if (bChangeStatusAppliedFinished && !bIsCurrentlyAppliedOnControl) {
 						// if a change was already processed and is not applied anymore,
-						// then the control was destroyed and recreated. In this case we need to recreate/copy the dependencies.
+						// then the control was destroyed and recreated.
 						oChange.setInitialApplyState();
 					} else if (!bChangeStatusAppliedFinished && bIsCurrentlyAppliedOnControl) {
 						// if a change is already applied on the control, but the status does not reflect that, the status has to be updated
@@ -609,9 +609,10 @@ sap.ui.define([
 			return new Utils.FakePromise(oResult);
 		}
 		if (bXmlModifier && oChange.getDefinition().jsOnly) {
-			//change is not capable of xml modifier
+			// change is not capable of xml modifier
+			// the change status has to be reset to initial
 			oResult = {success: false, error: new Error("Change cannot be applied in XML. Retrying in JS.")};
-			oChange.markFinished(oResult);
+			oChange.setInitialApplyState();
 			return new Utils.FakePromise(oResult);
 		}
 		if (oChange.hasApplyProcessStarted()) {
@@ -673,7 +674,13 @@ sap.ui.define([
 			.catch(function(oRejectionReason) {
 				this._logErrorAndWriteCustomData(oRejectionReason, oChange, mPropertyBag, mControl.control, bXmlModifier);
 				oResult = {success: false, error: oRejectionReason};
-				oChange.markFinished(oResult);
+				// if the change failed during XML processing, the status has to be reset
+				// the change will be applied again in JS
+				if (bXmlModifier) {
+					oChange.setInitialApplyState();
+				} else {
+					oChange.markFinished(oResult);
+				}
 				return oResult;
 			}.bind(this));
 		} else {
