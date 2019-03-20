@@ -90,6 +90,18 @@ sap.ui.define(['sap/ui/core/Renderer', './InputBaseRenderer', 'sap/ui/core/libra
 		};
 
 		/**
+		 * Returns the inner aria labelledby announcement texts for the accessibility.
+		 *
+		 * @param {sap.ui.core.Control} oControl an object representation of the control.
+		 * @returns {String}
+		 */
+		TimePickerRenderer.getLabelledByAnnouncement = function(oControl) {
+			// In the TimePicker we need to render the placeholder should be placed as
+			// hidden aria labelledby node for the accessibility
+			return oControl._getPlaceholder() || "";
+		};
+
+		/**
 		 * Writes the accessibility properties for the control.
 		 *
 		 * See {@link sap.m.InputBase#getAccessibilityState}.

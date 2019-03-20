@@ -1865,94 +1865,6 @@ sap.ui.define([
 		oText.destroy();
 	});
 
-	QUnit.test("Placeholder should be in labelledby", function(assert) {
-		var $HiddenLabel;
-		var sPlaceholder = "placeholder";
-		var oInput = new InputBase({
-			placeholder: sPlaceholder
-		}).placeAt("content");
-		sap.ui.getCore().applyChanges();
-		$HiddenLabel = oInput.$("labelledby");
-
-		var $Input = jQuery(oInput.getFocusDomRef());
-		assert.ok($HiddenLabel.is("span"), "The hidden reference element is of a correct type");
-		var $Reference = jQuery.sap.byId($Input.attr("aria-labelledby"));
-		assert.strictEqual($Reference.text(), sPlaceholder, "Placeholder is added into aria-labelledby");
-
-		var oText = new Text("text");
-		oInput.addAriaLabelledBy(oText);
-		sap.ui.getCore().applyChanges();
-		$Input = jQuery(oInput.getFocusDomRef());
-		assert.strictEqual($Input.attr("aria-labelledby"), "text " + oInput.getId() + "-labelledby", "aria-labelledby is set for assosiation and placeholder together");
-
-		oInput.removeAriaLabelledBy(oText);
-		sap.ui.getCore().applyChanges();
-		$Input = jQuery(oInput.getFocusDomRef());
-		assert.strictEqual($Input.attr("aria-labelledby"), oInput.getId() + "-labelledby", "aria-labelledby is set only for placeholder");
-
-		oInput.setPlaceholder("");
-		sap.ui.getCore().applyChanges();
-		$Input = jQuery(oInput.getFocusDomRef());
-		assert.strictEqual($Input.attr("aria-labelledby"), undefined, "no placeholder so aria-labelledby is removed");
-
-		oInput.destroy();
-		oText.destroy();
-	});
-
-	QUnit.test("Tooltip should be in describedby", function(assert) {
-		var sTooltip = "tooltip";
-		var oInput = new InputBase({
-			tooltip: sTooltip
-		}).placeAt("content");
-		sap.ui.getCore().applyChanges();
-
-		var $Input = jQuery(oInput.getFocusDomRef());
-		var $Reference = jQuery.sap.byId($Input.attr("aria-describedby"));
-		assert.strictEqual($Reference.text(), sTooltip, "Tooltip is added into aria-describedby");
-
-		oInput.destroy();
-	});
-
-	QUnit.test("it should render the tooltip and the invisible element with the same value (test case 1)", function(assert) {
-
-		// system under test
-		var oInput = new InputBase({
-			tooltip: "tooltip"
-		});
-
-		// arrange
-		oInput.placeAt("content");
-		sap.ui.getCore().applyChanges();
-
-		// assert
-		assert.strictEqual(oInput.$().attr("title"), "tooltip");
-		assert.strictEqual(oInput.$("describedby").text(), "tooltip");
-
-		// cleanup
-		oInput.destroy();
-	});
-
-	QUnit.test("it should render the tooltip and the invisible element with the same value (test case 2)", function(assert) {
-
-		// system under test
-		var oInput = new InputBase();
-
-		// arrange
-		oInput.placeAt("content");
-		sap.ui.getCore().applyChanges();
-
-		// act
-		oInput.setTooltip("tooltip");
-
-		// assert
-		assert.strictEqual(oInput.$().attr("title"), "tooltip");
-		assert.strictEqual(oInput.$("describedby").text(), "tooltip");
-		assert.strictEqual(oInput.getFocusDomRef().getAttribute("aria-describedby"), oInput.getId() + "-describedby");
-
-		// cleanup
-		oInput.destroy();
-	});
-
 	QUnit.test("it should not render the tooltip and the invisible element", function(assert) {
 
 		// system under test
@@ -2192,14 +2104,14 @@ sap.ui.define([
 		assert.ok(!!oInfo, "getAccessibilityInfo returns a info object");
 		assert.strictEqual(oInfo.role, oInput.getRenderer().getAriaRole(), "AriaRole");
 		assert.strictEqual(oInfo.type, sap.ui.getCore().getLibraryResourceBundle("sap.m").getText("ACC_CTR_TYPE_INPUT"), "Type");
-		assert.strictEqual(oInfo.description, "Value Placeholder Tooltip", "Description");
+		assert.strictEqual(oInfo.description, "Value", "Description");
 		assert.strictEqual(oInfo.focusable, true, "Focusable");
 		assert.strictEqual(oInfo.enabled, true, "Enabled");
 		assert.strictEqual(oInfo.editable, true, "Editable");
 		oInput.setValue("");
 		oInput.setEnabled(false);
 		oInfo = oInput.getAccessibilityInfo();
-		assert.strictEqual(oInfo.description, "Placeholder Tooltip", "Description");
+		assert.strictEqual(oInfo.description, "", "Description");
 		assert.strictEqual(oInfo.focusable, false, "Focusable");
 		assert.strictEqual(oInfo.enabled, false, "Enabled");
 		assert.strictEqual(oInfo.editable, false, "Editable");

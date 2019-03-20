@@ -227,7 +227,7 @@ sap.ui.define([
 		assert.ok(this.oFeedInput._getTextArea().getAggregation("_counter").isA("sap.m.Text"), "Counter aggregation is of type sap.m.Text");
 		assert.ok(this.oFeedInput.$().find("#input-counterContainer").is(":empty"), "Counter container is empty");
 		assert.ok(this.oFeedInput.$().find("#input-counterContainer").children().length === 0, "Counter container is empty");
-		assert.ok(this.oFeedInput.$().find("#input-textArea").children().length === 3, "Text Area has 3 children");
+		assert.ok(this.oFeedInput.$().find("#input-textArea").children().length === 2, "Text Area has correct children");
 		this.oFeedInput.setMaxLength(20);
 		this.oFeedInput.setShowExceededText(true);
 		sap.ui.getCore().applyChanges();
@@ -238,7 +238,7 @@ sap.ui.define([
 		assert.ok(this.oFeedInput._getTextArea().getAggregation("_counter").isA("sap.m.Text"), "Counter aggregation is of type sap.m.Text");
 		assert.ok(!this.oFeedInput.$().find("#input-counterContainer").is(":empty"), "Counter container is not empty");
 		assert.ok(this.oFeedInput.$().find("#input-counterContainer").children().length === 1, "Counter container contains 1 child element");
-		assert.ok(this.oFeedInput.$().find("#input-textArea").children().length === 2, "Text Area has 2 children");
+		assert.ok(this.oFeedInput.$().find("#input-textArea").children().length === 1, "Text Area has correct children");
 		this.oFeedInput.setMaxLength(0);
 		this.oFeedInput.setShowExceededText(false);
 		sap.ui.getCore().applyChanges();
@@ -247,7 +247,7 @@ sap.ui.define([
 		assert.ok(this.oFeedInput._getTextArea().getAggregation("_counter").isA("sap.m.Text"), "Counter aggregation is of type sap.m.Text");
 		assert.ok(this.oFeedInput.$().find("#input-counterContainer").is(":empty"), "Counter container is empty");
 		assert.ok(this.oFeedInput.$().find("#input-counterContainer").children().length === 0, "Counter container is empty");
-		assert.ok(this.oFeedInput.$().find("#input-textArea").children().length === 3, "Text Area has 3 children");
+		assert.ok(this.oFeedInput.$().find("#input-textArea").children().length === 2, "Text Area has correct children");
 		this.oFeedInput.setMaxLength(20);
 		this.oFeedInput.setShowExceededText(true);
 		sap.ui.getCore().applyChanges();
@@ -258,7 +258,7 @@ sap.ui.define([
 		assert.ok(this.oFeedInput._getTextArea().getAggregation("_counter").isA("sap.m.Text"), "Counter aggregation is of type sap.m.Text");
 		assert.ok(!this.oFeedInput.$().find("#input-counterContainer").is(":empty"), "Counter container is not empty");
 		assert.ok(this.oFeedInput.$().find("#input-counterContainer").children().length === 1, "Counter container contains 1 child element");
-		assert.ok(this.oFeedInput.$().find("#input-textArea").children().length === 2, "Text Area has 2 children");
+		assert.ok(this.oFeedInput.$().find("#input-textArea").children().length === 1, "Text Area has correct children");
 	});
 
 

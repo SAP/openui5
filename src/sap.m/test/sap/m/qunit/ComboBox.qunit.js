@@ -10214,14 +10214,14 @@ sap.ui.define([
 		assert.ok(!!oInfo, "getAccessibilityInfo returns a info object");
 		assert.strictEqual(oInfo.role, oComboBox.getRenderer().getAriaRole(), "AriaRole");
 		assert.strictEqual(oInfo.type, sap.ui.getCore().getLibraryResourceBundle("sap.m").getText("ACC_CTR_TYPE_COMBO"), "Type");
-		assert.strictEqual(oInfo.description, "Value Placeholder Tooltip", "Description");
+		assert.strictEqual(oInfo.description, "Value", "Description");
 		assert.strictEqual(oInfo.focusable, true, "Focusable");
 		assert.strictEqual(oInfo.enabled, true, "Enabled");
 		assert.strictEqual(oInfo.editable, true, "Editable");
 		oComboBox.setValue("");
 		oComboBox.setEnabled(false);
 		oInfo = oComboBox.getAccessibilityInfo();
-		assert.strictEqual(oInfo.description, "Placeholder Tooltip", "Description");
+		assert.strictEqual(oInfo.description, "", "Description");
 		assert.strictEqual(oInfo.focusable, false, "Focusable");
 		assert.strictEqual(oInfo.enabled, false, "Enabled");
 		assert.strictEqual(oInfo.editable, false, "Editable");

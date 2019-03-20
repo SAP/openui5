@@ -3211,14 +3211,14 @@ sap.ui.define([
 		assert.strictEqual(oInfo.role, oInput.getRenderer().getAriaRole(), "AriaRole");
 		assert.strictEqual(oInput.getRenderer().getAriaRole(), "", "No custom ARIA role");
 		assert.strictEqual(oInfo.type, sap.ui.getCore().getLibraryResourceBundle("sap.m").getText("ACC_CTR_TYPE_INPUT"), "Type");
-		assert.strictEqual(oInfo.description, "Value Placeholder Tooltip", "Description");
+		assert.strictEqual(oInfo.description, "Value", "Description");
 		assert.strictEqual(oInfo.focusable, true, "Focusable");
 		assert.strictEqual(oInfo.enabled, true, "Enabled");
 		assert.strictEqual(oInfo.editable, true, "Editable");
 		oInput.setValue("");
 		oInput.setEnabled(false);
 		oInfo = oInput.getAccessibilityInfo();
-		assert.strictEqual(oInfo.description, "Placeholder Tooltip", "Description");
+		assert.strictEqual(oInfo.description, "", "Description");
 		assert.strictEqual(oInfo.focusable, false, "Focusable");
 		assert.strictEqual(oInfo.enabled, false, "Enabled");
 		assert.strictEqual(oInfo.editable, false, "Editable");
@@ -3230,7 +3230,7 @@ sap.ui.define([
 		assert.strictEqual(oInfo.editable, false, "Editable");
 		oInput.setDescription("Description");
 		oInfo = oInput.getAccessibilityInfo();
-		assert.strictEqual(oInfo.description, "Placeholder Tooltip Description", "Description");
+		assert.strictEqual(oInfo.description, "Description", "Description");
 		oInput.destroy();
 	});
 
