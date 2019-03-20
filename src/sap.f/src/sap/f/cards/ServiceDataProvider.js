@@ -48,10 +48,15 @@ sap.ui.define(["sap/f/cards/DataProvider"], function (DataProvider) {
 	ServiceDataProvider.prototype.createServiceInstances = function (oServiceManager) {
 		this._oServiceManager = oServiceManager;
 
+		if (!this._oSettings || !this._oSettings.service) {
+			return;
+		}
+
 		var vService = this._oSettings.service;
 		if (vService && typeof vService === "object") {
 			vService = vService.name;
 		}
+
 		this._createServiceInstance(vService);
 	};
 
