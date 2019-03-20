@@ -30,6 +30,9 @@ sap.ui.define(function() {
 				title: "sap.ui.model.odata.v2.ODataModel - Get all pending changes",
 				sinon: 1 /* MockServer usage */
 			},
+			DerivedTypes: {
+				title: "DerivedTypes - QUnit tests"
+			},
 			ODataAnnotationsV2: {
 				title: "sap.ui.model.odata.v2.ODataAnnotations - QUnit tests"
 			},
