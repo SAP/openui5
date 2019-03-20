@@ -224,8 +224,15 @@ sap.ui.define([
 			 * Determines whether the <code>ObjectHeader</code> is rendered with a different design that
 			 * reacts responsively to the screen sizes.
 			 *
-			 * <b>Note:</b> Be aware that the design and behavior of the responsive <code>ObjectHeader</code>
-			 * could change without further notification.
+			 * When the <code>responsive</code> property is set to <code>true</code>, the
+			 * following behavior specifics for the control exist:
+			 * <ul>
+			 * <li>If an image (or an icon font) is set to the <code>icon</code> property, it is
+			 * hidden in portrait mode on phone.</li>
+			 * <li>The title is truncated to 80 characters if longer. For portrait mode on phone,
+			 * the title is truncated to 50 characters.</li>
+			 * </ul>
+			 *
 			 * @since 1.21.1
 			 */
 			responsive : {type : "boolean", group : "Behavior", defaultValue : false},
