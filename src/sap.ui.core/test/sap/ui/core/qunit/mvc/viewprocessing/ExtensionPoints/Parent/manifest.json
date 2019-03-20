@@ -1,0 +1,14 @@
+{
+	"_version": "0.0.1",
+	"sap.app": {
+		"id": "sap.ui.core.qunit.mvc.viewprocessing.ExtensionPoints.Parent"
+	},
+	"sap.ui5": {
+		"rootView": {
+			"viewName": "sap.ui.core.qunit.mvc.viewprocessing.ExtensionPoints.Parent.Main",
+			"type": "XML",
+			"async": true,
+			"id": "app"
+		}
+	}
+}

@@ -44,12 +44,13 @@ sap.ui.define([
 
 	//use counter to avoid duplicate id issues
 	var iCounter = 0;
-	function testViewFactoryFn(bAsync) {
+	function testViewFactoryFn(bAsync, sProcessingMode) {
 		return function(sViewId, sViewName, oController) {
 			return sap.ui.xmlview(sViewId + (bAsync ? "async" : "sync") + (iCounter++), {
 				async: bAsync,
 				viewName: sViewName,
-				controller: oController
+				controller: oController,
+				processingMode: sProcessingMode
 			});
 		};
 	}
@@ -74,10 +75,9 @@ sap.ui.define([
 		return oControllerImpl;
 	}
 
+	function viewProcessingTests(bAsyncView, sProcessingMode) {
 
-	function viewProcessingTests(bAsyncView, sSyncProcessingMode) {
-
-		QUnit.module("XMLView " + (bAsyncView ? "async" : "sync") + (sSyncProcessingMode ? " with " + sSyncProcessingMode + " processing" : ""), {
+		QUnit.module("XMLView " + (bAsyncView ? "async" : "sync") + (sProcessingMode ? " with " + sProcessingMode + " processing" : ""), {
 			beforeEach: function() {
 				var fnOldSyncPromiseAll = SyncPromise.all;
 				MyGlobal.reset();
@@ -86,12 +86,32 @@ sap.ui.define([
 						 return oRes.reverse();
 					 });
 				});
-				this.viewFactory = testViewFactoryFn(bAsyncView);
+				this.viewFactory = testViewFactoryFn(bAsyncView, sProcessingMode);
 				this._cleanup = [];
 				this.renderSync = function(ctrl) {
 					this._cleanup.push(ctrl);
 					ctrl.placeAt("content");
 					sap.ui.getCore().applyChanges();
+				};
+
+				// create fake server for extension point manifests
+				this.oServer = sinon.fakeServer.create();
+				this.oServer.xhr.supportCORS = true;
+				this.oServer.xhr.useFilters = true;
+				this.oServer.xhr.filters = [];
+				this.oServer.xhr.addFilter(function(method, url) {
+					return url.match(/ExtensionPoints\/Parent\/manifest.json/) == null;
+				});
+				this.oServer.autoRespond = true;
+
+				this.oServer.respondWithJSONContent = function(oManifest) {
+					this.respondWith("GET", /ExtensionPoints\/Parent\/manifest\.json/, [
+						200,
+						{
+							"Content-Type": "application/json"
+						},
+						JSON.stringify(oManifest)
+					]);
 				};
 			},
 			afterEach: function() {
@@ -99,6 +119,8 @@ sap.ui.define([
 					ctrl.destroy();
 				});
 				this.SyncPromiseAllStub.restore();
+
+				this.oServer.restore();
 			}
 		});
 
@@ -360,9 +382,9 @@ sap.ui.define([
 			//create async xml view
 			for (var i = 0; i < iNumberOfComponents; i++) {
 
-				var fnViewFactory = this.viewFactory.bind(null, (bAsyncView ? "async" : "sync") + sSyncProcessingMode + "view" + i, "sap.ui.core.qunit.mvc.viewprocessing.ViewProcessingRec");
+				var fnViewFactory = this.viewFactory.bind(null, (bAsyncView ? "async" : "sync") + sProcessingMode + "view" + i, "sap.ui.core.qunit.mvc.viewprocessing.ViewProcessingRec");
 
-				testComponentFactory("my.test." + (bAsyncView ? "async" : "sync") + sSyncProcessingMode + "." + i, fnViewFactory, fnAssertions);
+				testComponentFactory("my.test." + (bAsyncView ? "async" : "sync") + sProcessingMode + "." + i, fnViewFactory, fnAssertions);
 
 			}
 
@@ -381,9 +403,93 @@ sap.ui.define([
 				done();
 			}
 
-			var fnViewFactory = this.viewFactory.bind(null, (bAsyncView ? "async" : "sync") + sSyncProcessingMode + "view_x", "sap.ui.core.qunit.mvc.viewprocessing.NestingView");
+			var fnViewFactory = this.viewFactory.bind(null, (bAsyncView ? "async" : "sync") + sProcessingMode + "view_x", "sap.ui.core.qunit.mvc.viewprocessing.NestingView");
 
-			testComponentFactory("TheBest." + (bAsyncView ? "async" : "sync") + sSyncProcessingMode, fnViewFactory, fnAssertions);
+			testComponentFactory("TheBest." + (bAsyncView ? "async" : "sync") + sProcessingMode, fnViewFactory, fnAssertions);
+
+		});
+
+		QUnit.test("Owner component setting for ExtensionPoints", function(assert) {
+			var done = assert.async();
+
+			// responds changed parent manifest
+			// async switch on root-view is switched based on test-execution
+			var oManifest = {
+				"_version": "0.0.1",
+				"sap.app": {
+					"id": "sap.ui.core.qunit.mvc.viewprocessing.ExtensionPoints.Parent"
+				},
+				"sap.ui5": {
+					"rootView": {
+						"viewName": "sap.ui.core.qunit.mvc.viewprocessing.ExtensionPoints.Parent.Main",
+						"type": "XML",
+						"async": bAsyncView,
+						"processingMode": sProcessingMode,
+						"id": "app"
+					}
+				}
+			};
+
+			this.oServer.respondWithJSONContent(oManifest);
+
+			var fnAssertions = function(oComponent, oView) {
+				// resolved view content, extensionpoints are embedded
+				var aContent = oView.getContent();
+
+				// EPone (XMLView)
+				var oEPOne = aContent[0];
+				assert.deepEqual(Component.getOwnerComponentFor(oEPOne), oComponent, "Owner Component correctly set");
+				// EPone -> sap.m.Button
+				var aEPoneContent = aContent[0].getContent();
+				assert.deepEqual(Component.getOwnerComponentFor(aEPoneContent[0]), oComponent, "Owner Component correctly set for controls in extension-point view: EPone");
+
+				// sap.m.Text
+				assert.deepEqual(Component.getOwnerComponentFor(aContent[1]), oComponent, "Owner Component correctly set");
+
+				// EPtwo (XMLView)
+				var oEPtwo = aContent[2];
+				assert.deepEqual(Component.getOwnerComponentFor(oEPtwo), oComponent, "Owner Component correctly set");
+				// EPtwo -> sap.m.Button
+				var aEPtwoContent = oEPtwo.getContent();
+				assert.deepEqual(Component.getOwnerComponentFor(aEPtwoContent[0]), oComponent, "Owner Component correctly set for controls in extension-point view: EPtwo");
+
+				// EPnesting (XMLView)
+				var oEPnesting = aContent[3];
+				assert.deepEqual(Component.getOwnerComponentFor(oEPnesting), oComponent, "Owner Component correctly set");
+				// EPtwo -> [sap.m.Button, sap.m.Button]
+				var aEPnestingContent = oEPnesting.getContent();
+				assert.deepEqual(Component.getOwnerComponentFor(aEPnestingContent[0]), oComponent, "Owner Component correctly set for controls in extension-point view: EPnesting (1)");
+				assert.deepEqual(Component.getOwnerComponentFor(aEPnestingContent[1]), oComponent, "Owner Component correctly set for controls in extension-point view: EPnesting (2)");
+
+				// |--> sap.m.Input nested in ExtensionPoint tag (EPnesting) - rendered after the extension
+				assert.deepEqual(Component.getOwnerComponentFor(aContent[4]), oComponent, "Owner Component correctly set");
+
+				// clean-up components
+				oComponent.destroy();
+				// Destroy and remove parent component manifest:
+				// We need to do this because otherwise the parent UIComponent class will still have
+				// the "old" manifest and the sync tests might end up with an async root-view.
+				oComponent.getMetadata().getParent()._oManifest.destroy();
+				delete oComponent.getMetadata().getParent()._oManifest;
+
+				done();
+			};
+
+			if (bAsyncView) {
+				Component.create({
+					name:"sap.ui.core.qunit.mvc.viewprocessing.ExtensionPoints.Child"
+				}).then(function(oComponent) {
+					oComponent.getRootControl().loaded().then(function(oView) {
+						fnAssertions(oComponent, oView);
+					});
+				});
+			} else {
+				var oComponent = sap.ui.component({
+					name:"sap.ui.core.qunit.mvc.viewprocessing.ExtensionPoints.Child"
+				});
+				sap.ui.getCore().applyChanges();
+				fnAssertions(oComponent, oComponent.getRootControl());
+			}
 
 		});
 	}
