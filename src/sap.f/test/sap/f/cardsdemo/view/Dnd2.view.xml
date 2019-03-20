@@ -36,19 +36,15 @@
 			</Panel>
 
 			<Panel headerText="Card Group 1">
-				<grid:CSSGrid
+				<f:GridContainer
 					id="cssgrid"
-					class="maxWidth1140"
-					gridTemplateColumns="repeat(auto-fill, 80px)"
-					gridAutoRows="80px"
-					gridAutoFlow="Row"
-					gridRowGap="16px"
-					gridColumnGap="16px">
+					itemsStretch="true"
+					class="maxWidth1140">
 
-					<grid:items>
+					<f:items>
 						<GenericTile header="Sales Fulfillment Application Title" subheader="Subtitle">
 							<layoutData>
-								<grid:GridItemLayoutData gridRow="span 2" gridColumn="span 2" />
+								<f:GridContainerItemLayoutData rows="2" columns="2" />
 							</layoutData>
 							<TileContent unit="EUR" footer="Current Quarter">
 								<ImageContent src="sap-icon://home-share" />
@@ -57,7 +53,7 @@
 
 						<GenericTile header="Manage Activity Master Data Type" subheader="Subtitle">
 							<layoutData>
-								<grid:GridItemLayoutData gridRow="span 2" gridColumn="span 2" />
+								<f:GridContainerItemLayoutData rows="2" columns="2" />
 							</layoutData>
 							<TileContent>
 								<ImageContent src="sap-icon://activities" />
@@ -66,19 +62,19 @@
 
 						<w:Card manifest="{manifests>/listContent/smallList}">
 							<w:layoutData>
-								<grid:GridItemLayoutData gridRow="span 2" gridColumn="span 2" />
+								<f:GridContainerItemLayoutData rows="2" columns="2" />
 							</w:layoutData>
 						</w:Card>
 
 						<w:Card manifest="{manifests>/analyticalContent/line}">
 							<w:layoutData>
-								<grid:GridItemLayoutData gridRow="span 4" gridColumn="span 4" />
+								<f:GridContainerItemLayoutData rows="4" columns="4" />
 							</w:layoutData>
 						</w:Card>
 
 						<GenericTile header="Account" subheader="Your personal information">
 							<layoutData>
-								<grid:GridItemLayoutData gridRow="span 2" gridColumn="span 2" />
+								<f:GridContainerItemLayoutData rows="2" columns="2" />
 							</layoutData>
 							<TileContent>
 								<ImageContent src="sap-icon://account" />
@@ -87,19 +83,19 @@
 
 						<w:Card manifest="{manifests>/listContent/largeList}">
 							<w:layoutData>
-								<grid:GridItemLayoutData gridRow="span 6" gridColumn="span 4" />
+								<f:GridContainerItemLayoutData rows="6" columns="4" />
 							</w:layoutData>
 						</w:Card>
 
 						<w:Card manifest="{manifests>/listContent/mediumList}">
 							<w:layoutData>
-								<grid:GridItemLayoutData gridRow="span 4" gridColumn="span 2" />
+								<f:GridContainerItemLayoutData rows="4" columns="2" />
 							</w:layoutData>
 						</w:Card>
 
 						<GenericTile header="Appointments management">
 							<layoutData>
-								<grid:GridItemLayoutData gridRow="span 2" gridColumn="span 2" />
+								<f:GridContainerItemLayoutData rows="2" columns="2" />
 							</layoutData>
 							<TileContent unit="EUR" footer="Current Quarter">
 								<ImageContent src="sap-icon://appointment" />
@@ -108,7 +104,7 @@
 
 						<GenericTile header="Jessica D. Prince Senior Consultant" subheader="Department">
 							<layoutData>
-								<grid:GridItemLayoutData gridRow="span 2" gridColumn="span 2" />
+								<f:GridContainerItemLayoutData rows="2" columns="2" />
 							</layoutData>
 							<TileContent unit="EUR" footer="Current Quarter">
 								<ImageContent src="sap-icon://activity-individual" />
@@ -117,15 +113,15 @@
 
 						<w:Card manifest="{manifests>/analyticalContent/stackedBar}">
 							<w:layoutData>
-								<grid:GridItemLayoutData gridRow="span 4" gridColumn="span 4" />
+								<f:GridContainerItemLayoutData rows="4" columns="4" />
 							</w:layoutData>
 						</w:Card>
-					</grid:items>
-				</grid:CSSGrid>
+					</f:items>
+				</f:GridContainer>
 			</Panel>
 
 			<Panel headerText="Card Group 2">
-				<grid:CSSGrid
+				<f:GridContainer
 					id="cssgrid2"
 					class="maxWidth1140"
 					gridTemplateColumns="repeat(auto-fill, 80px)"
@@ -134,11 +130,11 @@
 					gridRowGap="16px"
 					gridColumnGap="16px">
 
-					<grid:items>
+					<f:items>
 
 						<GenericTile header="Comulative Tools" subheader="Expenses">
 							<layoutData>
-								<grid:GridItemLayoutData gridRow="span 2" gridColumn="span 2" />
+								<f:GridContainerItemLayoutData rows="2" columns="2" />
 							</layoutData>
 							<TileContent unit="Unit" footer="Footer Text">
 								<NumericContent value="1762" icon="sap-icon://line-charts" />
@@ -147,7 +143,7 @@
 
 						<GenericTile header="Cumulative Totals" subheader="Subtitle">
 							<layoutData>
-								<grid:GridItemLayoutData gridRow="span 2" gridColumn="span 2" />
+								<f:GridContainerItemLayoutData rows="2" columns="2" />
 							</layoutData>
 								<TileContent unit="Unit" footer="Footer Text">
 									<NumericContent value="12" />
@@ -156,7 +152,7 @@
 
 						<GenericTile header="Travel and Expenses" subheader="Access Concur">
 							<layoutData>
-								<grid:GridItemLayoutData gridRow="span 2" gridColumn="span 2" />
+								<f:GridContainerItemLayoutData rows="2" columns="2" />
 							</layoutData>
 							<TileContent>
 								<ImageContent src="sap-icon://travel-expense" />
@@ -165,7 +161,7 @@
 
 						<GenericTile header="Success Map" subheader="Access Success Map">
 							<layoutData>
-								<grid:GridItemLayoutData gridRow="span 2" gridColumn="span 2" />
+								<f:GridContainerItemLayoutData rows="2" columns="2" />
 							</layoutData>
 							<TileContent unit="EUR" footer="Current Quarter">
 								<ImageContent src="sap-icon://map-3" />
@@ -174,15 +170,15 @@
 
 						<GenericTile header="My Team Calendar">
 							<layoutData>
-								<grid:GridItemLayoutData gridRow="span 2" gridColumn="span 2" />
+								<f:GridContainerItemLayoutData rows="2" columns="2" />
 							</layoutData>
 							<TileContent unit="EUR" footer="Current Quarter">
 								<ImageContent src="sap-icon://check-availability" />
 							</TileContent>
 						</GenericTile>
 
-					</grid:items>
-				</grid:CSSGrid>
+					</f:items>
+				</f:GridContainer>
 			</Panel>
 		</content>
 	</Page>
