@@ -381,6 +381,12 @@ function(
 			this._tokenizer._useCollapsedMode(false);
 			this.focus();
 		}
+
+		// on mobile the list with the tokens should be updated and shown
+		if (this._bUseDialog) {
+			this._fillList();
+			this._manageListsVisibility(true/*show list with tokens*/);
+		}
 	};
 
 	MultiInput.prototype._onTokenUpdate = function (args) {
@@ -390,12 +396,6 @@ function(
 			args.preventDefault();
 		} else {
 			this.invalidate();
-		}
-
-		// on mobile the list with the tokens should be updated and shown
-		if (this._bUseDialog) {
-			this._fillList();
-			this._manageListsVisibility(true/*show list with tokens*/);
 		}
 	};
 
@@ -1610,11 +1610,8 @@ function(
 	MultiInput.prototype._createTokensList = function() {
 		return new List({
 			width: "auto",
-			mode: ListMode.MultiSelect,
-			includeItemInSelection: true,
-			rememberSelections: false
-		}).attachBrowserEvent("tap", this._handleItemTap, this)
-		  .attachSelectionChange(this._handleSelectionLiveChange, this);
+			mode: ListMode.Delete
+		}).attachDelete(this._handleNMoreItemDelete, this);
 	};
 
 	/**
@@ -1707,66 +1704,21 @@ function(
 	};
 
 	/**
-	 * Called when the user taps on a list item
+	 * Called when the user deletes a list item from the token's popover
 	 * @param {jQuery.Event} oEvent The event triggered by the user
 	 * @private
 	 */
-	MultiInput.prototype._handleItemTap = function (oEvent) {
-		if (jQuery(oEvent.target).hasClass("sapMCbMark")) {
-			return;
-		}
-
-		if (this._bUseDialog) {
-			this._oSuggPopover._oPopover.close();
-		} else if (this._oReadOnlyPopover && this._oReadOnlyPopover.isOpen()) {
-			this._oReadOnlyPopover.close();
-		} else {
-			this._getSelectedItemsPicker().close();
-		}
-	};
-
-	/**
-	 * Called when the user selects or deselects a list item from the token's popover
-	 * @param {jQuery.Event} oEvent The event triggered by the user
-	 * @private
-	 */
-	MultiInput.prototype._handleSelectionLiveChange = function(oEvent) {
+	MultiInput.prototype._handleNMoreItemDelete = function(oEvent) {
 		var oListItem = oEvent.getParameter("listItem"),
-			bIsSelected = oEvent.getParameter("selected");
-		this._syncTokensWithSelection(oListItem, bIsSelected);
-	};
+			sSelectedId = oListItem.data("tokenId"),
+			oTokenToDelete;
 
-	/**
-	 * Synchronizes the tokens with the selected items in the token's popover
-	 *
-	 * @param {sap.m.StandardListItem} oItemData The target list item
-	 * @param {boolean} bSelected True if the item is selected
-	 * @private
-	 */
-	MultiInput.prototype._syncTokensWithSelection = function(oItemData, bSelected) {
-		if (bSelected) {
-			var oToken = new Token({
-				text: oItemData.data("text"),
-				key: oItemData.data("key")
-			});
-			oItemData.data("tokenId", oToken.getId());
-			this.addToken(oToken);
+		oTokenToDelete = this.getTokens().filter(function(oToken){
+			return oToken.getId() === sSelectedId;
+		})[0];
 
-			this.fireTokenUpdate({
-				addedTokens: [oToken],
-				removedTokens: [],
-				type: Tokenizer.TokenUpdateType.Added
-			});
-		} else {
-			var sSelectedId = oItemData.data("tokenId");
-
-			this.getTokens().some(function(oToken){
-				if (oToken.getId() === sSelectedId) {
-					this._tokenizer._onTokenDelete(oToken);
-					return true;
-				}
-			}.bind(this));
-		}
+		this._tokenizer._onTokenDelete(oTokenToDelete);
+		this._getTokensList().removeItem(oListItem);
 	};
 
 	/**
