@@ -1703,12 +1703,11 @@ html[dir=rtl] .SmallPaddingBegin {
 	}
 
 	function handlePress(e) {
-		if(this.data("xyz") && "Content pressed" != this.data("xyz") )
+		if(this.data("xyz") && "Content pressed" != this.data("xyz") && !this.getParent().data("ContainedinDialog")) {
 			app.to(this.data("xyz"));
-		else{
+		} else {
 			showPopup();
 		}
-
 	}
 
 	function showPopup(message)
@@ -1774,6 +1773,7 @@ html[dir=rtl] .SmallPaddingBegin {
 	function showDialog(oPage, oList){
 		if(!oPage._dialog){
 			var list = oList.clone();
+			list.data("ContainedinDialog", true);
 			oPage._dialog = new sap.m.Dialog({
 				title: oPage.getTitle(),
 				content: [
