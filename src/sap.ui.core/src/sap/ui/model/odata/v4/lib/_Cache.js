@@ -300,6 +300,10 @@ sap.ui.define([
 			aCollection.shift();
 			aCollection.$created -= 1;
 			delete aCollection.$byPredicate[sTransientPredicate];
+			if (!sPath) {
+				// Note: sPath is empty only in a CollectionCache, so we may call adjustReadRequests
+				that.adjustReadRequests(0, -1);
+			}
 			fnCancelCallback();
 		}
 
@@ -377,6 +381,10 @@ sap.ui.define([
 		// if the nested collection is empty $byPredicate is not available, create it on demand
 		aCollection.$byPredicate = aCollection.$byPredicate || {};
 		aCollection.$byPredicate[sTransientPredicate] = oEntityData;
+		if (!sPath) {
+			// Note: sPath is empty only in a CollectionCache, so we may call adjustReadRequests
+			that.adjustReadRequests(0, 1);
+		}
 
 		return oPostPathPromise.then(function (sPostPath) {
 			sPostPath += that.oRequestor.buildQueryString(that.sMetaPath, that.mQueryOptions, true);
@@ -695,8 +703,11 @@ sap.ui.define([
 			delete aElements.$byPredicate[sTransientPredicate];
 		}
 		addToCount(this.mChangeListeners, sParentPath, aElements, -1);
-		if (!sParentPath && "iLimit" in this) {
+		if (!sParentPath) {
+			// Note: sParentPath is empty only in a CollectionCache, so we may use iLmit and
+			// adjustReadRequests
 			this.iLimit -= 1;
+			this.adjustReadRequests(iIndex, -1);
 		}
 	};
 
@@ -1188,11 +1199,33 @@ sap.ui.define([
 		this.aElements.$tail = undefined;  // promise for a read w/o $top
 		this.iLimit = Infinity;            // the upper limit for the count (for the case that the
 										   // exact value is unknown)
+		// an array of objects with ranges for pending read requests; each having the following
+		// properties:
+		// - iStart: the start (inclusive)
+		// - iEnd: the end (exclusive)
+		this.aReadRequests = [];
 		this.oSyncPromiseAll = undefined;
 	}
 
 	// make CollectionCache a Cache
 	CollectionCache.prototype = Object.create(Cache.prototype);
+
+	/**
+	 * Adjusts the indices for read requests.
+	 *
+	 * @param {number} iIndex The index at which an element has been added or removed
+	 * @param {number} iOffset The offset to add to the indices
+	 *
+	 * @private
+	 */
+	CollectionCache.prototype.adjustReadRequests = function (iIndex, iOffset) {
+		this.aReadRequests.forEach(function (oReadRequest) {
+			if (oReadRequest.iStart >= iIndex) {
+				oReadRequest.iStart += iOffset;
+				oReadRequest.iEnd += iOffset;
+			}
+		});
+	};
 
 	/**
 	 * Returns a promise to be resolved with an OData object for the requested data.
@@ -1518,7 +1551,7 @@ sap.ui.define([
 	/**
 	 * Requests the elements in the given range and places them into the aElements list. Calculates
 	 * the key predicates for all entities in the result before the promise is resolved. While the
-	 * request is running, all indexes in this range contain the Promise.
+	 * request is running, all indices in this range contain the Promise.
 	 *
 	 * @param {number} iStart
 	 *   The start index of the range
@@ -1534,8 +1567,13 @@ sap.ui.define([
 	CollectionCache.prototype.requestElements = function (iStart, iEnd, oGroupLock,
 			fnDataRequested) {
 		var oPromise,
+			oReadRequest = {
+				iEnd : iEnd,
+				iStart : iStart
+			},
 			that = this;
 
+		this.aReadRequests.push(oReadRequest);
 		oPromise = SyncPromise.all([
 			this.oRequestor.request("GET", this.getResourcePath(iStart, iEnd), oGroupLock,
 				undefined, undefined, fnDataRequested),
@@ -1544,10 +1582,12 @@ sap.ui.define([
 			if (that.aElements.$tail === oPromise) {
 				that.aElements.$tail = undefined;
 			}
-			that.handleResponse(iStart, iEnd, aResult[0], aResult[1]);
+			that.handleResponse(oReadRequest.iStart, oReadRequest.iEnd, aResult[0], aResult[1]);
 		}).catch(function (oError) {
-			that.fill(undefined, iStart, iEnd);
+			that.fill(undefined, oReadRequest.iStart, oReadRequest.iEnd);
 			throw oError;
+		}).finally(function () {
+			that.aReadRequests.splice(that.aReadRequests.indexOf(oReadRequest), 1);
 		});
 
 		this.bSentReadRequest = true;

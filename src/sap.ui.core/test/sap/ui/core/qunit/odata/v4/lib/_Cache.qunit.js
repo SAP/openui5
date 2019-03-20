@@ -377,6 +377,7 @@ sap.ui.define([
 
 		aCacheData[42] = {};
 		aCacheData[43] = oSuccessor;
+		oCache.adjustReadRequests = function () {};
 		oCache.fetchValue = function () {};
 		this.mock(oCache).expects("fetchValue")
 			.withExactArgs(sinon.match.same(_GroupLock.$cached), "")
@@ -464,6 +465,7 @@ sap.ui.define([
 						"@odata.etag" : "after"
 					}];
 
+				oCache.adjustReadRequests = function () {};
 				oCache.iLimit = 2;
 				aCacheData.$byPredicate = {"('1')" : aCacheData[1]};
 				aCacheData.$count = bCount ? 3 : undefined;
@@ -471,6 +473,8 @@ sap.ui.define([
 					.withExactArgs(sinon.match.same(oCache.mChangeListeners), sParentPath,
 						sinon.match.same(aCacheData), {$count : 2})
 					.callThrough();
+				this.mock(oCache).expects("adjustReadRequests").exactly(sParentPath ? 0 : 1)
+					.withExactArgs(1, -1);
 
 				// code under test
 				oCache.removeElement(aCacheData, 1, "('1')", sParentPath);
@@ -2537,6 +2541,158 @@ sap.ui.define([
 		assert.deepEqual(oSyncPromise.getResult(), {
 			"@odata.context" : undefined,
 			"value" : aElements
+		});
+	});
+
+	//*********************************************************************************************
+	QUnit.test("CollectionCache#read: create & pending read", function (assert) {
+		var oCache = this.createCache("Employees"),
+			oCreatePromise,
+			oReadPromise;
+
+		this.oRequestorMock.expects("request")
+			.withExactArgs("GET", "Employees?$skip=0&$top=4", new _GroupLock("group"),
+				/*mHeaders*/undefined, /*oPayload*/undefined, /*fnSubmit*/undefined)
+			.resolves(createResult(0, 3));
+		this.oRequestorMock.expects("request")
+			.withExactArgs("POST", "Employees", new _GroupLock("group"), null,
+				sinon.match.object, sinon.match.func, sinon.match.func, undefined,
+				"Employees($uid=id-1-23)")
+			.resolves({});
+
+		// code under test
+		oReadPromise = oCache.read(0, 4, 0, new _GroupLock("group"));
+		oCreatePromise = oCache.create(new _GroupLock("group"), SyncPromise.resolve("Employees"),
+			"", "($uid=id-1-23)", {});
+
+		return Promise.all([oReadPromise, oCreatePromise]).then(function () {
+			assert.deepEqual(oCache.aElements, [
+				{
+					"@$ui5._" : {
+						"transientPredicate" : "($uid=id-1-23)"
+					},
+					"@$ui5.context.isTransient" : false
+				},
+				{key : "a"},
+				{key : "b"},
+				{key : "c"}
+			]);
+		});
+	});
+
+	//*********************************************************************************************
+	QUnit.test("CollectionCache#read: cancel create & pending read", function (assert) {
+		var oCache = this.createCache("Employees"),
+			fnCancelCallback = function () {},
+			oError = new Error(),
+			oExpectation,
+			oPostPromise = Promise.reject(oError),
+			aPromises;
+
+		oError.canceled = true;
+		oExpectation = this.oRequestorMock.expects("request")
+			.withExactArgs("POST", "Employees", new _GroupLock("update"), null,
+				sinon.match.object, sinon.match.func, sinon.match.func, undefined,
+				"Employees($uid=id-1-23)")
+			.returns(oPostPromise);
+
+		this.mockRequest("Employees", 0, 3);
+
+		// code under test
+		aPromises = [
+			oCache.create(new _GroupLock("update"), SyncPromise.resolve("Employees"), "",
+				"($uid=id-1-23)", {}, fnCancelCallback).catch(function () {}),
+			oCache.read(1, 3, 0, new _GroupLock("group"))
+		];
+		oExpectation.args[0][6](); // simulate the requestor's callback on cancel
+
+		return Promise.all(aPromises).then(function () {
+			assert.deepEqual(oCache.aElements, [
+				{key : "a"},
+				{key : "b"},
+				{key : "c"}
+			]);
+		});
+	});
+
+	//*********************************************************************************************
+	QUnit.test("CollectionCache#read: removeElement & pending read (failing)", function (assert) {
+		var oCache = this.createCache("Employees"),
+			that = this;
+
+		this.mockRequest("Employees", 0, 3);
+
+		// prefill the cache
+		return oCache.read(0, 3, 0, new _GroupLock("group")).then(function () {
+			var oReadPromise;
+
+			that.oRequestorMock.expects("request")
+				.withExactArgs("GET", "Employees?$skip=3&$top=3", new _GroupLock("group"),
+					/*mHeaders*/undefined, /*oPayload*/undefined, /*fnSubmit*/undefined)
+				.returns(Promise.reject(new Error()));
+
+			// code under test
+			oReadPromise = oCache.read(3, 3, 0, new _GroupLock("group"));
+			oCache.removeElement(oCache.aElements, 1, "('b')", "");
+
+			return oReadPromise;
+		}).then(function () {
+			assert.ok(false);
+		}, function () {
+			assert.deepEqual(oCache.aElements, [
+				{key : "a"},
+				{key : "c"},
+				undefined,
+				undefined,
+				undefined
+			]);
+			assert.deepEqual(oCache.aReadRequests, [], "cleaned up properly");
+		});
+	});
+
+	//*********************************************************************************************
+	QUnit.test("CollectionCache#read: removeElement & pending reads", function (assert) {
+		var oCache = this.createCache("Employees"),
+			oReadPromise1,
+			fnResolve,
+			that = this;
+
+		this.mockRequest("Employees", 3, 3);
+
+		// prefill the cache
+		return oCache.read(3, 3, 0, new _GroupLock("group")).then(function () {
+			var oPromise = new Promise(function (resolve) {
+					fnResolve = resolve;
+				}),
+				oReadPromise2;
+
+			that.oRequestorMock.expects("request")
+				.withExactArgs("GET", "Employees?$skip=6&$top=3", new _GroupLock("group"),
+					/*mHeaders*/undefined, /*oPayload*/undefined, /*fnSubmit*/undefined)
+				.returns(oPromise);
+			that.mockRequest("Employees", 1, 2);
+
+			// code under test
+			oReadPromise1 = oCache.read(6, 3, 0, new _GroupLock("group"));
+			oReadPromise2 = oCache.read(1, 2, 0, new _GroupLock("group"));
+			oCache.removeElement(oCache.aElements, 4, "('e')", "");
+
+			return oReadPromise2;
+		}).then(function () {
+			oCache.removeElement(oCache.aElements, 4, "('f')", "");
+			fnResolve(createResult(6, 3));
+			return oReadPromise1;
+		}).then(function () {
+			assert.deepEqual(oCache.aElements, [
+				undefined,
+				{key : "b"},
+				{key : "c"},
+				{key : "d"},
+				{key : "g"},
+				{key : "h"},
+				{key : "i"}
+			]);
+			assert.deepEqual(oCache.aReadRequests, [], "cleaned up properly");
 		});
 	});
 

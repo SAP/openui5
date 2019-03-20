@@ -2437,6 +2437,69 @@ sap.ui.define([
 	});
 
 	//*********************************************************************************************
+	// Scenario: Delete an entity in a growing table via refresh and let the table grow at the same
+	// time.
+	// JIRA: CPOUI5UISERVICESV3-1795
+	QUnit.test("growing while deleting: adjust the pending read request", function (assert) {
+		var oModel = createSalesOrdersModel({autoExpandSelect : true}),
+			oTable,
+			sView = '\
+<Table id="table" growing="true" growingThreshold="3" items="{/SalesOrderList}">\
+	<columns><Column/></columns>\
+	<ColumnListItem>\
+		<Text id="id" text="{SalesOrderID}" />\
+	</ColumnListItem>\
+</Table>',
+			that = this;
+
+		that.expectRequest("SalesOrderList?$select=SalesOrderID&$skip=0&$top=3", {
+				"value" : [
+					{"SalesOrderID" : "0500000001"},
+					{"SalesOrderID" : "0500000002"},
+					{"SalesOrderID" : "0500000003"}
+				]
+			})
+			.expectChange("id", ["0500000001", "0500000002", "0500000003"]);
+
+		return this.createView(assert, sView, oModel).then(function () {
+			that.expectRequest("SalesOrderList?$select=SalesOrderID"
+					+ "&$filter=SalesOrderID eq '0500000002'", {
+					"value" : []
+				})
+				.expectRequest("SalesOrderList?$select=SalesOrderID&$skip=3&$top=3", {
+					"value" : [
+						{"SalesOrderID" : "0500000004"}
+					]
+				})
+				// this request is sent because the length is not yet known when the change event
+				// for the delete is fired (it wouldn't come with $count)
+				.expectRequest("SalesOrderList?$select=SalesOrderID&$skip=5&$top=1", {
+					"value" : []
+				})
+				.expectChange("id", null) // from deleting the item '0500000002'
+				.expectChange("id", "0500000004", 2);
+
+			oTable = that.oView.byId("table");
+
+			// code under test
+			oTable.getItems()[1].getBindingContext().refresh(undefined, true);
+			that.oView.byId("table-trigger").firePress();
+
+			return that.waitForChanges(assert);
+		}).then(function () {
+			assert.deepEqual(
+				oTable.getBinding("items").getCurrentContexts().map(function (oContext) {
+					return oContext.getPath();
+				}), [
+					"/SalesOrderList('0500000001')",
+					"/SalesOrderList('0500000003')",
+					"/SalesOrderList('0500000004')"
+				]
+			);
+		});
+	});
+
+	//*********************************************************************************************
 	// Scenario: SalesOrders app
 	// * Select a sales order
 	// * Refresh the sales order list
