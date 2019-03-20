@@ -576,7 +576,11 @@ sap.ui.define(['sap/ui/unified/calendar/CalendarDate', 'sap/ui/unified/calendar/
 
 			oRm.write("</div>");
 
-			// this.renderResizeHandle(oRm, oRow, oAppointment);
+			if (oControl.getEnableAppointmentsResize()
+				&& !bAppStartIsOutsideVisibleStartHour
+				&& !bAppEndIsOutsideVisibleEndHour) {
+				this.renderResizeHandles(oRm);
+			}
 
 			oRm.write("</div>");
 			oRm.write("</div>");
@@ -614,6 +618,19 @@ sap.ui.define(['sap/ui/unified/calendar/CalendarDate', 'sap/ui/unified/calendar/
 			}
 			oRm.write("</span>"); // END .sapMSinglePCNowMarkerText
 			oRm.write("</div>"); // END .sapMSinglePCNowMarker
+		};
+
+		SinglePlanningCalendarGridRenderer.renderResizeHandles = function(oRm) {
+			oRm.write("<span");
+			oRm.addClass("sapMSinglePCAppResizeHandleBottom");
+			oRm.writeClasses();
+			oRm.write(">");
+			oRm.write("</span>");
+			oRm.write("<span");
+			oRm.addClass("sapMSinglePCAppResizeHandleTop");
+			oRm.writeClasses();
+			oRm.write(">");
+			oRm.write("</span>");
 		};
 
 		return SinglePlanningCalendarGridRenderer;
