@@ -706,6 +706,7 @@ sap.ui.define([
 	QUnit.test("bindList with OData query options", function (assert) {
 		var oBinding,
 			oBaseContext = {getPath : function () {return "/";}},
+			oCacheMock = this.mock(_Cache),
 			oError = new Error("Unsupported ..."),
 			oModelMock = this.mock(this.oModel),
 			mParameters = {
@@ -726,9 +727,9 @@ sap.ui.define([
 		this.mock(ODataListBinding.prototype).expects("getOrderby").twice()
 			.withExactArgs(mQueryOptions.$orderby)
 			.returns(mQueryOptions.$orderby);
-		this.mock(_Cache).expects("create").twice()
+		oCacheMock.expects("create")
 			.withExactArgs(sinon.match.same(this.oModel.oRequestor), "EMPLOYEES",
-				{"$orderby" : "bar", "sap-client" : "111"}, false)
+				{"$orderby" : "bar", "sap-client" : "111"}, false, undefined)
 			.returns({});
 		this.spy(ODataListBinding.prototype, "reset");
 
@@ -747,6 +748,11 @@ sap.ui.define([
 		assert.deepEqual(oBinding.oDiff, undefined);
 		assert.deepEqual(oBinding.mPreviousContextsByPath, {});
 		assert.deepEqual(oBinding.aPreviousData, []);
+
+		oCacheMock.expects("create")
+			.withExactArgs(sinon.match.same(this.oModel.oRequestor), "EMPLOYEES",
+				{"$orderby" : "bar", "sap-client" : "111"}, false, "EMPLOYEES")
+			.returns({});
 
 		// code under test
 		oBinding = this.bindList("EMPLOYEES", oBaseContext, undefined, undefined, mParameters);
@@ -4322,6 +4328,7 @@ sap.ui.define([
 			}),
 			oCache = {},
 			oContext = {},
+			sDeepResourcePath = "deep/resource/path",
 			mMergedQueryOptions = {},
 			sResourcePath = "EMPLOYEES('42')/TEAM_2_EMPLOYEES",
 			mQueryOptions = {};
@@ -4333,11 +4340,13 @@ sap.ui.define([
 			.returns(mMergedQueryOptions);
 		this.mock(_Cache).expects("create")
 			.withExactArgs(sinon.match.same(this.oModel.oRequestor), sResourcePath,
-				sinon.match.same(mMergedQueryOptions), sinon.match.same(bAutoExpandSelect))
+				sinon.match.same(mMergedQueryOptions), sinon.match.same(bAutoExpandSelect),
+				sDeepResourcePath)
 			.returns(oCache);
 
 		// code under test
-		assert.strictEqual(oBinding.doCreateCache(sResourcePath, mQueryOptions, oContext),
+		assert.strictEqual(
+			oBinding.doCreateCache(sResourcePath, mQueryOptions, oContext, sDeepResourcePath),
 			oCache);
 	});
 

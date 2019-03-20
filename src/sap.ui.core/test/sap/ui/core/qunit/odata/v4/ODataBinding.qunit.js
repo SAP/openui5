@@ -796,12 +796,12 @@ sap.ui.define([
 				.withExactArgs(true, {}, sinon.match.same(oBinding.oModel.mUriParameters),
 					sinon.match.same(mLocalQueryOptions))
 				.returns(mResultingQueryOptions);
-			oBindingMock.expects("doCreateCache")
-				.withExactArgs("resourcePath", sinon.match.same(mResultingQueryOptions),
-					sinon.match.same(oContext))
-				.returns(oCache);
 			this.mock(_Helper).expects("buildPath").withExactArgs("/contextPath", "relative")
 				.returns("/built/path");
+			oBindingMock.expects("doCreateCache")
+				.withExactArgs("resourcePath", sinon.match.same(mResultingQueryOptions),
+					sinon.match.same(oContext), "built/path")
+				.returns(oCache);
 
 			// code under test
 			oBinding.fetchCache(oContext);
@@ -821,14 +821,14 @@ sap.ui.define([
 	[
 		undefined, // use old context for second call
 		{ // base context
-			getPath : function () { return "/n/a"; }
+			getPath : function () { return "/deep/path"; }
 		},
 		{ // no return value context ID
-			getPath : function () { return "/n/a"; },
+			getPath : function () { return "/deep/path"; },
 			getReturnValueContextId : function () { return undefined; }
 		},
 		{ // different return value context ID
-			getPath : function () { return "/n/a"; },
+			getPath : function () { return "/deep/path"; },
 			getReturnValueContextId : function () { return 43; }
 		}
 	].forEach(function (oContext, i) {
@@ -855,7 +855,7 @@ sap.ui.define([
 				oCache1 = {},
 				oCacheMock = this.mock(oCache),
 				oContext0 = {
-					getPath : function () { return "/n/a"; },
+					getPath : function () { return "/deep/path"; },
 					getReturnValueContextId : function () { return 42; }
 				},
 				oJQueryMock = this.mock(jQuery),
@@ -874,7 +874,7 @@ sap.ui.define([
 				.returns(mResultingQueryOptions);
 			oBindingMock.expects("doCreateCache")
 				.withExactArgs("resourcePath/relative", sinon.match.same(mResultingQueryOptions),
-					sinon.match.same(oContext0))
+					sinon.match.same(oContext0), "deep/path/relative")
 				.returns(oCache);
 
 			// code under test
@@ -904,7 +904,7 @@ sap.ui.define([
 					oBindingMock.expects("doCreateCache")
 						.withExactArgs("resourcePath/relative",
 							sinon.match.same(mResultingQueryOptions1),
-							sinon.match.same(oContext1))
+							sinon.match.same(oContext1), "deep/path/relative")
 						.returns(oCache1);
 					oCacheMock.expects("setActive").withExactArgs(true).never();
 				} else {
@@ -1053,7 +1053,7 @@ sap.ui.define([
 			oBindingMock = this.mock(oBinding),
 			oCache = {},
 			oContext = {
-				getPath : function () { return "/n/a"; }
+				getPath : function () { return "/deep/path"; }
 			},
 			mLocalQueryOptions = {},
 			mResultingQueryOptions = {};
@@ -1070,7 +1070,7 @@ sap.ui.define([
 			.returns(mResultingQueryOptions);
 		oBindingMock.expects("doCreateCache")
 			.withExactArgs("resourcePath/quasiAbsolute", sinon.match.same(mResultingQueryOptions),
-				sinon.match.same(oContext))
+				sinon.match.same(oContext), "deep/path/quasiAbsolute")
 			.returns(oCache);
 
 		// code under test
@@ -1245,6 +1245,7 @@ sap.ui.define([
 					reportError : function () {},
 					mUriParameters : {}
 				},
+				sPath : "relative",
 				mParameters : {"$$canonicalPath" : true},
 				bRelative : true,
 				toString : function () {return "MyBinding";}
@@ -1255,7 +1256,7 @@ sap.ui.define([
 				getPath : function () { return "/n/a"; }
 			},
 			oContext1 = {
-				getPath : function () { return "/n/a"; }
+				getPath : function () { return "/deep/path"; }
 			},
 			mLocalQueryOptions = {},
 			oPromise,
@@ -1279,7 +1280,7 @@ sap.ui.define([
 			.returns(mResultingQueryOptions);
 		oBindingMock.expects("doCreateCache")
 			.withExactArgs("resourcePath1", sinon.match.same(mResultingQueryOptions),
-				sinon.match.same(oContext1))
+				sinon.match.same(oContext1), "deep/path/relative")
 			.returns(oCache);
 
 		oBinding.fetchCache(oContext0);
@@ -1907,7 +1908,7 @@ sap.ui.define([
 		oModelMock.expects("reportBoundMessages")
 			.withExactArgs("SalesOrderList('42')/SO_2_SOITEM", {});
 		oModelMock.expects("reportBoundMessages")
-			.withExactArgs("BusinessPartnerList('42')/BP_2_PRODUCT", {});
+			.withExactArgs("SalesOrderList('42')/SO_2_BP/BP_2_PRODUCT", {});
 
 		// code under test
 		oBinding.removeCachesAndMessages("SalesOrderList('42')");

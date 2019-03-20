@@ -98,7 +98,8 @@ sap.ui.define([
 	 *   should just sort always
 	 * @param {function} [fnGetOriginalResourcePath]
 	 *   A function that returns the cache's original resource path to be used to build the target
-	 *   path for bound messages; if unset, sResourcePath is used
+	 *   path for bound messages; if it is not given or returns nothing, <code>sResourcePath</code>
+	 *   is used instead
 	 *
 	 * @private
 	 */
@@ -1132,9 +1133,8 @@ sap.ui.define([
 		}
 		if (bHasMessages) {
 			this.oRequestor.getModelInterface().reportBoundMessages(
-				this.fnGetOriginalResourcePath
-					? this.fnGetOriginalResourcePath(oRoot)
-					: this.sResourcePath,
+				this.fnGetOriginalResourcePath && this.fnGetOriginalResourcePath(oRoot)
+					|| this.sResourcePath,
 				mPathToODataMessages, aCachePaths);
 		}
 	};
@@ -1155,9 +1155,14 @@ sap.ui.define([
 	 *   A map of key-value pairs representing the query string
 	 * @param {boolean} [bSortExpandSelect=false]
 	 *   Whether the paths in $expand and $select shall be sorted in the cache's query string
+	 * @param {string} [sDeepResourcePath=sResourcePath]
+	 *   The deep resource path to be used to build the target path for bound messages
 	 */
-	function CollectionCache(oRequestor, sResourcePath, mQueryOptions, bSortExpandSelect) {
-		Cache.apply(this, arguments);
+	function CollectionCache(oRequestor, sResourcePath, mQueryOptions, bSortExpandSelect,
+			sDeepResourcePath) {
+		Cache.call(this, oRequestor, sResourcePath, mQueryOptions, bSortExpandSelect, function () {
+				return sDeepResourcePath;
+			});
 
 		this.sContext = undefined;         // the "@odata.context" from the responses
 		this.aElements = [];               // the available elements
@@ -1868,9 +1873,10 @@ sap.ui.define([
 	 *   A map of key-value pairs representing the query string
 	 * @param {boolean} [bSortExpandSelect=false]
 	 *   Whether the paths in $expand and $select shall be sorted in the cache's query string
-	 * @param {string} [fnGetOriginalResourcePath]
+	 * @param {function} [fnGetOriginalResourcePath]
 	 *   A function that returns the cache's original resource path to be used to build the target
-	 *   path for bound messages; if unset, sResourcePath is used
+	 *   path for bound messages; if it is not given or returns nothing, <code>sResourcePath</code>
+	 *   is used instead
 	 * @param {boolean} [bPost]
 	 *   Whether the cache uses POST requests. If <code>true</code>, only {@link #post} may lead to
 	 *   a request, {@link #read} may only read from the cache; otherwise {@link #post} throws an
@@ -2100,13 +2106,17 @@ sap.ui.define([
 	 *   {foo : ["bar", "baz"]} results in the query string "foo=bar&foo=baz"
 	 * @param {boolean} [bSortExpandSelect=false]
 	 *   Whether the paths in $expand and $select shall be sorted in the cache's query string
+	 * @param {string} [sDeepResourcePath=sResourcePath]
+	 *   The deep resource path to be used to build the target path for bound messages
 	 * @returns {sap.ui.model.odata.v4.lib._Cache}
 	 *   The cache
 	 *
 	 * @public
 	 */
-	Cache.create = function (oRequestor, sResourcePath, mQueryOptions, bSortExpandSelect) {
-		return new CollectionCache(oRequestor, sResourcePath, mQueryOptions, bSortExpandSelect);
+	Cache.create = function (oRequestor, sResourcePath, mQueryOptions, bSortExpandSelect,
+			sDeepResourcePath) {
+		return new CollectionCache(oRequestor, sResourcePath, mQueryOptions, bSortExpandSelect,
+				sDeepResourcePath);
 	};
 
 	/**
@@ -2150,9 +2160,10 @@ sap.ui.define([
 	 *   {foo : ["bar", "baz"]} results in the query string "foo=bar&foo=baz"
 	 * @param {boolean} [bSortExpandSelect=false]
 	 *   Whether the paths in $expand and $select shall be sorted in the cache's query string
-	 * @param {string} [fnGetOriginalResourcePath]
+	 * @param {function} [fnGetOriginalResourcePath]
 	 *   A function that returns the cache's original resource path to be used to build the target
-	 *   path for bound messages; if unset, sResourcePath is used
+	 *   path for bound messages; if it is not given or returns nothing, <code>sResourcePath</code>
+	 *   is used instead
 	 * @param {boolean} [bPost]
 	 *   Whether the cache uses POST requests. If <code>true</code>, only {@link #post} may
 	 *   lead to a request, {@link #read} may only read from the cache; otherwise {@link #post}

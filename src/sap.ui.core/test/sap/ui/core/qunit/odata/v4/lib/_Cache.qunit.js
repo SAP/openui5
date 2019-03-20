@@ -125,12 +125,14 @@ sap.ui.define([
 		 * this.oRequestor, does not sort query options.
 		 *
 		 * @param {string} sResourcePath The resource path
-		 * @param {object} [mQueryOptions] The query options.
+		 * @param {object} [mQueryOptions] The query options
 		 * @param {boolean} [bWithKeyPredicates=false] Whether key predicates are calculated
+		 * @param {string} [sDeepResourcePath] The deep resource path
 		 * @returns {sap.ui.model.odata.v4.lib._Cache}
 		 *   The cache
 		 */
-		createCache : function (sResourcePath, mQueryOptions, bWithKeyPredicates) {
+		createCache : function (sResourcePath, mQueryOptions, bWithKeyPredicates,
+				sDeepResourcePath) {
 			if (bWithKeyPredicates) {
 				this.oRequestor.fetchTypeForPath = function () { // enables key predicates
 					return SyncPromise.resolve({
@@ -141,7 +143,8 @@ sap.ui.define([
 					});
 				};
 			}
-			return _Cache.create(this.oRequestor, sResourcePath, mQueryOptions, false);
+			return _Cache.create(this.oRequestor, sResourcePath, mQueryOptions, false,
+					sDeepResourcePath);
 		},
 
 		/**
@@ -185,7 +188,8 @@ sap.ui.define([
 
 	//*********************************************************************************************
 	QUnit.test("_Cache basics", function (assert) {
-		var mQueryOptions = {},
+		var fnGetOriginalResourcePath = {},
+			mQueryOptions = {},
 			sResourcePath = "TEAMS('42')",
 			oCache;
 
@@ -195,16 +199,18 @@ sap.ui.define([
 
 		// code under test
 		oCache = new _Cache(this.oRequestor, sResourcePath, mQueryOptions,
-			"bSortExpandSelect");
+			"bSortExpandSelect", fnGetOriginalResourcePath);
 
 		assert.strictEqual(oCache.bActive, true);
 		assert.deepEqual(oCache.mChangeListeners, {});
+		assert.strictEqual(oCache.fnGetOriginalResourcePath, fnGetOriginalResourcePath);
 		assert.strictEqual(oCache.sMetaPath, "/TEAMS");
 		assert.deepEqual(oCache.mPatchRequests, {});
 		assert.deepEqual(oCache.mPostRequests, {});
 		assert.strictEqual(oCache.oPendingDeletePromise, null);
 		assert.strictEqual(oCache.oRequestor, this.oRequestor);
 		assert.strictEqual(oCache.sResourcePath, sResourcePath);
+		assert.strictEqual(oCache.bSortExpandSelect, "bSortExpandSelect");
 		assert.strictEqual(oCache.bSentReadRequest, false);
 		assert.strictEqual(oCache.oTypePromise, undefined);
 
@@ -2327,10 +2333,15 @@ sap.ui.define([
 	});
 
 	//*********************************************************************************************
-	QUnit.test("_Cache#visitResponse: operation message", function (assert) {
+[false, true].forEach(function (bReturnsOriginalResourcePath) {
+	var sTitle = "_Cache#visitResponse: operation message; bReturnsOriginalResourcePath = "
+			+ bReturnsOriginalResourcePath;
+
+	QUnit.test(sTitle, function (assert) {
 		var sOriginalResourcePath = "OperationImport(...)",
-			oCache = _Cache.createSingle(this.oRequestor, "OperationImport", {},
-				false, getOriginalResourcePath, false, undefined, true),
+			sResourcePath = "OperationImport",
+			oCache = _Cache.createSingle(this.oRequestor, sResourcePath, {}, false,
+				getOriginalResourcePath, false, undefined, true),
 			oData = {
 				messages : [{
 					message : "text"
@@ -2351,17 +2362,19 @@ sap.ui.define([
 
 		function getOriginalResourcePath(oValue) {
 			assert.strictEqual(oValue, oData);
-			return sOriginalResourcePath;
+			return bReturnsOriginalResourcePath ? sOriginalResourcePath : undefined;
 		}
 
 		mExpectedMessages[""].$count = 1;
 		mExpectedMessages[""].$created = 0;
 		this.oModelInterfaceMock.expects("reportBoundMessages")
-			.withExactArgs(sOriginalResourcePath, mExpectedMessages, undefined);
+			.withExactArgs(bReturnsOriginalResourcePath ? sOriginalResourcePath : sResourcePath,
+				mExpectedMessages, undefined);
 
 		// code under test
 		oCache.visitResponse(oData, mTypeForMetaPath);
 	});
+});
 
 	//*********************************************************************************************
 	QUnit.test("_Cache#patch", function (assert) {
@@ -3123,11 +3136,12 @@ sap.ui.define([
 
 	//*********************************************************************************************
 	QUnit.test("CollectionCache#read: infinite prefetch, $skip=0", function (assert) {
-		var oCache = this.createCache("Employees");
+		var oCache = this.createCache("Employees", undefined, undefined, "deep/resource/path");
 
 		// be friendly to V8
 		assert.ok(oCache instanceof _Cache);
 		assert.ok("sContext" in oCache);
+		assert.strictEqual(oCache.fnGetOriginalResourcePath(), "deep/resource/path");
 		assert.deepEqual(oCache.aElements, []);
 		assert.deepEqual(oCache.aElements.$byPredicate, {});
 		assert.ok("$count" in oCache.aElements);
