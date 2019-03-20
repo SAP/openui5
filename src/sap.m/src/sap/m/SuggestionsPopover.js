@@ -54,6 +54,9 @@ sap.ui.define([
 	// shortcut for sap.m.ListType
 	var ListType = library.ListType;
 
+	// shortcut for sap.m.ListSeparators
+	var ListSeparators = library.ListSeparators;
+
 	/**
 	 * Provides a popover that should be used with an input control which requires suggestions.
 	 *
@@ -301,7 +304,8 @@ sap.ui.define([
 			this._oList = new List(oInput.getId() + "-popup-list", {
 				showNoData : false,
 				mode : ListMode.SingleSelectMaster,
-				rememberSelections : false
+				rememberSelections : false,
+				showSeparators: ListSeparators.None
 			});
 
 			this._oList.addEventDelegate({
@@ -668,7 +672,7 @@ sap.ui.define([
 			this._oSuggestionTable = new Table(oInput.getId() + "-popup-table", {
 				mode: ListMode.SingleSelectMaster,
 				showNoData: false,
-				showSeparators: "All",
+				showSeparators: ListSeparators.None,
 				width: "100%",
 				enableBusyIndicator: false,
 				rememberSelections : false,
