@@ -185,6 +185,10 @@ sap.ui.define(['sap/ui/core/Control', 'sap/ui/core/theming/Parameters', 'sap/ui/
 	};
 
 	TableRenderer.renderToolbar = function(rm, oTable, oToolbar) {
+		if (!TableUtils.isA(oToolbar, "sap.ui.core.Toolbar")) {
+			return;
+		}
+
 		rm.write("<div");
 		rm.addClass("sapUiTableTbr");
 
