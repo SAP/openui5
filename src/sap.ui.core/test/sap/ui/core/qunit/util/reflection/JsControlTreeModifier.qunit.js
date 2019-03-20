@@ -115,6 +115,28 @@ function(
 			assert.strictEqual(JsControlTreeModifier.findIndexInParentAggregation(this.oButton), 0, "then the index of the most recently created button is found correctly");
 		});
 
+		QUnit.test("the modifier is not invalidating controls for changes in custom data aggregation", function (assert) {
+			var mData = {
+				key : "key",
+				value : "value"
+			};
+			this.oCustomData = JsControlTreeModifier.createControl('sap.ui.core.CustomData', this.oComponent, undefined, undefined, mData);
+			this.oControl = JsControlTreeModifier.createControl('sap.m.Button', this.oComponent, undefined, "myButton");
+			var fnInvalidateSpy = sandbox.spy(this.oControl, "invalidate");
+
+			JsControlTreeModifier.insertAggregation(this.oControl, 'customData', this.oCustomData);
+			assert.deepEqual(this.oControl.data(), {
+				"key": "value"
+			}, "custom data is set");
+			JsControlTreeModifier.removeAggregation(this.oControl, 'customData', this.oCustomData);
+			assert.deepEqual(this.oControl.data(), {}, "custom data is removed");
+			JsControlTreeModifier.insertAggregation(this.oControl, 'customData', this.oCustomData);
+			JsControlTreeModifier.removeAllAggregation(this.oControl, 'customData');
+			assert.deepEqual(this.oControl.data(), {}, "all custom data is removed");
+
+			assert.strictEqual(fnInvalidateSpy.callCount, 0, "then the control is not invalidated (no rerendering needed)");
+		});
+
 		QUnit.test("attachEvent() — basic case", function (assert) {
 			this.oControl = new Button();
 

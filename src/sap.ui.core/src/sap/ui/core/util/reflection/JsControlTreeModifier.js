@@ -263,15 +263,21 @@ sap.ui.define([
 		 *          iIndex <optional> - index to which it should be added/inserted
 		 */
 		insertAggregation: function (oParent, sName, oObject, iIndex) {
-			var oAggregation = this.findAggregation(oParent, sName);
-			if (oAggregation) {
-				if (oAggregation.multiple) {
-					var iInsertIndex = iIndex || 0;
-					oParent[oAggregation._sInsertMutator](oObject, iInsertIndex);
-				} else {
-					oParent[oAggregation._sMutator](oObject);
+			//special handling without invalidation for customData
+			if ( sName === "customData"){
+				oParent.insertAggregation(sName, oObject, iIndex, /*bSuppressInvalidate=*/true);
+			} else {
+				var oAggregation = this.findAggregation(oParent, sName);
+				if (oAggregation) {
+					if (oAggregation.multiple) {
+						var iInsertIndex = iIndex || 0;
+						oParent[oAggregation._sInsertMutator](oObject, iInsertIndex);
+					} else {
+						oParent[oAggregation._sMutator](oObject);
+					}
 				}
 			}
+
 		},
 
 		/**
@@ -285,16 +291,26 @@ sap.ui.define([
 		 *          oObject - aggregated object to be set
 		 */
 		removeAggregation: function (oControl, sName, oObject) {
-			var oAggregation = this.findAggregation(oControl, sName);
-			if (oAggregation) {
-				oControl[oAggregation._sRemoveMutator](oObject);
+			//special handling without invalidation for customData
+			if ( sName === "customData"){
+				oControl.removeAggregation(sName, oObject, /*bSuppressInvalidate=*/true);
+			} else {
+				var oAggregation = this.findAggregation(oControl, sName);
+				if (oAggregation) {
+					oControl[oAggregation._sRemoveMutator](oObject);
+				}
 			}
 		},
 
 		removeAllAggregation: function (oControl, sName) {
-			var oAggregation = this.findAggregation(oControl, sName);
-			if (oAggregation) {
-				oControl[oAggregation._sRemoveAllMutator]();
+			//special handling without invalidation for customData
+			if ( sName === "customData"){
+				oControl.removeAllAggregation(sName, /*bSuppressInvalidate=*/true);
+			} else {
+				var oAggregation = this.findAggregation(oControl, sName);
+				if (oAggregation) {
+					oControl[oAggregation._sRemoveAllMutator]();
+				}
 			}
 		},
 
