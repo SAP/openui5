@@ -1006,8 +1006,9 @@ sap.ui.define([
 		}
 	};
 
-	// against all our rules: use side effect of assert to differentiate between optimized and productive code
-	jQuery.sap.assert( Log.setLevel(Log.Level.DEBUG) || 1, "will be removed in optimized version");
+	if (!window["sap-ui-optimized"]) {
+		Log.setLevel(Log.Level.DEBUG);
+	}
 
 	// evaluate configuration
 	oCfgData.loglevel = (function() {
