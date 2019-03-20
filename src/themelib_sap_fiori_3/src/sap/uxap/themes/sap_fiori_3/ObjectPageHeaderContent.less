@@ -3,6 +3,9 @@
 /* Fiori 3 theme                                     */
 /* ================================================= */
 
+@sapUiFiori3AnchorBarBottomShadow: inset 0 -0.0625rem @sapUiObjectHeaderBorderColor;
+@sapUiFiori3AnchorBarTopShadow: inset 0 0.0625rem @sapUiObjectHeaderBorderColor;
+
 .sapUxAPObjectPageHeaderContent .sapMObjStatus, .sapUxAPObjectPageContainer .sapMObjStatus {
 	font-size: @sapMFontMediumSize;
 }
@@ -19,10 +22,6 @@
 .sapUxAPObjectPageHeaderStickied .sapUxAPObjectPageHeaderIdentifier .sapUxAPObjectPageHeaderObjectImage {
 	border: 1px solid @sapUiObjectHeaderBorderColor;
 	padding: 0;
-}
-
-.sapUxAPObjectPageHeaderStickied .sapUxAPObjectPageHeaderIdentifier {
-	box-shadow: @sapUiShadowHeader;
 }
 
 html.sapUiMedia-Std-Desktop, html.sapUiMedia-Std-Tablet {
@@ -63,9 +62,29 @@ html.sapUiMedia-Std-Desktop, html.sapUiMedia-Std-Tablet {
 }
 
 .sapUxAPObjectPageHeaderContent {
+	padding-top: 1rem;
+	padding-bottom: 1rem;
+
+	.sapUxAPObjectChildPage {
+		margin-top: -1rem;
+	}
+
 	> .sapUiSimpleForm {
 		.sapMText, .sapMLabel, .sapMLnk {
 			font-size: @sapMFontMediumSize;
+		}
+	}
+}
+
+html[dir=rtl] .sapUxAPObjectPageLayout,
+.sapUxAPObjectPageLayout {
+
+	&:not(.sapUxAPObjectPageHasDynamicTitle) .sapUxAPAnchorBar {
+
+		&.sapMTB,
+		&.sapUxAPAnchorBarScrollRight .anchorBarArrowRight,
+		&.sapUxAPAnchorBarScrollLeft .anchorBarArrowLeft {
+			box-shadow: @sapUiFiori3AnchorBarBottomShadow, @sapUiFiori3AnchorBarTopShadow;
 		}
 	}
 }
