@@ -1818,7 +1818,18 @@ sap.ui.define([
 
 			this.getHeaderTitle() && this._shiftHeaderTitle();
 
-			this._scrollTo(iScrollTo + iOffset, iDuration);
+			iScrollTo += iOffset;
+
+			if (!this._bStickyAnchorBar && this._shouldSnapHeaderOnScroll(iScrollTo)) {
+				// <code>scrollTo</code> position is the one with *snapped* header
+				// (because the header will snap DURING scroll,
+				// EXCEPT on slow machines, where it will snap only AFTER scroll)
+				// => snap the header in advance (before scrolling)
+				// to ensure page arrives at *correct* scroll position even on slow machines
+				this._scrollTo(this._getSnapPosition(), 0);
+			}
+
+			this._scrollTo(iScrollTo, iDuration);
 		}
 	};
 
