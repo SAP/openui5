@@ -8,9 +8,10 @@ sap.ui.define([
 	'sap/ui/core/IconPool',
 	'sap/ui/Device',
 	"sap/ui/events/KeyCodes",
+	"sap/m/Button",
 	"sap/ui/thirdparty/jquery"
 ],
-	function(Control, TimePickerSliderRenderer, IconPool, Device, KeyCodes, jQuery) {
+	function(Control, TimePickerSliderRenderer, IconPool, Device, KeyCodes, Button, jQuery) {
 		"use strict";
 
 		/**
@@ -1153,7 +1154,7 @@ sap.ui.define([
 		TimePickerSlider.prototype._initArrows = function() {
 			var that = this, oArrowUp, oArrowDown;
 
-			oArrowUp = new sap.m.Button({
+			oArrowUp = new Button({
 				icon: IconPool.getIconURI("slim-arrow-up"),
 				press: function (oEvent) {
 					that._offsetValue(-1);
@@ -1168,7 +1169,7 @@ sap.ui.define([
 
 			this.setAggregation("_arrowUp", oArrowUp);
 
-			oArrowDown = new sap.m.Button({
+			oArrowDown = new Button({
 				icon: IconPool.getIconURI("slim-arrow-down"),
 				press: function (oEvent) {
 					that._offsetValue(1);

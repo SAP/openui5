@@ -22,6 +22,7 @@ sap.ui.define([
 	'./SuggestionsPopover',
 	'./Toolbar',
 	'./ToolbarSpacer',
+	'./Button',
 	"sap/ui/dom/containsOrEquals",
 	"sap/base/assert",
 	"sap/base/util/deepEqual",
@@ -49,6 +50,7 @@ function(
 	SuggestionsPopover,
 	Toolbar,
 	ToolbarSpacer,
+	Button,
 	containsOrEquals,
 	assert,
 	deepEqual,
@@ -2210,7 +2212,7 @@ function(
 	 * @return {sap.m.Button} Show more button.
 	 */
 	Input.prototype._getShowMoreButton = function() {
-		return this._oShowMoreButton || (this._oShowMoreButton = new sap.m.Button({
+		return this._oShowMoreButton || (this._oShowMoreButton = new Button({
 			text : this._oRb.getText("INPUT_SUGGESTIONS_SHOW_ALL"),
 			press : function() {
 				if (this.getShowTableSuggestionValueHelp()) {

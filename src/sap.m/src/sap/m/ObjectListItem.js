@@ -11,6 +11,8 @@ sap.ui.define([
 	'sap/ui/core/IconPool',
 	'sap/m/ObjectNumber',
 	'sap/ui/core/library',
+	'./ObjectMarker',
+	'./Text',
 	'./ObjectListItemRenderer'
 ],
 function(
@@ -21,6 +23,8 @@ function(
 	IconPool,
 	ObjectNumber,
 	coreLibrary,
+	ObjectMarker,
+	Text,
 	ObjectListItemRenderer
 	) {
 		"use strict";
@@ -603,7 +607,7 @@ function(
 			}
 
 			if (!bHasMarker) {
-				this.insertAggregation("markers", new sap.m.ObjectMarker({
+				this.insertAggregation("markers", new ObjectMarker({
 					id: this.getId() + oIds[markerType],
 					type: markerType,
 					visible: bMarked
@@ -621,7 +625,7 @@ function(
 		ObjectListItem.prototype._getTitleText = function() {
 
 			if (!this._oTitleText) {
-				this._oTitleText = new sap.m.Text(this.getId() + "-titleText", {
+				this._oTitleText = new Text(this.getId() + "-titleText", {
 					maxLines: 2
 				});
 

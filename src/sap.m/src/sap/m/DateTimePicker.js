@@ -16,6 +16,10 @@ sap.ui.define([
 	'sap/ui/core/LocaleData',
 	'./DateTimePickerRenderer',
 	'./TimePickerSliders',
+	'./SegmentedButton',
+	'./SegmentedButtonItem',
+	'./ResponsivePopover',
+	'./Button',
 	"sap/ui/events/KeyCodes",
 	"sap/ui/core/IconPool"
 ], function(
@@ -31,6 +35,10 @@ sap.ui.define([
 	LocaleData,
 	DateTimePickerRenderer,
 	TimePickerSliders,
+	SegmentedButton,
+	SegmentedButtonItem,
+	ResponsivePopover,
+	Button,
 	KeyCodes,
 	IconPool
 ) {
@@ -223,10 +231,11 @@ sap.ui.define([
 				var sTimeText = oResourceBundle.getText("DATETIMEPICKER_TIME");
 
 
-				oSwitcher = new sap.m.SegmentedButton(this.getId() + "-Switch", {
+				oSwitcher = new SegmentedButton(this.getId() + "-Switch", {
 					selectedKey: "Cal",
-					items: [ new sap.m.SegmentedButtonItem(this.getId() + "-Switch-Cal", {key: "Cal", text: sDateText}),
-								new sap.m.SegmentedButtonItem(this.getId() + "-Switch-Sli", {key: "Sli", text: sTimeText})
+					items: [
+						new SegmentedButtonItem(this.getId() + "-Switch-Cal", {key: "Cal", text: sDateText}),
+						new SegmentedButtonItem(this.getId() + "-Switch-Sli", {key: "Sli", text: sTimeText})
 					]
 				});
 				oSwitcher.attachSelect(this._handleSelect, this);
@@ -485,12 +494,12 @@ sap.ui.define([
 			this._oPopupContent = new PopupContent(this.getId() + "-PC");
 			this._oPopupContent._oDateTimePicker = this;
 
-			this._oPopup = new sap.m.ResponsivePopover(this.getId() + "-RP", {
+			this._oPopup = new ResponsivePopover(this.getId() + "-RP", {
 				showCloseButton: false,
 				showHeader: false,
 				placement: PlacementType.VerticalPreferedBottom,
-				beginButton: new sap.m.Button(this.getId() + "-OK", { text: sOKButtonText, press: jQuery.proxy(_handleOkPress, this) }),
-				endButton: new sap.m.Button(this.getId() + "-Cancel", { text: sCancelButtonText, press: jQuery.proxy(_handleCancelPress, this) }),
+				beginButton: new Button(this.getId() + "-OK", { text: sOKButtonText, press: jQuery.proxy(_handleOkPress, this) }),
+				endButton: new Button(this.getId() + "-Cancel", { text: sCancelButtonText, press: jQuery.proxy(_handleCancelPress, this) }),
 				content: this._oPopupContent
 			});
 

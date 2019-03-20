@@ -1376,7 +1376,7 @@ function(
 		}
 
 		// Fill Tokenizer
-		var oToken = new sap.m.Token({
+		var oToken = new Token({
 			key: mOptions.key
 		});
 		oToken.setText(mOptions.item.getText());
@@ -1969,7 +1969,7 @@ function(
 	 * @private
 	 */
 	MultiComboBox.prototype._createTokenizer = function() {
-		var oTokenizer = new sap.m.Tokenizer({
+		var oTokenizer = new Tokenizer({
 			tokens: []
 		}).attachTokenChange(this._handleTokenChange, this);
 		oTokenizer._setAdjustable(true);

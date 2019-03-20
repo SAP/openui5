@@ -10,6 +10,7 @@ sap.ui.define([
 	'sap/ui/core/IconPool',
 	'sap/ui/core/ResizeHandler',
 	'sap/m/Button',
+	'sap/m/Text',
 	'./NotificationListItemRenderer'
 ],
 function(
@@ -20,6 +21,7 @@ function(
 	IconPool,
 	ResizeHandler,
 	Button,
+	Text,
 	NotificationListItemRenderer
 	) {
 	'use strict';
@@ -308,7 +310,7 @@ function(
 		var bodyText = this.getAggregation('_bodyText');
 
 		if (!bodyText) {
-			bodyText = new sap.m.Text({
+			bodyText = new Text({
 				id: this.getId() + '-body',
 				text: this.getDescription(),
 				maxLines: 2

@@ -8,9 +8,10 @@ sap.ui.define([
 	'sap/ui/core/Control',
 	'sap/ui/base/ManagedObject',
 	'./IconTabBarRenderer',
+	'./IconTabHeader',
 	"sap/ui/thirdparty/jquery"
 ],
-	function(library, Control, ManagedObject, IconTabBarRenderer, jQuery) {
+	function(library, Control, ManagedObject, IconTabBarRenderer, IconTabHeader, jQuery) {
 	"use strict";
 
 
@@ -530,7 +531,7 @@ sap.ui.define([
 		var oControl = this.getAggregation("_header");
 
 		if (!oControl) {
-			oControl = new sap.m.IconTabHeader(this.getId() + "--header", {
+			oControl = new IconTabHeader(this.getId() + "--header", {
 			});
 			this.setAggregation("_header", oControl, true);
 		}

@@ -53,6 +53,9 @@ sap.ui.define([
 	// lazy dependency to sap/ui/unified/Calendar
 	var Calendar;
 
+	// lazy dependency to sap/ui/unified/DateRange
+	var DateRange;
+
 	/**
 	 * Constructor for a new <code>DatePicker</code>.
 	 *
@@ -1034,6 +1037,18 @@ sap.ui.define([
 
 	};
 
+	/*
+	 * helper to resolve lazy dependencies
+	 * TODO: should act asynchronously
+	 */
+	function resolveDependenciesToUnified() {
+		if ( !Calendar || !DateRange ) {
+			sap.ui.getCore().loadLibrary("sap.ui.unified");
+			Calendar = sap.ui.requireSync("sap/ui/unified/Calendar");
+			DateRange = sap.ui.requireSync("sap/ui/unified/DateRange");
+		}
+	}
+
 	/**
 	 * Creates a DateRange with the first and the last visible days in the calendar popup.
 	 * @param {sap.ui.unified.Calendar} oCalendar the calendar whose DatesRange is wanted
@@ -1043,8 +1058,10 @@ sap.ui.define([
 	DatePicker.prototype._getVisibleDatesRange = function (oCalendar) {
 		var aVisibleDays = oCalendar._getVisibleDays();
 
+		resolveDependenciesToUnified();
+
 		// Convert to local JavaScript Date
-		return new sap.ui.unified.DateRange({
+		return new DateRange({
 			startDate: aVisibleDays[0].toLocalJSDate(), // First visible date
 			endDate: aVisibleDays[aVisibleDays.length - 1].toLocalJSDate() // Last visible date
 		});
@@ -1054,10 +1071,7 @@ sap.ui.define([
 	DatePicker.prototype._createPopupContent = function(){
 
 		if (!this._oCalendar) {
-			if ( !Calendar ) {
-				sap.ui.getCore().loadLibrary("sap.ui.unified");
-				Calendar = sap.ui.requireSync("sap/ui/unified/Calendar");
-			}
+			resolveDependenciesToUnified();
 			this._oCalendar = new Calendar(this.getId() + "-cal", {
 				intervalSelection: this._bIntervalSelection,
 				minDate: this.getMinDate(),
@@ -1069,7 +1083,7 @@ sap.ui.define([
 						});
 					}.bind(this)
 				});
-			this._oDateRange = new sap.ui.unified.DateRange();
+			this._oDateRange = new DateRange();
 			this._oCalendar.addSelectedDate(this._oDateRange);
 			if (this.$().closest(".sapUiSizeCompact").length > 0) {
 				this._oCalendar.addStyleClass("sapUiSizeCompact");

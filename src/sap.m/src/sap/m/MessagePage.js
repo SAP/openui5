@@ -13,6 +13,7 @@ sap.ui.define([
 	'sap/m/Image',
 	'sap/m/Button',
 	'sap/m/Title',
+	'sap/m/Bar',
 	'sap/m/FormattedText',
 	'./MessagePageRenderer',
 	"sap/ui/thirdparty/jquery"
@@ -26,6 +27,7 @@ sap.ui.define([
 	Image,
 	Button,
 	Title,
+	Bar,
 	FormattedText,
 	MessagePageRenderer,
 	jQuery
@@ -198,7 +200,7 @@ sap.ui.define([
 				}, this)
 			});
 
-			this.setAggregation("_internalHeader", new sap.m.Bar(this.getId() + "-intHeader", {
+			this.setAggregation("_internalHeader", new Bar(this.getId() + "-intHeader", {
 				design: BarDesign.Header
 			}));
 
