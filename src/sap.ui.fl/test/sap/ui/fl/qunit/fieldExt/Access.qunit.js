@@ -12,12 +12,15 @@ sap.ui.define([
 	"use strict";
 
 	var oBusinessExpectedContextRetrievalResult = {
-		BusinessContexts: [
-			"CFD_TSM_BUPA_ADR", "CFD_TSM_BUPA"
-		],
+		BusinessContexts: [ { BusinessContext: "CFD_TSM_BUPA_ADR" , BusinessContextDescription: "Description for CFD_TSM_BUPA_ADR"}, { BusinessContext: "CFD_TSM_BUPA", BusinessContextDescription: "Description for CFD_TSM_BUPA"} ],
 		ServiceName: "someService",
 		ServiceVersion: "0001"
 	};
+	var oBusinessExpectedContextRetrievalResultWithDescriptions = {
+			BusinessContexts: [ { BusinessContext: "CFD_TSM_BUPA_ADR", BusinessContextDescription: "Description for CFD_TSM_BUPA_ADR" } , { BusinessContext: "CFD_TSM_BUPA", BusinessContextDescription: "Description for CFD_TSM_BUPA" } ],
+			ServiceName: "someService",
+			ServiceVersion: "0001"
+		};
 
 	var oBusinessExpectedContextRetrievalResultWithoutBusinesscontexts = {
 		BusinessContexts: [],
@@ -154,7 +157,7 @@ sap.ui.define([
 
 				oPromise.done(function(oBusinessContexts) {
 					oServer.restore();
-					assert.deepEqual(oBusinessContexts, oBusinessExpectedContextRetrievalResult);
+					assert.deepEqual(oBusinessContexts, oBusinessExpectedContextRetrievalResultWithDescriptions);
 				});
 
 				oPromise.fail(function(error) {
@@ -166,7 +169,7 @@ sap.ui.define([
 					"Content-Type": "application/json",
 					"Content-Length": 13,
 					"X-CSRF-Token": "0987654321"
-				}, '{ "d": {"results":[{"BusinessContext":"CFD_TSM_BUPA_ADR"},{"BusinessContext":"CFD_TSM_BUPA"}] }}');
+				}, '{ "d": {"results":[{"BusinessContext":"CFD_TSM_BUPA_ADR", "BusinessContextDescription": "Description for CFD_TSM_BUPA_ADR"},{"BusinessContext":"CFD_TSM_BUPA" , "BusinessContextDescription": "Description for CFD_TSM_BUPA"}] }}');
 
 			} catch (e) {
 				oServer.restore();
@@ -198,7 +201,38 @@ sap.ui.define([
 					"Content-Type": "application/json",
 					"Content-Length": 13,
 					"X-CSRF-Token": "0987654321"
-				}, '{ "d": {"results":[{"BusinessContext":"CFD_TSM_BUPA_ADR"},{"BusinessContext":"CFD_TSM_BUPA"}] }}');
+				}, '{ "d": {"results":[{"BusinessContext":"CFD_TSM_BUPA_ADR", "BusinessContextDescription": "Description for CFD_TSM_BUPA_ADR"},{"BusinessContext":"CFD_TSM_BUPA", "BusinessContextDescription": "Description for CFD_TSM_BUPA" }] }}');
+
+			} catch (e) {
+				oServer.restore();
+				assert.ok(false, e);
+			}
+		});
+		QUnit.test("getBusinessContextsByEntitySetWithDescriptions", function(assert) {
+			var sServiceUrl = "/someService";
+			var sEntitySetName = "BusinessPartnerSet";
+
+			var oServer;
+			oServer = sinon.fakeServer.create();
+			oServer.autoRespond = true;
+			try {
+				var oPromise = Access.getBusinessContexts(sServiceUrl, null, sEntitySetName);
+
+				oPromise.done(function(oBusinessContexts) {
+					oServer.restore();
+					assert.deepEqual(oBusinessContexts, oBusinessExpectedContextRetrievalResultWithDescriptions);
+				});
+
+				oPromise.fail(function(error) {
+					oServer.restore();
+					assert.ok(false, "Should not run into fail branch. Error" + error);
+				});
+
+				oServer.requests[0].respond(200, {
+					"Content-Type": "application/json",
+					"Content-Length": 13,
+					"X-CSRF-Token": "0987654321"
+				}, '{ "d": {"results":[{"BusinessContext":"CFD_TSM_BUPA_ADR", "BusinessContextDescription":"Description for CFD_TSM_BUPA_ADR"}, { "BusinessContext":"CFD_TSM_BUPA", "BusinessContextDescription":"Description for CFD_TSM_BUPA" }] }}');
 
 			} catch (e) {
 				oServer.restore();

@@ -1000,7 +1000,7 @@ sap.ui.define([
 		},
 		beforeEach : function(assert) {
 			this.STUB_EXTENSIBILITY_BUSINESS_CTXT = {
-				BusinessContexts : ["some context"],
+				BusinessContexts : [{ BusinessContext: "some context", BusinessContextDescription: "some description" } ], //BusinessContext API returns this structure
 				ServiceName : "servive name",
 				ServiceVersion : "some dummy ServiceVersion",
 				EntityType : "Header"
@@ -1011,7 +1011,7 @@ sap.ui.define([
 					action : "develop"
 				},
 				params : {
-					businessContexts : ["some context"],
+					businessContexts : ["some context"], //Custom Field App expects list of strings
 					serviceName : "servive name",
 					serviceVersion : "some dummy ServiceVersion",
 					entityType : "Header"
