@@ -15,9 +15,10 @@
 	<script>
 		var oShell = new sap.ui.unified.Shell({
 			icon: sLogo,
-			headerHiding: true,
+			headerHiding: false,
 			search: createTestSearchField("sf", function(oEvent){
-					oOverlay.open();
+				oSearchField.setValue(oEvent.getParameter("query"));
+				oOverlay.open();
 			}),
 			content: [new sap.m.Text({text: window.sLorem})],
 			headItems: [new sap.ui.unified.ShellHeadItem({
