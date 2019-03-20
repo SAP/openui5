@@ -3,18 +3,19 @@
 sap.ui.define([
 	'sap/m/Button',
 	'sap/m/Page',
-	'sap/f/DynamicPageTitle',
+	'sap/m/QuickViewPage',
 	'sap/ui/core/util/reflection/JsControlTreeModifier',
 	"sap/ui/core/StashedControlSupport",
 	"sap/ui/core/UIComponent",
 	"sap/ui/model/json/JSONModel",
 	"sap/ui/core/CustomData",
-	"sap/ui/thirdparty/sinon-4"
+	"sap/ui/thirdparty/sinon-4",
+	'sap/f/DynamicPageTitle' //used implicitly
 ],
 function(
 	Button,
 	Page,
-	DynamicPageTitle,
+	QuickViewPage,
 	JsControlTreeModifier,
 	StashedControlSupport,
 	UIComponent,
@@ -268,7 +269,6 @@ function(
 
 	QUnit.module("Given the JsControlTreeModifier...", {
 		beforeEach: function () {
-			sap.ui.loader.config({paths:{"sap/ui/test":"../../component/testdata"}});
 			this.oComponent = sap.ui.getCore().createComponent({
 				name: "sap.ui.test.other",
 				id: "testComponent"
@@ -389,6 +389,23 @@ function(
 			assert.ok(oUnstashedControl instanceof Button, "then the returned control is the unstashed control");
 			assert.ok(JsControlTreeModifier.setVisible.calledWith(oUnstashedControl, true), "then JsControlTreeModifier setVisible() called for the unstashed control");
 			oUnstashedControl.destroy();
+		});
+
+		QUnit.test("when getProperty is called for a property of type object", function(assert) {
+			this.oControl = new QuickViewPage();
+			var oSomeObject = new Button();
+			this.oControl.addDependent(oSomeObject); //for later cleanup
+
+			var mData = { key : "value"};
+			JsControlTreeModifier.setProperty(this.oControl, "crossAppNavCallback", mData);
+			assert.deepEqual(this.oControl.getCrossAppNavCallback(), mData, "then serializable data can be passed");
+
+			assert.throws(function(){
+				JsControlTreeModifier.setProperty(this.oControl, "crossAppNavCallback", oSomeObject);
+			},
+			/TypeError/,
+			"then passing non JSON data will throw a message");
+
 		});
 	});
 

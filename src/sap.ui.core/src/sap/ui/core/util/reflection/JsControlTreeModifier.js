@@ -111,6 +111,10 @@ sap.ui.define([
 			this.unbindProperty(oControl, sPropertyName);
 
 			if (oMetadata) {
+				if (oMetadata.type === "object"){
+					//For compatibility with XMLTreeModifier only pass serializable data to properties of type object
+					JSON.stringify(oPropertyValue);
+				}
 				var sPropertySetter = oMetadata._sMutator;
 				oControl[sPropertySetter](oPropertyValue);
 			}
