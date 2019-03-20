@@ -152,8 +152,6 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control', 'sap/ui/
 		//if bScrollToEndIsActive === true, than tokenizer will keep last token visible
 		this._bScrollToEndIsActive = false;
 
-		this.bAllowTextSelection = false;
-
 		this._aTokenValidators = [];
 
 		this._oScroller = new ScrollEnablement(this, this.getId() + "-scrollContainer", {
