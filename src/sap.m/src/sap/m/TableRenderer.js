@@ -189,6 +189,7 @@ sap.ui.define([
 
 					if (align) {
 						rm.addStyle("justify-content", TableRenderer.columnAlign[align]);
+						rm.addStyle("text-align", align);
 					}
 
 					rm.writeClasses();
