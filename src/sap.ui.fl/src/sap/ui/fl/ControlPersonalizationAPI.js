@@ -418,7 +418,15 @@ sap.ui.define([
 				Utils.log.error(sErrorMessage);
 				return Promise.reject(sErrorMessage);
 			}
-			return FlexControllerFactory.createForControl(oManagedObject)._oChangePersistence.saveSequenceOfDirtyChanges(aChanges);
+			var mParameters = ControlPersonalizationAPI._determineParameters(oManagedObject);
+			var aVariantManagementReferences = Object.keys(mParameters.variantManagement).reduce(function (aReferences, sVariantForAssociationId) {
+				return aReferences.concat([mParameters.variantManagement[sVariantForAssociationId]]);
+			}, []);
+			return mParameters.flexController.saveSequenceOfDirtyChanges(aChanges)
+				.then(function(oResponse) {
+					mParameters.variantModel.checkDirtyStateForControlModels(aVariantManagementReferences);
+					return oResponse;
+				});
 		},
 
 		/**

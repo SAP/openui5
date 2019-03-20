@@ -77,10 +77,12 @@ sap.ui.define([
 						}
 					]
 				}
-			}, {});
+			}, { _oChangePersistence: { _oVariantController: {} } });
 
 			sinon.stub(oModel, "updateCurrentVariant").returns(Promise.resolve());
-
+			// to suppress "manage" event listener in VariantModel
+			sinon.stub(oModel, "_initializeManageVariantsEvents");
+			oModel.fnManageClick = function() {};
 		},
 		afterEach: function() {
 			this.oVariantManagement.destroy();

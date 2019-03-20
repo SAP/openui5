@@ -288,7 +288,7 @@ sap.ui.define([
 		if (oChange.getVariantReference()) {
 			// variant model is always associated with the app component
 			var oModel = oAppComponent.getModel("$FlexVariants");
-			oModel._addChange(oChange);
+			oModel.addChange(oChange);
 		}
 
 		this._oChangePersistence.addChange(oChange, oAppComponent);
@@ -312,7 +312,7 @@ sap.ui.define([
 	FlexController.prototype.deleteChange = function (oChange, oAppComponent) {
 		this._oChangePersistence.deleteChange(oChange);
 		if (oChange.getVariantReference()) {
-			oAppComponent.getModel("$FlexVariants")._removeChange(oChange);
+			oAppComponent.getModel("$FlexVariants").removeChange(oChange);
 		}
 	};
 
@@ -1311,6 +1311,16 @@ sap.ui.define([
 				return this._processDependentQueue(mDependencies, mDependentChangesOnMe, oAppComponent);
 			}
 		}.bind(this));
+	};
+
+	/**
+	 * Saves changes sequentially on the associated change persistence instance
+	 * @param {sap.ui.fl.Change[]} Array of dirty changes to be saved
+	 * @returns {Promise} A Promise which resolves when all changes have been saved
+	 * @public
+	 */
+	FlexController.prototype.saveSequenceOfDirtyChanges = function (aDirtyChanges) {
+		return this._oChangePersistence.saveSequenceOfDirtyChanges(aDirtyChanges);
 	};
 
 	return FlexController;
