@@ -9,7 +9,7 @@
 		class="sapUiContentPadding"
 		width="100%">
 		<Label text="Enter a search term, e.g. “Notebook”, and add matching products as tokens" width="100%" labelFor="multiInput"/>
-		<MultiInput width="500px"
+		<MultiInput width="70%"
 			id="multiInput"
 			suggestionItems="{
 				path: '/ProductCollection',
@@ -19,6 +19,6 @@
 			<core:Item key="{ProductId}" text="{Name}" />
 		</MultiInput>
 		<Label text="MultiInput with pre-selected tokens" labelFor="multiInput1"/>
-		<MultiInput id="multiInput2" width="100%" showValueHelp="false"/>
+		<MultiInput id="multiInput2" width="70%" showValueHelp="false"/>
 	</l:VerticalLayout>
 </mvc:View>
