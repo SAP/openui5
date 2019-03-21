@@ -150,11 +150,24 @@ sap.ui.define([
 		},
 
 		applySettings: function(oControl, mSettings) {
-			var oValue;
+			var oMetadata = this._getControlMetadata(oControl);
+			var mMetadata = oMetadata.getJSONKeys();
 			Object.keys(mSettings).forEach(function(sKey) {
-				oValue = mSettings[sKey];
-				oControl.setAttribute(sKey, oValue);
-			});
+				var oKeyInfo = mMetadata[sKey];
+				var vValue = mSettings[sKey];
+				switch (oKeyInfo._iKind) {
+					case 0: // PROPERTY
+						this.setProperty(oControl, sKey, vValue);
+						break;
+					// case 1: // SINGLE_AGGREGATION
+					// 	this.insertAggregation(oControl, sKey, vValue);
+					case 3: // SINGLE_ASSOCIATION
+						this.setAssociation(oControl, sKey, vValue);
+						break;
+					default:
+						throw new Error("Unsupported in applySettings on XMLTreeModifier: " + sKey);
+				}
+			}.bind(this));
 		},
 
 		/**
@@ -199,6 +212,34 @@ sap.ui.define([
 
 		getControlType: function (oControl) {
 			return this._getControlTypeInXml(oControl);
+		},
+
+		/**
+		* @param {Element}
+		*          vParent The control which has the association
+		* @param {string}
+		*          sName Association name
+		* @param {string | Element}
+		*          sId the ID of the managed object that is set as an association, or the XML node itself or null
+		* @public
+		*/
+		setAssociation: function (vParent, sName, sId) {
+			if (typeof sId !== "string"){
+				sId = this.getId(sId);
+			}
+			vParent.setAttribute(sName, sId);
+		},
+		/**
+		* @param {Element}
+		*          vParent The control which has the association
+		* @param {string}
+		*          sName Association name
+		*
+		* @returns {string | string[]} the ID of the associated managed object or an array of such IDs; may be null if the association has not been populated
+		* @public
+		*/
+		getAssociation: function (vParent, sName) {
+			return vParent.getAttribute(sName);
 		},
 
 		getAllAggregations: function (oControl) {
