@@ -470,6 +470,12 @@ sap.ui.define(function () {
 			"designtime/appVariant/ChangeModifier": {
 				group: "designTime"
 			},
+			"designtime/appVariant/ModuleModifier": {
+				group: "designTime"
+			},
+			"designtime/appVariant/ModifierUtils": {
+				group: "designTime"
+			},
 			"designtime/appVariant/AppVariantUtils": {
 				group: "designTime"
 			},

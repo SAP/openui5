@@ -35,7 +35,7 @@ sap.ui.define([
 		var oNewAppVariantManifest;
 		var oNewAppVariantManifestCopy;
 
-		QUnit.module("tests app variant creation", {
+		QUnit.module("AppVariantModifier", {
 			beforeEach: function () {
 				oNewAppVariantManifest = {
 					reference: "descriptor.test",
@@ -124,7 +124,7 @@ sap.ui.define([
 				"layer": "VENDOR"
 			};
 
-			QUnit.test("should ignore flex changes", function (assert) {
+			QUnit.test("does ignore flex changes", function (assert) {
 				var aFiles = [
 					{
 						fileName: "/changes/id_123_addField.change",
@@ -142,7 +142,7 @@ sap.ui.define([
 
 			});
 
-			QUnit.test("should convert descriptor changes into inline changes and place them before new app variant changes", function (assert) {
+			QUnit.test("does convert descriptor changes into inline changes and place them before new app variant changes", function (assert) {
 				var aFiles = [
 					{
 						fileName: "/changes/id_123_addField.change",
@@ -168,7 +168,7 @@ sap.ui.define([
 				assert.equal(aFilteredFiles[1].fileName, "/manifest.appdescr_variant",  "app variant should be the same");
 			});
 
-			QUnit.test("should convert descriptor changes into inline changes and sort them according to their timestamp", function (assert) {
+			QUnit.test("does convert descriptor changes into inline changes and sort them according to their timestamp", function (assert) {
 
 				var aFiles = [
 					{
@@ -205,7 +205,7 @@ sap.ui.define([
 				assert.equal(aFilteredFiles[1].fileName, "/manifest.appdescr_variant",  "app variant should be the same");
 			});
 
-			QUnit.test("should place inline changes of old app variant before all other changes", function (assert) {
+			QUnit.test("does place inline changes of old app variant before all other changes", function (assert) {
 				// reset to original value, Qunit test effects output
 				oNewAppVariantManifest.content = [oDescriptorChangeContent1, wizardChangeContent1];
 				var aFiles = [
@@ -242,7 +242,7 @@ sap.ui.define([
 
 			});
 
-			QUnit.test("should condense condensable changes", function (assert) {
+			QUnit.test("does condense condensable changes", function (assert) {
 				var aFiles = [
 					{
 						fileName: "/descriptorChanges/descriptor.test.appvar_addTitle.change",
@@ -268,7 +268,7 @@ sap.ui.define([
 
 			});
 
-			QUnit.test("should keep uncondensable changes", function (assert) {
+			QUnit.test("does keep uncondensable changes", function (assert) {
 				var aFiles = [
 					{
 						fileName: "/descriptorChanges/descriptor.test.appvar_changeInbound.change",
@@ -295,7 +295,7 @@ sap.ui.define([
 
 			});
 
-			QUnit.test("should copy and condense all changes ", function (assert) {
+			QUnit.test("does copy and condense all changes ", function (assert) {
 				var aFiles = [
 					{
 						fileName: "/changes/id_123_addField.change",

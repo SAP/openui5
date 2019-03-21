@@ -9,13 +9,11 @@ sap.ui.define([
 	function (sinon, ChangeModifier) {
 		"use strict";
 
+		var sandbox = sinon.sandbox.create();
 
 		QUnit.module("file filtering", {
-			beforeEach: function () {
-				this.sandbox = sinon.sandbox.create();
-			},
 			afterEach: function () {
-				this.sandbox.restore();
+				sandbox.restore();
 			}
 		}, function() {
 			QUnit.test("does modify change files in the '/changes/' folder", function (assert) {
@@ -36,7 +34,7 @@ sap.ui.define([
 					content: "{}"
 				}];
 
-				var modifyChangeFileStub = this.sandbox.stub(ChangeModifier, "_modifyChangeFile");
+				var modifyChangeFileStub = sandbox.stub(ChangeModifier, "_modifyChangeFile");
 
 				ChangeModifier.modify("", "", true, aFiles);
 
@@ -63,7 +61,7 @@ sap.ui.define([
 					content: "<>"
 				}];
 
-				var modifyChangeFileStub = this.sandbox.stub(ChangeModifier, "_modifyChangeFile");
+				var modifyChangeFileStub = sandbox.stub(ChangeModifier, "_modifyChangeFile");
 
 				ChangeModifier.modify("", "", true, aFiles);
 
@@ -75,7 +73,6 @@ sap.ui.define([
 
 		QUnit.module("file modification", {
 			beforeEach: function () {
-				this.sandbox = sinon.sandbox.create();
 				this.oChange = {
 					"fileName": "id_1550588173383_10_changeLabel",
 					"fileType": "change",
@@ -116,10 +113,10 @@ sap.ui.define([
 				};
 			},
 			afterEach: function () {
-				this.sandbox.restore();
+				sandbox.restore();
 			}
 		}, function() {
-			QUnit.test("modifies a single change correctly", function (assert) {
+			QUnit.test("does modify a single change correctly", function (assert) {
 				var sNewReference = "newReference";
 				var sNewVersion = "new.version";
 				var sChangeFileContent = JSON.stringify(this.oChange);
@@ -139,7 +136,7 @@ sap.ui.define([
 				assert.equal(oModifiedChange.namespace, "apps/sap.test/appVariants/" + sNewReference + "/changes/", "the namespace is set correctly");
 			});
 
-			QUnit.test("sets the 'validAppVersion.to' parameter in case of a version dependent app variant", function (assert) {
+			QUnit.test("does set the 'validAppVersion.to' parameter in case of a version dependent app variant", function (assert) {
 				var sNewReference = "newReference";
 				var sNewVersion = "new.version";
 				var sChangeFileContent = JSON.stringify(this.oChange);

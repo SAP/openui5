@@ -2,55 +2,40 @@
  * ! ${copyright}
  */
 
-sap.ui.define(["sap/ui/fl/Utils"], function(
-	Utils
-) {
+sap.ui.define([
+	"sap/ui/fl/Utils",
+	"sap/ui/fl/designtime/appVariant/ModifierUtils"
+], function(Utils, ModifierUtils) {
 	"use strict";
 
 	var ChangeModifier = {};
+
+	ChangeModifier.CHANGE_PATTERN = {
+		NAMESPACE: "/changes/",
+		FILETYPE: ".change"
+	};
 
 	/** Modifier function to loop over all entities passed and adjust UI changes.
 	 *
 	 * @param {string} sNewReference New reference for which the changes should be valid
 	 * @param {string} sNewVersion New version in which the changes should be valid
 	 * @param {sap.ui.fl.Scenario} sScenario Scenario in which the changes must be adjusted
-	 * @param {map[]} mFiles
-	 * @param {String} mFiles.fileName Complete file name with name space, file name and file type
-	 * @param {string} mFiles.content File content as string
-	 * @returns {map[]} adjusted mFiles map
+	 * @param {map[]} aFiles contains mFiles
+	 * @param {string} mFile.fileName Complete file name with name space, file name and file type
+	 * @param {string} mFile.content File content as string
+	 * @returns {map[]} adjusted aFiles map
 	 */
-	ChangeModifier.modify = function (sNewReference, sNewVersion, sScenario, mFiles) {
-		return mFiles.map(function (oFile) {
-			if (ChangeModifier._isTargetedUiChange(oFile.fileName)) {
-				oFile.content = ChangeModifier._modifyChangeFile(oFile.content, sNewReference, sNewVersion, sScenario);
+	ChangeModifier.modify = function (sNewReference, sNewVersion, sScenario, aFiles) {
+		return aFiles.map(function (mFile) {
+			if (ModifierUtils.fileNameMatchesPattern(mFile.fileName, ChangeModifier.CHANGE_PATTERN)) {
+				mFile.content = ChangeModifier._modifyChangeFile(mFile.content, sNewReference, sNewVersion, sScenario);
 			}
 
-			return oFile;
+			return mFile;
 		});
 	};
 
 	var _rChangeFolderPattern = new RegExp( "(apps/[^/]*/).*/", "g" );
-
-	/** Check that the file name matches the UI changes file name pattern: "/changes/<changeFileName>.change".
-	 *
-	 * @param {string} sFileName Complete file name with namespace, file name and file type
-	 * @returns {boolean} True if the file name pattern matches the convention
-	 * @private
-	 */
-	ChangeModifier._isTargetedUiChange = function (sFileName) {
-		var sChangesPrefix = "/changes/";
-		var sChangeFileType = ".change";
-		if (sFileName.startsWith(sChangesPrefix) && sFileName.endsWith(sChangeFileType)) {
-			// removal the start of the namespace "/changes/"
-			sFileName = sFileName.replace(new RegExp("^" + sChangesPrefix), "");
-			// removal the ending of the namespace ".change"
-			sFileName = sFileName.replace(new RegExp(sChangeFileType + "$"), "");
-			// no sub-folder is in the namespace mentioned
-			return sFileName.indexOf("/") === -1;
-		}
-
-		return false;
-	};
 
 	/** Adjusts all fields within a single change file.
 	 *
@@ -88,7 +73,8 @@ sap.ui.define(["sap/ui/fl/Utils"], function(
 	 *  The result will have the following pattern:
 	 *  - apps/<base app descriptor>/appVariants/<newReference>/changes/<fileName>.change
 	 *
-	 * @param sNamespace Filename which should be adjusted
+	 * @param {string} sNamespace Filename which should be adjusted
+	 * @param {string} sNewReference New reference for which the changes should be valid
 	 * @returns {string} Adjusted file name
 	 * @private
 	 */

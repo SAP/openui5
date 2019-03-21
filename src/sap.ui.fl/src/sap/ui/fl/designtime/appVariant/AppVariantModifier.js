@@ -4,11 +4,17 @@
 
 sap.ui.define([
 	"sap/ui/fl/descriptorRelated/api/DescriptorInlineChangeFactory",
+	"sap/ui/fl/designtime/appVariant/ModifierUtils",
 	"sap/base/util/includes"
-], function (DescriptorInlineChangeFactory, fnIncludes) {
+], function (DescriptorInlineChangeFactory, ModifierUtils, fnIncludes) {
 	"use strict";
 
 	var AppVariantModifier = {};
+
+	AppVariantModifier.DESCRIPTOR_CHANGE_PATTERN = {
+		NAMESPACE: "/descriptorChanges/",
+		FILETYPE: ".change"
+	};
 
 	var _aCondesableChangeTypes = DescriptorInlineChangeFactory.getCondensableDescriptorChangeTypes();
 
@@ -36,12 +42,12 @@ sap.ui.define([
 	AppVariantModifier.modify = function (oNewAppVariantManifest, aFiles) {
 		// aFiles could be empty if the basis app has no UI flex, no descriptor changes and if it has no app variant
 		if (aFiles.length !== 0) {
-			var oSeparatedFiles = AppVariantModifier._separateDescriptorAndManifestChangesFromOtherFiles(aFiles);
-			var aRelevantChanges = oSeparatedFiles.manifestChanges
+			var oSeparatedFiles = AppVariantModifier._separateDescriptorAndInlineChangesFromOtherFiles(aFiles);
+			var aRelevantChanges = oSeparatedFiles.inlineChanges
 									.concat(oSeparatedFiles.descriptorChanges.sort(sortByTimeStamp))
 									.concat(oNewAppVariantManifest.content);
 			oNewAppVariantManifest.content = AppVariantModifier._condenseDescriptorChanges(aRelevantChanges);
-			aFiles = oSeparatedFiles.noChangeFiles;
+			aFiles = oSeparatedFiles.otherFiles;
 		}
 
 		aFiles.push({ fileName: APPVARIANTFILENAME, content: JSON.stringify(oNewAppVariantManifest) });
@@ -51,31 +57,30 @@ sap.ui.define([
 	/**
 	 * Separates descriptor from non-descriptor file changes;
 	 * @param {map[]} aFiles Files provided for the app variant creation
-	 * @returns {Object} Object containing two properties; an array of descriptor changes and an array of filtered files
+	 * @returns {Object} Object containing three properties; an array of descriptor changes, an array of app variant inline changes and an array of other files
 	 * @private
 	 */
-	AppVariantModifier._separateDescriptorAndManifestChangesFromOtherFiles = function (aFiles) {
-		var aDescriptorChangesContent = [];
-		var oManifestChangeContent = [];
+	AppVariantModifier._separateDescriptorAndInlineChangesFromOtherFiles = function (aFiles) {
+		var aDescriptorChanges = [];
+		var aInlineChanges = [];
 		var aOtherFiles = [];
 
-		aFiles.forEach(function (oFile) {
-
-			if (oFile.fileName.startsWith("/descriptorChanges")) {
-				var oChangeContent = JSON.parse(oFile.content);
-				aDescriptorChangesContent.push(oChangeContent);
-			} else if (oFile.fileName === APPVARIANTFILENAME) {
-				var oManifestContent = JSON.parse(oFile.content);
-				oManifestChangeContent = oManifestContent.content;
+		aFiles.forEach(function (mFile) {
+			if (ModifierUtils.fileNameMatchesPattern(mFile.fileName, AppVariantModifier.DESCRIPTOR_CHANGE_PATTERN)) {
+				var oDescriptorChange = JSON.parse(mFile.content);
+				aDescriptorChanges.push(oDescriptorChange);
+			} else if (mFile.fileName === APPVARIANTFILENAME) {
+				var oOldAppVariant = JSON.parse(mFile.content);
+				aInlineChanges = oOldAppVariant.content;
 			} else {
-				aOtherFiles.push(oFile);
+				aOtherFiles.push(mFile);
 			}
 		});
 
 		return {
-				 descriptorChanges: aDescriptorChangesContent,
-				 manifestChanges: oManifestChangeContent,
-				 noChangeFiles: aOtherFiles
+				 descriptorChanges: aDescriptorChanges,
+				 inlineChanges: aInlineChanges,
+				 otherFiles: aOtherFiles
 				};
 	};
 
