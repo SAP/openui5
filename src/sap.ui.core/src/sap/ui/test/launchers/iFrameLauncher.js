@@ -13,6 +13,10 @@ sap.ui.define([
 
 	/*global CollectGarbage */
 
+	// after CSS transform - scale down by 0.6: width=768, height=614.4
+	var DEFAULT_WIDTH = 1280;
+	var DEFAULT_HEIGHT = 1024;
+
 	var oFrameWindow = null,
 		$Frame = null,
 		oFramePlugin = null,
@@ -37,16 +41,18 @@ sap.ui.define([
 	}
 
 	function setFrameSize(sWidth, sHeight) {
-		// by default the frame is scaled down from 100% of the page in both dimensions
+		// by default the frame is scaled down to 60% of a fixed page size: 1280x1024
 		// user-defined dimensions should not be scaled
 		if (sWidth) {
 			$Frame.css("width", sWidth);
 		} else {
+			$Frame.css("width", DEFAULT_WIDTH);
 			$Frame.addClass("default-scale-x");
 		}
 		if (sHeight) {
 			$Frame.css("height", sHeight);
 		} else {
+			$Frame.css("height", DEFAULT_HEIGHT);
 			$Frame.addClass("default-scale-y");
 		}
 		if (!sWidth && !sHeight) {
