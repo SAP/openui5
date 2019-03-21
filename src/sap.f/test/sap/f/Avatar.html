@@ -47,14 +47,14 @@
 					displayShape: "Square",
 					imageFitType: "Cover",
 					press: onAvatarPress
-				}).addStyleClass("sapUiTinyMarginBegin sapUiTinyMarginEnd"),
+				}).addStyleClass("sapUiTinyMarginBegin sapUiTinyMarginEnd sapUiTinyMarginTop"),
 				new sap.f.Avatar("imageXLSquareContain", {
 					src: "images/Lamp_avatar_01.jpg",
 					displaySize: "XL",
 					displayShape: "Square",
 					imageFitType: "Contain",
 					press: onAvatarPress
-				}).addStyleClass("sapUiTinyMarginEnd"),
+				}).addStyleClass("sapUiTinyMarginBegin sapUiTinyMarginEnd sapUiTinyMarginTop"),
 				new sap.f.Avatar("initialsCustomAvatar", {
 					initials: "BP",
 					displaySize: "Custom",
@@ -70,7 +70,7 @@
 							title: "LightBox example"
 						})
 					})
-				})
+				}).addStyleClass("sapUiTinyMarginBegin")
 			]
 		});
 
