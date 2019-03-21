@@ -384,7 +384,7 @@
 					oSPC = new SinglePlanningCalendar("SinglePlanningCalendar", {
 						title: "SinglePlanningCalendar",
 						startDate: new Date(2018, 6, 9),
-						views: [oDayView, oWorkWeekView, oWeekView],
+						views: [oDayView, oWorkWeekView,oWeekView],
 						actions: [
 							new Button("overrideTime", {
 								text: "Override current time",
@@ -430,6 +430,7 @@
 						enableAppointmentsDragAndDrop: true,
 						enableAppointmentsResize: true,
 						legend: oLegend,
+						enableAppointmentsCreate: true,
 						appointmentDrop: function (oEvent) {
 							var oAppointment = oEvent.getParameter("appointment"),
 									oStartDate = oEvent.getParameter("startDate"),
@@ -456,6 +457,24 @@
 							sap.m.MessageToast.show("Appointment with title \n'"
 								+ sAppointmentTitle
 								+ "'\n has been resized"
+							);
+						},
+						appointmentCreate: function(oEvent) {
+							var oStartDate = oEvent.getParameter("startDate"),
+								oEndDate = oEvent.getParameter("endDate"),
+								sAppointmentTitle = "New Appointment";
+
+							var oAppointment = new sap.ui.unified.CalendarAppointment({
+								title: sAppointmentTitle,
+								startDate: oStartDate,
+								endDate: oEndDate
+							});
+
+							oSPC.addAppointment(oAppointment);
+
+							sap.m.MessageToast.show("Appointment with title \n'"
+									+ sAppointmentTitle
+									+ "'\n has been created"
 							);
 						},
 						headerDateSelect: function (oEvent) {

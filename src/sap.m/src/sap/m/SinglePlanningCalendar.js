@@ -147,7 +147,16 @@ function(
 			 *
 			 * @since 1.65
 			 */
-			enableAppointmentsResize: { type: "boolean", group: "Misc", defaultValue: false }
+			enableAppointmentsResize: { type: "boolean", group: "Misc", defaultValue: false },
+
+			/**
+			 * Determines whether the appointments can be created by dragging on empty cells.
+			 *
+			 * See {@link #property:enableAppointmentsResize enableAppointmentsResize} for the specific points for events snapping
+			 *
+			 * @since 1.65
+			 */
+			enableAppointmentsCreate: { type: "boolean", group: "Misc", defaultValue: false }
 		},
 
 		aggregations : {
@@ -286,6 +295,24 @@ function(
 					 * End date of the resized appointment, as a JavaScript date object.
 					 */
 					endDate: { type: "object" }
+				}
+			},
+
+			/**
+			 * Fired if an appointment is created.
+			 * @since 1.65
+			 */
+			appointmentCreate: {
+				parameters: {
+					/**
+					 * Start date of the created appointment, as a JavaScript date object.
+					 */
+					startDate: {type: "object"},
+
+					/**
+					 * End date of the created appointment, as a JavaScript date object.
+					 */
+					endDate: {type: "object"}
 				}
 			},
 
@@ -435,6 +462,12 @@ function(
 		this._getGrid().setEnableAppointmentsResize(bEnabled);
 
 		return this.setProperty("enableAppointmentsResize", bEnabled, true);
+	};
+
+	SinglePlanningCalendar.prototype.setEnableAppointmentsCreate = function(bEnabled) {
+		this._getGrid().setEnableAppointmentsCreate(bEnabled);
+
+		return this.setProperty("enableAppointmentsCreate", bEnabled, true);
 	};
 
 	/**
@@ -764,6 +797,13 @@ function(
 		oGrid.attachEvent("appointmentResize", function(oEvent) {
 			this.fireAppointmentResize({
 				appointment: oEvent.getParameter("appointment"),
+				startDate: oEvent.getParameter("startDate"),
+				endDate: oEvent.getParameter("endDate")
+			});
+		}, this);
+
+		oGrid.attachEvent("appointmentCreate", function(oEvent) {
+			this.fireAppointmentCreate({
 				startDate: oEvent.getParameter("startDate"),
 				endDate: oEvent.getParameter("endDate")
 			});
