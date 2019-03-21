@@ -927,7 +927,9 @@ sap.ui.define([
 	};
 
 	/**
-	 * Reset changes on the server.
+	 * Reset changes on the server
+	 * If the reset is performed for an entire component, a browser reload is required.
+	 * If the reset is performed for a control, this function also triggers a reversion of deleted UI changes.
 	 *
 	 * @param {string} sLayer - Layer for which changes shall be deleted
 	 * @param {string} [sGenerator] - Generator of changes (optional)
@@ -939,7 +941,12 @@ sap.ui.define([
 	 */
 	FlexController.prototype.resetChanges = function (sLayer, sGenerator, oComponent, aSelectorIds, aChangeTypes) {
 		return this._oChangePersistence.resetChanges(sLayer, sGenerator, aSelectorIds, aChangeTypes)
-			.then( function(oResponse) {
+			.then(function(aChanges) {
+				if (aChanges.length !== 0) {
+					return this.revertChangesOnControl(aChanges, oComponent);
+				}
+			}.bind(this))
+			.then( function() {
 				if (oComponent) {
 					var oModel = oComponent.getModel("$FlexVariants");
 					if (oModel) {

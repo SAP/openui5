@@ -293,6 +293,18 @@ sap.ui.define([
 	};
 
 	/**
+	 * Returns the file name
+	 *
+	 * @returns {String} fileName of the file
+	 * @public
+	 */
+	Change.prototype.getFileName = function () {
+		if (this._oDefinition) {
+			return this._oDefinition.fileName;
+		}
+	};
+
+	/**
 	 * Returns the file type
 	 *
 	 * @returns {String} fileType of the file

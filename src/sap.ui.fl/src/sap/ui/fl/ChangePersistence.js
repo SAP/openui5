@@ -1255,15 +1255,30 @@ sap.ui.define([
 	};
 
 	/**
+	 * Collect changes from the internal map by names
+	 *
+	 * @param {string[]} aNames Names of changes
+	 * @returns {sap.ui.fl.Change[]} aChanges Array of changes with corresponding names
+	 * @private
+	 */
+	ChangePersistence.prototype._getChangesFromMapByNames = function (aNames) {
+		return this._mChanges.aChanges.filter(function(oChange) {
+			return aNames.indexOf(oChange.getFileName()) !== -1;
+		});
+	};
+
+	/**
 	 * Reset changes on the server. Specification of a generator, selector string or change type string is optional
 	 * but at least one of these parameters has to be filled.
+	 * This function returns an array of changes which need to be reverted from UI. When neither a selector nor a change type is provided,
+	 * an empty array is returned (this triggers a reset of the changes for an entire application component and reloads it).
 	 *
-	 * @param {string} sLayer - Layer for which changes shall be deleted
-	 * @param {string} [sGenerator] - Generator of changes (optional)
-	 * @param {string[]} [aSelectorIds] - Selector IDs in local format (optional)
-	 * @param {string[]} [aChangeTypes] - Types of changes (optional)
+	 * @param {string} sLayer Layer for which changes shall be deleted
+	 * @param {string} [sGenerator] Generator of changes (optional)
+	 * @param {string[]} [aSelectorIds] Selector IDs in local format (optional)
+	 * @param {string[]} [aChangeTypes] Types of changes (optional)
 	 *
-	 * @returns {Promise} promise that resolves with an array of content IDs of deleted changes in the response
+	 * @returns {Promise} Promise that resolves with an array of changes which need to be reverted from UI
 	 */
 	ChangePersistence.prototype.resetChanges = function (sLayer, sGenerator, aSelectorIds, aChangeTypes) {
 
@@ -1325,6 +1340,21 @@ sap.ui.define([
 			}
 
 			return this._oConnector.resetChanges(mParams);
+		}.bind(this))
+		.then(function(oResponse){
+			var aChangesToRevert = [];
+			//If reset changes for control, returns an array of deleted changes for reverting
+			if (aSelectorIds || aChangeTypes) {
+				var aNames = [];
+				if (oResponse && oResponse.response && oResponse.response.length > 0) {
+					oResponse.response.forEach(function (oChangeContentId) {
+						aNames.push(oChangeContentId.name);
+					});
+				}
+				Cache.removeChanges(this._mComponent, aNames);
+				aChangesToRevert =  this._getChangesFromMapByNames(aNames);
+			}
+			return aChangesToRevert;
 		}.bind(this));
 	};
 	return ChangePersistence;
