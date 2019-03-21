@@ -2627,11 +2627,10 @@ function (
 			var $titleDescription = oObjectPage.getHeaderTitle().$().find('.sapUxAPObjectPageHeaderIdentifierDescription').get(0);
 			$titleDescription.innerText = sShortText;
 
-			setTimeout(function() {
-				assert.strictEqual(layoutCalcSpy.callCount, 1, "layout recalculations called");
-				assert.strictEqual(headerCalcSpy.callCount, 1, "header height recalculation called");
-				done();
-			}, 100);
+			oObjectPage.getHeaderTitle()._onHeaderResize({ size: { width: "800px", height: "800px"}});
+			assert.strictEqual(layoutCalcSpy.callCount, 1, "layout recalculations called once");
+			assert.strictEqual(headerCalcSpy.callCount, 1, "header height recalculation called");
+			done();
 		});
 
 		helpers.renderObject(this.oObjectPage);
