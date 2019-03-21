@@ -303,7 +303,6 @@ sap.ui.define([
 	 *
 	 * @param {map} mAnnotations The new annotations that should be merged into the ones in this instance
 	 * @param {boolean} [bSuppressEvents] if set to true, the "loaded"-event is not fired
-	 * @returns {void}
 	 */
 	ODataAnnotations.prototype._mergeAnnotationData = function(mAnnotations, bSuppressEvents) {
 		if (!this.oAnnotations) {
