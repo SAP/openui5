@@ -131,26 +131,37 @@ function (
 
 		QUnit.test("Enable / Disable Button when the property is bound", function(assert) {
 			var oModel = new JSONModel();
-			oModel.setData({ mData: { enabled: false, visible: false, text: "Title 1" }});
+			oModel.setData({
+				mData: {
+					enabled: false,
+					visible: false,
+					text: "Title 1",
+					icon: "sap-icon://accept"
+				}
+			});
 
 			// Step 1: set defaults
 			this.oButton1.setEnabled(true);
 			this.oButton1.setVisible(true);
 			this.oButton1.setText("initial");
+			this.oButton1.setIcon("sap-icon://add");
 
 			assert.strictEqual(this.oButton1.getEnabled(), true, "then the initial value of the `enabled` property of the original button is correct");
 			assert.strictEqual(this.oButton1.getVisible(), true, "then the initial value of the `visible` property of the original button is correct");
 			assert.strictEqual(this.oButton1.getText(), "initial", "then the initial value of the `text` property of the original button is correct");
+			assert.strictEqual(this.oButton1.getIcon(), "sap-icon://add", "then the initial value of the `icon` property of the original button is correct");
 
 			// Step 2: assign custom model
 			this.oButton1.setModel(oModel);
 			this.oButton1.bindProperty("enabled", "/mData/enabled");
 			this.oButton1.bindProperty("visible", "/mData/visible");
 			this.oButton1.bindProperty("text", "/mData/text");
+			this.oButton1.bindProperty("icon", "/mData/icon");
 
 			assert.strictEqual(this.oButton1.getEnabled(), false, "then the value of the `enabled` property of the original button is taken from the Model");
 			assert.strictEqual(this.oButton1.getVisible(), false, "then the value of the `visible` property of the original button is taken from the Model");
 			assert.strictEqual(this.oButton1.getText(), "Title 1", "then the value of the `text` property of the original button is taken from the Model");
+			assert.strictEqual(this.oButton1.getIcon(), "sap-icon://accept", "then the value of the `icon` property of the original button is taken from the Model");
 
 			// Step 3: apply change (combine buttons)
 			CombineButtons.completeChangeContent(
@@ -179,18 +190,21 @@ function (
 			assert.strictEqual(oFirstMenuItem.getEnabled(), false, "then the value of the `enabled` property of the MenuItem button is taken from the original button");
 			assert.strictEqual(oFirstMenuItem.getVisible(), false, "then the value of the `visible` property of the MenuItem button is taken from the original button");
 			assert.strictEqual(oFirstMenuItem.getText(), "Title 1", "then the value of the `text` property of the MenuItem button is taken from the original button");
+			assert.strictEqual(oFirstMenuItem.getIcon(), "sap-icon://accept", "then the value of the `icon` property of the MenuItem button is taken from the original button");
 
 			// Step 5: check if new button reacts on updates on original button
 			oModel.setData({
 				mData: {
 					enabled: true,
 					visible: true,
-					text: "Title 2"
+					text: "Title 2",
+					icon: "sap-icon://home"
 				}
 			});
 			assert.strictEqual(oFirstMenuItem.getEnabled(), true, "then the value of the `enabled` property of the MenuItem button is taken from the original button");
 			assert.strictEqual(oFirstMenuItem.getVisible(), true, "then the value of the `visible` property of the MenuItem button is taken from the original button");
 			assert.strictEqual(oFirstMenuItem.getText(), "Title 2", "then the value of the `text` property of the MenuItem button is taken from the original button");
+			assert.strictEqual(oFirstMenuItem.getIcon(), "sap-icon://home", "then the value of the `icon` property of the MenuItem button is taken from the original button");
 		});
 
 		QUnit.test('CustomData of the Button is copied to MenuItem', function (assert) {
