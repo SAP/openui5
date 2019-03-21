@@ -115,7 +115,7 @@ sap.ui.define([
 				sPath = "",
 				sSegment;
 
-			for (i = 0; i < arguments.length; i++) {
+			for (i = 0; i < arguments.length; i += 1) {
 				sSegment = arguments[i];
 				if (sSegment || sSegment === 0) {
 					if (sPath && sPath !== "/" && sSegment[0] !== "(") {
@@ -397,7 +397,7 @@ sap.ui.define([
 				i;
 
 			if (aListeners) {
-				for (i = 0; i < aListeners.length; i++) {
+				for (i = 0; i < aListeners.length; i += 1) {
 					aListeners[i].onChange(vValue);
 				}
 			}

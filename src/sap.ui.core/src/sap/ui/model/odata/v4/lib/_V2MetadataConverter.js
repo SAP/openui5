@@ -1338,7 +1338,7 @@ sap.ui.define([
 				i,
 				n = aUnitPathSegments.length;
 
-			for (i = 0; i < n; i++) {
+			for (i = 0; i < n; i += 1) {
 				oType = that.result[sTypeName];
 				oUnitProperty = oType[aUnitPathSegments[i]];
 				if (!oUnitProperty) {

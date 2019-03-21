@@ -196,7 +196,7 @@ sap.ui.define([
 			}
 		} else {
 			vValue = this.enumTypeMemberCounter;
-			this.enumTypeMemberCounter++;
+			this.enumTypeMemberCounter += 1;
 		}
 		this.enumType[sName] = vValue;
 		this.annotatable(sName);

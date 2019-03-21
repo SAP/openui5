@@ -18,7 +18,7 @@ sap.ui.define([
 		exit : function () {
 			var i;
 
-			for (i = 0; i < this.aMockServers.length; i++) {
+			for (i = 0; i < this.aMockServers.length; i += 1) {
 				this.aMockServers[i].destroy();
 			}
 			this.oSandbox.restore();

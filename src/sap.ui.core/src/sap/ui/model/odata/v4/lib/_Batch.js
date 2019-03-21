@@ -53,7 +53,7 @@ sap.ui.define([
 			aMatches;
 
 		sParameterName = sParameterName.toLowerCase();
-		for (iParamIndex = 1; iParamIndex < aHeaderParts.length; iParamIndex++) {
+		for (iParamIndex = 1; iParamIndex < aHeaderParts.length; iParamIndex += 1) {
 			// remove possible quotes via reg exp
 			// RFC7231: parameter = token "=" ( token / quoted-string )
 			aMatches = rHeaderParameter.exec(aHeaderParts[iParamIndex]);
@@ -119,7 +119,7 @@ sap.ui.define([
 			aHeaderParts,
 			aHeaders = sHeaders.split("\r\n");
 
-		for (i = 0; i < aHeaders.length; i++) {
+		for (i = 0; i < aHeaders.length; i += 1) {
 			aHeaderParts = aHeaders[i].split(":");
 
 			if (aHeaderParts[0].toLowerCase().trim() === sHeaderName) {
@@ -178,7 +178,7 @@ sap.ui.define([
 			oResponse.headers = {};
 
 			// start with index 1 to skip status line
-			for (i = 1; i < aHttpHeaders.length; i++) {
+			for (i = 1; i < aHttpHeaders.length; i += 1) {
 				// e.g. Content-Type: application/json;odata.metadata=minimal
 				sHeader = aHttpHeaders[i];
 				iColonIndex = sHeader.indexOf(':');

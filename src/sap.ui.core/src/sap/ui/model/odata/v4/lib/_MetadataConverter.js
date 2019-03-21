@@ -161,7 +161,7 @@ sap.ui.define([
 				return sValue === "true";
 			case "EnumMember":
 				aValues = sValue.trim().replace(/ +/g, " ").split(" ");
-				for (i = 0; i < aValues.length; i++) {
+				for (i = 0; i < aValues.length; i += 1) {
 					aValues[i] = this.resolveAliasInPath(aValues[i]);
 				}
 				return {$EnumMember : aValues.join(" ")};
@@ -410,7 +410,7 @@ sap.ui.define([
 		if (oType) {
 			oResult.$Type = this.resolveAlias(oType);
 		}
-		for (i = 0; i < aResult.length; i++) {
+		for (i = 0; i < aResult.length; i += 1) {
 			oPropertyValue = aResult[i];
 			oResult[oPropertyValue.property] = oPropertyValue.value;
 		}
@@ -615,7 +615,7 @@ sap.ui.define([
 			sPath = sPath.slice(0, iAt);
 		}
 		aSegments = sPath.split("/");
-		for (i = 0; i < aSegments.length; i++) {
+		for (i = 0; i < aSegments.length; i += 1) {
 			aSegments[i] = this.resolveAlias(aSegments[i]);
 		}
 		return aSegments.join("/") + sTerm;
@@ -713,14 +713,14 @@ sap.ui.define([
 			oConfig.__processor.call(this, oElement);
 		}
 
-		for (i = 0; i < oChildList.length; i++) {
+		for (i = 0; i < oChildList.length; i += 1) {
 			oChildNode = oChildList.item(i);
 			if (oChildNode.nodeType === 1) { // Node.ELEMENT_NODE
 				sName = oChildNode.localName;
 				oChildConfig = oConfig[sName];
 				if (!oChildConfig && oConfig.__include) {
 					aIncludes = oConfig.__include;
-					for (j = 0; j < aIncludes.length; j++) {
+					for (j = 0; j < aIncludes.length; j += 1) {
 						oChildConfig = aIncludes[j][sName];
 						if (oChildConfig) {
 							break;
