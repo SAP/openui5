@@ -3760,7 +3760,7 @@ sap.ui.define([
 
 				oParentBinding.attachPatchCompleted(function (oEvent) {
 					assert.strictEqual(oEvent.getSource(), oParentBinding);
-					iPatchCompleted++;
+					iPatchCompleted += 1;
 					if (fnAfterPatchCompleted) {
 						fnAfterPatchCompleted();
 						fnAfterPatchCompleted = undefined;
@@ -3768,7 +3768,7 @@ sap.ui.define([
 				});
 				oParentBinding.attachPatchSent(function (oEvent) {
 					assert.strictEqual(oEvent.getSource(), oParentBinding);
-					iPatchSent++;
+					iPatchSent += 1;
 				});
 
 				that.expectRequest({

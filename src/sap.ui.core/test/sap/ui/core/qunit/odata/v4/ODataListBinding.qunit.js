@@ -147,7 +147,7 @@ sap.ui.define([
 		}
 		assert.strictEqual(aCurrentContexts.length, iResultLength, "Current contexts length");
 		assert.deepEqual(aCurrentContexts.slice(0, aContexts.length), aContexts, "contexts");
-		for (i = aContexts.length; i < iResultLength; i++) {
+		for (i = aContexts.length; i < iResultLength; i += 1) {
 			assert.strictEqual(aCurrentContexts[i], undefined);
 		}
 	}
@@ -1369,17 +1369,19 @@ sap.ui.define([
 				// during the last iteration there is only a sync request, otherwise an async one
 				// followed by a sync one
 				if (iRangeIndex < oFixture.length - 1) {
+					iSerialNumber += 1;
 					oCacheMock.expects("read")
 						.withExactArgs(iStart, iLength, 0,
-							new _GroupLock("$auto", bLocked, oBinding, ++iSerialNumber),
+							new _GroupLock("$auto", bLocked, oBinding, iSerialNumber),
 							sinon.match.func)
 						.callsArg(4)
 						.returns(createResult(iLength, iStart));
 					bLocked = undefined;
 				}
+				iSerialNumber += 1;
 				oCacheMock.expects("read")
 					.withExactArgs(iStart, iLength, 0,
-						new _GroupLock("$auto", bLocked, oBinding, ++iSerialNumber),
+						new _GroupLock("$auto", bLocked, oBinding, iSerialNumber),
 						sinon.match.func)
 					.returns(createSyncResult(iLength, iStart));
 				bLocked = undefined;
@@ -1567,10 +1569,10 @@ sap.ui.define([
 			var i;
 
 			// check that data is inserted at right place
-			for (i = 0; i < 100; i++) {
+			for (i = 0; i < 100; i += 1) {
 				assert.strictEqual(oBinding.aContexts[i], undefined, "Expected context: " + i);
 			}
-			for (i = 100; i < 115; i++) {
+			for (i = 100; i < 115; i += 1) {
 				assert.strictEqual(oBinding.aContexts[i].getIndex(), i,
 					"Expected context: " + i);
 			}
@@ -1633,7 +1635,7 @@ sap.ui.define([
 						new _GroupLock("$auto", undefined, oBinding, 2), sinon.match.func)
 					.callsArg(4)
 					.returns(oReadPromise);
-				for (i = Math.max(20, oFixture.start + oFixture.len); i < 35; i++) {
+				for (i = Math.max(20, oFixture.start + oFixture.len); i < 35; i += 1) {
 					that.mock(oBinding.aContexts[i]).expects("destroy").withExactArgs();
 				}
 
@@ -1646,7 +1648,7 @@ sap.ui.define([
 					oBinding.aContexts.slice(oFixture.start, oFixture.start + oFixture.result));
 				assert.strictEqual(oBinding.isLengthFinal(), oFixture.isFinal, "final");
 				assert.strictEqual(oBinding.getLength(), oFixture.len);
-				for (i = oFixture.start, n = oFixture.start + oFixture.result; i < n; i++) {
+				for (i = oFixture.start, n = oFixture.start + oFixture.result; i < n; i += 1) {
 					assert.strictEqual(oBinding.aContexts[i].sPath,
 						"/EMPLOYEES/" + i, "check content");
 				}
@@ -2768,7 +2770,7 @@ sap.ui.define([
 			assert.strictEqual(oBinding.aContexts.length, 49 + iCreatedContexts);
 			assert.strictEqual(oBinding.iMaxLength, 49);
 
-			for (i = 37; i < 49; i++) {
+			for (i = 37; i < 49; i += 1) {
 				this.mock(oBinding.aContexts[i + iCreatedContexts]).expects("destroy")
 					.withExactArgs();
 			}

@@ -582,7 +582,7 @@ sap.ui.define([
 
 			sPropertyName = sPropertyName || "name";
 			if (aArray) {
-				for (i = 0, n = aArray.length; i < n; i++) {
+				for (i = 0, n = aArray.length; i < n; i += 1) {
 					if (aArray[i][sPropertyName] === vExpectedPropertyValue) {
 						return i;
 					}

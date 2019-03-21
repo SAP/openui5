@@ -222,7 +222,7 @@ sap.ui.define([
 
 	function parseResponses(aResponses) {
 		var i, oResponse;
-		for (i = 0; i < aResponses.length; i++) {
+		for (i = 0; i < aResponses.length; i += 1) {
 			oResponse = aResponses[i];
 			if (Array.isArray(oResponse)) {
 				parseResponses(oResponse);

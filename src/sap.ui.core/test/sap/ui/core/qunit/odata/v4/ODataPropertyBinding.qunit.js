@@ -936,7 +936,7 @@ sap.ui.define([
 					dataRequested : function (oEvent) {
 						assert.strictEqual(oEvent.getSource(), oControl.getBinding("text"),
 							"dataRequested - correct source");
-						iDataRequestedCount++;
+						iDataRequestedCount += 1;
 					},
 					dataReceived : function (oEvent) {
 						var oBinding = oControl.getBinding("text");
@@ -947,7 +947,7 @@ sap.ui.define([
 						assert.strictEqual(iDataRequestedCount, 1);
 						assert.strictEqual(oBinding.getType(), oType);
 						assert.strictEqual(oBinding.getValue(), oValue);
-						iDataReceivedCount++;
+						iDataReceivedCount += 1;
 						finishTest();
 					}
 				}});

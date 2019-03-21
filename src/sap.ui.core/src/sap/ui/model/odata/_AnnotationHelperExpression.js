@@ -831,7 +831,7 @@ sap.ui.define([
 				return sPath;
 			}
 			// continue after the schema index
-			for (var i = 4; i < aParts.length; i++) {
+			for (var i = 4; i < aParts.length; i += 1) {
 				sObjectPath = sObjectPath + "/" + aParts[i];
 				// if there is an index, first try a query for "name"
 				if (rInteger.test(aParts[i]) && !processProperty("name", i)) {

@@ -2612,7 +2612,7 @@ sap.ui.define([
 				oFixture.current.forEach(function (aRange) {
 					var i, n;
 
-					for (i = aRange[0], n = aRange[1]; i < n; i++) {
+					for (i = aRange[0], n = aRange[1]; i < n; i += 1) {
 						aElements[i] = i;
 					}
 				});

@@ -1030,7 +1030,7 @@ sap.ui.define([
 		function visitArray(aInstances, sMetaPath, sCollectionPath, sContextUrl) {
 			var mByPredicate = {}, i, iIndex, vInstance, sPredicate;
 
-			for (i = 0; i < aInstances.length; i++) {
+			for (i = 0; i < aInstances.length; i += 1) {
 				vInstance = aInstances[i];
 				iIndex = sCollectionPath === "" ? iStart + i : i;
 
@@ -1245,7 +1245,7 @@ sap.ui.define([
 			this.aElements.$tail = oPromise;
 			iEnd = this.aElements.length;
 		}
-		for (i = iStart; i < iEnd; i++) {
+		for (i = iStart; i < iEnd; i += 1) {
 			this.aElements[i] = oPromise;
 		}
 		this.oSyncPromiseAll = undefined;  // from now on, fetchValue has to wait again
@@ -1363,7 +1363,7 @@ sap.ui.define([
 			setCount(this.mChangeListeners, "", this.aElements, this.iLimit);
 		}
 		this.visitResponse(oResult, mTypeForMetaPath, undefined, undefined, undefined, iStart);
-		for (i = 0; i < iResultLength; i++) {
+		for (i = 0; i < iResultLength; i += 1) {
 			oElement = oResult.value[i];
 			this.aElements[iStart + i] = oElement;
 			sPredicate = _Helper.getPrivateAnnotation(oElement, "predicate");
@@ -1446,7 +1446,7 @@ sap.ui.define([
 		iEnd = Math.min(oRange.start + oRange.length, this.aElements.$created + this.iLimit);
 		n = Math.min(iEnd, Math.max(oRange.start, this.aElements.length) + 1);
 
-		for (i = oRange.start; i < n; i++) {
+		for (i = oRange.start; i < n; i += 1) {
 			if (this.aElements[i] !== undefined) {
 				if (iGapStart >= 0) {
 					this.requestElements(iGapStart, i, oGroupLock.getUnlockedCopy(),
