@@ -273,7 +273,8 @@ sap.ui.define([
 	].forEach(function (oFixture, i) {
 		QUnit.test("hasPendingChanges: " + i, function (assert) {
 			var oModel = {
-					getDependentBindings : function () {}
+					getDependentBindings : function () {},
+					withUnresolvedBindings : function () {}
 				},
 				oModelMock = this.mock(oModel),
 				oBinding0 = {
@@ -296,8 +297,8 @@ sap.ui.define([
 				.withExactArgs()
 				.exactly(oFixture.aBindingHasPendingChanges[0] ? 0 : 1)
 				.returns(oFixture.aBindingHasPendingChanges[1]);
-			this.mock(oContext).expects("withUnresolvedBindings")
-				.withExactArgs("hasPendingChangesInCaches")
+			this.mock(oModel).expects("withUnresolvedBindings")
+				.withExactArgs("hasPendingChangesInCaches", "EMPLOYEES('42')")
 				.exactly(oFixture.hasOwnProperty("bUnresolvedBindingHasPendingChanges") ? 1 : 0)
 				.returns(oFixture.bUnresolvedBindingHasPendingChanges);
 
@@ -310,7 +311,8 @@ sap.ui.define([
 	[false, true].forEach(function (bTransient) {
 		QUnit.test("hasPendingChanges: transient context = " + bTransient, function (assert) {
 			var oModel = {
-					getDependentBindings : function () {}
+					getDependentBindings : function () {},
+					withUnresolvedBindings : function () {}
 				},
 				oContext = Context.create(oModel, {/*oBinding*/}, "/TEAMS", 0);
 
@@ -318,88 +320,12 @@ sap.ui.define([
 			this.mock(oContext).expects("isTransient").withExactArgs().returns(bTransient);
 			this.mock(oModel).expects("getDependentBindings").exactly(bTransient ? 0 : 1)
 				.withExactArgs(sinon.match.same(oContext)).returns([]);
-			this.mock(oContext).expects("withUnresolvedBindings").exactly(bTransient ? 0 : 1)
-				.withExactArgs("hasPendingChangesInCaches").returns(false);
+			this.mock(oModel).expects("withUnresolvedBindings").exactly(bTransient ? 0 : 1)
+				.withExactArgs("hasPendingChangesInCaches", "TEAMS").returns(false);
 
 			// code under test
 			assert.strictEqual(oContext.hasPendingChanges(), bTransient);
 		});
-	});
-
-	//*********************************************************************************************
-	QUnit.test("withUnresolvedBindings", function (assert) {
-		var oAbsoluteBinding = {
-				getContext : function () {},
-				isRelative : function () {}
-			},
-			oModel = {
-				getAllBindings : function () {}
-			},
-			oContext = Context.create(oModel, {}, "/foo('42')/bar"),
-			oContext1 = {/*any context*/},
-			oModelMock = this.mock(oModel),
-			oResolvedBinding = {
-				getContext : function () {},
-				isRelative : function () {}
-			},
-			oUnresolvedBinding0 = {
-				anyCallback : function () {},
-				getContext : function () {},
-				isRelative : function () {}
-			},
-			oUnresolvedBinding0Mock = this.mock(oUnresolvedBinding0),
-			oUnresolvedBinding1 = {
-				anyCallback : function () {},
-				getContext : function () {},
-				isRelative : function () {}
-			},
-			oUnresolvedBinding2 = {
-				anyCallback : function () {},
-				getContext : function () {},
-				isRelative : function () {}
-			},
-			oUnresolvedBinding2Mock = this.mock(oUnresolvedBinding2);
-
-		oModelMock.expects("getAllBindings").withExactArgs().returns([]);
-
-		// code under test
-		assert.strictEqual(oContext.withUnresolvedBindings(), false);
-
-		oModelMock.expects("getAllBindings").withExactArgs().returns([oResolvedBinding,
-			oUnresolvedBinding0, oAbsoluteBinding, oUnresolvedBinding1, oUnresolvedBinding2]);
-
-		this.mock(oResolvedBinding).expects("isRelative").withExactArgs().returns(true);
-		this.mock(oResolvedBinding).expects("getContext").withExactArgs().returns(oContext1);
-		oUnresolvedBinding0Mock.expects("isRelative").withExactArgs().returns(true);
-		oUnresolvedBinding0Mock.expects("getContext").withExactArgs().returns(undefined);
-		oUnresolvedBinding0Mock.expects("anyCallback").withExactArgs("foo('42')/bar")
-			.returns(false);
-		this.mock(oAbsoluteBinding).expects("isRelative").withExactArgs().returns(false);
-		this.mock(oAbsoluteBinding).expects("getContext").never();
-		this.mock(oUnresolvedBinding1).expects("isRelative").withExactArgs().returns(true);
-		this.mock(oUnresolvedBinding1).expects("getContext").withExactArgs().returns(null);
-		this.mock(oUnresolvedBinding1).expects("anyCallback").withExactArgs("foo('42')/bar")
-			.returns(true);
-		oUnresolvedBinding2Mock.expects("isRelative").withExactArgs().returns(true);
-		oUnresolvedBinding2Mock.expects("getContext").withExactArgs().returns(null);
-		oUnresolvedBinding2Mock.expects("anyCallback").never();
-
-		// code under test
-		assert.strictEqual(oContext.withUnresolvedBindings("anyCallback"), true);
-
-		oModelMock.expects("getAllBindings").withExactArgs().returns([oUnresolvedBinding0,
-			oUnresolvedBinding2]);
-
-		oUnresolvedBinding0Mock.expects("isRelative").withExactArgs().returns(true);
-		oUnresolvedBinding0Mock.expects("getContext").withExactArgs().returns(undefined);
-		oUnresolvedBinding0Mock.expects("anyCallback").withExactArgs("foo('42')/bar")
-			.returns(false);
-		oUnresolvedBinding2Mock.expects("isRelative").withExactArgs().returns(true);
-		oUnresolvedBinding2Mock.expects("getContext").withExactArgs().returns(null);
-		oUnresolvedBinding2Mock.expects("anyCallback").withExactArgs("foo('42')/bar").returns();
-
-		// code under test
-		assert.strictEqual(oContext.withUnresolvedBindings("anyCallback"), false);
 	});
 
 	//*********************************************************************************************
@@ -1087,23 +1013,24 @@ sap.ui.define([
 			oGroupLock = {},
 			oModel = {
 				checkGroupId : function () {},
-				lockGroup : function () {}
+				lockGroup : function () {},
+				withUnresolvedBindings : function () {}
 			},
 			oModelMock = this.mock(oModel),
-			oContext = Context.create(oModel, oBinding, "/EMPLOYEES/42", 42),
-			oContextMock = this.mock(oContext);
+			oContext = Context.create(oModel, oBinding, "/EMPLOYEES/42", 42);
 
 		oModelMock.expects("checkGroupId");
 		oModelMock.expects("lockGroup").withExactArgs("myGroup", true, oContext)
 			.returns(oGroupLock);
 		oBindingMock.expects("checkSuspended").withExactArgs();
-		oContextMock.expects("hasPendingChanges").withExactArgs().returns(false);
+		this.mock(oContext).expects("hasPendingChanges").withExactArgs().returns(false);
 		oBindingMock.expects("isRoot").withExactArgs().returns(true);
 		oBindingMock.expects("refresh").never();
 		oBindingMock.expects("refreshSingle")
 			.withExactArgs(sinon.match.same(oContext), sinon.match.same(oGroupLock),
 				sinon.match.same(bAllowRemoval));
-		oContextMock.expects("withUnresolvedBindings").withExactArgs("removeCachesAndMessages");
+		oModelMock.expects("withUnresolvedBindings")
+			.withExactArgs("removeCachesAndMessages", "EMPLOYEES/42");
 
 		// code under test
 		oContext.refresh("myGroup", bAllowRemoval);
@@ -1121,7 +1048,8 @@ sap.ui.define([
 				},
 				oBindingMock = this.mock(oBinding),
 				oModel = {
-					checkGroupId : function () {}
+					checkGroupId : function () {},
+					withUnresolvedBindings : function () {}
 				},
 				oModelMock = this.mock(oModel),
 				oContext =  Context.create(oModel, oBinding, "/EMPLOYEES('42')"),
@@ -1135,7 +1063,8 @@ sap.ui.define([
 				.returns(bReturnValueContext);
 			oBindingMock.expects("refresh").withExactArgs("myGroup")
 				.exactly(bReturnValueContext ? 0 : 1);
-			oContextMock.expects("withUnresolvedBindings").withExactArgs("removeCachesAndMessages");
+			oModelMock.expects("withUnresolvedBindings")
+				.withExactArgs("removeCachesAndMessages", "EMPLOYEES('42')");
 
 			// code under test
 			oContext.refresh("myGroup");

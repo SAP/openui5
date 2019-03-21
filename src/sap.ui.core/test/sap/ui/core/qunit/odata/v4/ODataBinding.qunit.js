@@ -334,19 +334,28 @@ sap.ui.define([
 		var oBinding = new ODataBinding({
 				oModel : {}
 			}),
-			oCache0 = {hasPendingChangesForPath : function () {}},
-			oCache1 = {hasPendingChangesForPath : function () {}},
-			oCache2 = {hasPendingChangesForPath : function () {}};
+			oCache0 = {
+				$deepResourcePath : "A('42')/A_2_B",
+				hasPendingChangesForPath : function () {}
+			},
+			oCache1 = {
+				$deepResourcePath : "A('42')/A_2_B/B_2_B",
+				hasPendingChangesForPath : function () {}
+			},
+			oCache2 = {
+				$deepResourcePath : "A('42')/A_2_B/B_2_C/C_2_B",
+				hasPendingChangesForPath : function () {}
+			};
 
 		// code under test
 		assert.notOk(oBinding.hasPendingChangesInCaches());
 
 		// simulate cached caches
 		oBinding.mCacheByResourcePath = {
-			"A('23')/A_2_B" : {/*not considered cache*/},
-			"A('42')/A_2_B" : oCache0,
-			"A('42')/A_2_B/B_2_B" : oCache1,
-			"A('42')/A_2_B/B_2_C/C_2_B" : oCache2
+			"A('42')" : {$deepResourcePath : "not considered cache"},
+			"b" : oCache0,
+			"c" : oCache1,
+			"d" : oCache2
 		};
 
 		this.mock(oCache0).expects("hasPendingChangesForPath").withExactArgs("").returns(false);
@@ -765,14 +774,16 @@ sap.ui.define([
 				}),
 				oBindingMock = this.mock(oBinding),
 				oCache = {},
-				oContext = {},
+				oContext = {
+					getPath : function () { return "/contextPath"; }
+				},
 				mLocalQueryOptions = {},
 				bQueryOptionsAsync = aFixture[0],
 				oQueryOptionsPromise = SyncPromise.resolve(bQueryOptionsAsync
 					? Promise.resolve(mLocalQueryOptions) : mLocalQueryOptions),
 				bResourcePathAsync = aFixture[1],
 				oResourcePathPromise = SyncPromise.resolve(bResourcePathAsync
-					? Promise.resolve("resourcePath/relative") : "resourcePath/relative"),
+					? Promise.resolve("resourcePath") : "resourcePath"),
 				mResultingQueryOptions = {};
 
 			oBindingMock.expects("fetchQueryOptionsForOwnCache")
@@ -786,9 +797,11 @@ sap.ui.define([
 					sinon.match.same(mLocalQueryOptions))
 				.returns(mResultingQueryOptions);
 			oBindingMock.expects("doCreateCache")
-				.withExactArgs("resourcePath/relative", sinon.match.same(mResultingQueryOptions),
+				.withExactArgs("resourcePath", sinon.match.same(mResultingQueryOptions),
 					sinon.match.same(oContext))
 				.returns(oCache);
+			this.mock(_Helper).expects("buildPath").withExactArgs("/contextPath", "relative")
+				.returns("/built/path");
 
 			// code under test
 			oBinding.fetchCache(oContext);
@@ -797,7 +810,8 @@ sap.ui.define([
 				!bQueryOptionsAsync && !bResourcePathAsync);
 			return oBinding.oCachePromise.then(function (oCache0) {
 				assert.strictEqual(oCache0, oCache);
-				assert.strictEqual(oCache0.$resourcePath, "resourcePath/relative");
+				assert.strictEqual(oCache0.$deepResourcePath, "built/path");
+				assert.strictEqual(oCache0.$resourcePath, "resourcePath");
 				assert.strictEqual(oBinding.mCacheQueryOptions, mResultingQueryOptions);
 			});
 		});
@@ -806,11 +820,17 @@ sap.ui.define([
 	//*********************************************************************************************
 	[
 		undefined, // use old context for second call
-		{/*base context*/},
-		// no return value context ID
-		{getReturnValueContextId : function () { return undefined; }},
-		// different return value context ID
-		{getReturnValueContextId : function () { return 43; }}
+		{ // base context
+			getPath : function () { return "/n/a"; }
+		},
+		{ // no return value context ID
+			getPath : function () { return "/n/a"; },
+			getReturnValueContextId : function () { return undefined; }
+		},
+		{ // different return value context ID
+			getPath : function () { return "/n/a"; },
+			getReturnValueContextId : function () { return 43; }
+		}
 	].forEach(function (oContext, i) {
 		var sTitle = "fetchCache: called second time, " + (oContext ? "create a new " : "reuse ")
 				+ "cache - " + i;
@@ -835,6 +855,7 @@ sap.ui.define([
 				oCache1 = {},
 				oCacheMock = this.mock(oCache),
 				oContext0 = {
+					getPath : function () { return "/n/a"; },
 					getReturnValueContextId : function () { return 42; }
 				},
 				oJQueryMock = this.mock(jQuery),
@@ -1031,7 +1052,9 @@ sap.ui.define([
 			}),
 			oBindingMock = this.mock(oBinding),
 			oCache = {},
-			oContext = {},
+			oContext = {
+				getPath : function () { return "/n/a"; }
+			},
 			mLocalQueryOptions = {},
 			mResultingQueryOptions = {};
 
@@ -1153,7 +1176,9 @@ sap.ui.define([
 				setActive : function () {}
 			},
 			oCacheMock = this.mock(oCache),
-			oContext = {},
+			oContext = {
+				getPath : function () { return "/n/a"; }
+			},
 			oResourcePathPromise = SyncPromise.resolve(Promise.resolve("resourcePath"));
 
 		oBindingMock.expects("fetchQueryOptionsForOwnCache").twice()
@@ -1226,8 +1251,12 @@ sap.ui.define([
 			}),
 			oBindingMock = this.mock(oBinding),
 			oCache = {},
-			oContext0 = {},
-			oContext1 = {},
+			oContext0 = {
+				getPath : function () { return "/n/a"; }
+			},
+			oContext1 = {
+				getPath : function () { return "/n/a"; }
+			},
 			mLocalQueryOptions = {},
 			oPromise,
 			mResultingQueryOptions = {};
@@ -1823,7 +1852,10 @@ sap.ui.define([
 	//*********************************************************************************************
 	QUnit.test("removeCachesAndMessages: mCacheByResourcePath", function (assert) {
 		var oBinding = new ODataBinding({
-				mCacheByResourcePath : {"foo" : {}, "bar" : {}},
+				mCacheByResourcePath : {
+					"bar" : {$deepResourcePath : "bar"},
+					"foo" : {$deepResourcePath : "foo"}
+				},
 				oContext : {},
 				oModel : {
 					reportBoundMessages : function () {},
@@ -1851,8 +1883,15 @@ sap.ui.define([
 			function (assert) {
 		var oBinding = new ODataBinding({
 				mCacheByResourcePath : {
-					"SalesOrderList('42')/SO_2_SOITEM" : {},
-					"SalesOrderList('23')/SO_2_SOITEM" : {}
+					"SalesOrderList('42')/SO_2_SOITEM" : {
+						$deepResourcePath : "SalesOrderList('42')/SO_2_SOITEM"
+					},
+					"SalesOrderList('23')/SO_2_SOITEM" : {
+						$deepResourcePath : "SalesOrderList('23')/SO_2_SOITEM"
+					},
+					"BusinessPartnerList('42')/BP_2_PRODUCT" : {
+						$deepResourcePath : "SalesOrderList('42')/SO_2_BP/BP_2_PRODUCT"
+					}
 				},
 				oModel : {
 					reportBoundMessages : function () {},
@@ -1867,11 +1906,17 @@ sap.ui.define([
 			.returns(undefined);
 		oModelMock.expects("reportBoundMessages")
 			.withExactArgs("SalesOrderList('42')/SO_2_SOITEM", {});
+		oModelMock.expects("reportBoundMessages")
+			.withExactArgs("BusinessPartnerList('42')/BP_2_PRODUCT", {});
 
 		// code under test
 		oBinding.removeCachesAndMessages("SalesOrderList('42')");
 
-		assert.deepEqual(oBinding.mCacheByResourcePath, {"SalesOrderList('23')/SO_2_SOITEM" : {}});
+		assert.deepEqual(oBinding.mCacheByResourcePath, {
+			"SalesOrderList('23')/SO_2_SOITEM" : {
+				$deepResourcePath : "SalesOrderList('23')/SO_2_SOITEM"
+			}
+		});
 	});
 
 	//*********************************************************************************************
