@@ -57,39 +57,41 @@ sap.ui.define([
 			});
 		});
 
-		QUnit.test("when calling send function with DELETE flag", function (assert) {
-			var sUri = "/sap/bc/lrep/changes/" +
-				"?reference=" + aTestData[0].reference +
-				"&appVersion=" + "1.0.0" +
-				"&layer=" + aTestData[0].layer +
-				"&generator=Change.createInitialFileContent";
+		QUnit.test("when calling resetChanges", function (assert) {
 			var oForeignTestData = { "fileName": "id_1445501120486_45", "fileType": "change", "changeType": "hideControl", "reference": "sap.ui.rta.test.ForeignDemo.md.Component", "packageName": "$TMP", "content": {}, "selector": { "id": "RTADemoAppMD---detail--GroupElementDatesShippingStatus" }, "layer": "CUSTOMER", "texts": {}, "namespace": "sap.ui.rta.test.ForeignDemo.md.Component", "creation": "2018-10-16T08:00:07", "originalLanguage": "EN", "conditions": {}, "support": { "generator": "Change.createInitialFileContent", "service": "", "user": "" }, "validAppVersions": { "creation": "1.0.0", "from": "1.0.0" } };
 			var aMixedTestData = aTestData.concat([oForeignTestData]);
-
+			var mParams = {
+				sReference: aTestData[0].reference,
+				sAppVersion: "1.0.0",
+				sLayer: aTestData[0].layer,
+				sGenerator: "Change.createInitialFileContent"
+			};
 			var fnDeleteChangeSpy = sandbox.spy(FakeLrepSessionStorage, "deleteChange");
 
 			return this.oFakeLrepConnectorSessionStorage.create(aMixedTestData)
 			.then(function () {
 				assert.equal(FakeLrepSessionStorage.getNumChanges(), 5, "Local Storage contains five changes in the beginning");
 			})
-			.then(this.oFakeLrepConnectorSessionStorage.send(sUri, "DELETE"))
-			.then(function () {
+			.then(this.oFakeLrepConnectorSessionStorage.resetChanges.bind(this.oFakeLrepConnectorSessionStorage, mParams))
+			.then(function (aResult) {
+				assert.equal(aResult.response.length, 4, "4 changes got returned");
 				assert.equal(fnDeleteChangeSpy.callCount, 4, "deleteChange of FakeLrepSessionStorage has been called four times");
 				assert.equal(FakeLrepSessionStorage.getNumChanges(), 1, "Finally one change is in the Local Storage");
 				assert.equal(FakeLrepSessionStorage.getChanges()[0].reference, "sap.ui.rta.test.ForeignDemo.md.Component", "and it is the one with a different reference");
 			});
 		});
 
-		QUnit.test("when calling send function with DELETE flag in CUSTOMER layer and a USER layer change available", function (assert) {
-			var sUri = "/sap/bc/lrep/changes/" +
-				"?reference=" + aTestData[0].reference +
-				"&appVersion=" + "1.0.0" +
-				"&layer=" + aTestData[0].layer +
-				"&generator=Change.createInitialFileContent";
-			var oUserLayerChange = jQuery.extend({}, aTestData[0]);
-			oUserLayerChange.layer = "USER";
-			oUserLayerChange.fileName = "id_1445501120486_45";
-			var aMixedTestData = aTestData.concat([oUserLayerChange]);
+		QUnit.test("when calling resetChanges with selector and changeTypes specified", function (assert) {
+			var oForeignTestData = { "fileName": "id_1445501120486_45", "fileType": "change", "changeType": "hideControl", "reference": "sap.ui.rta.test.ForeignDemo.md.Component", "packageName": "$TMP", "content": {}, "selector": { "id": "RTADemoAppMD---detail--GroupElementDatesShippingStatus" }, "layer": "CUSTOMER", "texts": {}, "namespace": "sap.ui.rta.test.ForeignDemo.md.Component", "creation": "2018-10-16T08:00:07", "originalLanguage": "EN", "conditions": {}, "support": { "generator": "Change.createInitialFileContent", "service": "", "user": "" }, "validAppVersions": { "creation": "1.0.0", "from": "1.0.0" } };
+			var aMixedTestData = aTestData.concat([oForeignTestData]);
+			var mParams = {
+				sReference: aTestData[0].reference,
+				sAppVersion: "1.0.0",
+				sLayer: aTestData[0].layer,
+				sGenerator: "Change.createInitialFileContent",
+				aSelectorIds: ["RTADemoAppMD---detail--GroupElementDatesShippingStatus","RTADemoAppMD---detail--GroupGeneralData"],
+				aChangeTypes: ["moveFields"]
+			};
 
 			var fnDeleteChangeSpy = sandbox.spy(FakeLrepSessionStorage, "deleteChange");
 
@@ -97,24 +99,78 @@ sap.ui.define([
 			.then(function () {
 				assert.equal(FakeLrepSessionStorage.getNumChanges(), 5, "Local Storage contains five changes in the beginning");
 			})
-			.then(this.oFakeLrepConnectorSessionStorage.send(sUri, "DELETE"))
+			.then(this.oFakeLrepConnectorSessionStorage.resetChanges.bind(this.oFakeLrepConnectorSessionStorage, mParams))
+			.then(function (aResult) {
+				assert.equal(aResult.response.length, 2, "2 changes got returned");
+				assert.equal(fnDeleteChangeSpy.callCount, 2, "deleteChange of FakeLrepSessionStorage has been called twice");
+				assert.equal(FakeLrepSessionStorage.getNumChanges(), 3, "Finally three changes are in the Local Storage");
+			});
+		});
+
+		QUnit.test("when calling resetChanges with selector and changeTypes specified and a variant change (no selector)", function (assert) {
+			var oForeignTestData = { "fileName": "id_1445501120486_45", "fileType": "change", "changeType": "moveFields", "reference": "sap.ui.rta.test.Demo.md.Component", "packageName": "$TMP", "content": {}, "layer": "CUSTOMER", "texts": {}, "namespace": "sap.ui.rta.test.ForeignDemo.md.Component", "creation": "2018-10-16T08:00:07", "originalLanguage": "EN", "conditions": {}, "support": { "generator": "Change.createInitialFileContent", "service": "", "user": "" }, "validAppVersions": { "creation": "1.0.0", "from": "1.0.0" } };
+			var aMixedTestData = aTestData.concat([oForeignTestData]);
+			var mParams = {
+				sReference: aTestData[0].reference,
+				sAppVersion: "1.0.0",
+				sLayer: aTestData[0].layer,
+				sGenerator: "Change.createInitialFileContent",
+				aSelectorIds: ["RTADemoAppMD---detail--GroupElementDatesShippingStatus","RTADemoAppMD---detail--GroupGeneralData"],
+				aChangeTypes: ["moveFields"]
+			};
+
+			var fnDeleteChangeSpy = sandbox.spy(FakeLrepSessionStorage, "deleteChange");
+
+			return this.oFakeLrepConnectorSessionStorage.create(aMixedTestData)
 			.then(function () {
+				assert.equal(FakeLrepSessionStorage.getNumChanges(), 5, "Local Storage contains five changes in the beginning");
+			})
+			.then(this.oFakeLrepConnectorSessionStorage.resetChanges.bind(this.oFakeLrepConnectorSessionStorage, mParams))
+			.then(function (aResult) {
+				assert.equal(aResult.response.length, 2, "2 changes got returned");
+				assert.equal(fnDeleteChangeSpy.callCount, 2, "deleteChange of FakeLrepSessionStorage has been called twice");
+				assert.equal(FakeLrepSessionStorage.getNumChanges(), 3, "Finally three changes are in the Local Storage");
+			});
+		});
+
+		QUnit.test("when calling resetChanges in CUSTOMER layer and a USER layer change available", function (assert) {
+			var oUserLayerChange = jQuery.extend({}, aTestData[0]);
+			oUserLayerChange.layer = "USER";
+			oUserLayerChange.fileName = "id_1445501120486_45";
+			var aMixedTestData = aTestData.concat([oUserLayerChange]);
+			var mParams = {
+				sReference: aTestData[0].reference,
+				sAppVersion: "1.0.0",
+				sLayer: aTestData[0].layer,
+				sGenerator: "Change.createInitialFileContent"
+			};
+
+			var fnDeleteChangeSpy = sandbox.spy(FakeLrepSessionStorage, "deleteChange");
+
+			return this.oFakeLrepConnectorSessionStorage.create(aMixedTestData)
+			.then(function () {
+				assert.equal(FakeLrepSessionStorage.getNumChanges(), 5, "Local Storage contains five changes in the beginning");
+			})
+			.then(this.oFakeLrepConnectorSessionStorage.resetChanges.bind(this.oFakeLrepConnectorSessionStorage, mParams))
+			.then(function (aResult) {
+				assert.equal(aResult.response.length, 4, "4 changes got returned");
 				assert.equal(fnDeleteChangeSpy.callCount, 4, "deleteChange of FakeLrepSessionStorage has been called four times");
 				assert.equal(FakeLrepSessionStorage.getNumChanges(), 1, "Finally one change is in the Local Storage");
 				assert.equal(FakeLrepSessionStorage.getChanges()[0].layer, "USER", "and it is the one with a different layer");
 			});
 		});
 
-		QUnit.test("when calling send function with DELETE flag in USER layer and a USER layer change available", function (assert) {
-			var sUri = "/sap/bc/lrep/changes/" +
-				"?reference=" + aTestData[0].reference +
-				"&appVersion=" + "1.0.0" +
-				"&layer=USER" +
-				"&generator=Change.createInitialFileContent";
+		QUnit.test("when calling resetChanges in USER layer and a USER layer change available", function (assert) {
 			var oUserLayerChange = jQuery.extend({}, aTestData[0]);
 			oUserLayerChange.layer = "USER";
 			oUserLayerChange.fileName = "id_1445501120486_45";
 			var aMixedTestData = aTestData.concat([oUserLayerChange]);
+			var mParams = {
+				sReference: aTestData[0].reference,
+				sAppVersion: "1.0.0",
+				sLayer: "USER",
+				sGenerator: "Change.createInitialFileContent"
+			};
 
 			var fnDeleteChangeSpy = sandbox.spy(FakeLrepSessionStorage, "deleteChange");
 
@@ -122,8 +178,9 @@ sap.ui.define([
 			.then(function () {
 				assert.equal(FakeLrepSessionStorage.getNumChanges(), 5, "Local Storage contains five changes in the beginning");
 			})
-			.then(this.oFakeLrepConnectorSessionStorage.send(sUri, "DELETE"))
-			.then(function () {
+			.then(this.oFakeLrepConnectorSessionStorage.resetChanges.bind(this.oFakeLrepConnectorSessionStorage, mParams))
+			.then(function (aResult) {
+				assert.equal(aResult.response.length, 1, "1 changes got returned");
 				assert.equal(fnDeleteChangeSpy.callCount, 1, "deleteChange of FakeLrepSessionStorage has been called four times");
 				assert.equal(FakeLrepSessionStorage.getNumChanges(), 4, "Finally three changes are in the Local Storage");
 				assert.equal(FakeLrepSessionStorage.getChanges()[0].layer, "CUSTOMER", "and it is in a different layer");
@@ -139,7 +196,7 @@ sap.ui.define([
 			FakeLrepConnectorSessionStorage.enableFakeConnector(mSettings);
 			var oFakeLrepConnectorSessionStorage = sap.ui.fl.LrepConnector.createConnector();
 
-			return oFakeLrepConnectorSessionStorage.loadChanges("sap.ui.fl.qunit.FakeLrepConnector", aTestData)
+			return oFakeLrepConnectorSessionStorage.loadChanges("sap.ui.fl.qunit.FakeLrepConnector", undefined, aTestData)
 			.then(function (oChanges) {
 				assert.equal(oChanges.changes.changes.length, 4, "then 4 changes are available");
 				FakeLrepConnectorSessionStorage.disableFakeConnector();
