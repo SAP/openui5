@@ -562,6 +562,11 @@ sap.ui.define([
 	 */
 
 	ObjectPageSubSection.prototype.onkeydown = function (oEvent) {
+		// Prevent browser scrolling in case of SPACE key
+		if (oEvent.keyCode === KeyCodes.SPACE) {
+			oEvent.preventDefault();
+		}
+
 		// Filter F7 key down
 		if (oEvent.keyCode === KeyCodes.F7) {
 			oEvent.stopPropagation();
