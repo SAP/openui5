@@ -110,8 +110,7 @@ sap.ui.define([
 		var $Table = oTable.$();
 		var aSelectedIndices = [];
 
-		oTable.addSelectionInterval(0,5);
-		setTimeout(function() {
+		oTable._oSelectionPlugin.attachEventOnce("selectionChange", function(){
 			aSelectedIndices = oTable.getSelectedIndices();
 			assert.deepEqual(aSelectedIndices, [0, 1, 2, 3, 4, 5], "rows properly selected");
 			assert.equal(oTable._oSelectionPlugin.getLimit(), 200, "Default selection limit is 200");
@@ -121,7 +120,8 @@ sap.ui.define([
 			aSelectedIndices = oTable.getSelectedIndices();
 			assert.deepEqual(aSelectedIndices, [], "select all function doesn't exist, the selection will be cleared");
 			done();
-		}, 10);
+		});
+		oTable.addSelectionInterval(0, 5);
 	});
 
 	QUnit.test("Selection: number of items in range below limit", function(assert) {
@@ -131,23 +131,24 @@ sap.ui.define([
 		oTable._oSelectionPlugin.setLimit(5);
 		assert.equal(oTable._oSelectionPlugin.getLimit(), 5, "Selection limit is properly set");
 		assert.equal(oTable._getSelectedIndicesCount(), 0, "no items are selected");
-		oTable.addSelectionInterval(0,4);
-		setTimeout(function() {
+		var fnGetContexts = sinon.spy(oTable.getBinding("rows"), "getContexts");
+
+		oTable._oSelectionPlugin.attachEventOnce("selectionChange", function(){
+			assert.ok(fnGetContexts.calledWith(0, 5), "getContexts is called with the correct parameters");
 			aSelectedIndices = oTable.getSelectedIndices();
 			assert.deepEqual(aSelectedIndices, [0, 1, 2, 3, 4], "Range selection is possible for number of items below limit");
 
-			oTable._oSelectionPlugin.attachEvent("selectionChange", function(oEvent){
-				assert.deepEqual(oEvent.mParameters.rowIndices, [5, 6, 7, 8, 9], "rowIndices parameter is correct");
-				assert.ok(!oEvent.mParameters.limitReached, "limitReached parameter is correct");
-			});
-
-			oTable.addSelectionInterval(5,9);
-			setTimeout(function() {
+			oTable._oSelectionPlugin.attachSelectionChange(function(oEvent){
+				assert.deepEqual(oEvent.getParameters().rowIndices, [5, 6, 7, 8, 9], "rowIndices parameter is correct");
+				assert.ok(!oEvent.getParameters().limitReached, "limitReached parameter is correct");
 				aSelectedIndices = oTable.getSelectedIndices();
 				assert.deepEqual(aSelectedIndices, [0, 1, 2, 3, 4, 5, 6, 7, 8, 9], "Multiple selections are possible");
 				done();
-			}, 10);
-		}, 10);
+			});
+
+			oTable.addSelectionInterval(5, 9);
+		});
+		oTable.addSelectionInterval(0, 4);
 	});
 
 	QUnit.test("Selection: number of items in range above limit", function(assert) {
@@ -156,57 +157,88 @@ sap.ui.define([
 
 		oTable._oSelectionPlugin.setLimit(5);
 		assert.equal(oTable._getSelectedIndicesCount(), 0, "no items are selected");
-		oTable.addSelectionInterval(0,0);
-		setTimeout(function() {
+		var fnGetContexts = sinon.spy(oTable.getBinding("rows"), "getContexts");
+
+		oTable._oSelectionPlugin.attachEventOnce("selectionChange", function(){
+			assert.ok(fnGetContexts.calledWith(0, 1), "getContexts is called with the correct parameters");
 			aSelectedIndices = oTable.getSelectedIndices();
 			assert.deepEqual(aSelectedIndices, [0], "First row is selected");
 
-			oTable._oSelectionPlugin.attachEvent("selectionChange", function(oEvent){
-				assert.deepEqual(oEvent.mParameters.rowIndices, [1, 2, 3, 4, 5, 6], "rowIndices parameter is correct");
-				assert.ok(oEvent.mParameters.limitReached, "limitReached parameter is correct");
+			oTable._oSelectionPlugin.attachSelectionChange(function(oEvent){
+				assert.ok(fnGetContexts.calledWith(1, 5), "getContexts is called with the correct parameters");
+				assert.deepEqual(oEvent.getParameters().rowIndices, [1, 2, 3, 4, 5], "rowIndices parameter is correct");
+				assert.ok(oEvent.getParameters().limitReached, "limitReached parameter is correct");
+				aSelectedIndices = oTable.getSelectedIndices();
+				assert.deepEqual(aSelectedIndices, [0, 1, 2, 3, 4, 5], "Selection is cut down to the possible limit. The first index was already selected, 5 new indices are added to the selection.");
+				done();
 			});
 
-			oTable.addSelectionInterval(1,10);
-			setTimeout(function() {
+			oTable.addSelectionInterval(0, 10);
+		});
+		oTable.setSelectedIndex(0);
+	});
+
+	QUnit.test("Selection using setSelectionInterval: number of items in range above limit", function(assert) {
+		var done = assert.async();
+		var aSelectedIndices = [];
+
+		oTable.setVisibleRowCount(3);
+		oTable._oSelectionPlugin.setLimit(5);
+		assert.equal(oTable._getSelectedIndicesCount(), 0, "no items are selected");
+		var fnGetContexts = sinon.spy(oTable.getBinding("rows"), "getContexts");
+
+		oTable._oSelectionPlugin.attachEventOnce("selectionChange", function(){
+			assert.ok(fnGetContexts.calledWith(16, 5), "getContexts is called with the correct parameters");
+			aSelectedIndices = oTable.getSelectedIndices();
+			assert.deepEqual(aSelectedIndices, [16, 17, 18, 19, 20], "The correct indices are selected");
+
+			oTable._oSelectionPlugin.attachSelectionChange(function(oEvent){
+				assert.ok(fnGetContexts.calledWith(16, 5), "getContexts is called with the correct parameters");
+				assert.deepEqual(oEvent.getParameters().rowIndices, [0, 1, 2, 3, 4, 16, 17, 18, 19, 20], "rowIndices parameter is correct (indices that are being selected and deselected)");
+				assert.ok(oEvent.getParameters().limitReached, "limitReached parameter is correct");
 				aSelectedIndices = oTable.getSelectedIndices();
-				assert.deepEqual(aSelectedIndices, [0, 1, 2, 3, 4, 5, 6], "Selection is cut down to the possible limit");
-				assert.equal(Math.max(0, 5 - oTable.getVisibleRowCount() + 2), oTable.getFirstVisibleRow(), "table scrolls back to the last selected item");
+				assert.deepEqual(aSelectedIndices, [0, 1, 2, 3, 4], "Selection is cut down to the possible limit. The previously selected indices are removed");
 				done();
-			}, 10);
-		}, 10);
+			});
+
+			oTable.setSelectionInterval(0, 10);
+		});
+		oTable.setSelectionInterval(16, 20);
 	});
 
 	QUnit.test("Mouse interaction", function(assert) {
 		var done = assert.async();
 		var aSelectedIndices = [];
 
-		oTable.addSelectionInterval(0,9);
-		setTimeout(function() {
+		oTable._oSelectionPlugin.attachEventOnce("selectionChange", function(){
 			aSelectedIndices = oTable.getSelectedIndices();
 			assert.equal(aSelectedIndices.length, 10, "rows properly selected");
-			oTable._oSelectionPlugin.onHeaderSelectorPress();
-			setTimeout(function() {
+
+			oTable._oSelectionPlugin.attachSelectionChange(function() {
 				aSelectedIndices = oTable.getSelectedIndices();
 				assert.equal(aSelectedIndices.length, 0, "selection is removed");
 				done();
-			}, 10);
-		}, 10);
+			});
+			oTable._oSelectionPlugin.onHeaderSelectorPress();
+		});
+		oTable.addSelectionInterval(0, 9);
 	});
 
 	QUnit.test("Keyboard interaction", function(assert) {
 		var done = assert.async();
 		var aSelectedIndices = [];
 
-		oTable.addSelectionInterval(0,9);
-		setTimeout(function() {
+		oTable._oSelectionPlugin.attachEventOnce("selectionChange", function(){
 			aSelectedIndices = oTable.getSelectedIndices();
 			assert.equal(aSelectedIndices.length, 10, "rows properly selected");
-			oTable._oSelectionPlugin.onKeyboardShortcut("toggle");
-			setTimeout(function() {
+
+			oTable._oSelectionPlugin.attachSelectionChange(function() {
 				aSelectedIndices = oTable.getSelectedIndices();
 				assert.equal(aSelectedIndices.length, 0, "selection is removed");
 				done();
-			}, 10);
-		}, 10);
+			});
+			oTable._oSelectionPlugin.onKeyboardShortcut("toggle");
+		});
+		oTable.addSelectionInterval(0, 9);
 	});
 });

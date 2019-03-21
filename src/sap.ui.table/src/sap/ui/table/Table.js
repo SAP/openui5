@@ -158,7 +158,7 @@ sap.ui.define([
 			 * When the selection mode is changed, the current selection is removed.
 			 * <b>Note:</b> Since the group header visualization relies on the row selectors, the row selectors are always shown if the grouping
 			 * functionality (depends on table type) is enabled, even if <code>sap.ui.table.SelectionMode.None</code> is set.
-			 * <b>Note:</b> When the MultiSelectionPlugin is applied to the table, the selection mode is controlled by the plugin and cannot be
+			 * <b>Note:</b> When a selection plugin is applied to the table, the selection mode is controlled by the plugin and cannot be
 			 * changed manually.
 			 */
 			selectionMode : {type : "sap.ui.table.SelectionMode", group : "Behavior", defaultValue : SelectionMode.MultiToggle},
@@ -458,6 +458,8 @@ sap.ui.define([
 			/**
 			 * fired when the row selection of the table has been changed (the event parameters can be used to determine
 			 * selection changes - to find out the selected rows you should better use the table selection API)
+			 *
+			 * <b>Note:</b> When a selection plugin is applied to the table, this event won't be fired.
 			 */
 			rowSelectionChange : {
 				parameters : {
@@ -3149,17 +3151,20 @@ sap.ui.define([
 		var iRowIndex = this._iSourceRowIndex !== undefined ? this._iSourceRowIndex : this.getSelectedIndex();
 		var bLimitReached = oEvent.getParameter("limitReached");
 		if (bLimitReached) {
-			this.setFirstVisibleRow(Math.max(0, aRowIndices[aRowIndices.length - 1] - this.getVisibleRowCount() + 2));
+			this.setFirstVisibleRow(Math.max(0, this.getSelectedIndex() - this.getVisibleRowCount() + 1));
 		}
 		this._updateSelection();
 
-		this.fireRowSelectionChange({
-			rowIndex: iRowIndex,
-			rowContext: this.getContextByIndex(iRowIndex),
-			rowIndices: aRowIndices,
-			selectAll: bSelectAll,
-			userInteraction: this._iSourceRowIndex !== undefined
-		});
+		if (this._oSelectionPlugin.isA("sap.ui.table.plugins.SelectionModelPlugin")
+			|| this._oSelectionPlugin.isA("sap.ui.table.plugins.BindingSelectionPlugin")) {
+			this.fireRowSelectionChange({
+				rowIndex: iRowIndex,
+				rowContext: this.getContextByIndex(iRowIndex),
+				rowIndices: aRowIndices,
+				selectAll: bSelectAll,
+				userInteraction: this._iSourceRowIndex !== undefined
+			});
+		}
 	};
 
 	/**
