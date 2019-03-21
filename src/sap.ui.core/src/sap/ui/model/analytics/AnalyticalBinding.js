@@ -1637,7 +1637,8 @@ sap.ui.define([
 							this.aBatchRequestQueue.push([ AnalyticalBinding._requestType.groupMembersAutoExpansionQuery, sParentGroupId, oGroupExpansionFirstMissingMember, missingMemberCount, iNumberOfExpandedLevels ]);
 						}
 					} else { // ! bGroupLevelAutoExpansionIsActive
-						bExecuteRequest = !this._isRequestPending(this._getRequestId(AnalyticalBinding._requestType.groupMembersQuery, {groupId: sParentGroupId}));
+						bExecuteRequest = oGroupSection.length
+							&& !this._isRequestPending(this._getRequestId(AnalyticalBinding._requestType.groupMembersQuery, {groupId: sParentGroupId}));
 						if (bExecuteRequest) {
 							this.aBatchRequestQueue.push([ AnalyticalBinding._requestType.groupMembersQuery, sParentGroupId, oGroupSection.startIndex, oGroupSection.length ]);
 							aMembersRequestId = [ this._getRequestId(AnalyticalBinding._requestType.groupMembersQuery, {groupId: sParentGroupId}) ];
@@ -1668,7 +1669,8 @@ sap.ui.define([
 							oMemberRequestDetails = this._prepareGroupMembersAutoExpansionQueryRequest(AnalyticalBinding._requestType.groupMembersAutoExpansionQuery, sParentGroupId, oGroupExpansionFirstMissingMember, missingMemberCount, iNumberOfExpandedLevels);
 						}
 					} else { // ! bGroupLevelAutoExpansionIsActive
-						bExecuteRequest = !this._isRequestPending(this._getRequestId(AnalyticalBinding._requestType.groupMembersQuery, {groupId: sParentGroupId}));
+						bExecuteRequest = oGroupSection.length
+							&& !this._isRequestPending(this._getRequestId(AnalyticalBinding._requestType.groupMembersQuery, {groupId: sParentGroupId}));
 						if (bExecuteRequest) {
 							oMemberRequestDetails = this._prepareGroupMembersQueryRequest(AnalyticalBinding._requestType.groupMembersQuery, sParentGroupId, oGroupSection.startIndex, oGroupSection.length);
 							aMembersRequestId = [ oMemberRequestDetails.sRequestId ];
