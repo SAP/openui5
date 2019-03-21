@@ -7,7 +7,7 @@
 	},
 	"sap.ui5": {
 		"rootView": {
-			"viewName": "sap.uxap.sample.AlternativeProfileObjectPageHeader.AlternativeProfileObjectPageHeader",
+			"viewName": "sap.uxap.sample.AlternativeProfileObjectPageHeader.view.AlternativeProfileObjectPageHeader",
 			"type": "XML",
 			"async": true
 		},
@@ -20,8 +20,8 @@
 			"sample": {
 				"stretch": true,
 				"files": [
-					"AlternativeProfileObjectPageHeader.view.xml",
-					"AlternativeProfileObjectPageHeader.controller.js",
+					"view/AlternativeProfileObjectPageHeader.view.xml",
+					"controller/AlternativeProfileObjectPageHeader.controller.js",
 					"../SharedBlocks/employment/BlockEmpDetailPart1.js",
 					"../SharedBlocks/employment/BlockEmpDetailPart1.view.xml",
 					"../SharedBlocks/employment/BlockEmpDetailPart2.js",
@@ -51,7 +51,7 @@
 					"../SharedBlocks/personal/PersonalBlockPart1.view.xml",
 					"../SharedBlocks/personal/PersonalBlockPart2.js",
 					"../SharedBlocks/personal/PersonalBlockPart2.view.xml",
-					"employee.json",
+					"../SharedJSONData/employee.json",
 					"manifest.json"
 				]
 			}

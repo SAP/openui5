@@ -7,7 +7,7 @@
 	},
 	"sap.ui5": {
 		"rootView": {
-			"viewName": "sap.uxap.sample.ObjectPageTitleOnLeft.ObjectPageTitleOnLeft",
+			"viewName": "sap.uxap.sample.ObjectPageTitleOnLeft.view.ObjectPageTitleOnLeft",
 			"type": "XML",
 			"async": true
 		},
@@ -20,8 +20,8 @@
 			"sample": {
 				"stretch": true,
 				"files": [
-					"ObjectPageTitleOnLeft.view.xml",
-					"ObjectPageOnJSON.controller.js",
+					"view/ObjectPageTitleOnLeft.view.xml",
+					"controller/ObjectPageTitleOnLeft.controller.js",
 					"../SharedBlocks/employment/BlockEmpDetailPart1.js",
 					"../SharedBlocks/employment/BlockEmpDetailPart1.view.xml",
 					"../SharedBlocks/employment/BlockEmpDetailPart2.js",
@@ -51,7 +51,7 @@
 					"../SharedBlocks/personal/PersonalBlockPart1.view.xml",
 					"../SharedBlocks/personal/PersonalBlockPart2.js",
 					"../SharedBlocks/personal/PersonalBlockPart2.view.xml",
-					"HRData.json",
+                    "../SharedJSONData/HRData.json",
 					"manifest.json"
 				]
 			}

@@ -1,0 +1,14 @@
+<mvc:View xmlns:html="http://www.w3.org/1999/xhtml" xmlns:mvc="sap.ui.core.mvc"
+		  xmlns:uxap="sap.uxap"
+		  xmlns:sample="sap.uxap.sample.BlockBaseBlockInBlock.controller.blocks"
+		  xmlns="sap.m">
+
+	<html:div style="height:24em; background-color: #A9EAFF ;">
+
+		<sample:InnerBlock id="vendorName">
+			<uxap:ModelMapping externalModelName="FirstBlock"
+							   externalPath="VendorName" internalModelName="NameDisplay"/>
+		</sample:InnerBlock>
+	</html:div>
+
+</mvc:View>

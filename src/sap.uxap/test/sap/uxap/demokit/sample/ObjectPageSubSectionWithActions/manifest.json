@@ -7,7 +7,7 @@
 	},
 	"sap.ui5": {
 		"rootView": {
-			"viewName": "sap.uxap.sample.ObjectPageSubSectionWithActions.ObjectPageSubSectionWithActions",
+			"viewName": "sap.uxap.sample.ObjectPageSubSectionWithActions.view.ObjectPageSubSectionWithActions",
 			"type": "XML",
 			"async": true
 		},
@@ -20,7 +20,7 @@
 			"sample": {
 				"stretch": true,
 				"files": [
-					"ObjectPageSubSectionWithActions.view.xml",
+					"view/ObjectPageSubSectionWithActions.view.xml",
 					"../SharedBlocks/BlockBlue.js",
 					"../SharedBlocks/BlockBlue.view.xml",
 					"manifest.json"

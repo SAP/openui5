@@ -7,7 +7,7 @@
 	},
 	"sap.ui5": {
 		"rootView": {
-			"viewName": "sap.uxap.sample.ObjectPageHeaderExpanded.ObjectPageHeaderExpanded",
+			"viewName": "sap.uxap.sample.ObjectPageHeaderExpanded.view.ObjectPageHeaderExpanded",
 			"type": "XML",
 			"async": true
 		},
@@ -20,8 +20,8 @@
 			"sample": {
 				"stretch": true,
 				"files": [
-					"ObjectPageHeaderExpanded.view.xml",
-					"ObjectPageHeaderExpanded.controller.js",
+					"view/ObjectPageHeaderExpanded.view.xml",
+					"controller/ObjectPageHeaderExpanded.controller.js",
 					"../SharedBlocks/goals/GoalsBlock.js",
 					"../SharedBlocks/goals/GoalsBlock.view.xml",
 					"../SharedBlocks/personal/BlockAdresses.js",
@@ -36,8 +36,8 @@
 					"../SharedBlocks/personal/PersonalBlockPart1.view.xml",
 					"../SharedBlocks/personal/PersonalBlockPart2.js",
 					"../SharedBlocks/personal/PersonalBlockPart2.view.xml",
-					"employee.json",
-					"products.json",
+                    "../SharedJSONData/employee.json",
+                    "../SharedJSONData/products.json",
 					"manifest.json"
 				]
 			}
