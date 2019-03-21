@@ -75,6 +75,9 @@ function(
 		// where 200ms transition sometimes seems to last a little longer
 		var iAnimationDuration = bUseAnimations ? 300 : 10;
 
+		// HTML container scrollbar width
+		var iScrollbarWidth = 17;
+
 		/**
 		* Constructor for a new Dialog.
 		*
@@ -905,7 +908,6 @@ function(
 		Dialog.prototype._onResize = function () {
 			var $dialog = this.$(),
 				$dialogContent = this.$('cont'),
-				dialogClientWidth = $dialogContent[0].clientWidth,
 				dialogContentScrollTop,
 				sContentHeight = this.getContentHeight(),
 				sContentWidth = this.getContentWidth(),
@@ -947,17 +949,17 @@ function(
 			// Browsers except chrome do not increase the width of the container to include scrollbar (when width is auto). So we need to compensate
 			if (Device.system.desktop && !oBrowser.chrome) {
 
-				var iVerticalScrollBarWidth = Math.ceil($dialogContent.outerWidth() - dialogClientWidth),
+				var bHasVerticalScrollbar = $dialogContent[0].clientHeight < $dialogContent[0].scrollHeight,
 					iCurrentWidthAndHeight = $dialogContent.width() + "x" + $dialogContent.height();
 
 				if (iCurrentWidthAndHeight !== this._iLastWidthAndHeightWithScroll) { // apply the fix only if width or height did actually change
-					if (iVerticalScrollBarWidth > 0 &&					// - there is a vertical scroll
+					if (bHasVerticalScrollbar &&					// - there is a vertical scroll
 						(!sContentWidth || sContentWidth == 'auto') &&	// - when the developer hasn't set it explicitly
 						!this.getStretch() && 							// - when the dialog is not stretched
 						$dialogContent.width() < maxDialogWidth) {		// - if the dialog can't grow anymore
 
 						$dialog.addClass("sapMDialogVerticalScrollIncluded");
-						$dialogContent.css({"padding-right" : iVerticalScrollBarWidth});
+						$dialogContent.css({"padding-right" : iScrollbarWidth});
 						this._iLastWidthAndHeightWithScroll = iCurrentWidthAndHeight;
 					} else {
 						$dialog.removeClass("sapMDialogVerticalScrollIncluded");
