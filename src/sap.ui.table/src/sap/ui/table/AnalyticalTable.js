@@ -12,7 +12,6 @@ sap.ui.define([
 	'sap/ui/model/analytics/ODataModelAdapter',
 	'sap/ui/model/SelectionModel',
 	'sap/ui/model/Sorter',
-	'sap/ui/core/Popup',
 	'sap/ui/unified/Menu',
 	'sap/ui/unified/MenuItem',
 	'./TableUtils',
@@ -30,7 +29,6 @@ sap.ui.define([
 		ODataModelAdapter,
 		SelectionModel,
 		Sorter,
-		Popup,
 		Menu,
 		MenuItem,
 		TableUtils,
@@ -482,11 +480,8 @@ sap.ui.define([
 				jQuery(oEvent.target).closest('.sapUiTableRowSelectionCell.sapUiTableGroupHeader').length > 0) {
 			this._iGroupedLevel = jQuery(oEvent.target).closest('[data-sap-ui-level]').data('sap-ui-level');
 			var oMenu = this._getGroupHeaderMenu();
-			var eDock = Popup.Dock;
 
-			var iLocationX = oEvent.pageX || oEvent.clientX;
-			var iLocationY = oEvent.pageY || oEvent.clientY;
-			oMenu.open(false, oEvent.target, eDock.LeftTop, eDock.LeftTop, document, (iLocationX - 2) + " " + (iLocationY - 2));
+			oMenu.openAsContextMenu(oEvent, TableUtils.getCell(this, oEvent.target) || oEvent.target);
 
 			oEvent.preventDefault();
 			oEvent.stopPropagation();
