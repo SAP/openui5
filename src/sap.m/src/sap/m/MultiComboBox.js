@@ -1380,7 +1380,6 @@ function(
 			key: mOptions.key
 		});
 		oToken.setText(mOptions.item.getText());
-		oToken.setTooltip(mOptions.item.getText());
 
 		mOptions.item.data(this.getRenderer().CSS_CLASS_COMBOBOXBASE + "Token", oToken);
 
@@ -2842,7 +2841,6 @@ function(
 			});
 
 			oToken.setText(oItem.getText());
-			oToken.setTooltip(oItem.getText());
 
 			oItem.data(oRenderer.CSS_CLASS_COMBOBOXBASE + "Token", oToken);
 			// TODO: Check this invalidation

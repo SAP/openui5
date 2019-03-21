@@ -11,7 +11,8 @@ sap.ui.define([
 	'sap/ui/core/Icon',
 	'./TokenRenderer',
 	"sap/ui/events/KeyCodes",
-	'sap/ui/core/theming/Parameters'
+	'sap/ui/core/theming/Parameters',
+	'sap/ui/core/Core'
 ],
 	function(
 		library,
@@ -21,7 +22,8 @@ sap.ui.define([
 		Icon,
 		TokenRenderer,
 		KeyCodes,
-		Parameters
+		Parameters,
+		Core
 	) {
 	"use strict";
 
@@ -225,6 +227,22 @@ sap.ui.define([
 		}
 
 		return this;
+	};
+
+	/**
+	 * Helper function for synchronizing the tooltip of the token
+	 * @private
+	 * @param {boolean} bEditable The editable value
+	 */
+	Token.prototype._getTooltip = function (oControl, bEditable) {
+		var sTooltip = oControl.getTooltip_AsString(),
+			sDeletableTooltip = Core.getLibraryResourceBundle("sap.m").getText("TOKEN_ARIA_DELETABLE");
+
+		if (bEditable && !sTooltip) {
+			return sDeletableTooltip;
+		}
+
+		return sTooltip;
 	};
 
 	/**
