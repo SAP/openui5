@@ -13,22 +13,6 @@ sap.ui.define(['sap/base/Log', '../../Component', '../../Element', '../../routin
 	function (Log, Component, Element, Router) {
 		"use strict";
 
-		var oEmpty = {},
-			EVENTS_BLACKLIST = {
-				"modelContextChange": oEmpty,
-				"beforeRendering": oEmpty,
-				"afterRendering": oEmpty,
-				"propertyChanged": oEmpty,
-				"aggregationChanged": oEmpty,
-				"componentCreated": oEmpty,
-				"afterInit": oEmpty,
-				"updateStarted": oEmpty,
-				"updateFinished": oEmpty,
-				"load": oEmpty,
-				"scroll": oEmpty,
-				"beforeGeometryChanged": oEmpty,
-				"geometryChanged": oEmpty
-			};
 
 		/**
 		 * Event broadcaster. This class is meant for private usages. Apps are not supposed to used it.
@@ -63,6 +47,87 @@ sap.ui.define(['sap/base/Log', '../../Component', '../../Element', '../../routin
 		 * @ui5-restricted
 		 */
 		var EventBroadcaster = {};
+
+
+		/*
+		 * Default Blacklist configuration.
+		 */
+		var EventsBlacklist = {
+				global: ["modelContextChange", "beforeRendering", "afterRendering", "propertyChanged", "beforeGeometryChanged", "geometryChanged",
+						"aggregationChanged", "componentCreated", "afterInit", "updateStarted", "updateFinished", "load", "scroll"
+						],
+				controls: {}
+		};
+
+		/**
+		 * Returns the currently set Blacklist configuration.
+		 * Returned object is copied from the original one.
+		 * In case you modify it, you have to set it by using the
+		 * <code>setEventBlacklist</code> setter in order for it to take effect.
+		 * @experimental
+		 * @since 1.65
+		 * @public
+		 */
+		EventBroadcaster.getEventsBlacklist = function() {
+			return JSON.parse(JSON.stringify(EventsBlacklist));
+		};
+
+		/**
+		 * Sets a new Blacklist configuration.
+		 *
+		 * BlackList configuration should have the following structure as in the example
+		 * shown below.
+		 *
+		 * In <code>global</code> object, we set all events that we don't want to track.
+		 * In <code>controls</code> object, we can list different controls and include or
+		 * exclude events for them.
+		 *
+		 * For example, in this configuration the <code>load</code> event is exposed for the
+		 * <code>sap.m.Image</code> control regardless of it being excluded globally for all
+		 * other controls.
+		 *
+		 * For <code>sap.m.Button</code> control, we don't want to track the <code>tap</code>
+		 * event but we need to track the <code>afterRendering</code> event.
+		 *
+		 * In the case where we write in the <code>controls</code> object a control without any
+		 * excluded or included events, this control is NOT tracked at all.
+		 *
+		 * In the example configuration events coming from control
+		 * <code>sap.m.AccButton</code> are not be exposed.
+		 *
+		 * <pre><code>
+		 * {
+		 *		global: ["modelContextChange", "beforeRendering", "afterRendering",
+		 *				"propertyChanged", "beforeGeometryChanged", "geometryChanged",
+		 *				"aggregationChanged", "componentCreated", "afterInit",
+		 *				"updateStarted", "updateFinished", "load", "scroll"
+		 *				],
+		 *		controls: {
+		 *			"sap.m.Image": {
+		 *				exclude: ["load"]
+		 *			},
+		 *			"sap.m.Button": {
+		 *				include: ["tap"],
+		 *				exclude: ["afterRendering"]
+		 *			},
+		 *			"sap.m.AccButton": {}
+		 *		}
+		 *	}
+		 * </pre></code>
+		 * The set configuration object is copied from the given one.
+		 * @experimental
+		 * @since 1.65
+		 * @public
+		 */
+		EventBroadcaster.setEventsBlacklist = function(oConfig) {
+			if (this._isValidConfig(oConfig)) {
+				EventsBlacklist = JSON.parse(JSON.stringify(oConfig));
+			} else {
+				if (Log.isLoggable()) {
+					Log.error("Provided Blacklist configuration is not valid. Continuing to use previously/default set configuration.");
+				}
+			}
+		};
 
 		/**
 		 * Starts broadcasting events. Consumers could stop broadcasting via
@@ -177,12 +242,65 @@ sap.ui.define(['sap/base/Log', '../../Component', '../../Element', '../../routin
 			window.dispatchEvent(oCustomEvent);
 		};
 
-		EventBroadcaster._shouldExpose = function (sEventId, oElement) {
-			return !EVENTS_BLACKLIST[sEventId] && EventBroadcaster._isPublicElementEvent(sEventId, oElement);
+		/**
+		 * Checks inside the configuration if the given event should be exposed.
+		 * The check is made once for the global list of blacklisted events
+		 * and then for the listed controls.
+		 * @param {string} sEventId the name of the event
+		 * @param {sap.ui.core.Element} oElement The event's target UI5 element.
+		 * @private
+		 */
+		EventBroadcaster._shouldExpose = function(sEventId, oElement) {
+			var oBlacklistConfig = EventBroadcaster.getEventsBlacklist(),
+				bExposeGlobal = oBlacklistConfig.global.indexOf(sEventId) === -1 && EventBroadcaster._isPublicElementEvent(sEventId, oElement),
+				bExposeControl = EventBroadcaster._isTrackableControlEvent(oBlacklistConfig, sEventId, oElement);
+
+			return bExposeGlobal && bExposeControl;
+		};
+
+		/**
+		 * Checks inside controls configuration if the given event should be exposed
+		 * for that control or if the control events should be tracked at all.
+		 * @param {object} oConfig configuration in which the check should be performed
+		 * @param {string} sEventId the name of the event
+		 * @param {sap.ui.core.Element} oElement The event's target UI5 element
+		 * @private
+		 */
+		EventBroadcaster._isTrackableControlEvent = function(oConfig, sEventId, oElement) {
+			var oInclude,
+				oExclude,
+				bTrackable = true,
+				sName = oElement.getMetadata().getName();
+
+			if (oConfig.controls[sName]) {
+
+				oInclude = oConfig.controls[sName].include;
+				oExclude = oConfig.controls[sName].exclude;
+
+				if (!oInclude && !oExclude) {
+					bTrackable = false;
+				}
+
+				if (oExclude && oExclude.indexOf(sEventId) > -1) {
+					bTrackable = true;
+				}
+				if (oInclude && oInclude.indexOf(sEventId) > -1) {
+					bTrackable = false;
+				}
+			}
+
+			return bTrackable;
 		};
 
 		EventBroadcaster._isPublicElementEvent = function (sEventId, oElement) {
 			return oElement.getMetadata().hasEvent(sEventId);
+		};
+
+		EventBroadcaster._isValidConfig = function (oConfig) {
+			var bGlobal = oConfig.hasOwnProperty("global"),
+				bControls = oConfig.hasOwnProperty("controls");
+
+			return bGlobal && bControls;
 		};
 
 		EventBroadcaster._createOwnerComponentInfo = function(oSrcElement) {
