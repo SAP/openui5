@@ -8,6 +8,9 @@ sap.ui.define(["sap/m/library", "sap/ui/Device", "sap/ui/core/library"],
 		// shortcut for sap.m.DialogType
 		var DialogType = library.DialogType;
 
+		// shortcut for sap.m.DialogRoleType
+		var DialogRoleType = library.DialogRoleType;
+
 		// shortcut for sap.ui.core.ValueState
 		var ValueState = coreLibrary.ValueState;
 
@@ -92,15 +95,15 @@ sap.ui.define(["sap/m/library", "sap/ui/Device", "sap/ui/core/library"],
 			}
 
 			// ARIA
-			if (sState === "Error" || sState === "Warning") {
-				oRm.writeAccessibilityState(oControl, {
-					role: "alertdialog"
-				});
-			} else {
-				oRm.writeAccessibilityState(oControl, {
-					role: "dialog"
-				});
+			var sRole = oControl.getProperty("role");
+
+			if (sState === ValueState.Error || sState === ValueState.Warning) {
+				sRole = DialogRoleType.AlertDialog;
 			}
+
+			oRm.writeAccessibilityState(oControl, {
+				role: sRole
+			});
 
 			if (oControl._forceDisableScrolling) {
 				oRm.addClass("sapMDialogWithScrollCont");

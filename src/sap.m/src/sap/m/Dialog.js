@@ -57,6 +57,9 @@ function(
 		// shortcut for sap.m.DialogType
 		var DialogType = library.DialogType;
 
+		// shortcut for sap.m.DialogType
+		var DialogRoleType = library.DialogRoleType;
+
 		// shortcut for sap.ui.core.ValueState
 		var ValueState = coreLibrary.ValueState;
 
@@ -212,7 +215,14 @@ function(
 					 * The function allows you to define custom behavior which will be executed when the Escape key is pressed. By default, when the Escape key is pressed, the Dialog is immediately closed.
 					 * @since 1.44
 					 */
-					escapeHandler : {type: "any", group: "Behavior", defaultValue: null}
+					escapeHandler : {type: "any", group: "Behavior", defaultValue: null},
+
+					/**
+					 * Specifies the ARIA role of the Dialog. If the state of the control is "Error" or "Warning" the role will be "AlertDialog" regardless of what is set.
+					 * @since 1.65
+					 * @private
+					 */
+					role: {type: "sap.m.DialogRoleType", group: "Data", defaultValue: DialogRoleType.Dialog, visibility: "hidden"}
 				},
 				defaultAggregation: "content",
 				aggregations: {
