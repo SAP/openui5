@@ -96,9 +96,10 @@ div[class*="sapUiRespGrid"]:after {
 
 .sapUiRespGridWriteSpanClass(@classFor, @hspace, @span, @screenSize, @useRounding) when (@classFor = Span) {
     @a:  @_sap_ui_layout_Grid_RespGridOneCol * @span;
-    @width_percentage_value: @a - 100% * @_sap_ui_layout_Grid_RespGridPxInRem * @hspace / @screenSize;
+	@width_percentage_value: @a - 100% * @_sap_ui_layout_Grid_RespGridPxInRem * @hspace / @screenSize;
     & when (@useRounding) {
-        width: floor(@width_percentage_value);
+		width: floor(@width_percentage_value);
+		.sapUiRespGrid-getCalcFuncSpan(floor(@a), @hspace);
     }
     & when not (@useRounding) {
         width: @width_percentage_value;
