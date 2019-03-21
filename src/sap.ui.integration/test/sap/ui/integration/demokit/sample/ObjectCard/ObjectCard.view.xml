@@ -4,11 +4,11 @@
         xmlns:mvc="sap.ui.core.mvc"
         xmlns:f="sap.f"
         xmlns:w="sap.ui.integration.widgets">
-    <f:CardContainer>
+    <f:GridContainer>
         <w:Card manifest="./test-resources/sap/ui/integration/demokit/sample/ObjectCard/model/manifest.json">
             <w:layoutData>
-                <f:CardItemLayoutData columns="5" />
+                <f:GridContainerItemLayoutData columns="5" />
             </w:layoutData>
         </w:Card>
-    </f:CardContainer>
+    </f:GridContainer>
 </mvc:View>

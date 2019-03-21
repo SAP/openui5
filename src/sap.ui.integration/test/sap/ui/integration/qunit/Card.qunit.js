@@ -1140,7 +1140,7 @@ function (
 				oContentDomRef = document.getElementsByClassName("sapFCardContent")[0],
 				sAriaLabelledByIds = oHeader._getTitle().getId() + " " + oHeader._getSubtitle().getId() + " " + oHeader._getAvatar().getId();
 
-			// Assert Card Container
+			// Assert Grid Container
 			assert.equal(oCardDomRef.getAttribute("role"), "region", "Card container should have a role - region");
 			assert.equal(oCardDomRef.getAttribute("aria-roledescription"), this.oRb.getText("ARIA_ROLEDESCRIPTION_CARD"), "Card container should have aria-roledescription - Card");
 			assert.equal(oCardDomRef.getAttribute("aria-labelledby"), oHeader._getTitle().getId(), "Card container should have aria-lebelledby - pointing to the title id if there is one");

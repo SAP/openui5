@@ -13,55 +13,55 @@
 			</Toolbar>
 		</subHeader>
 		<content>
-			<f:CardContainer id="cContainer">
+			<f:GridContainer id="cContainer">
 				<w:Card manifest="{manifests>/listContent/card13}">
 					<w:layoutData>
-						<f:CardItemLayoutData columns="3" />
+						<f:GridContainerItemLayoutData columns="3" />
 					</w:layoutData>
 				</w:Card>
 				<w:Card manifest="{manifests>/noLayout/card7}">
 					<w:layoutData>
-						<f:CardItemLayoutData columns="4" />
+						<f:GridContainerItemLayoutData columns="4" />
 					</w:layoutData>
 				</w:Card>
 				<w:Card manifest="{manifests>/noLayout/card7}">
 					<w:layoutData>
-						<f:CardItemLayoutData columns="4" />
+						<f:GridContainerItemLayoutData columns="4" />
 					</w:layoutData>
 				</w:Card>
 				<w:Card manifest="{manifests>/noLayout/card4}">
 					<w:layoutData>
-						<f:CardItemLayoutData columns="3" />
+						<f:GridContainerItemLayoutData columns="3" />
 					</w:layoutData>
 				</w:Card>
 				<w:Card manifest="{manifests>/listContent/card13}">
 					<w:layoutData>
-						<f:CardItemLayoutData columns="3" />
+						<f:GridContainerItemLayoutData columns="3" />
 					</w:layoutData>
 				</w:Card>
 				<w:Card manifest="{manifests>/noLayout/card4}">
 					<w:layoutData>
-						<f:CardItemLayoutData columns="5" />
+						<f:GridContainerItemLayoutData columns="5" />
 					</w:layoutData>
 				</w:Card>
 				<w:Card manifest="{manifests>/noLayout/card2}">
 					<w:layoutData>
-						<f:CardItemLayoutData columns="3" />
+						<f:GridContainerItemLayoutData columns="3" />
 					</w:layoutData>
 				</w:Card>
 
 				<w:Card manifest="{manifests>/listContent/card13}">
 					<w:layoutData>
-						<f:CardItemLayoutData columns="5" />
+						<f:GridContainerItemLayoutData columns="5" />
 					</w:layoutData>
 				</w:Card>
 
 				<w:Card manifest="{manifests>/noLayout/card6}">
 					<w:layoutData>
-						<f:CardItemLayoutData columns="8" />
+						<f:GridContainerItemLayoutData columns="8" />
 					</w:layoutData>
 				</w:Card>
-			</f:CardContainer>
+			</f:GridContainer>
 		</content>
 	</Page>
 </mvc:View>

@@ -2,29 +2,29 @@
  * ${copyright}
  */
 
-// Provides element sap.f.CardItemLayoutData
+// Provides element sap.f.GridContainerItemLayoutData
 sap.ui.define(['sap/ui/core/LayoutData'],
 	function(LayoutData) {
 		"use strict";
 
 		/**
-		 * Constructor for a new <code>sap.f.CardItemLayoutData</code>.
+		 * Constructor for a new <code>sap.f.GridContainerItemLayoutData</code>.
 		 *
 		 * @param {string} [sId] ID for the new element, generated automatically if no ID is given
 		 * @param {object} [mSettings] Initial settings for the new element.
 		 *
 		 * @class
-		 * Holds layout data for a CardContainer.
+		 * Holds layout data for a GridContainer.
 		 * @extends sap.ui.core.LayoutData
 		 * @version ${version}
 		 *
 		 * @constructor
 		 * @since 1.62
 		 * @see {@link TODO Card}
-		 * @alias sap.f.CardItemLayoutData
+		 * @alias sap.f.GridContainerItemLayoutData
 		 * @ui5-metamodel This control/element also will be described in the UI5 (legacy) designtime metamodel
 		 */
-		var CardItemLayoutData = LayoutData.extend("sap.f.CardItemLayoutData", /** @lends sap.f.CardItemLayoutData.prototype */ {
+		var GridContainerItemLayoutData = LayoutData.extend("sap.f.GridContainerItemLayoutData", /** @lends sap.f.GridContainerItemLayoutData.prototype */ {
 			metadata: {
 
 				library: "sap.f",
@@ -37,5 +37,5 @@ sap.ui.define(['sap/ui/core/LayoutData'],
 			}
 		});
 
-		return CardItemLayoutData;
+		return GridContainerItemLayoutData;
 	});

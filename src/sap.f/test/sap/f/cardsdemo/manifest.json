@@ -148,9 +148,9 @@
 		  "target": "sapfCard"
 		},
 		{
-		  "pattern": "cardContainer",
-		  "name": "cardContainer",
-		  "target": "cardContainer"
+		  "pattern": "gridContainer",
+		  "name": "gridContainer",
+		  "target": "gridContainer"
 		},
 		{
 		  "pattern": "timelineContent",
@@ -279,9 +279,9 @@
 		  "viewName": "sapfCard",
 		  "viewLevel": 1
 		},
-		"cardContainer": {
-		  "viewId": "CardContainer",
-		  "viewName": "CardContainer",
+		"gridContainer": {
+		  "viewId": "GridContainer",
+		  "viewName": "GridContainer",
 		  "viewLevel": 1
 		},
 		"navigationService": {
