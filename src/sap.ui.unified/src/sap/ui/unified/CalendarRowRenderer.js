@@ -601,9 +601,6 @@ sap.ui.define(['sap/ui/core/date/UniversalDate', 'sap/ui/unified/CalendarAppoint
 		// ARIA information about start and end
 		var sAriaText = oRow._oRb.getText("CALENDAR_START_TIME") + ": " + oRow._oFormatAria.format(oAppointment.getStartDate());
 		sAriaText = sAriaText + "; " + oRow._oRb.getText("CALENDAR_END_TIME") + ": " + oRow._oFormatAria.format(oAppointment.getEndDate());
-		if (sTooltip) {
-			sAriaText = sAriaText + "; " + sTooltip;
-		}
 
 		if (sType && sType != CalendarDayType.None) {
 

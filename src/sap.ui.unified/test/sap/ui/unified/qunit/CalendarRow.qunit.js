@@ -1201,10 +1201,9 @@ QUnit.test("CalendarRow '_oFormatAria' formatter", function (assert) {
 				sFormattedStartDate = that.sut._oFormatAria.format(oAppointment.getStartDate()),
 				sLocalizedEnd = that.sut._oRb.getText("CALENDAR_END_TIME"),
 				sFormattedEndDate = that.sut._oFormatAria.format(oAppointment.getEndDate()),
-				sTooltip = oAppointment.getTooltip() || "";
 				sType = oAppointment.getType() !== CalendarDayType.None ? "; " + CalendarLegendRenderer.getTypeAriaText(oAppointment.getType()).getText() : "";
 
-			return sLocalizedStart + ": " + sFormattedStartDate + "; " + sLocalizedEnd + ": " + sFormattedEndDate + "; " + sTooltip + sType;
+			return sLocalizedStart + ": " + sFormattedStartDate + "; " + sLocalizedEnd + ": " + sFormattedEndDate + sType;
 		},
 		aAppointments = this.sut.getAppointments();
 
