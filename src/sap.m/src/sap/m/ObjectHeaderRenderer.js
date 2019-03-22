@@ -568,8 +568,6 @@ sap.ui.define([
 	 * @private
 	 */
 	ObjectHeaderRenderer._renderFullOH = function(oRM, oOH) {
-		var oLibraryResourceBundle = sap.ui.getCore().getLibraryResourceBundle("sap.m"); // get resource translation bundle
-
 		// Introductory text at the top of the item, like "On behalf of Julie..."
 		if (oOH.getIntro()) {
 			this._renderIntro(oRM, oOH, "sapMOHIntro", "sapMOHIntroActive");
@@ -600,14 +598,7 @@ sap.ui.define([
 			oRM.addClass("sapMOHIcon");
 			oRM.addClass('sapMOHIcon' + oOH.getImageShape());
 			if (oOH.getIconActive()) {
-				oRM.writeAttribute("tabindex", "0");
 				oRM.addClass("sapMPointer");
-				//ARIA attributes
-				oRM.writeAccessibilityState({
-					role: "link",
-					haspopup: true,
-					label: oLibraryResourceBundle.getText("OH_ARIA_ICON")
-				});
 			}
 			oRM.writeClasses();
 			oRM.write(">");
@@ -855,8 +846,6 @@ sap.ui.define([
 	 * @private
 	 **/
 	ObjectHeaderRenderer._renderResponsiveTitleBlock = function(oRM, oControl) {
-		var oLibraryResourceBundle = sap.ui.getCore().getLibraryResourceBundle("sap.m"); // get resource translation bundle
-
 		// Title container displayed to the left of the number and number units container.
 		oRM.write("<div"); // Start Title and Number container (block1 and block2)
 		oRM.writeAttribute("id", oControl.getId() + "-titlenumdiv");
@@ -897,13 +886,6 @@ sap.ui.define([
 			}
 			if (oControl.getIconActive()) {
 				oRM.addClass("sapMPointer");
-				oRM.writeAttribute("tabindex", "0");
-				//ARIA attributes
-				oRM.writeAccessibilityState({
-					role: "link",
-					haspopup: true,
-					label: oLibraryResourceBundle.getText("OH_ARIA_ICON")
-				});
 			}
 			oRM.writeClasses();
 			oRM.write(">");
