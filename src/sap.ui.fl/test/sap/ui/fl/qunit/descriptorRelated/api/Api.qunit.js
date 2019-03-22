@@ -1270,6 +1270,23 @@ sap.ui.define([
 			});
 		});
 
+		QUnit.test("appdescr_ui5_setMinUI5Version", function(assert) {
+			return DescriptorInlineChangeFactory.create_ui5_setMinUI5Version({
+				"minUI5Version" : "1.63.0"
+			}).then(function(oDescriptorInlineChange) {
+				assert.notEqual(oDescriptorInlineChange, null);
+				assert.equal(oDescriptorInlineChange.getMap().changeType, "appdescr_ui5_setMinUI5Version");
+			});
+		});
+
+		QUnit.test("appdescr_ui5_setMinUI5Version failure", function (assert) {
+			assert.throws(function(){
+				DescriptorInlineChangeFactory.create_ui5_setMinUI5Version({
+					"minUI5Version" : {}
+				});
+			});
+		});
+
 		QUnit.test("appdescr_smb_addNamespace", function(assert) {
 			return DescriptorInlineChangeFactory.create_smb_addNamespace({
 				"smartBusinessApp": {
