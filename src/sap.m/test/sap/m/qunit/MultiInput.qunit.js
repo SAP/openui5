@@ -1587,7 +1587,7 @@ sap.ui.define([
 		// arrange
 		var oMultiInput = new sap.m.MultiInput({
 			editable: false,
-			width: "200px",
+			width: "50px",
 			tokens: [
 				new sap.m.Token({ text: "XXXX" }),
 				new sap.m.Token({ text: "XXXX" }),
