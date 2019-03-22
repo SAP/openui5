@@ -2068,6 +2068,7 @@ sap.ui.define([
 				.withExactArgs(sIgnoreThisWarning);
 
 			oError = new Error("This call failed intentionally");
+			oError.$uncaughtInPromise = true;
 			oModel = new (bAsync ? ODataModel : ODataModel1)("/fake/service", {
 				annotationURI : "",
 				json : true,

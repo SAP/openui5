@@ -4,10 +4,11 @@
 
 (function () {
 	"use strict";
-	/*global _$blanket, blanket, falafel, QUnit */
-	/*eslint no-warning-comments: 0 */
+	/*global _$blanket, blanket, falafel, Map, QUnit */
+	/*eslint no-alert: 0, no-warning-comments: 0 */
 
 	var aFileNames = [], // maps a file's index to its name
+		oScript = getScriptTag(),
 		aStatistics = [], // maps a file's index to its "hits" array (and statistics record)
 		iThreshold,
 		rWordChar = /\w/; // a "word" (= identifier) character
@@ -444,7 +445,6 @@
 		blanket.instrument = instrument; // self-made "plug-in" ;-)
 
 		var fnGetTestedModules = listenOnQUnit(),
-			oScript = getScriptTag(),
 			iLinesOfContext = getAttributeAsInteger(oScript, "data-lines-of-context", 3);
 
 		iThreshold = Math.min(getAttributeAsInteger(oScript, "data-threshold", 0), 100);
@@ -466,7 +466,8 @@
 		fnModule,
 		iNo = 0,
 		sTestId,
-		mUncaughtById = {};
+		mUncaughtById = {},
+		mUncaughtPromise2Reason = new Map();
 
 	/**
 	 * Check isolated line/branch coverage for the given test.
@@ -509,9 +510,12 @@
 	 */
 	function checkUncaught(fnReporter) {
 		var sId,
-			iLength = Object.keys(mUncaughtById).length,
+			iLength = Object.keys(mUncaughtById).length + mUncaughtPromise2Reason.size,
 			sMessage = "Uncaught (in promise): " + iLength + " times\n",
-			oPromise;
+			oPromise,
+			vReason,
+			oResult,
+			itValues;
 
 		if (iLength) {
 			for (sId in mUncaughtById) {
@@ -528,6 +532,21 @@
 				sMessage += "\n\n";
 			}
 			mUncaughtById = {};
+
+			//TODO once IE is gone: for (let vReason of mUncaughtPromise2Reason.values()) {...}
+			if (mUncaughtPromise2Reason.size) {
+				itValues = mUncaughtPromise2Reason.values();
+				for (;;) {
+					oResult = itValues.next();
+					if (oResult.done) {
+						break;
+					}
+					vReason = oResult.value;
+					sMessage += (vReason && vReason.stack || vReason) + "\n\n";
+				}
+				mUncaughtPromise2Reason.clear();
+			}
+
 			if (fnReporter) {
 				fnReporter(sMessage);
 			} else if (bInfo) {
@@ -535,6 +554,33 @@
 					sClassName);
 			}
 		}
+	}
+
+	if (oScript.getAttribute("data-uncaught-in-promise") !== "true") {
+		/*
+		 * Listener for "unhandledrejection" events to keep track of "Uncaught (in promise)".
+		 */
+		window.addEventListener("unhandledrejection", function (oEvent) {
+			if (oEvent.reason.$uncaughtInPromise) { // ignore exceptional cases
+				return;
+			}
+
+			if (mUncaughtPromise2Reason) {
+				mUncaughtPromise2Reason.set(oEvent.promise, oEvent.reason);
+				oEvent.preventDefault(); // do not report on console
+			} else { // QUnit already done
+				alert("Uncaught (in promise) " + oEvent.reason);
+			}
+		});
+
+		/*
+		 * Listener for "rejectionhandled" events to keep track of "Uncaught (in promise)".
+		 */
+		window.addEventListener("rejectionhandled", function (oEvent) {
+			if (mUncaughtPromise2Reason) {
+				mUncaughtPromise2Reason.delete(oEvent.promise);
+			}
+		});
 	}
 
 	/**
@@ -674,6 +720,10 @@
 				}
 				// Note: for SyncPromise, a lot of lines are already covered!
 			}
+		});
+
+		QUnit.done(function () {
+			mUncaughtPromise2Reason = null; // no use to keep track anymore
 		});
 	}
 }());
