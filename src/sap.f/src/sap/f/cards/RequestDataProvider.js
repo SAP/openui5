@@ -41,6 +41,10 @@ sap.ui.define([
 
 	RequestDataProvider.prototype._isValidRequest = function (oRequest) {
 
+		if (!oRequest) {
+			return false;
+		}
+
 		if (aModes.indexOf(oRequest.mode) === -1) {
 			return false;
 		}
@@ -64,6 +68,7 @@ sap.ui.define([
 			if (!oRequestConfig) {
 				Log.error(sMessage);
 				reject(sMessage);
+				return;
 			}
 
 			var oRequest = {

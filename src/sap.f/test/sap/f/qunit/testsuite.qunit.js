@@ -44,6 +44,16 @@ sap.ui.define(function () {
 					only: ["sap/f/cards/BindingResolver"]
 				}
 			},
+			"DataProvider": {
+				coverage: {
+					only: [
+						"sap/f/cards/DataProviderFactory",
+						"sap/f/cards/DataProvider",
+						"sap/f/cards/RequestDataProvider",
+						"sap/f/cards/ServiceDataProvider"
+					]
+				}
+			},
 			"DynamicPage": {
 				coverage: {
 					only: ["sap/f/DynamicPage"]
