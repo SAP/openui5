@@ -164,16 +164,18 @@ sap.ui.define([
 				lbp: 15,
 				led: unexpected,
 				nud: function (oToken, oParser) {
-					return UNARY.bind(null, oParser.expression(this.lbp),
-						function (x) { return !x; });
+					return UNARY.bind(null, oParser.expression(this.lbp), function (x) {
+							return !x;
+						});
 				}
 			},
 			"typeof": {
 				lbp: 15,
 				led: unexpected,
 				nud: function (oToken, oParser) {
-					return UNARY.bind(null, oParser.expression(this.lbp),
-							function (x) { return typeof x; });
+					return UNARY.bind(null, oParser.expression(this.lbp), function (x) {
+							return typeof x;
+						});
 				}
 			},
 			"?": {
