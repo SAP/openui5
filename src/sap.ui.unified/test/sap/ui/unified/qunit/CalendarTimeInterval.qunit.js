@@ -328,20 +328,24 @@ sap.ui.define([
 
 		//Prepare
 		var oCalendarTimeInt = new CalendarTimeInterval(),
-			oExternalControl = new CalendarTimeInterval("extControl");
+			oExternalControl = new CalendarTimeInterval("extControl"),
+			oElementToFocus;
 
 		oCalendarTimeInt.placeAt("qunit-fixture");
 		oExternalControl.placeAt("qunit-fixture");
 		sap.ui.getCore().applyChanges();
 
-		oExternalControl.$().focus();
-		_assertFocus(oExternalControl.getDomRef(), "Prerequisites check: 'extControl' (another MonthInterval) should be focused", assert);
+		// Get the focusable B1 button from the external CalendarTimeInterval, since CTI itself isn't focusable.
+		oElementToFocus = oExternalControl.getAggregation("header").getDomRef("B1");
+		oElementToFocus.focus();
+
+		_assertFocus(oElementToFocus, "Prerequisites check: 'extControl' (another MonthInterval) should be focused", assert);
 
 		//Act
 		oCalendarTimeInt.rerender();
 
 		//Assert
-		_assertFocus(oExternalControl.getDomRef(), "After rerendering, the focus should stay on the 'extControl' (TimeInterval)", assert);
+		_assertFocus(oElementToFocus, "After rerendering, the focus should stay on the 'extControl' (TimeInterval)", assert);
 		oCalendarTimeInt.destroy();
 		oExternalControl.destroy();
 	});
