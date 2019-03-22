@@ -11,7 +11,7 @@
 	</script>
 
 	<script id="myXml" type="text/xmldata">
-			<mvc:View xmlns:mvc="sap.ui.core.mvc" xmlns="sap.m" xmlns:core="sap.ui.core"
+			<mvc:View xmlns:mvc="sap.ui.core.mvc" xmlns="sap.m" xmlns:core="sap.ui.core" xmlns:l="sap.ui.layout"
 			 	controllerName="eventBroadcasterTestController" displayBlock="true">
 				<App>
 					<Page title="Enable EventBroadcaster">
@@ -29,6 +29,16 @@
 								<Switch/>
 								<TimePicker/>
 							</content>
+						</Panel>
+						<Panel headerText="Blacklist configuration for filtering events" expandable="true" expanded="true">
+								<l:VerticalLayout class="sapUiLargeMarginBegin">
+									<Label text="Enter events configuration:" />
+									<TextArea id="txtConfig" rows="10" width="550px" />
+									<l:HorizontalLayout>
+										<Button id="setConfig" text="Set Blacklist" press="setBlacklistConfig"/>
+										<Button id="getConfig" text="Get Blacklist events configuration" press="getBlacklistConfig"/>
+									</l:HorizontalLayout>
+								</l:VerticalLayout>
 						</Panel>
 						<Table id="log"
 								inset="false">
@@ -89,8 +99,8 @@
 	<script>
 		sap.ui.getCore().attachInit(function () {
 			sap.ui.require(['sap/ui/core/mvc/XMLView', 'sap/ui/core/support/usage/EventBroadcaster',
-						'sap/ui/core/mvc/Controller', 'sap/m/ColumnListItem', 'sap/m/Text'],
-					function (XMLView, EventBroadcaster, Controller, ColumnListItem, Text) {
+						'sap/ui/core/mvc/Controller', 'sap/m/ColumnListItem', 'sap/m/Text', 'sap/m/MessageToast'],
+					function (XMLView, EventBroadcaster, Controller, ColumnListItem, Text, MessageToast) {
 						"use strict";
 						var oTable;
 
@@ -127,6 +137,18 @@
 										new Text({text: oEvtDetail.componentVersion})
 									]
 								}, 0));
+							},
+							setBlacklistConfig: function () {
+								var oConfig;
+								try {
+									oConfig = JSON.parse(this.getView().byId("txtConfig").getValue());
+									EventBroadcaster.setEventsBlacklist(oConfig);
+								} catch (e) {
+									MessageToast.show("Please enter valid JSON." + e.message);
+								}
+							},
+							getBlacklistConfig: function () {
+								this.getView().byId("txtConfig").setValue(JSON.stringify(EventBroadcaster.getEventsBlacklist()));
 							}
 						});
 

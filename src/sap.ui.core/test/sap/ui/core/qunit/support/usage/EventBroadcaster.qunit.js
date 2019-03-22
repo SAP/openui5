@@ -9,8 +9,9 @@ sap.ui.define([
 	"sap/ui/core/routing/Router",
 	"sap/ui/core/routing/HashChanger",
 	"sap/m/Button",
+	"sap/m/Link",
 	"sap/m/Image"
-], function (EventBroadcaster, Element, Router, HashChanger, Button, Image) {
+], function (EventBroadcaster, Element, Router, HashChanger, Button, Link, Image) {
 	"use strict";
 
 
@@ -42,6 +43,53 @@ sap.ui.define([
 		EventBroadcaster.disable();
 		assert.notOk(Element._interceptEvent, "After calling #disable there is no broadcasting logic attached to Element");
 		assert.notOk(Router._interceptRouteMatched, "Initially #disable is no intercept logic attached to Router");
+	});
+
+	QUnit.test("set/get EventsBlacklist", function (assert) {
+		//Prepare
+		var oConfig = {
+				global: ["modelContextChange", "beforeRendering", "afterRendering", "propertyChanged", "beforeGeometryChanged", "geometryChanged",
+					"aggregationChanged", "componentCreated", "afterInit", "updateStarted", "updateFinished", "load", "scroll"
+					],
+				controls: {
+					"sap.m.Button": {
+						include: ["tap"]
+					}
+				}
+			};
+
+		// Act
+		EventBroadcaster.setEventsBlacklist(oConfig);
+
+		// Assert
+		assert.deepEqual(EventBroadcaster.getEventsBlacklist(), oConfig, "Blacklist configuration is set correctly");
+	});
+
+	QUnit.test("configuration blacklist can't be changed without the setter", function (assert) {
+		//Prepare
+		var oConfig = {
+				global: ["modelContextChange", "beforeRendering", "afterRendering", "propertyChanged", "beforeGeometryChanged", "geometryChanged",
+					"aggregationChanged", "componentCreated", "afterInit", "updateStarted", "updateFinished", "load", "scroll"
+					],
+				controls: {
+					"sap.m.Button": {
+						include: ["tap"]
+					}
+				}
+			};
+
+		// Act
+		EventBroadcaster.setEventsBlacklist(oConfig);
+
+		oConfig = {
+			global: [],
+			controls: {
+				"sap.m.Switch": {}
+			}
+		};
+
+		// Assert
+		assert.notDeepEqual(EventBroadcaster.getEventsBlacklist().controls, oConfig.controls, "Blacklist configuration wasn't modified when the configuration object was modified");
 	});
 
 	QUnit.module("Integration", {
@@ -158,4 +206,43 @@ sap.ui.define([
 		assert.notOk(EventBroadcaster._shouldExpose("load", new Image()), "event 'load' should not be exposed");
 		assert.notOk(EventBroadcaster._shouldExpose("load", new Image()), "event 'load' should not be exposed");
 	});
+
+	QUnit.test("_isTrackableControlEvent function filters out blacklisted events ", function (assert) {
+		var oConfig = {
+				global: ["modelContextChange", "beforeRendering", "afterRendering", "propertyChanged", "beforeGeometryChanged", "geometryChanged",
+					"aggregationChanged", "componentCreated", "afterInit", "updateStarted", "updateFinished", "load", "scroll"],
+			controls: {
+				"sap.m.Button": {
+					include: ["tap"]
+				},
+				"sap.m.Image": {
+					exclude: ["load"]
+				},
+				"sap.m.Link": {}
+			}
+		};
+		assert.notOk(EventBroadcaster._isTrackableControlEvent(oConfig, "tap", new Button()), "event 'tap' of the Button should not be tracked");
+		assert.ok(EventBroadcaster._isTrackableControlEvent(oConfig, "load", new Image()), "event 'load' of the Image should be tracked");
+		assert.notOk(EventBroadcaster._isTrackableControlEvent(oConfig, "click", new Link()), "control Link should not be tracked at all");
+	});
+
+	QUnit.test("_isValidConfig function", function (assert) {
+		var oValidConfig = {
+				global: [],
+				controls: {}
+		};
+		var oValidConfig2 = {
+				global: [],
+				controls: {},
+				something_else: []
+		};
+		var oInvalidConfig = {something: {}, something_else: "test"};
+		var oInvalidConfig2 = {global: [], something: "test"};
+
+		assert.ok(EventBroadcaster._isValidConfig(oValidConfig), "Blacklist is valid");
+		assert.ok(EventBroadcaster._isValidConfig(oValidConfig2), "Blacklist containing 'global' and 'controls' is valid, even if it contains some additional properties");
+		assert.notOk(EventBroadcaster._isValidConfig(oInvalidConfig), "Blacklist is not valid");
+		assert.notOk(EventBroadcaster._isValidConfig(oInvalidConfig2), "Blacklist containing only one of the needed properties is not valid");
+	});
+
 });
