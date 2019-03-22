@@ -434,4 +434,30 @@ function($, Core, KeyCodes, QUtils, Device, XMLView) {
 		}, 0);
 	});
 
+	QUnit.test("ObjectPageSection SPACE - browser scrolling is prevented", function (assert) {
+		var oSection = Core.byId("UxAP-70_KeyboardHandling--section-with-single-sub-section"),
+			oEvent = {
+				keyCode: KeyCodes.SPACE,
+				preventDefault: function () {}
+			},
+			oSpy = this.spy(oEvent, "preventDefault");
+
+		oSection.onkeydown(oEvent);
+
+		assert.ok(oSpy.calledOnce, "preventDefault is called on SPACE key for the section");
+	});
+
+	QUnit.test("ObjectPageSubSection SPACE - browser scrolling is prevented", function (assert) {
+		var oSection = Core.byId("UxAP-70_KeyboardHandling--multiple-sub-section-1"),
+			oEvent = {
+				keyCode: KeyCodes.SPACE,
+				preventDefault: function () {}
+			},
+			oSpy = this.spy(oEvent, "preventDefault");
+
+		oSection.onkeydown(oEvent);
+
+		assert.ok(oSpy.calledOnce, "preventDefault is called on SPACE key for the subsection");
+	});
+
 });
