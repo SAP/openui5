@@ -510,6 +510,21 @@ sap.ui.define([
 		};
 
 		/**
+		 * Gets the ID of the hidden label for the group header items
+		 * @returns {string} Id of hidden text
+		 * @protected
+		 */
+		ComboBoxBase.prototype._getGroupHeaderInvisibleText = function() {
+			if (!this._oGroupHeaderInvisibleText) {
+				this._oGroupHeaderInvisibleText = new InvisibleText();
+				this._oGroupHeaderInvisibleText.toStatic();
+			}
+
+			return this._oGroupHeaderInvisibleText;
+		};
+
+
+		/**
 		 * Gets the item corresponding to given list item.
 		 *
 		 * @param {sap.m.StandardListItem | null} oListItem The given list item
@@ -664,6 +679,11 @@ sap.ui.define([
 
 			if (this._oPickerValueStateText) {
 				this._oPickerValueStateText.destroy();
+			}
+
+			if (this._getGroupHeaderInvisibleText()) {
+				this._getGroupHeaderInvisibleText().destroy();
+				this._oGroupHeaderInvisibleText = null;
 			}
 
 			clearTimeout(this.iLoadItemsEventInitialProcessingTimeoutID);
@@ -1691,7 +1711,8 @@ sap.ui.define([
 		 */
 		ComboBoxBase.prototype._mapSeparatorItemToGroupHeader = function (oSeparatorItem, oControlRenderer) {
 			var oGroupHeaderListItem = new GroupHeaderListItem({
-				title: oSeparatorItem.getText()
+				title: oSeparatorItem.getText(),
+				ariaLabelledBy: this._getGroupHeaderInvisibleText().getId()
 			});
 
 			oGroupHeaderListItem.addStyleClass(oControlRenderer.CSS_CLASS_COMBOBOXBASE + "NonInteractiveItem");

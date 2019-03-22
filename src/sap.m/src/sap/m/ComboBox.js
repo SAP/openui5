@@ -234,6 +234,9 @@ sap.ui.define([
 
 				oControl.updateDomValue(sTypedValue);
 				oControl._bIsLastFocusedItemHeader = true;
+
+				oControl._handleAriaActiveDescendant(oItem);
+				oControl._getGroupHeaderInvisibleText().setText(oControl._oRb.getText("LIST_ITEM_GROUP_HEADER") + " " + oItem.getText());
 			}
 
 			oListItem = this.getListItem(oItem);

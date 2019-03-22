@@ -11618,6 +11618,38 @@ sap.ui.define([
 		}
 	});
 
+	QUnit.test("Group header's labelledBy", function (assert) {
+		var oGroupHeader = this.oComboBox._getList().getItems()[0],
+			sInvisibleTextId = this.oComboBox._getGroupHeaderInvisibleText().getId();
+
+		assert.strictEqual(oGroupHeader.getAriaLabelledBy()[0], sInvisibleTextId, "The correct invisible text is associated with the group item.");
+	});
+
+	QUnit.test("Group header's labelledBy text", function (assert) {
+		var oGroupHeaderListItem, oInvisibleText,
+			oFocusDomRef = this.oComboBox.getFocusDomRef(),
+			oSeparatorItem = this.oComboBox._getList().getItems()[0],
+			oExpectedLabel = sap.ui.getCore().getLibraryResourceBundle("sap.m").getText("LIST_ITEM_GROUP_HEADER") + " " + oSeparatorItem.getTitle();
+
+		// arrange
+		this.oComboBox.focus();
+		this.clock.tick();
+
+		// act
+		sap.ui.test.qunit.triggerKeydown(oFocusDomRef, KeyCodes.F4);
+		this.clock.tick(500);
+
+		assert.ok(this.oComboBox.isOpen(), "The combo box's picker is opened.");
+		sap.ui.test.qunit.triggerKeydown(oFocusDomRef, KeyCodes.ARROW_DOWN);
+
+		oGroupHeaderListItem = this.oComboBox._oList.getItems()[0];
+		oInvisibleText = sap.ui.getCore().byId(oGroupHeaderListItem.getAriaLabelledBy()[0]);
+
+		// assert
+		assert.strictEqual(oInvisibleText.getText(), oExpectedLabel, "The correct invisible text is associated with the group item.");
+	});
+
+
 	QUnit.test("getNonSeparatorSelectableItems should return array with non separator items only.", function (assert) {
 		var aItems = this.oComboBox.getNonSeparatorSelectableItems(this.oComboBox.getSelectableItems());
 		assert.strictEqual(aItems.length, 4, "Items of type sap.ui.core.Separator items are filtered out.");
