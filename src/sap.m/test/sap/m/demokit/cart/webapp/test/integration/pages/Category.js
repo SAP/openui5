@@ -140,15 +140,7 @@ sap.ui.define([
 						errorMessage: "The cancel button in the dialog was not found and could not be pressed"
 					});
 				},
-				iPressTheBackButton: function () {
-					this.waitFor({
-						controlType: "sap.m.Button",
-						matchers: new Properties({type: "Back"}),
-						actions: new Press(),
-						errorMessage: "The back button was not found and could not be pressed"
-					});
-				},
-				iPressTheBackButtonInProduct: function () {
+				iPressTheBackButtonInCategory: function () {
 					return this.waitFor({
 						id: "page",
 						actions: new Press(),
