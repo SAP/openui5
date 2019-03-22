@@ -7,13 +7,19 @@ sap.ui.define([
 	"sap/ui/base/ManagedObject",
 	"sap/base/util/merge",
 	"sap/ui/util/XMLHelper",
+	"sap/ui/core/mvc/EventHandlerResolver",
+	"sap/base/util/includes",
+	"sap/base/util/ObjectPath",
 	// needed to have sap.ui.xmlfragment
 	"sap/ui/core/Fragment"
 ], function(
 	BaseTreeModifier,
 	ManagedObject,
 	merge,
-	XMLHelper
+	XMLHelper,
+	EventHandlerResolver,
+	includes,
+	ObjectPath
 ) {
 
 	"use strict";
@@ -581,6 +587,58 @@ sap.ui.define([
 				return undefined;
 			}
 			return oControl.getAttributeNS("sap.ui.fl", "flexibility");
+		},
+
+		/**
+		 * @inheritDoc
+		 */
+		attachEvent: function(oNode, sEventName, sFunctionPath, vData) {
+			if (typeof ObjectPath.get(sFunctionPath) !== "function") {
+				throw new Error("Can't attach event because the event handler function is not found or not a function.");
+			}
+
+			var sValue = this.getProperty(oNode, sEventName) || "";
+			var aEventHandlers = EventHandlerResolver.parse(sValue);
+			var sEventHandler = sFunctionPath;
+			var aParams = ["$event"];
+
+			if (vData) {
+				aParams.push(JSON.stringify(vData));
+			}
+
+			sEventHandler += "(" + aParams.join(",") + ")";
+
+			if (!includes(aEventHandlers, sEventHandler)) {
+				aEventHandlers.push(sEventHandler);
+			}
+
+			oNode.setAttribute(sEventName, aEventHandlers.join(";"));
+		},
+
+		/**
+		 * @inheritDoc
+		 */
+		detachEvent: function(oNode, sEventName, sFunctionPath) {
+			if (typeof ObjectPath.get(sFunctionPath) !== "function") {
+				throw new Error("Can't attach event because the event handler function is not found or not a function.");
+			}
+
+			var sValue = this.getProperty(oNode, sEventName) || "";
+			var aEventHandlers = EventHandlerResolver.parse(sValue);
+
+			var iEventHandlerIndex =  aEventHandlers.findIndex(function (sEventHandler) {
+				return sEventHandler.includes(sFunctionPath);
+			});
+
+			if (iEventHandlerIndex > -1) {
+				aEventHandlers.splice(iEventHandlerIndex, 1);
+			}
+
+			if (aEventHandlers.length) {
+				oNode.setAttribute(sEventName, aEventHandlers.join(";"));
+			} else {
+				oNode.removeAttribute(sEventName);
+			}
 		}
 	};
 
