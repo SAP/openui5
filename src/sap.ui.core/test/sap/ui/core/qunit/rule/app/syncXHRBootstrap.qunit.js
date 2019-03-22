@@ -11,11 +11,18 @@
 			return new Promise(function(resolve) {
 				sap.ui.require(["sap/ui/Device", "sap/base/Log"], function(Device, Log) {
 
-					oTestModule.iExptectedSyncCalls = 3;
+					// Note: Expected synchronous requests for the following modules:
+
+					// sap/ui/core/support/Support.js
+					// sap/ui/support/Bootstrap.js
+					// sap/ui/base/Object.js
+					// In case preloads are used, there is also an additional sync request for the sap.ui.core library-preload.js
+
+					oTestModule.iExpectedMaxSyncCalls = 4;
 
 					// the Normalize Polyfill is optionally required sync by the FilterProcessor
 					if (!String.prototype.normalize && !Device.browser.mobile) {
-						oTestModule.iExptectedSyncCalls = 4;
+						oTestModule.iExpectedMaxSyncCalls = 5;
 					}
 
 					Log.logSupportInfo(true);
@@ -28,7 +35,8 @@
 			});
 		},
 		after: function(assert) {
-			assert.equal(this.requireSyncStub.callCount, this.iExptectedSyncCalls);
+			assert.ok(this.requireSyncStub.callCount <= this.iExpectedMaxSyncCalls,
+				"the number of sync requests does not exceed the defined maximum of " + this.iExpectedMaxSyncCalls + " calls");
 			this.requireSyncStub.restore();
 		}
 	});
