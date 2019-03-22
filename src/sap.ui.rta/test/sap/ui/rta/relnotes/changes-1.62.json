@@ -5,13 +5,13 @@
       {
         "id": "f12314c5bb92d6e374f5709d9d08f53cc0fb9022",
         "type": "FEATURE",
-        "text": "Deletion of app variants",
+        "text": " Deletion of app variants",
         "references": []
       },
       {
         "id": "39e3fbb626e63e2a340611af4e0c5bc891ba0644",
         "type": "FIX",
-        "text": "sap.ui.rta - EndToEnd timing issue",
+        "text": " sap.ui.rta - EndToEnd timing issue",
         "references": []
       }
     ]

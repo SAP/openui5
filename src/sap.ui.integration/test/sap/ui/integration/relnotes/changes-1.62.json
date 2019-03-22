@@ -5,13 +5,13 @@
       {
         "id": "2a44a832973e480e341128e47a3dd57f5ce5debb",
         "type": "FEATURE",
-        "text": "HostConfiguration and Custom Tags for Cards",
+        "text": " HostConfiguration and Custom Tags for Cards",
         "references": []
       },
       {
         "id": "65c4f232cf6c17540b9a4c427eec6bd4bce5da27",
         "type": "FEATURE",
-        "text": "New library sap.ui.integration",
+        "text": " New library sap.ui.integration",
         "references": []
       }
     ]

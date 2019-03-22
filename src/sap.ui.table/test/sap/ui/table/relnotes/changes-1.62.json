@@ -5,68 +5,44 @@
       {
         "id": "b7c5bbbe4a45e16904553540558945275bf94cfa",
         "type": "FEATURE",
-        "text": "GridTable: Highlight property extended to support IndicationColors",
+        "text": " GridTable: Highlight property extended to support IndicationColors",
         "references": []
       },
       {
         "id": "6a43ee5a73a2336985b7ae087a299e5154dc852a",
         "type": "FEATURE",
-        "text": "RowSettings: Added highlightText property",
+        "text": " RowSettings: Added highlightText property",
         "references": []
       },
       {
         "id": "9f2bdc5158375a230ac93a2cc4ad863a8544570d",
         "type": "FIX",
-        "text": "Table: Avoid infinite rendering loop with fixed columns in Edge 44",
-        "references": [
-          {
-            "type": "GitHub",
-            "reference": "2334"
-          },
-          {
-            "type": "BCP",
-            "reference": "002075129400006440602018"
-          }
-        ]
+        "text": " Table: Avoid infinite rendering loop with fixed columns in Edge 44",
+        "references": []
       },
       {
         "id": "944260a3cd23d5cd74069088fefcfb0c2b659e61",
         "type": "FIX",
-        "text": "Table: Replace IE incompatible function",
+        "text": " Table: Replace IE incompatible function",
         "references": []
       },
       {
         "id": "d9d0a695d33309b97a64f8f9c997313570f6b18d",
         "type": "FIX",
-        "text": "Table: SelectAll button won't deselect in \"Single\" selection mode",
-        "references": [
-          {
-            "type": "BCP",
-            "reference": "1880731924"
-          }
-        ]
+        "text": " Table: SelectAll button won\u0027t deselect in \"Single\" selection mode",
+        "references": []
       },
       {
         "id": "70f124df3b29bde0f889d4268a4870c5d9a8ef16",
         "type": "FIX",
-        "text": "Table: Show vertical scrollbar when adding entries in the model",
-        "references": [
-          {
-            "type": "BCP",
-            "reference": "1870485579"
-          }
-        ]
+        "text": " Table: Show vertical scrollbar when adding entries in the model",
+        "references": []
       },
       {
         "id": "0b8d6aac8b4dc8057a7a24149e381caf944ac8f5",
         "type": "FIX",
-        "text": "Table: Update column menu visibility to match actual state",
-        "references": [
-          {
-            "type": "BCP",
-            "reference": "1880365356"
-          }
-        ]
+        "text": " Table: Update column menu visibility to match actual state",
+        "references": []
       }
     ]
   }

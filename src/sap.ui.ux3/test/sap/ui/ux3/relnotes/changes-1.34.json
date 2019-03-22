@@ -1,73 +1,127 @@
 {
-	"1.34.0": {
-		"date": "November 2015",
-		"notes": [
-			{
-				"id": "8c4f0f2be7b8a9276202c8f6894484beaeb67c58",
-				"type": "FIX",
-				"text": "Respect \"themeroots\" when resolving img URLs in Controls",
-				"references": [
-					{
-						"type": "BCP",
-						"reference": "012002523100003930322015"
-					}
-				]
-			},
-			{
-				"id": "c14e2877d8f1c8f81ee639e53b9ce1d4bb178e17",
-				"type": "FIX",
-				"text": "sap.ui.ux3.NavigationBar - late style application would cause a bug in the ux3.Shell",
-				"references": [
-					{
-						"type": "BCP",
-						"reference": "1570784137"
-					}
-				]
-			},
-			{
-				"id": "e8c780cfd29a6778dc6ac9cf01d0039418635b2b",
-				"type": "FIX",
-				"text": "sap.ui.ux3.NotificationBar: Calculation of NotifierView when more than 5 items are showed fixed",
-				"references": [
-					{
-						"type": "BCP",
-						"reference": "1570740477"
-					}
-				]
-			},
-			{
-				"id": "34ca1fb2d52a6db6c9131da3667434de1046646d",
-				"type": "FIX",
-				"text": "sap.ui.ux3.ToolPopup: Content focus issue solved",
-				"references": [
-					{
-						"type": "BCP",
-						"reference": "1580190288"
-					}
-				]
-			},
-			{
-				"id": "60be951e90fa8156435137027455cecfb16903dd",
-				"type": "FIX",
-				"text": "sap.ui.ux3.ToolPopup: Control is now properly sized in sap_goldreflection theme",
-				"references": [
-					{
-						"type": "BCP",
-						"reference": "1580068341"
-					}
-				]
-			},
-			{
-				"id": "dfe4189c804fa45bcd29effea3e0545105cc2d53",
-				"type": "FIX",
-				"text": "ux3.NavigationBar: Explicitly define focus outline in HCB theme",
-				"references": [
-					{
-						"type": "BCP",
-						"reference": "1580085080"
-					}
-				]
-			}
-		]
-	}
+  "1.34.0": {
+    "date": "November 2015",
+    "notes": [
+      {
+        "id": "8c4f0f2be7b8a9276202c8f6894484beaeb67c58",
+        "type": "FIX",
+        "text": "Respect \"themeroots\" when resolving img URLs in Controls",
+        "references": []
+      },
+      {
+        "id": "c14e2877d8f1c8f81ee639e53b9ce1d4bb178e17",
+        "type": "FIX",
+        "text": "sap.ui.ux3.NavigationBar: Late style application would cause a bug in the ux3.Shell",
+        "references": []
+      },
+      {
+        "id": "e8c780cfd29a6778dc6ac9cf01d0039418635b2b",
+        "type": "FIX",
+        "text": "sap.ui.ux3.NotificationBar: Calculation of NotifierView when more than 5 items are showed fixed",
+        "references": []
+      },
+      {
+        "id": "34ca1fb2d52a6db6c9131da3667434de1046646d",
+        "type": "FIX",
+        "text": "sap.ui.ux3.ToolPopup: Content focus issue solved",
+        "references": []
+      },
+      {
+        "id": "60be951e90fa8156435137027455cecfb16903dd",
+        "type": "FIX",
+        "text": "sap.ui.ux3.ToolPopup: Control is now properly sized in sap_goldreflection theme",
+        "references": []
+      },
+      {
+        "id": "dfe4189c804fa45bcd29effea3e0545105cc2d53",
+        "type": "FIX",
+        "text": "ux3.NavigationBar: Explicitly define focus outline in HCB theme",
+        "references": []
+      }
+    ]
+  },
+  "1.34.2": {
+    "date": "January 2016",
+    "notes": [
+      {
+        "id": "c0763324339cb491d2332d4bdcb79e913babca80",
+        "type": "FIX",
+        "text": "sap.ui.ux3.Toolpoup: Arrow in HCB theme is positioned properly",
+        "references": []
+      }
+    ]
+  },
+  "1.34.4": {
+    "date": "February 2016",
+    "notes": [
+      {
+        "id": "a6110d88fa403f17b9f5f894ae0056df5660f902",
+        "type": "FIX",
+        "text": "sap.ui.ux3.Feeder: support edge browser",
+        "references": []
+      },
+      {
+        "id": "957a798dc7801776ed927213e4dfb333824d41d2",
+        "type": "FIX",
+        "text": "sap.ui.ux3.Shell: When there\u0027s a table inside, the shell is displaying scrollbar consistently accross browsers",
+        "references": []
+      },
+      {
+        "id": "900a0117d77bbb573a0b8cedfea9b19d0baa9962",
+        "type": "FIX",
+        "text": "ux3.Shell: Left and right part of the header do not overlap",
+        "references": []
+      }
+    ]
+  },
+  "1.34.5": {
+    "date": "February 2016",
+    "notes": [
+      {
+        "id": "70817ded9b6503a4607323231f3b01d072461b7a",
+        "type": "FIX",
+        "text": "sap.ui.ux3.Shell: When there\u0027s a table inside, the shell is displaying scrollbar consistently accross browsers\"",
+        "references": []
+      }
+    ]
+  },
+  "1.34.7": {
+    "date": "February 2016",
+    "notes": [
+      {
+        "id": "8cf1420d04f593776db8bab24c17dafc4a50ac12",
+        "type": "FIX",
+        "text": "m.Dialog,commons.Dialog,ux3.ToolPopup: Preserve Content on Remove",
+        "references": []
+      }
+    ]
+  },
+  "1.34.8": {
+    "date": "February 2016",
+    "notes": [
+      {
+        "id": "e3195e85936e36650dbfbf532c6eb651d766ef0f",
+        "type": "M/COMMONS",
+        "text": ".Dialog, ux3.ToolPopup: Preserve DOM only if rendered",
+        "references": []
+      },
+      {
+        "id": "0efe16e890d27e23bfabe3239e326bfd4e96cc21",
+        "type": "FIX",
+        "text": "sap.ui.ux3.NotificationBar: Minimized bar hovering is now consistent across all desktop browsers",
+        "references": []
+      }
+    ]
+  },
+  "1.34.10": {
+    "date": "March 2016",
+    "notes": [
+      {
+        "id": "ae9cdb4d473642ea68636557c3626acd47e76098",
+        "type": "FIX",
+        "text": "sap.ui.ux3.Shell: Align text selection behavior across browsers",
+        "references": []
+      }
+    ]
+  }
 }

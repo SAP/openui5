@@ -51,7 +51,7 @@
       {
         "id": "607d3d28d71afe3ba32c2e47184f027de06cf73f",
         "type": "FEATURE",
-        "text": "sap.ui.core: support for <base> tag",
+        "text": "sap.ui.core: support for \u003cbase\u003e tag",
         "references": []
       },
       {
@@ -360,71 +360,56 @@
       {
         "id": "53091b6f374b9a855526f378e33667177f8c551b",
         "type": "FEATURE",
-        "text": "Blocking Layer for reuse in LocalBusyIndicator",
+        "text": " Blocking Layer for reuse in LocalBusyIndicator",
         "references": []
       },
       {
         "id": "93bb2ec77a9ed84b66d66348b353c806dd543ca5",
         "type": "FEATURE",
-        "text": "NumberFormat: UOM CurrencyDigits",
+        "text": " NumberFormat: UOM CurrencyDigits",
         "references": []
       },
       {
         "id": "168bea65c84b7efe82f6db13531d6683f9ad4750",
         "type": "FIX",
-        "text": "Core#notifyContentDensityChanged: Missing \"theme\" event parameter",
+        "text": " Core#notifyContentDensityChanged: Missing \"theme\" event parameter",
         "references": []
       },
       {
         "id": "ad1a86cf2e5fd3c27ccdfd3f529f845568a3f443",
         "type": "FIX",
-        "text": "MessageManager: Memory leak",
+        "text": " MessageManager: Memory leak",
         "references": []
       },
       {
         "id": "1964aa586d0be066202789311a66d0f605c84e48",
         "type": "FIX",
-        "text": "ODataMetadata: duplicate annotations",
-        "references": [
-          {
-            "type": "BCP",
-            "reference": "1870002968"
-          }
-        ]
+        "text": " ODataMetadata: duplicate annotations",
+        "references": []
       },
       {
         "id": "73a967fa6f27aab69bf8853b0ad8e730644486b3",
         "type": "FIX",
-        "text": "ODataTreeBinding: Correct jQuery.sap.log call",
-        "references": [
-          {
-            "type": "BCP",
-            "reference": "1870039055"
-          }
-        ]
+        "text": " ODataTreeBinding: Correct jQuery.sap.log call",
+        "references": []
       },
       {
         "id": "fa19fecf56c80aca714f2132f7b0214eabe9a425",
         "type": "FIX",
-        "text": "Opa: revert make polling consistent when using execution delay",
+        "text": " Opa: revert make polling consistent when using execution delay",
         "references": []
       },
       {
         "id": "4f996c8bc19fe2822dca895c9f1d5d1533c154b3",
         "type": "FIX",
-        "text": "Use AggregationFragments multiple times",
+        "text": " Use AggregationFragments multiple times",
         "references": []
       },
       {
         "id": "7138621ed188597024a4ca642aa4804094f44c2f",
         "type": "FIX",
-        "text": "sap.ui.core.LocaleData: CZK digits",
-        "references": [
-          {
-            "type": "BCP",
-            "reference": "002075129500000261352018"
-          }
-        ]
+        "text": " sap.ui.core.LocaleData: CZK digits",
+        "references": []
       },
       {
         "id": "07ff6aa9b9822a91f8b87eabc2677c5fb3cd75db",
@@ -435,512 +420,748 @@
       {
         "id": "7a67a71cc28ef15aa9233370e8616d5ef31c84f4",
         "type": "FEATURE",
-        "text": "core.NumberFormat: Support precision & decimals per unit of measure",
+        "text": " core.NumberFormat: Support precision \u0026 decimals per unit of measure",
         "references": []
       },
       {
         "id": "91bc54d917b051c17bab5f8272f5332d2d63e4e8",
         "type": "FIX",
-        "text": "Gherkin: removed duplicate code coverage",
-        "references": [
-          {
-            "type": "BCP",
-            "reference": "1870028662"
-          }
-        ]
+        "text": " Gherkin: removed duplicate code coverage",
+        "references": []
       },
       {
         "id": "47d5317ce6deafb297f76ba4e6f01715771d3867",
         "type": "FIX",
-        "text": "Testing: use newest release of sinon to fix sinon issue #1534",
+        "text": " Testing: use newest release of sinon to fix sinon issue #1534",
         "references": []
       },
       {
         "id": "3fc41743eff88cc82b0b4cf627a522c650923457",
         "type": "FIX",
-        "text": "ThemeCheck: Fix Cross-Origin issues (MS Edge)",
-        "references": [
-          {
-            "type": "BCP",
-            "reference": "002075129500001269922018"
-          }
-        ]
+        "text": " ThemeCheck: Fix Cross-Origin issues (MS Edge)",
+        "references": []
       },
       {
         "id": "30a6edaf36496cb4ae8e0538ab5e4e7c22e05fb2",
         "type": "FIX",
-        "text": "jquery-mobile-custom: Edge button events",
-        "references": [
-          {
-            "type": "BCP",
-            "reference": "002075129500005680192017"
-          },
-          {
-            "type": "BCP",
-            "reference": "002075129500001076112018"
-          },
-          {
-            "type": "BCP",
-            "reference": "1880219029"
-          },
-          {
-            "type": "BCP",
-            "reference": "002075129400004318102017"
-          }
-        ]
+        "text": " jquery-mobile-custom: Edge button events",
+        "references": []
       },
       {
         "id": "eb2026c0e95b1b69d14a58b6ddfb82f7c328a993",
         "type": "FIX",
-        "text": "mvc/XMLViewRenderer: create DOM string before dummy placeholders",
-        "references": [
-          {
-            "type": "BCP",
-            "reference": "1870027560"
-          }
-        ]
+        "text": " mvc/XMLViewRenderer: create DOM string before dummy placeholders",
+        "references": []
       },
       {
         "id": "1e06db10365bcab3e67d70a713e6db67a9ec573b",
         "type": "FIX",
-        "text": "v2.ODataModel: metadata url params missing",
-        "references": [
-          {
-            "type": "BCP",
-            "reference": "1780434200"
-          }
-        ]
+        "text": " v2.ODataModel: metadata url params missing",
+        "references": []
       },
       {
         "id": "867c4c69984835d514d5a507c8f8701f915fa8a6",
         "type": "FEATURE",
-        "text": "sap.ui.core.IconPool - API for loading of additional fonts",
+        "text": " sap.ui.core.IconPool - API for loading of additional fonts",
         "references": []
       },
       {
         "id": "63ffdd8ecfcfb4dfc194e82057283147fc2b9172",
         "type": "FIX",
-        "text": "CalendarType: user date format 'C' implies use of Persian calendar",
+        "text": " CalendarType: user date format \u0027C\u0027 implies use of Persian calendar",
         "references": []
       },
       {
         "id": "a957e4e7303ed6db47109c75923087742107fc3f",
         "type": "FIX",
-        "text": "sap.ui.core.format.DateFormat: Parsing name of day",
-        "references": [
-          {
-            "type": "BCP",
-            "reference": "002075129500001179492018"
-          }
-        ]
+        "text": " sap.ui.core.format.DateFormat: Parsing name of day",
+        "references": []
       },
       {
         "id": "24708933272e8e2159553d6f1eb9183a54df23ea",
         "type": "FEATURE",
-        "text": "sap.ui.base.Object: instanceof which covers extends/implements",
+        "text": " sap.ui.base.Object: instanceof which covers extends/implements",
         "references": []
       },
       {
         "id": "b005ea19025529a6df79a6b27a3355cc9e642a3b",
         "type": "FIX",
-        "text": "Controller: Enhance onInit documentation",
-        "references": [
-          {
-            "type": "GitHub",
-            "reference": "790"
-          },
-          {
-            "type": "GitHub",
-            "reference": "1947"
-          }
-        ]
+        "text": " Controller: Enhance onInit documentation",
+        "references": []
       },
       {
         "id": "10bd37cc332cabbcf8c25aefec57ab1a0a0c7533",
         "type": "FIX",
-        "text": "JSONModel: log error when loadData fails",
-        "references": [
-          {
-            "type": "BCP",
-            "reference": "1770532792"
-          }
-        ]
+        "text": " JSONModel: log error when loadData fails",
+        "references": []
       },
       {
         "id": "b140cf498dc7f5d6074091662ef4d4bd5393117c",
         "type": "FIX",
-        "text": "ODataMetadata: Namespace handling",
-        "references": [
-          {
-            "type": "GitHub",
-            "reference": "1952"
-          },
-          {
-            "type": "BCP",
-            "reference": "1870102301"
-          }
-        ]
+        "text": " ODataMetadata: Namespace handling",
+        "references": []
       },
       {
         "id": "1ec5318d955ad81c19e5ca756900217d946796a2",
         "type": "FIX",
-        "text": "sap.m.StepInput: do not create global NumericInput",
-        "references": [
-          {
-            "type": "BCP",
-            "reference": "1870117517"
-          }
-        ]
+        "text": " sap.m.StepInput: do not create global NumericInput",
+        "references": []
       },
       {
         "id": "3a803d285c1e90c15315637518012dfbda2d6050",
         "type": "FIX",
-        "text": "sap.ui.model.odata.ODateMetadata: cache invalidation",
-        "references": [
-          {
-            "type": "BCP",
-            "reference": "1870102709"
-          }
-        ]
+        "text": " sap.ui.model.odata.ODateMetadata: cache invalidation",
+        "references": []
       },
       {
         "id": "d4d30cf134e87b7334fc407e312fbf40bdc933ba",
         "type": "FIX",
-        "text": "sap.ui.model.odata.ODateMetadata: type check",
-        "references": [
-          {
-            "type": "BCP",
-            "reference": "1870102547"
-          }
-        ]
+        "text": " sap.ui.model.odata.ODateMetadata: type check",
+        "references": []
       },
       {
         "id": "c0357dde4cbc7f999e03b0ffea354c25b82a6b32",
         "type": "FIX",
-        "text": "sap/base/util/equal: Support for NaN values",
-        "references": [
-          {
-            "type": "GitHub",
-            "reference": "1972"
-          }
-        ]
+        "text": " sap/base/util/equal: Support for NaN values",
+        "references": []
       },
       {
         "id": "304b633b6b3f982aa48c315c904d1ab25cf87374",
         "type": "FIX",
-        "text": "sap/ui/dom/includeStylesheet: Correct comparison with existing href",
+        "text": " sap/ui/dom/includeStylesheet: Correct comparison with existing href",
         "references": []
       },
       {
         "id": "7297fae262c0826a3894307b16edc15e1ad84e6f",
         "type": "FIX",
-        "text": "v2.ODataModel.createEntry: clone properties",
-        "references": [
-          {
-            "type": "BCP",
-            "reference": "1770022192"
-          }
-        ]
+        "text": " v2.ODataModel.createEntry: clone properties",
+        "references": []
       },
       {
         "id": "8f0c27b99a963286670225a2752b6575398593ea",
         "type": "FIX",
-        "text": "v2.OdataModel: createEntry",
-        "references": [
-          {
-            "type": "BCP",
-            "reference": "1870129992"
-          }
-        ]
+        "text": " v2.OdataModel: createEntry",
+        "references": []
       },
       {
         "id": "c0ae7b93a34b10c1e5f07cd7b9132f75e6f081a2",
         "type": "FEATURE",
-        "text": "core.ElementMetadata: drag-and-drop configuration",
+        "text": " core.ElementMetadata: drag-and-drop configuration",
         "references": []
       },
       {
         "id": "64e185fdbf152c085d475e94b582719d242c8efb",
         "type": "FEATURE",
-        "text": "sap.ui.Device: Introduce Blink flag",
-        "references": [
-          {
-            "type": "BCP",
-            "reference": "1870097430"
-          }
-        ]
+        "text": " sap.ui.Device: Introduce Blink flag",
+        "references": []
       },
       {
         "id": "d17fdac9dbc1fc0b58b2346972b36638e00981c6",
         "type": "FEATURE",
-        "text": "sap.ui.core.dnd: dragEnd and dragOver events are added",
+        "text": " sap.ui.core.dnd: dragEnd and dragOver events are added",
         "references": []
       },
       {
         "id": "f626a8007cffc664460aebe218789890b1985b94",
         "type": "FIX",
-        "text": "ComponentContainer: Convert \"manifest\" string to boolean",
+        "text": " ComponentContainer: Convert \"manifest\" string to boolean",
         "references": []
       },
       {
         "id": "b81674a564dca891aff4474be885b0a1d7bda05c",
         "type": "FIX",
-        "text": "FESR: correctly set values for initial interaction",
+        "text": " FESR: correctly set values for initial interaction",
         "references": []
       },
       {
         "id": "fa7705ba0d15be021cd22a7d7d7e5b9ce4f497f9",
         "type": "FIX",
-        "text": "ManagedObject: fix 'off by 1' bug in generated association methods",
+        "text": " ManagedObject: fix \u0027off by 1\u0027 bug in generated association methods",
         "references": []
       },
       {
         "id": "1be0e17fd57372a757cf2869e953b8673149172a",
         "type": "FIX",
-        "text": "databinding Documentation",
+        "text": " databinding Documentation",
         "references": []
       },
       {
         "id": "3dfe64355e9a77786e3dbb48a2788d93e26735d6",
         "type": "FIX",
-        "text": "jquery.sap.trace.qunit: adapted to different component name",
-        "references": [
-          {
-            "type": "BCP",
-            "reference": "1870146018"
-          }
-        ]
+        "text": " jquery.sap.trace.qunit: adapted to different component name",
+        "references": []
       },
       {
         "id": "bcf0fcdcc6f21619c7cf95539a1f0a6778d23424",
         "type": "FEATURE",
-        "text": "model.Filter: Add new option \"caseSensitive\"",
+        "text": " model.Filter: Add new option \"caseSensitive\"",
         "references": []
       },
       {
         "id": "dba66adc52300dd94af85bd98463aabae5e84008",
         "type": "FEATURE",
-        "text": "v2.ODataModel: filter 'toupper'",
+        "text": " v2.ODataModel: filter \u0027toupper\u0027",
         "references": []
       },
       {
         "id": "d494e13c602685bcdda9b64d06e00331e797fd1c",
         "type": "FIX",
-        "text": "Fix synchronous document.activeElement access in iframes",
-        "references": [
-          {
-            "type": "BCP",
-            "reference": "002075129500001736752018"
-          }
-        ]
+        "text": " Fix synchronous document.activeElement access in iframes",
+        "references": []
       },
       {
         "id": "33df0abfed867beed8d44faea443f6b7d45dbbae",
         "type": "FIX",
-        "text": "Label in Form: Text \"mark and copy\" also copies \":\"",
-        "references": [
-          {
-            "type": "BCP",
-            "reference": "1870098244"
-          }
-        ]
+        "text": " Label in Form: Text \"mark and copy\" also copies \":\"",
+        "references": []
       },
       {
         "id": "b92f72b681410bc177d7ce6362af79c769725543",
         "type": "FIX",
-        "text": "TreeBindingAdapter: Correct selected row index calculation for collapse operations",
-        "references": [
-          {
-            "type": "GitHub",
-            "reference": "1998"
-          }
-        ]
+        "text": " TreeBindingAdapter: Correct selected row index calculation for collapse operations",
+        "references": []
       },
       {
         "id": "89e116be122a60d56cf889c159ade9a63d993d79",
         "type": "FIX",
-        "text": "XMLComposite: Cloning of XMLComposite was not possible",
+        "text": " XMLComposite: Cloning of XMLComposite was not possible",
         "references": []
       },
       {
         "id": "2d739e4d4951d04f0a0a14ddfc0badbbbb9c7cf6",
         "type": "FIX",
-        "text": "sap.ui.model.odata.v4.ODataListBinding#getContexts fix diff calculation",
-        "references": [
-          {
-            "type": "BCP",
-            "reference": "1870081505"
-          }
-        ]
+        "text": " sap.ui.model.odata.v4.ODataListBinding#getContexts fix diff calculation",
+        "references": []
       },
       {
         "id": "9408b2e77c62c45222c1f940459ee9b6b182d473",
         "type": "FEATURE",
-        "text": "Component/ResourceModel: enhanceWith relative to manifest",
+        "text": " Component/ResourceModel: enhanceWith relative to manifest",
         "references": []
       },
       {
         "id": "ce954987106ae70bdb890b4768e85853a1c4d3a4",
         "type": "FEATURE",
-        "text": "sap/ui/thirdparty: added bignumber.js for arithmetic ops",
+        "text": " sap/ui/thirdparty: added bignumber.js for arithmetic ops",
         "references": []
       },
       {
         "id": "42c204a1b181448cbc45e11111c88402040fa466",
         "type": "FIX",
-        "text": "XMLComposite: Crash for multiple aggregation children",
+        "text": " XMLComposite: Crash for multiple aggregation children",
         "references": []
       },
       {
         "id": "455dbc8c94af0255c3634231566dccc8ce0d03c7",
         "type": "FIX",
-        "text": "XMLComposite: Fetch aggregation children via modifier",
+        "text": " XMLComposite: Fetch aggregation children via modifier",
         "references": []
       },
       {
         "id": "2cb7af156f5f832ee9ca2bd76c649aa4d531f81c",
         "type": "FIX",
-        "text": "opa: document asyncPolling parameter",
+        "text": " opa: document asyncPolling parameter",
         "references": []
       },
       {
         "id": "b4a49e845ebfe8e60320d54e48803e798fe50bb0",
         "type": "FIX",
-        "text": "ui5loader: noConflict works with debug mode",
-        "references": [
-          {
-            "type": "BCP",
-            "reference": "1870205230"
-          }
-        ]
+        "text": " ui5loader: noConflict works with debug mode",
+        "references": []
       },
       {
         "id": "6449fe09ea393eedea54d511f717244968df803f",
         "type": "FEATURE",
-        "text": "Component: Add async create() / load() API",
+        "text": " Component: Add async create() / load() API",
         "references": []
       },
       {
         "id": "02ec080817cf59aa2caec74292bc515321626ca4",
         "type": "FEATURE",
-        "text": "Component: preload non-lazy component usages",
+        "text": " Component: preload non-lazy component usages",
         "references": []
       },
       {
         "id": "860805dd329496be983a5534e1330243a742e457",
         "type": "FEATURE",
-        "text": "DataType: support 'function' properties in XMLViews",
+        "text": " DataType: support \u0027function\u0027 properties in XMLViews",
         "references": []
       },
       {
         "id": "100b0b28984b2e2ac1c28a01c3752da7b9c59915",
         "type": "FEATURE",
-        "text": "HTMLView: Add new async only create() API",
+        "text": " HTMLView: Add new async only create() API",
         "references": []
       },
       {
         "id": "5a36e73401198c097aa73528982548fa99a377e2",
         "type": "FEATURE",
-        "text": "IsPropertyInitial for Modifier",
+        "text": " IsPropertyInitial for Modifier",
         "references": []
       },
       {
         "id": "c742927d206b55343063ae06d57dbb340731fe39",
         "type": "FEATURE",
-        "text": "JSONView: Add new async only create API",
+        "text": " JSONView: Add new async only create API",
         "references": []
       },
       {
         "id": "6c6c24cb7191709ed3366f2b29bebfa0c92bc58c",
         "type": "FEATURE",
-        "text": "JSView: Add new async only create() API",
+        "text": " JSView: Add new async only create() API",
         "references": []
       },
       {
         "id": "c22871e6b70953479e6b6f114aef430a457d35c7",
         "type": "FEATURE",
-        "text": "TemplateView: deprecation",
+        "text": " TemplateView: deprecation",
         "references": []
       },
       {
         "id": "4eee52c29e5c5ff5ba8cc855a0a37dacc75d7026",
         "type": "FEATURE",
-        "text": "VersionInfo: New VersionInfo Module for async loading",
+        "text": " VersionInfo: New VersionInfo Module for async loading",
         "references": []
       },
       {
         "id": "4a62490df17c781b19050cf2394dc17c7e773e1a",
         "type": "FEATURE",
-        "text": "View: Add new async only create() API",
+        "text": " View: Add new async only create() API",
         "references": []
       },
       {
         "id": "30532753e65a63fd7c88afa9da028a5222301abe",
         "type": "FEATURE",
-        "text": "XMLView: Add fully async create() function",
+        "text": " XMLView: Add fully async create() function",
         "references": []
       },
       {
         "id": "29c14564ca3896d8822159a9d1ce208d47e7160c",
         "type": "FIX",
-        "text": "Diagnostics debugging: Rebooting UI5 from another location",
+        "text": " Diagnostics debugging: Rebooting UI5 from another location",
         "references": []
       },
       {
         "id": "bf5cbc32f2ab19bc36ef8269124863b69aa02425",
         "type": "FIX",
-        "text": "JSONModel: Async loadData - Error handling",
-        "references": [
-          {
-            "type": "BCP",
-            "reference": "1870221405"
-          }
-        ]
+        "text": " JSONModel: Async loadData - Error handling",
+        "references": []
       },
       {
         "id": "40b2bf379d3d4f8e7dcc63632d3ee272e8ea1f5c",
         "type": "FIX",
-        "text": "Messaging: Fire change event when controlId added",
+        "text": " Messaging: Fire change event when controlId added",
         "references": []
       },
       {
         "id": "232f3b0d7811f0c551d9faa0a294a79fe6d51f3c",
         "type": "FIX",
-        "text": "ui5loader-autoconfig: fixed case",
+        "text": " ui5loader-autoconfig: fixed case",
         "references": []
       },
       {
         "id": "1e80c23adf14e9c15cb5fdd240647eff092c062d",
         "type": "FIX",
-        "text": "v2.ODataListBinding: Implicit casting for filter values",
-        "references": [
-          {
-            "type": "BCP",
-            "reference": "1870002694"
-          }
-        ]
+        "text": " v2.ODataListBinding: Implicit casting for filter values",
+        "references": []
       },
       {
         "id": "b3737e547d50722c3816bc67076d3209cff3c054",
         "type": "FIX",
-        "text": "Controller: Extension by Customizing",
-        "references": [
-          {
-            "type": "BCP",
-            "reference": "1870248195"
-          }
-        ]
+        "text": " Controller: Extension by Customizing",
+        "references": []
       },
       {
         "id": "9dac6f7678179c2879c33d3710b8100c8fde3f39",
         "type": "FIX",
-        "text": "XMLComposite: No retemplating for destroying controls",
+        "text": " XMLComposite: No retemplating for destroying controls",
         "references": []
       },
       {
         "id": "607ee9874e5001fca691815644e07950ee1dd62e",
         "type": "FIX",
-        "text": "XMLComposite: Retemplating issues",
+        "text": " XMLComposite: Retemplating issues",
+        "references": []
+      }
+    ]
+  },
+  "1.56.1": {
+    "date": "May 2018",
+    "notes": [
+      {
+        "id": "75010072961d92b126a4e730b4a84efb8c10cee0",
+        "type": "FEATURE",
+        "text": " ExtensionPoint: Add new fully async load() API",
+        "references": []
+      },
+      {
+        "id": "d07c7d2cb1a358161f88eadec89354539f2b6dd1",
+        "type": "FIX",
+        "text": " Controller: extension",
+        "references": []
+      },
+      {
+        "id": "745e219fcde9406855f5c1d4279a1fe245e6aecb",
+        "type": "FIX",
+        "text": " ControllerExtension throws error",
+        "references": []
+      },
+      {
+        "id": "fcc72f01c91d3f8a46f12ba86a8f394cf808adcb",
+        "type": "FIX",
+        "text": " View.create: Create view with owner component",
+        "references": []
+      },
+      {
+        "id": "20b7c44beacb95f4d209861b8bffdf0ee690c2d8",
+        "type": "FIX",
+        "text": " sap.ui.model.odata.v4.lib._Requestor: OData-Version Header is optional for DELETE responses",
+        "references": []
+      },
+      {
+        "id": "2d1ec96e12a4342034fca69c05769e14b4f35c64",
+        "type": "FIX",
+        "text": " ui5loader: fix sync module loading on file protocol",
+        "references": []
+      },
+      {
+        "id": "064ee81a165270163a9ab0e4205e0685e3e32da8",
+        "type": "FIX",
+        "text": " Core: enable support for \"-\" and \".\" for initial modules",
+        "references": []
+      },
+      {
+        "id": "ac6bb43428731e2ec2c40760e80af6afe8fad77a",
+        "type": "FIX",
+        "text": " ui5loader: don\u0027t modify global define/require props by default",
+        "references": []
+      }
+    ]
+  },
+  "1.56.2": {
+    "date": "June 2018",
+    "notes": [
+      {
+        "id": "1d0daea9b88d1c947e75c1dc6830c4dc43ae17d1",
+        "type": "FIX",
+        "text": " ODataTreeBinding: Add missing support for count mode \"InlineRepeat\"",
+        "references": []
+      },
+      {
+        "id": "288a38aaff9b92ec8fac9137e6631f3a4eca5aaa",
+        "type": "FIX",
+        "text": " qunit-junit reporter: Add null-check for qunit DOM node",
+        "references": []
+      },
+      {
+        "id": "79f39a4c5fbd5472761e898c49ec1009f8b17cb3",
+        "type": "FIX",
+        "text": " ODataAnnotations: don\u0027t cache xml document",
+        "references": []
+      }
+    ]
+  },
+  "1.56.3": {
+    "date": "June 2018",
+    "notes": [
+      {
+        "id": "7693a999212ec2c74adbcd6676f41253ff314ba1",
+        "type": "FIX",
+        "text": " ControllerMetadata: don\u0027t delete public methods",
+        "references": []
+      },
+      {
+        "id": "eb6dcfa72637dde2a87278d553d22b7b246c6ecf",
+        "type": "FIX",
+        "text": " sap.ui.model.analytics.AnalyticalBinding#_createMultiUnitRepresentativeEntry",
+        "references": []
+      },
+      {
+        "id": "f15700d9eed90a2e0cb3269b18decae31f496c0e",
+        "type": "FIX",
+        "text": " sap.ui.model.analytics.AnalyticalBinding#getDownloadUrl: ensure all spaces are encoded",
+        "references": []
+      },
+      {
+        "id": "95be9300eb7659362397b89eeba3f1f80aba61f6",
+        "type": "FIX",
+        "text": " sap.ui.model.odata.AnnotationParser: better support annotations at arrays",
+        "references": []
+      },
+      {
+        "id": "492b68c748d1c6dcd3f73f4bd50a383771fd7bbe",
+        "type": "FIX",
+        "text": " ui5loader: Add Missing slash for JSDoc in closing code tag",
+        "references": []
+      },
+      {
+        "id": "6c574d623b2728f48c9bb6a253b73f4d22f508d8",
+        "type": "FIX",
+        "text": " DataState: Enable DS for List/Context/TreeBinding",
+        "references": []
+      },
+      {
+        "id": "07944d0e3141478aaa51cbaebb1d8950f7772034",
+        "type": "FIX",
+        "text": " sap.ui.model.odata.AnnotationParser: better support annotations at arrays",
+        "references": []
+      }
+    ]
+  },
+  "1.56.4": {
+    "date": "July 2018",
+    "notes": [
+      {
+        "id": "828d7a57d2d308285f84e67eae0a51ed32ac97e7",
+        "type": "FEATURE",
+        "text": " ui5loader: Enable async loading when switching to amd mode",
+        "references": []
+      },
+      {
+        "id": "56cb789946515b63e64cffb1b992f92dd3011d60",
+        "type": "FIX",
+        "text": " Component.getService(): Promise not rejecting",
+        "references": []
+      },
+      {
+        "id": "fa7a69bf8f42c5e94a83322207f86379db21030e",
+        "type": "FIX",
+        "text": " ManagedObject: remove trailing whitespaces",
+        "references": []
+      },
+      {
+        "id": "df477fdd30707650cc74e90778e16e1b324226e7",
+        "type": "FIX",
+        "text": " NumberFormat: Fix currency short format for RTL languages",
+        "references": []
+      },
+      {
+        "id": "156dca696f1bfef8b10c3103bedf4865ef970378",
+        "type": "FIX",
+        "text": " Theming Parameters: Improve inline parameters decoding",
+        "references": []
+      },
+      {
+        "id": "c8ad2e3a5bd01275356cd84f5cc978a7e0adb52f",
+        "type": "FIX",
+        "text": " jQuery.sap.loadResource: ignore URL params",
+        "references": []
+      },
+      {
+        "id": "cdc3bb5934dd0cf0037e82d8fc98759cbd8547a1",
+        "type": "FIX",
+        "text": " sap.ui.model.base.ManagedObjectModel",
+        "references": []
+      },
+      {
+        "id": "5dc9875f583cb6153a6303470d97169c24cb761c",
+        "type": "FIX",
+        "text": " sap/ui/dom/computedStylePolyfill: document.body is not there yet",
+        "references": []
+      },
+      {
+        "id": "d31d8f629b84db7598764125c116eb3976846e86",
+        "type": "FIX",
+        "text": " ODataAnnotations: restore cached arrays",
+        "references": []
+      }
+    ]
+  },
+  "1.56.5": {
+    "date": "July 2018",
+    "notes": [
+      {
+        "id": "346a986ef2b6a3e4382b9e8cf0e74e6e6dfb190d",
+        "type": "FIX",
+        "text": " core.Popup: modal popup should blur the previous DOM after open",
+        "references": []
+      },
+      {
+        "id": "30c2efbfeab19a5861fd8b424eb926236f31ffeb",
+        "type": "FIX",
+        "text": " model.ODataUtils: Complement toupper on all filter operators",
+        "references": []
+      },
+      {
+        "id": "66276c959364d7714916bfc1981e907bc1c8576c",
+        "type": "FIX",
+        "text": " sap/ui/dom/ActiveElementFix: empty object document.activeElement",
+        "references": []
+      },
+      {
+        "id": "903f86d2050a28d1db86d1c57eed506caaf1be67",
+        "type": "FIX",
+        "text": " AppCacheBuster: ignore query parameter for index lookup",
+        "references": []
+      }
+    ]
+  },
+  "1.56.6": {
+    "date": "August 2018",
+    "notes": [
+      {
+        "id": "13692a87c7db9fc6a522af4fa3f80653cda22138",
+        "type": "FEATURE",
+        "text": " core.CSSSize: Type validator now accepts viewport units",
+        "references": []
+      },
+      {
+        "id": "d27cd96fc64ffff8dfcd690f9a801ad04e380de4",
+        "type": "FIX",
+        "text": " FilterProcessor: Consider bCaseSensitive even if fnCompare is set",
+        "references": []
+      },
+      {
+        "id": "63701ac129711f73459af2dd5c8cb8183208b79e",
+        "type": "FIX",
+        "text": " Manifest: Manifest.load should keep manifest URL in async case",
+        "references": []
+      },
+      {
+        "id": "62f17cb6958d8c0bd36046edce181ca43a0c9f12",
+        "type": "FIX",
+        "text": " Manifest: set component base URL",
+        "references": []
+      },
+      {
+        "id": "fb6c4a2b1edcf2197ad085dc1e74b1264ff84287",
+        "type": "FIX",
+        "text": " v2.ODataAnnotations: don\u0027t cache invalid annotations",
+        "references": []
+      }
+    ]
+  },
+  "1.56.7": {
+    "date": "August 2018",
+    "notes": [
+      {
+        "id": "b2c5ad8632bec8886aa868d3fdc203ee0bf010a3",
+        "type": "FIX",
+        "text": " Register ui5loader modules synchronously",
+        "references": []
+      }
+    ]
+  },
+  "1.56.8": {
+    "date": "September 2018",
+    "notes": [
+      {
+        "id": "535d71a3b8d144ae415d09d67bfdad394eba6c08",
+        "type": "FIX",
+        "text": " Controller: controllerFactory resolves wrong controller class",
+        "references": []
+      },
+      {
+        "id": "0dd1a776348bfe33ce700926f0687a57d7633d52",
+        "type": "FIX",
+        "text": " performance/trace/Interaction: accept valid setRequestHeader parameters",
+        "references": []
+      }
+    ]
+  },
+  "1.56.9": {
+    "date": "September 2018",
+    "notes": [
+      {
+        "id": "e314af9b8bfb1a795ac3cf0f9fbb7169f30fb2e0",
+        "type": "FIX",
+        "text": " Manifest: always process entries with placeholders",
+        "references": []
+      },
+      {
+        "id": "cebb94960acb325edab4156d6361b8ec01ba58e7",
+        "type": "FIX",
+        "text": " types/NumberFormat: Currency with RTL locale format/parse",
+        "references": []
+      },
+      {
+        "id": "17841db154546d873e2918f97e8fa5c75994dc40",
+        "type": "FIX",
+        "text": " v2.ODataListBinding: 0 count in result now correctly processed",
+        "references": []
+      }
+    ]
+  },
+  "1.56.10": {
+    "date": "September 2018",
+    "notes": [
+      {
+        "id": "362b4640c54b6d5d83f1527284b04f1d89e94fb2",
+        "type": "FIX",
+        "text": " Theming Parameters: Prevent timing issues in Safari/Edge",
+        "references": []
+      }
+    ]
+  },
+  "1.56.11": {
+    "date": "October 2018",
+    "notes": [
+      {
+        "id": "51aec72b9037be5ec2578308612c438b299e8bb8",
+        "type": "FIX",
+        "text": " format/DateFormat: Multiple instances shouldn\u0027t share fallback formats",
+        "references": []
+      }
+    ]
+  },
+  "1.56.12": {
+    "date": "October 2018",
+    "notes": [
+      {
+        "id": "86c235f7cc315b6a9691a4f3e62f926f5249c636",
+        "type": "FIX",
+        "text": " XMLComposite: Repair id access for clones",
+        "references": []
+      },
+      {
+        "id": "0485cf58ff35c3f57e010edca3e2810163078e90",
+        "type": "FIX",
+        "text": " format/DateFormat: Remove unsupported API calls",
+        "references": []
+      }
+    ]
+  },
+  "1.56.16": {
+    "date": "December 2018",
+    "notes": [
+      {
+        "id": "9d11db4ac496012c599780b723d91a54b865d8a2",
+        "type": "FIX",
+        "text": " NumberFormat: correctly handle option precision with CurrencyFormat",
+        "references": []
+      }
+    ]
+  },
+  "1.56.17": {
+    "date": "January 2019",
+    "notes": [
+      {
+        "id": "608ea9065fb7f004517f662e98753ed7dd110f17",
+        "type": "FIX",
+        "text": " ComboBoxBase: Support for composition characters",
+        "references": []
+      },
+      {
+        "id": "bedbd8cfb894bcdb79d8b7f455010bf47fdfccff",
+        "type": "FIX",
+        "text": " Device.js: use maxTouchPoints for touch support detection",
+        "references": []
+      },
+      {
+        "id": "6834f64f1b7ac87895ffd64c6abb3be9d6ba86f2",
+        "type": "FIX",
+        "text": " ODataUtils: Enhance setAnnotationOrigin for HanaXS Use Case",
+        "references": []
+      }
+    ]
+  },
+  "1.56.18": {
+    "date": "January 2019",
+    "notes": [
+      {
+        "id": "9905bfe674772866da063ef78901aed5410b8dce",
+        "type": "FIX",
+        "text": " core.DateFormat: fix am/pm parsing with pattern which contains \".\"",
         "references": []
       }
     ]

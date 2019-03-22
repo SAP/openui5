@@ -5,13 +5,8 @@
       {
         "id": "f4f21f83d70338ef9002dcb2594c21efa3567e48",
         "type": "FIX",
-        "text": "sap.m.ComboBox: duplicated focus outline, spec implemented",
-        "references": [
-          {
-            "type": "BCP",
-            "reference": "1880494664"
-          }
-        ]
+        "text": " sap.m.ComboBox: duplicated focus outline, spec implemented",
+        "references": []
       }
     ]
   }
