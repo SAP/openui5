@@ -177,7 +177,6 @@ sap.ui.define([
 	/**
 	 * Adds an element to the facade of the composite. To be called by the composite application.
 	 * @param {sap.ui.core.Element} oElement element to be added to the facade
-	 * @return {void}
 	 * @public
 	 */
 	ComponentFactory.prototype.addFacadeComponent = function(oElement) {
@@ -187,7 +186,6 @@ sap.ui.define([
 	/**
 	 * Removes an element from the facade of the composite. To be called by the composite application.
 	 * @param {sap.ui.core.Element} oElement element to be removed to the facade
-	 * @return {void}
 	 * @public
 	 */
 	ComponentFactory.prototype.removeFacadeComponent = function(oElement) {
