@@ -184,7 +184,6 @@ sap.ui.define([
 	 * @returns {Promise}
 	 *   A promise which is resolved without a result in case of success, or rejected with an
 	 *   instance of <code>Error</code> in case of failure.
-	 * @throws {Error} If the binding has pending changes
 	 *
 	 * @private
 	 */
@@ -194,9 +193,6 @@ sap.ui.define([
 		// a context binding without path can simply delegate to its parent context.
 		if (this.sPath === "" && this.oContext.delete) {
 			return this.oContext._delete(oGroupLock);
-		}
-		if (this.hasPendingChanges()) {
-			throw new Error("Cannot delete due to pending changes");
 		}
 
 		return this.deleteFromCache(oGroupLock, sEditUrl, "", function () {

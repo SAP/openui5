@@ -11678,6 +11678,58 @@ sap.ui.define([
 	});
 
 	//*********************************************************************************************
+	// Scenario: Delete an entity from a relative ODLB with pending changes (POST) in siblings
+	// CPOUI5UISERVICESV3-1799
+	QUnit.test("Delete entity from rel. ODLB with pending changes in siblings", function (assert) {
+		var oModel = createTeaBusiModel({autoExpandSelect : true, updateGroupId : "update"}),
+			sView = '\
+<FlexBox id="detail" binding="{/TEAMS(\'TEAM_01\')}">\
+	<Text id="Team_Id" text="{Team_Id}"/>\
+	<Table id="table" items="{TEAM_2_EMPLOYEES}">\
+		<columns><Column/></columns>\
+		<ColumnListItem>\
+			<Text id="name" text="{Name}"/>\
+		</ColumnListItem>\
+	</Table>\
+</FlexBox>',
+			that = this;
+
+		this.expectRequest("TEAMS('TEAM_01')?$select=Team_Id"
+				+ "&$expand=TEAM_2_EMPLOYEES($select=ID,Name)", {
+				"Team_Id" : "TEAM_01",
+				"TEAM_2_EMPLOYEES" : [{
+					"ID" : "1",
+					"Name" : "Jonathan Smith"
+				}, {
+					"ID" : "2",
+					"Name" : "Frederic Fall"
+				}]
+			})
+			.expectChange("Team_Id", "TEAM_01")
+			.expectChange("name", ["Jonathan Smith", "Frederic Fall"]);
+
+		return this.createView(assert, sView, oModel).then(function () {
+			that.expectChange("name", ["John Doe", "Jonathan Smith", "Frederic Fall"]);
+
+			that.oView.byId("table").getBinding("items").create({Name : "John Doe"});
+
+			return that.waitForChanges(assert);
+		}).then(function () {
+			that.expectRequest({
+					method : "DELETE",
+					url : "EMPLOYEES('1')"
+				})
+				.expectChange("name", "Frederic Fall", 1);
+
+			return Promise.all([
+				// code under test
+				that.oView.byId("table").getItems()[1].getBindingContext().delete("$auto"),
+				that.waitForChanges(assert)
+			]);
+		});
+	});
+
+	//*********************************************************************************************
 	// Scenario: Delete an entity with messages from a relative ODataContextBinding w/o cache
 	QUnit.test("Delete an entity with messages from a relative ODCB w/o cache", function (assert) {
 		var oModel = createTeaBusiModel({autoExpandSelect : true}),

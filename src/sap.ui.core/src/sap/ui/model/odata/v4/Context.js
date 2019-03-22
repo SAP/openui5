@@ -207,8 +207,9 @@ sap.ui.define([
 	 *   has been detected; this should be shown to the user who needs to decide whether to try
 	 *   deletion again. If the entity does not exist, we assume it has already been deleted by
 	 *   someone else and report success.
-	 * @throws {Error} If the given group ID is invalid or if the context's root binding is
-	 *   suspended
+	 * @throws {Error} If the given group ID is invalid, if this context's root binding is
+	 *   suspended, or if this context is not transient (see {@link #isTransient}) and has pending
+	 *   changes (see {@link #hasPendingChanges})
 	 *
 	 * @function
 	 * @public
@@ -218,8 +219,12 @@ sap.ui.define([
 		var oGroupLock,
 			that = this;
 
-		this.oBinding.checkSuspended();
 		this.oModel.checkGroupId(sGroupId);
+		this.oBinding.checkSuspended();
+		if (!this.isTransient() && this.hasPendingChanges()) {
+			throw new Error("Cannot delete due to pending changes");
+		}
+
 		oGroupLock = this.oModel.lockGroup(sGroupId, true, this);
 		return this._delete(oGroupLock).catch(function (oError) {
 			oGroupLock.unlock(true);

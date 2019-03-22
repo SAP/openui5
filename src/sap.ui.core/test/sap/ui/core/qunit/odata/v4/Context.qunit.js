@@ -807,6 +807,10 @@ sap.ui.define([
 
 			this.mock(oBinding).expects("checkSuspended").withExactArgs();
 			this.mock(oModel).expects("checkGroupId").withExactArgs("myGroup");
+			this.mock(oContext).expects("isTransient").withExactArgs()
+				// check before deletion and twice while reporting the error
+				.exactly(bFailure ? 3 : 1)
+				.returns(true);
 			this.mock(oModel).expects("lockGroup").withExactArgs("myGroup", true, oContext)
 				.returns(oGroupLock);
 			this.mock(oContext).expects("_delete").withExactArgs(sinon.match.same(oGroupLock))
@@ -826,6 +830,57 @@ sap.ui.define([
 				assert.strictEqual(oError0, oError);
 			});
 		});
+	});
+
+	//*********************************************************************************************
+	QUnit.test("delete: error in checkGroupId and checkSuspended", function (assert) {
+		var oBinding = {
+				checkSuspended : function () {}
+			},
+			oBindingMock = this.mock(oBinding),
+			sGroupId = "$invalid",
+			oModel = {
+				checkGroupId : function () {}
+			},
+			oModelMock = this.mock(oModel),
+			oContext = Context.create(oModel, oBinding, "/EMPLOYEES/42", 42),
+			oError0 = new Error("invalid group"),
+			oError1 = new Error("suspended");
+
+		oModelMock.expects("checkGroupId").withExactArgs(sGroupId).throws(oError0);
+		oBindingMock.expects("checkSuspended").never();
+
+		assert.throws(function () {
+			oContext.delete(sGroupId);
+		}, oError0);
+
+		oModelMock.expects("checkGroupId").withExactArgs("$auto");
+		oBindingMock.expects("checkSuspended").withExactArgs().throws(oError1);
+
+		assert.throws(function () {
+			oContext.delete("$auto");
+		}, oError1);
+	});
+
+	//*********************************************************************************************
+	QUnit.test("delete: pending changes", function (assert) {
+		var oBinding = {
+				checkSuspended : function () {}
+			},
+			sGroupId = "$auto",
+			oModel = {
+				checkGroupId : function () {}
+			},
+			oContext = Context.create(oModel, oBinding, "/EMPLOYEES/42", 42);
+
+		this.mock(oBinding).expects("checkSuspended").withExactArgs();
+		this.mock(oModel).expects("checkGroupId").withExactArgs(sGroupId);
+		this.mock(oContext).expects("isTransient").withExactArgs().returns(false);
+		this.mock(oContext).expects("hasPendingChanges").withExactArgs().returns(true);
+
+		assert.throws(function () {
+			oContext.delete(sGroupId);
+		}, new Error("Cannot delete due to pending changes"));
 	});
 
 	//*********************************************************************************************

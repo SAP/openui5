@@ -2991,7 +2991,6 @@ sap.ui.define([
 			aData.splice(2, 1); // [-1, 0, 2, 3, 4, 5]
 
 			assert.strictEqual(oBinding.getLength(), 7);
-			this.mock(oBinding).expects("hasPendingChanges").withExactArgs().returns(false);
 			this.mock(oBinding).expects("deleteFromCache")
 				.withExactArgs("myGroup", "EMPLOYEES('2')", "2", sinon.match.func)
 				.callsArgWith(3, 2, aData)
@@ -3043,20 +3042,6 @@ sap.ui.define([
 	//TODO check the row of a pending update with higher index
 
 	//*********************************************************************************************
-	QUnit.test("_delete: pending changes", function (assert) {
-		var oBinding = this.bindList("/EMPLOYEES"),
-			oContext = {isTransient : function () {return false;}};
-
-		this.mock(oBinding).expects("hasPendingChanges").withExactArgs().returns(true);
-		this.mock(oBinding).expects("deleteFromCache").never();
-		this.mock(oBinding).expects("_fireChange").never();
-
-		assert.throws(function () {
-			oBinding._delete("myGroup", "EMPLOYEES('1')", oContext);
-		}, new Error("Cannot delete due to pending changes"));
-	});
-
-	//*********************************************************************************************
 	QUnit.test("_delete: transient context that has been persisted", function (assert) {
 		var oBinding = this.bindList("/EMPLOYEES"),
 			oBindingMock = this.mock(oBinding),
@@ -3068,8 +3053,6 @@ sap.ui.define([
 		oBinding.aContexts.unshift(oContext);
 		oBinding.iCreatedContexts = 1;
 		oBinding.iMaxLength = 42;
-		oContextMock.expects("isTransient").returns(false);
-		oBindingMock.expects("hasPendingChanges").returns(false);
 
 		oBindingMock.expects("deleteFromCache")
 			.withExactArgs("myGroup", "EMPLOYEES('1')", "-1"/*TODO transientPredicate*/,
