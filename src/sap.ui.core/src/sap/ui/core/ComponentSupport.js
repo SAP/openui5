@@ -109,7 +109,8 @@ sap.ui.define([
 					var oProperty = ComponentContainerMetadata.getProperty(sKey);
 					var oEvent = !oProperty && ComponentContainerMetadata.getEvent(sKey);
 					if (!oProperty && !oEvent) {
-						throw new Error("Property or event \"" + sKey + "\" does not exist in sap.ui.core.ComponentContainer");
+						Log.warning("Property or event \"" + sKey + "\" will be ignored as it does not exist in sap.ui.core.ComponentContainer");
+						continue;
 					}
 					if (oProperty) {
 						var oType = DataType.getType(oProperty.type);
