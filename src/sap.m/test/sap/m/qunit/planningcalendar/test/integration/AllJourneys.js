@@ -112,7 +112,7 @@ sap.ui.define([
 			return this.waitFor({
 				controlType: "sap.m.PlanningCalendar",
 				success: function (oPC) {
-					sap.ui.test.Opa5.assert.strictEqual(oPC[0].$('TimeInt--TimesRow-201512152000').text(), "8PM", "Cell is changed to 8PM");
+					Opa5.assert.strictEqual(oPC[0].$('TimeInt--TimesRow-201512152000').text(), "8PM", "Cell is changed to 8PM");
 				},
 				errorMessage: "I should see the change on Hours View."
 			});
@@ -121,7 +121,7 @@ sap.ui.define([
 			return this.waitFor({
 				controlType: "sap.m.PlanningCalendar",
 				success: function (oPC) {
-					sap.ui.test.Opa5.assert.strictEqual(oPC[0].$('DateInt--Month0-20151229').text(), "29Tue", "Cell is changed to 29Tue");
+					Opa5.assert.strictEqual(oPC[0].$('DateInt--Month0-20151229').text(), "29Tue", "Cell is changed to 29Tue");
 				},
 				errorMessage: "I should see the change on Days View."
 			});
@@ -130,8 +130,8 @@ sap.ui.define([
 			return this.waitFor({
 				controlType: "sap.m.PlanningCalendar",
 				success: function (oPC) {
-					sap.ui.test.Opa5.assert.strictEqual(oPC[0].$('MonthInt--Head-B2').text(), "2016 – 2017", "Cell is changed to 2016 – 2017");
-					sap.ui.test.Opa5.assert.strictEqual(oPC[0].$('MonthInt--MonthsRow-20161201').text(), "December", "Month in the cell is December");
+					Opa5.assert.strictEqual(oPC[0].$('MonthInt--Head-B2').text(), "2016 – 2017", "Cell is changed to 2016 – 2017");
+					Opa5.assert.strictEqual(oPC[0].$('MonthInt--MonthsRow-20161201').text(), "December", "Month in the cell is December");
 				},
 				errorMessage: "I should see the change on Months View."
 			});
@@ -140,7 +140,7 @@ sap.ui.define([
 			return this.waitFor({
 				controlType: "sap.m.PlanningCalendar",
 				success: function (oPC) {
-					sap.ui.test.Opa5.assert.strictEqual(oPC[0].$('WeekInt--Month0-20161204').text(), "4Sun", "Cell is changed to 4Sun");
+					Opa5.assert.strictEqual(oPC[0].$('WeekInt--Month0-20161204').text(), "4Sun", "Cell is changed to 4Sun");
 				},
 				errorMessage: "I should see the change on Week View."
 			});
@@ -149,15 +149,15 @@ sap.ui.define([
 			return this.waitFor({
 				controlType: "sap.m.PlanningCalendar",
 				success: function (oPC) {
-					sap.ui.test.Opa5.assert.strictEqual(oPC[0].$('OneMonthInt--Month0-20170101').text(), "1Sun", "Cell is changed to 1Sun");
-					sap.ui.test.Opa5.assert.strictEqual(oPC[0].$('OneMonthInt--Head-B1').text(), "January 2017", "Cell is changed to 2017");
+					Opa5.assert.strictEqual(oPC[0].$('OneMonthInt--Month0-20170101').text(), "1Sun", "Cell is changed to 1Sun");
+					Opa5.assert.strictEqual(oPC[0].$('OneMonthInt--Head-B1').text(), "January 2017", "Cell is changed to 2017");
 				},
 				errorMessage: "I should see the change on 1Month View."
 			});
 		}
 	});
 
-	sap.ui.test.Opa5.extendConfig({
+	Opa5.extendConfig({
 		arrangements: arrangements,
 		actions: actions,
 		assertions: assertions,

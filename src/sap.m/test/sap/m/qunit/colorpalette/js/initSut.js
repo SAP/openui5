@@ -1,4 +1,4 @@
-sap.ui.define([
+sap.ui.require([
 	"sap/ui/core/ComponentContainer"
 ], function(
 	ComponentContainer

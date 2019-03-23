@@ -60,7 +60,8 @@ sap.ui.define([
 				return this.iStartMyUIComponent({
 					componentConfig: {
 						name: sComponentName,
-						id: "__component0"
+						id: "__component0",
+						manifest:true
 					},
 					// testing deep links is possible by setting a hash
 					hash: ""
