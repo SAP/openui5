@@ -1,6 +1,6 @@
 sap.ui.define([
 	"sap/ui/qunit/utils/createAndAppendDiv",
-	"sap/ui/rta/test/controlEnablingCheck"
+	"sap/ui/rta/enablement/controlTest"
 ], function(createAndAppendDiv, rtaControlEnablingCheck) {
 	'use strict';
 

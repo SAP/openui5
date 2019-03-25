@@ -2,7 +2,7 @@
 
 sap.ui.define([
 	"sap/ui/qunit/utils/createAndAppendDiv",
-	"sap/ui/rta/test/controlEnablingCheck",
+	"sap/ui/rta/enablement/controlTest",
 	"sap/ui/dt/test/report/QUnit",
 	"sap/ui/dt/test/ElementEnablementTest",
 	"sap/m/changeHandler/CombineButtons",

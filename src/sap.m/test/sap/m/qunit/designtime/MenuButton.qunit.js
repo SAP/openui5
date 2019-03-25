@@ -7,7 +7,7 @@ sap.ui.define([
 	"sap/m/MenuButton",
 	"sap/m/Menu",
 	"sap/m/MenuItem",
-	"sap/ui/rta/test/controlEnablingCheck",
+	"sap/ui/rta/enablement/controlTest",
 	"sap/m/changeHandler/SplitMenuButton",
 	"sap/f/DynamicPageTitle",
 	"sap/ui/core/util/reflection/JsControlTreeModifier",

@@ -1,7 +1,7 @@
 /*global QUnit, sinon*/
 
 sap.ui.define([
-	"sap/ui/rta/test/controlEnablingCheck",
+	"sap/ui/rta/enablement/controlTest",
 	'sap/uxap/ObjectPageLayout',
 	'sap/uxap/ObjectPageSection',
 	'sap/uxap/ObjectPageSubSection',

@@ -2,7 +2,7 @@ sap.ui.define([
 	"sap/ui/dt/test/report/QUnit",
 	"sap/ui/dt/test/ElementEnablementTest",
 	"./HorizontalLayout",
-	"sap/ui/rta/test/controlEnablingCheck",
+	"sap/ui/rta/enablement/controlTest",
 	"sap/m/Button"
 ], function(QUnit, ElementEnablementTest, HorizontalLayout, rtaControlEnablingCheck, Button) {
 	"use strict";

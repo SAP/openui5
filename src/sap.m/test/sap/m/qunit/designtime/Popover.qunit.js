@@ -5,7 +5,7 @@ sap.ui.define([
 	"sap/m/Button",
 	"sap/m/Popover",
 	"sap/m/Text",
-	"sap/ui/rta/test/controlEnablingCheck"
+	"sap/ui/rta/enablement/controlTest"
 ], function(createAndAppendDiv, QUnitReport, ElementEnablementTest, Button, Popover, Text, rtaControlEnablingCheck) {
 	"use strict";
 	createAndAppendDiv("content");

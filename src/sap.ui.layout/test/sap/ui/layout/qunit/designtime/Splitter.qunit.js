@@ -3,7 +3,7 @@ sap.ui.define([
 	"sap/ui/dt/test/ElementEnablementTest",
 	"sap/ui/layout/Splitter",
 	"sap/m/Button",
-	"sap/ui/rta/test/controlEnablingCheck"
+	"sap/ui/rta/enablement/controlTest"
 ], function (QUnitReport,
 			 ElementEnablementTest,
 			 Splitter,

@@ -2,7 +2,7 @@
 sap.ui.define([
     "sap/ui/dt/test/report/QUnit",
     "sap/ui/dt/test/ElementEnablementTest",
-    "sap/ui/rta/test/controlEnablingCheck",
+    "sap/ui/rta/enablement/controlTest",
     "sap/f/DynamicPageTitle",
     "sap/m/Text",
     "sap/m/Title",

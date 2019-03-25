@@ -3,7 +3,7 @@ sap.ui.define([
 	"sap/ui/dt/test/report/QUnit",
 	"sap/ui/dt/test/ElementEnablementTest",
 	"sap/m/Title",
-	"sap/ui/rta/test/controlEnablingCheck"
+	"sap/ui/rta/enablement/controlTest"
 ], function(createAndAppendDiv, QUnitReport, ElementEnablementTest, Title, rtaControlEnablingCheck) {
 	"use strict";
 	createAndAppendDiv("content");

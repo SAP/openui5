@@ -5,7 +5,7 @@ sap.ui.define([
 	"sap/ui/layout/BlockLayoutRow",
 	"sap/ui/layout/BlockLayoutCell",
 	"sap/m/Text",
-	"sap/ui/rta/test/controlEnablingCheck"
+	"sap/ui/rta/enablement/controlTest"
 ], function (QUnitReport,
 			 ElementEnablementTest,
 			 BlockLayout,
