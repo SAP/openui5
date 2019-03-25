@@ -392,6 +392,8 @@ sap.ui.define([
 	};
 
 	DynamicPage.prototype.setHeaderExpanded = function (bHeaderExpanded) {
+		bHeaderExpanded	= this.validateProperty("headerExpanded", bHeaderExpanded);
+
 		if (this._bPinned) { // operation not allowed
 			return this;
 		}
