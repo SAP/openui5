@@ -605,7 +605,7 @@ sap.ui.define([
 			var sErrorMessage = "Change handler implementation for change not found or change type not enabled for current layer - Change ignored";
 			Utils.log.warning(sErrorMessage);
 			oResult = {success: false, error: new Error(sErrorMessage)};
-			oChange.markFinished(oResult);
+			oChange.setInitialApplyState();
 			return new Utils.FakePromise(oResult);
 		}
 		if (bXmlModifier && oChange.getDefinition().jsOnly) {
