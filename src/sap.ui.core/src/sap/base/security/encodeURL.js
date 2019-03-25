@@ -39,6 +39,12 @@ sap.ui.define(["sap/base/strings/toHex"], function(toHex) {
 	 *
 	 * Unescaped characters: alphabetic, decimal digits, -_. (dash, underscore, point)
 	 *
+	 * @example
+	 * sap.ui.require(['sap/base/security/encodeURL'], function(encodeURL) {
+	 *      var sEncoded = encodeURL('a/b?c=d&e');
+	 *      console.log(sEncoded); // a%2fb%3fc%3dd%26e
+	 * });
+	 *
 	 * @function
 	 * @since 1.58
 	 * @alias module:sap/base/security/encodeURL
