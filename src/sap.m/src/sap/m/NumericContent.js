@@ -132,12 +132,6 @@ sap.ui.define([
 	NumericContent.prototype.onAfterRendering = function() {
 		this.$().bind("mouseenter", this._addTooltip.bind(this));
 		this.$().bind("mouseleave", this._removeTooltip.bind(this));
-
-		if (library.LoadState.Loaded == this.getState() || this.getAnimateTextChange()) {
-			jQuery(document.getElementById(this.getId())).animate({
-				opacity : "1"
-			}, 1000);
-		}
 	};
 
 	/**
