@@ -201,25 +201,31 @@ sap.ui.define([
 	 * @override
 	 */
 	FlexCommand.prototype.undo = function() {
-		return Promise.resolve()
-			.then(function() {
-				var oControl = this.getElement() || this.getSelector();
-				var oChange = this.getPreparedChange();
+		function enhanceErrorMessage(sMessage, vControl) {
+			var sControlType = vControl.controlType ? vControl.controlType : JsControlTreeModifier.getControlType(vControl);
+			var sErrorMessage = "Undo is not possible for control type: " + sControlType + ". Reason: " + sMessage;
+			return sErrorMessage;
+		}
 
-				if (oChange.getRevertData()) {
-					var oFlexController = FlexControllerFactory.createForControl(this.getAppComponent());
-					var bRevertible = oFlexController.isChangeHandlerRevertible(oChange, oControl);
-					if (!bRevertible) {
-						Log.error("No revert change function available to handle revert data for " + oControl);
-						return;
-					}
-					return oFlexController.revertChangesOnControl([oChange], this.getAppComponent(true));
-				} else if (this._aRecordedUndo) {
-					RtaControlTreeModifier.performUndo(this._aRecordedUndo);
-				} else {
-					Log.warning("Undo is not available for " + oControl);
+		return Promise.resolve()
+		.then(function() {
+			var vControl = this.getElement() || this.getSelector();
+			var oChange = this.getPreparedChange();
+
+			if (oChange.getRevertData()) {
+				var oFlexController = FlexControllerFactory.createForControl(this.getAppComponent());
+				var bRevertible = oFlexController.isChangeHandlerRevertible(oChange, vControl, undefined);
+				if (!bRevertible) {
+					Log.error(enhanceErrorMessage("No revert change function available to handle revert data.", vControl));
+					return;
 				}
-			}.bind(this));
+				return oFlexController.revertChangesOnControl([oChange], this.getAppComponent(true));
+			} else if (this._aRecordedUndo) {
+				RtaControlTreeModifier.performUndo(this._aRecordedUndo);
+			} else {
+				Log.error(enhanceErrorMessage("Undo is not available.", vControl));
+			}
+		}.bind(this));
 	};
 
 	/**
