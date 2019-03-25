@@ -38,7 +38,8 @@ sap.ui.define(function () {
 			"String" : {},
 			"Time" : {},
 			"TimeOfDay" : {},
-			"Unit" : {}
+			"Unit" : {},
+			"UnitMixin" : {}
 		}
 	};
 });
