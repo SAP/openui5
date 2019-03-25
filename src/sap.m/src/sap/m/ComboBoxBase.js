@@ -15,7 +15,6 @@ sap.ui.define([
 	'sap/ui/core/SeparatorItem',
 	'sap/ui/core/InvisibleText',
 	'sap/ui/core/IconPool',
-	'sap/ui/core/ValueStateSupport',
 	'sap/base/Log',
 	'./library',
 	'sap/ui/Device',
@@ -40,7 +39,6 @@ sap.ui.define([
 		SeparatorItem,
 		InvisibleText,
 		IconPool,
-		ValueStateSupport,
 		Log,
 		library,
 		Device,
@@ -56,9 +54,6 @@ sap.ui.define([
 
 		// shortcut for sap.m.PlacementType
 		var PlacementType = library.PlacementType;
-
-		// shortcut for sap.ui.core.ValueState
-		var ValueState = coreLibrary.ValueState;
 
 		/**
 		 * Constructor for a new <code>sap.m.ComboBoxBase</code>.
@@ -661,25 +656,12 @@ sap.ui.define([
 			this.open();
 		};
 
-		ComboBoxBase.prototype.onBeforeRendering = function() {
-			var sNoneState = this.getValueState() === ValueState.None;
-			ComboBoxTextField.prototype.onBeforeRendering.apply(this, arguments);
-
-			if (!this.isPickerDialog() && sNoneState) {
-				this._showValueStateText(false);
-			}
-		};
-
 		ComboBoxBase.prototype.exit = function() {
 			ComboBoxTextField.prototype.exit.apply(this, arguments);
 
 			if (this._getList()) {
 				this._getList().destroy();
 				this._oList = null;
-			}
-
-			if (this._oPickerValueStateText) {
-				this._oPickerValueStateText.destroy();
 			}
 
 			if (this._getGroupHeaderInvisibleText()) {
@@ -873,112 +855,60 @@ sap.ui.define([
 			return this._sPickerType;
 		};
 
-		ComboBoxBase.prototype.setValueState = function(sValueState) {
-			var sAdditionalText,
-				sValueStateText = this.getValueStateText(),
-				bShow = ( sValueState === ValueState.None ? false : this.getShowValueStateMessage());
-
-			this._sOldValueState = this.getValueState();
-			ComboBoxTextField.prototype.setValueState.apply(this, arguments);
-
-			this._showValueStateText(bShow);
-
-			if (sValueStateText) {
-				this._setValueStateText(sValueStateText);
-			} else {
-				sAdditionalText = ValueStateSupport.getAdditionalText(this);
-				this._setValueStateText(sAdditionalText);
+		/**
+		 * Updates the suggestions popover value state
+		 *
+		 * @private
+		 */
+		ComboBoxBase.prototype._updateSuggestionsPopoverValueState = function() {
+			var oSuggestionsPopover = this._getSuggestionsPopover();
+			if (oSuggestionsPopover) {
+				oSuggestionsPopover.updateValueState(this.getValueState(), this.getValueStateText(), this.getShowValueStateMessage());
 			}
+		};
 
-			this._alignValueStateStyles();
+		/**
+		 * Sets the visualization of the validation state of the control,
+		 * e.g. <code>Error</code>, <code>Warning</code>, <code>Success</code>.
+		 *
+		 * @param {sap.m.ValueState} [sValueState] The new value state
+		 * @returns {sap.m.InputBase} this for chaining
+		 *
+		 * @public
+		 */
+		ComboBoxBase.prototype.setValueState = function(sValueState) {
+			ComboBoxTextField.prototype.setValueState.apply(this, arguments);
+			this._updateSuggestionsPopoverValueState();
+
 			return this;
 		};
 
-		ComboBoxBase.prototype.setValueStateText = function(sText) {
+		/**
+		 * Sets the value state text
+		 *
+		 * @param {string} [sValueStateText] The new value state text
+		 * @returns {sap.m.InputBase} this for chaining
+		 *
+		 * @public
+		 */
+		ComboBoxBase.prototype.setValueStateText = function(sValueStateText) {
 			ComboBoxTextField.prototype.setValueStateText.apply(this, arguments);
-			this._setValueStateText(this.getValueStateText());
+			this._updateSuggestionsPopoverValueState();
 			return this;
 		};
 
+		/**
+		 * Sets whether the value state message should be shown or not
+		 *
+		 * @param {boolean} [bShow] The new value state text
+		 * @returns {sap.m.InputBase} this for chaining
+		 *
+		 * @public
+		 */
 		ComboBoxBase.prototype.setShowValueStateMessage = function(bShow) {
 			ComboBoxTextField.prototype.setShowValueStateMessage.apply(this, arguments);
-			this._showValueStateText(this.getShowValueStateMessage());
+			this._updateSuggestionsPopoverValueState();
 			return this;
-		};
-
-		ComboBoxBase.prototype._showValueStateText = function(bShow) {
-			var oCustomHeader;
-
-			if (this.isPickerDialog()) {
-
-				if (this._oPickerValueStateText) {
-					this._oPickerValueStateText.setVisible(bShow);
-				}
-			} else {
-				oCustomHeader = this._getPickerCustomHeader();
-
-				if (oCustomHeader) {
-					oCustomHeader.setVisible(bShow);
-				}
-			}
-		};
-
-		ComboBoxBase.prototype._setValueStateText = function(sText) {
-			var oHeader;
-
-			if (this.isPickerDialog()) {
-				this._oPickerValueStateText = this.getPickerValueStateText();
-				this._oPickerValueStateText.setText(sText);
-			} else {
-				oHeader = this._getPickerCustomHeader();
-				if (oHeader) {
-					oHeader.getContentLeft()[0].setText(sText);
-				}
-			}
-		};
-
-		ComboBoxBase.prototype._getPickerCustomHeader = function() {
-			var oInternalTitle, oInternalHeader,
-				oPicker = this.getPicker(),
-				sPickerTitleClass = this.getRenderer().CSS_CLASS_COMBOBOXBASE + "PickerTitle";
-
-			if (!oPicker) {
-				return null;
-			}
-
-			if (oPicker.getCustomHeader()) {
-				return oPicker.getCustomHeader();
-			}
-
-			oInternalTitle = new Title({ textAlign: "Left" }).addStyleClass(sPickerTitleClass);
-			oInternalHeader = new Bar({ visible: false, contentLeft: oInternalTitle });
-			oPicker.setCustomHeader(oInternalHeader);
-
-			return oInternalHeader;
-		};
-
-		ComboBoxBase.prototype._alignValueStateStyles = function() {
-			var sOldValueState = this._sOldValueState,
-				PICKER_CSS_CLASS = this.getRenderer().CSS_CLASS_COMBOBOXBASE + "Picker",
-				sPickerWithState = PICKER_CSS_CLASS + "ValueState",
-				sOldCssClass = PICKER_CSS_CLASS + sOldValueState + "State",
-				sCssClass = PICKER_CSS_CLASS + this.getValueState() + "State",
-				oCustomHeader;
-
-			if (this.isPickerDialog() && this._oPickerValueStateText) {
-				this._oPickerValueStateText.addStyleClass(sPickerWithState);
-				this._oPickerValueStateText.removeStyleClass(sOldCssClass);
-				this._oPickerValueStateText.addStyleClass(sCssClass);
-			} else {
-
-				oCustomHeader = this._getPickerCustomHeader();
-
-				if (oCustomHeader) {
-					oCustomHeader.addStyleClass(sPickerWithState);
-					oCustomHeader.removeStyleClass(sOldCssClass);
-					oCustomHeader.addStyleClass(sCssClass);
-				}
-			}
 		};
 
 		ComboBoxBase.prototype.shouldValueStateMessageBeOpened = function() {
@@ -1042,36 +972,11 @@ sap.ui.define([
 		};
 
 		/*
-		 * Gets the picker value state message object.
-		 *
-		 * @returns {sap.m.Text}
-		 * @protected
-		 * @since 1.46
-		 */
-		ComboBoxBase.prototype.getPickerValueStateText = function() {
-			var oPicker = this.getPicker();
-
-			if (!this._oPickerValueStateText) {
-				this._oPickerValueStateText = new Text({ width: "100%" });
-				oPicker.insertContent(this._oPickerValueStateText, 0);
-			}
-
-			return this._oPickerValueStateText;
-		};
-
-		/*
 		 * Base method for the <code>List</code> configuration
 		 *
 		 * @protected
 		 */
 		ComboBoxBase.prototype._configureList = function () {};
-
-		/*
-		 * Base method for the <code>DropDown</code> configuration
-		 *
-		 * @protected
-		 */
-		ComboBoxBase.prototype.configureDropdown = function () {};
 
 		/*
 		 * Base method for the <code>Dialog</code> configuration
@@ -1099,7 +1004,10 @@ sap.ui.define([
 			oPicker = this._oSuggestionPopover._oPopover;
 			// define a parent-child relationship between the control's and the picker pop-up (Popover or Dialog)
 			this.setAggregation("picker", oPicker, true);
-			this["configure" + sPickerType](oPicker);
+
+			if (this.isPickerDialog()) {
+				this.configureDialog(oPicker);
+			}
 
 			this.configPicker(oPicker);
 
@@ -1140,6 +1048,8 @@ sap.ui.define([
 			// Creates the internal controls of the <code>SuggestionsPopover</code>
 			oSuggPopover._createSuggestionPopup();
 			oSuggPopover._createSuggestionPopupContent(false, false, false);
+
+			this._updateSuggestionsPopoverValueState();
 
 			// Ammends the suggestions popovers list
 			// this._oList is used by the ComboBoxBase
@@ -1195,6 +1105,17 @@ sap.ui.define([
 
 			// initialize the control's picker
 			return this.createPicker(this.getPickerType());
+		};
+
+		/**
+		 * Gets the control's suggestions popover.
+		 *
+		 * @returns {sap.m.SuggestionsPopover} The SuggestionsPopover instance, creating it if necessary by calling
+		 * the <code>createPicker()</code> method.
+		 * @private
+		 */
+		ComboBoxBase.prototype._getSuggestionsPopover = function() {
+			return this._oSuggestionPopover;
 		};
 
 		/**
@@ -1405,6 +1326,7 @@ sap.ui.define([
 			var oPicker = this.getPicker();
 
 			if (oPicker) {
+				this._updateSuggestionsPopoverValueState();
 				oPicker.open();
 			}
 

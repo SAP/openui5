@@ -108,6 +108,10 @@ sap.ui.define([
 		};
 	}
 
+	function getPopupItemsContent(oPopup) {
+		var aContents = oPopup.getContent();
+		return aContents[aContents.length - 1];
+	}
 
 	var i1;
 	var i2;
@@ -260,7 +264,7 @@ sap.ui.define([
 		this.clock.tick(300);
 		oPopup = oInput._oSuggPopover._oPopover;
 		oInput.$().trigger("focusout");
-		sap.ui.test.qunit.triggerTouchEvent("tap", oPopup.getContent()[0].getItems()[1].getDomRef());
+		sap.ui.test.qunit.triggerTouchEvent("tap", getPopupItemsContent(oPopup).getItems()[1].getDomRef());
 		this.clock.tick(300);
 
 		oInput.destroy();
@@ -776,19 +780,19 @@ sap.ui.define([
 		oPopup = oInput6._oSuggPopover._oPopover;
 		assert.ok(oPopup instanceof sap.m.Popover, "Suggestion Popup is created and is a Popover instance");
 		assert.ok(oPopup.isOpen(), "Suggestion Popup is open now");
-		assert.equal(oPopup.getContent()[0].getItems().length, aNames.length, "Suggestions are inserted");
-		assert.ok(oPopup.getContent()[0] instanceof sap.m.List, "Suggestions are list-based)");
+		assert.equal(getPopupItemsContent(oPopup).getItems().length, aNames.length, "Suggestions are inserted");
+		assert.ok(getPopupItemsContent(oPopup) instanceof sap.m.List, "Suggestions are list-based)");
 
 		oInput6._$input.focus().val("abcT").trigger("input");
 		this.clock.tick(400);
 		assert.ok(oPopup.isOpen(), "Suggestion Popup is still open now");
-		assert.equal(oPopup.getContent()[0].getItems().length, 1, "Suggestions are filtered");
+		assert.equal(getPopupItemsContent(oPopup).getItems().length, 1, "Suggestions are filtered");
 
 		//close the popoup when nothing is typed in input
 		oInput6._$input.focus().val("").trigger("input");
 		this.clock.tick(300);
 		assert.ok(!oPopup.isOpen(), "Suggestion Popup is closed");
-		assert.equal(oPopup.getContent()[0].getItems().length, 0, "Suggestions are destroyed");
+		assert.equal(getPopupItemsContent(oPopup).getItems().length, 0, "Suggestions are destroyed");
 
 		oInput6.destroy();
 	});
@@ -1100,8 +1104,8 @@ sap.ui.define([
 
 		assert.ok(oPopup instanceof sap.m.Popover, "Two Value Suggestion Popup is created and is a Popover instance");
 		assert.ok(oPopup.isOpen(), "Two Value Suggestion Popup is open now");
-		assert.equal(oPopup.getContent()[0].getItems().length, aNames.length, "Suggestions are inserted");
-		assert.ok(oPopup.getContent()[0].getItems()[0] instanceof sap.m.DisplayListItem, "Suggestion item is a DisplayListItem");
+		assert.equal(getPopupItemsContent(oPopup).getItems().length, aNames.length, "Suggestions are inserted");
+		assert.ok(getPopupItemsContent(oPopup).getItems()[0] instanceof sap.m.DisplayListItem, "Suggestion item is a DisplayListItem");
 
 		this.clock.tick(400);
 		assert.ok(oPopup.isOpen(), "Two Value Suggestion Popup is still open now");
@@ -1311,22 +1315,22 @@ sap.ui.define([
 
 		oInput._oSuggPopover._oPopupInput._$input.focus().val("abc").trigger("input");
 		this.clock.tick(400);
-		assert.equal(oPopup.getContent()[0].getItems().length, aNames.length, "Suggestions are inserted");
+		assert.equal(getPopupItemsContent(oPopup).getItems().length, aNames.length, "Suggestions are inserted");
 
 		oInput._oSuggPopover._oPopupInput._$input.focus().val("abcT").trigger("input");
 		this.clock.tick(400);
 		assert.ok(oPopup.isOpen(), "Suggestion Popup is still open now");
-		assert.equal(oPopup.getContent()[0].getItems().length, 1, "Suggestions are filtered");
+		assert.equal(getPopupItemsContent(oPopup).getItems().length, 1, "Suggestions are filtered");
 
 		oInput._oSuggPopover._oPopupInput._$input.focus().val("").trigger("input");
 		this.clock.tick(400);
 		assert.ok(oPopup.isOpen(), "Suggestion Popup is still open now");
-		assert.equal(oPopup.getContent()[0].getItems().length, 0, "Suggestions are destroyed");
+		assert.equal(getPopupItemsContent(oPopup).getItems().length, 0, "Suggestions are destroyed");
 
 		oInput._oSuggPopover._oPopupInput._$input.focus().val("abc").trigger("input");
 		this.clock.tick(400);
 
-		sap.ui.test.qunit.triggerTouchEvent("tap", oPopup.getContent()[0].getItems()[1].getDomRef());
+		sap.ui.test.qunit.triggerTouchEvent("tap", getPopupItemsContent(oPopup).getItems()[1].getDomRef());
 		this.clock.tick(500);
 		assert.ok(!oPopup.isOpen(), "Suggestion Popup is closed");
 		assert.equal(oInput.getValue(), aNames[1], "Value is set to originalInput");
@@ -1382,7 +1386,7 @@ sap.ui.define([
 
 		oInput._oSuggPopover._oPopupInput._$input.focus().val("abc").trigger("input");
 		this.clock.tick(400);
-		sap.ui.test.qunit.triggerTouchEvent("tap", oPopup.getContent()[0].getItems()[1].getDomRef());
+		sap.ui.test.qunit.triggerTouchEvent("tap", getPopupItemsContent(oPopup).getItems()[1].getDomRef());
 		this.clock.tick(500);
 		assert.equal(oInput.getValue(), "newValue", "Value is last modified by the suggestionItemSelected event listener");
 
@@ -1436,22 +1440,22 @@ sap.ui.define([
 
 		oInput._oSuggPopover._oPopupInput._$input.focus().val("abc").trigger("input");
 		this.clock.tick(400);
-		assert.equal(oPopup.getContent()[0].getItems().length, aNames.length, "Suggestions are inserted");
+		assert.equal(getPopupItemsContent(oPopup).getItems().length, aNames.length, "Suggestions are inserted");
 
 		oInput._oSuggPopover._oPopupInput._$input.focus().val("abcT").trigger("input");
 		this.clock.tick(400);
 		assert.ok(oPopup.isOpen(), "Two value Suggestion Popup is still open now");
-		assert.equal(oPopup.getContent()[0].getItems().length, 1, "Suggestions are filtered");
+		assert.equal(getPopupItemsContent(oPopup).getItems().length, 1, "Suggestions are filtered");
 
 		oInput._oSuggPopover._oPopupInput._$input.focus().val("").trigger("input");
 		this.clock.tick(400);
 		assert.ok(oPopup.isOpen(), "Two value Suggestion Popup is still open now");
-		assert.equal(oPopup.getContent()[0].getItems().length, 0, "Suggestions are destroyed");
+		assert.equal(getPopupItemsContent(oPopup).getItems().length, 0, "Suggestions are destroyed");
 
 		oInput._oSuggPopover._oPopupInput._$input.focus().val("abc").trigger("input");
 		this.clock.tick(400);
 
-		sap.ui.test.qunit.triggerTouchEvent("tap", oPopup.getContent()[0].getItems()[1].getDomRef());
+		sap.ui.test.qunit.triggerTouchEvent("tap", getPopupItemsContent(oPopup).getItems()[1].getDomRef());
 		this.clock.tick(500);
 		assert.ok(!oPopup.isOpen(), "Two value Suggestion Popup is closed");
 		assert.equal(oInput.getValue(), aNames[1], "Value is set to originalInput");
@@ -1660,9 +1664,9 @@ sap.ui.define([
 
 		assert.ok(!oInput._oSuggPopover._oList.hasStyleClass("sapMInputSuggestionTableHidden"), "Tabular suggestions table initially has not the hidden style class");
 
-		assert.equal(oPopup.getContent()[0].getItems().length, oSuggestionData.tabularSuggestionItems.length, "Suggestions are inserted");
-		assert.strictEqual(oPopup.getContent()[0].$().length, 1, "Suggestion table is rendered");
-		assert.ok(oPopup.getContent()[0] instanceof sap.m.Table, "Suggestions are tabular)");
+		assert.equal(getPopupItemsContent(oPopup).getItems().length, oSuggestionData.tabularSuggestionItems.length, "Suggestions are inserted");
+		assert.strictEqual(getPopupItemsContent(oPopup).$().length, 1, "Suggestion table is rendered");
+		assert.ok(getPopupItemsContent(oPopup) instanceof sap.m.Table, "Suggestions are tabular)");
 		assert.strictEqual(oPopup.getContentWidth(), "100px", "Suggestion popup has 100px width");
 
 		oInput._$input.focus().val("Product1").trigger("input");
@@ -1673,7 +1677,7 @@ sap.ui.define([
 		assert.ok(oPopup.isOpen(), "Suggestion Popup is still open now");
 		// FIXME: check doesn't work in headless PhantomJS test cycle => commented out!
 		if (!Device.browser.phantomJS) {
-			assert.equal(oPopup.getContent()[0].$().find("tbody").children(":visible").length, 1, "Suggestions are filtered");
+			assert.equal(getPopupItemsContent(oPopup).$().find("tbody").children(":visible").length, 1, "Suggestions are filtered");
 		}
 
 		// checks for the show more button (tabular suggestions only)
@@ -1808,9 +1812,9 @@ sap.ui.define([
 
 		assert.ok(oPopup instanceof sap.m.Popover, "Suggestion Popup is created and is a Popover instance");
 		assert.ok(oPopup.isOpen(), "Suggestion Popup is open now");
-		assert.equal(oPopup.getContent()[0].getItems().length, oSuggestionData.tabularSuggestionItems.length, "Suggestions are inserted");
-		assert.strictEqual(oPopup.getContent()[0].$().length, 1, "Suggestion table is rendered");
-		assert.ok(oPopup.getContent()[0] instanceof sap.m.Table, "Suggestions are tabular)");
+		assert.equal(getPopupItemsContent(oPopup).getItems().length, oSuggestionData.tabularSuggestionItems.length, "Suggestions are inserted");
+		assert.strictEqual(getPopupItemsContent(oPopup).$().length, 1, "Suggestion table is rendered");
+		assert.ok(getPopupItemsContent(oPopup) instanceof sap.m.Table, "Suggestions are tabular)");
 
 		oInput._$input.focus().val("Product1").trigger("input");
 		this.clock.tick(400);
@@ -1828,7 +1832,7 @@ sap.ui.define([
 		assert.ok(oPopup.isOpen(), "Suggestion Popup is still open now");
 		// FIXME: check doesn't work in headless PhantomJS test cycle => commented out!
 		if (!Device.browser.phantomJS) {
-			assert.equal(oPopup.getContent()[0].$().find("tbody").children(":visible").length, 1, "Suggestions are filtered");
+			assert.equal(getPopupItemsContent(oPopup).$().find("tbody").children(":visible").length, 1, "Suggestions are filtered");
 		}
 
 		//close the popoup when nothing is typed in input
@@ -2147,7 +2151,7 @@ sap.ui.define([
 
 		oInput._oSuggPopover._oPopupInput._$input.focus().val("Product").trigger("input");
 		this.clock.tick(400);
-		assert.equal(oPopup.getContent()[0].getItems().length, oSuggestionData.tabularSuggestionItems.length, "Suggestions are inserted");
+		assert.equal(getPopupItemsContent(oPopup).getItems().length, oSuggestionData.tabularSuggestionItems.length, "Suggestions are inserted");
 		assert.strictEqual(oDialogRendererSpy.callCount, 1, "Dialog has been renderded after opening");
 		assert.ok(!oInput._oSuggPopover._oList.hasStyleClass("sapMInputSuggestionTableHidden"), "Tabular suggestions table does not have the hidden style class when items are displayed");
 
@@ -2163,7 +2167,7 @@ sap.ui.define([
 		assert.ok(oPopup.isOpen(), "Suggestion Popup is still open now123");
 		// FIXME: check doesn't work in headless PhantomJS test cycle => commented out!
 		if (!bPhantomJS) {
-			assert.equal(oPopup.getContent()[0].$().find("tbody").children(":visible").length, 1, "Suggestions are filtered");
+			assert.equal(getPopupItemsContent(oPopup).$().find("tbody").children(":visible").length, 1, "Suggestions are filtered");
 		}
 		assert.strictEqual(oDialogRendererSpy.callCount, 1, "Dialog is not re-rendered when changing the input value to a another value");
 		assert.ok(!oInput._oSuggPopover._oList.hasStyleClass("sapMInputSuggestionTableHidden"), "Tabular suggestions table does not have the hidden style class when items are displayed");
@@ -2173,8 +2177,8 @@ sap.ui.define([
 		this.clock.tick(400);
 
 		assert.ok(oPopup.isOpen(), "Suggestion Popup is still open now");
-		assert.ok(oPopup.getContent()[0].getItems().length, "There are invisible suggestion items");
-		oPopup.getContent()[0].getItems().forEach(function (oItem) {
+		assert.ok(getPopupItemsContent(oPopup).getItems().length, "There are invisible suggestion items");
+		getPopupItemsContent(oPopup).getItems().forEach(function (oItem) {
 			assert.strictEqual(oItem.getVisible(), false, "Item " + oItem.getId() + " is not visible");
 		});
 		assert.strictEqual(oDialogRendererSpy.callCount, 1, "Dialog is not re-rendered when changing the input value to a another value");
@@ -2186,7 +2190,7 @@ sap.ui.define([
 
 		// FIXME: check doesn't work in headless PhantomJS test cycle => commented out!
 		if (!bPhantomJS) {
-			assert.equal(oPopup.getContent()[0].$().find("tbody").children().length, 3, "3 suggestions are displayed");
+			assert.equal(getPopupItemsContent(oPopup).$().find("tbody").children().length, 3, "3 suggestions are displayed");
 		}
 		assert.strictEqual(oDialogRendererSpy.callCount, 1, "Dialog is not re-rendered during filtering of suggestions");
 		assert.ok(!oInput._oSuggPopover._oList.hasStyleClass("sapMInputSuggestionTableHidden"), "Tabular suggestions table does not have the hidden style class when items are displayed");
@@ -2195,7 +2199,7 @@ sap.ui.define([
 		assert.strictEqual(oPopup.getEndButton() instanceof Button, true, "The show more button is added to the popup");
 		assert.strictEqual(oPopup.getEndButton().getText(), oMessageBundle.getText("INPUT_SUGGESTIONS_SHOW_ALL"), "The show more button shows the correct text from the message bundle");
 
-		oPopup.getContent()[0].getItems()[1].$().trigger("tap");
+		getPopupItemsContent(oPopup).getItems()[1].$().trigger("tap");
 
 		this.clock.tick(300);
 		assert.ok(!oPopup.isOpen(), "Suggestion Popup is closed");
@@ -2331,13 +2335,13 @@ sap.ui.define([
 		assert.ok(oPopup.isOpen(), "Suggestion Popup is open now");
 		// FIXME: check doesn't work in headless PhantomJS test cycle => commented out!
 		if (!Device.browser.phantomJS) {
-			assert.strictEqual(oPopup.getContent()[0].$().find("tbody").children(":visible").length, 1, "Suggestions are filtered");
+			assert.strictEqual(getPopupItemsContent(oPopup).$().find("tbody").children(":visible").length, 1, "Suggestions are filtered");
 		}
-		assert.strictEqual(oPopup.getContent()[0].$().find("tbody").find("tr>td>span" || "tr>td>label")[0].textContent, oSuggestionData.tabularSuggestionItems[1].name, "Product 2 is filtered");
+		assert.strictEqual(getPopupItemsContent(oPopup).$().find("tbody").find("tr>td>span" || "tr>td>label")[0].textContent, oSuggestionData.tabularSuggestionItems[1].name, "Product 2 is filtered");
 
 		// TODO: trigger selection with pseudo-events here
-		//oPopup.getContent()[0].getItems()[1].$().trigger("click");
-		oPopup.getContent()[0]._fireSelectionChangeEvent([oPopup.getContent()[0].getItems()[1]]);
+		//getPopupItemsContent(oPopup).getItems()[1].$().trigger("click");
+		getPopupItemsContent(oPopup)._fireSelectionChangeEvent([getPopupItemsContent(oPopup).getItems()[1]]);
 		this.clock.tick(300);
 		assert.ok(!oPopup.isOpen(), "Suggestion Popup is closed");
 		assert.equal(oInput.getValue(), "You chose: " + oSuggestionData.tabularSuggestionItems[1].limit, "The input value has been formatted with the custom row result function");
@@ -3761,9 +3765,8 @@ sap.ui.define([
 		assert.strictEqual(stub.callCount, 0, "Should NOT call 'setSelectedRow' when aggregation is destroyed after a proposed item was found.");
 	});
 
-	QUnit.module("Input with Suggestions and Value State Message", {
+	QUnit.module("Input with Suggestions and Value State, but not Value State Message", {
 		beforeEach: function () {
-
 			this.inputWithSuggestions = new Input({
 				showSuggestion: true,
 				valueStateText: 'Some Error',
@@ -3814,6 +3817,140 @@ sap.ui.define([
 
 		assert.ok(this.inputWithSuggestions._oValueStateMessage._oPopup, "Value state message is shown");
 		assert.strictEqual(jQuery(this.inputWithSuggestions._oValueStateMessage._oPopup.getContent()).css('z-index'), '1', 'z-index is correct');
+	});
+
+	QUnit.module("Input with Suggestions and Value State and Value State Message - Desktop", {
+		beforeEach: function () {
+
+			sinon.config.useFakeTimers = false;
+
+			this.inputWithSuggestions = new Input({
+				showSuggestion: true,
+				valueStateText: 'Some Error',
+				showValueStateMessage: true,
+				suggestionItems: [
+					new Item({
+						text: 'one',
+						key: '1'
+					}),
+					new Item({
+						text: 'two',
+						key: '2'
+					})
+				]
+			}).placeAt("content");
+			sap.ui.getCore().applyChanges();
+		},
+		afterEach: function () {
+			if (this.inputWithSuggestions._oValueStateMessage._oPopup) {
+				this.inputWithSuggestions._oValueStateMessage._oPopup.close();
+			}
+
+			this.inputWithSuggestions.destroy();
+			this.inputWithSuggestions = null;
+
+			sinon.config.useFakeTimers = true;
+		}
+	});
+
+	QUnit.test('value state', function (assert) {
+
+		var done = assert.async();
+
+		this.inputWithSuggestions.setShowValueStateMessage(true);
+		this.inputWithSuggestions.setValueState("Error");
+		this.inputWithSuggestions.onfocusin();
+
+		assert.ok(this.inputWithSuggestions._oValueStateMessage._oPopup.getContent().classList.contains('sapMValueStateMessage'), "Value state message is displayed");
+
+		this.inputWithSuggestions._$input.focus().val("on").trigger("input");
+
+		setTimeout(function () {
+
+			assert.strictEqual(this.inputWithSuggestions._getSuggestionsPopover()._oPopover.$().find('header .sapMTitle').text(), "Some Error", "value state message is displayed in the suggestion popover");
+
+			var oPopup = this.inputWithSuggestions._oValueStateMessage._oPopup;
+
+			assert.ok(!oPopup || oPopup.getContent().style.display === "none", "Value state message is not displayed");
+
+			this.inputWithSuggestions._closeSuggestionPopup();
+
+			setTimeout(function () {
+				assert.ok(this.inputWithSuggestions._oValueStateMessage._oPopup.getContent().classList.contains('sapMValueStateMessage'), "Value state message is displayed");
+
+				done();
+			}.bind(this), 300);
+
+		}.bind(this), 300);
+	});
+
+	QUnit.module("Input with Suggestions and Value State and Value State Message -  Mobile", {
+		beforeEach: function () {
+
+			this.isPhone = Device.system.phone;
+			Device.system.phone = true;
+
+			sinon.config.useFakeTimers = false;
+
+			this.inputWithSuggestions = new Input({
+				showSuggestion: true,
+				valueStateText: 'Some Error',
+				showValueStateMessage: true,
+				suggestionItems: [
+					new Item({
+						text: 'one',
+						key: '1'
+					}),
+					new Item({
+						text: 'two',
+						key: '2'
+					})
+				]
+			}).placeAt("content");
+			sap.ui.getCore().applyChanges();
+		},
+		afterEach: function () {
+			if (this.inputWithSuggestions._oValueStateMessage._oPopup) {
+				this.inputWithSuggestions._oValueStateMessage._oPopup.close();
+			}
+
+			this.inputWithSuggestions.destroy();
+			this.inputWithSuggestions = null;
+
+			Device.system.phone = this.isPhone;
+			sinon.config.useFakeTimers = true;
+		}
+	});
+
+	QUnit.test('value state', function (assert) {
+
+		var done = assert.async();
+
+		this.inputWithSuggestions.setShowValueStateMessage(true);
+		this.inputWithSuggestions.setValueState("Error");
+		this.inputWithSuggestions.onfocusin();
+
+		assert.ok(this.inputWithSuggestions._oValueStateMessage._oPopup.getContent().classList.contains('sapMValueStateMessage'), "Value state message is displayed");
+
+		this.inputWithSuggestions._openSuggestionsPopover();
+
+		setTimeout(function () {
+
+			assert.strictEqual(this.inputWithSuggestions._getSuggestionsPopover()._oPopover.getContent()[0].getText(), "Some Error", "value state message is displayed in the suggestion popover");
+
+			var oPopup = this.inputWithSuggestions._oValueStateMessage._oPopup;
+
+			assert.ok(!oPopup || oPopup.getContent().style.display === "none", "Value state message is not displayed");
+
+			this.inputWithSuggestions._closeSuggestionPopup();
+
+			setTimeout(function () {
+				assert.ok(this.inputWithSuggestions._oValueStateMessage._oPopup.getContent().classList.contains('sapMValueStateMessage'), "Value state message is displayed");
+
+				done();
+			}.bind(this), 300);
+
+		}.bind(this), 300);
 	});
 
 	QUnit.module("Input inside a Dialog and Value State Message", {

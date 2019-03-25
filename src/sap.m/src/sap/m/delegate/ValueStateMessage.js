@@ -131,7 +131,7 @@ sap.ui.define([
 		 */
 		ValueStateMessage.prototype.close = function() {
 			var oControl = this._oControl,
-				oPopup = this.getPopup();
+				oPopup = this._oPopup;
 
 			if (oPopup) {
 				oPopup.close(0);
