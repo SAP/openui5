@@ -327,6 +327,22 @@ sap.ui.define([
 		assert.strictEqual(oInnerButton.$().attr('title'), sTooltip, "The icon tooltip is successfully set");
 	});
 
+	QUnit.test("Semantic MenuButton disabled in Split mode", function (assert) {
+		var sTooltip = "Some meaningful tooltip";
+		this.sut.setEnabled(false);
+		this.sut.setIcon("sap-icon://slim-arrow-down");
+		this.sut.setText("Hello");
+		this.sut.setType(ButtonType.Emphasized);
+		this.sut.setButtonMode(MenuButtonMode.Split);
+		sap.ui.getCore().applyChanges();
+
+		var oInnerButton = this.sut._getButtonControl();
+
+		//assert
+		assert.strictEqual(oInnerButton.$().attr("tabindex"), "-1", "The inner split button has a tabindex -1");
+		assert.ok(oInnerButton.$().children().hasClass("sapMSBInnerDisabled"), "The inner split button has disabled class");
+	});
+
 	QUnit.module("Accessibility (Labelling)", {
 		beforeEach: function () {
 			this.oLabel = new sap.m.Label("initialLabel", {
