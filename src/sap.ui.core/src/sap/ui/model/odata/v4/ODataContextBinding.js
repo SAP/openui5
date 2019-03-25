@@ -624,21 +624,15 @@ sap.ui.define([
 	};
 
 	/**
-	 * Hook method for {@link sap.ui.model.odata.v4.ODataBinding#fetchCache} to create a cache for
-	 * this binding with the given resource path and query options.
-	 *
-	 * @param {string} sResourcePath
-	 *   The resource path, for example "EMPLOYEES('1')"
-	 * @param {object} mQueryOptions
-	 *   The query options
-	 * @returns {sap.ui.model.odata.v4.lib._Cache}
-	 *   The new cache instance
-	 *
-	 * @private
+	 * @override
+	 * @see sap.ui.model.odata.v4.ODataBinding#doCreateCache
 	 */
-	ODataContextBinding.prototype.doCreateCache = function (sResourcePath, mQueryOptions) {
+	ODataContextBinding.prototype.doCreateCache = function (sResourcePath, mQueryOptions, oContext,
+			sDeepResourcePath) {
 		return _Cache.createSingle(this.oModel.oRequestor, sResourcePath, mQueryOptions,
-			this.oModel.bAutoExpandSelect);
+			this.oModel.bAutoExpandSelect, function () {
+				return sDeepResourcePath;
+			});
 	};
 
 	/**

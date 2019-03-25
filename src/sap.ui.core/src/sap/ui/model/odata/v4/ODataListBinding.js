@@ -649,21 +649,11 @@ sap.ui.define([
 	};
 
 	/**
-	 * Hook method for {@link sap.ui.model.odata.v4.ODataBinding#fetchCache} to create a cache for
-	 * this binding with the given resource path and query options.
-	 *
-	 * @param {string} sResourcePath
-	 *   The resource path, for example "EMPLOYEES"
-	 * @param {object} mQueryOptions
-	 *   The query options
-	 * @param {sap.ui.model.Context} [oContext]
-	 *   The context instance to be used, must be <code>undefined</code> for absolute bindings
-	 * @returns {sap.ui.model.odata.v4.lib._Cache}
-	 *   The new cache instance, either a collection cache or an aggregation cache
-	 *
-	 * @private
+	 * @override
+	 * @see sap.ui.model.odata.v4.ODataBinding#doCreateCache
 	 */
-	ODataListBinding.prototype.doCreateCache = function (sResourcePath, mQueryOptions, oContext) {
+	ODataListBinding.prototype.doCreateCache = function (sResourcePath, mQueryOptions, oContext,
+			sDeepResourcePath) {
 		var bAggregate = this.oAggregation && (this.oAggregation.groupLevels.length
 				|| _AggregationHelper.hasMinOrMax(this.oAggregation.aggregate)
 				|| _AggregationHelper.hasGrandTotal(this.oAggregation.aggregate));
@@ -675,7 +665,7 @@ sap.ui.define([
 			? _AggregationCache.create(this.oModel.oRequestor, sResourcePath, this.oAggregation,
 				mQueryOptions)
 			: _Cache.create(this.oModel.oRequestor, sResourcePath, mQueryOptions,
-				this.oModel.bAutoExpandSelect);
+				this.oModel.bAutoExpandSelect, sDeepResourcePath);
 	};
 
 	/**

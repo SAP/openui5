@@ -33,7 +33,7 @@ sap.ui.define([
 		sInvalidModel = "/invalid/model/",
 		sSalesOrderService = "/sap/opu/odata4/sap/zui5_testv4/default/sap/zui5_epm_sample/0002/",
 		sTeaBusi = "/sap/opu/odata4/IWBEP/TEA/default/IWBEP/TEA_BUSI/0001/",
-		rTransientPredicate = /\(\$uid=.+\)/;
+		rTransientPredicate = /\(\$uid=[-\w]+\)/g;
 
 	/**
 	 * Creates a V4 OData model for <code>serviceroot.svc</code>
@@ -1592,7 +1592,7 @@ sap.ui.define([
 		}).then(function () {
 
 			return that.checkValueState(assert,
-				that.oView.byId("table").getItems("items")[0].getCells()[0] , "Error", "Not found");
+				that.oView.byId("table").getItems("items")[0].getCells()[0], "Error", "Not found");
 		});
 	});
 
@@ -13383,7 +13383,7 @@ sap.ui.define([
 	<Table id="table" items="{TEAM_2_EMPLOYEES}">\
 		<columns><Column/></columns>\
 		<ColumnListItem>\
-			<Text id="id" text="{ID}" />\
+			<Input id="id" value="{ID}" />\
 		</ColumnListItem>\
 	</Table>\
 </FlexBox>',
@@ -13440,9 +13440,9 @@ sap.ui.define([
 						"__CT__FAKE__Message" : {
 							"__FAKE__Messages" : [{
 								"code" : "1",
-								"message" : "Enter a name",
+								"message" : "Enter an ID",
 								"numericSeverity" : 3,
-								"target" : "Name",
+								"target" : "ID",
 								"transition" : false
 							}]
 						}
@@ -13451,13 +13451,11 @@ sap.ui.define([
 					.expectChange("id", ["7", "3"])
 					.expectMessages([{
 						"code" : "1",
-						"message" : "Enter a name",
+						"message" : "Enter an ID",
 						"persistent" : false,
 						"target" : bKeepTransientPath
-						//TODO why does ODataBinding.fetchCache compute a canonical path and how
-						// does this fit to message targets?
-							? "/TEAMS('23')/TEAM_2_EMPLOYEES($uid=...)/Name"
-							: "/TEAMS('23')/TEAM_2_EMPLOYEES('7')/Name",
+							? "/TEAMS($uid=...)/TEAM_2_EMPLOYEES($uid=...)/ID"
+							: "/TEAMS('23')/TEAM_2_EMPLOYEES('7')/ID",
 						"type" : "Warning"
 					}]);
 
@@ -13473,10 +13471,17 @@ sap.ui.define([
 					that.waitForChanges(assert)
 				]);
 			}).then(function () {
+				// the new one is at the top
+				var oInput = that.oView.byId("table").getItems("items")[0].getCells()[0];
+
 				assert.strictEqual(oEmployeeCreatedContext.getPath(),
 					bKeepTransientPath
 					? sNestedTransientPath
 					: "/TEAMS('23')/TEAM_2_EMPLOYEES('7')");
+				assert.strictEqual(oInput.getBindingContext().getPath(),
+					oEmployeeCreatedContext.getPath(), "we got the right input control");
+
+//TODO				return that.checkValueState(assert, oInput, "Warning", "Enter an ID");
 			});
 		});
 	});
@@ -13557,6 +13562,10 @@ sap.ui.define([
 			<Input id="note" value="{Note}" />\
 		</ColumnListItem>\
 	</Table>\
+	<FlexBox binding="{path : \'SO_2_BP/BP_2_SO(\\\'23\\\')\',\
+			parameters : {$$canonicalPath : true}}">\
+		<Input id="billingStatus" value="{BillingStatus}" />\
+	</FlexBox>\
 </FlexBox>',
 			that = this;
 
@@ -13566,7 +13575,8 @@ sap.ui.define([
 		}
 
 		function clearDetails() {
-			that.expectChange("note", [])
+			that.expectChange("billingStatus", null)
+				.expectChange("note", [])
 				.expectChange("productID", [])
 				.expectChange("salesOrderID", null);
 
@@ -13599,24 +13609,41 @@ sap.ui.define([
 						"SalesOrderID" : "42"
 					}]
 				})
+				.expectRequest("SalesOrderList('42')/SO_2_BP/BP_2_SO('23')"
+					+ "?$select=BillingStatus,SalesOrderID", {
+					"BillingStatus" : "UNKNOWN",
+					"Messages" : [{
+						"code" : "00",
+						"message" : "Unknown billing status",
+						"numericSeverity" : 3,
+						"target" : "BillingStatus"
+					}],
+					"SalesOrderID" : "23"
+				})
 				.expectMessages([{
 					"code" : "23",
 					"message" : "Just a test",
 					"persistent" : false,
-//					"target" : "/BusinessPartnerList('0500000000')/BP_2_SO('42')"
-//						+ "/SO_2_SOITEM(SalesOrderID='42',ItemPosition='10')/Note",
-					//TODO this does not work to make the field red!
-					"target" : "/SalesOrderList('42')"
+					"target" : "/BusinessPartnerList('0500000000')/BP_2_SO('42')"
 						+ "/SO_2_SOITEM(SalesOrderID='42',ItemPosition='20')/Note",
+					"technical" : false,
+					"type" : "Warning"
+				}, {
+					"code" : "00",
+					"message" : "Unknown billing status",
+					"persistent" : false,
+					"target" : "/BusinessPartnerList('0500000000')/BP_2_SO('42')"
+						+ "/SO_2_BP/BP_2_SO('23')/BillingStatus",
 					"technical" : false,
 					"type" : "Warning"
 				}]);
 		}
 
 		function selectFirst() {
-			that.expectChange("salesOrderID", "42")
+			that.expectChange("billingStatus", "UNKNOWN")
 				.expectChange("note", ["Notebook Basic 15", "ITelO Vault"])
-				.expectChange("productID", ["HT-1000", "HT-1007"]);
+				.expectChange("productID", ["HT-1000", "HT-1007"])
+				.expectChange("salesOrderID", "42");
 
 			oForm.setBindingContext(oBusinessPartnerContext);
 		}
@@ -13626,6 +13653,7 @@ sap.ui.define([
 					"BusinessPartnerID" : "0500000000"
 				}]
 			})
+			.expectChange("billingStatus")
 			.expectChange("businessPartnerID", ["0500000000"])
 			.expectChange("note", [])
 			.expectChange("productID", [])
@@ -13641,9 +13669,13 @@ sap.ui.define([
 
 			return that.waitForChanges(assert);
 		}).then(function () {
-			//TODO target does not work to make the field red!
-//			return that.checkValueState(assert, "note", "Warning", "Just a test");
-//		}).then(function () {
+			var oInput = that.oView.byId("table").getItems("items")[1].getCells()[1];
+
+			return that.checkValueState(assert, oInput, "Warning", "Just a test");
+		}).then(function () {
+			return that.checkValueState(assert, "billingStatus", "Warning",
+				"Unknown billing status");
+		}).then(function () {
 			clearDetails();
 
 			return that.waitForChanges(assert);
