@@ -12,30 +12,20 @@
 @_sap_ui_table_Grouping_GroupIconBorderWidth: @_sap_ui_table_BaseBorderWidth;
 @_sap_ui_table_Grouping_GroupIconFontSize: @sapMFontMediumSize;
 
+@_sap_ui_table_Grouping_TreeIconFontSize: 0.75rem;
+@_sap_ui_table_Grouping_TreeIconFontSizeCozy: 1rem;
+
 // Internet Explorer does not support nested calc().
 @_sap_ui_table_Grouping_GroupIconHeight_ForIECalc: @_sap_ui_table_RowHeight_ForIECalc;
 @_sap_ui_table_Grouping_GroupIconHeightCozy_ForIECalc: @_sap_ui_table_RowHeightCozy_ForIECalc;
 @_sap_ui_table_Grouping_GroupIconHeightCondensed_ForIECalc: @_sap_ui_table_RowHeightCondensed_ForIECalc;
 
 .sapUiTableTreeIcon {
-	flex: none;
-	text-align: center;
+	display: flex;
+	justify-content: center;
+	align-items: center;
 	width: @_sap_ui_table_RowSelectorWidth;
-	align-self: center;
 	cursor: default;
-}
-
-.sapUiSizeCondensed {
-
-	.sapUiTableTreeIcon {
-		padding: 0;
-		margin-right: 1px;
-	}
-
-	.sapUiTableTreeIcon::before {
-		line-height: 1.5rem;
-	}
-
 }
 
 .sapUiTableTreeIcon:focus {
@@ -107,8 +97,12 @@ html[data-sap-ui-browser^="ie"] .sapUiTableTreeIcon:focus::before {
 .sapUiTableGroupIcon::before,
 .sapUiTableTreeIcon::before {
 	font-family: "SAP-icons";
-	font-size: 0.75rem;
+	font-size: @_sap_ui_table_Grouping_TreeIconFontSize;
 	color: @sapUiContentIconColor;
+
+	.sapUiSizeCozy & {
+		font-size: @_sap_ui_table_Grouping_TreeIconFontSizeCozy;
+	}
 }
 
 .sapUiTableGroupIcon::before {
@@ -175,10 +169,24 @@ html[dir=rtl] {
 	}
 }
 
-.sapUiTableGroupMode .sapUiTableRowSelectionCell.sapUiTableGroupHeader > .sapUiTableGroupIcon,
-.sapUiTableGroupMode .sapUiTableRowSelectionCell.sapUiTableGroupHeader > .sapUiTableGroupIcon::before,
-.sapUiTableGroupMode .sapUiTableRowSelectionCell.sapUiTableGroupHeader > .sapUiTableGroupIcon::after {
-	display: inline-block;
+.sapUiTableGroupMode .sapUiTableRowSelectionCell.sapUiTableGroupHeader {
+	> .sapUiTableGroupIcon {
+		display: flex;
+		align-items: center;
+
+		html[data-sap-ui-browser^="ie"] & {
+			display: inline-block;
+		}
+
+		&::before,
+		&::after {
+			display: block;
+
+			html[data-sap-ui-browser^="ie"] & {
+				display: inline-block;
+			}
+		}
+	}
 }
 
 .sapUiTableGroupMode .sapUiTableGroupHeader.sapUiTableRowHvr,
