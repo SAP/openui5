@@ -3609,7 +3609,7 @@ sap.ui
 			/**
 			 * Cleans up the resources associated with this object and all its aggregated children.
 			 *
-			 * After an object has been destroyed, it can no longer be used in!
+			 * After an object has been destroyed, it can no longer be used!
 			 *
 			 * Applications should call this method if they don't need the object any longer.
 			 *
