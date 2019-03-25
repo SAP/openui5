@@ -2704,5 +2704,28 @@
         "references": []
       }
     ]
+  },
+  "1.60.11": {
+    "date": "March 2019",
+    "notes": [
+      {
+        "id": "de0a78c27588742c9bb4e72f2f419f67e93bc090",
+        "type": "FIX",
+        "text": " ViewSettingsDialog: OK when custom item is used for filtering",
+        "references": []
+      },
+      {
+        "id": "b9e99516f49d67d86b622c0fce56f2f82e4c9b91",
+        "type": "FIX",
+        "text": " sap.m.Input: Adding items before allowing suggestions no longer fails",
+        "references": []
+      },
+      {
+        "id": "b98cf13230da89851a34d83aac9f19eeca04604f",
+        "type": "FIX",
+        "text": " sap.m.Input: Value state border is now shown in Table",
+        "references": []
+      }
+    ]
   }
 }

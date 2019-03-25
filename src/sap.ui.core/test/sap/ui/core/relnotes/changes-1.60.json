@@ -1018,5 +1018,16 @@
         "references": []
       }
     ]
+  },
+  "1.60.11": {
+    "date": "March 2019",
+    "notes": [
+      {
+        "id": "04b532b24b2ef66ddfcf9a15aa1666ab39714dd6",
+        "type": "FIX",
+        "text": " XMLTemplateProcessor: run ExtensionPoints with correct owner ID",
+        "references": []
+      }
+    ]
   }
 }
