@@ -1,0 +1,13 @@
+{
+  "1.65.0": {
+    "date": "March 2019",
+    "notes": [
+      {
+        "id": "c443c4166aa098b4563add2f2c467bf69fc20cc7",
+        "type": "FIX",
+        "text": " sap.m.Carousel: Bullets are now visible in Fiori 3",
+        "references": []
+      }
+    ]
+  }
+}

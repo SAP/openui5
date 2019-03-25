@@ -13,6 +13,12 @@
         "type": "FIX",
         "text": " sap.m.Splitter: Endless resizing is now prevented",
         "references": []
+      },
+      {
+        "id": "46f842385abeb16bcf4a301768941cf8e669e395",
+        "type": "FIX",
+        "text": " sap.ui.layout.Grid: Wrapping of Grid children in IE is fixed",
+        "references": []
       }
     ]
   }

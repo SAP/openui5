@@ -7,6 +7,48 @@
         "type": "FIX",
         "text": " sap.uxap.AnchorBar: setSelectedButton behavior corrected",
         "references": []
+      },
+      {
+        "id": "68bf6683f27d68eb67832ff2746c19010c381ef6",
+        "type": "FIX",
+        "text": " sap.uxap.ObjectPageLayout: Allowed non-animated footer toggle",
+        "references": []
+      },
+      {
+        "id": "b73157716e4dd65d636f65cd79cd5e9b816d75dc",
+        "type": "FIX",
+        "text": " sap.uxap.ObjectPageLayout: Attach resize handler after rendering",
+        "references": []
+      },
+      {
+        "id": "091c97f2bc127795c6c2417cdd03a8bc89dcbcfb",
+        "type": "FIX",
+        "text": " sap.uxap.ObjectPageLayout: Corrected lazyLoading memory leak",
+        "references": []
+      },
+      {
+        "id": "b8c8dcc32160aa0808b7d3edba467d184805680f",
+        "type": "FIX",
+        "text": " sap.uxap.ObjectPageLayout: Corrected scrollToSection",
+        "references": []
+      },
+      {
+        "id": "6d2ab0755b1aae300a85d8fa8dc9f147628b2a5d",
+        "type": "FIX",
+        "text": " sap.uxap.ObjectPageLayout: Ensured no scrollbar after unsnap",
+        "references": []
+      },
+      {
+        "id": "31929d5a78e6f891aebd64a21a253decab60ad5f",
+        "type": "FIX",
+        "text": " sap.uxap.ObjectPageLayout: Failing QUnit is fixed",
+        "references": []
+      },
+      {
+        "id": "23daba2ea12a8f88339960fea8a6200b8445a3c9",
+        "type": "FIX",
+        "text": " sap.uxap.ObjectPageSection: SPACE key behavior handled correctly",
+        "references": []
       }
     ]
   }

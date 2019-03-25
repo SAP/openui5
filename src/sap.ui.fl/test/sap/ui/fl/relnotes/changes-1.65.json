@@ -1,0 +1,13 @@
+{
+  "1.65.0": {
+    "date": "March 2019",
+    "notes": [
+      {
+        "id": "9124843dd07afcff3dbee678fa33956a65856781",
+        "type": "FIX",
+        "text": " VariantManagement: Open Popover on Keyup",
+        "references": []
+      }
+    ]
+  }
+}

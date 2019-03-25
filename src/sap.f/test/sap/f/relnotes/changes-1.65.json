@@ -19,6 +19,12 @@
         "type": "FIX",
         "text": " sap.f.ShellBar: Unnecessary Second title truncation fixed",
         "references": []
+      },
+      {
+        "id": "e1959386cf5a9aa1d528e1bfa6aefa88b747fe6e",
+        "type": "FEATURE",
+        "text": " sap.f.Avatar: Custom fallback icon implemented",
+        "references": []
       }
     ]
   }
