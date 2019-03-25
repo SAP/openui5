@@ -46,9 +46,6 @@ sap.ui.define([
 		// shortcut for sap.m.ListMode
 		var ListMode = library.ListMode;
 
-		// shortcut for sap.m.ListSeparators
-		var ListSeparators = library.ListSeparators;
-
 		/**
 		 * Constructor for a new ComboBox.
 		 *
@@ -1813,7 +1810,6 @@ sap.ui.define([
 
 			// configure the list
 			oList.setMode(ListMode.SingleSelectMaster)
-				.setShowSeparators(ListSeparators.None)
 				.setIncludeItemInSelection(true)
 				.setWidth("100%")
 				.setRememberSelections(false)
