@@ -20,8 +20,12 @@ sap.ui.define(['sap/ui/unified/CalendarLegendRenderer', 'sap/ui/core/Renderer'],
 		 * @override
 		 */
 		PlanningCalendarLegendRenderer.renderItemsHeader = function(oRm, oLeg) {
-			var sItemsHeader = oLeg.getItemsHeader();
-			if (sItemsHeader && (oLeg.getItems().length || oLeg.getStandardItems().length)) {
+			var sItemsHeader = oLeg.getItemsHeader(),
+				//todo temporary until there are special dates in the SPC
+				//for now in the SPC standardItems & their section header will not be rendered
+				bRenderStandardItems = oLeg._bShouldRenderStandardItems;
+
+			if (bRenderStandardItems && sItemsHeader && (oLeg.getItems().length || oLeg.getStandardItems().length)) {
 				this._renderItemsHeader(oRm, sItemsHeader);
 			}
 		};

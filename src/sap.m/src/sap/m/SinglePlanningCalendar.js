@@ -20,7 +20,8 @@ sap.ui.define([
 	'sap/ui/core/format/DateFormat',
 	'sap/ui/unified/calendar/CalendarDate',
 	'sap/ui/unified/calendar/CalendarUtils',
-	'sap/ui/unified/DateRange'
+	'sap/ui/unified/DateRange',
+	'sap/ui/base/ManagedObjectObserver'
 ],
 function(
 	library,
@@ -39,7 +40,8 @@ function(
 	DateFormat,
 	CalendarDate,
 	CalendarUtils,
-	DateRange
+	DateRange,
+	ManagedObjectObserver
 ) {
 	"use strict";
 
@@ -208,7 +210,15 @@ function(
 			/**
 			 * Corresponds to the currently selected view.
 			 */
-			selectedView: { type: "sap.m.SinglePlanningCalendarView", multiple: false }
+			selectedView: { type: "sap.m.SinglePlanningCalendarView", multiple: false },
+
+			/**
+			 * Association to the <code>PlanningCalendarLegend</code> explaining the colors of the <code>Appointments</code>.
+			 *
+			 * <b>Note:</b> The legend does not have to be rendered but must exist, and all required types must be assigned.
+			 * @since 1.65.0
+			 */
+			legend: { type: "sap.m.PlanningCalendarLegend", multiple: false}
 
 		},
 
@@ -334,8 +344,17 @@ function(
 	 * @private
 	 */
 	SinglePlanningCalendar.prototype.onBeforeRendering = function () {
+		var oLegend = sap.ui.getCore().byId(this.getLegend());
+
 		// We can apply/remove sticky classes even before the control is rendered.
 		this._toggleStickyClasses();
+
+		//this is temporary & will be removed when SPC has a specialDates aggregation also
+		//for now in the SPC standartItems will not be rendered
+		if (oLegend) {
+			oLegend._bShouldRenderStandardItems = false;
+		}
+
 	};
 
 	/**
@@ -588,6 +607,29 @@ function(
 	 */
 	SinglePlanningCalendar.prototype.getSelectedAppointments = function() {
 		return this._getGrid().getSelectedAppointments();
+	};
+
+	SinglePlanningCalendar.prototype.setLegend = function (vLegend) {
+		var oLegendDestroyObserver,
+			oLegend;
+
+		this.setAssociation("legend", vLegend);
+
+		if (this.getLegend()) {
+			this._getGrid()._sLegendId = this.getLegend();
+			oLegend = sap.ui.getCore().byId(this.getLegend());
+		}
+
+		if (oLegend) { //destroy of the associated legend should rerender the SPC
+			oLegendDestroyObserver = new ManagedObjectObserver(function(oChanges) {
+				this.invalidate();
+			}.bind(this));
+			oLegendDestroyObserver.observe(oLegend, {
+				destroy: true
+			});
+		}
+
+		return this;
 	};
 
 	/**

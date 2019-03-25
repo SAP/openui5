@@ -253,6 +253,9 @@ sap.ui.define([
 				pattern: "EEEE dd/MM/YYYY 'at' HH:mm:ss a"
 			});
 
+			//the id of the SPC's legend if any
+			this._sLegendId = undefined;
+
 			setTimeout(this._updateRowHeaderAndNowMarker.bind(this), iDelay);
 		};
 
@@ -1498,7 +1501,7 @@ sap.ui.define([
 				sFormattedStartDate = this._oFormatAria.format(oAppointment.getStartDate()),
 				sFormattedEndDate = this._oFormatAria.format(oAppointment.getEndDate());
 
-			return sStartTime + ": " + sFormattedStartDate + "; " + sEndTime + ": " + sFormattedEndDate;
+			return sStartTime + ": " + sFormattedStartDate + "; " + sEndTime + ": " + sFormattedEndDate + "; ";
 		};
 
 		/**
@@ -1623,6 +1626,38 @@ sap.ui.define([
 				oRm.write("></div>");
 			}
 		});
+
+		/*
+		 * Finds the corresponding legend item to a given appointment.
+		 * @param {oControl}
+		 * @param {sap.ui.unified.CalendarAppointment}
+		 * @returns {string} The matching legend item's default text.
+		 * @private
+		 */
+		SinglePlanningCalendarGrid.prototype._findCorrespondingLegendItem = function(oControl, oAppointment) {
+			var sLegendId = oControl._sLegendId,
+				oLegend = sap.ui.getCore().byId(sLegendId),
+				aLegendItems = oLegend ? oLegend.getAppointmentItems() : null,
+				oItem,
+				sLegendItemText;
+
+			if (aLegendItems && aLegendItems.length) {
+				for (var i = 0; i < aLegendItems.length; i++) {
+					oItem = aLegendItems[i];
+					if (oItem.getType() === oAppointment.getType()) {
+						sLegendItemText = oItem.getText();
+						break;
+					}
+				}
+			}
+
+			//if the appointment's type is not present in the legend's items,
+			// the screen reader has to read it's type
+			if (!sLegendItemText) {
+				sLegendItemText = oAppointment.getType();
+			}
+			return sLegendItemText;
+		};
 
 		return SinglePlanningCalendarGrid;
 	});
