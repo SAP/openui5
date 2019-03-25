@@ -86,7 +86,7 @@
 							<l:VerticalLayout
 									width="100%">
 								<custom:TitleLink
-										href="#/topic/50eadaac8d2e49ee8996dc2b560cb76b"
+										href="topic/50eadaac8d2e49ee8996dc2b560cb76b"
 										text="Responsive Across Browsers and Devices"
 										titleStyle="H2"
 										class="demokitInitialPagesWhiteText sapUiSmallMarginBottom"/>
@@ -113,7 +113,7 @@
 								width="100%">
 							<custom:TitleLink
 								text="Powerful Development Concepts"
-								href="#/topic/ec699e0817fb46a0817b0fa276a249f8"
+								href="topic/ec699e0817fb46a0817b0fa276a249f8"
 								class="sapUiSmallMarginBottom"
 								titleStyle="H2"/>
 							<Text
@@ -163,7 +163,7 @@
 						<l:VerticalLayout
 								width="100%">
 							<custom:TitleLink
-									href="#/topic/23cfd955f58142389fa7c9097e11559c"
+									href="topic/23cfd955f58142389fa7c9097e11559c"
 									text="Enterprise-Ready Web Toolkit"
 									class="sapUiSmallMarginBottom"
 									titleStyle="H2"/>
@@ -260,7 +260,7 @@
 							width="1">
 
 						<custom:TitleLink
-								href="#/topic/8b49fc198bf04b2d9800fc37fecbb218"
+								href="topic/8b49fc198bf04b2d9800fc37fecbb218"
 								text="Get Ready"
 								titleStyle="H2"/>
 						<Text class="sapUiMediumMarginTop" text="All you need to develop Web apps with UI5 is a development ennvironment and a browser. Choose between SAP Web IDE in the cloud for maximum convenience or set up your local development environment for maximum flexibility."/>
@@ -298,7 +298,7 @@
 						<l:VerticalLayout
 								width="100%">
 							<custom:TitleLink
-									href="#/topic/28fcd55b04654977b63dacbee0552712"
+									href="topic/28fcd55b04654977b63dacbee0552712"
 									text="UI5 Evolution"
 									class="sapUiSmallMarginBottom"
 									titleStyle="H2"/>
@@ -471,7 +471,7 @@
 						<l:VerticalLayout
 								width="100%">
 							<custom:TitleLink
-									href="#/topic/2d3eb2f322ea4a82983c1c62a33ec4ae"
+									href="topic/2d3eb2f322ea4a82983c1c62a33ec4ae"
 									text="UI5 on Content Delivery Network"
 									titleStyle="H2"
 									class="sapUiSmallMarginBottom"/>

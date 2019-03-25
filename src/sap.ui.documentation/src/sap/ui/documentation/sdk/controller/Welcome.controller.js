@@ -86,7 +86,7 @@ sap.ui.define([
 			 * Navigates to the tutorial overview
 			 */
 			onGetStarted: function () {
-				mobileLibrary.URLHelper.redirect("#/topic/8b49fc198bf04b2d9800fc37fecbb218");
+				mobileLibrary.URLHelper.redirect("topic/8b49fc198bf04b2d9800fc37fecbb218");
 			},
 
 			/**

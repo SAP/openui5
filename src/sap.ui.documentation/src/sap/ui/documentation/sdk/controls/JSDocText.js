@@ -22,7 +22,14 @@ sap.ui.define([
 				 * JSDoc Text to be displayed by the control. This text can contain basic HTML markup needed to display
 				 * JSDoc content properly.
 				 */
-				text: {type : "string", defaultValue : ""}
+				text: {type : "string", defaultValue : ""},
+
+				/**
+				 * Whether to run the HTML sanitizer once the content (HTML markup) is applied or not.
+				 *
+				 * To configure the set of allowed URLs, you can use the {@link jQuery.sap.addUrlWhitelist whitelist API}.
+				 */
+				sanitizeContent : {type : "boolean", group : "Misc", defaultValue : true}
 			}
 		},
 
@@ -30,14 +37,18 @@ sap.ui.define([
 			apiVersion: 2,
 
 			render: function (oRm, oControl) {
-			oRm.openStart("div", oControl);
-			oRm.class("sapUiJSD");
-			oRm.openEnd();
+				var sText = oControl.getText();
+				if (oControl.getSanitizeContent()) {
+					sText = sanitizeHTML(sText);
+				}
 
-			// Sanitize HTML
-			oRm.unsafeHtml(sanitizeHTML(oControl.getText()));
+				oRm.openStart("div", oControl);
+				oRm.class("sapUiJSD");
+				oRm.openEnd();
 
-			oRm.close("div");
+				oRm.unsafeHtml(sText);
+
+				oRm.close("div");
 		}
 	}});
 
