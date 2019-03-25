@@ -51,7 +51,7 @@ sap.ui.define([ './library' ],
 			oRm.writeAttribute("aria-disabled", "true");
 		}
 		if (oControl.getAnimateTextChange()) {
-			oRm.addStyle("opacity", "0.25");
+			oRm.addClass("sapMNCAnimation");
 		}
 		if (oControl.getWidth()) {
 			oRm.addStyle("width", oControl.getWidth());
