@@ -102,13 +102,13 @@ sap.ui.define([
 	}
 
 	// creates mandatory FESR header string
-	function createFESR(oInteraction) {
+	function createFESR(oInteraction, oFESRHandle) {
 		return [
 			format(ROOT_ID, 32), // root_context_id
 			format(sFESRTransactionId, 32), // transaction_id
 			format(oInteraction.navigation, 16), // client_navigation_time
 			format(oInteraction.roundtrip, 16), // client_round_trip_time
-			format(oInteraction.duration, 16), // end_to_end_time
+			format(oFESRHandle.timeToInteractive, 16), // end_to_end_time
 			format(oInteraction.completeRoundtrips, 8), // completed network_round_trips
 			format(CLIENT_ID, 40), // client_id
 			format(oInteraction.networkTime, 16), // network_time
@@ -169,7 +169,7 @@ sap.ui.define([
 
 	function createHeader(oFinishedInteraction, oFESRHandle) {
 		// create FESR from completed interaction
-		sFESR = createFESR(oFinishedInteraction);
+		sFESR = createFESR(oFinishedInteraction, oFESRHandle);
 		sFESRopt = createFESRopt(oFinishedInteraction, oFESRHandle);
 	}
 
@@ -215,7 +215,8 @@ sap.ui.define([
 				var oFESRHandle = FESR.onBeforeCreated({
 					stepName: oFinishedInteraction.trigger + "_" + oFinishedInteraction.event,
 					appNameLong: oFinishedInteraction.stepComponent || oFinishedInteraction.component,
-					appNameShort: oFinishedInteraction.stepComponent || oFinishedInteraction.component
+					appNameShort: oFinishedInteraction.stepComponent || oFinishedInteraction.component,
+					timeToInteractive: oFinishedInteraction.duration
 				}, oFinishedInteraction);
 
 				// only send FESR when requests have occured
@@ -253,6 +254,7 @@ sap.ui.define([
 	 * @param {string} oFESRHandle.stepName The step name with <Trigger>_<Event>
 	 * @param {string} oFESRHandle.appNameLong The application name with max 70 chars
 	 * @param {string} oFESRHandle.appNameShort The application name with max 20 chars
+	 * @param {integer} oFESRHandle.timeToInteractive The Time To Interactive (TTI) with max 16 digits
 	 * @param  {object} oInteraction The corresponding interaction object, read-only
 	 * @return {object} Modified header information
 	 * @private
@@ -262,7 +264,8 @@ sap.ui.define([
 		return {
 			stepName: oFESRHandle.stepName,
 			appNameLong: oFESRHandle.appNameLong,
-			appNameShort: oFESRHandle.appNameShort
+			appNameShort: oFESRHandle.appNameShort,
+			timeToInteractive: oFESRHandle.timeToInteractive
 		};
 	};
 
