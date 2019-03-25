@@ -64,11 +64,12 @@ sap.ui.define(function () {
 		 * @param {function} fnPredicate The function to apply for each  cahnge
 		 */
 		FakeLrepStorage.forEachLrepChangeInLocalStorage = function(fnPredicate) {
-			for (var sKey in oStorage) {
+			var aKeys = Object.keys(oStorage);
+			aKeys.forEach(function(sKey) {
 				if (sKey.includes(FL_LREP_CHANGE_KEY) || sKey.includes(FL_LREP_VARIANT_KEY)) {
 					fnPredicate(sKey);
 				}
-			}
+			});
 		};
 
 		/**
