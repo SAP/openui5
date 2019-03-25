@@ -128,7 +128,10 @@ sap.ui.define([
 		 * @returns {Element | null} The element that is used as trigger to open the control's picker popup.
 		 */
 		ComboBoxTextField.prototype.getOpenArea = function() {
-			return this.getIcon().getDomRef();
+			// returns the div wrapping the icon
+			var oDomRef = this.getIcon().getDomRef();
+
+			return oDomRef ? oDomRef.parentNode : oDomRef;
 		};
 
 
