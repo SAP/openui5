@@ -41,7 +41,8 @@ sap.ui.define([
 	"sap/base/security/encodeURL",
 	"sap/ui/thirdparty/jquery",
 	"sap/base/util/isPlainObject",
-	"sap/base/util/each"
+	"sap/base/util/each",
+	"sap/base/util/isEmptyObject"
 ], function(
 	URI,
 	BindingMode,
@@ -72,7 +73,8 @@ sap.ui.define([
 	encodeURL,
 	jQuery,
 	isPlainObject,
-	each
+	each,
+	isEmptyObject
 ) {
 
 	"use strict";
@@ -1395,7 +1397,7 @@ sap.ui.define([
 					}
 				}
 
-				if (!jQuery.isEmptyObject(mHeaders)) {
+				if (!isEmptyObject(mHeaders)) {
 					if (!oData.__metadata) {
 						oData.__metadata = {};
 					}
@@ -4840,7 +4842,7 @@ sap.ui.define([
 	 */
 	ODataModel.prototype.getServiceAnnotations = function() {
 		var mAnnotations = this.oAnnotations.getData();
-		return jQuery.isEmptyObject(mAnnotations) ? null : mAnnotations;
+		return isEmptyObject(mAnnotations) ? null : mAnnotations;
 	};
 
 	ODataModel.prototype.onAnnotationsFailed = function(oEvent) {
@@ -5047,7 +5049,7 @@ sap.ui.define([
 				var sActPath = sCurPath + '/' + sKey;
 				if (isPlainObject(oChangedObject[sKey]) && isPlainObject(oOriginalObject[sKey])) {
 					updateChangedEntities(oOriginalObject[sKey], oChangedObject[sKey], sActPath);
-					if (jQuery.isEmptyObject(oChangedObject[sKey])) {
+					if (isEmptyObject(oChangedObject[sKey])) {
 						delete oChangedObject[sKey];
 					}
 				} else if (deepEqual(oChangedObject[sKey], oOriginalObject[sKey]) && !that.isLaundering(sActPath)) {
@@ -5078,7 +5080,7 @@ sap.ui.define([
 				sRootPath = '/' + sKey;
 				updateChangedEntities(oEntry, oChangedEntry, sRootPath);
 
-				if (jQuery.isEmptyObject(oChangedEntry)) {
+				if (isEmptyObject(oChangedEntry)) {
 					delete that.mChangedEntities[sKey];
 					that.abortInternalRequest(sKey, that._resolveGroup(sKey).groupId);
 				} else {
@@ -5123,7 +5125,7 @@ sap.ui.define([
 					//delete metadata to check if object has changes
 					oEntityMetadata = that.mChangedEntities[sKey].__metadata;
 					delete that.mChangedEntities[sKey].__metadata;
-					if (jQuery.isEmptyObject(that.mChangedEntities[sKey]) || !oEntityInfo.propertyPath) {
+					if (isEmptyObject(that.mChangedEntities[sKey]) || !oEntityInfo.propertyPath) {
 						that.oMetadata.loaded().then(function() {
 							that.abortInternalRequest(sKey, that._resolveGroup(sKey).groupId);
 						});
@@ -5176,7 +5178,7 @@ sap.ui.define([
 			each(oChangedObject,function(sKey) {
 				if (isPlainObject(oChangedObject[sKey]) && isPlainObject(oOriginalObject[sKey])) {
 					updateChangedEntities(oOriginalObject[sKey], oChangedObject[sKey]);
-					if (jQuery.isEmptyObject(oChangedObject[sKey])) {
+					if (isEmptyObject(oChangedObject[sKey])) {
 						delete oChangedObject[sKey];
 					}
 				} else if (deepEqual(oChangedObject[sKey], oOriginalObject[sKey])) {
@@ -5250,7 +5252,7 @@ sap.ui.define([
 			if (!bCreated) {
 				updateChangedEntities(oOriginalEntry, this.mChangedEntities[sKey]);
 			}
-			if (jQuery.isEmptyObject(this.mChangedEntities[sKey])) {
+			if (isEmptyObject(this.mChangedEntities[sKey])) {
 				delete this.mChangedEntities[sKey];
 				mChangedEntities[sKey] = true;
 				this.checkUpdate(false, bAsyncUpdate, mChangedEntities);
@@ -5402,7 +5404,7 @@ sap.ui.define([
 	 * @public
 	 */
 	ODataModel.prototype.hasPendingChanges = function() {
-		return !jQuery.isEmptyObject(this.mChangedEntities);
+		return !isEmptyObject(this.mChangedEntities);
 	};
 
 	/**
