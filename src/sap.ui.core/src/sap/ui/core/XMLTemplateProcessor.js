@@ -584,7 +584,7 @@ function(
 					// @evo-todo: The factory call needs to be refactored into a proper async/sync switch.
 					// @evo-todo: The ExtensionPoint module is actually the sap.ui.extensionpoint function.
 					//            We still call _factory for skipping the deprecation warning for now.
-					return SyncPromise.resolve(ExtensionPoint._factory(oContainer, node.getAttribute("name"), function() {
+					var fnExtensionPointFactory = ExtensionPoint._factory.bind(null, oContainer, node.getAttribute("name"), function() {
 						// create extensionpoint with callback function for defaultContent - will only be executed if there is no customizing configured or if customizing is disabled
 						var pChild = SyncPromise.resolve();
 						var aChildControlPromises = [];
@@ -606,7 +606,9 @@ function(
 							});
 							return aDefaultContent;
 						});
-					}));
+					});
+
+					return SyncPromise.resolve(oView.fnScopedRunWithOwner ? oView.fnScopedRunWithOwner(fnExtensionPointFactory) : fnExtensionPointFactory());
 				}
 
 			} else {
