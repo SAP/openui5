@@ -299,11 +299,8 @@ sap.ui.define([
 					}
 
 					// Open the menu below the cell if is is not already open.
-					var oCell =  oRow.getCells()[iColumnIndex];
-					var $Cell =  MenuUtils.TableUtils.getParentCell(oTable, oCell.getDomRef());
-
-					if ($Cell && !MenuUtils.TableUtils.Grouping.isInGroupingRow($Cell)) {
-						oCell = $Cell[0];
+					if (!MenuUtils.TableUtils.Grouping.isInGroupingRow(oCellInfo.cell)) {
+						var oCell = oCellInfo.cell[0];
 
 						var bMenuOpenAtAnotherDataCell = oTable._oCellContextMenu.bOpen && oTable._oCellContextMenu.oOpenerRef !== oCell;
 						if (bMenuOpenAtAnotherDataCell) {

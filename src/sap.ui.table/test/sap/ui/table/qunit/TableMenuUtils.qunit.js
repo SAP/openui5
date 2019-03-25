@@ -427,9 +427,6 @@ sap.ui.define([
 		oTable._oCellContextMenu.getItems()[0].__isOriginal = true;
 		oTable._oCellContextMenu.getItems()[0].mEventRegistry.select[0].fFunction.__isOriginal = true;
 
-		var oColumnB = oTable.getColumns()[1];
-		this.stub(oColumnB, "isFilterableByMenu").returns(true);
-
 		// Cell [0, 0]: The menu will be closed.
 		// Cell [1, 0]: The menu will be opened.
 		TableUtils.Menu.openDataCellContextMenu(oTable, TableUtils.getCellInfo(getCell(1, 0)), true);
@@ -447,6 +444,26 @@ sap.ui.define([
 		// Cell [1, 0]: The menu will stay open.
 		TableUtils.Menu.openDataCellContextMenu(oTable, TableUtils.getCellInfo(getCell(1, 0)), false);
 		this.assertDataCellContextMenuOpen(assert, 1, 0, true);
+		this.assertFirstMenuItemHovered(assert, oTable._oCellContextMenu, true);
+		assert.ok(oTable._oCellContextMenu.__isOriginal, "The menu has been reused");
+		assert.ok(oTable._oCellContextMenu.getItems()[0].__isOriginal, "The menu item has been reused");
+		assert.strictEqual(oTable._oCellContextMenu.getItems().length, 1, "There is still only one menu item");
+		assert.ok(!oTable._oCellContextMenu.getItems()[0].mEventRegistry.select[0].fFunction.__isOriginal,
+			"The menu item select event handler has been updated");
+		assert.strictEqual(oTable._oCellContextMenu.getItems()[0].mEventRegistry.select.length, 1,
+			"There is still only one menu item select event handler attached");
+
+		oColumnA.setVisible(false);
+		sap.ui.getCore().applyChanges();
+
+		var oColumnB = oTable.getColumns()[1];
+		this.stub(oColumnB, "isFilterableByMenu").returns(true);
+
+		// Cell [1, 0]: The menu will be closed.
+		// Cell [2, 0]: The menu will be opened.
+		TableUtils.Menu.openDataCellContextMenu(oTable, TableUtils.getCellInfo(getCell(0, 0)), true);
+		this.assertDataCellContextMenuOpen(assert, 0, 0, true);
+		this.assertDataCellContextMenuOpen(assert, 1, 0, false);
 		this.assertFirstMenuItemHovered(assert, oTable._oCellContextMenu, true);
 		assert.ok(oTable._oCellContextMenu.__isOriginal, "The menu has been reused");
 		assert.ok(oTable._oCellContextMenu.getItems()[0].__isOriginal, "The menu item has been reused");
