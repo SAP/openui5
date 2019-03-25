@@ -138,6 +138,7 @@ sap.ui.define([
 			ValueState.Error,
 			ValueState.Warning,
 			ValueState.Success,
+			ValueState.Information,
 			ValueState.None];
 
 		for (var i = 0; i < aValueStates.length; i++) {
