@@ -4,8 +4,10 @@ sap.ui.define([
 	"sap/ui/test/opaQunit",
 	"../utils/browser",
 	"sap/ui/test/actions/Press",
+	"sap/ui/thirdparty/URI",
+	"sap/ui/thirdparty/jquery",
 	"../utils/customQUnitAssertions"
-], function (Opa5, opaTest, browser, Press) {
+], function (Opa5, opaTest, browser, Press, URI, $) {
 	"use strict";
 
 	QUnit.test("Should not execute the test in debug mode", function (assert) {
@@ -155,55 +157,6 @@ sap.ui.define([
 		});
 	}
 
-	QUnit.test("Should use default iFrame scale", function (assert) {
-		var done = assert.async();
-		var oOpa5 = new Opa5();
-
-		oOpa5.iStartMyAppInAFrame(EMPTY_SITE_URL).done(function() {
-			assert.ok(jQuery("#OpaFrame").hasClass("default-scale-both"), "Applied default size and scale");
-		});
-
-		oOpa5.iTeardownMyAppFrame();
-		oOpa5.emptyQueue().done(done);
-	});
-
-	QUnit.test("Should apply user's iFrame width and height", function (assert) {
-		var done = assert.async();
-		var oOpa5 = new Opa5();
-
-		oOpa5.iStartMyAppInAFrame({source: EMPTY_SITE_URL, width: 700, height: 400}).done(function() {
-			assert.strictEqual(jQuery("#OpaFrame").attr("class"), "opaFrame", "Should not scale frame");
-			assert.strictEqual(jQuery("#OpaFrame").css("width"), "700px", "Should have desired frame width");
-			assert.strictEqual(jQuery("#OpaFrame").css("height"), "400px", "Should have desired frame height");
-		});
-
-		oOpa5.iTeardownMyAppFrame();
-
-		oOpa5.iStartMyAppInAFrame({source: EMPTY_SITE_URL, width: 700}).done(function() {
-			assert.strictEqual(jQuery("#OpaFrame").attr("class"), "opaFrame default-scale-y", "Should scale only frame height");
-			assert.strictEqual(jQuery("#OpaFrame").css("width"), "700px", "Should have desired frame width");
-			assert.strictEqual(jQuery("#OpaFrame").css("height"), jQuery("body").css("height"), "Should have default frame height");
-		});
-
-		oOpa5.iTeardownMyAppFrame();
-		oOpa5.emptyQueue().done(done);
-	});
-
-	QUnit.test("Should apply iFrame width and height from OPA config", function (assert) {
-		var done = assert.async();
-		var oOpa5 = new Opa5();
-		Opa5.extendConfig({frameWidth: 700, frameHeight: 400});
-
-		oOpa5.iStartMyAppInAFrame({source: EMPTY_SITE_URL, height: 500}).done(function() {
-			assert.strictEqual(jQuery("#OpaFrame").attr("class"), "opaFrame", "Should not scale frame");
-			assert.strictEqual(jQuery("#OpaFrame").css("width"), "700px", "Should have desired frame width");
-			assert.strictEqual(jQuery("#OpaFrame").css("height"), "500px", "Should have desired frame height");
-		});
-
-		oOpa5.iTeardownMyAppFrame();
-		oOpa5.emptyQueue().done(done);
-	});
-
 	QUnit.test("Should always load opaPlugin of the same OPA version running the test and not from the version running in the app (it might not have OPA available)", function(assert) {
 		var done = assert.async();
 		// System under Test
@@ -264,6 +217,91 @@ sap.ui.define([
 				// restore window objects before test end
 				window.onerror = fnOriginalOnError;
 				done();
+			});
+		});
+	});
+
+	QUnit.module("IFrame - size");
+
+	QUnit.test("Should use default iFrame size and scale", function (assert) {
+		var done = assert.async();
+		var oOpa5 = new Opa5();
+
+		oOpa5.iStartMyAppInAFrame(EMPTY_SITE_URL).done(function() {
+			assert.ok(jQuery("#OpaFrame").hasClass("default-scale-both"), "Applied default size and scale");
+			assert.strictEqual(jQuery("#OpaFrame").css("width"), "1280px", "Should have default frame width");
+			assert.strictEqual(jQuery("#OpaFrame").css("height"), "1024px", "Should have default frame height");
+		});
+
+		oOpa5.iTeardownMyAppFrame();
+		oOpa5.emptyQueue().done(done);
+	});
+
+	QUnit.test("Should apply user's iFrame width and height", function (assert) {
+		var done = assert.async();
+		var oOpa5 = new Opa5();
+
+		oOpa5.iStartMyAppInAFrame({source: EMPTY_SITE_URL, width: 700, height: 400}).done(function() {
+			assert.strictEqual(jQuery("#OpaFrame").attr("class"), "opaFrame", "Should not scale frame");
+			assert.strictEqual(jQuery("#OpaFrame").css("width"), "700px", "Should have desired frame width");
+			assert.strictEqual(jQuery("#OpaFrame").css("height"), "400px", "Should have desired frame height");
+		});
+
+		oOpa5.iTeardownMyAppFrame();
+
+		oOpa5.iStartMyAppInAFrame({source: EMPTY_SITE_URL, width: 700}).done(function() {
+			assert.strictEqual(jQuery("#OpaFrame").attr("class"), "opaFrame default-scale-y", "Should scale only frame height");
+			assert.strictEqual(jQuery("#OpaFrame").css("width"), "700px", "Should have desired frame width");
+			assert.strictEqual(jQuery("#OpaFrame").css("height"), "1024px", "Should have default frame height");
+		});
+
+		oOpa5.iTeardownMyAppFrame();
+		oOpa5.emptyQueue().done(done);
+	});
+
+	QUnit.test("Should apply iFrame width and height from OPA config", function (assert) {
+		var done = assert.async();
+		var oOpa5 = new Opa5();
+		Opa5.extendConfig({frameWidth: 700, frameHeight: 400});
+
+		oOpa5.iStartMyAppInAFrame({source: EMPTY_SITE_URL, height: 500}).done(function() {
+			assert.strictEqual(jQuery("#OpaFrame").attr("class"), "opaFrame", "Should not scale frame");
+			assert.strictEqual(jQuery("#OpaFrame").css("width"), "700px", "Should have desired frame width");
+			assert.strictEqual(jQuery("#OpaFrame").css("height"), "500px", "Should have desired frame height");
+		});
+
+		oOpa5.iTeardownMyAppFrame();
+		oOpa5.emptyQueue().done(done);
+	});
+
+	QUnit.test("Should apply iFrame width and height from URI params", function (assert) {
+		var fnDone = assert.async();
+		var fnOrig = URI.prototype.search;
+		var oStub = sinon.stub(URI.prototype, "search", function (query) {
+			if (query === true) {
+				return {
+					opaFrameWidth: "600",
+					opaFrameHeight: "400"
+				};
+			}
+			return fnOrig.apply(this, arguments); // should use callThrough with sinon > 3.0
+		});
+		$.sap.unloadResources("sap/ui/test/Opa.js", false, true, true);
+		$.sap.unloadResources("sap/ui/test/Opa5.js", false, true, true);
+
+		sap.ui.require(["sap/ui/test/Opa5"], function (Opa5) {
+			var oOpa5 = new Opa5();
+
+			oOpa5.iStartMyAppInAFrame({source: EMPTY_SITE_URL}).done(function() {
+				assert.strictEqual(jQuery("#OpaFrame").attr("class"), "opaFrame", "Should not scale frame");
+				assert.strictEqual(jQuery("#OpaFrame").css("width"), "600px", "Should have desired frame width");
+				assert.strictEqual(jQuery("#OpaFrame").css("height"), "400px", "Should have desired frame height");
+			});
+
+			oOpa5.iTeardownMyAppFrame();
+			oOpa5.emptyQueue().done(function () {
+				oStub.restore();
+				fnDone();
 			});
 		});
 	});

@@ -316,7 +316,7 @@ sap.ui.define([
 		 * @param {string|number} [vSourceOrOptions.width=Opa.config.frameWidth] Since 1.57, sets a fixed width for the iframe.
 		 * @param {string|number} [vSourceOrOptions.height=Opa.config.frameHeight] Since 1.57, sets a fixed height for the iframe.
 		 * Setting width and/or height is useful when testing responsive applications on screens of varying sizes.
-		 * By default, the iframe dimensions are 60% of the outer window dimensions.
+		 * Since 1.65, by default, the iframe dimensions are 60% of the default screen size, considered to be 1280x1024.
 		 * @returns {jQuery.promise} A promise that gets resolved on success
 		 * @public
 		 * @function
