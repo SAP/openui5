@@ -265,6 +265,13 @@ sap.ui.define([
 		assert.ok(oTree.getItems()[1].getItemNodeContext().nodeState.selected, "item context is selected");
 	});
 
+	QUnit.test("Accessibility - custom announcement", function(assert) {
+		var oTreeItem = oTree.getItems()[1];
+		var sSelected = sap.ui.getCore().getLibraryResourceBundle("sap.m").getText("LIST_ITEM_SELECTED");
+		oTreeItem.focus();
+		assert.equal(oTreeItem.getAccessibilityInfo().description, sSelected + "  Node2", "Custom announcement is added with current state");
+	});
+
 	QUnit.module("Expand/Collapse");
 
 	QUnit.test("Expand", function(assert){
@@ -464,7 +471,6 @@ sap.ui.define([
 		oTree.getModel().refresh();
 
 		assert.strictEqual(oTree.getItems().length, 6, "new length is 6.");
-		//oTree.destroy();
 	});
 
 });
