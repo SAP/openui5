@@ -53,7 +53,7 @@
 							<template:then>
 								<Input id="{field>Value/$Path}" textAlign="Right"
 									value="{field>Value/@@format}"
-									editable="false"/>
+									editable="{= %{@$ui5.context.isTransient} === true}"/>
 							</template:then>
 							<template:else>
 								<Input id="{field>Value/$Path}" textAlign="Right"

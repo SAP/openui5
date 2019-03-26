@@ -539,7 +539,8 @@ sap.ui.define([
 	 * For a context created using {@link sap.ui.model.odata.v4.ODataListBinding#create}, the
 	 * method returns <code>true</code> if the context is transient, meaning that the promise
 	 * returned by {@link #created} is not yet resolved or rejected, and returns <code>false</code>
-	 * if the context is not transient.
+	 * if the context is not transient. The result of this function can also be accessed via
+	 * instance annotation "@$ui5.context.isTransient" at the entity.
 	 *
 	 * @returns {boolean}
 	 *   Whether this context is transient if it is created using

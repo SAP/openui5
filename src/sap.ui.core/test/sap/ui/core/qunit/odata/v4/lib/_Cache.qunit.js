@@ -724,6 +724,10 @@ sap.ui.define([
 			oCache.drillDown({/*no advertised action found*/}, "#com.sap.foo.AcFoo").getResult(),
 			undefined, "no error if advertised action is not found");
 
+		assert.strictEqual(
+			oCache.drillDown({/*no annotation found*/}, "@$ui5.context.isTransient").getResult(),
+			undefined, "no error if annotation is not found");
+
 		oCacheMock.expects("from$skip")
 			.withExactArgs("foo", sinon.match.same(oData[0])).returns("foo");
 		oCacheMock.expects("from$skip")
@@ -3764,6 +3768,7 @@ sap.ui.define([
 				oExpectedPrivateAnnotation.transientPredicate = sTransientPredicate;
 				assert.deepEqual(oEntityData, {
 					"@$ui5._" : oExpectedPrivateAnnotation,
+					"@$ui5.context.isTransient": false,
 					ID : "7",
 					Name : "John Doe"
 				});
@@ -3975,7 +3980,8 @@ sap.ui.define([
 		assert.notStrictEqual(oCache.aElements[0], oEntityData, "'create' copies initial data");
 		assert.deepEqual(oCache.aElements[0], {
 			name : "John Doe",
-			"@$ui5._" : {"transient" : "updateGroup", "transientPredicate" : sTransientPredicate}
+			"@$ui5._" : {"transient" : "updateGroup", "transientPredicate" : sTransientPredicate},
+			"@$ui5.context.isTransient": true
 		});
 
 		// The lock must be unlocked although no request is created
@@ -4214,7 +4220,8 @@ sap.ui.define([
 			"", sTransientPredicate);
 
 		assert.deepEqual(oCache.aElements[0], {
-			"@$ui5._" : {"transient" : "updateGroup", "transientPredicate" : sTransientPredicate}
+			"@$ui5._" : {"transient" : "updateGroup", "transientPredicate" : sTransientPredicate},
+			"@$ui5.context.isTransient": true
 		});
 
 		// code under test
@@ -5953,6 +5960,8 @@ sap.ui.define([
 			assert.strictEqual(oCache.aElements.$byPredicate["('42')"], oElement);
 			assert.strictEqual(oCache.aElements.$byPredicate[sTransientPredicate],
 				bTransient ? oElement : undefined);
+			assert.strictEqual(oCache.aElements[3]["@$ui5.context.isTransient"],
+				bTransient ? false : undefined);
 		});
 	});
 

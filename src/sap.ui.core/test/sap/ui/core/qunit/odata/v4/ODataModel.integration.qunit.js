@@ -9237,8 +9237,6 @@ sap.ui.define([
 		</ColumnListItem>\
 	</items>\
 </Table>',
-			rMessage = new RegExp("^Failed to drill-down into \\(\\$uid=.+\\)\\/@\\$ui5\\.foo,"
-				+ " invalid segment: @\\$ui5\\.foo$"),
 			that = this;
 
 		this.expectRequest("Equipments?$skip=0&$top=100", {
@@ -9263,12 +9261,8 @@ sap.ui.define([
 			// code under test
 			oContext = oListBinding.create(oInitialData);
 
-			that.oLogMock.expects("error").withExactArgs(sinon.match(rMessage),
-				"/sap/opu/odata4/IWBEP/TEA/default/IWBEP/TEA_BUSI/0001/Equipments",
-				"sap.ui.model.odata.v4.lib._Cache");
-
 			// code under test
-			oContext.getProperty("@$ui5.foo");
+			assert.strictEqual(oContext.getProperty("@$ui5.foo"), undefined);
 		});
 	});
 

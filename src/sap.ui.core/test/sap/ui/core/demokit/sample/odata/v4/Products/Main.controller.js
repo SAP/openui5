@@ -43,11 +43,7 @@ sap.ui.define([
 
 			// add new row to table
 			oView.byId("ProductList").getBinding("items").create(oNewEntry).created()
-				.then(function () {
-					// Reset the editable status after the new entity is created successfully.
-					// See CPOUI5UISERVICESV3-1760.
-					oView.byId("ProductList").getItems()[0].getCells()[0].setEditable(false);
-				}, function (oError) {
+				.catch(function (oError) {
 					if (!oError.canceled) {
 						MessageBox.alert(oError.message);
 					}
@@ -93,17 +89,6 @@ sap.ui.define([
 		onInit : function () {
 			this.initMessagePopover("messagesButton");
 
-			// in a transient row, all fields need to be editable in order to fix errors
-			this.getView().byId("ProductID").bindProperty("editable", {
-				formatter : function () {
-					// Note: "this" refers to the control instance here
-					// Note: undefined is turned into editable's default value (true)
-					return this.getBindingContext().isTransient() || false;
-				},
-				path : "@odata.etag",
-				targetType : "any" // override "boolean" auto-derived from editable's type
-			});
-
 			// set up hidden list binding for creation row
 			this.oListBinding = this.getOwnerComponent().getModel()
 				.bindList("/ProductList", null, [], [], {$$updateGroupId : "doNotSubmit"});
@@ -128,7 +113,7 @@ sap.ui.define([
 					"WeightUnit" : "KG"
 				});
 
-			oContext.created().then(function () {}, function (oError) {
+			oContext.created().catch(function (oError) {
 				if (!oError.canceled) { // unexpected error
 					MessageBox.alert(oError.message);
 				}
