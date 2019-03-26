@@ -13,7 +13,7 @@
 				<Select
 					id="errorSelect"
 					forceSelection="true"
-					selectedKey="{/ErrorProductCollection/0/ProductId}"
+					selectedKey="{/SelectedProductErrorCollection}"
 					valueState="Error"
 					valueStateText="error value state text"
 					items="{
@@ -30,7 +30,7 @@
 				<Select
 					id="warningSelect"
 					forceSelection="true"
-					selectedKey="{/WarningProductCollection/1/ProductId}"
+					selectedKey="{/SelectedProductWarningCollection}"
 					valueState="Warning"
 					valueStateText="warning value state text"
 					items="{
@@ -47,7 +47,7 @@
 				<Select
 					id="successSelect"
 					forceSelection="true"
-					selectedKey="{/SuccessProductCollection/2/ProductId}"
+					selectedKey="{/SelectedProductSuccessCollection}"
 					valueState="Success"
 					valueStateText="success value state text"
 					items="{
@@ -64,7 +64,7 @@
 				<Select
 					id="informationSelect"
 					forceSelection="true"
-					selectedKey="{/InformationProductCollection/6/ProductId}"
+					selectedKey="{/SelectedProductInformationCollection}"
 					valueState="Information"
 					valueStateText="information value state text"
 					items="{
