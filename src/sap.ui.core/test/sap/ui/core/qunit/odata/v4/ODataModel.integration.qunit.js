@@ -13458,8 +13458,12 @@ sap.ui.define([
 					that.waitForChanges(assert)
 				]);
 			}).then(function () {
-				assert.strictEqual(oTeamCreatedContext.getPath(),
-					bKeepTransientPath ? sTransientPath : "/TEAMS('23')");
+				assert.strictEqual(
+					oTeamCreatedContext.getPath().replace(rTransientPredicate, "($uid=...)"),
+					bKeepTransientPath ? "/TEAMS($uid=...)" : "/TEAMS('23')");
+				if (bKeepTransientPath) {
+					assert.strictEqual(oTeamCreatedContext.getPath(), sTransientPath);
+				}
 
 				that.expectRequest("TEAMS('23')?$expand=TEAM_2_EMPLOYEES("
 						+ "$select=__CT__FAKE__Message/__FAKE__Messages,ID)", {
@@ -13527,7 +13531,7 @@ sap.ui.define([
 				assert.strictEqual(oInput.getBindingContext().getPath(),
 					oEmployeeCreatedContext.getPath(), "we got the right input control");
 
-//TODO				return that.checkValueState(assert, oInput, "Warning", "Enter an ID");
+				return that.checkValueState(assert, oInput, "Warning", "Enter an ID");
 			});
 		});
 	});

@@ -478,6 +478,7 @@ sap.ui.define([
 				sPredicate = _Helper.getPrivateAnnotation(oCreatedEntity, "predicate");
 				if (sPredicate) {
 					oContext.sPath = sResolvedPath + sPredicate;
+					that.oModel.checkMessages();
 				}
 			}
 			if (!bSkipRefresh && that.isRoot()) {

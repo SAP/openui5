@@ -3332,6 +3332,8 @@ sap.ui.define([
 					.withExactArgs(sinon.match.same(oCreatedEntity), "predicate")
 					.returns(oFixture.sPredicate);
 			});
+			this.mock(this.oModel).expects("checkMessages").exactly(oFixture.sPredicate ? 1 : 0)
+				.withExactArgs();
 
 			// code under test
 			oContext = oBinding.create(oFixture.oInitialData);
