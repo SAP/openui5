@@ -3,12 +3,10 @@
  */
 sap.ui.define([
 	"sap/ui/base/EventProvider",
-	"sap/base/Log",
-	"sap/ui/integration/services/Service"
+	"sap/base/Log"
 ], function (
 	EventProvider,
-	Log,
-	Service
+	Log
 ) {
 	"use strict";
 
@@ -112,11 +110,7 @@ sap.ui.define([
 			}
 
 			this._mServices[sServiceName].promise.then(function () {
-				if (this._mServices[sServiceName].instance instanceof Service) {
-					fnResolve(this._mServices[sServiceName].instance);
-				} else {
-					fnReject(sErrorMessage);
-				}
+				fnResolve(this._mServices[sServiceName].instance);
 			}.bind(this)).catch(fnReject);
 		}.bind(this));
 	};
