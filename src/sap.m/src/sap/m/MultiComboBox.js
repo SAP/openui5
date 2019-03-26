@@ -986,6 +986,7 @@ function(
 					that.setValue(sValue);
 					that._selectItemByKey();
 					this.setValue(that._sOldInput);
+					that.close();
 				}
 			}
 		}).addEventDelegate({

@@ -267,7 +267,7 @@ sap.ui.define([
 			(new Dialog(oInput.getId() + "-popup", {
 				beginButton : new Button(oInput.getId()
 					+ "-popup-closeButton", {
-					text : oMessageBundle.getText("MSGBOX_CLOSE")
+					text : oMessageBundle.getText("SUGGESTIONSPOPOVER_CLOSE_BUTTON")
 				}),
 				stretch : true,
 				customHeader : new Bar(oInput.getId()

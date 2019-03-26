@@ -18,7 +18,8 @@ sap.ui.define([
 	"sap/ui/thirdparty/jquery",
 	"sap/m/Input",
 	"sap/ui/core/ListItem",
-	"sap/m/StandardListItem"
+	"sap/m/StandardListItem",
+	"sap/ui/core/library"
 ], function(
 	qutils,
 	createAndAppendDiv,
@@ -37,11 +38,14 @@ sap.ui.define([
 	jQuery,
 	Input,
 	ListItem,
-	StandardListItem
+	StandardListItem,
+	coreLibrary
 ) {
 	createAndAppendDiv("content");
 
 
+	// shortcut for sap.ui.core.OpenState
+	var OpenState = coreLibrary.OpenState;
 
 	var oResourceBundle = sap.ui.getCore().getLibraryResourceBundle("sap.m");
 
@@ -806,7 +810,7 @@ sap.ui.define([
 
 	QUnit.test("onsapenter on mobile device", function (assert) {
 		// Setup
-		var oMI, sValue;
+		var oMI, sValue, oPickerTextFieldDomRef, sOpenState;
 
 		this.stub(Device, "system", {
 			desktop: false,
@@ -829,14 +833,73 @@ sap.ui.define([
 		assert.ok(oMI._oSuggPopover._oPopover.isOpen(), "The dialog is opened");
 
 		// Act
-		oMI._oSuggPopover._oPopupInput.setValue("test");
-		qutils.triggerKeydown(oMI._oSuggPopover._oPopupInput.getDomRef(), jQuery.sap.KeyCodes.ENTER);
+		oPickerTextFieldDomRef = oMI._oSuggPopover._oPopupInput.getFocusDomRef();
+
+		sap.ui.test.qunit.triggerCharacterInput(oPickerTextFieldDomRef, "test");
+		qutils.triggerKeydown(oPickerTextFieldDomRef, KeyCodes.ENTER);
+
+		sOpenState = oMI._oSuggPopover._oPopover.oPopup.getOpenState();
 
 		// Assert
-		assert.ok(oMI._oSuggPopover._oPopover.isOpen(), "The dialog is still open after enter key");
+		assert.strictEqual(sOpenState === OpenState.CLOSED || sOpenState === OpenState.CLOSING, true, "The dialog is still open after enter key");
 		assert.strictEqual(sValue, 'test', "The change event is triggered and the right value is passed");
 
-		// // Cleanup
+		// Cleanup
+		oMI.destroy();
+	});
+
+	QUnit.test("oninput on mobile device", function (assert) {
+
+		// Setup
+		var oMI;
+
+		this.stub(Device, "system", {
+			desktop: false,
+			phone: true,
+			tablet: false
+		});
+		var oSpy = sinon.spy(MultiInput.prototype, "_openSelectedItemsPicker"),
+			oSpy1 = sinon.spy(MultiInput.prototype, "_manageListsVisibility");
+
+		oMI = new MultiInput({
+			suggestionItems : [
+				new sap.ui.core.Item({
+					text : 'Damage',
+					key : 'damage'
+				}),
+				new sap.ui.core.Item({
+					text : 'another Damage',
+					key : 'damage'
+				}),
+				new sap.ui.core.Item({
+					text : 'demon',
+					key : 'demon'
+				})
+			]
+		}).placeAt( "qunit-fixture");
+		oMI.setTokens([
+			new Token({text: "XXXX"}),
+			new Token({text: "XXXX"})
+		]);
+		sap.ui.getCore().applyChanges();
+
+		oMI.$().find(".sapMTokenizerIndicator")[0].click();
+		this.clock.tick(1);
+
+		// Assert
+		assert.ok(oSpy.called, "_openSelectedItemsPicker is called when N-more is pressed");
+
+		// Act
+		sap.ui.test.qunit.triggerCharacterInput(oMI._oSuggPopover._oPopupInput.getFocusDomRef(), "d");
+		this.clock.tick(1000);
+
+		// Assert
+		assert.ok(oSpy1.called, "_manageListsVisibility is called when N-more is pressed");
+		assert.ok(oSpy1.calledWith(false));
+
+		// Cleanup
+		oSpy.restore();
+		oSpy1.restore();
 		oMI.destroy();
 	});
 

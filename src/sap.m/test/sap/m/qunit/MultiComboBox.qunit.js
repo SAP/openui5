@@ -5445,6 +5445,59 @@ sap.ui.define([
 		oMultiComboBox.destroy();
 	});
 
+	QUnit.test("onsapenter on mobile device", function(assert) {
+
+		// system under test
+		this.stub(Device, "system", {
+			desktop: false,
+			tablet: false,
+			phone: true
+		});
+
+		// arrange
+		var oPickerTextField,
+			oPickerTextFieldDomRef,
+			oFirstItem = new Item({key: "Item1", text: "Item1"}),
+			oMultiComboBox = new MultiComboBox({
+				items: [
+					new SeparatorItem({ text: "First Group" }),
+					oFirstItem,
+					new Item({key: "Item2", text: "Item2"}),
+					new SeparatorItem({ text: "Second Group" }),
+					new Item({key: "Item3", text: "Item3"}),
+					new SeparatorItem({ text: "Third Group" }),
+					new Item({key: "XXX", text: "XXX"})
+				]
+			});
+
+		// act
+		oMultiComboBox.setSelectedItems([oFirstItem]);
+
+		oMultiComboBox.placeAt("MultiComboBox-content");
+		sap.ui.getCore().applyChanges();
+
+		oMultiComboBox.open();
+		this.clock.tick(300);
+
+		oPickerTextField = oMultiComboBox.getPickerTextField();
+		oPickerTextField.focus();
+		oPickerTextFieldDomRef = oPickerTextField.getFocusDomRef();
+
+		oPickerTextFieldDomRef.value = "I";
+		sap.ui.qunit.QUnitUtils.triggerEvent("input", oPickerTextFieldDomRef);
+		this.clock.tick(300);
+		sap.ui.test.qunit.triggerKeydown(oPickerTextFieldDomRef, KeyCodes.ENTER); //onsapenter
+		this.clock.tick(300);
+
+		// assert
+		assert.strictEqual(oMultiComboBox.getSelectedItems().length, 2, "There are two selected item");
+		assert.notOk(oMultiComboBox.isOpen(), "The picker is closed");
+
+		// clean up
+		oMultiComboBox.destroy();
+	});
+
+
 	QUnit.test("Popup should have ariaLabelledBy that points to the PopupHiddenLabelId", function(assert) {
 		var oItem = new Item({
 			key: "li",

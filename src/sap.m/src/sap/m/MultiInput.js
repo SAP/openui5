@@ -1438,6 +1438,9 @@ function(
 			that._validateCurrentText();
 			that._setValueInvisible();
 
+			if (that._oSuggPopover._oPopupInput.getValue()) {
+				that._oSuggPopover._oPopover.close();
+			}
 			// Fire through the MultiInput Popup's input value and save it
 			that.onChange(oEvent, null, this.getValue());
 		};
@@ -1450,6 +1453,11 @@ function(
 
 			that._manageListsVisibility(that._bShowListWithTokens);
 		});
+
+		this._oSuggPopover._oPopupInput.oninput = function (oEvent) {
+			Input.prototype.oninput.call(this, oEvent);
+			that._manageListsVisibility(false);
+		};
 	};
 
 	/**
