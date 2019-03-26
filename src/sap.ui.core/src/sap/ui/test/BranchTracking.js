@@ -115,6 +115,7 @@
 		}
 		_$blanket[sFileName].source = sScriptInput.split("\n");
 		_$blanket[sFileName].source.unshift(""); // line 0 does not exist!
+		_$blanket[sFileName].warnings = [];
 
 		sScriptOutput = "" + falafel(sScriptInput, {
 				attachComment : bComment,
@@ -128,8 +129,8 @@
 
 		iNoOfOutputLines = sScriptOutput.split("\n").length + 1; // account for line 0 here as well
 		if (iNoOfOutputLines !== _$blanket[sFileName].source.length) {
-			jQuery.sap.log.warning("Line length mismatch! " + _$blanket[sFileName].source.length
-				+ " vs. " + iNoOfOutputLines, sFileName, "sap.ui.test.BranchTracking");
+			warn(sFileName, "Line length mismatch! " + _$blanket[sFileName].source.length + " vs. "
+				+ iNoOfOutputLines);
 		}
 
 		fnSuccess(sScriptOutput);
@@ -247,9 +248,8 @@
 		 */
 		function initHits() {
 			if (iLine in aHits) {
-				jQuery.sap.log.warning("Multiple statements on same line detected"
-						+ " – minified code not supported! Line number " + iLine,
-					aFileNames[iFileIndex], "sap.ui.test.BranchTracking");
+				warn(iFileIndex, "Multiple statements on same line detected"
+					+ " – minified code not supported! Line number " + iLine);
 			}
 			aHits[iLine] = 0;
 		}
@@ -277,6 +277,19 @@
 
 		if (Device && isChildOfIgnoredNode(Device, oNode)) {
 			return false;
+		}
+
+		switch (oNode.type) {
+			case "FunctionDeclaration":
+			case "FunctionExpression":
+				if (oNode.body.body[0] && iLine === oNode.body.body[0].loc.start.line) {
+					warn(iFileIndex, "Function body must not start on same line! Line number "
+						+ iLine);
+//					aHits[iLine] = NaN; //TODO find an easy way to mark this line as "missed"
+				}
+				break;
+
+			default:
 		}
 
 		switch (oNode.type) {
@@ -403,6 +416,22 @@
 			default:
 				throw new Error(oNode.source());
 		}
+	}
+
+	/**
+	 * Logs the given message related to the given file both as a warning on console and as a
+	 * warning to be reported inside QUnit.module's "before" hook.
+	 *
+	 * @param {number|string} vFile - the affected file's index or name
+	 * @param {string} sMessage - a message
+	 */
+	function warn(vFile, sMessage) {
+		var sFileName = typeof vFile === "string"
+				? vFile
+				: aFileNames[vFile];
+
+		jQuery.sap.log.warning(sMessage, sFileName, "sap.ui.test.BranchTracking");
+		_$blanket[sFileName].warnings.push(sMessage);
 	}
 
 	/**
@@ -625,6 +654,9 @@
 					this.$oldBranchTracking = JSON.parse(
 						JSON.stringify(aHits.branchTracking, ["falsy", "truthy"]));
 				}
+				aHits.warnings.forEach(function (sMessage) {
+					assert.ok(false, sMessage);
+				});
 			}
 
 			return fnBefore.apply(this, arguments);

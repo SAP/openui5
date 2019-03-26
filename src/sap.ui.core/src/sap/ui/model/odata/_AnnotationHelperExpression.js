@@ -713,8 +713,12 @@ sap.ui.define([
 				oMinMaxAnnotation,
 				oModel = oInterface.getModel(),
 				oPathValueInterface = {
-					getModel : function () { return oModel; },
-					getPath : function () { return oPathValue.path; }
+					getModel : function () {
+						return oModel;
+					},
+					getPath : function () {
+						return oPathValue.path;
+					}
 				},
 				oProperty,
 				oResult = {result : "binding", value : sBindingPath},
