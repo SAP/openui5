@@ -333,7 +333,7 @@ function(
 	Column.prototype.init = function() {
 		this._oSorter = null;
 
-		// Skip propagation of databinding properties to the template.
+		// Skip propagation of properties (models and bindingContext).
 		this.mSkipPropagation = {
 			template: true,
 			creationTemplate: true
