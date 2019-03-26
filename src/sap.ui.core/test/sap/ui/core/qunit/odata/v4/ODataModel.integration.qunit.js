@@ -10061,18 +10061,14 @@ sap.ui.define([
 			// and the return value context ID changed.
 			// The list must be updated manually.
 			oRowContext = that.oView.byId("table").getItems()[0].getBindingContext();
-			bindObjectPage(oRowContext, false);
-
-			return that.waitForChanges(assert);
+			return bindObjectPage(oRowContext, false);
 		}).then(function () {
 			// clear the object page
 			that.expectChange("id", null)
 				.expectChange("isActive", null)
 				.expectChange("name", null);
 
-			bindObjectPage(null, false);
-
-			return that.waitForChanges(assert);
+			return bindObjectPage(null, false);
 		});
 	});
 

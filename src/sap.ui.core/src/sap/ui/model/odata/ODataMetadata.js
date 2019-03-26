@@ -1373,7 +1373,8 @@ sap.ui.define([
 		var aSchema = this.oMetadata.dataServices.schema,
 			oContainer, aContainers;
 
-		if (!this.bMessageScopeSupported) {
+		// Note: "The edmx:DataServices element contains zero or more edm:Schema elements..."
+		if (!this.bMessageScopeSupported && aSchema) {
 			for (var i = 0; i < aSchema.length; ++i) {
 				aContainers = aSchema[i].entityContainer;
 				if (aContainers) {
