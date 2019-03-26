@@ -2593,36 +2593,59 @@ function (
 
 	QUnit.module("Private methods");
 
-	QUnit.test("BCP:1870298358 - cloned header should not introduce scrollbar - " +
-		"_obtainSnappedTitleHeight and _obtainExpandedTitleHeight", function (assert) {
+	QUnit.test("_obtainSnappedTitleHeight and _obtainExpandedTitleHeight should toggle stickied class of header title ",
+	function (assert) {
 
 		// Arrange
 		var oObjectPage = oFactory.getObjectPageLayoutWithIconTabBar(),
 			oCSSSpy;
 
+		oObjectPage.setHeaderTitle(oFactory.getHeaderTitle());
 		oObjectPage.placeAt("qunit-fixture");
 		Core.applyChanges();
-		oCSSSpy = sinon.spy(oObjectPage._$opWrapper, "css");
+		oCSSSpy = sinon.spy(oObjectPage._$headerTitle, "toggleClass");
 
-		// Act - render OP and call method
-		oObjectPage._obtainSnappedTitleHeight(true/* via clone */);
+		// Act
+		oObjectPage._obtainSnappedTitleHeight();
 
 		// Assert
-		assert.strictEqual(oCSSSpy.callCount, 2, "jQuery object css method is called twice");
-		assert.ok(oCSSSpy.firstCall.calledWith("overflow-y", "hidden"), "OverflowY of the wrapper set to hidden");
-		assert.ok(oCSSSpy.secondCall.calledWith("overflow-y", "auto"), "OverflowY of the wrapper set to auto");
+		assert.strictEqual(oCSSSpy.callCount, 2, "jQuery toggleClass method is called twice");
+		assert.ok(oCSSSpy.firstCall.calledWith("sapUxAPObjectPageHeaderStickied", true),
+			"sapUxAPObjectPageHeaderStickied class is aded");
+		assert.ok(oCSSSpy.secondCall.calledWith("sapUxAPObjectPageHeaderStickied", false),
+			"sapUxAPObjectPageHeaderStickied class is removed");
 
 		// ACT - Reset spy and call method
 		oCSSSpy.reset();
-		oObjectPage._obtainExpandedTitleHeight(true/* via clone */);
+		oObjectPage._obtainExpandedTitleHeight();
 
 		// Assert
-		assert.strictEqual(oCSSSpy.callCount, 2, "jQuery object css method is called twice");
-		assert.ok(oCSSSpy.firstCall.calledWith("overflow-y", "hidden"), "OverflowY of the wrapper set to hidden");
-		assert.ok(oCSSSpy.secondCall.calledWith("overflow-y", "auto"), "OverflowY of the wrapper set to auto");
+		assert.strictEqual(oCSSSpy.callCount, 2, "jQuery toggleClass method is called twice");
+		assert.ok(oCSSSpy.firstCall.calledWith("sapUxAPObjectPageHeaderStickied", false),
+			"sapUxAPObjectPageHeaderStickied is removed");
+		assert.ok(oCSSSpy.secondCall.calledWith("sapUxAPObjectPageHeaderStickied", true),
+			"sapUxAPObjectPageHeaderStickied is added");
 
 		// Cleanup
 		oCSSSpy.restore();
+		oObjectPage.destroy();
+	});
+
+	QUnit.test("_obtainSnappedTitleHeight and _obtainExpandedTitleHeight should return 0 if no header title is set",
+	function (assert) {
+
+		// Arrange
+		var oObjectPage = oFactory.getObjectPageLayoutWithIconTabBar();
+
+		oObjectPage.placeAt("qunit-fixture");
+		Core.applyChanges();
+
+		// Assert
+		assert.strictEqual( oObjectPage._obtainSnappedTitleHeight(), 0,
+			"Height of snapped title is 0 when no header title is set");
+		assert.strictEqual(oObjectPage._obtainExpandedTitleHeight(), 0,
+			"Height of expanded title is 0 when no header title is set");
+
 		oObjectPage.destroy();
 	});
 
