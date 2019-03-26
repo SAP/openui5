@@ -34,6 +34,8 @@ sap.ui.define(['sap/m/semantic/SemanticButton', 'sap/m/library', "sap/ui/events/
 
 			library : "sap.m",
 
+			"abstract": true,
+
 			properties : {
 
 				/**

@@ -423,7 +423,7 @@ sap.ui.define([
 		 * Adds a new <code>TabContainerItem</code> to the <code>items</code> aggregation of the <code>TabContainer</code>.
 		 *
 		 * @param {sap.m.TabContainerItem} oItem The new <code>TabContainerItem</code> to be added
-		 * @returns {sap.m.TabContainerItem} The newly added <code>TabContainerItem</code>
+		 * @returns {sap.m.TabContainer} This <code>TabContainer</code> to allow method chaining
 		 * @override
 		 */
 		TabContainer.prototype.addItem = function(oItem) {
@@ -441,7 +441,7 @@ sap.ui.define([
 				})
 			);
 
-			return oItem;
+			return this;
 		};
 
 		/*

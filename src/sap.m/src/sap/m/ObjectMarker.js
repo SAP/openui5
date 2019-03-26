@@ -559,13 +559,14 @@ sap.ui.define([
 	["getAriaLabelledBy", "addAriaLabelledBy", "removeAriaLabelledBy", "removeAllAriaLabelledBy",
 		"getAriaDescribedBy", "addAriaDescribedBy", "removeAriaDescribedBy", "removeAllAriaDescribedBy",
 		"getAccessibilityInfo"].map(function(sFn) {
+		var bChainable = /^add/.test(sFn);
 		ObjectMarker.prototype[sFn] = function() {
 			var oInnerControl = this._getInnerControl(),
 				oResult;
 			if (oInnerControl && oInnerControl[sFn]) {
 				oResult = oInnerControl[sFn].apply(oInnerControl, arguments);
 			}
-			return oResult === oInnerControl ? this : oResult;
+			return bChainable ? this : oResult;
 		};
 	});
 
