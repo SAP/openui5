@@ -29,115 +29,123 @@
 			</Panel>
 
 			<Panel headerText="Card Group 1">
-				<grid:CSSGrid
+				<f:GridContainer
 					id="cssgrid"
-					width="60%"
-					gridTemplateColumns="repeat(8, 1fr)"
-					gridAutoRows="80px"
-					gridAutoFlow="Row"
-					gridRowGap="8px"
-					gridColumnGap="8px">
+					itemsStretch="true"
+					width="60%">
 
-					<grid:items>
+					<f:items>
 
 						<w:Card class="green" manifest="{manifests>/zflow/card1}">
 							<w:layoutData>
-								<grid:GridItemLayoutData gridRow="span 2" gridColumn="span 2" />
+								<f:GridContainerItemLayoutData rows="2"  columns="2" />
 							</w:layoutData>
 						</w:Card>
 
 						<w:Card class="green" manifest="{manifests>/zflow/card2}">
 							<w:layoutData>
-								<grid:GridItemLayoutData gridRow="span 2" gridColumn="span 3" />
+								<f:GridContainerItemLayoutData rows="2"  columns="3" />
 							</w:layoutData>
 						</w:Card>
 
-						<w:Card class="green" manifest="{manifests>/zflow/card3}"></w:Card>
+						<w:Card class="green" manifest="{manifests>/zflow/card3}">
+							<w:layoutData>
+								<f:GridContainerItemLayoutData rows="1" columns="2" />
+							</w:layoutData>
+						</w:Card>
 
 						<w:Card class="green" manifest="{manifests>/zflow/card4}">
 							<w:layoutData>
-								<grid:GridItemLayoutData gridColumn="span 2" />
+								<f:GridContainerItemLayoutData rows="1" columns="2" />
 							</w:layoutData>
 						</w:Card>
 
-						<w:Card class="green" manifest="{manifests>/zflow/card5}"></w:Card>
+						<w:Card class="green" manifest="{manifests>/zflow/card5}">
+							<w:layoutData>
+								<f:GridContainerItemLayoutData rows="1" columns="2" />
+							</w:layoutData>
+						</w:Card>
 
 						<w:Card class="green" manifest="{manifests>/zflow/card6}">
 							<w:layoutData>
-								<grid:GridItemLayoutData gridColumn="span 3" />
+								<f:GridContainerItemLayoutData rows="1" columns="3" />
 							</w:layoutData>
 						</w:Card>
 
 						<w:Card class="green" manifest="{manifests>/zflow/card7}">
 							<w:layoutData>
-								<grid:GridItemLayoutData gridRow="span 3" gridColumn="span 2" />
+								<f:GridContainerItemLayoutData rows="3"  columns="2" />
 							</w:layoutData>
 						</w:Card>
 
 						<w:Card class="green" manifest="{manifests>/zflow/card8}">
 							<w:layoutData>
-								<grid:GridItemLayoutData gridRow="span 3" gridColumn="span 2" />
+								<f:GridContainerItemLayoutData rows="3"  columns="2" />
 							</w:layoutData>
 						</w:Card>
 
-					</grid:items>
-				</grid:CSSGrid>
+					</f:items>
+				</f:GridContainer>
 			</Panel>
 
 			<Panel headerText="Card Group 2">
-				<grid:CSSGrid
+				<f:GridContainer
 					id="cssgrid2"
-					width="60%"
-					gridTemplateColumns="repeat(8, 1fr)"
-					gridAutoRows="80px"
-					gridAutoFlow="Row"
-					gridRowGap="8px"
-					gridColumnGap="8px">
+					itemsStretch="true"
+					width="60%">
 
-					<grid:items>
+					<f:items>
 
 						<w:Card class="red" manifest="{manifests>/zflow/card1}">
 							<w:layoutData>
-								<grid:GridItemLayoutData gridRow="span 2" gridColumn="span 2" />
+								<f:GridContainerItemLayoutData rows="2"  columns="2" />
 							</w:layoutData>
 						</w:Card>
 
 						<w:Card class="red" manifest="{manifests>/zflow/card2}">
 							<w:layoutData>
-								<grid:GridItemLayoutData gridRow="span 2" gridColumn="span 3" />
+								<f:GridContainerItemLayoutData rows="2"  columns="3" />
 							</w:layoutData>
 						</w:Card>
 
-						<w:Card class="red" manifest="{manifests>/zflow/card3}"></w:Card>
+						<w:Card class="red" manifest="{manifests>/zflow/card3}">
+							<w:layoutData>
+								<f:GridContainerItemLayoutData rows="1" columns="2" />
+							</w:layoutData>
+						</w:Card>
 
 						<w:Card class="red" manifest="{manifests>/zflow/card4}">
 							<w:layoutData>
-								<grid:GridItemLayoutData gridColumn="span 2" />
+								<f:GridContainerItemLayoutData  columns="2" />
 							</w:layoutData>
 						</w:Card>
 
-						<w:Card class="red" manifest="{manifests>/zflow/card5}"></w:Card>
+						<w:Card class="red" manifest="{manifests>/zflow/card5}">
+							<w:layoutData>
+								<f:GridContainerItemLayoutData rows="1" columns="2" />
+							</w:layoutData>
+						</w:Card>
 
 						<w:Card class="red" manifest="{manifests>/zflow/card6}">
 							<w:layoutData>
-								<grid:GridItemLayoutData gridColumn="span 3" />
+								<f:GridContainerItemLayoutData  columns="3" />
 							</w:layoutData>
 						</w:Card>
 
 						<w:Card class="red" manifest="{manifests>/zflow/card7}">
 							<w:layoutData>
-								<grid:GridItemLayoutData gridRow="span 3" gridColumn="span 2" />
+								<f:GridContainerItemLayoutData rows="3"  columns="2" />
 							</w:layoutData>
 						</w:Card>
 
 						<w:Card class="red" manifest="{manifests>/zflow/card8}">
 							<w:layoutData>
-								<grid:GridItemLayoutData gridRow="span 3" gridColumn="span 2" />
+								<f:GridContainerItemLayoutData rows="3"  columns="2" />
 							</w:layoutData>
 						</w:Card>
 
-					</grid:items>
-				</grid:CSSGrid>
+					</f:items>
+				</f:GridContainer>
 			</Panel>
 		</content>
 	</Page>

@@ -9,9 +9,6 @@ sap.ui.define([
 
 	return Controller.extend("sap.f.cardsdemo.controller.sapFCard", {
 		onInit: function () {
-			// setTimeout(this.showNumbers.bind(this), 5000);
-
-			// Experiment to add the dnd info from outside
 			var aGrids = [
 				this.getView().byId("cssgrid"),
 				this.getView().byId("cssgrid2")
@@ -26,43 +23,51 @@ sap.ui.define([
 					dropPosition: "Between",
 					dropLayout: "Horizontal",
 					drop: function (oInfo) {
-						var oDragged = oInfo.getParameter("draggedControl").getDomRef();
-						var oDropped = oInfo.getParameter("droppedControl").getDomRef();
-						var sInsertPosition = oInfo.getParameter("dropPosition");
-						if (sInsertPosition === "Before") {
-							oDropped.parentNode.insertBefore(oDragged, oDropped);
-						} else {
-							oDropped.parentNode.insertBefore(oDragged, oDropped.nextSibling);
+						var oDragged = oInfo.getParameter("draggedControl"),
+							oDropped = oInfo.getParameter("droppedControl"),
+							oDragParent = oDragged.getParent(),
+							oDropParent = oDropped.getParent(),
+							sInsertPosition = oInfo.getParameter("dropPosition"),
+							iDragPosition = oDragParent.indexOfItem(oDragged),
+							iDropPosition = oDropParent.indexOfItem(oDropped);
+
+						oDragParent.removeItem(oDragged);
+
+						if (oDragParent === oDropParent && iDragPosition < iDropPosition) {
+							iDropPosition--;
 						}
+
+						if (sInsertPosition === "Before") {
+							oDropParent.insertItem(oDragged, iDropPosition);
+						} else {
+							oDropParent.insertItem(oDragged, iDropPosition + 1);
+						}
+
+						// NOTE DnD can be done with dom manipulations so that the grid is not rerendered each time.
+						// But then for IE special logic should take care of it. Or grid can be rerendered for IE only.
 					}
 				}));
 			});
 		},
 
-		showNumbers: function () {
-			jQuery(".sapUiLayoutCSSGrid").each(function (iGrid, oGrid) {
-				jQuery(oGrid).find(".sapFCardTitle>span, .sapMGTTitle>span").each(function (iIndex, oElement) {
-					jQuery(oElement).html((iIndex + 1) + ". " + jQuery(oElement).html());
-				});
-			});
-		},
-
 		onDenseChange: function (oEvent) {
 			if (oEvent.getParameter("state")) {
-				jQuery(".sapUiLayoutCSSGrid").css({gridAutoFlow: "row dense"});
+				jQuery(".sapFGridContainer").css({gridAutoFlow: "row dense"});
 			} else {
-				jQuery(".sapUiLayoutCSSGrid").css({gridAutoFlow: "row"});
+				jQuery(".sapFGridContainer").css({gridAutoFlow: "row"});
 			}
 		},
 
 		onRowSpanChange: function (oEvent) {
 			if (oEvent.getParameter("state")) {
-				jQuery(".sapUiLayoutCSSGrid").css({gridAutoRows: "min-content"});
+				jQuery(".sapFGridContainer").css({gridAutoRows: "min-content"});
+				jQuery(".sapFGridContainer").removeClass("sapFGridContainerStretchItems");
 			} else {
-				jQuery(".sapUiLayoutCSSGrid").css({gridAutoRows: "80px"});
+				jQuery(".sapFGridContainer").css({gridAutoRows: "80px"});
+				jQuery(".sapFGridContainer").addClass("sapFGridContainerStretchItems");
 			}
 
-			jQuery(".sapUiLayoutCSSGrid").children().each(function (iIndex, oElement) {
+			jQuery(".sapFGridContainer").children().each(function (iIndex, oElement) {
 				var $element = jQuery(oElement);
 
 				if (oEvent.getParameter("state")) {
