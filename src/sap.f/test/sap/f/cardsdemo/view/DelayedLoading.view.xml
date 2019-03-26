@@ -22,7 +22,7 @@
 		</subHeader>
 
 		<content>
-			<f:GridContainer>
+			<f:GridContainer class="sapUiSmallMargin">
 				<w:Card id="listCard1">
 					<w:layoutData>
 						<f:GridContainerItemLayoutData columns="6"/>

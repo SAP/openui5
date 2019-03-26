@@ -24,6 +24,11 @@ sap.ui.define([],
 			rm.writeControlData(control);
 
 			rm.addClass("sapFGridContainer");
+
+			if (control.getItemsStretch()) {
+				rm.addClass("sapFGridContainerStretchItems");
+			}
+
 			rm.writeClasses();
 
 			// Add inline styles
@@ -44,13 +49,37 @@ sap.ui.define([],
 			// Close opening tag
 			rm.write(">");
 
-			control.getItems().forEach(function (item) {
+			control.getItems().forEach(function (oItem) {
+				this.renderItem(rm, oItem);
+			}.bind(this));
 
-				rm.write("<div>");
-				rm.renderControl(item);
-				rm.write("</div>");
-			});
+			rm.write("</div>");
+		};
 
+		GridContainerRenderer.renderItem = function(rm, oItem) {
+			rm.write("<div");
+			rm.addClass("sapFGridContainerItemWrapper");
+
+			var oLayoutData = oItem.getLayoutData();
+			if (oLayoutData) {
+				if (oLayoutData.getColumns()) {
+					rm.addStyle("grid-column", "span " + oLayoutData.getColumns());
+				}
+
+				if (oLayoutData.getRows()) {
+					rm.addStyle("grid-row", "span " + oLayoutData.getRows());
+				}
+
+				if (!oLayoutData.getRowsAutoSpan()) {
+					rm.addClass("sapFGridContainerItemLimitRows");
+				}
+			}
+
+			rm.writeClasses();
+			rm.writeStyles();
+			rm.write(">");
+
+			rm.renderControl(oItem);
 			rm.write("</div>");
 		};
 
