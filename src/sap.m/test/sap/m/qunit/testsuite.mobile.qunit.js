@@ -1070,6 +1070,12 @@ sap.ui.define([
 					language: "en"
 				}
 			},
+			SinglePlanningCalendarGrid: {
+				title: "QUnit Page for sap.m.SinglePlanningCalendarGrid",
+				ui5: {
+					language: "en"
+				}
+			},
 			SlideTile: {
 				title: "Test Page for sap.m.SlideTile",
 				qunit: {

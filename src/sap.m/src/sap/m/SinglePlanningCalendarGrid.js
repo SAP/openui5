@@ -676,6 +676,8 @@ sap.ui.define([
 				}
 				this._adjustBlockersHeightforCompact();
 			}
+
+			this._updateRowHeaderAndNowMarker();
 		};
 
 		/**
