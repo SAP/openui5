@@ -117,7 +117,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/Device', 'sap/ui/unified/Menu', 'sap
 					}
 
 					if (bExecuteDefault) {
-						MenuUtils.openDataCellContextMenu(oTable, iColumnIndex, iRowIndex, bHoverFirstMenuItem);
+						MenuUtils.openDataCellContextMenu(oTable, oCellInfo, bHoverFirstMenuItem);
 					}
 				}
 			},
@@ -201,19 +201,22 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/Device', 'sap/ui/unified/Menu', 'sap
 			 * If a context menu of another data cell is open, it will be closed.
 			 *
 			 * @param {sap.ui.table.Table} oTable Instance of the table.
-			 * @param {int} iColumnIndex The column index of the data cell to open the context menu on.
-			 * @param {int} iRowIndex The row index of the data cell to open the context menu on.
+			 * @param {sap.ui.table.TableUtils.CellInfo} oCellInfo An object containing information about the cell.
 			 * @param {boolean} [bHoverFirstMenuItem] If <code>true</code>, the first item in the opened menu will be hovered.
 			 * @see openContextMenu
 			 * @see closeDataCellContextMenu
 			 * @private
 			 */
-			openDataCellContextMenu: function(oTable, iColumnIndex, iRowIndex, bHoverFirstMenuItem) {
+			openDataCellContextMenu: function(oTable, oCellInfo, bHoverFirstMenuItem) {
 				if (oTable == null ||
-					iColumnIndex == null || iColumnIndex < 0 ||
-					iRowIndex == null || iRowIndex < 0 || iRowIndex >= MenuUtils.TableUtils.getNonEmptyVisibleRowCount(oTable)) {
+					!oCellInfo ||
+					oCellInfo.rowIndex >= MenuUtils.TableUtils.getNonEmptyVisibleRowCount(oTable)) {
 					return;
 				}
+
+				var iColumnIndex = oCellInfo.columnIndex;
+				var iRowIndex = oCellInfo.rowIndex;
+
 				if (bHoverFirstMenuItem == null) {
 					bHoverFirstMenuItem = false;
 				}
@@ -224,7 +227,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/Device', 'sap/ui/unified/Menu', 'sap
 				}
 
 				var oColumn = oColumns[iColumnIndex];
-				if (!oColumn.getVisible()) {
+				if (!oColumn || !oColumn.getVisible()) {
 					return;
 				}
 
@@ -268,11 +271,8 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/Device', 'sap/ui/unified/Menu', 'sap
 					}
 
 					// Open the menu below the cell if is is not already open.
-					var oCell =  oRow.getCells()[iColumnIndex];
-					var $Cell =  MenuUtils.TableUtils.getParentCell(oTable, oCell.getDomRef());
-
-					if ($Cell !== null && !MenuUtils.TableUtils.Grouping.isInGroupingRow($Cell)) {
-						oCell = $Cell[0];
+					if (!MenuUtils.TableUtils.Grouping.isInGroupingRow(oCellInfo.cell)) {
+						var oCell = oCellInfo.cell[0];
 
 						var bMenuOpenAtAnotherDataCell = oTable._oCellContextMenu.bOpen && oTable._oCellContextMenu.oOpenerRef !== oCell;
 						if (bMenuOpenAtAnotherDataCell) {

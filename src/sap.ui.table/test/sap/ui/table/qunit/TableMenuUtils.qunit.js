@@ -54,7 +54,7 @@ sap.ui.require([
 			assert.strictEqual(bMenuOpen, bOpen,
 				"The column context menu is" + (bOpen ? " " : " not ") + "open (Column: " + (iColumnIndex + 1) + ")");
 		},
-		assertDataCellContextMenuOpen: function(assert, iColumnIndex, iRowIndex, bOpen) {
+		assertDataCellContextMenuOpen: function(assert, iRowIndex, iColumnIndex, bOpen) {
 			var bMenuOpen = oTable._oCellContextMenu && oTable._oCellContextMenu.bOpen;
 			var oCellElement = TableUtils.getCell(oTable, oTable.getRows()[iRowIndex].getCells()[iColumnIndex].getDomRef())[0];
 			var bMenuOpenAtSpecifiedCell = bMenuOpen && oTable._oCellContextMenu.oOpenerRef === oCellElement;
@@ -276,7 +276,7 @@ sap.ui.require([
 		TableUtils.Menu.openContextMenu(oTable, $CellB, false, true);
 		this.assertColumnContextMenuOpen(assert, 1, false);
 		this.assertDataCellContextMenuOpen(assert, 0, 0, false);
-		this.assertDataCellContextMenuOpen(assert, 1, 0, true);
+		this.assertDataCellContextMenuOpen(assert, 0, 1, true);
 		assert.ok(oCellContextMenuEventHandler.calledOnce, "The CellContextMenu event handler has been called once");
 		assert.deepEqual(mActualParameters, mExpectedParameters,
 			"The CellContextMenu event object contains the correct parameters");
@@ -302,7 +302,7 @@ sap.ui.require([
 		TableUtils.Menu.openContextMenu(oTable, $CellA, false, true);
 		this.assertColumnContextMenuOpen(assert, 0, false);
 		this.assertDataCellContextMenuOpen(assert, 0, 0, false);
-		this.assertDataCellContextMenuOpen(assert, 1, 0, true);
+		this.assertDataCellContextMenuOpen(assert, 0, 1, true);
 		assert.ok(oCellContextMenuEventHandler.calledOnce, "The CellContextMenu event handler has been called once");
 		assert.deepEqual(mActualParameters, mExpectedParameters,
 			"The CellContextMenu event object contains the correct parameters");
@@ -388,42 +388,32 @@ sap.ui.require([
 		assert.strictEqual(oTable._oCellContextMenu, undefined, "No parameters passed: The menu was not created");
 		TableUtils.Menu.openDataCellContextMenu(oTable);
 		assert.strictEqual(oTable._oCellContextMenu, undefined, "No column and row index parameters passed: The menu was not created");
-		TableUtils.Menu.openDataCellContextMenu(oTable, 0);
-		assert.strictEqual(oTable._oCellContextMenu, undefined, "No row index parameter passed: The menu was not created");
-		TableUtils.Menu.openDataCellContextMenu(oTable, -1, 0);
-		assert.strictEqual(oTable._oCellContextMenu, undefined, "Column index out of lower bound: The menu was not created");
-		TableUtils.Menu.openDataCellContextMenu(oTable, iNumberOfCols, 0);
-		assert.strictEqual(oTable._oCellContextMenu, undefined, "Column index out of upper bound: The menu was not created");
-		TableUtils.Menu.openDataCellContextMenu(oTable, 0, -1);
-		assert.strictEqual(oTable._oCellContextMenu, undefined, "Row index out of lower bound: The menu was not created");
-		TableUtils.Menu.openDataCellContextMenu(oTable, 0, iNumberOfRows + 1);
-		assert.strictEqual(oTable._oCellContextMenu, undefined, "Row index out of upper bound: The menu was not created");
-		TableUtils.Menu.openDataCellContextMenu(oTable, 0, iNumberOfRows);
-		assert.strictEqual(oTable._oCellContextMenu, undefined, "Row index pointing to an empty row: The menu was not created");
+		TableUtils.Menu.openDataCellContextMenu(oTable, TableUtils.getCellInfo(null));
+		assert.strictEqual(oTable._oCellContextMenu, undefined, "Empty CellInfo: The menu was not created");
 
 		var oColumnA = oTable.getColumns()[0];
 		var oIsColumnAFilterableByMenu = this.stub(oColumnA, "isFilterableByMenu");
 
 		// Column is not visible: The cell context menu will not be created.
 		oColumnA.setVisible(false);
-		TableUtils.Menu.openDataCellContextMenu(oTable, 0, 0);
+		TableUtils.Menu.openDataCellContextMenu(oTable, TableUtils.getCellInfo(getCell(0, 0)));
 		assert.strictEqual(oTable._oCellContextMenu, undefined, "Column index pointing to an invisible column: The menu was not created");
 		oColumnA.setVisible(true);
 
 		// Cell filters are not enabled: The cell context menu will not be created.
 		oTable.setEnableCellFilter(false);
-		TableUtils.Menu.openDataCellContextMenu(oTable, 0, 0);
+		TableUtils.Menu.openDataCellContextMenu(oTable, TableUtils.getCellInfo(getCell(0, 0)));
 		assert.strictEqual(oTable._oCellContextMenu, undefined, "Cell filters are not enabled: The menu was not created");
 		oTable.setEnableCellFilter(true);
 
 		// Column is not filterable by menu: The cell context menu will not be created.
 		oIsColumnAFilterableByMenu.returns(false);
-		TableUtils.Menu.openDataCellContextMenu(oTable, 0, 0);
+		TableUtils.Menu.openDataCellContextMenu(oTable, TableUtils.getCellInfo(getCell(0, 0)));
 		assert.strictEqual(oTable._oCellContextMenu, undefined, "Column not filterable by menu: The menu was not created");
 		oIsColumnAFilterableByMenu.returns(true);
 
 		// Cell [0, 0]: The menu will be created and opened.
-		TableUtils.Menu.openDataCellContextMenu(oTable, 0, 0);
+		TableUtils.Menu.openDataCellContextMenu(oTable, TableUtils.getCellInfo(getCell(0, 0)));
 		assert.ok(oTable._oCellContextMenu != undefined, "The menu has been created");
 		assert.strictEqual(oTable._oCellContextMenu.getItems().length, 1, "One menu item has been created");
 		assert.strictEqual(oTable._oCellContextMenu.getItems()[0].mEventRegistry.select.length, 1,
@@ -434,12 +424,9 @@ sap.ui.require([
 		oTable._oCellContextMenu.getItems()[0].__isOriginal = true;
 		oTable._oCellContextMenu.getItems()[0].mEventRegistry.select[0].fFunction.__isOriginal = true;
 
-		var oColumnB = oTable.getColumns()[1];
-		this.stub(oColumnB, "isFilterableByMenu").returns(true);
-
 		// Cell [0, 0]: The menu will be closed.
 		// Cell [1, 0]: The menu will be opened.
-		TableUtils.Menu.openDataCellContextMenu(oTable, 1, 0, true);
+		TableUtils.Menu.openDataCellContextMenu(oTable, TableUtils.getCellInfo(getCell(1, 0)), true);
 		this.assertDataCellContextMenuOpen(assert, 0, 0, false);
 		this.assertDataCellContextMenuOpen(assert, 1, 0, true);
 		this.assertFirstMenuItemHovered(assert, oTable._oCellContextMenu, true);
@@ -452,8 +439,28 @@ sap.ui.require([
 			"There is still only one menu item select event handler attached");
 
 		// Cell [1, 0]: The menu will stay open.
-		TableUtils.Menu.openDataCellContextMenu(oTable, 1, 0, false);
+		TableUtils.Menu.openDataCellContextMenu(oTable, TableUtils.getCellInfo(getCell(1, 0)), false);
 		this.assertDataCellContextMenuOpen(assert, 1, 0, true);
+		this.assertFirstMenuItemHovered(assert, oTable._oCellContextMenu, true);
+		assert.ok(oTable._oCellContextMenu.__isOriginal, "The menu has been reused");
+		assert.ok(oTable._oCellContextMenu.getItems()[0].__isOriginal, "The menu item has been reused");
+		assert.strictEqual(oTable._oCellContextMenu.getItems().length, 1, "There is still only one menu item");
+		assert.ok(!oTable._oCellContextMenu.getItems()[0].mEventRegistry.select[0].fFunction.__isOriginal,
+			"The menu item select event handler has been updated");
+		assert.strictEqual(oTable._oCellContextMenu.getItems()[0].mEventRegistry.select.length, 1,
+			"There is still only one menu item select event handler attached");
+
+		oColumnA.setVisible(false);
+		sap.ui.getCore().applyChanges();
+
+		var oColumnB = oTable.getColumns()[1];
+		this.stub(oColumnB, "isFilterableByMenu").returns(true);
+
+		// Cell [1, 0]: The menu will be closed.
+		// Cell [2, 0]: The menu will be opened.
+		TableUtils.Menu.openDataCellContextMenu(oTable, TableUtils.getCellInfo(getCell(0, 0)), true);
+		this.assertDataCellContextMenuOpen(assert, 0, 0, true);
+		this.assertDataCellContextMenuOpen(assert, 1, 0, false);
 		this.assertFirstMenuItemHovered(assert, oTable._oCellContextMenu, true);
 		assert.ok(oTable._oCellContextMenu.__isOriginal, "The menu has been reused");
 		assert.ok(oTable._oCellContextMenu.getItems()[0].__isOriginal, "The menu item has been reused");
@@ -469,7 +476,7 @@ sap.ui.require([
 		oColumn.setFilterProperty("A");
 
 		oTable.setEnableCellFilter(true);
-		TableUtils.Menu.openDataCellContextMenu(oTable, 0, 0);
+		TableUtils.Menu.openDataCellContextMenu(oTable, TableUtils.getCellInfo(getCell(0, 0)));
 
 		// Filter
 		var oFilter = this.spy(oTable, "filter");
@@ -511,7 +518,7 @@ sap.ui.require([
 
 		oTable.setEnableCellFilter(true);
 
-		TableUtils.Menu.openDataCellContextMenu(oTable, 0, 0);
+		TableUtils.Menu.openDataCellContextMenu(oTable, TableUtils.getCellInfo(getCell(0, 0)));
 		this.assertDataCellContextMenuOpen(assert, 0, 0, true);
 
 		TableUtils.Menu.closeDataCellContextMenu();
@@ -529,7 +536,7 @@ sap.ui.require([
 
 		assert.ok(!oTable._oCellContextMenu, "Context menu does not exist");
 
-		TableUtils.Menu.openDataCellContextMenu(oTable, 0, 0);
+		TableUtils.Menu.openDataCellContextMenu(oTable, TableUtils.getCellInfo(getCell(0, 0)));
 		this.assertDataCellContextMenuOpen(assert, 0, 0, true);
 
 		TableUtils.Menu.closeDataCellContextMenu(oTable);
