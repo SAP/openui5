@@ -109,18 +109,17 @@ function (
 		});
 
 		QUnit.test('createAndApplyChange shall not crash if no change handler can be found', function (assert) {
-			assert.expect(5);
+			assert.expect(4);
 			var oUtilsLogStub = sandbox.stub(Utils.log, "warning");
 			var oChangeSpecificData = {};
 			var oControlType = {};
 			var oControl = {};
 			var oChange = {
 				setQueuedForApply: function() {
-					assert.ok(true, "the function was called");
+					assert.ok(true, "the change was queued");
 				},
-				markFinished: function(oResult) {
-					assert.equal(oResult.success, false, "the function was called with success=false");
-					assert.ok(oResult.error, "the function was called with an error");
+				setInitialApplyState: function() {
+					assert.ok(true, "the state was reset");
 				}
 			};
 
@@ -1978,7 +1977,7 @@ function (
 			}.bind(this));
 		});
 
-		QUnit.test("_applyChangesOnControl dependency test 6 (with controlDependencies)", function (assert) {
+		QUnit.test("_applyChangesOnControl dependency test 5 (with controlDependencies)", function (assert) {
 			var oControlForm1 = new Control("form6-1");
 			var oControlGroup1 = new Control("group6-1");
 
@@ -2040,7 +2039,7 @@ function (
 			}.bind(this));
 		});
 
-		QUnit.test("_applyChangesOnControl dependency test 7 - with broken changes", function (assert) {
+		QUnit.test("_applyChangesOnControl dependency test 6 - with broken changes", function (assert) {
 			var oControlGroup1 = new Control("group7-1");
 
 			var oChange0 = new Change(getLabelChangeContent("fileNameChange0"));
@@ -2808,7 +2807,6 @@ function (
 			var oSetInitialStub = sandbox.stub(this.oChange, "setInitialApplyState");
 
 			return this.oFlexController.checkTargetAndApplyChange(this.oChange, this.oControl, {modifier: XmlTreeModifier, view: this.oView})
-
 			.then(function(vReturn) {
 				assert.equal(vReturn.error.message, "Change cannot be applied in XML. Retrying in JS.", "the function returns success: false and an error as parameter");
 				assert.notOk(vReturn.success, "the function returns success: false and an error as parameter");
@@ -2834,7 +2832,6 @@ function (
 			var oSetInitialStub = sandbox.stub(this.oChange, "setInitialApplyState");
 
 			return this.oFlexController.checkTargetAndApplyChange(this.oChange, this.oControl, {modifier: XmlTreeModifier, view: this.oView})
-
 			.then(function () {
 				assert.equal(oSetInitialStub.callCount, 1, "the setInitialApplyState function was called");
 				assert.equal(oMergeErrorStub.callCount, 1, "an error was thrown");
@@ -2882,7 +2879,6 @@ function (
 			var oSetInitialStub = sandbox.stub(this.oChange, "setInitialApplyState");
 
 			return this.oFlexController.checkTargetAndApplyChange(this.oChange, this.oControl, {modifier: XmlTreeModifier, view: this.oView})
-
 			.then(function() {
 				assert.ok(this.oChangeHandlerApplyChangeStub.calledOnce, "apply change functionality was called");
 				assert.equal(oSetInitialStub.callCount, 1, "the setInitialApplyState function was called");
@@ -2924,7 +2920,6 @@ function (
 			this.oChange.markFinished();
 
 			return this.oFlexController.checkTargetAndApplyChange(this.oChange, this.oControl, {modifier: XmlTreeModifier, view: this.oView})
-
 			.then(function() {
 				assert.equal(this.oChangeHandlerApplyChangeStub.callCount, 0, "the change handler was not called again");
 			}.bind(this));
@@ -2940,7 +2935,6 @@ function (
 			this.oControl = this.oView.childNodes[0];
 
 			return this.oFlexController._removeFromAppliedChangesAndMaybeRevert(this.oChange, this.oControl, {modifier: XmlTreeModifier, view: this.oView}, true)
-
 			.then(function() {
 				assert.equal(this.oChangeHandlerRevertChangeStub.callCount, 0, "the changehandler wasn't called");
 				assert.equal(this.oControl.getElementsByTagName("customData").length, 0, "no customData is available");
@@ -2980,7 +2974,6 @@ function (
 			this.oChange.setRevertData(oRevertData);
 
 			return this.oFlexController.checkTargetAndApplyChange(this.oChange, this.oControl, {modifier: XmlTreeModifier, view: this.oView})
-
 			.then(function() {
 				assert.ok(this.oChangeHandlerApplyChangeStub.calledOnce, "the change was applied");
 				assert.equal(this.oAddAppliedCustomDataStub.callCount, 1, "custom data was added");
