@@ -2145,19 +2145,6 @@ sap.ui.define([
 	});
 
 	//*********************************************************************************************
-	QUnit.test("_delete: pending changes", function (assert) {
-		var oBinding = this.bindContext("/EMPLOYEES('42')");
-
-		this.mock(oBinding).expects("hasPendingChanges").withExactArgs().returns(true);
-		this.mock(oBinding).expects("deleteFromCache").never();
-		this.mock(oBinding).expects("_fireChange").never();
-
-		assert.throws(function () {
-			oBinding._delete({/*oGroupLock*/}, "EMPLOYEES('42')");
-		}, new Error("Cannot delete due to pending changes"));
-	});
-
-	//*********************************************************************************************
 	QUnit.test("refreshInternal", function (assert) {
 		var oBinding,
 			oBindingMock = this.mock(ODataContextBinding.prototype),
