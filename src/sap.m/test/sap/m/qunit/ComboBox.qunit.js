@@ -149,6 +149,7 @@ sap.ui.define([
 		assert.ok(oComboBox._getList().hasStyleClass(oComboBox.getRenderer().CSS_CLASS_COMBOBOX + "List"));
 		assert.strictEqual(oComboBox.getShowSecondaryValues(), false, 'By default the showSecondaryValues property of the ComboBox control is "false"');
 		assert.strictEqual(oComboBox.getFilterSecondaryValues(), false, 'By default the filterSecondaryValues property of the ComboBox control is "false"');
+		assert.ok(jQuery(oComboBox.getOpenArea()).hasClass("sapMInputBaseIconContainer"), "The correct dom is returned for the open area");
 
 		// cleanup
 		oComboBox.destroy();
