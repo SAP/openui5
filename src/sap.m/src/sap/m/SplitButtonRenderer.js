@@ -94,13 +94,7 @@ sap.ui.define(["sap/m/library", "sap/ui/core/InvisibleText"],
 
 		SplitButtonRenderer.writeAriaLabelledBy = function(oButton, mAccProperties) {
 			var sAriaLabelledByValue = "",
-				sTitleAttribute = oButton.getTitleAttributeValue(),
 				oButtonTypeAriaLabelId = oButton.getButtonTypeAriaLabelId();
-
-			if (sTitleAttribute) {
-				sAriaLabelledByValue += oButton.getTooltipInfoLabel(sTitleAttribute).getId();
-				sAriaLabelledByValue += " ";
-			}
 
 			if (oButton.getText()) {
 				sAriaLabelledByValue += oButton._getTextButton().getId() + "-content";
