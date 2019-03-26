@@ -436,28 +436,48 @@ function($, Core, KeyCodes, QUtils, Device, XMLView) {
 
 	QUnit.test("ObjectPageSection SPACE - browser scrolling is prevented", function (assert) {
 		var oSection = Core.byId("UxAP-70_KeyboardHandling--section-with-single-sub-section"),
-			oEvent = {
+			oInput = Core.byId("UxAP-70_KeyboardHandling--input-single-sub-section"),
+			oEventSection = {
 				keyCode: KeyCodes.SPACE,
-				preventDefault: function () {}
+				preventDefault: function () {},
+				srcControl: oSection
 			},
-			oSpy = this.spy(oEvent, "preventDefault");
+			oSpySection = this.spy(oEventSection, "preventDefault"),
+			oEventInput = {
+				keyCode: KeyCodes.SPACE,
+				preventDefault: function () {},
+				srcControl: oInput
+			},
+			oSpyInput = this.spy(oEventInput, "preventDefault");
 
-		oSection.onkeydown(oEvent);
+		oSection.onkeydown(oEventSection);
+		assert.ok(oSpySection.calledOnce, "preventDefault is called on SPACE key for the section");
 
-		assert.ok(oSpy.calledOnce, "preventDefault is called on SPACE key for the section");
+		oInput.onkeydown(oEventInput);
+		assert.notOk(oSpyInput.called, "preventDefault is not called on SPACE key for the internal input");
 	});
 
 	QUnit.test("ObjectPageSubSection SPACE - browser scrolling is prevented", function (assert) {
 		var oSection = Core.byId("UxAP-70_KeyboardHandling--multiple-sub-section-1"),
-			oEvent = {
+			oInput = Core.byId("UxAP-70_KeyboardHandling--input-multiple-sub-section"),
+			oEventSection = {
 				keyCode: KeyCodes.SPACE,
-				preventDefault: function () {}
+				preventDefault: function () {},
+				srcControl: oSection
 			},
-			oSpy = this.spy(oEvent, "preventDefault");
+			oSpySection = this.spy(oEventSection, "preventDefault"),
+			oEventInput = {
+				keyCode: KeyCodes.SPACE,
+				preventDefault: function () {},
+				srcControl: oInput
+			},
+			oSpyInput = this.spy(oEventInput, "preventDefault");
 
-		oSection.onkeydown(oEvent);
+		oSection.onkeydown(oEventSection);
+		assert.ok(oSpySection.calledOnce, "preventDefault is called on SPACE key for the subsection");
 
-		assert.ok(oSpy.calledOnce, "preventDefault is called on SPACE key for the subsection");
+		oInput.onkeydown(oEventInput);
+		assert.notOk(oSpyInput.called, "preventDefault is not called on SPACE key for the internal input");
 	});
 
 });

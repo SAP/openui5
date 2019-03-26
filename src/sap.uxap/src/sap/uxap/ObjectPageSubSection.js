@@ -563,7 +563,7 @@ sap.ui.define([
 
 	ObjectPageSubSection.prototype.onkeydown = function (oEvent) {
 		// Prevent browser scrolling in case of SPACE key
-		if (oEvent.keyCode === KeyCodes.SPACE) {
+		if (oEvent.keyCode === KeyCodes.SPACE && oEvent.srcControl.isA("sap.uxap.ObjectPageSubSection")) {
 			oEvent.preventDefault();
 		}
 
