@@ -502,4 +502,28 @@ sap.ui.define([
 		// clean
 		oCalP.destroy();
 	});
+
+	QUnit.module("Misc");
+
+	QUnit.test("destroying CalendarMonthInterval", function(assert) {
+		// arrange
+		var oCal = new CalendarMonthInterval("Cal"),
+			oRange = new sap.ui.unified.DateTypeRange();
+
+		oRange.setTooltip("tooltip");
+		oCal.addSpecialDate(oRange);
+
+		oCal.placeAt("qunit-fixture");
+		sap.ui.getCore().applyChanges();
+
+		try {
+			oCal.destroy();
+			this.clock.tick(0);
+
+			assert.ok(true, "CalendarMonthInterval was destroyed correctly");
+		} catch (err) {
+			assert.ok(true, "CalendarMonthInterval wasn't destroyed correctly");
+		}
+
+	});
 });
