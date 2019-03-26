@@ -199,6 +199,7 @@ sap.ui.define([
 			this.setTooltip(this._oCallout);
 			this.setTooltip = function() {
 				Log.warning("Setting toolstips for notifiers deactivated");
+				return this;
 			};
 
 			this._proxyEnableMessageSelect = jQuery.proxy(fnEnableMessageSelect, this);

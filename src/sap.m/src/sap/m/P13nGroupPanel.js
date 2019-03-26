@@ -143,6 +143,7 @@ sap.ui.define([
 		if (this._oGroupPanel) {
 			this._oGroupPanel.setMaxConditions(sMax);
 		}
+		return this;
 	};
 
 	/**
@@ -158,12 +159,14 @@ sap.ui.define([
 		this.setProperty("containerQuery", b);
 
 		this._oGroupPanel.setContainerQuery(b);
+		return this;
 	};
 
 	P13nGroupPanel.prototype.setLayoutMode = function(sMode) {
 		this.setProperty("layoutMode", sMode);
 
 		this._oGroupPanel.setLayoutMode(sMode);
+		return this;
 	};
 
 	/**
@@ -503,6 +506,7 @@ sap.ui.define([
 		if (fListener) {
 			fListener(this, jQuery.proxy(this._updateValidationResult, this));
 		}
+		return this;
 	};
 
 	P13nGroupPanel.prototype._notifyChange = function() {

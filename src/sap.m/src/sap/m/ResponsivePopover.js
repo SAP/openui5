@@ -463,6 +463,7 @@ sap.ui.define([
 	ResponsivePopover.prototype.addContent = function(oControl){
 		this._bContentChanged = true;
 		this.addAggregation("content", oControl);
+		return this;
 	};
 
 	/**

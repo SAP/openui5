@@ -469,6 +469,7 @@ sap.ui.define([
 			var that = this;
 			updateControls(that);
 
+			return this;
 		};
 
 		// since some Properties and the change event are not available on all controls (Link)

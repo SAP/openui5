@@ -934,6 +934,7 @@ function(
 		this.oSelectedItem = null;
 		this._aTabKeys = [];
 		this.destroyAggregation("items");
+		return this;
 	};
 
 	IconTabHeader.prototype.addItem = function(oItem) {

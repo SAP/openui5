@@ -468,6 +468,7 @@ sap.ui.define([
 		}
 		this.rerenderSidebar();
 		this.refreshSelectionHighlighting();
+		return this;
 	};
 
 	/**
@@ -486,6 +487,7 @@ sap.ui.define([
 	CollectionInspector.prototype.insertContent = function(oContent, iIndex) {
 		this.insertAggregation("content",oContent,iIndex,true);
 		this.rerenderContent();
+		return this;
 	};
 
 	/**
@@ -500,6 +502,7 @@ sap.ui.define([
 	CollectionInspector.prototype.addContent = function(oContent) {
 		this.addAggregation("content",oContent,true);
 		this.rerenderContent();
+		return this;
 	};
 
 	/**
@@ -510,8 +513,9 @@ sap.ui.define([
 	 * @public
 	 */
 	CollectionInspector.prototype.removeContent = function(vContent) {
-		this.removeAggregation("content",vContent,true);
+		var vResult = this.removeAggregation("content",vContent,true);
 		this.rerenderContent();
+		return vResult;
 	};
 
 	/**
@@ -521,8 +525,9 @@ sap.ui.define([
 	 * @public
 	 */
 	CollectionInspector.prototype.removeAllContent = function() {
-		this.removeAllAggregation("content",true);
+		var vResult = this.removeAllAggregation("content",true);
 		this.rerenderContent();
+		return vResult;
 	};
 
 	/**
@@ -534,6 +539,7 @@ sap.ui.define([
 	CollectionInspector.prototype.destroyContent = function() {
 		this.destroyAggregation("content",true);
 		this.rerenderContent();
+		return this;
 	};
 
 	/**

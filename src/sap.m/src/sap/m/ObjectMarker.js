@@ -596,6 +596,7 @@ sap.ui.define([
 
 		this.setProperty("icon", sIcon , bSuppressInvalidate);
 		oIcon.setSrc(sIcon);
+		return this;
 	};
 
 	/**
@@ -620,6 +621,7 @@ sap.ui.define([
 
 	CustomText.prototype.setText = function(sText, bSuppressInvalidate) {
 		this.setProperty("text", sText , bSuppressInvalidate);
+		return this;
 	};
 
 	/****************************************** CUSTOM LINK CONTROL ****************************************************/
@@ -650,6 +652,7 @@ sap.ui.define([
 
 		this.setProperty("icon", sIcon , bSuppressInvalidate);
 		oIcon.setSrc(sIcon);
+		return this;
 	};
 
 	CustomLink.prototype._getTabindex = function () {
@@ -678,6 +681,7 @@ sap.ui.define([
 
 	CustomLink.prototype.setText = function(sText, bSuppressInvalidate){
 		this.setProperty("text", sText, bSuppressInvalidate);
+		return this;
 	};
 
 	return ObjectMarker;

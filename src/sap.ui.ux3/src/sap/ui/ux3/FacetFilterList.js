@@ -164,6 +164,7 @@ sap.ui.define([
 			oItem.setKey("generatedkey" + this.indexOfItem(oItem));
 		}
 		this.updateText4All();
+		return this;
 	};
 
 	FacetFilterList.prototype.insertItem = function(oItem, iIndex) {
@@ -172,11 +173,13 @@ sap.ui.define([
 			oItem.setKey("generatedkey" + this.indexOfItem(oItem));
 		}
 		this.updateText4All();
+		return this;
 	};
 
 	FacetFilterList.prototype.removeItem = function(oItem) {
-		this._oListBox.removeItem(oItem);
+		var vResult = this._oListBox.removeItem(oItem);
 		this.updateText4All();
+		return vResult;
 	};
 
 	FacetFilterList.prototype.removeAllItems = function() {
@@ -190,6 +193,7 @@ sap.ui.define([
 		this._oListBox.destroyItems();
 		this._oListBox.addItem(this._oItemAll);
 		this.updateText4All();
+		return this;
 	};
 
 	FacetFilterList.prototype.indexOfItem = function(oItem) {

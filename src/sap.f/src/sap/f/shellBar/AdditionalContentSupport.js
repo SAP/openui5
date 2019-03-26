@@ -119,7 +119,7 @@ sap.ui.define([
 			};
 
 			this.destroyAdditionalContent = function (oControl) {
-
+				return this;
 			};
 
 			this.getAdditionalContent = function () {

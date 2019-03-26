@@ -658,6 +658,7 @@ sap.ui.define([
 				this._IntervalCall = undefined;
 			}
 			this.addAggregation("content", oContent);
+			return this;
 		};
 
 		/**
@@ -677,6 +678,7 @@ sap.ui.define([
 				this._IntervalCall = undefined;
 			}
 			this.insertAggregation("content", oContent, iIndex);
+			return this;
 		};
 
 		/**

@@ -463,6 +463,7 @@ sap.ui.define([
 		if (this.getParent()) {
 			this.getParent().updateItems();
 		}
+		return this;
 	};
 
 	/**

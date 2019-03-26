@@ -1181,6 +1181,7 @@ function(
 	Column.prototype.setVisible = function(bVisible) {
 		this.setProperty("visible", bVisible);
 		ColumnMenu._updateVisibilityIcon(this.getParent(), this.getIndex(), bVisible);
+		return this;
 	};
 
 	/**

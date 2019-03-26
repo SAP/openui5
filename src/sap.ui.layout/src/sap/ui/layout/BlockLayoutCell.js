@@ -137,12 +137,12 @@ sap.ui.define([
 		};
 
 		BlockLayoutCell.prototype.setTitleLink = function(oObject) {
-				if (oObject && oObject.getMetadata().getName() !== "sap.m.Link") {
-					Log.warning("sap.ui.layout.BlockLayoutCell " + this.getId() + ": Can't add value for titleLink aggregation different than sap.m.Link.");
-					return;
-				}
+			if (oObject && oObject.getMetadata().getName() !== "sap.m.Link") {
+				Log.warning("sap.ui.layout.BlockLayoutCell " + this.getId() + ": Can't add value for titleLink aggregation different than sap.m.Link.");
+				return this;
+			}
 
-				this.setAggregation("titleLink", oObject);
+			this.setAggregation("titleLink", oObject);
 
 			return this;
 		};
