@@ -1,13 +1,13 @@
 /*global QUnit*/
 
 sap.ui.define([
-	"sap/ui/dt/test/Element",
+	"sap/ui/dt/enablement/Util",
 	"sap/ui/dt/DesignTime",
 	"sap/m/Button",
 	"sap/ui/layout/VerticalLayout"
 ],
 function (
-	Element,
+	EnablementUtil,
 	DesignTime,
 	Button,
 	VerticalLayout
@@ -31,13 +31,13 @@ function (
 		}
 	}, function () {
 		QUnit.test("when the getInfo is called", function(assert) {
-			var oElementTestInfo = Element.getInfo(this.oButton);
+			var oElementTestInfo = EnablementUtil.getInfo(this.oButton);
 			assert.ok(oElementTestInfo.metadata, "metadata is retrieved");
 			assert.ok(oElementTestInfo.overlay, "overlay is retrieved");
 		});
 
 		QUnit.test("when the getAggregationsInfo is called for layout without content", function(assert) {
-			var oAggregationsTestInfo = Element.getAggregationsInfo(this.oButton);
+			var oAggregationsTestInfo = EnablementUtil.getAggregationsInfo(this.oButton);
 			var aAggregationNames = Object.keys(oAggregationsTestInfo);
 			var bNotIgnoredAggregationFound = false;
 			aAggregationNames.forEach(function(sAggregationName) {
@@ -64,7 +64,7 @@ function (
 		}
 	}, function () {
 		QUnit.test("when the getAggregationInfo is called for layout without content", function(assert) {
-			var oAggregationTestInfo = Element.getAggregationInfo(this.oVerticalLayout, "content");
+			var oAggregationTestInfo = EnablementUtil.getAggregationInfo(this.oVerticalLayout, "content");
 			assert.strictEqual(oAggregationTestInfo.ignored, false, "aggregation isn't ignored in DT Metadata");
 			assert.strictEqual(oAggregationTestInfo.domRefDeclared, true, "domRef for content aggregation is declared in DT Metadata");
 			assert.strictEqual(oAggregationTestInfo.domRefFound, true, "domRef for content aggregation is found in dom");
@@ -75,7 +75,7 @@ function (
 		});
 
 		QUnit.test("when the getAggregationsInfo is called for layout without content", function(assert) {
-			var oAggregationsTestInfo = Element.getAggregationsInfo(this.oVerticalLayout);
+			var oAggregationsTestInfo = EnablementUtil.getAggregationsInfo(this.oVerticalLayout);
 			assert.ok(oAggregationsTestInfo.content, "content aggregation info is retrieved");
 		});
 	});
@@ -100,7 +100,7 @@ function (
 		}
 	}, function () {
 		QUnit.test("when the getAggregationInfo is called for layout with content", function (assert) {
-			var oAggregationTestInfo = Element.getAggregationInfo(this.oVerticalLayout, "content");
+			var oAggregationTestInfo = EnablementUtil.getAggregationInfo(this.oVerticalLayout, "content");
 			assert.strictEqual(oAggregationTestInfo.ignored, false, "aggregation isn't ignored in DT Metadata");
 			assert.strictEqual(oAggregationTestInfo.domRefDeclared, true, "domRef for content aggregation is declared in DT Metadata");
 			assert.strictEqual(oAggregationTestInfo.domRefFound, true, "domRef for content aggregation is found in dom");
@@ -112,7 +112,6 @@ function (
 	});
 
 	QUnit.done(function() {
-		jQuery("#qunit-fixture").hide();
+		document.getElementById("qunit-fixture").style.display = "none";
 	});
-
 });

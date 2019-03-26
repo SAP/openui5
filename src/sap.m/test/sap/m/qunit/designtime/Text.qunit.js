@@ -1,8 +1,8 @@
 sap.ui.define([
 	"sap/ui/qunit/QUnitUtils",
 	"sap/ui/qunit/utils/createAndAppendDiv",
-	"sap/ui/rta/enablement/controlTest"
-], function(QUnitUtils, createAndAppendDiv, rtaControlEnablingCheck) {
+	"sap/ui/rta/enablement/elementActionTest"
+], function(QUnitUtils, createAndAppendDiv, elementActionTest) {
 	'use strict';
 	createAndAppendDiv("content");
 
@@ -20,7 +20,7 @@ sap.ui.define([
 			"then the control has been renamed to the old value (Text 1)");
 	};
 
-	rtaControlEnablingCheck("Checking the rename action for a Text", {
+	elementActionTest("Checking the rename action for a Text", {
 		xmlView: '<mvc:View xmlns:mvc="sap.ui.core.mvc" xmlns:m="sap.m">"' +
 		'<m:Text text="Text 1" id="text" />' +
 		'</mvc:View>'
@@ -49,7 +49,7 @@ sap.ui.define([
 		assert.strictEqual(oViewAfterAction.byId("text").getVisible(), true, "then the Text element is visible");
 	};
 
-	rtaControlEnablingCheck("Checking the remove action for Text", {
+	elementActionTest("Checking the remove action for Text", {
 		xmlView: '<mvc:View xmlns:mvc="sap.ui.core.mvc" xmlns:m="sap.m">"' +
 		'<m:Text text="Text 1" id="text" />' +
 		'</mvc:View>'
@@ -68,7 +68,7 @@ sap.ui.define([
 		afterRedo: fnConfirmTextIsInvisible
 	});
 
-	rtaControlEnablingCheck("Checking the reveal action for a Text", {
+	elementActionTest("Checking the reveal action for a Text", {
 		xmlView: '<mvc:View xmlns:mvc="sap.ui.core.mvc" xmlns:m="sap.m">"' +
 		'<m:Text text="Text 1" id="text" visible="false"/>' +
 		'</mvc:View>'

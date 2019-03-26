@@ -1,7 +1,7 @@
 /*global QUnit*/
 
 sap.ui.define([
-	"sap/ui/dt/test/report/QUnit",
+	"sap/ui/dt/enablement/report/QUnitReport",
 	"sap/ui/thirdparty/sinon-4",
 	"sap/m/Button" // Used implicitly by ElementEnablementTest
 ],

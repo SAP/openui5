@@ -20,8 +20,7 @@ sap.ui.define([
 	"sap/ui/thirdparty/jquery",
 	//we have to ensure to load fl, so that change handler gets registered,
 	"sap/ui/fl/library",
-	'sap/ui/thirdparty/sinon',
-	'sap/ui/thirdparty/sinon-qunit'
+	"sap/ui/thirdparty/sinon-4"
 ],
 function (
 	UIComponent,
@@ -67,7 +66,7 @@ function (
 	 * @param {string}   [mOptions.layer] - (optional) flex layer used during testing, use it in case actions are enabled for other layers then CUSTOMER
 	 * @param {string|object}   mOptions.xmlView - XML view content or all settings available to sap.ui.xmlView, to have a view to apply the action
 	 * @param {sap.ui.model.Model}   [mOptions.model] - any model to be assigned on the view
-	 * @param {string}   [mOptions.placeAt="content"] - Id of tag to place view at runtime
+	 * @param {string}   [mOptions.placeAt="qunit-fixture"] - Id of tag to place view at runtime
 	 * @param {boolean}   [mOptions.jsOnly] - set to true, if change handler cannot work on xml view
 	 * @param {object}   mOptions.action - action to operate on <code>mOptions.xmlView</code>
 	 * @param {string}   mOptions.action.name - name of the action - e.g. 'remove', 'move', 'rename'
@@ -150,7 +149,7 @@ function (
 			this.oUiComponentContainer = new ComponentContainer({
 				component : this.oUiComponent
 			});
-			this.oUiComponentContainer.placeAt(mOptions.placeAt || "content");
+			this.oUiComponentContainer.placeAt(mOptions.placeAt || "qunit-fixture");
 
 			this.oView = this.oUiComponent.getRootControl();
 
@@ -234,8 +233,8 @@ function (
 			QUnit.test("When applying the change directly on the XMLView", function(assert){
 				// Stub LREP access to have the command as UI change (needs the view to build the correct ids)
 				var aChanges = [];
-				this.stub(ChangePersistence.prototype, "getChangesForComponent").returns(Promise.resolve(aChanges));
-				this.stub(ChangePersistence.prototype, "getCacheKey").returns(Promise.resolve("etag-123"));
+				sandbox.stub(ChangePersistence.prototype, "getChangesForComponent").returns(Promise.resolve(aChanges));
+				sandbox.stub(ChangePersistence.prototype, "getCacheKey").returns(Promise.resolve("etag-123"));
 
 				return createViewInComponent.call(this, SYNC).then(function(){
 					return buildCommand.call(this, assert);
@@ -286,7 +285,7 @@ function (
 			.then(function() {
 				sap.ui.getCore().applyChanges();
 
-				// Verfify result
+				// Verify result
 				mOptions.afterAction(this.oUiComponent, this.oView, assert);
 				done();
 			}.bind(this));

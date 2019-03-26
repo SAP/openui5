@@ -1,34 +1,30 @@
 sap.ui.define([
-	"sap/ui/qunit/utils/createAndAppendDiv",
-	"sap/ui/dt/test/report/QUnit",
-	"sap/ui/dt/test/ElementEnablementTest",
 	"sap/m/FlexBox",
 	"sap/m/Text",
-	"sap/ui/rta/enablement/controlTest"
-], function(createAndAppendDiv, QUnitReport, ElementEnablementTest, FlexBox, Text, rtaControlEnablingCheck) {
+	"sap/ui/dt/enablement/elementDesigntimeTest",
+	"sap/ui/rta/enablement/elementActionTest"
+], function(
+	FlexBox,
+	Text,
+	elementDesigntimeTest,
+	elementActionTest
+) {
 	"use strict";
-	createAndAppendDiv("content");
 
-	var oElementEnablementTest = new ElementEnablementTest({
-		type: "sap.m.FlexBox",
-		create: function () {
-			return new FlexBox({
-				items: [
-					new Text({text: "Text"}),
-					new Text({text: "Text"})
-				]
-			});
-		}
-	});
-
-	return oElementEnablementTest.run()
-
-	.then(function (oData) {
-		new QUnitReport({
-			data: oData
+	return Promise.resolve()
+	.then(function () {
+		return elementDesigntimeTest({
+			type: "sap.m.FlexBox",
+			create: function () {
+				return new FlexBox({
+					items: [
+						new Text({text: "Text"}),
+						new Text({text: "Text"})
+					]
+				});
+			}
 		});
 	})
-
 	.then(function() {
 		// Move action
 		var fnConfirmElement1IsOn3rdPosition = function (oUiComponent, oViewAfterAction, assert) {
@@ -42,7 +38,7 @@ sap.ui.define([
 				"then the control has been moved to the previous position");
 		};
 
-		rtaControlEnablingCheck("Checking the move action for FlexBox control", {
+		elementActionTest("Checking the move action for FlexBox control", {
 			xmlView: '<mvc:View xmlns:mvc="sap.ui.core.mvc" xmlns="sap.m">' +
 			'<FlexBox id="flexBox">' +
 			'<Text text="Text 1" id="text1" />' +
@@ -90,7 +86,7 @@ sap.ui.define([
 			assert.strictEqual(oViewAfterAction.byId("flexBox").getVisible(), true, "then the FlexBox element is visible");
 		};
 
-		rtaControlEnablingCheck("Checking the remove action for FlexBox", {
+		elementActionTest("Checking the remove action for FlexBox", {
 			xmlView: '<mvc:View xmlns:mvc="sap.ui.core.mvc" xmlns="sap.m">"' +
 			'<FlexBox id="flexBox">' +
 			'<Text text="Text 1" id="text1" />' +
@@ -106,7 +102,7 @@ sap.ui.define([
 			afterRedo: fnConfirmFlexBoxIsInvisible
 		});
 
-		rtaControlEnablingCheck("Checking the reveal action for a FlexBox", {
+		elementActionTest("Checking the reveal action for a FlexBox", {
 			xmlView: '<mvc:View xmlns:mvc="sap.ui.core.mvc" xmlns="sap.m">"' +
 			'<FlexBox id="flexBox" visible="false">' +
 			'<Text text="Text 1" id="text1" />' +
@@ -122,5 +118,4 @@ sap.ui.define([
 			afterRedo: fnConfirmFlexBoxIsVisible
 		});
 	});
-
 });

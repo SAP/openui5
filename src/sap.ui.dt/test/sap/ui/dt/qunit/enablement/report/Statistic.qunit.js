@@ -1,7 +1,7 @@
 /*global QUnit*/
 
 sap.ui.define([
-	"sap/ui/dt/test/report/Statistic"
+	"sap/ui/dt/enablement/report/Statistic"
 ],
 function (
 	Statistic
@@ -46,5 +46,4 @@ function (
 	QUnit.done(function() {
 		jQuery("#qunit-fixture").hide();
 	});
-
 });

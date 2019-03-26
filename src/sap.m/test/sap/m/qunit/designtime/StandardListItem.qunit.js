@@ -1,31 +1,25 @@
 sap.ui.define([
-	"sap/ui/qunit/utils/createAndAppendDiv",
-	"sap/ui/dt/test/report/QUnit",
-	"sap/ui/dt/test/ElementEnablementTest",
 	"sap/m/StandardListItem",
-	"sap/ui/rta/enablement/controlTest"
-], function(createAndAppendDiv, QUnitReport, ElementEnablementTest, StandardListItem, rtaControlEnablingCheck) {
-	'use strict';
-	createAndAppendDiv("content");
+	"sap/ui/dt/enablement/elementDesigntimeTest",
+	"sap/ui/rta/enablement/elementActionTest"
+], function (
+	StandardListItem,
+	elementDesigntimeTest,
+	elementActionTest
+) {
+	"use strict";
 
-
-	var oElementEnablementTest = new ElementEnablementTest({
-		type: "sap.m.StandardListItem",
-		create: function () {
-			return new StandardListItem({
-				title: "Title"
-			});
-		}
-	});
-
-	return oElementEnablementTest.run()
-
-	.then(function (oData) {
-		new QUnitReport({
-			data: oData
+	return Promise.resolve()
+	.then(function () {
+		return elementDesigntimeTest({
+			type: "sap.m.StandardListItem",
+			create: function () {
+				return new StandardListItem({
+					title: "Title"
+				});
+			}
 		});
 	})
-
 	.then(function() {
 		// Rename action
 		var fnConfirmTitleIsRenamedWithNewValue = function (oStandardListItem, oViewAfterAction, assert) {
@@ -40,7 +34,7 @@ sap.ui.define([
 				"then the control has been renamed to the old value (Initial Title)");
 		};
 
-		rtaControlEnablingCheck("Checking the rename action for a StandardListItem", {
+		elementActionTest("Checking the rename action for a StandardListItem", {
 			xmlView: '<mvc:View xmlns:mvc="sap.ui.core.mvc" xmlns:m="sap.m">"' +
 			'<m:List id="list">' +
 			'<m:StandardListItem id="listItem1" title="Initial Title"/>' +
@@ -73,7 +67,7 @@ sap.ui.define([
 			assert.strictEqual(oViewAfterAction.byId("listItem1").getVisible(), true, "then the StandardListItem element is visible");
 		};
 
-		rtaControlEnablingCheck("Checking the remove action for a StandardListItem", {
+		elementActionTest("Checking the remove action for a StandardListItem", {
 			xmlView: '<mvc:View xmlns:mvc="sap.ui.core.mvc" xmlns:m="sap.m">"' +
 			'<m:List id="list">' +
 			'<m:StandardListItem id="listItem1" title="Item"/>' +
@@ -91,7 +85,7 @@ sap.ui.define([
 			afterRedo: fnConfirmStandardListItemIsInvisible
 		});
 
-		rtaControlEnablingCheck("Checking the reveal action for a StandardListItem", {
+		elementActionTest("Checking the reveal action for a StandardListItem", {
 			xmlView: '<mvc:View xmlns:mvc="sap.ui.core.mvc" xmlns:m="sap.m">"' +
 			'<m:List id="list">' +
 			'<m:StandardListItem id="listItem1" title="Item" visible="false"/>' +
@@ -109,5 +103,4 @@ sap.ui.define([
 			afterRedo: fnConfirmStandardListItemIsVisible
 		});
 	});
-
 });

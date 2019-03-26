@@ -5,8 +5,8 @@
 // Provides class sap.ui.dt.test.LibraryEnablementTest.
 sap.ui.define([
 	'sap/ui/base/ManagedObject',
-	'sap/ui/dt/test/ElementEnablementTest2'],
-function(ManagedObject, ElementEnablementTest2) {
+	'controlEnablementReport/ElementActionDefinitionTest'
+], function(ManagedObject, ElementActionDefinitionTest) {
 	"use strict";
 
 
@@ -30,7 +30,7 @@ function(ManagedObject, ElementEnablementTest2) {
 	 * @alias sap.ui.dt.test.LibraryEnablementTest2
 	 * @experimental Since 1.48. This class is experimental and provides only limited functionality. Also the API might be changed in future.
 	 */
-	var LibraryEnablementTest2 = ManagedObject.extend("sap.ui.dt.test.LibraryEnablementTest2", /** @lends sap.ui.dt.test.LibraryEnablementTest2.prototype */ {
+	var LibraryEnablementTest2 = ManagedObject.extend("sap.ui.dt.test.LibraryEnablementTest", /** @lends sap.ui.dt.test.LibraryEnablementTest2.prototype */ {
 	});
 
 
@@ -41,7 +41,7 @@ function(ManagedObject, ElementEnablementTest2) {
 				 "sap.uiext.inbox.SubstitutionRulesManager",
 				 "sap.ui.codeeditor.CodeEditor"].indexOf(sType) === -1) {
 			oElementTestData.type = sType;
-			this.aElementEnablementTest.push(new ElementEnablementTest2(oElementTestData));
+			this.aElementEnablementTest.push(new ElementActionDefinitionTest(oElementTestData));
 		}
 	};
 

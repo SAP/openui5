@@ -6,6 +6,6 @@ sap.ui.define([
 	"use strict";
 
 	return elementDesigntimeTest({
-		type: "sap.m.Select"
+		type: "sap.m.semantic.DetailPage"
 	});
 });

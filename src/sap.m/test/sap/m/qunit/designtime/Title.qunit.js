@@ -1,29 +1,23 @@
 sap.ui.define([
-	"sap/ui/qunit/utils/createAndAppendDiv",
-	"sap/ui/dt/test/report/QUnit",
-	"sap/ui/dt/test/ElementEnablementTest",
 	"sap/m/Title",
-	"sap/ui/rta/enablement/controlTest"
-], function(createAndAppendDiv, QUnitReport, ElementEnablementTest, Title, rtaControlEnablingCheck) {
+	"sap/ui/dt/enablement/elementDesigntimeTest",
+	"sap/ui/rta/enablement/elementActionTest"
+], function (
+	Title,
+	elementDesigntimeTest,
+	elementActionTest
+) {
 	"use strict";
-	createAndAppendDiv("content");
 
-
-	var oElementEnablementTest = new ElementEnablementTest({
-		type: "sap.m.Title",
-		create: function () {
-			return new Title();
-		}
-	});
-
-	return oElementEnablementTest.run()
-
-	.then(function (oData) {
-		new QUnitReport({
-			data: oData
+	return Promise.resolve()
+	.then(function () {
+		return elementDesigntimeTest({
+			type: "sap.m.Title",
+			create: function () {
+				return new Title();
+			}
 		});
 	})
-
 	.then(function() {
 		// Rename action
 		var fnConfirmTitleIsRenamedWithNewValue = function (oUiComponent, oViewAfterAction, assert) {
@@ -38,7 +32,7 @@ sap.ui.define([
 				"then the control has been renamed to the old value (Test Title)");
 		};
 
-		rtaControlEnablingCheck("Checking the rename action for a Title", {
+		elementActionTest("Checking the rename action for a Title", {
 			xmlView: '<mvc:View xmlns:mvc="sap.ui.core.mvc" xmlns="sap.m">"' +
 				'<Title id="myTitle" text="Test Title" />' +
 			'</mvc:View>'
@@ -67,7 +61,7 @@ sap.ui.define([
 			assert.strictEqual(oViewAfterAction.byId("myTitle").getVisible(), true, "then the Title element is visible");
 		};
 
-		rtaControlEnablingCheck("Checking the remove action for Title", {
+		elementActionTest("Checking the remove action for Title", {
 			xmlView: '<mvc:View xmlns:mvc="sap.ui.core.mvc" xmlns="sap.m">"' +
 				'<Title id="myTitle" text="Test Title" />' +
 			'</mvc:View>'
@@ -81,7 +75,7 @@ sap.ui.define([
 			afterRedo: fnConfirmTitleIsInvisible
 		});
 
-		rtaControlEnablingCheck("Checking the reveal action for a Title", {
+		elementActionTest("Checking the reveal action for a Title", {
 			xmlView: '<mvc:View xmlns:mvc="sap.ui.core.mvc" xmlns="sap.m">"' +
 				'<Title id="myTitle" text="Test Title" visible="false"/>' +
 			'</mvc:View>'
@@ -95,5 +89,4 @@ sap.ui.define([
 			afterRedo: fnConfirmTitleIsVisible
 		});
 	});
-
 });

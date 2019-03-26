@@ -1,7 +1,6 @@
 sap.ui.define([
-	"sap/ui/dt/test/report/QUnit",
-	"sap/ui/dt/test/ElementEnablementTest",
-	"sap/ui/rta/enablement/controlTest",
+	"sap/ui/dt/enablement/elementDesigntimeTest",
+	"sap/ui/rta/enablement/elementActionTest",
 	"sap/m/Text",
 	"sap/m/Title",
 	"sap/m/OverflowToolbarButton",
@@ -31,9 +30,8 @@ sap.ui.define([
 	"sap/f/semantic/SendEmailAction",
 	"sap/f/semantic/PrintAction"
 ], function (
-	QUnitReport,
-	ElementEnablementTest,
-	rtaControlEnablingCheck,
+	elementDesigntimeTest,
+	elementActionTest,
 	Text,
 	Title,
 	OverflowToolbarButton,
@@ -64,143 +62,138 @@ sap.ui.define([
 	PrintAction
 ) {
 	"use strict";
-	var oElementEnablementTest = new ElementEnablementTest({
-		type: "sap.f.DynamicPage",
-		create: function () {
-			return new SemanticPage({
-				showFooter : true,
-				titleHeading : new Title({text : "Title text"}),
-				titleSnappedHeading : [new Text({text : "Collapsed header content"})],
-				titleExpandedHeading : [new Text({text : "Expanded header content"})],
-				titleSnappedContent : [new Text({text : "Collapsed subheading"})],
-				titleExpandedContent : [new Text({text : "Expanded subheading"})],
-				titleMainAction : new TitleMainAction({text : "TitleMainAction Text"}),
-				titleContent: [
-					new Text({text: "Title Content 1"}),
-					new Text({text: "Title Content 2"}),
-					new Text({text: "Title Content 3"})
-				],
-				editAction : new EditAction({
-					layoutData : [
-						new OverflowToolbarLayoutData({
-							priority : "NeverOverflow"
-						})
-					]
-				}),
-				addAction : new AddAction({
-					layoutData : [
-						new OverflowToolbarLayoutData({
-							priority : "NeverOverflow"
-						})
-					]
-				}),
-				deleteAction : new DeleteAction({
-					layoutData : [
-						new OverflowToolbarLayoutData({
-							priority : "NeverOverflow"
-						})
-					]
-				}),
-				copyAction : new CopyAction({
-					layoutData : [
-						new OverflowToolbarLayoutData({
-							priority : "NeverOverflow"
-						})
-					]
-				}),
-				flagAction : new FlagAction({
-					layoutData : [
-						new OverflowToolbarLayoutData({
-							priority : "NeverOverflow"
-						})
-					]
-				}),
-				favoriteAction : new FavoriteAction({
-					layoutData : [
-						new OverflowToolbarLayoutData({
-							priority : "NeverOverflow"
-						})
-					]
-				}),
-				fullScreenAction : new FullScreenAction({
-					layoutData : [
-						new OverflowToolbarLayoutData({
-							priority : "NeverOverflow"
-						})
-					]
-				}),
-				exitFullScreenAction : new ExitFullScreenAction({
-					layoutData : [
-						new OverflowToolbarLayoutData({
-							priority : "NeverOverflow"
-						})
-					]
-				}),
-				closeAction : new CloseAction({
-					layoutData : [
-						new OverflowToolbarLayoutData({
-							priority : "NeverOverflow"
-						})
-					]
-				}),
-				titleCustomTextActions: [
-					new Button({
-						text : "Title Custom Text Actions",
+
+	return Promise.resolve()
+	.then(function () {
+		return elementDesigntimeTest({
+			type: "sap.f.DynamicPage",
+			create: function () {
+				return new SemanticPage({
+					showFooter : true,
+					titleHeading : new Title({text : "Title text"}),
+					titleSnappedHeading : [new Text({text : "Collapsed header content"})],
+					titleExpandedHeading : [new Text({text : "Expanded header content"})],
+					titleSnappedContent : [new Text({text : "Collapsed subheading"})],
+					titleExpandedContent : [new Text({text : "Expanded subheading"})],
+					titleMainAction : new TitleMainAction({text : "TitleMainAction Text"}),
+					titleContent: [
+						new Text({text: "Title Content 1"}),
+						new Text({text: "Title Content 2"}),
+						new Text({text: "Title Content 3"})
+					],
+					editAction : new EditAction({
 						layoutData : [
 							new OverflowToolbarLayoutData({
 								priority : "NeverOverflow"
 							})
 						]
-					})
-				],
-				titleCustomIconActions : [
-					new OverflowToolbarButton({
-						icon: "sap-icon://cart",
+					}),
+					addAction : new AddAction({
 						layoutData : [
 							new OverflowToolbarLayoutData({
 								priority : "NeverOverflow"
 							})
 						]
+					}),
+					deleteAction : new DeleteAction({
+						layoutData : [
+							new OverflowToolbarLayoutData({
+								priority : "NeverOverflow"
+							})
+						]
+					}),
+					copyAction : new CopyAction({
+						layoutData : [
+							new OverflowToolbarLayoutData({
+								priority : "NeverOverflow"
+							})
+						]
+					}),
+					flagAction : new FlagAction({
+						layoutData : [
+							new OverflowToolbarLayoutData({
+								priority : "NeverOverflow"
+							})
+						]
+					}),
+					favoriteAction : new FavoriteAction({
+						layoutData : [
+							new OverflowToolbarLayoutData({
+								priority : "NeverOverflow"
+							})
+						]
+					}),
+					fullScreenAction : new FullScreenAction({
+						layoutData : [
+							new OverflowToolbarLayoutData({
+								priority : "NeverOverflow"
+							})
+						]
+					}),
+					exitFullScreenAction : new ExitFullScreenAction({
+						layoutData : [
+							new OverflowToolbarLayoutData({
+								priority : "NeverOverflow"
+							})
+						]
+					}),
+					closeAction : new CloseAction({
+						layoutData : [
+							new OverflowToolbarLayoutData({
+								priority : "NeverOverflow"
+							})
+						]
+					}),
+					titleCustomTextActions: [
+						new Button({
+							text : "Title Custom Text Actions",
+							layoutData : [
+								new OverflowToolbarLayoutData({
+									priority : "NeverOverflow"
+								})
+							]
+						})
+					],
+					titleCustomIconActions : [
+						new OverflowToolbarButton({
+							icon: "sap-icon://cart",
+							layoutData : [
+								new OverflowToolbarLayoutData({
+									priority : "NeverOverflow"
+								})
+							]
+						})
+					],
+					headerContent : [
+						new Text({text : "Some Header Content"})
+					],
+					content : new Text({text : "Some sample content"}),
+					footerMainAction : new FooterMainAction(),
+					messagesIndicator : new MessagesIndicator({
+						visible: true
+					}),
+					draftIndicator : new DraftIndicator(),
+					positiveAction : new PositiveAction(),
+					negativeAction : new NegativeAction(),
+					footerCustomActions : new Button({text : "Footer Custom Action"}),
+					discussInJamAction : new DiscussInJamAction(),
+					saveAsTileAction : new Button({text : "Save as Tile Action"}),
+					shareInJamAction : new ShareInJamAction(),
+					sendMessageAction : new SendMessageAction(),
+					sendEmailAction : new SendEmailAction(),
+					printAction : new PrintAction(),
+					customShareActions : new Button({text : "Custom Share Action"}),
+					titleBreadcrumbs : new Breadcrumbs({
+						currentLocationText : "test",
+						links : [
+							new Link({text: "link1"}),
+							new Link({text: "link2"})
+						]
 					})
-				],
-				headerContent : [
-					new Text({text : "Some Header Content"})
-				],
-				content : new Text({text : "Some sample content"}),
-				footerMainAction : new FooterMainAction(),
-				messagesIndicator : new MessagesIndicator({
-					visible: true
-				}),
-				draftIndicator : new DraftIndicator(),
-				positiveAction : new PositiveAction(),
-				negativeAction : new NegativeAction(),
-				footerCustomActions : new Button({text : "Footer Custom Action"}),
-				discussInJamAction : new DiscussInJamAction(),
-				saveAsTileAction : new Button({text : "Save as Tile Action"}),
-				shareInJamAction : new ShareInJamAction(),
-				sendMessageAction : new SendMessageAction(),
-				sendEmailAction : new SendEmailAction(),
-				printAction : new PrintAction(),
-				customShareActions : new Button({text : "Custom Share Action"}),
-				titleBreadcrumbs : new Breadcrumbs({
-					currentLocationText : "test",
-					links : [
-						new Link({text: "link1"}),
-						new Link({text: "link2"})
-					]
-				})
-			});
-		}
-	});
-
-	return oElementEnablementTest.run()
-
-	.then(function (oData) {
-		new QUnitReport({
-			data: oData
+				});
+			}
 		});
 	})
-
 	.then(function() {
 		var fnConfirmMoveExpandedContentOn3rdPosition = function (oAppComponent, oViewAfterAction, assert) {
 			assert.strictEqual( oViewAfterAction.byId("button1").getId(),                 // Id of element at first position in original view
@@ -213,8 +206,8 @@ sap.ui.define([
 				"then the control has been moved to the previous position");
 		};
 
-		// Use rtaControlEnablingCheck to check if a control is ready for the move action of UI adaptation
-		rtaControlEnablingCheck("Checking the move action for SemanticPage's TitleExpandedContent aggregation", {
+		// Use elementActionTest to check if a control is ready for the move action of UI adaptation
+		elementActionTest("Checking the move action for SemanticPage's TitleExpandedContent aggregation", {
 			xmlView :
 			'<mvc:View xmlns:mvc="sap.ui.core.mvc" xmlns:m="sap.m" xmlns="sap.f.semantic">' +
 				'<SemanticPage id="semanticPage">' +
@@ -263,8 +256,8 @@ sap.ui.define([
 				"then the control has been moved to the previous position");
 		};
 
-		// Use rtaControlEnablingCheck to check if a control is ready for the move action of UI adaptation
-		rtaControlEnablingCheck("Checking the move action for SemanticPage's TitleCollapsedContent aggregation", {
+		// Use elementActionTest to check if a control is ready for the move action of UI adaptation
+		elementActionTest("Checking the move action for SemanticPage's TitleCollapsedContent aggregation", {
 			xmlView :
 			'<mvc:View xmlns:mvc="sap.ui.core.mvc" xmlns:m="sap.m" xmlns="sap.f.semantic">' +
 				'<SemanticPage id="semanticPage" headerExpanded="false">' +
@@ -313,8 +306,8 @@ sap.ui.define([
 				"then the control has been moved to the previous position");
 		};
 
-		// Use rtaControlEnablingCheck to check if a control is ready for the move action of UI adaptation
-		rtaControlEnablingCheck("Checking the move action for SemanticPage's TitleContent aggregation", {
+		// Use elementActionTest to check if a control is ready for the move action of UI adaptation
+		elementActionTest("Checking the move action for SemanticPage's TitleContent aggregation", {
 			xmlView :
 			'<mvc:View xmlns:mvc="sap.ui.core.mvc" xmlns:m="sap.m" xmlns="sap.f.semantic">' +
 				'<SemanticPage id="semanticPage">' +
@@ -363,8 +356,8 @@ sap.ui.define([
 				"then the control has been moved to the previous position");
 		};
 
-		// Use rtaControlEnablingCheck to check if a control is ready for the move action of UI adaptation
-		rtaControlEnablingCheck("Checking the move action for SemanticPage's HeaderContent aggregation", {
+		// Use elementActionTest to check if a control is ready for the move action of UI adaptation
+		elementActionTest("Checking the move action for SemanticPage's HeaderContent aggregation", {
 			xmlView :
 			'<mvc:View xmlns:mvc="sap.ui.core.mvc" xmlns:m="sap.m" xmlns="sap.f.semantic">' +
 				'<SemanticPage id="semanticPage">' +

@@ -3,7 +3,7 @@
  */
 
 sap.ui.define([
-	"sap/ui/rta/enablement/controlTest"
+	"sap/ui/rta/enablement/elementActionTest"
 ],
 function(
 	controlTest

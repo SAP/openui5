@@ -1,10 +1,10 @@
 /*global QUnit*/
 
 sap.ui.define([
-	"sap/ui/rta/enablement/controlTest",
+	"sap/ui/rta/enablement/elementActionTest",
 	"sap/ui/fl/registry/ChangeRegistry",
 	"sap/ui/core/util/reflection/XmlTreeModifier"
-], function (rtaControlEnablingCheck, ChangeRegistry, XmlTreeModifier) {
+], function (elementActionTest, ChangeRegistry, XmlTreeModifier) {
 
 	"use strict";
 
@@ -19,8 +19,8 @@ sap.ui.define([
 			"then the control has been moved to the previous position");
 	};
 
-	// Use rtaControlEnablingCheck to check if a control is ready for the move action of UI adaptation
-	rtaControlEnablingCheck("Checking the move action for a sap.uxap.ObjectPageSection control", {
+	// Use elementActionTest to check if a control is ready for the move action of UI adaptation
+	elementActionTest("Checking the move action for a sap.uxap.ObjectPageSection control", {
 		xmlView :
 		'<mvc:View xmlns:mvc="sap.ui.core.mvc" ' +
 		'xmlns:m="sap.m" xmlns:uxap="sap.uxap" >' +
@@ -86,7 +86,7 @@ sap.ui.define([
 			"then the control has been renamed to the old value (Title 1)");
 	};
 
-	rtaControlEnablingCheck("Checking the rename action for a Section", {
+	elementActionTest("Checking the rename action for a Section", {
 		xmlView:'<mvc:View xmlns:mvc="sap.ui.core.mvc" ' +
 		'xmlns:m="sap.m" xmlns:uxap="sap.uxap" >' +
 			'<uxap:ObjectPageLayout>' +
@@ -121,7 +121,7 @@ sap.ui.define([
 	});
 
 		// Rename action of section with one subsection with NO title
-		rtaControlEnablingCheck("Checking the rename action for a Section, with one SubSection, without title ", {
+		elementActionTest("Checking the rename action for a Section, with one SubSection, without title ", {
 			xmlView:'<mvc:View xmlns:mvc="sap.ui.core.mvc" ' +
 			'xmlns:m="sap.m" xmlns:uxap="sap.uxap" >' +
 				'<uxap:ObjectPageLayout>' +
@@ -165,7 +165,7 @@ sap.ui.define([
 			"then the SubSection control has been renamed to the old value (SubSectionTitle 1)");
 	};
 
-	rtaControlEnablingCheck("Checking the rename action for a Section with one SubSection with title", {
+	elementActionTest("Checking the rename action for a Section with one SubSection with title", {
 		xmlView:'<mvc:View xmlns:mvc="sap.ui.core.mvc" ' +
 		'xmlns:m="sap.m" xmlns:uxap="sap.uxap" >' +
 			'<uxap:ObjectPageLayout>' +
@@ -209,7 +209,7 @@ sap.ui.define([
 			"then the Section control has been renamed to the old value (Title 1)");
 	};
 
-	rtaControlEnablingCheck("Checking the rename action for a Section with one SubSection with title, when subSectionLayout='TitleOnLeft' ", {
+	elementActionTest("Checking the rename action for a Section with one SubSection with title, when subSectionLayout='TitleOnLeft' ", {
 		xmlView:'<mvc:View xmlns:mvc="sap.ui.core.mvc" ' +
 		'xmlns:m="sap.m" xmlns:uxap="sap.uxap" >' +
 			'<uxap:ObjectPageLayout subSectionLayout="TitleOnLeft">' +

@@ -1,7 +1,7 @@
 /*global QUnit*/
 
 sap.ui.define([
-	"sap/ui/dt/test/ElementEnablementTest",
+	"sap/ui/dt/enablement/ElementEnablementTest",
 	"sap/m/Button",
 	"sap/ui/thirdparty/sinon-4"
 ],
@@ -74,7 +74,6 @@ function (
 	});
 
 	QUnit.done(function() {
-		jQuery("#qunit-fixture").hide();
+		document.getElementById("qunit-fixture").style.display = "none";
 	});
-
 });

@@ -231,22 +231,40 @@ sap.ui.define(function () {
 			},
 
 			// -------------------------------------------------------------------------------
-			// Validator tests:
+			// Enablement tests:
 			// -------------------------------------------------------------------------------
-			"test/Element": {
-				group: "Validator",
+			"enablement/Util": {
+				group: "Enablement",
 				coverage: {
-					only: ['sap/ui/dt/test']
+					only: ['sap/ui/dt/enablement']
 				}
 			},
-			"test/ElementEnablement": {
-				group: "Validator",
+			"enablement/ElementEnablement": {
+				group: "Enablement",
 				coverage: {
-					only: ['sap/ui/dt/test']
+					only: ['sap/ui/dt/enablement']
 				}
 			},
-			"test/LibraryEnablementTest": {
-				group: "Validator",
+			"enablement/report/LibraryReport": {
+				group: "Enablement",
+				ui5: {
+					resourceroots: {
+						"dt.control": "test-resources/sap/ui/dt/qunit/testdata/controls/",
+						"sap.ui.testLibrary": "test-resources/sap/ui/dt/qunit/testdata/"
+					}
+				},
+				coverage: {
+					only: ['sap/ui/dt/enablement']
+				}
+			},
+			"enablement/report/QUnitReport": {
+				group: "Enablement",
+				coverage: {
+					only: ['sap/ui/dt/enablement']
+				}
+			},
+			"enablement/report/Table": {
+				group: "Enablement",
 				ui5: {
 					resourceroots: {
 						"dt.control": "test-resources/sap/ui/dt/qunit/testdata/controls/",
@@ -257,40 +275,24 @@ sap.ui.define(function () {
 					only: ['sap/ui/dt/test']
 				}
 			},
-			"test/LibraryEnablementTest2": {
-				group: "Validator",
+			"enablement/report/Statistic": {
+				group: "Enablement",
+				coverage: {
+					only: ['sap/ui/dt/enablement']
+				}
+			},
+			"controlEnablementReport/LibraryScanner": {
+				group: "Enablement",
+				module: "./../controlEnablementReport/test/LibraryScanner.qunit",
 				ui5: {
 					resourceroots: {
 						"dt.control": "test-resources/sap/ui/dt/qunit/testdata/controls/",
-						"sap.ui.testLibrary": "test-resources/sap/ui/dt/qunit/testdata/"
+						"sap.ui.testLibrary": "test-resources/sap/ui/dt/qunit/testdata/",
+						"controlEnablementReport": "test-resources/sap/ui/dt/controlEnablementReport/"
 					}
 				},
 				coverage: {
-					only: ['sap/ui/dt/test']
-				}
-			},
-			"test/report/QUnit": {
-				group: "Validator",
-				coverage: {
-					only: ['sap/ui/dt/test']
-				}
-			},
-			"test/report/Table": {
-				group: "Validator",
-				ui5: {
-					resourceroots: {
-						"dt.control": "test-resources/sap/ui/dt/qunit/testdata/controls/",
-						"sap.ui.testLibrary": "test-resources/sap/ui/dt/qunit/testdata/"
-					}
-				},
-				coverage: {
-					only: ['sap/ui/dt/test']
-				}
-			},
-			"test/report/Statistic": {
-				group: "Validator",
-				coverage: {
-					only: ['sap/ui/dt/test']
+					only: ['sap/ui/dt/enablement']
 				}
 			}
 		}

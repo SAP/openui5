@@ -46,7 +46,7 @@ sap.ui.define([
 			},
 			"enablement/ControlValidator": {
 				coverage: {
-					only: ["sap/ui/rta/enablement/controlTest"]
+					only: ["sap/ui/rta/enablement/elementActionTest"]
 				}
 			},
 

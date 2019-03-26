@@ -1,14 +1,14 @@
 /*global QUnit*/
 
 sap.ui.define([
-	"sap/ui/dt/test/LibraryEnablementTest",
-	"sap/ui/dt/test/report/Table",
+	"sap/ui/dt/enablement/report/LibraryReport",
+	"sap/ui/dt/enablement/report/Table",
 	"sap/ui/qunit/QUnitUtils",
 	// ensure the test library is loaded so it can be used in the library enablement test
 	"sap/ui/testLibrary/library"
 ],
 function (
-	LibraryEnablementTest,
+	LibraryReport,
 	Table,
 	QUnitUtils
 ) {
@@ -16,17 +16,17 @@ function (
 
 	QUnit.module("Given that a sap.m Library is tested", {
 		beforeEach: function () {
-			this.oLibraryEnablementTest = new LibraryEnablementTest({
+			this.oLibraryReport = new LibraryReport({
 				libraryName : "sap.ui.testLibrary"
 			});
 		},
 		afterEach: function () {
-			this.oLibraryEnablementTest.destroy();
+			this.oLibraryReport.destroy();
 		}
 	}, function () {
 		QUnit.test("when the result is returned and displayed with the Table report", function (assert) {
 			var fnDone = assert.async();
-			this.oLibraryEnablementTest.run()
+			this.oLibraryReport.run()
 			.then(function(oResult) {
 				var oTable = new Table({
 					data : oResult

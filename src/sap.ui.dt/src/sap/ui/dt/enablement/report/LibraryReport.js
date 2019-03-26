@@ -2,26 +2,27 @@
  * ${copyright}
  */
 
-// Provides class sap.ui.dt.test.LibraryEnablementTest.
 sap.ui.define([
 	"sap/ui/thirdparty/jquery",
-	'sap/ui/dt/test/Test',
-	'sap/ui/dt/test/ElementEnablementTest'
-],
-function(jQuery, Test, ElementEnablementTest) {
+	'sap/ui/dt/enablement/Test',
+	'sap/ui/dt/enablement/ElementEnablementTest'
+], function (
+	jQuery,
+	Test,
+	ElementEnablementTest
+) {
 	"use strict";
 
-
 	/**
-	 * Constructor for a LibraryEnablementTest.
+	 * Constructor for a LibraryReport.
 	 *
 	 * @param {string} [sId] id for the new object, generated automatically if no id is given
 	 * @param {object} [mSettings] initial settings for the new object
 	 *
 	 * @class
-	 * The LibraryEnablementTest class allows to create a design time test
+	 * The LibraryReport class allows to create a design time test
 	 * which tests a given library on compatibility with the sap.ui.dt.DesignTime.
-	 * @extends sap.ui.dt.test.Test
+	 * @extends sap.ui.dt.enablement.Test
 	 *
 	 * @author SAP SE
 	 * @version ${version}
@@ -29,10 +30,10 @@ function(jQuery, Test, ElementEnablementTest) {
 	 * @constructor
 	 * @private
 	 * @since 1.38
-	 * @alias sap.ui.dt.test.LibraryEnablementTest
+	 * @alias sap.ui.dt.enablement.report.LibraryReport
 	 * @experimental Since 1.38. This class is experimental and provides only limited functionality. Also the API might be changed in future.
 	 */
-	var LibraryEnablementTest = Test.extend("sap.ui.dt.test.LibraryEnablementTest", /** @lends sap.ui.dt.test.LibraryEnablementTest.prototype */ {
+	var LibraryReport = Test.extend("sap.ui.dt.enablement.report.LibraryReport", /** @lends sap.ui.dt.enablement.report.LibraryReport.prototype */ {
 		metadata : {
 			// ---- object ----
 
@@ -54,7 +55,7 @@ function(jQuery, Test, ElementEnablementTest) {
 	 * @return {Promise} A promise providing the test results.
 	 * @override
 	 */
-	LibraryEnablementTest.prototype.run = function() {
+	LibraryReport.prototype.run = function() {
 		this._aResult = [];
 		var oTestData = this.getTestData() || {};
 		var sLibraryName = this.getLibraryName();
@@ -94,7 +95,7 @@ function(jQuery, Test, ElementEnablementTest) {
 			}
 			var oElementEnablementTest = aElementEnablementTest.shift();
 			if (oElementEnablementTest) {
-				return oElementEnablementTest.run().then(function(mResult) {
+				return oElementEnablementTest.run().then(function (mResult) {
 					oElementEnablementTest.destroy();
 					return fnIterate(mResult);
 				});
@@ -126,5 +127,5 @@ function(jQuery, Test, ElementEnablementTest) {
 
 	};
 
-	return LibraryEnablementTest;
-}, /* bExport= */ true);
+	return LibraryReport;
+});

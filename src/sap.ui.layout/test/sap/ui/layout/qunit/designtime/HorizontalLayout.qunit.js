@@ -1,25 +1,29 @@
 sap.ui.define([
-	"sap/ui/dt/test/report/QUnit",
-	"sap/ui/dt/test/ElementEnablementTest",
-	"./HorizontalLayout",
-	"sap/ui/rta/enablement/controlTest",
-	"sap/m/Button"
-], function(QUnit, ElementEnablementTest, HorizontalLayout, rtaControlEnablingCheck, Button) {
+	"sap/ui/layout/HorizontalLayout",
+	"sap/m/Button",
+	"sap/ui/dt/enablement/elementDesigntimeTest",
+	"sap/ui/rta/enablement/elementActionTest"
+], function (
+	HorizontalLayout,
+	Button,
+	elementDesigntimeTest,
+	elementActionTest
+) {
 	"use strict";
 
-	var oElementEnablementTest = new ElementEnablementTest({
-		type: "sap.ui.layout.HorizontalLayout",
-		create : HorizontalLayout.create
-	});
-
-	return oElementEnablementTest.run()
-
-	.then(function(oData) {
-		return new QUnit({
-			data: oData
+	return Promise.resolve()
+	.then(function () {
+		return elementDesigntimeTest({
+			type: "sap.ui.layout.HorizontalLayout",
+			create: function () {
+				return new HorizontalLayout({
+					content: [
+						new Button({ text: "test" })
+					]
+				});
+			}
 		});
 	})
-
 	.then(function() {
 		// Move action
 		var fnConfirmElement1IsOn3rdPosition = function (oUiComponent, oViewAfterAction, assert) {
@@ -33,7 +37,7 @@ sap.ui.define([
 					"then the control has been moved to the previous position");
 		};
 
-		rtaControlEnablingCheck("Checking the move action for HorizontalLayout control", {
+		elementActionTest("Checking the move action for HorizontalLayout control", {
 			xmlView: '<mvc:View xmlns:mvc="sap.ui.core.mvc" xmlns:m="sap.m" xmlns:l="sap.ui.layout">' +
 				'<l:HorizontalLayout id="layout">' +
 					'<m:Button text="Button 1" id="button1" />' +
@@ -77,7 +81,7 @@ sap.ui.define([
 			assert.strictEqual(oViewAfterAction.byId("layout").getVisible(), true, "then the Layout is visible");
 		};
 
-		rtaControlEnablingCheck("Checking the remove and reveal actions for HorizontalLayout control", {
+		elementActionTest("Checking the remove and reveal actions for HorizontalLayout control", {
 			xmlView: '<mvc:View xmlns:mvc="sap.ui.core.mvc" xmlns:m="sap.m" xmlns:l="sap.ui.layout">' +
 				'<l:HorizontalLayout id="layout">' +
 					'<m:Text text="Text" id="text1" />' +

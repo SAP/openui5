@@ -1429,11 +1429,23 @@ sap.ui.define([
 					version: 2
 				}
 			},
+			"designtime/semantic/DetailPage": {
+				title: "QUnit Page for sap.m.semantic.DetailPage design time and rta enabling",
+				ui5: {
+					libs: "sap.m,sap.ui.dt"
+				},
+				sinon: false,
+				qunit: 2,
+				skip : true,
+				group: "Designtime"
+			},
 			"designtime/ActionSheet": {
 				title: "QUnit Page for sap.m.ActionSheet design time and rta enabling",
 				ui5: {
 					libs: "sap.m,sap.ui.rta"
 				},
+				sinon: false,
+				qunit: 2,
 				group: "Designtime"
 			},
 			"designtime/Bar": {
@@ -1442,6 +1454,8 @@ sap.ui.define([
 				ui5: {
 					libs: "sap.m,sap.ui.rta"
 				},
+				qunit: 2,
+				sinon: false,
 				loader: {
 					paths: {
 						dt: "test-resources/sap/m/qunit/designtime/"
@@ -1455,13 +1469,12 @@ sap.ui.define([
 				ui5: {
 					libs: "sap.m,sap.ui.rta"
 				},
+				qunit: 2,
+				sinon: false,
 				loader: {
 					paths: {
 						dt: "test-resources/sap/m/qunit/designtime/"
 					}
-				},
-				qunit: {
-					version: 2
 				},
 				group: "Designtime",
 				module: [
@@ -1474,6 +1487,8 @@ sap.ui.define([
 				ui5: {
 					libs: "sap.m,sap.ui.rta"
 				},
+				qunit: 2,
+				sinon: false,
 				loader: {
 					paths: {
 						dt: "test-resources/sap/m/qunit/designtime/"
@@ -1489,6 +1504,8 @@ sap.ui.define([
 				ui5: {
 					libs: "sap.m,sap.ui.dt"
 				},
+				qunit: 2,
+				sinon: false,
 				loader: {
 					paths: {
 						dt: "test-resources/sap/m/qunit/designtime/"
@@ -1502,6 +1519,8 @@ sap.ui.define([
 				ui5: {
 					libs: "sap.m,sap.ui.dt"
 				},
+				qunit: 2,
+				sinon: false,
 				group: "Designtime"
 			},
 			"designtime/DatePicker": {
@@ -1509,6 +1528,8 @@ sap.ui.define([
 				ui5: {
 					libs: "sap.m,sap.ui.rta"
 				},
+				qunit: 2,
+				sinon: false,
 				group: "Designtime"
 			},
 			"designtime/FlexBox": {
@@ -1516,6 +1537,8 @@ sap.ui.define([
 				ui5: {
 					libs: "sap.m,sap.ui.rta"
 				},
+				qunit: 2,
+				sinon: false,
 				group: "Designtime"
 			},
 			"designtime/IconTabBar": {
@@ -1523,6 +1546,8 @@ sap.ui.define([
 				ui5: {
 					libs: "sap.m,sap.ui.rta"
 				},
+				qunit: 2,
+				sinon: false,
 				loader: {
 					paths: {
 						dt: "test-resources/sap/m/qunit/designtime/"
@@ -1535,6 +1560,8 @@ sap.ui.define([
 				ui5: {
 					libs: "sap.m,sap.ui.rta"
 				},
+				qunit: 2,
+				sinon: false,
 				loader: {
 					paths: {
 						dt: "test-resources/sap/m/qunit/designtime/"
@@ -1547,6 +1574,8 @@ sap.ui.define([
 				ui5: {
 					libs: "sap.m,sap.ui.rta"
 				},
+				qunit: 2,
+				sinon: false,
 				group: "Designtime"
 			},
 			"designtime/InputBase": {
@@ -1554,6 +1583,8 @@ sap.ui.define([
 				ui5: {
 					libs: "sap.m,sap.ui.rta"
 				},
+				qunit: 2,
+				sinon: false,
 				group: "Designtime"
 			},
 			"designtime/InputListItem": {
@@ -1561,6 +1592,8 @@ sap.ui.define([
 				ui5: {
 					libs: "sap.m,sap.ui.dt"
 				},
+				qunit: 2,
+				sinon: false,
 				group: "Designtime"
 			},
 			"designtime/Label": {
@@ -1568,10 +1601,14 @@ sap.ui.define([
 				ui5: {
 					libs: "sap.m,sap.ui.rta"
 				},
+				qunit: 2,
+				sinon: false,
 				group: "Designtime"
 			},
 			"designtime/Library": {
 				title: "QUnit Page for designtime consistency check of sap.m library",
+				qunit: 2,
+				sinon: false,
 				group: "Designtime"
 			},
 			"designtime/Link": {
@@ -1579,6 +1616,8 @@ sap.ui.define([
 				ui5: {
 					libs: "sap.m,sap.ui.rta"
 				},
+				qunit: 2,
+				sinon: false,
 				group: "Designtime"
 			},
 			"designtime/ListBase": {
@@ -1586,6 +1625,8 @@ sap.ui.define([
 				ui5: {
 					libs: "sap.m,sap.ui.rta"
 				},
+				qunit: 2,
+				sinon: false,
 				group: "Designtime"
 			},
 			"designtime/ListItemBase": {
@@ -1593,13 +1634,27 @@ sap.ui.define([
 				ui5: {
 					libs: "sap.m,sap.ui.rta"
 				},
+				qunit: 2,
+				sinon: false,
 				group: "Designtime"
 			},
 			"designtime/MenuButton": {
 				title: "QUnit Page for sap.m.MenuButton design time and rta enabling",
 				ui5: {
+					libs: "sap.m,sap.ui.dt"
+				},
+				qunit: 2,
+				sinon: false,
+				group: "Designtime"
+			},
+			"designtime/ObjectListItem": {
+				title: "QUnit Page for sap.m.ObjectListItem design time and rta enabling",
+				ui5: {
 					libs: "sap.m,sap.ui.rta"
 				},
+				qunit: 2,
+				sinon: false,
+				skip: true,
 				group: "Designtime"
 			},
 			"designtime/Page": {
@@ -1607,6 +1662,8 @@ sap.ui.define([
 				ui5: {
 					libs: "sap.m,sap.ui.rta"
 				},
+				qunit: 2,
+				sinon: false,
 				loader: {
 					paths: {
 						dt: "test-resources/sap/m/qunit/designtime/"
@@ -1619,6 +1676,8 @@ sap.ui.define([
 				ui5: {
 					libs: "sap.m,sap.ui.rta"
 				},
+				qunit: 2,
+				sinon: false,
 				group: "Designtime"
 			},
 			"designtime/Popover": {
@@ -1626,6 +1685,8 @@ sap.ui.define([
 				ui5: {
 					libs: "sap.m,sap.ui.rta"
 				},
+				qunit: 2,
+				sinon: false,
 				group: "Designtime"
 			},
 			"designtime/RadioButton": {
@@ -1633,6 +1694,8 @@ sap.ui.define([
 				ui5: {
 					libs: "sap.m,sap.ui.rta"
 				},
+				qunit: 2,
+				sinon: false,
 				group: "Designtime"
 			},
 			"designtime/RatingIndicator": {
@@ -1645,6 +1708,8 @@ sap.ui.define([
 						dt: "test-resources/sap/m/qunit/designtime/"
 					}
 				},
+				qunit: 2,
+				sinon: false,
 				group: "Designtime"
 			},
 			"designtime/ScrollContainer": {
@@ -1652,6 +1717,8 @@ sap.ui.define([
 				ui5: {
 					libs: "sap.m,sap.ui.rta"
 				},
+				qunit: 2,
+				sinon: false,
 				group: "Designtime"
 			},
 			"designtime/Select": {
@@ -1660,6 +1727,8 @@ sap.ui.define([
 				ui5: {
 					libs: "sap.m,sap.ui.dt"
 				},
+				qunit: 2,
+				sinon: false,
 				group: "Designtime"
 			},
 			"designtime/Slider": {
@@ -1667,6 +1736,8 @@ sap.ui.define([
 				ui5: {
 					libs: "sap.m,sap.ui.rta"
 				},
+				qunit: 2,
+				sinon: false,
 				group: "Designtime"
 			},
 			"designtime/SplitContainer": {
@@ -1675,6 +1746,8 @@ sap.ui.define([
 				ui5: {
 					libs: "sap.m,sap.ui.dt"
 				},
+				qunit: 2,
+				sinon: false,
 				group: "Designtime"
 			},
 			"designtime/StandardListItem": {
@@ -1682,6 +1755,8 @@ sap.ui.define([
 				ui5: {
 					libs: "sap.m,sap.ui.rta"
 				},
+				qunit: 2,
+				sinon: false,
 				group: "Designtime"
 			},
 			"designtime/Table": {
@@ -1689,6 +1764,8 @@ sap.ui.define([
 				ui5: {
 					libs: "sap.m,sap.ui.rta"
 				},
+				qunit: 2,
+				sinon: false,
 				group: "Designtime"
 			},
 			"designtime/Text": {
@@ -1697,6 +1774,8 @@ sap.ui.define([
 				ui5: {
 					libs: "sap.m,sap.ui.rta"
 				},
+				qunit: 2,
+				sinon: false,
 				group: "Designtime"
 			},
 			"designtime/Title": {
@@ -1704,6 +1783,8 @@ sap.ui.define([
 				ui5: {
 					libs: "sap.m,sap.ui.rta"
 				},
+				qunit: 2,
+				sinon: false,
 				group: "Designtime"
 			},
 			"designtime/Toolbar": {
@@ -1712,6 +1793,8 @@ sap.ui.define([
 				ui5: {
 					libs: "sap.m,sap.ui.rta"
 				},
+				qunit: 2,
+				sinon: false,
 				loader: {
 					paths: {
 						dt: "test-resources/sap/m/qunit/designtime/"

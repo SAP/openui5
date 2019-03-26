@@ -12,7 +12,6 @@ function(
 ) {
 	"use strict";
 
-
 	/**
 	 * Constructor for a QUnit.
 	 *
@@ -29,10 +28,10 @@ function(
 	 * @constructor
 	 * @private
 	 * @since 1.38
-	 * @alias sap.ui.dt.test.report.QUnit
+	 * @alias sap.ui.dt.enablement.report.QUnitReport
 	 * @experimental Since 1.38. This class is experimental and provides only limited functionality. Also the API might be changed in future.
 	 */
-	var QUnitReport = ManagedObject.extend("sap.ui.dt.test.report.QUnit", /** @lends sap.ui.dt.test.report.QUnit.prototype */ {
+	var QUnitReport = ManagedObject.extend("sap.ui.dt.enablement.report.QUnitReport", /** @lends sap.ui.dt.enablement.report.QUnitReport.prototype */ {
 		metadata : {
 			// ---- object ----
 
@@ -45,8 +44,6 @@ function(
 			}
 		},
 
-
-
 		/**
 		 * Called when the QUnit is initialized
 		 * @protected
@@ -56,7 +53,6 @@ function(
 				throw new Error("QUnit is required for this report.");
 			}
 		},
-
 
 		/**
 		 * Sets the data to use as a base for the QUnit tests.
@@ -74,7 +70,6 @@ function(
 			this.setProperty("data", oData);
 		},
 
-
 		/**
 		 * @private
 		 */
@@ -84,7 +79,6 @@ function(
 				this._createTest(oGroup);
 			}, this);
 		},
-
 
 		/**
 		 * @private
@@ -96,7 +90,6 @@ function(
 				}, this);
 			}.bind(this));
 		},
-
 
 		/**
 		 * @private
@@ -113,4 +106,4 @@ function(
 	});
 
 	return QUnitReport;
-}, /* bExport= */ true);
+});

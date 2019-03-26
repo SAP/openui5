@@ -1,4 +1,4 @@
-/*global QUnit sinon */
+/*global QUnit */
 
 sap.ui.define([
 	"sap/ui/core/Title",
@@ -13,7 +13,8 @@ sap.ui.define([
 	"sap/ui/model/json/JSONModel",
 	"sap/ui/core/CustomData",
 	"sap/ui/core/UIComponent",
-	"sap/ui/core/ComponentContainer"
+	"sap/ui/core/ComponentContainer",
+	"sap/ui/thirdparty/sinon-4"
 ],
 function (
 	Title,
@@ -28,9 +29,12 @@ function (
 	JSONModel,
 	CustomData,
 	UIComponent,
-	ComponentContainer
+	ComponentContainer,
+	sinon
 ) {
 	'use strict';
+
+	var sandbox = sinon.sandbox.create();
 
 	jQuery("#qunit-fixture").css({
 		top: "auto",
@@ -97,6 +101,7 @@ function (
 		},
 		afterEach: function () {
 			this.oComponentContainer.destroy();
+			sandbox.restore();
 		}
 	}, function () {
 		QUnit.test('Press event fired correctly after combine', function (assert) {
@@ -288,9 +293,7 @@ function (
 		QUnit.test('MenuButton text should be created from the original Buttons names in reverse order in RTL mode', function (assert) {
 			var config = sap.ui.getCore().getConfiguration();
 			//turn on rtl for this test
-			this.stub(config, "getRTL", function() {
-				return true;
-			});
+			sandbox.stub(config, "getRTL").returns(true);
 
 			var sMenuButtonText = this.oButton2.getText() + "/" + this.oButton1.getText();
 

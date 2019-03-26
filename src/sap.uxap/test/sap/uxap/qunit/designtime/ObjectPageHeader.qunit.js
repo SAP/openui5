@@ -1,6 +1,6 @@
 sap.ui.define([
-	"sap/ui/rta/enablement/controlTest"
-], function (rtaControlEnablingCheck) {
+	"sap/ui/rta/enablement/elementActionTest"
+], function (elementActionTest) {
 
 	"use strict";
 
@@ -14,8 +14,8 @@ sap.ui.define([
 			oViewAfterAction.byId("header").getActions() [0].getId(),   // Id of third element in group after change has been applied
 			"then the control has been moved to the previous position");
 	};
-	// Use rtaControlEnablingCheck to check if a control is ready for the move action of UI adaptation
-	rtaControlEnablingCheck("Checking the move action for a sap.uxap.ObjectPageHeader control", {
+	// Use elementActionTest to check if a control is ready for the move action of UI adaptation
+	elementActionTest("Checking the move action for a sap.uxap.ObjectPageHeader control", {
 		xmlView :
 		'<mvc:View xmlns:mvc="sap.ui.core.mvc" ' +
 		' xmlns:uxap="sap.uxap" >' +

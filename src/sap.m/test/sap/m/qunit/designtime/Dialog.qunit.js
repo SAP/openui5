@@ -1,47 +1,39 @@
 sap.ui.define([
-	"sap/ui/dt/test/report/QUnit",
-	"sap/ui/dt/test/ElementEnablementTest",
 	"sap/m/Dialog",
 	"sap/m/Text",
-	"sap/ui/rta/enablement/controlTest",
+	"sap/ui/dt/enablement/elementDesigntimeTest",
+	"sap/ui/rta/enablement/elementActionTest",
 	"sap/m/Bar",
 	"sap/m/Button"
 ], function(
-	QUnitReport,
-	ElementEnablementTest,
 	Dialog,
 	Text,
-	rtaControlEnablingCheck,
+	elementDesigntimeTest,
+	elementActionTest,
 	Bar,
 	Button
 ) {
 	"use strict";
 
-	var oElementEnablementTest = new ElementEnablementTest({
-		type: "sap.m.Dialog",
-		create: function () {
-			return new Dialog({
-				content: [
-					new Text({text: "Text"}),
-					new Text({text: "Text"})
-				],
-				subHeader: new Bar(),
-				beginButton: new Button({ text: "begin" }),
-				endButton: new Button({ text: "end" }),
-				customHeader: new Bar(),
-				buttons: [new Button()]
-			});
-		}
-	});
-
-	return oElementEnablementTest.run()
-
-	.then(function (oData) {
-		new QUnitReport({
-			data: oData
+	return Promise.resolve()
+	.then(function () {
+		return elementDesigntimeTest({
+			type: "sap.m.Dialog",
+			create: function () {
+				return new Dialog({
+					content: [
+						new Text({text: "Text"}),
+						new Text({text: "Text"})
+					],
+					subHeader: new Bar(),
+					beginButton: new Button({ text: "begin" }),
+					endButton: new Button({ text: "end" }),
+					customHeader: new Bar(),
+					buttons: [new Button()]
+				});
+			}
 		});
 	})
-
 	.then(function() {
 		// Move action
 		var fnConfirmElement1IsOn3rdPosition = function (oUiComponent, oViewAfterAction, assert) {
@@ -55,7 +47,7 @@ sap.ui.define([
 				"then the control has been moved to the previous position");
 		};
 
-		rtaControlEnablingCheck("Checking the move action for Dialog control", {
+		elementActionTest("Checking the move action for Dialog control", {
 			xmlView:
 			'<mvc:View xmlns:mvc="sap.ui.core.mvc" xmlns="sap.m">' +
 				'<Dialog id="dialog">' +
@@ -109,7 +101,7 @@ sap.ui.define([
 				"then the dialog title has been renamed to the old value (Old Title)");
 		};
 
-		rtaControlEnablingCheck("Checking the rename action for a Dialog title", {
+		elementActionTest("Checking the rename action for a Dialog title", {
 			xmlView:
 				'<mvc:View xmlns:mvc="sap.ui.core.mvc" xmlns="sap.m">' +
 					'<Dialog id="dialog" title="Old Title">' +
