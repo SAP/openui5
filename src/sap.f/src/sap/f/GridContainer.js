@@ -8,7 +8,10 @@ sap.ui.define([
 	"sap/ui/core/delegate/ItemNavigation",
 	"sap/f/GridContainerRenderer",
 	"sap/ui/Device",
-	"sap/ui/layout/cssgrid/VirtualGrid"
+	"sap/ui/layout/cssgrid/VirtualGrid",
+	"sap/f/GridContainerSettings",
+	"sap/ui/dom/units/Rem",
+	"sap/base/Log"
 
 ], function (Control,
              ManagedObjectObserver,
@@ -16,11 +19,12 @@ sap.ui.define([
              ItemNavigation,
              GridContainerRenderer,
              Device,
-             VirtualGrid) {
+			 VirtualGrid,
+			 GridContainerSettings,
+			 Rem,
+			 Log) {
 	"use strict";
 
-	var itemWidth = 5 * 16; // 5 rem
-	var gapSize = 16; // 1rem
 	var EDGE_VERSION_WITH_GRID_SUPPORT = 16;
 
 	function getItemColumnCount(item) {
@@ -113,7 +117,36 @@ sap.ui.define([
 				/**
 				 * The items contained by the control.
 				 */
-				items: {type: "sap.ui.core.Control", multiple: true, singularName: "item", dnd: true }
+				items: {type: "sap.ui.core.Control", multiple: true, singularName: "item", dnd: true },
+				/**
+				 * The sap.f.GridContainerSettings applied if no settings are provided for a specific size
+				 */
+				layout: { type: "sap.f.GridContainerSettings", multiple: false },
+
+				/**
+				 * The sap.f.GridContainerSettings applied for size "S"
+				 */
+				layoutS: { type: "sap.f.GridContainerSettings", multiple: false },
+
+				/**
+				 * The sap.f.GridContainerSettings applied for size "M"
+				 */
+				layoutM: { type: "sap.f.GridContainerSettings", multiple: false },
+
+				/**
+				 * The sap.f.GridContainerSettings applied for size "L"
+				 */
+				layoutL: { type: "sap.f.GridContainerSettings", multiple: false },
+
+				/**
+				 * The sap.f.GridContainerSettings applied for size "XL"
+				 */
+				layoutXL: { type: "sap.f.GridContainerSettings", multiple: false },
+
+				/**
+				 * Default sap.f.GridContainerSettings
+				 */
+				_defaultLayout: { type: "sap.f.GridContainerSettings", multiple: false, visibility: "hidden" }
 			},
 			dnd: { draggable: false, droppable: true }
 		}
@@ -132,7 +165,6 @@ sap.ui.define([
 
 	GridContainer.prototype._onAfterItemRendering = function () {
 		var container = this.getParent(),
-			itemColumnCount = getItemColumnCount(this),
 			$item = this.$();
 
 		if ($item[0].style.height === "auto"
@@ -141,20 +173,7 @@ sap.ui.define([
 		}
 
 		if (!isGridSupportedByBrowser()) {
-			var width = itemColumnCount * itemWidth + (itemColumnCount - 1) * gapSize,
-				css = {
-					top: 0,
-					left: 0,
-					width: width,
-					position: 'absolute'
-				};
-
-			if (!getItemRowsAutoSpan(this)) {
-				var itemRowCount = getItemRowCount(this);
-				css.height = itemRowCount * itemWidth + (itemRowCount - 1) * gapSize;
-			}
-
-			this.$().parent().css(css);
+			container._applyIEPolyfillForItem(this);
 		}
 
 		container._resizeListeners[this.getId()] = ResizeHandler.register(this.getDomRef(), container._resizeHandler);
@@ -197,7 +216,29 @@ sap.ui.define([
 		// }));
 	};
 
+	GridContainer.prototype._detectActiveLayout = function () {
+		var iWidth = window.innerWidth, // TODO can use containerQuery approach which is used in CSSGrid
+			oRange = Device.media.getCurrentRange("StdExt", iWidth),
+			sLayout = GridContainer.mSizeLayouts[oRange.name];
+
+		if (this._sActiveLayout === sLayout) {
+			return;
+		}
+
+		this._sActiveLayout = sLayout;
+
+		// TODO fire event
+	};
+
+	GridContainer.prototype.getActiveLayoutSettings = function () {
+		return this.getAggregation(this._sActiveLayout)
+			|| this.getAggregation("layout")
+			|| this.getAggregation("_defaultLayout");
+	};
+
 	GridContainer.prototype.init = function () {
+		this.setAggregation("_defaultLayout", new GridContainerSettings());
+		this._detectActiveLayout();
 
 		this._resizeListeners = {};
 
@@ -253,6 +294,16 @@ sap.ui.define([
 	};
 
 	GridContainer.prototype._resize = function () {
+		var oOldSettings = this.getActiveLayoutSettings();
+		this._detectActiveLayout();
+
+		if (oOldSettings !== this.getActiveLayoutSettings()) {
+			// layout was changed - invalidate
+			// TODO optimize, no need to invalidate
+			this.invalidate();
+			return;
+		}
+
 		this._applyLayout();
 	};
 
@@ -262,27 +313,77 @@ sap.ui.define([
 		}
 
 		if (isGridSupportedByBrowser()) {
+			var oContainer = this;
 			this.getItems().forEach(function (oItem) {
 				if (getItemRowsAutoSpan(oItem)) {
-					var $item = oItem.$();
-					var height = getScrollHeight($item);
+					var $item = oItem.$(),
+						height = getScrollHeight($item),
+						$container = oContainer.$(),
+						rowHeight = parseInt($container.css("grid-auto-rows")),
+						gapSize = parseInt($container.css("grid-row-gap"));
+
 					$item.parent().css({
-						'grid-row': 'span ' + (Math.floor(height / (itemWidth + gapSize)) + 1)
+						'grid-row': 'span ' + Math.ceil((height + gapSize) / (rowHeight + gapSize))
 					});
 				}
 			});
 		} else {
 			this._applyIEPolyfillLayout();
 		}
+	};
 
+	/**
+	 * ===================== IE11 Polyfill =====================
+	 */
 
+	function cssSizeToPx(sCssSize) {
+		if (sCssSize === 0 || sCssSize === "0") {
+			return 0;
+		}
+
+		var aMatch = sCssSize.match(/^(\d+(\.\d+)?)(px|rem)$/);
+		if (aMatch) {
+			if (aMatch[3] === "px") {
+				return parseFloat(aMatch[1]);
+			} else {
+				return Rem.toPx(parseFloat(aMatch[1]));
+			}
+		} else {
+			Log.error("Css size '" + sCssSize + "' is not supported for GridContainer. Only 'px' and 'rem' are supported.");
+		}
+	}
+
+	GridContainer.prototype._applyIEPolyfillForItem = function (oItem) {
+		var oSettings = this.getActiveLayoutSettings(),
+			itemWidth = cssSizeToPx(oSettings.getColumnSize()),
+			itemHeight = cssSizeToPx(oSettings.getRowSize()),
+			gapSize = cssSizeToPx(oSettings.getGap()),
+			itemColumnCount = getItemColumnCount(oItem),
+			width = itemColumnCount * itemWidth + (itemColumnCount - 1) * gapSize,
+			css = {
+				top: 0,
+				left: 0,
+				width: width,
+				position: 'absolute'
+			};
+
+		if (!getItemRowsAutoSpan(oItem)) {
+			var itemRowCount = getItemRowCount(oItem);
+			css.height = itemRowCount * itemHeight + (itemRowCount - 1) * gapSize;
+		}
+
+		oItem.$().parent().css(css);
 	};
 
 	GridContainer.prototype._applyIEPolyfillLayout = function () {
 
 		var $that = this.$(),
 			width = $that.innerWidth(),
-			columnsCount = Math.floor((width - gapSize) / (itemWidth + gapSize)),
+			oSettings = this.getActiveLayoutSettings(),
+			itemWidth = cssSizeToPx(oSettings.getColumnSize()),
+			itemHeight = cssSizeToPx(oSettings.getRowSize()),
+			gapSize = cssSizeToPx(oSettings.getGap()),
+			columnsCount = oSettings.getColumns() || (Math.floor((width - gapSize) / (itemWidth + gapSize))),
 			topOffset = parseInt($that.css("padding-top").replace("px", "")),
 			leftOffset = parseInt($that.css("padding-left").replace("px", "")),
 			items = this.getItems(),
@@ -296,7 +397,7 @@ sap.ui.define([
 		virtualGrid.init({
 			numberOfCols: Math.max(1, columnsCount),
 			cellWidth: itemWidth,
-			cellHeight: itemWidth,
+			cellHeight: itemHeight,
 			unitOfMeasure: "px",
 			gapSize: gapSize,
 			topOffset: topOffset ? topOffset : 0,
@@ -311,7 +412,7 @@ sap.ui.define([
 			var rows;
 			if (getItemRowsAutoSpan(item)) {
 				var height = getScrollHeight(jQuery($child.children().get(0)));
-				rows = (Math.floor(height / (itemWidth + gapSize)) + 1);
+				rows = Math.ceil((height + gapSize) / (itemHeight + gapSize));
 			} else {
 				rows = getItemRowCount(item);
 			}
@@ -333,6 +434,17 @@ sap.ui.define([
 		}
 
 		$that.css("height", virtualGrid.getHeight() + "px");
+	};
+
+	/**
+	 * A map from Std-ext size to layout aggregation name
+	 * @private
+	 */
+	GridContainer.mSizeLayouts = {
+		"Phone": "layoutS",
+		"Tablet": "layoutM",
+		"Desktop": "layoutL",
+		"LargeDesktop": "layoutXL"
 	};
 
 	return GridContainer;

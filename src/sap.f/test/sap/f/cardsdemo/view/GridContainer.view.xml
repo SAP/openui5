@@ -14,6 +14,12 @@
 		</subHeader>
 		<content>
 			<f:GridContainer class="sapUiSmallMargin">
+				<f:layout>
+					<f:GridContainerSettings rowSize="5rem" columnSize="5rem" gap="1rem" />
+				</f:layout>
+				<f:layoutS>
+					<f:GridContainerSettings rowSize="4rem" columnSize="4rem" gap="0.5rem" />
+				</f:layoutS>
 				<w:Card manifest="{manifests>/listContent/card13}">
 					<w:layoutData>
 						<f:GridContainerItemLayoutData columns="3" />

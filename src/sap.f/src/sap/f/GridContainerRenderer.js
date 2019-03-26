@@ -29,6 +29,8 @@ sap.ui.define([],
 				rm.addClass("sapFGridContainerStretchItems");
 			}
 
+			this.addGridStyles(rm, control);
+
 			rm.writeClasses();
 
 			// Add inline styles
@@ -54,6 +56,23 @@ sap.ui.define([],
 			}.bind(this));
 
 			rm.write("</div>");
+		};
+
+		/**
+		 * Adds grid styles depending on the layout settings
+		 *
+		 * @param {sap.ui.core.RenderManager} rm the RenderManager that can be used for writing to the render output buffer
+		 * @param {sap.ui.core.Control} oControl an object representation of the control that should be rendered
+		 */
+		GridContainerRenderer.addGridStyles = function(rm, oControl) {
+			var oSettings = oControl.getActiveLayoutSettings(),
+				columns = oSettings.getColumns() || "auto-fill";
+
+			rm.addStyle("grid-template-columns", "repeat(" + columns + ", " + oSettings.getColumnSize() + ")");
+			rm.addStyle("grid-auto-rows", oSettings.getRowSize());
+			rm.addStyle("grid-gap", oSettings.getGap());
+
+			rm.writeStyles();
 		};
 
 		GridContainerRenderer.renderItem = function(rm, oItem) {
