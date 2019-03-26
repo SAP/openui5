@@ -1555,10 +1555,10 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Control', './library', 'sap/ui/
 				if (this.getMultiple()) {
 					//multiple is not supported in IE <= 9
 					if (!(Device.browser.internet_explorer && Device.browser.version <= 9)) {
-						aFileUpload.push('name="' + this.getName() + '[]" ');
+						aFileUpload.push('name="' + jQuery.sap.encodeHTML(this.getName()) + '[]" ');
 					}
 				} else {
-					aFileUpload.push('name="' + this.getName() + '" ');
+					aFileUpload.push('name="' + jQuery.sap.encodeHTML(this.getName()) + '" ');
 				}
 			} else {
 				if (this.getMultiple()) {
@@ -1602,7 +1602,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Control', './library', 'sap/ui/
 					return item.indexOf(".") === 0 ? item : "." + item;
 				});
 				var sAcceptedTypes = aFileTypes.concat(aMimeTypes).join(",");
-				aFileUpload.push('accept="' + sAcceptedTypes + '" ');
+				aFileUpload.push('accept="' + jQuery.sap.encodeHTML(sAcceptedTypes) + '" ');
 			}
 			aFileUpload.push('>');
 
