@@ -1,12 +1,13 @@
 sap.ui.define([
 	"sap/ui/core/mvc/Controller",
+	"sap/ui/core/Core",
 	"sap/m/MessageToast"
-], function (Controller, MessageToast) {
+], function (Controller, Core, MessageToast) {
 	"use strict";
 
-	return Controller.extend("sap.f.sample.FlexibleColumnLayoutSimple.Master", {
+	return Controller.extend("sap.f.sample.FlexibleColumnLayoutSimple.controller.Master", {
 		onInit: function () {
-			this.bus = sap.ui.getCore().getEventBus();
+			this.bus = Core.getEventBus();
 		},
 		handleMasterPress: function () {
 			MessageToast.show("Loading mid column...");

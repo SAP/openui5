@@ -7,7 +7,7 @@
 	},
 	"sap.ui5": {
 		"rootView": {
-			"viewName": "sap.f.sample.DynamicPageFreeStyle.DynamicPageFreeStyle",
+			"viewName": "sap.f.sample.DynamicPageFreeStyle.view.DynamicPageFreeStyle",
 			"type": "XML",
 			"async": true
 		},
@@ -18,8 +18,8 @@
 			"sample": {
 				"stretch": true,
 				"files": [
-					"DynamicPageFreeStyle.controller.js",
-					"DynamicPageFreeStyle.view.xml",
+					"controller/DynamicPageFreeStyle.controller.js",
+					"view/DynamicPageFreeStyle.view.xml",
 					"manifest.json"
 				]
 			}

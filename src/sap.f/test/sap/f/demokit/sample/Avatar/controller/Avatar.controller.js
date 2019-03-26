@@ -4,7 +4,7 @@ sap.ui.define([
 ], function (MessageToast, Controller) {
 	"use strict";
 
-	return Controller.extend("sap.f.sample.Avatar.Avatar", {
+	return Controller.extend("sap.f.sample.Avatar.controller.Avatar", {
 		onPress: function(oEvent) {
 			MessageToast.show(oEvent.getSource().getId() + " Pressed");
 		}

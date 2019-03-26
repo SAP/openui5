@@ -1,13 +1,14 @@
 sap.ui.define([
 	"sap/m/SplitContainer",
 	"sap/ui/Device",
+	"sap/ui/core/Core",
 	"sap/ui/core/mvc/Controller"
-], function (SplitContainer, Device, Controller) {
+], function (SplitContainer, Device, Core, Controller) {
 	"use strict";
 
-	return Controller.extend("sap.f.sample.FlexibleColumnLayoutSimple.FlexibleColumnLayout", {
+	return Controller.extend("sap.f.sample.FlexibleColumnLayoutSimple.controller.FlexibleColumnLayout", {
 		onInit: function () {
-			this.bus = sap.ui.getCore().getEventBus();
+			this.bus = Core.getEventBus();
 			this.bus.subscribe("flexible", "setDetailPage", this.setDetailPage, this);
 			this.bus.subscribe("flexible", "setDetailDetailPage", this.setDetailDetailPage, this);
 
@@ -25,7 +26,7 @@ sap.ui.define([
 			if (!this.detailView) {
 				this.detailView = sap.ui.view({
 					id: "midView",
-					viewName: "sap.f.sample.FlexibleColumnLayoutSimple.Detail",
+					viewName: "sap.f.sample.FlexibleColumnLayoutSimple.view.Detail",
 					type: "XML"
 				});
 			}
@@ -40,7 +41,7 @@ sap.ui.define([
 			if (!this.detailDetailView) {
 				this.detailDetailView = sap.ui.view({
 					id: "endView",
-					viewName: "sap.f.sample.FlexibleColumnLayoutSimple.DetailDetail",
+					viewName: "sap.f.sample.FlexibleColumnLayoutSimple.view.DetailDetail",
 					type: "XML"
 				});
 			}
