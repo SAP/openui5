@@ -835,6 +835,12 @@ sap.ui.define([
 	 * @private
 	 */
 	Table.prototype.init = function() {
+		// Skip propagation of properties (models and bindingContext).
+		this.mSkipPropagation = {
+			rowActionTemplate: true,
+			rowSettingsTemplate: true
+		};
+
 		// Todo: the base class shouldn't know that subclasses might set a variable before its own init
 		if (!this._SelectionAdapterClass) {
 			this._SelectionAdapterClass = SelectionModelPlugin;
