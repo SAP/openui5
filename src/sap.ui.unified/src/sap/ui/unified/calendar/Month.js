@@ -828,7 +828,9 @@ sap.ui.define([
 		var oType, oTypeNW, bNonWorkingType, aTypes = [];
 		var aSpecialDates = this.getSpecialDates();
 		var oTimeStamp = oDate.toUTCJSDate().getTime();
-		var sCalendarType = this.getPrimaryCalendarType();
+		// we only need the timestamp of each special date for comparison
+		// because it is independent of calendar type, we use native UTC Date
+		var oUTCDate = new Date(Date.UTC(0, 0, 1));
 
 		for ( var i = 0; i < aSpecialDates.length; i++) {
 			// initialize the time part of the start and end time
@@ -836,14 +838,14 @@ sap.ui.define([
 			var oStartDate = oRange.getStartDate();
 			var oStartTimeStamp = CalendarUtils.MAX_MILLISECONDS; //max date
 			if (oStartDate) {
-				oStartDate = CalendarDate.fromLocalJSDate(oStartDate, sCalendarType);
-				oStartTimeStamp = oStartDate.toUTCJSDate().getTime();
+				oUTCDate.setUTCFullYear(oStartDate.getFullYear(), oStartDate.getMonth(), oStartDate.getDate());
+				oStartTimeStamp = oUTCDate.getTime();
 			}
 			var oEndDate = oRange.getEndDate();
 			var oEndTimeStamp = -CalendarUtils.MAX_MILLISECONDS; //min date
 			if (oEndDate) {
-				oEndDate = CalendarDate.fromLocalJSDate(oEndDate, sCalendarType);
-				oEndTimeStamp = oEndDate.toUTCJSDate().getTime();
+				oUTCDate.setUTCFullYear(oEndDate.getFullYear(), oEndDate.getMonth(), oEndDate.getDate());
+				oEndTimeStamp = oUTCDate.getTime();
 			}
 
 			bNonWorkingType = oRange.getType() === CalendarDayType.NonWorking;
