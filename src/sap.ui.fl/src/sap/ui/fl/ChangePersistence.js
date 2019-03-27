@@ -983,11 +983,7 @@ sap.ui.define([
 				return oResponse;
 			}.bind(this));
 		} else {
-			return aDirtyChangesClone.reduce(function (sequence, oDirtyChange) {
-				var saveAction = sequence.then(this._performSingleSaveAction(oDirtyChange));
-				saveAction.then(this._updateCacheAndDirtyState.bind(this, aDirtyChanges, oDirtyChange, bSkipUpdateCache));
-				return saveAction;
-			}.bind(this), Promise.resolve());
+			return this.saveSequenceOfDirtyChanges(aDirtyChangesClone, bSkipUpdateCache);
 		}
 	};
 
@@ -1004,10 +1000,10 @@ sap.ui.define([
 	ChangePersistence.prototype.saveSequenceOfDirtyChanges = function(aDirtyChanges, bSkipUpdateCache) {
 		var aAllDirtyChanges = this.getDirtyChanges();
 
-		return aDirtyChanges.reduce(function (sequence, oDirtyChange) {
-			var saveAction = sequence.then(this._performSingleSaveAction(oDirtyChange));
-			saveAction.then(this._updateCacheAndDirtyState.bind(this, aAllDirtyChanges, oDirtyChange, bSkipUpdateCache));
-			return saveAction;
+		return aDirtyChanges.reduce(function (oPreviousPromise, oDirtyChange) {
+			return oPreviousPromise
+				.then(this._performSingleSaveAction(oDirtyChange))
+				.then(this._updateCacheAndDirtyState.bind(this, aAllDirtyChanges, oDirtyChange, bSkipUpdateCache));
 		}.bind(this), Promise.resolve());
 	};
 

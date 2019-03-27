@@ -1105,8 +1105,8 @@ sap.ui.define([
 							var oData = this.oFlexController.getVariantModelData();
 							this.oModel = new VariantModel(oData, this.oFlexController, this.oComponent);
 							sandbox.stub(this.oComponent, "getModel").returns(this.oModel);
-							this.oModelRemoveChangeStub = sandbox.stub(this.oModel, "_removeChange");
-							this.oModelAddChangeStub = sandbox.stub(this.oModel, "_addChange");
+							this.oModelRemoveChangeStub = sandbox.stub(this.oModel, "removeChange");
+							this.oModelAddChangeStub = sandbox.stub(this.oModel, "addChange");
 							done();
 						}.bind(this));
 
@@ -1123,7 +1123,7 @@ sap.ui.define([
 		}
 	});
 
-	QUnit.test("when triggering _addChange and _removeChange on a control via the VariantModel", function(assert) {
+	QUnit.test("when triggering addChange and removeChange on a control via the VariantModel", function(assert) {
 		var oMockControl = new Text("RTADemoAppMD---detail--GroupElementDatesShippingStatus");
 
 		sandbox.stub(this.oFlexController._oChangePersistence, "_addPropagationListener");

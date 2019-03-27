@@ -343,21 +343,33 @@ sap.ui.define([
 		}
 	}, function() {
 		QUnit.test("When saveChanges() is called with an array of changes and a valid component", function(assert) {
-			var fnSaveSequenceOfDirtyChangesStub = sandbox.stub();
+			var sChangesSaved = "changesSaved";
+			var aReferences = ["variantManagementRef1", "variantManagementRef2"];
 			var oManagedObject = new ManagedObject("mockManagedObject");
 			var aSuccessfulChanges = ["mockChange1", "mockChange2"];
-			sandbox.stub(FlexControllerFactory, "createForControl")
-				.callThrough()
-				.withArgs(oManagedObject)
+			var oVariantModel = {
+				checkDirtyStateForControlModels: function(aVariantManagementReferences) {
+					assert.deepEqual(aVariantManagementReferences, aReferences, "then the correct variant management references were passed");
+				}
+			};
+			sandbox.stub(ControlPersonalizationAPI, "_determineParameters")
 				.returns({
-					_oChangePersistence: {
-						saveSequenceOfDirtyChanges: fnSaveSequenceOfDirtyChangesStub.resolves()
+					flexController: {
+						saveSequenceOfDirtyChanges: function(aChanges) {
+							assert.deepEqual(aChanges, aSuccessfulChanges, "then the correct changes were passed");
+							return Promise.resolve(sChangesSaved);
+						}
+					},
+					variantModel: oVariantModel,
+					variantManagement: {
+						"id1": aReferences[0],
+						"id2": aReferences[1]
 					}
 				});
 
 			return ControlPersonalizationAPI.saveChanges(aSuccessfulChanges, oManagedObject)
-				.then(function () {
-					assert.ok(fnSaveSequenceOfDirtyChangesStub.calledWith(aSuccessfulChanges), "then ChangePersistence.saveSequenceOfDirtyChanges called with the passed changes");
+				.then(function (vResponse) {
+					assert.strictEqual(vResponse, sChangesSaved, "then the correct response was received");
 					assert.strictEqual(Utils.log.error.callCount, 0, "then Utils.log.error() not called");
 					oManagedObject.destroy();
 				});
@@ -398,7 +410,7 @@ sap.ui.define([
 				this.oComp = new MockComponent("testComponent");
 				this.oFlexController = FlexControllerFactory.createForControl(this.oComp);
 				var oVariantModel = new VariantModel({}, this.oFlexController, this.oComp);
-				sandbox.stub(oVariantModel, "_addChange");
+				sandbox.stub(oVariantModel, "addChange");
 				this.oComp.setModel(oVariantModel, "$FlexVariants");
 				this.oCompContainer = new ComponentContainer("sap-ui-static", {
 					component: this.oComp

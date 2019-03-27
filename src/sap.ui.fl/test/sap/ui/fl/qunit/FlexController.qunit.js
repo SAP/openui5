@@ -104,8 +104,15 @@ function (
 			ChangePersistenceFactory._instanceCache = {};
 		}
 	}, function() {
-		QUnit.test("shall be instantiable", function (assert) {
-			assert.ok(this.oFlexController);
+		QUnit.test("when the constructor is called", function (assert) {
+			assert.ok(this.oFlexController instanceof FlexController, "then an instance of FlexController was created");
+		});
+
+		QUnit.test("when saveSequenceOfDirtyChanges is called with an array of changes", function (assert) {
+			var fnChangePersistenceSaveStub = sandbox.stub(this.oFlexController._oChangePersistence, "saveSequenceOfDirtyChanges");
+			var aChanges = ["mockChange1", "mockChange2"];
+			this.oFlexController.saveSequenceOfDirtyChanges(aChanges);
+			assert.ok(fnChangePersistenceSaveStub.calledWith(aChanges), "then sap.ui.fl.ChangePersistence.saveSequenceOfDirtyChanges() was called with correct parameters");
 		});
 
 		QUnit.test('createAndApplyChange shall not crash if no change handler can be found', function (assert) {
@@ -672,8 +679,8 @@ function (
 			var oAddChangeStub = sandbox.stub();
 			var oRemoveChangeStub = sandbox.stub();
 			var oModel = {
-				_addChange: oAddChangeStub,
-				_removeChange: oRemoveChangeStub,
+				addChange: oAddChangeStub,
+				removeChange: oRemoveChangeStub,
 				getVariant: function(){
 					return {
 						content : {
@@ -699,7 +706,7 @@ function (
 
 			var oPrepChange = this.oFlexController.addPreparedChange(oChange, oAppComponent);
 			assert.ok(oPrepChange, "then change object returned");
-			assert.ok(oAddChangeStub.calledOnce, "then model's _addChange is called as VariantManagement Change is detected");
+			assert.ok(oAddChangeStub.calledOnce, "then model's addChange is called as VariantManagement Change is detected");
 			var oChangePersistence = ChangePersistenceFactory.getChangePersistenceForComponent(this.oFlexController.getComponentName(), this.oFlexController.getAppVersion());
 			var aDirtyChanges = oChangePersistence.getDirtyChanges();
 
@@ -709,7 +716,7 @@ function (
 			assert.strictEqual(aDirtyChanges[0].isVariant(), false);
 
 			this.oFlexController.deleteChange(oPrepChange, oAppComponent);
-			assert.ok(oRemoveChangeStub.calledOnce, "then model's _removeChange is called as VariantManagement Change is detected and deleted");
+			assert.ok(oRemoveChangeStub.calledOnce, "then model's removeChange is called as VariantManagement Change is detected and deleted");
 		});
 
 		QUnit.test("resetChanges for control shall call ChangePersistance.resetChanges(), reset control variant URL parameters, and revert changes", function(assert) {
