@@ -851,15 +851,13 @@ sap.ui.define([
 	QUnit.test("oninput on mobile device", function (assert) {
 
 		// Setup
-		var oMI;
+		var oMI, oSpy, oSpy1;
 
 		this.stub(Device, "system", {
 			desktop: false,
 			phone: true,
 			tablet: false
 		});
-		var oSpy = sinon.spy(MultiInput.prototype, "_openSelectedItemsPicker"),
-			oSpy1 = sinon.spy(MultiInput.prototype, "_manageListsVisibility");
 
 		oMI = new MultiInput({
 			suggestionItems : [
@@ -882,6 +880,7 @@ sap.ui.define([
 			new Token({text: "XXXX"})
 		]);
 		sap.ui.getCore().applyChanges();
+		oSpy = sinon.spy(oMI, "_openSelectedItemsPicker");
 
 		oMI.$().find(".sapMTokenizerIndicator")[0].click();
 		this.clock.tick(1);
@@ -890,17 +889,85 @@ sap.ui.define([
 		assert.ok(oSpy.called, "_openSelectedItemsPicker is called when N-more is pressed");
 
 		// Act
+		oSpy1 = sinon.spy(oMI, "_manageListsVisibility");
 		sap.ui.test.qunit.triggerCharacterInput(oMI._oSuggPopover._oPopupInput.getFocusDomRef(), "d");
-		this.clock.tick(1000);
+		qutils.triggerEvent("input", oMI._oSuggPopover._oPopupInput.getFocusDomRef());
 
 		// Assert
-		assert.ok(oSpy1.called, "_manageListsVisibility is called when N-more is pressed");
+		assert.ok(oSpy1.called, "Suggestions list is shown on input");
 		assert.ok(oSpy1.calledWith(false));
 
 		// Cleanup
 		oSpy.restore();
 		oSpy1.restore();
 		oMI.destroy();
+	});
+
+	QUnit.test("onBeforeOpen should call _manageListsVisibility with the correct parameter", function (assert) {
+
+		// Setup
+		var oMI, oMultiInput1, oSpy, oSpy1;
+
+		this.stub(Device, "system", {
+			desktop: false,
+			phone: true,
+			tablet: false
+		});
+
+		// Arrange
+		oMI = new MultiInput({
+			suggestionItems : [
+				new sap.ui.core.Item({
+					text : 'Damage',
+					key : 'damage'
+				}),
+				new sap.ui.core.Item({
+					text : 'another Damage',
+					key : 'damage'
+				}),
+				new sap.ui.core.Item({
+					text : 'demon',
+					key : 'demon'
+				})
+			]
+		}).placeAt( "qunit-fixture");
+		oMI.setTokens([
+			new Token({text: "XXXX"}),
+			new Token({text: "XXXX"})
+		]);
+		sap.ui.getCore().applyChanges();
+
+		oSpy = sinon.spy(oMI, "_manageListsVisibility");
+
+		oMultiInput1 = new MultiInput({
+			showValueHelp: true,
+			valueHelpOnly: true
+		});
+		oMultiInput1.placeAt("content");
+
+		// Act
+		oMI._tokenizer.$().click();
+		this.clock.tick(1);
+
+		// Assert
+		assert.ok(oSpy.called, "_manageListsVisibility is called");
+		assert.ok(oSpy.calledWith(true), "Selected items list is visible.");
+
+		// Act
+		oMI._oSuggPopover._oPopover.close();
+		oSpy.restore();
+
+		oSpy1 = sinon.spy(oMultiInput1, "_manageListsVisibility");
+		oMultiInput1._tokenizer.$().click();
+
+		// Assert
+		assert.ok(oSpy1.called, "_manageListsVisibility is called");
+		assert.ok(oSpy1.calledWith(false), "Suggestions list is visible.");
+
+		// Cleanup
+		oSpy1.restore();
+		oMI.destroy();
+		oMultiInput1.destroy();
 	});
 
 	QUnit.module("Events", {
