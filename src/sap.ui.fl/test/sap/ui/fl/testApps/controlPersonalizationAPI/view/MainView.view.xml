@@ -7,7 +7,7 @@
 					<content>
 						<VBox id="vbox" class="sapUiMediumMargin">
 							<Button id="resetAllButton" icon="sap-icon://reset" text="Reset All" press=".resetAllPersonalization" />
-							<ObjectStatus text="{parts: [
+							<ObjectStatus id="overallPersStatus" text="{parts: [
 												  	{path:'/changes'},
 												  	{path:'/firstView/label'},
 												  	{path:'/firstView/variantLabel'},
