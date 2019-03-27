@@ -36,6 +36,9 @@ sap.ui.define([
 			// shortcut for sap.m.DialogType
 			var DialogType = library.DialogType;
 
+			// shortcut for sap.m.DialogRoleType
+			var DialogRoleType = library.DialogRoleType;
+
 			// shortcut for sap.ui.core.TextDirection
 			var TextDirection = coreLibrary.TextDirection;
 
@@ -438,12 +441,6 @@ sap.ui.define([
 						vMessageContent = getInformationLayout(mOptions, vMessageContent);
 					}
 
-					function onOpen () {
-						if (sap.ui.getCore().getConfiguration().getAccessibility()) {
-							oDialog.$().attr("role", "alertdialog");
-						}
-					}
-
 					oDialog = new Dialog({
 						id: mOptions.id,
 						type: DialogType.Message,
@@ -453,12 +450,13 @@ sap.ui.define([
 						initialFocus: getInitialFocusControl(),
 						verticalScrolling: mOptions.verticalScrolling,
 						horizontalScrolling: mOptions.horizontalScrolling,
-						afterOpen: onOpen,
 						afterClose: onclose,
 						buttons: aButtons,
 						ariaLabelledBy: oMessageText ? oMessageText.getId() : undefined,
 						contentWidth: mOptions.contentWidth
 					});
+
+					oDialog.setProperty("role",  DialogRoleType.AlertDialog);
 
 					if (mClasses[mOptions.icon]) {
 						oDialog.addStyleClass(mClasses[mOptions.icon]);
