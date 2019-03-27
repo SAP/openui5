@@ -1,5 +1,5 @@
 <mvc:View
-	controllerName="sap.ui.layout.sample.GridInfo.Grid"
+	controllerName="sap.ui.layout.sample.GridInfo.controller.GridInfo"
 	xmlns:l="sap.ui.layout"
 	xmlns:mvc="sap.ui.core.mvc"
 	xmlns="sap.m">

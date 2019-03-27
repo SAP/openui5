@@ -5,7 +5,7 @@ sap.ui.define([
 	], function(jQuery, Controller, JSONModel) {
 	"use strict";
 
-	var GridController = Controller.extend("sap.ui.layout.sample.GridInfo.Grid", {
+	return Controller.extend("sap.ui.layout.sample.GridInfo.controller.GridInfo", {
 
 		onInit: function () {
 			// set mock model
@@ -14,8 +14,4 @@ sap.ui.define([
 			this.getView().setModel(oModel);
 		}
 	});
-
-
-	return GridController;
-
 });
