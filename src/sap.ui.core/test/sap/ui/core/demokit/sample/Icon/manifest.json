@@ -18,8 +18,10 @@
 				}
 			]
 		},
-		"libs": {
-			"sap.m": {}
+		"dependencies": {
+			"libs": {
+				"sap.m": {}
+			}
 		},
 		"config": {
 			"sample": {

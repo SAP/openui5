@@ -11,8 +11,10 @@
 			"type": "XML",
 			"async": true
 		},
-		"libs": {
-			"sap.ui.integration": {}
+		"dependencies": {
+			"libs": {
+				"sap.ui.integration": {}
+			}
 		},
 		"config": {
 			"sample": {
@@ -20,7 +22,7 @@
 					"TimelineCard.view.xml",
 					"TimelineCard.controller.js",
 					"model/TeamMembersManifest.json",
-				  	"model/ActivitiesManifest.json",
+					"model/ActivitiesManifest.json",
 					"manifest.json"
 				]
 			}

@@ -11,11 +11,13 @@
 			"type": "XML",
 			"async": true
 		},
-		"libs": {
-			"sap.ui.layout": {}
-		},
-		"components": {
-			"sap.m.sample.Table": {}
+		"dependencies": {
+			"libs": {
+				"sap.ui.layout": {}
+			},
+			"components": {
+				"sap.m.sample.Table": {}
+			}
 		},
 		"config": {
 			"sample": {

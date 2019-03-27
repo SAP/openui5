@@ -11,8 +11,10 @@
 			"type": "XML",
 			"async": true
 		},
-		"libs": {
-			"sap.f": {}
+		"dependencies": {
+			"libs": {
+				"sap.f": {}
+			}
 		},
 		"config": {
 			"sample": {

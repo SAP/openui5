@@ -7,8 +7,10 @@
 	},
 	"sap.ui5": {
 		"rootView": "sap.tnt.sample.NavigationList.V",
-		"libs": {
-			"sap.m": {}
+		"dependencies": {
+			"libs": {
+				"sap.m": {}
+			}
 		},
 		"config": {
 			"sample": {

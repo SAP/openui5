@@ -11,8 +11,10 @@
 			"type": "XML",
 			"async": true
 		},
-		"libs": {
-			"sap.ui.core": {}
+		"dependencies": {
+			"libs": {
+				"sap.ui.core": {}
+			}
 		},
 		"resources": {
 			"css": [

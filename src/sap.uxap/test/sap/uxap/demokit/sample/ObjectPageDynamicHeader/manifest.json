@@ -7,8 +7,10 @@
 	},
 	"sap.ui5": {
 		"rootView": "sap.uxap.sample.ObjectPageDynamicHeader.ObjectPageDynamicHeader",
-		"libs": {
-			"sap.m": {}
+		"dependencies": {
+			"libs": {
+				"sap.m": {}
+			}
 		},
 		"config": {
 			"sample": {
