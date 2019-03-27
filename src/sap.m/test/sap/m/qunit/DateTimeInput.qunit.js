@@ -307,6 +307,7 @@ sap.ui.define([
 	QUnit.test("value state and value state message", function(assert) {
 		var oPicker = dti4.getAggregation("_picker");
 		dti4.focus();
+		this.clock.tick(0); // need some time the popup to be opened in IE
 		assert.ok(oPicker._oValueStateMessage._oPopup.isOpen(), "error message is open");
 		this.clock.tick(500);
 
