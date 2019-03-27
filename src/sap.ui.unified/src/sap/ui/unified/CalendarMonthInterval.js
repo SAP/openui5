@@ -1356,10 +1356,12 @@ sap.ui.define([
 		this._sInvalidateContent = undefined;
 
 		var oMonthsRow = this.getAggregation("monthsRow");
-		oMonthsRow._bDateRangeChanged = true;
-		oMonthsRow._bInvalidateSync = true;
-		oMonthsRow.invalidate();
-		oMonthsRow._bInvalidateSync = undefined;
+		if (oMonthsRow) {
+			oMonthsRow._bDateRangeChanged = true;
+			oMonthsRow._bInvalidateSync = true;
+			oMonthsRow.invalidate();
+			oMonthsRow._bInvalidateSync = undefined;
+		}
 
 		this._bDateRangeChanged = undefined;
 
