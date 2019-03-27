@@ -1,7 +1,7 @@
 /*global QUnit*/
 
 sap.ui.define([
-	"sap/ui/rta/test/controlEnablingCheck",
+	"sap/ui/rta/enablement/controlTest",
 	"sap/ui/fl/registry/ChangeRegistry",
 	"sap/ui/core/util/reflection/XmlTreeModifier"
 ], function (rtaControlEnablingCheck, ChangeRegistry, XmlTreeModifier) {

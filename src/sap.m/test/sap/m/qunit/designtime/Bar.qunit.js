@@ -4,7 +4,7 @@ sap.ui.define([
 	"sap/ui/dt/test/report/QUnit",
 	"sap/ui/dt/test/ElementEnablementTest",
 	"dt/Bar",
-	"sap/ui/rta/test/controlEnablingCheck"
+	"sap/ui/rta/enablement/controlTest"
 ], function(createAndAppendDiv, QUnitReport, ElementEnablementTest, Bar, rtaControlEnablingCheck) {
 	createAndAppendDiv("content");
 

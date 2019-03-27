@@ -1,7 +1,7 @@
 /*global QUnit*/
 sap.ui.define([
 	"sap/ui/dt/test/report/QUnit",
-	"sap/ui/rta/test/controlEnablingCheck",
+	"sap/ui/rta/enablement/controlTest",
 	"sap/ui/layout/designtime/form/FormElement.designtime",
 	"sap/ui/dt/test/ElementEnablementTest",
 	"sap/ui/layout/form/FormElement",

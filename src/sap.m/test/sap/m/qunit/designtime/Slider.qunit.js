@@ -4,7 +4,7 @@ sap.ui.define([
 	"sap/ui/dt/test/ElementEnablementTest",
 	"sap/m/Slider",
 	"sap/m/ResponsiveScale",
-	"sap/ui/rta/test/controlEnablingCheck"
+	"sap/ui/rta/enablement/controlTest"
 ], function(createAndAppendDiv, QUnitReport, ElementEnablementTest, Slider, ResponsiveScale, rtaControlEnablingCheck) {
 	"use strict";
 	createAndAppendDiv("content");

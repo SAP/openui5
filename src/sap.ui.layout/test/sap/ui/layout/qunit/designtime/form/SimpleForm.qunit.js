@@ -1,7 +1,7 @@
 sap.ui.define([
 	"sap/ui/dt/test/report/QUnit",
 	"sap/ui/dt/test/ElementEnablementTest",
-	"sap/ui/rta/test/controlEnablingCheck",
+	"sap/ui/rta/enablement/controlTest",
 	"sap/ui/layout/form/SimpleForm",
 	"sap/m/Toolbar",
 	"sap/m/Button",

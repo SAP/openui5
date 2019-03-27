@@ -4,7 +4,7 @@ sap.ui.define([
 	"sap/ui/dt/test/ElementEnablementTest",
 	"sap/m/FlexBox",
 	"sap/m/Text",
-	"sap/ui/rta/test/controlEnablingCheck"
+	"sap/ui/rta/enablement/controlTest"
 ], function(createAndAppendDiv, QUnitReport, ElementEnablementTest, FlexBox, Text, rtaControlEnablingCheck) {
 	"use strict";
 	createAndAppendDiv("content");

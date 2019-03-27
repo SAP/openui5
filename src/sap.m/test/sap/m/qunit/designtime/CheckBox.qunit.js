@@ -1,4 +1,4 @@
-sap.ui.define(['sap/ui/rta/test/controlEnablingCheck'], function (rtaControlEnablingCheck) {
+sap.ui.define(['sap/ui/rta/enablement/controlTest'], function (rtaControlEnablingCheck) {
 	'use strict';
 
 	// Rename action
