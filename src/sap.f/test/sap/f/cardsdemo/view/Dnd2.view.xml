@@ -22,17 +22,17 @@
 		</subHeader>
 
 		<content>
-			<Panel>
-				<VBox>
+			<Panel headerText="Experimental switches">
+				<HBox>
 					<HBox alignItems="Center">
 						<Label class="sapUiSmallMargin" text="Dense auto fill:"/>
 						<Switch change="onDenseChange" state="false" />
 					</HBox>
 					<HBox alignItems="Center">
-						<Label class="sapUiSmallMargin" text="Rows fit to cards:"/>
+						<Label class="sapUiSmallMargin" text="Pseudo grid:"/>
 						<Switch change="onRowSpanChange" state="false" />
 					</HBox>
-				</VBox>
+				</HBox>
 			</Panel>
 
 			<Panel headerText="Card Group 1">
