@@ -2,7 +2,7 @@ sap.ui.define(['sap/ui/core/mvc/Controller'],
 	function(Controller) {
 	"use strict";
 
-	var CController = Controller.extend("sap.m.sample.NavContainer.C", {
+	return Controller.extend("sap.m.sample.NavContainer.controller.NavContainer", {
 
 		handleNav: function(evt) {
 			var navCon = this.byId("navCon");
@@ -15,8 +15,4 @@ sap.ui.define(['sap/ui/core/mvc/Controller'],
 			}
 		}
 	});
-
-
-	return CController;
-
 });

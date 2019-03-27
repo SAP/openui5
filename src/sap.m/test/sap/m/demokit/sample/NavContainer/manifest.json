@@ -7,7 +7,7 @@
 	},
 	"sap.ui5": {
 		"rootView": {
-			"viewName": "sap.m.sample.NavContainer.V",
+			"viewName": "sap.m.sample.NavContainer.view.NavContainer",
 			"type": "XML",
 			"async": true
 		},
@@ -24,8 +24,8 @@
 		"config": {
 			"sample": {
 				"files": [
-					"V.view.xml",
-					"C.controller.js",
+					"view/NavContainer.view.xml",
+					"controller/NavContainer.controller.js",
 					"style.css",
 					"manifest.json"
 				]
