@@ -7,8 +7,10 @@
 	},
 	"sap.ui5": {
 		"rootView": "sap.m.sample.TableBreadcrumb.Page",
-		"libs": {
-			"sap.m": {}
+		"dependencies": {
+			"libs": {
+				"sap.m": {}
+			}
 		},
 		"resources": {
 			"css": [

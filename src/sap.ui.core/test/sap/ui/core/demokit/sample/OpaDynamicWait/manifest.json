@@ -6,8 +6,10 @@
 		}
 	},
 	"sap.ui5": {
-		"libs": {
-			"sap.ui.commons": {}
+		"dependencies": {
+			"libs": {
+				"sap.ui.commons": {}
+			}
 		},
 		"config": {
 			"sample": {

@@ -11,8 +11,10 @@
 			"type": "XML",
 			"async": true
 		},
-		"libs": {
-			"sap.ui.layout": {}
+		"dependencies": {
+			"libs": {
+				"sap.ui.layout": {}
+			}
 		},
 		"config": {
 			"sample": {

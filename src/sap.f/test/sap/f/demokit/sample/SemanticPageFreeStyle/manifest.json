@@ -11,17 +11,19 @@
 			"type": "XML",
 			"async": true
 		},
-		"libs": {
-			"sap.m": {}
+		"dependencies": {
+			"libs": {
+				"sap.m": {}
+			}
 		},
 		"config": {
 			"sample": {
 				"stretch": true,
 				"files": [
-                    "view/SemanticPageFreeStyle.view.xml",
-                    "controller/SemanticPageFreeStyle.controller.js",
-                    "model/model.json",
-                    "manifest.json"
+					"view/SemanticPageFreeStyle.view.xml",
+					"controller/SemanticPageFreeStyle.controller.js",
+					"model/model.json",
+					"manifest.json"
 				]
 			}
 		}
