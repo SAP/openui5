@@ -14204,4 +14204,71 @@ sap.ui.define([
 			return that.checkValueState(assert, "price", "Success", "Just A Message");
 		});
 	});
+
+	//*********************************************************************************************
+	// Scenario: Request side effects at a return value context leads to "duplicate" requests.
+	// (Note: This is as expected, because two caches need to be updated!)
+	// Avoid this by using the bound context of the binding with the empty path (a workaround by FE
+	// for missing support of $expand at action POSTs). No fix required.
+	// BCP: 1980108040
+	QUnit.test("BCP: 1980108040", function (assert) {
+		var oModel = createSpecialCasesModel({autoExpandSelect : true}),
+			oReturnValueContext,
+			sView = '\
+<FlexBox id="objectPage" binding="{path : \'\', parameters : {$$ownRequest : true}}">\
+	<Text id="id" text="{ArtistID}" />\
+	<Text id="name" text="{Name}" />\
+</FlexBox>',
+			that = this;
+
+		this.expectChange("id")
+			.expectChange("name");
+
+		return this.createView(assert, sView, oModel).then(function () {
+			var oListBinding = that.oModel.bindList("/Artists"),
+				oHeaderContext = oListBinding.getHeaderContext(),
+				oOperationBinding = that.oModel.bindContext("special.cases.Create(...)",
+					oHeaderContext, {$$patchWithoutSideEffects: true});
+
+			that.expectRequest({
+				method : "POST",
+				payload : {},
+				url : "Artists/special.cases.Create"
+			}, {
+				"ArtistID" : "42",
+				"IsActiveEntity" : false
+			});
+
+			return oOperationBinding.execute();
+		}).then(function (oReturnValueContext0) {
+			oReturnValueContext = oReturnValueContext0;
+
+			that.expectRequest("Artists(ArtistID='42',IsActiveEntity=false)"
+					+ "?$select=ArtistID,IsActiveEntity,Name", {
+					"ArtistID" : "42",
+					"IsActiveEntity" : false,
+					"Name" : ""
+				})
+				.expectChange("id", "42")
+				.expectChange("name", "");
+
+			that.oView.byId("objectPage").setBindingContext(oReturnValueContext);
+
+			return that.waitForChanges(assert);
+		}).then(function () {
+			that.expectRequest("Artists(ArtistID='42',IsActiveEntity=false)?$select=Name", {
+					"ArtistID" : "42",
+					"IsActiveEntity" : false,
+					"Name" : "Hour Frustrated"
+				})
+				.expectChange("name", "Hour Frustrated");
+
+			// Note: do not use oReturnValueContext, it would trigger duplicate requests
+			that.oView.byId("objectPage").getObjectBinding().getBoundContext()
+				// code under test
+				.requestSideEffects([{$PropertyPath : "Name"}]);
+
+			return that.waitForChanges(assert);
+		});
+	});
 });
