@@ -1,7 +1,7 @@
-<core:View displayBlock="true" controllerName="sap.f.FlexibleColumnLayoutWithFullscreenPage.controller.Master" height="100%"
+<mvc:View displayBlock="true" controllerName="sap.f.FlexibleColumnLayoutWithFullscreenPage.controller.Master" height="100%"
 	  xmlns="sap.m"
 	  xmlns:f="sap.f"
-	  xmlns:core="sap.ui.core">
+	  xmlns:mvc="sap.ui.core.mvc">
 	<f:DynamicPage id="dynamicPageId"
 				   toggleHeaderOnTitleClick="false">
 		<!-- DynamicPage Title -->
@@ -46,4 +46,4 @@
 		</f:content>
 		
 	</f:DynamicPage>
-</core:View>
+</mvc:View>
