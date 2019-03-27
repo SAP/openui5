@@ -31,6 +31,7 @@ sap.ui.define(["sap/m/library", "sap/ui/core/InvisibleText"],
 		SplitButtonRenderer.render = function(oRm, oButton) {
 			var sWidth = oButton.getWidth(),
 				sType = oButton.getType(),
+				bEnabled = oButton.getEnabled(),
 				sTitleAttribute = oButton.getTitleAttributeValue();
 
 			//write root DOM element
@@ -52,7 +53,7 @@ sap.ui.define(["sap/m/library", "sap/ui/core/InvisibleText"],
 			oRm.writeClasses();
 
 			this.writeAriaAttributes(oRm, oButton);
-			oRm.writeAttribute("tabindex", "0");
+			oRm.writeAttribute("tabindex", bEnabled ? "0" : "-1");
 
 			// add tooltip if available
 			if (sTitleAttribute) {
@@ -69,6 +70,11 @@ sap.ui.define(["sap/m/library", "sap/ui/core/InvisibleText"],
 
 			oRm.write("<div");
 			oRm.addClass("sapMSBInner");
+
+			if (!bEnabled) {
+				oRm.addClass("sapMSBInnerDisabled");
+			}
+
 			oRm.writeClasses();
 			oRm.write(">");
 
