@@ -15,7 +15,7 @@
 @_sap_m_SuggestionPopover_TabularItemHeight: 2.5rem;
 @_sap_m_SuggestionPopover_TabularItemHeightCompact: 2rem;
 @_sap_m_SuggestionPopover_TabularGroupItemHeight: 2.5rem;
-@_sap_m_SuggestionPopover_TabularItemHeightCompact: 2rem;
+@_sap_m_SuggestionPopover_TabularGroupItemHeightCompact: 2rem;
 
 .sapMInputSuggestionPopup {
 
@@ -29,10 +29,12 @@
 	.sapMListTbl .sapMLIB {
 		height: @_sap_m_SuggestionPopover_TabularItemHeight;
 	}
+	.sapMListTbl .sapMListTblHeader,
 	.sapMListTbl .sapMLIB.sapMGHLI {
 		height: @_sap_m_SuggestionPopover_TabularGroupItemHeight;
 	}
 
+	.sapMListTbl .sapMListTblHeader .sapMColumnHeader,
 	.sapMListTbl .sapMLIB .sapMListTblCell {
 		padding-top: 0.625rem;
 		padding-bottom: 0.625rem;
@@ -53,10 +55,12 @@
 		.sapMListTbl .sapMLIB {
 			height: @_sap_m_SuggestionPopover_TabularItemHeightCompact;
 		}
+		.sapMListTbl .sapMListTblHeader,
 		.sapMListTbl .sapMLIB.sapMGHLI {
-			height: @_sap_m_SuggestionPopover_TabularItemHeightCompact;
+			height: @_sap_m_SuggestionPopover_TabularGroupItemHeightCompact;
 		}
 
+		.sapMListTbl .sapMListTblHeader .sapMColumnHeader,
 		.sapMListTbl .sapMLIB .sapMListTblCell {
 			padding-top: 0.25rem;
 			padding-bottom: 0.25rem;
