@@ -6,7 +6,6 @@ sap.ui.define([
 	'./InputBase',
 	'./ComboBoxTextField',
 	'./ComboBoxBase',
-	'./SuggestionsPopover',
 	'./List',
 	'./library',
 	'sap/ui/Device',
@@ -24,7 +23,6 @@ sap.ui.define([
 		InputBase,
 		ComboBoxTextField,
 		ComboBoxBase,
-		SuggestionsPopover,
 		List,
 		library,
 		Device,
@@ -367,42 +365,6 @@ sap.ui.define([
 		};
 
 		/**
-		 * Handles highlighting of items after filtering.
-		 *
-		 * @param {string} sValue The value of the item
-		 * @private
-		 * @since 1.48
-		 */
-		ComboBox.prototype._highlightList = function(sValue) {
-			var aListItemsDOM = [],
-				aListItemAdditionalText = [],
-				oItemAdditionalTextRef, oItemDomRef;
-
-			this._oList.getItems().forEach(function(oItem) {
-				oItemDomRef = oItem.getDomRef();
-
-				if (oItemDomRef) {
-					aListItemsDOM.push({
-						ref: oItemDomRef.getElementsByClassName("sapMSLITitleOnly")[0],
-						text: oItem.getTitle()
-					});
-
-					oItemAdditionalTextRef = oItemDomRef.querySelector(".sapMSLIInfo");
-
-					if (oItemAdditionalTextRef && oItem.getInfo) {
-						aListItemAdditionalText.push({
-							ref: oItemAdditionalTextRef,
-							text: oItem.getInfo()
-						});
-					}
-				}
-			});
-
-			this.highLightList(sValue, aListItemsDOM);
-			this.highLightList(sValue, aListItemAdditionalText);
-		};
-
-		/**
 		 * Sets the selected item by its index.
 		 *
 		 * @param {int} iIndex The item index
@@ -434,21 +396,17 @@ sap.ui.define([
 			oDropdown.setInitialFocus(this);
 		};
 
+		/**
+		 * Configures a dialog.
+		 *
+		 * @private
+		 */
 		ComboBox.prototype.configureDialog = function (oDialog) {
 			var that = this,
 				oTextField = this.createPickerTextField(),
-				oTextFieldHandleEvent = oTextField._handleEvent,
 				sPickerInvisibleTextId = this.getPickerInvisibleTextId();
 
-			//TODO This is code from the ComboBoxBase
-			//TODO To be refactored
-			oTextField._handleEvent = function(oEvent) {
-				oTextFieldHandleEvent.apply(this, arguments);
-
-				if (/keydown|sapdown|sapup|saphome|sapend|sappagedown|sappageup|input/.test(oEvent.type)) {
-					that._handleEvent(oEvent);
-				}
-			};
+			this.setTextFieldHandler(oTextField);
 
 			oDialog._oPopupInput = oTextField;
 			oDialog.setStretch(true)
@@ -1736,71 +1694,26 @@ sap.ui.define([
 		};
 
 		/**
-		 * Creates a picker popup container where the selection should take place.
+		 * <code>ComboBox</code> picker configuration
 		 *
-		 * To be overwritten by subclasses.
-		 *
-		 * @param {string} sPickerType The type of the picker
-		 * @returns {sap.m.Popover | sap.m.Dialog} The picker popup to be used.
+		 * @param {sap.m.Popover | sap.m.Dialog} oPicker Picker instance
 		 * @protected
 		 */
-		ComboBox.prototype.createPicker = function(sPickerType) {
-			var oPicker = this.getAggregation("picker"),
-				oRenderer = this.getRenderer(),
+		ComboBox.prototype.configPicker = function (oPicker) {
+			var oRenderer = this.getRenderer(),
 				CSS_CLASS = oRenderer.CSS_CLASS_COMBOBOXBASE;
 
-			if (oPicker) {
-				return oPicker;
-			}
-
-			this._oSuggestionPopover = this._createSuggestionsPopover();
-			oPicker = this._oSuggestionPopover._oPopover;
-			// define a parent-child relationship between the control's and the picker pop-up (Popover or Dialog)
-			this.setAggregation("picker", oPicker, true);
-			this["configure" + sPickerType](oPicker);
-
-			// configuration
 			oPicker.setHorizontalScrolling(false)
-					.addStyleClass(CSS_CLASS + "Picker")
-					.addStyleClass(CSS_CLASS + "Picker-CTX")
-					.attachBeforeOpen(this.onBeforeOpen, this)
-					.attachAfterOpen(this.onAfterOpen, this)
-					.attachBeforeClose(this.onBeforeClose, this)
-					.attachAfterClose(this.onAfterClose, this)
-					.addEventDelegate({
-						onBeforeRendering: this.onBeforeRenderingPicker,
-						onAfterRendering: this.onAfterRenderingPicker
-					}, this);
-
-			return oPicker;
-		};
-
-		/**
-		 * Creates and configures a new instance of SuggestionsPopover and its internal controls.
-		 *
-		 * @returns {sap.m.Popover | sap.m.Dialog} The picker popup to be used.
-		 * @protected
-		 */
-		ComboBox.prototype._createSuggestionsPopover = function () {
-			var bUseDialog = this.isPickerDialog(),
-				oSuggPopover;
-
-			oSuggPopover = new SuggestionsPopover(this);
-
-			if (bUseDialog) {
-				oSuggPopover._oPopupInput = this.createPickerTextField();
-			}
-
-			// Create the SuggestionsPopover's internal controls
-			oSuggPopover._createSuggestionPopup();
-			oSuggPopover._createSuggestionPopupContent(false, false, false);
-
-			// Ammend the suggestions popovers list
-			// this._oList is used by the ComboBoxBase
-			this._oList = oSuggPopover._oList;
-			this._configureList(this._oList);
-
-			return oSuggPopover;
+				.addStyleClass(CSS_CLASS + "Picker")
+				.addStyleClass(CSS_CLASS + "Picker-CTX")
+				.attachBeforeOpen(this.onBeforeOpen, this)
+				.attachAfterOpen(this.onAfterOpen, this)
+				.attachBeforeClose(this.onBeforeClose, this)
+				.attachAfterClose(this.onAfterClose, this)
+				.addEventDelegate({
+					onBeforeRendering: this.onBeforeRenderingPicker,
+					onAfterRendering: this.onAfterRenderingPicker
+				}, this);
 		};
 
 		/**
@@ -1890,27 +1803,6 @@ sap.ui.define([
 			oItem.data(oRenderer.CSS_CLASS_COMBOBOXBASE + "ListItem", oListItem);
 
 			return oListItem;
-		};
-
-		/**
-		 * Sets the selectable property of sap.ui.core.Item
-		 *
-		 * @param {sap.ui.core.Item} oItem The item to set the property
-		 * @param {boolean} bSelectable The selectable value
-		 * @private
-		 */
-		ComboBox.prototype.setSelectable = function(oItem, bSelectable) {
-
-			if (this.indexOfItem(oItem) < 0) {
-				return;
-			}
-
-			oItem._bSelectable = bSelectable;
-			var oListItem = this.getListItem(oItem);
-
-			if (oListItem) {
-				oListItem.setVisible(bSelectable);
-			}
 		};
 
 		/**
