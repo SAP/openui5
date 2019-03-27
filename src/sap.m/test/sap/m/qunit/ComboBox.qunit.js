@@ -1,5 +1,6 @@
 /*global QUnit */
 sap.ui.define([
+	"sap/ui/qunit/QUnitUtils",
 	"sap/m/ComboBoxBase",
 	"sap/m/ComboBox",
 	"sap/m/ComboBoxTextField",
@@ -32,6 +33,7 @@ sap.ui.define([
 	"sap/ui/qunit/QUnitUtils",
 	"sap/ui/thirdparty/sinon-qunit"
 ], function(
+	qutils,
 	ComboBoxBase,
 	ComboBox,
 	ComboBoxTextField,
@@ -2926,6 +2928,69 @@ sap.ui.define([
 		oLabel.destroy();
 	});
 
+	QUnit.test("it should close the picker when the ENTER key is pressed", function (assert) {
+
+		// system under test
+		this.stub(Device, "system", {
+			desktop: false,
+			phone: true,
+			tablet: false
+		});
+
+		// arrange
+		var aItems = [
+			new Item({
+				key: "0",
+				text: "Item 0"
+			}),
+
+			new Item({
+				key: "1",
+				text: "Item 1"
+			}),
+
+			new Item({
+				key: "2",
+				text: "Item 2"
+			})
+		],
+			oPickerTextField,
+			oPickerTextFieldDomRef,
+			fnChangeSpy,
+			oComboBox = new ComboBox({
+				items: aItems
+			});
+
+		oComboBox.placeAt("content");
+		sap.ui.getCore().applyChanges();
+
+		// act
+		oComboBox.focus();
+		oComboBox.open();
+		// tick the clock ahead 1 milisecond, after the open animation is completed
+		this.clock.tick(1000);
+
+		oPickerTextField = oComboBox.getPickerTextField();
+		oPickerTextField.focus();
+		oPickerTextFieldDomRef = oPickerTextField.getFocusDomRef();
+		fnChangeSpy = this.spy(oComboBox, "fireChange");
+
+		oPickerTextFieldDomRef.value = "I";
+		sap.ui.qunit.QUnitUtils.triggerKeydown(oPickerTextFieldDomRef, KeyCodes.I);
+		sap.ui.qunit.QUnitUtils.triggerEvent("input", oPickerTextFieldDomRef);
+		this.clock.tick(300);
+		sap.ui.test.qunit.triggerKeydown(oPickerTextFieldDomRef, KeyCodes.ENTER);
+		this.clock.tick(300);
+
+		// assert
+		assert.strictEqual(fnChangeSpy.callCount, 1, "The change event was fired");
+		assert.strictEqual(oComboBox.getSelectedItem().getText(), "Item 0", "The correct item is selected");
+		assert.notOk(oComboBox.isOpen(), "The picker is closed");
+
+		// cleanup
+		oComboBox.destroy();
+		fnChangeSpy.restore();
+	});
 	QUnit.module("findFirstEnabledItem()");
 
 	QUnit.test("findFirstEnabledItem()", function (assert) {

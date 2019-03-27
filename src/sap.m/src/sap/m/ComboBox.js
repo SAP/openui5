@@ -477,16 +477,24 @@ sap.ui.define([
 		 * @private
 		 */
 		ComboBox.prototype.createPickerTextField = function() {
-			var oTextField = new ComboBoxTextField({
-				width: "100%",
-				showValueStateMessage: false,
-				showButton: false
-			}).addEventDelegate({
-				onsapenter: function() {
-					this.updateDomValue(oTextField.getValue());
-					this.onChange();
-				}
-			}, this);
+			var that = this,
+				sTextFieldValue,
+				oTextField = new ComboBoxTextField({
+					width: "100%",
+					showValueStateMessage: false,
+					showButton: false
+				}).addEventDelegate({
+					onsapenter: function() {
+						sTextFieldValue = oTextField.getValue();
+						this.updateDomValue(sTextFieldValue);
+						this.onChange();
+						if (sTextFieldValue) {
+							that.updateDomValue(sTextFieldValue);
+							that.onChange();
+							that.close();
+						}
+					}
+				}, this);
 
 			return oTextField;
 		};
