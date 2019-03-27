@@ -121,11 +121,10 @@ sap.ui.define(["sap/f/cards/BaseContent",
 			mItem.icon && this._bindItemProperty("icon", mItem.icon.src);
 			/* eslint-enable no-unused-expressions */
 
-			var oTimeline = this._getTimeline();
-			oTimeline.bindAggregation("content", {
-				path: this.getBindingContext().getPath(),
+			var oBindingInfo = {
 				template: this._oTimeLineItemTemplate
-			});
+			};
+			this._bindAggregation("content", this._getTimeline(), oBindingInfo);
 
 			return this;
 		};
