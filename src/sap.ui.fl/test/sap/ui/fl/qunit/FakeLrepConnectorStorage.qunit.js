@@ -195,9 +195,11 @@ sap.ui.define([
 			var mSettings = {};
 			FakeLrepConnectorSessionStorage.enableFakeConnector(mSettings);
 			var oFakeLrepConnectorSessionStorage = sap.ui.fl.LrepConnector.createConnector();
+			var oLoadChangesSpy = sandbox.spy(FakeLrepSessionStorage, "getChanges");
 
-			return oFakeLrepConnectorSessionStorage.loadChanges("sap.ui.fl.qunit.FakeLrepConnector", undefined, aTestData)
+			return oFakeLrepConnectorSessionStorage.loadChanges({name: "sap.ui.rta.test.Demo.md.Component"}, undefined, aTestData)
 			.then(function (oChanges) {
+				assert.ok(oLoadChangesSpy.lastCall.args[0], "sap.ui.rta.test.Demo.md.Component", "loadChanges was called with the reference as parameter");
 				assert.equal(oChanges.changes.changes.length, 4, "then 4 changes are available");
 				FakeLrepConnectorSessionStorage.disableFakeConnector();
 			});
