@@ -203,6 +203,10 @@ sap.ui.define([
 						oZipFile.file(sFileName, that.fetchSourceFile(sRef, sFileName));
 					});
 
+					// add generic license and notice file
+					oZipFile.file("LICENSE.txt", this.fetchSourceFile(sap.ui.require.toUrl("sap/ui/documentation/sdk/tmpl/"), "LICENSE.txt"));
+					oZipFile.file("NOTICE.txt", this.fetchSourceFile(sap.ui.require.toUrl("sap/ui/documentation/sdk/tmpl/"), "NOTICE.txt"));
+
 					var oContent = oZipFile.generate({type:"blob"});
 
 					// save and open generated file
