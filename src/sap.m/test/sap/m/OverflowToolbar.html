@@ -947,8 +947,6 @@
 		enableScrolling : true,
 		subHeader: aAllToolbars[0],
 		content: [
-
-
 			new sap.m.Slider({
 				value: 100,
 				liveChange: function(oControlEvent) {
@@ -968,10 +966,34 @@
 					});
 
 				}
-			})
+			}),
 
+			aAllToolbars.slice(1, aAllToolbars.length - 1),
 
-		].concat(aAllToolbars.slice(1, aAllToolbars.length - 1)),
+			new sap.m.MessageStrip({
+				text: "Change page width",
+				showIcon: true
+			}).addStyleClass("sapUiSmallMargin"),
+
+			new sap.m.HBox({
+				justifyContent: sap.m.FlexJustifyContent.Center,
+				wrap: sap.m.FlexWrap.Wrap,
+				items: [
+					new sap.m.Button("size_btn", {
+						text : "Change page width to 480px",
+						press : function() { jQuery("#toolbar-page").width("480px"); }
+					}).addStyleClass("sapUiSmallMargin"),
+					new sap.m.Button("size_btn2", {
+						text : "Change page width to 700px",
+						press : function() { jQuery("#toolbar-page").width("700px"); }
+					}).addStyleClass("sapUiSmallMargin"),
+					new sap.m.Button("size_btn3", {
+						text : "Change page width to 100%",
+						press : function() { jQuery("#toolbar-page").width("100%"); }
+					}).addStyleClass("sapUiSmallMargin")
+				]
+			}),
+		],
 	footer: aAllToolbars[aAllToolbars.length - 1]
 	});
 
@@ -1022,20 +1044,6 @@
 	});
 
 	oApp.addPage(oPage).placeAt("content");
-
-	var oB = new sap.m.Button("size_btn", {
-		text : "Change page size to 480px",
-		press : function() { jQuery("#toolbar-page").width("480px"); }
-	});
-
-	var oB2 = new sap.m.Button("size_btn2", {
-		text : "Change page size to 700px",
-		press : function() { jQuery("#toolbar-page").width("700px"); }
-	});
-
-	oB2.placeAt("content");
-	oB.placeAt("content");
-
 </script>
 </head>
 <body id="body" class="sapUiBody">
