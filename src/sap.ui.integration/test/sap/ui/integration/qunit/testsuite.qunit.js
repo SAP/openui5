@@ -39,6 +39,13 @@ sap.ui.define(function () {
 					]
 				}
 			},
+			"util/ServiceManager": {
+				coverage: {
+					only: [
+						"sap/ui/integration/util/ServiceManager"
+					]
+				}
+			},
 			"util/CustomElements": {
 				coverage: {
 					only: [
