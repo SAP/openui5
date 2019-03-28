@@ -112,10 +112,10 @@ sap.ui.define([
 
 			this._attachActions(oRow, this._oItemTemplate);
 
-			oTable.bindItems({
-				path: this.getBindingContext().getPath(),
+			var oBindingInfo = {
 				template: this._oItemTemplate
-			});
+			};
+			this._bindAggregation("items", oTable, oBindingInfo);
 		};
 
 		/**

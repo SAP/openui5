@@ -502,6 +502,113 @@ function (
 		}
 	};
 
+	var oManifest_TableCard_WithCardLevelData = {
+		"sap.card": {
+			"type": "Table",
+			"data": {
+				"json": [
+					{
+						"salesOrder": "5000010050",
+						"customer": "Robert Brown Entertainment",
+						"status": "Delivered",
+						"statusState": "Success",
+						"orderUrl": "http://www.sap.com",
+						"percent": 30,
+						"percentValue": "30%",
+						"progressState": "Error",
+						"iconSrc": "sap-icon://help"
+					},
+					{
+						"salesOrder": "5000010051",
+						"customer": "Entertainment Argentinia",
+						"status": "Canceled",
+						"statusState": "Error",
+						"orderUrl": "http://www.sap.com",
+						"percent": 70,
+						"percentValue": "70 of 100",
+						"progressState": "Success",
+						"iconSrc": "sap-icon://help"
+					},
+					{
+						"salesOrder": "5000010052",
+						"customer": "Brazil Technologies",
+						"status": "In Progress",
+						"statusState": "Warning",
+						"orderUrl": "http://www.sap.com",
+						"percent": 55,
+						"percentValue": "55GB of 100",
+						"progressState": "Warning",
+						"iconSrc": "sap-icon://help"
+					},
+					{
+						"salesOrder": "5000010053",
+						"customer": "Quimica Madrilenos",
+						"status": "Delivered",
+						"statusState": "Success",
+						"orderUrl": "http://www.sap.com",
+						"percent": 10,
+						"percentValue": "10GB",
+						"progressState": "Error",
+						"iconSrc": "sap-icon://help"
+					},
+					{
+						"salesOrder": "5000010054",
+						"customer": "Development Para O Governo",
+						"status": "Delivered",
+						"statusState": "Success",
+						"orderUrl": "http://www.sap.com",
+						"percent": 100,
+						"percentValue": "100%",
+						"progressState": "Success",
+						"iconSrc": "sap-icon://help"
+					}
+				]
+			},
+			"header": {
+				"title": "Sales Orders for Key Accounts"
+			},
+			"content": {
+				"row": {
+					"columns": [
+						{
+							"label": "Sales Order",
+							"value": "{salesOrder}",
+							"identifier": true
+						},
+						{
+							"label": "Customer",
+							"value": "{customer}"
+						},
+						{
+							"label": "Status",
+							"value": "{status}",
+							"state": "{statusState}"
+						},
+						{
+							"label": "Order ID",
+							"value": "{orderUrl}",
+							"url": "{orderUrl}"
+						},
+						{
+							"label": "Progress",
+							"progressIndicator": {
+								"percent": "{percent}",
+								"text": "{percentValue}",
+								"state": "{progressState}"
+							}
+						},
+						{
+							"label": "Avatar",
+							"icon": {
+								"src": "{iconSrc}"
+							}
+						}
+					]
+				}
+			}
+		}
+	};
+
 	var oManifest_AvatarHeader = {
 		"sap.card": {
 			"type": "List",
@@ -1097,6 +1204,32 @@ function (
 
 		// Act
 		this.oCard.setManifest(oManifest_TableCard);
+	});
+
+	QUnit.test("Table Card - using manifest with card level data section", function (assert) {
+
+		// Arrange
+		var done = assert.async();
+		var oManifestValueToCheck = oManifest_TableCard_WithCardLevelData["sap.card"].data.json[0].salesOrder;
+
+		this.oCard.attachEvent("_ready", function () {
+
+			Core.applyChanges();
+
+			var aItems = this.oCard.getCardContent().getAggregation("_content").getItems();
+			assert.equal(aItems.length, 5, "Should have 5 items in the table.");
+
+			var oItemCell = aItems[0].getCells()[0];
+			assert.ok(oItemCell.isA("sap.m.ObjectIdentifier"), "Should have created an object identifier.");
+
+			// Aggregation binding succeeded if one of the cells have correct value.
+			assert.equal(oItemCell.getTitle(), oManifestValueToCheck, "Cell should have correct value.");
+
+			done();
+		}.bind(this));
+
+		// Act
+		this.oCard.setManifest(oManifest_TableCard_WithCardLevelData);
 	});
 
 	QUnit.module("Card Accessibility", {
