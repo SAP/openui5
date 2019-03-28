@@ -753,7 +753,8 @@ sap.ui.define([
 	 * @private
 	 */
 	Card.prototype._applyManifestSettings = function () {
-		if (this._oCardManifest.get(MANIFEST_PATHS.APP_TYPE) !== "card") {
+		var sAppType = this._oCardManifest.get(MANIFEST_PATHS.APP_TYPE);
+		if (sAppType && sAppType !== "card") {
 			Log.error("sap.app/type entry in manifest is not 'card'");
 		}
 
@@ -861,7 +862,7 @@ sap.ui.define([
 			oManifestContent = this._oCardManifest.get(MANIFEST_PATHS.CONTENT),
 			bHasContent = !!oManifestContent;
 
-		if (!sCardType) {
+		if (bHasContent && !sCardType) {
 			Log.error("Card type property is mandatory!");
 			this.fireEvent("_contentReady");
 			return;
@@ -1008,9 +1009,9 @@ sap.ui.define([
 					oContent = this._oCardManifest.get(MANIFEST_PATHS.CONTENT),
 					sHeight = BaseContent.getMinHeight(sType, oContent);
 
-					if (this.getHeight() === "auto") { // if there is no height specified the default value is "auto"
-						oHBox.$().css({ "min-height": sHeight });
-					}
+				if (this.getHeight() === "auto") { // if there is no height specified the default value is "auto"
+					oHBox.$().css({ "min-height": sHeight });
+				}
 			}
 		}, this);
 
@@ -1057,9 +1058,10 @@ sap.ui.define([
 				var sType = this._oCardManifest.get(MANIFEST_PATHS.TYPE) + "Content",
 					oContent = this._oCardManifest.get(MANIFEST_PATHS.CONTENT),
 					sHeight = BaseContent.getMinHeight(sType, oContent);
-					if (this.getHeight() === "auto") { // if there is no height specified the default value is "auto"
-						oError.$().css({ "min-height": sHeight });
-					}
+
+				if (this.getHeight() === "auto") { // if there is no height specified the default value is "auto"
+					oError.$().css({ "min-height": sHeight });
+				}
 			}
 		}, this);
 
