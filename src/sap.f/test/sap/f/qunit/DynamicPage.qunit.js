@@ -780,8 +780,7 @@ function (
 	});
 
 	QUnit.test("DynamicPage On Snap Header when not enough scrollHeight to snap with scroll and scrollTop > 0", function (assert) {
-		/* TODO remove after 1.62 version */
-		var sHeight = Device.browser.msie  ? "300px" : "400px",
+		var sHeight = "400px",
 			aAcceptableValues = Device.browser.edge ? [0, 1] : [0]; // due to different MS browsers calculation
 
 		this.oDynamicPage.setContent(oFactory.getContent(1)); // not enough content to snap on scroll
@@ -804,7 +803,6 @@ function (
 		// Assert context changed as expected:
 		assert.strictEqual(this.oDynamicPage.getHeaderExpanded(), false, "header is snapped");
 		assert.ok(!this.oDynamicPage._needsVerticalScrollBar(), "not enough scrollHeight to scroll");//because header was hidden during snap
-		/* TODO remove after 1.62 version */
 		assert.ok(aAcceptableValues.indexOf(this.oDynamicPage._getScrollPosition()) !== -1,
 			"Page is scrolled to top"); // because no more scrolled-out content
 
