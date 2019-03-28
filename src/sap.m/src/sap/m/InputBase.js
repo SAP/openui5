@@ -81,6 +81,9 @@ function(
 
 			/**
 			 * Defines the width of the control.
+			 *
+			 * <b>Note:</b> If the provided width is too small, the control gets stretched to
+			 * its min width, which is needed in order for the control to be usable and well aligned.
 			 */
 			width: { type: "sap.ui.core.CSSSize", group: "Dimension", defaultValue: null },
 
@@ -892,6 +895,25 @@ function(
 				this.getShowValueStateMessage();
 	};
 
+	/**
+	 * Calculates the space taken by the icons.
+	 *
+	 * @private
+	 * @return {int | null} CSSSize in px
+	 */
+	InputBase.prototype._calculateIconsSpace = function () {
+		var oEndIcon = this.getAggregation("_endIcon") || [],
+			oBeginIcon = this.getAggregation("_beginIcon") || [],
+			aIcons = oEndIcon.concat(oBeginIcon),
+			iIconWidth;
+
+		return aIcons.reduce(function(iAcc, oIcon){
+			iIconWidth = oIcon && oIcon.getDomRef() ? oIcon.getDomRef().offsetWidth : 0;
+
+			return iAcc + iIconWidth;
+		}, 0);
+	};
+
 	/* ----------------------------------------------------------- */
 	/* public methods                                              */
 	/* ----------------------------------------------------------- */
@@ -939,7 +961,6 @@ function(
 				this.openValueStateMessage();
 			}
 		}
-
 		return this;
 	};
 

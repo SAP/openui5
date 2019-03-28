@@ -389,7 +389,7 @@
 		});
 
 		var oMinWidthMultiInput =  new sap.m.MultiInput("minWidthMI", {
-			width: "3rem",
+			width: "5rem",
 			tokens: [
 				new sap.m.Token({text: "Token 1", key: "0001"}),
 				new sap.m.Token({text: "Token 2", key: "0002"}),
@@ -517,6 +517,7 @@
 			selected: false,
 			select : function() {
 				$("body").toggleClass("sapUiSizeCompact");
+				sap.ui.getCore().notifyContentDensityChanged();
 			}
 		});
 		//*******************************

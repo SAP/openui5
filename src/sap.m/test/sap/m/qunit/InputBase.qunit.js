@@ -14,7 +14,8 @@ sap.ui.define([
 	"sap/m/Text",
 	"sap/m/InputBaseRenderer",
 	"sap/ui/Device",
-	"sap/ui/base/ManagedObject"
+	"sap/ui/base/ManagedObject",
+	"sap/ui/core/Icon"
 ], function(
 	qutils,
 	createAndAppendDiv,
@@ -29,7 +30,8 @@ sap.ui.define([
 	Text,
 	InputBaseRenderer,
 	Device,
-	ManagedObject
+	ManagedObject,
+	Icon
 ) {
 	// shortcut for sap.ui.core.TextDirection
 	var TextDirection = coreLibrary.TextDirection;
@@ -2262,6 +2264,34 @@ sap.ui.define([
 		// cleanup
 		oInput.destroy();
 	});
+
+	QUnit.module("Width calculations");
+
+	QUnit.test("_calculateIconsSpace", function(assert) {
+		var oInput = new InputBase(),
+			oBeginIcon, oEndIcon;
+
+		oInput.placeAt("content");
+		sap.ui.getCore().applyChanges();
+
+		assert.strictEqual(0, oInput._calculateIconsSpace(),
+			"The space taken by the icon should be 0, when no icon present");
+
+		oEndIcon = oInput.addEndIcon({src: "sap-icon://slim-arrow-down"});
+		sap.ui.getCore().applyChanges();
+
+		assert.strictEqual(oEndIcon.getDomRef().offsetWidth, oInput._calculateIconsSpace(),
+			"The space taken by the icon should be calculated");
+
+		oBeginIcon = oInput.addBeginIcon({src: "sap-icon://slim-arrow-down"});
+		sap.ui.getCore().applyChanges();
+
+		assert.strictEqual(oBeginIcon.getDomRef().offsetWidth + oEndIcon.getDomRef().offsetWidth,
+			oInput._calculateIconsSpace(), "The space taken by the icons should be calculated" );
+
+		oInput.destroy();
+	});
+
 
 	QUnit.module("Renderer hooks");
 	QUnit.test("writeInnerId() is called", function(assert) {
