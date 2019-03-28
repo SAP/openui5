@@ -1647,7 +1647,7 @@ function (
 			var oPromise1 = this.oChangePersistence.getChangesForVariant("persistencyKey", "SmartFilter_Explored", {includeVariants: true});
 			var oPromise2 = this.oChangePersistence.getChangesForVariant("persistencyKey", "SmartFilter_Explored", {includeVariants: true});
 			return Promise.all([oPromise1, oPromise2]).then(function(values){
-				assert.deepEqual(values[0], values[1]);
+				assert.ok(values[0] === values[1]);
 			});
 		});
 
