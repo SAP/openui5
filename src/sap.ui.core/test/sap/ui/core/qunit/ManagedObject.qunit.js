@@ -60,6 +60,9 @@ sap.ui.define([
 					myprop:"test"
 				}
 			},
+			events: {
+				press: {}
+			},
 			defaultAggregation : "singleAggr",
 			defaultProperty: "value"
 		},
@@ -2394,5 +2397,79 @@ sap.ui.define([
 		this.obj1.addAggregation("subObjects", this.obj2);
 
 		assert.equal(oSpy.callCount, 0, 'invalidation on obj2 must not be called');
+	});
+
+	QUnit.module("Events", {
+		afterEach: function () {
+			this.oFixture.destroy();
+		}
+	});
+
+	QUnit.test("when declared as a function", function (assert) {
+		var oSpy = sinon.spy();
+		this.oFixture = new TestManagedObject({
+			press: oSpy
+		});
+		this.oFixture.firePress();
+		assert.strictEqual(oSpy.callCount, 1);
+	});
+
+	QUnit.test("when declared as an array", function (assert) {
+		assert.expect(3);
+		var oScope = {};
+		var sData = "foo";
+		var oSpy = sinon.spy(function (oEvent, vData) {
+			assert.strictEqual(this, oScope);
+			assert.strictEqual(vData, sData);
+		});
+		this.oFixture = new TestManagedObject({
+			press: [sData, oSpy, oScope]
+		});
+		this.oFixture.firePress();
+		assert.strictEqual(oSpy.callCount, 1);
+	});
+
+	QUnit.test("when declared as an array with multiple events", function (assert) {
+		assert.expect(6);
+
+		// First event handler
+		var oScope1 = {};
+		var sData1 = "foo";
+		var oSpy1 = sinon.spy(function (oEvent, vData) {
+			assert.strictEqual(this, oScope1);
+			assert.strictEqual(vData, sData1);
+		});
+
+		// Second event handler
+		var oScope2 = { foo: "baz" };
+		var sData2 = "bar";
+		var oSpy2 = sinon.spy(function (oEvent, vData) {
+			assert.strictEqual(this, oScope2);
+			assert.strictEqual(vData, sData2);
+		});
+		this.oFixture = new TestManagedObject({
+			press: [
+				[sData1, oSpy1, oScope1],
+				[sData2, oSpy2, oScope2]
+			]
+		});
+		this.oFixture.firePress();
+		assert.strictEqual(oSpy1.callCount, 1);
+		assert.strictEqual(oSpy2.callCount, 1);
+	});
+
+	QUnit.test("when declared as an array with oData as an array", function (assert) {
+		assert.expect(3);
+		var oScope = {};
+		var aData = ["foo"];
+		var oSpy = sinon.spy(function (oEvent, vData) {
+			assert.strictEqual(this, oScope);
+			assert.strictEqual(vData, aData);
+		});
+		this.oFixture = new TestManagedObject({
+			press: [aData, oSpy, oScope]
+		});
+		this.oFixture.firePress();
+		assert.strictEqual(oSpy.callCount, 1);
 	});
 });

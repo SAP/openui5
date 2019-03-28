@@ -753,11 +753,19 @@ function(
 
 					} else if (oInfo && oInfo._iKind === 5 /* EVENT */ ) {
 						// EVENT
-						var vEventHandler = EventHandlerResolver.resolveEventHandler(sValue, oView._oContainingView.oController); // TODO: can this be made async? (to avoid the hard resolver dependency)
-						if ( vEventHandler ) {
-							mSettings[sName] = vEventHandler;
-						} else {
-							Log.warning(oView + ": event handler function \"" + sValue + "\" is not a function or does not exist in the controller.");
+						var aEventHandlers = [];
+
+						EventHandlerResolver.parse(sValue).forEach(function (sEventHandler) { // eslint-disable-line no-loop-func
+							var vEventHandler = EventHandlerResolver.resolveEventHandler(sEventHandler, oView._oContainingView.oController); // TODO: can this be made async? (to avoid the hard resolver dependency)
+							if (vEventHandler) {
+								aEventHandlers.push(vEventHandler);
+							} else  {
+								Log.warning(oView + ": event handler function \"" + sEventHandler + "\" is not a function or does not exist in the controller.");
+							}
+						});
+
+						if (aEventHandlers.length) {
+							mSettings[sName] = aEventHandlers;
 						}
 					} else if (oInfo && oInfo._iKind === -1) {
 						// SPECIAL SETTING - currently only allowed for View's async setting

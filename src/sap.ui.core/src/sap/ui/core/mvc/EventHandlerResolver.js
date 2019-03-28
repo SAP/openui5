@@ -12,6 +12,7 @@ sap.ui.define([
 	// TODO: think about lazy-loading in async case
 	"sap/ui/model/json/JSONModel",
 	"sap/ui/model/base/ManagedObjectModel",
+	"sap/base/util/JSTokenizer",
 	"sap/base/util/ObjectPath",
 	"sap/base/Log"
 ],
@@ -23,6 +24,7 @@ sap.ui.define([
 		CompositeBinding,
 		JSONModel,
 		MOM,
+		JSTokenizer,
 		ObjectPath,
 		Log
 	) {
@@ -181,6 +183,66 @@ sap.ui.define([
 
 				Log.warning("Event handler name '" + sName + "' could not be resolved to an event handler function");
 				// return undefined
+			},
+
+			/**
+			 * Parses and splits the incoming string into meaningful event handler definitions
+			 *
+			 * Examples:
+			 *
+			 * parse(".fnControllerMethod")
+			 * => [".fnControllerMethod"]
+			 *
+			 * parse(".doSomething('Hello World'); .doSomething2('string'); globalFunction")
+			 * => [".doSomething('Hello World')", ".doSomething2('string')", "globalFunction"]
+
+			 * parse(".fnControllerMethod; .fnControllerMethod(${  path:'/someModelProperty', formatter: '.myFormatter', type: 'sap.ui.model.type.String'}    ); globalFunction")
+			 * => [".fnControllerMethod", ".fnControllerMethod(${  path:'/someModelProperty', formatter: '.myFormatter', type: 'sap.ui.model.type.String'}    )", "globalFunction"]
+			 *
+			 * @param [string] sValue - Incoming string
+			 * @return {string[]} - Array of event handler definitions
+			 */
+			parse: function parse(sValue) {
+				sValue = sValue.trim();
+				var oTokenizer = new JSTokenizer();
+				var aResult = [];
+				var sBuffer = "";
+				var iParenthesesCounter = 0;
+
+				oTokenizer.init(sValue, 0);
+				for (;;) {
+					var sSymbol = oTokenizer.next();
+					if ( sSymbol === '"' || sSymbol === "'" ) {
+						var pos = oTokenizer.getIndex();
+						oTokenizer.string();
+						sBuffer += sValue.slice(pos, oTokenizer.getIndex());
+						sSymbol = oTokenizer.getCh();
+					}
+					if ( !sSymbol ) {
+						break;
+					}
+					switch (sSymbol) {
+						case "(":
+							iParenthesesCounter++;
+							break;
+						case ")":
+							iParenthesesCounter--;
+							break;
+					}
+
+					if (sSymbol === ";" && iParenthesesCounter === 0) {
+						aResult.push(sBuffer.trim());
+						sBuffer = "";
+					} else {
+						sBuffer += sSymbol;
+					}
+				}
+
+				if (sBuffer) {
+					aResult.push(sBuffer.trim());
+				}
+
+				return aResult;
 			}
 		};
 
