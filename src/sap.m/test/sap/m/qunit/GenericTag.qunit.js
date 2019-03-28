@@ -260,6 +260,26 @@ sap.ui.define([
 		this.assertNotCalled(this.oToggleActiveGenericTagSpy, assert);
 	});
 
+	QUnit.module("GenericTag - keydown");
+
+	QUnit.test("onkeydown event should be prevented - SPACE", function(assert) {
+		//setup
+		var oGenericTag = new GenericTag().placeAt(TESTS_DOM_CONTAINER),
+			oEvent = {
+				which: KeyCodes.SPACE,
+				preventDefault: function () {}
+			},
+			oSpy = this.spy(oEvent, "preventDefault");
+
+		//act
+		oGenericTag.onkeydown(oEvent);
+
+		//assert
+		assert.ok(oSpy.calledOnce, "preventDefault is called on SPACE key");
+
+		oGenericTag.destroy();
+	});
+
 	/* --------------------------- GenericTag Rendering ---------------------------------- */
 	QUnit.module("GenericTag - Rendering", {
 		beforeEach: function() {
