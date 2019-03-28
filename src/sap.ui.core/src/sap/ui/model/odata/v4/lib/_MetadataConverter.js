@@ -194,7 +194,7 @@ sap.ui.define([
 			vValue;
 
 		// check the last attribute first, this is typically the one with the annotation value
-		for (i = oAttributeList.length - 1; i >= 0; i--) {
+		for (i = oAttributeList.length - 1; i >= 0; i -= 1) {
 			oAttribute = oAttributeList.item(i);
 			vValue = this.getAnnotationValue(oAttribute.name, oAttribute.value);
 			if (vValue !== undefined) {

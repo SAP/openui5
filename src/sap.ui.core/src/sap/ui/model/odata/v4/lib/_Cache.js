@@ -705,7 +705,7 @@ sap.ui.define([
 
 			if (isSubPath(sRequestPath, sPath)) {
 				aPromises = that.mPatchRequests[sRequestPath];
-				for (i = aPromises.length - 1; i >= 0; i--) {
+				for (i = aPromises.length - 1; i >= 0; i -= 1) {
 					that.oRequestor.removePatch(aPromises[i]);
 				}
 				delete that.mPatchRequests[sRequestPath];
@@ -717,7 +717,7 @@ sap.ui.define([
 
 			if (isSubPath(sRequestPath, sPath)) {
 				aEntities = that.mPostRequests[sRequestPath];
-				for (i = aEntities.length - 1; i >= 0; i--) {
+				for (i = aEntities.length - 1; i >= 0; i -= 1) {
 					sTransientGroup = _Helper.getPrivateAnnotation(aEntities[i], "transient");
 					that.oRequestor.removePost(sTransientGroup, aEntities[i]);
 				}
