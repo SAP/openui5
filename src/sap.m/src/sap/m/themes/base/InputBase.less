@@ -9,7 +9,26 @@
 @_sap_m_InputBase_DisabledOpacity: 0.5;
 @_sap_m_InputBase_IconLineHeight: 2.375rem;
 @_sap_m_InputBase_IconWidth: 2.375rem;
+@_sap_m_InputBase_Compact_IconWidth: 2rem;
 @_sap_m_InputBase_IconMinWidth: 2.375rem;
+@_sap_m_InputBaseWrapper_Sum_Border: 0.125rem;
+@_sap_m_InputBase_InnerMinWidth_Compact: 2rem;
+
+/*MIN-WIDTH variables*/
+/* rounding values to 2 symbols, because of IE and Edge */
+@_InputBase_Control_MinWidth: round((@_sap_m_InputBase_InnerMinWidth + @_sap_m_InputBaseWrapper_Sum_Border), 2);
+@_InputBase_Control_OneIcon_MinWidth: round((@_InputBase_Control_MinWidth + @_sap_m_InputBase_IconWidth), 2);
+@_InputBase_Control_TwoIcons_MinWidth: round((@_InputBase_Control_MinWidth + @_sap_m_InputBase_IconWidth * 2), 2);
+@_InputBase_Control_State_MinWidth: round((@_InputBase_Control_MinWidth + @_sap_m_InputBaseWrapper_Sum_Border), 2);
+@_InputBase_Control_TwoIcons_State_MinWidth: round((@_InputBase_Control_TwoIcons_MinWidth + @_sap_m_InputBaseWrapper_Sum_Border), 2);
+@_InputBase_Control_OneIcon_State_MinWidth: round((@_InputBase_Control_OneIcon_MinWidth + @_sap_m_InputBaseWrapper_Sum_Border), 2);
+
+@_InputBase_Control_MinWidth_Compact: round((@_sap_m_InputBase_InnerMinWidth_Compact + @_sap_m_InputBaseWrapper_Sum_Border), 2);
+@_InputBase_Control_OneIcon_MinWidth_Compact: round((@_InputBase_Control_MinWidth_Compact + @_sap_m_InputBase_Compact_IconWidth), 2);
+@_InputBase_Control_TwoIcons_MinWidth_Compact: round((@_InputBase_Control_MinWidth_Compact + @_sap_m_InputBase_Compact_IconWidth * 2), 2);
+@_InputBase_Control_State_MinWidth_Compact: round((@_InputBase_Control_MinWidth_Compact + @_sap_m_InputBaseWrapper_Sum_Border), 2);
+@_InputBase_Control_TwoIcons_State_MinWidth_Compact: round((@_InputBase_Control_TwoIcons_MinWidth + @_sap_m_InputBaseWrapper_Sum_Border), 2);
+@_InputBase_Control_OneIcon_State_MinWidth_Compact: round((@_InputBase_Control_OneIcon_MinWidth + @_sap_m_InputBaseWrapper_Sum_Border), 2);
 
 .sapMInputBase {
 	height: @_sap_m_InputBase_Height;
@@ -22,12 +41,36 @@
 	line-height: 0;
 }
 
-.sapMInputBaseNoWidth {
-	max-width: 100%;
-}
-
 .sapMInputBaseHeightMargin {
 	margin: 0.25rem 0;
+}
+
+/* handle min-width calculation */
+.sapMInputBaseHasEndIcons, .sapMInputBaseHasBeginIcons {
+	.sapMInputBaseContentWrapper {
+		min-width: @_InputBase_Control_OneIcon_MinWidth;
+		&.sapMInputBaseContentWrapperState {
+			min-width: @_InputBase_Control_OneIcon_State_MinWidth;
+		}
+	}
+}
+
+.sapMInputBaseHasEndIcons.sapMInputBaseHasBeginIcons {
+	.sapMInputBaseContentWrapper {
+		min-width: @_InputBase_Control_TwoIcons_MinWidth;
+		&.sapMInputBaseContentWrapperState {
+			min-width: @_InputBase_Control_TwoIcons_State_MinWidth;
+		}
+	}
+}
+
+.sapMInputBase:not(.sapMInputBaseHasEndIcons):not(.sapMInputBaseHasBeginIcons) {
+	.sapMInputBaseContentWrapper {
+		min-width: @_InputBase_Control_MinWidth;
+		&.sapMInputBaseContentWrapperState {
+			min-width: @_InputBase_Control_State_MinWidth;
+		}
+	}
 }
 
 .sapMInputBaseInner {
@@ -42,42 +85,49 @@
 	padding: @_sap_m_InputBase_InnerPadding;
 	height: 100%;
 	box-sizing: border-box;
-	flex: auto;
 	min-width: @_sap_m_InputBase_InnerMinWidth;
+	overflow: hidden;
 	text-overflow: ellipsis;
+	vertical-align: inherit;
+}
+
+.sapMInputBaseReadonly .sapMInputBaseIconContainer {
+	height: 0;
+}
+
+.sapMInputBase:not(.sapMInputBaseHasEndIcons):not(.sapMInputBaseHasBeginIcons) .sapMInputBaseInner,
+.sapMInputBaseNoWidth .sapMInputBaseInner {
+	width: 100%;
+}
+
+.sapMInputBaseInner {
+	.sapMInputBaseHasEndIcons &,
+	.sapMInputBaseHasBeginIcons & {
+		width: calc(~'100% - @{_sap_m_InputBase_IconWidth}');
+	}
+
+	.sapMInputBaseHasEndIcons.sapMInputBaseHasBeginIcons & {
+		width: calc(~'100% - @{_sap_m_InputBase_IconWidth}*2');
+	}
 }
 
 .sapMInputBaseContentWrapper {
 	height: 100%;
 	box-sizing: border-box;
-	display: inline-flex;
-	flex-direction: row;
-	justify-content: flex-end;
+	display: inline-block;
 	position: relative;
 	overflow: hidden;
-	min-width: -moz-min-content;
-	min-width: min-content;
+	border-radius: 0;
+	vertical-align: middle;
+	margin: 0;
 }
 
 .sapMInputBaseIconContainer {
 	display: inline-block;
+	vertical-align: inherit;
 	height: 100%;
 	width: auto;
 	outline: none;
-}
-
-.sapMInputBaseDynamicContent {
-	height: 100%;
-	display: flex;
-	flex: 1;
-}
-
-html[data-sap-ui-browser^="ie"].sap-desktop .sapMInputBaseDynamicContent {
-	flex: 1 1 auto;
-}
-
-.sapMInputBaseNoWidth .sapMInputBaseDynamicContent {
-	flex: auto;
 }
 
 .sapMInputBaseHasBeginIcons .sapMInputBaseInner {
@@ -93,20 +143,12 @@ html[data-sap-ui-browser^="ie"].sap-desktop .sapMInputBaseDynamicContent {
 	min-width: @_sap_m_InputBase_IconMinWidth;
 	height: 100%;
 	line-height: @_sap_m_InputBase_IconLineHeight;
-	vertical-align: middle;
 	cursor: pointer;
 	background: transparent;
 	-webkit-user-select: none;
 	-moz-user-select: none;
 	-ms-user-select: none;
 	user-select: none;
-}
-
-.sapMInputDescriptionWrapper {
-	display: inline-block;
-	overflow: hidden;
-	text-overflow: ellipsis;
-	vertical-align: top;
 }
 
 .sapMFocus {
@@ -154,10 +196,6 @@ html[data-sap-ui-browser^="ed"].sap-desktop {
 .sapMInputBaseInner:-ms-input-placeholder {
 	font-size: @sapMFontMediumSize;
 	font-style: italic;
-}
-
-.sapMInputBaseInner {
-	width: 100%;
 }
 
 .sapMInputBaseInner::-webkit-outer-spin-button,
@@ -266,21 +304,35 @@ html[data-sap-ui-browser^="ed"].sap-desktop {
 		line-height: 1rem;
 		height: 1.625rem;
 	}
+
 	.sapMInputBaseContentWrapper {
 		height: 1.625rem;
 	}
+
 	.sapMInputBaseInner {
 		padding: 0 0.5rem;
-		min-width: 2rem;
+		min-width: @_sap_m_InputBase_InnerMinWidth_Compact;
 	}
+
+	.sapMInputBaseHasEndIcons .sapMInputBaseInner,
+	.sapMInputBaseHasBeginIcons .sapMInputBaseInner {
+		width: calc(~'100% - @{_sap_m_InputBase_Compact_IconWidth}');
+	}
+
+	.sapMInputBaseHasEndIcons.sapMInputBaseHasBeginIcons .sapMInputBaseInner {
+		width: calc(~'100% - @{_sap_m_InputBase_Compact_IconWidth}*2');
+	}
+
 	.sapMInputBaseIcon {
-		width: 2rem;
+		width: @_sap_m_InputBase_Compact_IconWidth;
 		min-width: 2rem;
 		line-height: 1.5rem;
 	}
+
 	.sapMInputBaseContentWrapper.sapMInputBaseContentWrapperState .sapMInputBaseIcon {
 		line-height: 1.375rem;
 	}
+
 	.sapMInputDescriptionWrapper span {
 		line-height: 1.625rem;
 	}
@@ -292,10 +344,38 @@ html[data-sap-ui-browser^="ed"].sap-desktop {
 	.sapMInputBaseHasEndIcons .sapMInputBaseInner {
 		padding-right: 0.25rem;
 	}
-}
 
-.sapUiSizeCompact .sapMInputBaseHeightMargin {
-	margin: 0.1875rem 0;
+	/* handle min-width calculation */
+	.sapMInputBaseHasEndIcons, .sapMInputBaseHasBeginIcons {
+		.sapMInputBaseContentWrapper {
+			min-width: @_InputBase_Control_OneIcon_MinWidth_Compact;
+			&.sapMInputBaseContentWrapperState {
+				min-width: @_InputBase_Control_OneIcon_State_MinWidth_Compact;
+			}
+		}
+	}
+
+	.sapMInputBaseHasEndIcons.sapMInputBaseHasBeginIcons {
+		.sapMInputBaseContentWrapper {
+			min-width: @_InputBase_Control_TwoIcons_MinWidth_Compact;
+			&.sapMInputBaseContentWrapperState {
+				min-width: @_InputBase_Control_TwoIcons_State_MinWidth_Compact;
+			}
+		}
+	}
+
+	.sapMInputBase:not(.sapMInputBaseHasEndIcons):not(.sapMInputBaseHasBeginIcons) {
+		.sapMInputBaseContentWrapper {
+			min-width: @_InputBase_Control_MinWidth_Compact;
+			&.sapMInputBaseContentWrapperState {
+				min-width: @_InputBase_Control_State_MinWidth_Compact;
+			}
+		}
+	}
+
+	.sapMInputBaseHeightMargin {
+		margin: 0.1875rem 0;
+	}
 }
 
 /* Condensed size */

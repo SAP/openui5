@@ -81,6 +81,9 @@ function(
 
 			/**
 			 * Defines the width of the control.
+			 *
+			 * <b>Note:</b> If the provided width is too small, the control gets stretched to
+			 * its min width, which is needed in order for the control to be usable and well aligned.
 			 */
 			width: { type: "sap.ui.core.CSSSize", group: "Dimension", defaultValue: null },
 
@@ -880,14 +883,17 @@ function(
 	};
 
 	InputBase.prototype.updateValueStateClasses = function(sValueState, sOldValueState) {
-		var $ContentWrapper = this.$("content"),
+		var $DomRef = this.$(),
+			$ContentWrapper = this.$("content"),
 			mValueState = ValueState;
 
 		if (sOldValueState !== mValueState.None) {
+			$DomRef.removeClass("sapMInputBaseState");
 			$ContentWrapper.removeClass("sapMInputBaseContentWrapperState sapMInputBaseContentWrapper" + sOldValueState);
 		}
 
 		if (sValueState !== mValueState.None) {
+			$DomRef.addClass("sapMInputBaseState");
 			$ContentWrapper.addClass("sapMInputBaseContentWrapperState sapMInputBaseContentWrapper" + sValueState);
 		}
 	};
@@ -900,36 +906,22 @@ function(
 	};
 
 	/**
-	 * Function calculates the available space for the tokenizer
+	 * Calculates the space taken by the icons.
 	 *
-	 * @sap-restricted sap.m.MultiInput sap.m.MultiComboBox
 	 * @private
-	 * @return {String | null} CSSSize in px
+	 * @return {int | null} CSSSize in px
 	 */
-	InputBase.prototype._calculateSpaceForTokenizer = function () {
-		if (this.getDomRef()) {
-			var iControlWidth = this.getDomRef().offsetWidth;
+	InputBase.prototype._calculateIconsSpace = function () {
+		var oEndIcon = this.getAggregation("_endIcon") || [],
+			oBeginIcon = this.getAggregation("_beginIcon") || [],
+			aIcons = oEndIcon.concat(oBeginIcon),
+			iIconWidth;
 
-			// calculate space taken up by icons
-			var aIcons = this.getAggregation("_endIcon").concat(this.getAggregation("_beginIcon")),
-				iIconWidth,
-				iSummedIconsWidth = aIcons.reduce(function(iAcc, oIcon){
-					iIconWidth = oIcon && oIcon.getDomRef() ? oIcon.getDomRef().offsetWidth : 0;
+		return aIcons.reduce(function(iAcc, oIcon){
+			iIconWidth = oIcon && oIcon.getDomRef() ? oIcon.getDomRef().offsetWidth : 0;
 
-					return iAcc + iIconWidth;
-				}, 0);
-
-			// calculate width of the input html element based on its min-width
-			var oInputRef = this.$().find(".sapMInputBaseInner"),
-				aInputRelevantCss = ["min-width", "padding-right", "padding-left"],
-				iInputWidth = aInputRelevantCss.reduce(function(iAcc, sProperty) {
-					return iAcc + (parseInt(oInputRef.css(sProperty)) || 0);
-				}, 0);
-
-			return iControlWidth - (iSummedIconsWidth + iInputWidth) + "px";
-		} else {
-			return null;
-		}
+			return iAcc + iIconWidth;
+		}, 0);
 	};
 
 	/* ----------------------------------------------------------- */
@@ -979,7 +971,6 @@ function(
 				this.openValueStateMessage();
 			}
 		}
-
 		return this;
 	};
 

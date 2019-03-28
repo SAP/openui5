@@ -375,7 +375,7 @@ sap.ui.define([
 	 * Function sets the maximum width of the Tokenizer.
 	 *
 	 * @public
-	 * @param {number} nWidth The new maximal width
+	 * @param {string} sWidth The new maximal width
 	 */
 	Tokenizer.prototype.setMaxWidth = function(sWidth) {
 		this.setProperty("maxWidth", sWidth, true);
@@ -384,9 +384,8 @@ sap.ui.define([
 		if (this.getDomRef() && this._getAdjustable()) {
 			this._adjustTokensVisibility();
 		}
-
 		return this;
-	};
+	 };
 
 	/**
 	 * Function returns whether the n-more indicator is visible
@@ -516,18 +515,27 @@ sap.ui.define([
 		this._adjustTokensVisibility();
 	};
 
-		/**
-		 * Handles the setting of collapsed state
-		 *
-		 * @param {boolean} If true collapses the tokenizer's content
-		 * @private
-		 */
+	/**
+	 * Handles the setting of collapsed state
+	 *
+	 * @param {boolean} If true collapses the tokenizer's content
+	 * @private
+	 */
 	Tokenizer.prototype._useCollapsedMode = function(bCollapse) {
+		var oParent = this.getParent(),
+			aTokens = this.getTokens();
+
+		if (!aTokens.length) {
+			return;
+		}
+
 		if (bCollapse) {
 			this._adjustTokensVisibility();
 		} else {
 			this._showAllTokens();
 		}
+
+		oParent._syncInputWidth && setTimeout(oParent["_syncInputWidth"].bind(oParent, this), 0);
 	};
 
 	Tokenizer.prototype.invalidate = function(oOrigin) {

@@ -12,12 +12,73 @@
 	font-style: normal;
 	font-weight: normal;
 	white-space: nowrap;
+	text-overflow: ellipsis;
+	overflow: hidden;
 }
 
-.sapMInput.sapMInputWithDescription {
-	overflow: hidden;
-	text-overflow: ellipsis;
+.sapMInputWithDescription {
 	white-space: nowrap;
+}
+
+.sapMInputDescriptionWrapper {
+	display: inline-flex;
+}
+
+/* Input with description */
+.sapMInputBaseHasEndIcons, .sapMInputBaseHasBeginIcons {
+	.sapMInputDescriptionWrapper {
+		max-width: ~"calc(100% - (@{_InputBase_Control_OneIcon_MinWidth}))";
+		.sapMInputBaseState & {
+			max-width: ~"calc(100% - (@{_InputBase_Control_OneIcon_State_MinWidth}))";
+		}
+	}
+}
+
+.sapMInputBaseHasEndIcons.sapMInputBaseHasBeginIcons {
+	.sapMInputDescriptionWrapper {
+		max-width: ~"calc(100% - (@{_InputBase_Control_TwoIcons_MinWidth}))";
+		.sapMInputBaseState & {
+			max-width: ~"calc(100% - (@{_InputBase_Control_TwoIcons_State_MinWidth}))";
+		}
+	}
+}
+
+.sapMInputBase:not(.sapMInputBaseHasEndIcons):not(.sapMInputBaseHasBeginIcons) {
+	.sapMInputDescriptionWrapper {
+		max-width: ~"calc(100% - (@{_InputBase_Control_MinWidth}))";
+		.sapMInputBaseState & {
+			max-width: ~"calc(100% - (@{_InputBase_Control_State_MinWidth}*2))";
+		}
+	}
+}
+
+.sapUiSizeCompact {
+	.sapMInputBaseHasEndIcons, .sapMInputBaseHasBeginIcons {
+		.sapMInputDescriptionWrapper {
+			max-width: ~"calc(100% - (@{_InputBase_Control_OneIcon_MinWidth_Compact}))";
+			.sapMInputBaseState & {
+				max-width: ~"calc(100% - (@{_InputBase_Control_OneIcon_State_MinWidth_Compact}))";
+			}
+		}
+	}
+
+	.sapMInputBaseHasEndIcons.sapMInputBaseHasBeginIcons {
+		.sapMInputDescriptionWrapper {
+			max-width: ~"calc(100% - (@{_InputBase_Control_TwoIcons_MinWidth_Compact}))";
+			.sapMInputBaseState & {
+				max-width: ~"calc(100% - (@{_InputBase_Control_TwoIcons_State_MinWidth_Compact}))";
+			}
+		}
+	}
+
+	.sapMInputBase:not(.sapMInputBaseHasEndIcons):not(.sapMInputBaseHasBeginIcons) {
+		.sapMInputDescriptionWrapper {
+			max-width: ~"calc(100% - (@{_InputBase_Control_MinWidth_Compact}))";
+			.sapMInputBaseState & {
+				max-width: ~"calc(100% - (@{_InputBase_Control_State_MinWidth_Compact}*2))";
+			}
+		}
+	}
 }
 
 .sapMInputHighlight {

@@ -17,6 +17,7 @@ sap.ui.define([
 	"sap/ui/model/json/JSONModel",
 	"sap/ui/thirdparty/jquery",
 	"sap/m/Input",
+	"sap/m/InputBase",
 	"sap/ui/core/ListItem",
 	"sap/m/StandardListItem",
 	"sap/ui/core/library"
@@ -37,6 +38,7 @@ sap.ui.define([
 	JSONModel,
 	jQuery,
 	Input,
+	InputBase,
 	ListItem,
 	StandardListItem,
 	coreLibrary
@@ -2061,5 +2063,37 @@ sap.ui.define([
 			assert.strictEqual(this.multiInput1.getTokens().length, 3, 'tokens count is correct');
 			done();
 		}.bind(this), 1000);
+	});
+
+	QUnit.module("Width calculations");
+
+	QUnit.test("_syncInputWidth", function(assert) {
+		var oItem1 = new Item({
+				key : "0",
+				text : "item 0"
+			}),
+			oSyncInput = this.spy(MultiInput.prototype, "_syncInputWidth");
+			oMI = new MultiInput({
+				suggestionItems: [oItem1]
+			});
+
+		oMI.placeAt("qunit-fixture");
+		sap.ui.getCore().applyChanges();
+		this.clock.tick(1000);
+
+		assert.strictEqual(oSyncInput.callCount, 1);
+
+		oMI.setSelectionItem(oItem1, true);
+		this.clock.tick(1000);
+
+		assert.strictEqual(oSyncInput.callCount, 2);
+
+		oMI.setTokens([]);
+		this.clock.tick(1000);
+
+		assert.strictEqual(oSyncInput.callCount, 3);
+
+		oSyncInput.restore();
+		oMI.destroy();
 	});
 });
