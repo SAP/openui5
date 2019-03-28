@@ -26,7 +26,11 @@ sap.ui.define(function () {
 					only: [
 						"sap/ui/integration/widgets/Card"
 					]
-				}
+				},
+				module: [
+					'./Card.qunit',
+					'./CardDataHandling.qunit'
+				]
 			},
 			"util/CardManifest": {
 				coverage: {
