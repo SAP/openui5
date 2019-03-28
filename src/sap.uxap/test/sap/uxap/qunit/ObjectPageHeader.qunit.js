@@ -9,8 +9,9 @@ sap.ui.define([
 	"sap/m/Button",
 	"sap/m/Link",
 	"sap/m/Breadcrumbs",
-	"sap/ui/core/mvc/XMLView"],
-function ($, Core, ObjectPageLayout, ObjectPageHeader, ObjectPageHeaderActionButton, Button, Link, Breadcrumbs, XMLView) {
+	"sap/ui/core/mvc/XMLView",
+	"sap/ui/qunit/QUnitUtils"],
+function ($, Core, ObjectPageLayout, ObjectPageHeader, ObjectPageHeaderActionButton, Button, Link, Breadcrumbs, XMLView, QUtils) {
 	"use strict";
 
 	var oFactory = {
@@ -443,6 +444,27 @@ function ($, Core, ObjectPageLayout, ObjectPageHeader, ObjectPageHeaderActionBut
 		oHeader._adaptActions(1000);
 
 		assert.strictEqual($overflowButton.css("display"), "none", "OverflowButton is hidden when not needed");
+	});
+
+	QUnit.test("Action button press event parameter", function (assert) {
+		var oHeader = this.myView.byId("applicationHeader"),
+			oActionButton = this.myView.byId("installButton"),
+			oActionSheetButton = oHeader._oActionSheetButtonMap[oActionButton.getId()],
+			fnPressOutside = function (oEvent) {
+				assert.strictEqual(oEvent.getParameter("bInOverflow"), undefined, "bInOverflow parameter is not passed from outside overflow");
+			},
+			fnPressInside = function (oEvent) {
+				assert.strictEqual(oEvent.getParameter("bInOverflow"), true, "bInOverflow parameter is passed from inside overflow");
+			};
+
+		oActionButton.attachPress(fnPressOutside);
+		QUtils.triggerKeyup(oActionButton.getId(), "SPACE");
+
+		oActionButton.detachPress(fnPressOutside);
+		oActionButton.attachPress(fnPressInside);
+
+		QUtils.triggerKeyup(oHeader._oOverflowButton.getId(), "SPACE");
+		QUtils.triggerKeyup(oActionSheetButton.getId(), "SPACE");
 	});
 
 	QUnit.test("_adaptLayoutForDomElement", function (assert) {
