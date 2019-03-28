@@ -31,9 +31,9 @@ sap.ui.define(["sap/uxap/library"],
 				getLabel: function(oControl) {
 					var aSubSection = oControl.getSubSections();
 
-					// If there is only one SubSection, its name is shown in the AnchorBar,
-					// instead of the name of the Section.
-					if (aSubSection.length === 1) {
+					// If there is only one SubSection, its title is shown in the AnchorBar,
+					// instead of the title of the Section (if it is available).
+					if (aSubSection.length === 1 && aSubSection[0].getTitle().trim() !== "") {
 						return aSubSection[0].getTitle();
 					}
 
