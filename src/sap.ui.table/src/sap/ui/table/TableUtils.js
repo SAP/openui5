@@ -1528,6 +1528,7 @@ sap.ui.define([
 
 			mThemeParameters.sapUiTableActionNavigationIcon = ThemeParameters.get("_sap_ui_table_RowActionNavigationIcon");
 			mThemeParameters.sapUiTableActionDeleteIcon = ThemeParameters.get("_sap_ui_table_DeleteIcon");
+			mThemeParameters.sapUiTableActionResetIcon = ThemeParameters.get("_sap_ui_table_ResetIcon");
 		},
 
 		selectElementText: function(oElement) {

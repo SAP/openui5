@@ -80,8 +80,8 @@ sap.ui.define([
 	MultiSelectionPlugin.prototype.init = function() {
 		SelectionPlugin.prototype.init.call(this);
 
-		var sapUiTableActionDeleteIcon = ThemeParameters.get("_sap_ui_table_DeleteIcon");
-		var oIcon = new Icon({src: IconPool.getIconURI(sapUiTableActionDeleteIcon), useIconTooltip: false});
+		var sapUiTableActionResetIcon = ThemeParameters.get("_sap_ui_table_ResetIcon");
+		var oIcon = new Icon({src: IconPool.getIconURI(sapUiTableActionResetIcon), useIconTooltip: false});
 		oIcon.addStyleClass("sapUiTableSelectClear");
 
 		this._bLimitReached = false;
@@ -439,7 +439,7 @@ sap.ui.define([
 	};
 
 	MultiSelectionPlugin.prototype.onThemeChanged = function() {
-		this.oDeselectAllIcon.setSrc(ThemeParameters.get("_sap_ui_table_DeleteIcon"));
+		this.oDeselectAllIcon.setSrc(ThemeParameters.get("_sap_ui_table_ResetIcon"));
 	};
 
 	return MultiSelectionPlugin;
