@@ -3307,19 +3307,22 @@ sap.ui.define([
 			$Clone,
 			iHeight;
 
+		// BCP: 1870298358 - setting overflow-y to hidden of the wrapper element to eliminate unwanted
+		// scrollbar appearing during measurement of the snapped title height
+		this._$opWrapper.css("overflow-y", "hidden");
+
 		if (bViaClone) {
-			// BCP: 1870298358 - setting overflow-y to hidden of the wrapper element during clone to eliminate unwanted
-			// scrollbar appearing during measurement of cloned header
-			this._$opWrapper.css("overflow-y", "hidden");
 			$Clone = this._appendTitleCloneToDOM(true /* enable snapped mode */);
 			iHeight = $Clone.height();
 			$Clone.remove(); //clean dom
-			this._$opWrapper.css("overflow-y", "auto");
 		} else if (oTitle && oTitle.snap) {
 			oTitle.snap(false);
 			iHeight = oTitle.$().outerHeight();
 			oTitle.unSnap(false);
 		}
+
+		// restore scrolling
+		this._$opWrapper.css("overflow-y", "auto");
 
 		return iHeight;
 	};
