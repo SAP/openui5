@@ -117,7 +117,7 @@ function(
 
 			/**
 			 * Indicates if the column is sorted. This property only controls if a sort indicator is displayed in the
-			 * column header - it does not trigger the sort function. The column has to be sorted by calling <code>Column.sort()</code>
+			 * column header - it does not trigger the sort function. The column can be sorted using {@link sap.ui.table.Table#sort}.
 			 */
 			sorted : {type : "boolean", group : "Appearance", defaultValue : false},
 
@@ -141,7 +141,7 @@ function(
 
 			/**
 			 * Indicates if the column is filtered. This property only controls if a filter indicator is displayed in the
-			 * column header - it does not trigger the filter function. The column has to be filtered by calling <code>Column.sort()</code>
+			 * column header - it does not trigger the filter function. The column can be filtered using {@link sap.ui.table.Table#filter}.
 			 */
 			filtered : {type : "boolean", group : "Appearance", defaultValue : false},
 
